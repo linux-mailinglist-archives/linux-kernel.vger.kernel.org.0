@@ -2,102 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1157445C92
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 14:19:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E1BC545C9C
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 14:20:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727721AbfFNMTT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 08:19:19 -0400
-Received: from foss.arm.com ([217.140.110.172]:60964 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727362AbfFNMTT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 08:19:19 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4E2DA3EF;
-        Fri, 14 Jun 2019 05:19:18 -0700 (PDT)
-Received: from [192.168.1.18] (unknown [172.31.20.19])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C24183F246;
-        Fri, 14 Jun 2019 05:19:15 -0700 (PDT)
-Subject: Re: [PATCH v6 00/19] Unify vDSOs across more architectures
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-mips@vger.kernel.org,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Mark Salyzyn <salyzyn@android.com>,
-        Peter Collingbourne <pcc@google.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Dmitry Safonov <0x7f454c46@gmail.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Huw Davies <huw@codeweavers.com>
-References: <20190530141531.43462-1-vincenzo.frascino@arm.com>
- <CAK8P3a11DE0sXteZoaP_N=mDhx3tXitGKddn1ogtFqJBYO-SCA@mail.gmail.com>
- <d96667d5-e43b-d33a-fbd0-5acfb4904316@arm.com>
- <alpine.DEB.2.21.1906141413070.1722@nanos.tec.linutronix.de>
-From:   Vincenzo Frascino <vincenzo.frascino@arm.com>
-Message-ID: <6f3bcd07-6eb4-53d6-d209-de42396a4ee2@arm.com>
-Date:   Fri, 14 Jun 2019 13:19:58 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        id S1727774AbfFNMUP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 08:20:15 -0400
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:39372 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727362AbfFNMUO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Jun 2019 08:20:14 -0400
+Received: by mail-qk1-f196.google.com with SMTP id i125so1491832qkd.6;
+        Fri, 14 Jun 2019 05:20:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=jms.id.au; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=6rc60klXbDdC4U4/MMrqWt/2TewJnLjQ/8r8hSCMd1s=;
+        b=iWbnwpM3Kxebrp9DARy7xnFW6kr0KF6p8qC4q2EsM9P78mqslIAqRrIUj8ZBTUvZfA
+         UiBAhtpSOHng8d69r5N05E8Pd9q3WGFt2mQ34gwLycRcYSw9+j8M02cm6srnmt9Ei8vU
+         ZkeV7zq719zsUoqI2tf7K64TdVSLi9VimJ680=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=6rc60klXbDdC4U4/MMrqWt/2TewJnLjQ/8r8hSCMd1s=;
+        b=mEMDwO0vYNBaWIWCjGKKqUrE7eGIp4QYsJ9q2MhL8CnZiVbt/lzePX/+tYqQOCscJn
+         vCJcXb6w/glaBSQ2T4n+Ynn60GTgpl7pg30zhrbwT/P9COTo4614kpXAn7QqVzN2mfpx
+         YkJcG48kIbadOPS8hzKbiy5CiMkuiTT2CwlE4AmFlvdRZnMZV6KqfHd0m9a3ElyLbbJ5
+         gepyAMGrwuKB4xEqKCKcavxSUC9fQJgUXEACN2vrO7K7mAPlSGEq/qbTQ4hD9fBzwAkw
+         WHsvnFTQZAEEf9WPsQywelGmQRA1g76xoqE1v3vOFtZofa9LdF5m0VUEQRrRntFkDhGc
+         JMTQ==
+X-Gm-Message-State: APjAAAXvKAS+cGXH2yAaZ2CVQxbIQ9XVS8e4YO7y+Fjko7DzjIhA7BRa
+        v9fDNA/BsM6cOmFUyINnxMFwnC0m0S+budQwBFk=
+X-Google-Smtp-Source: APXvYqyGrNC/mqtxIRaAuWze/JoTz2AsfNmSDrq8G4akumQY0TXEILTuIxe67BM5xQ23Pb3umDQ2KTDTek1Fgy9Gk4A=
+X-Received: by 2002:a37:a743:: with SMTP id q64mr74518182qke.236.1560514813660;
+ Fri, 14 Jun 2019 05:20:13 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.21.1906141413070.1722@nanos.tec.linutronix.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20190509035549.2203169-1-taoren@fb.com> <29d7503b-6c14-4990-aadc-7cbce2897fc2@www.fastmail.com>
+In-Reply-To: <29d7503b-6c14-4990-aadc-7cbce2897fc2@www.fastmail.com>
+From:   Joel Stanley <joel@jms.id.au>
+Date:   Fri, 14 Jun 2019 12:20:01 +0000
+Message-ID: <CACPK8Xe8qNww18hJx2skjYJtsCRLA+uwZsjGUb50u6QLE+wmSg@mail.gmail.com>
+Subject: Re: [PATCH] ARM: dts: aspeed: Add Facebook YAMP BMC
+To:     Andrew Jeffery <andrew@aj.id.au>
+Cc:     Tao Ren <taoren@fb.com>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-aspeed@lists.ozlabs.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        OpenBMC Maillist <openbmc@lists.ozlabs.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-On 6/14/19 1:16 PM, Thomas Gleixner wrote:
-> On Tue, 4 Jun 2019, Vincenzo Frascino wrote:
->> On 31/05/2019 09:46, Arnd Bergmann wrote:
->>> One open question I touched in my review is whether we want to
->>> have a vdso version of clock_getres() in all architectures or not.
->>> I'd prefer to leave it out because there is very little advantage to
->>> it over the system call (the results don't change at runtime and
->>> can easily be cached by libc if performance ever matters), and
->>> it takes up a small amount of memory for the implementation.
->>>
->>
->> I thought about it and I ended up with what proposed in this patchset mainly for
->> symmetry across all the architectures since in the end they use the same common
->> code.
->>
->> It seems also that there is some performance impact (i.e.):
->>
->> clock-getres-monotonic:    libc(system call): 296 nsec/call
->> clock-getres-monotonic:    libc(vdso): 5 nsec/call
-> 
-> clock_getres() is usually not a hot path operation.
-> 
->> I agree with you though when you say that caching it in the libc is a
->> possibility to overcome the performance impact.
->>
->>> We shouldn't just need it for consistency because all callers
->>> would require implementing a fallback to the system call
->>> anyway, to deal with old kernels.
-> 
-> libc has the fallback already. Let's aim for 1:1 replacement of the
-> architecture code first and then add the extra bits in separate patches.
+On Thu, 9 May 2019 at 06:06, Andrew Jeffery <andrew@aj.id.au> wrote:
 >
+>
+>
+> On Thu, 9 May 2019, at 13:26, Tao Ren wrote:
+> > Add initial version of device tree for Facebook YAMP ast2500 BMC.
+> >
+> > Signed-off-by: Tao Ren <taoren@fb.com>
+>
+> Acked-by: Andrew Jeffery <andrew@aj.id.au>
 
-Ok, thanks Thomas, I will split the patches accordingly.
+Committed to dev-5.1.
 
-> Thanks,
-> 
-> 	tglx
-> 
+Cheers,
 
--- 
-Regards,
-Vincenzo
+Joel
