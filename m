@@ -2,78 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9C8A94607A
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 16:19:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6AF224607D
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 16:20:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728551AbfFNOTU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 10:19:20 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:49338 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726335AbfFNOTT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 10:19:19 -0400
-Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 882E21C88C98E2127566;
-        Fri, 14 Jun 2019 22:19:15 +0800 (CST)
-Received: from [127.0.0.1] (10.133.213.239) by DGGEMS410-HUB.china.huawei.com
- (10.3.19.210) with Microsoft SMTP Server id 14.3.439.0; Fri, 14 Jun 2019
- 22:19:12 +0800
-Subject: Re: [PATCH] PCI: hv: Fix build error without CONFIG_SYSFS
-To:     <bhelgaas@google.com>, <sthemmin@microsoft.com>,
-        <sashal@kernel.org>, <decui@microsoft.com>
-References: <20190531150923.12376-1-yuehaibing@huawei.com>
-CC:     <linux-kernel@vger.kernel.org>, <linux-pci@vger.kernel.org>
-From:   Yuehaibing <yuehaibing@huawei.com>
-Message-ID: <6c97b2ae-b151-5610-d8d5-ef626d1f9bbb@huawei.com>
-Date:   Fri, 14 Jun 2019 22:19:10 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.2.0
+        id S1728627AbfFNOUL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 10:20:11 -0400
+Received: from mout.kundenserver.de ([212.227.126.133]:50363 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728285AbfFNOUL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Jun 2019 10:20:11 -0400
+Received: from [192.168.1.110] ([77.4.92.40]) by mrelayeu.kundenserver.de
+ (mreue012 [212.227.15.167]) with ESMTPSA (Nemesis) id
+ 1MS1G7-1i3agl3c7v-00TTps; Fri, 14 Jun 2019 16:20:08 +0200
+Subject: Re: Help with reviewing dosfstools patches
+To:     =?UTF-8?Q?Pali_Roh=c3=a1r?= <pali.rohar@gmail.com>,
+        util-linux@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20190614102513.4uwsu2wkigg3pimq@pali>
+From:   "Enrico Weigelt, metux IT consult" <lkml@metux.net>
+Organization: metux IT consult
+Message-ID: <ae5097ee-12af-2807-d48c-4274b4fc856d@metux.net>
+Date:   Fri, 14 Jun 2019 16:20:08 +0200
+User-Agent: Mozilla/5.0 (X11; Linux i686 on x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <20190531150923.12376-1-yuehaibing@huawei.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.133.213.239]
-X-CFilter-Loop: Reflected
+In-Reply-To: <20190614102513.4uwsu2wkigg3pimq@pali>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:2LLNQoGhbONM7cyzksFdRnDRrWxFja1lcyXQZkHp6CWWemZOkKF
+ pc3fUTvjvOWenMaUP08jTJaD4bFmIqeyEpnapbLFd+NB5wEGkJnc1wiR5RbM0n1wrJ1Atsn
+ 8sUteMyz4dUAuL11lg6U6vOe/AAZZpsjzILFkfAaNlF2EkcYP041m/+du6ucu1QI8wSz/QA
+ pbZU69Ng0PVKjkhBm4lZw==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:aQchCXy9btw=:9Qws8XsyQdvFbXHq9LjVfm
+ GzRTHRtG+vO9hkB8LN9NLXAiEbsmpSpPglc34dCBVvRiQ+FuxwHxWsXcdJ78KV/Cq7gUia/ym
+ ZR1BcplPcOlPbB/wc7goEdiypd9Y4m7lHO/lUzRl2ToJZ/6+0udruO91lh3tpnnRRTxiM2yqR
+ 9NsQW3aSJ4lKZItnGYyCEDI1CWTb1DvHanEzPFKVTRNA7cmzJc/tgZUyR9XSr3fC239eRzZHY
+ sbAfC8WcGu4iiMFz1OY0t4TWbhjEYer9n+tFO+3Mjg0+tOvJxVlbEDU0Ak0ZIAd2IdH+k4CcR
+ xC8ksBUf6ptFcGfkYFAVCNiO83RTZkLsv8VOHcW41PhG06VB0ux6ZI4GXwnjPktGMZneS18VC
+ zckfodNus0nc6r1li4t8cx7XhA0cIdn3PvTWAkdailUvk2rcVX3B9N0Q3mNqkhringMkwWMUV
+ 5r3Emo8SsoJXESmTaMSBWWWFgrskjbEIEBlHQsQsgJywpsyI94pxRoUexuEMjxiJbrbUQFjNh
+ oumJwpQ2j8o4CDp8Pr4WdbRfWekD/Xoh0pwznRmBF2eaLZ43PzrWMnG22wSb39Y+KK/p3miCr
+ ysz1lrzKgvZ/TKtPkkKkBe3B4lEWHkznP1pRpXtzemsguvq5F8knyyIdEqaWwUaNhcG03+qqL
+ DZyQxmO8/mBVNlDG57OGX//wcDN/3U7oFNSTv1KZfo1cyReG6tcfWKdDXNYJ6qbuwCIkmxjLP
+ wJZ3oMpg/mZBS7hQRSaQ7SMD/3/+PDXlxy9wGeN2rLvcz7mAtCVNMBqaFlM=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi all,
+On 14.06.19 12:25, Pali Rohár wrote:
+> Hello!
+> 
+> Can somebody help with reviewing existing patches / pull requests for
+> dosfstools project? https://github.com/dosfstools/dosfstools/pulls
 
-Friendly ping...
+I'll have a look at it. Could you perhaps prepare a (rebased) patch
+queue ?
 
-On 2019/5/31 23:09, YueHaibing wrote:
-> while building without CONFIG_SYSFS, fails as below:
-> 
-> drivers/pci/controller/pci-hyperv.o: In function 'hv_pci_assign_slots':
-> pci-hyperv.c:(.text+0x40a): undefined reference to 'pci_create_slot'
-> drivers/pci/controller/pci-hyperv.o: In function 'pci_devices_present_work':
-> pci-hyperv.c:(.text+0xc02): undefined reference to 'pci_destroy_slot'
-> drivers/pci/controller/pci-hyperv.o: In function 'hv_pci_remove':
-> pci-hyperv.c:(.text+0xe50): undefined reference to 'pci_destroy_slot'
-> drivers/pci/controller/pci-hyperv.o: In function 'hv_eject_device_work':
-> pci-hyperv.c:(.text+0x11f9): undefined reference to 'pci_destroy_slot'
-> 
-> Select SYSFS while PCI_HYPERV is set to fix this.
-> 
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Fixes: a15f2c08c708 ("PCI: hv: support reporting serial number as slot information")
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> ---
->  drivers/pci/Kconfig | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/pci/Kconfig b/drivers/pci/Kconfig
-> index 2ab9240..6722952 100644
-> --- a/drivers/pci/Kconfig
-> +++ b/drivers/pci/Kconfig
-> @@ -182,6 +182,7 @@ config PCI_LABEL
->  config PCI_HYPERV
->          tristate "Hyper-V PCI Frontend"
->          depends on X86 && HYPERV && PCI_MSI && PCI_MSI_IRQ_DOMAIN && X86_64
-> +	select SYSFS
->          help
->            The PCI device frontend driver allows the kernel to import arbitrary
->            PCI devices from a PCI backend to support PCI driver domains.
-> 
+Does the project already have a maillist ?
 
+
+--mtx
+
+-- 
+Enrico Weigelt, metux IT consult
+Free software and Linux embedded engineering
+info@metux.net -- +49-151-27565287
