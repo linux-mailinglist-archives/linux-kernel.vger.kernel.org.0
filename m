@@ -2,248 +2,162 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D06D845920
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 11:47:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 57DF545926
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 11:47:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727208AbfFNJrU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 05:47:20 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:35965 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726900AbfFNJrT (ORCPT
+        id S1727246AbfFNJrk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 05:47:40 -0400
+Received: from mx0a-0016f401.pphosted.com ([67.231.148.174]:37010 "EHLO
+        mx0b-0016f401.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727210AbfFNJrk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 05:47:19 -0400
-Received: by mail-lf1-f65.google.com with SMTP id q26so1298247lfc.3
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2019 02:47:17 -0700 (PDT)
+        Fri, 14 Jun 2019 05:47:40 -0400
+Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
+        by mx0a-0016f401.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5E9jF5i013167;
+        Fri, 14 Jun 2019 02:47:32 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=from : to : subject
+ : date : message-id : references : in-reply-to : content-type : content-id
+ : content-transfer-encoding : mime-version; s=pfpt0818;
+ bh=HZ07H84ALO8pKP73NIjWsjp2InvcVTFf7+ORLnms1Hw=;
+ b=qGVvGpJExqUGKYlg0LKlrY85tZfxKf/1BU5DN+8ixXdT8+mQOew6t8YSTbfGdaYoCwZv
+ iuUCv5N8Q88gGPkXvHDhVVPukRh/qiONUJXnPl4Ve5OSX/ACPn2T51SmSeDSA/hSvbCT
+ PxXU1WItDxOMpN3AyNBc5HgXQKZLkGVgp+1W06XrYktx2HnMQPpEhYgmJeds6Z56Yy9d
+ eEbtmUJHlVzY6Y/EdDla0dbpdUjnSbM95mRiJKX0//p6a07tHWMIU+rBXvsyhuZ1O0W0
+ 4v6rdd/TQlGNcTp/MpvBIhYrTbhQmSseDCAH1NpYCHG/IjD0LdecZ+oirys8HywMPC7w ow== 
+Received: from sc-exch03.marvell.com ([199.233.58.183])
+        by mx0a-0016f401.pphosted.com with ESMTP id 2t41j61qcj-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
+        Fri, 14 Jun 2019 02:47:32 -0700
+Received: from SC-EXCH03.marvell.com (10.93.176.83) by SC-EXCH03.marvell.com
+ (10.93.176.83) with Microsoft SMTP Server (TLS) id 15.0.1367.3; Fri, 14 Jun
+ 2019 02:47:31 -0700
+Received: from NAM02-CY1-obe.outbound.protection.outlook.com (104.47.37.50) by
+ SC-EXCH03.marvell.com (10.93.176.83) with Microsoft SMTP Server (TLS) id
+ 15.0.1367.3 via Frontend Transport; Fri, 14 Jun 2019 02:47:31 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cloudflare.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=TiE5d2z5em0Q7yF0HYZfqJy1XHLNfSk82Am88MWCFws=;
-        b=V3byRwYRlqnrI06ATO113AI5+6iker0nXFMAfEQ295DwWJl+nwaSI48YxYvdDb9FGX
-         miRjqvEHtWD+v8uwt49NBtpcftD25yQPbe4GTWPuviE6vsT5KcuN88i/tWKO84nSigaQ
-         4RHp3rr6wMmBC/6awZOJTKAwrpVQhhBM671V8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=TiE5d2z5em0Q7yF0HYZfqJy1XHLNfSk82Am88MWCFws=;
-        b=PeFBSwE4cnO6ecppJRX4cYcmNlqFaRShg9P/rlpWhDpMDZcI9vcoKpzPYMUQZVZsit
-         jzVE7rVjXwWGkOaXIdm3dWgVgoJQgd0oTtQyTGL7PciQOlVOlX4kvvFtynMlyZNCeewS
-         hSepCa0qpk4QRZtGZjmmzUsqbAu9IqwTiWkmdCQfRQLchsokYAS7xAt0iTzP6UISzeoA
-         5xJPpGvyu0kjC0AsRNuAbl80XIDxoX0jGGuQIscXwEnDgaQLboQPe4wbG2Urg46cNwRY
-         pmv9b0yx1ays0z7f6tDTUNALdDdK1xZHAMbWlVyH0v0XyQ4HWgX/Ng2XUY7Kc2h/fUGW
-         6x2A==
-X-Gm-Message-State: APjAAAUvGvT12WUVqssQKZFz9q+RDMmDdoxTx3DX8xaOnlOOrxS3C00o
-        npRB7fsm3Gy6vJCbdGFuZrvxcRte3a+cr3Jw/977LA==
-X-Google-Smtp-Source: APXvYqzoFTtWnYLqu3v68qDDsM1eS/XrxEzq59rIk/fnMtTaoe/jOaDk6pv36sY1VFDCg5MNBV030VoxRfSVs9pN/B4=
-X-Received: by 2002:a19:c14f:: with SMTP id r76mr37966973lff.70.1560505636796;
- Fri, 14 Jun 2019 02:47:16 -0700 (PDT)
+ d=marvell.onmicrosoft.com; s=selector2-marvell-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=HZ07H84ALO8pKP73NIjWsjp2InvcVTFf7+ORLnms1Hw=;
+ b=xdMn0dy/MSei614iurPilBy8Mhsj5inPDQLt4/Kp0uJpLPXZ+PeePb6cNyDjxOROpzOYpsaS18i/0/XdPQz2VCLmNSbMLhaUZbsrT9/cMGqAoeevTA6daU+u+IthOnw9w/AMJc/cR1Ryd+zA7/VJ79acCvJ3Dobxf4AkoR5uSWM=
+Received: from MN2PR18MB2527.namprd18.prod.outlook.com (20.179.82.202) by
+ MN2PR18MB2591.namprd18.prod.outlook.com (20.179.82.13) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1987.12; Fri, 14 Jun 2019 09:47:27 +0000
+Received: from MN2PR18MB2527.namprd18.prod.outlook.com
+ ([fe80::440b:de1d:b672:2e09]) by MN2PR18MB2527.namprd18.prod.outlook.com
+ ([fe80::440b:de1d:b672:2e09%7]) with mapi id 15.20.1987.010; Fri, 14 Jun 2019
+ 09:47:27 +0000
+From:   Saurav Kashyap <skashyap@marvell.com>
+To:     Young Xiao <92siuyang@gmail.com>,
+        "QLogic-Storage-Upstream@qlogic.com" 
+        <QLogic-Storage-Upstream@qlogic.com>,
+        "jejb@linux.ibm.com" <jejb@linux.ibm.com>,
+        "martin.petersen@oracle.com" <martin.petersen@oracle.com>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] scsi: bnx2fc: Check if sense buffer has been allocated
+ during completion
+Thread-Topic: [PATCH] scsi: bnx2fc: Check if sense buffer has been allocated
+ during completion
+Thread-Index: AQHVIpPIIJXdzJ0nyUOUrUslEmPGh6abQ18A
+Date:   Fri, 14 Jun 2019 09:47:26 +0000
+Message-ID: <D9296ADB.1A233%skashyap@marvell.com>
+References: <1560501397-831-1-git-send-email-92siuyang@gmail.com>
+In-Reply-To: <1560501397-831-1-git-send-email-92siuyang@gmail.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [114.143.185.87]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 10fecc79-c60e-4197-5661-08d6f0ad4f65
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:MN2PR18MB2591;
+x-ms-traffictypediagnostic: MN2PR18MB2591:
+x-microsoft-antispam-prvs: <MN2PR18MB2591B9F7EE1B90CC31508F67D2EE0@MN2PR18MB2591.namprd18.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:2150;
+x-forefront-prvs: 0068C7E410
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(376002)(39860400002)(396003)(366004)(346002)(13464003)(51914003)(189003)(199004)(446003)(11346002)(68736007)(2616005)(476003)(486006)(66066001)(25786009)(14444005)(76176011)(256004)(99286004)(229853002)(316002)(2906002)(110136005)(8936002)(2201001)(478600001)(86362001)(6436002)(66476007)(81156014)(36756003)(7736002)(6246003)(6512007)(305945005)(2501003)(8676002)(6486002)(76116006)(73956011)(66946007)(91956017)(66446008)(64756008)(66556008)(14454004)(102836004)(6506007)(5660300002)(6116002)(3846002)(53546011)(186003)(26005)(81166006)(53936002)(71190400001)(71200400001);DIR:OUT;SFP:1101;SCL:1;SRVR:MN2PR18MB2591;H:MN2PR18MB2527.namprd18.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: marvell.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: QI+hXr+79uOaO2Yw1HZzlR77+tipSXWM2rrOdXreIGu94o2A5ynONMqXqO5YJUj/gFqcSXwnb+Ftbf8td/ORgbfZH9kNzCKDoEzafVB5C0BFEJbYFRKy3mbTFdQbeheNy46z7FSHTZwLtWRuOkrA7K4ONYcDgbCRXD+EDVnTl61AgKffAEl+aN8mA1AXksHywLK4+N1E9oFiXYstNjOBb3qLPyvaDykq8RPDLCTGmEwhd7c2L3AJ1XVmdB4q5No1WS3We2Kzbx7fnshn1ePs9ssnd7SsSihljG885qcbBH5QEYoCsj1IOpXtoWf/I88lc1dbggvVqGzTqIBMV/IkMhnJm5VtDjxZ1f6Ygqc6IV/+eTZlYWBCPVynyjEZuAwyO6gz2VcD7f/IiK3nLR45c+Exf/TtlKfk9gpmSqKNKJQ=
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <238FE32BDB6C7C4BAEE1507B150D240B@namprd18.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-References: <20190613132433.17213-1-afabre@cloudflare.com> <CAEf4BzYp0ZtbojxP++GYsc097RpoLBb08Aj7NM0s+GoM7RpvXg@mail.gmail.com>
- <20190613201457.hv5z3pbi46z2cfwn@kafai-mbp.dhcp.thefacebook.com>
-In-Reply-To: <20190613201457.hv5z3pbi46z2cfwn@kafai-mbp.dhcp.thefacebook.com>
-From:   Arthur Fabre <afabre@cloudflare.com>
-Date:   Fri, 14 Jun 2019 10:47:05 +0100
-Message-ID: <CAOn4ftuJXXgaDOUUjFaO0ytyQCWt=-NUoxofbfHZjd6g-M_nZQ@mail.gmail.com>
-Subject: Re: [PATCH bpf-next] bpf: sk_storage: Fix out of bounds memory access
-To:     Martin Lau <kafai@fb.com>
-Cc:     Andrii Nakryiko <andrii.nakryiko@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        Networking <netdev@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+X-MS-Exchange-CrossTenant-Network-Message-Id: 10fecc79-c60e-4197-5661-08d6f0ad4f65
+X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Jun 2019 09:47:27.0214
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 70e1fb47-1155-421d-87fc-2e58f638b6e0
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: skashyap@marvell.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR18MB2591
+X-OriginatorOrg: marvell.com
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-14_05:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 13, 2019 at 9:15 PM Martin Lau <kafai@fb.com> wrote:
->
-> On Thu, Jun 13, 2019 at 10:15:38AM -0700, Andrii Nakryiko wrote:
-> > On Thu, Jun 13, 2019 at 8:16 AM Arthur Fabre <afabre@cloudflare.com> wrote:
-> > >
-> > > bpf_sk_storage maps use multiple spin locks to reduce contention.
-> > > The number of locks to use is determined by the number of possible CPUs.
-> > > With only 1 possible CPU, bucket_log == 0, and 2^0 = 1 locks are used.
-> Thanks for report.
->
-> > >
-> > > When updating elements, the correct lock is determined with hash_ptr().
-> > > Calling hash_ptr() with 0 bits is undefined behavior, as it does:
-> > >
-> > > x >> (64 - bits)
-> > >
-> > > Using the value results in an out of bounds memory access.
-> > > In my case, this manifested itself as a page fault when raw_spin_lock_bh()
-> > > is called later, when running the self tests:
-> > >
-> > > ./tools/testing/selftests/bpf/test_verifier 773 775
-> > >
-> > > [   16.366342] BUG: unable to handle page fault for address: ffff8fe7a66f93f8
-> > > [   16.367139] #PF: supervisor write access in kernel mode
-> > > [   16.367751] #PF: error_code(0x0002) - not-present page
-> > > [   16.368323] PGD 35a01067 P4D 35a01067 PUD 0
-> > > [   16.368796] Oops: 0002 [#1] SMP PTI
-> > > [   16.369175] CPU: 0 PID: 189 Comm: test_verifier Not tainted 5.2.0-rc2+ #10
-> > > [   16.369960] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.12.0-1 04/01/2014
-> > > [   16.371021] RIP: 0010:_raw_spin_lock_bh (/home/afabre/linux/./include/trace/events/initcall.h:48)
-> > > [ 16.371571] Code: 02 00 00 31 c0 ba ff 00 00 00 3e 0f b1 17 75 01 c3 e9 82 12 5f ff 66 90 65 81 05 ad 14 6f 41 00 02 00 00 31 c0 ba 01 00 00 00 <3e> 0f b1 17 75 01 c3 89 c6 e9 f0 02 5f ff b8 00 02 00 00 3e 0f c1
-> > > All code
-> > > ========
-> > >    0:   02 00                   add    (%rax),%al
-> > >    2:   00 31                   add    %dh,(%rcx)
-> > >    4:   c0 ba ff 00 00 00 3e    sarb   $0x3e,0xff(%rdx)
-> > >    b:   0f b1 17                cmpxchg %edx,(%rdi)
-> > >    e:   75 01                   jne    0x11
-> > >   10:   c3                      retq
-> > >   11:   e9 82 12 5f ff          jmpq   0xffffffffff5f1298
-> > >   16:   66 90                   xchg   %ax,%ax
-> > >   18:   65 81 05 ad 14 6f 41    addl   $0x200,%gs:0x416f14ad(%rip)        # 0x416f14d0
-> > >   1f:   00 02 00 00
-> > >   23:   31 c0                   xor    %eax,%eax
-> > >   25:   ba 01 00 00 00          mov    $0x1,%edx
-> > >   2a:   3e 0f b1 17             cmpxchg %edx,%ds:*(%rdi)                <-- trapping instruction
-> > >   2e:   75 01                   jne    0x31
-> > >   30:   c3                      retq
-> > >   31:   89 c6                   mov    %eax,%esi
-> > >   33:   e9 f0 02 5f ff          jmpq   0xffffffffff5f0328
-> > >   38:   b8 00 02 00 00          mov    $0x200,%eax
-> > >   3d:   3e                      ds
-> > >   3e:   0f                      .byte 0xf
-> > >   3f:   c1                      .byte 0xc1
-> > >
-> > > Code starting with the faulting instruction
-> > > ===========================================
-> > >    0:   3e 0f b1 17             cmpxchg %edx,%ds:(%rdi)
-> > >    4:   75 01                   jne    0x7
-> > >    6:   c3                      retq
-> > >    7:   89 c6                   mov    %eax,%esi
-> > >    9:   e9 f0 02 5f ff          jmpq   0xffffffffff5f02fe
-> > >    e:   b8 00 02 00 00          mov    $0x200,%eax
-> > >   13:   3e                      ds
-> > >   14:   0f                      .byte 0xf
-> > >   15:   c1                      .byte 0xc1
-> > > [   16.373398] RSP: 0018:ffffa759809d3be0 EFLAGS: 00010246
-> > > [   16.373954] RAX: 0000000000000000 RBX: ffff8fe7a66f93f0 RCX: 0000000000000040
-> > > [   16.374645] RDX: 0000000000000001 RSI: ffff8fdaf9f0d180 RDI: ffff8fe7a66f93f8
-> > > [   16.375338] RBP: ffff8fdaf9f0d180 R08: ffff8fdafba2c320 R09: ffff8fdaf9f0d0c0
-> > > [   16.376028] R10: 0000000000000000 R11: 0000000000000000 R12: ffff8fdafa346700
-> > > [   16.376719] R13: ffff8fe7a66f93f8 R14: ffff8fdaf9f0d0c0 R15: 0000000000000001
-> > > [   16.377413] FS:  00007fda724c0740(0000) GS:ffff8fdafba00000(0000) knlGS:0000000000000000
-> > > [   16.378204] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> > > [   16.378763] CR2: ffff8fe7a66f93f8 CR3: 0000000139d1c006 CR4: 0000000000360ef0
-> > > [   16.379453] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> > > [   16.380144] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> > > [   16.380864] Call Trace:
-> > > [   16.381112] selem_link_map (/home/afabre/linux/./include/linux/compiler.h:221 /home/afabre/linux/net/core/bpf_sk_storage.c:243)
-> > > [   16.381476] sk_storage_update (/home/afabre/linux/net/core/bpf_sk_storage.c:355 /home/afabre/linux/net/core/bpf_sk_storage.c:414)
-> > > [   16.381888] bpf_sk_storage_get (/home/afabre/linux/net/core/bpf_sk_storage.c:760 /home/afabre/linux/net/core/bpf_sk_storage.c:741)
-> > > [   16.382285] ___bpf_prog_run (/home/afabre/linux/kernel/bpf/core.c:1447)
-> > > [   16.382679] ? __bpf_prog_run32 (/home/afabre/linux/kernel/bpf/core.c:1603)
-> > > [   16.383074] ? alloc_file_pseudo (/home/afabre/linux/fs/file_table.c:232)
-> > > [   16.383486] ? kvm_clock_get_cycles (/home/afabre/linux/arch/x86/kernel/kvmclock.c:98)
-> > > [   16.383906] ? ktime_get (/home/afabre/linux/kernel/time/timekeeping.c:265 /home/afabre/linux/kernel/time/timekeeping.c:369 /home/afabre/linux/kernel/time/timekeeping.c:754)
-> > > [   16.384243] ? bpf_test_run (/home/afabre/linux/net/bpf/test_run.c:47)
-> > > [   16.384613] ? bpf_prog_test_run_skb (/home/afabre/linux/net/bpf/test_run.c:313)
-> > > [   16.385065] ? security_capable (/home/afabre/linux/security/security.c:696 (discriminator 19))
-> > > [   16.385460] ? __do_sys_bpf (/home/afabre/linux/kernel/bpf/syscall.c:2072 /home/afabre/linux/kernel/bpf/syscall.c:2848)
-> > > [   16.385854] ? __handle_mm_fault (/home/afabre/linux/mm/memory.c:3507 /home/afabre/linux/mm/memory.c:3532 /home/afabre/linux/mm/memory.c:3666 /home/afabre/linux/mm/memory.c:3897 /home/afabre/linux/mm/memory.c:4021)
-> > > [   16.386273] ? __dentry_kill (/home/afabre/linux/fs/dcache.c:595)
-> > > [   16.386652] ? do_syscall_64 (/home/afabre/linux/arch/x86/entry/common.c:301)
-> > > [   16.387031] ? entry_SYSCALL_64_after_hwframe (/home/afabre/linux/./include/trace/events/initcall.h:10 /home/afabre/linux/./include/trace/events/initcall.h:10)
-> > > [   16.387541] Modules linked in:
-> > > [   16.387846] CR2: ffff8fe7a66f93f8
-> > > [   16.388175] ---[ end trace 891cf27b5b9c9cc6 ]---
-> > > [   16.388628] RIP: 0010:_raw_spin_lock_bh (/home/afabre/linux/./include/trace/events/initcall.h:48)
-> > > [ 16.389089] Code: 02 00 00 31 c0 ba ff 00 00 00 3e 0f b1 17 75 01 c3 e9 82 12 5f ff 66 90 65 81 05 ad 14 6f 41 00 02 00 00 31 c0 ba 01 00 00 00 <3e> 0f b1 17 75 01 c3 89 c6 e9 f0 02 5f ff b8 00 02 00 00 3e 0f c1
-> > > All code
-> > > ========
-> > >    0:   02 00                   add    (%rax),%al
-> > >    2:   00 31                   add    %dh,(%rcx)
-> > >    4:   c0 ba ff 00 00 00 3e    sarb   $0x3e,0xff(%rdx)
-> > >    b:   0f b1 17                cmpxchg %edx,(%rdi)
-> > >    e:   75 01                   jne    0x11
-> > >   10:   c3                      retq
-> > >   11:   e9 82 12 5f ff          jmpq   0xffffffffff5f1298
-> > >   16:   66 90                   xchg   %ax,%ax
-> > >   18:   65 81 05 ad 14 6f 41    addl   $0x200,%gs:0x416f14ad(%rip)        # 0x416f14d0
-> > >   1f:   00 02 00 00
-> > >   23:   31 c0                   xor    %eax,%eax
-> > >   25:   ba 01 00 00 00          mov    $0x1,%edx
-> > >   2a:   3e 0f b1 17             cmpxchg %edx,%ds:*(%rdi)                <-- trapping instruction
-> > >   2e:   75 01                   jne    0x31
-> > >   30:   c3                      retq
-> > >   31:   89 c6                   mov    %eax,%esi
-> > >   33:   e9 f0 02 5f ff          jmpq   0xffffffffff5f0328
-> > >   38:   b8 00 02 00 00          mov    $0x200,%eax
-> > >   3d:   3e                      ds
-> > >   3e:   0f                      .byte 0xf
-> > >   3f:   c1                      .byte 0xc1
-> > >
-> > > Code starting with the faulting instruction
-> > > ===========================================
-> > >    0:   3e 0f b1 17             cmpxchg %edx,%ds:(%rdi)
-> > >    4:   75 01                   jne    0x7
-> > >    6:   c3                      retq
-> > >    7:   89 c6                   mov    %eax,%esi
-> > >    9:   e9 f0 02 5f ff          jmpq   0xffffffffff5f02fe
-> > >    e:   b8 00 02 00 00          mov    $0x200,%eax
-> > >   13:   3e                      ds
-> > >   14:   0f                      .byte 0xf
-> > >   15:   c1                      .byte 0xc1
-> > > [   16.390899] RSP: 0018:ffffa759809d3be0 EFLAGS: 00010246
-> > > [   16.391410] RAX: 0000000000000000 RBX: ffff8fe7a66f93f0 RCX: 0000000000000040
-> > > [   16.392102] RDX: 0000000000000001 RSI: ffff8fdaf9f0d180 RDI: ffff8fe7a66f93f8
-> > > [   16.392795] RBP: ffff8fdaf9f0d180 R08: ffff8fdafba2c320 R09: ffff8fdaf9f0d0c0
-> > > [   16.393481] R10: 0000000000000000 R11: 0000000000000000 R12: ffff8fdafa346700
-> > > [   16.394169] R13: ffff8fe7a66f93f8 R14: ffff8fdaf9f0d0c0 R15: 0000000000000001
-> > > [   16.394870] FS:  00007fda724c0740(0000) GS:ffff8fdafba00000(0000) knlGS:0000000000000000
-> > > [   16.395641] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> > > [   16.396193] CR2: ffff8fe7a66f93f8 CR3: 0000000139d1c006 CR4: 0000000000360ef0
-> > > [   16.396876] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> > > [   16.397557] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> > > [   16.398246] Kernel panic - not syncing: Fatal exception in interrupt
-> > > [   16.399067] Kernel Offset: 0x3ce00000 from 0xffffffff81000000 (relocation range: 0xffffffff80000000-0xffffffffbfffffff)
-> > > [   16.400098] ---[ end Kernel panic - not syncing: Fatal exception in interrupt ]---
-> > >
-> > > Signed-off-by: Arthur Fabre <afabre@cloudflare.com>
-> > > Fixes: 6ac99e8f23d4 ("bpf: Introduce bpf sk local storage")
-> > > ---
-> > >  net/core/bpf_sk_storage.c | 8 +++++++-
-> > >  1 file changed, 7 insertions(+), 1 deletion(-)
-> > >
-> > > diff --git a/net/core/bpf_sk_storage.c b/net/core/bpf_sk_storage.c
-> > > index f40e3d35fd9c..7ae0686c5418 100644
-> > > --- a/net/core/bpf_sk_storage.c
-> > > +++ b/net/core/bpf_sk_storage.c
-> > > @@ -90,7 +90,13 @@ struct bpf_sk_storage {
-> > >  static struct bucket *select_bucket(struct bpf_sk_storage_map *smap,
-> > >                                     struct bpf_sk_storage_elem *selem)
-> > >  {
-> > > -       return &smap->buckets[hash_ptr(selem, smap->bucket_log)];
-> > > +       /* hash_ptr is undefined behavior with 0 bits */
-> > > +       int bucket = 0;
-> > > +       if (smap->bucket_log != 0) {
-> > > +               bucket = hash_ptr(selem, smap->bucket_log);
-> > > +       }
-> >
-> > Would it be better instead to make sure that bucket_log is always at
-> > least 1? Having bucket_log as zero can bite us in the future again.
-> I also think it is better off to have a max_t(u32, 1, ...) done in
-> bpf_sk_storage_map_alloc().  Having an extra bucket should be fine in
-> this case.
 
-Makes sense, done in v2.
 
-> >
-> > > +
-> > > +       return &smap->buckets[bucket];
-> > >  }
-> > >
-> > >  static int omem_charge(struct sock *sk, unsigned int size)
-> > > --
-> > > 2.20.1
-> > >
+-----Original Message-----
+From: <linux-scsi-owner@vger.kernel.org> on behalf of Young Xiao
+<92siuyang@gmail.com>
+Date: Friday, 14 June 2019 at 2:06 PM
+To: "QLogic-Storage-Upstream@qlogic.com"
+<QLogic-Storage-Upstream@qlogic.com>, "jejb@linux.ibm.com"
+<jejb@linux.ibm.com>, "martin.petersen@oracle.com"
+<martin.petersen@oracle.com>, "linux-scsi@vger.kernel.org"
+<linux-scsi@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+<linux-kernel@vger.kernel.org>
+Cc: Young Xiao <92siuyang@gmail.com>
+Subject: [PATCH] scsi: bnx2fc: Check if sense buffer has been allocated
+during completion
+
+>sc_cmd->sense_buffer is not guaranteed to be allocated so we need to
+>sc_cmd->check if the pointer is NULL before trying to copy anything into
+>it.
+>
+>See commit 16a611154dc1 ("scsi: qedf: Check if sense buffer has been
+>allocated
+>during completion") for details.
+>
+>Signed-off-by: Young Xiao <92siuyang@gmail.com>
+>---
+> drivers/scsi/bnx2fc/bnx2fc_io.c | 8 +++++---
+> 1 file changed, 5 insertions(+), 3 deletions(-)
+>
+>diff --git a/drivers/scsi/bnx2fc/bnx2fc_io.c
+>b/drivers/scsi/bnx2fc/bnx2fc_io.c
+>index 8def63c..44a5e59 100644
+>--- a/drivers/scsi/bnx2fc/bnx2fc_io.c
+>+++ b/drivers/scsi/bnx2fc/bnx2fc_io.c
+>@@ -1789,9 +1789,11 @@ static void bnx2fc_parse_fcp_rsp(struct bnx2fc_cmd
+>*io_req,
+> 			fcp_sns_len =3D SCSI_SENSE_BUFFERSIZE;
+> 		}
+>=20
+>-		memset(sc_cmd->sense_buffer, 0, SCSI_SENSE_BUFFERSIZE);
+>-		if (fcp_sns_len)
+>-			memcpy(sc_cmd->sense_buffer, rq_data, fcp_sns_len);
+>+		if (sc_cmd->sense_buffer) {
+>+			memset(sc_cmd->sense_buffer, 0, SCSI_SENSE_BUFFERSIZE);
+>+			if (fcp_sns_len)
+>+				memcpy(sc_cmd->sense_buffer, rq_data, fcp_sns_len);
+>+		}
+>=20
+> 		/* return RQ entries */
+> 		for (i =3D 0; i < num_rq; i++)
+>--=20
+>2.7.4
+
+Thanks for the patch
+Acked-by: Saurav Kashyap <skashyap@marvell.com>
+
+Thanks,
+~Saurav
+>
+
