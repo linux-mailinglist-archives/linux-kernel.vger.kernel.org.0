@@ -2,275 +2,278 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5EC0D464F2
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 18:49:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E2B5A46486
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 18:42:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726184AbfFNQtS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 12:49:18 -0400
-Received: from mail-vs1-f67.google.com ([209.85.217.67]:44909 "EHLO
-        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725801AbfFNQtS (ORCPT
+        id S1726094AbfFNQmB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 12:42:01 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:33956 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725808AbfFNQmA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 12:49:18 -0400
-Received: by mail-vs1-f67.google.com with SMTP id v129so2148535vsb.11
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2019 09:49:17 -0700 (PDT)
+        Fri, 14 Jun 2019 12:42:00 -0400
+Received: by mail-lf1-f67.google.com with SMTP id y198so2198661lfa.1;
+        Fri, 14 Jun 2019 09:41:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=P57lZleFMEVvVu0eYFutZNaOn5WMh5DoQZ1UItFmSi8=;
-        b=NxwD+XN01kLskZRwzfUeYUym063Szl2JsZYwnev0tiTf5V0+dj2a62Ss8w9cDLONIX
-         7l9Q6edc6Wb+/Bt3OA1hHdWvwwGMvgfejBZw/9FYUiqyQM+/mn/mEY7WSDSNv6Jxdv3o
-         Y9ezv4cR+VNFOHvleZrFpDcOSwY+OVDs2vVHU=
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=6k6lYkzsQAZ/wO+Z6taNnrfa8/r9v0TyRuTT8h4ykCI=;
+        b=AUSh6qm3af5d0ndrL+qmwsOiotqORMfo+QZNW7vKyhOuLWV6m/JPsWTPZ9YyVs3LWC
+         w5AVVTLsKLbNgcoI+LCTxpUkX+JAiK7B85nit26U7BfEXc4cTPyr1dCsJ9jXMwGNxQMO
+         5TNoVSG6b6X186vaIf5kOwwTaBFnvnTPI4BQRJOsjX9JEnBWo6NOw2axMsSZ61jFnDAa
+         pl/spa7mC21TQpEKlw2ncGutBDFBUODNpHFBkhsJGWC03BgjV7joI5J9fPJXNnxqCshq
+         xQugTDpAo99SlZd/0ujWXc6m1lktoP8qAUMkJnN5OZCADTg2H8guYSwIJoAzwur4aEwc
+         T3tw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=P57lZleFMEVvVu0eYFutZNaOn5WMh5DoQZ1UItFmSi8=;
-        b=CSVlyeXpA6XB94J+DRUllKDNU05z/S2LJCPEnlRmyzVZZaLFHIXo8QHTobF8MNMC9N
-         uP5dE9DL+ptXZKSXBeJOB2kxMEXquSjc6MUIfc5aOYWNMvFMgRj3UcZO4Z0jHhaJ8hZx
-         u59PZUP4vloB6l2PLzUQz3wOENTLfFOjfrD50ba+FhWiOzoVgWva/SaOhkQkrNcRBZts
-         VMJOmWItBjEQ7Avkg//1kYhYtsF27dzec5dlNRf+ApVTC2RqrzgiXbGHOGOrNi7o9w2D
-         67HSY0o2v4n2vcF6TTLdI9O843oxAvIFTQ4S7gi1upeoeMTW9gMA0hVnw0D769d4OOM4
-         M6Yw==
-X-Gm-Message-State: APjAAAWbc9QheF1N3Kr7LnGvuQlFUXKTJFLbz4ZHqNo6IO3Diq8yPFKN
-        24sh2c/NEgX0Me26g7+SNFV2WOs2gy0=
-X-Google-Smtp-Source: APXvYqzN0/E1OH1VDyXK9GRCmxjN9S+ixLw/wQlImj9yg01W00jr1XKY1aKz50ZippaOYDyDXoaTBw==
-X-Received: by 2002:a67:db89:: with SMTP id f9mr25521657vsk.150.1560530956666;
-        Fri, 14 Jun 2019 09:49:16 -0700 (PDT)
-Received: from mail-ua1-f47.google.com (mail-ua1-f47.google.com. [209.85.222.47])
-        by smtp.gmail.com with ESMTPSA id f66sm687280vkh.9.2019.06.14.09.49.16
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Fri, 14 Jun 2019 09:49:16 -0700 (PDT)
-Received: by mail-ua1-f47.google.com with SMTP id s4so1178515uad.7
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2019 09:49:16 -0700 (PDT)
-X-Received: by 2002:ab0:2a49:: with SMTP id p9mr2189748uar.0.1560530496822;
- Fri, 14 Jun 2019 09:41:36 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190613234153.59309-1-dianders@chromium.org> <20190613234153.59309-3-dianders@chromium.org>
- <CAPDyKFrgXGf_9=H7G40fiUQj=da5WWRys_oim2azgL4FEOeUVA@mail.gmail.com>
-In-Reply-To: <CAPDyKFrgXGf_9=H7G40fiUQj=da5WWRys_oim2azgL4FEOeUVA@mail.gmail.com>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Fri, 14 Jun 2019 09:41:24 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=UA9i1eEi3Mx0WF-DnCnr4O4-MfOxa=axZOJtXzxbV7Tw@mail.gmail.com>
-Message-ID: <CAD=FV=UA9i1eEi3Mx0WF-DnCnr4O4-MfOxa=axZOJtXzxbV7Tw@mail.gmail.com>
-Subject: Re: [PATCH v4 2/5] mmc: core: API to temporarily disable retuning for
- SDIO CRC errors
-To:     Ulf Hansson <ulf.hansson@linaro.org>
-Cc:     Kalle Valo <kvalo@codeaurora.org>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Arend van Spriel <arend.vanspriel@broadcom.com>,
-        brcm80211-dev-list.pdl@broadcom.com,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-        Double Lo <double.lo@cypress.com>,
-        Brian Norris <briannorris@chromium.org>,
-        linux-wireless <linux-wireless@vger.kernel.org>,
-        Naveen Gupta <naveen.gupta@cypress.com>,
-        Madhan Mohan R <madhanmohan.r@cypress.com>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Wright Feng <wright.feng@cypress.com>,
-        Chi-Hsien Lin <chi-hsien.lin@cypress.com>,
-        netdev <netdev@vger.kernel.org>,
-        brcm80211-dev-list <brcm80211-dev-list@cypress.com>,
-        Jiong Wu <lohengrin1024@gmail.com>,
-        Ritesh Harjani <riteshh@codeaurora.org>,
-        Allison Randal <allison@lohutok.net>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=6k6lYkzsQAZ/wO+Z6taNnrfa8/r9v0TyRuTT8h4ykCI=;
+        b=qfqHtI+5gOd8rWmQXNwp/lIeZ0Na6GGI+9h/gjYKJ0nMuDGyWqlw7en4CbcHQGxpE1
+         h81LpQ4XCGfGO3PHfEwES5L8TVedQXPjxgfxwyFtdgrQYL24mhMKdWLeAoOSqUwm7HOe
+         xHU/QkLgGt5w2UKGKVTVnFzXTrE5twd6AfEslHq6gwK50fzbK23yq9sY3arPAnGs+Q9T
+         iIkkEqm9QxEcv1sB92nKGI+pJvb9ZhBEhQwMjlbKjejc2LVeY3ck/XjwiDNAShuCrm5A
+         1DddkrdAnq7BdYt/LIXpmPP/7XLKSVPq8TojW6vVWx3MfqmeFWaX4OzToYmNK/ocb9Ph
+         k4qQ==
+X-Gm-Message-State: APjAAAVeWBmMb+fAsvbadnCx3qhI5duVV0BFg5P/umNdMEMpdgxk25xJ
+        s3odw7SPuxEBcwSHyq1yAbOYi5vh
+X-Google-Smtp-Source: APXvYqylQtZkSBxwbidnNi/eilDXOEow7VGpIVlbewz6VQYdy+BUk0+FkvHLP3GPXAgXKj71610xFg==
+X-Received: by 2002:a05:6512:15a:: with SMTP id m26mr4775595lfo.71.1560530517119;
+        Fri, 14 Jun 2019 09:41:57 -0700 (PDT)
+Received: from [192.168.2.145] (ppp91-79-162-197.pppoe.mtu-net.ru. [91.79.162.197])
+        by smtp.googlemail.com with ESMTPSA id p15sm679286lji.80.2019.06.14.09.41.55
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 14 Jun 2019 09:41:56 -0700 (PDT)
+Subject: Re: [PATCH 2/2] rtc: tegra: Implement suspend clock source
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Daniel Lezcano <daniel.lezcano@linaro.org>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Shawn Lin <shawn.lin@rock-chips.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Avri Altman <avri.altman@wdc.com>
-Content-Type: text/plain; charset="UTF-8"
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-tegra@vger.kernel.org, linux-rtc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20190614104747.19712-1-thierry.reding@gmail.com>
+ <20190614104747.19712-2-thierry.reding@gmail.com>
+ <5a00bccf-6542-51bd-9030-99a59f14f2f9@gmail.com>
+ <20190614134110.GF15526@ulmo>
+ <d9b65fd9-ecad-b241-a0d6-251a648488aa@gmail.com>
+ <20190614141400.GI15526@ulmo>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <3c6ac621-bc2a-c9c8-64fc-531be7dd323d@gmail.com>
+Date:   Fri, 14 Jun 2019 19:41:54 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
+MIME-Version: 1.0
+In-Reply-To: <20190614141400.GI15526@ulmo>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+14.06.2019 17:14, Thierry Reding пишет:
+> On Fri, Jun 14, 2019 at 04:49:44PM +0300, Dmitry Osipenko wrote:
+>> 14.06.2019 16:41, Thierry Reding пишет:
+>>> On Fri, Jun 14, 2019 at 03:01:13PM +0300, Dmitry Osipenko wrote:
+>>>> 14.06.2019 13:47, Thierry Reding пишет:
+>>>>> From: Thierry Reding <treding@nvidia.com>
+>>>>>
+>>>>> The suspend clock source for Tegra210 and earlier is currently
+>>>>> implemented in the Tegra timer driver. However, the suspend clock source
+>>>>> code accesses registers that are part of the RTC hardware block, so both
+>>>>> can step on each others' toes. In practice this isn't an issue, but
+>>>>> there is no reason why the RTC driver can't implement the clock source,
+>>>>> so move the code over to the tegra-rtc driver.
+>>>>>
+>>>>> Signed-off-by: Thierry Reding <treding@nvidia.com>
+>>>>> ---
+>>>>>  drivers/clocksource/timer-tegra.c | 44 -------------------------------
+>>>>>  drivers/rtc/rtc-tegra.c           | 42 +++++++++++++++++++++++++++++
+>>>>>  2 files changed, 42 insertions(+), 44 deletions(-)
+>>>>>
+>>>>> diff --git a/drivers/clocksource/timer-tegra.c b/drivers/clocksource/timer-tegra.c
+>>>>> index e6608141cccb..87eac618924d 100644
+>>>>> --- a/drivers/clocksource/timer-tegra.c
+>>>>> +++ b/drivers/clocksource/timer-tegra.c
+>>>>> @@ -21,10 +21,6 @@
+>>>>>  
+>>>>>  #include "timer-of.h"
+>>>>>  
+>>>>> -#define RTC_SECONDS		0x08
+>>>>> -#define RTC_SHADOW_SECONDS	0x0c
+>>>>> -#define RTC_MILLISECONDS	0x10
+>>>>> -
+>>>>>  #define TIMERUS_CNTR_1US	0x10
+>>>>>  #define TIMERUS_USEC_CFG	0x14
+>>>>>  #define TIMERUS_CNTR_FREEZE	0x4c
+>>>>> @@ -164,34 +160,6 @@ static struct delay_timer tegra_delay_timer = {
+>>>>>  };
+>>>>>  #endif
+>>>>>  
+>>>>> -static struct timer_of suspend_rtc_to = {
+>>>>> -	.flags = TIMER_OF_BASE | TIMER_OF_CLOCK,
+>>>>> -};
+>>>>> -
+>>>>> -/*
+>>>>> - * tegra_rtc_read - Reads the Tegra RTC registers
+>>>>> - * Care must be taken that this function is not called while the
+>>>>> - * tegra_rtc driver could be executing to avoid race conditions
+>>>>> - * on the RTC shadow register
+>>>>> - */
+>>>>> -static u64 tegra_rtc_read_ms(struct clocksource *cs)
+>>>>> -{
+>>>>> -	void __iomem *reg_base = timer_of_base(&suspend_rtc_to);
+>>>>> -
+>>>>> -	u32 ms = readl_relaxed(reg_base + RTC_MILLISECONDS);
+>>>>> -	u32 s = readl_relaxed(reg_base + RTC_SHADOW_SECONDS);
+>>>>> -
+>>>>> -	return (u64)s * MSEC_PER_SEC + ms;
+>>>>> -}
+>>>>> -
+>>>>> -static struct clocksource suspend_rtc_clocksource = {
+>>>>> -	.name	= "tegra_suspend_timer",
+>>>>> -	.rating	= 200,
+>>>>> -	.read	= tegra_rtc_read_ms,
+>>>>> -	.mask	= CLOCKSOURCE_MASK(32),
+>>>>> -	.flags	= CLOCK_SOURCE_IS_CONTINUOUS | CLOCK_SOURCE_SUSPEND_NONSTOP,
+>>>>> -};
+>>>>> -
+>>>>>  static inline unsigned int tegra_base_for_cpu(int cpu, bool tegra20)
+>>>>>  {
+>>>>>  	if (tegra20) {
+>>>>> @@ -385,15 +353,3 @@ static int __init tegra20_init_timer(struct device_node *np)
+>>>>>  	return tegra_init_timer(np, true, rating);
+>>>>>  }
+>>>>>  TIMER_OF_DECLARE(tegra20_timer, "nvidia,tegra20-timer", tegra20_init_timer);
+>>>>> -
+>>>>> -static int __init tegra20_init_rtc(struct device_node *np)
+>>>>> -{
+>>>>> -	int ret;
+>>>>> -
+>>>>> -	ret = timer_of_init(np, &suspend_rtc_to);
+>>>>> -	if (ret)
+>>>>> -		return ret;
+>>>>> -
+>>>>> -	return clocksource_register_hz(&suspend_rtc_clocksource, 1000);
+>>>>> -}
+>>>>> -TIMER_OF_DECLARE(tegra20_rtc, "nvidia,tegra20-rtc", tegra20_init_rtc);
+>>>>> diff --git a/drivers/rtc/rtc-tegra.c b/drivers/rtc/rtc-tegra.c
+>>>>> index 8fa1b3febf69..6da54264a27a 100644
+>>>>> --- a/drivers/rtc/rtc-tegra.c
+>>>>> +++ b/drivers/rtc/rtc-tegra.c
+>>>>> @@ -6,6 +6,7 @@
+>>>>>   */
+>>>>>  
+>>>>>  #include <linux/clk.h>
+>>>>> +#include <linux/clocksource.h>
+>>>>>  #include <linux/delay.h>
+>>>>>  #include <linux/init.h>
+>>>>>  #include <linux/io.h>
+>>>>> @@ -52,8 +53,15 @@ struct tegra_rtc_info {
+>>>>>  	struct clk *clk;
+>>>>>  	int irq; /* alarm and periodic IRQ */
+>>>>>  	spinlock_t lock;
+>>>>> +
+>>>>> +	struct clocksource clksrc;
+>>>>>  };
+>>>>>  
+>>>>> +static struct tegra_rtc_info *to_tegra_rtc(struct clocksource *clksrc)
+>>>>> +{
+>>>>> +	return container_of(clksrc, struct tegra_rtc_info, clksrc);
+>>>>> +}
+>>>>> +
+>>>>>  /*
+>>>>>   * RTC hardware is busy when it is updating its values over AHB once every
+>>>>>   * eight 32 kHz clocks (~250 us). Outside of these updates the CPU is free to
+>>>>> @@ -268,6 +276,17 @@ static const struct rtc_class_ops tegra_rtc_ops = {
+>>>>>  	.alarm_irq_enable = tegra_rtc_alarm_irq_enable,
+>>>>>  };
+>>>>>  
+>>>>> +static u64 tegra_rtc_read_ms(struct clocksource *clksrc)
+>>>>> +{
+>>>>> +	struct tegra_rtc_info *info = to_tegra_rtc(clksrc);
+>>>>> +	u32 ms, s;
+>>>>> +
+>>>>> +	ms = readl_relaxed(info->base + TEGRA_RTC_REG_MILLI_SECONDS);
+>>>>> +	s = readl_relaxed(info->base + TEGRA_RTC_REG_SHADOW_SECONDS);
+>>>>> +
+>>>>> +	return (u64)s * MSEC_PER_SEC + ms;
+>>>>> +}
+>>>>> +
+>>>>>  static const struct of_device_id tegra_rtc_dt_match[] = {
+>>>>>  	{ .compatible = "nvidia,tegra20-rtc", },
+>>>>>  	{}
+>>>>> @@ -339,6 +358,28 @@ static int tegra_rtc_probe(struct platform_device *pdev)
+>>>>>  		goto disable_clk;
+>>>>>  	}
+>>>>>  
+>>>>> +	/*
+>>>>> +	 * The Tegra RTC is the only reliable clock source that persists
+>>>>> +	 * across an SC7 transition (VDD_CPU and VDD_CORE off) on Tegra210
+>>>>> +	 * and earlier. Starting with Tegra186, the ARM v8 architected timer
+>>>>> +	 * is in an always on power partition and its reference clock keeps
+>>>>> +	 * running during SC7. Therefore, we technically don't need to have
+>>>>> +	 * the RTC register as a clock source on Tegra186 and later, but it
+>>>>> +	 * doesn't hurt either, so we just register it unconditionally here.
+>>>>> +	 */
+>>>>> +	info->clksrc.name = "tegra_rtc";
+>>>>> +	info->clksrc.rating = 200;
+>>>>> +	info->clksrc.read = tegra_rtc_read_ms;
+>>>>> +	info->clksrc.mask = CLOCKSOURCE_MASK(32);
+>>>>
+>>>> Hm.. shouldn't this be CLOCKSOURCE_MASK(52)? Given that there are 32 bits for seconds and
+>>>> 10bits for milliseconds.
+>>>
+>>> Did you mean to say CLOCKSOURCE_MASK(42)? Yeah, that's probably better
+>>> here.
+>>
+>> Yes, 42 :)
+> 
+> I'm wondering if that could perhaps be a little problematic because
+> we're not actually using all of the 10 bits for the milliseconds. So the
+> maximum value that we can return is:
+> 
+> 	4294967296 * 1000 + 999 = 4294967296999
+> 
+> However, the maximum value for a 42 bit mask is:
+> 
+> 	2^42 - 1 = 4398046511103
+> 
+> That mask is only used in order to wrap around in delta computations. So
+> I can imagine a situation where we'd end up with a wrong value in the
+> delta. I suppose this can only really happen if the two samples are very
+> far apart in time, so maybe this isn't worth worrying about.
 
-On Fri, Jun 14, 2019 at 5:04 AM Ulf Hansson <ulf.hansson@linaro.org> wrote:
->
-> On Fri, 14 Jun 2019 at 01:42, Douglas Anderson <dianders@chromium.org> wrote:
-> >
-> > Normally when the MMC core sees an "-EILSEQ" error returned by a host
-> > controller then it will trigger a retuning of the card.  This is
-> > generally a good idea.
-> >
-> > However, if a command is expected to sometimes cause transfer errors
-> > then these transfer errors shouldn't cause a re-tuning.  This
-> > re-tuning will be a needless waste of time.  One example case where a
-> > transfer is expected to cause errors is when transitioning between
-> > idle (sometimes referred to as "sleep" in Broadcom code) and active
-> > state on certain Broadcom WiFi SDIO cards.  Specifically if the card
-> > was already transitioning between states when the command was sent it
-> > could cause an error on the SDIO bus.
-> >
-> > Let's add an API that the SDIO function drivers can call that will
-> > temporarily disable the auto-tuning functionality.  Then we can add a
-> > call to this in the Broadcom WiFi driver and any other driver that
-> > might have similar needs.
-> >
-> > NOTE: this makes the assumption that the card is already tuned well
-> > enough that it's OK to disable the auto-retuning during one of these
-> > error-prone situations.  Presumably the driver code performing the
-> > error-prone transfer knows how to recover / retry from errors.  ...and
-> > after we can get back to a state where transfers are no longer
-> > error-prone then we can enable the auto-retuning again.  If we truly
-> > find ourselves in a case where the card needs to be retuned sometimes
-> > to handle one of these error-prone transfers then we can always try a
-> > few transfers first without auto-retuning and then re-try with
-> > auto-retuning if the first few fail.
-> >
-> > Without this change on rk3288-veyron-minnie I periodically see this in
-> > the logs of a machine just sitting there idle:
-> >   dwmmc_rockchip ff0d0000.dwmmc: Successfully tuned phase to XYZ
-> >
-> > Fixes: bd11e8bd03ca ("mmc: core: Flag re-tuning is needed on CRC errors")
-> > Signed-off-by: Douglas Anderson <dianders@chromium.org>
-> > ---
-> >
-> > Changes in v4:
-> > - Moved to SDIO API only (Adrian, Ulf).
-> > - Renamed to make it less generic, now retune_crc_disable (Ulf).
-> > - Function header makes it clear host must be claimed (Ulf).
-> > - No more WARN_ON (Ulf).
-> >
-> > Changes in v3:
-> > - Took out the spinlock since I believe this is all in one context.
-> >
-> > Changes in v2:
-> > - Updated commit message to clarify based on discussion of v1.
-> >
-> >  drivers/mmc/core/core.c       |  5 +++--
-> >  drivers/mmc/core/sdio_io.c    | 36 +++++++++++++++++++++++++++++++++++
-> >  include/linux/mmc/core.h      |  2 ++
-> >  include/linux/mmc/host.h      |  1 +
-> >  include/linux/mmc/sdio_func.h |  3 +++
-> >  5 files changed, 45 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/drivers/mmc/core/core.c b/drivers/mmc/core/core.c
-> > index 6db36dc870b5..9020cb2490f7 100644
-> > --- a/drivers/mmc/core/core.c
-> > +++ b/drivers/mmc/core/core.c
-> > @@ -144,8 +144,9 @@ void mmc_request_done(struct mmc_host *host, struct mmc_request *mrq)
-> >         int err = cmd->error;
-> >
-> >         /* Flag re-tuning needed on CRC errors */
-> > -       if ((cmd->opcode != MMC_SEND_TUNING_BLOCK &&
-> > -           cmd->opcode != MMC_SEND_TUNING_BLOCK_HS200) &&
-> > +       if (cmd->opcode != MMC_SEND_TUNING_BLOCK &&
-> > +           cmd->opcode != MMC_SEND_TUNING_BLOCK_HS200 &&
-> > +           !host->retune_crc_disable &&
-> >             (err == -EILSEQ || (mrq->sbc && mrq->sbc->error == -EILSEQ) ||
-> >             (mrq->data && mrq->data->error == -EILSEQ) ||
-> >             (mrq->stop && mrq->stop->error == -EILSEQ)))
-> > diff --git a/drivers/mmc/core/sdio_io.c b/drivers/mmc/core/sdio_io.c
-> > index f79f0b0caab8..f822a9630b0e 100644
-> > --- a/drivers/mmc/core/sdio_io.c
-> > +++ b/drivers/mmc/core/sdio_io.c
-> > @@ -734,3 +734,39 @@ int sdio_set_host_pm_flags(struct sdio_func *func, mmc_pm_flag_t flags)
-> >         return 0;
-> >  }
-> >  EXPORT_SYMBOL_GPL(sdio_set_host_pm_flags);
-> > +
-> > +/**
-> > + *     sdio_retune_crc_disable - temporarily disable retuning on CRC errors
-> > + *     @func: SDIO function attached to host
-> > + *
-> > + *     If the SDIO card is known to be in a state where it might produce
-> > + *     CRC errors on the bus in response to commands (like if we know it is
-> > + *     transitioning between power states), an SDIO function driver can
-> > + *     call this function to temporarily disable the SD/MMC core behavior of
-> > + *     triggering an automatic retuning.
-> > + *
-> > + *     This function should be called while the host is claimed and the host
-> > + *     should remain claimed until sdio_retune_crc_enable() is called.
-> > + *     Specifically, the expected sequence of calls is:
-> > + *     - sdio_claim_host()
-> > + *     - sdio_retune_crc_disable()
-> > + *     - some number of calls like sdio_writeb() and sdio_readb()
->
-> sdio_retune_crc_enable()
->
-> > + *     - sdio_release_host()
-> > + */
-> > +void sdio_retune_crc_disable(struct sdio_func *func)
-> > +{
-> > +       func->card->host->retune_crc_disable = true;
-> > +}
-> > +EXPORT_SYMBOL_GPL(sdio_retune_crc_disable);
-> > +
-> > +/**
-> > + *     sdio_retune_crc_enable - reneable retuning on CRC errors
->
-> /s/reneable/re-enable
->
-> > + *     @func: SDIO function attached to host
-> > + *
-> > + *     This is the compement to sdio_retune_crc_disable().
-> > + */
-> > +void sdio_retune_crc_enable(struct sdio_func *func)
-> > +{
-> > +       func->card->host->retune_crc_disable = false;
-> > +}
-> > +EXPORT_SYMBOL_GPL(sdio_retune_crc_enable);
-> > diff --git a/include/linux/mmc/core.h b/include/linux/mmc/core.h
-> > index 134a6483347a..02a13abf0cda 100644
-> > --- a/include/linux/mmc/core.h
-> > +++ b/include/linux/mmc/core.h
-> > @@ -178,6 +178,8 @@ int mmc_wait_for_cmd(struct mmc_host *host, struct mmc_command *cmd,
-> >
-> >  int mmc_hw_reset(struct mmc_host *host);
-> >  int mmc_sw_reset(struct mmc_host *host);
-> > +void mmc_expect_errors_begin(struct mmc_host *host);
-> > +void mmc_expect_errors_end(struct mmc_host *host);
->
-> Leftovers for earlier versions.
+I'm a bit puzzled now. Looks problematic that wraparound will happen unexpectedly for
+the timekeeping. Although please bare in mind that I'm not expert in the area of
+timekeeping, actually I know very little about it.
 
-Oops!
+Maybe tegra_rtc_read_ms() should track wraparound case itself and return a
+monotonically incrementing value?
 
+static u64 tegra_rtc_read_ms(struct clocksource *clksrc)
+{
+	struct tegra_rtc_info *info = to_tegra_rtc(clksrc);
+	u64 ms, s, now;
 
-> >  void mmc_set_data_timeout(struct mmc_data *data, const struct mmc_card *card);
-> >
-> >  #endif /* LINUX_MMC_CORE_H */
-> > diff --git a/include/linux/mmc/host.h b/include/linux/mmc/host.h
-> > index 43d0f0c496f6..ecb7972e2423 100644
-> > --- a/include/linux/mmc/host.h
-> > +++ b/include/linux/mmc/host.h
-> > @@ -398,6 +398,7 @@ struct mmc_host {
-> >         unsigned int            retune_now:1;   /* do re-tuning at next req */
-> >         unsigned int            retune_paused:1; /* re-tuning is temporarily disabled */
-> >         unsigned int            use_blk_mq:1;   /* use blk-mq */
-> > +       unsigned int            retune_crc_disable:1; /* don't trigger retune upon crc */
-> >
-> >         int                     rescan_disable; /* disable card detection */
-> >         int                     rescan_entered; /* used with nonremovable devices */
-> > diff --git a/include/linux/mmc/sdio_func.h b/include/linux/mmc/sdio_func.h
-> > index e9dfdd501cd1..4820e6d09dac 100644
-> > --- a/include/linux/mmc/sdio_func.h
-> > +++ b/include/linux/mmc/sdio_func.h
-> > @@ -167,4 +167,7 @@ extern void sdio_f0_writeb(struct sdio_func *func, unsigned char b,
-> >  extern mmc_pm_flag_t sdio_get_host_pm_caps(struct sdio_func *func);
-> >  extern int sdio_set_host_pm_flags(struct sdio_func *func, mmc_pm_flag_t flags);
-> >
-> > +extern void sdio_retune_crc_disable(struct sdio_func *func);
-> > +extern void sdio_retune_crc_enable(struct sdio_func *func);
-> > +
-> >  #endif /* LINUX_MMC_SDIO_FUNC_H */
-> > --
-> > 2.22.0.rc2.383.gf4fbbf30c2-goog
-> >
->
-> Besides the minor comments, this looks good to me.
+	ms = readl_relaxed(info->base + TEGRA_RTC_REG_MILLI_SECONDS);
+	s = readl_relaxed(info->base + TEGRA_RTC_REG_SHADOW_SECONDS);
 
-Thank you for the reviews!
+	now = s * MSEC_PER_SEC + ms;
 
-I'll plan to send a v5 on my Monday with the fixes assuming no new
-heated discussion starts up.  If it's less work for you, I'm also
-happy if you just want to make the trivial fixes yourself when
-applying.
+	if (now < info->last)
+		info->ms_cnt += 0x3e8000003e8ull - info->last + now;
+	else
+		info->ms_cnt += now - info->last;
 
--Doug
+	info->last = now;
+
+	return info->ms_cnt;
+}
+
+and then simply CLOCKSOURCE_MASK(64).
