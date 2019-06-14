@@ -2,95 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 39F4E45518
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 08:54:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 47CA845531
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 09:02:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726380AbfFNGyv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 02:54:51 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:46387 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725835AbfFNGyu (ORCPT
+        id S1726160AbfFNHCV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 03:02:21 -0400
+Received: from [115.28.160.31] ([115.28.160.31]:33790 "EHLO
+        mailbox.box.xen0n.name" rhost-flags-FAIL-FAIL-OK-OK)
+        by vger.kernel.org with ESMTP id S1725780AbfFNHCV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 02:54:50 -0400
-Received: by mail-pl1-f195.google.com with SMTP id e5so590639pls.13
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2019 23:54:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=sp37gFsTYsqZp/7llE25fpprh1EZap60ZXSJKPJnl8E=;
-        b=dau3/LjmRZKAmCsJoYy7BlJ7u5EYHxppjWX9OUoxWUj3i1i0014usy5AOT/UbJco3h
-         leSs8vDaONA2+7UtXbVrKQ7WRrIJMhojVVCRFRymp1fuW2vdECgOeJzud0BGKS/law+W
-         qBqrl9I1AsST2UJ/k55SoZQhKEWOGoi8uQSDg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=sp37gFsTYsqZp/7llE25fpprh1EZap60ZXSJKPJnl8E=;
-        b=h9UqfLNFJVWwQz+S8lkjHO/ApmmBvXbkN+YMswh7l6cMRMMsOuLS9WEjc4bMQCvCqn
-         8YfLqAufWFr6CyZXRSbpxpL4F9OBILxzaiyg/I3VKQnsQXXAEQb/pdhlrF1Sz6QjPFPk
-         oAhzKyLMGgQaOZAJ8DNUyhhaBnYZAxO7/LYCOejaIbsC7EocGclwyKU7BeyJz2VzusvO
-         cG+QZtZaa1jrt2spXZE+tmG2FfAWWZslnffebTPI3aGcPBNCnWcZbb/QSsjUQeDUbrjp
-         JavI7jQrrCDv/VvTK+Wi87UGB8AppVmKBavoNoXgWVnB1UCTN6Kmq2HzKMwi7JWnGDqt
-         IMrw==
-X-Gm-Message-State: APjAAAXGEM8o3pncCPwzjoJux8LjA+bQKdOdv4bBkE3w6WyvCFmLI78K
-        WJLec5xbT0E514RGMpVWzf5yheP8BPrO+g==
-X-Google-Smtp-Source: APXvYqxE6JE5K3ifTOWAfzYm2RLZVozN6psI8nOkdv/xw0NsFO+0qqwOFn6Vg86f+RkCITX+XwaT2A==
-X-Received: by 2002:a17:902:7c90:: with SMTP id y16mr1887013pll.238.1560495289860;
-        Thu, 13 Jun 2019 23:54:49 -0700 (PDT)
-Received: from phoenixshen-z840.tpe.corp.google.com ([2401:fa00:1:10:4297:7d72:77ab:9cf2])
-        by smtp.gmail.com with ESMTPSA id h6sm1723113pfn.79.2019.06.13.23.54.47
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 13 Jun 2019 23:54:49 -0700 (PDT)
-From:   Ting Shen <phoenixshen@chromium.org>
-To:     LKML <linux-kernel@vger.kernel.org>
-Cc:     Nicolas Boichat <drinkcat@chromium.org>,
-        Pi-Hsun Shih <pihsun@chromium.org>,
-        Enrico Granata <egranata@chromium.org>,
-        Ting Shen <phoenixshen@chromium.org>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Guenter Roeck <groeck@chromium.org>,
-        Brian Norris <briannorris@chromium.org>,
-        Benson Leung <bleung@chromium.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        linux-input@vger.kernel.org,
-        Colin Ian King <colin.king@canonical.com>
-Subject: [PATCH] Input: cros_ec_keyb: mask out extra flags in event_type
-Date:   Fri, 14 Jun 2019 14:54:38 +0800
-Message-Id: <20190614065438.142867-1-phoenixshen@chromium.org>
-X-Mailer: git-send-email 2.22.0.rc2.383.gf4fbbf30c2-goog
+        Fri, 14 Jun 2019 03:02:21 -0400
+X-Greylist: delayed 414 seconds by postgrey-1.27 at vger.kernel.org; Fri, 14 Jun 2019 03:02:19 EDT
+Received: from ld50 (unknown [116.227.76.7])
+        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mailbox.box.xen0n.name (Postfix) with ESMTPSA id 49A406011D;
+        Fri, 14 Jun 2019 14:55:23 +0800 (CST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=xen0n.name; s=mail;
+        t=1560495323; bh=KIsjpnrc1kWTp5mngPR3Kyeg7MjoHz37JvngBJKfgLc=;
+        h=Date:From:To:Cc:Subject:From;
+        b=gMVMFGjQp+7oPQFpt+QkMFgKOYBR7sQOKe1S/hD3ZFWtuwUqQrMOHH5TTZIThER98
+         rcwnX4kWid+KtKsLH6btPuQ0HU+NInL7eFyQM32DRDT+gLdrKa/yeyS2M9MaoMLd9z
+         AXUy1bgNk7f3AWGkjJ/XgYhiupgXhdG4amz84lzQ=
+Date:   Fri, 14 Jun 2019 14:55:18 +0800
+From:   WANG Xuerui <kernel@xen0n.name>
+To:     linux-kernel@vger.kernel.org
+Cc:     linux-mips@vger.kernel.org
+Subject: DMI: support for non-EFI platforms with non-standard SMBIOS
+ entrypoint?
+Message-ID: <20190614065518.GA53855@ld50>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+User-Agent: Mutt/1.12.0 (2019-05-25)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-http://crosreview.com/1341159 added a EC_MKBP_HAS_MORE_EVENTS flag to
-the event_type field, the receiver side should mask out this extra bit when
-processing the event.
+Hi,
 
-Signed-off-by: Ting Shen <phoenixshen@chromium.org>
+There are several MIPS platforms floating around with firmware SMBIOS
+support, primarily Loongson 3-series, but their SMBIOS entrypoint is
+non-standard.  According to the SMBIOS spec the non-EFI platforms should
+have the tables in the 000F_0000h-000F_FFFFh physical range, however
+these boards put the table at 0FFF_E000h.
 
----
+How do we enable DMI for these non-EFI yet non-standard-compliant
+systems without resorting to firmware fixing, which is not always
+feasible?  It is possible to move the address definition to arch realm
+with the standard value as default, but I would like to first ask for
+suggestions, as I am fairly new to kernel development (personal hobby
+for now).
 
- drivers/input/keyboard/cros_ec_keyb.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Regards,
 
-diff --git a/drivers/input/keyboard/cros_ec_keyb.c b/drivers/input/keyboard/cros_ec_keyb.c
-index d5600118159835..38cb6d82d8fe67 100644
---- a/drivers/input/keyboard/cros_ec_keyb.c
-+++ b/drivers/input/keyboard/cros_ec_keyb.c
-@@ -237,7 +237,7 @@ static int cros_ec_keyb_work(struct notifier_block *nb,
- 	if (queued_during_suspend && !device_may_wakeup(ckdev->dev))
- 		return NOTIFY_OK;
- 
--	switch (ckdev->ec->event_data.event_type) {
-+	switch (ckdev->ec->event_data.event_type & EC_MKBP_EVENT_TYPE_MASK) {
- 	case EC_MKBP_EVENT_KEY_MATRIX:
- 		pm_wakeup_event(ckdev->dev, 0);
- 
--- 
-2.22.0.rc2.383.gf4fbbf30c2-goog
-
+Xuerui
