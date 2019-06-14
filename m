@@ -2,100 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C6AE8467C9
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 20:45:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 94024467BC
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 20:42:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726351AbfFNSpF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 14:45:05 -0400
-Received: from mout.kundenserver.de ([212.227.126.134]:43403 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725868AbfFNSpF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 14:45:05 -0400
-Received: from [192.168.1.110] ([77.4.92.40]) by mrelayeu.kundenserver.de
- (mreue010 [212.227.15.167]) with ESMTPSA (Nemesis) id
- 1MCsgS-1hkccZ2Tui-008rOk; Fri, 14 Jun 2019 20:45:03 +0200
-Subject: Re: Help with reviewing dosfstools patches
-From:   "Enrico Weigelt, metux IT consult" <lkml@metux.net>
-To:     =?UTF-8?Q?Pali_Roh=c3=a1r?= <pali.rohar@gmail.com>,
-        util-linux@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        id S1726525AbfFNSm4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 14:42:56 -0400
+Received: from mga09.intel.com ([134.134.136.24]:34137 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725808AbfFNSm4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Jun 2019 14:42:56 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Jun 2019 11:42:55 -0700
+Received: from alison-desk.jf.intel.com ([10.54.74.53])
+  by orsmga001-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Jun 2019 11:42:55 -0700
+Date:   Fri, 14 Jun 2019 11:46:02 -0700
+From:   Alison Schofield <alison.schofield@intel.com>
+To:     Dave Hansen <dave.hansen@intel.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>, x86@kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Borislav Petkov <bp@alien8.de>,
+        Andy Lutomirski <luto@amacapital.net>,
+        David Howells <dhowells@redhat.com>,
+        Kees Cook <keescook@chromium.org>,
+        Kai Huang <kai.huang@linux.intel.com>,
+        Jacob Pan <jacob.jun.pan@linux.intel.com>, linux-mm@kvack.org,
+        kvm@vger.kernel.org, keyrings@vger.kernel.org,
         linux-kernel@vger.kernel.org
-References: <20190614102513.4uwsu2wkigg3pimq@pali>
- <ae5097ee-12af-2807-d48c-4274b4fc856d@metux.net>
- <9e81aa56-358a-71e1-edc1-50781062f3a4@metux.net>
-Organization: metux IT consult
-Message-ID: <6f21c79d-5a80-ce3f-513c-0799145202ea@metux.net>
-Date:   Fri, 14 Jun 2019 20:45:02 +0200
-User-Agent: Mozilla/5.0 (X11; Linux i686 on x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+Subject: Re: [PATCH, RFC 44/62] x86/mm: Set KeyIDs in encrypted VMAs for MKTME
+Message-ID: <20190614184602.GB7252@alison-desk.jf.intel.com>
+References: <20190508144422.13171-1-kirill.shutemov@linux.intel.com>
+ <20190508144422.13171-45-kirill.shutemov@linux.intel.com>
+ <20190614114408.GD3436@hirez.programming.kicks-ass.net>
+ <20190614173345.GB5917@alison-desk.jf.intel.com>
+ <e0884a6b-78bc-209d-bc9a-90f69839189e@intel.com>
 MIME-Version: 1.0
-In-Reply-To: <9e81aa56-358a-71e1-edc1-50781062f3a4@metux.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:Y9lqlfdstTBt0DoPMvEfRUXRoxw4Xje2tgqv1QQgs0hUer3hnwZ
- pmR2xxNGqf4WU6XyUwGiQGU8IPF7j/ckuQk1KTUBTMxD969kW9bluh4lEps4UGjuwj48WRr
- sMXMJh2WRQOS7r3FDSYEdLYLLb84wzrLDP/1WBHy5KB1pu+1r6v7J7IydIOktUNUYDBFeLo
- Y/K7riDsb6EFhIhp+jM8w==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:84khekgv8Ak=:siex7XVyERaJL8tZlcUIUW
- U81Dx/pqkrYpp21xMJZvQRQncP2yNEEmjLHlNUFxRxQ/Q7lyQ2FDN+8KWW8padybQEDTibhet
- 8fv7ioFxOZQr+ntNnZXQdqv1oPJpKHQmXcDnqjWMhmix8jJ/8NBWaSyedsy/gmf92TVv+wY6i
- 9rvWTVQqWtLPNfuUVTVEow0CrhDiN/lF04DNERSdLwW+t4KXaFiahU9oxyxdCVFrR5Kebyyh+
- FeaigG5Ikb6HlDJG7i+BUaqMbFaSHVX8VY8mTo/eqka07caKUSnzAUi1blU6DTAJSUHJwYTDj
- Zd8S2hTPDOAF6+zY3afVqTq8SSF87QLM2KUpXxOFO6AcXZN1fjcsRUQHaEvgBqUZ74H3eef/h
- Lf6iFGdtaimRIGl3M2E1L9AyNgHau2GZGm9F3H1JvmVZboFfcfRjuTHmWxErcmmVkAcoV/Hj9
- 6yUgKaZKaOdYAz9mUgldVvrM1kZma6Z5Ipc1gTo15ur38IHD1o9ltETUntT7F+dgugBe1S5bl
- L201Au8abecRf3VnW9/4OEiQZQePlq3UfuyQlho0ypv8hu5YP1wf+rpBUbreAULlhNFJSWXPW
- HuB0gB/TNv5EDDalTo6qSJ4YiqRIZe3u1uNy8PR11Yod4VqtCnHfq/g+BJDAXFk6N5c8BHCpd
- UiFbjnQmsl3Kc2p8sZqedY3hcSqJte1eMtfjbbKCsqdLlCpnpgIY+iSsJF1gISihT5xYsNJJR
- 0oogBcIWAyVmkoSry/tS1msfAmzc7b1gxBVVMmCdKOxKC1iydX9xVw+4qc4=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e0884a6b-78bc-209d-bc9a-90f69839189e@intel.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 14.06.19 17:45, Enrico Weigelt, metux IT consult wrote:
-> On 14.06.19 16:20, Enrico Weigelt, metux IT consult wrote:
+On Fri, Jun 14, 2019 at 11:26:10AM -0700, Dave Hansen wrote:
+> On 6/14/19 10:33 AM, Alison Schofield wrote:
+> > Preserving the data across encryption key changes has not
+> > been a requirement. I'm not clear if it was ever considered
+> > and rejected. I believe that copying in order to preserve
+> > the data was never considered.
 > 
-> <snip>
+> We could preserve the data pretty easily.  It's just annoying, though.
+> Right now, our only KeyID conversions happen in the page allocator.  If
+> we were to convert in-place, we'd need something along the lines of:
 > 
-> Currently working through your branches. Smells like they really deserve
-> a rebase and signed-off lines.
+> 	1. Allocate a scratch page
+> 	2. Unmap target page, or at least make it entirely read-only
+> 	3. Copy plaintext into scratch page
+> 	4. Do cache KeyID conversion of page being converted:
+> 	   Flush caches, change page_ext metadata
+> 	5. Copy plaintext back into target page from scratch area
+> 	6. Re-establish PTEs with new KeyID
 
-rebased/applied your patches and got test failures:
+Seems like the 'Copy plaintext' steps might disappoint the user, as
+much as the 'we don't preserve your data' design. Would users be happy
+w the plain text steps ?
+Alison
 
-XFAIL: check-dot_entries
-========================
-
-Test check-dot_entries
-First fsck run to check and fix error...
-fsck.fat 4.1+git (2017-01-24)
-/DIR
-  "." is not first entry. Can't fix this yet.
-/DIR
-  ".." is not second entry. Can't fix this yet.
-check-dot_entries.img: 4 files, 3/63931 clusters
-*** Error was not detected by fsck.
-XFAIL check-dot_entries.fsck (exit status: 100)
-
-XFAIL: check-huge
-=================
-
-Test check-huge
-First fsck run to check and fix error...
-Failed to read sector 167772191.
-fsck.fat 4.1+git (2017-01-24)
-Second fsck run to check if error was fixed...
-Failed to read sector 167772191.
-fsck.fat 4.1+git (2017-01-24)
-*** Error was not fixed by fsck.
-XFAIL check-huge.fsck (exit status: 1)
-
-
---mtx
-
--- 
-Enrico Weigelt, metux IT consult
-Free software and Linux embedded engineering
-info@metux.net -- +49-151-27565287
+> 
+> #2 is *really* hard.  It's similar to the problems that the poor
+> filesystem guys are having with RDMA these days when RDMA is doing writes.
+> 
+> What we have here (destroying existing data) is certainly the _simplest_
+> semantic.  We can certainly give it a different name, or even non-PROT_*
+> semantics where it shares none of mprotect()'s functionality.
+> 
+> Doesn't really matter to me at all.
