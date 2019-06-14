@@ -2,124 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 44FCE459EA
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 12:06:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 28A5C459EF
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 12:07:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727274AbfFNKGw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 06:06:52 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:59532 "EHLO pegase1.c-s.fr"
+        id S1727380AbfFNKHM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 06:07:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34462 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726370AbfFNKGw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 06:06:52 -0400
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 45QGVJ0nt7z9vDbm;
-        Fri, 14 Jun 2019 12:06:48 +0200 (CEST)
-Authentication-Results: localhost; dkim=pass
-        reason="1024-bit key; insecure key"
-        header.d=c-s.fr header.i=@c-s.fr header.b=aMGMnR3v; dkim-adsp=pass;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id X4TVEgvEUXXh; Fri, 14 Jun 2019 12:06:48 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 45QGVH6rw3z9vDbk;
-        Fri, 14 Jun 2019 12:06:47 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
-        t=1560506807; bh=H6U3dIX2SVKCwZUsFTw72sro38m1Gqkl8Z8i5rZXXBk=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=aMGMnR3vGNtc96FQA7Tlx/Xb6c2k5dcWmki0WikZ3pCbwAQ5boG68yvaraxbba0gA
-         SmDmrwVTNjTIsBuCKtj2ADsZ/+uqrgL5K6rjuv6tuoLuYZylcEBbgrPXVO+yGDPymj
-         LRH1EF2eY01DWKSxkoYMNtpIqFxfEAG5lIhoLS7A=
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 27A3F8B7AD;
-        Fri, 14 Jun 2019 12:06:49 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id 8qQm5fcEnkLQ; Fri, 14 Jun 2019 12:06:49 +0200 (CEST)
-Received: from PO15451 (po15451.idsi0.si.c-s.fr [172.25.230.107])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 02E4A8B7AC;
-        Fri, 14 Jun 2019 12:06:49 +0200 (CEST)
-Subject: Re: [PATCH] powerpc: Enable kernel XZ compression option on PPC_85xx
-To:     Michael Ellerman <mpe@ellerman.id.au>,
-        Daniel Axtens <dja@axtens.net>,
-        Pawel Dembicki <paweldembicki@gmail.com>
-Cc:     Christian Lamparter <chunkeey@gmail.com>,
-        linux-kernel@vger.kernel.org, Paul Mackerras <paulus@samba.org>,
-        linuxppc-dev@lists.ozlabs.org
-References: <20190603164115.27471-1-paweldembicki@gmail.com>
- <877e9qp3ou.fsf@dja-thinkpad.axtens.net>
- <87ftodempa.fsf@concordia.ellerman.id.au>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Message-ID: <f988951c-3077-ab19-81eb-560418468d14@c-s.fr>
-Date:   Fri, 14 Jun 2019 12:06:48 +0200
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        id S1726370AbfFNKHM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Jun 2019 06:07:12 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 23EB521773;
+        Fri, 14 Jun 2019 10:07:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1560506831;
+        bh=00YDveKIzRA/Wgmz9r0i+z4w5SAjetUkYHtuL3H2+hM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=vW2Rktp3ulPmd/QTN+ZzUshT/ebz7+LLiXzio4Syen++SbD8ngo7mZv9TjU/sAnGm
+         I/iGLyxFxHpzSwqWbjFQ7YpiLvTOGRYOp51Yb4B4cRKKuYSd6BcYiTch484z7PvgDF
+         7HKwuV8X3wga35W2QHI1MY5mhjpmc/a6NaR+OII0=
+Date:   Fri, 14 Jun 2019 12:07:09 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Markus Elfring <Markus.Elfring@web.de>
+Cc:     Enrico Weigelt <lkml@metux.net>,
+        "Rafael J. Wysocki" <rafael@kernel.org>, cocci@systeme.lip6.fr,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Gilles Muller <Gilles.Muller@lip6.fr>,
+        Himanshu Jha <himanshujha199640@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Nicolas Palix <nicolas.palix@imag.fr>
+Subject: Re: [PATCH] drivers: Inline code in devm_platform_ioremap_resource()
+ from two functions
+Message-ID: <20190614100709.GB8466@kroah.com>
+References: <20190406061112.31620-1-himanshujha199640@gmail.com>
+ <f09006a3-691c-382a-23b8-8e9ff5b4a5f1@web.de>
+ <alpine.DEB.2.21.1906081925090.2543@hadrien>
+ <7b4fe770-dadd-80ba-2ba4-0f2bc90984ef@web.de>
+ <f573b2d3-11d0-92b5-f8ab-4c4b6493e152@metux.net>
+ <032e347f-e575-c89c-fa62-473d52232735@web.de>
 MIME-Version: 1.0
-In-Reply-To: <87ftodempa.fsf@concordia.ellerman.id.au>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <032e347f-e575-c89c-fa62-473d52232735@web.de>
+User-Agent: Mutt/1.12.0 (2019-05-25)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-Le 13/06/2019 à 13:42, Michael Ellerman a écrit :
-> Daniel Axtens <dja@axtens.net> writes:
->> Pawel Dembicki <paweldembicki@gmail.com> writes:
->>
->>> Enable kernel XZ compression option on PPC_85xx. Tested with
->>> simpleImage on TP-Link TL-WDR4900 (Freescale P1014 processor).
->>>
->>> Suggested-by: Christian Lamparter <chunkeey@gmail.com>
->>> Signed-off-by: Pawel Dembicki <paweldembicki@gmail.com>
->>> ---
->>>   arch/powerpc/Kconfig | 2 +-
->>>   1 file changed, 1 insertion(+), 1 deletion(-)
->>>
->>> diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
->>> index 8c1c636308c8..daf4cb968922 100644
->>> --- a/arch/powerpc/Kconfig
->>> +++ b/arch/powerpc/Kconfig
->>> @@ -196,7 +196,7 @@ config PPC
->>>   	select HAVE_IOREMAP_PROT
->>>   	select HAVE_IRQ_EXIT_ON_IRQ_STACK
->>>   	select HAVE_KERNEL_GZIP
->>> -	select HAVE_KERNEL_XZ			if PPC_BOOK3S || 44x
->>> +	select HAVE_KERNEL_XZ			if PPC_BOOK3S || 44x || PPC_85xx
->>
->> (I'm not super well versed in the compression stuff, so apologies if
->> this is a dumb question.) If it's this simple, is there any reason we
->> can't turn it on generally, or convert it to a blacklist of platforms
->> known not to work?
+On Fri, Jun 14, 2019 at 11:22:40AM +0200, Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Fri, 14 Jun 2019 11:05:33 +0200
 > 
-> For some platforms enabling XZ requires that your u-boot has XZ support,
-> and I'm not very clear on when that support landed in u-boot and what
-> boards have it. And there are boards out there with old/custom u-boots
-> that effectively can't be updated.
-
-I don't think that it has anything to do with u-boot.
-AFAIK, today's mainline U-boot only supports GZIP (by default) and the 
-following optional ones: LZO, LZMA, LZ4.
-
-If we want to set additional compression types for u-boot, it is not 
-enough to select HAVE_KERNEL_XXXX, we also have to update uImage 
-generation scripts.
-
-See the series I sent some time ago: 
-https://patchwork.ozlabs.org/project/linuxppc-dev/list/?series=104153
-I'll resent it without bzip2 as today's uboot doesn't support bzip2 anymore.
-
+> Two function calls were combined in this function implementation.
+> Inline corresponding code so that extra error checks can be avoided here.
 > 
-> But as a server guy I don't really know the details of all that very
-> well. So if someone tells me that we should enable XZ for everything, or
-> as you say just black list some platforms, then that's fine by me.
-> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+>  drivers/base/platform.c | 39 ++++++++++++++++++++++++++++++++++-----
+>  1 file changed, 34 insertions(+), 5 deletions(-)
 
-I guess we first need to understand how this is used.
+Hey, looks like you timed out from my kill-file and this snuck through
+somehow.  Let me go add you again to it, so I'm not bothered by
+pointless stuff like this anymore.
 
-Christophe
+*plonk*
+
