@@ -2,44 +2,45 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 24935451AE
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 04:04:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 23C12451A3
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 04:04:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727142AbfFNCEa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 22:04:30 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:52876 "EHLO
+        id S1727347AbfFNCEg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 22:04:36 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:52964 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726379AbfFNCE2 (ORCPT
+        with ESMTP id S1726011AbfFNCEb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 22:04:28 -0400
+        Thu, 13 Jun 2019 22:04:31 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Sender:Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
         Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From:
         Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=sRphWf8wFg3Yvz/q3q+E6FqyD8PeHYGCjmt44FlP/mI=; b=lkUwVoSRg0rRp+EjlDAkEqfudI
-        U7lz+B37PkVdI5wrJP2ajKMeG8cKVs0Qw9aEGlg0Vj9i06GKwCjtX2cQA9gqzVbhc7lbvy5ArcA8V
-        CnMfVDfHHJn6lkMNSYLY/hdVlssm0zwxRPcZgMiKzdKSTKxiUhUW2R8ohE2yNDxnTPggvprDK7MvO
-        g3MQC932BkdwMu82msYkdXEel5GmhnrbXnzxFH7GAlCOwAY5MIk+31jUUJbxZfpeZyeYLsnAc9tqH
-        u/dIsbRnLKJ/3fbG4iM3MxepxKMlEu6TQYqta2QrjHCKBs0wtuOibpEK8Epv4apRoiY1c/R2zAtKZ
-        0x3RSpyw==;
+        bh=1EDYIQPNmsiwyJ2mrEoIP/1S3ndA3wGsYXQv01sTZU4=; b=jDG95pA8CQ/CwTx2/TGGIX8I7+
+        Qj32M/UiRvWq36MBiHqz5daVAdCwvCQBuam7CK1UxyvkPfDDkU1PQ4APBbYJOeXGMl9DgrU3RHx0c
+        wr7xerJNWy4Sn05CBOeNeNPa2BS6Ozpw0TY1Xo+gCzC5HqoYLy4vKvige0Eb2Q5coEo8z89FfiIaC
+        XG/yg64VEQT+DdpNc9lvWAe6wyl9dRIB9eqVpaNuiaNsyhFkRObfjfOePCwGGuB3kX3cW5c7e2PaB
+        HR3Q+sIOI8Ptun9atgr5F4rDUnBUqbgxVOB0G9zPhLyRE63euwBiYxUNsNE1FmXxA1QaIDP5wqNRl
+        vuf0mrqg==;
 Received: from 201.86.169.251.dynamic.adsl.gvt.net.br ([201.86.169.251] helo=bombadil.infradead.org)
         by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hbbZr-0000E7-Ej; Fri, 14 Jun 2019 02:04:27 +0000
+        id 1hbbZv-0000EF-5v; Fri, 14 Jun 2019 02:04:31 +0000
 Received: from mchehab by bombadil.infradead.org with local (Exim 4.92)
         (envelope-from <mchehab@bombadil.infradead.org>)
-        id 1hbbZn-0002ng-Od; Thu, 13 Jun 2019 23:04:23 -0300
+        id 1hbbZn-0002nk-Pa; Thu, 13 Jun 2019 23:04:23 -0300
 From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc:     Mauro Carvalho Chehab <mchehab@s-opensource.com>,
         Mauro Carvalho Chehab <mchehab@infradead.org>,
         linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+        Stefan Achatz <erazor_de@users.sourceforge.net>,
         Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Subject: [PATCH 03/14] ABI: sysfs-class-uwb_rc: remove a duplicated incomplete entry
-Date:   Thu, 13 Jun 2019 23:04:09 -0300
-Message-Id: <f3646db9fa30c68a53b9990abe1d49fc2c83262b.1560477540.git.mchehab+samsung@kernel.org>
+Subject: [PATCH 04/14] ABI: better identificate tables
+Date:   Thu, 13 Jun 2019 23:04:10 -0300
+Message-Id: <6bc45c0d5d464d25d4d16eceac48a2f407166944.1560477540.git.mchehab+samsung@kernel.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <cover.1560477540.git.mchehab+samsung@kernel.org>
 References: <cover.1560477540.git.mchehab+samsung@kernel.org>
@@ -52,34 +53,142 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 
-There are two entries for /sys/class/uwb_rc/uwbN/<EUI-48>/BPST.
-The second one has a missing description.
+When parsing via script, it is important to know if the script
+should consider a description as a literal block that should
+be displayed as-is, or if the description can be considered
+as a normal text.
 
-Get rid of it.
+Change descriptions to ensure that the preceding line of a table
+ends with a colon. That makes easy to identify the need of a
+literal block.
 
 Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 ---
- Documentation/ABI/testing/sysfs-class-uwb_rc | 6 ------
- 1 file changed, 6 deletions(-)
+ Documentation/ABI/obsolete/sysfs-driver-hid-roccat-pyra   | 2 +-
+ .../ABI/testing/sysfs-class-backlight-driver-lm3533       | 6 +++---
+ Documentation/ABI/testing/sysfs-class-led-driver-lm3533   | 8 ++++----
+ Documentation/ABI/testing/sysfs-class-leds-gt683r         | 4 ++--
+ Documentation/ABI/testing/sysfs-driver-hid-roccat-kone    | 2 +-
+ 5 files changed, 11 insertions(+), 11 deletions(-)
 
-diff --git a/Documentation/ABI/testing/sysfs-class-uwb_rc b/Documentation/ABI/testing/sysfs-class-uwb_rc
-index 85f4875d16ac..a0578751c1e3 100644
---- a/Documentation/ABI/testing/sysfs-class-uwb_rc
-+++ b/Documentation/ABI/testing/sysfs-class-uwb_rc
-@@ -125,12 +125,6 @@ Description:
-                 The EUI-48 of this device in colon separated hex
-                 octets.
+diff --git a/Documentation/ABI/obsolete/sysfs-driver-hid-roccat-pyra b/Documentation/ABI/obsolete/sysfs-driver-hid-roccat-pyra
+index 16020b31ae64..5d41ebadf15e 100644
+--- a/Documentation/ABI/obsolete/sysfs-driver-hid-roccat-pyra
++++ b/Documentation/ABI/obsolete/sysfs-driver-hid-roccat-pyra
+@@ -5,7 +5,7 @@ Description:	It is possible to switch the cpi setting of the mouse with the
+ 		press of a button.
+ 		When read, this file returns the raw number of the actual cpi
+ 		setting reported by the mouse. This number has to be further
+-		processed to receive the real dpi value.
++		processed to receive the real dpi value:
  
--What:           /sys/class/uwb_rc/uwbN/<EUI-48>/BPST
--Date:           July 2008
--KernelVersion:  2.6.27
--Contact:        linux-usb@vger.kernel.org
--Description:
--
- What:           /sys/class/uwb_rc/uwbN/<EUI-48>/IEs
- Date:           July 2008
- KernelVersion:  2.6.27
+ 		VALUE DPI
+ 		1     400
+diff --git a/Documentation/ABI/testing/sysfs-class-backlight-driver-lm3533 b/Documentation/ABI/testing/sysfs-class-backlight-driver-lm3533
+index 77cf7ac949af..c0e0a9ae7b3d 100644
+--- a/Documentation/ABI/testing/sysfs-class-backlight-driver-lm3533
++++ b/Documentation/ABI/testing/sysfs-class-backlight-driver-lm3533
+@@ -4,7 +4,7 @@ KernelVersion:	3.5
+ Contact:	Johan Hovold <jhovold@gmail.com>
+ Description:
+ 		Get the ALS output channel used as input in
+-		ALS-current-control mode (0, 1), where
++		ALS-current-control mode (0, 1), where:
+ 
+ 		0 - out_current0 (backlight 0)
+ 		1 - out_current1 (backlight 1)
+@@ -28,7 +28,7 @@ Date:		April 2012
+ KernelVersion:	3.5
+ Contact:	Johan Hovold <jhovold@gmail.com>
+ Description:
+-		Set the brightness-mapping mode (0, 1), where
++		Set the brightness-mapping mode (0, 1), where:
+ 
+ 		0 - exponential mode
+ 		1 - linear mode
+@@ -38,7 +38,7 @@ Date:		April 2012
+ KernelVersion:	3.5
+ Contact:	Johan Hovold <jhovold@gmail.com>
+ Description:
+-		Set the PWM-input control mask (5 bits), where
++		Set the PWM-input control mask (5 bits), where:
+ 
+ 		bit 5 - PWM-input enabled in Zone 4
+ 		bit 4 - PWM-input enabled in Zone 3
+diff --git a/Documentation/ABI/testing/sysfs-class-led-driver-lm3533 b/Documentation/ABI/testing/sysfs-class-led-driver-lm3533
+index 620ebb3b9baa..e4c89b261546 100644
+--- a/Documentation/ABI/testing/sysfs-class-led-driver-lm3533
++++ b/Documentation/ABI/testing/sysfs-class-led-driver-lm3533
+@@ -4,7 +4,7 @@ KernelVersion:	3.5
+ Contact:	Johan Hovold <jhovold@gmail.com>
+ Description:
+ 		Set the ALS output channel to use as input in
+-		ALS-current-control mode (1, 2), where
++		ALS-current-control mode (1, 2), where:
+ 
+ 		1 - out_current1
+ 		2 - out_current2
+@@ -22,7 +22,7 @@ Date:		April 2012
+ KernelVersion:	3.5
+ Contact:	Johan Hovold <jhovold@gmail.com>
+ Description:
+-		Set the pattern generator fall and rise times (0..7), where
++		Set the pattern generator fall and rise times (0..7), where:
+ 
+ 		0 - 2048 us
+ 		1 - 262 ms
+@@ -45,7 +45,7 @@ Date:		April 2012
+ KernelVersion:	3.5
+ Contact:	Johan Hovold <jhovold@gmail.com>
+ Description:
+-		Set the brightness-mapping mode (0, 1), where
++		Set the brightness-mapping mode (0, 1), where:
+ 
+ 		0 - exponential mode
+ 		1 - linear mode
+@@ -55,7 +55,7 @@ Date:		April 2012
+ KernelVersion:	3.5
+ Contact:	Johan Hovold <jhovold@gmail.com>
+ Description:
+-		Set the PWM-input control mask (5 bits), where
++		Set the PWM-input control mask (5 bits), where:
+ 
+ 		bit 5 - PWM-input enabled in Zone 4
+ 		bit 4 - PWM-input enabled in Zone 3
+diff --git a/Documentation/ABI/testing/sysfs-class-leds-gt683r b/Documentation/ABI/testing/sysfs-class-leds-gt683r
+index e4fae6026e79..6adab27f646e 100644
+--- a/Documentation/ABI/testing/sysfs-class-leds-gt683r
++++ b/Documentation/ABI/testing/sysfs-class-leds-gt683r
+@@ -5,7 +5,7 @@ Contact:	Janne Kanniainen <janne.kanniainen@gmail.com>
+ Description:
+ 		Set the mode of LEDs. You should notice that changing the mode
+ 		of one LED will update the mode of its two sibling devices as
+-		well.
++		well. Possible values are:
+ 
+ 		0 - normal
+ 		1 - audio
+@@ -13,4 +13,4 @@ Description:
+ 
+ 		Normal: LEDs are fully on when enabled
+ 		Audio:  LEDs brightness depends on sound level
+-		Breathing: LEDs brightness varies at human breathing rate
+\ No newline at end of file
++		Breathing: LEDs brightness varies at human breathing rate
+diff --git a/Documentation/ABI/testing/sysfs-driver-hid-roccat-kone b/Documentation/ABI/testing/sysfs-driver-hid-roccat-kone
+index 3ca3971109bf..8f7982c70d72 100644
+--- a/Documentation/ABI/testing/sysfs-driver-hid-roccat-kone
++++ b/Documentation/ABI/testing/sysfs-driver-hid-roccat-kone
+@@ -5,7 +5,7 @@ Description:	It is possible to switch the dpi setting of the mouse with the
+ 		press of a button.
+ 		When read, this file returns the raw number of the actual dpi
+ 		setting reported by the mouse. This number has to be further
+-		processed to receive the real dpi value.
++		processed to receive the real dpi value:
+ 
+ 		VALUE DPI
+ 		1     800
 -- 
 2.21.0
 
