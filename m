@@ -2,111 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9176146741
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 20:16:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7F9CF4675A
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 20:17:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726207AbfFNSQp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 14:16:45 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:42391 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726094AbfFNSQp (ORCPT
+        id S1726732AbfFNSRk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 14:17:40 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:39150 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725809AbfFNSRi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 14:16:45 -0400
-Received: by mail-pf1-f194.google.com with SMTP id q10so1913901pff.9
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2019 11:16:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=puTHRzJLDYkby5dm7Z8PxTsKRwDG5hRxWOagm4BjqQs=;
-        b=Ws5E8yahDqKXoYIz72TJmHfAl5rhhKJVVPGEfYEKGwK1Xc7tB9TLqy3FeLI4M9by0Y
-         nMXLSaMHVOLx61lkQ4eUUCb9vUtSwVTg4ls6Pn098zvhtKgMxYUVGLgcxnqtWZcuj0wb
-         +rdB2UpYxEYkA2PhycUv7iLSB5vLDV1Xvf4sl/3t6gl7PWUiqvlBpaE+roV7yxDRQXKx
-         JNgFRV6RLUNG7r+ARt5Y35EJFWsQ6NJ6v+sxMi3CDaL8CVgehmo+c1j6ldTPFTSCBFJ6
-         xzyPPD6EcNGFtUWUTqjTdPh2hq0sg1ENk0pHqOMNBAOLMRkl5CBNejc+HZ2RvgdPrON7
-         TGGA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=puTHRzJLDYkby5dm7Z8PxTsKRwDG5hRxWOagm4BjqQs=;
-        b=suBLMizIeVSQdOJVBjiWV+0J6svzmpApv0SCt2nMFEH2xbjNmBmfb4PGz5O54sp6NK
-         AaAH3dJ0Lco97/3EiqAA6wmNwO+3DusuHuIMFOgSrNE6t2unbBP4qcPpQlaory9j9/U2
-         TkA09e7NWDMSRXKeg8Y+pjBM+hC1hJ9OefjM4Wj++/IjPrvZr+MbCcqEdmr7cQbgnNM1
-         7RiYcHpKi5OgmNSFXAAwqNOkeHO4o/tThc2ywGu9rTX19SFgfVzBfjgnSDa5FxHc6kxg
-         +AJ5zzeAKgPrG9FoeI3IxhsqzTQMk5xeMY185HjZorkYseyEjwCrXxtb0ZRPT0iM9zJC
-         xUUg==
-X-Gm-Message-State: APjAAAWzeXLIX5Imw9D+KArrYRqYZyceZPQ7x7KSVk3fvya895yI94lG
-        cnc4y1hjP7ej9q83j7PwIxgvsFjokhKTrWhtLy2f1g==
-X-Google-Smtp-Source: APXvYqyZgc8wUMxZ3Mln8U6UN35HufOhqqxZRAFb4tsblfJ4VSYkx2CoHaVLiNC8cZ96pfDUEqTOt66XarYRLfO+rdA=
-X-Received: by 2002:a63:52:: with SMTP id 79mr36714073pga.381.1560536203926;
- Fri, 14 Jun 2019 11:16:43 -0700 (PDT)
+        Fri, 14 Jun 2019 14:17:38 -0400
+Received: from p5b06daab.dip0.t-ipconnect.de ([91.6.218.171] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1hbqlM-0006Wc-Mn; Fri, 14 Jun 2019 20:17:20 +0200
+Date:   Fri, 14 Jun 2019 20:17:14 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
+cc:     Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@suse.de>,
+        Ashok Raj <ashok.raj@intel.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Andi Kleen <andi.kleen@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Suravee Suthikulpanit <Suravee.Suthikulpanit@amd.com>,
+        Stephane Eranian <eranian@google.com>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        Randy Dunlap <rdunlap@infradead.org>, x86@kernel.org,
+        linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org,
+        Ricardo Neri <ricardo.neri@intel.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Tony Luck <tony.luck@intel.com>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Subject: Re: [RFC PATCH v4 04/21] x86/hpet: Add hpet_set_comparator() for
+ periodic and one-shot modes
+In-Reply-To: <1558660583-28561-5-git-send-email-ricardo.neri-calderon@linux.intel.com>
+Message-ID: <alpine.DEB.2.21.1906142010230.1760@nanos.tec.linutronix.de>
+References: <1558660583-28561-1-git-send-email-ricardo.neri-calderon@linux.intel.com> <1558660583-28561-5-git-send-email-ricardo.neri-calderon@linux.intel.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-References: <20190614165242.79257-1-natechancellor@gmail.com>
-In-Reply-To: <20190614165242.79257-1-natechancellor@gmail.com>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Fri, 14 Jun 2019 11:16:32 -0700
-Message-ID: <CAKwvOdkyoEYe83HdF-0ofPckFkE5rsFdNnQw5NxXTUQfHNntsg@mail.gmail.com>
-Subject: Re: [PATCH] kbuild: Enable -Wuninitialized
-To:     Nathan Chancellor <natechancellor@gmail.com>
-Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        clang-built-linux <clang-built-linux@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 14, 2019 at 9:53 AM Nathan Chancellor
-<natechancellor@gmail.com> wrote:
->
-> This helps fine very dodgy behavior through both -Wuninitialized
-> (warning that a variable is always uninitialized) and
-> -Wsometimes-uninitialized (warning that a variable is sometimes
-> uninitialized, like GCC's -Wmaybe-uninitialized). These warnings
-> catch things that GCC doesn't such as:
->
-> https://lore.kernel.org/lkml/86649ee4-9794-77a3-502c-f4cd10019c36@lca.pw/
+On Thu, 23 May 2019, Ricardo Neri wrote:
+> +/**
+> + * hpet_set_comparator() - Helper function for setting comparator register
+> + * @num:	The timer ID
+> + * @cmp:	The value to be written to the comparator/accumulator
+> + * @period:	The value to be written to the period (0 = oneshot mode)
+> + *
+> + * Helper function for updating comparator, accumulator and period values.
+> + *
+> + * In periodic mode, HPET needs HPET_TN_SETVAL to be set before writing
+> + * to the Tn_CMP to update the accumulator. Then, HPET needs a second
+> + * write (with HPET_TN_SETVAL cleared) to Tn_CMP to set the period.
+> + * The HPET_TN_SETVAL bit is automatically cleared after the first write.
+> + *
+> + * For one-shot mode, HPET_TN_SETVAL does not need to be set.
+> + *
+> + * See the following documents:
+> + *   - Intel IA-PC HPET (High Precision Event Timers) Specification
+> + *   - AMD-8111 HyperTransport I/O Hub Data Sheet, Publication # 24674
+> + */
+> +void hpet_set_comparator(int num, unsigned int cmp, unsigned int period)
+> +{
+> +	if (period) {
+> +		unsigned int v = hpet_readl(HPET_Tn_CFG(num));
+> +
+> +		hpet_writel(v | HPET_TN_SETVAL, HPET_Tn_CFG(num));
+> +	}
+> +
+> +	hpet_writel(cmp, HPET_Tn_CMP(num));
+> +
+> +	if (!period)
+> +		return;
 
-or this one, which was my favorite, and quite insidious from an
-underhanded C contest perspective.
-https://lore.kernel.org/lkml/20190226053855.7020-1-natechancellor@gmail.com/
+TBH, I hate this conditional handling. What's wrong with two functions?
 
-Thank you very much for all the hard work you did tracking done and
-fixing all of the cases we could find.  I very much look forward to
-this patch as the capstone to all that work.
-Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
+> +
+> +	/*
+> +	 * This delay is seldom used: never in one-shot mode and in periodic
+> +	 * only when reprogramming the timer.
+> +	 */
+> +	udelay(1);
+> +	hpet_writel(period, HPET_Tn_CMP(num));
+> +}
+> +EXPORT_SYMBOL_GPL(hpet_set_comparator);
 
->
-> We very much want to catch these so turn this warning on so that CI is
-> aware of it.
->
-> Link: https://github.com/ClangBuiltLinux/linux/issues/381
-> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-> ---
->  scripts/Makefile.extrawarn | 1 -
->  1 file changed, 1 deletion(-)
->
-> diff --git a/scripts/Makefile.extrawarn b/scripts/Makefile.extrawarn
-> index 98081ab300e5..699683a7c116 100644
-> --- a/scripts/Makefile.extrawarn
-> +++ b/scripts/Makefile.extrawarn
-> @@ -71,6 +71,5 @@ KBUILD_CFLAGS += -Wno-unused-value
->  KBUILD_CFLAGS += -Wno-format
->  KBUILD_CFLAGS += -Wno-sign-compare
->  KBUILD_CFLAGS += -Wno-format-zero-length
-> -KBUILD_CFLAGS += -Wno-uninitialized
->  endif
->  endif
-> --
-> 2.22.0
->
+Why is this exported? Which module user needs this?
 
-
--- 
 Thanks,
-~Nick Desaulniers
+
+	tglx
