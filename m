@@ -2,64 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4C5BC45548
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 09:10:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3730B45534
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 09:03:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726298AbfFNHKj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 03:10:39 -0400
-Received: from mail.thorsis.com ([92.198.35.195]:45998 "EHLO mail.thorsis.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725843AbfFNHKj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 03:10:39 -0400
-X-Greylist: delayed 486 seconds by postgrey-1.27 at vger.kernel.org; Fri, 14 Jun 2019 03:10:38 EDT
-Received: from localhost (localhost [127.0.0.1])
-        by mail.thorsis.com (Postfix) with ESMTP id 9275A477B;
-        Fri, 14 Jun 2019 09:05:39 +0200 (CEST)
-X-Virus-Scanned: Debian amavisd-new at mail.thorsis.com
-Received: from mail.thorsis.com ([127.0.0.1])
-        by localhost (mail.thorsis.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id n4hKxe5O_F5z; Fri, 14 Jun 2019 09:05:39 +0200 (CEST)
-Received: by mail.thorsis.com (Postfix, from userid 109)
-        id BE7913DD3; Fri, 14 Jun 2019 09:05:37 +0200 (CEST)
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,NO_RECEIVED,
-        NO_RELAYS autolearn=unavailable autolearn_force=no version=3.4.2
-From:   Alexander Dahl <ada@thorsis.com>
-To:     linux-leds@vger.kernel.org
-Cc:     Dan Murphy <dmurphy@ti.com>, jacek.anaszewski@gmail.com,
-        pavel@ucw.cz, robh+dt@kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 0/9] Multicolor Framework update
-Date:   Fri, 14 Jun 2019 09:02:23 +0200
-Message-ID: <55737098.K72IVJ5cDM@ada>
-In-Reply-To: <20190523190820.29375-1-dmurphy@ti.com>
-References: <20190523190820.29375-1-dmurphy@ti.com>
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+        id S1726265AbfFNHDD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 03:03:03 -0400
+Received: from mail-io1-f68.google.com ([209.85.166.68]:46807 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725869AbfFNHDC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Jun 2019 03:03:02 -0400
+Received: by mail-io1-f68.google.com with SMTP id i10so3412465iol.13
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2019 00:03:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=/e9SMaz1f2hGhr+Y7ePFxQlAt1pAXhkHDxZGScVnsP0=;
+        b=VeS3CU0GVfEu7mUzCPUp6p8noRpmTbKdsRVKGt5bZ4jZnOSQhpuqS+ezrT+pak6Dc4
+         wCCOwBgDRwBJPwMdJdXl9ISTJZgvJVhwnxtLKKyovc07NM/cjyPDPQsrrEtSfVvR1bDA
+         IAuZZgXXVBUlis5movc1J9Nxn7jJoc9wK1V2yrB0jG32i+tZ9ii9CKS4mszok4ieLBvk
+         Rk1EBY/iZaFkhvgzNS3AsIW2B6tVwziphPKYyJbMNQQs5ynzTSn874Hu8rrAePxMF/c4
+         UpbX4ImEi2jtEVWL0lAhtd8KupAEgjqL/1GHGIjqMO0WgUSDYfVw0w6ecfBdH+3Par36
+         fWYA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=/e9SMaz1f2hGhr+Y7ePFxQlAt1pAXhkHDxZGScVnsP0=;
+        b=CQrirEk94jY+YxAqB5UbliRK8dtCgqCu3R4CKit99q2467hakdBgH/24/6hIh0sXEj
+         jsp6eXMgsoXRH9bJ2wl5e6WlIG7k/sML0CDTr2aAfjL6MF284z9gMlrNxEbV+4t/KleK
+         XdBqLtUqcNdmk8r9W6Obq/bzpXsbIbKjnL/muhy8sIPS0pYx2Fx9hna4Gqu+Hq+KrpDv
+         a5J2U9bTEASAIFK4JUgmN7NpyFIJUW2+Kp2OpSIcM6forXmbdqy2ghF2x1ryq44oeAcX
+         JKYMikW4H9+Y7k/S039b2FQ32tc2mYvfJx8Dqf3E/1Pdvw93lLtGRCF45T2iEou5WOXu
+         vsxQ==
+X-Gm-Message-State: APjAAAVPxHiNP3Zt5fFaAlefv8gs9sgGvLHHUFKrXPFb2pM0OFqA6Tvm
+        0QzY3/nC5nSvRCK9eRGuTl4rSL8TGfbLpQt2Ag5oFg==
+X-Google-Smtp-Source: APXvYqy6ncGT/KFf173rk/8qVGA0xxyZvKYmkEWhVq/Wy6GUm3QlOI5jun6ArLYaraXYK9V3vC277oAE7HAUOelPlDY=
+X-Received: by 2002:a5e:820a:: with SMTP id l10mr5570290iom.283.1560495781891;
+ Fri, 14 Jun 2019 00:03:01 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190614025932.533-1-f.fainelli@gmail.com>
+In-Reply-To: <20190614025932.533-1-f.fainelli@gmail.com>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Fri, 14 Jun 2019 09:02:49 +0200
+Message-ID: <CAKv+Gu8U1=Yxo7Mw6WsJbe82sRpjAq91HGW5XJi77ee+=BkGeA@mail.gmail.com>
+Subject: Re: [PATCH] arm64: Allow user selection of ARM64_MODULE_PLTS
+To:     Florian Fainelli <f.fainelli@gmail.com>
+Cc:     linux-arm-kernel@vger.kernel.org,
+        bcm-kernel-feedback-list@broadcom.com,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        "moderated list:ARM64 PORT (AARCH64 ARCHITECTURE)" 
+        <linux-arm-kernel@lists.infradead.org>,
+        open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Dan,
+On Fri, 14 Jun 2019 at 04:59, Florian Fainelli <f.fainelli@gmail.com> wrote:
+>
+> Make ARM64_MODULE_PLTS a selectable Kconfig symbol, since some people
+> might have very big modules spilling out of the dedicated module area
+> into vmalloc. Help text is copied from the ARM 32-bit counterpart.
+>
+> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+> ---
+>  arch/arm64/Kconfig | 14 +++++++++++++-
+>  1 file changed, 13 insertions(+), 1 deletion(-)
+>
+> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+> index 697ea0510729..36befe987b73 100644
+> --- a/arch/arm64/Kconfig
+> +++ b/arch/arm64/Kconfig
+> @@ -1418,8 +1418,20 @@ config ARM64_SVE
+>           KVM in the same kernel image.
+>
+>  config ARM64_MODULE_PLTS
+> -       bool
+> +       bool "Use PLTs to allow module memory to spill over into vmalloc area"
+>         select HAVE_MOD_ARCH_SPECIFIC
+> +       help
+> +         Allocate PLTs when loading modules so that jumps and calls whose
+> +         targets are too far away for their relative offsets to be encoded
+> +         in the instructions themselves can be bounced via veneers in the
+> +         module's PLT. This allows modules to be allocated in the generic
+> +         vmalloc area after the dedicated module memory area has been
+> +         exhausted. The modules will use slightly more memory, but after
+> +         rounding up to page size, the actual memory footprint is usually
+> +         the same.
+> +
+> +         Disabling this is usually safe for small single-platform
+> +         configurations. If unsure, say y.
+>
 
-Am Donnerstag, 23. Mai 2019, 14:08:11 CEST schrieb Dan Murphy:
->   leds: multicolor: Add sysfs interface definition
->   dt: bindings: Add multicolor class dt bindings documention
->   documention: leds: Add multicolor class documentation
->   dt-bindings: leds: Add multicolor ID to the color ID  list
->   leds: Add multicolor ID to the color ID list
->   leds: multicolor: Introduce a multicolor class definition
->   dt: bindings: lp50xx: Introduce the lp50xx family of RGB drivers
->   leds: lp50xx: Add the LP50XX family of the RGB LED driver
->   leds: Update the lp55xx to use the multi color framework
+I don't mind adding this, but it makes sense to add an explanation why
+KASLR enables this. E.g.,
 
-While not having much experience with the implementation of the LED subsystem, 
-I've had a short look at those. Curious question: would it be possible to take 
-three gpio-leds and group those together to one multicolor-led? I know at 
-least one board, where things are wired up like this, see e.g. 
-at91-sama5d27_som1_ek.dts
+"""
+When running with address space randomization (KASLR), the module
+region itself may be too far away for ordinary relative jumps and
+calls, and so in that case, module PLTs are required and cannot be
+disabled.
+"""
 
-Greets
-Alex
-
+>  config ARM64_PSEUDO_NMI
+>         bool "Support for NMI-like interrupts"
+> --
+> 2.17.1
+>
