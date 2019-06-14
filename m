@@ -2,58 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CEB8E46A8C
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 22:38:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B4BB46AC5
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 22:39:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728210AbfFNUiD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 16:38:03 -0400
-Received: from ms.lwn.net ([45.79.88.28]:54198 "EHLO ms.lwn.net"
+        id S1728348AbfFNUi2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 16:38:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39294 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726755AbfFNUiA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 16:38:00 -0400
-Received: from lwn.net (localhost [127.0.0.1])
+        id S1727175AbfFNUiK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Jun 2019 16:38:10 -0400
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ms.lwn.net (Postfix) with ESMTPSA id D29F1740;
-        Fri, 14 Jun 2019 20:37:59 +0000 (UTC)
-Date:   Fri, 14 Jun 2019 14:37:58 -0600
-From:   Jonathan Corbet <corbet@lwn.net>
-To:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Cc:     Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab@infradead.org>,
+        by mail.kernel.org (Postfix) with ESMTPSA id 177DD21473;
+        Fri, 14 Jun 2019 20:38:09 +0000 (UTC)
+Date:   Fri, 14 Jun 2019 16:38:07 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Masami Hiramatsu <mhiramat@kernel.org>
+Cc:     Anders Roxell <anders.roxell@linaro.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        "Naveen N . Rao" <naveen.n.rao@linux.ibm.com>,
+        Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
+        "David S . Miller" <davem@davemloft.net>,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] scripts/documentation-file-ref-check: ignore output dir
-Message-ID: <20190614143758.36b0ed65@lwn.net>
-In-Reply-To: <093d01459be472a20894c5be6f9b937ff7fd7d47.1560421751.git.mchehab+samsung@kernel.org>
-References: <093d01459be472a20894c5be6f9b937ff7fd7d47.1560421751.git.mchehab+samsung@kernel.org>
-Organization: LWN.net
+Subject: Re: [PATCH] kprobes: Fix to init kprobes in subsys_initcall
+Message-ID: <20190614163807.140cd682@gandalf.local.home>
+In-Reply-To: <20190613160857.9db38d1cb32996b8c4e0ddc3@kernel.org>
+References: <20190603214105.715a4072472ef4946123dc20@kernel.org>
+        <155956708268.12228.10363800793132214198.stgit@devnote2>
+        <20190612165947.ba696696dac0faa3aa35a501@kernel.org>
+        <20190612094729.40106a28@gandalf.local.home>
+        <20190613160857.9db38d1cb32996b8c4e0ddc3@kernel.org>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 13 Jun 2019 07:29:17 -0300
-Mauro Carvalho Chehab <mchehab+samsung@kernel.org> wrote:
+On Thu, 13 Jun 2019 16:08:57 +0900
+Masami Hiramatsu <mhiramat@kernel.org> wrote:
 
-> When there's no Documentation/output directory, the script will
-> complain about those missing references:
+> On Wed, 12 Jun 2019 09:47:29 -0400
+> Steven Rostedt <rostedt@goodmis.org> wrote:
 > 
-> 	Documentation/doc-guide/sphinx.rst: Documentation/output
-> 	Documentation/doc-guide/sphinx.rst: Documentation/output
-> 	Documentation/process/howto.rst: Documentation/output
-> 	Documentation/translations/it_IT/doc-guide/sphinx.rst: Documentation/output
-> 	Documentation/translations/it_IT/doc-guide/sphinx.rst: Documentation/output
-> 	Documentation/translations/it_IT/process/howto.rst: Documentation/output
-> 	Documentation/translations/ja_JP/howto.rst: Documentation/output
-> 	Documentation/translations/ko_KR/howto.rst: Documentation/output
+> > On Wed, 12 Jun 2019 16:59:47 +0900
+> > Masami Hiramatsu <mhiramat@kernel.org> wrote:
+> >   
+> > > Hi Steve,
+> > > 
+> > > Could you pick this to your ftrace/core branch?  
+> > 
+> > "core" or should this go to "urgent"? The difference is that core is
+> > scheduled for the next merge window, and urgent is for the rc releases
+> > (ie. bug fixes).  
 > 
-> Those are false positives, so add an ignore rule for them.
+> If the previous one (b5f8b32c93b2) has already gone to rc, yes
+> this should be in urgent, since this always crashes arm64 kernel
+> if we enables CONFIG_KPROBES_SANITY_TEST.
 > 
-> Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 
-Applied, thanks.
+Ah, no it's not in -rc. I'll add it to my linux-next queue.
 
-jon
+Thanks!
+
+-- Steve
+
