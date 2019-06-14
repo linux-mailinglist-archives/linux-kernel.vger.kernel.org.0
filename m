@@ -2,41 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 88CE946A4A
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 22:37:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 159C646A03
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 22:36:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727604AbfFNUhB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 16:37:01 -0400
-Received: from ms.lwn.net ([45.79.88.28]:54060 "EHLO ms.lwn.net"
+        id S1728083AbfFNUgh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 16:36:37 -0400
+Received: from ms.lwn.net ([45.79.88.28]:54110 "EHLO ms.lwn.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727484AbfFNUga (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 16:36:30 -0400
+        id S1727091AbfFNUge (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Jun 2019 16:36:34 -0400
 Received: from lwn.net (localhost [127.0.0.1])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ms.lwn.net (Postfix) with ESMTPSA id EE29C740;
-        Fri, 14 Jun 2019 20:36:28 +0000 (UTC)
-Date:   Fri, 14 Jun 2019 14:36:27 -0600
+        by ms.lwn.net (Postfix) with ESMTPSA id 731B91427;
+        Fri, 14 Jun 2019 20:36:32 +0000 (UTC)
+Date:   Fri, 14 Jun 2019 14:36:31 -0600
 From:   Jonathan Corbet <corbet@lwn.net>
 To:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Cc:     Linux Doc Mailing List <linux-doc@vger.kernel.org>,
         Mauro Carvalho Chehab <mchehab@infradead.org>,
-        linux-kernel@vger.kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Federico Vaga <federico.vaga@vaga.pv.it>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        linux-kernel@vger.kernel.org, Sebastian Reichel <sre@kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
+        Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Harry Wei <harryxiyou@gmail.com>,
+        Alex Shi <alex.shi@linux.alibaba.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        David Airlie <airlied@linux.ie>,
         Daniel Vetter <daniel@ffwll.ch>,
-        dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH v4 14/28] docs: locking: convert docs to ReST and rename
- to *.rst
-Message-ID: <20190614143627.173f5005@lwn.net>
-In-Reply-To: <791f74dab9607d3d349b1e7fe5d0ab5abbb24081.1560361364.git.mchehab+samsung@kernel.org>
-References: <cover.1560361364.git.mchehab+samsung@kernel.org>
-        <791f74dab9607d3d349b1e7fe5d0ab5abbb24081.1560361364.git.mchehab+samsung@kernel.org>
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        "David S. Miller" <davem@davemloft.net>, linux-pm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-pci@vger.kernel.org, linux-wireless@vger.kernel.org,
+        netdev@vger.kernel.org,
+        "Srivatsa S . Bhat" <srivatsa@csail.mit.edu>
+Subject: Re: [PATCH v5] docs: power: convert docs to ReST and rename to
+ *.rst
+Message-ID: <20190614143631.7c99719f@lwn.net>
+In-Reply-To: <72d1f8f360d395958dd0b49165fc51b58801f57e.1560420621.git.mchehab+samsung@kernel.org>
+References: <7dc94cb4-ebf1-22ab-29c9-fcb2b875a9ac@csail.mit.edu>
+        <72d1f8f360d395958dd0b49165fc51b58801f57e.1560420621.git.mchehab+samsung@kernel.org>
 Organization: LWN.net
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -46,15 +63,11 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 12 Jun 2019 14:52:50 -0300
+On Thu, 13 Jun 2019 07:10:36 -0300
 Mauro Carvalho Chehab <mchehab+samsung@kernel.org> wrote:
 
-> Convert the locking documents to ReST and add them to the
-> kernel development book where it belongs.
-> 
-> Most of the stuff here is just to make Sphinx to properly
-> parse the text file, as they're already in good shape,
-> not requiring massive changes in order to be parsed.
+> Convert the PM documents to ReST, in order to allow them to
+> build with Sphinx.
 > 
 > The conversion is actually:
 >   - add blank lines and identation in order to identify paragraphs;
@@ -67,10 +80,12 @@ Mauro Carvalho Chehab <mchehab+samsung@kernel.org> wrote:
 > the main index.rst file, in order to avoid build warnings.
 > 
 > Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-> Acked-by: Federico Vaga <federico.vaga@vaga.pv.it>
+> Acked-by: Mark Brown <broonie@kernel.org>
+> Acked-by: Bjorn Helgaas <bhelgaas@google.com>
+> Acked-by: Srivatsa S. Bhat (VMware) <srivatsa@csail.mit.edu>
 
-This patch contains linux-next changes and doesn't apply to docs-next.
-Perhaps the best thing to do is to apply it to the locking tree?
+So I can't apply this one due to conflicts in include/linux/pci.h.  Bjorn,
+perhaps the easiest thing is for you to take this one through your tree?
 
 Thanks,
 
