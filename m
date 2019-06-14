@@ -2,157 +2,370 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F17EA45D0D
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 14:41:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A3DF045D1C
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 14:44:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728030AbfFNMlk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 08:41:40 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:35902 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727930AbfFNMlf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 08:41:35 -0400
-Received: by mail-wr1-f66.google.com with SMTP id n4so2407837wrs.3
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2019 05:41:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:subject:date:message-id:in-reply-to:references:mime-version
-         :content-transfer-encoding;
-        bh=tm2PN34VJevI9ZW9IJurutGMCzu2ZjY7ozaA/XjkBM0=;
-        b=qK8JhE7mT9tUOlNnJxB6GUKXut/FqmO9LP3BIxIeFQe5NAz8q/LKgql3AyaXL8zVuy
-         wPpR5OFybGGjpF5QukjAFSb6YcyNCtopkfBdwUIZskiqViZ2GlhOgDILEfRF1pJq3pvS
-         zJVbcrEr1eXxzDMOegJNm6x62WsbBwmtq8RjQJntxwe/W6e1DLR4F+2KiufGjNdIkKiQ
-         5Q3FFmU9uEwPYZ1dJ+Vqkm+THiq8HhEsFoW5RZDRDmt7SHX3AtYawPhdibpsCcQhXmRP
-         9KE6euVBNa0tSKezoiM1rlvvJCTgd60eYNvT4diSQFQ1baDroKGhWiiuCrTnHFaR2FX7
-         4IWw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=tm2PN34VJevI9ZW9IJurutGMCzu2ZjY7ozaA/XjkBM0=;
-        b=EZKl5MvqQuJpSLTDipYsgMldL7WSK2yEj7DEwayhvgtZqlkILwtyz5uPZdWOqyHBq7
-         Kg6MPdR+lwQCf0jAK5/lWDgK/HzYSfQrW87V7Tsw+LfjwL54PELos5wnFgx/WQN3AFgh
-         7E+yglwEXIiHnd0g8fdYRl+HF7EdnssqyCdj0OeRFMZXX9escOr+uxLCXkslY7Q3Fcea
-         88lPbf9/NgeZRRxwruQko6e+OZRHGeGMCVz0F/6e0DUAYN6onoGAtrHpUy3IWVQGpmOZ
-         MkZj7HLKDTkLEIsP9Hx9jM0hflrxxwe35ogJAWvmsmwgl7/DYxIQYadySOBuOQpBUXb5
-         rQXw==
-X-Gm-Message-State: APjAAAWsOJPV62TsMBjx+bQGmBWiQDwG9nqZQyY+k+Uc716GwQ1aBZ1Q
-        cA5v7EGRYr3MvdZ9nzF95j8=
-X-Google-Smtp-Source: APXvYqzODwjMLrDLW/wAvxdO5UwbM+997kIqDgc3LoJww4panaWD52GNOzzJGcOdSinPiLSrE1KQEw==
-X-Received: by 2002:adf:dc09:: with SMTP id t9mr65268942wri.69.1560516093689;
-        Fri, 14 Jun 2019 05:41:33 -0700 (PDT)
-Received: from abel.fritz.box ([2a02:908:1252:fb60:e0eb:ed4e:b781:3e9f])
-        by smtp.gmail.com with ESMTPSA id n1sm2648209wrx.39.2019.06.14.05.41.32
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 14 Jun 2019 05:41:33 -0700 (PDT)
-From:   "=?UTF-8?q?Christian=20K=C3=B6nig?=" 
-        <ckoenig.leichtzumerken@gmail.com>
-X-Google-Original-From: =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>
-To:     daniel@ffwll.ch, l.stach@pengutronix.de,
-        linux+etnaviv@armlinux.org.uk, christian.gmeiner@gmail.com,
-        yuq825@gmail.com, eric@anholt.net, peterz@infradead.org,
-        thellstrom@vmware.com, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, etnaviv@lists.freedesktop.org,
-        lima@lists.freedesktop.org
-Subject: [PATCH 6/6] drm/vc4: use new ww_mutex_(un)lock_for_each macros
-Date:   Fri, 14 Jun 2019 14:41:25 +0200
-Message-Id: <20190614124125.124181-7-christian.koenig@amd.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190614124125.124181-1-christian.koenig@amd.com>
-References: <20190614124125.124181-1-christian.koenig@amd.com>
+        id S1727905AbfFNMoI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 08:44:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38806 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726874AbfFNMoH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Jun 2019 08:44:07 -0400
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1D6E621744;
+        Fri, 14 Jun 2019 12:44:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1560516245;
+        bh=HS28RNy+S6sp0Hoy4qNpEXF9makghMXDyaBdeIIS6ms=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=k6t5ryuP18viGWC8DiMBMqN21FdCvQ0zsWQZOA5M1+5IbDeX4leDc96etrJUjKYt7
+         r7ZqhRg0tOESGR30BS0FTwy2QTXFommvopNUZc+m0Zmj4EGnc5imYoW5poHFOUsHXk
+         nXKuJY2fyL/6rqG5T0UqX/a+jhlixrBb1LdnZj9Y=
+Received: by mail-lj1-f177.google.com with SMTP id k18so2227268ljc.11;
+        Fri, 14 Jun 2019 05:44:05 -0700 (PDT)
+X-Gm-Message-State: APjAAAXwKHncBO9RXm2TWPuPcJlyPUylrJymNTce6Y/CW3PkRHKwxW1N
+        5meyX+FAjXE3vV9IGJg0xKCy7v3EUFRX/XRWMEk=
+X-Google-Smtp-Source: APXvYqxz7zbhWEnI3AEDaxlmSYav0zCw8TVKKD95nT3ZafzGPyXWZ+upq4xQbINj8skrcrAA5+9GMVfJZDGAFhaWj+0=
+X-Received: by 2002:a2e:9e4d:: with SMTP id g13mr44769356ljk.80.1560516243323;
+ Fri, 14 Jun 2019 05:44:03 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <CGME20190614095325eucas1p20083d9290b36eca945ec3f1428bdbd4f@eucas1p2.samsung.com>
+ <20190614095309.24100-1-l.luba@partner.samsung.com> <20190614095309.24100-7-l.luba@partner.samsung.com>
+In-Reply-To: <20190614095309.24100-7-l.luba@partner.samsung.com>
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+Date:   Fri, 14 Jun 2019 14:43:52 +0200
+X-Gmail-Original-Message-ID: <CAJKOXPcDDyYmuX-RpkpxKSBK2JfV=tYakn+g8FM5Lau+rmkm+g@mail.gmail.com>
+Message-ID: <CAJKOXPcDDyYmuX-RpkpxKSBK2JfV=tYakn+g8FM5Lau+rmkm+g@mail.gmail.com>
+Subject: Re: [PATCH v10 06/13] drivers: memory: extend of_memory by LPDDR3 support
+To:     Lukasz Luba <l.luba@partner.samsung.com>,
+        gregkh@linuxfoundation.org, Rob Herring <robh@kernel.org>
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org,
+        "linux-samsung-soc@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>, linux-clk@vger.kernel.org,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?= 
+        <b.zolnierkie@samsung.com>, kgene@kernel.org,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        kyungmin.park@samsung.com,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        s.nawrocki@samsung.com, myungjoo.ham@samsung.com,
+        keescook@chromium.org, tony@atomide.com, jroedel@suse.de,
+        treding@nvidia.com, digetx@gmail.com, willy.mh.wolff.ml@gmail.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use the provided macros instead of implementing deadlock handling on our own.
+On Fri, 14 Jun 2019 at 11:53, Lukasz Luba <l.luba@partner.samsung.com> wrote:
+>
+> The patch adds AC timings information needed to support LPDDR3 and memory
+> controllers. The structure is used in of_memory and currently in Exynos
+> 5422 DMC. Add parsing data needed for LPDDR3 support.
+> It is currently used in Exynos5422 Dynamic Memory Controller.
+>
+> Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+> Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
+> ---
+>  drivers/memory/of_memory.c | 154 +++++++++++++++++++++++++++++++++++++
+>  drivers/memory/of_memory.h |  18 +++++
+>  include/memory/jedec_ddr.h |  62 +++++++++++++++
+>  3 files changed, 234 insertions(+)
 
-Signed-off-by: Christian König <christian.koenig@amd.com>
----
- drivers/gpu/drm/vc4/vc4_gem.c | 56 ++++++++---------------------------
- 1 file changed, 13 insertions(+), 43 deletions(-)
+Previously this was going through Greg, so if I am going to take it
+along with drivers/memory/samsung patches, I need some acks.
 
-diff --git a/drivers/gpu/drm/vc4/vc4_gem.c b/drivers/gpu/drm/vc4/vc4_gem.c
-index d9311be32a4f..628b3a8bcf6a 100644
---- a/drivers/gpu/drm/vc4/vc4_gem.c
-+++ b/drivers/gpu/drm/vc4/vc4_gem.c
-@@ -584,53 +584,17 @@ vc4_lock_bo_reservations(struct drm_device *dev,
- 			 struct vc4_exec_info *exec,
- 			 struct ww_acquire_ctx *acquire_ctx)
- {
--	int contended_lock = -1;
--	int i, ret;
-+	struct ww_mutex *contended;
- 	struct drm_gem_object *bo;
-+	int i, ret;
- 
- 	ww_acquire_init(acquire_ctx, &reservation_ww_class);
- 
--retry:
--	if (contended_lock != -1) {
--		bo = &exec->bo[contended_lock]->base;
--		ret = ww_mutex_lock_slow_interruptible(&bo->resv->lock,
--						       acquire_ctx);
--		if (ret) {
--			ww_acquire_done(acquire_ctx);
--			return ret;
--		}
--	}
--
--	for (i = 0; i < exec->bo_count; i++) {
--		if (i == contended_lock)
--			continue;
--
--		bo = &exec->bo[i]->base;
--
--		ret = ww_mutex_lock_interruptible(&bo->resv->lock, acquire_ctx);
--		if (ret) {
--			int j;
--
--			for (j = 0; j < i; j++) {
--				bo = &exec->bo[j]->base;
--				ww_mutex_unlock(&bo->resv->lock);
--			}
--
--			if (contended_lock != -1 && contended_lock >= i) {
--				bo = &exec->bo[contended_lock]->base;
--
--				ww_mutex_unlock(&bo->resv->lock);
--			}
--
--			if (ret == -EDEADLK) {
--				contended_lock = i;
--				goto retry;
--			}
--
--			ww_acquire_done(acquire_ctx);
--			return ret;
--		}
--	}
-+	ww_mutex_lock_for_each(for (i = 0; i < exec->bo_count; i++),
-+			       &exec->bo[i]->base.resv->lock, contended, ret,
-+			       true, acquire_ctx)
-+		if (ret)
-+			goto error;
- 
- 	ww_acquire_done(acquire_ctx);
- 
-@@ -648,6 +612,12 @@ vc4_lock_bo_reservations(struct drm_device *dev,
- 	}
- 
- 	return 0;
-+
-+error:
-+	ww_mutex_unlock_for_each(for (i = 0; i < exec->bo_count; i++),
-+				 &exec->bo[i]->base.resv->lock, contended);
-+	ww_acquire_done(acquire_ctx);
-+	return ret;
- }
- 
- /* Queues a struct vc4_exec_info for execution.  If no job is
--- 
-2.17.1
+Greg, Rob,
+Are you okay with this patch and with taking it through samsung-soc?
 
+Best regards,
+Krzysztof
+> diff --git a/drivers/memory/of_memory.c b/drivers/memory/of_memory.c
+> index 12a61f558644..30f3a3e75063 100644
+> --- a/drivers/memory/of_memory.c
+> +++ b/drivers/memory/of_memory.c
+> @@ -3,6 +3,12 @@
+>   * OpenFirmware helpers for memory drivers
+>   *
+>   * Copyright (C) 2012 Texas Instruments, Inc.
+> + * Copyright (C) 2019 Samsung Electronics Co., Ltd.
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License as published by
+> + * the Free Software Foundation; either version 2 of the License, or
+> + * (at your option) any later version.
+>   */
+>
+>  #include <linux/device.h>
+> @@ -148,3 +154,151 @@ const struct lpddr2_timings *of_get_ddr_timings(struct device_node *np_ddr,
+>         return lpddr2_jedec_timings;
+>  }
+>  EXPORT_SYMBOL(of_get_ddr_timings);
+> +
+> +/**
+> + * of_lpddr3_get_min_tck() - extract min timing values for lpddr3
+> + * @np: pointer to ddr device tree node
+> + * @device: device requesting for min timing values
+> + *
+> + * Populates the lpddr3_min_tck structure by extracting data
+> + * from device tree node. Returns a pointer to the populated
+> + * structure. If any error in populating the structure, returns NULL.
+> + */
+> +const struct lpddr3_min_tck *of_lpddr3_get_min_tck(struct device_node *np,
+> +                                                  struct device *dev)
+> +{
+> +       int                     ret = 0;
+> +       struct lpddr3_min_tck   *min;
+> +
+> +       min = devm_kzalloc(dev, sizeof(*min), GFP_KERNEL);
+> +       if (!min)
+> +               goto default_min_tck;
+> +
+> +       ret |= of_property_read_u32(np, "tRFC-min-tck", &min->tRFC);
+> +       ret |= of_property_read_u32(np, "tRRD-min-tck", &min->tRRD);
+> +       ret |= of_property_read_u32(np, "tRPab-min-tck", &min->tRPab);
+> +       ret |= of_property_read_u32(np, "tRPpb-min-tck", &min->tRPpb);
+> +       ret |= of_property_read_u32(np, "tRCD-min-tck", &min->tRCD);
+> +       ret |= of_property_read_u32(np, "tRC-min-tck", &min->tRC);
+> +       ret |= of_property_read_u32(np, "tRAS-min-tck", &min->tRAS);
+> +       ret |= of_property_read_u32(np, "tWTR-min-tck", &min->tWTR);
+> +       ret |= of_property_read_u32(np, "tWR-min-tck", &min->tWR);
+> +       ret |= of_property_read_u32(np, "tRTP-min-tck", &min->tRTP);
+> +       ret |= of_property_read_u32(np, "tW2W-C2C-min-tck", &min->tW2W_C2C);
+> +       ret |= of_property_read_u32(np, "tR2R-C2C-min-tck", &min->tR2R_C2C);
+> +       ret |= of_property_read_u32(np, "tWL-min-tck", &min->tWL);
+> +       ret |= of_property_read_u32(np, "tDQSCK-min-tck", &min->tDQSCK);
+> +       ret |= of_property_read_u32(np, "tRL-min-tck", &min->tRL);
+> +       ret |= of_property_read_u32(np, "tFAW-min-tck", &min->tFAW);
+> +       ret |= of_property_read_u32(np, "tXSR-min-tck", &min->tXSR);
+> +       ret |= of_property_read_u32(np, "tXP-min-tck", &min->tXP);
+> +       ret |= of_property_read_u32(np, "tCKE-min-tck", &min->tCKE);
+> +       ret |= of_property_read_u32(np, "tCKESR-min-tck", &min->tCKESR);
+> +       ret |= of_property_read_u32(np, "tMRD-min-tck", &min->tMRD);
+> +
+> +       if (ret) {
+> +               dev_warn(dev, "%s: errors while parsing min-tck values\n",
+> +                        __func__);
+> +               devm_kfree(dev, min);
+> +               goto default_min_tck;
+> +       }
+> +
+> +       return min;
+> +
+> +default_min_tck:
+> +       dev_warn(dev, "%s: using default min-tck values\n", __func__);
+> +       return NULL;
+> +}
+> +EXPORT_SYMBOL(of_lpddr3_get_min_tck);
+> +
+> +static int of_lpddr3_do_get_timings(struct device_node *np,
+> +                                   struct lpddr3_timings *tim)
+> +{
+> +       int ret;
+> +
+> +       /* The 'reg' param required since DT has changed, used as 'max-freq' */
+> +       ret = of_property_read_u32(np, "reg", &tim->max_freq);
+> +       ret |= of_property_read_u32(np, "min-freq", &tim->min_freq);
+> +       ret |= of_property_read_u32(np, "tRFC", &tim->tRFC);
+> +       ret |= of_property_read_u32(np, "tRRD", &tim->tRRD);
+> +       ret |= of_property_read_u32(np, "tRPab", &tim->tRPab);
+> +       ret |= of_property_read_u32(np, "tRPpb", &tim->tRPpb);
+> +       ret |= of_property_read_u32(np, "tRCD", &tim->tRCD);
+> +       ret |= of_property_read_u32(np, "tRC", &tim->tRC);
+> +       ret |= of_property_read_u32(np, "tRAS", &tim->tRAS);
+> +       ret |= of_property_read_u32(np, "tWTR", &tim->tWTR);
+> +       ret |= of_property_read_u32(np, "tWR", &tim->tWR);
+> +       ret |= of_property_read_u32(np, "tRTP", &tim->tRTP);
+> +       ret |= of_property_read_u32(np, "tW2W-C2C", &tim->tW2W_C2C);
+> +       ret |= of_property_read_u32(np, "tR2R-C2C", &tim->tR2R_C2C);
+> +       ret |= of_property_read_u32(np, "tFAW", &tim->tFAW);
+> +       ret |= of_property_read_u32(np, "tXSR", &tim->tXSR);
+> +       ret |= of_property_read_u32(np, "tXP", &tim->tXP);
+> +       ret |= of_property_read_u32(np, "tCKE", &tim->tCKE);
+> +       ret |= of_property_read_u32(np, "tCKESR", &tim->tCKESR);
+> +       ret |= of_property_read_u32(np, "tMRD", &tim->tMRD);
+> +
+> +       return ret;
+> +}
+> +
+> +/**
+> + * of_lpddr3_get_ddr_timings() - extracts the lpddr3 timings and updates no of
+> + * frequencies available.
+> + * @np_ddr: Pointer to ddr device tree node
+> + * @dev: Device requesting for ddr timings
+> + * @device_type: Type of ddr
+> + * @nr_frequencies: No of frequencies available for ddr
+> + * (updated by this function)
+> + *
+> + * Populates lpddr3_timings structure by extracting data from device
+> + * tree node. Returns pointer to populated structure. If any error
+> + * while populating, returns NULL.
+> + */
+> +const struct lpddr3_timings
+> +*of_lpddr3_get_ddr_timings(struct device_node *np_ddr, struct device *dev,
+> +                          u32 device_type, u32 *nr_frequencies)
+> +{
+> +       struct lpddr3_timings   *timings = NULL;
+> +       u32                     arr_sz = 0, i = 0;
+> +       struct device_node      *np_tim;
+> +       char                    *tim_compat = NULL;
+> +
+> +       switch (device_type) {
+> +       case DDR_TYPE_LPDDR3:
+> +               tim_compat = "jedec,lpddr3-timings";
+> +               break;
+> +       default:
+> +               dev_warn(dev, "%s: un-supported memory type\n", __func__);
+> +       }
+> +
+> +       for_each_child_of_node(np_ddr, np_tim)
+> +               if (of_device_is_compatible(np_tim, tim_compat))
+> +                       arr_sz++;
+> +
+> +       if (arr_sz)
+> +               timings = devm_kcalloc(dev, arr_sz, sizeof(*timings),
+> +                                      GFP_KERNEL);
+> +
+> +       if (!timings)
+> +               goto default_timings;
+> +
+> +       for_each_child_of_node(np_ddr, np_tim) {
+> +               if (of_device_is_compatible(np_tim, tim_compat)) {
+> +                       if (of_lpddr3_do_get_timings(np_tim, &timings[i])) {
+> +                               devm_kfree(dev, timings);
+> +                               goto default_timings;
+> +                       }
+> +                       i++;
+> +               }
+> +       }
+> +
+> +       *nr_frequencies = arr_sz;
+> +
+> +       return timings;
+> +
+> +default_timings:
+> +       dev_warn(dev, "%s: using default timings\n", __func__);
+> +       *nr_frequencies = 0;
+> +       return NULL;
+> +}
+> +EXPORT_SYMBOL(of_lpddr3_get_ddr_timings);
+> diff --git a/drivers/memory/of_memory.h b/drivers/memory/of_memory.h
+> index b077cc836b0b..e39ecc4c733d 100644
+> --- a/drivers/memory/of_memory.h
+> +++ b/drivers/memory/of_memory.h
+> @@ -14,6 +14,11 @@ extern const struct lpddr2_min_tck *of_get_min_tck(struct device_node *np,
+>  extern const struct lpddr2_timings
+>         *of_get_ddr_timings(struct device_node *np_ddr, struct device *dev,
+>         u32 device_type, u32 *nr_frequencies);
+> +extern const struct lpddr3_min_tck
+> +       *of_lpddr3_get_min_tck(struct device_node *np, struct device *dev);
+> +extern const struct lpddr3_timings
+> +       *of_lpddr3_get_ddr_timings(struct device_node *np_ddr,
+> +       struct device *dev, u32 device_type, u32 *nr_frequencies);
+>  #else
+>  static inline const struct lpddr2_min_tck
+>         *of_get_min_tck(struct device_node *np, struct device *dev)
+> @@ -27,6 +32,19 @@ static inline const struct lpddr2_timings
+>  {
+>         return NULL;
+>  }
+> +
+> +static inline const struct lpddr3_min_tck
+> +       *of_lpddr3_get_min_tck(struct device_node *np, struct device *dev)
+> +{
+> +       return NULL;
+> +}
+> +
+> +static inline const struct lpddr3_timings
+> +       *of_lpddr3_get_ddr_timings(struct device_node *np_ddr,
+> +       struct device *dev, u32 device_type, u32 *nr_frequencies)
+> +{
+> +       return NULL;
+> +}
+>  #endif /* CONFIG_OF && CONFIG_DDR */
+>
+>  #endif /* __LINUX_MEMORY_OF_REG_ */
+> diff --git a/include/memory/jedec_ddr.h b/include/memory/jedec_ddr.h
+> index ddad0f870e5d..3601825f807d 100644
+> --- a/include/memory/jedec_ddr.h
+> +++ b/include/memory/jedec_ddr.h
+> @@ -32,6 +32,7 @@
+>  #define DDR_TYPE_LPDDR2_S4     3
+>  #define DDR_TYPE_LPDDR2_S2     4
+>  #define DDR_TYPE_LPDDR2_NVM    5
+> +#define DDR_TYPE_LPDDR3                6
+>
+>  /* DDR IO width */
+>  #define DDR_IO_WIDTH_4         1
+> @@ -172,4 +173,65 @@ extern const struct lpddr2_timings
+>         lpddr2_jedec_timings[NUM_DDR_TIMING_TABLE_ENTRIES];
+>  extern const struct lpddr2_min_tck lpddr2_jedec_min_tck;
+>
+> +
+> +/*
+> + * Structure for timings for LPDDR3 based on LPDDR2 plus additional fields.
+> + * All parameters are in pico seconds(ps) unless explicitly indicated
+> + * with a suffix like tRAS_max_ns below
+> + */
+> +struct lpddr3_timings {
+> +       u32 max_freq;
+> +       u32 min_freq;
+> +       u32 tRFC;
+> +       u32 tRRD;
+> +       u32 tRPab;
+> +       u32 tRPpb;
+> +       u32 tRCD;
+> +       u32 tRC;
+> +       u32 tRAS;
+> +       u32 tWTR;
+> +       u32 tWR;
+> +       u32 tRTP;
+> +       u32 tW2W_C2C;
+> +       u32 tR2R_C2C;
+> +       u32 tWL;
+> +       u32 tDQSCK;
+> +       u32 tRL;
+> +       u32 tFAW;
+> +       u32 tXSR;
+> +       u32 tXP;
+> +       u32 tCKE;
+> +       u32 tCKESR;
+> +       u32 tMRD;
+> +};
+> +
+> +/*
+> + * Min value for some parameters in terms of number of tCK cycles(nCK)
+> + * Please set to zero parameters that are not valid for a given memory
+> + * type
+> + */
+> +struct lpddr3_min_tck {
+> +       u32 tRFC;
+> +       u32 tRRD;
+> +       u32 tRPab;
+> +       u32 tRPpb;
+> +       u32 tRCD;
+> +       u32 tRC;
+> +       u32 tRAS;
+> +       u32 tWTR;
+> +       u32 tWR;
+> +       u32 tRTP;
+> +       u32 tW2W_C2C;
+> +       u32 tR2R_C2C;
+> +       u32 tWL;
+> +       u32 tDQSCK;
+> +       u32 tRL;
+> +       u32 tFAW;
+> +       u32 tXSR;
+> +       u32 tXP;
+> +       u32 tCKE;
+> +       u32 tCKESR;
+> +       u32 tMRD;
+> +};
+> +
+>  #endif /* __LINUX_JEDEC_DDR_H */
+> --
+> 2.17.1
+>
