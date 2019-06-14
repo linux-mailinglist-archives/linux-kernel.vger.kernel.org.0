@@ -2,113 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1F9BF462A8
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 17:25:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EEC8E462DD
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 17:33:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726627AbfFNPZA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 11:25:00 -0400
-Received: from mga14.intel.com ([192.55.52.115]:44508 "EHLO mga14.intel.com"
+        id S1726772AbfFNPdW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 11:33:22 -0400
+Received: from mga18.intel.com ([134.134.136.126]:64871 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725923AbfFNPY7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 11:24:59 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
+        id S1725780AbfFNPdV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Jun 2019 11:33:21 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Jun 2019 08:24:59 -0700
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Jun 2019 08:33:20 -0700
 X-ExtLoop1: 1
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.36])
-  by orsmga002.jf.intel.com with ESMTP; 14 Jun 2019 08:24:58 -0700
-Date:   Fri, 14 Jun 2019 08:24:58 -0700
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     Fenghua Yu <fenghua.yu@intel.com>,
+Received: from yyu32-desk1.sc.intel.com ([10.144.153.205])
+  by fmsmga001.fm.intel.com with ESMTP; 14 Jun 2019 08:33:20 -0700
+Message-ID: <cf0d1470e95e0a8b88742651d06601a53d6655c1.camel@intel.com>
+Subject: Re: [PATCH v7 03/14] x86/cet/ibt: Add IBT legacy code bitmap setup
+ function
+From:   Yu-cheng Yu <yu-cheng.yu@intel.com>
+To:     Dave Hansen <dave.hansen@intel.com>,
+        Andy Lutomirski <luto@amacapital.net>
+Cc:     Peter Zijlstra <peterz@infradead.org>, x86@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, H Peter Anvin <hpa@zytor.com>,
-        Ravi V Shankar <ravi.v.shankar@intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        x86 <x86@kernel.org>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Subject: Re: [RFC PATCH 2/3] x86/cpufeatures: Combine word 11 and 12 into new
- scattered features word 11
-Message-ID: <20190614152458.GA22634@linux.intel.com>
-References: <1560459064-195037-1-git-send-email-fenghua.yu@intel.com>
- <1560459064-195037-3-git-send-email-fenghua.yu@intel.com>
- <20190614114410.GD2586@zn.tnic>
- <20190614122749.GE2586@zn.tnic>
- <20190614131701.GA198207@romley-ivt3.sc.intel.com>
- <20190614134123.GF2586@zn.tnic>
- <20190614141424.GA12191@linux.intel.com>
- <20190614142139.GH2586@zn.tnic>
- <20190614143912.GB12191@linux.intel.com>
- <20190614145734.GJ2586@zn.tnic>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190614145734.GJ2586@zn.tnic>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-mm@kvack.org,
+        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
+        Arnd Bergmann <arnd@arndb.de>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Eugene Syromiatnikov <esyr@redhat.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>,
+        Dave Martin <Dave.Martin@arm.com>
+Date:   Fri, 14 Jun 2019 08:25:16 -0700
+In-Reply-To: <ea5e333f-8cd6-8396-635f-a9dc580d5364@intel.com>
+References: <20190606200926.4029-1-yu-cheng.yu@intel.com>
+         <20190606200926.4029-4-yu-cheng.yu@intel.com>
+         <20190607080832.GT3419@hirez.programming.kicks-ass.net>
+         <aa8a92ef231d512b5c9855ef416db050b5ab59a6.camel@intel.com>
+         <20190607174336.GM3436@hirez.programming.kicks-ass.net>
+         <b3de4110-5366-fdc7-a960-71dea543a42f@intel.com>
+         <34E0D316-552A-401C-ABAA-5584B5BC98C5@amacapital.net>
+         <7e0b97bf1fbe6ff20653a8e4e147c6285cc5552d.camel@intel.com>
+         <25281DB3-FCE4-40C2-BADB-B3B05C5F8DD3@amacapital.net>
+         <e26f7d09376740a5f7e8360fac4805488b2c0a4f.camel@intel.com>
+         <3f19582d-78b1-5849-ffd0-53e8ca747c0d@intel.com>
+         <5aa98999b1343f34828414b74261201886ec4591.camel@intel.com>
+         <0665416d-9999-b394-df17-f2a5e1408130@intel.com>
+         <5c8727dde9653402eea97bfdd030c479d1e8dd99.camel@intel.com>
+         <ac9a20a6-170a-694e-beeb-605a17195034@intel.com>
+         <328275c9b43c06809c9937c83d25126a6e3efcbd.camel@intel.com>
+         <92e56b28-0cd4-e3f4-867b-639d9b98b86c@intel.com>
+         <1b961c71d30e31ecb22da2c5401b1a81cb802d86.camel@intel.com>
+         <ea5e333f-8cd6-8396-635f-a9dc580d5364@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 14, 2019 at 04:57:34PM +0200, Borislav Petkov wrote:
-> On Fri, Jun 14, 2019 at 07:39:12AM -0700, Sean Christopherson wrote:
-> > KVM can't handle Linux-defined leafs without extra tricks
+On Mon, 2019-06-10 at 15:59 -0700, Dave Hansen wrote:
+> On 6/10/19 3:40 PM, Yu-cheng Yu wrote:
+> > Ok, we will go back to do_mmap() with MAP_PRIVATE, MAP_NORESERVE and
+> > VM_DONTDUMP.  The bitmap will cover only 48-bit address space.
 > 
-> and that's what I'm proposing - an extra trick.
+> Could you make sure to discuss the downsides of only doing a 48-bit
+> address space?
 
-It's not a trick, it's bug suppression.
+The downside is that we cannot load legacy lib's above 48-bit address space, but
+currently ld-linux does not do that.  Should ld-linux do that in the future,
+dlopen() fails.  Considering CRIU migration, we probably need to do this anyway?
 
-Try running a kernel built with only patches 1/2 and 2/2 applied, along
-with KVM's assertions removed.  It'll probably boot fine since most of the
-affected features are option things, but Linux's feature reporting will be
-all kinds of screwed up.
+> What are the reasons behind and implications of VM_DONTDUMP?
 
-E.g. this WARN triggers because CPUID_7_EDX is 17, not 18 as expected,
-and so the word at c->x86_capability[18] is never written.  Run the kernel
-again after applying patch 3/3 and the warning magically disappears...
+The bitmap is very big.
 
-/* Intel-defined CPU features, CPUID level 0x00000007:0 (EDX), word 18 */
-#define X86_FEATURE_SPEC_CTRL_SSBD	(18*32+31) /* "" Speculative Store Bypass Disable */
+In GDB, it should be easy to tell why a control-protection fault occurred
+without the bitmap.
 
-diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-index 5b0e9d869ce5..6c30fb244594 100644
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -823,6 +823,8 @@ void get_cpu_cap(struct cpuinfo_x86 *c)
-                c->x86_capability[CPUID_7_0_EBX] = ebx;
-                c->x86_capability[CPUID_7_ECX] = ecx;
-                c->x86_capability[CPUID_7_EDX] = edx;
-+
-+               WARN_ON((edx & BIT(31)) && !cpu_has(c, X86_FEATURE_SPEC_CTRL_SSBD));
-        }
- 
-        /* Extended state features: level 0x0000000d */
-
-
-[    0.085583] WARNING: CPU: 0 PID: 0 at /home/sean/go/src/kernel.org/sinux/arch/x86/kernel/cpu/common.c:827 get_cpu_cap+0x1c9/0x1d0
-[    0.085583] Modules linked in:
-[    0.085585] CPU: 0 PID: 0 Comm: swapper/0 Tainted: G        W         5.2.0-rc2+ #4
-[    0.085585] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 0.0.0 02/06/2015
-[    0.085586] RIP: 0010:get_cpu_cap+0x1c9/0x1d0
-[    0.085587] Code: <0f> 0b e9 7f fe ff ff 48 8b 05 d9 39 fe 00 ba 01 00 00 00 41 54 b9
-[    0.085588] RSP: 0000:ffffffff82003e80 EFLAGS: 00010246
-[    0.085588] RAX: 0000000000000000 RBX: 00000000009c4fbb RCX: 0000000000000004
-[    0.085589] RDX: 0000000084000000 RSI: 0000000000000000 RDI: ffffffff820f71e0
-[    0.085589] RBP: ffffffff820f71e0 R08: 0000000000000001 R09: 0000000000000001
-[    0.085589] R10: 000000000002c4f8 R11: 0000000000000002 R12: ffffffff82486920
-[    0.085590] R13: ffffffff8248d2e0 R14: ffff88827fff73c0 R15: 000000000000010f
-[    0.085590] FS:  0000000000000000(0000) GS:ffff888277a00000(0000) knlGS:0000000000000000
-[    0.085592] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[    0.085592] CR2: 00000000ffffffff CR3: 0000000005009001 CR4: 00000000000606b0
-[    0.085592] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-[    0.085593] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-[    0.085593] Call Trace:
-[    0.085595]  identify_cpu+0xbb/0x540
-[    0.085597]  identify_boot_cpu+0xc/0x6f
-[    0.085598]  check_bugs+0x26/0x852
-[    0.085599]  start_kernel+0x47a/0x4ab
-[    0.085601]  secondary_startup_64+0xa4/0xb0
-[    0.085602] ---[ end trace 33fbe952b06dbb68 ]---
+Yu-cheng
