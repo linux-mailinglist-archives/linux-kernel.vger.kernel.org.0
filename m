@@ -2,126 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8B8B84658E
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 19:20:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AA600465A5
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 19:23:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726358AbfFNRU2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 13:20:28 -0400
-Received: from mga07.intel.com ([134.134.136.100]:55329 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725837AbfFNRU1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 13:20:27 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Jun 2019 10:20:27 -0700
-X-ExtLoop1: 1
-Received: from stinkbox.fi.intel.com (HELO stinkbox) ([10.237.72.174])
-  by orsmga006.jf.intel.com with SMTP; 14 Jun 2019 10:20:23 -0700
-Received: by stinkbox (sSMTP sendmail emulation); Fri, 14 Jun 2019 20:20:22 +0300
-Date:   Fri, 14 Jun 2019 20:20:22 +0300
-From:   Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
-To:     Sam Ravnborg <sam@ravnborg.org>
-Cc:     Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        kernel-janitors@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        David Airlie <airlied@linux.ie>, Sean Paul <sean@poorly.run>
-Subject: Re: Drop use of DRM_WAIT_ON() [Was: drm/drm_vblank: Change EINVAL by
- the correct errno]
-Message-ID: <20190614172022.GE5942@intel.com>
-References: <20190613021054.cdewdb3azy6zuoyw@smtp.gmail.com>
- <20190613050403.GA21502@ravnborg.org>
+        id S1726658AbfFNRX0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 13:23:26 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:42818 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726083AbfFNRXS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Jun 2019 13:23:18 -0400
+Received: by mail-wr1-f68.google.com with SMTP id x17so3324948wrl.9;
+        Fri, 14 Jun 2019 10:23:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=jzZPVNKvIqUnLAnTZJfqYcJAqoVMUTg4RgDz59BwLdo=;
+        b=JpUb+/3G7vn8sY5/+Dq8rBZn6qOeoQXPV+rexL0ETfp4lK+SrRDqsnA+D6sfs03HIP
+         2V7vH+Lo1K6UMwx2qBpp+XBifHJadBX/7WVFtmeHSfmVmpHFSPq2Ll5f6DAs3mFXdizh
+         /qL33pIFXYLoUi1mNITzoX+PJQxiwD4pnkkCOQcWG2Bax5KlZEzONEtIyalouBOgxnvL
+         tGgNfmMyFm7YYA0mwUDuE0kAH+LwaPy/BHiW7LOhQX0cdIoeqWwMk1cZwcbdOXSLgN99
+         9qgR1hQCOwL5KWS94YPi/acIm1vwK2YyEVgoqJJ3bpFI+NYn7cH7fbvbDSKCZ1hhGiAY
+         Bc1A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=jzZPVNKvIqUnLAnTZJfqYcJAqoVMUTg4RgDz59BwLdo=;
+        b=UjqZgpEkCd8ZRBGUvqGreOqckUzDgGS5qBrBvFV5QR2LuGD6zHhDG+R+4fd6OBe7H8
+         SLS89mQR4SOui3bAeyhYqqPAXaawyQjvbxFodT7YfIc1MwXBqZQPtM4ect1NQmFntAt9
+         Y/gsgZPjQkHKnlAyvfw08ocCbYfNI2bzRWVagRbGFZJxE3s0Fi+gZwmrLRRYaRSrdhhF
+         l3fBghHs+Y9NVUQ6jmZE0sUd+cUyCVsKEtmY53y7AoutaWafPjGwdEPHlQeKa58+pMq/
+         RP1/3S83jROyODGQRCtFkVxJEGTtPHeOhc7KgkRxchu2fubGbH5aeqfOel3uoEJx1C4n
+         9HfQ==
+X-Gm-Message-State: APjAAAWE1Vkkwr0Y8HItRHj4PY1t/SKwj78DsvB/WlkmEYyr5qJhdhWX
+        ni854ky4MpEhepD59mFarKs=
+X-Google-Smtp-Source: APXvYqzxYP1cbsOOCYPWmIbvJ1xl5Lko+tCkE0rpk+wdhu18dJhKiS/EwaA9FDMz67KxPa+Dn7N5Jg==
+X-Received: by 2002:adf:8044:: with SMTP id 62mr17657298wrk.20.1560532996451;
+        Fri, 14 Jun 2019 10:23:16 -0700 (PDT)
+Received: from Red ([2a01:cb1d:147:7200:2e56:dcff:fed2:c6d6])
+        by smtp.googlemail.com with ESMTPSA id r12sm4387641wrt.95.2019.06.14.10.23.15
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 14 Jun 2019 10:23:15 -0700 (PDT)
+Date:   Fri, 14 Jun 2019 19:23:13 +0200
+From:   Corentin Labbe <clabbe.montjoie@gmail.com>
+To:     Jose Abreu <Jose.Abreu@synopsys.com>
+Cc:     linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        Joao Pinto <Joao.Pinto@synopsys.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>
+Subject: Re: [PATCH net-next] net: stmmac: Fix wrapper drivers not detecting
+ PHY
+Message-ID: <20190614172313.GA24955@Red>
+References: <f4f524805a81c6f680b55d8fb084b1070294a0a8.1560524776.git.joabreu@synopsys.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190613050403.GA21502@ravnborg.org>
+In-Reply-To: <f4f524805a81c6f680b55d8fb084b1070294a0a8.1560524776.git.joabreu@synopsys.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 13, 2019 at 07:04:03AM +0200, Sam Ravnborg wrote:
-> Hi Rodrigo.
+On Fri, Jun 14, 2019 at 05:06:57PM +0200, Jose Abreu wrote:
+> Because of PHYLINK conversion we stopped parsing the phy-handle property
+> from DT. Unfortunatelly, some wrapper drivers still rely on this phy
+> node to configure the PHY.
 > 
-> On Wed, Jun 12, 2019 at 11:10:54PM -0300, Rodrigo Siqueira wrote:
-> > For historical reason, the function drm_wait_vblank_ioctl always return
-> > -EINVAL if something gets wrong. This scenario limits the flexibility
-> > for the userspace make detailed verification of the problem and take
-> > some action. In particular, the validation of “if (!dev->irq_enabled)”
-> > in the drm_wait_vblank_ioctl is responsible for checking if the driver
-> > support vblank or not. If the driver does not support VBlank, the
-> > function drm_wait_vblank_ioctl returns EINVAL which does not represent
-> > the real issue; this patch changes this behavior by return EOPNOTSUPP.
-> > Additionally, some operations are unsupported by this function, and
-> > returns EINVAL; this patch also changes the return value to EOPNOTSUPP
-> > in this case. Lastly, the function drm_wait_vblank_ioctl is invoked by
-> > libdrm, which is used by many compositors; because of this, it is
-> > important to check if this change breaks any compositor. In this sense,
-> > the following projects were examined:
-> > 
-> > * Drm-hwcomposer
-> > * Kwin
-> > * Sway
-> > * Wlroots
-> > * Wayland-core
-> > * Weston
-> > * Xorg (67 different drivers)
-> > 
-> > For each repository the verification happened in three steps:
-> > 
-> > * Update the main branch
-> > * Look for any occurrence "drmWaitVBlank" with the command:
-> >   git grep -n "drmWaitVBlank"
-> > * Look in the git history of the project with the command:
-> >   git log -SdrmWaitVBlank
-> > 
-> > Finally, none of the above projects validate the use of EINVAL which
-> > make safe, at least for these projects, to change the return values.
-> > 
-> > Change since V2:
-> >  Daniel Vetter and Chris Wilson
-> >  - Replace ENOTTY by EOPNOTSUPP
-> >  - Return EINVAL if the parameters are wrong
-> > 
-> > Signed-off-by: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
-> > ---
-> > Update:
-> >   Now IGT has a way to validate if a driver has vblank support or not.
-> >   See: https://gitlab.freedesktop.org/drm/igt-gpu-tools/commit/2d244aed69165753f3adbbd6468db073dc1acf9A
-> > 
-> >  drivers/gpu/drm/drm_vblank.c | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/drivers/gpu/drm/drm_vblank.c b/drivers/gpu/drm/drm_vblank.c
-> > index 0d704bddb1a6..d76a783a7d4b 100644
-> > --- a/drivers/gpu/drm/drm_vblank.c
-> > +++ b/drivers/gpu/drm/drm_vblank.c
-> > @@ -1578,10 +1578,10 @@ int drm_wait_vblank_ioctl(struct drm_device *dev, void *data,
-> >  	unsigned int flags, pipe, high_pipe;
-> >  
-> >  	if (!dev->irq_enabled)
-> > -		return -EINVAL;
-> > +		return -EOPNOTSUPP;
-> >  
-> >  	if (vblwait->request.type & _DRM_VBLANK_SIGNAL)
-> > -		return -EINVAL;
-> > +		return -EOPNOTSUPP;
-> >  
-> >  	if (vblwait->request.type &
-> >  	    ~(_DRM_VBLANK_TYPES_MASK | _DRM_VBLANK_FLAGS_MASK |
+> Let's restore the parsing of PHY handle while these wrapper drivers are
+> not fully converted to PHYLINK.
 > 
-> When touching this function, could I ask you to take a look at
-> eliminating the use of DRM_WAIT_ON()?
-> It comes from the deprecated drm_os_linux.h header, and it is only of
-> the few remaining users of DRM_WAIT_ON().
+> Reported-by: Corentin Labbe <clabbe.montjoie@gmail.com>
+> Fixes: 74371272f97f ("net: stmmac: Convert to phylink and remove phylib logic")
+> Signed-off-by: Jose Abreu <joabreu@synopsys.com>
+> Cc: Joao Pinto <jpinto@synopsys.com>
+> Cc: David S. Miller <davem@davemloft.net>
+> Cc: Giuseppe Cavallaro <peppe.cavallaro@st.com>
+> Cc: Alexandre Torgue <alexandre.torgue@st.com>
 
-IIRC all previous attempts at removing that ended up with
-regressions. I think there are some dragons lurking inside that
-macro.
+Thanks for the quick fix
 
--- 
-Ville Syrjälä
-Intel
+Tested-by: Corentin Labbe <clabbe.montjoie@gmail.com>
