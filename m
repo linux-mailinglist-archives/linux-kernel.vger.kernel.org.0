@@ -2,105 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A968C45FD0
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 16:00:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 35DF645FB8
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 16:00:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728396AbfFNN7e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 09:59:34 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:48413 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727922AbfFNN7e (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 09:59:34 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212])
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_128_CBC_SHA1:16)
-        (Exim 4.76)
-        (envelope-from <colin.king@canonical.com>)
-        id 1hbmjs-0003BN-MP; Fri, 14 Jun 2019 13:59:32 +0000
-To:     Leon Romanovsky <leonro@mellanox.com>,
-        Gal Pressman <galpress@amazon.com>,
-        Dennis Dalessandro <dennis.dalessandro@intel.com>,
-        Doug Ledford <dledford@redhat.com>, linux-rdma@vger.kernel.org
-From:   Colin Ian King <colin.king@canonical.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=colin.king@canonical.com; prefer-encrypt=mutual; keydata=
- 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
-Cc:     linux-kernel@vger.kernel.org
-Subject: re: RDMA: Clean destroy CQ in drivers do not return errors
-Message-ID: <68d62660-902c-ca49-20fd-32e92830faa7@canonical.com>
-Date:   Fri, 14 Jun 2019 14:59:32 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        id S1728600AbfFNN6B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 09:58:01 -0400
+Received: from mga06.intel.com ([134.134.136.31]:39583 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727382AbfFNN6A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Jun 2019 09:58:00 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Jun 2019 06:57:59 -0700
+X-ExtLoop1: 1
+Received: from jnikula-mobl3.fi.intel.com (HELO localhost) ([10.237.66.150])
+  by fmsmga001.fm.intel.com with ESMTP; 14 Jun 2019 06:57:57 -0700
+From:   Jani Nikula <jani.nikula@linux.intel.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab@s-opensource.com>,
+        Mauro Carvalho Chehab <mchehab@infradead.org>,
+        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>
+Subject: Re: [PATCH 05/14] scripts: add an script to parse the ABI files
+In-Reply-To: <20190614133933.GA1076@kroah.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <cover.1560477540.git.mchehab+samsung@kernel.org> <196fb3c497546f923bf5d156c3fddbe74a4913bc.1560477540.git.mchehab+samsung@kernel.org> <87r27wuwc3.fsf@intel.com> <20190614133933.GA1076@kroah.com>
+Date:   Fri, 14 Jun 2019 17:00:55 +0300
+Message-ID: <87lfy4uuzs.fsf@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Fri, 14 Jun 2019, Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
+> On Fri, Jun 14, 2019 at 04:31:56PM +0300, Jani Nikula wrote:
+>> On Thu, 13 Jun 2019, Mauro Carvalho Chehab <mchehab+samsung@kernel.org> wrote:
+>> > From: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+>> >
+>> > Add a script to parse the Documentation/ABI files and produce
+>> > an output with all entries inside an ABI (sub)directory.
+>> >
+>> > Right now, it outputs its contents on ReST format. It shouldn't
+>> > be hard to make it produce other kind of outputs, since the ABI
+>> > file parser is implemented in separate than the output generator.
+>> 
+>> Hum, or just convert the ABI files to rst directly.
+>
+> And what would that look like?
 
-Static analysis with Coverity reported an issue with the following commit:
+That pretty much depends on the requirements we want to set on both the
+ABI source files and the generated output. Obviously the requirements
+can be conflicting; might be hard to produce fancy output if the input
+is very limited.
 
-commit a52c8e2469c30cf7ac453d624aed9c168b23d1af
-Author: Leon Romanovsky <leonro@mellanox.com>
-Date:   Tue May 28 14:37:28 2019 +0300
+At the bare minimum, you could convert the files to contain
+reStructuredText field lists [1]. Add a colon at the start of the field
+name, and make sure field bodies (values) are not empty.
 
-    RDMA: Clean destroy CQ in drivers do not return errors
+Conversion of a file selected at random; I've only added ":" and "N/A".
 
-In function bnxt_re_destroy_cq() contains the following:
+diff --git a/Documentation/ABI/stable/sysfs-devices-system-cpu b/Documentation/ABI/stable/sysfs-devices-system-cpu
+index 33c133e2a631..34c218b344fb 100644
+--- a/Documentation/ABI/stable/sysfs-devices-system-cpu
++++ b/Documentation/ABI/stable/sysfs-devices-system-cpu
+@@ -1,19 +1,20 @@
+-What: 		/sys/devices/system/cpu/dscr_default
+-Date:		13-May-2014
+-KernelVersion:	v3.15.0
+-Contact:
+-Description:	Writes are equivalent to writing to
++:What: 		/sys/devices/system/cpu/dscr_default
++:Date:		13-May-2014
++:KernelVersion:	v3.15.0
++:Contact:	N/A
++:Description:	Writes are equivalent to writing to
+ 		/sys/devices/system/cpu/cpuN/dscr on all CPUs.
+ 		Reads return the last written value or 0.
+ 		This value is not a global default: it is a way to set
+ 		all per-CPU defaults at the same time.
+-Values:		64 bit unsigned integer (bit field)
++:Values:	64 bit unsigned integer (bit field)
+ 
+-What: 		/sys/devices/system/cpu/cpu[0-9]+/dscr
+-Date:		13-May-2014
+-KernelVersion:	v3.15.0
+-Contact:
+-Description:	Default value for the Data Stream Control Register (DSCR) on
++
++:What: 		/sys/devices/system/cpu/cpu[0-9]+/dscr
++:Date:		13-May-2014
++:KernelVersion:	v3.15.0
++:Contact:	N/A
++:Description:	Default value for the Data Stream Control Register (DSCR) on
+ 		a CPU.
+ 		This default value is used when the kernel is executing and
+ 		for any process that has not set the DSCR itself.
+@@ -22,4 +23,4 @@ Description:	Default value for the Data Stream Control Register (DSCR) on
+ 		on any CPU where it executes (overriding the value described
+ 		here).
+ 		If set by a process it will be inherited by child processes.
+-Values:		64 bit unsigned integer (bit field)
++:Values:		64 bit unsigned integer (bit field)
 
-        if (!cq->umem)
-                ib_umem_release(cq->umem);
+---
 
-Coverity detects this as a deference after null check on the null
-pointer cq->umem:
+Of course, you'd still need to add higher level files to include the ABI
+files.
 
-"var_deref_model: Passing null pointer cq->umem to ib_umem_release,
-which dereferences it"
+At the other end, you could add structure and syntax to your heart's
+content, and make the output fancier too.
 
-Is the logic inverted on that null check?
+BR,
+Jani.
 
-Colin
+[1] http://docutils.sourceforge.net/docs/ref/rst/restructuredtext.html#field-lists
+
+
+-- 
+Jani Nikula, Intel Open Source Graphics Center
