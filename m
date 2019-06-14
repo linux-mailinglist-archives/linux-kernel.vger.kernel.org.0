@@ -2,54 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 910B745AD7
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 12:45:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 34D3645AE2
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 12:48:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727365AbfFNKpP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 06:45:15 -0400
-Received: from mga05.intel.com ([192.55.52.43]:1446 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727018AbfFNKpP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 06:45:15 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Jun 2019 03:45:14 -0700
-X-ExtLoop1: 1
-Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.157])
-  by fmsmga001.fm.intel.com with SMTP; 14 Jun 2019 03:45:12 -0700
-Received: by lahna (sSMTP sendmail emulation); Fri, 14 Jun 2019 13:45:11 +0300
-Date:   Fri, 14 Jun 2019 13:45:11 +0300
-From:   Mika Westerberg <mika.westerberg@linux.intel.com>
-To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc:     Furquan Shaikh <furquan@google.com>, Len Brown <lenb@kernel.org>,
-        linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        rajatja@google.com
-Subject: Re: [PATCH] ACPI: PM: Clear wake-up device GPEs before enabling
-Message-ID: <20190614104511.GC2640@lahna.fi.intel.com>
-References: <20190516193616.252788-1-furquan@google.com>
- <13361760.nMXA0SR1Mq@kreacher>
+        id S1727298AbfFNKsT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 06:48:19 -0400
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:38202 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726900AbfFNKsS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Jun 2019 06:48:18 -0400
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x5EAlW17075133;
+        Fri, 14 Jun 2019 05:47:32 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1560509252;
+        bh=VO4FVnd5gxYVdAkdALZM4NQ4Jp0vvZIA2wgd7x8xSUs=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=cQGWrX6FBTtB52WDerOTzhblZJzqENMFCgab3pXXu0aCcVMRLLvEY1IJik3EfWciw
+         mzu/3Inn3Jj2XDEyHkbwuF6zomIj//AtSJaz/Ep2KNofCQUQvAVlv1GJLXAkrWLgYm
+         Vr90ralp0fpOXHlahbhUZhLPfW3TXkizb0VNSYTA=
+Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x5EAlWP7108465
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 14 Jun 2019 05:47:32 -0500
+Received: from DLEE109.ent.ti.com (157.170.170.41) by DLEE100.ent.ti.com
+ (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Fri, 14
+ Jun 2019 05:47:32 -0500
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE109.ent.ti.com
+ (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Fri, 14 Jun 2019 05:47:32 -0500
+Received: from [172.24.190.172] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id x5EAlT9V088764;
+        Fri, 14 Jun 2019 05:47:30 -0500
+Subject: Re: [PATCH] ARM: davinci: da850-evm: call
+ regulator_has_full_constraints()
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>
+CC:     Kevin Hilman <khilman@kernel.org>,
+        David Lechner <david@lechnology.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+References: <20190607090201.5995-1-brgl@bgdev.pl>
+ <CACRpkdYjXq-KV=zW=az+02tvjiHVHgUPiC149gNfkWTb4c29PQ@mail.gmail.com>
+From:   Sekhar Nori <nsekhar@ti.com>
+Message-ID: <5dcd0189-2283-fb0d-dd7c-4906f4594d69@ti.com>
+Date:   Fri, 14 Jun 2019 16:17:29 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <13361760.nMXA0SR1Mq@kreacher>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.11.4 (2019-03-13)
+In-Reply-To: <CACRpkdYjXq-KV=zW=az+02tvjiHVHgUPiC149gNfkWTb4c29PQ@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 13, 2019 at 10:24:41PM +0200, Rafael J. Wysocki wrote:
-> This patch may cause events to be missed if the GPE.  I guess what you reall mean is
-> something like the patch below.
+On 08/06/19 7:37 PM, Linus Walleij wrote:
+> On Fri, Jun 7, 2019 at 11:02 AM Bartosz Golaszewski <brgl@bgdev.pl> wrote:
 > 
-> This should allow the kernel to see the events generated before the GPEs are
-> implicitly enabled, but it should clear them for the explicit users of acpi_enable_gpe().
+>> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+>>
+>> The BB expander at 0x21 i2c bus 1 fails to probe on da850-evm because
+>> the board doesn't set has_full_constraints to true in the regulator
+>> API.
+>>
+>> Call regulator_has_full_constraints() at the end of board registration
+>> just like we do in da850-lcdk and da830-evm.
+>>
+>> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 > 
-> Mika, what do you think?
+> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+> 
+> I assume Sekhar will queue this and the LED patch?
 
-Looks good to me. I also tested this with two TBT systems (Skull Canyon
-NUC and Dell XPS 9370) using ACPI hotplug and it did not cause any
-problems if I boot the system with device connected.
+Yes, will do. Added this to fixes for v5.2
+
+Thanks,
+Sekhar
