@@ -2,14 +2,14 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6231A46639
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 19:53:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9288546651
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 19:53:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727216AbfFNRwn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 13:52:43 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:38622 "EHLO
+        id S1727017AbfFNRwg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 13:52:36 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:38628 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726649AbfFNRwf (ORCPT
+        with ESMTP id S1726860AbfFNRwf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 14 Jun 2019 13:52:35 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
@@ -18,27 +18,27 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From:
         Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=3v0sS61wq796LTjrCIGlnUicOjJQzGAsiyF19M1EX2c=; b=u/ESh3f65BSLRXkZ+AXmBNxjNC
-        gnrwrngtlWnKOr3vhuLTSXY9/fdw9r+AL/Rav1M8w9/KFYKl52HJA8vdrptJG26xi+f+9PYiWHGQu
-        YDj+hpvXJ9lIwYb4dqevFJxcU/dt+uyGZmLfQNHEaIFYlba6LLlmVsnqR99Y3n9PSvz94scfvfG4y
-        oigeSHE4XLskhNbhaRES1Yr55THnSNML14iy4zlbHY6MK2OUK2dbsXEoOSTOqYOM+l3aoa5sUtoPB
-        +iMhUs+h2lHmCIluqwEkAhQDVR+0mKFQDTxEqUJ/b2iMlupvWjfkuhi7OiC6uUj4aGAIMl0fPzUcl
-        h1JLhJAg==;
+        bh=rO3bjQzjDxRANZzkYcNidTwoC5hB1Y63PVyrEzCq1+c=; b=NUw6NxIreLD9FKP4unfrcSMyu4
+        fF1aKdoVRZFT/ogLyMwcwtX8omVt4DLNIVnutihYh2mC86CB++GxD+zmYgt5PjfwZUNTCYK3jPKZQ
+        wvyFGoGgZ/uAvrpRxGLNWdQdqpc8yI9P6iInRTfIsBobblD1bxRuLMYUGonW+h7dZg84MHT+yRATL
+        BJi+hPVuFShs8HVTtLxweBK1DyFUIjZK3XqtK+9L5TR2efgafSuzVyKgS0gBwV1mXS4utaS/57viR
+        JbQs5OQIlt4ZT9OD4Zs+6jqszltBBRc7A0cNNxGWKMx+PpNkzvkOJQvo8XFwPu5CSwflxV1UaaaYI
+        H9Uq+mjQ==;
 Received: from 177.133.85.52.dynamic.adsl.gvt.net.br ([177.133.85.52] helo=bombadil.infradead.org)
         by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hbqNO-0000PZ-JI; Fri, 14 Jun 2019 17:52:34 +0000
+        id 1hbqNO-0000Pc-K2; Fri, 14 Jun 2019 17:52:34 +0000
 Received: from mchehab by bombadil.infradead.org with local (Exim 4.92)
         (envelope-from <mchehab@bombadil.infradead.org>)
-        id 1hbqNL-0002Ou-TC; Fri, 14 Jun 2019 14:52:31 -0300
+        id 1hbqNL-0002Oy-Tx; Fri, 14 Jun 2019 14:52:31 -0300
 From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Mauro Carvalho Chehab <mchehab@infradead.org>,
         linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>
-Subject: [PATCH v2 08/16] scripts/get_abi.pl: represent what in tables
-Date:   Fri, 14 Jun 2019 14:52:22 -0300
-Message-Id: <8a1ae200b2ccdc04811a11cececeaad16c020556.1560534648.git.mchehab+samsung@kernel.org>
+Subject: [PATCH v2 09/16] scripts/get_abi.pl: fix parse issues with some files
+Date:   Fri, 14 Jun 2019 14:52:23 -0300
+Message-Id: <485e3e80bbddc4e144bc1d110f980ace092c5e1c.1560534648.git.mchehab+samsung@kernel.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <3b8d7c64f887ddea01df3c4eeabc745c8ec45406.1560534648.git.mchehab+samsung@kernel.org>
 References: <3b8d7c64f887ddea01df3c4eeabc745c8ec45406.1560534648.git.mchehab+samsung@kernel.org>
@@ -49,88 +49,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Several entries at the ABI have multiple What: with the same
-description.
+A few files are failing to parse:
 
-Instead of showing those symbols as sections, let's show them
-as tables. That makes easier to read on the final output,
-and avoid too much recursion at Sphinx parsing.
+	Documentation/ABI/testing/sysfs-bus-pci-devices-aer_stats
+	Documentation/ABI/testing/sysfs-class-pktcdvd
+	Documentation/ABI/testing/sysfs-bus-nfit
 
-We need to put file references at the end, as we don't want
-non-file tables to be mangled with other entries.
+On all three files, the problem is that there is a ":" character
+at the initial file description.
+
+Improve the parse in order to handle those special cases.
 
 Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 ---
- scripts/get_abi.pl | 41 ++++++++++++++++++++++++++++++++++++-----
- 1 file changed, 36 insertions(+), 5 deletions(-)
+ scripts/get_abi.pl | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/scripts/get_abi.pl b/scripts/get_abi.pl
-index ecf6b91df7c4..7d454e359d25 100755
+index 7d454e359d25..116f0c33c16d 100755
 --- a/scripts/get_abi.pl
 +++ b/scripts/get_abi.pl
-@@ -193,16 +193,19 @@ sub parse_abi {
- #
- # Outputs the book on ReST format
- #
-+
- sub output_rest {
--	foreach my $what (sort keys %data) {
-+	foreach my $what (sort {
-+				($data{$a}->{type} eq "File") cmp ($data{$b}->{type} eq "File") ||
-+				$a cmp $b
-+			       } keys %data) {
- 		my $type = $data{$what}->{type};
- 		my $file = $data{$what}->{file};
-+		my $filepath = $data{$what}->{filepath};
+@@ -87,7 +87,7 @@ sub parse_abi {
+ 					# New "tag" is actually part of
+ 					# description. Don't consider it a tag
+ 					$new_tag = "";
+-				} else {
++				} elsif ($tag ne "") {
+ 					parse_error($file, $ln, "tag '$tag' is invalid", $_);
+ 				}
+ 			}
+@@ -110,7 +110,7 @@ sub parse_abi {
+ 				next;
+ 			}
  
- 		my $w = $what;
- 		$w =~ s/([\(\)\_\-\*\=\^\~\\])/\\$1/g;
+-			if ($new_tag) {
++			if ($tag ne "" && $new_tag) {
+ 				$tag = $new_tag;
  
--		my $bar = $w;
--		$bar =~ s/./-/g;
- 
- 		foreach my $p (@{$data{$what}->{label}}) {
- 			my ($content, $label) = @{$p};
-@@ -222,9 +225,37 @@ sub output_rest {
- 			last;
- 		}
- 
--		print "$w\n$bar\n\n";
- 
--		print "- defined on file $file (type: $type)\n\n" if ($type ne "File");
-+		$filepath =~ s,.*/(.*/.*),\1,;;
-+		$filepath =~ s,[/\-],_,g;;
-+		my $fileref = "abi_file_".$filepath;
-+
-+		if ($type eq "File") {
-+			my $bar = $w;
-+			$bar =~ s/./-/g;
-+
-+			print ".. _$fileref:\n\n";
-+			print "$w\n$bar\n\n";
-+		} else {
-+			my @names = split /\s*,\s*/,$w;
-+
-+			my $len = 0;
-+
-+			foreach my $name (@names) {
-+				$len = length($name) if (length($name) > $len);
-+			}
-+
-+			print "What:\n\n";
-+
-+			print "+-" . "-" x $len . "-+\n";
-+			foreach my $name (@names) {
-+				printf "| %s", $name . " " x ($len - length($name)) . " |\n";
-+				print "+-" . "-" x $len . "-+\n";
-+			}
-+			print "\n";
-+		}
-+
-+		print "Defined on file :ref:`$file <$fileref>`\n\n" if ($type ne "File");
- 
- 		my $desc = $data{$what}->{description};
- 		$desc =~ s/^\s+//;
+ 				if ($new_what) {
 -- 
 2.21.0
 
