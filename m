@@ -2,110 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 59DBB4691D
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 22:31:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E0D24695A
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 22:33:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727814AbfFNUak (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 16:30:40 -0400
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:33964 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726784AbfFNUah (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 16:30:37 -0400
-Received: by mail-qt1-f195.google.com with SMTP id m29so4037537qtu.1;
-        Fri, 14 Jun 2019 13:30:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=AurvGG5md8kdmEphcGq2SiHYTXdU1Fp3TGMe3JSDOo0=;
-        b=ponl8/TKF4625A5i4nwix1bf/BKuWpdnWdsbj1AYGUJeoO6YwVASh4cXNfVx9IvaZa
-         CFwxikzqVVjimctDR05UE41qDDK4m4UYGGq6lT/dI8Ixp9oxQCdYqc2Z3XtJrBBoXrBq
-         umOejNZ+ajnJrFU8/luWxLTc7Lm3AgFpFjiX5f8hfTa03/nmo8RpqMAR3V/rc21lr+pO
-         P0+G+E4MVXjXkkNwPVaW1x6EO7L4vXqTBB1608iq6Bbm2erdxjqToEzmht7mQ7XHe7Ki
-         LsXMlWNkp0G6rLPcPPR+KhweE4x8FfhIUl4x1cZTqJy/9LML7BZbbD8ApalUlsrWEJMI
-         TxRg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=AurvGG5md8kdmEphcGq2SiHYTXdU1Fp3TGMe3JSDOo0=;
-        b=hmaoyJeeNEhOBOKwg9knm4EQnvki0SP+Cww6MkRFwddDnPnw30mE9gLX2kDBZuL4No
-         mMDyxpoY+8HQgnUxrWE46yVVXHK02+62v53rOPwFCimspnFtaNesk22Mm30tTlq5BMKV
-         S5LoDSd7/DsNMPCWA2Ki7TVeRQqbe2mvWjJlLZ8a8H4C3hCzdtX4k9Gvq+QdTnduLXdf
-         jU+4FWV9qyTMkGvKa/1X37yzNoyFBTMvp2z+uHNvQLXQ4aFjyumXNbzwSYqKHbAaEbu9
-         OYnGtRWMmSSCsaIUOXBfbKuFcdTA4UVIXUmZh71ZPMVS4tFrNNSwQ5H1Nuu+E4iu5OsF
-         wKJw==
-X-Gm-Message-State: APjAAAWo8hlOEMfzT7Pbw05EyYd3W7tF0awUE8K8PzyTlBbrmdZW4cPd
-        iLWE8GGv8Axb3NPIN5qX3kk=
-X-Google-Smtp-Source: APXvYqzw+5pIEwdgx1vf8nomOEwKyVQrAuLI6zJPGXYa+IhlGCCOm1m2SixssVwluHArEdFBBF2Wxg==
-X-Received: by 2002:ac8:1a39:: with SMTP id v54mr83461557qtj.21.1560544236029;
-        Fri, 14 Jun 2019 13:30:36 -0700 (PDT)
-Received: from localhost ([2620:10d:c091:480::6bab])
-        by smtp.gmail.com with ESMTPSA id e8sm2215252qkn.95.2019.06.14.13.30.35
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 14 Jun 2019 13:30:35 -0700 (PDT)
-Date:   Fri, 14 Jun 2019 13:30:33 -0700
-From:   Tejun Heo <tj@kernel.org>
-To:     Jonathan Corbet <corbet@lwn.net>
-Cc:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab@infradead.org>,
-        linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        Jens Axboe <axboe@kernel.dk>, Li Zefan <lizefan@huawei.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>, linux-block@vger.kernel.org,
-        cgroups@vger.kernel.org, netdev@vger.kernel.org,
-        bpf@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: Re: [PATCH v4 05/28] docs: cgroup-v1: convert docs to ReST and
- rename to *.rst
-Message-ID: <20190614203033.GD657710@devbig004.ftw2.facebook.com>
-References: <cover.1560361364.git.mchehab+samsung@kernel.org>
- <c1dd623359f44f05863456b8bceba0d8f3e42f38.1560361364.git.mchehab+samsung@kernel.org>
- <20190614141401.48bfb266@lwn.net>
+        id S1728217AbfFNUcH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 16:32:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54486 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727906AbfFNUar (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Jun 2019 16:30:47 -0400
+Received: from sasha-vm.mshome.net (unknown [131.107.159.134])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8A3F02184B;
+        Fri, 14 Jun 2019 20:30:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1560544246;
+        bh=BHDdNrpsIq8jeknUsZ5Uj2PKfzn0wluPDnaSJXxsYpc=;
+        h=From:To:Cc:Subject:Date:From;
+        b=UaiKXMmleVXEUhgYrsSIHYQTFjOzfPTCha5/4ioPr9PE1DL0ob4Dd7Ddzng7qIJmE
+         kK4Vp3TVbd+G5N0JBlxOvSg3ulRF+B3xoarNCEyQSvB44cUAiLK9A5yPDEphggRGSu
+         US6/r1+2eeeBS3ZslcANrJjghxuKZH0ZVTfujTvQ=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     YueHaibing <yuehaibing@huawei.com>, Hulk Robot <hulkci@huawei.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.4 01/10] parport: Fix mem leak in parport_register_dev_model
+Date:   Fri, 14 Jun 2019 16:30:37 -0400
+Message-Id: <20190614203046.28077-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190614141401.48bfb266@lwn.net>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 14, 2019 at 02:14:01PM -0600, Jonathan Corbet wrote:
-> On Wed, 12 Jun 2019 14:52:41 -0300
-> Mauro Carvalho Chehab <mchehab+samsung@kernel.org> wrote:
-> 
-> > Convert the cgroup-v1 files to ReST format, in order to
-> > allow a later addition to the admin-guide.
-> > 
-> > The conversion is actually:
-> >   - add blank lines and identation in order to identify paragraphs;
-> >   - fix tables markups;
-> >   - add some lists markups;
-> >   - mark literal blocks;
-> >   - adjust title markups.
-> > 
-> > At its new index.rst, let's add a :orphan: while this is not linked to
-> > the main index.rst file, in order to avoid build warnings.
-> > 
-> > Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-> > Acked-by: Tejun Heo <tj@kernel.org>
-> 
-> This one, too, has linux-next stuff that keeps it from applying to
-> docs-next.  Tejun, would you like to carry it on top of your work?
+From: YueHaibing <yuehaibing@huawei.com>
 
-Applied to cgroup/for-5.3.
+[ Upstream commit 1c7ebeabc9e5ee12e42075a597de40fdb9059530 ]
 
-Thanks.
+BUG: memory leak
+unreferenced object 0xffff8881df48cda0 (size 16):
+  comm "syz-executor.0", pid 5077, jiffies 4295994670 (age 22.280s)
+  hex dump (first 16 bytes):
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+  backtrace:
+    [<00000000d2d0d5fe>] parport_register_dev_model+0x141/0x6e0 [parport]
+    [<00000000782f6dab>] 0xffffffffc15d1196
+    [<00000000d2ca6ae4>] platform_drv_probe+0x7e/0x100
+    [<00000000628c2a94>] really_probe+0x342/0x4d0
+    [<000000006874f5da>] driver_probe_device+0x8c/0x170
+    [<00000000424de37a>] __device_attach_driver+0xda/0x100
+    [<000000002acab09a>] bus_for_each_drv+0xfe/0x170
+    [<000000003d9e5f31>] __device_attach+0x190/0x230
+    [<0000000035d32f80>] bus_probe_device+0x123/0x140
+    [<00000000a05ba627>] device_add+0x7cc/0xce0
+    [<000000003f7560bf>] platform_device_add+0x230/0x3c0
+    [<000000002a0be07d>] 0xffffffffc15d0949
+    [<000000007361d8d2>] port_check+0x3b/0x50 [parport]
+    [<000000004d67200f>] bus_for_each_dev+0x115/0x180
+    [<000000003ccfd11c>] __parport_register_driver+0x1f0/0x210 [parport]
+    [<00000000987f06fc>] 0xffffffffc15d803e
 
+After commit 4e5a74f1db8d ("parport: Revert "parport: fix
+memory leak""), free_pardevice do not free par_dev->state,
+we should free it in error path of parport_register_dev_model
+before return.
+
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Fixes: 4e5a74f1db8d ("parport: Revert "parport: fix memory leak"")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/parport/share.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/parport/share.c b/drivers/parport/share.c
+index 754f21fd9768..f26af0214ab3 100644
+--- a/drivers/parport/share.c
++++ b/drivers/parport/share.c
+@@ -892,6 +892,7 @@ parport_register_dev_model(struct parport *port, const char *name,
+ 	par_dev->devmodel = true;
+ 	ret = device_register(&par_dev->dev);
+ 	if (ret) {
++		kfree(par_dev->state);
+ 		put_device(&par_dev->dev);
+ 		goto err_put_port;
+ 	}
+@@ -909,6 +910,7 @@ parport_register_dev_model(struct parport *port, const char *name,
+ 			spin_unlock(&port->physport->pardevice_lock);
+ 			pr_debug("%s: cannot grant exclusive access for device %s\n",
+ 				 port->name, name);
++			kfree(par_dev->state);
+ 			device_unregister(&par_dev->dev);
+ 			goto err_put_port;
+ 		}
 -- 
-tejun
+2.20.1
+
