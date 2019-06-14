@@ -2,76 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 73DAA451F9
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 04:41:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B9AED45200
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 04:52:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725889AbfFNCla (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 22:41:30 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:33096 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725765AbfFNCl3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 22:41:29 -0400
-Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 78812A7D564B635DBDEA;
-        Fri, 14 Jun 2019 10:41:27 +0800 (CST)
-Received: from localhost.localdomain.localdomain (10.175.113.25) by
- DGGEMS401-HUB.china.huawei.com (10.3.19.201) with Microsoft SMTP Server id
- 14.3.439.0; Fri, 14 Jun 2019 10:41:21 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     Karen Xie <kxie@chelsio.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        Varun Prakash <varun@chelsio.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-CC:     YueHaibing <yuehaibing@huawei.com>, <linux-scsi@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH -next] scsi: cxgb4i: remove set but not used variable 'ppmax'
-Date:   Fri, 14 Jun 2019 02:48:56 +0000
-Message-ID: <20190614024856.115652-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.20.1
+        id S1725906AbfFNCuD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 22:50:03 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:41606 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725778AbfFNCuC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 22:50:02 -0400
+Received: by mail-pf1-f195.google.com with SMTP id m30so457368pff.8
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2019 19:50:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=Gt/SvG7yRtKmiEMzK1FJXFm1wfYI/ZfBKJY7bniNfw0=;
+        b=t69ygudK4onHNkRftxENnMyaFh8fdIivsMy6XkYJOsbAxe53KcP8W2UWVupaCBHCqJ
+         QWBO8UUP6jES+xjT2YwaT/YuqZKI92fYIfkmq425dclZ3WogxMlUeEvZviEmVBSU/w0n
+         XFyvkrSI/QSLaDq+ZYD//QUBdFTf0J0uuk/fFfbRsDtDwo1D/YtHrepuNWAt6JxdgH9H
+         /sroemESdRdVmnX2ImmUMmjBkYo9nbJ26Sfdes4gbBX+BGwbq0+TsCAA6RHlabYz6Ymh
+         sbzzpOqyPTNXNhBu4aBps0QVvR6p2sn3sdrxaLIUpOMkR6r9dabYNjAgPmpRdEE+u1X7
+         4CHg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=Gt/SvG7yRtKmiEMzK1FJXFm1wfYI/ZfBKJY7bniNfw0=;
+        b=psRXvSJi9gV71+P9QUivsTo8Ayar3HLxkt2i1VwMnf/9YwUi/DHF2+6ADAJRDSoczK
+         A2gRcBQwd9vhrGqJFl2ca62H/UneAKl11YiipWmV3FzE9DvRyFvtgq4rwhGyvj0x3YYK
+         tYk327zF+ZcIySkBUM0DNlI44Y8OA/EXHMHeCmryXCBZbhFCqgUW6PXRLu8VkyN9B6Gg
+         lKjjN2o4/MMRAH+KfqO21H2BwCZCrk9hH5VH/8RS9ABO5jmMnzqBzotpJs4CuSr4LdS7
+         dKlHcPwpA4HS7M5ejioTS15vToIAbTMNCqBOm8yjTMgp9tCYGDzlH/C8yqx7lqYyftun
+         b9lg==
+X-Gm-Message-State: APjAAAUo6VJuVbRBsJMXUNI3ESU/AH8DJgphfaUfAXLlopCsaGxFAg9q
+        9B8QqtW1f7q0qJy1IjwToZU=
+X-Google-Smtp-Source: APXvYqwUelCjdI/iBziKOHq8go5RgcYaj2UuHVhGitmfIpf2x4+NIcK1Gd/L6mXFGf10Am2WanFStA==
+X-Received: by 2002:a63:ec42:: with SMTP id r2mr34433065pgj.262.1560480602071;
+        Thu, 13 Jun 2019 19:50:02 -0700 (PDT)
+Received: from localhost ([175.223.34.99])
+        by smtp.gmail.com with ESMTPSA id a22sm1027270pfn.173.2019.06.13.19.50.00
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Thu, 13 Jun 2019 19:50:01 -0700 (PDT)
+Date:   Fri, 14 Jun 2019 11:49:57 +0900
+From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+To:     Ben Skeggs <bskeggs@redhat.com>, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>
+Cc:     dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org
+Subject: nouveau: DRM: GPU lockup - switching to software fbcon
+Message-ID: <20190614024957.GA9645@jagdpanzerIV>
 MIME-Version: 1.0
-Content-Type:   text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
-X-Originating-IP: [10.175.113.25]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.12.0 (2019-05-25)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fixes gcc '-Wunused-but-set-variable' warning:
+5.2.0-rc4-next-20190613
 
-drivers/scsi/cxgbi/cxgb4i/cxgb4i.c: In function 'cxgb4i_ddp_init':
-drivers/scsi/cxgbi/cxgb4i/cxgb4i.c:2072:15: warning:
- variable 'ppmax' set but not used [-Wunused-but-set-variable]
+dmesg
 
-It's not used since commit a248384e6420 ("cxgb4/libcxgb/cxgb4i/cxgbit:
-enable eDRAM page pods for iSCSI")
+ nouveau 0000:01:00.0: DRM: GPU lockup - switching to software fbcon
+ nouveau 0000:01:00.0: fifo: SCHED_ERROR 0a [CTXSW_TIMEOUT]
+ nouveau 0000:01:00.0: fifo: runlist 0: scheduled for recovery
+ nouveau 0000:01:00.0: fifo: channel 5: killed
+ nouveau 0000:01:00.0: fifo: engine 6: scheduled for recovery
+ nouveau 0000:01:00.0: fifo: engine 0: scheduled for recovery
+ nouveau 0000:01:00.0: firefox[476]: channel 5 killed!
+ nouveau 0000:01:00.0: firefox[476]: failed to idle channel 5 [firefox[476]]
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- drivers/scsi/cxgbi/cxgb4i/cxgb4i.c | 2 --
- 1 file changed, 2 deletions(-)
+It lockups several times a day. Twice in just one hour today.
+Can we fix this?
 
-diff --git a/drivers/scsi/cxgbi/cxgb4i/cxgb4i.c b/drivers/scsi/cxgbi/cxgb4i/cxgb4i.c
-index 66d6e1f4b3c3..0fbb4edc4161 100644
---- a/drivers/scsi/cxgbi/cxgb4i/cxgb4i.c
-+++ b/drivers/scsi/cxgbi/cxgb4i/cxgb4i.c
-@@ -2069,7 +2069,6 @@ static int cxgb4i_ddp_init(struct cxgbi_device *cdev)
- 	struct cxgb4_lld_info *lldi = cxgbi_cdev_priv(cdev);
- 	struct net_device *ndev = cdev->ports[0];
- 	struct cxgbi_tag_format tformat;
--	unsigned int ppmax;
- 	int i, err;
- 
- 	if (!lldi->vr->iscsi.size) {
-@@ -2078,7 +2077,6 @@ static int cxgb4i_ddp_init(struct cxgbi_device *cdev)
- 	}
- 
- 	cdev->flags |= CXGBI_FLAG_USE_PPOD_OFLDQ;
--	ppmax = lldi->vr->iscsi.size >> PPOD_SIZE_SHIFT;
- 
- 	memset(&tformat, 0, sizeof(struct cxgbi_tag_format));
- 	for (i = 0; i < 4; i++)
-
-
-
+	-ss
