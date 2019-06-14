@@ -2,105 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AE8DA45E63
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 15:38:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EE44B45E71
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 15:40:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728262AbfFNNiH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 09:38:07 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:34517 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728223AbfFNNiH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 09:38:07 -0400
-Received: by mail-qt1-f193.google.com with SMTP id m29so2483254qtu.1
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2019 06:38:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toxicpanda-com.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=5t38AdsOWv2f4Esw1W+MkepSRzr1WITdyAORH+5HjYw=;
-        b=RDZZZjUcgP1IQISh2OS0tjJq7h2lcyaLEZF4ZlCEaiFMBb9xylkmRKTOFdBqzT4CmS
-         pPUNoWCPpe3HFF/pMsbtof/jbvEp5RIksEwku+dWkHcrlYJ26kD9Dqq5vGTtWz2qLZsm
-         VigUHIj4paQ6Tly6gHAio3+6dTylmk0AM/qW0Xa+828w0olfCI3nAOPWG3ZBTFlUUwjr
-         9ow0YUAkq1hZQxV/aVZ/hWkdJ/YlB0EkCruIxzq+fKMxvsU6C/q0Q9meiBgvgag9IWlF
-         nccl5LY9zCXLLTksQBIci7LGgigiZ7vLU/6wZgWVN3V/czpvgZ2WGFhaN6Pw1JJ3t5FP
-         dI4w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=5t38AdsOWv2f4Esw1W+MkepSRzr1WITdyAORH+5HjYw=;
-        b=A5WNMmmfDMVPT4hHRs2nmO9Jl/ASCaQYw75tuIXb9Jr0nPOUUGydgnh2hFY8KclZ9m
-         bW3R5qOgE4UG26IVNO9btrOVwblZt9B5cQs/ItbA8JlsFuKz+XO+w1EqmMX8NnVGkHfj
-         gS0Qs51x1nmZTYYppiteEjsFUeDmh6pbKBrKxbAqwMi/OGkAD088uv55fjT0pj6d7+BA
-         W1Z/Jcvw8+NtNCQJzh2RSiVN/H1mNBVO/3osmpD0HeZWV97/c7QuNh0rFsZk8Nm0jAxz
-         dyPIrtT8lbkBtoftiSbweBfQewTDfPssDvpu1Lhgw45ePkcRpvh8S6IXFzyyqrVx5N9d
-         h/Qw==
-X-Gm-Message-State: APjAAAX6YxEhl99FM2vImDtoynFWeOMpbQOoFPiLZUmvA3PvYNEdviq7
-        pWx1XDZRb1LfCceig28DZHRy5A==
-X-Google-Smtp-Source: APXvYqzNmd+0+Nn6Q5ZrbPLFXLvgSb2BGcTgyraQHFgk83zTbcB39HZrH2xAznSe9nH6+xMmLCqDLg==
-X-Received: by 2002:ac8:2fa8:: with SMTP id l37mr78660838qta.358.1560519486142;
-        Fri, 14 Jun 2019 06:38:06 -0700 (PDT)
-Received: from localhost ([2620:10d:c091:480::a658])
-        by smtp.gmail.com with ESMTPSA id t67sm1449588qkf.34.2019.06.14.06.38.05
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 14 Jun 2019 06:38:05 -0700 (PDT)
-Date:   Fri, 14 Jun 2019 09:38:04 -0400
-From:   Josef Bacik <josef@toxicpanda.com>
-To:     Wouter Verhelst <w@uter.be>
-Cc:     Josef Bacik <josef@toxicpanda.com>,
-        Roman Stratiienko <roman.stratiienko@globallogic.com>,
-        linux-kernel@vger.kernel.org, nbd@other.debian.org,
-        Aleksandr Bulyshchenko <A.Bulyshchenko@globallogic.com>,
-        linux-block@vger.kernel.org, axboe@kernel.dkn.org
-Subject: Re: [PATCH 2/2] nbd: add support for nbd as root device
-Message-ID: <20190614133802.vg3w3sxpid2fpbp4@MacBook-Pro-91.local>
-References: <20190612163144.18486-1-roman.stratiienko@globallogic.com>
- <20190612163144.18486-2-roman.stratiienko@globallogic.com>
- <20190613135241.aghcrrz7rg2au3bw@MacBook-Pro-91.local>
- <CAODwZ7v=RSsmVj5GjcvGn2dn+ejLRBHZ79x-+S9DrX4GoXuVaQ@mail.gmail.com>
- <20190613145535.tdesq3y2xy6ycpw7@MacBook-Pro-91.local>
- <20190614103343.GB11340@grep.be>
+        id S1728320AbfFNNip (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 09:38:45 -0400
+Received: from mga14.intel.com ([192.55.52.115]:37599 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727808AbfFNNip (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Jun 2019 09:38:45 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Jun 2019 06:38:44 -0700
+X-ExtLoop1: 1
+Received: from smile.fi.intel.com (HELO smile) ([10.237.68.145])
+  by orsmga003.jf.intel.com with ESMTP; 14 Jun 2019 06:38:41 -0700
+Received: from andy by smile with local (Exim 4.92)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1hbmPg-0007Ry-BM; Fri, 14 Jun 2019 16:38:40 +0300
+Date:   Fri, 14 Jun 2019 16:38:40 +0300
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Markus Elfring <Markus.Elfring@web.de>,
+        Jack Ping CHNG <jack.ping.chng@linux.intel.com>
+Cc:     kernel-janitors@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Enrico Weigelt <lkml@metux.net>,
+        Himanshu Jha <himanshujha199640@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] drivers: Provide devm_platform_ioremap_resource_byname()
+Message-ID: <20190614133840.GN9224@smile.fi.intel.com>
+References: <39e46643-d799-94b7-4aa5-d6d99d738f99@web.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20190614103343.GB11340@grep.be>
-User-Agent: NeoMutt/20180716
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <39e46643-d799-94b7-4aa5-d6d99d738f99@web.de>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 14, 2019 at 12:33:43PM +0200, Wouter Verhelst wrote:
-> On Thu, Jun 13, 2019 at 10:55:36AM -0400, Josef Bacik wrote:
-> > Also I mean that there are a bunch of different nbd servers out there.  We have
-> > our own here at Facebook, qemu has one, IIRC there's a ceph one.
++Cc: Jack Ping, who did internally the same
+
+On Fri, Jun 14, 2019 at 03:26:25PM +0200, Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Fri, 14 Jun 2019 15:15:14 +0200
 > 
-> I can't claim to know about the Facebook one of course, but the qemu one
-> uses the same handshake protocol as anyone else. The ceph ones that I've
-> seen do too (but there are various implementations of that, so...).
+> The functions “platform_get_resource_byname” and “devm_ioremap_resource”
+> are called together in 181 source files.
+> This implementation detail can be determined also with the help
+> of the semantic patch language (Coccinelle software).
+> 
+> Wrap these two calls into another helper function.
+> Thus a local variable does not need to be declared for a resource
+> structure pointer before and a redundant argument can be omitted
+> for the resource type.
+
+This one makes sense.
+Though I'm not sure Greg will see your message.
+
+Rafael, maybe you can apply this one?
+
+FWIW,
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+>  drivers/base/platform.c | 18 ++++++++++++++++++
+>  1 file changed, 18 insertions(+)
+> 
+> diff --git a/drivers/base/platform.c b/drivers/base/platform.c
+> index 4d1729853d1a..c1f19a479dd7 100644
+> --- a/drivers/base/platform.c
+> +++ b/drivers/base/platform.c
+> @@ -97,6 +97,24 @@ void __iomem *devm_platform_ioremap_resource(struct platform_device *pdev,
+>  	return devm_ioremap_resource(&pdev->dev, res);
+>  }
+>  EXPORT_SYMBOL_GPL(devm_platform_ioremap_resource);
+> +
+> +/**
+> + * devm_platform_ioremap_resource_byname
+> + * Call devm_ioremap_resource() for a platform device
+> + *
+> + * @pdev: platform device to use both for memory resource lookup as well as
+> + *        resource management
+> + * @name: resource name
+> + */
+> +void __iomem *devm_platform_ioremap_resource_byname(struct platform_device *pdev,
+> +						    const char *name)
+> +{
+> +	struct resource *res;
+> +
+> +	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, name);
+> +	return devm_ioremap_resource(&pdev->dev, res);
+> +}
+> +EXPORT_SYMBOL_GPL(devm_platform_ioremap_resource_byname);
+>  #endif /* CONFIG_HAS_IOMEM */
+> 
+>  /**
+> --
+> 2.22.0
 > 
 
-Ah, for some reason I remembered Qemu's being distinctly different.
+-- 
+With Best Regards,
+Andy Shevchenko
 
-I suppose if most of the main ones people use are using the same handshake
-protocol that makes it more compelling.  But there'd have to be a really good
-reason why a initramfs isn't viable, and so far I haven't heard a solid reason
-that's not an option other than "it's hard and we don't want to do it."
 
-> > They all have their own connection protocols.  The beauty of NBD is
-> > that it doesn't have to know about that part, it just does the block
-> > device part, and I'd really rather leave it that way.  Thanks,
-> 
-> Sure.
-> 
-> OTOH, there is definitely also a benefit to using the same handshake
-> protocol everywhere, for interoperability reasons.
-> 
-
-Sure, Facebook's isn't different because we hate the protocol, we just use
-Thrift for all of our services, and thus it makes sense for us to use thrift for
-the client connection stuff to make it easy on all the apps that use disagg.
-Thanks,
-
-Josef
