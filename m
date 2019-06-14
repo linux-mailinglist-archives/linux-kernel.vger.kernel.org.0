@@ -2,113 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E37A460EB
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 16:36:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8CB28460F4
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 16:36:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728514AbfFNOen (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 10:34:43 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:44208 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728208AbfFNOen (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 10:34:43 -0400
-Received: by mail-pl1-f195.google.com with SMTP id t7so1091626plr.11;
-        Fri, 14 Jun 2019 07:34:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=hQ/2TCsgHd63qdgIeQy8ojRYEa5SdLlsBJg9pFxbgEs=;
-        b=da6OKv1AnE6d1/z1ZGsq0j5uJ1whVPCoD3uYZVLLWfq9nZMg8Bt9jtBI6EREwpRdzq
-         J4hhbpNC9nLg9fnKfGAYoNwTBxpOowltBZnDS6tyAsPOAwezJTi5TdhkXntxkA/mRLeq
-         wE77tHiEGlS0c1mM3lVr1Wj4i5B8WPZQFaehdndEC2SW7iqcJEKrMwcukU+SPy7Cyv81
-         tpDau0+IoHSfGyWZWC6DGUAc3/xseYVon1P67Mjgpx1OuqoyuDuKypEwmJC8XNpoSBoT
-         tcWKjJCQXvNVHTTXkQcrOjI7sUsXUGTbtWB09xZmtZnrgtXAJ6Es0f36340+AaxWf2nt
-         IEVg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=hQ/2TCsgHd63qdgIeQy8ojRYEa5SdLlsBJg9pFxbgEs=;
-        b=nKUjYJIBLcNRlKSQ5Jq3aGcFvl1tueBRKA2M/I+Rgd/y1+IrYRuEZGED97CHIHDL3B
-         J8+V8/FeB/T+vkg0a/MA27iDTDL3lVe7reW1GNAglwIISCKnqlElLtJAm974N6YekMqW
-         hN03r2oFkN+416KslySNWCVznhzEtoldemo5SuMzobfMZV0BpbpfwhL6Bw3qbcw6r9Td
-         4IWqt2pT0GiCoP+dypUNjmvcPlO6R1xhXiwLB1iAuGopYnL19hVe4iRPkAfKMH/ZDBrl
-         YA3OprTCkWiK5qhqhjpmQ3IO+iElWqlcGIwFlcQ8B+00/1aaTkZnHIHfcYo/02e3fEpd
-         bRRw==
-X-Gm-Message-State: APjAAAVkT1q0E3Cp0Ci6bKi05SsJHts96nlBl/y52ost/EwkM7d4LiDp
-        mZSA0OD+qQ+UxvAQ9dsfaMmSAz6j
-X-Google-Smtp-Source: APXvYqzNduItYPKPOV2+opTZ/P0fS0QMPWDWCD9fy67Rk/gk9whLzREGuPsnI/NXjZ2Ja8qZwrUlvQ==
-X-Received: by 2002:a17:902:a516:: with SMTP id s22mr54018004plq.178.1560522882345;
-        Fri, 14 Jun 2019 07:34:42 -0700 (PDT)
-Received: from [192.168.86.235] (c-73-241-150-70.hsd1.ca.comcast.net. [73.241.150.70])
-        by smtp.gmail.com with ESMTPSA id e26sm3196627pfn.94.2019.06.14.07.34.40
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Fri, 14 Jun 2019 07:34:41 -0700 (PDT)
-Subject: Re: [PATCH net v2] tcp: avoid creating multiple req socks with the
- same tuples
-To:     Eric Dumazet <edumazet@google.com>, maowenan <maowenan@huawei.com>
-Cc:     David Miller <davem@davemloft.net>,
-        netdev <netdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <20190612035715.166676-1-maowenan@huawei.com>
- <CANn89iJH6ZBH774SNrd2sUd_A5OBniiUVX=HBq6H4PXEW4cjwQ@mail.gmail.com>
- <6de5d6d8-e481-8235-193e-b12e7f511030@huawei.com>
- <a674e90e-d06f-cb67-604f-30cb736d7c72@huawei.com>
- <6aa69ab5-ed81-6a7f-2b2b-214e44ff0ada@gmail.com>
- <52025f94-04d3-2a44-11cd-7aa66ebc7e27@huawei.com>
- <CANn89iKzfvZqZRo1pEwqW11DQk1YOPkoAR4tLbjRG9qbKOYEMw@mail.gmail.com>
- <7d0f5a21-717c-74ee-18ad-fc0432dfbe33@huawei.com>
- <CANn89iJW0DHBg=RKgdLq1r33THL15UO3c2n4MkR6DdD7-QwP1w@mail.gmail.com>
-From:   Eric Dumazet <eric.dumazet@gmail.com>
-Message-ID: <0202f817-bd59-918e-96d5-ddf692f5e140@gmail.com>
-Date:   Fri, 14 Jun 2019 07:34:37 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        id S1728566AbfFNOgk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 10:36:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35022 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728201AbfFNOgk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Jun 2019 10:36:40 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5B3C42064A;
+        Fri, 14 Jun 2019 14:36:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1560522998;
+        bh=LMq/Sb352anykVPMDvbfaZbQVk5PdaiQxrm+VWdoXPA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=VXXdGL8qWGjsbWS38tMiiBeKXuvQtjJMM8YxL6EZvTVr7+IshxL8aWkak4YPBdy7I
+         xlaNFx0B10KcjATD+ixICuTu95BuX7s0tiN4HUfFvGxKqOkjY91wsoRYYTne3DSpXa
+         of+fGHu5khkS/PMYStOw53xAKyVZ/wybwY3YdyJE=
+Date:   Fri, 14 Jun 2019 16:36:36 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     "Rafael J. Wysocki" <rafael@kernel.org>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Joerg Roedel <joro@8bytes.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh@kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        linux-gpio@vger.kernel.org,
+        "open list:AMD IOMMU (AMD-VI)" <iommu@lists.linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] driver: core: Allow subsystems to continue deferring
+ probe
+Message-ID: <20190614143636.GB11550@kroah.com>
+References: <20190613170011.9647-1-thierry.reding@gmail.com>
+ <20190614091058.GA25912@kroah.com>
+ <20190614093856.GC15526@ulmo>
+ <CAJZ5v0jeH3x+kfAH9D5H6507-iBdVRhAfEKb-NOdhiutwR9O_Q@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <CANn89iJW0DHBg=RKgdLq1r33THL15UO3c2n4MkR6DdD7-QwP1w@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJZ5v0jeH3x+kfAH9D5H6507-iBdVRhAfEKb-NOdhiutwR9O_Q@mail.gmail.com>
+User-Agent: Mutt/1.12.0 (2019-05-25)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 6/14/19 7:25 AM, Eric Dumazet wrote:
-> On Fri, Jun 14, 2019 at 7:04 AM maowenan <maowenan@huawei.com> wrote:
->> I agree that this is a special case.
->> I propose one point about the sequence of synack, if two synack with two different
->> sequence since the time elapse 64ns, this issue disappear.
->>
->> tcp_conn_request->tcp_v4_init_seq->secure_tcp_seq->seq_scale
->> static u32 seq_scale(u32 seq)
->> {
->>         /*
->>          *      As close as possible to RFC 793, which
->>          *      suggests using a 250 kHz clock.
->>          *      Further reading shows this assumes 2 Mb/s networks.
->>          *      For 10 Mb/s Ethernet, a 1 MHz clock is appropriate.
->>          *      For 10 Gb/s Ethernet, a 1 GHz clock should be ok, but
->>          *      we also need to limit the resolution so that the u32 seq
->>          *      overlaps less than one time per MSL (2 minutes).
->>          *      Choosing a clock of 64 ns period is OK. (period of 274 s)
->>          */
->>         return seq + (ktime_get_real_ns() >> 6);
->> }
->>
->> So if the long delay larger than 64ns, the seq is difference.
+On Fri, Jun 14, 2019 at 12:10:10PM +0200, Rafael J. Wysocki wrote:
+> On Fri, Jun 14, 2019 at 11:39 AM Thierry Reding
+> <thierry.reding@gmail.com> wrote:
+> >
+> > On Fri, Jun 14, 2019 at 11:10:58AM +0200, Greg Kroah-Hartman wrote:
+> > > On Thu, Jun 13, 2019 at 07:00:11PM +0200, Thierry Reding wrote:
+> > > > From: Thierry Reding <treding@nvidia.com>
+> > > >
 > 
-> The core issue has nothing to do with syncookies.
+> [cut]
 > 
-> Are you sure you really understand this stack ?
+> >
+> > To avoid further back and forth, what exactly is it that you would have
+> > me do? That is, what do you consider to be the correct way to do this?
+> >
+> > Would you prefer me to add another function with a different name that
+> > reimplements the functionality only with the exception? Something along
+> > the lines of:
+> >
+> >         int driver_deferred_probe_check_state_continue(struct device *dev)
+> >         {
+> >                 int ret;
+> >
+> >                 ret = driver_deferred_probe_check_state(dev);
+> >                 if (ret == -ENODEV)
+> >                         return -EPROBE_DEFER;
+> >
+> >                 return ret;
+> >         }
+> >
+> > ? I'd need to split that up some more to avoid the warning that the
+> > inner function prints before returning -ENODEV, but that's a minor
+> > detail. Would that API be more to your liking?
 > 
+> Well, why don't you do
+> 
+> static int deferred_probe_check_state_internal(struct device *dev)
+> {
+>         if (!initcalls_done)
+>                 return -EPROBE_DEFER;
+> 
+>         if (!deferred_probe_timeout) {
+>                 dev_WARN(dev, "deferred probe timeout, ignoring dependency");
+>                 return -ETIMEDOUT;
+>         }
+> 
+>         return 0;
+> }
+> 
+> int driver_deferred_probe_check_state(struct device *dev)
+> {
+>         int ret = deferred_probe_check_state_internal(dev);
+> 
+>         if (ret)
+>                  return ret;
+> 
+>         dev_warn(dev, "ignoring dependency for device, assuming no driver");
+>         return -ENODEV;
+> }
+> 
+> int driver_deferred_probe_check_state_continue(struct device *dev)
+> {
+>         int ret = deferred_probe_check_state_internal(dev);
+> 
+>         if (ret)
+>                  return ret;
+> 
+>         return -EPROBE_DEFER;
+> }
 
-Oh well, maybe I should not have answered before my breakfast/coffee.
+Yes, that's much more sane.  Self-decribing apis are the key here, I did
+not want a boolean flag, or any other flag, as part of the public api as
+they do not describe what the call does at all.
 
-What I meant to say is that we do not want to fix this problem by working around
-the issue you noticed (which leads to RST packets)
+thanks,
 
+greg k-h
