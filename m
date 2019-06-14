@@ -2,261 +2,255 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4AC7545C2D
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 14:09:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 94C3245C6B
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 14:14:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727708AbfFNMJS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 08:09:18 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:18573 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727378AbfFNMJR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 08:09:17 -0400
-Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 7F0193513AEB5FA10ADC;
-        Fri, 14 Jun 2019 20:09:15 +0800 (CST)
-Received: from huawei.com (10.90.53.225) by DGGEMS413-HUB.china.huawei.com
- (10.3.19.213) with Microsoft SMTP Server id 14.3.439.0; Fri, 14 Jun 2019
- 20:09:05 +0800
-From:   <chengzhihao1@huawei.com>
-To:     <david.oberhollenzer@sigma-star.at>, <richard@nod.at>,
-        <boris.brezillon@bootlin.com>, <david@sigma-star.at>,
-        <artem.bityutskiy@linux.intel.com>, <yi.zhang@huawei.com>
-CC:     <linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <chengzhihao1@huawei.com>
-Subject: [PATCH mtd-utils] ubi-tests: ubi_mkvol_request: Fully initialize 'struct ubi_mkvol_request req'
-Date:   Fri, 14 Jun 2019 20:14:38 +0800
-Message-ID: <1560514478-54276-1-git-send-email-chengzhihao1@huawei.com>
-X-Mailer: git-send-email 2.7.4
+        id S1727845AbfFNMOb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 08:14:31 -0400
+Received: from foss.arm.com ([217.140.110.172]:60702 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727544AbfFNMOb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Jun 2019 08:14:31 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7972B2B;
+        Fri, 14 Jun 2019 05:14:30 -0700 (PDT)
+Received: from [192.168.1.18] (unknown [172.31.20.19])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id F11DD3F246;
+        Fri, 14 Jun 2019 05:14:27 -0700 (PDT)
+Subject: Re: [PATCH v6 03/19] kernel: Unify update_vsyscall implementation
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org,
+        linux-kselftest@vger.kernel.org,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Russell King <linux@armlinux.org.uk>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Mark Salyzyn <salyzyn@android.com>,
+        Peter Collingbourne <pcc@google.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Dmitry Safonov <0x7f454c46@gmail.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Huw Davies <huw@codeweavers.com>
+References: <20190530141531.43462-1-vincenzo.frascino@arm.com>
+ <20190530141531.43462-4-vincenzo.frascino@arm.com>
+ <alpine.DEB.2.21.1906141307430.1722@nanos.tec.linutronix.de>
+From:   Vincenzo Frascino <vincenzo.frascino@arm.com>
+Message-ID: <a69e48a2-575d-255c-2653-d3e99b7ba760@arm.com>
+Date:   Fri, 14 Jun 2019 13:15:08 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.90.53.225]
-X-CFilter-Loop: Reflected
+In-Reply-To: <alpine.DEB.2.21.1906141307430.1722@nanos.tec.linutronix.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Zhihao Cheng <chengzhihao1@huawei.com>
+Hi Thomas,
 
-'struct ubi_mkvol_request req' is one parameter of the function 'ubi_mkvol'
-, this parameter will be passed to kernel and then be checked. It acts as a
-local variable in many ubi tests, such as io_basic, io_read, mkvol_bad,
-mkvol_basic, etc.
+On 6/14/19 12:10 PM, Thomas Gleixner wrote:
+> On Thu, 30 May 2019, Vincenzo Frascino wrote:
+>> +
+>> +	if (__arch_use_vsyscall(vdata)) {
+>> +		vdata[CS_HRES_COARSE].cycle_last	=
+>> +						tk->tkr_mono.cycle_last;
+>> +		vdata[CS_HRES_COARSE].mask		=
+>> +						tk->tkr_mono.mask;
+>> +		vdata[CS_HRES_COARSE].mult		=
+>> +						tk->tkr_mono.mult;
+> 
+> These line breaks make it really hard to read. Can you fold in the patch
+> below please?
+> 
 
-After commit c355aa465fce ("ubi: expose the volume CRC check skip flag") in
-linux-stable, 'struct ubi_mkvol_request' supports a new configuration named
-'flags', and req.flags will be checked in kernel function
-'verify_mkvol_req'. Currently, there is no initialization for req.flags
-before 'ubi_mkvol' invoked. So, req.flags can be an arbitrary number passed
-to kernel. When we run ubi tests in qemu (x86_64, kernel image: 5.2.0-rc4),
-the following errors may occur:
+Thanks for this. I will do it in v7.
 
-  ======================================================================
-  ======================================================================
-  ======================================================================
-  Test on mtdram, fastmap enabled, VID header offset factor 1
-  ======================================================================
-  ======================================================================
-  ======================================================================
-  mtdram: 16MiB, PEB size 16KiB, fastmap enabled
-  Running mkvol_basic /dev/ubi0
-  Running mkvol_bad /dev/ubi0
-  [mkvol_bad] test_mkvol():105: ubi_mkvol failed with error 22
-  (Invalid argument), expected 28 (No space left on device)
-  [mkvol_bad] test_mkvol():105: bytes = 16060929
-  Error: mkvol_bad failed
-  FAILURE
+> Thanks,
+> 
+> 	tglx
+> 8<-----------
+> --- a/kernel/vdso/vsyscall.c
+> +++ b/kernel/vdso/vsyscall.c
+> @@ -11,6 +11,66 @@
+>  #include <vdso/helpers.h>
+>  #include <vdso/vsyscall.h>
+>  
+> +static inline void udpate_vdata(struct vdso_data *vdata, struct timekeeper *tk)
+> +{
+> +	struct vdso_timestamp *vdso_ts;
+> +	u64 nsec;
+> +
+> +	vdata[CS_HRES_COARSE].cycle_last	= tk->tkr_mono.cycle_last;
+> +	vdata[CS_HRES_COARSE].mask		= tk->tkr_mono.mask;
+> +	vdata[CS_HRES_COARSE].mult		= tk->tkr_mono.mult;
+> +	vdata[CS_HRES_COARSE].shift		= tk->tkr_mono.shift;
+> +	vdata[CS_RAW].cycle_last		= tk->tkr_raw.cycle_last;
+> +	vdata[CS_RAW].mask			= tk->tkr_raw.mask;
+> +	vdata[CS_RAW].mult			= tk->tkr_raw.mult;
+> +	vdata[CS_RAW].shift			= tk->tkr_raw.shift;
+> +
+> +	/* CLOCK_REALTIME */
+> +	vdso_ts		=  &vdata[CS_HRES_COARSE].basetime[CLOCK_REALTIME];
+> +	vdso_ts->sec	= tk->xtime_sec;
+> +	vdso_ts->nsec	= tk->tkr_mono.xtime_nsec;
+> +
+> +	/* CLOCK_MONOTONIC */
+> +	vdso_ts		= &vdata[CS_HRES_COARSE].basetime[CLOCK_MONOTONIC];
+> +	vdso_ts->sec	= tk->xtime_sec + tk->wall_to_monotonic.tv_sec;
+> +
+> +	nsec = tk->tkr_mono.xtime_nsec;
+> +	nsec += ((u64)tk->wall_to_monotonic.tv_nsec << tk->tkr_mono.shift);
+> +	while (nsec >= (((u64)NSEC_PER_SEC) << tk->tkr_mono.shift)) {
+> +		nsec -= (((u64)NSEC_PER_SEC) << tk->tkr_mono.shift);
+> +		vdso_ts->sec++;
+> +	}
+> +	vdso_ts->nsec	= nsec;
+> +
+> +	/* CLOCK_MONOTONIC_RAW */
+> +	vdso_ts		= &vdata[CS_RAW].basetime[CLOCK_MONOTONIC_RAW];
+> +	vdso_ts->sec	= tk->raw_sec;
+> +	vdso_ts->nsec	= tk->tkr_raw.xtime_nsec;
+> +
+> +	/* CLOCK_BOOTTIME */
+> +	vdso_ts		= &vdata[CS_HRES_COARSE].basetime[CLOCK_BOOTTIME];
+> +	vdso_ts->sec	= tk->xtime_sec + tk->wall_to_monotonic.tv_sec;
+> +	nsec = tk->tkr_mono.xtime_nsec;
+> +	nsec += ((u64)(tk->wall_to_monotonic.tv_nsec +
+> +		       ktime_to_ns(tk->offs_boot)) << tk->tkr_mono.shift);
+> +	while (nsec >= (((u64)NSEC_PER_SEC) << tk->tkr_mono.shift)) {
+> +		nsec -= (((u64)NSEC_PER_SEC) << tk->tkr_mono.shift);
+> +		vdso_ts->sec++;
+> +	}
+> +	vdso_ts->nsec	= nsec;
+> +
+> +	/* CLOCK_TAI */
+> +	vdso_ts		= &vdata[CS_HRES_COARSE].basetime[CLOCK_TAI];
+> +	vdso_ts->sec	= tk->xtime_sec + (s64)tk->tai_offset;
+> +	vdso_ts->nsec	= tk->tkr_mono.xtime_nsec;
+> +
+> +	/*
+> +	 * Read without the seqlock held by clock_getres().
+> +	 * Note: No need to have a second copy.
+> +	 */
+> +	WRITE_ONCE(vdata[CS_HRES_COARSE].hrtimer_res, hrtimer_resolution);
+> +}
+> +
+>  void update_vsyscall(struct timekeeper *tk)
+>  {
+>  	struct vdso_data *vdata = __arch_get_k_vdso_data();
+> @@ -32,92 +92,23 @@ void update_vsyscall(struct timekeeper *
+>  	vdata[CS_RAW].clock_mode		= __arch_get_clock_mode(tk);
+>  
+>  	/* CLOCK_REALTIME_COARSE */
+> -	vdso_ts			=
+> -			&vdata[CS_HRES_COARSE].basetime[CLOCK_REALTIME_COARSE];
+> -	vdso_ts->sec		= tk->xtime_sec;
+> -	vdso_ts->nsec		= tk->tkr_mono.xtime_nsec >> tk->tkr_mono.shift;
+> +	vdso_ts		= &vdata[CS_HRES_COARSE].basetime[CLOCK_REALTIME_COARSE];
+> +	vdso_ts->sec	= tk->xtime_sec;
+> +	vdso_ts->nsec	= tk->tkr_mono.xtime_nsec >> tk->tkr_mono.shift;
+> +
+>  	/* CLOCK_MONOTONIC_COARSE */
+> -	vdso_ts			=
+> -			&vdata[CS_HRES_COARSE].basetime[CLOCK_MONOTONIC_COARSE];
+> -	vdso_ts->sec		= tk->xtime_sec + tk->wall_to_monotonic.tv_sec;
+> -	nsec			= tk->tkr_mono.xtime_nsec >> tk->tkr_mono.shift;
+> -	nsec			= nsec + tk->wall_to_monotonic.tv_nsec;
+> +	vdso_ts		= &vdata[CS_HRES_COARSE].basetime[CLOCK_MONOTONIC_COARSE];
+> +	vdso_ts->sec	= tk->xtime_sec + tk->wall_to_monotonic.tv_sec;
+> +	nsec		= tk->tkr_mono.xtime_nsec >> tk->tkr_mono.shift;
+> +	nsec		= nsec + tk->wall_to_monotonic.tv_nsec;
+>  	while (nsec >= NSEC_PER_SEC) {
+>  		nsec = nsec - NSEC_PER_SEC;
+>  		vdso_ts->sec++;
+>  	}
+> -	vdso_ts->nsec		= nsec;
+> +	vdso_ts->nsec	= nsec;
+>  
+> -	if (__arch_use_vsyscall(vdata)) {
+> -		vdata[CS_HRES_COARSE].cycle_last	=
+> -						tk->tkr_mono.cycle_last;
+> -		vdata[CS_HRES_COARSE].mask		=
+> -						tk->tkr_mono.mask;
+> -		vdata[CS_HRES_COARSE].mult		=
+> -						tk->tkr_mono.mult;
+> -		vdata[CS_HRES_COARSE].shift		=
+> -						tk->tkr_mono.shift;
+> -		vdata[CS_RAW].cycle_last		=
+> -						tk->tkr_raw.cycle_last;
+> -		vdata[CS_RAW].mask			=
+> -						tk->tkr_raw.mask;
+> -		vdata[CS_RAW].mult			=
+> -						tk->tkr_raw.mult;
+> -		vdata[CS_RAW].shift			=
+> -						tk->tkr_raw.shift;
+> -		/* CLOCK_REALTIME */
+> -		vdso_ts			=
+> -			&vdata[CS_HRES_COARSE].basetime[CLOCK_REALTIME];
+> -		vdso_ts->sec		= tk->xtime_sec;
+> -		vdso_ts->nsec		= tk->tkr_mono.xtime_nsec;
+> -		/* CLOCK_MONOTONIC */
+> -		vdso_ts			=
+> -			&vdata[CS_HRES_COARSE].basetime[CLOCK_MONOTONIC];
+> -		vdso_ts->sec		= tk->xtime_sec +
+> -					  tk->wall_to_monotonic.tv_sec;
+> -		nsec			= tk->tkr_mono.xtime_nsec;
+> -		nsec			= nsec +
+> -					  ((u64)tk->wall_to_monotonic.tv_nsec <<
+> -					  tk->tkr_mono.shift);
+> -		while (nsec >= (((u64)NSEC_PER_SEC) << tk->tkr_mono.shift)) {
+> -			nsec = nsec -
+> -			       (((u64)NSEC_PER_SEC) << tk->tkr_mono.shift);
+> -			vdso_ts->sec++;
+> -		}
+> -		vdso_ts->nsec		= nsec;
+> -		/* CLOCK_MONOTONIC_RAW */
+> -		vdso_ts			=
+> -			&vdata[CS_RAW].basetime[CLOCK_MONOTONIC_RAW];
+> -		vdso_ts->sec		= tk->raw_sec;
+> -		vdso_ts->nsec		= tk->tkr_raw.xtime_nsec;
+> -		/* CLOCK_BOOTTIME */
+> -		vdso_ts			=
+> -			&vdata[CS_HRES_COARSE].basetime[CLOCK_BOOTTIME];
+> -		vdso_ts->sec		= tk->xtime_sec +
+> -					  tk->wall_to_monotonic.tv_sec;
+> -		nsec			= tk->tkr_mono.xtime_nsec;
+> -		nsec			= nsec +
+> -					  ((u64)(tk->wall_to_monotonic.tv_nsec +
+> -					  ktime_to_ns(tk->offs_boot)) <<
+> -					  tk->tkr_mono.shift);
+> -		while (nsec >= (((u64)NSEC_PER_SEC) << tk->tkr_mono.shift)) {
+> -			nsec = nsec -
+> -				(((u64)NSEC_PER_SEC) << tk->tkr_mono.shift);
+> -			vdso_ts->sec++;
+> -		}
+> -		vdso_ts->nsec		= nsec;
+> -		/* CLOCK_TAI */
+> -		vdso_ts			=
+> -			&vdata[CS_HRES_COARSE].basetime[CLOCK_TAI];
+> -		vdso_ts->sec		= tk->xtime_sec + (s64)tk->tai_offset;
+> -		vdso_ts->nsec		= tk->tkr_mono.xtime_nsec;
+> -
+> -		/*
+> -		 * Read without the seqlock held by clock_getres().
+> -		 * Note: No need to have a second copy.
+> -		 */
+> -		WRITE_ONCE(vdata[CS_HRES_COARSE].hrtimer_res, hrtimer_resolution);
+> -	}
+> +	if (__arch_use_vsyscall(vdata))
+> +		update_vdata(vdata, tk);
+>  
+>  	__arch_update_vsyscall(vdata, tk);
+>  
+> 
 
-This patch fully initializes every 'struct ubi_mkvol_request req' passed to
-'ubi_mkvol', which can fix the bug that the ubi test failed caused by that
-req.flags was not initialized. And it is still compatible with old kernel
-before kernel commit c355aa465fce ("ubi: expose the volume CRC check skip
-flag").
-
-----------------------------------------
-
-Signed-off-by: Zhihao Cheng <chengzhihao1@huawei.com>
----
- tests/ubi-tests/integ.c       | 1 +
- tests/ubi-tests/io_basic.c    | 2 ++
- tests/ubi-tests/io_paral.c    | 1 +
- tests/ubi-tests/io_read.c     | 2 ++
- tests/ubi-tests/io_update.c   | 1 +
- tests/ubi-tests/mkvol_bad.c   | 2 ++
- tests/ubi-tests/mkvol_basic.c | 3 +++
- tests/ubi-tests/mkvol_paral.c | 1 +
- tests/ubi-tests/rsvol.c       | 2 ++
- tests/ubi-tests/volrefcnt.c   | 1 +
- 10 files changed, 16 insertions(+)
-
-diff --git a/tests/ubi-tests/integ.c b/tests/ubi-tests/integ.c
-index 1cd0649..fd38ef5 100644
---- a/tests/ubi-tests/integ.c
-+++ b/tests/ubi-tests/integ.c
-@@ -467,6 +467,7 @@ static void operate_on_ubi_device(struct ubi_device_info *ubi_device)
- 		req.vol_id = UBI_VOL_NUM_AUTO;
- 		req.alignment = 1; /* TODO: What is this? */
- 		req.bytes = ubi_device->info.leb_size * max_ebs_per_vol;
-+		req.flags = 0;
- 		if (req.bytes == 0 || req.bytes > ubi_device->info.avail_bytes)
- 			req.bytes = ubi_device->info.avail_bytes;
- 		req.vol_type = UBI_DYNAMIC_VOLUME;
-diff --git a/tests/ubi-tests/io_basic.c b/tests/ubi-tests/io_basic.c
-index 3a296b4..288a351 100644
---- a/tests/ubi-tests/io_basic.c
-+++ b/tests/ubi-tests/io_basic.c
-@@ -55,6 +55,7 @@ static int test_basic(int type)
- 	req.bytes = dev_info.avail_bytes;
- 	req.vol_type = type;
- 	req.name = name;
-+	req.flags = 0;
- 
- 	if (ubi_mkvol(libubi, node, &req)) {
- 		failed("ubi_mkvol");
-@@ -102,6 +103,7 @@ static int test_aligned(int type)
- 
- 	req.vol_type = type;
- 	req.name = name;
-+	req.flags = 0;
- 
- 	for (i = 0; i < sizeof(alignments)/sizeof(int); i++) {
- 		req.vol_id = UBI_VOL_NUM_AUTO;
-diff --git a/tests/ubi-tests/io_paral.c b/tests/ubi-tests/io_paral.c
-index 6c77ec1..4040b3e 100644
---- a/tests/ubi-tests/io_paral.c
-+++ b/tests/ubi-tests/io_paral.c
-@@ -266,6 +266,7 @@ int main(int argc, char * const argv[])
- 		sprintf(vol_name[i], PROGRAM_NAME":%d", i);
- 		reqests[i].name = vol_name[i];
- 		reqests[i].vol_type = UBI_DYNAMIC_VOLUME;
-+		reqests[i].flags = 0;
- 		if (i == THREADS_NUM)
- 			reqests[i].vol_type = UBI_STATIC_VOLUME;
- 		sprintf(vol_nodes[i], UBI_VOLUME_PATTERN, dev_info.dev_num, i);
-diff --git a/tests/ubi-tests/io_read.c b/tests/ubi-tests/io_read.c
-index f48db67..3100ef1 100644
---- a/tests/ubi-tests/io_read.c
-+++ b/tests/ubi-tests/io_read.c
-@@ -74,6 +74,7 @@ static int test_static(void)
- 	req.bytes = dev_info.avail_bytes;
- 	req.vol_type = UBI_STATIC_VOLUME;
- 	req.name = name;
-+	req.flags = 0;
- 
- 	if (ubi_mkvol(libubi, node, &req)) {
- 		failed("ubi_mkvol");
-@@ -329,6 +330,7 @@ static int test_read(int type)
- 		req.vol_id = UBI_VOL_NUM_AUTO;
- 		req.vol_type = type;
- 		req.name = name;
-+		req.flags = 0;
- 
- 		req.alignment = alignments[i];
- 		req.alignment -= req.alignment % dev_info.min_io_size;
-diff --git a/tests/ubi-tests/io_update.c b/tests/ubi-tests/io_update.c
-index fe3ad7b..f48df1d 100644
---- a/tests/ubi-tests/io_update.c
-+++ b/tests/ubi-tests/io_update.c
-@@ -233,6 +233,7 @@ static int test_update(int type)
- 		req.vol_id = UBI_VOL_NUM_AUTO;
- 		req.vol_type = type;
- 		req.name = name;
-+		req.flags = 0;
- 
- 		req.alignment = alignments[i];
- 		req.alignment -= req.alignment % dev_info.min_io_size;
-diff --git a/tests/ubi-tests/mkvol_bad.c b/tests/ubi-tests/mkvol_bad.c
-index 486fbab..7e46726 100644
---- a/tests/ubi-tests/mkvol_bad.c
-+++ b/tests/ubi-tests/mkvol_bad.c
-@@ -48,6 +48,7 @@ static int test_mkvol(void)
- 	req.bytes = dev_info.avail_bytes;
- 	req.vol_type = UBI_DYNAMIC_VOLUME;
- 	req.name = name;
-+	req.flags = 0;
- 
- 	/* Bad volume ID */
- 	req.vol_id = -2;
-@@ -251,6 +252,7 @@ static int test_rmvol(void)
- 	req.bytes = dev_info.avail_bytes;
- 	req.vol_type = UBI_DYNAMIC_VOLUME;
- 	req.name = name;
-+	req.flags = 0;
- 	if (ubi_mkvol(libubi, node, &req)) {
- 		failed("ubi_mkvol");
- 		return -1;
-diff --git a/tests/ubi-tests/mkvol_basic.c b/tests/ubi-tests/mkvol_basic.c
-index 88d115a..c7c6984 100644
---- a/tests/ubi-tests/mkvol_basic.c
-+++ b/tests/ubi-tests/mkvol_basic.c
-@@ -59,6 +59,7 @@ static int mkvol_alignment(void)
- 
- 		req.vol_type = UBI_DYNAMIC_VOLUME;
- 		req.name = name;
-+		req.flags = 0;
- 
- 		if (ubi_mkvol(libubi, node, &req)) {
- 			failed("ubi_mkvol");
-@@ -101,6 +102,7 @@ static int mkvol_basic(void)
- 	req.bytes = dev_info.avail_bytes;
- 	req.vol_type = UBI_DYNAMIC_VOLUME;
- 	req.name = name;
-+	req.flags = 0;
- 
- 	if (ubi_mkvol(libubi, node, &req)) {
- 		failed("ubi_mkvol");
-@@ -170,6 +172,7 @@ static int mkvol_multiple(void)
- 		req.alignment = 1;
- 		req.bytes = 1;
- 		req.vol_type = UBI_STATIC_VOLUME;
-+		req.flags = 0;
- 
- 		sprintf(nm, "%s:%d", name, i);
- 		req.name = nm;
-diff --git a/tests/ubi-tests/mkvol_paral.c b/tests/ubi-tests/mkvol_paral.c
-index 95b5e10..41d5ae0 100644
---- a/tests/ubi-tests/mkvol_paral.c
-+++ b/tests/ubi-tests/mkvol_paral.c
-@@ -54,6 +54,7 @@ static void * the_thread(void *ptr)
- 	req.vol_type = UBI_DYNAMIC_VOLUME;
- 	sprintf(nm, "%s:%d", name, n);
- 	req.name = nm;
-+	req.flags = 0;
- 
- 	while (iter--) {
- 		req.vol_id = UBI_VOL_NUM_AUTO;
-diff --git a/tests/ubi-tests/rsvol.c b/tests/ubi-tests/rsvol.c
-index 6bfade9..921b36f 100644
---- a/tests/ubi-tests/rsvol.c
-+++ b/tests/ubi-tests/rsvol.c
-@@ -54,6 +54,7 @@ static int test_basic(int type)
- 	req.bytes = MIN_AVAIL_EBS * dev_info.leb_size;
- 	req.vol_type = type;
- 	req.name = name;
-+	req.flags = 0;
- 
- 	if (ubi_mkvol(libubi, node, &req)) {
- 		failed("ubi_mkvol");
-@@ -237,6 +238,7 @@ static int test_rsvol(int type)
- 		req.vol_id = UBI_VOL_NUM_AUTO;
- 		req.vol_type = type;
- 		req.name = name;
-+		req.flags = 0;
- 
- 		req.alignment = alignments[i];
- 		req.alignment -= req.alignment % dev_info.min_io_size;
-diff --git a/tests/ubi-tests/volrefcnt.c b/tests/ubi-tests/volrefcnt.c
-index 591a55a..328a8ad 100644
---- a/tests/ubi-tests/volrefcnt.c
-+++ b/tests/ubi-tests/volrefcnt.c
-@@ -67,6 +67,7 @@ int main(int argc, char * const argv[])
- 	req.bytes = dev_info.leb_size;
- 	req.vol_type = UBI_DYNAMIC_VOLUME;
- 	req.name = "rmvol";
-+	req.flags = 0;
- 
- 	if (ubi_mkvol(libubi, node, &req)) {
- 		failed("ubi_mkvol");
 -- 
-2.7.4
-
+Regards,
+Vincenzo
