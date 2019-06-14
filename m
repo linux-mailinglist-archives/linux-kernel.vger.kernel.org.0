@@ -2,141 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EABB7459C3
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 12:00:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A623E459DE
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 12:03:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727348AbfFNKA1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 06:00:27 -0400
-Received: from relay6-d.mail.gandi.net ([217.70.183.198]:56833 "EHLO
-        relay6-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726767AbfFNKA0 (ORCPT
+        id S1727561AbfFNKDH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 06:03:07 -0400
+Received: from mail.efficios.com ([167.114.142.138]:33086 "EHLO
+        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727197AbfFNKDH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 06:00:26 -0400
-X-Originating-IP: 37.177.88.254
-Received: from uno.localdomain (unknown [37.177.88.254])
-        (Authenticated sender: jacopo@jmondi.org)
-        by relay6-d.mail.gandi.net (Postfix) with ESMTPSA id CD4C9C0002;
-        Fri, 14 Jun 2019 10:00:20 +0000 (UTC)
-Date:   Fri, 14 Jun 2019 12:01:33 +0200
-From:   Jacopo Mondi <jacopo@jmondi.org>
-To:     Lubomir Rintel <lkundrak@v3.sk>
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>, linux-media@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        James Cameron <quozl@laptop.org>, Pavel Machek <pavel@ucw.cz>,
-        Libin Yang <lbyang@marvell.com>,
-        Albert Wang <twang13@marvell.com>,
-        Sakari Ailus <sakari.ailus@iki.fi>
-Subject: Re: [PATCH v5 03/10] [media] marvell-ccic: don't generate EOF on
- parallel bus
-Message-ID: <20190614100133.euxhdaktlemnd2ep@uno.localdomain>
-References: <20190505140031.9636-1-lkundrak@v3.sk>
- <20190505140031.9636-4-lkundrak@v3.sk>
+        Fri, 14 Jun 2019 06:03:07 -0400
+Received: from localhost (ip6-localhost [IPv6:::1])
+        by mail.efficios.com (Postfix) with ESMTP id B2F3A251338;
+        Fri, 14 Jun 2019 06:03:05 -0400 (EDT)
+Received: from mail.efficios.com ([IPv6:::1])
+        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
+        with ESMTP id aGDopCXhabIV; Fri, 14 Jun 2019 06:03:05 -0400 (EDT)
+Received: from localhost (ip6-localhost [IPv6:::1])
+        by mail.efficios.com (Postfix) with ESMTP id 455F4251331;
+        Fri, 14 Jun 2019 06:03:05 -0400 (EDT)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 455F4251331
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
+        s=default; t=1560506585;
+        bh=Hu2sfywP1wr/V2iml0Iwu3DskdZlle9a1sk8RIwPbAc=;
+        h=Date:From:To:Message-ID:MIME-Version;
+        b=fvSF4UnSVmbjIlv9Khoar4edqsd+o8saf61h4OK1+vIa0MgvAEnu/UKIG6N0a3apx
+         tiA7uuHAHRZy4dE8/w6aFGS05JUYkzKpfU/Hp0sUR8dLGa1RTyvIoc1RcI+Zqs8uww
+         EhYjeSssh2WOJo4xfeApdEIr7FfjxCje1SFA8lyywbM541+2WbLuP8fp/9665+tgwf
+         upU2nGhuAZzX4ZgGUyxKMvD1Gy32eTP5WwAiGaTvDqWB9L8AurGI/iNK96XYEqjGr8
+         x870WRvXafGceB05ZQ0JHYiemFDLtNq8m2mtALm2Yrm9zKcaFGc6IoKaFgaHfxL6kx
+         dzXk3iMwytTeQ==
+X-Virus-Scanned: amavisd-new at efficios.com
+Received: from mail.efficios.com ([IPv6:::1])
+        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
+        with ESMTP id LKwutttasM3j; Fri, 14 Jun 2019 06:03:05 -0400 (EDT)
+Received: from mail02.efficios.com (mail02.efficios.com [167.114.142.138])
+        by mail.efficios.com (Postfix) with ESMTP id 1BD4A251327;
+        Fri, 14 Jun 2019 06:03:05 -0400 (EDT)
+Date:   Fri, 14 Jun 2019 06:03:04 -0400 (EDT)
+From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+To:     carlos <carlos@redhat.com>, Florian Weimer <fweimer@redhat.com>
+Cc:     Joseph Myers <joseph@codesourcery.com>,
+        Szabolcs Nagy <szabolcs.nagy@arm.com>,
+        libc-alpha <libc-alpha@sourceware.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ben Maurer <bmaurer@fb.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Dave Watson <davejwatson@fb.com>, Paul Turner <pjt@google.com>,
+        Rich Felker <dalias@libc.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-api <linux-api@vger.kernel.org>
+Message-ID: <802638054.3032.1560506584705.JavaMail.zimbra@efficios.com>
+In-Reply-To: <914051741.43025.1560348011775.JavaMail.zimbra@efficios.com>
+References: <20190503184219.19266-1-mathieu.desnoyers@efficios.com> <87muj2k4ov.fsf@oldenburg2.str.redhat.com> <1528929896.22217.1559326257155.JavaMail.zimbra@efficios.com> <87o93d4lqb.fsf@oldenburg2.str.redhat.com> <117220011.27079.1559663870037.JavaMail.zimbra@efficios.com> <87wohzorj0.fsf@oldenburg2.str.redhat.com> <c16c9785-7f8c-430b-a4df-a53e47bf1600@redhat.com> <914051741.43025.1560348011775.JavaMail.zimbra@efficios.com>
+Subject: Re: [PATCH 1/5] glibc: Perform rseq(2) registration at C startup
+ and thread creation (v10)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="mmzrrql2dydy5u5w"
-Content-Disposition: inline
-In-Reply-To: <20190505140031.9636-4-lkundrak@v3.sk>
-User-Agent: NeoMutt/20180716
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [167.114.142.138]
+X-Mailer: Zimbra 8.8.12_GA_3803 (ZimbraWebClient - FF67 (Linux)/8.8.12_GA_3794)
+Thread-Topic: glibc: Perform rseq(2) registration at C startup and thread creation (v10)
+Thread-Index: 6rG93gdkMSoHS5ZP168diTIrRPG9C+LZilEL
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+----- On Jun 12, 2019, at 4:00 PM, Mathieu Desnoyers mathieu.desnoyers@efficios.com wrote:
 
---mmzrrql2dydy5u5w
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+> ----- On Jun 10, 2019, at 4:43 PM, carlos carlos@redhat.com wrote:
+> 
+>> On 6/6/19 7:57 AM, Florian Weimer wrote:
+>>> Let me ask the key question again: Does it matter if code observes the
+>>> rseq area first without kernel support, and then with kernel support?
+>>> If we don't expect any problems immediately, we do not need to worry
+>>> much about the constructor ordering right now.  I expect that over time,
+>>> fixing this properly will become easier.
+>> 
+>> I just wanted to chime in and say that splitting this into:
+>> 
+>> * Ownership (__rseq_handled)
+>> 
+>> * Initialization (__rseq_abi)
+>> 
+>> Makes sense to me.
+>> 
+>> I agree we need an answer to this question of ownership but not yet
+>> initialized, to owned and initialized.
+>> 
+>> I like the idea of having __rseq_handled in ld.so.
+> 
+> Very good, so I'll implement this approach. Sorry for the delayed
+> feedback, I am traveling this week.
 
-Hi Lubomir,
+I had issues with cases where application or LD_PRELOAD library also
+define the __rseq_handled symbol. They appear not to see the same
+address as the one initialized by ld.so.
 
-On Sun, May 05, 2019 at 04:00:24PM +0200, Lubomir Rintel wrote:
-> The commit 05fed81625bf ("[media] marvell-ccic: add MIPI support for
-> marvell-ccic driver") that claimed to add CSI2 turned on C0_EOF_VSYNC for
-> parallel bus without a very good explanation.
->
-> That broke camera on OLPC XO-1.75 which precisely uses a sensor on a
-> parallel bus. Revert that chunk.
->
-> Tested on an OLPC XO-1.75.
->
-> Fixes: 05fed81625bf755cc67c5864cdfd18b69ea828d1
+I tried using the GL() macro in ld.so to set __rseq_handled, but it's
+the wrong address compared to what the preload lib and application observe.
 
-Use the proper fixes format here
-Fixes: 05fed81625bf ("[media] marvell-ccic: add MIPI support for marvell-ccic driver")
+Any thoughts on how to solve this ?
 
-I have this simple entry in my git config:
+Thanks,
 
-[pretty]
-	fixes = Fixes: %h (\"%s\")
+Mathieu
 
-With
-        abbrev=12
-
-in the [core] section.
-
-You can now
-$git show 05fed81625bf755cc67c5864cdfd18b69ea828d1 --pretty=fixes
-
-> Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
-> ---
->  drivers/media/platform/marvell-ccic/mcam-core.c | 6 ------
->  1 file changed, 6 deletions(-)
->
-> diff --git a/drivers/media/platform/marvell-ccic/mcam-core.c b/drivers/media/platform/marvell-ccic/mcam-core.c
-> index d97f39bde9bd6..d24e5b7a3bc52 100644
-> --- a/drivers/media/platform/marvell-ccic/mcam-core.c
-> +++ b/drivers/media/platform/marvell-ccic/mcam-core.c
-> @@ -792,12 +792,6 @@ static void mcam_ctlr_image(struct mcam_camera *cam)
->  	 * Make sure it knows we want to use hsync/vsync.
->  	 */
->  	mcam_reg_write_mask(cam, REG_CTRL0, C0_SIF_HVSYNC, C0_SIFM_MASK);
-> -	/*
-> -	 * This field controls the generation of EOF(DVP only)
-> -	 */
-> -	if (cam->bus_type != V4L2_MBUS_CSI2_DPHY)
-> -		mcam_reg_set_bit(cam, REG_CTRL0,
-> -				C0_EOF_VSYNC | C0_VEDGE_CTRL);
-
-This change seems in facts unrelated to the original patch. As you
-remove all usages of C0_EOF_VSYNC and C0_VEDGE_CTRL you can drop their
-definition in mcam-core.h.
-
-As I've said, the change seems unrelated to CSI-2 support and could
-probably be salfey dropped, but pay attention, you're also dropping
-C0_VEDGE_CTRL, which seems to enable VSYNC detection on the signal
-falling edge. Is this intentional ?
-
-Thanks
-   j
-
->  }
->
->
-> --
-> 2.21.0
->
-
---mmzrrql2dydy5u5w
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEtcQ9SICaIIqPWDjAcjQGjxahVjwFAl0DcH0ACgkQcjQGjxah
-VjyxcRAAoBs1nLSqKz9dDuh1ExoER+gBlhUSp11xMqI770WvPzLLiSgVImxYpd3f
-JfLjOEzypnmiitZ8+V6+erHY0uTNnQaVgeaZpkLSe+uLBNqxzcMioFWoxBEgPDSq
-Uo1GYLMJ/bXEb2gmgH2/5EOjLME6fGyOlsUbU//ft0eAvOmS8qTA3z1cmvpRfume
-a+e2qav1MUXZ5EoImgWSSjn6YS8Epr96uKWg+lmoYzUaSuFJ8MvY7dc9Cq+yn5lz
-EVDCHkA7JMvfA6j1sbiPMwN+kB1QCKp8c2+IfQFQAo2A/M7MyYOl9oz45YOkqNKL
-Ub6olMo3EN6ZRePt2ooFLOuUJNLwnbgB4g4TQ8QlNW1dMrT0D2eRZw01sw6Sh6Qu
-xqmfrf9Jgjei1epV1/8KPNBUOTs/tr/AJGn00SSgpd/TcSnXTguPGZbkhvxs/1Un
-8A2pF8y1pR8l3FDbGkwWg1HzcbReyVrPmpTG2F+Z72SGAVsDDmOfapRi9++1owNf
-DTNjRshLw2fjmjFvrTgdyKEPJ7ENv1I57CLC7OdkdPf4uISeXfvuMkU2OIgP5j9x
-3Wf2WGumaR8U1uMQy98V5JYJzA+pNKhgzSlK6TWQQDCdpUt+LwlWFVjv4LmT1EQ/
-BnSdMDXuA1rBQ32TtrBIqVk9oDOrk51uXGuo5c48wz7htS8Tu4M=
-=DOfD
------END PGP SIGNATURE-----
-
---mmzrrql2dydy5u5w--
+-- 
+Mathieu Desnoyers
+EfficiOS Inc.
+http://www.efficios.com
