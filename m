@@ -2,130 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2145F45A2B
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 12:16:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D960745A34
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 12:18:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727415AbfFNKQb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 06:16:31 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:23606 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726884AbfFNKQ2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 06:16:28 -0400
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 45QGjP1Vnrz9vDbm;
-        Fri, 14 Jun 2019 12:16:25 +0200 (CEST)
-Authentication-Results: localhost; dkim=pass
-        reason="1024-bit key; insecure key"
-        header.d=c-s.fr header.i=@c-s.fr header.b=tj85kPHp; dkim-adsp=pass;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id x-ieB8R6280X; Fri, 14 Jun 2019 12:16:25 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 45QGjP0QnZz9vDbh;
-        Fri, 14 Jun 2019 12:16:25 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
-        t=1560507385; bh=Ncvp/xcVUmXSd5BetDki7lkPoESwzmp5vh6/pH0lEKQ=;
-        h=In-Reply-To:References:From:Subject:To:Cc:Date:From;
-        b=tj85kPHpr2D177M+FGuhqLYv9NsLU1LQYGPQYwqCLNN9iZeMM8RgHmBtgN4jRdWEQ
-         VTgA4m5NgBN/KV1BWQ2o4sMdw/HdJsKveV4NzIVEri9Wk9ctOPjYaVh5w28rPAYK3H
-         tIkmm6g3RiQTWPOygCtyb04gEqUqF65aBWB3G0So=
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 32B6D8B7AD;
-        Fri, 14 Jun 2019 12:16:26 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id ZtED3dm1Hgo0; Fri, 14 Jun 2019 12:16:26 +0200 (CEST)
-Received: from PO15451.localdomain (po15451.idsi0.si.c-s.fr [172.25.230.107])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id EE9C18B7AC;
-        Fri, 14 Jun 2019 12:16:25 +0200 (CEST)
-Received: by localhost.localdomain (Postfix, from userid 0)
-        id EE63568D78; Fri, 14 Jun 2019 10:16:25 +0000 (UTC)
-Message-Id: <513745c616ff9c46a077578a21c843ab818a0e57.1560507284.git.christophe.leroy@c-s.fr>
-In-Reply-To: <1b4946c9e580b51b6ca2ddc5963d66406c013c2d.1560507284.git.christophe.leroy@c-s.fr>
-References: <1b4946c9e580b51b6ca2ddc5963d66406c013c2d.1560507284.git.christophe.leroy@c-s.fr>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH v3 3/3] powerpc/boot: Add lzo support for uImage
-To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Date:   Fri, 14 Jun 2019 10:16:25 +0000 (UTC)
+        id S1727381AbfFNKSZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 06:18:25 -0400
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:33857 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727181AbfFNKSY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Jun 2019 06:18:24 -0400
+Received: by mail-ot1-f66.google.com with SMTP id n5so2163385otk.1
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2019 03:18:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=BluMzkCDQwyvUXl6lzhoZtoPJHAVNPhcRWOIM0TWe5A=;
+        b=CHPvPl+jUh7JA/rRQipbNvx2eeCXj4MzMMwsR5yCx/D03/DvrLCHOLgRsWofA1G48U
+         n4aIfJ3weW2OCpVKh2VRnG3ebK8M5ONtMEtIkC3fB3hNabi+ChyUQ9vYqqQbvssy8f4l
+         fpe34arGIzFmrKgaR8q/8j9Lx0H8qNOC6IU60=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=BluMzkCDQwyvUXl6lzhoZtoPJHAVNPhcRWOIM0TWe5A=;
+        b=Vy5KsjlxMsnzV3KrgNAxEAQarUPepCdSDeO1wrgVeDCIbdhbd7yw9FKViMiQxa887U
+         oms+BNdxsinH+kpt9g6j46Agdzme0RWBEMjdc4X28FoJA0Zt7n6qdFmVpflizCloHWRU
+         AWlPkf6haPG2CbbT8ULJ3M53DSWWQ1zGyPdCBo2ON0AQ6V0oyvt/NPTn4DgTV39Q0jng
+         vQrlavsYWN3DfRgDYNiaTnN/kNRWV4J4k8Rgw/ydKfVMkX+3LxSwFsNE0pBmYhKPlnhw
+         dvjP1SiSDc1Hm0HNPE416Zr7mBzYSy6i4wJQQnHV+TdQJe7VIes8YckK2qgNUF1fSjlG
+         0dzQ==
+X-Gm-Message-State: APjAAAUM1MAmERhSIwMG7dXFsAzVQ3iJRItL/rthgephcSRloIBcKW9a
+        SPjV2SwkGc14AhSb4sVy0t4mtlVgEdE=
+X-Google-Smtp-Source: APXvYqwrTh7Op1AtOq/c/UTII0/29kEuKbcU5RNLKXHpTnxtsz7soez+6wTm0QNpJCWsqqI+/QMkTQ==
+X-Received: by 2002:a9d:529:: with SMTP id 38mr22880584otw.145.1560507502984;
+        Fri, 14 Jun 2019 03:18:22 -0700 (PDT)
+Received: from mail-ot1-f54.google.com (mail-ot1-f54.google.com. [209.85.210.54])
+        by smtp.gmail.com with ESMTPSA id v203sm1050994oie.5.2019.06.14.03.18.21
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Fri, 14 Jun 2019 03:18:21 -0700 (PDT)
+Received: by mail-ot1-f54.google.com with SMTP id e8so1169856otl.7
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2019 03:18:21 -0700 (PDT)
+X-Received: by 2002:a9d:30c3:: with SMTP id r3mr9116550otg.141.1560507501049;
+ Fri, 14 Jun 2019 03:18:21 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190614075640.106709-1-acourbot@chromium.org> <9fd990d12ea1488592c5a590046f001a187b9c3f.camel@perches.com>
+In-Reply-To: <9fd990d12ea1488592c5a590046f001a187b9c3f.camel@perches.com>
+From:   Alexandre Courbot <acourbot@chromium.org>
+Date:   Fri, 14 Jun 2019 19:18:09 +0900
+X-Gmail-Original-Message-ID: <CAPBb6MVRA_tBwg_r-Z8Rx7pUkR8W47CN1dqWH5uk+_1ONhViog@mail.gmail.com>
+Message-ID: <CAPBb6MVRA_tBwg_r-Z8Rx7pUkR8W47CN1dqWH5uk+_1ONhViog@mail.gmail.com>
+Subject: Re: [PATCH v2] media: mtk-vcodec: remove unneeded proxy functions
+To:     Joe Perches <joe@perches.com>
+Cc:     Tiffany Lin <tiffany.lin@mediatek.com>,
+        Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Yunfei Dong <yunfei.dong@mediatek.com>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        linux-mediatek@lists.infradead.org,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch allows to generate lzo compressed uImage
+On Fri, Jun 14, 2019 at 6:11 PM Joe Perches <joe@perches.com> wrote:
+>
+> On Fri, 2019-06-14 at 16:56 +0900, Alexandre Courbot wrote:
+> > We were getting the codec interface through a proxy function that does
+> > not bring anything compared to just accessing the interface definition
+> > directly, so just do that. Also make the decoder interfaces const.
+> []
+> > diff --git a/drivers/media/platform/mtk-vcodec/vdec/vdec_h264_if.c b/drivers/media/platform/mtk-vcodec/vdec/vdec_h264_if.c
+> []
+> > @@ -485,16 +485,9 @@ static int vdec_h264_get_param(void *h_vdec, enum vdec_get_param_type type,
+> >       return 0;
+> >  }
+> >
+> > -static struct vdec_common_if vdec_h264_if = {
+> > +const struct vdec_common_if vdec_h264_if = {
+>
+> probably better to fixup whatever chains prevent
+> this (if any) from being static const
 
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
-
----
- v3: rebased following the drop of patch 3 (bzip2) which is not supported anymore by uboot.
- v2: restore alphabetic order in Kconfig
----
- arch/powerpc/Kconfig       | 1 +
- arch/powerpc/boot/Makefile | 2 ++
- arch/powerpc/boot/wrapper  | 5 ++++-
- 3 files changed, 7 insertions(+), 1 deletion(-)
-
-diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
-index 5542430ba261..2b041f88b593 100644
---- a/arch/powerpc/Kconfig
-+++ b/arch/powerpc/Kconfig
-@@ -197,6 +197,7 @@ config PPC
- 	select HAVE_IRQ_EXIT_ON_IRQ_STACK
- 	select HAVE_KERNEL_GZIP
- 	select HAVE_KERNEL_LZMA			if DEFAULT_UIMAGE
-+	select HAVE_KERNEL_LZO			if DEFAULT_UIMAGE
- 	select HAVE_KERNEL_XZ			if PPC_BOOK3S || 44x
- 	select HAVE_KPROBES
- 	select HAVE_KPROBES_ON_FTRACE
-diff --git a/arch/powerpc/boot/Makefile b/arch/powerpc/boot/Makefile
-index 9b7b11a22925..36fb51a9329f 100644
---- a/arch/powerpc/boot/Makefile
-+++ b/arch/powerpc/boot/Makefile
-@@ -23,6 +23,7 @@ all: $(obj)/zImage
- compress-$(CONFIG_KERNEL_GZIP) := CONFIG_KERNEL_GZIP
- compress-$(CONFIG_KERNEL_XZ)   := CONFIG_KERNEL_XZ
- compress-$(CONFIG_KERNEL_LZMA) := CONFIG_KERNEL_LZMA
-+compress-$(CONFIG_KERNEL_LZO)   := CONFIG_KERNEL_LZO
- 
- ifdef CROSS32_COMPILE
-     BOOTCC := $(CROSS32_COMPILE)gcc
-@@ -259,6 +260,7 @@ endif
- compressor-$(CONFIG_KERNEL_GZIP) := gz
- compressor-$(CONFIG_KERNEL_XZ)   := xz
- compressor-$(CONFIG_KERNEL_LZMA)   := lzma
-+compressor-$(CONFIG_KERNEL_LZO) := lzo
- 
- # args (to if_changed): 1 = (this rule), 2 = platform, 3 = dts 4=dtb 5=initrd
- quiet_cmd_wrap	= WRAP    $@
-diff --git a/arch/powerpc/boot/wrapper b/arch/powerpc/boot/wrapper
-index 19887f6ad7c1..5148ac271f28 100755
---- a/arch/powerpc/boot/wrapper
-+++ b/arch/powerpc/boot/wrapper
-@@ -136,7 +136,7 @@ while [ "$#" -gt 0 ]; do
-     -Z)
- 	shift
- 	[ "$#" -gt 0 ] || usage
--        [ "$1" != "gz" -o "$1" != "xz" -o "$1" != "lzma" -o "$1" != "none" ] || usage
-+        [ "$1" != "gz" -o "$1" != "xz" -o "$1" != "lzma" -o "$1" != "lzo" -o "$1" != "none" ] || usage
- 
- 	compression=".$1"
- 	uboot_comp=$1
-@@ -376,6 +376,9 @@ if [ -z "$cacheit" -o ! -f "$vmz$compression" -o "$vmz$compression" -ot "$kernel
-     .lzma)
-         xz --format=lzma -f -6 "$vmz.$$"
- 	;;
-+    .lzo)
-+        lzop -f -9 "$vmz.$$"
-+	;;
-     *)
-         # drop the compression suffix so the stripped vmlinux is used
-         compression=
--- 
-2.13.3
-
+These are defined in per-codec source files and selected at runtime by
+vdec_drv_if.c, so I don't think we can avoid declaring at least
+something? The previous approach was to declare a function, but as you
+can see we can remove quite some code by exporting the structs
+directly.
