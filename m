@@ -2,69 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B7607460A3
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 16:25:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1C433460ED
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 16:36:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728458AbfFNOZp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 10:25:45 -0400
-Received: from ms.lwn.net ([45.79.88.28]:52266 "EHLO ms.lwn.net"
+        id S1728569AbfFNOfR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 10:35:17 -0400
+Received: from mga09.intel.com ([134.134.136.24]:15426 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728050AbfFNOZo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 10:25:44 -0400
-Received: from lwn.net (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ms.lwn.net (Postfix) with ESMTPSA id 73B88128A;
-        Fri, 14 Jun 2019 14:25:43 +0000 (UTC)
-Date:   Fri, 14 Jun 2019 08:25:42 -0600
-From:   Jonathan Corbet <corbet@lwn.net>
-To:     Dmitry Vyukov <dvyukov@google.com>
-Cc:     "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "Theodore Ts'o" <tytso@mit.edu>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        David Rientjes <rientjes@google.com>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Subject: Re: [PATCH v3] Add a document on rebasing and merging
-Message-ID: <20190614082542.3f8674eb@lwn.net>
-In-Reply-To: <CACT4Y+avfTeZTmhti=7nEadthZZpTnOCTdEuG2S7PovmAMkhZQ@mail.gmail.com>
-References: <20190612094503.120f699a@lwn.net>
-        <CACT4Y+avfTeZTmhti=7nEadthZZpTnOCTdEuG2S7PovmAMkhZQ@mail.gmail.com>
-Organization: LWN.net
+        id S1728341AbfFNOfR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Jun 2019 10:35:17 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Jun 2019 07:35:16 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.63,373,1557212400"; 
+   d="scan'208";a="184978464"
+Received: from romley-ivt3.sc.intel.com ([172.25.110.60])
+  by fmsmga002.fm.intel.com with ESMTP; 14 Jun 2019 07:35:16 -0700
+Date:   Fri, 14 Jun 2019 07:25:51 -0700
+From:   Fenghua Yu <fenghua.yu@intel.com>
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, H Peter Anvin <hpa@zytor.com>,
+        Ravi V Shankar <ravi.v.shankar@intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        x86 <x86@kernel.org>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Paolo Bonzini <pbonzini@redhat.com>
+Subject: Re: [RFC PATCH 2/3] x86/cpufeatures: Combine word 11 and 12 into new
+ scattered features word 11
+Message-ID: <20190614142550.GD198207@romley-ivt3.sc.intel.com>
+References: <1560459064-195037-1-git-send-email-fenghua.yu@intel.com>
+ <1560459064-195037-3-git-send-email-fenghua.yu@intel.com>
+ <20190614114410.GD2586@zn.tnic>
+ <20190614122749.GE2586@zn.tnic>
+ <20190614131701.GA198207@romley-ivt3.sc.intel.com>
+ <20190614134123.GF2586@zn.tnic>
+ <20190614141424.GA12191@linux.intel.com>
+ <20190614141519.GC198207@romley-ivt3.sc.intel.com>
+ <20190614142611.GI2586@zn.tnic>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190614142611.GI2586@zn.tnic>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 14 Jun 2019 11:59:03 +0200
-Dmitry Vyukov <dvyukov@google.com> wrote:
+On Fri, Jun 14, 2019 at 04:26:11PM +0200, Borislav Petkov wrote:
+> On Fri, Jun 14, 2019 at 07:15:20AM -0700, Fenghua Yu wrote:
+> > Adding this small patch into patch 0002 will solve the build errors without
+> > changing the build checks.
+> 
+> There's no need for that if you remove the BUILD_BUG_ON checks first.
 
-> I will appreciate if you elaborate a bit on this "scale of the
-> project". I wondered about reasons for having the current hierarchy of
-> trees and complex merging for a while, but wasn't able to find any
-> rationale. What exactly scale do you mean? I know a number of projects
-> that are comparable to Linux kernel, with the largest being 2 orders
-> of magnitude larger than kernel both in terms of code size and rate of
-> change, that use single tree and linear history. 
+But without this small patch, CPUID_7_EDX is 17 instead of
+NCAPINTS(19)-1=18 in patch 0002. Of course CPUID_7_EDX is 18 correctly
+evetually after applying patch 0003 which add the word 12 back.
 
-I'm not sure what projects you're talking about, so it's hard to compare.
+KVM reports this CPUID_7_EDX is not 18 in bisect (as Sena also pointed
+out). I think even native kernel should have some check to report this
+error (similar to other checks of NCAPINTS).
 
-During the 5.2 merge window, Linus did 209 pulls, bringing in just over
-12,000 changesets, from on the order of 1600 developers.  Even if, at the
-beginning of the window, each of those pulls was set up to be a
-fast-forward, they would no longer be positioned that way once the first
-pull was done.
+Thanks.
 
-Are you really saying that subsystem maintainers should be continuously
-rebasing their trees to avoid merges at the top level?  Do you see how
-much work that would take, how badly it would obscure the development
-history, and how many bugs it would introduce?  Or perhaps I misunderstood
-what you're arguing for?
-
-Thanks,
-
-jon
+-Fenghua
