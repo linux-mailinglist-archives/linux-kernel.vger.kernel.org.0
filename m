@@ -2,55 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C6C0E459B0
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 11:57:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 76329459B9
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 11:58:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727238AbfFNJ5A (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 05:57:00 -0400
-Received: from mga07.intel.com ([134.134.136.100]:18229 "EHLO mga07.intel.com"
+        id S1727194AbfFNJ6w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 05:58:52 -0400
+Received: from foss.arm.com ([217.140.110.172]:58442 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725812AbfFNJ47 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 05:56:59 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Jun 2019 02:56:58 -0700
-X-ExtLoop1: 1
-Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.157])
-  by fmsmga001.fm.intel.com with SMTP; 14 Jun 2019 02:56:56 -0700
-Received: by lahna (sSMTP sendmail emulation); Fri, 14 Jun 2019 12:56:55 +0300
-Date:   Fri, 14 Jun 2019 12:56:55 +0300
-From:   Mika Westerberg <mika.westerberg@linux.intel.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Andreas Noever <andreas.noever@gmail.com>,
-        Michael Jamet <michael.jamet@intel.com>,
-        Yehezkel Bernat <YehezkelShB@gmail.com>,
-        Lukas Wunner <lukas@wunner.de>, Peter Bowen <pzb@amazon.com>
-Subject: Re: [PATCH] thunderbolt: Implement CIO reset correctly for Titan
- Ridge
-Message-ID: <20190614095655.GB2640@lahna.fi.intel.com>
-References: <20190607111451.59648-1-mika.westerberg@linux.intel.com>
+        id S1725812AbfFNJ6u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Jun 2019 05:58:50 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7ABB72B;
+        Fri, 14 Jun 2019 02:58:49 -0700 (PDT)
+Received: from fuggles.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3357A3F718;
+        Fri, 14 Jun 2019 03:00:32 -0700 (PDT)
+Date:   Fri, 14 Jun 2019 10:58:46 +0100
+From:   Will Deacon <will.deacon@arm.com>
+To:     Jayachandran Chandrasekharan Nair <jnair@marvell.com>
+Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+        Jan Glauber <jglauber@marvell.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Kees Cook <keescook@chromium.org>
+Subject: Re: [RFC] Disable lockref on arm64
+Message-ID: <20190614095846.GC10506@fuggles.cambridge.arm.com>
+References: <20190502231858.GB13168@dc5-eodlnx05.marvell.com>
+ <CAHk-=wiEahkwDXpoy=-SzJHNMRXKVSjPa870+eKKenufhO_Hgw@mail.gmail.com>
+ <20190506061100.GA8465@dc5-eodlnx05.marvell.com>
+ <20190506181039.GA2875@brain-police>
+ <20190518042424.GA28517@dc5-eodlnx05.marvell.com>
+ <CAKv+Gu9U9z3iAuz4V1c5zTHuz1As8FSNGY-TJon4OLErB8ts8Q@mail.gmail.com>
+ <20190522160417.GF7876@fuggles.cambridge.arm.com>
+ <20190612040933.GA18848@dc5-eodlnx05.marvell.com>
+ <20190612093151.GA11554@brain-police>
+ <20190614070914.GA21961@dc5-eodlnx05.marvell.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190607111451.59648-1-mika.westerberg@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.11.4 (2019-03-13)
+In-Reply-To: <20190614070914.GA21961@dc5-eodlnx05.marvell.com>
+User-Agent: Mutt/1.11.1+86 (6f28e57d73f2) ()
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 07, 2019 at 02:14:51PM +0300, Mika Westerberg wrote:
-> When starting ICM firmware on Apple systems we need to perform CIO reset
-> as part of the flow. However, it turns out that the reset register has
-> changed to another location in Titan Ridge.
-> 
-> Fix this by introducing ->cio_reset() callback with corresponding
-> implementations for Alpine and Titan Ridge.
-> 
-> Fixes: 4630d6ae6e3 ("thunderbolt: Start firmware on Titan Ridge Apple systems")
-> Reported-by: Peter Bowen <pzb@amazon.com>
-> Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+[+Kees]
 
-Applied to thunderbolt.git/fixes.
+On Fri, Jun 14, 2019 at 07:09:26AM +0000, Jayachandran Chandrasekharan Nair wrote:
+> On Wed, Jun 12, 2019 at 10:31:53AM +0100, Will Deacon wrote:
+> > On Wed, Jun 12, 2019 at 04:10:20AM +0000, Jayachandran Chandrasekharan Nair wrote:
+> > > Now that the lockref change is mainline, I think we need to take another
+> > > look at this patch.
+> > 
+> > Before we get too involved with this, I really don't want to start a trend of
+> > "let's try to rewrite all code using cmpxchg() in Linux because of TX2".
+> 
+> x86 added a arch-specific fast refcount implementation - and the commit
+> specifically notes that it is faster than cmpxchg based code[1].
+> 
+> There seems to be an ongoing effort to move over more and more subsystems
+> from atomic_t to refcount_t(e.g.[2]), specifically because refcount_t on
+> x86 is fast enough and you get some error checking atomic_t that does not
+> have.
+
+Correct, but there are also some cases that are only caught by
+REFCOUNT_FULL.
+
+> > At some point, the hardware needs to play ball. However...
+> 
+> Even on a totally baller CPU, REFCOUNT_FULL is going to be slow :)
+> On TX2, this specific benchmark just highlights the issue, but the
+> difference is significant even on x86 (as noted above).
+
+My point was more general than that. If you want scalable concurrent code,
+then you end up having to move away from the serialisation introduced by
+locking. The main trick in the toolbox is cmpxchg() so, in the absence of
+a zoo of special-purpose atomic instructions, it really needs to do better
+than serialising.
+
+> > I was hoping we could use LDMIN/LDMAX to maintain the semantics of
+> > REFCOUNT_FULL, but now that I think about it I can't see how we could keep
+> > the arithmetic atomic in that case. Hmm.
+> 
+> Do you think Ard's patch needs changes before it can be considered? I
+> can take a look at that.
+
+I would like to see how it performs if we keep the checking inline, yes.
+I suspect Ard could spin this in short order.
+
+> > Whatever we do, I prefer to keep REFCOUNT_FULL the default option for arm64,
+> > so if we can't keep the semantics when we remove the cmpxchg, you'll need to
+> > opt into this at config time.
+> 
+> Only arm64 and arm selects REFCOUNT_FULL in the default config. So please
+> reconsider this! This is going to slow down arm64 vs. other archs and it
+> will become worse when more code adopts refcount_t.
+
+Maybe, but faced with the choice between your micro-benchmark results and
+security-by-default for people using the arm64 Linux kernel, I really think
+that's a no-brainer. I'm well aware that not everybody agrees with me on
+that.
+
+Will
