@@ -2,140 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7EB19467DC
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 20:51:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 21AF4467E8
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 20:55:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726115AbfFNSvQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 14:51:16 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:43683 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725809AbfFNSvQ (ORCPT
+        id S1726201AbfFNSzh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 14:55:37 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:46592 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725809AbfFNSzh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 14:51:16 -0400
-Received: by mail-wr1-f67.google.com with SMTP id p13so3547526wru.10
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2019 11:51:14 -0700 (PDT)
+        Fri, 14 Jun 2019 14:55:37 -0400
+Received: by mail-pl1-f193.google.com with SMTP id e5so1351619pls.13;
+        Fri, 14 Jun 2019 11:55:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=reply-to:subject:to:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=TwsuP/5QpBpyw+894FkICl68mr19hbmwJDtOpUhHp38=;
-        b=eHN1sCz3W2HTRU7bY4U0Qo31XyxAGdDIGeVU0H3BQa3VmHEmxCdG5Sfx+qwxSwdk6o
-         kDaqfroDELkJHWYJMYMCqJTVNHXUNYpWwzBVQmbQjAZeGN9MGFYSdcy6TGbmvL885SIm
-         mpwm93e4a4mutIMsuS7/vbvrRZFR6dhZCy0yZ/v8Rnct7mIrb3mhtXVYHs4YJ3OL75OS
-         6dxYdzLxvja+X44d8HGx6bj/vqUT/vmAjoLUE2Cd2jFufxhXQwXYJqNvFaq+do9ekxal
-         uGK6BnU8q5zlVin8s9e0gspC7CgrdU85QCMNInHjsla8YPLlhRLcDpRBrIBVz4PEC296
-         2Vfw==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=YPRfZ3Acf8Ln7fWGUnEyPsHNaWo6nLpRMmmXFpve7Ac=;
+        b=Elgjv0rWDq+CXwqeT+0MqZJ1XefmSArPHMhGcBIU/E8DQ5/K4zc8sHFwX31jJ7kyH/
+         6cjcDlxerKHXbwW/iJXWO8/E0arBlnxt65PiqWrEu4BtJ/4f2YdqRfybgLEnIqRqeI6V
+         VCx/FHsZsxjpemTbYuZcH47f3/lHZeTH5wJ8unyV+x7SHUr2L9cW0ebnw3ZnXD0K4ygW
+         vVu+ohu1ElWLNYSMoVsEI9Tl963jVNXr6hRrGZC9qLa8EsEEBekuLoDHGtFD5wt60IER
+         dSCKbBbPArZZwNSaF4Wmti9Ap5QaPxWdpSywPpaT3DHSJa6xEFa0E7ciTR4/b9DxnP2g
+         qrAQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:reply-to:subject:to:references:from:message-id
-         :date:user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=TwsuP/5QpBpyw+894FkICl68mr19hbmwJDtOpUhHp38=;
-        b=LLGnG5MaKzIVhvMx+WbEWkuBN9wLsjDQfMjtDtNRpMP4PW180TEZ3Sk0q52uLBOmBi
-         gMsTWPJh3vKXHqLVSFTGwk+3bLR244LrbVxX+7sFTFBAuGwKwJsxGZcWyS6LQ8svVnlj
-         i47Pze0H3OdaT6iMbzu1J3Pqv9vY486F8qEDYCMnkjThQMRiraKGb93VAbBWGZV/Tb+y
-         Jc5dnjYk/eT6iYsVQEvZS1rMSxTjqBfAgPI0G2t0Pwi7Cp1ji1c+Hnccfw4U0L0A4utk
-         PfvFUvJdoOFp2/rlc6zNbhEvcbfmrowio+l/Tuhtvznb0qQxwRCaK3zRPDL1hgMSi1uV
-         WiiA==
-X-Gm-Message-State: APjAAAWjaltNbEMLHiw4xgDcLGhiHTB8L/UHMk8T/bbfbbH8B0gPK+HB
-        aq+le2AMTwpEGcdXRguYu60=
-X-Google-Smtp-Source: APXvYqz28bIDeaYBfPgupDqxKtdLyXRvsj0tCGO/2NqJFDkP1DqXrqASNNCznmEFJdwF1A4VtB2Aqg==
-X-Received: by 2002:adf:e2c7:: with SMTP id d7mr10305574wrj.272.1560538273929;
-        Fri, 14 Jun 2019 11:51:13 -0700 (PDT)
-Received: from ?IPv6:2a02:908:1252:fb60:be8a:bd56:1f94:86e7? ([2a02:908:1252:fb60:be8a:bd56:1f94:86e7])
-        by smtp.gmail.com with ESMTPSA id r4sm584930wra.96.2019.06.14.11.51.12
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 14 Jun 2019 11:51:13 -0700 (PDT)
-Reply-To: christian.koenig@amd.com
-Subject: Re: [PATCH 3/6] drm/gem: use new ww_mutex_(un)lock_for_each macros
-To:     =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Russell King <linux+etnaviv@armlinux.org.uk>,
-        Christian Gmeiner <christian.gmeiner@gmail.com>,
-        Qiang Yu <yuq825@gmail.com>, "Anholt, Eric" <eric@anholt.net>,
-        Thomas Hellstrom <thellstrom@vmware.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        The etnaviv authors <etnaviv@lists.freedesktop.org>,
-        lima@lists.freedesktop.org
-References: <20190614124125.124181-1-christian.koenig@amd.com>
- <20190614124125.124181-4-christian.koenig@amd.com>
- <20190614131916.GQ3436@hirez.programming.kicks-ass.net>
- <20190614152242.GC23020@phenom.ffwll.local>
- <094da0f7-a0f0-9ed4-d2da-8c6e6d165380@gmail.com>
- <CAKMK7uFcDCJ9sozny1RqqRATwcK39doZNq+NZekvrzuO63ap-Q@mail.gmail.com>
-From:   =?UTF-8?Q?Christian_K=c3=b6nig?= <ckoenig.leichtzumerken@gmail.com>
-Message-ID: <d97212dc-367c-28e9-6961-9b99110a4d2e@gmail.com>
-Date:   Fri, 14 Jun 2019 20:51:11 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=YPRfZ3Acf8Ln7fWGUnEyPsHNaWo6nLpRMmmXFpve7Ac=;
+        b=MZ1WrIFZNHVjoWFmuIToa9DDvl3GZbg22uU2wXxdBtpJ6xrqKXQdGD68y3k7kZVbF/
+         vbMKV8OnYhe6hK43Au5diovvM0zX72jNGlzNAfP/xdlI5nLUMzlwurEb2GfaA3NVxkks
+         vbxNLcsBsep95lzoiGstpO+/j4L27aJ7bOfbx1NygS7vxbO2RRDLYFkf+UYr+qLJGV+I
+         M2W4PV472gDTc1KxmnJXfVKx1jt0dd+63ECFLlgDkFKtWyJ80he2nMkVfSn4Q1vFFmvO
+         aZ7fTHNtpcbuhn9Fe09JE1WjRrzODSbd/C2VT46sXSNWS2iEE/OCOs0X7XTLp6XJLaep
+         sVog==
+X-Gm-Message-State: APjAAAWpwnKNHUejtfNZgVzbDQoNPfUh86dPA190s1lmHfd/Xws9Dz5J
+        K9tembpcLAMXJyJIM9hLKUE=
+X-Google-Smtp-Source: APXvYqwv+Ov1MINtpZCaO5aFC7LEfdLTjF9wmGZNnEnywAwTxfyk1TU1b4bUd/fCDOj21QQxw8YeKQ==
+X-Received: by 2002:a17:902:363:: with SMTP id 90mr9281967pld.340.1560538536305;
+        Fri, 14 Jun 2019 11:55:36 -0700 (PDT)
+Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
+        by smtp.gmail.com with ESMTPSA id a186sm4122291pfa.188.2019.06.14.11.55.35
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Fri, 14 Jun 2019 11:55:35 -0700 (PDT)
+Date:   Fri, 14 Jun 2019 11:55:33 -0700
+From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To:     Enrico Granata <egranata@google.com>
+Cc:     Ting Shen <phoenixshen@chromium.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Nicolas Boichat <drinkcat@chromium.org>,
+        Pi-Hsun Shih <pihsun@chromium.org>,
+        Enrico Granata <egranata@chromium.org>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Guenter Roeck <groeck@chromium.org>,
+        Brian Norris <briannorris@chromium.org>,
+        Benson Leung <bleung@chromium.org>,
+        linux-input@vger.kernel.org,
+        Colin Ian King <colin.king@canonical.com>
+Subject: Re: [PATCH] Input: cros_ec_keyb: mask out extra flags in event_type
+Message-ID: <20190614185533.GA142889@dtor-ws>
+References: <20190614065438.142867-1-phoenixshen@chromium.org>
+ <CAPR809sASD=MrQkJULVBgc_iqiPKE2xr8eUR0d4qymQkLUYRaw@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <CAKMK7uFcDCJ9sozny1RqqRATwcK39doZNq+NZekvrzuO63ap-Q@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAPR809sASD=MrQkJULVBgc_iqiPKE2xr8eUR0d4qymQkLUYRaw@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am 14.06.19 um 20:24 schrieb Daniel Vetter:
->
-> On Fri, Jun 14, 2019 at 8:10 PM Christian König <ckoenig.leichtzumerken@gmail.com> wrote:
->> [SNIP]
->> WW_MUTEX_LOCK_BEGIN()
->>
->> lock(lru_lock);
->>
->> while (bo = list_first(lru)) {
->> 	if (kref_get_unless_zero(bo)) {
->> 		unlock(lru_lock);
->> 		WW_MUTEX_LOCK(bo->ww_mutex);
->> 		lock(lru_lock);
->> 	} else {
->> 		/* bo is getting freed, steal it from the freeing process
->> 		 * or just ignore */
->> 	}
->> }
->> unlock(lru_lock)
->>
->> WW_MUTEX_LOCK_END;
+On Fri, Jun 14, 2019 at 11:27:03AM -0700, Enrico Granata wrote:
+> On Thu, Jun 13, 2019 at 11:54 PM Ting Shen <phoenixshen@chromium.org> wrote:
+> >
+> > http://crosreview.com/1341159 added a EC_MKBP_HAS_MORE_EVENTS flag to
+> > the event_type field, the receiver side should mask out this extra bit when
+> > processing the event.
+> >
+> > Signed-off-by: Ting Shen <phoenixshen@chromium.org>
+> 
+> Reviewed-by: Enrico Granata <egranata@google.com>
 
-Ah, now I know what you mean. And NO, that approach doesn't work.
+EC_MKBP_EVENT_TYPE_MASK is not in Linus' tree. It would be better to
+merge this path through whatever tree that is bringing in that
+definition.
 
-See for the correct ww_mutex dance we need to use the iterator multiple 
-times.
+Acked-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 
-Once to give us the BOs which needs to be locked and another time to 
-give us the BOs which needs to be unlocked in case of a contention.
+Thanks.
 
-That won't work with the approach you suggest here.
-
-Regards,
-Christian.
-
->
->
-> Also I think if we allow this we could perhaps use this to implement the
-> modeset macros too.
-> -Daniel
->
->
->
->
->>> This is kinda what we went with for modeset locks with
->>> DRM_MODESET_LOCK_ALL_BEGIN/END, you can grab more locks in between the
->>> pair at least. But it's a lot more limited use-cases, maybe too fragile an
->>> idea for ww_mutex in full generality.
->>>
->>> Not going to type this out because too much w/e mode here already, but I
->>> can give it a stab next week.
->>> -Daniel
->> _______________________________________________
->> dri-devel mailing list
->> dri-devel@lists.freedesktop.org
->> https://lists.freedesktop.org/mailman/listinfo/dri-devel
->
->
-
+-- 
+Dmitry
