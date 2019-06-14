@@ -2,43 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9288546651
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 19:53:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 152FB4665E
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 19:53:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727017AbfFNRwg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 13:52:36 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:38628 "EHLO
+        id S1727381AbfFNRxu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 13:53:50 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:38616 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726860AbfFNRwf (ORCPT
+        with ESMTP id S1726397AbfFNRwe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 13:52:35 -0400
+        Fri, 14 Jun 2019 13:52:34 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Sender:Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
         Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From:
         Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=rO3bjQzjDxRANZzkYcNidTwoC5hB1Y63PVyrEzCq1+c=; b=NUw6NxIreLD9FKP4unfrcSMyu4
-        fF1aKdoVRZFT/ogLyMwcwtX8omVt4DLNIVnutihYh2mC86CB++GxD+zmYgt5PjfwZUNTCYK3jPKZQ
-        wvyFGoGgZ/uAvrpRxGLNWdQdqpc8yI9P6iInRTfIsBobblD1bxRuLMYUGonW+h7dZg84MHT+yRATL
-        BJi+hPVuFShs8HVTtLxweBK1DyFUIjZK3XqtK+9L5TR2efgafSuzVyKgS0gBwV1mXS4utaS/57viR
-        JbQs5OQIlt4ZT9OD4Zs+6jqszltBBRc7A0cNNxGWKMx+PpNkzvkOJQvo8XFwPu5CSwflxV1UaaaYI
-        H9Uq+mjQ==;
+        bh=f7XUa/lQlxySmEWEcJcuTSMuU+ZsEK8Uqolu3z7EFDA=; b=Pp67UvWQoNL5haPkZ7R8Xthq8N
+        QawMGfQ4+60R72PEbqX7B3+/DxjITPqAzR/ZnZvDOOLI0cX6yAo9TG84HvSBUmwBUJCfJrgjHw9KJ
+        5j1IBek8OSO+l4sPBmyWxj8NbuJ8cFa9N6bUhkgo7Y8CQ0I+aUT3bo8sdICO6JbceS2j/34IqxqY7
+        P1h9C57qyJ2XDB04CQCYmTBgx9uADJkiHodQomCwA7wO+aXxMPVY2FyoElJffUfGErL6B+Qg9+TPE
+        MarrwVpeEh6ILKrMw3VFjX91PQJb1mZhkjAC+56GwozixSErKkPjSU8TlJZn7Gtc60kTVE2fLDBXb
+        CL/DokfA==;
 Received: from 177.133.85.52.dynamic.adsl.gvt.net.br ([177.133.85.52] helo=bombadil.infradead.org)
         by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hbqNO-0000Pc-K2; Fri, 14 Jun 2019 17:52:34 +0000
+        id 1hbqNO-0000PX-IZ; Fri, 14 Jun 2019 17:52:34 +0000
 Received: from mchehab by bombadil.infradead.org with local (Exim 4.92)
         (envelope-from <mchehab@bombadil.infradead.org>)
-        id 1hbqNL-0002Oy-Tx; Fri, 14 Jun 2019 14:52:31 -0300
+        id 1hbqNL-0002P2-Ul; Fri, 14 Jun 2019 14:52:31 -0300
 From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Mauro Carvalho Chehab <mchehab@infradead.org>,
         linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>
-Subject: [PATCH v2 09/16] scripts/get_abi.pl: fix parse issues with some files
-Date:   Fri, 14 Jun 2019 14:52:23 -0300
-Message-Id: <485e3e80bbddc4e144bc1d110f980ace092c5e1c.1560534648.git.mchehab+samsung@kernel.org>
+Subject: [PATCH v2 10/16] scripts/get_abi.pl: avoid creating duplicate names
+Date:   Fri, 14 Jun 2019 14:52:24 -0300
+Message-Id: <23c67f22ebdf43b3cf17798e451311871841a0df.1560534648.git.mchehab+samsung@kernel.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <3b8d7c64f887ddea01df3c4eeabc745c8ec45406.1560534648.git.mchehab+samsung@kernel.org>
 References: <3b8d7c64f887ddea01df3c4eeabc745c8ec45406.1560534648.git.mchehab+samsung@kernel.org>
@@ -49,44 +49,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A few files are failing to parse:
+The file the Documentation/ABI/testing/sysfs-class-power has
+voltage_min, voltage_max and voltage_now symbols duplicated.
 
-	Documentation/ABI/testing/sysfs-bus-pci-devices-aer_stats
-	Documentation/ABI/testing/sysfs-class-pktcdvd
-	Documentation/ABI/testing/sysfs-bus-nfit
+They are defined first for "General Properties" and then for
+"USB Properties".
 
-On all three files, the problem is that there is a ":" character
-at the initial file description.
+This cause those warnings:
 
-Improve the parse in order to handle those special cases.
+	get_abi.pl rest --dir $srctree/Documentation/ABI/testing:26933: WARNING: Duplicate explicit target name: "abi_sys_class_power_supply_supply_name_voltage_max".
+	get_abi.pl rest --dir $srctree/Documentation/ABI/testing:26968: WARNING: Duplicate explicit target name: "abi_sys_class_power_supply_supply_name_voltage_min".
+	get_abi.pl rest --dir $srctree/Documentation/ABI/testing:27008: WARNING: Duplicate explicit target name: "abi_sys_class_power_supply_supply_name_voltage_now".
+
+And, as the references are not valid, it will also generate
+warnings about links to undefined references.
+
+Fix it by storing labels into a hash table and, when a duplicated
+one is found, appending random characters at the end.
 
 Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 ---
- scripts/get_abi.pl | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ scripts/get_abi.pl | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
 diff --git a/scripts/get_abi.pl b/scripts/get_abi.pl
-index 7d454e359d25..116f0c33c16d 100755
+index 116f0c33c16d..329ace635ac2 100755
 --- a/scripts/get_abi.pl
 +++ b/scripts/get_abi.pl
-@@ -87,7 +87,7 @@ sub parse_abi {
- 					# New "tag" is actually part of
- 					# description. Don't consider it a tag
- 					$new_tag = "";
--				} else {
-+				} elsif ($tag ne "") {
- 					parse_error($file, $ln, "tag '$tag' is invalid", $_);
- 				}
- 			}
-@@ -110,7 +110,7 @@ sub parse_abi {
- 				next;
- 			}
+@@ -194,6 +194,8 @@ sub parse_abi {
+ # Outputs the book on ReST format
+ #
  
--			if ($new_tag) {
-+			if ($tag ne "" && $new_tag) {
- 				$tag = $new_tag;
++my %labels;
++
+ sub output_rest {
+ 	foreach my $what (sort {
+ 				($data{$a}->{type} eq "File") cmp ($data{$b}->{type} eq "File") ||
+@@ -217,6 +219,13 @@ sub output_rest {
+ 			$label =~ s,_+,_,g;
+ 			$label =~ s,_$,,;
  
- 				if ($new_what) {
++			# Avoid duplicated labels
++			while (defined($labels{$label})) {
++			    my @chars = ("A".."Z", "a".."z");
++			    $label .= $chars[rand @chars];
++			}
++			$labels{$label} = 1;
++
+ 			$data{$what}->{label} .= $label;
+ 
+ 			printf ".. _%s:\n\n", $label;
 -- 
 2.21.0
 
