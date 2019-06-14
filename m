@@ -2,75 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4EAEE45D5C
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 15:02:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6828045D60
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 15:02:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728106AbfFNNC2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 09:02:28 -0400
-Received: from mail-lf1-f54.google.com ([209.85.167.54]:36134 "EHLO
-        mail-lf1-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727682AbfFNNC2 (ORCPT
+        id S1728138AbfFNNCt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 09:02:49 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:37884 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726874AbfFNNCt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 09:02:28 -0400
-Received: by mail-lf1-f54.google.com with SMTP id q26so1696913lfc.3;
-        Fri, 14 Jun 2019 06:02:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=JNCCekNXxF72Z55DYxpSmTTnL0h6yytISWpjYq2m+S8=;
-        b=Vo96BzDQ74ypjJAU1MqhEcnRuUOs8FJSEkzLVURbhq0pZauL6Hsk4zntSTKsxlRAwo
-         6j3bgM0L61jhronOfeoLgFKzZpGbManW0X2Pf+OARHNkI0imiMTgoNLdd00bm0mQeQpA
-         oU3M05EiGcaO+lfh/leIPWtJRx2wm4ATGCbhl6VEVR+B1hTLssf6ZHyqkijzOKmmgJLf
-         T58p0FTsl5UC74a97uaWUPtTjq7YveSFTJavgTYAsz8Pwa+wNM7WhbWCnW0JrBA6tZK4
-         ROw7OObTvdUeRJfGkDcN7PKDZOTo9o2mBXM5pj9nauJFNgwxgHW9Ym9g63T/FUUaZ9As
-         7VSw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=JNCCekNXxF72Z55DYxpSmTTnL0h6yytISWpjYq2m+S8=;
-        b=CXUDSf3c1H9PfnEjSFByApgCC1RtjkVbgLxFpLs8MKYIFiq/SpAmiyk9sBWOKvFj0b
-         9Khrudhfcj3G3beWwFzhwT0+UXiSObIUpBP8uDQtnPaTxnPJjxQ7uOptl1MW5XBG0+vc
-         Dn8hXjC4CPn0meynqyc5RfC7+bLvqvMMlbiqntSz1PrBSUfiq9q7GNvR0A6lXnmacIlG
-         rmZxu+DFCbR3iYphLdxbjDieMqN3JOgaZhCxzXj9kFy6gDYFvqGREd9dGqRIjEbb3sjM
-         xvuIwPmGyWE4HapRUxW5mtXKlUmsVoqdR6DeScmBLcRjccLYl9CACbxvHwfHsKGmzTKN
-         qj+w==
-X-Gm-Message-State: APjAAAU970eV7oRLDMyPbC8IoLh0NMZaPp/oHM6gQplci0/B4g5E8Kmx
-        dGrcbPFwm5USwaHJs49P6q6872GzufYDr0C4G3oJIYgXxeQ=
-X-Google-Smtp-Source: APXvYqzT19zAyV7NHT8SynOcQ+B8M0VI3VgBKEvgbGYpbH+azt1LL7LzIBctjZRJqLUl4EH9EsxvJr/pB4zAVN1SpBI=
-X-Received: by 2002:ac2:5a5e:: with SMTP id r30mr5218050lfn.12.1560517345808;
- Fri, 14 Jun 2019 06:02:25 -0700 (PDT)
+        Fri, 14 Jun 2019 09:02:49 -0400
+Received: from [5.158.153.52] (helo=nanos.tec.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1hblqt-00046r-I2; Fri, 14 Jun 2019 15:02:43 +0200
+Date:   Fri, 14 Jun 2019 15:02:43 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     "Kirkendall, Garrett" <Garrett.Kirkendall@amd.com>
+cc:     "nstange@suse.de" <nstange@suse.de>,
+        "luto@kernel.org" <luto@kernel.org>,
+        "natechancellor@gmail.com" <natechancellor@gmail.com>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: arch/x86/kernel/apic/apic.c: calibrate_APIC_clock() soft hangs
+ when PIC is not configured by BIOS before kernel is launched.
+In-Reply-To: <SN6PR12MB2734370504CF4B89600C8FD885330@SN6PR12MB2734.namprd12.prod.outlook.com>
+Message-ID: <alpine.DEB.2.21.1906141454430.1722@nanos.tec.linutronix.de>
+References: <SN6PR12MB2734813FB27C43E06F5B4E3D85330@SN6PR12MB2734.namprd12.prod.outlook.com> <SN6PR12MB2734B49FDFEAC6CE5D93687185330@SN6PR12MB2734.namprd12.prod.outlook.com> <alpine.DEB.2.21.1905091526440.3139@nanos.tec.linutronix.de>
+ <SN6PR12MB2734370504CF4B89600C8FD885330@SN6PR12MB2734.namprd12.prod.outlook.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-References: <f297c15c-af4f-e4b3-feac-ca313f46f13e@sedsystems.ca>
- <74703679-96d4-b759-a332-c3f3bff9a7c7@sedsystems.ca> <CAOMZO5C9fu_h5Ct-rbSuTQ149JFT6tH-iN_r8dnYaDxE7gL+UQ@mail.gmail.com>
- <857036e0-769b-11bd-2083-5451670bd645@sedsystems.ca>
-In-Reply-To: <857036e0-769b-11bd-2083-5451670bd645@sedsystems.ca>
-From:   Fabio Estevam <festevam@gmail.com>
-Date:   Fri, 14 Jun 2019 10:02:29 -0300
-Message-ID: <CAOMZO5A+X_+4b3qGzSx0DzrU6UkH-KZ1Kd_WVNXP9pXXqFqFSQ@mail.gmail.com>
-Subject: Re: iMX6 5.2-rc3 boot failure due to "PCI: imx6: Allow asynchronous probing"
-To:     Robert Hancock <hancock@sedsystems.ca>,
-        Robin Gong <yibin.gong@nxp.com>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
-        Richard Zhu <hongxing.zhu@nxp.com>,
-        "l.stach@pengutronix.de" <l.stach@pengutronix.de>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Robert,
+Garrett,
 
-On Tue, Jun 11, 2019 at 8:05 PM Robert Hancock <hancock@sedsystems.ca> wrote:
+On Thu, 9 May 2019, Kirkendall, Garrett wrote:
 
-> Based on some tests, it appears that may help - however it is hard to be
-> conclusive since the behavior is somewhat random, it doesn't fail every
-> time. The first few times I booted this version, I didn't see the
-> problem, but after that it was consistently happening every time until I
-> reverted the patch.
+  A: Because it messes up the order in which people normally read text.
+  Q: Why is top-posting such a bad thing?
+  A: Top-posting.
+  Q: What is the most annoying thing in e-mail?
 
-Do you see the failure if you apply this patch from Robin?
-https://www.spinics.net/lists/arm-kernel/msg734813.html
+  A: No.
+  Q: Should I include quotations after my reply?
+
+  http://daringfireball.net/2007/07/on_top
+
+Also please break the lines around 78 chars.
+
+> 1.  Is it correct to probe the 8259 before it is initialized by the
+>     kernel?  The 8259 will not respond properly to the probe unless it is
+>     properly initialized.
+
+So far the kernel relied on the BIOS to initialize 8259
+
+> 2.  Should IOAPIC interrupts 0-15 require the legacy PIC be available and
+>     initialized by the BIOS?
+
+Unless the platform explicitely states that there is no legacy PIC, which
+is true for some MID and HV guest systems. 
+
+> 2.  The kernel will not boot if there is no legacy 8259 PIC even if all
+>     the other factors stated are provided.
+
+Hmm? what other factors?
+
+> I want to understand why a preinitialized 8259 is a requirement for a
+> system configured to use the IOAPIC?
+
+Mostly historical reasons and the whole PIC/IOAPIC thing has been a fragile
+nightmare forever, so I'm reluctant to do any extra work there which might
+break older machines.
+
+Thanks,
+
+	tglx
