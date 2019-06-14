@@ -2,51 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AC5DB4663C
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 19:53:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6AF8B4664B
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 19:53:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726945AbfFNRwr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 13:52:47 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:38744 "EHLO
+        id S1727091AbfFNRwh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 13:52:37 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:38652 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727150AbfFNRwk (ORCPT
+        with ESMTP id S1726891AbfFNRwf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 13:52:40 -0400
+        Fri, 14 Jun 2019 13:52:35 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Sender:Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
         Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From:
         Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=x8eDpGA9tkzRBlOBNNKR3eS8jBR9t93239y1JkYnhbQ=; b=kuA0elOUHo2L9KKLSGfNfwbvs3
-        G60U+4BUfljcguaEdp1oh1fdtJK9CHqB9ChT2aAITfeKI92oqotdfWGywmviMxaQy2CyCdYJyqYOL
-        fiVcjSKZrn5KGrO29grE7mKfsvFmGJWzjIX11UeQCU2pOHJ9dfE4z28vjKjxA41rswwC9OD/GHxxd
-        LACD6BQndscYbq201doqmw++JM04ZYJq/8GV/WY+LhUXit03e8csYjmVc6NgX+pJXakRtjHEXen/z
-        e5m2rk8ea/CdTMitrBu3e0VQaGuT+aCFdK59X4znceZLUKdfmIExkKxaey7XWPL7Twsr+b5F77YK7
-        vgY+sPAA==;
+        bh=iyGlSzfmPRPhgV34seTobe5HD+h41lRl2+Yc0sW70Vk=; b=U7/wfDVfv6bAW/KOTxLszc2Lc0
+        3Izya+hxW7iR+l8INo6WWVSeUwABUQ2oKSw0UE2eXh9kAZNsMg04HuYWuxGFn1i2F38T7RHZz2yz6
+        X5SGGldIh8u8DKz2+IlSDQbZuwrIB7aNG7lZqQ7WriYJ/A+UMvFnT/iUTR5MlfD8XfG3Rl40X1qfd
+        m9Yfdke2B1c43+sejTicflnDyauIwZ3UmoLodPY81smEZR8gByke8TS3imy682x2viNepRi/LqFFv
+        5Spx1aSzsscQEasuK+DpvCD+X9L5XrZfixLGLEGQsL3jiQtIEDvXWcoAduwqjYOamOXMuTNHuKdEI
+        KHOXq+SQ==;
 Received: from 177.133.85.52.dynamic.adsl.gvt.net.br ([177.133.85.52] helo=bombadil.infradead.org)
         by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hbqNT-0000Pj-CM; Fri, 14 Jun 2019 17:52:39 +0000
+        id 1hbqNO-0000Pf-PW; Fri, 14 Jun 2019 17:52:34 +0000
 Received: from mchehab by bombadil.infradead.org with local (Exim 4.92)
         (envelope-from <mchehab@bombadil.infradead.org>)
-        id 1hbqNL-0002OW-NX; Fri, 14 Jun 2019 14:52:31 -0300
+        id 1hbqNL-0002Oa-OW; Fri, 14 Jun 2019 14:52:31 -0300
 From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Mauro Carvalho Chehab <mchehab@infradead.org>,
-        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Anton Vorontsov <anton@enomsg.org>,
-        Colin Cross <ccross@android.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Andrew Donnellan <ajd@linux.ibm.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Rajat Jain <rajatja@google.com>,
-        Bjorn Helgaas <bhelgaas@google.com>
-Subject: [PATCH v2 02/16] ABI: Fix KernelVersion tags
-Date:   Fri, 14 Jun 2019 14:52:16 -0300
-Message-Id: <08110b8914ae2ac61e5b284f7488475a3c761f4b.1560534648.git.mchehab+samsung@kernel.org>
+        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>
+Subject: [PATCH v2 03/16] scripts: add an script to parse the ABI files
+Date:   Fri, 14 Jun 2019 14:52:17 -0300
+Message-Id: <680fb978ef9322c705eca9927c79b220cd3ccc4a.1560534648.git.mchehab+samsung@kernel.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <3b8d7c64f887ddea01df3c4eeabc745c8ec45406.1560534648.git.mchehab+samsung@kernel.org>
 References: <3b8d7c64f887ddea01df3c4eeabc745c8ec45406.1560534648.git.mchehab+samsung@kernel.org>
@@ -57,313 +49,237 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It is "KernelVersion:" and not "Kernel Version:".
+Add a script to parse the Documentation/ABI files and produce
+an output with all entries inside an ABI (sub)directory.
+
+Right now, it outputs its contents on ReST format. It shouldn't
+be hard to make it produce other kind of outputs, since the ABI
+file parser is implemented in separate than the output generator.
 
 Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 ---
- Documentation/ABI/testing/pstore              |  2 +-
- .../sysfs-bus-event_source-devices-format     |  2 +-
- .../ABI/testing/sysfs-bus-i2c-devices-hm6352  |  6 ++---
- .../testing/sysfs-bus-pci-devices-aer_stats   | 12 +++++-----
- .../ABI/testing/sysfs-bus-pci-devices-cciss   | 22 +++++++++----------
- .../testing/sysfs-bus-usb-devices-usbsevseg   | 10 ++++-----
- .../ABI/testing/sysfs-driver-altera-cvp       |  2 +-
- Documentation/ABI/testing/sysfs-driver-ppi    |  2 +-
- Documentation/ABI/testing/sysfs-driver-st     |  2 +-
- Documentation/ABI/testing/sysfs-driver-wacom  |  2 +-
- 10 files changed, 31 insertions(+), 31 deletions(-)
+ scripts/get_abi.pl | 212 +++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 212 insertions(+)
+ create mode 100755 scripts/get_abi.pl
 
-diff --git a/Documentation/ABI/testing/pstore b/Documentation/ABI/testing/pstore
-index 8d6e48f4e8ef..d45209abdb1b 100644
---- a/Documentation/ABI/testing/pstore
-+++ b/Documentation/ABI/testing/pstore
-@@ -1,6 +1,6 @@
- What:		/sys/fs/pstore/... (or /dev/pstore/...)
- Date:		March 2011
--Kernel Version: 2.6.39
-+KernelVersion: 2.6.39
- Contact:	tony.luck@intel.com
- Description:	Generic interface to platform dependent persistent storage.
- 
-diff --git a/Documentation/ABI/testing/sysfs-bus-event_source-devices-format b/Documentation/ABI/testing/sysfs-bus-event_source-devices-format
-index b6f8748e0200..5bb793ec926c 100644
---- a/Documentation/ABI/testing/sysfs-bus-event_source-devices-format
-+++ b/Documentation/ABI/testing/sysfs-bus-event_source-devices-format
-@@ -1,6 +1,6 @@
- What:		/sys/bus/event_source/devices/<dev>/format
- Date:		January 2012
--Kernel Version: 3.3
-+KernelVersion: 3.3
- Contact:	Jiri Olsa <jolsa@redhat.com>
- Description:
- 		Attribute group to describe the magic bits that go into
-diff --git a/Documentation/ABI/testing/sysfs-bus-i2c-devices-hm6352 b/Documentation/ABI/testing/sysfs-bus-i2c-devices-hm6352
-index 29bd447e50a0..4a251b7f11e4 100644
---- a/Documentation/ABI/testing/sysfs-bus-i2c-devices-hm6352
-+++ b/Documentation/ABI/testing/sysfs-bus-i2c-devices-hm6352
-@@ -1,20 +1,20 @@
- What:		/sys/bus/i2c/devices/.../heading0_input
- Date:		April 2010
--Kernel Version: 2.6.36?
-+KernelVersion: 2.6.36?
- Contact:	alan.cox@intel.com
- Description:	Reports the current heading from the compass as a floating
- 		point value in degrees.
- 
- What:		/sys/bus/i2c/devices/.../power_state
- Date:		April 2010
--Kernel Version: 2.6.36?
-+KernelVersion: 2.6.36?
- Contact:	alan.cox@intel.com
- Description:	Sets the power state of the device. 0 sets the device into
- 		sleep mode, 1 wakes it up.
- 
- What:		/sys/bus/i2c/devices/.../calibration
- Date:		April 2010
--Kernel Version: 2.6.36?
-+KernelVersion: 2.6.36?
- Contact:	alan.cox@intel.com
- Description:	Sets the calibration on or off (1 = on, 0 = off). See the
- 		chip data sheet.
-diff --git a/Documentation/ABI/testing/sysfs-bus-pci-devices-aer_stats b/Documentation/ABI/testing/sysfs-bus-pci-devices-aer_stats
-index ff229d71961c..3c9a8c4a25eb 100644
---- a/Documentation/ABI/testing/sysfs-bus-pci-devices-aer_stats
-+++ b/Documentation/ABI/testing/sysfs-bus-pci-devices-aer_stats
-@@ -11,7 +11,7 @@ saw any problems).
- 
- What:		/sys/bus/pci/devices/<dev>/aer_dev_correctable
- Date:		July 2018
--Kernel Version: 4.19.0
-+KernelVersion: 4.19.0
- Contact:	linux-pci@vger.kernel.org, rajatja@google.com
- Description:	List of correctable errors seen and reported by this
- 		PCI device using ERR_COR. Note that since multiple errors may
-@@ -33,7 +33,7 @@ TOTAL_ERR_COR 2
- 
- What:		/sys/bus/pci/devices/<dev>/aer_dev_fatal
- Date:		July 2018
--Kernel Version: 4.19.0
-+KernelVersion: 4.19.0
- Contact:	linux-pci@vger.kernel.org, rajatja@google.com
- Description:	List of uncorrectable fatal errors seen and reported by this
- 		PCI device using ERR_FATAL. Note that since multiple errors may
-@@ -64,7 +64,7 @@ TOTAL_ERR_FATAL 0
- 
- What:		/sys/bus/pci/devices/<dev>/aer_dev_nonfatal
- Date:		July 2018
--Kernel Version: 4.19.0
-+KernelVersion: 4.19.0
- Contact:	linux-pci@vger.kernel.org, rajatja@google.com
- Description:	List of uncorrectable nonfatal errors seen and reported by this
- 		PCI device using ERR_NONFATAL. Note that since multiple errors
-@@ -105,18 +105,18 @@ messages on the PCI hierarchy originating at that root port.
- 
- What:		/sys/bus/pci/devices/<dev>/aer_stats/aer_rootport_total_err_cor
- Date:		July 2018
--Kernel Version: 4.19.0
-+KernelVersion: 4.19.0
- Contact:	linux-pci@vger.kernel.org, rajatja@google.com
- Description:	Total number of ERR_COR messages reported to rootport.
- 
- What:	    /sys/bus/pci/devices/<dev>/aer_stats/aer_rootport_total_err_fatal
- Date:		July 2018
--Kernel Version: 4.19.0
-+KernelVersion: 4.19.0
- Contact:	linux-pci@vger.kernel.org, rajatja@google.com
- Description:	Total number of ERR_FATAL messages reported to rootport.
- 
- What:	    /sys/bus/pci/devices/<dev>/aer_stats/aer_rootport_total_err_nonfatal
- Date:		July 2018
--Kernel Version: 4.19.0
-+KernelVersion: 4.19.0
- Contact:	linux-pci@vger.kernel.org, rajatja@google.com
- Description:	Total number of ERR_NONFATAL messages reported to rootport.
-diff --git a/Documentation/ABI/testing/sysfs-bus-pci-devices-cciss b/Documentation/ABI/testing/sysfs-bus-pci-devices-cciss
-index eb449169c30b..92a94e1068c2 100644
---- a/Documentation/ABI/testing/sysfs-bus-pci-devices-cciss
-+++ b/Documentation/ABI/testing/sysfs-bus-pci-devices-cciss
-@@ -1,68 +1,68 @@
- What:		/sys/bus/pci/devices/<dev>/ccissX/cXdY/model
- Date:		March 2009
--Kernel Version: 2.6.30
-+KernelVersion: 2.6.30
- Contact:	iss_storagedev@hp.com
- Description:	Displays the SCSI INQUIRY page 0 model for logical drive
- 		Y of controller X.
- 
- What:		/sys/bus/pci/devices/<dev>/ccissX/cXdY/rev
- Date:		March 2009
--Kernel Version: 2.6.30
-+KernelVersion: 2.6.30
- Contact:	iss_storagedev@hp.com
- Description:	Displays the SCSI INQUIRY page 0 revision for logical
- 		drive Y of controller X.
- 
- What:		/sys/bus/pci/devices/<dev>/ccissX/cXdY/unique_id
- Date:		March 2009
--Kernel Version: 2.6.30
-+KernelVersion: 2.6.30
- Contact:	iss_storagedev@hp.com
- Description:	Displays the SCSI INQUIRY page 83 serial number for logical
- 		drive Y of controller X.
- 
- What:		/sys/bus/pci/devices/<dev>/ccissX/cXdY/vendor
- Date:		March 2009
--Kernel Version: 2.6.30
-+KernelVersion: 2.6.30
- Contact:	iss_storagedev@hp.com
- Description:	Displays the SCSI INQUIRY page 0 vendor for logical drive
- 		Y of controller X.
- 
- What:		/sys/bus/pci/devices/<dev>/ccissX/cXdY/block:cciss!cXdY
- Date:		March 2009
--Kernel Version: 2.6.30
-+KernelVersion: 2.6.30
- Contact:	iss_storagedev@hp.com
- Description:	A symbolic link to /sys/block/cciss!cXdY
- 
- What:		/sys/bus/pci/devices/<dev>/ccissX/rescan
- Date:		August 2009
--Kernel Version:	2.6.31
-+KernelVersion:	2.6.31
- Contact:	iss_storagedev@hp.com
- Description:	Kicks of a rescan of the controller to discover logical
- 		drive topology changes.
- 
- What:		/sys/bus/pci/devices/<dev>/ccissX/cXdY/lunid
- Date:		August 2009
--Kernel Version: 2.6.31
-+KernelVersion: 2.6.31
- Contact:	iss_storagedev@hp.com
- Description:	Displays the 8-byte LUN ID used to address logical
- 		drive Y of controller X.
- 
- What:		/sys/bus/pci/devices/<dev>/ccissX/cXdY/raid_level
- Date:		August 2009
--Kernel Version: 2.6.31
-+KernelVersion: 2.6.31
- Contact:	iss_storagedev@hp.com
- Description:	Displays the RAID level of logical drive Y of
- 		controller X.
- 
- What:		/sys/bus/pci/devices/<dev>/ccissX/cXdY/usage_count
- Date:		August 2009
--Kernel Version: 2.6.31
-+KernelVersion: 2.6.31
- Contact:	iss_storagedev@hp.com
- Description:	Displays the usage count (number of opens) of logical drive Y
- 		of controller X.
- 
- What:		/sys/bus/pci/devices/<dev>/ccissX/resettable
- Date:		February 2011
--Kernel Version:	2.6.38
-+KernelVersion:	2.6.38
- Contact:	iss_storagedev@hp.com
- Description:	Value of 1 indicates the controller can honor the reset_devices
- 		kernel parameter.  Value of 0 indicates reset_devices cannot be
-@@ -73,7 +73,7 @@ Description:	Value of 1 indicates the controller can honor the reset_devices
- 
- What:		/sys/bus/pci/devices/<dev>/ccissX/transport_mode
- Date:		July 2011
--Kernel Version:	3.0
-+KernelVersion:	3.0
- Contact:	iss_storagedev@hp.com
- Description:	Value of "simple" indicates that the controller has been placed
- 		in "simple mode". Value of "performant" indicates that the
-diff --git a/Documentation/ABI/testing/sysfs-bus-usb-devices-usbsevseg b/Documentation/ABI/testing/sysfs-bus-usb-devices-usbsevseg
-index f6199b314196..9ade80f81f96 100644
---- a/Documentation/ABI/testing/sysfs-bus-usb-devices-usbsevseg
-+++ b/Documentation/ABI/testing/sysfs-bus-usb-devices-usbsevseg
-@@ -1,6 +1,6 @@
- What:		/sys/bus/usb/.../powered
- Date:		August 2008
--Kernel Version:	2.6.26
-+KernelVersion:	2.6.26
- Contact:	Harrison Metzger <harrisonmetz@gmail.com>
- Description:	Controls whether the device's display will powered.
- 		A value of 0 is off and a non-zero value is on.
-@@ -8,7 +8,7 @@ Description:	Controls whether the device's display will powered.
- What:		/sys/bus/usb/.../mode_msb
- What:		/sys/bus/usb/.../mode_lsb
- Date:		August 2008
--Kernel Version:	2.6.26
-+KernelVersion:	2.6.26
- Contact:	Harrison Metzger <harrisonmetz@gmail.com>
- Description:	Controls the devices display mode.
- 		For a 6 character display the values are
-@@ -18,7 +18,7 @@ Description:	Controls the devices display mode.
- 
- What:		/sys/bus/usb/.../textmode
- Date:		August 2008
--Kernel Version:	2.6.26
-+KernelVersion:	2.6.26
- Contact:	Harrison Metzger <harrisonmetz@gmail.com>
- Description:	Controls the way the device interprets its text buffer.
- 		raw:	each character controls its segment manually
-@@ -27,13 +27,13 @@ Description:	Controls the way the device interprets its text buffer.
- 
- What:		/sys/bus/usb/.../text
- Date:		August 2008
--Kernel Version:	2.6.26
-+KernelVersion:	2.6.26
- Contact:	Harrison Metzger <harrisonmetz@gmail.com>
- Description:	The text (or data) for the device to display
- 
- What:		/sys/bus/usb/.../decimals
- Date:		August 2008
--Kernel Version:	2.6.26
-+KernelVersion:	2.6.26
- Contact:	Harrison Metzger <harrisonmetz@gmail.com>
- Description:	Controls the decimal places on the device.
- 		To set the nth decimal place, give this field
-diff --git a/Documentation/ABI/testing/sysfs-driver-altera-cvp b/Documentation/ABI/testing/sysfs-driver-altera-cvp
-index 8cde64a71edb..fbd8078fd7ad 100644
---- a/Documentation/ABI/testing/sysfs-driver-altera-cvp
-+++ b/Documentation/ABI/testing/sysfs-driver-altera-cvp
-@@ -1,6 +1,6 @@
- What:		/sys/bus/pci/drivers/altera-cvp/chkcfg
- Date:		May 2017
--Kernel Version:	4.13
-+KernelVersion:	4.13
- Contact:	Anatolij Gustschin <agust@denx.de>
- Description:
- 		Contains either 1 or 0 and controls if configuration
-diff --git a/Documentation/ABI/testing/sysfs-driver-ppi b/Documentation/ABI/testing/sysfs-driver-ppi
-index 9921ef285899..1a56fc507689 100644
---- a/Documentation/ABI/testing/sysfs-driver-ppi
-+++ b/Documentation/ABI/testing/sysfs-driver-ppi
-@@ -1,6 +1,6 @@
- What:		/sys/class/tpm/tpmX/ppi/
- Date:		August 2012
--Kernel Version:	3.6
-+KernelVersion:	3.6
- Contact:	xiaoyan.zhang@intel.com
- Description:
- 		This folder includes the attributes related with PPI (Physical
-diff --git a/Documentation/ABI/testing/sysfs-driver-st b/Documentation/ABI/testing/sysfs-driver-st
-index ba5d77008a85..88cab66fd77f 100644
---- a/Documentation/ABI/testing/sysfs-driver-st
-+++ b/Documentation/ABI/testing/sysfs-driver-st
-@@ -1,6 +1,6 @@
- What:		/sys/bus/scsi/drivers/st/debug_flag
- Date:		October 2015
--Kernel Version:	?.?
-+KernelVersion:	?.?
- Contact:	shane.seymour@hpe.com
- Description:
- 		This file allows you to turn debug output from the st driver
-diff --git a/Documentation/ABI/testing/sysfs-driver-wacom b/Documentation/ABI/testing/sysfs-driver-wacom
-index 2aa5503ee200..afc48fc163b5 100644
---- a/Documentation/ABI/testing/sysfs-driver-wacom
-+++ b/Documentation/ABI/testing/sysfs-driver-wacom
-@@ -1,6 +1,6 @@
- What:		/sys/bus/hid/devices/<bus>:<vid>:<pid>.<n>/speed
- Date:		April 2010
--Kernel Version:	2.6.35
-+KernelVersion:	2.6.35
- Contact:	linux-bluetooth@vger.kernel.org
- Description:
- 		The /sys/bus/hid/devices/<bus>:<vid>:<pid>.<n>/speed file
+diff --git a/scripts/get_abi.pl b/scripts/get_abi.pl
+new file mode 100755
+index 000000000000..f7c9944a833c
+--- /dev/null
++++ b/scripts/get_abi.pl
+@@ -0,0 +1,212 @@
++#!/usr/bin/perl
++
++use strict;
++use Pod::Usage;
++use Getopt::Long;
++use File::Find;
++use Fcntl ':mode';
++
++my $help;
++my $man;
++my $debug;
++
++GetOptions(
++	"debug|d+" => \$debug,
++	'help|?' => \$help,
++	man => \$man
++) or pod2usage(2);
++
++pod2usage(1) if $help;
++pod2usage(-exitstatus => 0, -verbose => 2) if $man;
++
++pod2usage(2) if (scalar @ARGV != 1);
++
++my ($prefix) = @ARGV;
++
++require Data::Dumper if ($debug);
++
++my %data;
++
++#
++# Displays an error message, printing file name and line
++#
++sub parse_error($$$$) {
++	my ($file, $ln, $msg, $data) = @_;
++
++	print STDERR "file $file#$ln: $msg at\n\t$data";
++}
++
++#
++# Parse an ABI file, storing its contents at %data
++#
++sub parse_abi {
++	my $file = $File::Find::name;
++
++	my $mode = (stat($file))[2];
++	return if ($mode & S_IFDIR);
++	return if ($file =~ m,/README,);
++
++	my $name = $file;
++	$name =~ s,.*/,,;
++
++	my $type = $file;
++	$type =~ s,.*/(.*)/.*,$1,;
++
++	my $what;
++	my $new_what;
++	my $tag;
++	my $ln;
++
++	print STDERR "Opening $file\n" if ($debug > 1);
++	open IN, $file;
++	while(<IN>) {
++		$ln++;
++		if (m/^(\S+):\s*(.*)/i) {
++			my $new_tag = lc($1);
++			my $content = $2;
++
++			if (!($new_tag =~ m/(what|date|kernelversion|contact|description|users)/)) {
++				if ($tag eq "description") {
++					$data{$what}->{$tag} .= "\n$content";;
++					$data{$what}->{$tag} =~ s/\n+$//;
++					next;
++				} else {
++					parse_error($file, $ln, "tag '$tag' is invalid", $_);
++				}
++			}
++
++			if ($new_tag =~ m/what/) {
++				if ($tag =~ m/what/) {
++					$what .= ", " . $content;
++				} else {
++					$what = $content;
++					$new_what = 1;
++				}
++				$tag = $new_tag;
++				next;
++			}
++
++			$tag = $new_tag;
++
++			if ($new_what) {
++				$new_what = 0;
++
++				$data{$what}->{type} = $type;
++				$data{$what}->{file} = $name;
++				print STDERR "\twhat: $what\n" if ($debug > 1);
++			}
++
++			if (!$what) {
++				parse_error($file, $ln, "'What:' should come first:", $_);
++				next;
++			}
++			$data{$what}->{$tag} = $content;
++			next;
++		}
++
++		# Silently ignore any headers before the database
++		next if (!$tag);
++
++		if (m/^\s*(.*)/) {
++			$data{$what}->{$tag} .= "\n$1";
++			$data{$what}->{$tag} =~ s/\n+$//;
++			next;
++		}
++
++		# Everything else is error
++		parse_error($file, $ln, "Unexpected line:", $_);
++	}
++	close IN;
++}
++
++# Outputs the output on ReST format
++sub output_rest {
++	foreach my $what (sort keys %data) {
++		my $type = $data{$what}->{type};
++		my $file = $data{$what}->{file};
++
++		my $w = $what;
++		$w =~ s/([\(\)\_\-\*\=\^\~\\])/\\$1/g;
++
++		print "$w\n\n";
++		print "- defined on file $file (type: $type)\n\n::\n\n";
++
++		my $desc = $data{$what}->{description};
++		$desc =~ s/^\s+//;
++
++		# Remove title markups from the description, as they won't work
++		$desc =~ s/\n[\-\*\=\^\~]+\n/\n/g;
++
++		# put everything inside a code block
++		$desc =~ s/\n/\n /g;
++
++
++		if (!($desc =~ /^\s*$/)) {
++			print " $desc\n\n";
++		} else {
++			print " DESCRIPTION MISSING\n\n";
++		}
++	}
++}
++
++#
++# Parses all ABI files located at $prefix dir
++#
++find({wanted =>\&parse_abi, no_chdir => 1}, $prefix);
++
++print STDERR Data::Dumper->Dump([\%data], [qw(*data)]) if ($debug);
++
++#
++# Outputs an ReST file with the ABI contents
++#
++output_rest
++
++
++__END__
++
++=head1 NAME
++
++abi_book.pl - parse the Linux ABI files and produce a ReST book.
++
++=head1 SYNOPSIS
++
++B<abi_book.pl> [--debug] <ABI_DIR>]
++
++=head1 OPTIONS
++
++=over 8
++
++=item B<--debug>
++
++Put the script in verbose mode, useful for debugging. Can be called multiple
++times, to increase verbosity.
++
++=item B<--help>
++
++Prints a brief help message and exits.
++
++=item B<--man>
++
++Prints the manual page and exits.
++
++=back
++
++=head1 DESCRIPTION
++
++Parse the Linux ABI files from ABI DIR (usually located at Documentation/ABI)
++and produce a ReST book containing the Linux ABI.
++
++=head1 BUGS
++
++Report bugs to Mauro Carvalho Chehab <mchehab@s-opensource.com>
++
++=head1 COPYRIGHT
++
++Copyright (c) 2016 by Mauro Carvalho Chehab <mchehab@s-opensource.com>.
++
++License GPLv2: GNU GPL version 2 <http://gnu.org/licenses/gpl.html>.
++
++This is free software: you are free to change and redistribute it.
++There is NO WARRANTY, to the extent permitted by law.
++
++=cut
 -- 
 2.21.0
 
