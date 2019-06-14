@@ -2,86 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0CDBB45B88
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 13:35:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 475E645B8D
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 13:36:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727520AbfFNLfh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 07:35:37 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:37794 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727054AbfFNLfg (ORCPT
+        id S1727604AbfFNLgH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 07:36:07 -0400
+Received: from mail-qt1-f182.google.com ([209.85.160.182]:39458 "EHLO
+        mail-qt1-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727054AbfFNLgG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 07:35:36 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=WWQ52tqaiCP0C1KYMNijF1HDqWlxTu5XvaRlCuBtZ3g=; b=fijeBxJqngGRNGgiX1l6dheAA
-        g0a+TA0qsbMnKPf3UF9mnTF+NJ8o2HHDxZGyQokqmbnkrBWxh2nwJAMMhedacfoexc3lD+yUgcstb
-        b58/Ies68J3GZLFKZdMLki9pYdHx5s9bTGYQntRYkltMpfp80uHWFFwUnBfxeqzhumHdFR1jsim+Q
-        Fcvnxn8kZXVv9SmjYvxD82ay1KdB3V7FWOTlZPdCFHVficpEuxVn3l5p4ZgEs+myHgUEcfUwux4Y/
-        xrCDihiDGQ2n0gR2hsnJIoV+HwI5A4h+me8DTlf+jEwCC3bHxoTlS1/sjfQOuLkYYJyhSLIyuA12r
-        fc9HqHw7w==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hbkUO-0007E2-VL; Fri, 14 Jun 2019 11:35:25 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 7156220A15636; Fri, 14 Jun 2019 13:35:23 +0200 (CEST)
-Date:   Fri, 14 Jun 2019 13:35:23 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>, x86@kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Borislav Petkov <bp@alien8.de>,
-        Andy Lutomirski <luto@amacapital.net>,
-        David Howells <dhowells@redhat.com>,
-        Kees Cook <keescook@chromium.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Kai Huang <kai.huang@linux.intel.com>,
-        Jacob Pan <jacob.jun.pan@linux.intel.com>,
-        Alison Schofield <alison.schofield@intel.com>,
-        linux-mm@kvack.org, kvm@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH, RFC 26/62] keys/mktme: Move the MKTME payload into a
- cache aligned structure
-Message-ID: <20190614113523.GC3436@hirez.programming.kicks-ass.net>
-References: <20190508144422.13171-1-kirill.shutemov@linux.intel.com>
- <20190508144422.13171-27-kirill.shutemov@linux.intel.com>
+        Fri, 14 Jun 2019 07:36:06 -0400
+Received: by mail-qt1-f182.google.com with SMTP id i34so2007631qta.6
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2019 04:36:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=iYWTfHNOGy0zCm7qjiECEcfyYn0UNGZv0fcAcGdSdgg=;
+        b=o6LPSm3YPDMrL/3E2NtKGfuENLZmMWBdAt0M2fXDRjTnM/hpNZZD+gQx4nuzZRErRi
+         OOXafc/BXwn0ssoqtMNrRgteXvsZ9xAn9QCgJjykO7RCluQFxU248dF6f0gsXfVgDHhP
+         trxyZq65xhrp0csV+D/zOKyYqleu7RIq0madxSfNVQW1qIL/UK4qUV1OFM0dwJf4YXvR
+         bI5jwS6oaZJ3+a3+myzITXwleNevb9W5SCrLkZM05SU8z3xCk3LixFOIvODGbEXUMe0Y
+         Hbl5Q0UCcaVzqBAHmIEpHRa57mo6U0i5aO1uDLd2NJTI9uLJ1jQ8pufjjrNYqf7PyLNr
+         KWxw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=iYWTfHNOGy0zCm7qjiECEcfyYn0UNGZv0fcAcGdSdgg=;
+        b=sP+H4DDqiqG7FS1tJ7l452Vq210TfJaUIx6UmehKIsm+UIvne7Lum5v7wuqaIktBGj
+         6BVyeW5QEY5Sdr9sadlYQQXYJr9c2D1zSwgXb4c0hpkicgIc4Bhj14t3OoiJtMBjhtTP
+         Tq4Xzh6ZI0MT8u9CKHmT2nOztzgvAjwoASSPY5C2RCfFr7nNsolWgHWlSVlyLjoVPS11
+         vgVCNT8pQ6ev/SLrIDPAKtPOEOpqG93EXnhSyKLYW7SMRgcERyHrOmgczaabtkpeJ9Mb
+         Ib5lYmKb7n1bb6hU1U0Gu335Q8KSaELWAVBC1/gRKQ7sRGp3A5W35UQdWjC+JbndoPZ+
+         LT6g==
+X-Gm-Message-State: APjAAAUWM/8dCJPXIzwr0hYnh6o2I+UszbvKfNU9NKlRSEgxzuh1fO8i
+        9PXN9bexl6EiZ7K0WWOaAAoH6ZiDo3XjdaujCyc=
+X-Google-Smtp-Source: APXvYqw4LNT9mOOlCh6RRAJMYCnVol0xQsRuD2GZQqReLTW7gc+Qtdxocgbn/MDYypq5T/Qb1tgZsEIDbXySavtO6ts=
+X-Received: by 2002:a05:6214:2b0:: with SMTP id m16mr7805135qvv.23.1560512165862;
+ Fri, 14 Jun 2019 04:36:05 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190508144422.13171-27-kirill.shutemov@linux.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190614100928.9791-1-hch@lst.de>
+In-Reply-To: <20190614100928.9791-1-hch@lst.de>
+From:   Greentime Hu <green.hu@gmail.com>
+Date:   Fri, 14 Jun 2019 19:35:29 +0800
+Message-ID: <CAEbi=3dnZNfMeLeuf9Y-d0HxTe_v1F_45Tb_TZwaat_LJq66SQ@mail.gmail.com>
+Subject: Re: [RFC] switch nds32 to use the generic remapping DMA allocator
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Vincent Chen <deanbo422@gmail.com>,
+        iommu@lists.linux-foundation.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 08, 2019 at 05:43:46PM +0300, Kirill A. Shutemov wrote:
+Christoph Hellwig <hch@lst.de> =E6=96=BC 2019=E5=B9=B46=E6=9C=8814=E6=97=A5=
+ =E9=80=B1=E4=BA=94 =E4=B8=8B=E5=8D=886:09=E5=AF=AB=E9=81=93=EF=BC=9A
+>
+> Hi Greentime and Vicent,
+>
+> can you take a look at the (untested) patch below?  It converts nds32
+> to use the generic remapping DMA allocator, which is also used by
+> arm64 and csky.
 
-> +/* Copy the payload to the HW programming structure and program this KeyID */
-> +static int mktme_program_keyid(int keyid, struct mktme_payload *payload)
-> +{
-> +	struct mktme_key_program *kprog = NULL;
-> +	int ret;
-> +
-> +	kprog = kmem_cache_zalloc(mktme_prog_cache, GFP_ATOMIC);
+Hi Christoph,
 
-Why GFP_ATOMIC, afaict neither of the usage is with a spinlock held.
+It looks good to me. I just verified in nds32 platform and it works fine.
+Should I put it in my next-tree or you will pick it up in your tree? :)
 
-> +	if (!kprog)
-> +		return -ENOMEM;
-> +
-> +	/* Hardware programming requires cached aligned struct */
-> +	kprog->keyid = keyid;
-> +	kprog->keyid_ctrl = payload->keyid_ctrl;
-> +	memcpy(kprog->key_field_1, payload->data_key, MKTME_AES_XTS_SIZE);
-> +	memcpy(kprog->key_field_2, payload->tweak_key, MKTME_AES_XTS_SIZE);
-> +
-> +	ret = MKTME_PROG_SUCCESS;	/* Future programming call */
-> +	kmem_cache_free(mktme_prog_cache, kprog);
-> +	return ret;
-> +}
+Tested-by: Greentime Hu <greentime@andestech.com>
+Reviewed-by: Greentime Hu <greentime@andestech.com>
