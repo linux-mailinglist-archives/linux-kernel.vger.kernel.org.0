@@ -2,312 +2,200 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A7A904535D
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 06:18:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4257C45363
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 06:20:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726599AbfFNESP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 00:18:15 -0400
-Received: from mail-yw1-f73.google.com ([209.85.161.73]:54641 "EHLO
-        mail-yw1-f73.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726514AbfFNESN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 00:18:13 -0400
-Received: by mail-yw1-f73.google.com with SMTP id f69so1181046ywb.21
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Jun 2019 21:18:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=XMHdLt0F/RebP7HWzdCoOFobZW4NF5SUvUmDw/iFZhM=;
-        b=oTap/qZTUkne67PMlUoRRMatHHPoKZTDEI6qJcuLB9ihSS6zThbjemCxzkWFRfYDe4
-         9d5fipYW0JDjBZJeOHeskT7pfF+F2CeBpJ+4vA1yNvx2v0cvuNhnlf9B1F4czXrF6e1E
-         9KPWCEuAqkILo799F3zCy0q+meYFfDuPZ+paISctiLQNVa2A4nJsys8iaiFxlp3gmRhm
-         ygQFxemjnu5T7BIut2Z9MFiKsjFKLfEJkIwabASqhhwBSNUs+h/RYpFnGb4bpGm7yI/f
-         5B2BR72PGxmfhE8Ty/RgPIDa2ouzpT0/02fA87EU5jCUGNpJNjPCTJCQihiOgCFU+Y66
-         Lgnw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=XMHdLt0F/RebP7HWzdCoOFobZW4NF5SUvUmDw/iFZhM=;
-        b=XtqJXoQ5tPklgNPoPc0FXzeGRLdZ76jA5jw1kPXz4Koq5sMRAjTNX7mSszZ4CoQK55
-         +zZe0jUQLHvOLWZbW4EI6n/6CWuYXCpuNxr0105Gmb0Qp/pb4uk+L5HWfW1LwiuPAy37
-         5/jqK4k88lybbeJfolj6MhHcq3ONpEDhevppZ4NoRBa4fI+GIlX1K2MUcLDIMgTbvrbp
-         guprjIOQ124vDT51pviM6dOsxNbM9bpHS7gT5jaq4ZLJyu7S3HI576jz1+H+O9AxZ34n
-         xw5ugcrOrxVTEWpYwyR17nU5LpooRbykPXSGIBuzpq6zGrgB062LRgEeDGf76JEJJKE7
-         hBHg==
-X-Gm-Message-State: APjAAAWunGr23LYKMgvx7glkyQYq1+YkCgZ8E1gj5fO9HtqDlcMKii36
-        B09r6Ft7HCX//edKfGHz18E/STEvmlbQSiI=
-X-Google-Smtp-Source: APXvYqyzotUOqc78Ajag02/VO0hFFB2pIylM0aPaNgvpI75rUDbQ8p8l6vCV8TAGFIu1713tf9bDphp6hphaolQ=
-X-Received: by 2002:a81:35c9:: with SMTP id c192mr42314247ywa.193.1560485892382;
- Thu, 13 Jun 2019 21:18:12 -0700 (PDT)
-Date:   Thu, 13 Jun 2019 21:17:33 -0700
-In-Reply-To: <20190614041733.120807-1-saravanak@google.com>
-Message-Id: <20190614041733.120807-12-saravanak@google.com>
-Mime-Version: 1.0
-References: <20190614041733.120807-1-saravanak@google.com>
-X-Mailer: git-send-email 2.22.0.rc2.383.gf4fbbf30c2-goog
-Subject: [PATCH v2 11/11] interconnect: Add devfreq support
-From:   Saravana Kannan <saravanak@google.com>
-To:     Georgi Djakov <georgi.djakov@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>
-Cc:     Saravana Kannan <saravanak@google.com>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Jordan Crouse <jcrouse@codeaurora.org>,
-        vincent.guittot@linaro.org, bjorn.andersson@linaro.org,
-        amit.kucheria@linaro.org, seansw@qti.qualcomm.com,
-        daidavid1@codeaurora.org, evgreen@chromium.org,
-        sibis@codeaurora.org, kernel-team@android.com,
-        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        id S1726449AbfFNETy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 00:19:54 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:47890 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725767AbfFNETx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Jun 2019 00:19:53 -0400
+Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 8F5159BC077B7B45EA24;
+        Fri, 14 Jun 2019 12:19:50 +0800 (CST)
+Received: from [127.0.0.1] (10.177.96.96) by DGGEMS407-HUB.china.huawei.com
+ (10.3.19.207) with Microsoft SMTP Server id 14.3.439.0; Fri, 14 Jun 2019
+ 12:19:50 +0800
+Subject: Re: [PATCH net v2] tcp: avoid creating multiple req socks with the
+ same tuples
+To:     Eric Dumazet <edumazet@google.com>
+References: <20190612035715.166676-1-maowenan@huawei.com>
+ <CANn89iJH6ZBH774SNrd2sUd_A5OBniiUVX=HBq6H4PXEW4cjwQ@mail.gmail.com>
+ <6de5d6d8-e481-8235-193e-b12e7f511030@huawei.com>
+CC:     David Miller <davem@davemloft.net>,
+        netdev <netdev@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+From:   maowenan <maowenan@huawei.com>
+Message-ID: <a674e90e-d06f-cb67-604f-30cb736d7c72@huawei.com>
+Date:   Fri, 14 Jun 2019 12:19:52 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.2.0
+MIME-Version: 1.0
+In-Reply-To: <6de5d6d8-e481-8235-193e-b12e7f511030@huawei.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.96.96]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a icc_create_devfreq() and icc_remove_devfreq() to create and remove
-devfreq devices for interconnect paths. A driver can create/remove devfreq
-devices for the interconnects needed for its device by calling these APIs.
-This would allow various devfreq governors to work with interconnect paths
-and the device driver itself doesn't have to actively manage the bandwidth
-votes for the interconnects.
+>>> diff --git a/net/ipv4/inet_connection_sock.c b/net/ipv4/inet_connection_sock.c
+>>> index 13ec7c3a9c49..fd45ed2fd985 100644
+>>> --- a/net/ipv4/inet_connection_sock.c
+>>> +++ b/net/ipv4/inet_connection_sock.c
+>>> @@ -749,7 +749,7 @@ static void reqsk_timer_handler(struct timer_list *t)
+>>>         inet_csk_reqsk_queue_drop_and_put(sk_listener, req);
+>>>  }
+>>>
+>>> -static void reqsk_queue_hash_req(struct request_sock *req,
+>>> +static bool reqsk_queue_hash_req(struct request_sock *req,
+>>>                                  unsigned long timeout)
+>>>  {
+>>>         req->num_retrans = 0;
+>>> @@ -759,19 +759,27 @@ static void reqsk_queue_hash_req(struct request_sock *req,
+>>>         timer_setup(&req->rsk_timer, reqsk_timer_handler, TIMER_PINNED);
+>>>         mod_timer(&req->rsk_timer, jiffies + timeout);
+>>>
+>>> -       inet_ehash_insert(req_to_sk(req), NULL);
+>>> +       if (!inet_ehash_insert(req_to_sk(req), NULL)) {
+>>> +               if (timer_pending(&req->rsk_timer))
+>>> +                       del_timer_sync(&req->rsk_timer);
+>>> +               return false;
+>>> +       }
+>>>         /* before letting lookups find us, make sure all req fields
+>>>          * are committed to memory and refcnt initialized.
+>>>          */
+>>>         smp_wmb();
+>>>         refcount_set(&req->rsk_refcnt, 2 + 1);
+>>> +       return true;
+>>>  }
+>>>
+>>> -void inet_csk_reqsk_queue_hash_add(struct sock *sk, struct request_sock *req,
+>>> +bool inet_csk_reqsk_queue_hash_add(struct sock *sk, struct request_sock *req,
+>>>                                    unsigned long timeout)
+>>>  {
+>>> -       reqsk_queue_hash_req(req, timeout);
+>>> +       if (!reqsk_queue_hash_req(req, timeout))
+>>> +               return false;
+>>> +
+>>>         inet_csk_reqsk_queue_added(sk);
+>>> +       return true;
+>>>  }
+>>>  EXPORT_SYMBOL_GPL(inet_csk_reqsk_queue_hash_add);
+>>>
+>>> diff --git a/net/ipv4/inet_hashtables.c b/net/ipv4/inet_hashtables.c
+>>> index c4503073248b..b6a1b5334565 100644
+>>> --- a/net/ipv4/inet_hashtables.c
+>>> +++ b/net/ipv4/inet_hashtables.c
+>>> @@ -477,6 +477,7 @@ bool inet_ehash_insert(struct sock *sk, struct sock *osk)
+>>>         struct inet_ehash_bucket *head;
+>>>         spinlock_t *lock;
+>>>         bool ret = true;
+>>> +       struct sock *reqsk = NULL;
+>>>
+>>>         WARN_ON_ONCE(!sk_unhashed(sk));
+>>>
+>>> @@ -486,6 +487,18 @@ bool inet_ehash_insert(struct sock *sk, struct sock *osk)
+>>>         lock = inet_ehash_lockp(hashinfo, sk->sk_hash);
+>>>
+>>>         spin_lock(lock);
+>>> +       if (!osk)
+>>> +               reqsk = __inet_lookup_established(sock_net(sk), &tcp_hashinfo,
+>>> +                                                       sk->sk_daddr, sk->sk_dport,
+>>> +                                                       sk->sk_rcv_saddr, sk->sk_num,
+>>> +                                                       sk->sk_bound_dev_if, sk->sk_bound_dev_if);
+>>> +       if (unlikely(reqsk)) {
+>>
+>> What reqsk would be a SYN_RECV socket, and not a ESTABLISH one (or a
+>> TIME_WAIT ?)
+> 
+> It wouldn't be SYN_RECV,ESTABLISH or TIME_WAIT, just TCP_NEW_SYN_RECV.
+> 
+> When server receives the third handshake packet ACK, SYN_RECV sk will insert to hash with osk(!= NULL).
+> The looking up here just avoid to create two or more request sk with TCP_NEW_SYN_RECV when receive syn packet.
+> 
 
-Signed-off-by: Saravana Kannan <saravanak@google.com>
----
- drivers/interconnect/Makefile      |   2 +-
- drivers/interconnect/icc-devfreq.c | 156 +++++++++++++++++++++++++++++
- include/linux/interconnect.h       |  14 +++
- 3 files changed, 171 insertions(+), 1 deletion(-)
- create mode 100644 drivers/interconnect/icc-devfreq.c
 
-diff --git a/drivers/interconnect/Makefile b/drivers/interconnect/Makefile
-index 28f2ab0824d5..ddfb65b7fa55 100644
---- a/drivers/interconnect/Makefile
-+++ b/drivers/interconnect/Makefile
-@@ -1,6 +1,6 @@
- # SPDX-License-Identifier: GPL-2.0
- 
--icc-core-objs				:= core.o
-+icc-core-objs				:= core.o icc-devfreq.o
- 
- obj-$(CONFIG_INTERCONNECT)		+= icc-core.o
- obj-$(CONFIG_INTERCONNECT_QCOM)		+= qcom/
-diff --git a/drivers/interconnect/icc-devfreq.c b/drivers/interconnect/icc-devfreq.c
-new file mode 100644
-index 000000000000..608716fbe612
---- /dev/null
-+++ b/drivers/interconnect/icc-devfreq.c
-@@ -0,0 +1,156 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * A devfreq device driver for interconnect paths
-+ *
-+ * Copyright (C) 2019 Google, Inc
-+ */
-+
-+#include <linux/devfreq.h>
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include <linux/pm_opp.h>
-+#include <linux/slab.h>
-+#include <linux/interconnect.h>
-+#include <linux/limits.h>
-+
-+struct icc_devfreq {
-+	struct device icc_dev;
-+	struct icc_path *path;
-+	struct devfreq_dev_profile dp;
-+	struct devfreq *df;
-+	unsigned long peak_bw;
-+	unsigned long avg_bw;
-+#if IS_ENABLED(CONFIG_DEVFREQ_GOV_PASSIVE)
-+	struct devfreq_passive_data p_data;
-+#endif
-+};
-+
-+static int icc_target(struct device *dev, unsigned long *freq,
-+				u32 flags)
-+{
-+	struct icc_devfreq *d = dev_get_drvdata(dev);
-+	struct dev_pm_opp *opp;
-+	unsigned long peak_bw, avg_bw;
-+
-+	opp = devfreq_recommended_opp(dev, &peak_bw, flags);
-+	if (IS_ERR(opp)) {
-+		dev_err(dev, "Failed to find opp for %lu KHz\n", *freq);
-+		return PTR_ERR(opp);
-+	}
-+	peak_bw = dev_pm_opp_get_bw(opp, &avg_bw);
-+	dev_pm_opp_put(opp);
-+
-+	if (!icc_set_bw(d->path, avg_bw, peak_bw)) {
-+		*freq = peak_bw;
-+		d->peak_bw = peak_bw;
-+		d->avg_bw = avg_bw;
-+	}
-+
-+	return 0;
-+}
-+
-+static int icc_get_dev_status(struct device *dev,
-+					struct devfreq_dev_status *stat)
-+{
-+	struct icc_devfreq *d = dev_get_drvdata(dev);
-+
-+	stat->current_frequency = d->peak_bw;
-+	return 0;
-+}
-+
-+#define icc_dev_to_data(DEV)	container_of((DEV), struct icc_devfreq, icc_dev)
-+static void icc_dev_release(struct device *dev)
-+{
-+	struct icc_devfreq *d = icc_dev_to_data(dev);
-+
-+	kfree(d);
-+}
-+
-+struct icc_devfreq *icc_create_devfreq(struct device *dev, char *name,
-+				       struct devfreq *devf)
-+{
-+	struct icc_devfreq *d;
-+	struct icc_path *path;
-+	struct opp_table *opp_table;
-+	struct dev_pm_opp *opp;
-+	void *p_data = NULL;
-+	unsigned long peak_bw = U32_MAX, avg_bw = U32_MAX;
-+	int err;
-+
-+	if (!name)
-+		return ERR_PTR(-EINVAL);
-+
-+	path = of_icc_get(dev, name);
-+	if (IS_ERR(path))
-+		return (void *) path;
-+
-+	opp_table = icc_get_opp_table(path);
-+	if (!opp_table) {
-+		err = -EINVAL;
-+		goto out_path;
-+	}
-+
-+	d = kzalloc(sizeof(*d), GFP_KERNEL);
-+	if (!d) {
-+		err = -ENOMEM;
-+		goto out_path;
-+	}
-+	d->path = path;
-+
-+	d->icc_dev.parent = dev;
-+	d->icc_dev.release = icc_dev_release;
-+	dev_set_name(&d->icc_dev, "%s-icc-%s", dev_name(dev), name);
-+	err = device_register(&d->icc_dev);
-+	if (err) {
-+		put_device(&d->icc_dev);
-+		goto out_path;
-+	}
-+
-+	dev_pm_opp_add_opp_table(&d->icc_dev, opp_table);
-+	opp = dev_pm_opp_find_peak_bw_floor(dev, &peak_bw);
-+	peak_bw = dev_pm_opp_get_bw(opp, &avg_bw);
-+	dev_pm_opp_put(opp);
-+
-+	if (!icc_set_bw(d->path, avg_bw, peak_bw)) {
-+		d->peak_bw = peak_bw;
-+		d->avg_bw = avg_bw;
-+	}
-+
-+#if !IS_ENABLED(CONFIG_DEVFREQ_GOV_PASSIVE)
-+	if (devf) {
-+		d->p_data.parent = devf;
-+		pdata = &d->p_data;
-+	}
-+#endif
-+	d->dp.initial_freq = peak_bw;
-+	d->dp.polling_ms = 0;
-+	d->dp.target = icc_target;
-+	d->dp.get_dev_status = icc_get_dev_status;
-+	d->df = devm_devfreq_add_device(&d->icc_dev,
-+					&d->dp,
-+					p_data ? "passive" : "performance",
-+					p_data);
-+	if (IS_ERR(d->df)) {
-+		err = PTR_ERR(d->df);
-+		goto out_dev;
-+	}
-+
-+	return d;
-+out_dev:
-+	put_device(&d->icc_dev);
-+out_path:
-+	icc_put(path);
-+	return ERR_PTR(err);
-+}
-+EXPORT_SYMBOL_GPL(icc_create_devfreq);
-+
-+void icc_remove_devfreq(struct icc_devfreq *d)
-+{
-+	icc_put(d->path);
-+	put_device(&d->icc_dev);
-+}
-+EXPORT_SYMBOL_GPL(icc_remove_devfreq);
-+
-+MODULE_LICENSE("GPL v2");
-+MODULE_DESCRIPTION("interconnect devfreq device driver");
-+MODULE_AUTHOR("Saravana Kannan <saravanak@google.com>");
-diff --git a/include/linux/interconnect.h b/include/linux/interconnect.h
-index 0c0bc55f0e89..ec5879a79301 100644
---- a/include/linux/interconnect.h
-+++ b/include/linux/interconnect.h
-@@ -10,6 +10,7 @@
- #include <linux/mutex.h>
- #include <linux/types.h>
- #include <linux/pm_opp.h>
-+#include <linux/devfreq.h>
- 
- /* macros for converting to icc units */
- #define Bps_to_icc(x)	((x) / 1000)
-@@ -23,6 +24,7 @@
- 
- struct icc_path;
- struct device;
-+struct icc_devfreq;
- 
- #if IS_ENABLED(CONFIG_INTERCONNECT)
- 
-@@ -32,6 +34,9 @@ struct icc_path *of_icc_get(struct device *dev, const char *name);
- struct opp_table *icc_get_opp_table(struct icc_path *path);
- void icc_put(struct icc_path *path);
- int icc_set_bw(struct icc_path *path, u32 avg_bw, u32 peak_bw);
-+struct icc_devfreq *icc_create_devfreq(struct device *dev, char *name,
-+				       struct devfreq *devf);
-+void icc_remove_devfreq(struct icc_devfreq *d);
- 
- #else
- 
-@@ -61,6 +66,15 @@ static inline int icc_set_bw(struct icc_path *path, u32 avg_bw, u32 peak_bw)
- 	return 0;
- }
- 
-+static inline struct icc_devfreq *icc_create_devfreq(struct device *dev,
-+						     char *name,
-+						     struct devfreq *devf);
-+{
-+	return NULL;
-+}
-+
-+void icc_remove_devfreq(struct icc_devfreq *d) {}
-+
- #endif /* CONFIG_INTERCONNECT */
- 
- #endif /* __LINUX_INTERCONNECT_H */
--- 
-2.22.0.rc2.383.gf4fbbf30c2-goog
+@Eric, for this issue I only want to check TCP_NEW_SYN_RECV sk, is it OK like below?
+ +       if (!osk && sk->sk_state == TCP_NEW_SYN_RECV)
+ +               reqsk = __inet_lookup_established(sock_net(sk), &tcp_hashinfo,
+ +                                                       sk->sk_daddr, sk->sk_dport,
+ +                                                       sk->sk_rcv_saddr, sk->sk_num,
+ +                                                       sk->sk_bound_dev_if, sk->sk_bound_dev_if);
+ +       if (unlikely(reqsk)) {
+
+
+
+
+>>
+>>> +               ret = false;
+>>> +               reqsk_free(inet_reqsk(sk));
+>>> +               spin_unlock(lock);
+>>> +               return ret;
+>>> +       }
+>>> +
+>>>         if (osk) {
+>>
+>> This test should have be a hint here : Sometime we _expect_ to have an
+>> old socket (TIMEWAIT) and remove it
+> I will check TIMEWAIT sk.
+>>
+>>
+>>>                 WARN_ON_ONCE(sk->sk_hash != osk->sk_hash);
+>>>                 ret = sk_nulls_del_node_init_rcu(osk);
+>>> diff --git a/net/ipv4/tcp_input.c b/net/ipv4/tcp_input.c
+>>> index 38dfc308c0fb..358272394590 100644
+>>> --- a/net/ipv4/tcp_input.c
+>>> +++ b/net/ipv4/tcp_input.c
+>>> @@ -6570,9 +6570,10 @@ int tcp_conn_request(struct request_sock_ops *rsk_ops,
+>>>                 sock_put(fastopen_sk);
+>>>         } else {
+>>>                 tcp_rsk(req)->tfo_listener = false;
+>>> -               if (!want_cookie)
+>>> -                       inet_csk_reqsk_queue_hash_add(sk, req,
+>>> -                               tcp_timeout_init((struct sock *)req));
+>>> +               if (!want_cookie && !inet_csk_reqsk_queue_hash_add(sk, req,
+>>> +                                       tcp_timeout_init((struct sock *)req)))
+>>> +                       return 0;
+>>> +
+>>>                 af_ops->send_synack(sk, dst, &fl, req, &foc,
+>>>                                     !want_cookie ? TCP_SYNACK_NORMAL :
+>>>                                                    TCP_SYNACK_COOKIE);
+>>> --
+>>> 2.20.1
+>>>
+>>
+>> I believe the proper fix is more complicated.
+> yes, pretty complicated.
+>>
+>> Probably we need to move the locking in a less deeper location.
+
+
+Currently, I find inet_ehash_insert is the most suitable location to do hash looking up,
+because the sk's lock can be found from sk_hash, and there has already existed spin_lock code
+In v1, I put the hash looking up in tcp_connect_request, there will be redundant lock to do looking up.
+
+
+> 
+>>
+>> (Also a similar fix would be needed in IPv6)
+> ok
+
+I find IPv6 has the same call trace, so this fix seems good to IPv6?
+tcp_v6_conn_request
+	tcp_conn_request
+		inet_csk_reqsk_queue_hash_add
+			reqsk_queue_hash_req
+				inet_ehash_insert
+					
+		
+
+>>
+>> Thanks.
+>>
+>> .
+>>
 
