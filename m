@@ -2,53 +2,163 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A8FF345532
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 09:02:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9E0F545539
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 09:09:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726204AbfFNHCv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 03:02:51 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:37009 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725780AbfFNHCv (ORCPT
+        id S1726063AbfFNHJH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 03:09:07 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:32862 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725843AbfFNHJG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 03:02:51 -0400
-Received: from p5b06daab.dip0.t-ipconnect.de ([91.6.218.171] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1hbgEc-0001r8-4O; Fri, 14 Jun 2019 09:02:50 +0200
-Date:   Fri, 14 Jun 2019 09:02:49 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     LKML <linux-kernel@vger.kernel.org>
-cc:     Jonathan Corbet <corbet@lwn.net>
-Subject: Documentation: Remove duplicate x86 index entry
-Message-ID: <alpine.DEB.2.21.1906140902050.1791@nanos.tec.linutronix.de>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Fri, 14 Jun 2019 03:09:06 -0400
+Received: by mail-lj1-f196.google.com with SMTP id h10so1296382ljg.0
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2019 00:09:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=mobiveil.co.in; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=yxfyM6IErwzUuZQc4rX6nb5MYVBMEiaUIJAOhGRqMq4=;
+        b=BFQ7n7ZxnDJCfw3InVQV8Lykl7mTzTO/uKjfT68koQImu8DCSUAFvWIamSHmM+uW7E
+         GZVxCsJcMdhXyWOdvsBS8286msfvR4ZWO78pNH0mqpSacM6BftYDWL1xMkdIh7w9MiX3
+         3tb2/ogsbdl7Lw2YtiCBHiD3UaatAaBTKNvM0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=yxfyM6IErwzUuZQc4rX6nb5MYVBMEiaUIJAOhGRqMq4=;
+        b=SeA1hWKtxGEsZnVCNCsOBNvNNBQIBjDiGqDclEa7df29UH0Bfm4kTi/08IFRTHVQun
+         gcSO27BPHiETwLr6PIoL3pF8v0xpJ+w9Ilv7v5rwq3T6WjiprOqkplY47wZlKH5684Qs
+         E3U+GggHD0d1xY0TZYqN8SBebDSwkfggJaqAQrh29OFxOK2r1mWqJk3XRJuQ8e/UtUVW
+         WID2l3YV+T2khMiOXedWfa5ZSBYEnA1V6c1QfP/gpKfPcbBhSRW0XxVBk1SGGg4C1eob
+         4fz0sGMuiXOIkYYfQwcXo3t4LVbBOipfz/uwSjl63U6g2DGDLvxUshNMv+724oQ5VwgP
+         WUjg==
+X-Gm-Message-State: APjAAAVJX3PlSEh5MS9YD1m+a2s1eKkxioHKOZhRm/9FtMH5RC3Keyf4
+        fwyVw14IR5gQaiv4ru/f4jbut6sXW7H25hgDxpohOygEUAPDz+uma41s35knlDx1soNuVGdXaZI
+        soxgTNFksv4Wm4jtF5latURaRPG0sCs0RUg==
+X-Google-Smtp-Source: APXvYqygzgKoulB56EW6IgCZUnp+so8s8umG4AYyfJaRVIp1tDhleNADbz8MqdlwR5Bohv/3k4ORVDx+UFQFAkoJJWU=
+X-Received: by 2002:a2e:760f:: with SMTP id r15mr34139345ljc.18.1560496143737;
+ Fri, 14 Jun 2019 00:09:03 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+References: <20190412083635.33626-1-Zhiqiang.Hou@nxp.com> <20190412083635.33626-11-Zhiqiang.Hou@nxp.com>
+ <20190612150819.GD15747@redmoon>
+In-Reply-To: <20190612150819.GD15747@redmoon>
+From:   Karthikeyan Mitran <m.karthikeyan@mobiveil.co.in>
+Date:   Fri, 14 Jun 2019 12:38:51 +0530
+Message-ID: <CAKnKUHFMH6=ox=qdaUR1kNEhETDCVyu3jQZEj+taEbbMRBRuYA@mail.gmail.com>
+Subject: Re: [PATCHv5 10/20] PCI: mobiveil: Fix the INTx process errors
+To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Cc:     "Z.q. Hou" <zhiqiang.hou@nxp.com>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "bhelgaas@google.com" <bhelgaas@google.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "l.subrahmanya@mobiveil.co.in" <l.subrahmanya@mobiveil.co.in>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        Leo Li <leoyang.li@nxp.com>,
+        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+        "will.deacon@arm.com" <will.deacon@arm.com>,
+        Mingkai Hu <mingkai.hu@nxp.com>,
+        "M.h. Lian" <minghuan.lian@nxp.com>,
+        Xiaowei Bao <xiaowei.bao@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-x86 got added twice to the index via the RST conversion and the MDS
-documentation changes. Remove one instance.
+Hi Lorenzo and Hou Zhiqiang
+ PAB_INTP_AMBA_MISC_STAT does have other status in the higher bits, it
+should have been masked before checking for the status
 
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
----
- Documentation/index.rst |    1 -
- 1 file changed, 1 deletion(-)
+Acked-by: Karthikeyan Mitran <m.karthikeyan@mobiveil.co.in>
 
---- a/Documentation/index.rst
-+++ b/Documentation/index.rst
-@@ -112,7 +112,6 @@ implementation.
- .. toctree::
-    :maxdepth: 2
- 
--   x86/index
-    sh/index
-    x86/index
- 
+On Wed, Jun 12, 2019 at 8:38 PM Lorenzo Pieralisi
+<lorenzo.pieralisi@arm.com> wrote:
+>
+> On Fri, Apr 12, 2019 at 08:36:12AM +0000, Z.q. Hou wrote:
+> > From: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
+> >
+> > In the loop block, there is not code to update the loop key,
+> > this patch updates the loop key by re-read the INTx status
+> > register.
+> >
+> > This patch also add the clearing of the handled INTx status.
+> >
+> > Note: Need MV to test this fix.
+>
+> This means INTX were never tested and current code handling them is,
+> AFAICS, an infinite loop which is very very bad.
+>
+> This is a gross bug and must be fixed as soon as possible.
+>
+> I want Karthikeyan ACK and Tested-by on this patch.
+>
+> Lorenzo
+>
+> > Fixes: 9af6bcb11e12 ("PCI: mobiveil: Add Mobiveil PCIe Host Bridge IP driver")
+> > Signed-off-by: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
+> > Reviewed-by: Minghuan Lian <Minghuan.Lian@nxp.com>
+> > Reviewed-by: Subrahmanya Lingappa <l.subrahmanya@mobiveil.co.in>
+> > ---
+> > V5:
+> >  - Corrected and retouched the subject and changelog.
+> >
+> >  drivers/pci/controller/pcie-mobiveil.c | 13 +++++++++----
+> >  1 file changed, 9 insertions(+), 4 deletions(-)
+> >
+> > diff --git a/drivers/pci/controller/pcie-mobiveil.c b/drivers/pci/controller/pcie-mobiveil.c
+> > index 4ba458474e42..78e575e71f4d 100644
+> > --- a/drivers/pci/controller/pcie-mobiveil.c
+> > +++ b/drivers/pci/controller/pcie-mobiveil.c
+> > @@ -361,6 +361,7 @@ static void mobiveil_pcie_isr(struct irq_desc *desc)
+> >       /* Handle INTx */
+> >       if (intr_status & PAB_INTP_INTX_MASK) {
+> >               shifted_status = csr_readl(pcie, PAB_INTP_AMBA_MISC_STAT);
+> > +             shifted_status &= PAB_INTP_INTX_MASK;
+> >               shifted_status >>= PAB_INTX_START;
+> >               do {
+> >                       for_each_set_bit(bit, &shifted_status, PCI_NUM_INTX) {
+> > @@ -372,12 +373,16 @@ static void mobiveil_pcie_isr(struct irq_desc *desc)
+> >                                       dev_err_ratelimited(dev, "unexpected IRQ, INT%d\n",
+> >                                                           bit);
+> >
+> > -                             /* clear interrupt */
+> > -                             csr_writel(pcie,
+> > -                                        shifted_status << PAB_INTX_START,
+> > +                             /* clear interrupt handled */
+> > +                             csr_writel(pcie, 1 << (PAB_INTX_START + bit),
+> >                                          PAB_INTP_AMBA_MISC_STAT);
+> >                       }
+> > -             } while ((shifted_status >> PAB_INTX_START) != 0);
+> > +
+> > +                     shifted_status = csr_readl(pcie,
+> > +                                                PAB_INTP_AMBA_MISC_STAT);
+> > +                     shifted_status &= PAB_INTP_INTX_MASK;
+> > +                     shifted_status >>= PAB_INTX_START;
+> > +             } while (shifted_status != 0);
+> >       }
+> >
+> >       /* read extra MSI status register */
+> > --
+> > 2.17.1
+> >
+
+
+
+-- 
+Thanks,
+Regards,
+Karthikeyan Mitran
+
+-- 
+Mobiveil INC., CONFIDENTIALITY NOTICE: This e-mail message, including any 
+attachments, is for the sole use of the intended recipient(s) and may 
+contain proprietary confidential or privileged information or otherwise be 
+protected by law. Any unauthorized review, use, disclosure or distribution 
+is prohibited. If you are not the intended recipient, please notify the 
+sender and destroy all copies and the original message.
