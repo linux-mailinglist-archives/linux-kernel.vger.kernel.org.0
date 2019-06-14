@@ -2,117 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BDFF7458AC
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 11:30:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 654ED458A7
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 11:29:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727094AbfFNJak (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 05:30:40 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:40427 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726686AbfFNJak (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 05:30:40 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x5E9SDmZ1626959
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Fri, 14 Jun 2019 02:28:13 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x5E9SDmZ1626959
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019051801; t=1560504494;
-        bh=8ovtBRuZ0q8GIqCVFE0Skn79qdS+yqXGPq1xONZOsDw=;
-        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
-        b=uLnFCratGXjhc7DxN/+6K+HriiKU8DO2JkCt+8Ylz1udjr4vbHqPo7jSPe+qOlFv+
-         XZ+s/9pRawXJmV8iST+m7AgYz5j8K1gdpR6Hz0qARVE3/yMUEp2RoFEf3jo8Vfl3yY
-         eAqaeoMPcL0ON3NkuwatnhITWjb3Z1r+QtMz1QEcd1VOOnysJpL/h8V5CIMlVHyIHS
-         L51DDoZ+plQtFAFqyT2MrDUp1ZPanF3NlNZoYkiJsXqogWrSUycoppm2Q1IHWnn5Hi
-         vDLXNR3DmyQOhM4b6dlFfqAogn418gYmvpYSc3u0lCCcO5PrZRNdSRZ7hJjmZjKTTa
-         HiPSxD4ZjdlUw==
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x5E9SD5k1626956;
-        Fri, 14 Jun 2019 02:28:13 -0700
-Date:   Fri, 14 Jun 2019 02:28:13 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Rajneesh Bhardwaj <tipbot@zytor.com>
-Message-ID: <tip-e32d045cd4ba06b59878323e434bad010e78e658@git.kernel.org>
-Cc:     peterz@infradead.org, rajneesh.bhardwaj@linux.intel.com,
-        linux-kernel@vger.kernel.org, dave.hansen@linux.intel.com,
-        linux-pm@vger.kernel.org, mingo@kernel.org,
-        kan.liang@linux.intel.com, qiuxu.zhuo@intel.com,
-        andriy.shevchenko@linux.intel.com, bp@alien8.de,
-        srinivas.pandruvada@linux.intel.com, tglx@linutronix.de,
-        hpa@zytor.com, lenb@kernel.org
-Reply-To: rajneesh.bhardwaj@linux.intel.com, peterz@infradead.org,
-          linux-kernel@vger.kernel.org, dave.hansen@linux.intel.com,
-          linux-pm@vger.kernel.org, mingo@kernel.org,
-          kan.liang@linux.intel.com, qiuxu.zhuo@intel.com,
-          andriy.shevchenko@linux.intel.com, bp@alien8.de,
-          srinivas.pandruvada@linux.intel.com, tglx@linutronix.de,
-          hpa@zytor.com, lenb@kernel.org
-In-Reply-To: <20190606012419.13250-1-rajneesh.bhardwaj@linux.intel.com>
-References: <20190606012419.13250-1-rajneesh.bhardwaj@linux.intel.com>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/cpu] x86/cpu: Add Ice Lake NNPI to Intel family
-Git-Commit-ID: e32d045cd4ba06b59878323e434bad010e78e658
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        id S1727021AbfFNJ3j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 05:29:39 -0400
+Received: from mx2.mailbox.org ([80.241.60.215]:35582 "EHLO mx2.mailbox.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726479AbfFNJ3j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Jun 2019 05:29:39 -0400
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [80.241.60.240])
+        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
+        (No client certificate requested)
+        by mx2.mailbox.org (Postfix) with ESMTPS id 8DF5FA1091;
+        Fri, 14 Jun 2019 11:29:35 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at heinlein-support.de
+Received: from smtp1.mailbox.org ([80.241.60.240])
+        by hefe.heinlein-support.de (hefe.heinlein-support.de [91.198.250.172]) (amavisd-new, port 10030)
+        with ESMTP id yKkjF9F1R2O0; Fri, 14 Jun 2019 11:29:31 +0200 (CEST)
+Subject: Re: [PATCH 1/3 v6] serial: mctrl_gpio: Check if GPIO property exisits
+ before requesting it
+To:     Yegor Yefremov <yegorslists@googlemail.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     linux-serial@vger.kernel.org,
+        kernel list <linux-kernel@vger.kernel.org>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Giulio Benetti <giulio.benetti@micronovasrl.com>
+References: <20190613154542.32438-1-sr@denx.de>
+ <20190613170802.GE9224@smile.fi.intel.com>
+ <CAGm1_ksNqh0ZVO+aHsdcS6XQHt3hfqWE3a=3waKWEp8Oc8HWcQ@mail.gmail.com>
+From:   Stefan Roese <sr@denx.de>
+Message-ID: <0bf6629c-cedf-e1dd-b42b-989c6711d390@denx.de>
+Date:   Fri, 14 Jun 2019 11:29:29 +0200
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
-X-Spam-Status: No, score=-3.1 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        T_DATE_IN_FUTURE_96_Q autolearn=ham autolearn_force=no version=3.4.2
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
+In-Reply-To: <CAGm1_ksNqh0ZVO+aHsdcS6XQHt3hfqWE3a=3waKWEp8Oc8HWcQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  e32d045cd4ba06b59878323e434bad010e78e658
-Gitweb:     https://git.kernel.org/tip/e32d045cd4ba06b59878323e434bad010e78e658
-Author:     Rajneesh Bhardwaj <rajneesh.bhardwaj@linux.intel.com>
-AuthorDate: Thu, 6 Jun 2019 06:54:19 +0530
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Thu, 13 Jun 2019 19:37:42 +0200
+On 14.06.19 11:04, Yegor Yefremov wrote:
+> On Thu, Jun 13, 2019 at 7:08 PM Andy Shevchenko
+> <andriy.shevchenko@linux.intel.com> wrote:
+>>
+>> On Thu, Jun 13, 2019 at 05:45:40PM +0200, Stefan Roese wrote:
+>>> This patch adds a check for the GPIOs property existence, before the
+>>> GPIO is requested. This fixes an issue seen when the 8250 mctrl_gpio
+>>> support is added (2nd patch in this patch series) on x86 platforms using
+>>> ACPI.
+>>>
+>>> Here Mika's comments from 2016-08-09:
+>>>
+>>> "
+>>> I noticed that with v4.8-rc1 serial console of some of our Broxton
+>>> systems does not work properly anymore. I'm able to see output but input
+>>> does not work.
+>>>
+>>> I bisected it down to commit 4ef03d328769eddbfeca1f1c958fdb181a69c341
+>>> ("tty/serial/8250: use mctrl_gpio helpers").
+>>>
+>>> The reason why it fails is that in ACPI we do not have names for GPIOs
+>>> (except when _DSD is used) so we use the "idx" to index into _CRS GPIO
+>>> resources. Now mctrl_gpio_init_noauto() goes through a list of GPIOs
+>>> calling devm_gpiod_get_index_optional() passing "idx" of 0 for each. The
+>>> UART device in Broxton has following (simplified) ACPI description:
+>>>
+>>>      Device (URT4)
+>>>      {
+>>>          ...
+>>>          Name (_CRS, ResourceTemplate () {
+>>>              GpioIo (Exclusive, PullDefault, 0x0000, 0x0000, IoRestrictionOutputOnly,
+>>>                      "\\_SB.GPO0", 0x00, ResourceConsumer)
+>>>              {
+>>>                  0x003A
+>>>              }
+>>>              GpioIo (Exclusive, PullDefault, 0x0000, 0x0000, IoRestrictionOutputOnly,
+>>>                      "\\_SB.GPO0", 0x00, ResourceConsumer)
+>>>              {
+>>>                  0x003D
+>>>              }
+>>>          })
+>>>
+>>> In this case it finds the first GPIO (0x003A which happens to be RX pin
+>>> for that UART), turns it into GPIO which then breaks input for the UART
+>>> device. This also breaks systems with bluetooth connected to UART (those
+>>> typically have some GPIOs in their _CRS).
+>>>
+>>> Any ideas how to fix this?
+>>>
+>>> We cannot just drop the _CRS index lookup fallback because that would
+>>> break many existing machines out there so maybe we can limit this to
+>>> only DT enabled machines. Or alternatively probe if the property first
+>>> exists before trying to acquire the GPIOs (using
+>>> device_property_present()).
+>>> "
+>>>
+>>> This patch implements the fix suggested by Mika in his statement above.
+>>>
+>>
+>> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> 
+> I cannot compile the driver without adding #include <linux/property.h>
+> to drivers/tty/serial/serial_mctrl_gpio.c.
+> 
+> My platform is AM335X (OMAP3). I've tried the patches both against the
+> main repo and also tty-next.
+>
+> Other than that everything is working.
 
-x86/cpu: Add Ice Lake NNPI to Intel family
+Thanks for reporting. I'll wait a bit for other review comments and
+tests (thanks Andy) and will then send v7 with this header included
+(and compile tested on OMAP3) later next week.
 
-Add the CPUID model number of Ice Lake Neural Network Processor for Deep
-Learning Inference (ICL-NNPI) to the Intel family list. Ice Lake NNPI uses
-model number 0x9D and this will be documented in a future version of Intel
-Software Development Manual.
+BTW: Could you please add a Tested-by-tag with the next version?
 
-Signed-off-by: Rajneesh Bhardwaj <rajneesh.bhardwaj@linux.intel.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: bp@suse.de
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Kan Liang <kan.liang@linux.intel.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: platform-driver-x86@vger.kernel.org
-Cc: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
-Cc: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Cc: Len Brown <lenb@kernel.org>
-Cc: Linux PM <linux-pm@vger.kernel.org>
-Link: https://lkml.kernel.org/r/20190606012419.13250-1-rajneesh.bhardwaj@linux.intel.com
-
----
- arch/x86/include/asm/intel-family.h | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/arch/x86/include/asm/intel-family.h b/arch/x86/include/asm/intel-family.h
-index 9f15384c504a..087de5d3b93a 100644
---- a/arch/x86/include/asm/intel-family.h
-+++ b/arch/x86/include/asm/intel-family.h
-@@ -53,6 +53,7 @@
- #define INTEL_FAM6_CANNONLAKE_MOBILE	0x66
- 
- #define INTEL_FAM6_ICELAKE_MOBILE	0x7E
-+#define INTEL_FAM6_ICELAKE_NNPI		0x9D
- 
- /* "Small Core" Processors (Atom) */
- 
+Thanks,
+Stefan
