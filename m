@@ -2,184 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B7566461BC
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 16:54:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1B5AE461C1
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 16:55:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728619AbfFNOyV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 10:54:21 -0400
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:38210 "EHLO
-        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726647AbfFNOyU (ORCPT
+        id S1728892AbfFNOzb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 10:55:31 -0400
+Received: from out03.mta.xmission.com ([166.70.13.233]:35253 "EHLO
+        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726647AbfFNOzb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 10:54:20 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 3CAA68EE147;
-        Fri, 14 Jun 2019 07:54:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1560524060;
-        bh=MCF4Tqb2oKklo6nH/PJ4WDJ/J4GPxm8BnIGHPurjG7c=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=NAnryftCE0J55HGOlqeJVtv87nhfKqvJpFznFXA3cLHdIhm7iK93mIoqwEZ51Appa
-         0h7ReSTgmg9cH08kaUXGsjewY+Fnw6AUqers15VOII4p63IUJNmtDAtN2VV432HClv
-         pmYVSdaTnqB8XENIpcQUWlxsVqQCBgAz869T+cAU=
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
-        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id jMOTbLiAlgvS; Fri, 14 Jun 2019 07:54:20 -0700 (PDT)
-Received: from jarvis.lan (unknown [50.35.68.20])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id A76E58EE134;
-        Fri, 14 Jun 2019 07:54:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1560524059;
-        bh=MCF4Tqb2oKklo6nH/PJ4WDJ/J4GPxm8BnIGHPurjG7c=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=a4FF/T4myELlTU5GbtAJwtx3aBx2jRQ5K+TBRvy5Dj+DlkAzjLkcyCpGRKGvropeR
-         zRzOzwZgnuEEIs3SCqeTeZy/iS8Fp+hDIOWLsHyx7YErXA4RoeYuKYyLKsZWSJ6Lpv
-         JLRvf7hhio7dyrHeJCIam+oESMOogD5IGZbGQrG4=
-Message-ID: <1560524058.27102.5.camel@HansenPartnership.com>
-Subject: Re: [PATCH] drivers/ata: print trim features at device
- initialization
-From:   James Bottomley <James.Bottomley@HansenPartnership.com>
-To:     Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Christoph Hellwig <hch@infradead.org>
-Cc:     Jens Axboe <axboe@kernel.dk>, linux-ide@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Dmitry Monakhov <dmtrmonakhov@yandex-team.ru>
-Date:   Fri, 14 Jun 2019 07:54:18 -0700
-In-Reply-To: <cd91b050-cbc6-7c3b-f9f8-91c0760668e6@yandex-team.ru>
-References: <155989287898.1506.14253954112551051148.stgit@buzz>
-         <yq1wohxib7t.fsf@oracle.com>
-         <eebfb1cc-f6d0-580e-1d56-2af0f481a92f@yandex-team.ru>
-         <048ed77f-8faa-fb67-c6bc-10d953f52f89@yandex-team.ru>
-         <1560116241.3324.19.camel@HansenPartnership.com>
-         <b554c428-417e-5fef-1776-87a4db1d674a@yandex-team.ru>
-         <1560206933.3698.27.camel@HansenPartnership.com>
-         <cd91b050-cbc6-7c3b-f9f8-91c0760668e6@yandex-team.ru>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Fri, 14 Jun 2019 10:55:31 -0400
+Received: from in02.mta.xmission.com ([166.70.13.52])
+        by out03.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1hbnc0-0003mm-3e; Fri, 14 Jun 2019 08:55:28 -0600
+Received: from ip72-206-97-68.om.om.cox.net ([72.206.97.68] helo=x220.xmission.com)
+        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1hbnbo-0001cx-AE; Fri, 14 Jun 2019 08:55:27 -0600
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     David Ahern <dsahern@gmail.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Matteo Croce <mcroce@redhat.com>,
+        David Miller <davem@davemloft.net>,
+        netdev <netdev@vger.kernel.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>
+References: <20190608125019.417-1-mcroce@redhat.com>
+        <20190609.195742.739339469351067643.davem@davemloft.net>
+        <d19abcd4-799c-ac2f-ffcb-fa749d17950c@infradead.org>
+        <CAGnkfhyS15NPEO2ygkjazECULtUDkJgPk8wCYFhA9zL2+w27pg@mail.gmail.com>
+        <49b58181-90da-4ee4-cbb0-80e226d040fc@infradead.org>
+        <CAK8P3a1mwnDFeD3xnQ6bm1x8C6yX=YEccxN2jknvTbRiCfD=Bg@mail.gmail.com>
+        <47f1889a-e919-e3fd-f90c-39c26cb1ccbb@gmail.com>
+        <CAK8P3a0w3K1O23616g3Nz4XQdgw-xHDPWSQ+Rb_O3VAy-3FnQg@mail.gmail.com>
+Date:   Fri, 14 Jun 2019 09:54:55 -0500
+In-Reply-To: <CAK8P3a0w3K1O23616g3Nz4XQdgw-xHDPWSQ+Rb_O3VAy-3FnQg@mail.gmail.com>
+        (Arnd Bergmann's message of "Fri, 14 Jun 2019 16:26:14 +0200")
+Message-ID: <87r27wrzcw.fsf@xmission.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain
+X-XM-SPF: eid=1hbnbo-0001cx-AE;;;mid=<87r27wrzcw.fsf@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=72.206.97.68;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX19xgdtHru1qF4+VUMChfP39qNf75uj1g9o=
+X-SA-Exim-Connect-IP: 72.206.97.68
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa03.xmission.com
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.0 required=8.0 tests=ALL_TRUSTED,BAYES_20,
+        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG autolearn=disabled
+        version=3.4.2
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        * -0.0 BAYES_20 BODY: Bayes spam probability is 5 to 20%
+        *      [score: 0.1644]
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa03 1397; Body=1 Fuz1=1 Fuz2=1]
+X-Spam-DCC: XMission; sa03 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: ;Arnd Bergmann <arnd@arndb.de>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 11412 ms - load_scoreonly_sql: 0.03 (0.0%),
+        signal_user_changed: 2.6 (0.0%), b_tie_ro: 1.85 (0.0%), parse: 0.67
+        (0.0%), extract_message_metadata: 11 (0.1%), get_uri_detail_list: 0.98
+        (0.0%), tests_pri_-1000: 15 (0.1%), tests_pri_-950: 1.09 (0.0%),
+        tests_pri_-900: 0.84 (0.0%), tests_pri_-90: 18 (0.2%), check_bayes: 17
+        (0.1%), b_tokenize: 5 (0.0%), b_tok_get_all: 6 (0.1%), b_comp_prob:
+        1.44 (0.0%), b_tok_touch_all: 2.8 (0.0%), b_finish: 0.55 (0.0%),
+        tests_pri_0: 3307 (29.0%), check_dkim_signature: 0.37 (0.0%),
+        check_dkim_adsp: 3095 (27.1%), poll_dns_idle: 11131 (97.5%),
+        tests_pri_10: 1.78 (0.0%), tests_pri_500: 8051 (70.6%), rewrite_mail:
+        0.00 (0.0%)
+Subject: Re: [PATCH net] mpls: fix af_mpls dependencies
+X-Spam-Flag: No
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2019-06-14 at 16:49 +0300, Konstantin Khlebnikov wrote:
-> 
-> On 11.06.2019 1:48, James Bottomley wrote:
-> > On Mon, 2019-06-10 at 10:49 +0300, Konstantin Khlebnikov wrote:
-> > > On 10.06.2019 0:37, James Bottomley wrote:
-> > > > On Sat, 2019-06-08 at 17:13 +0300, Konstantin Khlebnikov wrote:
-> > > > > > On 08.06.2019 11:25, Christoph Hellwig wrote:> On Fri, Jun
-> > > > > > 07,
-> > > > > > 2019
-> > > > > > at 10:34:39AM +0300, Konstantin Khlebnikov wrote:
-> > > > > >    >
-> > > > > >    > Do we really need to spam dmesg with even more ATA
-> > > > > > crap?  What
-> > > > > > about
-> > > > > >    > a sysfs file that can be read on demand instead?
-> > > > > >    >
-> > > > > > 
-> > > > > > Makes sense.
-> > > > > > 
-> > > > > > Trim state is exposed for ata_device:
-> > > > > > /sys/class/ata_device/devX.Y/trim
-> > > > > > but there is no link from scsi device to ata device so they
-> > > > > > hard to match.
-> > > > > > 
-> > > > > > I'll think about it.
-> > > > > 
-> > > > > Nope. There is no obvious way to link scsi device with
-> > > > > ata_device. ata_device is built on top of "transport_class"
-> > > > > and
-> > > > > "attribute_container". This some extremely over engineered
-> > > > > sysfs
-> > > > > framework used only in ata/scsi. I don't want to touch this.
-> > > > 
-> > > > You don't need to know any of that.  The problem is actually
-> > > > when
-> > > > the ata transport classes were first created, the devices
-> > > > weren't
-> > > > properly parented.  What should have happened, like every other
-> > > > transport class, is that the devices should have descended down
-> > > > to
-> > > > the scsi device as the leaf in an integrated fashion.  Instead,
-> > > > what we seem to have is three completely separate trees.
-> > > > 
-> > > > So if you look at a SAS device, you see from the pci device:
-> > > > 
-> > > > host2/port-2:0/end_device-
-> > > > 2:0/target2:0:0/2:0:0:0/block/sdb/sdb1
-> > > > 
-> > > > But if you look at a SATA device, you see three separate paths:
-> > > > 
-> > > > ata3/host3/target3\:0\:0/3\:0\:0\:0/block/sda/sda1
-> > > > ata3/link3/dev3.0/ata_device/dev3.0
-> > > > ata3/ata_port/ata3
-> > > > 
-> > > > Instead of an integrated tree
-> > > > 
-> > > > Unfortunately, this whole thing is unfixable now.  If I
-> > > > integrate
-> > > > the tree properly, the separate port and link directories will
-> > > > get
-> > > > subsumed and we won't be able to recover them with judicious
-> > > > linking so scripts relying on them will break.  The best we can
-> > > > probably do is add additional links with what we have.
-> > > > 
-> > > > To follow the way we usually do it, there should be a link from
-> > > > the
-> > > > ata device to the scsi target, but that wouldn't help you find
-> > > > the
-> > > > "trim" files, so it sounds like you want a link from the scsi
-> > > > device to the ata device, which would?
-> > > 
-> > > Yes, I'm talking about link from scsi device to leaf ata_device
-> > > node.
-> > > 
-> > > In libata scsi_device has one to one relation with ata_device.
-> > > So making link like /sys/class/block/sda/device/ata_device should
-> > > be
-> > > possible easy.
-> > > But I haven't found implicit reference from struct ata_device to
-> > > ata_device in sysfs.
-> > 
-> > If that's all you want, it is pretty simple modulo the fact we can
-> > only
-> > get at the tdev, not the lower transport device, which is what you
-> > want, but at least it's linear from the symlink.
-> > 
-> > The attached patch should do this.
-> > 
-> > Now I see this for my non-sas device:
-> > 
-> > # ls -l /sys/class/scsi_device/3\:0\:0\:0/device/ata_device
-> > lrwxrwxrwx 1 root root 0 Jun 10 13:39
-> > /sys/class/scsi_device/3:0:0:0/device/ata_device ->
-> > ../../../link3/dev3.0
-> 
-> I've tried this too. Such link is not very useful,
-> because attribute 'trim' is deeper and suffix path isn't constant:
-> 
-> /sys/class/block/sda/device/ata_device/ata_device/dev1.0/trim
-> 
-> while I expect something like
-> 
-> /sys/class/block/sda/device/ata_device/trim
+Arnd Bergmann <arnd@arndb.de> writes:
 
-It provides you with an unambiguous way of finding the correct trim
-file.
+> On Fri, Jun 14, 2019 at 4:07 PM David Ahern <dsahern@gmail.com> wrote:
+>> On 6/14/19 8:01 AM, Arnd Bergmann wrote:
+>> > On Wed, Jun 12, 2019 at 9:41 AM Randy Dunlap <rdunlap@infradead.org> wrote:
+>> >> On 6/11/19 5:08 PM, Matteo Croce wrote:
+>> >
+>> > It clearly shouldn't select PROC_SYSCTL, but I think it should not
+>> > have a 'depends on' statement either. I think the correct fix for the
+>> > original problem would have been something like
+>> >
+>> > --- a/net/mpls/af_mpls.c
+>> > +++ b/net/mpls/af_mpls.c
+>> > @@ -2659,6 +2659,9 @@ static int mpls_net_init(struct net *net)
+>> >         net->mpls.ip_ttl_propagate = 1;
+>> >         net->mpls.default_ttl = 255;
+>> >
+>> > +       if (!IS_ENABLED(CONFIG_PROC_SYSCTL))
+>> > +               return 0;
+>> > +
+>> >         table = kmemdup(mpls_table, sizeof(mpls_table), GFP_KERNEL);
+>> >         if (table == NULL)
+>> >                 return -ENOMEM;
+>> >
+>>
+>> Without sysctl, the entire mpls_router code is disabled. So if sysctl is
+>> not enabled there is no point in building this file.
+>
+> Ok, I see.
+>
+> There are a couple of other drivers that use 'depends on SYSCTL',
+> which may be the right thing to do here. In theory, one can still
+> build a kernel with CONFIG_SYSCTRL_SYSCALL=y and no
+> procfs.
 
-The problem with trying to lower the level of the link is that all the
-devices below the one I linked to are transport class devices meaning
-they're not visible at the point the link needs to be created.  That's
-not to say some additional transport class magic couldn't be done, but
-it would require pretty extensive code changes in drivers/base because
-none of the current constructor functions carries additional
-information, which is necessary to carry the link.
+Which reminds me.  I really need to write the patch to remove
+CONFIG_SYSCTL_SYSCALL.
 
-James
+Unless I have missed something we have finally reached default off in
+all of the distributions so no one should care.
 
+Eric
