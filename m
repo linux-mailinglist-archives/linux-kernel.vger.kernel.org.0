@@ -2,101 +2,136 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 93B76462D5
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 17:32:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 22F3F462D9
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 17:33:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726700AbfFNPc3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 11:32:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59302 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725780AbfFNPc2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 11:32:28 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B5B5A2175B;
-        Fri, 14 Jun 2019 15:32:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560526348;
-        bh=PJ6s6+mmJeZDNa175UFy5kch2QVF530bftti5lPPeJQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=pbv6v96aJHaQI82B1bM2l/P5uwdjb9rBNbcYo4w0uUZFLkccGWIXvBGpki/PZ8C4S
-         FHJUzHYRR6zQKiu0bo6GftzC0byFL18pRtsSAjF6zgyC9sbUuhR1qDtjKrBMVMaNzH
-         PouLYg27ntO8rTWKzCnoK0IzuyU6hxLIhqPJWCEU=
-Date:   Fri, 14 Jun 2019 17:32:25 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     Markus Elfring <Markus.Elfring@web.de>,
-        Jack Ping CHNG <jack.ping.chng@linux.intel.com>,
-        kernel-janitors@vger.kernel.org,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Enrico Weigelt <lkml@metux.net>,
-        Himanshu Jha <himanshujha199640@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] drivers: Provide devm_platform_ioremap_resource_byname()
-Message-ID: <20190614153225.GE18049@kroah.com>
-References: <39e46643-d799-94b7-4aa5-d6d99d738f99@web.de>
- <20190614133840.GN9224@smile.fi.intel.com>
- <20190614141004.GC7234@kroah.com>
- <20190614144706.GO9224@smile.fi.intel.com>
+        id S1726757AbfFNPdE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 11:33:04 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:33032 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725780AbfFNPdD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Jun 2019 11:33:03 -0400
+Received: by mail-pl1-f193.google.com with SMTP id c14so1182125plo.0;
+        Fri, 14 Jun 2019 08:33:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=94FnoFCGinxKIVI488xScEWQQ1X2y9NyRvuM1e8VR9g=;
+        b=JHykRz/yv1ZeAaVIebzGDc1gORj9rH2a8l7aAyECo3Nx+UvrJuoAth4rLNJPXxdXb0
+         nOhWWYPz25XqLYUrf/1jAsZDix8XVdiC58vYN8xosL3dQPjyq7TD9IlMZV33gxAgR7zK
+         oZcB+ZZMtQhLhotyD4rIkNl29/GszIKMwfLK/xD5w+CV/Q0SIGU4ZG1l5UcYv97MiQ0B
+         tn2zH0YrjCMd0ltmU/JHKX2yKRupyUKSIjb0kNoNzg4Nb1aXrRSiLUk1wuEA7Azh5bxT
+         MlgMULdIqZ5MXqNpaq6IK6owfyJD1lUeeBhR/kfljnQbwJdDFAjfx6zWnM39xfICnv4z
+         TEZA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=94FnoFCGinxKIVI488xScEWQQ1X2y9NyRvuM1e8VR9g=;
+        b=pzV5SnZrB/HQF7/bH3SZ0yILUX/rE3tpK1oIIsTVlvzZKmxI+UzqusBewrGOwGofe4
+         3LKLQ5jpLqYrP326/q6iJmc5EkRmNsVGWvmdMKqjFQ6J/P9UWCZM47HzrwSrEZKUMlSN
+         Tt5m8CnaXcUSLUGZZtgdnYahJUCIocqXSJV8h+K7QpnyqsL6aMX85EOrX4DKBp7qDRC1
+         SzzGI5ruHHccOVM5zI7lkc2p56zbpaHuMnhDbkvu+wF5XZYDx2uN/ERiPb+Y/O4QX5Jv
+         CU8sGFJ9RqIA9IT5YOSkNSvGk4p0y1TAjyoBGE2kzwYG+0z3EfjY/d9rbCYBRiu6ExGl
+         qJZw==
+X-Gm-Message-State: APjAAAVttYur9Lh6R7jKoLct1/eTZ4crvxeqlQI+9T94mx3FaegqqIj4
+        p951PBj2x+iZw0O88PFON2o=
+X-Google-Smtp-Source: APXvYqwfqCfExW0GEUt9P4RalfBCPWeXn5IPAkbmIRSBmOW9d6Y+luQHM0Nl7xy2v0c4pe7a2BdKhw==
+X-Received: by 2002:a17:902:aa83:: with SMTP id d3mr70465260plr.74.1560526382836;
+        Fri, 14 Jun 2019 08:33:02 -0700 (PDT)
+Received: from localhost ([2620:10d:c090:180::1:b330])
+        by smtp.gmail.com with ESMTPSA id l1sm3206498pgj.67.2019.06.14.08.33.01
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 14 Jun 2019 08:33:02 -0700 (PDT)
+Date:   Fri, 14 Jun 2019 08:32:58 -0700
+From:   Tejun Heo <tj@kernel.org>
+To:     dsterba@suse.com, clm@fb.com, josef@toxicpanda.com,
+        axboe@kernel.dk, jack@suse.cz
+Cc:     linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-block@vger.kernel.org, kernel-team@fb.com
+Subject: [PATCH v2 8/8] Btrfs: extent_write_locked_range() should attach
+ inode->i_wb
+Message-ID: <20190614153258.GC538958@devbig004.ftw2.facebook.com>
+References: <20190614003350.1178444-1-tj@kernel.org>
+ <20190614003350.1178444-9-tj@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190614144706.GO9224@smile.fi.intel.com>
-User-Agent: Mutt/1.12.0 (2019-05-25)
+In-Reply-To: <20190614003350.1178444-9-tj@kernel.org>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 14, 2019 at 05:47:06PM +0300, Andy Shevchenko wrote:
-> On Fri, Jun 14, 2019 at 04:10:04PM +0200, Greg Kroah-Hartman wrote:
-> > On Fri, Jun 14, 2019 at 04:38:40PM +0300, Andy Shevchenko wrote:
-> > > +Cc: Jack Ping, who did internally the same
-> > > 
-> > > On Fri, Jun 14, 2019 at 03:26:25PM +0200, Markus Elfring wrote:
-> > > > From: Markus Elfring <elfring@users.sourceforge.net>
-> > > > Date: Fri, 14 Jun 2019 15:15:14 +0200
-> > > > 
-> > > > The functions “platform_get_resource_byname” and “devm_ioremap_resource”
-> > > > are called together in 181 source files.
-> > > > This implementation detail can be determined also with the help
-> > > > of the semantic patch language (Coccinelle software).
-> > > > 
-> > > > Wrap these two calls into another helper function.
-> > > > Thus a local variable does not need to be declared for a resource
-> > > > structure pointer before and a redundant argument can be omitted
-> > > > for the resource type.
-> > > 
-> > > This one makes sense.
-> > > Though I'm not sure Greg will see your message.
-> > 
-> > Nope, didn't see it, don't want to see it, it will only cause more work
-> > in the longrun...
-> > 
-> > > Rafael, maybe you can apply this one?
-> > 
-> > Um, don't go around maintainers please, that's rude.  
-> 
-> I won't do it, how should we proceed if de facto this functionality is good to
-> have besides the fact of coming new user in the future?
-> 
-> > There is a reason
-> > this specific developer is in my blacklist, and perhaps they should be
-> > in yours as well :)
-> 
-> Perhaps.
-> 
-> > I don't like adding new apis with no user.
-> 
-> Perhaps Jack Ping will send it as a first patch of his series where he utilizes
-> this functionality. Would it be acceptable?
+extent_write_locked_range() is used when we're falling back to buffered
+IO from inside of compression.  It allocates its own wbc and should
+associate it with the inode's i_wb to make sure the IO goes down from
+the correct cgroup.
 
-Yes, that would be ok.
+Also, export the needed symbols from fs-writeback.c.
 
-thanks,
+Signed-off-by: Chris Mason <clm@fb.com>
+Build-Breakage-Reported-by: kbuild test robot <lkp@intel.com>
+---
+v2: Module build fix.
 
-greg k-h
+ fs/btrfs/extent_io.c |   10 ++++++----
+ fs/fs-writeback.c    |    3 +++
+ 2 files changed, 9 insertions(+), 4 deletions(-)
+
+--- a/fs/btrfs/extent_io.c
++++ b/fs/btrfs/extent_io.c
+@@ -4178,6 +4178,7 @@ int extent_write_locked_range(struct ino
+ 		.no_wbc_acct	= 1,
+ 	};
+ 
++	wbc_attach_fdatawrite_inode(&wbc_writepages, inode);
+ 	while (start <= end) {
+ 		page = find_get_page(mapping, start >> PAGE_SHIFT);
+ 		if (clear_page_dirty_for_io(page))
+@@ -4192,11 +4193,12 @@ int extent_write_locked_range(struct ino
+ 	}
+ 
+ 	ASSERT(ret <= 0);
+-	if (ret < 0) {
++	if (ret == 0)
++		ret = flush_write_bio(&epd);
++	else
+ 		end_write_bio(&epd, ret);
+-		return ret;
+-	}
+-	ret = flush_write_bio(&epd);
++
++	wbc_detach_inode(&wbc_writepages);
+ 	return ret;
+ }
+ 
+--- a/fs/fs-writeback.c
++++ b/fs/fs-writeback.c
+@@ -270,6 +270,7 @@ void __inode_attach_wb(struct inode *ino
+ 	if (unlikely(cmpxchg(&inode->i_wb, NULL, wb)))
+ 		wb_put(wb);
+ }
++EXPORT_SYMBOL_GPL(__inode_attach_wb);
+ 
+ /**
+  * locked_inode_to_wb_and_lock_list - determine a locked inode's wb and lock it
+@@ -582,6 +583,7 @@ void wbc_attach_and_unlock_inode(struct
+ 	if (unlikely(wb_dying(wbc->wb)))
+ 		inode_switch_wbs(inode, wbc->wb_id);
+ }
++EXPORT_SYMBOL_GPL(wbc_attach_and_unlock_inode);
+ 
+ /**
+  * wbc_detach_inode - disassociate wbc from inode and perform foreign detection
+@@ -701,6 +703,7 @@ void wbc_detach_inode(struct writeback_c
+ 	wb_put(wbc->wb);
+ 	wbc->wb = NULL;
+ }
++EXPORT_SYMBOL_GPL(wbc_detach_inode);
+ 
+ /**
+  * wbc_account_io - account IO issued during writeback
