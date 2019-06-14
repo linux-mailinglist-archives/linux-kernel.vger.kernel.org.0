@@ -2,125 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 35DF645FB8
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 16:00:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3F0AE45FD7
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 16:01:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728600AbfFNN6B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 09:58:01 -0400
-Received: from mga06.intel.com ([134.134.136.31]:39583 "EHLO mga06.intel.com"
+        id S1728671AbfFNOBL convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Fri, 14 Jun 2019 10:01:11 -0400
+Received: from gloria.sntech.de ([185.11.138.130]:41382 "EHLO gloria.sntech.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727382AbfFNN6A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 09:58:00 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Jun 2019 06:57:59 -0700
-X-ExtLoop1: 1
-Received: from jnikula-mobl3.fi.intel.com (HELO localhost) ([10.237.66.150])
-  by fmsmga001.fm.intel.com with ESMTP; 14 Jun 2019 06:57:57 -0700
-From:   Jani Nikula <jani.nikula@linux.intel.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab@s-opensource.com>,
-        Mauro Carvalho Chehab <mchehab@infradead.org>,
-        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>
-Subject: Re: [PATCH 05/14] scripts: add an script to parse the ABI files
-In-Reply-To: <20190614133933.GA1076@kroah.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <cover.1560477540.git.mchehab+samsung@kernel.org> <196fb3c497546f923bf5d156c3fddbe74a4913bc.1560477540.git.mchehab+samsung@kernel.org> <87r27wuwc3.fsf@intel.com> <20190614133933.GA1076@kroah.com>
-Date:   Fri, 14 Jun 2019 17:00:55 +0300
-Message-ID: <87lfy4uuzs.fsf@intel.com>
+        id S1727922AbfFNOBL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Jun 2019 10:01:11 -0400
+Received: from ip5f5a6320.dynamic.kabel-deutschland.de ([95.90.99.32] helo=diego.localnet)
+        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <heiko@sntech.de>)
+        id 1hbmlN-0005Zq-MY; Fri, 14 Jun 2019 16:01:05 +0200
+From:   Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To:     Nick Xie <xieqinick@gmail.com>
+Cc:     robh+dt@kernel.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+        nick@khadas.com
+Subject: Re: [PATCH v2] arm64: dts: rockchip: Add support for Khadas Edge/Edge-V/Captain boards
+Date:   Fri, 14 Jun 2019 16:01:05 +0200
+Message-ID: <1719008.LxYQEzyXAE@diego>
+In-Reply-To: <CAP4nuTUQZRG9yV1Bz2hpe10K3CrWhVWf_YYBnMs3O1KyahhrMw@mail.gmail.com>
+References: <1559035267-1884-1-git-send-email-xieqinick@gmail.com> <4566563.QzcLDyM7tj@phil> <CAP4nuTUQZRG9yV1Bz2hpe10K3CrWhVWf_YYBnMs3O1KyahhrMw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 14 Jun 2019, Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
-> On Fri, Jun 14, 2019 at 04:31:56PM +0300, Jani Nikula wrote:
->> On Thu, 13 Jun 2019, Mauro Carvalho Chehab <mchehab+samsung@kernel.org> wrote:
->> > From: Mauro Carvalho Chehab <mchehab@s-opensource.com>
->> >
->> > Add a script to parse the Documentation/ABI files and produce
->> > an output with all entries inside an ABI (sub)directory.
->> >
->> > Right now, it outputs its contents on ReST format. It shouldn't
->> > be hard to make it produce other kind of outputs, since the ABI
->> > file parser is implemented in separate than the output generator.
->> 
->> Hum, or just convert the ABI files to rst directly.
->
-> And what would that look like?
+Hi Nick,
 
-That pretty much depends on the requirements we want to set on both the
-ABI source files and the generated output. Obviously the requirements
-can be conflicting; might be hard to produce fancy output if the input
-is very limited.
+Am Freitag, 14. Juni 2019, 15:32:11 CEST schrieb Nick Xie:
+> Thanks, I'll check them out.
+> 
+> But there is a small typo:
+> https://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip.git/tree/arch/arm64/boot/dts/rockchip/rk3399-khadas-edge.dtsi?h=v5.3-armsoc/dts64&id=910249897d13beaa0b46069e27139024cd77e916#n299
+> 
+> *22 (GPIO1_C6)* should be *RK_PC6* NOT *RK_PD6*.
 
-At the bare minimum, you could convert the files to contain
-reStructuredText field lists [1]. Add a colon at the start of the field
-name, and make sure field bodies (values) are not empty.
+thanks for double-checking ... I've updated the commit to use the right gpio now.
 
-Conversion of a file selected at random; I've only added ":" and "N/A".
+Heiko
 
-diff --git a/Documentation/ABI/stable/sysfs-devices-system-cpu b/Documentation/ABI/stable/sysfs-devices-system-cpu
-index 33c133e2a631..34c218b344fb 100644
---- a/Documentation/ABI/stable/sysfs-devices-system-cpu
-+++ b/Documentation/ABI/stable/sysfs-devices-system-cpu
-@@ -1,19 +1,20 @@
--What: 		/sys/devices/system/cpu/dscr_default
--Date:		13-May-2014
--KernelVersion:	v3.15.0
--Contact:
--Description:	Writes are equivalent to writing to
-+:What: 		/sys/devices/system/cpu/dscr_default
-+:Date:		13-May-2014
-+:KernelVersion:	v3.15.0
-+:Contact:	N/A
-+:Description:	Writes are equivalent to writing to
- 		/sys/devices/system/cpu/cpuN/dscr on all CPUs.
- 		Reads return the last written value or 0.
- 		This value is not a global default: it is a way to set
- 		all per-CPU defaults at the same time.
--Values:		64 bit unsigned integer (bit field)
-+:Values:	64 bit unsigned integer (bit field)
- 
--What: 		/sys/devices/system/cpu/cpu[0-9]+/dscr
--Date:		13-May-2014
--KernelVersion:	v3.15.0
--Contact:
--Description:	Default value for the Data Stream Control Register (DSCR) on
-+
-+:What: 		/sys/devices/system/cpu/cpu[0-9]+/dscr
-+:Date:		13-May-2014
-+:KernelVersion:	v3.15.0
-+:Contact:	N/A
-+:Description:	Default value for the Data Stream Control Register (DSCR) on
- 		a CPU.
- 		This default value is used when the kernel is executing and
- 		for any process that has not set the DSCR itself.
-@@ -22,4 +23,4 @@ Description:	Default value for the Data Stream Control Register (DSCR) on
- 		on any CPU where it executes (overriding the value described
- 		here).
- 		If set by a process it will be inherited by child processes.
--Values:		64 bit unsigned integer (bit field)
-+:Values:		64 bit unsigned integer (bit field)
-
----
-
-Of course, you'd still need to add higher level files to include the ABI
-files.
-
-At the other end, you could add structure and syntax to your heart's
-content, and make the output fancier too.
-
-BR,
-Jani.
-
-[1] http://docutils.sourceforge.net/docs/ref/rst/restructuredtext.html#field-lists
+> 
+> Heiko Stuebner <heiko@sntech.de> 于2019年6月14日周五 下午7:32写道：
+> 
+> > Am Montag, 10. Juni 2019, 09:57:53 CEST schrieb xieqinick@gmail.com:
+> > > From: Nick Xie <nick@khadas.com>
+> > >
+> > > Add devicetree support for Khadas Edge/Edge-V/Captain boards.
+> > > Khadas Edge is an expandable Rockchip RK3399 board with goldfinger.
+> > > Khadas Captain is the carrier board for Khadas Edge.
+> > > Khadas Edge-V is a Khadas VIM form factor Rockchip RK3399 board.
+> > >
+> > > Signed-off-by: Nick Xie <nick@khadas.com>
+> >
+> > applied for 5.3 after doing some style-fixes to the edge.dtsi
+> > (2 missing gpio constants, some newlines and sdio-regulator
+> > references were missing "<..>")
+> >
+> > Please double-check the result
+> >
+> >
+> > Thanks
+> > Heiko
+> >
+> >
+> >
 
 
--- 
-Jani Nikula, Intel Open Source Graphics Center
+
+
