@@ -2,100 +2,157 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3148A45D09
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 14:40:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F17EA45D0D
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 14:41:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727888AbfFNMkR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 08:40:17 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:44352 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727685AbfFNMkR (ORCPT
+        id S1728030AbfFNMlk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 08:41:40 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:35902 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727930AbfFNMlf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 08:40:17 -0400
-Received: by mail-pf1-f196.google.com with SMTP id t16so1388042pfe.11;
-        Fri, 14 Jun 2019 05:40:16 -0700 (PDT)
+        Fri, 14 Jun 2019 08:41:35 -0400
+Received: by mail-wr1-f66.google.com with SMTP id n4so2407837wrs.3
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2019 05:41:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=G6J+XslQx14mgUJu3IkiN0FzUg+9m/GNr8qGP15QXM4=;
-        b=nSzXWq2wgDfSBPulagdL8DAcLzRmrLOdE8OSqGLUh/cCWEG3++iLthKmJE9JgDDu0J
-         g6PnPHyDY4q1EPdQW2X9uzxa3pPRJ1cOQ1fmM2aAQOyFV0HQsI4WYBYU17eIUeOW/36Y
-         KMj/d23F7Z95RMGAVs1TVxOW+bsfxCQPm7DxMpsIGQveqjpZoTZoueZ+mBMA9pxuYLEZ
-         /Wvfsyspn1WnCvGsUWh7gn1T+DdlKXPbDnokDp+vpPD9ZTI7sNMCiTspAz3oXxBwFKKx
-         OgMQHvcTuF2AoZgLsLOqS77QFmKQ0yZpPHOcNVjbQ5a6LU7o7HAkbsD5iytZBkx/8vr5
-         ngGw==
+        h=from:to:subject:date:message-id:in-reply-to:references:mime-version
+         :content-transfer-encoding;
+        bh=tm2PN34VJevI9ZW9IJurutGMCzu2ZjY7ozaA/XjkBM0=;
+        b=qK8JhE7mT9tUOlNnJxB6GUKXut/FqmO9LP3BIxIeFQe5NAz8q/LKgql3AyaXL8zVuy
+         wPpR5OFybGGjpF5QukjAFSb6YcyNCtopkfBdwUIZskiqViZ2GlhOgDILEfRF1pJq3pvS
+         zJVbcrEr1eXxzDMOegJNm6x62WsbBwmtq8RjQJntxwe/W6e1DLR4F+2KiufGjNdIkKiQ
+         5Q3FFmU9uEwPYZ1dJ+Vqkm+THiq8HhEsFoW5RZDRDmt7SHX3AtYawPhdibpsCcQhXmRP
+         9KE6euVBNa0tSKezoiM1rlvvJCTgd60eYNvT4diSQFQ1baDroKGhWiiuCrTnHFaR2FX7
+         4IWw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=G6J+XslQx14mgUJu3IkiN0FzUg+9m/GNr8qGP15QXM4=;
-        b=U4nq5HKrszTiqmcJW/4G87D3JptiK8laVf3weo0WVzpl6cDeDskbUoJqWFe+myp7k2
-         chAVnrZX/bIeEovQPTE5WkYTEgBvUa5BG/1uCHlBoXAftBYOWHJ6I3hKaF2UiiQ4lkxP
-         DL5okDpnwugrr5AITKQ17l96nD/HJRgth/eVEzgGFSqCa3m6vn+3okYkRZRxEF5xOFQY
-         BGQcyRTvn8LciOTSO0Iwfy0BniQiHmPYUrPEo1AEt0NfG2OuMLeAtF1gUCOt8M8lIlWz
-         AnOr8gpCMGa8pdlBtXeWZ1Z8lE3E5ibLbe6sidS7CHUWc41iZb1QJO4aTFK0MT6hIFaA
-         ykCA==
-X-Gm-Message-State: APjAAAUAM8AqSKLNpFLtXps4XC4650UbYftdfGk5jWAdTFVESRICM3Lo
-        vmE6bkgUyCtfLd5QNTI0qDQ=
-X-Google-Smtp-Source: APXvYqx9/TmX0TUwRb9YhbZ2LXa7SIjFQEulobTNWMcuiWddW3z+6s9Qvfj2cWsqDvqXx986mqHohQ==
-X-Received: by 2002:aa7:84d1:: with SMTP id x17mr75198419pfn.188.1560516016456;
-        Fri, 14 Jun 2019 05:40:16 -0700 (PDT)
-Received: from xy-data.openstacklocal ([159.138.22.150])
-        by smtp.gmail.com with ESMTPSA id a3sm2477908pff.122.2019.06.14.05.40.14
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Fri, 14 Jun 2019 05:40:15 -0700 (PDT)
-From:   Young Xiao <92siuyang@gmail.com>
-To:     bhelgaas@google.com, tyreld@linux.vnet.ibm.com,
-        andy.shevchenko@gmail.com, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Young Xiao <92siuyang@gmail.com>
-Subject: [PATCH] PCI/hotplug: fix potential null pointer deference
-Date:   Fri, 14 Jun 2019 20:41:25 +0800
-Message-Id: <1560516085-3101-1-git-send-email-92siuyang@gmail.com>
-X-Mailer: git-send-email 2.7.4
+        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=tm2PN34VJevI9ZW9IJurutGMCzu2ZjY7ozaA/XjkBM0=;
+        b=EZKl5MvqQuJpSLTDipYsgMldL7WSK2yEj7DEwayhvgtZqlkILwtyz5uPZdWOqyHBq7
+         Kg6MPdR+lwQCf0jAK5/lWDgK/HzYSfQrW87V7Tsw+LfjwL54PELos5wnFgx/WQN3AFgh
+         7E+yglwEXIiHnd0g8fdYRl+HF7EdnssqyCdj0OeRFMZXX9escOr+uxLCXkslY7Q3Fcea
+         88lPbf9/NgeZRRxwruQko6e+OZRHGeGMCVz0F/6e0DUAYN6onoGAtrHpUy3IWVQGpmOZ
+         MkZj7HLKDTkLEIsP9Hx9jM0hflrxxwe35ogJAWvmsmwgl7/DYxIQYadySOBuOQpBUXb5
+         rQXw==
+X-Gm-Message-State: APjAAAWsOJPV62TsMBjx+bQGmBWiQDwG9nqZQyY+k+Uc716GwQ1aBZ1Q
+        cA5v7EGRYr3MvdZ9nzF95j8=
+X-Google-Smtp-Source: APXvYqzODwjMLrDLW/wAvxdO5UwbM+997kIqDgc3LoJww4panaWD52GNOzzJGcOdSinPiLSrE1KQEw==
+X-Received: by 2002:adf:dc09:: with SMTP id t9mr65268942wri.69.1560516093689;
+        Fri, 14 Jun 2019 05:41:33 -0700 (PDT)
+Received: from abel.fritz.box ([2a02:908:1252:fb60:e0eb:ed4e:b781:3e9f])
+        by smtp.gmail.com with ESMTPSA id n1sm2648209wrx.39.2019.06.14.05.41.32
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 14 Jun 2019 05:41:33 -0700 (PDT)
+From:   "=?UTF-8?q?Christian=20K=C3=B6nig?=" 
+        <ckoenig.leichtzumerken@gmail.com>
+X-Google-Original-From: =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>
+To:     daniel@ffwll.ch, l.stach@pengutronix.de,
+        linux+etnaviv@armlinux.org.uk, christian.gmeiner@gmail.com,
+        yuq825@gmail.com, eric@anholt.net, peterz@infradead.org,
+        thellstrom@vmware.com, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, etnaviv@lists.freedesktop.org,
+        lima@lists.freedesktop.org
+Subject: [PATCH 6/6] drm/vc4: use new ww_mutex_(un)lock_for_each macros
+Date:   Fri, 14 Jun 2019 14:41:25 +0200
+Message-Id: <20190614124125.124181-7-christian.koenig@amd.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190614124125.124181-1-christian.koenig@amd.com>
+References: <20190614124125.124181-1-christian.koenig@amd.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There is otherwise a risk of a null pointer dereference.
+Use the provided macros instead of implementing deadlock handling on our own.
 
-Signed-off-by: Young Xiao <92siuyang@gmail.com>
+Signed-off-by: Christian König <christian.koenig@amd.com>
 ---
- drivers/pci/hotplug/cpqphp_ctrl.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ drivers/gpu/drm/vc4/vc4_gem.c | 56 ++++++++---------------------------
+ 1 file changed, 13 insertions(+), 43 deletions(-)
 
-diff --git a/drivers/pci/hotplug/cpqphp_ctrl.c b/drivers/pci/hotplug/cpqphp_ctrl.c
-index b7f4e1f..3c8399f 100644
---- a/drivers/pci/hotplug/cpqphp_ctrl.c
-+++ b/drivers/pci/hotplug/cpqphp_ctrl.c
-@@ -598,10 +598,11 @@ static struct pci_resource *get_io_resource(struct pci_resource **head, u32 size
- 			*head = node->next;
- 		} else {
- 			prevnode = *head;
--			while (prevnode->next != node)
-+			while (prevnode && prevnode->next != node)
- 				prevnode = prevnode->next;
+diff --git a/drivers/gpu/drm/vc4/vc4_gem.c b/drivers/gpu/drm/vc4/vc4_gem.c
+index d9311be32a4f..628b3a8bcf6a 100644
+--- a/drivers/gpu/drm/vc4/vc4_gem.c
++++ b/drivers/gpu/drm/vc4/vc4_gem.c
+@@ -584,53 +584,17 @@ vc4_lock_bo_reservations(struct drm_device *dev,
+ 			 struct vc4_exec_info *exec,
+ 			 struct ww_acquire_ctx *acquire_ctx)
+ {
+-	int contended_lock = -1;
+-	int i, ret;
++	struct ww_mutex *contended;
+ 	struct drm_gem_object *bo;
++	int i, ret;
  
--			prevnode->next = node->next;
-+			if (prevnode)
-+				prevnode->next = node->next;
- 		}
- 		node->next = NULL;
- 		break;
-@@ -788,10 +789,11 @@ static struct pci_resource *get_resource(struct pci_resource **head, u32 size)
- 			*head = node->next;
- 		} else {
- 			prevnode = *head;
--			while (prevnode->next != node)
-+			while (prevnode && prevnode->next != node)
- 				prevnode = prevnode->next;
+ 	ww_acquire_init(acquire_ctx, &reservation_ww_class);
  
--			prevnode->next = node->next;
-+			if (prevnode)
-+				prevnode->next = node->next;
- 		}
- 		node->next = NULL;
- 		break;
+-retry:
+-	if (contended_lock != -1) {
+-		bo = &exec->bo[contended_lock]->base;
+-		ret = ww_mutex_lock_slow_interruptible(&bo->resv->lock,
+-						       acquire_ctx);
+-		if (ret) {
+-			ww_acquire_done(acquire_ctx);
+-			return ret;
+-		}
+-	}
+-
+-	for (i = 0; i < exec->bo_count; i++) {
+-		if (i == contended_lock)
+-			continue;
+-
+-		bo = &exec->bo[i]->base;
+-
+-		ret = ww_mutex_lock_interruptible(&bo->resv->lock, acquire_ctx);
+-		if (ret) {
+-			int j;
+-
+-			for (j = 0; j < i; j++) {
+-				bo = &exec->bo[j]->base;
+-				ww_mutex_unlock(&bo->resv->lock);
+-			}
+-
+-			if (contended_lock != -1 && contended_lock >= i) {
+-				bo = &exec->bo[contended_lock]->base;
+-
+-				ww_mutex_unlock(&bo->resv->lock);
+-			}
+-
+-			if (ret == -EDEADLK) {
+-				contended_lock = i;
+-				goto retry;
+-			}
+-
+-			ww_acquire_done(acquire_ctx);
+-			return ret;
+-		}
+-	}
++	ww_mutex_lock_for_each(for (i = 0; i < exec->bo_count; i++),
++			       &exec->bo[i]->base.resv->lock, contended, ret,
++			       true, acquire_ctx)
++		if (ret)
++			goto error;
+ 
+ 	ww_acquire_done(acquire_ctx);
+ 
+@@ -648,6 +612,12 @@ vc4_lock_bo_reservations(struct drm_device *dev,
+ 	}
+ 
+ 	return 0;
++
++error:
++	ww_mutex_unlock_for_each(for (i = 0; i < exec->bo_count; i++),
++				 &exec->bo[i]->base.resv->lock, contended);
++	ww_acquire_done(acquire_ctx);
++	return ret;
+ }
+ 
+ /* Queues a struct vc4_exec_info for execution.  If no job is
 -- 
-2.7.4
+2.17.1
 
