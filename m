@@ -2,220 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1633946B56
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 22:56:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BE01F46B5B
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 22:57:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726327AbfFNU4f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 16:56:35 -0400
-Received: from mail-vs1-f73.google.com ([209.85.217.73]:46535 "EHLO
-        mail-vs1-f73.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725809AbfFNU4f (ORCPT
+        id S1726785AbfFNU5G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 16:57:06 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:37432 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725809AbfFNU5E (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 16:56:35 -0400
-Received: by mail-vs1-f73.google.com with SMTP id 129so1289999vsx.13
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2019 13:56:34 -0700 (PDT)
+        Fri, 14 Jun 2019 16:57:04 -0400
+Received: by mail-io1-f67.google.com with SMTP id e5so8760271iok.4
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2019 13:57:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=Hqmj3KOC0/+HjkeOr+Ogn5rNBLGqrlC9HeVJX7PS6ro=;
-        b=dZhdIjz6vd/juH05RY6nTEp3Gekt5QdITEMcM/F6AViqk+XXSTlKvbdBrKqIlSCskF
-         Z4SyOTM8Ia1UY7hdXBMpwXAKy0VpV2zqJYs3P+nbTdYA426dFSmwevqQI3AJPjt+iOh4
-         X2Wv1S8yIgYH78W20GV9ldZej/yQ+odKeD0lx5g6115rUxmPUJ2yoEgB+J0uMdmoEGWs
-         7GERveOOVs/hQpzzhh68dDy1gqFIpCfnIeUkQMkhA7Cl1im3WmqF8X/yqCy6+y03vSwW
-         pN9onzrhtU3N0DQGj/CsKSbE3fXeCNldbUboxGoSkcFo6C7CtDkl3p+cBR47bXvMCCx1
-         Rvog==
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=vaLAv5uruC5N6GIJ3Ca+8odIT2de0GG0bR3H9unYxL4=;
+        b=GNCpS1E66AyuJe0Or3YiOv6+a9iHoG5xGdE66eguUBk7a9hLaJA/F13zGHovn9T5fC
+         whMbluwtNnf1Q2pdiN5ku86DpBxH06YhVzzbuHJ3dGYZMv+Z+Sl3OiIbH7spq0gEBmhU
+         rrhBEkEjDSLJbUtCyD/6vy8Z94ejmgQ5ywGH4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=Hqmj3KOC0/+HjkeOr+Ogn5rNBLGqrlC9HeVJX7PS6ro=;
-        b=uDPvsNqOQ54hOIjEQmDuzRYghs1OSeew/FxkeYavAhheJGnahRncDerq6lbVqgwXCB
-         x2a3CxOkSIgjiWentZme9HIurglrTpXK2gxET4WWyv+/8sDsplD2EOVBFEE7iHCXaNCE
-         GFBB4wDMbH1fO+WvYQ+LKPkwsNP6vUp38iNL1wRhq7cYAUvGVwpNdriccMppsbcGJc7k
-         XmoujA6j48aO/zcgBOx8B3T7CPe+Yr/8d3lTSFKT/ABwxwy3kSjkUfhq3I4zOWrqZPYE
-         C+h9VuXlJCbMHMOgyNUpVmPegPJKoqSlALHNKk2/4rbKw/FAhHz9eV8fHACbJGRX8C0l
-         gQ/g==
-X-Gm-Message-State: APjAAAX0FkAlJd9Jau59pAwtj/CKpRESWmIIO7KLFZbX9QwlTH4vVz53
-        XTV7jTosPED/NAZAyz0gl7SKI6ohnA==
-X-Google-Smtp-Source: APXvYqxQhQhf9yxGq2PhF5E9pperHshypElSemxeBdUJpiSfFj9fwgtnqfs1uCnvecZSAUJvLAOXMq7ELw==
-X-Received: by 2002:ac5:c2d2:: with SMTP id i18mr1919912vkk.36.1560545794002;
- Fri, 14 Jun 2019 13:56:34 -0700 (PDT)
-Date:   Fri, 14 Jun 2019 13:56:23 -0700
-In-Reply-To: <CAKwvOdmq2og84Ja6eNpiNdZd_ArxJ+=4a6_q_c2OgwX3Z+93NQ@mail.gmail.com>
-Message-Id: <20190614205623.128201-1-nhuck@google.com>
-Mime-Version: 1.0
-References: <CAKwvOdmq2og84Ja6eNpiNdZd_ArxJ+=4a6_q_c2OgwX3Z+93NQ@mail.gmail.com>
-X-Mailer: git-send-email 2.22.0.410.gd8fdbe21b5-goog
-Subject: [PATCH] drm/msm/dpu: Fix Wunused-const-variable
-From:   Nathan Huckleberry <nhuck@google.com>
-To:     robdclark@gmail.com, sean@poorly.run, airlied@linux.ie,
-        daniel@ffwll.ch
-Cc:     linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        Nathan Huckleberry <nhuck@google.com>,
-        clang-built-linux@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=vaLAv5uruC5N6GIJ3Ca+8odIT2de0GG0bR3H9unYxL4=;
+        b=VW4K/URKofYkLhiyRR453u90cZkU8/CtKo3aexAy7kGFNXI5cnT9jz2sAqYVpMzWja
+         P1REtQqMyc2irA6UWf+BpFDWhldylOPU9FZ91lnciZersrmEaaaA/XzmT6SWfDRUYDmw
+         MRtgKx87AVsDktMStamASMHS0JwgFqfuKnuk/D9TJ3TeQSCCTKpxtZZfYMCOgzebp1kd
+         h+CPuUFte/bhcu4SM/gcd/+NWRvklsFbvaK+4M5pacacM1S/8MEyK3WBZkXQJtAo6L5b
+         /Qif9Cg2CjoD4flO0ns3DGJn50Eslg6503r7gZPnhlP2bu0CDPEM5jJpSHACy5tLEqXa
+         /lDw==
+X-Gm-Message-State: APjAAAUXIdXj5gixWW9Crl6HgXJCdXAY8DtnuMHp5AFSm0JY3MwIvG7L
+        3YvrjK0ci8s9g9E0nNvtK/i/eRDxgoksrg==
+X-Google-Smtp-Source: APXvYqziCB1jl/0OOKv2p0Rq2UwHLDLX++1BYErohBUejPufwSfA6j1vkm6yv72PpEvetN+I3vSHNg==
+X-Received: by 2002:a5d:8747:: with SMTP id k7mr10329058iol.20.1560545823769;
+        Fri, 14 Jun 2019 13:57:03 -0700 (PDT)
+Received: from ncrews2.bld.corp.google.com ([2620:15c:183:200:cb43:2cd4:65f5:5c84])
+        by smtp.gmail.com with ESMTPSA id e22sm2947351iob.66.2019.06.14.13.57.02
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Fri, 14 Jun 2019 13:57:03 -0700 (PDT)
+From:   Nick Crews <ncrews@chromium.org>
+To:     enric.balletbo@collabora.com, bleung@chromium.org
+Cc:     linux-kernel@vger.kernel.org, dlaurie@chromium.org,
+        djkurtz@chromium.org, dtor@google.com, sjg@chromium.org,
+        kernel-janitors@vger.kernel.org, dan.carpenter@oracle.com,
+        Nick Crews <ncrews@chromium.org>
+Subject: [PATCH 1/2] platform/chrome: wilco_ec: Fix unreleased lock in event_read()
+Date:   Fri, 14 Jun 2019 14:56:31 -0600
+Message-Id: <20190614205631.90222-1-ncrews@chromium.org>
+X-Mailer: git-send-email 2.20.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Clang produces the following warning
+When copying an event to userspace failed, the event queue
+lock was never released. This fixes that.
 
-drivers/gpu/drm/msm/disp/dpu1/dpu_formats.c:477:32: warning: unused
-variable 'dpu_format_map_tile' [-Wunused-const-variable] static const
-struct dpu_format dpu_format_map_tile[] = { ^
-
-drivers/gpu/drm/msm/disp/dpu1/dpu_formats.c:602:32: warning: unused
-variable 'dpu_format_map_p010' [-Wunused-const-variable] static const
-struct dpu_format dpu_format_map_p010[] = { ^
-
-drivers/gpu/drm/msm/disp/dpu1/dpu_formats.c:610:32: warning: unused
-variable 'dpu_format_map_p010_ubwc' [-Wunused-const-variable] static
-const struct dpu_format dpu_format_map_p010_ubwc[] = { ^
-
-drivers/gpu/drm/msm/disp/dpu1/dpu_formats.c:619:32: warning: unused
-variable 'dpu_format_map_tp10_ubwc' [-Wunused-const-variable] static
-const struct dpu_format dpu_format_map_tp10_ubwc[] = { ^
-
-Removing the unimplemented modifiers that cause the warning.
-
-Cc: clang-built-linux@googlegroups.com
-Link: https://github.com/ClangBuiltLinux/linux/issues/528
-Signed-off-by: Nathan Huckleberry <nhuck@google.com>
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Nick Crews <ncrews@chromium.org>
 ---
- drivers/gpu/drm/msm/disp/dpu1/dpu_formats.c | 110 --------------------
- 1 file changed, 110 deletions(-)
+ drivers/platform/chrome/wilco_ec/event.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_formats.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_formats.c
-index 0440696b5bad..d28520faf157 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_formats.c
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_formats.c
-@@ -470,90 +470,6 @@ static const struct dpu_format dpu_format_map[] = {
- 		DPU_FETCH_LINEAR, 3),
- };
- 
--/*
-- * A5x tile formats tables:
-- * These tables hold the A5x tile formats supported.
-- */
--static const struct dpu_format dpu_format_map_tile[] = {
--	INTERLEAVED_RGB_FMT_TILED(BGR565,
--		0, COLOR_5BIT, COLOR_6BIT, COLOR_5BIT,
--		C2_R_Cr, C0_G_Y, C1_B_Cb, 0, 3,
--		false, 2, 0,
--		DPU_FETCH_UBWC, 1, DPU_TILE_HEIGHT_TILED),
--
--	INTERLEAVED_RGB_FMT_TILED(ARGB8888,
--		COLOR_8BIT, COLOR_8BIT, COLOR_8BIT, COLOR_8BIT,
--		C3_ALPHA, C2_R_Cr, C0_G_Y, C1_B_Cb, 4,
--		true, 4, 0,
--		DPU_FETCH_UBWC, 1, DPU_TILE_HEIGHT_TILED),
--
--	INTERLEAVED_RGB_FMT_TILED(ABGR8888,
--		COLOR_8BIT, COLOR_8BIT, COLOR_8BIT, COLOR_8BIT,
--		C3_ALPHA, C1_B_Cb, C0_G_Y, C2_R_Cr, 4,
--		true, 4, 0,
--		DPU_FETCH_UBWC, 1, DPU_TILE_HEIGHT_TILED),
--
--	INTERLEAVED_RGB_FMT_TILED(XBGR8888,
--		COLOR_8BIT, COLOR_8BIT, COLOR_8BIT, COLOR_8BIT,
--		C2_R_Cr, C0_G_Y, C1_B_Cb, C3_ALPHA, 4,
--		false, 4, 0,
--		DPU_FETCH_UBWC, 1, DPU_TILE_HEIGHT_TILED),
--
--	INTERLEAVED_RGB_FMT_TILED(RGBA8888,
--		COLOR_8BIT, COLOR_8BIT, COLOR_8BIT, COLOR_8BIT,
--		C2_R_Cr, C0_G_Y, C1_B_Cb, C3_ALPHA, 4,
--		true, 4, 0,
--		DPU_FETCH_UBWC, 1, DPU_TILE_HEIGHT_TILED),
--
--	INTERLEAVED_RGB_FMT_TILED(BGRA8888,
--		COLOR_8BIT, COLOR_8BIT, COLOR_8BIT, COLOR_8BIT,
--		C1_B_Cb, C0_G_Y, C2_R_Cr, C3_ALPHA, 4,
--		true, 4, 0,
--		DPU_FETCH_UBWC, 1, DPU_TILE_HEIGHT_TILED),
--
--	INTERLEAVED_RGB_FMT_TILED(BGRX8888,
--		COLOR_8BIT, COLOR_8BIT, COLOR_8BIT, COLOR_8BIT,
--		C1_B_Cb, C0_G_Y, C2_R_Cr, C3_ALPHA, 4,
--		false, 4, 0,
--		DPU_FETCH_UBWC, 1, DPU_TILE_HEIGHT_TILED),
--
--	INTERLEAVED_RGB_FMT_TILED(XRGB8888,
--		COLOR_8BIT, COLOR_8BIT, COLOR_8BIT, COLOR_8BIT,
--		C3_ALPHA, C2_R_Cr, C0_G_Y, C1_B_Cb, 4,
--		false, 4, 0,
--		DPU_FETCH_UBWC, 1, DPU_TILE_HEIGHT_TILED),
--
--	INTERLEAVED_RGB_FMT_TILED(RGBX8888,
--		COLOR_8BIT, COLOR_8BIT, COLOR_8BIT, COLOR_8BIT,
--		C2_R_Cr, C0_G_Y, C1_B_Cb, C3_ALPHA, 4,
--		false, 4, 0,
--		DPU_FETCH_UBWC, 1, DPU_TILE_HEIGHT_TILED),
--
--	INTERLEAVED_RGB_FMT_TILED(ABGR2101010,
--		COLOR_8BIT, COLOR_8BIT, COLOR_8BIT, COLOR_8BIT,
--		C2_R_Cr, C0_G_Y, C1_B_Cb, C3_ALPHA, 4,
--		true, 4, DPU_FORMAT_FLAG_DX,
--		DPU_FETCH_UBWC, 1, DPU_TILE_HEIGHT_TILED),
--
--	INTERLEAVED_RGB_FMT_TILED(XBGR2101010,
--		COLOR_8BIT, COLOR_8BIT, COLOR_8BIT, COLOR_8BIT,
--		C2_R_Cr, C0_G_Y, C1_B_Cb, C3_ALPHA, 4,
--		true, 4, DPU_FORMAT_FLAG_DX,
--		DPU_FETCH_UBWC, 1, DPU_TILE_HEIGHT_TILED),
--
--	PSEUDO_YUV_FMT_TILED(NV12,
--		0, COLOR_8BIT, COLOR_8BIT, COLOR_8BIT,
--		C1_B_Cb, C2_R_Cr,
--		DPU_CHROMA_420, DPU_FORMAT_FLAG_YUV,
--		DPU_FETCH_UBWC, 2, DPU_TILE_HEIGHT_NV12),
--
--	PSEUDO_YUV_FMT_TILED(NV21,
--		0, COLOR_8BIT, COLOR_8BIT, COLOR_8BIT,
--		C2_R_Cr, C1_B_Cb,
--		DPU_CHROMA_420, DPU_FORMAT_FLAG_YUV,
--		DPU_FETCH_UBWC, 2, DPU_TILE_HEIGHT_NV12),
--};
--
- /*
-  * UBWC formats table:
-  * This table holds the UBWC formats supported.
-@@ -599,32 +515,6 @@ static const struct dpu_format dpu_format_map_ubwc[] = {
- 		DPU_FETCH_UBWC, 4, DPU_TILE_HEIGHT_NV12),
- };
- 
--static const struct dpu_format dpu_format_map_p010[] = {
--	PSEUDO_YUV_FMT_LOOSE(NV12,
--		0, COLOR_8BIT, COLOR_8BIT, COLOR_8BIT,
--		C1_B_Cb, C2_R_Cr,
--		DPU_CHROMA_420, (DPU_FORMAT_FLAG_YUV | DPU_FORMAT_FLAG_DX),
--		DPU_FETCH_LINEAR, 2),
--};
--
--static const struct dpu_format dpu_format_map_p010_ubwc[] = {
--	PSEUDO_YUV_FMT_LOOSE_TILED(NV12,
--		0, COLOR_8BIT, COLOR_8BIT, COLOR_8BIT,
--		C1_B_Cb, C2_R_Cr,
--		DPU_CHROMA_420, (DPU_FORMAT_FLAG_YUV | DPU_FORMAT_FLAG_DX |
--				DPU_FORMAT_FLAG_COMPRESSED),
--		DPU_FETCH_UBWC, 4, DPU_TILE_HEIGHT_NV12),
--};
--
--static const struct dpu_format dpu_format_map_tp10_ubwc[] = {
--	PSEUDO_YUV_FMT_TILED(NV12,
--		0, COLOR_8BIT, COLOR_8BIT, COLOR_8BIT,
--		C1_B_Cb, C2_R_Cr,
--		DPU_CHROMA_420, (DPU_FORMAT_FLAG_YUV | DPU_FORMAT_FLAG_DX |
--				DPU_FORMAT_FLAG_COMPRESSED),
--		DPU_FETCH_UBWC, 4, DPU_TILE_HEIGHT_NV12),
--};
--
- /* _dpu_get_v_h_subsample_rate - Get subsample rates for all formats we support
-  *   Note: Not using the drm_format_*_subsampling since we have formats
-  */
+diff --git a/drivers/platform/chrome/wilco_ec/event.c b/drivers/platform/chrome/wilco_ec/event.c
+index 4d2776f77dbd..1eed55681598 100644
+--- a/drivers/platform/chrome/wilco_ec/event.c
++++ b/drivers/platform/chrome/wilco_ec/event.c
+@@ -342,7 +342,7 @@ static ssize_t event_read(struct file *filp, char __user *buf, size_t count,
+ 				 struct ec_event_entry, list);
+ 	n_bytes_written = entry->size;
+ 	if (copy_to_user(buf, &entry->event, n_bytes_written))
+-		return -EFAULT;
++		n_bytes_written = -EFAULT;
+ 	list_del(&entry->list);
+ 	kfree(entry);
+ 	dev_data->num_events--;
 -- 
-2.22.0.410.gd8fdbe21b5-goog
+2.20.1
 
