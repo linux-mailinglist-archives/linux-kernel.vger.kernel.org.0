@@ -2,75 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DB6AF457F5
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 10:53:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 76AE645807
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 10:57:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726952AbfFNIxC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 04:53:02 -0400
-Received: from inva021.nxp.com ([92.121.34.21]:59240 "EHLO inva021.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726883AbfFNIxB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 04:53:01 -0400
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 3D3692005F1;
-        Fri, 14 Jun 2019 10:53:00 +0200 (CEST)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id B14702005DC;
-        Fri, 14 Jun 2019 10:52:55 +0200 (CEST)
-Received: from localhost.localdomain (mega.ap.freescale.net [10.192.208.232])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id A8D1F40319;
-        Fri, 14 Jun 2019 16:52:46 +0800 (SGT)
-From:   Yinbo Zhu <yinbo.zhu@nxp.com>
-To:     Alan Stern <stern@rowland.harvard.edu>
-Cc:     yinbo.zhu@nxp.com, xiaobo.xie@nxp.com, jiafei.pan@nxp.com,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ramneek Mehresh <ramneek.mehresh@freescale.com>,
-        Nikhil Badola <nikhil.badola@freescale.com>,
-        Ran Wang <ran.wang_1@nxp.com>, linux-usb@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v7 5/5] usb :fsl: Change string format for errata property
-Date:   Fri, 14 Jun 2019 16:54:33 +0800
-Message-Id: <20190614085433.22344-5-yinbo.zhu@nxp.com>
+        id S1726552AbfFNI5E (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 04:57:04 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:42390 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725812AbfFNI5E (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Jun 2019 04:57:04 -0400
+Received: from 61-220-137-37.hinet-ip.hinet.net ([61.220.137.37] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <kai.heng.feng@canonical.com>)
+        id 1hbi15-0001Cd-L7; Fri, 14 Jun 2019 08:57:00 +0000
+From:   Kai-Heng Feng <kai.heng.feng@canonical.com>
+To:     jikos@kernel.org, benjamin.tissoires@redhat.com
+Cc:     linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>
+Subject: [PATCH] HID: multitouch: Add pointstick support for ALPS Touchpad
+Date:   Fri, 14 Jun 2019 16:56:55 +0800
+Message-Id: <20190614085655.8255-1-kai.heng.feng@canonical.com>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190614085433.22344-1-yinbo.zhu@nxp.com>
-References: <20190614085433.22344-1-yinbo.zhu@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nikhil Badola <nikhil.badola@freescale.com>
+There's a new ALPS touchpad/pointstick combo device that requires
+MT_CLS_WIN_8_DUAL to make its pointsitck work as a mouse.
 
-Remove USB errata checking code from driver. Applicability of erratum
-is retrieved by reading corresponding property in device tree.
-This property is written during device tree fixup.
+The device can be found on HP ZBook 17 G5.
 
-Signed-off-by: Ramneek Mehresh <ramneek.mehresh@freescale.com>
-Signed-off-by: Nikhil Badola <nikhil.badola@freescale.com>
-Signed-off-by: Yinbo Zhu <yinbo.zhu@nxp.com>
+Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
 ---
- drivers/usb/host/fsl-mph-dr-of.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+ drivers/hid/hid-ids.h        | 1 +
+ drivers/hid/hid-multitouch.c | 4 ++++
+ 2 files changed, 5 insertions(+)
 
-diff --git a/drivers/usb/host/fsl-mph-dr-of.c b/drivers/usb/host/fsl-mph-dr-of.c
-index 762b97600ab0..ae8f60f6e6a5 100644
---- a/drivers/usb/host/fsl-mph-dr-of.c
-+++ b/drivers/usb/host/fsl-mph-dr-of.c
-@@ -226,11 +226,8 @@ static int fsl_usb2_mph_dr_of_probe(struct platform_device *ofdev)
- 		of_property_read_bool(np, "fsl,usb_erratum-a005697");
- 	pdata->has_fsl_erratum_a006918 =
- 		of_property_read_bool(np, "fsl,usb_erratum-a006918");
--
--	if (of_get_property(np, "fsl,usb_erratum_14", NULL))
--		pdata->has_fsl_erratum_14 = 1;
--	else
--		pdata->has_fsl_erratum_14 = 0;
-+	pdata->has_fsl_erratum_14 =
-+		of_property_read_bool(np, "fsl,usb_erratum-14");
+diff --git a/drivers/hid/hid-ids.h b/drivers/hid/hid-ids.h
+index eac0c54c5970..5311c62aeb88 100644
+--- a/drivers/hid/hid-ids.h
++++ b/drivers/hid/hid-ids.h
+@@ -80,6 +80,7 @@
+ #define HID_DEVICE_ID_ALPS_U1_DUAL_3BTN_PTP	0x1220
+ #define HID_DEVICE_ID_ALPS_U1		0x1215
+ #define HID_DEVICE_ID_ALPS_T4_BTNLESS	0x120C
++#define HID_DEVICE_ID_ALPS_1222		0x1222
  
- 	/*
- 	 * Determine whether phy_clk_valid needs to be checked
+ 
+ #define USB_VENDOR_ID_AMI		0x046b
+diff --git a/drivers/hid/hid-multitouch.c b/drivers/hid/hid-multitouch.c
+index 5df5dd56ecc8..b603c14d043b 100644
+--- a/drivers/hid/hid-multitouch.c
++++ b/drivers/hid/hid-multitouch.c
+@@ -1776,6 +1776,10 @@ static const struct hid_device_id mt_devices[] = {
+ 		HID_DEVICE(BUS_I2C, HID_GROUP_MULTITOUCH_WIN_8,
+ 			USB_VENDOR_ID_ALPS_JP,
+ 			HID_DEVICE_ID_ALPS_U1_DUAL_3BTN_PTP) },
++	{ .driver_data = MT_CLS_WIN_8_DUAL,
++		HID_DEVICE(BUS_I2C, HID_GROUP_MULTITOUCH_WIN_8,
++			USB_VENDOR_ID_ALPS_JP,
++			HID_DEVICE_ID_ALPS_1222) },
+ 
+ 	/* Lenovo X1 TAB Gen 2 */
+ 	{ .driver_data = MT_CLS_WIN_8_DUAL,
 -- 
 2.17.1
 
