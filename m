@@ -2,51 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 35AFB45445
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 07:49:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2C25445441
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 07:49:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726244AbfFNFtX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 01:49:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47974 "EHLO mail.kernel.org"
+        id S1726160AbfFNFtM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 01:49:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47904 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725801AbfFNFtX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 01:49:23 -0400
-Received: from localhost (unknown [106.201.34.42])
+        id S1725801AbfFNFtM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Jun 2019 01:49:12 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E1D1D21473;
-        Fri, 14 Jun 2019 05:49:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 933602133D;
+        Fri, 14 Jun 2019 05:49:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560491362;
-        bh=FESF3oWjtlfGp5YHypGT3YoUEo0yLRez1gMxgzKPF2k=;
+        s=default; t=1560491351;
+        bh=wIqYOuhdSMFupVcnp9vW1Ue7FJ+QVtopxgZS/I94rcU=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=1we4frlaEHalYp7oQhyNpSM/Izb2bQirr1KTsQuJnAKbF1iMnyCN7VXET7ajF4rF9
-         nfUlfVO9fO+1LZ0tthGagcA2WXripcihEBdMGFmhsfdyjCaprAfYSomMXajpa4HCcA
-         hKvslBWlWdG7sHLmhPQTlj3McT2w8n4Ni3YrhK3k=
-Date:   Fri, 14 Jun 2019 11:16:13 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     dan.j.williams@intel.com, dmaengine@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/6] dma: amba-pl08x: no need to cast away call to
- debugfs_create_file()
-Message-ID: <20190614054613.GB2962@vkoul-mobl>
-References: <20190612122557.24158-1-gregkh@linuxfoundation.org>
+        b=zIjGdJkTICYEs2AtYUBI5SfDCwPix8SSCwIDPAOEB1iwfDOrDS6SLXVlegIE5tSoM
+         aVQX+eVWdqGG4b+gOtUcH/vZhGOuwCAxfO4Kd2T/SA7adbBwSgeYtVViYmL4fw0McT
+         LghW8IXhxvRshc/YxBNtlfVw8FSXNBT3N49+jDGA=
+Date:   Fri, 14 Jun 2019 07:49:08 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Naresh Kamboju <naresh.kamboju@linaro.org>
+Cc:     open list <linux-kernel@vger.kernel.org>,
+        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
+        lkft-triage@lists.linaro.org,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        linux- stable <stable@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Guenter Roeck <linux@roeck-us.net>
+Subject: Re: [PATCH 5.1 000/155] 5.1.10-stable review
+Message-ID: <20190614054908.GB27319@kroah.com>
+References: <20190613075652.691765927@linuxfoundation.org>
+ <CA+G9fYsRq=DyOWhhPq3axyhLVBWLp7-3QZ3p5dSScR06ar5SZg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20190612122557.24158-1-gregkh@linuxfoundation.org>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CA+G9fYsRq=DyOWhhPq3axyhLVBWLp7-3QZ3p5dSScR06ar5SZg@mail.gmail.com>
+User-Agent: Mutt/1.12.0 (2019-05-25)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12-06-19, 14:25, Greg Kroah-Hartman wrote:
-> No need to check the return value of debugfs_create_file(), so no need
-> to provide a fake "cast away" of the return value either.
+On Fri, Jun 14, 2019 at 12:09:12AM +0530, Naresh Kamboju wrote:
+> On Thu, 13 Jun 2019 at 14:15, Greg Kroah-Hartman
+> <gregkh@linuxfoundation.org> wrote:
+> >
+> > This is the start of the stable review cycle for the 5.1.10 release.
+> > There are 155 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> >
+> > Responses should be made by Sat 15 Jun 2019 07:54:40 AM UTC.
+> > Anything received after that time might be too late.
+> >
+> > The whole patch series can be found in one patch at:
+> >         https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.1.10-rc1.gz
+> > or in the git tree and branch at:
+> >         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.1.y
+> > and the diffstat can be found below.
+> >
+> > thanks,
+> >
+> > greg k-h
+> >
+> 
+> Results from Linaro’s test farm.
+> No regressions on arm64, arm, x86_64, and i386.
 
-Applied all after fixing the subsystem tag (dmaengine), thanks
+Thanks for testing all of these and letting me know.
 
--- 
-~Vinod
+greg k-h
