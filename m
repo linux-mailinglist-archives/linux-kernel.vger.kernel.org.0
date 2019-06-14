@@ -2,101 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8D0B04608E
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 16:22:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 371F246096
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 16:24:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728738AbfFNOWl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 10:22:41 -0400
-Received: from foss.arm.com ([217.140.110.172]:35154 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728300AbfFNOWk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 10:22:40 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0FA17344;
-        Fri, 14 Jun 2019 07:22:40 -0700 (PDT)
-Received: from fuggles.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8BF923F246;
-        Fri, 14 Jun 2019 07:22:38 -0700 (PDT)
-Date:   Fri, 14 Jun 2019 15:22:31 +0100
-From:   Will Deacon <will.deacon@arm.com>
-To:     Anisse Astier <aastier@freebox.fr>
-Cc:     Dave Martin <Dave.Martin@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Mark Rutland <mark.rutland@arm.com>,
-        Richard Henderson <richard.henderson@linaro.org>,
-        Rich Felker <dalias@aerifal.cx>, linux-kernel@vger.kernel.org,
-        Kristina Martsenko <kristina.martsenko@arm.com>,
-        "Dmitry V . Levin" <ldv@altlinux.org>,
-        Ricardo Salveti <ricardo@foundries.io>
-Subject: Re: [PATCH] arm64/sve: <uapi/asm/ptrace.h> should not depend on
- <uapi/linux/prctl.h>
-Message-ID: <20190614142231.GA29231@fuggles.cambridge.arm.com>
-References: <20190613163801.21949-1-aastier@freebox.fr>
- <20190613171432.GA2790@e103592.cambridge.arm.com>
- <20190614112222.GA47082@anisse-station>
+        id S1728869AbfFNOXr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 10:23:47 -0400
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:44138 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728545AbfFNOXr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Jun 2019 10:23:47 -0400
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x5EENYNY087791;
+        Fri, 14 Jun 2019 09:23:34 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1560522214;
+        bh=jqWIXPxQ0tUVep8/8V0HZ+0jev3IjHrnjzBzntRpW+E=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=eZVJpZ1mJwnABWygXpv6c60oFL4KxmnDdnaP0oazfPYjrTxeFgR6OhRr8sEVjoZXF
+         gFb56vWyLFWSrz4tLjyvXaXAoGlfANGuNZHmg9BijIv8ml0vQADpCsje3hAQ7nVsT7
+         7jNXnEdGJZ3SMEnFrCFN9ojx2s4/LtloBWK88K18=
+Received: from DLEE112.ent.ti.com (dlee112.ent.ti.com [157.170.170.23])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x5EENY7j068628
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 14 Jun 2019 09:23:34 -0500
+Received: from DLEE109.ent.ti.com (157.170.170.41) by DLEE112.ent.ti.com
+ (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Fri, 14
+ Jun 2019 09:23:34 -0500
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE109.ent.ti.com
+ (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Fri, 14 Jun 2019 09:23:34 -0500
+Received: from [10.250.65.13] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id x5EENXEF102349;
+        Fri, 14 Jun 2019 09:23:34 -0500
+Subject: Re: [PATCH v3 0/9] Multicolor Framework update
+To:     Alexander Dahl <ada@thorsis.com>, <linux-leds@vger.kernel.org>
+CC:     <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>, <robh+dt@kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20190523190820.29375-1-dmurphy@ti.com> <55737098.K72IVJ5cDM@ada>
+From:   Dan Murphy <dmurphy@ti.com>
+Message-ID: <adfe9901-5428-3cd5-32a2-1e9ee3654460@ti.com>
+Date:   Fri, 14 Jun 2019 09:23:33 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190614112222.GA47082@anisse-station>
-User-Agent: Mutt/1.11.1+86 (6f28e57d73f2) ()
+In-Reply-To: <55737098.K72IVJ5cDM@ada>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Anisse, Dave,
+Hello
 
-On Fri, Jun 14, 2019 at 01:22:22PM +0200, Anisse Astier wrote:
-> On Thu, Jun 13, 2019 at 06:14:44PM +0100, Dave Martin wrote:
-> > On Thu, Jun 13, 2019 at 06:38:01PM +0200, Anisse Astier wrote:
-> > > -#define SVE_PT_VL_INHERIT		(PR_SVE_VL_INHERIT >> 16)
-> > > -#define SVE_PT_VL_ONEXEC		(PR_SVE_SET_VL_ONEXEC >> 16)
-> > > +#define SVE_PT_VL_INHERIT		(1 << 1) /* PR_SVE_VL_INHERIT */
-> > > +#define SVE_PT_VL_ONEXEC		(1 << 2) /* PR_SVE_SET_VL_ONEXEC */
-> > 
-> > Makes sense, but...
-> > 
-> > Since sve_context.h was already introduced to solve a closely related
-> > problem, I wonder whether we can provide shadow definitions there,
-> > similarly to way the arm64/include/uapi/asm/ptrace.h definitions are
-> > derived.  Although it's a slight abuse of that header, I think that
-> > would be my preferred approach.
-> 
-> Yes I saw this, and I considered doing something similar. But, those
-> defines are in uapi/linux/prctl.h, which does not include any asm/*.h
-> header. This would have then required adding a full infrastructure for
-> asm/prctl.h (that could then include sve_context.h for example), which
-> does not exist yet, instead of copying these two values.
+On 6/14/19 2:02 AM, Alexander Dahl wrote:
+> Hello Dan,
+>
+> Am Donnerstag, 23. Mai 2019, 14:08:11 CEST schrieb Dan Murphy:
+>>    leds: multicolor: Add sysfs interface definition
+>>    dt: bindings: Add multicolor class dt bindings documention
+>>    documention: leds: Add multicolor class documentation
+>>    dt-bindings: leds: Add multicolor ID to the color ID  list
+>>    leds: Add multicolor ID to the color ID list
+>>    leds: multicolor: Introduce a multicolor class definition
+>>    dt: bindings: lp50xx: Introduce the lp50xx family of RGB drivers
+>>    leds: lp50xx: Add the LP50XX family of the RGB LED driver
+>>    leds: Update the lp55xx to use the multi color framework
+> While not having much experience with the implementation of the LED subsystem,
+> I've had a short look at those. Curious question: would it be possible to take
+> three gpio-leds and group those together to one multicolor-led? I know at
+> least one board, where things are wired up like this, see e.g.
+> at91-sama5d27_som1_ek.dts
 
-x86 appears to have an asm/prctl.h implementation, but it's not included
-by anybody so I guess that doesn't really help us here.
+I have been thinking a lot about how gpio LEDs would fit into the mix here.
 
-> Since this is part of the kernel-userspace ABI, I don't see this values
-> changing anytime soon, which is why I thought copying them shouldn't be
-> a big issue.
+The leds-gpio.c would need to be extended to register to the multicolor 
+framework for this to work.
 
-Certainly not a big issue, just that the harder we make this to change
-the better.
+I would need to get or create a gpio led cluster to test it out.
 
-> A simple solution would be to to include sve_context.h or a third
-> header, maybe linux/prctl_arm64_sve.h (with only these two/five
-> defines), in linux/prctl.h, and reuse it in uapi/asm/ptrace.h; but this
-> would break the self-contained nature of linux/prctl.h.
-> > 
-> > Otherwise, at least make the required relationship between ptrace.h and
-> > prctl.h constants a bit more obvious, say,
-> > 
-> > 	#define SVE_PT_VL_INHERIT ((1 << 17) /* PR_SVE_SET_VL_INHERIT */ >> 16)
-> 
-> This one is much simpler and closer to what I had in mind with this
-> patch.
-> 
-> Will, what do you think of this second approach Dave proposed ?
+Dan
 
-Duplication is grotty, but it does the job so I'm ok with it. I don't have
-any better ideas.
 
-Thanks,
-
-Will
+> Greets
+> Alex
+>
