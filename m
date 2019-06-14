@@ -2,14 +2,14 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D39AB451B0
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 04:05:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 24935451AE
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 04:04:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727032AbfFNCE3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 22:04:29 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:52866 "EHLO
+        id S1727142AbfFNCEa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 22:04:30 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:52876 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726424AbfFNCE2 (ORCPT
+        with ESMTP id S1726379AbfFNCE2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 13 Jun 2019 22:04:28 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
@@ -18,18 +18,18 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From:
         Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=Rc2kXaDHzHXlwYcsQh5PtjF0ruhHsEakMken3/RrNnY=; b=GGMDoJaE6OWl6bctDCXTS4LfSO
-        ZUy/C6ACQv5M0UZ7z/6qGVpnPPkScGexpxl6iPivStuauSVc0qLVzK074htWn+7KXpAMImcIpHc07
-        stWNDC6KzkkKON0j1vj4D8mq+GZHbnHJsEAaTyiuMUSo9xGHRDGg0l4S7rZLiFn60fwBrDkkcIG4J
-        woZk7qTugH7khupRIfhZAlTj3Evw+zqt0PsOno9UaDeAJRjpOO7g14EgGhwIba3Dp3h15YGHi2Ccg
-        DItTqXvP9QT0Lber9BzECrS0VfdjfPbjHAMWWk50SvaZRQiDmMQdARnGsSi2V9GyWYNPzZAFi53Jc
-        PXsCMP7w==;
+        bh=sRphWf8wFg3Yvz/q3q+E6FqyD8PeHYGCjmt44FlP/mI=; b=lkUwVoSRg0rRp+EjlDAkEqfudI
+        U7lz+B37PkVdI5wrJP2ajKMeG8cKVs0Qw9aEGlg0Vj9i06GKwCjtX2cQA9gqzVbhc7lbvy5ArcA8V
+        CnMfVDfHHJn6lkMNSYLY/hdVlssm0zwxRPcZgMiKzdKSTKxiUhUW2R8ohE2yNDxnTPggvprDK7MvO
+        g3MQC932BkdwMu82msYkdXEel5GmhnrbXnzxFH7GAlCOwAY5MIk+31jUUJbxZfpeZyeYLsnAc9tqH
+        u/dIsbRnLKJ/3fbG4iM3MxepxKMlEu6TQYqta2QrjHCKBs0wtuOibpEK8Epv4apRoiY1c/R2zAtKZ
+        0x3RSpyw==;
 Received: from 201.86.169.251.dynamic.adsl.gvt.net.br ([201.86.169.251] helo=bombadil.infradead.org)
         by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hbbZr-0000EB-JQ; Fri, 14 Jun 2019 02:04:27 +0000
+        id 1hbbZr-0000E7-Ej; Fri, 14 Jun 2019 02:04:27 +0000
 Received: from mchehab by bombadil.infradead.org with local (Exim 4.92)
         (envelope-from <mchehab@bombadil.infradead.org>)
-        id 1hbbZn-0002nc-No; Thu, 13 Jun 2019 23:04:23 -0300
+        id 1hbbZn-0002ng-Od; Thu, 13 Jun 2019 23:04:23 -0300
 From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>
@@ -37,9 +37,9 @@ Cc:     Mauro Carvalho Chehab <mchehab@s-opensource.com>,
         Mauro Carvalho Chehab <mchehab@infradead.org>,
         linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
         Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Subject: [PATCH 02/14] ABI: sysfs-driver-hid: the "What" field doesn't parse fine
-Date:   Thu, 13 Jun 2019 23:04:08 -0300
-Message-Id: <dfba2c1063fda7de3e646d021ff914c1418b8305.1560477540.git.mchehab+samsung@kernel.org>
+Subject: [PATCH 03/14] ABI: sysfs-class-uwb_rc: remove a duplicated incomplete entry
+Date:   Thu, 13 Jun 2019 23:04:09 -0300
+Message-Id: <f3646db9fa30c68a53b9990abe1d49fc2c83262b.1560477540.git.mchehab+samsung@kernel.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <cover.1560477540.git.mchehab+samsung@kernel.org>
 References: <cover.1560477540.git.mchehab+samsung@kernel.org>
@@ -52,45 +52,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 
-The What: field on this ABI description use a different
-syntax than expected, causing it to not be properly parsed
-by script.
+There are two entries for /sys/class/uwb_rc/uwbN/<EUI-48>/BPST.
+The second one has a missing description.
 
-Fix it.
+Get rid of it.
 
 Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 ---
- Documentation/ABI/testing/sysfs-driver-hid | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ Documentation/ABI/testing/sysfs-class-uwb_rc | 6 ------
+ 1 file changed, 6 deletions(-)
 
-diff --git a/Documentation/ABI/testing/sysfs-driver-hid b/Documentation/ABI/testing/sysfs-driver-hid
-index 48942cacb0bf..a59533410871 100644
---- a/Documentation/ABI/testing/sysfs-driver-hid
-+++ b/Documentation/ABI/testing/sysfs-driver-hid
-@@ -1,6 +1,6 @@
--What:		For USB devices	: /sys/bus/usb/devices/<busnum>-<devnum>:<config num>.<interface num>/<hid-bus>:<vendor-id>:<product-id>.<num>/report_descriptor
--		For BT devices	: /sys/class/bluetooth/hci<addr>/<hid-bus>:<vendor-id>:<product-id>.<num>/report_descriptor
--		Symlink		: /sys/class/hidraw/hidraw<num>/device/report_descriptor
-+What:		/sys/bus/usb/devices/<busnum>-<devnum>:<config num>.<interface num>/<hid-bus>:<vendor-id>:<product-id>.<num>/report_descriptor
-+What:		/sys/class/bluetooth/hci<addr>/<hid-bus>:<vendor-id>:<product-id>.<num>/report_descriptor
-+What:		/sys/class/hidraw/hidraw<num>/device/report_descriptor
- Date:		Jan 2011
- KernelVersion:	2.0.39
- Contact:	Alan Ott <alan@signal11.us>
-@@ -9,9 +9,9 @@ Description:	When read, this file returns the device's raw binary HID
- 		This file cannot be written.
- Users:		HIDAPI library (http://www.signal11.us/oss/hidapi)
+diff --git a/Documentation/ABI/testing/sysfs-class-uwb_rc b/Documentation/ABI/testing/sysfs-class-uwb_rc
+index 85f4875d16ac..a0578751c1e3 100644
+--- a/Documentation/ABI/testing/sysfs-class-uwb_rc
++++ b/Documentation/ABI/testing/sysfs-class-uwb_rc
+@@ -125,12 +125,6 @@ Description:
+                 The EUI-48 of this device in colon separated hex
+                 octets.
  
--What:		For USB devices	: /sys/bus/usb/devices/<busnum>-<devnum>:<config num>.<interface num>/<hid-bus>:<vendor-id>:<product-id>.<num>/country
--		For BT devices	: /sys/class/bluetooth/hci<addr>/<hid-bus>:<vendor-id>:<product-id>.<num>/country
--		Symlink		: /sys/class/hidraw/hidraw<num>/device/country
-+What:		/sys/bus/usb/devices/<busnum>-<devnum>:<config num>.<interface num>/<hid-bus>:<vendor-id>:<product-id>.<num>/country
-+What:		/sys/class/bluetooth/hci<addr>/<hid-bus>:<vendor-id>:<product-id>.<num>/country
-+What:		/sys/class/hidraw/hidraw<num>/device/country
- Date:		February 2015
- KernelVersion:	3.19
- Contact:	Olivier Gay <ogay@logitech.com>
+-What:           /sys/class/uwb_rc/uwbN/<EUI-48>/BPST
+-Date:           July 2008
+-KernelVersion:  2.6.27
+-Contact:        linux-usb@vger.kernel.org
+-Description:
+-
+ What:           /sys/class/uwb_rc/uwbN/<EUI-48>/IEs
+ Date:           July 2008
+ KernelVersion:  2.6.27
 -- 
 2.21.0
 
