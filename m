@@ -2,43 +2,54 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7620646640
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 19:53:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7BB7446653
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 19:53:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727187AbfFNRwl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 13:52:41 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:38610 "EHLO
+        id S1727325AbfFNRxh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 13:53:37 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:38698 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726319AbfFNRwe (ORCPT
+        with ESMTP id S1726701AbfFNRwf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 13:52:34 -0400
+        Fri, 14 Jun 2019 13:52:35 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Sender:Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
         Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From:
         Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=4yo27ijYQu1yYo30q/R/RGMGUqSkkm83kufrAmJA9ng=; b=I7iAKGwk8MIwZBi9pG7YENWXoI
-        iC+5YfTXuhjWdD6D6k6ElBIDJKEZQ3nt26xJ737PLE1N6DCogIkBFPgGsfYXlgDyi8Ibu1uD5s+Fs
-        43gPcI+ZjITmBpwoAezCSuBJQheY1Nd1C5X68J7eqzW9l/ihOfkobXsSw2hhiOjX/kilnWTGGi9vD
-        Oro6sa87I2rDchIXHAAuWGK2XhWqC0M1Aj4jehRwqobOR3cCU4JizQ3h6R4qxZC5z+nqvLsz4xKjl
-        jF+2j6Km5RN89II1Bl0ZkK6hbBcJQK/+LfabBy6rbuTXYFhfJbnD0caw5LfwcLS7Bk0EJUSUx8YzB
-        jx7h/Few==;
+        bh=/v1AAw7om1V/odGoZszjgQFtzJKsLoAGR/3cdXZzrpw=; b=lTpUvIAd/F8l4cCpDxm3Dq4sjh
+        Ss68Yohhl2qG8EJztKjSqfoUlYBHWNDVsCiCO3BLyOn8hVpXsprhxRCYjxX8GpVMet/i1wti7MGfa
+        qUeF3L8a8x/X3I6J32o65HqV14Qro88ua3DhEJdbd2ja0mQ8eRSwaDBdkUsEZ5HZBS7ij1B93fZ2u
+        2wnhL2Xs8Yhw0byrSeSlFNzIcMHaczC3W7Eh2kCxvCxjo3Sl8Hc7safqWHMuQ1QIKBhViMJo0qFCP
+        bCwiHKtUZ85aDaMOAMwddgnCLQuHxnlWa4VRULVlFITTnbqDa4fZG9iCiwsB+SvYDGxCIO9NK938T
+        X4RhDe3w==;
 Received: from 177.133.85.52.dynamic.adsl.gvt.net.br ([177.133.85.52] helo=bombadil.infradead.org)
         by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hbqNO-0000Pb-Im; Fri, 14 Jun 2019 17:52:34 +0000
+        id 1hbqNO-0000Pk-Sr; Fri, 14 Jun 2019 17:52:34 +0000
 Received: from mchehab by bombadil.infradead.org with local (Exim 4.92)
         (envelope-from <mchehab@bombadil.infradead.org>)
-        id 1hbqNM-0002PN-2s; Fri, 14 Jun 2019 14:52:32 -0300
+        id 1hbqNM-0002PS-3h; Fri, 14 Jun 2019 14:52:32 -0300
 From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Mauro Carvalho Chehab <mchehab@infradead.org>,
-        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>
-Subject: [PATCH v2 15/16] sphinx/kernel_abi.py: make it compatible with Sphinx 1.7+
-Date:   Fri, 14 Jun 2019 14:52:29 -0300
-Message-Id: <76a9db53d324ff55fca23fae86b223110aca7678.1560534648.git.mchehab+samsung@kernel.org>
+        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Kees Cook <keescook@chromium.org>,
+        Petr Mladek <pmladek@suse.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Joe Lawrence <joe.lawrence@redhat.com>,
+        Mikulas Patocka <mpatocka@redhat.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Sri Krishna chowdary <schowdary@nvidia.com>,
+        Changbin Du <changbin.du@intel.com>
+Subject: [PATCH v2 16/16] docs: Kconfig/Makefile: add a check for broken ABI files
+Date:   Fri, 14 Jun 2019 14:52:30 -0300
+Message-Id: <9ad24385565c0395e06ccb0e058184744f6e4c3b.1560534648.git.mchehab+samsung@kernel.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <3b8d7c64f887ddea01df3c4eeabc745c8ec45406.1560534648.git.mchehab+samsung@kernel.org>
 References: <3b8d7c64f887ddea01df3c4eeabc745c8ec45406.1560534648.git.mchehab+samsung@kernel.org>
@@ -49,78 +60,112 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The same way kerneldoc.py needed changes to work with newer
-Sphinx, this script needs the same changes.
+The files under Documentation/ABI should follow the syntax
+as defined at Documentation/ABI/README.
 
-While here, reorganize the include order to match kerneldoc.py.
+Allow checking if they're following the syntax by running
+the ABI parser script on COMPILE_TEST.
+
+With that, when there's a problem with a file under
+Documentation/ABI, it would produce a warning like:
+
+	Warning: file ./Documentation/ABI/testing/sysfs-bus-pci-devices-aer_stats#14:
+		What '/sys/bus/pci/devices/<dev>/aer_stats/aer_rootport_total_err_cor' doesn't have a description
+	Warning: file ./Documentation/ABI/testing/sysfs-bus-pci-devices-aer_stats#21:
+		What '/sys/bus/pci/devices/<dev>/aer_stats/aer_rootport_total_err_fatal' doesn't have a description
 
 Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 ---
- Documentation/sphinx/kernel_abi.py | 39 +++++++++++++++++++++---------
- 1 file changed, 27 insertions(+), 12 deletions(-)
+ Documentation/Kconfig  | 11 +++++++++++
+ Documentation/Makefile |  5 +++++
+ lib/Kconfig.debug      |  2 ++
+ scripts/get_abi.pl     | 14 +++++++++++---
+ 4 files changed, 29 insertions(+), 3 deletions(-)
+ create mode 100644 Documentation/Kconfig
 
-diff --git a/Documentation/sphinx/kernel_abi.py b/Documentation/sphinx/kernel_abi.py
-index 0f3e51e67e8d..2d5d582207f7 100644
---- a/Documentation/sphinx/kernel_abi.py
-+++ b/Documentation/sphinx/kernel_abi.py
-@@ -30,18 +30,27 @@ u"""
- """
- 
- import codecs
--import sys
- import os
--from os import path
- import subprocess
-+import sys
- 
--from sphinx.ext.autodoc import AutodocReporter
-+from os import path
- 
--from docutils import nodes
--from docutils.parsers.rst import Directive, directives
-+from docutils import nodes, statemachine
- from docutils.statemachine import ViewList
-+from docutils.parsers.rst import directives, Directive
- from docutils.utils.error_reporting import ErrorString
- 
-+#
-+# AutodocReporter is only good up to Sphinx 1.7
-+#
-+import sphinx
+diff --git a/Documentation/Kconfig b/Documentation/Kconfig
+new file mode 100644
+index 000000000000..a8b0701c1422
+--- /dev/null
++++ b/Documentation/Kconfig
+@@ -0,0 +1,11 @@
++config WARN_ABI_ERRORS
++	bool "Warn if there are errors at ABI files"
++	depends on COMPILE_TEST
++	help
++	   The files under Documentation/ABI should follow what's
++	   described at Documentation/ABI/README. Yet, as they're manually
++	   written, it would be possible that some of those files would
++	   have errors that would break them for being parsed by
++	   scripts/get_abi.pl. Add a check to verify them.
 +
-+Use_SSI = sphinx.__version__[:3] >= '1.7'
-+if Use_SSI:
-+    from sphinx.util.docutils import switch_source_input
-+else:
-+    from sphinx.ext.autodoc import AutodocReporter
++	   If unsure, select 'N'.
+diff --git a/Documentation/Makefile b/Documentation/Makefile
+index e889e7cb8511..c6480ed22884 100644
+--- a/Documentation/Makefile
++++ b/Documentation/Makefile
+@@ -4,6 +4,11 @@
  
- __version__  = '1.0'
+ subdir-y := devicetree/bindings/
  
-@@ -139,11 +148,17 @@ class KernelCmd(Directive):
-             content.append(l, fname, c)
- 
-         buf  = self.state.memo.title_styles, self.state.memo.section_level, self.state.memo.reporter
--        self.state.memo.title_styles  = []
--        self.state.memo.section_level = 0
--        self.state.memo.reporter      = AutodocReporter(content, self.state.memo.reporter)
--        try:
--            self.state.nested_parse(content, 0, node, match_titles=1)
--        finally:
--            self.state.memo.title_styles, self.state.memo.section_level, self.state.memo.reporter = buf
++# Check for broken ABI files
++ifeq ($(CONFIG_WARN_ABI_ERRORS),y)
++$(shell $(srctree)/scripts/get_abi.pl validate --dir $(srctree)/Documentation/ABI)
++endif
 +
-+        if Use_SSI:
-+            with switch_source_input(self.state, content):
-+                self.state.nested_parse(content, 0, node, match_titles=1)
-+        else:
-+            self.state.memo.title_styles  = []
-+            self.state.memo.section_level = 0
-+            self.state.memo.reporter      = AutodocReporter(content, self.state.memo.reporter)
-+            try:
-+                self.state.nested_parse(content, 0, node, match_titles=1)
-+            finally:
-+                self.state.memo.title_styles, self.state.memo.section_level, self.state.memo.reporter = buf
+ # You can set these variables from the command line.
+ SPHINXBUILD   = sphinx-build
+ SPHINXOPTS    =
+diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
+index cbdfae379896..b1b7e141ca99 100644
+--- a/lib/Kconfig.debug
++++ b/lib/Kconfig.debug
+@@ -2110,4 +2110,6 @@ config IO_STRICT_DEVMEM
+ 
+ source "arch/$(SRCARCH)/Kconfig.debug"
+ 
++source "Documentation/Kconfig"
 +
-         return node.children
+ endmenu # Kernel hacking
+diff --git a/scripts/get_abi.pl b/scripts/get_abi.pl
+index 774e9b809ead..25248c012eb3 100755
+--- a/scripts/get_abi.pl
++++ b/scripts/get_abi.pl
+@@ -38,7 +38,15 @@ my %data;
+ sub parse_error($$$$) {
+ 	my ($file, $ln, $msg, $data) = @_;
+ 
+-	print STDERR "file $file#$ln: $msg at\n\t$data";
++	$data =~ s/\s+$/\n/;
++
++	print STDERR "Warning: file $file#$ln:\n\t$msg";
++
++	if ($data ne "") {
++		print STDERR ". Line\n\t\t$data";
++	} else {
++	    print STDERR "\n";
++	}
+ }
+ 
+ #
+@@ -94,7 +102,7 @@ sub parse_abi {
+ 
+ 			# Invalid, but it is a common mistake
+ 			if ($new_tag eq "where") {
+-				parse_error($file, $ln, "tag 'Where' is invalid. Should be 'What:' instead", $_);
++				parse_error($file, $ln, "tag 'Where' is invalid. Should be 'What:' instead", "");
+ 				$new_tag = "what";
+ 			}
+ 
+@@ -190,7 +198,7 @@ sub parse_abi {
+ 		}
+ 
+ 		# Everything else is error
+-		parse_error($file, $ln, "Unexpected line:", $_);
++		parse_error($file, $ln, "Unexpected content", $_);
+ 	}
+ 	$data{$nametag}->{description} =~ s/^\n+//;
+ 	close IN;
 -- 
 2.21.0
 
