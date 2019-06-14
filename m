@@ -2,286 +2,208 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 284C845E28
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 15:29:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E983A45E39
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 15:33:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728153AbfFNN3B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 09:29:01 -0400
-Received: from mga17.intel.com ([192.55.52.151]:23818 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727729AbfFNN3B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 09:29:01 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Jun 2019 06:29:00 -0700
-X-ExtLoop1: 1
-Received: from jnikula-mobl3.fi.intel.com (HELO localhost) ([10.237.66.150])
-  by fmsmga001.fm.intel.com with ESMTP; 14 Jun 2019 06:28:58 -0700
-From:   Jani Nikula <jani.nikula@linux.intel.com>
-To:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Mauro Carvalho Chehab <mchehab@s-opensource.com>,
-        Mauro Carvalho Chehab <mchehab@infradead.org>,
-        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Subject: Re: [PATCH 05/14] scripts: add an script to parse the ABI files
-In-Reply-To: <196fb3c497546f923bf5d156c3fddbe74a4913bc.1560477540.git.mchehab+samsung@kernel.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <cover.1560477540.git.mchehab+samsung@kernel.org> <196fb3c497546f923bf5d156c3fddbe74a4913bc.1560477540.git.mchehab+samsung@kernel.org>
-Date:   Fri, 14 Jun 2019 16:31:56 +0300
-Message-ID: <87r27wuwc3.fsf@intel.com>
+        id S1728117AbfFNNcZ convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Fri, 14 Jun 2019 09:32:25 -0400
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:36282 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728014AbfFNNcZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Jun 2019 09:32:25 -0400
+Received: by mail-qt1-f195.google.com with SMTP id p15so2446668qtl.3
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2019 06:32:23 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=UqHu6bnL2MykLrciT743QGm25pc9Ou6MAliGiUXxKbk=;
+        b=EQktjEOpD0SSlh9np5/CiSf8Xn4mAspAjQYmrWgszXZ5FYsFb1xagpKFtAycVynBQY
+         LvtsCL5K7M4YpLYtH+b206ERTXh7I19MPswlwUhn21l9JfqvYWAkPUAp6DAXleP2TOyz
+         TIKvVL85fH/IKrOqzwp/62iK4XEL7kqjOVfF4cBNWc8IlDe7ZjgoN/R4yONeuq3KjnD5
+         VoA1hWlHxbapv53O0RGlElMJFWvoadfgcrNKQvAp6C0lKhHyP5UhKyUy02o47S4itd6e
+         18v1/W+U8c1sYTwAf67e44R5qCJ/UGbLQANlw1fqlvRQ6wezxFW5GWBHCrHyFo0XDIPX
+         kPUg==
+X-Gm-Message-State: APjAAAXoKN4axBl/L9StRx6lEL34eWBhF2dWwStslOcU/VVbA2Y0vp76
+        asrhdgGABmGGMne8+yzdhD+EuQEfBlI/RzlCb8lu9A==
+X-Google-Smtp-Source: APXvYqzfzZWNJ4Z55P4qdShbPbeTD5roQrFHTZVzBjWxjfPMfKpdUBZOEJELbB0u6eJLCBM/nhJh8QnhvvE+jFIVAFU=
+X-Received: by 2002:a0c:baa7:: with SMTP id x39mr8406578qvf.100.1560519143506;
+ Fri, 14 Jun 2019 06:32:23 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <CAEXycp+Y-x7N_Yr==Xy_CT5K_a1DZYc85w1OUV+cKC5ZN+KB1g@mail.gmail.com>
+ <CAEXycpKJvSsyDQjeCC4YqmtN5tpmO15g8D-_3mrunY-NL1w4Qw@mail.gmail.com>
+ <1ed66b4e9090b802259aa0fce5da1e22bcaeaafc.camel@suse.de> <65865f56882af2baf8389458c5e6f05096f36818.camel@suse.de>
+In-Reply-To: <65865f56882af2baf8389458c5e6f05096f36818.camel@suse.de>
+From:   Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Date:   Fri, 14 Jun 2019 15:32:11 +0200
+Message-ID: <CAO-hwJ+QfEVAkq9j6CoB9Pr3ooVEHGWNn+STyCd5kYgnuGQDEw@mail.gmail.com>
+Subject: Re: Regression post "HID: core: move Usage Page concatenation to Main item"
+To:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+Cc:     =?UTF-8?Q?Jean=2DBaptiste_Th=C3=A9ou?= <jb@essential.com>,
+        Jiri Kosina <jikos@kernel.org>,
+        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 13 Jun 2019, Mauro Carvalho Chehab <mchehab+samsung@kernel.org> wrote:
-> From: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+On Fri, Jun 14, 2019 at 2:29 PM Nicolas Saenz Julienne
+<nsaenzjulienne@suse.de> wrote:
 >
-> Add a script to parse the Documentation/ABI files and produce
-> an output with all entries inside an ABI (sub)directory.
+> On Fri, 2019-06-14 at 10:52 +0200, Nicolas Saenz Julienne wrote:
+> > On Fri, 2019-06-14 at 09:02 +0900, Jean-Baptiste Théou wrote:
+> > > Sorry - Please find the public link:
+> > >
+> > >
+> >
+> https://android.googlesource.com/platform/cts/+/master/tests/tests/hardware/res/raw/asus_gamepad_register.json
+> > > Best regards
+> > >
+> > > On Fri, Jun 14, 2019 at 9:01 AM Jean-Baptiste Théou <jb@essential.com>
+> > > wrote:
+> > > > Hi,
+> > > >
+> > > > This patch (58e75155009cc800005629955d3482f36a1e0eec) is triggering a
+> > > > regression with the following descriptor (report not working as
+> > > > expected)
+> > > >
+> > > >
+> >
+> https://partner-android.googlesource.com/platform/cts/+/refs/heads/q-fs-release/tests/tests/hardware/res/raw/asus_gamepad_register.json
+> > > > Didn't see anything obviously wrong with this gamepad descriptor, so
+> > > > not sure what's trigger the regression.
+> > > >
+> > > > Thanks a lot
+> > > >
+> > > > Best regards
+> >
+> > Added Benjamin to the mail thread.
+> >
+> > For the record here's the report descritor, I have the feeling the issue is
+> > related to the Usage Page being defined in the middle of the Usage
+> > ennumeration.
+> >
+> > 0x05, 0x01,         /*  Usage Page (Desktop),               */
+> > 0x09, 0x05,         /*  Usage (Gamepad),                    */
+> > 0xA1, 0x01,         /*  Collection (Application),           */
+> > 0x85, 0x01,         /*      Report ID (1),                  */
+> > 0x05, 0x09,         /*      Usage Page (Button),            */
+> > 0x0A, 0x01, 0x00,   /*      Usage (01h),                    */
+> > 0x0A, 0x02, 0x00,   /*      Usage (02h),                    */
+> > 0x0A, 0x04, 0x00,   /*      Usage (04h),                    */
+> > 0x0A, 0x05, 0x00,   /*      Usage (05h),                    */
+> > 0x0A, 0x07, 0x00,   /*      Usage (07h),                    */
+> > 0x0A, 0x08, 0x00,   /*      Usage (08h),                    */
+> > 0x0A, 0x0E, 0x00,   /*      Usage (0Eh),                    */
+> > 0x0A, 0x0F, 0x00,   /*      Usage (0Fh),                    */
+> > 0x0A, 0x0D, 0x00,   /*      Usage (0Dh),                    */
+> > 0x05, 0x0C,         /*      Usage Page (Consumer),          */
+> > 0x0A, 0x24, 0x02,   /*      Usage (AC Back),                */
+> > 0x0A, 0x23, 0x02,   /*      Usage (AC Home),                */
+> > 0x15, 0x00,         /*      Logical Minimum (0),            */
+> > 0x25, 0x01,         /*      Logical Maximum (1),            */
+> > 0x75, 0x01,         /*      Report Size (1),                */
+> > 0x95, 0x0B,         /*      Report Count (11),              */
+> > 0x81, 0x02,         /*      Input (Variable),               */
+> > 0x75, 0x01,         /*      Report Size (1),                */
+> > 0x95, 0x01,         /*      Report Count (1),               */
+> > 0x81, 0x03,         /*      Input (Constant, Variable),     */
+> > 0x05, 0x01,         /*      Usage Page (Desktop),           */
+> > 0x75, 0x04,         /*      Report Size (4),                */
+> > 0x95, 0x01,         /*      Report Count (1),               */
+> > 0x25, 0x07,         /*      Logical Maximum (7),            */
+> > 0x46, 0x3B, 0x01,   /*      Physical Maximum (315),         */
+> > 0x66, 0x14, 0x00,   /*      Unit (Degrees),                 */
+> > 0x09, 0x39,         /*      Usage (Hat Switch),             */
+> > 0x81, 0x42,         /*      Input (Variable, Null State),   */
+> > 0x66, 0x00, 0x00,   /*      Unit,                           */
+> > 0x09, 0x01,         /*      Usage (Pointer),                */
+> > 0xA1, 0x00,         /*      Collection (Physical),          */
+> > 0x09, 0x30,         /*          Usage (X),                  */
+> > 0x09, 0x31,         /*          Usage (Y),                  */
+> > 0x09, 0x32,         /*          Usage (Z),                  */
+> > 0x09, 0x35,         /*          Usage (Rz),                 */
+> > 0x05, 0x02,         /*          Usage Page (Simulation),    */
+> > 0x09, 0xC5,         /*          Usage (C5h),                */
+> > 0x09, 0xC4,         /*          Usage (C4h),                */
+> > 0x15, 0x00,         /*          Logical Minimum (0),        */
+> > 0x26, 0xFF, 0x00,   /*          Logical Maximum (255),      */
+> > 0x35, 0x00,         /*          Physical Minimum (0),       */
+> > 0x46, 0xFF, 0x00,   /*          Physical Maximum (255),     */
+> > 0x75, 0x08,         /*          Report Size (8),            */
+> > 0x95, 0x06,         /*          Report Count (6),           */
+> > 0x81, 0x02,         /*          Input (Variable),           */
 >
-> Right now, it outputs its contents on ReST format. It shouldn't
-> be hard to make it produce other kind of outputs, since the ABI
-> file parser is implemented in separate than the output generator.
+> Well as it was stated in 57e75155009 ("HID: core: move Usage Page concatenation
+> to Main item"):
+>
+> The spec is not pretty clear as 5.2.2.7 states "Any usage that follows
+> is interpreted as a Usage ID and concatenated with the Usage Page".
+> While 5.2.2.8 states "When the parser encounters a main item it
+> concatenates the last declared Usage Page with a Usage to form a
+> complete usage value." Being somewhat contradictory it was decided to
+> match Window's implementation, which follows 5.2.2.8.
+>
+> This breaks the Report above as X, Y, Z and Rz will be concatenanted with the
+> 'Simulation' Usage Page as opposed to the 'Desktop' one.
+>
+> Based on the USB IDs can't find much information on this Gamepad, is it a real
+> one? If so I guess the solution would be to fix the report descriptor in a
+> custom driver. Otherwise I'd suggest fixing the descriptors directly on the
+> test suite.
 
-Hum, or just convert the ABI files to rst directly.
+And most of all, how does the joypad behave on Windows?
 
-BR,
-Jani.
+If no quirks is used in Windows, then maybe wee are not doing the
+right thing, but AFAICT, the patch was added to mimic Windows :/
 
-
+Cheers,
+Benjamin
 
 >
-> Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
-> Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-> ---
->  scripts/get_abi.pl | 212 +++++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 212 insertions(+)
->  create mode 100755 scripts/get_abi.pl
+> Regards,
+> Nicolas
 >
-> diff --git a/scripts/get_abi.pl b/scripts/get_abi.pl
-> new file mode 100755
-> index 000000000000..f7c9944a833c
-> --- /dev/null
-> +++ b/scripts/get_abi.pl
-> @@ -0,0 +1,212 @@
-> +#!/usr/bin/perl
-> +
-> +use strict;
-> +use Pod::Usage;
-> +use Getopt::Long;
-> +use File::Find;
-> +use Fcntl ':mode';
-> +
-> +my $help;
-> +my $man;
-> +my $debug;
-> +
-> +GetOptions(
-> +	"debug|d+" => \$debug,
-> +	'help|?' => \$help,
-> +	man => \$man
-> +) or pod2usage(2);
-> +
-> +pod2usage(1) if $help;
-> +pod2usage(-exitstatus => 0, -verbose => 2) if $man;
-> +
-> +pod2usage(2) if (scalar @ARGV != 1);
-> +
-> +my ($prefix) = @ARGV;
-> +
-> +require Data::Dumper if ($debug);
-> +
-> +my %data;
-> +
-> +#
-> +# Displays an error message, printing file name and line
-> +#
-> +sub parse_error($$$$) {
-> +	my ($file, $ln, $msg, $data) = @_;
-> +
-> +	print STDERR "file $file#$ln: $msg at\n\t$data";
-> +}
-> +
-> +#
-> +# Parse an ABI file, storing its contents at %data
-> +#
-> +sub parse_abi {
-> +	my $file = $File::Find::name;
-> +
-> +	my $mode = (stat($file))[2];
-> +	return if ($mode & S_IFDIR);
-> +	return if ($file =~ m,/README,);
-> +
-> +	my $name = $file;
-> +	$name =~ s,.*/,,;
-> +
-> +	my $type = $file;
-> +	$type =~ s,.*/(.*)/.*,$1,;
-> +
-> +	my $what;
-> +	my $new_what;
-> +	my $tag;
-> +	my $ln;
-> +
-> +	print STDERR "Opening $file\n" if ($debug > 1);
-> +	open IN, $file;
-> +	while(<IN>) {
-> +		$ln++;
-> +		if (m/^(\S+):\s*(.*)/i) {
-> +			my $new_tag = lc($1);
-> +			my $content = $2;
-> +
-> +			if (!($new_tag =~ m/(what|date|kernelversion|contact|description|users)/)) {
-> +				if ($tag eq "description") {
-> +					$data{$what}->{$tag} .= "\n$content";;
-> +					$data{$what}->{$tag} =~ s/\n+$//;
-> +					next;
-> +				} else {
-> +					parse_error($file, $ln, "tag '$tag' is invalid", $_);
-> +				}
-> +			}
-> +
-> +			if ($new_tag =~ m/what/) {
-> +				if ($tag =~ m/what/) {
-> +					$what .= ", " . $content;
-> +				} else {
-> +					$what = $content;
-> +					$new_what = 1;
-> +				}
-> +				$tag = $new_tag;
-> +				next;
-> +			}
-> +
-> +			$tag = $new_tag;
-> +
-> +			if ($new_what) {
-> +				$new_what = 0;
-> +
-> +				$data{$what}->{type} = $type;
-> +				$data{$what}->{file} = $name;
-> +				print STDERR "\twhat: $what\n" if ($debug > 1);
-> +			}
-> +
-> +			if (!$what) {
-> +				parse_error($file, $ln, "'What:' should come first:", $_);
-> +				next;
-> +			}
-> +			$data{$what}->{$tag} = $content;
-> +			next;
-> +		}
-> +
-> +		# Silently ignore any headers before the database
-> +		next if (!$tag);
-> +
-> +		if (m/^\s*(.*)/) {
-> +			$data{$what}->{$tag} .= "\n$1";
-> +			$data{$what}->{$tag} =~ s/\n+$//;
-> +			next;
-> +		}
-> +
-> +		# Everything else is error
-> +		parse_error($file, $ln, "Unexpected line:", $_);
-> +	}
-> +	close IN;
-> +}
-> +
-> +# Outputs the output on ReST format
-> +sub output_rest {
-> +	foreach my $what (sort keys %data) {
-> +		my $type = $data{$what}->{type};
-> +		my $file = $data{$what}->{file};
-> +
-> +		my $w = $what;
-> +		$w =~ s/([\(\)\_\-\*\=\^\~\\])/\\$1/g;
-> +
-> +		print "$w\n\n";
-> +		print "- defined on file $file (type: $type)\n\n::\n\n";
-> +
-> +		my $desc = $data{$what}->{description};
-> +		$desc =~ s/^\s+//;
-> +
-> +		# Remove title markups from the description, as they won't work
-> +		$desc =~ s/\n[\-\*\=\^\~]+\n/\n/g;
-> +
-> +		# put everything inside a code block
-> +		$desc =~ s/\n/\n /g;
-> +
-> +
-> +		if (!($desc =~ /^\s*$/)) {
-> +			print " $desc\n\n";
-> +		} else {
-> +			print " DESCRIPTION MISSING\n\n";
-> +		}
-> +	}
-> +}
-> +
-> +#
-> +# Parses all ABI files located at $prefix dir
-> +#
-> +find({wanted =>\&parse_abi, no_chdir => 1}, $prefix);
-> +
-> +print STDERR Data::Dumper->Dump([\%data], [qw(*data)]) if ($debug);
-> +
-> +#
-> +# Outputs an ReST file with the ABI contents
-> +#
-> +output_rest
-> +
-> +
-> +__END__
-> +
-> +=head1 NAME
-> +
-> +abi_book.pl - parse the Linux ABI files and produce a ReST book.
-> +
-> +=head1 SYNOPSIS
-> +
-> +B<abi_book.pl> [--debug] <ABI_DIR>]
-> +
-> +=head1 OPTIONS
-> +
-> +=over 8
-> +
-> +=item B<--debug>
-> +
-> +Put the script in verbose mode, useful for debugging. Can be called multiple
-> +times, to increase verbosity.
-> +
-> +=item B<--help>
-> +
-> +Prints a brief help message and exits.
-> +
-> +=item B<--man>
-> +
-> +Prints the manual page and exits.
-> +
-> +=back
-> +
-> +=head1 DESCRIPTION
-> +
-> +Parse the Linux ABI files from ABI DIR (usually located at Documentation/ABI)
-> +and produce a ReST book containing the Linux ABI.
-> +
-> +=head1 BUGS
-> +
-> +Report bugs to Mauro Carvalho Chehab <mchehab@s-opensource.com>
-> +
-> +=head1 COPYRIGHT
-> +
-> +Copyright (c) 2016 by Mauro Carvalho Chehab <mchehab@s-opensource.com>.
-> +
-> +License GPLv2: GNU GPL version 2 <http://gnu.org/licenses/gpl.html>.
-> +
-> +This is free software: you are free to change and redistribute it.
-> +There is NO WARRANTY, to the extent permitted by law.
-> +
-> +=cut
-
--- 
-Jani Nikula, Intel Open Source Graphics Center
+> > 0xC0,               /*      End Collection,                 */
+> > 0x85, 0x02,         /*      Report ID (2),                  */
+> > 0x05, 0x08,         /*      Usage Page (LED),               */
+> > 0x0A, 0x01, 0x00,   /*      Usage (01h),                    */
+> > 0x0A, 0x02, 0x00,   /*      Usage (02h),                    */
+> > 0x0A, 0x03, 0x00,   /*      Usage (03h),                    */
+> > 0x0A, 0x04, 0x00,   /*      Usage (04h),                    */
+> > 0x15, 0x00,         /*      Logical Minimum (0),            */
+> > 0x25, 0x01,         /*      Logical Maximum (1),            */
+> > 0x75, 0x01,         /*      Report Size (1),                */
+> > 0x95, 0x04,         /*      Report Count (4),               */
+> > 0x91, 0x02,         /*      Output (Variable),              */
+> > 0x75, 0x04,         /*      Report Size (4),                */
+> > 0x95, 0x01,         /*      Report Count (1),               */
+> > 0x91, 0x03,         /*      Output (Constant, Variable),    */
+> > 0xC0,               /*  End Collection,                     */
+> > 0x05, 0x0C,         /*  Usage Page (Consumer),              */
+> > 0x09, 0x01,         /*  Usage (Consumer Control),           */
+> > 0xA1, 0x01,         /*  Collection (Application),           */
+> > 0x85, 0x03,         /*      Report ID (3),                  */
+> > 0x05, 0x01,         /*      Usage Page (Desktop),           */
+> > 0x09, 0x06,         /*      Usage (Keyboard),               */
+> > 0xA1, 0x02,         /*      Collection (Logical),           */
+> > 0x05, 0x06,         /*          Usage Page (Device),        */
+> > 0x09, 0x20,         /*          Usage (20h),                */
+> > 0x15, 0x00,         /*          Logical Minimum (0),        */
+> > 0x26, 0xFF, 0x00,   /*          Logical Maximum (255),      */
+> > 0x75, 0x08,         /*          Report Size (8),            */
+> > 0x95, 0x01,         /*          Report Count (1),           */
+> > 0x81, 0x02,         /*          Input (Variable),           */
+> > 0x06, 0xBC, 0xFF,   /*          Usage Page (FFBCh),         */
+> > 0x0A, 0xAD, 0xBD,   /*          Usage (BDADh),              */
+> > 0x75, 0x08,         /*          Report Size (8),            */
+> > 0x95, 0x06,         /*          Report Count (6),           */
+> > 0x81, 0x02,         /*          Input (Variable),           */
+> > 0xC0,               /*      End Collection,                 */
+> > 0xC0                /*  End Collection                      */
+> >
+>
