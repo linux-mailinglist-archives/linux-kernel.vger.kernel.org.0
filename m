@@ -2,117 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A623E459DE
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 12:03:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1F52B459E4
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 12:04:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727561AbfFNKDH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 06:03:07 -0400
-Received: from mail.efficios.com ([167.114.142.138]:33086 "EHLO
-        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727197AbfFNKDH (ORCPT
+        id S1727210AbfFNKEY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 06:04:24 -0400
+Received: from smtprelay0221.hostedemail.com ([216.40.44.221]:33379 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726370AbfFNKEX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 06:03:07 -0400
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id B2F3A251338;
-        Fri, 14 Jun 2019 06:03:05 -0400 (EDT)
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
-        with ESMTP id aGDopCXhabIV; Fri, 14 Jun 2019 06:03:05 -0400 (EDT)
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id 455F4251331;
-        Fri, 14 Jun 2019 06:03:05 -0400 (EDT)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 455F4251331
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
-        s=default; t=1560506585;
-        bh=Hu2sfywP1wr/V2iml0Iwu3DskdZlle9a1sk8RIwPbAc=;
-        h=Date:From:To:Message-ID:MIME-Version;
-        b=fvSF4UnSVmbjIlv9Khoar4edqsd+o8saf61h4OK1+vIa0MgvAEnu/UKIG6N0a3apx
-         tiA7uuHAHRZy4dE8/w6aFGS05JUYkzKpfU/Hp0sUR8dLGa1RTyvIoc1RcI+Zqs8uww
-         EhYjeSssh2WOJo4xfeApdEIr7FfjxCje1SFA8lyywbM541+2WbLuP8fp/9665+tgwf
-         upU2nGhuAZzX4ZgGUyxKMvD1Gy32eTP5WwAiGaTvDqWB9L8AurGI/iNK96XYEqjGr8
-         x870WRvXafGceB05ZQ0JHYiemFDLtNq8m2mtALm2Yrm9zKcaFGc6IoKaFgaHfxL6kx
-         dzXk3iMwytTeQ==
-X-Virus-Scanned: amavisd-new at efficios.com
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
-        with ESMTP id LKwutttasM3j; Fri, 14 Jun 2019 06:03:05 -0400 (EDT)
-Received: from mail02.efficios.com (mail02.efficios.com [167.114.142.138])
-        by mail.efficios.com (Postfix) with ESMTP id 1BD4A251327;
-        Fri, 14 Jun 2019 06:03:05 -0400 (EDT)
-Date:   Fri, 14 Jun 2019 06:03:04 -0400 (EDT)
-From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To:     carlos <carlos@redhat.com>, Florian Weimer <fweimer@redhat.com>
-Cc:     Joseph Myers <joseph@codesourcery.com>,
-        Szabolcs Nagy <szabolcs.nagy@arm.com>,
-        libc-alpha <libc-alpha@sourceware.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ben Maurer <bmaurer@fb.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Dave Watson <davejwatson@fb.com>, Paul Turner <pjt@google.com>,
-        Rich Felker <dalias@libc.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-api <linux-api@vger.kernel.org>
-Message-ID: <802638054.3032.1560506584705.JavaMail.zimbra@efficios.com>
-In-Reply-To: <914051741.43025.1560348011775.JavaMail.zimbra@efficios.com>
-References: <20190503184219.19266-1-mathieu.desnoyers@efficios.com> <87muj2k4ov.fsf@oldenburg2.str.redhat.com> <1528929896.22217.1559326257155.JavaMail.zimbra@efficios.com> <87o93d4lqb.fsf@oldenburg2.str.redhat.com> <117220011.27079.1559663870037.JavaMail.zimbra@efficios.com> <87wohzorj0.fsf@oldenburg2.str.redhat.com> <c16c9785-7f8c-430b-a4df-a53e47bf1600@redhat.com> <914051741.43025.1560348011775.JavaMail.zimbra@efficios.com>
-Subject: Re: [PATCH 1/5] glibc: Perform rseq(2) registration at C startup
- and thread creation (v10)
+        Fri, 14 Jun 2019 06:04:23 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay01.hostedemail.com (Postfix) with ESMTP id 4A238100E86C6;
+        Fri, 14 Jun 2019 10:04:22 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::,RULES_HIT:41:355:379:599:800:960:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2393:2553:2559:2562:2693:2828:3138:3139:3140:3141:3142:3352:3622:3865:3867:3868:3870:3871:3872:3874:4250:4321:5007:6119:10004:10400:10848:11026:11232:11658:11914:12296:12740:12760:12895:13069:13153:13228:13255:13311:13357:13439:13972:14181:14659:14721:21080:21451:21627:30012:30054:30090:30091,0,RBL:23.242.196.136:@perches.com:.lbl8.mailshell.net-62.8.0.180 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:25,LUA_SUMMARY:none
+X-HE-Tag: beast43_6032aa142690d
+X-Filterd-Recvd-Size: 2014
+Received: from XPS-9350.home (cpe-23-242-196-136.socal.res.rr.com [23.242.196.136])
+        (Authenticated sender: joe@perches.com)
+        by omf06.hostedemail.com (Postfix) with ESMTPA;
+        Fri, 14 Jun 2019 10:04:20 +0000 (UTC)
+Message-ID: <8eacbd27239ec5ce956309278beae9b499499108.camel@perches.com>
+Subject: Re: [PATCH] bus: hisi_lpc: Don't use devm_kzalloc() to allocate
+ logical PIO range
+From:   Joe Perches <joe@perches.com>
+To:     John Garry <john.garry@huawei.com>, xuwei5@huawei.com
+Cc:     bhelgaas@google.com, linuxarm@huawei.com, arm@kernel.org,
+        linux-kernel@vger.kernel.org
+Date:   Fri, 14 Jun 2019 03:04:19 -0700
+In-Reply-To: <1560505624-39955-1-git-send-email-john.garry@huawei.com>
+References: <1560505624-39955-1-git-send-email-john.garry@huawei.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.30.5-0ubuntu0.18.10.1 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [167.114.142.138]
-X-Mailer: Zimbra 8.8.12_GA_3803 (ZimbraWebClient - FF67 (Linux)/8.8.12_GA_3794)
-Thread-Topic: glibc: Perform rseq(2) registration at C startup and thread creation (v10)
-Thread-Index: 6rG93gdkMSoHS5ZP168diTIrRPG9C+LZilEL
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
------ On Jun 12, 2019, at 4:00 PM, Mathieu Desnoyers mathieu.desnoyers@efficios.com wrote:
-
-> ----- On Jun 10, 2019, at 4:43 PM, carlos carlos@redhat.com wrote:
+On Fri, 2019-06-14 at 17:47 +0800, John Garry wrote:
+> If, after registering a logical PIO range, the driver probe later fails,
+> the logical PIO range memory will be released automatically.
 > 
->> On 6/6/19 7:57 AM, Florian Weimer wrote:
->>> Let me ask the key question again: Does it matter if code observes the
->>> rseq area first without kernel support, and then with kernel support?
->>> If we don't expect any problems immediately, we do not need to worry
->>> much about the constructor ordering right now.  I expect that over time,
->>> fixing this properly will become easier.
->> 
->> I just wanted to chime in and say that splitting this into:
->> 
->> * Ownership (__rseq_handled)
->> 
->> * Initialization (__rseq_abi)
->> 
->> Makes sense to me.
->> 
->> I agree we need an answer to this question of ownership but not yet
->> initialized, to owned and initialized.
->> 
->> I like the idea of having __rseq_handled in ld.so.
+> This causes an issue, in that the logical PIO range is not unregistered
+> (that is not supported) and the released range memory may be later
+> referenced
 > 
-> Very good, so I'll implement this approach. Sorry for the delayed
-> feedback, I am traveling this week.
+> Allocate the logical PIO range with kzalloc() to avoid this potential
+> issue.
+> 
+> Fixes: adf38bb0b5956 ("HISI LPC: Support the LPC host on Hip06/Hip07 with DT bindings")
+> Signed-off-by: John Garry <john.garry@huawei.com>
+> 
+> diff --git a/drivers/bus/hisi_lpc.c b/drivers/bus/hisi_lpc.c
+[]
+> @@ -599,7 +599,7 @@ static int hisi_lpc_probe(struct platform_device *pdev)
+>  	if (IS_ERR(lpcdev->membase))
+>  		return PTR_ERR(lpcdev->membase);
+>  
+> -	range = devm_kzalloc(dev, sizeof(*range), GFP_KERNEL);
+> +	range = kzalloc(sizeof(*range), GFP_KERNEL);
 
-I had issues with cases where application or LD_PRELOAD library also
-define the __rseq_handled symbol. They appear not to see the same
-address as the one initialized by ld.so.
+If this is really necessary, it'd be useful to say so in the
+code too with a comment so it doesn't get drive-by 'unfixed'
+by someone well meaning but ill-uninformed.
 
-I tried using the GL() macro in ld.so to set __rseq_handled, but it's
-the wrong address compared to what the preload lib and application observe.
 
-Any thoughts on how to solve this ?
-
-Thanks,
-
-Mathieu
-
--- 
-Mathieu Desnoyers
-EfficiOS Inc.
-http://www.efficios.com
