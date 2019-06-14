@@ -2,196 +2,159 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 675814630D
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 17:38:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3976546313
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 17:39:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726598AbfFNPil (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 11:38:41 -0400
-Received: from mga09.intel.com ([134.134.136.24]:20291 "EHLO mga09.intel.com"
+        id S1726827AbfFNPjG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 11:39:06 -0400
+Received: from foss.arm.com ([217.140.110.172]:36890 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725780AbfFNPil (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 11:38:41 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Jun 2019 08:38:40 -0700
-X-ExtLoop1: 1
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.36])
-  by orsmga002.jf.intel.com with ESMTP; 14 Jun 2019 08:38:40 -0700
-Date:   Fri, 14 Jun 2019 08:38:40 -0700
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Stephen Smalley <sds@tycho.nsa.gov>
-Cc:     Cedric Xing <cedric.xing@intel.com>,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-sgx@vger.kernel.org,
-        jarkko.sakkinen@linux.intel.com, luto@kernel.org,
-        jmorris@namei.org, serge@hallyn.com, paul@paul-moore.com,
-        eparis@parisplace.org, jethro@fortanix.com, dave.hansen@intel.com,
-        tglx@linutronix.de, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, nhorman@redhat.com,
-        pmccallum@redhat.com, serge.ayoun@intel.com,
-        shay.katz-zamir@intel.com, haitao.huang@intel.com,
-        andriy.shevchenko@linux.intel.com, kai.svahn@intel.com,
-        bp@alien8.de, josh@joshtriplett.org, kai.huang@intel.com,
-        rientjes@google.com, william.c.roberts@intel.com,
-        philip.b.tricca@intel.com
-Subject: Re: [RFC PATCH v1 2/3] LSM/x86/sgx: Implement SGX specific hooks in
- SELinux
-Message-ID: <20190614153840.GC12191@linux.intel.com>
-References: <cover.1560131039.git.cedric.xing@intel.com>
- <a382d46f66756e13929ca9244479dd9f689c470e.1560131039.git.cedric.xing@intel.com>
- <b6f099cd-c0eb-d5cf-847d-27a15ac5ceaf@tycho.nsa.gov>
- <20190611220243.GB3416@linux.intel.com>
- <8d99d8fb-a921-286a-8cf0-cd522e09b37c@tycho.nsa.gov>
- <20190614004600.GF18385@linux.intel.com>
+        id S1725780AbfFNPjF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Jun 2019 11:39:05 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 84DED28;
+        Fri, 14 Jun 2019 08:39:04 -0700 (PDT)
+Received: from [10.1.196.105] (eglon.cambridge.arm.com [10.1.196.105])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E22873F718;
+        Fri, 14 Jun 2019 08:39:02 -0700 (PDT)
+Subject: Re: [PATCH v3 2/2] EDAC: add EDAC driver for DMC520
+To:     "Lei Wang (BSP)" <Wang.Lei@microsoft.com>,
+        Lei Wang <leiwang_git@outlook.com>
+Cc:     "bp@alien8.de" <bp@alien8.de>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
+        Rui Zhao <ruizhao@outlook.com>,
+        Rui Zhao <ruizhao@microsoft.com>,
+        Hang Li <hangl@microsoft.com>,
+        Sasha Levin <Alexander.Levin@microsoft.com>
+References: <CY1PR0401MB1244FDD9E720C9D9C1F41FEE860A0@CY1PR0401MB1244.namprd04.prod.outlook.com>
+ <b1e360bc-2329-3f8b-3c93-65380f62d6fd@arm.com>
+ <BYAPR21MB131946E0B469E74D6054C33390EF0@BYAPR21MB1319.namprd21.prod.outlook.com>
+From:   James Morse <james.morse@arm.com>
+Message-ID: <2ca1143b-3251-7a40-5c8f-6c13f445562f@arm.com>
+Date:   Fri, 14 Jun 2019 16:39:01 +0100
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190614004600.GF18385@linux.intel.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <BYAPR21MB131946E0B469E74D6054C33390EF0@BYAPR21MB1319.namprd21.prod.outlook.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 13, 2019 at 05:46:00PM -0700, Sean Christopherson wrote:
-> On Thu, Jun 13, 2019 at 01:02:17PM -0400, Stephen Smalley wrote:
-> > On 6/11/19 6:02 PM, Sean Christopherson wrote:
-> > >On Tue, Jun 11, 2019 at 09:40:25AM -0400, Stephen Smalley wrote:
-> > >>I haven't looked at this code closely, but it feels like a lot of
-> > >>SGX-specific logic embedded into SELinux that will have to be repeated or
-> > >>reused for every security module.  Does SGX not track this state itself?
-> > >
-> > >SGX does track equivalent state.
-> > >
-> > >There are three proposals on the table (I think):
-> > >
-> > >   1. Require userspace to explicitly specificy (maximal) enclave page
-> > >      permissions at build time.  The enclave page permissions are provided
-> > >      to, and checked by, LSMs at enclave build time.
-> > >
-> > >      Pros: Low-complexity kernel implementation, straightforward auditing
-> > >      Cons: Sullies the SGX UAPI to some extent, may increase complexity of
-> > >            SGX2 enclave loaders.
-> > >
-> > >   2. Pre-check LSM permissions and dynamically track mappings to enclave
-> > >      pages, e.g. add an SGX mprotect() hook to restrict W->X and WX
-> > >      based on the pre-checked permissions.
-> > >
-> > >      Pros: Does not impact SGX UAPI, medium kernel complexity
-> > >      Cons: Auditing is complex/weird, requires taking enclave-specific
-> > >            lock during mprotect() to query/update tracking.
-> > >
-> > >   3. Implement LSM hooks in SGX to allow LSMs to track enclave regions
-> > >      from cradle to grave, but otherwise defer everything to LSMs.
-> > >
-> > >      Pros: Does not impact SGX UAPI, maximum flexibility, precise auditing
-> > >      Cons: Most complex and "heaviest" kernel implementation of the three,
-> > >            pushes more SGX details into LSMs.
-> > >
-> > >My RFC series[1] implements #1.  My understanding is that Andy (Lutomirski)
-> > >prefers #2.  Cedric's RFC series implements #3.
-> > >
-> > >Perhaps the easiest way to make forward progress is to rule out the
-> > >options we absolutely *don't* want by focusing on the potentially blocking
-> > >issue with each option:
-> > >
-> > >   #1 - SGX UAPI funkiness
-> > >
-> > >   #2 - Auditing complexity, potential enclave lock contention
-> > >
-> > >   #3 - Pushing SGX details into LSMs and complexity of kernel implementation
-> > >
-> > >
-> > >[1] https://lkml.kernel.org/r/20190606021145.12604-1-sean.j.christopherson@intel.com
-> > 
-> > Given the complexity tradeoff, what is the clear motivating example for why
-> > #1 isn't the obvious choice? That the enclave loader has no way of knowing a
-> > priori whether the enclave will require W->X or WX?  But aren't we better
-> > off requiring enclaves to be explicitly marked as needing such so that we
-> > can make a more informed decision about whether to load them in the first
-> > place?
+Hi Lei,
+
+On 13/06/2019 19:31, Lei Wang (BSP) wrote:
+> Please see inline(tagged with [Lei]) below. Thanks!
+
+Please don't do this. Top posting is discouraged[0]. Creating a reply treasure hunt is
+even worse!
+
+You probably need to change your mail client as your mail is also arriving base64 encoded.
+To the maintainer's scripts its going to look like this:
+https://lore.kernel.org/lkml/BYAPR21MB131946E0B469E74D6054C33390EF0@BYAPR21MB1319.namprd21.prod.outlook.com/raw
+
+
+> -----Original Message-----
+> From: James Morse <james.morse@arm.com> 
+> On 16/05/2019 03:55, Lei Wang wrote:
+>> New driver supports error detection and correction on the devices with ARM DMC-520 memory controller.
 > 
-> Andy and/or Cedric, can you please weigh in with a concrete (and practical)
-> use case that will break if we go with #1?  The auditing issues for #2/#3
-> are complex to say the least...
+>> diff --git a/MAINTAINERS b/MAINTAINERS index 7d1246b..23894ac 100644
+>> --- a/MAINTAINERS
+>> +++ b/MAINTAINERS
+>> @@ -5573,6 +5573,12 @@ F:	Documentation/driver-api/edac.rst
+>>  F:	drivers/edac/
+>>  F:	include/linux/edac.h
+>>  
+>> +EDAC-DMC520
+>> +M:	Rui Zhao <ruizhao@microsoft.com>
+>> +L:	linux-edac@vger.kernel.org
+>> +S:	Supported
+>> +F:	drivers/edac/dmc520_edac.c
+> 
+> Hmm, you're listing someone else as maintainer of this driver.
+> I think we'd need to see an Ack from Rui Zhao...
+> 
+> This patch was previously posted by Rui Zhao, this version has your changes and you as author. (But how you arrange the attribution is up to the two of you...)
+> [Lei] And Rui and I sync-ed up on this code and this patch was after addressing his feedbacks and his Ack.
 
-Follow-up question, is #1 any more palatable if SELinux adds SGX specific
-permissions and ties them to the process (instead of the vma or sigstruct)?
+And Rui commented that you should be listed as maintainer:
+https://lore.kernel.org/lkml/CY4PR21MB0279BB0E40B86CEA485CF19AB3010@CY4PR21MB0279.namprd21.prod.outlook.com/T/#u
 
-Something like this for SELinux, where the absolute worst case scenario is
-that SGX2 enclave loaders need SGXEXECMEM.  Graphene would need SGXEXECUNMR
-and probably SGXEXECANON.
-
-static inline int sgx_has_perm(u32 sid, u32 requested)
-{
-        return avc_has_perm(&selinux_state, sid, sid,
-			    SECCLASS_PROCESS2, requested, NULL);
-}
-
-static int selinux_enclave_load(struct vm_area_struct *vma, unsigned long prot,
-				bool measured)
-{
-	const struct cred *cred = current_cred();
-	u32 sid = cred_sid(cred);
-	int ret;
-
-	/* SGX is supported only in 64-bit kernels. */
-	WARN_ON_ONCE(!default_noexec);
-
-	/* Only executable enclave pages are restricted in any way. */
-	if (!(prot & PROT_EXEC))
-		return 0;
-
-	/*
-	 * Private mappings to enclave pages are impossible, ergo we don't
-	 * differentiate between W->X and WX, either case requires EXECMEM.
-	 */
-	if (prot & PROT_WRITE) {
-		ret = sgx_has_perm(sid, PROCESS2__SGXEXECMEM);
-		if (ret)
-			goto out;
-	}
-	if (!measured) {
-		ret = sgx_has_perm(sid, PROCESS2__SGXEXECUNMR);
-		if (ret)
-			goto out;
-	}
-
-	if (!vma->vm_file || !IS_PRIVATE(file_inode(vma->vm_file)) ||
-	    vma->anon_vma) {
-		/*
-		 * Loading enclave code from an anonymous mapping or from a
-		 * modified private file mapping.
-		 */
-		ret = sgx_has_perm(sid, PROCESS2__SGXEXECANON);
-		if (ret)
-			goto out;
-	} else {
-		/* Loading from a shared or unmodified private file mapping. */
-		ret = sgx_has_perm(sid, PROCESS2__SGXEXECFILE);
-		if (ret)
-			goto out;
-
-		/* The source file must be executable in this case. */
-		ret = file_has_perm(cred, vma->vm_file, FILE__EXECUTE);
-		if (ret)
-			goto out;
-	}
-
-out:
-	return ret;
-}
+Please don't add someone else!
 
 
-Given that AppArmor generally only cares about accessing files, its
-enclave_load() implementation would be something like:
+>> diff --git a/drivers/edac/dmc520_edac.c b/drivers/edac/dmc520_edac.c 
+>> new file mode 100644 index 0000000..c81bfcc
+>> --- /dev/null
+>> +++ b/drivers/edac/dmc520_edac.c
 
-static int apparmor_enclave_load(struct vm_area_struct *vma, unsigned long prot,
-				bool measured)
-{
-	if (!(prot & PROT_EXEC))
-		return 0;
+>> +static void dmc520_handle_dram_ecc_errors(struct mem_ctl_info *mci,
+>> +					  bool is_ce)
+>> +{
+>> +	struct ecc_error_info info;
+>> +	struct dmc520_edac *edac;
+>> +	u32 cnt;
+>> +	char message[EDAC_MSG_BUF_SIZE];
+>> +
+>> +	edac = mci->pvt_info;
+>> +	dmc520_get_dram_ecc_error_info(edac, is_ce, &info);
+>> +
+>> +	cnt = dmc520_get_dram_ecc_error_count(edac, is_ce);
+>> +
+>> +	if (cnt > 0) {
+>> +		snprintf(message, ARRAY_SIZE(message),
+>> +			 "rank:%d bank:%d row:%d col:%d",
+>> +			 info.rank, info.bank,
+>> +			 info.row, info.col);
+>> +
+>> +		edac_mc_handle_error((is_ce ? HW_EVENT_ERR_CORRECTED :
+>> +				     HW_EVENT_ERR_UNCORRECTED),
+>> +				     mci, cnt, 0, 0, 0, info.rank, -1, -1,
+>> +				     message, "");
+> 
+> Because you have multiple interrupts, you can be calling edac_mc_handle_error() in
+> parallel on different CPUs, for the same mci.
+> 
+> edac_mc_handle_error() packs all these arguments into mci->error_desc, so two CPUs will
+> stomp over each other's values.
+> 
+> Please add a spinlock in 'struct dmc520_edac' to prevent this.
+> 
+> [Lei] This round of patch moved away from using mci->error_desc, and the message is on stack now. 
 
-	return common_file_perm(OP_ENCL_LOAD, vma->vm_file, AA_EXEC_MMAP);
-}
+It's not just the message buffer this is a problem for. You call edac_mc_handle_error(),
+you can call it with the same mci on two different CPUs, at the same time.
+
+> edac_mc_handle_error() packs all these arguments into mci->error_desc, so two CPUs will
+> stomp over each other's values.
+
+From drivers/edac/edac_mc.c::edac_mc_handle_error():
+|	struct edac_raw_error_desc *e = &mci->error_desc;
+[...]
+|	e->error_count = error_count;
+|	e->top_layer = top_layer;
+|	e->mid_layer = mid_layer;
+|	e->low_layer = low_layer;
+|	e->page_frame_number = page_frame_number;
+|	e->offset_in_page = offset_in_page;
+|	e->syndrome = syndrome;
+|	e->msg = msg;
+|	e->other_detail = other_detail;
+
+If this happens one two CPUs at the same time, e->msg could point to the other CPU's stack.
+
+
+Thanks,
+
+James
+
+[0] The best summary I found after a quick search is:
+https://kernelnewbies.org/PatchCulture 's 'Email etiquette.'
