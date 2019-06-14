@@ -2,133 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E7B17461E2
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 16:59:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2940C461EA
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 17:00:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728361AbfFNO73 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 10:59:29 -0400
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:41493 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725780AbfFNO73 (ORCPT
+        id S1726953AbfFNPAu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 11:00:50 -0400
+Received: from conssluserg-01.nifty.com ([210.131.2.80]:32538 "EHLO
+        conssluserg-01.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725789AbfFNPAr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 10:59:29 -0400
-Received: by mail-qt1-f195.google.com with SMTP id 33so2779905qtr.8
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2019 07:59:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lca.pw; s=google;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=5z2Pz9BEyGq7RJT7oSwXGEkkJAkO10nXW654v8UxM6g=;
-        b=WzNVrOBd17Pk5xfQND6MhYXpenRxgHkYF6+NIHY7bXPGySvJWnA4Yc5m/7jqocYAVx
-         nTrcDq6ANA2a920ACj3SsqsjF/thm1dKOTQodWJSnroRL7n10qZOOIuDGVx0ljoBaROR
-         hLa/IhZRI7QfKibOJvG/7RzUho1Pu8cy9+Uhnt8lmT6kZeU09kSH02M/IqiDeVEl+E+2
-         5s/xKQU+RT5r5a4slL5v/ITGAbcYb+PGmPoI6NegmH/rqdPpxS8Q4dIGUiEvEqy6jrYV
-         s6VH8U4Ql0ajpdx5rS6/X/rje8aqnk8n12k9vFWka8I7ICAl41Z1O9v3sUhO3JIEIgBZ
-         VSyg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=5z2Pz9BEyGq7RJT7oSwXGEkkJAkO10nXW654v8UxM6g=;
-        b=USafhbz3FBMm8+vWn6LmN6GmlrWiM3JQVHYJepjCJ8zAO02KctFSnutbwAmbLimiiN
-         ryx6Jl4p39l2SjgHreN0IACV3xmeMZU5YW1/5/d3aX5MsSNrutvstds34xJiHRx/cFk+
-         XZZPti6RdLWgpxlGCzjP9Ww8Oa029OUqgNnIsZ3QBgg2QghwslzF0ZJOGqvv4yvTHSfq
-         8zAwjZp3pO+Jc6SC0g+sslob7miYOwT5ppz5qLGSY6zRmOZ1WQCMZHlPNC2jhlTlQ8wT
-         3cqtSqKnj2nFkhNs89Db2vkjroLW8gXuUZh+2yMccHzTBBzG74WS2orG9ZsbUA01aOUC
-         n2fw==
-X-Gm-Message-State: APjAAAVfyCnZcF0lHxD06+yObH9E4puO6ppd+5IndWyYr79MWBXJlCwZ
-        1NdKMVxLhLbGjmDpOuIL3i+oOQ==
-X-Google-Smtp-Source: APXvYqx3Gg4yTUqFYBGtbb6cacElACxIxE3Pvk81wkhcKZ5g0ia7pAZnlMD1JRW94Q3de08FfWw//Q==
-X-Received: by 2002:ac8:2ae8:: with SMTP id c37mr27433373qta.267.1560524367784;
-        Fri, 14 Jun 2019 07:59:27 -0700 (PDT)
-Received: from dhcp-41-57.bos.redhat.com (nat-pool-bos-t.redhat.com. [66.187.233.206])
-        by smtp.gmail.com with ESMTPSA id g10sm1458390qki.37.2019.06.14.07.59.26
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 14 Jun 2019 07:59:27 -0700 (PDT)
-Message-ID: <1560524365.5154.21.camel@lca.pw>
-Subject: Re: [PATCH -next] mm/hotplug: skip bad PFNs from
- pfn_to_online_page()
-From:   Qian Cai <cai@lca.pw>
-To:     "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
-        Dan Williams <dan.j.williams@intel.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Oscar Salvador <osalvador@suse.de>,
-        Linux MM <linux-mm@kvack.org>,
+        Fri, 14 Jun 2019 11:00:47 -0400
+Received: from mail-ua1-f52.google.com (mail-ua1-f52.google.com [209.85.222.52]) (authenticated)
+        by conssluserg-01.nifty.com with ESMTP id x5EF0NfZ011606;
+        Sat, 15 Jun 2019 00:00:23 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-01.nifty.com x5EF0NfZ011606
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1560524423;
+        bh=/s60AkWF0U1BOgzE1pN5P3jd9rwyhwm9G2111VynPfM=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=j3ka3syqoZGnKU6PIqP460OogrN7bfS2KlW/d0g1RrH94g8f+c0RcpyZzmFuWpRBX
+         u8Qduu0UTW/pmCa5kJbCdYYPVvlODQMsAAthu2I8+xS67NsZZ/enduH0BYVSE83YUB
+         +JEdn2Tiia9HBMDfbQNfrfK7J2DdrFFcSzK9LAdTRGsmCjEYu/PQDhhsOHRMVCL3qT
+         O6BmNfJbPNG//EriZjzWF0TuozRBPgbHEQJhKp2pL9JsQvgh96B2xHLji32qeWZ3bd
+         aVej2aN+08Nael3hI9B6Y93Y5B4A3iBBOSQiwvAPmBGzGniRn7D/+AVqgFMWJviQ82
+         mBDdSpdnmkbZA==
+X-Nifty-SrcIP: [209.85.222.52]
+Received: by mail-ua1-f52.google.com with SMTP id o2so995729uae.10;
+        Fri, 14 Jun 2019 08:00:23 -0700 (PDT)
+X-Gm-Message-State: APjAAAWiohvROaBHGZEChGfJz5JUSKLm/jlG68RD6xr8HpXzP4WofUUF
+        M8TPCYc5wwZBlGVKpvBIzvbFxXr1k2b11Rq05DQ=
+X-Google-Smtp-Source: APXvYqzUYCLJOr8aWbp0616zcs4Ga7lShn6QBAoUMQvxu9NG2N+7WApoM0G27MKsghofgy4I6fzNxJ9gMOI/ClIB1eQ=
+X-Received: by 2002:ab0:5ea6:: with SMTP id y38mr24152907uag.40.1560524422353;
+ Fri, 14 Jun 2019 08:00:22 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190613015532.19685-1-yamada.masahiro@socionext.com> <cc68b375-6011-6bbf-8f0b-c2963237a743@metux.net>
+In-Reply-To: <cc68b375-6011-6bbf-8f0b-c2963237a743@metux.net>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Fri, 14 Jun 2019 23:59:45 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAQ4KmXd0J2UYfi9WiisnfGa4g62BH2S46ELn4fYG05UcA@mail.gmail.com>
+Message-ID: <CAK7LNAQ4KmXd0J2UYfi9WiisnfGa4g62BH2S46ELn4fYG05UcA@mail.gmail.com>
+Subject: Re: [PATCH 1/2] pinctrl: remove unneeded #ifdef around declarations
+To:     "Enrico Weigelt, metux IT consult" <lkml@metux.net>
+Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Date:   Fri, 14 Jun 2019 10:59:25 -0400
-In-Reply-To: <87lfy4ilvj.fsf@linux.ibm.com>
-References: <1560366952-10660-1-git-send-email-cai@lca.pw>
-         <CAPcyv4hn0Vz24s5EWKr39roXORtBTevZf7dDutH+jwapgV3oSw@mail.gmail.com>
-         <CAPcyv4iuNYXmF0-EMP8GF5aiPsWF+pOFMYKCnr509WoAQ0VNUA@mail.gmail.com>
-         <1560376072.5154.6.camel@lca.pw> <87lfy4ilvj.fsf@linux.ibm.com>
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6 (3.22.6-10.el7) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2019-06-14 at 14:28 +0530, Aneesh Kumar K.V wrote:
-> Qian Cai <cai@lca.pw> writes:
-> 
-> 
-> > 1) offline is busted [1]. It looks like test_pages_in_a_zone() missed the
-> > same
-> > pfn_section_valid() check.
-> > 
-> > 2) powerpc booting is generating endless warnings [2]. In
-> > vmemmap_populated() at
-> > arch/powerpc/mm/init_64.c, I tried to change PAGES_PER_SECTION to
-> > PAGES_PER_SUBSECTION, but it alone seems not enough.
-> > 
-> 
-> Can you check with this change on ppc64.  I haven't reviewed this series yet.
-> I did limited testing with change . Before merging this I need to go
-> through the full series again. The vmemmap poplulate on ppc64 needs to
-> handle two translation mode (hash and radix). With respect to vmemap
-> hash doesn't setup a translation in the linux page table. Hence we need
-> to make sure we don't try to setup a mapping for a range which is
-> arleady convered by an existing mapping.
+On Fri, Jun 14, 2019 at 10:21 PM Enrico Weigelt, metux IT consult
+<lkml@metux.net> wrote:
+>
+> On 13.06.19 03:55, Masahiro Yamada wrote:
+> > What is the point in surrounding the whole of declarations with
+> > ifdef like this?
+> >
+> >   #ifdef CONFIG_FOO
+> >   int foo(void);
+> >   #endif
+> >
+> > If CONFIG_FOO is not defined, all callers of foo() will fail
+> > with implicit declaration errors since the top Makefile adds
+> > -Werror-implicit-function-declaration to KBUILD_CFLAGS.
+> >
+> > This breaks the build earlier when you are doing something wrong.
+> > That's it.
+>
+> hmm, in general I like the idea of breaking the build as early as
+> possible. depending on your available cpu power, a kernel build can
+> take a while, and it could be a huge waste of time when having to
+> wait for link stage, just to find out about missing functions.
+>
+> @linus: what's your oppinion ?
+>
+>
+> --mtx
+>
+> --
+> Enrico Weigelt, metux IT consult
+> Free software and Linux embedded engineering
+> info@metux.net -- +49-151-27565287
 
-It works fine.
 
-> 
-> diff --git a/arch/powerpc/mm/init_64.c b/arch/powerpc/mm/init_64.c
-> index a4e17a979e45..15c342f0a543 100644
-> --- a/arch/powerpc/mm/init_64.c
-> +++ b/arch/powerpc/mm/init_64.c
-> @@ -88,16 +88,23 @@ static unsigned long __meminit
-> vmemmap_section_start(unsigned long page)
->   * which overlaps this vmemmap page is initialised then this page is
->   * initialised already.
->   */
-> -static int __meminit vmemmap_populated(unsigned long start, int page_size)
-> +static bool __meminit vmemmap_populated(unsigned long start, int page_size)
->  {
->  	unsigned long end = start + page_size;
->  	start = (unsigned long)(pfn_to_page(vmemmap_section_start(start)));
->  
-> -	for (; start < end; start += (PAGES_PER_SECTION * sizeof(struct
-> page)))
-> -		if (pfn_valid(page_to_pfn((struct page *)start)))
-> -			return 1;
-> +	for (; start < end; start += (PAGES_PER_SECTION * sizeof(struct
-> page))) {
->  
-> -	return 0;
-> +		struct mem_section *ms;
-> +		unsigned long pfn = page_to_pfn((struct page *)start);
-> +
-> +		if (pfn_to_section_nr(pfn) >= NR_MEM_SECTIONS)
-> +			return 0;
-> +		ms = __nr_to_section(pfn_to_section_nr(pfn));
-> +		if (valid_section(ms))
-> +			return true;
-> +	}
-> +	return false;
->  }
->  
->  /*
-> 
+My previous clean-up (http://patchwork.ozlabs.org/patch/1112656/)
+broke this build.
+
+And, this patch will fix the build issue.
+
+Did you realize the madness of
+surrounding the forward declarations with #ifdef ?
+
+
+All GPIO/pinctrl headers are written in a bad way.
+
+Linus Walleij must realize he was doing *wrong*.
+
+
+-- 
+Best Regards
+Masahiro Yamada
