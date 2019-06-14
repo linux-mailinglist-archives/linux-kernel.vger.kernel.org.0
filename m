@@ -2,106 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1F61E456F5
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 10:06:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DC79B456ED
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 10:06:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726475AbfFNIGs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 04:06:48 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:53591 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726129AbfFNIGs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 04:06:48 -0400
-Received: by mail-wm1-f67.google.com with SMTP id x15so1328391wmj.3
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2019 01:06:46 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=brjrLWL4JqGzja9isRfXWMtKybZ6QGrjuL4EguZLxds=;
-        b=s+t2LHQQuol89n0buvKllnixe4I4XDf1m2cX3MvArab4E7EbCo8yUvj51VjCroBzYE
-         6wPLIH4PyF0qVd+KudWttGuxZO8Cr2w0bqV+c7wq58n+5YnolUSrQBV2QvUh+1Y6aTDo
-         Sxy0N8huRipK2zaUMS85senUYn+gye7sbtN1uhWFMuTASVjZtJBj2XROhuf6Y11ZnNi4
-         n2WPRDXMuMVe53Aw76Fs+9rZ9+tSfrm3lmhwNdIu4h5IcsiW3RK7YKBhyA4MhyAccpeQ
-         ayZpuPTmZND9oJbleI572NuiDrPz7tFkMRG50vvrSc+ayD6s1gYzgY4JtAZMnfbjtFBX
-         imtA==
-X-Gm-Message-State: APjAAAXfEKiwusv3WATNq6jJ6moXpRYP3JCzLpgJXl5lxFqokyq6aX7b
-        65BAcLNjUfVhz0RBl1Ziwz8+Qg==
-X-Google-Smtp-Source: APXvYqwHJDyTaSrq4WgrXVTA7Ep8ta1CbNp62od8lhVoOZy25e7JaJ95qKwKmYFkG2m/gFo3I4gJSg==
-X-Received: by 2002:a1c:7d4e:: with SMTP id y75mr6838905wmc.169.1560499605862;
-        Fri, 14 Jun 2019 01:06:45 -0700 (PDT)
-Received: from vitty.brq.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
-        by smtp.gmail.com with ESMTPSA id x8sm3073690wmc.5.2019.06.14.01.06.44
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Fri, 14 Jun 2019 01:06:45 -0700 (PDT)
-From:   Vitaly Kuznetsov <vkuznets@redhat.com>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     Dmitry Safonov <dima@arista.com>, linux-kernel@vger.kernel.org,
-        Prasanna Panchamukhi <panchamukhi@arista.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Cathy Avery <cavery@redhat.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        "Michael Kelley \(EOSG\)" <Michael.H.Kelley@microsoft.com>,
-        Mohammed Gamal <mmorsy@redhat.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Roman Kagan <rkagan@virtuozzo.com>,
-        Sasha Levin <sashal@kernel.org>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        devel@linuxdriverproject.org, kvm@vger.kernel.org,
-        linux-hyperv@vger.kernel.org, x86@kernel.org
-Subject: Re: [PATCH] x86/hyperv: Disable preemption while setting reenlightenment vector
-In-Reply-To: <alpine.DEB.2.21.1906132059020.1791@nanos.tec.linutronix.de>
-References: <20190611212003.26382-1-dima@arista.com> <8736kff6q3.fsf@vitty.brq.redhat.com> <alpine.DEB.2.21.1906132059020.1791@nanos.tec.linutronix.de>
-Date:   Fri, 14 Jun 2019 10:06:43 +0200
-Message-ID: <87a7ek7fqk.fsf@vitty.brq.redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+        id S1726373AbfFNIGF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 04:06:05 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:45794 "EHLO inva021.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725951AbfFNIGE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Jun 2019 04:06:04 -0400
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id AB11F200E44;
+        Fri, 14 Jun 2019 10:06:02 +0200 (CEST)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 37E1C2005D2;
+        Fri, 14 Jun 2019 10:05:58 +0200 (CEST)
+Received: from localhost.localdomain (mega.ap.freescale.net [10.192.208.232])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id BE37C402A0;
+        Fri, 14 Jun 2019 16:05:52 +0800 (SGT)
+From:   Anson.Huang@nxp.com
+To:     shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+        festevam@gmail.com, leonard.crestez@nxp.com,
+        viresh.kumar@linaro.org, abel.vesa@nxp.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     Linux-imx@nxp.com
+Subject: [PATCH V2 1/2] soc: imx8: Fix potential kernel dump in error path
+Date:   Fri, 14 Jun 2019 16:07:47 +0800
+Message-Id: <20190614080748.32997-1-Anson.Huang@nxp.com>
+X-Mailer: git-send-email 2.17.1
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thomas Gleixner <tglx@linutronix.de> writes:
+From: Anson Huang <Anson.Huang@nxp.com>
 
-> On Wed, 12 Jun 2019, Vitaly Kuznetsov wrote:
->> Dmitry Safonov <dima@arista.com> writes:
->> > diff --git a/arch/x86/hyperv/hv_init.c b/arch/x86/hyperv/hv_init.c
->> > index 1608050e9df9..0bdd79ecbff8 100644
->> > --- a/arch/x86/hyperv/hv_init.c
->> > +++ b/arch/x86/hyperv/hv_init.c
->> > @@ -91,7 +91,7 @@ EXPORT_SYMBOL_GPL(hv_max_vp_index);
->> >  static int hv_cpu_init(unsigned int cpu)
->> >  {
->> >  	u64 msr_vp_index;
->> > -	struct hv_vp_assist_page **hvp = &hv_vp_assist_page[smp_processor_id()];
->> > +	struct hv_vp_assist_page **hvp = &hv_vp_assist_page[cpu];
->> >  	void **input_arg;
->> >  	struct page *pg;
->> >  
->> > @@ -103,7 +103,7 @@ static int hv_cpu_init(unsigned int cpu)
->> >  
->> >  	hv_get_vp_index(msr_vp_index);
->> >  
->> > -	hv_vp_index[smp_processor_id()] = msr_vp_index;
->> > +	hv_vp_index[cpu] = msr_vp_index;
->> >  
->> >  	if (msr_vp_index > hv_max_vp_index)
->> >  		hv_max_vp_index = msr_vp_index;
->> 
->> The above is unrelated cleanup (as cpu == smp_processor_id() for
->> CPUHP_AP_ONLINE_DYN callbacks), right? As I'm pretty sure these can'd be
->> preempted.
->
-> They can be preempted, but they are guaranteed to run on the upcoming CPU,
-> i.e. smp_processor_id() is allowed even in preemptible context as the task
-> cannot migrate.
->
+When SoC's revision value is 0, SoC driver will print out
+"unknown" in sysfs's revision node, this "unknown" is a
+static string which can NOT be freed, this will caused below
+kernel dump in later error path which calls kfree:
 
-Ah, right, thanks! The guarantee that they don't migrate should be enough.
+kernel BUG at mm/slub.c:3942!
+Internal error: Oops - BUG: 0 [#1] PREEMPT SMP
+Modules linked in:
+CPU: 2 PID: 1 Comm: swapper/0 Not tainted 5.2.0-rc4-next-20190611-00023-g705146c-dirty #2197
+Hardware name: NXP i.MX8MQ EVK (DT)
+pstate: 60000005 (nZCv daif -PAN -UAO)
+pc : kfree+0x170/0x1b0
+lr : imx8_soc_init+0xc0/0xe4
+sp : ffff00001003bd10
+x29: ffff00001003bd10 x28: ffff00001121e0a0
+x27: ffff000011482000 x26: ffff00001117068c
+x25: ffff00001121e100 x24: ffff000011482000
+x23: ffff000010fe2b58 x22: ffff0000111b9ab0
+x21: ffff8000bd9dfba0 x20: ffff0000111b9b70
+x19: ffff7e000043f880 x18: 0000000000001000
+x17: ffff000010d05fa0 x16: ffff0000122e0000
+x15: 0140000000000000 x14: 0000000030360000
+x13: ffff8000b94b5bb0 x12: 0000000000000038
+x11: ffffffffffffffff x10: ffffffffffffffff
+x9 : 0000000000000003 x8 : ffff8000b9488147
+x7 : ffff00001003bc00 x6 : 0000000000000000
+x5 : 0000000000000003 x4 : 0000000000000003
+x3 : 0000000000000003 x2 : b8793acd604edf00
+x1 : ffff7e000043f880 x0 : ffff7e000043f888
+Call trace:
+ kfree+0x170/0x1b0
+ imx8_soc_init+0xc0/0xe4
+ do_one_initcall+0x58/0x1b8
+ kernel_init_freeable+0x1cc/0x288
+ kernel_init+0x10/0x100
+ ret_from_fork+0x10/0x18
 
+This patch fixes this potential kernel dump when a chip's
+revision is "unknown", it is done by checking whether the
+revision space can be freed.
+
+Fixes: a7e26f356ca1 ("soc: imx: Add generic i.MX8 SoC driver")
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+---
+Changes since V1:
+	- still need the "unknown" info for revision to avoid confusion, so fix this issue
+	  by checking whether the revision space can be freed before freeing it.
+---
+ drivers/soc/imx/soc-imx8.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/soc/imx/soc-imx8.c b/drivers/soc/imx/soc-imx8.c
+index 02309a2..5c7f330 100644
+--- a/drivers/soc/imx/soc-imx8.c
++++ b/drivers/soc/imx/soc-imx8.c
+@@ -155,7 +155,8 @@ static int __init imx8_soc_init(void)
+ 	return 0;
+ 
+ free_rev:
+-	kfree(soc_dev_attr->revision);
++	if (strcmp(soc_dev_attr->revision, "unknown"))
++		kfree(soc_dev_attr->revision);
+ free_soc:
+ 	kfree(soc_dev_attr);
+ 	of_node_put(root);
 -- 
-Vitaly
+2.7.4
+
