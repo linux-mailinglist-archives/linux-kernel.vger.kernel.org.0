@@ -2,51 +2,141 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 02D324591C
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 11:46:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 886D945924
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 11:47:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727196AbfFNJqn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 05:46:43 -0400
-Received: from verein.lst.de ([213.95.11.211]:45577 "EHLO newverein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727059AbfFNJqm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 05:46:42 -0400
-Received: by newverein.lst.de (Postfix, from userid 2407)
-        id D62CF227A82; Fri, 14 Jun 2019 11:46:13 +0200 (CEST)
-Date:   Fri, 14 Jun 2019 11:46:13 +0200
-From:   Christoph Hellwig <hch@lst.de>
-To:     Florian Fainelli <f.fainelli@gmail.com>
-Cc:     linux-kernel@vger.kernel.org,
-        bcm-kernel-feedback-list@broadcom.com,
-        Christoph Hellwig <hch@lst.de>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Vivien Didelot <vivien.didelot@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        "open list:DMA MAPPING HELPERS" <iommu@lists.linux-foundation.org>,
-        "open list:NETWORKING [GENERAL]" <netdev@vger.kernel.org>
-Subject: Re: [PATCH 1/2] swiotlb: Group identical cleanup in
- swiotlb_cleanup()
-Message-ID: <20190614094613.GG17292@lst.de>
-References: <20190611175825.572-1-f.fainelli@gmail.com> <20190611175825.572-2-f.fainelli@gmail.com>
+        id S1727227AbfFNJrb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 05:47:31 -0400
+Received: from mail-ua1-f65.google.com ([209.85.222.65]:42383 "EHLO
+        mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727210AbfFNJra (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Jun 2019 05:47:30 -0400
+Received: by mail-ua1-f65.google.com with SMTP id a97so670918uaa.9
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2019 02:47:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=cTK6glBPsz+2c5s1UM+u1mPbwUZRam6/XPlur2ZEtiY=;
+        b=HPMHUIQdfdoOM0SDvI3sEr6kDCZmo3ittCV4pWVgYCuhj/g133nGW30tKHco9ZZ5rU
+         gUHMwgjIVbEmt0wnvkJeQW2boDKtayXRBXS7Pq71cohgA+FkmRAkswIpbcjGHuh6W8mk
+         hxsRCiHsqLhR7e0MKcnIuTB9H8OaGbMW+rRRt32mNRnXt+iul9wWIQyohIRf4nuOsduE
+         BXiAv5Y7RnoKW3HdNFZ4Mxr9wcOUuOJaYBVr7cZMPBLK67bS+my4/grmh2rY9me/aeLn
+         jlsCHo9rYElEr9pQVMIKq+8cPMmszf4ToaQVGKVIWHRjFJitOCxtIliXkKnSC+vwD0+o
+         Gd9w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=cTK6glBPsz+2c5s1UM+u1mPbwUZRam6/XPlur2ZEtiY=;
+        b=VzxzJqiUS4qS0L9xnY/lGh3DNKMnpp8cF8Dn1J1a0tDhsMTMWZm34dven096NcYAKI
+         7Qmyoj9/gRjqPP7XK/O0ShKO+0dQo41dTaDxEu8orX1IBdyeD5IqnmqJmO5aWsT8WIoe
+         IF+KfKQzzhswiWJ3WqgcwL0Nx+v6aQgZc2D3aj21FtNf+ScNeMWKmu7WggyZJNaAOWSo
+         6ObymSyABNF5RTZdy+Wu4kWhGL148uTQxcKXheZhBGBQFCsWWJUpnxmhnn1NgznCHpoz
+         de2RIcfdU7sij1NFxcgCoZtjqigIy0+NnvyCoSo3o/r19JkFFFhbWKKfPAKO5MhkASI3
+         2COQ==
+X-Gm-Message-State: APjAAAU+EpAvMEPJ+DvKsVVrmJabgM28+1zmaygdWotHYvpD8UkvMU+6
+        ymANZOkQp8OiMjtqOSaQV879MAIZ/ERK0CAS6inFdw==
+X-Google-Smtp-Source: APXvYqwEVgKDbhvEOENA1sMGmEeMCk5a+6br+06u+T6+nPm6VgkH/bVzBGVaU7nnHL0NMG98KmSPpYmqqpRQ7ET6Mec=
+X-Received: by 2002:ab0:2705:: with SMTP id s5mr9263458uao.104.1560505649842;
+ Fri, 14 Jun 2019 02:47:29 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190611175825.572-2-f.fainelli@gmail.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+References: <1560489970-30467-1-git-send-email-jjian.zhou@mediatek.com>
+In-Reply-To: <1560489970-30467-1-git-send-email-jjian.zhou@mediatek.com>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Fri, 14 Jun 2019 11:46:52 +0200
+Message-ID: <CAPDyKFrXU4bpKeB7Aa15j2nHqUCn-bk+YKn9_vkznmi+PS8H7A@mail.gmail.com>
+Subject: Re: [PATCH 1/2] mmc: mediatek: fix SDIO IRQ interrupt handle flow
+To:     Jjian Zhou <jjian.zhou@mediatek.com>
+Cc:     Chaotian Jing <chaotian.jing@mediatek.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-mediatek@lists.infradead.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Yong Mao <yong.mao@mediatek.com>,
+        srv_heupstream <srv_heupstream@mediatek.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 11, 2019 at 10:58:24AM -0700, Florian Fainelli wrote:
-> Avoid repeating the zeroing of global swiotlb variables in two locations
-> and introduce swiotlb_cleanup() to do that.
-> 
-> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+On Fri, 14 Jun 2019 at 07:26, Jjian Zhou <jjian.zhou@mediatek.com> wrote:
+>
+> From: jjian zhou <jjian.zhou@mediatek.com>
+>
+> SDIO IRQ is triggered by low level. It need disable SDIO IRQ
+> detected function. Otherwise the interrupt register can't be cleared.
+> It will process the interrupt more.
+>
+> Signed-off-by: Jjian Zhou <jjian.zhou@mediatek.com>
+> Signed-off-by: Chaotian Jing <chaotian.jing@mediatek.com>
+> Signed-off-by: Yong Mao <yong.mao@mediatek.com>
+> ---
+>  drivers/mmc/host/mtk-sd.c | 13 +++++++------
+>  1 file changed, 7 insertions(+), 6 deletions(-)
+>
+> diff --git a/drivers/mmc/host/mtk-sd.c b/drivers/mmc/host/mtk-sd.c
+> index c518cc2..29992ae 100644
+> --- a/drivers/mmc/host/mtk-sd.c
+> +++ b/drivers/mmc/host/mtk-sd.c
+> @@ -1389,10 +1389,12 @@ static void __msdc_enable_sdio_irq(struct mmc_host *mmc, int enb)
+>         struct msdc_host *host = mmc_priv(mmc);
+>
+>         spin_lock_irqsave(&host->lock, flags);
+> -       if (enb)
+> +       if (enb) {
+>                 sdr_set_bits(host->base + MSDC_INTEN, MSDC_INTEN_SDIOIRQ);
+> -       else
+> +               sdr_set_bits(host->base + SDC_CFG, SDC_CFG_SDIOIDE);
+> +       } else {
+>                 sdr_clr_bits(host->base + MSDC_INTEN, MSDC_INTEN_SDIOIRQ);
 
-Looks good,
+Rather than clearing SDC_CFG_SDIOIDE in the irq handler, you need to
+do it here. As otherwise when the mmc core calls
+host->ops->enable_sdio_irq() to disable the SDIO IRQ, it may stay
+enabled.
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+> +       }
+>         spin_unlock_irqrestore(&host->lock, flags);
+>  }
+>
+> @@ -1422,6 +1424,8 @@ static irqreturn_t msdc_irq(int irq, void *dev_id)
+>                 spin_lock_irqsave(&host->lock, flags);
+>                 events = readl(host->base + MSDC_INT);
+>                 event_mask = readl(host->base + MSDC_INTEN);
+> +               if ((events & event_mask) & MSDC_INT_SDIOIRQ)
+> +                       sdr_clr_bits(host->base + SDC_CFG, SDC_CFG_SDIOIDE);
+
+As stated above, I suggest you move this into __msdc_enable_sdio_irq()
+and thus call that function from here instead. Well, that doesn't work
+as is, because of the spin lock, so you rather need to make a
+sub-function of __msdc_enable_sdio_irq, that don't take/releases the
+lock.
+
+I hope that was clear. If not, I can post a patch to show you what I mean.
+
+
+>                 /* clear interrupts */
+>                 writel(events & event_mask, host->base + MSDC_INT);
+>
+> @@ -1572,10 +1576,7 @@ static void msdc_init_hw(struct msdc_host *host)
+>         sdr_set_bits(host->base + SDC_CFG, SDC_CFG_SDIO);
+>
+>         /* Config SDIO device detect interrupt function */
+> -       if (host->mmc->caps & MMC_CAP_SDIO_IRQ)
+> -               sdr_set_bits(host->base + SDC_CFG, SDC_CFG_SDIOIDE);
+> -       else
+> -               sdr_clr_bits(host->base + SDC_CFG, SDC_CFG_SDIOIDE);
+> +       sdr_clr_bits(host->base + SDC_CFG, SDC_CFG_SDIOIDE);
+>
+>         /* Configure to default data timeout */
+>         sdr_set_field(host->base + SDC_CFG, SDC_CFG_DTOC, 3);
+> --
+> 1.9.1
+>
+
+Kind regards
+Uffe
