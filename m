@@ -2,94 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 82DF545CE1
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 14:31:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 61AB745CE3
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 14:32:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727915AbfFNMbq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 08:31:46 -0400
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:13611 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727544AbfFNMbq (ORCPT
+        id S1727944AbfFNMcS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 08:32:18 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:45494 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727544AbfFNMcS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 08:31:46 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5d0393b10000>; Fri, 14 Jun 2019 05:31:45 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Fri, 14 Jun 2019 05:31:45 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Fri, 14 Jun 2019 05:31:45 -0700
-Received: from HQMAIL109.nvidia.com (172.20.187.15) by HQMAIL108.nvidia.com
- (172.18.146.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 14 Jun
- 2019 12:31:44 +0000
-Received: from HQMAIL108.nvidia.com (172.18.146.13) by HQMAIL109.nvidia.com
- (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 14 Jun
- 2019 12:31:44 +0000
-Received: from hqnvemgw01.nvidia.com (172.20.150.20) by HQMAIL108.nvidia.com
- (172.18.146.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Fri, 14 Jun 2019 12:31:43 +0000
-Received: from dhcp-10-19-65-14.client.nvidia.com (Not Verified[10.19.65.14]) by hqnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5d0393ae0001>; Fri, 14 Jun 2019 05:31:44 -0700
-From:   Bitan Biswas <bbiswas@nvidia.com>
-To:     Thierry Reding <treding@nvidia.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Timo Alho <talho@nvidia.com>,
-        Sivaram Nair <sivaramn@nvidia.com>,
-        Allison Randal <allison@lohutok.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC:     Bitan Biswas <bbiswas@nvidia.com>
-Subject: [PATCH V1] firmware: tegra: early resume bpmp
-Date:   Fri, 14 Jun 2019 05:31:39 -0700
-Message-ID: <1560515499-1015-1-git-send-email-bbiswas@nvidia.com>
-X-Mailer: git-send-email 2.7.4
-X-NVConfidentiality: public
+        Fri, 14 Jun 2019 08:32:18 -0400
+Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5ECVgGK022932
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2019 08:32:16 -0400
+Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2t49bxds3h-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2019 08:32:16 -0400
+Received: from localhost
+        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <srikar@linux.vnet.ibm.com>;
+        Fri, 14 Jun 2019 13:32:14 +0100
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 14 Jun 2019 13:32:13 +0100
+Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x5ECWCY448890010
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 14 Jun 2019 12:32:12 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 1C47E42041;
+        Fri, 14 Jun 2019 12:32:12 +0000 (GMT)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id E20E94204D;
+        Fri, 14 Jun 2019 12:32:10 +0000 (GMT)
+Received: from linux.vnet.ibm.com (unknown [9.126.150.29])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with SMTP;
+        Fri, 14 Jun 2019 12:32:10 +0000 (GMT)
+Date:   Fri, 14 Jun 2019 18:02:10 +0530
+From:   Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+To:     Eiichi Tsukata <devel@etsukata.com>
+Cc:     rostedt@goodmis.org, mingo@redhat.com, mhiramat@kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] tracing/uprobe: Fix obsolete comment on
+ trace_uprobe_create()
+Reply-To: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+References: <20190614074026.8045-1-devel@etsukata.com>
+ <20190614074026.8045-2-devel@etsukata.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1560515505; bh=exJ9JHFPJP+5N/mN9hpEt8WRKiK/ZQdiCxv0VhMcx2E=;
-        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
-         X-NVConfidentiality:MIME-Version:Content-Type;
-        b=i2iXEMeuyb1JUvpjOVLCFhUjKeIu9f+3JyfYdf2Q1GK83hfu1fo5IxcIAZymXQfdg
-         WveAlyu5pvBl76zU0kud2Gi4tUwtjPXZRpQZkFXo71oXYAN4jl+lww3/LZgihUOIz4
-         Od/CdXebOvfG9+ODlsh0rU1IgvORAO80a4mZHNMx1j7HNAiMStqBl26uNL2MDr7iPW
-         VvMTPArzFW3UZoCfXT4pv0DabrQUpBtdr8oINBKXf+Lq9BbQk3jKJ/g2C63AKULkeM
-         GwcaS7ggT1A51Hn3x0mryvVNGE26LEJ2LWdNfPKoSbGCdCc5WF531GPYYOyUVJQZm3
-         HjoBzzDfzfHmg==
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+In-Reply-To: <20190614074026.8045-2-devel@etsukata.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-TM-AS-GCONF: 00
+x-cbid: 19061412-0028-0000-0000-0000037A4B9F
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19061412-0029-0000-0000-0000243A4869
+Message-Id: <20190614123210.GB16523@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-14_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1906140105
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Early resume Tegra bpmp to fix Xavier clock rate error as follows:
-[  159.017101] of_serial 3110000.serial: calling platform_pm_resume+0x0/0x58 @ 317, parent: cbb
-[  159.025501] of_serial 3110000.serial: platform_pm_resume+0x0/0x58 returned 0 after 14 usecs
-[  159.033694] tegra-i2c 31c0000.i2c: calling platform_pm_resume+0x0/0x58 @ 317, parent: cbb
-[  159.042254] tegra-i2c 31c0000.i2c: failed changing clock rate: -22
-[  159.048216] PM: dpm_run_callback(): platform_pm_resume+0x0/0x58 returns -22
-[  159.055553] tegra-i2c 31c0000.i2c: platform_pm_resume+0x0/0x58 returned -22 after 13072 usecs
-[  159.063875] PM: Device 31c0000.i2c failed to resume: error -22
+* Eiichi Tsukata <devel@etsukata.com> [2019-06-14 16:40:26]:
 
-Signed-off-by: Bitan Biswas <bbiswas@nvidia.com>
----
- drivers/firmware/tegra/bpmp.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+> Commit 0597c49c69d5 ("tracing/uprobes: Use dyn_event framework for
+> uprobe events") cleaned up the usage of trace_uprobe_create(), and the
+> function has been no longer used for removing uprobe/uretprobe.
+> 
 
-diff --git a/drivers/firmware/tegra/bpmp.c b/drivers/firmware/tegra/bpmp.c
-index dd775e8..de09036 100644
---- a/drivers/firmware/tegra/bpmp.c
-+++ b/drivers/firmware/tegra/bpmp.c
-@@ -811,7 +811,9 @@ static int __maybe_unused tegra_bpmp_resume(struct device *dev)
- 		return 0;
- }
- 
--static SIMPLE_DEV_PM_OPS(tegra_bpmp_pm_ops, NULL, tegra_bpmp_resume);
-+const struct dev_pm_ops tegra_bpmp_pm_ops = {
-+	.resume_early = tegra_bpmp_resume
-+};
- 
- #if IS_ENABLED(CONFIG_ARCH_TEGRA_186_SOC) || \
-     IS_ENABLED(CONFIG_ARCH_TEGRA_194_SOC)
+Agree
+
+Reviewed-by: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+
+> Signed-off-by: Eiichi Tsukata <devel@etsukata.com>
+> ---
+>  kernel/trace/trace_uprobe.c | 2 --
+>  1 file changed, 2 deletions(-)
+> 
+> diff --git a/kernel/trace/trace_uprobe.c b/kernel/trace/trace_uprobe.c
+> index 7dc8ee55cf84..7860e3f59fad 100644
+> --- a/kernel/trace/trace_uprobe.c
+> +++ b/kernel/trace/trace_uprobe.c
+> @@ -426,8 +426,6 @@ static int register_trace_uprobe(struct trace_uprobe *tu)
+>  /*
+>   * Argument syntax:
+>   *  - Add uprobe: p|r[:[GRP/]EVENT] PATH:OFFSET [FETCHARGS]
+> - *
+> - *  - Remove uprobe: -:[GRP/]EVENT
+>   */
+>  static int trace_uprobe_create(int argc, const char **argv)
+>  {
+> -- 
+> 2.21.0
+> 
+
 -- 
-2.7.4
+Thanks and Regards
+Srikar Dronamraju
 
