@@ -2,94 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D76FA46348
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 17:48:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C2F2746350
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 17:49:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726213AbfFNPsp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 11:48:45 -0400
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:7903 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726020AbfFNPsl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 11:48:41 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5d03c1d80000>; Fri, 14 Jun 2019 08:48:40 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Fri, 14 Jun 2019 08:48:40 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Fri, 14 Jun 2019 08:48:40 -0700
-Received: from [10.26.11.12] (172.20.13.39) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 14 Jun
- 2019 15:48:38 +0000
-Subject: Re: [PATCH v2 4/6] clocksource/drivers/tegra: Drop unneeded
- typecasting in one place
-To:     Dmitry Osipenko <digetx@gmail.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Joseph Lo <josephl@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>
-CC:     <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20190610164400.11830-1-digetx@gmail.com>
- <20190610164400.11830-5-digetx@gmail.com>
-From:   Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <2bea2303-42bb-a306-72ec-be60b00e2b23@nvidia.com>
-Date:   Fri, 14 Jun 2019 16:48:36 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        id S1726447AbfFNPtE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 11:49:04 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:37860 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726184AbfFNPsn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Jun 2019 11:48:43 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id B356EC057E65;
+        Fri, 14 Jun 2019 15:48:40 +0000 (UTC)
+Received: from ceranb.redhat.com (ovpn-204-86.brq.redhat.com [10.40.204.86])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 9BC7054696;
+        Fri, 14 Jun 2019 15:48:37 +0000 (UTC)
+From:   Ivan Vecera <ivecera@redhat.com>
+To:     netdev@vger.kernel.org
+Cc:     Tianhao <tizhao@redhat.com>,
+        Sathya Perla <sathya.perla@broadcom.com>,
+        Ajit Khaparde <ajit.khaparde@broadcom.com>,
+        Sriharsha Basavapatna <sriharsha.basavapatna@broadcom.com>,
+        Somnath Kotur <somnath.kotur@broadcom.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH net] be2net: Fix number of Rx queues used for flow hashing
+Date:   Fri, 14 Jun 2019 17:48:36 +0200
+Message-Id: <20190614154836.22172-1-ivecera@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <20190610164400.11830-5-digetx@gmail.com>
-X-Originating-IP: [172.20.13.39]
-X-ClientProxiedBy: HQMAIL106.nvidia.com (172.18.146.12) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1560527320; bh=qqFCsTbLnbXGAwdf+gOzklHxTJ/H1R22gcikOiKKLQs=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=IcBrn2YsQtpxsPqaKB5Ma3bulre+MaYssQ07cLUQ862DVeHKZquVi7xXQG+ZNAuuB
-         4ldewxi440XXSo4KLvmbTKP5jvWXyxvaoY+FGPL86I545RHoHJrqQO/f3kuRVLPqnM
-         CyUQCJbPJ07poTk+DMNTl5x1LrAjlLOhtlTW05+rFmH5onSRqHlc9cY1Mo0U+jwmvY
-         N/jNwfwT4x2E9NT2NxBZgcakRvype1KlSNZmDL4VQpYNEuIDlu83uvmOfd+7o2sQXm
-         bxaKf5dnKnWCTjIZv/KKV0VbpBBWloQNIyCNZLpkEcpgNk7+iY6OwZ/zaAJb9qLm55
-         ETVHrMy9W7OKA==
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Fri, 14 Jun 2019 15:48:42 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Number of Rx queues used for flow hashing returned by the driver is
+incorrect and this bug prevents user to use the last Rx queue in
+indirection table.
 
-On 10/06/2019 17:43, Dmitry Osipenko wrote:
-> There is no need to cast void because kernel allows to do that without
-> a warning message from a compiler.
-> 
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  drivers/clocksource/timer-tegra.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clocksource/timer-tegra.c b/drivers/clocksource/timer-tegra.c
-> index 646b3530c2d2..a7fa12488066 100644
-> --- a/drivers/clocksource/timer-tegra.c
-> +++ b/drivers/clocksource/timer-tegra.c
-> @@ -81,7 +81,7 @@ static int tegra_timer_set_periodic(struct clock_event_device *evt)
->  
->  static irqreturn_t tegra_timer_isr(int irq, void *dev_id)
->  {
-> -	struct clock_event_device *evt = (struct clock_event_device *)dev_id;
-> +	struct clock_event_device *evt = dev_id;
->  	void __iomem *reg_base = timer_of_base(to_timer_of(evt));
->  
->  	writel_relaxed(TIMER_PCR_INTR_CLR, reg_base + TIMER_PCR);
+Let's say we have a NIC with 6 combined queues:
 
-Acked-by: Jon Hunter <jonathanh@nvidia.com>
+[root@sm-03 ~]# ethtool -l enp4s0f0
+Channel parameters for enp4s0f0:
+Pre-set maximums:
+RX:             5
+TX:             5
+Other:          0
+Combined:       6
+Current hardware settings:
+RX:             0
+TX:             0
+Other:          0
+Combined:       6
 
-Cheers
-Jon
+Default indirection table maps all (6) queues equally but the driver
+reports only 5 rings available.
 
+[root@sm-03 ~]# ethtool -x enp4s0f0
+RX flow hash indirection table for enp4s0f0 with 5 RX ring(s):
+    0:      0     1     2     3     4     5     0     1
+    8:      2     3     4     5     0     1     2     3
+   16:      4     5     0     1     2     3     4     5
+   24:      0     1     2     3     4     5     0     1
+...
+
+Now change indirection table somehow:
+
+[root@sm-03 ~]# ethtool -X enp4s0f0 weight 1 1
+[root@sm-03 ~]# ethtool -x enp4s0f0
+RX flow hash indirection table for enp4s0f0 with 6 RX ring(s):
+    0:      0     0     0     0     0     0     0     0
+...
+   64:      1     1     1     1     1     1     1     1
+...
+
+Now it is not possible to change mapping back to equal (default) state:
+
+[root@sm-03 ~]# ethtool -X enp4s0f0 equal 6
+Cannot set RX flow hash configuration: Invalid argument
+
+Fixes: 594ad54a2c3b ("be2net: Add support for setting and getting rx flow hash options")
+Reported-by: Tianhao <tizhao@redhat.com>
+Signed-off-by: Ivan Vecera <ivecera@redhat.com>
+---
+ drivers/net/ethernet/emulex/benet/be_ethtool.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/emulex/benet/be_ethtool.c b/drivers/net/ethernet/emulex/benet/be_ethtool.c
+index 4c218341c51b..6e635debc7fd 100644
+--- a/drivers/net/ethernet/emulex/benet/be_ethtool.c
++++ b/drivers/net/ethernet/emulex/benet/be_ethtool.c
+@@ -1105,7 +1105,7 @@ static int be_get_rxnfc(struct net_device *netdev, struct ethtool_rxnfc *cmd,
+ 		cmd->data = be_get_rss_hash_opts(adapter, cmd->flow_type);
+ 		break;
+ 	case ETHTOOL_GRXRINGS:
+-		cmd->data = adapter->num_rx_qs - 1;
++		cmd->data = adapter->num_rx_qs;
+ 		break;
+ 	default:
+ 		return -EINVAL;
 -- 
-nvpublic
+2.21.0
+
