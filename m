@@ -2,93 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B228D45FC7
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 16:00:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CA32445FCE
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 16:00:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728702AbfFNN6Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 09:58:25 -0400
-Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:34868 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728182AbfFNN6Z (ORCPT
+        id S1728767AbfFNN7M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 09:59:12 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:38196 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728300AbfFNN7M (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 09:58:25 -0400
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by relay.mimecast.com with ESMTP id
- uk-mta-222-0dLfJHaUN2mjadwXspBVlg-1; Fri, 14 Jun 2019 14:58:22 +0100
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b::d117) by AcuMS.aculab.com
- (fd9f:af1c:a25b::d117) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Fri,
- 14 Jun 2019 14:58:21 +0100
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Fri, 14 Jun 2019 14:58:21 +0100
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Josh Poimboeuf' <jpoimboe@redhat.com>
-CC:     'Alexei Starovoitov' <alexei.starovoitov@gmail.com>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        "Daniel Borkmann" <daniel@iogearbox.net>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
-        "Peter Zijlstra" <peterz@infradead.org>,
-        Song Liu <songliubraving@fb.com>,
-        "Kairui Song" <kasong@redhat.com>
-Subject: RE: [PATCH 6/9] x86/bpf: Fix JIT frame pointer usage
-Thread-Topic: [PATCH 6/9] x86/bpf: Fix JIT frame pointer usage
-Thread-Index: AQHVIjMat8Fq1dO6sUKm4aXwvliIEKaa+NdggAAgcYCAABJOQA==
-Date:   Fri, 14 Jun 2019 13:58:21 +0000
-Message-ID: <9b8aa912df694d25b581786100d3e2e2@AcuMS.aculab.com>
-References: <cover.1560431531.git.jpoimboe@redhat.com>
- <03ddea21a533b7b0e471c1d73ebff19dacdcf7e3.1560431531.git.jpoimboe@redhat.com>
- <20190613215807.wjcop6eaadirz5xm@ast-mbp.dhcp.thefacebook.com>
- <57f6e69da6b3461a9c39d71aa1b58662@AcuMS.aculab.com>
- <20190614134401.q2wbh6mvo4nzmw2o@treble>
-In-Reply-To: <20190614134401.q2wbh6mvo4nzmw2o@treble>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        Fri, 14 Jun 2019 09:59:12 -0400
+Received: from [5.158.153.52] (helo=nanos.tec.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1hbmj6-0006Yh-J4; Fri, 14 Jun 2019 15:58:44 +0200
+Date:   Fri, 14 Jun 2019 15:58:43 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Dmitry Safonov <dima@arista.com>
+cc:     linux-kernel@vger.kernel.org, Andrei Vagin <avagin@openvz.org>,
+        Adrian Reber <adrian@lisas.de>,
+        Andy Lutomirski <luto@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Cyrill Gorcunov <gorcunov@openvz.org>,
+        Dmitry Safonov <0x7f454c46@gmail.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        Jann Horn <jannh@google.com>, Jeff Dike <jdike@addtoit.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Pavel Emelyanov <xemul@virtuozzo.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Vincenzo Frascino <vincenzo.frascino@arm.com>,
+        containers@lists.linux-foundation.org, criu@openvz.org,
+        linux-api@vger.kernel.org, x86@kernel.org,
+        Andrei Vagin <avagin@gmail.com>
+Subject: Re: [PATCHv4 15/28] x86/vdso: Add offsets page in vvar
+In-Reply-To: <20190612192628.23797-16-dima@arista.com>
+Message-ID: <alpine.DEB.2.21.1906141553070.1722@nanos.tec.linutronix.de>
+References: <20190612192628.23797-1-dima@arista.com> <20190612192628.23797-16-dima@arista.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-X-MC-Unique: 0dLfJHaUN2mjadwXspBVlg-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-RnJvbTogSm9zaCBQb2ltYm9ldWYNCj4gU2VudDogMTQgSnVuZSAyMDE5IDE0OjQ0DQo+IA0KPiBP
-biBGcmksIEp1biAxNCwgMjAxOSBhdCAxMDo1MDoyM0FNICswMDAwLCBEYXZpZCBMYWlnaHQgd3Jv
-dGU6DQo+ID4gT24gVGh1LCBKdW4gMTMsIDIwMTkgYXQgMDg6MjE6MDNBTSAtMDUwMCwgSm9zaCBQ
-b2ltYm9ldWYgd3JvdGU6DQo+ID4gPiBUaGUgQlBGIEpJVCBjb2RlIGNsb2JiZXJzIFJCUC4gIFRo
-aXMgYnJlYWtzIGZyYW1lIHBvaW50ZXIgY29udmVudGlvbiBhbmQNCj4gPiA+IHRodXMgcHJldmVu
-dHMgdGhlIEZQIHVud2luZGVyIGZyb20gdW53aW5kaW5nIHRocm91Z2ggSklUIGdlbmVyYXRlZCBj
-b2RlLg0KPiA+ID4NCj4gPiA+IFJCUCBpcyBjdXJyZW50bHkgdXNlZCBhcyB0aGUgQlBGIHN0YWNr
-IGZyYW1lIHBvaW50ZXIgcmVnaXN0ZXIuICBUaGUNCj4gPiA+IGFjdHVhbCByZWdpc3RlciB1c2Vk
-IGlzIG9wYXF1ZSB0byB0aGUgdXNlciwgYXMgbG9uZyBhcyBpdCdzIGENCj4gPiA+IGNhbGxlZS1z
-YXZlZCByZWdpc3Rlci4gIENoYW5nZSBpdCB0byB1c2UgUjEyIGluc3RlYWQuDQo+ID4NCj4gPiBD
-b3VsZCB5b3UgbWFpbnRhaW4gdGhlIHN5c3RlbSAlcmJwIGNoYWluIHRocm91Z2ggdGhlIEJQRiBz
-dGFjaz8NCj4gDQo+IERvIHlvdSBtZWFuIHRvIHNhdmUgUkJQIGFnYWluIGJlZm9yZSBjaGFuZ2lu
-ZyBpdCBhZ2Fpbiwgc28gdGhhdCB3ZQ0KPiBjcmVhdGUgYW5vdGhlciBzdGFjayBmcmFtZSBpbnNp
-ZGUgdGhlIEJQRiBzdGFjaz8gIFRoYXQgbWlnaHQgd29yay4NCg0KVGhlIHVud2luZGVyIHdpbGwg
-KElJUkMpIGV4cGVjdCAqJXJicCB0byBiZSB0aGUgcHJldmlvdXMgJXJicCB2YWx1ZS4NCklmIHlv
-dSBtYWludGFpbiB0aGF0IGl0IHdpbGwgcHJvYmFibHkgYWxsIHdvcmsuDQoNCj4gPiBJdCBtaWdo
-dCBldmVuIGJlIHBvc3NpYmxlIHRvIHB1dCBzb21ldGhpbmcgcmVsZXZhbnQgaW4gdGhlICVyaXAN
-Cj4gPiBsb2NhdGlvbi4NCj4gDQo+IEknbSBub3Qgc3VyZSB3aGF0IHlvdSBtZWFuIGhlcmUuDQoN
-ClRoZSByZXR1cm4gYWRkcmVzcyBpcyAoYWdhaW4gSUlSQykgJXJicFstOF0gc28gdGhlIHVud2lu
-ZGVyIHdpbGwNCmV4cGVjdCB0aGF0IGFkZHJlc3MgdG8gYmUgYSBzeW1ib2wuDQoNCkkgZG8gcmVt
-ZW1iZXIgYSBzdGFjayB0cmFjZSBwcmludGVyIGZvciB4ODYgdGhpcyBkaWRuJ3QgbmVlZA0KYW55
-IGFubm90YXRpb24gb2YgdGhlIG9iamVjdCBjb2RlIGFuZCBkaWRuJ3QgbmVlZCBmcmFtZSBwb2lu
-dGVycy4NClRoZSBvbmx5IGRvd25zaWRlIHdhcyB0aGF0IGl0IGhhZCB0byAnZ3Vlc3MnIChpZSBz
-Y2FuIHRoZSBzdGFjaykNCnRvIGdldCBvdXQgb2YgZnVuY3Rpb25zIHRoYXQgY291bGRuJ3QgcmV0
-dXJuLg0KQmFzaWNhbGx5IGl0IGZvbGxvd2VkIHRoZSBjb250cm9sIGZsb3cgZm9yd2FyZHMgdHJh
-Y2tpbmcgdGhlDQp2YWx1ZXMgb2YgJXNwIGFuZCAlYnAgdW50aWwgaXQgZm91bmQgYSByZXR1cm4g
-aW5zdHVjdGlvbi4NCkFsbCBpdCBoYXMgdG8gZG8gaXMgZGV0ZWN0IGxvb3BzIGFuZCByZXRyeSBm
-cm9tIHRoZSBvdGhlcg0KdGFyZ2V0IG9mIGNvbmRpdGlvbmFsIGJyYW5jaGVzLg0KDQoJRGF2aWQN
-Cg0KLQ0KUmVnaXN0ZXJlZCBBZGRyZXNzIExha2VzaWRlLCBCcmFtbGV5IFJvYWQsIE1vdW50IEZh
-cm0sIE1pbHRvbiBLZXluZXMsIE1LMSAxUFQsIFVLDQpSZWdpc3RyYXRpb24gTm86IDEzOTczODYg
-KFdhbGVzKQ0K
+On Wed, 12 Jun 2019, Dmitry Safonov wrote:
+>  
+> +#ifdef CONFIG_TIME_NS
+> +notrace static __always_inline void clk_to_ns(clockid_t clk, struct timespec *ts)
+> +{
+> +	struct timens_offsets *timens = (struct timens_offsets *) &timens_page;
+> +	struct timespec64 *offset64;
+> +
+> +	switch (clk) {
+> +	case CLOCK_MONOTONIC:
+> +	case CLOCK_MONOTONIC_COARSE:
+> +	case CLOCK_MONOTONIC_RAW:
+> +		offset64 = &timens->monotonic;
+> +		break;
+> +	case CLOCK_BOOTTIME:
+> +		offset64 = &timens->boottime;
+> +	default:
+> +		return;
+> +	}
+> +
+> +	ts->tv_nsec += offset64->tv_nsec;
+> +	ts->tv_sec += offset64->tv_sec;
+> +	if (ts->tv_nsec >= NSEC_PER_SEC) {
+> +		ts->tv_nsec -= NSEC_PER_SEC;
+> +		ts->tv_sec++;
+> +	}
+> +	if (ts->tv_nsec < 0) {
+> +		ts->tv_nsec += NSEC_PER_SEC;
+> +		ts->tv_sec--;
+> +	}
 
+I had to think twice why adding the offset (which can be negative) can
+never result in negative time being returned. A comment explaining this
+would be appreciated.
+
+As I'm planning to merge Vincezos VDSO consolidation into 5.3, can you
+please start to work on top of his series, which should be available as
+final v7 next week hopefully.
+
+Thanks,
+
+	tglx
