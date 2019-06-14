@@ -2,155 +2,344 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 53CCA4646E
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 18:38:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2BC8A46452
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 18:36:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726755AbfFNQh3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 12:37:29 -0400
-Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:47880 "EHLO
-        mx0b-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725996AbfFNQh1 (ORCPT
+        id S1726129AbfFNQgw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 12:36:52 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:34680 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725808AbfFNQgv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 12:37:27 -0400
-Received: from pps.filterd (m0109332.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5EGIGhI023443;
-        Fri, 14 Jun 2019 09:36:10 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : references : in-reply-to : content-type : content-id
- : content-transfer-encoding : mime-version; s=facebook;
- bh=jNRW9EmWXHDKfmPq7ZRz6M8ppAhae7tV4WfQ4SRKB3U=;
- b=NVPU6cUCj7go4ZN7SujSkagzKLFGRAvTuDJxxXSZB551P6cFcWPJuPwECHFebknecsd4
- VyTjACWDRkD/Ouv+sm+sw+Ql2iLP+0b1ymlfnFHd7a0jHw39898gM8V04SDPjzKQ+YxT
- KzH5nTOncGkuUTD31BffwEFwXWm9edhr+ME= 
-Received: from maileast.thefacebook.com ([163.114.130.16])
-        by mx0a-00082601.pphosted.com with ESMTP id 2t4ds0rbv0-3
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-        Fri, 14 Jun 2019 09:36:10 -0700
-Received: from ash-exhub101.TheFacebook.com (2620:10d:c0a8:82::e) by
- ash-exhub101.TheFacebook.com (2620:10d:c0a8:82::e) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1713.5; Fri, 14 Jun 2019 09:35:40 -0700
-Received: from NAM05-BY2-obe.outbound.protection.outlook.com (100.104.31.183)
- by o365-in.thefacebook.com (100.104.35.173) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.1.1713.5
- via Frontend Transport; Fri, 14 Jun 2019 09:35:39 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
- s=selector1-fb-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=jNRW9EmWXHDKfmPq7ZRz6M8ppAhae7tV4WfQ4SRKB3U=;
- b=UxzpnnnC3dfgmaTf592qdGW5mOmgO2x/XYv25lANqMZL3QcJdoCabA2Z8gB0L3ts1nMo0eBc5rA+YSINSgi0O6MBPcR3RM3GGulxT9rRNSyK4gX/zeaH5wrEE23+LB5QtmRO0pHiUY76oNkx1ihN2Eg7n36BfISVxTM+ux5k/iE=
-Received: from BYAPR15MB2501.namprd15.prod.outlook.com (52.135.196.11) by
- BYAPR15MB2421.namprd15.prod.outlook.com (52.135.198.149) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1965.15; Fri, 14 Jun 2019 16:35:35 +0000
-Received: from BYAPR15MB2501.namprd15.prod.outlook.com
- ([fe80::60a3:8bdd:1ea2:3702]) by BYAPR15MB2501.namprd15.prod.outlook.com
- ([fe80::60a3:8bdd:1ea2:3702%7]) with mapi id 15.20.1987.012; Fri, 14 Jun 2019
- 16:35:35 +0000
-From:   Alexei Starovoitov <ast@fb.com>
-To:     Tejun Heo <tj@kernel.org>,
-        Quentin Monnet <quentin.monnet@netronome.com>
-CC:     "axboe@kernel.dk" <axboe@kernel.dk>, Andy Newell <newella@fb.com>,
-        "Chris Mason" <clm@fb.com>,
-        "josef@toxicpanda.com" <josef@toxicpanda.com>,
-        "Dennis Zhou" <dennisz@fb.com>,
-        "lizefan@huawei.com" <lizefan@huawei.com>,
-        "hannes@cmpxchg.org" <hannes@cmpxchg.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        Kernel Team <Kernel-team@fb.com>,
-        "cgroups@vger.kernel.org" <cgroups@vger.kernel.org>,
-        "ast@kernel.org" <ast@kernel.org>,
-        "daniel@iogearbox.net" <daniel@iogearbox.net>,
-        Martin Lau <kafai@fb.com>, Song Liu <songliubraving@fb.com>,
-        Yonghong Song <yhs@fb.com>,
-        "bpf@vger.kernel.org" <bpf@vger.kernel.org>
-Subject: Re: [PATCH 10/10] blkcg: implement BPF_PROG_TYPE_IO_COST
-Thread-Topic: [PATCH 10/10] blkcg: implement BPF_PROG_TYPE_IO_COST
-Thread-Index: AQHVIlSgdAmsTapt/U2E3GyZX/rb/6abBPGAgAA4BYCAABy+AA==
-Date:   Fri, 14 Jun 2019 16:35:35 +0000
-Message-ID: <bed0a66a-7aa6-ac36-9182-31a4937257e5@fb.com>
-References: <20190614015620.1587672-1-tj@kernel.org>
- <20190614015620.1587672-11-tj@kernel.org>
- <e4d1df7b-66bb-061a-8ecb-ff1e5be3ab1d@netronome.com>
- <20190614145239.GA538958@devbig004.ftw2.facebook.com>
-In-Reply-To: <20190614145239.GA538958@devbig004.ftw2.facebook.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: MWHPR14CA0060.namprd14.prod.outlook.com
- (2603:10b6:300:81::22) To BYAPR15MB2501.namprd15.prod.outlook.com
- (2603:10b6:a02:88::11)
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [2620:10d:c090:200::1:6345]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 64d84e9b-9c9d-474a-b66e-08d6f0e6536d
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:BYAPR15MB2421;
-x-ms-traffictypediagnostic: BYAPR15MB2421:
-x-microsoft-antispam-prvs: <BYAPR15MB242115226704274B4D51FE19D7EE0@BYAPR15MB2421.namprd15.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:8273;
-x-forefront-prvs: 0068C7E410
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(346002)(136003)(376002)(396003)(366004)(189003)(199004)(66556008)(478600001)(229853002)(7416002)(66946007)(46003)(68736007)(6436002)(6116002)(66446008)(53936002)(66476007)(53546011)(36756003)(76176011)(110136005)(71190400001)(54906003)(64756008)(2906002)(6506007)(73956011)(31686004)(102836004)(52116002)(71200400001)(386003)(256004)(81156014)(8936002)(31696002)(6512007)(6246003)(186003)(6486002)(5024004)(86362001)(99286004)(316002)(7736002)(486006)(476003)(14444005)(4326008)(25786009)(5660300002)(305945005)(446003)(11346002)(81166006)(2616005)(14454004)(8676002);DIR:OUT;SFP:1102;SCL:1;SRVR:BYAPR15MB2421;H:BYAPR15MB2501.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: fb.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: dhOBio5kMMhD9ql1AjrOLSGGX0Sg+BDYCH1tzLPOoGtxGJRQEV5ekhpTZBG3+27VGMaSCVp5+6AK/Ac+9ggCxXUtnlB4s3mOyomxsYHVHVUMNLs/rf/YgtKAMLFtqMScDxnZ6Xw3HoUjKg+YIOz++Kro1xgNOMp8bX9BCujtSRlke9oIaJ1J9uzhdpRnKBfZQmHYPTcz3dXZXYbQZd6ezRbnA1509u0KXNv2d2zsaWA1hx6X2z/R9WeByrzlSBirN0ejkrUC4zBkONA1gw6ozfjvsjv7bfpoLcHcwMUkGqqqXHxnzUcif5pg+PLhjFV/nyER4FeREEGycQlYYDsqnQGxlkDLE7OCBCcqhDVypTudRBNFjuN7WaoFNh2DEDEcW4NJBj3Jnje5CIFfJ0diQZJ8UlrKvO18D3bCrPWT7rU=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <28B576F5DD3F7F42A8E9DFABB8D25258@namprd15.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        Fri, 14 Jun 2019 12:36:51 -0400
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: eballetbo)
+        with ESMTPSA id 5D4CA282418
+From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     gwendal@chromium.org, Guenter Roeck <groeck@chromium.org>,
+        Benson Leung <bleung@chromium.org>,
+        Lee Jones <lee.jones@linaro.org>, kernel@collabora.com,
+        dtor@chromium.org,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v2 01/10] mfd / platform: cros_ec: Handle chained ECs as platform devices
+Date:   Fri, 14 Jun 2019 18:36:26 +0200
+Message-Id: <20190614163635.22413-2-enric.balletbo@collabora.com>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190614163635.22413-1-enric.balletbo@collabora.com>
+References: <20190614163635.22413-1-enric.balletbo@collabora.com>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 64d84e9b-9c9d-474a-b66e-08d6f0e6536d
-X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Jun 2019 16:35:35.6095
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: ast@fb.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR15MB2421
-X-OriginatorOrg: fb.com
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-14_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=850 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1906140134
-X-FB-Internal: deliver
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gNi8xNC8xOSA3OjUyIEFNLCBUZWp1biBIZW8gd3JvdGU6DQo+IEhlbGxvLCBRdWVudGluLg0K
-PiANCj4gT24gRnJpLCBKdW4gMTQsIDIwMTkgYXQgMTI6MzI6MDlQTSArMDEwMCwgUXVlbnRpbiBN
-b25uZXQgd3JvdGU6DQo+PiBQbGVhc2UgbWFrZSBzdXJlIHRvIHVwZGF0ZSB0aGUgZG9jdW1lbnRh
-dGlvbiBhbmQgYmFzaA0KPj4gY29tcGxldGlvbiB3aGVuIGFkZGluZyB0aGUgbmV3IHR5cGUgdG8g
-YnBmdG9vbC4gWW91DQo+PiBwcm9iYWJseSB3YW50IHNvbWV0aGluZyBsaWtlIHRoZSBkaWZmIGJl
-bG93Lg0KPiANCj4gVGhhbmsgeW91IHNvIG11Y2guICBXaWxsIGluY29ycG9yYXRlIHRoZW0uICBK
-dXN0IGluIGNhc2UsIHdoaWxlIGl0J3MNCj4gbm90ZWQgaW4gdGhlIGhlYWQgbWVzc2FnZSwgSSBs
-b3N0IHRoZSBSRkMgbWFya2VyIHdoaWxlIHByZXBwaW5nIHRoaXMNCj4gcGF0Y2guICBJdCBpc24n
-dCB5ZXQgY2xlYXIgd2hldGhlciB3ZSdkIHJlYWxseSBuZWVkIGN1c3RvbSBjb3N0DQo+IGZ1bmN0
-aW9ucyBhbmQgdGhpcyBwYXRjaCBpcyBpbmNsdWRlZCBtb3JlIGFzIGEgcHJvb2Ygb2YgY29uY2Vw
-dC4gIA0KDQp0aGUgZXhhbXBsZSBicGYgcHJvZyBsb29rcyBmbGV4aWJsZSBlbm91Z2ggdG8gYWxs
-b3cgc29tZSBkZWdyZWUNCm9mIGV4cGVyaW1lbnRzLiBUaGUgcXVlc3Rpb24gaXMgd2hhdCBraW5k
-IG9mIG5ldyBhbGdvcml0aG1zIHlvdSBlbnZpc2lvbg0KaXQgd2lsbCBkbz8gd2hhdCBvdGhlciBp
-bnB1dHMgaXQgd291bGQgbmVlZCB0byBtYWtlIGEgZGVjaXNpb24/DQpJIHRoaW5rIGl0J3Mgb2sg
-dG8gc3RhcnQgd2l0aCB3aGF0IGl0IGRvZXMgbm93IGFuZCBleHRlbmQgZnVydGhlcg0Kd2hlbiBu
-ZWVkIGFyaXNlcy4NCg0KPiBJZg0KPiBpdCB0dXJucyBvdXQgdGhhdCB0aGlzIGlzIGJlbmVmaWNp
-YWwgZW5vdWdoLCB0aGUgZm9sbG93aW5ncyBuZWVkIHRvIGJlDQo+IGFuc3dlcmVkLg0KPiANCj4g
-KiBJcyBibG9jayBpb2N0bCB0aGUgcmlnaHQgbWVjaGFuaXNtIHRvIGF0dGFjaCB0aGVzZSBwcm9n
-cmFtcz8NCg0KaW1vIGlvY3RsIGlzIGEgYml0IHdlaXJkLCBidXQgc2luY2UgaXRzIG9ubHkgb25l
-IHByb2dyYW0gcGVyIGJsb2NrDQpkZXZpY2UgaXQncyBwcm9iYWJseSBvaz8gVW5sZXNzIHlvdSBz
-ZWUgaXQgYmVpbmcgY2dyb3VwIHNjb3BlZCBpbg0KdGhlIGZ1dHVyZT8gVGhlbiBjZ3JvdXAtYnBm
-IHN0eWxlIGhvb2tzIHdpbGwgYmUgbW9yZSBzdWl0YWJsZQ0KYW5kIGFsbG93IGEgY2hhaW4gb2Yg
-cHJvZ3JhbXMuDQoNCj4gKiBBcmUgdGhlcmUgbW9yZSBwYXJhbWV0ZXJzIHRoYXQgbmVlZCB0byBi
-ZSBleHBvc2VkIHRvIHRoZSBwcm9ncmFtcz8NCj4gDQo+ICogSXQnZCBiZSBncmVhdCB0byBoYXZl
-IGVmZmljaWVudCBhY2Nlc3MgdG8gcGVyLWJsb2NrZGV2IGFuZA0KPiAgICBwZXItYmxvY2tkZXYt
-Y2dyb3VwLXBhaXIgc3RvcmFnZXMgYXZhaWxhYmxlIHRvIHRoZXNlIHByb2dyYW1zIHNvDQo+ICAg
-IHRoYXQgdGhleSBjYW4ga2VlcCB0cmFjayBvZiBoaXN0b3J5LiAgV2hhdCdkIGJlIHRoZSBiZXN0
-IG9mIHdheSBvZg0KPiAgICBkb2luZyB0aGF0IGNvbnNpZGVyaW5nIHRoZSBmYWN0IHRoYXQgdGhl
-c2UgcHJvZ3JhbXMgd2lsbCBiZSBjYWxsZWQNCj4gICAgcGVyIGVhY2ggSU8gYW5kIHRoZSBvdmVy
-aGVhZCBjYW4gYWRkIHVwIHF1aWNrbHk/DQoNCk1hcnRpbidzIHNvY2tldCBsb2NhbCBzdG9yYWdl
-IHNvbHZlZCB0aGF0IGlzc3VlIGZvciBzb2NrZXRzLg0KU29tZXRoaW5nIHZlcnkgc2ltaWxhciBj
-YW4gd29yayBmb3IgcGVyLWJsb2NrZGV2LXBlci1jZ3JvdXAuDQo=
+An MFD is a device that contains several sub-devices (cells). For instance,
+the ChromeOS EC fits in this description as usually contains a charger and
+can have other devices with different functions like a Real-Time Clock,
+an Audio codec, a Real-Time Clock, ...
+
+If you look at the driver, though, we're doing something odd. We have
+two MFD cros-ec drivers where one of them (cros-ec-core) instantiates
+another MFD driver as sub-driver (cros-ec-dev), and the latest
+instantiates the different sub-devices (Real-Time Clock, Audio codec,
+etc).
+
+                  MFD
+------------------------------------------
+   cros-ec-core
+       |___ mfd-cellA (cros-ec-dev)
+       |       |__ mfd-cell0
+       |       |__ mfd-cell1
+       |       |__ ...
+       |
+       |___ mfd-cellB (cros-ec-dev)
+               |__ mfd-cell0
+               |__ mfd-cell1
+               |__ ...
+
+The problem that was trying to solve is to describe some kind of topology for
+the case where we have an EC (cros-ec) chained with another EC
+(cros-pd). Apart from that this extends the bounds of what MFD was
+designed to do we might be interested on have other kinds of topology that
+can't be implemented in that way.
+
+Let's prepare the code to move the cros-ec-core part from MFD to
+platform/chrome as this is clearly a platform specific thing non-related
+to a MFD device.
+
+  platform/chrome  |         MFD
+------------------------------------------
+                   |
+   cros-ec ________|___ cros-ec-dev
+                   |       |__ mfd-cell0
+                   |       |__ mfd-cell1
+                   |       |__ ...
+                   |
+   cros-pd ________|___ cros-ec-dev
+                   |        |__ mfd-cell0
+                   |        |__ mfd-cell1
+                   |        |__ ...
+
+Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Acked-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+
+Changes in v2:
+- Collect acks received.
+- Remove '[PATCH 07/10] mfd: cros_ec: Update with SPDX Licence identifier
+  and fix description' to avoid conflicts with some tree-wide patches
+  that actually updates the Licence identifier.
+- Add '[PATCH 10/10] arm/arm64: defconfig: Update configs to use the new
+  CROS_EC options' to update the defconfigs after change some config
+  symbols.
+
+ drivers/mfd/cros_ec.c                   | 61 +++++++++++++------------
+ drivers/platform/chrome/cros_ec_i2c.c   |  8 ++++
+ drivers/platform/chrome/cros_ec_lpc.c   |  3 +-
+ drivers/platform/chrome/cros_ec_rpmsg.c |  2 +
+ drivers/platform/chrome/cros_ec_spi.c   |  8 ++++
+ include/linux/mfd/cros_ec.h             | 18 ++++++++
+ 6 files changed, 69 insertions(+), 31 deletions(-)
+
+diff --git a/drivers/mfd/cros_ec.c b/drivers/mfd/cros_ec.c
+index bd2bcdd4718b..11fced7917fc 100644
+--- a/drivers/mfd/cros_ec.c
++++ b/drivers/mfd/cros_ec.c
+@@ -21,7 +21,6 @@
+ #include <linux/interrupt.h>
+ #include <linux/slab.h>
+ #include <linux/module.h>
+-#include <linux/mfd/core.h>
+ #include <linux/mfd/cros_ec.h>
+ #include <linux/suspend.h>
+ #include <asm/unaligned.h>
+@@ -39,18 +38,6 @@ static struct cros_ec_platform pd_p = {
+ 	.cmd_offset = EC_CMD_PASSTHRU_OFFSET(CROS_EC_DEV_PD_INDEX),
+ };
+ 
+-static const struct mfd_cell ec_cell = {
+-	.name = "cros-ec-dev",
+-	.platform_data = &ec_p,
+-	.pdata_size = sizeof(ec_p),
+-};
+-
+-static const struct mfd_cell ec_pd_cell = {
+-	.name = "cros-ec-dev",
+-	.platform_data = &pd_p,
+-	.pdata_size = sizeof(pd_p),
+-};
+-
+ static irqreturn_t ec_irq_thread(int irq, void *data)
+ {
+ 	struct cros_ec_device *ec_dev = data;
+@@ -158,38 +145,42 @@ int cros_ec_register(struct cros_ec_device *ec_dev)
+ 		}
+ 	}
+ 
+-	err = devm_mfd_add_devices(ec_dev->dev, PLATFORM_DEVID_AUTO, &ec_cell,
+-				   1, NULL, ec_dev->irq, NULL);
+-	if (err) {
+-		dev_err(dev,
+-			"Failed to register Embedded Controller subdevice %d\n",
+-			err);
+-		return err;
++	/* Register a platform device for the main EC instance */
++	ec_dev->ec = platform_device_register_data(ec_dev->dev, "cros-ec-dev",
++					PLATFORM_DEVID_AUTO, &ec_p,
++					sizeof(struct cros_ec_platform));
++	if (IS_ERR(ec_dev->ec)) {
++		dev_err(ec_dev->dev,
++			"Failed to create CrOS EC platform device\n");
++		return PTR_ERR(ec_dev->ec);
+ 	}
+ 
+ 	if (ec_dev->max_passthru) {
+ 		/*
+-		 * Register a PD device as well on top of this device.
++		 * Register a platform device for the PD behind the main EC.
+ 		 * We make the following assumptions:
+ 		 * - behind an EC, we have a pd
+ 		 * - only one device added.
+ 		 * - the EC is responsive at init time (it is not true for a
+-		 *   sensor hub.
++		 *   sensor hub).
+ 		 */
+-		err = devm_mfd_add_devices(ec_dev->dev, PLATFORM_DEVID_AUTO,
+-				      &ec_pd_cell, 1, NULL, ec_dev->irq, NULL);
+-		if (err) {
+-			dev_err(dev,
+-				"Failed to register Power Delivery subdevice %d\n",
+-				err);
+-			return err;
++		ec_dev->pd = platform_device_register_data(ec_dev->dev,
++					"cros-ec-dev",
++					PLATFORM_DEVID_AUTO, &pd_p,
++					sizeof(struct cros_ec_platform));
++		if (IS_ERR(ec_dev->pd)) {
++			dev_err(ec_dev->dev,
++				"Failed to create CrOS PD platform device\n");
++			platform_device_unregister(ec_dev->ec);
++			return PTR_ERR(ec_dev->pd);
+ 		}
+ 	}
+ 
+ 	if (IS_ENABLED(CONFIG_OF) && dev->of_node) {
+ 		err = devm_of_platform_populate(dev);
+ 		if (err) {
+-			mfd_remove_devices(dev);
++			platform_device_unregister(ec_dev->pd);
++			platform_device_unregister(ec_dev->ec);
+ 			dev_err(dev, "Failed to register sub-devices\n");
+ 			return err;
+ 		}
+@@ -210,6 +201,16 @@ int cros_ec_register(struct cros_ec_device *ec_dev)
+ }
+ EXPORT_SYMBOL(cros_ec_register);
+ 
++int cros_ec_unregister(struct cros_ec_device *ec_dev)
++{
++	if (ec_dev->pd)
++		platform_device_unregister(ec_dev->pd);
++	platform_device_unregister(ec_dev->ec);
++
++	return 0;
++}
++EXPORT_SYMBOL(cros_ec_unregister);
++
+ #ifdef CONFIG_PM_SLEEP
+ int cros_ec_suspend(struct cros_ec_device *ec_dev)
+ {
+diff --git a/drivers/platform/chrome/cros_ec_i2c.c b/drivers/platform/chrome/cros_ec_i2c.c
+index 61d75395f86d..6bb82dfa7dae 100644
+--- a/drivers/platform/chrome/cros_ec_i2c.c
++++ b/drivers/platform/chrome/cros_ec_i2c.c
+@@ -307,6 +307,13 @@ static int cros_ec_i2c_probe(struct i2c_client *client,
+ 	return 0;
+ }
+ 
++static int cros_ec_i2c_remove(struct i2c_client *client)
++{
++	struct cros_ec_device *ec_dev = i2c_get_clientdata(client);
++
++	return cros_ec_unregister(ec_dev);
++}
++
+ #ifdef CONFIG_PM_SLEEP
+ static int cros_ec_i2c_suspend(struct device *dev)
+ {
+@@ -357,6 +364,7 @@ static struct i2c_driver cros_ec_driver = {
+ 		.pm	= &cros_ec_i2c_pm_ops,
+ 	},
+ 	.probe		= cros_ec_i2c_probe,
++	.remove		= cros_ec_i2c_remove,
+ 	.id_table	= cros_ec_i2c_id,
+ };
+ 
+diff --git a/drivers/platform/chrome/cros_ec_lpc.c b/drivers/platform/chrome/cros_ec_lpc.c
+index c9c240fbe7c6..2c7e654cf89c 100644
+--- a/drivers/platform/chrome/cros_ec_lpc.c
++++ b/drivers/platform/chrome/cros_ec_lpc.c
+@@ -317,6 +317,7 @@ static int cros_ec_lpc_probe(struct platform_device *pdev)
+ 
+ static int cros_ec_lpc_remove(struct platform_device *pdev)
+ {
++	struct cros_ec_device *ec_dev = platform_get_drvdata(pdev);
+ 	struct acpi_device *adev;
+ 
+ 	adev = ACPI_COMPANION(&pdev->dev);
+@@ -324,7 +325,7 @@ static int cros_ec_lpc_remove(struct platform_device *pdev)
+ 		acpi_remove_notify_handler(adev->handle, ACPI_ALL_NOTIFY,
+ 					   cros_ec_lpc_acpi_notify);
+ 
+-	return 0;
++	return cros_ec_unregister(ec_dev);
+ }
+ 
+ static const struct acpi_device_id cros_ec_lpc_acpi_device_ids[] = {
+diff --git a/drivers/platform/chrome/cros_ec_rpmsg.c b/drivers/platform/chrome/cros_ec_rpmsg.c
+index 5d3fb2abad1d..520e507bfa54 100644
+--- a/drivers/platform/chrome/cros_ec_rpmsg.c
++++ b/drivers/platform/chrome/cros_ec_rpmsg.c
+@@ -233,6 +233,8 @@ static void cros_ec_rpmsg_remove(struct rpmsg_device *rpdev)
+ 	struct cros_ec_device *ec_dev = dev_get_drvdata(&rpdev->dev);
+ 	struct cros_ec_rpmsg *ec_rpmsg = ec_dev->priv;
+ 
++	cros_ec_unregister(ec_dev);
++
+ 	cancel_work_sync(&ec_rpmsg->host_event_work);
+ }
+ 
+diff --git a/drivers/platform/chrome/cros_ec_spi.c b/drivers/platform/chrome/cros_ec_spi.c
+index 8e9451720e73..02f9e8257581 100644
+--- a/drivers/platform/chrome/cros_ec_spi.c
++++ b/drivers/platform/chrome/cros_ec_spi.c
+@@ -743,6 +743,13 @@ static int cros_ec_spi_probe(struct spi_device *spi)
+ 	return 0;
+ }
+ 
++static int cros_ec_spi_remove(struct spi_device *spi)
++{
++	struct cros_ec_device *ec_dev = spi_get_drvdata(spi);
++
++	return cros_ec_unregister(ec_dev);
++}
++
+ #ifdef CONFIG_PM_SLEEP
+ static int cros_ec_spi_suspend(struct device *dev)
+ {
+@@ -781,6 +788,7 @@ static struct spi_driver cros_ec_driver_spi = {
+ 		.pm	= &cros_ec_spi_pm_ops,
+ 	},
+ 	.probe		= cros_ec_spi_probe,
++	.remove		= cros_ec_spi_remove,
+ 	.id_table	= cros_ec_spi_id,
+ };
+ 
+diff --git a/include/linux/mfd/cros_ec.h b/include/linux/mfd/cros_ec.h
+index cfa78bb4990f..95513d4f9a21 100644
+--- a/include/linux/mfd/cros_ec.h
++++ b/include/linux/mfd/cros_ec.h
+@@ -128,6 +128,10 @@ struct cros_ec_command {
+  * @event_data: Raw payload transferred with the MKBP event.
+  * @event_size: Size in bytes of the event data.
+  * @host_event_wake_mask: Mask of host events that cause wake from suspend.
++ * @ec: The platform_device used by the mfd driver to interface with the
++ *      main EC.
++ * @pd: The platform_device used by the mfd driver to interface with the
++ *      PD behind an EC.
+  */
+ struct cros_ec_device {
+ 	/* These are used by other drivers that want to talk to the EC */
+@@ -163,6 +167,10 @@ struct cros_ec_device {
+ 	struct ec_response_get_next_event_v1 event_data;
+ 	int event_size;
+ 	u32 host_event_wake_mask;
++
++	/* The platform devices used by the mfd driver */
++	struct platform_device *ec;
++	struct platform_device *pd;
+ };
+ 
+ /**
+@@ -297,6 +305,16 @@ int cros_ec_cmd_xfer_status(struct cros_ec_device *ec_dev,
+  */
+ int cros_ec_register(struct cros_ec_device *ec_dev);
+ 
++/**
++ * cros_ec_unregister() - Remove a ChromeOS EC.
++ * @ec_dev: Device to unregister.
++ *
++ * Call this to deregister a ChromeOS EC, then clean up any private data.
++ *
++ * Return: 0 on success or negative error code.
++ */
++int cros_ec_unregister(struct cros_ec_device *ec_dev);
++
+ /**
+  * cros_ec_query_all() -  Query the protocol version supported by the
+  *         ChromeOS EC.
+-- 
+2.20.1
+
