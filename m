@@ -2,105 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 50F67450AD
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 02:34:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 26C37450BC
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 02:36:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727542AbfFNAeS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 20:34:18 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:44980 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727437AbfFNAeO (ORCPT
+        id S1726767AbfFNAgW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 20:36:22 -0400
+Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:60257 "EHLO
+        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725777AbfFNAgV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 20:34:14 -0400
-Received: by mail-pf1-f196.google.com with SMTP id t16so265030pfe.11;
-        Thu, 13 Jun 2019 17:34:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=/0EbDb07rl0+2nTNpL5MUvCUgcM2dhBTtu5L9LJF/5g=;
-        b=fQzf7NTf2AamLhEOekVA/tGq5CXzVixbTzPlZT30QW79+jP48lozuQt7de3C/lUMk6
-         7p1A90E3IRJOZrR+B2m+ZrxoFfCgONFripL6/Z6mK2eXDG56V6Zi347mNIXBIr+OhFla
-         aAg7SCSH04phUpxuD4oZnN5t/VB1pzQAvjDg+Espr09ucLisQJrJW6+c6rOQiDYNDbH5
-         xhdBaUkdvurnAXEPEiRXw/Kv2kk5D/VZ460Vakf2HZFPW/HJJLZOQ0mIDMFTThsckZhX
-         0mcILt3PpQqiZ21EFLKp0N0jJor1Tpv04ozuYMNx5aMTFznWeMM5D7UzlFmwCxJl01KW
-         1mtA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
-         :in-reply-to:references;
-        bh=/0EbDb07rl0+2nTNpL5MUvCUgcM2dhBTtu5L9LJF/5g=;
-        b=uDPLnad4C/EA2D2qXmUkEr+QLoS1ghc1SiYmgM1uXTayEO+a+kZM9oY84WdFD7llAF
-         K5HxRmpuJ92qYgEOv0F0HQl5B563OjnlK8GWJt4kjyPq2vNLyUxaOCxjwDjjLYyNw4HB
-         KKdiCnaRyQByEzCZRT7QrL6xkSahocJ1neWMg6dN72PIyFpX35ocCRQM1GGoYQqO8I1y
-         khx7sccA4gIxk1IvFPxWsrf47uyrXJ6HjOPoFZDZ7rGvnM2ma/QbrywsOt3uLfSKmdsP
-         N7zXWtDJlj7uYbdGpkYsN+I73HV3SxqHbrToHqPDcQ/WB3LqxC6a6g5eOg562xGcRNna
-         QjIw==
-X-Gm-Message-State: APjAAAU4uUcw+6gv1EhpjrFfdgcU18/B2nPotznGLQwWX+mwiUNWUcIH
-        /zNR4U+99+7RmxAt/scZ5R3+jmU1
-X-Google-Smtp-Source: APXvYqybF/2c2vJJoH/ecmJ28qkRmO4fYSx+6HWKnNfzXIXgZ2gGvs6MVXS9F4ZKN7ITIYYq4h+QuQ==
-X-Received: by 2002:a63:e950:: with SMTP id q16mr8093874pgj.270.1560472453741;
-        Thu, 13 Jun 2019 17:34:13 -0700 (PDT)
-Received: from localhost ([2620:10d:c091:500::2:9d14])
-        by smtp.gmail.com with ESMTPSA id p3sm898857pgh.90.2019.06.13.17.34.13
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 13 Jun 2019 17:34:13 -0700 (PDT)
-From:   Tejun Heo <tj@kernel.org>
-To:     dsterba@suse.com, clm@fb.com, josef@toxicpanda.com,
-        axboe@kernel.dk, jack@suse.cz
-Cc:     linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-block@vger.kernel.org, kernel-team@fb.com
-Subject: [PATCH 8/8] Btrfs: extent_write_locked_range() should attach inode->i_wb
-Date:   Thu, 13 Jun 2019 17:33:50 -0700
-Message-Id: <20190614003350.1178444-9-tj@kernel.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190614003350.1178444-1-tj@kernel.org>
-References: <20190614003350.1178444-1-tj@kernel.org>
+        Thu, 13 Jun 2019 20:36:21 -0400
+Received: from dread.disaster.area (pa49-195-189-25.pa.nsw.optusnet.com.au [49.195.189.25])
+        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id 7F8AF43B354;
+        Fri, 14 Jun 2019 10:36:16 +1000 (AEST)
+Received: from dave by dread.disaster.area with local (Exim 4.92)
+        (envelope-from <david@fromorbit.com>)
+        id 1hbaBa-0004jE-EB; Fri, 14 Jun 2019 10:35:18 +1000
+Date:   Fri, 14 Jun 2019 10:35:18 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Kent Overstreet <kent.overstreet@gmail.com>
+Cc:     Andreas Dilger <adilger@dilger.ca>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Dave Chinner <dchinner@redhat.com>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Matthew Wilcox <willy@infradead.org>,
+        Amir Goldstein <amir73il@gmail.com>, Jan Kara <jack@suse.cz>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Josef Bacik <josef@toxicpanda.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: pagecache locking (was: bcachefs status update) merged)
+Message-ID: <20190614003518.GL14363@dread.disaster.area>
+References: <20190610191420.27007-1-kent.overstreet@gmail.com>
+ <CAHk-=wi0iMHcO5nsYug06fV3-8s8fz7GDQWCuanefEGq6mHH1Q@mail.gmail.com>
+ <20190611011737.GA28701@kmo-pixel>
+ <20190611043336.GB14363@dread.disaster.area>
+ <20190612162144.GA7619@kmo-pixel>
+ <20190612230224.GJ14308@dread.disaster.area>
+ <20190613183625.GA28171@kmo-pixel>
+ <AE838C22-1A11-4F93-AB88-80CF009BD301@dilger.ca>
+ <20190613212112.GB28171@kmo-pixel>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190613212112.GB28171@kmo-pixel>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.2 cv=FNpr/6gs c=1 sm=1 tr=0 cx=a_idp_d
+        a=K5LJ/TdJMXINHCwnwvH1bQ==:117 a=K5LJ/TdJMXINHCwnwvH1bQ==:17
+        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=dq6fvYVFJ5YA:10
+        a=7-415B0cAAAA:8 a=6_0dh5WEKKik7Vn-M0YA:9 a=FsNm7XV4SpkFqOcW:21
+        a=cFAAwf0Rn3E3QlG0:21 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chris Mason <clm@fb.com>
+On Thu, Jun 13, 2019 at 05:21:12PM -0400, Kent Overstreet wrote:
+> On Thu, Jun 13, 2019 at 03:13:40PM -0600, Andreas Dilger wrote:
+> > There are definitely workloads that require multiple threads doing non-overlapping
+> > writes to a single file in HPC.  This is becoming an increasingly common problem
+> > as the number of cores on a single client increase, since there is typically one
+> > thread per core trying to write to a shared file.  Using multiple files (one per
+> > core) is possible, but that has file management issues for users when there are a
+> > million cores running on the same job/file (obviously not on the same client node)
+> > dumping data every hour.
+> 
+> Mixed buffered and O_DIRECT though? That profile looks like just buffered IO to
+> me.
+> 
+> > We were just looking at this exact problem last week, and most of the threads are
+> > spinning in grab_cache_page_nowait->add_to_page_cache_lru() and set_page_dirty()
+> > when writing at 1.9GB/s when they could be writing at 5.8GB/s (when threads are
+> > writing O_DIRECT instead of buffered).  Flame graph is attached for 16-thread case,
+> > but high-end systems today easily have 2-4x that many cores.
+> 
+> Yeah I've been spending some time on buffered IO performance too - 4k page
+> overhead is a killer.
+> 
+> bcachefs has a buffered write path that looks up multiple pages at a time and
+> locks them, and then copies the data to all the pages at once (I stole the idea
+> from btrfs). It was a very significant performance increase.
 
-extent_write_locked_range() is used when we're falling back to buffered
-IO from inside of compression.  It allocates its own wbc and should
-associate it with the inode's i_wb to make sure the IO goes down from
-the correct cgroup.
+Careful with that - locking multiple pages is also a deadlock vector
+that triggers unexpectedly when something conspires to lock pages in
+non-ascending order. e.g.
 
-Signed-off-by: Chris Mason <clm@fb.com>
----
- fs/btrfs/extent_io.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+64081362e8ff mm/page-writeback.c: fix range_cyclic writeback vs writepages deadlock
 
-diff --git a/fs/btrfs/extent_io.c b/fs/btrfs/extent_io.c
-index d7b57341ff1a..afb916a69c30 100644
---- a/fs/btrfs/extent_io.c
-+++ b/fs/btrfs/extent_io.c
-@@ -4180,6 +4180,7 @@ int extent_write_locked_range(struct inode *inode, u64 start, u64 end,
- 		.no_wbc_acct	= 1,
- 	};
- 
-+	wbc_attach_fdatawrite_inode(&wbc_writepages, inode);
- 	while (start <= end) {
- 		page = find_get_page(mapping, start >> PAGE_SHIFT);
- 		if (clear_page_dirty_for_io(page))
-@@ -4194,11 +4195,12 @@ int extent_write_locked_range(struct inode *inode, u64 start, u64 end,
- 	}
- 
- 	ASSERT(ret <= 0);
--	if (ret < 0) {
-+	if (ret == 0)
-+		ret = flush_write_bio(&epd);
-+	else
- 		end_write_bio(&epd, ret);
--		return ret;
--	}
--	ret = flush_write_bio(&epd);
-+
-+	wbc_detach_inode(&wbc_writepages);
- 	return ret;
- }
- 
+The fs/iomap.c code avoids this problem by mapping the IO first,
+then iterating pages one at a time until the mapping is consumed,
+then it gets another mapping. It also avoids needing to put a page
+array on stack....
+
+Cheers,
+
+Dave.
 -- 
-2.17.1
-
+Dave Chinner
+david@fromorbit.com
