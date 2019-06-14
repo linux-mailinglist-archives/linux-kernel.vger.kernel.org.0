@@ -2,29 +2,30 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8BC19466A0
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 19:57:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F0DFB4669A
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 19:57:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727805AbfFNRzu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 13:55:50 -0400
-Received: from foss.arm.com ([217.140.110.172]:39682 "EHLO foss.arm.com"
+        id S1727722AbfFNRz3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 13:55:29 -0400
+Received: from foss.arm.com ([217.140.110.172]:39694 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727675AbfFNRz0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 13:55:26 -0400
+        id S1727700AbfFNRz1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Jun 2019 13:55:27 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 318493EF;
-        Fri, 14 Jun 2019 10:55:26 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 67A60D6E;
+        Fri, 14 Jun 2019 10:55:27 -0700 (PDT)
 Received: from en101.cambridge.arm.com (en101.cambridge.arm.com [10.1.196.93])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 49C813F718;
-        Fri, 14 Jun 2019 10:55:25 -0700 (PDT)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 64D113F718;
+        Fri, 14 Jun 2019 10:55:26 -0700 (PDT)
 From:   Suzuki K Poulose <suzuki.poulose@arm.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     gregkh@linuxfoundation.org, rafael@kernel.org,
-        suzuki.poulose@arm.com, Lee Jones <lee.jones@linaro.org>,
-        Thor Thayer <thor.thayer@linux.intel.com>
-Subject: [PATCH v2 23/28] drivers: Introduce driver_find_device_by_of_node() helper
-Date:   Fri, 14 Jun 2019 18:54:18 +0100
-Message-Id: <1560534863-15115-24-git-send-email-suzuki.poulose@arm.com>
+        suzuki.poulose@arm.com, Will Deacon <will.deacon@arm.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Joerg Roedel <joro@8bytes.org>
+Subject: [PATCH v2 24/28] drivers: Introduce driver_find_device_by_fwnode() helper
+Date:   Fri, 14 Jun 2019 18:54:19 +0100
+Message-Id: <1560534863-15115-25-git-send-email-suzuki.poulose@arm.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1560534863-15115-1-git-send-email-suzuki.poulose@arm.com>
 References: <1560534863-15115-1-git-send-email-suzuki.poulose@arm.com>
@@ -34,100 +35,86 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 Add a wrapper to driver_find_device() to search for a device
-by the of_node pointer, reusing the generic match function.
+by the fwnode pointer, reusing the generic match function.
 Also convert the existing users to make use of the new helper.
 
-Cc: Lee Jones <lee.jones@linaro.org>
-Cc: Thor Thayer <thor.thayer@linux.intel.com>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: Robin Murphy <robin.murphy@arm.com>
+Cc: Joerg Roedel <joro@8bytes.org>
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc: "Rafael J. Wysocki" <rafael@kernel.org>
-Acked-by: Thor Thayer <thor.thayer@linux.intel.com>
 Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
 ---
- drivers/amba/tegra-ahb.c    | 11 +----------
- drivers/mfd/altera-sysmgr.c | 14 ++------------
+ drivers/iommu/arm-smmu-v3.c |  9 ++-------
+ drivers/iommu/arm-smmu.c    |  9 ++-------
  include/linux/device.h      | 13 +++++++++++++
- 3 files changed, 16 insertions(+), 22 deletions(-)
+ 3 files changed, 17 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/amba/tegra-ahb.c b/drivers/amba/tegra-ahb.c
-index aa64eec..57d3b2e 100644
---- a/drivers/amba/tegra-ahb.c
-+++ b/drivers/amba/tegra-ahb.c
-@@ -134,22 +134,13 @@ static inline void gizmo_writel(struct tegra_ahb *ahb, u32 value, u32 offset)
+diff --git a/drivers/iommu/arm-smmu-v3.c b/drivers/iommu/arm-smmu-v3.c
+index d787856..6b956a03 100644
+--- a/drivers/iommu/arm-smmu-v3.c
++++ b/drivers/iommu/arm-smmu-v3.c
+@@ -2023,16 +2023,11 @@ arm_smmu_iova_to_phys(struct iommu_domain *domain, dma_addr_t iova)
+ 
+ static struct platform_driver arm_smmu_driver;
+ 
+-static int arm_smmu_match_node(struct device *dev, const void *data)
+-{
+-	return dev->fwnode == data;
+-}
+-
+ static
+ struct arm_smmu_device *arm_smmu_get_by_fwnode(struct fwnode_handle *fwnode)
+ {
+-	struct device *dev = driver_find_device(&arm_smmu_driver.driver, NULL,
+-						fwnode, arm_smmu_match_node);
++	struct device *dev = driver_find_device_by_fwnode(&arm_smmu_driver.driver,
++							  fwnode);
+ 	put_device(dev);
+ 	return dev ? dev_get_drvdata(dev) : NULL;
+ }
+diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu.c
+index 3af579a..0d63a9e 100644
+--- a/drivers/iommu/arm-smmu.c
++++ b/drivers/iommu/arm-smmu.c
+@@ -1419,16 +1419,11 @@ static bool arm_smmu_capable(enum iommu_cap cap)
+ 	}
  }
  
- #ifdef CONFIG_TEGRA_IOMMU_SMMU
--static int tegra_ahb_match_by_smmu(struct device *dev, const void *data)
+-static int arm_smmu_match_node(struct device *dev, const void *data)
 -{
--	struct tegra_ahb *ahb = dev_get_drvdata(dev);
--	const struct device_node *dn = data;
--
--	return (ahb->dev->of_node == dn) ? 1 : 0;
+-	return dev->fwnode == data;
 -}
 -
- int tegra_ahb_enable_smmu(struct device_node *dn)
+ static
+ struct arm_smmu_device *arm_smmu_get_by_fwnode(struct fwnode_handle *fwnode)
  {
- 	struct device *dev;
- 	u32 val;
- 	struct tegra_ahb *ahb;
- 
--	dev = driver_find_device(&tegra_ahb_driver.driver, NULL, dn,
--				 tegra_ahb_match_by_smmu);
-+	dev = driver_find_device_by_of_node(&tegra_ahb_driver.driver, dn);
- 	if (!dev)
- 		return -EPROBE_DEFER;
- 	ahb = dev_get_drvdata(dev);
-diff --git a/drivers/mfd/altera-sysmgr.c b/drivers/mfd/altera-sysmgr.c
-index 2ee14d8..d2a13a5 100644
---- a/drivers/mfd/altera-sysmgr.c
-+++ b/drivers/mfd/altera-sysmgr.c
-@@ -88,16 +88,6 @@ static struct regmap_config altr_sysmgr_regmap_cfg = {
- };
- 
- /**
-- * sysmgr_match_phandle
-- * Matching function used by driver_find_device().
-- * Return: True if match is found, otherwise false.
-- */
--static int sysmgr_match_phandle(struct device *dev, const void *data)
--{
--	return dev->of_node == (const struct device_node *)data;
--}
--
--/**
-  * altr_sysmgr_regmap_lookup_by_phandle
-  * Find the sysmgr previous configured in probe() and return regmap property.
-  * Return: regmap if found or error if not found.
-@@ -117,8 +107,8 @@ struct regmap *altr_sysmgr_regmap_lookup_by_phandle(struct device_node *np,
- 	if (!sysmgr_np)
- 		return ERR_PTR(-ENODEV);
- 
--	dev = driver_find_device(&altr_sysmgr_driver.driver, NULL,
--				 (void *)sysmgr_np, sysmgr_match_phandle);
-+	dev = driver_find_device_by_of_node(&altr_sysmgr_driver.driver,
-+					    (void *)sysmgr_np);
- 	of_node_put(sysmgr_np);
- 	if (!dev)
- 		return ERR_PTR(-EPROBE_DEFER);
+-	struct device *dev = driver_find_device(&arm_smmu_driver.driver, NULL,
+-						fwnode, arm_smmu_match_node);
++	struct device *dev = driver_find_device_by_fwnode(&arm_smmu_driver.driver,
++							  fwnode);
+ 	put_device(dev);
+ 	return dev ? dev_get_drvdata(dev) : NULL;
+ }
 diff --git a/include/linux/device.h b/include/linux/device.h
-index 0d3958e..f929671 100644
+index f929671..2cf49f7 100644
 --- a/include/linux/device.h
 +++ b/include/linux/device.h
-@@ -437,6 +437,19 @@ static inline struct device *driver_find_device_by_name(struct device_driver *dr
- 	return driver_find_device(drv, NULL, name, device_match_name);
+@@ -450,6 +450,19 @@ driver_find_device_by_of_node(struct device_driver *drv,
+ 	return driver_find_device(drv, NULL, np, device_match_of_node);
  }
  
 +/**
-+ * driver_find_device_by_of_node- device iterator for locating a particular device
-+ * by of_node pointer.
++ * driver_find_device_by_fwnode- device iterator for locating a particular device
++ * by fwnode pointer.
 + * @driver: the driver we're iterating
-+ * @np: of_node pointer to match.
++ * @fwnode: fwnode pointer to match.
 + */
 +static inline struct device *
-+driver_find_device_by_of_node(struct device_driver *drv,
-+			      const struct device_node *np)
++driver_find_device_by_fwnode(struct device_driver *drv,
++			     const struct fwnode_handle *fwnode)
 +{
-+	return driver_find_device(drv, NULL, np, device_match_of_node);
++	return driver_find_device(drv, NULL, fwnode, device_match_fwnode);
 +}
 +
  void driver_deferred_probe_add(struct device *dev);
