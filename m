@@ -2,109 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 16AD045C8A
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 14:17:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E89A145C53
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 14:13:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727690AbfFNMRs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 08:17:48 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:35033 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727362AbfFNMRs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 08:17:48 -0400
-Received: by mail-ed1-f65.google.com with SMTP id p26so3243692edr.2
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2019 05:17:47 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=+8quq0k8tqu/xsODhVIPdEOM4T34ZCS4DIB0amj5ChA=;
-        b=s9imPk8IoFfsvWD7x+y+3Fr8xx6PTFXerMF0zMvMiQVJ1LkuYaruen+kuK2v0mEXEF
-         nziTtPNpysiClMVYMVD9rbKhpIpXYGmi8wMqRA0oahIYmhFqyQZy/9ZvnW72tGHRWgy6
-         pmz7GANnqqgLyLA01dzl2JdWM6MNgK2ohjBY4f+/5PTcFUFM9OpcE53c4lzTg11V36a7
-         U4g/nmRm6swXTKlrgTYrlZQHVvhrLDRALAVGoGUzIHKiGy0UCdISMWDg3PgNqglJ+Qr0
-         ha3klPHtZxZTv+C9/Nc6/nThdKUUE8V9PS8a7b7qvmh9VLVMtG9vm3iBrj3zOSXndsgL
-         Eikg==
-X-Gm-Message-State: APjAAAX34i2/Ff+dzooZ3zqUSt70pyqhtp4tibns6uiSezkHoLlld1/q
-        NtcwKXpQLEfsxjBr2PEzjXVWfA==
-X-Google-Smtp-Source: APXvYqyqOun6k3rFPZiHWrWAxUeMwEI/iqTNd06JTPho68It+7LHZEn/6EYjihJLeJfIdRD2OVDxgw==
-X-Received: by 2002:a17:906:2594:: with SMTP id m20mr82883736ejb.217.1560514666534;
-        Fri, 14 Jun 2019 05:17:46 -0700 (PDT)
-Received: from alrua-x1.borgediget.toke.dk ([2a00:7660:6da:443::2])
-        by smtp.gmail.com with ESMTPSA id z40sm847346edb.61.2019.06.14.05.17.45
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Fri, 14 Jun 2019 05:17:45 -0700 (PDT)
-Received: by alrua-x1.borgediget.toke.dk (Postfix, from userid 1000)
-        id 3194F1804AF; Fri, 14 Jun 2019 14:17:45 +0200 (CEST)
-From:   Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>
-To:     Tejun Heo <tj@kernel.org>, axboe@kernel.dk, newella@fb.com,
-        clm@fb.com, josef@toxicpanda.com, dennisz@fb.com,
-        lizefan@huawei.com, hannes@cmpxchg.org
-Cc:     linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
-        kernel-team@fb.com, cgroups@vger.kernel.org, ast@kernel.org,
-        daniel@iogearbox.net, kafai@fb.com, songliubraving@fb.com,
-        yhs@fb.com, bpf@vger.kernel.org, Tejun Heo <tj@kernel.org>,
-        Josef Bacik <jbacik@fb.com>
-Subject: Re: [PATCH 08/10] blkcg: implement blk-ioweight
-In-Reply-To: <20190614015620.1587672-9-tj@kernel.org>
-References: <20190614015620.1587672-1-tj@kernel.org> <20190614015620.1587672-9-tj@kernel.org>
-X-Clacks-Overhead: GNU Terry Pratchett
-Date:   Fri, 14 Jun 2019 14:17:45 +0200
-Message-ID: <87pnngbbti.fsf@toke.dk>
+        id S1727791AbfFNMMz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 08:12:55 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:55756 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727572AbfFNMMz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Jun 2019 08:12:55 -0400
+Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 8DA29D3C080F3421CE99;
+        Fri, 14 Jun 2019 20:12:53 +0800 (CST)
+Received: from huawei.com (10.90.53.225) by DGGEMS403-HUB.china.huawei.com
+ (10.3.19.203) with Microsoft SMTP Server id 14.3.439.0; Fri, 14 Jun 2019
+ 20:12:44 +0800
+From:   <chengzhihao1@huawei.com>
+To:     <david.oberhollenzer@sigma-star.at>, <richard@nod.at>,
+        <boris.brezillon@bootlin.com>, <david@sigma-star.at>,
+        <artem.bityutskiy@linux.intel.com>, <yi.zhang@huawei.com>
+CC:     <linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <chengzhihao1@huawei.com>
+Subject: [PATCH mtd-utils] ubi-tests: io_read: Filter invalid offset value before 'lseek' in io_read test
+Date:   Fri, 14 Jun 2019 20:18:16 +0800
+Message-ID: <1560514696-54824-1-git-send-email-chengzhihao1@huawei.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
 Content-Type: text/plain
+X-Originating-IP: [10.90.53.225]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Tejun Heo <tj@kernel.org> writes:
+From: Zhihao Cheng <chengzhihao1@huawei.com>
 
-> This patchset implements IO cost model based work-conserving
-> proportional controller.
->
-> While io.latency provides the capability to comprehensively prioritize
-> and protect IOs depending on the cgroups, its protection is binary -
-> the lowest latency target cgroup which is suffering is protected at
-> the cost of all others.  In many use cases including stacking multiple
-> workload containers in a single system, it's necessary to distribute
-> IO capacity with better granularity.
->
-> One challenge of controlling IO resources is the lack of trivially
-> observable cost metric.  The most common metrics - bandwidth and iops
-> - can be off by orders of magnitude depending on the device type and
-> IO pattern.  However, the cost isn't a complete mystery.  Given
-> several key attributes, we can make fairly reliable predictions on how
-> expensive a given stream of IOs would be, at least compared to other
-> IO patterns.
->
-> The function which determines the cost of a given IO is the IO cost
-> model for the device.  This controller distributes IO capacity based
-> on the costs estimated by such model.  The more accurate the cost
-> model the better but the controller adapts based on IO completion
-> latency and as long as the relative costs across differents IO
-> patterns are consistent and sensible, it'll adapt to the actual
-> performance of the device.
->
-> Currently, the only implemented cost model is a simple linear one with
-> a few sets of default parameters for different classes of device.
-> This covers most common devices reasonably well.  All the
-> infrastructure to tune and add different cost models is already in
-> place and a later patch will also allow using bpf progs for cost
-> models.
->
-> Please see the top comment in blk-ioweight.c and documentation for
-> more details.
+There are many different offset values passed in 'lseek' during io_read
+testing of ubi test. The offset value maybe a negative number or a big
+number that exceeds the volume data size, which can lead to ubi tests
+failure by passing invalid offset value to 'lseek'. For example:
 
-Reading through the description here and in the comment, and with the
-caveat that I am familiar with network packet scheduling but not with
-the IO layer, I think your approach sounds quite reasonable; and I'm
-happy to see improvements in this area!
+Example 1: The data size of volume is 39525 bytes, offset = (sz) -
+MAX_NAND_PAGE_SIZE - 1, where MAX_NAND_PAGE_SIZE is 65536. Here, offset
+is a negative value passed to 'lseek', which leads to fail in io_read.
 
-One question: How are equal-weight cgroups scheduled relative to each
-other? Or requests from different processes within a single cgroup for
-that matter? FIFO? Round-robin? Something else?
+  ======================================================================
+  ======================================================================
+  ======================================================================
+  Test on mtdram, fastmap enabled, VID header offset factor 1
+  ======================================================================
+  ======================================================================
+  ======================================================================
+  mtdram: 16MiB, PEB size 16KiB, fastmap enabled
+  Running mkvol_basic /dev/ubi0
+  Running mkvol_bad /dev/ubi0
+  Running mkvol_paral /dev/ubi0
+  Running rsvol /dev/ubi0
+  Running io_basic /dev/ubi0
+  Running io_read /dev/ubi0
+  [io_basic] test_read3():189: function seek() failed with error 22
+  (Invalid argument)
+  [io_basic] test_read3():190: len = 1
+  [io_basic] test_read2():237: offset = -26012
+  [io_basic] test_read1():303: length = 1
+  [io_basic] test_read():362: alignment = 7905
+  Error: io_read failed
+  FAILURE
 
-Thanks,
+Example 2: The data size of volume is 79035 bytes, offset = 2 *
+MAX_NAND_PAGE_SIZE, where MAX_NAND_PAGE_SIZE is 65536. Here, offset is a
+value exceeds volume size, which leads to fail in io_read.
 
--Toke
+  ======================================================================
+  ======================================================================
+  ======================================================================
+  Test on mtdram, fastmap enabled, VID header offset factor 1
+  ======================================================================
+  ======================================================================
+  ======================================================================
+  mtdram: 16MiB, PEB size 16KiB, fastmap enabled
+  Running mkvol_basic /dev/ubi0
+  Running mkvol_bad /dev/ubi0
+  Running mkvol_paral /dev/ubi0
+  Running rsvol /dev/ubi0
+  Running io_basic /dev/ubi0
+  Running io_read /dev/ubi0
+  [io_basic] test_read3():185: function seek() failed with error 22
+  (Invalid argument)
+  [io_basic] test_read3():186: len = 1
+  [io_basic] test_read2():233: offset = 131072
+  [io_basic] test_read1():299: length = 1
+  [io_basic] test_read():358: alignment = 3
+  Error: io_read failed
+  FAILURE
+
+This patch checks offset value before executing 'lseek', invalid offset
+values are filtered.
+
+----------------------------------------
+
+Signed-off-by: Zhihao Cheng <chengzhihao1@huawei.com>
+---
+ tests/ubi-tests/io_read.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/tests/ubi-tests/io_read.c b/tests/ubi-tests/io_read.c
+index 3100ef1..f944a86 100644
+--- a/tests/ubi-tests/io_read.c
++++ b/tests/ubi-tests/io_read.c
+@@ -228,6 +228,10 @@ static int test_read2(const struct ubi_vol_info *vol_info, int len)
+ 				  vol_info->data_bytes);
+ 
+ 	for (i = 0; i < sizeof(offsets)/sizeof(off_t); i++) {
++		/* Filter invalid offset value */
++		if (offsets[i] < 0 || offsets[i] > vol_info->data_bytes)
++			continue;
++
+ 		if (test_read3(vol_info, len, offsets[i])) {
+ 			errorm("offset = %d", offsets[i]);
+ 			return -1;
+-- 
+2.7.4
+
