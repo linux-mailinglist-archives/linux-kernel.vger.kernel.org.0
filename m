@@ -2,114 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 41CF746217
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 17:07:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 792564621F
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 17:09:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726207AbfFNPHh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 11:07:37 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:37509 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725780AbfFNPHh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 11:07:37 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x5EF78rB1747147
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Fri, 14 Jun 2019 08:07:08 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x5EF78rB1747147
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019051801; t=1560524828;
-        bh=mVeTUeS+JAxwsiFo6HpV+7i87tYNDODON5MnOXLcNDw=;
-        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
-        b=yvQPdgIsBV4wpYGOvN/NnD+DwXclvRbOKlu8cQFKHX8UTvaLSs2va+w0rOT94S98e
-         1NGwxEvLKVbdOxNCPfSHl5N+SX7LCT9be2TR418bBWGiGjUFEmiddymt/DbNkoi3td
-         L3RDlDB3z4oW9BJ07FhtmlXG5eZLq1igRZzUXaKY6iqnB/PYGh9kocxmfXIPv1j5M8
-         jG8+8mBMcHBXwTxRAJ5a2QtjmtD3nkZa9tHPAWoNnjSdP85PAtWM2sMRUb/5D4MD0N
-         9HX8Vavbwgx+pxsbG38zSoYDw1M0QXwp0d5GLOeIays1SC3ll0Ra3j4ySZqxJt225I
-         QjwyUU7sBV0JQ==
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x5EF77Zl1747140;
-        Fri, 14 Jun 2019 08:07:07 -0700
-Date:   Fri, 14 Jun 2019 08:07:07 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Mathieu Malaterre <tipbot@zytor.com>
-Message-ID: <tip-83e837269e87436fda1cbf82214a5494fb6b35b1@git.kernel.org>
-Cc:     mingo@kernel.org, linux-kernel@vger.kernel.org, hpa@zytor.com,
-        tglx@linutronix.de, peterz@infradead.org, bp@alien8.de,
-        malat@debian.org
-Reply-To: mingo@kernel.org, hpa@zytor.com, tglx@linutronix.de,
-          linux-kernel@vger.kernel.org, peterz@infradead.org,
-          malat@debian.org, bp@alien8.de
-In-Reply-To: <20190524103252.28575-1-malat@debian.org>
-References: <20190524103252.28575-1-malat@debian.org>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/cleanups] x86/tsc: Move inline keyword to the beginning of
- function declarations
-Git-Commit-ID: 83e837269e87436fda1cbf82214a5494fb6b35b1
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        id S1726358AbfFNPJC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 11:09:02 -0400
+Received: from verein.lst.de ([213.95.11.211]:47751 "EHLO newverein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725789AbfFNPJC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Jun 2019 11:09:02 -0400
+Received: by newverein.lst.de (Postfix, from userid 2407)
+        id EDC7268B05; Fri, 14 Jun 2019 17:08:27 +0200 (CEST)
+Date:   Fri, 14 Jun 2019 17:08:27 +0200
+From:   'Christoph Hellwig' <hch@lst.de>
+To:     Robin Murphy <robin.murphy@arm.com>
+Cc:     'Christoph Hellwig' <hch@lst.de>,
+        David Laight <David.Laight@ACULAB.COM>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
+        "linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
+        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+        David Airlie <airlied@linux.ie>,
+        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+        Intel Linux Wireless <linuxwifi@intel.com>,
+        "intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Ian Abbott <abbotti@mev.co.uk>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        Sean Paul <sean@poorly.run>,
+        "moderated list:ARM PORT" <linux-arm-kernel@lists.infradead.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        H Hartley Sweeten <hsweeten@visionengravers.com>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        Daniel Vetter <daniel@ffwll.ch>
+Subject: Re: [PATCH 16/16] dma-mapping: use exact allocation in
+ dma_alloc_contiguous
+Message-ID: <20190614150827.GA9460@lst.de>
+References: <20190614134726.3827-1-hch@lst.de> <20190614134726.3827-17-hch@lst.de> <a90cf7ec5f1c4166b53c40e06d4d832a@AcuMS.aculab.com> <20190614145001.GB9088@lst.de> <4113cd5f-5c13-e9c7-bc5e-dcf0b60e7054@arm.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-X-Spam-Status: No, score=-3.1 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        T_DATE_IN_FUTURE_96_Q autolearn=ham autolearn_force=no version=3.4.2
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
+In-Reply-To: <4113cd5f-5c13-e9c7-bc5e-dcf0b60e7054@arm.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  83e837269e87436fda1cbf82214a5494fb6b35b1
-Gitweb:     https://git.kernel.org/tip/83e837269e87436fda1cbf82214a5494fb6b35b1
-Author:     Mathieu Malaterre <malat@debian.org>
-AuthorDate: Fri, 24 May 2019 12:32:51 +0200
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Fri, 14 Jun 2019 17:02:09 +0200
+On Fri, Jun 14, 2019 at 04:05:33PM +0100, Robin Murphy wrote:
+> That said, I don't believe this particular patch should make any 
+> appreciable difference - alloc_pages_exact() is still going to give back 
+> the same base address as the rounded up over-allocation would, and 
+> PAGE_ALIGN()ing the size passed to get_order() already seemed to be 
+> pointless.
 
-x86/tsc: Move inline keyword to the beginning of function declarations
-
-The inline keyword was not at the beginning of the function declarations.
-Fix the following warnings triggered when using W=1:
-
-  arch/x86/kernel/tsc.c:62:1: warning: 'inline' is not at beginning of declaration [-Wold-style-declaration]
-  arch/x86/kernel/tsc.c:79:1: warning: 'inline' is not at beginning of declaration [-Wold-style-declaration]
-
-Signed-off-by: Mathieu Malaterre <malat@debian.org>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: trivial@kernel.org
-Cc: kernel-janitors@vger.kernel.org
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Link: https://lkml.kernel.org/r/20190524103252.28575-1-malat@debian.org
-
----
- arch/x86/kernel/tsc.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/arch/x86/kernel/tsc.c b/arch/x86/kernel/tsc.c
-index 0b29e58f288e..75a41bddbc9d 100644
---- a/arch/x86/kernel/tsc.c
-+++ b/arch/x86/kernel/tsc.c
-@@ -59,7 +59,7 @@ struct cyc2ns {
- 
- static DEFINE_PER_CPU_ALIGNED(struct cyc2ns, cyc2ns);
- 
--void __always_inline cyc2ns_read_begin(struct cyc2ns_data *data)
-+__always_inline void cyc2ns_read_begin(struct cyc2ns_data *data)
- {
- 	int seq, idx;
- 
-@@ -76,7 +76,7 @@ void __always_inline cyc2ns_read_begin(struct cyc2ns_data *data)
- 	} while (unlikely(seq != this_cpu_read(cyc2ns.seq.sequence)));
- }
- 
--void __always_inline cyc2ns_read_end(void)
-+__always_inline void cyc2ns_read_end(void)
- {
- 	preempt_enable_notrace();
- }
+True, we actually do get the right alignment just about anywhere.
+Not 100% sure about the various static pool implementations, but we
+can make sure if any didn't we'll do that right thing once those
+get consolidated.
