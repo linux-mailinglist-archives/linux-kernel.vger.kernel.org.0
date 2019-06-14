@@ -2,152 +2,54 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6E26845AD9
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 12:45:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 910B745AD7
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 12:45:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727446AbfFNKpT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 06:45:19 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:45055 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727065AbfFNKpQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 06:45:16 -0400
-Received: by mail-wr1-f66.google.com with SMTP id r16so1976560wrl.11
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2019 03:45:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=1ZO2she5ppWx2Q8JyWUBWFFhbTM0LwZQEDphClt9pDw=;
-        b=ESWZ4uf2DPrhUI+Ux6Pq+ahq6nSiNhZTG8jYcSeneUseGmW75Zj5cES9mKbeDCc6p9
-         rkH9TUYVfFL8T/oqamNBaMdVxz75eLQzbKBMZsyVDT7wiDKSChDULETjtxBqhwuFndPw
-         TZUm26glTE4gMvaJXCT3sjc0RyDuL/6P+RLnKIIgn0BT2T8n4RttoCuuoNLtt1CoROik
-         GuMF+wa/HsH+5732vb8HNOIViJR0mR03XSmuet05ieZmyyFHu2BpUG1BuSUiBN1tDmRq
-         mwldgK0Wp8YJ7vBeg+ehpeG7x1JwT6Bh82aUhVFtz+iLGSW0YravjoQxptNj1fUDc193
-         Ooxg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=1ZO2she5ppWx2Q8JyWUBWFFhbTM0LwZQEDphClt9pDw=;
-        b=YoMnfW+MICIXJjAH2eTn1rXwezCiFx/RiZAKybYxuNtqL48u3mIecnSoKHwiRG49oM
-         vm/xKdt30muXRcEDHVWmiVQZy30Pds1dTQY+8ExfPsnRYdFPo84nqxerX5xYpfzLRhAD
-         a4cT7Jy43qoxftopD2Yal5ZD1fAjOw00cTIHD1viiUyy9IiVQcueDcbGMka8nmxaUeam
-         NvV6IHRySlezLvBBIMPoKq2AVTdEYMH+oz68REf6tUDjQ7F47OQab5tstFKbsr36G/7Z
-         KnT6eyX11g7sor7OC9NwivDbILSTQdHTEcB0WjtOrar/Fs3kJwmOsYQnJ043d0hOLZV3
-         SivQ==
-X-Gm-Message-State: APjAAAXC19qAiWs7K7LSprWZDadmeNgR8V2IUv1VIsCRgw9lYo42P18H
-        EkflPttPL0rqYR01+A0OQ7I=
-X-Google-Smtp-Source: APXvYqzdB/X7weMKQijAxhOggcNp+q++NTTj+4iEV8DKP91I/m3WEyO8E6DpxM49YTDL0DdPfjL5Mw==
-X-Received: by 2002:adf:c5c1:: with SMTP id v1mr45897548wrg.129.1560509114552;
-        Fri, 14 Jun 2019 03:45:14 -0700 (PDT)
-Received: from localhost (p2E5BEF36.dip0.t-ipconnect.de. [46.91.239.54])
-        by smtp.gmail.com with ESMTPSA id d10sm3746676wrp.74.2019.06.14.03.45.13
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Fri, 14 Jun 2019 03:45:14 -0700 (PDT)
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     John Stultz <john.stultz@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Cc:     Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] clocksource: Add suspend clocksource sysfs attribute
-Date:   Fri, 14 Jun 2019 12:45:10 +0200
-Message-Id: <20190614104510.19360-2-thierry.reding@gmail.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190614104510.19360-1-thierry.reding@gmail.com>
-References: <20190614104510.19360-1-thierry.reding@gmail.com>
+        id S1727365AbfFNKpP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 06:45:15 -0400
+Received: from mga05.intel.com ([192.55.52.43]:1446 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727018AbfFNKpP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Jun 2019 06:45:15 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Jun 2019 03:45:14 -0700
+X-ExtLoop1: 1
+Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.157])
+  by fmsmga001.fm.intel.com with SMTP; 14 Jun 2019 03:45:12 -0700
+Received: by lahna (sSMTP sendmail emulation); Fri, 14 Jun 2019 13:45:11 +0300
+Date:   Fri, 14 Jun 2019 13:45:11 +0300
+From:   Mika Westerberg <mika.westerberg@linux.intel.com>
+To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc:     Furquan Shaikh <furquan@google.com>, Len Brown <lenb@kernel.org>,
+        linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        rajatja@google.com
+Subject: Re: [PATCH] ACPI: PM: Clear wake-up device GPEs before enabling
+Message-ID: <20190614104511.GC2640@lahna.fi.intel.com>
+References: <20190516193616.252788-1-furquan@google.com>
+ <13361760.nMXA0SR1Mq@kreacher>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <13361760.nMXA0SR1Mq@kreacher>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thierry Reding <treding@nvidia.com>
+On Thu, Jun 13, 2019 at 10:24:41PM +0200, Rafael J. Wysocki wrote:
+> This patch may cause events to be missed if the GPE.  I guess what you reall mean is
+> something like the patch below.
+> 
+> This should allow the kernel to see the events generated before the GPEs are
+> implicitly enabled, but it should clear them for the explicit users of acpi_enable_gpe().
+> 
+> Mika, what do you think?
 
-Allow the currently selected suspend clocksource to be inspected via
-sysfs. The suspend clocksource can also be set using this attribute,
-which can be useful for debugging.
-
-Signed-off-by: Thierry Reding <treding@nvidia.com>
----
- kernel/time/clocksource.c | 53 ++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 52 insertions(+), 1 deletion(-)
-
-diff --git a/kernel/time/clocksource.c b/kernel/time/clocksource.c
-index 467b36d2f9f8..d963bcecbc96 100644
---- a/kernel/time/clocksource.c
-+++ b/kernel/time/clocksource.c
-@@ -489,7 +489,8 @@ static void __clocksource_suspend_select(struct clocksource *cs)
- 	}
- 
- 	/* Pick the best rating. */
--	if (!suspend_clocksource || cs->rating > suspend_clocksource->rating)
-+	if (!suspend_clocksource || cs->rating > suspend_clocksource->rating ||
-+	    (suspend_clocksource->flags & CLOCK_SOURCE_SUSPEND_NONSTOP) == 0)
- 		suspend_clocksource = cs;
- }
- 
-@@ -1172,10 +1173,60 @@ static ssize_t available_clocksource_show(struct device *dev,
- }
- static DEVICE_ATTR_RO(available_clocksource);
- 
-+static ssize_t suspend_clocksource_show(struct device *dev,
-+					struct device_attribute *attr,
-+					char *buf)
-+{
-+	struct clocksource *clksrc = suspend_clocksource;
-+	ssize_t count = 0;
-+
-+	if (clksrc)
-+		count += snprintf(buf, PAGE_SIZE, "%s\n", clksrc->name);
-+
-+	return count;
-+}
-+
-+static ssize_t suspend_clocksource_store(struct device *dev,
-+					 struct device_attribute *attr,
-+					 const char *buf, size_t count)
-+{
-+	struct clocksource *cs;
-+	char name[CS_NAME_LEN];
-+	ssize_t ret;
-+
-+	ret = sysfs_get_uname(buf, name, count);
-+	if (ret < 0)
-+		return ret;
-+
-+	mutex_lock(&clocksource_mutex);
-+
-+	if (strlen(name) > 0) {
-+		cs = clocksource_lookup(name);
-+		if (cs) {
-+			if (!(cs->flags & CLOCK_SOURCE_SUSPEND_NONSTOP))
-+				pr_warn("using non-persistent clocksource %s for suspend\n",
-+					cs->name);
-+
-+			suspend_clocksource = cs;
-+		} else {
-+			ret = -ENODEV;
-+		}
-+	} else {
-+		clocksource_suspend_select(false);
-+	}
-+
-+	mutex_unlock(&clocksource_mutex);
-+
-+	return ret ? ret : count;
-+}
-+
-+static DEVICE_ATTR_RW(suspend_clocksource);
-+
- static struct attribute *clocksource_attrs[] = {
- 	&dev_attr_current_clocksource.attr,
- 	&dev_attr_unbind_clocksource.attr,
- 	&dev_attr_available_clocksource.attr,
-+	&dev_attr_suspend_clocksource.attr,
- 	NULL
- };
- ATTRIBUTE_GROUPS(clocksource);
--- 
-2.21.0
-
+Looks good to me. I also tested this with two TBT systems (Skull Canyon
+NUC and Dell XPS 9370) using ACPI hotplug and it did not cause any
+problems if I boot the system with device connected.
