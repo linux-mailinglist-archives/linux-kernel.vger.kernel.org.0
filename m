@@ -2,30 +2,31 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5BD4D46679
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 19:55:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3AF214667B
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 19:55:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727569AbfFNRzP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 13:55:15 -0400
-Received: from foss.arm.com ([217.140.110.172]:39548 "EHLO foss.arm.com"
+        id S1727605AbfFNRzT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 13:55:19 -0400
+Received: from foss.arm.com ([217.140.110.172]:39556 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727483AbfFNRzO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 13:55:14 -0400
+        id S1727547AbfFNRzP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Jun 2019 13:55:15 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9CCD8ED1;
-        Fri, 14 Jun 2019 10:55:13 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EE08E106F;
+        Fri, 14 Jun 2019 10:55:14 -0700 (PDT)
 Received: from en101.cambridge.arm.com (en101.cambridge.arm.com [10.1.196.93])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id B50993F718;
-        Fri, 14 Jun 2019 10:55:12 -0700 (PDT)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id D03763F718;
+        Fri, 14 Jun 2019 10:55:13 -0700 (PDT)
 From:   Suzuki K Poulose <suzuki.poulose@arm.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     gregkh@linuxfoundation.org, rafael@kernel.org,
-        suzuki.poulose@arm.com,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        linux-usb@vger.kernel.org
-Subject: [PATCH v2 14/28] drivers: Introduce class_find_device_by_fwnode() helper
-Date:   Fri, 14 Jun 2019 18:54:09 +0100
-Message-Id: <1560534863-15115-15-git-send-email-suzuki.poulose@arm.com>
+        suzuki.poulose@arm.com, Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Harald Freudenberger <freude@linux.ibm.com>,
+        Tomas Winkler <tomas.winkler@intel.com>,
+        Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH v2 15/28] drivers: Introduce class_find_device_by_devt() helper
+Date:   Fri, 14 Jun 2019 18:54:10 +0100
+Message-Id: <1560534863-15115-16-git-send-email-suzuki.poulose@arm.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1560534863-15115-1-git-send-email-suzuki.poulose@arm.com>
 References: <1560534863-15115-1-git-send-email-suzuki.poulose@arm.com>
@@ -35,91 +36,149 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 Add a wrapper to class_find_device() to search for a device
-by the fwnode pointer, reusing the generic match function.
-Also convert the existing users to make use of the new helper.
+by the device type, reusing the generic match function. Also
+convert the existing users.
 
+Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc: Harald Freudenberger <freude@linux.ibm.com>
+Cc: Tomas Winkler <tomas.winkler@intel.com>
+Cc: Arnd Bergmann <arnd@arndb.de>
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Cc: linux-usb@vger.kernel.org
+Acked-by: Harald Freudenberger <freude@linux.ibm.com>
 Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
 ---
- drivers/usb/roles/class.c |  8 +-------
- drivers/usb/typec/class.c |  8 +-------
- include/linux/device.h    | 13 +++++++++++++
- 3 files changed, 15 insertions(+), 14 deletions(-)
+ drivers/base/core.c              |  9 +--------
+ drivers/misc/mei/main.c          |  9 +--------
+ drivers/s390/crypto/zcrypt_api.c | 11 +----------
+ drivers/tty/tty_io.c             |  8 +-------
+ include/linux/device.h           | 12 ++++++++++++
+ 5 files changed, 16 insertions(+), 33 deletions(-)
 
-diff --git a/drivers/usb/roles/class.c b/drivers/usb/roles/class.c
-index 07aaa96..5cd87d8 100644
---- a/drivers/usb/roles/class.c
-+++ b/drivers/usb/roles/class.c
-@@ -85,11 +85,6 @@ enum usb_role usb_role_switch_get_role(struct usb_role_switch *sw)
+diff --git a/drivers/base/core.c b/drivers/base/core.c
+index 053ee2e..e9746cf 100644
+--- a/drivers/base/core.c
++++ b/drivers/base/core.c
+@@ -2839,13 +2839,6 @@ struct device *device_create_with_groups(struct class *class,
  }
- EXPORT_SYMBOL_GPL(usb_role_switch_get_role);
+ EXPORT_SYMBOL_GPL(device_create_with_groups);
  
--static int switch_fwnode_match(struct device *dev, const void *fwnode)
+-static int __match_devt(struct device *dev, const void *data)
 -{
--	return dev_fwnode(dev) == fwnode;
+-	const dev_t *devt = data;
+-
+-	return dev->devt == *devt;
 -}
 -
- static void *usb_role_switch_match(struct device_connection *con, int ep,
- 				   void *data)
- {
-@@ -99,8 +94,7 @@ static void *usb_role_switch_match(struct device_connection *con, int ep,
- 		if (!fwnode_property_present(con->fwnode, con->id))
- 			return NULL;
- 
--		dev = class_find_device(role_class, NULL, con->fwnode,
--					switch_fwnode_match);
-+		dev = class_find_device_by_fwnode(role_class, con->fwnode);
- 	} else {
- 		dev = class_find_device_by_name(role_class, con->endpoint[ep]);
- 	}
-diff --git a/drivers/usb/typec/class.c b/drivers/usb/typec/class.c
-index 18a0687..af4fb73 100644
---- a/drivers/usb/typec/class.c
-+++ b/drivers/usb/typec/class.c
-@@ -205,11 +205,6 @@ static void typec_altmode_put_partner(struct altmode *altmode)
- 	put_device(&adev->dev);
- }
- 
--static int typec_port_fwnode_match(struct device *dev, const void *fwnode)
--{
--	return dev_fwnode(dev) == fwnode;
--}
--
- static void *typec_port_match(struct device_connection *con, int ep, void *data)
+ /**
+  * device_destroy - removes a device that was created with device_create()
+  * @class: pointer to the struct class that this device was registered with
+@@ -2858,7 +2851,7 @@ void device_destroy(struct class *class, dev_t devt)
  {
  	struct device *dev;
-@@ -219,8 +214,7 @@ static void *typec_port_match(struct device_connection *con, int ep, void *data)
- 	 * we need to return ERR_PTR(-PROBE_DEFER) when there is no device.
- 	 */
- 	if (con->fwnode)
--		return class_find_device(typec_class, NULL, con->fwnode,
--					 typec_port_fwnode_match);
-+		return class_find_device_by_fwnode(typec_class, con->fwnode);
  
- 	dev = class_find_device_by_name(typec_class, con->endpoint[ep]);
+-	dev = class_find_device(class, NULL, &devt, __match_devt);
++	dev = class_find_device_by_devt(class, devt);
+ 	if (dev) {
+ 		put_device(dev);
+ 		device_unregister(dev);
+diff --git a/drivers/misc/mei/main.c b/drivers/misc/mei/main.c
+index ad02097..572502a 100644
+--- a/drivers/misc/mei/main.c
++++ b/drivers/misc/mei/main.c
+@@ -858,13 +858,6 @@ static ssize_t dev_state_show(struct device *device,
+ }
+ static DEVICE_ATTR_RO(dev_state);
+ 
+-static int match_devt(struct device *dev, const void *data)
+-{
+-	const dev_t *devt = data;
+-
+-	return dev->devt == *devt;
+-}
+-
+ /**
+  * dev_set_devstate: set to new device state and notify sysfs file.
+  *
+@@ -880,7 +873,7 @@ void mei_set_devstate(struct mei_device *dev, enum mei_dev_state state)
+ 
+ 	dev->dev_state = state;
+ 
+-	clsdev = class_find_device(mei_class, NULL, &dev->cdev.dev, match_devt);
++	clsdev = class_find_device_by_devt(mei_class, dev->cdev.dev);
+ 	if (clsdev) {
+ 		sysfs_notify(&clsdev->kobj, NULL, "dev_state");
+ 		put_device(clsdev);
+diff --git a/drivers/s390/crypto/zcrypt_api.c b/drivers/s390/crypto/zcrypt_api.c
+index 38a5a47..150f623 100644
+--- a/drivers/s390/crypto/zcrypt_api.c
++++ b/drivers/s390/crypto/zcrypt_api.c
+@@ -133,12 +133,6 @@ struct zcdn_device {
+ static int zcdn_create(const char *name);
+ static int zcdn_destroy(const char *name);
+ 
+-/* helper function, matches the devt value for find_zcdndev_by_devt() */
+-static int __match_zcdn_devt(struct device *dev, const void *data)
+-{
+-	return dev->devt == *((dev_t *) data);
+-}
+-
+ /*
+  * Find zcdn device by name.
+  * Returns reference to the zcdn device which needs to be released
+@@ -158,10 +152,7 @@ static inline struct zcdn_device *find_zcdndev_by_name(const char *name)
+  */
+ static inline struct zcdn_device *find_zcdndev_by_devt(dev_t devt)
+ {
+-	struct device *dev =
+-		class_find_device(zcrypt_class, NULL,
+-				  (void *) &devt,
+-				  __match_zcdn_devt);
++	struct device *dev = class_find_device_by_devt(zcrypt_class, devt);
+ 
+ 	return dev ? to_zcdn_dev(dev) : NULL;
+ }
+diff --git a/drivers/tty/tty_io.c b/drivers/tty/tty_io.c
+index 033ac7e..202f640 100644
+--- a/drivers/tty/tty_io.c
++++ b/drivers/tty/tty_io.c
+@@ -2950,17 +2950,11 @@ void do_SAK(struct tty_struct *tty)
+ 
+ EXPORT_SYMBOL(do_SAK);
+ 
+-static int dev_match_devt(struct device *dev, const void *data)
+-{
+-	const dev_t *devt = data;
+-	return dev->devt == *devt;
+-}
+-
+ /* Must put_device() after it's unused! */
+ static struct device *tty_get_device(struct tty_struct *tty)
+ {
+ 	dev_t devt = tty_devnum(tty);
+-	return class_find_device(tty_class, NULL, &devt, dev_match_devt);
++	return class_find_device_by_devt(tty_class, devt);
+ }
+ 
  
 diff --git a/include/linux/device.h b/include/linux/device.h
-index 9228502..52ac911 100644
+index 52ac911..2effcc2 100644
 --- a/include/linux/device.h
 +++ b/include/linux/device.h
-@@ -509,6 +509,19 @@ class_find_device_by_of_node(struct class *class, const struct device_node *np)
- 	return class_find_device(class, NULL, np, device_match_of_node);
+@@ -522,6 +522,18 @@ class_find_device_by_fwnode(struct class *class,
+ 	return class_find_device(class, NULL, fwnode, device_match_fwnode);
  }
  
 +/**
-+ * class_find_device_by_fwnode : device iterator for locating a particular device
-+ * matching the fwnode.
++ * class_find_device_by_devt : device iterator for locating a particular device
++ * matching the device type.
 + * @class: class type
-+ * @fwnode: fwnode of the device to match.
++ * @devt: device type of the device to match.
 + */
-+static inline struct device *
-+class_find_device_by_fwnode(struct class *class,
-+			    const struct fwnode_handle *fwnode)
++static inline struct device *class_find_device_by_devt(struct class *class,
++						       dev_t devt)
 +{
-+	return class_find_device(class, NULL, fwnode, device_match_fwnode);
++	return class_find_device(class, NULL, &devt, device_match_devt);
 +}
 +
  struct class_attribute {
