@@ -2,127 +2,166 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 408E645ACB
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 12:44:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4E14C45AD1
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 12:44:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727197AbfFNKn6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 06:43:58 -0400
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:42559 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726873AbfFNKn6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 06:43:58 -0400
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20190614104356euoutp0236a21edef4fec4241a6f85711d121c5b~oCrNulpBO1196611966euoutp02P
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2019 10:43:56 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20190614104356euoutp0236a21edef4fec4241a6f85711d121c5b~oCrNulpBO1196611966euoutp02P
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1560509036;
-        bh=Zl7VnI5bsj4BuaNyNNSUeOVR4pqArffBJEh0eJbRbws=;
-        h=To:Cc:From:Subject:Date:References:From;
-        b=Ae1H5KsQQy+rjpQC3oXOlZ+Knk4zza9lc3lwkZLGm/7ikJQDgHtbwc68M4hPrztoV
-         5/9FrpF0R5LfHEmSbpL/xKp9f0xHwxkHj0Ag8ce1K+ZqtTK8UeizwyPbKsFCzWVwBP
-         PwvubvsZmNQhLEqozi7lIvS4wRSQDFzf3Z16cFyQ=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20190614104355eucas1p217c5dacecfec33cfdbd7887519d2a78a~oCrNGFicf1341513415eucas1p2Y;
-        Fri, 14 Jun 2019 10:43:55 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges2new.samsung.com (EUCPMTA) with SMTP id C1.B6.04377.B6A730D5; Fri, 14
-        Jun 2019 11:43:55 +0100 (BST)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20190614104355eucas1p236ecb70b6d48f37508f3837cee49b19f~oCrMSQjgh1341513415eucas1p2W;
-        Fri, 14 Jun 2019 10:43:55 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20190614104354eusmtrp276153a14cefbc37a839d65795e31ef03~oCrMCznpo1815618156eusmtrp2v;
-        Fri, 14 Jun 2019 10:43:54 +0000 (GMT)
-X-AuditID: cbfec7f4-12dff70000001119-70-5d037a6bf500
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id F3.C6.04146.A6A730D5; Fri, 14
-        Jun 2019 11:43:54 +0100 (BST)
-Received: from [106.120.51.71] (unknown [106.120.51.71]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20190614104354eusmtip1e5cff7dccf3f6757a4b7145d8b5ae8e8~oCrL0oNKa1678516785eusmtip1h;
-        Fri, 14 Jun 2019 10:43:54 +0000 (GMT)
-To:     linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org
-Cc:     Stephen Rothwell <sfr@canb.auug.org.au>
-From:   Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH] video: fbdev: pvr2fb: fix build warning when compiling as
- module
-Message-ID: <2376f0a7-2511-b52d-c0d1-9162382f8693@samsung.com>
-Date:   Fri, 14 Jun 2019 12:43:56 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
-        Thunderbird/60.6.1
+        id S1727322AbfFNKoP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 06:44:15 -0400
+Received: from foss.arm.com ([217.140.110.172]:59374 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727018AbfFNKoP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Jun 2019 06:44:15 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2A7262B;
+        Fri, 14 Jun 2019 03:44:14 -0700 (PDT)
+Received: from e121166-lin.cambridge.arm.com (unknown [10.1.196.255])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D936F3F246;
+        Fri, 14 Jun 2019 03:45:55 -0700 (PDT)
+Date:   Fri, 14 Jun 2019 11:43:59 +0100
+From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To:     Karthikeyan Mitran <m.karthikeyan@mobiveil.co.in>
+Cc:     "Z.q. Hou" <zhiqiang.hou@nxp.com>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "bhelgaas@google.com" <bhelgaas@google.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "l.subrahmanya@mobiveil.co.in" <l.subrahmanya@mobiveil.co.in>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        Leo Li <leoyang.li@nxp.com>,
+        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+        "will.deacon@arm.com" <will.deacon@arm.com>,
+        Mingkai Hu <mingkai.hu@nxp.com>,
+        "M.h. Lian" <minghuan.lian@nxp.com>,
+        Xiaowei Bao <xiaowei.bao@nxp.com>
+Subject: Re: [PATCHv5 10/20] PCI: mobiveil: Fix the INTx process errors
+Message-ID: <20190614104351.GA29955@e121166-lin.cambridge.arm.com>
+References: <20190412083635.33626-1-Zhiqiang.Hou@nxp.com>
+ <20190412083635.33626-11-Zhiqiang.Hou@nxp.com>
+ <20190612150819.GD15747@redmoon>
+ <CAKnKUHFMH6=ox=qdaUR1kNEhETDCVyu3jQZEj+taEbbMRBRuYA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprEKsWRmVeSWpSXmKPExsWy7djP87rZVcyxBte2aFlc+fqezeJE3wdW
-        i8u75rBZbN17ld2BxaPxxg02j/vdx5k8Pm+SC2CO4rJJSc3JLEst0rdL4Mp4Nv8Za8EM9orz
-        0xwbGH+zdjFyckgImEj8WPWaqYuRi0NIYAWjxMmXbxghnC+MEm2vdjJDOJ8ZJc7vusUG03Kr
-        7whUy3JGiQUHtrNAOG8ZJbqfn2MHqRIRSJBYMX0GI4jNLKAt0fv2PTOIzSZgJTGxfRVYXFgg
-        WGLHv0awQ3gF7CS+XW8Ds1kEVCWWbz/HAmKLCkRI3D+2AapGUOLkzCcsEDPFJW49mc8EYctL
-        bH87B+xUCYHPbBJ/ni5jhDjVReLr3MssELawxKvjW9ghbBmJ/zvnM0E0rGOU+NvxAqp7O6PE
-        8sn/oB61ljh8/CLQag6gFZoS63fpQ4QdJQ5v/cgGEpYQ4JO48VYQ4gg+iUnbpjNDhHklOtqE
-        IKrVJDYs28AGs7Zr50pmCNtDYkbzCqYJjIqzkLw2C8lrs5C8NgvhhgWMLKsYxVNLi3PTU4uN
-        8lLL9YoTc4tL89L1kvNzNzECU8rpf8e/7GDc9SfpEKMAB6MSD+8BK6ZYIdbEsuLK3EOMEhzM
-        SiK886yZY4V4UxIrq1KL8uOLSnNSiw8xSnOwKInzVjM8iBYSSE8sSc1OTS1ILYLJMnFwSjUw
-        rrp3fR2rvvlkSevDqhlVqY9OfdIw+LRpbd9V+2kHrk3cc8ZL9un7vk/Pdn6/1rd1a6Semuz2
-        +BqLWx4lnJ+4q6Ll5x1PM3656mP2iWaLrnt7GapC8g4k/ZgWoLI0wsDz4I0T+Tukvlo5Zrpb
-        VUfZx8aviX4ay2w70dv2aH1tCf+Fg0HS1ek5SizFGYmGWsxFxYkApOjzlyUDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupikeLIzCtJLcpLzFFi42I5/e/4Xd2sKuZYg70vjSyufH3PZnGi7wOr
-        xeVdc9gstu69yu7A4tF44wabx/3u40wenzfJBTBH6dkU5ZeWpCpk5BeX2CpFG1oY6RlaWugZ
-        mVjqGRqbx1oZmSrp29mkpOZklqUW6dsl6GU8m/+MtWAGe8X5aY4NjL9Zuxg5OSQETCRu9R1h
-        6mLk4hASWMoo8WXiIbYuRg6ghIzE8fVlEDXCEn+udbFB1LxmlFh0+z0bSEJEIEHi6ev5YDaz
-        gLZE79v3zCA2m4CVxMT2VYwgtrBAsMSOf41gy3gF7CS+XW8Ds1kEVCWWbz/HAmKLCkRInHm/
-        ggWiRlDi5MwnLBAz1SX+zLvEDGGLS9x6Mp8JwpaX2P52DvMERoFZSFpmIWmZhaRlFpKWBYws
-        qxhFUkuLc9Nziw31ihNzi0vz0vWS83M3MQLjYduxn5t3MF7aGHyIUYCDUYmH94AVU6wQa2JZ
-        cWXuIUYJDmYlEd551syxQrwpiZVVqUX58UWlOanFhxhNgR6ayCwlmpwPjNW8knhDU0NzC0tD
-        c2NzYzMLJXHeDoGDMUIC6YklqdmpqQWpRTB9TBycUg2MRhVfHBUuTVK57xH3W9rR61jrP+bU
-        A+ey9x7Ty2NPdtLY/F/T8+oVa009bT3j1XcmvQrRkfwfcl3NSzlpDU+keuij8pe8bL0J+1Qn
-        V+WfFFyiE2S9V+H+gktX9t65vmz25p9P+TY99P3Jdd9h16Xd7pI+5xiVv0yKuB+wu/tYpV/Q
-        /otMP6KNlFiKMxINtZiLihMBpVOgjZ0CAAA=
-X-CMS-MailID: 20190614104355eucas1p236ecb70b6d48f37508f3837cee49b19f
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20190614104355eucas1p236ecb70b6d48f37508f3837cee49b19f
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20190614104355eucas1p236ecb70b6d48f37508f3837cee49b19f
-References: <CGME20190614104355eucas1p236ecb70b6d48f37508f3837cee49b19f@eucas1p2.samsung.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKnKUHFMH6=ox=qdaUR1kNEhETDCVyu3jQZEj+taEbbMRBRuYA@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add missing #ifndef MODULE around pvr2_get_param_val().
+On Fri, Jun 14, 2019 at 12:38:51PM +0530, Karthikeyan Mitran wrote:
+> Hi Lorenzo and Hou Zhiqiang
+>  PAB_INTP_AMBA_MISC_STAT does have other status in the higher bits, it
+> should have been masked before checking for the status
 
-Fixes: 0f5a5712ad1e ("video: fbdev: pvr2fb: add COMPILE_TEST support")
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
----
- drivers/video/fbdev/pvr2fb.c |    2 ++
- 1 file changed, 2 insertions(+)
+You are the maintainer for this driver, so if there is something to be
+changed you must post a patch to that extent, I do not understand what
+the above means, write the code to fix it, I won't do it.
 
-Index: b/drivers/video/fbdev/pvr2fb.c
-===================================================================
---- a/drivers/video/fbdev/pvr2fb.c
-+++ b/drivers/video/fbdev/pvr2fb.c
-@@ -722,6 +722,7 @@ static struct fb_ops pvr2fb_ops = {
- 	.fb_imageblit	= cfb_imageblit,
- };
- 
-+#ifndef MODULE
- static int pvr2_get_param_val(const struct pvr2_params *p, const char *s,
- 			      int size)
- {
-@@ -733,6 +734,7 @@ static int pvr2_get_param_val(const stru
- 	}
- 	return -1;
- }
-+#endif
- 
- static char *pvr2_get_param_name(const struct pvr2_params *p, int val,
- 			  int size)
+I am getting a bit annoyed with this Mobiveil driver so either you guys
+sort this out or I will have to remove it from the kernel.
+
+> Acked-by: Karthikeyan Mitran <m.karthikeyan@mobiveil.co.in>
+
+Ok I assume this means you tested it but according to what you
+say above, are there still issues with this code path ? Should
+we update the patch ?
+
+Moreover:
+
+https://kernelnewbies.org/PatchCulture
+
+Please read it and never top-post.
+
+Thanks,
+Lorenzo
+
+> On Wed, Jun 12, 2019 at 8:38 PM Lorenzo Pieralisi
+> <lorenzo.pieralisi@arm.com> wrote:
+> >
+> > On Fri, Apr 12, 2019 at 08:36:12AM +0000, Z.q. Hou wrote:
+> > > From: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
+> > >
+> > > In the loop block, there is not code to update the loop key,
+> > > this patch updates the loop key by re-read the INTx status
+> > > register.
+> > >
+> > > This patch also add the clearing of the handled INTx status.
+> > >
+> > > Note: Need MV to test this fix.
+> >
+> > This means INTX were never tested and current code handling them is,
+> > AFAICS, an infinite loop which is very very bad.
+> >
+> > This is a gross bug and must be fixed as soon as possible.
+> >
+> > I want Karthikeyan ACK and Tested-by on this patch.
+> >
+> > Lorenzo
+> >
+> > > Fixes: 9af6bcb11e12 ("PCI: mobiveil: Add Mobiveil PCIe Host Bridge IP driver")
+> > > Signed-off-by: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
+> > > Reviewed-by: Minghuan Lian <Minghuan.Lian@nxp.com>
+> > > Reviewed-by: Subrahmanya Lingappa <l.subrahmanya@mobiveil.co.in>
+> > > ---
+> > > V5:
+> > >  - Corrected and retouched the subject and changelog.
+> > >
+> > >  drivers/pci/controller/pcie-mobiveil.c | 13 +++++++++----
+> > >  1 file changed, 9 insertions(+), 4 deletions(-)
+> > >
+> > > diff --git a/drivers/pci/controller/pcie-mobiveil.c b/drivers/pci/controller/pcie-mobiveil.c
+> > > index 4ba458474e42..78e575e71f4d 100644
+> > > --- a/drivers/pci/controller/pcie-mobiveil.c
+> > > +++ b/drivers/pci/controller/pcie-mobiveil.c
+> > > @@ -361,6 +361,7 @@ static void mobiveil_pcie_isr(struct irq_desc *desc)
+> > >       /* Handle INTx */
+> > >       if (intr_status & PAB_INTP_INTX_MASK) {
+> > >               shifted_status = csr_readl(pcie, PAB_INTP_AMBA_MISC_STAT);
+> > > +             shifted_status &= PAB_INTP_INTX_MASK;
+> > >               shifted_status >>= PAB_INTX_START;
+> > >               do {
+> > >                       for_each_set_bit(bit, &shifted_status, PCI_NUM_INTX) {
+> > > @@ -372,12 +373,16 @@ static void mobiveil_pcie_isr(struct irq_desc *desc)
+> > >                                       dev_err_ratelimited(dev, "unexpected IRQ, INT%d\n",
+> > >                                                           bit);
+> > >
+> > > -                             /* clear interrupt */
+> > > -                             csr_writel(pcie,
+> > > -                                        shifted_status << PAB_INTX_START,
+> > > +                             /* clear interrupt handled */
+> > > +                             csr_writel(pcie, 1 << (PAB_INTX_START + bit),
+> > >                                          PAB_INTP_AMBA_MISC_STAT);
+> > >                       }
+> > > -             } while ((shifted_status >> PAB_INTX_START) != 0);
+> > > +
+> > > +                     shifted_status = csr_readl(pcie,
+> > > +                                                PAB_INTP_AMBA_MISC_STAT);
+> > > +                     shifted_status &= PAB_INTP_INTX_MASK;
+> > > +                     shifted_status >>= PAB_INTX_START;
+> > > +             } while (shifted_status != 0);
+> > >       }
+> > >
+> > >       /* read extra MSI status register */
+> > > --
+> > > 2.17.1
+> > >
+> 
+> 
+> 
+> -- 
+> Thanks,
+> Regards,
+> Karthikeyan Mitran
+> 
+> -- 
+> Mobiveil INC., CONFIDENTIALITY NOTICE: This e-mail message, including any 
+> attachments, is for the sole use of the intended recipient(s) and may 
+> contain proprietary confidential or privileged information or otherwise be 
+> protected by law. Any unauthorized review, use, disclosure or distribution 
+> is prohibited. If you are not the intended recipient, please notify the 
+> sender and destroy all copies and the original message.
