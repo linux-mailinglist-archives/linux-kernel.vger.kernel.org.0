@@ -2,127 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 50186459AD
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 11:55:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AE9BD459B1
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 11:57:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727247AbfFNJzp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 05:55:45 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:56083 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726482AbfFNJzp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 05:55:45 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x5E9tEhd1635965
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Fri, 14 Jun 2019 02:55:14 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x5E9tEhd1635965
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019051801; t=1560506115;
-        bh=Ii1lnuXsbNNNZaFdngiuQTb/j33VkDEjlkzInVWyVsM=;
-        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
-        b=tWV5ZBLtSM9qwATy3OcQNR2oq2UHjvbZ34885IxR48LmEHb44NbaYsAW/9YUbESsQ
-         H9608C0PhpV/Uueh80NZhEbAnWgI/bo45HpPAYmnbovGqDEJfbQO43RQXgrzlpIx4R
-         C/vhyNmNG9kOeQeVJpmV7acTIm5xpeyMyZOO3UlR9mT+qYEuJevV2jRrD8nAxpQtHc
-         c+H1LQjak4LJWjS2tnRqVVbUxHLaZZvf0AZw1HFQS7ChHfVw7T4tnF2JV08nxyDDoq
-         QF29yZLABbs9IT8pTQZDj66gD4jYfqw1DqOS7NAlxU+Xyl5hrM5iSB8dAAq7PtQs43
-         neWqS5bv/mGOQ==
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x5E9tEBb1635962;
-        Fri, 14 Jun 2019 02:55:14 -0700
-Date:   Fri, 14 Jun 2019 02:55:14 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Thomas Gleixner <tipbot@zytor.com>
-Message-ID: <tip-e3ff9c3678b4d80e22d2557b68726174578eaf52@git.kernel.org>
-Cc:     sultan@kerneltoast.com, longman@redhat.com,
-        linux-kernel@vger.kernel.org, arnd@arndb.de, clemens@ladisch.de,
-        tglx@linutronix.de, hpa@zytor.com, Jason@zx2c4.com,
-        mingo@kernel.org, peterz@infradead.org
-Reply-To: Jason@zx2c4.com, hpa@zytor.com, mingo@kernel.org,
-          peterz@infradead.org, tglx@linutronix.de, arnd@arndb.de,
-          clemens@ladisch.de, longman@redhat.com, sultan@kerneltoast.com,
-          linux-kernel@vger.kernel.org
-In-Reply-To: <alpine.DEB.2.21.1906132136280.1791@nanos.tec.linutronix.de>
-References: <alpine.DEB.2.21.1906132136280.1791@nanos.tec.linutronix.de>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:timers/urgent] timekeeping: Repair ktime_get_coarse*()
- granularity
-Git-Commit-ID: e3ff9c3678b4d80e22d2557b68726174578eaf52
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        id S1727320AbfFNJ5D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 05:57:03 -0400
+Received: from frisell.zx2c4.com ([192.95.5.64]:51383 "EHLO frisell.zx2c4.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725812AbfFNJ5D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Jun 2019 05:57:03 -0400
+Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTP id 45c340f9
+        for <linux-kernel@vger.kernel.org>;
+        Fri, 14 Jun 2019 09:24:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=zx2c4.com; h=mime-version
+        :references:in-reply-to:from:date:message-id:subject:to:cc
+        :content-type; s=mail; bh=AVVulO5koPp3MqRQSN8F3CCnp/s=; b=wR2gqi
+        UgxWZzvdzxM/wzWSowXMj0P8TYUMZ5sYfR5EbRwu2zsP9WTSYT/cOP3vrVESjNWH
+        gCWAXlroxQmh7LMWzTdXjjAmaTQX4HORdx/BA355BgSEMm+jiWnqYwTlcO7QG/y4
+        B/Sv+SObsWpCRZs2TzG0qdY21J1vgwaQG8eMW8nc2aK6Q4HqtZEolcNqCl7iJEyD
+        Gttv+oXQ2nHrVUWlEWRY/jDC6P6iKrY4cldpeSRhvUK1GuFQFGU36So4mioA8sb9
+        ts2l6a1xNKHKweXrXRgxzgMoN5dYSuTKPdPFxAELqGUbANo7jKjO/73dfl8JbhuZ
+        Q4DUPPqY4bS5dLiw==
+Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 685c5a28 (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256:NO)
+        for <linux-kernel@vger.kernel.org>;
+        Fri, 14 Jun 2019 09:24:31 +0000 (UTC)
+Received: by mail-ot1-f48.google.com with SMTP id z23so2032465ote.13
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2019 02:57:00 -0700 (PDT)
+X-Gm-Message-State: APjAAAVfr3OBVjgt+leYsxaKi/ny/iaKGMBB17uKOCthmVZYzbhVWVyz
+        8CqvjnELfzELv9rZ85p9qNOSuhJQRO5PkiAmBPE=
+X-Google-Smtp-Source: APXvYqziiVufozTh8voh37sX5EeI7ajB/60Sy6FHSHfaDRrMz5lPRZy5exv3ObKTSI/WydmVQ4SQVWoEDDTFiz580Ps=
+X-Received: by 2002:a9d:67d5:: with SMTP id c21mr28823037otn.243.1560506219375;
+ Fri, 14 Jun 2019 02:56:59 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
-X-Spam-Status: No, score=-3.1 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        T_DATE_IN_FUTURE_96_Q autolearn=ham autolearn_force=no version=3.4.2
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
+References: <CAHmME9qBDtO1vJrA2Ch3SQigsu435wR7Q3vTm_3R=u=BE49S-Q@mail.gmail.com>
+ <alpine.DEB.2.21.1906112257120.2214@nanos.tec.linutronix.de>
+ <20190612090257.GF3436@hirez.programming.kicks-ass.net> <CAHmME9obwzZ5x=p3twDfNYux+kg0h4QAGe0ePAkZ2KqvguBK3g@mail.gmail.com>
+ <CAK8P3a15NTV=njOjz-ccYL8=_q_MdEru0A+jeE=f7ufUTOOTgw@mail.gmail.com>
+ <CAHmME9pOWk_ZteUZc_PT19rMn1kfYcXtmLcyAy5sncdV1tNuiQ@mail.gmail.com>
+ <CAK8P3a3DpRvk1Mw_MKs8wAbRJbMUQoY2UTgK1CF8UOiBQg=btw@mail.gmail.com>
+ <CAHmME9pVeYBkUX058EA-W4ZkEch=enPsiPioWnkVLK03djuQ9A@mail.gmail.com>
+ <alpine.DEB.2.21.1906131822300.1791@nanos.tec.linutronix.de>
+ <CAHmME9q1ihF617=Gjw9k9BK7OC9Ghnzfnfi6LfvJ8DG+vrQOqA@mail.gmail.com>
+ <alpine.DEB.2.21.1906132136280.1791@nanos.tec.linutronix.de>
+ <CAHmME9qa-8J0-x8zmcBrSg_iyPNS02h5CFvhFfXpNth60OQsBg@mail.gmail.com> <alpine.DEB.2.21.1906141131570.1722@nanos.tec.linutronix.de>
+In-Reply-To: <alpine.DEB.2.21.1906141131570.1722@nanos.tec.linutronix.de>
+From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
+Date:   Fri, 14 Jun 2019 11:56:47 +0200
+X-Gmail-Original-Message-ID: <CAHmME9r7EX6g-r=qB=jRCPhKKTDXVt4PMsm0xF0o26qwdP8=4A@mail.gmail.com>
+Message-ID: <CAHmME9r7EX6g-r=qB=jRCPhKKTDXVt4PMsm0xF0o26qwdP8=4A@mail.gmail.com>
+Subject: Re: infinite loop in read_hpet from ktime_get_boot_fast_ns
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Clemens Ladisch <clemens@ladisch.de>,
+        Sultan Alsawaf <sultan@kerneltoast.com>,
+        Waiman Long <longman@redhat.com>, X86 ML <x86@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  e3ff9c3678b4d80e22d2557b68726174578eaf52
-Gitweb:     https://git.kernel.org/tip/e3ff9c3678b4d80e22d2557b68726174578eaf52
-Author:     Thomas Gleixner <tglx@linutronix.de>
-AuthorDate: Thu, 13 Jun 2019 21:40:45 +0200
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Fri, 14 Jun 2019 11:51:44 +0200
+Hi Thomas,
 
-timekeeping: Repair ktime_get_coarse*() granularity
+On Fri, Jun 14, 2019 at 11:50 AM Thomas Gleixner <tglx@linutronix.de> wrote:
+> jiffies64 uses a seqcount on 32bit as well.
 
-Jason reported that the coarse ktime based time getters advance only once
-per second and not once per tick as advertised.
+Right, but not 64-bit, which is some sort of improvement I suppose.
 
-The code reads only the monotonic base time, which advances once per
-second. The nanoseconds are accumulated on every tick in xtime_nsec up to
-a second and the regular time getters take this nanoseconds offset into
-account, but the ktime_get_coarse*() implementation fails to do so.
+> Hrm, I'm not a great fan of these shortcuts which cut corners based on
+> 'somewhat rarely, so it should not matter'. Should not matter always
+> strikes back at some point. :)
 
-Add the accumulated xtime_nsec value to the monotonic base time to get the
-proper per tick advancing coarse tinme.
+What's the actual rare event you have in mind? That on 32-bits, only
+half of the value is updated while resuming from sleep? But isn't
+there already a race in that case? Namely, either the boot offset is
+never queried until the system has fully resumed (safe), or there's
+actually some overlap, where the boot offset is queried on resumption
+before it's updated. In the former case, a race isn't possible because
+of other locking. In the latter case, there's already a race
+contingent on the same instructions executing that's way worse. So I
+wonder if this is in the category of "hasn't ever mattered" rather
+than "should not matter".
 
-Fixes: b9ff604cff11 ("timekeeping: Add ktime_get_coarse_with_offset")
-Reported-by: Jason A. Donenfeld <Jason@zx2c4.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Tested-by: Jason A. Donenfeld <Jason@zx2c4.com>
-Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Clemens Ladisch <clemens@ladisch.de>
-Cc: Sultan Alsawaf <sultan@kerneltoast.com>
-Cc: Waiman Long <longman@redhat.com>
-Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/alpine.DEB.2.21.1906132136280.1791@nanos.tec.linutronix.de
+> So what you are looking for is jiffies based on boot time?
 
----
- kernel/time/timekeeping.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+Right. Just sent a patch.
 
-diff --git a/kernel/time/timekeeping.c b/kernel/time/timekeeping.c
-index 85f5912d8f70..44b726bab4bd 100644
---- a/kernel/time/timekeeping.c
-+++ b/kernel/time/timekeeping.c
-@@ -808,17 +808,18 @@ ktime_t ktime_get_coarse_with_offset(enum tk_offsets offs)
- 	struct timekeeper *tk = &tk_core.timekeeper;
- 	unsigned int seq;
- 	ktime_t base, *offset = offsets[offs];
-+	u64 nsecs;
- 
- 	WARN_ON(timekeeping_suspended);
- 
- 	do {
- 		seq = read_seqcount_begin(&tk_core.seq);
- 		base = ktime_add(tk->tkr_mono.base, *offset);
-+		nsecs = tk->tkr_mono.xtime_nsec >> tk->tkr_mono.shift;
- 
- 	} while (read_seqcount_retry(&tk_core.seq, seq));
- 
--	return base;
--
-+	return base + nsecs;
- }
- EXPORT_SYMBOL_GPL(ktime_get_coarse_with_offset);
- 
+Jason
