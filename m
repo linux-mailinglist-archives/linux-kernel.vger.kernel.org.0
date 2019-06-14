@@ -2,63 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6AE3946632
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 19:52:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C909C46643
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 19:53:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726877AbfFNRwF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 13:52:05 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:56698 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726319AbfFNRwE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 13:52:04 -0400
-Received: from zn.tnic (p200300EC2F097F008D9D08C27DC27982.dip0.t-ipconnect.de [IPv6:2003:ec:2f09:7f00:8d9d:8c2:7dc2:7982])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id DF1021EC0B6E;
-        Fri, 14 Jun 2019 19:52:02 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1560534723;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=ZhNpbjZ/sBf+ed16pzSV5IxgxQnNnZX7AhIWlrWLi88=;
-        b=DqI2VOouM8YhCWnmDBm5e1AV0aRPDsWP4C3Kf1OGU8kjkdlZ1PuyqQC3ZCounMOdi5KV/k
-        4Y1ReZB1sPHffVjWWQeKASgC1QJFFZtoxmYwFnbTeYe/7+ytsQ7vFrZbjczA9cv8k82jcj
-        Dr6mcduvELwG/yL6Qzfn+SPXXS2zqq8=
-Date:   Fri, 14 Jun 2019 19:51:59 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     YueHaibing <yuehaibing@huawei.com>
-Cc:     tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
-        x86@kernel.org, puwen@hygon.cn, bhelgaas@google.com,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH -next] x86/amd_nb: Make hygon_nb_misc_ids static
-Message-ID: <20190614175159.GO2586@zn.tnic>
-References: <20190614155441.22076-1-yuehaibing@huawei.com>
+        id S1727141AbfFNRwj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 13:52:39 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:38646 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726757AbfFNRwf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Jun 2019 13:52:35 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Sender:Content-Transfer-Encoding:
+        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Reply-To:Content-Type:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=C0W3exYft1KrUqFyOJUCPkgo7W6ZH/A+goYD/OL6mwQ=; b=XbR2pPbkWupU9wSy235pIngyj
+        w8ihDUcQfCxiy9ZmKtW+eKdu1ujaV83+ZZG85GMTTQD0XeYMxQnF/yqH4OQNjta7byrOQrVoe45ry
+        yhtieTkPeAdw2wZnSs08p8/PfuWpZRw2FP4j7QtoRu2rXCMRMXTlWy5qQ/KqMierhkRA9G+qvCW5j
+        ahUctCEciLduTBycBl7MAn+mygZqTL+r7u+ytRP7oJlFPlEDPAXIBwpujXBKnrZRFNFdHPWX/Kl9C
+        XYjWsQXRHrb4x9ZvO13SsUgO8vNnp2osAU0LTFohVXQBeUztHRAa0Y46v9+6RTHwsL23vNGeySbFR
+        IFscEwugA==;
+Received: from 177.133.85.52.dynamic.adsl.gvt.net.br ([177.133.85.52] helo=bombadil.infradead.org)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1hbqNO-0000PW-JU; Fri, 14 Jun 2019 17:52:34 +0000
+Received: from mchehab by bombadil.infradead.org with local (Exim 4.92)
+        (envelope-from <mchehab@bombadil.infradead.org>)
+        id 1hbqNL-0002OT-MW; Fri, 14 Jun 2019 14:52:31 -0300
+From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Mauro Carvalho Chehab <mchehab@infradead.org>,
+        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+        Rajat Jain <rajatja@google.com>,
+        Bjorn Helgaas <bhelgaas@google.com>
+Subject: [PATCH v2 01/16] ABI: sysfs-bus-pci-devices-aer_stats uses an invalid tag
+Date:   Fri, 14 Jun 2019 14:52:15 -0300
+Message-Id: <3b8d7c64f887ddea01df3c4eeabc745c8ec45406.1560534648.git.mchehab+samsung@kernel.org>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190614155441.22076-1-yuehaibing@huawei.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 14, 2019 at 11:54:41PM +0800, YueHaibing wrote:
-> Fix sparse warning:
-> 
-> arch/x86/kernel/amd_nb.c:74:28: warning:
->  symbol 'hygon_nb_misc_ids' was not declared. Should it be static?
-> 
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-	       ^^^^^^^^^^^^^^^^^
+According with Documentation/ABI/, the right tag to describe
+an ABI symbol is "What:", and not "Where:".
 
-Ha, what is that? :)
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+---
+ .../ABI/testing/sysfs-bus-pci-devices-aer_stats      | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-A new test bot?
-
+diff --git a/Documentation/ABI/testing/sysfs-bus-pci-devices-aer_stats b/Documentation/ABI/testing/sysfs-bus-pci-devices-aer_stats
+index 4b0318c99507..ff229d71961c 100644
+--- a/Documentation/ABI/testing/sysfs-bus-pci-devices-aer_stats
++++ b/Documentation/ABI/testing/sysfs-bus-pci-devices-aer_stats
+@@ -9,7 +9,7 @@ errors may be "seen" / reported by the link partner and not the
+ problematic endpoint itself (which may report all counters as 0 as it never
+ saw any problems).
+ 
+-Where:		/sys/bus/pci/devices/<dev>/aer_dev_correctable
++What:		/sys/bus/pci/devices/<dev>/aer_dev_correctable
+ Date:		July 2018
+ Kernel Version: 4.19.0
+ Contact:	linux-pci@vger.kernel.org, rajatja@google.com
+@@ -31,7 +31,7 @@ Header Log Overflow 0
+ TOTAL_ERR_COR 2
+ -------------------------------------------------------------------------
+ 
+-Where:		/sys/bus/pci/devices/<dev>/aer_dev_fatal
++What:		/sys/bus/pci/devices/<dev>/aer_dev_fatal
+ Date:		July 2018
+ Kernel Version: 4.19.0
+ Contact:	linux-pci@vger.kernel.org, rajatja@google.com
+@@ -62,7 +62,7 @@ TLP Prefix Blocked Error 0
+ TOTAL_ERR_FATAL 0
+ -------------------------------------------------------------------------
+ 
+-Where:		/sys/bus/pci/devices/<dev>/aer_dev_nonfatal
++What:		/sys/bus/pci/devices/<dev>/aer_dev_nonfatal
+ Date:		July 2018
+ Kernel Version: 4.19.0
+ Contact:	linux-pci@vger.kernel.org, rajatja@google.com
+@@ -103,19 +103,19 @@ collectors) that are AER capable. These indicate the number of error messages as
+ device, so these counters include them and are thus cumulative of all the error
+ messages on the PCI hierarchy originating at that root port.
+ 
+-Where:		/sys/bus/pci/devices/<dev>/aer_stats/aer_rootport_total_err_cor
++What:		/sys/bus/pci/devices/<dev>/aer_stats/aer_rootport_total_err_cor
+ Date:		July 2018
+ Kernel Version: 4.19.0
+ Contact:	linux-pci@vger.kernel.org, rajatja@google.com
+ Description:	Total number of ERR_COR messages reported to rootport.
+ 
+-Where:	    /sys/bus/pci/devices/<dev>/aer_stats/aer_rootport_total_err_fatal
++What:	    /sys/bus/pci/devices/<dev>/aer_stats/aer_rootport_total_err_fatal
+ Date:		July 2018
+ Kernel Version: 4.19.0
+ Contact:	linux-pci@vger.kernel.org, rajatja@google.com
+ Description:	Total number of ERR_FATAL messages reported to rootport.
+ 
+-Where:	    /sys/bus/pci/devices/<dev>/aer_stats/aer_rootport_total_err_nonfatal
++What:	    /sys/bus/pci/devices/<dev>/aer_stats/aer_rootport_total_err_nonfatal
+ Date:		July 2018
+ Kernel Version: 4.19.0
+ Contact:	linux-pci@vger.kernel.org, rajatja@google.com
 -- 
-Regards/Gruss,
-    Boris.
+2.21.0
 
-Good mailing practices for 400: avoid top-posting and trim the reply.
