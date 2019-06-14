@@ -2,62 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7168845779
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 10:29:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 43CED4577B
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 10:29:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726771AbfFNI3L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 04:29:11 -0400
-Received: from slot0.akontraders.ga ([178.156.202.151]:51892 "EHLO
-        slot0.akontraders.ga" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726259AbfFNI3L (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 04:29:11 -0400
-DKIM-Signature: v=1; a=rsa-sha1; c=relaxed/relaxed; s=dkim; d=akontraders.ga;
- h=Content-Type:MIME-Version:Content-Transfer-Encoding:Content-Description:Subject:To:From:Date:Reply-To:Message-ID; i=purchase2@akontraders.ga;
- bh=onxYcir3NvpNjk2I/gjm/O+ljxo=;
- b=BgDmW7DlyVa0K7O6+KVkR2RBIDwIg33K4zt5Mk1klyuwpiTJHDrweN3t44szCuvpfGmUqvtM2gny
-   5PuRigwNpAdOQBoarxOi1cTdoBg8iXGjwGMwI868PWvXfvniVII94a1MWEQPc5kZEx/NW64UDTfl
-   5YI/4KYhDRt8jUwWdMk36i7HYfP++/VyxSR/5/g2CJQCIVKcicAyjdkG/ZaledES3mloKGQqivgQ
-   QhhTedOZ71TN0pvqBZzOPUFlHipFzIA+VsKQhI/BUV44GZIi42Re7I4X4ulb++YmO2rNxLA9jNlG
-   1FBcU808mfaMU22Ztdgb6oWTbgmrVxMQuwHLuQ==
-DomainKey-Signature: a=rsa-sha1; c=nofws; q=dns; s=dkim; d=akontraders.ga;
- b=Yo/VUzl34md0GEbB5y06V5F8I/6mPv17QKVi5S5PG5JSClmB+V0nK37QCIXb2Ue07Grzb4kFjnWO
-   mipMZvNXsrlfNaCTQHmj5jGttC8xbHpR88GXenySZKoJOYYEIi00EcVfs5nyPf8+4ggvklKsWa+4
-   S7/OiIH/TW8q/ldUqC6SqzPdmuPgNjnHaJT4/SwZKha0A3FpiDHnsNCbiy5skRgH5ihusAopP3KD
-   G3jV6aJL5uDDTPd0vBB/kFag2MTZ2ebYs2CB9gHlZNF7HOGgbu7xhXSTTNFZeWTeJ0XRxFwiS7DR
-   UVivoxp6EWv56n0lUgFtYD829F+ypDyzqM7Q8w==;
-Content-Type: text/plain; charset="iso-8859-1"
+        id S1726792AbfFNI3j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 04:29:39 -0400
+Received: from mx2.suse.de ([195.135.220.15]:42818 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726259AbfFNI3j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Jun 2019 04:29:39 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 399EFAF7D;
+        Fri, 14 Jun 2019 08:29:38 +0000 (UTC)
+Message-ID: <4bb29ccf9848d7147cf975d8ed1f7f649ed72be0.camel@suse.de>
+Subject: Re: Regression post "HID: core: move Usage Page concatenation to
+ Main item"
+From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+To:     Jean-Baptiste =?ISO-8859-1?Q?Th=E9ou?= <jb@essential.com>,
+        Jiri Kosina <jikos@kernel.org>, linux-input@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date:   Fri, 14 Jun 2019 10:29:36 +0200
+In-Reply-To: <CAEXycp+Y-x7N_Yr==Xy_CT5K_a1DZYc85w1OUV+cKC5ZN+KB1g@mail.gmail.com>
+References: <CAEXycp+Y-x7N_Yr==Xy_CT5K_a1DZYc85w1OUV+cKC5ZN+KB1g@mail.gmail.com>
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-U9yRqFBIo6enOd/x5jVj"
+User-Agent: Evolution 3.32.2 
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Description: Mail message body
-Subject: INQUIRY #0059BHA..
-To:     Recipients <purchase2@akontraders.ga>
-From:   "info" <purchase2@akontraders.ga>
-Date:   Fri, 14 Jun 2019 11:29:03 +0300
-Reply-To: jpexcc@aol.com
-Message-ID: <0.0.8.8FD.1D5228B2DD85A66.0@slot0.akontraders.ga>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello dear,
- =
 
-We are in the market for your products after meeting at your stand during l=
-ast expo.
- =
+--=-U9yRqFBIo6enOd/x5jVj
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Please kindly send us your latest catalog and price list so as to start a n=
-ew project/order as promised during the exhibition. =
+On Fri, 2019-06-14 at 09:01 +0900, Jean-Baptiste Th=C3=A9ou wrote:
+> Hi,
+>=20
+> This patch (58e75155009cc800005629955d3482f36a1e0eec) is triggering a
+> regression with the following descriptor (report not working as
+> expected)
+>=20
+>=20
+https://partner-android.googlesource.com/platform/cts/+/refs/heads/q-fs-rel=
+ease/tests/tests/hardware/res/raw/asus_gamepad_register.json
+>=20
+> Didn't see anything obviously wrong with this gamepad descriptor, so
+> not sure what's trigger the regression.
+>=20
 
- =
+I'll have a look at it.
 
-I would appreciate your response about the above details required so we can=
- revert back to you asap.
- =
+Do you have any more information on the regression? What exactly isn't work=
+ing?
 
-Kind regards
- =
+Regards,
+Nicolas
 
-Rhema Zoeh
+
+--=-U9yRqFBIo6enOd/x5jVj
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEErOkkGDHCg2EbPcGjlfZmHno8x/4FAl0DWvAACgkQlfZmHno8
+x/7FBAf+JzgyfKk2vvWqED/dX0TFOZmtkPT14VCNY/I1UISIYlrf68w0q0h5KR6d
+Dx4KWGlQ9WcoLjB2cn4qkKs3SLdCRJ/wSKoJhRvMGJQvw3xjGN+aAyk7F0/y199E
+Or65Ty5CbADBWKMyAt5yzxyn+NFNvkLkU3Au0WnUvRdBFwFVz72vqLUQd10UU6GD
+yGi2e7rRzm+PUpj5npx/Vw3K1IVl1f0Xax7JvXY237ZNaobcktWLqv57nJKWyaQ4
+hCjlChopG2mITmZFLuIXQ28qRpoAKNrzMS8hJ2knHN+CFDKzCl+gGMPkmVAmc7fl
+wxGT+xw9cNMKi0iDWY2alW1SKyESCw==
+=ZkvD
+-----END PGP SIGNATURE-----
+
+--=-U9yRqFBIo6enOd/x5jVj--
+
