@@ -2,91 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5E89C4641D
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 18:30:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2EBC446422
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 18:31:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726073AbfFNQam (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 12:30:42 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:39636 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725801AbfFNQam (ORCPT
+        id S1726165AbfFNQbI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 12:31:08 -0400
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:10277 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725808AbfFNQbI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 12:30:42 -0400
-Received: by mail-qt1-f193.google.com with SMTP id i34so3145702qta.6;
-        Fri, 14 Jun 2019 09:30:41 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=jMjniYLe1gr6/AMUsfiLEF+RmBgBhFISx6JTCsfFayw=;
-        b=dylpHzVutdtvz80h4E1MALMrkF9zOCisPlXnDYM9KgCx7i+2LHdHkYBzgFgEJ8dGXF
-         UAprhzVtH+tEIJKKWjuQUBEPBLWbjubMFjuWEnVEGzSfZcy5ywQol5zb/0PT/FA3/8nO
-         BARpeRjPtzZYf6+9scil6YIUZDHH+ESX2MZSu6HCIWUMbn+fIPglWbXbRdMf+S2oDptM
-         h18CtxctbbD74q7yImTnOpvHWJrDAWaJdgpcjHZy2ubt1TdU98VB7tnWCfrXj4/L/fF5
-         cJztCXgvrqa8CfeMCzTTmKWlzSEaKllFz22lJmLIWRYnOX+wNPXqlHuf1LpByJSujK68
-         n1Pw==
-X-Gm-Message-State: APjAAAVyEsBKlw6ZuY9CTXrRtZsfo62mJSEbkVWMuPMSnOvd2TiripqO
-        +j8rftSpTyBB9tz2Rfzjqhn5yt4jzg==
-X-Google-Smtp-Source: APXvYqyq8hzzFgEGvYC87jNq+3O710Dm+93YPe7JOG/z4/1WC3Xyz09BCnowTVLy+F+fmhIrcXUSQg==
-X-Received: by 2002:ac8:2ae8:: with SMTP id c37mr27905229qta.267.1560529840914;
-        Fri, 14 Jun 2019 09:30:40 -0700 (PDT)
-Received: from localhost ([64.188.179.243])
-        by smtp.gmail.com with ESMTPSA id s23sm2624864qtj.56.2019.06.14.09.30.39
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Fri, 14 Jun 2019 09:30:40 -0700 (PDT)
-Date:   Fri, 14 Jun 2019 10:30:39 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Markus Reichl <m.reichl@fivetechno.de>,
-        =?iso-8859-1?Q?M=E5ns_Rullg=E5rd?= <mans@mansr.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Peter Chen <peter.chen@nxp.com>,
-        Alan Stern <stern@rowland.harvard.edu>
-Subject: Re: [PATCH 1/5] dt-bindings: switch Exynos EHCI/OHCI bindings to use
- array of generic PHYs
-Message-ID: <20190614163039.GA24384@bogus>
-References: <20190521115849.9882-1-m.szyprowski@samsung.com>
- <CGME20190521120107eucas1p1a56efaa0e7f2117063e70683276edc10@eucas1p1.samsung.com>
- <20190521115849.9882-2-m.szyprowski@samsung.com>
+        Fri, 14 Jun 2019 12:31:08 -0400
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5d03cbcb0000>; Fri, 14 Jun 2019 09:31:07 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Fri, 14 Jun 2019 09:31:07 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Fri, 14 Jun 2019 09:31:07 -0700
+Received: from HQMAIL102.nvidia.com (172.18.146.10) by HQMAIL104.nvidia.com
+ (172.18.146.11) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 14 Jun
+ 2019 16:31:07 +0000
+Received: from HQMAIL107.nvidia.com (172.20.187.13) by HQMAIL102.nvidia.com
+ (172.18.146.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 14 Jun
+ 2019 16:31:06 +0000
+Received: from hqnvemgw02.nvidia.com (172.16.227.111) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
+ Transport; Fri, 14 Jun 2019 16:31:06 +0000
+Received: from dhcp-10-19-65-14.client.nvidia.com (Not Verified[10.19.65.14]) by hqnvemgw02.nvidia.com with Trustwave SEG (v7,5,8,10121)
+        id <B5d03cbc80002>; Fri, 14 Jun 2019 09:31:05 -0700
+From:   Bitan Biswas <bbiswas@nvidia.com>
+To:     Jassi Brar <jassisinghbrar@gmail.com>,
+        Thierry Reding <treding@nvidia.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        <linux-kernel@vger.kernel.org>, <linux-tegra@vger.kernel.org>
+CC:     Bitan Biswas <bbiswas@nvidia.com>
+Subject: [PATCH V2 1/2] mailbox: tegra: hsp: add noirq resume
+Date:   Fri, 14 Jun 2019 09:31:00 -0700
+Message-ID: <1560529861-31376-1-git-send-email-bbiswas@nvidia.com>
+X-Mailer: git-send-email 2.7.4
+X-NVConfidentiality: public
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190521115849.9882-2-m.szyprowski@samsung.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1560529867; bh=kY8VvquYLGjeRdDquvZL6OISFhZiac6UhQbP3UIP5JE=;
+        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
+         X-NVConfidentiality:MIME-Version:Content-Type;
+        b=q+pR+ptSZk7iIYbX4kggcTHh1rRcw1G0HKLD/RkTLBsO2h/xnsfGs1RulBUEuqDLE
+         qc43SB2OkZJtQXBjF2Cv2Dv2LYVmUT5weYFet6NbQ7U/LpUz38nu1F8pPjh47fCdP1
+         qaEVdM+wdVgovo6LUNeTm5N/EdNTrMzFZRIaNq5B5d6hugM9zHkS06f6mSasZva3i3
+         ZAQu+Tcuo2c8QIhJYTU9uWNaJqgdy5tLH8Kqb54s32YAoCeAyiHadfhQ+5yfnIgC3j
+         unZvygFHS5CjEPeDuCHGd79E62wn26A033Ynxe3vRibfkcSInHPoC0JwGp4DPWpK8Y
+         zxWQnSl3bN7pw==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 21, 2019 at 01:58:45PM +0200, Marek Szyprowski wrote:
-> Commit 69bec7259853 ("USB: core: let USB device know device node") added
-> support for attaching devicetree node for USB devices. Those nodes are
-> children of their USB host controller. However Exynos EHCI and OHCI
-> driver bindings already define child-nodes for each physical root hub
-> port and assigns respective PHY controller and parameters to them. This
-> leads to the conflict. A workaround for it has been merged as commit
-> 01d4071486fe ("usb: exynos: add workaround for the USB device bindings
-> conflict"), but it disabled support for USB device binding for Exynos
-> EHCI/OHCI controllers.
-> 
-> To resolve it properly, lets move PHYs from the sub-nodes to a standard
-> array under the 'phys' property.
-> 
-> Suggested-by: Måns Rullgård <mans@mansr.com>
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
->  .../devicetree/bindings/usb/exynos-usb.txt    | 41 +++++++------------
->  1 file changed, 14 insertions(+), 27 deletions(-)
+Add noirq resume instead of resume callback for Tegra HSP. Tegra HSP
+resume needs tegra_hsp_doorbell_startup() call to fix timeout error for
+tegra_bpmp_transfer() during genpd resume noirq on Jetson TX2.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Bitan Biswas <bbiswas@nvidia.com>
+---
+ drivers/mailbox/tegra-hsp.c | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
 
-The old way would also conflict with the usb-connector binding as that 
-uses the graph binding.
+diff --git a/drivers/mailbox/tegra-hsp.c b/drivers/mailbox/tegra-hsp.c
+index 91f1a0c..91e223e 100644
+--- a/drivers/mailbox/tegra-hsp.c
++++ b/drivers/mailbox/tegra-hsp.c
+@@ -775,6 +775,12 @@ static int __maybe_unused tegra_hsp_resume(struct device *dev)
+ {
+ 	struct tegra_hsp *hsp = dev_get_drvdata(dev);
+ 	unsigned int i;
++	struct tegra_hsp_doorbell *db;
++
++	list_for_each_entry(db, &hsp->doorbells, list) {
++		if (db && db->channel.chan)
++			tegra_hsp_doorbell_startup(db->channel.chan);
++	}
+ 
+ 	for (i = 0; i < hsp->num_sm; i++) {
+ 		struct tegra_hsp_mailbox *mb = &hsp->mailboxes[i];
+@@ -786,7 +792,9 @@ static int __maybe_unused tegra_hsp_resume(struct device *dev)
+ 	return 0;
+ }
+ 
+-static SIMPLE_DEV_PM_OPS(tegra_hsp_pm_ops, NULL, tegra_hsp_resume);
++static const struct dev_pm_ops tegra_hsp_pm_ops = {
++	.resume_noirq = tegra_hsp_resume,
++};
+ 
+ static const struct tegra_hsp_db_map tegra186_hsp_db_map[] = {
+ 	{ "ccplex", TEGRA_HSP_DB_MASTER_CCPLEX, HSP_DB_CCPLEX, },
+-- 
+2.7.4
 
-Rob
