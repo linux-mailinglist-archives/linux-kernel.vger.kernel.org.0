@@ -2,100 +2,51 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9035D45911
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 11:44:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 02D324591C
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 11:46:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727188AbfFNJoK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 05:44:10 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:37277 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727038AbfFNJoJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 05:44:09 -0400
-Received: from [5.158.153.52] (helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1hbikd-0006Lk-DM; Fri, 14 Jun 2019 11:44:03 +0200
-Date:   Fri, 14 Jun 2019 11:44:03 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     "Jason A. Donenfeld" <Jason@zx2c4.com>
-cc:     Arnd Bergmann <arnd@arndb.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Clemens Ladisch <clemens@ladisch.de>,
-        Sultan Alsawaf <sultan@kerneltoast.com>,
-        Waiman Long <longman@redhat.com>, X86 ML <x86@kernel.org>
-Subject: Re: infinite loop in read_hpet from ktime_get_boot_fast_ns
-In-Reply-To: <CAHmME9qa-8J0-x8zmcBrSg_iyPNS02h5CFvhFfXpNth60OQsBg@mail.gmail.com>
-Message-ID: <alpine.DEB.2.21.1906141131570.1722@nanos.tec.linutronix.de>
-References: <CAHmME9qBDtO1vJrA2Ch3SQigsu435wR7Q3vTm_3R=u=BE49S-Q@mail.gmail.com> <alpine.DEB.2.21.1906112257120.2214@nanos.tec.linutronix.de> <20190612090257.GF3436@hirez.programming.kicks-ass.net> <CAHmME9obwzZ5x=p3twDfNYux+kg0h4QAGe0ePAkZ2KqvguBK3g@mail.gmail.com>
- <CAK8P3a15NTV=njOjz-ccYL8=_q_MdEru0A+jeE=f7ufUTOOTgw@mail.gmail.com> <CAHmME9pOWk_ZteUZc_PT19rMn1kfYcXtmLcyAy5sncdV1tNuiQ@mail.gmail.com> <CAK8P3a3DpRvk1Mw_MKs8wAbRJbMUQoY2UTgK1CF8UOiBQg=btw@mail.gmail.com> <CAHmME9pVeYBkUX058EA-W4ZkEch=enPsiPioWnkVLK03djuQ9A@mail.gmail.com>
- <alpine.DEB.2.21.1906131822300.1791@nanos.tec.linutronix.de> <CAHmME9q1ihF617=Gjw9k9BK7OC9Ghnzfnfi6LfvJ8DG+vrQOqA@mail.gmail.com> <alpine.DEB.2.21.1906132136280.1791@nanos.tec.linutronix.de>
- <CAHmME9qa-8J0-x8zmcBrSg_iyPNS02h5CFvhFfXpNth60OQsBg@mail.gmail.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        id S1727196AbfFNJqn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 05:46:43 -0400
+Received: from verein.lst.de ([213.95.11.211]:45577 "EHLO newverein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727059AbfFNJqm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Jun 2019 05:46:42 -0400
+Received: by newverein.lst.de (Postfix, from userid 2407)
+        id D62CF227A82; Fri, 14 Jun 2019 11:46:13 +0200 (CEST)
+Date:   Fri, 14 Jun 2019 11:46:13 +0200
+From:   Christoph Hellwig <hch@lst.de>
+To:     Florian Fainelli <f.fainelli@gmail.com>
+Cc:     linux-kernel@vger.kernel.org,
+        bcm-kernel-feedback-list@broadcom.com,
+        Christoph Hellwig <hch@lst.de>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Vivien Didelot <vivien.didelot@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        "open list:DMA MAPPING HELPERS" <iommu@lists.linux-foundation.org>,
+        "open list:NETWORKING [GENERAL]" <netdev@vger.kernel.org>
+Subject: Re: [PATCH 1/2] swiotlb: Group identical cleanup in
+ swiotlb_cleanup()
+Message-ID: <20190614094613.GG17292@lst.de>
+References: <20190611175825.572-1-f.fainelli@gmail.com> <20190611175825.572-2-f.fainelli@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190611175825.572-2-f.fainelli@gmail.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Jason,
-
-On Fri, 14 Jun 2019, Jason A. Donenfeld wrote:
-
-> Hey Thomas,
+On Tue, Jun 11, 2019 at 10:58:24AM -0700, Florian Fainelli wrote:
+> Avoid repeating the zeroing of global swiotlb variables in two locations
+> and introduce swiotlb_cleanup() to do that.
 > 
-> > --- a/kernel/time/timekeeping.c
-> > +++ b/kernel/time/timekeeping.c
-> >         } while (read_seqcount_retry(&tk_core.seq, seq));
-> >
-> > -       return base;
-> > -
-> > +       return base + nsecs;
-> 
-> The rest of the file seems to use `ktime_add_ns(base, nsecs)`. I
-> realize, of course, that these days that macro is the same thing as
-> what you wrote, though.
+> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
 
-Yeah, historical raisins when ktime_t was special on 32bit.
+Looks good,
 
-> One thing I'm curious about is the performance comparison with various
-> ways of using jiffies directly:
-> 
-> ktime_mono_to_any(ns_to_ktime(jiffies64_to_nsecs(get_jiffies_64())),
-> TK_OFFS_BOOT)
-> 
-> Or really giving up on the locking:
-> 
-> ktime_to_ns(tk_core.timekeeper.offs_boot) + jiffies64_to_nsecs(get_jiffies_64())
-> 
-> Or keeping things in units of jiffies, though that incurs a div_u64:
-> 
-> nsecs_to_jiffies64(ktime_to_ns(tk_core.timekeeper.offs_boot)) + get_jiffies_64()
-
-jiffies64 uses a seqcount on 32bit as well.
- 
-> But since offs_boot is updated somewhat rarely, that div_u64 could be
-> precomputed each time offs_boot is updated, allowing hypothetically:
-> 
-> tk_core.timekeeper.offs_boot_jiffies + get_jiffies_64()
-
-Hrm, I'm not a great fan of these shortcuts which cut corners based on
-'somewhat rarely, so it should not matter'. Should not matter always
-strikes back at some point. :)
-
-> Which then could be remade into a wrapper such as:
-> 
-> get_jiffies_boot_64()
-> 
-> The speed is indeed an important factor to me in accessing this time
-> value. Are any of these remotely interesting to you in that light?
-> Maybe I'll send a patch for the latter.
-
-So what you are looking for is jiffies based on boot time?
-
-Thanks,
-
-	tglx
+Reviewed-by: Christoph Hellwig <hch@lst.de>
