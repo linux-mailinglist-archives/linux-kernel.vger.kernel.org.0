@@ -2,158 +2,161 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CE2974669C
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 19:57:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C578466AE
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 19:59:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727757AbfFNRze (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 13:55:34 -0400
-Received: from foss.arm.com ([217.140.110.172]:39728 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727742AbfFNRzc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 13:55:32 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DD59311B3;
-        Fri, 14 Jun 2019 10:55:31 -0700 (PDT)
-Received: from en101.cambridge.arm.com (en101.cambridge.arm.com [10.1.196.93])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id A44413F718;
-        Fri, 14 Jun 2019 10:55:30 -0700 (PDT)
-From:   Suzuki K Poulose <suzuki.poulose@arm.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     gregkh@linuxfoundation.org, rafael@kernel.org,
-        suzuki.poulose@arm.com, Eric Anholt <eric@anholt.net>,
-        =?UTF-8?q?Heiko=20St=C3=BCbner?= <heiko@sntech.de>,
-        Inki Dae <inki.dae@samsung.com>,
-        Sandy Huang <hjc@rock-chips.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>
-Subject: [PATCH v2 28/28] platform: Add platform_find_device_by_driver() helper
-Date:   Fri, 14 Jun 2019 18:54:23 +0100
-Message-Id: <1560534863-15115-29-git-send-email-suzuki.poulose@arm.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1560534863-15115-1-git-send-email-suzuki.poulose@arm.com>
-References: <1560534863-15115-1-git-send-email-suzuki.poulose@arm.com>
+        id S1726924AbfFNR7N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 13:59:13 -0400
+Received: from lhrrgout.huawei.com ([185.176.76.210]:33008 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726389AbfFNR7N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Jun 2019 13:59:13 -0400
+Received: from lhreml702-cah.china.huawei.com (unknown [172.18.7.108])
+        by Forcepoint Email with ESMTP id 8E24D53F4C2D688BC80F;
+        Fri, 14 Jun 2019 18:59:10 +0100 (IST)
+Received: from roberto-HP-EliteDesk-800-G2-DM-65W.huawei.com (10.204.65.154)
+ by smtpsuk.huawei.com (10.201.108.43) with Microsoft SMTP Server (TLS) id
+ 14.3.408.0; Fri, 14 Jun 2019 18:59:00 +0100
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+To:     <zohar@linux.ibm.com>, <dmitry.kasatkin@huawei.com>,
+        <mjg59@google.com>
+CC:     <linux-integrity@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>,
+        <linux-fsdevel@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <silviu.vlasceanu@huawei.com>,
+        Roberto Sassu <roberto.sassu@huawei.com>
+Subject: [PATCH v4 00/14] ima: introduce IMA Digest Lists extension
+Date:   Fri, 14 Jun 2019 19:54:59 +0200
+Message-ID: <20190614175513.27097-1-roberto.sassu@huawei.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.204.65.154]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Provide a helper to lookup platform devices by matching device
-driver in order to avoid drivers trying to use platform bus
-internals.
+This patch set introduces a new IMA extension called IMA Digest Lists.
 
-Cc: Eric Anholt <eric@anholt.net>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: "Heiko Stübner" <heiko@sntech.de>
-Cc: Inki Dae <inki.dae@samsung.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Sandy Huang <hjc@rock-chips.com>
-Cc: Seung-Woo Kim <sw0312.kim@samsung.com>
-Tested-by: Heiko Stuebner <heiko@sntech.de>
-Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
----
- drivers/base/platform.c                     | 14 ++++++++++++++
- drivers/gpu/drm/exynos/exynos_drm_drv.c     |  9 +++------
- drivers/gpu/drm/rockchip/rockchip_drm_drv.c |  3 +--
- drivers/gpu/drm/vc4/vc4_drv.c               |  3 +--
- include/linux/platform_device.h             |  3 +++
- 5 files changed, 22 insertions(+), 10 deletions(-)
+At early boot, the extension preloads in kernel memory reference digest
+values, that can be compared with actual file digests when files are
+accessed in the system.
 
-diff --git a/drivers/base/platform.c b/drivers/base/platform.c
-index 4d17298..158ac24 100644
---- a/drivers/base/platform.c
-+++ b/drivers/base/platform.c
-@@ -1197,6 +1197,20 @@ struct bus_type platform_bus_type = {
- };
- EXPORT_SYMBOL_GPL(platform_bus_type);
- 
-+/**
-+ * platform_find_device_by_driver - Find a platform device with a given
-+ * driver.
-+ * @start: The device to start the search from.
-+ * @drv: The device driver to look for.
-+ */
-+struct device *platform_find_device_by_driver(struct device *start,
-+					      const struct device_driver *drv)
-+{
-+	return bus_find_device(&platform_bus_type, start, drv,
-+			       (void *)platform_match);
-+}
-+EXPORT_SYMBOL_GPL(platform_find_device_by_driver);
-+
- int __init platform_bus_init(void)
- {
- 	int error;
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.c b/drivers/gpu/drm/exynos/exynos_drm_drv.c
-index ba8932a..b357e0d 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_drv.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_drv.c
-@@ -244,9 +244,7 @@ static struct component_match *exynos_drm_match_add(struct device *dev)
- 		if (!info->driver || !(info->flags & DRM_COMPONENT_DRIVER))
- 			continue;
- 
--		while ((d = bus_find_device(&platform_bus_type, p,
--					    &info->driver->driver,
--					    (void *)platform_bus_type.match))) {
-+		while ((d = platform_find_device_by_driver(p, &info->driver->driver))) {
- 			put_device(p);
- 
- 			if (!(info->flags & DRM_FIMC_DEVICE) ||
-@@ -414,9 +412,8 @@ static void exynos_drm_unregister_devices(void)
- 		if (!info->driver || !(info->flags & DRM_VIRTUAL_DEVICE))
- 			continue;
- 
--		while ((dev = bus_find_device(&platform_bus_type, NULL,
--					    &info->driver->driver,
--					    (void *)platform_bus_type.match))) {
-+		while ((dev = platform_find_device_by_driver(NULL,
-+						&info->driver->driver))) {
- 			put_device(dev);
- 			platform_device_unregister(to_platform_device(dev));
- 		}
-diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_drv.c b/drivers/gpu/drm/rockchip/rockchip_drm_drv.c
-index 53d2c5b..38dc263 100644
---- a/drivers/gpu/drm/rockchip/rockchip_drm_drv.c
-+++ b/drivers/gpu/drm/rockchip/rockchip_drm_drv.c
-@@ -330,8 +330,7 @@ static struct component_match *rockchip_drm_match_add(struct device *dev)
- 		struct device *p = NULL, *d;
- 
- 		do {
--			d = bus_find_device(&platform_bus_type, p, &drv->driver,
--					    (void *)platform_bus_type.match);
-+			d = platform_find_device_by_driver(p, &drv->driver);
- 			put_device(p);
- 			p = d;
- 
-diff --git a/drivers/gpu/drm/vc4/vc4_drv.c b/drivers/gpu/drm/vc4/vc4_drv.c
-index 6d9be20..d159eb5 100644
---- a/drivers/gpu/drm/vc4/vc4_drv.c
-+++ b/drivers/gpu/drm/vc4/vc4_drv.c
-@@ -236,8 +236,7 @@ static void vc4_match_add_drivers(struct device *dev,
- 		struct device_driver *drv = &drivers[i]->driver;
- 		struct device *p = NULL, *d;
- 
--		while ((d = bus_find_device(&platform_bus_type, p, drv,
--					    (void *)platform_bus_type.match))) {
-+		while ((d = platform_find_device_by_driver(p, drv))) {
- 			put_device(p);
- 			component_match_add(dev, match, compare_dev, d);
- 			p = d;
-diff --git a/include/linux/platform_device.h b/include/linux/platform_device.h
-index beb25f2..c9c9d9e 100644
---- a/include/linux/platform_device.h
-+++ b/include/linux/platform_device.h
-@@ -51,6 +51,9 @@ extern struct device platform_bus;
- extern void arch_setup_pdev_archdata(struct platform_device *);
- extern struct resource *platform_get_resource(struct platform_device *,
- 					      unsigned int, unsigned int);
-+extern struct device *
-+platform_find_device_by_driver(struct device *start,
-+			       const struct device_driver *drv);
- extern void __iomem *
- devm_platform_ioremap_resource(struct platform_device *pdev,
- 			       unsigned int index);
+The extension will open for new possibilities: PCR with predictable value,
+that can be used for sealing policies associated to data or TPM keys;
+appraisal based on reference digests already provided by Linux distribution
+vendors in the software packages.
+
+The first objective can be achieved because the PCR values does not depend
+on which and when files are measured: the extension measures digest lists
+sequentially and files whose digest is not in the digest list.
+
+The second objective can be reached because the extension is able to
+extract reference measurements from packages (with a user space tool) and
+use it as a source for appraisal verification as the reference came from
+the security.ima xattr. This approach will also reduce the overhead as only
+one signature is verified for many files (as opposed to one signature for
+each file with the current implementation).
+
+This version of the patch set provides a clear separation between current
+and new functionality. First, the new functionality must be explicitly
+enabled from the kernel command line. Second, results of operations
+performed by the extension can be distinguished from those obtained from
+the existing code: measurement entries created by the extension have a
+different PCR; mutable files appraised with the extension have a different
+security.ima type.
+
+The review of this patch set should start from patch 11 and 12, which
+modify the IMA-Measure and IMA-Appraise submodules to use digest lists.
+Patch 1 to 5 are prerequisites. Patch 6 to 10 adds support for digest
+lists. Finally, patch 13 introduces two new policies to measure/appraise
+rootfs and patch 14 adds the documentation (including a flow chart to
+show how IMA has been modified).
+
+The user space tools to configure digest lists are available at:
+
+https://github.com/euleros/digest-list-tools/releases/tag/v0.3
+
+The patch set applies on top of linux-integrity/next-queued-testing
+(73589972b987).
+
+It is necessary to apply also:
+https://patchwork.kernel.org/cover/10957495/
+
+To use appraisal, it is necessary to use a modified cpio and a modified
+dracut:
+
+https://github.com/euleros/cpio/tree/xattr-v1
+https://github.com/euleros/dracut/tree/digest-lists
+
+For now, please use it only in a testing environment.
+
+
+Changelog
+
+v3:
+- move ima_lookup_loaded_digest() and ima_add_digest_data_entry() from
+  ima_queue.c to ima_digest_list.c
+- remove patch that introduces security.ima_algo
+- add version number and type modifiers to the compact list header
+- remove digest list metadata, all digest lists in the directory are
+  accessed
+- move loading of signing keys to user space
+- add violation for both PCRs if they are selected
+- introduce two new appraisal modes
+
+v2:
+- add support for multiple hash algorithms
+- remove RPM parser from the kernel
+- add support for parsing digest lists in user space
+
+v1:
+- add support for immutable/mutable files
+- add support for appraisal with digest lists
+
+
+Roberto Sassu (14):
+  ima: read hash algorithm from security.ima even if appraisal is not
+    enabled
+  ima: generalize ima_read_policy()
+  ima: generalize ima_write_policy() and raise uploaded data size limit
+  ima: generalize policy file operations
+  ima: use ima_show_htable_value to show violations and hash table data
+  ima: add parser of compact digest list
+  ima: restrict upload of converted digest lists
+  ima: prevent usage of digest lists that are not measured/appraised
+  ima: introduce new securityfs files
+  ima: load parser digests and execute the parser at boot time
+  ima: add support for measurement with digest lists
+  ima: add support for appraisal with digest lists
+  ima: introduce new policies initrd and appraise_initrd
+  ima: add Documentation/security/IMA-digest-lists.txt
+
+ .../admin-guide/kernel-parameters.txt         |  16 +-
+ Documentation/security/IMA-digest-lists.txt   | 226 +++++++++++++
+ include/linux/evm.h                           |   6 +
+ include/linux/fs.h                            |   1 +
+ security/integrity/evm/evm_main.c             |   2 +-
+ security/integrity/iint.c                     |   1 +
+ security/integrity/ima/Kconfig                |  25 ++
+ security/integrity/ima/Makefile               |   1 +
+ security/integrity/ima/ima.h                  |  32 +-
+ security/integrity/ima/ima_api.c              |  43 ++-
+ security/integrity/ima/ima_appraise.c         |  92 +++---
+ security/integrity/ima/ima_digest_list.c      | 309 ++++++++++++++++++
+ security/integrity/ima/ima_digest_list.h      |  69 ++++
+ security/integrity/ima/ima_fs.c               | 224 ++++++++-----
+ security/integrity/ima/ima_init.c             |   2 +-
+ security/integrity/ima/ima_main.c             |  81 ++++-
+ security/integrity/ima/ima_policy.c           |  29 +-
+ security/integrity/integrity.h                |  22 ++
+ 18 files changed, 1018 insertions(+), 163 deletions(-)
+ create mode 100644 Documentation/security/IMA-digest-lists.txt
+ create mode 100644 security/integrity/ima/ima_digest_list.c
+ create mode 100644 security/integrity/ima/ima_digest_list.h
+
 -- 
-2.7.4
+2.17.1
 
