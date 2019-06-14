@@ -2,59 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7E89245BFD
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 14:01:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C505D45C03
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 14:02:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727650AbfFNMBR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 08:01:17 -0400
-Received: from mx2.suse.de ([195.135.220.15]:58994 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727054AbfFNMBR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 08:01:17 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 60B4FADCB;
-        Fri, 14 Jun 2019 12:01:15 +0000 (UTC)
-Subject: Re: [RFC PATCH 08/16] x86/xen: irq/upcall handling with multiple
- xenhosts
-To:     Ankur Arora <ankur.a.arora@oracle.com>,
-        linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org
-Cc:     pbonzini@redhat.com, boris.ostrovsky@oracle.com,
-        konrad.wilk@oracle.com, sstabellini@kernel.org,
-        joao.m.martins@oracle.com
-References: <20190509172540.12398-1-ankur.a.arora@oracle.com>
- <20190509172540.12398-9-ankur.a.arora@oracle.com>
-From:   Juergen Gross <jgross@suse.com>
-Message-ID: <7eb08024-73c8-ef1f-cacc-e5105102c28d@suse.com>
-Date:   Fri, 14 Jun 2019 14:01:14 +0200
+        id S1727724AbfFNMCy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 08:02:54 -0400
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:50706 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727378AbfFNMCy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Jun 2019 08:02:54 -0400
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x5EC2mVo121156;
+        Fri, 14 Jun 2019 07:02:48 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1560513768;
+        bh=kTOOVS4lzR0ZGAawOm/QCWHiNqtFPNN7v2karhZmd94=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=kAZWZizhqg3dOKfeofrqT3kWX9NE99xhqM4m+tZjB1flTyVksciCTz7JLxjOVkzFc
+         MwS/IIzpwHfykNmxNQqvwxYWMhMVNmHQgQ0ol6vGxG0aw/lH2llMf9rkc4CWGFsvJC
+         POweS/21SYewNz3Ro+hEkdj98d4BKPukrhrlEaTk=
+Received: from DLEE104.ent.ti.com (dlee104.ent.ti.com [157.170.170.34])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x5EC2mSA083103
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 14 Jun 2019 07:02:48 -0500
+Received: from DLEE111.ent.ti.com (157.170.170.22) by DLEE104.ent.ti.com
+ (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Fri, 14
+ Jun 2019 07:02:47 -0500
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE111.ent.ti.com
+ (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Fri, 14 Jun 2019 07:02:47 -0500
+Received: from [172.24.190.172] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id x5EC2jcQ038250;
+        Fri, 14 Jun 2019 07:02:45 -0500
+Subject: Re: [PATCH] ARM: davinci: da8xx: specify dma_coherent_mask for lcdc
+To:     Bartosz Golaszewski <brgl@bgdev.pl>,
+        Kevin Hilman <khilman@kernel.org>
+CC:     <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+References: <20190607143350.11214-1-brgl@bgdev.pl>
+From:   Sekhar Nori <nsekhar@ti.com>
+Message-ID: <a437ee74-6e1d-c8cd-d9ad-7ccaf28faf9c@ti.com>
+Date:   Fri, 14 Jun 2019 17:32:44 +0530
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-In-Reply-To: <20190509172540.12398-9-ankur.a.arora@oracle.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: de-DE
+In-Reply-To: <20190607143350.11214-1-brgl@bgdev.pl>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09.05.19 19:25, Ankur Arora wrote:
-> For configurations with multiple xenhosts, we need to handle events
-> generated from multiple xenhosts.
+On 07/06/19 8:03 PM, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 > 
-> Having more than one upcall handler might be quite hairy, and it would
-> be simpler if the callback from L0-Xen could be bounced via L1-Xen.
-> This will also mean simpler pv_irq_ops code because now the IF flag
-> maps onto the xh_default->vcpu_info->evtchn_upcall_mask.
+> The lcdc device is missing the dma_coherent_mask definition causing the
+> following warning on da850-evm:
 > 
-> However, we still update the xh_remote->vcpu_info->evtchn_upcall_mask
-> on a best effort basis to minimize unnecessary work in remote xenhost.
+> da8xx_lcdc da8xx_lcdc.0: found Sharp_LK043T1DG01 panel
+> ------------[ cut here ]------------
+> WARNING: CPU: 0 PID: 1 at kernel/dma/mapping.c:247 dma_alloc_attrs+0xc8/0x110
+> Modules linked in:
+> CPU: 0 PID: 1 Comm: swapper Not tainted 5.2.0-rc3-00077-g16d72dd4891f #18
+> Hardware name: DaVinci DA850/OMAP-L138/AM18x EVM
+> [<c000fce8>] (unwind_backtrace) from [<c000d900>] (show_stack+0x10/0x14)
+> [<c000d900>] (show_stack) from [<c001a4f8>] (__warn+0xec/0x114)
+> [<c001a4f8>] (__warn) from [<c001a634>] (warn_slowpath_null+0x3c/0x48)
+> [<c001a634>] (warn_slowpath_null) from [<c0065860>] (dma_alloc_attrs+0xc8/0x110)
+> [<c0065860>] (dma_alloc_attrs) from [<c02820f8>] (fb_probe+0x228/0x5a8)
+> [<c02820f8>] (fb_probe) from [<c02d3e9c>] (platform_drv_probe+0x48/0x9c)
+> [<c02d3e9c>] (platform_drv_probe) from [<c02d221c>] (really_probe+0x1d8/0x2d4)
+> [<c02d221c>] (really_probe) from [<c02d2474>] (driver_probe_device+0x5c/0x168)
+> [<c02d2474>] (driver_probe_device) from [<c02d2728>] (device_driver_attach+0x58/0x60)
+> [<c02d2728>] (device_driver_attach) from [<c02d27b0>] (__driver_attach+0x80/0xbc)
+> [<c02d27b0>] (__driver_attach) from [<c02d047c>] (bus_for_each_dev+0x64/0xb4)
+> [<c02d047c>] (bus_for_each_dev) from [<c02d1590>] (bus_add_driver+0xe4/0x1d8)
+> [<c02d1590>] (bus_add_driver) from [<c02d301c>] (driver_register+0x78/0x10c)
+> [<c02d301c>] (driver_register) from [<c000a5c0>] (do_one_initcall+0x48/0x1bc)
+> [<c000a5c0>] (do_one_initcall) from [<c05cae6c>] (kernel_init_freeable+0x10c/0x1d8)
+> [<c05cae6c>] (kernel_init_freeable) from [<c048a000>] (kernel_init+0x8/0xf4)
+> [<c048a000>] (kernel_init) from [<c00090e0>] (ret_from_fork+0x14/0x34)
+> Exception stack(0xc6837fb0 to 0xc6837ff8)
+> 7fa0:                                     00000000 00000000 00000000 00000000
+> 7fc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+> 7fe0: 00000000 00000000 00000000 00000000 00000013 00000000
+> ---[ end trace 8a8073511be81dd2 ]---
+> 
+> Add a 32-bit mask to the platform device's definition.
+> 
+> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> ---
+>  arch/arm/mach-davinci/devices-da8xx.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/arch/arm/mach-davinci/devices-da8xx.c b/arch/arm/mach-davinci/devices-da8xx.c
+> index 9ff02de448c6..767cc6f7834c 100644
+> --- a/arch/arm/mach-davinci/devices-da8xx.c
+> +++ b/arch/arm/mach-davinci/devices-da8xx.c
+> @@ -683,6 +683,9 @@ static struct platform_device da8xx_lcdc_device = {
+>  	.id		= 0,
+>  	.num_resources	= ARRAY_SIZE(da8xx_lcdc_resources),
+>  	.resource	= da8xx_lcdc_resources,
+> +	.dev		= {
+> +		.coherent_dma_mask	= DMA_BIT_MASK(32)
 
-This is another design decision yet to be taken.
+Applied to fixes for v5.2 with a ',' added at the end so next
+initialization can be added without changing this line.
 
-My current prefernce is L1 Xen mapping events from L0 to L1 guest
-events.
-
-
-Juergen
+Thanks,
+Sekhar
