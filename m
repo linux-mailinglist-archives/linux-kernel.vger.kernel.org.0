@@ -2,30 +2,30 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E89A145C53
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 14:13:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4980645C58
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 14:13:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727791AbfFNMMz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 08:12:55 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:55756 "EHLO huawei.com"
+        id S1727747AbfFNMN0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 08:13:26 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:51550 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727572AbfFNMMz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 08:12:55 -0400
-Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 8DA29D3C080F3421CE99;
-        Fri, 14 Jun 2019 20:12:53 +0800 (CST)
-Received: from huawei.com (10.90.53.225) by DGGEMS403-HUB.china.huawei.com
- (10.3.19.203) with Microsoft SMTP Server id 14.3.439.0; Fri, 14 Jun 2019
- 20:12:44 +0800
+        id S1727531AbfFNMNZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Jun 2019 08:13:25 -0400
+Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id AA00B8BA90A42D58E026;
+        Fri, 14 Jun 2019 20:13:23 +0800 (CST)
+Received: from huawei.com (10.90.53.225) by DGGEMS412-HUB.china.huawei.com
+ (10.3.19.212) with Microsoft SMTP Server id 14.3.439.0; Fri, 14 Jun 2019
+ 20:13:15 +0800
 From:   <chengzhihao1@huawei.com>
 To:     <david.oberhollenzer@sigma-star.at>, <richard@nod.at>,
         <boris.brezillon@bootlin.com>, <david@sigma-star.at>,
         <artem.bityutskiy@linux.intel.com>, <yi.zhang@huawei.com>
 CC:     <linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
         <chengzhihao1@huawei.com>
-Subject: [PATCH mtd-utils] ubi-tests: io_read: Filter invalid offset value before 'lseek' in io_read test
-Date:   Fri, 14 Jun 2019 20:18:16 +0800
-Message-ID: <1560514696-54824-1-git-send-email-chengzhihao1@huawei.com>
+Subject: [PATCH mtd-utils] ubi-tests: mkvol test: Checks return value 'ENOSPC' for 'ubi_mkvol'
+Date:   Fri, 14 Jun 2019 20:18:48 +0800
+Message-ID: <1560514728-54932-1-git-send-email-chengzhihao1@huawei.com>
 X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
 Content-Type: text/plain
@@ -38,14 +38,12 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Zhihao Cheng <chengzhihao1@huawei.com>
 
-There are many different offset values passed in 'lseek' during io_read
-testing of ubi test. The offset value maybe a negative number or a big
-number that exceeds the volume data size, which can lead to ubi tests
-failure by passing invalid offset value to 'lseek'. For example:
-
-Example 1: The data size of volume is 39525 bytes, offset = (sz) -
-MAX_NAND_PAGE_SIZE - 1, where MAX_NAND_PAGE_SIZE is 65536. Here, offset
-is a negative value passed to 'lseek', which leads to fail in io_read.
+UBI tests try to create too many volumes in mkvol_bad and mkvol_basic.
+Currently mtd-utils allows return value 'ENFILE' from 'ubi_mkvol', that
+works fine in most situations. But what if the number of PEBs equals to
+the maximum count of volumes? For example, mkvol_basic test will fail in
+a 64MiB flash with 512KiB PEB size.
+Following is the output of mkvol_basic test:
 
   ======================================================================
   ======================================================================
@@ -54,74 +52,70 @@ is a negative value passed to 'lseek', which leads to fail in io_read.
   ======================================================================
   ======================================================================
   ======================================================================
-  mtdram: 16MiB, PEB size 16KiB, fastmap enabled
+  mtdram: 64MiB, PEB size 512KiB, fastmap enabled
   Running mkvol_basic /dev/ubi0
-  Running mkvol_bad /dev/ubi0
-  Running mkvol_paral /dev/ubi0
-  Running rsvol /dev/ubi0
-  Running io_basic /dev/ubi0
-  Running io_read /dev/ubi0
-  [io_basic] test_read3():189: function seek() failed with error 22
-  (Invalid argument)
-  [io_basic] test_read3():190: len = 1
-  [io_basic] test_read2():237: offset = -26012
-  [io_basic] test_read1():303: length = 1
-  [io_basic] test_read():362: alignment = 7905
-  Error: io_read failed
+  [mkvol_basic] mkvol_multiple():182: function ubi_mkvol() failed with
+  error 28 (No space left on device)
+  [mkvol_basic] mkvol_multiple():183: vol_id 122
+  Error: mkvol_basic failed
   FAILURE
 
-Example 2: The data size of volume is 79035 bytes, offset = 2 *
-MAX_NAND_PAGE_SIZE, where MAX_NAND_PAGE_SIZE is 65536. Here, offset is a
-value exceeds volume size, which leads to fail in io_read.
+The reason is that there is no available PEB to support a new volume. We
+can see following verbose in dmesg:
 
-  ======================================================================
-  ======================================================================
-  ======================================================================
-  Test on mtdram, fastmap enabled, VID header offset factor 1
-  ======================================================================
-  ======================================================================
-  ======================================================================
-  mtdram: 16MiB, PEB size 16KiB, fastmap enabled
-  Running mkvol_basic /dev/ubi0
-  Running mkvol_bad /dev/ubi0
-  Running mkvol_paral /dev/ubi0
-  Running rsvol /dev/ubi0
-  Running io_basic /dev/ubi0
-  Running io_read /dev/ubi0
-  [io_basic] test_read3():185: function seek() failed with error 22
-  (Invalid argument)
-  [io_basic] test_read3():186: len = 1
-  [io_basic] test_read2():233: offset = 131072
-  [io_basic] test_read1():299: length = 1
-  [io_basic] test_read():358: alignment = 3
-  Error: io_read failed
-  FAILURE
+  ubi0: attached mtd0 (name "mtdram test device", size 64 MiB)
+  ubi0: user volume: 0, internal volumes: 1, max. volumes count: 128
+  ubi0: available PEBs: 122, total reserved PEBs: 6, PEBs reserved for
+  bad PEB handling: 0
 
-This patch checks offset value before executing 'lseek', invalid offset
-values are filtered.
+The maximum count of volumes is 128, so we can create 128 volumes
+theoretically. But there are 122 available PEBs becauese of existence of
+reserved PEBs. In addition, a volume occupies at least one PEB. Actually,
+we can only create 122 volumes, Therefore, 'ubi_mkvol' returns 'ENOSPC'
+when mkvol_basic tries to create 123rd volume. And we can see
+corresponding error message in dmesg:
+
+  ubi0 error: ubi_create_volume [ubi]: not enough PEBs, only 0 available
+  ubi0 error: ubi_create_volume [ubi]: cannot create volume 122, error -28
+
+So, 'ENOSPC' can happen before 'ENFILE' in flash with a small amount of
+PEBs. This patch checks return value 'ENOSPC' for 'ubi_mkvol' when mkvol
+test is trying to create too many volumes.
 
 ----------------------------------------
 
 Signed-off-by: Zhihao Cheng <chengzhihao1@huawei.com>
 ---
- tests/ubi-tests/io_read.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ tests/ubi-tests/mkvol_bad.c   | 2 +-
+ tests/ubi-tests/mkvol_basic.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/tests/ubi-tests/io_read.c b/tests/ubi-tests/io_read.c
-index 3100ef1..f944a86 100644
---- a/tests/ubi-tests/io_read.c
-+++ b/tests/ubi-tests/io_read.c
-@@ -228,6 +228,10 @@ static int test_read2(const struct ubi_vol_info *vol_info, int len)
- 				  vol_info->data_bytes);
+diff --git a/tests/ubi-tests/mkvol_bad.c b/tests/ubi-tests/mkvol_bad.c
+index 7e46726..a5143e3 100644
+--- a/tests/ubi-tests/mkvol_bad.c
++++ b/tests/ubi-tests/mkvol_bad.c
+@@ -200,7 +200,7 @@ static int test_mkvol(void)
+ 			 * Note, because of gluebi we may be unable to create
+ 			 * dev_info.max_vol_count devices (MTD restrictions).
+ 			 */
+-			if (errno == ENFILE)
++			if (errno == ENFILE || errno == ENOSPC)
+ 				break;
+ 			failed("ubi_mkvol");
+ 			errorm("vol_id %d", i);
+diff --git a/tests/ubi-tests/mkvol_basic.c b/tests/ubi-tests/mkvol_basic.c
+index c7c6984..cc3f7ba 100644
+--- a/tests/ubi-tests/mkvol_basic.c
++++ b/tests/ubi-tests/mkvol_basic.c
+@@ -178,7 +178,7 @@ static int mkvol_multiple(void)
+ 		req.name = nm;
  
- 	for (i = 0; i < sizeof(offsets)/sizeof(off_t); i++) {
-+		/* Filter invalid offset value */
-+		if (offsets[i] < 0 || offsets[i] > vol_info->data_bytes)
-+			continue;
-+
- 		if (test_read3(vol_info, len, offsets[i])) {
- 			errorm("offset = %d", offsets[i]);
- 			return -1;
+ 		if (ubi_mkvol(libubi, node, &req)) {
+-			if (errno == ENFILE) {
++			if (errno == ENFILE || errno == ENOSPC) {
+ 				max = i;
+ 				break;
+ 			}
 -- 
 2.7.4
 
