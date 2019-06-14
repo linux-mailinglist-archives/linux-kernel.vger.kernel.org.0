@@ -2,117 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4314845E74
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 15:40:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1133745E7C
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 15:40:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728325AbfFNNjN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 09:39:13 -0400
-Received: from mail.efficios.com ([167.114.142.138]:41242 "EHLO
-        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727808AbfFNNjN (ORCPT
+        id S1728387AbfFNNjp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 09:39:45 -0400
+Received: from mout.kundenserver.de ([217.72.192.74]:59919 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728033AbfFNNjp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 09:39:13 -0400
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id A563B251635;
-        Fri, 14 Jun 2019 09:39:11 -0400 (EDT)
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
-        with ESMTP id GnCFb0jxdTlM; Fri, 14 Jun 2019 09:39:11 -0400 (EDT)
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id 3112D25162D;
-        Fri, 14 Jun 2019 09:39:11 -0400 (EDT)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 3112D25162D
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
-        s=default; t=1560519551;
-        bh=g11SeW4F7paEUETkOqOR7pC/7HcUtfs8xDR7RV9Lcyc=;
-        h=Date:From:To:Message-ID:MIME-Version;
-        b=bmoEbTEoy8FbWGZKWm4OIDeztip9KPC7WHuudiL4/WygRNBbB7MHLq6cp/Q82/u6s
-         MZIRFg9ankQrHB1IzwB0XutT1gJsfq6AbpKOJKLnxO6d2R2CG6Ip36uB8VWPKzR8tl
-         ekw891XGCbzwWZuE0IGxHiJARWkEVrp8Oges+tXqhNN7+jmCWR+/WaiU1mj2l0iG9H
-         i5JJ5gPseoFn5cp5Py420JTHRMp/OnxxyDNLeWQ1xEkbMDtS5/J9FMaSCCaACvg6zA
-         MoMmMPoqcmd/uqWeo24R6bn/rV/DTXW1kLtdZDyl2G+Prz6V9YKvKfw3Sa1On3BbqL
-         j9mOh7xxX9GqQ==
-X-Virus-Scanned: amavisd-new at efficios.com
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
-        with ESMTP id A4nfGl2sb7Zt; Fri, 14 Jun 2019 09:39:11 -0400 (EDT)
-Received: from mail02.efficios.com (mail02.efficios.com [167.114.142.138])
-        by mail.efficios.com (Postfix) with ESMTP id 176B2251626;
-        Fri, 14 Jun 2019 09:39:11 -0400 (EDT)
-Date:   Fri, 14 Jun 2019 09:39:10 -0400 (EDT)
-From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To:     David Laight <David.Laight@ACULAB.COM>
-Cc:     Florian Weimer <fweimer@redhat.com>, carlos <carlos@redhat.com>,
-        Joseph Myers <joseph@codesourcery.com>,
-        Szabolcs Nagy <szabolcs.nagy@arm.com>,
-        libc-alpha <libc-alpha@sourceware.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ben Maurer <bmaurer@fb.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Dave Watson <davejwatson@fb.com>, Paul Turner <pjt@google.com>,
-        Rich Felker <dalias@libc.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-api <linux-api@vger.kernel.org>
-Message-ID: <1503067753.3387.1560519550939.JavaMail.zimbra@efficios.com>
-In-Reply-To: <69a53ec2ce184af29c4cae58e0b2fb57@AcuMS.aculab.com>
-References: <20190503184219.19266-1-mathieu.desnoyers@efficios.com> <802638054.3032.1560506584705.JavaMail.zimbra@efficios.com> <87ftocwkei.fsf@oldenburg2.str.redhat.com> <1635690189.3049.1560507249693.JavaMail.zimbra@efficios.com> <87tvcsv1pk.fsf@oldenburg2.str.redhat.com> <1190407525.3131.1560516910936.JavaMail.zimbra@efficios.com> <1085273942.3137.1560517301721.JavaMail.zimbra@efficios.com> <69a53ec2ce184af29c4cae58e0b2fb57@AcuMS.aculab.com>
-Subject: Re: [PATCH 1/5] glibc: Perform rseq(2) registration at C startup
- and thread creation (v10)
+        Fri, 14 Jun 2019 09:39:45 -0400
+Received: from [192.168.1.110] ([77.4.92.40]) by mrelayeu.kundenserver.de
+ (mreue109 [212.227.15.183]) with ESMTPSA (Nemesis) id
+ 1MPGJf-1i0txJ0cqj-00PaAc; Fri, 14 Jun 2019 15:39:16 +0200
+Subject: Re: [PATCH] RDMA/ucma: Use struct_size() helper
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>
+Cc:     linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20190604154222.GA8938@embeddedor>
+From:   "Enrico Weigelt, metux IT consult" <lkml@metux.net>
+Organization: metux IT consult
+Message-ID: <f8d5dcb8-b665-b34e-3869-a720fd6f6899@metux.net>
+Date:   Fri, 14 Jun 2019 15:39:14 +0200
+User-Agent: Mozilla/5.0 (X11; Linux i686 on x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
+In-Reply-To: <20190604154222.GA8938@embeddedor>
 Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [167.114.142.138]
-X-Mailer: Zimbra 8.8.12_GA_3803 (ZimbraWebClient - FF67 (Linux)/8.8.12_GA_3794)
-Thread-Topic: glibc: Perform rseq(2) registration at C startup and thread creation (v10)
-Thread-Index: AdUitTFqJqb3c4uCSB28nMsheH09dGcCn4Ez
+X-Provags-ID: V03:K1:TyNnlCCne/1Ppqq1bYzrL6JZCGHTih8twwaASqDhXeiIa4I/XSy
+ E4A5ttx7aDQau/tjbadApxfoHDkB2T5svbpfYmr2W8BDkQmSjf7XrAGtU0wUdN6Xf0fIStk
+ U1SZ4C1VYX6rqqrwrAhfKxnXOV0Vat/fWVGmPYYWYML9wvys0/hMQIEDEAohZDrX+eM1WUq
+ SgdCBw244hyQ6AhSu0XFg==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:UjmK0ABtvNc=:XVKD2tvTEcA8JMRMpy0Htt
+ FURTKxjfIGc/KkFmVsLJL0pScwNlBoH84DzLmULSbZNiLfW1j1/U75nqxHMCw69r0koF1x3NS
+ 1eOgDwYx3Idh3WZ2EQ1Wd1tbRW9LnBjC5loBJUOODwdcM7zjrsUezonaxWaD0vNqABE3CcgvB
+ J0wsyqs1s3bmCmDroBEY0xKHLzcX3vIWczdBBSehV3oAd405VzXE0gLx7J75vjVSPfDrVu3TK
+ l/ffJmemx9p/ynRX8CGMKVp0s4UmVHoo1gqtD2z6WuqxNP+yzGb+rfHEkAdKpQuDhNOmJ2YR1
+ n/kX+yH/FcuffTYoFAfOM1oY2enBt+x3eXGrFu3uVI16Hb4fYVfuScp+znSCkaBB+6FdQ/tgh
+ eiIUKrd//XE5EjjGNEvkziApCl31uZzfQvd+ejQhi4Pv3bLPetHK0F5+zxTDWyuWPFJJK5Fvk
+ r6fw/pbY1edstTcVAE28wqQf2FfhPBpNHnybutpCq+HT+gdNt6OXBw6Gg05EOjLOdB9jGbDRt
+ FAkdvtxDU5p2XQmP5bLi8Q+1QqcvYnfGQZsRGM1xowbyneNrUcEQ0MEaolXO3lW/4gwUlpZlZ
+ mCJCuLIWh2NCvvxfMnwBjIKnj5HTFsQ/3YZuPJvmkA4Iqs8Yih2UuV/DQDCnRWorQPBfA/qXK
+ +Kfl/PJDPO4+ipXO0xLOwaxBGKarddEpf2hX+t4IERfWhMZWoNETaeGuKHLT4srg++GNHhSpV
+ W7x+rhROLzGd68qKQcywrBgTBr0Q+EYZt7HtwXa4OG7RTXM0evzPtFpIt/Q=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
------ On Jun 14, 2019, at 3:29 PM, David Laight David.Laight@ACULAB.COM wrote:
+On 04.06.19 17:42, Gustavo A. R. Silva wrote:
 
-> From: Mathieu Desnoyers
->> Sent: 14 June 2019 14:02
-> ...
->> But my original issue remains: if I define a variable called __rseq_handled
->> within either the main executable or the preloaded library, it overshadows
->> the libc one:
-> 
-> 1) That is the was elf symbol resolution is required to work.
->   Otherwise variables like 'errno' (non-thread safe form) wouldn't work.
-> 
-> 2) Don't do it then :-)
->   Names starting with __ will be reserved (probably 'for the implementation').
-> 
-> The real 'fun' starts because, under some circumstances, looking up a symbol as:
->	foo = dlsym(lib_handle, "foo");
-> Can find the data item instead of the function!
-> Usually it works (even when foo is global data) because 'lib_handle' refers
-> to a different symbol table.
-> But it can go horribly wrong.
+Hi,
 
-I was setting __rseq_handled too soon, before re-relocation of the dynamic linker.
-I moved the initialization after re-relocation and it works fine now.
+<snip>
 
-The purpose of __rseq_handled is to allow early adopter libraries and applications
-to define their own global instance of the symbol, and check whether the libc
-they are linked against handle rseq registration or not.
+> diff --git a/drivers/infiniband/core/ucma.c b/drivers/infiniband/core/ucma.c
+> index 140a338a135f..cbe460076611 100644
+> --- a/drivers/infiniband/core/ucma.c
+> +++ b/drivers/infiniband/core/ucma.c
+> @@ -951,8 +951,7 @@ static ssize_t ucma_query_path(struct ucma_context *ctx,
+>  		}
+>  	}
+>  
+> -	if (copy_to_user(response, resp,
+> -			 sizeof(*resp) + (i * sizeof(struct ib_path_rec_data))))
+> +	if (copy_to_user(response, resp, struct_size(resp, path_data, i)))
+>  		ret = -EFAULT;
 
-libc specifies the layout of that variable (an integer). The dynamic linker
-chooses one of those instances so it's used in the global symbol table of the
-program. The important thing is that all libraries agree on that global symbol.
-Of course this is not compatible with libraries compiled with forced "hidden"
-symbols only.
+have you already considered further reducing the boilerplate by putting
+this into it's own helper macro, so it finally would look like this ?
 
-Thanks,
++	if (copy_to_user_structs(response, resp, resp, path_data, i)))
+>  		ret = -EFAULT;
 
-Mathieu
+You've posted similar patches that also affected things like kzalloc().
+Maybe for those it would be better candidates for putting everything
+into its own helper macro ? (I've already got that on my 2do list, but
+not sure whether maintainers really like to be bothered with those
+kind of patches ;-)).
+
+
+--mtx
 
 -- 
-Mathieu Desnoyers
-EfficiOS Inc.
-http://www.efficios.com
+Enrico Weigelt, metux IT consult
+Free software and Linux embedded engineering
+info@metux.net -- +49-151-27565287
