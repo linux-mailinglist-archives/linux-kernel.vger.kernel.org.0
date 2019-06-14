@@ -2,140 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BC43045999
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 11:55:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 50186459AD
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 11:55:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727569AbfFNJyS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 05:54:18 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:45135 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727551AbfFNJyP (ORCPT
+        id S1727247AbfFNJzp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 05:55:45 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:56083 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726482AbfFNJzp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 05:54:15 -0400
-Received: by mail-ed1-f68.google.com with SMTP id a14so2622293edv.12;
-        Fri, 14 Jun 2019 02:54:14 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=qHuGCrXRTUkFQGayB4c7fw1V8CKP+g27HnNUqp7luJE=;
-        b=A61E+uFgn8g+uIiDes5z+O80mUf9mAy/dPoIP93za8g2WnuMP9LU+jI95OG1ls79Kx
-         yDnDx7RhzSuvjPyLxRjg8nzluuiy7QKz6T7IitCjR9TuDlS6HuiDbmDOn4r0UzAF7NGN
-         rcnlm8IHYqnWYpux0ZWee8fDYKKLJo/QlVDTl9nJ6w1ox5KaD8ov5oJNOE0BBRk0uwhX
-         PrYGOG+ZBhddM1MJ3K4D2aIZdb5FLWBmXTBUbAAUkWkjRFOUd7MGeAgD77xY1E9eJits
-         /gwOePblt3QG1L3MDiaTz/fTDrxhNm6tASrrT4ZVCMZrz6nT2GfUac3VcAOGfP7/eD5g
-         1YOw==
-X-Gm-Message-State: APjAAAVSS2i2sKYjImsKi9wQpzsJO0M/Y8/VoEWlZ0sG89LCiBX473+I
-        x5P60eU0xONYWUitHtk3uqz1u+m+4u8=
-X-Google-Smtp-Source: APXvYqwbflIiWpIZ18fe2y9eLll7EthUnohzkEFO5UdPG4ILKM1Dc6YIpEUU1uVRF1oIgJnB5da2nw==
-X-Received: by 2002:a05:6402:652:: with SMTP id u18mr7218160edx.85.1560506053022;
-        Fri, 14 Jun 2019 02:54:13 -0700 (PDT)
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com. [209.85.128.46])
-        by smtp.gmail.com with ESMTPSA id a17sm710461edt.63.2019.06.14.02.54.11
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Fri, 14 Jun 2019 02:54:12 -0700 (PDT)
-Received: by mail-wm1-f46.google.com with SMTP id z23so1652146wma.4;
-        Fri, 14 Jun 2019 02:54:11 -0700 (PDT)
-X-Received: by 2002:a1c:a186:: with SMTP id k128mr7440554wme.125.1560506051478;
- Fri, 14 Jun 2019 02:54:11 -0700 (PDT)
+        Fri, 14 Jun 2019 05:55:45 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x5E9tEhd1635965
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Fri, 14 Jun 2019 02:55:14 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x5E9tEhd1635965
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019051801; t=1560506115;
+        bh=Ii1lnuXsbNNNZaFdngiuQTb/j33VkDEjlkzInVWyVsM=;
+        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
+        b=tWV5ZBLtSM9qwATy3OcQNR2oq2UHjvbZ34885IxR48LmEHb44NbaYsAW/9YUbESsQ
+         H9608C0PhpV/Uueh80NZhEbAnWgI/bo45HpPAYmnbovGqDEJfbQO43RQXgrzlpIx4R
+         C/vhyNmNG9kOeQeVJpmV7acTIm5xpeyMyZOO3UlR9mT+qYEuJevV2jRrD8nAxpQtHc
+         c+H1LQjak4LJWjS2tnRqVVbUxHLaZZvf0AZw1HFQS7ChHfVw7T4tnF2JV08nxyDDoq
+         QF29yZLABbs9IT8pTQZDj66gD4jYfqw1DqOS7NAlxU+Xyl5hrM5iSB8dAAq7PtQs43
+         neWqS5bv/mGOQ==
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x5E9tEBb1635962;
+        Fri, 14 Jun 2019 02:55:14 -0700
+Date:   Fri, 14 Jun 2019 02:55:14 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Thomas Gleixner <tipbot@zytor.com>
+Message-ID: <tip-e3ff9c3678b4d80e22d2557b68726174578eaf52@git.kernel.org>
+Cc:     sultan@kerneltoast.com, longman@redhat.com,
+        linux-kernel@vger.kernel.org, arnd@arndb.de, clemens@ladisch.de,
+        tglx@linutronix.de, hpa@zytor.com, Jason@zx2c4.com,
+        mingo@kernel.org, peterz@infradead.org
+Reply-To: Jason@zx2c4.com, hpa@zytor.com, mingo@kernel.org,
+          peterz@infradead.org, tglx@linutronix.de, arnd@arndb.de,
+          clemens@ladisch.de, longman@redhat.com, sultan@kerneltoast.com,
+          linux-kernel@vger.kernel.org
+In-Reply-To: <alpine.DEB.2.21.1906132136280.1791@nanos.tec.linutronix.de>
+References: <alpine.DEB.2.21.1906132136280.1791@nanos.tec.linutronix.de>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:timers/urgent] timekeeping: Repair ktime_get_coarse*()
+ granularity
+Git-Commit-ID: e3ff9c3678b4d80e22d2557b68726174578eaf52
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-References: <20190613185241.22800-1-jagan@amarulasolutions.com>
- <20190613185241.22800-6-jagan@amarulasolutions.com> <CAGb2v654p=HZuXCTJkrbWbFP_kEkpRWHwj-7_Ck_=XbyMFmvFw@mail.gmail.com>
- <CAMty3ZD0atS2uWJmPB-n1wmy324JEpwt42=_wpKeF-8uxM-GbQ@mail.gmail.com>
-In-Reply-To: <CAMty3ZD0atS2uWJmPB-n1wmy324JEpwt42=_wpKeF-8uxM-GbQ@mail.gmail.com>
-From:   Chen-Yu Tsai <wens@csie.org>
-Date:   Fri, 14 Jun 2019 17:53:58 +0800
-X-Gmail-Original-Message-ID: <CAGb2v66BOOydMRQprKAo87F2rpr+xgqWgpGt_cccoHf8+9AoNA@mail.gmail.com>
-Message-ID: <CAGb2v66BOOydMRQprKAo87F2rpr+xgqWgpGt_cccoHf8+9AoNA@mail.gmail.com>
-Subject: Re: [PATCH 5/9] ARM: dts: sun8i: r40: Add TCON TOP LCD clocking
-To:     Jagan Teki <jagan@amarulasolutions.com>
-Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        linux-sunxi <linux-sunxi@googlegroups.com>,
-        linux-amarula <linux-amarula@amarulasolutions.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
+X-Spam-Status: No, score=-3.1 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        T_DATE_IN_FUTURE_96_Q autolearn=ham autolearn_force=no version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 14, 2019 at 5:48 PM Jagan Teki <jagan@amarulasolutions.com> wrote:
->
-> On Fri, Jun 14, 2019 at 9:16 AM Chen-Yu Tsai <wens@csie.org> wrote:
-> >
-> > On Fri, Jun 14, 2019 at 2:54 AM Jagan Teki <jagan@amarulasolutions.com> wrote:
-> > >
-> > > According to Fig 7-2. TCON Top Block Diagram in User manual.
-> > >
-> > > TCON TOP can have an hierarchy for TCON_LCD0, LCD1 like
-> > > TCON_TV0, TV1 so, the tcon top would handle the clocks of
-> > > TCON_LCD0, LCD1 similar like TV0, TV1.
-> >
-> > That is not guaranteed. The diagram shows the pixel data path,
-> > not necessarily the clocks. In addition, the LCD TCONs have an
-> > internal clock gate for the dot-clock output, which the TV variants
-> > do not. That might explain the need for the gates in TCON TOP.
->
-> Correct, the actual idea about explanation here is to mention the
-> clocks definition in tcon top level and internal tv and lcd can handle
-> as you explained.
->
-> >
-> > > But, the current tcon_top node is using dsi clock name with
-> > > CLK_DSI_DPHY which is ideally handle via dphy which indeed
-> > > a separate interface block.
-> > >
-> > > So, use tcon-lcd0 instead of dsi which would refer the
-> > > CLK_TCON_LCD0 similar like CLK_TCON_TV0 with tcon-tv0.
-> > >
-> > > This way we can refer CLK_TCON_LCD0 from tcon_top clock in
-> > > tcon_lcd0 node and the actual DSI_DPHY clock node would
-> > > refer in dphy node.
-> >
-> > That doesn't make sense. What about TCON_LCD1?
-> >
-> > The CCU already has CLK_TCON_LCD0 and CLK_TCON_LCD1. What makes
-> > you think that the TCONs don't use them directly?
-> >
-> > Or maybe they do go through TCON_TOP, but there's no gate,
-> > so we don't know about it.
-> >
-> > You need to rethink this. What are you trying to deal with?
->
-> Yes, I understand what your asking for and indeed this is where I get
-> confused and tried this way initially and attach the dsi reference in
-> dphy something like
->
-> tcon_lcd0 {
->                 clocks = <&ccu CLK_BUS_TCON_LCD0>, <&ccu CLK_TCON_LCD0>;
->                 clock-names = "ahb", "tcon-ch0";
-> };
->
-> dphy {
->                clocks = <&ccu CLK_BUS_MIPI_DSI>,
->                               <&tcon_top CLK_TCON_TOP_DSI>;
->                clock-names = "bus", "mod";
-> };
->
-> This would ended-up, phy wont getting the mod clock keep probing for
-> -EPROBE-DEFER since tcon top driver might not be loaded at the time
-> mipi driver. This way we have tv0, tv1 and dsi gates supported as
-> existed. Does it make sense?
+Commit-ID:  e3ff9c3678b4d80e22d2557b68726174578eaf52
+Gitweb:     https://git.kernel.org/tip/e3ff9c3678b4d80e22d2557b68726174578eaf52
+Author:     Thomas Gleixner <tglx@linutronix.de>
+AuthorDate: Thu, 13 Jun 2019 21:40:45 +0200
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Fri, 14 Jun 2019 11:51:44 +0200
 
-Looks like that happens because the clocks are only registered at
-the component bind phase, rather than the probe phase. And to bind
-all the components, the DSI controller wants the DPHY available,
-which isn't because it's still waiting for the clock.
+timekeeping: Repair ktime_get_coarse*() granularity
 
-So you could try moving the bits that register the clocks in the
-TCON TOP driver to the probe function, and see if that solves
-the circular dependency issue.
+Jason reported that the coarse ktime based time getters advance only once
+per second and not once per tick as advertised.
 
-ChenYu
+The code reads only the monotonic base time, which advances once per
+second. The nanoseconds are accumulated on every tick in xtime_nsec up to
+a second and the regular time getters take this nanoseconds offset into
+account, but the ktime_get_coarse*() implementation fails to do so.
+
+Add the accumulated xtime_nsec value to the monotonic base time to get the
+proper per tick advancing coarse tinme.
+
+Fixes: b9ff604cff11 ("timekeeping: Add ktime_get_coarse_with_offset")
+Reported-by: Jason A. Donenfeld <Jason@zx2c4.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Tested-by: Jason A. Donenfeld <Jason@zx2c4.com>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Clemens Ladisch <clemens@ladisch.de>
+Cc: Sultan Alsawaf <sultan@kerneltoast.com>
+Cc: Waiman Long <longman@redhat.com>
+Cc: stable@vger.kernel.org
+Link: https://lkml.kernel.org/r/alpine.DEB.2.21.1906132136280.1791@nanos.tec.linutronix.de
+
+---
+ kernel/time/timekeeping.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/kernel/time/timekeeping.c b/kernel/time/timekeeping.c
+index 85f5912d8f70..44b726bab4bd 100644
+--- a/kernel/time/timekeeping.c
++++ b/kernel/time/timekeeping.c
+@@ -808,17 +808,18 @@ ktime_t ktime_get_coarse_with_offset(enum tk_offsets offs)
+ 	struct timekeeper *tk = &tk_core.timekeeper;
+ 	unsigned int seq;
+ 	ktime_t base, *offset = offsets[offs];
++	u64 nsecs;
+ 
+ 	WARN_ON(timekeeping_suspended);
+ 
+ 	do {
+ 		seq = read_seqcount_begin(&tk_core.seq);
+ 		base = ktime_add(tk->tkr_mono.base, *offset);
++		nsecs = tk->tkr_mono.xtime_nsec >> tk->tkr_mono.shift;
+ 
+ 	} while (read_seqcount_retry(&tk_core.seq, seq));
+ 
+-	return base;
+-
++	return base + nsecs;
+ }
+ EXPORT_SYMBOL_GPL(ktime_get_coarse_with_offset);
+ 
