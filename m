@@ -2,134 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 38951458A0
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 11:27:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BDFF7458AC
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 11:30:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727063AbfFNJ1v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 05:27:51 -0400
-Received: from mail3-relais-sop.national.inria.fr ([192.134.164.104]:63450
-        "EHLO mail3-relais-sop.national.inria.fr" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726479AbfFNJ1v (ORCPT
+        id S1727094AbfFNJak (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 05:30:40 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:40427 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726686AbfFNJak (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 05:27:51 -0400
-X-IronPort-AV: E=Sophos;i="5.63,372,1557180000"; 
-   d="scan'208";a="309239293"
-Received: from unknown (HELO hadrien.local) ([163.173.90.224])
-  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Jun 2019 11:27:47 +0200
-Date:   Fri, 14 Jun 2019 11:27:47 +0200 (CEST)
-From:   Julia Lawall <julia.lawall@lip6.fr>
-X-X-Sender: jll@hadrien
-To:     Markus Elfring <Markus.Elfring@web.de>
-cc:     Enrico Weigelt <lkml@metux.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Nicolas Palix <nicolas.palix@imag.fr>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        cocci@systeme.lip6.fr
-Subject: Re: [Cocci] [PATCH] drivers: Inline code in devm_platform_ioremap_resource()
- from two functions
-In-Reply-To: <032e347f-e575-c89c-fa62-473d52232735@web.de>
-Message-ID: <alpine.DEB.2.20.1906141127030.9068@hadrien>
-References: <20190406061112.31620-1-himanshujha199640@gmail.com> <f09006a3-691c-382a-23b8-8e9ff5b4a5f1@web.de> <alpine.DEB.2.21.1906081925090.2543@hadrien> <7b4fe770-dadd-80ba-2ba4-0f2bc90984ef@web.de> <f573b2d3-11d0-92b5-f8ab-4c4b6493e152@metux.net>
- <032e347f-e575-c89c-fa62-473d52232735@web.de>
-User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
+        Fri, 14 Jun 2019 05:30:40 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x5E9SDmZ1626959
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Fri, 14 Jun 2019 02:28:13 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x5E9SDmZ1626959
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019051801; t=1560504494;
+        bh=8ovtBRuZ0q8GIqCVFE0Skn79qdS+yqXGPq1xONZOsDw=;
+        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
+        b=uLnFCratGXjhc7DxN/+6K+HriiKU8DO2JkCt+8Ylz1udjr4vbHqPo7jSPe+qOlFv+
+         XZ+s/9pRawXJmV8iST+m7AgYz5j8K1gdpR6Hz0qARVE3/yMUEp2RoFEf3jo8Vfl3yY
+         eAqaeoMPcL0ON3NkuwatnhITWjb3Z1r+QtMz1QEcd1VOOnysJpL/h8V5CIMlVHyIHS
+         L51DDoZ+plQtFAFqyT2MrDUp1ZPanF3NlNZoYkiJsXqogWrSUycoppm2Q1IHWnn5Hi
+         vDLXNR3DmyQOhM4b6dlFfqAogn418gYmvpYSc3u0lCCcO5PrZRNdSRZ7hJjmZjKTTa
+         HiPSxD4ZjdlUw==
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x5E9SD5k1626956;
+        Fri, 14 Jun 2019 02:28:13 -0700
+Date:   Fri, 14 Jun 2019 02:28:13 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Rajneesh Bhardwaj <tipbot@zytor.com>
+Message-ID: <tip-e32d045cd4ba06b59878323e434bad010e78e658@git.kernel.org>
+Cc:     peterz@infradead.org, rajneesh.bhardwaj@linux.intel.com,
+        linux-kernel@vger.kernel.org, dave.hansen@linux.intel.com,
+        linux-pm@vger.kernel.org, mingo@kernel.org,
+        kan.liang@linux.intel.com, qiuxu.zhuo@intel.com,
+        andriy.shevchenko@linux.intel.com, bp@alien8.de,
+        srinivas.pandruvada@linux.intel.com, tglx@linutronix.de,
+        hpa@zytor.com, lenb@kernel.org
+Reply-To: rajneesh.bhardwaj@linux.intel.com, peterz@infradead.org,
+          linux-kernel@vger.kernel.org, dave.hansen@linux.intel.com,
+          linux-pm@vger.kernel.org, mingo@kernel.org,
+          kan.liang@linux.intel.com, qiuxu.zhuo@intel.com,
+          andriy.shevchenko@linux.intel.com, bp@alien8.de,
+          srinivas.pandruvada@linux.intel.com, tglx@linutronix.de,
+          hpa@zytor.com, lenb@kernel.org
+In-Reply-To: <20190606012419.13250-1-rajneesh.bhardwaj@linux.intel.com>
+References: <20190606012419.13250-1-rajneesh.bhardwaj@linux.intel.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/cpu] x86/cpu: Add Ice Lake NNPI to Intel family
+Git-Commit-ID: e32d045cd4ba06b59878323e434bad010e78e658
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
+X-Spam-Status: No, score=-3.1 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        T_DATE_IN_FUTURE_96_Q autolearn=ham autolearn_force=no version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Commit-ID:  e32d045cd4ba06b59878323e434bad010e78e658
+Gitweb:     https://git.kernel.org/tip/e32d045cd4ba06b59878323e434bad010e78e658
+Author:     Rajneesh Bhardwaj <rajneesh.bhardwaj@linux.intel.com>
+AuthorDate: Thu, 6 Jun 2019 06:54:19 +0530
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Thu, 13 Jun 2019 19:37:42 +0200
 
+x86/cpu: Add Ice Lake NNPI to Intel family
 
-On Fri, 14 Jun 2019, Markus Elfring wrote:
+Add the CPUID model number of Ice Lake Neural Network Processor for Deep
+Learning Inference (ICL-NNPI) to the Intel family list. Ice Lake NNPI uses
+model number 0x9D and this will be documented in a future version of Intel
+Software Development Manual.
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Fri, 14 Jun 2019 11:05:33 +0200
->
-> Two function calls were combined in this function implementation.
-> Inline corresponding code so that extra error checks can be avoided here.
+Signed-off-by: Rajneesh Bhardwaj <rajneesh.bhardwaj@linux.intel.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: bp@suse.de
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Kan Liang <kan.liang@linux.intel.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: platform-driver-x86@vger.kernel.org
+Cc: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
+Cc: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Cc: Len Brown <lenb@kernel.org>
+Cc: Linux PM <linux-pm@vger.kernel.org>
+Link: https://lkml.kernel.org/r/20190606012419.13250-1-rajneesh.bhardwaj@linux.intel.com
 
-I don't see any point to this at all.  By inlining the code, you have
-created a clone, which will introduce extra work to maintain in the
-future.
+---
+ arch/x86/include/asm/intel-family.h | 1 +
+ 1 file changed, 1 insertion(+)
 
-julia
-
-
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/base/platform.c | 39 ++++++++++++++++++++++++++++++++++-----
->  1 file changed, 34 insertions(+), 5 deletions(-)
->
-> diff --git a/drivers/base/platform.c b/drivers/base/platform.c
-> index 4d1729853d1a..baadca72f949 100644
-> --- a/drivers/base/platform.c
-> +++ b/drivers/base/platform.c
-> @@ -80,8 +80,8 @@ struct resource *platform_get_resource(struct platform_device *dev,
->  EXPORT_SYMBOL_GPL(platform_get_resource);
->
->  /**
-> - * devm_platform_ioremap_resource - call devm_ioremap_resource() for a platform
-> - *				    device
-> + * devm_platform_ioremap_resource
-> + * Achieve devm_ioremap_resource() functionality for a platform device
->   *
->   * @pdev: platform device to use both for memory resource lookup as well as
->   *        resource management
-> @@ -91,10 +91,39 @@ EXPORT_SYMBOL_GPL(platform_get_resource);
->  void __iomem *devm_platform_ioremap_resource(struct platform_device *pdev,
->  					     unsigned int index)
->  {
-> -	struct resource *res;
-> +	u32 i;
->
-> -	res = platform_get_resource(pdev, IORESOURCE_MEM, index);
-> -	return devm_ioremap_resource(&pdev->dev, res);
-> +	for (i = 0; i < pdev->num_resources; i++) {
-> +		struct resource *res = &pdev->resource[i];
-> +
-> +		if (resource_type(res) == IORESOURCE_MEM && index-- == 0) {
-> +			struct device *dev = &pdev->dev;
-> +			resource_size_t size = resource_size(res);
-> +			void __iomem *dest;
-> +
-> +			if (!devm_request_mem_region(dev,
-> +						     res->start,
-> +						     size,
-> +						     dev_name(dev))) {
-> +				dev_err(dev,
-> +					"can't request region for resource %pR\n",
-> +					res);
-> +				return IOMEM_ERR_PTR(-EBUSY);
-> +			}
-> +
-> +			dest = devm_ioremap(dev, res->start, size);
-> +			if (!dest) {
-> +				dev_err(dev,
-> +					"ioremap failed for resource %pR\n",
-> +					res);
-> +				devm_release_mem_region(dev, res->start, size);
-> +				dest = IOMEM_ERR_PTR(-ENOMEM);
-> +			}
-> +
-> +			return dest;
-> +		}
-> +	}
-> +	return IOMEM_ERR_PTR(-EINVAL);
->  }
->  EXPORT_SYMBOL_GPL(devm_platform_ioremap_resource);
->  #endif /* CONFIG_HAS_IOMEM */
-> --
-> 2.22.0
->
-> _______________________________________________
-> Cocci mailing list
-> Cocci@systeme.lip6.fr
-> https://systeme.lip6.fr/mailman/listinfo/cocci
->
+diff --git a/arch/x86/include/asm/intel-family.h b/arch/x86/include/asm/intel-family.h
+index 9f15384c504a..087de5d3b93a 100644
+--- a/arch/x86/include/asm/intel-family.h
++++ b/arch/x86/include/asm/intel-family.h
+@@ -53,6 +53,7 @@
+ #define INTEL_FAM6_CANNONLAKE_MOBILE	0x66
+ 
+ #define INTEL_FAM6_ICELAKE_MOBILE	0x7E
++#define INTEL_FAM6_ICELAKE_NNPI		0x9D
+ 
+ /* "Small Core" Processors (Atom) */
+ 
