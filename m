@@ -2,115 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 40574450E0
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 02:46:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C817E450E7
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 02:49:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727213AbfFNAqC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 20:46:02 -0400
-Received: from mga11.intel.com ([192.55.52.93]:18675 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725778AbfFNAqC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 20:46:02 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Jun 2019 17:46:01 -0700
-X-ExtLoop1: 1
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.36])
-  by fmsmga007.fm.intel.com with ESMTP; 13 Jun 2019 17:46:00 -0700
-Date:   Thu, 13 Jun 2019 17:46:00 -0700
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Stephen Smalley <sds@tycho.nsa.gov>
-Cc:     Cedric Xing <cedric.xing@intel.com>,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-sgx@vger.kernel.org,
-        jarkko.sakkinen@linux.intel.com, luto@kernel.org,
-        jmorris@namei.org, serge@hallyn.com, paul@paul-moore.com,
-        eparis@parisplace.org, jethro@fortanix.com, dave.hansen@intel.com,
-        tglx@linutronix.de, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, nhorman@redhat.com,
-        pmccallum@redhat.com, serge.ayoun@intel.com,
-        shay.katz-zamir@intel.com, haitao.huang@intel.com,
-        andriy.shevchenko@linux.intel.com, kai.svahn@intel.com,
-        bp@alien8.de, josh@joshtriplett.org, kai.huang@intel.com,
-        rientjes@google.com, william.c.roberts@intel.com,
-        philip.b.tricca@intel.com
-Subject: Re: [RFC PATCH v1 2/3] LSM/x86/sgx: Implement SGX specific hooks in
- SELinux
-Message-ID: <20190614004600.GF18385@linux.intel.com>
-References: <cover.1560131039.git.cedric.xing@intel.com>
- <a382d46f66756e13929ca9244479dd9f689c470e.1560131039.git.cedric.xing@intel.com>
- <b6f099cd-c0eb-d5cf-847d-27a15ac5ceaf@tycho.nsa.gov>
- <20190611220243.GB3416@linux.intel.com>
- <8d99d8fb-a921-286a-8cf0-cd522e09b37c@tycho.nsa.gov>
+        id S1727157AbfFNAtE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 20:49:04 -0400
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:17282 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725985AbfFNAtD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 20:49:03 -0400
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5d02eeff0000>; Thu, 13 Jun 2019 17:49:03 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Thu, 13 Jun 2019 17:49:02 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Thu, 13 Jun 2019 17:49:02 -0700
+Received: from [10.110.48.28] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 14 Jun
+ 2019 00:49:00 +0000
+Subject: Re: [PATCH] drm/nouveau/dmem: missing mutex_lock in error path
+To:     Ralph Campbell <rcampbell@nvidia.com>,
+        Jerome Glisse <jglisse@redhat.com>,
+        David Airlie <airlied@linux.ie>,
+        Ben Skeggs <bskeggs@redhat.com>,
+        "Jason Gunthorpe" <jgg@mellanox.com>
+CC:     <nouveau@lists.freedesktop.org>, <linux-mm@kvack.org>,
+        <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
+References: <20190614001121.23950-1-rcampbell@nvidia.com>
+From:   John Hubbard <jhubbard@nvidia.com>
+X-Nvconfidentiality: public
+Message-ID: <1fc63655-985a-0d60-523f-00a51648dc38@nvidia.com>
+Date:   Thu, 13 Jun 2019 17:49:00 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8d99d8fb-a921-286a-8cf0-cd522e09b37c@tycho.nsa.gov>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20190614001121.23950-1-rcampbell@nvidia.com>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL104.nvidia.com (172.18.146.11) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1560473343; bh=BjedhBHdC+dcOh91aticrwFWw8MgD0WBJkzQKnUq81E=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:X-Nvconfidentiality:
+         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
+         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=TOSu9Iw1C1DyRb5jRymBzYQAVGIJGrsxVJQIolENnFKOatN3JUmcw1Cu7lBtGtE3X
+         cc+8Hc1/d7iGZDZFhLxpWRvLO2EQqM/XPuM/S7T68j1IMK3V62F6/Gu/we7U2KMrQH
+         TzSpxb5+WvPQsxgC5pSPQYT/yRLTWzMGeZg5F23F2WZiFp6OJSPuZm8DEQAuvOyfgH
+         83pDBVFmfiNeFA3osDju1F4Wbw1zBq/ovn9iTiBWwe8XdP86mKRIhfcUwBSb8PDBcM
+         FTNPwt4TervNTABgwRII5KXJ/FclnbDfCQfZZWdNIlPs0Rg0xcdClB5AUmpfBYvWgH
+         xZac448fVDEKA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 13, 2019 at 01:02:17PM -0400, Stephen Smalley wrote:
-> On 6/11/19 6:02 PM, Sean Christopherson wrote:
-> >On Tue, Jun 11, 2019 at 09:40:25AM -0400, Stephen Smalley wrote:
-> >>I haven't looked at this code closely, but it feels like a lot of
-> >>SGX-specific logic embedded into SELinux that will have to be repeated or
-> >>reused for every security module.  Does SGX not track this state itself?
-> >
-> >SGX does track equivalent state.
-> >
-> >There are three proposals on the table (I think):
-> >
-> >   1. Require userspace to explicitly specificy (maximal) enclave page
-> >      permissions at build time.  The enclave page permissions are provided
-> >      to, and checked by, LSMs at enclave build time.
-> >
-> >      Pros: Low-complexity kernel implementation, straightforward auditing
-> >      Cons: Sullies the SGX UAPI to some extent, may increase complexity of
-> >            SGX2 enclave loaders.
-> >
-> >   2. Pre-check LSM permissions and dynamically track mappings to enclave
-> >      pages, e.g. add an SGX mprotect() hook to restrict W->X and WX
-> >      based on the pre-checked permissions.
-> >
-> >      Pros: Does not impact SGX UAPI, medium kernel complexity
-> >      Cons: Auditing is complex/weird, requires taking enclave-specific
-> >            lock during mprotect() to query/update tracking.
-> >
-> >   3. Implement LSM hooks in SGX to allow LSMs to track enclave regions
-> >      from cradle to grave, but otherwise defer everything to LSMs.
-> >
-> >      Pros: Does not impact SGX UAPI, maximum flexibility, precise auditing
-> >      Cons: Most complex and "heaviest" kernel implementation of the three,
-> >            pushes more SGX details into LSMs.
-> >
-> >My RFC series[1] implements #1.  My understanding is that Andy (Lutomirski)
-> >prefers #2.  Cedric's RFC series implements #3.
-> >
-> >Perhaps the easiest way to make forward progress is to rule out the
-> >options we absolutely *don't* want by focusing on the potentially blocking
-> >issue with each option:
-> >
-> >   #1 - SGX UAPI funkiness
-> >
-> >   #2 - Auditing complexity, potential enclave lock contention
-> >
-> >   #3 - Pushing SGX details into LSMs and complexity of kernel implementation
-> >
-> >
-> >[1] https://lkml.kernel.org/r/20190606021145.12604-1-sean.j.christopherson@intel.com
+On 6/13/19 5:11 PM, Ralph Campbell wrote:
+> In nouveau_dmem_pages_alloc(), the drm->dmem->mutex is unlocked before
+> calling nouveau_dmem_chunk_alloc().
+> Reacquire the lock before continuing to the next page.
 > 
-> Given the complexity tradeoff, what is the clear motivating example for why
-> #1 isn't the obvious choice? That the enclave loader has no way of knowing a
-> priori whether the enclave will require W->X or WX?  But aren't we better
-> off requiring enclaves to be explicitly marked as needing such so that we
-> can make a more informed decision about whether to load them in the first
-> place?
+> Signed-off-by: Ralph Campbell <rcampbell@nvidia.com>
+> ---
+> 
+> I found this while testing Jason Gunthorpe's hmm tree but this is
+> independant of those changes. I guess it could go through
+> David Airlie's tree for nouveau or Jason's tree.
+> 
 
-Andy and/or Cedric, can you please weigh in with a concrete (and practical)
-use case that will break if we go with #1?  The auditing issues for #2/#3
-are complex to say the least...
+Hi Ralph,
+
+btw, was this the fix for the crash you were seeing? It might be nice to
+mention in the commit description, if you are seeing real symptoms.
+
+
+>  drivers/gpu/drm/nouveau/nouveau_dmem.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/drm/nouveau/nouveau_dmem.c b/drivers/gpu/drm/nouveau/nouveau_dmem.c
+> index 27aa4e72abe9..00f7236af1b9 100644
+> --- a/drivers/gpu/drm/nouveau/nouveau_dmem.c
+> +++ b/drivers/gpu/drm/nouveau/nouveau_dmem.c
+> @@ -379,9 +379,10 @@ nouveau_dmem_pages_alloc(struct nouveau_drm *drm,
+>  			ret = nouveau_dmem_chunk_alloc(drm);
+>  			if (ret) {
+>  				if (c)
+> -					break;
+
+Actually, the pre-existing code is a little concerning. Your change preserves
+the behavior, but it seems questionable to be doing a "return 0" (whether
+via the above break, or your change) when it's in this partially allocated
+state. It's reporting success when it only allocates part of what was requested,
+and it doesn't fill in the pages array either.
+
+
+
+> +					return 0;
+>  				return ret;
+>  			}
+> +			mutex_lock(&drm->dmem->mutex);
+>  			continue;
+>  		}
+>  
+> 
+
+The above comment is about pre-existing potential problems, but your patch itself
+looks correct, so:
+
+Reviewed-by: John Hubbard <jhubbard@nvidia.com> 
+
+
+thanks,
+-- 
+John Hubbard
+NVIDIA
+
