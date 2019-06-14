@@ -2,116 +2,163 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9649C45E24
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 15:28:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 07C1C45E2A
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 15:29:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728023AbfFNN2j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 09:28:39 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:34709 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727729AbfFNN2i (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 09:28:38 -0400
-Received: by mail-ed1-f65.google.com with SMTP id s49so3563649edb.1
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2019 06:28:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=/bEFMtHnd0Lq4R6BgJaHDb9jSNJdzL1pBjuE2g5cik8=;
-        b=voy0OQVzAPCvIAmwQgiYtlSleenOKuT/qpb01Z/+4pGuPKe1skxIJEkKDPpwS9HC3H
-         d2duEeopfKNnnkQCjYrCgqImAQqW5bLMgwugLa222v0jda83+go22NOjY5PWaEnTSvyV
-         KLhBwBJPS7SZJtXCtxB7OvQQqgSQ3kPKWmFUA1MJa9Wrfld0MCSAXdHUdWfClFnEwpgf
-         sOPE6zcJmB0iiUGNc4akPixQ19M5SCYisvcVkA0vU6UsVVet+GzmRtabFV//WJ5mNMyj
-         qJmJDuvP10aBanhB/RZD0uRXen4zbe9eWcwwuargF/sjpjd9dhGMdU11acHxnHjo9xUZ
-         o5vw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=/bEFMtHnd0Lq4R6BgJaHDb9jSNJdzL1pBjuE2g5cik8=;
-        b=coD8TeATohLfgZQhGaarZO74H5exr9aMPwmhM04iLuOdielfvnp9KkJqchf8iTxzf2
-         Szva4WXx0uFFaF4RBwneD30WNRsBF1d6f2O7gFnHFQTh3tQ64rfqjOZ0xkqremG2khBT
-         /wCkKGZdYEFNKeQZrRPtqlMVptlRic9UCfXqffsHSLNimzvZxpKSBUs5zpyiY6/hFzPb
-         bIxj9mmS3Hg45fR1ZZH5FV1WOGFv4ekfDr9panV6rfKb84CaA5VOhUEFqVLepB+zuEEt
-         KGaHate7qj+uzdH0O/tvVZoARD7vaQh/yVOtyHrCOa2w83Nn/ONq1Q30z5KmurGO40kF
-         mBEA==
-X-Gm-Message-State: APjAAAW1kQ8TjEbvpzl1dLCscruHT0RR+FLRpueFGOlOBPRCYyDJWcDn
-        qsz+woU7MSfiK9qOADjO1IBzGA==
-X-Google-Smtp-Source: APXvYqwTjBWiaWugHv92n/VOXJckmXdJ0ij79tTSCt3WN5QrjcsRYX/bfqnOjwWa25VDWFa14JeAyw==
-X-Received: by 2002:a50:b178:: with SMTP id l53mr75879420edd.244.1560518916776;
-        Fri, 14 Jun 2019 06:28:36 -0700 (PDT)
-Received: from box.localdomain ([86.57.175.117])
-        by smtp.gmail.com with ESMTPSA id 34sm901697eds.5.2019.06.14.06.28.36
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 14 Jun 2019 06:28:36 -0700 (PDT)
-Received: by box.localdomain (Postfix, from userid 1000)
-        id 8857010086F; Fri, 14 Jun 2019 16:28:36 +0300 (+03)
-Date:   Fri, 14 Jun 2019 16:28:36 +0300
-From:   "Kirill A. Shutemov" <kirill@shutemov.name>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>, x86@kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Borislav Petkov <bp@alien8.de>,
-        Andy Lutomirski <luto@amacapital.net>,
-        David Howells <dhowells@redhat.com>,
-        Kees Cook <keescook@chromium.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Kai Huang <kai.huang@linux.intel.com>,
-        Jacob Pan <jacob.jun.pan@linux.intel.com>,
-        Alison Schofield <alison.schofield@intel.com>,
-        linux-mm@kvack.org, kvm@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH, RFC 13/62] x86/mm: Add hooks to allocate and free
- encrypted pages
-Message-ID: <20190614132836.spl6bmk2kkx65nfr@box>
-References: <20190508144422.13171-1-kirill.shutemov@linux.intel.com>
- <20190508144422.13171-14-kirill.shutemov@linux.intel.com>
- <20190614093409.GX3436@hirez.programming.kicks-ass.net>
- <20190614110458.GN3463@hirez.programming.kicks-ass.net>
+        id S1728216AbfFNN3U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 09:29:20 -0400
+Received: from mail-eopbgr80082.outbound.protection.outlook.com ([40.107.8.82]:40717
+        "EHLO EUR04-VI1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727737AbfFNN3U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Jun 2019 09:29:20 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=C5l0eTiCXHxR4pHpa1CzyJNPzzs0FbIQx0VVcf3f+yY=;
+ b=OLRYJWboKLn4a85fwq2FClY9gVZFhs3POVB1+BtpEyrUmSlwrFVKVL0kophrfAU/j4ZQdzOTWx2L5YSpwZGV09RP0QcpwUoFrgk7nldiaym+Gywpntnt3nl2sph2IPzg15fMBcY1vlNdLpfzaYoYKhwgM/Hro3L8f6A6fiqRmRA=
+Received: from VI1PR04MB5967.eurprd04.prod.outlook.com (20.178.123.141) by
+ VI1PR04MB5405.eurprd04.prod.outlook.com (20.178.121.15) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1987.12; Fri, 14 Jun 2019 13:29:14 +0000
+Received: from VI1PR04MB5967.eurprd04.prod.outlook.com
+ ([fe80::3dd4:5031:dc06:1fd7]) by VI1PR04MB5967.eurprd04.prod.outlook.com
+ ([fe80::3dd4:5031:dc06:1fd7%7]) with mapi id 15.20.1965.018; Fri, 14 Jun 2019
+ 13:29:14 +0000
+From:   Robert Chiras <robert.chiras@nxp.com>
+To:     "festevam@gmail.com" <festevam@gmail.com>
+CC:     dl-linux-imx <linux-imx@nxp.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "sam@ravnborg.org" <sam@ravnborg.org>,
+        "daniel@ffwll.ch" <daniel@ffwll.ch>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "airlied@linux.ie" <airlied@linux.ie>
+Subject: Re: [EXT] Re: [PATCH 2/2] drm/panel: Add support for Raydium RM67191
+ panel driver
+Thread-Topic: [EXT] Re: [PATCH 2/2] drm/panel: Add support for Raydium RM67191
+ panel driver
+Thread-Index: AQHVIqdzFTZPTbEojEKDO3NY8aRErKabE9mAgAARJ4A=
+Date:   Fri, 14 Jun 2019 13:29:14 +0000
+Message-ID: <1560518953.9328.31.camel@nxp.com>
+References: <1560513063-24995-1-git-send-email-robert.chiras@nxp.com>
+         <1560513063-24995-3-git-send-email-robert.chiras@nxp.com>
+         <CAOMZO5BAborMvk=4cgreWKX6rJjK-237me98dM1dDV53oUnExQ@mail.gmail.com>
+In-Reply-To: <CAOMZO5BAborMvk=4cgreWKX6rJjK-237me98dM1dDV53oUnExQ@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: Evolution 3.18.5.2-0ubuntu3.2 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=robert.chiras@nxp.com; 
+x-originating-ip: [89.37.124.34]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: b87de7a8-16ef-47d9-df58-08d6f0cc4b34
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:VI1PR04MB5405;
+x-ms-traffictypediagnostic: VI1PR04MB5405:
+x-microsoft-antispam-prvs: <VI1PR04MB5405823370614FBA2628D863E3EE0@VI1PR04MB5405.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:8882;
+x-forefront-prvs: 0068C7E410
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(396003)(346002)(366004)(136003)(376002)(199004)(189003)(8676002)(54906003)(44832011)(1411001)(68736007)(86362001)(99286004)(64756008)(66946007)(73956011)(66556008)(66446008)(66476007)(478600001)(76116006)(81166006)(7416002)(305945005)(14444005)(8936002)(256004)(76176011)(66066001)(7736002)(14454004)(2501003)(81156014)(2906002)(1730700003)(6506007)(53546011)(6246003)(103116003)(186003)(6512007)(26005)(1361003)(316002)(5660300002)(6116002)(2351001)(6486002)(50226002)(36756003)(476003)(2616005)(102836004)(11346002)(25786009)(446003)(3846002)(229853002)(5640700003)(486006)(71190400001)(71200400001)(6916009)(6436002)(4326008)(53936002)(99106002)(2004002);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB5405;H:VI1PR04MB5967.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: 2MVYUqXYn6op9/Lbh21HunQ1VW/rvBfhSN+CWJTDSFRfPHNMINTGgw30Tz3o6+RlZrFAzLO0pFTKLRffEBwSRmbZJRG+WkpFmfVjTGFMyPpudNJGcdquo3XvswLuIRuypxau/IzKQvbF+uCFniudsdFgWJP+x9STaAEL2B0pNlGpTc+pl/RRAEw+NPfD9ZDrfQLO56DA9n4qjtiPe0u00pbvPt37iptYCizwOYU5ZKJvE6LipkPCgAjNNs9PSlk5BN+UYb3RZ0Z3baLTHxl5bRsPbxG1NPRvfH6f7o3IZ1S4w0jwJcFuCbt77mMekoUkFzhIAwnKQClyvZ7Cn0PNFJPVBXQ8J1D6Z6MlYskiojFENO1c54l/cEuZ3qPWZq5cBg86WivjE+D8T5b6viQJgqTwHr+i33hJEMloyr77p5s=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <6B40518580B34A4591C8D937481773BE@eurprd04.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190614110458.GN3463@hirez.programming.kicks-ass.net>
-User-Agent: NeoMutt/20180716
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b87de7a8-16ef-47d9-df58-08d6f0cc4b34
+X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Jun 2019 13:29:14.3505
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: robert.chiras@nxp.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB5405
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 14, 2019 at 01:04:58PM +0200, Peter Zijlstra wrote:
-> On Fri, Jun 14, 2019 at 11:34:09AM +0200, Peter Zijlstra wrote:
-> > On Wed, May 08, 2019 at 05:43:33PM +0300, Kirill A. Shutemov wrote:
-> > 
-> > > +		lookup_page_ext(page)->keyid = keyid;
-> 
-> > > +		lookup_page_ext(page)->keyid = 0;
-> 
-> Also, perhaps paranoid; but do we want something like:
-> 
-> static inline void page_set_keyid(struct page *page, int keyid)
-> {
-> 	/* ensure nothing creeps after changing the keyid */
-> 	barrier();
-> 	WRITE_ONCE(lookup_page_ext(page)->keyid, keyid);
-> 	barrier();
-> 	/* ensure nothing creeps before changing the keyid */
-> }
-> 
-> And this is very much assuming there is no concurrency through the
-> allocator locks.
-
-There's no concurrency for this page: it has been off the free list, but
-have not yet passed on to user. Nobody else sees the page before
-allocation is finished.
-
-And barriers/WRITE_ONCE() looks excessive to me. It's just yet another bit
-of page's metadata and I don't see why it's has to be handled in a special
-way.
-
-Does it relax your paranoia? :P
-
--- 
- Kirill A. Shutemov
+SGkgRmFiaW8sDQoNCk9uIFZpLCAyMDE5LTA2LTE0IGF0IDA5OjI3IC0wMzAwLCBGYWJpbyBFc3Rl
+dmFtIHdyb3RlOg0KPiBIaSBSb2JlcnQsDQo+IA0KPiBPbiBGcmksIEp1biAxNCwgMjAxOSBhdCA4
+OjUyIEFNIFJvYmVydCBDaGlyYXMgPHJvYmVydC5jaGlyYXNAbnhwLmNvbT4NCj4gd3JvdGU6DQo+
+IA0KPiA+IA0KPiA+IC0tLSAvZGV2L251bGwNCj4gPiArKysgYi9kcml2ZXJzL2dwdS9kcm0vcGFu
+ZWwvcGFuZWwtcmF5ZGl1bS1ybTY3MTkxLmMNCj4gPiBAQCAtMCwwICsxLDczMCBAQA0KPiA+ICsv
+LyBTUERYLUxpY2Vuc2UtSWRlbnRpZmllcjogR1BMLTIuMA0KPiA+ICsvKg0KPiA+ICsgKiBpLk1Y
+IGRybSBkcml2ZXIgLSBSYXlkaXVtIE1JUEktRFNJIHBhbmVsIGRyaXZlcg0KPiA+ICsgKg0KPiA+
+ICsgKiBDb3B5cmlnaHQgKEMpIDIwMTcgTlhQDQo+ID4gKyAqDQo+ID4gKyAqIFRoaXMgcHJvZ3Jh
+bSBpcyBmcmVlIHNvZnR3YXJlOyB5b3UgY2FuIHJlZGlzdHJpYnV0ZSBpdCBhbmQvb3INCj4gPiAr
+ICogbW9kaWZ5IGl0IHVuZGVyIHRoZSB0ZXJtcyBvZiB0aGUgR05VIEdlbmVyYWwgUHVibGljIExp
+Y2Vuc2UNCj4gPiArICogYXMgcHVibGlzaGVkIGJ5IHRoZSBGcmVlIFNvZnR3YXJlIEZvdW5kYXRp
+b247IGVpdGhlciB2ZXJzaW9uIDINCj4gPiArICogb2YgdGhlIExpY2Vuc2UsIG9yIChhdCB5b3Vy
+IG9wdGlvbikgYW55IGxhdGVyIHZlcnNpb24uDQo+ID4gKyAqIFRoaXMgcHJvZ3JhbSBpcyBkaXN0
+cmlidXRlZCBpbiB0aGUgaG9wZSB0aGF0IGl0IHdpbGwgYmUgdXNlZnVsLA0KPiA+ICsgKiBidXQg
+V0lUSE9VVCBBTlkgV0FSUkFOVFk7IHdpdGhvdXQgZXZlbiB0aGUgaW1wbGllZCB3YXJyYW50eSBv
+Zg0KPiA+ICsgKiBNRVJDSEFOVEFCSUxJVFkgb3IgRklUTkVTUyBGT1IgQSBQQVJUSUNVTEFSIFBV
+UlBPU0UuwqDCoFNlZSB0aGUNCj4gPiArICogR05VIEdlbmVyYWwgUHVibGljIExpY2Vuc2UgZm9y
+IG1vcmUgZGV0YWlscy4NCj4gTm8gbmVlZCBmb3IgdGhpcyB0ZXh0IGFzIHlvdSBhcmUgdXNpbmcg
+U1BEWCB0YWcuDQo+IA0KPiA+IA0KPiA+ICtzdGF0aWMgaW50IGNvbG9yX2Zvcm1hdF9mcm9tX2Rz
+aV9mb3JtYXQoZW51bSBtaXBpX2RzaV9waXhlbF9mb3JtYXQNCj4gPiBmb3JtYXQpDQo+ID4gK3sN
+Cj4gPiArwqDCoMKgwqDCoMKgwqBzd2l0Y2ggKGZvcm1hdCkgew0KPiA+ICvCoMKgwqDCoMKgwqDC
+oGNhc2UgTUlQSV9EU0lfRk1UX1JHQjU2NToNCj4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgcmV0dXJuIDB4NTU7DQo+ID4gK8KgwqDCoMKgwqDCoMKgY2FzZSBNSVBJX0RTSV9GTVRf
+UkdCNjY2Og0KPiA+ICvCoMKgwqDCoMKgwqDCoGNhc2UgTUlQSV9EU0lfRk1UX1JHQjY2Nl9QQUNL
+RUQ6DQo+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoHJldHVybiAweDY2Ow0KPiA+
+ICvCoMKgwqDCoMKgwqDCoGNhc2UgTUlQSV9EU0lfRk1UX1JHQjg4ODoNCj4gPiArwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgcmV0dXJuIDB4Nzc7DQo+IENvdWxkIHlvdSB1c2UgZGVmaW5l
+cyBmb3IgdGhlc2UgbWFnaWMgMHg1NSwgMHg2NiBhbmQgMHg3NyBudW1iZXJzPw0KVGhvc2UgbWFn
+aWMgbnVtYmVycyBtZWFuIGV4YWN0bHkgd2hhdCB0aGVpciBjYXNlIHN0YXRlbWVudHMgYXJlLiBU
+aGV5DQpjb21lIGZyb20gdGhlIHBhbmVsIGRvY3VtZW50YXRpb24uIEkgdGhvdWdodCB0aGF0IHRo
+ZSBhbHJlYWR5IGV4aXN0aW5nDQpkZWZpbmVzIChNSVBJX0RTSV9GTVRfKSBhcmUgc2VsZiBleHBs
+YW5hdG9yeSBoZXJlLCBzbyB1c2luZyBkZWZpbmVzDQpzZWVtZWQgcmVkdW5kYW50IGZvciBtZS4g
+QnV0LCBpZiB5b3UgdGhpbmsgdGhhdCB1c2luZyBkZWZpbmVzIGZvciB0aGVtDQppcyBiZXR0ZXIs
+IEkgY2FuIGRvIHRoYXQuDQo+IA0KPiA+IA0KPiA+ICtzdGF0aWMgaW50IHJhZF9wYW5lbF9wcmVw
+YXJlKHN0cnVjdCBkcm1fcGFuZWwgKnBhbmVsKQ0KPiA+ICt7DQo+ID4gK8KgwqDCoMKgwqDCoMKg
+c3RydWN0IHJhZF9wYW5lbCAqcmFkID0gdG9fcmFkX3BhbmVsKHBhbmVsKTsNCj4gPiArDQo+ID4g
+K8KgwqDCoMKgwqDCoMKgaWYgKHJhZC0+cHJlcGFyZWQpDQo+ID4gK8KgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoHJldHVybiAwOw0KPiA+ICsNCj4gPiArwqDCoMKgwqDCoMKgwqBpZiAocmFk
+LT5yZXNldCkgew0KPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBncGlvZF9zZXRf
+dmFsdWUocmFkLT5yZXNldCwgMCk7DQo+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oHVzbGVlcF9yYW5nZSg1MDAwLCAxMDAwMCk7DQo+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoGdwaW9kX3NldF92YWx1ZShyYWQtPnJlc2V0LCAxKTsNCj4gPiArwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgdXNsZWVwX3JhbmdlKDIwMDAwLCAyNTAwMCk7DQo+IFRoaXMgZG9l
+cyBub3QgbG9vayBjb3JyZWN0Lg0KPiANCj4gVGhlIGNvcnJlY3Qgd2F5IHRvIGRvIGEgcmVzZXQg
+d2l0aCBncGlvZCBBUEkgaXM6DQo+IA0KPiDCoGdwaW9kX3NldF92YWx1ZShyYWQtPnJlc2V0LCAx
+KTsNCj4gDQo+IGRlbGF5DQo+IA0KPiBncGlvZF9zZXRfdmFsdWUocmFkLT5yZXNldCwgMCk7DQo+
+IA0KPiBJIGRvbid0IGhhdmUgdGhlIGRhdGFzaGVldCBmb3IgdGhlIFJNNjcxOTEgcGFuZWwsIGJ1
+dCBJIGFzc3VtZSB0aGUNCj4gcmVzZXQgR1BJTyBpcyBhY3RpdmUgbG93Lg0KPiANCj4gU2luY2Ug
+eW91IGludmVydGVkIHRoZSBwb2xhcml0eSBpbiB0aGUgZHRzIGFuZCBpbnNpZGUgdGhlIGRyaXZl
+ciwgeW91DQo+IGdvdCBpdCByaWdodCBieSBhY2NpZGVudC4NClRoZSBHUElPIGlzIGFjdGl2ZSBo
+aWdoLCBhbmQgdGhlIGFib3ZlIHNlcXVlbmNlIHdhcyByZWNlaXZlZCBmcm9tIHRoZQ0KcGFuZWwg
+dmVuZG9yIGluIHRoZSBmb2xsb3dpbmcgZm9ybToNCglTRVRfUkVTRVRfUElOKDEpOw0KCU1ERUxB
+WSgxMCk7DQoJU0VUX1JFU0VUX1BJTigwKTsNCglNREVMQVkoNSk7DQoJU0VUX1JFU0VUX1BJTigx
+KTsNCglNREVMQVkoMjApOw0KSSBnb3QgcmlkIG9mIHRoZSBmaXJzdCB0cmFuc2l0aW9uIHRvIGhp
+Z2ggc2luY2Ugc2VlbWVkIHJlZHVuZGFudC4NCkFsc28sIGFjY29yZGluZyB0byB0aGUgbWFudWFs
+IHJlZmVyZW5jZSwgdGhlIFJTVEIgcGluIG5lZWRzIHRvIGJlDQphY3RpdmUgaGlnaCB3aGlsZSBv
+cGVyYXRpbmcgdGhlIGRpc3BsYXkuDQo+IA0KPiBZb3UgY291bGQgYWxzbyBjb25zaWRlciB1c2lu
+ZyBncGlvZF9zZXRfdmFsdWVfY2Fuc2xlZXAoKSB2YXJpYW50DQo+IGluc3RlYWQgYmVjYXVzZSB0
+aGUgR1BJTyByZXNldCBjb3VsZCBiZSBwcm92aWRlZCBieSBhbiBJMkMgR1BJTw0KPiBleHBhbmRl
+ciwgZm9yIGV4YW1wbGUuDQpUaGFua3MsIHdpbGwgdXNlIHRoaXMgaW4gdGhlIG5leHQgcmV2aXNp
+b24uDQo+IA0KPiBBbHNvLCB3aGVuIHNsZWVwaW5nIGZvciBtb3JlIHRoYW4gMTBtcywgbXNsZWVw
+IGlzIGEgYmV0dGVyIGZpdCBhcyBwZXINCj4gRG9jdW1lbnRhdGlvbi90aW1lcnMvdGltZXJzLWhv
+d3RvLnR4dC4NCk9LLCBJIHdpbGwgdXNlIG1zbGVlcC4gVGhhdCBkb2N1bWVudGF0aW9uIHJlY29t
+bWVuZHMgdXNpbmcgdXNsZWVwX3JhbmdlDQpmb3Igc2xlZXBzIDwyMG0sIGJ1dCBhbHNvIHVzaW5n
+IG1zbGVlcCBmb3IgPjEwbXMgKHNvIEkgZm9sbG93ZWQgdGhlDQpyZWNvbWVuZGF0aW9ucyBmcm9t
+IHVzbGVlcF9yYW5nZSkNCj4gDQo+ID4gDQo+ID4gK8KgwqDCoMKgwqDCoMKgaWYgKHJhZC0+cmVz
+ZXQpIHsNCj4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgZ3Bpb2Rfc2V0X3ZhbHVl
+KHJhZC0+cmVzZXQsIDApOw0KPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqB1c2xl
+ZXBfcmFuZ2UoMTUwMDAsIDE3MDAwKTsNCj4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgZ3Bpb2Rfc2V0X3ZhbHVlKHJhZC0+cmVzZXQsIDEpOw0KPiA+ICvCoMKgwqDCoMKgwqDCoH0N
+Cj4gQW5vdGhlciByZXNldD8NClllcy4gVGhpcyBpcyB0cmlja3ksIHNpbmNlIHRoaXMgR1BJTyBp
+cyBzaGFyZWQgYmV0d2VlbiB0aGUgRFNJDQpjb250cm9sbGVyIGFuZCB0b3VjaCBjb250cm9sbGVy
+LiBUaGUgQW5kcm9pZCBndXlzIG5lZWRzIHRoZSB0b3VjaA0KY29udHJvbGxlciB0byBiZSBhY3Rp
+dmUsIHdoaWxlIHRoZSBkaXNwbGF5IGNhbiBiZSB0dXJuZWQgb2ZmLiBTbyB0aGlzDQppcyB3aHks
+IGFmdGVyIHRoZSBkaXNwbGF5IGlzIHR1cm5lZCBvZmYsIHRoZSByZXNldCBwaW4gaXMgcHV0IGJh
+Y2sgdG8NCkhJR0ggaW4gb3JkZXIgdG8ga2VlcCB0aGUgdG91Y2ggd29ya2luZy4NCg==
