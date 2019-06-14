@@ -2,17 +2,17 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0EA654601E
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 16:09:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 40AF84601B
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 16:09:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728830AbfFNOJi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 10:09:38 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:48066 "EHLO huawei.com"
+        id S1728676AbfFNOJc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 10:09:32 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:48064 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728734AbfFNOJe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 10:09:34 -0400
+        id S1728619AbfFNOJb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Jun 2019 10:09:31 -0400
 Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id D91F2BC617D8266AF79E;
+        by Forcepoint Email with ESMTP id C657F890C7430FEBB34A;
         Fri, 14 Jun 2019 22:09:29 +0800 (CST)
 Received: from localhost.localdomain (10.67.212.75) by
  DGGEMS401-HUB.china.huawei.com (10.3.19.201) with Microsoft SMTP Server id
@@ -27,10 +27,12 @@ To:     <peterz@infradead.org>, <mingo@redhat.com>, <acme@kernel.org>,
 CC:     <linux-kernel@vger.kernel.org>, <linuxarm@huawei.com>,
         <linux-arm-kernel@lists.infradead.org>,
         <zhangshaokun@hisilicon.com>, "John Garry" <john.garry@huawei.com>
-Subject: [PATCH v2 0/5] Perf uncore PMU event alias support for Hisi hip08 ARM64 platform
-Date:   Fri, 14 Jun 2019 22:07:58 +0800
-Message-ID: <1560521283-73314-1-git-send-email-john.garry@huawei.com>
+Subject: [PATCH v2 1/5] perf pmu: Fix uncore PMU alias list for ARM64
+Date:   Fri, 14 Jun 2019 22:07:59 +0800
+Message-ID: <1560521283-73314-2-git-send-email-john.garry@huawei.com>
 X-Mailer: git-send-email 2.8.1
+In-Reply-To: <1560521283-73314-1-git-send-email-john.garry@huawei.com>
+References: <1560521283-73314-1-git-send-email-john.garry@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [10.67.212.75]
@@ -40,36 +42,73 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patchset adds support for uncore PMU event aliasing for HiSilicon
-hip08 ARM64 platform.
+In commit 292c34c10249 ("perf pmu: Fix core PMU alias list for X86
+platform"), we fixed the issue of CPU events being aliased to uncore
+events.
 
-We can now get proper event description for uncore events for the
-perf tool.
+Fix this same issue for ARM64, since the said commit left the (broken)
+behaviour untouched for ARM64.
 
-For HHA, DDRC, and L3C JSONs, we don't have all the event info yet, so
-I will seek it out to update the JSONs later.
+Signed-off-by: John Garry <john.garry@huawei.com>
+---
+ tools/perf/util/pmu.c | 28 ++++++++++++----------------
+ 1 file changed, 12 insertions(+), 16 deletions(-)
 
-Changes to v2:
-- Use strtok_r() in pmu_uncore_alias_match()
-- from "sccl" from uncore aliases
-
-John Garry (5):
-  perf pmu: Fix uncore PMU alias list for ARM64
-  perf pmu: Support more complex PMU event aliasing
-  perf jevents: Add support for Hisi hip08 DDRC PMU aliasing
-  perf jevents: Add support for Hisi hip08 HHA PMU aliasing
-  perf jevents: Add support for Hisi hip08 L3C PMU aliasing
-
- .../arm64/hisilicon/hip08/uncore-ddrc.json    | 44 ++++++++++++++
- .../arm64/hisilicon/hip08/uncore-hha.json     | 51 +++++++++++++++++
- .../arm64/hisilicon/hip08/uncore-l3c.json     | 37 ++++++++++++
- tools/perf/pmu-events/jevents.c               |  3 +
- tools/perf/util/pmu.c                         | 57 +++++++++++++------
- 5 files changed, 176 insertions(+), 16 deletions(-)
- create mode 100644 tools/perf/pmu-events/arch/arm64/hisilicon/hip08/uncore-ddrc.json
- create mode 100644 tools/perf/pmu-events/arch/arm64/hisilicon/hip08/uncore-hha.json
- create mode 100644 tools/perf/pmu-events/arch/arm64/hisilicon/hip08/uncore-l3c.json
-
+diff --git a/tools/perf/util/pmu.c b/tools/perf/util/pmu.c
+index f2eff272279b..7e7299fee550 100644
+--- a/tools/perf/util/pmu.c
++++ b/tools/perf/util/pmu.c
+@@ -709,9 +709,7 @@ static void pmu_add_cpu_aliases(struct list_head *head, struct perf_pmu *pmu)
+ {
+ 	int i;
+ 	struct pmu_events_map *map;
+-	struct pmu_event *pe;
+ 	const char *name = pmu->name;
+-	const char *pname;
+ 
+ 	map = perf_pmu__find_map(pmu);
+ 	if (!map)
+@@ -722,28 +720,26 @@ static void pmu_add_cpu_aliases(struct list_head *head, struct perf_pmu *pmu)
+ 	 */
+ 	i = 0;
+ 	while (1) {
++		const char *cpu_name = is_arm_pmu_core(name) ? name : "cpu";
++		struct pmu_event *pe = &map->table[i++];
++		const char *pname = pe->pmu ? pe->pmu : cpu_name;
+ 
+-		pe = &map->table[i++];
+ 		if (!pe->name) {
+ 			if (pe->metric_group || pe->metric_name)
+ 				continue;
+ 			break;
+ 		}
+ 
+-		if (!is_arm_pmu_core(name)) {
+-			pname = pe->pmu ? pe->pmu : "cpu";
+-
+-			/*
+-			 * uncore alias may be from different PMU
+-			 * with common prefix
+-			 */
+-			if (pmu_is_uncore(name) &&
+-			    !strncmp(pname, name, strlen(pname)))
+-				goto new_alias;
++		/*
++		 * uncore alias may be from different PMU
++		 * with common prefix
++		 */
++		if (pmu_is_uncore(name) &&
++		    !strncmp(pname, name, strlen(pname)))
++			goto new_alias;
+ 
+-			if (strcmp(pname, name))
+-				continue;
+-		}
++		if (strcmp(pname, name))
++			continue;
+ 
+ new_alias:
+ 		pr_err("%s new_alias name=%s pe->name=%s\n", __func__, name, pe->name);
 -- 
 2.17.1
 
