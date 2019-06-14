@@ -2,113 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D86F464C3
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 18:45:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4A0BE465A3
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 19:23:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726349AbfFNQpx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 12:45:53 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:36120 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725846AbfFNQpx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 12:45:53 -0400
-Received: by mail-lf1-f65.google.com with SMTP id q26so2193788lfc.3;
-        Fri, 14 Jun 2019 09:45:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=Gw/MY9qgeDsiVUyYG0Da4jLf/gn9jRPqLU0qfk6Sj5Q=;
-        b=JKtf4ik0NbeTHSwAa8PoMb/iH5wstiMFSAQunFYk7cnjB9bgV5KUW7Ah3WUaqfhe9P
-         OalXwS/wUotbFM27YlsEFBd4tUzBYXicRvag3cIqEUCNXfd2tZubtzt/JwEnfCT43Xd4
-         eleGs+wceM9fI+PxzoUfNiOFXp1IqAllWqEg1HPX4bvZMHqMjTkGKaZLYE9TmjSKgQjp
-         Ms5UbG5Ux1Z+SBgqgWSvkWPF+U31fRkiLHKpurUmdTzOhq8w3AgLiHhMgovwJ5kzTELK
-         Lmh0amtVAM11mmWVBc69RPrYpwY28KqKC+F6yBYbhebvPo9KvVwE5P7nMXig83rlGD+r
-         zRsA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Gw/MY9qgeDsiVUyYG0Da4jLf/gn9jRPqLU0qfk6Sj5Q=;
-        b=H/ayDzYTqZKecw8bXV3/uz2Y2GwOH/iMXYfAkqL7hZAlumrDArOerq+slohbcZ+Gk1
-         zEKjwhUGdwnVWOOxo/kXXnT/wWieWXwBd2Vn3BRwrVBziFzz3S4RYtOFAxFoJ6BC3OvP
-         2yMyL0YFddKoGqn5AXcJ/auAyIzQmlSQ/LfiWwIK28xDyxYJCZ+6bdY+NWxbVcF9q6G+
-         6NDgXGgsFJuJNwqDqZfrL7ejX9qJ19pX2KB4aswmkeEWJBq/b30DP6LjSk4EBeYsD+p3
-         GxJWh6OZb35yBZiUaXvuxiUyC4vQv6sz4b1IMkn/9NNuUaM8Br/la3xJhMUNl/xm+qyY
-         l82A==
-X-Gm-Message-State: APjAAAWLdMEE1hfUOfNxCdienK68/uYmdASlm6fyZFQ+Jb+FCHs5Vuow
-        7FYV/KSjrhN1mQ7gpNU/uFOB2wMB
-X-Google-Smtp-Source: APXvYqwnFkQTMrM/Hf9/rBogPFsz1fFn1ZMbAuJJDGYIGVOFc2HhOfBS9lTDIk9PGEKSOk5UqPDsrQ==
-X-Received: by 2002:ac2:4209:: with SMTP id y9mr7701278lfh.83.1560530750347;
-        Fri, 14 Jun 2019 09:45:50 -0700 (PDT)
-Received: from [192.168.2.145] (ppp91-79-162-197.pppoe.mtu-net.ru. [91.79.162.197])
-        by smtp.googlemail.com with ESMTPSA id f1sm202518ljf.53.2019.06.14.09.45.49
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 14 Jun 2019 09:45:49 -0700 (PDT)
-Subject: Re: [PATCH v2 3/6] clocksource/drivers/tegra: Set and use timer's
- period
-To:     Jon Hunter <jonathanh@nvidia.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Joseph Lo <josephl@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc:     linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20190610164400.11830-1-digetx@gmail.com>
- <20190610164400.11830-4-digetx@gmail.com>
- <ac8a1da8-9b82-3d5a-5fa6-0c1cc7f627f1@nvidia.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <3e941c50-ac62-719e-aac1-7072e9a3bcd0@gmail.com>
+        id S1726622AbfFNRXX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 13:23:23 -0400
+Received: from lnfm1.sai.msu.ru ([93.180.26.255]:50801 "EHLO lnfm1.sai.msu.ru"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726444AbfFNRXU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Jun 2019 13:23:20 -0400
+X-Greylist: delayed 2129 seconds by postgrey-1.27 at vger.kernel.org; Fri, 14 Jun 2019 13:23:05 EDT
+Received: from dragon.sai.msu.ru (dragon.sai.msu.ru [93.180.26.172])
+        by lnfm1.sai.msu.ru (8.14.1/8.12.8) with ESMTP id x5EGl5kL020143;
+        Fri, 14 Jun 2019 19:47:10 +0300
+Received: from oak.local (unknown [92.243.181.209])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (Client did not present a certificate)
+        by dragon.sai.msu.ru (Postfix) with ESMTPSA id 9152ABCE4;
+        Fri, 14 Jun 2019 19:46:58 +0300 (MSK)
+From:   "Matwey V. Kornilov" <matwey@sai.msu.ru>
+To:     b-liu@ti.com, gregkh@linuxfoundation.org, stern@rowland.harvard.edu
+Cc:     matwey.kornilov@gmail.com,
+        "Matwey V. Kornilov" <matwey@sai.msu.ru>,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/6] musb: Improve performance for hub-attached webcams
 Date:   Fri, 14 Jun 2019 19:45:48 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
-MIME-Version: 1.0
-In-Reply-To: <ac8a1da8-9b82-3d5a-5fa6-0c1cc7f627f1@nvidia.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Message-Id: <20190614164554.27679-1-matwey@sai.msu.ru>
+X-Mailer: git-send-email 2.16.4
+In-Reply-To: <20190403185310.8437-1-matwey@sai.msu.ru>
+References: <20190403185310.8437-1-matwey@sai.msu.ru>
+In-Reply-To: <20190403185310.8437-1-matwey@sai.msu.ru>
+References: <20190403185310.8437-1-matwey@sai.msu.ru>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-14.06.2019 18:48, Jon Hunter пишет:
-> 
-> On 10/06/2019 17:43, Dmitry Osipenko wrote:
->> The of_clk structure has a period field that is set up initially by
->> timer_of_clk_init(), that period value need to be adjusted for a case of
->> TIMER1-9 that are running at a fixed rate that doesn't match the clock's
->> rate. Note that the period value is currently used only by some of the
->> clocksource drivers internally and hence this is just a minor cleanup
->> change that doesn't fix anything.
->>
->> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->> ---
->>  drivers/clocksource/timer-tegra.c | 5 +++--
->>  1 file changed, 3 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/clocksource/timer-tegra.c b/drivers/clocksource/timer-tegra.c
->> index 810b4e7435cf..646b3530c2d2 100644
->> --- a/drivers/clocksource/timer-tegra.c
->> +++ b/drivers/clocksource/timer-tegra.c
->> @@ -71,9 +71,9 @@ static int tegra_timer_shutdown(struct clock_event_device *evt)
->>  static int tegra_timer_set_periodic(struct clock_event_device *evt)
->>  {
->>  	void __iomem *reg_base = timer_of_base(to_timer_of(evt));
->> +	unsigned long period = timer_of_period(to_timer_of(evt));
->>  
->> -	writel_relaxed(TIMER_PTV_EN | TIMER_PTV_PER |
->> -		       ((timer_of_rate(to_timer_of(evt)) / HZ) - 1),
->> +	writel_relaxed(TIMER_PTV_EN | TIMER_PTV_PER | (period - 1),
->>  		       reg_base + TIMER_PTV);
->>  
->>  	return 0;
->> @@ -297,6 +297,7 @@ static int __init tegra_init_timer(struct device_node *np, bool tegra20,
->>  		cpu_to->clkevt.rating = rating;
->>  		cpu_to->clkevt.cpumask = cpumask_of(cpu);
->>  		cpu_to->of_base.base = timer_reg_base + base;
->> +		cpu_to->of_clk.period = DIV_ROUND_UP(rate, HZ);
-> 
-> Any reason you made this a round-up?
+The series is concerned to issues with isochronous transfer while
+streaming the USB webcam data. I discovered the issue first time
+when attached PWC USB webcam to AM335x-based BeagleBone Black SBC.
+It appeared that the root issue was in numerous missed IN requests
+during isochronous transfer where each missing leaded to the frame
+drop. Since every IN request is triggered in MUSB driver
+individually, it is important to queue the send IN request as
+earlier as possible when the previous IN completed. At the same
+time the URB giveback handler of the device driver has also to be
+called there, that leads to arbitrarily delay depending on the
+device driver performance. The details with the references are
+described in [1].
 
-That's what timer_of_clk_init() does, I assume it should be a more correct variant.
+The issue has two parts:
+
+  1) peripheral driver URB callback performance
+  2) MUSB host driver performance
+
+It appeared that the first part is related to the wrong memory
+allocation strategy in the most USB webcam drivers. Non-cached
+memory is used in assumption that coherent DMA memory leads to
+the better performance than non-coherent memory in conjunction with
+the proper synchronization. Yet the assumption might be valid for
+x86 platforms some time ago, the issue was fixed for PWC driver in:
+
+    1161db6776bd ("media: usb: pwc: Don't use coherent DMA buffers for ISO transfer")
+
+that leads to 3.5x performance gain. The more generic fix for this
+common issue are coming for the rest drivers [2].
+
+The patch allowed successfully running full-speed USB PWC webcams
+attached directly to BeagleBone Black USB port.
+
+However, the second part of the issue is still present for
+peripheral device attached through the high-speed USB hub due to
+its 125us frame time. The patch series is intended to reorganize
+musb_advance_schedule() to allow host to send IN request quicker.
+
+The patch series is organized as the following. First three patches
+improve readability of the existing code in
+musb_advance_schedule(). Patches 4 and 5 introduce updated
+signature for musb_start_urb(). The last patch introduce new
+code-path in musb_advance_schedule() which allows for faster
+response.
+
+References:
+
+[1] https://www.spinics.net/lists/linux-usb/msg165735.html
+[2] https://www.spinics.net/lists/linux-media/msg144279.html
+
+Changes since v1:
+ - Patch 6 was redone to keep URB giveback order and stop transmission at
+   erroneous URB.
+
+Matwey V. Kornilov (6):
+  usb: musb: Use USB_DIR_IN when calling musb_advance_schedule()
+  usb: musb: Introduce musb_qh_empty() helper function
+  usb: musb: Introduce musb_qh_free() helper function
+  usb: musb: Rename musb_start_urb() to musb_start_next_urb()
+  usb: musb: Introduce musb_start_urb()
+  usb: musb: Decrease URB starting latency in musb_advance_schedule()
+
+ drivers/usb/musb/musb_host.c | 132 ++++++++++++++++++++++++++++---------------
+ drivers/usb/musb/musb_host.h |   1 +
+ 2 files changed, 86 insertions(+), 47 deletions(-)
+
+-- 
+2.16.4
+
