@@ -2,116 +2,151 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ECE3C460FE
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 16:39:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 38C4A46101
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 16:39:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728361AbfFNOjN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 10:39:13 -0400
-Received: from mga14.intel.com ([192.55.52.115]:41477 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728201AbfFNOjN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 10:39:13 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Jun 2019 07:39:12 -0700
-X-ExtLoop1: 1
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.36])
-  by orsmga002.jf.intel.com with ESMTP; 14 Jun 2019 07:39:12 -0700
-Date:   Fri, 14 Jun 2019 07:39:12 -0700
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     Fenghua Yu <fenghua.yu@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, H Peter Anvin <hpa@zytor.com>,
-        Ravi V Shankar <ravi.v.shankar@intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        x86 <x86@kernel.org>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Subject: Re: [RFC PATCH 2/3] x86/cpufeatures: Combine word 11 and 12 into new
- scattered features word 11
-Message-ID: <20190614143912.GB12191@linux.intel.com>
-References: <1560459064-195037-1-git-send-email-fenghua.yu@intel.com>
- <1560459064-195037-3-git-send-email-fenghua.yu@intel.com>
- <20190614114410.GD2586@zn.tnic>
- <20190614122749.GE2586@zn.tnic>
- <20190614131701.GA198207@romley-ivt3.sc.intel.com>
- <20190614134123.GF2586@zn.tnic>
- <20190614141424.GA12191@linux.intel.com>
- <20190614142139.GH2586@zn.tnic>
+        id S1728603AbfFNOjT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 10:39:19 -0400
+Received: from mail-wm1-f50.google.com ([209.85.128.50]:35723 "EHLO
+        mail-wm1-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728374AbfFNOjR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Jun 2019 10:39:17 -0400
+Received: by mail-wm1-f50.google.com with SMTP id c6so2594123wml.0;
+        Fri, 14 Jun 2019 07:39:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=9Wfk6KM9+Bziif5CBcrH982VpksXg1a3KjqRA9Jrsy8=;
+        b=FhajIOOjwj4/AtDgZsFMqv7pF+AibrxRxRgT4meVZQckZRWWoAMPCDERBvd+jff0fx
+         t7pn9Ge5xhPtm/yWpZAuf+ufF3T7HwC0diJ0LBBbfhkPM0/1kewKRDA2NacHnryUNOUH
+         sH9J/GYARSc59mKfmcczwngtSnel9mAgvP3GaeasbKOi7ThKAX4yi7PaTL8vYjpVp6ML
+         K7Ft9EQKL11BU1vvoHt2l1NWt3dDgw8Uyp1NK2FBe7cNBPGGijL9ebzxB+n/JLrBHrlE
+         X8JVE6dHfNpHwL8MKZSK+g5DNeZvKgtYFeINTAJC0tKL+58+vqsGu16XCutIGhEum7ZS
+         PfJw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=9Wfk6KM9+Bziif5CBcrH982VpksXg1a3KjqRA9Jrsy8=;
+        b=H6mWZgNd5CaOTp0uLYE6sEWkDrKL7G70jt3JDu152yQTjH6fFD1tlx9lbjcFjOcpYe
+         7e5PA+00gwjG7BBQv2yfTZBJ37lJLBIoacQsjGMTqIS55sW7fdllCcOiLGzNCVdbQmfH
+         NJ4JmBsehiiGJJuIPX0n/7V2yq/EiUq71msf8CUYlTEFarwLsJryNmUJGCKK2Y+e3n7K
+         sAle0UVgaP7ftAS7/UgesiKgeY2Fx6hVdkLHD8nKiHgPaWgN97GK5yltyYntj3TU+B96
+         79VGhR+1e9Aj06gGYA1EEfWABuIwZlSa61HfXT3WD5fImAf2pBSNBj85VZza1svf/tlI
+         S00A==
+X-Gm-Message-State: APjAAAVAPkYpwEtTRDlIlCDxtGNxd0JvKSpbOkEoIZQmgBkaPqMHJNqp
+        2xsCbjgZcgsPlDcv5m84c6M=
+X-Google-Smtp-Source: APXvYqydNtsY2l+qwL4x42OHD17qR1ZOzSUd/557u11zIKs/ZQgACXNDQnje+J3tayxKIpx97iSh8A==
+X-Received: by 2002:a05:600c:2507:: with SMTP id d7mr8115493wma.2.1560523155303;
+        Fri, 14 Jun 2019 07:39:15 -0700 (PDT)
+Received: from [10.83.36.153] ([217.173.96.166])
+        by smtp.gmail.com with ESMTPSA id z19sm2401900wmi.7.2019.06.14.07.39.13
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Fri, 14 Jun 2019 07:39:14 -0700 (PDT)
+Subject: Re: [PATCHv4 03/28] posix-clocks: add another call back to return
+ clock time in ktime_t
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        Dmitry Safonov <dima@arista.com>
+Cc:     linux-kernel@vger.kernel.org, Andrei Vagin <avagin@gmail.com>,
+        Adrian Reber <adrian@lisas.de>,
+        Andrei Vagin <avagin@openvz.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Cyrill Gorcunov <gorcunov@openvz.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        Jann Horn <jannh@google.com>, Jeff Dike <jdike@addtoit.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Pavel Emelyanov <xemul@virtuozzo.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Vincenzo Frascino <vincenzo.frascino@arm.com>,
+        containers@lists.linux-foundation.org, criu@openvz.org,
+        linux-api@vger.kernel.org, x86@kernel.org
+References: <20190612192628.23797-1-dima@arista.com>
+ <20190612192628.23797-4-dima@arista.com>
+ <alpine.DEB.2.21.1906141511440.1722@nanos.tec.linutronix.de>
+From:   Dmitry Safonov <0x7f454c46@gmail.com>
+Message-ID: <af700944-694c-822b-4633-7de945f9d228@gmail.com>
+Date:   Fri, 14 Jun 2019 15:39:13 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
+In-Reply-To: <alpine.DEB.2.21.1906141511440.1722@nanos.tec.linutronix.de>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190614142139.GH2586@zn.tnic>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 14, 2019 at 04:21:39PM +0200, Borislav Petkov wrote:
-> On Fri, Jun 14, 2019 at 07:14:24AM -0700, Sean Christopherson wrote:
-> > This is wrong.  KVM isn't complaining about shuffling the order of feature
-> > words, it's complaining that code is trying to do a reverse CPUID lookup
-> > to a feature that isn't in the reverse_cpuid table.   Filtering out
-> > checks dynamically is just hiding bugs.
+Hi Thomas,
+
+Thanks much for the review,
+
+On 6/14/19 2:32 PM, Thomas Gleixner wrote:
+> Dmitry,
 > 
-> No no, reverse_cpuid is hardcoding our feature leafs. This is wrong as
-> we want to be able to change those. And reverse_cpuid[] should be able
-> to handle that.
+> On Wed, 12 Jun 2019, Dmitry Safonov wrote:
 > 
-> KVM is complaining because he removed one leaf. He adds it later in
-> patch 3 as a Linux-defined leaf.
+>> From: Andrei Vagin <avagin@gmail.com>
+>>
+>> The callsite in common_timer_get() has already a comment:
+>>         /*
+>>          * The timespec64 based conversion is suboptimal, but it's not
+>>          * worth to implement yet another callback.
+>>          */
+>>         kc->clock_get(timr->it_clock, &ts64);
+>>         now = timespec64_to_ktime(ts64);
+>>
+>> Now we are going to add time namespaces and we need to be able to get:
+> 
+> Please avoid 'we' and try to describe the changes in a neutral technical
+> form, e.g.:
+> 
+>  The upcoming support for time namespaces requires to have access to:
+> 
+>> * clock value in a task time namespace to return it from the clock_gettime
+>>   syscall.
+> 
+>   - The time in a tasks time namespace for sys_clock_gettime()
+> 
+>> * clock valuse in the root time namespace to use it in
+>>   common_timer_get().
+> 
+>   - The time in the root name space for common_timer_get()
+> 
+>> It looks like another reason why we need a separate callback to return
+>> clock value in ktime_t.
+> 
+>  That adds a valid reason to finally implement a separate callback which
+>  returns the time in ktime_t format.
+> 
+> Hmm?
 
-Yes, because removing that leaf breaks 'enum cpuid_leafs'.  Patch 3/3
-"fixes" it by re-inserting a leaf, which causes 'enum cpuid_leafs' to
-align with the CPU features.
+Agree, the patch has become bigger than wanted and the message could
+have been better in technical sense. Will split, add kernel doc and fix
+the commit message(s).
 
-For example, this assertion also fails:
-
-diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-index 5b0e9d869ce5..c273b99702d0 100644
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -823,6 +823,7 @@ void get_cpu_cap(struct cpuinfo_x86 *c)
-                c->x86_capability[CPUID_7_0_EBX] = ebx;
-                c->x86_capability[CPUID_7_ECX] = ecx;
-                c->x86_capability[CPUID_7_EDX] = edx;
-+               BUILD_BUG_ON(CPUID_7_EDX != X86_FEATURE_ARCH_CAPABILITIES/32);
-        }
- 
-        /* Extended state features: level 0x0000000d */
-
-In function ‘x86_feature_cpuid’,
-    inlined from ‘guest_cpuid_get_register’ at arch/x86/kvm/cpuid.h:71:25,
-    inlined from ‘guest_cpuid_has’ at arch/x86/kvm/cpuid.h:100:6,
-    inlined from ‘kvm_get_msr_common’ at arch/x86/kvm/x86.c:2824:8:
-include/linux/compiler.h:345:38: error: call to ‘__compiletime_assert_62’ declared with attribute error: BUILD_BUG_ON failed: x86_leaf >= ARRAY_SIZE(reverse_cpuid)
-  _compiletime_assert(condition, msg, __compiletime_assert_, __LINE__)
-
-
-But this assertion passes because its word is 10, i.e. below the 11/12
-words that are getting mucked with.
-
-diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-index 5b0e9d869ce5..aada9d2fa4df 100644
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -830,6 +830,7 @@ void get_cpu_cap(struct cpuinfo_x86 *c)
-                cpuid_count(0x0000000d, 1, &eax, &ebx, &ecx, &edx);
- 
-                c->x86_capability[CPUID_D_1_EAX] = eax;
-+               BUILD_BUG_ON(CPUID_D_1_EAX != X86_FEATURE_XSAVES/32);
-        }
- 
-        /* AMD-defined flags: level 0x80000001 */
-
-
-> All that doesn't matter for KVM - if KVM wants to do reverse lookup,
-> then it should handle Linux-defined leafs just fine.
-
-KVM can't handle Linux-defined leafs without extra tricks, which is why
-I removed get_scattered_cpuid_leaf() or whatever it was called.
+[..]
+> TBH, this patch is way to big. It changes too many things at once. Can you
+> please structure it this way:
+> 
+>  1) Rename k_clock::clock_get to k_clock::clock_get_timespec and fix up all
+>     struct initializers
+> 
+>  2) Rename the clock_get_timespec functions per instance
+> 
+>  3) Add the new callback
+> 
+>  4) Add the new functions per instance and add them to the corresponding
+>     struct initializers
+> 
+>  5) Use the new callback
+> 
+Thanks,
+          Dima
