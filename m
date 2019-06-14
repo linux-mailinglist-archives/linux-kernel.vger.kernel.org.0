@@ -2,105 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A89C45716
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 10:15:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D2B7145767
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 10:21:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726705AbfFNIPc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 04:15:32 -0400
-Received: from inva021.nxp.com ([92.121.34.21]:58366 "EHLO inva021.nxp.com"
+        id S1726727AbfFNIV4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 04:21:56 -0400
+Received: from mga06.intel.com ([134.134.136.31]:32836 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725907AbfFNIPW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 04:15:22 -0400
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 315DE2005CB;
-        Fri, 14 Jun 2019 10:15:21 +0200 (CEST)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id B2A0A2005D2;
-        Fri, 14 Jun 2019 10:15:14 +0200 (CEST)
-Received: from localhost.localdomain (mega.ap.freescale.net [10.192.208.232])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 8CE3B4031E;
-        Fri, 14 Jun 2019 16:15:06 +0800 (SGT)
-From:   daniel.baluta@nxp.com
-To:     shawnguo@kernel.org
-Cc:     s.hauer@pengutronix.de, shengjiu.wang@nxp.com, festevam@gmail.com,
-        linux-imx@nxp.com, aisheng.dong@nxp.com, daniel.baluta@nxp.com,
-        daniel.baluta@gmail.com, anson.huang@nxp.com,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org, o.rempel@pengutronix.de
-Subject: [PATCH 2/2] dt-bindings: arm: fsl: Add DSP IPC binding support
-Date:   Fri, 14 Jun 2019 16:16:50 +0800
-Message-Id: <20190614081650.11880-3-daniel.baluta@nxp.com>
+        id S1726353AbfFNIVz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Jun 2019 04:21:55 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Jun 2019 01:21:53 -0700
+X-ExtLoop1: 1
+Received: from rajneesh-desk.iind.intel.com ([10.66.234.53])
+  by fmsmga005.fm.intel.com with ESMTP; 14 Jun 2019 01:21:49 -0700
+From:   Rajneesh Bhardwaj <rajneesh.bhardwaj@linux.intel.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     alexander.shishkin@linux.intel.com,
+        Rajneesh Bhardwaj <rajneesh.bhardwaj@linux.intel.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        Kan Liang <kan.liang@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Qiuxu Zhuo <qiuxu.zhuo@intel.com>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        Len Brown <lenb@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>, x86-ml <x86@kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>
+Subject: [PATCH] perf/x86: add Intel Ice Lake NNPI uncore support
+Date:   Fri, 14 Jun 2019 13:47:01 +0530
+Message-Id: <20190614081701.13828-1-rajneesh.bhardwaj@linux.intel.com>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190614081650.11880-1-daniel.baluta@nxp.com>
-References: <20190614081650.11880-1-daniel.baluta@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Daniel Baluta <daniel.baluta@nxp.com>
+Intel Ice Lake uncore support already included IMC PCI ID but ICL-NNPI
+CPUID is missing so add it to fix probe.
 
-DSP IPC is the layer that allows the Host CPU to communicate
-with DSP firmware.
-DSP is part of some i.MX8 boards (e.g i.MX8QM, i.MX8QXP)
-
-Signed-off-by: Daniel Baluta <daniel.baluta@nxp.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Kan Liang <kan.liang@linux.intel.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
+Cc: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Cc: Len Brown <lenb@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: x86-ml <x86@kernel.org>
+Cc: Linux PM <linux-pm@vger.kernel.org>
+Fixes:  e39875d15ad6 ("perf/x86: add Intel Icelake uncore support")
+Link: https://lkml.org/lkml/2019/6/5/1034
+Signed-off-by: Rajneesh Bhardwaj <rajneesh.bhardwaj@linux.intel.com>
 ---
- .../bindings/arm/freescale/fsl,dsp.yaml       | 43 +++++++++++++++++++
- 1 file changed, 43 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/arm/freescale/fsl,dsp.yaml
+ arch/x86/events/intel/uncore.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/arm/freescale/fsl,dsp.yaml b/Documentation/devicetree/bindings/arm/freescale/fsl,dsp.yaml
-new file mode 100644
-index 000000000000..16d9df1d397b
---- /dev/null
-+++ b/Documentation/devicetree/bindings/arm/freescale/fsl,dsp.yaml
-@@ -0,0 +1,43 @@
-+# SPDX-License-Identifier: GPL-2.0
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/arm/freescale/fsl,dsp.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: NXP i.MX IPC DSP driver
-+
-+maintainers:
-+  - Daniel Baluta <daniel.baluta@nxp.com>
-+
-+description: |
-+  IPC communication layer between Host CPU and DSP on NXP i.MX8 platforms
-+
-+properties:
-+  compatible:
-+    enum:
-+      - fsl,imx-dsp
-+
-+  mboxes:
-+    description:
-+      List of phandle of 2 MU channels for TXDB, 2 MU channels for RXDB
-+      (see mailbox/fsl,mu.txt)
-+    maxItems: 1
-+
-+  mbox-names
-+    description:
-+      Mailboxes names
-+    allOf:
-+      - $ref: "/schemas/types.yaml#/definitions/string"
-+      - enum: [ "txdb0", "txdb1", "rxdb0", "rxdb1" ]
-+required:
-+  - compatible
-+  - mboxes
-+  - mbox-names
-+
-+examples:
-+  - |
-+    dsp {
-+      compatbile = "fsl,imx-dsp";
-+      mbox-names = "txdb0", "txdb1", "rxdb0", "rxdb1";
-+      mboxes = <&lsio_mu13 2 0 &lsio_mu13 2 1 &lsio_mu13 3 0 &lsio_mu13 3 1>;
-+    };
+diff --git a/arch/x86/events/intel/uncore.c b/arch/x86/events/intel/uncore.c
+index fc40a1473058..3211462717c7 100644
+--- a/arch/x86/events/intel/uncore.c
++++ b/arch/x86/events/intel/uncore.c
+@@ -1399,6 +1399,7 @@ static const struct x86_cpu_id intel_uncore_match[] __initconst = {
+ 	X86_UNCORE_MODEL_MATCH(INTEL_FAM6_KABYLAKE_MOBILE, skl_uncore_init),
+ 	X86_UNCORE_MODEL_MATCH(INTEL_FAM6_KABYLAKE_DESKTOP, skl_uncore_init),
+ 	X86_UNCORE_MODEL_MATCH(INTEL_FAM6_ICELAKE_MOBILE, icl_uncore_init),
++	X86_UNCORE_MODEL_MATCH(INTEL_FAM6_ICELAKE_NNPI, icl_uncore_init),
+ 	{},
+ };
+ 
 -- 
 2.17.1
 
