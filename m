@@ -2,121 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B0AE94636A
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 17:54:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 637654636D
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 17:55:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725859AbfFNPyU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 11:54:20 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:38756 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725775AbfFNPyU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 11:54:20 -0400
-Received: from [5.158.153.52] (helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1hboWk-0002JC-4R; Fri, 14 Jun 2019 17:54:06 +0200
-Date:   Fri, 14 Jun 2019 17:54:05 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
-cc:     Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@suse.de>,
-        Ashok Raj <ashok.raj@intel.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Andi Kleen <andi.kleen@intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Suravee Suthikulpanit <Suravee.Suthikulpanit@amd.com>,
-        Stephane Eranian <eranian@google.com>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        Randy Dunlap <rdunlap@infradead.org>, x86@kernel.org,
-        linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org,
-        Ricardo Neri <ricardo.neri@intel.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Tony Luck <tony.luck@intel.com>,
-        Clemens Ladisch <clemens@ladisch.de>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Subject: Re: [RFC PATCH v4 03/21] x86/hpet: Calculate ticks-per-second in a
- separate function
-In-Reply-To: <1558660583-28561-4-git-send-email-ricardo.neri-calderon@linux.intel.com>
-Message-ID: <alpine.DEB.2.21.1906141749330.1722@nanos.tec.linutronix.de>
-References: <1558660583-28561-1-git-send-email-ricardo.neri-calderon@linux.intel.com> <1558660583-28561-4-git-send-email-ricardo.neri-calderon@linux.intel.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        id S1725985AbfFNPy6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 11:54:58 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:52066 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725775AbfFNPy6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Jun 2019 11:54:58 -0400
+Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 544C0B8A76344D1F0A32;
+        Fri, 14 Jun 2019 23:54:54 +0800 (CST)
+Received: from localhost (10.133.213.239) by DGGEMS414-HUB.china.huawei.com
+ (10.3.19.214) with Microsoft SMTP Server id 14.3.439.0; Fri, 14 Jun 2019
+ 23:54:44 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <tglx@linutronix.de>, <mingo@redhat.com>, <bp@alien8.de>,
+        <hpa@zytor.com>, <x86@kernel.org>, <puwen@hygon.cn>,
+        <bhelgaas@google.com>
+CC:     <linux-kernel@vger.kernel.org>, YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH -next] x86/amd_nb: Make hygon_nb_misc_ids static
+Date:   Fri, 14 Jun 2019 23:54:41 +0800
+Message-ID: <20190614155441.22076-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain
+X-Originating-IP: [10.133.213.239]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 23 May 2019, Ricardo Neri wrote:
->  
-> +u64 hpet_get_ticks_per_sec(u64 hpet_caps)
-> +{
-> +	u64 ticks_per_sec, period;
-> +
-> +	period = (hpet_caps & HPET_COUNTER_CLK_PERIOD_MASK) >>
-> +		 HPET_COUNTER_CLK_PERIOD_SHIFT; /* fs, 10^-15 */
-> +
-> +	/*
-> +	 * The frequency is the reciprocal of the period. The period is given
-> +	 * in femtoseconds per second. Thus, prepare a dividend to obtain the
-> +	 * frequency in ticks per second.
-> +	 */
-> +
-> +	/* 10^15 femtoseconds per second */
-> +	ticks_per_sec = 1000000000000000ULL;
-> +	ticks_per_sec += period >> 1; /* round */
-> +
-> +	/* The quotient is put in the dividend. We drop the remainder. */
-> +	do_div(ticks_per_sec, period);
-> +
-> +	return ticks_per_sec;
-> +}
-> +
->  int hpet_alloc(struct hpet_data *hdp)
->  {
->  	u64 cap, mcfg;
-> @@ -844,7 +867,6 @@ int hpet_alloc(struct hpet_data *hdp)
->  	struct hpets *hpetp;
->  	struct hpet __iomem *hpet;
->  	static struct hpets *last;
-> -	unsigned long period;
->  	unsigned long long temp;
->  	u32 remainder;
->  
-> @@ -894,12 +916,7 @@ int hpet_alloc(struct hpet_data *hdp)
->  
->  	last = hpetp;
->  
-> -	period = (cap & HPET_COUNTER_CLK_PERIOD_MASK) >>
-> -		HPET_COUNTER_CLK_PERIOD_SHIFT; /* fs, 10^-15 */
-> -	temp = 1000000000000000uLL; /* 10^15 femtoseconds per second */
-> -	temp += period >> 1; /* round */
-> -	do_div(temp, period);
-> -	hpetp->hp_tick_freq = temp; /* ticks per second */
-> +	hpetp->hp_tick_freq = hpet_get_ticks_per_sec(cap);
+Fix sparse warning:
 
-Why are we actually computing this over and over?
+arch/x86/kernel/amd_nb.c:74:28: warning:
+ symbol 'hygon_nb_misc_ids' was not declared. Should it be static?
 
-In hpet_enable() which is the first function invoked we have:
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ arch/x86/kernel/amd_nb.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-        /*
-         * The period is a femto seconds value. Convert it to a
-         * frequency.
-         */
-        freq = FSEC_PER_SEC;
-        do_div(freq, hpet_period);
-        hpet_freq = freq;
-
-So we already have ticks per second, aka frequency, right? So why do we
-need yet another function instead of using the value which is computed
-once? The frequency of the HPET channels has to be identical no matter
-what. If it's not HPET is broken beyond repair.
-
-Thanks,
-
-	tglx
+diff --git a/arch/x86/kernel/amd_nb.c b/arch/x86/kernel/amd_nb.c
+index cc51275..922e8fd 100644
+--- a/arch/x86/kernel/amd_nb.c
++++ b/arch/x86/kernel/amd_nb.c
+@@ -71,7 +71,7 @@ static const struct pci_device_id hygon_root_ids[] = {
+ 	{}
+ };
+ 
+-const struct pci_device_id hygon_nb_misc_ids[] = {
++static const struct pci_device_id hygon_nb_misc_ids[] = {
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_HYGON, PCI_DEVICE_ID_AMD_17H_DF_F3) },
+ 	{}
+ };
+-- 
+2.7.4
 
 
