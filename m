@@ -2,320 +2,144 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D821345D5A
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 15:02:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C29CA45D5D
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 15:02:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728018AbfFNNCY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 09:02:24 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:56227 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727682AbfFNNCY (ORCPT
+        id S1728128AbfFNNCb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 09:02:31 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:33450 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726874AbfFNNC3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 09:02:24 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x5ED1o1r1697688
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Fri, 14 Jun 2019 06:01:51 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x5ED1o1r1697688
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019051801; t=1560517311;
-        bh=I3M3pctM9I89W//e6VBySqtO/xU76PUAl/e7mvfPUno=;
-        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
-        b=MK1r/kKraLnq3rGiazLFnvqVXsqnD/g0xf2MXhwDcKacw6/oxau62Vpxa5XIgJRXx
-         7CFX2fBld97tZSPNVDPDqJfunb6HBqYUgr16fcdPndg8mNaPlvp0tfApzLsWD9Wthi
-         4X03o1lm2WRWKmxJScXltMgs9kqmKS0ZTgvo+tRqvQkbdCsONgpgv6tYw+hGWXntuG
-         giznJK66NL41IFxv05a28MlAQQH2e1jSE5rd8cuPkbqYMc6OJoN9t0LtbU1Q8iygcu
-         J42uCv0HkMv15FC0VDa/FpX4lz2rh1T7CStMEs2U4rF3tW+j1b/5dzEx90fIJgoFyR
-         lhtNxjXfSOFqQ==
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x5ED1okY1697680;
-        Fri, 14 Jun 2019 06:01:50 -0700
-Date:   Fri, 14 Jun 2019 06:01:50 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Waiman Long <tipbot@zytor.com>
-Message-ID: <tip-d5f34153e526903abe71869dbbc898bfc0f69373@git.kernel.org>
-Cc:     joel@joelfernandes.org, mingo@kernel.org, zhongjiang@huawei.com,
-        linux-kernel@vger.kernel.org, cai@gmx.us, hpa@zytor.com,
-        tglx@linutronix.de, longman@redhat.com, yang.shi@linux.alibaba.com,
-        akpm@linux-foundation.org
-Reply-To: tglx@linutronix.de, hpa@zytor.com, cai@gmx.us,
-          longman@redhat.com, yang.shi@linux.alibaba.com,
-          akpm@linux-foundation.org, joel@joelfernandes.org,
-          zhongjiang@huawei.com, mingo@kernel.org,
-          linux-kernel@vger.kernel.org
-In-Reply-To: <20190520141450.7575-6-longman@redhat.com>
-References: <20190520141450.7575-6-longman@redhat.com>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:core/debugobjects] debugobjects: Move printk out of db->lock
- critical sections
-Git-Commit-ID: d5f34153e526903abe71869dbbc898bfc0f69373
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Fri, 14 Jun 2019 09:02:29 -0400
+Received: by mail-lf1-f68.google.com with SMTP id y17so1709848lfe.0;
+        Fri, 14 Jun 2019 06:02:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=pRP7qyOkDFtVUVsLDhfDaqQj/BTUTCxxtpJ3rjbJ4gI=;
+        b=YPo2ruTox4SlsGl1IjghGXdBC0uUqlmcRpaKkG31j06io3XMIThlhH3uiY3fLJwb4T
+         65uGl/tIgF0nWit/WY1kWqaAGaqJsaOdlgc6QGih659sfwzGvAux6nYrZi1pv8QVC3Ca
+         m5rRSgxQT5ehHMYNggHl8rf6uOde73KauwWSyD/qfavQb/7wXp61Yr7H4Dd7kSYiwyJV
+         /woRvyYYkNx9DyE0QM2+iyFEiipJ98y6ts8e6/rcd47OwEhmc4dnbqF1e5MzbKbcAg33
+         Rd/Jwd7tyHAYx54EyYqMbz6C41PXk5QhAxt4F0qqqmW9LYVVEaBw/N6INJkrb2pxmKEF
+         cP6Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=pRP7qyOkDFtVUVsLDhfDaqQj/BTUTCxxtpJ3rjbJ4gI=;
+        b=Xd8JJAuh788qcMJhXIZY8/jEofLY4gWVmX10sdtnY142QHxLFulqoMTuvWxOI5lOQy
+         CfFFHYVx71Uh3PglMS0mjh0xSjO/g5Oym2sRAiq+N1VZgfjtD+5/yXdBGHDhP6yjK7jS
+         FCcWtFVOPLm+8l+jtz7RQi2euUzL4Qby3TiGxCs5xKDhNzXAgXdg9QwNGZ8qqXUIvex1
+         b4FL5OYWKvrut2u8EnCZ3u0RxbPQzcBCCriIqxHuFlHxghPrhBCbWqpxxIBqJWq9mosQ
+         OMbI++C/E70jwrPcC0AZSyUUxrd3GnrfaDTiHGyNMv1O1KAZGaEQcy7zP7Q9rXSV0Ui5
+         u0zA==
+X-Gm-Message-State: APjAAAX6iXALVsFPOZD4cFgajRZDoLLJJs/rAiHCI1vJKpYNUIOmGiD9
+        lFNrp9FKNqwtTgVDi/HqFdaRVuSR
+X-Google-Smtp-Source: APXvYqxQYD8gAVrptvWPCVyszEwO3Y573I51sTNfYV1C6xkSIzv1jts7i8RQZD1N7ozD3+c8eci+wQ==
+X-Received: by 2002:a19:bec9:: with SMTP id o192mr26311169lff.78.1560517346711;
+        Fri, 14 Jun 2019 06:02:26 -0700 (PDT)
+Received: from [192.168.2.145] (ppp91-79-162-197.pppoe.mtu-net.ru. [91.79.162.197])
+        by smtp.googlemail.com with ESMTPSA id j25sm483692lfh.6.2019.06.14.06.02.25
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 14 Jun 2019 06:02:26 -0700 (PDT)
+Subject: Re: [PATCH V5 6/7] i2c: tegra: fix PIO rx/tx residual transfer check
+To:     Bitan Biswas <bbiswas@nvidia.com>,
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        Thierry Reding <treding@nvidia.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Peter Rosin <peda@axentia.se>,
+        Wolfram Sang <wsa@the-dreams.de>
+Cc:     Shardar Mohammed <smohammed@nvidia.com>,
+        Sowjanya Komatineni <skomatineni@nvidia.com>,
+        Mantravadi Karthik <mkarthik@nvidia.com>
+References: <1560250274-18499-1-git-send-email-bbiswas@nvidia.com>
+ <1560250274-18499-6-git-send-email-bbiswas@nvidia.com>
+ <42ce2523-dab9-0cdf-e8ff-42631dd161b7@gmail.com>
+ <78140337-dca0-e340-a501-9e37eca6cc87@nvidia.com>
+ <9cb7123a-1ebd-3a93-60dc-c8f57f60270b@gmail.com>
+ <e795ddcf-dd11-4e39-2a94-b663e5ecb35b@nvidia.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <d2c97291-6392-d614-5cd9-1490a816548c@gmail.com>
+Date:   Fri, 14 Jun 2019 16:02:25 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
+In-Reply-To: <e795ddcf-dd11-4e39-2a94-b663e5ecb35b@nvidia.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
-X-Spam-Status: No, score=-1.0 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        FREEMAIL_FORGED_REPLYTO,T_DATE_IN_FUTURE_96_Q autolearn=no
-        autolearn_force=no version=3.4.2
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  d5f34153e526903abe71869dbbc898bfc0f69373
-Gitweb:     https://git.kernel.org/tip/d5f34153e526903abe71869dbbc898bfc0f69373
-Author:     Waiman Long <longman@redhat.com>
-AuthorDate: Mon, 20 May 2019 10:14:50 -0400
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Fri, 14 Jun 2019 14:51:16 +0200
+14.06.2019 12:50, Bitan Biswas пишет:
+> 
+> 
+> On 6/13/19 5:28 AM, Dmitry Osipenko wrote:
+>> 13.06.2019 14:30, Bitan Biswas пишет:
+>>>
+>>>
+>>> On 6/12/19 7:30 AM, Dmitry Osipenko wrote:
+>>>> 11.06.2019 13:51, Bitan Biswas пишет:
+>>>>> Fix expression for residual bytes(less than word) transfer
+>>>>> in I2C PIO mode RX/TX.
+>>>>>
+>>>>> Signed-off-by: Bitan Biswas <bbiswas@nvidia.com>
+>>>>> ---
+>>>>
+>>>> [snip]
+>>>>
+>>>>>            /*
+>>>>> -         * Update state before writing to FIFO.  If this casues us
+>>>>> +         * Update state before writing to FIFO.  If this causes us
+>>>>>             * to finish writing all bytes (AKA buf_remaining goes to
+>>>>> 0) we
+>>>>>             * have a potential for an interrupt (PACKET_XFER_COMPLETE is
+>>>>> -         * not maskable).  We need to make sure that the isr sees
+>>>>> -         * buf_remaining as 0 and doesn't call us back re-entrantly.
+>>>>> +         * not maskable).
+>>>>>             */
+>>>>>            buf_remaining -= words_to_transfer * BYTES_PER_FIFO_WORD;
+>>>>
+>>>> Looks like the comment could be removed altogether because it doesn't
+>>>> make sense since interrupt handler is under xfer_lock which is kept
+>>>> locked during of tegra_i2c_xfer_msg().
+>>> I would push a separate patch to remove this comment because of
+>>> xfer_lock in ISR now.
+>>>
+>>>>
+>>>> Moreover the comment says that "PACKET_XFER_COMPLETE is not maskable",
+>>>> but then what I2C_INT_PACKET_XFER_COMPLETE masking does?
+>>>>
+>>> I2C_INT_PACKET_XFER_COMPLETE masking support available in Tegra chips
+>>> newer than Tegra30 allows one to not see interrupt after Packet transfer
+>>> complete. With the xfer_lock in ISR the scenario discussed in comment
+>>> can be ignored.
+>>
+>> Also note that xfer_lock could be removed and replaced with a just
+>> irq_enable/disable() calls in tegra_i2c_xfer_msg() because we only care
+>> about IRQ not firing during of the preparation process.
+> This should need sufficient testing hence let us do it in a different series.
 
-debugobjects: Move printk out of db->lock critical sections
+I don't think that there is much to test here since obviously it should work.
 
-The db->lock is a raw spinlock and so the lock hold time is supposed
-to be short. This will not be the case when printk() is being involved
-in some of the critical sections. In order to avoid the long hold time,
-in case some messages need to be printed, the debug_object_is_on_stack()
-and debug_print_object() calls are now moved out of those critical
-sections.
+>>
+>> It also looks like tegra_i2c_[un]nmask_irq isn't really needed and all
+>> IRQ's could be simply unmasked during the driver's probe, in that case
+>> it may worth to add a kind of "in-progress" flag to catch erroneous
+>> interrupts.
+>>
+> TX interrupt needs special handling if this change is done. Hence I think it should be
+> taken up after sufficient testing in a separate patch.
 
-Signed-off-by: Waiman Long <longman@redhat.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Yang Shi <yang.shi@linux.alibaba.com>
-Cc: "Joel Fernandes (Google)" <joel@joelfernandes.org>
-Cc: Qian Cai <cai@gmx.us>
-Cc: Zhong Jiang <zhongjiang@huawei.com>
-Link: https://lkml.kernel.org/r/20190520141450.7575-6-longman@redhat.com
+This one is indeed a bit more trickier. Probably another alternative could be to keep GIC
+interrupt disabled while no transfer is performed, then you'll have to request interrupt
+in a disabled state using IRQ_NOAUTOEN flag.
 
----
- lib/debugobjects.c | 58 ++++++++++++++++++++++++++++++++++++------------------
- 1 file changed, 39 insertions(+), 19 deletions(-)
-
-diff --git a/lib/debugobjects.c b/lib/debugobjects.c
-index ede96c659552..61261195f5b6 100644
---- a/lib/debugobjects.c
-+++ b/lib/debugobjects.c
-@@ -528,6 +528,7 @@ static void
- __debug_object_init(void *addr, struct debug_obj_descr *descr, int onstack)
- {
- 	enum debug_obj_state state;
-+	bool check_stack = false;
- 	struct debug_bucket *db;
- 	struct debug_obj *obj;
- 	unsigned long flags;
-@@ -547,7 +548,7 @@ __debug_object_init(void *addr, struct debug_obj_descr *descr, int onstack)
- 			debug_objects_oom();
- 			return;
- 		}
--		debug_object_is_on_stack(addr, onstack);
-+		check_stack = true;
- 	}
- 
- 	switch (obj->state) {
-@@ -558,20 +559,23 @@ __debug_object_init(void *addr, struct debug_obj_descr *descr, int onstack)
- 		break;
- 
- 	case ODEBUG_STATE_ACTIVE:
--		debug_print_object(obj, "init");
- 		state = obj->state;
- 		raw_spin_unlock_irqrestore(&db->lock, flags);
-+		debug_print_object(obj, "init");
- 		debug_object_fixup(descr->fixup_init, addr, state);
- 		return;
- 
- 	case ODEBUG_STATE_DESTROYED:
-+		raw_spin_unlock_irqrestore(&db->lock, flags);
- 		debug_print_object(obj, "init");
--		break;
-+		return;
- 	default:
- 		break;
- 	}
- 
- 	raw_spin_unlock_irqrestore(&db->lock, flags);
-+	if (check_stack)
-+		debug_object_is_on_stack(addr, onstack);
- }
- 
- /**
-@@ -629,6 +633,8 @@ int debug_object_activate(void *addr, struct debug_obj_descr *descr)
- 
- 	obj = lookup_object(addr, db);
- 	if (obj) {
-+		bool print_object = false;
-+
- 		switch (obj->state) {
- 		case ODEBUG_STATE_INIT:
- 		case ODEBUG_STATE_INACTIVE:
-@@ -637,14 +643,14 @@ int debug_object_activate(void *addr, struct debug_obj_descr *descr)
- 			break;
- 
- 		case ODEBUG_STATE_ACTIVE:
--			debug_print_object(obj, "activate");
- 			state = obj->state;
- 			raw_spin_unlock_irqrestore(&db->lock, flags);
-+			debug_print_object(obj, "activate");
- 			ret = debug_object_fixup(descr->fixup_activate, addr, state);
- 			return ret ? 0 : -EINVAL;
- 
- 		case ODEBUG_STATE_DESTROYED:
--			debug_print_object(obj, "activate");
-+			print_object = true;
- 			ret = -EINVAL;
- 			break;
- 		default:
-@@ -652,10 +658,13 @@ int debug_object_activate(void *addr, struct debug_obj_descr *descr)
- 			break;
- 		}
- 		raw_spin_unlock_irqrestore(&db->lock, flags);
-+		if (print_object)
-+			debug_print_object(obj, "activate");
- 		return ret;
- 	}
- 
- 	raw_spin_unlock_irqrestore(&db->lock, flags);
-+
- 	/*
- 	 * We are here when a static object is activated. We
- 	 * let the type specific code confirm whether this is
-@@ -687,6 +696,7 @@ void debug_object_deactivate(void *addr, struct debug_obj_descr *descr)
- 	struct debug_bucket *db;
- 	struct debug_obj *obj;
- 	unsigned long flags;
-+	bool print_object = false;
- 
- 	if (!debug_objects_enabled)
- 		return;
-@@ -704,24 +714,27 @@ void debug_object_deactivate(void *addr, struct debug_obj_descr *descr)
- 			if (!obj->astate)
- 				obj->state = ODEBUG_STATE_INACTIVE;
- 			else
--				debug_print_object(obj, "deactivate");
-+				print_object = true;
- 			break;
- 
- 		case ODEBUG_STATE_DESTROYED:
--			debug_print_object(obj, "deactivate");
-+			print_object = true;
- 			break;
- 		default:
- 			break;
- 		}
--	} else {
-+	}
-+
-+	raw_spin_unlock_irqrestore(&db->lock, flags);
-+	if (!obj) {
- 		struct debug_obj o = { .object = addr,
- 				       .state = ODEBUG_STATE_NOTAVAILABLE,
- 				       .descr = descr };
- 
- 		debug_print_object(&o, "deactivate");
-+	} else if (print_object) {
-+		debug_print_object(obj, "deactivate");
- 	}
--
--	raw_spin_unlock_irqrestore(&db->lock, flags);
- }
- EXPORT_SYMBOL_GPL(debug_object_deactivate);
- 
-@@ -736,6 +749,7 @@ void debug_object_destroy(void *addr, struct debug_obj_descr *descr)
- 	struct debug_bucket *db;
- 	struct debug_obj *obj;
- 	unsigned long flags;
-+	bool print_object = false;
- 
- 	if (!debug_objects_enabled)
- 		return;
-@@ -755,20 +769,22 @@ void debug_object_destroy(void *addr, struct debug_obj_descr *descr)
- 		obj->state = ODEBUG_STATE_DESTROYED;
- 		break;
- 	case ODEBUG_STATE_ACTIVE:
--		debug_print_object(obj, "destroy");
- 		state = obj->state;
- 		raw_spin_unlock_irqrestore(&db->lock, flags);
-+		debug_print_object(obj, "destroy");
- 		debug_object_fixup(descr->fixup_destroy, addr, state);
- 		return;
- 
- 	case ODEBUG_STATE_DESTROYED:
--		debug_print_object(obj, "destroy");
-+		print_object = true;
- 		break;
- 	default:
- 		break;
- 	}
- out_unlock:
- 	raw_spin_unlock_irqrestore(&db->lock, flags);
-+	if (print_object)
-+		debug_print_object(obj, "destroy");
- }
- EXPORT_SYMBOL_GPL(debug_object_destroy);
- 
-@@ -797,9 +813,9 @@ void debug_object_free(void *addr, struct debug_obj_descr *descr)
- 
- 	switch (obj->state) {
- 	case ODEBUG_STATE_ACTIVE:
--		debug_print_object(obj, "free");
- 		state = obj->state;
- 		raw_spin_unlock_irqrestore(&db->lock, flags);
-+		debug_print_object(obj, "free");
- 		debug_object_fixup(descr->fixup_free, addr, state);
- 		return;
- 	default:
-@@ -872,6 +888,7 @@ debug_object_active_state(void *addr, struct debug_obj_descr *descr,
- 	struct debug_bucket *db;
- 	struct debug_obj *obj;
- 	unsigned long flags;
-+	bool print_object = false;
- 
- 	if (!debug_objects_enabled)
- 		return;
-@@ -887,22 +904,25 @@ debug_object_active_state(void *addr, struct debug_obj_descr *descr,
- 			if (obj->astate == expect)
- 				obj->astate = next;
- 			else
--				debug_print_object(obj, "active_state");
-+				print_object = true;
- 			break;
- 
- 		default:
--			debug_print_object(obj, "active_state");
-+			print_object = true;
- 			break;
- 		}
--	} else {
-+	}
-+
-+	raw_spin_unlock_irqrestore(&db->lock, flags);
-+	if (!obj) {
- 		struct debug_obj o = { .object = addr,
- 				       .state = ODEBUG_STATE_NOTAVAILABLE,
- 				       .descr = descr };
- 
- 		debug_print_object(&o, "active_state");
-+	} else if (print_object) {
-+		debug_print_object(obj, "active_state");
- 	}
--
--	raw_spin_unlock_irqrestore(&db->lock, flags);
- }
- EXPORT_SYMBOL_GPL(debug_object_active_state);
- 
-@@ -937,10 +957,10 @@ repeat:
- 
- 			switch (obj->state) {
- 			case ODEBUG_STATE_ACTIVE:
--				debug_print_object(obj, "free");
- 				descr = obj->descr;
- 				state = obj->state;
- 				raw_spin_unlock_irqrestore(&db->lock, flags);
-+				debug_print_object(obj, "free");
- 				debug_object_fixup(descr->fixup_free,
- 						   (void *) oaddr, state);
- 				goto repeat;
+And yes, that all should be a separate changes if you're going to implement them.
