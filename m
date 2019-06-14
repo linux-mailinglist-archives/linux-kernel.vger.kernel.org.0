@@ -2,86 +2,173 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E211D4673F
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 20:16:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 140124675E
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 20:17:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726083AbfFNSQU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 14:16:20 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:36384 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725802AbfFNSQU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 14:16:20 -0400
-Received: by mail-pg1-f194.google.com with SMTP id f21so1994857pgi.3
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2019 11:16:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=PbI2AaJV5OGbUvXuaZ8xvq+0MioqIy25hz3zwSGI/6I=;
-        b=odTDkmauhKoEk4o2w9rUx7xDRZL74iqtmVgU8sRqDb9hGIIRB+hByQ77yPQaHA3sWr
-         nEpafjGXO1rDrrX7axNprXRtBDBp+8Mnyd+mUJ/gQFhAhxVQPxkUZR8SQALKM5Qm1p9e
-         SzE4bc9/hmNKtW6tCcMRK33iBeEB8W5Is1XGsfm1/PfsTEVebo7Ov3SGS4GwRVDxwFUD
-         mV0d0uKD/afxvsfh4sEYSozzhL7N3TdcmzKBpbDQ9FLtCkkmi/JWT+8fXaIw4D7McVkw
-         immnUy+JAhYUeiT6vR9+KAmJZvl20FUodTy/G1usu7tABeCwOUEup2bEk7sQN5uJIdAj
-         kDbQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=PbI2AaJV5OGbUvXuaZ8xvq+0MioqIy25hz3zwSGI/6I=;
-        b=FtgSnm15BiTfhwXJhf3NzplCyX/8XWLg4kHKAnEnqB6PiY9jUwa7PWqnemlu5R91E0
-         QkGxTbszjs4nd/MFBApZ9jsa1Zkeas+1+EguC4i+ZKcwOS9LHJ2jCPe3AHqGVmwh126O
-         Dh4NB0hQp+dVQPz8klRuUp3iolkbU4AcWR5742X9wfJAWyZwyakWQFAKs6Cti6R21buL
-         ijbBYVsGTNBVi9IsSq+hVLRst1NrYKp7MCV1b+NR4n3x7bVFA46E3qW1x4brAakCW+aY
-         moKI4i/rTHWw/nu7qGm/vqEb2YEAoBCa1vCGIVxL+aH7xIPgWVdd6kD72j8X3OSzc9Qi
-         038g==
-X-Gm-Message-State: APjAAAW2NxWePU7MVcOAuHma2LQpTD3gf2CYwL+nDp+rbFIQrGhoBs0F
-        NUTSse2cIdPkA+b32apr6k4=
-X-Google-Smtp-Source: APXvYqyDzmF1i7RpE0aPWt4rZMw6ybxepLHW8Tdd6Msq/cJjXorHOukm3EmsuOJgiXF3AypKN9M7jQ==
-X-Received: by 2002:a17:90a:de0e:: with SMTP id m14mr12446159pjv.36.1560536179510;
-        Fri, 14 Jun 2019 11:16:19 -0700 (PDT)
-Received: from ahmlpt0706 ([106.222.0.33])
-        by smtp.gmail.com with ESMTPSA id u97sm3514804pjb.26.2019.06.14.11.16.15
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Fri, 14 Jun 2019 11:16:18 -0700 (PDT)
-Date:   Fri, 14 Jun 2019 23:46:06 +0530
-From:   Saiyam Doshi <saiyamdoshi.in@gmail.com>
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     groeck@google.com, linux-kernel@vger.kernel.org,
-        groeck@chromium.org, adurbin@chromium.org, dlaurie@chromium.org
-Subject: Re: [PATCH] gsmi: replace printk with relevant dev_<level>
-Message-ID: <20190614181606.GA4448@ahmlpt0706>
-References: <20190613185705.GA16951@ahmlpt0706>
- <20190614060919.GA7271@kroah.com>
+        id S1726370AbfFNSRR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 14:17:17 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:18576 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725951AbfFNSRP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Jun 2019 14:17:15 -0400
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 575A9499F4040C8D4004;
+        Sat, 15 Jun 2019 02:17:13 +0800 (CST)
+Received: from architecture4.huawei.com (10.140.130.215) by smtp.huawei.com
+ (10.3.19.208) with Microsoft SMTP Server (TLS) id 14.3.439.0; Sat, 15 Jun
+ 2019 02:17:02 +0800
+From:   Gao Xiang <gaoxiang25@huawei.com>
+To:     <chao@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <devel@driverdev.osuosl.org>
+CC:     LKML <linux-kernel@vger.kernel.org>,
+        <linux-fsdevel@vger.kernel.org>, <linux-erofs@lists.ozlabs.org>,
+        Miao Xie <miaoxie@huawei.com>, <weidu.du@huawei.com>,
+        Fang Wei <fangwei1@huawei.com>,
+        Gao Xiang <gaoxiang25@huawei.com>
+Subject: [RFC PATCH 0/8] staging: erofs: decompression inplace approach
+Date:   Sat, 15 Jun 2019 02:16:11 +0800
+Message-ID: <20190614181619.64905-1-gaoxiang25@huawei.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190614060919.GA7271@kroah.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+X-Originating-IP: [10.140.130.215]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 14, 2019 at 08:09:19AM +0200, Greg KH wrote:
-> On Fri, Jun 14, 2019 at 12:27:05AM +0530, Saiyam Doshi wrote:
-> > Replace printk() with dev_* macros for logging consistency.
-> > In process of replacing printk with dev_err, dev_info etc.,
-> > removed unnecessary "out of memory" debug message.
-> 
-> That is multiple things done in the same patch, please break this up
-> into a patch series, only doing one "logical" thing per patch.
+Hi,
 
-Agreed. I could have broken it into patch set.
+After working on for more than half a year, the detail of erofs decompression
+inplace is almost determined and ready for linux-next.
 
-> Note, generic cleanup patches like this are tough to get done in the
-> "real" part of the kernel, I strongly recommend you start out in
-> drivers/staging/ where these types of changes are welcomed.  Get
-> experience there and then move out into other areas of the kernel if you
-> want to, that way you don't annoy developers/maintainers with basic
-> errors like this.
-> 
-> good luck!
+Currently, inplace IO is used if the whole compressed data is used
+in order to reduce compressed pages extra memory overhead and an extra
+memcpy (the only one memcpy) will be used for each inplace IO since
+temporary buffer is needed to keep decompressing safe for inplace IO.
 
-Noted. Thanks Greg for feedback and suggestion.
+However, most of lz-based decompression algorithms support decompression
+inplace by their algorithm designs, such as LZ4, LZO, etc.
+
+If iend - oend margin is large enough, decompression inplace can be done
+in the same buffer safely, as illustrated below:
+
+         start of compressed logical extent
+           |                          end of this logical extent
+           |                           |
+     ______v___________________________v________
+... |  page 6  |  page 7  |  page 8  |  page 9  | ...
+    |__________|__________|__________|__________|
+           .                         ^ .        ^
+           .                         |compressed|
+           .                         |   data   |
+           .                           .        .
+           |<          dstsize        >|<margin>|
+                                       oend     iend
+           op                        ip
+
+Fixed-size output compression can make the full use of this feature
+to reduce memory overhead and avoid extra memcpy compared with fixed-size
+input compression since iend is strictly not less than oend for fixed-size
+output compression with inplace IO to last pages.
+
+In addition, erofs compression indexes have been improved as well by
+introducing compacted compression indexes.
+
+These two techniques all benefit sequential read (on x86_64, 710.8MiB/s
+-> 755.4MiB/s; on Kirin980, 725MiB/s -> 812MiB/s) therefore erofs
+could have similar sequential read performance against ext4 in a larger
+CR range on high-spend SSD / NVMe devices as well.
+
+However, note that it is _cpu vs storage device_ balance, there is no
+absolute performance conclusion for all on-market combinations.
+
+At last, this is RFC patch v1, which means it is not suitable for
+merging soon... I'm still working on it, testing its stability
+these days and hope these patches get merged for 5.3 LTS
+(if 5.3 is a LTS version).
+
+The series is based on staging-next with the following patches, which
+can be merged in advance:
+ [PATCH v3 1/2] staging: erofs: add requirements field in superblock
+ [PATCH v2 2/2] staging: erofs: rename data_mapping_mode to datamode
+
+
+
+Test images:
+ name                       size                 CR
+ enwik9                     1000000000           1.00
+ enwik9_4k.squashfs.img      621211648           1.61
+ enwik9_4k.erofs.img         558133248           1.79
+ enwik9_8k.squashfs.img      556191744           1.80
+ enwik9_16k.squashfs.img     502661120           1.99
+ enwik9_128k.squashfs.img    398204928           2.51
+
+Test Environment:
+CPU: Intel(R) Core(TM) i5-8250U CPU @ 1.60GHz (4 cores, 8 threads)
+DDR: 8G
+SSD: INTEL SSDPEKKF360G7H
+Kernel: Linux 5.2-rc3+ (with lz4-1.8.3 algorithm)
+
+Test configuration:
+squashfs:
+CONFIG_SQUASHFS=y
+CONFIG_SQUASHFS_FILE_DIRECT=y
+CONFIG_SQUASHFS_DECOMP_MULTI_PERCPU=y
+CONFIG_SQUASHFS_LZ4=y
+CONFIG_SQUASHFS_4K_DEVBLK_SIZE=y
+erofs:
+CONFIG_EROFS_FS_USE_VM_MAP_RAM=y
+CONFIG_EROFS_FS_ZIP=y
+CONFIG_EROFS_FS_CLUSTER_PAGE_LIMIT=1
+CONFIG_EROFS_FS_ZIP_CACHE_BIPOLAR=y
+
+with intel_pstate=disable,
+     8 cpus on at 1801000 scaling_{min,max}_freq,
+     userspace scaling_governor
+
+Sequential read results (MiB/s):
+                           1      2      3      4      5      avg
+ enwik9_4k.ext4.img        767    770    738    726    724    745
+ enwik9_4k.erofs.img       756    745    770    746    760    755.4
+ enwik9_4k.squashfs.img    90.3   83.0   94.3   90.7   92.6   90.18
+ enwik9_8k.squashfs.img    111    108    110    108    110    109.4
+ enwik9_16k.squashfs.img   158    163    146    165    174    161.2
+ enwik9_128k.squashfs.img  324    314    262    262    296    291.6
+
+
+Thanks,
+Gao Xiang
+
+Gao Xiang (8):
+  staging: erofs: add compacted ondisk compression indexes
+  staging: erofs: add compacted compression indexes support
+  staging: erofs: move per-CPU buffers implementation to utils.c
+  staging: erofs: move stagingpage operations to compress.h
+  staging: erofs: introduce generic decompression backend
+  staging: erofs: introduce LZ4 decompression inplace
+  staging: erofs: switch to new decompression backend
+  staging: erofs: integrate decompression inplace
+
+ drivers/staging/erofs/Makefile        |   2 +-
+ drivers/staging/erofs/compress.h      |  62 ++++
+ drivers/staging/erofs/data.c          |   4 +-
+ drivers/staging/erofs/decompressor.c  | 321 ++++++++++++++++++
+ drivers/staging/erofs/erofs_fs.h      |  60 +++-
+ drivers/staging/erofs/inode.c         |  12 +-
+ drivers/staging/erofs/internal.h      |  58 +++-
+ drivers/staging/erofs/unzip_vle.c     | 368 ++------------------
+ drivers/staging/erofs/unzip_vle.h     |  38 +--
+ drivers/staging/erofs/unzip_vle_lz4.c | 229 -------------
+ drivers/staging/erofs/utils.c         |  12 +
+ drivers/staging/erofs/zmap.c          | 462 ++++++++++++++++++++++++++
+ 12 files changed, 996 insertions(+), 632 deletions(-)
+ create mode 100644 drivers/staging/erofs/compress.h
+ create mode 100644 drivers/staging/erofs/decompressor.c
+ delete mode 100644 drivers/staging/erofs/unzip_vle_lz4.c
+ create mode 100644 drivers/staging/erofs/zmap.c
+
+-- 
+2.17.1
+
