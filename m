@@ -2,208 +2,179 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E983A45E39
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 15:33:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4FFBB45E3C
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 15:33:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728117AbfFNNcZ convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Fri, 14 Jun 2019 09:32:25 -0400
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:36282 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728014AbfFNNcZ (ORCPT
+        id S1728217AbfFNNcw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 09:32:52 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:38005 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727729AbfFNNcv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 09:32:25 -0400
-Received: by mail-qt1-f195.google.com with SMTP id p15so2446668qtl.3
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2019 06:32:23 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=UqHu6bnL2MykLrciT743QGm25pc9Ou6MAliGiUXxKbk=;
-        b=EQktjEOpD0SSlh9np5/CiSf8Xn4mAspAjQYmrWgszXZ5FYsFb1xagpKFtAycVynBQY
-         LvtsCL5K7M4YpLYtH+b206ERTXh7I19MPswlwUhn21l9JfqvYWAkPUAp6DAXleP2TOyz
-         TIKvVL85fH/IKrOqzwp/62iK4XEL7kqjOVfF4cBNWc8IlDe7ZjgoN/R4yONeuq3KjnD5
-         VoA1hWlHxbapv53O0RGlElMJFWvoadfgcrNKQvAp6C0lKhHyP5UhKyUy02o47S4itd6e
-         18v1/W+U8c1sYTwAf67e44R5qCJ/UGbLQANlw1fqlvRQ6wezxFW5GWBHCrHyFo0XDIPX
-         kPUg==
-X-Gm-Message-State: APjAAAXoKN4axBl/L9StRx6lEL34eWBhF2dWwStslOcU/VVbA2Y0vp76
-        asrhdgGABmGGMne8+yzdhD+EuQEfBlI/RzlCb8lu9A==
-X-Google-Smtp-Source: APXvYqzfzZWNJ4Z55P4qdShbPbeTD5roQrFHTZVzBjWxjfPMfKpdUBZOEJELbB0u6eJLCBM/nhJh8QnhvvE+jFIVAFU=
-X-Received: by 2002:a0c:baa7:: with SMTP id x39mr8406578qvf.100.1560519143506;
- Fri, 14 Jun 2019 06:32:23 -0700 (PDT)
+        Fri, 14 Jun 2019 09:32:51 -0400
+Received: from [5.158.153.52] (helo=nanos.tec.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1hbmJY-0005Aq-Ov; Fri, 14 Jun 2019 15:32:21 +0200
+Date:   Fri, 14 Jun 2019 15:32:20 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Dmitry Safonov <dima@arista.com>
+cc:     linux-kernel@vger.kernel.org, Andrei Vagin <avagin@gmail.com>,
+        Adrian Reber <adrian@lisas.de>,
+        Andrei Vagin <avagin@openvz.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Cyrill Gorcunov <gorcunov@openvz.org>,
+        Dmitry Safonov <0x7f454c46@gmail.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        Jann Horn <jannh@google.com>, Jeff Dike <jdike@addtoit.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Pavel Emelyanov <xemul@virtuozzo.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Vincenzo Frascino <vincenzo.frascino@arm.com>,
+        containers@lists.linux-foundation.org, criu@openvz.org,
+        linux-api@vger.kernel.org, x86@kernel.org
+Subject: Re: [PATCHv4 03/28] posix-clocks: add another call back to return
+ clock time in ktime_t
+In-Reply-To: <20190612192628.23797-4-dima@arista.com>
+Message-ID: <alpine.DEB.2.21.1906141511440.1722@nanos.tec.linutronix.de>
+References: <20190612192628.23797-1-dima@arista.com> <20190612192628.23797-4-dima@arista.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-References: <CAEXycp+Y-x7N_Yr==Xy_CT5K_a1DZYc85w1OUV+cKC5ZN+KB1g@mail.gmail.com>
- <CAEXycpKJvSsyDQjeCC4YqmtN5tpmO15g8D-_3mrunY-NL1w4Qw@mail.gmail.com>
- <1ed66b4e9090b802259aa0fce5da1e22bcaeaafc.camel@suse.de> <65865f56882af2baf8389458c5e6f05096f36818.camel@suse.de>
-In-Reply-To: <65865f56882af2baf8389458c5e6f05096f36818.camel@suse.de>
-From:   Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Date:   Fri, 14 Jun 2019 15:32:11 +0200
-Message-ID: <CAO-hwJ+QfEVAkq9j6CoB9Pr3ooVEHGWNn+STyCd5kYgnuGQDEw@mail.gmail.com>
-Subject: Re: Regression post "HID: core: move Usage Page concatenation to Main item"
-To:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-Cc:     =?UTF-8?Q?Jean=2DBaptiste_Th=C3=A9ou?= <jb@essential.com>,
-        Jiri Kosina <jikos@kernel.org>,
-        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 14, 2019 at 2:29 PM Nicolas Saenz Julienne
-<nsaenzjulienne@suse.de> wrote:
->
-> On Fri, 2019-06-14 at 10:52 +0200, Nicolas Saenz Julienne wrote:
-> > On Fri, 2019-06-14 at 09:02 +0900, Jean-Baptiste Théou wrote:
-> > > Sorry - Please find the public link:
-> > >
-> > >
-> >
-> https://android.googlesource.com/platform/cts/+/master/tests/tests/hardware/res/raw/asus_gamepad_register.json
-> > > Best regards
-> > >
-> > > On Fri, Jun 14, 2019 at 9:01 AM Jean-Baptiste Théou <jb@essential.com>
-> > > wrote:
-> > > > Hi,
-> > > >
-> > > > This patch (58e75155009cc800005629955d3482f36a1e0eec) is triggering a
-> > > > regression with the following descriptor (report not working as
-> > > > expected)
-> > > >
-> > > >
-> >
-> https://partner-android.googlesource.com/platform/cts/+/refs/heads/q-fs-release/tests/tests/hardware/res/raw/asus_gamepad_register.json
-> > > > Didn't see anything obviously wrong with this gamepad descriptor, so
-> > > > not sure what's trigger the regression.
-> > > >
-> > > > Thanks a lot
-> > > >
-> > > > Best regards
-> >
-> > Added Benjamin to the mail thread.
-> >
-> > For the record here's the report descritor, I have the feeling the issue is
-> > related to the Usage Page being defined in the middle of the Usage
-> > ennumeration.
-> >
-> > 0x05, 0x01,         /*  Usage Page (Desktop),               */
-> > 0x09, 0x05,         /*  Usage (Gamepad),                    */
-> > 0xA1, 0x01,         /*  Collection (Application),           */
-> > 0x85, 0x01,         /*      Report ID (1),                  */
-> > 0x05, 0x09,         /*      Usage Page (Button),            */
-> > 0x0A, 0x01, 0x00,   /*      Usage (01h),                    */
-> > 0x0A, 0x02, 0x00,   /*      Usage (02h),                    */
-> > 0x0A, 0x04, 0x00,   /*      Usage (04h),                    */
-> > 0x0A, 0x05, 0x00,   /*      Usage (05h),                    */
-> > 0x0A, 0x07, 0x00,   /*      Usage (07h),                    */
-> > 0x0A, 0x08, 0x00,   /*      Usage (08h),                    */
-> > 0x0A, 0x0E, 0x00,   /*      Usage (0Eh),                    */
-> > 0x0A, 0x0F, 0x00,   /*      Usage (0Fh),                    */
-> > 0x0A, 0x0D, 0x00,   /*      Usage (0Dh),                    */
-> > 0x05, 0x0C,         /*      Usage Page (Consumer),          */
-> > 0x0A, 0x24, 0x02,   /*      Usage (AC Back),                */
-> > 0x0A, 0x23, 0x02,   /*      Usage (AC Home),                */
-> > 0x15, 0x00,         /*      Logical Minimum (0),            */
-> > 0x25, 0x01,         /*      Logical Maximum (1),            */
-> > 0x75, 0x01,         /*      Report Size (1),                */
-> > 0x95, 0x0B,         /*      Report Count (11),              */
-> > 0x81, 0x02,         /*      Input (Variable),               */
-> > 0x75, 0x01,         /*      Report Size (1),                */
-> > 0x95, 0x01,         /*      Report Count (1),               */
-> > 0x81, 0x03,         /*      Input (Constant, Variable),     */
-> > 0x05, 0x01,         /*      Usage Page (Desktop),           */
-> > 0x75, 0x04,         /*      Report Size (4),                */
-> > 0x95, 0x01,         /*      Report Count (1),               */
-> > 0x25, 0x07,         /*      Logical Maximum (7),            */
-> > 0x46, 0x3B, 0x01,   /*      Physical Maximum (315),         */
-> > 0x66, 0x14, 0x00,   /*      Unit (Degrees),                 */
-> > 0x09, 0x39,         /*      Usage (Hat Switch),             */
-> > 0x81, 0x42,         /*      Input (Variable, Null State),   */
-> > 0x66, 0x00, 0x00,   /*      Unit,                           */
-> > 0x09, 0x01,         /*      Usage (Pointer),                */
-> > 0xA1, 0x00,         /*      Collection (Physical),          */
-> > 0x09, 0x30,         /*          Usage (X),                  */
-> > 0x09, 0x31,         /*          Usage (Y),                  */
-> > 0x09, 0x32,         /*          Usage (Z),                  */
-> > 0x09, 0x35,         /*          Usage (Rz),                 */
-> > 0x05, 0x02,         /*          Usage Page (Simulation),    */
-> > 0x09, 0xC5,         /*          Usage (C5h),                */
-> > 0x09, 0xC4,         /*          Usage (C4h),                */
-> > 0x15, 0x00,         /*          Logical Minimum (0),        */
-> > 0x26, 0xFF, 0x00,   /*          Logical Maximum (255),      */
-> > 0x35, 0x00,         /*          Physical Minimum (0),       */
-> > 0x46, 0xFF, 0x00,   /*          Physical Maximum (255),     */
-> > 0x75, 0x08,         /*          Report Size (8),            */
-> > 0x95, 0x06,         /*          Report Count (6),           */
-> > 0x81, 0x02,         /*          Input (Variable),           */
->
-> Well as it was stated in 57e75155009 ("HID: core: move Usage Page concatenation
-> to Main item"):
->
-> The spec is not pretty clear as 5.2.2.7 states "Any usage that follows
-> is interpreted as a Usage ID and concatenated with the Usage Page".
-> While 5.2.2.8 states "When the parser encounters a main item it
-> concatenates the last declared Usage Page with a Usage to form a
-> complete usage value." Being somewhat contradictory it was decided to
-> match Window's implementation, which follows 5.2.2.8.
->
-> This breaks the Report above as X, Y, Z and Rz will be concatenanted with the
-> 'Simulation' Usage Page as opposed to the 'Desktop' one.
->
-> Based on the USB IDs can't find much information on this Gamepad, is it a real
-> one? If so I guess the solution would be to fix the report descriptor in a
-> custom driver. Otherwise I'd suggest fixing the descriptors directly on the
-> test suite.
+Dmitry,
 
-And most of all, how does the joypad behave on Windows?
+On Wed, 12 Jun 2019, Dmitry Safonov wrote:
 
-If no quirks is used in Windows, then maybe wee are not doing the
-right thing, but AFAICT, the patch was added to mimic Windows :/
+> From: Andrei Vagin <avagin@gmail.com>
+> 
+> The callsite in common_timer_get() has already a comment:
+>         /*
+>          * The timespec64 based conversion is suboptimal, but it's not
+>          * worth to implement yet another callback.
+>          */
+>         kc->clock_get(timr->it_clock, &ts64);
+>         now = timespec64_to_ktime(ts64);
+> 
+> Now we are going to add time namespaces and we need to be able to get:
 
-Cheers,
-Benjamin
+Please avoid 'we' and try to describe the changes in a neutral technical
+form, e.g.:
 
->
-> Regards,
-> Nicolas
->
-> > 0xC0,               /*      End Collection,                 */
-> > 0x85, 0x02,         /*      Report ID (2),                  */
-> > 0x05, 0x08,         /*      Usage Page (LED),               */
-> > 0x0A, 0x01, 0x00,   /*      Usage (01h),                    */
-> > 0x0A, 0x02, 0x00,   /*      Usage (02h),                    */
-> > 0x0A, 0x03, 0x00,   /*      Usage (03h),                    */
-> > 0x0A, 0x04, 0x00,   /*      Usage (04h),                    */
-> > 0x15, 0x00,         /*      Logical Minimum (0),            */
-> > 0x25, 0x01,         /*      Logical Maximum (1),            */
-> > 0x75, 0x01,         /*      Report Size (1),                */
-> > 0x95, 0x04,         /*      Report Count (4),               */
-> > 0x91, 0x02,         /*      Output (Variable),              */
-> > 0x75, 0x04,         /*      Report Size (4),                */
-> > 0x95, 0x01,         /*      Report Count (1),               */
-> > 0x91, 0x03,         /*      Output (Constant, Variable),    */
-> > 0xC0,               /*  End Collection,                     */
-> > 0x05, 0x0C,         /*  Usage Page (Consumer),              */
-> > 0x09, 0x01,         /*  Usage (Consumer Control),           */
-> > 0xA1, 0x01,         /*  Collection (Application),           */
-> > 0x85, 0x03,         /*      Report ID (3),                  */
-> > 0x05, 0x01,         /*      Usage Page (Desktop),           */
-> > 0x09, 0x06,         /*      Usage (Keyboard),               */
-> > 0xA1, 0x02,         /*      Collection (Logical),           */
-> > 0x05, 0x06,         /*          Usage Page (Device),        */
-> > 0x09, 0x20,         /*          Usage (20h),                */
-> > 0x15, 0x00,         /*          Logical Minimum (0),        */
-> > 0x26, 0xFF, 0x00,   /*          Logical Maximum (255),      */
-> > 0x75, 0x08,         /*          Report Size (8),            */
-> > 0x95, 0x01,         /*          Report Count (1),           */
-> > 0x81, 0x02,         /*          Input (Variable),           */
-> > 0x06, 0xBC, 0xFF,   /*          Usage Page (FFBCh),         */
-> > 0x0A, 0xAD, 0xBD,   /*          Usage (BDADh),              */
-> > 0x75, 0x08,         /*          Report Size (8),            */
-> > 0x95, 0x06,         /*          Report Count (6),           */
-> > 0x81, 0x02,         /*          Input (Variable),           */
-> > 0xC0,               /*      End Collection,                 */
-> > 0xC0                /*  End Collection                      */
-> >
->
+ The upcoming support for time namespaces requires to have access to:
+
+> * clock value in a task time namespace to return it from the clock_gettime
+>   syscall.
+
+  - The time in a tasks time namespace for sys_clock_gettime()
+
+> * clock valuse in the root time namespace to use it in
+>   common_timer_get().
+
+  - The time in the root name space for common_timer_get()
+
+> It looks like another reason why we need a separate callback to return
+> clock value in ktime_t.
+
+ That adds a valid reason to finally implement a separate callback which
+ returns the time in ktime_t format.
+
+Hmm?
+
+> +int posix_get_timespec(clockid_t which_clock, struct timespec64 *tp);
+> +int posix_get_boottime_timespec(const clockid_t which_clock, struct timespec64 *tp);
+>  #endif
+> diff --git a/kernel/time/alarmtimer.c b/kernel/time/alarmtimer.c
+> index 0519a8805aab..68a163c8b4f2 100644
+> --- a/kernel/time/alarmtimer.c
+> +++ b/kernel/time/alarmtimer.c
+> @@ -43,6 +43,8 @@ static struct alarm_base {
+>  	spinlock_t		lock;
+>  	struct timerqueue_head	timerqueue;
+>  	ktime_t			(*gettime)(void);
+> +	int			(*get_timespec)(const clockid_t which_clock,
+> +						struct timespec64 *tp);
+>  	clockid_t		base_clockid;
+>  } alarm_bases[ALARM_NUMTYPE];
+>  
+> @@ -645,21 +647,30 @@ static int alarm_clock_getres(const clockid_t which_clock, struct timespec64 *tp
+>  }
+>  
+>  /**
+> - * alarm_clock_get - posix clock_get interface
+> + * alarm_clock_get_timespec - posix clock_get_timespec interface
+>   * @which_clock: clockid
+>   * @tp: timespec to fill.
+>   *
+>   * Provides the underlying alarm base time.
+>   */
+> -static int alarm_clock_get(clockid_t which_clock, struct timespec64 *tp)
+> +static int alarm_clock_get_timespec(clockid_t which_clock, struct timespec64 *tp)
+>  {
+>  	struct alarm_base *base = &alarm_bases[clock2alarm(which_clock)];
+>  
+>  	if (!alarmtimer_get_rtcdev())
+>  		return -EINVAL;
+>  
+> -	*tp = ktime_to_timespec64(base->gettime());
+> -	return 0;
+> +	return base->get_timespec(base->base_clockid, tp);
+> +}
+> +
+> +static ktime_t alarm_clock_get_ktime(clockid_t which_clock)
+
+Please add kernel doc for this function. It does not make sense to have one
+documented and the other not.
+
+> +{
+> +	struct alarm_base *base = &alarm_bases[clock2alarm(which_clock)];
+> +
+> +	if (!alarmtimer_get_rtcdev())
+> +		return -EINVAL;
+> +
+> +	return base->gettime();
+>  }
+  
+> --- a/kernel/time/posix-timers.h
+> +++ b/kernel/time/posix-timers.h
+> @@ -6,8 +6,11 @@ struct k_clock {
+>  				struct timespec64 *tp);
+>  	int	(*clock_set)(const clockid_t which_clock,
+>  			     const struct timespec64 *tp);
+> -	int	(*clock_get)(const clockid_t which_clock,
+> -			     struct timespec64 *tp);
+> +	/* return the clock value in the current time namespace. */
+> +	int	(*clock_get_timespec)(const clockid_t which_clock,
+> +				      struct timespec64 *tp);
+> +	/* return the clock value in the root time namespace. */
+> +	ktime_t	(*clock_get_ktime)(const clockid_t which_clock);
+>  	int	(*clock_adj)(const clockid_t which_clock, struct __kernel_timex *tx);
+>  	int	(*timer_create)(struct k_itimer *timer);
+>  	int	(*nsleep)(const clockid_t which_clock, int flags,
+
+TBH, this patch is way to big. It changes too many things at once. Can you
+please structure it this way:
+
+ 1) Rename k_clock::clock_get to k_clock::clock_get_timespec and fix up all
+    struct initializers
+
+ 2) Rename the clock_get_timespec functions per instance
+
+ 3) Add the new callback
+
+ 4) Add the new functions per instance and add them to the corresponding
+    struct initializers
+
+ 5) Use the new callback
+
+Thanks,
+
+	tglx
