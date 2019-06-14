@@ -2,137 +2,167 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9441445941
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 11:50:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 04B8445937
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 11:50:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727312AbfFNJug (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 05:50:36 -0400
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:7478 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726900AbfFNJug (ORCPT
+        id S1727219AbfFNJuC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 05:50:02 -0400
+Received: from relay6-d.mail.gandi.net ([217.70.183.198]:52005 "EHLO
+        relay6-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726900AbfFNJuB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 05:50:36 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5d036de90000>; Fri, 14 Jun 2019 02:50:33 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Fri, 14 Jun 2019 02:50:33 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Fri, 14 Jun 2019 02:50:33 -0700
-Received: from [10.19.65.14] (172.20.13.39) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 14 Jun
- 2019 09:50:30 +0000
-Subject: Re: [PATCH V5 6/7] i2c: tegra: fix PIO rx/tx residual transfer check
-To:     Dmitry Osipenko <digetx@gmail.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Thierry Reding <treding@nvidia.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        <linux-i2c@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Peter Rosin <peda@axentia.se>,
-        Wolfram Sang <wsa@the-dreams.de>
-CC:     Shardar Mohammed <smohammed@nvidia.com>,
-        Sowjanya Komatineni <skomatineni@nvidia.com>,
-        Mantravadi Karthik <mkarthik@nvidia.com>
-References: <1560250274-18499-1-git-send-email-bbiswas@nvidia.com>
- <1560250274-18499-6-git-send-email-bbiswas@nvidia.com>
- <42ce2523-dab9-0cdf-e8ff-42631dd161b7@gmail.com>
- <78140337-dca0-e340-a501-9e37eca6cc87@nvidia.com>
- <9cb7123a-1ebd-3a93-60dc-c8f57f60270b@gmail.com>
-From:   Bitan Biswas <bbiswas@nvidia.com>
-Message-ID: <e795ddcf-dd11-4e39-2a94-b663e5ecb35b@nvidia.com>
-Date:   Fri, 14 Jun 2019 02:50:27 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        Fri, 14 Jun 2019 05:50:01 -0400
+X-Originating-IP: 37.177.88.254
+Received: from uno.localdomain (unknown [37.177.88.254])
+        (Authenticated sender: jacopo@jmondi.org)
+        by relay6-d.mail.gandi.net (Postfix) with ESMTPSA id 2184FC000A;
+        Fri, 14 Jun 2019 09:49:45 +0000 (UTC)
+Date:   Fri, 14 Jun 2019 11:50:58 +0200
+From:   Jacopo Mondi <jacopo@jmondi.org>
+To:     Lubomir Rintel <lkundrak@v3.sk>
+Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>, linux-media@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        James Cameron <quozl@laptop.org>, Pavel Machek <pavel@ucw.cz>,
+        Libin Yang <lbyang@marvell.com>,
+        Albert Wang <twang13@marvell.com>,
+        Sakari Ailus <sakari.ailus@iki.fi>
+Subject: Re: [PATCH v5 01/10] media: dt-bindings: marvell,mmp2-ccic: Add
+ Marvell MMP2 camera
+Message-ID: <20190614094921.tf4nqgszhg7pxzft@uno.localdomain>
+References: <20190505140031.9636-1-lkundrak@v3.sk>
+ <20190505140031.9636-2-lkundrak@v3.sk>
 MIME-Version: 1.0
-In-Reply-To: <9cb7123a-1ebd-3a93-60dc-c8f57f60270b@gmail.com>
-X-Originating-IP: [172.20.13.39]
-X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1560505833; bh=dGTgHQykk8jjvblnk+qeivA9BFZLXLPF1/akzFWONSg=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=DVVkim1ofihgybXPoOwhLLaGQtOofCb3Fc084JU3veDx1hLbL6UF05lF5f9xSGuSG
-         lDN1/rdZ+XoOQTg0BEve/RPDWADoaAyzCaZtZ2BAVakBwwGGgqJOWg9LekCcdO+FV4
-         JG96ZRe5dDJ3wdFsMrOC4OcmIfM/fZxwl3/AbUzLLS8LMX7u2BggknsfU8FZOgno+o
-         d8Vlbd8Hys1S9nz+Z9iy9KnSibRye4IhyARfRTmH39jqJp2IkaVVOqgq78GzJjFQe1
-         dbOQIuoGIRXQIqvshp45F0fKyMCWvQhbtdxCJHR6OLYrN7z0novUCfTpPSJMMVD0Zf
-         IE95Ppx/aa0FQ==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="kj5s4had2x4icus2"
+Content-Disposition: inline
+In-Reply-To: <20190505140031.9636-2-lkundrak@v3.sk>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
+--kj5s4had2x4icus2
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 
-On 6/13/19 5:28 AM, Dmitry Osipenko wrote:
-> 13.06.2019 14:30, Bitan Biswas =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->>
->>
->> On 6/12/19 7:30 AM, Dmitry Osipenko wrote:
->>> 11.06.2019 13:51, Bitan Biswas =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->>>> Fix expression for residual bytes(less than word) transfer
->>>> in I2C PIO mode RX/TX.
->>>>
->>>> Signed-off-by: Bitan Biswas <bbiswas@nvidia.com>
->>>> ---
->>>
->>> [snip]
->>>
->>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /*
->>>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * Update state befor=
-e writing to FIFO.=C2=A0 If this casues us
->>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * Update state befor=
-e writing to FIFO.=C2=A0 If this causes us
->>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * to fin=
-ish writing all bytes (AKA buf_remaining goes to
->>>> 0) we
->>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * have a=
- potential for an interrupt (PACKET_XFER_COMPLETE is
->>>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * not maskable).=C2=
-=A0 We need to make sure that the isr sees
->>>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * buf_remaining as 0=
- and doesn't call us back re-entrantly.
->>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * not maskable).
->>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 */
->>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 buf_remaining =
--=3D words_to_transfer * BYTES_PER_FIFO_WORD;
->>>
->>> Looks like the comment could be removed altogether because it doesn't
->>> make sense since interrupt handler is under xfer_lock which is kept
->>> locked during of tegra_i2c_xfer_msg().
->> I would push a separate patch to remove this comment because of
->> xfer_lock in ISR now.
->>
->>>
->>> Moreover the comment says that "PACKET_XFER_COMPLETE is not maskable",
->>> but then what I2C_INT_PACKET_XFER_COMPLETE masking does?
->>>
->> I2C_INT_PACKET_XFER_COMPLETE masking support available in Tegra chips
->> newer than Tegra30 allows one to not see interrupt after Packet transfer
->> complete. With the xfer_lock in ISR the scenario discussed in comment
->> can be ignored.
->=20
-> Also note that xfer_lock could be removed and replaced with a just
-> irq_enable/disable() calls in tegra_i2c_xfer_msg() because we only care
-> about IRQ not firing during of the preparation process.
-This should need sufficient testing hence let us do it in a different=20
-series.
+Hi Lubomir,
 
->=20
-> It also looks like tegra_i2c_[un]nmask_irq isn't really needed and all
-> IRQ's could be simply unmasked during the driver's probe, in that case
-> it may worth to add a kind of "in-progress" flag to catch erroneous
-> interrupts.
->=20
-TX interrupt needs special handling if this change is done. Hence I=20
-think it should be taken up after sufficient testing in a separate patch.
+On Sun, May 05, 2019 at 04:00:22PM +0200, Lubomir Rintel wrote:
+> Add Marvell MMP2 camera host interface.
+>
+> Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
+>
+> ---
+> Changes since v4:
+> - s/Nust/Must/
+> - Documented required endpoint properties; bus-type, hsync-active,
+>   vsync-active and pclk-sample.
+>
+> Changes since v3:
+> - Dropped the video-interfaces.txt reference
+> - Clarify "clocks", "clock-names" and "clock-output-names" descriptions
+> - Refer to other documentation by full path
+>
+> Changes since v2:
+> - Added #clock-cells, clock-names, port
+>
+>  .../bindings/media/marvell,mmp2-ccic.txt      | 50 +++++++++++++++++++
+>  1 file changed, 50 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/media/marvell,mmp2-ccic.txt
+>
+> diff --git a/Documentation/devicetree/bindings/media/marvell,mmp2-ccic.txt b/Documentation/devicetree/bindings/media/marvell,mmp2-ccic.txt
+> new file mode 100644
+> index 0000000000000..7ec2c8c8a3b98
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/media/marvell,mmp2-ccic.txt
+> @@ -0,0 +1,50 @@
+> +Marvell MMP2 camera host interface
+> +
+> +Required properties:
+> + - compatible: Should be "marvell,mmp2-ccic".
+> + - reg: Register base and size.
+> + - interrupts: The interrupt number.
+> + - #clock-cells: Must be 0.
+> +
+> +Optional properties:
+> + - clocks: Reference to the input clock as specified by
+> +           Documentation/devicetree/bindings/clock/clock-bindings.txt.
+> + - clock-names: Names of the clocks used; "axi" for the AXI bus interface,
+> +                "func" for the peripheral clock and "phy" for the parallel
+> +                video bus interface.
+> + - clock-output-names: Optional clock source for sensors. Shall be "mclk".
+> +
+> +Required subnodes:
+> + - port: The parallel bus interface port with a single endpoint linked to
+> +         the sensor's endpoint as described in
+> +         Documentation/devicetree/bindings/media/video-interfaces.txt.
+> +
+> +Required endpoint properties:
+> + - bus-type: data bus type, <5> or <6> for Parallel or Bt.656 respectively
+> + - pclk-sample: pixel clock polarity
+> + - hsync-active: horizontal synchronization polarity (only required for
+> +   parallel bus)
+> + - vsync-active: vertical synchronization polarity (only required for
+> +   parallel bus)
 
--regards,
-  Bitan
+Minor nit: if you don't want to specify what maps to 0/1 in the
+properties, could you add "as defined in video-interfaces.txt" after
+each property?
 
+Reviewed-by: Jacopo Mondi <jacopo@jmondi.org>
+
+Thanks
+  j
+
+> +
+> +Example:
+> +
+> +	camera0: camera@d420a000 {
+> +		compatible = "marvell,mmp2-ccic";
+> +		reg = <0xd420a000 0x800>;
+> +		interrupts = <42>;
+> +		clocks = <&soc_clocks MMP2_CLK_CCIC0>;
+> +		clock-names = "axi";
+> +		#clock-cells = <0>;
+> +		clock-output-names = "mclk";
+> +
+> +		port {
+> +			camera0_0: endpoint {
+> +				remote-endpoint = <&ov7670_0>;
+> +                                bus-type = <5>;      /* Parallel */
+> +                                hsync-active = <1>;  /* Active high */
+> +                                vsync-active = <1>;  /* Active high */
+> +                                pclk-sample = <0>;   /* Falling */
+> +			};
+> +		};
+> +	};
+> --
+> 2.21.0
+>
+
+--kj5s4had2x4icus2
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEtcQ9SICaIIqPWDjAcjQGjxahVjwFAl0DbgIACgkQcjQGjxah
+Vjyzcg//clH4UtRYjsI86mItIoXCvJcGZTdFoZ/gLPd5Di9SslN9R2iMjN3VAY2f
+48IBTCCE9shwey6dCHak6yLlgvlH2DUaXG6o9E7t92ryxnYt3ydTEG4Jtq6X97MU
+xNRHPWcdBxpt3UNFUgkPol2iXX9mjltw9QhR+SNb2pBrOwHfU3JXQI1tTWvUkw8S
+7M1ajKUW3/fAVhaOKWKTfwU5Tov0IZaDBXLS7wRuQ5CI06ebk//yCjy/2dNTE1q4
+EWoXD/Fl/S0Z7nAmtn2eQG3H2ezlkIrEIi0wZXckgBOXHUe8D+8pqQE8Q6PQeFhA
+CxVXquKIa7MQfqY1Mybu7Wa9o99Xt0Jjaxtfp9Sy+mEb4gABA2WALwFn2SOscJbY
+YdN2wJmbr7+cwJ1720dDEA21/Vwc95S/UEiZji3BxnU+oEFOL1NUbxlDS6E8HMfp
+F0R7xUrCkjU1bcTfigzOJ/uGC4Mnm/vbgft18mK+uZSj4U6+sDvfMNYGMSLFzjmK
+7nA+8uOALWCoji7VMU+nlqAmxxxw7LL/T/mD8GA2n3S+wW2VIPZA2G6z3Xt59HYw
+neZJXsk/JaamauA4iIRAHi1nnOVSPVO2O0BE16tO+ALL/r7HJxUzgwjExmkEQHu6
+5lrtTA1XVqxWPndB0ODL/YTtzROZ5r7mCKC0uSVAMz8LEb1mggY=
+=ENUC
+-----END PGP SIGNATURE-----
+
+--kj5s4had2x4icus2--
