@@ -2,151 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C71DA4645C
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 18:37:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0010D46463
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 18:37:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726638AbfFNQhI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 12:37:08 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:34934 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726519AbfFNQhG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 12:37:06 -0400
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: eballetbo)
-        with ESMTPSA id 141C928617E
-From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     gwendal@chromium.org, Guenter Roeck <groeck@chromium.org>,
-        Benson Leung <bleung@chromium.org>,
-        Lee Jones <lee.jones@linaro.org>, kernel@collabora.com,
-        dtor@chromium.org, Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-samsung-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Dinh Nguyen <dinguyen@kernel.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Kukjin Kim <kgene@kernel.org>,
-        Jagan Teki <jagan@amarulasolutions.com>,
-        Daniel Mack <daniel@zonque.org>,
-        Russell King <linux@armlinux.org.uk>,
-        linux-arm-kernel@lists.infradead.org,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        =?UTF-8?q?Yannick=20Fertr=C3=A9?= <yannick.fertre@st.com>,
-        Robert Jarzmik <robert.jarzmik@free.fr>,
-        Tony Lindgren <tony@atomide.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>
-Subject: [PATCH v2 10/10] arm/arm64: defconfig: Update configs to use the new CROS_EC options
-Date:   Fri, 14 Jun 2019 18:36:35 +0200
-Message-Id: <20190614163635.22413-11-enric.balletbo@collabora.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190614163635.22413-1-enric.balletbo@collabora.com>
-References: <20190614163635.22413-1-enric.balletbo@collabora.com>
+        id S1726340AbfFNQg5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 12:36:57 -0400
+Received: from mx2.suse.de ([195.135.220.15]:38268 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726063AbfFNQg5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Jun 2019 12:36:57 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id E210FAF58;
+        Fri, 14 Jun 2019 16:36:55 +0000 (UTC)
+Date:   Fri, 14 Jun 2019 18:36:55 +0200
+From:   Libor Pechacek <lpechacek@suse.cz>
+To:     Joe Lawrence <joe.lawrence@redhat.com>
+Cc:     Petr Mladek <pmladek@suse.com>, Miroslav Benes <mbenes@suse.cz>,
+        linux-kernel@vger.kernel.org, live-patching@vger.kernel.org,
+        linux-kbuild@vger.kernel.org
+Subject: Re: [PATCH v4 00/10] klp-convert livepatch build tooling
+Message-ID: <20190614163655.GC15002@fm.suse.cz>
+References: <20190509143859.9050-1-joe.lawrence@redhat.com>
+ <alpine.LSU.2.21.1906131451560.22698@pobox.suse.cz>
+ <b1a627a4-3702-9689-6c03-0c2123c06a2d@redhat.com>
+ <c9021573-11c6-b576-0aa6-97754c98a06e@redhat.com>
+ <20190614083435.uq3mk6mprbatysol@pathway.suse.cz>
+ <a0db1cee-8bba-4093-c3ca-4c2fe61b15ba@redhat.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a0db1cee-8bba-4093-c3ca-4c2fe61b15ba@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Recently we refactored the CrOS EC drivers moving part of the code from
-the MFD subsystem to the platform chrome subsystem. During this change
-we needed to rename some config options, so, update the defconfigs
-accordingly.
+On Fri 14-06-19 10:20:09, Joe Lawrence wrote:
+> On 6/14/19 4:34 AM, Petr Mladek wrote:
+[...]
+> > Anyway, I am curious about one thing. I saw:
+> > 
+> > function __load_mod() {
+> > 	local mod="$1"; shift
+> > 
+> > 	local msg="% modprobe $mod $*"
+> > 	log "${msg%% }"
+> > 	ret=$(modprobe "$mod" "$@" 2>&1)
+> > 	if [[ "$ret" != "" ]]; then
+> > 		die "$ret"
+> > 	fi
+> > 
+> > 	# Wait for module in sysfs ...
+> > 	loop_until '[[ -e "/sys/module/$mod" ]]' ||
+> > 		die "failed to load module $mod"
+> > }
+> > 
+> > Is the waiting for sysfs really necessary here?
+> > 
+> > Note that it is /sys/module and not /sys/kernel/livepatch/.
+> 
+> I can't remember if that was just paranoid-protective-bash coding or
+> actually required.  Libor provided great feedback on the initial patch
+> series that introduced the self-tests, perhaps he remembers.
 
-Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
----
+I don't recall analyzing this spot in detail but looking at it now I don't see
+anything wrong with it. While the check is likely superfluous, I'm not against
+keeping it in place.
 
-Changes in v2: None
+> > My understanding is that modprobe waits until the module succesfully
+> > loaded. mod_sysfs_setup() is called before the module init callback.
+> > Therefore the sysfs interface should be read before modprobe returns.
+> > Do I miss something?
+> >
+> > If it works different way then there might be some races because
+> > mod_sysfs_setup() is called before the module is alive.
+> 
+> All of this is called from a single bash script function, so in a call stack
+> fashion, something like this would occur when loading a livepatch module:
+> 
+>   [ mod_sysfs_setup() ]
+>   modprobe waits for:         .init complete, MODULE_STATE_LIVE
+>   __load_mod() waits for:     /sys/module/$mod
+>   load_lp_nowait() waits for: /sys/kernel/livepatch/$mod
+>   load_lp() waits for:        /sys/kernel/livepatch/$mod/transition = 0
+>   test-script.sh
+> 
+> So I would think that by calling modprobe, we ensure that the module code is
+> ready to go.  The /sys/module/$mod check might be redundant as you say, but
+> because modprobe completed, we should be safe, no?
+> 
+> The only "nowait" function we have is load_lp_nowait(), which would let us
+> march onward before the livepatch transition may have completed.
 
- arch/arm/configs/exynos_defconfig   | 4 +++-
- arch/arm/configs/multi_v7_defconfig | 6 ++++--
- arch/arm/configs/pxa_defconfig      | 4 +++-
- arch/arm64/configs/defconfig        | 6 ++++--
- 4 files changed, 14 insertions(+), 6 deletions(-)
+And even that one is waiting for the live patch module name appear under
+/sys/kernel/livepatch/. This is IMHO acceptable level of paranoia.
 
-diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
-index c95c54284da2..03448fba569f 100644
---- a/arch/arm/configs/exynos_defconfig
-+++ b/arch/arm/configs/exynos_defconfig
-@@ -154,7 +154,9 @@ CONFIG_CPU_THERMAL=y
- CONFIG_THERMAL_EMULATION=y
- CONFIG_WATCHDOG=y
- CONFIG_S3C2410_WATCHDOG=y
--CONFIG_MFD_CROS_EC=y
-+CONFIG_MFD_CROS_EC_DEV=y
-+CONFIG_CHROME_PLATFORMS=y
-+CONFIG_CROS_EC=y
- CONFIG_CROS_EC_I2C=y
- CONFIG_CROS_EC_SPI=y
- CONFIG_MFD_MAX14577=y
-diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
-index 6b748f214eae..9fe783abf3c5 100644
---- a/arch/arm/configs/multi_v7_defconfig
-+++ b/arch/arm/configs/multi_v7_defconfig
-@@ -510,10 +510,12 @@ CONFIG_MFD_BCM590XX=y
- CONFIG_MFD_AC100=y
- CONFIG_MFD_AXP20X_I2C=y
- CONFIG_MFD_AXP20X_RSB=y
--CONFIG_MFD_CROS_EC=m
-+CONFIG_MFD_CROS_EC_DEV=m
-+CONFIG_CHROME_PLATFORMS=y
-+CONFIG_CROS_EC=m
- CONFIG_CROS_EC_I2C=m
- CONFIG_CROS_EC_SPI=m
--CONFIG_MFD_CROS_EC_CHARDEV=m
-+CONFIG_CROS_EC_CHARDEV=m
- CONFIG_MFD_DA9063=m
- CONFIG_MFD_MAX14577=y
- CONFIG_MFD_MAX77686=y
-diff --git a/arch/arm/configs/pxa_defconfig b/arch/arm/configs/pxa_defconfig
-index 07ebbdce3645..e335b986cf70 100644
---- a/arch/arm/configs/pxa_defconfig
-+++ b/arch/arm/configs/pxa_defconfig
-@@ -394,7 +394,9 @@ CONFIG_SA1100_WATCHDOG=m
- CONFIG_MFD_AS3711=y
- CONFIG_MFD_BCM590XX=m
- CONFIG_MFD_AXP20X=y
--CONFIG_MFD_CROS_EC=m
-+CONFIG_MFD_CROS_EC_DEV=m
-+CONFIG_CHROME_PLATFORMS=y
-+CONFIG_CROS_EC=m
- CONFIG_CROS_EC_I2C=m
- CONFIG_CROS_EC_SPI=m
- CONFIG_MFD_ASIC3=y
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 4d583514258c..b5bba5f04082 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -430,8 +430,7 @@ CONFIG_MFD_ALTERA_SYSMGR=y
- CONFIG_MFD_BD9571MWV=y
- CONFIG_MFD_AXP20X_I2C=y
- CONFIG_MFD_AXP20X_RSB=y
--CONFIG_MFD_CROS_EC=y
--CONFIG_MFD_CROS_EC_CHARDEV=m
-+CONFIG_MFD_CROS_EC_DEV=y
- CONFIG_MFD_EXYNOS_LPASS=m
- CONFIG_MFD_HI6421_PMIC=y
- CONFIG_MFD_HI655X_PMIC=y
-@@ -631,8 +630,11 @@ CONFIG_VIRTIO_BALLOON=y
- CONFIG_VIRTIO_MMIO=y
- CONFIG_XEN_GNTDEV=y
- CONFIG_XEN_GRANT_DEV_ALLOC=y
-+CONFIG_CHROME_PLATFORMS=y
-+CONFIG_CROS_EC=y
- CONFIG_CROS_EC_I2C=y
- CONFIG_CROS_EC_SPI=y
-+CONFIG_CROS_EC_CHARDEV=m
- CONFIG_COMMON_CLK_RK808=y
- CONFIG_COMMON_CLK_SCPI=y
- CONFIG_COMMON_CLK_CS2000_CP=y
+Libor
 -- 
-2.20.1
-
+Libor Pechacek
+SUSE Labs
