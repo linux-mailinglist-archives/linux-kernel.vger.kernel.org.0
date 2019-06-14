@@ -2,101 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9226046A51
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 22:37:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CEB8E46A8C
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 22:38:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727723AbfFNUh1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 16:37:27 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:38126 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726102AbfFNUhY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 16:37:24 -0400
-Received: by mail-pg1-f195.google.com with SMTP id v11so2162759pgl.5
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2019 13:37:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=lsF1y/LAf5L+2wQLGdeHEaRtoQrXQNuhBq52QCwbapo=;
-        b=OLPYBKcTI+78/S0FOVJMy9P3vw12j1xgEFVW/Zh4gP7hfjAUxnZ/FizK29hQocZGeB
-         2VpJiAbbc9MRZmfY6iqA6wq4sqz/DCAzWfkPb3oBtXfVwHvMeiqwUEbDqYQklOTGGTb+
-         Mt95Re9HEDvxMcRC3XaQjslmVZQNgfybwBtYQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=lsF1y/LAf5L+2wQLGdeHEaRtoQrXQNuhBq52QCwbapo=;
-        b=RmFNKwWiLyXa7eM6scrwZPMBou1dll3L9cGxIKTyQ5j9NCzMh1tnhEWOH3TYL2my3q
-         cg38cztRBGq6KYqWcwPTa7CgyVJc5d4dy3Z75UHTIWIZ1S3cwrQ5+IYkC06kQuvqQwWN
-         wjbdQ1dai5sa6FFlOp5Xk/adA+p1d3JVGfDRS96BvqFVUbTP7rKLcqGinalz22CQzxPh
-         j2JXa2GlQ0rBhNlt8AGJzjDX3bh9eaACh/18AW5ORmZRWjQGzD6c3d8M0d6klxrMMYzK
-         I4X821IZEkXgdi8SfY76vODF1lKhe9ANeJG4xBBB5bWpTjO6FpXTKCh1ksAyfBotABgG
-         rFxQ==
-X-Gm-Message-State: APjAAAW1m4wjbFs8+YiPi5Hoz3R6ZvEBXoIrUJJqu+bJlFsclPlc4OgV
-        F5wB6XEnAepGbbkLLutIPCdEkQ==
-X-Google-Smtp-Source: APXvYqyh8elsGc5/c/L5iwGKta5WBR5tLdN1CqyHJTufMS/UgZnVCWVLvirzqoh1gd6Gf0IQIIbSKw==
-X-Received: by 2002:a17:90a:d14a:: with SMTP id t10mr13015629pjw.85.1560544643851;
-        Fri, 14 Jun 2019 13:37:23 -0700 (PDT)
-Received: from smtp.gmail.com ([2620:15c:202:1:fa53:7765:582b:82b9])
-        by smtp.gmail.com with ESMTPSA id x5sm3673187pjp.21.2019.06.14.13.37.22
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Fri, 14 Jun 2019 13:37:23 -0700 (PDT)
-From:   Stephen Boyd <swboyd@chromium.org>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        Evan Green <evgreen@chromium.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>
-Subject: [PATCH v2 5/5] soc: qcom: cmd-db: Map with read-only mappings
-Date:   Fri, 14 Jun 2019 13:37:17 -0700
-Message-Id: <20190614203717.75479-6-swboyd@chromium.org>
-X-Mailer: git-send-email 2.22.0.410.gd8fdbe21b5-goog
-In-Reply-To: <20190614203717.75479-1-swboyd@chromium.org>
-References: <20190614203717.75479-1-swboyd@chromium.org>
+        id S1728210AbfFNUiD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 16:38:03 -0400
+Received: from ms.lwn.net ([45.79.88.28]:54198 "EHLO ms.lwn.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726755AbfFNUiA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Jun 2019 16:38:00 -0400
+Received: from lwn.net (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ms.lwn.net (Postfix) with ESMTPSA id D29F1740;
+        Fri, 14 Jun 2019 20:37:59 +0000 (UTC)
+Date:   Fri, 14 Jun 2019 14:37:58 -0600
+From:   Jonathan Corbet <corbet@lwn.net>
+To:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Cc:     Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab@infradead.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] scripts/documentation-file-ref-check: ignore output dir
+Message-ID: <20190614143758.36b0ed65@lwn.net>
+In-Reply-To: <093d01459be472a20894c5be6f9b937ff7fd7d47.1560421751.git.mchehab+samsung@kernel.org>
+References: <093d01459be472a20894c5be6f9b937ff7fd7d47.1560421751.git.mchehab+samsung@kernel.org>
+Organization: LWN.net
 MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The command DB is read-only already to the kernel because everything is
-const marked once we map it. Let's go one step further and try to map
-the memory as read-only in the page tables. This should make it harder
-for random code to corrupt the database and change the contents.
+On Thu, 13 Jun 2019 07:29:17 -0300
+Mauro Carvalho Chehab <mchehab+samsung@kernel.org> wrote:
 
-Cc: Evan Green <evgreen@chromium.org>
-Cc: Rob Herring <robh+dt@kernel.org>
-Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Andy Gross <agross@kernel.org>
-Cc: Will Deacon <will.deacon@arm.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Dan Williams <dan.j.williams@intel.com>
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-Signed-off-by: Stephen Boyd <swboyd@chromium.org>
----
- drivers/soc/qcom/cmd-db.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+> When there's no Documentation/output directory, the script will
+> complain about those missing references:
+> 
+> 	Documentation/doc-guide/sphinx.rst: Documentation/output
+> 	Documentation/doc-guide/sphinx.rst: Documentation/output
+> 	Documentation/process/howto.rst: Documentation/output
+> 	Documentation/translations/it_IT/doc-guide/sphinx.rst: Documentation/output
+> 	Documentation/translations/it_IT/doc-guide/sphinx.rst: Documentation/output
+> 	Documentation/translations/it_IT/process/howto.rst: Documentation/output
+> 	Documentation/translations/ja_JP/howto.rst: Documentation/output
+> 	Documentation/translations/ko_KR/howto.rst: Documentation/output
+> 
+> Those are false positives, so add an ignore rule for them.
+> 
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 
-diff --git a/drivers/soc/qcom/cmd-db.c b/drivers/soc/qcom/cmd-db.c
-index 10a34d26b753..6365e8260282 100644
---- a/drivers/soc/qcom/cmd-db.c
-+++ b/drivers/soc/qcom/cmd-db.c
-@@ -240,7 +240,8 @@ static int cmd_db_dev_probe(struct platform_device *pdev)
- {
- 	int ret = 0;
- 
--	cmd_db_header = devm_memremap_reserved_mem(&pdev->dev, MEMREMAP_WB);
-+	cmd_db_header = devm_memremap_reserved_mem(&pdev->dev,
-+						   MEMREMAP_RO | MEMREMAP_WB);
- 	if (IS_ERR(cmd_db_header)) {
- 		ret = PTR_ERR(cmd_db_header);
- 		cmd_db_header = NULL;
--- 
-Sent by a computer through tubes
+Applied, thanks.
 
+jon
