@@ -2,174 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D200346299
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 17:23:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 24B034629E
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 17:23:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726297AbfFNPXM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 11:23:12 -0400
-Received: from mail.efficios.com ([167.114.142.138]:49952 "EHLO
-        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726083AbfFNPXM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 11:23:12 -0400
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id EEC6825174D;
-        Fri, 14 Jun 2019 11:23:10 -0400 (EDT)
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
-        with ESMTP id dHBNh9EPKqVL; Fri, 14 Jun 2019 11:23:10 -0400 (EDT)
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id AA480251731;
-        Fri, 14 Jun 2019 11:23:08 -0400 (EDT)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com AA480251731
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
-        s=default; t=1560525788;
-        bh=OBox3OMxjxvC7PvoLYGWSN3dsx6DMeQHxfzI7UPjj1Y=;
-        h=From:To:Date:Message-Id;
-        b=ZxhHLReM1LIW1i4jvG82L8qd3m5LTPJDyXwDqty0mpFQ+PLM8Cp+W8h7rbu734ot7
-         1Qg6PIsk3Q7eYwHmQEuH3mqUrMoYcqExVUsVlkB3ehCCcSSj7BDPSoHhGE61e2qXk3
-         1YWyu18xdbqY6QiRcvEfvoUpuZdvaZbNux0oI2PFtFfshhaSZpXcDfNkqsBbeK04Cq
-         zFNu2khFa6v4rXfjX3jNPBAsvjO1NCOPjV8OeL6X7WoPzKrpW4fPeJoYBiCx1OS0uq
-         L6HiXqZWIgOHjhdQXVDEhVs55OyLIH9rME6OctJDlrefUJQcZnehuOQ6ABHcrRk6fa
-         g3yhiwSdJrUyg==
-X-Virus-Scanned: amavisd-new at efficios.com
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
-        with ESMTP id Uimi5a9qPjeK; Fri, 14 Jun 2019 11:23:08 -0400 (EDT)
-Received: from localhost.localdomain (192-222-181-218.qc.cable.ebox.net [192.222.181.218])
-        by mail.efficios.com (Postfix) with ESMTPSA id 655E725171F;
-        Fri, 14 Jun 2019 11:23:08 -0400 (EDT)
-From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To:     Carlos O'Donell <carlos@redhat.com>
-Cc:     Florian Weimer <fweimer@redhat.com>,
-        Joseph Myers <joseph@codesourcery.com>,
-        Szabolcs Nagy <szabolcs.nagy@arm.com>,
-        libc-alpha@sourceware.org,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ben Maurer <bmaurer@fb.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Dave Watson <davejwatson@fb.com>, Paul Turner <pjt@google.com>,
-        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org
-Subject: [PATCH glibc 2/5] glibc: sched_getcpu(): use rseq cpu_id TLS on Linux (v5)
-Date:   Fri, 14 Jun 2019 11:23:01 -0400
-Message-Id: <20190614152304.12321-3-mathieu.desnoyers@efficios.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190614152304.12321-1-mathieu.desnoyers@efficios.com>
-References: <20190614152304.12321-1-mathieu.desnoyers@efficios.com>
+        id S1726448AbfFNPXo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 11:23:44 -0400
+Received: from foss.arm.com ([217.140.110.172]:36598 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725981AbfFNPXn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Jun 2019 11:23:43 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B2E62344;
+        Fri, 14 Jun 2019 08:23:42 -0700 (PDT)
+Received: from e121166-lin.cambridge.arm.com (unknown [10.1.196.255])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id AE3D43F718;
+        Fri, 14 Jun 2019 08:23:41 -0700 (PDT)
+Date:   Fri, 14 Jun 2019 16:23:36 +0100
+From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To:     Yuehaibing <yuehaibing@huawei.com>
+Cc:     bhelgaas@google.com, sthemmin@microsoft.com, sashal@kernel.org,
+        decui@microsoft.com, linux-kernel@vger.kernel.org,
+        linux-pci@vger.kernel.org
+Subject: Re: [PATCH] PCI: hv: Fix build error without CONFIG_SYSFS
+Message-ID: <20190614152336.GA26846@e121166-lin.cambridge.arm.com>
+References: <20190531150923.12376-1-yuehaibing@huawei.com>
+ <6c97b2ae-b151-5610-d8d5-ef626d1f9bbb@huawei.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6c97b2ae-b151-5610-d8d5-ef626d1f9bbb@huawei.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When available, use the cpu_id field from __rseq_abi on Linux to
-implement sched_getcpu(). Fall-back on the vgetcpu vDSO if unavailable.
+On Fri, Jun 14, 2019 at 10:19:10PM +0800, Yuehaibing wrote:
+> Hi all,
+> 
+> Friendly ping...
 
-Benchmarks:
+We should address Michael's question:
 
-x86-64: Intel E5-2630 v3@2.40GHz, 16-core, hyperthreading
+https://lore.kernel.org/linux-pci/BYAPR21MB12211EEA95200F437C8E37ECD71A0@BYAPR21MB1221.namprd21.prod.outlook.com/
 
-glibc sched_getcpu():                     13.7 ns (baseline)
-glibc sched_getcpu() using rseq:           2.5 ns (speedup:  5.5x)
-inline load cpuid from __rseq_abi TLS:     0.8 ns (speedup: 17.1x)
+Lorenzo
 
-Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-CC: Carlos O'Donell <carlos@redhat.com>
-CC: Florian Weimer <fweimer@redhat.com>
-CC: Joseph Myers <joseph@codesourcery.com>
-CC: Szabolcs Nagy <szabolcs.nagy@arm.com>
-CC: Thomas Gleixner <tglx@linutronix.de>
-CC: Ben Maurer <bmaurer@fb.com>
-CC: Peter Zijlstra <peterz@infradead.org>
-CC: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-CC: Boqun Feng <boqun.feng@gmail.com>
-CC: Will Deacon <will.deacon@arm.com>
-CC: Dave Watson <davejwatson@fb.com>
-CC: Paul Turner <pjt@google.com>
-CC: libc-alpha@sourceware.org
-CC: linux-kernel@vger.kernel.org
-CC: linux-api@vger.kernel.org
----
-Changes since v1:
-- rseq is only used if both __NR_rseq and RSEQ_SIG are defined.
-
-Changes since v2:
-- remove duplicated __rseq_abi extern declaration.
-
-Changes since v3:
-- update ChangeLog.
-
-Changes since v4:
-- Use atomic_load_relaxed to load the __rseq_abi.cpu_id field, a
-  consequence of the fact that __rseq_abi is not volatile anymore.
-- Include atomic.h which provides atomic_load_relaxed.
----
- ChangeLog                              |  5 +++++
- sysdeps/unix/sysv/linux/sched_getcpu.c | 25 +++++++++++++++++++++++--
- 2 files changed, 28 insertions(+), 2 deletions(-)
-
-diff --git a/ChangeLog b/ChangeLog
-index 01a411acbf..58830cafc2 100644
---- a/ChangeLog
-+++ b/ChangeLog
-@@ -1,3 +1,8 @@
-+2019-04-23  Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-+
-+	* sysdeps/unix/sysv/linux/sched_getcpu.c: use rseq cpu_id TLS on
-+	Linux.
-+
- 2019-04-23  Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
- 
- 	* NEWS: Add Restartable Sequences feature description.
-diff --git a/sysdeps/unix/sysv/linux/sched_getcpu.c b/sysdeps/unix/sysv/linux/sched_getcpu.c
-index fb0d317f83..01a818f5b0 100644
---- a/sysdeps/unix/sysv/linux/sched_getcpu.c
-+++ b/sysdeps/unix/sysv/linux/sched_getcpu.c
-@@ -18,14 +18,15 @@
- #include <errno.h>
- #include <sched.h>
- #include <sysdep.h>
-+#include <atomic.h>
- 
- #ifdef HAVE_GETCPU_VSYSCALL
- # define HAVE_VSYSCALL
- #endif
- #include <sysdep-vdso.h>
- 
--int
--sched_getcpu (void)
-+static int
-+vsyscall_sched_getcpu (void)
- {
- #ifdef __NR_getcpu
-   unsigned int cpu;
-@@ -37,3 +38,23 @@ sched_getcpu (void)
-   return -1;
- #endif
- }
-+
-+#ifdef __NR_rseq
-+#include <sys/rseq.h>
-+#endif
-+
-+#if defined __NR_rseq && defined RSEQ_SIG
-+int
-+sched_getcpu (void)
-+{
-+  int cpu_id = atomic_load_relaxed (&__rseq_abi.cpu_id);
-+
-+  return cpu_id >= 0 ? cpu_id : vsyscall_sched_getcpu ();
-+}
-+#else
-+int
-+sched_getcpu (void)
-+{
-+  return vsyscall_sched_getcpu ();
-+}
-+#endif
--- 
-2.17.1
-
+> On 2019/5/31 23:09, YueHaibing wrote:
+> > while building without CONFIG_SYSFS, fails as below:
+> > 
+> > drivers/pci/controller/pci-hyperv.o: In function 'hv_pci_assign_slots':
+> > pci-hyperv.c:(.text+0x40a): undefined reference to 'pci_create_slot'
+> > drivers/pci/controller/pci-hyperv.o: In function 'pci_devices_present_work':
+> > pci-hyperv.c:(.text+0xc02): undefined reference to 'pci_destroy_slot'
+> > drivers/pci/controller/pci-hyperv.o: In function 'hv_pci_remove':
+> > pci-hyperv.c:(.text+0xe50): undefined reference to 'pci_destroy_slot'
+> > drivers/pci/controller/pci-hyperv.o: In function 'hv_eject_device_work':
+> > pci-hyperv.c:(.text+0x11f9): undefined reference to 'pci_destroy_slot'
+> > 
+> > Select SYSFS while PCI_HYPERV is set to fix this.
+> > 
+> > Reported-by: Hulk Robot <hulkci@huawei.com>
+> > Fixes: a15f2c08c708 ("PCI: hv: support reporting serial number as slot information")
+> > Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+> > ---
+> >  drivers/pci/Kconfig | 1 +
+> >  1 file changed, 1 insertion(+)
+> > 
+> > diff --git a/drivers/pci/Kconfig b/drivers/pci/Kconfig
+> > index 2ab9240..6722952 100644
+> > --- a/drivers/pci/Kconfig
+> > +++ b/drivers/pci/Kconfig
+> > @@ -182,6 +182,7 @@ config PCI_LABEL
+> >  config PCI_HYPERV
+> >          tristate "Hyper-V PCI Frontend"
+> >          depends on X86 && HYPERV && PCI_MSI && PCI_MSI_IRQ_DOMAIN && X86_64
+> > +	select SYSFS
+> >          help
+> >            The PCI device frontend driver allows the kernel to import arbitrary
+> >            PCI devices from a PCI backend to support PCI driver domains.
+> > 
+> 
