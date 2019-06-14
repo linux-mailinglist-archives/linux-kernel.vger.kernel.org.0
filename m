@@ -2,141 +2,182 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3027045AB0
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 12:41:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 18BC245A88
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 12:38:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727552AbfFNKjn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 06:39:43 -0400
-Received: from gloria.sntech.de ([185.11.138.130]:39200 "EHLO gloria.sntech.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727315AbfFNKjl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 06:39:41 -0400
-Received: from we0305.dip.tu-dresden.de ([141.76.177.49] helo=phil.localnet)
-        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <heiko@sntech.de>)
-        id 1hbjcK-0004XL-Mp; Fri, 14 Jun 2019 12:39:32 +0200
-From:   Heiko Stuebner <heiko@sntech.de>
-To:     Douglas Anderson <dianders@chromium.org>,
-        Thierry Reding <thierry.reding@gmail.com>
-Cc:     Sean Paul <seanpaul@chromium.org>,
-        linux-rockchip@lists.infradead.org,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        dri-devel@lists.freedesktop.org,
-        Boris Brezillon <boris.brezillon@collabora.com>,
-        Ezequiel Garcia <ezequiel@collabora.com>,
-        Enric =?ISO-8859-1?Q?Balletb=F2?= <enric.balletbo@collabora.com>,
-        Rob Herring <robh+dt@kernel.org>, mka@chromium.org,
-        devicetree@vger.kernel.org,
-        Brian Norris <briannorris@chromium.org>,
-        Klaus Goger <klaus.goger@theobroma-systems.com>,
-        linux-kernel@vger.kernel.org, David Airlie <airlied@linux.ie>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        linux-arm-kernel@lists.infradead.org,
-        Daniel Vetter <daniel@ffwll.ch>
-Subject: Re: [PATCH v5 0/7] drm/panel: simple: Add mode support to devicetree
-Date:   Fri, 14 Jun 2019 12:39:31 +0200
-Message-ID: <1584725.WvTV0KElQL@phil>
-In-Reply-To: <20190401171724.215780-1-dianders@chromium.org>
-References: <20190401171724.215780-1-dianders@chromium.org>
+        id S1727135AbfFNKii (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 06:38:38 -0400
+Received: from relay2-d.mail.gandi.net ([217.70.183.194]:34159 "EHLO
+        relay2-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726784AbfFNKii (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Jun 2019 06:38:38 -0400
+X-Originating-IP: 37.177.88.254
+Received: from uno.localdomain (unknown [37.177.88.254])
+        (Authenticated sender: jacopo@jmondi.org)
+        by relay2-d.mail.gandi.net (Postfix) with ESMTPSA id 3EA8240007;
+        Fri, 14 Jun 2019 10:38:26 +0000 (UTC)
+Date:   Fri, 14 Jun 2019 12:39:40 +0200
+From:   Jacopo Mondi <jacopo@jmondi.org>
+To:     Lubomir Rintel <lkundrak@v3.sk>
+Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>, linux-media@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Pavel Machek <pavel@ucw.cz>
+Subject: Re: [PATCH v6 5/7] [media] marvell-ccic/mmp: add devicetree support
+Message-ID: <20190614103940.4dg43fo7dmbwnpfs@uno.localdomain>
+References: <20190528090731.10341-1-lkundrak@v3.sk>
+ <20190528090731.10341-6-lkundrak@v3.sk>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="afhe6fv3nxwqv4st"
+Content-Disposition: inline
+In-Reply-To: <20190528090731.10341-6-lkundrak@v3.sk>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Montag, 1. April 2019, 19:17:17 CEST schrieb Douglas Anderson:
-> I'm reviving Sean Paul's old patchset to get mode support in device
-> tree.  The cover letter for his v3 is at:
-> https://lists.freedesktop.org/archives/dri-devel/2018-February/165162.html
-> 
-> No code is different between v4 and v5, just commit messages and text
-> in the bindings.
-> 
-> I've pulled together the patches that didn't land in v3, addressed
-> outstanding feedback, and reposted.  Atop them I've added patches for
-> rk3288-veyron-chromebook (used for jaq, jerry, mighty, speedy) and
-> rk3288-veryon-minnie.
-> 
-> Please let me know how they look.
-> 
-> In general I have added people to the whole series who I think would
-> like the whole series and then let get_maintainer pick extra people it
-> thinks are relevant to each individual patch.  If I see you respond to
-> any of the patches in the series, though, I'll add you to the whole
-> series Cc list next time.
 
-sadly it looks like the panel-simple parts haven't made it into
-drm-misc yet and the conversation on patch 1/7 seems to have stalled
-after Doug's replies.
+--afhe6fv3nxwqv4st
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 
-Thierry, do you have an opinion on these?
+On Tue, May 28, 2019 at 11:07:29AM +0200, Lubomir Rintel wrote:
+> The platform data is actually not used anywhere (along with the CSI
+> support) and should be safe to remove.
+>
+> Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
+> Acked-by: Pavel Machek <pavel@ucw.cz>
+>
+> ---
+> Changes since v1:
+> - s/This are/These are/ in a comment
+>
+>  .../media/platform/marvell-ccic/mmp-driver.c  | 36 ++++++++++++++-----
+>  1 file changed, 27 insertions(+), 9 deletions(-)
+>
+> diff --git a/drivers/media/platform/marvell-ccic/mmp-driver.c b/drivers/media/platform/marvell-ccic/mmp-driver.c
+> index 8f1d2a972bc9..54c2dd8c29d8 100644
+> --- a/drivers/media/platform/marvell-ccic/mmp-driver.c
+> +++ b/drivers/media/platform/marvell-ccic/mmp-driver.c
+> @@ -19,6 +19,8 @@
+>  #include <media/v4l2-device.h>
+>  #include <linux/platform_data/media/mmp-camera.h>
+>  #include <linux/device.h>
+> +#include <linux/of.h>
+> +#include <linux/of_platform.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/gpio.h>
+>  #include <linux/io.h>
+> @@ -196,6 +198,9 @@ static void mmpcam_calc_dphy(struct mcam_camera *mcam)
+>  	struct device *dev = &cam->pdev->dev;
+>  	unsigned long tx_clk_esc;
+>
+> +	if (!pdata)
+> +		return;
+> +
 
+This seems a bit of an hack to me. The caller knows the mcam->bus_type
+and should not try to calc_dphy() if the bus type is not CSI2_DPHY.
+What do you think?
+
+>  	/*
+>  	 * If CSI2_DPHY3 is calculated dynamically,
+>  	 * pdata->lane_clk should be already set
+> @@ -314,10 +319,6 @@ static int mmpcam_probe(struct platform_device *pdev)
+>  	struct mmp_camera_platform_data *pdata;
+>  	int ret;
+>
+> -	pdata = pdev->dev.platform_data;
+> -	if (!pdata)
+> -		return -ENODEV;
+> -
+>  	cam = devm_kzalloc(&pdev->dev, sizeof(*cam), GFP_KERNEL);
+>  	if (cam == NULL)
+>  		return -ENOMEM;
+> @@ -330,17 +331,29 @@ static int mmpcam_probe(struct platform_device *pdev)
+>  	mcam->calc_dphy = mmpcam_calc_dphy;
+>  	mcam->dev = &pdev->dev;
+>  	mcam->use_smbus = 0;
+> -	mcam->mclk_src = pdata->mclk_src;
+> -	mcam->mclk_div = pdata->mclk_div;
+> -	mcam->bus_type = pdata->bus_type;
+> -	mcam->dphy = pdata->dphy;
+> +	pdata = pdev->dev.platform_data;
+> +	if (pdata) {
+> +		mcam->mclk_src = pdata->mclk_src;
+> +		mcam->mclk_div = pdata->mclk_div;
+> +		mcam->bus_type = pdata->bus_type;
+> +		mcam->dphy = pdata->dphy;
+> +		mcam->lane = pdata->lane;
+> +	} else {
+> +		/*
+> +		 * These are values that used to be hardcoded in mcam-core and
+> +		 * work well on a OLPC XO 1.75 with a parallel bus sensor.
+> +		 * If it turns out other setups make sense, the values should
+> +		 * be obtained from the device tree.
+> +		 */
+> +		mcam->mclk_src = 3;
+> +		mcam->mclk_div = 2;
+
+I see these only used in mcam_enable_mipi(). Am I wrong?
 
 Thanks
-Heiko
+   j
 
-> Changes in v5:
-> - Removed bit about OS may ignore (Rob/Ezequiel)
-> - Added Heiko's Tested-by
-> - It's not just jerry, it's most rk3288 Chromebooks (Heiko)
-> 
-> Changes in v4:
-> - Simplify desc. for when override should be used (Thierry/Laurent)
-> - Removed Rob H review since it's been a year and wording changed
-> - Don't add mode from timing if override was specified (Thierry)
-> - Add warning if timing and fixed mode was specified (Thierry)
-> - Don't add fixed mode if timing was specified (Thierry)
-> - Refactor/rename a bit to avoid extra indentation from "if" tests
-> - i should be unsigned (Thierry)
-> - Add annoying WARN_ONs for some cases (Thierry)
-> - Simplify 'No display_timing found' handling (Thierry)
-> - Rename to panel_simple_parse_override_mode() (Thierry)
-> - Rebase to top of Heiko's tree
-> - Converted changelog to after-the-cut for non-DRM change.
-> - display_timing for Innolux n116bge new for v4.
-> - display_timing for AUO b101ean01 new for v4.
-> - rk3288-veyron-jerry patch new for v4.
-> - rk3288-veyron-minnie patch new for v4.
-> 
-> Changes in v3:
-> - Go back to using the timing subnode directly, but rename to
->   panel-timing (Rob)
-> - No longer parse display-timings subnode, use panel-timing (Rob)
-> - Unwrap the timing from display-timings and rename panel-timing (Rob)
-> 
-> Changes in v2:
-> - Split out the binding into a new patch (Rob)
-> - display-timings is a new section (Rob)
-> - Use the full display-timings subnode instead of picking the timing
->   out (Rob/Thierry)
-> - Parse the full display-timings node (using the native-mode) (Rob)
-> - Wrap the timing in display-timings node to match binding (Rob/Thierry)
-> 
-> Douglas Anderson (4):
->   drm/panel: simple: Use display_timing for Innolux n116bge
->   drm/panel: simple: Use display_timing for AUO b101ean01
->   ARM: dts: rockchip: Specify rk3288-veyron-chromebook's display timings
->   ARM: dts: rockchip: Specify rk3288-veyron-minnie's display timings
-> 
-> Sean Paul (3):
->   dt-bindings: Add panel-timing subnode to simple-panel
->   drm/panel: simple: Add ability to override typical timing
->   arm64: dts: rockchip: Specify override mode for kevin panel
-> 
->  .../bindings/display/panel/simple-panel.txt   |  22 +++
->  .../boot/dts/rk3288-veyron-chromebook.dtsi    |  14 ++
->  arch/arm/boot/dts/rk3288-veyron-minnie.dts    |  14 ++
->  .../boot/dts/rockchip/rk3399-gru-kevin.dts    |  14 ++
->  drivers/gpu/drm/panel/panel-simple.c          | 171 ++++++++++++++----
->  5 files changed, 203 insertions(+), 32 deletions(-)
-> 
-> 
+> +	}
+>  	if (mcam->bus_type == V4L2_MBUS_CSI2_DPHY) {
+>  		cam->mipi_clk = devm_clk_get(mcam->dev, "mipi");
+>  		if ((IS_ERR(cam->mipi_clk) && mcam->dphy[2] == 0))
+>  			return PTR_ERR(cam->mipi_clk);
+>  	}
+>  	mcam->mipi_enabled = false;
+> -	mcam->lane = pdata->lane;
+>  	mcam->chip_id = MCAM_ARMADA610;
+>  	mcam->buffer_mode = B_DMA_sg;
+>  	strscpy(mcam->bus_info, "platform:mmp-camera", sizeof(mcam->bus_info));
+> @@ -475,6 +488,10 @@ static int mmpcam_resume(struct platform_device *pdev)
+>
+>  #endif
+>
+> +static const struct of_device_id mmpcam_of_match[] = {
+> +	{ .compatible = "marvell,mmp2-ccic", },
+> +	{},
+> +};
+>
+>  static struct platform_driver mmpcam_driver = {
+>  	.probe		= mmpcam_probe,
+> @@ -485,6 +502,7 @@ static struct platform_driver mmpcam_driver = {
+>  #endif
+>  	.driver = {
+>  		.name	= "mmp-camera",
+> +		.of_match_table = of_match_ptr(mmpcam_of_match),
+>  	}
+>  };
+>
+> --
+> 2.21.0
+>
 
+--afhe6fv3nxwqv4st
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
 
+iQIzBAABCAAdFiEEtcQ9SICaIIqPWDjAcjQGjxahVjwFAl0DeWsACgkQcjQGjxah
+VjyN0w//eJaACnLIgd74jgfWMgGJrJO2ESYgEtFE/sPAVC2bg9CM93nN3/ucTwcd
+EM0efN3gDbUiL3pBvVD9Nqlpqd9CZOjZJxKT2bPSJvsTNG+zXgaf1Iu1imj4kPEw
+zfBr37DzBb5ldvcMv/VgOef4K0OtQIvXTZ2IxndL5jjj9n0qtTnWtMkIxwprRtjR
+2sX+quTJcKJqGQHx6thTM4TPIvgFCaSHpq/ivsKRTF9PnC9S7ij82GDKG8F/HJoi
+xCaLdbEw1SE+CYz65L2ze6TttX+YeWHfZT1ciLTmbE3f0idr897PaRL0Bo9mhc/x
+SOCv0VyxuOhNwO1lMfKiXwWuEnjmIyo6tv4tcFn8Az48YbTjYacEsiRwcPLrSV2/
+AX0N/zISxiPeOvESiNFZzRfhj4nx30DjMTVR0jRFWi2HtzbXBlcTBkH547yI7WlR
+Wir1fstvC3aY7AXeFlZ6efJNPsRgHRojaSbQoFGfebMgw00aust2fOAkJS4opEda
+e0OvH4IY0wgX6tJKauv2M/RNqhzmjPybtgcfwHYjktNjaaP5Rt8MxfeBRCHDMGxF
+FjxEEnzQMX4KIJSk86V24qbcEUehSkbkcy2yySKvRTsqules6CNeEVaLtRZtnr1L
+5es8YRDqM+q0IW7Obbf40CC9DNqkgGrWrjV7EviNStJ/2T7cQQc=
+=Dnfz
+-----END PGP SIGNATURE-----
 
+--afhe6fv3nxwqv4st--
