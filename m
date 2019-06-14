@@ -2,104 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2940C461EA
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 17:00:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 41EF7461E8
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 17:00:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726953AbfFNPAu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 11:00:50 -0400
-Received: from conssluserg-01.nifty.com ([210.131.2.80]:32538 "EHLO
-        conssluserg-01.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725789AbfFNPAr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        id S1726092AbfFNPAr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
         Fri, 14 Jun 2019 11:00:47 -0400
-Received: from mail-ua1-f52.google.com (mail-ua1-f52.google.com [209.85.222.52]) (authenticated)
-        by conssluserg-01.nifty.com with ESMTP id x5EF0NfZ011606;
-        Sat, 15 Jun 2019 00:00:23 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-01.nifty.com x5EF0NfZ011606
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1560524423;
-        bh=/s60AkWF0U1BOgzE1pN5P3jd9rwyhwm9G2111VynPfM=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=j3ka3syqoZGnKU6PIqP460OogrN7bfS2KlW/d0g1RrH94g8f+c0RcpyZzmFuWpRBX
-         u8Qduu0UTW/pmCa5kJbCdYYPVvlODQMsAAthu2I8+xS67NsZZ/enduH0BYVSE83YUB
-         +JEdn2Tiia9HBMDfbQNfrfK7J2DdrFFcSzK9LAdTRGsmCjEYu/PQDhhsOHRMVCL3qT
-         O6BmNfJbPNG//EriZjzWF0TuozRBPgbHEQJhKp2pL9JsQvgh96B2xHLji32qeWZ3bd
-         aVej2aN+08Nael3hI9B6Y93Y5B4A3iBBOSQiwvAPmBGzGniRn7D/+AVqgFMWJviQ82
-         mBDdSpdnmkbZA==
-X-Nifty-SrcIP: [209.85.222.52]
-Received: by mail-ua1-f52.google.com with SMTP id o2so995729uae.10;
-        Fri, 14 Jun 2019 08:00:23 -0700 (PDT)
-X-Gm-Message-State: APjAAAWiohvROaBHGZEChGfJz5JUSKLm/jlG68RD6xr8HpXzP4WofUUF
-        M8TPCYc5wwZBlGVKpvBIzvbFxXr1k2b11Rq05DQ=
-X-Google-Smtp-Source: APXvYqzUYCLJOr8aWbp0616zcs4Ga7lShn6QBAoUMQvxu9NG2N+7WApoM0G27MKsghofgy4I6fzNxJ9gMOI/ClIB1eQ=
-X-Received: by 2002:ab0:5ea6:: with SMTP id y38mr24152907uag.40.1560524422353;
- Fri, 14 Jun 2019 08:00:22 -0700 (PDT)
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:39528 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725780AbfFNPAq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Jun 2019 11:00:46 -0400
+Received: by mail-ed1-f66.google.com with SMTP id m10so3936640edv.6
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2019 08:00:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=NbFRe8iz8+YgXTd9+j/Su+erCoaDy3fGkGP7auiuNUA=;
+        b=bMvCQCY1CEGJuCCTGphkCQCQDXbBiiOzKD2MHOjDq+l9sETlfAVva1PsQHnRf2oUGN
+         M5o0BI9D4sRZY9xNMHZwuhH8HqA0pR3KYSUbrT4aFt/AOsxxvjk9BZkDeqOL6uUKUt/2
+         lfg6y+DC2kF7XSnWHwQW2J1I6e61GDiKl3nik=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=NbFRe8iz8+YgXTd9+j/Su+erCoaDy3fGkGP7auiuNUA=;
+        b=FKX3F1w6USKwYfq6qRcIKkkDfer4Jn6ZMhhVS4jCbnMKuge5rDK26jya13kd69zdsO
+         gZPdlmglqIPYA+lGmwFuH9Uzwx7UpgH06168HCPdJvHoRhKSI2WjDDlwpIzMKtxYW8ms
+         bApGggFr7FJva3fdPn/sST960MKuue3B4UGo31e0nQuAKhBHeeQ2IEHS/8JPK07og1Hp
+         hmjRtIpMKPQsX2+hq0fVYquKwhUimmf1rZRwILKxgLAm5uoix4hFXh/+Kv3K8Au+tcNU
+         uk1bh/x41+Si6X08I5fnaV/liKmUre4s8ci6Mk5hPZ5H7kVjKvnFdkUaHGfT8Xab7+f5
+         ZYAA==
+X-Gm-Message-State: APjAAAXwufeRZ9GE6uxc6A6A+dF8nsKanV+zo2dZnf92dRJkix4x9bVu
+        XupP0xcZcRADoyEdpQ0VPOXBPA==
+X-Google-Smtp-Source: APXvYqzbUincpkS9VRFPqctb2mtBCQ81/I0YaGNHD6rsk2qXjiGZJEqf/FLbTjm8dLd6boMGMh27sg==
+X-Received: by 2002:a17:906:4e57:: with SMTP id g23mr10186023ejw.52.1560524444771;
+        Fri, 14 Jun 2019 08:00:44 -0700 (PDT)
+Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
+        by smtp.gmail.com with ESMTPSA id 17sm962988edu.21.2019.06.14.08.00.43
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Fri, 14 Jun 2019 08:00:43 -0700 (PDT)
+Date:   Fri, 14 Jun 2019 17:00:41 +0200
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     Young Xiao <92siuyang@gmail.com>
+Cc:     alexander.deucher@amd.com, christian.koenig@amd.com,
+        David1.Zhou@amd.com, airlied@linux.ie, daniel@ffwll.ch,
+        amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm/amd: fix hotplug race at startup
+Message-ID: <20190614150041.GA23020@phenom.ffwll.local>
+Mail-Followup-To: Young Xiao <92siuyang@gmail.com>,
+        alexander.deucher@amd.com, christian.koenig@amd.com,
+        David1.Zhou@amd.com, airlied@linux.ie,
+        amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org
+References: <1560511763-2140-1-git-send-email-92siuyang@gmail.com>
 MIME-Version: 1.0
-References: <20190613015532.19685-1-yamada.masahiro@socionext.com> <cc68b375-6011-6bbf-8f0b-c2963237a743@metux.net>
-In-Reply-To: <cc68b375-6011-6bbf-8f0b-c2963237a743@metux.net>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Fri, 14 Jun 2019 23:59:45 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAQ4KmXd0J2UYfi9WiisnfGa4g62BH2S46ELn4fYG05UcA@mail.gmail.com>
-Message-ID: <CAK7LNAQ4KmXd0J2UYfi9WiisnfGa4g62BH2S46ELn4fYG05UcA@mail.gmail.com>
-Subject: Re: [PATCH 1/2] pinctrl: remove unneeded #ifdef around declarations
-To:     "Enrico Weigelt, metux IT consult" <lkml@metux.net>
-Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1560511763-2140-1-git-send-email-92siuyang@gmail.com>
+X-Operating-System: Linux phenom 4.19.0-5-amd64 
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 14, 2019 at 10:21 PM Enrico Weigelt, metux IT consult
-<lkml@metux.net> wrote:
->
-> On 13.06.19 03:55, Masahiro Yamada wrote:
-> > What is the point in surrounding the whole of declarations with
-> > ifdef like this?
-> >
-> >   #ifdef CONFIG_FOO
-> >   int foo(void);
-> >   #endif
-> >
-> > If CONFIG_FOO is not defined, all callers of foo() will fail
-> > with implicit declaration errors since the top Makefile adds
-> > -Werror-implicit-function-declaration to KBUILD_CFLAGS.
-> >
-> > This breaks the build earlier when you are doing something wrong.
-> > That's it.
->
-> hmm, in general I like the idea of breaking the build as early as
-> possible. depending on your available cpu power, a kernel build can
-> take a while, and it could be a huge waste of time when having to
-> wait for link stage, just to find out about missing functions.
->
-> @linus: what's your oppinion ?
->
->
-> --mtx
->
-> --
-> Enrico Weigelt, metux IT consult
-> Free software and Linux embedded engineering
-> info@metux.net -- +49-151-27565287
+On Fri, Jun 14, 2019 at 07:29:23PM +0800, Young Xiao wrote:
+> We should check mode_config_initialized flag in amdgpu_hotplug_work_func.
+> 
+> See commit 7f98ca454ad3 ("drm/radeon: fix hotplug race at startup") for details.
+> 
+> Signed-off-by: Young Xiao <92siuyang@gmail.com>
+> ---
+>  drivers/gpu/drm/amd/amdgpu/amdgpu_irq.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_irq.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_irq.c
+> index af4c3b1..13186d6 100644
+> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_irq.c
+> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_irq.c
+> @@ -85,6 +85,9 @@ static void amdgpu_hotplug_work_func(struct work_struct *work)
+>  	struct drm_mode_config *mode_config = &dev->mode_config;
+>  	struct drm_connector *connector;
+>  
+> +	if (!adev->mode_info.mode_config_initialized)
+> +		return;
 
+I think you want to delay your hotplug initialization until you're ready
+to serve hotplug events, this here is fairly racy ...
+-Daniel
 
-My previous clean-up (http://patchwork.ozlabs.org/patch/1112656/)
-broke this build.
-
-And, this patch will fix the build issue.
-
-Did you realize the madness of
-surrounding the forward declarations with #ifdef ?
-
-
-All GPIO/pinctrl headers are written in a bad way.
-
-Linus Walleij must realize he was doing *wrong*.
-
+> +
+>  	mutex_lock(&mode_config->mutex);
+>  	list_for_each_entry(connector, &mode_config->connector_list, head)
+>  		amdgpu_connector_hotplug(connector);
+> -- 
+> 2.7.4
+> 
 
 -- 
-Best Regards
-Masahiro Yamada
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
