@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 16B4F464BC
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 18:45:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4E21E464C1
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 18:45:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726115AbfFNQpb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 12:45:31 -0400
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:33825 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725808AbfFNQpa (ORCPT
+        id S1726218AbfFNQpj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 12:45:39 -0400
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:45453 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725808AbfFNQpi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 12:45:30 -0400
-Received: by mail-qk1-f193.google.com with SMTP id t8so2101825qkt.1;
-        Fri, 14 Jun 2019 09:45:30 -0700 (PDT)
+        Fri, 14 Jun 2019 12:45:38 -0400
+Received: by mail-qt1-f195.google.com with SMTP id j19so3174685qtr.12;
+        Fri, 14 Jun 2019 09:45:38 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=VifAE9FDVkI31pZVAA2VI7QJ/Wx0IcW9fionB1xyoh0=;
-        b=f5gDBIMYOpL3op8T2idCcsZjhuqRrFx0P/ZgeCSQqH3xC/h09NVjjt6zG2TngeILQy
-         Dj5+HL9kmlMzL6+8P61jyDssRBrihL65Ja2j3j3caz7Ue7u2cIuByGSnF5UZ6OfLQxQy
-         xfjXPG7Onjkaolxa5ERrKWUUARMR0NUr/um+Is8sqN2Tjjgfp8QHY4sWZuYVziOWx2Bz
-         YU+indD86Tw5/OvMT6PkIM9vmwRjRoeEbtYNNS65yD99P+REatLzHNnPi//EA7tu9RH6
-         imXF+eU5Y+JIkjqyyzY5xXWn1UDd8RWGWSVOCAMLGxH+NbsCV0drSvKo9b9iO2RClEci
-         DOOg==
-X-Gm-Message-State: APjAAAXVSAYTIrNiflPFAG/v1z2k8mfJ5PlW5xhjzVAbXUT+dQz3lc9E
-        xpdSejiSbZ6BExrbzlprSQ==
-X-Google-Smtp-Source: APXvYqzFqW995e8sjoYb7nKrXgjhLY1KUnK5k7TGtKpruk3FzVi+niP+7rswSAogRaw59lDQ0hknHg==
-X-Received: by 2002:a37:9d1:: with SMTP id 200mr28663998qkj.306.1560530729677;
-        Fri, 14 Jun 2019 09:45:29 -0700 (PDT)
+        bh=HlBKCnO0xMTag9WfokrT/rGmwb/ORvUR1BpXNNiMUQM=;
+        b=U5h617LkH8BZgcPr+LhsW5GfeevPCUlXh0JERV0gJckALYEVxCorv59d58xNzE5TAT
+         419oceW1rB/bEosG1clFZrOrrQqFhdV1X+lq5hU/MtSjI8rklOp6PZP3XKGe2VANis+S
+         +MiipGlWZmfoq+Wq5EOP4okwdnnIF6x3wozZQD8HHUXJJVj/CIAXNGtFtLj1HaaBZeH6
+         HM9b3sKmhyrgtgtvE/BrM/SSDhHOj0Ffq5bJ6CrWunQDSKV5yNocCFZTBVKUA5mhvEse
+         TqGmApqC5j44JWsDT/tF1JIDeAkM/s2hraeWk/vW+9A26GWI07sHuu0vCcOqo5gQkIYC
+         gHww==
+X-Gm-Message-State: APjAAAVO1jeyTgF1EwmKslI8PSyKdzKXF90ptIwULyQlLBnlrfPr+1Jj
+        xCQWwaJSAZOu/286yHrxcA==
+X-Google-Smtp-Source: APXvYqyd6wUFLy/S8KXkP9eDUvnYHmUJhimauNDZWvGK3zxBUlgJUXMl3RMwWqaPxUusvLz6Y82JMQ==
+X-Received: by 2002:ac8:2b51:: with SMTP id 17mr25937893qtv.206.1560530737809;
+        Fri, 14 Jun 2019 09:45:37 -0700 (PDT)
 Received: from localhost ([64.188.179.243])
-        by smtp.gmail.com with ESMTPSA id g54sm2554846qtc.61.2019.06.14.09.45.28
+        by smtp.gmail.com with ESMTPSA id g2sm1831222qkb.80.2019.06.14.09.45.37
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Fri, 14 Jun 2019 09:45:28 -0700 (PDT)
-Date:   Fri, 14 Jun 2019 10:45:26 -0600
+        Fri, 14 Jun 2019 09:45:37 -0700 (PDT)
+Date:   Fri, 14 Jun 2019 10:45:36 -0600
 From:   Rob Herring <robh@kernel.org>
 To:     Nishanth Menon <nm@ti.com>
 Cc:     Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
@@ -43,13 +43,14 @@ Cc:     Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
         Catalin Marinas <catalin.marinas@arm.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Rob Herring <robh+dt@kernel.org>, linux-serial@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
         Tony Lindgren <tony@atomide.com>,
         Russell King <linux@armlinux.org.uk>,
-        Tero Kristo <t-kristo@ti.com>
+        Tero Kristo <t-kristo@ti.com>, Nishanth Menon <nm@ti.com>
 Subject: Re: [PATCH 1/6] dt-bindings: arm: ti: Add bindings for J721E SoC
-Message-ID: <20190614164526.GA14925@bogus>
+Message-ID: <20190614164536.GA18039@bogus>
 References: <20190522161921.20750-1-nm@ti.com>
  <20190522161921.20750-2-nm@ti.com>
 MIME-Version: 1.0
@@ -62,7 +63,7 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 22, 2019 at 11:19:16AM -0500, Nishanth Menon wrote:
+On Wed, 22 May 2019 11:19:16 -0500, Nishanth Menon wrote:
 > The J721E SoC belongs to the K3 Multicore SoC architecture platform,
 > providing advanced system integration to enable lower system costs
 > of automotive applications such as infotainment, cluster, premium
@@ -104,7 +105,6 @@ On Wed, May 22, 2019 at 11:19:16AM -0500, Nishanth Menon wrote:
 > ---
 >  Documentation/devicetree/bindings/arm/ti/k3.txt | 3 +++
 >  1 file changed, 3 insertions(+)
-
-Okay for now, but please convert K3 and other TI SoCs to schema soon.
+> 
 
 Reviewed-by: Rob Herring <robh@kernel.org>
