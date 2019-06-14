@@ -2,74 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 86918456C5
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 09:49:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C92F7456CE
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 09:53:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726046AbfFNHty (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 03:49:54 -0400
-Received: from mga07.intel.com ([134.134.136.100]:12480 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725775AbfFNHtx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 03:49:53 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Jun 2019 00:49:53 -0700
-X-ExtLoop1: 1
-Received: from rbhardw1-mobl.gar.corp.intel.com (HELO [10.252.89.98]) ([10.252.89.98])
-  by fmsmga008.fm.intel.com with ESMTP; 14 Jun 2019 00:49:51 -0700
-Subject: Re: [PATCH 2/2] powercap/rapl: Add Ice Lake NNPI support to RAPL
- driver
-To:     rjw@rjwysocki.net, linux-kernel@vger.kernel.org
-Cc:     len.brown@intel.com, rafael.j.wysocki@intel.com,
-        linux-pm@vger.kernel.org
-References: <20190614073947.12270-1-rajneesh.bhardwaj@linux.intel.com>
- <20190614073947.12270-2-rajneesh.bhardwaj@linux.intel.com>
-From:   "Bhardwaj, Rajneesh" <rajneesh.bhardwaj@linux.intel.com>
-Message-ID: <2d097ac4-2533-42a1-3658-9b646d105a84@linux.intel.com>
-Date:   Fri, 14 Jun 2019 13:19:50 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        id S1725942AbfFNHxP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 03:53:15 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:45861 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725775AbfFNHxP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Jun 2019 03:53:15 -0400
+Received: by mail-wr1-f68.google.com with SMTP id f9so1399668wre.12
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2019 00:53:13 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
+         :message-id:mime-version;
+        bh=8fphykZty4ByRRDrabr8kIG4WtC4MdL+z6VNpErB0g0=;
+        b=UzTUo77tL7VNandOU3L2bwWda6pDjgVF85WT2GnEwoMAwfx8hIgZ1Sb3N680xh0LV4
+         iSQQW/vIuBQ6XM61AI4TbU9KJtRGdBn9IlJcMdauvWgoIKCacJZ2qSsI6iLSDCu3uEk0
+         RYG4zgOpiQIaGtQfQp5PzrIYdc2YwBB6j0/UKKs+ZGXlrscQ2QtBVyTpnU8h/UYUabQf
+         V7RyuhizBID5At9LQdTW3BuNXkbC5ygOpE8RQj4c1AcOe6RSv7K3BVWZfleGJE+Divkw
+         QFf8WpltNMRSz5fBLL2omfeB2LtZW5YaTh9lUq+WU9RXXnQ+hw0Go4XG4huc5GvOiJK1
+         njmw==
+X-Gm-Message-State: APjAAAV+SgiEU4SOJsb4zTqXDzYZMFPbBr8aW6njocBvZKTqBJgdgVuX
+        Iibo4jDgLI6JYcvlpwboVZr/9w==
+X-Google-Smtp-Source: APXvYqwudq3lF4n8Rq0cC6F8jfIcXcCrwvwQ7V8kVVjpQeinklynWmw5QYHdkRp6uBhckMxPdXxU9g==
+X-Received: by 2002:adf:e9c6:: with SMTP id l6mr4390021wrn.216.1560498793342;
+        Fri, 14 Jun 2019 00:53:13 -0700 (PDT)
+Received: from vitty.brq.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
+        by smtp.gmail.com with ESMTPSA id n10sm2013838wrw.83.2019.06.14.00.53.12
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Fri, 14 Jun 2019 00:53:12 -0700 (PDT)
+From:   Vitaly Kuznetsov <vkuznets@redhat.com>
+To:     Michael Kelley <mikelley@microsoft.com>,
+        "m.maya.nakamura" <m.maya.nakamura@gmail.com>
+Cc:     "x86\@kernel.org" <x86@kernel.org>,
+        "linux-hyperv\@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        KY Srinivasan <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        "sashal\@kernel.org" <sashal@kernel.org>
+Subject: RE: [PATCH v2 4/5] HID: hv: Remove dependencies on PAGE_SIZE for ring buffer
+In-Reply-To: <BL0PR2101MB134877ED5DCB9F23033C92D9D7EF0@BL0PR2101MB1348.namprd21.prod.outlook.com>
+References: <cover.1559807514.git.m.maya.nakamura@gmail.com> <0e9385a241dc7c26445eb7e104d08e2e2c5d30de.1559807514.git.m.maya.nakamura@gmail.com> <87h88vdr36.fsf@vitty.brq.redhat.com> <BL0PR2101MB134877ED5DCB9F23033C92D9D7EF0@BL0PR2101MB1348.namprd21.prod.outlook.com>
+Date:   Fri, 14 Jun 2019 09:53:11 +0200
+Message-ID: <87ftoc7gd4.fsf@vitty.brq.redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <20190614073947.12270-2-rajneesh.bhardwaj@linux.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rafael
+Michael Kelley <mikelley@microsoft.com> writes:
 
-On 14-Jun-19 1:09 PM, Rajneesh Bhardwaj wrote:
-> Enables support for ICL-NNPI, neural network processor for deep learning
-> inference. From RAPL point of view it is same as Ice Lake Mobile
-> processor.
+> From: Vitaly Kuznetsov <vkuznets@redhat.com> Sent: Wednesday, June 12, 2019 3:40 AM
+>> Maya Nakamura <m.maya.nakamura@gmail.com> writes:
+>> 
+>> > Define the ring buffer size as a constant expression because it should
+>> > not depend on the guest page size.
+>> >
+>> > Signed-off-by: Maya Nakamura <m.maya.nakamura@gmail.com>
+>> > ---
+>> >  drivers/hid/hid-hyperv.c | 4 ++--
+>> >  1 file changed, 2 insertions(+), 2 deletions(-)
+>> >
+>> > diff --git a/drivers/hid/hid-hyperv.c b/drivers/hid/hid-hyperv.c
+>> > index d3311d714d35..e8b154fa38e2 100644
+>> > --- a/drivers/hid/hid-hyperv.c
+>> > +++ b/drivers/hid/hid-hyperv.c
+>> > @@ -112,8 +112,8 @@ struct synthhid_input_report {
+>> >
+>> >  #pragma pack(pop)
+>> >
+>> > -#define INPUTVSC_SEND_RING_BUFFER_SIZE		(10*PAGE_SIZE)
+>> > -#define INPUTVSC_RECV_RING_BUFFER_SIZE		(10*PAGE_SIZE)
+>> > +#define INPUTVSC_SEND_RING_BUFFER_SIZE		(40 * 1024)
+>> > +#define INPUTVSC_RECV_RING_BUFFER_SIZE		(40 * 1024)
+>> >
+>> 
+>> My understanding is that this size is pretty arbitrary and as I see you
+>> use it for hyperv-keyboard.c as well. It may make sense to have a
+>> define, something like HYPERV_STD_RINGBUFFER_SIZE.
 >
-> Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-> Cc: linux-pm@vger.kernel.org
-> Link: https://lkml.org/lkml/2019/6/5/1034
-> Signed-off-by: Rajneesh Bhardwaj <rajneesh.bhardwaj@linux.intel.com>
-> ---
->   drivers/powercap/intel_rapl.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/powercap/intel_rapl.c b/drivers/powercap/intel_rapl.c
-> index 4347f15165f8..19d470c73b6e 100644
-> --- a/drivers/powercap/intel_rapl.c
-> +++ b/drivers/powercap/intel_rapl.c
-> @@ -1156,7 +1156,7 @@ static const struct x86_cpu_id rapl_ids[] __initconst = {
->   	INTEL_CPU_FAM6(KABYLAKE_MOBILE,		rapl_defaults_core),
->   	INTEL_CPU_FAM6(KABYLAKE_DESKTOP,	rapl_defaults_core),
->   	INTEL_CPU_FAM6(CANNONLAKE_MOBILE,	rapl_defaults_core),
-> -	INTEL_CPU_FAM6(ICELAKE_MOBILE,		rapl_defaults_core),
-> +	INTEL_CPU_FAM6(ICELAKE_NNPI,		rapl_defaults_core),
+> Yes, the size is pretty arbitrary because it hasn't been important enough
+> from a memory consumption or performance standpoint to run experiments
+> to see if a smaller value could be used.  That said, I would not want to
+> link these two devices (keyboard and mouse) by using a shared ring buffer
+> size definition.  Logically, the ring buffer sizes are independent of each other,
+> and using a common #define implies that they are somehow linked.
 
-Sorry, i sent the wrong patch, please ignore this one. I will send 
-another one.
+Ok, makes sense, let's keep them separate.
 
-Thanks.
-
->   	INTEL_CPU_FAM6(ATOM_SILVERMONT,		rapl_defaults_byt),
->   	INTEL_CPU_FAM6(ATOM_AIRMONT,		rapl_defaults_cht),
+-- 
+Vitaly
