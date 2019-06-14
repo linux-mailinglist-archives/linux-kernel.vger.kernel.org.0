@@ -2,69 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 28BFE45EC5
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 15:46:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7AEE045ED5
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 15:47:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728502AbfFNNqe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 09:46:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41998 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728467AbfFNNqb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 09:46:31 -0400
-Received: from tleilax.poochiereds.net (cpe-71-70-156-158.nc.res.rr.com [71.70.156.158])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 99FE821744;
-        Fri, 14 Jun 2019 13:46:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560519990;
-        bh=5B3ZAjA7gOsgPJfhSPrsXHeb6ZPgy7neIaABFDQJVWI=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PEF60wV5RZE/wH/xodj6n79XiNZOV5arIxxiyGabEGOSpHi7CGGBaeIBKrnYVi9go
-         ZUZe+lb3cDwJZm3yYaGbkRaY3TYbd1Mq28nFlZp7HXDYhB+ymmZtLtyd2zQaduN50p
-         3vbdiTjDT+zB/lUtHyCI6t2XinzwhhvGPMXRcMko=
-From:   Jeff Layton <jlayton@kernel.org>
-To:     linux-kernel@vger.kernel.org, ceph-devel@vger.kernel.org
-Cc:     akpm@linux-foundation.org, idryomov@gmail.com, zyan@redhat.com,
-        sage@redhat.com, agruenba@redhat.com
-Subject: [PATCH 3/3] ceph: return -ERANGE if virtual xattr value didn't fit in buffer
-Date:   Fri, 14 Jun 2019 09:46:25 -0400
-Message-Id: <20190614134625.6870-4-jlayton@kernel.org>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190614134625.6870-1-jlayton@kernel.org>
-References: <20190614134625.6870-1-jlayton@kernel.org>
+        id S1728651AbfFNNrq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 09:47:46 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:50618 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728583AbfFNNro (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Jun 2019 09:47:44 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=2klM0787YOypidTxFFKkFXrGCXrbMhQ5qreI3X9Vu1k=; b=Cj3+LM9vIrA6nltYCay8yBPba
+        y6IkbYwpLx9JZh8kK5t2kLy0T8EhKYFLd4ni8FEoVyGRGa1u1i3grWUes4UAS9IJ9k3PGBxh0Ddkp
+        +eH6rF5lBzxCwQMwke6G/c2TJda2p6rGBomPUsGZBfRc0dQxUxHgwIel6XPax0+lxmSXe9hnoqneL
+        tM4WnvDTXZk0YQhKyEzCwXVDmrezpr/WzX/aQS4stZilw7GkSoqCXo2Zka98OqbC6gFV5/7OKNZNF
+        BKEvRnmiaTr9rp4o4Y6qOWysCXUmGZc3uHBgRcuKZdrN51a9q9TVTZ/wz3VsIWst8b5uTNKZ6nDin
+        VS2+DYitQ==;
+Received: from 213-225-9-13.nat.highway.a1.net ([213.225.9.13] helo=localhost)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1hbmYG-0004Xc-Jk; Fri, 14 Jun 2019 13:47:33 +0000
+From:   Christoph Hellwig <hch@lst.de>
+To:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        Ian Abbott <abbotti@mev.co.uk>,
+        H Hartley Sweeten <hsweeten@visionengravers.com>
+Cc:     Intel Linux Wireless <linuxwifi@intel.com>,
+        linux-arm-kernel@lists.infradead.org (moderated list:ARM PORT),
+        dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
+        linux-rdma@vger.kernel.org, linux-media@vger.kernel.org,
+        netdev@vger.kernel.org, linux-wireless@vger.kernel.org,
+        linux-s390@vger.kernel.org, devel@driverdev.osuosl.org,
+        linux-mm@kvack.org, iommu@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org
+Subject: use exact allocation for dma coherent memory
+Date:   Fri, 14 Jun 2019 15:47:10 +0200
+Message-Id: <20190614134726.3827-1-hch@lst.de>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The getxattr manpage states that we should return ERANGE if the
-destination buffer size is too small to hold the value.
+Hi all,
 
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
----
- fs/ceph/xattr.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+various architectures have used exact memory allocations for dma
+allocations for a long time, but x86 and thus the common code based
+on it kept using our normal power of two allocator, which tends to
+waste a lot of memory for certain allocations.
 
-diff --git a/fs/ceph/xattr.c b/fs/ceph/xattr.c
-index a1cd9613be98..e3246c27f2da 100644
---- a/fs/ceph/xattr.c
-+++ b/fs/ceph/xattr.c
-@@ -805,8 +805,11 @@ ssize_t __ceph_getxattr(struct inode *inode, const char *name, void *value,
- 		if (err)
- 			return err;
- 		err = -ENODATA;
--		if (!(vxattr->exists_cb && !vxattr->exists_cb(ci)))
-+		if (!(vxattr->exists_cb && !vxattr->exists_cb(ci))) {
- 			err = vxattr->getxattr_cb(ci, value, size);
-+			if (size && size < err)
-+				err = -ERANGE;
-+		}
- 		return err;
- 	}
- 
--- 
-2.21.0
-
+Switching to a slightly cleaned up alloc_pages_exact is pretty easy,
+but it turns out that because we didn't filter valid gfp_t flags
+on the DMA allocator, a bunch of drivers were passing __GFP_COMP
+to it, which is rather bogus in too many ways to explain.  Arm has
+been filtering it for a while, but this series instead tries to fix
+the drivers and warn when __GFP_COMP is passed, which makes it much
+larger than just adding the functionality.
