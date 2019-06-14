@@ -2,79 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2F9964624A
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 17:14:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0120D46256
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 17:16:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726305AbfFNPOh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 11:14:37 -0400
-Received: from mx2.suse.de ([195.135.220.15]:51726 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725808AbfFNPOh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 11:14:37 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 76E96AB42;
-        Fri, 14 Jun 2019 15:14:35 +0000 (UTC)
-Received: by ds.suse.cz (Postfix, from userid 10065)
-        id AFF59DA8D6; Fri, 14 Jun 2019 17:15:24 +0200 (CEST)
-Date:   Fri, 14 Jun 2019 17:15:24 +0200
-From:   David Sterba <dsterba@suse.cz>
-To:     Tejun Heo <tj@kernel.org>
-Cc:     dsterba@suse.com, clm@fb.com, josef@toxicpanda.com,
-        axboe@kernel.dk, jack@suse.cz, linux-btrfs@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
-        kernel-team@fb.com
-Subject: Re: [PATCH 7/8] Btrfs: use REQ_CGROUP_PUNT for worker thread
- submitted bios
-Message-ID: <20190614151524.GZ3563@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-Mail-Followup-To: dsterba@suse.cz, Tejun Heo <tj@kernel.org>,
-        dsterba@suse.com, clm@fb.com, josef@toxicpanda.com, axboe@kernel.dk,
-        jack@suse.cz, linux-btrfs@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
-        kernel-team@fb.com
-References: <20190614003350.1178444-1-tj@kernel.org>
- <20190614003350.1178444-8-tj@kernel.org>
+        id S1726397AbfFNPQW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 11:16:22 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:48445 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726297AbfFNPQV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Jun 2019 11:16:21 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x5EFGBuV1750095
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Fri, 14 Jun 2019 08:16:11 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x5EFGBuV1750095
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019051801; t=1560525372;
+        bh=YT9bA0rD0nP9H52nMHHd6hin4ckI1Jlw53UJQXVmC7I=;
+        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
+        b=r5wWDFfNpb+nkM/CxZu1kdGJfi9Mm2es/jg1p4AC3aQd75914SUKsiKNpRnES1TEH
+         VSOLpBdHeqOS3KDJ7Np4WNWW4piJnnCiDrdzQX8cKgUmQLEM0pDJT7eNVMSsKsETrb
+         kewjXrXS6dYucXTbTmwMoPwkgWWDYqFlUgq9tCCJKdFiMJWL3HhO8+FcR69g4nsRAM
+         sdIkuTW+NwJ0e5/QXVlMNETbq3Di+pPBo/k6ZF2JlXh5a96T+HpBzoUhZXFD5lE+lp
+         YglsXagaw6ggKJ+NUbW5MZo6hTuKRA4WVmt+zpGDzAgI0950KN+7iqQFveU2gyggmN
+         crTqJiLGpop6A==
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x5EFGA9a1750091;
+        Fri, 14 Jun 2019 08:16:10 -0700
+Date:   Fri, 14 Jun 2019 08:16:10 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Mathieu Malaterre <tipbot@zytor.com>
+Message-ID: <tip-0f48b41f597e3b62b649abbf796e1e72901f9df3@git.kernel.org>
+Cc:     malat@debian.org, linux-kernel@vger.kernel.org, tglx@linutronix.de,
+        john.stultz@linaro.org, mingo@kernel.org, hpa@zytor.com,
+        sboyd@kernel.org
+Reply-To: hpa@zytor.com, sboyd@kernel.org, tglx@linutronix.de,
+          mingo@kernel.org, john.stultz@linaro.org,
+          linux-kernel@vger.kernel.org, malat@debian.org
+In-Reply-To: <20190524103339.28787-1-malat@debian.org>
+References: <20190524103339.28787-1-malat@debian.org>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:timers/core] clocksource: Move inline keyword to the beginning
+ of function declarations
+Git-Commit-ID: 0f48b41f597e3b62b649abbf796e1e72901f9df3
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190614003350.1178444-8-tj@kernel.org>
-User-Agent: Mutt/1.5.23.1 (2014-03-12)
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
+X-Spam-Status: No, score=-3.1 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        T_DATE_IN_FUTURE_96_Q autolearn=ham autolearn_force=no version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 13, 2019 at 05:33:49PM -0700, Tejun Heo wrote:
-> @@ -1251,12 +1258,29 @@ static int cow_file_range_async(struct inode *inode, struct page *locked_page,
->  		 * to unlock it.
->  		 */
->  		if (locked_page) {
-> +			/*
-> +			 * Depending on the compressibility, the pages
-> +			 * might or might not go through async.  We want
-> +			 * all of them to be accounted against @wbc once.
-> +			 * Let's do it here before the paths diverge.  wbc
-> +			 * accounting is used only for foreign writeback
-> +			 * detection and doesn't need full accuracy.  Just
-> +			 * account the whole thing against the first page.
-> +			 */
-> +			wbc_account_io(wbc, locked_page, cur_end - start);
->  			async_chunk[i].locked_page = locked_page;
->  			locked_page = NULL;
->  		} else {
->  			async_chunk[i].locked_page = NULL;
->  		}
->  
-> +		if (blkcg_css != blkcg_root_css) {
-> +			css_get(blkcg_css);
+Commit-ID:  0f48b41f597e3b62b649abbf796e1e72901f9df3
+Gitweb:     https://git.kernel.org/tip/0f48b41f597e3b62b649abbf796e1e72901f9df3
+Author:     Mathieu Malaterre <malat@debian.org>
+AuthorDate: Fri, 24 May 2019 12:33:39 +0200
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Fri, 14 Jun 2019 17:04:03 +0200
 
-fs/btrfs/inode.c: In function ‘cow_file_range_async’:
-fs/btrfs/inode.c:1278:4: error: implicit declaration of function ‘css_get’; did you mean ‘css_put’? [-Werror=implicit-function-declaration]
- 1278 |    css_get(blkcg_css);
-      |    ^~~~~~~
-      |    css_put
+clocksource: Move inline keyword to the beginning of function declarations
 
-I don't have CONFIG_CGROUPS enabled in the testing kernel so this probably
-needs a wrapper so the ifdef is not in the middle of the function.
+The inline keyword was not at the beginning of the function declarations.
+Fix the following warnings triggered when using W=1:
+
+  kernel/time/clocksource.c:108:1: warning: 'inline' is not at beginning of declaration [-Wold-style-declaration]
+  kernel/time/clocksource.c:113:1: warning: 'inline' is not at beginning of declaration [-Wold-style-declaration]
+
+Signed-off-by: Mathieu Malaterre <malat@debian.org>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: trivial@kernel.org
+Cc: kernel-janitors@vger.kernel.org
+Cc: John Stultz <john.stultz@linaro.org>
+Cc: Stephen Boyd <sboyd@kernel.org>
+Link: https://lkml.kernel.org/r/20190524103339.28787-1-malat@debian.org
+
+---
+ kernel/time/clocksource.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/kernel/time/clocksource.c b/kernel/time/clocksource.c
+index 3bcc19ceb073..fff5f64981c6 100644
+--- a/kernel/time/clocksource.c
++++ b/kernel/time/clocksource.c
+@@ -105,12 +105,12 @@ static DEFINE_SPINLOCK(watchdog_lock);
+ static int watchdog_running;
+ static atomic_t watchdog_reset_pending;
+ 
+-static void inline clocksource_watchdog_lock(unsigned long *flags)
++static inline void clocksource_watchdog_lock(unsigned long *flags)
+ {
+ 	spin_lock_irqsave(&watchdog_lock, *flags);
+ }
+ 
+-static void inline clocksource_watchdog_unlock(unsigned long *flags)
++static inline void clocksource_watchdog_unlock(unsigned long *flags)
+ {
+ 	spin_unlock_irqrestore(&watchdog_lock, *flags);
+ }
