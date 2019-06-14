@@ -2,146 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D4B34464DA
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 18:46:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 71800464E0
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 18:46:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726786AbfFNQqO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 12:46:14 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:38206 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726244AbfFNQqM (ORCPT
+        id S1726613AbfFNQqs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 12:46:48 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:45506 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725801AbfFNQqs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 12:46:12 -0400
-Received: by mail-pl1-f193.google.com with SMTP id f97so1251479plb.5;
-        Fri, 14 Jun 2019 09:46:12 -0700 (PDT)
+        Fri, 14 Jun 2019 12:46:48 -0400
+Received: by mail-pg1-f195.google.com with SMTP id s21so1843833pga.12
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2019 09:46:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=z0Q8djqHX6ZMfWsK/PWD8i+5lV9BAONQ6vZFum0/x6M=;
-        b=nuer/AobPoxP8KxkPKIEp1Pi4bj1OThodc7YnaduLgelE+l0GQKCmRr/yADUxqFazs
-         0MRyGpcxmigz70ZivLMmBCV6QlSBJG62YKtUaJBR8SPq1dyA6a9S3vHpY4ZWGeJYGahV
-         SS9P7gw0joJ2q1FzO3NgGsPLKXcAHByLH0zCm5nfIj1mLtB28XB2dbZoU/iV1QEx0dDr
-         byc+3Eu0tePDzDCYi/ymYIFFeWVsn+r5y1rCOS/cZeAlHm6EVrf0Qx5PD1ZsePldomuX
-         QaR1i58UD4J29VBGZOA03DeCsZWcJpMLKqJtBdYJqynWj5tVoSNODXu52nRsqYNPIjdW
-         fg2A==
+        bh=Yf8AaZQCzwIcFoIppyOptGSt+yOTkl5BeJ2O0ErAtlY=;
+        b=nivcbY2W2jCDywDVEROgcoel9+RmuFM394rEuAbBkZ7FmgB7YDOPVzzaN7/vWluvCJ
+         znwydKoHFp4gR4cXxVA70LSg1seuu8YKkPKfmw5Ito8FLP6jEmeEkeVJqUvqQP2+uxJR
+         ZZj0r9za8esEvab9jQ2IMJJJwGSRhTKCsE56E=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=z0Q8djqHX6ZMfWsK/PWD8i+5lV9BAONQ6vZFum0/x6M=;
-        b=nlnqebnGwFhCnaLNnwjYg/5z7Miw+/nqJr1I8fwRTiJ0EAXbIVRaAYayyy/1ZgOysT
-         DAsLNUWI4RHQwdSii4fccps/xmjsdgZUW2DNfKotozrY4KCxyoUgcpe3bKygKpUamF9q
-         cVhL3NH1LEfx+kj/VXIIlT5HeOW1BOlopKnM1SFWySi6DHGSajYw7KT/Ci3nZ5Fv/xyI
-         U9+BlhbUxaXrfrgaCVt7titsBnX8pq2vJ2LBeQyZLAZmQbD6vs20Vk+pL1wDpocRVOTc
-         bbu6NJihJUeanCMsedvxycfBfd4ZcJFisaN2t5scVuOjErPEpCPzM/jME0iS6+3/IjaJ
-         ChOA==
-X-Gm-Message-State: APjAAAVSDPz92uvWJg2w6vYCTbN+Dim9O8HxsF08mPein0f1NMW9s27s
-        AFlQVNaP1X6z2ucn2tnWvic=
-X-Google-Smtp-Source: APXvYqwz29BHb+7kecHv8rdqjLtchfGJlP2LhtF80HB0TpaLtUPO64PROcPKpcZVRwui3EO+D5ubyw==
-X-Received: by 2002:a17:902:988b:: with SMTP id s11mr67503607plp.216.1560530771670;
-        Fri, 14 Jun 2019 09:46:11 -0700 (PDT)
-Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id 139sm3433474pfw.152.2019.06.14.09.46.09
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Yf8AaZQCzwIcFoIppyOptGSt+yOTkl5BeJ2O0ErAtlY=;
+        b=szxq+21YsuMR26+rgCLgOsULBpvLFgNGlMtiqo7R5hWAEitVZaYyN/K+Vds2LhOmvw
+         hrLyjSQbezWsprBagJnZzFXc6lDHp2v7b/WTff1rbWBedK7PFHR0UnjuOR0cSiXZZE4l
+         bXXArHInMPmI1zHVZyR4xSUDs7LaYY42zkc8pjK05LfwsOSHCmYZtf6yz6amSdBjrOS4
+         7PESJ504BwUsth5aCxJBFKHkyzFIRFRYGjuvEP0ner+430oJAYGasJAUuBDmP94qyt1N
+         sGY9ScUWK4lKwRBwVsoGccxQsdXUtfHFmVAf0d85gg2k0JpbtiWm7Dn/D3r0XXKXx61y
+         2jxg==
+X-Gm-Message-State: APjAAAWPjZ0w4fsotqQkrOYn1JoIo0fFpGlUYzPNNPd4WS0rKkbjbZzH
+        kgl3jFjKDUxJulH7jPaxMkMHjg==
+X-Google-Smtp-Source: APXvYqyXMk7ZfP/0d6oGbg9M5RURFbm0kAH8HF/iLk/DodByjVz3Pz9UAhRTisfbR4mQaLnDr6PceQ==
+X-Received: by 2002:a17:90a:bd8c:: with SMTP id z12mr12174873pjr.60.1560530807697;
+        Fri, 14 Jun 2019 09:46:47 -0700 (PDT)
+Received: from localhost ([2620:15c:202:1:75a:3f6e:21d:9374])
+        by smtp.gmail.com with ESMTPSA id f21sm3487102pjq.2.2019.06.14.09.46.46
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 14 Jun 2019 09:46:10 -0700 (PDT)
-Date:   Fri, 14 Jun 2019 09:46:09 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Ken Sloat <KSloat@aampglobal.com>
-Cc:     "nicolas.ferre@microchip.com" <nicolas.ferre@microchip.com>,
-        "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
-        "ludovic.desroches@microchip.com" <ludovic.desroches@microchip.com>,
-        "wim@linux-watchdog.org" <wim@linux-watchdog.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 1/1] watchdog: atmel: atmel-sama5d4-wdt: Disable
- watchdog on system suspend
-Message-ID: <20190614164609.GA29814@roeck-us.net>
-References: <20190614125310.29458-1-ksloat@aampglobal.com>
+        Fri, 14 Jun 2019 09:46:47 -0700 (PDT)
+Date:   Fri, 14 Jun 2019 09:46:41 -0700
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     Viresh Kumar <viresh.kumar@linaro.org>
+Cc:     Rafael Wysocki <rjw@rjwysocki.net>, linux-pm@vger.kernel.org,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Qais.Yousef@arm.com, juri.lelli@gmail.com,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V3 4/5] cpufreq: Register notifiers with the PM QoS
+ framework
+Message-ID: <20190614164641.GP137143@google.com>
+References: <cover.1560163748.git.viresh.kumar@linaro.org>
+ <a275fdd9325f1b2cba046c79930ad59653674455.1560163748.git.viresh.kumar@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20190614125310.29458-1-ksloat@aampglobal.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <a275fdd9325f1b2cba046c79930ad59653674455.1560163748.git.viresh.kumar@linaro.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 14, 2019 at 12:53:22PM +0000, Ken Sloat wrote:
-> From: Ken Sloat <ksloat@aampglobal.com>
+Hi Viresh,
+
+On Mon, Jun 10, 2019 at 04:21:35PM +0530, Viresh Kumar wrote:
+> This registers the notifiers for min/max frequency constraints with the
+> PM QoS framework. The constraints are also taken into consideration in
+> cpufreq_set_policy().
 > 
-> Currently, the atmel-sama5d4-wdt continues to run after system suspend.
-> Unless the system resumes within the watchdog timeout period so the
-> userspace can kick it, the system will be reset. This change disables
-> the watchdog on suspend if it is active and re-enables on resume. These
-> actions occur during the late and early phases of suspend and resume
-> respectively to minimize chances where a lock could occur while the
-> watchdog is disabled.
+> This also relocates cpufreq_policy_put_kobj() as it is required to be
+> called from cpufreq_policy_alloc() now.
 > 
-> Signed-off-by: Ken Sloat <ksloat@aampglobal.com>
+> No constraints are added until now though.
+> 
+> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
 > ---
->  Changes in v2:
->  -Consolidate resume and resume early statements.
+>  drivers/cpufreq/cpufreq.c | 139 +++++++++++++++++++++++++++++++-------
+>  include/linux/cpufreq.h   |   4 ++
+>  2 files changed, 120 insertions(+), 23 deletions(-)
 > 
->  drivers/watchdog/sama5d4_wdt.c | 21 ++++++++++++++++++---
->  1 file changed, 18 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/watchdog/sama5d4_wdt.c b/drivers/watchdog/sama5d4_wdt.c
-> index 111695223aae..0d123f8cbcc6 100644
-> --- a/drivers/watchdog/sama5d4_wdt.c
-> +++ b/drivers/watchdog/sama5d4_wdt.c
-> @@ -280,7 +280,17 @@ static const struct of_device_id sama5d4_wdt_of_match[] = {
->  MODULE_DEVICE_TABLE(of, sama5d4_wdt_of_match);
+> diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
+> index 85ff958e01f1..547d221b2ff2 100644
+> --- a/drivers/cpufreq/cpufreq.c
+> +++ b/drivers/cpufreq/cpufreq.c
+> @@ -26,6 +26,7 @@
+>  #include <linux/kernel_stat.h>
+>  #include <linux/module.h>
+>  #include <linux/mutex.h>
+> +#include <linux/pm_qos.h>
+>  #include <linux/slab.h>
+>  #include <linux/suspend.h>
+>  #include <linux/syscore_ops.h>
+> @@ -1126,11 +1127,77 @@ static void handle_update(struct work_struct *work)
+>  	cpufreq_update_policy(cpu);
+>  }
 >  
->  #ifdef CONFIG_PM_SLEEP
-> -static int sama5d4_wdt_resume(struct device *dev)
-> +static int sama5d4_wdt_suspend_late(struct device *dev)
+> +static void cpufreq_update_freq_work(struct work_struct *work)
 > +{
-> +	struct sama5d4_wdt *wdt = dev_get_drvdata(dev);
+> +	struct cpufreq_policy *policy =
+> +		container_of(work, struct cpufreq_policy, req_work);
+> +	struct cpufreq_policy new_policy = *policy;
 > +
-> +	if (watchdog_active(&wdt->wdd))
-> +		sama5d4_wdt_stop(&wdt->wdd);
+> +	/* We should read constraint values from QoS layer */
+> +	new_policy.min = 0;
+> +	new_policy.max = UINT_MAX;
 > +
-> +	return 0;
+> +	down_write(&policy->rwsem);
+> +
+> +	if (!policy_is_inactive(policy))
+> +		cpufreq_set_policy(policy, &new_policy);
+> +
+> +	up_write(&policy->rwsem);
 > +}
 > +
-> +static int sama5d4_wdt_resume_early(struct device *dev)
->  {
->  	struct sama5d4_wdt *wdt = dev_get_drvdata(dev);
->  
-> @@ -291,12 +301,17 @@ static int sama5d4_wdt_resume(struct device *dev)
->  	 */
->  	sama5d4_wdt_init(wdt);
->  
-> +	if (watchdog_active(&wdt->wdd))
-> +		sama5d4_wdt_start(&wdt->wdd);
-> +
+> +static int cpufreq_update_freq(struct cpufreq_policy *policy)
+> +{
+> +	schedule_work(&policy->req_work);
 
-The call to sama5d4_wdt_init() above now explicitly stops the watchdog
-even if we want to (re)start it. I think this would be better handled
-with an else case here
+I think you need to add a cancel_work_sync() in cpufreq_policy_free()
+to make sure the work doesn't run after the policy has been freed.
 
-	else
-		sama5d4_wdt_stop(&wdt->wdd);
+Otherwise it looks good to me.
 
-Guenter
+Cheers
 
->  	return 0;
->  }
->  #endif
->  
-> -static SIMPLE_DEV_PM_OPS(sama5d4_wdt_pm_ops, NULL,
-> -			 sama5d4_wdt_resume);
-> +static const struct dev_pm_ops sama5d4_wdt_pm_ops = {
-> +	SET_LATE_SYSTEM_SLEEP_PM_OPS(sama5d4_wdt_suspend_late,
-> +			sama5d4_wdt_resume_early)
-> +};
->  
->  static struct platform_driver sama5d4_wdt_driver = {
->  	.probe		= sama5d4_wdt_probe,
-> -- 
-> 2.17.1
-> 
+Matthias
