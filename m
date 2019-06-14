@@ -2,125 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E3E5E45A0B
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 12:10:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5493F459C9
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 12:01:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727423AbfFNKKW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 06:10:22 -0400
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:41224 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726798AbfFNKKW (ORCPT
+        id S1727371AbfFNKB0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 06:01:26 -0400
+Received: from relay11.mail.gandi.net ([217.70.178.231]:53989 "EHLO
+        relay11.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727162AbfFNKBZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 06:10:22 -0400
-Received: by mail-ot1-f68.google.com with SMTP id 107so2101721otj.8;
-        Fri, 14 Jun 2019 03:10:21 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=EQFqDx56ArdqMtwRzBeDN3+uyf/q8nRQ91FrvCgNlus=;
-        b=T+UDdh59PDstefaDEilZLq0jQ5l+z1dyJKp100jDHQPkg7iZDTx2TMsi4BDQsG2zjs
-         MSoKipWtPSQVqElpqLD9yQZFgLulGPEhKr9FeNJ9RTaLWK4EY6SKvmNZlMPhQcMWjGHk
-         lKVeVIvvPOtNLTEyn0jy505iGDNyWQwwkllpTi2VEnXx4ZVMKEdFhuI5ynKSlr2O0SLk
-         Wm6kWDhDylzq9rAfEr/Z07Y5dzhWmu1AgtFfZqjhCTLrA50b05pxDy+iCt2Vkv5J8Wl7
-         U+MVgFjJbqVlE7CElg+WvvDWB3GKnvZc5r6CYp1cZChSpXi2sPPyBytozgrxyHt4YHjl
-         2Y1Q==
-X-Gm-Message-State: APjAAAV6lQdirotAA9C/fGjUOKSabsBqBZbIDwbSL+C6M9Dw2+B6I0SF
-        rjDm6Se93ZzqxWocDWYR8zEfuyg4Ig8A3aRX3NUGX1o3
-X-Google-Smtp-Source: APXvYqzla74fywlifHDfrUkFPvp96u1JCh5ytR3Rfap99pfKpNbS6Np/wi5SUpskNas/C6Gyl2xZT2QWu5iLRTph14s=
-X-Received: by 2002:a9d:5f05:: with SMTP id f5mr2484337oti.167.1560507021280;
- Fri, 14 Jun 2019 03:10:21 -0700 (PDT)
+        Fri, 14 Jun 2019 06:01:25 -0400
+Received: from localhost (unknown [88.190.179.123])
+        (Authenticated sender: repk@triplefau.lt)
+        by relay11.mail.gandi.net (Postfix) with ESMTPSA id BF1E1100018;
+        Fri, 14 Jun 2019 10:01:21 +0000 (UTC)
+From:   Remi Pommarel <repk@triplefau.lt>
+To:     Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Bjorn Helgaas <helgaas@kernel.org>
+Cc:     Ellie Reeves <ellierevves@gmail.com>, linux-pci@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Remi Pommarel <repk@triplefau.lt>
+Subject: [PATCH v3] PCI: aardvark: Fix PCI_EXP_RTCTL register configuration
+Date:   Fri, 14 Jun 2019 12:10:59 +0200
+Message-Id: <20190614101059.1664-1-repk@triplefau.lt>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-References: <20190613170011.9647-1-thierry.reding@gmail.com>
- <20190614091058.GA25912@kroah.com> <20190614093856.GC15526@ulmo>
-In-Reply-To: <20190614093856.GC15526@ulmo>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Fri, 14 Jun 2019 12:10:10 +0200
-Message-ID: <CAJZ5v0jeH3x+kfAH9D5H6507-iBdVRhAfEKb-NOdhiutwR9O_Q@mail.gmail.com>
-Subject: Re: [PATCH v2] driver: core: Allow subsystems to continue deferring probe
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Kevin Hilman <khilman@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Joerg Roedel <joro@8bytes.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh@kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        linux-gpio@vger.kernel.org,
-        "open list:AMD IOMMU (AMD-VI)" <iommu@lists.linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 14, 2019 at 11:39 AM Thierry Reding
-<thierry.reding@gmail.com> wrote:
->
-> On Fri, Jun 14, 2019 at 11:10:58AM +0200, Greg Kroah-Hartman wrote:
-> > On Thu, Jun 13, 2019 at 07:00:11PM +0200, Thierry Reding wrote:
-> > > From: Thierry Reding <treding@nvidia.com>
-> > >
+PCI_EXP_RTCTL is used to activate PME interrupt only, so writing into it
+should not modify other interrupts' mask. The ISR mask polarity was also
+inverted, when PCI_EXP_RTCTL_PMEIE is set PCIE_MSG_PM_PME_MASK mask bit
+should actually be cleared.
 
-[cut]
+Fixes: 8a3ebd8de328 ("PCI: aardvark: Implement emulated root PCI bridge config space")
+Signed-off-by: Remi Pommarel <repk@triplefau.lt>
+---
+Changes since v1:
+ * Improve code readability
+ * Fix mask polarity
+ * PME_MASK shift was off by one
+Changes since v2:
+ * Modify patch title
+ * Change Fixes tag to commit that actually introduces the bug
+---
+ drivers/pci/controller/pci-aardvark.c | 13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
 
->
-> To avoid further back and forth, what exactly is it that you would have
-> me do? That is, what do you consider to be the correct way to do this?
->
-> Would you prefer me to add another function with a different name that
-> reimplements the functionality only with the exception? Something along
-> the lines of:
->
->         int driver_deferred_probe_check_state_continue(struct device *dev)
->         {
->                 int ret;
->
->                 ret = driver_deferred_probe_check_state(dev);
->                 if (ret == -ENODEV)
->                         return -EPROBE_DEFER;
->
->                 return ret;
->         }
->
-> ? I'd need to split that up some more to avoid the warning that the
-> inner function prints before returning -ENODEV, but that's a minor
-> detail. Would that API be more to your liking?
+diff --git a/drivers/pci/controller/pci-aardvark.c b/drivers/pci/controller/pci-aardvark.c
+index 134e0306ff00..f6e55c4597b1 100644
+--- a/drivers/pci/controller/pci-aardvark.c
++++ b/drivers/pci/controller/pci-aardvark.c
+@@ -415,7 +415,7 @@ advk_pci_bridge_emul_pcie_conf_read(struct pci_bridge_emul *bridge,
+ 
+ 	case PCI_EXP_RTCTL: {
+ 		u32 val = advk_readl(pcie, PCIE_ISR0_MASK_REG);
+-		*value = (val & PCIE_MSG_PM_PME_MASK) ? PCI_EXP_RTCTL_PMEIE : 0;
++		*value = (val & PCIE_MSG_PM_PME_MASK) ? 0 : PCI_EXP_RTCTL_PMEIE;
+ 		return PCI_BRIDGE_EMUL_HANDLED;
+ 	}
+ 
+@@ -451,10 +451,15 @@ advk_pci_bridge_emul_pcie_conf_write(struct pci_bridge_emul *bridge,
+ 		advk_writel(pcie, new, PCIE_CORE_PCIEXP_CAP + reg);
+ 		break;
+ 
+-	case PCI_EXP_RTCTL:
+-		new = (new & PCI_EXP_RTCTL_PMEIE) << 3;
+-		advk_writel(pcie, new, PCIE_ISR0_MASK_REG);
++	case PCI_EXP_RTCTL: {
++		/* Only mask/unmask PME interrupt */
++		u32 val = advk_readl(pcie, PCIE_ISR0_MASK_REG) &
++			~PCIE_MSG_PM_PME_MASK;
++		if ((new & PCI_EXP_RTCTL_PMEIE) == 0)
++			val |= PCIE_MSG_PM_PME_MASK;
++		advk_writel(pcie, val, PCIE_ISR0_MASK_REG);
+ 		break;
++	}
+ 
+ 	case PCI_EXP_RTSTA:
+ 		new = (new & PCI_EXP_RTSTA_PME) >> 9;
+-- 
+2.20.1
 
-Well, why don't you do
-
-static int deferred_probe_check_state_internal(struct device *dev)
-{
-        if (!initcalls_done)
-                return -EPROBE_DEFER;
-
-        if (!deferred_probe_timeout) {
-                dev_WARN(dev, "deferred probe timeout, ignoring dependency");
-                return -ETIMEDOUT;
-        }
-
-        return 0;
-}
-
-int driver_deferred_probe_check_state(struct device *dev)
-{
-        int ret = deferred_probe_check_state_internal(dev);
-
-        if (ret)
-                 return ret;
-
-        dev_warn(dev, "ignoring dependency for device, assuming no driver");
-        return -ENODEV;
-}
-
-int driver_deferred_probe_check_state_continue(struct device *dev)
-{
-        int ret = deferred_probe_check_state_internal(dev);
-
-        if (ret)
-                 return ret;
-
-        return -EPROBE_DEFER;
-}
