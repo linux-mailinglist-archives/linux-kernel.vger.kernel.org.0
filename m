@@ -2,211 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5C77A464C8
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 18:46:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5E361465A1
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 19:23:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726693AbfFNQp6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 12:45:58 -0400
-Received: from mga14.intel.com ([192.55.52.115]:49994 "EHLO mga14.intel.com"
+        id S1726468AbfFNRXT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 13:23:19 -0400
+Received: from lnfm1.sai.msu.ru ([93.180.26.255]:50801 "EHLO lnfm1.sai.msu.ru"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725846AbfFNQp5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 12:45:57 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Jun 2019 09:45:57 -0700
-X-ExtLoop1: 1
-Received: from stinkbox.fi.intel.com (HELO stinkbox) ([10.237.72.174])
-  by fmsmga007.fm.intel.com with SMTP; 14 Jun 2019 09:45:50 -0700
-Received: by stinkbox (sSMTP sendmail emulation); Fri, 14 Jun 2019 19:45:49 +0300
-Date:   Fri, 14 Jun 2019 19:45:49 +0300
-From:   Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        Ian Abbott <abbotti@mev.co.uk>,
-        H Hartley Sweeten <hsweeten@visionengravers.com>,
-        devel@driverdev.osuosl.org, linux-s390@vger.kernel.org,
-        Intel Linux Wireless <linuxwifi@intel.com>,
-        linux-rdma@vger.kernel.org, netdev@vger.kernel.org,
-        intel-gfx@lists.freedesktop.org, linux-wireless@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-mm@kvack.org, iommu@lists.linux-foundation.org,
-        "moderated list:ARM PORT" <linux-arm-kernel@lists.infradead.org>,
-        linux-media@vger.kernel.org,
-        Chris Wilson <chris@chris-wilson.co.uk>
-Subject: Re: [Intel-gfx] [PATCH 03/16] drm/i915: stop using drm_pci_alloc
-Message-ID: <20190614164549.GD5942@intel.com>
-References: <20190614134726.3827-1-hch@lst.de>
- <20190614134726.3827-4-hch@lst.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190614134726.3827-4-hch@lst.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S1726370AbfFNRXQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Jun 2019 13:23:16 -0400
+X-Greylist: delayed 2129 seconds by postgrey-1.27 at vger.kernel.org; Fri, 14 Jun 2019 13:23:05 EDT
+Received: from dragon.sai.msu.ru (dragon.sai.msu.ru [93.180.26.172])
+        by lnfm1.sai.msu.ru (8.14.1/8.12.8) with ESMTP id x5EGl5ZD020147;
+        Fri, 14 Jun 2019 19:47:10 +0300
+Received: from oak.local (unknown [92.243.181.209])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (Client did not present a certificate)
+        by dragon.sai.msu.ru (Postfix) with ESMTPSA id 10EF4433F0;
+        Fri, 14 Jun 2019 19:47:06 +0300 (MSK)
+From:   "Matwey V. Kornilov" <matwey@sai.msu.ru>
+To:     b-liu@ti.com, gregkh@linuxfoundation.org, stern@rowland.harvard.edu
+Cc:     matwey.kornilov@gmail.com,
+        "Matwey V. Kornilov" <matwey@sai.msu.ru>,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 2/6] usb: musb: Introduce musb_qh_empty() helper function
+Date:   Fri, 14 Jun 2019 19:45:50 +0300
+Message-Id: <20190614164554.27679-3-matwey@sai.msu.ru>
+X-Mailer: git-send-email 2.16.4
+In-Reply-To: <20190614164554.27679-1-matwey@sai.msu.ru>
+References: <20190403185310.8437-1-matwey@sai.msu.ru>
+ <20190614164554.27679-1-matwey@sai.msu.ru>
+In-Reply-To: <20190403185310.8437-1-matwey@sai.msu.ru>
+References: <20190403185310.8437-1-matwey@sai.msu.ru>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 14, 2019 at 03:47:13PM +0200, Christoph Hellwig wrote:
-> Remove usage of the legacy drm PCI DMA wrappers, and with that the
-> incorrect usage cocktail of __GFP_COMP, virt_to_page on DMA allocation
-> and SetPageReserved.
-> 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
->  drivers/gpu/drm/i915/i915_gem.c        | 30 +++++++++++++-------------
->  drivers/gpu/drm/i915/i915_gem_object.h |  3 ++-
->  drivers/gpu/drm/i915/intel_display.c   |  2 +-
->  3 files changed, 18 insertions(+), 17 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/i915/i915_gem.c b/drivers/gpu/drm/i915/i915_gem.c
-> index ad01c92aaf74..8f2053c91aff 100644
-> --- a/drivers/gpu/drm/i915/i915_gem.c
-> +++ b/drivers/gpu/drm/i915/i915_gem.c
-> @@ -228,7 +228,6 @@ i915_gem_get_aperture_ioctl(struct drm_device *dev, void *data,
->  static int i915_gem_object_get_pages_phys(struct drm_i915_gem_object *obj)
->  {
->  	struct address_space *mapping = obj->base.filp->f_mapping;
-> -	drm_dma_handle_t *phys;
->  	struct sg_table *st;
->  	struct scatterlist *sg;
->  	char *vaddr;
-> @@ -242,13 +241,13 @@ static int i915_gem_object_get_pages_phys(struct drm_i915_gem_object *obj)
->  	 * to handle all possible callers, and given typical object sizes,
->  	 * the alignment of the buddy allocation will naturally match.
->  	 */
-> -	phys = drm_pci_alloc(obj->base.dev,
-> -			     roundup_pow_of_two(obj->base.size),
-> -			     roundup_pow_of_two(obj->base.size));
-> -	if (!phys)
-> +	obj->phys_vaddr = dma_alloc_coherent(&obj->base.dev->pdev->dev,
-> +			roundup_pow_of_two(obj->base.size),
-> +			&obj->phys_handle, GFP_KERNEL);
-> +	if (!obj->phys_vaddr)
->  		return -ENOMEM;
->  
-> -	vaddr = phys->vaddr;
-> +	vaddr = obj->phys_vaddr;
->  	for (i = 0; i < obj->base.size / PAGE_SIZE; i++) {
->  		struct page *page;
->  		char *src;
-> @@ -286,18 +285,17 @@ static int i915_gem_object_get_pages_phys(struct drm_i915_gem_object *obj)
->  	sg->offset = 0;
->  	sg->length = obj->base.size;
->  
-> -	sg_dma_address(sg) = phys->busaddr;
-> +	sg_dma_address(sg) = obj->phys_handle;
->  	sg_dma_len(sg) = obj->base.size;
->  
-> -	obj->phys_handle = phys;
-> -
->  	__i915_gem_object_set_pages(obj, st, sg->length);
->  
->  	return 0;
->  
->  err_phys:
-> -	drm_pci_free(obj->base.dev, phys);
-> -
-> +	dma_free_coherent(&obj->base.dev->pdev->dev,
-> +			roundup_pow_of_two(obj->base.size), obj->phys_vaddr,
-> +			obj->phys_handle);
+Use musb_qh_empty() instead of &qh->hep->urb_list to avoid code
+duplicating.
 
-Need to undo the damage to obj->phys_vaddr here since
-i915_gem_pwrite_ioctl() will now use that to determine if it's
-dealing with a phys obj.
+Signed-off-by: Matwey V. Kornilov <matwey@sai.msu.ru>
+---
+ drivers/usb/musb/musb_host.c | 13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
 
->  	return err;
->  }
->  
-> @@ -335,7 +333,7 @@ i915_gem_object_put_pages_phys(struct drm_i915_gem_object *obj,
->  
->  	if (obj->mm.dirty) {
->  		struct address_space *mapping = obj->base.filp->f_mapping;
-> -		char *vaddr = obj->phys_handle->vaddr;
-> +		char *vaddr = obj->phys_vaddr;
->  		int i;
->  
->  		for (i = 0; i < obj->base.size / PAGE_SIZE; i++) {
-> @@ -363,7 +361,9 @@ i915_gem_object_put_pages_phys(struct drm_i915_gem_object *obj,
->  	sg_free_table(pages);
->  	kfree(pages);
->  
-> -	drm_pci_free(obj->base.dev, obj->phys_handle);
-> +	dma_free_coherent(&obj->base.dev->pdev->dev,
-> +			roundup_pow_of_two(obj->base.size), obj->phys_vaddr,
-> +			obj->phys_handle);
-
-This one is fine I think since the object remains a phys obj once
-turned into one. At least the current code isn't clearing
-phys_handle here. But my memory is a bit hazy on the details. Chris?
-
-Also maybe s/phys_handle/phys_busaddr/ all over?
-
->  }
->  
->  static void
-> @@ -603,7 +603,7 @@ i915_gem_phys_pwrite(struct drm_i915_gem_object *obj,
->  		     struct drm_i915_gem_pwrite *args,
->  		     struct drm_file *file)
->  {
-> -	void *vaddr = obj->phys_handle->vaddr + args->offset;
-> +	void *vaddr = obj->phys_vaddr + args->offset;
->  	char __user *user_data = u64_to_user_ptr(args->data_ptr);
->  
->  	/* We manually control the domain here and pretend that it
-> @@ -1431,7 +1431,7 @@ i915_gem_pwrite_ioctl(struct drm_device *dev, void *data,
->  		ret = i915_gem_gtt_pwrite_fast(obj, args);
->  
->  	if (ret == -EFAULT || ret == -ENOSPC) {
-> -		if (obj->phys_handle)
-> +		if (obj->phys_vaddr)
->  			ret = i915_gem_phys_pwrite(obj, args, file);
->  		else
->  			ret = i915_gem_shmem_pwrite(obj, args);
-> diff --git a/drivers/gpu/drm/i915/i915_gem_object.h b/drivers/gpu/drm/i915/i915_gem_object.h
-> index ca93a40c0c87..14bd2d61d0f6 100644
-> --- a/drivers/gpu/drm/i915/i915_gem_object.h
-> +++ b/drivers/gpu/drm/i915/i915_gem_object.h
-> @@ -290,7 +290,8 @@ struct drm_i915_gem_object {
->  	};
->  
->  	/** for phys allocated objects */
-> -	struct drm_dma_handle *phys_handle;
-> +	dma_addr_t phys_handle;
-> +	void *phys_vaddr;
->  
->  	struct reservation_object __builtin_resv;
->  };
-> diff --git a/drivers/gpu/drm/i915/intel_display.c b/drivers/gpu/drm/i915/intel_display.c
-> index 5098228f1302..4f8b368ac4e2 100644
-> --- a/drivers/gpu/drm/i915/intel_display.c
-> +++ b/drivers/gpu/drm/i915/intel_display.c
-> @@ -10066,7 +10066,7 @@ static u32 intel_cursor_base(const struct intel_plane_state *plane_state)
->  	u32 base;
->  
->  	if (INTEL_INFO(dev_priv)->display.cursor_needs_physical)
-> -		base = obj->phys_handle->busaddr;
-> +		base = obj->phys_handle;
->  	else
->  		base = intel_plane_ggtt_offset(plane_state);
->  
-> -- 
-> 2.20.1
-> 
-> _______________________________________________
-> Intel-gfx mailing list
-> Intel-gfx@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/intel-gfx
-
+diff --git a/drivers/usb/musb/musb_host.c b/drivers/usb/musb/musb_host.c
+index 3ffea6a5e022..37aa9f6155d9 100644
+--- a/drivers/usb/musb/musb_host.c
++++ b/drivers/usb/musb/musb_host.c
+@@ -80,6 +80,11 @@ static void musb_ep_program(struct musb *musb, u8 epnum,
+ 			struct urb *urb, int is_out,
+ 			u8 *buf, u32 offset, u32 len);
+ 
++static bool musb_qh_empty(struct musb_qh *qh)
++{
++	return list_empty(&qh->hep->urb_list);
++}
++
+ /*
+  * Clear TX fifo. Needed to avoid BABBLE errors.
+  */
+@@ -342,7 +347,7 @@ static void musb_advance_schedule(struct musb *musb, struct urb *urb,
+ 	/* reclaim resources (and bandwidth) ASAP; deschedule it, and
+ 	 * invalidate qh as soon as list_empty(&hep->urb_list)
+ 	 */
+-	if (list_empty(&qh->hep->urb_list)) {
++	if (musb_qh_empty(qh)) {
+ 		struct list_head	*head;
+ 		struct dma_controller	*dma = musb->dma_controller;
+ 
+@@ -2430,7 +2435,7 @@ static int musb_urb_dequeue(struct usb_hcd *hcd, struct urb *urb, int status)
+ 		/* If nothing else (usually musb_giveback) is using it
+ 		 * and its URB list has emptied, recycle this qh.
+ 		 */
+-		if (ready && list_empty(&qh->hep->urb_list)) {
++		if (ready && musb_qh_empty(qh)) {
+ 			qh->hep->hcpriv = NULL;
+ 			list_del(&qh->ring);
+ 			kfree(qh);
+@@ -2475,7 +2480,7 @@ musb_h_disable(struct usb_hcd *hcd, struct usb_host_endpoint *hep)
+ 		/* Then nuke all the others ... and advance the
+ 		 * queue on hw_ep (e.g. bulk ring) when we're done.
+ 		 */
+-		while (!list_empty(&hep->urb_list)) {
++		while (!musb_qh_empty(qh)) {
+ 			urb = next_urb(qh);
+ 			urb->status = -ESHUTDOWN;
+ 			musb_advance_schedule(musb, urb, qh->hw_ep, is_in);
+@@ -2485,7 +2490,7 @@ musb_h_disable(struct usb_hcd *hcd, struct usb_host_endpoint *hep)
+ 		 * other transfers, and since !qh->is_ready nothing
+ 		 * will activate any of these as it advances.
+ 		 */
+-		while (!list_empty(&hep->urb_list))
++		while (!musb_qh_empty(qh))
+ 			musb_giveback(musb, next_urb(qh), -ESHUTDOWN);
+ 
+ 		hep->hcpriv = NULL;
 -- 
-Ville Syrjälä
-Intel
+2.16.4
+
