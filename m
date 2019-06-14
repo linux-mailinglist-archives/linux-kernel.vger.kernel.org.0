@@ -2,158 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9A32645EA1
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 15:43:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B241945EAD
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 15:44:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728521AbfFNNmy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 09:42:54 -0400
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:35216 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728033AbfFNNmx (ORCPT
+        id S1728462AbfFNNnt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 09:43:49 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:39208 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727979AbfFNNnr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 09:42:53 -0400
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x5EDgjcU015726;
-        Fri, 14 Jun 2019 08:42:45 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1560519765;
-        bh=JTrKAS5DxBlxyr/RUcG7xCZZCkjwEovfo2qd+cpbq7o=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=HEpkw3CrAA6B+lRcszpV93/Y16UTfxTK16V1R8rSpRtlNuPfp4MuPbeje6tJaOzv5
-         fLdJFQ9otRoony+Lme3E13MenSQy4LEqEfVsXt7mou3/cYyqI1RR0wYBEpi47ZEC48
-         vJVGouhBNOuc0lWGVRF9c2Y/XVhzbzCnR+kY2Cn8=
-Received: from DFLE106.ent.ti.com (dfle106.ent.ti.com [10.64.6.27])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x5EDgjTi018675
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 14 Jun 2019 08:42:45 -0500
-Received: from DFLE102.ent.ti.com (10.64.6.23) by DFLE106.ent.ti.com
- (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Fri, 14
- Jun 2019 08:42:45 -0500
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE102.ent.ti.com
- (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Fri, 14 Jun 2019 08:42:45 -0500
-Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id x5EDggeV100780;
-        Fri, 14 Jun 2019 08:42:43 -0500
-Subject: Re: [PATCH 09/16] dt-bindings: dma: ti: Add document for K3 UDMA
-To:     Rob Herring <robh@kernel.org>
-CC:     Vinod <vkoul@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        "open list:DMA GENERIC OFFLOAD ENGINE SUBSYSTEM" 
-        <dmaengine@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        Lokesh Vutla <lokeshvutla@ti.com>,
-        Tero Kristo <t-kristo@ti.com>, Tony Lindgren <tony@atomide.com>
-References: <20190506123456.6777-1-peter.ujfalusi@ti.com>
- <20190506123456.6777-10-peter.ujfalusi@ti.com> <20190613181626.GA7039@bogus>
- <e0d6a264-96b5-31a6-e70b-3b1c2d863988@ti.com>
- <CAL_JsqJNMkKL_FubZfjKY6jLebMetmgR24EoendHoPM2ckrUQA@mail.gmail.com>
-From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
-Message-ID: <e811d674-b79f-4da8-c632-c7a90844b6c5@ti.com>
-Date:   Fri, 14 Jun 2019 16:43:15 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        Fri, 14 Jun 2019 09:43:47 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=CEpLzxWl0gVhhE2loe/wZNC7HEFBNtusAecwnKLSC9Y=; b=wJWUaH4KBhaf6FksZmx6YleNS
+        SqJt2t24BqEHD50uiboct62KgbUmDCuQAqSNqCr87Vaizsbh9ww1KCcI+top6ZWkFHX3dyskStBzq
+        UIViB3eY+V4668fgqSO5LtEzseW5ElzpJsd3aNvCMF/RVO9Lg/DIm9iLz357FOEQ+WxQ4pw2Q077W
+        kf4mJRIvgRsBYqbPyY7CtR7XUwXqeFv4KrkG8WnWDVb7ouPheOhasUPP57/2hdI+uSHSKuH4XsfuR
+        +Si9/YiEQVF9qWr46i2A8Hr8Uzh3Su4WRqmqOee1TLNOHja45yFHb/hTiCA++kVXKwxYFFWwXNFqx
+        pH+R4j+Fg==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1hbmUS-00087g-TV; Fri, 14 Jun 2019 13:43:37 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 983BF20292FD5; Fri, 14 Jun 2019 15:43:35 +0200 (CEST)
+Date:   Fri, 14 Jun 2019 15:43:35 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     "Kirill A. Shutemov" <kirill@shutemov.name>
+Cc:     "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>, x86@kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Borislav Petkov <bp@alien8.de>,
+        Andy Lutomirski <luto@amacapital.net>,
+        David Howells <dhowells@redhat.com>,
+        Kees Cook <keescook@chromium.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Kai Huang <kai.huang@linux.intel.com>,
+        Jacob Pan <jacob.jun.pan@linux.intel.com>,
+        Alison Schofield <alison.schofield@intel.com>,
+        linux-mm@kvack.org, kvm@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH, RFC 13/62] x86/mm: Add hooks to allocate and free
+ encrypted pages
+Message-ID: <20190614134335.GU3436@hirez.programming.kicks-ass.net>
+References: <20190508144422.13171-1-kirill.shutemov@linux.intel.com>
+ <20190508144422.13171-14-kirill.shutemov@linux.intel.com>
+ <20190614093409.GX3436@hirez.programming.kicks-ass.net>
+ <20190614110458.GN3463@hirez.programming.kicks-ass.net>
+ <20190614132836.spl6bmk2kkx65nfr@box>
 MIME-Version: 1.0
-In-Reply-To: <CAL_JsqJNMkKL_FubZfjKY6jLebMetmgR24EoendHoPM2ckrUQA@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190614132836.spl6bmk2kkx65nfr@box>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-On 14/06/2019 16.20, Rob Herring wrote:
-> On Thu, Jun 13, 2019 at 2:33 PM Peter Ujfalusi <peter.ujfalusi@ti.com> wrote:
->>
->> Rob,
->>
->> On 13/06/2019 21.16, Rob Herring wrote:
->>>> +Remote PSI-L endpoint
->>>> +
->>>> +Required properties:
->>>> +--------------------
->>>> +- ti,psil-base:             PSI-L thread ID base of the endpoint
->>>> +
->>>> +Within the PSI-L endpoint node thread configuration subnodes must present with:
->>>> +ti,psil-configX naming convention, where X is the thread ID offset.
->>>
->>> Don't use vendor prefixes on node names.
->>
->> OK.
->>
->>>> +
->>>> +Configuration node Required properties:
->>>> +--------------------
->>>> +- linux,udma-mode:  Channel mode, can be:
->>>> +                    - UDMA_PKT_MODE: for Packet mode channels (peripherals)
->>>> +                    - UDMA_TR_MODE: for Third-Party mode
->>>
->>> This is hardly a common linux thing. What determines the value here.
->>
->> Unfortunately it is.
+On Fri, Jun 14, 2019 at 04:28:36PM +0300, Kirill A. Shutemov wrote:
+> On Fri, Jun 14, 2019 at 01:04:58PM +0200, Peter Zijlstra wrote:
+> > On Fri, Jun 14, 2019 at 11:34:09AM +0200, Peter Zijlstra wrote:
+> > > On Wed, May 08, 2019 at 05:43:33PM +0300, Kirill A. Shutemov wrote:
+> > > 
+> > > > +		lookup_page_ext(page)->keyid = keyid;
+> > 
+> > > > +		lookup_page_ext(page)->keyid = 0;
+> > 
+> > Also, perhaps paranoid; but do we want something like:
+> > 
+> > static inline void page_set_keyid(struct page *page, int keyid)
+> > {
+> > 	/* ensure nothing creeps after changing the keyid */
+> > 	barrier();
+> > 	WRITE_ONCE(lookup_page_ext(page)->keyid, keyid);
+> > 	barrier();
+> > 	/* ensure nothing creeps before changing the keyid */
+> > }
+> > 
+> > And this is very much assuming there is no concurrency through the
+> > allocator locks.
 > 
-> No, it's a feature of your h/w and in no way is something linux
-> defined which is the point of 'linux' prefix.
-
-The channel can be either Packet or TR mode. The HW is really flexible
-on this (and on other things as well).
-It just happens that Linux need to use specific channels in a specific mode.
-
-Would it help if we assume that all channels are used in Packet mode,
-but we have linux,tr-mode bool to indicate that the given channel in
-Linux need to be used in TR mode.
-
->> Each channel can be configured to Packet or TR mode. For some
->> peripherals it is true that they only support packet mode, these are the
->> newer PSI-L native peripherals.
->> For these channels a udma-mode property would be correct.
->>
->> But we have legacy peripherals as well and they are serviced by PDMA
->> (which is a native peripheral designed to talk to the given legacy IP).
->> We can use either packet or TR mode in UDMAP to talk to PDMAs, it is in
->> most cases clear what to use, but for example for audio (McASP) channels
->> Linux is using TR channel because we need cyclic DMA while for example
->> RTOS is using Packet mode as it fits their needs better.
->>
->> Here I need to prefix the udma-mode with linux as the mode is used by
->> Linux, but other OS might opt to use different channel mode.
+> There's no concurrency for this page: it has been off the free list, but
+> have not yet passed on to user. Nobody else sees the page before
+> allocation is finished.
 > 
-> So you'd need <os>,udma-mode? That doesn't work... If the setting is
-> per OS, then it belongs in the OS because the same dtb should work
-> across OS's.
-
-So I should have a table for the thread IDs in the DMA driver and mark
-channels as TR or Packet in there for Linux use?
-Or just an array which would mark the non packet PSI-L thread IDs?
-
-I still prefer to have this coming via DT as a Linux parameter as other
-OS is free to ignore the linux,udma-mode, but as I said there are
-certain channels which must be used in Linux in certain mode while
-others in different mode.
-
->> The reason why this needs to be in the DT is that when the channel is
->> requested we need to configure the mode and it can not be swapped
->> runtime easily between Packet and TR mode.
+> And barriers/WRITE_ONCE() looks excessive to me. It's just yet another bit
+> of page's metadata and I don't see why it's has to be handled in a special
+> way.
 > 
-> So when the client makes the channel request, why doesn't it specify the mode?
+> Does it relax your paranoia? :P
 
-This is UDMAP internal information on what type of Descriptors the
-channel will expect and how it is going to dispatch the work.
+Not really, it all 'works' because clflush_cache_range() includes mb()
+and page_address() has an address dependency on the store, and there are
+no other sites that will ever change 'keyid', which is all kind of
+fragile.
 
-Packet and TR mode at the end does the same thing, but in a completely
-different way.
+At the very least that should be explicitly called out in a comment.
 
-- Péter
-
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
