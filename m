@@ -2,86 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 68F6645572
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 09:12:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 128E445582
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 09:14:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726468AbfFNHMC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 03:12:02 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:34344 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726115AbfFNHMC (ORCPT
+        id S1726351AbfFNHOf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 03:14:35 -0400
+Received: from lb1-smtp-cloud7.xs4all.net ([194.109.24.24]:56791 "EHLO
+        lb1-smtp-cloud7.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725837AbfFNHOe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 03:12:02 -0400
-Received: by mail-pg1-f194.google.com with SMTP id p10so1032704pgn.1;
-        Fri, 14 Jun 2019 00:12:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=Z24ehB4D4Ib9KAp40EZZmlh/Bvx/EOYlNXp8ka69OO8=;
-        b=B9BPcDseXlrG3ycjZwkqgwkcR4nbLzBIh5VosFrf0JeTSEKLiWEH6adqv8bIWjlg4W
-         BZ/ZOqF/A/WYbvWb9vmh7V/loVsJqBxoEIuQJweLvcYV0fIC4vlQ7lqYh3yxthPbgr2u
-         CNHzecQBxrBeIfgbc8ho7f7yZsrmweoLIveR4N3U2Yil8uZ4FE3XSSXjXYKBWBFuYn7o
-         PHQR8MyXRWvpnBsJhGbmXFj8ARsLEMGcjU2gmzLgPiBRvFrrWstDIaXjnW3gIG5E6kRG
-         grEUr886Mf21+FzGVkzxd2/v6C+saav0KjRjDR2PrUB29ZETxp+0Q3jgxtGQWB7IslDt
-         NP7Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=Z24ehB4D4Ib9KAp40EZZmlh/Bvx/EOYlNXp8ka69OO8=;
-        b=s8ahWKl+/lZpJFOUZpYoO2JWInshv2JYd7mA68ep6Hrf+calmT7qRiOFRwbUlAa6Q4
-         to8YVV+lv8dLZQ9Ca3hFZwo1fil9Ep66SLYsmBVWCzOIFyC3YSH6/Pv1SVbdAup87qOR
-         VYD/YPSGiFCxXsPXwP4wgeXtMdiPT56Eu2102vigyBG6hndaT128wHeJFnprDq75PHJ7
-         sQxnQvMdQJT9lGFqn1b82azAz8anXG7huqIHwzgw/QXK1e83FFwFJfC+NXIFo2/dhYiD
-         UJtbyzT5QFS3e1redzf3+JVfNNOxf5JV1PL1wpNVD5AxBPWGhD/lywOeAtfLBq8Ha3Xd
-         LBCw==
-X-Gm-Message-State: APjAAAUj2aPYrrfAAlSYPcZr9g8kW/mI6aiPsGfWBk3XbKGXOEv81j9D
-        buJT/F4jVGqnGgSJJ20j1Qo=
-X-Google-Smtp-Source: APXvYqzts64d3r5DidYI4YK6nxHWTCr4iviOKRGBsvDDVRUCcUr1GO2l5XgET6/yAn2cJC6dCRNUFw==
-X-Received: by 2002:a63:3148:: with SMTP id x69mr19476839pgx.226.1560496321289;
-        Fri, 14 Jun 2019 00:12:01 -0700 (PDT)
-Received: from xy-data.openstacklocal ([159.138.22.150])
-        by smtp.gmail.com with ESMTPSA id p68sm1634074pfb.80.2019.06.14.00.11.59
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Fri, 14 Jun 2019 00:12:00 -0700 (PDT)
-From:   Young Xiao <92siuyang@gmail.com>
-To:     sameo@linux.intel.com, davem@davemloft.net,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Young Xiao <92siuyang@gmail.com>
-Subject: [PATCH] nfc: Ensure presence of required attributes in the deactivate_target handler
-Date:   Fri, 14 Jun 2019 15:13:02 +0800
-Message-Id: <1560496382-32532-1-git-send-email-92siuyang@gmail.com>
-X-Mailer: git-send-email 2.7.4
+        Fri, 14 Jun 2019 03:14:34 -0400
+Received: from [192.168.2.10] ([46.9.252.75])
+        by smtp-cloud7.xs4all.net with ESMTPA
+        id bgPshVxU75qKabgPwhKdm7; Fri, 14 Jun 2019 09:14:32 +0200
+Subject: Re: [PATCH 1/9] media: docs: v4l2-controls: fix sentence rendered in
+ a nonsense way
+To:     Luca Ceresoli <luca@lucaceresoli.net>, linux-media@vger.kernel.org
+Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
+References: <20190613141826.26775-1-luca@lucaceresoli.net>
+From:   Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <069ac18c-7b9e-652a-1ff8-35fca09e6538@xs4all.nl>
+Date:   Fri, 14 Jun 2019 09:14:28 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
+MIME-Version: 1.0
+In-Reply-To: <20190613141826.26775-1-luca@lucaceresoli.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfLULx6w3UFhlf3J5JCexhb+m+iklOFzmIMMKYRDvzeNKBekzrOFhmeknJxOTmQMdjN9XXfrlhqBoDBMxyopKvpsduSm8E4ZnhyNOYzfyjOTCLMRf2gbJ
+ nFD/I3Y/uQGHROwU5W1NTsxyx+1m5iOUBgTnOppzJbh1+1gOeOOQg6USO0X3NrS4fTWpZtXCtO9D8675Hs8pBfZegACeBdsm++1XHnLzbsmjbwiIOVaAK/hW
+ vWl2Z6B5IOcq/K3hJbooxYhAHKWQuvMYoypRtPhRRzcU3Z30O0a1bW+zQ/R2mReAwhefEiXp/5f5DiZms7Yidg==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Check that the NFC_ATTR_TARGET_INDEX attributes (in addition to
-NFC_ATTR_DEVICE_INDEX) are provided by the netlink client prior to
-accessing them. This prevents potential unhandled NULL pointer dereference
-exceptions which can be triggered by malicious user-mode programs,
-if they omit one or both of these attributes.
+On 6/13/19 4:18 PM, Luca Ceresoli wrote:
+> This sentence renders as:
+> 
+>> Since such compound controls need to expose more information about
+>> themselves than is possible with ioctls VIDIOC_QUERYCTRL,
+>> VIDIOC_QUERY_EXT_CTRL and VIDIOC_QUERYMENU the VIDIOC_QUERY_EXT_CTRL
+>   ^^^^^^^^^^^^^^^^^^^^^                          ^^^^^^^^^^^^^^^^^^^^^
+>> ioctl was added.
+> 
+> This does not make sense. Fix by providing an explicit link text. This
+> results in:
+> 
+>> Since such compound controls need to expose more information about
+>> themselves than is possible with VIDIOC_QUERYCTRL and VIDIOC_QUERYMENU
+>> the VIDIOC_QUERY_EXT_CTRL ioctl was added.
+> 
+> Signed-off-by: Luca Ceresoli <luca@lucaceresoli.net>
+> ---
+>  Documentation/media/uapi/v4l/extended-controls.rst | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/media/uapi/v4l/extended-controls.rst b/Documentation/media/uapi/v4l/extended-controls.rst
+> index 24274b398e63..0968aa9cd167 100644
+> --- a/Documentation/media/uapi/v4l/extended-controls.rst
+> +++ b/Documentation/media/uapi/v4l/extended-controls.rst
+> @@ -86,7 +86,7 @@ with compound types should only be used programmatically.
+>  
+>  Since such compound controls need to expose more information about
+>  themselves than is possible with
+> -:ref:`VIDIOC_QUERYCTRL` the
+> +:ref:`VIDIOC_QUERYCTRL and VIDIOC_QUERYMENU <VIDIOC_QUERYCTRL>` the
 
-Signed-off-by: Young Xiao <92siuyang@gmail.com>
----
- net/nfc/netlink.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+This should just refer to VIDIOC_QUERYCTRL, not QUERYMENU. So this
+becomes: :ref:`VIDIOC_QUERYCTRL <VIDIOC_QUERYCTRL>`
 
-diff --git a/net/nfc/netlink.c b/net/nfc/netlink.c
-index 04a8e47..89d885d 100644
---- a/net/nfc/netlink.c
-+++ b/net/nfc/netlink.c
-@@ -923,7 +923,8 @@ static int nfc_genl_deactivate_target(struct sk_buff *skb,
- 	u32 device_idx, target_idx;
- 	int rc;
- 
--	if (!info->attrs[NFC_ATTR_DEVICE_INDEX])
-+	if (!info->attrs[NFC_ATTR_DEVICE_INDEX] ||
-+	    !info->attrs[NFC_ATTR_TARGET_INDEX])
- 		return -EINVAL;
- 
- 	device_idx = nla_get_u32(info->attrs[NFC_ATTR_DEVICE_INDEX]);
--- 
-2.7.4
+Regards,
+
+	Hans
+
+>  :ref:`VIDIOC_QUERY_EXT_CTRL <VIDIOC_QUERYCTRL>` ioctl was added. In
+>  particular, this ioctl gives the dimensions of the N-dimensional array
+>  if this control consists of more than one element.
+> 
 
