@@ -2,85 +2,178 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3370E46921
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 22:31:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A856646959
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 22:33:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727984AbfFNUax (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 16:30:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54642 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727963AbfFNUaw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 16:30:52 -0400
-Received: from sasha-vm.mshome.net (unknown [131.107.159.134])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9A8A7217F9;
-        Fri, 14 Jun 2019 20:30:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560544251;
-        bh=F+anLLuCwXvo7UdHUf2b8qxkr5pxdKd/+T5t+Wh0p2Y=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PCv/8t90kbpCsFsemava6/k66xUUgdqWSaHND//1zHUwOqUvFQn8wZOBaA1OetMKb
-         YdDL5jyb275VvR76UJDLf6kxcoOuhp+9SY48YtmjWlGmCzdHFiEuD5b33JC4SfwzZm
-         7s0UvlqqjC3/0A//MNEsYju1f9jrC+MXoqih68YY=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     YueHaibing <yuehaibing@huawei.com>,
-        Paul Burton <paul.burton@mips.com>, ralf@linux-mips.org,
-        jhogan@kernel.org, linux-mips@vger.kernel.org,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.4 04/10] MIPS: uprobes: remove set but not used variable 'epc'
-Date:   Fri, 14 Jun 2019 16:30:40 -0400
-Message-Id: <20190614203046.28077-4-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190614203046.28077-1-sashal@kernel.org>
-References: <20190614203046.28077-1-sashal@kernel.org>
+        id S1728196AbfFNUcF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 16:32:05 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:35566 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726811AbfFNUar (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Jun 2019 16:30:47 -0400
+Received: by mail-ed1-f67.google.com with SMTP id p26so5248375edr.2
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2019 13:30:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
+         :references:mime-version:content-disposition
+         :content-transfer-encoding:in-reply-to:user-agent;
+        bh=KN+MMrJdiVIVfoSWWn55ZRF9gbRyuAu71YCJdRQFpRk=;
+        b=VWM2vYLhPQHrafSrDQJFyDSau+89Xxt/kk+glA2qwPxZ29ccExYoJtEyKzVb7qHMSq
+         OF07IqqDGmEAfuCzoUagcSNT4jOb7KzHyf8utimEHOAZIrVJ73/igURZAId4d4hwLd/8
+         YpNRjV2z2ylXops4uWCelR0CmBXYmQqv0uhJA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :content-transfer-encoding:in-reply-to:user-agent;
+        bh=KN+MMrJdiVIVfoSWWn55ZRF9gbRyuAu71YCJdRQFpRk=;
+        b=Piaf3aZcYmddUaWezsZBe83GwOpRuuz7pilk8My+wby6jSvWKbXKCNS4H9BUx0Z7Ul
+         1c5exd86gK7MHvc9QMvpIwCBPgoAh1oezl93i2EubqmvYEqfLb5OuVbCgXWwkcWuIVvF
+         FIXbzKmhlgc6Rz8YUJ+1yJQjFKK2mq0fzm5V32I7EG2SHCVY65pRaSgfFaB7WDZfLbzA
+         F/Zr3svUjNnVXMwgKrqo2wtn4OsCmYa1Rh7KUILOA2GzVAzrV4bweUNzDKJHjO48jdFr
+         vTd6wU1csKpPn5mMdQrzhMXo3ua8ZnoD4soBxEPi+ZoVe78tMbmTzMxerxPaDwijye0o
+         lKaw==
+X-Gm-Message-State: APjAAAULudyRzxvuOE/vamtgYFMlqIDSqAq1cWEoWr2nXjFMlPfD3xpO
+        vyxIFvW7jo9G9ndeRstbgXWkxQ==
+X-Google-Smtp-Source: APXvYqzs5TtIkPYbwFylQmX4JfL716O72INnTisyVLZpVam1/N8EkPIy/YAYosSNlQ0xCI+3ngip/A==
+X-Received: by 2002:a17:906:63c1:: with SMTP id u1mr83393976ejk.173.1560544244991;
+        Fri, 14 Jun 2019 13:30:44 -0700 (PDT)
+Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
+        by smtp.gmail.com with ESMTPSA id 17sm1184399edu.21.2019.06.14.13.30.42
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Fri, 14 Jun 2019 13:30:43 -0700 (PDT)
+Date:   Fri, 14 Jun 2019 22:30:40 +0200
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     christian.koenig@amd.com
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Russell King <linux+etnaviv@armlinux.org.uk>,
+        Christian Gmeiner <christian.gmeiner@gmail.com>,
+        Qiang Yu <yuq825@gmail.com>, "Anholt, Eric" <eric@anholt.net>,
+        Thomas Hellstrom <thellstrom@vmware.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        The etnaviv authors <etnaviv@lists.freedesktop.org>,
+        lima@lists.freedesktop.org
+Subject: Re: [PATCH 3/6] drm/gem: use new ww_mutex_(un)lock_for_each macros
+Message-ID: <20190614203040.GE23020@phenom.ffwll.local>
+Mail-Followup-To: christian.koenig@amd.com,
+        Peter Zijlstra <peterz@infradead.org>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Russell King <linux+etnaviv@armlinux.org.uk>,
+        Christian Gmeiner <christian.gmeiner@gmail.com>,
+        Qiang Yu <yuq825@gmail.com>, "Anholt, Eric" <eric@anholt.net>,
+        Thomas Hellstrom <thellstrom@vmware.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        The etnaviv authors <etnaviv@lists.freedesktop.org>,
+        lima@lists.freedesktop.org
+References: <20190614124125.124181-1-christian.koenig@amd.com>
+ <20190614124125.124181-4-christian.koenig@amd.com>
+ <20190614131916.GQ3436@hirez.programming.kicks-ass.net>
+ <20190614152242.GC23020@phenom.ffwll.local>
+ <094da0f7-a0f0-9ed4-d2da-8c6e6d165380@gmail.com>
+ <CAKMK7uFcDCJ9sozny1RqqRATwcK39doZNq+NZekvrzuO63ap-Q@mail.gmail.com>
+ <d97212dc-367c-28e9-6961-9b99110a4d2e@gmail.com>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <d97212dc-367c-28e9-6961-9b99110a4d2e@gmail.com>
+X-Operating-System: Linux phenom 4.19.0-5-amd64 
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: YueHaibing <yuehaibing@huawei.com>
+On Fri, Jun 14, 2019 at 08:51:11PM +0200, Christian König wrote:
+> Am 14.06.19 um 20:24 schrieb Daniel Vetter:
+> > 
+> > On Fri, Jun 14, 2019 at 8:10 PM Christian König <ckoenig.leichtzumerken@gmail.com> wrote:
+> > > [SNIP]
+> > > WW_MUTEX_LOCK_BEGIN()
+> > > 
+> > > lock(lru_lock);
+> > > 
+> > > while (bo = list_first(lru)) {
+> > > 	if (kref_get_unless_zero(bo)) {
+> > > 		unlock(lru_lock);
+> > > 		WW_MUTEX_LOCK(bo->ww_mutex);
+> > > 		lock(lru_lock);
+> > > 	} else {
+> > > 		/* bo is getting freed, steal it from the freeing process
+> > > 		 * or just ignore */
+> > > 	}
+> > > }
+> > > unlock(lru_lock)
+> > > 
+> > > WW_MUTEX_LOCK_END;
+> 
+> Ah, now I know what you mean. And NO, that approach doesn't work.
+> 
+> See for the correct ww_mutex dance we need to use the iterator multiple
+> times.
+> 
+> Once to give us the BOs which needs to be locked and another time to give us
+> the BOs which needs to be unlocked in case of a contention.
+> 
+> That won't work with the approach you suggest here.
 
-[ Upstream commit f532beeeff0c0a3586cc15538bc52d249eb19e7c ]
+A right, drat.
 
-Fixes gcc '-Wunused-but-set-variable' warning:
+Maybe give up on the idea to make this work for ww_mutex in general, and
+just for drm_gem_buffer_object? I'm just about to send out a patch series
+which makes sure that a lot more drivers set gem_bo.resv correctly (it
+will alias with ttm_bo.resv for ttm drivers ofc). Then we could add a
+list_head to gem_bo (won't really matter, but not something we can do with
+ww_mutex really), so that the unlock walking doesn't need to reuse the
+same iterator. That should work I think ...
 
-arch/mips/kernel/uprobes.c: In function 'arch_uprobe_pre_xol':
-arch/mips/kernel/uprobes.c:115:17: warning: variable 'epc' set but not used [-Wunused-but-set-variable]
+Also, it would almost cover everything you want to do. For ttm we'd need
+to make ttm_bo a subclass of gem_bo (and maybe not initialize that
+embedded gem_bo for vmwgfx and shadow bo and driver internal stuff).
 
-It's never used since introduction in
-commit 40e084a506eb ("MIPS: Add uprobes support.")
+Just some ideas, since copypasting the ww_mutex dance into all drivers is
+indeed not great.
+-Daniel
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-Signed-off-by: Paul Burton <paul.burton@mips.com>
-Cc: <ralf@linux-mips.org>
-Cc: <jhogan@kernel.org>
-Cc: <linux-kernel@vger.kernel.org>
-Cc: <linux-mips@vger.kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- arch/mips/kernel/uprobes.c | 3 ---
- 1 file changed, 3 deletions(-)
+> 
+> Regards,
+> Christian.
+> 
+> > 
+> > 
+> > Also I think if we allow this we could perhaps use this to implement the
+> > modeset macros too.
+> > -Daniel
+> > 
+> > 
+> > 
+> > 
+> > > > This is kinda what we went with for modeset locks with
+> > > > DRM_MODESET_LOCK_ALL_BEGIN/END, you can grab more locks in between the
+> > > > pair at least. But it's a lot more limited use-cases, maybe too fragile an
+> > > > idea for ww_mutex in full generality.
+> > > > 
+> > > > Not going to type this out because too much w/e mode here already, but I
+> > > > can give it a stab next week.
+> > > > -Daniel
+> > > _______________________________________________
+> > > dri-devel mailing list
+> > > dri-devel@lists.freedesktop.org
+> > > https://lists.freedesktop.org/mailman/listinfo/dri-devel
+> > 
+> > 
+> 
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
 
-diff --git a/arch/mips/kernel/uprobes.c b/arch/mips/kernel/uprobes.c
-index 4e7b89f2e244..1363d705cc8c 100644
---- a/arch/mips/kernel/uprobes.c
-+++ b/arch/mips/kernel/uprobes.c
-@@ -164,9 +164,6 @@ int arch_uprobe_pre_xol(struct arch_uprobe *aup, struct pt_regs *regs)
- 	 */
- 	aup->resume_epc = regs->cp0_epc + 4;
- 	if (insn_has_delay_slot((union mips_instruction) aup->insn[0])) {
--		unsigned long epc;
--
--		epc = regs->cp0_epc;
- 		__compute_return_epc_for_insn(regs,
- 			(union mips_instruction) aup->insn[0]);
- 		aup->resume_epc = regs->cp0_epc;
 -- 
-2.20.1
-
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
