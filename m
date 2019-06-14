@@ -2,363 +2,275 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 598F44647F
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 18:41:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5EC0D464F2
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 18:49:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726193AbfFNQlC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 12:41:02 -0400
-Received: from smtprelay-out1.synopsys.com ([198.182.61.142]:57090 "EHLO
-        smtprelay-out1.synopsys.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725808AbfFNQlC (ORCPT
+        id S1726184AbfFNQtS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 12:49:18 -0400
+Received: from mail-vs1-f67.google.com ([209.85.217.67]:44909 "EHLO
+        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725801AbfFNQtS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 12:41:02 -0400
-Received: from mailhost.synopsys.com (mdc-mailhost1.synopsys.com [10.225.0.209])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (No client certificate requested)
-        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id DE0FDC2295;
-        Fri, 14 Jun 2019 16:41:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1560530461; bh=iueo8gxwYJtBx4iMnrqFdzGZ5RRP386gk1czBYdaGCY=;
-        h=From:To:Cc:Subject:Date:From;
-        b=BhflzRvku2CPl1FmpVpMny/wDZcH9j32myZFQ51dCWK/BuShl5MitJKqWusLf1gwF
-         lJkmPiQex+YeEMrB1TkwgKxKf7IV1OdTaHDyjS39iSJ1csWnaPun/ZI4TfxyTl0nlg
-         1xaEHFI+L5CxkmlBUrKVfmHou1IvV+f28y7JDiFTUuhbbHiJ3uWBn5jwvbh8j3JUMt
-         B1qx4g8GG7fHSYri3OOJtSNOiRrCartTB+O28qhJbLwlCptdOcewZc63T+UCdi6fMg
-         P4oUNo+EpZllO9pe1TOI7zMnZED4YhiK88nFGhNEhvqy5QqFjTuO9ElWX4h2SXTOez
-         T3fDckgQQBESQ==
-Received: from paltsev-e7480.internal.synopsys.com (paltsev-e7480.internal.synopsys.com [10.121.8.58])
-        by mailhost.synopsys.com (Postfix) with ESMTP id 54564A0057;
-        Fri, 14 Jun 2019 16:40:58 +0000 (UTC)
-From:   Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
-To:     linux-snps-arc@lists.infradead.org,
-        Vineet Gupta <Vineet.Gupta1@synopsys.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Alexey Brodkin <Alexey.Brodkin@synopsys.com>,
-        Jason Baron <jbaron@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        linux-arch@vger.kernel.org,
-        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
-Subject: [PATCH] ARC: ARCv2: jump label: implement jump label patching
-Date:   Fri, 14 Jun 2019 19:40:49 +0300
-Message-Id: <20190614164049.31626-1-Eugeniy.Paltsev@synopsys.com>
-X-Mailer: git-send-email 2.21.0
+        Fri, 14 Jun 2019 12:49:18 -0400
+Received: by mail-vs1-f67.google.com with SMTP id v129so2148535vsb.11
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2019 09:49:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=P57lZleFMEVvVu0eYFutZNaOn5WMh5DoQZ1UItFmSi8=;
+        b=NxwD+XN01kLskZRwzfUeYUym063Szl2JsZYwnev0tiTf5V0+dj2a62Ss8w9cDLONIX
+         7l9Q6edc6Wb+/Bt3OA1hHdWvwwGMvgfejBZw/9FYUiqyQM+/mn/mEY7WSDSNv6Jxdv3o
+         Y9ezv4cR+VNFOHvleZrFpDcOSwY+OVDs2vVHU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=P57lZleFMEVvVu0eYFutZNaOn5WMh5DoQZ1UItFmSi8=;
+        b=CSVlyeXpA6XB94J+DRUllKDNU05z/S2LJCPEnlRmyzVZZaLFHIXo8QHTobF8MNMC9N
+         uP5dE9DL+ptXZKSXBeJOB2kxMEXquSjc6MUIfc5aOYWNMvFMgRj3UcZO4Z0jHhaJ8hZx
+         u59PZUP4vloB6l2PLzUQz3wOENTLfFOjfrD50ba+FhWiOzoVgWva/SaOhkQkrNcRBZts
+         VMJOmWItBjEQ7Avkg//1kYhYtsF27dzec5dlNRf+ApVTC2RqrzgiXbGHOGOrNi7o9w2D
+         67HSY0o2v4n2vcF6TTLdI9O843oxAvIFTQ4S7gi1upeoeMTW9gMA0hVnw0D769d4OOM4
+         M6Yw==
+X-Gm-Message-State: APjAAAWbc9QheF1N3Kr7LnGvuQlFUXKTJFLbz4ZHqNo6IO3Diq8yPFKN
+        24sh2c/NEgX0Me26g7+SNFV2WOs2gy0=
+X-Google-Smtp-Source: APXvYqzN0/E1OH1VDyXK9GRCmxjN9S+ixLw/wQlImj9yg01W00jr1XKY1aKz50ZippaOYDyDXoaTBw==
+X-Received: by 2002:a67:db89:: with SMTP id f9mr25521657vsk.150.1560530956666;
+        Fri, 14 Jun 2019 09:49:16 -0700 (PDT)
+Received: from mail-ua1-f47.google.com (mail-ua1-f47.google.com. [209.85.222.47])
+        by smtp.gmail.com with ESMTPSA id f66sm687280vkh.9.2019.06.14.09.49.16
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Fri, 14 Jun 2019 09:49:16 -0700 (PDT)
+Received: by mail-ua1-f47.google.com with SMTP id s4so1178515uad.7
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2019 09:49:16 -0700 (PDT)
+X-Received: by 2002:ab0:2a49:: with SMTP id p9mr2189748uar.0.1560530496822;
+ Fri, 14 Jun 2019 09:41:36 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20190613234153.59309-1-dianders@chromium.org> <20190613234153.59309-3-dianders@chromium.org>
+ <CAPDyKFrgXGf_9=H7G40fiUQj=da5WWRys_oim2azgL4FEOeUVA@mail.gmail.com>
+In-Reply-To: <CAPDyKFrgXGf_9=H7G40fiUQj=da5WWRys_oim2azgL4FEOeUVA@mail.gmail.com>
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Fri, 14 Jun 2019 09:41:24 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=UA9i1eEi3Mx0WF-DnCnr4O4-MfOxa=axZOJtXzxbV7Tw@mail.gmail.com>
+Message-ID: <CAD=FV=UA9i1eEi3Mx0WF-DnCnr4O4-MfOxa=axZOJtXzxbV7Tw@mail.gmail.com>
+Subject: Re: [PATCH v4 2/5] mmc: core: API to temporarily disable retuning for
+ SDIO CRC errors
+To:     Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     Kalle Valo <kvalo@codeaurora.org>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Arend van Spriel <arend.vanspriel@broadcom.com>,
+        brcm80211-dev-list.pdl@broadcom.com,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        Double Lo <double.lo@cypress.com>,
+        Brian Norris <briannorris@chromium.org>,
+        linux-wireless <linux-wireless@vger.kernel.org>,
+        Naveen Gupta <naveen.gupta@cypress.com>,
+        Madhan Mohan R <madhanmohan.r@cypress.com>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Wright Feng <wright.feng@cypress.com>,
+        Chi-Hsien Lin <chi-hsien.lin@cypress.com>,
+        netdev <netdev@vger.kernel.org>,
+        brcm80211-dev-list <brcm80211-dev-list@cypress.com>,
+        Jiong Wu <lohengrin1024@gmail.com>,
+        Ritesh Harjani <riteshh@codeaurora.org>,
+        Allison Randal <allison@lohutok.net>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Shawn Lin <shawn.lin@rock-chips.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Avri Altman <avri.altman@wdc.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Implement jump label patching for ARC. Jump labels provide
-an interface to generate dynamic branches using
-self-modifying code.
+Hi,
 
-This allows us to implement conditional branches where
-changing branch direction is expensive but branch selection
-is basically 'free'
+On Fri, Jun 14, 2019 at 5:04 AM Ulf Hansson <ulf.hansson@linaro.org> wrote:
+>
+> On Fri, 14 Jun 2019 at 01:42, Douglas Anderson <dianders@chromium.org> wrote:
+> >
+> > Normally when the MMC core sees an "-EILSEQ" error returned by a host
+> > controller then it will trigger a retuning of the card.  This is
+> > generally a good idea.
+> >
+> > However, if a command is expected to sometimes cause transfer errors
+> > then these transfer errors shouldn't cause a re-tuning.  This
+> > re-tuning will be a needless waste of time.  One example case where a
+> > transfer is expected to cause errors is when transitioning between
+> > idle (sometimes referred to as "sleep" in Broadcom code) and active
+> > state on certain Broadcom WiFi SDIO cards.  Specifically if the card
+> > was already transitioning between states when the command was sent it
+> > could cause an error on the SDIO bus.
+> >
+> > Let's add an API that the SDIO function drivers can call that will
+> > temporarily disable the auto-tuning functionality.  Then we can add a
+> > call to this in the Broadcom WiFi driver and any other driver that
+> > might have similar needs.
+> >
+> > NOTE: this makes the assumption that the card is already tuned well
+> > enough that it's OK to disable the auto-retuning during one of these
+> > error-prone situations.  Presumably the driver code performing the
+> > error-prone transfer knows how to recover / retry from errors.  ...and
+> > after we can get back to a state where transfers are no longer
+> > error-prone then we can enable the auto-retuning again.  If we truly
+> > find ourselves in a case where the card needs to be retuned sometimes
+> > to handle one of these error-prone transfers then we can always try a
+> > few transfers first without auto-retuning and then re-try with
+> > auto-retuning if the first few fail.
+> >
+> > Without this change on rk3288-veyron-minnie I periodically see this in
+> > the logs of a machine just sitting there idle:
+> >   dwmmc_rockchip ff0d0000.dwmmc: Successfully tuned phase to XYZ
+> >
+> > Fixes: bd11e8bd03ca ("mmc: core: Flag re-tuning is needed on CRC errors")
+> > Signed-off-by: Douglas Anderson <dianders@chromium.org>
+> > ---
+> >
+> > Changes in v4:
+> > - Moved to SDIO API only (Adrian, Ulf).
+> > - Renamed to make it less generic, now retune_crc_disable (Ulf).
+> > - Function header makes it clear host must be claimed (Ulf).
+> > - No more WARN_ON (Ulf).
+> >
+> > Changes in v3:
+> > - Took out the spinlock since I believe this is all in one context.
+> >
+> > Changes in v2:
+> > - Updated commit message to clarify based on discussion of v1.
+> >
+> >  drivers/mmc/core/core.c       |  5 +++--
+> >  drivers/mmc/core/sdio_io.c    | 36 +++++++++++++++++++++++++++++++++++
+> >  include/linux/mmc/core.h      |  2 ++
+> >  include/linux/mmc/host.h      |  1 +
+> >  include/linux/mmc/sdio_func.h |  3 +++
+> >  5 files changed, 45 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/drivers/mmc/core/core.c b/drivers/mmc/core/core.c
+> > index 6db36dc870b5..9020cb2490f7 100644
+> > --- a/drivers/mmc/core/core.c
+> > +++ b/drivers/mmc/core/core.c
+> > @@ -144,8 +144,9 @@ void mmc_request_done(struct mmc_host *host, struct mmc_request *mrq)
+> >         int err = cmd->error;
+> >
+> >         /* Flag re-tuning needed on CRC errors */
+> > -       if ((cmd->opcode != MMC_SEND_TUNING_BLOCK &&
+> > -           cmd->opcode != MMC_SEND_TUNING_BLOCK_HS200) &&
+> > +       if (cmd->opcode != MMC_SEND_TUNING_BLOCK &&
+> > +           cmd->opcode != MMC_SEND_TUNING_BLOCK_HS200 &&
+> > +           !host->retune_crc_disable &&
+> >             (err == -EILSEQ || (mrq->sbc && mrq->sbc->error == -EILSEQ) ||
+> >             (mrq->data && mrq->data->error == -EILSEQ) ||
+> >             (mrq->stop && mrq->stop->error == -EILSEQ)))
+> > diff --git a/drivers/mmc/core/sdio_io.c b/drivers/mmc/core/sdio_io.c
+> > index f79f0b0caab8..f822a9630b0e 100644
+> > --- a/drivers/mmc/core/sdio_io.c
+> > +++ b/drivers/mmc/core/sdio_io.c
+> > @@ -734,3 +734,39 @@ int sdio_set_host_pm_flags(struct sdio_func *func, mmc_pm_flag_t flags)
+> >         return 0;
+> >  }
+> >  EXPORT_SYMBOL_GPL(sdio_set_host_pm_flags);
+> > +
+> > +/**
+> > + *     sdio_retune_crc_disable - temporarily disable retuning on CRC errors
+> > + *     @func: SDIO function attached to host
+> > + *
+> > + *     If the SDIO card is known to be in a state where it might produce
+> > + *     CRC errors on the bus in response to commands (like if we know it is
+> > + *     transitioning between power states), an SDIO function driver can
+> > + *     call this function to temporarily disable the SD/MMC core behavior of
+> > + *     triggering an automatic retuning.
+> > + *
+> > + *     This function should be called while the host is claimed and the host
+> > + *     should remain claimed until sdio_retune_crc_enable() is called.
+> > + *     Specifically, the expected sequence of calls is:
+> > + *     - sdio_claim_host()
+> > + *     - sdio_retune_crc_disable()
+> > + *     - some number of calls like sdio_writeb() and sdio_readb()
+>
+> sdio_retune_crc_enable()
+>
+> > + *     - sdio_release_host()
+> > + */
+> > +void sdio_retune_crc_disable(struct sdio_func *func)
+> > +{
+> > +       func->card->host->retune_crc_disable = true;
+> > +}
+> > +EXPORT_SYMBOL_GPL(sdio_retune_crc_disable);
+> > +
+> > +/**
+> > + *     sdio_retune_crc_enable - reneable retuning on CRC errors
+>
+> /s/reneable/re-enable
+>
+> > + *     @func: SDIO function attached to host
+> > + *
+> > + *     This is the compement to sdio_retune_crc_disable().
+> > + */
+> > +void sdio_retune_crc_enable(struct sdio_func *func)
+> > +{
+> > +       func->card->host->retune_crc_disable = false;
+> > +}
+> > +EXPORT_SYMBOL_GPL(sdio_retune_crc_enable);
+> > diff --git a/include/linux/mmc/core.h b/include/linux/mmc/core.h
+> > index 134a6483347a..02a13abf0cda 100644
+> > --- a/include/linux/mmc/core.h
+> > +++ b/include/linux/mmc/core.h
+> > @@ -178,6 +178,8 @@ int mmc_wait_for_cmd(struct mmc_host *host, struct mmc_command *cmd,
+> >
+> >  int mmc_hw_reset(struct mmc_host *host);
+> >  int mmc_sw_reset(struct mmc_host *host);
+> > +void mmc_expect_errors_begin(struct mmc_host *host);
+> > +void mmc_expect_errors_end(struct mmc_host *host);
+>
+> Leftovers for earlier versions.
 
-This implementation uses 32-bit NOP and BRANCH instructions
-which forced to be aligned by 4 to guarantee that they don't
-cross L1 cache line and can be update atomically.
+Oops!
 
-Signed-off-by: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
----
- arch/arc/Kconfig                  |   8 ++
- arch/arc/include/asm/jump_label.h |  68 ++++++++++++
- arch/arc/kernel/Makefile          |   1 +
- arch/arc/kernel/jump_label.c      | 168 ++++++++++++++++++++++++++++++
- 4 files changed, 245 insertions(+)
- create mode 100644 arch/arc/include/asm/jump_label.h
- create mode 100644 arch/arc/kernel/jump_label.c
 
-diff --git a/arch/arc/Kconfig b/arch/arc/Kconfig
-index c781e45d1d99..b1313e016c54 100644
---- a/arch/arc/Kconfig
-+++ b/arch/arc/Kconfig
-@@ -47,6 +47,7 @@ config ARC
- 	select OF_EARLY_FLATTREE
- 	select PCI_SYSCALL if PCI
- 	select PERF_USE_VMALLOC if ARC_CACHE_VIPT_ALIASING
-+	select HAVE_ARCH_JUMP_LABEL if ISA_ARCV2 && !CPU_ENDIAN_BE32
- 
- config ARCH_HAS_CACHE_LINE_SIZE
- 	def_bool y
-@@ -529,6 +530,13 @@ config ARC_DW2_UNWIND
- config ARC_DBG_TLB_PARANOIA
- 	bool "Paranoia Checks in Low Level TLB Handlers"
- 
-+config ARC_DBG_STATIC_KEYS
-+	bool "Paranoid checks in Static Keys code"
-+	depends on JUMP_LABEL
-+	select STATIC_KEYS_SELFTEST
-+	help
-+	  Enable paranoid checks and self-test of both ARC-specific and generic
-+	  part of static-keys-related code.
- endif
- 
- config ARC_BUILTIN_DTB_NAME
-diff --git a/arch/arc/include/asm/jump_label.h b/arch/arc/include/asm/jump_label.h
-new file mode 100644
-index 000000000000..8971d0608f2c
---- /dev/null
-+++ b/arch/arc/include/asm/jump_label.h
-@@ -0,0 +1,68 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef _ASM_ARC_JUMP_LABEL_H
-+#define _ASM_ARC_JUMP_LABEL_H
-+
-+#ifndef __ASSEMBLY__
-+
-+#include <linux/types.h>
-+
-+#define JUMP_LABEL_NOP_SIZE 4
-+
-+/*
-+ * To make atomic update of patched instruction available we need to guarantee
-+ * that this instruction doesn't cross L1 cache line boundary.
-+ *
-+ * As of today we simply align instruction which can be patched by 4 byte using
-+ * ".balign 4" directive. In that case patched instruction is aligned with one
-+ * 16-bit NOP_S if this is required.
-+ * However 'align by 4' directive is much stricter than it actually required.
-+ * It's enough that our 32-bit instruction don't cross l1 cache line boundary
-+ * which can be achieved by using ".bundle_align_mode" directive. That will save
-+ * us from adding useless NOP_S padding in most of the cases.
-+ *
-+ * TODO: switch to ".bundle_align_mode" directive using whin it will be
-+ * supported by ARC toolchain.
-+ */
-+
-+static __always_inline bool arch_static_branch(struct static_key *key,
-+					       bool branch)
-+{
-+	asm_volatile_goto(".balign 4			\n"
-+		 "1:					\n"
-+		 "nop					\n"
-+		 ".pushsection __jump_table, \"aw\"	\n"
-+		 ".word 1b, %l[l_yes], %c0		\n"
-+		 ".popsection				\n"
-+		 : : "i" (&((char *)key)[branch]) : : l_yes);
-+
-+	return false;
-+l_yes:
-+	return true;
-+}
-+
-+static __always_inline bool arch_static_branch_jump(struct static_key *key,
-+						    bool branch)
-+{
-+	asm_volatile_goto(".balign 4			\n"
-+		 "1:					\n"
-+		 "b %l[l_yes]				\n"
-+		 ".pushsection __jump_table, \"aw\"	\n"
-+		 ".word 1b, %l[l_yes], %c0		\n"
-+		 ".popsection				\n"
-+		 : : "i" (&((char *)key)[branch]) : : l_yes);
-+
-+	return false;
-+l_yes:
-+	return true;
-+}
-+
-+typedef u32 jump_label_t;
-+
-+struct jump_entry {
-+	jump_label_t code;
-+	jump_label_t target;
-+	jump_label_t key;
-+};
-+
-+#endif  /* __ASSEMBLY__ */
-+#endif
-diff --git a/arch/arc/kernel/Makefile b/arch/arc/kernel/Makefile
-index 2dc5f4296d44..307f74156d99 100644
---- a/arch/arc/kernel/Makefile
-+++ b/arch/arc/kernel/Makefile
-@@ -22,6 +22,7 @@ obj-$(CONFIG_ARC_EMUL_UNALIGNED) 	+= unaligned.o
- obj-$(CONFIG_KGDB)			+= kgdb.o
- obj-$(CONFIG_ARC_METAWARE_HLINK)	+= arc_hostlink.o
- obj-$(CONFIG_PERF_EVENTS)		+= perf_event.o
-+obj-$(CONFIG_JUMP_LABEL)		+= jump_label.o
- 
- obj-$(CONFIG_ARC_FPU_SAVE_RESTORE)	+= fpu.o
- CFLAGS_fpu.o   += -mdpfp
-diff --git a/arch/arc/kernel/jump_label.c b/arch/arc/kernel/jump_label.c
-new file mode 100644
-index 000000000000..93e3bc84288f
---- /dev/null
-+++ b/arch/arc/kernel/jump_label.c
-@@ -0,0 +1,168 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+#include <linux/kernel.h>
-+#include <linux/jump_label.h>
-+
-+#include "asm/cacheflush.h"
-+
-+#define JUMPLABEL_ERR	"ARC: jump_label: ERROR: "
-+
-+/* Halt system on fatal error to make debug easier */
-+#define arc_jl_fatal(format...)						\
-+({									\
-+	pr_err(JUMPLABEL_ERR format);					\
-+	BUG();								\
-+})
-+
-+static inline u32 arc_gen_nop(void)
-+{
-+	/* 1x 32bit NOP in middle endian */
-+	return 0x7000264a;
-+}
-+
-+static inline bool cross_l1_cache_line(void *addr, int len)
-+{
-+	unsigned long a = (unsigned long)addr;
-+
-+	return (a >> L1_CACHE_SHIFT) != ((a + len - 1) >> L1_CACHE_SHIFT);
-+}
-+
-+/*
-+ * ARCv2 'Branch unconditionally' instruction:
-+ * 00000ssssssssss1SSSSSSSSSSNRtttt
-+ * s S[n:0] lower bits signed immediate (number is bitfield size)
-+ * S S[m:n+1] upper bits signed immediate (number is bitfield size)
-+ * t S[24:21] upper bits signed immediate (branch unconditionally far)
-+ * N N <.d> delay slot mode
-+ * R R Reserved
-+ */
-+static inline u32 arc_gen_branch(jump_label_t pc, jump_label_t target)
-+{
-+	u32 instruction_l, instruction_r;
-+	u32 pcl = pc & GENMASK(31, 2);
-+	u32 u_offset = target - pcl;
-+	u32 s, S, t;
-+
-+	/*
-+	 * Offset in 32-bit branch instruction must to fit into s25.
-+	 * Something is terribly broken if we get such huge offset within one
-+	 * function.
-+	 */
-+	if ((s32)u_offset < -16777216 || (s32)u_offset > 16777214)
-+		arc_jl_fatal("gen branch with offset (%d) not fit in s25\n",
-+			     (s32)u_offset);
-+
-+	/*
-+	 * All instructions are aligned by 2 bytes so we should never get offset
-+	 * here which is not 2 bytes aligned.
-+	 */
-+	if (u_offset & 0x1)
-+		arc_jl_fatal("gen branch with offset (%d) unaligned to 2 bytes\n",
-+			     (s32)u_offset);
-+
-+	s = (u_offset >> 1)  & GENMASK(9, 0);
-+	S = (u_offset >> 11) & GENMASK(9, 0);
-+	t = (u_offset >> 21) & GENMASK(3, 0);
-+
-+	/* 00000ssssssssss1 */
-+	instruction_l = (s << 1) | 0x1;
-+	/* SSSSSSSSSSNRtttt */
-+	instruction_r = (S << 6) | t;
-+
-+	return (instruction_r << 16) | (instruction_l & GENMASK(15, 0));
-+}
-+
-+void arch_jump_label_transform(struct jump_entry *entry,
-+			       enum jump_label_type type)
-+{
-+	jump_label_t *instr_addr = (jump_label_t *)entry->code;
-+	u32 instr;
-+
-+	/*
-+	 * Atomic update of patched instruction is only available if this
-+	 * instruction doesn't cross L1 cache line boundary. You can read about
-+	 * the way we achieve this in arc/include/asm/jump_label.h
-+	 */
-+	if (cross_l1_cache_line(instr_addr, JUMP_LABEL_NOP_SIZE))
-+		arc_jl_fatal("instruction (addr %px) cross L1 cache line",
-+			     instr_addr);
-+
-+	if (type == JUMP_LABEL_JMP)
-+		instr = arc_gen_branch(entry->code, entry->target);
-+	else
-+		instr = arc_gen_nop();
-+
-+	WRITE_ONCE(*instr_addr, instr);
-+	flush_icache_range(entry->code, entry->code + JUMP_LABEL_NOP_SIZE);
-+}
-+
-+void arch_jump_label_transform_static(struct jump_entry *entry,
-+				      enum jump_label_type type)
-+{
-+	/*
-+	 * We use only one NOP type (1x, 4 byte) in arch_static_branch, so
-+	 * there's no need to patch an identical NOP over the top of it here.
-+	 * The generic code calls 'arch_jump_label_transform' if the NOP needs
-+	 * to be replaced by a branch, so 'arch_jump_label_transform_static' is
-+	 * newer called with type other than JUMP_LABEL_NOP.
-+	 */
-+	BUG_ON(type != JUMP_LABEL_NOP);
-+}
-+
-+#ifdef CONFIG_ARC_DBG_STATIC_KEYS
-+#define SELFTEST_MSG	"ARC: instruction generation self-test: "
-+
-+struct arc_gen_branch_testdata {
-+	jump_label_t pc;
-+	jump_label_t target_address;
-+	u32 expected_instr;
-+};
-+
-+static __init int branch_gen_test(struct arc_gen_branch_testdata *test_data)
-+{
-+	u32 instr_got;
-+
-+	instr_got = arc_gen_branch(test_data->pc, test_data->target_address);
-+	if (instr_got != test_data->expected_instr) {
-+		pr_err(SELFTEST_MSG "FAIL:\n arc_gen_branch(0x%08x, 0x%08x) != 0x%08x, got 0x%08x\n",
-+		       test_data->pc, test_data->target_address,
-+		       test_data->expected_instr, instr_got);
-+
-+		return -EFAULT;
-+	}
-+
-+	return 0;
-+}
-+
-+static __init int instr_gen_test(void)
-+{
-+	int i, ret;
-+
-+	struct arc_gen_branch_testdata test_data[] = {
-+		{0x90007548, 0x90007514, 0xffcf07cd}, /* tiny (-52) offs */
-+		{0x9000c9c0, 0x9000c782, 0xffcf05c3}, /* tiny (-574) offs */
-+		{0x9000cc1c, 0x9000c782, 0xffcf0367}, /* tiny (-1178) offs */
-+		{0x9009dce0, 0x9009d106, 0xff8f0427}, /* small (-3034) offs */
-+		{0x9000f5de, 0x90007d30, 0xfc0f0755}, /* big  (-30892) offs */
-+		{0x900a2444, 0x90035f64, 0xc9cf0321}, /* huge (-443616) offs */
-+		{0x90007514, 0x9000752c, 0x00000019}, /* tiny (+24) offs */
-+		{0x9001a578, 0x9001a77a, 0x00000203}, /* tiny (+514) offs */
-+		{0x90031ed8, 0x90032634, 0x0000075d}, /* tiny (+1884) offs */
-+		{0x9008c7f2, 0x9008d3f0, 0x00400401}, /* small (+3072) offs */
-+		{0x9000bb38, 0x9003b340, 0x17c00009}, /* big  (+194568) offs */
-+		{0x90008f44, 0x90578d80, 0xb7c2063d}  /* huge (+5701180) offs */
-+	};
-+
-+	for (i = 0; i < ARRAY_SIZE(test_data); i++) {
-+		ret = branch_gen_test(&test_data[i]);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	pr_info(SELFTEST_MSG "OK\n");
-+
-+	return 0;
-+}
-+early_initcall(instr_gen_test);
-+
-+#endif /* CONFIG_ARC_STATIC_KEYS_DEBUG */
--- 
-2.21.0
+> >  void mmc_set_data_timeout(struct mmc_data *data, const struct mmc_card *card);
+> >
+> >  #endif /* LINUX_MMC_CORE_H */
+> > diff --git a/include/linux/mmc/host.h b/include/linux/mmc/host.h
+> > index 43d0f0c496f6..ecb7972e2423 100644
+> > --- a/include/linux/mmc/host.h
+> > +++ b/include/linux/mmc/host.h
+> > @@ -398,6 +398,7 @@ struct mmc_host {
+> >         unsigned int            retune_now:1;   /* do re-tuning at next req */
+> >         unsigned int            retune_paused:1; /* re-tuning is temporarily disabled */
+> >         unsigned int            use_blk_mq:1;   /* use blk-mq */
+> > +       unsigned int            retune_crc_disable:1; /* don't trigger retune upon crc */
+> >
+> >         int                     rescan_disable; /* disable card detection */
+> >         int                     rescan_entered; /* used with nonremovable devices */
+> > diff --git a/include/linux/mmc/sdio_func.h b/include/linux/mmc/sdio_func.h
+> > index e9dfdd501cd1..4820e6d09dac 100644
+> > --- a/include/linux/mmc/sdio_func.h
+> > +++ b/include/linux/mmc/sdio_func.h
+> > @@ -167,4 +167,7 @@ extern void sdio_f0_writeb(struct sdio_func *func, unsigned char b,
+> >  extern mmc_pm_flag_t sdio_get_host_pm_caps(struct sdio_func *func);
+> >  extern int sdio_set_host_pm_flags(struct sdio_func *func, mmc_pm_flag_t flags);
+> >
+> > +extern void sdio_retune_crc_disable(struct sdio_func *func);
+> > +extern void sdio_retune_crc_enable(struct sdio_func *func);
+> > +
+> >  #endif /* LINUX_MMC_SDIO_FUNC_H */
+> > --
+> > 2.22.0.rc2.383.gf4fbbf30c2-goog
+> >
+>
+> Besides the minor comments, this looks good to me.
 
+Thank you for the reviews!
+
+I'll plan to send a v5 on my Monday with the fixes assuming no new
+heated discussion starts up.  If it's less work for you, I'm also
+happy if you just want to make the trivial fixes yourself when
+applying.
+
+-Doug
