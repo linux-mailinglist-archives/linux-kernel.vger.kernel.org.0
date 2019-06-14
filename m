@@ -2,61 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2644C46380
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 17:58:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 068EE46387
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 17:59:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725942AbfFNP6j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 11:58:39 -0400
-Received: from mga18.intel.com ([134.134.136.126]:2001 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725775AbfFNP6j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 11:58:39 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Jun 2019 08:58:39 -0700
-X-ExtLoop1: 1
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.36])
-  by fmsmga001.fm.intel.com with ESMTP; 14 Jun 2019 08:58:38 -0700
-Date:   Fri, 14 Jun 2019 08:58:38 -0700
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Nadav Amit <namit@vmware.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
-        Borislav Petkov <bp@alien8.de>, x86@kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>
-Subject: Re: [PATCH 8/9] x86/tlb: Privatize cpu_tlbstate
-Message-ID: <20190614155838.GD12191@linux.intel.com>
-References: <20190613064813.8102-1-namit@vmware.com>
- <20190613064813.8102-9-namit@vmware.com>
+        id S1726072AbfFNP7q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 11:59:46 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:38782 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725775AbfFNP7p (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Jun 2019 11:59:45 -0400
+Received: from [5.158.153.52] (helo=nanos.tec.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1hboc2-0002RQ-MH; Fri, 14 Jun 2019 17:59:34 +0200
+Date:   Fri, 14 Jun 2019 17:59:34 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
+cc:     Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@suse.de>,
+        Ashok Raj <ashok.raj@intel.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Andi Kleen <andi.kleen@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Suravee Suthikulpanit <Suravee.Suthikulpanit@amd.com>,
+        Stephane Eranian <eranian@google.com>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        Randy Dunlap <rdunlap@infradead.org>, x86@kernel.org,
+        linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org,
+        Ricardo Neri <ricardo.neri@intel.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Tony Luck <tony.luck@intel.com>,
+        Clemens Ladisch <clemens@ladisch.de>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Subject: Re: [RFC PATCH v4 03/21] x86/hpet: Calculate ticks-per-second in a
+ separate function
+In-Reply-To: <alpine.DEB.2.21.1906141749330.1722@nanos.tec.linutronix.de>
+Message-ID: <alpine.DEB.2.21.1906141756430.1722@nanos.tec.linutronix.de>
+References: <1558660583-28561-1-git-send-email-ricardo.neri-calderon@linux.intel.com> <1558660583-28561-4-git-send-email-ricardo.neri-calderon@linux.intel.com> <alpine.DEB.2.21.1906141749330.1722@nanos.tec.linutronix.de>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190613064813.8102-9-namit@vmware.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 12, 2019 at 11:48:12PM -0700, Nadav Amit wrote:
-> diff --git a/arch/x86/include/asm/tlbflush.h b/arch/x86/include/asm/tlbflush.h
-> index 79272938cf79..a1fea36d5292 100644
-> --- a/arch/x86/include/asm/tlbflush.h
-> +++ b/arch/x86/include/asm/tlbflush.h
+On Fri, 14 Jun 2019, Thomas Gleixner wrote:
+> On Thu, 23 May 2019, Ricardo Neri wrote:
+> >  int hpet_alloc(struct hpet_data *hdp)
+> >  {
+> >  	u64 cap, mcfg;
+> > @@ -844,7 +867,6 @@ int hpet_alloc(struct hpet_data *hdp)
+> >  	struct hpets *hpetp;
+> >  	struct hpet __iomem *hpet;
+> >  	static struct hpets *last;
+> > -	unsigned long period;
+> >  	unsigned long long temp;
+> >  	u32 remainder;
+> >  
+> > @@ -894,12 +916,7 @@ int hpet_alloc(struct hpet_data *hdp)
+> >  
+> >  	last = hpetp;
+> >  
+> > -	period = (cap & HPET_COUNTER_CLK_PERIOD_MASK) >>
+> > -		HPET_COUNTER_CLK_PERIOD_SHIFT; /* fs, 10^-15 */
+> > -	temp = 1000000000000000uLL; /* 10^15 femtoseconds per second */
+> > -	temp += period >> 1; /* round */
+> > -	do_div(temp, period);
+> > -	hpetp->hp_tick_freq = temp; /* ticks per second */
+> > +	hpetp->hp_tick_freq = hpet_get_ticks_per_sec(cap);
+> 
+> Why are we actually computing this over and over?
+> 
+> In hpet_enable() which is the first function invoked we have:
+> 
+>         /*
+>          * The period is a femto seconds value. Convert it to a
+>          * frequency.
+>          */
+>         freq = FSEC_PER_SEC;
+>         do_div(freq, hpet_period);
+>         hpet_freq = freq;
+> 
+> So we already have ticks per second, aka frequency, right? So why do we
+> need yet another function instead of using the value which is computed
+> once? The frequency of the HPET channels has to be identical no matter
+> what. If it's not HPET is broken beyond repair.
 
-...
+Aside of that this change breaks the IA64 support for /dev/hpet.
 
-> @@ -439,6 +442,7 @@ static inline void __native_flush_tlb_one_user(unsigned long addr)
->  {
->  	u32 loaded_mm_asid = this_cpu_read(cpu_tlbstate.loaded_mm_asid);
->  
-> +	//invpcid_flush_one(kern_pcid(loaded_mm_asid), addr);
+Thanks,
 
-Leftover debug/testing code.
-
->  	asm volatile("invlpg (%0)" ::"r" (addr) : "memory");
->  
->  	if (!static_cpu_has(X86_FEATURE_PTI))
+	tglx
