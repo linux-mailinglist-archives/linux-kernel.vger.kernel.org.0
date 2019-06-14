@@ -2,71 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B6BA94662E
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 19:52:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6AE3946632
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 19:52:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726832AbfFNRv4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 13:51:56 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:34453 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726319AbfFNRvz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 13:51:55 -0400
-Received: by mail-qt1-f193.google.com with SMTP id m29so3489299qtu.1;
-        Fri, 14 Jun 2019 10:51:54 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=PST035fihKP7qa7V2kxzXv7aujCa26RgBIP4O3/ziZQ=;
-        b=pZ3KRfVn0qsDF+MqrNJPWTPBrfl8E3yJ11aIH4sslhjAK8KvkgonzStQTGOIHsEhtj
-         fckRk+R0U362vK5N5WyKvoLdrUMJbZDwtzMTIzVN7gzOCmVk8TxUn2tEINjNu67aB1YZ
-         2A1gzXk0UCTT7jvxQINJJ1yHCEc+K0iGQD3gpsq9If8hB9+kGM5xkE5AISMJmFzkFFMB
-         tUoSsJcjjGmS7Kx3BqNLu65sVjGn0OxuyzNtTzniPZwdDyhzt6Dtu3x8XO831FD7AlGi
-         0NIC8x7Qgnv1AQvSY0N887A/xmofXYB4FvkRkdGkHK9+3TlPEVwnmelObcJVXa/dnkfB
-         mpKw==
-X-Gm-Message-State: APjAAAX7xEfJHgNycBg+FrYKBMmcOS7ibwCLY9zqAOanamURQyjD78Ip
-        D5M0nQfcBzijDlor/X90Jw==
-X-Google-Smtp-Source: APXvYqwUnd8FPADe8nH6dseR+TRRkfxHm0kmkb3uxoiwjmhMZifbdpbshCoLVh3igT7lLIlcMAitWA==
-X-Received: by 2002:a0c:86e8:: with SMTP id 37mr9667182qvg.77.1560534714279;
-        Fri, 14 Jun 2019 10:51:54 -0700 (PDT)
-Received: from localhost ([64.188.179.243])
-        by smtp.gmail.com with ESMTPSA id n5sm2197915qta.29.2019.06.14.10.51.53
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Fri, 14 Jun 2019 10:51:53 -0700 (PDT)
-Date:   Fri, 14 Jun 2019 11:51:52 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Erwan Le Ray <erwan.leray@st.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Fabrice Gasnier <fabrice.gasnier@st.com>,
-        Erwan Le Ray <erwan.leray@st.com>
-Subject: Re: [PATCH 1/1] dt-bindings: stm32: serial: Add optional reset
-Message-ID: <20190614175152.GA18378@bogus>
-References: <1558711838-21174-1-git-send-email-erwan.leray@st.com>
+        id S1726877AbfFNRwF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 13:52:05 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:56698 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726319AbfFNRwE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Jun 2019 13:52:04 -0400
+Received: from zn.tnic (p200300EC2F097F008D9D08C27DC27982.dip0.t-ipconnect.de [IPv6:2003:ec:2f09:7f00:8d9d:8c2:7dc2:7982])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id DF1021EC0B6E;
+        Fri, 14 Jun 2019 19:52:02 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1560534723;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=ZhNpbjZ/sBf+ed16pzSV5IxgxQnNnZX7AhIWlrWLi88=;
+        b=DqI2VOouM8YhCWnmDBm5e1AV0aRPDsWP4C3Kf1OGU8kjkdlZ1PuyqQC3ZCounMOdi5KV/k
+        4Y1ReZB1sPHffVjWWQeKASgC1QJFFZtoxmYwFnbTeYe/7+ytsQ7vFrZbjczA9cv8k82jcj
+        Dr6mcduvELwG/yL6Qzfn+SPXXS2zqq8=
+Date:   Fri, 14 Jun 2019 19:51:59 +0200
+From:   Borislav Petkov <bp@alien8.de>
+To:     YueHaibing <yuehaibing@huawei.com>
+Cc:     tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
+        x86@kernel.org, puwen@hygon.cn, bhelgaas@google.com,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH -next] x86/amd_nb: Make hygon_nb_misc_ids static
+Message-ID: <20190614175159.GO2586@zn.tnic>
+References: <20190614155441.22076-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <1558711838-21174-1-git-send-email-erwan.leray@st.com>
+In-Reply-To: <20190614155441.22076-1-yuehaibing@huawei.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 24 May 2019 17:30:38 +0200, Erwan Le Ray wrote:
-> STM32 serial can be reset via reset controller.
-> Add an optional reset property to stm32 usart bindings.
+On Fri, Jun 14, 2019 at 11:54:41PM +0800, YueHaibing wrote:
+> Fix sparse warning:
 > 
-> Signed-off-by: Erwan Le Ray <erwan.leray@st.com>
+> arch/x86/kernel/amd_nb.c:74:28: warning:
+>  symbol 'hygon_nb_misc_ids' was not declared. Should it be static?
 > 
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+	       ^^^^^^^^^^^^^^^^^
 
-Applied, thanks.
+Ha, what is that? :)
 
-Rob
+A new test bot?
+
+-- 
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
