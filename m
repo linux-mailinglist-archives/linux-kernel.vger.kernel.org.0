@@ -2,131 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2508A45A79
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 12:34:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CE58F45A8A
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 12:39:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727093AbfFNKei (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 06:34:38 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:55804 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726693AbfFNKeh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 06:34:37 -0400
-Received: by mail-wm1-f66.google.com with SMTP id a15so1791112wmj.5
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2019 03:34:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=VQlYOuWw/XgKJ5lYOlgzDNhtem0wEWO83AzsJk5siJw=;
-        b=CFkz0AWBLH3qM/wTX9/0rbnEGIdGMhwqDq25JmOGJSDvCx9ui0dw9bqgpr1ksw+LT6
-         VMXk2sllUNdudRlnQH2Z9jYfoaJjzBK0BdkpGhugaQ59wtMT7Fi1LQBmUAcNx7u/Q6pU
-         woUjMPVk5GtD8+dGjT/59hrYjznvzD+kfru+iCm4Tz+MtFEks/RA/Kl9F9z+YnEp4Rj6
-         sL4tqPfeAmH+cBDQDwBd7Dr9J45Vc23gasoIa+2gUZSSujFqmnL1Cd4a2nk5nisrD3o2
-         zIEygEfF25IlZJQyz3E3gS73g0A/n8nN0PtL72QnwI6a6tCnEqMvkchTeYiJ1eSFbbrZ
-         iG7A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=VQlYOuWw/XgKJ5lYOlgzDNhtem0wEWO83AzsJk5siJw=;
-        b=YMvaAfKbxiFLjQL/iF+2bqtdaYR270eJWKiI0YIE2oB4tsirqb7I9ag2eW5cjRY9hB
-         3bJMg1UcF1+ukNKo17BgC+AUiI+lq7Q+6mpRGZ38PPEqgPEzrvYpPGXPsfwXIIB6RSRp
-         v8XILx0Jx1myvD8EZz1Tnb8Lm1qXFktwc5tsqCFvVMOwbzXXyB0BANxmHbC/cYxMf848
-         QH/X/IbmQT4IT9ca4G0VvxwkByuxszyn5/XKZeb6eOJU/UUbCYejU7TW2G4RB3kThmIy
-         UXoF8TpMdbLEcrJnVbXyOQIU8kqCAVKmmUh8FdJhQHuxW8RYwRMGTQHj4Amkzyv1X/nk
-         DVvA==
-X-Gm-Message-State: APjAAAUH+PSkWH7eko1zBjJPEGZe9b98xJ4EibbidkGEQShs8cK6P069
-        jcHERZAbkqVeatSA1iYUIl6yyw==
-X-Google-Smtp-Source: APXvYqzMy7f04xPUuO0lEJs4Zkj7eAmy4TPUQhawhEeebqMCl/nBD1FiRvyH776EUxFte8zki3W9TQ==
-X-Received: by 2002:a7b:c933:: with SMTP id h19mr7726918wml.52.1560508474645;
-        Fri, 14 Jun 2019 03:34:34 -0700 (PDT)
-Received: from apalos (athedsl-4461147.home.otenet.gr. [94.71.2.75])
-        by smtp.gmail.com with ESMTPSA id s10sm3938737wrw.45.2019.06.14.03.34.33
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 14 Jun 2019 03:34:34 -0700 (PDT)
-Date:   Fri, 14 Jun 2019 13:34:30 +0300
-From:   Ilias Apalodimas <ilias.apalodimas@linaro.org>
-To:     Sasha Levin <sashal@kernel.org>
-Cc:     Sumit Garg <sumit.garg@linaro.org>, peterhuewe@gmx.de,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        jgg@ziepe.ca, corbet@lwn.net,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-doc@vger.kernel.org, linux-integrity@vger.kernel.org,
-        Microsoft Linux Kernel List <linux-kernel@microsoft.com>,
-        Thirupathaiah Annapureddy <thiruan@microsoft.com>,
-        "Bryan Kelly (CSI)" <bryankel@microsoft.com>,
-        tee-dev@lists.linaro.org
-Subject: Re: [PATCH v4 1/2] fTPM: firmware TPM running in TEE
-Message-ID: <20190614103430.GA6108@apalos>
-References: <20190530152758.16628-1-sashal@kernel.org>
- <20190530152758.16628-2-sashal@kernel.org>
- <CAFA6WYM1NrghG9qxUhrm76kopvBx9nmCL9XnRs11ysb2Yr0+Qw@mail.gmail.com>
- <20190604200951.GB29739@sasha-vm>
- <CAFA6WYMOjgHRw9RVrjherNo0ZNbTtEonPwSFFC0dT4CZO=A1NQ@mail.gmail.com>
- <20190613171141.GL1513@sasha-vm>
+        id S1727179AbfFNKiy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 06:38:54 -0400
+Received: from foss.arm.com ([217.140.110.172]:59062 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727141AbfFNKix (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Jun 2019 06:38:53 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 473812B;
+        Fri, 14 Jun 2019 03:38:53 -0700 (PDT)
+Received: from fuggles.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id F2CF63F246;
+        Fri, 14 Jun 2019 03:40:35 -0700 (PDT)
+Date:   Fri, 14 Jun 2019 11:38:50 +0100
+From:   Will Deacon <will.deacon@arm.com>
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc:     Jayachandran Chandrasekharan Nair <jnair@marvell.com>,
+        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+        Jan Glauber <jglauber@marvell.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Kees Cook <keescook@chromium.org>
+Subject: Re: [RFC] Disable lockref on arm64
+Message-ID: <20190614103850.GG10659@fuggles.cambridge.arm.com>
+References: <20190506061100.GA8465@dc5-eodlnx05.marvell.com>
+ <20190506181039.GA2875@brain-police>
+ <20190518042424.GA28517@dc5-eodlnx05.marvell.com>
+ <CAKv+Gu9U9z3iAuz4V1c5zTHuz1As8FSNGY-TJon4OLErB8ts8Q@mail.gmail.com>
+ <20190522160417.GF7876@fuggles.cambridge.arm.com>
+ <20190612040933.GA18848@dc5-eodlnx05.marvell.com>
+ <20190612093151.GA11554@brain-police>
+ <20190614070914.GA21961@dc5-eodlnx05.marvell.com>
+ <20190614095846.GC10506@fuggles.cambridge.arm.com>
+ <CAKv+Gu_Kdq=UPijjA84FpmO=ZsdEO9EyyF7GeOQ+WmfqtO_hMg@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190613171141.GL1513@sasha-vm>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <CAKv+Gu_Kdq=UPijjA84FpmO=ZsdEO9EyyF7GeOQ+WmfqtO_hMg@mail.gmail.com>
+User-Agent: Mutt/1.11.1+86 (6f28e57d73f2) ()
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Sasha, 
-On Thu, Jun 13, 2019 at 01:11:41PM -0400, Sasha Levin wrote:
-> On Wed, Jun 05, 2019 at 04:39:36PM +0530, Sumit Garg wrote:
-> >On Wed, 5 Jun 2019 at 01:39, Sasha Levin <sashal@kernel.org> wrote:
-> >>
-> >>On Tue, Jun 04, 2019 at 11:45:52AM +0530, Sumit Garg wrote:
-> >>>On Thu, 30 May 2019 at 20:58, Sasha Levin <sashal@kernel.org> wrote:
-> >>>> +       /* Open context with TEE driver */
-> >>>> +       pvt_data->ctx = tee_client_open_context(NULL, ftpm_tee_match, NULL,
-> >>>> +                                               NULL);
-> >>>> +       if (IS_ERR(pvt_data->ctx)) {
-> >>>> +               dev_err(dev, "%s:tee_client_open_context failed\n", __func__);
-> >>>
-> >>>Is this well tested? I see this misleading error multiple times as
-> >>>follows although TEE driver works pretty well.
-> >>
-> >>Yes, this was all functionally tested.
-I did test as well with a DeveloperBox, i can confirm the driver is loading (but
-i have no fTPM support on the OP-TEE side for now)
+Hi Ard,
 
+On Fri, Jun 14, 2019 at 12:24:54PM +0200, Ard Biesheuvel wrote:
+> On Fri, 14 Jun 2019 at 11:58, Will Deacon <will.deacon@arm.com> wrote:
+> > On Fri, Jun 14, 2019 at 07:09:26AM +0000, Jayachandran Chandrasekharan Nair wrote:
+> > > x86 added a arch-specific fast refcount implementation - and the commit
+> > > specifically notes that it is faster than cmpxchg based code[1].
+> > >
+> > > There seems to be an ongoing effort to move over more and more subsystems
+> > > from atomic_t to refcount_t(e.g.[2]), specifically because refcount_t on
+> > > x86 is fast enough and you get some error checking atomic_t that does not
+> > > have.
+> >
+> > Correct, but there are also some cases that are only caught by
+> > REFCOUNT_FULL.
+> >
+> Yes, but do note that my arm64 implementation catches
+> increment-from-zero as well.
 
-apalos@mule:~>sudo dmesg | grep optee
-[sudo] password for apalos: 
-[    5.035801] optee: probing for conduit method from DT.
-[    5.041045] optee: revision 3.2 (53bf1c38)
-[    5.041772] optee: initialized driver
-apalos@mule:~>sudo dmesg | grep tpm
-[    5.000674] ftpm-tee tpm@0: ftpm_tee_probe:tee_client_open_context failed
-[    5.101655] ftpm-tee tpm@0: ftpm_tee_probe:tee_client_open_session failed,
-err=ffff000c
-[    5.109703] ftpm-tee: probe of tpm@0 failed with error -22
+Ok, so it's just the silly racy cases that are problematic?
 
-
-The error -22 is nice since the probe eventually failed (no fTPM support in
-secure world). Can we slightly change the
-'ftpm_tee_probe:tee_client_open_context failed' and indicate this is not a real
-error since the probe gets deferred untill Secure world is alive?
-
-By the way there is *real* interest for this functionality. I expect to run it
-on a number of Arm boards once i get some free time.
-
-> >Can you share your build instructions and testing approach?
+> > > Do you think Ard's patch needs changes before it can be considered? I
+> > > can take a look at that.
+> >
+> > I would like to see how it performs if we keep the checking inline, yes.
+> > I suspect Ard could spin this in short order.
 > 
-> Yes: it looks like you got all the kernel bits, but not the firmware.
-> There are instructions for it here: https://github.com/microsoft/ms-tpm-20-ref
-> 
-> Once it's running, you can test it by running your favorite TPM usecases
-> through /dev/tpm0.
-> 
-> --
-> Thanks,
-> Sasha
+> Moving the post checks before the stores you mean? That shouldn't be
+> too difficult, I suppose, but it will certainly cost performance.
 
-Thanks
-/Ilias
+That's what I'd like to assess, since the major complaint seems to be the
+use of cmpxchg() as opposed to inline branching.
+
+> > > > Whatever we do, I prefer to keep REFCOUNT_FULL the default option for arm64,
+> > > > so if we can't keep the semantics when we remove the cmpxchg, you'll need to
+> > > > opt into this at config time.
+> > >
+> > > Only arm64 and arm selects REFCOUNT_FULL in the default config. So please
+> > > reconsider this! This is going to slow down arm64 vs. other archs and it
+> > > will become worse when more code adopts refcount_t.
+> >
+> > Maybe, but faced with the choice between your micro-benchmark results and
+> > security-by-default for people using the arm64 Linux kernel, I really think
+> > that's a no-brainer. I'm well aware that not everybody agrees with me on
+> > that.
+> 
+> I think the question whether the benchmark is valid is justified, but
+> otoh, we are obsessed with hackbench which is not that representative
+> of a real workload either. It would be better to discuss these changes
+> in the context of known real-world use cases where refcounts are a
+> true bottleneck.
+
+I wasn't calling into question the validity of the benchmark (I really have
+no clue about that), but rather that you can't have your cake and eat it.
+Faced with the choice, I'd err on the security side because it's far easier
+to explain to somebody that the default is full mitigation at a cost than it
+is to explain why a partial mitigation is acceptable (and in the end it's
+often subjective because people have different thresholds).
+
+> Also, I'd like to have Kees's view on the gap between REFCOUNT_FULL
+> and the fast version on arm64. I'm not convinced the cases we are not
+> covering are such a big deal.
+
+Fair enough, but if the conclusion is that it's not a big deal then we
+should just remove REFCOUNT_FULL altogether, because it's the choice that
+is the problem here.
+
+Will
