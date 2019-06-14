@@ -2,122 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 058FF459C0
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 11:59:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5A60D459D5
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 12:02:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727341AbfFNJ7d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 05:59:33 -0400
-Received: from kadath.azazel.net ([81.187.231.250]:41598 "EHLO
-        kadath.azazel.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726767AbfFNJ7c (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 05:59:32 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=azazel.net;
-         s=20190108; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=+SqYUowZr52aqAdLPxRNaayVXCYX/FhSATpPUJOhNrw=; b=EJlBGeh1c7hJ9Ws6hHNTKAepg/
-        tgaD0qi533U8Qu9foxsKUShJesrorJjYJNOgEqDWQUtG4vFR2Zb03OMDqWK8TdZGxhLCGQGwebKd8
-        pq+euhq83cOJHmesuPoikyW7vzgsJP6jLvfXKVlIiDF4Ec4+o65kLduKheMcXMmWK869T85lagj2z
-        3SniQ/Gz3ePrx+6k1+aKnO8JqJ/ZCHPTA3fNoNj66ncUYCeka+uEifFIKagcD4N2XBXCgmWTMyRRG
-        7+sQ9vjH/WVuydB0MbDhki5nfmw8j4yc0+64HNCYqYf7yqbvNSNFeyLjkAlcqHR28qOg779JYaLeF
-        DQsVL/0A==;
-Received: from kadath.azazel.net ([2001:8b0:135f:bcd1:e2cb:4eff:fedf:e608] helo=azazel.net)
-        by kadath.azazel.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <jeremy@azazel.net>)
-        id 1hbizT-0006xV-OC; Fri, 14 Jun 2019 10:59:23 +0100
-Date:   Fri, 14 Jun 2019 10:59:22 +0100
-From:   Jeremy Sowden <jeremy@azazel.net>
-To:     Steffen Klassert <steffen.klassert@secunet.com>, g@azazel.net
-Cc:     Young Xiao <92siuyang@gmail.com>, herbert@gondor.apana.org.au,
-        davem@davemloft.net, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] af_key: Fix memory leak in key_notify_policy.
-Message-ID: <20190614095922.k5yzeyew2zhrfp7e@azazel.net>
-References: <1560500786-572-1-git-send-email-92siuyang@gmail.com>
- <20190614085346.GN17989@gauss3.secunet.de>
+        id S1727484AbfFNKB7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 06:01:59 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:59120 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727447AbfFNKBy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Jun 2019 06:01:54 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 7B670308FBB4;
+        Fri, 14 Jun 2019 10:01:33 +0000 (UTC)
+Received: from t460s.redhat.com (ovpn-116-252.ams2.redhat.com [10.36.116.252])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 22F6D5D9C3;
+        Fri, 14 Jun 2019 10:01:14 +0000 (UTC)
+From:   David Hildenbrand <david@redhat.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Dan Williams <dan.j.williams@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linuxppc-dev@lists.ozlabs.org, linux-acpi@vger.kernel.org,
+        linux-mm@kvack.org, David Hildenbrand <david@redhat.com>,
+        Andrew Banman <andrew.banman@hpe.com>,
+        Anshuman Khandual <anshuman.khandual@arm.com>,
+        Arun KS <arunks@codeaurora.org>, Baoquan He <bhe@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Juergen Gross <jgross@suse.com>,
+        Keith Busch <keith.busch@intel.com>,
+        Len Brown <lenb@kernel.org>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Michael Neuling <mikey@neuling.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        "mike.travis@hpe.com" <mike.travis@hpe.com>,
+        Oscar Salvador <osalvador@suse.com>,
+        Oscar Salvador <osalvador@suse.de>,
+        Paul Mackerras <paulus@samba.org>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        Pavel Tatashin <pasha.tatashin@soleen.com>,
+        Pavel Tatashin <pavel.tatashin@microsoft.com>,
+        Qian Cai <cai@lca.pw>, "Rafael J. Wysocki" <rafael@kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Rashmica Gupta <rashmica.g@gmail.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Wei Yang <richard.weiyang@gmail.com>
+Subject: [PATCH v1 0/6] mm: Further memory block device cleanups
+Date:   Fri, 14 Jun 2019 12:01:08 +0200
+Message-Id: <20190614100114.311-1-david@redhat.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="okvcvc2i7gz2dbyk"
-Content-Disposition: inline
-In-Reply-To: <20190614085346.GN17989@gauss3.secunet.de>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:8b0:135f:bcd1:e2cb:4eff:fedf:e608
-X-SA-Exim-Mail-From: jeremy@azazel.net
-X-SA-Exim-Scanned: No (on kadath.azazel.net); SAEximRunCond expanded to false
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Fri, 14 Jun 2019 10:01:54 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Some further cleanups around memory block devices. Especially, clean up
+and simplify walk_memory_range(). Including some other minor cleanups.
 
---okvcvc2i7gz2dbyk
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Based on: linux-next
 
-On 2019-06-14, at 10:53:46 +0200, Steffen Klassert wrote:
-> On Fri, Jun 14, 2019 at 04:26:26PM +0800, Young Xiao wrote:
-> > We leak the allocated out_skb in case pfkey_xfrm_policy2msg() fails.
-> > Fix this by freeing it on error.
-> >
-> > Signed-off-by: Young Xiao <92siuyang@gmail.com>
-> > ---
-> >  net/key/af_key.c | 2 ++
-> >  1 file changed, 2 insertions(+)
-> >
-> > diff --git a/net/key/af_key.c b/net/key/af_key.c
-> > index 4af1e1d..ec414f6 100644
-> > --- a/net/key/af_key.c
-> > +++ b/net/key/af_key.c
-> > @@ -2443,6 +2443,7 @@ static int key_pol_get_resp(struct sock *sk, struct xfrm_policy *xp, const struc
-> >  	}
-> >  	err = pfkey_xfrm_policy2msg(out_skb, xp, dir);
-> >  	if (err < 0)
-> > +		kfree_skb(out_skb);
-> >  		goto out;
->
-> Did you test this?
->
-> You need to add braces, otherwise 'goto out' will happen unconditionally.
->
-> >
-> >  	out_hdr = (struct sadb_msg *) out_skb->data;
-> > @@ -2695,6 +2696,7 @@ static int dump_sp(struct xfrm_policy *xp, int dir, int count, void *ptr)
-> >
-> >  	err = pfkey_xfrm_policy2msg(out_skb, xp, dir);
-> >  	if (err < 0)
-> > +		kfree_skb(out_skb);
-> >  		return err;
->
-> Same here.
+Minor conflict with Dan's subsection hot-add series.
+Compiled + tested on x86 with DIMMs under QEMU.
 
-There's already a patch for this:
+David Hildenbrand (6):
+  mm: Section numbers use the type "unsigned long"
+  drivers/base/memory: Use "unsigned long" for block ids
+  mm: Make register_mem_sect_under_node() static
+  mm/memory_hotplug: Rename walk_memory_range() and pass start+size
+    instead of pfns
+  mm/memory_hotplug: Move and simplify walk_memory_blocks()
+  drivers/base/memory.c: Get rid of find_memory_block_hinted()
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/klassert/ipsec.git/commit/?id=7c80eb1c7e2b8420477fbc998971d62a648035d9
+ arch/powerpc/platforms/powernv/memtrace.c | 22 +++---
+ drivers/acpi/acpi_memhotplug.c            | 19 ++----
+ drivers/base/memory.c                     | 81 +++++++++++++++++------
+ drivers/base/node.c                       |  8 ++-
+ include/linux/memory.h                    |  5 +-
+ include/linux/memory_hotplug.h            |  2 -
+ include/linux/mmzone.h                    |  4 +-
+ include/linux/node.h                      |  7 --
+ mm/memory_hotplug.c                       | 57 +---------------
+ mm/sparse.c                               | 12 ++--
+ 10 files changed, 92 insertions(+), 125 deletions(-)
 
-J.
+-- 
+2.21.0
 
---okvcvc2i7gz2dbyk
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEZ8d+2N/NBLDbUxIF0Z7UzfnX9sMFAl0Db/kACgkQ0Z7UzfnX
-9sO+dg//X5IBarNnBL4+mJo1PVkihtoJNZib7SkyNpJjU74rQ5lfILTPWBKkxOHD
-LFQt62krPp/IUE328UQthubS8BbJWSDJ7BF9HUtHlme2nZoxjgfPxvn3EvAkhQTn
-DjoeP9hOrRgn1ufCqU09n+drVOl/tTxOZIuGK4XT0j0Ycp4PpW3fPng3gs5x4eNS
-YPrLZU51nOU46GQW8b60BSgoG5h2YytLwJ4kicaJGjZxhZZOtKycrX5oc5YnnU8Z
-ki7zUF/eU5Hni231wjhJBLs8uNTtll7g8Nl8oYogDlCo1EwFukScqS9dPXev7SKZ
-4W9Xm8xP2aHAGvylJJhvFpqQ/gR5U9MkXr+gmc6uachuiZrbp3zCDyKgYt+hxZG9
-lnLjLKxNm4Bc+Wwn38BvoBcg03q850BEUGdfANpM1l/aFS+va27MFGX0wnWFsVfV
-ChOS0BfrqrOwpvLFUjFN7Ojvli+9Qs+KWiwHzp7dJFltnntif1J8i27T6v0cjQBL
-irphre+3e96UgilQ/1+ygZQi/h4SwQzt8yEfGXo3Gx8sGb7VSaYS43oW3jzhH4Rm
-WgQWyFnlzbUtaz/SZMXvj5vUaQhTUjpVHG/Ws5vkEE+ED7CGdu0r4J1j0+EfLQOi
-TJPyklntEQv4rzJHQK18+InPJgQ7HTox2Yft8rfjEZ2dSa2R6UI=
-=Llij
------END PGP SIGNATURE-----
-
---okvcvc2i7gz2dbyk--
