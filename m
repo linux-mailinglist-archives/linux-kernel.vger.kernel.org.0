@@ -2,98 +2,148 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 21C2D45198
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 03:58:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 24ABC451A4
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 04:04:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726800AbfFNB6w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 21:58:52 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:42832 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726011AbfFNB6w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 21:58:52 -0400
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id A6CBB3083394;
-        Fri, 14 Jun 2019 01:58:51 +0000 (UTC)
-Received: from treble (ovpn-121-232.rdu2.redhat.com [10.10.121.232])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 9918119C67;
-        Fri, 14 Jun 2019 01:58:50 +0000 (UTC)
-Date:   Thu, 13 Jun 2019 20:58:48 -0500
-From:   Josh Poimboeuf <jpoimboe@redhat.com>
-To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc:     x86@kernel.org, linux-kernel@vger.kernel.org,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>, netdev@vger.kernel.org,
-        bpf@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
-        Song Liu <songliubraving@fb.com>,
-        Kairui Song <kasong@redhat.com>
-Subject: Re: [PATCH 7/9] x86/unwind/orc: Fall back to using frame pointers
- for generated code
-Message-ID: <20190614015848.todgfogryjn573nd@treble>
-References: <cover.1560431531.git.jpoimboe@redhat.com>
- <4f536ec4facda97406273a22a4c2677f7cb22148.1560431531.git.jpoimboe@redhat.com>
- <20190613220054.tmonrgfdeie2kl74@ast-mbp.dhcp.thefacebook.com>
- <20190614013051.6gnwduy4dsygbamj@treble>
- <20190614014244.st7fbr6areazmyrb@ast-mbp.dhcp.thefacebook.com>
+        id S1727383AbfFNCEi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 22:04:38 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:52986 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727264AbfFNCEe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Jun 2019 22:04:34 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Sender:Content-Transfer-Encoding:
+        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Reply-To:Content-Type:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=aQUK413dBnPXJRbLUE6/RHV++edzrn3sivF8fzDWpGc=; b=hkvPTUNcFjmIKqVi/42DI9hcc
+        djs1/CZZ1gEi9/pkYp7JBfy+mzE4TN3vkpNxJQh+cxpMRjoZUQcYKThK+Lbc9vaeo/sl8COrkoihQ
+        2Nkm9p9a41yPkSk0oiQ+uqa9oaJuLpxhPzO87IqfhV1REBX6QdyTJk7Iexd5hgkPKXUb5IA07VKQe
+        XftuKi6beE3iXFUKmgQ526h4XS+dEAK09FLVKDxMSBZDMm71B91V+TcVb8eWcF/Dwv1toe1WcA/6A
+        XywndEaNPy/piJ98UTvHIdgHMyT3QFWskJPRUdKWRYklnTH2RNGvnLIL8zv28a+39Mv9Q16ozoVaQ
+        AKLPWGR4A==;
+Received: from 201.86.169.251.dynamic.adsl.gvt.net.br ([201.86.169.251] helo=bombadil.infradead.org)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1hbbZv-0000EJ-7a; Fri, 14 Jun 2019 02:04:31 +0000
+Received: from mchehab by bombadil.infradead.org with local (Exim 4.92)
+        (envelope-from <mchehab@bombadil.infradead.org>)
+        id 1hbbZn-0002nV-M0; Thu, 13 Jun 2019 23:04:23 -0300
+From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Mauro Carvalho Chehab <mchehab@infradead.org>,
+        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+        linuxppc-dev@lists.ozlabs.org,
+        Andrew Donnellan <ajd@linux.ibm.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Anton Vorontsov <anton@enomsg.org>, linux-pm@vger.kernel.org,
+        Colin Cross <ccross@android.com>, linux-iio@vger.kernel.org,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Sebastian Reichel <sre@kernel.org>,
+        Frederic Barrat <fbarrat@linux.ibm.com>,
+        Andreas Klinger <ak@it-klinger.de>,
+        Tony Luck <tony.luck@intel.com>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Stefan Achatz <erazor_de@users.sourceforge.net>,
+        Kees Cook <keescook@chromium.org>
+Subject: [PATCH 00/14] Add support to generate ABI documentation at admin-guide
+Date:   Thu, 13 Jun 2019 23:04:06 -0300
+Message-Id: <cover.1560477540.git.mchehab+samsung@kernel.org>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190614014244.st7fbr6areazmyrb@ast-mbp.dhcp.thefacebook.com>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Fri, 14 Jun 2019 01:58:51 +0000 (UTC)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 13, 2019 at 06:42:45PM -0700, Alexei Starovoitov wrote:
-> On Thu, Jun 13, 2019 at 08:30:51PM -0500, Josh Poimboeuf wrote:
-> > On Thu, Jun 13, 2019 at 03:00:55PM -0700, Alexei Starovoitov wrote:
-> > > > @@ -392,8 +402,16 @@ bool unwind_next_frame(struct unwind_state *state)
-> > > >  	 * calls and calls to noreturn functions.
-> > > >  	 */
-> > > >  	orc = orc_find(state->signal ? state->ip : state->ip - 1);
-> > > > -	if (!orc)
-> > > > -		goto err;
-> > > > +	if (!orc) {
-> > > > +		/*
-> > > > +		 * As a fallback, try to assume this code uses a frame pointer.
-> > > > +		 * This is useful for generated code, like BPF, which ORC
-> > > > +		 * doesn't know about.  This is just a guess, so the rest of
-> > > > +		 * the unwind is no longer considered reliable.
-> > > > +		 */
-> > > > +		orc = &orc_fp_entry;
-> > > > +		state->error = true;
-> > > 
-> > > That seems fragile.
-> > 
-> > I don't think so.  The unwinder has sanity checks to make sure it
-> > doesn't go off the rails.  And it works just fine.  The beauty is that
-> > it should work for all generated code (not just BPF).
-> > 
-> > > Can't we populate orc_unwind tables after JIT ?
-> > 
-> > As I mentioned it would introduce a lot more complexity.  For each JIT
-> > function, BPF would have to tell ORC the following:
-> > 
-> > - where the BPF function lives
-> > - how big the stack frame is
-> > - where RBP and other callee-saved regs are on the stack
-> 
-> that sounds like straightforward addition that ORC should have anyway.
-> right now we're not using rbp in the jit-ed code,
-> but one day we definitely will.
-> Same goes for r12. It's reserved right now for 'strategic use'.
-> We've been thinking to add another register to bpf isa.
-> It will map to r12 on x86. arm64 and others have plenty of regs to use.
-> The programs are getting bigger and register spill/fill starting to
-> become a performance concern. Extra register will give us more room.
+Greg,
 
-With CONFIG_FRAME_POINTER, RBP isn't available.  If you look at all the
-code in the entire kernel you'll notice that BPF JIT is pretty much the
-only one still clobbering it.
+As promised, I'm resending the patch series with adds the Kernel ABI to
+Documentation/admin-guide.
+
+Those patches are basically the version 3 patchset I sent back in 2017,
+rebased on the top of linux-next (next-20190613), and with some fixes
+in order for it to work.
+
+- The 4 initial patches to fix some ABI descriptions that are violating 
+  the syntax described at Documentation/ABI/README;
+
+- The next 6 patches are the ones originally written in 2017 with a
+  script with parses the ABI files;
+
+- The 11th patch is a new one: it relaxes a little bit the parser in 
+  order to parse file headers that contains colons on it;
+
+- The 12th patch adds the new script to the documentation build
+  system, together with a new python Sphinx extension with calls it;
+
+- The 13th patch fixes the python script when running with newer
+  Sphinx versions (1.7 and upper);
+
+- The final patch fixes an UTF-8 trouble. I noticed it only with Sphinx
+  1.4, but it could affect other versions too. So, I ended by changing
+  the UTF-8 encoding logit to work version-independent, just like
+  what happens with kerneldoc.py extension.
+
+Mauro Carvalho Chehab (14):
+  ABI: fix some syntax issues at the ABI database
+  ABI: sysfs-driver-hid: the "What" field doesn't parse fine
+  ABI: sysfs-class-uwb_rc: remove a duplicated incomplete entry
+  ABI: better identificate tables
+  scripts: add an script to parse the ABI files
+  scripts/get_abi.pl: parse files with text at beginning
+  scripts/get_abi.pl: avoid use literal blocks when not needed
+  scripts/get_abi.pl: split label naming from xref logic
+  scripts/get_abi.pl: add support for searching for ABI symbols
+  scripts/get_abi.pl: represent what in tables
+  scripts/get_abi.pl: fix parse issues with some files
+  doc-rst: add ABI documentation to the admin-guide book
+  sphinx/kernel_abi.py: make it compatible with Sphinx 1.7+
+  docs: sphinx/kernel_abi.py: fix UTF-8 support
+
+ .../ABI/obsolete/sysfs-driver-hid-roccat-pyra |   2 +-
+ Documentation/ABI/testing/pstore              |   2 +-
+ .../sysfs-bus-event_source-devices-format     |   2 +-
+ .../ABI/testing/sysfs-bus-i2c-devices-hm6352  |   6 +-
+ .../ABI/testing/sysfs-bus-iio-distance-srf08  |   4 +-
+ .../testing/sysfs-bus-iio-proximity-as3935    |   4 +-
+ .../ABI/testing/sysfs-bus-pci-devices-cciss   |  22 +-
+ .../testing/sysfs-bus-usb-devices-usbsevseg   |  12 +-
+ .../sysfs-class-backlight-driver-lm3533       |   6 +-
+ Documentation/ABI/testing/sysfs-class-cxl     |   6 +-
+ Documentation/ABI/testing/sysfs-class-devfreq |   2 +-
+ .../ABI/testing/sysfs-class-led-driver-lm3533 |   8 +-
+ .../ABI/testing/sysfs-class-leds-gt683r       |   4 +-
+ .../ABI/testing/sysfs-class-powercap          |   2 +-
+ Documentation/ABI/testing/sysfs-class-uwb_rc  |   6 -
+ Documentation/ABI/testing/sysfs-driver-hid    |  12 +-
+ .../ABI/testing/sysfs-driver-hid-roccat-kone  |   2 +-
+ Documentation/ABI/testing/sysfs-kernel-fscaps |   2 +-
+ .../ABI/testing/sysfs-kernel-vmcoreinfo       |   2 +-
+ Documentation/admin-guide/abi-obsolete.rst    |  10 +
+ Documentation/admin-guide/abi-removed.rst     |   4 +
+ Documentation/admin-guide/abi-stable.rst      |  13 +
+ Documentation/admin-guide/abi-testing.rst     |  19 +
+ Documentation/admin-guide/abi.rst             |  11 +
+ Documentation/admin-guide/index.rst           |   1 +
+ Documentation/conf.py                         |   2 +-
+ Documentation/sphinx/kernel_abi.py            | 172 +++++++
+ scripts/get_abi.pl                            | 450 ++++++++++++++++++
+ 28 files changed, 731 insertions(+), 57 deletions(-)
+ create mode 100644 Documentation/admin-guide/abi-obsolete.rst
+ create mode 100644 Documentation/admin-guide/abi-removed.rst
+ create mode 100644 Documentation/admin-guide/abi-stable.rst
+ create mode 100644 Documentation/admin-guide/abi-testing.rst
+ create mode 100644 Documentation/admin-guide/abi.rst
+ create mode 100644 Documentation/sphinx/kernel_abi.py
+ create mode 100755 scripts/get_abi.pl
 
 -- 
-Josh
+2.21.0
+
+
