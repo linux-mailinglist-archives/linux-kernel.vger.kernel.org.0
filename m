@@ -2,109 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C2F2746350
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 17:49:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D7D3E4634B
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 17:48:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726447AbfFNPtE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 11:49:04 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:37860 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726184AbfFNPsn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 11:48:43 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id B356EC057E65;
-        Fri, 14 Jun 2019 15:48:40 +0000 (UTC)
-Received: from ceranb.redhat.com (ovpn-204-86.brq.redhat.com [10.40.204.86])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 9BC7054696;
-        Fri, 14 Jun 2019 15:48:37 +0000 (UTC)
-From:   Ivan Vecera <ivecera@redhat.com>
-To:     netdev@vger.kernel.org
-Cc:     Tianhao <tizhao@redhat.com>,
-        Sathya Perla <sathya.perla@broadcom.com>,
-        Ajit Khaparde <ajit.khaparde@broadcom.com>,
-        Sriharsha Basavapatna <sriharsha.basavapatna@broadcom.com>,
-        Somnath Kotur <somnath.kotur@broadcom.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH net] be2net: Fix number of Rx queues used for flow hashing
-Date:   Fri, 14 Jun 2019 17:48:36 +0200
-Message-Id: <20190614154836.22172-1-ivecera@redhat.com>
+        id S1726344AbfFNPsu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 11:48:50 -0400
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:15148 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726298AbfFNPsr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Jun 2019 11:48:47 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5d03c1de0001>; Fri, 14 Jun 2019 08:48:46 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Fri, 14 Jun 2019 08:48:46 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Fri, 14 Jun 2019 08:48:46 -0700
+Received: from [10.26.11.12] (172.20.13.39) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 14 Jun
+ 2019 15:48:44 +0000
+Subject: Re: [PATCH v2 5/6] clocksource/drivers/tegra: Add verbose definition
+ for 1MHz constant
+To:     Dmitry Osipenko <digetx@gmail.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Joseph Lo <josephl@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>
+CC:     <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20190610164400.11830-1-digetx@gmail.com>
+ <20190610164400.11830-6-digetx@gmail.com>
+From:   Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <2d890693-20b5-6f1d-89c8-f89533f04f22@nvidia.com>
+Date:   Fri, 14 Jun 2019 16:48:41 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Fri, 14 Jun 2019 15:48:42 +0000 (UTC)
+In-Reply-To: <20190610164400.11830-6-digetx@gmail.com>
+X-Originating-IP: [172.20.13.39]
+X-ClientProxiedBy: HQMAIL106.nvidia.com (172.18.146.12) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1560527326; bh=mL9uq+zgkQoheW7I6zgddAifZts2XKq2svr6yIs+L1E=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=aF+fQfFb4btr30nxav/w2tKyLXnX98ExqLjIcfEjuToLwuJV95Cwmq/K/lxN81hmd
+         9MCNUosn2GvMsnHNLvgcgVkbHUVMlRf9c0kFZrsuRsOjYepidD5wOi8MMp70T4KHG/
+         mlRHjJqWQEZSBRaxCLP0GOJ8kOxwlKDVzaZWyC/8FCD7ISaXvjZlD3l5p6KFG2vrwI
+         HOLXc7LVrJZCbIYt9cSg+S3wWjKFJ4KuDQWT9976QyEOOoHnq1vb8k1vg+cL0IoKL5
+         m1/br5erny33qwYVljrmpphloACv01+ESDXavFY2hST9tLGJS9ACUEgdjkjWODqLVt
+         VAxy7yhiVn7eg==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Number of Rx queues used for flow hashing returned by the driver is
-incorrect and this bug prevents user to use the last Rx queue in
-indirection table.
 
-Let's say we have a NIC with 6 combined queues:
+On 10/06/2019 17:43, Dmitry Osipenko wrote:
+> Convert all 1MHz literals to a verbose constant for better readability.
+> 
+> Suggested-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+>  drivers/clocksource/timer-tegra.c | 12 +++++++-----
+>  1 file changed, 7 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/clocksource/timer-tegra.c b/drivers/clocksource/timer-tegra.c
+> index a7fa12488066..2a428fdf702f 100644
+> --- a/drivers/clocksource/timer-tegra.c
+> +++ b/drivers/clocksource/timer-tegra.c
+> @@ -44,6 +44,8 @@
+>  #define TIMER1_IRQ_IDX		0
+>  #define TIMER10_IRQ_IDX		10
+>  
+> +#define TIMER_1MHz		1000000
+> +
+>  static u32 usec_config;
+>  static void __iomem *timer_reg_base;
+>  
+> @@ -158,7 +160,7 @@ static unsigned long tegra_delay_timer_read_counter_long(void)
+>  
+>  static struct delay_timer tegra_delay_timer = {
+>  	.read_current_timer = tegra_delay_timer_read_counter_long,
+> -	.freq = 1000000,
+> +	.freq = TIMER_1MHz,
+>  };
+>  #endif
+>  
+> @@ -224,7 +226,7 @@ static inline unsigned long tegra_rate_for_timer(struct timer_of *to,
+>  	 * parent clock.
+>  	 */
+>  	if (tegra20)
+> -		return 1000000;
+> +		return TIMER_1MHz;
+>  
+>  	return timer_of_rate(to);
+>  }
+> @@ -313,11 +315,11 @@ static int __init tegra_init_timer(struct device_node *np, bool tegra20,
+>  		}
+>  	}
+>  
+> -	sched_clock_register(tegra_read_sched_clock, 32, 1000000);
+> +	sched_clock_register(tegra_read_sched_clock, 32, TIMER_1MHz);
+>  
+>  	ret = clocksource_mmio_init(timer_reg_base + TIMERUS_CNTR_1US,
+> -				    "timer_us", 1000000,
+> -				    300, 32, clocksource_mmio_readl_up);
+> +				    "timer_us", TIMER_1MHz, 300, 32,
+> +				    clocksource_mmio_readl_up);
+>  	if (ret)
+>  		pr_err("failed to register clocksource: %d\n", ret);
+>  
 
-[root@sm-03 ~]# ethtool -l enp4s0f0
-Channel parameters for enp4s0f0:
-Pre-set maximums:
-RX:             5
-TX:             5
-Other:          0
-Combined:       6
-Current hardware settings:
-RX:             0
-TX:             0
-Other:          0
-Combined:       6
+Acked-by: Jon Hunter <jonathanh@nvidia.com>
 
-Default indirection table maps all (6) queues equally but the driver
-reports only 5 rings available.
+Cheers
+Jon
 
-[root@sm-03 ~]# ethtool -x enp4s0f0
-RX flow hash indirection table for enp4s0f0 with 5 RX ring(s):
-    0:      0     1     2     3     4     5     0     1
-    8:      2     3     4     5     0     1     2     3
-   16:      4     5     0     1     2     3     4     5
-   24:      0     1     2     3     4     5     0     1
-...
-
-Now change indirection table somehow:
-
-[root@sm-03 ~]# ethtool -X enp4s0f0 weight 1 1
-[root@sm-03 ~]# ethtool -x enp4s0f0
-RX flow hash indirection table for enp4s0f0 with 6 RX ring(s):
-    0:      0     0     0     0     0     0     0     0
-...
-   64:      1     1     1     1     1     1     1     1
-...
-
-Now it is not possible to change mapping back to equal (default) state:
-
-[root@sm-03 ~]# ethtool -X enp4s0f0 equal 6
-Cannot set RX flow hash configuration: Invalid argument
-
-Fixes: 594ad54a2c3b ("be2net: Add support for setting and getting rx flow hash options")
-Reported-by: Tianhao <tizhao@redhat.com>
-Signed-off-by: Ivan Vecera <ivecera@redhat.com>
----
- drivers/net/ethernet/emulex/benet/be_ethtool.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/net/ethernet/emulex/benet/be_ethtool.c b/drivers/net/ethernet/emulex/benet/be_ethtool.c
-index 4c218341c51b..6e635debc7fd 100644
---- a/drivers/net/ethernet/emulex/benet/be_ethtool.c
-+++ b/drivers/net/ethernet/emulex/benet/be_ethtool.c
-@@ -1105,7 +1105,7 @@ static int be_get_rxnfc(struct net_device *netdev, struct ethtool_rxnfc *cmd,
- 		cmd->data = be_get_rss_hash_opts(adapter, cmd->flow_type);
- 		break;
- 	case ETHTOOL_GRXRINGS:
--		cmd->data = adapter->num_rx_qs - 1;
-+		cmd->data = adapter->num_rx_qs;
- 		break;
- 	default:
- 		return -EINVAL;
 -- 
-2.21.0
-
+nvpublic
