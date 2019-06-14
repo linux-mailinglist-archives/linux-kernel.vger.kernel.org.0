@@ -2,130 +2,140 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9DB754596D
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 11:53:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BC43045999
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 11:55:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727468AbfFNJxl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 05:53:41 -0400
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:54535 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727431AbfFNJxf (ORCPT
+        id S1727569AbfFNJyS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 05:54:18 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:45135 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727551AbfFNJyP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 05:53:35 -0400
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20190614095334euoutp02998fad70bdc7a9a4c5b72fa4430a6782~oB-PJy-y81678716787euoutp029
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2019 09:53:34 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20190614095334euoutp02998fad70bdc7a9a4c5b72fa4430a6782~oB-PJy-y81678716787euoutp029
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1560506014;
-        bh=Rv+G7xRM5W0qIJMO/1XEZpXdtXED3pTULKiTBpTxK9M=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aqCvA7AnOuF0NzeOFqalIpglXNfHQQ3WWwIG6iZ6msiSJ6i/AKOqwqmiSNWAkZNvn
-         fgGRZfQL9S+kL8iG7/M4FunHo2w2WzMsmNtZw7ytaia3iy/5WHK5xiFAEDh5lOlJgG
-         U2euMpzcoydhqmZwBIEOLYug0iSbZNAU/RelzHLw=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20190614095333eucas1p177d0ae9f420ce5d8cecf1e16e482e29a~oB-OTXveF1133711337eucas1p1g;
-        Fri, 14 Jun 2019 09:53:33 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id C0.B5.04298.D9E630D5; Fri, 14
-        Jun 2019 10:53:33 +0100 (BST)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20190614095332eucas1p10e0a690604c6210d5f61c55175532785~oB-NeZsE11136511365eucas1p1W;
-        Fri, 14 Jun 2019 09:53:32 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20190614095332eusmtrp2350e5e78017c06082698342f7a82df4f~oB-NOsSKg2148621486eusmtrp2N;
-        Fri, 14 Jun 2019 09:53:32 +0000 (GMT)
-X-AuditID: cbfec7f2-f13ff700000010ca-48-5d036e9dbe90
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id 45.40.04146.C9E630D5; Fri, 14
-        Jun 2019 10:53:32 +0100 (BST)
-Received: from AMDC3778.DIGITAL.local (unknown [106.120.51.20]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20190614095331eusmtip287a1b11711375a82978c084705a1a5ad~oB-MTglbl2261522615eusmtip2z;
-        Fri, 14 Jun 2019 09:53:31 +0000 (GMT)
-From:   Lukasz Luba <l.luba@partner.samsung.com>
-To:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Cc:     mturquette@baylibre.com, sboyd@kernel.org,
-        b.zolnierkie@samsung.com, krzk@kernel.org, kgene@kernel.org,
-        cw00.choi@samsung.com, kyungmin.park@samsung.com,
-        m.szyprowski@samsung.com, s.nawrocki@samsung.com,
-        myungjoo.ham@samsung.com, keescook@chromium.org, tony@atomide.com,
-        jroedel@suse.de, treding@nvidia.com, digetx@gmail.com,
-        gregkh@linuxfoundation.org, willy.mh.wolff.ml@gmail.com,
-        Lukasz Luba <l.luba@partner.samsung.com>
-Subject: [PATCH v10 13/13] ARM: exynos_defconfig: enable DMC driver
-Date:   Fri, 14 Jun 2019 11:53:09 +0200
-Message-Id: <20190614095309.24100-14-l.luba@partner.samsung.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190614095309.24100-1-l.luba@partner.samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA0VSe0hTURzu7D7VJrct8lCRNAgqSTOCTilRlHAzKDGhqMxW3VRy0+71kWmw
-        FT18TEvJTF0rIrJZqHMsLdPlI9d6mD3MNEtcDzU1bSrM6OHcrP++3/f4fT8Oh8YkNmI+HatM
-        5HilPE5GeuKmR47nK7RKLHLlRYcUVRaWE+jt2FcC6ZqeE6hs1AbQqevlJMq3akXoaZYC5dq+
-        Yai1tYJCz04OUqhTtRCNZn8g0Kt7JSSya5oAKmytE6E7Td0UarOGoC51KYkaB88S6Hd7JY7q
-        X4eirp/eaMLSCzb4sBPjeTj7veM0xRar2nC2pqibYg36DJKt196mWM2pYZJ9OFwrYnOMesBW
-        PUlj7YZFYV67PYMPcXGxyRwfsH6/Z4zJWksmjBDHxi+/w1WggMgEHjRkVsPezEZRJvCkJUwp
-        gB9z9bhrGAPws8ZOugY7gFX5J/GZSP/9SbdwE8AHLSbqX8T4Szu1jKZJxh9W6486A3OZQgCL
-        +3Y4PRhzF4NDXe+BU5Aym2DFhdfTW3FmCTR+KRA5sZjZADs/2YGrzReWVZgxJ/aY4pt1g9PN
-        kMmgYY3FIXKZNsO+yRJ3QAoHWoyUCy+Ef2p0bo8AVZprbk86tOVq3Z4g2NjSRjiPxphlsPxe
-        gIveCF92OignDRlv2DE0x0ljUzDPdAlz0WJ47ozE5V4Kjdkv3EXz4M3bBe7lLJwYGXa/VT6A
-        6tp+cB74Fv0vuwqAHvhwSYIimhMClVyKvyBXCEnKaP+D8QoDmPp6T363/KgG4y8PNACGBrLZ
-        YvM6UaSEkCcLqYoGAGlMNld8JQiLlIgPyVOPc3x8FJ8UxwkNYAGNy3zEabN69kiYaHkid4Tj
-        Ejh+RhXRHvNVwLdntF+Xslu9/Y6l1LxmLbPoSqApY9W6cHNtRcezhL7QG5uLNSHqiI07w17c
-        qiuGhzOpAdtQ2/Gf5n220Tf8Yq/H9r4TW6r94o9Kf/Ee6eut0oCY4J5Q69alEWFk+wSD7c1d
-        4hduWOaw+ORE7YrwHTPwlmadwyaO35bYnjWZ+kaGCzHywOUYL8j/Av5WhQV2AwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrKIsWRmVeSWpSXmKPExsVy+t/xe7pz8phjDWbekbTYOGM9q8X1L89Z
-        LeYfOcdqsfrjY0aL5sXr2Swmn5rLZHGmO9ei//FrZovz5zewW5xtesNucatBxuJjzz1Wi8u7
-        5rBZfO49wmgx4/w+Jou1R+6yW1w85Wpxu3EFm8XhN+2sFv+ubWSx2H/Fy+L2bz6LbyceMTqI
-        e3z7OonF4/2NVnaP2Q0XWTx2zrrL7rFpVSebx/65a9g9epvfsXkcfLeHyaNvyypGj82nqz0+
-        b5IL4I7SsynKLy1JVcjILy6xVYo2tDDSM7S00DMysdQzNDaPtTIyVdK3s0lJzcksSy3St0vQ
-        y9h2ag9bwQfWiq8zb7I0ME5j7WLk5JAQMJF4ufsXWxcjF4eQwFJGiVXndzFDJMQkJu3bzg5h
-        C0v8udYFVfSJUeLu2p1ADgcHm4CexI5VhSBxEYE5jBI/u7YxgjjMAmeZJXaveMME0i0s4Cyx
-        YeIVFhCbRUBVYsuzaWBxXgEHiVtPPjNCbJCXWL3hANhmTqD40flvwBYICdhLfJ/BP4GRbwEj
-        wypGkdTS4tz03GJDveLE3OLSvHS95PzcTYzAKNx27OfmHYyXNgYfYhTgYFTi4T1gxRQrxJpY
-        VlyZe4hRgoNZSYR3njVzrBBvSmJlVWpRfnxRaU5q8SFGU6CbJjJLiSbnAxNEXkm8oamhuYWl
-        obmxubGZhZI4b4fAwRghgfTEktTs1NSC1CKYPiYOTqkGxr5GP5VA3VUZDA/1NDL7/sYEfdJt
-        8iq3E0tW6l7a4X6kT7HJe/dWVxN2U8fzVeICU90lOCzsGO779oXe32nlOcVhYeHv7Zw3nz0W
-        vf5XpevLimvuQv08iwLmF4g+nOpds9w4QVRhhdOneLUTN6Wvekzr859ScDXXh79Lz9xEwYNj
-        0vOHLy8osRRnJBpqMRcVJwIALtZL0NgCAAA=
-X-CMS-MailID: 20190614095332eucas1p10e0a690604c6210d5f61c55175532785
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20190614095332eucas1p10e0a690604c6210d5f61c55175532785
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20190614095332eucas1p10e0a690604c6210d5f61c55175532785
-References: <20190614095309.24100-1-l.luba@partner.samsung.com>
-        <CGME20190614095332eucas1p10e0a690604c6210d5f61c55175532785@eucas1p1.samsung.com>
+        Fri, 14 Jun 2019 05:54:15 -0400
+Received: by mail-ed1-f68.google.com with SMTP id a14so2622293edv.12;
+        Fri, 14 Jun 2019 02:54:14 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=qHuGCrXRTUkFQGayB4c7fw1V8CKP+g27HnNUqp7luJE=;
+        b=A61E+uFgn8g+uIiDes5z+O80mUf9mAy/dPoIP93za8g2WnuMP9LU+jI95OG1ls79Kx
+         yDnDx7RhzSuvjPyLxRjg8nzluuiy7QKz6T7IitCjR9TuDlS6HuiDbmDOn4r0UzAF7NGN
+         rcnlm8IHYqnWYpux0ZWee8fDYKKLJo/QlVDTl9nJ6w1ox5KaD8ov5oJNOE0BBRk0uwhX
+         PrYGOG+ZBhddM1MJ3K4D2aIZdb5FLWBmXTBUbAAUkWkjRFOUd7MGeAgD77xY1E9eJits
+         /gwOePblt3QG1L3MDiaTz/fTDrxhNm6tASrrT4ZVCMZrz6nT2GfUac3VcAOGfP7/eD5g
+         1YOw==
+X-Gm-Message-State: APjAAAVSS2i2sKYjImsKi9wQpzsJO0M/Y8/VoEWlZ0sG89LCiBX473+I
+        x5P60eU0xONYWUitHtk3uqz1u+m+4u8=
+X-Google-Smtp-Source: APXvYqwbflIiWpIZ18fe2y9eLll7EthUnohzkEFO5UdPG4ILKM1Dc6YIpEUU1uVRF1oIgJnB5da2nw==
+X-Received: by 2002:a05:6402:652:: with SMTP id u18mr7218160edx.85.1560506053022;
+        Fri, 14 Jun 2019 02:54:13 -0700 (PDT)
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com. [209.85.128.46])
+        by smtp.gmail.com with ESMTPSA id a17sm710461edt.63.2019.06.14.02.54.11
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Fri, 14 Jun 2019 02:54:12 -0700 (PDT)
+Received: by mail-wm1-f46.google.com with SMTP id z23so1652146wma.4;
+        Fri, 14 Jun 2019 02:54:11 -0700 (PDT)
+X-Received: by 2002:a1c:a186:: with SMTP id k128mr7440554wme.125.1560506051478;
+ Fri, 14 Jun 2019 02:54:11 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190613185241.22800-1-jagan@amarulasolutions.com>
+ <20190613185241.22800-6-jagan@amarulasolutions.com> <CAGb2v654p=HZuXCTJkrbWbFP_kEkpRWHwj-7_Ck_=XbyMFmvFw@mail.gmail.com>
+ <CAMty3ZD0atS2uWJmPB-n1wmy324JEpwt42=_wpKeF-8uxM-GbQ@mail.gmail.com>
+In-Reply-To: <CAMty3ZD0atS2uWJmPB-n1wmy324JEpwt42=_wpKeF-8uxM-GbQ@mail.gmail.com>
+From:   Chen-Yu Tsai <wens@csie.org>
+Date:   Fri, 14 Jun 2019 17:53:58 +0800
+X-Gmail-Original-Message-ID: <CAGb2v66BOOydMRQprKAo87F2rpr+xgqWgpGt_cccoHf8+9AoNA@mail.gmail.com>
+Message-ID: <CAGb2v66BOOydMRQprKAo87F2rpr+xgqWgpGt_cccoHf8+9AoNA@mail.gmail.com>
+Subject: Re: [PATCH 5/9] ARM: dts: sun8i: r40: Add TCON TOP LCD clocking
+To:     Jagan Teki <jagan@amarulasolutions.com>
+Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        linux-sunxi <linux-sunxi@googlegroups.com>,
+        linux-amarula <linux-amarula@amarulasolutions.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Enable driver for Exynos5422 Dynamic Memory Controller supporting
-dynamic frequency and voltage scaling in Exynos5422 SoCs.
+On Fri, Jun 14, 2019 at 5:48 PM Jagan Teki <jagan@amarulasolutions.com> wrote:
+>
+> On Fri, Jun 14, 2019 at 9:16 AM Chen-Yu Tsai <wens@csie.org> wrote:
+> >
+> > On Fri, Jun 14, 2019 at 2:54 AM Jagan Teki <jagan@amarulasolutions.com> wrote:
+> > >
+> > > According to Fig 7-2. TCON Top Block Diagram in User manual.
+> > >
+> > > TCON TOP can have an hierarchy for TCON_LCD0, LCD1 like
+> > > TCON_TV0, TV1 so, the tcon top would handle the clocks of
+> > > TCON_LCD0, LCD1 similar like TV0, TV1.
+> >
+> > That is not guaranteed. The diagram shows the pixel data path,
+> > not necessarily the clocks. In addition, the LCD TCONs have an
+> > internal clock gate for the dot-clock output, which the TV variants
+> > do not. That might explain the need for the gates in TCON TOP.
+>
+> Correct, the actual idea about explanation here is to mention the
+> clocks definition in tcon top level and internal tv and lcd can handle
+> as you explained.
+>
+> >
+> > > But, the current tcon_top node is using dsi clock name with
+> > > CLK_DSI_DPHY which is ideally handle via dphy which indeed
+> > > a separate interface block.
+> > >
+> > > So, use tcon-lcd0 instead of dsi which would refer the
+> > > CLK_TCON_LCD0 similar like CLK_TCON_TV0 with tcon-tv0.
+> > >
+> > > This way we can refer CLK_TCON_LCD0 from tcon_top clock in
+> > > tcon_lcd0 node and the actual DSI_DPHY clock node would
+> > > refer in dphy node.
+> >
+> > That doesn't make sense. What about TCON_LCD1?
+> >
+> > The CCU already has CLK_TCON_LCD0 and CLK_TCON_LCD1. What makes
+> > you think that the TCONs don't use them directly?
+> >
+> > Or maybe they do go through TCON_TOP, but there's no gate,
+> > so we don't know about it.
+> >
+> > You need to rethink this. What are you trying to deal with?
+>
+> Yes, I understand what your asking for and indeed this is where I get
+> confused and tried this way initially and attach the dsi reference in
+> dphy something like
+>
+> tcon_lcd0 {
+>                 clocks = <&ccu CLK_BUS_TCON_LCD0>, <&ccu CLK_TCON_LCD0>;
+>                 clock-names = "ahb", "tcon-ch0";
+> };
+>
+> dphy {
+>                clocks = <&ccu CLK_BUS_MIPI_DSI>,
+>                               <&tcon_top CLK_TCON_TOP_DSI>;
+>                clock-names = "bus", "mod";
+> };
+>
+> This would ended-up, phy wont getting the mod clock keep probing for
+> -EPROBE-DEFER since tcon top driver might not be loaded at the time
+> mipi driver. This way we have tv0, tv1 and dsi gates supported as
+> existed. Does it make sense?
 
-Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
----
- arch/arm/configs/exynos_defconfig | 1 +
- 1 file changed, 1 insertion(+)
+Looks like that happens because the clocks are only registered at
+the component bind phase, rather than the probe phase. And to bind
+all the components, the DSI controller wants the DPHY available,
+which isn't because it's still waiting for the clock.
 
-diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
-index c95c54284da2..0cd16c924941 100644
---- a/arch/arm/configs/exynos_defconfig
-+++ b/arch/arm/configs/exynos_defconfig
-@@ -290,6 +290,7 @@ CONFIG_DEVFREQ_GOV_PERFORMANCE=y
- CONFIG_DEVFREQ_GOV_POWERSAVE=y
- CONFIG_DEVFREQ_GOV_USERSPACE=y
- CONFIG_ARM_EXYNOS_BUS_DEVFREQ=y
-+CONFIG_ARM_EXYNOS5422_DMC=y
- CONFIG_DEVFREQ_EVENT_EXYNOS_NOCP=y
- CONFIG_EXYNOS_IOMMU=y
- CONFIG_EXTCON=y
--- 
-2.17.1
+So you could try moving the bits that register the clocks in the
+TCON TOP driver to the probe function, and see if that solves
+the circular dependency issue.
 
+ChenYu
