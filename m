@@ -2,51 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D67784634A
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 17:48:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A609C4634D
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 17:48:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726305AbfFNPsr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 11:48:47 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:45320 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726218AbfFNPsp (ORCPT
+        id S1726381AbfFNPsy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 11:48:54 -0400
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:15155 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726340AbfFNPsu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 11:48:45 -0400
-Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::3d5])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 93A67148BD7FF;
-        Fri, 14 Jun 2019 08:48:44 -0700 (PDT)
-Date:   Fri, 14 Jun 2019 08:48:44 -0700 (PDT)
-Message-Id: <20190614.084844.694799483519239073.davem@davemloft.net>
-To:     92siuyang@gmail.com
-Cc:     sameo@linux.intel.com, linux-wireless@vger.kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] nfc: Ensure presence of required attributes in the
- deactivate_target handler
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <1560496382-32532-1-git-send-email-92siuyang@gmail.com>
-References: <1560496382-32532-1-git-send-email-92siuyang@gmail.com>
-X-Mailer: Mew version 6.8 on Emacs 26.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
+        Fri, 14 Jun 2019 11:48:50 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5d03c1e20000>; Fri, 14 Jun 2019 08:48:50 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Fri, 14 Jun 2019 08:48:50 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Fri, 14 Jun 2019 08:48:50 -0700
+Received: from [10.26.11.12] (172.20.13.39) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 14 Jun
+ 2019 15:48:47 +0000
+Subject: Re: [PATCH v2 6/6] clocksource/drivers/tegra: Restore base address
+ before cleanup
+To:     Dmitry Osipenko <digetx@gmail.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Joseph Lo <josephl@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>
+CC:     <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20190610164400.11830-1-digetx@gmail.com>
+ <20190610164400.11830-7-digetx@gmail.com>
+From:   Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <b2eeb477-2e08-eaf5-6355-4a05cec5a9b7@nvidia.com>
+Date:   Fri, 14 Jun 2019 16:48:45 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
+MIME-Version: 1.0
+In-Reply-To: <20190610164400.11830-7-digetx@gmail.com>
+X-Originating-IP: [172.20.13.39]
+X-ClientProxiedBy: HQMAIL106.nvidia.com (172.18.146.12) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Fri, 14 Jun 2019 08:48:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1560527330; bh=9k+h83QDqVPiDqnxwLk+IzdrFW33J4CWSkp9+TU9VY0=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=ovcS0/5EK1oAwvYQnT2mnEhYUMsLXbwrtSLrP7omEhS9QfV6VckujhSjKqj4I5ut/
+         n7lSvNr5XiJ5w+EneNJP/Sh1D3KO+nRfyjq0GrHBqKE0S5siZaoKdQ4Y7xh9G6fss+
+         vuJX/Tim4I4k/aKn3uZYjQPVRS6WZwBhG3wmD+dbEM8Va011efT63ev9P4s2wjlgr4
+         O6MYJ4H6+EO0SgZbgcLaoubI/hafiPPnGw/9CrR9MKfPzFpLtg9dH4WkYUxAr1+cLL
+         xjWFk5qAgvprErFDUNpuxXELQBP7A/qr0H8WHOo6hpvsr96Ctd40ODu6Q8m519Od2Y
+         /szA0K1AsJxog==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Young Xiao <92siuyang@gmail.com>
-Date: Fri, 14 Jun 2019 15:13:02 +0800
 
-> Check that the NFC_ATTR_TARGET_INDEX attributes (in addition to
-> NFC_ATTR_DEVICE_INDEX) are provided by the netlink client prior to
-> accessing them. This prevents potential unhandled NULL pointer dereference
-> exceptions which can be triggered by malicious user-mode programs,
-> if they omit one or both of these attributes.
+On 10/06/2019 17:44, Dmitry Osipenko wrote:
+> We're adjusting the timer's base for each per-CPU timer to point to the
+> actual start of the timer since device-tree defines a compound registers
+> range that includes all of the timers. In this case the original base
+> need to be restore before calling iounmap to unmap the proper address.
 > 
-> Signed-off-by: Young Xiao <92siuyang@gmail.com>
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+>  drivers/clocksource/timer-tegra.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/clocksource/timer-tegra.c b/drivers/clocksource/timer-tegra.c
+> index 2a428fdf702f..7be91db98bd7 100644
+> --- a/drivers/clocksource/timer-tegra.c
+> +++ b/drivers/clocksource/timer-tegra.c
+> @@ -345,6 +345,8 @@ static int __init tegra_init_timer(struct device_node *np, bool tegra20,
+>  			irq_dispose_mapping(cpu_to->clkevt.irq);
+>  		}
+>  	}
+> +
+> +	to->of_base.base = timer_reg_base;
+>  out:
+>  	timer_of_cleanup(to);
 
-Applied and queued up for -stable, thanks.
+So what you are saying is that because we don't know which CPU executes
+the tegra_init_timer() function, then it is necessary to restore the
+base. IOW if it is not CPU0, then the base will be updated and hence,
+need to be restored. Correct?
+
+Jon
+
+-- 
+nvpublic
