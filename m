@@ -2,30 +2,31 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1FEBE46698
+	by mail.lfdr.de (Postfix) with ESMTP id 8873E46699
 	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 19:57:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727705AbfFNRz1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        id S1727686AbfFNRz1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
         Fri, 14 Jun 2019 13:55:27 -0400
-Received: from foss.arm.com ([217.140.110.172]:39640 "EHLO foss.arm.com"
+Received: from foss.arm.com ([217.140.110.172]:39656 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727639AbfFNRzX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 13:55:23 -0400
+        id S1727655AbfFNRzY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Jun 2019 13:55:24 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 677D53EF;
-        Fri, 14 Jun 2019 10:55:22 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B8A45D6E;
+        Fri, 14 Jun 2019 10:55:23 -0700 (PDT)
 Received: from en101.cambridge.arm.com (en101.cambridge.arm.com [10.1.196.93])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 64BB33F718;
-        Fri, 14 Jun 2019 10:55:21 -0700 (PDT)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 9AF603F718;
+        Fri, 14 Jun 2019 10:55:22 -0700 (PDT)
 From:   Suzuki K Poulose <suzuki.poulose@arm.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     gregkh@linuxfoundation.org, rafael@kernel.org,
-        suzuki.poulose@arm.com, Bjorn Helgaas <bhelgaas@google.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH v2 20/28] drivers: Introduce bus_find_next_device() helper
-Date:   Fri, 14 Jun 2019 18:54:15 +0100
-Message-Id: <1560534863-15115-21-git-send-email-suzuki.poulose@arm.com>
+        suzuki.poulose@arm.com,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org,
+        Mark Brown <broonie@kernel.org>
+Subject: [PATCH v2 21/28] drivers: Introduce bus_find_device_by_acpi_dev() helper
+Date:   Fri, 14 Jun 2019 18:54:16 +0100
+Message-Id: <1560534863-15115-22-git-send-email-suzuki.poulose@arm.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1560534863-15115-1-git-send-email-suzuki.poulose@arm.com>
 References: <1560534863-15115-1-git-send-email-suzuki.poulose@arm.com>
@@ -34,86 +35,104 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a wrapper for bus_find_device() to find the next devices
-on the given bus from the "start" device. Also convert the existing
-users to make use of the new helper.
+Add a wrapper to bus_find_device() to search for a device
+by the ACPI COMPANION device, reusing the generic match function.
+Also convert the existing users to make use of the new helper.
 
-Cc: Bjorn Helgaas <bhelgaas@google.com>
-Cc: "James E.J. Bottomley" <jejb@linux.ibm.com>
-Cc: "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: Wolfram Sang <wsa@the-dreams.de>
+Cc: linux-i2c@vger.kernel.org
+Cc: Mark Brown <broonie@kernel.org>
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc: "Rafael J. Wysocki" <rafael@kernel.org>
 Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
 ---
- drivers/pci/probe.c      |  7 +------
- drivers/scsi/scsi_proc.c |  9 ++-------
- include/linux/device.h   | 10 ++++++++++
- 3 files changed, 13 insertions(+), 13 deletions(-)
+ drivers/i2c/i2c-core-acpi.c |  8 +-------
+ drivers/spi/spi.c           |  8 +-------
+ include/linux/device.h      | 22 ++++++++++++++++++++++
+ 3 files changed, 24 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
-index f9ef7ad..3504695 100644
---- a/drivers/pci/probe.c
-+++ b/drivers/pci/probe.c
-@@ -64,11 +64,6 @@ static struct resource *get_pci_domain_busn_res(int domain_nr)
- 	return &r->res;
+diff --git a/drivers/i2c/i2c-core-acpi.c b/drivers/i2c/i2c-core-acpi.c
+index 8af35f11..7c6435c 100644
+--- a/drivers/i2c/i2c-core-acpi.c
++++ b/drivers/i2c/i2c-core-acpi.c
+@@ -328,11 +328,6 @@ static int i2c_acpi_find_match_adapter(struct device *dev, const void *data)
+ 	return ACPI_HANDLE(dev) == (acpi_handle)data;
  }
  
--static int find_anything(struct device *dev, const void *data)
+-static int i2c_acpi_find_match_device(struct device *dev, const void *data)
 -{
--	return 1;
+-	return ACPI_COMPANION(dev) == data;
 -}
 -
- /*
-  * Some device drivers need know if PCI is initiated.
-  * Basically, we think PCI is not initiated when there
-@@ -79,7 +74,7 @@ int no_pci_devices(void)
- 	struct device *dev;
- 	int no_devices;
- 
--	dev = bus_find_device(&pci_bus_type, NULL, NULL, find_anything);
-+	dev = bus_find_next_device(&pci_bus_type, NULL);
- 	no_devices = (dev == NULL);
- 	put_device(dev);
- 	return no_devices;
-diff --git a/drivers/scsi/scsi_proc.c b/drivers/scsi/scsi_proc.c
-index c074631..5b31322 100644
---- a/drivers/scsi/scsi_proc.c
-+++ b/drivers/scsi/scsi_proc.c
-@@ -372,15 +372,10 @@ static ssize_t proc_scsi_write(struct file *file, const char __user *buf,
- 	return err;
- }
- 
--static int always_match(struct device *dev, const void *data)
--{
--	return 1;
--}
--
- static inline struct device *next_scsi_device(struct device *start)
+ static struct i2c_adapter *i2c_acpi_find_adapter_by_handle(acpi_handle handle)
  {
--	struct device *next = bus_find_device(&scsi_bus_type, start, NULL,
--					      always_match);
-+	struct device *next = bus_find_next_device(&scsi_bus_type, start);
-+
- 	put_device(start);
- 	return next;
+ 	struct device *dev;
+@@ -346,8 +341,7 @@ static struct i2c_client *i2c_acpi_find_client_by_adev(struct acpi_device *adev)
+ {
+ 	struct device *dev;
+ 
+-	dev = bus_find_device(&i2c_bus_type, NULL, adev,
+-			      i2c_acpi_find_match_device);
++	dev = bus_find_device_by_acpi_dev(&i2c_bus_type, adev);
+ 	return dev ? i2c_verify_client(dev) : NULL;
  }
+ 
+diff --git a/drivers/spi/spi.c b/drivers/spi/spi.c
+index cc4d83e..8737d69 100644
+--- a/drivers/spi/spi.c
++++ b/drivers/spi/spi.c
+@@ -3627,11 +3627,6 @@ static int spi_acpi_controller_match(struct device *dev, const void *data)
+ 	return ACPI_COMPANION(dev->parent) == data;
+ }
+ 
+-static int spi_acpi_device_match(struct device *dev, const void *data)
+-{
+-	return ACPI_COMPANION(dev) == data;
+-}
+-
+ static struct spi_controller *acpi_spi_find_controller_by_adev(struct acpi_device *adev)
+ {
+ 	struct device *dev;
+@@ -3651,8 +3646,7 @@ static struct spi_device *acpi_spi_find_device_by_adev(struct acpi_device *adev)
+ {
+ 	struct device *dev;
+ 
+-	dev = bus_find_device(&spi_bus_type, NULL, adev, spi_acpi_device_match);
+-
++	dev = bus_find_device_by_acpi_dev(&spi_bus_type, adev);
+ 	return dev ? to_spi_device(dev) : NULL;
+ }
+ 
 diff --git a/include/linux/device.h b/include/linux/device.h
-index 3c244ac..1c137ab 100644
+index 1c137ab..6768e2b 100644
 --- a/include/linux/device.h
 +++ b/include/linux/device.h
-@@ -225,6 +225,16 @@ static inline struct device *bus_find_device_by_devt(struct bus_type *bus,
- 	return bus_find_device(bus, NULL, &devt, device_match_devt);
+@@ -235,6 +235,28 @@ bus_find_next_device(struct bus_type *bus,struct device *cur)
+ 	return bus_find_device(bus, cur, NULL, device_match_any);
  }
  
++#ifdef CONFIG_ACPI
++struct acpi_device;
++
 +/**
-+ * bus_find_next_device - Find the next device after a given device in a
-+ * given bus.
++ * bus_find_device_by_acpi_dev : device iterator for locating a particular device
++ * matching the ACPI COMPANION device.
++ * @bus: bus type
++ * @adev: ACPI COMPANION device to match.
 + */
 +static inline struct device *
-+bus_find_next_device(struct bus_type *bus,struct device *cur)
++bus_find_device_by_acpi_dev(struct bus_type *bus, const struct acpi_device *adev)
 +{
-+	return bus_find_device(bus, cur, NULL, device_match_any);
++	return bus_find_device(bus, NULL, adev, device_match_acpi_dev);
 +}
++#else
++static inline struct device *
++bus_find_device_by_acpi_dev(struct bus_type *bus, const void *adev)
++{
++	return NULL;
++}
++#endif
 +
  struct device *subsys_find_device_by_id(struct bus_type *bus, unsigned int id,
  					struct device *hint);
