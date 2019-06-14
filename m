@@ -2,87 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 34D3645AE2
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 12:48:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6156F45ADE
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 12:47:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727298AbfFNKsT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 06:48:19 -0400
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:38202 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726900AbfFNKsS (ORCPT
+        id S1727167AbfFNKrv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 06:47:51 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:34804 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726767AbfFNKrv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 06:48:18 -0400
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x5EAlW17075133;
-        Fri, 14 Jun 2019 05:47:32 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1560509252;
-        bh=VO4FVnd5gxYVdAkdALZM4NQ4Jp0vvZIA2wgd7x8xSUs=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=cQGWrX6FBTtB52WDerOTzhblZJzqENMFCgab3pXXu0aCcVMRLLvEY1IJik3EfWciw
-         mzu/3Inn3Jj2XDEyHkbwuF6zomIj//AtSJaz/Ep2KNofCQUQvAVlv1GJLXAkrWLgYm
-         Vr90ralp0fpOXHlahbhUZhLPfW3TXkizb0VNSYTA=
-Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x5EAlWP7108465
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 14 Jun 2019 05:47:32 -0500
-Received: from DLEE109.ent.ti.com (157.170.170.41) by DLEE100.ent.ti.com
- (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Fri, 14
- Jun 2019 05:47:32 -0500
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE109.ent.ti.com
- (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Fri, 14 Jun 2019 05:47:32 -0500
-Received: from [172.24.190.172] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id x5EAlT9V088764;
-        Fri, 14 Jun 2019 05:47:30 -0500
-Subject: Re: [PATCH] ARM: davinci: da850-evm: call
- regulator_has_full_constraints()
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>
-CC:     Kevin Hilman <khilman@kernel.org>,
-        David Lechner <david@lechnology.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-References: <20190607090201.5995-1-brgl@bgdev.pl>
- <CACRpkdYjXq-KV=zW=az+02tvjiHVHgUPiC149gNfkWTb4c29PQ@mail.gmail.com>
-From:   Sekhar Nori <nsekhar@ti.com>
-Message-ID: <5dcd0189-2283-fb0d-dd7c-4906f4594d69@ti.com>
-Date:   Fri, 14 Jun 2019 16:17:29 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        Fri, 14 Jun 2019 06:47:51 -0400
+Received: by mail-wr1-f65.google.com with SMTP id k11so2035587wrl.1;
+        Fri, 14 Jun 2019 03:47:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=4kJkce9QnAQ2uiZZ7WIZ0dOp6754sfSUCWC444c4ZX8=;
+        b=s9ovk65wR09SMBZkhl/aHPmD0VGxq9BjXa3YN4IvlDonT4j9AB7svsn6ssnuk6dH1T
+         uMIOmzknk7peaKjVah/JWlQDQ7+bnOB9wrBprU9Gc8JatXJmt+xN3s5DqK0YMXSTe4bz
+         GOBDgEy0kNT9tpCVmuEtPoP4WVEvkYRu1rCIK9bBFxpL8zmpgA0FBSWgGL6w6Adyb0+R
+         EorvOb6sQQe3vZN4F4dUBooR1/u7Ju8Mc/pz+Moh42fFOfzYjdchxky+ah1NK/n5A0O0
+         395ikpdlWJUfhvGgMti0G7wofKKqQNqvfUNyDtgxrHT3mCS9IVznIGM/4pybFGKX/oBj
+         aVgQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=4kJkce9QnAQ2uiZZ7WIZ0dOp6754sfSUCWC444c4ZX8=;
+        b=t5LoMTyBQAZkuvEtLX+DlBTQIA6W/Xo9CaGEjN2o0QmqGruy4ZZSlcXS+9Z0xKZ2H6
+         dUFpHRMk03wlAtg/mAtrfUaXdR9rx0Tqa1XDY+DVycQ7eYqemJWA9Z2/vmxF0nVHRuTO
+         pkRmOI8eBCOQE6OKCOC2uvEm9Jrwpr9wN3OrYWUd/35zeCu2/Nz/Rcc5PHHSFsCc3i6O
+         PrM47zstrVii1KEIW/BubgWcEbE+wNm2Ilrk/0+Iq+FUZohaA72XLboFZSw4n4YyExTi
+         h0k5fWMAJk+8h8RNmZC9HtO7LGo0CoWmoMzj0qyuNvhURpRiVtN0p1p0hbLHqKeUVner
+         Khlw==
+X-Gm-Message-State: APjAAAVLKhgjla2Ht6ViAhrkN9LYwHQTSdT/FC3lWSu6IM8u7ixk2t93
+        VmBjc2/g+l3ZsE0I4ww4xO4=
+X-Google-Smtp-Source: APXvYqxyE04Ux17OdI3cnfl25wz19B8Y9lVATZFL7+lepI3B7xi5/of6zkce+HAIRMo57HhBintKcA==
+X-Received: by 2002:adf:cf0a:: with SMTP id o10mr1009433wrj.37.1560509269308;
+        Fri, 14 Jun 2019 03:47:49 -0700 (PDT)
+Received: from localhost (p2E5BEF36.dip0.t-ipconnect.de. [46.91.239.54])
+        by smtp.gmail.com with ESMTPSA id y17sm5200554wrg.18.2019.06.14.03.47.48
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Fri, 14 Jun 2019 03:47:48 -0700 (PDT)
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
+        Dmitry Osipenko <digetx@gmail.com>,
+        linux-tegra@vger.kernel.org, linux-rtc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] clocksource: tegra: Use rating when registering clock source
+Date:   Fri, 14 Jun 2019 12:47:46 +0200
+Message-Id: <20190614104747.19712-1-thierry.reding@gmail.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-In-Reply-To: <CACRpkdYjXq-KV=zW=az+02tvjiHVHgUPiC149gNfkWTb4c29PQ@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/06/19 7:37 PM, Linus Walleij wrote:
-> On Fri, Jun 7, 2019 at 11:02 AM Bartosz Golaszewski <brgl@bgdev.pl> wrote:
-> 
->> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
->>
->> The BB expander at 0x21 i2c bus 1 fails to probe on da850-evm because
->> the board doesn't set has_full_constraints to true in the regulator
->> API.
->>
->> Call regulator_has_full_constraints() at the end of board registration
->> just like we do in da850-lcdk and da830-evm.
->>
->> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> 
-> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-> 
-> I assume Sekhar will queue this and the LED patch?
+From: Thierry Reding <treding@nvidia.com>
 
-Yes, will do. Added this to fixes for v5.2
+The rating is parameterized depending on SoC generation to make sure it
+takes precedence on implementations where the architected timer can't be
+used. This rating is already used for the clock event device. Use the
+same rating for the clock source to be consistent.
 
-Thanks,
-Sekhar
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+---
+ drivers/clocksource/timer-tegra.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/clocksource/timer-tegra.c b/drivers/clocksource/timer-tegra.c
+index f6a8eb0d7322..e6608141cccb 100644
+--- a/drivers/clocksource/timer-tegra.c
++++ b/drivers/clocksource/timer-tegra.c
+@@ -318,7 +318,7 @@ static int __init tegra_init_timer(struct device_node *np, bool tegra20,
+ 	sched_clock_register(tegra_read_sched_clock, 32, TIMER_1MHz);
+ 
+ 	ret = clocksource_mmio_init(timer_reg_base + TIMERUS_CNTR_1US,
+-				    "timer_us", TIMER_1MHz, 300, 32,
++				    "timer_us", TIMER_1MHz, rating, 32,
+ 				    clocksource_mmio_readl_up);
+ 	if (ret)
+ 		pr_err("failed to register clocksource: %d\n", ret);
+-- 
+2.21.0
+
