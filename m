@@ -2,101 +2,51 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C912E45435
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 07:46:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 35AFB45445
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 07:49:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726201AbfFNFqJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 01:46:09 -0400
-Received: from mx2.suse.de ([195.135.220.15]:44208 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725852AbfFNFqJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 01:46:09 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 0084DADF1;
-        Fri, 14 Jun 2019 05:46:07 +0000 (UTC)
-From:   Juergen Gross <jgross@suse.com>
-To:     xen-devel@lists.xenproject.org, iommu@lists.linux-foundation.org,
+        id S1726244AbfFNFtX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 01:49:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47974 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725801AbfFNFtX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Jun 2019 01:49:23 -0400
+Received: from localhost (unknown [106.201.34.42])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E1D1D21473;
+        Fri, 14 Jun 2019 05:49:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1560491362;
+        bh=FESF3oWjtlfGp5YHypGT3YoUEo0yLRez1gMxgzKPF2k=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=1we4frlaEHalYp7oQhyNpSM/Izb2bQirr1KTsQuJnAKbF1iMnyCN7VXET7ajF4rF9
+         nfUlfVO9fO+1LZ0tthGagcA2WXripcihEBdMGFmhsfdyjCaprAfYSomMXajpa4HCcA
+         hKvslBWlWdG7sHLmhPQTlj3McT2w8n4Ni3YrhK3k=
+Date:   Fri, 14 Jun 2019 11:16:13 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     dan.j.williams@intel.com, dmaengine@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Cc:     Juergen Gross <jgross@suse.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Stefano Stabellini <sstabellini@kernel.org>
-Subject: [PATCH v3 3/3] xen/swiotlb: remember having called xen_create_contiguous_region()
-Date:   Fri, 14 Jun 2019 07:46:04 +0200
-Message-Id: <20190614054604.30101-4-jgross@suse.com>
-X-Mailer: git-send-email 2.16.4
-In-Reply-To: <20190614054604.30101-1-jgross@suse.com>
-References: <20190614054604.30101-1-jgross@suse.com>
+Subject: Re: [PATCH 1/6] dma: amba-pl08x: no need to cast away call to
+ debugfs_create_file()
+Message-ID: <20190614054613.GB2962@vkoul-mobl>
+References: <20190612122557.24158-1-gregkh@linuxfoundation.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190612122557.24158-1-gregkh@linuxfoundation.org>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Instead of always calling xen_destroy_contiguous_region() in case the
-memory is DMA-able for the used device, do so only in case it has been
-made DMA-able via xen_create_contiguous_region() before.
+On 12-06-19, 14:25, Greg Kroah-Hartman wrote:
+> No need to check the return value of debugfs_create_file(), so no need
+> to provide a fake "cast away" of the return value either.
 
-This will avoid a lot of xen_destroy_contiguous_region() calls for
-64-bit capable devices.
+Applied all after fixing the subsystem tag (dmaengine), thanks
 
-As the memory in question is owned by swiotlb-xen the PG_owner_priv_1
-flag of the first allocated page can be used for remembering.
-
-Signed-off-by: Juergen Gross <jgross@suse.com>
----
-V2: add PG_xen_remapped alias for PG_owner_priv_1 (Boris Ostrovsky)
-    only clear page flag in case of sane conditions (Jan Beulich)
-V3: use TestClearPageXenRemapped() (Jan Beulich)
----
- drivers/xen/swiotlb-xen.c  | 4 +++-
- include/linux/page-flags.h | 4 ++++
- 2 files changed, 7 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/xen/swiotlb-xen.c b/drivers/xen/swiotlb-xen.c
-index 37ddcfcfbb21..ceb681cf64bb 100644
---- a/drivers/xen/swiotlb-xen.c
-+++ b/drivers/xen/swiotlb-xen.c
-@@ -322,6 +322,7 @@ xen_swiotlb_alloc_coherent(struct device *hwdev, size_t size,
- 			xen_free_coherent_pages(hwdev, size, ret, (dma_addr_t)phys, attrs);
- 			return NULL;
- 		}
-+		SetPageXenRemapped(virt_to_page(ret));
- 	}
- 	memset(ret, 0, size);
- 	return ret;
-@@ -346,7 +347,8 @@ xen_swiotlb_free_coherent(struct device *hwdev, size_t size, void *vaddr,
- 	size = 1UL << (order + XEN_PAGE_SHIFT);
- 
- 	if (!WARN_ON((dev_addr + size - 1 > dma_mask) ||
--		     range_straddles_page_boundary(phys, size)))
-+		     range_straddles_page_boundary(phys, size)) &&
-+	    TestClearPageXenRemapped(virt_to_page(vaddr)))
- 		xen_destroy_contiguous_region(phys, order);
- 
- 	xen_free_coherent_pages(hwdev, size, vaddr, (dma_addr_t)phys, attrs);
-diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
-index 9f8712a4b1a5..fc503a47e7db 100644
---- a/include/linux/page-flags.h
-+++ b/include/linux/page-flags.h
-@@ -152,6 +152,8 @@ enum pageflags {
- 	PG_savepinned = PG_dirty,
- 	/* Has a grant mapping of another (foreign) domain's page. */
- 	PG_foreign = PG_owner_priv_1,
-+	/* Remapped by swiotlb-xen. */
-+	PG_xen_remapped = PG_owner_priv_1,
- 
- 	/* SLOB */
- 	PG_slob_free = PG_private,
-@@ -329,6 +331,8 @@ PAGEFLAG(Pinned, pinned, PF_NO_COMPOUND)
- 	TESTSCFLAG(Pinned, pinned, PF_NO_COMPOUND)
- PAGEFLAG(SavePinned, savepinned, PF_NO_COMPOUND);
- PAGEFLAG(Foreign, foreign, PF_NO_COMPOUND);
-+PAGEFLAG(XenRemapped, xen_remapped, PF_NO_COMPOUND)
-+	TESTCLEARFLAG(XenRemapped, xen_remapped, PF_NO_COMPOUND)
- 
- PAGEFLAG(Reserved, reserved, PF_NO_COMPOUND)
- 	__CLEARPAGEFLAG(Reserved, reserved, PF_NO_COMPOUND)
 -- 
-2.16.4
-
+~Vinod
