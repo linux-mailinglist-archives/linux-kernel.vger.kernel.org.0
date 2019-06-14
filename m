@@ -2,128 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 19A1C45799
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 10:34:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9F4994579E
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 10:35:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726797AbfFNIei (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 04:34:38 -0400
-Received: from mx2.suse.de ([195.135.220.15]:43676 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726259AbfFNIeh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 04:34:37 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 96AE4ADFA;
-        Fri, 14 Jun 2019 08:34:35 +0000 (UTC)
-Date:   Fri, 14 Jun 2019 10:34:35 +0200
-From:   Petr Mladek <pmladek@suse.com>
-To:     Joe Lawrence <joe.lawrence@redhat.com>
-Cc:     Miroslav Benes <mbenes@suse.cz>, linux-kernel@vger.kernel.org,
-        live-patching@vger.kernel.org, linux-kbuild@vger.kernel.org
-Subject: Re: [PATCH v4 00/10] klp-convert livepatch build tooling
-Message-ID: <20190614083435.uq3mk6mprbatysol@pathway.suse.cz>
-References: <20190509143859.9050-1-joe.lawrence@redhat.com>
- <alpine.LSU.2.21.1906131451560.22698@pobox.suse.cz>
- <b1a627a4-3702-9689-6c03-0c2123c06a2d@redhat.com>
- <c9021573-11c6-b576-0aa6-97754c98a06e@redhat.com>
+        id S1726834AbfFNIfg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 04:35:36 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:46476 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726798AbfFNIff (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Jun 2019 04:35:35 -0400
+Received: by mail-lf1-f67.google.com with SMTP id z15so1109605lfh.13
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2019 01:35:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=pWi+5Am3aiah73yNoWhssqvYmNUO+DbKo0cUh/HhkqE=;
+        b=pKRcA/99Kn1RlfqkHCYqITsKL7wcnLiDSjciQMsaMhyKPrztKtivTtE5j6rxb/p5mm
+         m9XTZ4uAkazuHYYFeuR92f/e88xXmS32is65BsB2JBkW6wS0oiYDvfo+Y+c0cXfPJF/B
+         r9FM/Df0Rb/33FclCysY54h+m5sSqYcwvaqnXP3YyIlemTEuVl+7OaUdilcQbnk6A4lR
+         LU/f5FEfNUuL9DGNwp2Pg+v0B0BOXwVZpQ9RSJLtV4VVl5VMRs/3ApUkL6ieZSnrQ3Vv
+         EABPOWr8yihT8hyr5T9ABQSv57oEbueA1tmjA49U0HVBi7OZAojYps6AEv+Nny2MR4oJ
+         sJ/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=pWi+5Am3aiah73yNoWhssqvYmNUO+DbKo0cUh/HhkqE=;
+        b=R/dHKt3WbrwmV3fkC6X/tBh1NYrNjIgGJCyMtsiPoC1V7g+W2XEuIH3ikNjZlPHRLu
+         KWmNeQlh6JgHATj6QgaOKbX7GRjuCOvZoQZaqjK/76UvI6BZaxa+o1J11tXyD8HI3oBn
+         JlHI+NlNQiAycfiSqXce3g5VHXJWKaFIPnJKd7UaSP+LegWnRdz9oXe5b1ySI5TdA4DA
+         S2Ztnj2shZ4NWQNe4eDFNmbbHYYh1NROJHeZsD+n2vDZafpA+A0IAkqIokvUTcAo4smw
+         3tAEwMlK+eo/u45DIjYKIxRX1qrwtgEfKSzOkWnCMIQ80Dgg1nzlGzdmONkyk+vTme6O
+         GkoQ==
+X-Gm-Message-State: APjAAAVuOAgR+toU8UioMDjQ883MPjpEnWizz2jIp7WnJ13/GtyNIQbm
+        7Lje0pLC0QKdjdaWPc8h+KquvyNZ5fM=
+X-Google-Smtp-Source: APXvYqx2uAm03uGrknxT6QYWcLV22zpl1XfOYxHWcwU5kxumOqNqeSXIVWkf4PB3EpjuqDpve5pyOw==
+X-Received: by 2002:a19:22d8:: with SMTP id i207mr44177294lfi.97.1560501333006;
+        Fri, 14 Jun 2019 01:35:33 -0700 (PDT)
+Received: from [192.168.0.199] ([31.173.84.143])
+        by smtp.gmail.com with ESMTPSA id 24sm504402ljs.63.2019.06.14.01.35.31
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 14 Jun 2019 01:35:32 -0700 (PDT)
+Subject: Re: [PATCH 15/17] binfmt_flat: move the MAX_SHARED_LIBS definition to
+ binfmt_flat.c
+To:     Christoph Hellwig <hch@lst.de>, Greg Ungerer <gerg@linux-m68k.org>
+Cc:     Michal Simek <monstr@monstr.eu>,
+        linux-arm-kernel@lists.infradead.org, linux-c6x-dev@linux-c6x.org,
+        uclinux-h8-devel@lists.sourceforge.jp,
+        linux-m68k@lists.linux-m68k.org, linux-riscv@lists.infradead.org,
+        linux-sh@vger.kernel.org, linux-xtensa@linux-xtensa.org,
+        linux-kernel@vger.kernel.org
+References: <20190613070903.17214-1-hch@lst.de>
+ <20190613070903.17214-16-hch@lst.de>
+From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <e000b92e-a047-936e-c20a-9cc8b4f524bb@cogentembedded.com>
+Date:   Fri, 14 Jun 2019 11:35:20 +0300
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c9021573-11c6-b576-0aa6-97754c98a06e@redhat.com>
-User-Agent: NeoMutt/20170912 (1.9.0)
+In-Reply-To: <20190613070903.17214-16-hch@lst.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 2019-06-13 16:48:02, Joe Lawrence wrote:
-> On 6/13/19 9:15 AM, Joe Lawrence wrote:
-> > On 6/13/19 9:00 AM, Miroslav Benes wrote:
-> >> Hi Joe,
-> >>
-> >> first, I'm sorry for the lack of response so far.
-> >>
-> >> Maybe you've already noticed but the selftests fail. Well, at least in
-> >> my VM. When test_klp_convert1.ko is loaded, the process is killed with
-> >>
-> >> [  518.041826] BUG: kernel NULL pointer dereference, address: 0000000000000000
-> >> [  518.042816] #PF: supervisor read access in kernel mode
-> >> [  518.043393] #PF: error_code(0x0000) - not-present page
-> >> [  518.043981] PGD 0 P4D 0
-> >> [  518.044185] Oops: 0000 [#1] SMP PTI
-> >> [  518.044518] CPU: 2 PID: 2255 Comm: insmod Tainted: G           O  K   5.1.0-klp_convert_v4-193435-g67748576637e #2
-> >> [  518.045784] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.12.1-0-ga5cab58-prebuilt.qemu.org 04/01/2014
-> >> [  518.046940] RIP: 0010:test_klp_convert_init+0x1c/0x40 [test_klp_convert1]
-> >> [  518.047611] Code: 1b a0 48 89 c6 e9 a8 c0 f4 e0 0f 1f 40 00 0f 1f 44 00 00 53 48 c7 c7 00 30 1b a0 e8 5e 33 f6 e0 85 c0 89 c3 74 04 89 d8 5b c3 <48> 8b 35 5d ef e4 5f 48 c7 c7 28 20 1b a0 e8 75 c0 f4 e0 e8 6c ff
-> >> [  518.049779] RSP: 0018:ffffc90000f37cc8 EFLAGS: 00010246
-> >> [  518.050243] RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000027de0
-> >> [  518.050922] RDX: 0000000000000000 RSI: 0000000000000006 RDI: ffff88807ab54f40
-> >> [  518.051619] RBP: ffffffffa01b1080 R08: 0000000096efde7a R09: 0000000000000001
-> >> [  518.052332] R10: 0000000000000000 R11: 0000000000000000 R12: 00000000ffffffff
-> >> [  518.053012] R13: 0000000000000000 R14: ffff888078b55000 R15: ffffc90000f37ea0
-> >> [  518.053714] FS:  00007febece1fb80(0000) GS:ffff88807d400000(0000) knlGS:0000000000000000
-> >> [  518.054514] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> >> [  518.055078] CR2: 0000000000000000 CR3: 000000007a56a000 CR4: 00000000000006e0
-> >> [  518.055818] Call Trace:
-> >> [  518.056007]  do_one_initcall+0x6a/0x2da
-> >> [  518.056340]  ? do_init_module+0x22/0x230
-> >> [  518.056702]  ? rcu_read_lock_sched_held+0x96/0xa0
-> >> [  518.057125]  ? kmem_cache_alloc_trace+0x284/0x2e0
-> >> [  518.057493]  do_init_module+0x5a/0x230
-> >> [  518.057900]  load_module+0x17bc/0x1f50
-> >> [  518.058214]  ? __symbol_put+0x40/0x40
-> >> [  518.058499]  ? vfs_read+0x12d/0x160
-> >> [  518.058766]  __do_sys_finit_module+0x83/0xc0
-> >> [  518.059122]  do_syscall_64+0x57/0x190
-> >> [  518.059407]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> >> ...
-> >>
-> >> It crashes right in test_klp_convert_init() when print_*() using
-> >> supposed-to-be-converted symbols are called. I'll debug it next week. Can
-> >> you reproduce it too?
-> > 
-> > Hey, thanks for the report..
-> > 
-> > I don't recall the tests crashing, but I had put this patchset on the
-> > side for a few weeks now.  I'll try to fire up a VM and see what happens
-> > today.
-> > 
+Hello!
+
+On 13.06.2019 10:09, Christoph Hellwig wrote:
+
+> MAX_SHARED_LIBS is an implementation detail of the kernel loader,
+> and should be kept away from the file format definition.
 > 
-> Hmm, I haven't been able to reproduce using my original base (Linux 5.1-rc6)
-> or when rebased ontop of livepatching.git/master + 997a55f3fb6d("stacktrace: Unbreak stack_trace_save_tsk_reliable()")
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ---
+>   fs/binfmt_flat.c     | 6 ++++++
+>   include/linux/flat.h | 6 ------
+>   2 files changed, 6 insertions(+), 6 deletions(-)
+> 
+> diff --git a/fs/binfmt_flat.c b/fs/binfmt_flat.c
+> index 0ca65d51bb01..ccd9843e979e 100644
+> --- a/fs/binfmt_flat.c
+> +++ b/fs/binfmt_flat.c
+> @@ -68,6 +68,12 @@
+>   #define RELOC_FAILED 0xff00ff01		/* Relocation incorrect somewhere */
+>   #define UNLOADED_LIB 0x7ff000ff		/* Placeholder for unused library */
+>   
+> +#ifdef CONFIG_BINFMT_SHARED_FLAT
+> +#define	MAX_SHARED_LIBS			(4)
+> +#else
+> +#define	MAX_SHARED_LIBS			(1)
+> +#endif
 
-I stared into the code a bit but I did not find any bug. Let's hope
-that it was just some pre-vacation last minute mistake (system
-inconsistency or so ;-)
+    Perhaps the time to remove ()?
 
-Anyway, I am curious about one thing. I saw:
+[...]
 
-function __load_mod() {
-	local mod="$1"; shift
-
-	local msg="% modprobe $mod $*"
-	log "${msg%% }"
-	ret=$(modprobe "$mod" "$@" 2>&1)
-	if [[ "$ret" != "" ]]; then
-		die "$ret"
-	fi
-
-	# Wait for module in sysfs ...
-	loop_until '[[ -e "/sys/module/$mod" ]]' ||
-		die "failed to load module $mod"
-}
-
-Is the waiting for sysfs really necessary here?
-
-Note that it is /sys/module and not /sys/kernel/livepatch/.
-
-My understanding is that modprobe waits until the module succesfully
-loaded. mod_sysfs_setup() is called before the module init callback.
-Therefore the sysfs interface should be read before modprobe returns.
-Do I miss something?
-
-If it works different way then there might be some races because
-mod_sysfs_setup() is called before the module is alive.
-
-Best Regards,
-Petr
+MBR, Sergei
