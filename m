@@ -2,57 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F351445B80
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 13:32:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3CE6C45B97
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 13:43:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727591AbfFNLcr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 07:32:47 -0400
-Received: from gloria.sntech.de ([185.11.138.130]:39726 "EHLO gloria.sntech.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727307AbfFNLcq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 07:32:46 -0400
-Received: from we0305.dip.tu-dresden.de ([141.76.177.49] helo=phil.localnet)
-        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <heiko@sntech.de>)
-        id 1hbkRm-0004mJ-74; Fri, 14 Jun 2019 13:32:42 +0200
-From:   Heiko Stuebner <heiko@sntech.de>
-To:     xieqinick@gmail.com
-Cc:     robh+dt@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-        nick@khadas.com
-Subject: Re: [PATCH v2] arm64: dts: rockchip: Add support for Khadas Edge/Edge-V/Captain boards
-Date:   Fri, 14 Jun 2019 13:32:41 +0200
-Message-ID: <4566563.QzcLDyM7tj@phil>
-In-Reply-To: <1560153473-17190-1-git-send-email-xieqinick@gmail.com>
-References: <1559035267-1884-1-git-send-email-xieqinick@gmail.com> <1560153473-17190-1-git-send-email-xieqinick@gmail.com>
+        id S1727510AbfFNLny (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 07:43:54 -0400
+Received: from mail.vodokanal.poltava.ua ([91.219.220.27]:44123 "EHLO
+        mail.vodokanal.poltava.ua" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727217AbfFNLnx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Jun 2019 07:43:53 -0400
+Received: by mail.vodokanal.poltava.ua (Postfix, from userid 80)
+        id 7492422A34C; Fri, 14 Jun 2019 14:35:11 +0300 (EEST)
+Received: from 192.168.0.119
+        (SquirrelMail authenticated user test@vodokanal.poltava.ua)
+        by mail.vodokanal.poltava.ua with HTTP;
+        Fri, 14 Jun 2019 12:35:11 +0100
+Message-ID: <d9f6b7586c9eab9bf49ae27ed1737e62.squirrel@mail.vodokanal.poltava.ua>
+Date:   Fri, 14 Jun 2019 12:35:11 +0100
+Subject: LOANS !!!
+From:   "Dial Direct Loans" <dialdirect@info.org>
+Reply-To: infodialdirectloans@mail2consultant.com
+User-Agent: SquirrelMail/1.4.21
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type:   text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+X-Priority: 3 (Normal)
+Importance: Normal
+To:     undisclosed-recipients:;
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Montag, 10. Juni 2019, 09:57:53 CEST schrieb xieqinick@gmail.com:
-> From: Nick Xie <nick@khadas.com>
-> 
-> Add devicetree support for Khadas Edge/Edge-V/Captain boards.
-> Khadas Edge is an expandable Rockchip RK3399 board with goldfinger.
-> Khadas Captain is the carrier board for Khadas Edge.
-> Khadas Edge-V is a Khadas VIM form factor Rockchip RK3399 board.
-> 
-> Signed-off-by: Nick Xie <nick@khadas.com>
 
-applied for 5.3 after doing some style-fixes to the edge.dtsi
-(2 missing gpio constants, some newlines and sdio-regulator
-references were missing "<..>")
-
-Please double-check the result
+Dial Direct Loan SA
 
 
-Thanks
-Heiko
+Consolidate your debts with Dial Direct Loan SA for your peace of
+mind at a fixed interest rate of 4.75%,personal and business loans
+are also welcome.For details file in your applications by sending an email
+to:infodialdirectloans@mail2consultant.com.
+
+
+
+Yours in Service,
+Susan Muller (Mrs.),
+Senior Consultant,
+Loan Application Team
+Dial Direct Loan SA
+Tel No: +27717231058
 
 
