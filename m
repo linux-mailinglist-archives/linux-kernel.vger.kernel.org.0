@@ -2,77 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A1E0045E94
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 15:42:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BE06945E9D
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 15:43:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728505AbfFNNln (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 09:41:43 -0400
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:35818 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727918AbfFNNln (ORCPT
+        id S1728398AbfFNNmj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 09:42:39 -0400
+Received: from stargate.chelsio.com ([12.32.117.8]:22443 "EHLO
+        stargate.chelsio.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727918AbfFNNmi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 09:41:43 -0400
-Received: by mail-qk1-f195.google.com with SMTP id l128so1678742qke.2
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2019 06:41:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toxicpanda-com.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=yb0/sevEMdafr2vXQ3qC01lm6vSKeakGcpjhBltDdpk=;
-        b=jQtFbDrieAPENr34h0NUQDNe209XEw+cgr6byx7mhVe+H/I4OpVT5Rmtkwu7rOTXDf
-         UZyyDSms5H7OeZUnR29dpbgr+m10jg7GwyH4EjG9Ift7e1mZBpK4rQRKA5x4zK9cIUam
-         PFXJWxFZ6irPMweVHfjT48XHVwUaLlv+WO9I8Y36/SMVyJdGBJdbhncsXKKVQ7hH+pq1
-         lqPArqtDo8LoKzaNMBpxhNCABn++pc4m+hJgJEN5Lt2W6uFoh20WmEjYvxnYorDjx7sw
-         aS7oYnV14PWuNtxeFf9la+DtngnBiNQEOROSSRJrSkgZJRuTXnUNfuUU02ZE43H3xx1Y
-         d5eA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=yb0/sevEMdafr2vXQ3qC01lm6vSKeakGcpjhBltDdpk=;
-        b=D4pn2VXulVi2K/VFG5WM0dEklZem60BfGnIiwdQ3IOjjzvOstAFwV+2CGjPEE1wcSM
-         oW8Mti8f+T0+mib+hLdJ7We4ns1gJviC19VwqlMm2ledC3eabjs1e2tqutZ4GnUWqfZs
-         bMEslJl99tKnDhjATI+hJJ8RLS2UoEuDnG4FiOvE9ypPf30GYLbBI4jYCB8OuouLqfKT
-         DFrBPF3UByHhKYiJcPi1BWRwmrjlCxLZX3KhzyuEgXWc5hqr/pjmx0c5afcfxvN3oyZC
-         aqljWyUZa0rABkbe5+X3rd6VnrnXdnItCejg5ioivPl5f5m2I9K8qG594EJt+KeqpNQ+
-         oImg==
-X-Gm-Message-State: APjAAAW58cmULvQQ+/NiBcfh2xUoULi8dyXX5a3RixIYzjLohZZdfp3Z
-        uh0/65D8/y3FwbVp+WDZ6ak6Dg==
-X-Google-Smtp-Source: APXvYqy95F8IXy3awZMsVz6XFn2JcaEs7ITo2Lhv35mkO5CbPjyv/eOkl5aUm+OphfRVf0h+M09noQ==
-X-Received: by 2002:a37:4b56:: with SMTP id y83mr32892834qka.338.1560519702426;
-        Fri, 14 Jun 2019 06:41:42 -0700 (PDT)
-Received: from localhost ([2620:10d:c091:480::a658])
-        by smtp.gmail.com with ESMTPSA id l88sm1602172qte.33.2019.06.14.06.41.41
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 14 Jun 2019 06:41:41 -0700 (PDT)
-Date:   Fri, 14 Jun 2019 09:41:40 -0400
-From:   Josef Bacik <josef@toxicpanda.com>
-To:     Tejun Heo <tj@kernel.org>
-Cc:     dsterba@suse.com, clm@fb.com, josef@toxicpanda.com,
-        axboe@kernel.dk, jack@suse.cz, linux-btrfs@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
-        kernel-team@fb.com
-Subject: Re: [PATCH 2/8] blkcg, writeback: Implement wbc_blkcg_css()
-Message-ID: <20190614134139.miko2ypm5znqho6f@MacBook-Pro-91.local>
-References: <20190614003350.1178444-1-tj@kernel.org>
- <20190614003350.1178444-3-tj@kernel.org>
+        Fri, 14 Jun 2019 09:42:38 -0400
+Received: from localhost (varun.asicdesigners.com [10.193.190.56])
+        by stargate.chelsio.com (8.13.8/8.13.8) with ESMTP id x5EDfkhn025181;
+        Fri, 14 Jun 2019 06:41:47 -0700
+Date:   Fri, 14 Jun 2019 19:11:44 +0530
+From:   Varun Prakash <varun@chelsio.com>
+To:     YueHaibing <yuehaibing@huawei.com>
+Cc:     "Martin K . Petersen" <martin.petersen@oracle.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Mike Christie <mchristi@redhat.com>,
+        Bart Van Assche <bvanassche@acm.org>,
+        linux-scsi@vger.kernel.org, target-devel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        varun@chelsio.com
+Subject: Re: [PATCH -next] cxgbit: remove set but not used variable 'ppmax'
+Message-ID: <20190614134143.GA1630@chelsio.com>
+References: <20190614024413.110449-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190614003350.1178444-3-tj@kernel.org>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20190614024413.110449-1-yuehaibing@huawei.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 13, 2019 at 05:33:44PM -0700, Tejun Heo wrote:
-> Add a helper to determine the target blkcg from wbc.
+On Fri, Jun 14, 2019 at 02:44:13AM +0000, YueHaibing wrote:
+> Fixes gcc '-Wunused-but-set-variable' warning:
 > 
-> Signed-off-by: Tejun Heo <tj@kernel.org>
+> drivers/target/iscsi/cxgbit/cxgbit_ddp.c: In function 'cxgbit_ddp_init':
+> drivers/target/iscsi/cxgbit/cxgbit_ddp.c:303:15: warning:
+>  variable 'ppmax' set but not used [-Wunused-but-set-variable]
+> 
+> It's not used since commit a248384e6420 ("cxgb4/libcxgb/cxgb4i/cxgbit:
+> enable eDRAM page pods for iSCSI")
+> 
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+> ---
+>  drivers/target/iscsi/cxgbit/cxgbit_ddp.c | 3 ---
+>  1 file changed, 3 deletions(-)
+> 
+> diff --git a/drivers/target/iscsi/cxgbit/cxgbit_ddp.c b/drivers/target/iscsi/cxgbit/cxgbit_ddp.c
+> index 1443ef045a5f..fe1be5feaf21 100644
+> --- a/drivers/target/iscsi/cxgbit/cxgbit_ddp.c
+> +++ b/drivers/target/iscsi/cxgbit/cxgbit_ddp.c
+> @@ -300,7 +300,6 @@ int cxgbit_ddp_init(struct cxgbit_device *cdev)
+>  	struct cxgb4_lld_info *lldi = &cdev->lldi;
+>  	struct net_device *ndev = cdev->lldi.ports[0];
+>  	struct cxgbi_tag_format tformat;
+> -	unsigned int ppmax;
+>  	int ret, i;
+>  
+>  	if (!lldi->vr->iscsi.size) {
+> @@ -308,8 +307,6 @@ int cxgbit_ddp_init(struct cxgbit_device *cdev)
+>  		return -EACCES;
+>  	}
+>  
+> -	ppmax = lldi->vr->iscsi.size >> PPOD_SIZE_SHIFT;
+> -
+>  	memset(&tformat, 0, sizeof(struct cxgbi_tag_format));
+>  	for (i = 0; i < 4; i++)
+>  		tformat.pgsz_order[i] = (lldi->iscsi_pgsz_order >> (i << 3))
+> 
 
-Reviewed-by: Josef Bacik <josef@toxicpanda.com>
+Acked-by: Varun Prakash <varun@chelsio.com>
 
-Thanks,
-
-Josef
+This patch is for net-next tree.
