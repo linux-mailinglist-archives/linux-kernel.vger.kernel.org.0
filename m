@@ -2,141 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6DB9F46944
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 22:32:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2573346923
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 22:31:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728122AbfFNUbR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 16:31:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54830 "EHLO mail.kernel.org"
+        id S1728028AbfFNUa4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 16:30:56 -0400
+Received: from sauhun.de ([88.99.104.3]:56660 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728044AbfFNUa7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 16:30:59 -0400
-Received: from sasha-vm.mshome.net (unknown [131.107.159.134])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 28D7B21848;
-        Fri, 14 Jun 2019 20:30:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560544258;
-        bh=4O0JKj5fBcg87NwHkyaqFLa7IWZd6uZjlE5yc9zzJqQ=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EmWpnp7DFDptPSVVhs4A98DPvD3KMEd2iO/Ykf316vL22wthxnUJv0MYHTrdPMO/k
-         L3wiD5nLsZ6vgjH37uqhT92GtVxgPj2ix/RiWE9bD2BKtQM9YyHmCo4n4CEpLbWg9H
-         SkO8DGTxuAaVsFH1rh01UdHW7zUyNOOwMiwg6bq8=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Robert Hancock <hancock@sedsystems.ca>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Sasha Levin <sashal@kernel.org>, linux-hwmon@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.4 10/10] hwmon: (pmbus/core) Treat parameters as paged if on multiple pages
-Date:   Fri, 14 Jun 2019 16:30:46 -0400
-Message-Id: <20190614203046.28077-10-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190614203046.28077-1-sashal@kernel.org>
-References: <20190614203046.28077-1-sashal@kernel.org>
+        id S1727963AbfFNUay (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Jun 2019 16:30:54 -0400
+Received: from localhost (p5486CF81.dip0.t-ipconnect.de [84.134.207.129])
+        by pokefinder.org (Postfix) with ESMTPSA id C679A2CF690;
+        Fri, 14 Jun 2019 22:30:52 +0200 (CEST)
+Date:   Fri, 14 Jun 2019 22:30:51 +0200
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     Suzuki K Poulose <suzuki.poulose@arm.com>
+Cc:     linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org,
+        rafael@kernel.org,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Andreas Noever <andreas.noever@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Corey Minyard <minyard@acm.org>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        David Kershner <david.kershner@unisys.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        David Airlie <airlied@linux.ie>,
+        Felipe Balbi <balbi@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        Harald Freudenberger <freude@linux.ibm.com>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Jonathan Cameron <jic23@kernel.org>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        Len Brown <lenb@kernel.org>, Mark Brown <broonie@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Michael Jamet <michael.jamet@intel.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Peter Oberparleiter <oberpar@linux.ibm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Sebastian Ott <sebott@linux.ibm.com>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Yehezkel Bernat <YehezkelShB@gmail.com>
+Subject: Re: [PATCH v2 04/28] bus_find_device: Unify the match callback with
+ class_find_device
+Message-ID: <20190614203051.GA7991@kunai>
+References: <1560534863-15115-1-git-send-email-suzuki.poulose@arm.com>
+ <1560534863-15115-5-git-send-email-suzuki.poulose@arm.com>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="vtzGhvizbBRQ85DL"
+Content-Disposition: inline
+In-Reply-To: <1560534863-15115-5-git-send-email-suzuki.poulose@arm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Robert Hancock <hancock@sedsystems.ca>
 
-[ Upstream commit 4a60570dce658e3f8885bbcf852430b99f65aca5 ]
+--vtzGhvizbBRQ85DL
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Some chips have attributes which exist on more than one page but the
-attribute is not presently marked as paged. This causes the attributes
-to be generated with the same label, which makes it impossible for
-userspace to tell them apart.
+On Fri, Jun 14, 2019 at 06:53:59PM +0100, Suzuki K Poulose wrote:
+> There is an arbitrary difference between the prototypes of
+> bus_find_device() and class_find_device() preventing their callers
+> from passing the same pair of data and match() arguments to both of
+> them, which is the const qualifier used in the prototype of
+> class_find_device().  If that qualifier is also used in the
+> bus_find_device() prototype, it will be possible to pass the same
+> match() callback function to both bus_find_device() and
+> class_find_device(), which will allow some optimizations to be made in
+> order to avoid code duplication going forward.  Also with that, constify
+> the "data" parameter as it is passed as a const to the match function.
+>=20
+> For this reason, change the prototype of bus_find_device() to match
+> the prototype of class_find_device() and adjust its callers to use the
+> const qualifier in accordance with the new prototype of it.
 
-Marking all such attributes as paged would result in the page suffix
-being added regardless of whether they were present on more than one
-page or not, which might break existing setups. Therefore, we add a
-second check which treats the attribute as paged, even if not marked as
-such, if it is present on multiple pages.
+Acked-by: Wolfram Sang <wsa@the-dreams.de> # for the I2C parts
 
-Fixes: b4ce237b7f7d ("hwmon: (pmbus) Introduce infrastructure to detect sensors and limit registers")
-Signed-off-by: Robert Hancock <hancock@sedsystems.ca>
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/hwmon/pmbus/pmbus_core.c | 34 ++++++++++++++++++++++++++++----
- 1 file changed, 30 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/hwmon/pmbus/pmbus_core.c b/drivers/hwmon/pmbus/pmbus_core.c
-index c00bad02761a..0d75bc7b5065 100644
---- a/drivers/hwmon/pmbus/pmbus_core.c
-+++ b/drivers/hwmon/pmbus/pmbus_core.c
-@@ -1028,14 +1028,15 @@ static int pmbus_add_sensor_attrs_one(struct i2c_client *client,
- 				      const struct pmbus_driver_info *info,
- 				      const char *name,
- 				      int index, int page,
--				      const struct pmbus_sensor_attr *attr)
-+				      const struct pmbus_sensor_attr *attr,
-+				      bool paged)
- {
- 	struct pmbus_sensor *base;
- 	int ret;
- 
- 	if (attr->label) {
- 		ret = pmbus_add_label(data, name, index, attr->label,
--				      attr->paged ? page + 1 : 0);
-+				      paged ? page + 1 : 0);
- 		if (ret)
- 			return ret;
- 	}
-@@ -1067,6 +1068,30 @@ static int pmbus_add_sensor_attrs_one(struct i2c_client *client,
- 	return 0;
- }
- 
-+static bool pmbus_sensor_is_paged(const struct pmbus_driver_info *info,
-+				  const struct pmbus_sensor_attr *attr)
-+{
-+	int p;
-+
-+	if (attr->paged)
-+		return true;
-+
-+	/*
-+	 * Some attributes may be present on more than one page despite
-+	 * not being marked with the paged attribute. If that is the case,
-+	 * then treat the sensor as being paged and add the page suffix to the
-+	 * attribute name.
-+	 * We don't just add the paged attribute to all such attributes, in
-+	 * order to maintain the un-suffixed labels in the case where the
-+	 * attribute is only on page 0.
-+	 */
-+	for (p = 1; p < info->pages; p++) {
-+		if (info->func[p] & attr->func)
-+			return true;
-+	}
-+	return false;
-+}
-+
- static int pmbus_add_sensor_attrs(struct i2c_client *client,
- 				  struct pmbus_data *data,
- 				  const char *name,
-@@ -1080,14 +1105,15 @@ static int pmbus_add_sensor_attrs(struct i2c_client *client,
- 	index = 1;
- 	for (i = 0; i < nattrs; i++) {
- 		int page, pages;
-+		bool paged = pmbus_sensor_is_paged(info, attrs);
- 
--		pages = attrs->paged ? info->pages : 1;
-+		pages = paged ? info->pages : 1;
- 		for (page = 0; page < pages; page++) {
- 			if (!(info->func[page] & attrs->func))
- 				continue;
- 			ret = pmbus_add_sensor_attrs_one(client, data, info,
- 							 name, index, page,
--							 attrs);
-+							 attrs, paged);
- 			if (ret)
- 				return ret;
- 			index++;
--- 
-2.20.1
+--vtzGhvizbBRQ85DL
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAl0EA/cACgkQFA3kzBSg
+KbbXHBAAstp9GpPxsxW8LEQOVfaMLoMg9Dnm0OuY4goxVWlgniJP6l0iDHJlYr35
+QxpIPfO7Hg9F5jykwiY7mppMva+ORnWPpoeKNCUl5D/4DhYyteQJTay9YeH15YAf
+jg6hBpIHFXaQ1Pjb2ffw4m/sUtxT+69SjUdtzHOvfsP6v3ASIc76xlK/bC9IOawr
+bGbpbdX8PMGbq0v1DlF/1VjeWFHAvkO1/bnMFrZSczAtJyLnSyH43wNMyOIbHC/P
+hN4qbazCTw2uofmlV9yIDwa5ByiTH+DVDJbwhzE3wPqnTmJrFhH4wqhdfaFyvm9W
+4VLIGOOBzsr4vCwVCpwL5XCgYnuOIMVB3fHoehmWH052O495D0yxTvu5M6zHZVp8
+MJ/m5t/8D1PBDExf1THKVC5p2C/i+Qy0hbTo1jHN7uxgx6qTE/9/xPC8TS0E2vXe
+TEs7HJtni+uZhOojf85CqpJYeUrvkjadriphh/dYKt2cepPCsmbpI8ko+Waeam8I
+KM4gDxBTtInIAiw+5VfGmA1z9ijz69ol0yQfLPbr4OmOqLt54e1j183EJuyDSXpD
+P621n54QpbOmnNymvjXZxSanlFTMuWudI3ahHaaKrVex1nTDTXriA0LvQywqCjQo
+Sf5pz6vvfxrb4G+0YB8gt0gBQLytl7OHJWhIBvosSo39VLFv7VQ=
+=59Uk
+-----END PGP SIGNATURE-----
+
+--vtzGhvizbBRQ85DL--
