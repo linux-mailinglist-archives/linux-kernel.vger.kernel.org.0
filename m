@@ -2,102 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5DF8345E3A
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 15:33:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9A55345E49
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 15:35:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728156AbfFNNcn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 09:32:43 -0400
-Received: from foss.arm.com ([217.140.110.172]:33830 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727729AbfFNNcn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 09:32:43 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 625AF367;
-        Fri, 14 Jun 2019 06:32:42 -0700 (PDT)
-Received: from [10.1.196.93] (en101.cambridge.arm.com [10.1.196.93])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 460C93F718;
-        Fri, 14 Jun 2019 06:32:41 -0700 (PDT)
-Subject: Re: [RFC PATCH 01/57] drivers: s390/cio: Use driver_for_each_device
-To:     linux-kernel@vger.kernel.org, sebott@linux.ibm.com,
-        oberpar@linux.ibm.com, heiko.carstens@de.ibm.com
-Cc:     gregkh@linuxfoundation.org, rafael@kernel.org
-References: <1559577023-558-1-git-send-email-suzuki.poulose@arm.com>
- <1559577023-558-2-git-send-email-suzuki.poulose@arm.com>
-From:   Suzuki K Poulose <suzuki.poulose@arm.com>
-Message-ID: <2e71f1c3-9654-92a0-64e5-e7a2a1081fbb@arm.com>
-Date:   Fri, 14 Jun 2019 14:32:39 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S1728108AbfFNNeF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 09:34:05 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:38994 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727842AbfFNNeE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Jun 2019 09:34:04 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=C0nBHLDkMzGog27NgS5rehy1Wv/08uCW/YzQiNw7nNs=; b=RqOZRS7urkSMLctNG2/1Ak12G
+        f/4kQHDb+UbN4+940BDAXkw1woJik4UQ0ENEMnpn29ly5gI/CXJdX+l08QcStbFkmC0zMpWNGjc4C
+        WEk5rb584twn+em5U7jBNkLRnOLXdnSoKmJzLWr5MOv/hEv/jGeWsDCFM4fe0ZKCQPzAMmm2+DDAa
+        HwPEfLEaIUktNrPdwIKJ4a6E58LjOYEDRRGDcxDDJpiH9chmHcjMMzS7cfxAacSXSzFrdBbDhteHl
+        GfdnjQgCFpUYAhbI88l+XnPm8iSKqpuDlMnxBcMLo5SMoBRwmD7NLqJJtqQBtdQRQBPcp5J+DrcXR
+        TkIwqv4fw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1hbmL2-00082H-Eq; Fri, 14 Jun 2019 13:33:52 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id EAAE520A3149A; Fri, 14 Jun 2019 15:33:50 +0200 (CEST)
+Date:   Fri, 14 Jun 2019 15:33:50 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Jiri Olsa <jolsa@redhat.com>
+Cc:     Kan Liang <kan.liang@intel.com>, Jiri Olsa <jolsa@kernel.org>,
+        David Carrillo-Cisneros <davidcc@google.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>, Tom Vaden <tom.vaden@hpe.com>
+Subject: Re: [RFC] perf/x86/intel: Disable check_msr for real hw
+Message-ID: <20190614133350.GT3436@hirez.programming.kicks-ass.net>
+References: <20190614112853.GC4325@krava>
 MIME-Version: 1.0
-In-Reply-To: <1559577023-558-2-git-send-email-suzuki.poulose@arm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190614112853.GC4325@krava>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Heiko, Sebastian, Peter,
-
-Please could you review the following patch ?
-
-
-On 03/06/2019 16:49, Suzuki K Poulose wrote:
-> The cio driver use driver_find_device() to find all devices
-> to release them before the driver is unregistered. Instead,
-> it could easily use a lighter driver_for_each_device() helper
-> to iterate over all the devices.
+On Fri, Jun 14, 2019 at 01:28:53PM +0200, Jiri Olsa wrote:
+> hi,
+> the HPE server can do POST tracing and have enabled LBR
+> tracing during the boot, which makes check_msr fail falsly.
 > 
-> Cc: Sebastian Ott <sebott@linux.ibm.com>
-> Cc: Peter Oberparleiter <oberpar@linux.ibm.com>
-> Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
-> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+> It looks like check_msr code was added only to check on guests
+> MSR access, would it be then ok to disable check_msr for real
+> hardware? (as in patch below)
+> 
+> We could also check if LBR tracing is enabled and make
+> appropriate checks, but this change is simpler ;-)
+> 
+> ideas? thanks,
+> jirka
+> 
+> 
 > ---
->   drivers/s390/cio/ccwgroup.c | 18 ++++++++----------
->   1 file changed, 8 insertions(+), 10 deletions(-)
+>  arch/x86/events/intel/core.c | 8 ++++++++
+>  1 file changed, 8 insertions(+)
 > 
-> diff --git a/drivers/s390/cio/ccwgroup.c b/drivers/s390/cio/ccwgroup.c
-> index 4ebf6d4..a006945 100644
-> --- a/drivers/s390/cio/ccwgroup.c
-> +++ b/drivers/s390/cio/ccwgroup.c
-> @@ -581,9 +581,12 @@ int ccwgroup_driver_register(struct ccwgroup_driver *cdriver)
->   }
->   EXPORT_SYMBOL(ccwgroup_driver_register);
->   
-> -static int __ccwgroup_match_all(struct device *dev, void *data)
-> +static int ccwgroup_release_device(struct device *dev, void *unused)
->   {
-> -	return 1;
-> +	struct ccwgroup_device *gdev = to_ccwgroupdev(dev);
-> +
-> +	ccwgroup_ungroup(gdev);
-> +	return 0;
->   }
->   
->   /**
-> @@ -594,16 +597,11 @@ static int __ccwgroup_match_all(struct device *dev, void *data)
->    */
->   void ccwgroup_driver_unregister(struct ccwgroup_driver *cdriver)
->   {
-> -	struct device *dev;
-> +	int ret;
->   
->   	/* We don't want ccwgroup devices to live longer than their driver. */
-> -	while ((dev = driver_find_device(&cdriver->driver, NULL, NULL,
-> -					 __ccwgroup_match_all))) {
-> -		struct ccwgroup_device *gdev = to_ccwgroupdev(dev);
-> -
-> -		ccwgroup_ungroup(gdev);
-> -		put_device(dev);
-> -	}
-> +	ret = driver_for_each_device(&cdriver->driver, NULL, NULL,
-> +				     ccwgroup_release_device);
->   	driver_unregister(&cdriver->driver);
->   }
->   EXPORT_SYMBOL(ccwgroup_driver_unregister);
+> diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
+> index 71001f005bfe..1194ae7e1992 100644
+> --- a/arch/x86/events/intel/core.c
+> +++ b/arch/x86/events/intel/core.c
+> @@ -20,6 +20,7 @@
+>  #include <asm/intel-family.h>
+>  #include <asm/apic.h>
+>  #include <asm/cpu_device_id.h>
+> +#include <asm/hypervisor.h>
+>  
+>  #include "../perf_event.h"
+>  
+> @@ -4050,6 +4051,13 @@ static bool check_msr(unsigned long msr, u64 mask)
+>  {
+>  	u64 val_old, val_new, val_tmp;
+>  
+> +	/*
+> +	 * Disable the check for real HW, so we don't
+> +	 * mess up with potentionaly enabled regs.
+> +	 */
+> +	if (hypervisor_is_type(X86_HYPER_NATIVE))
+> +		return true;
+
+Yeah, I think that works, or !boot_cpu_has(X86_FEATURE_HYPERVISOR).
+
+>  	/*
+>  	 * Read the current value, change it and read it back to see if it
+>  	 * matches, this is needed to detect certain hardware emulators
+> -- 
+> 2.21.0
 > 
-
-
-Thanks
-Suzuki
