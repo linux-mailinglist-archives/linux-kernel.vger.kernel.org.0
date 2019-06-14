@@ -2,170 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7BB7446653
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 19:53:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0C26B4663F
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 19:53:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727325AbfFNRxh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 13:53:37 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:38698 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726701AbfFNRwf (ORCPT
+        id S1727301AbfFNRwv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 13:52:51 -0400
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:35492 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727257AbfFNRwr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 13:52:35 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Sender:Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
-        Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=/v1AAw7om1V/odGoZszjgQFtzJKsLoAGR/3cdXZzrpw=; b=lTpUvIAd/F8l4cCpDxm3Dq4sjh
-        Ss68Yohhl2qG8EJztKjSqfoUlYBHWNDVsCiCO3BLyOn8hVpXsprhxRCYjxX8GpVMet/i1wti7MGfa
-        qUeF3L8a8x/X3I6J32o65HqV14Qro88ua3DhEJdbd2ja0mQ8eRSwaDBdkUsEZ5HZBS7ij1B93fZ2u
-        2wnhL2Xs8Yhw0byrSeSlFNzIcMHaczC3W7Eh2kCxvCxjo3Sl8Hc7safqWHMuQ1QIKBhViMJo0qFCP
-        bCwiHKtUZ85aDaMOAMwddgnCLQuHxnlWa4VRULVlFITTnbqDa4fZG9iCiwsB+SvYDGxCIO9NK938T
-        X4RhDe3w==;
-Received: from 177.133.85.52.dynamic.adsl.gvt.net.br ([177.133.85.52] helo=bombadil.infradead.org)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hbqNO-0000Pk-Sr; Fri, 14 Jun 2019 17:52:34 +0000
-Received: from mchehab by bombadil.infradead.org with local (Exim 4.92)
-        (envelope-from <mchehab@bombadil.infradead.org>)
-        id 1hbqNM-0002PS-3h; Fri, 14 Jun 2019 14:52:32 -0300
-From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Mauro Carvalho Chehab <mchehab@infradead.org>,
-        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Kees Cook <keescook@chromium.org>,
-        Petr Mladek <pmladek@suse.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Joe Lawrence <joe.lawrence@redhat.com>,
-        Mikulas Patocka <mpatocka@redhat.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Sri Krishna chowdary <schowdary@nvidia.com>,
-        Changbin Du <changbin.du@intel.com>
-Subject: [PATCH v2 16/16] docs: Kconfig/Makefile: add a check for broken ABI files
-Date:   Fri, 14 Jun 2019 14:52:30 -0300
-Message-Id: <9ad24385565c0395e06ccb0e058184744f6e4c3b.1560534648.git.mchehab+samsung@kernel.org>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <3b8d7c64f887ddea01df3c4eeabc745c8ec45406.1560534648.git.mchehab+samsung@kernel.org>
-References: <3b8d7c64f887ddea01df3c4eeabc745c8ec45406.1560534648.git.mchehab+samsung@kernel.org>
+        Fri, 14 Jun 2019 13:52:47 -0400
+Received: by mail-ot1-f68.google.com with SMTP id j19so3468158otq.2;
+        Fri, 14 Jun 2019 10:52:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ZWIf587I0I/IIO3dm5/wm1By4rJHZ+H19lkvJnydh20=;
+        b=milTqAIRSdQkbg+N9Pa3KMpKvZDfQHcxJqP+24UT886LqQASMh+9tLPsoFbHhkmLhM
+         cDxD3zdC3MY2sIYyeHmGdAUsx+NFQ3DMOxErlCmNTGLs4jp3ms2nc7iV4Nud4UChVh7h
+         TQXphH1ZouQfXp6NWtHXjye70r/2+/r0JMHTP17p5y4XqqpzmR8lxUnUQ9yyN+936YhH
+         aiI8aaxRrF9lByfeoFT40ulwJ8loD7sqcBFPxNdEmKA+prvMQmhB8OmTCzJI8WK894ke
+         BbG0hi0dj8xIusdAwL1e3pS7KhE+ur14WbclFJCX78gaF0bPW7tLl3Lhio8wy+6YvRFI
+         50hA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ZWIf587I0I/IIO3dm5/wm1By4rJHZ+H19lkvJnydh20=;
+        b=jZXlXQtzuBOW+Su7L8RPo21bkgvQqmM8tgcge/4kviWZupeI0yO4YCuzWdz6y8l7Cs
+         xRUfRTFopFVp4zqzMKsNuqXnmsfb6KRE87KtOdYQWxQNeWU10+blDzx5dDzEwd6GOjzB
+         T8ndlsQDj3t/NEhM2OtmmZz6lwaDdV6ABVsljiPwi69WWHP/rlvpwCKKHnE0zc4vRH+8
+         DS/0y7O+oDkXy4IMVTFrlTYADZ/B3KjMAIkYcPG3DMHjg6q4bmhhY6s2yvnuKlsj8Xb8
+         QRjkTadI1ly3CMXE12VnfrXMlWzPfGsGhpprGkRFCeAtmiKCXUA3vzmxaKg6M6BFBpr8
+         ozJQ==
+X-Gm-Message-State: APjAAAXNw7ozXL7sgIW6XxKNFeevI6Iqn+y+kfrqtah+cnqvliHlIQ3J
+        69C3BuXC7hB2Txm3d5TPEpS2I/yhBITOkPis+gToD4Et
+X-Google-Smtp-Source: APXvYqzvCvm1eY5/2Sub7G3piT3spKXBEzftR3A6CCDw+d0ELK+Uz06CI/iqOgvM9+lOQptFqtfBk0NYnRxHxBrpOPg=
+X-Received: by 2002:a9d:5911:: with SMTP id t17mr393254oth.159.1560534766509;
+ Fri, 14 Jun 2019 10:52:46 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20190612221549.28399-1-prsriva02@gmail.com> <20190612221549.28399-3-prsriva02@gmail.com>
+ <1560455980.4805.57.camel@linux.ibm.com> <1560509860.4171.13.camel@linux.ibm.com>
+ <1560521651.4072.7.camel@linux.ibm.com>
+In-Reply-To: <1560521651.4072.7.camel@linux.ibm.com>
+From:   prakhar srivastava <prsriva02@gmail.com>
+Date:   Fri, 14 Jun 2019 10:52:35 -0700
+Message-ID: <CAEFn8qL-Fumt82oZ6-J-dWA29ztLLraJ6iXc7+du=vNtyBQO4g@mail.gmail.com>
+Subject: Re: [PATCH V8 2/3] Define a new ima template field buf
+To:     Mimi Zohar <zohar@linux.ibm.com>
+Cc:     linux-integrity <linux-integrity@vger.kernel.org>,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Roberto Sassu <roberto.sassu@huawei.com>,
+        thiago Jung Bauermann <bauerman@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The files under Documentation/ABI should follow the syntax
-as defined at Documentation/ABI/README.
+On Fri, Jun 14, 2019 at 7:14 AM Mimi Zohar <zohar@linux.ibm.com> wrote:
+>
+> > > > diff --git a/security/integrity/ima/ima_init.c b/security/integrity/ima/ima_init.c
+> > > > index 993d0f1915ff..c8591406c0e2 100644
+> > > > --- a/security/integrity/ima/ima_init.c
+> > > > +++ b/security/integrity/ima/ima_init.c
+> > > > @@ -50,7 +50,7 @@ static int __init ima_add_boot_aggregate(void)
+> > > >   struct ima_template_entry *entry;
+> > > >   struct integrity_iint_cache tmp_iint, *iint = &tmp_iint;
+> > > >   struct ima_event_data event_data = {iint, NULL, boot_aggregate_name,
+> > > > -                                     NULL, 0, NULL};
+> > > > +                                     NULL, 0, NULL, NULL, 0};
+> > >
+> > > here, don't belong in this patch.  It belongs in "IMA: support for per
+> > > policy rule template formats", in case it should ever be backported.
+> > >  Please post this as a separate patch, that will be squashed with
+> > > "IMA: support for per policy rule template formats".
+> >
+> > My mistake.  I should have picked up Thaigo's "ima: Use designated
+> > initializers for struct ima_event_data".  Please drop these changes
+> > instead.
+>
+> Sorry for the confusion.  I just pushed out Thiago's patch.
+>
+Just to clarify:
+- no split up of patch is needed.
+- only formatting needs to cleaned up.
 
-Allow checking if they're following the syntax by running
-the ABI parser script on COMPILE_TEST.
+Apologies for the formatting issues, my editor switches back to
+tab as 4 chars.
 
-With that, when there's a problem with a file under
-Documentation/ABI, it would produce a warning like:
-
-	Warning: file ./Documentation/ABI/testing/sysfs-bus-pci-devices-aer_stats#14:
-		What '/sys/bus/pci/devices/<dev>/aer_stats/aer_rootport_total_err_cor' doesn't have a description
-	Warning: file ./Documentation/ABI/testing/sysfs-bus-pci-devices-aer_stats#21:
-		What '/sys/bus/pci/devices/<dev>/aer_stats/aer_rootport_total_err_fatal' doesn't have a description
-
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
----
- Documentation/Kconfig  | 11 +++++++++++
- Documentation/Makefile |  5 +++++
- lib/Kconfig.debug      |  2 ++
- scripts/get_abi.pl     | 14 +++++++++++---
- 4 files changed, 29 insertions(+), 3 deletions(-)
- create mode 100644 Documentation/Kconfig
-
-diff --git a/Documentation/Kconfig b/Documentation/Kconfig
-new file mode 100644
-index 000000000000..a8b0701c1422
---- /dev/null
-+++ b/Documentation/Kconfig
-@@ -0,0 +1,11 @@
-+config WARN_ABI_ERRORS
-+	bool "Warn if there are errors at ABI files"
-+	depends on COMPILE_TEST
-+	help
-+	   The files under Documentation/ABI should follow what's
-+	   described at Documentation/ABI/README. Yet, as they're manually
-+	   written, it would be possible that some of those files would
-+	   have errors that would break them for being parsed by
-+	   scripts/get_abi.pl. Add a check to verify them.
-+
-+	   If unsure, select 'N'.
-diff --git a/Documentation/Makefile b/Documentation/Makefile
-index e889e7cb8511..c6480ed22884 100644
---- a/Documentation/Makefile
-+++ b/Documentation/Makefile
-@@ -4,6 +4,11 @@
- 
- subdir-y := devicetree/bindings/
- 
-+# Check for broken ABI files
-+ifeq ($(CONFIG_WARN_ABI_ERRORS),y)
-+$(shell $(srctree)/scripts/get_abi.pl validate --dir $(srctree)/Documentation/ABI)
-+endif
-+
- # You can set these variables from the command line.
- SPHINXBUILD   = sphinx-build
- SPHINXOPTS    =
-diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-index cbdfae379896..b1b7e141ca99 100644
---- a/lib/Kconfig.debug
-+++ b/lib/Kconfig.debug
-@@ -2110,4 +2110,6 @@ config IO_STRICT_DEVMEM
- 
- source "arch/$(SRCARCH)/Kconfig.debug"
- 
-+source "Documentation/Kconfig"
-+
- endmenu # Kernel hacking
-diff --git a/scripts/get_abi.pl b/scripts/get_abi.pl
-index 774e9b809ead..25248c012eb3 100755
---- a/scripts/get_abi.pl
-+++ b/scripts/get_abi.pl
-@@ -38,7 +38,15 @@ my %data;
- sub parse_error($$$$) {
- 	my ($file, $ln, $msg, $data) = @_;
- 
--	print STDERR "file $file#$ln: $msg at\n\t$data";
-+	$data =~ s/\s+$/\n/;
-+
-+	print STDERR "Warning: file $file#$ln:\n\t$msg";
-+
-+	if ($data ne "") {
-+		print STDERR ". Line\n\t\t$data";
-+	} else {
-+	    print STDERR "\n";
-+	}
- }
- 
- #
-@@ -94,7 +102,7 @@ sub parse_abi {
- 
- 			# Invalid, but it is a common mistake
- 			if ($new_tag eq "where") {
--				parse_error($file, $ln, "tag 'Where' is invalid. Should be 'What:' instead", $_);
-+				parse_error($file, $ln, "tag 'Where' is invalid. Should be 'What:' instead", "");
- 				$new_tag = "what";
- 			}
- 
-@@ -190,7 +198,7 @@ sub parse_abi {
- 		}
- 
- 		# Everything else is error
--		parse_error($file, $ln, "Unexpected line:", $_);
-+		parse_error($file, $ln, "Unexpected content", $_);
- 	}
- 	$data{$nametag}->{description} =~ s/^\n+//;
- 	close IN;
--- 
-2.21.0
-
+Thanks,
+Prakhar Srivastava
+> thanks,
+>
+> Mimi
+>
