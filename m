@@ -2,95 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CA0C9469EA
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 22:36:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 88CE946A4A
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 22:37:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728296AbfFNUgN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 16:36:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35052 "EHLO mail.kernel.org"
+        id S1727604AbfFNUhB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 16:37:01 -0400
+Received: from ms.lwn.net ([45.79.88.28]:54060 "EHLO ms.lwn.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727177AbfFNUgL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 16:36:11 -0400
-Received: from kernel.org (unknown [104.132.0.74])
+        id S1727484AbfFNUga (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Jun 2019 16:36:30 -0400
+Received: from lwn.net (localhost [127.0.0.1])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 959DA217F9;
-        Fri, 14 Jun 2019 20:36:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560544570;
-        bh=RQFeY7ClB3qfZKUqanGUTFvCrvIQv9xp/N5O5ZqmrGM=;
-        h=In-Reply-To:References:To:From:Subject:Cc:Date:From;
-        b=fr/TmeQBEPKbLUgkDfSTEhkYS/y4YHrr57CLOtIcGW9sNuajAET5wxTQr07bnOLMh
-         7hE0zaI6D/yrtKuLXwSnBM8hQhS5xdVHThZ7fMOEmZ7C8C+zVH7d80njyK4SeX5nv0
-         p/a54K9i3XcPK0xQHnK47DZ6q/7T0QjynQ0+X/6Q=
-Content-Type: text/plain; charset="utf-8"
+        by ms.lwn.net (Postfix) with ESMTPSA id EE29C740;
+        Fri, 14 Jun 2019 20:36:28 +0000 (UTC)
+Date:   Fri, 14 Jun 2019 14:36:27 -0600
+From:   Jonathan Corbet <corbet@lwn.net>
+To:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Cc:     Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab@infradead.org>,
+        linux-kernel@vger.kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Federico Vaga <federico.vaga@vaga.pv.it>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH v4 14/28] docs: locking: convert docs to ReST and rename
+ to *.rst
+Message-ID: <20190614143627.173f5005@lwn.net>
+In-Reply-To: <791f74dab9607d3d349b1e7fe5d0ab5abbb24081.1560361364.git.mchehab+samsung@kernel.org>
+References: <cover.1560361364.git.mchehab+samsung@kernel.org>
+        <791f74dab9607d3d349b1e7fe5d0ab5abbb24081.1560361364.git.mchehab+samsung@kernel.org>
+Organization: LWN.net
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <13456600.FWPkgmLa5g@phil>
-References: <20190614165454.13743-1-heiko@sntech.de> <20190614174526.6F805217D6@mail.kernel.org> <19cea8f7c279ef6efb12d1ec0822767d@risingedge.co.za> <13456600.FWPkgmLa5g@phil>
-To:     Heiko Stuebner <heiko@sntech.de>,
-        Justin Swartz <justin.swartz@risingedge.co.za>
-From:   Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH 3/4] ARM: dts: rockchip: add display nodes for rk322x
-Cc:     linux-rockchip@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, mturquette@baylibre.com
-User-Agent: alot/0.8.1
-Date:   Fri, 14 Jun 2019 13:36:09 -0700
-Message-Id: <20190614203610.959DA217F9@mail.kernel.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Heiko Stuebner (2019-06-14 12:33:12)
-> Am Freitag, 14. Juni 2019, 20:32:35 CEST schrieb Justin Swartz:
-> > On 2019-06-14 19:45, Stephen Boyd wrote:
-> > >> diff --git a/arch/arm/boot/dts/rk322x.dtsi=20
-> > >> b/arch/arm/boot/dts/rk322x.dtsi
-> > >> index da102fff96a2..148f9b5157ea 100644
-> > >> --- a/arch/arm/boot/dts/rk322x.dtsi
-> > >> +++ b/arch/arm/boot/dts/rk322x.dtsi
-> > >> @@ -143,6 +143,11 @@
-> > >> #clock-cells =3D <0>;
-> > >> };
-> > >>=20
-> > >> +       display_subsystem: display-subsystem {
-> > >> +               compatible =3D "rockchip,display-subsystem";
-> > >> +               ports =3D <&vop_out>;
-> > >> +       };
-> > >> +
-> > >=20
-> > > What is this? It doesn't have a reg property so it looks like a virtu=
-al
-> > > device. Why is it in DT?
-> >=20
-> > This is a virtual device.
-> >=20
-> > I assumed it would be acceptable to it find in a device tree due to=20
-> > binding documentation,=20
-> > "Documentation/devicetree/bindings/display/rockchip/rockchip-drm.txt,=20
-> > which states:
-> >=20
-> > <quote>
-> > The Rockchip DRM master device is a virtual device needed to list all
-> > vop devices or other display interface nodes that comprise the
-> > graphics subsystem.
-> > </quote>
-> >=20
-> > Without the "display_subsystem" device node, the HDMI PHY and=20
-> > rockchipdrmfb frame buffer device are not initialized.
-> >=20
-> > Perhaps I should have included this in my commit message? :)
->=20
-> As Justin said, that is very much common as the root of the components
-> that make up the drm device and pretty much common in a lot of devicetrees
-> for the last 5 years and longer ;-) .
->=20
-> Also gpio-keys also don't have a reg property ;-) .
->=20
+On Wed, 12 Jun 2019 14:52:50 -0300
+Mauro Carvalho Chehab <mchehab+samsung@kernel.org> wrote:
 
-Do you have a SoC node? If so, this virtual device should live in the
-root, away from the nodes that have reg properties and are thus in the
-SoC node.
+> Convert the locking documents to ReST and add them to the
+> kernel development book where it belongs.
+> 
+> Most of the stuff here is just to make Sphinx to properly
+> parse the text file, as they're already in good shape,
+> not requiring massive changes in order to be parsed.
+> 
+> The conversion is actually:
+>   - add blank lines and identation in order to identify paragraphs;
+>   - fix tables markups;
+>   - add some lists markups;
+>   - mark literal blocks;
+>   - adjust title markups.
+> 
+> At its new index.rst, let's add a :orphan: while this is not linked to
+> the main index.rst file, in order to avoid build warnings.
+> 
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+> Acked-by: Federico Vaga <federico.vaga@vaga.pv.it>
 
+This patch contains linux-next changes and doesn't apply to docs-next.
+Perhaps the best thing to do is to apply it to the locking tree?
+
+Thanks,
+
+jon
