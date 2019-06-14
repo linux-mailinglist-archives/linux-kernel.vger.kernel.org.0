@@ -2,45 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 23C12451A3
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 04:04:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 37978451BB
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 04:05:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727347AbfFNCEg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 13 Jun 2019 22:04:36 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:52964 "EHLO
+        id S1727493AbfFNCFY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 13 Jun 2019 22:05:24 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:52862 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726011AbfFNCEb (ORCPT
+        with ESMTP id S1726283AbfFNCE2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Jun 2019 22:04:31 -0400
+        Thu, 13 Jun 2019 22:04:28 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Sender:Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
         Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From:
         Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=1EDYIQPNmsiwyJ2mrEoIP/1S3ndA3wGsYXQv01sTZU4=; b=jDG95pA8CQ/CwTx2/TGGIX8I7+
-        Qj32M/UiRvWq36MBiHqz5daVAdCwvCQBuam7CK1UxyvkPfDDkU1PQ4APBbYJOeXGMl9DgrU3RHx0c
-        wr7xerJNWy4Sn05CBOeNeNPa2BS6Ozpw0TY1Xo+gCzC5HqoYLy4vKvige0Eb2Q5coEo8z89FfiIaC
-        XG/yg64VEQT+DdpNc9lvWAe6wyl9dRIB9eqVpaNuiaNsyhFkRObfjfOePCwGGuB3kX3cW5c7e2PaB
-        HR3Q+sIOI8Ptun9atgr5F4rDUnBUqbgxVOB0G9zPhLyRE63euwBiYxUNsNE1FmXxA1QaIDP5wqNRl
-        vuf0mrqg==;
+        bh=dNrIccKnV6SyCCvCWjjZHRIxHwGzsNAFrwoB2MJ2zQE=; b=CE+V2O43jQjdUOo+U3ubgE8uf4
+        Xv7UR8ytZKtx7ilwxBD+eIgpDJ+8kfXvFkt2BOulgkjHgQlz2+sfMH2Eq8ou1QZuCfD0FgRvIyc6h
+        eDZtKGVelIclGs9tc+bfTfc2AaGuTTOy5gLwYiKatXcu8yMQKT1UYWVnaR15vehiEUP72o0tCVsVM
+        auZ5msDB828mTy+IP4k0eTWSmGudnkz0IPQQzCuKpTCORmLzApTHzlHJz3LCG5O8b5dV2VVMv3KzU
+        1FfXODejCdvHea6GBEJs5wCwLQnvBnjUS4+WVzroLxDS9+78tynfwfsflu84LY/XALf0k0ZIiulYx
+        bN88agBg==;
 Received: from 201.86.169.251.dynamic.adsl.gvt.net.br ([201.86.169.251] helo=bombadil.infradead.org)
         by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hbbZv-0000EF-5v; Fri, 14 Jun 2019 02:04:31 +0000
+        id 1hbbZr-0000E5-D1; Fri, 14 Jun 2019 02:04:27 +0000
 Received: from mchehab by bombadil.infradead.org with local (Exim 4.92)
         (envelope-from <mchehab@bombadil.infradead.org>)
-        id 1hbbZn-0002nk-Pa; Thu, 13 Jun 2019 23:04:23 -0300
+        id 1hbbZn-0002no-QM; Thu, 13 Jun 2019 23:04:23 -0300
 From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc:     Mauro Carvalho Chehab <mchehab@s-opensource.com>,
         Mauro Carvalho Chehab <mchehab@infradead.org>,
         linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        Stefan Achatz <erazor_de@users.sourceforge.net>,
         Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Subject: [PATCH 04/14] ABI: better identificate tables
-Date:   Thu, 13 Jun 2019 23:04:10 -0300
-Message-Id: <6bc45c0d5d464d25d4d16eceac48a2f407166944.1560477540.git.mchehab+samsung@kernel.org>
+Subject: [PATCH 05/14] scripts: add an script to parse the ABI files
+Date:   Thu, 13 Jun 2019 23:04:11 -0300
+Message-Id: <196fb3c497546f923bf5d156c3fddbe74a4913bc.1560477540.git.mchehab+samsung@kernel.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <cover.1560477540.git.mchehab+samsung@kernel.org>
 References: <cover.1560477540.git.mchehab+samsung@kernel.org>
@@ -53,142 +52,238 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 
-When parsing via script, it is important to know if the script
-should consider a description as a literal block that should
-be displayed as-is, or if the description can be considered
-as a normal text.
+Add a script to parse the Documentation/ABI files and produce
+an output with all entries inside an ABI (sub)directory.
 
-Change descriptions to ensure that the preceding line of a table
-ends with a colon. That makes easy to identify the need of a
-literal block.
+Right now, it outputs its contents on ReST format. It shouldn't
+be hard to make it produce other kind of outputs, since the ABI
+file parser is implemented in separate than the output generator.
 
 Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 ---
- Documentation/ABI/obsolete/sysfs-driver-hid-roccat-pyra   | 2 +-
- .../ABI/testing/sysfs-class-backlight-driver-lm3533       | 6 +++---
- Documentation/ABI/testing/sysfs-class-led-driver-lm3533   | 8 ++++----
- Documentation/ABI/testing/sysfs-class-leds-gt683r         | 4 ++--
- Documentation/ABI/testing/sysfs-driver-hid-roccat-kone    | 2 +-
- 5 files changed, 11 insertions(+), 11 deletions(-)
+ scripts/get_abi.pl | 212 +++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 212 insertions(+)
+ create mode 100755 scripts/get_abi.pl
 
-diff --git a/Documentation/ABI/obsolete/sysfs-driver-hid-roccat-pyra b/Documentation/ABI/obsolete/sysfs-driver-hid-roccat-pyra
-index 16020b31ae64..5d41ebadf15e 100644
---- a/Documentation/ABI/obsolete/sysfs-driver-hid-roccat-pyra
-+++ b/Documentation/ABI/obsolete/sysfs-driver-hid-roccat-pyra
-@@ -5,7 +5,7 @@ Description:	It is possible to switch the cpi setting of the mouse with the
- 		press of a button.
- 		When read, this file returns the raw number of the actual cpi
- 		setting reported by the mouse. This number has to be further
--		processed to receive the real dpi value.
-+		processed to receive the real dpi value:
- 
- 		VALUE DPI
- 		1     400
-diff --git a/Documentation/ABI/testing/sysfs-class-backlight-driver-lm3533 b/Documentation/ABI/testing/sysfs-class-backlight-driver-lm3533
-index 77cf7ac949af..c0e0a9ae7b3d 100644
---- a/Documentation/ABI/testing/sysfs-class-backlight-driver-lm3533
-+++ b/Documentation/ABI/testing/sysfs-class-backlight-driver-lm3533
-@@ -4,7 +4,7 @@ KernelVersion:	3.5
- Contact:	Johan Hovold <jhovold@gmail.com>
- Description:
- 		Get the ALS output channel used as input in
--		ALS-current-control mode (0, 1), where
-+		ALS-current-control mode (0, 1), where:
- 
- 		0 - out_current0 (backlight 0)
- 		1 - out_current1 (backlight 1)
-@@ -28,7 +28,7 @@ Date:		April 2012
- KernelVersion:	3.5
- Contact:	Johan Hovold <jhovold@gmail.com>
- Description:
--		Set the brightness-mapping mode (0, 1), where
-+		Set the brightness-mapping mode (0, 1), where:
- 
- 		0 - exponential mode
- 		1 - linear mode
-@@ -38,7 +38,7 @@ Date:		April 2012
- KernelVersion:	3.5
- Contact:	Johan Hovold <jhovold@gmail.com>
- Description:
--		Set the PWM-input control mask (5 bits), where
-+		Set the PWM-input control mask (5 bits), where:
- 
- 		bit 5 - PWM-input enabled in Zone 4
- 		bit 4 - PWM-input enabled in Zone 3
-diff --git a/Documentation/ABI/testing/sysfs-class-led-driver-lm3533 b/Documentation/ABI/testing/sysfs-class-led-driver-lm3533
-index 620ebb3b9baa..e4c89b261546 100644
---- a/Documentation/ABI/testing/sysfs-class-led-driver-lm3533
-+++ b/Documentation/ABI/testing/sysfs-class-led-driver-lm3533
-@@ -4,7 +4,7 @@ KernelVersion:	3.5
- Contact:	Johan Hovold <jhovold@gmail.com>
- Description:
- 		Set the ALS output channel to use as input in
--		ALS-current-control mode (1, 2), where
-+		ALS-current-control mode (1, 2), where:
- 
- 		1 - out_current1
- 		2 - out_current2
-@@ -22,7 +22,7 @@ Date:		April 2012
- KernelVersion:	3.5
- Contact:	Johan Hovold <jhovold@gmail.com>
- Description:
--		Set the pattern generator fall and rise times (0..7), where
-+		Set the pattern generator fall and rise times (0..7), where:
- 
- 		0 - 2048 us
- 		1 - 262 ms
-@@ -45,7 +45,7 @@ Date:		April 2012
- KernelVersion:	3.5
- Contact:	Johan Hovold <jhovold@gmail.com>
- Description:
--		Set the brightness-mapping mode (0, 1), where
-+		Set the brightness-mapping mode (0, 1), where:
- 
- 		0 - exponential mode
- 		1 - linear mode
-@@ -55,7 +55,7 @@ Date:		April 2012
- KernelVersion:	3.5
- Contact:	Johan Hovold <jhovold@gmail.com>
- Description:
--		Set the PWM-input control mask (5 bits), where
-+		Set the PWM-input control mask (5 bits), where:
- 
- 		bit 5 - PWM-input enabled in Zone 4
- 		bit 4 - PWM-input enabled in Zone 3
-diff --git a/Documentation/ABI/testing/sysfs-class-leds-gt683r b/Documentation/ABI/testing/sysfs-class-leds-gt683r
-index e4fae6026e79..6adab27f646e 100644
---- a/Documentation/ABI/testing/sysfs-class-leds-gt683r
-+++ b/Documentation/ABI/testing/sysfs-class-leds-gt683r
-@@ -5,7 +5,7 @@ Contact:	Janne Kanniainen <janne.kanniainen@gmail.com>
- Description:
- 		Set the mode of LEDs. You should notice that changing the mode
- 		of one LED will update the mode of its two sibling devices as
--		well.
-+		well. Possible values are:
- 
- 		0 - normal
- 		1 - audio
-@@ -13,4 +13,4 @@ Description:
- 
- 		Normal: LEDs are fully on when enabled
- 		Audio:  LEDs brightness depends on sound level
--		Breathing: LEDs brightness varies at human breathing rate
-\ No newline at end of file
-+		Breathing: LEDs brightness varies at human breathing rate
-diff --git a/Documentation/ABI/testing/sysfs-driver-hid-roccat-kone b/Documentation/ABI/testing/sysfs-driver-hid-roccat-kone
-index 3ca3971109bf..8f7982c70d72 100644
---- a/Documentation/ABI/testing/sysfs-driver-hid-roccat-kone
-+++ b/Documentation/ABI/testing/sysfs-driver-hid-roccat-kone
-@@ -5,7 +5,7 @@ Description:	It is possible to switch the dpi setting of the mouse with the
- 		press of a button.
- 		When read, this file returns the raw number of the actual dpi
- 		setting reported by the mouse. This number has to be further
--		processed to receive the real dpi value.
-+		processed to receive the real dpi value:
- 
- 		VALUE DPI
- 		1     800
+diff --git a/scripts/get_abi.pl b/scripts/get_abi.pl
+new file mode 100755
+index 000000000000..f7c9944a833c
+--- /dev/null
++++ b/scripts/get_abi.pl
+@@ -0,0 +1,212 @@
++#!/usr/bin/perl
++
++use strict;
++use Pod::Usage;
++use Getopt::Long;
++use File::Find;
++use Fcntl ':mode';
++
++my $help;
++my $man;
++my $debug;
++
++GetOptions(
++	"debug|d+" => \$debug,
++	'help|?' => \$help,
++	man => \$man
++) or pod2usage(2);
++
++pod2usage(1) if $help;
++pod2usage(-exitstatus => 0, -verbose => 2) if $man;
++
++pod2usage(2) if (scalar @ARGV != 1);
++
++my ($prefix) = @ARGV;
++
++require Data::Dumper if ($debug);
++
++my %data;
++
++#
++# Displays an error message, printing file name and line
++#
++sub parse_error($$$$) {
++	my ($file, $ln, $msg, $data) = @_;
++
++	print STDERR "file $file#$ln: $msg at\n\t$data";
++}
++
++#
++# Parse an ABI file, storing its contents at %data
++#
++sub parse_abi {
++	my $file = $File::Find::name;
++
++	my $mode = (stat($file))[2];
++	return if ($mode & S_IFDIR);
++	return if ($file =~ m,/README,);
++
++	my $name = $file;
++	$name =~ s,.*/,,;
++
++	my $type = $file;
++	$type =~ s,.*/(.*)/.*,$1,;
++
++	my $what;
++	my $new_what;
++	my $tag;
++	my $ln;
++
++	print STDERR "Opening $file\n" if ($debug > 1);
++	open IN, $file;
++	while(<IN>) {
++		$ln++;
++		if (m/^(\S+):\s*(.*)/i) {
++			my $new_tag = lc($1);
++			my $content = $2;
++
++			if (!($new_tag =~ m/(what|date|kernelversion|contact|description|users)/)) {
++				if ($tag eq "description") {
++					$data{$what}->{$tag} .= "\n$content";;
++					$data{$what}->{$tag} =~ s/\n+$//;
++					next;
++				} else {
++					parse_error($file, $ln, "tag '$tag' is invalid", $_);
++				}
++			}
++
++			if ($new_tag =~ m/what/) {
++				if ($tag =~ m/what/) {
++					$what .= ", " . $content;
++				} else {
++					$what = $content;
++					$new_what = 1;
++				}
++				$tag = $new_tag;
++				next;
++			}
++
++			$tag = $new_tag;
++
++			if ($new_what) {
++				$new_what = 0;
++
++				$data{$what}->{type} = $type;
++				$data{$what}->{file} = $name;
++				print STDERR "\twhat: $what\n" if ($debug > 1);
++			}
++
++			if (!$what) {
++				parse_error($file, $ln, "'What:' should come first:", $_);
++				next;
++			}
++			$data{$what}->{$tag} = $content;
++			next;
++		}
++
++		# Silently ignore any headers before the database
++		next if (!$tag);
++
++		if (m/^\s*(.*)/) {
++			$data{$what}->{$tag} .= "\n$1";
++			$data{$what}->{$tag} =~ s/\n+$//;
++			next;
++		}
++
++		# Everything else is error
++		parse_error($file, $ln, "Unexpected line:", $_);
++	}
++	close IN;
++}
++
++# Outputs the output on ReST format
++sub output_rest {
++	foreach my $what (sort keys %data) {
++		my $type = $data{$what}->{type};
++		my $file = $data{$what}->{file};
++
++		my $w = $what;
++		$w =~ s/([\(\)\_\-\*\=\^\~\\])/\\$1/g;
++
++		print "$w\n\n";
++		print "- defined on file $file (type: $type)\n\n::\n\n";
++
++		my $desc = $data{$what}->{description};
++		$desc =~ s/^\s+//;
++
++		# Remove title markups from the description, as they won't work
++		$desc =~ s/\n[\-\*\=\^\~]+\n/\n/g;
++
++		# put everything inside a code block
++		$desc =~ s/\n/\n /g;
++
++
++		if (!($desc =~ /^\s*$/)) {
++			print " $desc\n\n";
++		} else {
++			print " DESCRIPTION MISSING\n\n";
++		}
++	}
++}
++
++#
++# Parses all ABI files located at $prefix dir
++#
++find({wanted =>\&parse_abi, no_chdir => 1}, $prefix);
++
++print STDERR Data::Dumper->Dump([\%data], [qw(*data)]) if ($debug);
++
++#
++# Outputs an ReST file with the ABI contents
++#
++output_rest
++
++
++__END__
++
++=head1 NAME
++
++abi_book.pl - parse the Linux ABI files and produce a ReST book.
++
++=head1 SYNOPSIS
++
++B<abi_book.pl> [--debug] <ABI_DIR>]
++
++=head1 OPTIONS
++
++=over 8
++
++=item B<--debug>
++
++Put the script in verbose mode, useful for debugging. Can be called multiple
++times, to increase verbosity.
++
++=item B<--help>
++
++Prints a brief help message and exits.
++
++=item B<--man>
++
++Prints the manual page and exits.
++
++=back
++
++=head1 DESCRIPTION
++
++Parse the Linux ABI files from ABI DIR (usually located at Documentation/ABI)
++and produce a ReST book containing the Linux ABI.
++
++=head1 BUGS
++
++Report bugs to Mauro Carvalho Chehab <mchehab@s-opensource.com>
++
++=head1 COPYRIGHT
++
++Copyright (c) 2016 by Mauro Carvalho Chehab <mchehab@s-opensource.com>.
++
++License GPLv2: GNU GPL version 2 <http://gnu.org/licenses/gpl.html>.
++
++This is free software: you are free to change and redistribute it.
++There is NO WARRANTY, to the extent permitted by law.
++
++=cut
 -- 
 2.21.0
 
