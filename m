@@ -2,136 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B3CA946937
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 22:32:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 59DBB4691D
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 22:31:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727950AbfFNUau (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 16:30:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54310 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727872AbfFNUap (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 16:30:45 -0400
-Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 793E421897
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2019 20:30:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560544244;
-        bh=mGWwuvYHtCOEdqUhryn/C5GcCwcG5zTHTlMA26N2pvo=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=Sx81Q/xpvwk4mFA/RoOKvG+QEjJIGN65Z2wayQOScvrbjGUaFxkkl/qN1cBp1Hbw5
-         0EcRu3IJwiI1KBX2GNsbwbJrCdyBiDNpGQutFZDd1WJkAxH2FCmhT+rlijUA7hEIHi
-         U+0QReilDuUyHSZ87o9v3uWqeVFUgwti/gdDS1+k=
-Received: by mail-qt1-f170.google.com with SMTP id n11so4011464qtl.5
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2019 13:30:44 -0700 (PDT)
-X-Gm-Message-State: APjAAAXly3OKvQFWmjFUcH78kEiBfzJoFfWVah4RSqde0NWDraEJU0DZ
-        bQNR07HhqQHkvZUvyfVjrXLEVGPpx8yVd5SKsg==
-X-Google-Smtp-Source: APXvYqyEa40ZqholttyFEwOyFtfBSULLcL6K/CiDOleixhkANZ8lnSHU37BmhI1pZBhMVJKbKKBIEza4Y7nBOCUemac=
-X-Received: by 2002:ac8:3908:: with SMTP id s8mr81739065qtb.224.1560544243650;
- Fri, 14 Jun 2019 13:30:43 -0700 (PDT)
+        id S1727814AbfFNUak (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 16:30:40 -0400
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:33964 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726784AbfFNUah (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Jun 2019 16:30:37 -0400
+Received: by mail-qt1-f195.google.com with SMTP id m29so4037537qtu.1;
+        Fri, 14 Jun 2019 13:30:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=AurvGG5md8kdmEphcGq2SiHYTXdU1Fp3TGMe3JSDOo0=;
+        b=ponl8/TKF4625A5i4nwix1bf/BKuWpdnWdsbj1AYGUJeoO6YwVASh4cXNfVx9IvaZa
+         CFwxikzqVVjimctDR05UE41qDDK4m4UYGGq6lT/dI8Ixp9oxQCdYqc2Z3XtJrBBoXrBq
+         umOejNZ+ajnJrFU8/luWxLTc7Lm3AgFpFjiX5f8hfTa03/nmo8RpqMAR3V/rc21lr+pO
+         P0+G+E4MVXjXkkNwPVaW1x6EO7L4vXqTBB1608iq6Bbm2erdxjqToEzmht7mQ7XHe7Ki
+         LsXMlWNkp0G6rLPcPPR+KhweE4x8FfhIUl4x1cZTqJy/9LML7BZbbD8ApalUlsrWEJMI
+         TxRg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=AurvGG5md8kdmEphcGq2SiHYTXdU1Fp3TGMe3JSDOo0=;
+        b=hmaoyJeeNEhOBOKwg9knm4EQnvki0SP+Cww6MkRFwddDnPnw30mE9gLX2kDBZuL4No
+         mMDyxpoY+8HQgnUxrWE46yVVXHK02+62v53rOPwFCimspnFtaNesk22Mm30tTlq5BMKV
+         S5LoDSd7/DsNMPCWA2Ki7TVeRQqbe2mvWjJlLZ8a8H4C3hCzdtX4k9Gvq+QdTnduLXdf
+         jU+4FWV9qyTMkGvKa/1X37yzNoyFBTMvp2z+uHNvQLXQ4aFjyumXNbzwSYqKHbAaEbu9
+         OYnGtRWMmSSCsaIUOXBfbKuFcdTA4UVIXUmZh71ZPMVS4tFrNNSwQ5H1Nuu+E4iu5OsF
+         wKJw==
+X-Gm-Message-State: APjAAAWo8hlOEMfzT7Pbw05EyYd3W7tF0awUE8K8PzyTlBbrmdZW4cPd
+        iLWE8GGv8Axb3NPIN5qX3kk=
+X-Google-Smtp-Source: APXvYqzw+5pIEwdgx1vf8nomOEwKyVQrAuLI6zJPGXYa+IhlGCCOm1m2SixssVwluHArEdFBBF2Wxg==
+X-Received: by 2002:ac8:1a39:: with SMTP id v54mr83461557qtj.21.1560544236029;
+        Fri, 14 Jun 2019 13:30:36 -0700 (PDT)
+Received: from localhost ([2620:10d:c091:480::6bab])
+        by smtp.gmail.com with ESMTPSA id e8sm2215252qkn.95.2019.06.14.13.30.35
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 14 Jun 2019 13:30:35 -0700 (PDT)
+Date:   Fri, 14 Jun 2019 13:30:33 -0700
+From:   Tejun Heo <tj@kernel.org>
+To:     Jonathan Corbet <corbet@lwn.net>
+Cc:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab@infradead.org>,
+        linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Jens Axboe <axboe@kernel.dk>, Li Zefan <lizefan@huawei.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>, linux-block@vger.kernel.org,
+        cgroups@vger.kernel.org, netdev@vger.kernel.org,
+        bpf@vger.kernel.org, linux-security-module@vger.kernel.org
+Subject: Re: [PATCH v4 05/28] docs: cgroup-v1: convert docs to ReST and
+ rename to *.rst
+Message-ID: <20190614203033.GD657710@devbig004.ftw2.facebook.com>
+References: <cover.1560361364.git.mchehab+samsung@kernel.org>
+ <c1dd623359f44f05863456b8bceba0d8f3e42f38.1560361364.git.mchehab+samsung@kernel.org>
+ <20190614141401.48bfb266@lwn.net>
 MIME-Version: 1.0
-References: <1560534863-15115-1-git-send-email-suzuki.poulose@arm.com> <1560534863-15115-5-git-send-email-suzuki.poulose@arm.com>
-In-Reply-To: <1560534863-15115-5-git-send-email-suzuki.poulose@arm.com>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Fri, 14 Jun 2019 14:30:31 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqKuFN=3OVMa6iBQSiCrPvDP30KFZKDmUh1WczoYexDyMg@mail.gmail.com>
-Message-ID: <CAL_JsqKuFN=3OVMa6iBQSiCrPvDP30KFZKDmUh1WczoYexDyMg@mail.gmail.com>
-Subject: Re: [PATCH v2 04/28] bus_find_device: Unify the match callback with class_find_device
-To:     Suzuki K Poulose <suzuki.poulose@arm.com>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Andreas Noever <andreas.noever@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Corey Minyard <minyard@acm.org>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        David Kershner <david.kershner@unisys.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        David Airlie <airlied@linux.ie>,
-        Felipe Balbi <balbi@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        Harald Freudenberger <freude@linux.ibm.com>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Jonathan Cameron <jic23@kernel.org>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        Len Brown <lenb@kernel.org>, Mark Brown <broonie@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Michael Jamet <michael.jamet@intel.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Peter Oberparleiter <oberpar@linux.ibm.com>,
-        Sebastian Ott <sebott@linux.ibm.com>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Yehezkel Bernat <YehezkelShB@gmail.com>,
-        Wolfram Sang <wsa@the-dreams.de>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190614141401.48bfb266@lwn.net>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 14, 2019 at 11:54 AM Suzuki K Poulose
-<suzuki.poulose@arm.com> wrote:
->
-> There is an arbitrary difference between the prototypes of
-> bus_find_device() and class_find_device() preventing their callers
-> from passing the same pair of data and match() arguments to both of
-> them, which is the const qualifier used in the prototype of
-> class_find_device().  If that qualifier is also used in the
-> bus_find_device() prototype, it will be possible to pass the same
-> match() callback function to both bus_find_device() and
-> class_find_device(), which will allow some optimizations to be made in
-> order to avoid code duplication going forward.  Also with that, constify
-> the "data" parameter as it is passed as a const to the match function.
->
-> For this reason, change the prototype of bus_find_device() to match
-> the prototype of class_find_device() and adjust its callers to use the
-> const qualifier in accordance with the new prototype of it.
->
-> Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-> Cc: Andrew Lunn <andrew@lunn.ch>
-> Cc: Andreas Noever <andreas.noever@gmail.com>
-> Cc: Arnd Bergmann <arnd@arndb.de>
-> Cc: Bjorn Helgaas <bhelgaas@google.com>
-> Cc: Corey Minyard <minyard@acm.org>
-> Cc: Christian Borntraeger <borntraeger@de.ibm.com>
-> Cc: David Kershner <david.kershner@unisys.com>
-> Cc: "David S. Miller" <davem@davemloft.net>
-> Cc: David Airlie <airlied@linux.ie>
-> Cc: Felipe Balbi <balbi@kernel.org>
-> Cc: Frank Rowand <frowand.list@gmail.com>
-> Cc: Grygorii Strashko <grygorii.strashko@ti.com>
-> Cc: Harald Freudenberger <freude@linux.ibm.com>
-> Cc: Hartmut Knaack <knaack.h@gmx.de>
-> Cc: Heiko Stuebner <heiko@sntech.de>
-> Cc: Jason Gunthorpe <jgg@ziepe.ca>
-> Cc: Jonathan Cameron <jic23@kernel.org>
-> Cc: Jonathan Cameron <jic23@kernel.org>
-> Cc: "James E.J. Bottomley" <jejb@linux.ibm.com>
-> Cc: Len Brown <lenb@kernel.org>
-> Cc: Mark Brown <broonie@kernel.org>
-> Cc: Michael Ellerman <mpe@ellerman.id.au>
-> Cc: Michael Jamet <michael.jamet@intel.com>
-> Cc: "Martin K. Petersen" <martin.petersen@oracle.com>
-> Cc: Peter Oberparleiter <oberpar@linux.ibm.com>
-> Cc: Rob Herring <robh+dt@kernel.org>
-> Cc: Sebastian Ott <sebott@linux.ibm.com>
-> Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-> Cc: Yehezkel Bernat <YehezkelShB@gmail.com>
-> Cc: Wolfram Sang <wsa@the-dreams.de>
-> Cc: rafael@kernel.org
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Acked-by: Corey Minyard <minyard@acm.org>
-> Acked-by: David Kershner <david.kershner@unisys.com>
-> Acked-by: Mark Brown <broonie@kernel.org>
-> Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> Acked-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+On Fri, Jun 14, 2019 at 02:14:01PM -0600, Jonathan Corbet wrote:
+> On Wed, 12 Jun 2019 14:52:41 -0300
+> Mauro Carvalho Chehab <mchehab+samsung@kernel.org> wrote:
+> 
+> > Convert the cgroup-v1 files to ReST format, in order to
+> > allow a later addition to the admin-guide.
+> > 
+> > The conversion is actually:
+> >   - add blank lines and identation in order to identify paragraphs;
+> >   - fix tables markups;
+> >   - add some lists markups;
+> >   - mark literal blocks;
+> >   - adjust title markups.
+> > 
+> > At its new index.rst, let's add a :orphan: while this is not linked to
+> > the main index.rst file, in order to avoid build warnings.
+> > 
+> > Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+> > Acked-by: Tejun Heo <tj@kernel.org>
+> 
+> This one, too, has linux-next stuff that keeps it from applying to
+> docs-next.  Tejun, would you like to carry it on top of your work?
 
-Acked-by: Rob Herring <robh@kernel.org>
+Applied to cgroup/for-5.3.
+
+Thanks.
+
+-- 
+tejun
