@@ -2,101 +2,193 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5E5A045ECC
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 15:47:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 11D9B45F76
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 15:50:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728401AbfFNNrQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 09:47:16 -0400
-Received: from mail.efficios.com ([167.114.142.138]:43596 "EHLO
-        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727898AbfFNNrP (ORCPT
+        id S1728725AbfFNNr7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 09:47:59 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:51742 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728227AbfFNNr6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 09:47:15 -0400
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id 76B3B2517E2;
-        Fri, 14 Jun 2019 09:47:14 -0400 (EDT)
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
-        with ESMTP id E1TuGgOUa87X; Fri, 14 Jun 2019 09:47:14 -0400 (EDT)
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id 19F7F2517DB;
-        Fri, 14 Jun 2019 09:47:14 -0400 (EDT)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 19F7F2517DB
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
-        s=default; t=1560520034;
-        bh=81EpfFNjP6SvW3w5jVIET8nZSw4QEAdPUWyGh9rrrk0=;
-        h=Date:From:To:Message-ID:MIME-Version;
-        b=WP5wmVF8o+loCPX8mYQM0wAdEPJvADvYrEjChO39wLC+vtYpIZxQuRACD3Kgpe7Zq
-         yhLb+4GcQ7C1oJH+sDD40TqSWG3P42Q+5Pcc8M28ejSkaIRm0sg+t465+rlB++q6Gn
-         m1uywQpEaIDmT3u+1QZqmeKgaI5D30aIo2kFFsg+8ey0ccxACsRsz2ozANcftu/sUn
-         jB+oiHAEw5jFqmOTTOXQk/CMPgmyamBGMz5xOaH7UYn8J7FY2v6qHyeh+fBLZo3JK2
-         MXBEtnwG5IJbvsUUqMouiENJR5j9pJ68XHzbGN8JAzxgrFje6wyjfArbPkO+mMVa/W
-         UdJlAmp2tJ4nw==
-X-Virus-Scanned: amavisd-new at efficios.com
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
-        with ESMTP id j3nKT3CEgr1y; Fri, 14 Jun 2019 09:47:14 -0400 (EDT)
-Received: from mail02.efficios.com (mail02.efficios.com [167.114.142.138])
-        by mail.efficios.com (Postfix) with ESMTP id EF45F2517D4;
-        Fri, 14 Jun 2019 09:47:13 -0400 (EDT)
-Date:   Fri, 14 Jun 2019 09:47:13 -0400 (EDT)
-From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To:     Florian Weimer <fweimer@redhat.com>
-Cc:     carlos <carlos@redhat.com>, Joseph Myers <joseph@codesourcery.com>,
-        Szabolcs Nagy <szabolcs.nagy@arm.com>,
-        libc-alpha <libc-alpha@sourceware.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ben Maurer <bmaurer@fb.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Dave Watson <davejwatson@fb.com>, Paul Turner <pjt@google.com>,
-        Rich Felker <dalias@libc.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-api <linux-api@vger.kernel.org>
-Message-ID: <26171199.3391.1560520033825.JavaMail.zimbra@efficios.com>
-In-Reply-To: <87imt8tha5.fsf@oldenburg2.str.redhat.com>
-References: <20190503184219.19266-1-mathieu.desnoyers@efficios.com> <1190407525.3131.1560516910936.JavaMail.zimbra@efficios.com> <1085273942.3137.1560517301721.JavaMail.zimbra@efficios.com> <87d0jguxdk.fsf@oldenburg2.str.redhat.com> <1779359826.3226.1560518318701.JavaMail.zimbra@efficios.com> <87wohoti47.fsf@oldenburg2.str.redhat.com> <189377747.3315.1560519247118.JavaMail.zimbra@efficios.com> <87imt8tha5.fsf@oldenburg2.str.redhat.com>
-Subject: Re: [PATCH 1/5] glibc: Perform rseq(2) registration at C startup
- and thread creation (v10)
+        Fri, 14 Jun 2019 09:47:58 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
+        :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
+        :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=+xs8xEvecIN+pidhw5Y71rlRjZmb8fJOnZhp8o/DsSw=; b=LZajKbx8vMWmoPyPihl3W8b1II
+        oarEXVrrz2rxvZ0BgXTxaFSJ89DHAoMwNs46qftGPIs2iOcmI3PGUZe+ESDrKJqwk8Pn/9InuTjbe
+        w/TkgWs39UEZl5gAqGPQNkS8QJr9eK5xRj4GSD3z1xgEem0WZvNMx/y06DWCWoiPPtMn6DV1KJtT4
+        3dephzfXQQJVrhS8KA9VAcX9i7Lqdp6j+6fd+Du7mG+QFzmKyVufezvRPWVqUb7kH/R5PAyOXYi6v
+        YOEZa1MgatXouQX+rfRB0aOlbZAvy1un6+StmE3Bzk1C+2JjRxYHzmpazpOIF5cCv5pJpncKedcmm
+        mul+NSrA==;
+Received: from 213-225-9-13.nat.highway.a1.net ([213.225.9.13] helo=localhost)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1hbmYQ-0004jF-5L; Fri, 14 Jun 2019 13:47:42 +0000
+From:   Christoph Hellwig <hch@lst.de>
+To:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        Ian Abbott <abbotti@mev.co.uk>,
+        H Hartley Sweeten <hsweeten@visionengravers.com>
+Cc:     Intel Linux Wireless <linuxwifi@intel.com>,
+        linux-arm-kernel@lists.infradead.org (moderated list:ARM PORT),
+        dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
+        linux-rdma@vger.kernel.org, linux-media@vger.kernel.org,
+        netdev@vger.kernel.org, linux-wireless@vger.kernel.org,
+        linux-s390@vger.kernel.org, devel@driverdev.osuosl.org,
+        linux-mm@kvack.org, iommu@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 03/16] drm/i915: stop using drm_pci_alloc
+Date:   Fri, 14 Jun 2019 15:47:13 +0200
+Message-Id: <20190614134726.3827-4-hch@lst.de>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190614134726.3827-1-hch@lst.de>
+References: <20190614134726.3827-1-hch@lst.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [167.114.142.138]
-X-Mailer: Zimbra 8.8.12_GA_3803 (ZimbraWebClient - FF67 (Linux)/8.8.12_GA_3794)
-Thread-Topic: glibc: Perform rseq(2) registration at C startup and thread creation (v10)
-Thread-Index: wOBWzLotZbvRJLIS40uVtgojXXE/sQ==
+Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
------ On Jun 14, 2019, at 3:42 PM, Florian Weimer fweimer@redhat.com wrote:
+Remove usage of the legacy drm PCI DMA wrappers, and with that the
+incorrect usage cocktail of __GFP_COMP, virt_to_page on DMA allocation
+and SetPageReserved.
 
-> * Mathieu Desnoyers:
-> 
->> +  /* Publicize rseq registration ownership.  This must be performed
->> +     after rtld re-relocation, before invoking constructors of
->> +     preloaded libraries.  */
->> +  rseq_init ();
-> 
-> Please add a comment that IFUNC resolvers do not see the initialized
-> value.  I think this is okay because we currently do not support access
-> to extern variables in IFUNC resolvers.
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+---
+ drivers/gpu/drm/i915/i915_gem.c        | 30 +++++++++++++-------------
+ drivers/gpu/drm/i915/i915_gem_object.h |  3 ++-
+ drivers/gpu/drm/i915/intel_display.c   |  2 +-
+ 3 files changed, 18 insertions(+), 17 deletions(-)
 
-Do IFUNC resolvers happen to observe the __rseq_handled address that
-was internal to ld.so ?
-
-If so, we could simply initialize __rseq_handled twice: early before calling
-IFUNC resolvers, and after ld.so re-relocation.
-
-Thanks,
-
-Mathieu
-
-
+diff --git a/drivers/gpu/drm/i915/i915_gem.c b/drivers/gpu/drm/i915/i915_gem.c
+index ad01c92aaf74..8f2053c91aff 100644
+--- a/drivers/gpu/drm/i915/i915_gem.c
++++ b/drivers/gpu/drm/i915/i915_gem.c
+@@ -228,7 +228,6 @@ i915_gem_get_aperture_ioctl(struct drm_device *dev, void *data,
+ static int i915_gem_object_get_pages_phys(struct drm_i915_gem_object *obj)
+ {
+ 	struct address_space *mapping = obj->base.filp->f_mapping;
+-	drm_dma_handle_t *phys;
+ 	struct sg_table *st;
+ 	struct scatterlist *sg;
+ 	char *vaddr;
+@@ -242,13 +241,13 @@ static int i915_gem_object_get_pages_phys(struct drm_i915_gem_object *obj)
+ 	 * to handle all possible callers, and given typical object sizes,
+ 	 * the alignment of the buddy allocation will naturally match.
+ 	 */
+-	phys = drm_pci_alloc(obj->base.dev,
+-			     roundup_pow_of_two(obj->base.size),
+-			     roundup_pow_of_two(obj->base.size));
+-	if (!phys)
++	obj->phys_vaddr = dma_alloc_coherent(&obj->base.dev->pdev->dev,
++			roundup_pow_of_two(obj->base.size),
++			&obj->phys_handle, GFP_KERNEL);
++	if (!obj->phys_vaddr)
+ 		return -ENOMEM;
+ 
+-	vaddr = phys->vaddr;
++	vaddr = obj->phys_vaddr;
+ 	for (i = 0; i < obj->base.size / PAGE_SIZE; i++) {
+ 		struct page *page;
+ 		char *src;
+@@ -286,18 +285,17 @@ static int i915_gem_object_get_pages_phys(struct drm_i915_gem_object *obj)
+ 	sg->offset = 0;
+ 	sg->length = obj->base.size;
+ 
+-	sg_dma_address(sg) = phys->busaddr;
++	sg_dma_address(sg) = obj->phys_handle;
+ 	sg_dma_len(sg) = obj->base.size;
+ 
+-	obj->phys_handle = phys;
+-
+ 	__i915_gem_object_set_pages(obj, st, sg->length);
+ 
+ 	return 0;
+ 
+ err_phys:
+-	drm_pci_free(obj->base.dev, phys);
+-
++	dma_free_coherent(&obj->base.dev->pdev->dev,
++			roundup_pow_of_two(obj->base.size), obj->phys_vaddr,
++			obj->phys_handle);
+ 	return err;
+ }
+ 
+@@ -335,7 +333,7 @@ i915_gem_object_put_pages_phys(struct drm_i915_gem_object *obj,
+ 
+ 	if (obj->mm.dirty) {
+ 		struct address_space *mapping = obj->base.filp->f_mapping;
+-		char *vaddr = obj->phys_handle->vaddr;
++		char *vaddr = obj->phys_vaddr;
+ 		int i;
+ 
+ 		for (i = 0; i < obj->base.size / PAGE_SIZE; i++) {
+@@ -363,7 +361,9 @@ i915_gem_object_put_pages_phys(struct drm_i915_gem_object *obj,
+ 	sg_free_table(pages);
+ 	kfree(pages);
+ 
+-	drm_pci_free(obj->base.dev, obj->phys_handle);
++	dma_free_coherent(&obj->base.dev->pdev->dev,
++			roundup_pow_of_two(obj->base.size), obj->phys_vaddr,
++			obj->phys_handle);
+ }
+ 
+ static void
+@@ -603,7 +603,7 @@ i915_gem_phys_pwrite(struct drm_i915_gem_object *obj,
+ 		     struct drm_i915_gem_pwrite *args,
+ 		     struct drm_file *file)
+ {
+-	void *vaddr = obj->phys_handle->vaddr + args->offset;
++	void *vaddr = obj->phys_vaddr + args->offset;
+ 	char __user *user_data = u64_to_user_ptr(args->data_ptr);
+ 
+ 	/* We manually control the domain here and pretend that it
+@@ -1431,7 +1431,7 @@ i915_gem_pwrite_ioctl(struct drm_device *dev, void *data,
+ 		ret = i915_gem_gtt_pwrite_fast(obj, args);
+ 
+ 	if (ret == -EFAULT || ret == -ENOSPC) {
+-		if (obj->phys_handle)
++		if (obj->phys_vaddr)
+ 			ret = i915_gem_phys_pwrite(obj, args, file);
+ 		else
+ 			ret = i915_gem_shmem_pwrite(obj, args);
+diff --git a/drivers/gpu/drm/i915/i915_gem_object.h b/drivers/gpu/drm/i915/i915_gem_object.h
+index ca93a40c0c87..14bd2d61d0f6 100644
+--- a/drivers/gpu/drm/i915/i915_gem_object.h
++++ b/drivers/gpu/drm/i915/i915_gem_object.h
+@@ -290,7 +290,8 @@ struct drm_i915_gem_object {
+ 	};
+ 
+ 	/** for phys allocated objects */
+-	struct drm_dma_handle *phys_handle;
++	dma_addr_t phys_handle;
++	void *phys_vaddr;
+ 
+ 	struct reservation_object __builtin_resv;
+ };
+diff --git a/drivers/gpu/drm/i915/intel_display.c b/drivers/gpu/drm/i915/intel_display.c
+index 5098228f1302..4f8b368ac4e2 100644
+--- a/drivers/gpu/drm/i915/intel_display.c
++++ b/drivers/gpu/drm/i915/intel_display.c
+@@ -10066,7 +10066,7 @@ static u32 intel_cursor_base(const struct intel_plane_state *plane_state)
+ 	u32 base;
+ 
+ 	if (INTEL_INFO(dev_priv)->display.cursor_needs_physical)
+-		base = obj->phys_handle->busaddr;
++		base = obj->phys_handle;
+ 	else
+ 		base = intel_plane_ggtt_offset(plane_state);
+ 
 -- 
-Mathieu Desnoyers
-EfficiOS Inc.
-http://www.efficios.com
+2.20.1
+
