@@ -2,151 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 38C4A46101
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 16:39:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 38D5D4611D
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 16:40:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728603AbfFNOjT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 10:39:19 -0400
-Received: from mail-wm1-f50.google.com ([209.85.128.50]:35723 "EHLO
-        mail-wm1-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728374AbfFNOjR (ORCPT
+        id S1728912AbfFNOk1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 10:40:27 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:37211 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728210AbfFNOk0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 10:39:17 -0400
-Received: by mail-wm1-f50.google.com with SMTP id c6so2594123wml.0;
-        Fri, 14 Jun 2019 07:39:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=9Wfk6KM9+Bziif5CBcrH982VpksXg1a3KjqRA9Jrsy8=;
-        b=FhajIOOjwj4/AtDgZsFMqv7pF+AibrxRxRgT4meVZQckZRWWoAMPCDERBvd+jff0fx
-         t7pn9Ge5xhPtm/yWpZAuf+ufF3T7HwC0diJ0LBBbfhkPM0/1kewKRDA2NacHnryUNOUH
-         sH9J/GYARSc59mKfmcczwngtSnel9mAgvP3GaeasbKOi7ThKAX4yi7PaTL8vYjpVp6ML
-         K7Ft9EQKL11BU1vvoHt2l1NWt3dDgw8Uyp1NK2FBe7cNBPGGijL9ebzxB+n/JLrBHrlE
-         X8JVE6dHfNpHwL8MKZSK+g5DNeZvKgtYFeINTAJC0tKL+58+vqsGu16XCutIGhEum7ZS
-         PfJw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=9Wfk6KM9+Bziif5CBcrH982VpksXg1a3KjqRA9Jrsy8=;
-        b=H6mWZgNd5CaOTp0uLYE6sEWkDrKL7G70jt3JDu152yQTjH6fFD1tlx9lbjcFjOcpYe
-         7e5PA+00gwjG7BBQv2yfTZBJ37lJLBIoacQsjGMTqIS55sW7fdllCcOiLGzNCVdbQmfH
-         NJ4JmBsehiiGJJuIPX0n/7V2yq/EiUq71msf8CUYlTEFarwLsJryNmUJGCKK2Y+e3n7K
-         sAle0UVgaP7ftAS7/UgesiKgeY2Fx6hVdkLHD8nKiHgPaWgN97GK5yltyYntj3TU+B96
-         79VGhR+1e9Aj06gGYA1EEfWABuIwZlSa61HfXT3WD5fImAf2pBSNBj85VZza1svf/tlI
-         S00A==
-X-Gm-Message-State: APjAAAVAPkYpwEtTRDlIlCDxtGNxd0JvKSpbOkEoIZQmgBkaPqMHJNqp
-        2xsCbjgZcgsPlDcv5m84c6M=
-X-Google-Smtp-Source: APXvYqydNtsY2l+qwL4x42OHD17qR1ZOzSUd/557u11zIKs/ZQgACXNDQnje+J3tayxKIpx97iSh8A==
-X-Received: by 2002:a05:600c:2507:: with SMTP id d7mr8115493wma.2.1560523155303;
-        Fri, 14 Jun 2019 07:39:15 -0700 (PDT)
-Received: from [10.83.36.153] ([217.173.96.166])
-        by smtp.gmail.com with ESMTPSA id z19sm2401900wmi.7.2019.06.14.07.39.13
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Fri, 14 Jun 2019 07:39:14 -0700 (PDT)
-Subject: Re: [PATCHv4 03/28] posix-clocks: add another call back to return
- clock time in ktime_t
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        Dmitry Safonov <dima@arista.com>
-Cc:     linux-kernel@vger.kernel.org, Andrei Vagin <avagin@gmail.com>,
-        Adrian Reber <adrian@lisas.de>,
-        Andrei Vagin <avagin@openvz.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Cyrill Gorcunov <gorcunov@openvz.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        Jann Horn <jannh@google.com>, Jeff Dike <jdike@addtoit.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Pavel Emelyanov <xemul@virtuozzo.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        containers@lists.linux-foundation.org, criu@openvz.org,
-        linux-api@vger.kernel.org, x86@kernel.org
-References: <20190612192628.23797-1-dima@arista.com>
- <20190612192628.23797-4-dima@arista.com>
- <alpine.DEB.2.21.1906141511440.1722@nanos.tec.linutronix.de>
-From:   Dmitry Safonov <0x7f454c46@gmail.com>
-Message-ID: <af700944-694c-822b-4633-7de945f9d228@gmail.com>
-Date:   Fri, 14 Jun 2019 15:39:13 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        Fri, 14 Jun 2019 10:40:26 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x5EEeDX21735706
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Fri, 14 Jun 2019 07:40:13 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x5EEeDX21735706
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019051801; t=1560523213;
+        bh=MTIomEjR0QGw2Y/B1esgMdBm8zLW2TjMINe9+/UbZw8=;
+        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
+        b=dKcaYIc8B3jJkXC26NehlU+BlKN/18Sn83o6rZT+Sgw0mA6B21TVcF3xeJu9xqNt2
+         LfszzEOdPOz2Ub7jkKtA1C9L1gPkForhBSv1j04JzzyHDnDovgEFpRASi9MagWMQ0R
+         OZpgbiqpQxXQu5CHeK/T6C3/blbi4xw3aZbhhjj6TYhKZtvjLQfOaEBTV6J2SoOw7B
+         2CtOKJrPTvdeZmo76nvX7VmG+oW3MGAD93Q8lSULAPl6tikwyaAEex6K95ibsGYFO2
+         nbKitfAqr+BrmYxOMPIMnkgM4PfThQdVM/ibfQJ2MDTJvVCcbY9yFQE8d4PaaJj80J
+         6noge/6ltFrFg==
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x5EEeCAi1735701;
+        Fri, 14 Jun 2019 07:40:12 -0700
+Date:   Fri, 14 Jun 2019 07:40:12 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Andrey Ryabinin <tipbot@zytor.com>
+Message-ID: <tip-f3176ec9420de0c385023afa3e4970129444ac2f@git.kernel.org>
+Cc:     bp@alien8.de, linux-kernel@vger.kernel.org, mingo@kernel.org,
+        dvyukov@google.com, tglx@linutronix.de, kirill@shutemov.name,
+        stable@vger.kernel.org, aryabinin@virtuozzo.com, glider@google.com,
+        hpa@zytor.com
+Reply-To: hpa@zytor.com, glider@google.com, stable@vger.kernel.org,
+          aryabinin@virtuozzo.com, kirill@shutemov.name,
+          tglx@linutronix.de, mingo@kernel.org, dvyukov@google.com,
+          linux-kernel@vger.kernel.org, bp@alien8.de
+In-Reply-To: <20190614143149.2227-1-aryabinin@virtuozzo.com>
+References: <20190614143149.2227-1-aryabinin@virtuozzo.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/urgent] x86/kasan: Fix boot with 5-level paging and KASAN
+Git-Commit-ID: f3176ec9420de0c385023afa3e4970129444ac2f
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.21.1906141511440.1722@nanos.tec.linutronix.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
+X-Spam-Status: No, score=-3.1 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        T_DATE_IN_FUTURE_96_Q autolearn=ham autolearn_force=no version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Thomas,
+Commit-ID:  f3176ec9420de0c385023afa3e4970129444ac2f
+Gitweb:     https://git.kernel.org/tip/f3176ec9420de0c385023afa3e4970129444ac2f
+Author:     Andrey Ryabinin <aryabinin@virtuozzo.com>
+AuthorDate: Fri, 14 Jun 2019 17:31:49 +0300
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Fri, 14 Jun 2019 16:37:30 +0200
 
-Thanks much for the review,
+x86/kasan: Fix boot with 5-level paging and KASAN
 
-On 6/14/19 2:32 PM, Thomas Gleixner wrote:
-> Dmitry,
-> 
-> On Wed, 12 Jun 2019, Dmitry Safonov wrote:
-> 
->> From: Andrei Vagin <avagin@gmail.com>
->>
->> The callsite in common_timer_get() has already a comment:
->>         /*
->>          * The timespec64 based conversion is suboptimal, but it's not
->>          * worth to implement yet another callback.
->>          */
->>         kc->clock_get(timr->it_clock, &ts64);
->>         now = timespec64_to_ktime(ts64);
->>
->> Now we are going to add time namespaces and we need to be able to get:
-> 
-> Please avoid 'we' and try to describe the changes in a neutral technical
-> form, e.g.:
-> 
->  The upcoming support for time namespaces requires to have access to:
-> 
->> * clock value in a task time namespace to return it from the clock_gettime
->>   syscall.
-> 
->   - The time in a tasks time namespace for sys_clock_gettime()
-> 
->> * clock valuse in the root time namespace to use it in
->>   common_timer_get().
-> 
->   - The time in the root name space for common_timer_get()
-> 
->> It looks like another reason why we need a separate callback to return
->> clock value in ktime_t.
-> 
->  That adds a valid reason to finally implement a separate callback which
->  returns the time in ktime_t format.
-> 
-> Hmm?
+Since commit d52888aa2753 ("x86/mm: Move LDT remap out of KASLR region on
+5-level paging") kernel doesn't boot with KASAN on 5-level paging machines.
+The bug is actually in early_p4d_offset() and introduced by commit
+12a8cc7fcf54 ("x86/kasan: Use the same shadow offset for 4- and 5-level paging")
 
-Agree, the patch has become bigger than wanted and the message could
-have been better in technical sense. Will split, add kernel doc and fix
-the commit message(s).
+early_p4d_offset() tries to convert pgd_val(*pgd) value to a physical
+address. This doesn't make sense because pgd_val() already contains the
+physical address.
 
-[..]
-> TBH, this patch is way to big. It changes too many things at once. Can you
-> please structure it this way:
-> 
->  1) Rename k_clock::clock_get to k_clock::clock_get_timespec and fix up all
->     struct initializers
-> 
->  2) Rename the clock_get_timespec functions per instance
-> 
->  3) Add the new callback
-> 
->  4) Add the new functions per instance and add them to the corresponding
->     struct initializers
-> 
->  5) Use the new callback
-> 
-Thanks,
-          Dima
+It did work prior to commit d52888aa2753 because the result of
+"__pa_nodebug(pgd_val(*pgd)) & PTE_PFN_MASK" was the same as "pgd_val(*pgd)
+& PTE_PFN_MASK". __pa_nodebug() just set some high bits which were masked
+out by applying PTE_PFN_MASK.
+
+After the change of the PAGE_OFFSET offset in commit d52888aa2753
+__pa_nodebug(pgd_val(*pgd)) started to return a value with more high bits
+set and PTE_PFN_MASK wasn't enough to mask out all of them. So it returns a
+wrong not even canonical address and crashes on the attempt to dereference
+it.
+
+Switch back to pgd_val() & PTE_PFN_MASK to cure the issue.
+
+Fixes: 12a8cc7fcf54 ("x86/kasan: Use the same shadow offset for 4- and 5-level paging")
+Reported-by: Kirill A. Shutemov <kirill@shutemov.name>
+Signed-off-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Alexander Potapenko <glider@google.com>
+Cc: Dmitry Vyukov <dvyukov@google.com>
+Cc: kasan-dev@googlegroups.com
+Cc: stable@vger.kernel.org
+Cc: <stable@vger.kernel.org>
+Link: https://lkml.kernel.org/r/20190614143149.2227-1-aryabinin@virtuozzo.com
+
+---
+ arch/x86/mm/kasan_init_64.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/x86/mm/kasan_init_64.c b/arch/x86/mm/kasan_init_64.c
+index 8dc0fc0b1382..296da58f3013 100644
+--- a/arch/x86/mm/kasan_init_64.c
++++ b/arch/x86/mm/kasan_init_64.c
+@@ -199,7 +199,7 @@ static inline p4d_t *early_p4d_offset(pgd_t *pgd, unsigned long addr)
+ 	if (!pgtable_l5_enabled())
+ 		return (p4d_t *)pgd;
+ 
+-	p4d = __pa_nodebug(pgd_val(*pgd)) & PTE_PFN_MASK;
++	p4d = pgd_val(*pgd) & PTE_PFN_MASK;
+ 	p4d += __START_KERNEL_map - phys_base;
+ 	return (p4d_t *)p4d + p4d_index(addr);
+ }
