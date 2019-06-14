@@ -2,120 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4980645C58
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 14:13:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 95A7B45C97
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 14:19:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727747AbfFNMN0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 08:13:26 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:51550 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727531AbfFNMNZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 08:13:25 -0400
-Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id AA00B8BA90A42D58E026;
-        Fri, 14 Jun 2019 20:13:23 +0800 (CST)
-Received: from huawei.com (10.90.53.225) by DGGEMS412-HUB.china.huawei.com
- (10.3.19.212) with Microsoft SMTP Server id 14.3.439.0; Fri, 14 Jun 2019
- 20:13:15 +0800
-From:   <chengzhihao1@huawei.com>
-To:     <david.oberhollenzer@sigma-star.at>, <richard@nod.at>,
-        <boris.brezillon@bootlin.com>, <david@sigma-star.at>,
-        <artem.bityutskiy@linux.intel.com>, <yi.zhang@huawei.com>
-CC:     <linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <chengzhihao1@huawei.com>
-Subject: [PATCH mtd-utils] ubi-tests: mkvol test: Checks return value 'ENOSPC' for 'ubi_mkvol'
-Date:   Fri, 14 Jun 2019 20:18:48 +0800
-Message-ID: <1560514728-54932-1-git-send-email-chengzhihao1@huawei.com>
-X-Mailer: git-send-email 2.7.4
+        id S1727763AbfFNMT3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 08:19:29 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:37725 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727362AbfFNMT2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Jun 2019 08:19:28 -0400
+Received: from [5.158.153.52] (helo=nanos.tec.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1hblAz-0002iH-Sb; Fri, 14 Jun 2019 14:19:26 +0200
+Date:   Fri, 14 Jun 2019 14:19:25 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Vincenzo Frascino <vincenzo.frascino@arm.com>
+cc:     linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org,
+        linux-kselftest@vger.kernel.org,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Russell King <linux@armlinux.org.uk>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Mark Salyzyn <salyzyn@android.com>,
+        Peter Collingbourne <pcc@google.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Dmitry Safonov <0x7f454c46@gmail.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Huw Davies <huw@codeweavers.com>
+Subject: Re: [PATCH v6 03/19] kernel: Unify update_vsyscall implementation
+In-Reply-To: <a69e48a2-575d-255c-2653-d3e99b7ba760@arm.com>
+Message-ID: <alpine.DEB.2.21.1906141416100.1722@nanos.tec.linutronix.de>
+References: <20190530141531.43462-1-vincenzo.frascino@arm.com> <20190530141531.43462-4-vincenzo.frascino@arm.com> <alpine.DEB.2.21.1906141307430.1722@nanos.tec.linutronix.de> <a69e48a2-575d-255c-2653-d3e99b7ba760@arm.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.90.53.225]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Zhihao Cheng <chengzhihao1@huawei.com>
+On Fri, 14 Jun 2019, Vincenzo Frascino wrote:
+> On 6/14/19 12:10 PM, Thomas Gleixner wrote:
+> > On Thu, 30 May 2019, Vincenzo Frascino wrote:
+> >> +
+> >> +	if (__arch_use_vsyscall(vdata)) {
+> >> +		vdata[CS_HRES_COARSE].cycle_last	=
+> >> +						tk->tkr_mono.cycle_last;
+> >> +		vdata[CS_HRES_COARSE].mask		=
+> >> +						tk->tkr_mono.mask;
+> >> +		vdata[CS_HRES_COARSE].mult		=
+> >> +						tk->tkr_mono.mult;
+> > 
+> > These line breaks make it really hard to read. Can you fold in the patch
+> > below please?
+> > 
+> 
+> Thanks for this. I will do it in v7.
 
-UBI tests try to create too many volumes in mkvol_bad and mkvol_basic.
-Currently mtd-utils allows return value 'ENFILE' from 'ubi_mkvol', that
-works fine in most situations. But what if the number of PEBs equals to
-the maximum count of volumes? For example, mkvol_basic test will fail in
-a 64MiB flash with 512KiB PEB size.
-Following is the output of mkvol_basic test:
+Talking about v7. I'd like to get this into 5.3. That means you'd have to
+rebase it on
 
-  ======================================================================
-  ======================================================================
-  ======================================================================
-  Test on mtdram, fastmap enabled, VID header offset factor 1
-  ======================================================================
-  ======================================================================
-  ======================================================================
-  mtdram: 64MiB, PEB size 512KiB, fastmap enabled
-  Running mkvol_basic /dev/ubi0
-  [mkvol_basic] mkvol_multiple():182: function ubi_mkvol() failed with
-  error 28 (No space left on device)
-  [mkvol_basic] mkvol_multiple():183: vol_id 122
-  Error: mkvol_basic failed
-  FAILURE
+  git://git.kernel.org/pub/scm/linux/kernel/git/hyperv/linux.git hyperv-next
 
-The reason is that there is no available PEB to support a new volume. We
-can see following verbose in dmesg:
+to avoid the hyperv conflict. I'll sort this out with the hyperv folks how
+I can get these bits as a base for a tip branch which holds all the vdso
+pieces.
 
-  ubi0: attached mtd0 (name "mtdram test device", size 64 MiB)
-  ubi0: user volume: 0, internal volumes: 1, max. volumes count: 128
-  ubi0: available PEBs: 122, total reserved PEBs: 6, PEBs reserved for
-  bad PEB handling: 0
+Thanks,
 
-The maximum count of volumes is 128, so we can create 128 volumes
-theoretically. But there are 122 available PEBs becauese of existence of
-reserved PEBs. In addition, a volume occupies at least one PEB. Actually,
-we can only create 122 volumes, Therefore, 'ubi_mkvol' returns 'ENOSPC'
-when mkvol_basic tries to create 123rd volume. And we can see
-corresponding error message in dmesg:
-
-  ubi0 error: ubi_create_volume [ubi]: not enough PEBs, only 0 available
-  ubi0 error: ubi_create_volume [ubi]: cannot create volume 122, error -28
-
-So, 'ENOSPC' can happen before 'ENFILE' in flash with a small amount of
-PEBs. This patch checks return value 'ENOSPC' for 'ubi_mkvol' when mkvol
-test is trying to create too many volumes.
-
-----------------------------------------
-
-Signed-off-by: Zhihao Cheng <chengzhihao1@huawei.com>
----
- tests/ubi-tests/mkvol_bad.c   | 2 +-
- tests/ubi-tests/mkvol_basic.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/tests/ubi-tests/mkvol_bad.c b/tests/ubi-tests/mkvol_bad.c
-index 7e46726..a5143e3 100644
---- a/tests/ubi-tests/mkvol_bad.c
-+++ b/tests/ubi-tests/mkvol_bad.c
-@@ -200,7 +200,7 @@ static int test_mkvol(void)
- 			 * Note, because of gluebi we may be unable to create
- 			 * dev_info.max_vol_count devices (MTD restrictions).
- 			 */
--			if (errno == ENFILE)
-+			if (errno == ENFILE || errno == ENOSPC)
- 				break;
- 			failed("ubi_mkvol");
- 			errorm("vol_id %d", i);
-diff --git a/tests/ubi-tests/mkvol_basic.c b/tests/ubi-tests/mkvol_basic.c
-index c7c6984..cc3f7ba 100644
---- a/tests/ubi-tests/mkvol_basic.c
-+++ b/tests/ubi-tests/mkvol_basic.c
-@@ -178,7 +178,7 @@ static int mkvol_multiple(void)
- 		req.name = nm;
- 
- 		if (ubi_mkvol(libubi, node, &req)) {
--			if (errno == ENFILE) {
-+			if (errno == ENFILE || errno == ENOSPC) {
- 				max = i;
- 				break;
- 			}
--- 
-2.7.4
-
+	tglx
