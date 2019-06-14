@@ -2,89 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AC8D245A48
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 12:21:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 22C0845A4D
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 12:24:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727495AbfFNKVf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 06:21:35 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:54916 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727461AbfFNKVe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 06:21:34 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
-        :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
-        :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=G1EKyROpAQVEYGtm5ijQO3cKjBjFMreGSE5rh5ys5ng=; b=EW/OF1BDc7NqRaJ4XThECARCHp
-        02oQWMr0930A918uYZftAfLmPDh6BT81/ISlK1O+dhZIFeL1nGmuGBTrwk7JNvP0TaEjg9O+3pOPW
-        Ptzh70Ll7wr0p/2GTuccJ2QkG3EfKrm8ngqzhtDlqBBpqGRjzO5hBVcfZwHrUbJPTrf/zOaWHfIt/
-        TKo11YxzmFETo9BNEK9aJWDFrBAxNcdk2hHKDDOnrKsAHe4HLxVk79T7GjoKXjhnjUYa1cQi/kIu1
-        wgomWQX3OQdQ4RxxZ16BR+jaHpNEIRae5oRXIU4TSC0AQJSUXnJRa4mvgzBt9lfYUDI1gu+r2AMl6
-        Itwfsitw==;
-Received: from clnet-p19-102.ikbnet.co.at ([83.175.77.102] helo=localhost)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hbjKw-0005Nu-1s; Fri, 14 Jun 2019 10:21:34 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>,
-        Greg Ungerer <gerg@linux-m68k.org>
-Cc:     linux-m68k@lists.linux-m68k.org, iommu@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] m68k: implement arch_dma_prep_coherent
-Date:   Fri, 14 Jun 2019 12:21:26 +0200
-Message-Id: <20190614102126.8402-3-hch@lst.de>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190614102126.8402-1-hch@lst.de>
-References: <20190614102126.8402-1-hch@lst.de>
+        id S1727240AbfFNKX7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 06:23:59 -0400
+Received: from foss.arm.com ([217.140.110.172]:58884 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726884AbfFNKX7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Jun 2019 06:23:59 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8C3953EF;
+        Fri, 14 Jun 2019 03:23:58 -0700 (PDT)
+Received: from fuggles.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E7F333F246;
+        Fri, 14 Jun 2019 03:25:40 -0700 (PDT)
+Date:   Fri, 14 Jun 2019 11:23:55 +0100
+From:   Will Deacon <will.deacon@arm.com>
+To:     Dave Martin <Dave.Martin@arm.com>
+Cc:     Anisse Astier <aastier@freebox.fr>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Mark Rutland <mark.rutland@arm.com>,
+        Richard Henderson <richard.henderson@linaro.org>,
+        Rich Felker <dalias@aerifal.cx>, linux-kernel@vger.kernel.org,
+        Kristina Martsenko <kristina.martsenko@arm.com>,
+        "Dmitry V . Levin" <ldv@altlinux.org>,
+        Ricardo Salveti <ricardo@foundries.io>
+Subject: Re: [PATCH] arm64/sve: <uapi/asm/ptrace.h> should not depend on
+ <uapi/linux/prctl.h>
+Message-ID: <20190614102355.GE10659@fuggles.cambridge.arm.com>
+References: <20190613163801.21949-1-aastier@freebox.fr>
+ <20190613171432.GA2790@e103592.cambridge.arm.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190613171432.GA2790@e103592.cambridge.arm.com>
+User-Agent: Mutt/1.11.1+86 (6f28e57d73f2) ()
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When we remap memory as non-cached to be used as a DMA coherent buffer
-we should writeback all cache and invalidate the cache lines so that
-we make sure we have a clean slate.  Implement this using the
-cache_push() helper.
+On Thu, Jun 13, 2019 at 06:14:44PM +0100, Dave Martin wrote:
+> On Thu, Jun 13, 2019 at 06:38:01PM +0200, Anisse Astier wrote:
+> >   */
+> > -#define SVE_PT_VL_INHERIT		(PR_SVE_VL_INHERIT >> 16)
+> > -#define SVE_PT_VL_ONEXEC		(PR_SVE_SET_VL_ONEXEC >> 16)
+> > +#define SVE_PT_VL_INHERIT		(1 << 1) /* PR_SVE_VL_INHERIT */
+> > +#define SVE_PT_VL_ONEXEC		(1 << 2) /* PR_SVE_SET_VL_ONEXEC */
+> 
+> Makes sense, but...
+> 
+> Since sve_context.h was already introduced to solve a closely related
+> problem, I wonder whether we can provide shadow definitions there,
+> similarly to way the arm64/include/uapi/asm/ptrace.h definitions are
+> derived.  Although it's a slight abuse of that header, I think that
+> would be my preferred approach.
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- arch/m68k/Kconfig      | 1 +
- arch/m68k/kernel/dma.c | 5 +++++
- 2 files changed, 6 insertions(+)
+Yes, that sounds better to me as well. Please send a v2!
 
-diff --git a/arch/m68k/Kconfig b/arch/m68k/Kconfig
-index 2571a8fba4b0..64b122595896 100644
---- a/arch/m68k/Kconfig
-+++ b/arch/m68k/Kconfig
-@@ -4,6 +4,7 @@ config M68K
- 	default y
- 	select ARCH_32BIT_OFF_T
- 	select ARCH_HAS_DMA_MMAP_PGPROT if MMU && !COLDFIRE
-+	select ARCH_HAS_DMA_PREP_COHERENT
- 	select ARCH_HAS_SYNC_DMA_FOR_DEVICE if HAS_DMA
- 	select ARCH_MIGHT_HAVE_PC_PARPORT if ISA
- 	select ARCH_NO_COHERENT_DMA_MMAP if !MMU
-diff --git a/arch/m68k/kernel/dma.c b/arch/m68k/kernel/dma.c
-index 9c6a350a16d8..e720e6eed838 100644
---- a/arch/m68k/kernel/dma.c
-+++ b/arch/m68k/kernel/dma.c
-@@ -18,6 +18,11 @@
- #include <asm/pgalloc.h>
- 
- #if defined(CONFIG_MMU) && !defined(CONFIG_COLDFIRE)
-+void arch_dma_prep_coherent(struct page *page, size_t size)
-+{
-+	cache_push(page_to_phys(page), size);
-+}
-+
- pgprot_t arch_dma_mmap_pgprot(struct device *dev, pgprot_t prot,
- 		unsigned long attrs)
- {
--- 
-2.20.1
-
+Will
