@@ -2,98 +2,158 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E5E2F4605C
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 16:16:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2181F46061
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 16:16:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728943AbfFNOOm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 10:14:42 -0400
-Received: from mail-eopbgr740053.outbound.protection.outlook.com ([40.107.74.53]:12334
-        "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
+        id S1728987AbfFNOO4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 10:14:56 -0400
+Received: from mx2.suse.de ([195.135.220.15]:34754 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728913AbfFNOOl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 10:14:41 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amdcloud.onmicrosoft.com; s=selector1-amdcloud-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=l0wu9xDXyDtT7EogLA/yer6QhrmNMafCIf9keEIa8jE=;
- b=oE82JbZX9l52a+zGaCbhvyCA715cFFC4P9zHQUNIgboNSUbtpDJrtZxQeIYPmQlgeYtzVsz+o4TX1LhJnZIKI+eXucDF88Bl5OTAoeORoaD+9O+Az1+FMAxVOC7mF/V+pHo9csXzACKyoqd1kbVkZXmXUIwgnGxqY46FZJDQ/pk=
-Received: from SN6PR12MB2639.namprd12.prod.outlook.com (52.135.103.16) by
- SN6PR12MB2784.namprd12.prod.outlook.com (52.135.107.147) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1965.17; Fri, 14 Jun 2019 14:14:39 +0000
-Received: from SN6PR12MB2639.namprd12.prod.outlook.com
- ([fe80::69b5:19ac:b63d:2b82]) by SN6PR12MB2639.namprd12.prod.outlook.com
- ([fe80::69b5:19ac:b63d:2b82%3]) with mapi id 15.20.1965.019; Fri, 14 Jun 2019
- 14:14:39 +0000
-From:   "Ghannam, Yazen" <Yazen.Ghannam@amd.com>
-To:     Borislav Petkov <bp@alien8.de>
-CC:     "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH 2/8] EDAC/amd64: Support more than two controllers for
- chip selects handling
-Thread-Topic: [PATCH 2/8] EDAC/amd64: Support more than two controllers for
- chip selects handling
-Thread-Index: AQHVGArjP8ASCZySEUyWj7FP348Ui6aZtVCAgABvqsCAABgIgIABCSOg
-Date:   Fri, 14 Jun 2019 14:14:39 +0000
-Message-ID: <SN6PR12MB263902F373B6184FEB563B89F8EE0@SN6PR12MB2639.namprd12.prod.outlook.com>
-References: <20190531234501.32826-1-Yazen.Ghannam@amd.com>
- <20190531234501.32826-3-Yazen.Ghannam@amd.com>
- <20190613141715.GD11598@zn.tnic>
- <SN6PR12MB263987AAB225A09527C4D736F8EF0@SN6PR12MB2639.namprd12.prod.outlook.com>
- <20190613222255.GH11598@zn.tnic>
-In-Reply-To: <20190613222255.GH11598@zn.tnic>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Yazen.Ghannam@amd.com; 
-x-originating-ip: [165.204.25.250]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: dfc3c572-9bd9-42b9-a289-08d6f0d2a36a
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:SN6PR12MB2784;
-x-ms-traffictypediagnostic: SN6PR12MB2784:
-x-microsoft-antispam-prvs: <SN6PR12MB2784F61BB411EBED2A8CE6A0F8EE0@SN6PR12MB2784.namprd12.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:8273;
-x-forefront-prvs: 0068C7E410
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(346002)(376002)(136003)(366004)(39860400002)(13464003)(189003)(199004)(86362001)(4326008)(25786009)(2906002)(4744005)(6246003)(53936002)(71190400001)(54906003)(33656002)(256004)(102836004)(71200400001)(316002)(76176011)(66556008)(99286004)(7696005)(3846002)(66946007)(66476007)(73956011)(66066001)(66446008)(64756008)(6116002)(76116006)(6506007)(53546011)(9686003)(8936002)(81166006)(81156014)(8676002)(186003)(26005)(55016002)(6916009)(74316002)(5660300002)(229853002)(11346002)(446003)(305945005)(52536014)(7736002)(6436002)(486006)(68736007)(476003)(478600001)(14454004)(72206003);DIR:OUT;SFP:1101;SCL:1;SRVR:SN6PR12MB2784;H:SN6PR12MB2639.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: amd.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: jg3hQzlxM+GjyKztjWZVhOY7RJZEGrPmtuwAFMvCBRpeGNAjtKJfRvmSoQEvH2AOxfcP5GFQ+EUwhQ5Q8lxHjPvlo4je7/R0c72x6iWpfoVQkhUZ/rs+3OLSpmhN+RBDyW6SVTkte9GlTAl7Lh+Th2GeOk6sIpX7+ZgihtiWatytZtr41a8BLSQYVk+fZivApQtlj1usxwEDwlG62yJ6VfCz+K1zqByC44P3n8HQGIHJWC25nNU/0dYLdEWrNuXtmHOAohqmvKv53OKTyfqlVEcFstANpA/wE1wJV3ptLE3gc0GKVYK3onUHyOjQWmOoaBk5Ua4/wK3hWzkFRsUR6EYmmBxbydznXAKMmMrf0p3fzKloxciD95X/lq+71jR9NgQkBikwVZf1StI/JSLx+JvjA2n0kQBy/nYXN41fqPA=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        id S1728555AbfFNOO4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Jun 2019 10:14:56 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 08FA2AEB3;
+        Fri, 14 Jun 2019 14:14:54 +0000 (UTC)
+Date:   Fri, 14 Jun 2019 16:14:53 +0200
+From:   Petr Mladek <pmladek@suse.com>
+To:     Josh Poimboeuf <jpoimboe@redhat.com>
+Cc:     Jessica Yu <jeyu@kernel.org>, Steven Rostedt <rostedt@goodmis.org>,
+        Jiri Kosina <jikos@kernel.org>,
+        Miroslav Benes <mbenes@suse.cz>,
+        Joe Lawrence <joe.lawrence@redhat.com>,
+        linux-kernel@vger.kernel.org, live-patching@vger.kernel.org,
+        Johannes Erdfelt <johannes@erdfelt.com>,
+        Ingo Molnar <mingo@kernel.org>
+Subject: Re: [PATCH 3/3] module: Improve module __ro_after_init handling
+Message-ID: <20190614141453.fjtvk7uvux6vcmlp@pathway.suse.cz>
+References: <cover.1560474114.git.jpoimboe@redhat.com>
+ <1b72f40d863a1444f687b3e1b958bdc6925882ed.1560474114.git.jpoimboe@redhat.com>
 MIME-Version: 1.0
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: dfc3c572-9bd9-42b9-a289-08d6f0d2a36a
-X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Jun 2019 14:14:39.2938
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: yghannam@amd.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR12MB2784
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1b72f40d863a1444f687b3e1b958bdc6925882ed.1560474114.git.jpoimboe@redhat.com>
+User-Agent: NeoMutt/20170912 (1.9.0)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBsaW51eC1rZXJuZWwtb3duZXJA
-dmdlci5rZXJuZWwub3JnIDxsaW51eC1rZXJuZWwtb3duZXJAdmdlci5rZXJuZWwub3JnPiBPbiBC
-ZWhhbGYgT2YgQm9yaXNsYXYgUGV0a292DQo+IFNlbnQ6IFRodXJzZGF5LCBKdW5lIDEzLCAyMDE5
-IDU6MjMgUE0NCj4gVG86IEdoYW5uYW0sIFlhemVuIDxZYXplbi5HaGFubmFtQGFtZC5jb20+DQo+
-IENjOiBsaW51eC1lZGFjQHZnZXIua2VybmVsLm9yZzsgbGludXgta2VybmVsQHZnZXIua2VybmVs
-Lm9yZw0KPiBTdWJqZWN0OiBSZTogW1BBVENIIDIvOF0gRURBQy9hbWQ2NDogU3VwcG9ydCBtb3Jl
-IHRoYW4gdHdvIGNvbnRyb2xsZXJzIGZvciBjaGlwIHNlbGVjdHMgaGFuZGxpbmcNCj4gDQo+IE9u
-IFRodSwgSnVuIDEzLCAyMDE5IGF0IDA4OjU4OjE2UE0gKzAwMDAsIEdoYW5uYW0sIFlhemVuIHdy
-b3RlOg0KPiA+IFRoZSBmaXJzdCBwYXRjaCBpcyBtZWFudCBhcyBhIGZpeCBmb3IgZXhpc3Rpbmcg
-c3lzdGVtcywgYW5kIHRoaXMgcGF0Y2gNCj4gPiBpcyB0byBhZGQgbmV3IGZ1bmN0aW9uYWxpdHku
-DQo+ID4NCj4gPiBJIGNhbiBtZXJnZSB0aGVtIHRvZ2V0aGVyIGlmIHlvdSB0aGluayB0aGF0J3Mg
-bW9yZSBhcHByb3ByaWF0ZS4NCj4gDQo+IElzIGl0IGZpeGluZyBzdWNoIGEgY3JpdGljYWwgaXNz
-dWUgdGhhdCBpdCBuZWVkcyB0byBiZSBhIHNlcGFyYXRlIHBhdGNoPw0KPiBJZiBzbywgaXQgc2hv
-dWxkIGJlIENDOnN0YWJsZS4NCj4gDQo+IEJ1dCBJIHRoaW5rIHdlJ3ZlIHN1cnZpdmVkIHdpdGhv
-dXQgaXQganVzdCBmaW5lIHNvIHdoeSBib3RoZXIuIEJ1dCBtYXliZQ0KPiB0aGVyZSdzIGFuIGFz
-cGVjdCBJJ20gbWlzc2luZy4uLg0KPiANCg0KTm8sIHlvdSdyZSByaWdodC4gSXQncyBub3Qgc29t
-ZXRoaW5nIGNyaXRpY2FsLg0KDQpJIGNhbiBzcXVhc2ggdGhlc2UgdHdvIHBhdGNoZXMgdG9nZXRo
-ZXIgaWYgeW91J2QgbGlrZS4NCg0KVGhhbmtzLA0KWWF6ZW4NCg==
+On Thu 2019-06-13 20:07:24, Josh Poimboeuf wrote:
+> module_enable_ro() can be called in the following scenario:
+> 
+>   [load livepatch module]
+>     initcall
+>       klp_enable_patch()
+>         klp_init_patch()
+>           klp_init_object()
+>             klp_init_object_loaded()
+>               module_enable_ro(pmod, true)
+> 
+> In this case, module_enable_ro()'s 'after_init' argument is true, which
+> prematurely changes the module's __ro_after_init area to read-only.
+> 
+> If, theoretically, a registrant of the MODULE_STATE_LIVE module notifier
+> tried to write to the livepatch module's __ro_after_init section, an
+> oops would occur.
+> 
+> Remove the 'after_init' argument and instead make __module_enable_ro()
+> smart enough to only frob the __ro_after_init section after the module
+> has gone live.
+> 
+> Reported-by: Petr Mladek <pmladek@suse.com>
+> Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
+> ---
+>  arch/arm64/kernel/ftrace.c |  2 +-
+>  include/linux/module.h     |  4 ++--
+>  kernel/livepatch/core.c    |  4 ++--
+>  kernel/module.c            | 14 +++++++-------
+>  4 files changed, 12 insertions(+), 12 deletions(-)
+> 
+> diff --git a/arch/arm64/kernel/ftrace.c b/arch/arm64/kernel/ftrace.c
+> index 65a51331088e..c17d98aafc93 100644
+> --- a/arch/arm64/kernel/ftrace.c
+> +++ b/arch/arm64/kernel/ftrace.c
+> @@ -120,7 +120,7 @@ int ftrace_make_call(struct dyn_ftrace *rec, unsigned long addr)
+>  			/* point the trampoline to our ftrace entry point */
+>  			module_disable_ro(mod);
+>  			*mod->arch.ftrace_trampoline = trampoline;
+> -			module_enable_ro(mod, true);
+> +			module_enable_ro(mod);
+>  
+>  			/* update trampoline before patching in the branch */
+>  			smp_wmb();
+> diff --git a/include/linux/module.h b/include/linux/module.h
+> index 188998d3dca9..4d6922f3760e 100644
+> --- a/include/linux/module.h
+> +++ b/include/linux/module.h
+> @@ -844,12 +844,12 @@ extern int module_sysfs_initialized;
+>  #ifdef CONFIG_STRICT_MODULE_RWX
+>  extern void set_all_modules_text_rw(void);
+>  extern void set_all_modules_text_ro(void);
+> -extern void module_enable_ro(const struct module *mod, bool after_init);
+> +extern void module_enable_ro(const struct module *mod);
+>  extern void module_disable_ro(const struct module *mod);
+>  #else
+>  static inline void set_all_modules_text_rw(void) { }
+>  static inline void set_all_modules_text_ro(void) { }
+> -static inline void module_enable_ro(const struct module *mod, bool after_init) { }
+> +static inline void module_enable_ro(const struct module *mod) { }
+>  static inline void module_disable_ro(const struct module *mod) { }
+>  #endif
+>  
+> diff --git a/kernel/livepatch/core.c b/kernel/livepatch/core.c
+> index c4ce08f43bd6..f9882ffa2f44 100644
+> --- a/kernel/livepatch/core.c
+> +++ b/kernel/livepatch/core.c
+> @@ -724,13 +724,13 @@ static int klp_init_object_loaded(struct klp_patch *patch,
+>  	module_disable_ro(patch->mod);
+>  	ret = klp_write_object_relocations(patch->mod, obj);
+>  	if (ret) {
+> -		module_enable_ro(patch->mod, true);
+> +		module_enable_ro(patch->mod);
+>  		mutex_unlock(&text_mutex);
+>  		return ret;
+>  	}
+>  
+>  	arch_klp_init_object_loaded(patch, obj);
+> -	module_enable_ro(patch->mod, true);
+> +	module_enable_ro(patch->mod);
+>  
+>  	mutex_unlock(&text_mutex);
+>  
+> diff --git a/kernel/module.c b/kernel/module.c
+> index e43a90ee2d23..fb3561e0c5b0 100644
+> --- a/kernel/module.c
+> +++ b/kernel/module.c
+> @@ -1956,7 +1956,7 @@ void module_disable_ro(const struct module *mod)
+>  	frob_rodata(&mod->init_layout, set_memory_rw);
+>  }
+>  
+> -void __module_enable_ro(const struct module *mod, bool after_init)
+> +static void __module_enable_ro(const struct module *mod)
+>  {
+>  	if (!rodata_enabled)
+>  		return;
+> @@ -1973,15 +1973,15 @@ void __module_enable_ro(const struct module *mod, bool after_init)
+>  
+>  	frob_rodata(&mod->init_layout, set_memory_ro);
+>  
+> -	if (after_init)
+> +	if (mod->state == MODULE_STATE_LIVE)
+>  		frob_ro_after_init(&mod->core_layout, set_memory_ro);
+
+This works only now because __module_enable_ro() is called only from
+three locations (klp_init_object_loaded(),  complete_formation(),
+and do_init_module(). And they all are called in a well defined order
+from load_module().
+
+Only the final call in do_init_module() should touch the after_init
+section.
+
+IMHO, the most clean solutiuon would be to call frob_ro_after_init()
+from extra __module_after_init_enable_ro() or so. This should be
+called only from the single place.
+
+Best Regards,
+Petr
