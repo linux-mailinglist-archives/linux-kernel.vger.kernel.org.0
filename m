@@ -2,154 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A50DB4674A
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 20:17:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9176146741
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 20:16:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726659AbfFNSR1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 14:17:27 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:18618 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726567AbfFNSR0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 14:17:26 -0400
-Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 6C7A9E99CC26E4179A95;
-        Sat, 15 Jun 2019 02:17:23 +0800 (CST)
-Received: from architecture4.huawei.com (10.140.130.215) by smtp.huawei.com
- (10.3.19.208) with Microsoft SMTP Server (TLS) id 14.3.439.0; Sat, 15 Jun
- 2019 02:17:14 +0800
-From:   Gao Xiang <gaoxiang25@huawei.com>
-To:     <chao@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <devel@driverdev.osuosl.org>
-CC:     LKML <linux-kernel@vger.kernel.org>,
-        <linux-fsdevel@vger.kernel.org>, <linux-erofs@lists.ozlabs.org>,
-        Miao Xie <miaoxie@huawei.com>, <weidu.du@huawei.com>,
-        Fang Wei <fangwei1@huawei.com>,
-        Gao Xiang <gaoxiang25@huawei.com>
-Subject: [RFC PATCH 8/8] staging: erofs: integrate decompression inplace
-Date:   Sat, 15 Jun 2019 02:16:19 +0800
-Message-ID: <20190614181619.64905-9-gaoxiang25@huawei.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190614181619.64905-1-gaoxiang25@huawei.com>
-References: <20190614181619.64905-1-gaoxiang25@huawei.com>
+        id S1726207AbfFNSQp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 14:16:45 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:42391 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726094AbfFNSQp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Jun 2019 14:16:45 -0400
+Received: by mail-pf1-f194.google.com with SMTP id q10so1913901pff.9
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2019 11:16:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=puTHRzJLDYkby5dm7Z8PxTsKRwDG5hRxWOagm4BjqQs=;
+        b=Ws5E8yahDqKXoYIz72TJmHfAl5rhhKJVVPGEfYEKGwK1Xc7tB9TLqy3FeLI4M9by0Y
+         nMXLSaMHVOLx61lkQ4eUUCb9vUtSwVTg4ls6Pn098zvhtKgMxYUVGLgcxnqtWZcuj0wb
+         +rdB2UpYxEYkA2PhycUv7iLSB5vLDV1Xvf4sl/3t6gl7PWUiqvlBpaE+roV7yxDRQXKx
+         JNgFRV6RLUNG7r+ARt5Y35EJFWsQ6NJ6v+sxMi3CDaL8CVgehmo+c1j6ldTPFTSCBFJ6
+         xzyPPD6EcNGFtUWUTqjTdPh2hq0sg1ENk0pHqOMNBAOLMRkl5CBNejc+HZ2RvgdPrON7
+         TGGA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=puTHRzJLDYkby5dm7Z8PxTsKRwDG5hRxWOagm4BjqQs=;
+        b=suBLMizIeVSQdOJVBjiWV+0J6svzmpApv0SCt2nMFEH2xbjNmBmfb4PGz5O54sp6NK
+         AaAH3dJ0Lco97/3EiqAA6wmNwO+3DusuHuIMFOgSrNE6t2unbBP4qcPpQlaory9j9/U2
+         TkA09e7NWDMSRXKeg8Y+pjBM+hC1hJ9OefjM4Wj++/IjPrvZr+MbCcqEdmr7cQbgnNM1
+         7RiYcHpKi5OgmNSFXAAwqNOkeHO4o/tThc2ywGu9rTX19SFgfVzBfjgnSDa5FxHc6kxg
+         +AJ5zzeAKgPrG9FoeI3IxhsqzTQMk5xeMY185HjZorkYseyEjwCrXxtb0ZRPT0iM9zJC
+         xUUg==
+X-Gm-Message-State: APjAAAWzeXLIX5Imw9D+KArrYRqYZyceZPQ7x7KSVk3fvya895yI94lG
+        cnc4y1hjP7ej9q83j7PwIxgvsFjokhKTrWhtLy2f1g==
+X-Google-Smtp-Source: APXvYqyZgc8wUMxZ3Mln8U6UN35HufOhqqxZRAFb4tsblfJ4VSYkx2CoHaVLiNC8cZ96pfDUEqTOt66XarYRLfO+rdA=
+X-Received: by 2002:a63:52:: with SMTP id 79mr36714073pga.381.1560536203926;
+ Fri, 14 Jun 2019 11:16:43 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.140.130.215]
-X-CFilter-Loop: Reflected
+References: <20190614165242.79257-1-natechancellor@gmail.com>
+In-Reply-To: <20190614165242.79257-1-natechancellor@gmail.com>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Fri, 14 Jun 2019 11:16:32 -0700
+Message-ID: <CAKwvOdkyoEYe83HdF-0ofPckFkE5rsFdNnQw5NxXTUQfHNntsg@mail.gmail.com>
+Subject: Re: [PATCH] kbuild: Enable -Wuninitialized
+To:     Nathan Chancellor <natechancellor@gmail.com>
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        clang-built-linux <clang-built-linux@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Decompressor needs to know whether it's a partial
-or full decompression since only full decompression
-can be decompressed in-place.
+On Fri, Jun 14, 2019 at 9:53 AM Nathan Chancellor
+<natechancellor@gmail.com> wrote:
+>
+> This helps fine very dodgy behavior through both -Wuninitialized
+> (warning that a variable is always uninitialized) and
+> -Wsometimes-uninitialized (warning that a variable is sometimes
+> uninitialized, like GCC's -Wmaybe-uninitialized). These warnings
+> catch things that GCC doesn't such as:
+>
+> https://lore.kernel.org/lkml/86649ee4-9794-77a3-502c-f4cd10019c36@lca.pw/
 
-On kirin980 platform, sequential read is finally
-increased to 812MiB/s after decompression inplace
-is enabled.
+or this one, which was my favorite, and quite insidious from an
+underhanded C contest perspective.
+https://lore.kernel.org/lkml/20190226053855.7020-1-natechancellor@gmail.com/
 
-Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
----
- drivers/staging/erofs/internal.h  |  3 +++
- drivers/staging/erofs/unzip_vle.c | 15 +++++++++++----
- drivers/staging/erofs/unzip_vle.h |  1 +
- drivers/staging/erofs/zmap.c      |  1 +
- 4 files changed, 16 insertions(+), 4 deletions(-)
+Thank you very much for all the hard work you did tracking done and
+fixing all of the cases we could find.  I very much look forward to
+this patch as the capstone to all that work.
+Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
 
-diff --git a/drivers/staging/erofs/internal.h b/drivers/staging/erofs/internal.h
-index dcbe6f7f5dae..190cd3879d7f 100644
---- a/drivers/staging/erofs/internal.h
-+++ b/drivers/staging/erofs/internal.h
-@@ -447,6 +447,7 @@ extern const struct address_space_operations z_erofs_vle_normalaccess_aops;
-  */
- enum {
- 	BH_Zipped = BH_PrivateStart,
-+	BH_FullMapped,
- };
- 
- /* Has a disk mapping */
-@@ -455,6 +456,8 @@ enum {
- #define EROFS_MAP_META		(1 << BH_Meta)
- /* The extent has been compressed */
- #define EROFS_MAP_ZIPPED	(1 << BH_Zipped)
-+/* The length of extent is full */
-+#define EROFS_MAP_FULL_MAPPED	(1 << BH_FullMapped)
- 
- struct erofs_map_blocks {
- 	erofs_off_t m_pa, m_la;
-diff --git a/drivers/staging/erofs/unzip_vle.c b/drivers/staging/erofs/unzip_vle.c
-index cb870b83f3c8..316382d33783 100644
---- a/drivers/staging/erofs/unzip_vle.c
-+++ b/drivers/staging/erofs/unzip_vle.c
-@@ -469,6 +469,9 @@ z_erofs_vle_work_register(const struct z_erofs_vle_work_finder *f,
- 				    Z_EROFS_VLE_WORKGRP_FMT_LZ4 :
- 				    Z_EROFS_VLE_WORKGRP_FMT_PLAIN);
- 
-+	if (map->m_flags & EROFS_MAP_FULL_MAPPED)
-+		grp->flags |= Z_EROFS_VLE_WORKGRP_FULL_LENGTH;
-+
- 	/* new workgrps have been claimed as type 1 */
- 	WRITE_ONCE(grp->next, *f->owned_head);
- 	/* primary and followed work for all new workgrps */
-@@ -901,7 +904,7 @@ static int z_erofs_vle_unzip(struct super_block *sb,
- 	unsigned int i, outputsize;
- 
- 	enum z_erofs_page_type page_type;
--	bool overlapped;
-+	bool overlapped, partial;
- 	struct z_erofs_vle_work *work;
- 	int err;
- 
-@@ -1009,10 +1012,13 @@ static int z_erofs_vle_unzip(struct super_block *sb,
- 	if (unlikely(err))
- 		goto out;
- 
--	if (nr_pages << PAGE_SHIFT >= work->pageofs + grp->llen)
-+	if (nr_pages << PAGE_SHIFT >= work->pageofs + grp->llen) {
- 		outputsize = grp->llen;
--	else
-+		partial = !(grp->flags & Z_EROFS_VLE_WORKGRP_FULL_LENGTH);
-+	} else {
- 		outputsize = (nr_pages << PAGE_SHIFT) - work->pageofs;
-+		partial = true;
-+	}
- 
- 	if (z_erofs_vle_workgrp_fmt(grp) == Z_EROFS_VLE_WORKGRP_FMT_PLAIN)
- 		algorithm = Z_EROFS_COMPRESSION_SHIFTED;
-@@ -1028,7 +1034,8 @@ static int z_erofs_vle_unzip(struct super_block *sb,
- 					.outputsize = outputsize,
- 					.alg = algorithm,
- 					.inplace_io = overlapped,
--					.partial_decoding = true }, page_pool);
-+					.partial_decoding = partial
-+				 }, page_pool);
- 
- out:
- 	/* must handle all compressed pages before endding pages */
-diff --git a/drivers/staging/erofs/unzip_vle.h b/drivers/staging/erofs/unzip_vle.h
-index 2abde53d09d7..9d05fc88f78b 100644
---- a/drivers/staging/erofs/unzip_vle.h
-+++ b/drivers/staging/erofs/unzip_vle.h
-@@ -44,6 +44,7 @@ struct z_erofs_vle_work {
- #define Z_EROFS_VLE_WORKGRP_FMT_PLAIN        0
- #define Z_EROFS_VLE_WORKGRP_FMT_LZ4          1
- #define Z_EROFS_VLE_WORKGRP_FMT_MASK         1
-+#define Z_EROFS_VLE_WORKGRP_FULL_LENGTH      2
- 
- typedef void *z_erofs_vle_owned_workgrp_t;
- 
-diff --git a/drivers/staging/erofs/zmap.c b/drivers/staging/erofs/zmap.c
-index fea3717bf605..70820e282323 100644
---- a/drivers/staging/erofs/zmap.c
-+++ b/drivers/staging/erofs/zmap.c
-@@ -423,6 +423,7 @@ int z_erofs_map_blocks_iter(struct inode *inode,
- 			goto unmap_out;
- 		}
- 		end = (m.lcn << lclusterbits) | m.clusterofs;
-+		map->m_flags |= EROFS_MAP_FULL_MAPPED;
- 		m.delta[0] = 1;
- 		/* fallthrough */
- 	case Z_EROFS_VLE_CLUSTER_TYPE_NONHEAD:
+>
+> We very much want to catch these so turn this warning on so that CI is
+> aware of it.
+>
+> Link: https://github.com/ClangBuiltLinux/linux/issues/381
+> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+> ---
+>  scripts/Makefile.extrawarn | 1 -
+>  1 file changed, 1 deletion(-)
+>
+> diff --git a/scripts/Makefile.extrawarn b/scripts/Makefile.extrawarn
+> index 98081ab300e5..699683a7c116 100644
+> --- a/scripts/Makefile.extrawarn
+> +++ b/scripts/Makefile.extrawarn
+> @@ -71,6 +71,5 @@ KBUILD_CFLAGS += -Wno-unused-value
+>  KBUILD_CFLAGS += -Wno-format
+>  KBUILD_CFLAGS += -Wno-sign-compare
+>  KBUILD_CFLAGS += -Wno-format-zero-length
+> -KBUILD_CFLAGS += -Wno-uninitialized
+>  endif
+>  endif
+> --
+> 2.22.0
+>
+
+
 -- 
-2.17.1
-
+Thanks,
+~Nick Desaulniers
