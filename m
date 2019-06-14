@@ -2,94 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2EF874621C
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 17:08:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 017244622A
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 17:09:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726160AbfFNPIt convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Fri, 14 Jun 2019 11:08:49 -0400
-Received: from mail.fireflyinternet.com ([109.228.58.192]:58369 "EHLO
-        fireflyinternet.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725789AbfFNPIt (ORCPT
+        id S1726377AbfFNPJb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 11:09:31 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:46993 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725837AbfFNPJb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 11:08:49 -0400
-X-Default-Received-SPF: pass (skip=forwardok (res=PASS)) x-ip-name=78.156.65.138;
-Received: from localhost (unverified [78.156.65.138]) 
-        by fireflyinternet.com (Firefly Internet (M1)) with ESMTP (TLS) id 16904012-1500050 
-        for multiple; Fri, 14 Jun 2019 16:08:35 +0100
-Content-Type: text/plain; charset="utf-8"
+        Fri, 14 Jun 2019 11:09:31 -0400
+Received: by mail-pl1-f195.google.com with SMTP id e5so1128901pls.13;
+        Fri, 14 Jun 2019 08:09:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=+I9U1GODgSkyxPAIv5uSBlih1n/pRySECC43JZGkdsQ=;
+        b=iGhc4xzitJMk67sXbQMyBo8eYE8TxhKJEDf+KuuPxlnOLUZFysidCzwr54Kzzy0K2J
+         D+GJRX71MpXYgXx2M6apuBILbtB+nlVv2HxnXhyaQJh8VlGfzYaUAn2jZSunbRUcJP+x
+         iOB3D7jvu5eEN6YbwgH60SuKTejWz4B6PizS20cko5zfs7ZiBvyTkCfK/CSqY5Bns3l8
+         Ro6EsJZk30weiEJY/Uk5TEteCCGXB8XYvuQXqPh/3FoevGvIok7Er3BS5HLnUo9gdnw3
+         FP2pyydyRWD6S3lNwlB6S79WFXpwubyELDGZOmGBXGY7MLSjmvWneimvwEkDnHpcmFWV
+         0G/g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition
+         :content-transfer-encoding:in-reply-to:user-agent;
+        bh=+I9U1GODgSkyxPAIv5uSBlih1n/pRySECC43JZGkdsQ=;
+        b=HyJqtfDS72O5+9b4rUTlWezjRoRGjZcozrgUUZAu/pHK3Ra2m5TzIiRFzDuS26+PtL
+         BrTEV7VCmGA6vZkz0pXKdvVNAv25hJ+TR3tbOs4mLP/wmzmrVQEjBenljYN9TsRRumrC
+         e51XXRACUySdMtCGx+CMvJ3baFsoIv2nGjl3RrKEsxNYfWBrkDkNURBPUJ6YgqHRISny
+         lGSZGSV3l2vNFsKq5bYdRSeykmffCti5Cl1MT5soFduDfrcDLD3bdkXEBwi2GSdZjBha
+         oxF0bnd2MGzqz1jGCdKtf0fJ3r18iudr7oV9NdarQp9dM0Ld0IWQuSJWMS7CYOf3HwVC
+         EdNg==
+X-Gm-Message-State: APjAAAXJQhL/2ux5JThI5KGU1SoHqOQv9PkNNXpkEs48awzC58nuDUEH
+        8F2s0wQiWoe0Q73tZmHsO0Y=
+X-Google-Smtp-Source: APXvYqxzOCKBrFEtUYYWecwehqGBRjbcRqqz2d1PNNKgZEyBo102COqcOPB0Jz3DOPgdv6CXMm9Xlg==
+X-Received: by 2002:a17:902:b70f:: with SMTP id d15mr12366371pls.318.1560524969921;
+        Fri, 14 Jun 2019 08:09:29 -0700 (PDT)
+Received: from localhost ([2620:10d:c090:180::1:b330])
+        by smtp.gmail.com with ESMTPSA id a22sm4039041pfn.173.2019.06.14.08.09.28
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 14 Jun 2019 08:09:28 -0700 (PDT)
+Date:   Fri, 14 Jun 2019 08:09:24 -0700
+From:   Tejun Heo <tj@kernel.org>
+To:     Toke =?iso-8859-1?Q?H=F8iland-J=F8rgensen?= <toke@redhat.com>
+Cc:     axboe@kernel.dk, newella@fb.com, clm@fb.com, josef@toxicpanda.com,
+        dennisz@fb.com, lizefan@huawei.com, hannes@cmpxchg.org,
+        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+        kernel-team@fb.com, cgroups@vger.kernel.org, ast@kernel.org,
+        daniel@iogearbox.net, kafai@fb.com, songliubraving@fb.com,
+        yhs@fb.com, bpf@vger.kernel.org, Josef Bacik <jbacik@fb.com>
+Subject: Re: [PATCH 08/10] blkcg: implement blk-ioweight
+Message-ID: <20190614150924.GB538958@devbig004.ftw2.facebook.com>
+References: <20190614015620.1587672-1-tj@kernel.org>
+ <20190614015620.1587672-9-tj@kernel.org>
+ <87pnngbbti.fsf@toke.dk>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Steven Rostedt <rostedt@goodmis.org>, Tejun Heo <tj@kernel.org>
-From:   Chris Wilson <chris@chris-wilson.co.uk>
-In-Reply-To: <20190614093914.58f41d8f@gandalf.local.home>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Tvrtko Ursulin <tvrtko.ursulin@intel.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-References: <20190614093914.58f41d8f@gandalf.local.home>
-Message-ID: <156052491337.7796.17642747687124632554@skylake-alporthouse-com>
-User-Agent: alot/0.6
-Subject: Re: [BUG] lockdep splat with kernfs lockdep annotations and slab mutex from
- drm patch??
-Date:   Fri, 14 Jun 2019 16:08:33 +0100
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <87pnngbbti.fsf@toke.dk>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Steven Rostedt (2019-06-14 14:39:14)
-> I'm trying to debug some code where I need KASAN and lockdep enabled
-> but I can't get past this splat unrelated to my code. I bisected it
-> down to this commit:
-> 
->  32eb6bcfdda9da ("drm/i915: Make request allocation caches global")
-> 
-> To make sure it wasn't a bad bisect, I removed the patch and the splat
-> goes away. I add the patch back, and the splat returns. I did this
-> several times, so I have a large confidence that this is the cause of
-> the splat, or at least it is the commit that triggers whatever is going
-> on.
-> 
-> Perhaps all the cache updates caused the slab_mutex to be called
-> inverse of the kernfs locking?
-> 
-> Attached is my config.
-> 
-> Also might be helpful, the splat happens:
-> 
->   kernfs_fop_write()
->     ops->write == sysfs_kf_write
->        sysfs_kf_write()
->          ops->store = slab_attr_store
+Hello, Toke.
 
-More interestingly,
+On Fri, Jun 14, 2019 at 02:17:45PM +0200, Toke Høiland-Jørgensen wrote:
+> One question: How are equal-weight cgroups scheduled relative to each
+> other? Or requests from different processes within a single cgroup for
+> that matter? FIFO? Round-robin? Something else?
 
-static ssize_t slab_attr_store(struct kobject *kobj,
-                                struct attribute *attr,
-                                const char *buf, size_t len)
-{
-        struct slab_attribute *attribute;
-        struct kmem_cache *s;
-        int err;
+Once each cgroup got their hierarchical weight and current vtime for
+the period, they don't talk to each other.  Each is expected to do the
+right thing on their own.  When the period ends, the timer looks at
+how the device is performing, how much each used and so on and then
+make necessary adjustments.  So, there's no direct cross-cgroup
+synchronization.  Each is throttled to their target level
+independently.
 
-        attribute = to_slab_attr(attr);
-        s = to_slab(kobj);
+Within a single cgroup, the IOs are FIFO.  When an IO has enough vtime
+credit, it just passes through.  When it doesn't, it always waits
+behind any other IOs which are already waiting.
 
-        if (!attribute->store)
-                return -EIO;
+Thanks.
 
-        err = attribute->store(s, buf, len);
-#ifdef CONFIG_MEMCG
-        if (slab_state >= FULL && err >= 0 && is_root_cache(s)) {
-                struct kmem_cache *c;
-
-                mutex_lock(&slab_mutex);
-
-so it happens to hit the error + FULL case with the additional slabcaches?
-
-Anyway, according to lockdep, it is dangerous to use the slab_mutex inside
-slab_attr_store().
--Chris
+-- 
+tejun
