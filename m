@@ -2,103 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 89860468C8
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 22:21:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E6695468D5
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 22:26:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726325AbfFNUVj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 16:21:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43290 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726072AbfFNUVg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 16:21:36 -0400
-Received: from sasha-vm.mshome.net (unknown [131.107.159.134])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 423F62184C;
-        Fri, 14 Jun 2019 20:21:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560543695;
-        bh=7pm8JkCLHqEoLrJYY8z/2/wqC8f2TYEabiJDZrXwd5A=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=y6YMv1qU68gkZugK3Zs30fL635yTULIgOGn84MH449NBFuBJzExPGh9cigrJlIwQE
-         RqIEblW+Qp8qPgGtfhPlQue/kbfpVY8HN5hvdJ7HK5A478nwceV1rCOPn7vzsY3Pue
-         AqL86QycMpZGNo9FD0KrsnwoMHnUw19l6cSBtJtM=
-From:   Sasha Levin <sashal@kernel.org>
-To:     peterhuewe@gmx.de, jarkko.sakkinen@linux.intel.com, jgg@ziepe.ca
-Cc:     corbet@lwn.net, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-kernel@microsoft.com, thiruan@microsoft.com,
-        bryankel@microsoft.com, tee-dev@lists.linaro.org,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH v5 2/2] fTPM: add documentation for ftpm driver
-Date:   Fri, 14 Jun 2019 16:21:27 -0400
-Message-Id: <20190614202127.26812-3-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190614202127.26812-1-sashal@kernel.org>
-References: <20190614202127.26812-1-sashal@kernel.org>
+        id S1726177AbfFNU0e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 16:26:34 -0400
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:37042 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725802AbfFNU0d (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Jun 2019 16:26:33 -0400
+Received: by mail-oi1-f196.google.com with SMTP id t76so2893201oih.4
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2019 13:26:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=Hu6UH6SAxMoZ+zdg3c2COyOtX79gFZR/VtwmhecH8dA=;
+        b=o3N5dXiKLQ9PbDeRIB98rfVh15PxoVFa/1ufQzJRNpgABUqbXosiApy2K7CWnu2aFD
+         lptSKRX1xOc2/Zt5x5tc1uypFmRuOfUjlR1XzP+CMxmQijfWhcAJWJ6hQZO/28zmqhMu
+         ZZWs09so+lam17Oqi0ATZLBRk2R90J8lyxq5m2cKDJ6z0QdTrYTWgX2CG6kbO5VtTq/C
+         HVVB4iWvAUoIhVRd1sRZmKBbAV4u+Gs+PblKIbCyDifVZ8qXaUf9fpXu+R7YQS4sOVgV
+         SYMWYwzNgoKTsz+wYF2ceul3EWIC8IquOZzyX5r46poJ2lIi8oFLO9yWjpaoOZfsyK6p
+         aZwA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Hu6UH6SAxMoZ+zdg3c2COyOtX79gFZR/VtwmhecH8dA=;
+        b=ZJfQ5Wuxbl16O3cEac8QNUHV+8EIv7/X/6XbHOBIzjaQ+d/VIwBMlLGedLH/ElyBA5
+         T1bWd5LIBGwpfuuKHTOLyTxjQLkqLzhTwdHN6h8G5RpnW/z/Zox7/5qDuJ8EBOUMwcQZ
+         tlM8visKWJEiYqrUEDxMAr9Lk2OOAPSr7clUj1WFgDGnBMo8W2Tp+iyL5uT+XVnlQ5Uf
+         VH79XGNYIq40TPEg8d4sQS6frJJ7PI1cl/GIeojZTeOoKtlCVc5wwpQQm6F3iOZuceID
+         NLHpgwnTFtBooQDrZViPM3+3aAdOoKmwaJeHhX/8W9H3v7CucPsTYC6EC2AvRU9fzSli
+         29ng==
+X-Gm-Message-State: APjAAAVRFP2zPo3ncFMjNPlpGa/h550zTCuNAGXsp69eva3saJLJvtb0
+        V+O23WKn2ANXTLFyNwwxwHEbpFAu
+X-Google-Smtp-Source: APXvYqypZyd7CSFEGroYYb1iKjlsO3SWJUCtaP6WveZciRKaw0cfbgSxgbaQDgwzxZnfKZpsek1gNw==
+X-Received: by 2002:aca:3d54:: with SMTP id k81mr2811911oia.111.1560543992838;
+        Fri, 14 Jun 2019 13:26:32 -0700 (PDT)
+Received: from [192.168.1.112] (cpe-24-31-245-230.kc.res.rr.com. [24.31.245.230])
+        by smtp.gmail.com with ESMTPSA id q2sm1532873oia.45.2019.06.14.13.26.31
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Fri, 14 Jun 2019 13:26:32 -0700 (PDT)
+Subject: Re: [PATCH] powerpc: enable a 30-bit ZONE_DMA for 32-bit pmac
+To:     Aaro Koskinen <aaro.koskinen@iki.fi>,
+        Mathieu Malaterre <malat@debian.org>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <20190613082446.18685-1-hch@lst.de>
+ <CA+7wUswMtpVCoX0H5eF=GUY8jWDAEWa9Z223tKiKHiL69hhHtQ@mail.gmail.com>
+ <20190614191532.GC27145@darkstar.musicnaut.iki.fi>
+From:   Larry Finger <Larry.Finger@lwfinger.net>
+Message-ID: <d508cc9c-435f-4108-17ac-6db74640514c@lwfinger.net>
+Date:   Fri, 14 Jun 2019 15:26:31 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190614191532.GC27145@darkstar.musicnaut.iki.fi>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds basic documentation to describe the new fTPM driver.
+On 6/14/19 2:15 PM, Aaro Koskinen wrote:
+> Hi,
+> 
+> On Fri, Jun 14, 2019 at 09:24:16AM +0200, Mathieu Malaterre wrote:
+>> On Thu, Jun 13, 2019 at 10:27 AM Christoph Hellwig <hch@lst.de> wrote:
+>>> With the strict dma mask checking introduced with the switch to
+>>> the generic DMA direct code common wifi chips on 32-bit powerbooks
+>>> stopped working.  Add a 30-bit ZONE_DMA to the 32-bit pmac builds
+>>> to allow them to reliably allocate dma coherent memory.
+>>>
+>>> Fixes: 65a21b71f948 ("powerpc/dma: remove dma_nommu_dma_supported")
+>>> Reported-by: Aaro Koskinen <aaro.koskinen@iki.fi>
+>>> Signed-off-by: Christoph Hellwig <hch@lst.de>
+>>> ---
+>>>   arch/powerpc/include/asm/page.h         | 7 +++++++
+>>>   arch/powerpc/mm/mem.c                   | 3 ++-
+>>>   arch/powerpc/platforms/powermac/Kconfig | 1 +
+>>>   3 files changed, 10 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/arch/powerpc/include/asm/page.h b/arch/powerpc/include/asm/page.h
+>>> index b8286a2013b4..0d52f57fca04 100644
+>>> --- a/arch/powerpc/include/asm/page.h
+>>> +++ b/arch/powerpc/include/asm/page.h
+>>> @@ -319,6 +319,13 @@ struct vm_area_struct;
+>>>   #endif /* __ASSEMBLY__ */
+>>>   #include <asm/slice.h>
+>>>
+>>> +/*
+>>> + * Allow 30-bit DMA for very limited Broadcom wifi chips on many powerbooks.
+>>
+>> nit: would it be possible to mention explicit reference to b43-legacy.
+>> Using b43 on my macmini g4 never showed those symptoms (using
+>> 5.2.0-rc2+)
+> 
+> According to Wikipedia Mac mini G4 is limited to 1 GB RAM, so that's
+> why you don't see the issue.
 
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- Documentation/security/tpm/index.rst        |  1 +
- Documentation/security/tpm/tpm_ftpm_tee.rst | 31 +++++++++++++++++++++
- 2 files changed, 32 insertions(+)
- create mode 100644 Documentation/security/tpm/tpm_ftpm_tee.rst
+He wouldn't see it with b43. Those cards have 32-bit DMA.
 
-diff --git a/Documentation/security/tpm/index.rst b/Documentation/security/tpm/index.rst
-index af77a7bbb070..15783668644f 100644
---- a/Documentation/security/tpm/index.rst
-+++ b/Documentation/security/tpm/index.rst
-@@ -4,4 +4,5 @@ Trusted Platform Module documentation
- 
- .. toctree::
- 
-+   tpm_ftpm_tee
-    tpm_vtpm_proxy
-diff --git a/Documentation/security/tpm/tpm_ftpm_tee.rst b/Documentation/security/tpm/tpm_ftpm_tee.rst
-new file mode 100644
-index 000000000000..29c2f8b5ed10
---- /dev/null
-+++ b/Documentation/security/tpm/tpm_ftpm_tee.rst
-@@ -0,0 +1,31 @@
-+=============================================
-+Firmware TPM Driver
-+=============================================
-+
-+| Authors:
-+| Thirupathaiah Annapureddy <thiruan@microsoft.com>
-+| Sasha Levin <sashal@kernel.org>
-+
-+This document describes the firmware Trusted Platform Module (fTPM)
-+device driver.
-+
-+Introduction
-+============
-+
-+This driver is a shim for a firmware implemented in ARM's TrustZone
-+environment. The driver allows programs to interact with the TPM in the same
-+way the would interact with a hardware TPM.
-+
-+Design
-+======
-+
-+The driver acts as a thin layer that passes commands to and from a TPM
-+implemented in firmware. The driver itself doesn't contain much logic and is
-+used more like a dumb pipe between firmware and kernel/userspace.
-+
-+The firmware itself is based on the following paper:
-+https://www.microsoft.com/en-us/research/wp-content/uploads/2017/06/ftpm1.pdf
-+
-+When the driver is loaded it will expose ``/dev/tpmX`` character devices to
-+userspace which will enable userspace to communicate with the firmware tpm
-+through this device.
--- 
-2.20.1
+Larry
+
 
