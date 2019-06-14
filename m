@@ -2,142 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0F59C45B9C
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 13:44:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DEE3145BA0
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 13:44:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727622AbfFNLoU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 07:44:20 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:50340 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727164AbfFNLoT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 07:44:19 -0400
-Received: from zn.tnic (p200300EC2F097F00C4A032B92937AA15.dip0.t-ipconnect.de [IPv6:2003:ec:2f09:7f00:c4a0:32b9:2937:aa15])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id B6C931EC0911;
-        Fri, 14 Jun 2019 13:44:17 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1560512657;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=xJiQKds9daYcI0Rz9VfC2JJuBX2EaMYu3LKFjb/Vmt8=;
-        b=Y3h8YwzmAsMfAXptgAnqTVOPSzAl9/VINGz0CSBifu/eP9U3pm83e90vQopVh8I56isnSS
-        IkuKgFzIs8v26TjBxk7LO6FX4Jf3d3f4hWyfPo7K/yKjByUwiYMxS2KgkccREJTyzTD3KC
-        8NTQ3PofI+luXdUl8ayPBfauJH6PPp8=
-Date:   Fri, 14 Jun 2019 13:44:10 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     Fenghua Yu <fenghua.yu@intel.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, H Peter Anvin <hpa@zytor.com>,
-        Christopherson Sean J <sean.j.christopherson@intel.com>,
-        Ravi V Shankar <ravi.v.shankar@intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>, x86 <x86@kernel.org>
-Subject: Re: [RFC PATCH 2/3] x86/cpufeatures: Combine word 11 and 12 into new
- scattered features word 11
-Message-ID: <20190614114410.GD2586@zn.tnic>
-References: <1560459064-195037-1-git-send-email-fenghua.yu@intel.com>
- <1560459064-195037-3-git-send-email-fenghua.yu@intel.com>
+        id S1727643AbfFNLob (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 07:44:31 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:41555 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727164AbfFNLoa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Jun 2019 07:44:30 -0400
+Received: by mail-wr1-f67.google.com with SMTP id c2so2182539wrm.8;
+        Fri, 14 Jun 2019 04:44:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=nfOL/QEZKCqwjy4s7vi3c4DFfSxvD/93w3BZ2MZj8Vk=;
+        b=uX+dN39E3i0FIlS5Q321OQ/Ml+GopVkhaRtA0MOAhayeHrvd5so3euF27cf7H/Z5Ei
+         GIqhyq/D9j1Nxkqn43pH1JIlHBQsWCfBcp7RBiLSX/3mKx6JWVaZZ9HHsD/rYwk6Ogar
+         2bH5E/jYfTzaBsB7sEPA2q+Qgy45fLc0uQ4JSrZLBQMs45zYLbTGt79Hzh/KjBtvJIe4
+         S5HzMUt9HyOKba9ccuFk2Xhc+hlcsIZfsvAyCvxWsXr3ADCe6WfetwaRr4QeOREkV6lA
+         Pe3p+ISTmpo1cIvUho0yivmqAdaqJF8duYIu84mIjn3HUQSAJgYJ5e7ixUVkCsFZg62L
+         qlpA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=nfOL/QEZKCqwjy4s7vi3c4DFfSxvD/93w3BZ2MZj8Vk=;
+        b=eGHkm6CvRfEVwQ3FhRgtST/xZar29f1vW2PhzbA+2dExgtkLToLnwEsiDUWhCAbSPc
+         rIs2W/pzInHyPlXydVF45tPatU1ComCzuOV07+2qje88vLskCip1E7iJFAtQ4rwFMoeG
+         9QaQYJcvigI/foT8d8EpHQ5sxIBS6jrJQAihOxbZOlTB7zPQc9WTbIVcYm4T3A/lEfS3
+         oeKQVLRiGwK8WPrpHew2zGe/8KRM2FW11HweMe+n/MjLCxtE+cz832Gt0Fis/NLbU3zl
+         x2dtf5ZdDHM+9Y4sq5djbDjrenXmjuAIMxrx4bB2ZzojcjoN71aN862UEfJSaOjIHjxJ
+         C8iw==
+X-Gm-Message-State: APjAAAUnH7Sf6XU2Vgl19xMRecE3fhzF3SgUaXQ9TVktgBn7SlLu/F6F
+        LVbgzMDKgbNIbcMqQIPR9Qs=
+X-Google-Smtp-Source: APXvYqzC0NHfeSRCuYRGy3eWWyCg/1pEvAHwAwn0YSXciR+vsSOL8YcgVHefJ+T3cMLSWpKuQXikbg==
+X-Received: by 2002:a5d:6b12:: with SMTP id v18mr65017972wrw.306.1560512668442;
+        Fri, 14 Jun 2019 04:44:28 -0700 (PDT)
+Received: from localhost.localdomain ([185.107.117.129])
+        by smtp.gmail.com with ESMTPSA id b14sm2955592wro.5.2019.06.14.04.44.26
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Fri, 14 Jun 2019 04:44:27 -0700 (PDT)
+From:   "Pavel Begunkov (Silence)" <asml.silence@gmail.com>
+To:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, josef@toxicpanda.com,
+        dennis@kernel.org
+Cc:     Pavel Begunkov <asml.silence@gmail.com>
+Subject: [PATCH 0/2] Fix misuse of blk_rq_stats in blk-iolatency
+Date:   Fri, 14 Jun 2019 14:44:11 +0300
+Message-Id: <cover.1560510935.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.22.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <1560459064-195037-3-git-send-email-fenghua.yu@intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 13, 2019 at 01:51:03PM -0700, Fenghua Yu wrote:
-> It's a waste for the four X86_FEATURE_CQM_* features to occupy two
-> pure feature bits words. To better utilize feature words, re-define
-> word 11 to host scattered features and move the four X86_FEATURE_CQM_*
-> features into word 11. More scattered features can be added in word 11
-> in the future.
-> 
-> KVM doesn't support resctrl now. So it's safe to move the
-> X86_FEATURE_CQM_* features to scattered features word 11 for KVM.
-> 
-> Signed-off-by: Fenghua Yu <fenghua.yu@intel.com>
+From: Pavel Begunkov <asml.silence@gmail.com>
 
-...
+There are implicit assumptions about struct blk_rq_stats, which make
+it's very easy to misuse. The first patch fixes consequences, and the
+second employs type-system to prevent recurrences.
 
-> diff --git a/arch/x86/kvm/cpuid.h b/arch/x86/kvm/cpuid.h
-> index 9a327d5b6d1f..d78a61408243 100644
-> --- a/arch/x86/kvm/cpuid.h
-> +++ b/arch/x86/kvm/cpuid.h
-> @@ -47,8 +47,6 @@ static const struct cpuid_reg reverse_cpuid[] = {
->  	[CPUID_8000_0001_ECX] = {0x80000001, 0, CPUID_ECX},
->  	[CPUID_7_0_EBX]       = {         7, 0, CPUID_EBX},
->  	[CPUID_D_1_EAX]       = {       0xd, 1, CPUID_EAX},
-> -	[CPUID_F_0_EDX]       = {       0xf, 0, CPUID_EDX},
-> -	[CPUID_F_1_EDX]       = {       0xf, 1, CPUID_EDX},
 
-I think you're going to have to change those to:
+Pavel Begunkov (2):
+  blk-iolatency: Fix zero mean in previous stats
+  blk-stats: Introduce explicit stat staging buffers
 
-        [CPUID_LNX_4]         = {         0, 0, 0},
-        [CPUID_7_1_EAX]       = {         7, 1, CPUID_EAX },
-
-instead of removing them because kvm is basically hardcoding the feature
-words and then bitches when array elements in the middle get removed:
-
-In file included from ./include/linux/export.h:45,
-                 from ./include/linux/linkage.h:7,
-                 from ./include/linux/preempt.h:10,
-                 from ./include/linux/hardirq.h:5,
-                 from ./include/linux/kvm_host.h:10,
-                 from arch/x86/kvm/x86.c:22:
-In function ‘x86_feature_cpuid’,
-    inlined from ‘guest_cpuid_get_register’ at arch/x86/kvm/cpuid.h:71:33,
-    inlined from ‘guest_cpuid_has’ at arch/x86/kvm/cpuid.h:100:8,
-    inlined from ‘kvm_get_msr_common’ at arch/x86/kvm/x86.c:2804:8:
-./include/linux/compiler.h:345:38: error: call to ‘__compiletime_assert_62’ declared with attribute error: BUILD_BUG_ON failed: x86_leaf >= ARRAY_SIZE(reverse_cpuid)
-  _compiletime_assert(condition, msg, __compiletime_assert_, __LINE__)
-                                      ^
-./include/linux/compiler.h:326:4: note: in definition of macro ‘__compiletime_assert’
-    prefix ## suffix();    \
-    ^~~~~~
-./include/linux/compiler.h:345:2: note: in expansion of macro ‘_compiletime_assert’
-  _compiletime_assert(condition, msg, __compiletime_assert_, __LINE__)
-  ^~~~~~~~~~~~~~~~~~~
-./include/linux/build_bug.h:39:37: note: in expansion of macro ‘compiletime_assert’
- #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
-                                     ^~~~~~~~~~~~~~~~~~
-./include/linux/build_bug.h:50:2: note: in expansion of macro ‘BUILD_BUG_ON_MSG’
-  BUILD_BUG_ON_MSG(condition, "BUILD_BUG_ON failed: " #condition)
-  ^~~~~~~~~~~~~~~~
-arch/x86/kvm/cpuid.h:62:2: note: in expansion of macro ‘BUILD_BUG_ON’
-  BUILD_BUG_ON(x86_leaf >= ARRAY_SIZE(reverse_cpuid));
-  ^~~~~~~~~~~~
-./include/linux/compiler.h:345:38: error: call to ‘__compiletime_assert_63’ declared with attribute error: BUILD_BUG_ON failed: reverse_cpuid[x86_leaf].function == 0
-  _compiletime_assert(condition, msg, __compiletime_assert_, __LINE__)
-                                      ^
-./include/linux/compiler.h:326:4: note: in definition of macro ‘__compiletime_assert’
-    prefix ## suffix();    \
-    ^~~~~~
-./include/linux/compiler.h:345:2: note: in expansion of macro ‘_compiletime_assert’
-  _compiletime_assert(condition, msg, __compiletime_assert_, __LINE__)
-  ^~~~~~~~~~~~~~~~~~~
-./include/linux/build_bug.h:39:37: note: in expansion of macro ‘compiletime_assert’
- #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
-                                     ^~~~~~~~~~~~~~~~~~
-./include/linux/build_bug.h:50:2: note: in expansion of macro ‘BUILD_BUG_ON_MSG’
-  BUILD_BUG_ON_MSG(condition, "BUILD_BUG_ON failed: " #condition)
-  ^~~~~~~~~~~~~~~~
-arch/x86/kvm/cpuid.h:63:2: note: in expansion of macro ‘BUILD_BUG_ON’
-  BUILD_BUG_ON(reverse_cpuid[x86_leaf].function == 0);
-  ^~~~~~~~~~~~
-make[2]: *** [scripts/Makefile.build:278: arch/x86/kvm/x86.o] Error 1
-make[2]: *** Waiting for unfinished jobs....
-make[1]: *** [scripts/Makefile.build:489: arch/x86/kvm] Error 2
-make[1]: *** Waiting for unfinished jobs....
-make: *** [Makefile:1071: arch/x86] Error 2
-make: *** Waiting for unfinished jobs....
+ block/blk-iolatency.c     | 60 ++++++++++++++++++++++++++++++---------
+ block/blk-stat.c          | 48 +++++++++++++++++++++++--------
+ block/blk-stat.h          |  9 ++++--
+ include/linux/blk_types.h |  6 ++++
+ 4 files changed, 94 insertions(+), 29 deletions(-)
 
 -- 
-Regards/Gruss,
-    Boris.
+2.22.0
 
-Good mailing practices for 400: avoid top-posting and trim the reply.
