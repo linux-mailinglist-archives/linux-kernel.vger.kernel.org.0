@@ -2,158 +2,143 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2181F46061
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 16:16:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CF8B746099
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 16:24:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728987AbfFNOO4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 10:14:56 -0400
-Received: from mx2.suse.de ([195.135.220.15]:34754 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728555AbfFNOO4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 10:14:56 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 08FA2AEB3;
-        Fri, 14 Jun 2019 14:14:54 +0000 (UTC)
-Date:   Fri, 14 Jun 2019 16:14:53 +0200
-From:   Petr Mladek <pmladek@suse.com>
-To:     Josh Poimboeuf <jpoimboe@redhat.com>
-Cc:     Jessica Yu <jeyu@kernel.org>, Steven Rostedt <rostedt@goodmis.org>,
-        Jiri Kosina <jikos@kernel.org>,
-        Miroslav Benes <mbenes@suse.cz>,
-        Joe Lawrence <joe.lawrence@redhat.com>,
-        linux-kernel@vger.kernel.org, live-patching@vger.kernel.org,
-        Johannes Erdfelt <johannes@erdfelt.com>,
-        Ingo Molnar <mingo@kernel.org>
-Subject: Re: [PATCH 3/3] module: Improve module __ro_after_init handling
-Message-ID: <20190614141453.fjtvk7uvux6vcmlp@pathway.suse.cz>
-References: <cover.1560474114.git.jpoimboe@redhat.com>
- <1b72f40d863a1444f687b3e1b958bdc6925882ed.1560474114.git.jpoimboe@redhat.com>
+        id S1728583AbfFNOYr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 10:24:47 -0400
+Received: from mga18.intel.com ([134.134.136.126]:60424 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727979AbfFNOYq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Jun 2019 10:24:46 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Jun 2019 07:24:45 -0700
+X-ExtLoop1: 1
+Received: from romley-ivt3.sc.intel.com ([172.25.110.60])
+  by orsmga002.jf.intel.com with ESMTP; 14 Jun 2019 07:24:45 -0700
+Date:   Fri, 14 Jun 2019 07:15:20 -0700
+From:   Fenghua Yu <fenghua.yu@intel.com>
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     Borislav Petkov <bp@alien8.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, H Peter Anvin <hpa@zytor.com>,
+        Ravi V Shankar <ravi.v.shankar@intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        x86 <x86@kernel.org>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Paolo Bonzini <pbonzini@redhat.com>
+Subject: Re: [RFC PATCH 2/3] x86/cpufeatures: Combine word 11 and 12 into new
+ scattered features word 11
+Message-ID: <20190614141519.GC198207@romley-ivt3.sc.intel.com>
+References: <1560459064-195037-1-git-send-email-fenghua.yu@intel.com>
+ <1560459064-195037-3-git-send-email-fenghua.yu@intel.com>
+ <20190614114410.GD2586@zn.tnic>
+ <20190614122749.GE2586@zn.tnic>
+ <20190614131701.GA198207@romley-ivt3.sc.intel.com>
+ <20190614134123.GF2586@zn.tnic>
+ <20190614141424.GA12191@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <1b72f40d863a1444f687b3e1b958bdc6925882ed.1560474114.git.jpoimboe@redhat.com>
-User-Agent: NeoMutt/20170912 (1.9.0)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190614141424.GA12191@linux.intel.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 2019-06-13 20:07:24, Josh Poimboeuf wrote:
-> module_enable_ro() can be called in the following scenario:
+On Fri, Jun 14, 2019 at 07:14:24AM -0700, Sean Christopherson wrote:
+> On Fri, Jun 14, 2019 at 03:41:23PM +0200, Borislav Petkov wrote:
+> > + Radim and Paolo. See upthread for context.
+> > 
+> > On Fri, Jun 14, 2019 at 06:17:02AM -0700, Fenghua Yu wrote:
+> > > > Alternatively - and what I think is the better solution - would be to
+> > > > remove those BUILD_BUG_ONs in x86_feature_cpuid and filter out the
+> > > > Linux-defined leafs dynamically. This way the array won't have holes in
+> > > > it.
+> > > 
+> > > Maybe adding a dummy slot in cpuid_leafs in patch 0002 to avoid the
+> > > compilation errors?
+> > 
+> > Maybe you didn't read what you're replying to: "This way the array
+> > won't have holes in it". Ontop of yours:
+> > 
+> > diff --git a/arch/x86/kvm/cpuid.h b/arch/x86/kvm/cpuid.h
+> > index d78a61408243..03d6f3f7b27c 100644
+> > --- a/arch/x86/kvm/cpuid.h
+> > +++ b/arch/x86/kvm/cpuid.h
+> > @@ -47,6 +47,7 @@ static const struct cpuid_reg reverse_cpuid[] = {
+> >  	[CPUID_8000_0001_ECX] = {0x80000001, 0, CPUID_ECX},
+> >  	[CPUID_7_0_EBX]       = {         7, 0, CPUID_EBX},
+> >  	[CPUID_D_1_EAX]       = {       0xd, 1, CPUID_EAX},
+> > +	[CPUID_7_1_EAX]       = {         7, 1, CPUID_EAX},
+> >  	[CPUID_8000_0008_EBX] = {0x80000008, 0, CPUID_EBX},
+> >  	[CPUID_6_EAX]         = {         6, 0, CPUID_EAX},
+> >  	[CPUID_8000_000A_EDX] = {0x8000000a, 0, CPUID_EDX},
+> > @@ -59,8 +60,9 @@ static __always_inline struct cpuid_reg x86_feature_cpuid(unsigned x86_feature)
+> >  {
+> >  	unsigned x86_leaf = x86_feature / 32;
+> >  
+> > -	BUILD_BUG_ON(x86_leaf >= ARRAY_SIZE(reverse_cpuid));
+> > -	BUILD_BUG_ON(reverse_cpuid[x86_leaf].function == 0);
+> > +	if (x86_leaf == CPUID_LNX_1 ||
+> > +	    x86_leaf == CPUID_LNX_4)
+> > +		return NULL;
+> >  
+> >  	return reverse_cpuid[x86_leaf];
+> >  }
+> > 
+> > That's what I mean with filter out dynamically.
 > 
->   [load livepatch module]
->     initcall
->       klp_enable_patch()
->         klp_init_patch()
->           klp_init_object()
->             klp_init_object_loaded()
->               module_enable_ro(pmod, true)
+> This is wrong.  KVM isn't complaining about shuffling the order of feature
+> words, it's complaining that code is trying to do a reverse CPUID lookup
+> to a feature that isn't in the reverse_cpuid table.   Filtering out
+> checks dynamically is just hiding bugs.
 > 
-> In this case, module_enable_ro()'s 'after_init' argument is true, which
-> prematurely changes the module's __ro_after_init area to read-only.
+> >In function ‘x86_feature_cpuid’,
+> >     inlined from ‘guest_cpuid_get_register’ at arch/x86/kvm/cpuid.h:71:33,
+> >     inlined from ‘guest_cpuid_has’ at arch/x86/kvm/cpuid.h:100:8,
+> >     inlined from ‘kvm_get_msr_common’ at arch/x86/kvm/x86.c:2804:8:
 > 
-> If, theoretically, a registrant of the MODULE_STATE_LIVE module notifier
-> tried to write to the livepatch module's __ro_after_init section, an
-> oops would occur.
+> This corresponds to "guest_cpuid_has(vcpu, X86_FEATURE_ARCH_CAPABILITIES)",
+> i.e. KVM is trying to query X86_FEATURE_ARCH_CAPABILITIES and is yelling
+> that there is no reverse_cpuid entry for CPUID_7_EDX.
 > 
-> Remove the 'after_init' argument and instead make __module_enable_ro()
-> smart enough to only frob the __ro_after_init section after the module
-> has gone live.
+> The problem is that 'enum cpuid_leafs' no longer matches up with the
+> word numbers defined in cpufeatures.h, e.g. CPUID_7_EDX == 17 or so, but
+> the entries in cpufeatures.h defined CPUID_7_EDX flags using word 18.
 > 
-> Reported-by: Petr Mladek <pmladek@suse.com>
-> Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
-> ---
->  arch/arm64/kernel/ftrace.c |  2 +-
->  include/linux/module.h     |  4 ++--
->  kernel/livepatch/core.c    |  4 ++--
->  kernel/module.c            | 14 +++++++-------
->  4 files changed, 12 insertions(+), 12 deletions(-)
-> 
-> diff --git a/arch/arm64/kernel/ftrace.c b/arch/arm64/kernel/ftrace.c
-> index 65a51331088e..c17d98aafc93 100644
-> --- a/arch/arm64/kernel/ftrace.c
-> +++ b/arch/arm64/kernel/ftrace.c
-> @@ -120,7 +120,7 @@ int ftrace_make_call(struct dyn_ftrace *rec, unsigned long addr)
->  			/* point the trampoline to our ftrace entry point */
->  			module_disable_ro(mod);
->  			*mod->arch.ftrace_trampoline = trampoline;
-> -			module_enable_ro(mod, true);
-> +			module_enable_ro(mod);
->  
->  			/* update trampoline before patching in the branch */
->  			smp_wmb();
-> diff --git a/include/linux/module.h b/include/linux/module.h
-> index 188998d3dca9..4d6922f3760e 100644
-> --- a/include/linux/module.h
-> +++ b/include/linux/module.h
-> @@ -844,12 +844,12 @@ extern int module_sysfs_initialized;
->  #ifdef CONFIG_STRICT_MODULE_RWX
->  extern void set_all_modules_text_rw(void);
->  extern void set_all_modules_text_ro(void);
-> -extern void module_enable_ro(const struct module *mod, bool after_init);
-> +extern void module_enable_ro(const struct module *mod);
->  extern void module_disable_ro(const struct module *mod);
->  #else
->  static inline void set_all_modules_text_rw(void) { }
->  static inline void set_all_modules_text_ro(void) { }
-> -static inline void module_enable_ro(const struct module *mod, bool after_init) { }
-> +static inline void module_enable_ro(const struct module *mod) { }
->  static inline void module_disable_ro(const struct module *mod) { }
->  #endif
->  
-> diff --git a/kernel/livepatch/core.c b/kernel/livepatch/core.c
-> index c4ce08f43bd6..f9882ffa2f44 100644
-> --- a/kernel/livepatch/core.c
-> +++ b/kernel/livepatch/core.c
-> @@ -724,13 +724,13 @@ static int klp_init_object_loaded(struct klp_patch *patch,
->  	module_disable_ro(patch->mod);
->  	ret = klp_write_object_relocations(patch->mod, obj);
->  	if (ret) {
-> -		module_enable_ro(patch->mod, true);
-> +		module_enable_ro(patch->mod);
->  		mutex_unlock(&text_mutex);
->  		return ret;
->  	}
->  
->  	arch_klp_init_object_loaded(patch, obj);
-> -	module_enable_ro(patch->mod, true);
-> +	module_enable_ro(patch->mod);
->  
->  	mutex_unlock(&text_mutex);
->  
-> diff --git a/kernel/module.c b/kernel/module.c
-> index e43a90ee2d23..fb3561e0c5b0 100644
-> --- a/kernel/module.c
-> +++ b/kernel/module.c
-> @@ -1956,7 +1956,7 @@ void module_disable_ro(const struct module *mod)
->  	frob_rodata(&mod->init_layout, set_memory_rw);
->  }
->  
-> -void __module_enable_ro(const struct module *mod, bool after_init)
-> +static void __module_enable_ro(const struct module *mod)
->  {
->  	if (!rodata_enabled)
->  		return;
-> @@ -1973,15 +1973,15 @@ void __module_enable_ro(const struct module *mod, bool after_init)
->  
->  	frob_rodata(&mod->init_layout, set_memory_ro);
->  
-> -	if (after_init)
-> +	if (mod->state == MODULE_STATE_LIVE)
->  		frob_ro_after_init(&mod->core_layout, set_memory_ro);
+> This patch also needs to modify NCAPINTS.
 
-This works only now because __module_enable_ro() is called only from
-three locations (klp_init_object_loaded(),  complete_formation(),
-and do_init_module(). And they all are called in a well defined order
-from load_module().
+Changing NCAPINTS is heavy lifting to only solve this biset issue. After
+applying patch 0003, the word 12 hole generated in patch 0002 is filled
+in and no issue reported. If changing NCAPINTS in patch 0002, it needs to
+be changed back again after applying 0003.
 
-Only the final call in do_init_module() should touch the after_init
-section.
+How about add this patch in patch 0002? I posted this patch in this thread
+just now and post it here again:
 
-IMHO, the most clean solutiuon would be to call frob_ro_after_init()
-from extra __module_after_init_enable_ro() or so. This should be
-called only from the single place.
+diff --git a/arch/x86/include/asm/cpufeature.h b/arch/x86/include/asm/cpufeature.h
+index 526619906305..403f70c2e431 100644
+--- a/arch/x86/include/asm/cpufeature.h
++++ b/arch/x86/include/asm/cpufeature.h
+@@ -23,6 +23,7 @@ enum cpuid_leafs
+ 	CPUID_7_0_EBX,
+ 	CPUID_D_1_EAX,
+ 	CPUID_LNX_4,
++	CPUID_DUMMY,
+ 	CPUID_8000_0008_EBX,
+ 	CPUID_6_EAX,
+ 	CPUID_8000_000A_EDX,
 
-Best Regards,
-Petr
+Adding this small patch into patch 0002 will solve the build errors without
+changing the build checks.
+
+Thanks.
+
+-Fenghua
+
+
