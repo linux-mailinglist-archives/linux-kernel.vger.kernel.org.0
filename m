@@ -2,60 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DF2174547C
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 08:09:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D0B4045491
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Jun 2019 08:16:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726082AbfFNGJX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 02:09:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53038 "EHLO mail.kernel.org"
+        id S1725951AbfFNGQX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 02:16:23 -0400
+Received: from mga11.intel.com ([192.55.52.93]:31869 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725775AbfFNGJW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 02:09:22 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AE0EE20851;
-        Fri, 14 Jun 2019 06:09:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560492562;
-        bh=MCq50Ao69iZZCdhmd9FQAh4J7GheaJEiNvU0CEIW6mo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Hm1dCsjsHea4fg7qzxjZ6g0blwGo+xVDbRbqB9NosDIfEu/PIUCSTzrrwRqT3nOu8
-         7QDbzySTfK1tDfOXdKZMYcD49RNnF/dXsqftus1pyaHBNxEm3hliVqT5LRRHRJB8fu
-         ltziWtYwHPwzfCyBCug8PL8A8OtM/Lmb7Jr736Nw=
-Date:   Fri, 14 Jun 2019 08:09:19 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Saiyam Doshi <saiyamdoshi.in@gmail.com>
-Cc:     groeck@google.com, linux-kernel@vger.kernel.org,
-        groeck@chromium.org, adurbin@chromium.org, dlaurie@chromium.org
-Subject: Re: [PATCH] gsmi: replace printk with relevant dev_<level>
-Message-ID: <20190614060919.GA7271@kroah.com>
-References: <20190613185705.GA16951@ahmlpt0706>
+        id S1725775AbfFNGQW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Jun 2019 02:16:22 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Jun 2019 23:16:22 -0700
+X-ExtLoop1: 1
+Received: from pgsmsx114.gar.corp.intel.com ([10.108.55.203])
+  by orsmga007.jf.intel.com with ESMTP; 13 Jun 2019 23:16:20 -0700
+Received: from pgsmsx109.gar.corp.intel.com ([169.254.14.167]) by
+ pgsmsx114.gar.corp.intel.com ([169.254.4.185]) with mapi id 14.03.0415.000;
+ Fri, 14 Jun 2019 14:11:00 +0800
+From:   "Tan, Ley Foon" <ley.foon.tan@intel.com>
+To:     "hch@lst.de" <hch@lst.de>
+CC:     "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "monstr@monstr.eu" <monstr@monstr.eu>,
+        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
+        "lftan.linux@gmail.com" <lftan.linux@gmail.com>
+Subject: Re: switch nios2 and microblaze to use the generic uncached
+ segement support
+Thread-Topic: switch nios2 and microblaze to use the generic uncached
+ segement support
+Thread-Index: AQHVGdkT7boJI3RS4kqc/A8kJoZA3KaatPRz//+BHIA=
+Date:   Fri, 14 Jun 2019 06:11:00 +0000
+Message-ID: <1560492659.21652.3.camel@intel.com>
+References: <20190603065324.9724-1-hch@lst.de>
+         <1560476434.21652.1.camel@intel.com> <20190614054418.GA6722@lst.de>
+In-Reply-To: <20190614054418.GA6722@lst.de>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.226.248.78]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <BBFDFFA76CA1BE40A273987AB2E67CFB@intel.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190613185705.GA16951@ahmlpt0706>
-User-Agent: Mutt/1.12.0 (2019-05-25)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 14, 2019 at 12:27:05AM +0530, Saiyam Doshi wrote:
-> Replace printk() with dev_* macros for logging consistency.
-> In process of replacing printk with dev_err, dev_info etc.,
-> removed unnecessary "out of memory" debug message.
-
-That is multiple things done in the same patch, please break this up
-into a patch series, only doing one "logical" thing per patch.
-
-Note, generic cleanup patches like this are tough to get done in the
-"real" part of the kernel, I strongly recommend you start out in
-drivers/staging/ where these types of changes are welcomed.  Get
-experience there and then move out into other areas of the kernel if you
-want to, that way you don't annoy developers/maintainers with basic
-errors like this.
-
-good luck!
-
-greg k-h
+T24gRnJpLCAyMDE5LTA2LTE0IGF0IDA3OjQ0ICswMjAwLCBDaHJpc3RvcGggSGVsbHdpZyB3cm90
+ZToNCj4gT24gRnJpLCBKdW4gMTQsIDIwMTkgYXQgMDk6NDA6MzRBTSArMDgwMCwgTGV5IEZvb24g
+VGFuIHdyb3RlOg0KPiA+IA0KPiA+IEhpwqBDaHJpc3RvcGgNCj4gPiANCj4gPiBDYW4gdGhpcyBw
+YXRjaCBpbsKgaHR0cDovL2dpdC5pbmZyYWRlYWQub3JnL3VzZXJzL2hjaC9kbWEtbWFwcGluZy5n
+aQ0KPiA+IHQvc2gNCj4gPiBvcnRsb2cvcmVmcy9oZWFkcy9mb3ItbmV4dA0KPiA+IA0KPiA+IFtQ
+QVRDSCAxLzJdIG5pb3MyOiB1c2UgdGhlIGdlbmVyaWMgdW5jYWNoZWQgc2VnbWVudCBzdXBwb3J0
+IGluIGRtYS0NCj4gPiBkaXJlY3QNCj4gSGkgTGV5IEZvb24sDQo+IA0KPiBJIGRvbid0IHVuZGVy
+c3RhbmQgdGhlIGFib3ZlIHNlbnRlbmNlLsKgwqBEb2VzIGl0IGltcGx5IGEgUmV2aWV3ZWQtYnk/
+DQpTb3JyeSwgdHlwbyBpbiBteSBwcmV2aW91cyBlbWFpbC7CoA0KQ2FuJ3QgZmluZCB0aGlzIHBh
+dGNoIGluIHRoZSBnaXQgbGluayB5b3UgcHJvdmlkZWQgKGZvci1uZXh0IGJyYW5jaCkuDQpEaWQg
+eW91IHB1c2ggdGhlIHBhdGNoPw0KDQpSZWdhcmRzDQpMZXkgRm9vbg==
