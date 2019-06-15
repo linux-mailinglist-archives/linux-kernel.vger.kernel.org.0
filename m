@@ -2,144 +2,180 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 07FB447001
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2019 14:43:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C787147007
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2019 14:46:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726866AbfFOMn1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 15 Jun 2019 08:43:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33180 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726760AbfFOMnP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 15 Jun 2019 08:43:15 -0400
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 83DFE21872;
-        Sat, 15 Jun 2019 12:43:14 +0000 (UTC)
-Received: from rostedt by gandalf.local.home with local (Exim 4.92)
-        (envelope-from <rostedt@goodmis.org>)
-        id 1hc81Z-0006f6-L1; Sat, 15 Jun 2019 08:43:13 -0400
-Message-Id: <20190615124313.538948727@goodmis.org>
-User-Agent: quilt/0.65
-Date:   Sat, 15 Jun 2019 08:42:23 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Wei Li <liwei391@huawei.com>
-Subject: [for-linus][PATCH 7/7] ftrace: Fix NULL pointer dereference in free_ftrace_func_mapper()
-References: <20190615124216.188179157@goodmis.org>
+        id S1726773AbfFOMqO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 15 Jun 2019 08:46:14 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:47024 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725943AbfFOMqO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 15 Jun 2019 08:46:14 -0400
+Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 1BE1DBBF7D24A9E17971;
+        Sat, 15 Jun 2019 20:46:05 +0800 (CST)
+Received: from [127.0.0.1] (10.133.213.239) by DGGEMS409-HUB.china.huawei.com
+ (10.3.19.209) with Microsoft SMTP Server id 14.3.439.0; Sat, 15 Jun 2019
+ 20:46:01 +0800
+Subject: Re: [PATCH v2 -next] firmware: ti_sci: remove set but not used
+ variable 'dev'
+To:     <nm@ti.com>, <t-kristo@ti.com>, <ssantosh@kernel.org>,
+        <s-anna@ti.com>, <santosh.shilimkar@oracle.com>
+References: <20190614154421.17556-1-yuehaibing@huawei.com>
+ <20190615123823.15708-1-yuehaibing@huawei.com>
+CC:     <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+From:   Yuehaibing <yuehaibing@huawei.com>
+Message-ID: <74b6ab2e-09c0-a91d-6339-cb6b72eb4261@huawei.com>
+Date:   Sat, 15 Jun 2019 20:46:00 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.2.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
+In-Reply-To: <20190615123823.15708-1-yuehaibing@huawei.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.133.213.239]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wei Li <liwei391@huawei.com>
+Sorry, Pls ignore this, will fix the patch title
 
-The mapper may be NULL when called from register_ftrace_function_probe()
-with probe->data == NULL.
-
-This issue can be reproduced as follow (it may be covered by compiler
-optimization sometime):
-
-/ # cat /sys/kernel/debug/tracing/set_ftrace_filter
-#### all functions enabled ####
-/ # echo foo_bar:dump > /sys/kernel/debug/tracing/set_ftrace_filter
-[  206.949100] Unable to handle kernel NULL pointer dereference at virtual address 0000000000000000
-[  206.952402] Mem abort info:
-[  206.952819]   ESR = 0x96000006
-[  206.955326]   Exception class = DABT (current EL), IL = 32 bits
-[  206.955844]   SET = 0, FnV = 0
-[  206.956272]   EA = 0, S1PTW = 0
-[  206.956652] Data abort info:
-[  206.957320]   ISV = 0, ISS = 0x00000006
-[  206.959271]   CM = 0, WnR = 0
-[  206.959938] user pgtable: 4k pages, 48-bit VAs, pgdp=0000000419f3a000
-[  206.960483] [0000000000000000] pgd=0000000411a87003, pud=0000000411a83003, pmd=0000000000000000
-[  206.964953] Internal error: Oops: 96000006 [#1] SMP
-[  206.971122] Dumping ftrace buffer:
-[  206.973677]    (ftrace buffer empty)
-[  206.975258] Modules linked in:
-[  206.976631] Process sh (pid: 281, stack limit = 0x(____ptrval____))
-[  206.978449] CPU: 10 PID: 281 Comm: sh Not tainted 5.2.0-rc1+ #17
-[  206.978955] Hardware name: linux,dummy-virt (DT)
-[  206.979883] pstate: 60000005 (nZCv daif -PAN -UAO)
-[  206.980499] pc : free_ftrace_func_mapper+0x2c/0x118
-[  206.980874] lr : ftrace_count_free+0x68/0x80
-[  206.982539] sp : ffff0000182f3ab0
-[  206.983102] x29: ffff0000182f3ab0 x28: ffff8003d0ec1700
-[  206.983632] x27: ffff000013054b40 x26: 0000000000000001
-[  206.984000] x25: ffff00001385f000 x24: 0000000000000000
-[  206.984394] x23: ffff000013453000 x22: ffff000013054000
-[  206.984775] x21: 0000000000000000 x20: ffff00001385fe28
-[  206.986575] x19: ffff000013872c30 x18: 0000000000000000
-[  206.987111] x17: 0000000000000000 x16: 0000000000000000
-[  206.987491] x15: ffffffffffffffb0 x14: 0000000000000000
-[  206.987850] x13: 000000000017430e x12: 0000000000000580
-[  206.988251] x11: 0000000000000000 x10: cccccccccccccccc
-[  206.988740] x9 : 0000000000000000 x8 : ffff000013917550
-[  206.990198] x7 : ffff000012fac2e8 x6 : ffff000012fac000
-[  206.991008] x5 : ffff0000103da588 x4 : 0000000000000001
-[  206.991395] x3 : 0000000000000001 x2 : ffff000013872a28
-[  206.991771] x1 : 0000000000000000 x0 : 0000000000000000
-[  206.992557] Call trace:
-[  206.993101]  free_ftrace_func_mapper+0x2c/0x118
-[  206.994827]  ftrace_count_free+0x68/0x80
-[  206.995238]  release_probe+0xfc/0x1d0
-[  206.995555]  register_ftrace_function_probe+0x4a8/0x868
-[  206.995923]  ftrace_trace_probe_callback.isra.4+0xb8/0x180
-[  206.996330]  ftrace_dump_callback+0x50/0x70
-[  206.996663]  ftrace_regex_write.isra.29+0x290/0x3a8
-[  206.997157]  ftrace_filter_write+0x44/0x60
-[  206.998971]  __vfs_write+0x64/0xf0
-[  206.999285]  vfs_write+0x14c/0x2f0
-[  206.999591]  ksys_write+0xbc/0x1b0
-[  206.999888]  __arm64_sys_write+0x3c/0x58
-[  207.000246]  el0_svc_common.constprop.0+0x408/0x5f0
-[  207.000607]  el0_svc_handler+0x144/0x1c8
-[  207.000916]  el0_svc+0x8/0xc
-[  207.003699] Code: aa0003f8 a9025bf5 aa0103f5 f946ea80 (f9400303)
-[  207.008388] ---[ end trace 7b6d11b5f542bdf1 ]---
-[  207.010126] Kernel panic - not syncing: Fatal exception
-[  207.011322] SMP: stopping secondary CPUs
-[  207.013956] Dumping ftrace buffer:
-[  207.014595]    (ftrace buffer empty)
-[  207.015632] Kernel Offset: disabled
-[  207.017187] CPU features: 0x002,20006008
-[  207.017985] Memory Limit: none
-[  207.019825] ---[ end Kernel panic - not syncing: Fatal exception ]---
-
-Link: http://lkml.kernel.org/r/20190606031754.10798-1-liwei391@huawei.com
-
-Signed-off-by: Wei Li <liwei391@huawei.com>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
----
- kernel/trace/ftrace.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
-
-diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
-index a89700590485..38277af44f5c 100644
---- a/kernel/trace/ftrace.c
-+++ b/kernel/trace/ftrace.c
-@@ -4226,10 +4226,13 @@ void free_ftrace_func_mapper(struct ftrace_func_mapper *mapper,
- 	struct ftrace_func_entry *entry;
- 	struct ftrace_func_map *map;
- 	struct hlist_head *hhd;
--	int size = 1 << mapper->hash.size_bits;
--	int i;
-+	int size, i;
-+
-+	if (!mapper)
-+		return;
- 
- 	if (free_func && mapper->hash.count) {
-+		size = 1 << mapper->hash.size_bits;
- 		for (i = 0; i < size; i++) {
- 			hhd = &mapper->hash.buckets[i];
- 			hlist_for_each_entry(entry, hhd, hlist) {
--- 
-2.20.1
-
+On 2019/6/15 20:38, YueHaibing wrote:
+> Fixes gcc '-Wunused-but-set-variable' warning:
+> 
+> drivers/firmware/ti_sci.c: In function ti_sci_cmd_ring_config:
+> drivers/firmware/ti_sci.c:2035:17: warning: variable dev set but not used [-Wunused-but-set-variable]
+> drivers/firmware/ti_sci.c: In function ti_sci_cmd_ring_get_config:
+> drivers/firmware/ti_sci.c:2104:17: warning: variable dev set but not used [-Wunused-but-set-variable]
+> drivers/firmware/ti_sci.c: In function ti_sci_cmd_rm_udmap_tx_ch_cfg:
+> drivers/firmware/ti_sci.c:2287:17: warning: variable dev set but not used [-Wunused-but-set-variable]
+> drivers/firmware/ti_sci.c: In function ti_sci_cmd_rm_udmap_rx_ch_cfg:
+> drivers/firmware/ti_sci.c:2357:17: warning: variable dev set but not used [-Wunused-but-set-variable]
+> 
+> Use the 'dev' variable instead of 'info->dev' to fix this.
+> 
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+> ---
+> v2: use the 'dev' variable as Suman Anna's suggestion
+> ---
+>  drivers/firmware/ti_sci.c | 24 ++++++++++++------------
+>  1 file changed, 12 insertions(+), 12 deletions(-)
+> 
+> diff --git a/drivers/firmware/ti_sci.c b/drivers/firmware/ti_sci.c
+> index 86b2727..c8da6e2 100644
+> --- a/drivers/firmware/ti_sci.c
+> +++ b/drivers/firmware/ti_sci.c
+> @@ -2046,7 +2046,7 @@ static int ti_sci_cmd_ring_config(const struct ti_sci_handle *handle,
+>  				   sizeof(*req), sizeof(*resp));
+>  	if (IS_ERR(xfer)) {
+>  		ret = PTR_ERR(xfer);
+> -		dev_err(info->dev, "RM_RA:Message config failed(%d)\n", ret);
+> +		dev_err(dev, "RM_RA:Message config failed(%d)\n", ret);
+>  		return ret;
+>  	}
+>  	req = (struct ti_sci_msg_rm_ring_cfg_req *)xfer->xfer_buf;
+> @@ -2062,7 +2062,7 @@ static int ti_sci_cmd_ring_config(const struct ti_sci_handle *handle,
+>  
+>  	ret = ti_sci_do_xfer(info, xfer);
+>  	if (ret) {
+> -		dev_err(info->dev, "RM_RA:Mbox config send fail %d\n", ret);
+> +		dev_err(dev, "RM_RA:Mbox config send fail %d\n", ret);
+>  		goto fail;
+>  	}
+>  
+> @@ -2071,7 +2071,7 @@ static int ti_sci_cmd_ring_config(const struct ti_sci_handle *handle,
+>  
+>  fail:
+>  	ti_sci_put_one_xfer(&info->minfo, xfer);
+> -	dev_dbg(info->dev, "RM_RA:config ring %u ret:%d\n", index, ret);
+> +	dev_dbg(dev, "RM_RA:config ring %u ret:%d\n", index, ret);
+>  	return ret;
+>  }
+>  
+> @@ -2115,7 +2115,7 @@ static int ti_sci_cmd_ring_get_config(const struct ti_sci_handle *handle,
+>  				   sizeof(*req), sizeof(*resp));
+>  	if (IS_ERR(xfer)) {
+>  		ret = PTR_ERR(xfer);
+> -		dev_err(info->dev,
+> +		dev_err(dev,
+>  			"RM_RA:Message get config failed(%d)\n", ret);
+>  		return ret;
+>  	}
+> @@ -2125,7 +2125,7 @@ static int ti_sci_cmd_ring_get_config(const struct ti_sci_handle *handle,
+>  
+>  	ret = ti_sci_do_xfer(info, xfer);
+>  	if (ret) {
+> -		dev_err(info->dev, "RM_RA:Mbox get config send fail %d\n", ret);
+> +		dev_err(dev, "RM_RA:Mbox get config send fail %d\n", ret);
+>  		goto fail;
+>  	}
+>  
+> @@ -2150,7 +2150,7 @@ static int ti_sci_cmd_ring_get_config(const struct ti_sci_handle *handle,
+>  
+>  fail:
+>  	ti_sci_put_one_xfer(&info->minfo, xfer);
+> -	dev_dbg(info->dev, "RM_RA:get config ring %u ret:%d\n", index, ret);
+> +	dev_dbg(dev, "RM_RA:get config ring %u ret:%d\n", index, ret);
+>  	return ret;
+>  }
+>  
+> @@ -2298,7 +2298,7 @@ static int ti_sci_cmd_rm_udmap_tx_ch_cfg(const struct ti_sci_handle *handle,
+>  				   sizeof(*req), sizeof(*resp));
+>  	if (IS_ERR(xfer)) {
+>  		ret = PTR_ERR(xfer);
+> -		dev_err(info->dev, "Message TX_CH_CFG alloc failed(%d)\n", ret);
+> +		dev_err(dev, "Message TX_CH_CFG alloc failed(%d)\n", ret);
+>  		return ret;
+>  	}
+>  	req = (struct ti_sci_msg_rm_udmap_tx_ch_cfg_req *)xfer->xfer_buf;
+> @@ -2323,7 +2323,7 @@ static int ti_sci_cmd_rm_udmap_tx_ch_cfg(const struct ti_sci_handle *handle,
+>  
+>  	ret = ti_sci_do_xfer(info, xfer);
+>  	if (ret) {
+> -		dev_err(info->dev, "Mbox send TX_CH_CFG fail %d\n", ret);
+> +		dev_err(dev, "Mbox send TX_CH_CFG fail %d\n", ret);
+>  		goto fail;
+>  	}
+>  
+> @@ -2332,7 +2332,7 @@ static int ti_sci_cmd_rm_udmap_tx_ch_cfg(const struct ti_sci_handle *handle,
+>  
+>  fail:
+>  	ti_sci_put_one_xfer(&info->minfo, xfer);
+> -	dev_dbg(info->dev, "TX_CH_CFG: chn %u ret:%u\n", params->index, ret);
+> +	dev_dbg(dev, "TX_CH_CFG: chn %u ret:%u\n", params->index, ret);
+>  	return ret;
+>  }
+>  
+> @@ -2368,7 +2368,7 @@ static int ti_sci_cmd_rm_udmap_rx_ch_cfg(const struct ti_sci_handle *handle,
+>  				   sizeof(*req), sizeof(*resp));
+>  	if (IS_ERR(xfer)) {
+>  		ret = PTR_ERR(xfer);
+> -		dev_err(info->dev, "Message RX_CH_CFG alloc failed(%d)\n", ret);
+> +		dev_err(dev, "Message RX_CH_CFG alloc failed(%d)\n", ret);
+>  		return ret;
+>  	}
+>  	req = (struct ti_sci_msg_rm_udmap_rx_ch_cfg_req *)xfer->xfer_buf;
+> @@ -2392,7 +2392,7 @@ static int ti_sci_cmd_rm_udmap_rx_ch_cfg(const struct ti_sci_handle *handle,
+>  
+>  	ret = ti_sci_do_xfer(info, xfer);
+>  	if (ret) {
+> -		dev_err(info->dev, "Mbox send RX_CH_CFG fail %d\n", ret);
+> +		dev_err(dev, "Mbox send RX_CH_CFG fail %d\n", ret);
+>  		goto fail;
+>  	}
+>  
+> @@ -2401,7 +2401,7 @@ static int ti_sci_cmd_rm_udmap_rx_ch_cfg(const struct ti_sci_handle *handle,
+>  
+>  fail:
+>  	ti_sci_put_one_xfer(&info->minfo, xfer);
+> -	dev_dbg(info->dev, "RX_CH_CFG: chn %u ret:%d\n", params->index, ret);
+> +	dev_dbg(dev, "RX_CH_CFG: chn %u ret:%d\n", params->index, ret);
+>  	return ret;
+>  }
+>  
+> 
 
