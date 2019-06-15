@@ -2,61 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 062EA47142
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2019 18:29:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2714747161
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2019 19:21:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726965AbfFOQ3W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 15 Jun 2019 12:29:22 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:42331 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726770AbfFOQ3W (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 15 Jun 2019 12:29:22 -0400
-Received: by mail-wr1-f65.google.com with SMTP id x17so5551333wrl.9;
-        Sat, 15 Jun 2019 09:29:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=xbzPPti/d7x+WaN+ndNWClJ+kz638DCPbc0fo6KZsxY=;
-        b=ieIDwSTE7HAtFhzhbgj5P/HFRPZEIOuO8UWSkVQTqz8dqtGwrSTeM3Cg9+iEftZa3d
-         2p6TE36oS951Zcr5TMHXCxTlcpVKKP2i2vxphtNzUExZ3vPQNOzQ9URg0n9Bh/mOyOE0
-         eFHvyzQcM5aA/lzRMYs1D8xXFPGsKtLXwGUHTg/BQ8Zf8AYN8gQCy5DQaoV0kysM/F0W
-         Pj1BqSQxd3WMA3K0gRtqYhk3hMlJxIS9sxBWG3F70AkC6jweErdA/5KbBB3xJMbC5aXt
-         F3mTXmmIeZj/X9g8FdvIlxnRS9oXBDAZ24UKlabYwAPZtgbjpNt7DP+d1iYkkGTdupyP
-         GRCg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=xbzPPti/d7x+WaN+ndNWClJ+kz638DCPbc0fo6KZsxY=;
-        b=cwOt7QTpqzPnDF60TClWny+0DA6F3HtvuLrzbmb4jNl3R2oltM0Rsxb1l3puqUQwQB
-         gINI4X/8vgDOHMOYX6pEIn5yRb09LbQB931E1bDHBNtRn7dplNtYsPoTvFmcWiho1aw4
-         RY4oPqM4BHcXsFOq77mjueiGhpMDO8eNkU+kiIdqq0bdaquDn2Q1JnD22TeSlAcuqlVH
-         klanI6gXAoaeJAHNWxpy3/dindUFXxqgac2HTfv/CiqL0rUHNRrZ//zOREWdX+fL2O03
-         IiDHT+2gkjzMz2IVK+JHfHJxxpEcUyt5QS3xTwb76ktAgdoS219vLXlCivcqV7feWsxr
-         lnXA==
-X-Gm-Message-State: APjAAAWdEBXk3VbYVce85QGP3md+Rms5jbV+6tJ7HBaWLrrj0aTAkzaJ
-        CpUOIuXe0kkwHW9899kex35CJBrEjb4=
-X-Google-Smtp-Source: APXvYqy6frYI/6mx+Dk4Co35nGqa5ZlXs/X4iQfnMoOiujw6z3Bucud4rw6PC+VvLVuv0WlBY8iJXA==
-X-Received: by 2002:adf:f64a:: with SMTP id x10mr12181927wrp.287.1560616159963;
-        Sat, 15 Jun 2019 09:29:19 -0700 (PDT)
-Received: from debian64.daheim (pD9E2960F.dip0.t-ipconnect.de. [217.226.150.15])
-        by smtp.gmail.com with ESMTPSA id l18sm5643055wrv.38.2019.06.15.09.29.18
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Sat, 15 Jun 2019 09:29:19 -0700 (PDT)
-Received: from chuck by debian64.daheim with local (Exim 4.92)
-        (envelope-from <chunkeey@gmail.com>)
-        id 1hcBYM-0007aO-6H; Sat, 15 Jun 2019 18:29:18 +0200
-From:   Christian Lamparter <chunkeey@gmail.com>
-To:     linux-arm-msm@vger.kernel.org
-Cc:     Abhishek Sahu <absahu@codeaurora.org>,
-        Andy Gross <agross@kernel.org>,
-        David Brown <david.brown@linaro.org>,
-        linux-kernel@vger.kernel.org, Pavel Kubelun <be.dissent@gmail.com>
-Subject: [PATCH v2] ARM: dts: qcom: ipq4019: fix high resolution timer
-Date:   Sat, 15 Jun 2019 18:29:18 +0200
-Message-Id: <20190615162918.29120-1-chunkeey@gmail.com>
+        id S1726770AbfFORQs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 15 Jun 2019 13:16:48 -0400
+Received: from mail.andi.de1.cc ([85.214.239.24]:54290 "EHLO mail.andi.de1.cc"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725535AbfFORQs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 15 Jun 2019 13:16:48 -0400
+X-Greylist: delayed 2592 seconds by postgrey-1.27 at vger.kernel.org; Sat, 15 Jun 2019 13:16:48 EDT
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=kemnade.info; s=20180802; h=Content-Transfer-Encoding:MIME-Version:
+        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=eOiWl8p2TWN6Uxy14AMrR2XP1Yr3a8JbfAQfRrrCR5U=; b=WPR/5ZoQSEu+cvcRoNTd3f9IR0
+        FMs7Tx0pZZ6ekv4taD6McaZO2x1aq/h5dQHJ2b6tnyLHObewXebdzvYjSY66u9U/5fxKCtbuug1Kb
+        T3LEvIXb5DzPBf/3Jx/leBnkcGVUEyWflWP8biPABHeXgtW0ndX50jqveC1BHwk9ZMLM=;
+Received: from p200300ccff3e33001a3da2fffebfd33a.dip0.t-ipconnect.de ([2003:cc:ff3e:3300:1a3d:a2ff:febf:d33a] helo=aktux)
+        by mail.andi.de1.cc with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <andreas@kemnade.info>)
+        id 1hcBcP-0005bp-QY; Sat, 15 Jun 2019 18:33:29 +0200
+Received: from andi by aktux with local (Exim 4.92)
+        (envelope-from <andreas@kemnade.info>)
+        id 1hcBcP-0007Tk-EP; Sat, 15 Jun 2019 18:33:29 +0200
+From:   Andreas Kemnade <andreas@kemnade.info>
+To:     tony@atomide.com, lgirdwood@gmail.com, broonie@kernel.org,
+        linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, sboyd@kernel.org, nm@ti.com,
+        vireshk@kernel.org, letux-kernel@openphoenux.org
+Cc:     Andreas Kemnade <andreas@kemnade.info>
+Subject: [PATCH] regulator: twl: mark vdd1/2 as continuous on twl4030
+Date:   Sat, 15 Jun 2019 18:33:14 +0200
+Message-Id: <20190615163314.28173-1-andreas@kemnade.info>
 X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -65,40 +46,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Abhishek Sahu <absahu@codeaurora.org>
+_opp_supported_by_regulators() wrongly ignored errors from
+regulator_is_supported_voltage(), so it considered errors as
+success. Since
+commit 498209445124 ("regulator: core: simplify return value on suported_voltage")
+regulator_is_supported_voltage() returns a real boolean, so
+errors make _opp_supported_by_regulators() return false.
 
+The VDD1/VDD2 regulators on twl4030 are neither defined with
+voltage lists nor with the continuous flag set, so
+regulator_is_supported_voltage() returns false and an error
+before above mentioned commit (which was considered success)
+The result is that after the above mentioned commit cpufreq
+does not work properly e.g. dm3730.
 
-Cherry-picked from CAF QSDK repo with Change-Id
-I7c00b3c74d97c2a30ac9f05e18b511a0550fd459.
+[    2.490997] core: _opp_supported_by_regulators: OPP minuV: 1012500 maxuV: 1012500, not supported by regulator
+[    2.501617] cpu cpu0: _opp_add: OPP not supported by regulators (300000000)
+[    2.509246] core: _opp_supported_by_regulators: OPP minuV: 1200000 maxuV: 1200000, not supported by regulator
+[    2.519775] cpu cpu0: _opp_add: OPP not supported by regulators (600000000)
+[    2.527313] core: _opp_supported_by_regulators: OPP minuV: 1325000 maxuV: 1325000, not supported by regulator
+[    2.537750] cpu cpu0: _opp_add: OPP not supported by regulators (800000000)
 
-Original commit message:
-The kernel is failing in switching the timer for high resolution
-mode and clock source operates in 10ms resolution. The always-on
-property needs to be given for timer device tree node to make
-clock source working in 1ns resolution.
+The patch fixes declaration of VDD1/2 regulators.
 
-Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
-Signed-off-by: Pavel Kubelun <be.dissent@gmail.com>
-Signed-off-by: Christian Lamparter <chunkeey@gmail.com>
+Fixes: 498209445124 ("regulator: core: simplify return value on suported_voltage")
+Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
 ---
-
-v2: fixed subject [Abhishek Sahu is bouncing]
----
- arch/arm/boot/dts/qcom-ipq4019.dtsi | 1 +
+ drivers/regulator/twl-regulator.c | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm/boot/dts/qcom-ipq4019.dtsi b/arch/arm/boot/dts/qcom-ipq4019.dtsi
-index bbcb7db810f7..0e3e79442c50 100644
---- a/arch/arm/boot/dts/qcom-ipq4019.dtsi
-+++ b/arch/arm/boot/dts/qcom-ipq4019.dtsi
-@@ -169,6 +169,7 @@
- 			     <1 4 0xf08>,
- 			     <1 1 0xf08>;
- 		clock-frequency = <48000000>;
-+		always-on;
- 	};
- 
- 	soc {
+diff --git a/drivers/regulator/twl-regulator.c b/drivers/regulator/twl-regulator.c
+index 6fa15b2d6fb3..f7bfdf53701d 100644
+--- a/drivers/regulator/twl-regulator.c
++++ b/drivers/regulator/twl-regulator.c
+@@ -478,6 +478,7 @@ static const struct twlreg_info TWL4030_INFO_##label = { \
+ 		.type = REGULATOR_VOLTAGE, \
+ 		.owner = THIS_MODULE, \
+ 		.enable_time = turnon_delay, \
++		.continuous_voltage_range = true, \
+ 		.of_map_mode = twl4030reg_map_mode, \
+ 		}, \
+ 	}
 -- 
 2.20.1
 
