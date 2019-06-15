@@ -2,115 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8DC2A46F48
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2019 11:21:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7AB2746F8F
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2019 12:38:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726560AbfFOJVv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 15 Jun 2019 05:21:51 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:41200 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725927AbfFOJVv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 15 Jun 2019 05:21:51 -0400
-Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 8C34F9152DDE68AF5ADA;
-        Sat, 15 Jun 2019 17:21:48 +0800 (CST)
-Received: from huawei.com (10.175.101.78) by DGGEMS411-HUB.china.huawei.com
- (10.3.19.211) with Microsoft SMTP Server id 14.3.439.0; Sat, 15 Jun 2019
- 17:21:41 +0800
-From:   Yang Yingliang <yangyingliang@huawei.com>
-To:     <linux-kernel@vger.kernel.org>, <gregkh@linuxfoundation.org>
-CC:     <yangyingliang@huawei.com>
-Subject: [RFC PATCH] doc: fix documentation about UIO_MEM_LOGICAL using
-Date:   Sat, 15 Jun 2019 17:41:29 +0800
-Message-ID: <1560591689-68051-1-git-send-email-yangyingliang@huawei.com>
-X-Mailer: git-send-email 1.8.3
+        id S1726729AbfFOKiu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 15 Jun 2019 06:38:50 -0400
+Received: from www.linux-watchdog.org ([185.87.125.42]:37242 "EHLO
+        www.linux-watchdog.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725944AbfFOKiu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 15 Jun 2019 06:38:50 -0400
+Received: by www.linux-watchdog.org (Postfix, from userid 500)
+        id E075540909; Sat, 15 Jun 2019 12:02:30 +0200 (CEST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 www.linux-watchdog.org E075540909
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-watchdog.org;
+        s=odk20180602; t=1560592950;
+        bh=x4moI263mVJ9xXic7CfPOGIPWBoqDc8/6cZrMgLHrrk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=a33jSYKHPmrGKL4bHC44S8kGiyIC/LW5QIg3kRKNEItop/qtctXJF40ON/1zXd/4j
+         BgH7YfgZUmz3jFwYewwboPMspfWmDzvzr3h++8zpXPrvz64egaHFHXVSWSbC+y5WIo
+         q17kUKzN8DhrwbU3GrwhWIEE2wagNL4K5wufWaEg=
+Date:   Sat, 15 Jun 2019 12:02:30 +0200
+From:   Wim Van Sebroeck <wim@linux-watchdog.org>
+To:     Rasmus Villemoes <rasmus.villemoes@prevas.dk>
+Cc:     Guenter Roeck <linux@roeck-us.net>,
+        "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        Esben Haabendal <esben@haabendal.dk>,
+        Jerry Hoemann <jerry.hoemann@hpe.com>,
+        Rasmus Villemoes <Rasmus.Villemoes@prevas.se>
+Subject: Re: [PATCH v10 3/3] watchdog: make the device time out at
+ open_deadline when open_timeout is used
+Message-ID: <20190615100230.GA10480@www.linux-watchdog.org>
+References: <20190605140628.618-1-rasmus.villemoes@prevas.dk>
+ <20190605140628.618-4-rasmus.villemoes@prevas.dk>
+ <20190607183827.GA32475@roeck-us.net>
+ <56280052-9437-9813-a24e-125abb876762@prevas.dk>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.175.101.78]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <56280052-9437-9813-a24e-125abb876762@prevas.dk>
+User-Agent: Mutt/1.5.20 (2009-12-10)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-After commit d4fc5069a394 ("mm: switch s_mem and slab_cache in struct page")
-page->mapping will be re-used by slab allocations and page->mapping->host
-will be used in balance_dirty_pages_ratelimited() as an inode member but
-it's not an inode in fact and leads an oops.
+Hi Rasmus,
 
-[  159.906493] Unable to handle kernel paging request at virtual address ffff200012d90be8
-[  159.908029] Mem abort info:
-[  159.908552]   ESR = 0x96000007
-[  159.909138]   Exception class = DABT (current EL), IL = 32 bits
-[  159.910155]   SET = 0, FnV = 0
-[  159.910690]   EA = 0, S1PTW = 0
-[  159.911241] Data abort info:
-[  159.911846]   ISV = 0, ISS = 0x00000007
-[  159.912567]   CM = 0, WnR = 0
-[  159.913105] swapper pgtable: 4k pages, 48-bit VAs, pgdp=0000000042acd000
-[  159.914269] [ffff200012d90be8] pgd=000000043ffff003, pud=000000043fffe003, pmd=000000043fffa003, pte=0000000000000000
-[  159.916280] Internal error: Oops: 96000007 [#1] SMP
-[  159.917195] Dumping ftrace buffer:
-[  159.917845]    (ftrace buffer empty)
-[  159.918521] Modules linked in: uio_dev(OE)
-[  159.919276] CPU: 1 PID: 295 Comm: uio_test Tainted: G           OE     5.2.0-rc4+ #46
-[  159.920859] Hardware name: linux,dummy-virt (DT)
-[  159.921815] pstate: 60000005 (nZCv daif -PAN -UAO)
-[  159.922809] pc : balance_dirty_pages_ratelimited+0x68/0xc38
-[  159.923965] lr : fault_dirty_shared_page.isra.8+0xe4/0x100
-[  159.925134] sp : ffff800368a77ae0
-[  159.925824] x29: ffff800368a77ae0 x28: 1ffff0006d14ce1a
-[  159.926906] x27: ffff800368a670d0 x26: ffff800368a67120
-[  159.927985] x25: 1ffff0006d10f5fe x24: ffff200012d90be8
-[  159.929089] x23: ffff200013732000 x22: ffff80036ec03200
-[  159.930172] x21: ffff200012d90bc0 x20: 1fffe400025b217d
-[  159.931253] x19: ffff80036ec03200 x18: 0000000000000000
-[  159.932348] x17: 0000000000000000 x16: 0ffffe0000010208
-[  159.933439] x15: 0000000000000000 x14: 0000000000000000
-[  159.934518] x13: 0000000000000000 x12: 0000000000000000
-[  159.935596] x11: 1fffefc001b452c0 x10: ffff0fc001b452c0
-[  159.936697] x9 : dfff200000000000 x8 : dfff200000000001
-[  159.937781] x7 : ffff7e000da29607 x6 : ffff0fc001b452c1
-[  159.938859] x5 : ffff0fc001b452c1 x4 : ffff0fc001b452c1
-[  159.939944] x3 : ffff200010523ad4 x2 : 1fffe400026e659b
-[  159.941065] x1 : dfff200000000000 x0 : ffff200013732cd8
-[  159.942205] Call trace:
-[  159.942732]  balance_dirty_pages_ratelimited+0x68/0xc38
-[  159.943797]  fault_dirty_shared_page.isra.8+0xe4/0x100
-[  159.944867]  do_fault+0x608/0x1250
-[  159.945571]  __handle_mm_fault+0x93c/0xfb8
-[  159.946412]  handle_mm_fault+0x1c0/0x360
-[  159.947224]  do_page_fault+0x358/0x8d0
-[  159.947993]  do_translation_fault+0xf8/0x124
-[  159.948884]  do_mem_abort+0x70/0x190
-[  159.949624]  el0_da+0x24/0x28
+> > On Wed, Jun 05, 2019 at 02:06:44PM +0000, Rasmus Villemoes wrote:
+> >> When the watchdog device is not open by userspace, the kernel takes
+> >> care of pinging it. When the open_timeout feature is in use, we should
+> >> ensure that the hardware fires close to open_timeout seconds after the
+> >> kernel has assumed responsibility for the device.
+> >>
+> >> To do this, simply reuse the logic that is already in place for
+> >> ensuring the same thing when userspace is responsible for regularly
+> >> pinging the device:
+> >>
+> >> - When watchdog_active(wdd), this patch doesn't change anything.
+> >>
+> >> - When !watchdoc_active(wdd), the "virtual timeout" should be taken to
+> > 
+> > s/watchdoc_active/watchdog_active/
+> > 
+> > otherwise
+> > 
+> > Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+> 
+> Thanks! Wim, can you fix up if/when applying, or do you prefer I resend?
 
-According another commit 5e901d0b15c0 ("scsi: qedi: Fix bad pte call trace
-when iscsiuio is stopped."), using kmalloc also cause other problem.
+I'll fix up when applying. No need to resend a new patch for that.
 
-But the documentation about UIO_MEM_LOGICAL allows using kmalloc(), remove
-and don't allow using kmalloc() in documentation.
-
-Signed-off-by: Yang Yingliang <yangyingliang@huawei.com>
----
- Documentation/driver-api/uio-howto.rst | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/Documentation/driver-api/uio-howto.rst b/Documentation/driver-api/uio-howto.rst
-index 25f50ea..8fecfa1 100644
---- a/Documentation/driver-api/uio-howto.rst
-+++ b/Documentation/driver-api/uio-howto.rst
-@@ -276,8 +276,8 @@ fields of ``struct uio_mem``:
- -  ``int memtype``: Required if the mapping is used. Set this to
-    ``UIO_MEM_PHYS`` if you you have physical memory on your card to be
-    mapped. Use ``UIO_MEM_LOGICAL`` for logical memory (e.g. allocated
--   with :c:func:`kmalloc()`). There's also ``UIO_MEM_VIRTUAL`` for
--   virtual memory.
-+   with :c:func:`__get_free_pages()` but not kmalloc()). There's also
-+   ``UIO_MEM_VIRTUAL`` for virtual memory.
- 
- -  ``phys_addr_t addr``: Required if the mapping is used. Fill in the
-    address of your memory block. This address is the one that appears in
--- 
-1.8.3
+Kind regards,
+Wim.
 
