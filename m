@@ -2,99 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3626247108
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2019 17:50:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C3C054710A
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2019 17:51:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726877AbfFOPuZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 15 Jun 2019 11:50:25 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:56276 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726405AbfFOPuY (ORCPT
+        id S1726933AbfFOPvB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 15 Jun 2019 11:51:01 -0400
+Received: from mail-qt1-f175.google.com ([209.85.160.175]:45582 "EHLO
+        mail-qt1-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726405AbfFOPvB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 15 Jun 2019 11:50:24 -0400
-Received: by mail-wm1-f65.google.com with SMTP id a15so5209690wmj.5;
-        Sat, 15 Jun 2019 08:50:23 -0700 (PDT)
+        Sat, 15 Jun 2019 11:51:01 -0400
+Received: by mail-qt1-f175.google.com with SMTP id j19so6024945qtr.12;
+        Sat, 15 Jun 2019 08:51:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=fCnxcuBISnCFMkS4CaXGr8LMwEuRq/IrT37Bl4TOGh4=;
-        b=oDrN3FIrIFBF30pElj4VmuGcUjcw1qR0CtlyNdG/UJgVLADKFLAEqFg4CULrX1ewbd
-         EiVaBluytK9RPLn1T31RfddunY5GK4eo/hOXxO0FWwO+Ri/vD46fRIV9aR8geI+i44jD
-         BS1dI9M94WeUbYc1VGMokk8cJCtM0tcmNi/baThN7WemK7SNjUBeG300PlTbZ1WfYQM+
-         c653nCj2E04+vyoji6W8zlxTrUyedcAVkKPD84HQN7Kr5a5wUUgeeJyLAkgkHlN1k3Fo
-         2GJP6X8cwWQT5sLo23jSJONVVI4yGdrVadGyKMwb6mCT8tIMiDli2B+UOXbqngkpRiEn
-         QTvA==
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=FRzed5Hn746STY3Jn1Vo7AmbqOd5utzWg8eosdJW/6k=;
+        b=JpNpW9yyNPMPd3JVLXskBsuaQGQXPcqQEzxepyVxim0aReQclp0mx6GTbHFViCTdjy
+         aekVO97SE9eFL8c0GH+PBYc4L0qm0g9s4ul64DOCJeEgiubQVcbePuPDi2MVE4zFORlh
+         UXA8VuGlFzNmy09xLrjviSIYCKcZE5Z5yUAfcYg303mgaE5vfbWWuV4rO/fnHScnRtq3
+         SP7lMQieg+/hVSLMl6DDMLGfzKFF0Bc36bcu+5voP9bERAi3h5e3wsIuNXtpswhFw/7K
+         kkyPDbAx5gKngVZYfnHTlidETdJHvmyv3mXlLPHRNEN3r4xunT1RSLIe1EhNxWXlgq9E
+         SZdA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=fCnxcuBISnCFMkS4CaXGr8LMwEuRq/IrT37Bl4TOGh4=;
-        b=K6K3H/8565YSRl297P7oCoZLca2YZQjao+dIhPP3n+oEELgzspeXiB6lIT+oqPKYLW
-         +UBMpqlftvQeVeVI8q86nHRIlNcUC79b0ZfFFWdB7R62DBeO+9RN9FZ+Na1D8B6uF49H
-         iHcuWCDby6zuNMH/cqeIyvINuuYsX50EgSt2vHhH6efxctORguR3KxEVbkSLS4X6VKWU
-         fNr16PVzwy4wuYgpuOxnTxvr2cGeb+ry3bSLKowXhL+nM1szsoQBvLElp/4+sqEnAUcm
-         oR4I9rllMHwSjzdOTo1WxzaDvCCbexdN/GMiHG1TgIN9LC72xKcBpNi+Q9n+apmBBCRP
-         FmwA==
-X-Gm-Message-State: APjAAAWz0mW6dTaoCbQYZ3UAKvKvFEk+E5OwJFIkJPgi7cJy2kQzxRrI
-        hj5HITTTsyd/BqL4aySeI3Zv3WU2uvQ=
-X-Google-Smtp-Source: APXvYqwgrDLe1sR+kqURXVgPIh6Qp7jjSpzcV0oQSqmHkgPfVLJQ40UYVwsVp75Iuxm60ew4zFl4ng==
-X-Received: by 2002:a1c:6a17:: with SMTP id f23mr11916738wmc.91.1560613822175;
-        Sat, 15 Jun 2019 08:50:22 -0700 (PDT)
-Received: from debian64.daheim (pD9E2960F.dip0.t-ipconnect.de. [217.226.150.15])
-        by smtp.gmail.com with ESMTPSA id 128sm8065848wme.12.2019.06.15.08.50.21
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Sat, 15 Jun 2019 08:50:21 -0700 (PDT)
-Received: from chuck by debian64.daheim with local (Exim 4.92)
-        (envelope-from <chunkeey@gmail.com>)
-        id 1hcAwe-00070w-Ua; Sat, 15 Jun 2019 17:50:20 +0200
-From:   Christian Lamparter <chunkeey@gmail.com>
-To:     linux-arm-msm@vger.kernel.org
-Cc:     Abhishek Sahu <absahu@codeaurora.org>,
-        Andy Gross <agross@kernel.org>,
-        David Brown <david.brown@linaro.org>,
-        linux-kernel@vger.kernel.org, Pavel Kubelun <be.dissent@gmail.com>
-Subject: [PATCH] ipq40xx: fix high resolution timer
-Date:   Sat, 15 Jun 2019 17:50:20 +0200
-Message-Id: <20190615155020.26922-1-chunkeey@gmail.com>
-X-Mailer: git-send-email 2.20.1
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=FRzed5Hn746STY3Jn1Vo7AmbqOd5utzWg8eosdJW/6k=;
+        b=Cg3g4AqRVR1S1wBYuBTb0/1U+CEDjlINKxZ7JuKzhFcatRlrk2FYGBz9gsqb9yc3T+
+         Xb/hypRNbnQhE7hoIc8hffzRvcksIsdyo8715MLH3LKq3XuK2issYBC/d3oB1LYHT0T7
+         7LiWmUq6syJ64ll+nyXyJVlLTagkB8qQZm7Ihpy3MklthefxI+i5D2tcSnmOkrt9eyNc
+         cURgaQDBEou6EM7uLLd6LQw1hXdVYGKI/tnCjvI1T37Y12Je9VfZzDqsjF5GIpd8K36s
+         PjoLSj/JY+OYHXts4uEcI7+6JENoyx4m38DDPMisPyQo5Z83iFd4deAPAglTLUKFtql0
+         FnmA==
+X-Gm-Message-State: APjAAAVdzifTjczhLHu2lPOdMZUAaBXg2aimqpbpAp2Of61XKG0HiMaM
+        /Ib8PrlqxgL8agAidNYpM/Y=
+X-Google-Smtp-Source: APXvYqwSd08QU/s59USkejLBKf+YmKKH56HxmDM0ZXlLrhzdKfSCJWF0VhO8fcG438Nk1o55sB/TBA==
+X-Received: by 2002:ac8:2d82:: with SMTP id p2mr9501333qta.130.1560613859979;
+        Sat, 15 Jun 2019 08:50:59 -0700 (PDT)
+Received: from localhost ([2620:10d:c091:480::673a])
+        by smtp.gmail.com with ESMTPSA id n48sm3833013qtc.90.2019.06.15.08.50.58
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 15 Jun 2019 08:50:58 -0700 (PDT)
+Date:   Sat, 15 Jun 2019 08:50:55 -0700
+From:   Tejun Heo <tj@kernel.org>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     jbacik@fb.com, linux-kernel@vger.kernel.org,
+        linux-block@vger.kernel.org, kernel-team@fb.com, dennis@kernel.org,
+        jack@suse.cz
+Subject: Re: [PATCHSET block/for-linus] Assorted blkcg fixes
+Message-ID: <20190615155055.GE657710@devbig004.ftw2.facebook.com>
+References: <20190613223041.606735-1-tj@kernel.org>
+ <5d5835d3-d0e4-f4cc-19b1-841b4ad46a9a@kernel.dk>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5d5835d3-d0e4-f4cc-19b1-841b4ad46a9a@kernel.dk>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Abhishek Sahu <absahu@codeaurora.org>
+Hello,
 
-Cherry-picked from CAF QSDK repo with Change-Id
-I7c00b3c74d97c2a30ac9f05e18b511a0550fd459.
+On Sat, Jun 15, 2019 at 01:40:50AM -0600, Jens Axboe wrote:
+> > Please refer to each patch's description for details.  Patchset is
+> > also available in the following git branch.
+> > 
+> >   git://git.kernel.org/pub/scm/linux/kernel/git/tj/cgroup.git review-blkcg-fixes
+> > 
+> > Thanks.  diffstat follows.
+> 
+> Are you fine with these hitting 5.3?
 
-Original commit message:
-The kernel is failing in switching the timer for high resolution
-mode and clock source operates in 10ms resolution. The always-on
-property needs to be given for timer device tree node to make
-clock source working in 1ns resolution.
+Yeah, none of them are very urgent.  5.3 should be fine.
 
-Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
-Signed-off-by: Pavel Kubelun <be.dissent@gmail.com>
-Signed-off-by: Christian Lamparter <chunkeey@gmail.com>
----
- arch/arm/boot/dts/qcom-ipq4019.dtsi | 1 +
- 1 file changed, 1 insertion(+)
+Thanks.
 
-diff --git a/arch/arm/boot/dts/qcom-ipq4019.dtsi b/arch/arm/boot/dts/qcom-ipq4019.dtsi
-index 83eb5c29274b..c7fa9f61e1f1 100644
---- a/arch/arm/boot/dts/qcom-ipq4019.dtsi
-+++ b/arch/arm/boot/dts/qcom-ipq4019.dtsi
-@@ -165,6 +165,7 @@
- 			     <1 4 0xf08>,
- 			     <1 1 0xf08>;
- 		clock-frequency = <48000000>;
-+		always-on;
- 	};
- 
- 	soc {
 -- 
-2.20.1
-
+tejun
