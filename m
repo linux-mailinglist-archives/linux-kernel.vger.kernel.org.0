@@ -2,89 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8D11D46E0F
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2019 06:02:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EDF0A46E12
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2019 06:05:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726466AbfFOECR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 15 Jun 2019 00:02:17 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:42448 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726451AbfFOECQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 15 Jun 2019 00:02:16 -0400
-Received: by mail-pg1-f196.google.com with SMTP id l19so2608497pgh.9;
-        Fri, 14 Jun 2019 21:02:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:subject:message-id:mime-version:content-disposition
-         :content-transfer-encoding:user-agent;
-        bh=u1ZcG1Sp0JvhKEi3rEpRDEedkqqLBcdvyquQGonVQRw=;
-        b=GzCnkIla8t/CAZwgluyHn46xdqBub+xym2+1pTfmLv7K5C5y691nCtPwbWqiAGwSwK
-         WDyrJVMv+CaURgfh0yM31SgMFDZ0mxU9kzcLlrX4Ap5YdQPDtAynNZPh06brqIWlQUr3
-         1FpXmpo/LbmuU+c5Z0WWjfMzFk2xQ8osf9Zzih9oBdY9MTjv/BHJw+YufUEQb2W9Moeu
-         M+BbcjPTjbu5SM80EnekimCviunjNUJ3c5pjJTQORg2Cvhw9W8Cpv+FUQw2VdqKxW3zD
-         yu2qoZGp+x6xOk7uV+N6rp0VvGC3i+Gl7HDcfWMX7aIWRMForIlRH2Taj06y3vqyCBnh
-         BV6g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:subject:message-id:mime-version
-         :content-disposition:content-transfer-encoding:user-agent;
-        bh=u1ZcG1Sp0JvhKEi3rEpRDEedkqqLBcdvyquQGonVQRw=;
-        b=Lh/up5ZsrUwbJwTFTS0tAe1P0DIx+4dnWcVZpPUgVKPPgBvTnh7rLqkpfyADyjNqoN
-         vWgJpR9N2XJqpZkQFH+4LQ7/KU8OnX3TBFnjuxhcJleckYMSiw43zCkiaTwEFXTyCTub
-         AJYnQPCU0wrLvVL2alzDSWo7ZoXfg83F8+DHK5Dsax1N9HmvIfkRFBQdQYgD4ykViyUI
-         YNVnS1BPXYb/1yiyEIRwKuoEas1BAukspK8Irr5u5XH8B1sCO9DNjhVlk52Bwfb7fXkX
-         suS31bEfwvliDFi6qPyFomLBAVpeE8VJ6Fm1qnsEitpALjUGFYA+S4ZO+5v7k1bd/G/e
-         Myfg==
-X-Gm-Message-State: APjAAAX1Et3JYpktUPy/2aNckBELHqs8aNAi0/h9SXRJcZVV7ZyEYLye
-        Zmx5f/lVMe9j3HmYJ6FrbNo=
-X-Google-Smtp-Source: APXvYqwudYW3SlUwNYhcsJjD2f8LUUTsZK63ADPGAZf93vIUia8LG6mRDg88vi/jG9tXTki6OS1H0Q==
-X-Received: by 2002:aa7:8d98:: with SMTP id i24mr34349227pfr.199.1560571335596;
-        Fri, 14 Jun 2019 21:02:15 -0700 (PDT)
-Received: from hari-Inspiron-1545 ([183.83.89.153])
-        by smtp.gmail.com with ESMTPSA id m1sm3857242pjv.22.2019.06.14.21.02.13
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 14 Jun 2019 21:02:14 -0700 (PDT)
-Date:   Sat, 15 Jun 2019 09:32:10 +0530
-From:   Hariprasad Kelam <hariprasad.kelam@gmail.com>
-To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] drivers: firmware: efi: fix gcc warning -Wint-conversion
-Message-ID: <20190615040210.GA9112@hari-Inspiron-1545>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        id S1726293AbfFOEFH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 15 Jun 2019 00:05:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52670 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725828AbfFOEFG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 15 Jun 2019 00:05:06 -0400
+Subject: Re: [GIT PULL] cgroup fixes for v5.2-rc4
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1560571505;
+        bh=b/a8q+CufRJOz/FcqspHWxNUkU3OrCBVs4vkAypASqQ=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=otnN/L1LY0F94t/dI+qB38ZzdW7FYqv3bIFyVAeJjWDOdwGJ+NvFu/zAGw8no7Qlf
+         coDpQUqN9fmObXv4xW0QCLzheSm+fDrYqdGme9kwfyv7pEN/ePErevz7nbdjpyQHig
+         HOVxsodcqUnskYLizcCGQHyd0Us8V7ySu/wR8oTk=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <20190614200253.GB657710@devbig004.ftw2.facebook.com>
+References: <20190614200253.GB657710@devbig004.ftw2.facebook.com>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20190614200253.GB657710@devbig004.ftw2.facebook.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/tj/cgroup.git for-5.2-fixes
+X-PR-Tracked-Commit-Id: d477f8c202d1f0d4791ab1263ca7657bbe5cf79e
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 0011572c883082a95e02d47f45fc4a42dc0e8634
+Message-Id: <156057150566.28747.12493884345585916211.pr-tracker-bot@kernel.org>
+Date:   Sat, 15 Jun 2019 04:05:05 +0000
+To:     Tejun Heo <tj@kernel.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, Li Zefan <lizefan@huawei.com>,
+        Johannes Weiner <hannes@cmpxchg.org>, cgroups@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch fixes below warning
+The pull request you sent on Fri, 14 Jun 2019 13:02:53 -0700:
 
-drivers/firmware/efi/tpm.c:78:38: warning: passing argument 1 of
-‘tpm2_calc_event_log_size’ makes pointer from integer without a cast
-[-Wint-conversion]
+> git://git.kernel.org/pub/scm/linux/kernel/git/tj/cgroup.git for-5.2-fixes
 
-Signed-off-by: Hariprasad Kelam <hariprasad.kelam@gmail.com>
----
- drivers/firmware/efi/tpm.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/0011572c883082a95e02d47f45fc4a42dc0e8634
 
-diff --git a/drivers/firmware/efi/tpm.c b/drivers/firmware/efi/tpm.c
-index 74d0cd1..1d3f5ca 100644
---- a/drivers/firmware/efi/tpm.c
-+++ b/drivers/firmware/efi/tpm.c
-@@ -75,7 +75,7 @@ int __init efi_tpm_eventlog_init(void)
- 		goto out;
- 	}
- 
--	tbl_size = tpm2_calc_event_log_size(efi.tpm_final_log
-+	tbl_size = tpm2_calc_event_log_size((void *)efi.tpm_final_log
- 					    + sizeof(final_tbl->version)
- 					    + sizeof(final_tbl->nr_events),
- 					    final_tbl->nr_events,
+Thank you!
+
 -- 
-2.7.4
-
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
