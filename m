@@ -2,97 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 562F947118
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2019 17:57:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E31674711C
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2019 17:58:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726930AbfFOP5s (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 15 Jun 2019 11:57:48 -0400
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:33029 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726405AbfFOP5r (ORCPT
+        id S1726975AbfFOP6f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 15 Jun 2019 11:58:35 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:43410 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726405AbfFOP6f (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 15 Jun 2019 11:57:47 -0400
-Received: by mail-qk1-f195.google.com with SMTP id r6so3704108qkc.0;
-        Sat, 15 Jun 2019 08:57:47 -0700 (PDT)
+        Sat, 15 Jun 2019 11:58:35 -0400
+Received: by mail-pl1-f193.google.com with SMTP id cl9so2275924plb.10
+        for <linux-kernel@vger.kernel.org>; Sat, 15 Jun 2019 08:58:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=V1Xn65jFA9fLzGnZCICEwL6tUShlHAvAc5j9I2/vRW4=;
-        b=csyg6vgm0i4uNhPsUxiT5I9v9LOyUNu0/a9saVtXHrnPe9wqOlbnYU16Udzo53uh/u
-         ntH7pwRtBjuYbe9ZRhTBP3W/jUlEuQnIvB0w7IG3x9Ic2hAnHAbtU0CPHO2gkqHUsvN6
-         cbfvLAcvtmBIdwilZEn2cBDPcUNiKMGQEWZcQt6R+ZKmEM4/Opb3ub+9xk/GktAgEGmR
-         7jDLFDvE5TNOV/yA2grBclF2D5ZeFv5ddWM5MPXh6kBco8WTEXIVO1CcoKFaaCofb2Bt
-         XsIzD6JAPKS4+AxN7vQovTd0s8Zxat1tSWhNEOzrhnY6XwBMzmfPPOwBkM1nY3UjStQW
-         Xtbw==
+        d=chrisdown.name; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=3UEdf7L10rlDvutzhQ5oN7IH73FXQkj8yTdma29U82E=;
+        b=XkyL4uWd3z3bLemMqav9h6r4cxQjATGvT6nrLhY1yRSxw+QOo7/ixS91nRkv7T5pHZ
+         ygciPYZ3p4au9mHIUYBFJFcheawDvU2ZfcbDSLexM7mBnSbvzcbm957GXSGPBODlinPN
+         VzLZVxx8U7/Rur2+zKhPoPSglFf29mPLk5sdI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition
-         :content-transfer-encoding:in-reply-to:user-agent;
-        bh=V1Xn65jFA9fLzGnZCICEwL6tUShlHAvAc5j9I2/vRW4=;
-        b=coLPfFv7f+hAIkS0BM92BaoAp8P/hkPfbPRWJxIKN1boopRzD/uOcp03eoAVY7LbyM
-         2GmfPuLf1G+WTZPlzGIJy862384xRHhYrnPfJ7veYR3wP/u9g9P1UOFsk5fgQkGpF/P2
-         uuPCDa6Rl8WPd1yUB6PhuywUNJ5ReXbAuaeRryFt7nNgzKYW5dnpdN3MD5w5yIhxdjKF
-         XrY6o2X5ndjiPxdUuBEPwJr7b6R1Vc1PGDIOPjgunG9NFwx9VU0sAdOMM1lNg/fF4Rrj
-         1jU2SY6qEg0O3FyHAmuxlFEQjW+fY53Wz8wdd31UyVwBcrRXwuCH48XHqObT66MPNLxV
-         0N9A==
-X-Gm-Message-State: APjAAAWz5eXPQERHfp1ZAG/YL56uRSqQiq7m3Q/MAD+hAx+0Gi5SzHEB
-        KryA2GCForr8pyM2/Gq9D00=
-X-Google-Smtp-Source: APXvYqw7pW50FWwPRrhOjvP+Dt3tlqNNZWVvipaSTxtXb/kfSgJbt5OwlMOikhxcouvwT5smDdGKnA==
-X-Received: by 2002:ae9:f702:: with SMTP id s2mr82033743qkg.28.1560614266380;
-        Sat, 15 Jun 2019 08:57:46 -0700 (PDT)
-Received: from localhost ([2620:10d:c091:480::673a])
-        by smtp.gmail.com with ESMTPSA id g10sm3067097qkk.91.2019.06.15.08.57.45
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 15 Jun 2019 08:57:45 -0700 (PDT)
-Date:   Sat, 15 Jun 2019 08:57:43 -0700
-From:   Tejun Heo <tj@kernel.org>
-To:     Toke =?iso-8859-1?Q?H=F8iland-J=F8rgensen?= <toke@redhat.com>
-Cc:     axboe@kernel.dk, newella@fb.com, clm@fb.com, josef@toxicpanda.com,
-        dennisz@fb.com, lizefan@huawei.com, hannes@cmpxchg.org,
-        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
-        kernel-team@fb.com, cgroups@vger.kernel.org, ast@kernel.org,
-        daniel@iogearbox.net, kafai@fb.com, songliubraving@fb.com,
-        yhs@fb.com, bpf@vger.kernel.org, Josef Bacik <jbacik@fb.com>
-Subject: Re: [PATCH 08/10] blkcg: implement blk-ioweight
-Message-ID: <20190615155743.GF657710@devbig004.ftw2.facebook.com>
-References: <20190614015620.1587672-1-tj@kernel.org>
- <20190614015620.1587672-9-tj@kernel.org>
- <87pnngbbti.fsf@toke.dk>
- <20190614150924.GB538958@devbig004.ftw2.facebook.com>
- <87blyzc2n9.fsf@toke.dk>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=3UEdf7L10rlDvutzhQ5oN7IH73FXQkj8yTdma29U82E=;
+        b=ZK7E16KUoGkRQgDc08v0kMISDtbuOHbcdDoQeo0ZhqP18O5JrZF01jFDkGKiRq0uJV
+         Yc/afweKohjf++5O/+nE/v5Rndu4e8s/JNcWM/lX/YR9fZzo9a6XmWGD622XX1j5rU57
+         76pdfdsP4M9wXxOICK6QLW8JMoTUCGM3dlgsHnzg1PMJiVHc1eGfbSUXoK6dpH+kPJ2p
+         of6ScKJIMxsuPTgfReSj3umKlgS+9aqMAZzPSnSgPnYv9oMCSFytzzMYrMsmUQavsHY2
+         ulshVZscoCqB7YuFWTEpsntFbc4+mUQyc82wk5siPiVnqpdtOx09JDRcfVts4fIOfKl2
+         ZeCw==
+X-Gm-Message-State: APjAAAUBzTHeQJHYAKD/gorHjOrI12/zVvg9olKcY+g8SRr3ZEJmb/Ir
+        3t4X4VWkYa0g8TYGl/Y+2VCVdw==
+X-Google-Smtp-Source: APXvYqwfY314uRro4dsc54oOetfpJqc+ffBY+G0B6BoAGGAlJaMAITXdd1MDQTxvCLR47/tBL2uq+g==
+X-Received: by 2002:a17:902:724:: with SMTP id 33mr96737215pli.49.1560614314543;
+        Sat, 15 Jun 2019 08:58:34 -0700 (PDT)
+Received: from localhost ([61.6.140.222])
+        by smtp.gmail.com with ESMTPSA id p7sm14713756pfp.131.2019.06.15.08.58.33
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Sat, 15 Jun 2019 08:58:33 -0700 (PDT)
+Date:   Sat, 15 Jun 2019 23:58:31 +0800
+From:   Chris Down <chris@chrisdown.name>
+To:     Xunlei Pang <xlpang@linux.alibaba.com>
+Cc:     Roman Gushchin <guro@fb.com>, Michal Hocko <mhocko@kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH] psi: Don't account force reclaim as memory pressure
+Message-ID: <20190615155831.GA1307@chrisdown.name>
+References: <20190615120644.26743-1-xlpang@linux.alibaba.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <87blyzc2n9.fsf@toke.dk>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20190615120644.26743-1-xlpang@linux.alibaba.com>
+User-Agent: Mutt/1.12.0 (2019-05-25)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+Hi Xunlei,
 
-On Fri, Jun 14, 2019 at 10:50:34PM +0200, Toke Høiland-Jørgensen wrote:
-> > Within a single cgroup, the IOs are FIFO. When an IO has enough vtime
-> > credit, it just passes through. When it doesn't, it always waits
-> > behind any other IOs which are already waiting.
-> 
-> OK. Is there any fundamental reason why requests from individual
-> processes could not be interleaved? Or does it just not give the same
-> benefits in an IO request context as it does for network packets?
+Xunlei Pang writes:
+>There're several cases like resize and force_empty that don't
+>need to account to psi, otherwise is misleading.
 
-I don't think there's any fundamental reason we can't.  Currently, it
-just isn't doing anything it doesn't have to do while preserving the
-existing ordering.  One different from networking could be that
-there's more sharing - buffered writes are attributed to the whole
-domain (either system or cgroup) rather than individual tasks, so the
-ownership of IOs gets a bit mushy beyond resource domain level.
-
-Thanks.
-
--- 
-tejun
+I'm afraid I'm quite confused by this patch. Why do you think accounting for 
+force reclaim in PSI is misleading? I completely expect that force reclaim 
+should still be accounted for as memory pressure, can you present some reason 
+why it shouldn't be?
