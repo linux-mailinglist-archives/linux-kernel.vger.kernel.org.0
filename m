@@ -2,85 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 94F3247172
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2019 19:40:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0D30547179
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2019 19:55:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726523AbfFORky (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 15 Jun 2019 13:40:54 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:36423 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725270AbfFORkx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 15 Jun 2019 13:40:53 -0400
-Received: by mail-pf1-f194.google.com with SMTP id r7so3327887pfl.3
-        for <linux-kernel@vger.kernel.org>; Sat, 15 Jun 2019 10:40:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:sender:from:date:message-id:subject:to;
-        bh=KppfXZZpJPEi/CjZSEtvqmbI5qt1QsjN8iLsZFEVchY=;
-        b=DFrYibY0564yeaVkvUPzyJMFDzed60WgoQS3FBKRX7HeO1Ngyl58cd25sB4hQmTj0p
-         bucCP43lF4m00jgR2Evn3q2XJdGvAjCFY5hqVFUt6/RzYfz+DoYT0xcEYqwY1pRAFI+y
-         P1qQN1qoXWp/nnvhFpBeQqP6JEz/x5SA5dt9bhwhm6EitWNky+BXyJKdZvqoXAPG92Ul
-         z2VoRqnTvE8bN4UzQLw6NJW77pgi1OtLSg2D1caLF+NfCuSUSKmkhWfxiplOa3HUInqR
-         ie/MJLYmCtoMorQNqI9Ti3f5s4KrNxpTSy30/AoKdyO3CSmsXJmiq/rTK9u/OEGFXfhw
-         Mxlw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:from:date:message-id:subject
-         :to;
-        bh=KppfXZZpJPEi/CjZSEtvqmbI5qt1QsjN8iLsZFEVchY=;
-        b=D8XRtZ/SUE7YZ7xFf2ay9YV4TE+U2ogTWnMkApA9hFSNXU9WIbrB2Lj6IFzZG0wAT1
-         SL4kqqb0QoU60dcaOioR7kJmS5eZDsi03UFUGBUMky/EvfjerzwNEzMbyUg3giwijt8s
-         COxQwbGZ/YTA9Aa9NcRzp7hs9w2GYF10tSVTWWrzcILtI93KH5YMq8mAh3JRO75uBTwR
-         u1L2g1fIcJw+e7/mXGjjmz3GRtT9u2YFTMiEtF8aDCnlX/eAzi65QmalLud0xGTMdBDe
-         UCWVDCWX/+I8NChb45bL1paCA9T/ZJ7x6rKVI1SadS3AuJmEGBynYntNZvTSi3izZk9y
-         vZ9A==
-X-Gm-Message-State: APjAAAUouEnD/Vya9seBlPSaPDU2aHXBYSf4UxNVzI7kEKKdAT4/wak8
-        0BpATM+ybfaZcTIeKdNgqYSjdGOrljWvx4tr19I=
-X-Google-Smtp-Source: APXvYqxOEalIqkvhBTL3A+h8hKeB3XfnDXGwa1pun9BWn5IrwUKuMeePvy8mWUlucxSPZ/8UICVx2RILH66oEvTcdWU=
-X-Received: by 2002:a62:e515:: with SMTP id n21mr38453560pff.186.1560620453088;
- Sat, 15 Jun 2019 10:40:53 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a17:90a:d153:0:0:0:0 with HTTP; Sat, 15 Jun 2019 10:40:52
- -0700 (PDT)
-From:   Mrs Carlsen Monika <carlsen.monika@gmail.com>
-Date:   Sat, 15 Jun 2019 18:40:52 +0100
-X-Google-Sender-Auth: 96S1AsL6ZOj-_jRIA6a5hDOGbQ8
-Message-ID: <CAOQxS=Fi7fqPQuBuQXN3a3F4CD4a9kzJFFqDG0Z0ak036TO_ag@mail.gmail.com>
-Subject: Greetings My Dear, Please I Need Your Help.
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+        id S1726766AbfFORzG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 15 Jun 2019 13:55:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41694 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725270AbfFORzG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 15 Jun 2019 13:55:06 -0400
+Subject: Re: [GIT PULL] tracing: A few fixes for 5.2-rc4
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1560621305;
+        bh=f8FtjePG/h27fTmwsBArl69zyMjwbxuO5ehkxcSQ2RU=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=jPd1ZBvC1MhqZnkiSfQbyLj0ZYUd+HY78gsywD5mCLdBIoCiBnKVMYX+UYuODDGKY
+         7lLFt7pAXZU9z+CDUt7f6WuTWkwFbee8bmgWSSxVFsezJQtmMJp0XLoGU2PnkgkHv/
+         6IfFJJBRQbJ6CK4bN534sY9gRdeV9Zq/Rut2l8N8=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <20190615084903.763883c5@gandalf.local.home>
+References: <20190615084903.763883c5@gandalf.local.home>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20190615084903.763883c5@gandalf.local.home>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/rostedt/linux-trace.git
+ trace-v5.2-rc4
+X-PR-Tracked-Commit-Id: 04e03d9a616c19a47178eaca835358610e63a1dd
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 6a71398c6aead255efe445ea96d52b33f0d5f0b2
+Message-Id: <156062130559.5191.3426124715879613891.pr-tracker-bot@kernel.org>
+Date:   Sat, 15 Jun 2019 17:55:05 +0000
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Greetings My Dear,
+The pull request you sent on Sat, 15 Jun 2019 08:49:03 -0400:
 
-    I sent this mail praying it will found you in a good condition of
-health, since I myself are in a very critical health condition in
-which I  sleep every night without knowing if I may be alive to see
-the next day. I am Mrs. Monika John  Carlsen from Denmark wife of late
-Mr John Carlsen, a widow suffering from long time illness. I have some
-funds I inherited from my late husband, the sum of (eleven million
-dollars) my Doctor told me recently that I have serious sickness which
-is cancer problem. What disturbs me most is my stroke sickness. Having
-known my condition, I decided to donate this fund to a good person
-that will utilize it the way i am going to instruct herein. I need a
-very honest and God fearing person who can claim this money and use it
-for Charity works, for orphanages, widows and also  build schools for
-less privileges that will be named after my late husband if possible
-and to promote the word of God and the effort that the house of God is
-maintained.
+> git://git.kernel.org/pub/scm/linux/kernel/git/rostedt/linux-trace.git trace-v5.2-rc4
 
-I do not want a situation where this money will be used in an ungodly
-manner. That's why I'm taking this decision. I'm not afraid of death
-so I know where I'm going. I accept this decision because I do not
-have any child who will inherit this money after I die. Please I want
-your sincerely and urgent answer to know if you will be able to
-execute this project, and I will give you more information on how the
-fund will be transferred to your bank account. I am waiting for your
-reply.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/6a71398c6aead255efe445ea96d52b33f0d5f0b2
 
-May God Bless you,
-Mrs. Monika John  Carlsen
+Thank you!
+
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
