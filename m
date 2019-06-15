@@ -2,75 +2,176 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C607D46FE7
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2019 14:28:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 81E5547004
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2019 14:44:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726569AbfFOM2l (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 15 Jun 2019 08:28:41 -0400
-Received: from mail-out.m-online.net ([212.18.0.9]:47617 "EHLO
-        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725446AbfFOM2l (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 15 Jun 2019 08:28:41 -0400
-Received: from frontend01.mail.m-online.net (unknown [192.168.8.182])
-        by mail-out.m-online.net (Postfix) with ESMTP id 45QxbT3gzFz1rFDl;
-        Sat, 15 Jun 2019 14:28:37 +0200 (CEST)
-Received: from localhost (dynscan1.mnet-online.de [192.168.6.70])
-        by mail.m-online.net (Postfix) with ESMTP id 45QxbT2NhDz1qqkh;
-        Sat, 15 Jun 2019 14:28:37 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at mnet-online.de
-Received: from mail.mnet-online.de ([192.168.8.182])
-        by localhost (dynscan1.mail.m-online.net [192.168.6.70]) (amavisd-new, port 10024)
-        with ESMTP id TfqFOYFLjnQz; Sat, 15 Jun 2019 14:28:36 +0200 (CEST)
-X-Auth-Info: OQbThpk8h3LyExLjWVy0gLSRfEJA3KB+AaHbnxoN4dOUOIKp68nqKB9ZJEV0X+1N
-Received: from igel.home (ppp-46-244-181-62.dynamic.mnet-online.de [46.244.181.62])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.mnet-online.de (Postfix) with ESMTPSA;
-        Sat, 15 Jun 2019 14:28:36 +0200 (CEST)
-Received: by igel.home (Postfix, from userid 1000)
-        id D72C52C0C9A; Sat, 15 Jun 2019 14:28:35 +0200 (CEST)
-From:   Andreas Schwab <schwab@linux-m68k.org>
-To:     Christophe Leroy <christophe.leroy@c-s.fr>
-Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>, j.neuschaefer@gmx.net,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH v5 13/16] powerpc/mm/32s: Use BATs for STRICT_KERNEL_RWX
-References: <cover.1550775950.git.christophe.leroy@c-s.fr>
-        <1e412310cc18ea654fb2ce4c935654d8d1069f27.1550775950.git.christophe.leroy@c-s.fr>
-X-Yow:  Fold, fold, FOLD!!  FOLDING many items!!
-Date:   Sat, 15 Jun 2019 14:28:35 +0200
-In-Reply-To: <1e412310cc18ea654fb2ce4c935654d8d1069f27.1550775950.git.christophe.leroy@c-s.fr>
-        (Christophe Leroy's message of "Thu, 21 Feb 2019 19:08:49 +0000
-        (UTC)")
-Message-ID: <877e9n9gng.fsf@igel.home>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.2.90 (gnu/linux)
+        id S1726968AbfFOMoa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 15 Jun 2019 08:44:30 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:18623 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725943AbfFOMoa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 15 Jun 2019 08:44:30 -0400
+Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 1293B78A29872D6DE2C8;
+        Sat, 15 Jun 2019 20:44:26 +0800 (CST)
+Received: from localhost (10.133.213.239) by DGGEMS405-HUB.china.huawei.com
+ (10.3.19.205) with Microsoft SMTP Server id 14.3.439.0; Sat, 15 Jun 2019
+ 20:44:16 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <nm@ti.com>, <t-kristo@ti.com>, <ssantosh@kernel.org>,
+        <s-anna@ti.com>, <santosh.shilimkar@oracle.com>
+CC:     <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH v2 -next] firmware: ti_sci: remove set but not used variable 'dev'
+Date:   Sat, 15 Jun 2019 20:38:23 +0800
+Message-ID: <20190615123823.15708-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
+In-Reply-To: <20190614154421.17556-1-yuehaibing@huawei.com>
+References: <20190614154421.17556-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain
+X-Originating-IP: [10.133.213.239]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Feb 21 2019, Christophe Leroy <christophe.leroy@c-s.fr> wrote:
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-> diff --git a/arch/powerpc/mm/pgtable_32.c b/arch/powerpc/mm/pgtable_32.c
-> index a000768a5cc9..6e56a6240bfa 100644
-> --- a/arch/powerpc/mm/pgtable_32.c
-> +++ b/arch/powerpc/mm/pgtable_32.c
-> @@ -353,7 +353,10 @@ void mark_initmem_nx(void)
->  	unsigned long numpages = PFN_UP((unsigned long)_einittext) -
->  				 PFN_DOWN((unsigned long)_sinittext);
->  
-> -	change_page_attr(page, numpages, PAGE_KERNEL);
-> +	if (v_block_mapped((unsigned long)_stext) + 1)
+drivers/firmware/ti_sci.c: In function ti_sci_cmd_ring_config:
+drivers/firmware/ti_sci.c:2035:17: warning: variable dev set but not used [-Wunused-but-set-variable]
+drivers/firmware/ti_sci.c: In function ti_sci_cmd_ring_get_config:
+drivers/firmware/ti_sci.c:2104:17: warning: variable dev set but not used [-Wunused-but-set-variable]
+drivers/firmware/ti_sci.c: In function ti_sci_cmd_rm_udmap_tx_ch_cfg:
+drivers/firmware/ti_sci.c:2287:17: warning: variable dev set but not used [-Wunused-but-set-variable]
+drivers/firmware/ti_sci.c: In function ti_sci_cmd_rm_udmap_rx_ch_cfg:
+drivers/firmware/ti_sci.c:2357:17: warning: variable dev set but not used [-Wunused-but-set-variable]
 
-That is always true.
+Use the 'dev' variable instead of 'info->dev' to fix this.
 
-Andreas.
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+v2: use the 'dev' variable as Suman Anna's suggestion
+---
+ drivers/firmware/ti_sci.c | 24 ++++++++++++------------
+ 1 file changed, 12 insertions(+), 12 deletions(-)
 
+diff --git a/drivers/firmware/ti_sci.c b/drivers/firmware/ti_sci.c
+index 86b2727..c8da6e2 100644
+--- a/drivers/firmware/ti_sci.c
++++ b/drivers/firmware/ti_sci.c
+@@ -2046,7 +2046,7 @@ static int ti_sci_cmd_ring_config(const struct ti_sci_handle *handle,
+ 				   sizeof(*req), sizeof(*resp));
+ 	if (IS_ERR(xfer)) {
+ 		ret = PTR_ERR(xfer);
+-		dev_err(info->dev, "RM_RA:Message config failed(%d)\n", ret);
++		dev_err(dev, "RM_RA:Message config failed(%d)\n", ret);
+ 		return ret;
+ 	}
+ 	req = (struct ti_sci_msg_rm_ring_cfg_req *)xfer->xfer_buf;
+@@ -2062,7 +2062,7 @@ static int ti_sci_cmd_ring_config(const struct ti_sci_handle *handle,
+ 
+ 	ret = ti_sci_do_xfer(info, xfer);
+ 	if (ret) {
+-		dev_err(info->dev, "RM_RA:Mbox config send fail %d\n", ret);
++		dev_err(dev, "RM_RA:Mbox config send fail %d\n", ret);
+ 		goto fail;
+ 	}
+ 
+@@ -2071,7 +2071,7 @@ static int ti_sci_cmd_ring_config(const struct ti_sci_handle *handle,
+ 
+ fail:
+ 	ti_sci_put_one_xfer(&info->minfo, xfer);
+-	dev_dbg(info->dev, "RM_RA:config ring %u ret:%d\n", index, ret);
++	dev_dbg(dev, "RM_RA:config ring %u ret:%d\n", index, ret);
+ 	return ret;
+ }
+ 
+@@ -2115,7 +2115,7 @@ static int ti_sci_cmd_ring_get_config(const struct ti_sci_handle *handle,
+ 				   sizeof(*req), sizeof(*resp));
+ 	if (IS_ERR(xfer)) {
+ 		ret = PTR_ERR(xfer);
+-		dev_err(info->dev,
++		dev_err(dev,
+ 			"RM_RA:Message get config failed(%d)\n", ret);
+ 		return ret;
+ 	}
+@@ -2125,7 +2125,7 @@ static int ti_sci_cmd_ring_get_config(const struct ti_sci_handle *handle,
+ 
+ 	ret = ti_sci_do_xfer(info, xfer);
+ 	if (ret) {
+-		dev_err(info->dev, "RM_RA:Mbox get config send fail %d\n", ret);
++		dev_err(dev, "RM_RA:Mbox get config send fail %d\n", ret);
+ 		goto fail;
+ 	}
+ 
+@@ -2150,7 +2150,7 @@ static int ti_sci_cmd_ring_get_config(const struct ti_sci_handle *handle,
+ 
+ fail:
+ 	ti_sci_put_one_xfer(&info->minfo, xfer);
+-	dev_dbg(info->dev, "RM_RA:get config ring %u ret:%d\n", index, ret);
++	dev_dbg(dev, "RM_RA:get config ring %u ret:%d\n", index, ret);
+ 	return ret;
+ }
+ 
+@@ -2298,7 +2298,7 @@ static int ti_sci_cmd_rm_udmap_tx_ch_cfg(const struct ti_sci_handle *handle,
+ 				   sizeof(*req), sizeof(*resp));
+ 	if (IS_ERR(xfer)) {
+ 		ret = PTR_ERR(xfer);
+-		dev_err(info->dev, "Message TX_CH_CFG alloc failed(%d)\n", ret);
++		dev_err(dev, "Message TX_CH_CFG alloc failed(%d)\n", ret);
+ 		return ret;
+ 	}
+ 	req = (struct ti_sci_msg_rm_udmap_tx_ch_cfg_req *)xfer->xfer_buf;
+@@ -2323,7 +2323,7 @@ static int ti_sci_cmd_rm_udmap_tx_ch_cfg(const struct ti_sci_handle *handle,
+ 
+ 	ret = ti_sci_do_xfer(info, xfer);
+ 	if (ret) {
+-		dev_err(info->dev, "Mbox send TX_CH_CFG fail %d\n", ret);
++		dev_err(dev, "Mbox send TX_CH_CFG fail %d\n", ret);
+ 		goto fail;
+ 	}
+ 
+@@ -2332,7 +2332,7 @@ static int ti_sci_cmd_rm_udmap_tx_ch_cfg(const struct ti_sci_handle *handle,
+ 
+ fail:
+ 	ti_sci_put_one_xfer(&info->minfo, xfer);
+-	dev_dbg(info->dev, "TX_CH_CFG: chn %u ret:%u\n", params->index, ret);
++	dev_dbg(dev, "TX_CH_CFG: chn %u ret:%u\n", params->index, ret);
+ 	return ret;
+ }
+ 
+@@ -2368,7 +2368,7 @@ static int ti_sci_cmd_rm_udmap_rx_ch_cfg(const struct ti_sci_handle *handle,
+ 				   sizeof(*req), sizeof(*resp));
+ 	if (IS_ERR(xfer)) {
+ 		ret = PTR_ERR(xfer);
+-		dev_err(info->dev, "Message RX_CH_CFG alloc failed(%d)\n", ret);
++		dev_err(dev, "Message RX_CH_CFG alloc failed(%d)\n", ret);
+ 		return ret;
+ 	}
+ 	req = (struct ti_sci_msg_rm_udmap_rx_ch_cfg_req *)xfer->xfer_buf;
+@@ -2392,7 +2392,7 @@ static int ti_sci_cmd_rm_udmap_rx_ch_cfg(const struct ti_sci_handle *handle,
+ 
+ 	ret = ti_sci_do_xfer(info, xfer);
+ 	if (ret) {
+-		dev_err(info->dev, "Mbox send RX_CH_CFG fail %d\n", ret);
++		dev_err(dev, "Mbox send RX_CH_CFG fail %d\n", ret);
+ 		goto fail;
+ 	}
+ 
+@@ -2401,7 +2401,7 @@ static int ti_sci_cmd_rm_udmap_rx_ch_cfg(const struct ti_sci_handle *handle,
+ 
+ fail:
+ 	ti_sci_put_one_xfer(&info->minfo, xfer);
+-	dev_dbg(info->dev, "RX_CH_CFG: chn %u ret:%d\n", params->index, ret);
++	dev_dbg(dev, "RX_CH_CFG: chn %u ret:%d\n", params->index, ret);
+ 	return ret;
+ }
+ 
 -- 
-Andreas Schwab, schwab@linux-m68k.org
-GPG Key fingerprint = 7578 EB47 D4E5 4D69 2510  2552 DF73 E780 A9DA AEC1
-"And now for something completely different."
+2.7.4
+
+
