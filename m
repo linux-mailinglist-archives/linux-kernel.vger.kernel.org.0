@@ -2,134 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EF8A346D20
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2019 02:13:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2EF4146D2D
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2019 02:24:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726632AbfFOAN0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 20:13:26 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:38262 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725981AbfFOAN0 (ORCPT
+        id S1726072AbfFOAYa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 20:24:30 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:42152 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725889AbfFOAY3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 20:13:26 -0400
-Received: by mail-wr1-f65.google.com with SMTP id d18so4187960wrs.5;
-        Fri, 14 Jun 2019 17:13:24 -0700 (PDT)
+        Fri, 14 Jun 2019 20:24:29 -0400
+Received: by mail-lj1-f196.google.com with SMTP id t28so4006800lje.9
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2019 17:24:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=IIP1/YvYoY92mUfSqOCesL/m+06w4rNNJnBcAjHL0iM=;
-        b=JYeNrkiNcBDnRy47zYB7oBeGqPPZDAr1nukQ3TVL0JTGpHNYqXrPcJfXthyjCniRG5
-         QqBpTNKxCmLRpdL2WX7+FPbyoS4xg08Qb09o7oPc3Q+IKLE2k8EQD5J5Q27nPhal1QU3
-         fDeWrqE/bKJVLH0IDcPhtvSH/x2Y1Gx+iGoE+mnxsaBXtCVWKA+qrKTCaFcJAUKs09+0
-         zVpybWUzNtF5UiVaIhTGayzM4FxPht7tey1VrK1sen0qnUv43OvzxnPaIHsXCyXVcqCi
-         bKXKi+KRJx54r2a/ksSNLTl11g3nSx02azM6YgG+e+PYMfiBFWPZx70Mx56YlddIpwZC
-         RbKg==
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=aK7lUvYVYd4MHzc03gl18he+PgV3Hkk9KuzGz+vIyo4=;
+        b=e5ZS2eb2pZskGk1t2DAfftIR2H6ohKVnchU3giQkQVAHGxWxwBW20eLh5ZsUiCGGME
+         6sw8frLd89Po3z4XAfZ9MbD/TJit973JCdkHd51Y1T1Uq4vgc81VpJT6f+zyKtfC0mDs
+         rLEOUzr6pgcKa2PubqoFxZV/FYtmA1r3D0rKA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
-         :mime-version:content-transfer-encoding;
-        bh=IIP1/YvYoY92mUfSqOCesL/m+06w4rNNJnBcAjHL0iM=;
-        b=arlSFa0iXYAB2DzDZMLDPwhljmrvmaxqbK/xqXdPXD5vj78vRp1m6XA8V/G+AFyB9v
-         rphVNUtMXxiR0D31k5/hH3AI4hDASeHHIO80qHb0pcm1qBE6Y8tvqncd8yP7e5D0cSqZ
-         N/9yAqfthA2ZLew1icJgyrHxKaBdLlgQ5r/jJ54TABPVrNjanApV9nRumSdKXqFaKF6s
-         otwy/ftgLeNLGNdv5Pehcpbgdkf5WL+l+5GFqUwRNlmbICNJG0nguKteeEyfa6GI0edf
-         IuBj4w5sPOqPWXT3JrxcyFttoe64RpYdDB/6jl5rxF686EuPinVR0af8EGYJTkO4RAuL
-         1mlQ==
-X-Gm-Message-State: APjAAAWveakQGDBAOlTVMTjxyFENNtwvUE7LNq/iWrqxBrabQ+twp1Xf
-        AQ8T7636Pn3KPDVkJuFyK4gXgbxn
-X-Google-Smtp-Source: APXvYqwWPgLwgMMlsIhJPF/R2iJnnlgj0seuShzihkDe1jsYQ3xm+5mCY9qtwFzYjSxsUVdKOSRL9w==
-X-Received: by 2002:a5d:5582:: with SMTP id i2mr16218961wrv.209.1560557603364;
-        Fri, 14 Jun 2019 17:13:23 -0700 (PDT)
-Received: from donizetti.lan ([2001:b07:6468:f312:1da0:213e:1763:a1a8])
-        by smtp.gmail.com with ESMTPSA id z19sm3203367wmi.7.2019.06.14.17.13.22
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Fri, 14 Jun 2019 17:13:22 -0700 (PDT)
-From:   Paolo Bonzini <pbonzini@redhat.com>
-To:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Cc:     Liran Alon <liran.alon@oracle.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Jim Mattson <jmattson@google.com>
-Subject: [PATCH] KVM: improve definition of KVM_GET/SET_NESTED_STATE structs
-Date:   Sat, 15 Jun 2019 02:13:24 +0200
-Message-Id: <20190615001324.4776-1-pbonzini@redhat.com>
-X-Mailer: git-send-email 2.21.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=aK7lUvYVYd4MHzc03gl18he+PgV3Hkk9KuzGz+vIyo4=;
+        b=eS9bWkRYfcxf3lQ40eoFwPt2ImmOVpMEZ/xg/tBvRxEKgVolQaQAgemdQyN+YY71B0
+         6tvz3SOiEnS1DwqnzLjU6hlt0DHRToKfUBXZHVb7vwr1KsgMSCl3lL2y6CbUMDXqDBaS
+         Soql2n5sF2E0lTJ3a4XLCe6x7e1iRgJ8j3mDIF3LeQD/s20r9Ker/DA27BFuMY1HLBS3
+         Mz61pyZHaDX+MKvdqHZ69pyqN3drTaLggA+rSCvNqqUkQQ3Nz09rA8HrwvoVoLviYk5G
+         3wjmXX0oryDQmQw3agVPE3nknjNuxymUWLdYIOT04rF8KsuyUigOKteO8/IzBxuUxzTx
+         aGOg==
+X-Gm-Message-State: APjAAAUIPr5lgjirwTNDnh62V3fLX2+rDMzpo0+Mc3yXQBxzdznNKkK+
+        Jwcm4zoIkS9VFkd+p9dCyWwQwxlh75U=
+X-Google-Smtp-Source: APXvYqz+emNKnZHMGCsdk8bKFVVPGa88IOU9udwEW5jscLxci6F34urTKXhkDuMMJOK2sbNBLGBwRQ==
+X-Received: by 2002:a2e:3807:: with SMTP id f7mr12515253lja.87.1560558266698;
+        Fri, 14 Jun 2019 17:24:26 -0700 (PDT)
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com. [209.85.167.43])
+        by smtp.gmail.com with ESMTPSA id m10sm683305lfd.32.2019.06.14.17.24.25
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Fri, 14 Jun 2019 17:24:25 -0700 (PDT)
+Received: by mail-lf1-f43.google.com with SMTP id 136so2833036lfa.8
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2019 17:24:25 -0700 (PDT)
+X-Received: by 2002:ac2:4565:: with SMTP id k5mr45739644lfm.170.1560558265318;
+ Fri, 14 Jun 2019 17:24:25 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <155930001303.17253.2447519598157285098.stgit@warthog.procyon.org.uk>
+ <17467.1559300202@warthog.procyon.org.uk> <alpine.LRH.2.21.1906040842110.13657@namei.org>
+ <6cfd5113-8473-f962-dee7-e490e6f76f9c@schaufler-ca.com> <cb3749a6-e45b-3e07-27f9-841adf6f4640@schaufler-ca.com>
+In-Reply-To: <cb3749a6-e45b-3e07-27f9-841adf6f4640@schaufler-ca.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Fri, 14 Jun 2019 14:24:09 -1000
+X-Gmail-Original-Message-ID: <CAHk-=wj8VCxjwyd_BDgRtDigik5UdizCZP7PU4wUtj4vHsEWNw@mail.gmail.com>
+Message-ID: <CAHk-=wj8VCxjwyd_BDgRtDigik5UdizCZP7PU4wUtj4vHsEWNw@mail.gmail.com>
+Subject: Re: [PATCH] Smack: Restore the smackfsdef mount option and add
+ missing prefixes
+To:     Casey Schaufler <casey@schaufler-ca.com>
+Cc:     James Morris <jmorris@namei.org>,
+        David Howells <dhowells@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        stable <stable@vger.kernel.org>, Jose Bollo <jose.bollo@iot.bzh>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Liran sent me a patch with a large overhaul of the
-KVM_GET/SET_NESTED_STATE structs.  However, I am wary of changing the
-userspace ABI in backwards-incompatible ways, so here is the bare minimum
-that is needed to achieve the same functionality.
+On Fri, Jun 14, 2019 at 1:08 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+>
+> Al, are you going to take this, or should I find another way
+> to get it in for 5.2?
 
-Namely, the format of VMX nested state is detailed in a struct, and is
-accessible through struct kvm_vmx_nested_state.  Unfortunately, to avoid
-changing the size of the structs it has to be accessed as "vmx.data[0]"
-rather than just "vmx.data".
+I guess I can take it directly.
 
-Also, the values of the "format" field are defined as macros, which is
-easy and not controversial.
+I was assuming it would come through either Al (which is how I got the
+commit it fixes) or Casey (as smack maintainer), so I ignored the
+patch.
 
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
----
- arch/x86/include/uapi/asm/kvm.h | 11 +++++++++++
- arch/x86/kvm/vmx/nested.c       |  3 +++
- 2 files changed, 14 insertions(+)
-
-diff --git a/arch/x86/include/uapi/asm/kvm.h b/arch/x86/include/uapi/asm/kvm.h
-index 7a0e64ccd6ff..06b8727a3b58 100644
---- a/arch/x86/include/uapi/asm/kvm.h
-+++ b/arch/x86/include/uapi/asm/kvm.h
-@@ -383,6 +383,9 @@ struct kvm_sync_regs {
- #define KVM_X86_QUIRK_LAPIC_MMIO_HOLE	(1 << 2)
- #define KVM_X86_QUIRK_OUT_7E_INC_RIP	(1 << 3)
- 
-+#define KVM_STATE_NESTED_FORMAT_VMX	0
-+#define KVM_STATE_NESTED_FORMAT_SVM	1
-+
- #define KVM_STATE_NESTED_GUEST_MODE	0x00000001
- #define KVM_STATE_NESTED_RUN_PENDING	0x00000002
- #define KVM_STATE_NESTED_EVMCS		0x00000004
-@@ -390,6 +393,11 @@ struct kvm_sync_regs {
- #define KVM_STATE_NESTED_SMM_GUEST_MODE	0x00000001
- #define KVM_STATE_NESTED_SMM_VMXON	0x00000002
- 
-+struct kvm_vmx_nested_state_data {
-+	__u8 vmcs12[0x1000];
-+	__u8 shadow_vmcs12[0x1000];
-+};
-+
- struct kvm_vmx_nested_state {
- 	__u64 vmxon_pa;
- 	__u64 vmcs_pa;
-@@ -397,6 +405,9 @@ struct kvm_vmx_nested_state {
- 	struct {
- 		__u16 flags;
- 	} smm;
-+
-+	__u8 pad[120 - 18];
-+	struct kvm_vmx_nested_state_data data[0];
- };
- 
- /* for KVM_CAP_NESTED_STATE */
-diff --git a/arch/x86/kvm/vmx/nested.c b/arch/x86/kvm/vmx/nested.c
-index 0c601d079cd2..d97b87ef209b 100644
---- a/arch/x86/kvm/vmx/nested.c
-+++ b/arch/x86/kvm/vmx/nested.c
-@@ -5269,6 +5269,9 @@ static int vmx_get_nested_state(struct kvm_vcpu *vcpu,
- 		.vmx.vmcs_pa = -1ull,
- 	};
- 
-+	BUILD_BUG_ON(sizeof(struct kvm_vmx_nested_state)
-+		     != sizeof_field(struct kvm_nested_state, pad));
-+
- 	if (!vcpu)
- 		return kvm_state.size + 2 * VMCS12_SIZE;
- 
--- 
-2.21.0
-
+                 Linus
