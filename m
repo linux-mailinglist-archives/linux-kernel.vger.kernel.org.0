@@ -2,52 +2,50 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0D30547179
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2019 19:55:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B78D4717C
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2019 19:55:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726766AbfFORzG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 15 Jun 2019 13:55:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41694 "EHLO mail.kernel.org"
+        id S1727015AbfFORzI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 15 Jun 2019 13:55:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41740 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725270AbfFORzG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 15 Jun 2019 13:55:06 -0400
-Subject: Re: [GIT PULL] tracing: A few fixes for 5.2-rc4
+        id S1725270AbfFORzH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 15 Jun 2019 13:55:07 -0400
+Subject: Re: [GIT PULL] USB fixes for 5.2-rc5
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560621305;
-        bh=f8FtjePG/h27fTmwsBArl69zyMjwbxuO5ehkxcSQ2RU=;
+        s=default; t=1560621306;
+        bh=CA6qax+LZQSfbA3Nv9S7rXdp4xUGXGlahHUXFbBpPVw=;
         h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=jPd1ZBvC1MhqZnkiSfQbyLj0ZYUd+HY78gsywD5mCLdBIoCiBnKVMYX+UYuODDGKY
-         7lLFt7pAXZU9z+CDUt7f6WuTWkwFbee8bmgWSSxVFsezJQtmMJp0XLoGU2PnkgkHv/
-         6IfFJJBRQbJ6CK4bN534sY9gRdeV9Zq/Rut2l8N8=
+        b=o8pMDLsHGbIQJ5LbZTS48lcw4WlKG+EDvp/E4l1218Mehwn2U5sGBJeE8swHE8/m9
+         wjkXPM4pmvKO3kCULSH+x05ZxcgGXWk74l6295ajzWoAmtoaAeNCCvqyMS4rVA7c2l
+         lL4iWwjkCCy7D5zSufhjXeCdUxZ0ItENHgAuCQIU=
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20190615084903.763883c5@gandalf.local.home>
-References: <20190615084903.763883c5@gandalf.local.home>
+In-Reply-To: <20190615154845.GA6603@kroah.com>
+References: <20190615154845.GA6603@kroah.com>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20190615084903.763883c5@gandalf.local.home>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/rostedt/linux-trace.git
- trace-v5.2-rc4
-X-PR-Tracked-Commit-Id: 04e03d9a616c19a47178eaca835358610e63a1dd
+X-PR-Tracked-Message-Id: <20190615154845.GA6603@kroah.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git tags/usb-5.2-rc5
+X-PR-Tracked-Commit-Id: 5f54a85db5df67df8161739a4b2f9c2b7ab219fe
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 6a71398c6aead255efe445ea96d52b33f0d5f0b2
-Message-Id: <156062130559.5191.3426124715879613891.pr-tracker-bot@kernel.org>
-Date:   Sat, 15 Jun 2019 17:55:05 +0000
-To:     Steven Rostedt <rostedt@goodmis.org>
+X-PR-Merge-Commit-Id: ff39074b1d4e727c299ccfd1588f9cca17a59c86
+Message-Id: <156062130668.5191.12217177123386573904.pr-tracker-bot@kernel.org>
+Date:   Sat, 15 Jun 2019 17:55:06 +0000
+To:     Greg KH <gregkh@linuxfoundation.org>
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Sat, 15 Jun 2019 08:49:03 -0400:
+The pull request you sent on Sat, 15 Jun 2019 17:48:45 +0200:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/rostedt/linux-trace.git trace-v5.2-rc4
+> git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git tags/usb-5.2-rc5
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/6a71398c6aead255efe445ea96d52b33f0d5f0b2
+https://git.kernel.org/torvalds/c/ff39074b1d4e727c299ccfd1588f9cca17a59c86
 
 Thank you!
 
