@@ -2,80 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 14EC046F42
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2019 11:17:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8A41D46F4D
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2019 11:34:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726458AbfFOJRT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 15 Jun 2019 05:17:19 -0400
-Received: from mailoutvs14.siol.net ([185.57.226.205]:59014 "EHLO
-        mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725927AbfFOJRT (ORCPT
+        id S1726602AbfFOJel (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 15 Jun 2019 05:34:41 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:46252 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726417AbfFOJel (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 15 Jun 2019 05:17:19 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by mail.siol.net (Zimbra) with ESMTP id 12758521FCA;
-        Sat, 15 Jun 2019 11:17:15 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at psrvmta12.zcs-production.pri
-Received: from mail.siol.net ([127.0.0.1])
-        by localhost (psrvmta12.zcs-production.pri [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id yyLb-_JfXJHX; Sat, 15 Jun 2019 11:17:14 +0200 (CEST)
-Received: from mail.siol.net (localhost [127.0.0.1])
-        by mail.siol.net (Zimbra) with ESMTPS id 2C731521FCD;
-        Sat, 15 Jun 2019 11:17:14 +0200 (CEST)
-Received: from jernej-laptop.localnet (cpe-86-58-52-202.static.triera.net [86.58.52.202])
-        (Authenticated sender: jernej.skrabec@siol.net)
-        by mail.siol.net (Zimbra) with ESMTPA id 00F3E521FCA;
-        Sat, 15 Jun 2019 11:17:10 +0200 (CEST)
-From:   Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
-To:     Neil Armstrong <narmstrong@baylibre.com>
-Cc:     a.hajda@samsung.com, Laurent.pinchart@ideasonboard.com,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Jerome Brunet <jbrunet@baylibre.com>
-Subject: Re: [PATCH] drm/bridge: dw-hdmi: Use automatic CTS generation mode when using non-AHB audio
-Date:   Sat, 15 Jun 2019 11:17:10 +0200
-Message-ID: <1804909.ykhh25WWxx@jernej-laptop>
-In-Reply-To: <20190612085147.26971-1-narmstrong@baylibre.com>
-References: <20190612085147.26971-1-narmstrong@baylibre.com>
+        Sat, 15 Jun 2019 05:34:41 -0400
+Received: by mail-lj1-f193.google.com with SMTP id v24so4711754ljg.13
+        for <linux-kernel@vger.kernel.org>; Sat, 15 Jun 2019 02:34:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=S+e3ae3nDo211Phfm6lcT95OA7IYBp3eNuvxr46hQI8=;
+        b=zsVylsI+bnY06zotdYazoqPbnqUS2bZqtx0d0MuPW/bi3FvKVPndysWw/GmsA8nyHT
+         8OH/NT4ce1fzy5TYJlw+GTkMjV7R1XaROP5ucrGnnw9G+yWfWFxFlIgWx3OVZ0x1I5tl
+         QnwB4lxeWcknPXNyNPm3rS4cHa7P5WmM815esIo4rsIvSI7OdC5YxnnU8It9uAtMks6l
+         K850SbpvjROUXWEPw6SiH2O9omsXoqefhAPei/vVTEUCASiIZYeatcjTMajo59ZtyfWb
+         DWVcboaNAnc11jo7aidKR2y3twNjWkTIb2gO4WO2e7TpPWH+XJkry/tpYuGouE7lLcyR
+         0c+Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=S+e3ae3nDo211Phfm6lcT95OA7IYBp3eNuvxr46hQI8=;
+        b=loLoVl+I66lkcNX83EmNgsi0x9ES3Nj1Ykb9/t/hTdhE8BQK2W/mdt5std0gTBk+CM
+         BnN4+E13m8pxD5QkvfHZ9BDmmxAAGBNIaURox8YWaxFgVQC/BWCyN3ja/RMFdRgVj+H/
+         L7YmBhd8v72HDggMmewUig3uCp28HD7qGb+Y0PDZCjpPpNVeG2fgNr1etwlFPxUEmPZG
+         iOIwNqXv0EWbeOkaZ4NPFBgChYhEjHjqCVwqrw3DL2Wh+rEDgHikR5YGx7MGF5OQ070Y
+         20a0yAulTdNmC6LjgLG25xVnVAh6ej6seZFhp6u9A9BpxSX8bIpPNvAlONP/I+P6tSzs
+         MOBw==
+X-Gm-Message-State: APjAAAW4tIavzW2+3mN3WPJetFP/9+7U7YJN46MOQeXF2uQDYtIq8W5U
+        K70IOHuxKCRizepV4E0XWoe4t8KWcP10ezeBFUMMqQ==
+X-Google-Smtp-Source: APXvYqwLTbopvLRNBKb2DO7gOLSSgRDu4W/A9L+CndsAaEJ7YfZQiyyOgo75eSM8f89ms/J7M3hBuD/kna+45G311Jo=
+X-Received: by 2002:a2e:a0cf:: with SMTP id f15mr23119868ljm.180.1560591279344;
+ Sat, 15 Jun 2019 02:34:39 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+References: <20190612193115.6751-1-martin.blumenstingl@googlemail.com>
+ <20190612193115.6751-2-martin.blumenstingl@googlemail.com>
+ <CACRpkdajXRXRFz=XpbEzwUb-crhBxNQ4f-m9rfdY6+HcG0+_gA@mail.gmail.com> <CAFBinCAimhth8fDcBZ3vNdy_9dGmHZVAAK0=TUczWWC4Dsa-pA@mail.gmail.com>
+In-Reply-To: <CAFBinCAimhth8fDcBZ3vNdy_9dGmHZVAAK0=TUczWWC4Dsa-pA@mail.gmail.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Sat, 15 Jun 2019 11:34:25 +0200
+Message-ID: <CACRpkdbQ5VivFJhL4keOgmUe7BzhVU2v2R0Lso8rQx5s3tHY8w@mail.gmail.com>
+Subject: Re: [PATCH net-next v2 1/1] net: stmmac: use GPIO descriptors in stmmac_mdio_reset
+To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc:     netdev <netdev@vger.kernel.org>,
+        Giuseppe CAVALLARO <peppe.cavallaro@st.com>,
+        Alexandre TORGUE <alexandre.torgue@st.com>,
+        Jose Abreu <joabreu@synopsys.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dne sreda, 12. junij 2019 ob 10:51:47 CEST je Neil Armstrong napisal(a):
-> When using an I2S source using a different clock source (usually the I2S
-> audio HW uses dedicated PLLs, different from the HDMI PHY PLL), fixed
-> CTS values will cause some frequent audio drop-out and glitches as
-> reported on Amlogic, Allwinner and Rockchip SoCs setups.
-> 
-> Setting the CTS in automatic mode will let the HDMI controller generate
-> automatically the CTS value to match the input audio clock.
-> 
-> The DesignWare DW-HDMI User Guide explains:
->   For Automatic CTS generation
->   Write "0" on the bit field "CTS_manual", Register 0x3205: AUD_CTS3
-> 
-> The DesignWare DW-HDMI Databook explains :
->   If "CTS_manual" bit equals 0b this registers contains "audCTS[19:0]"
->   generated by the Cycle time counter according to specified timing.
-> 
-> Cc: Jernej Skrabec <jernej.skrabec@siol.net>
-> Cc: Maxime Ripard <maxime.ripard@bootlin.com>
-> Cc: Jonas Karlman <jonas@kwiboo.se>
-> Cc: Heiko Stuebner <heiko@sntech.de>
-> Cc: Jerome Brunet <jbrunet@baylibre.com>
-> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+On Sat, Jun 15, 2019 at 11:11 AM Martin Blumenstingl
+<martin.blumenstingl@googlemail.com> wrote:
 
-Tested-by: Jernej Skrabec <jernej.skrabec@siol.net>
-Reviewed-by: Jernej Skrabec <jernej.skrabec@siol.net>
+> I think I finally understand why you want to switch everything over to
+> GPIO descriptors
 
-Best regards,
-Jernej
+A bit after-the-fact reasoning, but after I was made aware of an interesting
+lecture by John Ousterhout I feel the best description of the descriptor
+refactoring is the idea to make the GPIO API narrow and deep, make
+it simple for consumers (hence <linux/gpio/consumer.h>) and handle
+as much special cases (polarity inversion, open drain...) as possible
+behind the scenes.
 
-
-
+Yours,
+Linus Walleij
