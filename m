@@ -2,61 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2DBBF46D24
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2019 02:14:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EF8A346D20
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2019 02:13:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726806AbfFOAOA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 20:14:00 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:46860 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726655AbfFOAN5 (ORCPT
+        id S1726632AbfFOAN0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 20:13:26 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:38262 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725981AbfFOAN0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 20:13:57 -0400
-Received: by mail-pg1-f193.google.com with SMTP id v9so2378773pgr.13
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Jun 2019 17:13:57 -0700 (PDT)
+        Fri, 14 Jun 2019 20:13:26 -0400
+Received: by mail-wr1-f65.google.com with SMTP id d18so4187960wrs.5;
+        Fri, 14 Jun 2019 17:13:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=z8Sr3wwef/63KELNe4jUJaKB5wCZ2YTUwefjWC3YKWA=;
-        b=dsc/F7g2uIm7KIaNWINoPbXEKXEF+qrsta0rCrMTJ3HTQAlFdVy7t6i557mgCbrynO
-         ufA2pqxjJyc1/F2fpZKpMkbKNlUj95WoPq95c2aPaODVcYcqEvjlT/2CMntRk6FrXUYr
-         kbNBP8McMPLivkpcZdP7OZfk3Eq78x3UCzDL4=
+        d=gmail.com; s=20161025;
+        h=sender:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=IIP1/YvYoY92mUfSqOCesL/m+06w4rNNJnBcAjHL0iM=;
+        b=JYeNrkiNcBDnRy47zYB7oBeGqPPZDAr1nukQ3TVL0JTGpHNYqXrPcJfXthyjCniRG5
+         QqBpTNKxCmLRpdL2WX7+FPbyoS4xg08Qb09o7oPc3Q+IKLE2k8EQD5J5Q27nPhal1QU3
+         fDeWrqE/bKJVLH0IDcPhtvSH/x2Y1Gx+iGoE+mnxsaBXtCVWKA+qrKTCaFcJAUKs09+0
+         zVpybWUzNtF5UiVaIhTGayzM4FxPht7tey1VrK1sen0qnUv43OvzxnPaIHsXCyXVcqCi
+         bKXKi+KRJx54r2a/ksSNLTl11g3nSx02azM6YgG+e+PYMfiBFWPZx70Mx56YlddIpwZC
+         RbKg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=z8Sr3wwef/63KELNe4jUJaKB5wCZ2YTUwefjWC3YKWA=;
-        b=t9v7ZpslPuOOj9tzhDM1OEBomAzil0UQP1EQD16sFJLJJR5MnWqjucUqRtST1sFISI
-         Qmq9iNb59liolEemtr46TFedTJa0PhW07TZQ8p1Yu9pGZWTCrzrGR7vldvOEsc37N7oJ
-         AGU/Yh7uS/8oFNnuprxyxAcXF5akuGQ+3QNNg08EpWXnH7FzaUqkSjCDvX27CjpQ0Y3O
-         cUyinqS20GwZl5RUilCjIoBPYP2HauDqHT/0KT37RQpiXVtmJrXsxOoQa/yV07mTihsl
-         KE9V7pHS3TPROjFtpumffI82NAMt9+2liHGQq6bJJ2HVsa86yzKeBNlUUjML7EaTTaqe
-         8Jdg==
-X-Gm-Message-State: APjAAAUZX5ksuzRJoVBhP0jaQiHUqZ/4EF3U5po1aXQNp5XXKcAfKrrO
-        KOdlb5enfpTD+dPNrYuC/tNtLw==
-X-Google-Smtp-Source: APXvYqx99nlTn0yxCc0/LUOCwLtM405Jzo+91yDOaKTrB2/qezmNV06q9avSDDvLHEMrmliA60WlkA==
-X-Received: by 2002:a17:90a:b908:: with SMTP id p8mr13640504pjr.94.1560557636959;
-        Fri, 14 Jun 2019 17:13:56 -0700 (PDT)
-Received: from smtp.gmail.com ([2620:15c:202:1:534:b7c0:a63c:460c])
-        by smtp.gmail.com with ESMTPSA id n2sm3708253pgp.27.2019.06.14.17.13.55
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
+         :mime-version:content-transfer-encoding;
+        bh=IIP1/YvYoY92mUfSqOCesL/m+06w4rNNJnBcAjHL0iM=;
+        b=arlSFa0iXYAB2DzDZMLDPwhljmrvmaxqbK/xqXdPXD5vj78vRp1m6XA8V/G+AFyB9v
+         rphVNUtMXxiR0D31k5/hH3AI4hDASeHHIO80qHb0pcm1qBE6Y8tvqncd8yP7e5D0cSqZ
+         N/9yAqfthA2ZLew1icJgyrHxKaBdLlgQ5r/jJ54TABPVrNjanApV9nRumSdKXqFaKF6s
+         otwy/ftgLeNLGNdv5Pehcpbgdkf5WL+l+5GFqUwRNlmbICNJG0nguKteeEyfa6GI0edf
+         IuBj4w5sPOqPWXT3JrxcyFttoe64RpYdDB/6jl5rxF686EuPinVR0af8EGYJTkO4RAuL
+         1mlQ==
+X-Gm-Message-State: APjAAAWveakQGDBAOlTVMTjxyFENNtwvUE7LNq/iWrqxBrabQ+twp1Xf
+        AQ8T7636Pn3KPDVkJuFyK4gXgbxn
+X-Google-Smtp-Source: APXvYqwWPgLwgMMlsIhJPF/R2iJnnlgj0seuShzihkDe1jsYQ3xm+5mCY9qtwFzYjSxsUVdKOSRL9w==
+X-Received: by 2002:a5d:5582:: with SMTP id i2mr16218961wrv.209.1560557603364;
+        Fri, 14 Jun 2019 17:13:23 -0700 (PDT)
+Received: from donizetti.lan ([2001:b07:6468:f312:1da0:213e:1763:a1a8])
+        by smtp.gmail.com with ESMTPSA id z19sm3203367wmi.7.2019.06.14.17.13.22
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Fri, 14 Jun 2019 17:13:56 -0700 (PDT)
-From:   Brian Norris <briannorris@chromium.org>
-To:     Ganapathi Bhat <gbhat@marvell.com>,
-        Nishant Sarmukadam <nishants@marvell.com>,
-        Amitkumar Karwar <amitkarwar@gmail.com>,
-        Xinming Hu <huxinming820@gmail.com>
-Cc:     <linux-kernel@vger.kernel.org>, linux-wireless@vger.kernel.org,
-        Takashi Iwai <tiwai@suse.de>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Brian Norris <briannorris@chromium.org>
-Subject: [PATCH 2/2] mwifiex: use 'total_ie_len' in mwifiex_update_bss_desc_with_ie()
-Date:   Fri, 14 Jun 2019 17:13:21 -0700
-Message-Id: <20190615001321.241808-2-briannorris@chromium.org>
-X-Mailer: git-send-email 2.22.0.410.gd8fdbe21b5-goog
-In-Reply-To: <20190615001321.241808-1-briannorris@chromium.org>
-References: <20190615001321.241808-1-briannorris@chromium.org>
+        Fri, 14 Jun 2019 17:13:22 -0700 (PDT)
+From:   Paolo Bonzini <pbonzini@redhat.com>
+To:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Cc:     Liran Alon <liran.alon@oracle.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Jim Mattson <jmattson@google.com>
+Subject: [PATCH] KVM: improve definition of KVM_GET/SET_NESTED_STATE structs
+Date:   Sat, 15 Jun 2019 02:13:24 +0200
+Message-Id: <20190615001324.4776-1-pbonzini@redhat.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -64,68 +61,75 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is clearer than copy/pasting the magic number '+ 2' around, and it
-even saves the need for one existing comment.
+Liran sent me a patch with a large overhaul of the
+KVM_GET/SET_NESTED_STATE structs.  However, I am wary of changing the
+userspace ABI in backwards-incompatible ways, so here is the bare minimum
+that is needed to achieve the same functionality.
 
-Cc: Takashi Iwai <tiwai@suse.de>
-Signed-off-by: Brian Norris <briannorris@chromium.org>
+Namely, the format of VMX nested state is detailed in a struct, and is
+accessible through struct kvm_vmx_nested_state.  Unfortunately, to avoid
+changing the size of the structs it has to be accessed as "vmx.data[0]"
+rather than just "vmx.data".
+
+Also, the values of the "format" field are defined as macros, which is
+easy and not controversial.
+
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 ---
- drivers/net/wireless/marvell/mwifiex/scan.c | 14 ++++++--------
- 1 file changed, 6 insertions(+), 8 deletions(-)
+ arch/x86/include/uapi/asm/kvm.h | 11 +++++++++++
+ arch/x86/kvm/vmx/nested.c       |  3 +++
+ 2 files changed, 14 insertions(+)
 
-diff --git a/drivers/net/wireless/marvell/mwifiex/scan.c b/drivers/net/wireless/marvell/mwifiex/scan.c
-index e2786ab612ca..707e5159262f 100644
---- a/drivers/net/wireless/marvell/mwifiex/scan.c
-+++ b/drivers/net/wireless/marvell/mwifiex/scan.c
-@@ -1269,7 +1269,7 @@ int mwifiex_update_bss_desc_with_ie(struct mwifiex_adapter *adapter,
- 			break;
+diff --git a/arch/x86/include/uapi/asm/kvm.h b/arch/x86/include/uapi/asm/kvm.h
+index 7a0e64ccd6ff..06b8727a3b58 100644
+--- a/arch/x86/include/uapi/asm/kvm.h
++++ b/arch/x86/include/uapi/asm/kvm.h
+@@ -383,6 +383,9 @@ struct kvm_sync_regs {
+ #define KVM_X86_QUIRK_LAPIC_MMIO_HOLE	(1 << 2)
+ #define KVM_X86_QUIRK_OUT_7E_INC_RIP	(1 << 3)
  
- 		case WLAN_EID_FH_PARAMS:
--			if (element_len + 2 < sizeof(*fh_param_set))
-+			if (total_ie_len < sizeof(*fh_param_set))
- 				return -EINVAL;
- 			fh_param_set =
- 				(struct ieee_types_fh_param_set *) current_ptr;
-@@ -1279,7 +1279,7 @@ int mwifiex_update_bss_desc_with_ie(struct mwifiex_adapter *adapter,
- 			break;
++#define KVM_STATE_NESTED_FORMAT_VMX	0
++#define KVM_STATE_NESTED_FORMAT_SVM	1
++
+ #define KVM_STATE_NESTED_GUEST_MODE	0x00000001
+ #define KVM_STATE_NESTED_RUN_PENDING	0x00000002
+ #define KVM_STATE_NESTED_EVMCS		0x00000004
+@@ -390,6 +393,11 @@ struct kvm_sync_regs {
+ #define KVM_STATE_NESTED_SMM_GUEST_MODE	0x00000001
+ #define KVM_STATE_NESTED_SMM_VMXON	0x00000002
  
- 		case WLAN_EID_DS_PARAMS:
--			if (element_len + 2 < sizeof(*ds_param_set))
-+			if (total_ie_len < sizeof(*ds_param_set))
- 				return -EINVAL;
- 			ds_param_set =
- 				(struct ieee_types_ds_param_set *) current_ptr;
-@@ -1292,7 +1292,7 @@ int mwifiex_update_bss_desc_with_ie(struct mwifiex_adapter *adapter,
- 			break;
++struct kvm_vmx_nested_state_data {
++	__u8 vmcs12[0x1000];
++	__u8 shadow_vmcs12[0x1000];
++};
++
+ struct kvm_vmx_nested_state {
+ 	__u64 vmxon_pa;
+ 	__u64 vmcs_pa;
+@@ -397,6 +405,9 @@ struct kvm_vmx_nested_state {
+ 	struct {
+ 		__u16 flags;
+ 	} smm;
++
++	__u8 pad[120 - 18];
++	struct kvm_vmx_nested_state_data data[0];
+ };
  
- 		case WLAN_EID_CF_PARAMS:
--			if (element_len + 2 < sizeof(*cf_param_set))
-+			if (total_ie_len < sizeof(*cf_param_set))
- 				return -EINVAL;
- 			cf_param_set =
- 				(struct ieee_types_cf_param_set *) current_ptr;
-@@ -1302,7 +1302,7 @@ int mwifiex_update_bss_desc_with_ie(struct mwifiex_adapter *adapter,
- 			break;
+ /* for KVM_CAP_NESTED_STATE */
+diff --git a/arch/x86/kvm/vmx/nested.c b/arch/x86/kvm/vmx/nested.c
+index 0c601d079cd2..d97b87ef209b 100644
+--- a/arch/x86/kvm/vmx/nested.c
++++ b/arch/x86/kvm/vmx/nested.c
+@@ -5269,6 +5269,9 @@ static int vmx_get_nested_state(struct kvm_vcpu *vcpu,
+ 		.vmx.vmcs_pa = -1ull,
+ 	};
  
- 		case WLAN_EID_IBSS_PARAMS:
--			if (element_len + 2 < sizeof(*ibss_param_set))
-+			if (total_ie_len < sizeof(*ibss_param_set))
- 				return -EINVAL;
- 			ibss_param_set =
- 				(struct ieee_types_ibss_param_set *)
-@@ -1459,10 +1459,8 @@ int mwifiex_update_bss_desc_with_ie(struct mwifiex_adapter *adapter,
- 			break;
- 		}
++	BUILD_BUG_ON(sizeof(struct kvm_vmx_nested_state)
++		     != sizeof_field(struct kvm_nested_state, pad));
++
+ 	if (!vcpu)
+ 		return kvm_state.size + 2 * VMCS12_SIZE;
  
--		current_ptr += element_len + 2;
--
--		/* Need to account for IE ID and IE Len */
--		bytes_left -= (element_len + 2);
-+		current_ptr += total_ie_len;
-+		bytes_left -= total_ie_len;
- 
- 	}	/* while (bytes_left > 2) */
- 	return ret;
 -- 
-2.22.0.410.gd8fdbe21b5-goog
+2.21.0
 
