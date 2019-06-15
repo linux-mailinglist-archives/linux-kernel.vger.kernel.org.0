@@ -2,133 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 24CA746EF1
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2019 10:18:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DAF5646EFC
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2019 10:29:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726279AbfFOISK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 15 Jun 2019 04:18:10 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:56048 "EHLO pegase1.c-s.fr"
+        id S1726445AbfFOI3b (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 15 Jun 2019 04:29:31 -0400
+Received: from mengyan1223.wang ([89.208.246.23]:56688 "EHLO mengyan1223.wang"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725825AbfFOISJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 15 Jun 2019 04:18:09 -0400
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 45Qr2Q4R0Yz9v0Dw;
-        Sat, 15 Jun 2019 10:18:06 +0200 (CEST)
-Authentication-Results: localhost; dkim=pass
-        reason="1024-bit key; insecure key"
-        header.d=c-s.fr header.i=@c-s.fr header.b=S/HGbpHT; dkim-adsp=pass;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id sapXI2Lu1-d5; Sat, 15 Jun 2019 10:18:06 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 45Qr2Q2t64z9v0Dk;
-        Sat, 15 Jun 2019 10:18:06 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
-        t=1560586686; bh=+Zco0FR9mmqB3Bll/AYl3OOsNrGQR4TrxurFLcfKqYQ=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=S/HGbpHTpbiPjpxKnfGawh1W0KnxaGu2okWAzbwWln7hJjfGK8J0BaGEsZJ9KK+oe
-         cpxxNcwCu10adPTu3ZeKimZC24Qg14UlA20Iai4/FBlyMbUpCwWgdbsC8cmITBMZUX
-         yqCKNNY3JpKWsyfcNcoVVS2GkvW59SX/ypVnzbZ0=
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 6BFB38B7B3;
-        Sat, 15 Jun 2019 10:18:07 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id D6B_beVqunfZ; Sat, 15 Jun 2019 10:18:07 +0200 (CEST)
-Received: from PO15451 (unknown [192.168.4.90])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id BFCD58B77A;
-        Sat, 15 Jun 2019 10:18:06 +0200 (CEST)
-Subject: Re: [PATCH v3 2/4] crypto: talitos - fix hash on SEC1.
-To:     Horia Geanta <horia.geanta@nxp.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>
-Cc:     "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>
-References: <cover.1560429844.git.christophe.leroy@c-s.fr>
- <732ca0ff440bf4cd589d844cfda71d96efd500f5.1560429844.git.christophe.leroy@c-s.fr>
- <VI1PR0402MB34855C37F53DC1012DAF670798EE0@VI1PR0402MB3485.eurprd04.prod.outlook.com>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Message-ID: <e98f196d-a47c-f2ae-e729-fe2613628da7@c-s.fr>
-Date:   Sat, 15 Jun 2019 10:18:06 +0200
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        id S1725825AbfFOI3a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 15 Jun 2019 04:29:30 -0400
+X-Greylist: delayed 554 seconds by postgrey-1.27 at vger.kernel.org; Sat, 15 Jun 2019 04:29:30 EDT
+Received: from [IPv6:2408:8270:a51:2470:fdc9:19d4:d061:dd4f] (unknown [IPv6:2408:8270:a51:2470:fdc9:19d4:d061:dd4f])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: xry111@mengyan1223.wang)
+        by mengyan1223.wang (Postfix) with ESMTPSA id C3F06665D2;
+        Sat, 15 Jun 2019 04:20:10 -0400 (EDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mengyan1223.wang;
+        s=mail; t=1560586815;
+        bh=bqks99JML0mByy8FjY6xU4G7QtZG+ZkGbWODY0s995M=;
+        h=Subject:From:To:Cc:Date:From;
+        b=X6WUvQ6Am7IOROADt2MULQT0N6H5XyrHdIjWhdgp66wkT9D8yJ03fRRJg/E8IzSug
+         gP0aGKnrhRYQxaiRYYbPD+FNjl+mcGY+DcnnpYHZJat/mcn3+jv+6UuxSAFkQC/7Fm
+         J6Yf0nJeFn/Rq0SXJrgMZDo0dMHERBp4NR1yps8ewLikCwHpT1K9ZW7KAC5AHOJDxE
+         MmIP//2o1N12q/4eljFk+jD8otsc+oigSiisbEjPqxj+3G/Utn+HpXRQLdbZvtl5zs
+         EYW60BWEROdja3ZcdxvD1EgO9YE768kPQwCJJCK/G5PEiAsYo1EaNILfCRAvT7uhUf
+         eHr2f/ibTrg5A==
+Message-ID: <0f1be041f8de95603753ffe989bd25069efa13bb.camel@mengyan1223.wang>
+Subject: [PATCH RFC] mm: memcontrol: add cgroup v2 interface to read memory
+ watermark
+From:   Xi Ruoyao <xry111@mengyan1223.wang>
+To:     Johannes Weiner <hannes@cmpxchg.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>
+Cc:     cgroups@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Date:   Sat, 15 Jun 2019 16:20:04 +0800
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.32.2 
 MIME-Version: 1.0
-In-Reply-To: <VI1PR0402MB34855C37F53DC1012DAF670798EE0@VI1PR0402MB3485.eurprd04.prod.outlook.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Introduce a control file memory.watermark showing the watermark
+consumption of the cgroup and its descendants, in bytes.
 
+Signed-off-by: Xi Ruoyao <xry111@mengyan1223.wang>
+---
+ mm/memcontrol.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-Le 14/06/2019 à 13:32, Horia Geanta a écrit :
-> On 6/13/2019 3:48 PM, Christophe Leroy wrote:
->> @@ -336,15 +336,18 @@ static void flush_channel(struct device *dev, int ch, int error, int reset_ch)
->>   	tail = priv->chan[ch].tail;
->>   	while (priv->chan[ch].fifo[tail].desc) {
->>   		__be32 hdr;
->> +		struct talitos_edesc *edesc;
->>   
->>   		request = &priv->chan[ch].fifo[tail];
->> +		edesc = container_of(request->desc, struct talitos_edesc, desc);
-> Not needed for all cases, should be moved to the block that uses it.
+diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+index ba9138a4a1de..b1d968f2adcd 100644
+--- a/mm/memcontrol.c
++++ b/mm/memcontrol.c
+@@ -5495,6 +5495,13 @@ static u64 memory_current_read(struct cgroup_subsys_state
+*css,
+ 	return (u64)page_counter_read(&memcg->memory) * PAGE_SIZE;
+ }
+ 
++static u64 memory_watermark_read(struct cgroup_subsys_state *css,
++				 struct cftype *cft)
++{
++	struct mem_cgroup *memcg = mem_cgroup_from_css(css);
++	return (u64)memcg->memory.watermark * PAGE_SIZE;
++}
++
+ static int memory_min_show(struct seq_file *m, void *v)
+ {
+ 	return seq_puts_memcg_tunable(m,
+@@ -5771,6 +5778,11 @@ static struct cftype memory_files[] = {
+ 		.flags = CFTYPE_NOT_ON_ROOT,
+ 		.read_u64 = memory_current_read,
+ 	},
++	{
++		.name = "watermark",
++		.flags = CFTYPE_NOT_ON_ROOT,
++		.read_u64 = memory_watermark_read,
++	},
+ 	{
+ 		.name = "min",
+ 		.flags = CFTYPE_NOT_ON_ROOT,
+-- 
+Xi Ruoyao <xry111@mengyan1223.wang>
+School of Aerospace Science and Technology, Xidian University
 
-Ok.
-
-> 
->>   
->>   		/* descriptors with their done bits set don't get the error */
->>   		rmb();
->>   		if (!is_sec1)
->>   			hdr = request->desc->hdr;
->>   		else if (request->desc->next_desc)
->> -			hdr = (request->desc + 1)->hdr1;
->> +			hdr = ((struct talitos_desc *)
->> +			       (edesc->buf + edesc->dma_len))->hdr1;
->>   		else
->>   			hdr = request->desc->hdr1;
->>   
-> [snip]
->> @@ -2058,7 +2065,18 @@ static int ahash_process_req(struct ahash_request *areq, unsigned int nbytes)
->>   		sg_copy_to_buffer(areq->src, nents,
->>   				  ctx_buf + req_ctx->nbuf, offset);
->>   		req_ctx->nbuf += offset;
->> -		req_ctx->psrc = areq->src;
->> +		for (sg = areq->src; sg && offset >= sg->length;
->> +		     offset -= sg->length, sg = sg_next(sg))
->> +			;
->> +		if (offset) {
->> +			sg_init_table(req_ctx->bufsl, 2);
->> +			sg_set_buf(req_ctx->bufsl, sg_virt(sg) + offset,
->> +				   sg->length - offset);
->> +			sg_chain(req_ctx->bufsl, 2, sg_next(sg));
->> +			req_ctx->psrc = req_ctx->bufsl;
-> Isn't this what scatterwalk_ffwd() does?
-
-Thanks for pointing this, I wasn't aware of that function. Looking at it 
-it seems to do the same. Unfortunately, some tests fails with 'wrong 
-result' when using it instead.
-
-Comparing the results of scatterwalk_ffwd() with what I get with my open 
-codying, I see the following difference:
-
-scatterwalk_ffwd() uses sg_page(sg) + sg->offset + len
-
-while my open codying results in virt_to_page(sg_virt(sg) + len)
-
-When sg->offset + len is greater than PAGE_SIZE, the resulting SG entry 
-is different allthough valid in both cases. I think this difference 
-results in sg_copy_to_buffer() failing. I'm still investigating. Any idea ?
-
-Christophe
-
-> 
-> Horia
-> 
