@@ -2,58 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C5C424721E
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2019 22:43:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D4B747225
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2019 22:47:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726846AbfFOUnW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 15 Jun 2019 16:43:22 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:39464 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725535AbfFOUnW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 15 Jun 2019 16:43:22 -0400
-Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::3d5])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id A042214EB903F;
-        Sat, 15 Jun 2019 13:43:21 -0700 (PDT)
-Date:   Sat, 15 Jun 2019 13:43:21 -0700 (PDT)
-Message-Id: <20190615.134321.740066323733871726.davem@davemloft.net>
-To:     yangbo.lu@nxp.com
-Cc:     netdev@vger.kernel.org, richardcochran@gmail.com,
-        robh+dt@kernel.org, shawnguo@kernel.org, andrew@lunn.ch,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        devicetree@vger.kernel.org
-Subject: Re: [v2, 0/6] Reuse ptp_qoriq driver for dpaa2-ptp
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20190614104055.43998-1-yangbo.lu@nxp.com>
-References: <20190614104055.43998-1-yangbo.lu@nxp.com>
-X-Mailer: Mew version 6.8 on Emacs 26.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Sat, 15 Jun 2019 13:43:22 -0700 (PDT)
+        id S1726619AbfFOUro (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 15 Jun 2019 16:47:44 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:60838 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725535AbfFOUrn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 15 Jun 2019 16:47:43 -0400
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 9A6222F8BC8;
+        Sat, 15 Jun 2019 20:47:43 +0000 (UTC)
+Received: from treble (ovpn-112-16.rdu2.redhat.com [10.10.112.16])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 2F05960CA3;
+        Sat, 15 Jun 2019 20:47:38 +0000 (UTC)
+Date:   Sat, 15 Jun 2019 15:47:36 -0500
+From:   Josh Poimboeuf <jpoimboe@redhat.com>
+To:     Petr Mladek <pmladek@suse.com>
+Cc:     Jiri Kosina <jikos@kernel.org>, Miroslav Benes <mbenes@suse.cz>,
+        Joe Lawrence <joe.lawrence@redhat.com>,
+        Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>,
+        Nicolai Stange <nstange@suse.de>,
+        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC 0/5] livepatch: new API to track system state changes
+Message-ID: <20190615204736.coc2gbgffahkirnz@treble>
+References: <20190611135627.15556-1-pmladek@suse.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20190611135627.15556-1-pmladek@suse.com>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Sat, 15 Jun 2019 20:47:43 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yangbo Lu <yangbo.lu@nxp.com>
-Date: Fri, 14 Jun 2019 18:40:49 +0800
-
-> Although dpaa2-ptp.c driver is a fsl_mc_driver which
-> is using MC APIs for register accessing, it's same IP
-> block with eTSEC/DPAA/ENETC 1588 timer.
-> This patch-set is to convert to reuse ptp_qoriq driver by
-> using register ioremap and dropping related MC APIs.
-> However the interrupts could only be handled by MC which
-> fires MSIs to ARM cores. So the interrupt enabling and
-> handling still rely on MC APIs. MC APIs for interrupt
-> and PPS event support are also added by this patch-set.
+On Tue, Jun 11, 2019 at 03:56:22PM +0200, Petr Mladek wrote:
+> Hi,
 > 
-> ---
-> Changes for v2:
-> 	- Allowed to compile with COMPILE_TEST.
+> this is another piece in the puzzle that helps to maintain more
+> livepatches.
+> 
+> Especially pre/post (un)patch callbacks might change a system state.
+> Any newly installed livepatch has to somehow deal with system state
+> modifications done be already installed livepatches.
+> 
+> This patchset provides, hopefully, a simple and generic API that
+> helps to keep and pass information between the livepatches.
+> It is also usable to prevent loading incompatible livepatches.
+> 
+> There was also a related idea to add a sticky flag. It should be
+> easy to add it later. It would perfectly fit into the new struct
+> klp_state.
+> 
+> Petr Mladek (5):
+>   livepatch: Keep replaced patches until post_patch callback is called
+>   livepatch: Basic API to track system state changes
+>   livepatch: Allow to distinguish different version of system state
+>     changes
+>   livepatch: Documentation of the new API for tracking system state
+>     changes
+>   livepatch: Selftests of the API for tracking system state changes
 
-Series applied, thanks.
+I confess I missed most of the previous discussion, but from a first
+read-through this seems reasonable, and the code looks simple and
+self-contained.
+
+-- 
+Josh
