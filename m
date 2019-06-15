@@ -2,61 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A4A2146F8B
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2019 12:37:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C800E46FB0
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2019 12:56:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726657AbfFOKh1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 15 Jun 2019 06:37:27 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:18622 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725944AbfFOKh1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 15 Jun 2019 06:37:27 -0400
-Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id D5DFC3ED05B042B05866;
-        Sat, 15 Jun 2019 18:37:20 +0800 (CST)
-Received: from localhost.localdomain.localdomain (10.175.113.25) by
- DGGEMS413-HUB.china.huawei.com (10.3.19.213) with Microsoft SMTP Server id
- 14.3.439.0; Sat, 15 Jun 2019 18:37:10 +0800
-From:   Wei Yongjun <weiyongjun1@huawei.com>
-To:     Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>
-CC:     Wei Yongjun <weiyongjun1@huawei.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
-Subject: [PATCH -next] coresight: replicator: Add terminate entry for acpi_device_id tables
-Date:   Sat, 15 Jun 2019 10:44:40 +0000
-Message-ID: <20190615104440.94149-1-weiyongjun1@huawei.com>
-X-Mailer: git-send-email 2.20.1
+        id S1726701AbfFOK4I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 15 Jun 2019 06:56:08 -0400
+Received: from mga17.intel.com ([192.55.52.151]:54842 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725999AbfFOK4I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 15 Jun 2019 06:56:08 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Jun 2019 03:56:07 -0700
+X-ExtLoop1: 1
+Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
+  by fmsmga004.fm.intel.com with ESMTP; 15 Jun 2019 03:56:05 -0700
+Received: from kbuild by lkp-server01 with local (Exim 4.89)
+        (envelope-from <lkp@intel.com>)
+        id 1hc6Lt-0003ui-Ey; Sat, 15 Jun 2019 18:56:05 +0800
+Date:   Sat, 15 Jun 2019 18:55:11 +0800
+From:   kbuild test robot <lkp@intel.com>
+To:     Tim Wawrzynczak <twawrzynczak@chromium.org>
+Cc:     kbuild-all@01.org,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Benson Leung <bleung@chromium.org>,
+        Guenter Roeck <groeck@chromium.org>,
+        linux-kernel@vger.kernel.org
+Subject: [chrome-platform-linux:for-next 14/16]
+ drivers/platform/chrome/cros_ec_debugfs.c:288:30: sparse: sparse: symbol
+ 'cros_ec_uptime_fops' was not declared. Should it be static?
+Message-ID: <201906151827.DYouSmoA%lkp@intel.com>
 MIME-Version: 1.0
-Content-Type:   text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
-X-Originating-IP: [10.175.113.25]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Patchwork-Hint: ignore
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Make sure acpi_device_id tables have terminate entry.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/chrome-platform/linux.git for-next
+head:   3185b85f64fcb5bf521a4093b13ad901569d09c7
+commit: 909447f683b31d27b8d59838f8723d744f9300a2 [14/16] platform/chrome: cros_ec_debugfs: Add debugfs entry to retrieve EC uptime
+reproduce:
+        # apt-get install sparse
+        # sparse version: v0.6.1-rc1-7-g2b96cd8-dirty
+        git checkout 909447f683b31d27b8d59838f8723d744f9300a2
+        make ARCH=x86_64 allmodconfig
+        make C=1 CF='-fdiagnostic-prefix -D__CHECK_ENDIAN__'
 
-Fixes: 8f35caae1e1f ("coresight: acpi: Support for platform devices")
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+If you fix the issue, kindly add following tag
+Reported-by: kbuild test robot <lkp@intel.com>
+
+
+sparse warnings: (new ones prefixed by >>)
+
+
+Please review and possibly fold the followup patch.
+
 ---
- drivers/hwtracing/coresight/coresight-replicator.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/hwtracing/coresight/coresight-replicator.c b/drivers/hwtracing/coresight/coresight-replicator.c
-index 542952759941..0c73dc1073c0 100644
---- a/drivers/hwtracing/coresight/coresight-replicator.c
-+++ b/drivers/hwtracing/coresight/coresight-replicator.c
-@@ -300,6 +300,7 @@ static const struct of_device_id static_replicator_match[] = {
- #ifdef CONFIG_ACPI
- static const struct acpi_device_id static_replicator_acpi_ids[] = {
- 	{"ARMHC985", 0}, /* ARM CoreSight Static Replicator */
-+	{"", 0},
- };
- #endif
-
-
-
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
