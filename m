@@ -2,51 +2,51 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6255146DA7
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2019 03:55:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C413946DA9
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2019 03:55:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726389AbfFOBzG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 21:55:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37730 "EHLO mail.kernel.org"
+        id S1726545AbfFOBzI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 21:55:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37770 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725809AbfFOBzF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 21:55:05 -0400
-Subject: Re: [PULL REQUEST] i2c for 5.2
+        id S1725809AbfFOBzH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Jun 2019 21:55:07 -0400
+Subject: Re: [GIT PULL] SCSI fixes for 5.2-rc4
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560563705;
-        bh=5X6lG+aweYd3ld01vEg3aXWOFE3AOs2/v/c8/zBSmtQ=;
+        s=default; t=1560563706;
+        bh=c2xG0sMMn3reLu/+z+3+JnJocsu+h7cW/PNsrKjcXH4=;
         h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=G+QxVlaQh62h4DhRUogr3DUrGGr8brIVkd/+blGVjQkZ9wnkVqZB1RVnZsoP//MAb
-         KuUP3NXniiJN6e9DXwv4/0n+R47EsL2nWzjY7Qwlz3mDxvJctqdUEj5on8a8GY2CId
-         +kt2gwW7jKBkxzEpWos2e6aXKWiP+HZFp3HMX42w=
+        b=bAyH9I5YQlxI95hVPZqTSgc1q+pMHoGxYSKKGT20VzPpsZKnpYGNJpxGlPlG/mKFS
+         /d6noNSffFuvWyioOcJcOGi43FUZcsZN0d0phBqUM4yqZg8YbcJjYXtvUnRis2BeZ+
+         +t4uLWguSVHxhQvHhmfI7Pyy9vi/mbR/Yj9BwQRs=
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20190614164549.GA6067@kunai>
-References: <20190614164549.GA6067@kunai>
+In-Reply-To: <1560551043.27102.99.camel@HansenPartnership.com>
+References: <1560551043.27102.99.camel@HansenPartnership.com>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20190614164549.GA6067@kunai>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git i2c/for-current
-X-PR-Tracked-Commit-Id: a0cac264a86fbf4d6cb201fbbb73c1d335e3248a
+X-PR-Tracked-Message-Id: <1560551043.27102.99.camel@HansenPartnership.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi.git scsi-fixes
+X-PR-Tracked-Commit-Id: 625d7d3518875c4d303c652a198feaa13d9f52d9
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 5dcedf4600f8708150b89485d25cead88bff08a4
-Message-Id: <156056370528.9443.16281348104646164725.pr-tracker-bot@kernel.org>
-Date:   Sat, 15 Jun 2019 01:55:05 +0000
-To:     Wolfram Sang <wsa@the-dreams.de>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Peter Rosin <peda@axentia.se>,
-        Bartosz Golaszewski <brgl@bgdev.pl>
+X-PR-Merge-Commit-Id: 1ed1fa5f9c311a74f031cabb18a415b4defdfa03
+Message-Id: <156056370681.9443.2329949705637808644.pr-tracker-bot@kernel.org>
+Date:   Sat, 15 Jun 2019 01:55:06 +0000
+To:     James Bottomley <James.Bottomley@HansenPartnership.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-scsi <linux-scsi@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Fri, 14 Jun 2019 18:45:53 +0200:
+The pull request you sent on Fri, 14 Jun 2019 15:24:03 -0700:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git i2c/for-current
+> git://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi.git scsi-fixes
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/5dcedf4600f8708150b89485d25cead88bff08a4
+https://git.kernel.org/torvalds/c/1ed1fa5f9c311a74f031cabb18a415b4defdfa03
 
 Thank you!
 
