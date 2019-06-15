@@ -2,50 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 08A8346DE2
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2019 04:47:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F3ECF46DEF
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2019 04:57:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726596AbfFOCrn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 22:47:43 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:57704 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725809AbfFOCrn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 22:47:43 -0400
-Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::3d5])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 9260212B05D34;
-        Fri, 14 Jun 2019 19:47:42 -0700 (PDT)
-Date:   Fri, 14 Jun 2019 19:47:42 -0700 (PDT)
-Message-Id: <20190614.194742.1040162810429209822.davem@davemloft.net>
-To:     haiyangz@microsoft.com
-Cc:     sashal@kernel.org, linux-hyperv@vger.kernel.org,
-        netdev@vger.kernel.org, kys@microsoft.com, sthemmin@microsoft.com,
-        olaf@aepfle.de, vkuznets@redhat.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net] hv_netvsc: Set probe mode to sync
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <1560459955-37900-1-git-send-email-haiyangz@microsoft.com>
-References: <1560459955-37900-1-git-send-email-haiyangz@microsoft.com>
-X-Mailer: Mew version 6.8 on Emacs 26.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Fri, 14 Jun 2019 19:47:42 -0700 (PDT)
+        id S1726727AbfFOC5h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 22:57:37 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:18620 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725825AbfFOC5h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Jun 2019 22:57:37 -0400
+Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id EBD726116911769F74C7;
+        Sat, 15 Jun 2019 10:57:32 +0800 (CST)
+Received: from [127.0.0.1] (10.133.217.137) by DGGEMS402-HUB.china.huawei.com
+ (10.3.19.202) with Microsoft SMTP Server id 14.3.439.0; Sat, 15 Jun 2019
+ 10:57:29 +0800
+Subject: Re: [PATCH next] of/fdt: Fix defined but not used compiler warning
+To:     Rob Herring <robh@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>
+CC:     <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Stephen Boyd <swboyd@chromium.org>
+References: <20190612010011.90185-1-wangkefeng.wang@huawei.com>
+ <0702fa2d-1952-e9fc-8e17-a93f3b90a958@gmail.com>
+ <CAL_JsqKsjK237W+-Yz4McxSZG=Gd3Pfp2JtgMnfAqiNRUcCg1g@mail.gmail.com>
+ <41acc800-1ab8-c715-2674-c1204d546b4f@gmail.com>
+ <CAL_Jsq+EVO9OiEK5bidywgKsfOCK+BgWvKehCNonqogegRfikA@mail.gmail.com>
+From:   Kefeng Wang <wangkefeng.wang@huawei.com>
+Message-ID: <87eb8114-0b52-6324-43b2-aa8193808637@huawei.com>
+Date:   Sat, 15 Jun 2019 10:57:28 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
+MIME-Version: 1.0
+In-Reply-To: <CAL_Jsq+EVO9OiEK5bidywgKsfOCK+BgWvKehCNonqogegRfikA@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.133.217.137]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Haiyang Zhang <haiyangz@microsoft.com>
-Date: Thu, 13 Jun 2019 21:06:53 +0000
 
-> For better consistency of synthetic NIC names, we set the probe mode to
-> PROBE_FORCE_SYNCHRONOUS. So the names can be aligned with the vmbus
-> channel offer sequence.
+
+On 2019/6/14 21:53, Rob Herring wrote:
+> On Wed, Jun 12, 2019 at 12:29 PM Frank Rowand <frowand.list@gmail.com> wrote:
+>>
+>> On 6/12/19 10:00 AM, Rob Herring wrote:
+>>> On Wed, Jun 12, 2019 at 10:45 AM Frank Rowand <frowand.list@gmail.com> wrote:
+>>>>
+>>>> Hi Kefeng,
+>>>>
+>>>> If Rob agrees, I'd like to see one more change in this patch.
+>>>>
+>>>> Since the only caller of of_fdt_match() is of_flat_dt_match(),
+>>>> can you move the body of of_fdt_match() into  of_flat_dt_match()
+>>>> and eliminate of_fdt_match()?
+>>>
+>>> That's fine as long as we think there's never any use for of_fdt_match
+>>> after init? Fixup of nodes in an overlay for example.
+>>
+>> We can always re-expose the functionality as of_fdt_match() in the future
+>> if the need arises.  But Stephen's recent patch was moving in the opposite
+>> direction, removing of_fdt_match() from the header file and making it
+>> static.
 > 
-> Fixes: af0a5646cb8d ("use the new async probing feature for the hyperv drivers")
-> Signed-off-by: Haiyang Zhang <haiyangz@microsoft.com>
+> Yes, we can, but it is just churn if we think it is likely needed.
+> 
+> OTOH, we probably want users to just use libfdt API directly and
+> should add this to libfdt if needed.
+> 
+> So yes, please implement Frank's suggestion.
 
-Applied and queued up for -stable.
+OK，done in patch v2.
+
+> 
+> Rob
+> 
+> .
+> 
+
