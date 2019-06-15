@@ -2,91 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2714747161
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2019 19:21:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E2C7A4714C
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2019 18:40:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726770AbfFORQs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 15 Jun 2019 13:16:48 -0400
-Received: from mail.andi.de1.cc ([85.214.239.24]:54290 "EHLO mail.andi.de1.cc"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725535AbfFORQs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 15 Jun 2019 13:16:48 -0400
-X-Greylist: delayed 2592 seconds by postgrey-1.27 at vger.kernel.org; Sat, 15 Jun 2019 13:16:48 EDT
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=kemnade.info; s=20180802; h=Content-Transfer-Encoding:MIME-Version:
-        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=eOiWl8p2TWN6Uxy14AMrR2XP1Yr3a8JbfAQfRrrCR5U=; b=WPR/5ZoQSEu+cvcRoNTd3f9IR0
-        FMs7Tx0pZZ6ekv4taD6McaZO2x1aq/h5dQHJ2b6tnyLHObewXebdzvYjSY66u9U/5fxKCtbuug1Kb
-        T3LEvIXb5DzPBf/3Jx/leBnkcGVUEyWflWP8biPABHeXgtW0ndX50jqveC1BHwk9ZMLM=;
-Received: from p200300ccff3e33001a3da2fffebfd33a.dip0.t-ipconnect.de ([2003:cc:ff3e:3300:1a3d:a2ff:febf:d33a] helo=aktux)
-        by mail.andi.de1.cc with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <andreas@kemnade.info>)
-        id 1hcBcP-0005bp-QY; Sat, 15 Jun 2019 18:33:29 +0200
-Received: from andi by aktux with local (Exim 4.92)
-        (envelope-from <andreas@kemnade.info>)
-        id 1hcBcP-0007Tk-EP; Sat, 15 Jun 2019 18:33:29 +0200
-From:   Andreas Kemnade <andreas@kemnade.info>
-To:     tony@atomide.com, lgirdwood@gmail.com, broonie@kernel.org,
-        linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, sboyd@kernel.org, nm@ti.com,
-        vireshk@kernel.org, letux-kernel@openphoenux.org
-Cc:     Andreas Kemnade <andreas@kemnade.info>
-Subject: [PATCH] regulator: twl: mark vdd1/2 as continuous on twl4030
-Date:   Sat, 15 Jun 2019 18:33:14 +0200
-Message-Id: <20190615163314.28173-1-andreas@kemnade.info>
-X-Mailer: git-send-email 2.20.1
+        id S1726967AbfFOQkU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 15 Jun 2019 12:40:20 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:45542 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726859AbfFOQkU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 15 Jun 2019 12:40:20 -0400
+Received: by mail-wr1-f65.google.com with SMTP id f9so5543895wre.12
+        for <linux-kernel@vger.kernel.org>; Sat, 15 Jun 2019 09:40:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=1kclzBY5PNZTommgGhPdgVS2cfCmzWZVTfht0vXTwCQ=;
+        b=JZ6U04ArpLq8AS2xkzrb4Pt5Fh1RnVZ1qP63J/hDTfXcvt46/6V+A2mg/PyQWgKfsR
+         GSSztIEC1ibdqHNVmLvYNhUsG6UgTdk13cSbTXafmpSnzexoF5W4xl2DC7cGup58lH9v
+         LLMxv1QPKGGHY/0M0xexLH+xkvU4+ghDlrT7En/w0khyRuSHpTi2dcpNXK6mHkwy0xye
+         vNc/oHqJsz7Sl0mKUtk8+JZkgsB5LRPcIPWZCv9aJxx1dEGpY56wUxCDDbXNLYclFQmO
+         aEQQtZCeSI51njJCbs5ScHGrunWce2jOttYa44FgYtMZ7uqhAD4xGn1dkbQ3FihaUxsE
+         ANsg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=1kclzBY5PNZTommgGhPdgVS2cfCmzWZVTfht0vXTwCQ=;
+        b=nhm//fAoCKHUAISlbOwrygsGBynL11wITe3wskLuGJSUFtEOf2AtobBJl8m+RnIeqd
+         T1kAAJ1zAWoExiBaxGovs/OnBoO3glcqcumW0ixzbu3OkiwKAGuHAvKdR0+5JlHfFpc1
+         WyyV07BKrjxBlV4Fc7qBl0mWw5Eu1Ih54TQwtc29tcxsixr9n/rKsxw7MxO0k23AjuxB
+         oL/5bu1RYcu3llrsk1uJ+Iv8BcQa+jFI16q5XjxMe/Um6WRfqiWFGqo5FC2XEckaw6p4
+         EFun6Rk+/OuWN8/ASnP+vBoTzQ7UdaRdW+qtdLFebkqzo2C0Ag1axEKZYKdZeYenHOVW
+         UZSQ==
+X-Gm-Message-State: APjAAAWNHlCiSSyzCvf5ySUjcIPaER9EwU3U1ZmEnu6PMH6RzWxuSrOQ
+        4MU+R6G1V1PrSVNV6zFyQ1CWBhj/DhJFK56c
+X-Google-Smtp-Source: APXvYqy9WEGALvrPT9COz+kWlbL9LXsbakuQb82aL5RDScZUgcY1zebZfqdZqPWKvssB7JsPXoZ9GQ==
+X-Received: by 2002:adf:ec49:: with SMTP id w9mr1610492wrn.303.1560616818338;
+        Sat, 15 Jun 2019 09:40:18 -0700 (PDT)
+Received: from [192.168.88.149] ([62.170.2.124])
+        by smtp.gmail.com with ESMTPSA id v18sm4121746wrs.80.2019.06.15.09.40.15
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 15 Jun 2019 09:40:17 -0700 (PDT)
+Subject: Re: [PATCHSET block/for-linus] Assorted blkcg fixes
+To:     Tejun Heo <tj@kernel.org>
+Cc:     jbacik@fb.com, linux-kernel@vger.kernel.org,
+        linux-block@vger.kernel.org, kernel-team@fb.com, dennis@kernel.org,
+        jack@suse.cz
+References: <20190613223041.606735-1-tj@kernel.org>
+ <5d5835d3-d0e4-f4cc-19b1-841b4ad46a9a@kernel.dk>
+ <20190615155055.GE657710@devbig004.ftw2.facebook.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <30e86027-ea36-02c5-b3bf-b1f3ce1a9d98@kernel.dk>
+Date:   Sat, 15 Jun 2019 10:40:13 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190615155055.GE657710@devbig004.ftw2.facebook.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-_opp_supported_by_regulators() wrongly ignored errors from
-regulator_is_supported_voltage(), so it considered errors as
-success. Since
-commit 498209445124 ("regulator: core: simplify return value on suported_voltage")
-regulator_is_supported_voltage() returns a real boolean, so
-errors make _opp_supported_by_regulators() return false.
+On 6/15/19 9:50 AM, Tejun Heo wrote:
+> Hello,
+> 
+> On Sat, Jun 15, 2019 at 01:40:50AM -0600, Jens Axboe wrote:
+>>> Please refer to each patch's description for details.  Patchset is
+>>> also available in the following git branch.
+>>>
+>>>    git://git.kernel.org/pub/scm/linux/kernel/git/tj/cgroup.git review-blkcg-fixes
+>>>
+>>> Thanks.  diffstat follows.
+>>
+>> Are you fine with these hitting 5.3?
+> 
+> Yeah, none of them are very urgent.  5.3 should be fine.
 
-The VDD1/VDD2 regulators on twl4030 are neither defined with
-voltage lists nor with the continuous flag set, so
-regulator_is_supported_voltage() returns false and an error
-before above mentioned commit (which was considered success)
-The result is that after the above mentioned commit cpufreq
-does not work properly e.g. dm3730.
+OK great, added for 5.3, thanks.
 
-[    2.490997] core: _opp_supported_by_regulators: OPP minuV: 1012500 maxuV: 1012500, not supported by regulator
-[    2.501617] cpu cpu0: _opp_add: OPP not supported by regulators (300000000)
-[    2.509246] core: _opp_supported_by_regulators: OPP minuV: 1200000 maxuV: 1200000, not supported by regulator
-[    2.519775] cpu cpu0: _opp_add: OPP not supported by regulators (600000000)
-[    2.527313] core: _opp_supported_by_regulators: OPP minuV: 1325000 maxuV: 1325000, not supported by regulator
-[    2.537750] cpu cpu0: _opp_add: OPP not supported by regulators (800000000)
-
-The patch fixes declaration of VDD1/2 regulators.
-
-Fixes: 498209445124 ("regulator: core: simplify return value on suported_voltage")
-Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
----
- drivers/regulator/twl-regulator.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/regulator/twl-regulator.c b/drivers/regulator/twl-regulator.c
-index 6fa15b2d6fb3..f7bfdf53701d 100644
---- a/drivers/regulator/twl-regulator.c
-+++ b/drivers/regulator/twl-regulator.c
-@@ -478,6 +478,7 @@ static const struct twlreg_info TWL4030_INFO_##label = { \
- 		.type = REGULATOR_VOLTAGE, \
- 		.owner = THIS_MODULE, \
- 		.enable_time = turnon_delay, \
-+		.continuous_voltage_range = true, \
- 		.of_map_mode = twl4030reg_map_mode, \
- 		}, \
- 	}
 -- 
-2.20.1
+Jens Axboe
 
