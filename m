@@ -2,60 +2,198 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A760646DF3
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2019 05:02:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9DD0546DED
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Jun 2019 04:56:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726133AbfFODCc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 14 Jun 2019 23:02:32 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:47278 "EHLO huawei.com"
+        id S1726679AbfFOC42 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 14 Jun 2019 22:56:28 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:44170 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725812AbfFODCc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Jun 2019 23:02:32 -0400
-Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 3A3B0EC38FB9B4569D4A;
-        Sat, 15 Jun 2019 11:02:30 +0800 (CST)
-Received: from [127.0.0.1] (10.133.213.239) by DGGEMS411-HUB.china.huawei.com
- (10.3.19.211) with Microsoft SMTP Server id 14.3.439.0; Sat, 15 Jun 2019
- 11:02:26 +0800
-Subject: Re: [PATCH -next] x86/amd_nb: Make hygon_nb_misc_ids static
-To:     Borislav Petkov <bp@alien8.de>
-References: <20190614155441.22076-1-yuehaibing@huawei.com>
- <20190614175159.GO2586@zn.tnic>
-CC:     <tglx@linutronix.de>, <mingo@redhat.com>, <hpa@zytor.com>,
-        <x86@kernel.org>, <puwen@hygon.cn>, <bhelgaas@google.com>,
-        <linux-kernel@vger.kernel.org>
-From:   Yuehaibing <yuehaibing@huawei.com>
-Message-ID: <a8ce777e-a45d-2525-5527-8eb3eb083883@huawei.com>
-Date:   Sat, 15 Jun 2019 11:02:25 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.2.0
+        id S1725825AbfFOC42 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Jun 2019 22:56:28 -0400
+Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 2AFAFB300C5A02C151B8;
+        Sat, 15 Jun 2019 10:56:25 +0800 (CST)
+Received: from localhost.localdomain.localdomain (10.175.113.25) by
+ DGGEMS411-HUB.china.huawei.com (10.3.19.211) with Microsoft SMTP Server id
+ 14.3.439.0; Sat, 15 Jun 2019 10:56:17 +0800
+From:   Kefeng Wang <wangkefeng.wang@huawei.com>
+To:     <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC:     Kefeng Wang <wangkefeng.wang@huawei.com>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Rob Herring <robh@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>
+Subject: [PATCH next v2] of/fdt: Fix defined but not used compiler warning
+Date:   Sat, 15 Jun 2019 11:03:43 +0800
+Message-ID: <20190615030343.96524-1-wangkefeng.wang@huawei.com>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190612010011.90185-1-wangkefeng.wang@huawei.com>
+References: <20190612010011.90185-1-wangkefeng.wang@huawei.com>
 MIME-Version: 1.0
-In-Reply-To: <20190614175159.GO2586@zn.tnic>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.133.213.239]
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.175.113.25]
 X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+When CONFIG_OF_EARLY_FLATTREE is disabled, there is a compiler
+warning,
 
-On 2019/6/15 1:51, Borislav Petkov wrote:
-> On Fri, Jun 14, 2019 at 11:54:41PM +0800, YueHaibing wrote:
->> Fix sparse warning:
->>
->> arch/x86/kernel/amd_nb.c:74:28: warning:
->>  symbol 'hygon_nb_misc_ids' was not declared. Should it be static?
->>
->> Reported-by: Hulk Robot <hulkci@huawei.com>
-> 	       ^^^^^^^^^^^^^^^^^
-> 
-> Ha, what is that? :)
-> 
-> A new test bot?
+drivers/of/fdt.c:129:19: warning: ‘of_fdt_match’ defined but not used [-Wunused-function]
+ static int __init of_fdt_match(const void *blob, unsigned long node,
 
-Yes, our internal CI robot.
+Since the only caller of of_fdt_match() is of_flat_dt_match(),
+let's move the body of of_fdt_match() into of_flat_dt_match()
+and eliminate of_fdt_match().
 
-> 
+Meanwhile, move of_fdt_is_compatible() under CONFIG_OF_EARLY_FLATTREE,
+as all callers are over there.
+
+Cc: Stephen Boyd <swboyd@chromium.org>
+Cc: Rob Herring <robh@kernel.org>
+Cc: Frank Rowand <frowand.list@gmail.com>
+Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
+---
+v2:
+-Move the body of of_fdt_match() into of_flat_dt_match(), suggested by Frank.
+
+ drivers/of/fdt.c | 99 ++++++++++++++++++++++--------------------------
+ 1 file changed, 45 insertions(+), 54 deletions(-)
+
+diff --git a/drivers/of/fdt.c b/drivers/of/fdt.c
+index 3d36b5afd9bd..cd17dc62a719 100644
+--- a/drivers/of/fdt.c
++++ b/drivers/of/fdt.c
+@@ -78,38 +78,6 @@ void __init of_fdt_limit_memory(int limit)
+ 	}
+ }
+ 
+-/**
+- * of_fdt_is_compatible - Return true if given node from the given blob has
+- * compat in its compatible list
+- * @blob: A device tree blob
+- * @node: node to test
+- * @compat: compatible string to compare with compatible list.
+- *
+- * On match, returns a non-zero value with smaller values returned for more
+- * specific compatible values.
+- */
+-static int of_fdt_is_compatible(const void *blob,
+-		      unsigned long node, const char *compat)
+-{
+-	const char *cp;
+-	int cplen;
+-	unsigned long l, score = 0;
+-
+-	cp = fdt_getprop(blob, node, "compatible", &cplen);
+-	if (cp == NULL)
+-		return 0;
+-	while (cplen > 0) {
+-		score++;
+-		if (of_compat_cmp(cp, compat, strlen(compat)) == 0)
+-			return score;
+-		l = strlen(cp) + 1;
+-		cp += l;
+-		cplen -= l;
+-	}
+-
+-	return 0;
+-}
+-
+ static bool of_fdt_device_is_available(const void *blob, unsigned long node)
+ {
+ 	const char *status = fdt_getprop(blob, node, "status", NULL);
+@@ -123,27 +91,6 @@ static bool of_fdt_device_is_available(const void *blob, unsigned long node)
+ 	return false;
+ }
+ 
+-/**
+- * of_fdt_match - Return true if node matches a list of compatible values
+- */
+-static int __init of_fdt_match(const void *blob, unsigned long node,
+-			       const char *const *compat)
+-{
+-	unsigned int tmp, score = 0;
+-
+-	if (!compat)
+-		return 0;
+-
+-	while (*compat) {
+-		tmp = of_fdt_is_compatible(blob, node, *compat);
+-		if (tmp && (score == 0 || (tmp < score)))
+-			score = tmp;
+-		compat++;
+-	}
+-
+-	return score;
+-}
+-
+ static void *unflatten_dt_alloc(void **mem, unsigned long size,
+ 				       unsigned long align)
+ {
+@@ -764,6 +711,38 @@ const void *__init of_get_flat_dt_prop(unsigned long node, const char *name,
+ 	return fdt_getprop(initial_boot_params, node, name, size);
+ }
+ 
++/**
++ * of_fdt_is_compatible - Return true if given node from the given blob has
++ * compat in its compatible list
++ * @blob: A device tree blob
++ * @node: node to test
++ * @compat: compatible string to compare with compatible list.
++ *
++ * On match, returns a non-zero value with smaller values returned for more
++ * specific compatible values.
++ */
++static int of_fdt_is_compatible(const void *blob,
++		      unsigned long node, const char *compat)
++{
++	const char *cp;
++	int cplen;
++	unsigned long l, score = 0;
++
++	cp = fdt_getprop(blob, node, "compatible", &cplen);
++	if (cp == NULL)
++		return 0;
++	while (cplen > 0) {
++		score++;
++		if (of_compat_cmp(cp, compat, strlen(compat)) == 0)
++			return score;
++		l = strlen(cp) + 1;
++		cp += l;
++		cplen -= l;
++	}
++
++	return 0;
++}
++
+ /**
+  * of_flat_dt_is_compatible - Return true if given node has compat in compatible list
+  * @node: node to test
+@@ -779,7 +758,19 @@ int __init of_flat_dt_is_compatible(unsigned long node, const char *compat)
+  */
+ static int __init of_flat_dt_match(unsigned long node, const char *const *compat)
+ {
+-	return of_fdt_match(initial_boot_params, node, compat);
++	unsigned int tmp, score = 0;
++
++	if (!compat)
++		return 0;
++
++	while (*compat) {
++		tmp = of_fdt_is_compatible(initial_boot_params, node, *compat);
++		if (tmp && (score == 0 || (tmp < score)))
++			score = tmp;
++		compat++;
++	}
++
++	return score;
+ }
+ 
+ /**
+-- 
+2.20.1
 
