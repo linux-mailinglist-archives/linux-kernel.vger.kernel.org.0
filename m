@@ -2,15 +2,15 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ED4E44760F
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2019 19:24:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5090447612
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2019 19:24:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726440AbfFPRXo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 16 Jun 2019 13:23:44 -0400
+        id S1727312AbfFPRX4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 16 Jun 2019 13:23:56 -0400
 Received: from mga12.intel.com ([192.55.52.136]:33650 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725895AbfFPRXn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 16 Jun 2019 13:23:43 -0400
+        id S1725920AbfFPRXo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 16 Jun 2019 13:23:44 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga007.fm.intel.com ([10.253.24.52])
@@ -28,57 +28,148 @@ To:     "Thomas Gleixner" <tglx@linutronix.de>,
         "Ravi V Shankar" <ravi.v.shankar@intel.com>
 Cc:     "linux-kernel" <linux-kernel@vger.kernel.org>,
         "x86" <x86@kernel.org>, Fenghua Yu <fenghua.yu@intel.com>
-Subject: [PATCH 0/3] x86/cpufeatures: Re-arrange a few features and enumerate AVX512 BFLOAT16 intructions
-Date:   Sun, 16 Jun 2019 10:14:07 -0700
-Message-Id: <1560705250-211820-1-git-send-email-fenghua.yu@intel.com>
+Subject: [PATCH 1/3] x86/resctrl: Get max rmid and occupancy scale directly from CPUID instead of cpuinfo_x86
+Date:   Sun, 16 Jun 2019 10:14:08 -0700
+Message-Id: <1560705250-211820-2-git-send-email-fenghua.yu@intel.com>
 X-Mailer: git-send-email 2.5.0
+In-Reply-To: <1560705250-211820-1-git-send-email-fenghua.yu@intel.com>
+References: <1560705250-211820-1-git-send-email-fenghua.yu@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-To enumerate AVX512 BFLOAT16 feature CPUID.7.1:EAX[5] and other future
-features in CPUID.7.1:EAX, Boris suggests to create a new pure feature
-bits word.
+Although x86_cache_max_rmid and x86_cache_occ_scale are only read once
+during resctrl initialization, they are always stored in cpuinfo_x86 for
+each CPU during run time without usage. Even if resctrl is not
+configured, they still occupy space in cpuinfo_x86.
 
-Boris further suggests to re-define word 11 as scattered features word
-and move the four X86_FEATURE_CQM_* features in existing word 11 and
-word 12 into the new word 11. Then use word 12 to hold features in
-CPUID.7.1:EAX including AVX512 BFLOAT16 instructions.
+To save cpuinfo_x86 space and make CPU and resctrl initialization simpler,
+remove the two fields from cpuinfo_x86 and get max rmid and occupancy
+scale directly from CPUID during resctrl initialization. And since each
+known platform that supports resctrl has same max rmid on all CPUs, no
+need to scan all CPUs to find minimum of max rmid values, i.e. getting
+max rmid from CPUID on the current CPU is fine.
 
-Also remove x86_cache_max_rmid and x86_cache_occ_scale in cpuinfo_x86
-to save memory space because they are only read once by resctrl during
-boot time. Get the info directly from CPUID in resctrl initialization.
-
-Change Log:
-
-Address all comments from Borislav Petkov:
-- Re-define feature word 11 as a scattered features word and move the
-  four X86_FEATURE_CQM_* features into the word
-- Re-define feature word 12 to hold CPUID.7.1:EAX including BFLOAT16
-- Name a dummy leaf 12 in cpuid_leafs in patch 0002 to avoid bisect
-  error
-- Simplify code to get number of rmid and monitoring scale in
-  rdt_get_mon_l3_config()
-
-Fenghua Yu (3):
-  x86/resctrl: Get max rmid and occupancy scale directly from CPUID
-    instead of cpuinfo_x86
-  x86/cpufeatures: Combine word 11 and 12 into new scattered features
-    word 11
-  x86/cpufeatures: Enumerate new AVX512 BFLOAT16 instructions
-
- arch/x86/include/asm/cpufeature.h      |  4 +--
- arch/x86/include/asm/cpufeatures.h     | 18 +++++++----
- arch/x86/include/asm/processor.h       |  3 --
- arch/x86/kernel/cpu/common.c           | 45 ++------------------------
- arch/x86/kernel/cpu/cpuid-deps.c       |  4 +++
+Signed-off-by: Fenghua Yu <fenghua.yu@intel.com>
+---
+ arch/x86/include/asm/processor.h       |  3 ---
+ arch/x86/kernel/cpu/common.c           | 28 --------------------------
  arch/x86/kernel/cpu/resctrl/internal.h |  2 +-
- arch/x86/kernel/cpu/resctrl/monitor.c  | 13 ++++++--
- arch/x86/kernel/cpu/scattered.c        |  4 +++
- arch/x86/kvm/cpuid.h                   |  2 --
- 9 files changed, 36 insertions(+), 59 deletions(-)
+ arch/x86/kernel/cpu/resctrl/monitor.c  | 13 +++++++++---
+ 4 files changed, 11 insertions(+), 35 deletions(-)
 
+diff --git a/arch/x86/include/asm/processor.h b/arch/x86/include/asm/processor.h
+index c34a35c78618..27e875d4ca7d 100644
+--- a/arch/x86/include/asm/processor.h
++++ b/arch/x86/include/asm/processor.h
+@@ -99,9 +99,6 @@ struct cpuinfo_x86 {
+ 	/* in KB - valid for CPUS which support this call: */
+ 	unsigned int		x86_cache_size;
+ 	int			x86_cache_alignment;	/* In bytes */
+-	/* Cache QoS architectural values: */
+-	int			x86_cache_max_rmid;	/* max index */
+-	int			x86_cache_occ_scale;	/* scale to bytes */
+ 	int			x86_power;
+ 	unsigned long		loops_per_jiffy;
+ 	/* cpuid returned max cores value: */
+diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
+index 2c57fffebf9b..38e4b1a9005e 100644
+--- a/arch/x86/kernel/cpu/common.c
++++ b/arch/x86/kernel/cpu/common.c
+@@ -840,22 +840,9 @@ void get_cpu_cap(struct cpuinfo_x86 *c)
+ 		c->x86_capability[CPUID_F_0_EDX] = edx;
+ 
+ 		if (cpu_has(c, X86_FEATURE_CQM_LLC)) {
+-			/* will be overridden if occupancy monitoring exists */
+-			c->x86_cache_max_rmid = ebx;
+-
+ 			/* QoS sub-leaf, EAX=0Fh, ECX=1 */
+ 			cpuid_count(0x0000000F, 1, &eax, &ebx, &ecx, &edx);
+ 			c->x86_capability[CPUID_F_1_EDX] = edx;
+-
+-			if ((cpu_has(c, X86_FEATURE_CQM_OCCUP_LLC)) ||
+-			      ((cpu_has(c, X86_FEATURE_CQM_MBM_TOTAL)) ||
+-			       (cpu_has(c, X86_FEATURE_CQM_MBM_LOCAL)))) {
+-				c->x86_cache_max_rmid = ecx;
+-				c->x86_cache_occ_scale = ebx;
+-			}
+-		} else {
+-			c->x86_cache_max_rmid = -1;
+-			c->x86_cache_occ_scale = -1;
+ 		}
+ 	}
+ 
+@@ -1269,20 +1256,6 @@ static void generic_identify(struct cpuinfo_x86 *c)
+ #endif
+ }
+ 
+-static void x86_init_cache_qos(struct cpuinfo_x86 *c)
+-{
+-	/*
+-	 * The heavy lifting of max_rmid and cache_occ_scale are handled
+-	 * in get_cpu_cap().  Here we just set the max_rmid for the boot_cpu
+-	 * in case CQM bits really aren't there in this CPU.
+-	 */
+-	if (c != &boot_cpu_data) {
+-		boot_cpu_data.x86_cache_max_rmid =
+-			min(boot_cpu_data.x86_cache_max_rmid,
+-			    c->x86_cache_max_rmid);
+-	}
+-}
+-
+ /*
+  * Validate that ACPI/mptables have the same information about the
+  * effective APIC id and update the package map.
+@@ -1391,7 +1364,6 @@ static void identify_cpu(struct cpuinfo_x86 *c)
+ #endif
+ 
+ 	x86_init_rdrand(c);
+-	x86_init_cache_qos(c);
+ 	setup_pku(c);
+ 
+ 	/*
+diff --git a/arch/x86/kernel/cpu/resctrl/internal.h b/arch/x86/kernel/cpu/resctrl/internal.h
+index e49b77283924..474a7090d2dd 100644
+--- a/arch/x86/kernel/cpu/resctrl/internal.h
++++ b/arch/x86/kernel/cpu/resctrl/internal.h
+@@ -579,7 +579,7 @@ int closids_supported(void);
+ void closid_free(int closid);
+ int alloc_rmid(void);
+ void free_rmid(u32 rmid);
+-int rdt_get_mon_l3_config(struct rdt_resource *r);
++int __init rdt_get_mon_l3_config(struct rdt_resource *r);
+ void mon_event_count(void *info);
+ int rdtgroup_mondata_show(struct seq_file *m, void *arg);
+ void rmdir_mondata_subdir_allrdtgrp(struct rdt_resource *r,
+diff --git a/arch/x86/kernel/cpu/resctrl/monitor.c b/arch/x86/kernel/cpu/resctrl/monitor.c
+index 1573a0a6b525..ea612dacf676 100644
+--- a/arch/x86/kernel/cpu/resctrl/monitor.c
++++ b/arch/x86/kernel/cpu/resctrl/monitor.c
+@@ -617,13 +617,20 @@ static void l3_mon_evt_init(struct rdt_resource *r)
+ 		list_add_tail(&mbm_local_event.list, &r->evt_list);
+ }
+ 
+-int rdt_get_mon_l3_config(struct rdt_resource *r)
++int __init rdt_get_mon_l3_config(struct rdt_resource *r)
+ {
+ 	unsigned int cl_size = boot_cpu_data.x86_cache_size;
++	u32 eax, ebx, ecx, edx;
+ 	int ret;
+ 
+-	r->mon_scale = boot_cpu_data.x86_cache_occ_scale;
+-	r->num_rmid = boot_cpu_data.x86_cache_max_rmid + 1;
++	/*
++	 * At this point, CQM LLC and one of L3 occupancy, MBM total, and
++	 * MBM local monitoring features must be supported. So sub-leaf
++	 * (EAX=0xf, ECX=1) contains needed information for this resource.
++	 */
++	cpuid_count(0xf, 1, &eax, &ebx, &ecx, &edx);
++	r->num_rmid = ecx + 1;
++	r->mon_scale = ebx;
+ 
+ 	/*
+ 	 * A reasonable upper limit on the max threshold is the number
 -- 
 2.19.1
 
