@@ -2,45 +2,45 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 134A3473D8
+	by mail.lfdr.de (Postfix) with ESMTP id 768EE473D9
 	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2019 10:58:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727135AbfFPI6n (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 16 Jun 2019 04:58:43 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:33968 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726612AbfFPI6m (ORCPT
+        id S1727165AbfFPI6o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 16 Jun 2019 04:58:44 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:41959 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727044AbfFPI6n (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 16 Jun 2019 04:58:42 -0400
-Received: by mail-wr1-f65.google.com with SMTP id k11so6699871wrl.1
-        for <linux-kernel@vger.kernel.org>; Sun, 16 Jun 2019 01:58:41 -0700 (PDT)
+        Sun, 16 Jun 2019 04:58:43 -0400
+Received: by mail-wr1-f66.google.com with SMTP id c2so6664357wrm.8
+        for <linux-kernel@vger.kernel.org>; Sun, 16 Jun 2019 01:58:42 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=3ITCIjtRiKXBETAqnfXapAAbycKyMBn7c3dUFh4aTVw=;
-        b=BJ3VqwLhfcgBEJMs7Nx92tfXf8T92OEqP6LJNqcau2RcnRdGyPvg+7BuSHzAFXU1JE
-         b0//LF/vh4g5/jzh7O88Dr2x0cLDv+ng9yavSfpVjh8mvZQqwWuCFJdW5QxKeLn4ArjD
-         JOJXZ9+EHvlIP64xUaJqueJ+6qAR/TPBYpKj+p0gcpYuLjvN+wPDVf6sGhmI5QLALwWS
-         1GLb5UVA4EaG03bHxjbkfld4pXjrzeSMAqIoXuWRNUGF2TUldvrTNCnaDgToui/BJm+G
-         lcZUvLNCSNHDyeopmRLQNUWKQKe4EEDmRTNlePnuaPvefGxy/7xmHXVCq7e+4dIjzqFO
-         JO9A==
-X-Gm-Message-State: APjAAAWGPBRB1rUsdJcXoxzBPCDxa/N38liE5RKYGzXaVR+6mSx+bIuY
-        7MtTXpJHs9q4v/kuKSEV1daqOCuVih8=
-X-Google-Smtp-Source: APXvYqzQMjvzDFYnOgTdFM99hcnJUp0/uTV59QLuRVfafS23C/DUgS5gTgJZNRO0B4DaEtyvurzykA==
-X-Received: by 2002:a5d:6a42:: with SMTP id t2mr6432594wrw.352.1560675520784;
-        Sun, 16 Jun 2019 01:58:40 -0700 (PDT)
+        bh=2sgxUU390W2PtuQ88MMXWGwjdnv5ZXrQD67uDLz3qgg=;
+        b=akokCc4aeSsHGKnHmL988FiySRsn/eZMHbUxABNls/89iicJchtbgu3/lBhYUSQCcA
+         /JMVn+cChXjzhwanwoVUqwkzaBsWwTDCC1Oba+eZuHbtRype4EB92bccsUuw5W+Az92W
+         NxjkkzT0zIjneCncX/z7UcdZ7cDwkkivMASzXubQHojSQkU6Th2A/v94HAwiJu/25fBz
+         B6xYkvLqXPCOWTcVdqz6jrlSXic3zZPa95/xGBpWWTDh68YljRrGFnP6A4OkJb4OfeOx
+         NXw4jjnQEV+eNKrNCcvglNL87M2w789ePwUXF7rgp5lNybqY63661ktXjiTa+qnMddAD
+         TuXQ==
+X-Gm-Message-State: APjAAAVNpre3pRXL3jtliV7itiNNO7pPrLcjfY+f2fcsFzMrvgOXjGUr
+        0uS1le6C5IZyqQ4b6PsGS7peTg==
+X-Google-Smtp-Source: APXvYqwX2256HeSx7fk/qLqgGOiy/mrmlvd+nYfLi1zyyw8W3Dtaz40qJJqmoIRaEQdsdMHYjWP9JQ==
+X-Received: by 2002:adf:f610:: with SMTP id t16mr9367740wrp.3.1560675522190;
+        Sun, 16 Jun 2019 01:58:42 -0700 (PDT)
 Received: from localhost (nat-pool-brq-t.redhat.com. [213.175.37.10])
-        by smtp.gmail.com with ESMTPSA id t1sm7728752wra.74.2019.06.16.01.58.40
+        by smtp.gmail.com with ESMTPSA id h90sm18578838wrh.15.2019.06.16.01.58.41
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Sun, 16 Jun 2019 01:58:40 -0700 (PDT)
+        Sun, 16 Jun 2019 01:58:41 -0700 (PDT)
 From:   Oleksandr Natalenko <oleksandr@redhat.com>
 To:     Minchan Kim <minchan@kernel.org>
 Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
         linux-api@vger.kernel.org
-Subject: [PATCH NOTFORMERGE 2/5] mm: revert madvise_inject_error line split
-Date:   Sun, 16 Jun 2019 10:58:32 +0200
-Message-Id: <20190616085835.953-3-oleksandr@redhat.com>
+Subject: [PATCH NOTFORMERGE 3/5] mm: include uio.h to madvise.c
+Date:   Sun, 16 Jun 2019 10:58:33 +0200
+Message-Id: <20190616085835.953-4-oleksandr@redhat.com>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190616085835.953-1-oleksandr@redhat.com>
 References: <20190616085835.953-1-oleksandr@redhat.com>
@@ -51,27 +51,25 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Just to highlight it after our conversation.
+I couldn't compile it w/o this header.
 
 Signed-off-by: Oleksandr Natalenko <oleksandr@redhat.com>
 ---
- mm/madvise.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ mm/madvise.c | 1 +
+ 1 file changed, 1 insertion(+)
 
 diff --git a/mm/madvise.c b/mm/madvise.c
-index edb7184f665c..70aeb54f3e1c 100644
+index 70aeb54f3e1c..9755340da157 100644
 --- a/mm/madvise.c
 +++ b/mm/madvise.c
-@@ -1041,8 +1041,7 @@ static int madvise_common(struct task_struct *task, struct mm_struct *mm,
+@@ -25,6 +25,7 @@
+ #include <linux/swapops.h>
+ #include <linux/shmem_fs.h>
+ #include <linux/mmu_notifier.h>
++#include <linux/uio.h>
  
- #ifdef CONFIG_MEMORY_FAILURE
- 	if (behavior == MADV_HWPOISON || behavior == MADV_SOFT_OFFLINE)
--		return madvise_inject_error(behavior,
--					start, start + len_in);
-+		return madvise_inject_error(behavior, start, start + len_in);
- #endif
+ #include <asm/tlb.h>
  
- 	write = madvise_need_mmap_write(behavior);
 -- 
 2.22.0
 
