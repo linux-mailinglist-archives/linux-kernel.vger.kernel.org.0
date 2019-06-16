@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8DC4C47754
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 01:36:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6F80847747
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 01:36:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727651AbfFPXgp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 16 Jun 2019 19:36:45 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:43689 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727491AbfFPXgL (ORCPT
+        id S1727571AbfFPXgT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 16 Jun 2019 19:36:19 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:43690 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727510AbfFPXgN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 16 Jun 2019 19:36:11 -0400
-Received: by mail-lj1-f195.google.com with SMTP id 16so7467645ljv.10;
-        Sun, 16 Jun 2019 16:36:09 -0700 (PDT)
+        Sun, 16 Jun 2019 19:36:13 -0400
+Received: by mail-lj1-f193.google.com with SMTP id 16so7467660ljv.10;
+        Sun, 16 Jun 2019 16:36:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=MLcVzTC0IaxbESeka8YOusn41kpWSvPViTyvRdxCIn4=;
-        b=YAsh4YgDg7WErbR21/+wFVb57h35BN/D7dwoqVfRSbLsa+1mJfsZKft9zNEeM4FaYm
-         +4cyKvqhbD3cNV52b8j/ESBPvr8hpXw4Le3dbzzmNsiT62YxTGQvmkesDvXC6yNm6KaM
-         vuMMCpeQzEh/jptv7uZZtShzw8D1ROTp/H9o5fQGPPYmPmVW3VwtBBKZgd9/N/1pQsva
-         6kUJXtCjexQYhXNNf33VhnImnKjS5OQQ9Kbt+2E9igelolFvV1DEZMsvoF5ice8qDeMm
-         0jG4GNmfcgTGH8TTbpHezAA4uwWBANxit1NaqK1z9Z1hMypnWoEklRSkcdoQvnPYbpHM
-         okmw==
+        bh=qSGWfyGgts7/ACGUx3NwBZ4EU3S1UppuppDAwYa+a/0=;
+        b=BSRSWdUKGozsTDN4tXaeO4A7jbuKpBt71UNSuQo/xNKqwqmoTGSiTL2ddHSA3wA92/
+         4i8jqm0zSsnqkOB6pffvf4jiF4j1Ev1GCCN5bm8iTFBw5OX/TiqSFdnPl8SRLFXUJe24
+         zWnyLiCHFIVgigjnuq3z0+golgy0aO4BrFwzwucjvRWRHyJy9cvjiHGT3GWJNNOKkigp
+         UslUpzhtIctQuile3kX8OgTB1+heUUdIoQ8Xu32SwXhPG+uDQaJp7mw5GjylSq2oQeie
+         IIgKh3no3AuBzrh89c03H+Gh6PvZNcD1isnDi0YMiCvf4wSEYzqjuzsUyefO3f4MFjaR
+         65tg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=MLcVzTC0IaxbESeka8YOusn41kpWSvPViTyvRdxCIn4=;
-        b=rtqn2PVcYdJtrYVyQy4VA0xlGvAn3GcPpuzzAUcWeIDksYIZfbihTIDl0tdY3sVXva
-         Qw2VS4Yxmaji6orCQA6D2G7nbmjsRGCQZg0q6Sr1IQqQjOE28l20VQx/WsRjFdkDCjAP
-         GM3Di2D93yY8usMRq5A/bX0uictXT2ngwIu2dyxRH+CuuOHdPXMXiNW3HFAr6Suyio77
-         kM+Nzjnt2QYEA0kLzkAoo7P4W4Oty5xFmBzSOB9nEbmlexYmaEdac/0+pn6VgbD0KDBx
-         ssdlFBU1fU++6wcWFgjonlCKilKQo2wo+5aSN1+yDOgdGifEsvTkkcY+tdGibT6bHs8k
-         iXsw==
-X-Gm-Message-State: APjAAAXa/ENDdNfkdQlzYFKQ2umVgp/zVwyNtc8UZAkWBPwlviripoB1
-        DJLlx1kAZA1L36LowGEd28Y=
-X-Google-Smtp-Source: APXvYqyuvXRfe8AHcpXDXE1lcVXJXVWk482SzjTXIDhIq9j+KWdEs9H6/aBgi9YfgzrZG+jjW+a48A==
-X-Received: by 2002:a2e:2b57:: with SMTP id q84mr10518197lje.105.1560728169216;
-        Sun, 16 Jun 2019 16:36:09 -0700 (PDT)
+        bh=qSGWfyGgts7/ACGUx3NwBZ4EU3S1UppuppDAwYa+a/0=;
+        b=MBITJmuW5OZK8JzwkC5XB3rwvbeQpP7LidEdb/EsiYMN1IRwI/ed/WYfqaOIMONwJ2
+         LbAO4ON44OgrTKGz2mzX+pWqJy+HigCEuayC36Edc2xFPmwAgnPW/tQh8iJedm6r34mo
+         VT+6/fZBwIOCdN3t5f/0rvzRunk1yw95aCDD9vufwRxvXR1kvHSV4CdcQUiluTA4NCj1
+         y235tsKGh6yxjJahe9NM+0wmp0J1y0fm4zFGBEmH4dK71U4z4OjIx423aVn+jxgmdh9i
+         HM8MPocz46efzBew5PCwaHOMQ+fwPQljgaYFSgQ+LAtoM1b5nJrNk8roHAUWaLGs6KwI
+         DxUA==
+X-Gm-Message-State: APjAAAVl0WYNI3dv9hM7dU6ujFiKH1pcm2FbDZ2p7eWw5VQWb/N4ETur
+        308iuTcgg24x8FAzbOm5YyM=
+X-Google-Smtp-Source: APXvYqwSkmBdIBpprG/cKABiWTNsfDQOuRSS4JhueH2eCr04/WhLzruIsne2m/uF5EoJdNIWW3mP4Q==
+X-Received: by 2002:a2e:87d0:: with SMTP id v16mr160701ljj.24.1560728170254;
+        Sun, 16 Jun 2019 16:36:10 -0700 (PDT)
 Received: from localhost.localdomain (ppp91-79-162-197.pppoe.mtu-net.ru. [91.79.162.197])
-        by smtp.gmail.com with ESMTPSA id q4sm2008377lje.99.2019.06.16.16.36.08
+        by smtp.gmail.com with ESMTPSA id q4sm2008377lje.99.2019.06.16.16.36.09
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 16 Jun 2019 16:36:08 -0700 (PDT)
+        Sun, 16 Jun 2019 16:36:09 -0700 (PDT)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Rob Herring <robh+dt@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
@@ -56,9 +56,9 @@ To:     Rob Herring <robh+dt@kernel.org>,
         Stephen Boyd <sboyd@kernel.org>
 Cc:     devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v4 04/10] memory: tegra20-emc: Include io.h instead of iopoll.h
-Date:   Mon, 17 Jun 2019 02:35:45 +0300
-Message-Id: <20190616233551.6838-5-digetx@gmail.com>
+Subject: [PATCH v4 05/10] memory: tegra20-emc: Replace clk_get_sys with devm_clk_get
+Date:   Mon, 17 Jun 2019 02:35:46 +0300
+Message-Id: <20190616233551.6838-6-digetx@gmail.com>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190616233551.6838-1-digetx@gmail.com>
 References: <20190616233551.6838-1-digetx@gmail.com>
@@ -69,27 +69,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The register polling code was gone, but the included header change was
-missed. Fix it up for consistency.
+There is no problem for drivers to request pll_m and pll_p clocks for
+the device, hence there is no need to use clk_get_sys() and it could be
+replaced with devm_clk_get() for consistency.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/memory/tegra/tegra20-emc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/memory/tegra/tegra20-emc.c | 12 ++++--------
+ 1 file changed, 4 insertions(+), 8 deletions(-)
 
 diff --git a/drivers/memory/tegra/tegra20-emc.c b/drivers/memory/tegra/tegra20-emc.c
-index d3e1f898d745..43aef3614b65 100644
+index 43aef3614b65..527aa4b90e95 100644
 --- a/drivers/memory/tegra/tegra20-emc.c
 +++ b/drivers/memory/tegra/tegra20-emc.c
-@@ -10,7 +10,7 @@
- #include <linux/completion.h>
- #include <linux/err.h>
- #include <linux/interrupt.h>
--#include <linux/iopoll.h>
-+#include <linux/io.h>
- #include <linux/kernel.h>
- #include <linux/module.h>
- #include <linux/of.h>
+@@ -527,33 +527,29 @@ static int tegra_emc_probe(struct platform_device *pdev)
+ 		goto unset_cb;
+ 	}
+ 
+-	emc->pll_m = clk_get_sys(NULL, "pll_m");
++	emc->pll_m = devm_clk_get(&pdev->dev, "pll_m");
+ 	if (IS_ERR(emc->pll_m)) {
+ 		err = PTR_ERR(emc->pll_m);
+ 		dev_err(&pdev->dev, "failed to get pll_m clock: %d\n", err);
+ 		goto unset_cb;
+ 	}
+ 
+-	emc->backup_clk = clk_get_sys(NULL, "pll_p");
++	emc->backup_clk = devm_clk_get(&pdev->dev, "pll_p");
+ 	if (IS_ERR(emc->backup_clk)) {
+ 		err = PTR_ERR(emc->backup_clk);
+ 		dev_err(&pdev->dev, "failed to get pll_p clock: %d\n", err);
+-		goto put_pll_m;
++		goto unset_cb;
+ 	}
+ 
+ 	err = clk_notifier_register(emc->clk, &emc->clk_nb);
+ 	if (err) {
+ 		dev_err(&pdev->dev, "failed to register clk notifier: %d\n",
+ 			err);
+-		goto put_backup;
++		goto unset_cb;
+ 	}
+ 
+ 	return 0;
+ 
+-put_backup:
+-	clk_put(emc->backup_clk);
+-put_pll_m:
+-	clk_put(emc->pll_m);
+ unset_cb:
+ 	tegra20_clk_set_emc_round_callback(NULL, NULL);
+ 
 -- 
 2.22.0
 
