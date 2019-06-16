@@ -2,69 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7E05747634
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2019 19:50:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E434F4762D
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2019 19:48:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727406AbfFPRuB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 16 Jun 2019 13:50:01 -0400
-Received: from conuserg-10.nifty.com ([210.131.2.77]:52511 "EHLO
-        conuserg-10.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726121AbfFPRuB (ORCPT
+        id S1727331AbfFPRsK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 16 Jun 2019 13:48:10 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:37989 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726121AbfFPRsJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 16 Jun 2019 13:50:01 -0400
-Received: from grover.flets-west.jp (softbank126125154139.bbtec.net [126.125.154.139]) (authenticated)
-        by conuserg-10.nifty.com with ESMTP id x5GHmCb3032735;
-        Mon, 17 Jun 2019 02:48:12 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-10.nifty.com x5GHmCb3032735
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1560707293;
-        bh=Te693hygqCk6T69KjghvaUj9Rx8zaxGUTGHMI/OphOA=;
-        h=From:To:Cc:Subject:Date:From;
-        b=JTjezIzOW7STPIX7uzZ/YRLpPKesR4u7WdeD2VTiUifcJfYIklwCHHte5/8XmYhUw
-         b/A+3Fh4o8in3SEUdbrr6cy2EheRPJZeoArTjyU+B7iTUPt6egppuZQlS2BNic1HJ7
-         tDVg9OGLnL5GAF3627aTM06Nh4LETvKqfU2aMivm+pxJlVitS3yNL2PZH/NrEAzH92
-         4BB5yRA25f0ERq92WeQ+iGnJRLNPnDMGAxf+B4HWGrU1EYGRQj59EiKzqMGaDrnA00
-         OXRWMXevCHvrx/pZ+ZQ032xkvar2tYJ9M8cze6vwgl6O2p1eSVNTOh1Y3EAN3W2tHH
-         o13UcG2csZAaQ==
-X-Nifty-SrcIP: [126.125.154.139]
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-To:     linux-kbuild@vger.kernel.org
-Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        linux-kernel@vger.kernel.org,
-        Russell King <rmk+kernel@armlinux.org.uk>,
-        Stefan Agner <stefan@agner.ch>, Joel Stanley <joel@jms.id.au>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Nathan Chancellor <natechancellor@gmail.com>
-Subject: [PATCH 1/2] lib/raid6: remove duplicated CFLAGS_REMOVE_altivec8.o
-Date:   Mon, 17 Jun 2019 02:48:04 +0900
-Message-Id: <20190616174805.3069-1-yamada.masahiro@socionext.com>
-X-Mailer: git-send-email 2.17.1
+        Sun, 16 Jun 2019 13:48:09 -0400
+Received: by mail-wr1-f66.google.com with SMTP id d18so7462754wrs.5;
+        Sun, 16 Jun 2019 10:48:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=ThSO14z8dxRAnR6aIr1IzqylMcpg3kvMNycxr8zWOB8=;
+        b=NBigtsLAYKz8w5ObUbhc6PIipQufdy30Vvr0GQ/UV81O9F+NLGmUc8u6fuIwdpnoAB
+         G4aDrBpfeMks/ZqkxK6FdokI2ldB2jyyLihMKtr791Kjmjus8S23Ns+UtcjPLYVRXwBL
+         HNG9BBBCwe/livPQBRUQgszqrJHkJjaMWGSHrCQ8ZWrsxmCNV5yTEXXGweHSrOVYXuY7
+         Trdh0OTjbPigEeUD84q93NmHo2yuv3TM9rCxplbivNpVZCZEAyko8bexFzguNKeBzog/
+         hwSyZVDtfqp88o4/zErjOc+wnIrNdM+q41BtCEpURFelhsONFXjfvi8GiOAuVNnnMFtK
+         XYGg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=ThSO14z8dxRAnR6aIr1IzqylMcpg3kvMNycxr8zWOB8=;
+        b=SrzqOoYA/SnxE4HAGlUETCfbeoSsr2senwdlHMgL3Ex8BUEboKyq2opgJzqBk2Oxs/
+         qB0FlnuPmaQMV/+4HQAeFTRyPsUa7Ptr7r0TEwxsvpF0dHejJSG8IvimREO/33fx0quL
+         r9WCxWmdlDss6R7tVOvH11Oe+Hum6sCA84AyjZBkh399DL0QWfegX0O3/IPqsq4JAO4P
+         6r9atJFRaXKqzF9UrYW5SqWY8FvV02IrXpOi692Dy1C3Xr18dPtU3Z+BnGR05ByI/VQ8
+         N7NkZx+dgSe66ut0eLKZzUYZAFWElYP2b5CV3I5hxzJHg0YR5nnWh/WntxOUq2GR67K4
+         p3zA==
+X-Gm-Message-State: APjAAAVr+2xYB6GbHIuz/81V6SDHMVUPAr/GS1BP92INGkXdidGxPlDB
+        DX7fLnkcGTaXV4BY5m0ICRU=
+X-Google-Smtp-Source: APXvYqzQc5rPXci8lQT7ZDftZOmILFnWTF3t3BzEyBuiY0MGyRb+S996VGdtuRy3WqmVbTwapnsn6Q==
+X-Received: by 2002:adf:dc4b:: with SMTP id m11mr10677128wrj.51.1560707287860;
+        Sun, 16 Jun 2019 10:48:07 -0700 (PDT)
+Received: from [10.83.36.153] ([217.173.96.166])
+        by smtp.gmail.com with ESMTPSA id r4sm19734073wra.96.2019.06.16.10.48.06
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Sun, 16 Jun 2019 10:48:07 -0700 (PDT)
+Subject: Re: [PATCHv4 09/28] timens: Shift /proc/uptime
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        Dmitry Safonov <dima@arista.com>
+Cc:     linux-kernel@vger.kernel.org, Adrian Reber <adrian@lisas.de>,
+        Andrei Vagin <avagin@openvz.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Cyrill Gorcunov <gorcunov@openvz.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        Jann Horn <jannh@google.com>, Jeff Dike <jdike@addtoit.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Pavel Emelyanov <xemul@virtuozzo.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Vincenzo Frascino <vincenzo.frascino@arm.com>,
+        containers@lists.linux-foundation.org, criu@openvz.org,
+        linux-api@vger.kernel.org, x86@kernel.org
+References: <20190612192628.23797-1-dima@arista.com>
+ <20190612192628.23797-10-dima@arista.com>
+ <alpine.DEB.2.21.1906141549560.1722@nanos.tec.linutronix.de>
+From:   Dmitry Safonov <0x7f454c46@gmail.com>
+Message-ID: <6e675417-37ee-0799-60d9-f85812485842@gmail.com>
+Date:   Sun, 16 Jun 2019 18:48:05 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
+MIME-Version: 1.0
+In-Reply-To: <alpine.DEB.2.21.1906141549560.1722@nanos.tec.linutronix.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-No intended change in behavior.
+On 6/14/19 2:50 PM, Thomas Gleixner wrote:
+> On Wed, 12 Jun 2019, Dmitry Safonov wrote:
+> 
+> Again, please use the usual prefix and bolt not everything to
+> timens. timens: is the proper prefix for the actual time namespace core
+> code.
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
+Yep, will do.
 
- lib/raid6/Makefile | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/lib/raid6/Makefile b/lib/raid6/Makefile
-index e723eacf7868..74004037033f 100644
---- a/lib/raid6/Makefile
-+++ b/lib/raid6/Makefile
-@@ -26,7 +26,6 @@ CFLAGS_REMOVE_altivec1.o  += -msoft-float
- CFLAGS_REMOVE_altivec2.o  += -msoft-float
- CFLAGS_REMOVE_altivec4.o  += -msoft-float
- CFLAGS_REMOVE_altivec8.o  += -msoft-float
--CFLAGS_REMOVE_altivec8.o  += -msoft-float
- CFLAGS_REMOVE_vpermxor1.o += -msoft-float
- CFLAGS_REMOVE_vpermxor2.o += -msoft-float
- CFLAGS_REMOVE_vpermxor4.o += -msoft-float
--- 
-2.17.1
-
+Thanks,
+          Dmitry
