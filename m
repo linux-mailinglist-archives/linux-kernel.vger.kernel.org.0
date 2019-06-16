@@ -2,133 +2,387 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ADC5F476B6
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2019 22:24:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2719D476D7
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2019 22:52:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726926AbfFPUYb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 16 Jun 2019 16:24:31 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:42051 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726012AbfFPUYb (ORCPT
+        id S1727272AbfFPUwi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 16 Jun 2019 16:52:38 -0400
+Received: from outgoing2.flk.host-h.net ([188.40.0.84]:55185 "EHLO
+        outgoing2.flk.host-h.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726038AbfFPUwh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 16 Jun 2019 16:24:31 -0400
-Received: from p5b06daab.dip0.t-ipconnect.de ([91.6.218.171] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1hcbhG-0006b9-RQ; Sun, 16 Jun 2019 22:24:15 +0200
-Date:   Sun, 16 Jun 2019 22:24:13 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Fenghua Yu <fenghua.yu@intel.com>
-cc:     Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        H Peter Anvin <hpa@zytor.com>,
-        Christopherson Sean J <sean.j.christopherson@intel.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Radim Krcmar <rkrcmar@redhat.com>,
-        Ravi V Shankar <ravi.v.shankar@intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        x86 <x86@kernel.org>, Jacob Pan <jacob.jun.pan@linux.intel.com>,
-        Len Brown <lenb@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>
-Subject: Re: [PATCH 1/3] x86/resctrl: Get max rmid and occupancy scale directly
- from CPUID instead of cpuinfo_x86
-In-Reply-To: <1560705250-211820-2-git-send-email-fenghua.yu@intel.com>
-Message-ID: <alpine.DEB.2.21.1906162141301.1760@nanos.tec.linutronix.de>
-References: <1560705250-211820-1-git-send-email-fenghua.yu@intel.com> <1560705250-211820-2-git-send-email-fenghua.yu@intel.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+        Sun, 16 Jun 2019 16:52:37 -0400
+Received: from www31.flk1.host-h.net ([188.40.1.173])
+        by antispam3-flk1.host-h.net with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.89)
+        (envelope-from <justin.swartz@risingedge.co.za>)
+        id 1hcc8f-0002Cg-6k; Sun, 16 Jun 2019 22:52:34 +0200
+Received: from [130.255.73.16] (helo=v01.28459.vpscontrol.net)
+        by www31.flk1.host-h.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.84_2)
+        (envelope-from <justin.swartz@risingedge.co.za>)
+        id 1hcc8Z-0001Ky-QF; Sun, 16 Jun 2019 22:52:27 +0200
+From:   Justin Swartz <justin.swartz@risingedge.co.za>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Heiko Stuebner <heiko@sntech.de>
+Cc:     Justin Swartz <justin.swartz@risingedge.co.za>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org
+Subject: [PATCH] ARM: dts: add device tree for Mecer Xtreme Mini S6
+Date:   Sun, 16 Jun 2019 20:47:45 +0000
+Message-Id: <20190616204746.21001-1-justin.swartz@risingedge.co.za>
+X-Mailer: git-send-email 2.11.0
+X-Authenticated-Sender: justin.swartz@risingedge.co.za
+X-Virus-Scanned: Clear (ClamAV 0.100.3/25482/Sun Jun 16 09:58:03 2019)
+X-Originating-IP: 188.40.1.173
+X-SpamExperts-Domain: risingedge.co.za
+X-SpamExperts-Username: 
+Authentication-Results: host-h.net; auth=pass (login) smtp.auth=@risingedge.co.za
+X-SpamExperts-Outgoing-Class: ham
+X-SpamExperts-Outgoing-Evidence: SB/global_tokens (0.00288349527902)
+X-Recommended-Action: accept
+X-Filter-ID: Mvzo4OR0dZXEDF/gcnlw0aEcKiGOen0TgGQo14QTNxSpSDasLI4SayDByyq9LIhVHere0oDd3L9u
+ imP3LL7ogkTNWdUk1Ol2OGx3IfrIJKyP9eGNFz9TW9u+Jt8z2T3Kf0cVcrGOWHuvhhsNFanSQ+63
+ p/UbUTcmIpuXtxg/CxkoU3DKFYUc83wlJ68apqUflsInmcmrhWKh5CGxWvoqRSom1N6/V6eFJqiY
+ 8AHI8ZE2UOjrQY19nYX/K9cXl+nRiJs637DFkSoL4pcNpzwOwYXt6ymoFHaG7BQtEYvFCSqHkTDj
+ dyZcrshowL7tH1pWEOpHXO3AWQB4otYhXjSOOlnZeZkTpSWjdKDr98cJY3GhoSe4G2e3oZQMPPCL
+ TET2QWyC1bDOw2oEv3DmjqX5Rdlnibl3vcBqVmvQB4A18acTZXv+E0Ab+jT9e8RETzDnmH6eQvWp
+ DWTULXV1jJ5bfceEJeNruLKdflVX7oFNsdHVhnpudkCyIg6Nob+f0OfCg2lBMt3xu9nbye2CdJLN
+ jSo1M+TSg3TNDI3/M5s9/ot3ko3rrae7IifWc6pL546YUVQwaYLh3di89W/ji5iahyCgJgyv93tC
+ 61cbiLYl3RCqADG/Ryndzp4OfbK7c6EqHwlqvaI+zok/BsKQK4gft4+8sY8CNaDDoRMm0CGce/fp
+ WUXurEbGCiZ0ePvZjCuJdbYb9IXfYGRpVS/0hA4Mwkg/wxsjmSXwdCAtc5U5IMGqr3wBwEeX6Ai5
+ 5FPRpzhbYqsuNEW45+y/2kiUpWy9c957+6R4kroQiAThpzOdFqFvbdRuq0FZjQOwDKXnhaC6dkwF
+ 9ybSMhHO+IPM0C985aNe1vwE2plJLdOGZ2rsAWflnmUXwJv1R9bnj+xoJG4VhUotTJ0/e5GmrorL
+ FK/ZMLGo5vAZZCvXfX7a9yMLanTRjdK3JtbOY4V5u4SqNrbdxyGLEIoLEuuC4P/fyEEgA3CnflZn
+ bjDB2+RGRgaXth2/9YEbMsGSn6owqJN0kS7MUpAEhFoAxikOdx3ALFboD0vMokt+4lO8Qp33tUy6
+ u+wammt1kz0RzA9JhvR8ZmWiOKLc7g6Iuozoj6Fx1fwaiDwJWw42swm4bO6gacpMpzJ5RNWFoIkg
+ vLC7uMZSLKkLPlzqsPnNmrTFfBI+gCHkFgyh9jAE9PwtDurXCCybWAnihjA708Lg3Y2gXyaf+rIt
+ vvthbyiMZOAfvJjwL84MO4Vozqbzv/NmqBexmg1oMlu3UCyNNO7qENlLqkRemjF1A1q3g0ZrubFa
+ n/xi+AGXOIO97ttnHrPmGyC6rR21+9c=
+X-Report-Abuse-To: spam@antispammaster.host-h.net
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 16 Jun 2019, Fenghua Yu wrote:
+The Mecer Xtreme Mini S6 features a Rockchip RK3229 SoC,
+1GB DDR3 RAM, 8GB eMMC, MicroSD port, 10/100Mbps Ethernet,
+Realtek 8723BS WLAN module, 2 x USB 2.0 ports, HDMI output,
+and S/PDIF output.
 
-> Although x86_cache_max_rmid and x86_cache_occ_scale are only read once
-> during resctrl initialization, they are always stored in cpuinfo_x86 for
-> each CPU during run time without usage. Even if resctrl is not
-> configured, they still occupy space in cpuinfo_x86.
+Signed-off-by: Justin Swartz <justin.swartz@risingedge.co.za>
+---
+ arch/arm/boot/dts/Makefile        |   1 +
+ arch/arm/boot/dts/rk3229-xms6.dts | 286 ++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 287 insertions(+)
+ create mode 100644 arch/arm/boot/dts/rk3229-xms6.dts
 
-And that's a problem because?
-
-> To save cpuinfo_x86 space and make CPU and resctrl initialization simpler,
-> remove the two fields from cpuinfo_x86 and get max rmid and occupancy
-
-What is simpler? The fact that more code fiddles with CPUID? That's exactly
-the wrong direction.
-
-The storage size of struct cpuinfo is largely uninteresting especially as
-long as we keep num_online_cpus copies of the same information around.
-
-Just grep for places which invoke CPUID and then look how many of them do
-it over and over and even the code in arch/x86/kernel/cpu/ is an
-unpenetrable mess for exactly this reason.
-
-The right thing to do is to have one instance of the CPUID information
-which is
-
-  - a proper data structure with named fields and named bits
-
-  - a single master instance which can be mapped to all CPUs
-
-This data structure is filled in in one go by reading out all leaves and
-not by the maze we have today which puts together selected parts piecewise
-and never exposes a full and consistent picture.
-
-This allows to remove all these custom copies of CPUID leaf readouts and
-allows proper filtering/disabling at a central place.
-
-Making it a proper data structure with fields and bits gets rid of all that
-hex masking/shifting nonsense which is used to decode parts of those
-fields.
-
-That's not a performance issue because all performance critical code should
-use static_cpu_has() anyway. For non critical code boot_cpu_has() is
-sufficient.
-
-Upcoming secondary CPUs would do a sanity check on their CPUID content to
-check whether everything is symmetric. We should do that actually today
-because not detecting asymetric features early leads to exactly the issue
-which was fixed recently with loading the micro code earlier than perf.
-But we can't because the information retrieval is done in a gazillion of
-places.
-  
-Now you might argue that the upcoming asymetric processors (SIGH!) will
-require per CPU instances of the feature leafs. Sure that needs some
-thought, but it needs thought even with the current code and I'm absolutely
-not interested to duct tape that stuff into the current code.
-
-The solution for this with the above scheme is to utilize the feature
-mismatch detection and have a proper classification which features are
-allowed to deviate and which are not. For those which can deviate, we can
-provide separate storage as this information needs to be propagated to
-other entities (fault handlers, placement code, xsave variants etc.). But
-that's a limited amount of information and the bulk will still be the same.
-
-This mismatch detection is essential for dealing with future asymetric
-CPUs proper. When the kernel detects it, it can disable mismatching
-features which are not yet handled by code which has to be aware of them.
-
-And disabling them means that with that scheme we can actually trap CPUID
-in userspace and provide it consistent and filtered information instead
-of having the mismatch between kernel view and user space view.
-
-Borislav has experimented with that already, but thanks to the marvelous
-security features built into Intel (and other) CPUs this is still mostly a
-drawing board exercise.
-
-Just for the record. Before this cleanup takes place, I'm not even looking
-at any patches which attempt to support asymetric processors. The current
-supply of duct tape engineering horrors is sufficient for bad mood. No need
-for more of that.
-
-Thanks,
-
-	tglx
+diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+index dab2914fa293..6fbd7c304f62 100644
+--- a/arch/arm/boot/dts/Makefile
++++ b/arch/arm/boot/dts/Makefile
+@@ -902,6 +902,7 @@ dtb-$(CONFIG_ARCH_ROCKCHIP) += \
+ 	rk3188-radxarock.dtb \
+ 	rk3228-evb.dtb \
+ 	rk3229-evb.dtb \
++	rk3229-xms6.dtb \
+ 	rk3288-evb-act8846.dtb \
+ 	rk3288-evb-rk808.dtb \
+ 	rk3288-fennec.dtb \
+diff --git a/arch/arm/boot/dts/rk3229-xms6.dts b/arch/arm/boot/dts/rk3229-xms6.dts
+new file mode 100644
+index 000000000000..9b666fa66292
+--- /dev/null
++++ b/arch/arm/boot/dts/rk3229-xms6.dts
+@@ -0,0 +1,286 @@
++// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
++
++/dts-v1/;
++
++#include <dt-bindings/input/input.h>
++#include "rk3229.dtsi"
++
++/ {
++	model = "Rockchip RK3229 (Mecer Xtreme Mini S6)";
++	compatible = "rockchip,rk3229-xms6", "rockchip,rk3229";
++
++	memory@60000000 {
++		device_type = "memory";
++		reg = <0x60000000 0x40000000>;
++	};
++
++	dc_12v: dc-12v-regulator {
++		compatible = "regulator-fixed";
++		regulator-name = "dc_12v";
++		regulator-always-on;
++		regulator-boot-on;
++		regulator-min-microvolt = <12000000>;
++		regulator-max-microvolt = <12000000>;
++	};
++
++	ext_gmac: ext_gmac {
++		compatible = "fixed-clock";
++		clock-frequency = <125000000>;
++		clock-output-names = "ext_gmac";
++		#clock-cells = <0>;
++	};
++
++	vcc_host: vcc-host-regulator {
++		compatible = "regulator-fixed";
++		enable-active-high;
++		gpio = <&gpio3 RK_PC4 GPIO_ACTIVE_HIGH>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&host_vbus_drv>;
++		regulator-name = "vcc_host";
++		regulator-always-on;
++		regulator-boot-on;
++		vin-supply = <&vcc_sys>;
++	};
++
++	vcc_phy: vcc-phy-regulator {
++		compatible = "regulator-fixed";
++		enable-active-high;
++		regulator-name = "vcc_phy";
++		regulator-min-microvolt = <1800000>;
++		regulator-max-microvolt = <1800000>;
++		regulator-always-on;
++		regulator-boot-on;
++		vin-supply = <&vccio_1v8>;
++	};
++
++	vcc_sys: vcc-sys-regulator {
++		compatible = "regulator-fixed";
++		regulator-name = "vcc_sys";
++		regulator-always-on;
++		regulator-boot-on;
++		regulator-min-microvolt = <5000000>;
++		regulator-max-microvolt = <5000000>;
++		vin-supply = <&dc_12v>;
++	};
++
++	vccio_1v8: vccio-1v8-regulator {
++		compatible = "regulator-fixed";
++		regulator-name = "vccio_1v8";
++		regulator-min-microvolt = <1800000>;
++		regulator-max-microvolt = <1800000>;
++		regulator-always-on;
++		vin-supply = <&vcc_sys>;
++	};
++
++	vccio_3v3: vccio-3v3-regulator {
++		compatible = "regulator-fixed";
++		regulator-name = "vccio_3v3";
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++		regulator-always-on;
++		vin-supply = <&vcc_sys>;
++	};
++
++	vdd_arm: vdd-arm-regulator {
++		compatible = "pwm-regulator";
++		pwms = <&pwm1 0 25000 1>;
++		pwm-supply = <&vcc_sys>;
++		regulator-name = "vdd_arm";
++		regulator-min-microvolt = <950000>;
++		regulator-max-microvolt = <1400000>;
++		regulator-always-on;
++		regulator-boot-on;
++	};
++
++	vdd_log: vdd-log-regulator {
++		compatible = "pwm-regulator";
++		pwms = <&pwm2 0 25000 1>;
++		pwm-supply = <&vcc_sys>;
++		regulator-name = "vdd_log";
++		regulator-min-microvolt = <1000000>;
++		regulator-max-microvolt = <1300000>;
++		regulator-always-on;
++		regulator-boot-on;
++	};
++
++	power-led {
++		compatible = "gpio-leds";
++
++		blue {
++			gpios = <&gpio3 21 GPIO_ACTIVE_HIGH>;
++			default-state = "on";
++		};
++	};
++};
++
++&cpu0 {
++	clock-frequency = <1464000000>;
++	cpu-supply = <&vdd_arm>;
++};
++
++&cpu1 {
++	clock-frequency = <1464000000>;
++	cpu-supply = <&vdd_arm>;
++};
++
++&cpu2 {
++	clock-frequency = <1464000000>;
++	cpu-supply = <&vdd_arm>;
++};
++
++&cpu3 {
++	clock-frequency = <1464000000>;
++	cpu-supply = <&vdd_arm>;
++};
++
++&vop {
++	status = "okay";
++};
++
++&vop_mmu {
++	status = "okay";
++};
++
++&iep_mmu {
++	status = "okay";
++};
++
++&hdmi {
++	status = "okay";
++};
++
++&hdmi_phy {
++	status = "okay";
++};
++
++&emmc {
++	cap-mmc-highspeed;
++	disable-wp;
++	non-removable;
++	status = "okay";
++};
++
++&sdmmc {
++	cap-mmc-highspeed;
++	disable-wp;
++	status = "okay";
++};
++
++&gmac {
++	assigned-clocks = <&cru SCLK_MAC_SRC>;
++	assigned-clock-rates = <50000000>;
++	clock_in_out = "output";
++	phy-supply = <&vcc_phy>;
++	phy-mode = "rmii";
++	phy-handle = <&phy>;
++	status = "okay";
++
++	mdio {
++		compatible = "snps,dwmac-mdio";
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		phy: phy@0 {
++			compatible = "ethernet-phy-id1234.d400", "ethernet-phy-ieee802.3-c22";
++			reg = <0>;
++			clocks = <&cru SCLK_MAC_PHY>;
++			resets = <&cru SRST_MACPHY>;
++			phy-is-integrated;
++		};
++	};
++};
++
++&gpu {
++	mali-supply = <&vdd_log>;
++	status = "okay";
++};
++
++&io_domains {
++	status = "okay";
++
++	vccio1-supply = <&vccio_3v3>;
++	vccio2-supply = <&vccio_1v8>;
++	vccio4-supply = <&vccio_3v3>;
++};
++
++&pinctrl {
++	usb {
++		host_vbus_drv: host-vbus-drv {
++			rockchip,pins = <3 RK_PC4 RK_FUNC_GPIO &pcfg_pull_none>;
++		};
++	};
++};
++
++&pwm1 {
++	status = "okay";
++};
++
++&pwm2 {
++	status = "okay";
++};
++
++&tsadc {
++	rockchip,hw-tshut-mode = <0>;
++	status = "okay";
++};
++
++&uart2 {
++	pinctrl-0 = <&uart21_xfer>;
++	status = "okay";
++};
++
++&u2phy0 {
++	status = "okay";
++
++	u2phy0_otg: otg-port {
++		phy-supply = <&vcc_host>;
++		status = "okay";
++	};
++
++	u2phy0_host: host-port {
++		phy-supply = <&vcc_host>;
++		status = "okay";
++	};
++};
++
++&u2phy1 {
++	status = "okay";
++
++	u2phy1_otg: otg-port {
++		phy-supply = <&vcc_host>;
++		status = "okay";
++	};
++
++	u2phy1_host: host-port {
++		phy-supply = <&vcc_host>;
++		status = "okay";
++	};
++};
++
++&usb_host0_ehci {
++	status = "okay";
++};
++
++&usb_host0_ohci {
++	status = "okay";
++};
++
++&usb_host1_ehci {
++	status = "okay";
++};
++
++&usb_host1_ohci {
++	status = "okay";
++};
++
++&usb_host2_ehci {
++	status = "okay";
++};
++
++&usb_host2_ohci {
++	status = "okay";
++};
++
++&usb_otg {
++	status = "okay";
++};
+-- 
+2.11.0
 
