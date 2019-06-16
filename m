@@ -2,86 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 21BA8474DC
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2019 15:52:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 25179474DF
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2019 15:56:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727181AbfFPNwc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 16 Jun 2019 09:52:32 -0400
-Received: from saturn.retrosnub.co.uk ([46.235.226.198]:41014 "EHLO
-        saturn.retrosnub.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725874AbfFPNwb (ORCPT
+        id S1727201AbfFPN4U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 16 Jun 2019 09:56:20 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:43608 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725874AbfFPN4U (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 16 Jun 2019 09:52:31 -0400
-Received: from archlinux (cpc149474-cmbg20-2-0-cust94.5-4.cable.virginm.net [82.4.196.95])
-        by saturn.retrosnub.co.uk (Postfix; Retrosnub mail submission) with ESMTPSA id 659889E8FF9;
-        Sun, 16 Jun 2019 14:52:29 +0100 (BST)
-Date:   Sun, 16 Jun 2019 14:52:27 +0100
-From:   Jonathan Cameron <jic23@jic23.retrosnub.co.uk>
-To:     William Breathitt Gray <vilhelm.gray@gmail.com>
-Cc:     Patrick Havelange <patrick.havelange@essensium.com>,
-        linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jonathan.Cameron@huawei.com
-Subject: Re: [PATCH 1/1] MAINTAINERS: add counter/ftm-quaddec driver entry
-Message-ID: <20190616145227.6198d6c1@archlinux>
-In-Reply-To: <20190612150221.GA6631@icarus>
-References: <20190612145223.8402-1-patrick.havelange@essensium.com>
-        <20190612150221.GA6631@icarus>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Sun, 16 Jun 2019 09:56:20 -0400
+Received: by mail-lf1-f68.google.com with SMTP id j29so4643047lfk.10;
+        Sun, 16 Jun 2019 06:56:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=vUj7/cmqz5EsJjON5muTu2B1PksKipHdgkZedARaWAY=;
+        b=EArIxiUtzwv4fAo+tQXYXVYXrYx2cB+95rmkMP1Sbun8BYAnoXJvcPNJ/+VqPFG7NV
+         RPrMmnQO0vhs5xa32MLsOiZv0l8PCJ8cpaPqhI2flQWvJqgbAcTNjvAxCzSwYJ7Wnbqx
+         8ME4LPcwqiU1sF5dW5bKJa8CbpWGd10FcE1NdAk1Pm89ovais6IaK27HFTgvojNoa2EO
+         QqjQFZTrx+kRH6ptv+PeApRs4rUu/bYTsNRNgQyTuy/XQQ9r8N2WGQ10Vc93gmIwNN6j
+         9+ef2fyP0GA5kaZ3bDgK4ygInimJmZAndBQWqnx2UA1K8ICDQQeW8AjiynhslUrERBml
+         hJqQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=vUj7/cmqz5EsJjON5muTu2B1PksKipHdgkZedARaWAY=;
+        b=iMZ9D5coofBoyYdS1DlOfqWCsVtFs/pYbq7lUYLmQKO/dY3QuwzTkJrn6rXBKesw2b
+         NofVkrvy5XxrFjWG5OmwtsAYQnsAPUIiE29tIxc/F5znb5D6ctgXLn3/1ns3ne5x86mc
+         0oaIifEgbpJcY2X0LG2r8v7jLaeal1Rmt1lvHTMu7g0wQs5JmlEBUD0mftpCqRd1xfNQ
+         rFRuzKSxcu1zdi/vsmT/XaduAmIZkDwZpIlz5QUkN3fCyRisABTybhZTUnzJwPiMIAOb
+         Mf+FmYedxBxH7U+l1hv8oaUcSFw2F+Zbm44cR6m5ud2Xc+u1uUt7mip4qFsacrxKJzK4
+         swaQ==
+X-Gm-Message-State: APjAAAVxtX86D5HtiPl7YMQRnzeCY/DyyiFis/hvaX5BsPU4YtAVsaSf
+        7utSn2xAiblI7FNDRCzYeoQ=
+X-Google-Smtp-Source: APXvYqziCr78Zs5kDjI/NHZgifF4wyDPKUb+UgfVgT5G+4vXttuXr/e5KKMq7FdThf8SUrN9mEM1kg==
+X-Received: by 2002:a19:6e41:: with SMTP id q1mr45228904lfk.20.1560693377880;
+        Sun, 16 Jun 2019 06:56:17 -0700 (PDT)
+Received: from [192.168.2.145] (ppp91-79-162-197.pppoe.mtu-net.ru. [91.79.162.197])
+        by smtp.googlemail.com with ESMTPSA id z12sm1297835lfg.67.2019.06.16.06.56.16
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 16 Jun 2019 06:56:17 -0700 (PDT)
+Subject: Re: [PATCH V3] i2c: busses: tegra: Add suspend-resume support
+To:     Wolfram Sang <wsa@the-dreams.de>, Bitan Biswas <bbiswas@nvidia.com>
+Cc:     Laxman Dewangan <ldewangan@nvidia.com>,
+        Thierry Reding <treding@nvidia.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Shardar Mohammed <smohammed@nvidia.com>,
+        Sowjanya Komatineni <skomatineni@nvidia.com>,
+        Mantravadi Karthik <mkarthik@nvidia.com>
+References: <1559885867-10190-1-git-send-email-bbiswas@nvidia.com>
+ <20190614211129.GG17899@ninjato>
+ <758d6dc2-f044-6be3-6896-196ef477d393@nvidia.com>
+ <20190615045405.GA1023@kunai>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <69a9a7e3-f885-b6ab-60bb-a1165ce2db23@gmail.com>
+Date:   Sun, 16 Jun 2019 16:56:06 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20190615045405.GA1023@kunai>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 13 Jun 2019 00:02:21 +0900
-William Breathitt Gray <vilhelm.gray@gmail.com> wrote:
-
-> On Wed, Jun 12, 2019 at 04:52:23PM +0200, Patrick Havelange wrote:
-> > Adding myself as maintainer for this driver
-> > 
-> > Signed-off-by: Patrick Havelange <patrick.havelange@essensium.com>
-> > ---
-> >  MAINTAINERS | 8 ++++++++
-> >  1 file changed, 8 insertions(+)
-> > 
-> > diff --git a/MAINTAINERS b/MAINTAINERS
-> > index 57f496cff999..6671854098d6 100644
-> > --- a/MAINTAINERS
-> > +++ b/MAINTAINERS
-> > @@ -6218,6 +6218,14 @@ M:	Philip Kelleher <pjk1939@linux.ibm.com>
-> >  S:	Maintained
-> >  F:	drivers/block/rsxx/
-> >  
-> > +FLEXTIMER FTM-QUADDEC DRIVER
-> > +M:	Patrick Havelange <patrick.havelange@essensium.com>
-> > +L:	linux-iio@vger.kernel.org
-> > +S:	Maintained
-> > +F:	Documentation/ABI/testing/sysfs-bus-counter-ftm-quadddec
-> > +F:	Documentation/devicetree/bindings/counter/ftm-quaddec.txt
-> > +F:	drivers/counter/ftm-quaddec.c
-> > +
-> >  FLOPPY DRIVER
-> >  M:	Jiri Kosina <jikos@kernel.org>
-> >  T:	git git://git.kernel.org/pub/scm/linux/kernel/git/jikos/floppy.git
-> > -- 
-> > 2.19.1  
+15.06.2019 7:54, Wolfram Sang пишет:
 > 
-> Thank you, this should take care of those files.
+>>> Without a maintainer ack, this is an exception this time. Should we add
+>>> Dmitry as another maintainer or reviewer at least?
+>>>
+>> I shall followup with Maintainer for ACK in future I2C tegra patches.
 > 
-> Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
+> This comment was not directed at you, sorry if that was not clear. It
+> was more for Laxman, Thierry, Jonathan, and Dmitry (if he is
+> interested).
+> 
 
-Given I took the last patch related to this driver, I'll pick this
-one up as well.   William, let me know on each series whether you want
-me to.  I would imagine that sometimes you'll have a enough going on
-you'll want to do something more efficient, but whilst it's individual
-patches this works fine.
-
-Applied to the togreg branch of iio.git and pushed out as testing.
-
-Thanks,
-
-Jonathan
-
-
+I don't mind at all to review and test patches for the driver and can propose myself
+as a reviewer if that helps and if there are no objections from the Tegra maintainers.
+My primary interest is to have my devices working after next kernel update, but I also
+like to review patches in general if they are touching area that I'm familiar with.
