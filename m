@@ -2,87 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EB17E4740A
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2019 11:55:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 199CC4740D
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2019 11:59:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726650AbfFPJzT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 16 Jun 2019 05:55:19 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:41666 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725888AbfFPJzT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 16 Jun 2019 05:55:19 -0400
-Received: from p5b06daab.dip0.t-ipconnect.de ([91.6.218.171] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1hcRsP-0007lv-2B; Sun, 16 Jun 2019 11:55:05 +0200
-Date:   Sun, 16 Jun 2019 11:55:03 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
-cc:     Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@suse.de>,
-        Ashok Raj <ashok.raj@intel.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Andi Kleen <andi.kleen@intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Suravee Suthikulpanit <Suravee.Suthikulpanit@amd.com>,
-        Stephane Eranian <eranian@google.com>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        Randy Dunlap <rdunlap@infradead.org>, x86@kernel.org,
-        linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org,
-        Ricardo Neri <ricardo.neri@intel.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Jacob Pan <jacob.jun.pan@intel.com>,
-        Juergen Gross <jgross@suse.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Wincy Van <fanwenyi0529@gmail.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Baoquan He <bhe@redhat.com>,
-        Jan Kiszka <jan.kiszka@siemens.com>,
-        Lu Baolu <baolu.lu@linux.intel.com>
-Subject: Re: [RFC PATCH v4 18/21] x86/apic: Add a parameter for the APIC
- delivery mode
-In-Reply-To: <1558660583-28561-19-git-send-email-ricardo.neri-calderon@linux.intel.com>
-Message-ID: <alpine.DEB.2.21.1906161151240.1760@nanos.tec.linutronix.de>
-References: <1558660583-28561-1-git-send-email-ricardo.neri-calderon@linux.intel.com> <1558660583-28561-19-git-send-email-ricardo.neri-calderon@linux.intel.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        id S1727091AbfFPJ6a (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 16 Jun 2019 05:58:30 -0400
+Received: from mga02.intel.com ([134.134.136.20]:28463 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725888AbfFPJ6a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 16 Jun 2019 05:58:30 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Jun 2019 02:58:29 -0700
+X-ExtLoop1: 1
+Received: from tao-optiplex-7060.sh.intel.com ([10.239.13.104])
+  by orsmga005.jf.intel.com with ESMTP; 16 Jun 2019 02:58:27 -0700
+From:   Tao Xu <tao3.xu@intel.com>
+To:     pbonzini@redhat.com, rkrcmar@redhat.com, corbet@lwn.net,
+        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
+        sean.j.christopherson@intel.com, fenghua.yu@intel.com
+Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        tao3.xu@intel.com, jingqi.liu@intel.com
+Subject: [PATCH RESEND v3 0/3] KVM: x86: Enable user wait instructions
+Date:   Sun, 16 Jun 2019 17:55:52 +0800
+Message-Id: <20190616095555.20978-1-tao3.xu@intel.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 23 May 2019, Ricardo Neri wrote:
->  
->  struct irq_cfg {
-> -	unsigned int		dest_apicid;
-> -	unsigned int		vector;
-> +	unsigned int				dest_apicid;
-> +	unsigned int				vector;
-> +	enum ioapic_irq_destination_types	delivery_mode;
+UMONITOR, UMWAIT and TPAUSE are a set of user wait instructions.
 
-And how is this related to IOAPIC? I know this enum exists already, but in
-connection with MSI this does not make any sense at all.
+UMONITOR arms address monitoring hardware using an address. A store
+to an address within the specified address range triggers the
+monitoring hardware to wake up the processor waiting in umwait.
 
-> +
-> +		/*
-> +		 * Initialize the delivery mode of this irq to match the
-> +		 * default delivery mode of the APIC. This is useful for
-> +		 * children irq domains which want to take the delivery
-> +		 * mode from the individual irq configuration rather
-> +		 * than from the APIC.
-> +		 */
-> +		 apicd->hw_irq_cfg.delivery_mode = apic->irq_delivery_mode;
+UMWAIT instructs the processor to enter an implementation-dependent
+optimized state while monitoring a range of addresses. The optimized
+state may be either a light-weight power/performance optimized state
+(c0.1 state) or an improved power/performance optimized state
+(c0.2 state).
 
-And here it's initialized from apic->irq_delivery_mode, which is an
-u32. Intuitive and consistent - NOT!
+TPAUSE instructs the processor to enter an implementation-dependent
+optimized state c0.1 or c0.2 state and wake up when time-stamp counter
+reaches specified timeout.
 
-Thanks,
+Availability of the user wait instructions is indicated by the presence
+of the CPUID feature flag WAITPKG CPUID.0x07.0x0:ECX[5].
 
-	tglx
+The patches enable the umonitor, umwait and tpause features in KVM.
+Because umwait and tpause can put a (psysical) CPU into a power saving
+state, by default we dont't expose it to kvm and enable it only when
+guest CPUID has it. If the instruction causes a delay, the amount
+of time delayed is called here the physical delay. The physical delay is
+first computed by determining the virtual delay (the time to delay
+relative to the VM’s timestamp counter). 
+
+The release document ref below link:
+Intel 64 and IA-32 Architectures Software Developer's Manual,
+https://software.intel.com/sites/default/files/\
+managed/39/c5/325462-sdm-vol-1-2abcd-3abcd.pdf
+This patch has a dependency on https://lkml.org/lkml/2019/6/7/1206
+
+Changelog:
+v3:
+	Simplify the patches, expose user wait instructions when the
+	guest has CPUID (Paolo)
+	Use mwait_control_cached to avoid frequently rdmsr of
+	IA32_UMWAIT_CONTROL (Paolo and Xiaoyao)
+	Handle vm-exit for UMWAIT and TPAUSE as "never happen" (Paolo)
+v2:
+	Separated from the series https://lkml.org/lkml/2018/7/10/160
+	Add provide a capability to enable UMONITOR, UMWAIT and TPAUSE 
+v1:
+	Sent out with MOVDIRI/MOVDIR64B instructions patches
+
+Tao Xu (3):
+  KVM: x86: add support for user wait instructions
+  KVM: vmx: Emulate MSR IA32_UMWAIT_CONTROL
+  KVM: vmx: handle vm-exit for UMWAIT and TPAUSE
+
+ arch/x86/include/asm/vmx.h      |  1 +
+ arch/x86/include/uapi/asm/vmx.h |  6 +++-
+ arch/x86/kvm/cpuid.c            |  2 +-
+ arch/x86/kvm/vmx/capabilities.h |  6 ++++
+ arch/x86/kvm/vmx/vmx.c          | 56 +++++++++++++++++++++++++++++++++
+ arch/x86/kvm/vmx/vmx.h          |  3 ++
+ arch/x86/power/umwait.c         |  3 +-
+ 7 files changed, 74 insertions(+), 3 deletions(-)
+
+-- 
+2.20.1
+
