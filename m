@@ -2,105 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5766D473C2
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2019 10:21:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 97881473BA
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2019 10:13:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726155AbfFPIVK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 16 Jun 2019 04:21:10 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:3414 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725865AbfFPIVK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 16 Jun 2019 04:21:10 -0400
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 45RS3P5Wz2z9v19q;
-        Sun, 16 Jun 2019 10:21:05 +0200 (CEST)
-Authentication-Results: localhost; dkim=pass
-        reason="1024-bit key; insecure key"
-        header.d=c-s.fr header.i=@c-s.fr header.b=JAcmLDvt; dkim-adsp=pass;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id OfUt7G1n3Fr2; Sun, 16 Jun 2019 10:21:05 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 45RS3P4GXPz9v19n;
-        Sun, 16 Jun 2019 10:21:05 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
-        t=1560673265; bh=1SrBWoXlclcq/cUIT3RSqtbhC9U/JqjMj1hkhPdAGfc=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=JAcmLDvtikWnCc0qk3wwmvIx5s+X1XIF3kGGVFj05NirrMOD5XA/MYyYSbNlfoGkr
-         6setvLyqHSqLbKLJdMkmifsiBDAQYBwqJtD8swRfT5kOQecmmbVNmbytPdUREIeK6q
-         e7IQHnpQGcOtYO4QD28PAut5cm1wUmo38t6SuhZE=
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 72E808B7D1;
-        Sun, 16 Jun 2019 10:21:08 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id QnD6C3CT-bfe; Sun, 16 Jun 2019 10:21:08 +0200 (CEST)
-Received: from [192.168.232.53] (unknown [192.168.232.53])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id E9A958B7CD;
-        Sun, 16 Jun 2019 10:21:07 +0200 (CEST)
-Subject: Re: [PATCH] powerpc/mm/32s: only use MMU to mark initmem NX if
- STRICT_KERNEL_RWX
-To:     Andreas Schwab <schwab@linux-m68k.org>
-Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        j.neuschaefer@gmx.net, Michael Ellerman <mpe@ellerman.id.au>,
-        Paul Mackerras <paulus@samba.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>
-References: <cover.1550775950.git.christophe.leroy@c-s.fr>
- <1e412310cc18ea654fb2ce4c935654d8d1069f27.1550775950.git.christophe.leroy@c-s.fr>
- <8736kb9fry.fsf_-_@igel.home>
- <20190615152559.Horde.0lTFIZALxZ-RI75z94G3jA8@messagerie.si.c-s.fr>
- <87pnne9aqo.fsf@igel.home>
-From:   christophe leroy <christophe.leroy@c-s.fr>
-Message-ID: <7dd94b1c-08cb-c6ac-83c1-5b67a3dad2d8@c-s.fr>
-Date:   Sun, 16 Jun 2019 10:06:14 +0200
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.1
+        id S1726062AbfFPINQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 16 Jun 2019 04:13:16 -0400
+Received: from smtprelay0077.hostedemail.com ([216.40.44.77]:45099 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725865AbfFPINQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 16 Jun 2019 04:13:16 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay07.hostedemail.com (Postfix) with ESMTP id 43DCC181D3368;
+        Sun, 16 Jun 2019 08:13:15 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::,RULES_HIT:41:355:379:599:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2393:2559:2562:2828:3138:3139:3140:3141:3142:3352:3622:3865:3866:3867:3868:3870:3872:3873:3874:4321:5007:10004:10400:10471:10848:11026:11232:11473:11657:11658:11914:12043:12296:12438:12555:12740:12760:12895:13069:13161:13229:13255:13311:13357:13439:14096:14097:14659:14721:21080:21627:30012:30054:30070:30091,0,RBL:23.242.196.136:@perches.com:.lbl8.mailshell.net-62.14.0.180 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:24,LUA_SUMMARY:none
+X-HE-Tag: print89_735c9b2327048
+X-Filterd-Recvd-Size: 2424
+Received: from XPS-9350 (cpe-23-242-196-136.socal.res.rr.com [23.242.196.136])
+        (Authenticated sender: joe@perches.com)
+        by omf14.hostedemail.com (Postfix) with ESMTPA;
+        Sun, 16 Jun 2019 08:13:12 +0000 (UTC)
+Message-ID: <1d668acbce4cc9759cc940f56016dc9437df5441.camel@perches.com>
+Subject: Re: [PATCH v2] staging: rtl8723bs: Resolve checkpatch error "that
+ open brace { should be on the previous line" in the rtl8723 driver
+From:   Joe Perches <joe@perches.com>
+To:     Shobhit Kukreti <shobhitkukreti@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Bastien Nocera <hadess@hadess.net>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Larry Finger <Larry.Finger@lwfinger.net>,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+Date:   Sun, 16 Jun 2019 01:13:11 -0700
+In-Reply-To: <1560634159-9015-1-git-send-email-shobhitkukreti@gmail.com>
+References: <20190615185355.GC10201@kroah.com>
+         <1560634159-9015-1-git-send-email-shobhitkukreti@gmail.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.30.5-0ubuntu0.18.10.1 
 MIME-Version: 1.0
-In-Reply-To: <87pnne9aqo.fsf@igel.home>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
-X-Antivirus: Avast (VPS 190616-0, 16/06/2019), Outbound message
-X-Antivirus-Status: Clean
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Sat, 2019-06-15 at 14:29 -0700, Shobhit Kukreti wrote:
+> Cleaned up the code from the following files to get rid of
+> check patch error "that open brace { should be on the previous line"
 
+It's fine you are modifying brace styles, but:
 
-Le 15/06/2019 à 16:36, Andreas Schwab a écrit :
-> On Jun 15 2019, Christophe Leroy <christophe.leroy@c-s.fr> wrote:
-> 
->> Andreas Schwab <schwab@linux-m68k.org> a écrit :
->>
->>> If STRICT_KERNEL_RWX is disabled, never use the MMU to mark initmen
->>> nonexecutable.
->>
->> I dont understand, can you elaborate ?
-> 
-> It breaks suspend.
+> diff --git a/drivers/staging/rtl8723bs/os_dep/mlme_linux.c b/drivers/staging/rtl8723bs/os_dep/mlme_linux.c
+> index aa2499f..4631b68 100644
+> --- a/drivers/staging/rtl8723bs/os_dep/mlme_linux.c
+> +++ b/drivers/staging/rtl8723bs/os_dep/mlme_linux.c
+> @@ -46,8 +46,7 @@ void rtw_os_indicate_connect(struct adapter *adapter)
+>  	struct mlme_priv *pmlmepriv = &(adapter->mlmepriv);
+>  
+>  	if ((check_fwstate(pmlmepriv, WIFI_ADHOC_MASTER_STATE) == true) ||
+> -		(check_fwstate(pmlmepriv, WIFI_ADHOC_STATE) == true))
+> -	{
+> +		(check_fwstate(pmlmepriv, WIFI_ADHOC_STATE) == true)) {
+>  		rtw_cfg80211_ibss_indicate_connect(adapter);
+>  	}
+>  	else
 
-Ok, but we need to explain why it breaks suspend, and again your patch 
-is wrong anyway because that area of memory is mapped with BATs so you 
-can't use change_page_attr()
+the else should be on the same line as the close brace
 
-> 
->> This area is mapped with BATs so using change_page_attr() is pointless.
-> 
-> There must be a reason STRICT_KERNEL_RWX is not available with
-> HIBERNATE.
+> @@ -106,8 +105,9 @@ void rtw_reset_securitypriv(struct adapter *adapter)
+>  		adapter->securitypriv.ndisencryptstatus = Ndis802_11WEPDisabled;
+>  
+>  	}
+> -	else /* reset values in securitypriv */
+> -	{
+> +	else {
+> +		/* reset values in securitypriv */
+> +
 
-Yes but HIBERNATE and suspend are not the same thing. I guess HIBERNATE 
-is not available with STRICT_KERNEL_RWX because HIBERNATE have to write 
-back saved state into read-only memory as well.
+and here.  etc.  Please change all instances appropriately.
 
-Christophe
-
----
-L'absence de virus dans ce courrier électronique a été vérifiée par le logiciel antivirus Avast.
-https://www.avast.com/antivirus
 
