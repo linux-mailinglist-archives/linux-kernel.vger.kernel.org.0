@@ -2,56 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E55BB476E5
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2019 23:03:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 269C2476F9
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2019 23:31:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727446AbfFPVDn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 16 Jun 2019 17:03:43 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:52118 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725920AbfFPVDn (ORCPT
+        id S1727427AbfFPVb1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 16 Jun 2019 17:31:27 -0400
+Received: from mail-pf1-f182.google.com ([209.85.210.182]:43467 "EHLO
+        mail-pf1-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726698AbfFPVb1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 16 Jun 2019 17:03:43 -0400
-Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::3d5])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 64DC7151BFFA9;
-        Sun, 16 Jun 2019 14:03:42 -0700 (PDT)
-Date:   Sun, 16 Jun 2019 14:03:41 -0700 (PDT)
-Message-Id: <20190616.140341.1206535816113380121.davem@davemloft.net>
-To:     ivan.khoronzhuk@linaro.org
-Cc:     grygorii.strashko@ti.com, linux-omap@vger.kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next] net: ethernet: ti: davinci_cpdma: use idled
- submit
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20190615110132.6594-1-ivan.khoronzhuk@linaro.org>
-References: <20190615110132.6594-1-ivan.khoronzhuk@linaro.org>
-X-Mailer: Mew version 6.8 on Emacs 26.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Sun, 16 Jun 2019 14:03:42 -0700 (PDT)
+        Sun, 16 Jun 2019 17:31:27 -0400
+Received: by mail-pf1-f182.google.com with SMTP id i189so4509687pfg.10
+        for <linux-kernel@vger.kernel.org>; Sun, 16 Jun 2019 14:31:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=7VduBeQKV5QqdjaRJMGgAlmp2IHtPHNsUVn3EFkQ16A=;
+        b=NaOJcl+yzjhCeEuveWJCk+ztsn2feghCQVbaTu/DJt/zO+DaY4tFj/CMCQsela+8h+
+         EKmmF2vvjDrJU6JhpZFROJhfuBdfMvQrtx3BxSU/UtzB8jNzHBhvW5ji713pacfpK+ur
+         T/RCfrXIOu2euKG9FHWvlH0SOhLRvANMeGHsY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=7VduBeQKV5QqdjaRJMGgAlmp2IHtPHNsUVn3EFkQ16A=;
+        b=ZfFSf5qe5atXd9tmNFgoxwqDCbXHCfuUiQKbMNHzC8+C77lKDXxk3017l85JRskanb
+         bLT3bw/paT25YhQPSnbV/FFZ4WkdSoA24PY2ZMpidoa8XbrA3f0Zf2olioUYMc3a2VAz
+         Sxjfdq0Mv3zppTDIQ3LckpqUncsZ8YF9I2kC7EN+0mZuXUU+oZZ30ioyFeMIFdlbSdK9
+         3gsMsPZGXQrpRawrRlzh7Drs1Rs4NZVML6RozJFwDqCUlypiiI06EaYJn5Jdc9ZUHBfR
+         k9AiG7txuDulOgnpDs+wGx5bfnDMEwMRdv0DPs2BiWdI75FiJA5Xp4vynYA6GsbPvvgg
+         mCMA==
+X-Gm-Message-State: APjAAAXsM2Bg5XsKQm4t0XRjBALdM/2gyDrXtZjk3Umt7otAR382DRhm
+        /FjzHtWOpUKmDNjGgvQJFj+CHA==
+X-Google-Smtp-Source: APXvYqy5woxSa9sXUW5owSCTm3+vlDqFe+0XmxF8JtpZmxIUt7qyTuJKjIzBbbHvBsWgxujujdFMaA==
+X-Received: by 2002:a65:64d6:: with SMTP id t22mr43708172pgv.406.1560720686430;
+        Sun, 16 Jun 2019 14:31:26 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id f11sm4268923pjg.1.2019.06.16.14.31.25
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 16 Jun 2019 14:31:25 -0700 (PDT)
+Date:   Sun, 16 Jun 2019 14:31:24 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc:     Will Deacon <will.deacon@arm.com>,
+        Jayachandran Chandrasekharan Nair <jnair@marvell.com>,
+        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+        Jan Glauber <jglauber@marvell.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [RFC] Disable lockref on arm64
+Message-ID: <201906161429.BCE1083@keescook>
+References: <20190612040933.GA18848@dc5-eodlnx05.marvell.com>
+ <20190612093151.GA11554@brain-police>
+ <20190614070914.GA21961@dc5-eodlnx05.marvell.com>
+ <20190614095846.GC10506@fuggles.cambridge.arm.com>
+ <CAKv+Gu_Kdq=UPijjA84FpmO=ZsdEO9EyyF7GeOQ+WmfqtO_hMg@mail.gmail.com>
+ <20190614103850.GG10659@fuggles.cambridge.arm.com>
+ <201906142026.1BC27EDB1E@keescook>
+ <CAKv+Gu_XuhgUCYOeykrbaxJz-wL1HFrc_O+HeZHqaGkMHd2J9Q@mail.gmail.com>
+ <201906150654.FF4400F7C8@keescook>
+ <CAKv+Gu9-rZ16Nb9t3=knzW0BHu0eNxQoPwWS4c8UMMm=2iqiuw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKv+Gu9-rZ16Nb9t3=knzW0BHu0eNxQoPwWS4c8UMMm=2iqiuw@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
-Date: Sat, 15 Jun 2019 14:01:32 +0300
-
-> While data pass suspend, reuse of rx descriptors can be disabled using
-> channel state & lock from cpdma layer. For this, submit to a channel
-> has to be disabled using state != "not active" under lock, what is done
-> with this patch. The same submit is used to fill rx channel while
-> ndo_open, when channel is idled, so add idled submit routine that
-> allows to prepare descs for the channel. All this simplifies code and
-> helps to avoid dormant mode usage and send packets only to active
-> channels, avoiding potential race in later on changes. Also add missed
-> sync barrier analogically like in other places after stopping tx
-> queues.
+On Sat, Jun 15, 2019 at 04:18:21PM +0200, Ard Biesheuvel wrote:
+> Yes, I am using the same saturation point as x86. In this example, I
+> am not entirely sure I understand why it matters, though: the atomics
+> guarantee that the write by CPU2 fails if CPU1 changed the value in
+> the mean time, regardless of which value it wrote.
 > 
-> Signed-off-by: Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
+> I think the concern is more related to the likelihood of another CPU
+> doing something nasty between the moment that the refcount overflows
+> and the moment that the handler pins it at INT_MIN/2, e.g.,
+> 
+> > CPU 1                   CPU 2
+> > inc()
+> >   load INT_MAX
+> >   about to overflow?
+> >   yes
+> >
+> >   set to 0
+> >                          <insert exploit here>
+> >   set to INT_MIN/2
 
-Applied.
+Ah, gotcha, but the "set to 0" is really "set to INT_MAX+1" (not zero)
+if you're using the same saturation.
+
+-- 
+Kees Cook
