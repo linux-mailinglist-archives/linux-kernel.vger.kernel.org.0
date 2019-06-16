@@ -2,87 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8BF69473CF
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2019 10:45:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3B3FD473D4
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2019 10:55:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726833AbfFPIpx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 16 Jun 2019 04:45:53 -0400
-Received: from mail-out.m-online.net ([212.18.0.9]:49023 "EHLO
-        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725990AbfFPIpx (ORCPT
+        id S1726504AbfFPIxn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 16 Jun 2019 04:53:43 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:41632 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725945AbfFPIxm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 16 Jun 2019 04:45:53 -0400
-Received: from frontend01.mail.m-online.net (unknown [192.168.8.182])
-        by mail-out.m-online.net (Postfix) with ESMTP id 45RSby1NXQz1rBn0;
-        Sun, 16 Jun 2019 10:45:50 +0200 (CEST)
-Received: from localhost (dynscan1.mnet-online.de [192.168.6.70])
-        by mail.m-online.net (Postfix) with ESMTP id 45RSby0dMVz1qql1;
-        Sun, 16 Jun 2019 10:45:50 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at mnet-online.de
-Received: from mail.mnet-online.de ([192.168.8.182])
-        by localhost (dynscan1.mail.m-online.net [192.168.6.70]) (amavisd-new, port 10024)
-        with ESMTP id fnOwM6JoyojP; Sun, 16 Jun 2019 10:45:49 +0200 (CEST)
-X-Auth-Info: fJwPQASbNuDgl/aehkgpQTFNB7ny6jTRKY6YjGIMgoKnJD+r41neojvRQ/CdEYcp
-Received: from igel.home (ppp-46-244-189-62.dynamic.mnet-online.de [46.244.189.62])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.mnet-online.de (Postfix) with ESMTPSA;
-        Sun, 16 Jun 2019 10:45:48 +0200 (CEST)
-Received: by igel.home (Postfix, from userid 1000)
-        id CF0352C117A; Sun, 16 Jun 2019 10:45:46 +0200 (CEST)
-From:   Andreas Schwab <schwab@linux-m68k.org>
-To:     christophe leroy <christophe.leroy@c-s.fr>
-Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>, j.neuschaefer@gmx.net,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH v5 13/16] powerpc/mm/32s: Use BATs for STRICT_KERNEL_RWX
-References: <cover.1550775950.git.christophe.leroy@c-s.fr>
-        <1e412310cc18ea654fb2ce4c935654d8d1069f27.1550775950.git.christophe.leroy@c-s.fr>
-        <877e9n9gng.fsf@igel.home>
-        <1c271e47-6917-2f29-97b6-f3160ddf5117@c-s.fr>
-X-Yow:  While my BRAINPAN is being refused service in BURGER KING,
- Jesuit priests are DATING CAREER DIPLOMATS!!
-Date:   Sun, 16 Jun 2019 10:45:46 +0200
-In-Reply-To: <1c271e47-6917-2f29-97b6-f3160ddf5117@c-s.fr> (christophe leroy's
-        message of "Sun, 16 Jun 2019 10:01:10 +0200")
-Message-ID: <87lfy1apfp.fsf@igel.home>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.2.90 (gnu/linux)
+        Sun, 16 Jun 2019 04:53:42 -0400
+Received: from p5b06daab.dip0.t-ipconnect.de ([91.6.218.171] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1hcQut-0007Ik-Bj; Sun, 16 Jun 2019 10:53:35 +0200
+Date:   Sun, 16 Jun 2019 10:53:33 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
+cc:     Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@suse.de>,
+        Ashok Raj <ashok.raj@intel.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Andi Kleen <andi.kleen@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Suravee Suthikulpanit <Suravee.Suthikulpanit@amd.com>,
+        Stephane Eranian <eranian@google.com>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        Randy Dunlap <rdunlap@infradead.org>, x86@kernel.org,
+        linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org,
+        Ricardo Neri <ricardo.neri@intel.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Jacob Pan <jacob.jun.pan@intel.com>,
+        Juergen Gross <jgross@suse.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Wincy Van <fanwenyi0529@gmail.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Baoquan He <bhe@redhat.com>,
+        Jan Kiszka <jan.kiszka@siemens.com>,
+        Lu Baolu <baolu.lu@linux.intel.com>
+Subject: Re: [RFC PATCH v4 21/21] x86/watchdog/hardlockup/hpet: Support
+ interrupt remapping
+In-Reply-To: <alpine.DEB.2.21.1906161042080.1760@nanos.tec.linutronix.de>
+Message-ID: <alpine.DEB.2.21.1906161051491.1760@nanos.tec.linutronix.de>
+References: <1558660583-28561-1-git-send-email-ricardo.neri-calderon@linux.intel.com> <1558660583-28561-22-git-send-email-ricardo.neri-calderon@linux.intel.com> <alpine.DEB.2.21.1906161042080.1760@nanos.tec.linutronix.de>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Jun 16 2019, christophe leroy <christophe.leroy@c-s.fr> wrote:
+On Sun, 16 Jun 2019, Thomas Gleixner wrote:
 
-> Le 15/06/2019 à 14:28, Andreas Schwab a écrit :
->> On Feb 21 2019, Christophe Leroy <christophe.leroy@c-s.fr> wrote:
->>
->>> diff --git a/arch/powerpc/mm/pgtable_32.c b/arch/powerpc/mm/pgtable_32.c
->>> index a000768a5cc9..6e56a6240bfa 100644
->>> --- a/arch/powerpc/mm/pgtable_32.c
->>> +++ b/arch/powerpc/mm/pgtable_32.c
->>> @@ -353,7 +353,10 @@ void mark_initmem_nx(void)
->>>   	unsigned long numpages = PFN_UP((unsigned long)_einittext) -
->>>   				 PFN_DOWN((unsigned long)_sinittext);
->>>   -	change_page_attr(page, numpages, PAGE_KERNEL);
->>> +	if (v_block_mapped((unsigned long)_stext) + 1)
->>
->> That is always true.
->>
->
-> Did you boot with 'nobats' kernel parameter ?
->
-> If not, that's normal to be true, it means that memory is mapped with BATs.
+> On Thu, 23 May 2019, Ricardo Neri wrote:
+> > +/** irq_remapping_enabled() - Detect if interrupt remapping is enabled
+> > + * @hdata:	A data structure with the HPET block id
+> > + *
+> > + * Determine if the HPET block that the hardlockup detector is under
+> > + * the remapped interrupt domain.
+> > + *
+> > + * Returns: True interrupt remapping is enabled. False otherwise.
+> > + */
+> > +static bool irq_remapping_enabled(struct hpet_hld_data *hdata)
+> > +{
+> > +	struct irq_alloc_info info;
+> > +
+> > +	init_irq_alloc_info(&info, NULL);
+> > +	info.type = X86_IRQ_ALLOC_TYPE_HPET;
+> > +	info.hpet_id = hdata->blockid;
+> > +
+> > +	return !!irq_remapping_get_ir_irq_domain(&info);
+> > +}
+> > +
+> >  /**
+> >   * compose_msi_msg() - Populate address and data fields of an MSI message
+> >   * @hdata:	A data strucure with the message to populate
+> > @@ -161,6 +181,9 @@ static int update_msi_destid(struct hpet_hld_data *hdata)
+> >  {
+> >  	u32 destid;
+> >  
+> > +	if (irq_remapping_enabled(hdata))
+> > +		return hld_hpet_intremap_activate_irq(hdata);
+> 
+> No. This is horrible hackery violating all the layering which we carefully
+> put into place to avoid exactly this kind of sprinkling conditionals into
+> all code pathes.
+> 
+> With some thought the existing irqdomain hierarchy can be used to achieve
+> the same thing without tons of extra functions and conditionals.
 
-bool + 1 is always true.
+And of course this whole thing falls completely apart when someone enables
+the hpet watchdog on AMD.
 
-Andreas.
+Can you folks please stop this works for me tinkering and finally grasp
+that there is a world outside of Intel and outside of big enterprise boxes?
 
--- 
-Andreas Schwab, schwab@linux-m68k.org
-GPG Key fingerprint = 7578 EB47 D4E5 4D69 2510  2552 DF73 E780 A9DA AEC1
-"And now for something completely different."
+Thanks,
+
+	tglx
