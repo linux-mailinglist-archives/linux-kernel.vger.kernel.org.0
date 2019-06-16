@@ -2,66 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B8934774D
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 01:36:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F263047767
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 01:49:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727638AbfFPXgh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 16 Jun 2019 19:36:37 -0400
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:39467 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727544AbfFPXgS (ORCPT
+        id S1727416AbfFPXtN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 16 Jun 2019 19:49:13 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:37703 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726038AbfFPXtN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 16 Jun 2019 19:36:18 -0400
-Received: by mail-lf1-f67.google.com with SMTP id p24so5144339lfo.6;
-        Sun, 16 Jun 2019 16:36:17 -0700 (PDT)
+        Sun, 16 Jun 2019 19:49:13 -0400
+Received: by mail-lj1-f196.google.com with SMTP id 131so7527013ljf.4;
+        Sun, 16 Jun 2019 16:49:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=/LoNLOLC4v22fCk8MRxYZiVyFU9l44MdyNDw1bDmHwQ=;
-        b=m2yYGjNriXkaj18ueVpnD4vnoouUICdAj4mYFBxnqWOZGiwAaR5Bs62vrnNjku/2vP
-         X67mpJWA+Abgp3FLwUmzC4yHD/IIBAci1l5sCvSuG+RQj1QTQ4TBNADrYYOoJbkuKhZB
-         w56N3l17SwypZ6jd/tRs51e+XOyJr/UyXacC/6cZkB715iKmYAC2qQq3oVJZ2CdMIM8/
-         xiqV/zALHGyJE0dADZZDSa2AGYqQoRM85PqPwEFDpRKyfwFdjgM1tJGkTjxbivOYl5Bv
-         YlTMe6qRuDuKUcifzd1nvbQtVzFmLd8jB2MlIK4Zi0M+rUhN188PdRy25B6MGy6lxBzE
-         +wYg==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Y+5yDRvcNIN4RUhpeH+EVFUJxnejknqZPYJEnpgH9uI=;
+        b=I2DIE87nZet0GxiEsPHnRBPee2Nct6hYA0VsbLtWI2hTS2IcxmZaBMt3j1YB6KnFDW
+         bL0kVcVcey+0Ce8yytXOokVz0sWLKx+OeIbhS628Tn9lHcna/r1N+bmiv3UfvGVTu38R
+         veRxzSh0i1AlgBjc2UXjNKr4dCyGO8LNEegQ0ePMIE0B3tQcKnfFkd+2eol4UCQ8wlH9
+         PXrGto4DAw0ub8XG79V6Ca9wa8c9BSwdCQq1VQq6hDWQXJ3X/q62Pt3nGaWOJl8qc/d1
+         tN86HbJ1/70XxUo2XbCuoRMkZllAIQelK7LiRs0lCIzG4FtK1jj9fPA8C7snmyzZJme/
+         gEBg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=/LoNLOLC4v22fCk8MRxYZiVyFU9l44MdyNDw1bDmHwQ=;
-        b=JldVCg+NoqVj19IuB9My4zeUyA0WRDy70zx1prCZJ8lQANPP9hwpJMMqssyuW5GhZ9
-         Bm/7kbbNLkehqyoNb1KPPEwuvFNqGQL9ZTK0fOpcVXyyWk9G4o0rfz8eZE5XiA0Qf48U
-         nueNDBNzMIhTjLSClEweKB9E+XPi6xxzAvaBcGT266WBSfOOx5PCrazRHRsJBZXyQ3US
-         eDJHLAhY+CHd2OHt9eeRy8YsPcxc8OcOvfbF6bl0bs7FJyKoCkgH8O7+Yh62+MBKg9Ui
-         qMd/ph65XVD9hQl4IxY6fn6m/pxO4cmvu8wCfC+lLbKT1OMSgEtOPMqI1tqEyFvSBmsp
-         Hclw==
-X-Gm-Message-State: APjAAAVgmEFqD1DjY82Pzm8FkI72eO5uDmxu5DpoUFO8CC/skRLTVs5D
-        7zyPTx4gWklVHPKwsVfiSHw=
-X-Google-Smtp-Source: APXvYqzrZ4HrWxTmGdAtjCWvopnaULhASTi++CVRUtOFAy27Rd4qfCGCV/jA8t8SLbcC9nAlQ6DX4A==
-X-Received: by 2002:ac2:5212:: with SMTP id a18mr46653296lfl.50.1560728176194;
-        Sun, 16 Jun 2019 16:36:16 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Y+5yDRvcNIN4RUhpeH+EVFUJxnejknqZPYJEnpgH9uI=;
+        b=moNz9SNemn8sRar+HzMqRkknp7q65t4VVY9NBc8GNo8YrnRb17VhADtTVKaovKHJsu
+         TiAjsaTWXUPCXBvu7U2sKrE93FfcF5N0bZwkIixc9IrGVvHElwVlBRq7BPu/e8GYOFmm
+         LsOXtYOURNeA58FR0mMOAWab8Lg0dW7Cqo1vJOUlyvLBBipGsR0O46YS11Nou1F9V5rC
+         DpJd4/10aJLZ9IDZR8V2ZTMy22+z04CwzvRyp4g0Kg4BXYVDlWu+OIhVPq47VSUKXNcn
+         yxmG9P3XX+tidNDB7OFe6JfaWeQIhYsmo43aheezXsxMZpdnqRgt9bhu10aEIgnAXAHi
+         plNQ==
+X-Gm-Message-State: APjAAAWm4a210LYAiVVoWkrBweEMSfG4WrqwXXHQk3Seasj6hvePYz+C
+        MSOlZTIKib5WSyLGG3GtRxQ=
+X-Google-Smtp-Source: APXvYqzLiyi3CILtjo8tsRuB+ZrO67sNW5f+HoFMMYOB1BfFkdjvpNaEx0PNX92mlbfsJPxn9EbKow==
+X-Received: by 2002:a2e:a0cf:: with SMTP id f15mr27454859ljm.180.1560728952126;
+        Sun, 16 Jun 2019 16:49:12 -0700 (PDT)
 Received: from localhost.localdomain (ppp91-79-162-197.pppoe.mtu-net.ru. [91.79.162.197])
-        by smtp.gmail.com with ESMTPSA id q4sm2008377lje.99.2019.06.16.16.36.15
+        by smtp.gmail.com with ESMTPSA id w1sm2032390ljm.81.2019.06.16.16.49.10
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 16 Jun 2019 16:36:15 -0700 (PDT)
+        Sun, 16 Jun 2019 16:49:11 -0700 (PDT)
 From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Joseph Lo <josephl@nvidia.com>,
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>,
         Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v4 10/10] ARM: dts: tegra30: Add External Memory Controller node
-Date:   Mon, 17 Jun 2019 02:35:51 +0300
-Message-Id: <20190616233551.6838-11-digetx@gmail.com>
+        Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc:     linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v1 1/2] clocksource/drivers/tegra: Cycles can't be 0
+Date:   Mon, 17 Jun 2019 02:47:43 +0300
+Message-Id: <20190616234744.8975-1-digetx@gmail.com>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190616233551.6838-1-digetx@gmail.com>
-References: <20190616233551.6838-1-digetx@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -69,35 +62,29 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add External Memory Controller node to the device-tree.
+The minimum number of "cycles" is limited to 1 by
+clockevents_config_and_register().
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- arch/arm/boot/dts/tegra30.dtsi | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ drivers/clocksource/timer-tegra.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/arch/arm/boot/dts/tegra30.dtsi b/arch/arm/boot/dts/tegra30.dtsi
-index e074258d4518..92c4aeafab29 100644
---- a/arch/arm/boot/dts/tegra30.dtsi
-+++ b/arch/arm/boot/dts/tegra30.dtsi
-@@ -732,6 +732,17 @@
- 		#reset-cells = <1>;
- 	};
+diff --git a/drivers/clocksource/timer-tegra.c b/drivers/clocksource/timer-tegra.c
+index f6a8eb0d7322..090c85358fe8 100644
+--- a/drivers/clocksource/timer-tegra.c
++++ b/drivers/clocksource/timer-tegra.c
+@@ -54,9 +54,7 @@ static int tegra_timer_set_next_event(unsigned long cycles,
+ {
+ 	void __iomem *reg_base = timer_of_base(to_timer_of(evt));
  
-+	memory-controller@7000f400 {
-+		compatible = "nvidia,tegra30-emc";
-+		reg = <0x7000f400 0x400>;
-+		interrupts = <GIC_SPI 78 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&tegra_car TEGRA30_CLK_EMC>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		nvidia,memory-controller = <&mc>;
-+	};
-+
- 	fuse@7000f800 {
- 		compatible = "nvidia,tegra30-efuse";
- 		reg = <0x7000f800 0x400>;
+-	writel_relaxed(TIMER_PTV_EN |
+-		       ((cycles > 1) ? (cycles - 1) : 0), /* n+1 scheme */
+-		       reg_base + TIMER_PTV);
++	writel_relaxed(TIMER_PTV_EN | (cycles - 1), reg_base + TIMER_PTV);
+ 
+ 	return 0;
+ }
 -- 
 2.22.0
 
