@@ -2,62 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F096D4738F
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2019 09:14:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 952CC47375
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2019 09:02:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726104AbfFPHO0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 16 Jun 2019 03:14:26 -0400
-Received: from mail5.windriver.com ([192.103.53.11]:58148 "EHLO mail5.wrs.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725860AbfFPHOZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 16 Jun 2019 03:14:25 -0400
-Received: from ALA-HCA.corp.ad.wrs.com (ala-hca.corp.ad.wrs.com [147.11.189.40])
-        by mail5.wrs.com (8.15.2/8.15.2) with ESMTPS id x5G7CC6u031011
-        (version=TLSv1 cipher=AES128-SHA bits=128 verify=FAIL);
-        Sun, 16 Jun 2019 00:12:27 -0700
-Received: from [128.224.155.90] (128.224.155.90) by ALA-HCA.corp.ad.wrs.com
- (147.11.189.50) with Microsoft SMTP Server (TLS) id 14.3.439.0; Sun, 16 Jun
- 2019 00:12:06 -0700
-Subject: Re: memory leak in tipc_buf_acquire
-To:     Xin Long <lucien.xin@gmail.com>,
-        syzbot <syzbot+78fbe679c8ca8d264a8d@syzkaller.appspotmail.com>
-CC:     davem <davem@davemloft.net>, Jon Maloy <jon.maloy@ericsson.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        network dev <netdev@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        <tipc-discussion@lists.sourceforge.net>
-References: <000000000000000c060589a8bc66@google.com>
- <CADvbK_cMohjd3U=8H8ECT74rK85Tjy1FZYAXQQ_CsWgFq3c5gA@mail.gmail.com>
-From:   Ying Xue <ying.xue@windriver.com>
-Message-ID: <ccbfc1eb-e371-d890-14ee-ec1429d4e751@windriver.com>
-Date:   Sun, 16 Jun 2019 15:02:05 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S1726192AbfFPHC0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 16 Jun 2019 03:02:26 -0400
+Received: from smtp09.smtpout.orange.fr ([80.12.242.131]:33193 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725992AbfFPHC0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 16 Jun 2019 03:02:26 -0400
+Received: from localhost.localdomain ([86.243.180.47])
+        by mwinf5d17 with ME
+        id RK2N2000C11lVym03K2NQE; Sun, 16 Jun 2019 09:02:23 +0200
+X-ME-Helo: localhost.localdomain
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sun, 16 Jun 2019 09:02:23 +0200
+X-ME-IP: 86.243.180.47
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     martin.petersen@oracle.com
+Cc:     linux-scsi@vger.kernel.org, target-devel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] scsi: tcmu: Simplify 'tcmu_update_uio_info()'
+Date:   Sun, 16 Jun 2019 09:02:20 +0200
+Message-Id: <20190616070220.24189-1-christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <CADvbK_cMohjd3U=8H8ECT74rK85Tjy1FZYAXQQ_CsWgFq3c5gA@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [128.224.155.90]
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 6/10/19 2:44 AM, Xin Long wrote:
-> Looks we need to purge each member's deferredq list in tipc_group_delete():
-> diff --git a/net/tipc/group.c b/net/tipc/group.c
-> index 992be61..23823eb 100644
-> --- a/net/tipc/group.c
-> +++ b/net/tipc/group.c
-> @@ -218,6 +218,7 @@ void tipc_group_delete(struct net *net, struct
-> tipc_group *grp)
-> 
->   rbtree_postorder_for_each_entry_safe(m, tmp, tree, tree_node) {
->   tipc_group_proto_xmit(grp, m, GRP_LEAVE_MSG, &xmitq);
-> + __skb_queue_purge(&m->deferredq);
->   list_del(&m->list);
->   kfree(m);
->   }
+Use 'kasprintf()' instead of:
+   - snprintf(NULL, 0...
+   - kmalloc(...
+   - snprintf(...
 
-Good catch! I agree with you.
+This is less verbose and saves 7 bytes (i.e. the space for '/(null)') if
+'udev->dev_config' is NULL.
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/target/target_core_user.c | 16 +++++++---------
+ 1 file changed, 7 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/target/target_core_user.c b/drivers/target/target_core_user.c
+index b43d6385a1a0..04eda111920e 100644
+--- a/drivers/target/target_core_user.c
++++ b/drivers/target/target_core_user.c
+@@ -1824,20 +1824,18 @@ static int tcmu_update_uio_info(struct tcmu_dev *udev)
+ {
+ 	struct tcmu_hba *hba = udev->hba->hba_ptr;
+ 	struct uio_info *info;
+-	size_t size, used;
+ 	char *str;
+ 
+ 	info = &udev->uio_info;
+-	size = snprintf(NULL, 0, "tcm-user/%u/%s/%s", hba->host_id, udev->name,
+-			udev->dev_config);
+-	size += 1; /* for \0 */
+-	str = kmalloc(size, GFP_KERNEL);
+-	if (!str)
+-		return -ENOMEM;
+ 
+-	used = snprintf(str, size, "tcm-user/%u/%s", hba->host_id, udev->name);
+ 	if (udev->dev_config[0])
+-		snprintf(str + used, size - used, "/%s", udev->dev_config);
++		str = kasprintf(GFP_KERNEL, "tcm-user/%u/%s/%s", hba->host_id,
++				udev->name, udev->dev_config);
++	else
++		str = kasprintf(GFP_KERNEL, "tcm-user/%u/%s", hba->host_id,
++				udev->name);
++	if (!str)
++		return -ENOMEM;
+ 
+ 	/* If the old string exists, free it */
+ 	kfree(info->name);
+-- 
+2.20.1
+
