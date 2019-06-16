@@ -2,56 +2,169 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0C69B4740B
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2019 11:56:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2CA0A47414
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2019 11:59:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727107AbfFPJz4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 16 Jun 2019 05:55:56 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:38514 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725888AbfFPJz4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 16 Jun 2019 05:55:56 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=IEOh0sWetk7eUh0Rjg4YlSVXRKMictYb1AnLfZ2dm3I=; b=STvGVIwk/uvRBj8V5wSWzfGRj
-        5p7XuWqwuPMqVRxsogOUJWU6V7UI32zy4FgdcWrHjaDG+dAycFEpjiOf/BhdXqAr/TzLMoCIPkVNO
-        11oso49jFhNuy45mviQKHZ3PaF6oITp20JBJ2ZREJ9rHSO9xjso3vc9aCBMEj8cK7wUlbfQvgFlH5
-        fLBZWlkoDiHGKQz+cafKvfwBqB+HvimAy/Cb3GXb8ToY9Us2CD52ih1NFsTFHGaO/tBU+LzF/Fxxp
-        m4zGv/CFUC5l/IhfwbYX2gWJ1sYxMMPYeCOZkIbkFuCB8KtlYUCB2hZ4xKzDkKIdJx3KuqecGLSYH
-        KjmEQMKZQ==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
-        id 1hcRtC-00030M-75; Sun, 16 Jun 2019 09:55:54 +0000
-Date:   Sun, 16 Jun 2019 02:55:54 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Oded Gabbay <oded.gabbay@gmail.com>
-Cc:     Greg KH <gregkh@linuxfoundation.org>,
-        "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 8/8] habanalabs: enable 64-bit DMA mask in POWER9
-Message-ID: <20190616095554.GA5156@infradead.org>
-References: <20190611092144.11194-1-oded.gabbay@gmail.com>
- <20190611095857.GB24058@kroah.com>
- <20190611151753.GA11404@infradead.org>
- <20190611152655.GA3972@kroah.com>
- <CAFCwf11DKi+pfvvGR2zN4jvwTQZ9-Lm=OXBs+ZU=E-eFfJOi7A@mail.gmail.com>
+        id S1727240AbfFPJ6o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 16 Jun 2019 05:58:44 -0400
+Received: from mga02.intel.com ([134.134.136.20]:28463 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725888AbfFPJ6f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 16 Jun 2019 05:58:35 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Jun 2019 02:58:34 -0700
+X-ExtLoop1: 1
+Received: from tao-optiplex-7060.sh.intel.com ([10.239.13.104])
+  by orsmga005.jf.intel.com with ESMTP; 16 Jun 2019 02:58:32 -0700
+From:   Tao Xu <tao3.xu@intel.com>
+To:     pbonzini@redhat.com, rkrcmar@redhat.com, corbet@lwn.net,
+        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
+        sean.j.christopherson@intel.com, fenghua.yu@intel.com
+Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        tao3.xu@intel.com, jingqi.liu@intel.com
+Subject: [PATCH RESEND v3 2/3] KVM: vmx: Emulate MSR IA32_UMWAIT_CONTROL
+Date:   Sun, 16 Jun 2019 17:55:54 +0800
+Message-Id: <20190616095555.20978-3-tao3.xu@intel.com>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190616095555.20978-1-tao3.xu@intel.com>
+References: <20190616095555.20978-1-tao3.xu@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAFCwf11DKi+pfvvGR2zN4jvwTQZ9-Lm=OXBs+ZU=E-eFfJOi7A@mail.gmail.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jun 15, 2019 at 03:12:36PM +0300, Oded Gabbay wrote:
-> So after the dust has settled a bit, do you think it is reasonable to
-> add this patch upstream ?
+UMWAIT and TPAUSE instructions use IA32_UMWAIT_CONTROL at MSR index E1H
+to determines the maximum time in TSC-quanta that the processor can reside
+in either C0.1 or C0.2.
 
-I'm not Greg, but the answer is a very clear no.  drivers have abslutely
-no business adding these hacks.
+This patch emulates MSR IA32_UMWAIT_CONTROL in guest and differentiate
+IA32_UMWAIT_CONTROL between host and guest. The variable
+mwait_control_cached in arch/x86/power/umwait.c caches the MSR value, so
+this patch uses it to avoid frequently rdmsr of IA32_UMWAIT_CONTROL.
+
+Co-developed-by: Jingqi Liu <jingqi.liu@intel.com>
+Signed-off-by: Jingqi Liu <jingqi.liu@intel.com>
+Signed-off-by: Tao Xu <tao3.xu@intel.com>
+---
+ arch/x86/kvm/vmx/vmx.c  | 36 ++++++++++++++++++++++++++++++++++++
+ arch/x86/kvm/vmx/vmx.h  |  3 +++
+ arch/x86/power/umwait.c |  3 ++-
+ 3 files changed, 41 insertions(+), 1 deletion(-)
+
+diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+index b35bfac30a34..f33a25e82cb8 100644
+--- a/arch/x86/kvm/vmx/vmx.c
++++ b/arch/x86/kvm/vmx/vmx.c
+@@ -1679,6 +1679,12 @@ static int vmx_get_msr(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
+ #endif
+ 	case MSR_EFER:
+ 		return kvm_get_msr_common(vcpu, msr_info);
++	case MSR_IA32_UMWAIT_CONTROL:
++		if (!vmx_waitpkg_supported())
++			return 1;
++
++		msr_info->data = vmx->msr_ia32_umwait_control;
++		break;
+ 	case MSR_IA32_SPEC_CTRL:
+ 		if (!msr_info->host_initiated &&
+ 		    !guest_cpuid_has(vcpu, X86_FEATURE_SPEC_CTRL))
+@@ -1841,6 +1847,15 @@ static int vmx_set_msr(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
+ 			return 1;
+ 		vmcs_write64(GUEST_BNDCFGS, data);
+ 		break;
++	case MSR_IA32_UMWAIT_CONTROL:
++		if (!vmx_waitpkg_supported())
++			return 1;
++
++		if (!data)
++			break;
++
++		vmx->msr_ia32_umwait_control = data;
++		break;
+ 	case MSR_IA32_SPEC_CTRL:
+ 		if (!msr_info->host_initiated &&
+ 		    !guest_cpuid_has(vcpu, X86_FEATURE_SPEC_CTRL))
+@@ -4126,6 +4141,8 @@ static void vmx_vcpu_reset(struct kvm_vcpu *vcpu, bool init_event)
+ 	vmx->rmode.vm86_active = 0;
+ 	vmx->spec_ctrl = 0;
+ 
++	vmx->msr_ia32_umwait_control = 0;
++
+ 	vcpu->arch.microcode_version = 0x100000000ULL;
+ 	vmx->vcpu.arch.regs[VCPU_REGS_RDX] = get_rdx_init_val();
+ 	kvm_set_cr8(vcpu, 0);
+@@ -6339,6 +6356,23 @@ static void atomic_switch_perf_msrs(struct vcpu_vmx *vmx)
+ 					msrs[i].host, false);
+ }
+ 
++static void atomic_switch_ia32_umwait_control(struct vcpu_vmx *vmx)
++{
++	u64 host_umwait_control;
++
++	if (!vmx_waitpkg_supported())
++		return;
++
++	host_umwait_control = umwait_control_cached;
++
++	if (vmx->msr_ia32_umwait_control != host_umwait_control)
++		add_atomic_switch_msr(vmx, MSR_IA32_UMWAIT_CONTROL,
++				      vmx->msr_ia32_umwait_control,
++				      host_umwait_control, false);
++	else
++		clear_atomic_switch_msr(vmx, MSR_IA32_UMWAIT_CONTROL);
++}
++
+ static void vmx_arm_hv_timer(struct vcpu_vmx *vmx, u32 val)
+ {
+ 	vmcs_write32(VMX_PREEMPTION_TIMER_VALUE, val);
+@@ -6447,6 +6481,8 @@ static void vmx_vcpu_run(struct kvm_vcpu *vcpu)
+ 
+ 	atomic_switch_perf_msrs(vmx);
+ 
++	atomic_switch_ia32_umwait_control(vmx);
++
+ 	vmx_update_hv_timer(vcpu);
+ 
+ 	/*
+diff --git a/arch/x86/kvm/vmx/vmx.h b/arch/x86/kvm/vmx/vmx.h
+index 61128b48c503..8485bec7c38a 100644
+--- a/arch/x86/kvm/vmx/vmx.h
++++ b/arch/x86/kvm/vmx/vmx.h
+@@ -14,6 +14,8 @@
+ extern const u32 vmx_msr_index[];
+ extern u64 host_efer;
+ 
++extern u32 umwait_control_cached;
++
+ #define MSR_TYPE_R	1
+ #define MSR_TYPE_W	2
+ #define MSR_TYPE_RW	3
+@@ -194,6 +196,7 @@ struct vcpu_vmx {
+ #endif
+ 
+ 	u64		      spec_ctrl;
++	u64		      msr_ia32_umwait_control;
+ 
+ 	u32 vm_entry_controls_shadow;
+ 	u32 vm_exit_controls_shadow;
+diff --git a/arch/x86/power/umwait.c b/arch/x86/power/umwait.c
+index 7fa381e3fd4e..2e6ce4cbccb3 100644
+--- a/arch/x86/power/umwait.c
++++ b/arch/x86/power/umwait.c
+@@ -9,7 +9,8 @@
+  * MSR value. By default, umwait max time is 100000 in TSC-quanta and C0.2
+  * is enabled
+  */
+-static u32 umwait_control_cached = 100000;
++u32 umwait_control_cached = 100000;
++EXPORT_SYMBOL_GPL(umwait_control_cached);
+ 
+ /*
+  * Serialize access to umwait_control_cached and IA32_UMWAIT_CONTROL MSR
+-- 
+2.20.1
+
