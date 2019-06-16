@@ -2,115 +2,138 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D77CB47411
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2019 11:59:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A094147415
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Jun 2019 11:59:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727219AbfFPJ6i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 16 Jun 2019 05:58:38 -0400
-Received: from mga02.intel.com ([134.134.136.20]:28471 "EHLO mga02.intel.com"
+        id S1727273AbfFPJ6y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 16 Jun 2019 05:58:54 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:52642 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727194AbfFPJ6i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 16 Jun 2019 05:58:38 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Jun 2019 02:58:37 -0700
-X-ExtLoop1: 1
-Received: from tao-optiplex-7060.sh.intel.com ([10.239.13.104])
-  by orsmga005.jf.intel.com with ESMTP; 16 Jun 2019 02:58:35 -0700
-From:   Tao Xu <tao3.xu@intel.com>
-To:     pbonzini@redhat.com, rkrcmar@redhat.com, corbet@lwn.net,
-        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
-        sean.j.christopherson@intel.com, fenghua.yu@intel.com
-Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        tao3.xu@intel.com, jingqi.liu@intel.com
-Subject: [PATCH RESEND v3 3/3] KVM: vmx: handle vm-exit for UMWAIT and TPAUSE
-Date:   Sun, 16 Jun 2019 17:55:55 +0800
-Message-Id: <20190616095555.20978-4-tao3.xu@intel.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190616095555.20978-1-tao3.xu@intel.com>
-References: <20190616095555.20978-1-tao3.xu@intel.com>
+        id S1727246AbfFPJ6y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 16 Jun 2019 05:58:54 -0400
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 39D303084034;
+        Sun, 16 Jun 2019 09:58:53 +0000 (UTC)
+Received: from krava (ovpn-204-53.brq.redhat.com [10.40.204.53])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 6BD2C6AD2F;
+        Sun, 16 Jun 2019 09:58:45 +0000 (UTC)
+Date:   Sun, 16 Jun 2019 11:58:44 +0200
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     John Garry <john.garry@huawei.com>
+Cc:     peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
+        alexander.shishkin@linux.intel.com, namhyung@kernel.org,
+        tmricht@linux.ibm.com, brueckner@linux.ibm.com,
+        kan.liang@linux.intel.com, ben@decadent.org.uk,
+        mathieu.poirier@linaro.org, mark.rutland@arm.com,
+        will.deacon@arm.com, linux-kernel@vger.kernel.org,
+        linuxarm@huawei.com, linux-arm-kernel@lists.infradead.org,
+        zhangshaokun@hisilicon.com
+Subject: Re: [PATCH v2 2/5] perf pmu: Support more complex PMU event aliasing
+Message-ID: <20190616095844.GC2500@krava>
+References: <1560521283-73314-1-git-send-email-john.garry@huawei.com>
+ <1560521283-73314-3-git-send-email-john.garry@huawei.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1560521283-73314-3-git-send-email-john.garry@huawei.com>
+User-Agent: Mutt/1.11.4 (2019-03-13)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Sun, 16 Jun 2019 09:58:53 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As the latest Intel 64 and IA-32 Architectures Software Developer's
-Manual, UMWAIT and TPAUSE instructions cause a VM exit if the
-RDTSC exiting and enable user wait and pause VM-execution
-controls are both 1.
+On Fri, Jun 14, 2019 at 10:08:00PM +0800, John Garry wrote:
+> The jevent "Unit" field is used for uncore PMU alias definition.
+> 
+> The form uncore_pmu_example_X is supported, where "X" is a wildcard,
+> to support multiple instances of the same PMU in a system.
+> 
+> Unfortunately this format not suitable for all uncore PMUs; take the Hisi
+> DDRC uncore PMU for example, where the name is in the form
+> hisi_scclX_ddrcY.
+> 
+> For the current jevent parsing, we would be required to hardcode an uncore
+> alias translation for each possible value of X. This is not scalable.
+> 
+> Instead, add support for "Unit" field in the form "hisi_sccl,ddrc", where
+> we can match by hisi_scclX and ddrcY. Tokens in Unit field are 
+> delimited by ','.
+> 
+> Signed-off-by: John Garry <john.garry@huawei.com>
+> ---
+>  tools/perf/util/pmu.c | 39 ++++++++++++++++++++++++++++++++++-----
+>  1 file changed, 34 insertions(+), 5 deletions(-)
+> 
+> diff --git a/tools/perf/util/pmu.c b/tools/perf/util/pmu.c
+> index 7e7299fee550..bc71c60589b5 100644
+> --- a/tools/perf/util/pmu.c
+> +++ b/tools/perf/util/pmu.c
+> @@ -700,6 +700,39 @@ struct pmu_events_map *perf_pmu__find_map(struct perf_pmu *pmu)
+>  	return map;
+>  }
+>  
+> +static bool pmu_uncore_alias_match(const char *pmu_name, const char *name)
+> +{
+> +	char *tmp, *tok, *str;
+> +	bool res;
+> +
+> +	str = strdup(pmu_name);
+> +	if (!str)
+> +		return false;
+> +
+> +	/*
+> +	 * uncore alias may be from different PMU with common
+> +	 * prefix or matching tokens.
+> +	 */
+> +	tok = strtok_r(str, ",", &tmp);
+> +	if (strncmp(pmu_name, tok, strlen(tok))) {
 
-This patch is to handle the vm-exit for UMWAIT and TPAUSE as this
-should never happen.
+if tok is NULL in here we crash
 
-Co-developed-by: Jingqi Liu <jingqi.liu@intel.com>
-Signed-off-by: Jingqi Liu <jingqi.liu@intel.com>
-Signed-off-by: Tao Xu <tao3.xu@intel.com>
----
- arch/x86/include/uapi/asm/vmx.h |  6 +++++-
- arch/x86/kvm/vmx/vmx.c          | 16 ++++++++++++++++
- 2 files changed, 21 insertions(+), 1 deletion(-)
+> +		res = false;
+> +		goto out;
+> +	}
+> +
+> +	for (; tok; name += strlen(tok), tok = strtok_r(NULL, ",", &tmp)) {
 
-diff --git a/arch/x86/include/uapi/asm/vmx.h b/arch/x86/include/uapi/asm/vmx.h
-index d213ec5c3766..d88d7a68849b 100644
---- a/arch/x86/include/uapi/asm/vmx.h
-+++ b/arch/x86/include/uapi/asm/vmx.h
-@@ -85,6 +85,8 @@
- #define EXIT_REASON_PML_FULL            62
- #define EXIT_REASON_XSAVES              63
- #define EXIT_REASON_XRSTORS             64
-+#define EXIT_REASON_UMWAIT              67
-+#define EXIT_REASON_TPAUSE              68
- 
- #define VMX_EXIT_REASONS \
- 	{ EXIT_REASON_EXCEPTION_NMI,         "EXCEPTION_NMI" }, \
-@@ -142,7 +144,9 @@
- 	{ EXIT_REASON_RDSEED,                "RDSEED" }, \
- 	{ EXIT_REASON_PML_FULL,              "PML_FULL" }, \
- 	{ EXIT_REASON_XSAVES,                "XSAVES" }, \
--	{ EXIT_REASON_XRSTORS,               "XRSTORS" }
-+	{ EXIT_REASON_XRSTORS,               "XRSTORS" }, \
-+	{ EXIT_REASON_UMWAIT,                "UMWAIT" }, \
-+	{ EXIT_REASON_TPAUSE,                "TPAUSE" }
- 
- #define VMX_ABORT_SAVE_GUEST_MSR_FAIL        1
- #define VMX_ABORT_LOAD_HOST_PDPTE_FAIL       2
-diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-index f33a25e82cb8..386bd68f8d0b 100644
---- a/arch/x86/kvm/vmx/vmx.c
-+++ b/arch/x86/kvm/vmx/vmx.c
-@@ -5335,6 +5335,20 @@ static int handle_monitor(struct kvm_vcpu *vcpu)
- 	return handle_nop(vcpu);
- }
- 
-+static int handle_umwait(struct kvm_vcpu *vcpu)
-+{
-+	kvm_skip_emulated_instruction(vcpu);
-+	WARN(1, "this should never happen\n");
-+	return 1;
-+}
-+
-+static int handle_tpause(struct kvm_vcpu *vcpu)
-+{
-+	kvm_skip_emulated_instruction(vcpu);
-+	WARN(1, "this should never happen\n");
-+	return 1;
-+}
-+
- static int handle_invpcid(struct kvm_vcpu *vcpu)
- {
- 	u32 vmx_instruction_info;
-@@ -5545,6 +5559,8 @@ static int (*kvm_vmx_exit_handlers[])(struct kvm_vcpu *vcpu) = {
- 	[EXIT_REASON_VMFUNC]		      = handle_vmx_instruction,
- 	[EXIT_REASON_PREEMPTION_TIMER]	      = handle_preemption_timer,
- 	[EXIT_REASON_ENCLS]		      = handle_encls,
-+	[EXIT_REASON_UMWAIT]                  = handle_umwait,
-+	[EXIT_REASON_TPAUSE]                  = handle_tpause,
- };
- 
- static const int kvm_vmx_max_exit_handlers =
--- 
-2.20.1
+why is name shifted in here?
 
+jirka
+
+> +		name = strstr(name, tok);
+> +		if (!name) {
+> +			res = false;
+> +			goto out;
+> +		}
+> +	}
+> +
+> +	res = true;
+> +out:
+> +	free(str);
+> +	return res;
+> +}
+> +
+>  /*
+>   * From the pmu_events_map, find the table of PMU events that corresponds
+>   * to the current running CPU. Then, add all PMU events from that table
+> @@ -730,12 +763,8 @@ static void pmu_add_cpu_aliases(struct list_head *head, struct perf_pmu *pmu)
+>  			break;
+>  		}
+>  
+> -		/*
+> -		 * uncore alias may be from different PMU
+> -		 * with common prefix
+> -		 */
+>  		if (pmu_is_uncore(name) &&
+> -		    !strncmp(pname, name, strlen(pname)))
+> +		    pmu_uncore_alias_match(pname, name))
+>  			goto new_alias;
+>  
+>  		if (strcmp(pname, name))
+> -- 
+> 2.17.1
+> 
