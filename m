@@ -2,106 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7811148268
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 14:30:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9BA444826D
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 14:30:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728349AbfFQM3D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 08:29:03 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:35114 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728039AbfFQM2T (ORCPT
+        id S1727906AbfFQM3j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 08:29:39 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:39612 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725971AbfFQM3j (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 08:28:19 -0400
-Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-        by mx08-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5HCLCqf009408;
-        Mon, 17 Jun 2019 14:28:07 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=STMicroelectronics;
- bh=E9NXlEGXNnvQZ3RULpw4oSl2qhYRA7pqUq0NxFi2maM=;
- b=Xn3sBMkfKYiuf6tnzB0nw/OrQ40k70XSyR3NVXIQ0Tyf8cgYlIClW771t+KqxiHkmQ7J
- Sl3H+GM6khJ7nB8zFPqU5RKM2siZIzdyCvSVaD5aKjcSSHjRcnbjam5zH5mCB9XunpMO
- drxsAYB1f4oqSBPcsHMCIIWdBf1e47fdq6Q+Vvx6dIJOXt5GJI7mRoDWbx42/zhySbHj
- n02S3xT2j0qnnBLjypHU37Nx73VwNIkVgTozZ9Efpyinwz+CThn65YlcQzo38Bq1KwUr
- OVjJM2CQXCXAbHWjBFf+SbrmMOQqBAQGJHB1ILAFIZNc85414UIu0s/PM+LfPiiOVVGT pg== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx08-00178001.pphosted.com with ESMTP id 2t4qjhte0v-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Mon, 17 Jun 2019 14:28:07 +0200
-Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 935DB3A;
-        Mon, 17 Jun 2019 12:28:06 +0000 (GMT)
-Received: from Webmail-eu.st.com (sfhdag3node2.st.com [10.75.127.8])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 69B6829A9;
-        Mon, 17 Jun 2019 12:28:06 +0000 (GMT)
-Received: from [10.48.0.204] (10.75.127.50) by SFHDAG3NODE2.st.com
- (10.75.127.8) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Mon, 17 Jun
- 2019 14:28:05 +0200
-Subject: Re: [PATCH v4 0/4] Add Avenger96 board support
-To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        <mcoquelin.stm32@gmail.com>, <robh+dt@kernel.org>
-CC:     <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <loic.pallardy@st.com>
-References: <20190612075451.8643-1-manivannan.sadhasivam@linaro.org>
-From:   Alexandre Torgue <alexandre.torgue@st.com>
-Message-ID: <e34e8160-d16e-bf18-e7c3-240098908df2@st.com>
-Date:   Mon, 17 Jun 2019 14:28:04 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        Mon, 17 Jun 2019 08:29:39 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=Si8xIwmDMrAT8HXNiwXvhIHU0hreznP4YCiiLf9PZho=; b=m0dfZJr2CkMDRBJCgmiqfO17q
+        dK1d5TQRmkt9QT/kcvPkrhHKHmJHQgFPTp7sYviIo8guDXGQCjgbN9SyPAR3SwwKTPzmpWsNzl1kO
+        cXQPKY6b90IdQCOlG8kEHuyR3guRkbWnwQE+ADaYTVPG5ToBmaLIn2WtRP2T/Hv5KNSLU=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=finisterre.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1hcqlS-0001at-LD; Mon, 17 Jun 2019 12:29:34 +0000
+Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
+        id 33A7B440046; Mon, 17 Jun 2019 13:29:34 +0100 (BST)
+Date:   Mon, 17 Jun 2019 13:29:34 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>
+Subject: Re: [PATCH v1] driver core: regmap: Switch to bitmap_zalloc()
+Message-ID: <20190617122934.GQ5316@sirena.org.uk>
+References: <20190617115403.33241-1-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <20190612075451.8643-1-manivannan.sadhasivam@linaro.org>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.75.127.50]
-X-ClientProxiedBy: SFHDAG8NODE1.st.com (10.75.127.22) To SFHDAG3NODE2.st.com
- (10.75.127.8)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-17_06:,,
- signatures=0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="2VmY8g3XFtK+hx8d"
+Content-Disposition: inline
+In-Reply-To: <20190617115403.33241-1-andriy.shevchenko@linux.intel.com>
+X-Cookie: Editing is a rewording activity.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Mani,
 
-On 6/12/19 9:54 AM, Manivannan Sadhasivam wrote:
-> Hello,
-> 
-> This patchset adds Avenger96 board support. This board is one of the
-> Consumer Edition boards of the 96Boards family from Arrow Electronics
-> featuring STM32MP157A MPU and has the following features:
-> 
-> SoC: STM32MP157AAC
-> PMIC: STPMIC1A
-> RAM: 1024 Mbyte @ 533MHz
-> Storage: eMMC v4.51: 8 Gbyte
->           microSD Socket: UHS-1 v3.01
-> Ethernet Port: 10/100/1000 Mbit/s, IEEE 802.3 Compliant
-> Wireless: WiFi 5 GHz & 2.4GHz IEEE 802.11a/b/g/n/ac
->            Bluetooth®v4.2 (BR/EDR/BLE)
-> USB: 2x Type A (USB 2.0) Host and 1x Micro B (USB 2.0) OTG
-> Display: HDMI: WXGA (1366x768)@ 60 fps, HDMI 1.4
-> LED: 4x User LED, 1x WiFi LED, 1x BT LED
-> 
-> More information about this board can be found in 96Boards website:
-> https://www.96boards.org/product/avenger96/
-> 
-> Thanks,
-> Mani
-> 
+--2VmY8g3XFtK+hx8d
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Thanks to extend the stm32 family!
-I just format commit message title for device tree patches ("ARM: dts: 
-stm32 ...").
+On Mon, Jun 17, 2019 at 02:54:03PM +0300, Andy Shevchenko wrote:
+> Switch to bitmap_zalloc() to show clearly what we are allocating.
+> Besides that it returns pointer of bitmap type instead of opaque void *.
 
-Rob, I took also the dt-binding patches.
+Please use subject lines matching the style for the subsystem.  This
+makes it easier for people to identify relevant patches.
 
-Series applied on stm32-next.
+--2VmY8g3XFtK+hx8d
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Regards
-Alex
+-----BEGIN PGP SIGNATURE-----
 
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl0Hh60ACgkQJNaLcl1U
+h9A3+gf/dhDyB0ENXPq2rau8Fw+LxFWczxrWyFPda+bkb/AgAIAZm6CQOic08heH
+KYlmngkyFnmCihwkZMKa3yAfGh6qa191tZ9jqRoS8K6CjPYacXjh2YoLTS1kHtlL
+LuY0i6ZbHlEUGkaH/vn5zoo1upXo+PQmmfZ8kwWcd90UVLd/LhBGwBGL3me92ZUm
+gauVvmsqRq64b9sbJiEFynXAKQqjXvjTGnOdCTP8USoNr9k3c+bpJne1xzLBmlVs
+yady6unZioC+JkHMINeTEbZc/c5WdAJb1GsnYW57k7rZpTMQBPgDi77T2qqfWo+I
+prfhvTFX9kxPz6wKe10xxLIvj1ubIg==
+=biwi
+-----END PGP SIGNATURE-----
 
+--2VmY8g3XFtK+hx8d--
