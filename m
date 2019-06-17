@@ -2,126 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1DC7448020
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 13:02:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 92DCF4802B
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 13:04:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727701AbfFQLCu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 07:02:50 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:47556 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726174AbfFQLCt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 07:02:49 -0400
-Received: from zn.tnic (p200300EC2F0613006087DD9CF534030C.dip0.t-ipconnect.de [IPv6:2003:ec:2f06:1300:6087:dd9c:f534:30c])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 600511EC0249;
-        Mon, 17 Jun 2019 13:02:48 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1560769368;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=OijPc0WWIfdOsltA5SOHD4hbuYIyRTxsd1+8sNjTtHk=;
-        b=ecdcx5xI9o4i+Zruw2Jkv8SaWdeKSbRo0kW3W5sAxfi2Mm0yXsU7Svn7y2GNa7OYHm7xj0
-        wEov1MZL0HcvVRSFSFGVMzgUgdpBppioXX0ycCOO1wSqtrqV1nVYiVEx7z5dWPG86o2F08
-        BLpu0+pEE+e7y0tx1sX3UhXLHjWxhKc=
-Date:   Mon, 17 Jun 2019 13:02:41 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     "Lendacky, Thomas" <Thomas.Lendacky@amd.com>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Baoquan He <bhe@redhat.com>, Lianbo Jiang <lijiang@redhat.com>
-Subject: Re: [PATCH v2 2/2] x86/mm: Create an SME workarea in the kernel for
- early encryption
-Message-ID: <20190617110241.GH27127@zn.tnic>
-References: <cover.1560546537.git.thomas.lendacky@amd.com>
- <cdb1fab3558ae11a50c922d8f373c2125c862e10.1560546537.git.thomas.lendacky@amd.com>
+        id S1728023AbfFQLEk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 07:04:40 -0400
+Received: from mout.kundenserver.de ([212.227.17.10]:50833 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726164AbfFQLEj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Jun 2019 07:04:39 -0400
+Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
+ (mreue109 [212.227.15.145]) with ESMTPA (Nemesis) id
+ 1Mj8eB-1iFAr734RJ-00fBNP; Mon, 17 Jun 2019 13:04:24 +0200
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     Mark Brown <broonie@kernel.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Sugar Zhang <sugar.zhang@rock-chips.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Heiko Stuebner <heiko@sntech.de>, alsa-devel@alsa-project.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] ASoC: rockchip: pdm: select CONFIG_RATIONAL
+Date:   Mon, 17 Jun 2019 13:03:51 +0200
+Message-Id: <20190617110415.2084205-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.20.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <cdb1fab3558ae11a50c922d8f373c2125c862e10.1560546537.git.thomas.lendacky@amd.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:RQUeaFNGGn1EAUOJ+4Zq3U9Xg93dFdoGITN3ZKm3Mt4YbKTsksr
+ /Nb5nKnunoTBlLqFGpZWA9oXu9HPZ4ooTs1PKfIUNNUH5c8OdpM9y5ix03RPi90uP8mhFUV
+ 9sef2XlRxJsu4Em1+4Jl7xTmRcNS727kWov9tH/9ugCaLfPF+pyKE/2opwfYI1/uTAULabq
+ C5OfVG/T7vycW0msxCGig==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:TgeddKwT1bQ=:+0nAmfdfN0DrHy0szFSDxd
+ E97/qsS1VXgSEQ9Kd9UM8LUmS2rDvT8u8ENSePmCM8L5TPoigst9b5PpOt5gQXY4w/6/k2vdi
+ GPlMTAQjWQxxHAqcUyyrFwNr0A7jljiNSZ4XPoTUTSHp4P8mYysAR4i4kVQrTuWSqtpcshFAx
+ frleG1h6TqhiR3kn/x6UQhrQlpJwKeiXqQSjicC5pldL/n3LULCpGxPuwoGnz9UHMLHA8u8vY
+ /K1ftN31dtrN73VQ+S7TsxRcjiD5c1JRn93SdwhuFs0cAF0BS2xmBdzcX+M5Y3QH5t4hau+ug
+ RnKA/CzG9cS1KOVvA/sfahClyagQHFGXk9ZKHark+8g/7E0EJ5lQSsbRlUL1np++MmiwP6Z90
+ eTezWa9VSrMf1PzATR8+/V7X/OmPlwDjJxbSh4hwYKXbhIKWgAsF2Dx0Himn6AUOdBVaAPTkC
+ agTTz1y0ppeyET6Vd5JHfjc9a8SnYJph9o0Y+mLvjyxp6VMvemow0EMxGeIR4C1wdpwI4WC4w
+ 7ADR9bijyRaq4WT/0OLwqdeFQ7M2uVHMqd3e4J9B9q1E5dH3gHnPV09SAmC++ybSYOjA9MIIL
+ tdG8aPKFXJDyEnH9SiUWWzlu1rixOSpRQo8e2fseE6D8GmQVz6CnJJCmJRHnDwE16yfU4dJX7
+ JKGaLRDElTyJ/ehi37iXnQAULGay4vAx+KpY2/tvxZH+wixT05wCB93gM6RfdxNk2/+c3sgdC
+ ikEUF7R9U1+VpjOcGVmdFJ579sUlQGHYws5bFQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 14, 2019 at 09:15:19PM +0000, Lendacky, Thomas wrote:
-> diff --git a/arch/x86/kernel/vmlinux.lds.S b/arch/x86/kernel/vmlinux.lds.S
-> index ca2252ca6ad7..a7aa65b44c71 100644
-> --- a/arch/x86/kernel/vmlinux.lds.S
-> +++ b/arch/x86/kernel/vmlinux.lds.S
-> @@ -387,6 +387,30 @@ SECTIONS
->  	. = ALIGN(PAGE_SIZE);		/* keep VO_INIT_SIZE page aligned */
->  	_end = .;
->  
-> +#ifdef CONFIG_AMD_MEM_ENCRYPT
-> +	/*
-> +	 * SME workarea section: Lives outside of the kernel proper (_text -
-> +	 * _end) for performing in-place encryption of the kernel during boot.
-> +	 *
-> +	 * Resides after _end because even though the .brk section is after
-> +	 * __end_of_kernel_reserve, the .brk section is later reserved as a
-> +	 * part of the kernel. It is used in very early boot code and not
-> +	 * needed after that, so it is located after __end_of_kernel_reserve
-> +	 * so that it will be discarded and become part of the available
-> +	 * memory.
-> +	 *
-> +	 * Resides on a 2MB boundary to simplify the pagetable setup used for
-> +	 * the encryption.
-> +	 */
-> +	. = ALIGN(HPAGE_SIZE);
-> +	.sme : AT(ADDR(.sme) - LOAD_OFFSET) {
+Without this, we get a link error:
 
-Should we call that section something more generic as
+sound/soc/rockchip/rockchip_pdm.o: In function `rockchip_pdm_hw_params':
+rockchip_pdm.c:(.text+0x754): undefined reference to `rational_best_approximation'
 
-	.early_scratch
+Fixes: 624e8e00acaf ("ASoC: rockchip: pdm: fixup pdm fractional div")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ sound/soc/rockchip/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-or so?
-
-Someone else might need something like that too, in the future...
-
-Also, the DISCARDS sections do get freed at runtime so why not make it
-part of the DISCARD section...?
-
-> +		__sme_begin = .;
-> +		*(.sme)
-> +		. = ALIGN(HPAGE_SIZE);
-> +		__sme_end = .;
-> +	}
-> +#endif
-> +
->  	STABS_DEBUG
->  	DWARF_DEBUG
->  
-> diff --git a/arch/x86/mm/mem_encrypt_identity.c b/arch/x86/mm/mem_encrypt_identity.c
-> index 4aa9b1480866..c55c2ec8fb12 100644
-> --- a/arch/x86/mm/mem_encrypt_identity.c
-> +++ b/arch/x86/mm/mem_encrypt_identity.c
-> @@ -73,6 +73,19 @@ struct sme_populate_pgd_data {
->  	unsigned long vaddr_end;
->  };
->  
-> +/*
-> + * This work area lives in the .sme section, which lives outside of
-> + * the kernel proper. It is sized to hold the intermediate copy buffer
-> + * and more than enough pagetable pages.
-> + *
-> + * By using this section, the kernel can be encrypted in place and we
-
-replace that "we" with an impartial passive formulation.
-
-Other than that, I like the commenting, very helpful!
-
-Thx.
-
+diff --git a/sound/soc/rockchip/Kconfig b/sound/soc/rockchip/Kconfig
+index 28a80c1cb41d..b43657e6e655 100644
+--- a/sound/soc/rockchip/Kconfig
++++ b/sound/soc/rockchip/Kconfig
+@@ -20,6 +20,7 @@ config SND_SOC_ROCKCHIP_PDM
+ 	tristate "Rockchip PDM Controller Driver"
+ 	depends on CLKDEV_LOOKUP && SND_SOC_ROCKCHIP
+ 	select SND_SOC_GENERIC_DMAENGINE_PCM
++	select RATIONAL
+ 	help
+ 	  Say Y or M if you want to add support for PDM driver for
+ 	  Rockchip PDM Controller. The Controller supports up to maximum of
 -- 
-Regards/Gruss,
-    Boris.
+2.20.0
 
-Good mailing practices for 400: avoid top-posting and trim the reply.
