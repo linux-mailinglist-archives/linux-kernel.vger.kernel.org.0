@@ -2,72 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8384A47E05
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 11:14:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CDED547E22
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 11:17:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727815AbfFQJOH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 05:14:07 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:54694 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726753AbfFQJOH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 05:14:07 -0400
-Received: from zn.tnic (p200300EC2F061300E197F1B82D7E4667.dip0.t-ipconnect.de [IPv6:2003:ec:2f06:1300:e197:f1b8:2d7e:4667])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id E4CCC1EC0AB9;
-        Mon, 17 Jun 2019 11:14:05 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1560762846;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=esWtvvaU+HTDTE+bUZUafraMPobPs9RAIBfZm9WP3nE=;
-        b=jqYp+0dJxQc41097/0iTI7yAt2X7EbZ8TpnXunoKsxcrr+01XbII9oCW9JxWUA7kkEMc1b
-        pUUOWsQMvGmH4ri+t72y6IFGrRO5sjMF/ZNyR+EoECFC/EDM2KFWW/dhfWf27G/uhyI26Y
-        YQEhkhdqYKYjCGt7EjK3Hmg5Q885ygs=
-Date:   Mon, 17 Jun 2019 11:13:57 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     Fenghua Yu <fenghua.yu@intel.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, H Peter Anvin <hpa@zytor.com>,
-        Christopherson Sean J <sean.j.christopherson@intel.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Radim Krcmar <rkrcmar@redhat.com>,
-        Ravi V Shankar <ravi.v.shankar@intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        x86 <x86@kernel.org>, Jacob Pan <jacob.jun.pan@linux.intel.com>,
-        Len Brown <lenb@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>
-Subject: Re: [PATCH 1/3] x86/resctrl: Get max rmid and occupancy scale
- directly from CPUID instead of cpuinfo_x86
-Message-ID: <20190617091357.GF27127@zn.tnic>
-References: <1560705250-211820-1-git-send-email-fenghua.yu@intel.com>
- <1560705250-211820-2-git-send-email-fenghua.yu@intel.com>
- <alpine.DEB.2.21.1906162141301.1760@nanos.tec.linutronix.de>
- <20190617031808.GA214090@romley-ivt3.sc.intel.com>
- <20190617075214.GB27127@zn.tnic>
- <20190617080909.GC214090@romley-ivt3.sc.intel.com>
- <20190617083048.GE27127@zn.tnic>
- <20190617083502.GD214090@romley-ivt3.sc.intel.com>
+        id S1728026AbfFQJRI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 05:17:08 -0400
+Received: from casper.infradead.org ([85.118.1.10]:54562 "EHLO
+        casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726753AbfFQJRH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Jun 2019 05:17:07 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
+        MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:From:Date:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=4UvzZyS/aNQ/MsOVrJfipLFSDYLsgIWS72uO2fF+tF8=; b=HS/CCJGZiIDLX7SkLozd/7MuYA
+        2t7Ma2qN+j7tNX0giTN/vzpfBAEsXSVzV5SVXyj3keXbOfpphcBLRCCq5K+FykW+IGLQ04czlkpdD
+        mzVe5GSNsWCGnQQ8SCYN5XGIjq51GafrObm1Tra3imKne3LxFwJ1Ggh4LkM2kptBQSx2ltvbebm6c
+        DxwlMbXy5S+8IGas47ofH3Oc7cVTl65AarNjSWJTwl/GwFX0zIbrOUutxLse14oHDuKYiqcy1TrnN
+        fGEJL6oKcPj8QvheF0P+5bjS6+zn7fv/suvs1Xg2q3tUoSHu18Bi17Se+K7M0bOtpbqNFNHMZcmUA
+        TdgNGObw==;
+Received: from 179.186.105.91.dynamic.adsl.gvt.net.br ([179.186.105.91] helo=coco.lan)
+        by casper.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1hcnlA-0007OR-OD; Mon, 17 Jun 2019 09:17:05 +0000
+Date:   Mon, 17 Jun 2019 06:16:59 -0300
+From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+To:     Markus Heiser <markus.heiser@darmarit.de>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab@infradead.org>,
+        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>
+Subject: Re: [PATCH 14/14] docs: sphinx/kernel_abi.py: fix UTF-8 support
+Message-ID: <20190617061659.22596fc3@coco.lan>
+In-Reply-To: <28aca947-4e88-7186-7f07-9a3ccb379649@darmarit.de>
+References: <cover.1560477540.git.mchehab+samsung@kernel.org>
+        <62c8ffe86df40c90299e80619a1cb5d50971c2c6.1560477540.git.mchehab+samsung@kernel.org>
+        <20190614161837.GA25206@kroah.com>
+        <20190614132530.7a013757@coco.lan>
+        <28aca947-4e88-7186-7f07-9a3ccb379649@darmarit.de>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190617083502.GD214090@romley-ivt3.sc.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 17, 2019 at 01:35:02AM -0700, Fenghua Yu wrote:
-> Is this OK? Or the patch 0002 is unnecessary?
+Em Sun, 16 Jun 2019 17:43:50 +0200
+Markus Heiser <markus.heiser@darmarit.de> escreveu:
 
-One patch: carve out and move it where you think it should belong.
+> Am 14.06.19 um 18:25 schrieb Mauro Carvalho Chehab:
+> > Em Fri, 14 Jun 2019 18:18:37 +0200
+> > Greg Kroah-Hartman <gregkh@linuxfoundation.org> escreveu:
+> >   
+> >> On Thu, Jun 13, 2019 at 11:04:20PM -0300, Mauro Carvalho Chehab wrote:  
+> >>> The parser breaks with UTF-8 characters with Sphinx 1.4.
+> >>>
+> >>> Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+> >>> ---
+> >>>   Documentation/sphinx/kernel_abi.py | 10 ++++++----
+> >>>   1 file changed, 6 insertions(+), 4 deletions(-)
+> >>>
+> >>> diff --git a/Documentation/sphinx/kernel_abi.py b/Documentation/sphinx/kernel_abi.py
+> >>> index 7fa7806532dc..460cee48a245 100644
+> >>> --- a/Documentation/sphinx/kernel_abi.py
+> >>> +++ b/Documentation/sphinx/kernel_abi.py
+> >>> @@ -1,4 +1,5 @@
+> >>> -# -*- coding: utf-8; mode: python -*-
+> >>> +# coding=utf-8
+> >>> +#  
+> >>
+> >> Is this an emacs vs. vim fight?  
+> > 
+> > No. This is a python-specific thing:
+> > 
+> > 	https://www.python.org/dev/peps/pep-0263/  
+> 
+> No need to change, the emacs notation is also OK, see your link
+> 
+>    """or (using formats recognized by popular editors):"""
+> 
+>    https://www.python.org/dev/peps/pep-0263/#defining-the-encoding
+> 
+> I prefer emacs notation, this is also evaluated by many other editors / tools.
 
--- 
-Regards/Gruss,
-    Boris.
+The usage of emacs notation is something that we don't like at the
+Linux Kernel. With ~4K developers per release, if we add tags to
+every single editor people use, it would be really messy, as one
+developer would be adding a tag and the next one replacing it by its
+some other favorite editor's tag.
 
-Good mailing practices for 400: avoid top-posting and trim the reply.
+There's even an item at Documentation/process/coding-style.rst
+due to that (item 9).
+
+Thanks,
+Mauro
