@@ -2,111 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5CD8F47D50
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 10:39:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EDE8147D60
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 10:41:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727823AbfFQIjs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 04:39:48 -0400
-Received: from mga04.intel.com ([192.55.52.120]:3979 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725837AbfFQIjs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 04:39:48 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Jun 2019 01:39:47 -0700
-X-ExtLoop1: 1
-Received: from khuang2-desk.gar.corp.intel.com ([10.255.91.82])
-  by fmsmga005.fm.intel.com with ESMTP; 17 Jun 2019 01:39:44 -0700
-Message-ID: <1560760783.5187.10.camel@linux.intel.com>
-Subject: Re: [PATCH, RFC 49/62] mm, x86: export several MKTME variables
-From:   Kai Huang <kai.huang@linux.intel.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>, x86@kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Borislav Petkov <bp@alien8.de>,
-        Andy Lutomirski <luto@amacapital.net>,
-        David Howells <dhowells@redhat.com>,
-        Kees Cook <keescook@chromium.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Jacob Pan <jacob.jun.pan@linux.intel.com>,
-        Alison Schofield <alison.schofield@intel.com>,
-        linux-mm@kvack.org, kvm@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Mon, 17 Jun 2019 20:39:43 +1200
-In-Reply-To: <20190617074643.GW3436@hirez.programming.kicks-ass.net>
-References: <20190508144422.13171-1-kirill.shutemov@linux.intel.com>
-         <20190508144422.13171-50-kirill.shutemov@linux.intel.com>
-         <20190614115647.GI3436@hirez.programming.kicks-ass.net>
-         <1560741269.5187.7.camel@linux.intel.com>
-         <20190617074643.GW3436@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.24.6 (3.24.6-1.fc26) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1727830AbfFQIl3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 04:41:29 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:33508 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725837AbfFQIl3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Jun 2019 04:41:29 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5H8dG9s171166;
+        Mon, 17 Jun 2019 08:40:51 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=mtHQgsyMZPGWe/GtLM4GBjN4evtvLlkaFbbD9s9dYHc=;
+ b=tpPU+h5+tChKaBLVITUdWhziFfm/aZCQvxbIk6T1ZoreFkfteknyoZphPXRVsOWSnRHc
+ yT7fkuV2H3JGDzfx5Wqoe9CltzTt/8BQ4SS6AdavygyUnCqBmdP1RXDJmp4hTCqf2Oel
+ e0axr6p5JsEg88NvqWwaoMjsxJ+AkvlKry8VJTLEKSFXGHCAzv4CMuoO/GrIYyFd4BZM
+ Drj17BYZIYYQpWvQPAF++51ZTIJv3wb4wFpiCduHYxAICMGKR2/piciLbJJHJcqCdh3N
+ D6zpLun1X48U29YHR/7grjby/ZE6mfOMgjxlk4kgLP2hlk6j9gXieYTJaAftOrnGPnW3 OQ== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by aserp2120.oracle.com with ESMTP id 2t4rmnw486-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 17 Jun 2019 08:40:50 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5H8eN7o165168;
+        Mon, 17 Jun 2019 08:40:50 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserp3020.oracle.com with ESMTP id 2t5mgb7wt2-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 17 Jun 2019 08:40:50 +0000
+Received: from abhmp0018.oracle.com (abhmp0018.oracle.com [141.146.116.24])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x5H8ehRn003768;
+        Mon, 17 Jun 2019 08:40:43 GMT
+Received: from kadam (/41.57.98.10)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 17 Jun 2019 01:40:43 -0700
+Date:   Mon, 17 Jun 2019 11:40:34 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Jonathan Cameron <jic23@kernel.org>
+Cc:     Melissa Wen <melissa.srw@gmail.com>, devel@driverdev.osuosl.org,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Stefan Popa <stefan.popa@analog.com>,
+        Michael Hennerich <Michael.Hennerich@analog.com>,
+        linux-iio@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Barry Song <21cnbao@gmail.com>, linux-kernel@vger.kernel.org,
+        kernel-usp@googlegroups.com,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Hartmut Knaack <knaack.h@gmx.de>
+Subject: Re: [PATCH] staging: iio: ad7150: use ternary operating to ensure
+ 0/1 value
+Message-ID: <20190617084033.GG28859@kadam>
+References: <20190614165059.7bifufvhxofy6ybu@smtp.gmail.com>
+ <20190616111516.1af0d41b@archlinux>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190616111516.1af0d41b@archlinux>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9290 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1906170081
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9290 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1906170082
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2019-06-17 at 09:46 +0200, Peter Zijlstra wrote:
-> On Mon, Jun 17, 2019 at 03:14:29PM +1200, Kai Huang wrote:
-> > On Fri, 2019-06-14 at 13:56 +0200, Peter Zijlstra wrote:
-> > > On Wed, May 08, 2019 at 05:44:09PM +0300, Kirill A. Shutemov wrote:
-> > > > From: Kai Huang <kai.huang@linux.intel.com>
-> > > > 
-> > > > KVM needs those variables to get/set memory encryption mask.
-> > > > 
-> > > > Signed-off-by: Kai Huang <kai.huang@linux.intel.com>
-> > > > Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-> > > > ---
-> > > >  arch/x86/mm/mktme.c | 3 +++
-> > > >  1 file changed, 3 insertions(+)
-> > > > 
-> > > > diff --git a/arch/x86/mm/mktme.c b/arch/x86/mm/mktme.c
-> > > > index df70651816a1..12f4266cf7ea 100644
-> > > > --- a/arch/x86/mm/mktme.c
-> > > > +++ b/arch/x86/mm/mktme.c
-> > > > @@ -7,13 +7,16 @@
-> > > >  
-> > > >  /* Mask to extract KeyID from physical address. */
-> > > >  phys_addr_t mktme_keyid_mask;
-> > > > +EXPORT_SYMBOL_GPL(mktme_keyid_mask);
-> > > >  /*
-> > > >   * Number of KeyIDs available for MKTME.
-> > > >   * Excludes KeyID-0 which used by TME. MKTME KeyIDs start from 1.
-> > > >   */
-> > > >  int mktme_nr_keyids;
-> > > > +EXPORT_SYMBOL_GPL(mktme_nr_keyids);
-> > > >  /* Shift of KeyID within physical address. */
-> > > >  int mktme_keyid_shift;
-> > > > +EXPORT_SYMBOL_GPL(mktme_keyid_shift);
-> > > >  
-> > > >  DEFINE_STATIC_KEY_FALSE(mktme_enabled_key);
-> > > >  EXPORT_SYMBOL_GPL(mktme_enabled_key);
-> > > 
-> > > NAK, don't export variables. Who owns the values, who enforces this?
-> > > 
-> > 
-> > Both KVM and IOMMU driver need page_keyid() and mktme_keyid_shift to set page's keyID to the
-> > right
-> > place in the PTE (of KVM EPT and VT-d DMA page table).
-> > 
-> > MKTME key type code need to know mktme_nr_keyids in order to alloc/free keyID.
-> > 
-> > Maybe better to introduce functions instead of exposing variables directly?
-> > 
-> > Or instead of introducing page_keyid(), we use page_encrypt_mask(), which essentially holds
-> > "page_keyid() << mktme_keyid_shift"?
+On Sun, Jun 16, 2019 at 11:15:16AM +0100, Jonathan Cameron wrote:
+> On Fri, 14 Jun 2019 13:50:59 -0300
+> Melissa Wen <melissa.srw@gmail.com> wrote:
 > 
-> Yes, that's much better, because that strictly limits the access to R/O.
+> > Remove idiom and use ternary operator for consistently trigger 0/1 value
+> > on variable declaration.
+> > 
+> > Signed-off-by: Melissa Wen <melissa.srw@gmail.com>
+> Hi Melissa,
 > 
+> In general I would consider this unnecessary churn as, whilst
+> it's no longer a favoured idiom, it is extremely common in the
+> kernel.
 
-Thanks. I think Kirill will be the one to handle your suggestion. :)
+It's still my favourite...  Why wouldn't people like it?  It feels like
+last week I just saw someone send a bunch of:
 
-Kirill?
+-	foo = (bar == baz) ? 1 : 0;
++	foo = (bar == baz);
 
-Thanks,
--Kai
+patches and I thought it was an improvement at the time...
+
+regards,
+dan carpenter
+
