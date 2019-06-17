@@ -2,95 +2,222 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EFF2B491D1
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 22:59:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B579491D9
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 23:00:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727480AbfFQU7M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 16:59:12 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:45879 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725497AbfFQU7M (ORCPT
+        id S1726974AbfFQVAb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 17:00:31 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:45686 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725497AbfFQVAb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 16:59:12 -0400
-Received: by mail-pf1-f193.google.com with SMTP id r1so6303953pfq.12;
-        Mon, 17 Jun 2019 13:59:12 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=rHIyU01hnGOwsvfBG7AIRuhj4MaQwQhxtb0qU2ma0Tw=;
-        b=YcRzJ7rnHoQwgmbgnGUP5cXXaXKQhlaqDJRfXbOqh4Vnl7saD/fX2Om/sqExuYCZqZ
-         Yv9HHl2AQF9+tlB2387B+ArUg0pdc7V2AkGLuc9dPCNQy6OqHaRofyuJO7lj+J1iEn6d
-         iJDEZriKr7KWwrHWt1G0SK8FG02j1jdvQbcKk6thDthJ9hOg7zQBQvTHxzFteLutUIJG
-         cA6I1teE273YY7yrpuS66vnnXYZy6INcQlMYyr3bkAkn8BPZaAK3/qG2+Mufudnd1TI9
-         tGUFWYgB746gkyao1Kg2+j0Nv47/j5leusCNPS2qDE2UfyPF+lZTKBBdIBwgidWbEFSK
-         rYTw==
-X-Gm-Message-State: APjAAAVS64nUedo5WwXaBlNPpbA3cMingw7tqhDWsc4wWggEapPsjW5f
-        PFQumztUd88meTcqk7osWYYIJHlLItc=
-X-Google-Smtp-Source: APXvYqyHO7JLS+3zWn4jMgqTtAZxGDmLfr7jj8zmPXm8ih+uXHUsbX/jHmqsNRktyxUpaSffr8aiRA==
-X-Received: by 2002:a17:90a:ac11:: with SMTP id o17mr1044136pjq.134.1560805150995;
-        Mon, 17 Jun 2019 13:59:10 -0700 (PDT)
-Received: from desktop-bart.svl.corp.google.com ([2620:15c:2cd:202:4308:52a3:24b6:2c60])
-        by smtp.gmail.com with ESMTPSA id a13sm11200233pgl.84.2019.06.17.13.59.09
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Mon, 17 Jun 2019 13:59:10 -0700 (PDT)
-Subject: Re: [PATCH 4/8] storvsc: set virt_boundary_mask in the scsi host
- template
-To:     Christoph Hellwig <hch@lst.de>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>
-Cc:     Sagi Grimberg <sagi@grimberg.me>, Max Gurtovoy <maxg@mellanox.com>,
-        linux-rdma@vger.kernel.org, linux-scsi@vger.kernel.org,
-        megaraidlinux.pdl@broadcom.com, MPT-FusionLinux.pdl@broadcom.com,
-        linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20190617122000.22181-1-hch@lst.de>
- <20190617122000.22181-5-hch@lst.de>
-From:   Bart Van Assche <bvanassche@acm.org>
-Message-ID: <e2ea87c6-a6ba-149b-f99e-d2980f5cd9a0@acm.org>
-Date:   Mon, 17 Jun 2019 13:59:09 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        Mon, 17 Jun 2019 17:00:31 -0400
+Received: from p5b06daab.dip0.t-ipconnect.de ([91.6.218.171] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1hcyjs-0005CJ-2H; Mon, 17 Jun 2019 23:00:28 +0200
+Date:   Mon, 17 Jun 2019 23:00:27 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Ferdinand Blomqvist <ferdinand.blomqvist@gmail.com>
+cc:     linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 7/7] rslib: Fix remaining decoder flaws
+In-Reply-To: <20190330182947.8823-8-ferdinand.blomqvist@gmail.com>
+Message-ID: <alpine.DEB.2.21.1906172249580.1963@nanos.tec.linutronix.de>
+References: <20190330182947.8823-1-ferdinand.blomqvist@gmail.com> <20190330182947.8823-8-ferdinand.blomqvist@gmail.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-In-Reply-To: <20190617122000.22181-5-hch@lst.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 6/17/19 5:19 AM, Christoph Hellwig wrote:
-> This ensures all proper DMA layer handling is taken care of by the
-> SCSI midlayer.
-> 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
->   drivers/scsi/storvsc_drv.c | 5 ++---
->   1 file changed, 2 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/scsi/storvsc_drv.c b/drivers/scsi/storvsc_drv.c
-> index b89269120a2d..7ed6f2fc1446 100644
-> --- a/drivers/scsi/storvsc_drv.c
-> +++ b/drivers/scsi/storvsc_drv.c
-> @@ -1422,9 +1422,6 @@ static int storvsc_device_configure(struct scsi_device *sdevice)
->   {
->   	blk_queue_rq_timeout(sdevice->request_queue, (storvsc_timeout * HZ));
->   
-> -	/* Ensure there are no gaps in presented sgls */
-> -	blk_queue_virt_boundary(sdevice->request_queue, PAGE_SIZE - 1);
-> -
->   	sdevice->no_write_same = 1;
->   
->   	/*
-> @@ -1697,6 +1694,8 @@ static struct scsi_host_template scsi_driver = {
->   	.this_id =		-1,
->   	/* Make sure we dont get a sg segment crosses a page boundary */
->   	.dma_boundary =		PAGE_SIZE-1,
-> +	/* Ensure there are no gaps in presented sgls */
-> +	.virt_boundary_mask =	PAGE_SIZE-1,
->   	.no_write_same =	1,
->   	.track_queue_depth =	1,
->   };
+On Sat, 30 Mar 2019, Ferdinand Blomqvist wrote:
+> The decoder is flawed in the following ways:
 
-Reviewed-by: Bart Van Assche <bvanassche@acm.org>
+...
+
+> - Also fix errors in parity when correcting in-place. Another option
+>   would be to completely disregard errors in the parity, but then the
+>   interface makes it impossible to write tests that test for silent
+>   failures.
+> 
+> Other changes:
+> 
+> - Only fill the correction buffer and error position buffer if both of
+>   them are provided. Otherwise correct in place. Previously the error
+>   position buffer was always populated with the positions of the
+>   corrected errors, irrespective of whether a correction buffer was
+>   supplied or not. The rationale for this change is that there seems to
+>   be two use cases for the decoder; correct in-place or use the
+>   correction buffers. The caller does not need the positions of the
+>   corrected errors when in-place correction is used. If in-place
+>   correction is not used, then both the correction buffer and error
+>   position buffer need to be populated.
+
+Again. A perfect changelog! Very nice to read, informative and technically
+on the point.
+
+> diff --git a/lib/reed_solomon/decode_rs.c b/lib/reed_solomon/decode_rs.c
+> index 7ecc449e57e9..33621ea67f67 100644
+> --- a/lib/reed_solomon/decode_rs.c
+> +++ b/lib/reed_solomon/decode_rs.c
+> @@ -22,6 +22,7 @@
+>  	uint16_t *index_of = rs->index_of;
+>  	uint16_t u, q, tmp, num1, num2, den, discr_r, syn_error;
+>  	int count = 0;
+> +	int num_corrected;
+>  	uint16_t msk = (uint16_t) rs->nn;
+>  
+>  	/*
+> @@ -182,6 +183,15 @@
+>  		if (lambda[i] != nn)
+>  			deg_lambda = i;
+>  	}
+> +
+> +	if (deg_lambda == 0) {
+> +		/*
+> +		 * deg(lambda) is zero even though the syndrome is non-zero
+> +		 * => uncorrectable error detected
+> +		 */
+> +		return -EBADMSG;
+
+Good catch. Now that I paged all that stuff back in it's obvious.
+
+> +	}
+> +
+>  	/* Find roots of error+erasure locator polynomial by Chien search */
+>  	memcpy(&reg[1], &lambda[1], nroots * sizeof(reg[0]));
+>  	count = 0;		/* Number of roots of lambda(x) */
+> @@ -195,6 +205,12 @@
+>  		}
+>  		if (q != 0)
+>  			continue;	/* Not a root */
+> +
+> +		if (k < pad) {
+> +			/* Impossible error location. Uncorrectable error. */
+> +			return -EBADMSG;
+
+True.
+
+> +		}
+> +
+>  		/* store root (index-form) and error location number */
+>  		root[count] = i;
+>  		loc[count] = k;
+> @@ -229,7 +245,9 @@
+>  	/*
+>  	 * Compute error values in poly-form. num1 = omega(inv(X(l))), num2 =
+>  	 * inv(X(l))**(fcr-1) and den = lambda_pr(inv(X(l))) all in poly-form
+> +	 * Note: we reuse the buffer for b to store the correction pattern
+>  	 */
+> +	num_corrected = 0;
+>  	for (j = count - 1; j >= 0; j--) {
+>  		num1 = 0;
+>  		for (i = deg_omega; i >= 0; i--) {
+> @@ -237,6 +255,12 @@
+>  				num1 ^= alpha_to[rs_modnn(rs, omega[i] +
+>  							i * root[j])];
+>  		}
+> +
+> +		if (num1 == 0) {
+> +			b[j] = 0;
+> +			continue;
+
+A comment for this would be appreciated.
+
+> +		}
+> +
+>  		num2 = alpha_to[rs_modnn(rs, root[j] * (fcr - 1) + nn)];
+>  		den = 0;
+>  
+> @@ -248,29 +272,52 @@
+>  						       i * root[j])];
+>  			}
+>  		}
+> -		/* Apply error to data */
+> -		if (num1 != 0 && loc[j] >= pad) {
+> -			uint16_t cor = alpha_to[rs_modnn(rs,index_of[num1] +
+> -						       index_of[num2] +
+> -						       nn - index_of[den])];
+> -			/* Store the error correction pattern, if a
+> -			 * correction buffer is available */
+> -			if (corr) {
+> -				corr[j] = cor;
+> -			} else {
+> -				/* If a data buffer is given and the
+> -				 * error is inside the message,
+> -				 * correct it */
+> -				if (data && (loc[j] < (nn - nroots)))
+> -					data[loc[j] - pad] ^= cor;
+> -			}
+> +
+> +		b[j] = alpha_to[rs_modnn(rs, index_of[num1] +
+> +					       index_of[num2] +
+> +					       nn - index_of[den])];
+
+Way simpler indeed.
+
+> +		num_corrected++;
+> +	}
+> +
+> +	/*
+> +	 * We compute the syndrome of the 'error' to and check that it matches
+
+s/to// or s/to/too ?
+
+> +	 * the syndrome of the received word
+> +	 */
+> +	for (i = 0; i < nroots; i++) {
+> +		tmp = 0;
+> +		for (j = 0; j < count; j++) {
+> +			if (b[j] == 0)
+> +				continue;
+> +
+> +			k = (fcr + i) * prim * (nn-loc[j]-1);
+> +			tmp ^= alpha_to[rs_modnn(rs, index_of[b[j]] + k)];
+>  		}
+> +
+> +		if (tmp != alpha_to[s[i]])
+> +			return -EBADMSG;
+
+Interesting it never occured to me that this can actually happen.
+
+>  	}
+>  
+> -	if (eras_pos != NULL) {
+> -		for (i = 0; i < count; i++)
+> -			eras_pos[i] = loc[i] - pad;
+> +	/*
+> +	 * Store the error correction pattern, if a
+> +	 * correction buffer is available
+> +	 */
+> +	if (corr && eras_pos) {
+> +		j = 0;
+> +		for (i = 0; i < count; i++) {
+> +			if (b[i]) {
+> +				corr[j] = b[i];
+> +				eras_pos[j++] = loc[i] - pad;
+> +			}
+> +		}
+> +	} else if (data && par) {
+> +		/* Apply error to data and parity */
+> +		for (i = 0; i < count; i++) {
+> +			if (loc[i] < (nn - nroots))
+> +				data[loc[i] - pad] ^= b[i];
+> +			else
+> +				par[loc[i] - pad - len] ^= b[i];
+> +		}
+
+Aside of the fact that I had to wrap my brain around this crime I committed
+more than a decade ago, all of this was really a pleasure to review.
+
+Thanks a lot for putting that effort in! I'm looking forward to V2 of that.
+
+Thanks,
+
+	tglx
