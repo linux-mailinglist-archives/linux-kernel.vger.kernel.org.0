@@ -2,314 +2,178 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D990A48F17
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 21:30:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6E0B948F04
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 21:29:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729092AbfFQTaG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 15:30:06 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:57469 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728993AbfFQT37 (ORCPT
+        id S1728882AbfFQT3F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 15:29:05 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:45504 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726331AbfFQT3E (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 15:29:59 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x5HJSXcF3564014
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Mon, 17 Jun 2019 12:28:33 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x5HJSXcF3564014
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019051801; t=1560799713;
-        bh=SjZNQd+s30ZqQQS1LKtuk70XdajQxYcfTYZa71Mhr5A=;
-        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
-        b=SxGB0v8en/BeG+DCiQaGU3GPIsrHL7i8zW//2WRdCEffMTPwYr0d2hLARvOS1yFYF
-         W5UDLT1AS54X4onz2/ozshr8Mkx/ph/uCfSIhAkB5MAeurHoiz8UWSSMshCoo3+Ns9
-         upvoAF4hZQ2vHP6Ad6D9TfVPsYsJAJ2PnBiG2BV5nRqBpVL1Ic+9u1t2sDWm8e3Y46
-         p26nqRPOp+78/iWk+8LAOwHmxHdfiqH+jKpWEdvphb36Ff7L4WVvbHrn36k7UdVdFT
-         7cjd9P4owXhmqXvAvNUQbD0aEMSRbzhBsDfG11FsgXx7doYiYM4c8/MPcstIX5bha3
-         DWftS8re1vRiQ==
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x5HJSWbZ3564006;
-        Mon, 17 Jun 2019 12:28:32 -0700
-Date:   Mon, 17 Jun 2019 12:28:32 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Mathieu Poirier <tipbot@zytor.com>
-Message-ID: <tip-af21577c05a746579c4c084d51d7f0661def128c@git.kernel.org>
-Cc:     alexander.shishkin@linux.intel.com, peterz@infradead.org,
-        acme@redhat.com, mingo@kernel.org, suzuki.poulose@arm.com,
-        leo.yan@linaro.org, hpa@zytor.com, mathieu.poirier@linaro.org,
-        linux-kernel@vger.kernel.org, namhyung@kernel.org,
-        jolsa@redhat.com, tglx@linutronix.de
-Reply-To: leo.yan@linaro.org, suzuki.poulose@arm.com,
-          alexander.shishkin@linux.intel.com, peterz@infradead.org,
-          acme@redhat.com, mingo@kernel.org, jolsa@redhat.com,
-          tglx@linutronix.de, mathieu.poirier@linaro.org, hpa@zytor.com,
-          linux-kernel@vger.kernel.org, namhyung@kernel.org
-In-Reply-To: <20190524173508.29044-14-mathieu.poirier@linaro.org>
-References: <20190524173508.29044-14-mathieu.poirier@linaro.org>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf cs-etm: Use traceID aware memory callback API
-Git-Commit-ID: af21577c05a746579c4c084d51d7f0661def128c
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Mon, 17 Jun 2019 15:29:04 -0400
+Received: by mail-wr1-f66.google.com with SMTP id f9so11208668wre.12;
+        Mon, 17 Jun 2019 12:29:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=zrxy0WllXzL1VTI6UrDNAs4m1yjH3oQJOE/ib7yHppg=;
+        b=MAbgPHqqsO3J32BGwB6IpY8PF/XmJCgTfJvWZ7YkJW1F8h5ldrRWzjVXxu4oMlm9fM
+         0N/HnnF5rGSz52qH582ZhhqGA3idNNN1hsQ7Q+0sXk/tD28PvS6eHVVMfc3qxeT4rHI6
+         aUhzjTV2CPsqxz/W71Sq+ZMoe4hKVQGuzRnHU5fPo1IqkBvhqn6dl/FBGDhsKMznGbun
+         +CKFELCHbDLLKQ6M9X76H0SY67K8/D4iD7ZwJ/DpjcxAplES1T5WxD+OK96bEkLhg8PJ
+         vboS23azarQJrDkky/cSyoT941k6O1W4UzC3x+qCcBNhYDs4zqJiWKj3MjfwMv4PrpFY
+         bFkw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=zrxy0WllXzL1VTI6UrDNAs4m1yjH3oQJOE/ib7yHppg=;
+        b=DM6Ak2n0CEyee7OY/cShTkQFskd0VCurUqR+DbFwQ9r4ToKU3yiwJ6SEt/lO46GLh4
+         G8nBlC717K/oPuhWoqXXWjZLrDxGQ3qkkXaHJ5N89B4gPMC8sfFOpkGUe3hPbMJYsQ3c
+         mCwr4RXd/QlsRSEV9zeTY9bcXB02lXy+8SJLJ73roJVEykTfvWwCMxiC7Een3pJtWbrQ
+         vpQ0lNnzxqPRsoFBLXuCI3o9FCFyMomuLP32zQzWQl042Z+M1JJy0npG4xhs4E/U988h
+         ERx43rfb1Dv4rI4IfMwuynK3JlV2Alhbbc6C91aFMJPCuAJvZcPGoNjbI3oXL7GxHYA4
+         MgZw==
+X-Gm-Message-State: APjAAAWdNNBfX74nDPuuRJ+PFQuJ/Ez1g76uO/VuOirtuhS54nYYoOHw
+        yeh9sBl2haQdpBahfl8k5og=
+X-Google-Smtp-Source: APXvYqw+aPGfpkw1pikw+INM7bq89C7AwENHffGjJVzT0GoISwCZRBWoLMVPJTOjOqXkPEtRbsgUZQ==
+X-Received: by 2002:adf:b60f:: with SMTP id f15mr11642091wre.283.1560799741580;
+        Mon, 17 Jun 2019 12:29:01 -0700 (PDT)
+Received: from [192.168.2.145] (ppp91-79-162-197.pppoe.mtu-net.ru. [91.79.162.197])
+        by smtp.googlemail.com with ESMTPSA id o126sm400268wmo.1.2019.06.17.12.28.59
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 17 Jun 2019 12:29:00 -0700 (PDT)
+Subject: Re: [PATCH V7] i2c: tegra: remove BUG, BUG_ON
+To:     Bitan Biswas <bbiswas@nvidia.com>,
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        Thierry Reding <treding@nvidia.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Peter Rosin <peda@axentia.se>,
+        Wolfram Sang <wsa@the-dreams.de>
+Cc:     Shardar Mohammed <smohammed@nvidia.com>,
+        Sowjanya Komatineni <skomatineni@nvidia.com>,
+        Mantravadi Karthik <mkarthik@nvidia.com>
+References: <1560748152-6575-1-git-send-email-bbiswas@nvidia.com>
+ <5a8ad23f-33c8-5140-cef8-f9cef70764b1@gmail.com>
+ <43a3fae8-dd3e-c7d3-42a7-493210e601e2@nvidia.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <070ee927-be5a-327f-36d7-e6395c898574@gmail.com>
+Date:   Mon, 17 Jun 2019 22:28:59 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.1
 MIME-Version: 1.0
+In-Reply-To: <43a3fae8-dd3e-c7d3-42a7-493210e601e2@nvidia.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
-X-Spam-Status: No, score=-1.2 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        DATE_IN_FUTURE_06_12,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,
-        DKIM_VALID_EF autolearn=ham autolearn_force=no version=3.4.2
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  af21577c05a746579c4c084d51d7f0661def128c
-Gitweb:     https://git.kernel.org/tip/af21577c05a746579c4c084d51d7f0661def128c
-Author:     Mathieu Poirier <mathieu.poirier@linaro.org>
-AuthorDate: Fri, 24 May 2019 11:35:04 -0600
-Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Mon, 10 Jun 2019 15:50:02 -0300
+17.06.2019 21:41, Bitan Biswas пишет:
+> 
+> 
+> On 6/17/19 5:13 AM, Dmitry Osipenko wrote:
+>> 17.06.2019 8:09, Bitan Biswas пишет:
+>>> Remove BUG, BUG_ON as it makes system usable:
+>>>   - Remove redundant BUG_ON calls or replace with WARN_ON_ONCE
+>>>     as needed.
+>>>   - Remove BUG() and mask Rx interrupt similar as Tx
+>>>     for message fully sent case.
+>>>   - Add caller error handling and WARN_ON_ONCE check for non-zero
+>>>     rx_fifo_avail in tegra_i2c_empty_rx_fifo() after all processing.
+>>
+>> The commit message should describe motivation of the change and not the change itself,
+>> unless it's some additional information which is required for better understanding of
+>> the code.
+>>
+>> In yours case it could be something like that:
+>>
+>>      The usage of BUG() macro is generally discouraged in kernel, unless
+>>      it's a problem that results in a physical damage or loss of data.
+>>      This patch removes unnecessary BUG() macros and replaces the rest
+>>      with a warnings.
+> I shall update as per above comments.
+> 
+>>
+>>> Signed-off-by: Bitan Biswas <bbiswas@nvidia.com>
+>>> ---
+>>>   drivers/i2c/busses/i2c-tegra.c | 45 ++++++++++++++++++++++++++++++++++--------
+>>>   1 file changed, 37 insertions(+), 8 deletions(-)
+>>>
+>>> diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
+>>> index 4dfb4c1..b155b61 100644
+>>> --- a/drivers/i2c/busses/i2c-tegra.c
+>>> +++ b/drivers/i2c/busses/i2c-tegra.c
+>>> @@ -73,6 +73,7 @@
+>>>   #define I2C_ERR_NO_ACK                BIT(0)
+>>>   #define I2C_ERR_ARBITRATION_LOST        BIT(1)
+>>>   #define I2C_ERR_UNKNOWN_INTERRUPT        BIT(2)
+>>> +#define I2C_ERR_RX_BUFFER_OVERFLOW        BIT(3)
+>>>     #define PACKET_HEADER0_HEADER_SIZE_SHIFT    28
+>>>   #define PACKET_HEADER0_PACKET_ID_SHIFT        16
+>>> @@ -515,7 +516,11 @@ static int tegra_i2c_empty_rx_fifo(struct tegra_i2c_dev *i2c_dev)
+>>>        * prevent overwriting past the end of buf
+>>>        */
+>>>       if (rx_fifo_avail > 0 && buf_remaining > 0) {
+>>> -        BUG_ON(buf_remaining > 3);
+>>> +        /*
+>>> +         * buf_remaining > 3 check not needed as rx_fifo_avail == 0
+>>> +         * when (words_to_transfer was > rx_fifo_avail) earlier
+>>> +         * in this function.
+>>> +         */
+>>>           val = i2c_readl(i2c_dev, I2C_RX_FIFO);
+>>>           val = cpu_to_le32(val);
+>>>           memcpy(buf, &val, buf_remaining);
+>>> @@ -523,7 +528,15 @@ static int tegra_i2c_empty_rx_fifo(struct tegra_i2c_dev *i2c_dev)
+>>>           rx_fifo_avail--;
+>>>       }
+>>>   -    BUG_ON(rx_fifo_avail > 0 && buf_remaining > 0);
+>>> +    if ((!(i2c_dev->msg_buf_remaining)) &&
+>>
+>> The RX FIFO shall be drained completely no matter what.
+>>
+>> Hence why the "i2c_dev->msg_buf_remaining" checking is needed here?
+> I moved the part of below condition in Patch V6 to function tegra_i2c_empty_rx_fifo:
+> 
+>>> +            err_val = tegra_i2c_empty_rx_fifo(i2c_dev);
+>>> +            if ((!(i2c_dev->msg_buf_remaining)) &&
+> 
+>> Let's move this check into tegra_i2c_empty_rx_fifo() and return -EINVAL for that case.
+>> This will make code to look cleaner.
+> 
+> Is above condition not needed?
 
-perf cs-etm: Use traceID aware memory callback API
+Let's put it at the very beginning. This may give a bit more information about the
+problem by knowing if the offending overflow happens after or during of the buffer's
+fill up.
 
-When working with CPU-wide traces different traceID may be found in the
-same stream.  As such we need to use the decoder callback that provides
-the traceID in order to know the thread context being decoded.
+static int tegra_i2c_empty_rx_fifo(struct tegra_i2c_dev *i2c_dev)
+{
+	u32 val;
+	int rx_fifo_avail;
+	u8 *buf = i2c_dev->msg_buf;
+	size_t buf_remaining = i2c_dev->msg_buf_remaining;
+	int words_to_transfer;
 
-Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-Tested-by: Leo Yan <leo.yan@linaro.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Suzuki Poulouse <suzuki.poulose@arm.com>
-Cc: coresight@lists.linaro.org
-Cc: linux-arm-kernel@lists.infradead.org
-Link: http://lkml.kernel.org/r/20190524173508.29044-14-mathieu.poirier@linaro.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/util/cs-etm-decoder/cs-etm-decoder.c | 14 ++++-----
- tools/perf/util/cs-etm-decoder/cs-etm-decoder.h |  3 +-
- tools/perf/util/cs-etm.c                        | 41 +++++++++++++++++--------
- 3 files changed, 36 insertions(+), 22 deletions(-)
+	if (WARN_ON(!i2c_dev->msg_buf_remaining))
+		return -EINVAL;
+...
 
-diff --git a/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c b/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c
-index 4303d2d00d31..87264b79de0e 100644
---- a/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c
-+++ b/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c
-@@ -41,15 +41,14 @@ static u32
- cs_etm_decoder__mem_access(const void *context,
- 			   const ocsd_vaddr_t address,
- 			   const ocsd_mem_space_acc_t mem_space __maybe_unused,
-+			   const u8 trace_chan_id,
- 			   const u32 req_size,
- 			   u8 *buffer)
- {
- 	struct cs_etm_decoder *decoder = (struct cs_etm_decoder *) context;
- 
--	return decoder->mem_access(decoder->data,
--				   address,
--				   req_size,
--				   buffer);
-+	return decoder->mem_access(decoder->data, trace_chan_id,
-+				   address, req_size, buffer);
- }
- 
- int cs_etm_decoder__add_mem_access_cb(struct cs_etm_decoder *decoder,
-@@ -58,9 +57,10 @@ int cs_etm_decoder__add_mem_access_cb(struct cs_etm_decoder *decoder,
- {
- 	decoder->mem_access = cb_func;
- 
--	if (ocsd_dt_add_callback_mem_acc(decoder->dcd_tree, start, end,
--					 OCSD_MEM_SPACE_ANY,
--					 cs_etm_decoder__mem_access, decoder))
-+	if (ocsd_dt_add_callback_trcid_mem_acc(decoder->dcd_tree, start, end,
-+					       OCSD_MEM_SPACE_ANY,
-+					       cs_etm_decoder__mem_access,
-+					       decoder))
- 		return -1;
- 
- 	return 0;
-diff --git a/tools/perf/util/cs-etm-decoder/cs-etm-decoder.h b/tools/perf/util/cs-etm-decoder/cs-etm-decoder.h
-index 6ae7ab4cf5fe..11f3391d06f2 100644
---- a/tools/perf/util/cs-etm-decoder/cs-etm-decoder.h
-+++ b/tools/perf/util/cs-etm-decoder/cs-etm-decoder.h
-@@ -19,8 +19,7 @@ struct cs_etm_packet_queue;
- 
- struct cs_etm_queue;
- 
--typedef u32 (*cs_etm_mem_cb_type)(struct cs_etm_queue *, u64,
--				  size_t, u8 *);
-+typedef u32 (*cs_etm_mem_cb_type)(struct cs_etm_queue *, u8, u64, size_t, u8 *);
- 
- struct cs_etmv3_trace_params {
- 	u32 reg_ctrl;
-diff --git a/tools/perf/util/cs-etm.c b/tools/perf/util/cs-etm.c
-index 7e3b4d10f5c4..2483293266d8 100644
---- a/tools/perf/util/cs-etm.c
-+++ b/tools/perf/util/cs-etm.c
-@@ -491,8 +491,8 @@ static u8 cs_etm__cpu_mode(struct cs_etm_queue *etmq, u64 address)
- 	}
- }
- 
--static u32 cs_etm__mem_access(struct cs_etm_queue *etmq, u64 address,
--			      size_t size, u8 *buffer)
-+static u32 cs_etm__mem_access(struct cs_etm_queue *etmq, u8 trace_chan_id,
-+			      u64 address, size_t size, u8 *buffer)
- {
- 	u8  cpumode;
- 	u64 offset;
-@@ -501,6 +501,8 @@ static u32 cs_etm__mem_access(struct cs_etm_queue *etmq, u64 address,
- 	struct	 machine *machine;
- 	struct	 addr_location al;
- 
-+	(void)trace_chan_id;
-+
- 	if (!etmq)
- 		return 0;
- 
-@@ -687,10 +689,12 @@ void cs_etm__reset_last_branch_rb(struct cs_etm_traceid_queue *tidq)
- }
- 
- static inline int cs_etm__t32_instr_size(struct cs_etm_queue *etmq,
--					 u64 addr) {
-+					 u8 trace_chan_id, u64 addr)
-+{
- 	u8 instrBytes[2];
- 
--	cs_etm__mem_access(etmq, addr, ARRAY_SIZE(instrBytes), instrBytes);
-+	cs_etm__mem_access(etmq, trace_chan_id, addr,
-+			   ARRAY_SIZE(instrBytes), instrBytes);
- 	/*
- 	 * T32 instruction size is indicated by bits[15:11] of the first
- 	 * 16-bit word of the instruction: 0b11101, 0b11110 and 0b11111
-@@ -719,6 +723,7 @@ u64 cs_etm__last_executed_instr(const struct cs_etm_packet *packet)
- }
- 
- static inline u64 cs_etm__instr_addr(struct cs_etm_queue *etmq,
-+				     u64 trace_chan_id,
- 				     const struct cs_etm_packet *packet,
- 				     u64 offset)
- {
-@@ -726,7 +731,8 @@ static inline u64 cs_etm__instr_addr(struct cs_etm_queue *etmq,
- 		u64 addr = packet->start_addr;
- 
- 		while (offset > 0) {
--			addr += cs_etm__t32_instr_size(etmq, addr);
-+			addr += cs_etm__t32_instr_size(etmq,
-+						       trace_chan_id, addr);
- 			offset--;
- 		}
- 		return addr;
-@@ -1063,6 +1069,7 @@ static int cs_etm__sample(struct cs_etm_queue *etmq,
- 	struct cs_etm_auxtrace *etm = etmq->etm;
- 	struct cs_etm_packet *tmp;
- 	int ret;
-+	u8 trace_chan_id = tidq->trace_chan_id;
- 	u64 instrs_executed = tidq->packet->instr_count;
- 
- 	tidq->period_instructions += instrs_executed;
-@@ -1093,7 +1100,8 @@ static int cs_etm__sample(struct cs_etm_queue *etmq,
- 		 * executed, but PC has not advanced to next instruction)
- 		 */
- 		u64 offset = (instrs_executed - instrs_over - 1);
--		u64 addr = cs_etm__instr_addr(etmq, tidq->packet, offset);
-+		u64 addr = cs_etm__instr_addr(etmq, trace_chan_id,
-+					      tidq->packet, offset);
- 
- 		ret = cs_etm__synth_instruction_sample(
- 			etmq, tidq, addr, etm->instructions_sample_period);
-@@ -1268,7 +1276,7 @@ static int cs_etm__get_data_block(struct cs_etm_queue *etmq)
- 	return etmq->buf_len;
- }
- 
--static bool cs_etm__is_svc_instr(struct cs_etm_queue *etmq,
-+static bool cs_etm__is_svc_instr(struct cs_etm_queue *etmq, u8 trace_chan_id,
- 				 struct cs_etm_packet *packet,
- 				 u64 end_addr)
- {
-@@ -1291,7 +1299,8 @@ static bool cs_etm__is_svc_instr(struct cs_etm_queue *etmq,
- 		 * so below only read 2 bytes as instruction size for T32.
- 		 */
- 		addr = end_addr - 2;
--		cs_etm__mem_access(etmq, addr, sizeof(instr16), (u8 *)&instr16);
-+		cs_etm__mem_access(etmq, trace_chan_id, addr,
-+				   sizeof(instr16), (u8 *)&instr16);
- 		if ((instr16 & 0xFF00) == 0xDF00)
- 			return true;
- 
-@@ -1306,7 +1315,8 @@ static bool cs_etm__is_svc_instr(struct cs_etm_queue *etmq,
- 		 * +---------+---------+-------------------------+
- 		 */
- 		addr = end_addr - 4;
--		cs_etm__mem_access(etmq, addr, sizeof(instr32), (u8 *)&instr32);
-+		cs_etm__mem_access(etmq, trace_chan_id, addr,
-+				   sizeof(instr32), (u8 *)&instr32);
- 		if ((instr32 & 0x0F000000) == 0x0F000000 &&
- 		    (instr32 & 0xF0000000) != 0xF0000000)
- 			return true;
-@@ -1322,7 +1332,8 @@ static bool cs_etm__is_svc_instr(struct cs_etm_queue *etmq,
- 		 * +-----------------------+---------+-----------+
- 		 */
- 		addr = end_addr - 4;
--		cs_etm__mem_access(etmq, addr, sizeof(instr32), (u8 *)&instr32);
-+		cs_etm__mem_access(etmq, trace_chan_id, addr,
-+				   sizeof(instr32), (u8 *)&instr32);
- 		if ((instr32 & 0xFFE0001F) == 0xd4000001)
- 			return true;
- 
-@@ -1338,6 +1349,7 @@ static bool cs_etm__is_svc_instr(struct cs_etm_queue *etmq,
- static bool cs_etm__is_syscall(struct cs_etm_queue *etmq,
- 			       struct cs_etm_traceid_queue *tidq, u64 magic)
- {
-+	u8 trace_chan_id = tidq->trace_chan_id;
- 	struct cs_etm_packet *packet = tidq->packet;
- 	struct cs_etm_packet *prev_packet = tidq->prev_packet;
- 
-@@ -1352,7 +1364,7 @@ static bool cs_etm__is_syscall(struct cs_etm_queue *etmq,
- 	 */
- 	if (magic == __perf_cs_etmv4_magic) {
- 		if (packet->exception_number == CS_ETMV4_EXC_CALL &&
--		    cs_etm__is_svc_instr(etmq, prev_packet,
-+		    cs_etm__is_svc_instr(etmq, trace_chan_id, prev_packet,
- 					 prev_packet->end_addr))
- 			return true;
- 	}
-@@ -1390,6 +1402,7 @@ static bool cs_etm__is_sync_exception(struct cs_etm_queue *etmq,
- 				      struct cs_etm_traceid_queue *tidq,
- 				      u64 magic)
- {
-+	u8 trace_chan_id = tidq->trace_chan_id;
- 	struct cs_etm_packet *packet = tidq->packet;
- 	struct cs_etm_packet *prev_packet = tidq->prev_packet;
- 
-@@ -1415,7 +1428,7 @@ static bool cs_etm__is_sync_exception(struct cs_etm_queue *etmq,
- 		 * (SMC, HVC) are taken as sync exceptions.
- 		 */
- 		if (packet->exception_number == CS_ETMV4_EXC_CALL &&
--		    !cs_etm__is_svc_instr(etmq, prev_packet,
-+		    !cs_etm__is_svc_instr(etmq, trace_chan_id, prev_packet,
- 					  prev_packet->end_addr))
- 			return true;
- 
-@@ -1439,6 +1452,7 @@ static int cs_etm__set_sample_flags(struct cs_etm_queue *etmq,
- {
- 	struct cs_etm_packet *packet = tidq->packet;
- 	struct cs_etm_packet *prev_packet = tidq->prev_packet;
-+	u8 trace_chan_id = tidq->trace_chan_id;
- 	u64 magic;
- 	int ret;
- 
-@@ -1519,7 +1533,8 @@ static int cs_etm__set_sample_flags(struct cs_etm_queue *etmq,
- 		if (prev_packet->flags == (PERF_IP_FLAG_BRANCH |
- 					   PERF_IP_FLAG_RETURN |
- 					   PERF_IP_FLAG_INTERRUPT) &&
--		    cs_etm__is_svc_instr(etmq, packet, packet->start_addr))
-+		    cs_etm__is_svc_instr(etmq, trace_chan_id,
-+					 packet, packet->start_addr))
- 			prev_packet->flags = PERF_IP_FLAG_BRANCH |
- 					     PERF_IP_FLAG_RETURN |
- 					     PERF_IP_FLAG_SYSCALLRET;
+In general, the original logic should be preserved during of refactoring. In this case
+we are keeping the original check and then also making it a bit more informative.
+
+> 
+>>
+>> Secondly, in the future please don't add parens where they are not needed. In this
+>> case parens around !i2c_dev->msg_buf_remaining are not needed at all.
+>>
+> I shall look out for similar unnecessary parentheses and update the patch.
+
+Yes, please clean up all the occurrences in the code if there are any. And please do
+it in a separate patch.
