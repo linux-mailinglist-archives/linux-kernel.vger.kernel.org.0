@@ -2,336 +2,310 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4DD4748673
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 17:03:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E42274865C
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 17:00:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728551AbfFQPBr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 11:01:47 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:55479 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727783AbfFQPBq (ORCPT
+        id S1728481AbfFQPAq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 11:00:46 -0400
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:42094 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726065AbfFQPAp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 11:01:46 -0400
-Received: by mail-wm1-f68.google.com with SMTP id a15so9642851wmj.5
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2019 08:01:43 -0700 (PDT)
+        Mon, 17 Jun 2019 11:00:45 -0400
+Received: by mail-oi1-f193.google.com with SMTP id s184so7207656oie.9
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2019 08:00:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=Wqsnkrqxuzj4H7GgqM3V2IbbAn/b8Sl0ywChnZlDzVw=;
-        b=rMdY7twpWhnHa4cxiVRG0sqvzqelh8jEW8qKBC9Mh3yio6324k7HmjwwEtXpTvNr2R
-         +DFsBk4LHWIuDOoZoyzJCTgdyTygIsC4sdUVAV0qxgi4AMRXiwo8weMPCwLqGJkFVlku
-         yaMKp1gJiqKlRPFlNh2gaKeFazEqU/fYwAiafOz36gao+DsYGbEBLFN2p4+AgxOKgoe3
-         N+sOGCF4y0CdIDfvSGtFSLeS7kNh2falxhVU2bpft01H2HZWnxsVkgJGhmKQkgihIlOK
-         J4vPnksJJNIvaVrpeMy4oNDLffgqqHt+4ikCveP52pi7iuEQQgKmInwtNKyJJANIrgbc
-         t6wg==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=HCTvu4IsRueSfr/ouOzLpKJTPljveQ9bZrKF+dWlcZM=;
+        b=uwbCGrWOJj7uHb8U9chaQV92+35YbEsQHRfs0EIj3zQonSjkigUmgSJ+yB0QlglLDg
+         J5upp3iV4K3Yo8E9hkQgeKqmXM8IkJy8NJil+xqiojw+JNkv+miJRtSjnx6x4Ew++/fK
+         oVoR7PKV7oDdUioPLoyf3iYLFong7g8bm7xAKrXUsywCth2hlynXxpsNsoNDXbufDUCS
+         ulGntEJqx3iNu1kvqV0So8fKjob0Oq5tbIkVkezvQcE6W3QgyTGIqdMQR8LE+1zCcSyD
+         H4v7Vp2rd2jLQo+inVrU89jcAf+cEMqkCHy5fgSn/9tmsa4M2H1nUlF4otdZkAzd+saS
+         Sl0w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=Wqsnkrqxuzj4H7GgqM3V2IbbAn/b8Sl0ywChnZlDzVw=;
-        b=q/b8kJTTUCNlg9UnuUhlH3CcFGJMKRxq3etNUfY25jOPollycsYKVDMCYdTY6dSyaY
-         lAsqtlkH1lZLUxzNGXGno0Al+NB8ff2l6OgWXZZU4OpVLgj4NKNI/odUNHiOY4cmZiXt
-         vsZauu8gwMAr7h0GDm9mKT5+Z89K7pnGcZ03nYf5lYGg/O5wFOxpkaYjv3t9DLi78Uhk
-         W8eWyVN8D+DVl3DIw5iVRd6+7LzcEaW/HgEAvTrJld9/uU9WBPwjvRXG5xn+ZlqNvLxU
-         MPlkezqZF8z74XoI/m1OpRKW/DLCnjmzM8N7ak9VV4F3HK332422wODKlZ2HasasmAPd
-         qr0g==
-X-Gm-Message-State: APjAAAUhfzTXJEHwluvo+atQJ3l9D5DxkiNkKDxzzUv2IWPO9iaWfTot
-        RjvodnJhLfoc1miWn4TRLRaInA==
-X-Google-Smtp-Source: APXvYqx0Vpq43qQXCS96ZNcRfKpgn1FVlYwTD2lRr7UkryQBhX1Ha0iT13M9dJRgn/4mVsxYWYK73A==
-X-Received: by 2002:a1c:407:: with SMTP id 7mr20501193wme.113.1560783702741;
-        Mon, 17 Jun 2019 08:01:42 -0700 (PDT)
-Received: from localhost.localdomain ([2a01:e0a:f:6020:100d:4d23:a79e:7684])
-        by smtp.gmail.com with ESMTPSA id v24sm9045185wmj.26.2019.06.17.08.01.41
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 17 Jun 2019 08:01:42 -0700 (PDT)
-From:   Vincent Guittot <vincent.guittot@linaro.org>
-To:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux@armlinux.org.uk,
-        gregkh@linuxfoundation.org, rafael@kernel.org,
-        viresh.kumar@linaro.org, mingo@redhat.com, peterz@infradead.org
-Cc:     quentin.perret@arm.com,
-        Vincent Guittot <vincent.guittot@linaro.org>
-Subject: [PATCH] sched/topology: remove unused sd param from arch_scale_cpu_capacity()
-Date:   Mon, 17 Jun 2019 17:00:17 +0200
-Message-Id: <1560783617-5827-1-git-send-email-vincent.guittot@linaro.org>
-X-Mailer: git-send-email 2.7.4
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=HCTvu4IsRueSfr/ouOzLpKJTPljveQ9bZrKF+dWlcZM=;
+        b=V8W97f83NxhaiQUsTb9sWWMkgPGYCQ9YbYkb+xhV5ADMTvNpP1qgN4qjbKbm2wnOd+
+         EkUsdRxn5moXtS42M6n1c+9J2BV+uTwZ/lFcIYOzVMH+YGDPsB7XJtSiZ05FKLjLcO97
+         Ve6mMVbMPA4yLcvouUTAEJ8cFIlycjVoc9V8nEXqx9qpFfd3/wzrWUpdoCyz9nPkBq4b
+         zp8sWJFCqueaxcwGkcUB7HuRYwXp9waOecVG1s8pDRyBQHyY6PO2YhvDPZh1Ik46+fMb
+         pTl0549QujhOkLfsJxG3/9W1cnb62nBs2KbYQWp1yM3xvGiw5hC+W9UlMpswVtVK6s3T
+         wuZg==
+X-Gm-Message-State: APjAAAUx51yuLz3vFAeIT276Crm0z5KtoHr7jB27vc1L39x0V3LSFP70
+        Mcw1AbnedfVnua3kfgTjp+p2mA==
+X-Google-Smtp-Source: APXvYqxB6hbQ4qmXvYCvcf2gLNsvmhgnO3wKEIll6B3DjpTtJQjVe5P+sAtyL5095jrfNPXh+6fxvw==
+X-Received: by 2002:aca:5403:: with SMTP id i3mr9314748oib.132.1560783643964;
+        Mon, 17 Jun 2019 08:00:43 -0700 (PDT)
+Received: from localhost.localdomain (li964-79.members.linode.com. [45.33.10.79])
+        by smtp.gmail.com with ESMTPSA id q3sm4835969oig.7.2019.06.17.08.00.36
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 17 Jun 2019 08:00:43 -0700 (PDT)
+From:   Leo Yan <leo.yan@linaro.org>
+To:     Arnaldo Carvalho de Melo <acme@kernel.org>,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        netdev@vger.kernel.org, bpf@vger.kernel.org
+Cc:     Leo Yan <leo.yan@linaro.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Suzuki Poulouse <suzuki.poulose@arm.com>,
+        coresight@lists.linaro.org
+Subject: [PATCH] perf cs-etm: Improve completeness for kernel address space
+Date:   Mon, 17 Jun 2019 23:00:24 +0800
+Message-Id: <20190617150024.11787-1-leo.yan@linaro.org>
+X-Mailer: git-send-email 2.17.1
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-struct sched_domain *sd parameter is not used anymore in
-arch_scale_cpu_capacity() so we can remove it.
+Arm and arm64 architecture reserve some memory regions prior to the
+symbol '_stext' and these memory regions later will be used by device
+module and BPF jit.  The current code misses to consider these memory
+regions thus any address in the regions will be taken as user space
+mode, but perf cannot find the corresponding dso with the wrong CPU
+mode so we misses to generate samples for device module and BPF
+related trace data.
 
-Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
+This patch parse the link scripts to get the memory size prior to start
+address and reduce this size from 'etmq->etm->kernel_start', then can
+get a fixed up kernel start address which contain memory regions for
+device module and BPF.  Finally, cs_etm__cpu_mode() can return right
+mode for these memory regions and perf can successfully generate
+samples.
+
+The reason for parsing the link scripts is Arm architecture changes text
+offset dependent on different platforms, which define multiple text
+offsets in $kernel/arch/arm/Makefile.  This offset is decided when build
+kernel and the final value is extended in the link script, so we can
+extract the used value from the link script.  We use the same way to
+parse arm64 link script as well.  If fail to find the link script, the
+pre start memory size is assumed as zero, in this case it has no any
+change caused with this patch.
+
+Below is detailed info for testing this patch:
+
+- Build LLVM/Clang 8.0 or later version;
+
+- Configure perf with ~/.perfconfig:
+
+  root@debian:~# cat ~/.perfconfig
+  # this file is auto-generated.
+  [llvm]
+          clang-path = /mnt/build/llvm-build/build/install/bin/clang
+          kbuild-dir = /mnt/linux-kernel/linux-cs-dev/
+          clang-opt = "-DLINUX_VERSION_CODE=0x50200 -g"
+          dump-obj = true
+
+  [trace]
+          show_zeros = yes
+          show_duration = no
+          no_inherit = yes
+          show_timestamp = no
+          show_arg_names = no
+          args_alignment = 40
+          show_prefix = yes
+
+- Run 'perf trace' command with eBPF event:
+
+  root@debian:~# perf trace -e string \
+      -e $kernel/tools/perf/examples/bpf/augmented_raw_syscalls.c
+
+- Read eBPF program memory mapping in kernel:
+
+  root@debian:~# echo 1 > /proc/sys/net/core/bpf_jit_kallsyms
+  root@debian:~# cat /proc/kallsyms | grep -E "bpf_prog_.+_sys_[enter|exit]"
+  ffff000000086a84 t bpf_prog_f173133dc38ccf87_sys_enter  [bpf]
+  ffff000000088618 t bpf_prog_c1bd85c092d6e4aa_sys_exit   [bpf]
+
+- Launch any program which accesses file system frequently so can hit
+  the system calls trace flow with eBPF event;
+
+- Capture CoreSight trace data with filtering eBPF program:
+
+  root@debian:~# perf record -e cs_etm/@20070000.etr/ \
+	  --filter 'filter 0xffff000000086a84/0x800' -a sleep 5s
+
+- Annotate for symbol 'bpf_prog_f173133dc38ccf87_sys_enter':
+
+  root@debian:~# perf report
+  Then select 'branches' samples and press 'a' to annotate symbol
+  'bpf_prog_f173133dc38ccf87_sys_enter', press 'P' to print to the
+  bpf_prog_f173133dc38ccf87_sys_enter.annotation file:
+
+  root@debian:~# cat bpf_prog_f173133dc38ccf87_sys_enter.annotation
+
+  bpf_prog_f173133dc38ccf87_sys_enter() bpf_prog_f173133dc38ccf87_sys_enter
+  Event: branches
+
+  Percent      int sys_enter(struct syscall_enter_args *args)
+                 stp  x29, x30, [sp, #-16]!
+
+               	int key = 0;
+                 mov  x29, sp
+
+                       augmented_args = bpf_map_lookup_elem(&augmented_filename_map, &key);
+                 stp  x19, x20, [sp, #-16]!
+
+                       augmented_args = bpf_map_lookup_elem(&augmented_filename_map, &key);
+                 stp  x21, x22, [sp, #-16]!
+
+                 stp  x25, x26, [sp, #-16]!
+
+               	return bpf_get_current_pid_tgid();
+                 mov  x25, sp
+
+               	return bpf_get_current_pid_tgid();
+                 mov  x26, #0x0                   	// #0
+
+                 sub  sp, sp, #0x10
+
+               	return bpf_map_lookup_elem(pids, &pid) != NULL;
+                 add  x19, x0, #0x0
+
+                 mov  x0, #0x0                   	// #0
+
+                 mov  x10, #0xfffffffffffffff8    	// #-8
+
+               	if (pid_filter__has(&pids_filtered, getpid()))
+                 str  w0, [x25, x10]
+
+               	probe_read(&augmented_args->args, sizeof(augmented_args->args), args);
+                 add  x1, x25, #0x0
+
+               	probe_read(&augmented_args->args, sizeof(augmented_args->args), args);
+                 mov  x10, #0xfffffffffffffff8    	// #-8
+
+               	syscall = bpf_map_lookup_elem(&syscalls, &augmented_args->args.syscall_nr);
+                 add  x1, x1, x10
+
+               	syscall = bpf_map_lookup_elem(&syscalls, &augmented_args->args.syscall_nr);
+                 mov  x0, #0xffff8009ffffffff    	// #-140694538682369
+
+                 movk x0, #0x6698, lsl #16
+
+                 movk x0, #0x3e00
+
+                 mov  x10, #0xffffffffffff1040    	// #-61376
+
+               	if (syscall == NULL || !syscall->enabled)
+                 movk x10, #0x1023, lsl #16
+
+               	if (syscall == NULL || !syscall->enabled)
+                 movk x10, #0x0, lsl #32
+
+               	loop_iter_first()
+    3.69       → blr  bpf_prog_f173133dc38ccf87_sys_enter
+               	loop_iter_first()
+                 add  x7, x0, #0x0
+
+               	loop_iter_first()
+                 add  x20, x7, #0x0
+
+               	int size = probe_read_str(&augmented_filename->value, filename_len, filename_arg);
+                 mov  x0, #0x1                   	// #1
+
+  [...]
+
+Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Suzuki Poulouse <suzuki.poulose@arm.com>
+Cc: coresight@lists.linaro.org
+Cc: linux-arm-kernel@lists.infradead.org
+Signed-off-by: Leo Yan <leo.yan@linaro.org>
 ---
- arch/arm/kernel/topology.c       |  2 +-
- drivers/base/arch_topology.c     |  6 +++---
- include/linux/arch_topology.h    |  2 +-
- include/linux/energy_model.h     |  2 +-
- include/linux/sched/topology.h   | 14 +++-----------
- kernel/power/energy_model.c      |  2 +-
- kernel/sched/cpufreq_schedutil.c |  2 +-
- kernel/sched/deadline.c          |  2 +-
- kernel/sched/fair.c              |  6 +++---
- kernel/sched/pelt.c              |  2 +-
- kernel/sched/pelt.h              |  2 +-
- kernel/sched/sched.h             |  2 +-
- kernel/sched/topology.c          |  8 ++++----
- 13 files changed, 22 insertions(+), 30 deletions(-)
+ tools/perf/Makefile.config | 24 ++++++++++++++++++++++++
+ tools/perf/util/cs-etm.c   | 26 +++++++++++++++++++++++++-
+ 2 files changed, 49 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/kernel/topology.c b/arch/arm/kernel/topology.c
-index 60e375c..d17cb1e 100644
---- a/arch/arm/kernel/topology.c
-+++ b/arch/arm/kernel/topology.c
-@@ -169,7 +169,7 @@ static void update_cpu_capacity(unsigned int cpu)
- 	topology_set_cpu_scale(cpu, cpu_capacity(cpu) / middle_capacity);
- 
- 	pr_info("CPU%u: update cpu_capacity %lu\n",
--		cpu, topology_get_cpu_scale(NULL, cpu));
-+		cpu, topology_get_cpu_scale(cpu));
- }
- 
- #else
-diff --git a/drivers/base/arch_topology.c b/drivers/base/arch_topology.c
-index 1739d7e..9b09e31 100644
---- a/drivers/base/arch_topology.c
-+++ b/drivers/base/arch_topology.c
-@@ -43,7 +43,7 @@ static ssize_t cpu_capacity_show(struct device *dev,
+diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
+index 51dd00f65709..4776c2c1fb6d 100644
+--- a/tools/perf/Makefile.config
++++ b/tools/perf/Makefile.config
+@@ -418,6 +418,30 @@ ifdef CORESIGHT
+     endif
+     LDFLAGS += $(LIBOPENCSD_LDFLAGS)
+     EXTLIBS += $(OPENCSDLIBS)
++    ifneq ($(wildcard $(srctree)/arch/arm64/kernel/vmlinux.lds),)
++      # Extract info from lds:
++      #  . = ((((((((0xffffffffffffffff)) - (((1)) << (48)) + 1) + (0)) + (0x08000000))) + (0x08000000))) + 0x00080000;
++      # ARM64_PRE_START_SIZE := (0x08000000 + 0x08000000 + 0x00080000)
++      ARM64_PRE_START_SIZE := $(shell egrep ' \. \= \({8}0x[0-9a-fA-F]+\){2}' \
++        $(srctree)/arch/arm64/kernel/vmlinux.lds | \
++        sed -e 's/[(|)|.|=|+|<|;|-]//g' -e 's/ \+/ /g' -e 's/^[ \t]*//' | \
++        awk -F' ' '{print "("$$6 "+"  $$7 "+" $$8")"}' 2>/dev/null)
++    else
++      ARM64_PRE_START_SIZE := 0
++    endif
++    CFLAGS += -DARM64_PRE_START_SIZE="$(ARM64_PRE_START_SIZE)"
++    ifneq ($(wildcard $(srctree)/arch/arm/kernel/vmlinux.lds),)
++      # Extract info from lds:
++      #   . = ((0xC0000000)) + 0x00208000;
++      # ARM_PRE_START_SIZE := 0x00208000
++      ARM_PRE_START_SIZE := $(shell egrep ' \. \= \({2}0x[0-9a-fA-F]+\){2}' \
++        $(srctree)/arch/arm/kernel/vmlinux.lds | \
++        sed -e 's/[(|)|.|=|+|<|;|-]//g' -e 's/ \+/ /g' -e 's/^[ \t]*//' | \
++        awk -F' ' '{print "("$$2")"}' 2>/dev/null)
++    else
++      ARM_PRE_START_SIZE := 0
++    endif
++    CFLAGS += -DARM_PRE_START_SIZE="$(ARM_PRE_START_SIZE)"
+     $(call detected,CONFIG_LIBOPENCSD)
+     ifdef CSTRACE_RAW
+       CFLAGS += -DCS_DEBUG_RAW
+diff --git a/tools/perf/util/cs-etm.c b/tools/perf/util/cs-etm.c
+index 0c7776b51045..ae831f836c70 100644
+--- a/tools/perf/util/cs-etm.c
++++ b/tools/perf/util/cs-etm.c
+@@ -613,10 +613,34 @@ static void cs_etm__free(struct perf_session *session)
+ static u8 cs_etm__cpu_mode(struct cs_etm_queue *etmq, u64 address)
  {
- 	struct cpu *cpu = container_of(dev, struct cpu, dev);
+ 	struct machine *machine;
++	u64 fixup_kernel_start = 0;
++	const char *arch;
  
--	return sprintf(buf, "%lu\n", topology_get_cpu_scale(NULL, cpu->dev.id));
-+	return sprintf(buf, "%lu\n", topology_get_cpu_scale(cpu->dev.id));
- }
+ 	machine = etmq->etm->machine;
++	arch = perf_env__arch(machine->env);
  
- static void update_topology_flags_workfn(struct work_struct *work);
-@@ -116,7 +116,7 @@ void topology_normalize_cpu_scale(void)
- 			/ capacity_scale;
- 		topology_set_cpu_scale(cpu, capacity);
- 		pr_debug("cpu_capacity: CPU%d cpu_capacity=%lu\n",
--			cpu, topology_get_cpu_scale(NULL, cpu));
-+			cpu, topology_get_cpu_scale(cpu));
- 	}
- }
- 
-@@ -185,7 +185,7 @@ init_cpu_capacity_callback(struct notifier_block *nb,
- 	cpumask_andnot(cpus_to_visit, cpus_to_visit, policy->related_cpus);
- 
- 	for_each_cpu(cpu, policy->related_cpus) {
--		raw_capacity[cpu] = topology_get_cpu_scale(NULL, cpu) *
-+		raw_capacity[cpu] = topology_get_cpu_scale(cpu) *
- 				    policy->cpuinfo.max_freq / 1000UL;
- 		capacity_scale = max(raw_capacity[cpu], capacity_scale);
- 	}
-diff --git a/include/linux/arch_topology.h b/include/linux/arch_topology.h
-index d9bdc1a..1cfe05e 100644
---- a/include/linux/arch_topology.h
-+++ b/include/linux/arch_topology.h
-@@ -18,7 +18,7 @@ DECLARE_PER_CPU(unsigned long, cpu_scale);
- 
- struct sched_domain;
- static inline
--unsigned long topology_get_cpu_scale(struct sched_domain *sd, int cpu)
-+unsigned long topology_get_cpu_scale(int cpu)
- {
- 	return per_cpu(cpu_scale, cpu);
- }
-diff --git a/include/linux/energy_model.h b/include/linux/energy_model.h
-index aa027f7..73f8c3c 100644
---- a/include/linux/energy_model.h
-+++ b/include/linux/energy_model.h
-@@ -89,7 +89,7 @@ static inline unsigned long em_pd_energy(struct em_perf_domain *pd,
- 	 * like schedutil.
- 	 */
- 	cpu = cpumask_first(to_cpumask(pd->cpus));
--	scale_cpu = arch_scale_cpu_capacity(NULL, cpu);
-+	scale_cpu = arch_scale_cpu_capacity(cpu);
- 	cs = &pd->table[pd->nr_cap_states - 1];
- 	freq = map_util_freq(max_util, cs->frequency, scale_cpu);
- 
-diff --git a/include/linux/sched/topology.h b/include/linux/sched/topology.h
-index 53afbe0..e445d37 100644
---- a/include/linux/sched/topology.h
-+++ b/include/linux/sched/topology.h
-@@ -196,14 +196,6 @@ extern void set_sched_topology(struct sched_domain_topology_level *tl);
- # define SD_INIT_NAME(type)
- #endif
- 
--#ifndef arch_scale_cpu_capacity
--static __always_inline
--unsigned long arch_scale_cpu_capacity(struct sched_domain *sd, int cpu)
--{
--	return SCHED_CAPACITY_SCALE;
--}
--#endif
--
- #else /* CONFIG_SMP */
- 
- struct sched_domain_attr;
-@@ -219,16 +211,16 @@ static inline bool cpus_share_cache(int this_cpu, int that_cpu)
- 	return true;
- }
- 
-+#endif	/* !CONFIG_SMP */
+-	if (address >= etmq->etm->kernel_start) {
++	/*
++	 * Since arm and arm64 specify some memory regions prior to
++	 * 'kernel_start', kernel addresses can be less than 'kernel_start'.
++	 *
++	 * For arm architecture, the 16MB virtual memory space prior to
++	 * 'kernel_start' is allocated to device modules, a PMD table if
++	 * CONFIG_HIGHMEM is enabled and a PGD table.
++	 *
++	 * For arm64 architecture, the root PGD table, device module memory
++	 * region and BPF jit region are prior to 'kernel_start'.
++	 *
++	 * To reflect the complete kernel address space, compensate these
++	 * pre-defined regions for kernel start address.
++	 */
++	if (!strcmp(arch, "arm64"))
++		fixup_kernel_start = etmq->etm->kernel_start -
++				     ARM64_PRE_START_SIZE;
++	else if (!strcmp(arch, "arm"))
++		fixup_kernel_start = etmq->etm->kernel_start -
++				     ARM_PRE_START_SIZE;
 +
- #ifndef arch_scale_cpu_capacity
- static __always_inline
--unsigned long arch_scale_cpu_capacity(void __always_unused *sd, int cpu)
-+unsigned long arch_scale_cpu_capacity(int cpu)
- {
- 	return SCHED_CAPACITY_SCALE;
- }
- #endif
- 
--#endif	/* !CONFIG_SMP */
--
- static inline int task_node(const struct task_struct *p)
- {
- 	return cpu_to_node(task_cpu(p));
-diff --git a/kernel/power/energy_model.c b/kernel/power/energy_model.c
-index 7d66ee6..0a9326f 100644
---- a/kernel/power/energy_model.c
-+++ b/kernel/power/energy_model.c
-@@ -223,7 +223,7 @@ int em_register_perf_domain(cpumask_t *span, unsigned int nr_states,
- 		 * All CPUs of a domain must have the same micro-architecture
- 		 * since they all share the same table.
- 		 */
--		cap = arch_scale_cpu_capacity(NULL, cpu);
-+		cap = arch_scale_cpu_capacity(cpu);
- 		if (prev_cap && prev_cap != cap) {
- 			pr_err("CPUs of %*pbl must have the same capacity\n",
- 							cpumask_pr_args(span));
-diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
-index 962cf343..7c4ce69 100644
---- a/kernel/sched/cpufreq_schedutil.c
-+++ b/kernel/sched/cpufreq_schedutil.c
-@@ -276,7 +276,7 @@ static unsigned long sugov_get_util(struct sugov_cpu *sg_cpu)
- {
- 	struct rq *rq = cpu_rq(sg_cpu->cpu);
- 	unsigned long util = cpu_util_cfs(rq);
--	unsigned long max = arch_scale_cpu_capacity(NULL, sg_cpu->cpu);
-+	unsigned long max = arch_scale_cpu_capacity(sg_cpu->cpu);
- 
- 	sg_cpu->max = max;
- 	sg_cpu->bw_dl = cpu_bw_dl(rq);
-diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
-index c1ef308..8b5bb2a 100644
---- a/kernel/sched/deadline.c
-+++ b/kernel/sched/deadline.c
-@@ -1195,7 +1195,7 @@ static void update_curr_dl(struct rq *rq)
- 						 &curr->dl);
- 	} else {
- 		unsigned long scale_freq = arch_scale_freq_capacity(cpu);
--		unsigned long scale_cpu = arch_scale_cpu_capacity(NULL, cpu);
-+		unsigned long scale_cpu = arch_scale_cpu_capacity(cpu);
- 
- 		scaled_delta_exec = cap_scale(delta_exec, scale_freq);
- 		scaled_delta_exec = cap_scale(scaled_delta_exec, scale_cpu);
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 7f8d477..1c151a7 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -764,7 +764,7 @@ void post_init_entity_util_avg(struct task_struct *p)
- 	struct sched_entity *se = &p->se;
- 	struct cfs_rq *cfs_rq = cfs_rq_of(se);
- 	struct sched_avg *sa = &se->avg;
--	long cpu_scale = arch_scale_cpu_capacity(NULL, cpu_of(rq_of(cfs_rq)));
-+	long cpu_scale = arch_scale_cpu_capacity(cpu_of(rq_of(cfs_rq)));
- 	long cap = (long)(cpu_scale - cfs_rq->avg.util_avg) / 2;
- 
- 	if (cap > 0) {
-@@ -7633,7 +7633,7 @@ static inline void init_sd_lb_stats(struct sd_lb_stats *sds)
- static unsigned long scale_rt_capacity(struct sched_domain *sd, int cpu)
- {
- 	struct rq *rq = cpu_rq(cpu);
--	unsigned long max = arch_scale_cpu_capacity(sd, cpu);
-+	unsigned long max = arch_scale_cpu_capacity(cpu);
- 	unsigned long used, free;
- 	unsigned long irq;
- 
-@@ -7658,7 +7658,7 @@ static void update_cpu_capacity(struct sched_domain *sd, int cpu)
- 	unsigned long capacity = scale_rt_capacity(sd, cpu);
- 	struct sched_group *sdg = sd->groups;
- 
--	cpu_rq(cpu)->cpu_capacity_orig = arch_scale_cpu_capacity(sd, cpu);
-+	cpu_rq(cpu)->cpu_capacity_orig = arch_scale_cpu_capacity(cpu);
- 
- 	if (!capacity)
- 		capacity = 1;
-diff --git a/kernel/sched/pelt.c b/kernel/sched/pelt.c
-index befce29..42ea66b 100644
---- a/kernel/sched/pelt.c
-+++ b/kernel/sched/pelt.c
-@@ -366,7 +366,7 @@ int update_irq_load_avg(struct rq *rq, u64 running)
- 	 * reflect the real amount of computation
- 	 */
- 	running = cap_scale(running, arch_scale_freq_capacity(cpu_of(rq)));
--	running = cap_scale(running, arch_scale_cpu_capacity(NULL, cpu_of(rq)));
-+	running = cap_scale(running, arch_scale_cpu_capacity(cpu_of(rq)));
- 
- 	/*
- 	 * We know the time that has been used by interrupt since last update
-diff --git a/kernel/sched/pelt.h b/kernel/sched/pelt.h
-index 7489d5f..afff644 100644
---- a/kernel/sched/pelt.h
-+++ b/kernel/sched/pelt.h
-@@ -79,7 +79,7 @@ static inline void update_rq_clock_pelt(struct rq *rq, s64 delta)
- 	 * Scale the elapsed time to reflect the real amount of
- 	 * computation
- 	 */
--	delta = cap_scale(delta, arch_scale_cpu_capacity(NULL, cpu_of(rq)));
-+	delta = cap_scale(delta, arch_scale_cpu_capacity(cpu_of(rq)));
- 	delta = cap_scale(delta, arch_scale_freq_capacity(cpu_of(rq)));
- 
- 	rq->clock_pelt += delta;
-diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index 607859a..7a50391 100644
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -2248,7 +2248,7 @@ unsigned long schedutil_freq_util(int cpu, unsigned long util_cfs,
- 
- static inline unsigned long schedutil_energy_util(int cpu, unsigned long cfs)
- {
--	unsigned long max = arch_scale_cpu_capacity(NULL, cpu);
-+	unsigned long max = arch_scale_cpu_capacity(cpu);
- 
- 	return schedutil_freq_util(cpu, cfs, max, ENERGY_UTIL);
- }
-diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
-index 63184cf..f751ce0 100644
---- a/kernel/sched/topology.c
-+++ b/kernel/sched/topology.c
-@@ -1874,10 +1874,10 @@ static struct sched_domain_topology_level
- 	unsigned long cap;
- 
- 	/* Is there any asymmetry? */
--	cap = arch_scale_cpu_capacity(NULL, cpumask_first(cpu_map));
-+	cap = arch_scale_cpu_capacity(cpumask_first(cpu_map));
- 
- 	for_each_cpu(i, cpu_map) {
--		if (arch_scale_cpu_capacity(NULL, i) != cap) {
-+		if (arch_scale_cpu_capacity(i) != cap) {
- 			asym = true;
- 			break;
- 		}
-@@ -1892,7 +1892,7 @@ static struct sched_domain_topology_level
- 	 * to everyone.
- 	 */
- 	for_each_cpu(i, cpu_map) {
--		unsigned long max_capacity = arch_scale_cpu_capacity(NULL, i);
-+		unsigned long max_capacity = arch_scale_cpu_capacity(i);
- 		int tl_id = 0;
- 
- 		for_each_sd_topology(tl) {
-@@ -1902,7 +1902,7 @@ static struct sched_domain_topology_level
- 			for_each_cpu_and(j, tl->mask(i), cpu_map) {
- 				unsigned long capacity;
- 
--				capacity = arch_scale_cpu_capacity(NULL, j);
-+				capacity = arch_scale_cpu_capacity(j);
- 
- 				if (capacity <= max_capacity)
- 					continue;
++	if (address >= fixup_kernel_start) {
+ 		if (machine__is_host(machine))
+ 			return PERF_RECORD_MISC_KERNEL;
+ 		else
 -- 
-2.7.4
+2.17.1
 
