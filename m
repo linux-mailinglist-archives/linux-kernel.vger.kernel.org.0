@@ -2,57 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 44C9048519
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 16:17:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 388584851C
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 16:17:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727862AbfFQOQ6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 10:16:58 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:52253 "EHLO
+        id S1727895AbfFQORf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 10:17:35 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:48035 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726005AbfFQOQ5 (ORCPT
+        with ESMTP id S1726005AbfFQORd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 10:16:57 -0400
+        Mon, 17 Jun 2019 10:17:33 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x5HEFtrT3452399
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x5HEGb1l3452484
         (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Mon, 17 Jun 2019 07:15:55 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x5HEFtrT3452399
+        Mon, 17 Jun 2019 07:16:37 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x5HEGb1l3452484
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019051801; t=1560780956;
-        bh=bRUpAMP3+2MttUQFM00wGOJZZl0Vur+HegccH9fDJoI=;
+        s=2019051801; t=1560780998;
+        bh=rlKpGCYloCpmgmr8Oy56Sj+JOtl9+BZDTSNa68QN37E=;
         h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
-        b=DYM26yvEdhqeIE1BMVbAdOWwvtO3NXCFtlsRja9gRwz4hlzOxXknaZ8mqaV8tktoi
-         cGkjSHGOHJJXUfm4W45BuK94v7nAKDKRELjX+1EeHhgh/HrEkInRST6qQyRz8bGyTY
-         QH4Mi6I8oV8HE5f5bohN9rnivOLfx7WWzDVNpDACr17b4sqZw+cvSDddGlHWKIquqt
-         X+BEuxMsiDve2RSaokuVQ7cOK2lwbO/EWL5GrACaf1Ol3yRBELzmzA2C3FauCGOvOk
-         oag9BqNOebaKWWameeTR77Tzld1stZHBPpAKgIFLjE0UoaUg0VU4Y2u0gTfnPpoOtj
-         NKJjvTQz8U+1A==
+        b=CEvPQfAvW2wUa0q+uzU1zKrjDFwiB+ZF1X8iy3uQZjRuOfnbgOQkoP5ID+F7VHfNe
+         xkhkb+IENxWrvN2oRU0iGnUdwVsA4JfoGD93q1noxDgHQVfkwGXATbd92Sp+iyJxYc
+         vpaC6Rs+bBDDBI3fbdal/Bb1Ed1THdi2wvwI9yIoB5wzZfYG7FuZMlkLLPQMtDE5U6
+         NqXOypW304qCEE2HUPyYpk66nhVg2qgbNKWdN6/rNOBm1obv7Rdnxdfi8bixOJmMjt
+         +lE6t9LkJfk/1yui4UjkKeaeb/iOUjK8hURccG5LXk5LTYHQwKq2JGEfayWznThWT/
+         FVy1LWNzmv1Hw==
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x5HEFt9F3452396;
-        Mon, 17 Jun 2019 07:15:55 -0700
-Date:   Mon, 17 Jun 2019 07:15:55 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x5HEGbvs3452481;
+        Mon, 17 Jun 2019 07:16:37 -0700
+Date:   Mon, 17 Jun 2019 07:16:37 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Daniel Bristot de Oliveira <tipbot@zytor.com>
-Message-ID: <tip-c2ba8a15f310d915f8748dd8324c91c82b12b5ff@git.kernel.org>
-Cc:     mingo@kernel.org, peterz@infradead.org,
-        torvalds@linux-foundation.org, bp@alien8.de, swood@redhat.com,
-        tglx@linutronix.de, rostedt@goodmis.org, bristot@redhat.com,
-        mtosatti@redhat.com, mhiramat@kernel.org, jkosina@suse.cz,
-        williams@redhat.com, jpoimboe@redhat.com,
-        gregkh@linuxfoundation.org, hpa@zytor.com, jbaron@akamai.com,
-        linux-kernel@vger.kernel.org, crecklin@redhat.com
-Reply-To: linux-kernel@vger.kernel.org, crecklin@redhat.com,
-          jbaron@akamai.com, hpa@zytor.com, gregkh@linuxfoundation.org,
-          williams@redhat.com, jpoimboe@redhat.com, mhiramat@kernel.org,
-          jkosina@suse.cz, bristot@redhat.com, rostedt@goodmis.org,
-          mtosatti@redhat.com, bp@alien8.de, tglx@linutronix.de,
-          swood@redhat.com, torvalds@linux-foundation.org,
-          peterz@infradead.org, mingo@kernel.org
-In-Reply-To: <acc891dbc2dbc9fd616dd680529a2337b1d1274c.1560325897.git.bristot@redhat.com>
-References: <acc891dbc2dbc9fd616dd680529a2337b1d1274c.1560325897.git.bristot@redhat.com>
+Message-ID: <tip-ba54f0c3f7c400a392c413d8ca21d3ada35f2584@git.kernel.org>
+Cc:     tglx@linutronix.de, hpa@zytor.com, rostedt@goodmis.org,
+        peterz@infradead.org, mingo@kernel.org, gregkh@linuxfoundation.org,
+        jbaron@akamai.com, bp@alien8.de, bristot@redhat.com,
+        mtosatti@redhat.com, swood@redhat.com, mhiramat@kernel.org,
+        jpoimboe@redhat.com, linux-kernel@vger.kernel.org,
+        crecklin@redhat.com, torvalds@linux-foundation.org,
+        jkosina@suse.cz, williams@redhat.com
+Reply-To: mhiramat@kernel.org, swood@redhat.com, jpoimboe@redhat.com,
+          crecklin@redhat.com, linux-kernel@vger.kernel.org,
+          jkosina@suse.cz, torvalds@linux-foundation.org,
+          williams@redhat.com, hpa@zytor.com, tglx@linutronix.de,
+          rostedt@goodmis.org, peterz@infradead.org,
+          gregkh@linuxfoundation.org, jbaron@akamai.com, mingo@kernel.org,
+          bristot@redhat.com, bp@alien8.de, mtosatti@redhat.com
+In-Reply-To: <57b4caa654bad7e3b066301c9a9ae233dea065b5.1560325897.git.bristot@redhat.com>
+References: <57b4caa654bad7e3b066301c9a9ae233dea065b5.1560325897.git.bristot@redhat.com>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:locking/core] jump_label: Batch updates if arch supports it
-Git-Commit-ID: c2ba8a15f310d915f8748dd8324c91c82b12b5ff
+Subject: [tip:locking/core] x86/jump_label: Batch jump label updates
+Git-Commit-ID: ba54f0c3f7c400a392c413d8ca21d3ada35f2584
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -70,92 +70,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  c2ba8a15f310d915f8748dd8324c91c82b12b5ff
-Gitweb:     https://git.kernel.org/tip/c2ba8a15f310d915f8748dd8324c91c82b12b5ff
+Commit-ID:  ba54f0c3f7c400a392c413d8ca21d3ada35f2584
+Gitweb:     https://git.kernel.org/tip/ba54f0c3f7c400a392c413d8ca21d3ada35f2584
 Author:     Daniel Bristot de Oliveira <bristot@redhat.com>
-AuthorDate: Wed, 12 Jun 2019 11:57:30 +0200
+AuthorDate: Wed, 12 Jun 2019 11:57:31 +0200
 Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Mon, 17 Jun 2019 12:09:22 +0200
+CommitDate: Mon, 17 Jun 2019 12:09:23 +0200
 
-jump_label: Batch updates if arch supports it
+x86/jump_label: Batch jump label updates
 
-If the architecture supports the batching of jump label updates, use it!
+Currently, the jump label of a static key is transformed via the arch
+specific function:
 
-An easy way to see the benefits of this patch is switching the
-schedstats on and off. For instance:
+    void arch_jump_label_transform(struct jump_entry *entry,
+                                   enum jump_label_type type)
 
--------------------------- %< ----------------------------
-  #!/bin/sh
-  while [ true ]; do
-      sysctl -w kernel.sched_schedstats=1
-      sleep 2
-      sysctl -w kernel.sched_schedstats=0
-      sleep 2
-  done
--------------------------- >% ----------------------------
+The new approach (batch mode) uses two arch functions, the first has the
+same arguments of the arch_jump_label_transform(), and is the function:
 
-while watching the IPI count:
+    bool arch_jump_label_transform_queue(struct jump_entry *entry,
+                                         enum jump_label_type type)
 
--------------------------- %< ----------------------------
-  # watch -n1 "cat /proc/interrupts | grep Function"
--------------------------- >% ----------------------------
+Rather than transforming the code, it adds the jump_entry in a queue of
+entries to be updated. This functions returns true in the case of a
+successful enqueue of an entry. If it returns false, the caller must to
+apply the queue and then try to queue again, for instance, because the
+queue is full.
 
-With the current mode, it is possible to see +- 168 IPIs each 2 seconds,
-while with this patch the number of IPIs goes to 3 each 2 seconds.
+This function expects the caller to sort the entries by the address before
+enqueueuing then. This is already done by the arch independent code, though.
 
-Regarding the performance impact of this patch set, I made two measurements:
+After queuing all jump_entries, the function:
 
-    The time to update a key (the task that is causing the change)
-    The time to run the int3 handler (the side effect on a thread that
-                                      hits the code being changed)
+    void arch_jump_label_transform_apply(void)
 
-The schedstats static key was chosen as the key to being switched on and off.
-The reason being is that it is used in more than 56 places, in a hot path. The
-change in the schedstats static key will be done with the following command:
-
-while [ true ]; do
-    sysctl -w kernel.sched_schedstats=1
-    usleep 500000
-    sysctl -w kernel.sched_schedstats=0
-    usleep 500000
-done
-
-In this way, they key will be updated twice per second. To force the hit of the
-int3 handler, the system will also run a kernel compilation with two jobs per
-CPU. The test machine is a two nodes/24 CPUs box with an Intel Xeon processor
-@2.27GHz.
-
-Regarding the update part, on average, the regular kernel takes 57 ms to update
-the schedstats key, while the kernel with the batch updates takes just 1.4 ms
-on average. Although it seems to be too good to be true, it makes sense: the
-schedstats key is used in 56 places, so it was expected that it would take
-around 56 times to update the keys with the current implementation, as the
-IPIs are the most expensive part of the update.
-
-Regarding the int3 handler, the non-batch handler takes 45 ns on average, while
-the batch version takes around 180 ns. At first glance, it seems to be a high
-value. But it is not, considering that it is doing 56 updates, rather than one!
-It is taking four times more, only. This gain is possible because the patch
-uses a binary search in the vector: log2(56)=5.8. So, it was expected to have
-an overhead within four times.
-
-(voice of tv propaganda) But, that is not all! As the int3 handler keeps on for
-a shorter period (because the update part is on for a shorter time), the number
-of hits in the int3 handler decreased by 10%.
-
-The question then is: Is it worth paying the price of "135 ns" more in the int3
-handler?
-
-Considering that, in this test case, we are saving the handling of 53 IPIs,
-that takes more than these 135 ns, it seems to be a meager price to be paid.
-Moreover, the test case was forcing the hit of the int3, in practice, it
-does not take that often. While the IPI takes place on all CPUs, hitting
-the int3 handler or not!
-
-For instance, in an isolated CPU with a process running in user-space
-(nohz_full use-case), the chances of hitting the int3 handler is barely zero,
-while there is no way to avoid the IPIs. By bounding the IPIs, we are improving
-a lot this scenario.
+Applies the changes in the queue.
 
 Signed-off-by: Daniel Bristot de Oliveira <bristot@redhat.com>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
@@ -174,65 +123,103 @@ Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Scott Wood <swood@redhat.com>
 Cc: Steven Rostedt (VMware) <rostedt@goodmis.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lkml.kernel.org/r/acc891dbc2dbc9fd616dd680529a2337b1d1274c.1560325897.git.bristot@redhat.com
+Link: https://lkml.kernel.org/r/57b4caa654bad7e3b066301c9a9ae233dea065b5.1560325897.git.bristot@redhat.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- include/linux/jump_label.h |  3 +++
- kernel/jump_label.c        | 23 +++++++++++++++++++++++
- 2 files changed, 26 insertions(+)
+ arch/x86/include/asm/jump_label.h |  2 ++
+ arch/x86/kernel/jump_label.c      | 69 +++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 71 insertions(+)
 
-diff --git a/include/linux/jump_label.h b/include/linux/jump_label.h
-index 3e113a1fa0f1..3526c0aee954 100644
---- a/include/linux/jump_label.h
-+++ b/include/linux/jump_label.h
-@@ -215,6 +215,9 @@ extern void arch_jump_label_transform(struct jump_entry *entry,
- 				      enum jump_label_type type);
- extern void arch_jump_label_transform_static(struct jump_entry *entry,
- 					     enum jump_label_type type);
-+extern bool arch_jump_label_transform_queue(struct jump_entry *entry,
-+					    enum jump_label_type type);
-+extern void arch_jump_label_transform_apply(void);
- extern int jump_label_text_reserved(void *start, void *end);
- extern void static_key_slow_inc(struct static_key *key);
- extern void static_key_slow_dec(struct static_key *key);
-diff --git a/kernel/jump_label.c b/kernel/jump_label.c
-index ca00ac10d9b9..df3008419a1d 100644
---- a/kernel/jump_label.c
-+++ b/kernel/jump_label.c
-@@ -414,6 +414,7 @@ static bool jump_label_can_update(struct jump_entry *entry, bool init)
- 	return true;
+diff --git a/arch/x86/include/asm/jump_label.h b/arch/x86/include/asm/jump_label.h
+index 65191ce8e1cf..06c3cc22a058 100644
+--- a/arch/x86/include/asm/jump_label.h
++++ b/arch/x86/include/asm/jump_label.h
+@@ -2,6 +2,8 @@
+ #ifndef _ASM_X86_JUMP_LABEL_H
+ #define _ASM_X86_JUMP_LABEL_H
+ 
++#define HAVE_JUMP_LABEL_BATCH
++
+ #define JUMP_LABEL_NOP_SIZE 5
+ 
+ #ifdef CONFIG_X86_64
+diff --git a/arch/x86/kernel/jump_label.c b/arch/x86/kernel/jump_label.c
+index f33408f1c3f6..ea13808bf6da 100644
+--- a/arch/x86/kernel/jump_label.c
++++ b/arch/x86/kernel/jump_label.c
+@@ -101,6 +101,75 @@ void arch_jump_label_transform(struct jump_entry *entry,
+ 	mutex_unlock(&text_mutex);
  }
  
-+#ifndef HAVE_JUMP_LABEL_BATCH
- static void __jump_label_update(struct static_key *key,
- 				struct jump_entry *entry,
- 				struct jump_entry *stop,
-@@ -424,6 +425,28 @@ static void __jump_label_update(struct static_key *key,
- 			arch_jump_label_transform(entry, jump_label_type(entry));
- 	}
- }
-+#else
-+static void __jump_label_update(struct static_key *key,
-+				struct jump_entry *entry,
-+				struct jump_entry *stop,
-+				bool init)
++#define TP_VEC_MAX (PAGE_SIZE / sizeof(struct text_poke_loc))
++static struct text_poke_loc tp_vec[TP_VEC_MAX];
++int tp_vec_nr = 0;
++
++bool arch_jump_label_transform_queue(struct jump_entry *entry,
++				     enum jump_label_type type)
 +{
-+	for (; (entry < stop) && (jump_entry_key(entry) == key); entry++) {
++	struct text_poke_loc *tp;
++	void *entry_code;
 +
-+		if (!jump_label_can_update(entry, init))
-+			continue;
-+
-+		if (!arch_jump_label_transform_queue(entry, jump_label_type(entry))) {
-+			/*
-+			 * Queue is full: Apply the current queue and try again.
-+			 */
-+			arch_jump_label_transform_apply();
-+			BUG_ON(!arch_jump_label_transform_queue(entry, jump_label_type(entry)));
-+		}
++	if (system_state == SYSTEM_BOOTING) {
++		/*
++		 * Fallback to the non-batching mode.
++		 */
++		arch_jump_label_transform(entry, type);
++		return true;
 +	}
-+	arch_jump_label_transform_apply();
++
++	/*
++	 * No more space in the vector, tell upper layer to apply
++	 * the queue before continuing.
++	 */
++	if (tp_vec_nr == TP_VEC_MAX)
++		return false;
++
++	tp = &tp_vec[tp_vec_nr];
++
++	entry_code = (void *)jump_entry_code(entry);
++
++	/*
++	 * The INT3 handler will do a bsearch in the queue, so we need entries
++	 * to be sorted. We can survive an unsorted list by rejecting the entry,
++	 * forcing the generic jump_label code to apply the queue. Warning once,
++	 * to raise the attention to the case of an unsorted entry that is
++	 * better not happen, because, in the worst case we will perform in the
++	 * same way as we do without batching - with some more overhead.
++	 */
++	if (tp_vec_nr > 0) {
++		int prev = tp_vec_nr - 1;
++		struct text_poke_loc *prev_tp = &tp_vec[prev];
++
++		if (WARN_ON_ONCE(prev_tp->addr > entry_code))
++			return false;
++	}
++
++	__jump_label_set_jump_code(entry, type,
++				   (union jump_code_union *) &tp->opcode, 0);
++
++	tp->addr = entry_code;
++	tp->detour = entry_code + JUMP_LABEL_NOP_SIZE;
++	tp->len = JUMP_LABEL_NOP_SIZE;
++
++	tp_vec_nr++;
++
++	return true;
 +}
-+#endif
- 
- void __init jump_label_init(void)
- {
++
++void arch_jump_label_transform_apply(void)
++{
++	if (!tp_vec_nr)
++		return;
++
++	mutex_lock(&text_mutex);
++	text_poke_bp_batch(tp_vec, tp_vec_nr);
++	mutex_unlock(&text_mutex);
++
++	tp_vec_nr = 0;
++}
++
+ static enum {
+ 	JL_STATE_START,
+ 	JL_STATE_NO_UPDATE,
