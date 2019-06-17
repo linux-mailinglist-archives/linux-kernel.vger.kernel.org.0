@@ -2,139 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0FC87488F1
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 18:30:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9BA09488FA
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 18:31:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728472AbfFQQah (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 12:30:37 -0400
-Received: from mail-pg1-f174.google.com ([209.85.215.174]:38533 "EHLO
-        mail-pg1-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728308AbfFQQad (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 12:30:33 -0400
-Received: by mail-pg1-f174.google.com with SMTP id v11so6109056pgl.5
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2019 09:30:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=MZrjut71NWNNaKlLd3kxdXdldXiQAJyc0Qxm4bxHoDY=;
-        b=CPHtJ2By0lXch1LgQEpHWMooMYGBDG2ewjy5cFlf67lYX9MHcxSYLY29NJuImhdguf
-         /+igoGJC4XV5ibOc1FOAUdO6E0/P1MSwn86hbG9Z79eHYo6+WNHqw75pV4imKh2vrtm9
-         eBeLhPIORJTD+D/nevbhWZqjiS6LMYN8AQvCg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=MZrjut71NWNNaKlLd3kxdXdldXiQAJyc0Qxm4bxHoDY=;
-        b=nDcQvktWrUZY82CavuNXKoWCYVKbkM1McFVeoexC58hge+0qHteZuIZhHQrOE6ssGb
-         wV6t79sTEOmhsaxurN9zEXccsZj/rbTWMstACSrrkXfwUP7PVBBLvbFTkf1ITHT/vjjV
-         dxDNLZst7AlZIbIRJvzBmoanUatNk0gIufAfjPfMKaAEphslfD8xHZHzhlLUt4tPXjh8
-         7Mx/iXwW7x2mzmX1J5R+u6PdNU/Qgjrbt9udJxhqqC0NtDj1lk3L78f8GltiMvRAwC7+
-         sp/mrh4a3+mObX+p9bC/PXjbCUsBCtMSN+Mmxg0tnRkzOV84npxRsLc/IZzoSEBAWxa/
-         MZFg==
-X-Gm-Message-State: APjAAAU+dfmiYqpmHpwzgnnoxbrqR5KJWH4wKIpMqy0BzHkMIcn68Cml
-        ml8ovKZeA33LIofgS1YdrEhQ4g==
-X-Google-Smtp-Source: APXvYqyeGb12otld5CDA+Wx17m4Ieywv4C5/6/QbfVQQ946V3lEKoBfvkyLivdI7EXj5RHu0cN6fug==
-X-Received: by 2002:a17:90a:9289:: with SMTP id n9mr27273064pjo.35.1560789032483;
-        Mon, 17 Jun 2019 09:30:32 -0700 (PDT)
-Received: from localhost ([2620:15c:202:1:75a:3f6e:21d:9374])
-        by smtp.gmail.com with ESMTPSA id ci15sm8076407pjb.12.2019.06.17.09.30.31
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 17 Jun 2019 09:30:32 -0700 (PDT)
-Date:   Mon, 17 Jun 2019 09:30:30 -0700
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Cc:     Pavel Machek <pavel@ucw.cz>, Heiko Stuebner <heiko@sntech.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Douglas Anderson <dianders@chromium.org>
-Subject: Re: [PATCH] Revert "ARM: dts: rockchip: set PWM delay backlight
- settings for Minnie"
-Message-ID: <20190617163030.GS137143@google.com>
-References: <20190614224533.169881-1-mka@chromium.org>
- <20190616154143.GA28583@atrey.karlin.mff.cuni.cz>
- <c88619de-45f4-9ba7-cfdc-0cedb764f6f4@collabora.com>
+        id S1728269AbfFQQb2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 12:31:28 -0400
+Received: from smtp3.goneo.de ([85.220.129.37]:36582 "EHLO smtp3.goneo.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726292AbfFQQbZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Jun 2019 12:31:25 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by smtp3.goneo.de (Postfix) with ESMTP id DD80323F252;
+        Mon, 17 Jun 2019 18:31:21 +0200 (CEST)
+X-Virus-Scanned: by goneo
+X-Spam-Flag: NO
+X-Spam-Score: -2.879
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.879 tagged_above=-999 tests=[ALL_TRUSTED=-1,
+        AWL=0.021, BAYES_00=-1.9] autolearn=ham
+Received: from smtp3.goneo.de ([127.0.0.1])
+        by localhost (smtp3.goneo.de [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id s76l7b57MjrH; Mon, 17 Jun 2019 18:31:20 +0200 (CEST)
+Received: from [192.168.10.227] (ip-109-91-78-216.hsi12.unitymediagroup.de [109.91.78.216])
+        by smtp3.goneo.de (Postfix) with ESMTPSA id 18BDE23F021;
+        Mon, 17 Jun 2019 18:31:20 +0200 (CEST)
+Subject: Re: [PATCH 12/14] doc-rst: add ABI documentation to the admin-guide
+ book
+To:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Cc:     Jonathan Corbet <corbet@lwn.net>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mauro Carvalho Chehab <mchehab@s-opensource.com>,
+        Mauro Carvalho Chehab <mchehab@infradead.org>,
+        linux-kernel@vger.kernel.org
+References: <cover.1560477540.git.mchehab+samsung@kernel.org>
+ <9da2a7f6ff57d9d53dcbb964eb310f7956522870.1560477540.git.mchehab+samsung@kernel.org>
+ <87o930uvur.fsf@intel.com> <2955920a-3d6a-8e41-e8fe-b7db3cefed8b@darmarit.de>
+ <20190614081546.64101411@lwn.net>
+ <327067f6-2609-41e6-c987-e37620e7154e@darmarit.de>
+ <20190617061146.06975213@coco.lan>
+From:   Markus Heiser <markus.heiser@darmarit.de>
+Message-ID: <c3caf35e-9790-661f-e9db-0a050d31ca7d@darmarit.de>
+Date:   Mon, 17 Jun 2019 18:31:19 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <c88619de-45f4-9ba7-cfdc-0cedb764f6f4@collabora.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190617061146.06975213@coco.lan>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: de-DE
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Enric,
 
-On Mon, Jun 17, 2019 at 12:08:25PM +0200, Enric Balletbo i Serra wrote:
-> Hi,
+Am 17.06.19 um 11:11 schrieb Mauro Carvalho Chehab:
+> Em Sun, 16 Jun 2019 18:04:01 +0200
+> Markus Heiser <markus.heiser@darmarit.de> escreveu:
 > 
-> On 16/6/19 17:41, Pavel Machek wrote:
-> > Hi!
-> > 
-> >> This reverts commit 288ceb85b505c19abe1895df068dda5ed20cf482.
-> >>
-> >> According to the commit message the AUO B101EAN01 panel on minnie
-> >> requires a PWM delay of 200 ms, however this is not what the
-> >> datasheet says. The datasheet mentions a *max* delay of 200 ms
-> >> for T2 ("delay from LCDVDD to black video generation") and T3
-> >> ("delay from LCDVDD to HPD high"), which aren't related to the
-> >> PWM. The backlight power sequence does not specify min/max
-> >> constraints for T15 (time from PWM on to BL enable) or T16
-> >> (time from BL disable to PWM off).
-> >>
+>> Am 14.06.19 um 16:15 schrieb Jonathan Corbet:
+>>> On Fri, 14 Jun 2019 16:10:31 +0200
+>>> Markus Heiser <markus.heiser@darmarit.de> wrote:
+>>>    
+>>>> I agree with Jani. No matter how the decision ends, since I can't help here, I'd
+>>>> rather not show up in the copyright.
+>>>
+>>> Is there something specific you are asking us to do here?
+>>>    
+>>
+>>
+>> I have lost the overview, but there was a patch Mauro added a
+>> kernel_abi.py.  There was my name (Markus Heiser) listed with a
+>> copyright notation.
+>>
+>> I guess Mauro picked up some old RFC or an other old patch of
+>> mine from 2016 and made some C&P .. whatever .. ATM I do not have
+>> time to give any support on parsing ABI and I'am not interested
+>> in holding copyrights on a C&P of a old source  ;)
 > 
-> Hmm, clearly we are not looking at the same datasheet, because in the one I have
-> I don't see any reference to T15/T16 or LCDVDD. And, I assume I am probably
-> wrong because you might have better access to the specific panel specs for minnie.
+> Well, the code was basically written by you :-)
 > 
-> I looked at my archive and the datasheet I have is similar to this [1]. In page
-> 21, Section 6.5 Power ON/OFF Sequence, there are two delays T3 and T4, it is
-> *min* time between the pwm signal and the bl_en and it is 200 ms. That's the
-> delay the patch was adding.
-> 
-> [1] http://www.yslcd.com.tw/docs/product/B101EAN01.1.pdf
-> 
-> >> Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
-> >> ---
-> >> Enric, if you think I misinterpreted the datasheet please holler!
-> > 
-> > Was this tested? Was previous patch tested?
-> > 
-> 
-> IIRC, It was tested measuring the backlight power on timing (although I am not
-> sure if I tested this on minnie or another board with better access to the pins)
-> 
-> > Does patch being reverted actually break anything? If so, cc stable?
-> > 
-> > 								Pavel
-> > 								
-> > 
-> 
-> Probably will not break anything, I don't remember the reverted patch as a fix
-> of any specific issue. IIRC it was more a fear to be out of specs but I'll not
-> be surprised if the datasheet lies and this delay is not needed at all.
+> It was written to be a script capable of running a generic
+> script. On that time, my contribution to it was basically
+> to hardcode it to run "get_abi.pl".
 
-Indeed, we are looking at different datasheets. It turns out that
-'B101EAN01' is an underspecification, minnie uses the 'B101EAN01.8'
-(eDP interface), your datasheet describes the 'B101EAN01.1' (LVDS
-interface).
+Thanks for clarifying.
 
-> Matthias, are you reverting this to solve any problem?
+> 
+> This came from an old branch where the last change was back in 2017.
+> It was resurrected due to a discussion at KS ML.
+> 
+> There, the discussion was related to what's left to be converted
+> to ReST.
+> 
+> While I can't simply remove your copyright, would you be happy
+> with something like that?
 
-With the patch there is a user perceptible delay between switching on
-the LCD and the backlight. Not necessarily a big problem, but better
-avoid it if the delay is not needed.
+Yes, but basically I share Jani's and Jon's doubts about this solution.
 
-> Could you share your datasheet?
+-- Markus --
 
-http://www.yslcd.com.tw/docs/product/B101EAN01.8.pdf (the server seems
-to be down currently).
+> 
+> 
+> Thanks,
+> Mauro
+> 
+> diff --git a/Documentation/sphinx/kernel_abi.py b/Documentation/sphinx/kernel_abi.py
+> index 2d5d582207f7..ef91b1e1ff4b 100644
+> --- a/Documentation/sphinx/kernel_abi.py
+> +++ b/Documentation/sphinx/kernel_abi.py
+> @@ -7,7 +7,8 @@ u"""
+>       Implementation of the ``kernel-abi`` reST-directive.
+>   
+>       :copyright:  Copyright (C) 2016  Markus Heiser
+> -    :copyright:  Copyright (C) 2016  Mauro Carvalho Chehab
+> +    :copyright:  Copyright (C) 2016-2019  Mauro Carvalho Chehab
+> +    :maintained-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+>       :license:    GPL Version 2, June 1991 see Linux/COPYING for details.
+>   
+>       The ``kernel-abi`` (:py:class:`KernelCmd`) directive calls the
+> 
+> 
 
-Thanks
 
-Matthias
