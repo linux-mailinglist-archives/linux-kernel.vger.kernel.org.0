@@ -2,121 +2,197 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8A60248CD2
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 20:45:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A987048CDD
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 20:47:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728685AbfFQSpE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 14:45:04 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:59436 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726007AbfFQSpD (ORCPT
+        id S1728476AbfFQSrS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 14:47:18 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:45203 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727317AbfFQSrR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 14:45:03 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5HIhvF7186461;
-        Mon, 17 Jun 2019 18:44:20 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=GOIdRAMf3skF4wPK2T/7fFj0vhfi1GT6kR2ybYgOAu4=;
- b=lljcPfBpWWXCHaf1yRMmXyfI54fHwvCFKfK5VIao6y/jBGDnvk52ml8ocSTuVDbgc2QO
- aKpxdSEeWRAAE+4oDoqRrIrhX+jfnrFlj7QNLaYUL0F/6MzY/SzEzmD1f6vEiHByXW49
- VI5gQ1ROqihrvrj4+AK0i3Ww+1kYqFVi58GQ0JM//3tp5uKq7RYNjAPJf5QPQ90/6ssZ
- kh8E6dIhQMuR1uTOnbVXsoqrYQL40V88lnlUVGONOr9O9ZVkcJjKoy+5QYdfAgjFfDej
- Jv53Hqeo8nSxxDhrbBtZbtWsG6GEfXzg37XQNCJA9pfhAEwU7SeLpbHIik7nMCKfnIBS xg== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by userp2120.oracle.com with ESMTP id 2t4saq83g6-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 17 Jun 2019 18:44:19 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5HIhXeI066471;
-        Mon, 17 Jun 2019 18:44:19 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userp3030.oracle.com with ESMTP id 2t59gdcub9-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 17 Jun 2019 18:44:19 +0000
-Received: from abhmp0014.oracle.com (abhmp0014.oracle.com [141.146.116.20])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x5HIiDdo015527;
-        Mon, 17 Jun 2019 18:44:14 GMT
-Received: from char.us.oracle.com (/10.152.32.25)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 17 Jun 2019 11:44:12 -0700
-Received: by char.us.oracle.com (Postfix, from userid 1000)
-        id DF1D76A0120; Mon, 17 Jun 2019 14:45:36 -0400 (EDT)
-Date:   Mon, 17 Jun 2019 14:45:36 -0400
-From:   Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-To:     Dave Hansen <dave.hansen@intel.com>
-Cc:     Nadav Amit <nadav.amit@gmail.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Alexander Graf <graf@amazon.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Marius Hillenbrand <mhillenb@amazon.de>,
-        kvm list <kvm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux-MM <linux-mm@kvack.org>, Alexander Graf <graf@amazon.de>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [RFC 00/10] Process-local memory allocations for hiding KVM
- secrets
-Message-ID: <20190617184536.GB11017@char.us.oracle.com>
-References: <eecc856f-7f3f-ed11-3457-ea832351e963@intel.com>
- <A542C98B-486C-4849-9DAC-2355F0F89A20@amacapital.net>
- <alpine.DEB.2.21.1906141618000.1722@nanos.tec.linutronix.de>
- <58788f05-04c3-e71c-12c3-0123be55012c@amazon.com>
- <63b1b249-6bc7-ffd9-99db-d36dd3f1a962@intel.com>
- <CALCETrXph3Zg907kWTn6gAsZVsPbCB3A2XuNf0hy5Ez2jm2aNQ@mail.gmail.com>
- <698ca264-123d-46ae-c165-ed62ea149896@intel.com>
- <CALCETrVt=X+FB2cM5hMN9okvbcROFfT4_KMwaKaN2YVvc7UQTw@mail.gmail.com>
- <5AA8BF10-8987-4FCB-870C-667A5228D97B@gmail.com>
- <f6f352ed-750e-d735-a1c9-7ff133ca8aea@intel.com>
+        Mon, 17 Jun 2019 14:47:17 -0400
+Received: by mail-io1-f66.google.com with SMTP id e3so23460660ioc.12
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2019 11:47:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=N++lS1o+MDz9+i4mzKncc0qVpXXpsoR+Jo3R2g+KlCo=;
+        b=SAnZ3X0db+ry3DfdGKhXmDVRB1ay1ZXQyzAHIfdFfY354qGzD+/MI11JpexYGS29uJ
+         j/eWkJnZhvOuHS/+zRUH8o7WpVEbUQkgyLS8HmbtOP1YHy+H+Pbb/FMLh460HskPqysH
+         pUl3dQYa5lFFHCpPM7xu1Tgu8PXg+wPzShMxM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=N++lS1o+MDz9+i4mzKncc0qVpXXpsoR+Jo3R2g+KlCo=;
+        b=iJIXOi7YnuV9MksWo4XKijH8tJhEgT0JKnKptVrwJhpeYyrhFh10NzneBZ9X7PNDGw
+         1cfk6PnJ4y3fA285MH3BQTz1E/lo1e6Z5uE73RR76sRHXTBS8g7bsRsv1YAS46H5mIux
+         xqXaIcEg1/RasVUkuVEU4EFBPireRvv1vdzDMhUeuaySVpYIsYOBQ0XKLr0jpPwI4QBb
+         /X/0mOStQ1Vn37l1UCKCvYx7ff2hre/nf2lveDPg+oe2MaKOtdf7AGuaBCsHUNs1sccJ
+         x8SROi8ABolMQ6q+S09OJBYK5yYFyyEFHXCl8GRotXf06NWalKIrecUVBtpXVWjZlFzx
+         mMFg==
+X-Gm-Message-State: APjAAAVXV1JLW2fjx8/UMnKfIpFwNvwxW+XTnIE3ZeGr6FBzBaeK23SD
+        lvuYDhchC7S0a7S7yJFzqqSS46X8738=
+X-Google-Smtp-Source: APXvYqw6byYZADq/e4f5nKHM8Kn6Wu4+kMxyqtfGyLkIDWvBFXbUjy9toJR4stA6IAtiBv1/dzAgMA==
+X-Received: by 2002:a5d:97d8:: with SMTP id k24mr3849596ios.84.1560797236315;
+        Mon, 17 Jun 2019 11:47:16 -0700 (PDT)
+Received: from mail-io1-f46.google.com (mail-io1-f46.google.com. [209.85.166.46])
+        by smtp.gmail.com with ESMTPSA id b20sm10330165ios.44.2019.06.17.11.47.13
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Mon, 17 Jun 2019 11:47:15 -0700 (PDT)
+Received: by mail-io1-f46.google.com with SMTP id r185so17610838iod.6
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2019 11:47:13 -0700 (PDT)
+X-Received: by 2002:a5e:db0a:: with SMTP id q10mr77753iop.168.1560797232212;
+ Mon, 17 Jun 2019 11:47:12 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f6f352ed-750e-d735-a1c9-7ff133ca8aea@intel.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9291 signatures=668687
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1906170165
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9291 signatures=668687
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1906170166
+References: <20190617175653.21756-1-dianders@chromium.org> <CAPDyKFpaX6DSM_BjtghAHUf7qYCyEG+wMagXPUdgz3Eutovqfw@mail.gmail.com>
+In-Reply-To: <CAPDyKFpaX6DSM_BjtghAHUf7qYCyEG+wMagXPUdgz3Eutovqfw@mail.gmail.com>
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Mon, 17 Jun 2019 11:46:59 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=U5+j8V7qckLJf0N+xMeuaOqF+ThL3th98y63aTAVe57g@mail.gmail.com>
+Message-ID: <CAD=FV=U5+j8V7qckLJf0N+xMeuaOqF+ThL3th98y63aTAVe57g@mail.gmail.com>
+Subject: Re: [PATCH v5 0/5] brcmfmac: sdio: Deal better w/ transmission errors
+ related to idle
+To:     Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     Kalle Valo <kvalo@codeaurora.org>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Arend van Spriel <arend.vanspriel@broadcom.com>,
+        brcm80211-dev-list.pdl@broadcom.com,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        Double Lo <double.lo@cypress.com>,
+        Brian Norris <briannorris@chromium.org>,
+        linux-wireless <linux-wireless@vger.kernel.org>,
+        Naveen Gupta <naveen.gupta@cypress.com>,
+        Madhan Mohan R <madhanmohan.r@cypress.com>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Wright Feng <wright.feng@cypress.com>,
+        Chi-Hsien Lin <chi-hsien.lin@cypress.com>,
+        netdev <netdev@vger.kernel.org>,
+        brcm80211-dev-list <brcm80211-dev-list@cypress.com>,
+        YueHaibing <yuehaibing@huawei.com>,
+        Allison Randal <allison@lohutok.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Hante Meuleman <hante.meuleman@broadcom.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        =?UTF-8?Q?Niklas_S=C3=B6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>,
+        Ritesh Harjani <riteshh@codeaurora.org>,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Franky Lin <franky.lin@broadcom.com>,
+        Ondrej Jirman <megous@megous.com>,
+        Jiong Wu <lohengrin1024@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Avri Altman <avri.altman@wdc.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 17, 2019 at 11:07:45AM -0700, Dave Hansen wrote:
-> On 6/17/19 9:53 AM, Nadav Amit wrote:
-> >>> For anyone following along at home, I'm going to go off into crazy
-> >>> per-cpu-pgds speculation mode now...  Feel free to stop reading now. :)
-> >>>
-> >>> But, I was thinking we could get away with not doing this on _every_
-> >>> context switch at least.  For instance, couldn't 'struct tlb_context'
-> >>> have PGD pointer (or two with PTI) in addition to the TLB info?  That
-> >>> way we only do the copying when we change the context.  Or does that tie
-> >>> the implementation up too much with PCIDs?
-> >> Hmm, that seems entirely reasonable.  I think the nasty bit would be
-> >> figuring out all the interactions with PV TLB flushing.  PV TLB
-> >> flushes already don't play so well with PCID tracking, and this will
-> >> make it worse.  We probably need to rewrite all that code regardless.
-> > How is PCID (as you implemented) related to TLB flushing of kernel (not
-> > user) PTEs? These kernel PTEs would be global, so they would be invalidated
-> > from all the address-spaces using INVLPG, I presume. No?
-> 
-> The idea is that you have a per-cpu address space.  Certain kernel
-> virtual addresses would map to different physical address based on where
-> you are running.  Each of the physical addresses would be "owned" by a
-> single CPU and would, by convention, never use a PGD that mapped an
-> address unless that CPU that "owned" it.
-> 
-> In that case, you never really invalidate those addresses.
+Hi,
 
-But you would need to invalidate if the process moved to another CPU, correct?
+On Mon, Jun 17, 2019 at 11:39 AM Ulf Hansson <ulf.hansson@linaro.org> wrote:
+>
+> On Mon, 17 Jun 2019 at 19:57, Douglas Anderson <dianders@chromium.org> wrote:
+> >
+> > This series attempts to deal better with the expected transmission
+> > errors related to the idle states (handled by the Always-On-Subsystem
+> > or AOS) on the SDIO-based WiFi on rk3288-veyron-minnie,
+> > rk3288-veyron-speedy, and rk3288-veyron-mickey.
+> >
+> > Some details about those errors can be found in
+> > <https://crbug.com/960222>, but to summarize it here: if we try to
+> > send the wakeup command to the WiFi card at the same time it has
+> > decided to wake up itself then it will behave badly on the SDIO bus.
+> > This can cause timeouts or CRC errors.
+> >
+> > When I tested on 4.19 and 4.20 these CRC errors can be seen to cause
+> > re-tuning.  Since I am currently developing on 4.19 this was the
+> > original problem I attempted to solve.
+> >
+> > On mainline it turns out that you don't see the retuning errors but
+> > you see tons of spam about timeouts trying to wakeup from sleep.  I
+> > tracked down the commit that was causing that and have partially
+> > reverted it here.  I have no real knowledge about Broadcom WiFi, but
+> > the commit that was causing problems sounds (from the descriptioin) to
+> > be a hack commit penalizing all Broadcom WiFi users because of a bug
+> > in a Cypress SD controller.  I will let others comment if this is
+> > truly the case and, if so, what the right solution should be.
+> >
+> > For v3 of this series I have added 2 patches to the end of the series
+> > to address errors that would show up on systems with these same SDIO
+> > WiFi cards when used on controllers that do periodic retuning.  These
+> > systems need an extra fix to prevent the retuning from happening when
+> > the card is asleep.
+> >
+> > I believe v5 of this series is all ready to go assuming Kalle Valo is
+> > good with it.  I've added after-the-cut notes to patches awaiting his
+> > Ack and have added other tags collected so far.
+> >
+> > Changes in v5:
+> > - Add missing sdio_retune_crc_enable() in comments (Ulf).
+> > - /s/reneable/re-enable (Ulf).
+> > - Remove leftover prototypes: mmc_expect_errors_begin() / end() (Ulf).
+> > - Rewording of "sleep command" in commit message (Arend).
+> >
+> > Changes in v4:
+> > - Moved to SDIO API only (Adrian, Ulf).
+> > - Renamed to make it less generic, now retune_crc_disable (Ulf).
+> > - Function header makes it clear host must be claimed (Ulf).
+> > - No more WARN_ON (Ulf).
+> > - Adjust to API rename (Adrian, Ulf).
+> > - Moved retune hold/release to SDIO API (Adrian).
+> > - Adjust to API rename (Adrian).
+> >
+> > Changes in v3:
+> > - Took out the spinlock since I believe this is all in one context.
+> > - Expect errors for all of brcmf_sdio_kso_control() (Adrian).
+> > - ("mmc: core: Export mmc_retune_hold_now() mmc_retune_release()") new for v3.
+> > - ("brcmfmac: sdio: Don't tune while the card is off") new for v3.
+> >
+> > Changes in v2:
+> > - A full revert, not just a partial one (Arend).  ...with explicit Cc.
+> > - Updated commit message to clarify based on discussion of v1.
+> >
+> > Douglas Anderson (5):
+> >   Revert "brcmfmac: disable command decode in sdio_aos"
+> >   mmc: core: API to temporarily disable retuning for SDIO CRC errors
+> >   brcmfmac: sdio: Disable auto-tuning around commands expected to fail
+> >   mmc: core: Add sdio_retune_hold_now() and sdio_retune_release()
+> >   brcmfmac: sdio: Don't tune while the card is off
+> >
+> >  drivers/mmc/core/core.c                       |  5 +-
+> >  drivers/mmc/core/sdio_io.c                    | 77 +++++++++++++++++++
+> >  .../broadcom/brcm80211/brcmfmac/sdio.c        | 17 ++--
+> >  include/linux/mmc/host.h                      |  1 +
+> >  include/linux/mmc/sdio_func.h                 |  6 ++
+> >  5 files changed, 99 insertions(+), 7 deletions(-)
+> >
+> > --
+> > 2.22.0.410.gd8fdbe21b5-goog
+> >
+>
+> Applied for fixes, thanks!
+>
+> Some minor changes:
+> 1) Dropped the a few "commit notes", that was more related to version
+> and practical information about the series.
+> 2) Dropped fixes tags for patch 2->5, but instead put a stable tag
+> targeted for v4.18+.
 
+OK, sounds good.  Thanks!  :-)
+
+I guess when I see the # v4.18+ in the commit message it makes me
+believe that the problem only existed on 4.18+, but maybe that's just
+me reading too much into it.  ;-)  In any case, presumably anyone who
+had these problems on earlier kernels already has solved them with
+local patches.
+
+
+-Doug
