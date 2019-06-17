@@ -2,119 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D2D10494ED
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 00:12:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9C760494E4
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 00:12:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728891AbfFQWL6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 18:11:58 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:46078 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728736AbfFQWL4 (ORCPT
+        id S1728775AbfFQWLu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 18:11:50 -0400
+Received: from gate2.alliedtelesis.co.nz ([202.36.163.20]:51579 "EHLO
+        gate2.alliedtelesis.co.nz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727145AbfFQWLq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 18:11:56 -0400
-Received: by mail-pl1-f196.google.com with SMTP id bi6so4735013plb.12;
-        Mon, 17 Jun 2019 15:11:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=/VaXSLpZ75ORCB1zbl4hdNQEjbM9Qsyda80h69PRSPA=;
-        b=HsMQvlLIq0OP3L+FNIJyK0J78hvT1oQovohPXn1CRaD6VJCWPJiDVE7KaumvwPCqPI
-         Kejd+2gug/XQ+dNQmZn8ot3iXedEbK/uf+uCWp4vrklRf18r/7wuC36QXr3aC2I+yPSn
-         3juO07q/f4tTVJwdeVZeS+cbKvuPVDA2UKZ3y9lNhUdSG9QP7k6tD56pNJfmIEkIqJk2
-         sKiiEmKP2oqEo16lJeYQGSdpJTVjAM+5d4O9IfYuxLMdcrGY6tZdFU379hSKXMadpcUH
-         BFHBZh5uBpa0YpPUJgjJR7h2ZfTw9qFlGiq/GJX4ri5ptBDGBx/oc8dwS2ohZf26tdUc
-         95nw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=/VaXSLpZ75ORCB1zbl4hdNQEjbM9Qsyda80h69PRSPA=;
-        b=rKqaF19YWSXKIarfNptMXy5KG45Xpk+AMi7q4adJ+g7t23xZ9rbKIOAgzsU3zzRQjL
-         XiKYxpGy101zW6wPSesKvVi2cNVLcsdfywotBHPUdXUquST5o3A9gluO777vQw4Oluc8
-         vSv6/cstxM0dmgA+/amyetNZvoO+3IK87L7tjDwmqJVUuu7PZdiUhjFl5r1rnSVPliOI
-         jtkKKc8xa6iuhq48+Tkdjojz3lmDBkPJBNZhHwW0iXzoDaKiRVkmHZ6T+qSsC+iYS93z
-         9b6sAezebty/Aa17BoDWnSV/OwyKgf4gL/RRhsj4yACC63Mzwe+7lgA1Q88LNd9nLmaD
-         JwDQ==
-X-Gm-Message-State: APjAAAXP3XRTxPIIpKcH9Z+65OTRh0W6yiWZGwciYy9estvAwq7quXt3
-        a6Bfteyr6NMJpOML36MJwgI=
-X-Google-Smtp-Source: APXvYqx55+qVC4ZdfQ7ba9JDRhraTt/q+1YyyqWzNGimZEtBjgZOCXen8WCKjalGTR2c2HmM9y+7AA==
-X-Received: by 2002:a17:902:8696:: with SMTP id g22mr84220867plo.249.1560809515479;
-        Mon, 17 Jun 2019 15:11:55 -0700 (PDT)
-Received: from fainelli-desktop.igp.broadcom.net ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id s129sm12551020pfb.186.2019.06.17.15.11.53
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 17 Jun 2019 15:11:54 -0700 (PDT)
-From:   Florian Fainelli <f.fainelli@gmail.com>
-To:     linux-arm-kernel@lists.infradead.org
-Cc:     bcm-kernel-feedback-list@broadcom.com,
-        Andrey Ryabinin <ryabinin@virtuozzo.com>,
-        Abbott Liu <liuwenliang@huawei.com>,
-        Florian Fainelli <f.fainelli@gmail.com>, glider@google.com,
-        dvyukov@google.com, corbet@lwn.net, linux@armlinux.org.uk,
-        christoffer.dall@arm.com, marc.zyngier@arm.com, arnd@arndb.de,
-        nico@fluxnic.net, vladimir.murzin@arm.com, keescook@chromium.org,
-        jinb.park7@gmail.com, alexandre.belloni@bootlin.com,
-        ard.biesheuvel@linaro.org, daniel.lezcano@linaro.org,
-        pombredanne@nexb.com, rob@landley.net, gregkh@linuxfoundation.org,
-        akpm@linux-foundation.org, mark.rutland@arm.com,
-        catalin.marinas@arm.com, yamada.masahiro@socionext.com,
-        tglx@linutronix.de, thgarnie@google.com, dhowells@redhat.com,
-        geert@linux-m68k.org, andre.przywara@arm.com,
-        julien.thierry@arm.com, drjones@redhat.com, philip@cog.systems,
-        mhocko@suse.com, kirill.shutemov@linux.intel.com,
-        kasan-dev@googlegroups.com, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kvmarm@lists.cs.columbia.edu,
-        ryabinin.a.a@gmail.com
-Subject: [PATCH v6 6/6] ARM: Enable KASan for arm
-Date:   Mon, 17 Jun 2019 15:11:34 -0700
-Message-Id: <20190617221134.9930-7-f.fainelli@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190617221134.9930-1-f.fainelli@gmail.com>
-References: <20190617221134.9930-1-f.fainelli@gmail.com>
+        Mon, 17 Jun 2019 18:11:46 -0400
+Received: from mmarshal3.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 025A6886BF
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2019 10:11:43 +1200 (NZST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
+        s=mail181024; t=1560809503;
+        bh=DSLbrc5ukZCi8kilt1qLlyon/yI7IWOwk3BYxT6iAaE=;
+        h=From:To:CC:Subject:Date:References;
+        b=IyPfPrYPj2M2iG5aK4Gr1B2AilDoXhov+KIGUyS8MjUbMuYP13MQ3XvYcA+R3hoaE
+         iYyPNsC+GeS+8Ii/wZLwPUwn37q+d/HLZ0SHkHlXRdpKQxuTu4LFXsmTp4R3c1MXpF
+         jfW7f/k1xAa2k4IZHhamPdSLgEX8nV+Jd3gXzev6xkzAkJzc/sxtBmEnT9S+I8qg7k
+         VGXvR8qoQw+Ibv7/vBvQ/dwxwgThSgPeaaOhKi+j/1Qn2WUopoQn3/WNbc9qpjRmWB
+         VHY7a1DBaE8c9OotRkXbFdFmSx0LQedaWOdU4l+2I1V9jmHTZA/kSTF9LDhKzzKLU4
+         d0adHAE46YiIQ==
+Received: from svr-chch-ex1.atlnz.lc (Not Verified[10.32.16.77]) by mmarshal3.atlnz.lc with Trustwave SEG (v7,5,8,10121)
+        id <B5d08101f0001>; Tue, 18 Jun 2019 10:11:43 +1200
+Received: from svr-chch-ex1.atlnz.lc (2001:df5:b000:bc8:409d:36f5:8899:92e8)
+ by svr-chch-ex1.atlnz.lc (2001:df5:b000:bc8:409d:36f5:8899:92e8) with
+ Microsoft SMTP Server (TLS) id 15.0.1156.6; Tue, 18 Jun 2019 10:11:42 +1200
+Received: from svr-chch-ex1.atlnz.lc ([fe80::409d:36f5:8899:92e8]) by
+ svr-chch-ex1.atlnz.lc ([fe80::409d:36f5:8899:92e8%12]) with mapi id
+ 15.00.1156.000; Tue, 18 Jun 2019 10:11:42 +1200
+From:   Chris Packham <Chris.Packham@alliedtelesis.co.nz>
+To:     Richard Weinberger <richard.weinberger@gmail.com>
+CC:     "dwmw2@infradead.org" <dwmw2@infradead.org>,
+        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
+        "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
+        "miquel.raynal@bootlin.com" <miquel.raynal@bootlin.com>,
+        "richard@nod.at" <richard@nod.at>,
+        "vigneshr@ti.com" <vigneshr@ti.com>,
+        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 1/2] mtd: concat: refactor concat_lock/concat_unlock
+Thread-Topic: [PATCH v2 1/2] mtd: concat: refactor concat_lock/concat_unlock
+Thread-Index: AQHVEPTbCX8jgKCQ/EWiWr4BFnYFGQ==
+Date:   Mon, 17 Jun 2019 22:11:42 +0000
+Message-ID: <365a80987504424f8685faaceb23b468@svr-chch-ex1.atlnz.lc>
+References: <20190522231948.17559-1-chris.packham@alliedtelesis.co.nz>
+ <355dad1321ed46baa98ca6f47b4d00b5@svr-chch-ex1.atlnz.lc>
+ <CAFLxGvwNNWKzbfKvDjAK6rujbr5qtmVAWCDD5aULO4BVKutRKw@mail.gmail.com>
+Accept-Language: en-NZ, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [2001:df5:b000:22:3a2c:4aff:fe70:2b02]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andrey Ryabinin <ryabinin@virtuozzo.com>
-
-This patch enable kernel address sanitizer for ARM.
-
-Acked-by: Dmitry Vyukov <dvyukov@google.com>
-Signed-off-by: Abbott Liu <liuwenliang@huawei.com>
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
----
- Documentation/dev-tools/kasan.rst | 4 ++--
- arch/arm/Kconfig                  | 1 +
- 2 files changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/Documentation/dev-tools/kasan.rst b/Documentation/dev-tools/kasan.rst
-index b72d07d70239..a9cb1feec0c1 100644
---- a/Documentation/dev-tools/kasan.rst
-+++ b/Documentation/dev-tools/kasan.rst
-@@ -21,8 +21,8 @@ global variables yet.
- 
- Tag-based KASAN is only supported in Clang and requires version 7.0.0 or later.
- 
--Currently generic KASAN is supported for the x86_64, arm64, xtensa and s390
--architectures, and tag-based KASAN is supported only for arm64.
-+Currently generic KASAN is supported for the x86_64, arm, arm64, xtensa and
-+s390 architectures, and tag-based KASAN is supported only for arm64.
- 
- Usage
- -----
-diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-index 8869742a85df..5c98431ddaea 100644
---- a/arch/arm/Kconfig
-+++ b/arch/arm/Kconfig
-@@ -59,6 +59,7 @@ config ARM
- 	select HAVE_ARCH_BITREVERSE if (CPU_32v7M || CPU_32v7) && !CPU_32v6
- 	select HAVE_ARCH_JUMP_LABEL if !XIP_KERNEL && !CPU_ENDIAN_BE32 && MMU
- 	select HAVE_ARCH_KGDB if !CPU_ENDIAN_BE32 && MMU
-+	select HAVE_ARCH_KASAN if MMU
- 	select HAVE_ARCH_MMAP_RND_BITS if MMU
- 	select HAVE_ARCH_SECCOMP_FILTER if AEABI && !OABI_COMPAT
- 	select HAVE_ARCH_THREAD_STRUCT_WHITELIST
--- 
-2.17.1
-
+On 18/06/19 10:08 AM, Richard Weinberger wrote:=0A=
+> On Fri, Jun 14, 2019 at 5:26 AM Chris Packham=0A=
+> <Chris.Packham@alliedtelesis.co.nz> wrote:=0A=
+>>=0A=
+>> Hi All,=0A=
+>>=0A=
+>> Ping?=0A=
+> =0A=
+> Your patch is not lost. We start soon with collecting all material for=0A=
+> the merge window. :-)=0A=
+> =0A=
+=0A=
+OK thanks for the confirmation and sorry for the noise.=0A=
