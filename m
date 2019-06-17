@@ -2,99 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C7670482CD
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 14:44:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BA0B0482D9
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 14:45:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727507AbfFQMnw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 08:43:52 -0400
-Received: from foss.arm.com ([217.140.110.172]:48538 "EHLO foss.arm.com"
+        id S1727190AbfFQMpx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 08:45:53 -0400
+Received: from mga17.intel.com ([192.55.52.151]:2718 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725995AbfFQMnw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 08:43:52 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6064F2B;
-        Mon, 17 Jun 2019 05:43:51 -0700 (PDT)
-Received: from e121166-lin.cambridge.arm.com (unknown [10.1.196.255])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5CD913F246;
-        Mon, 17 Jun 2019 05:43:50 -0700 (PDT)
-Date:   Mon, 17 Jun 2019 13:43:36 +0100
-From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To:     Remi Pommarel <repk@triplefau.lt>
-Cc:     Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Bjorn Helgaas <helgaas@kernel.org>,
-        Ellie Reeves <ellierevves@gmail.com>,
-        linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] PCI: aardvark: Fix PCI_EXP_RTCTL register
- configuration
-Message-ID: <20190617124328.GA27113@e121166-lin.cambridge.arm.com>
-References: <20190614101059.1664-1-repk@triplefau.lt>
+        id S1725995AbfFQMpx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Jun 2019 08:45:53 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Jun 2019 05:45:52 -0700
+X-ExtLoop1: 1
+Received: from pipin.fi.intel.com (HELO pipin) ([10.237.72.175])
+  by orsmga008.jf.intel.com with ESMTP; 17 Jun 2019 05:45:48 -0700
+From:   Felipe Balbi <balbi@kernel.org>
+To:     Lee Jones <lee.jones@linaro.org>
+Cc:     alokc@codeaurora.org, agross@kernel.org, david.brown@linaro.org,
+        wsa+renesas@sang-engineering.com, bjorn.andersson@linaro.org,
+        gregkh@linuxfoundation.org, ard.biesheuvel@linaro.org,
+        jlhugo@gmail.com, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-usb@vger.kernel.org
+Subject: Re: [PATCH v4 4/6] usb: dwc3: qcom: Add support for booting with ACPI
+In-Reply-To: <20190617124329.GH16364@dell>
+References: <20190612142654.9639-1-lee.jones@linaro.org> <20190612142654.9639-5-lee.jones@linaro.org> <20190617102146.GG16364@dell> <87y320gzp4.fsf@linux.intel.com> <20190617124329.GH16364@dell>
+Date:   Mon, 17 Jun 2019 15:45:44 +0300
+Message-ID: <87r27sgz2f.fsf@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190614101059.1664-1-repk@triplefau.lt>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha256; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 14, 2019 at 12:10:59PM +0200, Remi Pommarel wrote:
-> PCI_EXP_RTCTL is used to activate PME interrupt only, so writing into it
-> should not modify other interrupts' mask. The ISR mask polarity was also
-> inverted, when PCI_EXP_RTCTL_PMEIE is set PCIE_MSG_PM_PME_MASK mask bit
-> should actually be cleared.
-> 
-> Fixes: 8a3ebd8de328 ("PCI: aardvark: Implement emulated root PCI bridge config space")
-> Signed-off-by: Remi Pommarel <repk@triplefau.lt>
-> ---
-> Changes since v1:
->  * Improve code readability
->  * Fix mask polarity
->  * PME_MASK shift was off by one
-> Changes since v2:
->  * Modify patch title
->  * Change Fixes tag to commit that actually introduces the bug
-> ---
->  drivers/pci/controller/pci-aardvark.c | 13 +++++++++----
->  1 file changed, 9 insertions(+), 4 deletions(-)
+--=-=-=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-I need Thomas' ACK to apply it, thanks.
 
-Lorenzo
+Hi,
 
-> diff --git a/drivers/pci/controller/pci-aardvark.c b/drivers/pci/controller/pci-aardvark.c
-> index 134e0306ff00..f6e55c4597b1 100644
-> --- a/drivers/pci/controller/pci-aardvark.c
-> +++ b/drivers/pci/controller/pci-aardvark.c
-> @@ -415,7 +415,7 @@ advk_pci_bridge_emul_pcie_conf_read(struct pci_bridge_emul *bridge,
->  
->  	case PCI_EXP_RTCTL: {
->  		u32 val = advk_readl(pcie, PCIE_ISR0_MASK_REG);
-> -		*value = (val & PCIE_MSG_PM_PME_MASK) ? PCI_EXP_RTCTL_PMEIE : 0;
-> +		*value = (val & PCIE_MSG_PM_PME_MASK) ? 0 : PCI_EXP_RTCTL_PMEIE;
->  		return PCI_BRIDGE_EMUL_HANDLED;
->  	}
->  
-> @@ -451,10 +451,15 @@ advk_pci_bridge_emul_pcie_conf_write(struct pci_bridge_emul *bridge,
->  		advk_writel(pcie, new, PCIE_CORE_PCIEXP_CAP + reg);
->  		break;
->  
-> -	case PCI_EXP_RTCTL:
-> -		new = (new & PCI_EXP_RTCTL_PMEIE) << 3;
-> -		advk_writel(pcie, new, PCIE_ISR0_MASK_REG);
-> +	case PCI_EXP_RTCTL: {
-> +		/* Only mask/unmask PME interrupt */
-> +		u32 val = advk_readl(pcie, PCIE_ISR0_MASK_REG) &
-> +			~PCIE_MSG_PM_PME_MASK;
-> +		if ((new & PCI_EXP_RTCTL_PMEIE) == 0)
-> +			val |= PCIE_MSG_PM_PME_MASK;
-> +		advk_writel(pcie, val, PCIE_ISR0_MASK_REG);
->  		break;
-> +	}
->  
->  	case PCI_EXP_RTSTA:
->  		new = (new & PCI_EXP_RTSTA_PME) >> 9;
-> -- 
-> 2.20.1
-> 
+Lee Jones <lee.jones@linaro.org> writes:
+> On Mon, 17 Jun 2019, Felipe Balbi wrote:
+>
+>> Hi,
+>>=20
+>> Lee Jones <lee.jones@linaro.org> writes:
+>> >> In Linux, the DWC3 core exists as its own independent platform device.
+>> >> Thus when describing relationships in Device Tree, the current default
+>> >> boot configuration table option, the DWC3 core often resides as a chi=
+ld
+>> >> of the platform specific node.  Both of which are given their own
+>> >> address space descriptions and the drivers can be mostly agnostic to
+>> >> each other.
+>> >>=20
+>> >> However, other Operating Systems have taken a more monolithic approac=
+h,
+>> >> which is evident in the configuration ACPI tables for the Qualcomm
+>> >> Snapdragon SDM850, where all DWC3 (core and platform) components are
+>> >> described under a single IO memory region.
+>> >>=20
+>> >> To ensure successful booting using the supplied ACPI tables, we need =
+to
+>> >> devise a way to chop up the address regions provided and subsequently
+>> >> register the DWC3 core with the resultant information, which is
+>> >> precisely what this patch aims to achieve.
+>> >>=20
+>> >> Signed-off-by: Lee Jones <lee.jones@linaro.org>
+>> >> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+>> >> ---
+>> >>  drivers/usb/dwc3/Kconfig     |   2 +-
+>> >>  drivers/usb/dwc3/dwc3-qcom.c | 206 ++++++++++++++++++++++++++++++---=
+--
+>> >>  2 files changed, 179 insertions(+), 29 deletions(-)
+>> >
+>> > I'm starting to get a little twitchy about these patches now.  Due to
+>> > the release cadence of the larger Linux distros, it's pretty important
+>> > that these changes land in v5.3.  Without them, it is impossible to
+>> > install Linux on some pretty high profile emerging platforms.
+>> >
+>> > It's already -rc5 and I'm concerned that we're going to miss the
+>> > merge-window.  Would you be kind enough to review these patches
+>> > please?  The Pinctrl and I2C parts of the set have already been
+>> > merged.
+>>=20
+>> I don't seem to have this series in my inbox. This is the only email I
+>> have in this series.
+>
+> I did wonder, which is why I made sure I sent this to your Intel
+> address as well.  Is your @kernel.org address broken?
+
+not really, that drops in a valid inbox. I didn't receive it in either,
+however. :-s
+
+> Will re-send the patches to your Intel address, give me a few
+> minutes.
+
+Thanks.
+
+=2D-=20
+balbi
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEElLzh7wn96CXwjh2IzL64meEamQYFAl0Hi3gACgkQzL64meEa
+mQY6cw//UR0+y5aHXtLn2hjlVUhYgBlcnFJr3gT/bI+asF95lLJrC5erexaMReya
+oVXaqMIj1FicOrT8LH6BQrAO7pCkK1nzMRa1Zzz0eaP02V+4KBw2rQdY3DqPN2UR
+cFRTPiG3rLyKTtFvjGbbg7T4eA7x5sXsgW95up5xFl3xWNMNvwk0Lhem+sIZgFFW
+SdEyfrkdqOEmKTXvLS+4FuEt3SHvPRjNfqHLR//JRSpRa9JFYak2GvFiSeJUfj1o
+Slw074pz4bcsUa2XGXElFv2FqG0SbsTlYWS2D8u3s5XaKk2zAMo35Be9JT2uFvL5
+kQyHVoNowkSXm27o19tBiqaidyRhEnQUxs8sBLNyVvr5dI7rKzTAbXY3F5zr4nVd
+7BNohgUx1c+UDbagD3hYJ4uP40lGGTgLx8UjU0V/iigzOdIqNJLZm4vJ3CxkBDI4
+OS9Xgvg6keTCk/PwEoM6QevioGBta7+nlLYHkFZD2NaCoRc1u5iQqfLe0TmCuFJh
+pP+m7g0yCXX9BXikm1XnPBcaA4sZ1BsYx7JN9LczYM6paqPm4vWwnxVkAbIv0bwe
+baDR7JtlY9ISajgV40UArHLkcN7+2/XHVNxgrTHfnluw/AFUfGkCl+soPC/CrTg4
+gPuvGPbuYM2oRfaWRGJJNyW/7yz4FUutnBFGdmZqD3JubShRE34=
+=FCzN
+-----END PGP SIGNATURE-----
+--=-=-=--
