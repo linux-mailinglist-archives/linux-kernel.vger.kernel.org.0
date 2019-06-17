@@ -2,125 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0F04C48628
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 16:54:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C1D3048634
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 16:56:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728327AbfFQOy3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 10:54:29 -0400
-Received: from relay10.mail.gandi.net ([217.70.178.230]:50121 "EHLO
-        relay10.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726631AbfFQOy3 (ORCPT
+        id S1727919AbfFQOz7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 10:55:59 -0400
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:33716 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726028AbfFQOz6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 10:54:29 -0400
-Received: from localhost (aaubervilliers-681-1-81-150.w90-88.abo.wanadoo.fr [90.88.23.150])
-        (Authenticated sender: maxime.ripard@bootlin.com)
-        by relay10.mail.gandi.net (Postfix) with ESMTPSA id C497C240018;
-        Mon, 17 Jun 2019 14:54:20 +0000 (UTC)
-Date:   Mon, 17 Jun 2019 16:54:20 +0200
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Chen-Yu Tsai <wens@csie.org>
-Cc:     Jagan Teki <jagan@amarulasolutions.com>,
+        Mon, 17 Jun 2019 10:55:58 -0400
+Received: by mail-qt1-f195.google.com with SMTP id x2so11073965qtr.0
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2019 07:55:58 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=nLt9ZHlsi0Mo2ZjZlBll3f1E3rXQj8ngnIQB0JKvcQ8=;
+        b=gMh4660+KviTRCOboPishI78lXOsLjIn8Sh9g8+Q046HGy/mw315yPLEfHrJitYUju
+         gHE2e9Y7A05LQadQpvAG/RYjpONHaLOjnynMKk3uSySTjBIKYjVvhYtNp05j8wPIH+zO
+         nylEeg/+BPzkodiXsAP1T3HicHbXtUIHKssmapPwerdW+WP16p7EZo0lkoEh1Xq8yj5w
+         EQXXuS8owQyZO68QGjt67li2wx1IugB89+GM55Y8EVBRpJlKezIRuqjXSpuFpU9p0r9Y
+         e5sfJD9EjYBNsP3TBSRWXKdvs77IV00TKbnnHWup5Ht7+RdlBbLcR1XGvHjtjD/VWKHe
+         h3kw==
+X-Gm-Message-State: APjAAAUvmQj9CZaG0Dgj8fcAX0ABuDqR1V6fnVI+IO3ItdNQIngqwyWx
+        6Hd0mhwLDloGcXksM+e6HWT1d4XKfpkDNT5w34m6ZI7z
+X-Google-Smtp-Source: APXvYqx3pBYXn/aH9OmUnV1E8DvaJlX+VwTvOQB7RTbuTrROkMdV/xIuWGgCG5AUexpYMZQTA9GZIYm4cMyrwmEQCVE=
+X-Received: by 2002:aed:33a4:: with SMTP id v33mr60323126qtd.18.1560783357568;
+ Mon, 17 Jun 2019 07:55:57 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190617123915.926526-1-arnd@arndb.de> <20190617144109.GA14528@ravnborg.org>
+In-Reply-To: <20190617144109.GA14528@ravnborg.org>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Mon, 17 Jun 2019 16:55:40 +0200
+Message-ID: <CAK8P3a2tPrYxDpP7EU34=+N3P5+jwSX4XkA1AV6K-YYCQNt_sw@mail.gmail.com>
+Subject: Re: [PATCH] drm/amd/display: include missing linux/delay.h
+To:     Sam Ravnborg <sam@ravnborg.org>
+Cc:     Harry Wentland <harry.wentland@amd.com>,
+        Leo Li <sunpeng.li@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
         David Airlie <airlied@linux.ie>,
         Daniel Vetter <daniel@ffwll.ch>,
+        Thomas Lim <Thomas.Lim@amd.com>,
+        Eric Yang <eric.yang2@amd.com>,
+        Charlene Liu <charlene.liu@amd.com>,
+        Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        amd-gfx@lists.freedesktop.org,
+        Dmytro Laktyushkin <Dmytro.Laktyushkin@amd.com>,
         dri-devel <dri-devel@lists.freedesktop.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        linux-sunxi <linux-sunxi@googlegroups.com>,
-        linux-amarula <linux-amarula@amarulasolutions.com>
-Subject: Re: [linux-sunxi] Re: [PATCH v2 5/9] drm/sun4i: tcon_top: Register
- clock gates in probe
-Message-ID: <20190617145420.e7yfrmmhdhift5id@flea>
-References: <20190614164324.9427-1-jagan@amarulasolutions.com>
- <20190614164324.9427-6-jagan@amarulasolutions.com>
- <20190617114503.pclqsf6bo3ih47nt@flea>
- <CAGb2v66RU=m0iA9VoBiYbake+mDoiiGcd5gGGXvNCBjhY2n+Dw@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="jzvxnzdlcqa2ksrf"
-Content-Disposition: inline
-In-Reply-To: <CAGb2v66RU=m0iA9VoBiYbake+mDoiiGcd5gGGXvNCBjhY2n+Dw@mail.gmail.com>
-User-Agent: NeoMutt/20180716
+        Tony Cheng <tony.cheng@amd.com>,
+        Anthony Koo <Anthony.Koo@amd.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
---jzvxnzdlcqa2ksrf
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Mon, Jun 17, 2019 at 09:01:33PM +0800, Chen-Yu Tsai wrote:
-> On Mon, Jun 17, 2019 at 7:45 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
+On Mon, Jun 17, 2019 at 4:41 PM Sam Ravnborg <sam@ravnborg.org> wrote:
+> On Mon, Jun 17, 2019 at 02:38:55PM +0200, Arnd Bergmann wrote:
+> > Some randconfig builds fail to compile the dcn10 code because of
+> > a missing declaration:
 > >
-> > On Fri, Jun 14, 2019 at 10:13:20PM +0530, Jagan Teki wrote:
-> > > TCON TOP have clock gates for TV0, TV1, dsi and right
-> > > now these are register during bind call.
-> > >
-> > > Of which, dsi clock gate would required during DPHY probe
-> > > but same can miss to get since tcon top is not bound at
-> > > that time.
-> > >
-> > > To solve, this circular dependency move the clock gate
-> > > registration from bind to probe so-that DPHY can get the
-> > > dsi gate clock on time.
+> > drivers/gpu/drm/amd/amdgpu/../display/dc/dcn10/dcn10_hw_sequencer.c: In function 'dcn10_apply_ctx_for_surface':
+> > drivers/gpu/drm/amd/amdgpu/../display/dc/dcn10/dcn10_hw_sequencer.c:2378:3: error: implicit declaration of function 'udelay' [-Werror=implicit-function-declaration]
 > >
-> > It's not really clear to me what the circular dependency is?
+> > Include the appropriate kernel header.
 > >
-> > if you have a chain that is:
+> > Fixes: 9ed43ef84d9d ("drm/amd/display: Add Underflow Asserts to dc")
+> > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> > ---
+> >  drivers/gpu/drm/amd/display/dc/dcn10/dcn10_hw_sequencer.c | 1 +
+> >  1 file changed, 1 insertion(+)
 > >
-> > tcon-top +-> DSI
-> >          +-> D-PHY
+> > diff --git a/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_hw_sequencer.c b/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_hw_sequencer.c
+> > index 1ac9a4f03990..d87ddc7de9c6 100644
+> > --- a/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_hw_sequencer.c
+> > +++ b/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_hw_sequencer.c
+> > @@ -22,6 +22,7 @@
+> >   * Authors: AMD
+> >   *
+> >   */
+> > +#include <linux/delay.h>
 > >
-> > There's no loop, right?
+> >  #include <linux/delay.h>
+> >  #include "dm_services.h"
 >
-> Looking at how the DTSI patch structures things (without going into
-> whether it is correct or accurate):
+> Something has gone wrong here, as you add a second include of linux/delay.h.
 >
-> The D-PHY is not part of the component graph. However it requests
-> the DSI gate clock from the TCON-TOP.
->
-> The TCON-TOP driver, in its current form, only registers the clocks
-> it provides at component bind time. Thus the D-PHY can't successfully
-> probe until the TCON-TOP has been bound.
->
-> The DSI interface requires the D-PHY to bind. It will return -EPROBE_DEFER
-> if it cannot request it. This in turn goes into the error path of
-> component_bind_all, which unbinds all previous components.
->
-> So it's actually
->
->     D-PHY -> TCON-TOP -> DSI
->       ^                   |
->       |--------------------
->
-> I've not checked, but I suspect there's no possibility of having other
-> drivers probe (to deal with deferred probing) within component_bind_all.
-> Otherwise we shouldn't run into this weird circular dependency issue.
->
+> We had this problem before, which Alex fixed by applying a patch to
+> include linux/delay.h
 
-Ah, yes, that makes sense. It should be cleraer in the commit log then.
+My mistake, sorry about that. I had written and tested the patch on
+last week's linux-next ernel and sent it out today after rebasing it, but did
+not closely look at the resulting patch after the rebase.
 
-Thanks!
-Maxime
-
---
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---jzvxnzdlcqa2ksrf
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXQepmwAKCRDj7w1vZxhR
-xYw9AQDHLFtmVu3MFQ1SBBQaIYnHJKObnT7QFiGqQdKlvtmJPQEAnVAr+0qvuMbJ
-nxfnMe/iGRf/aI9F/dseertWbl3c1AQ=
-=Vhms
------END PGP SIGNATURE-----
-
---jzvxnzdlcqa2ksrf--
+           Arnd
