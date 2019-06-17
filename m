@@ -2,80 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 95E534909C
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 21:54:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 17702490A0
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 21:54:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729130AbfFQTyf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 15:54:35 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:51380 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725878AbfFQTye (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 15:54:34 -0400
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 76A8B30872E1;
-        Mon, 17 Jun 2019 19:54:28 +0000 (UTC)
-Received: from redhat.com (ovpn-125-143.rdu2.redhat.com [10.10.125.143])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 522804146;
-        Mon, 17 Jun 2019 19:54:27 +0000 (UTC)
-Date:   Mon, 17 Jun 2019 15:54:25 -0400
-From:   Jerome Glisse <jglisse@redhat.com>
-To:     Souptick Joarder <jrdr.linux@gmail.com>
-Cc:     bskeggs@redhat.com, airlied@linux.ie,
-        Daniel Vetter <daniel@ffwll.ch>, jasojgg@ziepe.ca,
-        dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm/nouveau/svm: Convert to use hmm_range_fault()
-Message-ID: <20190617195425.GA4085@redhat.com>
-References: <1558378918-25279-1-git-send-email-jrdr.linux@gmail.com>
- <CAFqt6zYmL2P9w0Z4yfPtB=ftiy-H6-_beYsXJq-nD9T5OAw6Dg@mail.gmail.com>
+        id S1729158AbfFQTyu convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 17 Jun 2019 15:54:50 -0400
+Received: from lithops.sigma-star.at ([195.201.40.130]:54082 "EHLO
+        lithops.sigma-star.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727419AbfFQTyu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Jun 2019 15:54:50 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by lithops.sigma-star.at (Postfix) with ESMTP id 50DCC6125473;
+        Mon, 17 Jun 2019 21:54:47 +0200 (CEST)
+Received: from lithops.sigma-star.at ([127.0.0.1])
+        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id pX_4MBQoTrkS; Mon, 17 Jun 2019 21:54:45 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by lithops.sigma-star.at (Postfix) with ESMTP id 9CE1A6125474;
+        Mon, 17 Jun 2019 21:54:45 +0200 (CEST)
+Received: from lithops.sigma-star.at ([127.0.0.1])
+        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id L-9kwGPTSA4Y; Mon, 17 Jun 2019 21:54:45 +0200 (CEST)
+Received: from lithops.sigma-star.at (lithops.sigma-star.at [195.201.40.130])
+        by lithops.sigma-star.at (Postfix) with ESMTP id 717096125473;
+        Mon, 17 Jun 2019 21:54:45 +0200 (CEST)
+Date:   Mon, 17 Jun 2019 21:54:45 +0200 (CEST)
+From:   Richard Weinberger <richard@nod.at>
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-iio@vger.kernel.org,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Kjeld Flarup <kfa@deif.com>,
+        Patrick Havelange <patrick.havelange@essensium.com>,
+        William Breathitt Gray <vilhelm.gray@gmail.com>
+Message-ID: <1644235064.95157.1560801285401.JavaMail.zimbra@nod.at>
+In-Reply-To: <e33254e5-3e8e-fc86-de72-b3dd2f6c310c@infradead.org>
+References: <e33254e5-3e8e-fc86-de72-b3dd2f6c310c@infradead.org>
+Subject: Re: [PATCH] counter: fix ftm-quaddec build error on UML
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAFqt6zYmL2P9w0Z4yfPtB=ftiy-H6-_beYsXJq-nD9T5OAw6Dg@mail.gmail.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Mon, 17 Jun 2019 19:54:33 +0000 (UTC)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
+X-Originating-IP: [195.201.40.130]
+X-Mailer: Zimbra 8.8.8_GA_3025 (ZimbraWebClient - FF60 (Linux)/8.8.8_GA_1703)
+Thread-Topic: counter: fix ftm-quaddec build error on UML
+Thread-Index: eEfWTSXRju2JBcEkIrpay7AI04j7dg==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jun 08, 2019 at 12:14:50AM +0530, Souptick Joarder wrote:
-> Hi Jason,
-> 
-> On Tue, May 21, 2019 at 12:27 AM Souptick Joarder <jrdr.linux@gmail.com> wrote:
-> >
-> > Convert to use hmm_range_fault().
-> >
-> > Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
-> 
-> Would you like to take it through your new hmm tree or do I
-> need to resend it ?
+Hi!
 
-This patch is wrong as the API is different between the two see what
-is in hmm.h to see the differences between hmm_vma_fault() hmm_range_fault()
-a simple rename break things.
+----- Ursprüngliche Mail -----
+> Von: "Randy Dunlap" <rdunlap@infradead.org>
+> An: "linux-kernel" <linux-kernel@vger.kernel.org>, linux-iio@vger.kernel.org
+> CC: "Geert Uytterhoeven" <geert@linux-m68k.org>, "Kjeld Flarup" <kfa@deif.com>, "Patrick Havelange"
+> <patrick.havelange@essensium.com>, "William Breathitt Gray" <vilhelm.gray@gmail.com>, "richard" <richard@nod.at>
+> Gesendet: Montag, 17. Juni 2019 18:21:40
+> Betreff: [PATCH] counter: fix ftm-quaddec build error on UML
 
+> From: Randy Dunlap <rdunlap@infradead.org>
 > 
-> > ---
-> >  drivers/gpu/drm/nouveau/nouveau_svm.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/gpu/drm/nouveau/nouveau_svm.c b/drivers/gpu/drm/nouveau/nouveau_svm.c
-> > index 93ed43c..8d56bd6 100644
-> > --- a/drivers/gpu/drm/nouveau/nouveau_svm.c
-> > +++ b/drivers/gpu/drm/nouveau/nouveau_svm.c
-> > @@ -649,7 +649,7 @@ struct nouveau_svmm {
-> >                 range.values = nouveau_svm_pfn_values;
-> >                 range.pfn_shift = NVIF_VMM_PFNMAP_V0_ADDR_SHIFT;
-> >  again:
-> > -               ret = hmm_vma_fault(&range, true);
-> > +               ret = hmm_range_fault(&range, true);
-> >                 if (ret == 0) {
-> >                         mutex_lock(&svmm->mutex);
-> >                         if (!hmm_vma_range_done(&range)) {
-> > --
-> > 1.9.1
-> >
+> Fix build error on user-mode Linux, which does not set HAS_IOMEM,
+> so devm_ioremap() is not available.  Fixes this build error:
+> 
+> ERROR: "devm_ioremap" [drivers/counter/ftm-quaddec.ko] undefined!
+> 
+> Fixes: a3b9a99980d9 ("counter: add FlexTimer Module Quadrature decoder counter
+> driver")
+> 
+> Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+
+AFAICT Patrick fixed this already.
+
+Thanks,
+//richard
