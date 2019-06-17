@@ -2,116 +2,173 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E577F48488
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 15:52:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AE4C448495
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 15:54:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727777AbfFQNwD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 09:52:03 -0400
-Received: from casper.infradead.org ([85.118.1.10]:50732 "EHLO
-        casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726005AbfFQNwD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 09:52:03 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
-        MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:From:Date:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=rqoIj6ukwJM6l56EUxxnRITr+tibvaPKGHXeg6stNSw=; b=qfKX0T9vD3Jr2Jtfa1cJHW1EdS
-        jxjCFwsVgdI0mcoZG1NtKye1fbR6u76zbwjRB3lbVSwAaC5US5sdheGAvCCvYO7D/iOA2PeTGV1n9
-        dYtZtKcJAaQT1fAaLiNONQflP5GZ+6HlIGKvncFnGApIQc3M2l06bQZuLjvmu19Im60Un2pvMJmWD
-        HksolIGmjABbfAiPYma6XBr/Xy1hGa00Swn2hb/DDSVJ+ejmzfQRsU5HRCw+LnoNqs4c/O2iavTDk
-        cDulxLWgxwY7N9GoMzR1PMFp4K8qIX14bsMfEwTFfZCKu4jylrg6lNIVHtGzfs7HwMWWh6JvvAT0R
-        /qE3lOmw==;
-Received: from 179.186.105.91.dynamic.adsl.gvt.net.br ([179.186.105.91] helo=coco.lan)
-        by casper.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hcs3E-0002ed-FW; Mon, 17 Jun 2019 13:52:01 +0000
-Date:   Mon, 17 Jun 2019 10:51:54 -0300
-From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-To:     Jani Nikula <jani.nikula@linux.intel.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab@s-opensource.com>,
-        Mauro Carvalho Chehab <mchehab@infradead.org>,
-        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>
-Subject: Re: [PATCH 12/14] doc-rst: add ABI documentation to the admin-guide
- book
-Message-ID: <20190617105154.3874fd89@coco.lan>
-In-Reply-To: <874l4ov16m.fsf@intel.com>
-References: <cover.1560477540.git.mchehab+samsung@kernel.org>
-        <9da2a7f6ff57d9d53dcbb964eb310f7956522870.1560477540.git.mchehab+samsung@kernel.org>
-        <87o930uvur.fsf@intel.com>
-        <20190614140603.GB7234@kroah.com>
-        <20190614122755.1c7b4898@coco.lan>
-        <874l4ov16m.fsf@intel.com>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1728031AbfFQNwg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 09:52:36 -0400
+Received: from node.akkea.ca ([192.155.83.177]:54964 "EHLO node.akkea.ca"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727900AbfFQNwg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Jun 2019 09:52:36 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by node.akkea.ca (Postfix) with ESMTP id A95604E2050;
+        Mon, 17 Jun 2019 13:52:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=akkea.ca; s=mail;
+        t=1560779555; bh=/rmfFWYlDMpMcCLQsn2AZKLe0UX7Zspxgjz3g0JAjTc=;
+        h=From:To:Cc:Subject:Date;
+        b=mFOcPsU//xyaTt77VMGE4tcmVzFrOnvr/FIYRxyjKaOU2aBsUJVVO/QYVXjBafN3o
+         Y+4idlCeXlwcSJy09HqKEbrneGvoc7R8bH84TR5S370UA/bqM4BNjQq0fYJ3ol0Bey
+         lYwJTw18nd7lPYuDciiKLVr26GC1k7lasp9Gz2H0=
+X-Virus-Scanned: Debian amavisd-new at mail.akkea.ca
+Received: from node.akkea.ca ([127.0.0.1])
+        by localhost (mail.akkea.ca [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id 6MkXKjCxyr74; Mon, 17 Jun 2019 13:52:35 +0000 (UTC)
+Received: from localhost.localdomain (198-48-167-13.cpe.pppoe.ca [198.48.167.13])
+        by node.akkea.ca (Postfix) with ESMTPSA id F26FB4E204B;
+        Mon, 17 Jun 2019 13:52:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=akkea.ca; s=mail;
+        t=1560779555; bh=/rmfFWYlDMpMcCLQsn2AZKLe0UX7Zspxgjz3g0JAjTc=;
+        h=From:To:Cc:Subject:Date;
+        b=mFOcPsU//xyaTt77VMGE4tcmVzFrOnvr/FIYRxyjKaOU2aBsUJVVO/QYVXjBafN3o
+         Y+4idlCeXlwcSJy09HqKEbrneGvoc7R8bH84TR5S370UA/bqM4BNjQq0fYJ3ol0Bey
+         lYwJTw18nd7lPYuDciiKLVr26GC1k7lasp9Gz2H0=
+From:   "Angus Ainslie (Purism)" <angus@akkea.ca>
+To:     angus.ainslie@puri.sm
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        "Angus Ainslie (Purism)" <angus@akkea.ca>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, pavel@ucw.cz
+Subject: [PATCH v16 0/3] Add support for the Purism Librem5 devkit
+Date:   Mon, 17 Jun 2019 07:52:12 -0600
+Message-Id: <20190617135215.550-1-angus@akkea.ca>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Mon, 17 Jun 2019 15:36:17 +0300
-Jani Nikula <jani.nikula@linux.intel.com> escreveu:
+The Librem5 devkit is based on the imx8mq from NXP. This is a default
+devicetree to boot the board to a command prompt.
 
-> On Fri, 14 Jun 2019, Mauro Carvalho Chehab <mchehab+samsung@kernel.org> wrote:
-> > Em Fri, 14 Jun 2019 16:06:03 +0200
-> > Greg Kroah-Hartman <gregkh@linuxfoundation.org> escreveu:
-> >  
-> >> On Fri, Jun 14, 2019 at 04:42:20PM +0300, Jani Nikula wrote:  
-> >> > 2) Have the python extension read the ABI files directly, without an
-> >> >    extra pipeline.    
-> >> 
-> >> He who writes the script, get's to dictate the language of the script :)  
-> 
-> The point is, it's an extension to a python based tool, written in perl,
-> using pipes for communication, and losing any advantages of integrating
-> with the tool it's extending.
-> 
-> I doubt you'd want to see system() to be used to subsequently extend the
-> perl tool.
-> 
-> I think it's just sad to see the documentation system slowly drift
-> further away from the ideals we had, and towards the old ways we worked
-> so hard to fix.
+Changes since v15:
 
-Actually, it is a perl script that can be used standalone (just like
-get_maintainers.pl and kernel-doc) with have some features including
-producing a ReST output. We could easily get rid of the python extension,
-if we add this to the Makefile (adjusted to work with O= option):
+Update the ti,minimum-sys-voltage for the PMIC.
 
-	./scripts/get_api.pl rest > Documentation/output/admin-guide/abi.rst
+Changes since v14:
 
-> 
-> > No idea about how much time it would take if written in python,
-> > but this perl script is really fast:
-> >
-> > 	$ time ./scripts/get_abi.pl search voltage_max >/dev/null
-> > 	real	0m0,139s
-> > 	user	0m0,132s
-> > 	sys	0m0,006s
-> >
-> > That's the time it takes here (SSD disks) to read all files under
-> > Documentation/ABI, parse them and seek for a string.
-> >
-> > That's about half of the time a python script takes to just import the
-> > the sphinx modules and print its version, running at the same machine:
-> >
-> > 	$ time sphinx-build --version >/dev/null
-> >
-> > 	real	0m0,224s
-> > 	user	0m0,199s
-> > 	sys	0m0,024s  
-> 
-> Please at least use fair and sensible comparisons. If you want to make
-> the extension usable standalone on the command-line, bypassing Sphinx,
-> you can do that. No need to factor in Sphinx to your comparisons.
+Add regulator-always-on for the SNVS regulators.
+Added pgc nodes.
+Fixed charger pre-current.
 
-Yeah, I guess it should be possible to do that. How a python script
-can identify if it was called by Sphinx, or if it was called directly?
+Changes since v13:
 
-Thanks,
-Mauro
+Moved haptic motor from pwm-led to gpio-vibrator.
+Cleaned up regulator node naming.
+Whitescpace cleanup.
+Re-indent pinmux stanzas.
+Drop pwm2 node.
+Drop MAINTAINERS patch.
+
+Changes since v12:
+
+Updated patch to vendor-prefixes.yaml.
+Dropped always on from regulators.
+
+Changes since v11:
+
+Added reviewed-by tags.
+Fixed subject typo.
+
+Changes since v10:
+
+Moved MAINTAINERS entry to "ARM/FREESCALE IMX" section
+
+Changes since v9:
+
+Added a MAINTAINERS entry for arm64 imx devicetree files.
+
+Changes since v8:
+
+Fixed license comment.
+Changed regulators to all lower case.
+Changed clock frequency for NXP errata e7805.
+Dropped blank line.
+
+Changes since v7:
+
+More regulators always on for USB.
+Add vbus regulator.
+Drop vbat regulator.
+Replace legacy "gpio-key,wakeup" with "wakeup-source".
+Add vbus-supply to get rid of warning
+imx8mq-usb-phy 382f0040.usb-phy: 382f0040.usb-phy supply vbus not found,
+using dummy regulator
+
+Changes since v6:
+
+Dropped unused regulators.
+Fix regulator phandles case.
+Dropped extra whitespace.
+
+Changes since v5:
+
+Added reviewed-by tags.
+Moved USB port links to USB controller node.
+
+Changes since v4:
+
+Compiled against linux-next next-20190415.
+Added imx8mq to the arm yaml file.
+Re-arrange regulator nodes to drop undefined supplies.
+Additional ordering for aesthetics.
+Split some long lines.
+Added lots of blank lines.
+Moved pinctl muxes to where they are used.
+Cleaned out reg defintions from regulator nodes.
+
+Changes since v3:
+
+Freshly sorted and pressed nodes.
+Change the backlight to an interpolated scale.
+Dropped i2c2.
+Dropped devkit version number to match debian MR.
+
+Changes since v2:
+
+Fixed incorrect phy-supply for the fsl-fec.
+Dropped unused regulator property.
+Fixup Makefile for linux-next.
+
+Changes since v1:
+
+Dropped config file.
+Updated the board compatible label.
+Changed node names to follow naming conventions.
+Added a more complete regulator hierachy.
+Removed unused nodes.
+Removed unknown devices.
+Fixed comment style.
+Dropped undocumented properties.
+
+Angus Ainslie (Purism) (3):
+  arm64: dts: fsl: librem5: Add a device tree for the Librem5 devkit
+  dt-bindings: Add an entry for Purism SPC
+  dt-bindings: arm: fsl: Add the imx8mq boards
+
+ .../devicetree/bindings/arm/fsl.yaml          |   7 +
+ .../devicetree/bindings/vendor-prefixes.yaml  |   2 +
+ arch/arm64/boot/dts/freescale/Makefile        |   1 +
+ .../dts/freescale/imx8mq-librem5-devkit.dts   | 806 ++++++++++++++++++
+ 4 files changed, 816 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/freescale/imx8mq-librem5-devkit.dts
+
+-- 
+2.17.1
+
