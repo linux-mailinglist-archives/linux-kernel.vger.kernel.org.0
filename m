@@ -2,73 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 733384870C
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 17:27:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B483A48711
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 17:27:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728669AbfFQPZ0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 11:25:26 -0400
-Received: from mga05.intel.com ([192.55.52.43]:28800 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726715AbfFQPZ0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 11:25:26 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Jun 2019 08:25:25 -0700
-X-ExtLoop1: 1
-Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
-  by fmsmga004.fm.intel.com with ESMTP; 17 Jun 2019 08:25:24 -0700
-Received: from kbuild by lkp-server01 with local (Exim 4.89)
-        (envelope-from <lkp@intel.com>)
-        id 1hctVb-0006ty-SQ; Mon, 17 Jun 2019 23:25:23 +0800
-Date:   Mon, 17 Jun 2019 23:25:23 +0800
-From:   kbuild test robot <lkp@intel.com>
-To:     Detlev Casanova <detlev.casanova@gmail.com>
-Cc:     kbuild-all@01.org, Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Detlev Casanova <detlev.casanova@gmail.com>
-Subject: Re: [PATCH] e1000e: Make watchdog use delayed work
-Message-ID: <201906172310.xCz4u1rq%lkp@intel.com>
-References: <20190616145445.9637-1-detlev.casanova@gmail.com>
+        id S1728220AbfFQP0o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 11:26:44 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:42820 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725863AbfFQP0n (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Jun 2019 11:26:43 -0400
+Received: by mail-lf1-f66.google.com with SMTP id y13so6808565lfh.9;
+        Mon, 17 Jun 2019 08:26:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=RODdXc2ZD5wyJFcFeho8WC0XDsY2lZXJRt8XMboVzP8=;
+        b=VpHprEV3MRqB+ioJ94x+V1DngSDAAKRmXpwiKCJYLKkHh2ryBJOXyzmgxkekOAVhS3
+         0DlRHF2Kr2D4rWWnerxmLuXg52Kg6NbadquKJOLB2lCKyqdH1iAbICRugQXDfsUnW+t6
+         /3w0t2eTstaqQfAGbQx0rBiWxRFN7SGc0LTtAP3Ys7KoLkgjxhIfawf1j0mSmnqXkwT8
+         dewp9gBbqYED6dr6JbWZwKU9/lGsPCDor30tZOcQC/COQKMzE10q1aZkRRxEzQug817s
+         pp+lG9VjGrJ8N8+HlEZ55NlxuYLhBkQQoSflIi5BZ9j8prslboCA9ITnRaMSaaesXmAF
+         8mug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=RODdXc2ZD5wyJFcFeho8WC0XDsY2lZXJRt8XMboVzP8=;
+        b=o+IAtWGhcbKhlFuMzLnmXXqNsWh/HCWx5lKP6V/djZji+yUPiRLV0RX8HFBgjfHdxf
+         B/IlAVqwIcf1+DpEe3mDLZquTV72GgCOCoGgdKgdt65Lf/RV37DTIuJ2VUTlJUsaOWLn
+         /Wh318RlYFW0GESvF3B+tmZCUazsHhEHymgkyXlUqpisGbgAPdyKaJ2Oxde8RHR8EiqA
+         X8d4EdIdvsiGEFPfS13nqQ44/rCobyB4yrJ+ShRlvHn/p+wUIltKtuTvs7os9D9tmSb4
+         WG818o9EN+KQj9berjACYdsLO0NIAWU47PyVBXfw7nNhohKWtYvZegZXlQnDNA1u/cer
+         phkg==
+X-Gm-Message-State: APjAAAVU6LD1heOm8FLEFSWPfpxRtJySL4MKuFKOb/uEyMCOerzHzXVL
+        meIMFuAoLB+waUX0NhOifxLKgEvc5PMvoclFjRYJYA==
+X-Google-Smtp-Source: APXvYqxMDyI7/A0JHlYJNU0PnpEQfcBsEndnVvrovk/NsiqZpqGf2nxvTYdD3oPKQKwK0tE39WfEn6+/7XFqAvC91WA=
+X-Received: by 2002:ac2:4c29:: with SMTP id u9mr2469510lfq.100.1560785201357;
+ Mon, 17 Jun 2019 08:26:41 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190616145445.9637-1-detlev.casanova@gmail.com>
-X-Patchwork-Hint: ignore
-User-Agent: Mutt/1.5.23 (2014-03-12)
+References: <20190617125724.1616165-1-arnd@arndb.de>
+In-Reply-To: <20190617125724.1616165-1-arnd@arndb.de>
+From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date:   Mon, 17 Jun 2019 08:26:29 -0700
+Message-ID: <CAADnVQ+LzuNHFyLae0vUAudZpOFQ4cA02OC0zu3ypis+gqnjew@mail.gmail.com>
+Subject: Re: [PATCH] bpf: hide do_bpf_send_signal when unused
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Andrii Nakryiko <andriin@fb.com>, Yonghong Song <yhs@fb.com>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>,
+        Matt Mullins <mmullins@fb.com>,
+        Network Development <netdev@vger.kernel.org>,
+        bpf <bpf@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Detlev,
+On Mon, Jun 17, 2019 at 5:59 AM Arnd Bergmann <arnd@arndb.de> wrote:
+>
+> When CONFIG_MODULES is disabled, this function is never called:
+>
+> kernel/trace/bpf_trace.c:581:13: error: 'do_bpf_send_signal' defined but not used [-Werror=unused-function]
 
-Thank you for the patch! Perhaps something to improve:
-
-[auto build test WARNING on jkirsher-next-queue/dev-queue]
-[also build test WARNING on v5.2-rc5 next-20190617]
-[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
-
-url:    https://github.com/0day-ci/linux/commits/Detlev-Casanova/e1000e-Make-watchdog-use-delayed-work/20190617-154840
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/jkirsher/next-queue.git dev-queue
-reproduce:
-        # apt-get install sparse
-        # sparse version: v0.6.1-rc1-7-g2b96cd8-dirty
-        make ARCH=x86_64 allmodconfig
-        make C=1 CF='-fdiagnostic-prefix -D__CHECK_ENDIAN__'
-
-If you fix the issue, kindly add following tag
-Reported-by: kbuild test robot <lkp@intel.com>
-
-
-sparse warnings: (new ones prefixed by >>)
-
-
-Please review and possibly fold the followup patch.
-
----
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+hmm. it should work just fine without modules.
+the bug is somewhere else.
