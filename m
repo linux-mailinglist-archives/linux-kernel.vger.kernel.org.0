@@ -2,40 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 67BAE492EF
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 23:25:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 17B2C492AA
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 23:23:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730071AbfFQVZ1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 17:25:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51440 "EHLO mail.kernel.org"
+        id S1728978AbfFQVWc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 17:22:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47078 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727523AbfFQVZW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 17:25:22 -0400
+        id S1729537AbfFQVW0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Jun 2019 17:22:26 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B3070206B7;
-        Mon, 17 Jun 2019 21:25:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 01B7A2063F;
+        Mon, 17 Jun 2019 21:22:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560806721;
-        bh=mKtyJluVbixW8qvdlr8Grs/hbKxOyEeZGEwPJY1SwsA=;
+        s=default; t=1560806545;
+        bh=BznVoR+FiBUgaFlz9uhoR8AQG6axRGqhTctpnfjZEQE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DysEY6XRkD7jHWqSguX3rGeS5eoKcuzqR0nOOWVvPvf0Db7BaifyVz+Xdz1Y6BqxS
-         WFUFS80BnrmEZwS0SZ4YW7V2iRzwEIDRYUeAvLj6pe+6Na88PGbiJV48PeHxBkTRi+
-         nz+mhW0yPBCu2S0vh1LRw2f8h7i7zmayjvd9mJyc=
+        b=OXx4CEurr+Y/eFZhB5kL4QtbuRwUgNX5WqPNgHt9Wcu/7bfhVplsotAgstRDvpJ4u
+         o7+XZltJREfOEfVQYwaAcW6Ex0vTYb/lXOXL7BM0qXtfbhzZnaxdvTI9FG43CNtuG+
+         JNu+50AQnBdxgMWjz1AafyTFEGCZKWpvJvV93XEg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>,
-        Manish Rangankar <mrangankar@marvell.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        stable@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Liran Alon <liran.alon@oracle.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 35/75] scsi: qedi: remove set but not used variables cdev and udev
-Date:   Mon, 17 Jun 2019 23:09:46 +0200
-Message-Id: <20190617210754.141452451@linuxfoundation.org>
+Subject: [PATCH 5.1 087/115] KVM: LAPIC: Fix lapic_timer_advance_ns parameter overflow
+Date:   Mon, 17 Jun 2019 23:09:47 +0200
+Message-Id: <20190617210804.414958400@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190617210752.799453599@linuxfoundation.org>
-References: <20190617210752.799453599@linuxfoundation.org>
+In-Reply-To: <20190617210759.929316339@linuxfoundation.org>
+References: <20190617210759.929316339@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,46 +47,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit d0adee5d12752256ff0c87ad7f002f21fe49d618 ]
+[ Upstream commit 0e6edceb8f18a4e31526d83e6099fef1f29c3af5 ]
 
-Fixes gcc '-Wunused-but-set-variable' warning:
+After commit c3941d9e0 (KVM: lapic: Allow user to disable adaptive tuning of
+timer advancement), '-1' enables adaptive tuning starting from default
+advancment of 1000ns. However, we should expose an int instead of an overflow
+uint module parameter.
 
-drivers/scsi/qedi/qedi_iscsi.c: In function 'qedi_ep_connect':
-drivers/scsi/qedi/qedi_iscsi.c:813:23: warning: variable 'udev' set but not used [-Wunused-but-set-variable]
-drivers/scsi/qedi/qedi_iscsi.c:812:18: warning: variable 'cdev' set but not used [-Wunused-but-set-variable]
+Before patch:
 
-These have never been used since introduction.
+/sys/module/kvm/parameters/lapic_timer_advance_ns:4294967295
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-Acked-by: Manish Rangankar <mrangankar@marvell.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+After patch:
+
+/sys/module/kvm/parameters/lapic_timer_advance_ns:-1
+
+Fixes: c3941d9e0 (KVM: lapic: Allow user to disable adaptive tuning of timer advancement)
+Cc: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Radim Krčmář <rkrcmar@redhat.com>
+Cc: Sean Christopherson <sean.j.christopherson@intel.com>
+Cc: Liran Alon <liran.alon@oracle.com>
+Reviewed-by: Sean Christopherson <sean.j.christopherson@intel.com>
+Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/qedi/qedi_iscsi.c | 4 ----
- 1 file changed, 4 deletions(-)
+ arch/x86/kvm/x86.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/scsi/qedi/qedi_iscsi.c b/drivers/scsi/qedi/qedi_iscsi.c
-index 4130b9117055..1b7049dce169 100644
---- a/drivers/scsi/qedi/qedi_iscsi.c
-+++ b/drivers/scsi/qedi/qedi_iscsi.c
-@@ -810,8 +810,6 @@ qedi_ep_connect(struct Scsi_Host *shost, struct sockaddr *dst_addr,
- 	struct qedi_endpoint *qedi_ep;
- 	struct sockaddr_in *addr;
- 	struct sockaddr_in6 *addr6;
--	struct qed_dev *cdev  =  NULL;
--	struct qedi_uio_dev *udev = NULL;
- 	struct iscsi_path path_req;
- 	u32 msg_type = ISCSI_KEVENT_IF_DOWN;
- 	u32 iscsi_cid = QEDI_CID_RESERVED;
-@@ -831,8 +829,6 @@ qedi_ep_connect(struct Scsi_Host *shost, struct sockaddr *dst_addr,
- 	}
+diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+index efc8adf7ca0e..b07868eb1656 100644
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -143,7 +143,7 @@ module_param(tsc_tolerance_ppm, uint, S_IRUGO | S_IWUSR);
+  * tuning, i.e. allows priveleged userspace to set an exact advancement time.
+  */
+ static int __read_mostly lapic_timer_advance_ns = -1;
+-module_param(lapic_timer_advance_ns, uint, S_IRUGO | S_IWUSR);
++module_param(lapic_timer_advance_ns, int, S_IRUGO | S_IWUSR);
  
- 	qedi = iscsi_host_priv(shost);
--	cdev = qedi->cdev;
--	udev = qedi->udev;
- 
- 	if (test_bit(QEDI_IN_OFFLINE, &qedi->flags) ||
- 	    test_bit(QEDI_IN_RECOVERY, &qedi->flags)) {
+ static bool __read_mostly vector_hashing = true;
+ module_param(vector_hashing, bool, S_IRUGO);
 -- 
 2.20.1
 
