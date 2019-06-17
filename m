@@ -2,136 +2,422 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7007948806
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 17:56:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 422B548809
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 17:57:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728594AbfFQP4N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 11:56:13 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:57366 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728497AbfFQP4L (ORCPT
+        id S1728614AbfFQP4t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 11:56:49 -0400
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:33976 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727333AbfFQP4r (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 11:56:11 -0400
-Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5HFr3VV127575
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2019 11:56:10 -0400
-Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2t6c3d5smy-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2019 11:56:10 -0400
-Received: from localhost
-        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Mon, 17 Jun 2019 16:56:08 +0100
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
-        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 17 Jun 2019 16:56:05 +0100
-Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x5HFu4qB49152140
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 17 Jun 2019 15:56:04 GMT
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E82F611C05B;
-        Mon, 17 Jun 2019 15:56:03 +0000 (GMT)
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C03EA11C04A;
-        Mon, 17 Jun 2019 15:56:02 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.80.81.90])
-        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Mon, 17 Jun 2019 15:56:02 +0000 (GMT)
-Subject: Re: [PATCH] ima: dynamically allocate shash_desc
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Arnd Bergmann <arnd@arndb.de>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>
-Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Mon, 17 Jun 2019 11:55:51 -0400
-In-Reply-To: <20190617115838.2397872-1-arnd@arndb.de>
-References: <20190617115838.2397872-1-arnd@arndb.de>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19061715-0012-0000-0000-00000329E361
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19061715-0013-0000-0000-00002162FBD7
-Message-Id: <1560786951.4072.103.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-17_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1906170141
+        Mon, 17 Jun 2019 11:56:47 -0400
+Received: by mail-qt1-f196.google.com with SMTP id m29so11333364qtu.1
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2019 08:56:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=fMbBupmKpvqxTbAa++1G7QLKFVGIh4tCJDJCcA32Xlk=;
+        b=Fod9JZEqts/1042T9cVWGi94vW7ZK18VpVXHmYeddLbBsDX2u1q/DxEQke0lLtZp0T
+         NjTprvnENSl12aQ/9Rj0gG9NQZpUTDwKM/VgYxHQRx/byC1SMJ6UYx7ExLnurBw9qKK2
+         kkedodrEkGFlaJWFgR8tsCkCQHjqHScLETggUrAqfuIHFx3GItyF+H/YQNkIjHi7NwJt
+         4qEry9Q+jVSNt+nJJaqmC8XEvGn1JVig+HDSQdDCdPcwoy1RVd5krkPlFYHcBLYL8iH6
+         OhyUGqVVk5Uxr3xjaJXelO7gby8yFEi7s34o5pSbxcw2GFYcYCclOOBnLqb2KQKdLmOR
+         wExA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=fMbBupmKpvqxTbAa++1G7QLKFVGIh4tCJDJCcA32Xlk=;
+        b=IKV88wyjR7VXf0+wq/VO+dAN6w8WzBtniB50CefC3JjXf28hL5xtbfT0giCVUVWVb/
+         Hk492EcUWQUBADcx3X4NMPRHZhRMdNvib+5ecpjY1PTHQ4vJeEfO9IvAgpVS6r1Vr1iw
+         1hfY5D7m5BcNQa7y15Edcw59Dkb07tGvH3b/L3o39eT/kkzhI5OE5DeeaxLH/Z54KUwJ
+         MJLXUw3CzW8pe6Z1es0OSXldRMCuDIvB4YaK3whQtxAzUTixporaCgNjlL6c7p5v7Cji
+         XSQjL132VtnFlKyYgB5/iJ0L/KgAdHaYPLncfA03xoSzPTi4eSLl6o3VQHflz0i2GAtA
+         YxwQ==
+X-Gm-Message-State: APjAAAV0i1HPZ90aSEbygcHIeWSGyBp0+TYi+lOa8Z+f2Uvm46Xky3Dr
+        WgVmfp5JOafN1FwerE2GxgY=
+X-Google-Smtp-Source: APXvYqySNRnWvTNhT/YvNusD5TpqNeN3LvLJ5o15qOWwvkii1KTh+GIzNVcLdsD97MjObAC8fhoDCA==
+X-Received: by 2002:ac8:29c9:: with SMTP id 9mr68508667qtt.196.1560787006073;
+        Mon, 17 Jun 2019 08:56:46 -0700 (PDT)
+Received: from quaco.ghostprotocols.net (179-240-145-61.3g.claro.net.br. [179.240.145.61])
+        by smtp.gmail.com with ESMTPSA id s134sm7068493qke.51.2019.06.17.08.56.45
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Mon, 17 Jun 2019 08:56:45 -0700 (PDT)
+From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
+X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
+Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
+        id F2CB541149; Mon, 17 Jun 2019 12:56:33 -0300 (-03)
+Date:   Mon, 17 Jun 2019 12:56:33 -0300
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     Andi Kleen <andi@firstfloor.org>, Kan Liang <kan.liang@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Jiri Kosina <trivial@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH trivial] perf vendor events intel: Assorted style fixes
+Message-ID: <20190617155633.GA3927@kernel.org>
+References: <20190617142156.2526-1-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190617142156.2526-1-geert+renesas@glider.be>
+X-Url:  http://acmel.wordpress.com
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2019-06-17 at 13:20 +0200, Arnd Bergmann wrote:
-> On 32-bit ARM, we get a warning about excessive stack usage when
-> building with clang.
-> 
-> security/integrity/ima/ima_crypto.c:504:5: error: stack frame size
-> of 1152 bytes in function 'ima_calc_field_array_hash' [-Werror,-
-> Wframe-larger-than=]
+Em Mon, Jun 17, 2019 at 04:21:56PM +0200, Geert Uytterhoeven escreveu:
+>   - Do not use apostrophes for plurals,
+>   - Insert commas before "and",
+>   - Spelling s/statisfied/satisfied/.
 
-I'm definitely not seeing this.  Is this problem a result of non
-upstreamed patches?  For sha1, currently the only possible hash
-algorithm, I'm seeing 664.
+I think these files are generated from some other material from Intel,
+i.e. if they update something somewhere else and regenerate those files,
+your changes would be lost, right Andi, Kan? (Adding them to the CC list).
 
-Mimi
-
-> 
-> Using kmalloc to get the descriptor reduces this to 320 bytes.
-> 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+- Arnaldo
+ 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 > ---
->  security/integrity/ima/ima_crypto.c | 12 +++++++++---
->  1 file changed, 9 insertions(+), 3 deletions(-)
+>  tools/perf/pmu-events/arch/x86/nehalemep/cache.json  | 12 ++++++------
+>  tools/perf/pmu-events/arch/x86/nehalemep/memory.json |  4 ++--
+>  tools/perf/pmu-events/arch/x86/nehalemex/cache.json  | 12 ++++++------
+>  tools/perf/pmu-events/arch/x86/nehalemex/memory.json |  4 ++--
+>  .../pmu-events/arch/x86/westmereep-sp/cache.json     | 12 ++++++------
+>  .../pmu-events/arch/x86/westmereep-sp/memory.json    |  4 ++--
+>  tools/perf/pmu-events/arch/x86/westmereex/cache.json | 12 ++++++------
+>  .../perf/pmu-events/arch/x86/westmereex/memory.json  |  4 ++--
+>  8 files changed, 32 insertions(+), 32 deletions(-)
 > 
-> diff --git a/security/integrity/ima/ima_crypto.c b/security/integrity/ima/ima_crypto.c
-> index d4c7b8e1b083..8a66bab4c435 100644
-> --- a/security/integrity/ima/ima_crypto.c
-> +++ b/security/integrity/ima/ima_crypto.c
-> @@ -461,16 +461,21 @@ static int ima_calc_field_array_hash_tfm(struct ima_field_data *field_data,
->  					 struct ima_digest_data *hash,
->  					 struct crypto_shash *tfm)
->  {
-> -	SHASH_DESC_ON_STACK(shash, tfm);
-> +	struct shash_desc *shash;
->  	int rc, i;
->  
-> +	shash = kmalloc(sizeof(struct shash_desc) + crypto_shash_descsize(tfm),
-> +			GFP_KERNEL);
-> +	if (!shash)
-> +		return -ENOMEM;
-> +
->  	shash->tfm = tfm;
->  
->  	hash->length = crypto_shash_digestsize(tfm);
->  
->  	rc = crypto_shash_init(shash);
->  	if (rc != 0)
-> -		return rc;
-> +		goto out;
->  
->  	for (i = 0; i < num_fields; i++) {
->  		u8 buffer[IMA_EVENT_NAME_LEN_MAX + 1] = { 0 };
-> @@ -497,7 +502,8 @@ static int ima_calc_field_array_hash_tfm(struct ima_field_data *field_data,
->  
->  	if (!rc)
->  		rc = crypto_shash_final(shash, hash->digest);
-> -
-> +out:
-> +	kfree(shash);
->  	return rc;
->  }
->  
+> diff --git a/tools/perf/pmu-events/arch/x86/nehalemep/cache.json b/tools/perf/pmu-events/arch/x86/nehalemep/cache.json
+> index a11029efda2f01e6..1c4fd6af138229e3 100644
+> --- a/tools/perf/pmu-events/arch/x86/nehalemep/cache.json
+> +++ b/tools/perf/pmu-events/arch/x86/nehalemep/cache.json
+> @@ -1804,7 +1804,7 @@
+>          "EventName": "OFFCORE_RESPONSE.DATA_IN.IO_CSR_MMIO",
+>          "MSRIndex": "0x1A6",
+>          "SampleAfterValue": "100000",
+> -        "BriefDescription": "Offcore data reads, RFO's and prefetches satisfied by the IO, CSR, MMIO unit",
+> +        "BriefDescription": "Offcore data reads, RFOs, and prefetches satisfied by the IO, CSR, MMIO unit",
+>          "Offcore": "1"
+>      },
+>      {
+> @@ -1815,7 +1815,7 @@
+>          "EventName": "OFFCORE_RESPONSE.DATA_IN.LLC_HIT_NO_OTHER_CORE",
+>          "MSRIndex": "0x1A6",
+>          "SampleAfterValue": "100000",
+> -        "BriefDescription": "Offcore data reads, RFO's and prefetches statisfied by the LLC and not found in a sibling core",
+> +        "BriefDescription": "Offcore data reads, RFOs, and prefetches satisfied by the LLC and not found in a sibling core",
+>          "Offcore": "1"
+>      },
+>      {
+> @@ -1826,7 +1826,7 @@
+>          "EventName": "OFFCORE_RESPONSE.DATA_IN.LLC_HIT_OTHER_CORE_HIT",
+>          "MSRIndex": "0x1A6",
+>          "SampleAfterValue": "100000",
+> -        "BriefDescription": "Offcore data reads, RFO's and prefetches satisfied by the LLC and HIT in a sibling core",
+> +        "BriefDescription": "Offcore data reads, RFOs, and prefetches satisfied by the LLC and HIT in a sibling core",
+>          "Offcore": "1"
+>      },
+>      {
+> @@ -1837,7 +1837,7 @@
+>          "EventName": "OFFCORE_RESPONSE.DATA_IN.LLC_HIT_OTHER_CORE_HITM",
+>          "MSRIndex": "0x1A6",
+>          "SampleAfterValue": "100000",
+> -        "BriefDescription": "Offcore data reads, RFO's and prefetches satisfied by the LLC  and HITM in a sibling core",
+> +        "BriefDescription": "Offcore data reads, RFOs, and prefetches satisfied by the LLC  and HITM in a sibling core",
+>          "Offcore": "1"
+>      },
+>      {
+> @@ -1892,7 +1892,7 @@
+>          "EventName": "OFFCORE_RESPONSE.DATA_IN.REMOTE_CACHE_HIT",
+>          "MSRIndex": "0x1A6",
+>          "SampleAfterValue": "100000",
+> -        "BriefDescription": "Offcore data reads, RFO's and prefetches that HIT in a remote cache ",
+> +        "BriefDescription": "Offcore data reads, RFOs, and prefetches that HIT in a remote cache ",
+>          "Offcore": "1"
+>      },
+>      {
+> @@ -1903,7 +1903,7 @@
+>          "EventName": "OFFCORE_RESPONSE.DATA_IN.REMOTE_CACHE_HITM",
+>          "MSRIndex": "0x1A6",
+>          "SampleAfterValue": "100000",
+> -        "BriefDescription": "Offcore data reads, RFO's and prefetches that HITM in a remote cache",
+> +        "BriefDescription": "Offcore data reads, RFOs, and prefetches that HITM in a remote cache",
+>          "Offcore": "1"
+>      },
+>      {
+> diff --git a/tools/perf/pmu-events/arch/x86/nehalemep/memory.json b/tools/perf/pmu-events/arch/x86/nehalemep/memory.json
+> index f914a4525b651d0f..029a7fc8561c0629 100644
+> --- a/tools/perf/pmu-events/arch/x86/nehalemep/memory.json
+> +++ b/tools/perf/pmu-events/arch/x86/nehalemep/memory.json
+> @@ -293,7 +293,7 @@
+>          "EventName": "OFFCORE_RESPONSE.DATA_IN.LOCAL_DRAM",
+>          "MSRIndex": "0x1A6",
+>          "SampleAfterValue": "100000",
+> -        "BriefDescription": "Offcore data reads, RFO's and prefetches statisfied by the local DRAM.",
+> +        "BriefDescription": "Offcore data reads, RFOs, and prefetches satisfied by the local DRAM.",
+>          "Offcore": "1"
+>      },
+>      {
+> @@ -304,7 +304,7 @@
+>          "EventName": "OFFCORE_RESPONSE.DATA_IN.REMOTE_DRAM",
+>          "MSRIndex": "0x1A6",
+>          "SampleAfterValue": "100000",
+> -        "BriefDescription": "Offcore data reads, RFO's and prefetches statisfied by the remote DRAM",
+> +        "BriefDescription": "Offcore data reads, RFOs, and prefetches satisfied by the remote DRAM",
+>          "Offcore": "1"
+>      },
+>      {
+> diff --git a/tools/perf/pmu-events/arch/x86/nehalemex/cache.json b/tools/perf/pmu-events/arch/x86/nehalemex/cache.json
+> index 21a0f8fd057e8388..980352618ad7e987 100644
+> --- a/tools/perf/pmu-events/arch/x86/nehalemex/cache.json
+> +++ b/tools/perf/pmu-events/arch/x86/nehalemex/cache.json
+> @@ -1759,7 +1759,7 @@
+>          "EventName": "OFFCORE_RESPONSE.DATA_IN.IO_CSR_MMIO",
+>          "MSRIndex": "0x1A6",
+>          "SampleAfterValue": "100000",
+> -        "BriefDescription": "Offcore data reads, RFO's and prefetches satisfied by the IO, CSR, MMIO unit",
+> +        "BriefDescription": "Offcore data reads, RFOs, and prefetches satisfied by the IO, CSR, MMIO unit",
+>          "Offcore": "1"
+>      },
+>      {
+> @@ -1770,7 +1770,7 @@
+>          "EventName": "OFFCORE_RESPONSE.DATA_IN.LLC_HIT_NO_OTHER_CORE",
+>          "MSRIndex": "0x1A6",
+>          "SampleAfterValue": "100000",
+> -        "BriefDescription": "Offcore data reads, RFO's and prefetches statisfied by the LLC and not found in a sibling core",
+> +        "BriefDescription": "Offcore data reads, RFOs, and prefetches satisfied by the LLC and not found in a sibling core",
+>          "Offcore": "1"
+>      },
+>      {
+> @@ -1781,7 +1781,7 @@
+>          "EventName": "OFFCORE_RESPONSE.DATA_IN.LLC_HIT_OTHER_CORE_HIT",
+>          "MSRIndex": "0x1A6",
+>          "SampleAfterValue": "100000",
+> -        "BriefDescription": "Offcore data reads, RFO's and prefetches satisfied by the LLC and HIT in a sibling core",
+> +        "BriefDescription": "Offcore data reads, RFOs, and prefetches satisfied by the LLC and HIT in a sibling core",
+>          "Offcore": "1"
+>      },
+>      {
+> @@ -1792,7 +1792,7 @@
+>          "EventName": "OFFCORE_RESPONSE.DATA_IN.LLC_HIT_OTHER_CORE_HITM",
+>          "MSRIndex": "0x1A6",
+>          "SampleAfterValue": "100000",
+> -        "BriefDescription": "Offcore data reads, RFO's and prefetches satisfied by the LLC  and HITM in a sibling core",
+> +        "BriefDescription": "Offcore data reads, RFOs, and prefetches satisfied by the LLC  and HITM in a sibling core",
+>          "Offcore": "1"
+>      },
+>      {
+> @@ -1847,7 +1847,7 @@
+>          "EventName": "OFFCORE_RESPONSE.DATA_IN.REMOTE_CACHE_HIT",
+>          "MSRIndex": "0x1A6",
+>          "SampleAfterValue": "100000",
+> -        "BriefDescription": "Offcore data reads, RFO's and prefetches that HIT in a remote cache ",
+> +        "BriefDescription": "Offcore data reads, RFOs, and prefetches that HIT in a remote cache ",
+>          "Offcore": "1"
+>      },
+>      {
+> @@ -1858,7 +1858,7 @@
+>          "EventName": "OFFCORE_RESPONSE.DATA_IN.REMOTE_CACHE_HITM",
+>          "MSRIndex": "0x1A6",
+>          "SampleAfterValue": "100000",
+> -        "BriefDescription": "Offcore data reads, RFO's and prefetches that HITM in a remote cache",
+> +        "BriefDescription": "Offcore data reads, RFOs, and prefetches that HITM in a remote cache",
+>          "Offcore": "1"
+>      },
+>      {
+> diff --git a/tools/perf/pmu-events/arch/x86/nehalemex/memory.json b/tools/perf/pmu-events/arch/x86/nehalemex/memory.json
+> index f914a4525b651d0f..029a7fc8561c0629 100644
+> --- a/tools/perf/pmu-events/arch/x86/nehalemex/memory.json
+> +++ b/tools/perf/pmu-events/arch/x86/nehalemex/memory.json
+> @@ -293,7 +293,7 @@
+>          "EventName": "OFFCORE_RESPONSE.DATA_IN.LOCAL_DRAM",
+>          "MSRIndex": "0x1A6",
+>          "SampleAfterValue": "100000",
+> -        "BriefDescription": "Offcore data reads, RFO's and prefetches statisfied by the local DRAM.",
+> +        "BriefDescription": "Offcore data reads, RFOs, and prefetches satisfied by the local DRAM.",
+>          "Offcore": "1"
+>      },
+>      {
+> @@ -304,7 +304,7 @@
+>          "EventName": "OFFCORE_RESPONSE.DATA_IN.REMOTE_DRAM",
+>          "MSRIndex": "0x1A6",
+>          "SampleAfterValue": "100000",
+> -        "BriefDescription": "Offcore data reads, RFO's and prefetches statisfied by the remote DRAM",
+> +        "BriefDescription": "Offcore data reads, RFOs, and prefetches satisfied by the remote DRAM",
+>          "Offcore": "1"
+>      },
+>      {
+> diff --git a/tools/perf/pmu-events/arch/x86/westmereep-sp/cache.json b/tools/perf/pmu-events/arch/x86/westmereep-sp/cache.json
+> index dad20f0e3cac235f..62cddfff9781766d 100644
+> --- a/tools/perf/pmu-events/arch/x86/westmereep-sp/cache.json
+> +++ b/tools/perf/pmu-events/arch/x86/westmereep-sp/cache.json
+> @@ -1808,7 +1808,7 @@
+>          "EventName": "OFFCORE_RESPONSE.DATA_IN.IO_CSR_MMIO",
+>          "MSRIndex": "0x1a6,0x1a7",
+>          "SampleAfterValue": "100000",
+> -        "BriefDescription": "Offcore data reads, RFO's and prefetches satisfied by the IO, CSR, MMIO unit",
+> +        "BriefDescription": "Offcore data reads, RFOs, and prefetches satisfied by the IO, CSR, MMIO unit",
+>          "Offcore": "1"
+>      },
+>      {
+> @@ -1819,7 +1819,7 @@
+>          "EventName": "OFFCORE_RESPONSE.DATA_IN.LLC_HIT_NO_OTHER_CORE",
+>          "MSRIndex": "0x1a6,0x1a7",
+>          "SampleAfterValue": "100000",
+> -        "BriefDescription": "Offcore data reads, RFO's and prefetches statisfied by the LLC and not found in a sibling core",
+> +        "BriefDescription": "Offcore data reads, RFOs, and prefetches satisfied by the LLC and not found in a sibling core",
+>          "Offcore": "1"
+>      },
+>      {
+> @@ -1830,7 +1830,7 @@
+>          "EventName": "OFFCORE_RESPONSE.DATA_IN.LLC_HIT_OTHER_CORE_HIT",
+>          "MSRIndex": "0x1a6,0x1a7",
+>          "SampleAfterValue": "100000",
+> -        "BriefDescription": "Offcore data reads, RFO's and prefetches satisfied by the LLC and HIT in a sibling core",
+> +        "BriefDescription": "Offcore data reads, RFOs, and prefetches satisfied by the LLC and HIT in a sibling core",
+>          "Offcore": "1"
+>      },
+>      {
+> @@ -1841,7 +1841,7 @@
+>          "EventName": "OFFCORE_RESPONSE.DATA_IN.LLC_HIT_OTHER_CORE_HITM",
+>          "MSRIndex": "0x1a6,0x1a7",
+>          "SampleAfterValue": "100000",
+> -        "BriefDescription": "Offcore data reads, RFO's and prefetches satisfied by the LLC  and HITM in a sibling core",
+> +        "BriefDescription": "Offcore data reads, RFOs, and prefetches satisfied by the LLC  and HITM in a sibling core",
+>          "Offcore": "1"
+>      },
+>      {
+> @@ -1896,7 +1896,7 @@
+>          "EventName": "OFFCORE_RESPONSE.DATA_IN.REMOTE_CACHE_HIT",
+>          "MSRIndex": "0x1a6,0x1a7",
+>          "SampleAfterValue": "100000",
+> -        "BriefDescription": "Offcore data reads, RFO's and prefetches that HIT in a remote cache ",
+> +        "BriefDescription": "Offcore data reads, RFOs, and prefetches that HIT in a remote cache ",
+>          "Offcore": "1"
+>      },
+>      {
+> @@ -1907,7 +1907,7 @@
+>          "EventName": "OFFCORE_RESPONSE.DATA_IN.REMOTE_CACHE_HITM",
+>          "MSRIndex": "0x1a6,0x1a7",
+>          "SampleAfterValue": "100000",
+> -        "BriefDescription": "Offcore data reads, RFO's and prefetches that HITM in a remote cache",
+> +        "BriefDescription": "Offcore data reads, RFOs, and prefetches that HITM in a remote cache",
+>          "Offcore": "1"
+>      },
+>      {
+> diff --git a/tools/perf/pmu-events/arch/x86/westmereep-sp/memory.json b/tools/perf/pmu-events/arch/x86/westmereep-sp/memory.json
+> index 90eb6aac357b5ffa..8355b5d3945ba8fa 100644
+> --- a/tools/perf/pmu-events/arch/x86/westmereep-sp/memory.json
+> +++ b/tools/perf/pmu-events/arch/x86/westmereep-sp/memory.json
+> @@ -293,7 +293,7 @@
+>          "EventName": "OFFCORE_RESPONSE.DATA_IN.LOCAL_DRAM",
+>          "MSRIndex": "0x1a6,0x1a7",
+>          "SampleAfterValue": "100000",
+> -        "BriefDescription": "Offcore data reads, RFO's and prefetches statisfied by the local DRAM.",
+> +        "BriefDescription": "Offcore data reads, RFOs, and prefetches satisfied by the local DRAM.",
+>          "Offcore": "1"
+>      },
+>      {
+> @@ -304,7 +304,7 @@
+>          "EventName": "OFFCORE_RESPONSE.DATA_IN.REMOTE_DRAM",
+>          "MSRIndex": "0x1a6,0x1a7",
+>          "SampleAfterValue": "100000",
+> -        "BriefDescription": "Offcore data reads, RFO's and prefetches statisfied by the remote DRAM",
+> +        "BriefDescription": "Offcore data reads, RFOs, and prefetches satisfied by the remote DRAM",
+>          "Offcore": "1"
+>      },
+>      {
+> diff --git a/tools/perf/pmu-events/arch/x86/westmereex/cache.json b/tools/perf/pmu-events/arch/x86/westmereex/cache.json
+> index f9bc7fdd48d6e648..30266602fc82e85d 100644
+> --- a/tools/perf/pmu-events/arch/x86/westmereex/cache.json
+> +++ b/tools/perf/pmu-events/arch/x86/westmereex/cache.json
+> @@ -1800,7 +1800,7 @@
+>          "EventName": "OFFCORE_RESPONSE.DATA_IN.IO_CSR_MMIO",
+>          "MSRIndex": "0x1A6",
+>          "SampleAfterValue": "100000",
+> -        "BriefDescription": "Offcore data reads, RFO's and prefetches satisfied by the IO, CSR, MMIO unit",
+> +        "BriefDescription": "Offcore data reads, RFOs, and prefetches satisfied by the IO, CSR, MMIO unit",
+>          "Offcore": "1"
+>      },
+>      {
+> @@ -1811,7 +1811,7 @@
+>          "EventName": "OFFCORE_RESPONSE.DATA_IN.LLC_HIT_NO_OTHER_CORE",
+>          "MSRIndex": "0x1A6",
+>          "SampleAfterValue": "100000",
+> -        "BriefDescription": "Offcore data reads, RFO's and prefetches statisfied by the LLC and not found in a sibling core",
+> +        "BriefDescription": "Offcore data reads, RFOs, and prefetches satisfied by the LLC and not found in a sibling core",
+>          "Offcore": "1"
+>      },
+>      {
+> @@ -1822,7 +1822,7 @@
+>          "EventName": "OFFCORE_RESPONSE.DATA_IN.LLC_HIT_OTHER_CORE_HIT",
+>          "MSRIndex": "0x1A6",
+>          "SampleAfterValue": "100000",
+> -        "BriefDescription": "Offcore data reads, RFO's and prefetches satisfied by the LLC and HIT in a sibling core",
+> +        "BriefDescription": "Offcore data reads, RFOs, and prefetches satisfied by the LLC and HIT in a sibling core",
+>          "Offcore": "1"
+>      },
+>      {
+> @@ -1833,7 +1833,7 @@
+>          "EventName": "OFFCORE_RESPONSE.DATA_IN.LLC_HIT_OTHER_CORE_HITM",
+>          "MSRIndex": "0x1A6",
+>          "SampleAfterValue": "100000",
+> -        "BriefDescription": "Offcore data reads, RFO's and prefetches satisfied by the LLC  and HITM in a sibling core",
+> +        "BriefDescription": "Offcore data reads, RFOs, and prefetches satisfied by the LLC  and HITM in a sibling core",
+>          "Offcore": "1"
+>      },
+>      {
+> @@ -1888,7 +1888,7 @@
+>          "EventName": "OFFCORE_RESPONSE.DATA_IN.REMOTE_CACHE_HIT",
+>          "MSRIndex": "0x1A6",
+>          "SampleAfterValue": "100000",
+> -        "BriefDescription": "Offcore data reads, RFO's and prefetches that HIT in a remote cache ",
+> +        "BriefDescription": "Offcore data reads, RFOs, and prefetches that HIT in a remote cache ",
+>          "Offcore": "1"
+>      },
+>      {
+> @@ -1899,7 +1899,7 @@
+>          "EventName": "OFFCORE_RESPONSE.DATA_IN.REMOTE_CACHE_HITM",
+>          "MSRIndex": "0x1A6",
+>          "SampleAfterValue": "100000",
+> -        "BriefDescription": "Offcore data reads, RFO's and prefetches that HITM in a remote cache",
+> +        "BriefDescription": "Offcore data reads, RFOs, and prefetches that HITM in a remote cache",
+>          "Offcore": "1"
+>      },
+>      {
+> diff --git a/tools/perf/pmu-events/arch/x86/westmereex/memory.json b/tools/perf/pmu-events/arch/x86/westmereex/memory.json
+> index 3ba555e73cbd60d5..794e6773bf74cc0c 100644
+> --- a/tools/perf/pmu-events/arch/x86/westmereex/memory.json
+> +++ b/tools/perf/pmu-events/arch/x86/westmereex/memory.json
+> @@ -301,7 +301,7 @@
+>          "EventName": "OFFCORE_RESPONSE.DATA_IN.LOCAL_DRAM",
+>          "MSRIndex": "0x1A6",
+>          "SampleAfterValue": "100000",
+> -        "BriefDescription": "Offcore data reads, RFO's and prefetches statisfied by the local DRAM.",
+> +        "BriefDescription": "Offcore data reads, RFOs, and prefetches satisfied by the local DRAM.",
+>          "Offcore": "1"
+>      },
+>      {
+> @@ -312,7 +312,7 @@
+>          "EventName": "OFFCORE_RESPONSE.DATA_IN.REMOTE_DRAM",
+>          "MSRIndex": "0x1A6",
+>          "SampleAfterValue": "100000",
+> -        "BriefDescription": "Offcore data reads, RFO's and prefetches statisfied by the remote DRAM",
+> +        "BriefDescription": "Offcore data reads, RFOs, and prefetches satisfied by the remote DRAM",
+>          "Offcore": "1"
+>      },
+>      {
+> -- 
+> 2.17.1
 
+-- 
+
+- Arnaldo
