@@ -2,89 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0AC3E491FE
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 23:09:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7C2B0492D5
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 23:25:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727772AbfFQVJg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 17:09:36 -0400
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:39678 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726529AbfFQVJg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 17:09:36 -0400
-Received: by mail-ot1-f67.google.com with SMTP id r21so8273951otq.6
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2019 14:09:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=WJY8mRWNKYbMrxiqtcC6On1cSl2WUj/ZIwS4ootoQak=;
-        b=1CPoHsv8eJYyjii0r2v+tpwEGCkSWwSYtZacx/AqtzGMRs3fZPgZrV7RbEeA45KDwP
-         lsJvq7QgmiqEwVzp5wdQHibzWroOdc9btguH5MJ/BTdcEtQKRrkY2A644oJ5v1entk28
-         jQX1i10dz7Bzaag9WMXeIi4g9aL/drgYMGhz0EwOOdHkXNcNmVY9Lux9aw2TbX6HsoFA
-         rgd+c/SR//qS9xH7huYep7vdqcSElSiqUL7CnczUCly0wMqqGAQdyboSJvis9joomSOv
-         KyK08LiIatM0igaxt5Yo3ksIlA7sTKvevIo1tgB6DFbvKhgZgBfO8B1hLUl5bdDehAB/
-         2KGw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=WJY8mRWNKYbMrxiqtcC6On1cSl2WUj/ZIwS4ootoQak=;
-        b=NkOkAzeATLpWPsbLFiDVg+6mU2m9LEwf5Ye1QHEp9SumQ8AIfEmpLdByiuDCL44s1u
-         Bj5bXLekfbGxCUh7814xR5j+yhIfJU2+1OBwojhRQxAp8P2lcIglNahBE+MKYHP7vme2
-         romQhLjrlwSJfjiTIqtLNOp0vd+sGzBG78OZA6fyPsrn/A6TVlAM1YEAkrPMHiZK5oiw
-         7/+LLNLNZjxg2bijJZIKM+oOGv6dODwFYsTYVU28aAhVpgAx2jUYy/7GRb5vipTzn95l
-         w/+nQwv+ecPb82AKU6E+XUm4mCdgW1EcsZTbRyVixm706EE3N8QTaooKp7Jwzhn/UgGM
-         J2ew==
-X-Gm-Message-State: APjAAAWuOHn1OWegsthvPqKcBhaOP7U0xGPZet97Grbth+7I9ODrxJIN
-        gV4915He4Hz2SQbWthnznBavPsEvWEXrL/KUahoDdA==
-X-Google-Smtp-Source: APXvYqyAU1TcMvPiGYVYhBbyC0eVXwwhkAqKTWqXoLyuFCBz8f0kthsk9jFJXToSNfs33gSFBQCmV/94ID8R2le9oJQ=
-X-Received: by 2002:a9d:7a8b:: with SMTP id l11mr55835238otn.247.1560805775819;
- Mon, 17 Jun 2019 14:09:35 -0700 (PDT)
+        id S1728545AbfFQVYX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 17:24:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49894 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729516AbfFQVYW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Jun 2019 17:24:22 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id AC4402070B;
+        Mon, 17 Jun 2019 21:24:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1560806661;
+        bh=ZaxbKxuDo9b9NHacMWb7xXuPgMvT1zufacV2xQ1U+U4=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=rc5sxgnixpK96YkPh0j8snPf56LipipkEGZUQIjX49CLmWNOnZx55s3SyqT6ft4eS
+         NkOVwqxm9t/RQ52mZbKHqgL6Ecp2fLKEDHTRDohlG6m431K+gVlRzQmW7K0PxC81cV
+         Sp/Br7D2RMbkXEcbF5+ymRS3Tbkc7q7TbNV6+TNw=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org,
+        syzbot+f90a420dfe2b1b03cb2c@syzkaller.appspotmail.com,
+        Shakeel Butt <shakeelb@google.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Kirill Tkhai <ktkhai@virtuozzo.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.19 14/75] mm/list_lru.c: fix memory leak in __memcg_init_list_lru_node
+Date:   Mon, 17 Jun 2019 23:09:25 +0200
+Message-Id: <20190617210753.425090475@linuxfoundation.org>
+X-Mailer: git-send-email 2.22.0
+In-Reply-To: <20190617210752.799453599@linuxfoundation.org>
+References: <20190617210752.799453599@linuxfoundation.org>
+User-Agent: quilt/0.66
 MIME-Version: 1.0
-References: <20190617122733.22432-1-hch@lst.de> <20190617122733.22432-9-hch@lst.de>
- <CAPcyv4i_0wUJHDqY91R=x5M2o_De+_QKZxPyob5=E9CCv8rM7A@mail.gmail.com> <20190617195526.GB20275@lst.de>
-In-Reply-To: <20190617195526.GB20275@lst.de>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Mon, 17 Jun 2019 14:09:24 -0700
-Message-ID: <CAPcyv4iYP-7QtO7hDkAeaxJsfUCrCTBSJi3bK6e5v-VVAKQz-w@mail.gmail.com>
-Subject: Re: [PATCH 08/25] memremap: move dev_pagemap callbacks into a
- separate structure
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Ben Skeggs <bskeggs@redhat.com>, Linux MM <linux-mm@kvack.org>,
-        nouveau@lists.freedesktop.org,
-        Maling list - DRI developers 
-        <dri-devel@lists.freedesktop.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        linux-pci@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Logan Gunthorpe <logang@deltatee.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 17, 2019 at 12:59 PM Christoph Hellwig <hch@lst.de> wrote:
->
-> On Mon, Jun 17, 2019 at 10:51:35AM -0700, Dan Williams wrote:
-> > > -       struct dev_pagemap *pgmap =3D _pgmap;
-> >
-> > Whoops, needed to keep this line to avoid:
-> >
-> > tools/testing/nvdimm/test/iomap.c:109:11: error: =E2=80=98pgmap=E2=80=
-=99 undeclared
-> > (first use in this function); did you mean =E2=80=98_pgmap=E2=80=99?
->
-> So I really shouldn't be tripping over this anymore, but can we somehow
-> this mess?
->
->  - at least add it to the normal build system and kconfig deps instead
->    of stashing it away so that things like buildbot can build it?
->  - at least allow building it (under COMPILE_TEST) if needed even when
->    pmem.ko and friends are built in the kernel?
+From: Shakeel Butt <shakeelb@google.com>
 
-Done: https://patchwork.kernel.org/patch/11000477/
+commit 3510955b327176fd4cbab5baa75b449f077722a2 upstream.
+
+Syzbot reported following memory leak:
+
+ffffffffda RBX: 0000000000000003 RCX: 0000000000441f79
+BUG: memory leak
+unreferenced object 0xffff888114f26040 (size 32):
+  comm "syz-executor626", pid 7056, jiffies 4294948701 (age 39.410s)
+  hex dump (first 32 bytes):
+    40 60 f2 14 81 88 ff ff 40 60 f2 14 81 88 ff ff  @`......@`......
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+  backtrace:
+     slab_post_alloc_hook mm/slab.h:439 [inline]
+     slab_alloc mm/slab.c:3326 [inline]
+     kmem_cache_alloc_trace+0x13d/0x280 mm/slab.c:3553
+     kmalloc include/linux/slab.h:547 [inline]
+     __memcg_init_list_lru_node+0x58/0xf0 mm/list_lru.c:352
+     memcg_init_list_lru_node mm/list_lru.c:375 [inline]
+     memcg_init_list_lru mm/list_lru.c:459 [inline]
+     __list_lru_init+0x193/0x2a0 mm/list_lru.c:626
+     alloc_super+0x2e0/0x310 fs/super.c:269
+     sget_userns+0x94/0x2a0 fs/super.c:609
+     sget+0x8d/0xb0 fs/super.c:660
+     mount_nodev+0x31/0xb0 fs/super.c:1387
+     fuse_mount+0x2d/0x40 fs/fuse/inode.c:1236
+     legacy_get_tree+0x27/0x80 fs/fs_context.c:661
+     vfs_get_tree+0x2e/0x120 fs/super.c:1476
+     do_new_mount fs/namespace.c:2790 [inline]
+     do_mount+0x932/0xc50 fs/namespace.c:3110
+     ksys_mount+0xab/0x120 fs/namespace.c:3319
+     __do_sys_mount fs/namespace.c:3333 [inline]
+     __se_sys_mount fs/namespace.c:3330 [inline]
+     __x64_sys_mount+0x26/0x30 fs/namespace.c:3330
+     do_syscall_64+0x76/0x1a0 arch/x86/entry/common.c:301
+     entry_SYSCALL_64_after_hwframe+0x44/0xa9
+
+This is a simple off by one bug on the error path.
+
+Link: http://lkml.kernel.org/r/20190528043202.99980-1-shakeelb@google.com
+Fixes: 60d3fd32a7a9 ("list_lru: introduce per-memcg lists")
+Reported-by: syzbot+f90a420dfe2b1b03cb2c@syzkaller.appspotmail.com
+Signed-off-by: Shakeel Butt <shakeelb@google.com>
+Acked-by: Michal Hocko <mhocko@suse.com>
+Reviewed-by: Kirill Tkhai <ktkhai@virtuozzo.com>
+Cc: <stable@vger.kernel.org>	[4.0+]
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+---
+ mm/list_lru.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/mm/list_lru.c
++++ b/mm/list_lru.c
+@@ -353,7 +353,7 @@ static int __memcg_init_list_lru_node(st
+ 	}
+ 	return 0;
+ fail:
+-	__memcg_destroy_list_lru_node(memcg_lrus, begin, i - 1);
++	__memcg_destroy_list_lru_node(memcg_lrus, begin, i);
+ 	return -ENOMEM;
+ }
+ 
+
+
