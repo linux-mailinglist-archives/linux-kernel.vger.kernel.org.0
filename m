@@ -2,127 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DFB9948594
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 16:36:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5ABDA4858E
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 16:35:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728255AbfFQOgD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 10:36:03 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:33859 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725983AbfFQOgD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 10:36:03 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x5HEYqdr3458117
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Mon, 17 Jun 2019 07:34:52 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x5HEYqdr3458117
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019051801; t=1560782092;
-        bh=05KeCClXwy5E8ZTl4HM3IIhdTtCoZfeUo2GUiZQ+odE=;
-        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
-        b=N9cRKrnx6SZfawlM9xXRkxNmABBMxGnKY6E3zDV6W869lBRhZ54PizwtwI95KxWW1
-         GuLO3rggqWuAAlk4pL31UCbdKkaLyTG1+Kt92wk/wpMIJDSFG5J65XA3i6JnSPlvKf
-         LZUptD1iBaIfbGrylSwAnijKduhOpP7mclezxX4kUUWG2uRrBaxGvUx9aGtKLN4O2S
-         QKNw8zSYWUnIuMNUk/QxPJ2m/Jjn95qgk2vUDgk4gNBdQF+8ArFC7/Qw5RPMpZNyIQ
-         lUPxTXXwuMG8zQPhLDVnDzARGlEsNkA5MDGE4pjINn30ERIzEiYnZ1CgVm/zk2YXjK
-         9kdfBQS3/j7YQ==
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x5HEYpXF3458114;
-        Mon, 17 Jun 2019 07:34:51 -0700
-Date:   Mon, 17 Jun 2019 07:34:51 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Kan Liang <tipbot@zytor.com>
-Message-ID: <tip-2a538fda82824a7722e296be656bb5d11d91a9cb@git.kernel.org>
-Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org,
-        torvalds@linux-foundation.org, hpa@zytor.com, peterz@infradead.org,
-        tglx@linutronix.de, kan.liang@linux.intel.com
-Reply-To: kan.liang@linux.intel.com, peterz@infradead.org,
-          tglx@linutronix.de, linux-kernel@vger.kernel.org, hpa@zytor.com,
-          mingo@kernel.org, torvalds@linux-foundation.org
-In-Reply-To: <20190603134122.13853-3-kan.liang@linux.intel.com>
-References: <20190603134122.13853-3-kan.liang@linux.intel.com>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf/x86/intel: Add Icelake desktop CPUID
-Git-Commit-ID: 2a538fda82824a7722e296be656bb5d11d91a9cb
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        id S1727207AbfFQOfQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 10:35:16 -0400
+Received: from mga18.intel.com ([134.134.136.126]:51264 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726028AbfFQOfP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Jun 2019 10:35:15 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Jun 2019 07:35:14 -0700
+X-ExtLoop1: 1
+Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.157])
+  by fmsmga001.fm.intel.com with SMTP; 17 Jun 2019 07:35:11 -0700
+Received: by lahna (sSMTP sendmail emulation); Mon, 17 Jun 2019 17:35:10 +0300
+Date:   Mon, 17 Jun 2019 17:35:10 +0300
+From:   Mika Westerberg <mika.westerberg@linux.intel.com>
+To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc:     Lukas Wunner <lukas@wunner.de>,
+        Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Keith Busch <keith.busch@intel.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Alexandru Gagniuc <mr.nuke.me@gmail.com>
+Subject: Re: [PATCH] PCI/PME: Fix race on PME polling
+Message-ID: <20190617143510.GT2640@lahna.fi.intel.com>
+References: <0113014581dbe2d1f938813f1783905bd81b79db.1560079442.git.lukas@wunner.de>
+ <1957149.eOSnrBRbHu@kreacher>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-X-Spam-Status: No, score=-1.2 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        DATE_IN_FUTURE_06_12,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,
-        DKIM_VALID_EF autolearn=ham autolearn_force=no version=3.4.2
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
+In-Reply-To: <1957149.eOSnrBRbHu@kreacher>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  2a538fda82824a7722e296be656bb5d11d91a9cb
-Gitweb:     https://git.kernel.org/tip/2a538fda82824a7722e296be656bb5d11d91a9cb
-Author:     Kan Liang <kan.liang@linux.intel.com>
-AuthorDate: Mon, 3 Jun 2019 06:41:22 -0700
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Mon, 17 Jun 2019 12:36:14 +0200
+On Mon, Jun 17, 2019 at 12:37:06PM +0200, Rafael J. Wysocki wrote:
+> On Sunday, June 9, 2019 1:29:33 PM CEST Lukas Wunner wrote:
+> > Since commit df17e62e5bff ("PCI: Add support for polling PME state on
+> > suspended legacy PCI devices"), the work item pci_pme_list_scan() polls
+> > the PME status flag of devices and wakes them up if the bit is set.
+> > 
+> > The function performs a check whether a device's upstream bridge is in
+> > D0 for otherwise the device is inaccessible, rendering PME polling
+> > impossible.  However the check is racy because it is performed before
+> > polling the device.  If the upstream bridge runtime suspends to D3hot
+> > after pci_pme_list_scan() checks its power state and before it invokes
+> > pci_pme_wakeup(), the latter will read the PMCSR as "all ones" and
+> > mistake it for a set PME status flag.  I am seeing this race play out as
+> > a Thunderbolt controller going to D3cold and occasionally immediately
+> > going to D0 again because PM polling was performed at just the wrong
+> > time.
+> > 
+> > Avoid by checking for an "all ones" PMCSR in pci_check_pme_status().
+> > 
+> > Fixes: 58ff463396ad ("PCI PM: Add function for checking PME status of devices")
+> > Tested-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+> > Signed-off-by: Lukas Wunner <lukas@wunner.de>
+> > Cc: stable@vger.kernel.org # v2.6.34+
+> > Cc: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> > ---
+> >  drivers/pci/pci.c | 2 ++
+> >  1 file changed, 2 insertions(+)
+> > 
+> > diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+> > index 8abc843b1615..eed5db9f152f 100644
+> > --- a/drivers/pci/pci.c
+> > +++ b/drivers/pci/pci.c
+> > @@ -1989,6 +1989,8 @@ bool pci_check_pme_status(struct pci_dev *dev)
+> >  	pci_read_config_word(dev, pmcsr_pos, &pmcsr);
+> >  	if (!(pmcsr & PCI_PM_CTRL_PME_STATUS))
+> >  		return false;
+> > +	if (pmcsr == 0xffff)
+> > +		return false;
+> >  
+> >  	/* Clear PME status. */
+> >  	pmcsr |= PCI_PM_CTRL_PME_STATUS;
+> > 
+> 
+> Added to my 5.3 queue, thanks!
 
-perf/x86/intel: Add Icelake desktop CPUID
+Today when doing some PM testing I noticed that this patch actually
+reveals an issue in our native PME handling. Problem is in
+pcie_pme_handle_request() where we first convert req_id to struct
+pci_dev and then call pci_check_pme_status() for it. Now, when a device
+triggers wake the link is first brought up and then the PME is sent to
+root complex with req_id matching the originating device. However, if
+there are PCIe ports in the middle they may still be in D3 which means
+that pci_check_pme_status() returns 0xffff for the device below so there
+are lots of
 
-Add new Icelake desktop CPUID for RAPL, CSTATE and UNCORE.
+	Spurious native interrupt"
 
-Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: bp@alien8.de
-Cc: qiuxu.zhuo@intel.com
-Cc: rui.zhang@intel.com
-Cc: tony.luck@intel.com
-Link: https://lkml.kernel.org/r/20190603134122.13853-3-kan.liang@linux.intel.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- arch/x86/events/intel/cstate.c | 1 +
- arch/x86/events/intel/rapl.c   | 1 +
- arch/x86/events/intel/uncore.c | 1 +
- 3 files changed, 3 insertions(+)
+messages in the dmesg but the actual PME is never handled.
 
-diff --git a/arch/x86/events/intel/cstate.c b/arch/x86/events/intel/cstate.c
-index 267d7f8e12ab..e1caa0b49d63 100644
---- a/arch/x86/events/intel/cstate.c
-+++ b/arch/x86/events/intel/cstate.c
-@@ -580,6 +580,7 @@ static const struct x86_cpu_id intel_cstates_match[] __initconst = {
- 	X86_CSTATES_MODEL(INTEL_FAM6_ATOM_GOLDMONT_PLUS, glm_cstates),
- 
- 	X86_CSTATES_MODEL(INTEL_FAM6_ICELAKE_MOBILE, snb_cstates),
-+	X86_CSTATES_MODEL(INTEL_FAM6_ICELAKE_DESKTOP, snb_cstates),
- 	{ },
- };
- MODULE_DEVICE_TABLE(x86cpu, intel_cstates_match);
-diff --git a/arch/x86/events/intel/rapl.c b/arch/x86/events/intel/rapl.c
-index 8c7ecde3ba70..798135419a62 100644
---- a/arch/x86/events/intel/rapl.c
-+++ b/arch/x86/events/intel/rapl.c
-@@ -778,6 +778,7 @@ static const struct x86_cpu_id rapl_cpu_match[] __initconst = {
- 	X86_RAPL_MODEL_MATCH(INTEL_FAM6_ATOM_GOLDMONT_PLUS, hsw_rapl_init),
- 
- 	X86_RAPL_MODEL_MATCH(INTEL_FAM6_ICELAKE_MOBILE,  skl_rapl_init),
-+	X86_RAPL_MODEL_MATCH(INTEL_FAM6_ICELAKE_DESKTOP, skl_rapl_init),
- 	{},
- };
- 
-diff --git a/arch/x86/events/intel/uncore.c b/arch/x86/events/intel/uncore.c
-index 6094c8db949d..d37bb2c657b0 100644
---- a/arch/x86/events/intel/uncore.c
-+++ b/arch/x86/events/intel/uncore.c
-@@ -1403,6 +1403,7 @@ static const struct x86_cpu_id intel_uncore_match[] __initconst = {
- 	X86_UNCORE_MODEL_MATCH(INTEL_FAM6_KABYLAKE_DESKTOP, skl_uncore_init),
- 	X86_UNCORE_MODEL_MATCH(INTEL_FAM6_ICELAKE_MOBILE, icl_uncore_init),
- 	X86_UNCORE_MODEL_MATCH(INTEL_FAM6_ICELAKE_NNPI, icl_uncore_init),
-+	X86_UNCORE_MODEL_MATCH(INTEL_FAM6_ICELAKE_DESKTOP, icl_uncore_init),
- 	{},
- };
- 
+It has been working because pci_check_pme_status() returned true in case
+of 0xffff as well and we went and runtime resumed to originating device.
+
+I think the correct way to handle this is actually drop the call to
+pci_check_pme_status() in pcie_pme_handle_request() because the whole
+idea of req_id in PME message is to allow the root complex and SW to
+identify the device without need to poll for the PME status bit.
