@@ -2,168 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B4AE487BE
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 17:46:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 00FE2487CA
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 17:48:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728322AbfFQPq1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 11:46:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59918 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726292AbfFQPq1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 11:46:27 -0400
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2F39621530
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2019 15:46:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560786385;
-        bh=F3uEyDN+Xs7L0Di68zDs4MEi1Cbu2UWQXut0pG0xWMs=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=wa35xolYW4YasUKQT8EwzT6szfhNdHDv0tXqCBbVczs42MXSBCsyqEPKC57euY3wj
-         xTlfaENabxyxNZ4xaXCX4kGyw7z94wbPMr9w+hYWZLZqYfzBKsWgmhZHcCSZ61Sbjv
-         HM3+iiGzq5mOAoMIYcKW89sL9P2A2CmPt30I6s04=
-Received: by mail-wm1-f41.google.com with SMTP id f17so7140361wme.2
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2019 08:46:25 -0700 (PDT)
-X-Gm-Message-State: APjAAAUYpa2r3r++l/hIhmVd+Kj9dXk1Ze2p1HV7PlTqSRBANJlYJStF
-        C6e4K+LcMItcWWd/FhJX7aslzX7+YpUj3Pz8LAKR/Q==
-X-Google-Smtp-Source: APXvYqyrDpnzTXcyPRzw7xdKgDkoK9TPRpUT8p/03uOhfg+q5WxYbogJ4WqJXyfqu9bcckbw7dHL/p31ug/zjQinPwo=
-X-Received: by 2002:a1c:a942:: with SMTP id s63mr19448598wme.76.1560786383736;
- Mon, 17 Jun 2019 08:46:23 -0700 (PDT)
+        id S1728404AbfFQPrq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 11:47:46 -0400
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:57850 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727833AbfFQPrq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Jun 2019 11:47:46 -0400
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x5HFlN1h043664;
+        Mon, 17 Jun 2019 10:47:23 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1560786443;
+        bh=UqzhKdCvFhtNpUr5vFdw+6v6fHvR90i1hNildl+b+9s=;
+        h=Date:From:To:CC:Subject:References:In-Reply-To;
+        b=NARiwjCy3syAuulADRz6Lykk68iTE2lZIoiDk6E7W9V7Qg6HXFhTxbv7P1oKTAtck
+         3tI0r1c1eIGH2sQB8SEDbhDNHg9dHsxFTjeNc6Z9FgDqtpIYcjEAu3S2dRl6jv2dAR
+         eM83QjPhhrGrtcUUm2A8t4+2mjIk2vFODDkLvnzs=
+Received: from DLEE101.ent.ti.com (dlee101.ent.ti.com [157.170.170.31])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x5HFlNfw076253
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 17 Jun 2019 10:47:23 -0500
+Received: from DLEE103.ent.ti.com (157.170.170.33) by DLEE101.ent.ti.com
+ (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Mon, 17
+ Jun 2019 10:47:22 -0500
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE103.ent.ti.com
+ (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Mon, 17 Jun 2019 10:47:22 -0500
+Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id x5HFlMXS023695;
+        Mon, 17 Jun 2019 10:47:22 -0500
+Date:   Mon, 17 Jun 2019 10:46:14 -0500
+From:   Nishanth Menon <nm@ti.com>
+To:     Rob Herring <robh@kernel.org>
+CC:     Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        <linux-serial@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Tony Lindgren <tony@atomide.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Tero Kristo <t-kristo@ti.com>
+Subject: Re: [PATCH 1/6] dt-bindings: arm: ti: Add bindings for J721E SoC
+Message-ID: <20190617154614.wlbh6dtj54brkt67@kahuna>
+References: <20190522161921.20750-1-nm@ti.com>
+ <20190522161921.20750-2-nm@ti.com>
+ <20190614164526.GA14925@bogus>
 MIME-Version: 1.0
-References: <20190508144422.13171-1-kirill.shutemov@linux.intel.com>
- <20190508144422.13171-46-kirill.shutemov@linux.intel.com> <CALCETrVCdp4LyCasvGkc0+S6fvS+dna=_ytLdDPuD2xeAr5c-w@mail.gmail.com>
- <3c658cce-7b7e-7d45-59a0-e17dae986713@intel.com>
-In-Reply-To: <3c658cce-7b7e-7d45-59a0-e17dae986713@intel.com>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Mon, 17 Jun 2019 08:46:12 -0700
-X-Gmail-Original-Message-ID: <CALCETrUPSv4Xae3iO+2i_HecJLfx4mqFfmtfp+cwBdab8JUZrg@mail.gmail.com>
-Message-ID: <CALCETrUPSv4Xae3iO+2i_HecJLfx4mqFfmtfp+cwBdab8JUZrg@mail.gmail.com>
-Subject: Re: [PATCH, RFC 45/62] mm: Add the encrypt_mprotect() system call for MKTME
-To:     Dave Hansen <dave.hansen@intel.com>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        X86 ML <x86@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Borislav Petkov <bp@alien8.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        David Howells <dhowells@redhat.com>,
-        Kees Cook <keescook@chromium.org>,
-        Kai Huang <kai.huang@linux.intel.com>,
-        Jacob Pan <jacob.jun.pan@linux.intel.com>,
-        Alison Schofield <alison.schofield@intel.com>,
-        Linux-MM <linux-mm@kvack.org>, kvm list <kvm@vger.kernel.org>,
-        keyrings@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20190614164526.GA14925@bogus>
+User-Agent: NeoMutt/20171215
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 17, 2019 at 8:28 AM Dave Hansen <dave.hansen@intel.com> wrote:
->
-> On 6/17/19 8:07 AM, Andy Lutomirski wrote:
-> > I still find it bizarre that this is conflated with mprotect().
->
-> This needs to be in the changelog.  But, for better or worse, it's
-> following the mprotect_pkey() pattern.
->
-> Other than the obvious "set the key on this memory", we're looking for
-> two other properties: atomicity (ensuring there is no transient state
-> where the memory is usable without the desired properties) and that it
-> is usable on existing allocations.
->
-> For atomicity, we have a model where we can allocate things with
-> PROT_NONE, then do mprotect_pkey() and mprotect_encrypt() (plus any
-> future features), then the last mprotect_*() call takes us from
-> PROT_NONE to the desired end permisions.  We could just require a plain
-> old mprotect() to do that instead of embedding mprotect()-like behavior
-> in these, of course, but that isn't the path we're on at the moment with
-> mprotect_pkey().
->
-> So, for this series it's just a matter of whether we do this:
->
->         ptr = mmap(..., PROT_NONE);
->         mprotect_pkey(protect_key, ptr, PROT_NONE);
->         mprotect_encrypt(encr_key, ptr, PROT_READ|PROT_WRITE);
->         // good to go
->
-> or this:
->
->         ptr = mmap(..., PROT_NONE);
->         mprotect_pkey(protect_key, ptr, PROT_NONE);
->         sys_encrypt(key, ptr);
->         mprotect(ptr, PROT_READ|PROT_WRITE);
->         // good to go
->
-> I actually don't care all that much which one we end up with.  It's not
-> like the extra syscall in the second options means much.
+On 10:45-20190614, Rob Herring wrote:
+> On Wed, May 22, 2019 at 11:19:16AM -0500, Nishanth Menon wrote:
+> > The J721E SoC belongs to the K3 Multicore SoC architecture platform,
+> > providing advanced system integration to enable lower system costs
+> > of automotive applications such as infotainment, cluster, premium
+> > Audio, Gateway, industrial and a range of broad market applications.
+> > This SoC is designed around reducing the system cost by eliminating
+> > the need of an external system MCU and is targeted towards ASIL-B/C
+> > certification/requirements in addition to allowing complex software
+> > and system use-cases.
+> > 
+> > Some highlights of this SoC are:
+> > * Dual Cortex-A72s in a single cluster, three clusters of lockstep
+> >   capable dual Cortex-R5F MCUs, Deep-learning Matrix Multiply Accelerator(MMA),
+> >   C7x floating point Vector DSP, Two C66x floating point DSPs.
+> > * 3D GPU PowerVR Rogue 8XE GE8430
+> > * Vision Processing Accelerator (VPAC) with image signal processor and Depth
+> >   and Motion Processing Accelerator (DMPAC)
+> > * Two Gigabit Industrial Communication Subsystems (ICSSG), each with dual
+> >   PRUs and dual RTUs
+> > * Two CSI2.0 4L RX plus one CSI2.0 4L TX, one eDP/DP, One DSI Tx, and
+> >   up to two DPI interfaces.
+> > * Integrated Ethernet switch supporting up to a total of 8 external ports in
+> >   addition to legacy Ethernet switch of up to 2 ports.
+> > * System MMU (SMMU) Version 3.0 and advanced virtualisation
+> >   capabilities.
+> > * Upto 4 PCIe-GEN3 controllers, 2 USB3.0 Dual-role device subsystems,
+> >   16 MCANs, 12 McASP, eMMC and SD, UFS, OSPI/HyperBus memory controller, QSPI,
+> >   I3C and I2C, eCAP/eQEP, eHRPWM, MLB among other peripherals.
+> > * Two hardware accelerator block containing AES/DES/SHA/MD5 called SA2UL
+> >   management.
+> > * Configurable L3 Cache and IO-coherent architecture with high data throughput
+> >   capable distributed DMA architecture under NAVSS
+> > * Centralized System Controller for Security, Power, and Resource
+> >   Management (DMSC)
+> > 
+> > See J721E Technical Reference Manual (SPRUIL1, May 2019)
+> > for further details: http://www.ti.com/lit/pdf/spruil1
+> > 
+> > Signed-off-by: Nishanth Menon <nm@ti.com>
+> > ---
+> >  Documentation/devicetree/bindings/arm/ti/k3.txt | 3 +++
+> >  1 file changed, 3 insertions(+)
+> 
+> Okay for now, but please convert K3 and other TI SoCs to schema soon.
+> 
+> Reviewed-by: Rob Herring <robh@kernel.org>
 
-The benefit of the second one is that, if sys_encrypt is absent, it
-just works.  In the first model, programs need a fallback because
-they'll segfault of mprotect_encrypt() gets ENOSYS.
 
->
-> > This is part of why I much prefer the idea of making this style of
-> > MKTME a driver or some other non-intrusive interface.  Then, once
-> > everyone gets tired of it, the driver can just get turned off with no
-> > side effects.
->
-> I like the concept, but not where it leads.  I'd call it the 'hugetlbfs
-> approach". :)  Hugetblfs certainly go us huge pages, but it's continued
-> to be a parallel set of code with parallel bugs and parallel
-> implementations of many VM features.  It's not that you can't implement
-> new things on hugetlbfs, it's that you *need* to.  You never get them
-> for free.
-
-Fair enough, but...
-
->
-> For instance, if we do a driver, how do we get large pages?  How do we
-> swap/reclaim the pages?  How do we do NUMA affinity?
-
-Those all make sense.
-
->  How do we
-> eventually stack it on top of persistent memory filesystems or Device
-> DAX?
-
-How do we stack anonymous memory on top of persistent memory or Device
-DAX?  I'm confused.
-
-Just to throw this out there, what if we had a new device /dev/xpfo
-and MKTME were one of its features.  You open /dev/xpfo, optionally do
-an ioctl to set a key, and them map it.  The pages you get are
-unmapped entirely from the direct map, and you get a PFNMAP VMA with
-all its limitations.  This seems much more useful -- it's limited, but
-it's limited *because the kernel can't accidentally read it*.
-
-I think that, in the long run, we're going to have to either expand
-the core mm's concept of what "memory" is or just have a whole
-parallel set of mechanisms for memory that doesn't work like memory.
-We're already accumulating a set of things that are backed by memory
-but aren't usable as memory. SGX EPC pages and SEV pages come to mind.
-They are faster when they're in big contiguous chunks (well, not SGX
-AFAIK, but maybe some day), they have NUMA node affinity, and they
-show up in page tables, but the hardware restricts who can read and
-write them.  If Intel isn't planning to do something like this with
-the MKTME hardware, I'll eat my hat.
-
-I expect that some day normal memory will  be able to be repurposed as
-SGX pages on the fly, and that will also look a lot more like SEV or
-XPFO than like the this model of MKTME.
-
-So, if we upstream MKTME as anonymous memory with a magic config
-syscall, I predict that, in a few years, it will be end up inheriting
-all downsides of both approaches with few of the upsides.  Programs
-like QEMU will need to learn to manipulate pages that can't be
-accessed outside the VM without special VM buy-in, so the fact that
-MKTME pages are fully functional and can be GUP-ed won't be very
-useful.  And the VM will learn about all these things, but MKTME won't
-really fit in.
-
-And, one of these days, someone will come up with a version of XPFO
-that could actually be upstreamed, and it seems entirely plausible
-that it will be totally incompatible with MKTME-as-anonymous-memory
-and that users of MKTME will actually get *worse* security.
+Thanks Rob. Will do the change to rst soon (hopefully post in the 5.3 window).
+-- 
+Regards,
+Nishanth Menon
