@@ -2,117 +2,50 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F40FC495A6
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 01:01:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 351ED49577
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 00:52:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728745AbfFQXBd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 19:01:33 -0400
-Received: from mga14.intel.com ([192.55.52.115]:38492 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726555AbfFQXBd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 19:01:33 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Jun 2019 16:01:17 -0700
-X-ExtLoop1: 1
-Received: from romley-ivt3.sc.intel.com ([172.25.110.60])
-  by orsmga006.jf.intel.com with ESMTP; 17 Jun 2019 16:01:17 -0700
-Date:   Mon, 17 Jun 2019 15:51:46 -0700
-From:   Fenghua Yu <fenghua.yu@intel.com>
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        H Peter Anvin <hpa@zytor.com>,
-        Ashok Raj <ashok.raj@intel.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Ravi V Shankar <ravi.v.shankar@intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>, x86 <x86@kernel.org>
-Subject: Re: [PATCH v4 3/5] x86/umwait: Add sysfs interface to control umwait
- C0.2 state
-Message-ID: <20190617225146.GE217081@romley-ivt3.sc.intel.com>
-References: <1559944837-149589-1-git-send-email-fenghua.yu@intel.com>
- <1559944837-149589-4-git-send-email-fenghua.yu@intel.com>
- <CALCETrWi+uM5Rch6vaXOwHsHas928CDY5VJoBYaudD+3VFTrNw@mail.gmail.com>
- <20190610040449.GB162238@romley-ivt3.sc.intel.com>
- <CALCETrWZukWNeiCCwSMPxSHnn6YB_jJeiv4wd2MZAU9pwXf80g@mail.gmail.com>
- <20190617224820.GD217081@romley-ivt3.sc.intel.com>
- <CALCETrXnOKo3daWp-oSwaVZagQ_iP7SHCbpoB2VioWhRds5gqw@mail.gmail.com>
+        id S1728111AbfFQWwj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 18:52:39 -0400
+Received: from cloudserver094114.home.pl ([79.96.170.134]:49515 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726095AbfFQWwj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Jun 2019 18:52:39 -0400
+Received: from 79.184.254.20.ipv4.supernova.orange.pl (79.184.254.20) (HELO kreacher.localnet)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.267)
+ id 8f85b65f7d4e573e; Tue, 18 Jun 2019 00:52:37 +0200
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     Viresh Kumar <viresh.kumar@linaro.org>
+Cc:     Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
+        Kevin Hilman <khilman@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>, linux-pm@vger.kernel.org,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Qais.Yousef@arm.com, mka@chromium.org, juri.lelli@gmail.com,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V3 1/5] PM / QOS: Pass request type to dev_pm_qos_{add|remove}_notifier()
+Date:   Tue, 18 Jun 2019 00:52:36 +0200
+Message-ID: <1577870.9p1GPmOpaG@kreacher>
+In-Reply-To: <c263629a53dba33f9e7190b82172a88cc79654d1.1560163748.git.viresh.kumar@linaro.org>
+References: <cover.1560163748.git.viresh.kumar@linaro.org> <c263629a53dba33f9e7190b82172a88cc79654d1.1560163748.git.viresh.kumar@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CALCETrXnOKo3daWp-oSwaVZagQ_iP7SHCbpoB2VioWhRds5gqw@mail.gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 17, 2019 at 03:59:28PM -0700, Andy Lutomirski wrote:
-> On Mon, Jun 17, 2019 at 3:57 PM Fenghua Yu <fenghua.yu@intel.com> wrote:
-> >
-> > On Sun, Jun 09, 2019 at 09:26:29PM -0700, Andy Lutomirski wrote:
-> > > On Sun, Jun 9, 2019 at 9:14 PM Fenghua Yu <fenghua.yu@intel.com> wrote:
-> > > >
-> > > > On Sat, Jun 08, 2019 at 03:52:03PM -0700, Andy Lutomirski wrote:
-> > > > > On Fri, Jun 7, 2019 at 3:10 PM Fenghua Yu <fenghua.yu@intel.com> wrote:
-> > > > > >
-> > > > > > C0.2 state in umwait and tpause instructions can be enabled or disabled
-> > > > > > on a processor through IA32_UMWAIT_CONTROL MSR register.
-> > > > > >
-> > > > >
-> > > > > > +static u32 get_umwait_control_c02(void)
-> > > > > > +{
-> > > > > > +       return umwait_control_cached & MSR_IA32_UMWAIT_CONTROL_C02;
-> > > > > > +}
-> > > > > > +
-> > > > > > +static u32 get_umwait_control_max_time(void)
-> > > > > > +{
-> > > > > > +       return umwait_control_cached & MSR_IA32_UMWAIT_CONTROL_MAX_TIME;
-> > > > > > +}
-> > > > > > +
-> > > > >
-> > > > > I'm not convinced that these helpers make the code any more readable.
-> > > >
-> > > > The helpers reduce length of statements that call them. Otherwise, all of
-> > > > the statements would be easily over 80 characters.
-> > > >
-> > > > Plus, each of the helpers is called multiple places in #0003 and #0004.
-> > > > So the helpers make the patches smaller and cleaner.
-> > > >
-> > >
-> > > I was imagining things like:
-> > >
-> > > umwait_control_cached &= ~MSR_IA32_UMWAIT_CONTROL_C02;
-> > > if (whatever condition)
-> > >   umwait_control_cached |= MSR_IA32_UMWAIT_CONTROL_C02;
-> > > umwait_control_cached &= ~MSR_IA32_UMWAIT_CONTROL_MAX_TIME;
-> > > umwait_control_cached |= new_max_time;
-> >
-> > How about this statement?
-> > With the helpers:
-> >         umwait_control_cached = max_time | get_umwait_control_c02();
-> > If there is no helpers, the above statement will need two statements:
-> >         umwait_control_cached &= ~MSR_IA32_UMWAIT_CONTROL_MAX_TIME;
-> >         umwait_control_cached |= max_time;
-> >
-> > Another example:
-> > With the helpers:
-> >         if (umwait_control_c02 == get_umwait_control_c02())
-> > If no helpers, the above statement will be long:
-> >        if (umwait_control_c02 == (umwait_control_cached & MSR_IA32_UMWAIT_CONTROL_C02_DISABLED))
-> >
-> > There are quite a few places like above examples.
-> >
-> > The helpers can reduce the length of those long lines and make code more
-> > readable and shorter, right?
-> >
-> > Can I still keep the helpers?
-> >
+On Monday, June 10, 2019 12:51:32 PM CEST Viresh Kumar wrote:
+> In order to use the same set of routines to register notifiers for
+> different request types, update the existing
+> dev_pm_qos_{add|remove}_notifier() routines with an additional
+> parameter: request-type.
 > 
-> Sure, unless someone else objects.
+> For now, it only supports resume-latency request type.
 
-Thank you very much for your advice!
+It would be good to mention the broader rationale of this change in its changelog
+(that is, the frequency limits use case).
 
--Fenghua
+
+
