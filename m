@@ -2,109 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ABE4A4827B
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 14:32:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D4DF548281
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 14:32:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727702AbfFQMcS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 08:32:18 -0400
-Received: from mga12.intel.com ([192.55.52.136]:57562 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726005AbfFQMcS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 08:32:18 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Jun 2019 05:32:17 -0700
-X-ExtLoop1: 1
-Received: from pipin.fi.intel.com (HELO pipin) ([10.237.72.175])
-  by orsmga005.jf.intel.com with ESMTP; 17 Jun 2019 05:32:13 -0700
-From:   Felipe Balbi <balbi@kernel.org>
-To:     Lee Jones <lee.jones@linaro.org>, alokc@codeaurora.org,
-        agross@kernel.org, david.brown@linaro.org,
-        wsa+renesas@sang-engineering.com, bjorn.andersson@linaro.org,
-        gregkh@linuxfoundation.org, ard.biesheuvel@linaro.org,
-        jlhugo@gmail.com
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-i2c@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-usb@vger.kernel.org
-Subject: Re: [PATCH v4 4/6] usb: dwc3: qcom: Add support for booting with ACPI
-In-Reply-To: <20190617102146.GG16364@dell>
-References: <20190612142654.9639-1-lee.jones@linaro.org> <20190612142654.9639-5-lee.jones@linaro.org> <20190617102146.GG16364@dell>
-Date:   Mon, 17 Jun 2019 15:32:07 +0300
-Message-ID: <87y320gzp4.fsf@linux.intel.com>
+        id S1728001AbfFQMc1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 08:32:27 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:33354 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726005AbfFQMcZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Jun 2019 08:32:25 -0400
+Received: by mail-pg1-f195.google.com with SMTP id k187so5758820pga.0;
+        Mon, 17 Jun 2019 05:32:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ETsv5V713PqfBbxptdNaDO/9A5O3HqtK22qegpsPBRM=;
+        b=I1ob8Mw2H2thmUye5x2sp6jGFUWg2hZKIUIc/UrJ+3N1DO8dQGyfs5jjf1X8TfiWyF
+         GE6xVtsVQKhU4Am+J1AK8bN0EH1spxrKp1IqsjoozcvJj9pJUru0j2GyVnpj79ISMr05
+         yNaNPNxyZnJ+7uajXj2oyTsWc+Rmkffu72ZghFlFCNXS9nFeWOyL1orT41z+DvjlYtN3
+         Gare/0NStEccjZLKTzGfOk+hUaGAH0UxRpLAuZ0gOLaHUEsMBQDICy6MK3ktHNK1/FCa
+         BgoRYJ2B1WM91HdLmOjgImT3TYFTU0ZTxabb5/8WcUuf8IwHscDfL4TkwcS57O0J/ep2
+         c6vg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ETsv5V713PqfBbxptdNaDO/9A5O3HqtK22qegpsPBRM=;
+        b=LnPYBirZJt0bMUD2DY1+0dKLuffzUBVFJeJFTdANADiPQPTKnKRyEa6Mzn32jF436e
+         yJtZPfZi51gOLpC9XWnD3twE6X2r9glDQLaK6cNRmgT02ln37P5AOkVzK0m0iO8kiD4P
+         5Gotkp3ry7J/tgy2pHWoE70yg7j99nMM0zr8PtLezbJAH3aLmfWIvQjsSPoP+hFK7/wb
+         HH3Bf7er4FzbhQxhx0kTdn9nuEe46aKhC/+Qcw9Z/1gK89DxmNEFHinAbk3vj17cLeT0
+         x2xUCyeFT7IT7Gsp5Zc9UhrcS3umoWnPcshKhPdt+eoj+2I4UFoZ2yMWdjf3peP2/5pV
+         eKRQ==
+X-Gm-Message-State: APjAAAVibtklCNznIdPddahofKbAUrVIHg/5sDEKlYVKgX/ziMlTt8cZ
+        g1U3XKiQhCw4XPgzcen2ba1cLTu71zXJkJyuCKQ=
+X-Google-Smtp-Source: APXvYqy0mtPFb8J/e+TcLeJbV0prtKSvy/MF15YIH1l6Aq9HxxWDYk6n2e9vLDDfCY9aVzucB9Wm04E2uK0EkphnEW8=
+X-Received: by 2002:a63:f346:: with SMTP id t6mr43106755pgj.203.1560774744359;
+ Mon, 17 Jun 2019 05:32:24 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha256; protocol="application/pgp-signature"
+References: <20190612121258.19535-1-gregkh@linuxfoundation.org>
+ <CAHp75VeQy9o6tHtqKEE3o9ijBE4c11cWcc00+RqCj+P1FOky1w@mail.gmail.com> <20190614065339.GB21447@kroah.com>
+In-Reply-To: <20190614065339.GB21447@kroah.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Mon, 17 Jun 2019 15:32:13 +0300
+Message-ID: <CAHp75Vc7HeHgkq6h9TKrNHO-g_5uDtbnD8jY9HpHLuu607AUkA@mail.gmail.com>
+Subject: Re: [PATCH 1/8] platform: x86: acer-wmi: no need to check return
+ value of debugfs_create functions
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        "Lee, Chun-Yi" <jlee@suse.com>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
-
-Hi,
-
-Lee Jones <lee.jones@linaro.org> writes:
->> In Linux, the DWC3 core exists as its own independent platform device.
->> Thus when describing relationships in Device Tree, the current default
->> boot configuration table option, the DWC3 core often resides as a child
->> of the platform specific node.  Both of which are given their own
->> address space descriptions and the drivers can be mostly agnostic to
->> each other.
->>=20
->> However, other Operating Systems have taken a more monolithic approach,
->> which is evident in the configuration ACPI tables for the Qualcomm
->> Snapdragon SDM850, where all DWC3 (core and platform) components are
->> described under a single IO memory region.
->>=20
->> To ensure successful booting using the supplied ACPI tables, we need to
->> devise a way to chop up the address regions provided and subsequently
->> register the DWC3 core with the resultant information, which is
->> precisely what this patch aims to achieve.
->>=20
->> Signed-off-by: Lee Jones <lee.jones@linaro.org>
->> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
->> ---
->>  drivers/usb/dwc3/Kconfig     |   2 +-
->>  drivers/usb/dwc3/dwc3-qcom.c | 206 ++++++++++++++++++++++++++++++-----
->>  2 files changed, 179 insertions(+), 29 deletions(-)
+On Fri, Jun 14, 2019 at 9:53 AM Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
 >
-> I'm starting to get a little twitchy about these patches now.  Due to
-> the release cadence of the larger Linux distros, it's pretty important
-> that these changes land in v5.3.  Without them, it is impossible to
-> install Linux on some pretty high profile emerging platforms.
+> On Fri, Jun 14, 2019 at 09:48:04AM +0300, Andy Shevchenko wrote:
+> > On Wed, Jun 12, 2019 at 3:13 PM Greg Kroah-Hartman
+> > <gregkh@linuxfoundation.org> wrote:
+> > >
+> > > When calling debugfs functions, there is no need to ever check the
+> > > return value.  The function can work or not, but the code logic should
+> > > never do something different based on this.
+> > >
+> > > Also, because there is no need to save the file dentry, remove the
+> > > variable that was saving it and just recursively delete the whole
+> > > directory.
+> > >
+> >
+> > Through which tree you want to proceed this?
 >
-> It's already -rc5 and I'm concerned that we're going to miss the
-> merge-window.  Would you be kind enough to review these patches
-> please?  The Pinctrl and I2C parts of the set have already been
-> merged.
+> What ever is easier for you, I can take it through mine, as I have a lot
+> of other patches like this queued up already, or it can go through
+> yours.
 
-I don't seem to have this series in my inbox. This is the only email I
-have in this series.
+All 8 pushed to my review and testing queue, thanks!
 
-=2D-=20
-balbi
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEElLzh7wn96CXwjh2IzL64meEamQYFAl0HiEkACgkQzL64meEa
-mQZgTg/+MvWLo+0fVFNR04KSqTX6nZcqLk/4KwBc7uy1RsD4WMFa3zcKE/jB8scd
-KN48Szwr6TxXj6/nboP7PeKF+u2ftbYw8L1Ggtd1Okq/Fn8mUcM+vY1xGotjgrao
-ZXbOLcI393gCADUuEgHbOZDXPeLtgF2K/RQ06CPJ+wPunpx3pDwJVaMumW5Inocu
-Yz/eMkd5XP2QXDfL8F+27ZfnZQ6oNbEa+RV0cakbyvjHWDbkeiCW2DN5YFM3gJpC
-T9RXeqzKIUkfWd3mLcBq54Z3wCh51nw2UfThE1bQK2XlPKPXnU9P/Oi7ZIJYn5X4
-hF9PoBRoYWoaS5v9TJxL+78F+salna/FVsr6jKtbmVQjr4t3H+2i3SKXUmcMtaP9
-/jXg8jRCni44640ri7F4xN52TdkE/K7eAShOTp2izyRydKkZRxCOgW0xPh1Yi6Yx
-DGFxy4TQPUc6uAchzWfB/DIQywLYMDChFGMc525vTiw3ATnWf5dK7c/G0FufNs+g
-YcXsD9HyhYs9puAp4DBUZmXZGiuPHT8Se78aTfYqAvY7oFH5puh2Mg8UDLeeiatr
-A67I1jpWh9RvTGFPpBABobbaItB4lMcitFy2MqxByxNmJt9l5bbExTRmdXLFzbZK
-db8+BiVaO0xw70s0j9BuGwO/YolXOiX2i4lP4Qzhc7WjniL3FPw=
-=l8qE
------END PGP SIGNATURE-----
---=-=-=--
+-- 
+With Best Regards,
+Andy Shevchenko
