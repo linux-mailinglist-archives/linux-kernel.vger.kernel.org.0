@@ -2,92 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6B19648339
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 14:56:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6055348347
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 14:57:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727957AbfFQMzn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 08:55:43 -0400
-Received: from mga17.intel.com ([192.55.52.151]:3200 "EHLO mga17.intel.com"
+        id S1728076AbfFQM5F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 08:57:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60212 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726028AbfFQMzm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 08:55:42 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Jun 2019 05:55:42 -0700
-X-ExtLoop1: 1
-Received: from pipin.fi.intel.com (HELO pipin) ([10.237.72.175])
-  by fmsmga004.fm.intel.com with ESMTP; 17 Jun 2019 05:55:39 -0700
-From:   Felipe Balbi <balbi@kernel.org>
-To:     Lee Jones <lee.jones@linaro.org>, alokc@codeaurora.org,
-        agross@kernel.org, david.brown@linaro.org,
-        bjorn.andersson@linaro.org, gregkh@linuxfoundation.org,
-        ard.biesheuvel@linaro.org, jlhugo@gmail.com,
-        linux-arm-msm@vger.kernel.org, linux-usb@vger.kernel.org
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Lee Jones <lee.jones@linaro.org>
-Subject: Re: [RESEND v4 0/4] I2C: DWC3 USB: Add support for ACPI based AArch64 Laptops
-In-Reply-To: <20190617125105.6186-1-lee.jones@linaro.org>
-References: <20190617125105.6186-1-lee.jones@linaro.org>
-Date:   Mon, 17 Jun 2019 15:55:35 +0300
-Message-ID: <87lfy0gym0.fsf@linux.intel.com>
+        id S1726286AbfFQM5F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Jun 2019 08:57:05 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 57C212089E;
+        Mon, 17 Jun 2019 12:57:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1560776224;
+        bh=xdETj5mf6aeUoLj5hEhq8+dwhZFws6OLsC2VvsYVJ5o=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=nsEF4PxvDA0r6DHB4M8Djp8eU2sl7B8TBIQry4L9GCDem3Dfb8yTpDqmotIUb0OZy
+         hZpHMWVKkPrWYMhyuTH5/sQkNhYAP9BD8EXtxx9xuT7EXQPVLEeRcIM8v4VM5TfdW6
+         Q6QpII6vbYQCzD3w6o6EMQjuqfgzdxkH8KHx218o=
+Date:   Mon, 17 Jun 2019 14:57:02 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Cc:     Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab@infradead.org>,
+        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>
+Subject: Re: [PATCH v2 03/16] scripts: add an script to parse the ABI files
+Message-ID: <20190617125702.GA20042@kroah.com>
+References: <3b8d7c64f887ddea01df3c4eeabc745c8ec45406.1560534648.git.mchehab+samsung@kernel.org>
+ <680fb978ef9322c705eca9927c79b220cd3ccc4a.1560534648.git.mchehab+samsung@kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha256; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <680fb978ef9322c705eca9927c79b220cd3ccc4a.1560534648.git.mchehab+samsung@kernel.org>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+On Fri, Jun 14, 2019 at 02:52:17PM -0300, Mauro Carvalho Chehab wrote:
+> Add a script to parse the Documentation/ABI files and produce
+> an output with all entries inside an ABI (sub)directory.
+> 
+> Right now, it outputs its contents on ReST format. It shouldn't
+> be hard to make it produce other kind of outputs, since the ABI
+> file parser is implemented in separate than the output generator.
+> 
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+> ---
+>  scripts/get_abi.pl | 212 +++++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 212 insertions(+)
+>  create mode 100755 scripts/get_abi.pl
+> 
+> diff --git a/scripts/get_abi.pl b/scripts/get_abi.pl
+> new file mode 100755
+> index 000000000000..f7c9944a833c
+> --- /dev/null
+> +++ b/scripts/get_abi.pl
+> @@ -0,0 +1,212 @@
+> +#!/usr/bin/perl
+> +
 
-Lee Jones <lee.jones@linaro.org> writes:
+Ok, I was going to apply this, but there is no SPDX line on the script.
+Can you resend this series with that on it, so that I can apply the
+patches of the series that adds the script to the kernel tree?
 
-> This patch-set ensures the kernel is bootable on the newly released
-> AArch64 based Laptops using ACPI configuration tables.  The Pinctrl
-> changes have been accepted, leaving only I2C (keyboard, touchpad,
-> touchscreen, fingerprint, etc, HID device) and USB (root filesystem,
-> camera, networking, etc) enablement.
->
-> RESEND: Stripped I2C patches as they have also been merged into
->         their respective subsystem.
->
-> v4:
->  * Collecting Acks
->  * Adding Andy Gross' new email
->  * Removing applied Pinctrl patches
->
-> Lee Jones (4):
->   soc: qcom: geni: Add support for ACPI
->   usb: dwc3: qcom: Add support for booting with ACPI
->   usb: dwc3: qcom: Start USB in 'host mode' on the SDM845
->   usb: dwc3: qcom: Improve error handling
+thanks,
 
-pushed to testing/next
-
-=2D-=20
-balbi
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEElLzh7wn96CXwjh2IzL64meEamQYFAl0HjccACgkQzL64meEa
-mQZhsA/9GPXGmz10q8n644hKI3owpJviGwOTfR0L0fAavSjDtLvI3avmcYMZ1a+h
-oYvJDVOAZNvc97WMt8JeF1Dc9rfutyq+jtmkpRwTAZ1Xy8cg+9nu1GLSaajLu/OU
-kECtbgtUXf76/srOfseNyRk8aFnEW6YZXviTW0q1L6ayYhtxHibF8y1Z3ltKl8Wq
-xgFLb1EeffqtNfQze/6Fg7y20XfPA2VeeJGqy+e3IFN6p4GJsRtGhLtJUObxmclR
-vSaelq0UrPylodnFK+5GhcPHhXwYZKA28JNlZmw91kplKCvLHR32goJsfTY6fq4W
-xTZvHn54vnQ6xoNgxQCtzpFa4A9m5Eqabsq2HzrRzha/HbzCj5kKnFIhHxLV+N4a
-CGtDJzcB9nZbuspSsjTGrumTtKPKedrmwHkbxD9sWW/mMwTbavqu0MAiRqBkm/eU
-v1lGqBNjIvMX+246KG/iCLvfYZjANYM84cLxz//ODfKjS67WKrIgqCFHXGflEpd0
-DBjFHGtIX2JJKtCFOcSkzyxyPo4qiRvdM5wP+MStR2YNa9e+DZrd+DgRV1HlkOBR
-A/r4yTd8mqlCCw7F1gkP689+zCQUhZn4SASDwWeuXtqaQigXDFYuA8gMMbVbBG/Z
-ieiHtc8WmhlI11GgO5Qbj6ucJHNuzKhJcpKMeMf5d6jR1nNACdo=
-=yt0c
------END PGP SIGNATURE-----
---=-=-=--
+greg k-h
