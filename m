@@ -2,212 +2,202 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 66CE6482EB
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 14:48:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5A0F8482DF
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 14:47:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727845AbfFQMsG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 08:48:06 -0400
-Received: from mout.kundenserver.de ([217.72.192.74]:58131 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725973AbfFQMsG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 08:48:06 -0400
-Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
- (mreue106 [212.227.15.145]) with ESMTPA (Nemesis) id
- 1MCs9W-1hlgkL024W-008tQ9; Mon, 17 Jun 2019 14:47:21 +0200
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Will Deacon <will.deacon@arm.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        Bart Van Assche <bvanassche@acm.org>,
-        Yuyang Du <duyuyang@gmail.com>,
-        Waiman Long <longman@redhat.com>, linux-kernel@vger.kernel.org
-Subject: [PATCH] locking/lockdep: Move mark_lock() inside CONFIG_TRACE_IRQFLAGS && CONFIG_PROVE_LOCKING
-Date:   Mon, 17 Jun 2019 14:47:05 +0200
-Message-Id: <20190617124718.1232976-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.20.0
+        id S1727620AbfFQMrR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 08:47:17 -0400
+Received: from mx2.suse.de ([195.135.220.15]:41406 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725995AbfFQMrR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Jun 2019 08:47:17 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 66235AEF1;
+        Mon, 17 Jun 2019 12:47:15 +0000 (UTC)
+Subject: Re: kernel BUG at mm/swap_state.c:170!
+To:     Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        linux-mm@kvack.org, Matthew Wilcox <willy@infradead.org>
+References: <CABXGCsN9mYmBD-4GaaeW_NrDu+FDXLzr_6x+XNxfmFV6QkYCDg@mail.gmail.com>
+ <CABXGCsNq4xTFeeLeUXBj7vXBz55aVu31W9q74r+pGM83DrPjfA@mail.gmail.com>
+Cc:     Jan Kara <jack@suse.cz>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Song Liu <songliubraving@fb.com>,
+        William Kucharski <william.kucharski@oracle.com>,
+        Qian Cai <cai@lca.pw>
+From:   Vlastimil Babka <vbabka@suse.cz>
+Openpgp: preference=signencrypt
+Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <f23fe795-5023-be6a-8007-86d3141306ed@suse.cz>
+Date:   Mon, 17 Jun 2019 14:47:14 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:9y9mDTsxENvvAM8tJ4M4IfThpqKKt6FNbAOAb3z9kaq1Y3sL3OS
- hlpz9zjdetpupz/6oZSAoDazr16jf55Zsw0klHg771w4S6nMakzkLmyDv13OPERf5lKLQfW
- Y8i8J3Z386siprFI+CknhXdsXx9brsUXEWcZmyXvvlLHbuLTsHbfZ2KYRol0AKeTn/8tK7o
- F2ponCwisZ+Rar3eWUcJw==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:9pdLL28vOL0=:/fDOi4z8GeFSe3wg15BqIQ
- i2UNOf8LfzJE6nOfRPbOut7QDm3T0uAoaTKRV5zmoN6McZU/wsMsr4Vj4Htta89qn3wlOPnGI
- UkMRha8DbAWTQS8a3jZxqOecjD2d0VgvsHvhrtwUapWandS04e4bdjp5d9VnVqCFszyrex50z
- w2JUA2+MabisXj5S6SSJhgiXGiJQ48uOHyBtmKLwpHEVKxI/UrQlimMd0HDNBTfazgch+ZvdU
- DXrQfeq0/DKOMoJ9fM1CwYgRkZHEGjtOdjYnrfqN/tTAGQ/nK/jFv5jkIo+J1rNVe4t9aBDl7
- /gY0WhnX//ERIHiqowNGwyFiqWxr1d5DjWBjpQ51/9RPWA0VR7eJX54uKBa7t1UAzo0Q2KES5
- 2sz8qiWfmBn4xiVxf1IPiSVpKHcu+1jHtJ4VpIFLIIuuPdaMSLfXO7AvBgHja4iAYL/a8hj6Y
- BcQAU4CCsLY9ND8l2BtgDtgItHzE697KJJDVcRJwHxMv8FoPSVMol1T8y3VxObG79kxPvhcgf
- kMKmSeBh5E5LIpCrwNpoT/jMiVAyDjOTNXac62HHDuibwTVON94cKYpLfC8KllRmaub4azPwv
- 4uAT+r+8MKjYV2PsaVbVkWVyCKmTi69MMNJeLcG1USvY+V/lwX/5XjTdjJGu3SpiLbNH5d2OS
- NVbRJbqJeUDNFCVkxUsZUXZkHTlhuXTTV4CKSpuMKrqY9+wZGa4j/8dysNLV3mffAfbxs/M2E
- mx7gzQPvPRd2B4PpiIEjAUoMJCcHiNx4Cc2YfQ==
+In-Reply-To: <CABXGCsNq4xTFeeLeUXBj7vXBz55aVu31W9q74r+pGM83DrPjfA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The last cleanup patch triggered another issue, as now another function
-should be moved into the same section:
+On 5/29/19 7:32 PM, Mikhail Gavrilov wrote:
+> On Wed, 29 May 2019 at 09:05, Mikhail Gavrilov
+> <mikhail.v.gavrilov@gmail.com> wrote:
+>>
+>> Hi folks.
+>> I am observed kernel panic after update to git tag 5.2-rc2.
+>> This crash happens at memory pressing when swap being used.
+>>
+>> Unfortunately in journalctl saved only this:
+>>
+> 
+> Now I captured better trace.
 
-kernel/locking/lockdep.c:3580:12: error: 'mark_lock' defined but not used [-Werror=unused-function]
- static int mark_lock(struct task_struct *curr, struct held_lock *this,
+The VM_BUG_ON_PAGE has been touched in 5.2-rc1 by commit
+5fd4ca2d84b2 ("mm: page cache: store only head pages in i_pages")
+CCing relevant people and keeping rest of mail for reference.
 
-Move mark_lock() into the same #ifdef section as its only caller, and
-remove the now-unused mark_lock_irq() stub helper.
-
-Fixes: 0d2cc3b34532 ("locking/lockdep: Move valid_state() inside CONFIG_TRACE_IRQFLAGS && CONFIG_PROVE_LOCKING")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- kernel/locking/lockdep.c | 73 +++++++++++++++++++---------------------
- 1 file changed, 34 insertions(+), 39 deletions(-)
-
-diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
-index 48a840adb281..43e880ceafc2 100644
---- a/kernel/locking/lockdep.c
-+++ b/kernel/locking/lockdep.c
-@@ -437,13 +437,6 @@ static int verbose(struct lock_class *class)
- 	return 0;
- }
- 
--/*
-- * Stack-trace: tightly packed array of stack backtrace
-- * addresses. Protected by the graph_lock.
-- */
--unsigned long nr_stack_trace_entries;
--static unsigned long stack_trace[MAX_STACK_TRACE_ENTRIES];
--
- static void print_lockdep_off(const char *bug_msg)
- {
- 	printk(KERN_DEBUG "%s\n", bug_msg);
-@@ -453,6 +446,15 @@ static void print_lockdep_off(const char *bug_msg)
- #endif
- }
- 
-+unsigned long nr_stack_trace_entries;
-+
-+#if defined(CONFIG_TRACE_IRQFLAGS) && defined(CONFIG_PROVE_LOCKING)
-+/*
-+ * Stack-trace: tightly packed array of stack backtrace
-+ * addresses. Protected by the graph_lock.
-+ */
-+static unsigned long stack_trace[MAX_STACK_TRACE_ENTRIES];
-+
- static int save_trace(struct lock_trace *trace)
- {
- 	unsigned long *entries = stack_trace + nr_stack_trace_entries;
-@@ -475,6 +477,7 @@ static int save_trace(struct lock_trace *trace)
- 
- 	return 1;
- }
-+#endif
- 
- unsigned int nr_hardirq_chains;
- unsigned int nr_softirq_chains;
-@@ -488,6 +491,7 @@ unsigned int max_lockdep_depth;
- DEFINE_PER_CPU(struct lockdep_stats, lockdep_stats);
- #endif
- 
-+#if defined(CONFIG_TRACE_IRQFLAGS) && defined(CONFIG_PROVE_LOCKING)
- /*
-  * Locking printouts:
-  */
-@@ -505,6 +509,7 @@ static const char *usage_str[] =
- #undef LOCKDEP_STATE
- 	[LOCK_USED] = "INITIAL USE",
- };
-+#endif
- 
- const char * __get_key_name(struct lockdep_subclass_key *key, char *str)
- {
-@@ -2964,12 +2969,10 @@ static void check_chain_key(struct task_struct *curr)
- #endif
- }
- 
-+#if defined(CONFIG_TRACE_IRQFLAGS) && defined(CONFIG_PROVE_LOCKING)
- static int mark_lock(struct task_struct *curr, struct held_lock *this,
- 		     enum lock_usage_bit new_bit);
- 
--#if defined(CONFIG_TRACE_IRQFLAGS) && defined(CONFIG_PROVE_LOCKING)
--
--
- static void print_usage_bug_scenario(struct held_lock *lock)
- {
- 	struct lock_class *class = hlock_class(lock);
-@@ -3545,35 +3548,6 @@ static int separate_irq_context(struct task_struct *curr,
- 	return 0;
- }
- 
--#else /* defined(CONFIG_TRACE_IRQFLAGS) && defined(CONFIG_PROVE_LOCKING) */
--
--static inline
--int mark_lock_irq(struct task_struct *curr, struct held_lock *this,
--		enum lock_usage_bit new_bit)
--{
--	WARN_ON(1); /* Impossible innit? when we don't have TRACE_IRQFLAG */
--	return 1;
--}
--
--static inline int
--mark_usage(struct task_struct *curr, struct held_lock *hlock, int check)
--{
--	return 1;
--}
--
--static inline unsigned int task_irq_context(struct task_struct *task)
--{
--	return 0;
--}
--
--static inline int separate_irq_context(struct task_struct *curr,
--		struct held_lock *hlock)
--{
--	return 0;
--}
--
--#endif /* defined(CONFIG_TRACE_IRQFLAGS) && defined(CONFIG_PROVE_LOCKING) */
--
- /*
-  * Mark a lock with a usage bit, and validate the state transition:
-  */
-@@ -3634,6 +3608,27 @@ static int mark_lock(struct task_struct *curr, struct held_lock *this,
- 	return ret;
- }
- 
-+#else /* defined(CONFIG_TRACE_IRQFLAGS) && defined(CONFIG_PROVE_LOCKING) */
-+
-+static inline int
-+mark_usage(struct task_struct *curr, struct held_lock *hlock, int check)
-+{
-+	return 1;
-+}
-+
-+static inline unsigned int task_irq_context(struct task_struct *task)
-+{
-+	return 0;
-+}
-+
-+static inline int separate_irq_context(struct task_struct *curr,
-+		struct held_lock *hlock)
-+{
-+	return 0;
-+}
-+
-+#endif /* defined(CONFIG_TRACE_IRQFLAGS) && defined(CONFIG_PROVE_LOCKING) */
-+
- /*
-  * Initialize a lock instance's lock-class mapping info:
-  */
--- 
-2.20.0
+> : page:ffffd6d34dff0000 refcount:1 mapcount:1 mapping:ffff97812323a689
+> index:0xfecec363
+> : anon
+> : flags: 0x17fffe00080034(uptodate|lru|active|swapbacked)
+> : raw: 0017fffe00080034 ffffd6d34c67c508 ffffd6d3504b8d48 ffff97812323a689
+> : raw: 00000000fecec363 0000000000000000 0000000100000000 ffff978433ace000
+> : page dumped because: VM_BUG_ON_PAGE(entry != page)
+> : page->mem_cgroup:ffff978433ace000
+> : ------------[ cut here ]------------
+> : kernel BUG at mm/swap_state.c:170!
+> : invalid opcode: 0000 [#1] SMP NOPTI
+> : CPU: 1 PID: 221 Comm: kswapd0 Not tainted 5.2.0-0.rc2.git0.1.fc31.x86_64 #1
+> : Hardware name: System manufacturer System Product Name/ROG STRIX
+> X470-I GAMING, BIOS 2202 04/11/2019
+> : RIP: 0010:__delete_from_swap_cache+0x20d/0x240
+> : Code: 30 65 48 33 04 25 28 00 00 00 75 4a 48 83 c4 38 5b 5d 41 5c 41
+> 5d 41 5e 41 5f c3 48 c7 c6 2f dc 0f 8a 48 89 c7 e8 93 1b fd ff <0f> 0b
+> 48 c7 c6 a8 74 0f 8a e8 85 1b fd ff 0f 0b 48 c7 c6 a8 7d 0f
+> : RSP: 0018:ffffa982036e7980 EFLAGS: 00010046
+> : RAX: 0000000000000021 RBX: 0000000000000040 RCX: 0000000000000006
+> : RDX: 0000000000000000 RSI: 0000000000000086 RDI: ffff97843d657900
+> : RBP: 0000000000000001 R08: ffffa982036e7835 R09: 0000000000000535
+> : R10: ffff97845e21a46c R11: ffffa982036e7835 R12: ffff978426387120
+> : R13: 0000000000000000 R14: ffffd6d34dff0040 R15: ffffd6d34dff0000
+> : FS:  0000000000000000(0000) GS:ffff97843d640000(0000) knlGS:0000000000000000
+> : CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> : CR2: 00002cba88ef5000 CR3: 000000078a97c000 CR4: 00000000003406e0
+> : Call Trace:
+> :  delete_from_swap_cache+0x46/0xa0
+> :  try_to_free_swap+0xbc/0x110
+> :  swap_writepage+0x13/0x70
+> :  pageout.isra.0+0x13c/0x350
+> :  shrink_page_list+0xc14/0xdf0
+> :  shrink_inactive_list+0x1e5/0x3c0
+> :  shrink_node_memcg+0x202/0x760
+> :  ? do_shrink_slab+0x52/0x2c0
+> :  shrink_node+0xe0/0x470
+> :  balance_pgdat+0x2d1/0x510
+> :  kswapd+0x220/0x420
+> :  ? finish_wait+0x80/0x80
+> :  kthread+0xfb/0x130
+> :  ? balance_pgdat+0x510/0x510
+> :  ? kthread_park+0x90/0x90
+> :  ret_from_fork+0x22/0x40
+> : Modules linked in: uinput rfcomm fuse xt_CHECKSUM xt_MASQUERADE tun
+> bridge stp llc nf_conntrack_netbios_ns nf_conntrack_broadcast xt_CT
+> ip6t_rpfilter ip6t_REJECT nf_reject_ipv6 ipt_REJECT nf_reject_ipv4
+> xt_conntrack ebtable_nat ip6table_nat ip6table_mangle ip6table_raw
+> ip6table_security iptable_nat nf_nat iptable_mangle iptable_raw
+> iptable_security cmac nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4
+> libcrc32c ip_set nfnetlink ebtable_filter ebtables ip6table_filter
+> ip6_tables iptable_filter ip_tables bnep sunrpc vfat fat edac_mce_amd
+> arc4 kvm_amd rtwpci snd_hda_codec_realtek rtw88 kvm eeepc_wmi
+> snd_hda_codec_generic asus_wmi sparse_keymap ledtrig_audio
+> snd_hda_codec_hdmi video wmi_bmof mac80211 snd_hda_intel uvcvideo
+> snd_hda_codec videobuf2_vmalloc videobuf2_memops videobuf2_v4l2
+> irqbypass snd_usb_audio videobuf2_common snd_hda_core videodev
+> snd_usbmidi_lib snd_seq snd_hwdep snd_rawmidi snd_seq_device btusb
+> snd_pcm crct10dif_pclmul btrtl crc32_pclmul btbcm btintel bluetooth
+> :  cfg80211 snd_timer ghash_clmulni_intel joydev snd k10temp soundcore
+> media sp5100_tco ccp i2c_piix4 ecdh_generic rfkill ecc gpio_amdpt
+> pcc_cpufreq gpio_generic acpi_cpufreq binfmt_misc hid_logitech_hidpp
+> hid_logitech_dj uas usb_storage hid_sony ff_memless amdgpu
+> amd_iommu_v2 gpu_sched ttm drm_kms_helper igb nvme dca drm
+> crc32c_intel i2c_algo_bit nvme_core wmi pinctrl_amd
+> : ---[ end trace 3840e49b1d8d2c24 ]---
+> 
+> 
+> $ /usr/src/kernels/`uname -r`/scripts/faddr2line
+> /lib/debug/lib/modules/`uname -r`/vmlinux
+> __delete_from_swap_cache+0x20d
+> __delete_from_swap_cache+0x20d/0x240:
+> __delete_from_swap_cache at mm/swap_state.c:170 (discriminator 1)
+> 
+> 
+> 
+> 
+> --
+> Best Regards,
+> Mike Gavrilov.
+> 
 
