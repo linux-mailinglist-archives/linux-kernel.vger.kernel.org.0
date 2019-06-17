@@ -2,178 +2,154 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6E0B948F04
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 21:29:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3280948F07
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 21:29:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728882AbfFQT3F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 15:29:05 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:45504 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726331AbfFQT3E (ORCPT
+        id S1729000AbfFQT31 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 15:29:27 -0400
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:34418 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726331AbfFQT31 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 15:29:04 -0400
-Received: by mail-wr1-f66.google.com with SMTP id f9so11208668wre.12;
-        Mon, 17 Jun 2019 12:29:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=zrxy0WllXzL1VTI6UrDNAs4m1yjH3oQJOE/ib7yHppg=;
-        b=MAbgPHqqsO3J32BGwB6IpY8PF/XmJCgTfJvWZ7YkJW1F8h5ldrRWzjVXxu4oMlm9fM
-         0N/HnnF5rGSz52qH582ZhhqGA3idNNN1hsQ7Q+0sXk/tD28PvS6eHVVMfc3qxeT4rHI6
-         aUhzjTV2CPsqxz/W71Sq+ZMoe4hKVQGuzRnHU5fPo1IqkBvhqn6dl/FBGDhsKMznGbun
-         +CKFELCHbDLLKQ6M9X76H0SY67K8/D4iD7ZwJ/DpjcxAplES1T5WxD+OK96bEkLhg8PJ
-         vboS23azarQJrDkky/cSyoT941k6O1W4UzC3x+qCcBNhYDs4zqJiWKj3MjfwMv4PrpFY
-         bFkw==
+        Mon, 17 Jun 2019 15:29:27 -0400
+Received: by mail-qt1-f195.google.com with SMTP id m29so12256201qtu.1
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2019 12:29:26 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=zrxy0WllXzL1VTI6UrDNAs4m1yjH3oQJOE/ib7yHppg=;
-        b=DM6Ak2n0CEyee7OY/cShTkQFskd0VCurUqR+DbFwQ9r4ToKU3yiwJ6SEt/lO46GLh4
-         G8nBlC717K/oPuhWoqXXWjZLrDxGQ3qkkXaHJ5N89B4gPMC8sfFOpkGUe3hPbMJYsQ3c
-         mCwr4RXd/QlsRSEV9zeTY9bcXB02lXy+8SJLJ73roJVEykTfvWwCMxiC7Een3pJtWbrQ
-         vpQ0lNnzxqPRsoFBLXuCI3o9FCFyMomuLP32zQzWQl042Z+M1JJy0npG4xhs4E/U988h
-         ERx43rfb1Dv4rI4IfMwuynK3JlV2Alhbbc6C91aFMJPCuAJvZcPGoNjbI3oXL7GxHYA4
-         MgZw==
-X-Gm-Message-State: APjAAAWdNNBfX74nDPuuRJ+PFQuJ/Ez1g76uO/VuOirtuhS54nYYoOHw
-        yeh9sBl2haQdpBahfl8k5og=
-X-Google-Smtp-Source: APXvYqw+aPGfpkw1pikw+INM7bq89C7AwENHffGjJVzT0GoISwCZRBWoLMVPJTOjOqXkPEtRbsgUZQ==
-X-Received: by 2002:adf:b60f:: with SMTP id f15mr11642091wre.283.1560799741580;
-        Mon, 17 Jun 2019 12:29:01 -0700 (PDT)
-Received: from [192.168.2.145] (ppp91-79-162-197.pppoe.mtu-net.ru. [91.79.162.197])
-        by smtp.googlemail.com with ESMTPSA id o126sm400268wmo.1.2019.06.17.12.28.59
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 17 Jun 2019 12:29:00 -0700 (PDT)
-Subject: Re: [PATCH V7] i2c: tegra: remove BUG, BUG_ON
-To:     Bitan Biswas <bbiswas@nvidia.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Thierry Reding <treding@nvidia.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Peter Rosin <peda@axentia.se>,
-        Wolfram Sang <wsa@the-dreams.de>
-Cc:     Shardar Mohammed <smohammed@nvidia.com>,
-        Sowjanya Komatineni <skomatineni@nvidia.com>,
-        Mantravadi Karthik <mkarthik@nvidia.com>
-References: <1560748152-6575-1-git-send-email-bbiswas@nvidia.com>
- <5a8ad23f-33c8-5140-cef8-f9cef70764b1@gmail.com>
- <43a3fae8-dd3e-c7d3-42a7-493210e601e2@nvidia.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <070ee927-be5a-327f-36d7-e6395c898574@gmail.com>
-Date:   Mon, 17 Jun 2019 22:28:59 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=/xlNlelotM+Dvc+xUSx9X17ASwHKHoVnlctg4TDQCb8=;
+        b=pnIKUK0yhUXApNPupv14FMaBkIH2OiOH6Sf3J5/ObemWPZtqBijS03f4MJgNGxY+uU
+         PhJtz6FV0/CPcYo0Yz989d5/JA13jRL4Zl5D3ohpxPH6pJG1XIr342CzeEVKwMhbj9kT
+         41KPSLxODNy8PDXnhqKeSesxdRJ5rqbbO0Jq2k1aB6SlG0LdsA/4O/UlXjmfS+jp7ODh
+         YcN/1qBq/82nId3P6X1y9+E28RctV/19t4rKqzwMaz2OpoSimP6wjxxp8Mdlzmv2Xtk/
+         c5fAYJm0AYrrJAWbFivZJ3vbr4dCYW5t7Z4dQAsyOoyyLYkR3QuZyDN0Cgl1/C6U4giC
+         sXBA==
+X-Gm-Message-State: APjAAAUuGgBlVANVGlYka7W7Sll3XIYusjpo2O1YNwTO9Pkn7eSEgJ2s
+        nzGxbuJ4L/62e1TAuCl7juX6SMa/02FIjsncfEg=
+X-Google-Smtp-Source: APXvYqzmfEEp6gZuCeDUa3GncclqO8Dliciq18czTA1lJjjPkfklni0CHo+I/ASPntOHr7eDK1ToeB1Yu+l+Zozbcl4=
+X-Received: by 2002:ac8:3485:: with SMTP id w5mr18630643qtb.142.1560799765930;
+ Mon, 17 Jun 2019 12:29:25 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <43a3fae8-dd3e-c7d3-42a7-493210e601e2@nvidia.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20190617121427.77565-1-arnd@arndb.de> <20190617141244.5x22nrylw7hodafp@pc636>
+ <CAK8P3a3sjuyeQBUprGFGCXUSDAJN_+c+2z=pCR5J05rByBVByQ@mail.gmail.com>
+ <CAK8P3a0pnEnzfMkCi7Nb97-nG4vnAj7fOepfOaW0OtywP8TLpw@mail.gmail.com> <20190617165730.5l7z47n3vg73q7mp@pc636>
+In-Reply-To: <20190617165730.5l7z47n3vg73q7mp@pc636>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Mon, 17 Jun 2019 21:29:08 +0200
+Message-ID: <CAK8P3a1Ab2MVVgSh4EW0Yef_BsxcRbkxarknMzV7tOA+s79qsA@mail.gmail.com>
+Subject: Re: [BUG]: mm/vmalloc: uninitialized variable access in pcpu_get_vm_areas
+To:     Uladzislau Rezki <urezki@gmail.com>
+Cc:     Roman Gushchin <guro@fb.com>, Michal Hocko <mhocko@suse.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Thomas Garnier <thgarnie@google.com>,
+        Oleksiy Avramchenko <oleksiy.avramchenko@sonymobile.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Joel Fernandes <joelaf@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@elte.hu>, Tejun Heo <tj@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Roman Penyaev <rpenyaev@suse.de>,
+        Rick Edgecombe <rick.p.edgecombe@intel.com>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Linux-MM <linux-mm@kvack.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-17.06.2019 21:41, Bitan Biswas пишет:
-> 
-> 
-> On 6/17/19 5:13 AM, Dmitry Osipenko wrote:
->> 17.06.2019 8:09, Bitan Biswas пишет:
->>> Remove BUG, BUG_ON as it makes system usable:
->>>   - Remove redundant BUG_ON calls or replace with WARN_ON_ONCE
->>>     as needed.
->>>   - Remove BUG() and mask Rx interrupt similar as Tx
->>>     for message fully sent case.
->>>   - Add caller error handling and WARN_ON_ONCE check for non-zero
->>>     rx_fifo_avail in tegra_i2c_empty_rx_fifo() after all processing.
->>
->> The commit message should describe motivation of the change and not the change itself,
->> unless it's some additional information which is required for better understanding of
->> the code.
->>
->> In yours case it could be something like that:
->>
->>      The usage of BUG() macro is generally discouraged in kernel, unless
->>      it's a problem that results in a physical damage or loss of data.
->>      This patch removes unnecessary BUG() macros and replaces the rest
->>      with a warnings.
-> I shall update as per above comments.
-> 
->>
->>> Signed-off-by: Bitan Biswas <bbiswas@nvidia.com>
->>> ---
->>>   drivers/i2c/busses/i2c-tegra.c | 45 ++++++++++++++++++++++++++++++++++--------
->>>   1 file changed, 37 insertions(+), 8 deletions(-)
->>>
->>> diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
->>> index 4dfb4c1..b155b61 100644
->>> --- a/drivers/i2c/busses/i2c-tegra.c
->>> +++ b/drivers/i2c/busses/i2c-tegra.c
->>> @@ -73,6 +73,7 @@
->>>   #define I2C_ERR_NO_ACK                BIT(0)
->>>   #define I2C_ERR_ARBITRATION_LOST        BIT(1)
->>>   #define I2C_ERR_UNKNOWN_INTERRUPT        BIT(2)
->>> +#define I2C_ERR_RX_BUFFER_OVERFLOW        BIT(3)
->>>     #define PACKET_HEADER0_HEADER_SIZE_SHIFT    28
->>>   #define PACKET_HEADER0_PACKET_ID_SHIFT        16
->>> @@ -515,7 +516,11 @@ static int tegra_i2c_empty_rx_fifo(struct tegra_i2c_dev *i2c_dev)
->>>        * prevent overwriting past the end of buf
->>>        */
->>>       if (rx_fifo_avail > 0 && buf_remaining > 0) {
->>> -        BUG_ON(buf_remaining > 3);
->>> +        /*
->>> +         * buf_remaining > 3 check not needed as rx_fifo_avail == 0
->>> +         * when (words_to_transfer was > rx_fifo_avail) earlier
->>> +         * in this function.
->>> +         */
->>>           val = i2c_readl(i2c_dev, I2C_RX_FIFO);
->>>           val = cpu_to_le32(val);
->>>           memcpy(buf, &val, buf_remaining);
->>> @@ -523,7 +528,15 @@ static int tegra_i2c_empty_rx_fifo(struct tegra_i2c_dev *i2c_dev)
->>>           rx_fifo_avail--;
->>>       }
->>>   -    BUG_ON(rx_fifo_avail > 0 && buf_remaining > 0);
->>> +    if ((!(i2c_dev->msg_buf_remaining)) &&
->>
->> The RX FIFO shall be drained completely no matter what.
->>
->> Hence why the "i2c_dev->msg_buf_remaining" checking is needed here?
-> I moved the part of below condition in Patch V6 to function tegra_i2c_empty_rx_fifo:
-> 
->>> +            err_val = tegra_i2c_empty_rx_fifo(i2c_dev);
->>> +            if ((!(i2c_dev->msg_buf_remaining)) &&
-> 
->> Let's move this check into tegra_i2c_empty_rx_fifo() and return -EINVAL for that case.
->> This will make code to look cleaner.
-> 
-> Is above condition not needed?
+On Mon, Jun 17, 2019 at 6:57 PM Uladzislau Rezki <urezki@gmail.com> wrote:
+> > diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+> > index a9213fc3802d..5b7e50de008b 100644
+> > --- a/mm/vmalloc.c
+> > +++ b/mm/vmalloc.c
+> > @@ -915,7 +915,8 @@ adjust_va_to_fit_type(struct vmap_area *va,
+> >  {
+> >         struct vmap_area *lva;
+> >
+> > -       if (type == FL_FIT_TYPE) {
+> > +       switch (type) {
+> > +       case FL_FIT_TYPE:
+> >                 /*
+> >                  * No need to split VA, it fully fits.
+> >                  *
+> > @@ -925,7 +926,8 @@ adjust_va_to_fit_type(struct vmap_area *va,
+> >                  */
+> >                 unlink_va(va, &free_vmap_area_root);
+> >                 kmem_cache_free(vmap_area_cachep, va);
+> > -       } else if (type == LE_FIT_TYPE) {
+> > +               break;
+> > +       case LE_FIT_TYPE:
+> >                 /*
+> >                  * Split left edge of fit VA.
+> >                  *
+> > @@ -934,7 +936,8 @@ adjust_va_to_fit_type(struct vmap_area *va,
+> >                  * |-------|-------|
+> >                  */
+> >                 va->va_start += size;
+> > -       } else if (type == RE_FIT_TYPE) {
+> > +               break;
+> > +       case RE_FIT_TYPE:
+> >                 /*
+> >                  * Split right edge of fit VA.
+> >                  *
+> > @@ -943,7 +946,8 @@ adjust_va_to_fit_type(struct vmap_area *va,
+> >                  * |-------|-------|
+> >                  */
+> >                 va->va_end = nva_start_addr;
+> > -       } else if (type == NE_FIT_TYPE) {
+> > +               break;
+> > +       case NE_FIT_TYPE:
+> >                 /*
+> >                  * Split no edge of fit VA.
+> >                  *
+> > @@ -980,7 +984,8 @@ adjust_va_to_fit_type(struct vmap_area *va,
+> >                  * Shrink this VA to remaining size.
+> >                  */
+> >                 va->va_start = nva_start_addr + size;
+> > -       } else {
+> > +               break;
+> > +       default:
+> >                 return -1;
+> >         }
+> >
+> To me it is not clear how it would solve the warning. It sounds like
+> your GCC after this change is able to keep track of that variable
+> probably because of less generated code. But i am not sure about
+> other versions. For example i have:
+>
+> gcc version 6.3.0 20170516 (Debian 6.3.0-18+deb9u1)
+>
+> and it totally OK, i.e. it does not emit any related warning.
 
-Let's put it at the very beginning. This may give a bit more information about the
-problem by knowing if the offending overflow happens after or during of the buffer's
-fill up.
+To provide some background here, I'm doing randconfig tests, and
+this warning might be one that only shows up with a specific combination
+of options that add complexity to the build.
 
-static int tegra_i2c_empty_rx_fifo(struct tegra_i2c_dev *i2c_dev)
-{
-	u32 val;
-	int rx_fifo_avail;
-	u8 *buf = i2c_dev->msg_buf;
-	size_t buf_remaining = i2c_dev->msg_buf_remaining;
-	int words_to_transfer;
+I do run into a lot -Wmaybe-uninitialized warnings, and most of the time
+can figure out to change the code to be more readable by both
+humans and compilers in a way that shuts up the warning. The
+underlying algorithm in the compiler is NP-complete, so it can't
+ever get it right 100%, but it is a valuable warning in general.
 
-	if (WARN_ON(!i2c_dev->msg_buf_remaining))
-		return -EINVAL;
-...
+Using switch/case makes it easier for the compiler because it
+seems to turn this into a single conditional instead of a set of
+conditions. It also seems to be the much more common style
+in the kernel.
 
-In general, the original logic should be preserved during of refactoring. In this case
-we are keeping the original check and then also making it a bit more informative.
+> Another thing is that, if we add mode code there or change the function
+> prototype, we might run into the same warning. Therefore i proposed that
+> we just set the variable to NULL, i.e. Initialize it.
 
-> 
->>
->> Secondly, in the future please don't add parens where they are not needed. In this
->> case parens around !i2c_dev->msg_buf_remaining are not needed at all.
->>
-> I shall look out for similar unnecessary parentheses and update the patch.
+The problem with adding explicit NULL initializations is that this is
+more likely to hide actual bugs if the code changes again, and the
+compiler no longer notices the problem, so I try to avoid ever
+initializing a variable to something that would cause a runtime
+bug in place of a compile time warning later.
 
-Yes, please clean up all the occurrences in the code if there are any. And please do
-it in a separate patch.
+       Arnd
