@@ -2,173 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5E0B547DFB
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 11:11:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E6CDF47DFE
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 11:12:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727983AbfFQJLe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 05:11:34 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:56562 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726753AbfFQJLe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 05:11:34 -0400
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 92A13307D86F;
-        Mon, 17 Jun 2019 09:11:33 +0000 (UTC)
-Received: from xz-x1 (ovpn-12-34.pek2.redhat.com [10.72.12.34])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 12FDE7E5B1;
-        Mon, 17 Jun 2019 09:11:26 +0000 (UTC)
-Date:   Mon, 17 Jun 2019 17:11:22 +0800
-From:   Peter Xu <peterx@redhat.com>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     linux-kernel@vger.kernel.org, John Stultz <john.stultz@linaro.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Luiz Capitulino <lcapitulino@redhat.com>,
-        Marcelo Tosatti <mtosatti@redhat.com>
-Subject: Re: [PATCH] timers: Fix up get_target_base() to use old base properly
-Message-ID: <20190617091122.GC12456@xz-x1>
-References: <20190603132944.9726-1-peterx@redhat.com>
- <alpine.DEB.2.21.1906170732410.1760@nanos.tec.linutronix.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.1906170732410.1760@nanos.tec.linutronix.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.48]); Mon, 17 Jun 2019 09:11:33 +0000 (UTC)
+        id S1728043AbfFQJMH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 05:12:07 -0400
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:36092 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727952AbfFQJMG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Jun 2019 05:12:06 -0400
+Received: by mail-oi1-f194.google.com with SMTP id w7so6492707oic.3
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2019 02:12:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=oZAaOCoJj5x4sDBNqZQb5CRUWvcKQL64QGOvdU8EjU4=;
+        b=QR/zCNgVHHN5LeDILxIyEF49A0+54vewuBaVy2cgPGVk8oEINFWT7v77TpCagykcA9
+         sZtuMn2DGpqTyvZ4T46gz41Zqq9tSi0sR0XX/jm0xoLs6BlL8yS83yr5bwTUP/ZhXFFe
+         APrXumCbSdT91yp1/Be6n4CnzCRDmCo5Mn6FSe/9mZb91Xur++zomVFwRzDqewFAqKxj
+         YPyNnS2f6z5mV+A7dVWTEMCm82AJiM/GK0uCt8RMX6ekyDVhr+OB78o/BwVy7y656DY/
+         YYI/DJvQ5lf4RZfQnDL+tbi3h+tvy+3/pY9ZEhcuHpoJzG0vTEumIjPZbIPMzjPBpn3B
+         88iQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=oZAaOCoJj5x4sDBNqZQb5CRUWvcKQL64QGOvdU8EjU4=;
+        b=r+/DNTsYm1qBPf3kJIL9KWjuLPDHVBuxfVns3KqtmhBmUlhF4O93xeq/ylt7Y7fw0n
+         95m97Xf7xB36dRrNaJWvA2DPKuQKmV2XnZ+mDcNr1xTwHyCKNwYqG5rMkbnRvFXodatw
+         U1ZyMaCBRZMnwnkXGsAX9XFgzBjWhnPVuFxsf+Qi/O5mwKMaKrA3IiJI5/SStFmHyg1q
+         D1nArwwsugaL/hWEqNrbw3xs413nTl8BRTERsU5yCD7wYjPofYxxzlxMmZnfYCCG1F0Z
+         +JnFQXCXsZlio//HfqaVA8yqURI9Vtq/TBkSiYb1FhlWmZ3zqzVTQNwACyVfCAtBgGNC
+         +GpQ==
+X-Gm-Message-State: APjAAAXtqQABI2UBwnd0Y/2KMJQfOUZQZJf3XiAE86Ke7XzxM4MaAawM
+        EHsLoLtI5VT95zhPxRwR0RTclw==
+X-Google-Smtp-Source: APXvYqxqLNV9ru2z5YiSS6UvcnG8UNh3v2Lq1GuDACtveDmZ0Jn/Bs7DJjYnWgT6GI7qHMz9SBfwOg==
+X-Received: by 2002:aca:aa95:: with SMTP id t143mr10189295oie.22.1560762725883;
+        Mon, 17 Jun 2019 02:12:05 -0700 (PDT)
+Received: from localhost.localdomain (li964-79.members.linode.com. [45.33.10.79])
+        by smtp.gmail.com with ESMTPSA id l145sm4418324oib.6.2019.06.17.02.12.00
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 17 Jun 2019 02:12:05 -0700 (PDT)
+From:   Leo Yan <leo.yan@linaro.org>
+To:     Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        bpf@vger.kernel.org
+Cc:     Leo Yan <leo.yan@linaro.org>
+Subject: [PATCH 1/2] perf trace: Use pr_debug() instead of fprintf() for logging
+Date:   Mon, 17 Jun 2019 17:11:39 +0800
+Message-Id: <20190617091140.24372-1-leo.yan@linaro.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 17, 2019 at 08:09:20AM +0200, Thomas Gleixner wrote:
-> Peter,
+In the function trace__syscall_info(), it explicitly checks verbose
+level and print out log with fprintf().  Actually, we can use
+pr_debug() to do the same thing for debug logging.
 
-Hi, Thomas,
+This patch uses pr_debug() instead of fprintf() for debug logging; it
+includes a minor fixing for 'space before tab in indent', which
+dismisses git warning when apply it.
 
-Thanks for replying.
+Signed-off-by: Leo Yan <leo.yan@linaro.org>
+---
+ tools/perf/builtin-trace.c | 21 +++++++++------------
+ 1 file changed, 9 insertions(+), 12 deletions(-)
 
-> 
-> On Mon, 3 Jun 2019, Peter Xu wrote:
-> 
-> > get_target_base() in the timer code is not using the "base" parameter
-> > at all.  My gut feeling is that instead of removing that extra
-> > parameter, what we really want to do is "return the old base if it
-> > does not suite for a new one".
-> 
-> Gut feelings are not really useful for technical decisions.
-> 
-> >  kernel/time/timer.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/kernel/time/timer.c b/kernel/time/timer.c
-> > index 343c7ba33b1c..6ff6ffd2c719 100644
-> > --- a/kernel/time/timer.c
-> > +++ b/kernel/time/timer.c
-> > @@ -868,7 +868,7 @@ get_target_base(struct timer_base *base, unsigned tflags)
-> >  	    !(tflags & TIMER_PINNED))
-> >  		return get_timer_cpu_base(tflags, get_nohz_timer_target());
-> >  #endif
-> > -	return get_timer_this_cpu_base(tflags);
-> > +	return base;
-> >  }
-> 
-> Timers are supposed to be queued on the local CPU except for the following
-> cases:
-> 
->  1) timer migration is enabled and the timer is not pinned
-> 
->     In this case the get_nohz_timer_target() crystal ball logic tries to
->     find a useful base for the timer, which is doomed but its that way
->     until we reach the point where the pull model actually works.
-> 
->  2) add_timer_on() is invoked which puts a timer on an explicit target
->     CPU. That's not using the above.
-> 
-> That has been that way forever and the base parameter is stale as older
-> code used the base to check whether migration is enabled or not. When this
-> was converted to a static branch the parameter stayed and got unused.
-> 
-> So your change would prevent moving the timer to the current CPU.
-> 
-> You might argue that in case of an explicit pinned timer, the above logic
-> is wrong when the timer is modified as it might move to a different
-> CPU. But from day one when the pinned logic was introduced, pinned just
-> prevents it from being queued on a remote CPU. If you need a timer to stay
-> on a particular CPU even if modified from a remote CPU, then the only way
-> right now is to dequeue and requeue it with add_timer_on(). 
-
-Indeed.  If add_timer_on() should always be used when with pinned
-timers, IMHO it would be good to comment probably above TIMER_PINNED
-about the fact so people will never misuse the interfaces (it seems to
-be mis-used somehow but I cannot be 100% sure, please see below).
-
-> 
-> If we really want to change that, then we need to audit all usage sites of
-> pinned timers and figure out whether this would break anything.
-> 
-> The proper change would be in that case:
-> 
->       return pinned ? base : get_timer_this_cpu_base(tflags);
-
-Purely for curiousity - why would we like to use current cpu base even
-if it's unpinned?  My humble opinion is that if we use base directly
-at least we can avoid potential migration of the timer.  But I can be
-missing some real reason here...
-
-> 
-> But unless you can come up with a use case where the current logic is truly
-> broken, I don't see a reason to do that.
-
-It's not a lot of places that used TIMER_PINNED so I gave a quick look
-on it.  Two conditions are always correct:
-
-- when add_timer_on is used as explained, or,
-
-- when timer_setup(..., TIMER_PINNED) is used in the same context as
-  timer_mod() (e.g., mod_timer is called right after timer_setup).
-
-For above two cases, the timer will always be running with expected
-CPU that was pinned.
-
-Though, I see two outliers:
-
-======================
-
-*** drivers/cpufreq/powernv-cpufreq.c:
-powernv_cpufreq_cpu_init[867]  TIMER_PINNED | TIMER_DEFERRABLE);
-
-*** net/ipv4/inet_timewait_sock.c:
-inet_twsk_alloc[189]           timer_setup(&tw->tw_timer, tw_timer_handler, TIMER_PINNED);
-
-======================
-
-For the first one I can't say it's problematic since even if it's not
-pinned correctly it has the logic to re-pin the timer so it'll finally
-be fine:
-
-void gpstate_timer_handler(struct timer_list *t)
-{
-        ...
-	/*
-	 * If the timer has migrated to the different cpu then bring
-	 * it back to one of the policy->cpus
-	 */
-	if (!cpumask_test_cpu(raw_smp_processor_id(), policy->cpus)) {
-		gpstates->timer.expires = jiffies + msecs_to_jiffies(1);
-		add_timer_on(&gpstates->timer, cpumask_first(policy->cpus));
-		spin_unlock(&gpstates->gpstate_lock);
-		return;
-	}
-        ...
-}
-
-For the other one, the timer is setup during inet_twsk_alloc(), but
-the mod_timer() is in __inet_twsk_schedule() which seems to be
-problematic.
-
-Thanks,
-
+diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
+index bd1f00e7a2eb..5cd74651db4c 100644
+--- a/tools/perf/builtin-trace.c
++++ b/tools/perf/builtin-trace.c
+@@ -1760,12 +1760,11 @@ static struct syscall *trace__syscall_info(struct trace *trace,
+ 		 * grep "NR -1 " /t/trace_pipe
+ 		 *
+ 		 * After generating some load on the machine.
+- 		 */
+-		if (verbose > 1) {
+-			static u64 n;
+-			fprintf(trace->output, "Invalid syscall %d id, skipping (%s, %" PRIu64 ") ...\n",
+-				id, perf_evsel__name(evsel), ++n);
+-		}
++		 */
++		static u64 n;
++
++		pr_debug("Invalid syscall %d id, skipping (%s, %" PRIu64 ")\n",
++			 id, perf_evsel__name(evsel), ++n);
+ 		return NULL;
+ 	}
+ 
+@@ -1779,12 +1778,10 @@ static struct syscall *trace__syscall_info(struct trace *trace,
+ 	return &trace->syscalls.table[id];
+ 
+ out_cant_read:
+-	if (verbose > 0) {
+-		fprintf(trace->output, "Problems reading syscall %d", id);
+-		if (id <= trace->syscalls.max && trace->syscalls.table[id].name != NULL)
+-			fprintf(trace->output, "(%s)", trace->syscalls.table[id].name);
+-		fputs(" information\n", trace->output);
+-	}
++	pr_debug("Problems reading syscall %d", id);
++	if (id <= trace->syscalls.max && trace->syscalls.table[id].name != NULL)
++		pr_debug("(%s)", trace->syscalls.table[id].name);
++	pr_debug(" information\n");
+ 	return NULL;
+ }
+ 
 -- 
-Peter Xu
+2.17.1
+
