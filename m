@@ -2,123 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0904549354
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 23:30:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 51FEA49225
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 23:11:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730779AbfFQVaA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 17:30:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57172 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730763AbfFQV36 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 17:29:58 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9CB882063F;
-        Mon, 17 Jun 2019 21:29:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560806998;
-        bh=i9Ko+0/eQ4ec+hUVmpS3MjI3uwmIUDUjQmFTmcYNk1s=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=J4FuHOyq/LcCOPsvzeVcD9GCx9c1k+kb4wtRuoQqkjEP8RhKolEm66DRGM8QAvJpJ
-         GZeRD02GCp/TSNSmPtE2xvJRXFuH0OUVlVZMfnz23givu6ztumKnfRIbXHV7av9Hpr
-         JMO6ogiiAHDXbNLak6jnS8jypOGrWbcimLPErfTs=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        =?UTF-8?q?Erik=20=C4=8Cuk?= <erik.cuk@domel.com>,
-        Baruch Siach <baruch@tkos.co.il>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>
-Subject: [PATCH 4.14 53/53] rtc: pcf8523: dont return invalid date when battery is low
-Date:   Mon, 17 Jun 2019 23:10:36 +0200
-Message-Id: <20190617210752.684594543@linuxfoundation.org>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190617210745.104187490@linuxfoundation.org>
-References: <20190617210745.104187490@linuxfoundation.org>
-User-Agent: quilt/0.66
+        id S1727384AbfFQVLJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 17:11:09 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:44203 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726607AbfFQVLJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Jun 2019 17:11:09 -0400
+Received: by mail-pf1-f195.google.com with SMTP id t16so6316313pfe.11;
+        Mon, 17 Jun 2019 14:11:08 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=opkG1qef1rxaB9MLU7WTvGnCWk3AjYn68RxS3C8luR4=;
+        b=aL6zFVE+sKOg/mLKBs8ggt2NPzITwtSP8e+l6Cr7cBTh0Zh9zdic+No42M/2fYcG3w
+         a61On09uk3Z4XbMxE2vVIsQlfNgwEGbMRX9//B096CqBtvRYnGwovRfECA9+cAFLzFEE
+         Gs1fAaarb/T+/UHWzZnzZmb7i5IelwuI4Gzdd5XztjzNCEd8F6kTwU/g6qRPzxOt+Ziu
+         In/VwuWSIdQFZA1MzxM/mhcJqDaQ1omxWwhf6SmoX6Oab8DgocmbXNWQ1EeVPcYs7soA
+         1TnqLS2mu0ZWMEW/8aOBWShiNNaCJY7jYSFooFemWJfw2SwCVwKsYBhNvjN4mfpLKuJc
+         oXIw==
+X-Gm-Message-State: APjAAAVQIboWgMKKdBCT7ZbUGU2ZR6cWvMKSo4q5y5j3C/jEqq2qRx67
+        yLX4pWqfrvrd8qV+i+UUhiA=
+X-Google-Smtp-Source: APXvYqyGNr9bMK5hPPswV5Y15Ekkz7I470S6OP0w859vv5dnOxfcXFe+JNmM62YPFNzTyK+G/3EsUg==
+X-Received: by 2002:a17:90a:778c:: with SMTP id v12mr972067pjk.141.1560805868191;
+        Mon, 17 Jun 2019 14:11:08 -0700 (PDT)
+Received: from desktop-bart.svl.corp.google.com ([2620:15c:2cd:202:4308:52a3:24b6:2c60])
+        by smtp.gmail.com with ESMTPSA id f17sm13277058pgv.16.2019.06.17.14.11.07
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Mon, 17 Jun 2019 14:11:07 -0700 (PDT)
+Subject: Re: [PATCH v1] scsi: Don't select SCSI_PROC_FS by default
+To:     Marc Gonzalez <marc.w.gonzalez@free.fr>,
+        James Bottomley <jejb@linux.ibm.com>,
+        Martin Petersen <martin.petersen@oracle.com>
+Cc:     SCSI <linux-scsi@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Douglas Gilbert <dgilbert@interlog.com>
+References: <2de15293-b9be-4d41-bc67-a69417f27f7a@free.fr>
+From:   Bart Van Assche <bvanassche@acm.org>
+Message-ID: <621306ee-7ab6-9cd2-e934-94b3d6d731fc@acm.org>
+Date:   Mon, 17 Jun 2019 14:11:06 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <2de15293-b9be-4d41-bc67-a69417f27f7a@free.fr>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Baruch Siach <baruch@tkos.co.il>
+On 6/12/19 6:59 AM, Marc Gonzalez wrote:
+> According to the option's help message, SCSI_PROC_FS has been
+> superseded for ~15 years. Don't select it by default anymore.
+> 
+> Signed-off-by: Marc Gonzalez <marc.w.gonzalez@free.fr>
+> ---
+>   drivers/scsi/Kconfig | 3 ---
+>   1 file changed, 3 deletions(-)
+> 
+> diff --git a/drivers/scsi/Kconfig b/drivers/scsi/Kconfig
+> index 73bce9b6d037..8c95e9ad6470 100644
+> --- a/drivers/scsi/Kconfig
+> +++ b/drivers/scsi/Kconfig
+> @@ -54,14 +54,11 @@ config SCSI_NETLINK
+>   config SCSI_PROC_FS
+>   	bool "legacy /proc/scsi/ support"
+>   	depends on SCSI && PROC_FS
+> -	default y
+>   	---help---
+>   	  This option enables support for the various files in
+>   	  /proc/scsi.  In Linux 2.6 this has been superseded by
+>   	  files in sysfs but many legacy applications rely on this.
+>   
+> -	  If unsure say Y.
+> -
+>   comment "SCSI support type (disk, tape, CD-ROM)"
+>   	depends on SCSI
 
-commit ecb4a353d3afd45b9bb30c85d03ee113a0589079 upstream.
+Hi Doug,
 
-The RTC_VL_READ ioctl reports the low battery condition. Still,
-pcf8523_rtc_read_time() happily returns invalid dates in this case.
-Check the battery health on pcf8523_rtc_read_time() to avoid that.
+If I run grep "/proc/scsi" over the sg3_utils source code then grep 
+reports 38 matches for that string. Does sg3_utils break with 
+SCSI_PROC_FS=n?
 
-Reported-by: Erik Čuk <erik.cuk@domel.com>
-Signed-off-by: Baruch Siach <baruch@tkos.co.il>
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Thanks,
 
----
- drivers/rtc/rtc-pcf8523.c |   32 ++++++++++++++++++++++++--------
- 1 file changed, 24 insertions(+), 8 deletions(-)
-
---- a/drivers/rtc/rtc-pcf8523.c
-+++ b/drivers/rtc/rtc-pcf8523.c
-@@ -82,6 +82,18 @@ static int pcf8523_write(struct i2c_clie
- 	return 0;
- }
- 
-+static int pcf8523_voltage_low(struct i2c_client *client)
-+{
-+	u8 value;
-+	int err;
-+
-+	err = pcf8523_read(client, REG_CONTROL3, &value);
-+	if (err < 0)
-+		return err;
-+
-+	return !!(value & REG_CONTROL3_BLF);
-+}
-+
- static int pcf8523_select_capacitance(struct i2c_client *client, bool high)
- {
- 	u8 value;
-@@ -164,6 +176,14 @@ static int pcf8523_rtc_read_time(struct
- 	struct i2c_msg msgs[2];
- 	int err;
- 
-+	err = pcf8523_voltage_low(client);
-+	if (err < 0) {
-+		return err;
-+	} else if (err > 0) {
-+		dev_err(dev, "low voltage detected, time is unreliable\n");
-+		return -EINVAL;
-+	}
-+
- 	msgs[0].addr = client->addr;
- 	msgs[0].flags = 0;
- 	msgs[0].len = 1;
-@@ -248,17 +268,13 @@ static int pcf8523_rtc_ioctl(struct devi
- 			     unsigned long arg)
- {
- 	struct i2c_client *client = to_i2c_client(dev);
--	u8 value;
--	int ret = 0, err;
-+	int ret;
- 
- 	switch (cmd) {
- 	case RTC_VL_READ:
--		err = pcf8523_read(client, REG_CONTROL3, &value);
--		if (err < 0)
--			return err;
--
--		if (value & REG_CONTROL3_BLF)
--			ret = 1;
-+		ret = pcf8523_voltage_low(client);
-+		if (ret < 0)
-+			return ret;
- 
- 		if (copy_to_user((void __user *)arg, &ret, sizeof(int)))
- 			return -EFAULT;
-
-
+Bart.
