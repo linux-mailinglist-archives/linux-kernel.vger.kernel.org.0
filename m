@@ -2,103 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 30AAD48D75
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 21:06:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0210B48D7C
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 21:06:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728788AbfFQTGN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 15:06:13 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:54774 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727097AbfFQTGN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 15:06:13 -0400
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 991556EBA2;
-        Mon, 17 Jun 2019 19:06:12 +0000 (UTC)
-Received: from linux-ws.nc.xsintricity.com (ovpn-112-63.rdu2.redhat.com [10.10.112.63])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 4D1DF7DF66;
-        Mon, 17 Jun 2019 19:06:11 +0000 (UTC)
-Message-ID: <b8a3714af85a4a798bd205bd152a2098b4124820.camel@redhat.com>
-Subject: Re: [PATCH trivial] IB/hfi1: Spelling s/statisfied/satisfied/
-From:   Doug Ledford <dledford@redhat.com>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Mike Marciniszyn <mike.marciniszyn@intel.com>,
-        Dennis Dalessandro <dennis.dalessandro@intel.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Jiri Kosina <trivial@kernel.org>
-Cc:     linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Mon, 17 Jun 2019 15:06:08 -0400
-In-Reply-To: <20190617140138.734-1-geert+renesas@glider.be>
-References: <20190617140138.734-1-geert+renesas@glider.be>
-Organization: Red Hat, Inc.
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-uV6aTJ3m0eystd3cMwoh"
-User-Agent: Evolution 3.32.2 (3.32.2-1.fc30) 
+        id S1728825AbfFQTGh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 15:06:37 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:40713 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726529AbfFQTGh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Jun 2019 15:06:37 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x5HJ6Kqs3557458
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Mon, 17 Jun 2019 12:06:20 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x5HJ6Kqs3557458
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019051801; t=1560798381;
+        bh=kFwIgSiREST7oqsbnpiUUGTnIJ5e4VL7bPFl3bJaAy0=;
+        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
+        b=ki9DSDjCsuVbIHMYcB1cW0tMyqyVZ/fzYLPv3RvMkSmQfb/7j9y8K9Y1Ptj/faeRq
+         2beaO4zYfwlhWdSPS/Gif4jlupz6pxQ6zudl76i3k6RGGDIn/oPAbUHsOUaa30/CH9
+         //UWGn3UhK/5bTVTCVnIr7+qzijQjP3As5I3kFa3Uofr7WuvNCGdrF4In9aF3dPLPa
+         xAitiLMuEUxl453AoIAT5p4n2wUH68yIOtaf6ebU3LrajMz50YLrpI4KucCkGqv5Gn
+         JcydjfqZRp1pkvoLYeMpAqffH+cggos8mzQ94B9PkJd716xnt/5LPgWbWACQ4mBjFC
+         M8TZNsOvw71pg==
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x5HJ6KOQ3557455;
+        Mon, 17 Jun 2019 12:06:20 -0700
+Date:   Mon, 17 Jun 2019 12:06:20 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Adrian Hunter <tipbot@zytor.com>
+Message-ID: <tip-1159facee97fe184a434db3086604c7572fd7dfa@git.kernel.org>
+Cc:     acme@redhat.com, linux-kernel@vger.kernel.org, hpa@zytor.com,
+        tglx@linutronix.de, adrian.hunter@intel.com, jolsa@redhat.com,
+        mingo@kernel.org
+Reply-To: linux-kernel@vger.kernel.org, hpa@zytor.com,
+          adrian.hunter@intel.com, tglx@linutronix.de, mingo@kernel.org,
+          jolsa@redhat.com, acme@redhat.com
+In-Reply-To: <20190520113728.14389-15-adrian.hunter@intel.com>
+References: <20190520113728.14389-15-adrian.hunter@intel.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/core] perf db-export: Add brief documentation
+Git-Commit-ID: 1159facee97fe184a434db3086604c7572fd7dfa
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Mon, 17 Jun 2019 19:06:13 +0000 (UTC)
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
+X-Spam-Status: No, score=-1.2 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DATE_IN_FUTURE_06_12,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,
+        DKIM_VALID_EF autolearn=ham autolearn_force=no version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Commit-ID:  1159facee97fe184a434db3086604c7572fd7dfa
+Gitweb:     https://git.kernel.org/tip/1159facee97fe184a434db3086604c7572fd7dfa
+Author:     Adrian Hunter <adrian.hunter@intel.com>
+AuthorDate: Mon, 20 May 2019 14:37:20 +0300
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Wed, 5 Jun 2019 09:47:57 -0300
 
---=-uV6aTJ3m0eystd3cMwoh
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+perf db-export: Add brief documentation
 
-On Mon, 2019-06-17 at 16:01 +0200, Geert Uytterhoeven wrote:
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
->  drivers/infiniband/hw/hfi1/tid_rdma.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/infiniband/hw/hfi1/tid_rdma.c
-> b/drivers/infiniband/hw/hfi1/tid_rdma.c
-> index 6fb93032fbefcb7e..24f30ff6b5fbc868 100644
-> --- a/drivers/infiniband/hw/hfi1/tid_rdma.c
-> +++ b/drivers/infiniband/hw/hfi1/tid_rdma.c
-> @@ -477,7 +477,7 @@ static struct rvt_qp *first_qp(struct
-> hfi1_ctxtdata *rcd,
->   * Must hold the qp s_lock and the exp_lock.
->   *
->   * Return:
-> - * false if either of the conditions below are statisfied:
-> + * false if either of the conditions below are satisfied:
->   * 1. The list is empty or
->   * 2. The indicated qp is at the head of the list and the
->   *    HFI1_S_WAIT_TID_SPACE bit is set in qp->s_flags.
+Add brief documentation to explain how the database export maintains
+backward and forward compatibility.
 
-Thanks, applied to for-next.
+Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Link: http://lkml.kernel.org/r/20190520113728.14389-15-adrian.hunter@intel.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/Documentation/db-export.txt | 41 ++++++++++++++++++++++++++++++++++
+ 1 file changed, 41 insertions(+)
 
---=20
-Doug Ledford <dledford@redhat.com>
-    GPG KeyID: B826A3330E572FDD
-    Key fingerprint =3D AE6B 1BDA 122B 23B4 265B  1274 B826 A333 0E57
-2FDD
-
---=-uV6aTJ3m0eystd3cMwoh
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEErmsb2hIrI7QmWxJ0uCajMw5XL90FAl0H5KAACgkQuCajMw5X
-L93CIw/+IhiUDg8ipstsI788cxfhZ0Fzg3YRv/bOAkc5Mpyle0jyr2UVJiuUwlC6
-X2imbQx3GIDS0Q+widP4HmB2USrYen9B7waoQ8Y0HBiw01xG1479+1thRG2ujiDd
-iJTUtRE7JhkLVQ3+GQSbdxXtgdnkqHH0/52w/EX5jtEXwaDZUaEMfb5gkgze/89F
-pniweNJU+I1y0sRqoSrK8CrcQ++fGAHQbYHrOqeccujB0PsC2v8kHoA2LsLWJxkm
-lX1oyaIK+KbSoue3q6meH9iSmW4KSB4vnCYDeitMqSzr0+vSvGESXKrDvwaV4PDr
-6dZsq5vnJGQ1LpzePZ/ky/xCXdBFvh0YgUiSC3O0VD42rVhC3UlCjqJhSotAgaac
-PXG6AAB/upnVeiLtAi6FdQab0Gc/og+p1pH7+1Z6S2h9ZKTFBs20PKuTZZBj2cLm
-j7Zoa4KF1VOH3sP01ysCB488QMbY1oXW5QslWPTCbDJg6bppHEFSrQTxNUtxMEKD
-ttHUPati9V7QQkNBPDbUFr1NjqLhAdLx9WGHgyII1DpV5EBObNfh6OyjqC/MOKG+
-69pf+LuhoxyhoFQzYFtPTEtzp4808qfxW76fmDYtun9gypyrZVxl+jpoAPSYSIzj
-ZEzaMHBsY2ybwDrPbFI+P/AoNmfbIfveZuwtC3aVWrP0ZDp8VXo=
-=QIBC
------END PGP SIGNATURE-----
-
---=-uV6aTJ3m0eystd3cMwoh--
-
+diff --git a/tools/perf/Documentation/db-export.txt b/tools/perf/Documentation/db-export.txt
+new file mode 100644
+index 000000000000..52ffccb02d55
+--- /dev/null
++++ b/tools/perf/Documentation/db-export.txt
+@@ -0,0 +1,41 @@
++Database Export
++===============
++
++perf tool's python scripting engine:
++
++	tools/perf/util/scripting-engines/trace-event-python.c
++
++supports scripts:
++
++	tools/perf/scripts/python/export-to-sqlite.py
++	tools/perf/scripts/python/export-to-postgresql.py
++
++which export data to a SQLite3 or PostgreSQL database.
++
++The export process provides records with unique sequential ids which allows the
++data to be imported directly to a database and provides the relationships
++between tables.
++
++Over time it is possible to continue to expand the export while maintaining
++backward and forward compatibility, by following some simple rules:
++
++1. Because of the nature of SQL, existing tables and columns can continue to be
++used so long as the names and meanings (and to some extent data types) remain
++the same.
++
++2. New tables and columns can be added, without affecting existing SQL queries,
++so long as the new names are unique.
++
++3. Scripts that use a database (e.g. exported-sql-viewer.py) can maintain
++backward compatibility by testing for the presence of new tables and columns
++before using them. e.g. function IsSelectable() in exported-sql-viewer.py
++
++4. The export scripts themselves maintain forward compatibility (i.e. an existing
++script will continue to work with new versions of perf) by accepting a variable
++number of arguments (e.g. def call_return_table(*x)) i.e. perf can pass more
++arguments which old scripts will ignore.
++
++5. The scripting engine tests for the existence of script handler functions
++before calling them.  The scripting engine can also test for the support of new
++or optional features by checking for the existence and value of script global
++variables.
