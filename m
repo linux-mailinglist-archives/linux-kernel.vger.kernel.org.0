@@ -2,111 +2,175 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7A1E6480D7
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 13:35:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 427D5480F3
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 13:37:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727403AbfFQLeu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 07:34:50 -0400
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:4018 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725681AbfFQLeu (ORCPT
+        id S1728357AbfFQLfs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 07:35:48 -0400
+Received: from mail-vs1-f68.google.com ([209.85.217.68]:45437 "EHLO
+        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726173AbfFQLfs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 07:34:50 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5d077ad90000>; Mon, 17 Jun 2019 04:34:49 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Mon, 17 Jun 2019 04:34:49 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Mon, 17 Jun 2019 04:34:49 -0700
-Received: from [10.24.247.153] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 17 Jun
- 2019 11:34:47 +0000
-Subject: Re: [PATCH v2 0/2] PCI: device link quirk for NVIDIA GPU
-To:     Bjorn Helgaas <helgaas@kernel.org>
-CC:     <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <lukas@wunner.de>
-References: <20190606092225.17960-1-abhsahu@nvidia.com>
- <20190613205720.GK13533@google.com>
-X-Nvconfidentiality: public
-From:   Abhishek Sahu <abhsahu@nvidia.com>
-Message-ID: <ec2226e8-ccce-488f-20eb-0dd22dc9bed1@nvidia.com>
-Date:   Mon, 17 Jun 2019 17:04:43 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        Mon, 17 Jun 2019 07:35:48 -0400
+Received: by mail-vs1-f68.google.com with SMTP id n21so5844639vsp.12
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2019 04:35:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Rdj5y7WUhCyxuRRSk61DK/G2r8mbCnRcx9QGkbHiSrE=;
+        b=ahERndKw2GY6JLEmRsjtiw3oDqIj+mYbgL6lSV96YnKupRUkausE5qwiHJqwzfXqWL
+         v8zneB63ByCBnkQMtgj9MX/cVJ2Ta1DLnfwalFQbkq7fNAWQX2RWu17yMWsbI7u00bmI
+         FgLTp2YvgADDyXx/WXcH96Ux4+qlE1/Kzl4Ckt96KdZ/Nhtm6zpTCbqbiuQYtslkfgQX
+         G1HN8/KI8qxPB7aNZ9FhbpRkO+7vv1f48hCSkyTFAUfz/hUI70RfXJWI7aWkgiCrUg16
+         e2vvJ2hSh9nDfyS4CZA0XmB3CH3x8cpWGUqB32GFVxNJcF5WQZ0bDvgvl7SCqRiUQa6j
+         bBdg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Rdj5y7WUhCyxuRRSk61DK/G2r8mbCnRcx9QGkbHiSrE=;
+        b=A8VKCu64wD/3tgDDyOphBhHRQn+ydjWHLz0PGrWkc8TsBgoAG/WEzS30BA35+6LMza
+         8GWcisJJUokcsVFCGEo8iowToZL18g1PmTWyYY9sqCUGeWdtf324T8JGUfVBR7WaZLh+
+         npqtwBrzgYpz7PgzBCYKb36dYwmodsB6zL0ZrZb7IwwcqbLYHwH6wZV6PDAs1Bp+Ubnb
+         u+xGZKJ3ANvAcl/jH6r00pt5X2a9VrO7tx5EjzPc8yf+i3AXn5xUL4TKERM3zi+xaxTC
+         7u7UsCaCm6DSVUqeWyjdQWRQn0onnXaSPKJ3uBirfF4ex4SezJcIAFwRW4hp893z5tAA
+         1Kzw==
+X-Gm-Message-State: APjAAAXk3yLmbnPwVByqcW9/DSfB7/4wnoE/ChLVJlh620i3PP5bALLw
+        9JBWqA+hKtqKsGC3eVHzkDKRykELc++LP+9klsZUfQ==
+X-Google-Smtp-Source: APXvYqzzGaGuVCedyz80q6rNgp0f0P5Uq2ofFroB+k9lv/ume7i4twtBuzApD3RlCd+N9qQ92YfAsRGk0Fjz+dYV07U=
+X-Received: by 2002:a67:ee16:: with SMTP id f22mr10488350vsp.191.1560771347027;
+ Mon, 17 Jun 2019 04:35:47 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20190613205720.GK13533@google.com>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL104.nvidia.com (172.18.146.11) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1560771289; bh=Hk/6KBGqJg6eibtneR2WtGviyInDD/OJ7+WqSEyVYRc=;
-        h=X-PGP-Universal:Subject:To:CC:References:X-Nvconfidentiality:From:
-         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
-         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=bieRDgFeWAkiTRJzUdd4ELyDZRMADAoqyCE90ifyaN/QNX4qV7WRSuW+zpDQdVBpH
-         iDhxm8A09dE/2J1ceOTaoQpvXVrwF9b8KIX9OQSN7NdpniNwOBVmtM3MNxtMrrCK4O
-         oQ3ECSTaM9mN5k39Smjq3UQseOaBRSuhdP0EBn+FHWC4/TyRClbaZNBOAmXE/MjFG0
-         qsUZvBKSbAlxX9eJwm+JXyHErDFO4ATEKM+ikjX1AV0JawFOjvzYNERL/phM31pmoX
-         7a5buzhrPg9Hy2tdb1b7XBqTzu+nGBo4bvEebzUUjQrrEYP//SEKgX2Ky6hxv6PDyV
-         G/3ysW/Dp1ghg==
+References: <1560769448-23070-1-git-send-email-jjian.zhou@mediatek.com>
+In-Reply-To: <1560769448-23070-1-git-send-email-jjian.zhou@mediatek.com>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Mon, 17 Jun 2019 13:35:10 +0200
+Message-ID: <CAPDyKFo5zpoRFMG6U_Y2uMk0qCyypW-Ui1Kha5t9_Rher4CDkw@mail.gmail.com>
+Subject: Re: [PATCH V2 1/2] mmc: mediatek: fix SDIO IRQ interrupt handle flow
+To:     Jjian Zhou <jjian.zhou@mediatek.com>
+Cc:     Chaotian Jing <chaotian.jing@mediatek.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-mediatek@lists.infradead.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Yong Mao <yong.mao@mediatek.com>,
+        srv_heupstream <srv_heupstream@mediatek.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 6/14/2019 2:27 AM, Bjorn Helgaas wrote:
-> On Thu, Jun 06, 2019 at 02:52:23PM +0530, Abhishek Sahu wrote:
->> * v2:
->>
->> 1. Make the pci device link helper function generic which can be
->>    used for other multi-function PCI devices also.
->> 2. Minor changes in comments and commit logs.
->>
->> * v1:
->>
->> NVIDIA Turing GPU [1] has hardware support for USB Type-C and
->> VirtualLink [2]. The Turing GPU is a multi-function PCI device
->> which has the following four functions:
->>
->> 	- VGA display controller (Function 0)
->> 	- Audio controller (Function 1)
->> 	- USB xHCI Host controller (Function 2)
->> 	- USB Type-C USCI controller (Function 3)
->>
->> Currently NVIDIA and Nouveau GPU drivers only manage function 0.
->> Rest of the functions are managed by other drivers. These functions
->> internally in the hardware are tightly coupled. When function 0 goes
->> in runtime suspended state, then it will do power gating for most of
->> the hardware blocks. Some of these hardware blocks are used by
->> the other PCI functions, which leads to functional failure. In the
->> mainline kernel, the device link is present between
->> function 0 and function 1.  This patch series deals with creating
->> a similar kind of device link between function 0 and
->> functions 2 and 3.
->>
->> [1] https://www.nvidia.com/content/dam/en-zz/Solutions/design-visualization/technologies/turing-architecture/NVIDIA-Turing-Architecture-Whitepaper.pdf
->> [2] https://en.wikipedia.org/wiki/VirtualLink
->>
->> Abhishek Sahu (2):
->>   PCI: Code reorganization for creating device link
->>   PCI: Create device link for NVIDIA GPU
-> 
-> Applied to pci/misc for v5.3, thanks!
+On Mon, 17 Jun 2019 at 13:04, Jjian Zhou <jjian.zhou@mediatek.com> wrote:
+>
+> From: jjian zhou <jjian.zhou@mediatek.com>
+>
+> SDIO IRQ is triggered by low level. It need disable SDIO IRQ
+> detected function. Otherwise the interrupt register can't be cleared.
+> It will process the interrupt more.
+>
+> Signed-off-by: Jjian Zhou <jjian.zhou@mediatek.com>
+> Signed-off-by: Chaotian Jing <chaotian.jing@mediatek.com>
+> Signed-off-by: Yong Mao <yong.mao@mediatek.com>
 
- Thanks Bjorn for your review and support!
+Applied for fixes and by adding a fixes/stable tag, thanks!
 
- The runtime PM changes in USB Type-C USCI driver is also
- applied for v5.3
+Kind regards
+Uffe
 
- https://marc.info/?l=linux-usb&m=155994544705901&w=2
 
- It will help in achieving run-time PM for Turing GPUs
- in v5.3.
-
- Regards,
- Abhishek
+> ---
+>  drivers/mmc/host/mtk-sd.c | 37 ++++++++++++++++++++-----------------
+>  1 file changed, 20 insertions(+), 17 deletions(-)
+>
+> diff --git a/drivers/mmc/host/mtk-sd.c b/drivers/mmc/host/mtk-sd.c
+> index c518cc2..fa7d420 100644
+> --- a/drivers/mmc/host/mtk-sd.c
+> +++ b/drivers/mmc/host/mtk-sd.c
+> @@ -1383,24 +1383,25 @@ static void msdc_request_timeout(struct work_struct *work)
+>         }
+>  }
+>
+> -static void __msdc_enable_sdio_irq(struct mmc_host *mmc, int enb)
+> +static void __msdc_enable_sdio_irq(struct msdc_host *host, int enb)
+>  {
+> -       unsigned long flags;
+> -       struct msdc_host *host = mmc_priv(mmc);
+> -
+> -       spin_lock_irqsave(&host->lock, flags);
+> -       if (enb)
+> +       if (enb) {
+>                 sdr_set_bits(host->base + MSDC_INTEN, MSDC_INTEN_SDIOIRQ);
+> -       else
+> +               sdr_set_bits(host->base + SDC_CFG, SDC_CFG_SDIOIDE);
+> +       } else {
+>                 sdr_clr_bits(host->base + MSDC_INTEN, MSDC_INTEN_SDIOIRQ);
+> -       spin_unlock_irqrestore(&host->lock, flags);
+> +               sdr_clr_bits(host->base + SDC_CFG, SDC_CFG_SDIOIDE);
+> +       }
+>  }
+>
+>  static void msdc_enable_sdio_irq(struct mmc_host *mmc, int enb)
+>  {
+> +       unsigned long flags;
+>         struct msdc_host *host = mmc_priv(mmc);
+>
+> -       __msdc_enable_sdio_irq(mmc, enb);
+> +       spin_lock_irqsave(&host->lock, flags);
+> +       __msdc_enable_sdio_irq(host, enb);
+> +       spin_unlock_irqrestore(&host->lock, flags);
+>
+>         if (enb)
+>                 pm_runtime_get_noresume(host->dev);
+> @@ -1422,6 +1423,8 @@ static irqreturn_t msdc_irq(int irq, void *dev_id)
+>                 spin_lock_irqsave(&host->lock, flags);
+>                 events = readl(host->base + MSDC_INT);
+>                 event_mask = readl(host->base + MSDC_INTEN);
+> +               if ((events & event_mask) & MSDC_INT_SDIOIRQ)
+> +                       __msdc_enable_sdio_irq(host, 0);
+>                 /* clear interrupts */
+>                 writel(events & event_mask, host->base + MSDC_INT);
+>
+> @@ -1430,10 +1433,8 @@ static irqreturn_t msdc_irq(int irq, void *dev_id)
+>                 data = host->data;
+>                 spin_unlock_irqrestore(&host->lock, flags);
+>
+> -               if ((events & event_mask) & MSDC_INT_SDIOIRQ) {
+> -                       __msdc_enable_sdio_irq(host->mmc, 0);
+> +               if ((events & event_mask) & MSDC_INT_SDIOIRQ)
+>                         sdio_signal_irq(host->mmc);
+> -               }
+>
+>                 if ((events & event_mask) & MSDC_INT_CDSC) {
+>                         if (host->internal_cd)
+> @@ -1572,10 +1573,7 @@ static void msdc_init_hw(struct msdc_host *host)
+>         sdr_set_bits(host->base + SDC_CFG, SDC_CFG_SDIO);
+>
+>         /* Config SDIO device detect interrupt function */
+> -       if (host->mmc->caps & MMC_CAP_SDIO_IRQ)
+> -               sdr_set_bits(host->base + SDC_CFG, SDC_CFG_SDIOIDE);
+> -       else
+> -               sdr_clr_bits(host->base + SDC_CFG, SDC_CFG_SDIOIDE);
+> +       sdr_clr_bits(host->base + SDC_CFG, SDC_CFG_SDIOIDE);
+>
+>         /* Configure to default data timeout */
+>         sdr_set_field(host->base + SDC_CFG, SDC_CFG_DTOC, 3);
+> @@ -2103,7 +2101,12 @@ static void msdc_hw_reset(struct mmc_host *mmc)
+>
+>  static void msdc_ack_sdio_irq(struct mmc_host *mmc)
+>  {
+> -       __msdc_enable_sdio_irq(mmc, 1);
+> +       unsigned long flags;
+> +       struct msdc_host *host = mmc_priv(mmc);
+> +
+> +       spin_lock_irqsave(&host->lock, flags);
+> +       __msdc_enable_sdio_irq(host, 1);
+> +       spin_unlock_irqrestore(&host->lock, flags);
+>  }
+>
+>  static int msdc_get_cd(struct mmc_host *mmc)
+> --
+> 1.9.1
+>
