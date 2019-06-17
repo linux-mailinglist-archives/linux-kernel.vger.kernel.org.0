@@ -2,113 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4870A48948
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 18:49:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1231048956
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 18:53:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728554AbfFQQtc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 12:49:32 -0400
-Received: from mout.kundenserver.de ([212.227.17.24]:57613 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728487AbfFQQt0 (ORCPT
+        id S1726509AbfFQQxz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 12:53:55 -0400
+Received: from mail-out.m-online.net ([212.18.0.10]:58227 "EHLO
+        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726005AbfFQQxz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 12:49:26 -0400
-Received: from orion.localdomain ([77.2.173.233]) by mrelayeu.kundenserver.de
- (mreue107 [212.227.15.183]) with ESMTPSA (Nemesis) id
- 1MwxNF-1iZJEN1bcR-00yMlz; Mon, 17 Jun 2019 18:49:24 +0200
-From:   "Enrico Weigelt, metux IT consult" <info@metux.net>
-To:     linux-kernel@vger.kernel.org
-Cc:     linus.walleij@linaro.org, bgolaszewski@baylibre.com,
-        orsonzhai@gmail.com, baolin.wang@linaro.org, zhang.lyra@gmail.com,
-        linux-gpio@vger.kernel.org
-Subject: [PATCH 7/7] drivers: gpio: vr41xx: use devm_platform_ioremap_resource()
-Date:   Mon, 17 Jun 2019 18:49:20 +0200
-Message-Id: <1560790160-3372-7-git-send-email-info@metux.net>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1560790160-3372-1-git-send-email-info@metux.net>
-References: <1560790160-3372-1-git-send-email-info@metux.net>
-X-Provags-ID: V03:K1:iUF692x61ZLmpEW0cyk7fN8zcW0UYE6NQcxbLTjJriJAElwKTNe
- R8nuHt6HzR9DEAZVvZ8bupP06/M7gDcUdeCSM8bfmcqQmGRwO5y3oJxgPJJWaD18K/L+zLz
- xF5esffapY6LrK9w3lS2JPXeAPx+O7VO8aJddt3M4sYKGu0nRKp3MmfEnQd6Vl4/MrZJkz5
- R/U/uB22KtRpWnqp9I44w==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:0EfjCshqp9A=:ApvvgQiO6IU01FfSZtslzu
- /WbmaDnBcgnDieQ7FUOdGTn4BY9twHFbWXMoSJkZNIg8bK1sVfINLgb3LYUNPFohw1XgWTJC6
- snsGp6Y72hWZ9d+5pFWJdbhU46FVNUwVzlI/kJ2CVvlYgLUwakZIdgztXTevWL11XlJaBDO7l
- o9szWMXH+DgaC9SACrJDBvnFfQf75nT6aQ0yrecIQUGMZSsRNVCsN7dPzDchPDnHJQf6UKxic
- IJdWE+8gCX7uom/dlkTJRczyj1dZHHMkQW7v6+VlY3v4ONTHK5n/4UKEVtCtUhLHcYlznHJtc
- BfS/zWIZyHOg9AxSkPTGc2UAcSM8V2uAlAprYP0HMkZxkO6cf7Wtg0uFIlxuVXk/8bNlmTqPJ
- b16dS7nHumju55aSUSKDuBeM4x+aIPGper2nuStFVCbj8M2Pd0ZXyE9GPhMzqiKshdDSbFdpF
- yhUblqaJm7P1P3utwh9934wlrYmlD40De3pwM8iVikfzxk8/A2LlC20WxFoFPAOLFPcbRd3NP
- TdW1b2RmLbBpp8owrGGmOgRxbUBAKOqniFxg/Pb2h5hBrOLifF213dA7gJdvQ1lWjl5EnrJKQ
- jsEaJxWe9PlPJKPcay3gSOc9QElOxTyccfwn2lDbRn2uoOBY69EcwICnVEwTx/fenRmcyDabl
- Xz8M4XJVKikzdg+YYEYymkher2mqlq0IKXTj/U2ZLvKMsFrfwn4G8J+HuDuU9F1C/vL+lNgEo
- ohVgT3gmaZCnRJODpEz7HuqyK82T2uieuWwDRw==
+        Mon, 17 Jun 2019 12:53:55 -0400
+Received: from frontend01.mail.m-online.net (unknown [192.168.8.182])
+        by mail-out.m-online.net (Postfix) with ESMTP id 45SHNb67bfz1rXhF;
+        Mon, 17 Jun 2019 18:53:51 +0200 (CEST)
+Received: from localhost (dynscan1.mnet-online.de [192.168.6.70])
+        by mail.m-online.net (Postfix) with ESMTP id 45SHNb4mhtz1qqkL;
+        Mon, 17 Jun 2019 18:53:51 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at mnet-online.de
+Received: from mail.mnet-online.de ([192.168.8.182])
+        by localhost (dynscan1.mail.m-online.net [192.168.6.70]) (amavisd-new, port 10024)
+        with ESMTP id EduzkY92MSM3; Mon, 17 Jun 2019 18:53:50 +0200 (CEST)
+X-Auth-Info: YMFv82YrYRNRm64KwnvzFGkYeEExd5AQ+BFIz1DoP27GE4T0WOvh/3I1eDuV+NJX
+Received: from igel.home (ppp-46-244-166-202.dynamic.mnet-online.de [46.244.166.202])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.mnet-online.de (Postfix) with ESMTPSA;
+        Mon, 17 Jun 2019 18:53:50 +0200 (CEST)
+Received: by igel.home (Postfix, from userid 1000)
+        id 260DA2C1101; Mon, 17 Jun 2019 18:53:47 +0200 (CEST)
+From:   Andreas Schwab <schwab@linux-m68k.org>
+To:     Christophe Leroy <christophe.leroy@c-s.fr>
+Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH] powerpc/32s: fix suspend/resume when IBATs 4-7 are used
+References: <4291e0dd36aafff58bec429ac5355d10206c72d6.1560751738.git.christophe.leroy@c-s.fr>
+X-Yow:  Okay..  I'm going home to write the ``I HATE RUBIK's CUBE
+ HANDBOOK FOR DEAD CAT LOVERS''..
+Date:   Mon, 17 Jun 2019 18:53:47 +0200
+In-Reply-To: <4291e0dd36aafff58bec429ac5355d10206c72d6.1560751738.git.christophe.leroy@c-s.fr>
+        (Christophe Leroy's message of "Mon, 17 Jun 2019 06:10:22 +0000
+        (UTC)")
+Message-ID: <87y32040h0.fsf@igel.home>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.2.90 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use the new helper that wraps the calls to platform_get_resource()
-and devm_ioremap_resource() together.
+  AS      arch/powerpc/kernel/swsusp_32.o
+arch/powerpc/kernel/swsusp_32.S: Assembler messages:
+arch/powerpc/kernel/swsusp_32.S:109: Error: invalid bat number
+arch/powerpc/kernel/swsusp_32.S:111: Error: invalid bat number
+arch/powerpc/kernel/swsusp_32.S:113: Error: invalid bat number
+arch/powerpc/kernel/swsusp_32.S:115: Error: invalid bat number
+arch/powerpc/kernel/swsusp_32.S:117: Error: invalid bat number                  
+arch/powerpc/kernel/swsusp_32.S:119: Error: invalid bat number                  
+arch/powerpc/kernel/swsusp_32.S:121: Error: invalid bat number                  
+arch/powerpc/kernel/swsusp_32.S:123: Error: invalid bat number                  
+arch/powerpc/kernel/swsusp_32.S:143: Error: invalid bat number                  
+arch/powerpc/kernel/swsusp_32.S:145: Error: invalid bat number                  
+arch/powerpc/kernel/swsusp_32.S:147: Error: invalid bat number                  
+arch/powerpc/kernel/swsusp_32.S:149: Error: invalid bat number                  
+arch/powerpc/kernel/swsusp_32.S:151: Error: invalid bat number                  
+arch/powerpc/kernel/swsusp_32.S:153: Error: invalid bat number                  
+arch/powerpc/kernel/swsusp_32.S:155: Error: invalid bat number
+arch/powerpc/kernel/swsusp_32.S:157: Error: invalid bat number
+make[3]: *** [arch/powerpc/kernel/swsusp_32.o] Error 1
 
-this driver deserves a bit more cleanup, to get rid of the global
-variable giu_base, which makes it single-instance-only.
+Andreas.
 
-Signed-off-by: Enrico Weigelt, metux IT consult <info@metux.net>
----
- drivers/gpio/gpio-vr41xx.c | 19 +++++--------------
- 1 file changed, 5 insertions(+), 14 deletions(-)
-
-diff --git a/drivers/gpio/gpio-vr41xx.c b/drivers/gpio/gpio-vr41xx.c
-index b13a49c..98cd715 100644
---- a/drivers/gpio/gpio-vr41xx.c
-+++ b/drivers/gpio/gpio-vr41xx.c
-@@ -467,10 +467,9 @@ static int vr41xx_gpio_to_irq(struct gpio_chip *chip, unsigned offset)
- 
- static int giu_probe(struct platform_device *pdev)
- {
--	struct resource *res;
- 	unsigned int trigger, i, pin;
- 	struct irq_chip *chip;
--	int irq, ret;
-+	int irq;
- 
- 	switch (pdev->id) {
- 	case GPIO_50PINS_PULLUPDOWN:
-@@ -489,21 +488,14 @@ static int giu_probe(struct platform_device *pdev)
- 		return -ENODEV;
- 	}
- 
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	if (!res)
--		return -EBUSY;
--
--	giu_base = ioremap(res->start, resource_size(res));
--	if (!giu_base)
--		return -ENOMEM;
-+	giu_base = devm_platform_ioremap_resource(pdev, 0);
-+	if (IS_ERR(giu_base))
-+		return PTR_ERR(giu_base);
- 
- 	vr41xx_gpio_chip.parent = &pdev->dev;
- 
--	ret = gpiochip_add_data(&vr41xx_gpio_chip, NULL);
--	if (!ret) {
--		iounmap(giu_base);
-+	if (gpiochip_add_data(&vr41xx_gpio_chip, NULL))
- 		return -ENODEV;
--	}
- 
- 	giu_write(GIUINTENL, 0);
- 	giu_write(GIUINTENH, 0);
-@@ -534,7 +526,6 @@ static int giu_probe(struct platform_device *pdev)
- static int giu_remove(struct platform_device *pdev)
- {
- 	if (giu_base) {
--		iounmap(giu_base);
- 		giu_base = NULL;
- 	}
- 
 -- 
-1.9.1
-
+Andreas Schwab, schwab@linux-m68k.org
+GPG Key fingerprint = 7578 EB47 D4E5 4D69 2510  2552 DF73 E780 A9DA AEC1
+"And now for something completely different."
