@@ -2,89 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 540E6483E2
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 15:26:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 47441483BE
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 15:20:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727574AbfFQN0n (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 09:26:43 -0400
-Received: from smtp121.ord1c.emailsrvr.com ([108.166.43.121]:44980 "EHLO
-        smtp121.ord1c.emailsrvr.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726028AbfFQN0n (ORCPT
+        id S1727463AbfFQNUh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 09:20:37 -0400
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:33566 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725884AbfFQNUh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 09:26:43 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mev.co.uk;
-        s=20190130-41we5z8j; t=1560777558;
-        bh=5TbJE6kgkkLp1/JINzOKzzcb0A8rBGMKS/yWgPbV0Bo=;
-        h=Subject:To:From:Date:From;
-        b=aasxPrsCPX9YDpRl6CZ8FO8w7OMs0IipOKSScZ3pErTJc9HuVa6NaAqBGrviIXIVB
-         UhNJfVpuIuspNhY6/Q2b7ZEwRjjZzMjSVMOMQkjLnRNsJx5y87AAPhgxHWd3It//Tz
-         VTpGqV09l1TxI1WKwkK3C3jUU4iHDDyBNuLJOOlg=
-X-Auth-ID: abbotti@mev.co.uk
-Received: by smtp16.relay.ord1c.emailsrvr.com (Authenticated sender: abbotti-AT-mev.co.uk) with ESMTPSA id 90654C0270;
-        Mon, 17 Jun 2019 09:19:17 -0400 (EDT)
-X-Sender-Id: abbotti@mev.co.uk
-Received: from [10.0.0.62] (remote.quintadena.com [81.133.34.160])
-        (using TLSv1.2 with cipher AES128-SHA)
-        by 0.0.0.0:465 (trex/5.7.12);
-        Mon, 17 Jun 2019 09:19:18 -0400
-Subject: Re: [PATCH][next] staging: comedi: usbdux: remove redundant
- initialization of fx2delay
-To:     Colin King <colin.king@canonical.com>,
-        H Hartley Sweeten <hsweeten@visionengravers.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        devel@driverdev.osuosl.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20190617130358.28749-1-colin.king@canonical.com>
-From:   Ian Abbott <abbotti@mev.co.uk>
-Organization: MEV Ltd.
-Message-ID: <fe0881ce-90aa-0689-7563-0d94aeebb461@mev.co.uk>
-Date:   Mon, 17 Jun 2019 14:19:16 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        Mon, 17 Jun 2019 09:20:37 -0400
+Received: by mail-qt1-f196.google.com with SMTP id x2so10646394qtr.0
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2019 06:20:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lca.pw; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=WxySO7RavF5zKMyjv/ZaNC+WOWObSuSTRMAxWTHSvk8=;
+        b=mWanSoeKZy4yF6NDlcrcGKEXWiXQ/nNABojBc9NmRQLyOxGN+dfp6x98NxigKwj4A1
+         0TbLG+zYbbzxQ9VsYrkBavXogdkcX6lH1Q2hGSSD1xPLqrb3OEfaPzOgWOuZwF838FIM
+         abzv0h0l/nIAiwtlY+xCaD6+GIdpUj1xNWcH9XHJ285eeYs/KxtJFGcAtFZTcN83DFe2
+         OS0m58Pyl5UPRnWJZRdZlEZbD1QXl6SfEcziIPoJYPWq1xYE3vprBROYORWK14gLD1Gh
+         ySE/+Wx36zotGAUWWc2tV8iUfDd8G8nNTDA3sCmBlr0f6FRrRl1WRUUwh6stUCakMUvG
+         9mgw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=WxySO7RavF5zKMyjv/ZaNC+WOWObSuSTRMAxWTHSvk8=;
+        b=HBdrM83xTxE0gmv9YlUWftSFExwYyiavlV1cPlw6ziHH3fRJ8xmlSbnjn0CxQGfDzw
+         InbIliqCymcHK8axA3IC4jPIP6rC72DMzgQUNXEz24xUvsjFSXXoxL0iwsU5GoH6fahH
+         0S476zG9pRamUlG4JSnd/232hya2VTZrq/Wj0ZLtpv2mzo3I8ZJqMJ/IdVe+t2s0YxRa
+         9Pip1JZIkrpw5UvEadMrfxUvFvvWqAMjCDks5ARXCkd9lLgRO+zqctZqnhNch49M8eTB
+         iCIOo9yqYNjx6y5wD/UUqjleMQao5aLmbjv9dXBC6EB3KI8JsY+J20RDtVz0Y87El+Mf
+         PsiQ==
+X-Gm-Message-State: APjAAAX1gKxISXR96qi9LHRCWIb5AZq/0u+9QxOlyiLdQSzNAI6TR6IQ
+        MIKHvjn3xl5393+3vjjge4xeOw==
+X-Google-Smtp-Source: APXvYqx8nwAh/ef1Z7S6mpaIuw+uQGeTu/VellQt7Hwdg7+ajM7LdXfG3blR+hAVljz5qh/x3jNcpw==
+X-Received: by 2002:a0c:b0c6:: with SMTP id p6mr20449953qvc.225.1560777636216;
+        Mon, 17 Jun 2019 06:20:36 -0700 (PDT)
+Received: from ovpn-120-145.rdu2.redhat.com (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
+        by smtp.gmail.com with ESMTPSA id t80sm5767002qka.87.2019.06.17.06.20.35
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Mon, 17 Jun 2019 06:20:35 -0700 (PDT)
+From:   Qian Cai <cai@lca.pw>
+To:     jroedel@suse.de
+Cc:     dwmw2@infradead.org, eric.auger@redhat.com,
+        baolu.lu@linux.intel.com, iommu@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, Qian Cai <cai@lca.pw>
+Subject: [PATCH] iommu/intel: remove an unused variable "length"
+Date:   Mon, 17 Jun 2019 09:20:27 -0400
+Message-Id: <20190617132027.1960-1-cai@lca.pw>
+X-Mailer: git-send-email 2.20.1 (Apple Git-117)
 MIME-Version: 1.0
-In-Reply-To: <20190617130358.28749-1-colin.king@canonical.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 17/06/2019 14:03, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Variable fx2delay is being initialized to a value that is never read
-> and is being re-assigned a few statements later. The initialization
-> is redundant and can be removed.
-> 
-> Addresses-Coverity: ("Unused value")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->   drivers/staging/comedi/drivers/usbdux.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/staging/comedi/drivers/usbdux.c b/drivers/staging/comedi/drivers/usbdux.c
-> index b8f54b7fb34a..0350f303d557 100644
-> --- a/drivers/staging/comedi/drivers/usbdux.c
-> +++ b/drivers/staging/comedi/drivers/usbdux.c
-> @@ -1226,7 +1226,7 @@ static int usbdux_pwm_period(struct comedi_device *dev,
->   			     unsigned int period)
->   {
->   	struct usbdux_private *devpriv = dev->private;
-> -	int fx2delay = 255;
-> +	int fx2delay;
->   
->   	if (period < MIN_PWM_PERIOD)
->   		return -EAGAIN;
-> 
+The linux-next commit "iommu/vt-d: Duplicate iommu_resv_region objects
+per device list" [1] left out an unused variable,
 
-Looks good, thanks!
+drivers/iommu/intel-iommu.c: In function 'dmar_parse_one_rmrr':
+drivers/iommu/intel-iommu.c:4014:9: warning: variable 'length' set but
+not used [-Wunused-but-set-variable]
 
-Reviewed-by: Ian Abbott <abbotti@mev.co.uk>
+[1] https://lore.kernel.org/patchwork/patch/1083073/
 
+Signed-off-by: Qian Cai <cai@lca.pw>
+---
+ drivers/iommu/intel-iommu.c | 3 ---
+ 1 file changed, 3 deletions(-)
+
+diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
+index 478ac186570b..d86d4ee5cc78 100644
+--- a/drivers/iommu/intel-iommu.c
++++ b/drivers/iommu/intel-iommu.c
+@@ -4011,7 +4011,6 @@ int __init dmar_parse_one_rmrr(struct acpi_dmar_header *header, void *arg)
+ {
+ 	struct acpi_dmar_reserved_memory *rmrr;
+ 	struct dmar_rmrr_unit *rmrru;
+-	size_t length;
+ 
+ 	rmrru = kzalloc(sizeof(*rmrru), GFP_KERNEL);
+ 	if (!rmrru)
+@@ -4022,8 +4021,6 @@ int __init dmar_parse_one_rmrr(struct acpi_dmar_header *header, void *arg)
+ 	rmrru->base_address = rmrr->base_address;
+ 	rmrru->end_address = rmrr->end_address;
+ 
+-	length = rmrr->end_address - rmrr->base_address + 1;
+-
+ 	rmrru->devices = dmar_alloc_dev_scope((void *)(rmrr + 1),
+ 				((void *)rmrr) + rmrr->header.length,
+ 				&rmrru->devices_cnt);
 -- 
--=( Ian Abbott <abbotti@mev.co.uk> || Web: www.mev.co.uk )=-
--=( MEV Ltd. is a company registered in England & Wales. )=-
--=( Registered number: 02862268.  Registered address:    )=-
--=( 15 West Park Road, Bramhall, STOCKPORT, SK7 3JZ, UK. )=-
+2.20.1 (Apple Git-117)
+
