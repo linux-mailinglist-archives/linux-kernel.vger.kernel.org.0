@@ -2,174 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7580748B13
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 19:59:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A4F6348AF2
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 19:58:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728749AbfFQR7X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 13:59:23 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:40051 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728752AbfFQR7U (ORCPT
+        id S1728630AbfFQR6W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 13:58:22 -0400
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:11787 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726091AbfFQR6T (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 13:59:20 -0400
-Received: by mail-pf1-f195.google.com with SMTP id p184so6087124pfp.7
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2019 10:59:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=FlnZzdiFf1S0YMLoCTFEyV12ust5Dpo7bSpHKMU0s0k=;
-        b=VIWj2CuRQEFDLQTpFrEiwh7JmnmIdikL7iboXsKITUDu17jDFvklPt+TErOhzcT4hL
-         M45V1hxQGm9U+GrK+lQYDYIj2Ak6M6/DRUgQHo+Eh2Be+W6dF0MnnCpH29uTjmn+fKMv
-         tP1d85wAvCnpc6uw+HsZKe4wc8XeCeeqZFD8c=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=FlnZzdiFf1S0YMLoCTFEyV12ust5Dpo7bSpHKMU0s0k=;
-        b=d4ox+FS1hV53L1HjAsl4iBOwhxiSTZFbNQCbDKuPXy615MC37weMdp/sNQ1bPp5Lx/
-         qFRANYkUSxPiVPRKywTi5xfgxqfG/f81EnYKu+Ey+wPpDa1zIdcN4M4b5QTaygt80frd
-         zKSMYm1HIs/OIS5X7ldNt4fPuaAB1bqpMmUlQ7vpHOZqttFnvuMw/a+MUyhWDge459px
-         aPdU1U62Qr50m9nfpmUEIHOeXBLwFPPcFmoLEmC6bcTKxCtXZRcVLgjVsgsQ/CUaweow
-         0IvzXPzYPXCs3dtzanu+xeZwfREd57BEuJjSY9jPatt1VZuxoyY32MzoLv3Bdk1dqlFj
-         LFOw==
-X-Gm-Message-State: APjAAAUv0z6VU5Gwr8cLoLdoolYWyACZFO1H5LP2ghikBslmOSGrn/kT
-        nIysK32tO5AJWWhsY3/ZDEZYXA==
-X-Google-Smtp-Source: APXvYqyaVs3fvyMpOLZjM3c8dSSZ0GNGbc2/XbFy4Qlb/yNERuegnQR6T/3bb+Lh0yT+fdVq5jr3Gw==
-X-Received: by 2002:a62:b40f:: with SMTP id h15mr107121375pfn.57.1560794358391;
-        Mon, 17 Jun 2019 10:59:18 -0700 (PDT)
-Received: from tictac2.mtv.corp.google.com ([2620:15c:202:1:24fa:e766:52c9:e3b2])
-        by smtp.gmail.com with ESMTPSA id q1sm15145809pfn.178.2019.06.17.10.59.14
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 17 Jun 2019 10:59:16 -0700 (PDT)
-From:   Douglas Anderson <dianders@chromium.org>
-To:     Ulf Hansson <ulf.hansson@linaro.org>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Arend van Spriel <arend.vanspriel@broadcom.com>
-Cc:     brcm80211-dev-list.pdl@broadcom.com,
-        linux-rockchip@lists.infradead.org,
-        Double Lo <double.lo@cypress.com>, briannorris@chromium.org,
-        linux-wireless@vger.kernel.org,
-        Naveen Gupta <naveen.gupta@cypress.com>,
-        Madhan Mohan R <madhanmohan.r@cypress.com>, mka@chromium.org,
-        Wright Feng <wright.feng@cypress.com>,
-        Chi-Hsien Lin <chi-hsien.lin@cypress.com>,
-        netdev@vger.kernel.org, brcm80211-dev-list@cypress.com,
-        Douglas Anderson <dianders@chromium.org>,
-        stable@vger.kernel.org, Franky Lin <franky.lin@broadcom.com>,
-        linux-kernel@vger.kernel.org,
-        Hante Meuleman <hante.meuleman@broadcom.com>,
-        Ondrej Jirman <megous@megous.com>,
-        YueHaibing <yuehaibing@huawei.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH v5 5/5] brcmfmac: sdio: Don't tune while the card is off
-Date:   Mon, 17 Jun 2019 10:56:53 -0700
-Message-Id: <20190617175653.21756-6-dianders@chromium.org>
-X-Mailer: git-send-email 2.22.0.410.gd8fdbe21b5-goog
-In-Reply-To: <20190617175653.21756-1-dianders@chromium.org>
-References: <20190617175653.21756-1-dianders@chromium.org>
+        Mon, 17 Jun 2019 13:58:19 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5d07d4ba0000>; Mon, 17 Jun 2019 10:58:18 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Mon, 17 Jun 2019 10:58:18 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Mon, 17 Jun 2019 10:58:18 -0700
+Received: from [10.19.65.14] (172.20.13.39) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 17 Jun
+ 2019 17:58:15 +0000
+Subject: Re: [PATCH V3] i2c: busses: tegra: Add suspend-resume support
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Wolfram Sang <wsa@the-dreams.de>
+CC:     Laxman Dewangan <ldewangan@nvidia.com>,
+        Thierry Reding <treding@nvidia.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        <linux-i2c@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Shardar Mohammed <smohammed@nvidia.com>,
+        Sowjanya Komatineni <skomatineni@nvidia.com>,
+        Mantravadi Karthik <mkarthik@nvidia.com>
+References: <1559885867-10190-1-git-send-email-bbiswas@nvidia.com>
+ <20190614211129.GG17899@ninjato>
+ <758d6dc2-f044-6be3-6896-196ef477d393@nvidia.com>
+ <20190615045405.GA1023@kunai> <20190617070935.GB30126@ulmo>
+From:   Bitan Biswas <bbiswas@nvidia.com>
+Message-ID: <4abda3d1-b70b-672d-0fe0-6e0ef748f9aa@nvidia.com>
+Date:   Mon, 17 Jun 2019 10:58:12 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190617070935.GB30126@ulmo>
+X-Originating-IP: [172.20.13.39]
+X-ClientProxiedBy: HQMAIL106.nvidia.com (172.18.146.12) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1560794298; bh=0ueJBY+Lv6odOXcv++qxQRsJjIhWcKA5wndZDLgnKGQ=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=DKuno/6ydOH7Oel00ywdck6oDWWbiMppgU5mfbnBCi2UpQgMyp0sEkZJRXo9G4tya
+         p2qppgQL8nRHOjFGHKaT+rHIhZb6d94OUqE2S/lRmZ0VHz50HJqyHKcSOAsgmKhkz9
+         +tEA1iDctCwUDteJS7Odxcxw4Fd+3ubJVqyK/jhKhmzGsxIPhph+oIYoWYyyguC4Iv
+         0mI2BJBKIZI4FGBzbKaJVCfv43IMmA/stOwV9ZitcBDOcKRy0FLEAoHvw6DEKcu0o7
+         9elO43NwIuepL23nFFExsPyjajML5/S5fAic3KWqJNjrHteAgjgHMz5cs6KyXyTVV6
+         AmY/+giItMaqg==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When Broadcom SDIO cards are idled they go to sleep and a whole
-separate subsystem takes over their SDIO communication.  This is the
-Always-On-Subsystem (AOS) and it can't handle tuning requests.
 
-Specifically, as tested on rk3288-veyron-minnie (which reports having
-BCM4354/1 in dmesg), if I force a retune in brcmf_sdio_kso_control()
-when "on = 1" (aka we're transition from sleep to wake) by whacking:
-  bus->sdiodev->func1->card->host->need_retune = 1
-...then I can often see tuning fail.  In this case dw_mmc reports "All
-phases bad!").  Note that I don't get 100% failure, presumably because
-sometimes the card itself has already transitioned away from the AOS
-itself by the time we try to wake it up.  If I force retuning when "on
-= 0" (AKA force retuning right before sending the command to go to
-sleep) then retuning is always OK.
 
-NOTE: we need _both_ this patch and the patch to avoid triggering
-tuning due to CRC errors in the sleep/wake transition, AKA ("brcmfmac:
-sdio: Disable auto-tuning around commands expected to fail").  Though
-both patches handle issues with Broadcom's AOS, the problems are
-distinct:
-1. We want to defer (but not ignore) asynchronous (like
-   timer-requested) tuning requests till the card is awake.  However,
-   we want to ignore CRC errors during the transition, we don't want
-   to queue deferred tuning request.
-2. You could imagine that the AOS could implement retuning but we
-   could still get errors while transitioning in and out of the AOS.
-   Similarly you could imagine a seamless transition into and out of
-   the AOS (with no CRC errors) even if the AOS couldn't handle
-   tuning.
+On 6/17/19 12:09 AM, Thierry Reding wrote:
+> On Sat, Jun 15, 2019 at 06:54:05AM +0200, Wolfram Sang wrote:
+>>
+>>>> Without a maintainer ack, this is an exception this time. Should we add
+>>>> Dmitry as another maintainer or reviewer at least?
+>>>>
+>>> I shall followup with Maintainer for ACK in future I2C tegra patches.
+>>
+>> This comment was not directed at you, sorry if that was not clear. It
+>> was more for Laxman, Thierry, Jonathan, and Dmitry (if he is
+>> interested).
+> 
+> I thought I had already acked this. I've certainly been testing this
+> since I carry it in a local tree. So for what it's worth:
+> 
+> Tested-by: Thierry Reding <treding@nvidia.com>
+> Acked-by: Thierry Reding <treding@nvidia.com>
+> 
+> Bitan, I don't mind getting the patches to the corporate email address,
+> but please make sure to also always include the gmail address when
+> sending patches to the public mailing lists. My workflow is somewhat
+> quirky that way because I work remotely and for historical reasons.
+I shall put both email addresses going forward.
 
-ALSO NOTE: presumably there is never a desperate need to retune in
-order to wake up the card, since doing so is impossible.  Luckily the
-only way the card can get into sleep state is if we had a good enough
-tuning to send it the command to put it into sleep, so presumably that
-"good enough" tuning is enough to wake us up, at least with a few
-retries.
-
-Cc: stable@vger.kernel.org
-Signed-off-by: Douglas Anderson <dianders@chromium.org>
-Acked-by: Adrian Hunter <adrian.hunter@intel.com>
-Reviewed-by: Arend van Spriel <arend.vanspriel@broadcom.com>
----
-Patches #2 - #5 will go through Ulf's tree.
-
-This patch is still lacking Kalle Valo's Ack, which should probably be
-received before landing in Ulf's tree.
-
-I've CCed stable@ here without a version tag.  As per Adrian Hunter
-this patch applies cleanly to 4.18+ so that would be an easy first
-target.  However, if someone were so inclined they could provide
-further backports.  As per Adrian [1] the root problem has existed for
-~4 years.
-
-[1] https://lkml.kernel.org/r/4f39e152-04ba-a64e-985a-df93e6d15ff8@intel.com
-
-Changes in v5:
-- Rewording of "sleep command" in commit message (Arend).
-
-Changes in v4:
-- Adjust to API rename (Adrian).
-
-Changes in v3:
-- ("brcmfmac: sdio: Don't tune while the card is off") new for v3.
-
-Changes in v2: None
-
- drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.c | 7 +++++++
- 1 file changed, 7 insertions(+)
-
-diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.c b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.c
-index ee76593259a7..629140b6d7e2 100644
---- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.c
-+++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.c
-@@ -669,6 +669,10 @@ brcmf_sdio_kso_control(struct brcmf_sdio *bus, bool on)
- 
- 	sdio_retune_crc_disable(bus->sdiodev->func1);
- 
-+	/* Cannot re-tune if device is asleep; defer till we're awake */
-+	if (on)
-+		sdio_retune_hold_now(bus->sdiodev->func1);
-+
- 	wr_val = (on << SBSDIO_FUNC1_SLEEPCSR_KSO_SHIFT);
- 	/* 1st KSO write goes to AOS wake up core if device is asleep  */
- 	brcmf_sdiod_writeb(bus->sdiodev, SBSDIO_FUNC1_SLEEPCSR, wr_val, &err);
-@@ -729,6 +733,9 @@ brcmf_sdio_kso_control(struct brcmf_sdio *bus, bool on)
- 	if (try_cnt > MAX_KSO_ATTEMPTS)
- 		brcmf_err("max tries: rd_val=0x%x err=%d\n", rd_val, err);
- 
-+	if (on)
-+		sdio_retune_release(bus->sdiodev->func1);
-+
- 	sdio_retune_crc_enable(bus->sdiodev->func1);
- 
- 	return err;
--- 
-2.22.0.410.gd8fdbe21b5-goog
-
+-regards,
+  Bitan
