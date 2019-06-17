@@ -2,107 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7490548169
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 13:59:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6EACD48086
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 13:24:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726969AbfFQL7S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 07:59:18 -0400
-Received: from mout.kundenserver.de ([212.227.17.10]:33899 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725763AbfFQL7S (ORCPT
+        id S1727837AbfFQLYN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 07:24:13 -0400
+Received: from outils.crapouillou.net ([89.234.176.41]:42598 "EHLO
+        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726605AbfFQLYN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 07:59:18 -0400
-Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
- (mreue109 [212.227.15.145]) with ESMTPA (Nemesis) id
- 1N1Oft-1idn5x173T-012p0I; Mon, 17 Jun 2019 13:58:46 +0200
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     Mimi Zohar <zohar@linux.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] ima: dynamically allocate shash_desc
-Date:   Mon, 17 Jun 2019 13:20:37 +0200
-Message-Id: <20190617115838.2397872-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.20.0
+        Mon, 17 Jun 2019 07:24:13 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
+        s=mail; t=1560770649; h=from:from:sender:reply-to:subject:subject:date:date:
+         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+         content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=XXgClKH7M7bb5E8c4HAo2DhEtqDm8AwWK0DAg3w6CSA=;
+        b=DLFCe8J7F1iPnSyAWfCXNCPswqEMS67tC5mWBLsUUPwwict7OqgpXo58qFhDKzwVuWmzPl
+        TCvyCpszlQ8FaFEm+TC3DOPxtvbwxLOoI1+wWRdFKVEjsCDewxvAz27jOkgCkA0D6HuhTQ
+        T0Cn9LgLxGKKsufguSZno81dsI1kJRU=
+Date:   Mon, 17 Jun 2019 13:24:04 +0200
+From:   Paul Cercueil <paul@crapouillou.net>
+Subject: Re: [PATCH] mtd: rawnand: ingenic: fix ingenic_ecc dependency
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Miquel Raynal <miquel.raynal@bootlin.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
+Message-Id: <1560770644.1774.0@crapouillou.net>
+In-Reply-To: <20190617111110.2103786-1-arnd@arndb.de>
+References: <20190617111110.2103786-1-arnd@arndb.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:Aok4LcHbJEGe4AaznFIfACC7Rx178p41ovN43L+MyVducbpJUmo
- Ks3nYiQFYUumaQQDtFktb7FASBDgNt0aWrEmebIaB2QKuW7eKXp/C3mpmUcUcD6KVf3YWcB
- cHciwJcVESXqtHG5EZm3ls+ZpDxsTRQTdcm0F/UvIc6M6Ypeq63DAIUrs/oUOxrkLyMFvCw
- XFmMdwOf5uOdyLU9P5gpA==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:jHvm8xVNDAg=:2tQYUYi5EHZK8Jj9NnbR8R
- Eo7gZUfrH0IV231kubqyOXrM2KIdTUI7lkeT64oWq+/f71gkLCOBA3NzPI6XwDwGl8OwX+/5w
- yVDiKGLnOGCxf+S0vbTYzsRNBq76ZlUCUzWuIjpHVVGjeN5SAyE6MywStp8xA1h/cRWcK3cSx
- Bwgbt7JUQDgtp4jOKoxHjqlrVcLSbpbu8rpnkIYtSBmEobq2yDokeJyj1QugUmAg+hNXmMcM4
- pVvePhrtr24jnquz/odgNTRAHaD5VQY3uTcDpF6QdL9zrmy6UCL8SCxFf5EeaJeTzSiiW+uPk
- bCVCbyUWrELjuHEt22u1i1oJ2sBS1ldJ9xecgj7l+X+Sj5Jouj+A+Zbi5xcgrU/ngnLRiabOU
- 5TLlpJZgM7xeHyJcibAzzh034agXYUkyVbw0mEZZW8Tjq5nL6IkBWYphrpAfGzFQ946pBaF1p
- nPVIq+92AGgeXZ3Cv0v7IQ2bLUq3YUj5fsawacZO1BG8fAaSf+EgYJsPg6RYip3gbP5uDLPyF
- Gi7rVAPX3uwg04Pe4uBMsw41abY2iVQBULvYBbFi9ohYBnVty966idrZjgx+Pyg3inltOFtVj
- M/fpwbgM2WhO2KGKKzFiiOs+uajZha0drkVdDo1ZbPf2NM+4BAb+90WhFspBAfibbneJlHCMx
- kakkUzVCB2p/ES21GFZU+Q2++wdThYh8RzHe6rYlRywsa2B879EEe/j1On0RzPHJxZa/QOEFJ
- 3HYbjkqetrngw4zwpfpkit5NhMMqT6RJEFSXnA==
+Content-Type: text/plain; charset=iso-8859-1; format=flowed
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 32-bit ARM, we get a warning about excessive stack usage when
-building with clang.
+Hi Arnd,
 
-security/integrity/ima/ima_crypto.c:504:5: error: stack frame size of 1152 bytes in function 'ima_calc_field_array_hash' [-Werror,-Wframe-larger-than=]
 
-Using kmalloc to get the descriptor reduces this to 320 bytes.
+Le lun. 17 juin 2019 =E0 13:10, Arnd Bergmann <arnd@arndb.de> a =E9crit :
+> The ecc code is called from the main ingenic_nand module, but the
+> Kconfig symbol gets selected by the dependent ones.
+>=20
+> If the child drivers are loadable modules, this leads to a link
+> error:
+>=20
+> drivers/mtd/nand/raw/ingenic/ingenic_nand.o: In function=20
+> `ingenic_nand_remove':
+> ingenic_nand.c:(.text+0x1a1): undefined reference to=20
+> `ingenic_ecc_release'
+> drivers/mtd/nand/raw/ingenic/ingenic_nand.o: In function=20
+> `ingenic_nand_ecc_correct':
+> ingenic_nand.c:(.text+0x1fa): undefined reference to=20
+> `ingenic_ecc_correct'
+> drivers/mtd/nand/raw/ingenic/ingenic_nand.o: In function=20
+> `ingenic_nand_ecc_calculate':
+> ingenic_nand.c:(.text+0x255): undefined reference to=20
+> `ingenic_ecc_calculate'
+> drivers/mtd/nand/raw/ingenic/ingenic_nand.o: In function=20
+> `ingenic_nand_probe':
+> ingenic_nand.c:(.text+0x3ca): undefined reference to=20
+> `of_ingenic_ecc_get'
+> ingenic_nand.c:(.text+0x685): undefined reference to=20
+> `ingenic_ecc_release'
+>=20
+> Rearrange this to have the ecc code linked the same way as the main
+> driver.
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- security/integrity/ima/ima_crypto.c | 12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
+I think there's a better way to fix it, only in Kconfig.
 
-diff --git a/security/integrity/ima/ima_crypto.c b/security/integrity/ima/ima_crypto.c
-index d4c7b8e1b083..8a66bab4c435 100644
---- a/security/integrity/ima/ima_crypto.c
-+++ b/security/integrity/ima/ima_crypto.c
-@@ -461,16 +461,21 @@ static int ima_calc_field_array_hash_tfm(struct ima_field_data *field_data,
- 					 struct ima_digest_data *hash,
- 					 struct crypto_shash *tfm)
- {
--	SHASH_DESC_ON_STACK(shash, tfm);
-+	struct shash_desc *shash;
- 	int rc, i;
- 
-+	shash = kmalloc(sizeof(struct shash_desc) + crypto_shash_descsize(tfm),
-+			GFP_KERNEL);
-+	if (!shash)
-+		return -ENOMEM;
-+
- 	shash->tfm = tfm;
- 
- 	hash->length = crypto_shash_digestsize(tfm);
- 
- 	rc = crypto_shash_init(shash);
- 	if (rc != 0)
--		return rc;
-+		goto out;
- 
- 	for (i = 0; i < num_fields; i++) {
- 		u8 buffer[IMA_EVENT_NAME_LEN_MAX + 1] = { 0 };
-@@ -497,7 +502,8 @@ static int ima_calc_field_array_hash_tfm(struct ima_field_data *field_data,
- 
- 	if (!rc)
- 		rc = crypto_shash_final(shash, hash->digest);
--
-+out:
-+	kfree(shash);
- 	return rc;
- }
- 
--- 
-2.20.0
+* Add a bool symbol MTD_NAND_INGENIC_USE_HW_ECC
+* Have the three ECC/BCH drivers select this symbol instead of
+  MTD_NAND_INGENIC_ECC
+* Add the following to the MTD_NAND_JZ4780 config option:
+  "select MTD_NAND_INGENIC_ECC if MTD_NAND_INGENIC_USE_HW_ECC"
+
+
+> Fixes: 15de8c6efd0e ("mtd: rawnand: ingenic: Separate top-level and=20
+> SoC specific code")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  drivers/mtd/nand/raw/ingenic/Kconfig  | 2 +-
+>  drivers/mtd/nand/raw/ingenic/Makefile | 5 ++++-
+>  2 files changed, 5 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/mtd/nand/raw/ingenic/Kconfig=20
+> b/drivers/mtd/nand/raw/ingenic/Kconfig
+> index 19a96ce515c1..66b7cffdb0c2 100644
+> --- a/drivers/mtd/nand/raw/ingenic/Kconfig
+> +++ b/drivers/mtd/nand/raw/ingenic/Kconfig
+> @@ -16,7 +16,7 @@ config MTD_NAND_JZ4780
+>  if MTD_NAND_JZ4780
+>=20
+>  config MTD_NAND_INGENIC_ECC
+> -	tristate
+> +	bool
+>=20
+>  config MTD_NAND_JZ4740_ECC
+>  	tristate "Hardware BCH support for JZ4740 SoC"
+> diff --git a/drivers/mtd/nand/raw/ingenic/Makefile=20
+> b/drivers/mtd/nand/raw/ingenic/Makefile
+> index 1ac4f455baea..5a55efc5d9bb 100644
+> --- a/drivers/mtd/nand/raw/ingenic/Makefile
+> +++ b/drivers/mtd/nand/raw/ingenic/Makefile
+> @@ -2,7 +2,10 @@
+>  obj-$(CONFIG_MTD_NAND_JZ4740) +=3D jz4740_nand.o
+>  obj-$(CONFIG_MTD_NAND_JZ4780) +=3D ingenic_nand.o
+>=20
+> -obj-$(CONFIG_MTD_NAND_INGENIC_ECC) +=3D ingenic_ecc.o
+> +ifdef CONFIG_MTD_NAND_INGENIC_ECC
+> +obj-$(CONFIG_MTD_NAND_JZ4780) +=3D ingenic_ecc.o
+> +endif
+> +
+>  obj-$(CONFIG_MTD_NAND_JZ4740_ECC) +=3D jz4740_ecc.o
+>  obj-$(CONFIG_MTD_NAND_JZ4725B_BCH) +=3D jz4725b_bch.o
+>  obj-$(CONFIG_MTD_NAND_JZ4780_BCH) +=3D jz4780_bch.o
+> --
+> 2.20.0
+>=20
+
+=
 
