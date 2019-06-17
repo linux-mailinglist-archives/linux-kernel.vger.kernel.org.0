@@ -2,36 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 086D947BF8
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 10:18:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 94B7647BFD
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 10:19:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726111AbfFQISa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 04:18:30 -0400
-Received: from verein.lst.de ([213.95.11.211]:33830 "EHLO newverein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725791AbfFQISa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 04:18:30 -0400
-Received: by newverein.lst.de (Postfix, from userid 2407)
-        id 3FA9668AFE; Mon, 17 Jun 2019 10:18:01 +0200 (CEST)
-Date:   Mon, 17 Jun 2019 10:18:01 +0200
-From:   Christoph Hellwig <hch@lst.de>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] initramfs: Fix populate_initrd_image() section mismatch
-Message-ID: <20190617081801.GA7391@lst.de>
-References: <20190617074340.12779-1-geert@linux-m68k.org>
+        id S1726890AbfFQITp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 04:19:45 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:60368 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725791AbfFQITp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Jun 2019 04:19:45 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=bLNZQEWf0s5ffYRlcrJ5UoBdA2dcz1yaQRq0y4hSYAM=; b=KreEZ6td8sbW6SE+GYNkgb+Qd
+        cPIEcHl43SZ0CM3LaBPR7qX25BRogbOTkzKYWLh4+kDlnv3Jpv3kdoLlU+7cRj1UZFUcPNHMglW6s
+        u5Ir3XOVg21zmYlz+8Kq1WnvOjhZ+ahKtFrvgSRJKwrQrA4Zs6A9WdH+UGnrYMUy4MDaDVueakg4m
+        twYAiOHb1AhsNzpH6Gj3ScfWuM4GHom1v2wAHruOddlpJ9T3ACizq4HI8f6uwifGxCm2nmLT1Knnb
+        G2EdWjWlFN1C2B6rdIoOX7wSQLdM3/qMA19tiW1E1fhwetykM/J2GafHTNSc2E7prNCY6queI9BPC
+        nDHN9mylA==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
+        id 1hcmrf-000341-Uk; Mon, 17 Jun 2019 08:19:43 +0000
+Date:   Mon, 17 Jun 2019 01:19:43 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Oded Gabbay <oded.gabbay@gmail.com>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 8/8] habanalabs: enable 64-bit DMA mask in POWER9
+Message-ID: <20190617081943.GA11274@infradead.org>
+References: <20190611092144.11194-1-oded.gabbay@gmail.com>
+ <20190611095857.GB24058@kroah.com>
+ <20190611151753.GA11404@infradead.org>
+ <20190611152655.GA3972@kroah.com>
+ <CAFCwf11DKi+pfvvGR2zN4jvwTQZ9-Lm=OXBs+ZU=E-eFfJOi7A@mail.gmail.com>
+ <20190616095554.GA5156@infradead.org>
+ <CAFCwf11XU1JydbS-wswXBzm4t-fxLjGyXuHCqrNxTsWzLraSZQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190617074340.12779-1-geert@linux-m68k.org>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <CAFCwf11XU1JydbS-wswXBzm4t-fxLjGyXuHCqrNxTsWzLraSZQ@mail.gmail.com>
+User-Agent: Mutt/1.11.4 (2019-03-13)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Looks good:
+On Sun, Jun 16, 2019 at 02:24:08PM +0300, Oded Gabbay wrote:
+> So the alternative is that my device won't work on POWER9.
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+The alternative is that we fix the powerpc code to do the right
+thing, which already is in progress.
