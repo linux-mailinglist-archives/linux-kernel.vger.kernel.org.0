@@ -2,88 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C6E4D48263
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 14:30:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7811148268
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 14:30:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728323AbfFQM2m (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 08:28:42 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:44632 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728302AbfFQM2h (ORCPT
+        id S1728349AbfFQM3D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 08:29:03 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:35114 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728039AbfFQM2T (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 08:28:37 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
-        :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
-        :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=I8PlqMUI4C1+5AXdWNAvJGUn4z7E5OvP3cFwdUwwRcM=; b=idjxwSVcGR8gj/Hv9rgN32Pbhq
-        n+B3Dw/eAY5nzc0hWjvE0/DJdYcXUudxghMTEfuhBlOZzQqw6Kp9Ri+RNMJ+ZbD/rpwTc7jNnggaJ
-        oWqEp9P7byqhhh4K1c+iPeFxUZ8V7J2oZFOxQqqzjxHYw+5SJgb3oBcJchVokBPs8JXyeVW8tAhRx
-        i7ntPKqW6sOS8kblCvWSXQcLZNVxYW/7zdv6j5cHwyvtGEDGaTmZwfX2j/Yje0mucmxOeMh4+QyGl
-        st8aBl75weQTuuByjCtZpmELlzhnz8odxyh1rYlQ1/iPx/2DY6A/ochv2KYvVjetIbSP6uDrsRviB
-        sLz4N94A==;
-Received: from clnet-p19-102.ikbnet.co.at ([83.175.77.102] helo=localhost)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hcqkS-0000eV-VL; Mon, 17 Jun 2019 12:28:33 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     Dan Williams <dan.j.williams@intel.com>,
-        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Ben Skeggs <bskeggs@redhat.com>
-Cc:     linux-mm@kvack.org, nouveau@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org, linux-nvdimm@lists.01.org,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 25/25] mm: don't select MIGRATE_VMA_HELPER from HMM_MIRROR
-Date:   Mon, 17 Jun 2019 14:27:33 +0200
-Message-Id: <20190617122733.22432-26-hch@lst.de>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190617122733.22432-1-hch@lst.de>
-References: <20190617122733.22432-1-hch@lst.de>
+        Mon, 17 Jun 2019 08:28:19 -0400
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+        by mx08-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5HCLCqf009408;
+        Mon, 17 Jun 2019 14:28:07 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=STMicroelectronics;
+ bh=E9NXlEGXNnvQZ3RULpw4oSl2qhYRA7pqUq0NxFi2maM=;
+ b=Xn3sBMkfKYiuf6tnzB0nw/OrQ40k70XSyR3NVXIQ0Tyf8cgYlIClW771t+KqxiHkmQ7J
+ Sl3H+GM6khJ7nB8zFPqU5RKM2siZIzdyCvSVaD5aKjcSSHjRcnbjam5zH5mCB9XunpMO
+ drxsAYB1f4oqSBPcsHMCIIWdBf1e47fdq6Q+Vvx6dIJOXt5GJI7mRoDWbx42/zhySbHj
+ n02S3xT2j0qnnBLjypHU37Nx73VwNIkVgTozZ9Efpyinwz+CThn65YlcQzo38Bq1KwUr
+ OVjJM2CQXCXAbHWjBFf+SbrmMOQqBAQGJHB1ILAFIZNc85414UIu0s/PM+LfPiiOVVGT pg== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx08-00178001.pphosted.com with ESMTP id 2t4qjhte0v-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Mon, 17 Jun 2019 14:28:07 +0200
+Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 935DB3A;
+        Mon, 17 Jun 2019 12:28:06 +0000 (GMT)
+Received: from Webmail-eu.st.com (sfhdag3node2.st.com [10.75.127.8])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 69B6829A9;
+        Mon, 17 Jun 2019 12:28:06 +0000 (GMT)
+Received: from [10.48.0.204] (10.75.127.50) by SFHDAG3NODE2.st.com
+ (10.75.127.8) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Mon, 17 Jun
+ 2019 14:28:05 +0200
+Subject: Re: [PATCH v4 0/4] Add Avenger96 board support
+To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        <mcoquelin.stm32@gmail.com>, <robh+dt@kernel.org>
+CC:     <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <loic.pallardy@st.com>
+References: <20190612075451.8643-1-manivannan.sadhasivam@linaro.org>
+From:   Alexandre Torgue <alexandre.torgue@st.com>
+Message-ID: <e34e8160-d16e-bf18-e7c3-240098908df2@st.com>
+Date:   Mon, 17 Jun 2019 14:28:04 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
+In-Reply-To: <20190612075451.8643-1-manivannan.sadhasivam@linaro.org>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+X-Originating-IP: [10.75.127.50]
+X-ClientProxiedBy: SFHDAG8NODE1.st.com (10.75.127.22) To SFHDAG3NODE2.st.com
+ (10.75.127.8)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-17_06:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The migrate_vma helper is only used by noveau to migrate device private
-pages around.  Other HMM_MIRROR users like amdgpu or infiniband don't
-need it.
+Hi Mani,
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
-Reviewed-by: Jason Gunthorpe <jgg@mellanox.com>
----
- drivers/gpu/drm/nouveau/Kconfig | 1 +
- mm/Kconfig                      | 1 -
- 2 files changed, 1 insertion(+), 1 deletion(-)
+On 6/12/19 9:54 AM, Manivannan Sadhasivam wrote:
+> Hello,
+> 
+> This patchset adds Avenger96 board support. This board is one of the
+> Consumer Edition boards of the 96Boards family from Arrow Electronics
+> featuring STM32MP157A MPU and has the following features:
+> 
+> SoC: STM32MP157AAC
+> PMIC: STPMIC1A
+> RAM: 1024 Mbyte @ 533MHz
+> Storage: eMMC v4.51: 8 Gbyte
+>           microSD Socket: UHS-1 v3.01
+> Ethernet Port: 10/100/1000 Mbit/s, IEEE 802.3 Compliant
+> Wireless: WiFi 5 GHz & 2.4GHz IEEE 802.11a/b/g/n/ac
+>            Bluetooth®v4.2 (BR/EDR/BLE)
+> USB: 2x Type A (USB 2.0) Host and 1x Micro B (USB 2.0) OTG
+> Display: HDMI: WXGA (1366x768)@ 60 fps, HDMI 1.4
+> LED: 4x User LED, 1x WiFi LED, 1x BT LED
+> 
+> More information about this board can be found in 96Boards website:
+> https://www.96boards.org/product/avenger96/
+> 
+> Thanks,
+> Mani
+> 
 
-diff --git a/drivers/gpu/drm/nouveau/Kconfig b/drivers/gpu/drm/nouveau/Kconfig
-index 66c839d8e9d1..96b9814e6d06 100644
---- a/drivers/gpu/drm/nouveau/Kconfig
-+++ b/drivers/gpu/drm/nouveau/Kconfig
-@@ -88,6 +88,7 @@ config DRM_NOUVEAU_SVM
- 	depends on DRM_NOUVEAU
- 	depends on HMM_MIRROR
- 	depends on STAGING
-+	select MIGRATE_VMA_HELPER
- 	default n
- 	help
- 	  Say Y here if you want to enable experimental support for
-diff --git a/mm/Kconfig b/mm/Kconfig
-index 7fa785551f96..55c9c661e2ee 100644
---- a/mm/Kconfig
-+++ b/mm/Kconfig
-@@ -680,7 +680,6 @@ config HMM_MIRROR
- 	depends on (X86_64 || PPC64)
- 	depends on MMU && 64BIT
- 	select MMU_NOTIFIER
--	select MIGRATE_VMA_HELPER
- 	help
- 	  Select HMM_MIRROR if you want to mirror range of the CPU page table of a
- 	  process into a device page table. Here, mirror means "keep synchronized".
--- 
-2.20.1
+Thanks to extend the stm32 family!
+I just format commit message title for device tree patches ("ARM: dts: 
+stm32 ...").
+
+Rob, I took also the dt-binding patches.
+
+Series applied on stm32-next.
+
+Regards
+Alex
+
 
