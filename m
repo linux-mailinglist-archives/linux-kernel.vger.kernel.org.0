@@ -2,81 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9C760494E4
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 00:12:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8929A494F7
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 00:15:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728775AbfFQWLu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 18:11:50 -0400
-Received: from gate2.alliedtelesis.co.nz ([202.36.163.20]:51579 "EHLO
-        gate2.alliedtelesis.co.nz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727145AbfFQWLq (ORCPT
+        id S1728126AbfFQWP2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 18:15:28 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:40488 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726116AbfFQWP2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 18:11:46 -0400
-Received: from mmarshal3.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 025A6886BF
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2019 10:11:43 +1200 (NZST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
-        s=mail181024; t=1560809503;
-        bh=DSLbrc5ukZCi8kilt1qLlyon/yI7IWOwk3BYxT6iAaE=;
-        h=From:To:CC:Subject:Date:References;
-        b=IyPfPrYPj2M2iG5aK4Gr1B2AilDoXhov+KIGUyS8MjUbMuYP13MQ3XvYcA+R3hoaE
-         iYyPNsC+GeS+8Ii/wZLwPUwn37q+d/HLZ0SHkHlXRdpKQxuTu4LFXsmTp4R3c1MXpF
-         jfW7f/k1xAa2k4IZHhamPdSLgEX8nV+Jd3gXzev6xkzAkJzc/sxtBmEnT9S+I8qg7k
-         VGXvR8qoQw+Ibv7/vBvQ/dwxwgThSgPeaaOhKi+j/1Qn2WUopoQn3/WNbc9qpjRmWB
-         VHY7a1DBaE8c9OotRkXbFdFmSx0LQedaWOdU4l+2I1V9jmHTZA/kSTF9LDhKzzKLU4
-         d0adHAE46YiIQ==
-Received: from svr-chch-ex1.atlnz.lc (Not Verified[10.32.16.77]) by mmarshal3.atlnz.lc with Trustwave SEG (v7,5,8,10121)
-        id <B5d08101f0001>; Tue, 18 Jun 2019 10:11:43 +1200
-Received: from svr-chch-ex1.atlnz.lc (2001:df5:b000:bc8:409d:36f5:8899:92e8)
- by svr-chch-ex1.atlnz.lc (2001:df5:b000:bc8:409d:36f5:8899:92e8) with
- Microsoft SMTP Server (TLS) id 15.0.1156.6; Tue, 18 Jun 2019 10:11:42 +1200
-Received: from svr-chch-ex1.atlnz.lc ([fe80::409d:36f5:8899:92e8]) by
- svr-chch-ex1.atlnz.lc ([fe80::409d:36f5:8899:92e8%12]) with mapi id
- 15.00.1156.000; Tue, 18 Jun 2019 10:11:42 +1200
-From:   Chris Packham <Chris.Packham@alliedtelesis.co.nz>
-To:     Richard Weinberger <richard.weinberger@gmail.com>
-CC:     "dwmw2@infradead.org" <dwmw2@infradead.org>,
-        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
-        "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
-        "miquel.raynal@bootlin.com" <miquel.raynal@bootlin.com>,
-        "richard@nod.at" <richard@nod.at>,
-        "vigneshr@ti.com" <vigneshr@ti.com>,
-        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 1/2] mtd: concat: refactor concat_lock/concat_unlock
-Thread-Topic: [PATCH v2 1/2] mtd: concat: refactor concat_lock/concat_unlock
-Thread-Index: AQHVEPTbCX8jgKCQ/EWiWr4BFnYFGQ==
-Date:   Mon, 17 Jun 2019 22:11:42 +0000
-Message-ID: <365a80987504424f8685faaceb23b468@svr-chch-ex1.atlnz.lc>
-References: <20190522231948.17559-1-chris.packham@alliedtelesis.co.nz>
- <355dad1321ed46baa98ca6f47b4d00b5@svr-chch-ex1.atlnz.lc>
- <CAFLxGvwNNWKzbfKvDjAK6rujbr5qtmVAWCDD5aULO4BVKutRKw@mail.gmail.com>
-Accept-Language: en-NZ, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [2001:df5:b000:22:3a2c:4aff:fe70:2b02]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Mon, 17 Jun 2019 18:15:28 -0400
+Received: by mail-wr1-f67.google.com with SMTP id p11so11707490wre.7
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2019 15:15:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=aOxrv4Z+duhzHk+Vvgki6wKRY9I+T3teV7bGXJE2hg4=;
+        b=aY49b7WkuTfBi9s+q3YkqPFoksMYySMOhjBU6L7c9cc3C7zQp4p2+UV4mY95F/0+JH
+         tL2UKDIzzhClKL9WqK/0Xcgf5BKsw0fpZTFv4wGWckmU7Bj/9XiimGYc94tZJV6KoFnl
+         beS12Vz7LfpA7sRaj1tu2a0eGRfqM+Vka0dXZ83xvafIRlOdvEhQIXWECXaxI/fR6zaA
+         hwTrx3seR9v6J6808XBpeexTzC0DeRJO3yWEKo945ztZeW0s/8p43ED0XsQdd7h3kqk5
+         acZlzLfwvorsKhYzrGPaUSAchILthJH/N4thVd/F5xGt6QCD91vonSWuuI5keLuP7Dab
+         6okw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=aOxrv4Z+duhzHk+Vvgki6wKRY9I+T3teV7bGXJE2hg4=;
+        b=n6dAvSt9M3XpaqQgYtfLkihjNUGz36wqp8yZQZ5IyRaIlQDvAQ3hUS/DHoVB8O+GPm
+         qxffCzIsFJc9f9jGxj4IeHUUUMS0UgoRb7c0uAL1H1S8daAkcNNsSXrT7nYeaGKaA5l9
+         SEPUPvcRpZcli3qPkFJtAH96b+G4CSkBulvB6JTgWb4rbEoZ+5Ea4ZSzvFdfLiU55wYC
+         wQi1odk6m34GCYvDWPGKwNJurcGTLAqHe/zCl0La85lR1mN09Vw9zinXnJHUIMdBiwfp
+         qpOclgrI6TJvs6NhcAGnzunUUI8jZR/YT55fEgNcKoeVwrLwE1QpxDDGlyfYVeIHpSFO
+         nx0g==
+X-Gm-Message-State: APjAAAXkklEHwLsJs8xuDm10tea7EU6pYMsHXLVSC4f/Zu/uuHTP6RRa
+        e+GvE1ceK3HklLlIUqnFfFpNiJtpXByfCnZo0D8=
+X-Google-Smtp-Source: APXvYqzIRENvbCsYIcq6eR/PMaPMcy9DkvAWKBfar8wlTlCUFzrbGjxFQHJKL/sWdXUH34woXRKOQ0zdzM7JxnWZL1U=
+X-Received: by 2002:adf:ea8b:: with SMTP id s11mr33675436wrm.100.1560809726001;
+ Mon, 17 Jun 2019 15:15:26 -0700 (PDT)
 MIME-Version: 1.0
+References: <1558024913-26502-1-git-send-email-kdasu.kdev@gmail.com> <CAFLxGvwjqo27VQ092WV9=6N5RJr-M7aL0HYVWkeaCYbY3XWa1w@mail.gmail.com>
+In-Reply-To: <CAFLxGvwjqo27VQ092WV9=6N5RJr-M7aL0HYVWkeaCYbY3XWa1w@mail.gmail.com>
+From:   Richard Weinberger <richard.weinberger@gmail.com>
+Date:   Tue, 18 Jun 2019 00:15:14 +0200
+Message-ID: <CAFLxGvyGFtacE3mgZ03zrOeF2S24KdtGj+Qy-3kmA2wbRhNJYQ@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] mtd: Add flag to indicate panic_write
+To:     Kamal Dasu <kdasu.kdev@gmail.com>
+Cc:     linux-mtd@lists.infradead.org,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Richard Weinberger <richard@nod.at>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        bcm-kernel-feedback-list@broadcom.com,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Brian Norris <computersforpeace@gmail.com>,
+        David Woodhouse <dwmw2@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 18/06/19 10:08 AM, Richard Weinberger wrote:=0A=
-> On Fri, Jun 14, 2019 at 5:26 AM Chris Packham=0A=
-> <Chris.Packham@alliedtelesis.co.nz> wrote:=0A=
->>=0A=
->> Hi All,=0A=
->>=0A=
->> Ping?=0A=
-> =0A=
-> Your patch is not lost. We start soon with collecting all material for=0A=
-> the merge window. :-)=0A=
-> =0A=
-=0A=
-OK thanks for the confirmation and sorry for the noise.=0A=
+On Fri, May 17, 2019 at 10:08 AM Richard Weinberger
+<richard.weinberger@gmail.com> wrote:
+>
+> On Thu, May 16, 2019 at 6:42 PM Kamal Dasu <kdasu.kdev@gmail.com> wrote:
+> >
+> > Added a flag to indicate a panic_write so that low level drivers can
+> > use it to take required action where applicable, to ensure oops data
+> > gets written to assigned mtd device.
+> >
+> > Signed-off-by: Kamal Dasu <kdasu.kdev@gmail.com>
+> > ---
+> >  drivers/mtd/mtdcore.c   | 3 +++
+> >  include/linux/mtd/mtd.h | 6 ++++++
+> >  2 files changed, 9 insertions(+)
+> >
+> > diff --git a/drivers/mtd/mtdcore.c b/drivers/mtd/mtdcore.c
+> > index 76b4264..a83decd 100644
+> > --- a/drivers/mtd/mtdcore.c
+> > +++ b/drivers/mtd/mtdcore.c
+> > @@ -1138,6 +1138,9 @@ int mtd_panic_write(struct mtd_info *mtd, loff_t to, size_t len, size_t *retlen,
+> >                 return -EROFS;
+> >         if (!len)
+> >                 return 0;
+> > +       if (!mtd->oops_panic_write)
+> > +               mtd->oops_panic_write = true;
+> > +
+>
+> You can set the flag unconditionally.
+> If it is set, it will stay so, and setting it again, won't hurt.
+>
+> >         return mtd->_panic_write(mtd, to, len, retlen, buf);
+> >  }
+> >  EXPORT_SYMBOL_GPL(mtd_panic_write);
+> > diff --git a/include/linux/mtd/mtd.h b/include/linux/mtd/mtd.h
+> > index 677768b..791c34d 100644
+> > --- a/include/linux/mtd/mtd.h
+> > +++ b/include/linux/mtd/mtd.h
+> > @@ -330,6 +330,12 @@ struct mtd_info {
+> >         int (*_get_device) (struct mtd_info *mtd);
+> >         void (*_put_device) (struct mtd_info *mtd);
+> >
+> > +       /*
+> > +        * flag indicates a panic write, low level drivers can take appropriate
+> > +        * action if required to ensure writes go through
+> > +        */
+> > +       bool oops_panic_write;
+> > +
+>
+> Maybe we find a better name for it.
+> panic_write_triggered?
+
+ping?
+I'm happy with the overall approach.
+So let's target the upcoming merge window.
+Can you please sort my two comments out? :-)
+
+-- 
+Thanks,
+//richard
