@@ -2,85 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ABBF7483BA
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 15:19:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 540E6483E2
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 15:26:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727039AbfFQNTV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 09:19:21 -0400
-Received: from foss.arm.com ([217.140.110.172]:49700 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725884AbfFQNTV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 09:19:21 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7BAED28;
-        Mon, 17 Jun 2019 06:19:20 -0700 (PDT)
-Received: from [10.1.196.93] (en101.cambridge.arm.com [10.1.196.93])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C45D13F246;
-        Mon, 17 Jun 2019 06:19:19 -0700 (PDT)
-Subject: Re: [PATCH] coresight: platform: add OF/APCI dependency
-To:     arnd@arndb.de, mathieu.poirier@linaro.org,
-        alexander.shishkin@linux.intel.com
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20190617125908.1674177-1-arnd@arndb.de>
-From:   Suzuki K Poulose <suzuki.poulose@arm.com>
-Message-ID: <f91b2cad-a16e-6474-59a6-82ad890a3a54@arm.com>
-Date:   Mon, 17 Jun 2019 14:19:15 +0100
+        id S1727574AbfFQN0n (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 09:26:43 -0400
+Received: from smtp121.ord1c.emailsrvr.com ([108.166.43.121]:44980 "EHLO
+        smtp121.ord1c.emailsrvr.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726028AbfFQN0n (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Jun 2019 09:26:43 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mev.co.uk;
+        s=20190130-41we5z8j; t=1560777558;
+        bh=5TbJE6kgkkLp1/JINzOKzzcb0A8rBGMKS/yWgPbV0Bo=;
+        h=Subject:To:From:Date:From;
+        b=aasxPrsCPX9YDpRl6CZ8FO8w7OMs0IipOKSScZ3pErTJc9HuVa6NaAqBGrviIXIVB
+         UhNJfVpuIuspNhY6/Q2b7ZEwRjjZzMjSVMOMQkjLnRNsJx5y87AAPhgxHWd3It//Tz
+         VTpGqV09l1TxI1WKwkK3C3jUU4iHDDyBNuLJOOlg=
+X-Auth-ID: abbotti@mev.co.uk
+Received: by smtp16.relay.ord1c.emailsrvr.com (Authenticated sender: abbotti-AT-mev.co.uk) with ESMTPSA id 90654C0270;
+        Mon, 17 Jun 2019 09:19:17 -0400 (EDT)
+X-Sender-Id: abbotti@mev.co.uk
+Received: from [10.0.0.62] (remote.quintadena.com [81.133.34.160])
+        (using TLSv1.2 with cipher AES128-SHA)
+        by 0.0.0.0:465 (trex/5.7.12);
+        Mon, 17 Jun 2019 09:19:18 -0400
+Subject: Re: [PATCH][next] staging: comedi: usbdux: remove redundant
+ initialization of fx2delay
+To:     Colin King <colin.king@canonical.com>,
+        H Hartley Sweeten <hsweeten@visionengravers.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        devel@driverdev.osuosl.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20190617130358.28749-1-colin.king@canonical.com>
+From:   Ian Abbott <abbotti@mev.co.uk>
+Organization: MEV Ltd.
+Message-ID: <fe0881ce-90aa-0689-7563-0d94aeebb461@mev.co.uk>
+Date:   Mon, 17 Jun 2019 14:19:16 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-In-Reply-To: <20190617125908.1674177-1-arnd@arndb.de>
+In-Reply-To: <20190617130358.28749-1-colin.king@canonical.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+Content-Language: en-GB
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Arnd,
-
-On 17/06/2019 13:58, Arnd Bergmann wrote:
-> When neither CONFIG_OF nor CONFIG_ACPI are set, we get a harmless
-> build warning:
+On 17/06/2019 14:03, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
 > 
-> drivers/hwtracing/coresight/coresight-platform.c:26:12: error: unused function 'coresight_alloc_conns'
->        [-Werror,-Wunused-function]
-> static int coresight_alloc_conns(struct device *dev,
->             ^
-> drivers/hwtracing/coresight/coresight-platform.c:46:1: error: unused function 'coresight_find_device_by_fwnode'
->        [-Werror,-Wunused-function]
-> coresight_find_device_by_fwnode(struct fwnode_handle *fwnode)
+> Variable fx2delay is being initialized to a value that is never read
+> and is being re-assigned a few statements later. The initialization
+> is redundant and can be removed.
 > 
-> As the code is useless in that configuration anyway, just add
-> a Kconfig dependency that only allows building when at least
-> one of the two is set.
-> 
-> This should not hinder compile-testing, as CONFIG_OF can be
-> enabled on any architecture.
-
-Ok, that justifies why "not using ARM || ARM64" is better.
-
-
-> 
-> Fixes: ac0e232c12f0 ("coresight: platform: Use fwnode handle for device search")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-
-Reviewed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-
+> Addresses-Coverity: ("Unused value")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 > ---
->   drivers/hwtracing/coresight/Kconfig | 1 +
->   1 file changed, 1 insertion(+)
+>   drivers/staging/comedi/drivers/usbdux.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/drivers/hwtracing/coresight/Kconfig b/drivers/hwtracing/coresight/Kconfig
-> index 5487d4a1abc2..14638db4991d 100644
-> --- a/drivers/hwtracing/coresight/Kconfig
-> +++ b/drivers/hwtracing/coresight/Kconfig
-> @@ -4,6 +4,7 @@
->   #
->   menuconfig CORESIGHT
->   	bool "CoreSight Tracing Support"
-> +	depends on OF || ACPI
->   	select ARM_AMBA
->   	select PERF_EVENTS
->   	help
+> diff --git a/drivers/staging/comedi/drivers/usbdux.c b/drivers/staging/comedi/drivers/usbdux.c
+> index b8f54b7fb34a..0350f303d557 100644
+> --- a/drivers/staging/comedi/drivers/usbdux.c
+> +++ b/drivers/staging/comedi/drivers/usbdux.c
+> @@ -1226,7 +1226,7 @@ static int usbdux_pwm_period(struct comedi_device *dev,
+>   			     unsigned int period)
+>   {
+>   	struct usbdux_private *devpriv = dev->private;
+> -	int fx2delay = 255;
+> +	int fx2delay;
+>   
+>   	if (period < MIN_PWM_PERIOD)
+>   		return -EAGAIN;
 > 
+
+Looks good, thanks!
+
+Reviewed-by: Ian Abbott <abbotti@mev.co.uk>
+
+-- 
+-=( Ian Abbott <abbotti@mev.co.uk> || Web: www.mev.co.uk )=-
+-=( MEV Ltd. is a company registered in England & Wales. )=-
+-=( Registered number: 02862268.  Registered address:    )=-
+-=( 15 West Park Road, Bramhall, STOCKPORT, SK7 3JZ, UK. )=-
