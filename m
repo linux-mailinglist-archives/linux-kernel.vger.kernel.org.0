@@ -2,57 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B3338491C9
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 22:58:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A2EC491D4
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 22:59:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727317AbfFQU6W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 16:58:22 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:38196 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726107AbfFQU6W (ORCPT
+        id S1727675AbfFQU7R (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 16:59:17 -0400
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:41820 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725497AbfFQU7Q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 16:58:22 -0400
-Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::3d5])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id A9B6B15130B18;
-        Mon, 17 Jun 2019 13:58:21 -0700 (PDT)
-Date:   Mon, 17 Jun 2019 13:58:21 -0700 (PDT)
-Message-Id: <20190617.135821.1970853531857836652.davem@davemloft.net>
-To:     jasowang@redhat.com
-Cc:     mst@redhat.com, kvm@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, huhai@kylinos.cn
-Subject: Re: [PATCH net-next] vhost_net: disable zerocopy by default
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20190617092054.12299-1-jasowang@redhat.com>
-References: <20190617092054.12299-1-jasowang@redhat.com>
-X-Mailer: Mew version 6.8 on Emacs 26.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Mon, 17 Jun 2019 13:58:21 -0700 (PDT)
+        Mon, 17 Jun 2019 16:59:16 -0400
+Received: by mail-qt1-f195.google.com with SMTP id d17so7623989qtj.8;
+        Mon, 17 Jun 2019 13:59:16 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=nIPHa48eC477VDjHx1ZCYDwdsGRn2h4fpH2GcgXY5WE=;
+        b=PVJS3rQlo7EgpZ0Osav7kLrFVPZxQecQ4M+54gFZNIzropfO06Aq8VDFc9/cpUKB5y
+         8/eyxwxU95+kZ0vHbzVmJwA9wSAk8mB9dPmaVCZ1SxR/Go97yddOw0ZYlw4CpbD7rB3n
+         KIiySWXJoLslXNIgX6MSMhlR3QRrWGnUXjoGja6Tmq4+7rW5vTi4RYTl9p3Cvf6InaPH
+         yEm7IEo3DY8SrmkgCMfqROkFQlg+hokKjhReuHngNBPBIouoVfWn3KQOWVL5BqrRGQ+o
+         OLCvoGxHigCVtZIi0nwi/m7gXlGc2FVvCo146yuFjfN7Ii3qsRnQGfr130rVI0e77NkQ
+         5uhA==
+X-Gm-Message-State: APjAAAUjfunF3nYpqu6MkAWAZeDDL47PaR8mPNDUyudyh0IAlwt4CxG1
+        Wie4p2jXgk0o0lgWkjCHvBokjibpVdY8UO7/2PI=
+X-Google-Smtp-Source: APXvYqwdO9AXswCnqssJhbkYuHKAqCG+M7GEDGIS0W5qNxg/G4WXNXsrWuIOG9pTVB9wQ5YtWiHQyphDJ77tPGzwraA=
+X-Received: by 2002:a0c:b758:: with SMTP id q24mr23622267qve.45.1560805155468;
+ Mon, 17 Jun 2019 13:59:15 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190617132440.2721536-1-arnd@arndb.de> <20190617144335.q243r7l7ox7galhl@gondor.apana.org.au>
+In-Reply-To: <20190617144335.q243r7l7ox7galhl@gondor.apana.org.au>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Mon, 17 Jun 2019 22:58:58 +0200
+Message-ID: <CAK8P3a2g4ZDcyxuSOkYzOmqV3Hc3YF3Anc3GQysvGo9bijYufQ@mail.gmail.com>
+Subject: Re: [PATCH] drbd: dynamically allocate shash descriptor
+To:     Herbert Xu <herbert@gondor.apana.org.au>
+Cc:     Philipp Reisner <philipp.reisner@linbit.com>,
+        Lars Ellenberg <lars.ellenberg@linbit.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Roland Kammerer <roland.kammerer@linbit.com>,
+        Eric Biggers <ebiggers@google.com>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Kees Cook <keescook@chromium.org>, drbd-dev@lists.linbit.com,
+        linux-block <linux-block@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jason Wang <jasowang@redhat.com>
-Date: Mon, 17 Jun 2019 05:20:54 -0400
+On Mon, Jun 17, 2019 at 4:43 PM Herbert Xu <herbert@gondor.apana.org.au> wrote:
+>
+> On Mon, Jun 17, 2019 at 03:24:13PM +0200, Arnd Bergmann wrote:
+> > Building with clang and KASAN, we get a warning about an overly large
+> > stack frame on 32-bit architectures:
+> >
+> > drivers/block/drbd/drbd_receiver.c:921:31: error: stack frame size of 1280 bytes in function 'conn_connect'
+> >       [-Werror,-Wframe-larger-than=]
+> >
+> > We already allocate other data dynamically in this function, so
+> > just do the same for the shash descriptor, which makes up most of
+> > this memory.
+> >
+> > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> > ---
+> >  drivers/block/drbd/drbd_receiver.c | 10 +++++++++-
+> >  1 file changed, 9 insertions(+), 1 deletion(-)
+>
+> Does this patch fix the warning as well?
 
-> Vhost_net was known to suffer from HOL[1] issues which is not easy to
-> fix. Several downstream disable the feature by default. What's more,
-> the datapath was split and datacopy path got the support of batching
-> and XDP support recently which makes it faster than zerocopy part for
-> small packets transmission.
-> 
-> It looks to me that disable zerocopy by default is more
-> appropriate. It cold be enabled by default again in the future if we
-> fix the above issues.
-> 
-> [1] https://patchwork.kernel.org/patch/3787671/
-> 
-> Signed-off-by: Jason Wang <jasowang@redhat.com>
+The warning is gone with this patch. Instead of 1280 bytes for drbd_receiver,
+I now see 512 bytes, and 768 bytes for drbd_get_response, everything else is
+under 160 bytes in this file.
 
-Applied, thanks Jason.
+However, with the call chain of
+
+drbd_receiver
+   conn_connect
+       drbd_do_auth
+             drbd_get_response
+
+This still adds up to as much as before, so it only shuts up the
+warning but does not reduce the maximum stack usage.
+
+If we are sure that is ok, then your patch would be nicer,
+possibly with a 'noinline_for_stack' tag on drbd_get_response.
+
+       Arnd
