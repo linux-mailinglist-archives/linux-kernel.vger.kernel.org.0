@@ -2,33 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C718748808
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 17:56:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6E8E64880D
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 17:57:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728600AbfFQP4q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 11:56:46 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:50434 "EHLO
+        id S1728627AbfFQP5D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 11:57:03 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:50439 "EHLO
         atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727333AbfFQP4q (ORCPT
+        with ESMTP id S1727333AbfFQP5C (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 11:56:46 -0400
+        Mon, 17 Jun 2019 11:57:02 -0400
 Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 9B1BF80276; Mon, 17 Jun 2019 17:56:33 +0200 (CEST)
-Date:   Mon, 17 Jun 2019 17:56:43 +0200
+        id 2352980278; Mon, 17 Jun 2019 17:56:50 +0200 (CEST)
+Date:   Mon, 17 Jun 2019 17:57:00 +0200
 From:   Pavel Machek <pavel@ucw.cz>
-To:     Shawn Landden <shawn@git.icu>
-Cc:     linux-kernel@vger.kernel.org,
-        "Gustavo A . R . Silva" <gustavo@embeddedor.com>,
-        Joe Perches <joe@perches.com>,
-        Andy Whitcroft <apw@canonical.com>
-Subject: Re: [PATCH] Use fall-through attribute rather than magic comments
-Message-ID: <20190617155643.GA32544@amd>
-References: <20190316033841.7659-1-shawn@git.icu>
+To:     Sasha Levin <sashal@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        linux-leds@vger.kernel.org
+Subject: Re: [PATCH AUTOSEL 5.1 033/375] leds: avoid races with workqueue
+Message-ID: <20190617155659.GB32544@amd>
+References: <20190522192115.22666-1-sashal@kernel.org>
+ <20190522192115.22666-33-sashal@kernel.org>
+ <20190524225505.GA16076@amd>
+ <20190529185143.GH12898@sasha-vm>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="KsGdsel6WgEHnImy"
+        protocol="application/pgp-signature"; boundary="ftEhullJWpWg/VHq"
 Content-Disposition: inline
-In-Reply-To: <20190316033841.7659-1-shawn@git.icu>
+In-Reply-To: <20190529185143.GH12898@sasha-vm>
 User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -36,43 +38,38 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---KsGdsel6WgEHnImy
+--ftEhullJWpWg/VHq
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi!
 
-> +/*
-> + *   gcc: https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-=
-Wimplicit-fallthrough
-> + *   gcc: https://developers.redhat.com/blog/2017/03/10/wimplicit-fallth=
-rough-in-gcc-7/
-> + */
-> +#if __has_attribute(__fallthrough__)
-> +# define __fallthrough                    __attribute__((__fallthrough__=
-))
-> +#else
-> +# define __fallthrough
-> +#endif
+> >Could we hold this patch for now?
+>=20
+> Sure, dropped. Thanks!
 
-Is it good idea to add the __'s ? They look kind of ugly.=20
+So... fix for this now should be in mainline. But as original problem
+is not too severe, I don't think we need to apply this or the fixed
+version to stable.
+
+Best regards,
 									Pavel
 --=20
 (english) http://www.livejournal.com/~pavelmachek
 (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
 g.html
 
---KsGdsel6WgEHnImy
+--ftEhullJWpWg/VHq
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1
 
-iEYEARECAAYFAl0HuDsACgkQMOfwapXb+vLxuACguH4PoAow3Kt+DR2IqNag4udH
-jQIAn2cmzMyr8cjjeZcc4mdyVrRmKi3e
-=Z71h
+iEYEARECAAYFAl0HuEsACgkQMOfwapXb+vIN9gCghh2mt0P0yiQz64VCwTSsLCGE
+8k0AoLxWHBoA6YRevOHIQHADmm7JTh3U
+=ve35
 -----END PGP SIGNATURE-----
 
---KsGdsel6WgEHnImy--
+--ftEhullJWpWg/VHq--
