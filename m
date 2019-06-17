@@ -2,93 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B28164830A
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 14:52:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9A94248313
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 14:52:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728007AbfFQMvU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 08:51:20 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:38671 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727912AbfFQMvO (ORCPT
+        id S1728142AbfFQMvm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 08:51:42 -0400
+Received: from mail-vs1-f65.google.com ([209.85.217.65]:41809 "EHLO
+        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726121AbfFQMvl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 08:51:14 -0400
-Received: by mail-wm1-f68.google.com with SMTP id s15so8978517wmj.3
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2019 05:51:13 -0700 (PDT)
+        Mon, 17 Jun 2019 08:51:41 -0400
+Received: by mail-vs1-f65.google.com with SMTP id 2so2864413vso.8;
+        Mon, 17 Jun 2019 05:51:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=Yh8KWN22mWMhTl8rcvEzBYBWJNOHxR/ZVbPRRDE/D+g=;
-        b=q/VQwMJ7CaCCS2TpiY40tB9SR/0BGYUD9cg5QmvyZlgN0oSe9DGo/a+8W3tFnih/es
-         f/TGbxw2+NhrkghexAa4OElVuqj6adr3zChACFmOr55PBTOD/M1NIEdtp5/IEy9qU/kC
-         fX2Qrs7PhDGqUidNClIWZ04Lwg4RW4iXSfsUN/mQ3Fz6ReP9i0AdV914a9optyVwxJ9W
-         Xy6Y1mSeoVn1NeqGDQGLUT+gzK0PwP6QYlI5aEiS1G795pxPRN55vGKPX1Kr7l+p8xwx
-         9xxVx3Oo0mrnM/HpISh/Sd3kMq4WHV1BoTnn1nr+LgaU5NktIDT5p1PPAhig5lYx1wqZ
-         dRuw==
+        d=googlemail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=klPdjqqlVoeDREb75kQqStjinhVsI/mU0etQ6QnCaVA=;
+        b=Q7kHBLmkk8yeIcrJfSdKv0eDe8c6TIcykYfxeE+gtyxDGM7jTmWBX8X8LqO0Vz8wmh
+         l2H7Gj3rNds4mi0waYFOmJF58IVTdd8njCA3nt2QMsVA/in322QCir6CzFI8M8Jq+RI6
+         YLDvBk2D9gE6D8rmyfWqroIaIJxgFycHSyS4NRF7Zo2BY2Qag9JEILtsxLXUpFsVF9op
+         U3TVunfWmIcq5z0r1zZ3UousfHv+Y5FC10uYHhcLW+z/qmYV+1TCAl9OkJKcvx/K/+O1
+         zIAQ70uPMhRJ/QLvnR1n8XirV8I5X8DuBiVQLw5/I5wrY9+jsNdRYprh+F8aPtaKk29P
+         LX6g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=Yh8KWN22mWMhTl8rcvEzBYBWJNOHxR/ZVbPRRDE/D+g=;
-        b=tFRt4z3cu9g+V4A3Eu6ORVuWjzQn7x9nEVeJCoIOzhxRB7NjKqor2GZ75KDb06dJ27
-         iqVqCydBQi64yu+ewkErAdahsZW38YFOu4ApRWyDv4d5aqMXyWep/a4h6FQkahHkaQO6
-         0WnIIQDbqO5WlJIHgoSWpZBJqcfJARIBD5TjqJExdTbf/ga9mTrkK5pQj2HPP8AfF1JW
-         5+vftI2jIsOiLj3UB0SUcwQ20wrz4KYvMdYWan34tjZDqZun9OFK6GsOj0EB+6oA3ld/
-         SwTk3oPdhlIt4LY7LrTRK1Ew0xOW3IHP7tsvLmWmXRLWw5LfQMZgRDKOFd6gJRx0BZV5
-         l4Fw==
-X-Gm-Message-State: APjAAAVCSTpss/pWRcx0pXTa2Zs1mNeRuTI0/mFn+LjOGYJYT4Le48uB
-        fVq6L12L1u7LFhMb+kBnzCsoxw==
-X-Google-Smtp-Source: APXvYqyQ7uC0yXE6+rCbtoO1nXI3vuubKGuLiHCQLeIEVsa7DW/HvoU6icIxjcUwUpeyeJFFHJ6L2g==
-X-Received: by 2002:a1c:63c4:: with SMTP id x187mr17953607wmb.4.1560775872645;
-        Mon, 17 Jun 2019 05:51:12 -0700 (PDT)
-Received: from dell.watershed.co.uk ([2.27.35.243])
-        by smtp.gmail.com with ESMTPSA id o11sm10477852wmh.37.2019.06.17.05.51.11
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 17 Jun 2019 05:51:12 -0700 (PDT)
-From:   Lee Jones <lee.jones@linaro.org>
-To:     alokc@codeaurora.org, agross@kernel.org, david.brown@linaro.org,
-        bjorn.andersson@linaro.org, balbi@kernel.org,
-        gregkh@linuxfoundation.org, ard.biesheuvel@linaro.org,
-        jlhugo@gmail.com, linux-arm-msm@vger.kernel.org,
-        linux-usb@vger.kernel.org, felipe.balbi@linux.intel.com
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Lee Jones <lee.jones@linaro.org>
-Subject: [RESEND v4 4/4] usb: dwc3: qcom: Improve error handling
-Date:   Mon, 17 Jun 2019 13:51:05 +0100
-Message-Id: <20190617125105.6186-5-lee.jones@linaro.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190617125105.6186-1-lee.jones@linaro.org>
-References: <20190617125105.6186-1-lee.jones@linaro.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=klPdjqqlVoeDREb75kQqStjinhVsI/mU0etQ6QnCaVA=;
+        b=SWKhRB0NKz7Nz4os0WwEMufS3VRQ9nsvGuvM9dFiBCl7fhEtSff/DmWEBTgDCTB4+d
+         411tYMqXTLAXDKkyHgYFgpzlCxmFOxPxrhOpRDgNM6czejboJAwjcXOWH9fCX3DPr1EU
+         F4IAz1YN6guhNNxhB3OsiK5kbZ3hJNG48Du19k/eHjZUwlWfgRZlQ06luhw5D8ltKUJy
+         DSc6fFl99g54hhuQZTRvmDGQ+knYP79siKibnMO5Qrnk7eeaAE7KK5n3+ie3RV9mvXFy
+         Jd4PRJ/Ln6ZvW2kK6nXpXUCMndAndrWKIMVS72uo+e1QZ3t7uU5tml+Gm40FeLpRsykj
+         xm+g==
+X-Gm-Message-State: APjAAAUmIyGv6ILaDhOEArTk2Sc6cpANJbTZhb2AuYjGFGz1t3conkzg
+        DrhBfoKdEkyM8/NdxFIL+Ihfvd87B3Rjk1/vv/I=
+X-Google-Smtp-Source: APXvYqwFeWgFnNJblZqkjL2ae02IOcVqxIIBQrv40Ft1GMFRwdqN43eWUISS8RdMVxsuA8gLkKAFkvwqWO2Ghp/c13c=
+X-Received: by 2002:a67:de0b:: with SMTP id q11mr4656005vsk.134.1560775900716;
+ Mon, 17 Jun 2019 05:51:40 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190613154542.32438-1-sr@denx.de> <20190613154542.32438-3-sr@denx.de>
+ <CAGm1_kuyt5ue_3CuvryXw8L0=z0Bti5BeQMA50yRYhFmffcJuQ@mail.gmail.com>
+ <CAGm1_ksdQ5CNLGGNzHKBNKeLE3ByHvPyOkjYNoWWM+rw0q214Q@mail.gmail.com> <d62c1a2b-3e24-c109-a7fb-57190388d75f@denx.de>
+In-Reply-To: <d62c1a2b-3e24-c109-a7fb-57190388d75f@denx.de>
+From:   Yegor Yefremov <yegorslists@googlemail.com>
+Date:   Mon, 17 Jun 2019 14:51:15 +0200
+Message-ID: <CAGm1_ks0TWAkKGQ+k060hmwZi-i1jD2-KMqxex1QqrbujS00WQ@mail.gmail.com>
+Subject: Re: [PATCH 3/3 v6] tty/serial/8250: use mctrl_gpio helpers
+To:     Stefan Roese <sr@denx.de>
+Cc:     linux-serial@vger.kernel.org,
+        kernel list <linux-kernel@vger.kernel.org>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Giulio Benetti <giulio.benetti@micronovasrl.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-dwc3_qcom_clk_init() is called with of_count_phandle_with_args() as an
-argument.  If of_count_phandle_with_args() returns an error, the number
-of clocks will be a negative value and will lead to undefined behaviour.
+On Mon, Jun 17, 2019 at 2:42 PM Stefan Roese <sr@denx.de> wrote:
+>
+> On 17.06.19 11:51, Yegor Yefremov wrote:
+>
+> <snip>
+>
+> >>> @@ -1944,11 +1948,15 @@ unsigned int serial8250_do_get_mctrl(struct uart_port *port)
+> >>>   {
+> >>>          struct uart_8250_port *up = up_to_u8250p(port);
+> >>>          unsigned int status;
+> >>> +       unsigned int val = 0;
+> >>>
+> >>>          serial8250_rpm_get(up);
+> >>>          status = serial8250_modem_status(up);
+> >>>          serial8250_rpm_put(up);
+> >>>
+> >>> +       if (up->gpios)
+> >>> +               return mctrl_gpio_get(up->gpios, &val);
+> >>> +
+> >>
+> >> What happens when you have a mixed setup i.e. CTS controlled by UART
+> >> but other status pins controlled by GPIO? In this case CTS status
+> >> won't be returned. Do I see it right?
+>
+> Yes, your analysis does seem to be correct. Please note that I did
+> not intentionally did change it this way. I was not thinking about
+> such a "mixed design".
+>
+> > What about something like this:
+> >
+> > unsigned int serial8250_do_get_mctrl(struct uart_port *port)
+> >    {
+> >            struct uart_8250_port *up = up_to_u8250p(port);
+> >            unsigned int status;
+> >            unsigned int val;
+> >
+> >            serial8250_rpm_get(up);
+> >            status = serial8250_modem_status(up);
+> >            serial8250_rpm_put(up);
+> >
+> >            val = serial8250_MSR_to_TIOCM(status);
+> >            if (up->gpios)
+> >                    mctrl_gpio_get(up->gpios, &val);
+> >
+> >            return val;
+> >    }
+>
+> Looks good to me, thanks. Do you have such a setup with some modem
+> control signal handled via GPIO and some via the UART? Could you
+> test such a change?
 
-Ensure we check for an error before attempting to blindly use the value.
+I already have :-)
 
-Signed-off-by: Lee Jones <lee.jones@linaro.org>
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
----
- drivers/usb/dwc3/dwc3-qcom.c | 3 +++
- 1 file changed, 3 insertions(+)
+This my DTS file:
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/arch/arm/boot/dts/am335x-baltos-ir5221.dts#n38
 
-diff --git a/drivers/usb/dwc3/dwc3-qcom.c b/drivers/usb/dwc3/dwc3-qcom.c
-index 2d050303d564..c59e9d8e8609 100644
---- a/drivers/usb/dwc3/dwc3-qcom.c
-+++ b/drivers/usb/dwc3/dwc3-qcom.c
-@@ -409,6 +409,9 @@ static int dwc3_qcom_clk_init(struct dwc3_qcom *qcom, int count)
- 	if (!np || !count)
- 		return 0;
- 
-+	if (count < 0)
-+		return count;
-+
- 	qcom->num_clocks = count;
- 
- 	qcom->clks = devm_kcalloc(dev, qcom->num_clocks,
--- 
-2.17.1
-
+Yegor
