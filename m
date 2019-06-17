@@ -2,122 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ABCB148B75
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 20:10:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8A88148B39
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 20:02:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728681AbfFQSKA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 14:10:00 -0400
-Received: from mga18.intel.com ([134.134.136.126]:62757 "EHLO mga18.intel.com"
+        id S1727990AbfFQSCx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 14:02:53 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:50144 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728547AbfFQSJx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 14:09:53 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Jun 2019 11:09:52 -0700
-X-ExtLoop1: 1
-Received: from romley-ivt3.sc.intel.com ([172.25.110.60])
-  by fmsmga005.fm.intel.com with ESMTP; 17 Jun 2019 11:09:51 -0700
-From:   Fenghua Yu <fenghua.yu@intel.com>
-To:     "Thomas Gleixner" <tglx@linutronix.de>,
-        "Ingo Molnar" <mingo@redhat.com>, "Borislav Petkov" <bp@alien8.de>,
-        "H Peter Anvin" <hpa@zytor.com>,
-        "Christopherson Sean J" <sean.j.christopherson@intel.com>,
-        "Paolo Bonzini" <pbonzini@redhat.com>,
-        "Radim Krcmar" <rkrcmar@redhat.com>,
-        "Ravi V Shankar" <ravi.v.shankar@intel.com>
-Cc:     "linux-kernel" <linux-kernel@vger.kernel.org>,
-        "x86" <x86@kernel.org>, Fenghua Yu <fenghua.yu@intel.com>
-Subject: [PATCH v2 2/2] x86/cpufeatures: Enumerate new AVX512 BFLOAT16 instructions
-Date:   Mon, 17 Jun 2019 11:00:16 -0700
-Message-Id: <1560794416-217638-3-git-send-email-fenghua.yu@intel.com>
-X-Mailer: git-send-email 2.5.0
-In-Reply-To: <1560794416-217638-1-git-send-email-fenghua.yu@intel.com>
-References: <1560794416-217638-1-git-send-email-fenghua.yu@intel.com>
+        id S1726047AbfFQSCw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Jun 2019 14:02:52 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id CC29781DFE;
+        Mon, 17 Jun 2019 18:02:46 +0000 (UTC)
+Received: from oldenburg2.str.redhat.com (ovpn-116-59.ams2.redhat.com [10.36.116.59])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 4D96978401;
+        Mon, 17 Jun 2019 18:02:41 +0000 (UTC)
+From:   Florian Weimer <fweimer@redhat.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Joseph Myers <joseph@codesourcery.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Netdev <netdev@vger.kernel.org>,
+        Laura Abbott <labbott@redhat.com>,
+        Paul Burton <pburton@wavecomp.com>,
+        Deepa Dinamani <deepa.kernel@gmail.com>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] uapi: avoid namespace conflict in linux/posix_types.h
+References: <20190319165123.3967889-1-arnd@arndb.de>
+        <alpine.DEB.2.21.1905072249570.19308@digraph.polyomino.org.uk>
+        <87tvd2j9ye.fsf@oldenburg2.str.redhat.com>
+        <CAHk-=wio1e4=WUUwmo-Ph55BEgH_X3oXzBpvPyLQg2TxzfGYuw@mail.gmail.com>
+        <871s05fd8o.fsf@oldenburg2.str.redhat.com>
+        <CAHk-=wg4ijSoPq-w7ct_VuZvgHx+tUv_QX-We-62dEwK+AOf2w@mail.gmail.com>
+        <87sgs8igfj.fsf@oldenburg2.str.redhat.com>
+        <CAHk-=wjCwnk0nfgCcMYqqX6o9bBrutDtut_fzZ-2VwiZR1y4kw@mail.gmail.com>
+Date:   Mon, 17 Jun 2019 20:02:39 +0200
+In-Reply-To: <CAHk-=wjCwnk0nfgCcMYqqX6o9bBrutDtut_fzZ-2VwiZR1y4kw@mail.gmail.com>
+        (Linus Torvalds's message of "Mon, 17 Jun 2019 10:49:44 -0700")
+Message-ID: <87k1dkdr9c.fsf@oldenburg2.str.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.2 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Mon, 17 Jun 2019 18:02:52 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-AVX512 Vector Neural Network Instructions (VNNI) in Intel Deep Learning
-Boost support BFLOAT16 format (BF16). BF16 is a short version of FP32 and
-has several advantages over FP16. BF16 offers more than enough range for
-deep learning training tasks and doesn't need to handle hardware exception
-as this is a performance optimization. FP32 accumulation after the
-multiply is essential to achieve sufficient numerical behavior on an
-application level.
+* Linus Torvalds:
 
-AVX512 BFLOAT16 instructions can be enumerated by:
-	CPUID.7.1:EAX[bit 5] AVX512_BF16
+>> A different approach would rename <asm/posix_types.h> to something more
+>> basic, exclude the two structs, and move all internal #includes which do
+>> need the structs to the new header.
+>
+> In fact, I wouldn't even rename <posix_types.h> at all, I'd just make
+> sure it's namespace-clean.
+>
+> I _think_ the only thing causing problems is  '__kernel_fsid_t' due to
+> that "val[]" thing, so just remove ity entirely, and add it to
+> <statfs.h> instead.
 
-Use word 12, which is empty now, to hold features in CPUID.7.1:EAX
-including AVX512_BF16. Leaf CPUID_DUMMY is renamed as CPUID_7_1_EAX.
+There's also __kernel_fd_set in <linux/posix_types.h>.  I may have
+lumped this up with <asm/posix_types.h>, but it has the same problem.
 
-Detailed information of the CPUID bit and AVX512 BFLOAT16 instructions
-can be found in the latest Intel Architecture Instruction Set Extensions
-and Future Features Programming Reference.
+If it's okay to move them both to more natural places (maybe
+<asm/statfs.h> and <linux/socket.h>), I think that should work well for
+glibc.
 
-Signed-off-by: Fenghua Yu <fenghua.yu@intel.com>
----
- arch/x86/include/asm/cpufeature.h  | 2 +-
- arch/x86/include/asm/cpufeatures.h | 3 +++
- arch/x86/kernel/cpu/common.c       | 3 +++
- arch/x86/kernel/cpu/cpuid-deps.c   | 1 +
- 4 files changed, 8 insertions(+), 1 deletion(-)
+However, application code may have to include additional header files.
+I think the GCC/LLVM sanitizers currently get __kernel_fd_set from
+<linux/posix_types.h> (but I think we discussed it before, they really
+shouldn't use this type because it's misleading).
 
-diff --git a/arch/x86/include/asm/cpufeature.h b/arch/x86/include/asm/cpufeature.h
-index 403f70c2e431..58acda503817 100644
---- a/arch/x86/include/asm/cpufeature.h
-+++ b/arch/x86/include/asm/cpufeature.h
-@@ -23,7 +23,7 @@ enum cpuid_leafs
- 	CPUID_7_0_EBX,
- 	CPUID_D_1_EAX,
- 	CPUID_LNX_4,
--	CPUID_DUMMY,
-+	CPUID_7_1_EAX,
- 	CPUID_8000_0008_EBX,
- 	CPUID_6_EAX,
- 	CPUID_8000_000A_EDX,
-diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
-index 4f0a3d093794..625191ceb214 100644
---- a/arch/x86/include/asm/cpufeatures.h
-+++ b/arch/x86/include/asm/cpufeatures.h
-@@ -280,6 +280,9 @@
- #define X86_FEATURE_CQM_MBM_TOTAL	(11*32+ 2) /* LLC Total MBM monitoring */
- #define X86_FEATURE_CQM_MBM_LOCAL	(11*32+ 3) /* LLC Local MBM monitoring */
- 
-+/* Intel-defined CPU features, CPUID level 0x00000007:1 (EAX), word 12 */
-+#define X86_FEATURE_AVX512_BF16		(12*32+ 5) /* AVX512 BFLOAT16 instructions */
-+
- /* AMD-defined CPU features, CPUID level 0x80000008 (EBX), word 13 */
- #define X86_FEATURE_CLZERO		(13*32+ 0) /* CLZERO instruction */
- #define X86_FEATURE_IRPERF		(13*32+ 1) /* Instructions Retired Count */
-diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-index f080be35da41..645a6c52d925 100644
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -848,6 +848,9 @@ void get_cpu_cap(struct cpuinfo_x86 *c)
- 		c->x86_capability[CPUID_7_0_EBX] = ebx;
- 		c->x86_capability[CPUID_7_ECX] = ecx;
- 		c->x86_capability[CPUID_7_EDX] = edx;
-+
-+		cpuid_count(0x00000007, 1, &eax, &ebx, &ecx, &edx);
-+		c->x86_capability[CPUID_7_1_EAX] = eax;
- 	}
- 
- 	/* Extended state features: level 0x0000000d */
-diff --git a/arch/x86/kernel/cpu/cpuid-deps.c b/arch/x86/kernel/cpu/cpuid-deps.c
-index fa07a224e7b9..a444028d8145 100644
---- a/arch/x86/kernel/cpu/cpuid-deps.c
-+++ b/arch/x86/kernel/cpu/cpuid-deps.c
-@@ -62,6 +62,7 @@ static const struct cpuid_dep cpuid_deps[] = {
- 	{ X86_FEATURE_CQM_OCCUP_LLC,	X86_FEATURE_CQM_LLC   },
- 	{ X86_FEATURE_CQM_MBM_TOTAL,	X86_FEATURE_CQM_LLC   },
- 	{ X86_FEATURE_CQM_MBM_LOCAL,	X86_FEATURE_CQM_LLC   },
-+	{ X86_FEATURE_AVX512_BF16,	X86_FEATURE_AVX512VL  },
- 	{}
- };
- 
--- 
-2.19.1
-
+Thanks,
+Florian
