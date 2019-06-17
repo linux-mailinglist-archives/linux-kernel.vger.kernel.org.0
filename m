@@ -2,48 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2DECB487D9
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 17:51:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B1524487DE
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 17:51:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728514AbfFQPun (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 11:50:43 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:41846 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727557AbfFQPum (ORCPT
+        id S1728170AbfFQPuv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 11:50:51 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:45238 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728546AbfFQPut (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 11:50:42 -0400
-Received: by mail-pf1-f195.google.com with SMTP id m30so5904947pff.8
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2019 08:50:42 -0700 (PDT)
+        Mon, 17 Jun 2019 11:50:49 -0400
+Received: by mail-pg1-f193.google.com with SMTP id s21so6026427pga.12
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2019 08:50:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=bhNu4utWYAV9/FCkXg5cdnSlw/3mDgUJ9qG+Sjofx/A=;
-        b=TMP9idnk9y5qeJ+IFANT4FG5otjDpCw2gzXTklpz8ikhGZW4m/xKkO1vpIoModayQk
-         8uSFZcpK94h6ZgC1lcS7izwVrfBjHTgaG6TVdaLpgJX9zATvBK5fG0sQTbDnlQ7QNuQL
-         vdGgpmwtkfjx3vuUnYEDm0RV794PJFJqpV/00Qxd1F0ZD0GVPvGkoWu/K6cPucmGirhA
-         Y7mp2/M2YyD/i49ObZTxc69x5bWLAWxdJy1FwUQvaTlcVBfnIk0pp18zBZJxCxv3bx2U
-         kCcbLJrD9jx0mdKwg507rytfp38bRSiaJPlFWdlhmHERl5b5JEAGsjyC6v85MH1Mf8Bx
-         7UUw==
+        bh=swE05brVXtK4K444C06Ee7EjL8AS/Iz3XKQck7SeOkQ=;
+        b=zNXCeH0d5MSZ48Szd4E1IfUmCprVMeRqZeqnCoGUphntbzXQcv3HkNPwo21TENmxrC
+         gdO/l70dCXWO1c1OfgNP1+r5auTbIVulw210l8401N2uvETaZ20ncCY+abtvfzR032Re
+         b6FDCsj6BEtSgDZ8rnQgJYEUS29/0tm/NSrQ0N/3WKs2KyUAs6Zvh9iWiGgllyY7nZ8T
+         BvonxTtt9v75Ycglh2mPjYQd5IYmM/JNzuq46QthbwQNEeQ3dUKZiD6bHbYmyxuLzAXV
+         bBOl1DaLeYyRbDP3e8t0mo7oU3ycmzKXYmQ6R4g5RiriIq9Au6a6Qskx10/V3D3wT3NR
+         8RsA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=bhNu4utWYAV9/FCkXg5cdnSlw/3mDgUJ9qG+Sjofx/A=;
-        b=ZiLXxYov9VujYnxGIsJ6dVsgsqhU+58RG5TuVtJV5skTR6SlCFNm3iZPxQM3hzIOg3
-         DbdFs/Nscud8GmLkV/RhBBD2zPwM59cTldTW2F20AIUugiZaW7l/FdLpRU+ZnAMoYlHB
-         Am+e8MJwZzwxv5wwlyFILHtRkiiMA+Bc//BkXVbAe/4YpHEQE/3Xo0wrrEOHDrPb9Sc6
-         Tpd0pXL2ygHz6mhXa2zcXN24qJfsq7KrTxauWdUbw2FvOs+WN0+3Vl9PjSMy85q7uMh1
-         wsM2GeuwJHZclGNuQrCHtIEUswfG+PQ6rq+Uvs2CStI3YDja+OpDdZXCpnp0l7Rk0rdE
-         U16g==
-X-Gm-Message-State: APjAAAUKqXOQ/hC/r+W08yPFZpiAIzBzq7TEODwE0NDnRnjZVRP7AK1M
-        ERkp1oAbvdjwPjj7DpYNB1Wq
-X-Google-Smtp-Source: APXvYqzbcNERM7ZEI95naMYV8Bxhes0Ws93EQGSslATHTMVRGNbVQLNwidXFoAfkB30qdCk31gxnAA==
-X-Received: by 2002:a17:90a:9f0b:: with SMTP id n11mr26214296pjp.98.1560786641674;
-        Mon, 17 Jun 2019 08:50:41 -0700 (PDT)
+        bh=swE05brVXtK4K444C06Ee7EjL8AS/Iz3XKQck7SeOkQ=;
+        b=i/khTjGyBjpzz8P7hCL4nfD2PZfswvNfpNyu/8WJnNl5+/RLz94/45MqFjp0vMukp+
+         Mtu7wwtIRPq09X8VEGqxckoOG3MJbrJ/mO1rw7xQzNiYPP/WDu/T/mHUTnKLu8koRmIE
+         1xLhYzFK0VvPx4PDgqGPU1misEzmumz81MYDlwmiB4MG+MUpiqTJRwoNYDBOcMCk/0NV
+         VH0WCqCUTvF+z/ajLNXuDw00QLYL8lovFarFgbGebrN/kLr1RvY4osYMXtGFeTtHoQyv
+         Uauiwyf3P45Cd0I+8QHHtMORzdL3qlQU90dN/PCmVaTerEpIPgjCuqesUyjNoavQGDx0
+         rp1g==
+X-Gm-Message-State: APjAAAXP+91cEeWJ6I+fkGHLnnp0OCVFviZCvBbdb8BuEDUX00GoIKJG
+        cCm+QRSH291mlnceVi2JVV2f
+X-Google-Smtp-Source: APXvYqx89pAIH8GhhHl6NdhdHnZHdylSi6cdOFfImompjIRRNJ8ZZbXHsBMxh0BRJQagdvTln+LMdA==
+X-Received: by 2002:a17:90a:216f:: with SMTP id a102mr27370280pje.29.1560786648652;
+        Mon, 17 Jun 2019 08:50:48 -0700 (PDT)
 Received: from localhost.localdomain ([2409:4072:629b:c246:9431:2a24:7932:6dba])
-        by smtp.gmail.com with ESMTPSA id n2sm11023603pff.104.2019.06.17.08.50.34
+        by smtp.gmail.com with ESMTPSA id n2sm11023603pff.104.2019.06.17.08.50.42
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 17 Jun 2019 08:50:41 -0700 (PDT)
+        Mon, 17 Jun 2019 08:50:48 -0700 (PDT)
 From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 To:     lee.jones@linaro.org, lgirdwood@gmail.com, broonie@kernel.org,
         robh+dt@kernel.org
@@ -51,9 +51,9 @@ Cc:     afaerber@suse.de, linux-actions@lists.infradead.org,
         linux-kernel@vger.kernel.org, thomas.liau@actions-semi.com,
         devicetree@vger.kernel.org, linus.walleij@linaro.org,
         Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH 2/4] mfd: Add initial MFD driver for ATC260x PMICs
-Date:   Mon, 17 Jun 2019 21:20:09 +0530
-Message-Id: <20190617155011.15376-3-manivannan.sadhasivam@linaro.org>
+Subject: [PATCH 3/4] regulator: Add regulator driver for ATC260x PMICs
+Date:   Mon, 17 Jun 2019 21:20:10 +0530
+Message-Id: <20190617155011.15376-4-manivannan.sadhasivam@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190617155011.15376-1-manivannan.sadhasivam@linaro.org>
 References: <20190617155011.15376-1-manivannan.sadhasivam@linaro.org>
@@ -62,710 +62,444 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add initial MFD driver for Actions Semi ATC260x PMICs. ATC260x series
-PMICs integrates Audio Codec, Power management, Clock generation, and GPIO
-controller blocks. This driver only supports Regulator functionality on
-ATC2609A PMIC variant for now.
-
-Since the PMICs can be accessed using both I2C and SPI busses, following
-driver structure has been adapted:
-
-           ----->atc260x-core.c (Implements core funtionalities)
-          /
-ATC260x--------->atc260x-i2c.c (Implements I2C interface)
-          \
-           ----->atc2609a-helpers.c (Implements ATC2609A specific helpers)
+Add regulator driver for Actions Semi ATC260x PMICs. This driver
+supports 5 DC-DC converters and 10 LDO regulators found in ATC2609A
+PMIC variant.
 
 Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 ---
- drivers/mfd/Kconfig                       |  22 +++
- drivers/mfd/Makefile                      |   7 +
- drivers/mfd/atc2609a-helpers.c            |  91 +++++++++
- drivers/mfd/atc260x-core.c                |  85 ++++++++
- drivers/mfd/atc260x-i2c.c                 |  98 ++++++++++
- drivers/mfd/atc260x.h                     |  22 +++
- include/linux/mfd/atc260x/atc2609a_regs.h | 228 ++++++++++++++++++++++
- include/linux/mfd/atc260x/core.h          |  64 ++++++
- 8 files changed, 617 insertions(+)
- create mode 100644 drivers/mfd/atc2609a-helpers.c
- create mode 100644 drivers/mfd/atc260x-core.c
- create mode 100644 drivers/mfd/atc260x-i2c.c
- create mode 100644 drivers/mfd/atc260x.h
- create mode 100644 include/linux/mfd/atc260x/atc2609a_regs.h
- create mode 100644 include/linux/mfd/atc260x/core.h
+ drivers/regulator/Kconfig             |   8 +
+ drivers/regulator/Makefile            |   1 +
+ drivers/regulator/atc260x-regulator.c | 389 ++++++++++++++++++++++++++
+ 3 files changed, 398 insertions(+)
+ create mode 100644 drivers/regulator/atc260x-regulator.c
 
-diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
-index a17d275bf1d4..eb388505357b 100644
---- a/drivers/mfd/Kconfig
-+++ b/drivers/mfd/Kconfig
-@@ -1945,6 +1945,28 @@ config MFD_STMFX
- 	  additional drivers must be enabled in order to use the functionality
- 	  of the device.
+diff --git a/drivers/regulator/Kconfig b/drivers/regulator/Kconfig
+index 8553bdf87c1d..acaf447ecdc6 100644
+--- a/drivers/regulator/Kconfig
++++ b/drivers/regulator/Kconfig
+@@ -166,6 +166,14 @@ config REGULATOR_AS3722
+ 	  AS3722 PMIC. This will enable support for all the software
+ 	  controllable DCDC/LDO regulators.
  
-+config MFD_ATC260X
-+	tristate "Actions Semi ATC260x PMICs"
-+	select MFD_CORE
-+	select REGMAP
-+	select REGMAP_IRQ
-+	help
-+	  Support for the Actions Semi ATC260x PMICs.
-+
-+config MFD_ATC260X_I2C
-+	tristate "Actions Semi ATC260x PMICs with I2C"
-+	depends on MFD_ATC260X
-+	depends on I2C
-+	select REGMAP_I2C
-+	help
-+	  Support for the Actions Semi ATC260x PMICs controlled via I2C.
-+
-+config MFD_ATC2609A
-+	bool "Actions Semi ATC2609A PMIC"
++config REGULATOR_ATC260X
++	tristate "Actions Semi ATC260x PMIC Regulators"
 +	depends on MFD_ATC260X
 +	help
-+	  Support for Actions Semi ATC2609A PMIC
++	  This driver provides support for the voltage regulators on the
++	  ATC260x PMICs. This will enable support for all the software
++	  controllable DCDC/LDO regulators.
 +
- menu "Multimedia Capabilities Port drivers"
- 	depends on ARCH_SA1100
- 
-diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
-index 52b1a90ff515..a87e7ed55a02 100644
---- a/drivers/mfd/Makefile
-+++ b/drivers/mfd/Makefile
-@@ -249,3 +249,10 @@ obj-$(CONFIG_MFD_SC27XX_PMIC)	+= sprd-sc27xx-spi.o
- obj-$(CONFIG_RAVE_SP_CORE)	+= rave-sp.o
- obj-$(CONFIG_MFD_ROHM_BD718XX)	+= rohm-bd718x7.o
- obj-$(CONFIG_MFD_STMFX) 	+= stmfx.o
-+
-+atc260x-objs			:= atc260x-core.o
-+ifeq ($(CONFIG_MFD_ATC2609A),y)
-+atc260x-objs			+= atc2609a-helpers.o
-+endif
-+obj-$(CONFIG_MFD_ATC260X)	+= atc260x.o
-+obj-$(CONFIG_MFD_ATC260X_I2C)	+= atc260x-i2c.o
-diff --git a/drivers/mfd/atc2609a-helpers.c b/drivers/mfd/atc2609a-helpers.c
+ config REGULATOR_AXP20X
+ 	tristate "X-POWERS AXP20X PMIC Regulators"
+ 	depends on MFD_AXP20X
+diff --git a/drivers/regulator/Makefile b/drivers/regulator/Makefile
+index 93f53840e8f1..600d01d082a3 100644
+--- a/drivers/regulator/Makefile
++++ b/drivers/regulator/Makefile
+@@ -25,6 +25,7 @@ obj-$(CONFIG_REGULATOR_ARIZONA_LDO1) += arizona-ldo1.o
+ obj-$(CONFIG_REGULATOR_ARIZONA_MICSUPP) += arizona-micsupp.o
+ obj-$(CONFIG_REGULATOR_AS3711) += as3711-regulator.o
+ obj-$(CONFIG_REGULATOR_AS3722) += as3722-regulator.o
++obj-$(CONFIG_REGULATOR_ATC260X) += atc260x-regulator.o
+ obj-$(CONFIG_REGULATOR_AXP20X) += axp20x-regulator.o
+ obj-$(CONFIG_REGULATOR_BCM590XX) += bcm590xx-regulator.o
+ obj-$(CONFIG_REGULATOR_BD70528) += bd70528-regulator.o
+diff --git a/drivers/regulator/atc260x-regulator.c b/drivers/regulator/atc260x-regulator.c
 new file mode 100644
-index 000000000000..6d304ea61552
+index 000000000000..e9e11f2567b2
 --- /dev/null
-+++ b/drivers/mfd/atc2609a-helpers.c
-@@ -0,0 +1,91 @@
++++ b/drivers/regulator/atc260x-regulator.c
+@@ -0,0 +1,389 @@
 +// SPDX-License-Identifier: GPL-2.0+
 +/*
-+ * Helper functions for ATC2609A PMIC
++ * Regulator driver for ATC260x PMICs
 + *
 + * Copyright (C) 2019 Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 + */
 +
 +#include <linux/mfd/atc260x/core.h>
-+#include <linux/mfd/core.h>
-+#include <linux/of.h>
-+#include <linux/regmap.h>
-+
-+#include "atc260x.h"
-+
-+const struct regmap_config atc2609a_regmap_config = {
-+	.reg_bits = 8,
-+	.val_bits = 16,
-+	.max_register = ATC2609A_SADDR,
-+	.cache_type = REGCACHE_NONE,
-+};
-+
-+const struct regmap_irq atc2609a_irqs[] = {
-+	[ATC2609A_IRQ_AUDIO] = {
-+		.reg_offset = 0,
-+		.mask = BIT(0),
-+	},
-+	[ATC2609A_IRQ_OV] = {
-+		.reg_offset = 0,
-+		.mask = BIT(1),
-+	},
-+	[ATC2609A_IRQ_OC] = {
-+		.reg_offset = 0,
-+		.mask = BIT(2),
-+	},
-+	[ATC2609A_IRQ_OT] = {
-+		.reg_offset = 0,
-+		.mask = BIT(3),
-+	},
-+	[ATC2609A_IRQ_UV] = {
-+		.reg_offset = 0,
-+		.mask = BIT(4),
-+	},
-+	[ATC2609A_IRQ_ALARM] = {
-+		.reg_offset = 0,
-+		.mask = BIT(5),
-+	},
-+	[ATC2609A_IRQ_ONOFF] = {
-+		.reg_offset = 0,
-+		.mask = BIT(6),
-+	},
-+	[ATC2609A_IRQ_WKUP] = {
-+		.reg_offset = 0,
-+		.mask = BIT(7),
-+	},
-+	[ATC2609A_IRQ_IR] = {
-+		.reg_offset = 0,
-+		.mask = BIT(8),
-+	},
-+	[ATC2609A_IRQ_REMCON] = {
-+		.reg_offset = 0,
-+		.mask = BIT(9),
-+	},
-+	[ATC2609A_IRQ_POWER_IN] = {
-+		.reg_offset = 0,
-+		.mask = BIT(10),
-+	},
-+};
-+
-+const struct regmap_irq_chip atc2609a_regmap_irq_chip = {
-+	.name = "atc2609a",
-+	.irqs = atc2609a_irqs,
-+	.num_irqs = ARRAY_SIZE(atc2609a_irqs),
-+	.num_regs = 1,
-+	.status_base = ATC2609A_INTS_PD,
-+	.mask_base = ATC2609A_INTS_MSK,
-+	.mask_invert = true,
-+};
-+
-+int atc2609a_dev_init(struct atc260x *atc260x)
-+{
-+	/* Initialize interrupt block */
-+	atc260x_cmu_reset(atc260x, ATC2609A_CMU_DEVRST, ATC260X_CMU_INTS,
-+			  ATC260X_CMU_INTS);
-+
-+	/* Disable all interrupt sources */
-+	regmap_write(atc260x->regmap, ATC2609A_INTS_MSK, 0);
-+
-+	/* Enable EXTIRQ pad */
-+	return regmap_update_bits(atc260x->regmap, ATC2609A_PAD_EN,
-+				  BIT(0), BIT(0));
-+}
-diff --git a/drivers/mfd/atc260x-core.c b/drivers/mfd/atc260x-core.c
-new file mode 100644
-index 000000000000..e65f1cb2648b
---- /dev/null
-+++ b/drivers/mfd/atc260x-core.c
-@@ -0,0 +1,85 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+/*
-+ * Core MFD support for ATC260x PMICs
-+ *
-+ * Copyright (C) 2019 Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-+ */
-+
-+#include <linux/interrupt.h>
-+#include <linux/mfd/atc260x/core.h>
-+#include <linux/mfd/core.h>
-+#include <linux/of.h>
-+#include <linux/regmap.h>
-+
-+#include "atc260x.h"
-+
-+void atc260x_cmu_reset(struct atc260x *atc260x, u32 reg, u8 mask, u32 bit)
-+{
-+	/* Assert reset */
-+	regmap_update_bits(atc260x->regmap, reg, mask, ~bit);
-+
-+	/* De-assert reset */
-+	regmap_update_bits(atc260x->regmap, reg, mask, bit);
-+}
-+
-+int atc260x_core_init(struct atc260x *atc260x)
-+{
-+	struct device *dev = atc260x->dev;
-+	unsigned int chip_rev;
-+	int ret;
-+
-+	if (!atc260x->irq) {
-+		dev_err(dev, "No interrupt support\n");
-+		return -EINVAL;
-+	}
-+
-+	/* Initialize the hardware */
-+	atc260x->dev_init(atc260x);
-+
-+	ret = regmap_read(atc260x->regmap, atc260x->rev_reg, &chip_rev);
-+	if (ret) {
-+		dev_err(dev, "Failed to read revision register\n");
-+		return ret;
-+	}
-+
-+	if (chip_rev < 0 || chip_rev > 31) {
-+		dev_err(dev, "Unknown chip revision: %d\n", ret);
-+		return -EINVAL;
-+	}
-+
-+	chip_rev = __ffs(chip_rev + 1U);
-+
-+	dev_info(dev, "%s chip revision: %d\n", atc260x->type_name, chip_rev);
-+
-+	ret = regmap_add_irq_chip(atc260x->regmap, atc260x->irq,
-+				  IRQF_ONESHOT, -1,
-+				  atc260x->regmap_irq_chip, &atc260x->irq_data);
-+	if (ret) {
-+		dev_err(dev, "Failed to add irq_chip %d\n", ret);
-+		return ret;
-+	}
-+
-+	ret = devm_mfd_add_devices(dev, PLATFORM_DEVID_NONE,
-+				   atc260x->cells, atc260x->nr_cells, NULL, 0,
-+				   regmap_irq_get_domain(atc260x->irq_data));
-+	if (ret) {
-+		dev_err(dev, "Failed to add MFD devices %d\n", ret);
-+		goto err_irq;
-+	}
-+
-+	return 0;
-+
-+err_irq:
-+	regmap_del_irq_chip(atc260x->irq, atc260x->irq_data);
-+
-+	return ret;
-+}
-+EXPORT_SYMBOL_GPL(atc260x_core_init);
-+
-+int atc260x_core_exit(struct atc260x *atc260x)
-+{
-+	regmap_del_irq_chip(atc260x->irq, atc260x->irq_data);
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(atc260x_core_exit);
-diff --git a/drivers/mfd/atc260x-i2c.c b/drivers/mfd/atc260x-i2c.c
-new file mode 100644
-index 000000000000..3b7e8c1f5ac5
---- /dev/null
-+++ b/drivers/mfd/atc260x-i2c.c
-@@ -0,0 +1,98 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+/*
-+ * I2C bus interface for ATC260x PMICs
-+ *
-+ * Copyright (C) 2019 Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-+ */
-+
-+#include <linux/i2c.h>
-+#include <linux/mfd/atc260x/core.h>
-+#include <linux/mfd/core.h>
 +#include <linux/module.h>
-+#include <linux/of.h>
 +#include <linux/of_device.h>
 +#include <linux/regmap.h>
++#include <linux/regulator/driver.h>
 +
-+#include "atc260x.h"
++#define ATC2609A_DCDC_VSEL_MASK 0xff00
++#define ATC2609A_DCDC_MIN_UV 600000
++#define ATC2609A_DCDC_UV_STEP 6250
++#define ATC2609A_DCDC_NR_VOLT 256
 +
-+const struct mfd_cell atc2609a_mfd_cells[] = {
-+	{ .name = "atc260x-regulator", },
++#define ATC2609A_LDO_VSEL_MASK0 0x003c
++#define ATC2609A_LDO_VSEL_MASK1 0x001e
++#define ATC2609A_LDO_VSEL_MASK2 0xe000
++#define ATC2609A_LDO_VSEL_RANGE_MASK 0x0020
++
++static const struct regulator_linear_range atc260x_ldo_voltage_ranges0[] = {
++	REGULATOR_LINEAR_RANGE(700000, 0, 15, 100000),
++	REGULATOR_LINEAR_RANGE(2100000, 16, 28, 100000),
 +};
 +
-+static int atc260x_i2c_probe(struct i2c_client *client,
-+			     const struct i2c_device_id *id)
++static const struct regulator_linear_range atc260x_ldo_voltage_ranges1[] = {
++	REGULATOR_LINEAR_RANGE(850000, 0, 15, 100000),
++	REGULATOR_LINEAR_RANGE(2100000, 16, 27, 100000),
++};
++
++static const unsigned int atc260x_ldo_voltage_range_sel[] = {
++	0x0, 0x1,
++};
++
++static const struct regulator_linear_range atc260x_dcdc_voltage_ranges[] = {
++	REGULATOR_LINEAR_RANGE(600000, 0, 127, 6250),
++	REGULATOR_LINEAR_RANGE(1400000, 128, 232, 25000),
++};
++
++static const struct regulator_ops atc260x_reg_ops = {
++	.enable	= regulator_enable_regmap,
++	.disable = regulator_disable_regmap,
++	.is_enabled = regulator_is_enabled_regmap,
++	.list_voltage = regulator_list_voltage_linear,
++	.set_voltage_sel = regulator_set_voltage_sel_regmap,
++	.get_voltage_sel = regulator_get_voltage_sel_regmap,
++};
++
++static const struct regulator_ops atc260x_reg_fixed_ops = {
++	.list_voltage = regulator_list_voltage_linear,
++	.set_voltage_sel = regulator_set_voltage_sel_regmap,
++	.get_voltage_sel = regulator_get_voltage_sel_regmap,
++};
++
++static const struct regulator_ops atc260x_reg_range0_ops = {
++	.enable	= regulator_enable_regmap,
++	.disable = regulator_disable_regmap,
++	.is_enabled = regulator_is_enabled_regmap,
++	.list_voltage = regulator_list_voltage_pickable_linear_range,
++	.set_voltage_sel = regulator_set_voltage_sel_pickable_regmap,
++	.get_voltage_sel = regulator_get_voltage_sel_pickable_regmap,
++};
++
++static const struct regulator_ops atc260x_reg_range1_ops = {
++	.enable	= regulator_enable_regmap,
++	.disable = regulator_disable_regmap,
++	.is_enabled = regulator_is_enabled_regmap,
++	.list_voltage = regulator_list_voltage_linear_range,
++	.set_voltage_sel = regulator_set_voltage_sel_regmap,
++	.get_voltage_sel = regulator_get_voltage_sel_regmap,
++};
++
++static const struct regulator_desc atc2609a_reg[] = {
++	{
++		.name = "DCDC_REG0",
++		.supply_name = "vcc0",
++		.of_match = of_match_ptr("DCDC_REG0"),
++		.regulators_node = of_match_ptr("regulators"),
++		.id = ATC2609A_ID_DCDC0,
++		.ops = &atc260x_reg_ops,
++		.type = REGULATOR_VOLTAGE,
++		.min_uV = ATC2609A_DCDC_MIN_UV,
++		.uV_step = ATC2609A_DCDC_UV_STEP,
++		.n_voltages = ATC2609A_DCDC_NR_VOLT,
++		.vsel_reg = ATC2609A_PMU_DC0_CTL0,
++		.vsel_mask = ATC2609A_DCDC_VSEL_MASK,
++		.enable_reg = ATC2609A_PMU_DC_OSC,
++		.enable_mask = BIT(4),
++		.enable_time = 800,
++		.owner = THIS_MODULE,
++	}, {
++		.name = "DCDC_REG1",
++		.supply_name = "vcc1",
++		.of_match = of_match_ptr("DCDC_REG1"),
++		.regulators_node = of_match_ptr("regulators"),
++		.id = ATC2609A_ID_DCDC1,
++		.ops = &atc260x_reg_ops,
++		.type = REGULATOR_VOLTAGE,
++		.min_uV = ATC2609A_DCDC_MIN_UV,
++		.uV_step = ATC2609A_DCDC_UV_STEP,
++		.n_voltages = ATC2609A_DCDC_NR_VOLT,
++		.vsel_reg = ATC2609A_PMU_DC1_CTL0,
++		.vsel_mask = ATC2609A_DCDC_VSEL_MASK,
++		.enable_reg = ATC2609A_PMU_DC_OSC,
++		.enable_mask = BIT(5),
++		.enable_time = 800,
++		.owner = THIS_MODULE,
++	}, {
++		.name = "DCDC_REG2",
++		.supply_name = "vcc2",
++		.of_match = of_match_ptr("DCDC_REG2"),
++		.regulators_node = of_match_ptr("regulators"),
++		.id = ATC2609A_ID_DCDC2,
++		.ops = &atc260x_reg_ops,
++		.type = REGULATOR_VOLTAGE,
++		.min_uV = ATC2609A_DCDC_MIN_UV,
++		.uV_step = ATC2609A_DCDC_UV_STEP,
++		.n_voltages = ATC2609A_DCDC_NR_VOLT,
++		.vsel_reg = ATC2609A_PMU_DC2_CTL0,
++		.vsel_mask = ATC2609A_DCDC_VSEL_MASK,
++		.enable_reg = ATC2609A_PMU_DC_OSC,
++		.enable_mask = BIT(6),
++		.enable_time = 800,
++		.owner = THIS_MODULE,
++	}, {
++		.name = "DCDC_REG3",
++		.supply_name = "vcc3",
++		.of_match = of_match_ptr("DCDC_REG3"),
++		.regulators_node = of_match_ptr("regulators"),
++		.id = ATC2609A_ID_DCDC3,
++		.ops = &atc260x_reg_range1_ops,
++		.type = REGULATOR_VOLTAGE,
++		.n_voltages = 233,
++		.linear_ranges = atc260x_dcdc_voltage_ranges,
++		.n_linear_ranges = ARRAY_SIZE(atc260x_dcdc_voltage_ranges),
++		.vsel_reg = ATC2609A_PMU_DC3_CTL0,
++		.vsel_mask = ATC2609A_DCDC_VSEL_MASK,
++		.enable_reg = ATC2609A_PMU_DC_OSC,
++		.enable_mask = BIT(7),
++		.enable_time = 800,
++		.owner = THIS_MODULE,
++	}, {
++		.name = "DCDC_REG4",
++		.supply_name = "vcc4",
++		.of_match = of_match_ptr("DCDC_REG4"),
++		.regulators_node = of_match_ptr("regulators"),
++		.id = ATC2609A_ID_DCDC4,
++		.ops = &atc260x_reg_ops,
++		.type = REGULATOR_VOLTAGE,
++		.min_uV = ATC2609A_DCDC_MIN_UV,
++		.uV_step = ATC2609A_DCDC_UV_STEP,
++		.n_voltages = ATC2609A_DCDC_NR_VOLT,
++		.vsel_reg = ATC2609A_PMU_DC4_CTL0,
++		.vsel_mask = ATC2609A_DCDC_VSEL_MASK,
++		.enable_reg = ATC2609A_PMU_DC_OSC,
++		.enable_mask = BIT(8),
++		.enable_time = 800,
++		.owner = THIS_MODULE,
++	}, {
++		.name = "LDO_REG0",
++		.supply_name = "vcc5",
++		.of_match = of_match_ptr("LDO_REG0"),
++		.regulators_node = of_match_ptr("regulators"),
++		.id = ATC2609A_ID_LDO0,
++		.ops = &atc260x_reg_ops,
++		.type = REGULATOR_VOLTAGE,
++		.min_uV = 2300000,
++		.uV_step = 100000,
++		.n_voltages = 12,
++		.vsel_reg = ATC2609A_PMU_LDO0_CTL0,
++		.vsel_mask = ATC2609A_LDO_VSEL_MASK0,
++		.enable_reg = ATC2609A_PMU_LDO0_CTL0,
++		.enable_mask = BIT(0),
++		.enable_time = 2000,
++		.owner = THIS_MODULE,
++	}, {
++		.name = "LDO_REG1",
++		.supply_name = "vcc6",
++		.of_match = of_match_ptr("LDO_REG1"),
++		.regulators_node = of_match_ptr("regulators"),
++		.id = ATC2609A_ID_LDO1,
++		.ops = &atc260x_reg_ops,
++		.type = REGULATOR_VOLTAGE,
++		.min_uV = 2300000,
++		.uV_step = 100000,
++		.n_voltages = 12,
++		.vsel_reg = ATC2609A_PMU_LDO1_CTL0,
++		.vsel_mask = ATC2609A_LDO_VSEL_MASK0,
++		.enable_reg = ATC2609A_PMU_LDO1_CTL0,
++		.enable_mask = BIT(0),
++		.enable_time = 2000,
++		.owner = THIS_MODULE,
++	}, {
++		.name = "LDO_REG2",
++		.supply_name = "vcc7",
++		.of_match = of_match_ptr("LDO_REG2"),
++		.regulators_node = of_match_ptr("regulators"),
++		.id = ATC2609A_ID_LDO2,
++		.ops = &atc260x_reg_ops,
++		.type = REGULATOR_VOLTAGE,
++		.min_uV = 2300000,
++		.uV_step = 100000,
++		.n_voltages = 12,
++		.vsel_reg = ATC2609A_PMU_LDO2_CTL0,
++		.vsel_mask = ATC2609A_LDO_VSEL_MASK0,
++		.enable_reg = ATC2609A_PMU_LDO2_CTL0,
++		.enable_mask = BIT(0),
++		.enable_time = 2000,
++		.owner = THIS_MODULE,
++	}, {
++		.name = "LDO_REG3",
++		.supply_name = "vcc8",
++		.of_match = of_match_ptr("LDO_REG3"),
++		.regulators_node = of_match_ptr("regulators"),
++		.id = ATC2609A_ID_LDO3,
++		.ops = &atc260x_reg_range0_ops,
++		.type = REGULATOR_VOLTAGE,
++		.linear_ranges = atc260x_ldo_voltage_ranges0,
++		.n_linear_ranges = ARRAY_SIZE(atc260x_ldo_voltage_ranges0),
++		.vsel_reg = ATC2609A_PMU_LDO3_CTL0,
++		.vsel_mask = ATC2609A_LDO_VSEL_MASK1,
++		.vsel_range_reg = ATC2609A_PMU_LDO3_CTL0,
++		.vsel_range_mask = ATC2609A_LDO_VSEL_RANGE_MASK,
++		.linear_range_selectors = atc260x_ldo_voltage_range_sel,
++		.enable_reg = ATC2609A_PMU_LDO3_CTL0,
++		.enable_mask = BIT(0),
++		.enable_time = 2000,
++		.owner = THIS_MODULE,
++	}, {
++		.name = "LDO_REG4",
++		.supply_name = "vcc9",
++		.of_match = of_match_ptr("LDO_REG4"),
++		.regulators_node = of_match_ptr("regulators"),
++		.id = ATC2609A_ID_LDO4,
++		.ops = &atc260x_reg_range0_ops,
++		.type = REGULATOR_VOLTAGE,
++		.linear_ranges = atc260x_ldo_voltage_ranges0,
++		.n_linear_ranges = ARRAY_SIZE(atc260x_ldo_voltage_ranges0),
++		.vsel_reg = ATC2609A_PMU_LDO4_CTL0,
++		.vsel_mask = ATC2609A_LDO_VSEL_MASK1,
++		.vsel_range_reg = ATC2609A_PMU_LDO4_CTL0,
++		.vsel_range_mask = ATC2609A_LDO_VSEL_RANGE_MASK,
++		.linear_range_selectors = atc260x_ldo_voltage_range_sel,
++		.enable_reg = ATC2609A_PMU_LDO4_CTL0,
++		.enable_mask = BIT(0),
++		.enable_time = 2000,
++		.owner = THIS_MODULE,
++	}, {
++		.name = "LDO_REG5",
++		.supply_name = "vcc10",
++		.of_match = of_match_ptr("LDO_REG5"),
++		.regulators_node = of_match_ptr("regulators"),
++		.id = ATC2609A_ID_LDO5,
++		.ops = &atc260x_reg_ops,
++		.type = REGULATOR_VOLTAGE,
++		.min_uV = 700000,
++		.uV_step = 100000,
++		.n_voltages = 16,
++		.vsel_reg = ATC2609A_PMU_LDO5_CTL0,
++		.vsel_mask = ATC2609A_LDO_VSEL_MASK1,
++		.enable_reg = ATC2609A_PMU_LDO5_CTL0,
++		.enable_mask = BIT(0),
++		.enable_time = 2000,
++		.owner = THIS_MODULE,
++	}, {
++		.name = "LDO_REG6",
++		.supply_name = "vcc11",
++		.of_match = of_match_ptr("LDO_REG6"),
++		.regulators_node = of_match_ptr("regulators"),
++		.id = ATC2609A_ID_LDO6,
++		.ops = &atc260x_reg_range0_ops,
++		.type = REGULATOR_VOLTAGE,
++		.linear_ranges = atc260x_ldo_voltage_ranges1,
++		.n_linear_ranges = ARRAY_SIZE(atc260x_ldo_voltage_ranges1),
++		.vsel_reg = ATC2609A_PMU_LDO6_CTL0,
++		.vsel_mask = ATC2609A_LDO_VSEL_MASK1,
++		.vsel_range_reg = ATC2609A_PMU_LDO6_CTL0,
++		.vsel_range_mask = ATC2609A_LDO_VSEL_RANGE_MASK,
++		.linear_range_selectors = atc260x_ldo_voltage_range_sel,
++		.enable_reg = ATC2609A_PMU_LDO6_CTL0,
++		.enable_mask = BIT(0),
++		.enable_time = 2000,
++		.owner = THIS_MODULE,
++	}, {
++		.name = "LDO_REG7",
++		.supply_name = "vcc12",
++		.of_match = of_match_ptr("LDO_REG7"),
++		.regulators_node = of_match_ptr("regulators"),
++		.id = ATC2609A_ID_LDO7,
++		.ops = &atc260x_reg_range0_ops,
++		.type = REGULATOR_VOLTAGE,
++		.linear_ranges = atc260x_ldo_voltage_ranges0,
++		.n_linear_ranges = ARRAY_SIZE(atc260x_ldo_voltage_ranges0),
++		.vsel_reg = ATC2609A_PMU_LDO7_CTL0,
++		.vsel_mask = ATC2609A_LDO_VSEL_MASK1,
++		.vsel_range_reg = ATC2609A_PMU_LDO7_CTL0,
++		.vsel_range_mask = ATC2609A_LDO_VSEL_RANGE_MASK,
++		.linear_range_selectors = atc260x_ldo_voltage_range_sel,
++		.enable_reg = ATC2609A_PMU_LDO7_CTL0,
++		.enable_mask = BIT(0),
++		.enable_time = 2000,
++		.owner = THIS_MODULE,
++	}, {
++		.name = "LDO_REG8",
++		.supply_name = "vcc13",
++		.of_match = of_match_ptr("LDO_REG8"),
++		.regulators_node = of_match_ptr("regulators"),
++		.id = ATC2609A_ID_LDO8,
++		.ops = &atc260x_reg_range0_ops,
++		.type = REGULATOR_VOLTAGE,
++		.linear_ranges = atc260x_ldo_voltage_ranges0,
++		.n_linear_ranges = ARRAY_SIZE(atc260x_ldo_voltage_ranges0),
++		.vsel_reg = ATC2609A_PMU_LDO8_CTL0,
++		.vsel_mask = ATC2609A_LDO_VSEL_MASK1,
++		.vsel_range_reg = ATC2609A_PMU_LDO8_CTL0,
++		.vsel_range_mask = ATC2609A_LDO_VSEL_RANGE_MASK,
++		.linear_range_selectors = atc260x_ldo_voltage_range_sel,
++		.enable_reg = ATC2609A_PMU_LDO8_CTL0,
++		.enable_mask = BIT(0),
++		.enable_time = 2000,
++		.owner = THIS_MODULE,
++	}, {
++		.name = "LDO_REG9",
++		.supply_name = "vcc14",
++		.of_match = of_match_ptr("LDO_REG9"),
++		.regulators_node = of_match_ptr("regulators"),
++		.id = ATC2609A_ID_LDO9,
++		.ops = &atc260x_reg_fixed_ops,
++		.type = REGULATOR_VOLTAGE,
++		.min_uV = 2600000,
++		.uV_step = 100000,
++		.n_voltages = 8,
++		.vsel_reg = ATC2609A_PMU_LDO9_CTL,
++		.vsel_mask = ATC2609A_LDO_VSEL_MASK2,
++		.enable_time = 2000,
++		.owner = THIS_MODULE,
++	},
++};
++
++static int atc260x_regulator_probe(struct platform_device *pdev)
 +{
-+	struct atc260x *atc260x;
-+	const void *of_data;
-+	unsigned long atc260x_type;
++	struct atc260x *atc260x = dev_get_drvdata(pdev->dev.parent);
++	struct device *dev = atc260x->dev;
++	struct regulator_config config = {};
++	struct regulator_dev *atc260x_rdev;
++	const struct regulator_desc *regulators;
++	int i, nregulators;
 +
-+	atc260x = devm_kzalloc(&client->dev, sizeof(*atc260x), GFP_KERNEL);
-+	if (!atc260x)
-+		return -ENOMEM;
-+
-+	of_data = of_device_get_match_data(&client->dev);
-+	if (!of_data)
-+		return -ENODEV;
-+
-+	atc260x_type = (unsigned long)of_data;
-+
-+	switch (atc260x_type) {
++	switch (atc260x->type) {
 +	case ATC2609A:
-+		atc260x->regmap_cfg = &atc2609a_regmap_config;
-+		atc260x->regmap_irq_chip = &atc2609a_regmap_irq_chip;
-+		atc260x->cells = atc2609a_mfd_cells;
-+		atc260x->nr_cells = ARRAY_SIZE(atc2609a_mfd_cells);
-+		atc260x->type_name = "atc2609a";
-+		atc260x->rev_reg = ATC2609A_CHIP_VER;
-+		atc260x->dev_init = atc2609a_dev_init;
++		regulators = atc2609a_reg;
++		nregulators = ATC2609A_ID_MAX;
 +		break;
 +	default:
-+		dev_err(&client->dev,
-+			"Unsupported ATC260x I2C device type %ld\n",
-+			atc260x_type);
++		dev_err(dev, "unsupported ATC260X ID %d\n", atc260x->type);
 +		return -EINVAL;
 +	}
 +
-+	atc260x->regmap = devm_regmap_init_i2c(client, atc260x->regmap_cfg);
-+	if (IS_ERR(atc260x->regmap)) {
-+		dev_err(&client->dev, "regmap initialization failed\n");
-+		return PTR_ERR(atc260x->regmap);
++	config.dev = dev;
++	config.regmap = atc260x->regmap;
++
++	/* Instantiate the regulators */
++	for (i = 0; i < nregulators; i++) {
++		atc260x_rdev = devm_regulator_register(&pdev->dev,
++						       &regulators[i], &config);
++		if (IS_ERR(atc260x_rdev)) {
++			dev_err(dev, "failed to register regulator: %d\n", i);
++			return PTR_ERR(atc260x_rdev);
++		}
 +	}
-+
-+	i2c_set_clientdata(client, atc260x);
-+	atc260x->type = atc260x_type;
-+	atc260x->dev = &client->dev;
-+	atc260x->irq = client->irq;
-+
-+	return atc260x_core_init(atc260x);
-+}
-+
-+static int atc260x_i2c_remove(struct i2c_client *client)
-+{
-+	struct atc260x *atc260x = dev_get_drvdata(&client->dev);
-+
-+	atc260x_core_exit(atc260x);
 +
 +	return 0;
 +}
 +
-+const struct of_device_id atc260x_of_match[] = {
-+	{ .compatible = "actions,atc2609a", .data = (void *)ATC2609A },
-+	{ /* sentinel */ }
-+};
-+MODULE_DEVICE_TABLE(i2c, atc260x_of_match);
-+
-+static struct i2c_driver atc260x_i2c_driver = {
++static struct platform_driver atc260x_regulator_driver = {
++	.probe = atc260x_regulator_probe,
 +	.driver = {
-+		.name	= "atc260x",
-+		.of_match_table	= of_match_ptr(atc260x_of_match),
++		.name = "atc260x-regulator"
 +	},
-+	.probe		= atc260x_i2c_probe,
-+	.remove		= atc260x_i2c_remove,
 +};
 +
-+module_i2c_driver(atc260x_i2c_driver);
++module_platform_driver(atc260x_regulator_driver);
 +
-+MODULE_DESCRIPTION("ATC260x PMICs I2C bus interface");
++MODULE_DESCRIPTION("Regulator driver for ATC260x PMICs");
 +MODULE_AUTHOR("Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>");
-+MODULE_LICENSE("GPL v2");
-diff --git a/drivers/mfd/atc260x.h b/drivers/mfd/atc260x.h
-new file mode 100644
-index 000000000000..30fc66dfba04
---- /dev/null
-+++ b/drivers/mfd/atc260x.h
-@@ -0,0 +1,22 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+/*
-+ * MFD internals for ATC260x PMICs
-+ *
-+ * Copyright (C) 2019 Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-+ */
-+
-+#ifndef ATC260X_MFD_H
-+#define ATC260X_MFD_H
-+
-+extern const struct of_device_id atc260x_of_match[];
-+int atc260x_core_init(struct atc260x *atc260x);
-+int atc260x_core_exit(struct atc260x *atc260x);
-+void atc260x_cmu_reset(struct atc260x *atc260x, u32 reg, u8 mask, u32 bit);
-+
-+extern const struct regmap_config atc2609a_regmap_config;
-+extern const struct mfd_cell atc2609a_mfd_cells[];
-+extern const struct regmap_irq_chip atc2609a_regmap_irq_chip;
-+extern const struct regmap_irq atc2609a_irqs[];
-+int atc2609a_dev_init(struct atc260x *atc260x);
-+
-+#endif /* ATC260X_MFD_H */
-diff --git a/include/linux/mfd/atc260x/atc2609a_regs.h b/include/linux/mfd/atc260x/atc2609a_regs.h
-new file mode 100644
-index 000000000000..851fb3dadd4f
---- /dev/null
-+++ b/include/linux/mfd/atc260x/atc2609a_regs.h
-@@ -0,0 +1,228 @@
-+/* SPDX-License-Identifier: GPL-2.0+ */
-+/*
-+ * ATC2609A PMIC register definitions
-+ *
-+ * Copyright (C) 2019 Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-+ */
-+
-+#ifndef __ATC2609A_REGS_H__
-+#define __ATC2609A_REGS_H__
-+
-+enum atc2609a_irq_def {
-+	ATC2609A_IRQ_AUDIO = 0,
-+	ATC2609A_IRQ_OV = 1,
-+	ATC2609A_IRQ_OC = 2,
-+	ATC2609A_IRQ_OT = 3,
-+	ATC2609A_IRQ_UV = 4,
-+	ATC2609A_IRQ_ALARM = 5,
-+	ATC2609A_IRQ_ONOFF = 6,
-+	ATC2609A_IRQ_WKUP = 7,
-+	ATC2609A_IRQ_IR = 8,
-+	ATC2609A_IRQ_REMCON = 9,
-+	ATC2609A_IRQ_POWER_IN = 10,
-+};
-+
-+/* PMU Register */
-+#define ATC2609A_PMU_SYS_CTL0			0x00
-+#define ATC2609A_PMU_SYS_CTL1			0x01
-+#define ATC2609A_PMU_SYS_CTL2			0x02
-+#define ATC2609A_PMU_SYS_CTL3			0x03
-+#define ATC2609A_PMU_SYS_CTL4			0x04
-+#define ATC2609A_PMU_SYS_CTL5			0x05
-+#define ATC2609A_PMU_SYS_CTL6			0x06
-+#define ATC2609A_PMU_SYS_CTL7			0x07
-+#define ATC2609A_PMU_SYS_CTL8			0x08
-+#define ATC2609A_PMU_SYS_CTL9			0x09
-+#define ATC2609A_PMU_BAT_CTL0			0x0A
-+#define ATC2609A_PMU_BAT_CTL1			0x0B
-+#define ATC2609A_PMU_VBUS_CTL0			0x0C
-+#define ATC2609A_PMU_VBUS_CTL1			0x0D
-+#define ATC2609A_PMU_WALL_CTL0			0x0E
-+#define ATC2609A_PMU_WALL_CTL1			0x0F
-+#define ATC2609A_PMU_SYS_PENDING		0x10
-+#define ATC2609A_PMU_APDS_CTL0			0x11
-+#define ATC2609A_PMU_APDS_CTL1			0x12
-+#define ATC2609A_PMU_APDS_CTL2			0x13
-+#define ATC2609A_PMU_CHARGER_CTL		0x14
-+#define ATC2609A_PMU_BAKCHARGER_CTL		0x15
-+#define ATC2609A_PMU_SWCHG_CTL0			0x16
-+#define ATC2609A_PMU_SWCHG_CTL1			0x17
-+#define ATC2609A_PMU_SWCHG_CTL2			0x18
-+#define ATC2609A_PMU_SWCHG_CTL3			0x19
-+#define ATC2609A_PMU_SWCHG_CTL4			0x1A
-+#define ATC2609A_PMU_DC_OSC			0x1B
-+#define ATC2609A_PMU_DC0_CTL0			0x1C
-+#define ATC2609A_PMU_DC0_CTL1			0x1D
-+#define ATC2609A_PMU_DC0_CTL2			0x1E
-+#define ATC2609A_PMU_DC0_CTL3			0x1F
-+#define ATC2609A_PMU_DC0_CTL4			0x20
-+#define ATC2609A_PMU_DC0_CTL5			0x21
-+#define ATC2609A_PMU_DC0_CTL6			0x22
-+#define ATC2609A_PMU_DC1_CTL0			0x23
-+#define ATC2609A_PMU_DC1_CTL1			0x24
-+#define ATC2609A_PMU_DC1_CTL2			0x25
-+#define ATC2609A_PMU_DC1_CTL3			0x26
-+#define ATC2609A_PMU_DC1_CTL4			0x27
-+#define ATC2609A_PMU_DC1_CTL5			0x28
-+#define ATC2609A_PMU_DC1_CTL6			0x29
-+#define ATC2609A_PMU_DC2_CTL0			0x2A
-+#define ATC2609A_PMU_DC2_CTL1			0x2B
-+#define ATC2609A_PMU_DC2_CTL2			0x2C
-+#define ATC2609A_PMU_DC2_CTL3			0x2D
-+#define ATC2609A_PMU_DC2_CTL4			0x2E
-+#define ATC2609A_PMU_DC2_CTL5			0x2F
-+#define ATC2609A_PMU_DC2_CTL6			0x30
-+#define ATC2609A_PMU_DC3_CTL0			0x31
-+#define ATC2609A_PMU_DC3_CTL1			0x32
-+#define ATC2609A_PMU_DC3_CTL2			0x33
-+#define ATC2609A_PMU_DC3_CTL3			0x34
-+#define ATC2609A_PMU_DC3_CTL4			0x35
-+#define ATC2609A_PMU_DC3_CTL5			0x36
-+#define ATC2609A_PMU_DC3_CTL6			0x37
-+#define ATC2609A_PMU_DC_ZR			0x38
-+#define ATC2609A_PMU_LDO0_CTL0			0x39
-+#define ATC2609A_PMU_LDO0_CTL1			0x3A
-+#define ATC2609A_PMU_LDO1_CTL0			0x3B
-+#define ATC2609A_PMU_LDO1_CTL1			0x3C
-+#define ATC2609A_PMU_LDO2_CTL0			0x3D
-+#define ATC2609A_PMU_LDO2_CTL1			0x3E
-+#define ATC2609A_PMU_LDO3_CTL0			0x3F
-+#define ATC2609A_PMU_LDO3_CTL1			0x40
-+#define ATC2609A_PMU_LDO4_CTL0			0x41
-+#define ATC2609A_PMU_LDO4_CTL1			0x42
-+#define ATC2609A_PMU_LDO5_CTL0			0x43
-+#define ATC2609A_PMU_LDO5_CTL1			0x44
-+#define ATC2609A_PMU_LDO6_CTL0			0x45
-+#define ATC2609A_PMU_LDO6_CTL1			0x46
-+#define ATC2609A_PMU_LDO7_CTL0			0x47
-+#define ATC2609A_PMU_LDO7_CTL1			0x48
-+#define ATC2609A_PMU_LDO8_CTL0			0x49
-+#define ATC2609A_PMU_LDO8_CTL1			0x4A
-+#define ATC2609A_PMU_LDO9_CTL			0x4B
-+#define ATC2609A_PMU_OV_INT_EN			0x4C
-+#define ATC2609A_PMU_OV_STATUS			0x4D
-+#define ATC2609A_PMU_UV_INT_EN			0x4E
-+#define ATC2609A_PMU_UV_STATUS			0x4F
-+#define ATC2609A_PMU_OC_INT_EN			0x50
-+#define ATC2609A_PMU_OC_STATUS			0x51
-+#define ATC2609A_PMU_OT_CTL			0x52
-+#define ATC2609A_PMU_CM_CTL0			0x53
-+#define ATC2609A_PMU_FW_USE0			0x54
-+#define ATC2609A_PMU_FW_USE1			0x55
-+#define ATC2609A_PMU_ADC12B_I			0x56
-+#define ATC2609A_PMU_ADC12B_V			0x57
-+#define ATC2609A_PMU_ADC12B_DUMMY		0x58
-+#define ATC2609A_PMU_AUXADC_CTL0		0x59
-+#define ATC2609A_PMU_AUXADC_CTL1		0x5A
-+#define ATC2609A_PMU_BATVADC			0x5B
-+#define ATC2609A_PMU_BATIADC			0x5C
-+#define ATC2609A_PMU_WALLVADC			0x5D
-+#define ATC2609A_PMU_WALLIADC			0x5E
-+#define ATC2609A_PMU_VBUSVADC			0x5F
-+#define ATC2609A_PMU_VBUSIADC			0x60
-+#define ATC2609A_PMU_SYSPWRADC			0x61
-+#define ATC2609A_PMU_REMCONADC			0x62
-+#define ATC2609A_PMU_SVCCADC			0x63
-+#define ATC2609A_PMU_CHGIADC			0x64
-+#define ATC2609A_PMU_IREFADC			0x65
-+#define ATC2609A_PMU_BAKBATADC			0x66
-+#define ATC2609A_PMU_ICTEMPADC			0x67
-+#define ATC2609A_PMU_AUXADC0			0x68
-+#define ATC2609A_PMU_AUXADC1			0x69
-+#define ATC2609A_PMU_AUXADC2			0x6A
-+#define ATC2609A_PMU_AUXADC3			0x6B
-+#define ATC2609A_PMU_ICTEMPADC_ADJ		0x6C
-+#define ATC2609A_PMU_BDG_CTL			0x6D
-+#define ATC2609A_RTC_CTL			0x6E
-+#define ATC2609A_RTC_MSALM			0x6F
-+#define ATC2609A_RTC_HALM			0x70
-+#define ATC2609A_RTC_YMDALM			0x71
-+#define ATC2609A_RTC_MS				0x72
-+#define ATC2609A_RTC_H				0x73
-+#define ATC2609A_RTC_DC				0x74
-+#define ATC2609A_RTC_YMD			0x75
-+#define ATC2609A_EFUSE_DAT			0x76
-+#define ATC2609A_EFUSECRTL1			0x77
-+#define ATC2609A_EFUSECRTL2			0x78
-+#define ATC2609A_PMU_DC4_CTL0			0x79
-+#define ATC2609A_PMU_DC4_CTL1			0x7A
-+#define ATC2609A_PMU_DC4_CTL2			0x7B
-+#define ATC2609A_PMU_DC4_CTL3			0x7C
-+#define ATC2609A_PMU_DC4_CTL4			0x7D
-+#define ATC2609A_PMU_DC4_CTL5			0x7E
-+#define ATC2609A_PMU_DC4_CTL6			0x7F
-+#define ATC2609A_PMU_PWR_STATUS			0x80
-+#define ATC2609A_PMU_S2_PWR			0x81
-+#define ATC2609A_CLMT_CTL0			0x82
-+#define ATC2609A_CLMT_DATA0			0x83
-+#define ATC2609A_CLMT_DATA1			0x84
-+#define ATC2609A_CLMT_DATA2			0x85
-+#define ATC2609A_CLMT_DATA3			0x86
-+#define ATC2609A_CLMT_ADD0			0x87
-+#define ATC2609A_CLMT_ADD1			0x88
-+#define ATC2609A_CLMT_OCV_TABLE			0x89
-+#define ATC2609A_CLMT_R_TABLE			0x8A
-+#define ATC2609A_PMU_PWRON_CTL0			0x8D
-+#define ATC2609A_PMU_PWRON_CTL1			0x8E
-+#define ATC2609A_PMU_PWRON_CTL2			0x8F
-+#define ATC2609A_IRC_CTL			0x90
-+#define ATC2609A_IRC_STAT			0x91
-+#define ATC2609A_IRC_CC				0x92
-+#define ATC2609A_IRC_KDC			0x93
-+#define ATC2609A_IRC_WK				0x94
-+#define ATC2609A_IRC_RCC			0x95
-+
-+/* AUDIO_OUT Register */
-+#define ATC2609A_AUDIOINOUT_CTL			0xA0
-+#define ATC2609A_AUDIO_DEBUGOUTCTL		0xA1
-+#define ATC2609A_DAC_DIGITALCTL			0xA2
-+#define ATC2609A_DAC_VOLUMECTL0			0xA3
-+#define ATC2609A_DAC_ANALOG0			0xA4
-+#define ATC2609A_DAC_ANALOG1			0xA5
-+#define ATC2609A_DAC_ANALOG2			0xA6
-+#define ATC2609A_DAC_ANALOG3			0xA7
-+
-+/* AUDIO_IN Register */
-+#define ATC2609A_ADC_DIGITALCTL			0xA8
-+#define ATC2609A_ADC_HPFCTL			0xA9
-+#define ATC2609A_ADC_CTL			0xAA
-+#define ATC2609A_AGC_CTL0			0xAB
-+#define ATC2609A_AGC_CTL1			0xAC
-+#define ATC2609A_AGC_CTL2			0xAD
-+#define ATC2609A_ADC_ANALOG0			0xAE
-+#define ATC2609A_ADC_ANALOG1			0xAF
-+
-+/* PCM_IF Register */
-+#define ATC2609A_PCM0_CTL			0xB0
-+#define ATC2609A_PCM1_CTL			0xB1
-+#define ATC2609A_PCM2_CTL			0xB2
-+#define ATC2609A_PCMIF_CTL			0xB3
-+
-+/* CMU_CONTROL Register */
-+#define ATC2609A_CMU_DEVRST			0xC1
-+
-+/* INTS Register */
-+#define ATC2609A_INTS_PD			0xC8
-+#define ATC2609A_INTS_MSK			0xC9
-+
-+/* MFP Register */
-+#define ATC2609A_MFP_CTL			0xD0
-+#define ATC2609A_PAD_VSEL			0xD1
-+#define ATC2609A_GPIO_OUTEN			0xD2
-+#define ATC2609A_GPIO_INEN			0xD3
-+#define ATC2609A_GPIO_DAT			0xD4
-+#define ATC2609A_PAD_DRV			0xD5
-+#define ATC2609A_PAD_EN				0xD6
-+#define ATC2609A_DEBUG_SEL			0xD7
-+#define ATC2609A_DEBUG_IE			0xD8
-+#define ATC2609A_DEBUG_OE			0xD9
-+#define ATC2609A_CHIP_VER			0xDC
-+
-+/* PWSI Register */
-+#define ATC2609A_PWSI_CTL			0xF0
-+#define ATC2609A_PWSI_STATUS			0xF1
-+
-+/* TWSI Register */
-+#define ATC2609A_SADDR				0xFF
-+
-+#endif /* __ATC2609A_REGS_H__ */
-diff --git a/include/linux/mfd/atc260x/core.h b/include/linux/mfd/atc260x/core.h
-new file mode 100644
-index 000000000000..9d75eca731d4
---- /dev/null
-+++ b/include/linux/mfd/atc260x/core.h
-@@ -0,0 +1,64 @@
-+/* SPDX-License-Identifier: GPL-2.0+ */
-+/*
-+ * Core MFD defines for ATC260x PMICs
-+ *
-+ * Copyright (C) 2019 Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-+ */
-+
-+#ifndef __ATC260X_CORE_H__
-+#define __ATC260X_CORE_H__
-+
-+#include <linux/mfd/atc260x/atc2609a_regs.h>
-+
-+enum atc260x_type {
-+	ATC2603A = 0,
-+	ATC2603C = 1,
-+	ATC2609A = 2,
-+};
-+
-+enum atc260x_reg {
-+	ATC2609A_ID_DCDC0,
-+	ATC2609A_ID_DCDC1,
-+	ATC2609A_ID_DCDC2,
-+	ATC2609A_ID_DCDC3,
-+	ATC2609A_ID_DCDC4,
-+	ATC2609A_ID_LDO0,
-+	ATC2609A_ID_LDO1,
-+	ATC2609A_ID_LDO2,
-+	ATC2609A_ID_LDO3,
-+	ATC2609A_ID_LDO4,
-+	ATC2609A_ID_LDO5,
-+	ATC2609A_ID_LDO6,
-+	ATC2609A_ID_LDO7,
-+	ATC2609A_ID_LDO8,
-+	ATC2609A_ID_LDO9,
-+	ATC2609A_ID_MAX,
-+};
-+
-+enum atc260x_cmu_bits {
-+	ATC260X_CMU_TP = 0,
-+	ATC260X_CMU_MFP = 1,
-+	ATC260X_CMU_INTS = 2,
-+	ATC260X_CMU_ETHPHY = 3,
-+	ATC260X_CMU_AUDIO = 4,
-+	ATC260X_CMU_PWSI = 5,
-+};
-+
-+struct atc260x {
-+	struct device *dev;
-+	struct regmap_irq_chip_data *irq_data;
-+	struct regmap *regmap;
-+	const struct regmap_config *regmap_cfg;
-+	const struct regmap_irq_chip *regmap_irq_chip;
-+	const struct mfd_cell *cells;
-+	int nr_cells;
-+	int irq;
-+
-+	enum atc260x_type type;
-+	const char *type_name;
-+	unsigned int rev_reg;
-+
-+	int (*dev_init)(struct atc260x *atc260x);
-+};
-+
-+#endif /* __ATC260X_CORE_H__ */
++MODULE_LICENSE("GPL");
 -- 
 2.17.1
 
