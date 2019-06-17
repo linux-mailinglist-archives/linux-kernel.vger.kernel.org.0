@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BAF75492A5
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 23:23:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7C29F49318
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 23:27:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729523AbfFQVWV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 17:22:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46812 "EHLO mail.kernel.org"
+        id S1730059AbfFQV13 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 17:27:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54412 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729053AbfFQVWO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 17:22:14 -0400
+        id S1729475AbfFQV10 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Jun 2019 17:27:26 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 836D62133F;
-        Mon, 17 Jun 2019 21:22:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E46B3204FD;
+        Mon, 17 Jun 2019 21:27:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560806534;
-        bh=ym4hldG3rHedrF2DLGYRBjm7J9cMx/8Di5y/blYtK7o=;
+        s=default; t=1560806845;
+        bh=DkQ4+3eXZuqP2wd/INZMDQrJBw4VOOOrip6+Xw6VTSk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gGdWMx5PQjIfWPIK3F7+7Hvz+emDXtYMdliVAQimr4HXq1zDL6X/6Tte2acrmPDwF
-         N6dPM6XDrCz/iJWuRI5yrP4v3ZtS6LFvwWx5fH8VQUDBIUIpX0RsIMA+W3W+MmKBXR
-         YdOCeQFiBQ4DeuSuuwB7hwJcuOuN0CKMgADhtpp8=
+        b=JPc6nlhf4JuruuJckvX1QGFFn7p+qyyX50jjR8QMHuo4NSv/WmbbSOTltKH5/iu+g
+         7r8CAhmNFVOwONSdzXX1mwQzE9cWoL5hJXCf4M0mIlPDJj0UvadjZX160iVyuGjR4c
+         MIRS0PSiqFwyKmFypnLJmt2G+u9c5FvBNcbDu1bc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, James Morse <james.morse@arm.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
+        stable@vger.kernel.org, Randall Huang <huangrandall@google.com>,
+        Chao Yu <yuchao0@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 083/115] KVM: arm/arm64: Move cc/it checks under hyps Makefile to avoid instrumentation
-Date:   Mon, 17 Jun 2019 23:09:43 +0200
-Message-Id: <20190617210804.251087323@linuxfoundation.org>
+Subject: [PATCH 4.19 33/75] f2fs: fix to avoid accessing xattr across the boundary
+Date:   Mon, 17 Jun 2019 23:09:44 +0200
+Message-Id: <20190617210754.076823433@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190617210759.929316339@linuxfoundation.org>
-References: <20190617210759.929316339@linuxfoundation.org>
+In-Reply-To: <20190617210752.799453599@linuxfoundation.org>
+References: <20190617210752.799453599@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,327 +44,152 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 623e1528d4090bd1abaf93ec46f047dee9a6fb32 ]
+[ Upstream commit 2777e654371dd4207a3a7f4fb5fa39550053a080 ]
 
-KVM has helpers to handle the condition codes of trapped aarch32
-instructions. These are marked __hyp_text and used from HYP, but they
-aren't built by the 'hyp' Makefile, which has all the runes to avoid ASAN
-and KCOV instrumentation.
+When we traverse xattr entries via __find_xattr(),
+if the raw filesystem content is faked or any hardware failure occurs,
+out-of-bound error can be detected by KASAN.
+Fix the issue by introducing boundary check.
 
-Move this code to a new hyp/aarch32.c to avoid a hyp-panic when starting
-an aarch32 guest on a host built with the ASAN/KCOV debug options.
+[   38.402878] c7   1827 BUG: KASAN: slab-out-of-bounds in f2fs_getxattr+0x518/0x68c
+[   38.402891] c7   1827 Read of size 4 at addr ffffffc0b6fb35dc by task
+[   38.402935] c7   1827 Call trace:
+[   38.402952] c7   1827 [<ffffff900809003c>] dump_backtrace+0x0/0x6bc
+[   38.402966] c7   1827 [<ffffff9008090030>] show_stack+0x20/0x2c
+[   38.402981] c7   1827 [<ffffff900871ab10>] dump_stack+0xfc/0x140
+[   38.402995] c7   1827 [<ffffff9008325c40>] print_address_description+0x80/0x2d8
+[   38.403009] c7   1827 [<ffffff900832629c>] kasan_report_error+0x198/0x1fc
+[   38.403022] c7   1827 [<ffffff9008326104>] kasan_report_error+0x0/0x1fc
+[   38.403037] c7   1827 [<ffffff9008325000>] __asan_load4+0x1b0/0x1b8
+[   38.403051] c7   1827 [<ffffff90085fcc44>] f2fs_getxattr+0x518/0x68c
+[   38.403066] c7   1827 [<ffffff90085fc508>] f2fs_xattr_generic_get+0xb0/0xd0
+[   38.403080] c7   1827 [<ffffff9008395708>] __vfs_getxattr+0x1f4/0x1fc
+[   38.403096] c7   1827 [<ffffff9008621bd0>] inode_doinit_with_dentry+0x360/0x938
+[   38.403109] c7   1827 [<ffffff900862d6cc>] selinux_d_instantiate+0x2c/0x38
+[   38.403123] c7   1827 [<ffffff900861b018>] security_d_instantiate+0x68/0x98
+[   38.403136] c7   1827 [<ffffff9008377db8>] d_splice_alias+0x58/0x348
+[   38.403149] c7   1827 [<ffffff900858d16c>] f2fs_lookup+0x608/0x774
+[   38.403163] c7   1827 [<ffffff900835eacc>] lookup_slow+0x1e0/0x2cc
+[   38.403177] c7   1827 [<ffffff9008367fe0>] walk_component+0x160/0x520
+[   38.403190] c7   1827 [<ffffff9008369ef4>] path_lookupat+0x110/0x2b4
+[   38.403203] c7   1827 [<ffffff900835dd38>] filename_lookup+0x1d8/0x3a8
+[   38.403216] c7   1827 [<ffffff900835eeb0>] user_path_at_empty+0x54/0x68
+[   38.403229] c7   1827 [<ffffff9008395f44>] SyS_getxattr+0xb4/0x18c
+[   38.403241] c7   1827 [<ffffff9008084200>] el0_svc_naked+0x34/0x38
 
-Fixes: 021234ef3752f ("KVM: arm64: Make kvm_condition_valid32() accessible from EL2")
-Fixes: 8cebe750c4d9a ("arm64: KVM: Make kvm_skip_instr32 available to HYP")
-Signed-off-by: James Morse <james.morse@arm.com>
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+Signed-off-by: Randall Huang <huangrandall@google.com>
+[Jaegeuk Kim: Fix wrong ending boundary]
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/kvm/hyp/Makefile   |   1 +
- arch/arm64/kvm/hyp/Makefile |   1 +
- virt/kvm/arm/aarch32.c      | 121 --------------------------------
- virt/kvm/arm/hyp/aarch32.c  | 136 ++++++++++++++++++++++++++++++++++++
- 4 files changed, 138 insertions(+), 121 deletions(-)
- create mode 100644 virt/kvm/arm/hyp/aarch32.c
+ fs/f2fs/xattr.c | 36 +++++++++++++++++++++++++++---------
+ fs/f2fs/xattr.h |  2 ++
+ 2 files changed, 29 insertions(+), 9 deletions(-)
 
-diff --git a/arch/arm/kvm/hyp/Makefile b/arch/arm/kvm/hyp/Makefile
-index d2b5ec9c4b92..ba88b1eca93c 100644
---- a/arch/arm/kvm/hyp/Makefile
-+++ b/arch/arm/kvm/hyp/Makefile
-@@ -11,6 +11,7 @@ CFLAGS_ARMV7VE		   :=$(call cc-option, -march=armv7ve)
+diff --git a/fs/f2fs/xattr.c b/fs/f2fs/xattr.c
+index 409a637f7a92..88e30f7cf9e1 100644
+--- a/fs/f2fs/xattr.c
++++ b/fs/f2fs/xattr.c
+@@ -205,12 +205,17 @@ static inline const struct xattr_handler *f2fs_xattr_handler(int index)
+ 	return handler;
+ }
  
- obj-$(CONFIG_KVM_ARM_HOST) += $(KVM)/arm/hyp/vgic-v3-sr.o
- obj-$(CONFIG_KVM_ARM_HOST) += $(KVM)/arm/hyp/timer-sr.o
-+obj-$(CONFIG_KVM_ARM_HOST) += $(KVM)/arm/hyp/aarch32.o
+-static struct f2fs_xattr_entry *__find_xattr(void *base_addr, int index,
+-					size_t len, const char *name)
++static struct f2fs_xattr_entry *__find_xattr(void *base_addr,
++				void *last_base_addr, int index,
++				size_t len, const char *name)
+ {
+ 	struct f2fs_xattr_entry *entry;
  
- obj-$(CONFIG_KVM_ARM_HOST) += tlb.o
- obj-$(CONFIG_KVM_ARM_HOST) += cp15-sr.o
-diff --git a/arch/arm64/kvm/hyp/Makefile b/arch/arm64/kvm/hyp/Makefile
-index 82d1904328ad..ea710f674cb6 100644
---- a/arch/arm64/kvm/hyp/Makefile
-+++ b/arch/arm64/kvm/hyp/Makefile
-@@ -10,6 +10,7 @@ KVM=../../../../virt/kvm
+ 	list_for_each_xattr(entry, base_addr) {
++		if ((void *)(entry) + sizeof(__u32) > last_base_addr ||
++			(void *)XATTR_NEXT_ENTRY(entry) > last_base_addr)
++			return NULL;
++
+ 		if (entry->e_name_index != index)
+ 			continue;
+ 		if (entry->e_name_len != len)
+@@ -300,20 +305,22 @@ static int lookup_all_xattrs(struct inode *inode, struct page *ipage,
+ 				const char *name, struct f2fs_xattr_entry **xe,
+ 				void **base_addr, int *base_size)
+ {
+-	void *cur_addr, *txattr_addr, *last_addr = NULL;
++	void *cur_addr, *txattr_addr, *last_txattr_addr;
++	void *last_addr = NULL;
+ 	nid_t xnid = F2FS_I(inode)->i_xattr_nid;
+-	unsigned int size = xnid ? VALID_XATTR_BLOCK_SIZE : 0;
+ 	unsigned int inline_size = inline_xattr_size(inode);
+ 	int err = 0;
  
- obj-$(CONFIG_KVM_ARM_HOST) += $(KVM)/arm/hyp/vgic-v3-sr.o
- obj-$(CONFIG_KVM_ARM_HOST) += $(KVM)/arm/hyp/timer-sr.o
-+obj-$(CONFIG_KVM_ARM_HOST) += $(KVM)/arm/hyp/aarch32.o
+-	if (!size && !inline_size)
++	if (!xnid && !inline_size)
+ 		return -ENODATA;
  
- obj-$(CONFIG_KVM_ARM_HOST) += vgic-v2-cpuif-proxy.o
- obj-$(CONFIG_KVM_ARM_HOST) += sysreg-sr.o
-diff --git a/virt/kvm/arm/aarch32.c b/virt/kvm/arm/aarch32.c
-index 5abbe9b3c652..6880236974b8 100644
---- a/virt/kvm/arm/aarch32.c
-+++ b/virt/kvm/arm/aarch32.c
-@@ -25,127 +25,6 @@
- #include <asm/kvm_emulate.h>
- #include <asm/kvm_hyp.h>
+-	*base_size = inline_size + size + XATTR_PADDING_SIZE;
++	*base_size = XATTR_SIZE(xnid, inode) + XATTR_PADDING_SIZE;
+ 	txattr_addr = f2fs_kzalloc(F2FS_I_SB(inode), *base_size, GFP_NOFS);
+ 	if (!txattr_addr)
+ 		return -ENOMEM;
  
--/*
-- * stolen from arch/arm/kernel/opcodes.c
-- *
-- * condition code lookup table
-- * index into the table is test code: EQ, NE, ... LT, GT, AL, NV
-- *
-- * bit position in short is condition code: NZCV
-- */
--static const unsigned short cc_map[16] = {
--	0xF0F0,			/* EQ == Z set            */
--	0x0F0F,			/* NE                     */
--	0xCCCC,			/* CS == C set            */
--	0x3333,			/* CC                     */
--	0xFF00,			/* MI == N set            */
--	0x00FF,			/* PL                     */
--	0xAAAA,			/* VS == V set            */
--	0x5555,			/* VC                     */
--	0x0C0C,			/* HI == C set && Z clear */
--	0xF3F3,			/* LS == C clear || Z set */
--	0xAA55,			/* GE == (N==V)           */
--	0x55AA,			/* LT == (N!=V)           */
--	0x0A05,			/* GT == (!Z && (N==V))   */
--	0xF5FA,			/* LE == (Z || (N!=V))    */
--	0xFFFF,			/* AL always              */
--	0			/* NV                     */
--};
--
--/*
-- * Check if a trapped instruction should have been executed or not.
-- */
--bool __hyp_text kvm_condition_valid32(const struct kvm_vcpu *vcpu)
--{
--	unsigned long cpsr;
--	u32 cpsr_cond;
--	int cond;
--
--	/* Top two bits non-zero?  Unconditional. */
--	if (kvm_vcpu_get_hsr(vcpu) >> 30)
--		return true;
--
--	/* Is condition field valid? */
--	cond = kvm_vcpu_get_condition(vcpu);
--	if (cond == 0xE)
--		return true;
--
--	cpsr = *vcpu_cpsr(vcpu);
--
--	if (cond < 0) {
--		/* This can happen in Thumb mode: examine IT state. */
--		unsigned long it;
--
--		it = ((cpsr >> 8) & 0xFC) | ((cpsr >> 25) & 0x3);
--
--		/* it == 0 => unconditional. */
--		if (it == 0)
--			return true;
--
--		/* The cond for this insn works out as the top 4 bits. */
--		cond = (it >> 4);
--	}
--
--	cpsr_cond = cpsr >> 28;
--
--	if (!((cc_map[cond] >> cpsr_cond) & 1))
--		return false;
--
--	return true;
--}
--
--/**
-- * adjust_itstate - adjust ITSTATE when emulating instructions in IT-block
-- * @vcpu:	The VCPU pointer
-- *
-- * When exceptions occur while instructions are executed in Thumb IF-THEN
-- * blocks, the ITSTATE field of the CPSR is not advanced (updated), so we have
-- * to do this little bit of work manually. The fields map like this:
-- *
-- * IT[7:0] -> CPSR[26:25],CPSR[15:10]
-- */
--static void __hyp_text kvm_adjust_itstate(struct kvm_vcpu *vcpu)
--{
--	unsigned long itbits, cond;
--	unsigned long cpsr = *vcpu_cpsr(vcpu);
--	bool is_arm = !(cpsr & PSR_AA32_T_BIT);
--
--	if (is_arm || !(cpsr & PSR_AA32_IT_MASK))
--		return;
--
--	cond = (cpsr & 0xe000) >> 13;
--	itbits = (cpsr & 0x1c00) >> (10 - 2);
--	itbits |= (cpsr & (0x3 << 25)) >> 25;
--
--	/* Perform ITAdvance (see page A2-52 in ARM DDI 0406C) */
--	if ((itbits & 0x7) == 0)
--		itbits = cond = 0;
--	else
--		itbits = (itbits << 1) & 0x1f;
--
--	cpsr &= ~PSR_AA32_IT_MASK;
--	cpsr |= cond << 13;
--	cpsr |= (itbits & 0x1c) << (10 - 2);
--	cpsr |= (itbits & 0x3) << 25;
--	*vcpu_cpsr(vcpu) = cpsr;
--}
--
--/**
-- * kvm_skip_instr - skip a trapped instruction and proceed to the next
-- * @vcpu: The vcpu pointer
-- */
--void __hyp_text kvm_skip_instr32(struct kvm_vcpu *vcpu, bool is_wide_instr)
--{
--	bool is_thumb;
--
--	is_thumb = !!(*vcpu_cpsr(vcpu) & PSR_AA32_T_BIT);
--	if (is_thumb && !is_wide_instr)
--		*vcpu_pc(vcpu) += 2;
--	else
--		*vcpu_pc(vcpu) += 4;
--	kvm_adjust_itstate(vcpu);
--}
--
- /*
-  * Table taken from ARMv8 ARM DDI0487B-B, table G1-10.
-  */
-diff --git a/virt/kvm/arm/hyp/aarch32.c b/virt/kvm/arm/hyp/aarch32.c
-new file mode 100644
-index 000000000000..d31f267961e7
---- /dev/null
-+++ b/virt/kvm/arm/hyp/aarch32.c
-@@ -0,0 +1,136 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Hyp portion of the (not much of an) Emulation layer for 32bit guests.
-+ *
-+ * Copyright (C) 2012,2013 - ARM Ltd
-+ * Author: Marc Zyngier <marc.zyngier@arm.com>
-+ *
-+ * based on arch/arm/kvm/emulate.c
-+ * Copyright (C) 2012 - Virtual Open Systems and Columbia University
-+ * Author: Christoffer Dall <c.dall@virtualopensystems.com>
-+ */
++	last_txattr_addr = (void *)txattr_addr + XATTR_SIZE(xnid, inode);
 +
-+#include <linux/kvm_host.h>
-+#include <asm/kvm_emulate.h>
-+#include <asm/kvm_hyp.h>
-+
-+/*
-+ * stolen from arch/arm/kernel/opcodes.c
-+ *
-+ * condition code lookup table
-+ * index into the table is test code: EQ, NE, ... LT, GT, AL, NV
-+ *
-+ * bit position in short is condition code: NZCV
-+ */
-+static const unsigned short cc_map[16] = {
-+	0xF0F0,			/* EQ == Z set            */
-+	0x0F0F,			/* NE                     */
-+	0xCCCC,			/* CS == C set            */
-+	0x3333,			/* CC                     */
-+	0xFF00,			/* MI == N set            */
-+	0x00FF,			/* PL                     */
-+	0xAAAA,			/* VS == V set            */
-+	0x5555,			/* VC                     */
-+	0x0C0C,			/* HI == C set && Z clear */
-+	0xF3F3,			/* LS == C clear || Z set */
-+	0xAA55,			/* GE == (N==V)           */
-+	0x55AA,			/* LT == (N!=V)           */
-+	0x0A05,			/* GT == (!Z && (N==V))   */
-+	0xF5FA,			/* LE == (Z || (N!=V))    */
-+	0xFFFF,			/* AL always              */
-+	0			/* NV                     */
-+};
-+
-+/*
-+ * Check if a trapped instruction should have been executed or not.
-+ */
-+bool __hyp_text kvm_condition_valid32(const struct kvm_vcpu *vcpu)
-+{
-+	unsigned long cpsr;
-+	u32 cpsr_cond;
-+	int cond;
-+
-+	/* Top two bits non-zero?  Unconditional. */
-+	if (kvm_vcpu_get_hsr(vcpu) >> 30)
-+		return true;
-+
-+	/* Is condition field valid? */
-+	cond = kvm_vcpu_get_condition(vcpu);
-+	if (cond == 0xE)
-+		return true;
-+
-+	cpsr = *vcpu_cpsr(vcpu);
-+
-+	if (cond < 0) {
-+		/* This can happen in Thumb mode: examine IT state. */
-+		unsigned long it;
-+
-+		it = ((cpsr >> 8) & 0xFC) | ((cpsr >> 25) & 0x3);
-+
-+		/* it == 0 => unconditional. */
-+		if (it == 0)
-+			return true;
-+
-+		/* The cond for this insn works out as the top 4 bits. */
-+		cond = (it >> 4);
+ 	/* read from inline xattr */
+ 	if (inline_size) {
+ 		err = read_inline_xattr(inode, ipage, txattr_addr);
+@@ -340,7 +347,11 @@ static int lookup_all_xattrs(struct inode *inode, struct page *ipage,
+ 	else
+ 		cur_addr = txattr_addr;
+ 
+-	*xe = __find_xattr(cur_addr, index, len, name);
++	*xe = __find_xattr(cur_addr, last_txattr_addr, index, len, name);
++	if (!*xe) {
++		err = -EFAULT;
++		goto out;
 +	}
+ check:
+ 	if (IS_XATTR_LAST_ENTRY(*xe)) {
+ 		err = -ENODATA;
+@@ -584,7 +595,8 @@ static int __f2fs_setxattr(struct inode *inode, int index,
+ 			struct page *ipage, int flags)
+ {
+ 	struct f2fs_xattr_entry *here, *last;
+-	void *base_addr;
++	void *base_addr, *last_base_addr;
++	nid_t xnid = F2FS_I(inode)->i_xattr_nid;
+ 	int found, newsize;
+ 	size_t len;
+ 	__u32 new_hsize;
+@@ -608,8 +620,14 @@ static int __f2fs_setxattr(struct inode *inode, int index,
+ 	if (error)
+ 		return error;
+ 
++	last_base_addr = (void *)base_addr + XATTR_SIZE(xnid, inode);
 +
-+	cpsr_cond = cpsr >> 28;
-+
-+	if (!((cc_map[cond] >> cpsr_cond) & 1))
-+		return false;
-+
-+	return true;
-+}
-+
-+/**
-+ * adjust_itstate - adjust ITSTATE when emulating instructions in IT-block
-+ * @vcpu:	The VCPU pointer
-+ *
-+ * When exceptions occur while instructions are executed in Thumb IF-THEN
-+ * blocks, the ITSTATE field of the CPSR is not advanced (updated), so we have
-+ * to do this little bit of work manually. The fields map like this:
-+ *
-+ * IT[7:0] -> CPSR[26:25],CPSR[15:10]
-+ */
-+static void __hyp_text kvm_adjust_itstate(struct kvm_vcpu *vcpu)
-+{
-+	unsigned long itbits, cond;
-+	unsigned long cpsr = *vcpu_cpsr(vcpu);
-+	bool is_arm = !(cpsr & PSR_AA32_T_BIT);
-+
-+	if (is_arm || !(cpsr & PSR_AA32_IT_MASK))
-+		return;
-+
-+	cond = (cpsr & 0xe000) >> 13;
-+	itbits = (cpsr & 0x1c00) >> (10 - 2);
-+	itbits |= (cpsr & (0x3 << 25)) >> 25;
-+
-+	/* Perform ITAdvance (see page A2-52 in ARM DDI 0406C) */
-+	if ((itbits & 0x7) == 0)
-+		itbits = cond = 0;
-+	else
-+		itbits = (itbits << 1) & 0x1f;
-+
-+	cpsr &= ~PSR_AA32_IT_MASK;
-+	cpsr |= cond << 13;
-+	cpsr |= (itbits & 0x1c) << (10 - 2);
-+	cpsr |= (itbits & 0x3) << 25;
-+	*vcpu_cpsr(vcpu) = cpsr;
-+}
-+
-+/**
-+ * kvm_skip_instr - skip a trapped instruction and proceed to the next
-+ * @vcpu: The vcpu pointer
-+ */
-+void __hyp_text kvm_skip_instr32(struct kvm_vcpu *vcpu, bool is_wide_instr)
-+{
-+	bool is_thumb;
-+
-+	is_thumb = !!(*vcpu_cpsr(vcpu) & PSR_AA32_T_BIT);
-+	if (is_thumb && !is_wide_instr)
-+		*vcpu_pc(vcpu) += 2;
-+	else
-+		*vcpu_pc(vcpu) += 4;
-+	kvm_adjust_itstate(vcpu);
-+}
+ 	/* find entry with wanted name. */
+-	here = __find_xattr(base_addr, index, len, name);
++	here = __find_xattr(base_addr, last_base_addr, index, len, name);
++	if (!here) {
++		error = -EFAULT;
++		goto exit;
++	}
+ 
+ 	found = IS_XATTR_LAST_ENTRY(here) ? 0 : 1;
+ 
+diff --git a/fs/f2fs/xattr.h b/fs/f2fs/xattr.h
+index dbcd1d16e669..2a4ecaf338ea 100644
+--- a/fs/f2fs/xattr.h
++++ b/fs/f2fs/xattr.h
+@@ -74,6 +74,8 @@ struct f2fs_xattr_entry {
+ 				entry = XATTR_NEXT_ENTRY(entry))
+ #define VALID_XATTR_BLOCK_SIZE	(PAGE_SIZE - sizeof(struct node_footer))
+ #define XATTR_PADDING_SIZE	(sizeof(__u32))
++#define XATTR_SIZE(x,i)		(((x) ? VALID_XATTR_BLOCK_SIZE : 0) +	\
++						(inline_xattr_size(i)))
+ #define MIN_OFFSET(i)		XATTR_ALIGN(inline_xattr_size(i) +	\
+ 						VALID_XATTR_BLOCK_SIZE)
+ 
 -- 
 2.20.1
 
