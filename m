@@ -2,90 +2,218 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D6F7D481DA
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 14:21:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 82528481E0
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 14:22:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727859AbfFQMUy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 08:20:54 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:43602 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725973AbfFQMUx (ORCPT
+        id S1727565AbfFQMWK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 08:22:10 -0400
+Received: from mail-vs1-f66.google.com ([209.85.217.66]:35029 "EHLO
+        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725973AbfFQMWG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 08:20:53 -0400
-Received: from [5.158.153.52] (helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1hcqcr-0006q9-JE; Mon, 17 Jun 2019 14:20:41 +0200
-Date:   Mon, 17 Jun 2019 14:20:40 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Florian Weimer <fweimer@redhat.com>
-cc:     Dave Martin <Dave.Martin@arm.com>,
-        Yu-cheng Yu <yu-cheng.yu@intel.com>, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-mm@kvack.org, linux-arch@vger.kernel.org,
-        linux-api@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Balbir Singh <bsingharora@gmail.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Eugene Syromiatnikov <esyr@redhat.com>,
-        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>
-Subject: Re: [PATCH v7 22/27] binfmt_elf: Extract .note.gnu.property from an
- ELF file
-In-Reply-To: <87imt4jwpt.fsf@oldenburg2.str.redhat.com>
-Message-ID: <alpine.DEB.2.21.1906171418220.1854@nanos.tec.linutronix.de>
-References: <20190606200646.3951-1-yu-cheng.yu@intel.com>        <20190606200646.3951-23-yu-cheng.yu@intel.com>        <20190607180115.GJ28398@e103592.cambridge.arm.com>        <94b9c55b3b874825fda485af40ab2a6bc3dad171.camel@intel.com>       
- <87lfy9cq04.fsf@oldenburg2.str.redhat.com>        <20190611114109.GN28398@e103592.cambridge.arm.com>        <031bc55d8dcdcf4f031e6ff27c33fd52c61d33a5.camel@intel.com>        <20190612093238.GQ28398@e103592.cambridge.arm.com>
- <87imt4jwpt.fsf@oldenburg2.str.redhat.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Mon, 17 Jun 2019 08:22:06 -0400
+Received: by mail-vs1-f66.google.com with SMTP id u124so5967718vsu.2
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2019 05:22:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=inGSDUfgy12MnV2jo2D4Nubdqwd8cc039JMXj9GTRrA=;
+        b=BaY/Mw4ucNOLlZG6021hvYu+v8OFPCGaf5W2OANB6XPbg0UqT/cgAB3AravOtr3BEF
+         yUGEhb38oekQt0UrrCBEpZgcUST8GsaDeV4pe+g7KoeJlRnXUAyDklVTAS8hGgTZTVnY
+         A7ZsBtlltgi8+h1kaTi80I2Kbpf6jzD/DnljX9n76hZJmsVDNxJRQTcOl2TKSU6F5crE
+         SyA8FgL2RvuBCgYHXHZgDLkut1yb6DaP09n2as2TT836YKODLrQ0ewzsz86A5EIXw8YI
+         NjiHJywpoahWsy5SzgYUhCKomVxgX2YyRex2O/fOhOQlTT+Ub10tpaDPZmfd+2GCDERS
+         +T5Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=inGSDUfgy12MnV2jo2D4Nubdqwd8cc039JMXj9GTRrA=;
+        b=KGOrI7TFx1UvI4cPFL5EMzam4pmGh+YKN5BTFdyLLXM/sIfRyZBg1CXPUAVuIjhz1d
+         qXFhM9aN8ufxfsRgpS/xiSI4dvGqeAhTIwFd0B6YnOjG5OjNja/9QxwBfDqMF5Edp/OU
+         TlmSXRdJ+Eg9XaMdVz60XYVRvwo8BKVjzs0iEfBkjlaqH/d/sgVkpdowX6X1ehAr7aIm
+         vx5JALO/N8LMu5sZgYDNuFQyHPT0E0MryvT6YhJFrDXwTDQ34UtO7FKZ+kWjcvT7gxv8
+         Ufvb2cXfsPQtRukyYCCTqneTjEuIm/85MjccbS7CIs395y7ZxLrtvNsvlqFSYDS4L0ct
+         0WqA==
+X-Gm-Message-State: APjAAAXCFgDN3VCXurMYJ9yKlNxMUr+DeiX/TnGwYAQQP0b5eMMmEgGF
+        9S6cvCuRCgG7PI6XGyagnD5LQ0Y7lLB9KW74so2JTg==
+X-Google-Smtp-Source: APXvYqwvsX2qorPP589qYvilkHLdtcwg2ZCmDdhmhV70oupOdc+lud+k/srIUL3u3WxMmegbWHGCs6qQXzT1ePDp16s=
+X-Received: by 2002:a67:3254:: with SMTP id y81mr20750067vsy.34.1560774125745;
+ Mon, 17 Jun 2019 05:22:05 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+References: <1560247011-26369-1-git-send-email-manish.narani@xilinx.com>
+ <1560247011-26369-4-git-send-email-manish.narani@xilinx.com>
+ <CAPDyKFrJwpwUUX_q2kcR9QY_fv9Lgos+ixPmU6JMeJVqJAiFpg@mail.gmail.com> <5feac3fb-bef3-b7d1-57d6-81e115e1f555@xilinx.com>
+In-Reply-To: <5feac3fb-bef3-b7d1-57d6-81e115e1f555@xilinx.com>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Mon, 17 Jun 2019 14:21:28 +0200
+Message-ID: <CAPDyKFp_ZvSjFp2FGonzGsnc9xPyZ7qOCaRnX1SimBxLpfz9-Q@mail.gmail.com>
+Subject: Re: [PATCH 3/3] mmc: sdhci-of-arasan: Add support for ZynqMP Platform
+ Tap Delays Setup
+To:     Michal Simek <michal.simek@xilinx.com>
+Cc:     Manish Narani <manish.narani@xilinx.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Adrian Hunter <adrian.hunter@intel.com>, rajan.vaja@xilinx.com,
+        jolly.shah@xilinx.com, nava.manne@xilinx.com,
+        Olof Johansson <olof@lixom.net>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        DTML <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 17 Jun 2019, Florian Weimer wrote:
-> * Dave Martin:
-> > On Tue, Jun 11, 2019 at 12:31:34PM -0700, Yu-cheng Yu wrote:
-> >> We can probably check PT_GNU_PROPERTY first, and fallback (based on ld-linux
-> >> version?) to PT_NOTE scanning?
+On Mon, 17 Jun 2019 at 13:28, Michal Simek <michal.simek@xilinx.com> wrote:
+>
+> Hi,
+>
+> On 17. 06. 19 13:15, Ulf Hansson wrote:
+> > On Tue, 11 Jun 2019 at 11:57, Manish Narani <manish.narani@xilinx.com> wrote:
+> >>
+> >> Apart from taps set by auto tuning, ZynqMP platform has feature to set
+> >> the tap values manually. Add support to read tap delay values from
+> >> DT and set the same in HW via ZynqMP SoC framework. Reading Tap
+> >> Delays from DT is optional, if the property is not available in DT the
+> >> driver will use the pre-defined Tap Delay Values.
+> >>
+> >> Signed-off-by: Manish Narani <manish.narani@xilinx.com>
+> >> ---
+> >>  drivers/mmc/host/sdhci-of-arasan.c | 173 ++++++++++++++++++++++++++++++++++++-
+> >>  1 file changed, 172 insertions(+), 1 deletion(-)
+> >>
+> >> diff --git a/drivers/mmc/host/sdhci-of-arasan.c b/drivers/mmc/host/sdhci-of-arasan.c
+> >> index b12abf9..7af6cec 100644
+> >> --- a/drivers/mmc/host/sdhci-of-arasan.c
+> >> +++ b/drivers/mmc/host/sdhci-of-arasan.c
+> >> @@ -22,6 +22,7 @@
+> >>  #include <linux/phy/phy.h>
+> >>  #include <linux/regmap.h>
+> >>  #include <linux/of.h>
+> >> +#include <linux/firmware/xlnx-zynqmp.h>
+> >>
+> >>  #include "cqhci.h"
+> >>  #include "sdhci-pltfm.h"
+> >> @@ -32,6 +33,10 @@
+> >>
+> >>  #define PHY_CLK_TOO_SLOW_HZ            400000
+> >>
+> >> +/* Default settings for ZynqMP Tap Delays */
+> >> +#define ZYNQMP_ITAP_DELAYS {0, 0x15, 0x15, 0, 0x15, 0, 0, 0x3D, 0x12, 0, 0}
+> >> +#define ZYNQMP_OTAP_DELAYS {0, 0x5, 0x6, 0, 0x5, 0x3, 0x3, 0x4, 0x6, 0x3, 0}
+> >> +
+> >>  /*
+> >>   * On some SoCs the syscon area has a feature where the upper 16-bits of
+> >>   * each 32-bit register act as a write mask for the lower 16-bits.  This allows
+> >> @@ -81,6 +86,7 @@ struct sdhci_arasan_soc_ctl_map {
+> >>   * @sdcardclk:         Pointer to normal 'struct clock' for sdcardclk_hw.
+> >>   * @soc_ctl_base:      Pointer to regmap for syscon for soc_ctl registers.
+> >>   * @soc_ctl_map:       Map to get offsets into soc_ctl registers.
+> >> + * @of_data:           Platform specific runtime data storage pointer
+> >>   */
+> >>  struct sdhci_arasan_data {
+> >>         struct sdhci_host *host;
+> >> @@ -101,6 +107,15 @@ struct sdhci_arasan_data {
+> >>  /* Controller immediately reports SDHCI_CLOCK_INT_STABLE after enabling the
+> >>   * internal clock even when the clock isn't stable */
+> >>  #define SDHCI_ARASAN_QUIRK_CLOCK_UNSTABLE BIT(1)
+> >> +
+> >> +       void *of_data;
+> >> +};
+> >> +
+> >> +struct sdhci_arasan_zynqmp_data {
+> >> +       void (*set_tap_delay)(struct sdhci_host *host);
+> >> +       const struct zynqmp_eemi_ops *eemi_ops;
+> >> +       u8 tapdly[MMC_TIMING_MMC_HS400 + 1][2]; /* [0] for input delay, */
+> >> +                                               /* [1] for output delay */
+> >>  };
 > >
-> > For arm64, we can check for PT_GNU_PROPERTY and then give up
-> > unconditionally.
+> > Please use two different structs, one for the clock provider data and
+> > one for the mmc variant/platform data. This makes the code more
+> > readable.
+>
+> Origin version before sending that out was using two fields.
+> +       u32 itapdly[MMC_TIMING_MMC_HS400 + 1];
+> +       u32 otapdly[MMC_TIMING_MMC_HS400 + 1];
+>
+> I did asked for putting it together to two dimensional array for
+> improving readability of this code. The reason was that you need to take
+> care about input/output together.
+> One thing I was also suggesting was to use instead of 2 just enum values
+> to specify IN=0/OUT/MAX to improve readability of this.
+> Do you think that using enum should be enough?
+
+Not sure I understand what you suggest here, sorry. I have no problem
+with the enums.
+
+The important point I am trying to make here, is that we should split
+the clock provider data and the mmc variant data, simply because those
+doesn't really belong to each each other.
+
+Something like this:
+
+struct sdhci_arasan_zynqmp_data {
+         bool tap_delays;
+         u8 tapdly[MMC_TIMING_MMC_HS400 + 1][2]; /* [0] for input
+delay, [1] for output delay */
+         + other variant specific data one may want to put here
+}
+
+These are just regular mmc OF data that are parsed as any other
+property of the mmc device.
+
+The "const struct zynqmp_eemi_ops *eemi_ops; should then be moved into
+a clock provider specific struct, which is assigned when calling
+sdhci_arasan_register_sdclk. I understand that all the clock data is
+folded into struct sdhci_arasan_data today, but I think that should be
+moved into a "sub-struct" for the clock specifics.
+
+Moreover, when registering the clock, we should convert from using
+devm_clk_register() into devm_clk_hw_register() as the first one is
+now deprecated.
+
+>
+>
+> > In regards to the mmc data part, I suggest to drop the
+> > ->set_tap_delay() callback, but rather use a boolean flag to indicate
+> > whether clock phases needs to be changed for the variant. Potentially
+> > that could even be skipped and instead call clk_set_phase()
+> > unconditionally, as the clock core deals fine with clock providers
+> > that doesn't support the ->set_phase() callback.
+>
+> In connection to another version of this driver for latest Xilinx chip
+> it would be better to keep set_tap_delay callback in the driver. The
+> reason is that new chip/ip is capable to setup tap delays directly
+> without asking firmware to do it. That's why for versal IP there is a
+> need to call different setup_tap_delay function.
+
+The ->set_tap_delay() callback is for ZyncMp pointing to
+sdhci_arasan_zynqmp_set_tap_delay(). This function calls the
+clk_set_phase() API.
+
+What does ->set_tap_delay() do for the latest version?
+
+>
 > >
-> > For x86, we would fall back to PT_NOTE scanning, but this will add a bit
-> > of cost to binaries that don't have NT_GNU_PROPERTY_TYPE_0.  The ld.so
-> > version doesn't tell you what ELF ABI a given executable conforms to.
+> > [...]
 > >
-> > Since this sounds like it's largely a distro-specific issue, maybe there
-> > could be a Kconfig option to turn the fallback PT_NOTE scanning on?
-> 
-> I'm worried that this causes interop issues similarly to what we see
-> with VSYSCALL today.  If we need both and a way to disable it, it should
-> be something like a personality flag which can be configured for each
-> process tree separately.  Ideally, we'd settle on one correct approach
-> (i.e., either always process both, or only process PT_GNU_PROPERTY) and
-> enforce that.
+> > Otherwise this looks good to me!
+> >
+> > When it comes to patch1, I need an ack from Michal to pick it up.
+>
+> I am waiting till Rob ack dt binding and then I wanted to talk to you if
+> you want to take it with 1/3 or if you want me to take all of them via
+> my tree.
+> In previous releases I was taking them via my tree because there were
+> several subsystem changing firmware interface. In this cycle there are
+> just small changes to firmware interface that's why taking it via your
+> tree shouldn't be a problem too.
 
-Chose one and only the one which makes technically sense and is not some
-horrible vehicle.
+Okay, then let's target this via my mmc tree this time.
 
-Everytime we did those 'oh we need to make x fly workarounds' we regretted
-it sooner than later.
-
-Thanks,
-
-	tglx
+Kind regards
+Uffe
