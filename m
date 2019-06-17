@@ -2,78 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 92DCF4802B
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 13:04:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B3A548023
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 13:04:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728023AbfFQLEk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 07:04:40 -0400
-Received: from mout.kundenserver.de ([212.227.17.10]:50833 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726164AbfFQLEj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 07:04:39 -0400
-Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
- (mreue109 [212.227.15.145]) with ESMTPA (Nemesis) id
- 1Mj8eB-1iFAr734RJ-00fBNP; Mon, 17 Jun 2019 13:04:24 +0200
-From:   Arnd Bergmann <arnd@arndb.de>
+        id S1727805AbfFQLEL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 07:04:11 -0400
+Received: from mail.andi.de1.cc ([85.214.239.24]:58076 "EHLO mail.andi.de1.cc"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726164AbfFQLEK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Jun 2019 07:04:10 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=kemnade.info; s=20180802; h=Content-Type:MIME-Version:References:
+        In-Reply-To:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=8XdeYg0GlEJgt8p/N7L3c6uxos5/PKeCfsQ7LLmnUYw=; b=IuvGRaou5HUNJXpE0AAbIF/rF
+        u6PHU/hQ0TSVaOmy6/9EGTV43+qYi2ART6kKlk1HQfesa80EJk1W6AW7Y+Qi1Ck2o7HF21+tLD4HO
+        6qOEWxIgq4jzaspY2ICoo+CnpDdABhaKgEEkWJ3UgmadL7L/65At2872P2geg9b0cM76w=;
+Received: from p578b2b7d.dip0.t-ipconnect.de ([87.139.43.125] helo=localhost)
+        by mail.andi.de1.cc with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <andreas@kemnade.info>)
+        id 1hcpQl-0000PF-SB; Mon, 17 Jun 2019 13:04:07 +0200
+Received: from [::1] (helo=localhost)
+        by eeepc with esmtp (Exim 4.89)
+        (envelope-from <andreas@kemnade.info>)
+        id 1hcpQi-0003Ls-9m; Mon, 17 Jun 2019 13:04:04 +0200
+Date:   Mon, 17 Jun 2019 13:03:57 +0200
+From:   Andreas Kemnade <andreas@kemnade.info>
 To:     Mark Brown <broonie@kernel.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Sugar Zhang <sugar.zhang@rock-chips.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Heiko Stuebner <heiko@sntech.de>, alsa-devel@alsa-project.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] ASoC: rockchip: pdm: select CONFIG_RATIONAL
-Date:   Mon, 17 Jun 2019 13:03:51 +0200
-Message-Id: <20190617110415.2084205-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.20.0
+Cc:     tony@atomide.com, lgirdwood@gmail.com, linux-omap@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        sboyd@kernel.org, nm@ti.com, vireshk@kernel.org,
+        letux-kernel@openphoenux.org
+Subject: Re: [PATCH] regulator: twl: mark vdd1/2 as continuous on twl4030
+Message-ID: <20190617130357.41204ff7@kemnade.info>
+In-Reply-To: <20190617103111.GM5316@sirena.org.uk>
+References: <20190615163314.28173-1-andreas@kemnade.info>
+        <20190617103111.GM5316@sirena.org.uk>
+X-Mailer: Claws Mail 3.14.1 (GTK+ 2.24.31; i686-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:RQUeaFNGGn1EAUOJ+4Zq3U9Xg93dFdoGITN3ZKm3Mt4YbKTsksr
- /Nb5nKnunoTBlLqFGpZWA9oXu9HPZ4ooTs1PKfIUNNUH5c8OdpM9y5ix03RPi90uP8mhFUV
- 9sef2XlRxJsu4Em1+4Jl7xTmRcNS727kWov9tH/9ugCaLfPF+pyKE/2opwfYI1/uTAULabq
- C5OfVG/T7vycW0msxCGig==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:TgeddKwT1bQ=:+0nAmfdfN0DrHy0szFSDxd
- E97/qsS1VXgSEQ9Kd9UM8LUmS2rDvT8u8ENSePmCM8L5TPoigst9b5PpOt5gQXY4w/6/k2vdi
- GPlMTAQjWQxxHAqcUyyrFwNr0A7jljiNSZ4XPoTUTSHp4P8mYysAR4i4kVQrTuWSqtpcshFAx
- frleG1h6TqhiR3kn/x6UQhrQlpJwKeiXqQSjicC5pldL/n3LULCpGxPuwoGnz9UHMLHA8u8vY
- /K1ftN31dtrN73VQ+S7TsxRcjiD5c1JRn93SdwhuFs0cAF0BS2xmBdzcX+M5Y3QH5t4hau+ug
- RnKA/CzG9cS1KOVvA/sfahClyagQHFGXk9ZKHark+8g/7E0EJ5lQSsbRlUL1np++MmiwP6Z90
- eTezWa9VSrMf1PzATR8+/V7X/OmPlwDjJxbSh4hwYKXbhIKWgAsF2Dx0Himn6AUOdBVaAPTkC
- agTTz1y0ppeyET6Vd5JHfjc9a8SnYJph9o0Y+mLvjyxp6VMvemow0EMxGeIR4C1wdpwI4WC4w
- 7ADR9bijyRaq4WT/0OLwqdeFQ7M2uVHMqd3e4J9B9q1E5dH3gHnPV09SAmC++ybSYOjA9MIIL
- tdG8aPKFXJDyEnH9SiUWWzlu1rixOSpRQo8e2fseE6D8GmQVz6CnJJCmJRHnDwE16yfU4dJX7
- JKGaLRDElTyJ/ehi37iXnQAULGay4vAx+KpY2/tvxZH+wixT05wCB93gM6RfdxNk2/+c3sgdC
- ikEUF7R9U1+VpjOcGVmdFJ579sUlQGHYws5bFQ==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/T/ae9AiTrO+noE5l2ZRMJjS"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Without this, we get a link error:
+--Sig_/T/ae9AiTrO+noE5l2ZRMJjS
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-sound/soc/rockchip/rockchip_pdm.o: In function `rockchip_pdm_hw_params':
-rockchip_pdm.c:(.text+0x754): undefined reference to `rational_best_approximation'
+Hi,
 
-Fixes: 624e8e00acaf ("ASoC: rockchip: pdm: fixup pdm fractional div")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- sound/soc/rockchip/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+On Mon, 17 Jun 2019 11:31:11 +0100
+Mark Brown <broonie@kernel.org> wrote:
 
-diff --git a/sound/soc/rockchip/Kconfig b/sound/soc/rockchip/Kconfig
-index 28a80c1cb41d..b43657e6e655 100644
---- a/sound/soc/rockchip/Kconfig
-+++ b/sound/soc/rockchip/Kconfig
-@@ -20,6 +20,7 @@ config SND_SOC_ROCKCHIP_PDM
- 	tristate "Rockchip PDM Controller Driver"
- 	depends on CLKDEV_LOOKUP && SND_SOC_ROCKCHIP
- 	select SND_SOC_GENERIC_DMAENGINE_PCM
-+	select RATIONAL
- 	help
- 	  Say Y or M if you want to add support for PDM driver for
- 	  Rockchip PDM Controller. The Controller supports up to maximum of
--- 
-2.20.0
+> On Sat, Jun 15, 2019 at 06:33:14PM +0200, Andreas Kemnade wrote:
+>=20
+> > The VDD1/VDD2 regulators on twl4030 are neither defined with
+> > voltage lists nor with the continuous flag set, so
+> > regulator_is_supported_voltage() returns false and an error
+> > before above mentioned commit (which was considered success)
+> > The result is that after the above mentioned commit cpufreq
+> > does not work properly e.g. dm3730. =20
+>=20
+> Why is this a good fix and not defining the supported voltages?  These
+> look like fairly standard linear range regulators.
 
+I am fixing the definition of the two regulators in the patch.
+I am defining them as continuous.=20
+Voltage ranges are defined in
+arch/arm/boot/dts/twl4030.dtsi
+Only the continuous flag is missing.
+
+Is there anything else do you want to be defined?
+
+Regards,
+Andreas
+
+--Sig_/T/ae9AiTrO+noE5l2ZRMJjS
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEPIWxmAFyOaBcwCpFl4jFM1s/ye8FAl0Hc50ACgkQl4jFM1s/
+ye8YpA/8CrtqyQjtHJXh7k+8PQQp3Shw7IYEnKTorCO7pz3jS6Y9LTGR11kH5GVe
+tsZpUKXcGjbNGPo9Urnb78t+SWySAABsd9F0zF00m0Ma8qA8KptW1Zggs1+zzm5z
+P+ariX43asVqSXLbdNAEEPrFmWSeHTl1+n6vk/D3FPxAisyPKknRwPSZ6nv/6w6V
+/IIiUYaJ1X4oBbr3ydhsIVmbmAsE1U6R5nl+nw5/+fRPakD2WVyv5oGCm6sgglvX
+5lLnvhZE1S6YJF/eSUwlqbJt0R9KLFCWlvede0a4OAx5tDvIqqyEGzjGjUt+YKBQ
+e3Jb8c2/oh29MtQHLvxxBEvWih0yact/T7ZDKUGsgJ9L0epJ56EGgFUTYmwQTDck
+Y2z4jt7ciNCcBSDx1SGhRZeUoBEeCrUzsRL6Pqeuxf1s6O9bnP1Xs1mbZOYmMkVl
+XPxpNqgbJNV1LLOHBHqac7nrm1lzkKPIbkNEk79A7pbWtWH67PoEUXcr5Y8Jkkjl
+HM4Qwzd3KM3DZvHed666wpJ6n8LSUb7f0TqzRJPjFt8AYsgu4uoQcwWycFVDGWDS
+P0t/41wyQQOCxzNIMj9HRaKnryqqo7+Frg+KaRuzXkUrAi6uwDFDH/jUbk/jmr0g
+AzX7JHDzzEVtdslahvTmKXparIef4Lch42NvaE0naDOyabZLRtg=
+=3Fg4
+-----END PGP SIGNATURE-----
+
+--Sig_/T/ae9AiTrO+noE5l2ZRMJjS--
