@@ -2,208 +2,171 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C596E48C55
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 20:41:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2D81248C62
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 20:42:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728831AbfFQSl6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 14:41:58 -0400
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:47898 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728792AbfFQSlx (ORCPT
+        id S1726996AbfFQSmR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 14:42:17 -0400
+Received: from esa6.hgst.iphmx.com ([216.71.154.45]:9534 "EHLO
+        esa6.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726001AbfFQSmP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 14:41:53 -0400
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x5HIff7a085314;
-        Mon, 17 Jun 2019 13:41:41 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1560796901;
-        bh=B3vkuFEUJ6Y+O0/Ge2hah5BykSfysAS/GfgDfsj6bMM=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=EDdKCmHTCHn9AKkRwgMVrf6ak3sB0ko3yysHGWqzNslmzDwDnj2TJzkzWSoMstDHJ
-         9ronLXuw8GrxcdYsZhuEvLFzd5R9Idzm+INtWI+XiWMnt2SUHLyicvfKdxEHVQF6XQ
-         SCOHMV5NGt126+VXoxFxQd1dKuj0r6k2rAs77jY8=
-Received: from DLEE106.ent.ti.com (dlee106.ent.ti.com [157.170.170.36])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x5HIffow065358
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 17 Jun 2019 13:41:41 -0500
-Received: from DLEE110.ent.ti.com (157.170.170.21) by DLEE106.ent.ti.com
- (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Mon, 17
- Jun 2019 13:41:40 -0500
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE110.ent.ti.com
- (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Mon, 17 Jun 2019 13:41:40 -0500
-Received: from [128.247.58.153] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id x5HIfeus104041;
-        Mon, 17 Jun 2019 13:41:40 -0500
-Subject: Re: [PATCH v3 -next] firmware: ti_sci: Fix gcc
- unused-but-set-variable warning
-To:     YueHaibing <yuehaibing@huawei.com>, <nm@ti.com>, <t-kristo@ti.com>,
-        <ssantosh@kernel.org>, <santosh.shilimkar@oracle.com>
-CC:     <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-References: <20190614154421.17556-1-yuehaibing@huawei.com>
- <20190615125054.16416-1-yuehaibing@huawei.com>
-From:   Suman Anna <s-anna@ti.com>
-Message-ID: <e13fe9fa-4a79-8af5-6968-dfc9364a3c55@ti.com>
-Date:   Mon, 17 Jun 2019 13:41:40 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
-MIME-Version: 1.0
-In-Reply-To: <20190615125054.16416-1-yuehaibing@huawei.com>
-Content-Type: text/plain; charset="utf-8"
+        Mon, 17 Jun 2019 14:42:15 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1560796935; x=1592332935;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-id:content-transfer-encoding:
+   mime-version;
+  bh=WdrIn3el4HI8u0Tts7xTjVlebQ0t8O0LN3dUT0Vd4rA=;
+  b=UBGWcZs/lq1bWYn8++PPmoa8CxResKa8LuhVfGKjvfWt+1zeT7CMgbZf
+   auHCBwaI4qF5F8VUeGuDITJ1J7PXzHSInA2B+MF3YgqyqpMVfnMNKRxtQ
+   5y2M0n5kGUXCa2+exF2N55QEV39lrbBoECJShSIz4URcyqKzl1xztf/Mu
+   tut3cV23abzUYk7DdWb6F/1bPbghrUUbyWhfDCOAHTQz4UK+/raYDEghV
+   cgaGCH2c5Z/NQRf4/guvE95kH9fPknBuUJwMw8nCF35AHcKMsmmWV1Xko
+   3gcBvpDGA+Kwutigo55JQzDj0zAS5+eznNb95+5mdcd5MyiU0H+YHpTKR
+   Q==;
+X-IronPort-AV: E=Sophos;i="5.63,386,1557158400"; 
+   d="scan'208";a="112433996"
+Received: from mail-co1nam04lp2055.outbound.protection.outlook.com (HELO NAM04-CO1-obe.outbound.protection.outlook.com) ([104.47.45.55])
+  by ob1.hgst.iphmx.com with ESMTP; 18 Jun 2019 02:42:13 +0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=WdrIn3el4HI8u0Tts7xTjVlebQ0t8O0LN3dUT0Vd4rA=;
+ b=X9jgjmbCswzAqMam5q4dU291RW2R7Az1jcIhfDA1Ahmp6kxh/TCqPCRBvicAciH3joVi1Zq38B5fuyg3t/XA74euU5DsaR1OT/4Uq3WRFGDfVpYIN/PelZUizwzTmdCRco9PioPMRpJppSsdbaTBru8edVIWiDN4ieRCNMQaxC4=
+Received: from BYAPR04MB4901.namprd04.prod.outlook.com (52.135.232.206) by
+ BYAPR04MB5046.namprd04.prod.outlook.com (52.135.235.16) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1987.11; Mon, 17 Jun 2019 18:42:11 +0000
+Received: from BYAPR04MB4901.namprd04.prod.outlook.com
+ ([fe80::40b0:3c4b:b778:664d]) by BYAPR04MB4901.namprd04.prod.outlook.com
+ ([fe80::40b0:3c4b:b778:664d%7]) with mapi id 15.20.1987.012; Mon, 17 Jun 2019
+ 18:42:11 +0000
+From:   Alistair Francis <Alistair.Francis@wdc.com>
+To:     "paul.walmsley@sifive.com" <paul.walmsley@sifive.com>,
+        "troy.benjegerdes@sifive.com" <troy.benjegerdes@sifive.com>
+CC:     "jamez@wit.com" <jamez@wit.com>,
+        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "schwab@suse.de" <schwab@suse.de>,
+        "nicolas.ferre@microchip.com" <nicolas.ferre@microchip.com>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>,
+        "sachin.ghadi@sifive.com" <sachin.ghadi@sifive.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "ynezz@true.cz" <ynezz@true.cz>,
+        "palmer@sifive.com" <palmer@sifive.com>,
+        "yash.shah@sifive.com" <yash.shah@sifive.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>
+Subject: Re: [PATCH v2 0/2] Add macb support for SiFive FU540-C000
+Thread-Topic: [PATCH v2 0/2] Add macb support for SiFive FU540-C000
+Thread-Index: AQHVJMPxUGJ6CrWTfEOSlZ7T+RNJNKafgw4CgAAZzACAAAECfoAAAOIAgAAC1UKAABYjAIAALLGAgABKKYA=
+Date:   Mon, 17 Jun 2019 18:42:11 +0000
+Message-ID: <d2836a90b92f3522a398d57ab8555d08956a0d1f.camel@wdc.com>
+References: <1560745167-9866-1-git-send-email-yash.shah@sifive.com>
+         <mvmtvco62k9.fsf@suse.de>
+         <alpine.DEB.2.21.9999.1906170252410.19994@viisi.sifive.com>
+         <mvmpnnc5y49.fsf@suse.de>
+         <alpine.DEB.2.21.9999.1906170305020.19994@viisi.sifive.com>
+         <mvmh88o5xi5.fsf@suse.de>
+         <alpine.DEB.2.21.9999.1906170419010.19994@viisi.sifive.com>
+         <F48A4F7F-0B0D-4191-91AD-DC51686D1E78@sifive.com>
+In-Reply-To: <F48A4F7F-0B0D-4191-91AD-DC51686D1E78@sifive.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Alistair.Francis@wdc.com; 
+x-originating-ip: [199.255.44.250]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 1eb723f1-7a9c-4416-b5e7-08d6f353828d
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:BYAPR04MB5046;
+x-ms-traffictypediagnostic: BYAPR04MB5046:
+x-ms-exchange-purlcount: 3
+wdcipoutbound: EOP-TRUE
+x-microsoft-antispam-prvs: <BYAPR04MB50465A5BA8390459F0B765D390EB0@BYAPR04MB5046.namprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:4303;
+x-forefront-prvs: 0071BFA85B
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(6029001)(39860400002)(346002)(376002)(366004)(396003)(136003)(189003)(199004)(25786009)(486006)(86362001)(7416002)(966005)(478600001)(6306002)(53936002)(6512007)(7736002)(256004)(6116002)(14444005)(73956011)(72206003)(14454004)(229853002)(110136005)(54906003)(316002)(2906002)(66066001)(2501003)(3846002)(66446008)(4326008)(5660300002)(68736007)(71200400001)(446003)(11346002)(36756003)(81156014)(26005)(76116006)(2616005)(64756008)(99286004)(6486002)(53546011)(71190400001)(476003)(76176011)(6506007)(81166006)(102836004)(66946007)(66476007)(6246003)(66556008)(8936002)(6436002)(305945005)(8676002)(186003)(118296001);DIR:OUT;SFP:1102;SCL:1;SRVR:BYAPR04MB5046;H:BYAPR04MB4901.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: aUpCGCubp5Fbgb1fqk4XqgRVQyUGU13uv4L9JpEOGpJrLgcDTgyxhPxp4mGlL0BDwojp/dbwPPYFn2+Rzpl1OiRAhTXQ/IbYWx4pqd9Tfz8i5e+RjAPCM1G8QfjXSmV+sQR7tIfdtl7oCky4l6TeDmLaC00NdGCndUHm496pE1VKM+Jd67fG0gPNGut7k09D4TTo/zuL7g81B8WRCGBEjxqu0VvOE5RWdFWt0cWOf0B//JNr3G+0bZpzX/ekTBktsnyLpneOavWdt+f1EI3qodpAhKIw9byRbz23HYRnaxd0buJo0egWSFtYmf7y8qAgG4HGPrfohTYn7H8dLXUId/tVAwO7x618//MtNVQjqTz1eB2NoxMT/0FMlq0toSgnHw9J7zPPNw3EG4VyN3LVUqM9uQD6pELDesXlHNvQwjc=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <FDADB0944AF2D049A719E1E1B9A030E4@namprd04.prod.outlook.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: wdc.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1eb723f1-7a9c-4416-b5e7-08d6f353828d
+X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Jun 2019 18:42:11.5415
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: Alistair.Francis@wdc.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR04MB5046
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 6/15/19 7:50 AM, YueHaibing wrote:
-> Fixes gcc '-Wunused-but-set-variable' warning:
-> 
-> drivers/firmware/ti_sci.c: In function ti_sci_cmd_ring_config:
-> drivers/firmware/ti_sci.c:2035:17: warning: variable dev set but not used [-Wunused-but-set-variable]
-> drivers/firmware/ti_sci.c: In function ti_sci_cmd_ring_get_config:
-> drivers/firmware/ti_sci.c:2104:17: warning: variable dev set but not used [-Wunused-but-set-variable]
-> drivers/firmware/ti_sci.c: In function ti_sci_cmd_rm_udmap_tx_ch_cfg:
-> drivers/firmware/ti_sci.c:2287:17: warning: variable dev set but not used [-Wunused-but-set-variable]
-> drivers/firmware/ti_sci.c: In function ti_sci_cmd_rm_udmap_rx_ch_cfg:
-> drivers/firmware/ti_sci.c:2357:17: warning: variable dev set but not used [-Wunused-but-set-variable]
-> 
-> Use the 'dev' variable instead of info->dev to fix this.
-> 
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-
-Acked-by: Suman Anna <s-anna@ti.com>
-
-Hi Santosh,
-Can you pick up this patch, goes on top of your for_5.3/driver-soc branch?
-
-regards
-Suman
-
-> ---
-> v3: fix patch title
-> v2: use the 'dev' variable as Suman Anna's suggestion
-> ---
->  drivers/firmware/ti_sci.c | 24 ++++++++++++------------
->  1 file changed, 12 insertions(+), 12 deletions(-)
-> 
-> diff --git a/drivers/firmware/ti_sci.c b/drivers/firmware/ti_sci.c
-> index 86b2727..c8da6e2 100644
-> --- a/drivers/firmware/ti_sci.c
-> +++ b/drivers/firmware/ti_sci.c
-> @@ -2046,7 +2046,7 @@ static int ti_sci_cmd_ring_config(const struct ti_sci_handle *handle,
->  				   sizeof(*req), sizeof(*resp));
->  	if (IS_ERR(xfer)) {
->  		ret = PTR_ERR(xfer);
-> -		dev_err(info->dev, "RM_RA:Message config failed(%d)\n", ret);
-> +		dev_err(dev, "RM_RA:Message config failed(%d)\n", ret);
->  		return ret;
->  	}
->  	req = (struct ti_sci_msg_rm_ring_cfg_req *)xfer->xfer_buf;
-> @@ -2062,7 +2062,7 @@ static int ti_sci_cmd_ring_config(const struct ti_sci_handle *handle,
->  
->  	ret = ti_sci_do_xfer(info, xfer);
->  	if (ret) {
-> -		dev_err(info->dev, "RM_RA:Mbox config send fail %d\n", ret);
-> +		dev_err(dev, "RM_RA:Mbox config send fail %d\n", ret);
->  		goto fail;
->  	}
->  
-> @@ -2071,7 +2071,7 @@ static int ti_sci_cmd_ring_config(const struct ti_sci_handle *handle,
->  
->  fail:
->  	ti_sci_put_one_xfer(&info->minfo, xfer);
-> -	dev_dbg(info->dev, "RM_RA:config ring %u ret:%d\n", index, ret);
-> +	dev_dbg(dev, "RM_RA:config ring %u ret:%d\n", index, ret);
->  	return ret;
->  }
->  
-> @@ -2115,7 +2115,7 @@ static int ti_sci_cmd_ring_get_config(const struct ti_sci_handle *handle,
->  				   sizeof(*req), sizeof(*resp));
->  	if (IS_ERR(xfer)) {
->  		ret = PTR_ERR(xfer);
-> -		dev_err(info->dev,
-> +		dev_err(dev,
->  			"RM_RA:Message get config failed(%d)\n", ret);
->  		return ret;
->  	}
-> @@ -2125,7 +2125,7 @@ static int ti_sci_cmd_ring_get_config(const struct ti_sci_handle *handle,
->  
->  	ret = ti_sci_do_xfer(info, xfer);
->  	if (ret) {
-> -		dev_err(info->dev, "RM_RA:Mbox get config send fail %d\n", ret);
-> +		dev_err(dev, "RM_RA:Mbox get config send fail %d\n", ret);
->  		goto fail;
->  	}
->  
-> @@ -2150,7 +2150,7 @@ static int ti_sci_cmd_ring_get_config(const struct ti_sci_handle *handle,
->  
->  fail:
->  	ti_sci_put_one_xfer(&info->minfo, xfer);
-> -	dev_dbg(info->dev, "RM_RA:get config ring %u ret:%d\n", index, ret);
-> +	dev_dbg(dev, "RM_RA:get config ring %u ret:%d\n", index, ret);
->  	return ret;
->  }
->  
-> @@ -2298,7 +2298,7 @@ static int ti_sci_cmd_rm_udmap_tx_ch_cfg(const struct ti_sci_handle *handle,
->  				   sizeof(*req), sizeof(*resp));
->  	if (IS_ERR(xfer)) {
->  		ret = PTR_ERR(xfer);
-> -		dev_err(info->dev, "Message TX_CH_CFG alloc failed(%d)\n", ret);
-> +		dev_err(dev, "Message TX_CH_CFG alloc failed(%d)\n", ret);
->  		return ret;
->  	}
->  	req = (struct ti_sci_msg_rm_udmap_tx_ch_cfg_req *)xfer->xfer_buf;
-> @@ -2323,7 +2323,7 @@ static int ti_sci_cmd_rm_udmap_tx_ch_cfg(const struct ti_sci_handle *handle,
->  
->  	ret = ti_sci_do_xfer(info, xfer);
->  	if (ret) {
-> -		dev_err(info->dev, "Mbox send TX_CH_CFG fail %d\n", ret);
-> +		dev_err(dev, "Mbox send TX_CH_CFG fail %d\n", ret);
->  		goto fail;
->  	}
->  
-> @@ -2332,7 +2332,7 @@ static int ti_sci_cmd_rm_udmap_tx_ch_cfg(const struct ti_sci_handle *handle,
->  
->  fail:
->  	ti_sci_put_one_xfer(&info->minfo, xfer);
-> -	dev_dbg(info->dev, "TX_CH_CFG: chn %u ret:%u\n", params->index, ret);
-> +	dev_dbg(dev, "TX_CH_CFG: chn %u ret:%u\n", params->index, ret);
->  	return ret;
->  }
->  
-> @@ -2368,7 +2368,7 @@ static int ti_sci_cmd_rm_udmap_rx_ch_cfg(const struct ti_sci_handle *handle,
->  				   sizeof(*req), sizeof(*resp));
->  	if (IS_ERR(xfer)) {
->  		ret = PTR_ERR(xfer);
-> -		dev_err(info->dev, "Message RX_CH_CFG alloc failed(%d)\n", ret);
-> +		dev_err(dev, "Message RX_CH_CFG alloc failed(%d)\n", ret);
->  		return ret;
->  	}
->  	req = (struct ti_sci_msg_rm_udmap_rx_ch_cfg_req *)xfer->xfer_buf;
-> @@ -2392,7 +2392,7 @@ static int ti_sci_cmd_rm_udmap_rx_ch_cfg(const struct ti_sci_handle *handle,
->  
->  	ret = ti_sci_do_xfer(info, xfer);
->  	if (ret) {
-> -		dev_err(info->dev, "Mbox send RX_CH_CFG fail %d\n", ret);
-> +		dev_err(dev, "Mbox send RX_CH_CFG fail %d\n", ret);
->  		goto fail;
->  	}
->  
-> @@ -2401,7 +2401,7 @@ static int ti_sci_cmd_rm_udmap_rx_ch_cfg(const struct ti_sci_handle *handle,
->  
->  fail:
->  	ti_sci_put_one_xfer(&info->minfo, xfer);
-> -	dev_dbg(info->dev, "RX_CH_CFG: chn %u ret:%d\n", params->index, ret);
-> +	dev_dbg(dev, "RX_CH_CFG: chn %u ret:%d\n", params->index, ret);
->  	return ret;
->  }
->  
-> 
-
+T24gTW9uLCAyMDE5LTA2LTE3IGF0IDA5OjE0IC0wNTAwLCBUcm95IEJlbmplZ2VyZGVzIHdyb3Rl
+Og0KPiA+IE9uIEp1biAxNywgMjAxOSwgYXQgNjozNCBBTSwgUGF1bCBXYWxtc2xleSA8DQo+ID4g
+cGF1bC53YWxtc2xleUBzaWZpdmUuY29tPiB3cm90ZToNCj4gPiANCj4gPiBPbiBNb24sIDE3IEp1
+biAyMDE5LCBBbmRyZWFzIFNjaHdhYiB3cm90ZToNCj4gPiANCj4gPiA+IE9uIEp1biAxNyAyMDE5
+LCBQYXVsIFdhbG1zbGV5IDxwYXVsLndhbG1zbGV5QHNpZml2ZS5jb20+IHdyb3RlOg0KPiA+ID4g
+DQo+ID4gPiA+IE9uIE1vbiwgMTcgSnVuIDIwMTksIEFuZHJlYXMgU2Nod2FiIHdyb3RlOg0KPiA+
+ID4gPiANCj4gPiA+ID4gPiBPbiBKdW4gMTcgMjAxOSwgUGF1bCBXYWxtc2xleSA8cGF1bC53YWxt
+c2xleUBzaWZpdmUuY29tPg0KPiA+ID4gPiA+IHdyb3RlOg0KPiA+ID4gPiA+IA0KPiA+ID4gPiA+
+ID4gTG9va3MgdG8gbWUgdGhhdCBpdCBzaG91bGRuJ3QgaGF2ZSBhbiBpbXBhY3QgdW5sZXNzIHRo
+ZSBEVA0KPiA+ID4gPiA+ID4gc3RyaW5nIGlzIA0KPiA+ID4gPiA+ID4gcHJlc2VudCwgYW5kIGV2
+ZW4gdGhlbiwgdGhlIGltcGFjdCBtaWdodCBzaW1wbHkgYmUgdGhhdCB0aGUNCj4gPiA+ID4gPiA+
+IE1BQ0IgZHJpdmVyIA0KPiA+ID4gPiA+ID4gbWF5IG5vdCB3b3JrPw0KPiA+ID4gPiA+IA0KPiA+
+ID4gPiA+IElmIHRoZSBtYWNiIGRyaXZlciBkb2Vzbid0IHdvcmsgeW91IGhhdmUgYW4gdW51c2Fi
+bGUgc3lzdGVtLA0KPiA+ID4gPiA+IG9mIGNvdXJzZS4NCj4gPiA+ID4gDQo+ID4gPiA+IFdoeT8N
+Cj4gPiA+IA0KPiA+ID4gQmVjYXVzZSBhIHN5c3RlbSBpcyB1c2VsZXNzIHdpdGhvdXQgbmV0d29y
+ay4NCj4gPiANCj4gPiBGcm9tIGFuIHVwc3RyZWFtIExpbnV4IHBvaW50IG9mIHZpZXcsIFlhc2gn
+cyBwYXRjaGVzIHNob3VsZCBiZSBhbiANCj4gPiBpbXByb3ZlbWVudCBvdmVyIHRoZSBjdXJyZW50
+IG1haW5saW5lIGtlcm5lbCBzaXR1YXRpb24sIHNpbmNlDQo+ID4gdGhlcmUncyANCj4gPiBjdXJy
+ZW50bHkgbm8gdXBzdHJlYW0gc3VwcG9ydCBmb3IgdGhlIChTaUZpdmUtc3BlY2lmaWMpIFRYIGNs
+b2NrDQo+ID4gc3dpdGNoIA0KPiA+IHJlZ2lzdGVyLiAgV2l0aCB0aGUgcmlnaHQgRFQgZGF0YSwg
+YW5kIGEgYm9vdGxvYWRlciB0aGF0IGhhbmRsZXMNCj4gPiB0aGUgUEhZIA0KPiA+IHJlc2V0LCBJ
+IHRoaW5rIG5ldHdvcmtpbmcgc2hvdWxkIHdvcmsgYWZ0ZXIgaGlzIHBhdGNoZXMgYXJlDQo+ID4g
+dXBzdHJlYW0gLS0gDQo+ID4gYWx0aG91Z2ggSSBteXNlbGYgaGF2ZW4ndCB0cmllZCB0aGlzIHll
+dC4NCj4gPiANCj4gDQo+IEhhdmUgd2UgZG9jdW1lbnRlZCB0aGlzIHR4IGNsb2NrIHN3aXRjaCBy
+ZWdpc3RlciBpbiBzb21ldGhpbmcgd2l0aCBhDQo+IGRpcmVjdCBVUkwgbGluayAocmF0aGVyIHRo
+YW4gYSBQREYpPw0KPiANCj4gSeKAmWQgbGlrZSB0byB1cGRhdGUgZnJlZWRvbS11LXNkayAob3Ig
+eW9jdG8pIHRvIGNyZWF0ZSBib290YWJsZSBpbWFnZXMNCj4gd2l0aCBhIHdvcmtpbmcgVS1ib290
+ICh1cHN0cmVhbSBvciBub3QsIEkgZG9u4oCZdCBjYXJlLCBhcyBsb25nIGFzIGl0DQo+IHdvcmtz
+KSwNCj4gYW5kIHdoYXQgSSBoYXZlIHJpZ2h0IG5vdyBpcyB0aGUgb2xkIGxlZ2FjeSBIaUZpdmUg
+VS1ib290WzFdIGFuZCBhDQo+IDQuMTkNCj4ga2VybmVsIHdpdGggYSBidW5jaCBvZiBleHRyYSBw
+YXRjaGVzLg0KDQpZb2N0by9PcGVuRW1iZWRkZWQgZG9lcyB0aGlzIHRvZGF5LiBURlRQIGJvb3Qg
+d29ya3Mgd2l0aCB0aGUgMjAxOS4wNCBVLQ0KQm9vdCAoKyBzb21lIHBhdGNoZXMgb250b3AgZm9y
+IFNNUCBzdXBwb3J0KS4gV2UgdXNlIHRoZSBsYXRlc3QgNS4xDQpzdGFibGUga2VybmVsIHBsdXMg
+NSBvciBzbyBwYXRjaGVzIHRvIGJvb3Qgb24gdGhlIFVubGVhc2VkLiBOZXR3b3JraW5nLA0KZGlz
+cGxheSBhbmQgYXVkaW8gYXJlIGFsbCB3b3JraW5nIHdpdGggdGhlIE1pY3Jvc2VtaSBleHBhbnNp
+b24gYm9hcmQgYXMNCndlbGwuIExldCBtZSBrbm93IGlmIHRoZXJlIGlzIHNvbWV0aGluZyBlbHNl
+IG1pc3NpbmcgYW5kIEknbGwgYWRkIGl0DQppbi4gVGhlcmUgYXJlIHByb2JhYmx5IGRvY3VtZW50
+YXRpb24gZml4ZXMgdGhhdCBhcmUgbmVlZGVkIGFzIHdlbGwuDQoNCkkgd2FzIHRoaW5raW5nIG9m
+IHNraXBwaW5nIHRoZSA1LjIgcmVsZWFzZSB0aG91Z2ggYXMgSSB0aG91Z2h0IHRoZSBEVA0Kc3R1
+ZmYgd2Fzbid0IGdvaW5nIHRvIG1ha2UgaXQgWzFdLiBJIHdpbGwgcHJvYmFibHkgcmUtZXZhbHVh
+dGUgdGhhdA0KZGVjaXNpb24gdGhvdWdoIHdoZW4gNS4yIGNvbWVzIG91dCBhcyBpdCBsb29rcyBs
+aWtlIGl0J3MgYWxsIGdvaW5nIHRvDQp3b3JrIDopDQoNCldpdGggVS1ib290IDIwMTcuMDkgYW5k
+IExpbnV4IDUuMi81LjMgd2Ugc2hvdWxkIGZpbmFsbHkgYmUgdXBzdHJlYW0NCm9ubHkhDQoNCj4g
+DQo+IFRoZSBsZWdhY3kgTS1tb2RlIFUtYm9vdCBoYW5kbGVzIHRoZSBwaHkgcmVzZXQgYWxyZWFk
+eSwgYW5kIEnigJl2ZSBiZWVuDQo+IGFibGUgdG8gbG9hZCB1cHN0cmVhbSBTLW1vZGUgdWJvb3Qg
+YXMgYSBwYXlsb2FkIHZpYSBURlRQLCBhbmQgdGhlbiANCj4gbG9hZCBhbmQgYm9vdCBhIDQuMTkg
+a2VybmVsLiANCj4gDQo+IEl0IHdvdWxkIGJlIG5pY2UgdG8gZ2V0IHRoaXMgYWxsIHdvcmtpbmcg
+d2l0aCA1LngsIGhvd2V2ZXIgdGhlcmUgYXJlDQo+IHN0aWxsDQo+IHNldmVyYWwgbWlzc2luZyBw
+aWVjZXMgdG8gcmVhbGx5IGhhdmUgaXQgd29yayB3ZWxsLg0KDQpMZXQgbWUga25vdyB3aGF0IGlz
+IHN0aWxsIG1pc3NpbmcvZG9lc24ndCB3b3JrIGFuZCBJIGNhbiBhZGQgaXQuIEF0IHRoZQ0KbW9t
+ZW50IHRoZSBvbmx5IGtub3duIGlzc3VlIEkga25vdyBvZiBpcyBhIG1pc3NpbmcgU0QgY2FyZCBk
+cml2ZXIgaW4gVS0NCkJvb3QuDQoNCjE6IGh0dHBzOi8vZ2l0aHViLmNvbS9yaXNjdi9tZXRhLXJp
+c2N2L2lzc3Vlcy8xNDMNCg0KQWxpc3RhaXINCg0KPiANCj4gDQo+IFsxXSBodHRwczovL2dpdGh1
+Yi5jb20vc2lmaXZlL0hpRml2ZV9VLUJvb3QNCj4gX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX18NCj4gbGludXgtcmlzY3YgbWFpbGluZyBsaXN0DQo+IGxpbnV4
+LXJpc2N2QGxpc3RzLmluZnJhZGVhZC5vcmcNCj4gaHR0cDovL2xpc3RzLmluZnJhZGVhZC5vcmcv
+bWFpbG1hbi9saXN0aW5mby9saW51eC1yaXNjdg0K
