@@ -2,75 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E9714802A
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 13:04:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3B0CE48034
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 13:06:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727971AbfFQLEe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 07:04:34 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:63679 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726164AbfFQLEd (ORCPT
+        id S1727680AbfFQLG2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 07:06:28 -0400
+Received: from mout.kundenserver.de ([217.72.192.73]:56837 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726164AbfFQLG2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 07:04:33 -0400
-X-UUID: 4fedadb637504bf4a9a96d82aded44e6-20190617
-X-UUID: 4fedadb637504bf4a9a96d82aded44e6-20190617
-Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw02.mediatek.com
-        (envelope-from <jjian.zhou@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 394192256; Mon, 17 Jun 2019 19:04:27 +0800
-Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- mtkmbs07n1.mediatek.inc (172.21.101.16) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Mon, 17 Jun 2019 19:04:26 +0800
-Received: from localhost.localdomain (10.17.3.153) by mtkcas08.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Mon, 17 Jun 2019 19:04:25 +0800
-From:   Jjian Zhou <jjian.zhou@mediatek.com>
-To:     <ulf.hansson@linaro.org>, <chaotian.jing@mediatek.com>,
-        <matthias.bgg@gmail.com>, <linux-mmc@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-CC:     <yong.mao@mediatek.com>, <srv_heupstream@mediatek.com>,
-        jjian zhou <jjian.zhou@mediatek.com>
-Subject: [PATCH V2 2/2] mmc: mediatek: fix SDIO IRQ detection issue
-Date:   Mon, 17 Jun 2019 19:04:08 +0800
-Message-ID: <1560769448-23070-2-git-send-email-jjian.zhou@mediatek.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1560769448-23070-1-git-send-email-jjian.zhou@mediatek.com>
-References: <1560769448-23070-1-git-send-email-jjian.zhou@mediatek.com>
+        Mon, 17 Jun 2019 07:06:28 -0400
+Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
+ (mreue108 [212.227.15.145]) with ESMTPA (Nemesis) id
+ 1MF35K-1hsBX83HGi-00FX24; Mon, 17 Jun 2019 13:06:18 +0200
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     Mark Brown <broonie@kernel.org>
+Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+        simon.ho@synaptics.com, Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH] ASoC: cx2072x: mark PM function as __maybe_unused
+Date:   Mon, 17 Jun 2019 13:06:15 +0200
+Message-Id: <20190617110615.2084748-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.20.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:imZ+6nmN3JNLX3mmZ/m85Tw3DUGLuQRqfp+OHv0e6v8Sna1BTqb
+ Ia0NkHUM0xOVTKecq7eJVkaHlweKCwVnWwuER+8zeP2Hz09xud7svdcbfGvspIytpP3UE0k
+ jm+h/cewI2Dtv5LN95ENIk3DIIcvb+9z6TkyhTyIbk9snxwrP+i48H8bY+xJzBfbU8Roz14
+ FevkcIEAZMFuRlJOjH38w==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:UWLRdc/oTTw=:LHC1wNVDSBgYr0e7hr3Y2a
+ wVXYdnSRqTmZB8VMYxiVgLIa9BL3ZZ5VZpQNxxRjyG6Mtp2EN4cVv1/pUW0gVzsHnEuArbhg0
+ 1rEpVDQTWwW0NDzXrt6WQRO+7vcq9mtVdskwNjKU0QYdvvjePsBHcuZ85jDWoZC/cidNj8wey
+ J7yTYoAjgdMaFy3PGgJbr6ZFmaJwQt73Lo1RXqDwkvipxqs+yXqJSoDGTtBkYOb9gnPCwsZRS
+ 3CyZ7cVtAgNeOFfc4ksfRqPVNwojfCfhXDZOhLyktpv/S57Xhn6IPMSUuvy8i4i3WCWauIOYd
+ SFoIcidvUvCcekS9JW0LXYvyMccJqESJG6kDY3vpjENpPpKREvm4Z/K2TCR4pmBIqK5D06LZr
+ xgBNNQzI1C2We5i6+ow2wyvvOc7Z3wlwGxVXtuDtWpSxcRtn+NYpcpBlhPwRvt7md06RKF1tF
+ GfP5pif9+vPkUrbrjBc2PuGOe8ddC8SJPUDRWSOZXcrOYvhuA46Gip4g58CZCw1H8R9K4wjSs
+ D4Mh9JtLq+rALuzsOxIQMng8iNCVKdkJrC+wpbHk65C0Ac3Z/2vZD9gF7q5zlXmCAXhgUp/vj
+ HVAN3ZMo2i2KZQiw7xO8UkG5aADAAnI76lSafwybmtphKuEsccFGMqjz7rkm1GYBOrrQrKAqC
+ uk+C7XGnBVSySyV/sTJMEXBLzVIDXUMb+uE6AOYSkchln31VcMCFhRWMtip1bl8zvoTyljWV8
+ sEWIlOh7XBBVwpoVMVL/f9/+KMyaL3JA4OMzdQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: jjian zhou <jjian.zhou@mediatek.com>
+While the suspend function is already marked __maybe_unused,
+the resume function is not, which leads to a warning when
+CONFIG_PM is disabled:
 
-If cmd19 timeout or response crcerr occurs during execute_tuning(),
-it need invoke msdc_reset_hw(). Otherwise SDIO IRQ can't be detected.
+sound/soc/codecs/cx2072x.c:1625:12: error: unused function 'cx2072x_runtime_resume' [-Werror,-Wunused-function]
 
-Signed-off-by: jjian zhou <jjian.zhou@mediatek.com>
-Signed-off-by: Chaotian Jing <chaotian.jing@mediatek.com>
-Signed-off-by: Yong Mao <yong.mao@mediatek.com>
+Mark this one like the other one.
+
+Fixes: a497a4363706 ("ASoC: Add support for Conexant CX2072X CODEC")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- drivers/mmc/host/mtk-sd.c | 2 ++
- 1 file changed, 2 insertions(+)
+ sound/soc/codecs/cx2072x.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/mmc/host/mtk-sd.c b/drivers/mmc/host/mtk-sd.c
-index fa7d420..ba1ad5e 100644
---- a/drivers/mmc/host/mtk-sd.c
-+++ b/drivers/mmc/host/mtk-sd.c
-@@ -1031,6 +1031,8 @@ static void msdc_request_done(struct msdc_host *host, struct mmc_request *mrq)
- 	msdc_track_cmd_data(host, mrq->cmd, mrq->data);
- 	if (mrq->data)
- 		msdc_unprepare_data(host, mrq);
-+	if (host->error)
-+		msdc_reset_hw(host);
- 	mmc_request_done(host->mmc, mrq);
+diff --git a/sound/soc/codecs/cx2072x.c b/sound/soc/codecs/cx2072x.c
+index f2cb35a50726..1c1ba7bea4d8 100644
+--- a/sound/soc/codecs/cx2072x.c
++++ b/sound/soc/codecs/cx2072x.c
+@@ -1622,7 +1622,7 @@ static int __maybe_unused cx2072x_runtime_suspend(struct device *dev)
+ 	return 0;
  }
-
---
-1.9.1
+ 
+-static int cx2072x_runtime_resume(struct device *dev)
++static int __maybe_unused cx2072x_runtime_resume(struct device *dev)
+ {
+ 	struct cx2072x_priv *cx2072x = dev_get_drvdata(dev);
+ 
+-- 
+2.20.0
 
