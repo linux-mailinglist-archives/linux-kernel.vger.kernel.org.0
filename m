@@ -2,129 +2,158 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BDE43488F9
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 18:31:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0484948900
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 18:32:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727935AbfFQQbY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 12:31:24 -0400
-Received: from foss.arm.com ([217.140.110.172]:55768 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726336AbfFQQbY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 12:31:24 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3BA5E28;
-        Mon, 17 Jun 2019 09:31:23 -0700 (PDT)
-Received: from e107158-lin.cambridge.arm.com (e107158-lin.cambridge.arm.com [10.1.195.51])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 012AF3F718;
-        Mon, 17 Jun 2019 09:31:21 -0700 (PDT)
-Date:   Mon, 17 Jun 2019 17:31:19 +0100
-From:   Qais Yousef <qais.yousef@arm.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        linux-kernel@vger.kernel.org,
-        Pavankumar Kondeti <pkondeti@codeaurora.org>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Uwe Kleine-Konig <u.kleine-koenig@pengutronix.de>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Quentin Perret <quentin.perret@arm.com>
-Subject: Re: [PATCH v3 5/6] sched: Add sched_overutilized tracepoint
-Message-ID: <20190617163119.iawzbpc4pgsoljme@e107158-lin.cambridge.arm.com>
-References: <20190604111459.2862-1-qais.yousef@arm.com>
- <20190604111459.2862-6-qais.yousef@arm.com>
- <20190617155010.GH3436@hirez.programming.kicks-ass.net>
+        id S1727967AbfFQQc3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 12:32:29 -0400
+Received: from mail-io1-f68.google.com ([209.85.166.68]:46303 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726238AbfFQQc3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Jun 2019 12:32:29 -0400
+Received: by mail-io1-f68.google.com with SMTP id i10so22455592iol.13
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2019 09:32:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=XyvlBZ9D/Zjk2MW/3VQHdWy6VMYt1yotnl1P/NZQLYw=;
+        b=EJ/Cp9sFXyoWPLdx4T75q2KAVuLe6xIazZp50xTNkSvbp8Lz55BFAWfHHcfdafuJLs
+         rlzMdiwYuGiot4wub+V48pZl2j6EaWZEUAPGnv1eowEzTFIfxowKcHGD2WhSXEPd3aJX
+         k+rOD1WfnXUFECEDLjKKiLM/n6SgQ8XemLXAdZF7CeRJvGVkxwuaytocJcGMKDqTZjvu
+         Rp10jnCmEfwE65wcMd3FVaQXFBQarjFZFkqWhKUbFJuDR4QXJbCetOuFahb5+xVGEJI5
+         c3H+CYuwx5kdUNS04YSIWIKRkcCrolC/vwbXKKuzWcgbrPcC+cjdcYDeYQdPNqfcL9RQ
+         VxWA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=XyvlBZ9D/Zjk2MW/3VQHdWy6VMYt1yotnl1P/NZQLYw=;
+        b=ozTiiKJnKVuyDvnccrzZ5WdpPbMIO/sexi3XwCj3xoU6Spwr9z87rXmjEkOqBjYRpB
+         1lQrDQAETSSAAteWaWK71Py6U6vWCv4hloy65FW41zvTv3qfiyo0ZBUrdDo1NWfReSNI
+         BgwpUW1RmdixVcoLjS3z3/o5MjAhEbPGIJTUrFLdk5v/YEMHQGvf728ty5rrCqQoNknX
+         J5KGz9bN3Aoc87Plp3TwIV0qzsjhjfphGIjpILwXzAvC6ArL4+MIT6WHgWuwwGBO6lNu
+         kkqUDbpbvU++s13dX054uPy1n6NqKFm2yZxs/S9HobsMsAm31lQqxWAL384oQ7Vq06t7
+         bmrw==
+X-Gm-Message-State: APjAAAULZMbDX5t6tFOsYAUCbbrPcJg8bfDhgUr7qlF/XHhszObzF087
+        lKeqLBd1adf1gWnQO1lcB4NjtG/G2Zwcnze2eDUTF512
+X-Google-Smtp-Source: APXvYqx5u4mTUnavwavifEXCjDNol/Lgb4aYt5qFQmeAoCNvZzuBGMwtrlzB5E5q3/XAvaD2Tw3E0ByOs8hoi+G+mpQ=
+X-Received: by 2002:a05:6602:98:: with SMTP id h24mr11263939iob.49.1560789148415;
+ Mon, 17 Jun 2019 09:32:28 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190617155010.GH3436@hirez.programming.kicks-ass.net>
-User-Agent: NeoMutt/20171215
+References: <20190617104237.2082388-1-arnd@arndb.de> <20190617112652.GB30800@fuggles.cambridge.arm.com>
+ <CAK8P3a2aJNiLTyfRDqazJa2sAc-Jf-QShSZ7+4-whHSxKbLUVQ@mail.gmail.com> <20190617161330.GD30800@fuggles.cambridge.arm.com>
+In-Reply-To: <20190617161330.GD30800@fuggles.cambridge.arm.com>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Mon, 17 Jun 2019 18:32:16 +0200
+Message-ID: <CAKv+Gu9Fh3anh6-TeDWZ+pL7rs7EBWZqvLXASRNjicGu7k+WKw@mail.gmail.com>
+Subject: Re: [PATCH] arm64/sve: fix genksyms generation
+To:     Will Deacon <will.deacon@arm.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Dave Martin <Dave.Martin@arm.com>,
+        =?UTF-8?B?QWxleCBCZW5uw6ll?= <alex.bennee@linaro.org>,
+        Peter Maydell <peter.maydell@linaro.org>,
+        Alan Hayward <alan.hayward@arm.com>,
+        Julien Grall <julien.grall@arm.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Andrew Murray <andrew.murray@arm.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/17/19 17:50, Peter Zijlstra wrote:
-> On Tue, Jun 04, 2019 at 12:14:58PM +0100, Qais Yousef wrote:
-> > The new tracepoint allows us to track the changes in overutilized
-> > status.
-> > 
-> > Overutilized status is associated with EAS. It indicates that the system
-> > is in high performance state. EAS is disabled when the system is in this
-> > state since there's not much energy savings while high performance tasks
-> > are pushing the system to the limit and it's better to default to the
-> > spreading behavior of the scheduler.
-> > 
-> > This tracepoint helps understanding and debugging the conditions under
-> > which this happens.
-> > 
-> > Signed-off-by: Qais Yousef <qais.yousef@arm.com>
-> > ---
-> >  include/trace/events/sched.h |  4 ++++
-> >  kernel/sched/fair.c          | 11 +++++++++--
-> >  2 files changed, 13 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/include/trace/events/sched.h b/include/trace/events/sched.h
-> > index c7dd9bc7f001..edd96e04049f 100644
-> > --- a/include/trace/events/sched.h
-> > +++ b/include/trace/events/sched.h
-> > @@ -621,6 +621,10 @@ DECLARE_TRACE(pelt_se_tp,
-> >  	TP_PROTO(struct sched_entity *se),
-> >  	TP_ARGS(se));
-> >  
-> > +DECLARE_TRACE(sched_overutilized_tp,
-> > +	TP_PROTO(int overutilized, struct root_domain *rd),
-> > +	TP_ARGS(overutilized, rd));
-> > +
-> 
-> strictly speaking you only need @rd :-)
+On Mon, 17 Jun 2019 at 18:13, Will Deacon <will.deacon@arm.com> wrote:
+>
+> On Mon, Jun 17, 2019 at 02:21:46PM +0200, Arnd Bergmann wrote:
+> > On Mon, Jun 17, 2019 at 1:26 PM Will Deacon <will.deacon@arm.com> wrote:
+> > > On Mon, Jun 17, 2019 at 12:42:11PM +0200, Arnd Bergmann wrote:
+> > > > genksyms does not understand __uint128_t, so we get a build failure
+> > > > in the fpsimd module when it cannot export a symbol right:
+> > >
+> > > The fpsimd code is builtin, so which module is actually failing? My
+> > > allmodconfig build succeeds, so I must be missing something.
+> >
+> > It happened for me on randconfig builds, you can find one such configuration
+> > at https://pastebin.com/cU8iQ4ta now. I was building this with clang
+> > rather than gcc, which may affect the issue, but I assumed not.
+>
+> Hmm, I've failed to reproduce the issue with that config and either GCC
+> (7.1.1 and 8.3.0) or Clang (a flavour of 9.0.0 from a few months ago).
+>
+> > > > WARNING: EXPORT symbol "kernel_neon_begin" [vmlinux] version generation failed, symbol will not be versioned.
+> > > > /home/arnd/cross/x86_64/gcc-8.1.0-nolibc/aarch64-linux/bin/aarch64-linux-ld: arch/arm64/kernel/fpsimd.o: relocation R_AARCH64_ABS32 against `__crc_kernel_neon_begin' can not be used when making a shared object
+> > > > arch/arm64/kernel/fpsimd.o:(.data+0x0): dangerous relocation: unsupported relocation
+> > > > arch/arm64/kernel/fpsimd.o:(".discard.addressable"+0x0): dangerous relocation: unsupported relocation
+> > > > arch/arm64/kernel/fpsimd.o:(".discard.addressable"+0x8): dangerous relocation: unsupported relocation
+> > > >
+> > > > We could teach genksyms about the type, but it's easier to just
+> > > > work around it by defining that type locally in a way that genksyms
+> > > > understands.
+> > > >
+> > > > Fixes: 41040cf7c5f0 ("arm64/sve: Fix missing SVE/FPSIMD endianness conversions")
+> > >
+> > > I can't see which part of that patch causes the problem, so I'm a bit wary
+> > > of the fix. We've been using __uint128_t for a while now, and I see there's
+> > > one in the x86 kvm code as well, so it would be nice to understand what's
+> > > happening here so that we can avoid running into it in future as well.
+> >
+> > The problem is only in files that export a symbol. This is also the
+> > case in arch/x86/kernel/kvm.c, but it may be lucky because the
+> > type only appears /after/ the last export in that file.
+> >
+> > > > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> > > > ---
+> > > >  arch/arm64/kernel/fpsimd.c | 3 +++
+> > > >  1 file changed, 3 insertions(+)
+> > > >
+> > > > diff --git a/arch/arm64/kernel/fpsimd.c b/arch/arm64/kernel/fpsimd.c
+> > > > index 07f238ef47ae..2aba07cccf50 100644
+> > > > --- a/arch/arm64/kernel/fpsimd.c
+> > > > +++ b/arch/arm64/kernel/fpsimd.c
+> > > > @@ -400,6 +400,9 @@ static int __init sve_sysctl_init(void) { return 0; }
+> > > >  #define ZREG(sve_state, vq, n) ((char *)(sve_state) +                \
+> > > >       (SVE_SIG_ZREG_OFFSET(vq, n) - SVE_SIG_REGS_OFFSET))
+> > > >
+> > > > +#ifdef __GENKSYMS__
+> > > > +typedef __u64 __uint128_t[2];
+> > > > +#endif
+> > >
+> > > I suspect I need to figure out what genksyms is doing, but I'm nervous
+> > > about exposing this as an array type without understanding whether or
+> > > not that has consequences for its operation.
+> >
+> > The entire point is genksyms is to ensure that types of exported symbols
+> > are compatible. To do this, it has a limited parser for C source code that
+> > understands the basic types (char, int, long, _Bool, etc) and how to
+> > aggregate them into structs and function arguments. This process has
+> > always been fragile, and it clearly breaks when it fails to understand a
+> > particular type.
+>
+> Ok, but the patch that appears to cause this problem doesn't change the
+> type of anything we're exporting. The symbol in your log is
+> "kernel_neon_begin" which is:
+>
+>         void kernel_neon_begin(void);
+>
+> so I'm still fairly confused about the problem. In fact, even if I create
+> a silly:
+>
+>         void will_kernel_neon_begin(__uint128_t);
+>
+> function, then somehow I see it being processed:
+>
+>         __crc_will_kernel_neon_begin = 0x5401d250;
+>
+> Is there some way that your passing '-w' to genksyms?
+>
 
-Yes. Sorry my brain was hardwired this is overutilized event so we need to
-pass this info :-)
-
-> 
-> >  #endif /* _TRACE_SCHED_H */
-> >  
-> >  /* This part must be outside protection */
-> > diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> > index 8e0015ebf109..e2418741608e 100644
-> > --- a/kernel/sched/fair.c
-> > +++ b/kernel/sched/fair.c
-> > @@ -5179,8 +5179,10 @@ static inline bool cpu_overutilized(int cpu)
-> >  
-> >  static inline void update_overutilized_status(struct rq *rq)
-> >  {
-> > -	if (!READ_ONCE(rq->rd->overutilized) && cpu_overutilized(rq->cpu))
-> > +	if (!READ_ONCE(rq->rd->overutilized) && cpu_overutilized(rq->cpu)) {
-> >  		WRITE_ONCE(rq->rd->overutilized, SG_OVERUTILIZED);
-> > +		trace_sched_overutilized_tp(1, rq->rd);
-> > +	}
-> >  }
-> >  #else
-> >  static inline void update_overutilized_status(struct rq *rq) { }
-> > @@ -8542,8 +8544,13 @@ static inline void update_sd_lb_stats(struct lb_env *env, struct sd_lb_stats *sd
-> >  
-> >  		/* Update over-utilization (tipping point, U >= 0) indicator */
-> >  		WRITE_ONCE(rd->overutilized, sg_status & SG_OVERUTILIZED);
-> > +
-> > +		trace_sched_overutilized_tp(!!(sg_status & SG_OVERUTILIZED), rd);
-> >  	} else if (sg_status & SG_OVERUTILIZED) {
-> > -		WRITE_ONCE(env->dst_rq->rd->overutilized, SG_OVERUTILIZED);
-> > +		struct root_domain *rd = env->dst_rq->rd;
-> > +
-> > +		WRITE_ONCE(rd->overutilized, SG_OVERUTILIZED);
-> > +		trace_sched_overutilized_tp(1, rd);
-> >  	}
-> >  }
-> 
-> But I figure since we need both values anyway, this isn't too much of a
-> bother.
-> 
-> I'm going to flip the argument order though.
-
-Sounds good to me. The good news is that changing the signature should be
-doable in the future if we felt the need to evolve it :-)
-
-Thanks
-
---
-Qais Yousef
+The problem is not about the types we're *exporting*. Genksyms just
+gives up halfway through the file, as soon as it encounters something
+it doesn't like, and any symbol that hasn't been encountered yet at
+that point will not have a crc generated for it.
