@@ -2,22 +2,22 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B03B8480DC
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 13:35:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2E7AB480DD
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 13:35:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728109AbfFQLfE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 07:35:04 -0400
+        id S1728177AbfFQLfG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 07:35:06 -0400
 Received: from mga12.intel.com ([192.55.52.136]:54390 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727876AbfFQLfB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 07:35:01 -0400
+        id S1728087AbfFQLfE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Jun 2019 07:35:04 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Jun 2019 04:35:01 -0700
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Jun 2019 04:35:04 -0700
 X-ExtLoop1: 1
 Received: from xxx.igk.intel.com ([10.237.93.170])
-  by fmsmga006.fm.intel.com with ESMTP; 17 Jun 2019 04:34:59 -0700
+  by fmsmga006.fm.intel.com with ESMTP; 17 Jun 2019 04:35:01 -0700
 From:   =?UTF-8?q?Amadeusz=20S=C5=82awi=C5=84ski?= 
         <amadeuszx.slawinski@linux.intel.com>
 To:     alsa-devel@alsa-project.org
@@ -30,9 +30,9 @@ Cc:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
         linux-kernel@vger.kernel.org,
         =?UTF-8?q?Amadeusz=20S=C5=82awi=C5=84ski?= 
         <amadeuszx.slawinski@linux.intel.com>
-Subject: [PATCH v2 04/11] ASoC: Intel: Skylake: Don't return failure on machine driver reload
-Date:   Mon, 17 Jun 2019 13:36:37 +0200
-Message-Id: <20190617113644.25621-5-amadeuszx.slawinski@linux.intel.com>
+Subject: [PATCH v2 05/11] ASoC: Intel: Skylake: Remove static table index when parsing topology
+Date:   Mon, 17 Jun 2019 13:36:38 +0200
+Message-Id: <20190617113644.25621-6-amadeuszx.slawinski@linux.intel.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190617113644.25621-1-amadeuszx.slawinski@linux.intel.com>
 References: <20190617113644.25621-1-amadeuszx.slawinski@linux.intel.com>
@@ -44,31 +44,76 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When we unload and reload machine driver, we shouldn't return that we
-failed to initialize. This allows to reload machine driver, without
-having to unload whole stack.
+Currently when we remove and reload driver we use previous ref_count
+value to start iterating over skl->modules which leads to out of table
+access. To fix this just inline the function and calculate indexes
+everytime we parse UUID token.
 
 Signed-off-by: Amadeusz Sławiński <amadeuszx.slawinski@linux.intel.com>
 ---
- sound/soc/intel/skylake/skl-pcm.c | 5 -----
- 1 file changed, 5 deletions(-)
+ sound/soc/intel/skylake/skl-topology.c | 35 ++++++++++----------------
+ 1 file changed, 13 insertions(+), 22 deletions(-)
 
-diff --git a/sound/soc/intel/skylake/skl-pcm.c b/sound/soc/intel/skylake/skl-pcm.c
-index 489ecef311ad..5e3421cc0feb 100644
---- a/sound/soc/intel/skylake/skl-pcm.c
-+++ b/sound/soc/intel/skylake/skl-pcm.c
-@@ -1418,11 +1418,6 @@ static int skl_platform_soc_probe(struct snd_soc_component *component)
- 		if (!ops)
- 			return -EIO;
+diff --git a/sound/soc/intel/skylake/skl-topology.c b/sound/soc/intel/skylake/skl-topology.c
+index c69d999d7bf1..44f3b29a7210 100644
+--- a/sound/soc/intel/skylake/skl-topology.c
++++ b/sound/soc/intel/skylake/skl-topology.c
+@@ -3477,25 +3477,6 @@ static int skl_tplg_get_int_tkn(struct device *dev,
+ 	return tkn_count;
+ }
  
--		if (!skl->skl_sst->is_first_boot) {
--			dev_err(component->dev, "DSP reports first boot done!!!\n");
--			return -EIO;
--		}
+-static int skl_tplg_get_manifest_uuid(struct device *dev,
+-				struct skl *skl,
+-				struct snd_soc_tplg_vendor_uuid_elem *uuid_tkn)
+-{
+-	static int ref_count;
+-	struct skl_module *mod;
 -
- 		/*
- 		 * Disable dynamic clock and power gating during firmware
- 		 * and library download
+-	if (uuid_tkn->token == SKL_TKN_UUID) {
+-		mod = skl->modules[ref_count];
+-		memcpy(&mod->uuid, &uuid_tkn->uuid, sizeof(uuid_tkn->uuid));
+-		ref_count++;
+-	} else {
+-		dev_err(dev, "Not an UUID token tkn %d\n", uuid_tkn->token);
+-		return -EINVAL;
+-	}
+-
+-	return 0;
+-}
+-
+ /*
+  * Fill the manifest structure by parsing the tokens based on the
+  * type.
+@@ -3506,6 +3487,7 @@ static int skl_tplg_get_manifest_tkn(struct device *dev,
+ {
+ 	int tkn_count = 0, ret;
+ 	int off = 0, tuple_size = 0;
++	u8 uuid_index = 0;
+ 	struct snd_soc_tplg_vendor_array *array;
+ 	struct snd_soc_tplg_vendor_value_elem *tkn_elem;
+ 
+@@ -3528,9 +3510,18 @@ static int skl_tplg_get_manifest_tkn(struct device *dev,
+ 			continue;
+ 
+ 		case SND_SOC_TPLG_TUPLE_TYPE_UUID:
+-			ret = skl_tplg_get_manifest_uuid(dev, skl, array->uuid);
+-			if (ret < 0)
+-				return ret;
++			if (array->uuid->token != SKL_TKN_UUID) {
++				dev_err(dev, "Not an UUID token: %d\n",
++					array->uuid->token);
++				return -EINVAL;
++			}
++			if (uuid_index >= skl->nr_modules) {
++				dev_err(dev, "Too many UUID tokens\n");
++				return -EINVAL;
++			}
++			memcpy(&skl->modules[uuid_index++]->uuid,
++			       &array->uuid->uuid,
++			       sizeof(array->uuid->uuid));
+ 
+ 			tuple_size += sizeof(*array->uuid);
+ 			continue;
 -- 
 2.17.1
 
