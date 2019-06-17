@@ -2,98 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 51FAC482F9
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 14:50:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D8FD0482F4
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 14:50:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727665AbfFQMuN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 08:50:13 -0400
-Received: from mout.kundenserver.de ([212.227.17.10]:41345 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726834AbfFQMuM (ORCPT
+        id S1726887AbfFQMtm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 08:49:42 -0400
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:46938 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725973AbfFQMtm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 08:50:12 -0400
-Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
- (mreue106 [212.227.15.145]) with ESMTPA (Nemesis) id
- 1MkpvV-1iL0zK3xWR-00mM5r; Mon, 17 Jun 2019 14:50:06 +0200
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     "James (Qian) Wang" <james.qian.wang@arm.com>,
-        Liviu Dudau <liviu.dudau@arm.com>,
-        Brian Starkey <brian.starkey@arm.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        "Lowry Li (Arm Technology China)" <Lowry.Li@arm.com>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] drm/komeda: fix size_t format string
-Date:   Mon, 17 Jun 2019 14:49:18 +0200
-Message-Id: <20190617125002.1312331-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.20.0
+        Mon, 17 Jun 2019 08:49:42 -0400
+Received: by mail-qt1-f193.google.com with SMTP id h21so10424266qtn.13
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2019 05:49:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=d6cp5lLEYX1NgjT7O9JHG7TIte4Jp7jyu/1K24ySFWg=;
+        b=ktbQvFsJIf+N1fkXir10WlSccsP/1xfmsSWZa5mjM94aoc04b7AZ/pWGv8A4BdzF33
+         pWX/eXVWI3v3/CtafE4u22xrRuB6IUgmvJLr8+Acsa3n/vTJ4bmPNFhCMaBmPIQUWTv5
+         A9SqF/OCDsY+Kk8tBUWJuUY7INUyjKyaYmiK07Cj4feVm8YbxVgKHUh/6opXsPLUCvXG
+         czymtAyMGq9RxSjzhsYAxgPc3VtfWsSPWAKX/+thxq5jcRs5MYONHmwgYxtd0Np7Uh+7
+         QVWkZguv+6KuzFuEYGh7Y29ejYa5M4nR7HKT8JhTVlN9R8Zt1Lu9R267M6bHj/44Yu2T
+         YVbQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=d6cp5lLEYX1NgjT7O9JHG7TIte4Jp7jyu/1K24ySFWg=;
+        b=KwvV6gIssaz2RsMUs8qDvK0uL/6zlR6YL0O9mOIQNRFRwjYaxONUtIGztzjgvsY9aF
+         qYUWLJPg2BLFGLiAm6FIwBnuRn1WczO9p6gStIpgY4kfhdTdxJjDtYHmUu8G4We3GJR9
+         VmR2h3mMn9qROOoB+AJqMIEe0sj0tUBC+gvqkm35dDyKCVs72sohpOhBSK7sDF0JKkLf
+         IvBd99ivLB8zRXv9GX4NJqpaOFvCjsicHMoiGstXfXZF8AznX/rBPhDKxDGh2sVuHkti
+         tzE7mN6lKrL3h5Ukbwc2Q3fhGb5W0wvEJiYt/Phudpn/F57r30rDYMZAEMOsivDUIquV
+         3MQQ==
+X-Gm-Message-State: APjAAAUzk1FVChinxYW/O8D9nLcwwUCI/ZqCIebYvZdgN/EbZuoh+plh
+        7W/R2PURNM/ich8Z341RwIAY51JJywHwjbLxRQ==
+X-Google-Smtp-Source: APXvYqz4Vm5pQARMrZaAtyB6WEMg7T4Ny7+8+8wYOVrstwsWprpf7FHbwV6mwHskEkJkQmsN51bnhk9aVc9yGuTMIq0=
+X-Received: by 2002:a0c:9274:: with SMTP id 49mr5728943qvz.119.1560775781353;
+ Mon, 17 Jun 2019 05:49:41 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:2IhlH3w9aK7OqAObh0m0vtxUjmwrTi/dYeLzaTbn3KHAugqPA8o
- upoUdMJZ1b6d3NEfaBcd6MZbAuwFtdZ71C++Eh5q12WN8vmMJUEXW6JIe/JpUrIXf++qqi6
- v1bKA5Cxe/HV/9AQpRk7pZqnXeHebYbE+h+L9C19RjPK6emuttIEXdLD+XEnlU7+WS+0MgC
- JtVOPXXnWtvXeN4BfSoVg==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:VaDA1yhVmLA=:g4ishUQg/9y48nkuWTTim9
- CKe+CRr3qNuWCTs0dQomBqhLY9wanMMx5GUPzQq/qae5a6nMVHLumwch9AQ4eV6P2eZ5yANSA
- AuMlEvAKfNJLPVUsyjS3/443uWo0JkXdurg/34XxbCoHvoc5084nNBfdkLmz90Vb6nE7jgAQ9
- cfBn/XmeCS7q3+ST5mO2Lyh6A1Gxdue/hBkHTTL3H0M6KCO2BxJaoG3qwQgjYsiDf3cRknPxY
- 9hLgpyL53cbs+ldZUEP6lymD07kZCVNI+w7xWF753jJSUQLXwroprvfCc6EMvJVojnubkq8HL
- BhIjYQnt+ywvFdCwFHU5Y9oZsTPgg3B1IIni+yMFISgPiNHtJPPTdwUsQjxppj+yBeSpSLucn
- SiC7i0Cz+ndzKyjx3bj0WApMANOxp/6dMT0zHcBPhg444ckNXlkHAOFyvTjgVf3JEq3tpY1o2
- 6GBjoHmn+IL0j7aZrWYCrDj8LNu1UF5ixzs5jRBAtT1e1d+0mShEWAARFLu6Fito4FtuhHnar
- ScDPkGc3lTHHYy15d+0O5cDDTxX9G7JUJrm1cYIpLb9xU6+oTP4LEDaO2ahBwWg66GN0WsDcT
- sv96/vaORqZhWelqjQa3aHNVzciKGx7yAl5yhwQk9MBd4INeLcG2cNAAd8OoEd8Cvj++UCU97
- 3nbXlu/0dkNkZ1RyZ06V4WNIXgOEbXFbfzjz1bCQXNWFKOvEF2PAyV0F33LuCKAKXXNpdW6Hg
- rMJ5lt8Hdptk0L+1RRuMHvWSbKcyTi7BTLMBeQ==
+Received: by 2002:ac8:231c:0:0:0:0:0 with HTTP; Mon, 17 Jun 2019 05:49:40
+ -0700 (PDT)
+Reply-To: eddywilliam0002@gmail.com
+From:   eddy william <smithhason13@gmail.com>
+Date:   Mon, 17 Jun 2019 14:49:40 +0200
+Message-ID: <CAE9dMzZbys2bf_9ytzsrf+UwgZupAbS2CS=va2=eSJ63woV4yQ@mail.gmail.com>
+Subject: hello
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The debug output uses the wrong format string for printing a size_t:
+Hello
 
-In file included from include/drm/drm_mm.h:49,
-                 from include/drm/drm_vma_manager.h:26,
-                 from include/drm/drm_gem.h:40,
-                 from drivers/gpu/drm/arm/display/komeda/komeda_framebuffer.c:9:
-drivers/gpu/drm/arm/display/komeda/komeda_framebuffer.c: In function 'komeda_fb_afbc_size_check':
-drivers/gpu/drm/arm/display/komeda/komeda_framebuffer.c:96:17: error: format '%lx' expects argument of type 'long unsigned int', but argument 3 has type 'size_t' {aka 'unsigned int'} [-Werror=format=]
-   DRM_DEBUG_KMS("afbc size check failed, obj_size: 0x%lx. min_size 0x%x.\n",
+My name is Eddy William I am a lawyer by profession. I wish to offer you
+the next of kin to my client. You will inherit the sum of ($14.2 Million)
+dollars my client left in the bank before his death.
 
-This is harmless in the kernel as size_t and long are always the same
-width, but it's always better to use the correct format string
-to shut up the warning.
+My client is a citizen of your country who died in auto crash with his wife
+and only son. I will be entitled with 50% of the total fund while 50% will
+be for you.
 
-Fixes: 9ccf536e53cb ("drm/komeda: Added AFBC support for komeda driver")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/gpu/drm/arm/display/komeda/komeda_framebuffer.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Please contact my private email here for more details:eddywilliam0002@gmail.com
 
-diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_framebuffer.c b/drivers/gpu/drm/arm/display/komeda/komeda_framebuffer.c
-index abc8c0ccc053..58ff34e718d0 100644
---- a/drivers/gpu/drm/arm/display/komeda/komeda_framebuffer.c
-+++ b/drivers/gpu/drm/arm/display/komeda/komeda_framebuffer.c
-@@ -93,7 +93,7 @@ komeda_fb_afbc_size_check(struct komeda_fb *kfb, struct drm_file *file,
- 			       AFBC_SUPERBLK_ALIGNMENT);
- 	min_size = kfb->afbc_size + fb->offsets[0];
- 	if (min_size > obj->size) {
--		DRM_DEBUG_KMS("afbc size check failed, obj_size: 0x%lx. min_size 0x%x.\n",
-+		DRM_DEBUG_KMS("afbc size check failed, obj_size: 0x%zx. min_size 0x%x.\n",
- 			      obj->size, min_size);
- 		goto check_failed;
- 	}
-@@ -137,7 +137,7 @@ komeda_fb_none_afbc_size_check(struct komeda_dev *mdev, struct komeda_fb *kfb,
- 		min_size = komeda_fb_get_pixel_addr(kfb, 0, fb->height, i)
- 			 - to_drm_gem_cma_obj(obj)->paddr;
- 		if (obj->size < min_size) {
--			DRM_DEBUG_KMS("The fb->obj[%d] size: %ld lower than the minimum requirement: %d.\n",
-+			DRM_DEBUG_KMS("The fb->obj[%d] size: %zd lower than the minimum requirement: %d.\n",
- 				      i, obj->size, min_size);
- 			return -EINVAL;
- 		}
--- 
-2.20.0
-
+Many thanks in advance,
+Mr.Eddy William,
