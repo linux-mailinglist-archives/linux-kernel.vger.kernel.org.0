@@ -2,124 +2,181 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EE7E948D41
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 21:01:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E39F48D33
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 21:00:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728812AbfFQTBD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 15:01:03 -0400
-Received: from esa3.hgst.iphmx.com ([216.71.153.141]:59831 "EHLO
-        esa3.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725497AbfFQTBB (ORCPT
+        id S1728562AbfFQTAM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 15:00:12 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:56595 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725497AbfFQTAL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 15:01:01 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1560798061; x=1592334061;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=41zR8QjGMqwDXm/EOxIo4VhtiejJSwkpc8NiWlOpJ0o=;
-  b=EKmfXpL7QA9KpvaBunhOEYkMXhcuYgxnYw/5yMyJNmZ89KmCKpiLqffl
-   i46ULg94aQNPjhbOM2gi4sIpnQEMxAFgG8FVKFmCTDbd2bqh05REjCPgx
-   q89rdZ+Op4B8TfLdouE5ScXeSPbnvyDrt64h3wm4DAYuB5JZ+2m7RbYdk
-   4R23N3jy+IsPOocHkO0D5skPAqnQNU+rCGo3jdPtzCo27fY/Nlzbb2RNX
-   QkzxnswsW3augTTHvPC43/cnR2mRi5acYEuET5uRXT30ZnSxypn6rM4N6
-   QOb0gSNYtGFFwdr91XZA6Ci50rIcF/1Eh/l3STg14pY0iRU9RPQKXRLS+
-   Q==;
-X-IronPort-AV: E=Sophos;i="5.63,386,1557158400"; 
-   d="scan'208";a="115695482"
-Received: from uls-op-cesaip01.wdc.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
-  by ob1.hgst.iphmx.com with ESMTP; 18 Jun 2019 03:01:01 +0800
-IronPort-SDR: spOuXSxRrjdAUR5Mf+tol6cicoxFy6dFp37yEtiIA1Nch8T1ddPewPRTfcSswfnmbGLgpN/qx+
- IQ6FwWZovP0BY5luNPn8kEm15kpGFQxoIA/wZwLsRvZ9cTNPgLuLtZeSFbE7PyyDowR0owe1r5
- qpi0XDaV42LK0wN7tg6bbFK/DmCDh37TX6erD7819+m0gidSeCLrFHZQH/hE4o+7tD1DrPqYtH
- skEMgKm2cdvCAhERy2SRCVxnOGnQaObZeH35sqCG6EaOSe7wDrdDU9kODS1H63VH3h87g0bP0A
- rmIoNafpStXSRnP5ksLBDWRD
-Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
-  by uls-op-cesaep01.wdc.com with ESMTP; 17 Jun 2019 12:00:34 -0700
-IronPort-SDR: 5sUm89DLg86LTT++XMnEPR2jSdCE5MaQwfzr9HlRyf5iwKcy5zp28LRQQmd7TMxYAuZ1fNw30B
- 459ZfbJFgwAVTKPs9nKxf1E4+lNKOaJVP0Fbr1Yl8K53d+JwBG5UWpUhzutPjcVT00hrkMYbdG
- Cae24DcFXM/uWBZR+PMIxGlEABrADVP8zbX2hGZgBNTHWXNel5CKyP9nufYJTM0aVyKGU9YlGZ
- CB93X6sU8FPK1IiwanicqFZIv/1vK9c/aeMY4WWXxRmO5T/cxXgiCdE69aDS0+1RIJBuY8Qv9J
- vsM=
-Received: from jedi-01.sdcorp.global.sandisk.com (HELO jedi-01.int.fusionio.com) ([10.11.143.218])
-  by uls-op-cesaip01.wdc.com with ESMTP; 17 Jun 2019 12:00:59 -0700
-From:   Atish Patra <atish.patra@wdc.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Sudeep Holla <sudeep.holla@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Anup Patel <anup@brainfault.org>,
-        Atish Patra <atish.patra@wdc.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        devicetree@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-riscv@lists.infradead.org,
-        Mark Rutland <mark.rutland@arm.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Otto Sabart <ottosabart@seberm.com>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Richard Fontana <rfontana@redhat.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-arm-kernel@lists.infradead.org,
-        Russell King <linux@armlinux.org.uk>
-Subject: [PATCH v7 7/7] MAINTAINERS: Add an entry for generic architecture topology
-Date:   Mon, 17 Jun 2019 11:59:20 -0700
-Message-Id: <20190617185920.29581-8-atish.patra@wdc.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190617185920.29581-1-atish.patra@wdc.com>
-References: <20190617185920.29581-1-atish.patra@wdc.com>
+        Mon, 17 Jun 2019 15:00:11 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x5HIxr403554106
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Mon, 17 Jun 2019 11:59:53 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x5HIxr403554106
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019051801; t=1560797993;
+        bh=AdWGzLrvMBjUrfUtppcPJ8CSxypUpMmqKAy724o9P6M=;
+        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
+        b=D7czRxN6p8ALVS9mq2lz18XZZjapj3vja1jFL/tqj5xGRLFy/O3hwc6t4Wsi8ocSN
+         EWqzt2LHmV46s/ThaYykgUA+vbfta5AVECd/ecjKV9RzKXvptGq2ESzfsfqpG562WQ
+         z/RKmzIDUxufQrFNHKbByw6niN/0Axxk413hSTzwVyWuXiTOiC7mHCJts226PcfJ16
+         VFEa5jYlRMt81FoGD9IP+BeR/iWPrETYvQ9kEUyiLPkQSjKqG6P4WF+j/u1+B4DbTw
+         ApokzsAQ2mdcdZDV+B8RF2Qo6aenThcUKPmCyp6PUyQeziOZ1LmfD3TCHFcilCMvUR
+         BkvvilKLCjaPw==
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x5HIxrUW3554103;
+        Mon, 17 Jun 2019 11:59:53 -0700
+Date:   Mon, 17 Jun 2019 11:59:53 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Adrian Hunter <tipbot@zytor.com>
+Message-ID: <tip-7b4b4f83881e11b1fe5d8743953f81addb0871de@git.kernel.org>
+Cc:     adrian.hunter@intel.com, jolsa@redhat.com, hpa@zytor.com,
+        linux-kernel@vger.kernel.org, acme@redhat.com, tglx@linutronix.de,
+        mingo@kernel.org
+Reply-To: jolsa@redhat.com, hpa@zytor.com, adrian.hunter@intel.com,
+          tglx@linutronix.de, acme@redhat.com, mingo@kernel.org,
+          linux-kernel@vger.kernel.org
+In-Reply-To: <20190520113728.14389-6-adrian.hunter@intel.com>
+References: <20190520113728.14389-6-adrian.hunter@intel.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/core] perf intel-pt: Accumulate cycle count from CYC
+ packets
+Git-Commit-ID: 7b4b4f83881e11b1fe5d8743953f81addb0871de
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
+X-Spam-Status: No, score=-1.2 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DATE_IN_FUTURE_06_12,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,
+        DKIM_VALID_EF autolearn=ham autolearn_force=no version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sudeep Holla <sudeep.holla@arm.com>
+Commit-ID:  7b4b4f83881e11b1fe5d8743953f81addb0871de
+Gitweb:     https://git.kernel.org/tip/7b4b4f83881e11b1fe5d8743953f81addb0871de
+Author:     Adrian Hunter <adrian.hunter@intel.com>
+AuthorDate: Mon, 20 May 2019 14:37:11 +0300
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Wed, 5 Jun 2019 09:47:54 -0300
 
-arm and arm64 shared lot of CPU topology related code. This was
-consolidated under driver/base/arch_topology.c by Juri. Now RISC-V
-is also started sharing the same code pulling more code from arm64
-into arch_topology.c
+perf intel-pt: Accumulate cycle count from CYC packets
 
-Since I was involved in the review from the beginning, I would like
-to assume maintenance for the same.
+In preparation for providing instructions-per-cycle (IPC) information,
+accumulate cycle count from CYC packets.
 
-Cc: Will Deacon <will.deacon@arm.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Acked-by: Juri Lelli <juri.lelli@redhat.com>
-Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
+Although CYC packets are optional (requires config term 'cyc' to enable
+cycle-accurate mode when recording), the simplest way to count cycles is
+with CYC packets.
+
+The first complication is that cycles must be counted only when also
+counting instructions.
+
+That means when control flow packet generation is enabled i.e. between
+TIP.PGE and TIP.PGD packets.
+
+Also, sampling the cycle count follows the same rules as sampling the
+timestamp, that is, not before the instruction to which the decoder is
+walking is reached.
+
+In addition, the cycle count is not accurate for any but the first
+branch of a TNT packet.
+
+Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Link: http://lkml.kernel.org/r/20190520113728.14389-6-adrian.hunter@intel.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- MAINTAINERS | 7 +++++++
- 1 file changed, 7 insertions(+)
+ tools/perf/util/intel-pt-decoder/intel-pt-decoder.c | 14 +++++++++++++-
+ tools/perf/util/intel-pt-decoder/intel-pt-decoder.h |  1 +
+ 2 files changed, 14 insertions(+), 1 deletion(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 57f496cff999..c6f7d7152f01 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -6595,6 +6595,13 @@ W:	https://linuxtv.org
- S:	Maintained
- F:	drivers/media/radio/radio-gemtek*
+diff --git a/tools/perf/util/intel-pt-decoder/intel-pt-decoder.c b/tools/perf/util/intel-pt-decoder/intel-pt-decoder.c
+index 1ab4070b5633..ef3a1c1cd250 100644
+--- a/tools/perf/util/intel-pt-decoder/intel-pt-decoder.c
++++ b/tools/perf/util/intel-pt-decoder/intel-pt-decoder.c
+@@ -160,6 +160,8 @@ struct intel_pt_decoder {
+ 	uint64_t period_mask;
+ 	uint64_t period_ticks;
+ 	uint64_t last_masked_timestamp;
++	uint64_t tot_cyc_cnt;
++	uint64_t sample_tot_cyc_cnt;
+ 	bool continuous_period;
+ 	bool overflow;
+ 	bool set_fup_tx_flags;
+@@ -167,6 +169,7 @@ struct intel_pt_decoder {
+ 	bool set_fup_mwait;
+ 	bool set_fup_pwre;
+ 	bool set_fup_exstop;
++	bool sample_cyc;
+ 	unsigned int fup_tx_flags;
+ 	unsigned int tx_flags;
+ 	uint64_t fup_ptw_payload;
+@@ -1323,6 +1326,7 @@ static int intel_pt_walk_tnt(struct intel_pt_decoder *decoder)
+ 				decoder->ip += intel_pt_insn.length;
+ 				return 0;
+ 			}
++			decoder->sample_cyc = false;
+ 			decoder->ip += intel_pt_insn.length;
+ 			if (!decoder->tnt.count) {
+ 				intel_pt_update_sample_time(decoder);
+@@ -1515,6 +1519,9 @@ static void intel_pt_calc_cyc_timestamp(struct intel_pt_decoder *decoder)
+ 	decoder->have_cyc = true;
  
-+GENERIC ARCHITECTURE TOPOLOGY
-+M:	Sudeep Holla <sudeep.holla@arm.com>
-+L:	linux-kernel@vger.kernel.org
-+S:	Maintained
-+F:	drivers/base/arch_topology.c
-+F:	include/linux/arch_topology.h
-+
- GENERIC GPIO I2C DRIVER
- M:	Wolfram Sang <wsa+renesas@sang-engineering.com>
- S:	Supported
--- 
-2.21.0
-
+ 	decoder->cycle_cnt += decoder->packet.payload;
++	if (decoder->pge)
++		decoder->tot_cyc_cnt += decoder->packet.payload;
++	decoder->sample_cyc = true;
+ 
+ 	if (!decoder->cyc_ref_timestamp)
+ 		return;
+@@ -2419,6 +2426,7 @@ const struct intel_pt_state *intel_pt_decode(struct intel_pt_decoder *decoder)
+ 		decoder->state.err = intel_pt_ext_err(err);
+ 		decoder->state.from_ip = decoder->ip;
+ 		intel_pt_update_sample_time(decoder);
++		decoder->sample_tot_cyc_cnt = decoder->tot_cyc_cnt;
+ 	} else {
+ 		decoder->state.err = 0;
+ 		if (decoder->cbr != decoder->cbr_seen && decoder->state.type) {
+@@ -2426,14 +2434,18 @@ const struct intel_pt_state *intel_pt_decode(struct intel_pt_decoder *decoder)
+ 			decoder->state.type |= INTEL_PT_CBR_CHG;
+ 			decoder->state.cbr_payload = decoder->cbr_payload;
+ 		}
+-		if (intel_pt_sample_time(decoder->pkt_state))
++		if (intel_pt_sample_time(decoder->pkt_state)) {
+ 			intel_pt_update_sample_time(decoder);
++			if (decoder->sample_cyc)
++				decoder->sample_tot_cyc_cnt = decoder->tot_cyc_cnt;
++		}
+ 	}
+ 
+ 	decoder->state.timestamp = decoder->sample_timestamp;
+ 	decoder->state.est_timestamp = intel_pt_est_timestamp(decoder);
+ 	decoder->state.cr3 = decoder->cr3;
+ 	decoder->state.tot_insn_cnt = decoder->tot_insn_cnt;
++	decoder->state.tot_cyc_cnt = decoder->sample_tot_cyc_cnt;
+ 
+ 	return &decoder->state;
+ }
+diff --git a/tools/perf/util/intel-pt-decoder/intel-pt-decoder.h b/tools/perf/util/intel-pt-decoder/intel-pt-decoder.h
+index ed088d4726ba..6a61773dc44b 100644
+--- a/tools/perf/util/intel-pt-decoder/intel-pt-decoder.h
++++ b/tools/perf/util/intel-pt-decoder/intel-pt-decoder.h
+@@ -77,6 +77,7 @@ struct intel_pt_state {
+ 	uint64_t to_ip;
+ 	uint64_t cr3;
+ 	uint64_t tot_insn_cnt;
++	uint64_t tot_cyc_cnt;
+ 	uint64_t timestamp;
+ 	uint64_t est_timestamp;
+ 	uint64_t trace_nr;
