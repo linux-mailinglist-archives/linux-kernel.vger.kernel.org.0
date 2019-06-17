@@ -2,84 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9BD45488B5
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 18:17:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 27306488BD
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 18:21:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728479AbfFQQRp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 12:17:45 -0400
-Received: from smtprelay0123.hostedemail.com ([216.40.44.123]:44470 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726091AbfFQQRo (ORCPT
+        id S1727997AbfFQQVq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 12:21:46 -0400
+Received: from conuserg-12.nifty.com ([210.131.2.79]:45807 "EHLO
+        conuserg-12.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727639AbfFQQVq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 12:17:44 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay06.hostedemail.com (Postfix) with ESMTP id F0530182251A2;
-        Mon, 17 Jun 2019 16:17:42 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::,RULES_HIT:41:355:379:599:800:960:982:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2198:2199:2393:2559:2562:2828:3138:3139:3140:3141:3142:3352:3622:3653:3865:3866:3867:3868:3870:3871:3872:3874:4321:5007:10004:10400:10848:11232:11658:11914:12043:12296:12663:12679:12740:12760:12895:13069:13071:13161:13229:13311:13357:13439:14180:14181:14659:14721:21060:21080:21451:21627:21740:30029:30054:30070:30091,0,RBL:23.242.196.136:@perches.com:.lbl8.mailshell.net-62.14.0.180 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:27,LUA_SUMMARY:none
-X-HE-Tag: dock02_2616e45532807
-X-Filterd-Recvd-Size: 2206
-Received: from XPS-9350 (cpe-23-242-196-136.socal.res.rr.com [23.242.196.136])
-        (Authenticated sender: joe@perches.com)
-        by omf03.hostedemail.com (Postfix) with ESMTPA;
-        Mon, 17 Jun 2019 16:17:41 +0000 (UTC)
-Message-ID: <9f241554ff74531d3a61e6bd1c1043831e870819.camel@perches.com>
-Subject: Re: [PATCH] [RFC] get_maintainer: Really limit regex patterns to
- words
-From:   Joe Perches <joe@perches.com>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>
-Cc:     linux-stm32@st-md-mailman.stormreply.com,
-        linux-kernel@vger.kernel.org
-Date:   Mon, 17 Jun 2019 09:17:39 -0700
-In-Reply-To: <20190617142320.2830-1-geert+renesas@glider.be>
-References: <20190617142320.2830-1-geert+renesas@glider.be>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.30.5-0ubuntu0.18.10.1 
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Mon, 17 Jun 2019 12:21:46 -0400
+Received: from grover.flets-west.jp (softbank126125154139.bbtec.net [126.125.154.139]) (authenticated)
+        by conuserg-12.nifty.com with ESMTP id x5HGLP0a021960;
+        Tue, 18 Jun 2019 01:21:25 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-12.nifty.com x5HGLP0a021960
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1560788485;
+        bh=9Vm4Ynh/kWZgI3KQqSGTAag3aRK8FA3tSa76sSISXdg=;
+        h=From:To:Cc:Subject:Date:From;
+        b=jlmJDnmTI2akcO5J5J7XjrMV/pUBRF9GNH/gFAbyIFLtAgoE54PZSNIudD6klV6po
+         rnTCSBjGYlM33MilC4g/ejVOspJx9Cc4ArKA355ftACfIhH5W/9UVFfgahxbFsTApk
+         /FNz+ovCbmWvhVNviUlHRSdi+3w4aUBT3SKr12RmdSM9a3ufyBiO00YZP9Q0AxBpAk
+         X1rvtGKkXjnJvwdUM0kc/41GV5OXoCkbldysAMk+ga1VdX0RTgt7KBz7LX3Xy2eVM2
+         4ZPf1Pl+cPCEHZ7w/VQVE9IdcVRJaZDSoEeDzU+qLniBcD+gVfxxuP26FxsYM2oWLY
+         W2jXJYRBR8c4w==
+X-Nifty-SrcIP: [126.125.154.139]
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        devicetree@vger.kernel.org
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-kernel@vger.kernel.org, Rob Herring <robh@kernel.org>
+Subject: [PATCH] libfdt: reduce the number of headers included from libfdt_env.h
+Date:   Tue, 18 Jun 2019 01:21:23 +0900
+Message-Id: <20190617162123.24920-1-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2019-06-17 at 16:23 +0200, Geert Uytterhoeven wrote:
-> Limit file and directory regex matching to paths that contain the
-> pattern as a word, i.e. that contain word boundaries before and after
-> the pattern.  This helps avoiding false positives.
-> 
-> Without this, e.g. "scripts/get_maintainer.pl -f
-> tools/perf/pmu-events/arch/x86/westmereex" lists the STM32 maintainers,
-> due to the presence of "stm" in the middle of a word in the path name.
-> 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
-> What to do with drivers/pwm/pwm-stmpe.c, which is no longer caught?
-> Add a new pattern to MAINTAINERS?
+Currently, libfdt_env.h includes <linux/kernel.h> just for INT_MAX.
 
-Hi Geert
+<linux/kernel.h> pulls in a lots of broat.
 
-> diff --git a/scripts/get_maintainer.pl b/scripts/get_maintainer.pl
-[]
-> @@ -884,7 +884,7 @@ sub get_maintainers {
->  				}
->  			    }
->  			} elsif ($type eq 'N') {
-> -			    if ($file =~ m/$value/x) {
-> +			    if ($file =~ m/\b$value\b/x) {
+Thanks to commit 54d50897d544 ("linux/kernel.h: split *_MAX and *_MIN
+macros into <linux/limits.h>"), <linux/kernel.h> can be replaced with
+<linux/limits.h>.
 
-I'm not sure this is the right approach as it also
-affects regexes like
-"N:	rockchip" where there
-are multiple current matches that wouldn't
-work anymore.
+This saves including dozens of headers.
 
-It might be better to change the regexes in MAINTAINERS
-where appropriate.
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
 
-There is also a regex with a directory slash so it's
-probably better to use m{<foo>}
+ include/linux/libfdt_env.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-MAINTAINERS:N:  /pmac
+diff --git a/include/linux/libfdt_env.h b/include/linux/libfdt_env.h
+index edb0f0c30904..2231eb855e8f 100644
+--- a/include/linux/libfdt_env.h
++++ b/include/linux/libfdt_env.h
+@@ -2,7 +2,7 @@
+ #ifndef LIBFDT_ENV_H
+ #define LIBFDT_ENV_H
+ 
+-#include <linux/kernel.h>	/* For INT_MAX */
++#include <linux/limits.h>	/* For INT_MAX */
+ #include <linux/string.h>
+ 
+ #include <asm/byteorder.h>
+-- 
+2.17.1
 
