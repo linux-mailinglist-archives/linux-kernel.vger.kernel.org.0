@@ -2,78 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9D3E047997
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 07:02:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8045448304
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 14:52:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726813AbfFQFBm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 01:01:42 -0400
-Received: from mga01.intel.com ([192.55.52.88]:51879 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726614AbfFQFBg (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 01:01:36 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Jun 2019 22:01:36 -0700
-X-ExtLoop1: 1
-Received: from skl.sh.intel.com ([10.239.159.132])
-  by fmsmga008.fm.intel.com with ESMTP; 16 Jun 2019 22:01:35 -0700
-From:   Jin Yao <yao.jin@linux.intel.com>
-To:     acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
-        mingo@redhat.com, alexander.shishkin@linux.intel.com
-Cc:     Linux-kernel@vger.kernel.org, ak@linux.intel.com,
-        kan.liang@intel.com, yao.jin@intel.com,
-        Jin Yao <yao.jin@linux.intel.com>
-Subject: [PATCH v3 7/7] perf diff: Documentation -c cycles option
-Date:   Mon, 17 Jun 2019 20:50:57 +0800
-Message-Id: <1560775857-22355-8-git-send-email-yao.jin@linux.intel.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1560775857-22355-1-git-send-email-yao.jin@linux.intel.com>
-References: <1560775857-22355-1-git-send-email-yao.jin@linux.intel.com>
+        id S1727774AbfFQMvL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 08:51:11 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:36691 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726614AbfFQMvK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Jun 2019 08:51:10 -0400
+Received: by mail-wr1-f66.google.com with SMTP id n4so1735443wrs.3
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2019 05:51:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=5bmkX35OV+Un6bMajgKlhe2VCa9szCQ2ZkSqsLoxX0o=;
+        b=SkGqB8nJ/IEWG4IXm6QepVKAPERnunfILKb8Kq1MbhkJjXx3UULfKVudbA72IOKn4f
+         G62Fr3PqgKzQKcNsmyBRXyveUf+dHEtdCXtQsE3gTVZVWnfWkldCrMnFs2slVkltx4Gb
+         8AATCMbXrzOzWwipup1IO6zK1olLm9TmFGFjp+3h5Yjpcyz6iiNP46kZZ3t5mshsqkkB
+         uUfjeYjyZ9Qx603esC/J+weA9ps0NBpcyLjXqm3f6wYZUVQ8smY0LRF+HMW2KQdWf9ZA
+         5xqUxmiRTeR1e7KAm+OpIrpAp3jU3t2gdQNZWCNNhR7OlH8K5th6Jk4140PPDGahTHVY
+         aqWg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=5bmkX35OV+Un6bMajgKlhe2VCa9szCQ2ZkSqsLoxX0o=;
+        b=bL4WntJzDD3NsPNiMxiv5vnExeXON3qgUGJyVsyFgOZnWJ+r3MHPwXmd8msCMFfimr
+         hfiaW9Bn4XpTh2j3fic/MIAC0JTjDV795YkAuSnYuZ0bTbmYdnergHuLkuxoQhYsdFsm
+         TK/sAdqeofKYQTmh4QTWcLhrcsflJQjAfzAxFiGwYp8nFvRbJpktwhE67H+OI+6rTI5Y
+         1Rm1vTHaDY2/WqN6Mx02Zcei4Uys+C5w7+xg6rdli62vjzwAkNEPTbozWOwqcFPLUpYD
+         Y2+HmU7pC2FZckoBbW9aaD9eZdlC6TCcj92JQdNuAevopESCSdsGriVOt8G4wYUy41VM
+         MGhw==
+X-Gm-Message-State: APjAAAVvdqtjnkkQHUr3FETdfBes43uD1WXEIe8+vEi6sbayyZV1d2eL
+        jTQbdvozrw2vNSGJLLgiT40vEA==
+X-Google-Smtp-Source: APXvYqw7cAvvCpSNGdJ5pbIUQp1AMGTBLl023D9nSX8+bxc3wDDiQnF3ftT8PtAoEjuj1WIEl1FdVg==
+X-Received: by 2002:adf:f84f:: with SMTP id d15mr75718744wrq.53.1560775868649;
+        Mon, 17 Jun 2019 05:51:08 -0700 (PDT)
+Received: from dell.watershed.co.uk ([2.27.35.243])
+        by smtp.gmail.com with ESMTPSA id o11sm10477852wmh.37.2019.06.17.05.51.07
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 17 Jun 2019 05:51:08 -0700 (PDT)
+From:   Lee Jones <lee.jones@linaro.org>
+To:     alokc@codeaurora.org, agross@kernel.org, david.brown@linaro.org,
+        bjorn.andersson@linaro.org, balbi@kernel.org,
+        gregkh@linuxfoundation.org, ard.biesheuvel@linaro.org,
+        jlhugo@gmail.com, linux-arm-msm@vger.kernel.org,
+        linux-usb@vger.kernel.org, felipe.balbi@linux.intel.com
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Lee Jones <lee.jones@linaro.org>
+Subject: [RESEND v4 0/4] I2C: DWC3 USB: Add support for ACPI based AArch64 Laptops
+Date:   Mon, 17 Jun 2019 13:51:01 +0100
+Message-Id: <20190617125105.6186-1-lee.jones@linaro.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Documentation the new computation selection 'cycles'.
+This patch-set ensures the kernel is bootable on the newly released
+AArch64 based Laptops using ACPI configuration tables.  The Pinctrl
+changes have been accepted, leaving only I2C (keyboard, touchpad,
+touchscreen, fingerprint, etc, HID device) and USB (root filesystem,
+camera, networking, etc) enablement.
 
-Signed-off-by: Jin Yao <yao.jin@linux.intel.com>
----
- tools/perf/Documentation/perf-diff.txt | 14 +++++++++++---
- 1 file changed, 11 insertions(+), 3 deletions(-)
+RESEND: Stripped I2C patches as they have also been merged into
+        their respective subsystem.
 
-diff --git a/tools/perf/Documentation/perf-diff.txt b/tools/perf/Documentation/perf-diff.txt
-index facd91e..73903d2 100644
---- a/tools/perf/Documentation/perf-diff.txt
-+++ b/tools/perf/Documentation/perf-diff.txt
-@@ -90,9 +90,10 @@ OPTIONS
- 
- -c::
- --compute::
--        Differential computation selection - delta, ratio, wdiff, delta-abs
--        (default is delta-abs).  Default can be changed using diff.compute
--        config option.  See COMPARISON METHODS section for more info.
-+        Differential computation selection - delta, ratio, wdiff, cycles,
-+        delta-abs (default is delta-abs).  Default can be changed using
-+        diff.compute config option.  See COMPARISON METHODS section for
-+        more info.
- 
- -p::
- --period::
-@@ -280,6 +281,13 @@ If specified the 'Weighted diff' column is displayed with value 'd' computed as:
-     - WEIGHT-A being the weight of the data file
-     - WEIGHT-B being the weight of the baseline data file
- 
-+cycles
-+~~~~~~
-+If specified the 'Block cycles diff [start:end]' column is displayed.
-+It displays the cycles difference of same program basic block amongst
-+two perf.data. The program basic block is the code block between
-+two branches in a function (indicated by [start:end]).
-+
- SEE ALSO
- --------
- linkperf:perf-record[1], linkperf:perf-report[1]
+v4:
+ * Collecting Acks
+ * Adding Andy Gross' new email
+ * Removing applied Pinctrl patches
+
+Lee Jones (4):
+  soc: qcom: geni: Add support for ACPI
+  usb: dwc3: qcom: Add support for booting with ACPI
+  usb: dwc3: qcom: Start USB in 'host mode' on the SDM845
+  usb: dwc3: qcom: Improve error handling
+
+ drivers/soc/qcom/qcom-geni-se.c |  21 ++-
+ drivers/usb/dwc3/Kconfig        |   2 +-
+ drivers/usb/dwc3/dwc3-qcom.c    | 221 ++++++++++++++++++++++++++++----
+ 3 files changed, 209 insertions(+), 35 deletions(-)
+
 -- 
-2.7.4
+2.17.1
 
