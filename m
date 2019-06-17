@@ -2,190 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1527847961
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 06:30:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C4B884796B
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 06:38:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726017AbfFQEas (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 00:30:48 -0400
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:55028 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725730AbfFQEar (ORCPT
+        id S1726276AbfFQEi0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 00:38:26 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:34748 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726043AbfFQEiV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 00:30:47 -0400
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x5H4U4rh055473;
-        Sun, 16 Jun 2019 23:30:04 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1560745804;
-        bh=ESKXVh9Sq512lPIqthTXEUClTEi6OelQzFKQgNFQ7wM=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=O+3RFtA3fdfmaj1j/OEZXoOysP1/tfUlSMyvZiC8PYnbYhSaaPvf++0OJeSmhd+uA
-         FkMWyld0BDwQiHM1SjnHuwUiSV+LHs5tgvIbPZgqMbLIyHSavD+G8oXUxetR+Gj8dY
-         GFqQuKTY1NyJxqD4amy7labW3TVRrE+zNWnedBio=
-Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x5H4U4E4103253
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Sun, 16 Jun 2019 23:30:04 -0500
-Received: from DLEE101.ent.ti.com (157.170.170.31) by DLEE105.ent.ti.com
- (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Sun, 16
- Jun 2019 23:30:03 -0500
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE101.ent.ti.com
- (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Sun, 16 Jun 2019 23:30:03 -0500
-Received: from [172.24.190.89] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id x5H4TvCq010286;
-        Sun, 16 Jun 2019 23:29:58 -0500
-Subject: Re: [PATCH v5 4/5] dt-bindings: mtd: Add bindings for TI's AM654
- HyperBus memory controller
-To:     Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Boris Brezillon <bbrezillon@kernel.org>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        Rob Herring <robh+dt@kernel.org>
-CC:     <linux-mtd@lists.infradead.org>,
-        Tudor Ambarus <Tudor.Ambarus@microchip.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Joakim Tjernlund <Joakim.Tjernlund@infinera.com>,
-        <devicetree@vger.kernel.org>, Mason Yang <masonccyang@mxic.com.tw>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20190609103227.24875-1-vigneshr@ti.com>
- <20190609103227.24875-5-vigneshr@ti.com>
- <a808ffca-02a8-14b0-3422-c0905ab212a6@cogentembedded.com>
-From:   Vignesh Raghavendra <vigneshr@ti.com>
-Message-ID: <7c7828b9-bcfd-6156-3ddb-cbdde5956675@ti.com>
-Date:   Mon, 17 Jun 2019 10:00:45 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        Mon, 17 Jun 2019 00:38:21 -0400
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5H4cFYm048677
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2019 00:38:20 -0400
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2t63k6gq3k-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2019 00:38:18 -0400
+Received: from localhost
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <alastair@au1.ibm.com>;
+        Mon, 17 Jun 2019 05:38:01 +0100
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 17 Jun 2019 05:37:55 +0100
+Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x5H4bsib51904688
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 17 Jun 2019 04:37:54 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 82EFE42041;
+        Mon, 17 Jun 2019 04:37:54 +0000 (GMT)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 307084204B;
+        Mon, 17 Jun 2019 04:37:54 +0000 (GMT)
+Received: from ozlabs.au.ibm.com (unknown [9.192.253.14])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Mon, 17 Jun 2019 04:37:54 +0000 (GMT)
+Received: from adsilva.ozlabs.ibm.com (haven.au.ibm.com [9.192.254.114])
+        (using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.au.ibm.com (Postfix) with ESMTPSA id DEDC7A0208;
+        Mon, 17 Jun 2019 14:37:50 +1000 (AEST)
+From:   "Alastair D'Silva" <alastair@au1.ibm.com>
+To:     alastair@d-silva.org
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Oscar Salvador <osalvador@suse.com>,
+        David Hildenbrand <david@redhat.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Pavel Tatashin <pasha.tatashin@soleen.com>,
+        Wei Yang <richard.weiyang@gmail.com>, Qian Cai <cai@lca.pw>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Jiri Kosina <jkosina@suse.cz>,
+        Mukesh Ojha <mojha@codeaurora.org>,
+        Arun KS <arunks@codeaurora.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Baoquan He <bhe@redhat.com>,
+        Logan Gunthorpe <logang@deltatee.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 0/5] mm: Cleanup & allow modules to hotplug memory
+Date:   Mon, 17 Jun 2019 14:36:26 +1000
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-In-Reply-To: <a808ffca-02a8-14b0-3422-c0905ab212a6@cogentembedded.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19061704-0016-0000-0000-00000289A7C9
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19061704-0017-0000-0000-000032E6EEDB
+Message-Id: <20190617043635.13201-1-alastair@au1.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-17_03:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=444 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1906170042
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+From: Alastair D'Silva <alastair@d-silva.org>
 
-On 10/06/19 9:55 PM, Sergei Shtylyov wrote:
-> Hello!
-> 
-> On 06/09/2019 01:32 PM, Vignesh Raghavendra wrote:
-> 
->> Add binding documentation for TI's HyperBus memory controller present on
->> AM654 SoC.
->>
->> Signed-off-by: Vignesh Raghavendra <vigneshr@ti.com>
->> ---
->> v5:
->> Update binding example to show MMIO mux
->> Fix reg property for flash slave.
->>
->>  .../devicetree/bindings/mtd/ti,am654-hbmc.txt | 51 +++++++++++++++++++
->>  MAINTAINERS                                   |  1 +
->>  2 files changed, 52 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/mtd/ti,am654-hbmc.txt
->>
->> diff --git a/Documentation/devicetree/bindings/mtd/ti,am654-hbmc.txt b/Documentation/devicetree/bindings/mtd/ti,am654-hbmc.txt
->> new file mode 100644
->> index 000000000000..c2a2c2b42a92
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/mtd/ti,am654-hbmc.txt
->> @@ -0,0 +1,51 @@
->> +Bindings for HyperBus Memory Controller (HBMC) on TI's K3 family of SoCs
->> +
->> +Required properties:
->> +- compatible : "ti,am654-hbmc" for AM654 SoC
->> +- reg : Two entries:
->> +	First entry pointed to the register space of HBMC controller
->> +	Second entry pointing to the memory map region dedicated for
->> +	MMIO access to attached flash devices
->> +- ranges : Address translation from offset within CS to allocated MMIO
->> +	   space in SoC
->> +
->> +Optional properties:
->> +- mux-controls : phandle to the multiplexer that controls selection of
->> +		 HBMC vs OSPI inside Flash SubSystem. Default is OSPI,
->> +		 if property is absent.
->> +		 See Documentation/devicetree/bindings/mux/reg-mux.txt
->> +		 for mmio-mux binding details
->> +
->> +Example:
->> +
->> +	fss: fss@47000000 {
-> 
->    What's FSS?
+This series addresses some minor issues found when developing a
+persistent memory driver.
 
-Flash SubSystem (FSS). Will highlight that in mux control definition above
+As well as cleanup code, it also exports try_online_node so that
+it can be called from driver modules that provide access to additional
+physical memory.
 
->    Regardless of the answer, the node names should be generic, like "memory-controller@".
-> 
->> +		compatible = "syscon", "simple-mfd";
-> 
->    If it's "sycon", the nme should probably be "system-controller".
+Alastair D'Silva (5):
+  mm: Trigger bug on if a section is not found in __section_nr
+  mm: don't hide potentially null memmap pointer in
+    sparse_remove_one_section
+  mm: Don't manually decrement num_poisoned_pages
+  mm/hotplug: Avoid RCU stalls when removing large amounts of memory
+  mm/hotplug: export try_online_node
 
-FSS is like a subchip that has all Flash controllers like Octal SPI
-controllers and HyperBus controller within it. Some of their controls
-are in the below address range. So I think its more closer to
-"system-controller"
-
-> 
->> +		reg = <0x0 0x47000000 0x0 0x100>;
->> +		#address-cells = <2>;
->> +		#size-cells = <2>;
->> +		ranges;
->> +
->> +		hbmc_mux: hbmc-mux {
-> 
->    So, just "multiplexor"?
-
-Ok
-
-> 
->> +			compatible = "mmio-mux";
->> +			#mux-control-cells = <1>;
->> +			mux-reg-masks = <0x4 0x2>; /* 0: reg 0x4, bit 1 */
->> +		};
->> +
->> +		hbmc: hbmc@47034000 {
-> 
->    Should be named "memory-controller@47034000", according to the DT spec.
-
-IMO, since HyperBus is a bus protocol and has a specification, I think
-its should have a separate generic name like SPI etc.
-
-I will change this to "hyperbus@47034000" to common name of spec.
-
-> 
->> +			compatible = "ti,am654-hbmc";
->> +			reg = <0x0 0x47034000 0x0 0x100>,
->> +				<0x5 0x00000000 0x1 0x0000000>;
->> +			power-domains = <&k3_pds 55>;
->> +			#address-cells = <2>;
->> +			#size-cells = <1>;
->> +			ranges = <0x0 0x0 0x5 0x00000000 0x4000000>, /* CS0 - 64MB */
->> +				 <0x1 0x0 0x5 0x04000000 0x4000000>; /* CS1 - 64MB */
->> +			mux-controls = <&hbmc_mux 0>;
->> +
->> +			/* Slave flash node */
->> +			flash@0,0 {
->> +				compatible = "cypress,hyperflash", "cfi-flash";
->> +				reg = <0x0 0x0 0x4000000>;
->> +			};
->> +		};
->> +	};
-> [...]
-> 
-> MBR, Sergei
-> 
+ include/linux/memory_hotplug.h |  4 ++--
+ kernel/cpu.c                   |  2 +-
+ mm/memory_hotplug.c            | 23 ++++++++++++++++++-----
+ mm/sparse.c                    | 28 +++++++++++++++++-----------
+ 4 files changed, 38 insertions(+), 19 deletions(-)
 
 -- 
-Regards
-Vignesh
+2.21.0
+
