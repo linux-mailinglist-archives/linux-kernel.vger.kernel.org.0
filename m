@@ -2,132 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DEA3D48844
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 18:04:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5652948851
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 18:06:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728299AbfFQQEM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 12:04:12 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:33350 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727936AbfFQQEE (ORCPT
+        id S1728473AbfFQQEz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 12:04:55 -0400
+Received: from mail-vs1-f42.google.com ([209.85.217.42]:37295 "EHLO
+        mail-vs1-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726091AbfFQQEz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 12:04:04 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=CLbL6cpc9U7h527k8o/1MxF91Z/CtBA1frPv8iuvv78=; b=CzHAVvqyU0UCgx6eMsims7dJ2
-        21zkbdbIB6UEFSRRnA57/6BGsabwS5TzyehbKe065AwrEI+Ea8uu06M5wRo3ll3Jn6jhnbLpwF0Sl
-        IOTHYtT2w6FjoIkYv1ipdWRbjt8XoDTPgR2Md3Qq2tadbnCiQxqlDjm0N7aPvyrwsu9LQ=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=finisterre.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1hcu6x-000279-GA; Mon, 17 Jun 2019 16:03:59 +0000
-Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
-        id CBA86440046; Mon, 17 Jun 2019 17:03:58 +0100 (BST)
-Date:   Mon, 17 Jun 2019 17:03:58 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
-Cc:     lgirdwood@gmail.com, Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        MSM <linux-arm-msm@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>, devicetree@vger.kernel.org
-Subject: Re: [PATCH v4 4/7] regulator: qcom_spmi: Add support for PM8005
-Message-ID: <20190617160358.GC5316@sirena.org.uk>
-References: <20190613212436.6940-1-jeffrey.l.hugo@gmail.com>
- <20190613212553.10541-1-jeffrey.l.hugo@gmail.com>
- <20190613212553.10541-2-jeffrey.l.hugo@gmail.com>
- <20190617150502.GU5316@sirena.org.uk>
- <CAOCk7NrwYezbVyLKOZdxgGRVemKtBmHKP+fSO0a2p3bCPNdW3w@mail.gmail.com>
+        Mon, 17 Jun 2019 12:04:55 -0400
+Received: by mail-vs1-f42.google.com with SMTP id v6so6467041vsq.4;
+        Mon, 17 Jun 2019 09:04:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=pnnc1YqqDFPd8WzGDfGgqKol4mW6SfIm1hkAQXkloAQ=;
+        b=FcuH+7EurKK2QioEYceTZLdpXz6DMaf+I3nLQhr1rnEhvteqQRCEdYh9VookY4398q
+         Q5V4dmEg2BL6OgSV1CbZqhFz5NoPB0YmWjp015Yy4iDWwOrZjJ7UFXqHkK4h7XKAOaHv
+         TwGSuEruYPrkT6i4edpcLtmPbgFzxPXSo/OsV5olbaxn6TFZOgMsKA0axRi3ip0pNJsW
+         iJmRApuDDjW2Uuo73o9qc6Fg3OQ4qbIsYz92XcxxJ2PheSoKi8/t4kJ6g0ukJPhRz85s
+         5M7sKwU2IjER2XwDCQF2X4nFFGx916qmgqqAwVnLIMwAm7Zk+WYB//sshYpWNY5duKyn
+         iD6w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=pnnc1YqqDFPd8WzGDfGgqKol4mW6SfIm1hkAQXkloAQ=;
+        b=SSAQA7YUOXLyJ5+tnC1QBTy2x5kvfs1qsF/xbKOfLK/PLxnWcLwK+dVhylodzZ2334
+         JfpRi09LFKPRQYm8xNELm8HPnqzlUmjl8fTMo9ILfJSi1sx+EYyXggPJa8jMeprSQqpF
+         vr++h7es95eEyp5PMecEIIyYpGFvKHV/w7jOLVkaDlod904hEknN1gAp3DEt7t1gzx+Z
+         Q6HrzrEBIPUOyQHNAiopmKGGGV638IaEh76G1PlJkjjj/pTqxqkIYYFqHkBJX021fE+L
+         wEIPRTog0mj29qKggQwmLbgNNBqH1viEhipB2Cavx2Dtts57iODAiiXWsoFn4au8EmKb
+         z74w==
+X-Gm-Message-State: APjAAAUYU2iqrEANIlHy1sX/DigM7FFjyfbFcK31Jen0DuT8+zjYzedE
+        DqfhzQISrWojAo2hQE58fqtgEeAgfo0dkTDyMH8=
+X-Google-Smtp-Source: APXvYqxauZ6Wqdr1a6x/fpJLFsVERHU34VPVNMXn1iKL+e4p9OfXuz7VWrsJtK4Kn2WxOdyeEuBc+E97plQbyrlmZx0=
+X-Received: by 2002:a67:e3da:: with SMTP id k26mr20351031vsm.131.1560787493667;
+ Mon, 17 Jun 2019 09:04:53 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="l8YfOjwMha7d9KWK"
-Content-Disposition: inline
-In-Reply-To: <CAOCk7NrwYezbVyLKOZdxgGRVemKtBmHKP+fSO0a2p3bCPNdW3w@mail.gmail.com>
-X-Cookie: Editing is a rewording activity.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190617153025.12120-1-andrew.smirnov@gmail.com>
+In-Reply-To: <20190617153025.12120-1-andrew.smirnov@gmail.com>
+From:   Fabio Estevam <festevam@gmail.com>
+Date:   Mon, 17 Jun 2019 13:05:03 -0300
+Message-ID: <CAOMZO5CALFFcUQ7mY6L7DqB+iuJHzk_WKhZ1=BePjHqpT6pOYA@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] ARM: dts: Add ZII support for ZII i.MX7 RMU2 board
+To:     Andrey Smirnov <andrew.smirnov@gmail.com>
+Cc:     "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Shawn Guo <shawnguo@kernel.org>, Rob Herring <robh@kernel.org>,
+        Chris Healy <cphealy@gmail.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Bob Langer <Bob.Langer@zii.aero>,
+        Liang Pan <Liang.Pan@zii.aero>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Jun 17, 2019 at 12:30 PM Andrey Smirnov
+<andrew.smirnov@gmail.com> wrote:
+>
+> Add support for ZII's i.MX7 based Remote Modem Unit 2 (RMU2) board.
+>
+> Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
 
---l8YfOjwMha7d9KWK
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Mon, Jun 17, 2019 at 09:17:21AM -0600, Jeffrey Hugo wrote:
-> On Mon, Jun 17, 2019 at 9:05 AM Mark Brown <broonie@kernel.org> wrote:
-
-> > > +static int spmi_regulator_ftsmps426_set_voltage(struct regulator_dev *rdev,
-> > > +                                           unsigned selector)
-> > > +{
-
-> > > +     mV = spmi_regulator_common_list_voltage(rdev, selector) / 1000;
-
-> > This could just be a set_voltage_sel(), no need for it to be a
-> > set_voltage() operation....
-
-> This is a set_voltage_sel() in spmi_ftsmps426_ops.  Is the issue because this
-> function is "spmi_regulator_ftsmps426_set_voltage" and not
-> "spmi_regulator_ftsmps426_set_voltage_sel"?
-
-Well, that's certainly confusing naming and there's some confusion in
-the code about what a selector is - it's supposed to be a raw register
-value so if you're having to convert it into a voltage something is
-going wrong.  Just implement a set_voltage() operation?
-
-> We already have code in the driver to convert a selector to the
-> voltage.  Why duplicate
-> that inline in spmi_regulator_ftsmps426_set_voltage?
-
-Either work with selectors or work with voltages, don't mix and match
-the two.
-
-> > > +     switch (mode) {
-> > > +     case REGULATOR_MODE_NORMAL:
-> > > +             val = SPMI_FTSMPS426_MODE_HPM_MASK;
-> > > +             break;
-> > > +     case REGULATOR_MODE_FAST:
-> > > +             val = SPMI_FTSMPS426_MODE_AUTO_MASK;
-> > > +             break;
-> > > +     default:
-> > > +             val = SPMI_FTSMPS426_MODE_LPM_MASK;
-> > > +             break;
-> > > +     }
-
-> > This should validate, it shouldn't just translate invalid values into
-> > valid ones.
-
-> Validate what?  The other defines are REGULATOR_MODE_IDLE
-> and REGULATOR_MODE_STANDBY which correspond to the LPM
-> mode.  Or are you suggesting that regulator framework is going to pass
-> REGULATOR_MODE_INVALID to this operation?
-
-You should be validating that the argument passed in is one that the
-driver understands, your assumption will break if we add any new modes
-and in any case there should be a 1:1 mapping between hardware and API
-modes so you shouldn't be translating two different API modes into the
-same hardware mode.
-
---l8YfOjwMha7d9KWK
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl0Hue0ACgkQJNaLcl1U
-h9BokQf/fWdp7er8/W74adT1KeOqQi4nPS93SO7dWKuu7q1YNud8ppBRNgmG3djL
-xaZh1dTIqVx2GICGfhZA3uEYPTsgPfNiM0ENiApp8OqfxX8VE5J6Ww01ikPQq08J
-Hgwb5piOsDD1uQWUr07Y7R3eoZeKmFCWBRAxUSdNSFBdbQy/v1Of2Yl98/ghbP7Z
-c8Au/mllEECB2Ew4rFXJXse1R19p0feZxxw2DQUPPB+AQ46TstNc487vUoSKNxJp
-8D2BxD5Ph+8wT9lHUimBTNyNhBtRo8wiO0yXOe7xWR8w3rJxMUGe1jNJqFO4olqf
-KFAvYXEW+12HBtSq7ZaqNi5iCB/XJg==
-=GX4O
------END PGP SIGNATURE-----
-
---l8YfOjwMha7d9KWK--
+Reviewed-by: Fabio Estevam <festevam@gmail.com>
