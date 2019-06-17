@@ -2,62 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 87567482E9
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 14:48:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 08DCF482EF
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 14:48:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727789AbfFQMr3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 08:47:29 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:47855 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725995AbfFQMr3 (ORCPT
+        id S1727901AbfFQMsY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 08:48:24 -0400
+Received: from mout.kundenserver.de ([212.227.126.187]:35837 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725973AbfFQMsX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 08:47:29 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
-        (Exim 4.76)
-        (envelope-from <colin.king@canonical.com>)
-        id 1hcr2k-0004xq-T9; Mon, 17 Jun 2019 12:47:27 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        devel@driverdev.osuosl.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] staging: rtl8723bs: remove redundant assignment to rtStatus
-Date:   Mon, 17 Jun 2019 13:47:26 +0100
-Message-Id: <20190617124726.27961-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.20.1
+        Mon, 17 Jun 2019 08:48:23 -0400
+Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
+ (mreue011 [212.227.15.129]) with ESMTPA (Nemesis) id
+ 1M5PyX-1hbTbo3fxl-001Ome; Mon, 17 Jun 2019 14:48:01 +0200
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>, Mike Marshall <hubcap@omnibond.com>,
+        YueHaibing <yuehaibing@huawei.com>,
+        Ira Weiny <ira.weiny@intel.com>,
+        dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] video: fbdev: pvr2fb: fix compile-testing as module
+Date:   Mon, 17 Jun 2019 14:47:36 +0200
+Message-Id: <20190617124758.1252449-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.20.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:fQtLcNbtFadlnuLEAq66p6lty3m3sCianAYbjFY5chYptpALFcP
+ 4TxA6KG53CIq6rdVgC2Kw5nD2IaMXJ9u2BJNWuVDUJEgJ1UZ7GJu0qTunRJs6pVBchRVHN4
+ 6/SGL8y9THk7xyJslKbKJ5xTKGBxXsBnkJr8gaAoXGZvwc1iK9Xywo/doP/QGHF3pzhceof
+ kh4RdN+3fsW0iy/E4G7aQ==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:NPqdFaKRhec=:lkKoHx6wdLb5r5g14ioiy1
+ uwH9a3rmaAwmHLYZGcFd7m67zqtsWFr6xzqJAXKqkl0T1laFSLypRhCug/yHZbNyO6xuGYPMj
+ liNdVhD4poaIJSkG5UsQfXvYfLUNGtOk2G23+cjDJhhsdFXgyE3uswykw4yMedtlojfb6fjot
+ hZ9qYQuXhQzAje+Lf1iY6rf6k9npIa7e9LQukSn76TWe9gCvOeqefKSKW1vCEqqu2OELO3ZkL
+ du4t2tjwc12ZyMGfT5pvlO41awVTRrpuxRlNbfgtM1g9LQyNkhF9/dAV8iM5QLuKYGi7/2TQV
+ k4AathpPl5Fty7Er23WgsVkLjT47mEGB4EDYly6mYWxfB9y7q2VwjsFTH0mX4UYlwZuQQdHFC
+ 3sYlbZVzHpKdsXe+LEHdI+cOFr/OVL3I7f+C20gayOOfRSEXw0IB7xMZnUoNfd5UglXL2D2A9
+ JWJj4fPdpB2IcxUKjOo4VSWXi2kTYBVYgym6AX4+MZwGKP/89gBG8dq5T8sRqiBiV+yTgUR94
+ Tq2jvVXyaaQUznlxOVi1gE5zu68cZ1IqPSBaPadTunaM4dTsZCDAeOZNXHSR3p2ad0LcgBOjk
+ mGAYcQVb1d64vwwAd8eGIZP2+adfBBedct4G2WfAWWW91BiweyqFd4dRbtwm1r1nb+nEyY6Rd
+ lzDOEX4sxeTU62xDnO99nVuRvGLgHlz8Cmz1stGzayK8+xWfvIaOkCru5mvDpX1utmzdpk7oi
+ ejdZRUC4AlthUaR6bdgaY5kj0z1rHqVauKxVaA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Building an allmodconfig kernel now produces a harmless warning:
 
-Variable rtStatus is initialized with a value that is never read
-and later it is reassigned a new value.  Hence the initialization
-is redundant and can be removed.
+drivers/video/fbdev/pvr2fb.c:726:12: error: unused function 'pvr2_get_param_val' [-Werror,-Wunused-function]
 
-Addresses-Coverity: ("Unused value")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Shut this up the same way as we do for other unused functions
+in the same file, using the __maybe_unused attribute.
+
+Fixes: 0f5a5712ad1e ("video: fbdev: pvr2fb: add COMPILE_TEST support")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- drivers/staging/rtl8723bs/hal/rtl8723b_hal_init.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/video/fbdev/pvr2fb.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/staging/rtl8723bs/hal/rtl8723b_hal_init.c b/drivers/staging/rtl8723bs/hal/rtl8723b_hal_init.c
-index 21f2365fa627..bda19769c37f 100644
---- a/drivers/staging/rtl8723bs/hal/rtl8723b_hal_init.c
-+++ b/drivers/staging/rtl8723bs/hal/rtl8723b_hal_init.c
-@@ -352,7 +352,7 @@ void rtl8723b_FirmwareSelfReset(struct adapter *padapter)
- /*  */
- s32 rtl8723b_FirmwareDownload(struct adapter *padapter, bool  bUsedWoWLANFw)
+diff --git a/drivers/video/fbdev/pvr2fb.c b/drivers/video/fbdev/pvr2fb.c
+index 59c59b3a67cb..cf9cfdc5e685 100644
+--- a/drivers/video/fbdev/pvr2fb.c
++++ b/drivers/video/fbdev/pvr2fb.c
+@@ -723,8 +723,8 @@ static struct fb_ops pvr2fb_ops = {
+ 	.fb_imageblit	= cfb_imageblit,
+ };
+ 
+-static int pvr2_get_param_val(const struct pvr2_params *p, const char *s,
+-			      int size)
++static int __maybe_unused pvr2_get_param_val(const struct pvr2_params *p,
++					     const char *s, int size)
  {
--	s32 rtStatus = _SUCCESS;
-+	s32 rtStatus;
- 	u8 write_fw = 0;
- 	unsigned long fwdl_start_time;
- 	struct hal_com_data *pHalData = GET_HAL_DATA(padapter);
+ 	int i;
+ 
 -- 
-2.20.1
+2.20.0
 
