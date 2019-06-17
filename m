@@ -2,105 +2,223 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EF9FE48F15
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 21:30:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EC5D348F19
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 21:30:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727072AbfFQTaB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 15:30:01 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:35862 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728631AbfFQTaA (ORCPT
+        id S1729119AbfFQTaS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 15:30:18 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:45271 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726818AbfFQTaR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 15:30:00 -0400
-Received: by mail-wr1-f65.google.com with SMTP id n4so3185890wrs.3
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2019 12:29:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=EkTsmPm54nV9I4eCV7klbBI2xmAyNZbDf6YnrgHdVW0=;
-        b=AmGxu5F0KkO3GEQ+Ip9mfFWBY+gHo846Sjgr7/Mu/jH0pE9VoO7pZ8yAl7ZzP1xgNv
-         oM1KZ0aJNGsTRu6qeMpzYy5xBvKeV/zhKXEfoRZCSPXxxuw+lE1meqg9Ldgwb/8SLQKP
-         PX9onnzJjT7tzw5wGIhQwOQ2F7fcB9J6k387s9l30NMFJ0RJiY8x4Jo7ZP5QFD7jVjVG
-         DBP4xEwe3rQX/S4eCkfcidL0fqh2msiwMk3NV1xO5kc53n6n/FJUQ4Ku6+rs/vKVVvw8
-         gJBxdh+YyBGwEIv8EOEGhEAY3sqkh5Qt2YBAEF98qNIc8yykvpK3RydN2xGe37fzTojI
-         tLyg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=EkTsmPm54nV9I4eCV7klbBI2xmAyNZbDf6YnrgHdVW0=;
-        b=l0InBvjKmz/qVef3mpRCaqjWB3PsC7fXQORfVtyr8eDsudI3Cel9rcmwxjYEFi+IqR
-         bDEBBGTtYqoBsGQQdFtNb/KwpgAaxsAII2ReotaBpqablvYPSgW/ODllrv0D1ptKZ4/f
-         3Gw4Wg6M5u6+wjtF/FOM3ZDyoc77ovLdKDfpih55mM7XD9olrvIT+YRbywdOcN7gfV2j
-         jR3EgkhRZVz5H+FGS10yQPo4CgVuGZ0G1u4GAly1U0N4K1tGkXu4UDq9y2mLFZKgAgy/
-         ccTljbTnM91+66C9dJuxQsjc109t746bcjID6ikHIZnS2xe9NWl6Ua2KCUV3d2NdjqO2
-         /lcg==
-X-Gm-Message-State: APjAAAVPElj9WdxgHRiJyvA26zdYPwdS8WeeVgN1qT5PC2cFfD8P8LiF
-        WFFhRoHd8WtBLv+BpZUZnL4JXQ==
-X-Google-Smtp-Source: APXvYqyX0kVbSqS7aC4sfwCCNuTTDSn5b7E8alU67haUiF3ORjBg9no+KsXo3NxLtJPX9fne/yCrhw==
-X-Received: by 2002:adf:fecd:: with SMTP id q13mr7631641wrs.97.1560799797685;
-        Mon, 17 Jun 2019 12:29:57 -0700 (PDT)
-Received: from loys-ubuntu-BY1835A49200471.thefacebook.com (cust-west-pareq2-46-193-13-130.wb.wifirst.net. [46.193.13.130])
-        by smtp.googlemail.com with ESMTPSA id u18sm9412034wrr.11.2019.06.17.12.29.56
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 17 Jun 2019 12:29:57 -0700 (PDT)
-From:   Loys Ollivier <lollivier@baylibre.com>
-To:     Palmer Dabbelt <palmer@sifive.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>
-Cc:     Loys Ollivier <lollivier@baylibre.com>,
-        linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, Kevin Hilman <khilman@baylibre.com>
-Subject: [PATCH 3/3] riscv: defconfig: enable SOC_SIFIVE
-Date:   Mon, 17 Jun 2019 21:29:50 +0200
-Message-Id: <1560799790-20287-4-git-send-email-lollivier@baylibre.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1560799790-20287-1-git-send-email-lollivier@baylibre.com>
-References: <1560799790-20287-1-git-send-email-lollivier@baylibre.com>
+        Mon, 17 Jun 2019 15:30:17 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x5HJTuCo3564246
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Mon, 17 Jun 2019 12:29:56 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x5HJTuCo3564246
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019051801; t=1560799796;
+        bh=Wab4JSezjhdoD2MmlO1AeozBl1srNTDPVg+gQh4hrvc=;
+        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
+        b=RJ/f9p4rrVumXFmlEv0Dij31us5c1xs4lDQpfVuAn/xVhFuPTTqp9CUVqwF3Ri9Ez
+         ExUOHiIv3G9GiPs4EPSoM6AteRz0OX1l2BNbSOWEWv6hptfZMQVlWZxzkYUUhWpA9R
+         I82+DkIslLdAFVcI08tfkPjH4LGdkrUtFKNsqL8fTYfEaGj5LrDk1rfwbDb5qZYO5l
+         tQ3Pt13OxxaNJ3VzoTJWtKZxY+NtDd85K71C06dNSU46GYiTHBNdm0yT9GfgWbVTKW
+         ujSUJUAEZIIjHUImAGzu2RrsnlCIzhFhdeGCAp0lRgLDK2Qq8JdszqDSCE53W1jHmc
+         NFjPTytHMYuQA==
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x5HJTubn3564243;
+        Mon, 17 Jun 2019 12:29:56 -0700
+Date:   Mon, 17 Jun 2019 12:29:56 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Mathieu Poirier <tipbot@zytor.com>
+Message-ID: <tip-0a6be300eb7b9f6630d565e213a904e5c75a86c0@git.kernel.org>
+Cc:     mathieu.poirier@linaro.org, mingo@kernel.org,
+        linux-kernel@vger.kernel.org, alexander.shishkin@linux.intel.com,
+        peterz@infradead.org, leo.yan@linaro.org, namhyung@kernel.org,
+        acme@redhat.com, suzuki.poulose@arm.com, hpa@zytor.com,
+        tglx@linutronix.de, jolsa@redhat.com
+Reply-To: tglx@linutronix.de, jolsa@redhat.com, mathieu.poirier@linaro.org,
+          mingo@kernel.org, alexander.shishkin@linux.intel.com,
+          linux-kernel@vger.kernel.org, peterz@infradead.org,
+          hpa@zytor.com, namhyung@kernel.org, leo.yan@linaro.org,
+          acme@redhat.com, suzuki.poulose@arm.com
+In-Reply-To: <20190524173508.29044-16-mathieu.poirier@linaro.org>
+References: <20190524173508.29044-16-mathieu.poirier@linaro.org>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/core] perf cs-etm: Linking PE contextID with perf thread
+ mechanic
+Git-Commit-ID: 0a6be300eb7b9f6630d565e213a904e5c75a86c0
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
+X-Spam-Status: No, score=-1.2 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DATE_IN_FUTURE_06_12,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,
+        DKIM_VALID_EF autolearn=ham autolearn_force=no version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Enable SOC_SIFIVE so the default upstream config is bootable on the SiFive
-Unleashed Board.
-And have basic support for future boards based on the same SoC.
+Commit-ID:  0a6be300eb7b9f6630d565e213a904e5c75a86c0
+Gitweb:     https://git.kernel.org/tip/0a6be300eb7b9f6630d565e213a904e5c75a86c0
+Author:     Mathieu Poirier <mathieu.poirier@linaro.org>
+AuthorDate: Fri, 24 May 2019 11:35:06 -0600
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Mon, 10 Jun 2019 15:50:02 -0300
 
-Signed-off-by: Loys Ollivier <lollivier@baylibre.com>
+perf cs-etm: Linking PE contextID with perf thread mechanic
+
+Link contextID packets received from the decoder with the perf tool
+thread mechanic so that we know the specifics of the process currently
+executing.
+
+Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+Tested-by: Leo Yan <leo.yan@linaro.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Suzuki Poulouse <suzuki.poulose@arm.com>
+Cc: coresight@lists.linaro.org
+Cc: linux-arm-kernel@lists.infradead.org
+Link: http://lkml.kernel.org/r/20190524173508.29044-16-mathieu.poirier@linaro.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- arch/riscv/configs/defconfig | 6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
+ tools/perf/util/cs-etm-decoder/cs-etm-decoder.c | 20 ++++++++++++++++
+ tools/perf/util/cs-etm.c                        | 32 ++++++++++++++++++++-----
+ tools/perf/util/cs-etm.h                        | 10 ++++++++
+ 3 files changed, 56 insertions(+), 6 deletions(-)
 
-diff --git a/arch/riscv/configs/defconfig b/arch/riscv/configs/defconfig
-index 4f02967e55de..6e3e37aa8fd1 100644
---- a/arch/riscv/configs/defconfig
-+++ b/arch/riscv/configs/defconfig
-@@ -12,6 +12,7 @@ CONFIG_CHECKPOINT_RESTORE=y
- CONFIG_BLK_DEV_INITRD=y
- CONFIG_EXPERT=y
- CONFIG_BPF_SYSCALL=y
-+CONFIG_SOC_SIFIVE=y
- CONFIG_SMP=y
- CONFIG_MODULES=y
- CONFIG_MODULE_UNLOAD=y
-@@ -49,8 +50,6 @@ CONFIG_SERIAL_8250=y
- CONFIG_SERIAL_8250_CONSOLE=y
- CONFIG_SERIAL_OF_PLATFORM=y
- CONFIG_SERIAL_EARLYCON_RISCV_SBI=y
--CONFIG_SERIAL_SIFIVE=y
--CONFIG_SERIAL_SIFIVE_CONSOLE=y
- CONFIG_HVC_RISCV_SBI=y
- # CONFIG_PTP_1588_CLOCK is not set
- CONFIG_DRM=y
-@@ -66,9 +65,6 @@ CONFIG_USB_OHCI_HCD_PLATFORM=y
- CONFIG_USB_STORAGE=y
- CONFIG_USB_UAS=y
- CONFIG_VIRTIO_MMIO=y
--CONFIG_CLK_SIFIVE=y
--CONFIG_CLK_SIFIVE_FU540_PRCI=y
--CONFIG_SIFIVE_PLIC=y
- CONFIG_EXT4_FS=y
- CONFIG_EXT4_FS_POSIX_ACL=y
- CONFIG_AUTOFS4_FS=y
--- 
-2.7.4
-
+diff --git a/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c b/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c
+index 87264b79de0e..ce85e52f989c 100644
+--- a/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c
++++ b/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c
+@@ -402,6 +402,24 @@ cs_etm_decoder__buffer_exception_ret(struct cs_etm_packet_queue *queue,
+ 					     CS_ETM_EXCEPTION_RET);
+ }
+ 
++static ocsd_datapath_resp_t
++cs_etm_decoder__set_tid(struct cs_etm_queue *etmq,
++			const ocsd_generic_trace_elem *elem,
++			const uint8_t trace_chan_id)
++{
++	pid_t tid;
++
++	/* Ignore PE_CONTEXT packets that don't have a valid contextID */
++	if (!elem->context.ctxt_id_valid)
++		return OCSD_RESP_CONT;
++
++	tid =  elem->context.context_id;
++	if (cs_etm__etmq_set_tid(etmq, tid, trace_chan_id))
++		return OCSD_RESP_FATAL_SYS_ERR;
++
++	return OCSD_RESP_CONT;
++}
++
+ static ocsd_datapath_resp_t cs_etm_decoder__gen_trace_elem_printer(
+ 				const void *context,
+ 				const ocsd_trc_index_t indx __maybe_unused,
+@@ -440,6 +458,8 @@ static ocsd_datapath_resp_t cs_etm_decoder__gen_trace_elem_printer(
+ 							    trace_chan_id);
+ 		break;
+ 	case OCSD_GEN_TRC_ELEM_PE_CONTEXT:
++		resp = cs_etm_decoder__set_tid(etmq, elem, trace_chan_id);
++		break;
+ 	case OCSD_GEN_TRC_ELEM_ADDR_NACC:
+ 	case OCSD_GEN_TRC_ELEM_TIMESTAMP:
+ 	case OCSD_GEN_TRC_ELEM_CYCLE_COUNT:
+diff --git a/tools/perf/util/cs-etm.c b/tools/perf/util/cs-etm.c
+index afc2491f9f2a..17adf554b679 100644
+--- a/tools/perf/util/cs-etm.c
++++ b/tools/perf/util/cs-etm.c
+@@ -907,13 +907,8 @@ cs_etm__get_trace(struct cs_etm_queue *etmq)
+ }
+ 
+ static void cs_etm__set_pid_tid_cpu(struct cs_etm_auxtrace *etm,
+-				    struct auxtrace_queue *queue,
+ 				    struct cs_etm_traceid_queue *tidq)
+ {
+-	/* CPU-wide tracing isn't supported yet */
+-	if (queue->tid == -1)
+-		return;
+-
+ 	if ((!tidq->thread) && (tidq->tid != -1))
+ 		tidq->thread = machine__find_thread(etm->machine, -1,
+ 						    tidq->tid);
+@@ -922,6 +917,31 @@ static void cs_etm__set_pid_tid_cpu(struct cs_etm_auxtrace *etm,
+ 		tidq->pid = tidq->thread->pid_;
+ }
+ 
++int cs_etm__etmq_set_tid(struct cs_etm_queue *etmq,
++			 pid_t tid, u8 trace_chan_id)
++{
++	int cpu, err = -EINVAL;
++	struct cs_etm_auxtrace *etm = etmq->etm;
++	struct cs_etm_traceid_queue *tidq;
++
++	tidq = cs_etm__etmq_get_traceid_queue(etmq, trace_chan_id);
++	if (!tidq)
++		return err;
++
++	if (cs_etm__get_cpu(trace_chan_id, &cpu) < 0)
++		return err;
++
++	err = machine__set_current_tid(etm->machine, cpu, tid, tid);
++	if (err)
++		return err;
++
++	tidq->tid = tid;
++	thread__zput(tidq->thread);
++
++	cs_etm__set_pid_tid_cpu(etm, tidq);
++	return 0;
++}
++
+ static int cs_etm__synth_instruction_sample(struct cs_etm_queue *etmq,
+ 					    struct cs_etm_traceid_queue *tidq,
+ 					    u64 addr, u64 period)
+@@ -1866,7 +1886,7 @@ static int cs_etm__process_timeless_queues(struct cs_etm_auxtrace *etm,
+ 			continue;
+ 
+ 		if ((tid == -1) || (tidq->tid == tid)) {
+-			cs_etm__set_pid_tid_cpu(etm, queue, tidq);
++			cs_etm__set_pid_tid_cpu(etm, tidq);
+ 			cs_etm__run_decoder(etmq);
+ 		}
+ 	}
+diff --git a/tools/perf/util/cs-etm.h b/tools/perf/util/cs-etm.h
+index f16082d37ab5..b2a7628620bf 100644
+--- a/tools/perf/util/cs-etm.h
++++ b/tools/perf/util/cs-etm.h
+@@ -181,6 +181,8 @@ struct cs_etm_packet_queue {
+ int cs_etm__process_auxtrace_info(union perf_event *event,
+ 				  struct perf_session *session);
+ int cs_etm__get_cpu(u8 trace_chan_id, int *cpu);
++int cs_etm__etmq_set_tid(struct cs_etm_queue *etmq,
++			 pid_t tid, u8 trace_chan_id);
+ struct cs_etm_packet_queue
+ *cs_etm__etmq_get_packet_queue(struct cs_etm_queue *etmq, u8 trace_chan_id);
+ #else
+@@ -197,6 +199,14 @@ static inline int cs_etm__get_cpu(u8 trace_chan_id __maybe_unused,
+ 	return -1;
+ }
+ 
++static inline int cs_etm__etmq_set_tid(
++				struct cs_etm_queue *etmq __maybe_unused,
++				pid_t tid __maybe_unused,
++				u8 trace_chan_id __maybe_unused)
++{
++	return -1;
++}
++
+ static inline struct cs_etm_packet_queue *cs_etm__etmq_get_packet_queue(
+ 				struct cs_etm_queue *etmq __maybe_unused,
+ 				u8 trace_chan_id __maybe_unused)
