@@ -2,99 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 379284810A
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 13:40:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 76BC14816E
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 14:01:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726183AbfFQLk4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 07:40:56 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:42378 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725763AbfFQLkz (ORCPT
+        id S1727055AbfFQMAu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 08:00:50 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:40364 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725681AbfFQMAt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 07:40:55 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=TGS1jJo4f0gqZ+d4CFQwjoWxEngjb1gvJrhJoe43XXw=; b=ZBwbG3Gn/ueMgLs/6/3z0n1QM
-        507hzQfk0t9Zw1uJnlZeDzAPWNYDhAeo/UV94aOVTVW/5AywlPRBL02pEaEpoEFyUUdrxrGJh99mn
-        Nrzcw971o/sV50QDOkFF03USVvyeXz4z1PhCPhdiQ1rV4M9BBGW0dKByZQECxSQ73jPf8=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=finisterre.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1hcq0H-0001VF-Pe; Mon, 17 Jun 2019 11:40:49 +0000
-Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
-        id 0FA79440046; Mon, 17 Jun 2019 12:40:49 +0100 (BST)
-Date:   Mon, 17 Jun 2019 12:40:48 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Andreas Kemnade <andreas@kemnade.info>
-Cc:     tony@atomide.com, lgirdwood@gmail.com, linux-omap@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        sboyd@kernel.org, nm@ti.com, vireshk@kernel.org,
-        letux-kernel@openphoenux.org
-Subject: Re: [PATCH] regulator: twl: mark vdd1/2 as continuous on twl4030
-Message-ID: <20190617114048.GN5316@sirena.org.uk>
-Mail-Followup-To: Andreas Kemnade <andreas@kemnade.info>, tony@atomide.com,
-        lgirdwood@gmail.com, linux-omap@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        sboyd@kernel.org, nm@ti.com, vireshk@kernel.org,
-        letux-kernel@openphoenux.org
-References: <20190615163314.28173-1-andreas@kemnade.info>
- <20190617103111.GM5316@sirena.org.uk>
- <20190617130357.41204ff7@kemnade.info>
+        Mon, 17 Jun 2019 08:00:49 -0400
+Received: by mail-lf1-f65.google.com with SMTP id a9so6284878lff.7
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2019 05:00:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lixom-net.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=WMOobivDUXfkCWR6pjRCOHNvO/6DOagtbl2NP8XjONo=;
+        b=ff3wGzEwNI2T2elXEz8FCLpI/REFBeKdKx2zf6MqQfZBtYK8vQlnaHO6bhamdvVbaP
+         51fYwx8k+ppTt8z1VI36YDSJNGbtFO+fTiFqKgvlMG2JH6SUrOZmWHHSEe9pkz9Grroa
+         U2ZIf1eaVGT8yzhCo/XIfkSXBL1h+j1v9D61pnTFL71nCFMkcsR51HSCAlmUz8ps5ioP
+         d/IhdsPtOi99gXcabRDsLtf7+augejt0ZFYXwBWyXLYXTHSZAy7thsLRuoFgcNTx6fn3
+         shOA5oRdZ0QqKpetOlDgNaJQZ4jn++4q7/fTwYKK8EaTR9ZPII5fH12B/64j1hiND+PZ
+         yB2w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=WMOobivDUXfkCWR6pjRCOHNvO/6DOagtbl2NP8XjONo=;
+        b=cEIMIrRNSvxew0md7090YIbsGV5NTQ215+AM+LpLH8zcRjEu6mVF4sbCZtUnZYGfAn
+         xmQlBmB8X3v09IT8+plgWgVNH3qNfbzIjrFczauXTCjFmsUwW/n73E17Iwgnn8ApIA66
+         0nhZn7FIPiIZ6iskR0nrSXtYz6Jg9k6GCTDbPPwser0UwJisKcWpxL8hXTEj6zMO1ZDs
+         ijpNsYRevCSxvvUwhh7/D6BQPOr5g7U3P26q05GC5GMZyneXhuthxw4gUD1BjI6m5lEp
+         KOK33cgV9JHgJGdNWjP0XtNCBMqDr1TjRVqByq8R7PNNPXuy2zyAcMCeQX6UX/KUGmRT
+         bQnA==
+X-Gm-Message-State: APjAAAV6MImuQssYnDxzBymrfwr+7BMJYnNmDmgyHXiJhFw+Vodn8a79
+        DWColasua8cIFPzpTpiu+RF/RQ==
+X-Google-Smtp-Source: APXvYqwj0ZEEUC11brx6LjTF61ISaIIIHQ9Cv7PlQ0vk+DY940LjTUESF8y4LCWjPpp5YS0si7V8WQ==
+X-Received: by 2002:ac2:499b:: with SMTP id f27mr29899101lfl.88.1560772847314;
+        Mon, 17 Jun 2019 05:00:47 -0700 (PDT)
+Received: from localhost (h85-30-9-151.cust.a3fiber.se. [85.30.9.151])
+        by smtp.gmail.com with ESMTPSA id u9sm1740980lfb.38.2019.06.17.05.00.45
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 17 Jun 2019 05:00:46 -0700 (PDT)
+Date:   Mon, 17 Jun 2019 04:41:05 -0700
+From:   Olof Johansson <olof@lixom.net>
+To:     Jens Wiklander <jens.wiklander@linaro.org>
+Cc:     arm-soc <arm@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [GIT PULL] tee subsys for v5.3
+Message-ID: <20190617114105.fyosfx4gddkhqav4@localhost>
+References: <20190527062854.GA19419@jax>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="ukZ3tWq1IjZw6zEx"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190617130357.41204ff7@kemnade.info>
-X-Cookie: Editing is a rewording activity.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190527062854.GA19419@jax>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, May 27, 2019 at 08:28:54AM +0200, Jens Wiklander wrote:
+> Hello arm-soc maintainers,
+> 
+> Please pull this update of MAINTAINERS with a mailing list for TEE subsystem.
+> 
+> Thanks,
+> Jens
+> 
+> The following changes since commit cd6c84d8f0cdc911df435bb075ba22ce3c605b07:
+> 
+>   Linux 5.2-rc2 (2019-05-26 16:49:19 -0700)
+> 
+> are available in the Git repository at:
+> 
+>   https://git.linaro.org/people/jens.wiklander/linux-tee.git tags/tee-maint-for-5.3
+> 
+> for you to fetch changes up to d7f3f7d847044a111d4abadf9c69aa54d0d05167:
+> 
+>   MAINTAINERS: Add mailing list for the TEE subsystem (2019-05-27 07:59:03 +0200)
+> 
+> ----------------------------------------------------------------
+> Adding mailing list for TEE subsystem
+> 
+> ----------------------------------------------------------------
+> Sumit Garg (1):
+>       MAINTAINERS: Add mailing list for the TEE subsystem
 
---ukZ3tWq1IjZw6zEx
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Merged, thanks!
 
-On Mon, Jun 17, 2019 at 01:03:57PM +0200, Andreas Kemnade wrote:
-> Mark Brown <broonie@kernel.org> wrote:
-> > On Sat, Jun 15, 2019 at 06:33:14PM +0200, Andreas Kemnade wrote:
 
-> > Why is this a good fix and not defining the supported voltages?  These
-> > look like fairly standard linear range regulators.
-
-> I am fixing the definition of the two regulators in the patch.
-> I am defining them as continuous.=20
-> Voltage ranges are defined in
-> arch/arm/boot/dts/twl4030.dtsi
-> Only the continuous flag is missing.
-
-> Is there anything else do you want to be defined?
-
-These regulators are not continuous regulators as far as I can see, they
-are normal linear range regulators and so should have their voltages
-enumerable like any other linear range regulator.
-
---ukZ3tWq1IjZw6zEx
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl0HfEAACgkQJNaLcl1U
-h9C9fgf/demCydc2jv+vdSyZVH8mb+/coXKQUhsJXvaspY3plQYlF5HnzQrABgHC
-nFoahPYWwqbuRl4WzotNHAnblTLZz54cPzr+W89TPLVlfRLxKuF44I3807SJYW4f
-+eh/7+cyOcyiA+eJba+PAG72l5oIkJszxNywvIDZENBjIc7exIxo5I8ee4zfTSoI
-2uv7ZzaeVVrI/1j7SIuC2KlBhQ6j3qOPew1r0kpl66Q7zPNFf4AWzl2LbhjIuUVk
-3BxJcetz+zA7NbCR2QIEr5o7vCnOuOLQQN8Dk1LNI4QxItF7MD0PXkSA33GCu8rD
-uYW9FLSQK0YzKaeddERgm1nLLKkKYg==
-=U7Iy
------END PGP SIGNATURE-----
-
---ukZ3tWq1IjZw6zEx--
+-Olof
