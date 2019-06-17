@@ -2,96 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BF9A8481E4
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 14:22:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3C5BB481DD
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 14:22:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727329AbfFQMWe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 08:22:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42108 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725962AbfFQMWd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 08:22:33 -0400
-Received: from localhost.localdomain (unknown [223.93.147.148])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F1A7F20657;
-        Mon, 17 Jun 2019 12:22:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560774153;
-        bh=tgZsHVbNLcoLLQMpm8YjGpkR8Z8fD1Ui+K8OiDs0s6s=;
-        h=From:To:Cc:Subject:Date:From;
-        b=x5cqyCrkuzEzrPAfDR+MhZxDNHPD/8QeH6qyO0oFG2BaD6r3HaQrHGIMpEvB1SmKP
-         efbcJlQKdfAeWSWAgni++3TMSzpbNsGLvvP8A27xW94PSZ1rB7iOK9wyql9RE1sw31
-         T1Vor4UjLD4TPAJ2TberYVFxromn/dxQkrI+LahI=
-From:   guoren@kernel.org
-To:     robh+dt@kernel.org, guoren@kernel.org, han_mao@c-sky.com
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] dt-bindings: csky: Add csky PMU bindings
-Date:   Mon, 17 Jun 2019 20:21:39 +0800
-Message-Id: <1560774099-8808-1-git-send-email-guoren@kernel.org>
-X-Mailer: git-send-email 2.7.4
+        id S1727318AbfFQMWF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 08:22:05 -0400
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:45695 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725962AbfFQMWE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Jun 2019 08:22:04 -0400
+Received: by mail-qt1-f193.google.com with SMTP id j19so10331079qtr.12
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2019 05:22:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=J1D0wRVIBxkLJPdsyEaqbWMW7xmtTDyWae7i+70qMQs=;
+        b=GOaHoBgvNGJIIr7Jatbi1CK9+jALGw4+UEoCEXXBBFq9efzp9LpO8CVgf7MrwQVgNj
+         Ceak5lBwKT8v6V63DxxTA7o437lKA0xMe8bTTgfyruCBLTEI9nFleVlPZzch44dXT2tC
+         RUxZUGe3AbmmAvwdCu5iUQkWRtU3TL2a3cxa2ESlzhyj3bblQ0ueHGZN+ZIcF1GFKhNP
+         ygNwtuOr//D+LbX4mLgTaGr6g8nUqUOvN5U7l96KhiwKVsVyiJPLuBcV8hxES7El7v32
+         7FJ/6n5MEnpLEX2CJ43pgcvmI4yq/GZedKnCWWx7FQXyouJbKmPT6LGZ74etYWoyWcoa
+         nZ+w==
+X-Gm-Message-State: APjAAAUiC6TbVznhmJY/R91TLcaHUOAPCDhGI8kCtIS8+mSwRpppYeZQ
+        QNHNBqi5eEv21MFqSJNwuumqDuIWVREJhWgYuOc=
+X-Google-Smtp-Source: APXvYqzBS9/f+FzXIzoMEx/rQKNZckt6bdT2jsoQ/5V9Nb2UOXwEEV6V5B/6sbBr2C25lfeCYsPalMWFzJMpk3UwffM=
+X-Received: by 2002:a0c:b758:: with SMTP id q24mr21150036qve.45.1560774123691;
+ Mon, 17 Jun 2019 05:22:03 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190617104237.2082388-1-arnd@arndb.de> <20190617112652.GB30800@fuggles.cambridge.arm.com>
+In-Reply-To: <20190617112652.GB30800@fuggles.cambridge.arm.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Mon, 17 Jun 2019 14:21:46 +0200
+Message-ID: <CAK8P3a2aJNiLTyfRDqazJa2sAc-Jf-QShSZ7+4-whHSxKbLUVQ@mail.gmail.com>
+Subject: Re: [PATCH] arm64/sve: fix genksyms generation
+To:     Will Deacon <will.deacon@arm.com>
+Cc:     Catalin Marinas <catalin.marinas@arm.com>,
+        Dave Martin <Dave.Martin@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        =?UTF-8?B?QWxleCBCZW5uw6ll?= <alex.bennee@linaro.org>,
+        Peter Maydell <peter.maydell@linaro.org>,
+        Alan Hayward <alan.hayward@arm.com>,
+        Julien Grall <julien.grall@arm.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Andrew Murray <andrew.murray@arm.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mao Han <han_mao@c-sky.com>
+On Mon, Jun 17, 2019 at 1:26 PM Will Deacon <will.deacon@arm.com> wrote:
+>
+> Hi Arnd,
+>
+> On Mon, Jun 17, 2019 at 12:42:11PM +0200, Arnd Bergmann wrote:
+> > genksyms does not understand __uint128_t, so we get a build failure
+> > in the fpsimd module when it cannot export a symbol right:
+>
+> The fpsimd code is builtin, so which module is actually failing? My
+> allmodconfig build succeeds, so I must be missing something.
 
-This patch adds the documentation to describe that how to add pmu node in
-dts.
+It happened for me on randconfig builds, you can find one such configuration
+at https://pastebin.com/cU8iQ4ta now. I was building this with clang
+rather than gcc, which may affect the issue, but I assumed not.
 
-Signed-off-by: Mao Han <han_mao@c-sky.com>
-Signed-off-by: Guo Ren <guoren@kernel.org>
-Cc: Rob Herring <robh+dt@kernel.org>
----
- Documentation/devicetree/bindings/csky/pmu.txt | 38 ++++++++++++++++++++++++++
- 1 file changed, 38 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/csky/pmu.txt
+> > WARNING: EXPORT symbol "kernel_neon_begin" [vmlinux] version generation failed, symbol will not be versioned.
+> > /home/arnd/cross/x86_64/gcc-8.1.0-nolibc/aarch64-linux/bin/aarch64-linux-ld: arch/arm64/kernel/fpsimd.o: relocation R_AARCH64_ABS32 against `__crc_kernel_neon_begin' can not be used when making a shared object
+> > arch/arm64/kernel/fpsimd.o:(.data+0x0): dangerous relocation: unsupported relocation
+> > arch/arm64/kernel/fpsimd.o:(".discard.addressable"+0x0): dangerous relocation: unsupported relocation
+> > arch/arm64/kernel/fpsimd.o:(".discard.addressable"+0x8): dangerous relocation: unsupported relocation
+> >
+> > We could teach genksyms about the type, but it's easier to just
+> > work around it by defining that type locally in a way that genksyms
+> > understands.
+> >
+> > Fixes: 41040cf7c5f0 ("arm64/sve: Fix missing SVE/FPSIMD endianness conversions")
+>
+> I can't see which part of that patch causes the problem, so I'm a bit wary
+> of the fix. We've been using __uint128_t for a while now, and I see there's
+> one in the x86 kvm code as well, so it would be nice to understand what's
+> happening here so that we can avoid running into it in future as well.
 
-diff --git a/Documentation/devicetree/bindings/csky/pmu.txt b/Documentation/devicetree/bindings/csky/pmu.txt
-new file mode 100644
-index 0000000..728d05c
---- /dev/null
-+++ b/Documentation/devicetree/bindings/csky/pmu.txt
-@@ -0,0 +1,38 @@
-+===============================
-+C-SKY Performance Monitor Units
-+===============================
-+
-+C-SKY Performance Monitor is designed for ck807/ck810/ck860 SMP soc and
-+it could count cpu's events for helping analysis performance issues.
-+
-+============================
-+PMU node bindings definition
-+============================
-+
-+	Description: Describes PMU
-+
-+	PROPERTIES
-+
-+	- compatible
-+		Usage: required
-+		Value type: <string>
-+		Definition: must be "csky,csky-pmu"
-+	- interrupts
-+		Usage: required
-+		Value type: <u32 IRQ_TYPE_XXX>
-+		Definition: must be pmu irq num defined by soc
-+	- count-width
-+		Usage: optional
-+		Value type: <u32>
-+		Definition: the width of pmu counter
-+
-+Examples:
-+---------
-+#include <dt-bindings/interrupt-controller/irq.h>
-+
-+	pmu: performace-monitor {
-+		compatible = "csky,csky-pmu";
-+		interrupts = <23 IRQ_TYPE_EDGE_RISING>;
-+		interrupt-parent = <&intc>;
-+		count-width = <48>;
-+        };
--- 
-2.7.4
+The problem is only in files that export a symbol. This is also the
+case in arch/x86/kernel/kvm.c, but it may be lucky because the
+type only appears /after/ the last export in that file.
 
+> > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> > ---
+> >  arch/arm64/kernel/fpsimd.c | 3 +++
+> >  1 file changed, 3 insertions(+)
+> >
+> > diff --git a/arch/arm64/kernel/fpsimd.c b/arch/arm64/kernel/fpsimd.c
+> > index 07f238ef47ae..2aba07cccf50 100644
+> > --- a/arch/arm64/kernel/fpsimd.c
+> > +++ b/arch/arm64/kernel/fpsimd.c
+> > @@ -400,6 +400,9 @@ static int __init sve_sysctl_init(void) { return 0; }
+> >  #define ZREG(sve_state, vq, n) ((char *)(sve_state) +                \
+> >       (SVE_SIG_ZREG_OFFSET(vq, n) - SVE_SIG_REGS_OFFSET))
+> >
+> > +#ifdef __GENKSYMS__
+> > +typedef __u64 __uint128_t[2];
+> > +#endif
+>
+> I suspect I need to figure out what genksyms is doing, but I'm nervous
+> about exposing this as an array type without understanding whether or
+> not that has consequences for its operation.
+
+The entire point is genksyms is to ensure that types of exported symbols
+are compatible. To do this, it has a limited parser for C source code that
+understands the basic types (char, int, long, _Bool, etc) and how to
+aggregate them into structs and function arguments. This process has
+always been fragile, and it clearly breaks when it fails to understand a
+particular type.
+
+          Arnd
