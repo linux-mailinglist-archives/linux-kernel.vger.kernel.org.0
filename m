@@ -2,82 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E1B0249413
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 23:35:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B733493DA
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 23:34:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729570AbfFQVWf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 17:22:35 -0400
-Received: from mail-out.m-online.net ([212.18.0.10]:51939 "EHLO
-        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729135AbfFQVW0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 17:22:26 -0400
-Received: from frontend01.mail.m-online.net (unknown [192.168.8.182])
-        by mail-out.m-online.net (Postfix) with ESMTP id 45SPLR482Fz1rWT1;
-        Mon, 17 Jun 2019 23:22:23 +0200 (CEST)
-Received: from localhost (dynscan1.mnet-online.de [192.168.6.70])
-        by mail.m-online.net (Postfix) with ESMTP id 45SPLR3Sk9z1qql7;
-        Mon, 17 Jun 2019 23:22:23 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at mnet-online.de
-Received: from mail.mnet-online.de ([192.168.8.182])
-        by localhost (dynscan1.mail.m-online.net [192.168.6.70]) (amavisd-new, port 10024)
-        with ESMTP id Ofi2Vk0dQod8; Mon, 17 Jun 2019 23:22:22 +0200 (CEST)
-X-Auth-Info: kxoQWfsuvJNGfuKCoxPyz8lu9v+YflcEBGhwLMkqB17xmmElfILuca/iqbizjt6/
-Received: from igel.home (ppp-46-244-166-202.dynamic.mnet-online.de [46.244.166.202])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.mnet-online.de (Postfix) with ESMTPSA;
-        Mon, 17 Jun 2019 23:22:22 +0200 (CEST)
-Received: by igel.home (Postfix, from userid 1000)
-        id 852962C1101; Mon, 17 Jun 2019 23:22:20 +0200 (CEST)
-From:   Andreas Schwab <schwab@linux-m68k.org>
-To:     Christophe Leroy <christophe.leroy@c-s.fr>
-Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>, j.neuschaefer@gmx.net,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Subject: [PATCH] powerpc/mm/32s: fix condition that is always true
-References: <cover.1550775950.git.christophe.leroy@c-s.fr>
-        <1e412310cc18ea654fb2ce4c935654d8d1069f27.1550775950.git.christophe.leroy@c-s.fr>
-X-Yow:  ..  I have a VISION!  It's a RANCID double-FISHWICH on an ENRICHED BUN!!
-Date:   Mon, 17 Jun 2019 23:22:20 +0200
-In-Reply-To: <1e412310cc18ea654fb2ce4c935654d8d1069f27.1550775950.git.christophe.leroy@c-s.fr>
-        (Christophe Leroy's message of "Thu, 21 Feb 2019 19:08:49 +0000
-        (UTC)")
-Message-ID: <87muif52lv.fsf_-_@igel.home>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.2.90 (gnu/linux)
+        id S1730016AbfFQVdt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 17:33:49 -0400
+Received: from vps0.lunn.ch ([185.16.172.187]:34730 "EHLO vps0.lunn.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729704AbfFQVZg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Jun 2019 17:25:36 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=u7MoVGcAMXVMM2R0jgKIcggyAzOygrEZc0VCSkcCuyo=; b=TuhOfTZ/uWJ1wPUYqgjheigb6R
+        ydQsFZd23EnqqvDhcGxeXSTiB0Ii2dwroBWw0U8Fp53HzRjLL5KW3NNXZpNHDHzPmvZjWPsXDy3Fd
+        8JhCCQE3aTVwwtFCmRNoG8KU+HjvdLXVYVl73FFsg2piu6msN130tjspKvDLKPseUDuc=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.89)
+        (envelope-from <andrew@lunn.ch>)
+        id 1hcz7u-0003sW-ET; Mon, 17 Jun 2019 23:25:18 +0200
+Date:   Mon, 17 Jun 2019 23:25:18 +0200
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Chris Packham <Chris.Packham@alliedtelesis.co.nz>
+Cc:     "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
+        "jason@lakedaemon.net" <jason@lakedaemon.net>,
+        "gregory.clement@bootlin.com" <gregory.clement@bootlin.com>,
+        "sebastian.hesselbarth@gmail.com" <sebastian.hesselbarth@gmail.com>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Subject: Re: [PATCH 2/4] dt-bindings: clock: mvebu: Add compatible string for
+ 98dx1135 core clock
+Message-ID: <20190617212518.GN17551@lunn.ch>
+References: <20190617100432.13037-1-chris.packham@alliedtelesis.co.nz>
+ <20190617100432.13037-3-chris.packham@alliedtelesis.co.nz>
+ <20190617170931.GG17551@lunn.ch>
+ <52f0fe4f276e4088ac7ad47bc761722e@svr-chch-ex1.atlnz.lc>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <52f0fe4f276e4088ac7ad47bc761722e@svr-chch-ex1.atlnz.lc>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Move a misplaced paren that makes the condition always true.
+> That list would be the same as the Kirkwood/Dove. I thought about adding 
+> it but decided not to to avoid unnecessary duplication. One compromise 
+> would be to change "for 98dx1135 SoC core clocks" to "for Kirkwood 
+> 98dx1135 SoC" which would fit with the MV88f6180 line above and make it 
+> clear that it falls into the kirkwood bucket.
 
-Fixes: 63b2bc619565 ("powerpc/mm/32s: Use BATs for STRICT_KERNEL_RWX")
-Signed-off-by: Andreas Schwab <schwab@linux-m68k.org>
----
- arch/powerpc/mm/pgtable_32.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Hi Chris
 
-diff --git a/arch/powerpc/mm/pgtable_32.c b/arch/powerpc/mm/pgtable_32.c
-index d53188dee18f..35cb96cfc258 100644
---- a/arch/powerpc/mm/pgtable_32.c
-+++ b/arch/powerpc/mm/pgtable_32.c
-@@ -360,7 +360,7 @@ void mark_initmem_nx(void)
- 	unsigned long numpages = PFN_UP((unsigned long)_einittext) -
- 				 PFN_DOWN((unsigned long)_sinittext);
- 
--	if (v_block_mapped((unsigned long)_stext) + 1)
-+	if (v_block_mapped((unsigned long)_stext + 1))
- 		mmu_mark_initmem_nx();
- 	else
- 		change_page_attr(page, numpages, PAGE_KERNEL);
--- 
-2.22.0
+The Compromise sounds good.
 
--- 
-Andreas Schwab, schwab@linux-m68k.org
-GPG Key fingerprint = 7578 EB47 D4E5 4D69 2510  2552 DF73 E780 A9DA AEC1
-"And now for something completely different."
+Thanks
+	Andrew
