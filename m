@@ -2,89 +2,164 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7AFA247EEF
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 11:58:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1131E47F06
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 12:00:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727965AbfFQJ6a (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 05:58:30 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:58941 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727518AbfFQJ63 (ORCPT
+        id S1727978AbfFQKAt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 06:00:49 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:51310 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727518AbfFQKAs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 05:58:29 -0400
-Received: from fsav401.sakura.ne.jp (fsav401.sakura.ne.jp [133.242.250.100])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x5H9upm3052739;
-        Mon, 17 Jun 2019 18:56:51 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav401.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav401.sakura.ne.jp);
- Mon, 17 Jun 2019 18:56:51 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav401.sakura.ne.jp)
-Received: from [192.168.1.8] (softbank126012062002.bbtec.net [126.12.62.2])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x5H9uksP052600
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
-        Mon, 17 Jun 2019 18:56:50 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: Re: general protection fault in oom_unkillable_task
-To:     Michal Hocko <mhocko@kernel.org>,
-        Shakeel Butt <shakeelb@google.com>
-Cc:     syzbot <syzbot+d0fc9d3c166bc5e4a94b@syzkaller.appspotmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Roman Gushchin <guro@fb.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux MM <linux-mm@kvack.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        yuzhoujian@didichuxing.com
-References: <0000000000004143a5058b526503@google.com>
- <CALvZod72=KuBZkSd0ey5orJFGFpwx462XY=cZvO3NOXC0MogFw@mail.gmail.com>
- <20190615134955.GA28441@dhcp22.suse.cz>
- <CALvZod4hT39PfGt9Ohj+g77om5=G0coHK=+G1=GKcm-PowkXsw@mail.gmail.com>
- <20190617063319.GB30420@dhcp22.suse.cz>
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Message-ID: <268214f9-18ef-b63e-2d4f-c344a7dd5e72@i-love.sakura.ne.jp>
-Date:   Mon, 17 Jun 2019 18:56:47 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.1
-MIME-Version: 1.0
-In-Reply-To: <20190617063319.GB30420@dhcp22.suse.cz>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Mon, 17 Jun 2019 06:00:48 -0400
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5HA05NF187082
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2019 06:00:47 -0400
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2t6708vbd3-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2019 06:00:46 -0400
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <huntbag@linux.vnet.ibm.com>;
+        Mon, 17 Jun 2019 11:00:45 +0100
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 17 Jun 2019 11:00:40 +0100
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x5HA0dQj54853752
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 17 Jun 2019 10:00:39 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id AE041A406B;
+        Mon, 17 Jun 2019 10:00:39 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 3EABBA4051;
+        Mon, 17 Jun 2019 10:00:38 +0000 (GMT)
+Received: from boston16h.aus.stglabs.ibm.com (unknown [9.3.23.78])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Mon, 17 Jun 2019 10:00:38 +0000 (GMT)
+From:   Abhishek Goel <huntbag@linux.vnet.ibm.com>
+To:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-pm@vger.kernel.org
+Cc:     rjw@rjwysocki.net, daniel.lezcano@linaro.org, mpe@ellerman.id.au,
+        dja@axtens.net, npiggin@gmail.com, ego@linux.vnet.ibm.com,
+        Abhishek Goel <huntbag@linux.vnet.ibm.com>
+Subject: [PATCH v2 1/1] cpuidle-powernv : forced wakeup for stop states
+Date:   Mon, 17 Jun 2019 04:56:48 -0500
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190617095648.18847-1-huntbag@linux.vnet.ibm.com>
+References: <20190617095648.18847-1-huntbag@linux.vnet.ibm.com>
+X-TM-AS-GCONF: 00
+x-cbid: 19061710-4275-0000-0000-00000342FDA9
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19061710-4276-0000-0000-000038531FEB
+Message-Id: <20190617095648.18847-2-huntbag@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-17_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1906170093
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019/06/17 15:33, Michal Hocko wrote:
-> On Sat 15-06-19 09:11:37, Shakeel Butt wrote:
->> On Sat, Jun 15, 2019 at 6:50 AM Michal Hocko <mhocko@kernel.org> wrote:
-> [...]
->>> diff --git a/mm/oom_kill.c b/mm/oom_kill.c
->>> index 5a58778c91d4..43eb479a5dc7 100644
->>> --- a/mm/oom_kill.c
->>> +++ b/mm/oom_kill.c
->>> @@ -161,8 +161,8 @@ static bool oom_unkillable_task(struct task_struct *p,
->>>                 return true;
->>>
->>>         /* When mem_cgroup_out_of_memory() and p is not member of the group */
->>> -       if (memcg && !task_in_mem_cgroup(p, memcg))
->>> -               return true;
->>> +       if (memcg)
->>> +               return false;
->>
->> This will break the dump_tasks() usage of oom_unkillable_task(). We
->> can change dump_tasks() to traverse processes like
->> mem_cgroup_scan_tasks() for memcg OOMs.
-> 
-> Right you are. Doing a similar trick to the oom victim selection is
-> indeed better. We should really strive to not doing a global process
-> iteration when we can do a targeted scan. Care to send a patch?
+Currently, the cpuidle governors determine what idle state a idling CPU
+should enter into based on heuristics that depend on the idle history on
+that CPU. Given that no predictive heuristic is perfect, there are cases
+where the governor predicts a shallow idle state, hoping that the CPU will
+be busy soon. However, if no new workload is scheduled on that CPU in the
+near future, the CPU may end up in the shallow state.
 
-I posted a patch that (as a side effect) avoids oom_unkillable_task() from dump_tasks() at
-https://lore.kernel.org/linux-mm/1558519686-16057-2-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp/ .
-What do you think?
+This is problematic, when the predicted state in the aforementioned
+scenario is a shallow stop state on a tickless system. As we might get
+stuck into shallow states for hours, in absence of ticks or interrupts.
+
+To address this, We forcefully wakeup the cpu by setting the
+decrementer. The decrementer is set to a value that corresponds with the
+residency of the next available state. Thus firing up a timer that will
+forcefully wakeup the cpu. Few such iterations will essentially train the
+governor to select a deeper state for that cpu, as the timer here
+corresponds to the next available cpuidle state residency. Thus, cpu will
+eventually end up in the deepest possible state.
+
+Signed-off-by: Abhishek Goel <huntbag@linux.vnet.ibm.com>
+---
+
+Auto-promotion
+ v1 : started as auto promotion logic for cpuidle states in generic
+driver
+ v2 : Removed timeout_needed and rebased the code to upstream kernel
+Forced-wakeup
+ v1 : New patch with name of forced wakeup started
+ v2 : Extending the forced wakeup logic for all states. Setting the
+decrementer instead of queuing up a hrtimer to implement the logic.
+
+ drivers/cpuidle/cpuidle-powernv.c | 38 +++++++++++++++++++++++++++++++
+ 1 file changed, 38 insertions(+)
+
+diff --git a/drivers/cpuidle/cpuidle-powernv.c b/drivers/cpuidle/cpuidle-powernv.c
+index 84b1ebe212b3..bc9ca18ae7e3 100644
+--- a/drivers/cpuidle/cpuidle-powernv.c
++++ b/drivers/cpuidle/cpuidle-powernv.c
+@@ -46,6 +46,26 @@ static struct stop_psscr_table stop_psscr_table[CPUIDLE_STATE_MAX] __read_mostly
+ static u64 default_snooze_timeout __read_mostly;
+ static bool snooze_timeout_en __read_mostly;
+ 
++static u64 forced_wakeup_timeout(struct cpuidle_device *dev,
++				 struct cpuidle_driver *drv,
++				 int index)
++{
++	int i;
++
++	for (i = index + 1; i < drv->state_count; i++) {
++		struct cpuidle_state *s = &drv->states[i];
++		struct cpuidle_state_usage *su = &dev->states_usage[i];
++
++		if (s->disabled || su->disable)
++			continue;
++
++		return (s->target_residency + 2 * s->exit_latency) *
++			tb_ticks_per_usec;
++	}
++
++	return 0;
++}
++
+ static u64 get_snooze_timeout(struct cpuidle_device *dev,
+ 			      struct cpuidle_driver *drv,
+ 			      int index)
+@@ -144,8 +164,26 @@ static int stop_loop(struct cpuidle_device *dev,
+ 		     struct cpuidle_driver *drv,
+ 		     int index)
+ {
++	u64 dec_expiry_tb, dec, timeout_tb, forced_wakeup;
++
++	dec = mfspr(SPRN_DEC);
++	timeout_tb = forced_wakeup_timeout(dev, drv, index);
++	forced_wakeup = 0;
++
++	if (timeout_tb && timeout_tb < dec) {
++		forced_wakeup = 1;
++		dec_expiry_tb = mftb() + dec;
++	}
++
++	if (forced_wakeup)
++		mtspr(SPRN_DEC, timeout_tb);
++
+ 	power9_idle_type(stop_psscr_table[index].val,
+ 			 stop_psscr_table[index].mask);
++
++	if (forced_wakeup)
++		mtspr(SPRN_DEC, dec_expiry_tb - mftb());
++
+ 	return index;
+ }
+ 
+-- 
+2.17.1
 
