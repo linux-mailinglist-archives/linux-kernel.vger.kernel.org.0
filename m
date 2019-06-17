@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 38E18492F3
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 23:25:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D609C492BF
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 23:23:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730105AbfFQVZl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 17:25:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51794 "EHLO mail.kernel.org"
+        id S1729317AbfFQVXY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 17:23:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48416 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730090AbfFQVZg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 17:25:36 -0400
+        id S1729308AbfFQVXU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Jun 2019 17:23:20 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5E3D720657;
-        Mon, 17 Jun 2019 21:25:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 98627208E4;
+        Mon, 17 Jun 2019 21:23:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560806735;
-        bh=uMGcgAsYAZxbhh/FHlZiLhemMx3jhyMKrx9MPh0BtHk=;
+        s=default; t=1560806600;
+        bh=m9Q9Vlgl+kNwOg3Xk7nW9kRT4PszanSRflTUJekU/bQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=d7UozSVwlqEr7TiirZXpAAyJyRpomGmLS/LYF1Pxy6zcVkwKbS+pl0gAfDOIAhlZm
-         4wCwfh2L5zUiwovHlwxFhnFCa87JxwnvR/LZuRHVaP5xtYYS5O9/XCQ8T3Gq5Sm9tF
-         VQ90wGSu46MEoTvJydzk1hNNmhQcDOsjYim4Slck=
+        b=R4hBs+D0sBP9PhaSQjFD/11tabiOfHHx1XRIdHxk+3PhwxShadyCriuY1b/hAydRf
+         py82SMYVb7BahHbX67Hgduz5VjXJuiZiCC9BjRfq6k5ljTBVU0qwOJogq9LQajOnH8
+         G/Qb7yY6LtoB5Sr9wZg1+zyCw6rTgtLM1+dhnaJo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
-        Keith Busch <keith.busch@intel.com>,
-        Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>,
+        stable@vger.kernel.org,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 40/75] nvme: remove the ifdef around nvme_nvm_ioctl
+Subject: [PATCH 5.1 091/115] KVM: s390: fix memory slot handling for KVM_SET_USER_MEMORY_REGION
 Date:   Mon, 17 Jun 2019 23:09:51 +0200
-Message-Id: <20190617210754.327223202@linuxfoundation.org>
+Message-Id: <20190617210804.577765445@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190617210752.799453599@linuxfoundation.org>
-References: <20190617210752.799453599@linuxfoundation.org>
+In-Reply-To: <20190617210759.929316339@linuxfoundation.org>
+References: <20190617210759.929316339@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,34 +45,67 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 3f98bcc58cd5f1e4668db289dcab771874cc0920 ]
+[ Upstream commit 19ec166c3f39fe1d3789888a74cc95544ac266d4 ]
 
-We already have a proper stub if lightnvm is not enabled, so don't bother
-with the ifdef.
+kselftests exposed a problem in the s390 handling for memory slots.
+Right now we only do proper memory slot handling for creation of new
+memory slots. Neither MOVE, nor DELETION are handled properly. Let us
+implement those.
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
-Reviewed-by: Keith Busch <keith.busch@intel.com>
-Reviewed-by: Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>
+Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/nvme/host/core.c | 2 --
- 1 file changed, 2 deletions(-)
+ arch/s390/kvm/kvm-s390.c | 35 +++++++++++++++++++++--------------
+ 1 file changed, 21 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
-index 44d8077fbe95..1cdfea3c094a 100644
---- a/drivers/nvme/host/core.c
-+++ b/drivers/nvme/host/core.c
-@@ -1311,10 +1311,8 @@ static int nvme_ns_ioctl(struct nvme_ns *ns, unsigned cmd, unsigned long arg)
- 	case NVME_IOCTL_SUBMIT_IO:
- 		return nvme_submit_io(ns, (void __user *)arg);
- 	default:
--#ifdef CONFIG_NVM
- 		if (ns->ndev)
- 			return nvme_nvm_ioctl(ns, cmd, arg);
--#endif
- 		if (is_sed_ioctl(cmd))
- 			return sed_ioctl(ns->ctrl->opal_dev, cmd,
- 					 (void __user *) arg);
+diff --git a/arch/s390/kvm/kvm-s390.c b/arch/s390/kvm/kvm-s390.c
+index c4180ecfbb2a..ee35f1112db9 100644
+--- a/arch/s390/kvm/kvm-s390.c
++++ b/arch/s390/kvm/kvm-s390.c
+@@ -4413,21 +4413,28 @@ void kvm_arch_commit_memory_region(struct kvm *kvm,
+ 				const struct kvm_memory_slot *new,
+ 				enum kvm_mr_change change)
+ {
+-	int rc;
+-
+-	/* If the basics of the memslot do not change, we do not want
+-	 * to update the gmap. Every update causes several unnecessary
+-	 * segment translation exceptions. This is usually handled just
+-	 * fine by the normal fault handler + gmap, but it will also
+-	 * cause faults on the prefix page of running guest CPUs.
+-	 */
+-	if (old->userspace_addr == mem->userspace_addr &&
+-	    old->base_gfn * PAGE_SIZE == mem->guest_phys_addr &&
+-	    old->npages * PAGE_SIZE == mem->memory_size)
+-		return;
++	int rc = 0;
+ 
+-	rc = gmap_map_segment(kvm->arch.gmap, mem->userspace_addr,
+-		mem->guest_phys_addr, mem->memory_size);
++	switch (change) {
++	case KVM_MR_DELETE:
++		rc = gmap_unmap_segment(kvm->arch.gmap, old->base_gfn * PAGE_SIZE,
++					old->npages * PAGE_SIZE);
++		break;
++	case KVM_MR_MOVE:
++		rc = gmap_unmap_segment(kvm->arch.gmap, old->base_gfn * PAGE_SIZE,
++					old->npages * PAGE_SIZE);
++		if (rc)
++			break;
++		/* FALLTHROUGH */
++	case KVM_MR_CREATE:
++		rc = gmap_map_segment(kvm->arch.gmap, mem->userspace_addr,
++				      mem->guest_phys_addr, mem->memory_size);
++		break;
++	case KVM_MR_FLAGS_ONLY:
++		break;
++	default:
++		WARN(1, "Unknown KVM MR CHANGE: %d\n", change);
++	}
+ 	if (rc)
+ 		pr_warn("failed to commit memory region\n");
+ 	return;
 -- 
 2.20.1
 
