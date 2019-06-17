@@ -2,46 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 22627486EF
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 17:24:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7A017486FF
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 17:27:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728537AbfFQPYZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 11:24:25 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:51164 "EHLO
+        id S1728597AbfFQPYg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 11:24:36 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:51630 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728507AbfFQPYY (ORCPT
+        with ESMTP id S1728540AbfFQPYe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 11:24:24 -0400
+        Mon, 17 Jun 2019 11:24:34 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=UJRWJ09xP8ootXMPZbq+lZFFHZl9CzFTpyiDR3ZdmWY=; b=SBSudCfs52nT
-        rQwg8QArgmgTqBMDqy1eqmjMImJfunmIiiVoAhHVL15oPz/wqMH4LYzExDvsR9X33l25FaUdaGmtp
-        UOG0oaK3L2sh8y3RaGUGp3yaYytPbJ+2xs042nC8k37o2VBFCyfH6dk3cW62sYgP7ygE+NiT3ChWd
-        LOBV4=;
-Received: from [2001:470:1f1d:6b5:7e7a:91ff:fede:4a45] (helo=finisterre.sirena.org.uk)
+        List-Archive; bh=CIY51a7RXn+3BakapD28ylMMASdeoR+L+pX2WrJ2130=; b=k4a61FsmCo7X
+        ILeku7cXPaNGUbrKgAyZYzc+VMKe4+0PhcAWqPU9T5jp1sJFUDUvSMaG2xmVaS+xPeUE5GhoohZ2D
+        y+9SMNSF6w41Lqe6BNxtXr25k+eHrHzdBXpgIIZaIK+2J05wUCoxYGCinVgtMT4wY4K2O8WJQ9tat
+        pBxWM=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=finisterre.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1hctUY-0001x0-5u; Mon, 17 Jun 2019 15:24:18 +0000
+        id 1hctUk-0001zC-H4; Mon, 17 Jun 2019 15:24:30 +0000
 Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
-        id 9FBC0440046; Mon, 17 Jun 2019 16:24:17 +0100 (BST)
+        id 031FB440046; Mon, 17 Jun 2019 16:24:29 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
 To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     alsa-devel@alsa-project.org,
-        Kai Vehmanen <kai.vehmanen@linux.intel.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Zhu Yingjiang <yingjiang.zhu@linux.intel.com>
-Subject: Applied "ASoC: SOF: disallow building without CONFIG_PCI again" to the asoc tree
-In-Reply-To: <20190617124632.1176809-1-arnd@arndb.de>
+Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+        Mark Brown <broonie@kernel.org>, simon.ho@synaptics.com
+Subject: Applied "ASoC: cx2072x: mark PM function as __maybe_unused" to the asoc tree
+In-Reply-To: <20190617110615.2084748-1-arnd@arndb.de>
 X-Patchwork-Hint: ignore
-Message-Id: <20190617152417.9FBC0440046@finisterre.sirena.org.uk>
-Date:   Mon, 17 Jun 2019 16:24:17 +0100 (BST)
+Message-Id: <20190617152430.031FB440046@finisterre.sirena.org.uk>
+Date:   Mon, 17 Jun 2019 16:24:29 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -49,7 +45,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: SOF: disallow building without CONFIG_PCI again
+   ASoC: cx2072x: mark PM function as __maybe_unused
 
 has been applied to the asoc tree at
 
@@ -74,137 +70,39 @@ to this mail.
 Thanks,
 Mark
 
-From 9de7eaddfa7f47fbb1cd9cdb9aab405599ef414e Mon Sep 17 00:00:00 2001
+From 83ee240aad9147ed5dac5a7c7b4c559d134072e7 Mon Sep 17 00:00:00 2001
 From: Arnd Bergmann <arnd@arndb.de>
-Date: Mon, 17 Jun 2019 14:45:49 +0200
-Subject: [PATCH] ASoC: SOF: disallow building without CONFIG_PCI again
+Date: Mon, 17 Jun 2019 13:06:15 +0200
+Subject: [PATCH] ASoC: cx2072x: mark PM function as __maybe_unused
 
-Compile-testing without PCI just causes warnings:
+While the suspend function is already marked __maybe_unused,
+the resume function is not, which leads to a warning when
+CONFIG_PM is disabled:
 
-sound/soc/sof/sof-pci-dev.c:330:13: error: 'sof_pci_remove' defined but not used [-Werror=unused-function]
- static void sof_pci_remove(struct pci_dev *pci)
-             ^~~~~~~~~~~~~~
-sound/soc/sof/sof-pci-dev.c:230:12: error: 'sof_pci_probe' defined but not used [-Werror=unused-function]
- static int sof_pci_probe(struct pci_dev *pci,
-            ^~~~~~~~~~~~~
+sound/soc/codecs/cx2072x.c:1625:12: error: unused function 'cx2072x_runtime_resume' [-Werror,-Wunused-function]
 
-I tried to fix this in a way that would still allow compile
-tests, but it got too ugly, so this just reverts the patch
-that allowed it in the first place.
+Mark this one like the other one.
 
-Most architectures do allow enabling PCI, so the value of the
-COMPILE_TEST alternative was not very high to start with.
-
-Fixes: e13ef82a9ab8 ("ASoC: SOF: add COMPILE_TEST for PCI options")
+Fixes: a497a4363706 ("ASoC: Add support for Conexant CX2072X CODEC")
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/sof/Kconfig       |  2 +-
- sound/soc/sof/intel/hda.c   | 13 ++-----------
- sound/soc/sof/sof-pci-dev.c |  4 ----
- 3 files changed, 3 insertions(+), 16 deletions(-)
+ sound/soc/codecs/cx2072x.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/soc/sof/Kconfig b/sound/soc/sof/Kconfig
-index 1d4b4dced4b6..bc6d7b311af4 100644
---- a/sound/soc/sof/Kconfig
-+++ b/sound/soc/sof/Kconfig
-@@ -10,7 +10,7 @@ if SND_SOC_SOF_TOPLEVEL
+diff --git a/sound/soc/codecs/cx2072x.c b/sound/soc/codecs/cx2072x.c
+index f2cb35a50726..1c1ba7bea4d8 100644
+--- a/sound/soc/codecs/cx2072x.c
++++ b/sound/soc/codecs/cx2072x.c
+@@ -1622,7 +1622,7 @@ static int __maybe_unused cx2072x_runtime_suspend(struct device *dev)
+ 	return 0;
+ }
  
- config SND_SOC_SOF_PCI
- 	tristate "SOF PCI enumeration support"
--	depends on PCI || COMPILE_TEST
-+	depends on PCI
- 	select SND_SOC_SOF
- 	select SND_SOC_ACPI if ACPI
- 	select SND_SOC_SOF_OPTIONS
-diff --git a/sound/soc/sof/intel/hda.c b/sound/soc/sof/intel/hda.c
-index af546e42e1d9..8754dfe75000 100644
---- a/sound/soc/sof/intel/hda.c
-+++ b/sound/soc/sof/intel/hda.c
-@@ -525,9 +525,7 @@ int hda_dsp_probe(struct snd_sof_dev *sdev)
- 	 * TODO: support interrupt mode selection with kernel parameter
- 	 *       support msi multiple vectors
- 	 */
--#if IS_ENABLED(CONFIG_PCI)
- 	ret = pci_alloc_irq_vectors(pci, 1, 1, PCI_IRQ_MSI);
--#endif
- 	if (ret < 0) {
- 		dev_info(sdev->dev, "use legacy interrupt mode\n");
- 		/*
-@@ -539,9 +537,7 @@ int hda_dsp_probe(struct snd_sof_dev *sdev)
- 		sdev->msi_enabled = 0;
- 	} else {
- 		dev_info(sdev->dev, "use msi interrupt mode\n");
--#if IS_ENABLED(CONFIG_PCI)
- 		hdev->irq = pci_irq_vector(pci, 0);
--#endif
- 		/* ipc irq number is the same of hda irq */
- 		sdev->ipc_irq = hdev->irq;
- 		sdev->msi_enabled = 1;
-@@ -598,10 +594,8 @@ int hda_dsp_probe(struct snd_sof_dev *sdev)
- free_hda_irq:
- 	free_irq(hdev->irq, bus);
- free_irq_vector:
--#if IS_ENABLED(CONFIG_PCI)
- 	if (sdev->msi_enabled)
- 		pci_free_irq_vectors(pci);
--#endif
- free_streams:
- 	hda_dsp_stream_free(sdev);
- /* dsp_unmap: not currently used */
-@@ -616,6 +610,7 @@ int hda_dsp_remove(struct snd_sof_dev *sdev)
+-static int cx2072x_runtime_resume(struct device *dev)
++static int __maybe_unused cx2072x_runtime_resume(struct device *dev)
  {
- 	struct sof_intel_hda_dev *hda = sdev->pdata->hw_pdata;
- 	struct hdac_bus *bus = sof_to_bus(sdev);
-+	struct pci_dev *pci = to_pci_dev(sdev->dev);
- 	const struct sof_intel_dsp_desc *chip = hda->desc;
+ 	struct cx2072x_priv *cx2072x = dev_get_drvdata(dev);
  
- #if IS_ENABLED(CONFIG_SND_SOC_SOF_HDA)
-@@ -644,12 +639,8 @@ int hda_dsp_remove(struct snd_sof_dev *sdev)
- 
- 	free_irq(sdev->ipc_irq, sdev);
- 	free_irq(hda->irq, bus);
--#if IS_ENABLED(CONFIG_PCI)
--	if (sdev->msi_enabled) {
--		struct pci_dev *pci = to_pci_dev(sdev->dev);
-+	if (sdev->msi_enabled)
- 		pci_free_irq_vectors(pci);
--	}
--#endif
- 
- 	hda_dsp_stream_free(sdev);
- #if IS_ENABLED(CONFIG_SND_SOC_SOF_HDA)
-diff --git a/sound/soc/sof/sof-pci-dev.c b/sound/soc/sof/sof-pci-dev.c
-index ab58d4f9119f..e2b19782f01a 100644
---- a/sound/soc/sof/sof-pci-dev.c
-+++ b/sound/soc/sof/sof-pci-dev.c
-@@ -251,11 +251,9 @@ static int sof_pci_probe(struct pci_dev *pci,
- 	if (!sof_pdata)
- 		return -ENOMEM;
- 
--#if IS_ENABLED(CONFIG_PCI)
- 	ret = pcim_enable_device(pci);
- 	if (ret < 0)
- 		return ret;
--#endif
- 
- 	ret = pci_request_regions(pci, "Audio DSP");
- 	if (ret < 0)
-@@ -388,7 +386,6 @@ static const struct pci_device_id sof_pci_ids[] = {
- };
- MODULE_DEVICE_TABLE(pci, sof_pci_ids);
- 
--#if IS_ENABLED(CONFIG_PCI)
- /* pci_driver definition */
- static struct pci_driver snd_sof_pci_driver = {
- 	.name = "sof-audio-pci",
-@@ -400,6 +397,5 @@ static struct pci_driver snd_sof_pci_driver = {
- 	},
- };
- module_pci_driver(snd_sof_pci_driver);
--#endif
- 
- MODULE_LICENSE("Dual BSD/GPL");
 -- 
 2.20.1
 
