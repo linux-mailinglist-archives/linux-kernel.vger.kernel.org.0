@@ -2,61 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C80EC484FF
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 16:14:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E0244850B
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 16:15:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727913AbfFQOOM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 10:14:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47702 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726091AbfFQOOM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 10:14:12 -0400
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5AA46206B7;
-        Mon, 17 Jun 2019 14:14:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560780851;
-        bh=hg8zXu4lNwst1/gASH2kaLe0y4zZL5PBg8O20GVXn08=;
-        h=In-Reply-To:References:To:From:Subject:Cc:Date:From;
-        b=wTinsuIRCpvQbooqu3bbQ7Aap9ZuoAoFHUedLk18u8u1Or1ChyH7zbnrm+sJYDgxa
-         a9MOLIXiIZ5pWYycmV3Et2b9iKVXyO2059eXyIs5vEnYYTg2ixDNhmkS+ZIWhoUnYC
-         VU5XBoUbZe33q99nLf2EjztetykFo8rMKLEOvoeM=
-Content-Type: text/plain; charset="utf-8"
+        id S1728140AbfFQOOc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 10:14:32 -0400
+Received: from mail-io1-f65.google.com ([209.85.166.65]:41340 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728036AbfFQOO3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Jun 2019 10:14:29 -0400
+Received: by mail-io1-f65.google.com with SMTP id w25so21410540ioc.8;
+        Mon, 17 Jun 2019 07:14:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=IfMMacDCEm5DrweDwYWF788XFS0vnRBrlp52D5AlxZY=;
+        b=cvDCotR4yV8JD1WStg2ykTBlVb4D2EG+aZ2eHDNyE16zkhSPlS2rll6A433QvIP+d4
+         bOOvG5/lQk7Nmm8XPRstaeQaKmAZQpQ3aOtqCYm5QMpmnB4CibSiIs8shiNUR+PaayL8
+         XLaZgRgffRrooFzRlk1rwZjsuWQ29sGtlX9Xt97KVc4KQfulmtO7QP1bBy1IVXaHVH7Q
+         m1Sd3enQWqzrYyV6ukMmH8BM3PljZUidJXSCWguBo2b43klrYzfWDenXLJh+mIJ1HtuW
+         AP9R2FaDWaT1PzKSxKn7/Qr7nq+k24gVBYiH/GiBuxZzT3NXZJ87zpOpFmoTNY8MuBHU
+         DO9w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=IfMMacDCEm5DrweDwYWF788XFS0vnRBrlp52D5AlxZY=;
+        b=c6J7ORjsIKnrm1TGhhpQYNPUmQFBH8Ngr2zpSCCWZ/QCAL+wCqfOqg6nbkmOT+Ia7h
+         j2ufpY7fW9eE6l/KABQWUJtlKk7X+DtryQJS2IgFbe2Gl7oL2ToLdTTlPptVt7Htf3o7
+         Yo0ca8Rx0Vkkxk8OxMDhgTOJsww5ncxF8QQo/PekHxJ/6tuHnJiszJfZ1YarX2Hxb/RD
+         aphO+pjCpn6MiPsqiSEDtpuuKEwvGnO+vN1lMP5Rhnrg1Cx/yK2VYMO5ltwbftJkpJUN
+         US3epsDZ1iqLoCyngsaiRxFKVsfONN/LjhGw0gtnjyGOpkGuDZN8ofX5D3qOTCBMLxBI
+         nQ4Q==
+X-Gm-Message-State: APjAAAUh0xOq5ORtVc3rUVcRXB7I6114ptqjWJ6GWfVBFMVCii/o4EQt
+        ETYRA6ZSC4vWoITy2BxIxmYTCidD
+X-Google-Smtp-Source: APXvYqywv7Qg7K8EwUy9WHIF+e+y9mecZODBz68uw3BKpbhaVJihQPyccQ1HKXKUJqa9r6c0yOI4JQ==
+X-Received: by 2002:a05:6602:2253:: with SMTP id o19mr30456906ioo.297.1560780868559;
+        Mon, 17 Jun 2019 07:14:28 -0700 (PDT)
+Received: from ?IPv6:2601:282:800:fd80:f1:4f12:3a05:d55e? ([2601:282:800:fd80:f1:4f12:3a05:d55e])
+        by smtp.googlemail.com with ESMTPSA id a2sm8888533iod.57.2019.06.17.07.14.27
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 17 Jun 2019 07:14:27 -0700 (PDT)
+Subject: Re: [PATCH bpf] bpf: fix the check that forwarding is enabled in
+ bpf_ipv6_fib_lookup
+To:     =?UTF-8?Q?Toke_H=c3=b8iland-J=c3=b8rgensen?= <toke@redhat.com>,
+        Anton Protopopov <a.s.protopopov@gmail.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        bpf@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20190615225348.2539-1-a.s.protopopov@gmail.com>
+ <877e9ka2aj.fsf@toke.dk>
+From:   David Ahern <dsahern@gmail.com>
+Message-ID: <df5297c5-87c5-5f2f-e22b-d35d6448d82c@gmail.com>
+Date:   Mon, 17 Jun 2019 08:14:23 -0600
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:52.0)
+ Gecko/20100101 Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20190614181040.67326-1-sboyd@kernel.org>
-References: <20190614181040.67326-1-sboyd@kernel.org>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-From:   Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH] clk: Do a DT parent lookup even when index < 0
-Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        Alexandre Mergnat <amergnat@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Chen-Yu Tsai <wens@csie.org>
-User-Agent: alot/0.8.1
-Date:   Mon, 17 Jun 2019 07:14:10 -0700
-Message-Id: <20190617141411.5AA46206B7@mail.kernel.org>
+In-Reply-To: <877e9ka2aj.fsf@toke.dk>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Stephen Boyd (2019-06-14 11:10:40)
-> We want to allow the parent lookup to happen even if the index is some
-> value less than 0. This may be the case if a clk provider only specifies
-> the .name member to match a string in the "clock-names" DT property. We
-> shouldn't require that the index be >=3D 0 to make this use case work.
->=20
-> Fixes: 601b6e93304a ("clk: Allow parents to be specified via clkspec inde=
-x")
-> Reported-by: Alexandre Mergnat <amergnat@baylibre.com>
-> Cc: Jerome Brunet <jbrunet@baylibre.com>
-> Cc: Chen-Yu Tsai <wens@csie.org>
-> Signed-off-by: Stephen Boyd <sboyd@kernel.org>
-> ---
+On 6/17/19 5:17 AM, Toke Høiland-Jørgensen wrote:
+> Anton Protopopov <a.s.protopopov@gmail.com> writes:
+> 
+>> The bpf_ipv6_fib_lookup function should return BPF_FIB_LKUP_RET_FWD_DISABLED
+>> when forwarding is disabled for the input device.  However instead of checking
+>> if forwarding is enabled on the input device, it checked the global
+>> net->ipv6.devconf_all->forwarding flag.  Change it to behave as expected.
+>>
+>> Signed-off-by: Anton Protopopov <a.s.protopopov@gmail.com>
+> 
+> Thanks!
+> 
+> Acked-by: Toke Høiland-Jørgensen <toke@redhat.com>
+> 
 
-Applied to clk-fixes
+Fixes: 87f5fc7e48dd ("bpf: Provide helper to do forwarding lookups in
+kernel FIB table")
 
+Reviewed-by: David Ahern <dsahern@gmail.com>
