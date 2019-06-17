@@ -2,118 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 59788483F2
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 15:30:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7499B483EC
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 15:28:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727377AbfFQNav (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 09:30:51 -0400
-Received: from mout.kundenserver.de ([212.227.126.131]:44647 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725884AbfFQNav (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 09:30:51 -0400
-Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
- (mreue011 [212.227.15.129]) with ESMTPA (Nemesis) id
- 1Mnq8Y-1iQnn21uzS-00pKbB; Mon, 17 Jun 2019 15:29:50 +0200
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     Christoph Hellwig <hch@lst.de>,
-        Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Jesper Dangaard Brouer <brouer@redhat.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Juergen Gross <jgross@suse.com>,
-        Stefano Stabellini <sstabellini@kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Joerg Roedel <jroedel@suse.de>, xen-devel@lists.xenproject.org,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] swiotlb: fix phys_addr_t overflow warning
-Date:   Mon, 17 Jun 2019 15:28:43 +0200
-Message-Id: <20190617132946.2817440-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.20.0
+        id S1726584AbfFQN2y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 09:28:54 -0400
+Received: from mail-eopbgr130054.outbound.protection.outlook.com ([40.107.13.54]:16345
+        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725884AbfFQN2y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Jun 2019 09:28:54 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=UXdEZOOKnezUzKmpFBaKWBJGd3nS04aFoTGg5T7Yass=;
+ b=IMaulPYz1qZO9sxXIE33umTn91jfoosTLnsOv2rmpe9f7BAVLGqb8fTM/6O7CFkh3R1b7RBGRuRhwcpuLjVlC5UEEGjuqtwo3tNeqV8fqPA/MM1tI8NOmFJB0LRBRNY1dvTWhZFruou/TXzdNWjXwa8pvvDxFJK/dx71iM0UObg=
+Received: from VE1PR04MB6687.eurprd04.prod.outlook.com (20.179.235.152) by
+ VE1PR04MB6734.eurprd04.prod.outlook.com (20.179.234.33) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1987.12; Mon, 17 Jun 2019 13:28:50 +0000
+Received: from VE1PR04MB6687.eurprd04.prod.outlook.com
+ ([fe80::9e6:e136:4c09:fe67]) by VE1PR04MB6687.eurprd04.prod.outlook.com
+ ([fe80::9e6:e136:4c09:fe67%5]) with mapi id 15.20.1987.014; Mon, 17 Jun 2019
+ 13:28:50 +0000
+From:   Leo Li <leoyang.li@nxp.com>
+To:     Olof Johansson <olof@lixom.net>
+CC:     "arm@kernel.org" <arm@kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>
+Subject: RE: [GIT PULL v2] updates to soc/fsl drivers for next(v5.3)
+Thread-Topic: [GIT PULL v2] updates to soc/fsl drivers for next(v5.3)
+Thread-Index: AQHVJQRRM+rvlXmln0KUqEroTyzJyqaf1DJA
+Date:   Mon, 17 Jun 2019 13:28:50 +0000
+Message-ID: <VE1PR04MB668773AB42154134CE18A6AB8FEB0@VE1PR04MB6687.eurprd04.prod.outlook.com>
+References: <20190605194511.12127-1-leoyang.li@nxp.com>
+ <20190617114948.7xxtpivve52c2jnb@localhost>
+In-Reply-To: <20190617114948.7xxtpivve52c2jnb@localhost>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=leoyang.li@nxp.com; 
+x-originating-ip: [64.157.242.222]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 1941167b-0928-4a26-9881-08d6f327bbf3
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:VE1PR04MB6734;
+x-ms-traffictypediagnostic: VE1PR04MB6734:
+x-microsoft-antispam-prvs: <VE1PR04MB67340C2E09B0606C1D9429728FEB0@VE1PR04MB6734.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:9508;
+x-forefront-prvs: 0071BFA85B
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(376002)(39860400002)(396003)(136003)(346002)(189003)(13464003)(199004)(316002)(7736002)(8676002)(53546011)(305945005)(14444005)(256004)(76176011)(6916009)(2906002)(6506007)(6436002)(478600001)(102836004)(26005)(55016002)(73956011)(76116006)(7696005)(4326008)(229853002)(25786009)(54906003)(71200400001)(9686003)(99286004)(66446008)(53936002)(186003)(6246003)(71190400001)(5660300002)(15650500001)(68736007)(14454004)(66946007)(52536014)(66556008)(66476007)(3846002)(6116002)(86362001)(64756008)(33656002)(11346002)(66066001)(446003)(486006)(476003)(8936002)(81166006)(81156014)(74316002);DIR:OUT;SFP:1101;SCL:1;SRVR:VE1PR04MB6734;H:VE1PR04MB6687.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: 7M5msL7QeM2Q3txSLahmjLTuBD6OXB2ZwHcHFIzdGcDWXStkAFr2k1IH6G41dhVix9eW+C+IvIsiGiYRVhWtlWAv2umevBd2FJohRY0QDeSTt+3RW4qzPoVSheAjwGwikE7XtM1UpXZ3FLqBcSa5o2yMPHoatwMytlSRcV7VX6XHIDV8DUlZnMEkx4Kljir4In06RnXWuU6ccQUKK+MnQE2eplQ/f7rW49jvYGMwZnKHuMQpiPFcIK/aim3gGgLJ/+BbI/2rL7mqMcivQI+90VIHVMNg1yXLf9uIKN5XLFF9wC9X3rg3AZxCWloQQ2NOWBoqmv2ww9R80q2jjCjmtaiUYSD8Dc58eShLGVLnfcfNIp3+ScOkPA6B8DDU5tHR3HYilTGLKfpaN4k356s7S8p0W/KeuLirwZfm3sfUfk4=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:WxAlzhRk05Boo+/YM4l5i3GHyI9GeBc8OiWCfJusR6LAoI1zMkq
- mI5T09W/WmD7J75VlpcbwtZqQ0SrDUbM08mliK9OyOpw5VGdZN1zx6lKdkmnejKI2IWefXV
- gD87Cuo+tKgxk+8DVFi5MULUIVmtKYjNbQ/mH9PLbLfMO/vz0NadJP8Sg5EQz6l4Rygh/yT
- LeEipTLCyl1mG60QYU9LA==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:pjHS7vU6GCo=:oYrDoKB2+KgIcpoaYs8GlG
- uTtBiYh+a9NRCMSK/VAmJBtr3OyY50oWkyFrAONPZtPHVNpiF2a8CHfvo5FAn9V1TMPmHj5jF
- NHxQxqMxS1V9M23uTBejYpfbDSjtIH/c0sAcPnkGEJkybimAEup6/oze7uWb2eQBnfEFQoWUQ
- aJy4HSSAKT+4gw0ktzsx3iM6TPn57cocJrG/3j5ZCD/oAdErbgrysiAhEeIY9GWvEVkvjDLUI
- ONy9C26roR2C6uw20//9hHKteelpqgKuxODx/J/UPtPgIMywqCsDLHqOreyPZIamuMa1y+w5G
- VfTKrnXuklvNm0PX7w7uJIDUmjaHUOra43Y5OxASS35FYFrpJFZvxfUiVc8eRpYhueBJoiqeA
- aAO7vgmS0K7aJcv4XsT7yAuXgRNjzO7c8G4uCtniGqhvkCj6f0V3UlfvkLvAEw1olB/EoBZGI
- 3UqpKNY5rjoEdLlVgcSXpS2IAI4cwApvlzIwjAAoBu4rrtqwv/aK0yvzchZRHvCzAFXGe8bRe
- +bm04PWiu6yyPZ/yOlveC8euUHfYhoJOdzudhIanL205wpbYyqs+QeylkyGFUUOg3X6Qs5qsa
- RMJUfD0XDSpuNei092sg7J/xfBCHQmIWZmyPvHOtDnOWOGKcu2l7SMGW+i1PFzF9/LL4Vrn18
- 3KHw4A+YxFrMfGY9xxypp+kyL9UCU3Vi3s/DYWqc7KuDLjYVMLmoUjW3hGoYprONHKuxNyhn/
- ltfrC74ikaZMsbUQaH/Ka2jk6kCcG4leKkdP+w==
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1941167b-0928-4a26-9881-08d6f327bbf3
+X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Jun 2019 13:28:50.0622
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: leoyang.li@nxp.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VE1PR04MB6734
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On architectures that have a larger dma_addr_t than phys_addr_t,
-the swiotlb_tbl_map_single() function truncates its return code
-in the failure path, making it impossible to identify the error
-later, as we compare to the original value:
 
-kernel/dma/swiotlb.c:551:9: error: implicit conversion from 'dma_addr_t' (aka 'unsigned long long') to 'phys_addr_t' (aka 'unsigned int') changes value from 18446744073709551615 to 4294967295 [-Werror,-Wconstant-conversion]
-        return DMA_MAPPING_ERROR;
 
-Use an explicit typecast here to convert it to the narrower type,
-and use the same expression in the error handling later.
+> -----Original Message-----
+> From: Olof Johansson <olof@lixom.net>
+> Sent: Monday, June 17, 2019 6:50 AM
+> To: Leo Li <leoyang.li@nxp.com>
+> Cc: arm@kernel.org; linux-arm-kernel@lists.infradead.org; linux-
+> kernel@vger.kernel.org; shawnguo@kernel.org
+> Subject: Re: [GIT PULL v2] updates to soc/fsl drivers for next(v5.3)
+>=20
+> On Wed, Jun 05, 2019 at 02:45:11PM -0500, Li Yang wrote:
+> > Hi arm-soc maintainers,
+> >
+> > This is a rebase of patches that missed 5.2 merge window together with
+> > some new patches for QE.  Please help to review and merge it.  We
+> > would like this to be merged earlier because there are other patches
+> > depending on patches in this pull request.  After this is merged in
+> > arm-soc, we can ask other sub-system maintainers to pull from this tag
+> > and apply additional patches.  Thanks.
+>=20
+> Li,
+>=20
+> You never followed up with a reply, or removed, the previous tag. So when
+> we process the pull requests that come in, we've already merged it.
 
-Fixes: b907e20508d0 ("swiotlb: remove SWIOTLB_MAP_ERROR")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
-I still think that reverting the original commit would have
-provided clearer semantics for this corner case, but at least
-this patch restores the correct behavior.
----
- drivers/xen/swiotlb-xen.c | 2 +-
- kernel/dma/swiotlb.c      | 4 ++--
- 2 files changed, 3 insertions(+), 3 deletions(-)
+Sorry about that.  Will reply the previous pull request and remove the old =
+tag if update is needed next time.
 
-diff --git a/drivers/xen/swiotlb-xen.c b/drivers/xen/swiotlb-xen.c
-index d53f3493a6b9..cfbe46785a3b 100644
---- a/drivers/xen/swiotlb-xen.c
-+++ b/drivers/xen/swiotlb-xen.c
-@@ -402,7 +402,7 @@ static dma_addr_t xen_swiotlb_map_page(struct device *dev, struct page *page,
- 
- 	map = swiotlb_tbl_map_single(dev, start_dma_addr, phys, size, dir,
- 				     attrs);
--	if (map == DMA_MAPPING_ERROR)
-+	if (map == (phys_addr_t)DMA_MAPPING_ERROR)
- 		return DMA_MAPPING_ERROR;
- 
- 	dev_addr = xen_phys_to_bus(map);
-diff --git a/kernel/dma/swiotlb.c b/kernel/dma/swiotlb.c
-index e906ef2e6315..a3be651973ad 100644
---- a/kernel/dma/swiotlb.c
-+++ b/kernel/dma/swiotlb.c
-@@ -548,7 +548,7 @@ phys_addr_t swiotlb_tbl_map_single(struct device *hwdev,
- 	if (!(attrs & DMA_ATTR_NO_WARN) && printk_ratelimit())
- 		dev_warn(hwdev, "swiotlb buffer is full (sz: %zd bytes), total %lu (slots), used %lu (slots)\n",
- 			 size, io_tlb_nslabs, tmp_io_tlb_used);
--	return DMA_MAPPING_ERROR;
-+	return (phys_addr_t)DMA_MAPPING_ERROR;
- found:
- 	io_tlb_used += nslots;
- 	spin_unlock_irqrestore(&io_tlb_lock, flags);
-@@ -666,7 +666,7 @@ bool swiotlb_map(struct device *dev, phys_addr_t *phys, dma_addr_t *dma_addr,
- 	/* Oh well, have to allocate and map a bounce buffer. */
- 	*phys = swiotlb_tbl_map_single(dev, __phys_to_dma(dev, io_tlb_start),
- 			*phys, size, dir, attrs);
--	if (*phys == DMA_MAPPING_ERROR)
-+	if (*phys == (phys_addr_t)DMA_MAPPING_ERROR)
- 		return false;
- 
- 	/* Ensure that the address returned is DMA'ble */
--- 
-2.20.0
+>=20
+> So, I've merged the previous version. Can you send an incremental pull
+> request on top of that branch/tag instead of a rebase like this was, plea=
+se?
 
+Actually the new pull request is based on the old pull request this time.  =
+I sent the new one as V2 hoping that you can see this first and avoid mergi=
+ng two times.  Since you have already merged the first one, you can merge t=
+he second pull request as an incremental pull request directly.
+
+Regards,
+Leo
+
+>=20
+>=20
+> Thanks!
+>=20
+> -Olof
