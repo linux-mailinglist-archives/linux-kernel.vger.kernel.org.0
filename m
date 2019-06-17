@@ -2,93 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9B63F488DA
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 18:27:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BFC06488E4
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 18:29:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727557AbfFQQ1s (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 12:27:48 -0400
-Received: from mail.andi.de1.cc ([85.214.239.24]:58722 "EHLO mail.andi.de1.cc"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725863AbfFQQ1s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 12:27:48 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=kemnade.info; s=20180802; h=Content-Transfer-Encoding:Content-Type:
-        MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:From:Date:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=V1J5KcSxrmH6kMxoNhKSoFAdQCQGIWo+tRQvbszLDJM=; b=KAmzeS4j/v69f/vQoCyWhWlPgL
-        mGRwjrgL+MK7xaGU9oj98xKnUYud42p/Yy2Y3GnpQfOtwckJZD+F2LP5uD5BYNXSlG8lW3IQ9KcWa
-        BQty8OMnl+zEnFxexcXLU5ilJQPZRj6h2JpaUakEhNf8S9Ruo5gj03cgzelBhpMSD5EY=;
-Received: from p5dcc3c96.dip0.t-ipconnect.de ([93.204.60.150] helo=aktux)
-        by mail.andi.de1.cc with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <andreas@kemnade.info>)
-        id 1hcuTw-0003bY-3i; Mon, 17 Jun 2019 18:27:44 +0200
-Date:   Mon, 17 Jun 2019 18:27:43 +0200
-From:   Andreas Kemnade <andreas@kemnade.info>
-To:     Mark Brown <broonie@kernel.org>
-Cc:     tony@atomide.com, lgirdwood@gmail.com, linux-omap@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        sboyd@kernel.org, nm@ti.com, vireshk@kernel.org,
-        letux-kernel@openphoenux.org
-Subject: Re: [PATCH] regulator: twl: mark vdd1/2 as continuous on twl4030
-Message-ID: <20190617182743.7f40f2ee@aktux>
-In-Reply-To: <20190617114048.GN5316@sirena.org.uk>
-References: <20190615163314.28173-1-andreas@kemnade.info>
-        <20190617103111.GM5316@sirena.org.uk>
-        <20190617130357.41204ff7@kemnade.info>
-        <20190617114048.GN5316@sirena.org.uk>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1728304AbfFQQ3S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 12:29:18 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:55100 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725863AbfFQQ3R (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Jun 2019 12:29:17 -0400
+Received: from turingmachine.home (unknown [IPv6:2804:431:d719:ae74:d711:794d:1c68:5ed3])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: tonyk)
+        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id 031F626D0BB;
+        Mon, 17 Jun 2019 17:29:13 +0100 (BST)
+From:   =?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@collabora.com>
+To:     linux-media@vger.kernel.org
+Cc:     mchehab@kernel.org, hverkuil@xs4all.nl, helen.koike@collabora.com,
+        kernel@collabora.com, linux-kernel@vger.kernel.org,
+        =?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@collabora.com>
+Subject: [PATCH] media: vimc: cap: check v4l2_fill_pixfmt return value
+Date:   Mon, 17 Jun 2019 13:28:02 -0300
+Message-Id: <20190617162802.10042-1-andrealmeid@collabora.com>
+X-Mailer: git-send-email 2.22.0
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 17 Jun 2019 12:40:48 +0100
-Mark Brown <broonie@kernel.org> wrote:
+v4l2_fill_pixfmt() returns -EINVAL if the pixelformat used as parameter is
+invalid or if the user is trying to use a multiplanar format with the
+singleplanar API. Currently, the vimc_cap_try_fmt_vid_cap() returns such
+value, but vimc_cap_s_fmt_vid_cap() is ignoring it. Fix that and returns
+an error value if vimc_cap_try_fmt_vid_cap() has failed.
 
-> On Mon, Jun 17, 2019 at 01:03:57PM +0200, Andreas Kemnade wrote:
-> > Mark Brown <broonie@kernel.org> wrote: =20
-> > > On Sat, Jun 15, 2019 at 06:33:14PM +0200, Andreas Kemnade wrote: =20
->=20
-> > > Why is this a good fix and not defining the supported voltages?  These
-> > > look like fairly standard linear range regulators. =20
->=20
-> > I am fixing the definition of the two regulators in the patch.
-> > I am defining them as continuous.=20
-> > Voltage ranges are defined in
-> > arch/arm/boot/dts/twl4030.dtsi
-> > Only the continuous flag is missing. =20
->=20
-> > Is there anything else do you want to be defined? =20
->=20
-> These regulators are not continuous regulators as far as I can see, they
-> are normal linear range regulators and so should have their voltages
-> enumerable like any other linear range regulator.
+Signed-off-by: André Almeida <andrealmeid@collabora.com>
+Suggested-by: Helen Koike <helen.koike@collabora.com>
+---
+Hello,
 
-Citing tps65950 trm page 55:
+This commit was suggest by Helen at "[v3,05/14] media: vimc: cap:
+refactor singleplanar as a subset of multiplanar"
 
-The device contains three switch-mode power supplies (SMPS):
-=E2=80=A2 VDD1: 1.2-A, buck DC/DC converter (VOUT =3D 0.6 V to 1.45 V, in s=
-teps of 12.5 mV)
-=E2=80=A2 VDD2: 600-mA buck DC/DC converter (VOUT =3D 0.6 V to 1.45 V, in s=
-teps of 12.5 mV, and 1.5 V as a
-   single programmable value)
+ drivers/media/platform/vimc/vimc-capture.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-you are right, they are not really continuous. So should I add these
-68 steps they have as a voltage list?
+diff --git a/drivers/media/platform/vimc/vimc-capture.c b/drivers/media/platform/vimc/vimc-capture.c
+index 946dc0908566..664855708fdf 100644
+--- a/drivers/media/platform/vimc/vimc-capture.c
++++ b/drivers/media/platform/vimc/vimc-capture.c
+@@ -142,12 +142,15 @@ static int vimc_cap_s_fmt_vid_cap(struct file *file, void *priv,
+ 				  struct v4l2_format *f)
+ {
+ 	struct vimc_cap_device *vcap = video_drvdata(file);
++	int ret;
+ 
+ 	/* Do not change the format while stream is on */
+ 	if (vb2_is_busy(&vcap->queue))
+ 		return -EBUSY;
+ 
+-	vimc_cap_try_fmt_vid_cap(file, priv, f);
++	ret = vimc_cap_try_fmt_vid_cap(file, priv, f);
++	if (ret)
++		return ret;
+ 
+ 	dev_dbg(vcap->dev, "%s: format update: "
+ 		"old:%dx%d (0x%x, %d, %d, %d, %d) "
+-- 
+2.22.0
 
-I think they are nearly continuous, so we should IMHO rather take that
-not that strict. I guess there are no really continuous regulators, all
-have steps as voltage is specified in a limited resolution. So what is
-the exact meaning of that flag here?
-
-I think it is common sense to specify these regulators as continuous.
-Max and min values are already in arch/arm/boot/dts/twl4030.dtsi.
-
-Regards,
-Andreas
