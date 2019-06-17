@@ -2,80 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8278D4816B
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 13:59:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E4854817C
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 14:03:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727013AbfFQL7s (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 07:59:48 -0400
-Received: from mout.kundenserver.de ([212.227.126.131]:53163 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725681AbfFQL7s (ORCPT
+        id S1726430AbfFQMDC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 08:03:02 -0400
+Received: from albert.telenet-ops.be ([195.130.137.90]:39590 "EHLO
+        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725810AbfFQMDC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 07:59:48 -0400
-Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
- (mreue009 [212.227.15.129]) with ESMTPA (Nemesis) id
- 1Mq2vS-1iObZe1orS-00n8eA; Mon, 17 Jun 2019 13:59:32 +0200
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>
-Cc:     Arnd Bergmann <arnd@arndb.de>, Eric Biggers <ebiggers@google.com>,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] crypto: serpent - mark __serpent_setkey_sbox noinline
-Date:   Mon, 17 Jun 2019 13:59:08 +0200
-Message-Id: <20190617115927.3813471-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.20.0
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:nlRKSlHgvz2m3fKSfZ7wC9E0KZXX9jzM/z2eRxUPOPM/3xpzPV+
- Zw3rBSyaQGObcrKRgaRZBxPqG/R0UConl0Iztg7s7WYIyKPn7P3/rl6YDLBpg4Wze3oViSl
- AbUC34gVy0QvoEIx7GO+gSyXbln6QnK7KQ1WhH6FQ5BIPcxQOnQdQojUzLZutskEY55LrCR
- uGptJwdiqTHn0XAHHUjdg==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:3c/M2mR4H6w=:n/NbLMsUQ62zu8ZHsbJLcH
- zV+JBLdWrhAArxRLcX3E2VpK0xEiURubZba5QlXHF3JvBl0Q0Kp8G7vdEoJmSs5j0GwmkyL3o
- 5dRwdGPNWcrmWt11IU0WAvt8cK4T2ak8c3fwmzzQwEigCekU/h55VKvNYT24rgTm4iHX7PSk/
- aWtRQjtrOOhUlt1PRfrRsf8trlX05V5N5kmsnRGRG/nOXy7B+I5bL4tmN6dx146S+mR96kxEu
- xAHrCf6ShdehcK/uXN/FgrCjlGEt6oYFupHkmfBS79w+oqq/BWGEh6lW0AjnGu4SJS+P58H0g
- gYXJ2pl4sxktGQQzhBzPDv3N++NFzsGTz5P63s+/rgx6SQhJkPw4OUajRd4KLKf/59sSnYglV
- m9CWbNbxZGmXdxhRujDksY/XLnnNGC8FTR+nZGq3n6MK83hCquDeGg1pj3CQ+lkxhalKbmI35
- itORR+B7VGRpqd7WeQaLv1GvSO7GAubUgryDiq9WP3lPFnEas7Uw8CNpRgXQYBvE8BVRCrdOC
- x98PvOuwhSELH2Zlhjqc8rs14vUpvH/dyjLsvnyVYz6BCjc7EM4sGz8F/c7Y8T8T7iOIMoIC5
- bAG/PXQL20Y4xzcr9qXgV1CZad8HrupmPF5v57TptwICd6UBUtRICj9RInHHNmwFWgYEEClmZ
- Tqgf8ubm98ekNFiEPD4hfSkBikODvaS9UB8yIeGwTFW00XXNkunUsTEXnhcTXbmXD3EQTDcgh
- 1rZ2etgkbKeTh0RQivoyC6fiipKJ3pYp9eygbQ==
+        Mon, 17 Jun 2019 08:03:02 -0400
+Received: from ramsan ([84.194.111.163])
+        by albert.telenet-ops.be with bizsmtp
+        id Ro2p2000l3XaVaC06o2pRY; Mon, 17 Jun 2019 14:02:56 +0200
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan with esmtp (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1hcqLZ-0001dS-7R; Mon, 17 Jun 2019 14:02:49 +0200
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1hcqLZ-0002VQ-5X; Mon, 17 Jun 2019 14:02:49 +0200
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Jerome Brunet <jbrunet@baylibre.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] clk: Simplify clk_core_can_round()
+Date:   Mon, 17 Jun 2019 14:02:48 +0200
+Message-Id: <20190617120248.9590-1-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The same bug that gcc hit in the past is apparently now showing
-up with clang, which decides to inline __serpent_setkey_sbox:
+A boolean expression already evaluates to true or false, so there is no
+need to check the result and return true or false explicitly.
 
-crypto/serpent_generic.c:268:5: error: stack frame size of 2112 bytes in function '__serpent_setkey' [-Werror,-Wframe-larger-than=]
-
-Marking it 'noinline' reduces the stack usage from 2112 bytes to
-192 and 96 bytes, respectively, and seems to generate more
-useful object code.
-
-Fixes: c871c10e4ea7 ("crypto: serpent - improve __serpent_setkey with UBSAN")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- crypto/serpent_generic.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/clk.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/crypto/serpent_generic.c b/crypto/serpent_generic.c
-index e57757904677..183661faf420 100644
---- a/crypto/serpent_generic.c
-+++ b/crypto/serpent_generic.c
-@@ -225,7 +225,7 @@
- 	x4 ^= x2;					\
- 	})
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index aa51756fd4d695b3..c68bc5f695912bf5 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -1324,10 +1324,7 @@ static void clk_core_init_rate_req(struct clk_core * const core,
  
--static void __serpent_setkey_sbox(u32 r0, u32 r1, u32 r2, u32 r3, u32 r4, u32 *k)
-+static void noinline __serpent_setkey_sbox(u32 r0, u32 r1, u32 r2, u32 r3, u32 r4, u32 *k)
+ static bool clk_core_can_round(struct clk_core * const core)
  {
- 	k += 100;
- 	S3(r3, r4, r0, r1, r2); store_and_load_keys(r1, r2, r4, r3, 28, 24);
+-	if (core->ops->determine_rate || core->ops->round_rate)
+-		return true;
+-
+-	return false;
++	return core->ops->determine_rate || core->ops->round_rate;
+ }
+ 
+ static int clk_core_round_rate_nolock(struct clk_core *core,
 -- 
-2.20.0
+2.17.1
 
