@@ -2,89 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DE01548311
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 14:52:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B28164830A
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 14:52:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728097AbfFQMvc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 08:51:32 -0400
-Received: from mout.kundenserver.de ([212.227.126.133]:52071 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726694AbfFQMva (ORCPT
+        id S1728007AbfFQMvU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 08:51:20 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:38671 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727912AbfFQMvO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 08:51:30 -0400
-Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
- (mreue012 [212.227.15.129]) with ESMTPA (Nemesis) id
- 1Mae7u-1iDYhN3MgU-00cAt7; Mon, 17 Jun 2019 14:51:23 +0200
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     "James (Qian) Wang" <james.qian.wang@arm.com>,
-        Liviu Dudau <liviu.dudau@arm.com>,
-        Brian Starkey <brian.starkey@arm.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        "Lowry Li (Arm Technology China)" <Lowry.Li@arm.com>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] drm/komeda: fix 32-bit komeda_crtc_update_clock_ratio
-Date:   Mon, 17 Jun 2019 14:51:04 +0200
-Message-Id: <20190617125121.1414507-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.20.0
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:YNZWWtAS0xzrrfM3pjl8AX7tgKroNKj7VFYbWmDIWP/c+QDu9S7
- gDzeeip7x3tIK53FmtWpRwGHG5N939FLMnzAsoVcZaSW6/75zGoPpl5A3CoovOmO27pN0bu
- +st/zT8a1j8o/NkZMy9MfDYpsgyizzJO+Zecj5us03TSbd2deNIluDsQ0DA0iiCQE4u6SJz
- 5dh87wbTaBXhC9/NXsyfg==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:PW9GCohIInk=:aQ0AToBxA4KMITMsE6cbZd
- juUFYtzR/V0Dv2gTDcYLEKSU9/lX85CRt9wTtq9n2K0GuoDniFeKoMSv3kH9wQsYyBSl1GOT+
- Hxc2TIgRvv2yxH80NHgQ19qoblsq+tlaPGedNOsisEoFymDHTOj1qJ4ojrTJ53Ss826ZH0MRd
- sDIyFNlw8Z3P0XU0qu7hDEqdY+Nu+pcACQwG3t+ywZyEcMzUoyQ4h/6DxGXUsqafWvTQSk5Bg
- AT6JNPDPoxwlWvFbrnY9JkNyY7dg/5J5jT8i5Wu8dA8EFKBmMxoTUyG7mJZneJHTVR25U7J8r
- 6NNgyAifw76O4YbYvkeMLGAV2MGjytvaKLDMI46qMwwy4wnF8ExI7ZEQoQdbnNjKIh/glQtQi
- n9E47x1U/LYi/9LLltQZ9QJjlYb90ntJVC0j7GfroYkHKG+dYuClIJm7rUswXLPV4INl9mTky
- zwMsdvJjxnkia4JBdDQjkcWNRaPXujcRI+TABRKxmt0GBRlqaKeOZ0bVC3+cUjSM0Vnpif//Z
- xj8WVCPbVZ6mzuNoIA3aTVTq/uUn1g7FIqF97AKKiH176ZBXmPm/YRhFh6N5qrY5focL6IMQH
- K8V9R7FwTpU+NQtAsoUOw0DbO4JXvdcof5aJdABDJl2e5l/Qa0DJarsKjVxmkDzKerCNBx/yo
- I8cY6vMFjuZOtV+DKIjXufoz25+pUl4RkYQWVEBrVzwx9ckEoPO7C9jjOORUJb2BX74ud2lMz
- oD0NTcn6AeHkjHNkWQEDtEUlePIiIhqs+nkvmA==
+        Mon, 17 Jun 2019 08:51:14 -0400
+Received: by mail-wm1-f68.google.com with SMTP id s15so8978517wmj.3
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2019 05:51:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=Yh8KWN22mWMhTl8rcvEzBYBWJNOHxR/ZVbPRRDE/D+g=;
+        b=q/VQwMJ7CaCCS2TpiY40tB9SR/0BGYUD9cg5QmvyZlgN0oSe9DGo/a+8W3tFnih/es
+         f/TGbxw2+NhrkghexAa4OElVuqj6adr3zChACFmOr55PBTOD/M1NIEdtp5/IEy9qU/kC
+         fX2Qrs7PhDGqUidNClIWZ04Lwg4RW4iXSfsUN/mQ3Fz6ReP9i0AdV914a9optyVwxJ9W
+         Xy6Y1mSeoVn1NeqGDQGLUT+gzK0PwP6QYlI5aEiS1G795pxPRN55vGKPX1Kr7l+p8xwx
+         9xxVx3Oo0mrnM/HpISh/Sd3kMq4WHV1BoTnn1nr+LgaU5NktIDT5p1PPAhig5lYx1wqZ
+         dRuw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=Yh8KWN22mWMhTl8rcvEzBYBWJNOHxR/ZVbPRRDE/D+g=;
+        b=tFRt4z3cu9g+V4A3Eu6ORVuWjzQn7x9nEVeJCoIOzhxRB7NjKqor2GZ75KDb06dJ27
+         iqVqCydBQi64yu+ewkErAdahsZW38YFOu4ApRWyDv4d5aqMXyWep/a4h6FQkahHkaQO6
+         0WnIIQDbqO5WlJIHgoSWpZBJqcfJARIBD5TjqJExdTbf/ga9mTrkK5pQj2HPP8AfF1JW
+         5+vftI2jIsOiLj3UB0SUcwQ20wrz4KYvMdYWan34tjZDqZun9OFK6GsOj0EB+6oA3ld/
+         SwTk3oPdhlIt4LY7LrTRK1Ew0xOW3IHP7tsvLmWmXRLWw5LfQMZgRDKOFd6gJRx0BZV5
+         l4Fw==
+X-Gm-Message-State: APjAAAVCSTpss/pWRcx0pXTa2Zs1mNeRuTI0/mFn+LjOGYJYT4Le48uB
+        fVq6L12L1u7LFhMb+kBnzCsoxw==
+X-Google-Smtp-Source: APXvYqyQ7uC0yXE6+rCbtoO1nXI3vuubKGuLiHCQLeIEVsa7DW/HvoU6icIxjcUwUpeyeJFFHJ6L2g==
+X-Received: by 2002:a1c:63c4:: with SMTP id x187mr17953607wmb.4.1560775872645;
+        Mon, 17 Jun 2019 05:51:12 -0700 (PDT)
+Received: from dell.watershed.co.uk ([2.27.35.243])
+        by smtp.gmail.com with ESMTPSA id o11sm10477852wmh.37.2019.06.17.05.51.11
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 17 Jun 2019 05:51:12 -0700 (PDT)
+From:   Lee Jones <lee.jones@linaro.org>
+To:     alokc@codeaurora.org, agross@kernel.org, david.brown@linaro.org,
+        bjorn.andersson@linaro.org, balbi@kernel.org,
+        gregkh@linuxfoundation.org, ard.biesheuvel@linaro.org,
+        jlhugo@gmail.com, linux-arm-msm@vger.kernel.org,
+        linux-usb@vger.kernel.org, felipe.balbi@linux.intel.com
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Lee Jones <lee.jones@linaro.org>
+Subject: [RESEND v4 4/4] usb: dwc3: qcom: Improve error handling
+Date:   Mon, 17 Jun 2019 13:51:05 +0100
+Message-Id: <20190617125105.6186-5-lee.jones@linaro.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190617125105.6186-1-lee.jones@linaro.org>
+References: <20190617125105.6186-1-lee.jones@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-clang points out a bug in the clock calculation on 32-bit, that leads
-to the clock_ratio always being zero:
+dwc3_qcom_clk_init() is called with of_count_phandle_with_args() as an
+argument.  If of_count_phandle_with_args() returns an error, the number
+of clocks will be a negative value and will lead to undefined behaviour.
 
-drivers/gpu/drm/arm/display/komeda/komeda_crtc.c:31:36: error: shift count >= width of type [-Werror,-Wshift-count-overflow]
-        aclk = komeda_calc_aclk(kcrtc_st) << 32;
+Ensure we check for an error before attempting to blindly use the value.
 
-Move the shift into the division to make it apply on a 64-bit
-variable. Also use the more expensive div64_u64() instead of div_u64()
-to account for pxlclk being a 64-bit integer.
-
-Fixes: a962091227ed ("drm/komeda: Add engine clock requirement check for the downscaling")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Lee Jones <lee.jones@linaro.org>
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 ---
- drivers/gpu/drm/arm/display/komeda/komeda_crtc.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ drivers/usb/dwc3/dwc3-qcom.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_crtc.c b/drivers/gpu/drm/arm/display/komeda/komeda_crtc.c
-index cafb4457e187..3f222f464eb2 100644
---- a/drivers/gpu/drm/arm/display/komeda/komeda_crtc.c
-+++ b/drivers/gpu/drm/arm/display/komeda/komeda_crtc.c
-@@ -28,10 +28,9 @@ static void komeda_crtc_update_clock_ratio(struct komeda_crtc_state *kcrtc_st)
- 	}
+diff --git a/drivers/usb/dwc3/dwc3-qcom.c b/drivers/usb/dwc3/dwc3-qcom.c
+index 2d050303d564..c59e9d8e8609 100644
+--- a/drivers/usb/dwc3/dwc3-qcom.c
++++ b/drivers/usb/dwc3/dwc3-qcom.c
+@@ -409,6 +409,9 @@ static int dwc3_qcom_clk_init(struct dwc3_qcom *qcom, int count)
+ 	if (!np || !count)
+ 		return 0;
  
- 	pxlclk = kcrtc_st->base.adjusted_mode.clock * 1000;
--	aclk = komeda_calc_aclk(kcrtc_st) << 32;
-+	aclk = komeda_calc_aclk(kcrtc_st);
++	if (count < 0)
++		return count;
++
+ 	qcom->num_clocks = count;
  
--	do_div(aclk, pxlclk);
--	kcrtc_st->clock_ratio = aclk;
-+	kcrtc_st->clock_ratio = div64_u64(aclk << 32, pxlclk);
- }
- 
- /**
+ 	qcom->clks = devm_kcalloc(dev, qcom->num_clocks,
 -- 
-2.20.0
+2.17.1
 
