@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E79D49355
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 23:30:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D846949304
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 23:26:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730787AbfFQVaE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 17:30:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57232 "EHLO mail.kernel.org"
+        id S1730247AbfFQV0h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 17:26:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53186 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730328AbfFQVaB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 17:30:01 -0400
+        id S1729021AbfFQV0e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Jun 2019 17:26:34 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8746D20673;
-        Mon, 17 Jun 2019 21:30:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 42821206B7;
+        Mon, 17 Jun 2019 21:26:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560807001;
-        bh=P0LIOFq/wF6tmB19nDw5NC14GjcgOnPUKzgCtfUQLYg=;
+        s=default; t=1560806793;
+        bh=rTRSA2ixgXrIK32n3nUn99ovwkIyyyPn4BpR/+aI+fI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Qxx8uq2uouU31M/2hYbC24Lxf9YmGjzwvJofvL6WnIyLnDwsbUV69qNcIZzksjhB2
-         9TXwNxxLo5IG6nMsudONvilFx/bBuw7mzaaUlwX5JA/4eXA50LrtQ6PQpdFJjaPqDO
-         ApI1Yk9IkjrvRM5ZFNKiz5f8NF0j9Cdm1TE8BO+c=
+        b=G+EkIXw/0cTNB+uDpJDZc7hSQvVLHzUy73SlBQKg17AdGR+9US/bmCpBpN6mCdsQ5
+         jc6ATyvSIH8ewKufW4vnKGh5OkznLEfcf3d9CBHrbt3T4DUzUv7/3HptiR7iLe5iwa
+         MHkCg/pHthXcp7Cis3bIApySNCEbcqm0XMT6O2w4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vasily Gorbik <gor@linux.ibm.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 26/53] s390/kasan: fix strncpy_from_user kasan checks
+        stable@vger.kernel.org,
+        Murray McAllister <murray.mcallister@gmail.com>,
+        Thomas Hellstrom <thellstrom@vmware.com>
+Subject: [PATCH 4.19 58/75] drm/vmwgfx: NULL pointer dereference from vmw_cmd_dx_view_define()
 Date:   Mon, 17 Jun 2019 23:10:09 +0200
-Message-Id: <20190617210750.342730819@linuxfoundation.org>
+Message-Id: <20190617210755.106215921@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190617210745.104187490@linuxfoundation.org>
-References: <20190617210745.104187490@linuxfoundation.org>
+In-Reply-To: <20190617210752.799453599@linuxfoundation.org>
+References: <20190617210752.799453599@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,41 +44,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 01eb42afb45719cb41bb32c278e068073738899d ]
+From: Murray McAllister <murray.mcallister@gmail.com>
 
-arch/s390/lib/uaccess.c is built without kasan instrumentation. Kasan
-checks are performed explicitly in copy_from_user/copy_to_user
-functions. But since those functions could be inlined, calls from
-files like uaccess.c with instrumentation disabled won't generate
-kasan reports. This is currently the case with strncpy_from_user
-function which was revealed by newly added kasan test. Avoid inlining of
-copy_from_user/copy_to_user when the kernel is built with kasan support
-to make sure kasan checks are fully functional.
+commit bcd6aa7b6cbfd6f985f606c6f76046d782905820 upstream.
 
-Signed-off-by: Vasily Gorbik <gor@linux.ibm.com>
-Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+If SVGA_3D_CMD_DX_DEFINE_RENDERTARGET_VIEW is called with a surface
+ID of SVGA3D_INVALID_ID, the srf struct will remain NULL after
+vmw_cmd_res_check(), leading to a null pointer dereference in
+vmw_view_add().
+
+Cc: <stable@vger.kernel.org>
+Fixes: d80efd5cb3de ("drm/vmwgfx: Initial DX support")
+Signed-off-by: Murray McAllister <murray.mcallister@gmail.com>
+Reviewed-by: Thomas Hellstrom <thellstrom@vmware.com>
+Signed-off-by: Thomas Hellstrom <thellstrom@vmware.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+
 ---
- arch/s390/include/asm/uaccess.h | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/arch/s390/include/asm/uaccess.h b/arch/s390/include/asm/uaccess.h
-index cdd0f0d999e2..689eae8d3859 100644
---- a/arch/s390/include/asm/uaccess.h
-+++ b/arch/s390/include/asm/uaccess.h
-@@ -67,8 +67,10 @@ raw_copy_from_user(void *to, const void __user *from, unsigned long n);
- unsigned long __must_check
- raw_copy_to_user(void __user *to, const void *from, unsigned long n);
- 
-+#ifndef CONFIG_KASAN
- #define INLINE_COPY_FROM_USER
- #define INLINE_COPY_TO_USER
-+#endif
- 
- #ifdef CONFIG_HAVE_MARCH_Z10_FEATURES
- 
--- 
-2.20.1
-
+--- a/drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c
++++ b/drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c
+@@ -2733,6 +2733,10 @@ static int vmw_cmd_dx_view_define(struct
+ 	if (view_type == vmw_view_max)
+ 		return -EINVAL;
+ 	cmd = container_of(header, typeof(*cmd), header);
++	if (unlikely(cmd->sid == SVGA3D_INVALID_ID)) {
++		DRM_ERROR("Invalid surface id.\n");
++		return -EINVAL;
++	}
+ 	ret = vmw_cmd_res_check(dev_priv, sw_context, vmw_res_surface,
+ 				user_surface_converter,
+ 				&cmd->sid, &srf_node);
 
 
