@@ -2,117 +2,145 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C6F0947BD6
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 10:09:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 73F5647BF9
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 10:18:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726487AbfFQIJO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 04:09:14 -0400
-Received: from aclms1.advantech.com.tw ([61.58.41.199]:52260 "EHLO
-        ACLMS1.advantech.com.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725995AbfFQIJO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 04:09:14 -0400
-Received: from taipei08.ADVANTECH.CORP (unverified [172.20.0.235]) by ACLMS1.advantech.com.tw
- (Clearswift SMTPRS 5.6.0) with ESMTP id <Td8729bcfeeac14014b1070@ACLMS1.advantech.com.tw>;
- Mon, 17 Jun 2019 16:09:09 +0800
-From:   <Amy.Shih@advantech.com.tw>
-To:     <she90122@gmail.com>
-CC:     <amy.shih@advantech.com.tw>, <oakley.ding@advantech.com.tw>,
-        <jia.sui@advantech.com.cn>, Jean Delvare <jdelvare@suse.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        <linux-hwmon@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [v2 1/9] hwmon: (nct7904) Add error handling in probe function.
-Date:   Mon, 17 Jun 2019 08:08:50 +0000
-Message-ID: <928e46508bbe1ebc0763c3d2403a5aebe95af552.1560756733.git.amy.shih@advantech.com.tw>
-X-Mailer: git-send-email 2.17.1
+        id S1726500AbfFQISk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 04:18:40 -0400
+Received: from mga07.intel.com ([134.134.136.100]:23328 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725791AbfFQISj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Jun 2019 04:18:39 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Jun 2019 01:18:39 -0700
+X-ExtLoop1: 1
+Received: from romley-ivt3.sc.intel.com ([172.25.110.60])
+  by fmsmga006.fm.intel.com with ESMTP; 17 Jun 2019 01:18:39 -0700
+Date:   Mon, 17 Jun 2019 01:09:09 -0700
+From:   Fenghua Yu <fenghua.yu@intel.com>
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, H Peter Anvin <hpa@zytor.com>,
+        Christopherson Sean J <sean.j.christopherson@intel.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Radim Krcmar <rkrcmar@redhat.com>,
+        Ravi V Shankar <ravi.v.shankar@intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        x86 <x86@kernel.org>, Jacob Pan <jacob.jun.pan@linux.intel.com>,
+        Len Brown <lenb@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>
+Subject: Re: [PATCH 1/3] x86/resctrl: Get max rmid and occupancy scale
+ directly from CPUID instead of cpuinfo_x86
+Message-ID: <20190617080909.GC214090@romley-ivt3.sc.intel.com>
+References: <1560705250-211820-1-git-send-email-fenghua.yu@intel.com>
+ <1560705250-211820-2-git-send-email-fenghua.yu@intel.com>
+ <alpine.DEB.2.21.1906162141301.1760@nanos.tec.linutronix.de>
+ <20190617031808.GA214090@romley-ivt3.sc.intel.com>
+ <20190617075214.GB27127@zn.tnic>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [172.17.10.58]
-X-ClientProxiedBy: ACLDAG.ADVANTECH.CORP (172.20.2.88) To
- taipei08.ADVANTECH.CORP (172.20.0.235)
-X-StopIT: No
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190617075214.GB27127@zn.tnic>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "amy.shih" <amy.shih@advantech.com.tw>
+On Mon, Jun 17, 2019 at 09:52:14AM +0200, Borislav Petkov wrote:
+> On Sun, Jun 16, 2019 at 08:18:09PM -0700, Fenghua Yu wrote:
+> > diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
+> > index 2c57fffebf9b..f080be35da41 100644
+> > --- a/arch/x86/kernel/cpu/common.c
+> > +++ b/arch/x86/kernel/cpu/common.c
+> > @@ -801,6 +801,31 @@ static void init_speculation_control(struct cpuinfo_x86 *c)
+> >  	}
+> >  }
+> >  
+> > +static void get_cqm_info(struct cpuinfo_x86 *c)
+> > +{
+> > +	if (cpu_has(c, X86_FEATURE_CQM_LLC)) {
+> > +		u32 eax, ebx, ecx, edx;
+> > +
+> > +		/* QoS sub-leaf, EAX=0Fh, ECX=0 */
+> > +		cpuid_count(0x0000000F, 0, &eax, &ebx, &ecx, &edx);
+> > +		/* will be overridden if occupancy monitoring exists */
+> > +		c->x86_cache_max_rmid = ebx;
+> > +
+> > +		if (cpu_has(c, X86_FEATURE_CQM_OCCUP_LLC) ||
+> > +		    cpu_has(c, X86_FEATURE_CQM_MBM_TOTAL) ||
+> > +		    cpu_has(c, X86_FEATURE_CQM_MBM_LOCAL)) {
+> > +			/* QoS sub-leaf, EAX=0Fh, ECX=1 */
+> > +			cpuid_count(0x0000000F, 1, &eax, &ebx, &ecx, &edx);
+> > +
+> > +			c->x86_cache_max_rmid = ecx;
+> > +			c->x86_cache_occ_scale = ebx;
+> > +		}
+> > +	} else {
+> > +		c->x86_cache_max_rmid = -1;
+> > +		c->x86_cache_occ_scale = -1;
+> > +	}
+> > +}
+> > +
+> >  void get_cpu_cap(struct cpuinfo_x86 *c)
+> >  {
+> >  	u32 eax, ebx, ecx, edx;
+> > @@ -832,33 +857,6 @@ void get_cpu_cap(struct cpuinfo_x86 *c)
+> >  		c->x86_capability[CPUID_D_1_EAX] = eax;
+> >  	}
+> >  
+> > -	/* Additional Intel-defined flags: level 0x0000000F */
+> > -	if (c->cpuid_level >= 0x0000000F) {
+> > -
+> > -		/* QoS sub-leaf, EAX=0Fh, ECX=0 */
+> > -		cpuid_count(0x0000000F, 0, &eax, &ebx, &ecx, &edx);
+> > -		c->x86_capability[CPUID_F_0_EDX] = edx;
+> > -
+> > -		if (cpu_has(c, X86_FEATURE_CQM_LLC)) {
+> > -			/* will be overridden if occupancy monitoring exists */
+> > -			c->x86_cache_max_rmid = ebx;
+> > -
+> > -			/* QoS sub-leaf, EAX=0Fh, ECX=1 */
+> > -			cpuid_count(0x0000000F, 1, &eax, &ebx, &ecx, &edx);
+> > -			c->x86_capability[CPUID_F_1_EDX] = edx;
+> > -
+> > -			if ((cpu_has(c, X86_FEATURE_CQM_OCCUP_LLC)) ||
+> > -			      ((cpu_has(c, X86_FEATURE_CQM_MBM_TOTAL)) ||
+> > -			       (cpu_has(c, X86_FEATURE_CQM_MBM_LOCAL)))) {
+> > -				c->x86_cache_max_rmid = ecx;
+> > -				c->x86_cache_occ_scale = ebx;
+> > -			}
+> > -		} else {
+> > -			c->x86_cache_max_rmid = -1;
+> > -			c->x86_cache_occ_scale = -1;
+> > -		}
+> > -	}
+> 
+> Why are you doing this carving out into a separate function since you're
+> keeping the cpuinfo_x86 members?
 
-When register read and write operations return errors, needs to add
-error handling.
+I just keep the code a bit uniform around the calling area where
+a few functions are called. So get_cqm_info() makes the code a bit more
+readable.
 
-Signed-off-by: amy.shih <amy.shih@advantech.com.tw>
----
-Changes in v2:
-- Check for errors on register read and write operations.
+        init_scattered_cpuid_features(c);
+        init_speculation_control(c);
++       get_cqm_info(c);
 
- drivers/hwmon/nct7904.c | 23 ++++++++++++++++++-----
- 1 file changed, 18 insertions(+), 5 deletions(-)
+        /*
+         * Clear/Set all flags overridden by options, after probe.
+         * This needs to happen each time we re-probe, which may happen
+         * several times during CPU initialization.
+         */
+        apply_forced_caps(c);
+}
 
-diff --git a/drivers/hwmon/nct7904.c b/drivers/hwmon/nct7904.c
-index 5708171197e7..401ed4a4a576 100644
---- a/drivers/hwmon/nct7904.c
-+++ b/drivers/hwmon/nct7904.c
-@@ -506,6 +506,8 @@ static int nct7904_probe(struct i2c_client *client,
- 
- 	/* CPU_TEMP attributes */
- 	ret = nct7904_read_reg(data, BANK_0, VT_ADC_CTRL0_REG);
-+	if (ret < 0)
-+		return ret;
- 
- 	if ((ret & 0x6) == 0x6)
- 		data->tcpu_mask |= 1; /* TR1 */
-@@ -518,11 +520,15 @@ static int nct7904_probe(struct i2c_client *client,
- 
- 	/* LTD */
- 	ret = nct7904_read_reg(data, BANK_0, VT_ADC_CTRL2_REG);
-+	if (ret < 0)
-+		return ret;
- 	if ((ret & 0x02) == 0x02)
- 		data->tcpu_mask |= 0x10;
- 
- 	/* Multi-Function detecting for Volt and TR/TD */
- 	ret = nct7904_read_reg(data, BANK_0, VT_ADC_MD_REG);
-+	if (ret < 0)
-+		return ret;
- 
- 	for (i = 0; i < 4; i++) {
- 		val = (ret & (0x03 << i)) >> (i * 2);
-@@ -533,22 +539,29 @@ static int nct7904_probe(struct i2c_client *client,
- 
- 	/* PECI */
- 	ret = nct7904_read_reg(data, BANK_2, PFE_REG);
-+	if (ret < 0)
-+		return ret;
- 	if (ret & 0x80) {
- 		data->enable_dts = 1; //Enable DTS & PECI
- 	} else {
- 		ret = nct7904_read_reg(data, BANK_2, TSI_CTRL_REG);
-+		if (ret < 0)
-+			return ret;
- 		if (ret & 0x80)
- 			data->enable_dts = 0x3; //Enable DTS & TSI
- 	}
- 
- 	/* Check DTS enable status */
- 	if (data->enable_dts) {
--		data->has_dts =
--			nct7904_read_reg(data, BANK_0, DTS_T_CTRL0_REG) & 0xF;
-+		ret = nct7904_read_reg(data, BANK_0, DTS_T_CTRL0_REG);
-+		if (ret < 0)
-+			return ret;
-+		data->has_dts = ret & 0xF;
- 		if (data->enable_dts & 0x2) {
--			data->has_dts |=
--			(nct7904_read_reg(data, BANK_0, DTS_T_CTRL1_REG) & 0xF)
--								<< 4;
-+			ret = nct7904_read_reg(data, BANK_0, DTS_T_CTRL1_REG);
-+			if (ret < 0)
-+				return ret;
-+			data->has_dts |= (ret & 0xF) << 4;
- 		}
- 	}
- 
--- 
-2.17.1
+Maybe not? If the function is not good, I can directly put the code here?
 
+Thanks.
+
+-Fenghua
