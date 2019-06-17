@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 96E09492FD
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 23:26:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B7F9E4938E
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 23:32:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728837AbfFQV0I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 17:26:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52434 "EHLO mail.kernel.org"
+        id S1729311AbfFQV2M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 17:28:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55212 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729615AbfFQV0C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 17:26:02 -0400
+        id S1729369AbfFQV2G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Jun 2019 17:28:06 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1E8F320657;
-        Mon, 17 Jun 2019 21:26:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8BEF32187F;
+        Mon, 17 Jun 2019 21:28:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560806761;
-        bh=ZDmmVoPhIp1mq/TvKtY0HDmQNyoK47fziOfMSlrhMEQ=;
+        s=default; t=1560806886;
+        bh=5+pIcsxL3+kMfNjKRKyMxU8gJGrwjrepimwCwm6k9zk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zHNFRsbrMK1XGLYMO5m9To5OYgTap2mlPmacXZTv6VKwGdSwN1kLHVbYGg4fiFF8V
-         8Pa2/+uc7bXwcsmaqrw48wER+UjTDAG2iCIEm+IgOJh9Btm/eulsecXU8Ksh7r9hRO
-         p1bzsDqpPCg5d4Ajc9BITgfJri5f9hzq3SyoTTyc=
+        b=yRknwLO4Mhhjw6Ws8p7oApWN6Y0PzDGGpJD2a0L89yzjndsH6uxwUE4ayr5G3g8Ys
+         /ElYGgcwiX5z22bzqR5dpRlqxoRYDRenKoz68tp2opqhbCVeFg9ETezfaiIpGnAJg1
+         9XveFwvF4FUxclBdv2xNl/0AGXat3s/8oelhIFDU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hangbin Liu <liuhangbin@gmail.com>,
-        David Ahern <dsahern@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 48/75] selftests: fib_rule_tests: fix local IPv4 address typo
+        stable@vger.kernel.org, Russell King <rmk+kernel@armlinux.org.uk>,
+        Wolfram Sang <wsa@the-dreams.de>, stable@kernel.org
+Subject: [PATCH 4.14 16/53] i2c: acorn: fix i2c warning
 Date:   Mon, 17 Jun 2019 23:09:59 +0200
-Message-Id: <20190617210754.607470699@linuxfoundation.org>
+Message-Id: <20190617210748.336849640@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190617210752.799453599@linuxfoundation.org>
-References: <20190617210752.799453599@linuxfoundation.org>
+In-Reply-To: <20190617210745.104187490@linuxfoundation.org>
+References: <20190617210745.104187490@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,35 +43,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit fc82d93e57e3d41f79eff19031588b262fc3d0b6 ]
+From: Russell King <rmk+kernel@armlinux.org.uk>
 
-The IPv4 testing address are all in 192.51.100.0 subnet. It doesn't make
-sense to set a 198.51.100.1 local address. Should be a typo.
+commit ca21f851cc9643af049226d57fabc3c883ea648e upstream.
 
-Fixes: 65b2b4939a64 ("selftests: net: initial fib rule tests")
-Signed-off-by: Hangbin Liu <liuhangbin@gmail.com>
-Reviewed-by: David Ahern <dsahern@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+The Acorn i2c driver (for RiscPC) triggers the "i2c adapter has no name"
+warning in the I2C core driver, resulting in the RTC being inaccessible.
+Fix this.
+
+Fixes: 2236baa75f70 ("i2c: Sanity checks on adapter registration")
+Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
+Cc: stable@kernel.org
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- tools/testing/selftests/net/fib_rule_tests.sh | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/i2c/busses/i2c-acorn.c |    1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/tools/testing/selftests/net/fib_rule_tests.sh b/tools/testing/selftests/net/fib_rule_tests.sh
-index d84193bdc307..dbd90ca73e44 100755
---- a/tools/testing/selftests/net/fib_rule_tests.sh
-+++ b/tools/testing/selftests/net/fib_rule_tests.sh
-@@ -55,7 +55,7 @@ setup()
+--- a/drivers/i2c/busses/i2c-acorn.c
++++ b/drivers/i2c/busses/i2c-acorn.c
+@@ -83,6 +83,7 @@ static struct i2c_algo_bit_data ioc_data
  
- 	$IP link add dummy0 type dummy
- 	$IP link set dev dummy0 up
--	$IP address add 198.51.100.1/24 dev dummy0
-+	$IP address add 192.51.100.1/24 dev dummy0
- 	$IP -6 address add 2001:db8:1::1/64 dev dummy0
+ static struct i2c_adapter ioc_ops = {
+ 	.nr			= 0,
++	.name			= "ioc",
+ 	.algo_data		= &ioc_data,
+ };
  
- 	set +e
--- 
-2.20.1
-
 
 
