@@ -2,54 +2,54 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BC7634853C
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 16:24:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1EF5C48542
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 16:26:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728181AbfFQOYP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 10:24:15 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:59671 "EHLO
+        id S1728270AbfFQOYt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 10:24:49 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:37641 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726028AbfFQOYP (ORCPT
+        with ESMTP id S1726028AbfFQOYt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 10:24:15 -0400
+        Mon, 17 Jun 2019 10:24:49 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x5HENZ7g3453944
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x5HEOHfU3455821
         (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Mon, 17 Jun 2019 07:23:35 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x5HENZ7g3453944
+        Mon, 17 Jun 2019 07:24:17 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x5HEOHfU3455821
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019051801; t=1560781416;
-        bh=DNz9ty4/+N8ctU2rQhJYbF/lEQkP6p7nDft/oug9e2w=;
+        s=2019051801; t=1560781457;
+        bh=erawa5D80AlYWE7IugLvLOPh9ThZCS/pUytZuP7teuI=;
         h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
-        b=b2JlNq+2n3d7jjgsbKgswayyL4fWGTJYj43AyMMis/qGQ6ICBGXovMxtEP58Wtozo
-         e7d+lVUVmE/Eh1AIH6agyF6mf+RaynRQV5H9ofz9TpYJ4Bm66iO78bQwBeUMCjQBSQ
-         AgS9TX6nV5lm697PMC69TXQJ9XulBd0ZdL7Ge+1wD1Q99aXdMpmGuji6XZuYkLR+IV
-         /u2s2yJi9RBJXv1SrOLKpcRH3+Dxsydg9FgjoKbokADb8J9plQUBD4O5mhy2UOiou3
-         EjOoeUsDihHp3brogz/oy/hGFJ3j8VS31cOx5/FJoAycxuAtDauVW2jmCgnxfZt/+b
-         6TgbbYl8g+N3A==
+        b=wtXFPGNJStYXwEh/hLE4gaztQaWgeLiWpnVdtnr0GZ5UmDiD0tsMeToS5VTvbwkpr
+         2chAAilXJWNR8AXcwx6FflXZ9nhqYOplRnabvKj911KM4Qqq++s2qRcgeO2Hhm28A8
+         hwHfMm4QLC7xnQ+XDEAEcjhPEtNIkiYPedyoiZTw0iu+/A/uLFR5G1h9FL+HbVSHJE
+         N5yuHJWbkgjRmAMpRnxIelL7zq2spdwtsUCB8HStrxhZNYIjRatB74zf0ehm4d09UK
+         AiX6a1naB1Ihh3/sJakgN8P3mhxv6INbosiE//WiOd80Uac3hWKiRFS1cXkX9FXyus
+         sYpQi9E537ROQ==
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x5HENZlV3453941;
-        Mon, 17 Jun 2019 07:23:35 -0700
-Date:   Mon, 17 Jun 2019 07:23:35 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x5HEOHeK3455817;
+        Mon, 17 Jun 2019 07:24:17 -0700
+Date:   Mon, 17 Jun 2019 07:24:17 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Waiman Long <tipbot@zytor.com>
-Message-ID: <tip-c71fd893f614f205dbc050d60299cc5496491c19@git.kernel.org>
-Cc:     dave@stgolabs.net, longman@redhat.com, hpa@zytor.com,
-        linux-kernel@vger.kernel.org, tim.c.chen@linux.intel.com,
-        bp@alien8.de, torvalds@linux-foundation.org,
-        huang.ying.caritas@gmail.com, peterz@infradead.org,
-        tglx@linutronix.de, mingo@kernel.org, will.deacon@arm.com
-Reply-To: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-          dave@stgolabs.net, mingo@kernel.org, tglx@linutronix.de,
-          will.deacon@arm.com, hpa@zytor.com, bp@alien8.de,
-          tim.c.chen@linux.intel.com, longman@redhat.com,
-          huang.ying.caritas@gmail.com, peterz@infradead.org
-In-Reply-To: <20190520205918.22251-2-longman@redhat.com>
-References: <20190520205918.22251-2-longman@redhat.com>
+Message-ID: <tip-5c1ec49b60cdb31e51010f8a647f3189b774bddf@git.kernel.org>
+Cc:     bp@alien8.de, huang.ying.caritas@gmail.com, dave@stgolabs.net,
+        mingo@kernel.org, linux-kernel@vger.kernel.org, tglx@linutronix.de,
+        peterz@infradead.org, tim.c.chen@linux.intel.com,
+        longman@redhat.com, torvalds@linux-foundation.org, hpa@zytor.com,
+        will.deacon@arm.com
+Reply-To: tglx@linutronix.de, linux-kernel@vger.kernel.org,
+          mingo@kernel.org, bp@alien8.de, huang.ying.caritas@gmail.com,
+          dave@stgolabs.net, tim.c.chen@linux.intel.com,
+          peterz@infradead.org, will.deacon@arm.com, hpa@zytor.com,
+          longman@redhat.com, torvalds@linux-foundation.org
+In-Reply-To: <20190520205918.22251-3-longman@redhat.com>
+References: <20190520205918.22251-3-longman@redhat.com>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:locking/core] locking/rwsem: Make owner available even if
- !CONFIG_RWSEM_SPIN_ON_OWNER
-Git-Commit-ID: c71fd893f614f205dbc050d60299cc5496491c19
+Subject: [tip:locking/core] locking/rwsem: Remove rwsem_wake() wakeup
+ optimization
+Git-Commit-ID: 5c1ec49b60cdb31e51010f8a647f3189b774bddf
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -68,23 +68,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  c71fd893f614f205dbc050d60299cc5496491c19
-Gitweb:     https://git.kernel.org/tip/c71fd893f614f205dbc050d60299cc5496491c19
+Commit-ID:  5c1ec49b60cdb31e51010f8a647f3189b774bddf
+Gitweb:     https://git.kernel.org/tip/5c1ec49b60cdb31e51010f8a647f3189b774bddf
 Author:     Waiman Long <longman@redhat.com>
-AuthorDate: Mon, 20 May 2019 16:59:00 -0400
+AuthorDate: Mon, 20 May 2019 16:59:01 -0400
 Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Mon, 17 Jun 2019 12:27:54 +0200
+CommitDate: Mon, 17 Jun 2019 12:27:55 +0200
 
-locking/rwsem: Make owner available even if !CONFIG_RWSEM_SPIN_ON_OWNER
+locking/rwsem: Remove rwsem_wake() wakeup optimization
 
-The owner field in the rw_semaphore structure is used primarily for
-optimistic spinning. However, identifying the rwsem owner can also be
-helpful in debugging as well as tracing locking related issues when
-analyzing crash dump. The owner field may also store state information
-that can be important to the operation of the rwsem.
+After the following commit:
 
-So the owner field is now made a permanent member of the rw_semaphore
-structure irrespective of CONFIG_RWSEM_SPIN_ON_OWNER.
+  59aabfc7e959 ("locking/rwsem: Reduce spinlock contention in wakeup after up_read()/up_write()")
+
+the rwsem_wake() forgoes doing a wakeup if the wait_lock cannot be directly
+acquired and an optimistic spinning locker is present.  This can help performance
+by avoiding spinning on the wait_lock when it is contended.
+
+With the later commit:
+
+  133e89ef5ef3 ("locking/rwsem: Enable lockless waiter wakeup(s)")
+
+the performance advantage of the above optimization diminishes as the average
+wait_lock hold time become much shorter.
+
+With a later patch that supports rwsem lock handoff, we can no
+longer relies on the fact that the presence of an optimistic spinning
+locker will ensure that the lock will be acquired by a task soon and
+rwsem_wake() will be called later on to wake up waiters. This can lead
+to missed wakeup and application hang.
+
+So the original 59aabfc7e959 commit has to be reverted.
 
 Signed-off-by: Waiman Long <longman@redhat.com>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
@@ -97,138 +111,105 @@ Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: Tim Chen <tim.c.chen@linux.intel.com>
 Cc: Will Deacon <will.deacon@arm.com>
 Cc: huang ying <huang.ying.caritas@gmail.com>
-Link: https://lkml.kernel.org/r/20190520205918.22251-2-longman@redhat.com
+Link: https://lkml.kernel.org/r/20190520205918.22251-3-longman@redhat.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- include/linux/rwsem.h       |  9 +++++----
- kernel/locking/rwsem-xadd.c |  2 +-
- kernel/locking/rwsem.h      | 23 -----------------------
- lib/Kconfig.debug           |  8 ++++----
- 4 files changed, 10 insertions(+), 32 deletions(-)
+ kernel/locking/rwsem-xadd.c | 72 ---------------------------------------------
+ 1 file changed, 72 deletions(-)
 
-diff --git a/include/linux/rwsem.h b/include/linux/rwsem.h
-index 2ea18a3def04..148983e21d47 100644
---- a/include/linux/rwsem.h
-+++ b/include/linux/rwsem.h
-@@ -34,12 +34,12 @@
-  */
- struct rw_semaphore {
- 	atomic_long_t count;
--#ifdef CONFIG_RWSEM_SPIN_ON_OWNER
- 	/*
--	 * Write owner. Used as a speculative check to see
--	 * if the owner is running on the cpu.
-+	 * Write owner or one of the read owners. Can be used as a
-+	 * speculative check to see if the owner is running on the cpu.
- 	 */
- 	struct task_struct *owner;
-+#ifdef CONFIG_RWSEM_SPIN_ON_OWNER
- 	struct optimistic_spin_queue osq; /* spinner MCS lock */
- #endif
- 	raw_spinlock_t wait_lock;
-@@ -73,13 +73,14 @@ static inline int rwsem_is_locked(struct rw_semaphore *sem)
- #endif
- 
- #ifdef CONFIG_RWSEM_SPIN_ON_OWNER
--#define __RWSEM_OPT_INIT(lockname) , .osq = OSQ_LOCK_UNLOCKED, .owner = NULL
-+#define __RWSEM_OPT_INIT(lockname) , .osq = OSQ_LOCK_UNLOCKED
- #else
- #define __RWSEM_OPT_INIT(lockname)
- #endif
- 
- #define __RWSEM_INITIALIZER(name)				\
- 	{ __RWSEM_INIT_COUNT(name),				\
-+	  .owner = NULL,					\
- 	  .wait_list = LIST_HEAD_INIT((name).wait_list),	\
- 	  .wait_lock = __RAW_SPIN_LOCK_UNLOCKED(name.wait_lock)	\
- 	  __RWSEM_OPT_INIT(name)				\
 diff --git a/kernel/locking/rwsem-xadd.c b/kernel/locking/rwsem-xadd.c
-index 0b1f77957240..c0500679fd2f 100644
+index c0500679fd2f..3083fdf50447 100644
 --- a/kernel/locking/rwsem-xadd.c
 +++ b/kernel/locking/rwsem-xadd.c
-@@ -86,8 +86,8 @@ void __init_rwsem(struct rw_semaphore *sem, const char *name,
- 	atomic_long_set(&sem->count, RWSEM_UNLOCKED_VALUE);
- 	raw_spin_lock_init(&sem->wait_lock);
- 	INIT_LIST_HEAD(&sem->wait_list);
--#ifdef CONFIG_RWSEM_SPIN_ON_OWNER
- 	sem->owner = NULL;
-+#ifdef CONFIG_RWSEM_SPIN_ON_OWNER
- 	osq_lock_init(&sem->osq);
- #endif
+@@ -411,25 +411,11 @@ done:
+ 	lockevent_cond_inc(rwsem_opt_fail, !taken);
+ 	return taken;
  }
-diff --git a/kernel/locking/rwsem.h b/kernel/locking/rwsem.h
-index 64877f5294e3..eb9c8534299b 100644
---- a/kernel/locking/rwsem.h
-+++ b/kernel/locking/rwsem.h
-@@ -61,7 +61,6 @@
- #define RWSEM_ACTIVE_READ_BIAS		RWSEM_ACTIVE_BIAS
- #define RWSEM_ACTIVE_WRITE_BIAS		(RWSEM_WAITING_BIAS + RWSEM_ACTIVE_BIAS)
- 
--#ifdef CONFIG_RWSEM_SPIN_ON_OWNER
- /*
-  * All writes to owner are protected by WRITE_ONCE() to make sure that
-  * store tearing can't happen as optimistic spinners may read and use
-@@ -126,7 +125,6 @@ static inline bool rwsem_has_anonymous_owner(struct task_struct *owner)
-  * real owner or one of the real owners. The only exception is when the
-  * unlock is done by up_read_non_owner().
-  */
--#define rwsem_clear_reader_owned rwsem_clear_reader_owned
- static inline void rwsem_clear_reader_owned(struct rw_semaphore *sem)
- {
- 	unsigned long val = (unsigned long)current | RWSEM_READER_OWNED
-@@ -135,28 +133,7 @@ static inline void rwsem_clear_reader_owned(struct rw_semaphore *sem)
- 		cmpxchg_relaxed((unsigned long *)&sem->owner, val,
- 				RWSEM_READER_OWNED | RWSEM_ANONYMOUSLY_OWNED);
- }
--#endif
+-
+-/*
+- * Return true if the rwsem has active spinner
+- */
+-static inline bool rwsem_has_spinner(struct rw_semaphore *sem)
+-{
+-	return osq_is_locked(&sem->osq);
+-}
 -
  #else
--static inline void rwsem_set_owner(struct rw_semaphore *sem)
--{
--}
--
--static inline void rwsem_clear_owner(struct rw_semaphore *sem)
--{
--}
--
--static inline void __rwsem_set_reader_owned(struct rw_semaphore *sem,
--					   struct task_struct *owner)
--{
--}
--
--static inline void rwsem_set_reader_owned(struct rw_semaphore *sem)
--{
--}
--#endif
--
--#ifndef rwsem_clear_reader_owned
- static inline void rwsem_clear_reader_owned(struct rw_semaphore *sem)
+ static bool rwsem_optimistic_spin(struct rw_semaphore *sem)
  {
+ 	return false;
  }
-diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-index cbdfae379896..417bdd9e80fb 100644
---- a/lib/Kconfig.debug
-+++ b/lib/Kconfig.debug
-@@ -1095,7 +1095,7 @@ config PROVE_LOCKING
- 	select DEBUG_SPINLOCK
- 	select DEBUG_MUTEXES
- 	select DEBUG_RT_MUTEXES if RT_MUTEXES
--	select DEBUG_RWSEMS if RWSEM_SPIN_ON_OWNER
-+	select DEBUG_RWSEMS
- 	select DEBUG_WW_MUTEX_SLOWPATH
- 	select DEBUG_LOCK_ALLOC
- 	select TRACE_IRQFLAGS
-@@ -1199,10 +1199,10 @@ config DEBUG_WW_MUTEX_SLOWPATH
+-
+-static inline bool rwsem_has_spinner(struct rw_semaphore *sem)
+-{
+-	return false;
+-}
+ #endif
  
- config DEBUG_RWSEMS
- 	bool "RW Semaphore debugging: basic checks"
--	depends on DEBUG_KERNEL && RWSEM_SPIN_ON_OWNER
-+	depends on DEBUG_KERNEL
- 	help
--	  This debugging feature allows mismatched rw semaphore locks and unlocks
--	  to be detected and reported.
-+	  This debugging feature allows mismatched rw semaphore locks
-+	  and unlocks to be detected and reported.
+ /*
+@@ -651,65 +637,7 @@ struct rw_semaphore *rwsem_wake(struct rw_semaphore *sem)
+ 	unsigned long flags;
+ 	DEFINE_WAKE_Q(wake_q);
  
- config DEBUG_LOCK_ALLOC
- 	bool "Lock debugging: detect incorrect freeing of live locks"
+-	/*
+-	* __rwsem_down_write_failed_common(sem)
+-	*   rwsem_optimistic_spin(sem)
+-	*     osq_unlock(sem->osq)
+-	*   ...
+-	*   atomic_long_add_return(&sem->count)
+-	*
+-	*      - VS -
+-	*
+-	*              __up_write()
+-	*                if (atomic_long_sub_return_release(&sem->count) < 0)
+-	*                  rwsem_wake(sem)
+-	*                    osq_is_locked(&sem->osq)
+-	*
+-	* And __up_write() must observe !osq_is_locked() when it observes the
+-	* atomic_long_add_return() in order to not miss a wakeup.
+-	*
+-	* This boils down to:
+-	*
+-	* [S.rel] X = 1                [RmW] r0 = (Y += 0)
+-	*         MB                         RMB
+-	* [RmW]   Y += 1               [L]   r1 = X
+-	*
+-	* exists (r0=1 /\ r1=0)
+-	*/
+-	smp_rmb();
+-
+-	/*
+-	 * If a spinner is present, it is not necessary to do the wakeup.
+-	 * Try to do wakeup only if the trylock succeeds to minimize
+-	 * spinlock contention which may introduce too much delay in the
+-	 * unlock operation.
+-	 *
+-	 *    spinning writer		up_write/up_read caller
+-	 *    ---------------		-----------------------
+-	 * [S]   osq_unlock()		[L]   osq
+-	 *	 MB			      RMB
+-	 * [RmW] rwsem_try_write_lock() [RmW] spin_trylock(wait_lock)
+-	 *
+-	 * Here, it is important to make sure that there won't be a missed
+-	 * wakeup while the rwsem is free and the only spinning writer goes
+-	 * to sleep without taking the rwsem. Even when the spinning writer
+-	 * is just going to break out of the waiting loop, it will still do
+-	 * a trylock in rwsem_down_write_failed() before sleeping. IOW, if
+-	 * rwsem_has_spinner() is true, it will guarantee at least one
+-	 * trylock attempt on the rwsem later on.
+-	 */
+-	if (rwsem_has_spinner(sem)) {
+-		/*
+-		 * The smp_rmb() here is to make sure that the spinner
+-		 * state is consulted before reading the wait_lock.
+-		 */
+-		smp_rmb();
+-		if (!raw_spin_trylock_irqsave(&sem->wait_lock, flags))
+-			return sem;
+-		goto locked;
+-	}
+ 	raw_spin_lock_irqsave(&sem->wait_lock, flags);
+-locked:
+ 
+ 	if (!list_empty(&sem->wait_list))
+ 		__rwsem_mark_wake(sem, RWSEM_WAKE_ANY, &wake_q);
