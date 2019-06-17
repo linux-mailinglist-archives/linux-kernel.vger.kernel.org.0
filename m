@@ -2,82 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AD2EF494B6
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 00:01:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B010E494C0
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 00:07:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728280AbfFQWBw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 18:01:52 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:37739 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727027AbfFQWBv (ORCPT
+        id S1728321AbfFQWH1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 18:07:27 -0400
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:35346 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726776AbfFQWH0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 18:01:51 -0400
-Received: by mail-lj1-f194.google.com with SMTP id 131so10914067ljf.4
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2019 15:01:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=HsWdsGdHcCmWS5nc++DZu7iYbolrJmLe83td+Ig9vaE=;
-        b=yuWRKTDlK+XqWjq7QVlSItRs/dXUKXy1A8l3JjvZDzMpjItd4K3XndJGD4EYZk89dH
-         ftrGFYjxe/x+W0J4EENOQisBCGxAwZ74knvZTRRAdc95RzUE9ZqN7rle2lcHExq1+7+d
-         KNKVUjO1/Tq7NCsuoyRpvvkXWShHtHahsZfcDYzKLOg/fIryjzvvFvVDPfhLU3/5KH1y
-         5XpSd5sD9vfVqdAAPfRO+haO4Iyy2q/gOCkrVTjDr6Dwp+wLbDg3Ed7Ml30TrT1443Pg
-         n+L8c/D2Ni7oRRnHXfPjEJBiwUCTC5tLd2F6dwMPu0LhLviEmx1CX74t2z/9l/sAASI7
-         WMXQ==
+        Mon, 17 Jun 2019 18:07:26 -0400
+Received: by mail-ot1-f66.google.com with SMTP id j19so11435031otq.2;
+        Mon, 17 Jun 2019 15:07:26 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=HsWdsGdHcCmWS5nc++DZu7iYbolrJmLe83td+Ig9vaE=;
-        b=a6rbnoG7xuEv03MoUfYITSsxFueS4F65L6FgfrcDa0KCSywjc7DDKiJZRNjQt3gQCF
-         MNY06BXBRlaJlmB+o8zx3o5d5oIs/gDmQbdLH357B+N8vrTlUCSH6oPV4I/8MP8hcL/o
-         LegUdAZ2BeTHXiJ2QP1oA7F6iaZWs532XcTmhO2xrj8UIL4G60kAl8EV8iH5KDlnAP3a
-         c6fBuEsKrb+qM+uoqKOr0XlBrzrtklTd9FHcBRIM80zLgzxsGLCOIwaFRXC49OJ44hCT
-         Q/Krl/E5Z9y/6kDdAMswgEI0d/oS5VbCOnGrM72YBR156JPQazkZdx4jdG8d/uEqrx2x
-         rwYA==
-X-Gm-Message-State: APjAAAVRJzPC6Yk4LfcvHQrj1uD5TcbOZixySR490yKUntQFICSt6YcD
-        ZXuc/W0SxntIlFs0kyJmHt5zCnSs+Suh2cvvKDc1
-X-Google-Smtp-Source: APXvYqxO80PFS2J7nH7z2/60Uxxt+c0vds1wc/30QCv3aD8rM/v8/T8bRZyfd3RubIYEKJbFyWNOStsHG2Y6SBEYbYI=
-X-Received: by 2002:a2e:9dc1:: with SMTP id x1mr617238ljj.0.1560808909485;
- Mon, 17 Jun 2019 15:01:49 -0700 (PDT)
+        bh=AFy/9cysAawEQrUMoAZ4MyvgzzTIR1Smv13PGFCI2ms=;
+        b=l/XIcDHbRwEpxuyjOww9TbgMveWUlyYSoDZjOunrq6gvYP5bC4mBJFYQvHXsd9w6rp
+         nOFr9RC+hROuQqfnfRfDbz4dckMkVV51x8zR5oxCIL+m1m6D8QLEJUNnLL9eazFFQn71
+         AWyw2V4Ay8FdrILGZHV125YM7ldUX+Cf1f+C+LudC+DSeCgnl3uqJd29wbNwv2DgX3DD
+         xOeLkNRjiPDLLQyROkeIypuyVB40FpGHjZXqaqmHLU5/C1uERq4H5u7eAsM82uFo0ui3
+         3S8SeVdqO5Uwi8NQ7LkJZnLEwKIb2cgAm3S3ho8DKHc+Qhq1CDKjVQNY8SARmhGFuxx6
+         NeNg==
+X-Gm-Message-State: APjAAAWjS8S7Fz8nk1R/D6PpIYpZGwHAOMmH6IqOnN23lfxjlXOmLrfR
+        gcbTlqLfgG7WtOVkvxoIKcq6Q8mr41J8G+3eyM0=
+X-Google-Smtp-Source: APXvYqwTNmgy24pYXwR4INVjV8iW1gliaNLtQySRakOJo1leZBtxgEns5qtz2Uj8iNgMTwmNYfc9rTjq9qe9/cnFUNE=
+X-Received: by 2002:a9d:5e99:: with SMTP id f25mr32693430otl.262.1560809246008;
+ Mon, 17 Jun 2019 15:07:26 -0700 (PDT)
 MIME-Version: 1.0
-References: <53af233d05da5e07d75d122878387288a10276df.1560447640.git.rgb@redhat.com>
-In-Reply-To: <53af233d05da5e07d75d122878387288a10276df.1560447640.git.rgb@redhat.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Mon, 17 Jun 2019 18:01:38 -0400
-Message-ID: <CAHC9VhQ5xgV2hnegThALdCP8KcqTLZsf2w6h2aT1WnH=-AdtEA@mail.gmail.com>
-Subject: Re: [PATCH ghak57 V1] selinux: format all invalid context as untrusted
-To:     Richard Guy Briggs <rgb@redhat.com>
-Cc:     Linux-Audit Mailing List <linux-audit@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        SElinux list <selinux@vger.kernel.org>,
-        Ondrej Mosnacec <omosnace@redhat.com>,
-        Eric Paris <eparis@redhat.com>, Steve Grubb <sgrubb@redhat.com>
+References: <1560534863-15115-1-git-send-email-suzuki.poulose@arm.com> <1560534863-15115-10-git-send-email-suzuki.poulose@arm.com>
+In-Reply-To: <1560534863-15115-10-git-send-email-suzuki.poulose@arm.com>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Tue, 18 Jun 2019 00:07:14 +0200
+Message-ID: <CAJZ5v0gi2vpr5y3USnPnPBHjPA1YAwfqjsJppfLgBP5CcycGog@mail.gmail.com>
+Subject: Re: [PATCH v2 09/28] drivers: Add generic match helper by
+ ACPI_COMPANION device
+To:     Suzuki K Poulose <suzuki.poulose@arm.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Len Brown <lenb@kernel.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        linux-spi <linux-spi@vger.kernel.org>,
+        Mark Brown <broonie@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 13, 2019 at 2:43 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+On Fri, Jun 14, 2019 at 7:55 PM Suzuki K Poulose <suzuki.poulose@arm.com> wrote:
 >
-> All instances of one field type should be encoded in the same way.
-> Since some invalid_context fields can contain untrusted strings, encode
-> all instances of this field the same way.
+> Add a generic helper to match a device by the ACPI_COMPANION device.
+> This will be later used for providing wrappers for
+> (bus/class/driver)_find_device().
 >
-> Please see github issue
-> https://github.com/linux-audit/audit-kernel/issues/57
+> Cc: Len Brown <lenb@kernel.org>
+> Cc: linux-acpi@vger.kernel.org
+> Cc: linux-spi@vger.kernel.org
+> Cc: Mark Brown <broonie@kernel.org>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: "Rafael J. Wysocki" <rafael@kernel.org>
+> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
 
-It would be good to see a list of all the places we are using the
-"invalid_context" field and some discussion about if those labels are
-really "trusted" or "untrusted".  In both the
-compute_sid_handle_invalid_context() and security_sid_mls_copy() cases
-below it would appear that the labels can be considered "trusted",
-even if they are invalid.  I understand your concern about logging
-consistency with the "invalid_context" field, but without some further
-discussion it is hard to accept this patch as-is.
+Please fold this change into the patch adding users of device_match_acpi_dev().
 
--- 
-paul moore
-www.paul-moore.com
+> ---
+>  drivers/base/core.c    | 6 ++++++
+>  include/linux/device.h | 1 +
+>  2 files changed, 7 insertions(+)
+>
+> diff --git a/drivers/base/core.c b/drivers/base/core.c
+> index b827ca1..597095b 100644
+> --- a/drivers/base/core.c
+> +++ b/drivers/base/core.c
+> @@ -3346,3 +3346,9 @@ int device_match_devt(struct device *dev, const void *pdevt)
+>         return dev->devt == *(dev_t *)pdevt;
+>  }
+>  EXPORT_SYMBOL_GPL(device_match_devt);
+> +
+> +int device_match_acpi_dev(struct device *dev, const void *adev)
+> +{
+> +       return ACPI_COMPANION(dev) == adev;
+> +}
+> +EXPORT_SYMBOL(device_match_acpi_dev);
+> diff --git a/include/linux/device.h b/include/linux/device.h
+> index f315692..a03b50d 100644
+> --- a/include/linux/device.h
+> +++ b/include/linux/device.h
+> @@ -166,6 +166,7 @@ void subsys_dev_iter_exit(struct subsys_dev_iter *iter);
+>  int device_match_of_node(struct device *dev, const void *np);
+>  int device_match_fwnode(struct device *dev, const void *fwnode);
+>  int device_match_devt(struct device *dev, const void *pdevt);
+> +int device_match_acpi_dev(struct device *dev, const void *adev);
+>
+>  int bus_for_each_dev(struct bus_type *bus, struct device *start, void *data,
+>                      int (*fn)(struct device *dev, void *data));
+> --
+> 2.7.4
+>
