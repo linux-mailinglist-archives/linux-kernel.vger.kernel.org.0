@@ -2,168 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 68CC34948F
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 23:53:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2BFB6494A1
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 23:55:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727810AbfFQVwu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 17:52:50 -0400
-Received: from mail-pg1-f179.google.com ([209.85.215.179]:33296 "EHLO
-        mail-pg1-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726001AbfFQVwu (ORCPT
+        id S1728520AbfFQVzF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 17:55:05 -0400
+Received: from gate2.alliedtelesis.co.nz ([202.36.163.20]:51463 "EHLO
+        gate2.alliedtelesis.co.nz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726001AbfFQVzF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 17:52:50 -0400
-Received: by mail-pg1-f179.google.com with SMTP id k187so6511565pga.0
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2019 14:52:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=1xcZsDnFJerp/M5+7w3KuITigLfvTiYHjxaMnqovFnc=;
-        b=gqp+ypfDJvASzGRx5oJFX+iqTEx4//7RUpoeMF0vxhp+6NNfjnCgSFycqewM34vSxS
-         XQPL6g0t5fW+I2axHfyL9SI4l9hvJ1vE6/kSzZ+lI1EuKOsNTra0hHPXcHwjHuH9QTdN
-         pPBaSINBP2SeFiESwIhr3905usYVGNhS+9KmA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=1xcZsDnFJerp/M5+7w3KuITigLfvTiYHjxaMnqovFnc=;
-        b=Co1mN1qn45MhKxDfpKVDciNAlp4dFqcIRGPfuWA7CNJkKyEGCPu5qeXp8WH19nek+j
-         /N7uNIz+ed4jOpsUyHGQjTJSt5ciC49P2OMqq8mXlbiGj+qBhydHI9PqZogFQUue2k9b
-         pYYUopei83rWCtm+6Mo+h0Nplr0Vw2yJLNRRxINvU2E2M5pPiO8tbd/LHk2hzCvMJcgm
-         Wf7ZRpFU89Bob1ntyyloZifrHCJ9jar5WAghcQPTtbid3et88zFxgQxlf0qib69HPD1F
-         6PVTgt9/agf2HcwKJiUjrvftNL7YNLmk4p28rYCl+oO1Zs8ANEYgoNtyQzH8DefyoYla
-         n/Hg==
-X-Gm-Message-State: APjAAAUCrQ46OcMiXa/DvclJymeOargivbj1twx4opjdu9NaInfRT7cy
-        FMuQe1sI+EsjKjmIZli2Bcod+A==
-X-Google-Smtp-Source: APXvYqysAsJcrGHv+ZIF21sw3uSMMfr2WsNoXiatBdoPHN+8eKXQ64ceV5ChmXT/f9A8gZ3gGeerWw==
-X-Received: by 2002:a17:90a:be0d:: with SMTP id a13mr1244815pjs.84.1560808369562;
-        Mon, 17 Jun 2019 14:52:49 -0700 (PDT)
-Received: from evgreen2.mtv.corp.google.com ([2620:15c:202:201:ffda:7716:9afc:1301])
-        by smtp.gmail.com with ESMTPSA id f17sm13319629pgv.16.2019.06.17.14.52.48
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 17 Jun 2019 14:52:49 -0700 (PDT)
-From:   Evan Green <evgreen@chromium.org>
-To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Lee Jones <lee.jones@linaro.org>
-Cc:     Ravi Chandra Sadineni <ravisadineni@chromium.org>,
-        Rajat Jain <rajatja@chromium.org>,
-        Evan Green <evgreen@chromium.org>,
-        Guenter Roeck <groeck@chromium.org>,
-        linux-kernel@vger.kernel.org, Benson Leung <bleung@chromium.org>,
-        Tim Wawrzynczak <twawrzynczak@chromium.org>
-Subject: [PATCH v2] platform/chrome: Expose resume result via debugfs
-Date:   Mon, 17 Jun 2019 14:52:34 -0700
-Message-Id: <20190617215234.260982-1-evgreen@chromium.org>
-X-Mailer: git-send-email 2.20.1
+        Mon, 17 Jun 2019 17:55:05 -0400
+Received: from mmarshal3.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 16968891A9;
+        Tue, 18 Jun 2019 09:55:01 +1200 (NZST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
+        s=mail181024; t=1560808501;
+        bh=hMGkfofcp3Y5IvOC7/IuqFMk2ddLSIWy+00ffvgz630=;
+        h=From:To:Cc:Subject:Date;
+        b=Ke/V8OCav3k/c2C8Nsapp1G5nBaMhbwDz/3rdEVmHvCe4W+iQbODyVYuCUG/ALlVy
+         T97hrgA6uJy5xCqOD2xrhMg3w7kkav0befvCHDW9GfqInRG6oMNMBR7USkhU54mjst
+         iT/cMHX2ecy0abrfvGf9+Hbj+tDWGxWBSMvk9XnMI/bZNx9CHpmuy5utfVJ3LZSQ94
+         JRJMEBzjuNLDWlONcfuJONmRQDJvFlVBk4JtsK+NnZaGYhKuJGo2Jq1Z+J821JgCcH
+         K3rYmjg2T+WDWjaTjaFDEN1Mte6r219q4tlPwGdcVUzGXvCqlA7WY09itzA96rnq4u
+         W/JUP/10Tbhdg==
+Received: from smtp (Not Verified[10.32.16.33]) by mmarshal3.atlnz.lc with Trustwave SEG (v7,5,8,10121)
+        id <B5d080c340004>; Tue, 18 Jun 2019 09:55:00 +1200
+Received: from chrisp-dl.ws.atlnz.lc (chrisp-dl.ws.atlnz.lc [10.33.22.30])
+        by smtp (Postfix) with ESMTP id 35BA413EF89;
+        Tue, 18 Jun 2019 09:55:01 +1200 (NZST)
+Received: by chrisp-dl.ws.atlnz.lc (Postfix, from userid 1030)
+        id 0B8B21E04F0; Tue, 18 Jun 2019 09:55:00 +1200 (NZST)
+From:   Chris Packham <chris.packham@alliedtelesis.co.nz>
+To:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, linus.walleij@linaro.org,
+        jason@lakedaemon.net, andrew@lunn.ch, gregory.clement@bootlin.com,
+        sebastian.hesselbarth@gmail.com, linux-gpio@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        Chris Packham <chris.packham@alliedtelesis.co.nz>
+Subject: [PATCH v2 0/4] Add support for Marvell 98DX1135
+Date:   Tue, 18 Jun 2019 09:54:54 +1200
+Message-Id: <20190617215458.32688-1-chris.packham@alliedtelesis.co.nz>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+x-atlnz-ls: pat
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For ECs that support it, the EC returns the number of slp_s0
-transitions and whether or not there was a timeout in the resume
-response. Expose the last resume result to usermode via debugfs so
-that usermode can detect and report S0ix timeouts.
+The Marvell 98DX1135 is a switch chip with an integrated ARMv5 CPU, it is
+similar to the 98DX4122 with differences in clocking and pin control.
 
-Signed-off-by: Evan Green <evgreen@chromium.org>
----
+I haven't added a separate dts for the SoC since it would be so similar t=
+o
+kirkwood-98dx4122.dtsi.
 
 Changes in v2:
- - Moved from sysfs to debugfs (Enric)
- - Added documentation (Enric)
+- Update description of mv98dx1135-core-clock
+- Collect review from Andrew
 
+Chris Packham (4):
+  dt-bindings: pinctrl: mvebu: Document bindings for 98DX1135
+  dt-bindings: clock: mvebu: Add compatible string for 98dx1135 core
+    clock
+  pinctrl: mvebu: Add support for MV98DX1135
+  clk: kirkwood: Add support for MV98DX1135
 
----
- Documentation/ABI/testing/debugfs-cros-ec | 22 ++++++++++++++++++++++
- drivers/mfd/cros_ec.c                     |  6 +++++-
- drivers/platform/chrome/cros_ec_debugfs.c |  7 +++++++
- include/linux/mfd/cros_ec.h               |  1 +
- 4 files changed, 35 insertions(+), 1 deletion(-)
+ .../bindings/clock/mvebu-core-clock.txt       |   1 +
+ .../pinctrl/marvell,kirkwood-pinctrl.txt      |  44 +-
+ drivers/clk/mvebu/kirkwood.c                  |  17 +
+ drivers/pinctrl/mvebu/pinctrl-kirkwood.c      | 576 +++++++++---------
+ 4 files changed, 357 insertions(+), 281 deletions(-)
 
-diff --git a/Documentation/ABI/testing/debugfs-cros-ec b/Documentation/ABI/testing/debugfs-cros-ec
-index 573a82d23c89..008b31422079 100644
---- a/Documentation/ABI/testing/debugfs-cros-ec
-+++ b/Documentation/ABI/testing/debugfs-cros-ec
-@@ -32,3 +32,25 @@ Description:
- 		is used for synchronizing the AP host time with the EC
- 		log. An error is returned if the command is not supported
- 		by the EC or there is a communication problem.
-+
-+What:		/sys/kernel/debug/cros_ec/last_resume_result
-+Date:		June 2019
-+KernelVersion:	5.3
-+Description:
-+		Some ECs have a feature where they will track transitions to
-+		the (Intel) processor's SLP_S0 line, in order to detect cases
-+		where a system failed to go into S0ix. When the system resumes,
-+		an EC with this feature will return a summary of SLP_S0
-+		transitions that occurred. The last_resume_result file returns
-+		the most recent response from the AP's resume message to the EC.
-+
-+		The bottom 31 bits contain a count of the number of SLP_S0
-+		transitions that occurred since the suspend message was
-+		received. Bit 31 is set if the EC attempted to wake the
-+		system due to a timeout when watching for SLP_S0 transitions.
-+		Callers can use this to detect a wake from the EC due to
-+		S0ix timeouts. The result will be zero if no suspend
-+		transitions have been attempted, or the EC does not support
-+		this feature.
-+
-+		Output will be in the format: "0x%08x\n".
-diff --git a/drivers/mfd/cros_ec.c b/drivers/mfd/cros_ec.c
-index 5d5c41ac3845..2a9ac5213893 100644
---- a/drivers/mfd/cros_ec.c
-+++ b/drivers/mfd/cros_ec.c
-@@ -102,12 +102,16 @@ static int cros_ec_sleep_event(struct cros_ec_device *ec_dev, u8 sleep_event)
- 
- 	/* For now, report failure to transition to S0ix with a warning. */
- 	if (ret >= 0 && ec_dev->host_sleep_v1 &&
--	    (sleep_event == HOST_SLEEP_EVENT_S0IX_RESUME))
-+	    (sleep_event == HOST_SLEEP_EVENT_S0IX_RESUME)) {
-+		ec_dev->last_resume_result =
-+			buf.u.resp1.resume_response.sleep_transitions;
-+
- 		WARN_ONCE(buf.u.resp1.resume_response.sleep_transitions &
- 			  EC_HOST_RESUME_SLEEP_TIMEOUT,
- 			  "EC detected sleep transition timeout. Total slp_s0 transitions: %d",
- 			  buf.u.resp1.resume_response.sleep_transitions &
- 			  EC_HOST_RESUME_SLEEP_TRANSITIONS_MASK);
-+	}
- 
- 	return ret;
- }
-diff --git a/drivers/platform/chrome/cros_ec_debugfs.c b/drivers/platform/chrome/cros_ec_debugfs.c
-index cd3fb9c22a44..663bebf699bf 100644
---- a/drivers/platform/chrome/cros_ec_debugfs.c
-+++ b/drivers/platform/chrome/cros_ec_debugfs.c
-@@ -447,6 +447,13 @@ static int cros_ec_debugfs_probe(struct platform_device *pd)
- 	debugfs_create_file("uptime", 0444, debug_info->dir, debug_info,
- 			    &cros_ec_uptime_fops);
- 
-+	if (!strcmp(ec->class_dev.kobj.name, CROS_EC_DEV_NAME)) {
-+		debugfs_create_x32("last_resume_result",
-+				   0444,
-+				   debug_info->dir,
-+				   &ec->ec_dev->last_resume_result);
-+	}
-+
- 	ec->debug_info = debug_info;
- 
- 	dev_set_drvdata(&pd->dev, ec);
-diff --git a/include/linux/mfd/cros_ec.h b/include/linux/mfd/cros_ec.h
-index 5ddca44be06d..45aba26db964 100644
---- a/include/linux/mfd/cros_ec.h
-+++ b/include/linux/mfd/cros_ec.h
-@@ -155,6 +155,7 @@ struct cros_ec_device {
- 	struct ec_response_get_next_event_v1 event_data;
- 	int event_size;
- 	u32 host_event_wake_mask;
-+	u32 last_resume_result;
- };
- 
- /**
--- 
-2.20.1
+--=20
+2.21.0
 
