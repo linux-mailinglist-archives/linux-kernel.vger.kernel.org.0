@@ -2,192 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5C0CF494FF
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 00:16:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 19D0449505
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 00:19:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728760AbfFQWQv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 18:16:51 -0400
-Received: from mail-pl1-f177.google.com ([209.85.214.177]:38232 "EHLO
-        mail-pl1-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726116AbfFQWQu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 18:16:50 -0400
-Received: by mail-pl1-f177.google.com with SMTP id f97so4765332plb.5;
-        Mon, 17 Jun 2019 15:16:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=RPNj7ShabpMoFkMl8hXYCQ7Om75Kbzpx9KYyRLhZGG8=;
-        b=DVGF2NKBlE04Yj2Nxv1vDt5w2mixVbF3kAxDrAWcPNbQ4cLiOxa3MBkvZi0bCCPwqj
-         BONS/lOiWgXPd235YxEUL8obNhUqsnY+A/zJNLonOwZ3IoYOksG1BV5KPMskiQrVaAmy
-         oJ3lU7zDoBpTZp9nMJTODniB53HmQ1K5NytM0v01EvyWj3lzsO8SE8lV8cUovBeMENtt
-         /8Gt/QKHtNzAvip20rhkF2XkfWVKjjaFyqp/CkcD3UKc6vgdJPzjXFkIRsQMHXr8ETil
-         F+wVkhKl3LIPz/RBzRgutsj7Gr1xQNXDsd28GdJTzutysda0vyBLuVB45DT12QovtHDl
-         QdBw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=RPNj7ShabpMoFkMl8hXYCQ7Om75Kbzpx9KYyRLhZGG8=;
-        b=CtSVHhGulo0u4br3M20KxoecmjnEQckXssViZ1/J4XNUQ5wtxLGVcyb7BaLkZP2lPq
-         hH8UH+xx0PP263nMJxCrVTMllhh8EOcN2Sjw86jjnFRJ2rKf51cJrQYay+aDLYei08en
-         x3yFoY3lwIQVn2jwR5TWXWy0QIAOOsNruMcFloyOpXGvO2zpTWRYsfzuLszuVdFYrs9v
-         UzSQn/UOvLxQ71k8j/1kvOiTu6DgPIpVjxtfCom0ZyWGQC30dCZ8HTfXC9Y3nnHukdUk
-         5NhqxVNISkMOFMdhXVI1bKALfcseaGy9XKuMQOIBOc2Mb4hrkwIY75WgsdYfztDq8W7x
-         cH0w==
-X-Gm-Message-State: APjAAAUona71BLX7BqlfILGEXzWxwBUdSul2Mj1B0GpRAAGz3NBQfw9E
-        hAhY080b6qJawgBRdgXJiWIld4Q4xV4=
-X-Google-Smtp-Source: APXvYqz/gKAwbHUzFU1vea3F3sPxdXUfv/oq0nZ509+gBNUW7dnCQuqHzgpJ7PKdgQ4iUCvqmi6Qgw==
-X-Received: by 2002:a17:902:aa95:: with SMTP id d21mr3436765plr.185.1560809809699;
-        Mon, 17 Jun 2019 15:16:49 -0700 (PDT)
-Received: from Asurada-Nvidia.nvidia.com (thunderhill.nvidia.com. [216.228.112.22])
-        by smtp.gmail.com with ESMTPSA id f3sm254444pjo.31.2019.06.17.15.16.49
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 17 Jun 2019 15:16:49 -0700 (PDT)
-From:   Nicolin Chen <nicoleotsuka@gmail.com>
-To:     thierry.reding@gmail.com
-Cc:     robh+dt@kernel.org, mark.rutland@arm.com, jonathanh@nvidia.com,
-        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] arm64: tegra: Add INA3221 channel info for Jetson TX2
-Date:   Mon, 17 Jun 2019 15:16:59 -0700
-Message-Id: <20190617221659.25366-1-nicoleotsuka@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        id S1728721AbfFQWTA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 18:19:00 -0400
+Received: from vps0.lunn.ch ([185.16.172.187]:34980 "EHLO vps0.lunn.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726116AbfFQWTA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Jun 2019 18:19:00 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=MmNUBAcapnWmnMp45QnWIpxu2KfpFe5ke1zaBCdGC+E=; b=xDyYRN65bP5x1n5lfLPDMUYTPP
+        4PotiD8auEcgLaKMHt9KNvt7nRvAmd1caTjVUqUBYEEW6obJCJp4x8M6U+o9wgRJRL7cHspqfb72e
+        IYN9krUqQ/JaoxuzXc+QwP4TmnlY59Ue+Xhi8rsbWUgI5FbvPiz0IfZLZpEMMMJBCA7A=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.89)
+        (envelope-from <andrew@lunn.ch>)
+        id 1hczxb-0004LJ-Om; Tue, 18 Jun 2019 00:18:43 +0200
+Date:   Tue, 18 Jun 2019 00:18:43 +0200
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Chris Packham <chris.packham@alliedtelesis.co.nz>
+Cc:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, linus.walleij@linaro.org,
+        jason@lakedaemon.net, gregory.clement@bootlin.com,
+        sebastian.hesselbarth@gmail.com, linux-gpio@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 2/4] dt-bindings: clock: mvebu: Add compatible string
+ for 98dx1135 core clock
+Message-ID: <20190617221843.GM25211@lunn.ch>
+References: <20190617215458.32688-1-chris.packham@alliedtelesis.co.nz>
+ <20190617215458.32688-3-chris.packham@alliedtelesis.co.nz>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190617215458.32688-3-chris.packham@alliedtelesis.co.nz>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There are four INA3221 chips on the Jetson TX2 (p3310 + p2771).
-And each INA3221 chip has three input channels to monitor power.
+On Tue, Jun 18, 2019 at 09:54:56AM +1200, Chris Packham wrote:
+> Add compatible string for the core clock on the 98dx1135 switch with
+> integrated CPU.
+> 
+> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
 
-So this patch adds these 12 channels to the DT of Jetson TX2, by
-following the DT binding of INA3221 and official documents from
-https://developer.nvidia.com/embedded/downloads
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
-tegra186-p3310:
-https://developer.nvidia.com/embedded/dlc/jetson-tx2-series-modules-oem-product-design-guide
-
-tegra186-p2771-0000:
-http://developer.nvidia.com/embedded/dlc/jetson-tx1-tx2-developer-kit-carrier-board-spec-20180618
-
-Signed-off-by: Nicolin Chen <nicoleotsuka@gmail.com>
----
- .../boot/dts/nvidia/tegra186-p2771-0000.dts   | 40 +++++++++++++++++++
- .../arm64/boot/dts/nvidia/tegra186-p3310.dtsi | 40 +++++++++++++++++++
- 2 files changed, 80 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts b/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts
-index ab6648c72ad5..9df4782c90f3 100644
---- a/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts
-+++ b/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts
-@@ -14,11 +14,51 @@
- 		power-monitor@42 {
- 			compatible = "ti,ina3221";
- 			reg = <0x42>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			channel@0 {
-+				reg = <0x0>;
-+				label = "VDD_MUX";
-+				shunt-resistor-micro-ohms = <20000>;
-+			};
-+
-+			channel@1 {
-+				reg = <0x1>;
-+				label = "VDD_5V0_IO_SYS";
-+				shunt-resistor-micro-ohms = <5000>;
-+			};
-+
-+			channel@2 {
-+				reg = <0x2>;
-+				label = "VDD_3V3_SYS";
-+				shunt-resistor-micro-ohms = <10000>;
-+			};
- 		};
- 
- 		power-monitor@43 {
- 			compatible = "ti,ina3221";
- 			reg = <0x43>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			channel@0 {
-+				reg = <0x0>;
-+				label = "VDD_3V3_IO_SLP";
-+				shunt-resistor-micro-ohms = <10000>;
-+			};
-+
-+			channel@1 {
-+				reg = <0x1>;
-+				label = "VDD_1V8_IO";
-+				shunt-resistor-micro-ohms = <10000>;
-+			};
-+
-+			channel@2 {
-+				reg = <0x2>;
-+				label = "VDD_M2_IN";
-+				shunt-resistor-micro-ohms = <10000>;
-+			};
- 		};
- 
- 		exp1: gpio@74 {
-diff --git a/arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi b/arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi
-index 4bbee83d9943..5e18acf5cfad 100644
---- a/arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi
-@@ -67,11 +67,51 @@
- 		power-monitor@40 {
- 			compatible = "ti,ina3221";
- 			reg = <0x40>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			channel@0 {
-+				reg = <0x0>;
-+				label = "VDD_SYS_GPU";
-+				shunt-resistor-micro-ohms = <10000>;
-+			};
-+
-+			channel@1 {
-+				reg = <0x1>;
-+				label = "VDD_SYS_SOC";
-+				shunt-resistor-micro-ohms = <10000>;
-+			};
-+
-+			channel@2 {
-+				reg = <0x2>;
-+				label = "VDD_3V8_WIFI";
-+				shunt-resistor-micro-ohms = <10000>;
-+			};
- 		};
- 
- 		power-monitor@41 {
- 			compatible = "ti,ina3221";
- 			reg = <0x41>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			channel@0 {
-+				reg = <0x0>;
-+				label = "VDD_IN";
-+				shunt-resistor-micro-ohms = <5000>;
-+			};
-+
-+			channel@1 {
-+				reg = <0x1>;
-+				label = "VDD_SYS_CPU";
-+				shunt-resistor-micro-ohms = <10000>;
-+			};
-+
-+			channel@2 {
-+				reg = <0x2>;
-+				label = "VDD_5V0_DDR";
-+				shunt-resistor-micro-ohms = <10000>;
-+			};
- 		};
- 	};
- 
--- 
-2.17.1
-
+    Andrew
