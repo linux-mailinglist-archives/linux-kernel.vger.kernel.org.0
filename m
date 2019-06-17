@@ -2,786 +2,587 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D94B249523
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 00:29:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 76F9D4952B
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 00:31:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728032AbfFQW3Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 18:29:25 -0400
-Received: from mx2.suse.de ([195.135.220.15]:38018 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726331AbfFQW3Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 18:29:24 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 5284EAE48;
-        Mon, 17 Jun 2019 22:29:22 +0000 (UTC)
-Received: by ds.suse.cz (Postfix, from userid 10065)
-        id D475EDA832; Tue, 18 Jun 2019 00:30:09 +0200 (CEST)
-Date:   Tue, 18 Jun 2019 00:30:08 +0200
-From:   David Sterba <dsterba@suse.cz>
-To:     Naohiro Aota <naohiro.aota@wdc.com>
-Cc:     linux-btrfs@vger.kernel.org, David Sterba <dsterba@suse.com>,
-        Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
-        Qu Wenruo <wqu@suse.com>, Nikolay Borisov <nborisov@suse.com>,
-        linux-kernel@vger.kernel.org, Hannes Reinecke <hare@suse.com>,
-        linux-fsdevel@vger.kernel.org,
-        Damien Le Moal <damien.lemoal@wdc.com>,
-        Matias =?iso-8859-1?Q?Bj=F8rling?= <mb@lightnvm.io>,
-        Johannes Thumshirn <jthumshirn@suse.de>,
-        Bart Van Assche <bvanassche@acm.org>
-Subject: Re: [PATCH 07/19] btrfs: do sequential extent allocation in HMZONED
- mode
-Message-ID: <20190617223007.GI19057@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-Mail-Followup-To: dsterba@suse.cz, Naohiro Aota <naohiro.aota@wdc.com>,
-        linux-btrfs@vger.kernel.org, David Sterba <dsterba@suse.com>,
-        Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
-        Qu Wenruo <wqu@suse.com>, Nikolay Borisov <nborisov@suse.com>,
-        linux-kernel@vger.kernel.org, Hannes Reinecke <hare@suse.com>,
-        linux-fsdevel@vger.kernel.org,
-        Damien Le Moal <damien.lemoal@wdc.com>,
-        Matias =?iso-8859-1?Q?Bj=F8rling?= <mb@lightnvm.io>,
-        Johannes Thumshirn <jthumshirn@suse.de>,
-        Bart Van Assche <bvanassche@acm.org>
-References: <20190607131025.31996-1-naohiro.aota@wdc.com>
- <20190607131025.31996-8-naohiro.aota@wdc.com>
+        id S1727899AbfFQWbm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 18:31:42 -0400
+Received: from mga05.intel.com ([192.55.52.43]:48353 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726336AbfFQWbm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Jun 2019 18:31:42 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Jun 2019 15:31:39 -0700
+X-ExtLoop1: 1
+Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
+  by fmsmga006.fm.intel.com with ESMTP; 17 Jun 2019 15:31:37 -0700
+Received: from kbuild by lkp-server01 with local (Exim 4.89)
+        (envelope-from <lkp@intel.com>)
+        id 1hd0A5-000J0q-Aw; Tue, 18 Jun 2019 06:31:37 +0800
+Date:   Tue, 18 Jun 2019 06:31:29 +0800
+From:   kbuild test robot <lkp@intel.com>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     kbuild-all@01.org, linux-kernel@vger.kernel.org, tipbuild@zytor.com
+Subject: [tip:WIP.x86/hpet 28/29] WARNING: vmlinux.o(.text+0x9e640): Section
+ mismatch in reference from the function hpet_cpuhp_online() to the function
+ .init.text:hpet_init_clockevent()
+Message-ID: <201906180628.r5wrENnl%lkp@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/mixed; boundary="EVF5PPMfhYS0aIcm"
 Content-Disposition: inline
-In-Reply-To: <20190607131025.31996-8-naohiro.aota@wdc.com>
-User-Agent: Mutt/1.5.23.1 (2014-03-12)
+X-Patchwork-Hint: ignore
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 07, 2019 at 10:10:13PM +0900, Naohiro Aota wrote:
-> On HMZONED drives, writes must always be sequential and directed at a block
-> group zone write pointer position. Thus, block allocation in a block group
-> must also be done sequentially using an allocation pointer equal to the
-> block group zone write pointer plus the number of blocks allocated but not
-> yet written.
-> 
-> Sequential allocation function find_free_extent_seq() bypass the checks in
-> find_free_extent() and increase the reserved byte counter by itself. It is
-> impossible to revert once allocated region in the sequential allocation,
-> since it might race with other allocations and leave an allocation hole,
-> which breaks the sequential write rule.
-> 
-> Furthermore, this commit introduce two new variable to struct
-> btrfs_block_group_cache. "wp_broken" indicate that write pointer is broken
-> (e.g. not synced on a RAID1 block group) and mark that block group read
-> only. "unusable" keeps track of the size of once allocated then freed
-> region. Such region is never usable until resetting underlying zones.
-> Signed-off-by: Naohiro Aota <naohiro.aota@wdc.com>
-> ---
->  fs/btrfs/ctree.h            |  24 +++
->  fs/btrfs/extent-tree.c      | 378 ++++++++++++++++++++++++++++++++++--
->  fs/btrfs/free-space-cache.c |  33 ++++
->  fs/btrfs/free-space-cache.h |   5 +
->  4 files changed, 426 insertions(+), 14 deletions(-)
-> 
-> diff --git a/fs/btrfs/ctree.h b/fs/btrfs/ctree.h
-> index 6c00101407e4..f4bcd2a6ec12 100644
-> --- a/fs/btrfs/ctree.h
-> +++ b/fs/btrfs/ctree.h
-> @@ -582,6 +582,20 @@ struct btrfs_full_stripe_locks_tree {
->  	struct mutex lock;
->  };
->  
-> +/* Block group allocation types */
-> +enum btrfs_alloc_type {
-> +
-> +	/* Regular first fit allocation */
-> +	BTRFS_ALLOC_FIT		= 0,
-> +
-> +	/*
-> +	 * Sequential allocation: this is for HMZONED mode and
-> +	 * will result in ignoring free space before a block
-> +	 * group allocation offset.
 
-Please format the comments to 80 columns
+--EVF5PPMfhYS0aIcm
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> +	 */
-> +	BTRFS_ALLOC_SEQ		= 1,
-> +};
-> +
->  struct btrfs_block_group_cache {
->  	struct btrfs_key key;
->  	struct btrfs_block_group_item item;
-> @@ -592,6 +606,7 @@ struct btrfs_block_group_cache {
->  	u64 reserved;
->  	u64 delalloc_bytes;
->  	u64 bytes_super;
-> +	u64 unusable;
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git WIP.x86/hpet
+head:   e68a1d0fce032346dbfeca0140d90da75796bab9
+commit: f16b728c11a349070f991885a7458aee91b01c5b [28/29] x86/hpet: Use common init for legacy clockevent
+config: x86_64-lkp (attached as .config)
+compiler: gcc-7 (Debian 7.3.0-1) 7.3.0
+reproduce:
+        git checkout f16b728c11a349070f991885a7458aee91b01c5b
+        # save the attached .config to linux build tree
+        make ARCH=x86_64 
 
-'unusable' is specific to the zones, so 'zone_unusable' would make it
-clear. The terminilogy around space is confusing already (we have
-unused, free, reserved, allocated, slack).
+If you fix the issue, kindly add following tag
+Reported-by: kbuild test robot <lkp@intel.com>
 
->  	u64 flags;
->  	u64 cache_generation;
->  
-> @@ -621,6 +636,7 @@ struct btrfs_block_group_cache {
->  	unsigned int iref:1;
->  	unsigned int has_caching_ctl:1;
->  	unsigned int removed:1;
-> +	unsigned int wp_broken:1;
->  
->  	int disk_cache_state;
->  
-> @@ -694,6 +710,14 @@ struct btrfs_block_group_cache {
->  
->  	/* Record locked full stripes for RAID5/6 block group */
->  	struct btrfs_full_stripe_locks_tree full_stripe_locks_root;
-> +
-> +	/*
-> +	 * Allocation offset for the block group to implement sequential
-> +	 * allocation. This is used only with HMZONED mode enabled and if
-> +	 * the block group resides on a sequential zone.
-> +	 */
-> +	enum btrfs_alloc_type alloc_type;
-> +	u64 alloc_offset;
->  };
->  
->  /* delayed seq elem */
-> diff --git a/fs/btrfs/extent-tree.c b/fs/btrfs/extent-tree.c
-> index 363db58f56b8..ebd0d6eae038 100644
-> --- a/fs/btrfs/extent-tree.c
-> +++ b/fs/btrfs/extent-tree.c
-> @@ -28,6 +28,7 @@
->  #include "sysfs.h"
->  #include "qgroup.h"
->  #include "ref-verify.h"
-> +#include "rcu-string.h"
->  
->  #undef SCRAMBLE_DELAYED_REFS
->  
-> @@ -590,6 +591,8 @@ static int cache_block_group(struct btrfs_block_group_cache *cache,
->  	struct btrfs_caching_control *caching_ctl;
->  	int ret = 0;
->  
-> +	WARN_ON(cache->alloc_type == BTRFS_ALLOC_SEQ);
-> +
->  	caching_ctl = kzalloc(sizeof(*caching_ctl), GFP_NOFS);
->  	if (!caching_ctl)
->  		return -ENOMEM;
-> @@ -6555,6 +6558,19 @@ void btrfs_wait_block_group_reservations(struct btrfs_block_group_cache *bg)
->  	wait_var_event(&bg->reservations, !atomic_read(&bg->reservations));
->  }
->  
-> +static void __btrfs_add_reserved_bytes(struct btrfs_block_group_cache *cache,
-> +				       u64 ram_bytes, u64 num_bytes,
-> +				       int delalloc)
-> +{
-> +	struct btrfs_space_info *space_info = cache->space_info;
-> +
-> +	cache->reserved += num_bytes;
-> +	space_info->bytes_reserved += num_bytes;
-> +	update_bytes_may_use(space_info, -ram_bytes);
-> +	if (delalloc)
-> +		cache->delalloc_bytes += num_bytes;
-> +}
-> +
->  /**
->   * btrfs_add_reserved_bytes - update the block_group and space info counters
->   * @cache:	The cache we are manipulating
-> @@ -6573,17 +6589,16 @@ static int btrfs_add_reserved_bytes(struct btrfs_block_group_cache *cache,
->  	struct btrfs_space_info *space_info = cache->space_info;
->  	int ret = 0;
->  
-> +	/* should handled by find_free_extent_seq */
-> +	WARN_ON(cache->alloc_type == BTRFS_ALLOC_SEQ);
-> +
->  	spin_lock(&space_info->lock);
->  	spin_lock(&cache->lock);
-> -	if (cache->ro) {
-> +	if (cache->ro)
->  		ret = -EAGAIN;
-> -	} else {
-> -		cache->reserved += num_bytes;
-> -		space_info->bytes_reserved += num_bytes;
-> -		update_bytes_may_use(space_info, -ram_bytes);
-> -		if (delalloc)
-> -			cache->delalloc_bytes += num_bytes;
-> -	}
-> +	else
-> +		__btrfs_add_reserved_bytes(cache, ram_bytes, num_bytes,
-> +					   delalloc);
->  	spin_unlock(&cache->lock);
->  	spin_unlock(&space_info->lock);
->  	return ret;
-> @@ -6701,9 +6716,13 @@ static int unpin_extent_range(struct btrfs_fs_info *fs_info,
->  			cache = btrfs_lookup_block_group(fs_info, start);
->  			BUG_ON(!cache); /* Logic error */
->  
-> -			cluster = fetch_cluster_info(fs_info,
-> -						     cache->space_info,
-> -						     &empty_cluster);
-> +			if (cache->alloc_type == BTRFS_ALLOC_FIT)
-> +				cluster = fetch_cluster_info(fs_info,
-> +							     cache->space_info,
-> +							     &empty_cluster);
-> +			else
-> +				cluster = NULL;
-> +
->  			empty_cluster <<= 1;
->  		}
->  
-> @@ -6743,7 +6762,8 @@ static int unpin_extent_range(struct btrfs_fs_info *fs_info,
->  		space_info->max_extent_size = 0;
->  		percpu_counter_add_batch(&space_info->total_bytes_pinned,
->  			    -len, BTRFS_TOTAL_BYTES_PINNED_BATCH);
-> -		if (cache->ro) {
-> +		if (cache->ro || cache->alloc_type == BTRFS_ALLOC_SEQ) {
-> +			/* need reset before reusing in ALLOC_SEQ BG */
->  			space_info->bytes_readonly += len;
->  			readonly = true;
->  		}
-> @@ -7588,6 +7608,60 @@ static int find_free_extent_unclustered(struct btrfs_block_group_cache *bg,
->  	return 0;
->  }
->  
-> +/*
-> + * Simple allocator for sequential only block group. It only allows
-> + * sequential allocation. No need to play with trees. This function
-> + * also reserve the bytes as in btrfs_add_reserved_bytes.
-> + */
-> +
-> +static int find_free_extent_seq(struct btrfs_block_group_cache *cache,
-> +				struct find_free_extent_ctl *ffe_ctl)
-> +{
-> +	struct btrfs_space_info *space_info = cache->space_info;
-> +	struct btrfs_free_space_ctl *ctl = cache->free_space_ctl;
-> +	u64 start = cache->key.objectid;
-> +	u64 num_bytes = ffe_ctl->num_bytes;
-> +	u64 avail;
-> +	int ret = 0;
-> +
-> +	/* Sanity check */
-> +	if (cache->alloc_type != BTRFS_ALLOC_SEQ)
-> +		return 1;
-> +
-> +	spin_lock(&space_info->lock);
-> +	spin_lock(&cache->lock);
-> +
-> +	if (cache->ro) {
-> +		ret = -EAGAIN;
-> +		goto out;
-> +	}
-> +
-> +	spin_lock(&ctl->tree_lock);
-> +	avail = cache->key.offset - cache->alloc_offset;
-> +	if (avail < num_bytes) {
-> +		ffe_ctl->max_extent_size = avail;
-> +		spin_unlock(&ctl->tree_lock);
-> +		ret = 1;
-> +		goto out;
-> +	}
-> +
-> +	ffe_ctl->found_offset = start + cache->alloc_offset;
-> +	cache->alloc_offset += num_bytes;
-> +	ctl->free_space -= num_bytes;
-> +	spin_unlock(&ctl->tree_lock);
-> +
-> +	BUG_ON(!IS_ALIGNED(ffe_ctl->found_offset,
-> +			   cache->fs_info->stripesize));
-> +	ffe_ctl->search_start = ffe_ctl->found_offset;
-> +	__btrfs_add_reserved_bytes(cache, ffe_ctl->ram_bytes, num_bytes,
-> +				   ffe_ctl->delalloc);
-> +
-> +out:
-> +	spin_unlock(&cache->lock);
-> +	spin_unlock(&space_info->lock);
-> +	return ret;
-> +}
-> +
->  /*
->   * Return >0 means caller needs to re-search for free extent
->   * Return 0 means we have the needed free extent.
-> @@ -7889,6 +7963,16 @@ static noinline int find_free_extent(struct btrfs_fs_info *fs_info,
->  		if (unlikely(block_group->cached == BTRFS_CACHE_ERROR))
->  			goto loop;
->  
-> +		if (block_group->alloc_type == BTRFS_ALLOC_SEQ) {
-> +			ret = find_free_extent_seq(block_group, &ffe_ctl);
-> +			if (ret)
-> +				goto loop;
-> +			/* btrfs_find_space_for_alloc_seq should ensure
-> +			 * that everything is OK and reserve the extent.
-> +			 */
+All warnings (new ones prefixed by >>):
 
-Please use the
+>> WARNING: vmlinux.o(.text+0x9e640): Section mismatch in reference from the function hpet_cpuhp_online() to the function .init.text:hpet_init_clockevent()
+   The function hpet_cpuhp_online() references
+   the function __init hpet_init_clockevent().
+   This is often because hpet_cpuhp_online lacks a __init
+   annotation or the annotation of hpet_init_clockevent is wrong.
 
-/*
- * comment
- */
+---
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
 
-style
+--EVF5PPMfhYS0aIcm
+Content-Type: application/gzip
+Content-Disposition: attachment; filename=".config.gz"
+Content-Transfer-Encoding: base64
 
-> +			goto nocheck;
-> +		}
-> +
->  		/*
->  		 * Ok we want to try and use the cluster allocator, so
->  		 * lets look there
-> @@ -7944,6 +8028,7 @@ static noinline int find_free_extent(struct btrfs_fs_info *fs_info,
->  					     num_bytes);
->  			goto loop;
->  		}
-> +nocheck:
->  		btrfs_inc_block_group_reservations(block_group);
->  
->  		/* we are all good, lets return */
-> @@ -9616,7 +9701,8 @@ static int inc_block_group_ro(struct btrfs_block_group_cache *cache, int force)
->  	}
->  
->  	num_bytes = cache->key.offset - cache->reserved - cache->pinned -
-> -		    cache->bytes_super - btrfs_block_group_used(&cache->item);
-> +		    cache->bytes_super - cache->unusable -
-> +		    btrfs_block_group_used(&cache->item);
->  	sinfo_used = btrfs_space_info_used(sinfo, true);
->  
->  	if (sinfo_used + num_bytes + min_allocable_bytes <=
-> @@ -9766,6 +9852,7 @@ void btrfs_dec_block_group_ro(struct btrfs_block_group_cache *cache)
->  	if (!--cache->ro) {
->  		num_bytes = cache->key.offset - cache->reserved -
->  			    cache->pinned - cache->bytes_super -
-> +			    cache->unusable -
->  			    btrfs_block_group_used(&cache->item);
->  		sinfo->bytes_readonly -= num_bytes;
->  		list_del_init(&cache->ro_list);
-> @@ -10200,11 +10287,240 @@ static void link_block_group(struct btrfs_block_group_cache *cache)
->  	}
->  }
->  
-> +static int
-> +btrfs_get_block_group_alloc_offset(struct btrfs_block_group_cache *cache)
-> +{
-> +	struct btrfs_fs_info *fs_info = cache->fs_info;
-> +	struct extent_map_tree *em_tree = &fs_info->mapping_tree.map_tree;
-> +	struct extent_map *em;
-> +	struct map_lookup *map;
-> +	struct btrfs_device *device;
-> +	u64 logical = cache->key.objectid;
-> +	u64 length = cache->key.offset;
-> +	u64 physical = 0;
-> +	int ret, alloc_type;
-> +	int i, j;
-> +	u64 *alloc_offsets = NULL;
-> +
-> +#define WP_MISSING_DEV ((u64)-1)
+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
 
-Please move the definition to the beginning of the file
-
-> +
-> +	/* Sanity check */
-> +	if (!IS_ALIGNED(length, fs_info->zone_size)) {
-> +		btrfs_err(fs_info, "unaligned block group at %llu + %llu",
-> +			  logical, length);
-> +		return -EIO;
-> +	}
-> +
-> +	/* Get the chunk mapping */
-> +	em_tree = &fs_info->mapping_tree.map_tree;
-> +	read_lock(&em_tree->lock);
-> +	em = lookup_extent_mapping(em_tree, logical, length);
-> +	read_unlock(&em_tree->lock);
-> +
-> +	if (!em)
-> +		return -EINVAL;
-> +
-> +	map = em->map_lookup;
-> +
-> +	/*
-> +	 * Get the zone type: if the group is mapped to a non-sequential zone,
-> +	 * there is no need for the allocation offset (fit allocation is OK).
-> +	 */
-> +	alloc_type = -1;
-> +	alloc_offsets = kcalloc(map->num_stripes, sizeof(*alloc_offsets),
-> +				GFP_NOFS);
-> +	if (!alloc_offsets) {
-> +		free_extent_map(em);
-> +		return -ENOMEM;
-> +	}
-> +
-> +	for (i = 0; i < map->num_stripes; i++) {
-> +		int is_sequential;
-
-Please use bool instead of int
-
-> +		struct blk_zone zone;
-> +
-> +		device = map->stripes[i].dev;
-> +		physical = map->stripes[i].physical;
-> +
-> +		if (device->bdev == NULL) {
-> +			alloc_offsets[i] = WP_MISSING_DEV;
-> +			continue;
-> +		}
-> +
-> +		is_sequential = btrfs_dev_is_sequential(device, physical);
-> +		if (alloc_type == -1)
-> +			alloc_type = is_sequential ?
-> +					BTRFS_ALLOC_SEQ : BTRFS_ALLOC_FIT;
-> +
-> +		if ((is_sequential && alloc_type != BTRFS_ALLOC_SEQ) ||
-> +		    (!is_sequential && alloc_type == BTRFS_ALLOC_SEQ)) {
-> +			btrfs_err(fs_info, "found block group of mixed zone types");
-> +			ret = -EIO;
-> +			goto out;
-> +		}
-> +
-> +		if (!is_sequential)
-> +			continue;
-> +
-> +		/* this zone will be used for allocation, so mark this
-> +		 * zone non-empty
-> +		 */
-> +		clear_bit(physical >> device->zone_size_shift,
-> +			  device->empty_zones);
-> +
-> +		/*
-> +		 * The group is mapped to a sequential zone. Get the zone write
-> +		 * pointer to determine the allocation offset within the zone.
-> +		 */
-> +		WARN_ON(!IS_ALIGNED(physical, fs_info->zone_size));
-> +		ret = btrfs_get_dev_zone(device, physical, &zone, GFP_NOFS);
-> +		if (ret == -EIO || ret == -EOPNOTSUPP) {
-> +			ret = 0;
-> +			alloc_offsets[i] = WP_MISSING_DEV;
-> +			continue;
-> +		} else if (ret) {
-> +			goto out;
-> +		}
-> +
-> +
-> +		switch (zone.cond) {
-> +		case BLK_ZONE_COND_OFFLINE:
-> +		case BLK_ZONE_COND_READONLY:
-> +			btrfs_err(fs_info, "Offline/readonly zone %llu",
-> +				  physical >> device->zone_size_shift);
-> +			alloc_offsets[i] = WP_MISSING_DEV;
-> +			break;
-> +		case BLK_ZONE_COND_EMPTY:
-> +			alloc_offsets[i] = 0;
-> +			break;
-> +		case BLK_ZONE_COND_FULL:
-> +			alloc_offsets[i] = fs_info->zone_size;
-> +			break;
-> +		default:
-> +			/* Partially used zone */
-> +			alloc_offsets[i] =
-> +				((zone.wp - zone.start) << SECTOR_SHIFT);
-> +			break;
-> +		}
-> +	}
-> +
-> +	if (alloc_type == BTRFS_ALLOC_FIT)
-> +		goto out;
-> +
-> +	switch (map->type & BTRFS_BLOCK_GROUP_PROFILE_MASK) {
-> +	case 0: /* single */
-> +	case BTRFS_BLOCK_GROUP_DUP:
-> +	case BTRFS_BLOCK_GROUP_RAID1:
-> +		cache->alloc_offset = WP_MISSING_DEV;
-> +		for (i = 0; i < map->num_stripes; i++) {
-> +			if (alloc_offsets[i] == WP_MISSING_DEV)
-> +				continue;
-> +			if (cache->alloc_offset == WP_MISSING_DEV)
-> +				cache->alloc_offset = alloc_offsets[i];
-> +			if (alloc_offsets[i] == cache->alloc_offset)
-> +				continue;
-> +
-> +			btrfs_err(fs_info,
-> +				  "write pointer mismatch: block group %llu",
-> +				  logical);
-> +			cache->wp_broken = 1;
-> +		}
-> +		break;
-> +	case BTRFS_BLOCK_GROUP_RAID0:
-> +		cache->alloc_offset = 0;
-> +		for (i = 0; i < map->num_stripes; i++) {
-> +			if (alloc_offsets[i] == WP_MISSING_DEV) {
-> +				btrfs_err(fs_info,
-> +					  "cannot recover write pointer: block group %llu",
-> +					  logical);
-> +				cache->wp_broken = 1;
-> +				continue;
-> +			}
-> +
-> +			if (alloc_offsets[0] < alloc_offsets[i]) {
-> +				btrfs_err(fs_info,
-> +					  "write pointer mismatch: block group %llu",
-> +					  logical);
-> +				cache->wp_broken = 1;
-> +				continue;
-> +			}
-> +
-> +			cache->alloc_offset += alloc_offsets[i];
-> +		}
-> +		break;
-> +	case BTRFS_BLOCK_GROUP_RAID10:
-> +		/*
-> +		 * Pass1: check write pointer of RAID1 level: each pointer
-> +		 * should be equal.
-> +		 */
-> +		for (i = 0; i < map->num_stripes / map->sub_stripes; i++) {
-> +			int base = i*map->sub_stripes;
-
-spaces around binary operators
-
-			int base = i * map->sub_stripes;
-
-> +			u64 offset = WP_MISSING_DEV;
-> +
-> +			for (j = 0; j < map->sub_stripes; j++) {
-> +				if (alloc_offsets[base+j] == WP_MISSING_DEV)
-
-here and below
-
-> +					continue;
-> +				if (offset == WP_MISSING_DEV)
-> +					offset = alloc_offsets[base+j];
-> +				if (alloc_offsets[base+j] == offset)
-> +					continue;
-> +
-> +				btrfs_err(fs_info,
-> +					  "write pointer mismatch: block group %llu",
-> +					  logical);
-> +				cache->wp_broken = 1;
-> +			}
-> +			for (j = 0; j < map->sub_stripes; j++)
-> +				alloc_offsets[base+j] = offset;
-> +		}
-> +
-> +		/* Pass2: check write pointer of RAID1 level */
-> +		cache->alloc_offset = 0;
-> +		for (i = 0; i < map->num_stripes / map->sub_stripes; i++) {
-> +			int base = i*map->sub_stripes;
-> +
-> +			if (alloc_offsets[base] == WP_MISSING_DEV) {
-> +				btrfs_err(fs_info,
-> +					  "cannot recover write pointer: block group %llu",
-> +					  logical);
-> +				cache->wp_broken = 1;
-> +				continue;
-> +			}
-> +
-> +			if (alloc_offsets[0] < alloc_offsets[base]) {
-> +				btrfs_err(fs_info,
-> +					  "write pointer mismatch: block group %llu",
-> +					  logical);
-> +				cache->wp_broken = 1;
-> +				continue;
-> +			}
-> +
-> +			cache->alloc_offset += alloc_offsets[base];
-> +		}
-> +		break;
-> +	case BTRFS_BLOCK_GROUP_RAID5:
-> +	case BTRFS_BLOCK_GROUP_RAID6:
-> +		/* RAID5/6 is not supported yet */
-> +	default:
-> +		btrfs_err(fs_info, "Unsupported profile on HMZONED %llu",
-> +			map->type & BTRFS_BLOCK_GROUP_PROFILE_MASK);
-> +		ret = -EINVAL;
-> +		goto out;
-> +	}
-> +
-> +out:
-> +	cache->alloc_type = alloc_type;
-> +	kfree(alloc_offsets);
-> +	free_extent_map(em);
-> +
-> +	return ret;
-> +}
-> +
->  static struct btrfs_block_group_cache *
->  btrfs_create_block_group_cache(struct btrfs_fs_info *fs_info,
->  			       u64 start, u64 size)
->  {
->  	struct btrfs_block_group_cache *cache;
-> +	int ret;
->  
->  	cache = kzalloc(sizeof(*cache), GFP_NOFS);
->  	if (!cache)
-> @@ -10238,6 +10554,16 @@ btrfs_create_block_group_cache(struct btrfs_fs_info *fs_info,
->  	atomic_set(&cache->trimming, 0);
->  	mutex_init(&cache->free_space_lock);
->  	btrfs_init_full_stripe_locks_tree(&cache->full_stripe_locks_root);
-> +	cache->alloc_type = BTRFS_ALLOC_FIT;
-> +	cache->alloc_offset = 0;
-> +
-> +	if (btrfs_fs_incompat(fs_info, HMZONED)) {
-> +		ret = btrfs_get_block_group_alloc_offset(cache);
-> +		if (ret) {
-> +			kfree(cache);
-> +			return NULL;
-> +		}
-> +	}
->  
->  	return cache;
->  }
-> @@ -10310,6 +10636,7 @@ int btrfs_read_block_groups(struct btrfs_fs_info *info)
->  	int need_clear = 0;
->  	u64 cache_gen;
->  	u64 feature;
-> +	u64 unusable;
->  	int mixed;
->  
->  	feature = btrfs_super_incompat_flags(info->super_copy);
-> @@ -10415,6 +10742,26 @@ int btrfs_read_block_groups(struct btrfs_fs_info *info)
->  			free_excluded_extents(cache);
->  		}
->  
-> +		switch (cache->alloc_type) {
-> +		case BTRFS_ALLOC_FIT:
-> +			unusable = cache->bytes_super;
-> +			break;
-> +		case BTRFS_ALLOC_SEQ:
-> +			WARN_ON(cache->bytes_super != 0);
-> +			unusable = cache->alloc_offset -
-> +				btrfs_block_group_used(&cache->item);
-> +			/* we only need ->free_space in ALLOC_SEQ BGs */
-> +			cache->last_byte_to_unpin = (u64)-1;
-> +			cache->cached = BTRFS_CACHE_FINISHED;
-> +			cache->free_space_ctl->free_space =
-> +				cache->key.offset - cache->alloc_offset;
-> +			cache->unusable = unusable;
-> +			free_excluded_extents(cache);
-> +			break;
-> +		default:
-> +			BUG();
-
-An unexpeced value of allocation is found, this needs a message and
-proper error handling, btrfs_read_block_groups is called from mount path
-so the recovery should be possible.
-
-> +		}
-> +
->  		ret = btrfs_add_block_group_cache(info, cache);
->  		if (ret) {
->  			btrfs_remove_free_space_cache(cache);
-> @@ -10425,7 +10772,7 @@ int btrfs_read_block_groups(struct btrfs_fs_info *info)
->  		trace_btrfs_add_block_group(info, cache, 0);
->  		update_space_info(info, cache->flags, found_key.offset,
->  				  btrfs_block_group_used(&cache->item),
-> -				  cache->bytes_super, &space_info);
-> +				  unusable, &space_info);
->  
->  		cache->space_info = space_info;
->  
-> @@ -10438,6 +10785,9 @@ int btrfs_read_block_groups(struct btrfs_fs_info *info)
->  			ASSERT(list_empty(&cache->bg_list));
->  			btrfs_mark_bg_unused(cache);
->  		}
-> +
-> +		if (cache->wp_broken)
-> +			inc_block_group_ro(cache, 1);
->  	}
->  
->  	list_for_each_entry_rcu(space_info, &info->space_info, list) {
-> diff --git a/fs/btrfs/free-space-cache.c b/fs/btrfs/free-space-cache.c
-> index f74dc259307b..cc69dc71f4c1 100644
-> --- a/fs/btrfs/free-space-cache.c
-> +++ b/fs/btrfs/free-space-cache.c
-> @@ -2326,8 +2326,11 @@ int __btrfs_add_free_space(struct btrfs_fs_info *fs_info,
->  			   u64 offset, u64 bytes)
->  {
->  	struct btrfs_free_space *info;
-> +	struct btrfs_block_group_cache *block_group = ctl->private;
->  	int ret = 0;
->  
-> +	WARN_ON(block_group && block_group->alloc_type == BTRFS_ALLOC_SEQ);
-> +
->  	info = kmem_cache_zalloc(btrfs_free_space_cachep, GFP_NOFS);
->  	if (!info)
->  		return -ENOMEM;
-> @@ -2376,6 +2379,28 @@ int __btrfs_add_free_space(struct btrfs_fs_info *fs_info,
->  	return ret;
->  }
->  
-> +int __btrfs_add_free_space_seq(struct btrfs_block_group_cache *block_group,
-> +			       u64 bytenr, u64 size)
-> +{
-> +	struct btrfs_free_space_ctl *ctl = block_group->free_space_ctl;
-> +	u64 offset = bytenr - block_group->key.objectid;
-> +	u64 to_free, to_unusable;
-> +
-> +	spin_lock(&ctl->tree_lock);
-> +	if (offset >= block_group->alloc_offset)
-> +		to_free = size;
-> +	else if (offset + size <= block_group->alloc_offset)
-> +		to_free = 0;
-> +	else
-> +		to_free = offset + size - block_group->alloc_offset;
-> +	to_unusable = size - to_free;
-> +	ctl->free_space += to_free;
-> +	block_group->unusable += to_unusable;
-> +	spin_unlock(&ctl->tree_lock);
-> +	return 0;
-> +
-> +}
-> +
->  int btrfs_remove_free_space(struct btrfs_block_group_cache *block_group,
->  			    u64 offset, u64 bytes)
->  {
-> @@ -2384,6 +2409,8 @@ int btrfs_remove_free_space(struct btrfs_block_group_cache *block_group,
->  	int ret;
->  	bool re_search = false;
->  
-> +	WARN_ON(block_group->alloc_type == BTRFS_ALLOC_SEQ);
-> +
->  	spin_lock(&ctl->tree_lock);
->  
->  again:
-> @@ -2619,6 +2646,8 @@ u64 btrfs_find_space_for_alloc(struct btrfs_block_group_cache *block_group,
->  	u64 align_gap = 0;
->  	u64 align_gap_len = 0;
->  
-> +	WARN_ON(block_group->alloc_type == BTRFS_ALLOC_SEQ);
-> +
->  	spin_lock(&ctl->tree_lock);
->  	entry = find_free_space(ctl, &offset, &bytes_search,
->  				block_group->full_stripe_len, max_extent_size);
-> @@ -2738,6 +2767,8 @@ u64 btrfs_alloc_from_cluster(struct btrfs_block_group_cache *block_group,
->  	struct rb_node *node;
->  	u64 ret = 0;
->  
-> +	WARN_ON(block_group->alloc_type == BTRFS_ALLOC_SEQ);
-> +
->  	spin_lock(&cluster->lock);
->  	if (bytes > cluster->max_size)
->  		goto out;
-> @@ -3384,6 +3415,8 @@ int btrfs_trim_block_group(struct btrfs_block_group_cache *block_group,
->  {
->  	int ret;
->  
-> +	WARN_ON(block_group->alloc_type == BTRFS_ALLOC_SEQ);
-> +
->  	*trimmed = 0;
->  
->  	spin_lock(&block_group->lock);
-> diff --git a/fs/btrfs/free-space-cache.h b/fs/btrfs/free-space-cache.h
-> index 8760acb55ffd..d30667784f73 100644
-> --- a/fs/btrfs/free-space-cache.h
-> +++ b/fs/btrfs/free-space-cache.h
-> @@ -73,10 +73,15 @@ void btrfs_init_free_space_ctl(struct btrfs_block_group_cache *block_group);
->  int __btrfs_add_free_space(struct btrfs_fs_info *fs_info,
->  			   struct btrfs_free_space_ctl *ctl,
->  			   u64 bytenr, u64 size);
-> +int __btrfs_add_free_space_seq(struct btrfs_block_group_cache *block_group,
-> +			       u64 bytenr, u64 size);
->  static inline int
->  btrfs_add_free_space(struct btrfs_block_group_cache *block_group,
->  		     u64 bytenr, u64 size)
->  {
-> +	if (block_group->alloc_type == BTRFS_ALLOC_SEQ)
-> +		return __btrfs_add_free_space_seq(block_group, bytenr, size);
-> +
->  	return __btrfs_add_free_space(block_group->fs_info,
->  				      block_group->free_space_ctl,
->  				      bytenr, size);
-> -- 
-> 2.21.0
+--EVF5PPMfhYS0aIcm--
