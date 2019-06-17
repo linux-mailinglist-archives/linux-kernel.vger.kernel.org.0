@@ -2,122 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3C5BB481DD
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 14:22:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 86406481E9
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 14:26:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727318AbfFQMWF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 08:22:05 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:45695 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725962AbfFQMWE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 08:22:04 -0400
-Received: by mail-qt1-f193.google.com with SMTP id j19so10331079qtr.12
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2019 05:22:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=J1D0wRVIBxkLJPdsyEaqbWMW7xmtTDyWae7i+70qMQs=;
-        b=GOaHoBgvNGJIIr7Jatbi1CK9+jALGw4+UEoCEXXBBFq9efzp9LpO8CVgf7MrwQVgNj
-         Ceak5lBwKT8v6V63DxxTA7o437lKA0xMe8bTTgfyruCBLTEI9nFleVlPZzch44dXT2tC
-         RUxZUGe3AbmmAvwdCu5iUQkWRtU3TL2a3cxa2ESlzhyj3bblQ0ueHGZN+ZIcF1GFKhNP
-         ygNwtuOr//D+LbX4mLgTaGr6g8nUqUOvN5U7l96KhiwKVsVyiJPLuBcV8hxES7El7v32
-         7FJ/6n5MEnpLEX2CJ43pgcvmI4yq/GZedKnCWWx7FQXyouJbKmPT6LGZ74etYWoyWcoa
-         nZ+w==
-X-Gm-Message-State: APjAAAUiC6TbVznhmJY/R91TLcaHUOAPCDhGI8kCtIS8+mSwRpppYeZQ
-        QNHNBqi5eEv21MFqSJNwuumqDuIWVREJhWgYuOc=
-X-Google-Smtp-Source: APXvYqzBS9/f+FzXIzoMEx/rQKNZckt6bdT2jsoQ/5V9Nb2UOXwEEV6V5B/6sbBr2C25lfeCYsPalMWFzJMpk3UwffM=
-X-Received: by 2002:a0c:b758:: with SMTP id q24mr21150036qve.45.1560774123691;
- Mon, 17 Jun 2019 05:22:03 -0700 (PDT)
+        id S1726557AbfFQMYP convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 17 Jun 2019 08:24:15 -0400
+Received: from mx1.emlix.com ([188.40.240.192]:37784 "EHLO mx1.emlix.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725962AbfFQMYO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Jun 2019 08:24:14 -0400
+Received: from mailer.emlix.com (unknown [81.20.119.6])
+        (using TLSv1.2 with cipher ADH-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mx1.emlix.com (Postfix) with ESMTPS id EC211600A1;
+        Mon, 17 Jun 2019 14:24:12 +0200 (CEST)
+From:   Rolf Eike Beer <eb@emlix.com>
+To:     Yoshinori Sato <ysato@users.sourceforge.jp>
+Cc:     uclinux-h8-devel@lists.sourceforge.jp, linux-kernel@vger.kernel.org
+Subject: [PATCH RESEND] H8300: remove unused barrier defines
+Date:   Mon, 17 Jun 2019 14:24:12 +0200
+Message-ID: <5435162.LEDey6R3HY@devpool35>
+Organization: emlix GmbH
+In-Reply-To: <2401183.V4Yr0kgUre@devpool21>
+References: <2401183.V4Yr0kgUre@devpool21>
 MIME-Version: 1.0
-References: <20190617104237.2082388-1-arnd@arndb.de> <20190617112652.GB30800@fuggles.cambridge.arm.com>
-In-Reply-To: <20190617112652.GB30800@fuggles.cambridge.arm.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Mon, 17 Jun 2019 14:21:46 +0200
-Message-ID: <CAK8P3a2aJNiLTyfRDqazJa2sAc-Jf-QShSZ7+4-whHSxKbLUVQ@mail.gmail.com>
-Subject: Re: [PATCH] arm64/sve: fix genksyms generation
-To:     Will Deacon <will.deacon@arm.com>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Dave Martin <Dave.Martin@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        =?UTF-8?B?QWxleCBCZW5uw6ll?= <alex.bennee@linaro.org>,
-        Peter Maydell <peter.maydell@linaro.org>,
-        Alan Hayward <alan.hayward@arm.com>,
-        Julien Grall <julien.grall@arm.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Andrew Murray <andrew.murray@arm.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Transfer-Encoding: 8BIT
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 17, 2019 at 1:26 PM Will Deacon <will.deacon@arm.com> wrote:
->
-> Hi Arnd,
->
-> On Mon, Jun 17, 2019 at 12:42:11PM +0200, Arnd Bergmann wrote:
-> > genksyms does not understand __uint128_t, so we get a build failure
-> > in the fpsimd module when it cannot export a symbol right:
->
-> The fpsimd code is builtin, so which module is actually failing? My
-> allmodconfig build succeeds, so I must be missing something.
+From c907e749917f430e3dc62048985c8419778572f9 Mon Sep 17 00:00:00 2001
+From: Rolf Eike Beer <eb@emlix.com>
+Date: Fri, 14 Jul 2017 11:19:08 +0200
+Subject: [PATCH] H8300: remove unused barrier defines
 
-It happened for me on randconfig builds, you can find one such configuration
-at https://pastebin.com/cU8iQ4ta now. I was building this with clang
-rather than gcc, which may affect the issue, but I assumed not.
+They were introduced in d2a5f4999f6c211adf30d9788349e13988d6f2a7 long after
+2e39465abc4b7856a0ea6fcf4f6b4668bb5db877 removed the remnants of all previous
+instances from the tree.
 
-> > WARNING: EXPORT symbol "kernel_neon_begin" [vmlinux] version generation failed, symbol will not be versioned.
-> > /home/arnd/cross/x86_64/gcc-8.1.0-nolibc/aarch64-linux/bin/aarch64-linux-ld: arch/arm64/kernel/fpsimd.o: relocation R_AARCH64_ABS32 against `__crc_kernel_neon_begin' can not be used when making a shared object
-> > arch/arm64/kernel/fpsimd.o:(.data+0x0): dangerous relocation: unsupported relocation
-> > arch/arm64/kernel/fpsimd.o:(".discard.addressable"+0x0): dangerous relocation: unsupported relocation
-> > arch/arm64/kernel/fpsimd.o:(".discard.addressable"+0x8): dangerous relocation: unsupported relocation
-> >
-> > We could teach genksyms about the type, but it's easier to just
-> > work around it by defining that type locally in a way that genksyms
-> > understands.
-> >
-> > Fixes: 41040cf7c5f0 ("arm64/sve: Fix missing SVE/FPSIMD endianness conversions")
->
-> I can't see which part of that patch causes the problem, so I'm a bit wary
-> of the fix. We've been using __uint128_t for a while now, and I see there's
-> one in the x86 kvm code as well, so it would be nice to understand what's
-> happening here so that we can avoid running into it in future as well.
+Signed-off-by: Rolf Eike Beer <eb@emlix.com>
+---
+ arch/h8300/include/asm/bitops.h | 6 ------
+ 1 file changed, 6 deletions(-)
 
-The problem is only in files that export a symbol. This is also the
-case in arch/x86/kernel/kvm.c, but it may be lucky because the
-type only appears /after/ the last export in that file.
+diff --git a/arch/h8300/include/asm/bitops.h b/arch/h8300/include/asm/bitops.h
+index 647a83bd40b7..7aa16c732aa9 100644
+--- a/arch/h8300/include/asm/bitops.h
++++ b/arch/h8300/include/asm/bitops.h
+@@ -51,12 +51,6 @@ static inline void FNAME(int nr, volatile unsigned long *addr)	\
+ 	}							\
+ }
+ 
+-/*
+- * clear_bit() doesn't provide any barrier for the compiler.
+- */
+-#define smp_mb__before_clear_bit()	barrier()
+-#define smp_mb__after_clear_bit()	barrier()
+-
+ H8300_GEN_BITOP(set_bit,    "bset")
+ H8300_GEN_BITOP(clear_bit,  "bclr")
+ H8300_GEN_BITOP(change_bit, "bnot")
+-- 
+2.21.0
+-- 
+Rolf Eike Beer, emlix GmbH, http://www.emlix.com
+Fon +49 551 30664-0, Fax +49 551 30664-11
+Gothaer Platz 3, 37083 Göttingen, Germany
+Sitz der Gesellschaft: Göttingen, Amtsgericht Göttingen HR B 3160
+Geschäftsführung: Heike Jordan, Dr. Uwe Kracke – Ust-IdNr.: DE 205 198 055
 
-> > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> > ---
-> >  arch/arm64/kernel/fpsimd.c | 3 +++
-> >  1 file changed, 3 insertions(+)
-> >
-> > diff --git a/arch/arm64/kernel/fpsimd.c b/arch/arm64/kernel/fpsimd.c
-> > index 07f238ef47ae..2aba07cccf50 100644
-> > --- a/arch/arm64/kernel/fpsimd.c
-> > +++ b/arch/arm64/kernel/fpsimd.c
-> > @@ -400,6 +400,9 @@ static int __init sve_sysctl_init(void) { return 0; }
-> >  #define ZREG(sve_state, vq, n) ((char *)(sve_state) +                \
-> >       (SVE_SIG_ZREG_OFFSET(vq, n) - SVE_SIG_REGS_OFFSET))
-> >
-> > +#ifdef __GENKSYMS__
-> > +typedef __u64 __uint128_t[2];
-> > +#endif
->
-> I suspect I need to figure out what genksyms is doing, but I'm nervous
-> about exposing this as an array type without understanding whether or
-> not that has consequences for its operation.
+emlix - smart embedded open source
 
-The entire point is genksyms is to ensure that types of exported symbols
-are compatible. To do this, it has a limited parser for C source code that
-understands the basic types (char, int, long, _Bool, etc) and how to
-aggregate them into structs and function arguments. This process has
-always been fragile, and it clearly breaks when it fails to understand a
-particular type.
 
-          Arnd
