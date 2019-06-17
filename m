@@ -2,108 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 51E51484C5
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 16:01:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AD7E3484C7
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 16:01:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727481AbfFQOAx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 10:00:53 -0400
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:42367 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725906AbfFQOAw (ORCPT
+        id S1727727AbfFQOBR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 10:01:17 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:47396 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725906AbfFQOBR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 10:00:52 -0400
-Received: by mail-ot1-f67.google.com with SMTP id l15so9351988otn.9
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2019 07:00:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=v/0AosDiq0XlRMBf8oBwjVIp/eynr9o30+abHU130tU=;
-        b=QfGwVzUyw61eYELwxKAlY9/Qm6Aj9QSJ0n+dIVkf8/4yeJfiVbarVyCC4XbKUh7zyA
-         TB4mJQ/4WDEFdFlP9q8qfUxerum3OAS9kJIC9HkWocd6c82xelhC5lUZ8KGeL7GIc9b2
-         Vn2SIVgDQO8hQMwPHS4nOTl0lopwU7OuI/SKFbVXrGvgWTzn57ByfbFw3uFr/5eqy03z
-         O/40JUT3OWHkoJhC5IIKY/lFAiriQzdivbyM4D4bt87oTbTSaLBLA/VBa+dUA9Qn7Q8O
-         AgESDbDnLQa9ZvaNVt9qijL0DoPw8QB7RGDJ+rCIOi5DiwTJKQQpi0xCcP/5ARb5gi6O
-         48XQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=v/0AosDiq0XlRMBf8oBwjVIp/eynr9o30+abHU130tU=;
-        b=RUnyVbhQgIi4qsUc/A/ONI9vgZ/IIrP9t+Ym51k/sJ4kFQ0ovLUsnymApwhtg7GMVj
-         njLbEL1VgtJ7fR+pQcHGGnBq0ZxoXJ/URCmlodCIoc9Ip62vtuqdS8ub1oTz5uEhcuoB
-         txBsiwdvMCkcC8uV4/wvyKtY+Xv+YxaFx2orOrXqh7YUCu79Rqi+TBochRxe5a7ejRzX
-         5l8+TkfPDZwXcXZJiCZDwLIK/ugF+xNRLkxPswbdYUmlU44U0R52UHTSVDXzMSNWzwqn
-         XdsEtoHMAoc51toHdj47Ami7zsWnd2aRS0Dyoc/iVQGdSRlLonmkFwC6nH33nSR87Gip
-         jYow==
-X-Gm-Message-State: APjAAAWpNXfSlZQITbH96Q3F9SS7ICgiak6tOPU3c0LexwLJ1jKGvwiv
-        0hAZ6O+rIt9E8rfN5JUz7bdzGXCt1yEQb0z4tl0BSQ==
-X-Google-Smtp-Source: APXvYqz5F9NBThJnsQ+gL+ZpGjjXfOmWdrkG2sLPN0k3OAALt6m/XyHFzA0l3LB9J01pkclLKo1k7HRwqBHaHCOQM+M=
-X-Received: by 2002:a05:6830:1688:: with SMTP id k8mr9743899otr.233.1560780051018;
- Mon, 17 Jun 2019 07:00:51 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190613125950.197667-1-elver@google.com>
-In-Reply-To: <20190613125950.197667-1-elver@google.com>
-From:   Marco Elver <elver@google.com>
-Date:   Mon, 17 Jun 2019 16:00:38 +0200
-Message-ID: <CANpmjNMCmcg8GS_pkKc2gsdtd7-A2t27mOXATY9OLb1vQW5Lsg@mail.gmail.com>
-Subject: Re: [PATCH v5 0/3] Bitops instrumentation for KASAN
-To:     Peter Zijlstra <peterz@infradead.org>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Alexander Potapenko <glider@google.com>,
-        Andrey Konovalov <andreyknvl@google.com>,
+        Mon, 17 Jun 2019 10:01:17 -0400
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id A54F580265; Mon, 17 Jun 2019 16:01:04 +0200 (CEST)
+Date:   Mon, 17 Jun 2019 16:01:14 +0200
+From:   Pavel Machek <pavel@ucw.cz>
+To:     "Angus Ainslie (Purism)" <angus@akkea.ca>
+Cc:     angus.ainslie@puri.sm, Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     Jonathan Corbet <corbet@lwn.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        kasan-dev <kasan-dev@googlegroups.com>,
-        Linux Memory Management List <linux-mm@kvack.org>
-Content-Type: text/plain; charset="UTF-8"
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v16 1/3] arm64: dts: fsl: librem5: Add a device tree for
+ the Librem5 devkit
+Message-ID: <20190617140114.GA26140@amd>
+References: <20190617135215.550-1-angus@akkea.ca>
+ <20190617135215.550-2-angus@akkea.ca>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="azLHFNyN32YCQGCU"
+Content-Disposition: inline
+In-Reply-To: <20190617135215.550-2-angus@akkea.ca>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-All 3 patches have now been Acked and Reviewed. Which tree should this land in?
 
-Since this is related to KASAN, would this belong into the MM tree?
+--azLHFNyN32YCQGCU
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Many thanks,
--- Marco
+On Mon 2019-06-17 07:52:13, Angus Ainslie (Purism) wrote:
+> This is for the development kit board for the Librem 5. The current level
+> of support yields a working console and is able to boot userspace from
+> the network or eMMC.
+>=20
+> Additional subsystems that are active :
+>=20
+> - Both USB ports
+> - SD card socket
+> - WiFi usdhc
+> - WWAN modem
+> - GNSS
+> - GPIO keys
+> - LEDs
+> - gyro
+> - magnetometer
+> - touchscreen
+> - pwm
+> - backlight
+> - haptic motor
+>=20
+> Signed-off-by: Angus Ainslie (Purism) <angus@akkea.ca>
+> Reviewed-by: Fabio Estevam <festevam@gmail.com>
+
+Reviewed-by: Pavel Machek <pavel@ucw.cz>
 
 
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
 
+--azLHFNyN32YCQGCU
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-On Thu, 13 Jun 2019 at 15:00, Marco Elver <elver@google.com> wrote:
->
-> Previous version:
-> http://lkml.kernel.org/r/20190613123028.179447-1-elver@google.com
->
-> * Only changed lib/test_kasan in this version.
->
-> Marco Elver (3):
->   lib/test_kasan: Add bitops tests
->   x86: Use static_cpu_has in uaccess region to avoid instrumentation
->   asm-generic, x86: Add bitops instrumentation for KASAN
->
->  Documentation/core-api/kernel-api.rst     |   2 +-
->  arch/x86/ia32/ia32_signal.c               |   2 +-
->  arch/x86/include/asm/bitops.h             | 189 ++++------------
->  arch/x86/kernel/signal.c                  |   2 +-
->  include/asm-generic/bitops-instrumented.h | 263 ++++++++++++++++++++++
->  lib/test_kasan.c                          |  81 ++++++-
->  6 files changed, 382 insertions(+), 157 deletions(-)
->  create mode 100644 include/asm-generic/bitops-instrumented.h
->
-> --
-> 2.22.0.rc2.383.gf4fbbf30c2-goog
->
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAl0HnSoACgkQMOfwapXb+vJOGgCgi4UVHEckeZdZZeAkOxWfWI5z
+EcgAn2c/wl0vMJH3MIZWhH8So2axxskQ
+=DbDK
+-----END PGP SIGNATURE-----
+
+--azLHFNyN32YCQGCU--
