@@ -2,113 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0C94448897
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 18:15:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E4247488AE
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 18:16:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728663AbfFQQPb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 12:15:31 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:46090 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728467AbfFQQPZ (ORCPT
+        id S1728694AbfFQQQb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 12:16:31 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:32831 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726974AbfFQQQa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 12:15:25 -0400
-Received: by mail-pf1-f193.google.com with SMTP id 81so5934454pfy.13;
-        Mon, 17 Jun 2019 09:15:24 -0700 (PDT)
+        Mon, 17 Jun 2019 12:16:30 -0400
+Received: by mail-pf1-f195.google.com with SMTP id x15so5966191pfq.0
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2019 09:16:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=k6eoJ9xcXnsJZd+Hemm7niOXBdFUm/UTEBKSRrxNhkU=;
-        b=nOM2+Mr4/ZWdg9YLUFi1vUmPa+NnhrsZBduzKwbOTXEsdvw4j1+q85sN1qxqpfb4yM
-         v3ZKRy8804fzS61vcXWFxLqSGuntUv8vh1ElSkoUAjDuRdiemi+PmBeyuUZidWJrGzby
-         2fACc7vVKio97GA6w0Iufr/JR49rw79iObREJMDpASb+X1s5BgYlZPcGDMsfyjgMl+Cv
-         /H1VBH72hz3M0KkC6RBsP+ihQD3DAP6/4GDibCoHZbXbmOJYZK90+7n9BCsX6+VlJJET
-         xhbNkMY0XWbQdxgZiH79M7WmXwPrknfOsL54XRmaGasZ7KfUiFR0941QPACJNW3VRz2T
-         2qfA==
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=zvibPhwENQ3qc2un3M/Q6u9vfA61QDqGf+AvuS+Jre0=;
+        b=ZoqSWmU/lQLp0AxiYiOl4DnE8lGbhiLm4TaGaplykVD8NJT3wL2fFNQtVZ1rhnDefR
+         BaZR79IvfuOD5CsEX5Gw7fbGTcYyajcJl9kBZ4M7KE9N1zgzsiE4tOPQV7Ij2cCHZ82h
+         EeOCnc0aOXf5zaqOyTsOM7HB6gCUwOMLTttbg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=k6eoJ9xcXnsJZd+Hemm7niOXBdFUm/UTEBKSRrxNhkU=;
-        b=JxCBkgC7jfQE3XDV38hLJZUhZpe61+mX9vs/vkHDlH3OZq1fxzMNkljNM2KQLOvKuE
-         TFREpDcxoDqutV7i7jTxjxL1YPjBTLx8eaxEFEKfvKgvD3DNxo0cL6R2HzB/pjqoWAHH
-         6n7FqtlRgnDDpJIVjcwKDjat+Z3DUjBWlAH3jdQ59+xSdZFVTcgFLLG/j2fhjxUOkZei
-         p3OUw1noW4iPjCT8r5lBRPZ66uR2GLDL9fknjqkZw0/NV8QSeMuLDo2nPAd/McJ0w3Hq
-         mqkQl6Sw6eOlxoIccXfr26RQNBDrhbDHk/7Z1bUoUt4i3C1MZdFV8Ts2f3DVvGMc68ks
-         nggA==
-X-Gm-Message-State: APjAAAVW8UJI29NMgOppaFDKWrM2j3/9VCAqYwm86o1q1nsuDQeRjCIh
-        XFE8/IDUsM1zXwN8epkdlBcT8+j9vIQ=
-X-Google-Smtp-Source: APXvYqzWenjwHPZKTCUVtWeHTsrf7J75/gEJwqgz+joeNQO3l8GrHK1sc1q2Yx7Noe2d4V7UPCHljg==
-X-Received: by 2002:a62:8643:: with SMTP id x64mr80128030pfd.7.1560788124067;
-        Mon, 17 Jun 2019 09:15:24 -0700 (PDT)
-Received: from localhost.lan (c-24-22-235-96.hsd1.wa.comcast.net. [24.22.235.96])
-        by smtp.gmail.com with ESMTPSA id c9sm14791953pfn.3.2019.06.17.09.15.22
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 17 Jun 2019 09:15:23 -0700 (PDT)
-From:   Andrey Smirnov <andrew.smirnov@gmail.com>
-To:     linux-pm@vger.kernel.org
-Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Chris Healy <cphealy@gmail.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Angus Ainslie <angus@akkea.ca>, linux-imx@nxp.com,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v6 12/12] thermal: qoriq: Add hwmon support
-Date:   Mon, 17 Jun 2019 09:14:58 -0700
-Message-Id: <20190617161458.3754-13-andrew.smirnov@gmail.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190617161458.3754-1-andrew.smirnov@gmail.com>
-References: <20190617161458.3754-1-andrew.smirnov@gmail.com>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=zvibPhwENQ3qc2un3M/Q6u9vfA61QDqGf+AvuS+Jre0=;
+        b=MYQ1Uwu5SdinCDaIvbhgleRBAmuZDn3yX4E5Amd7Z4eeB8YyPX7IxA2rHN2DdfVg6B
+         ON0Sw9XxXv1Frtxkvvst1IvroMCz623w5Rt5xbvChiYAY9O+h76weXV9OL+CVD+X7p6s
+         mH8RM2KOJmxiKCMfzUwcgCZa2KeMVBqot7hrGtT+nooQn5IRv8V4fn3Qg7EB6TNJl7Hx
+         qHYETbffAmOXF5uWzUGl4H8cr7jVu/KktXWi9oqRU8mBWBMGsm6IioQIafveopPAat28
+         9sLqJWHFeAYY2ZRC2lcp7+fbxghKLKGkJYA42lCQRF/qMBl5FRc46ESzzTt3CleaMgDV
+         eK3w==
+X-Gm-Message-State: APjAAAVQ9u5xGYhIXg0+lLgEdVx4aI9tXE3AwpS2hHrbL4l1QTuU0TTL
+        Z4ubHjGSBXWDaes/vPtyNBS30A==
+X-Google-Smtp-Source: APXvYqw3rc3Tet3QBs9yulULj2UwlZKr/1RY50orF99rzSnjjv2kEBXdw1GPW8ggnZq5hpDRRJ/YNg==
+X-Received: by 2002:a17:90a:b908:: with SMTP id p8mr26903360pjr.94.1560788189915;
+        Mon, 17 Jun 2019 09:16:29 -0700 (PDT)
+Received: from localhost ([2620:15c:202:1:75a:3f6e:21d:9374])
+        by smtp.gmail.com with ESMTPSA id d12sm12846713pfd.96.2019.06.17.09.16.29
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 17 Jun 2019 09:16:29 -0700 (PDT)
+Date:   Mon, 17 Jun 2019 09:16:25 -0700
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     Pavel Machek <pavel@ucw.cz>
+Cc:     Heiko Stuebner <heiko@sntech.de>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Douglas Anderson <dianders@chromium.org>
+Subject: Re: [PATCH] Revert "ARM: dts: rockchip: set PWM delay backlight
+ settings for Minnie"
+Message-ID: <20190617161625.GR137143@google.com>
+References: <20190614224533.169881-1-mka@chromium.org>
+ <20190616154143.GA28583@atrey.karlin.mff.cuni.cz>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20190616154143.GA28583@atrey.karlin.mff.cuni.cz>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Expose thermal readings as a HWMON device, so that it could be
-accessed using lm-sensors.
+Hi Pavel,
 
-Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
-Reviewed-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-Tested-by: Lucas Stach <l.stach@pengutronix.de>
-Cc: Chris Healy <cphealy@gmail.com>
-Cc: Lucas Stach <l.stach@pengutronix.de>
-Cc: Eduardo Valentin <edubezval@gmail.com>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Angus Ainslie (Purism) <angus@akkea.ca>
-Cc: linux-imx@nxp.com
-Cc: linux-pm@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
----
- drivers/thermal/qoriq_thermal.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+On Sun, Jun 16, 2019 at 05:41:43PM +0200, Pavel Machek wrote:
+> Hi!
+> 
+> > This reverts commit 288ceb85b505c19abe1895df068dda5ed20cf482.
+> > 
+> > According to the commit message the AUO B101EAN01 panel on minnie
+> > requires a PWM delay of 200 ms, however this is not what the
+> > datasheet says. The datasheet mentions a *max* delay of 200 ms
+> > for T2 ("delay from LCDVDD to black video generation") and T3
+> > ("delay from LCDVDD to HPD high"), which aren't related to the
+> > PWM. The backlight power sequence does not specify min/max
+> > constraints for T15 (time from PWM on to BL enable) or T16
+> > (time from BL disable to PWM off).
+> > 
+> > Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+> > ---
+> > Enric, if you think I misinterpreted the datasheet please holler!
+> 
+> Was this tested?
 
-diff --git a/drivers/thermal/qoriq_thermal.c b/drivers/thermal/qoriq_thermal.c
-index 2f8c5feb1a25..56f9927cf63c 100644
---- a/drivers/thermal/qoriq_thermal.c
-+++ b/drivers/thermal/qoriq_thermal.c
-@@ -12,6 +12,7 @@
- #include <linux/thermal.h>
- 
- #include "thermal_core.h"
-+#include "thermal_hwmon.h"
- 
- #define SITES_MAX	16
- 
-@@ -115,6 +116,11 @@ static int qoriq_tmu_register_tmu_zone(struct device *dev,
- 			regmap_write(qdata->regmap, REGS_TMR, TMR_DISABLE);
- 			return ret;
- 		}
-+
-+		if (devm_thermal_add_hwmon_sysfs(tzd))
-+			dev_warn(dev,
-+				 "Failed to add hwmon sysfs attributes\n");
-+
- 	}
- 
- 	return 0;
--- 
-2.21.0
+I performed limited manually testing.
 
+minnie ships with the Chrome OS 3.14 downstream, which doesn't include
+this delay, to my knowledge there are no open display related bugs for
+minnie. One could argue that a the configuration without the delay was
+widely field tested
+
+> Does patch being reverted actually break anything?
+
+To my knowledge it doesn't really break anything, however there is a
+short user perceptible delay between switching on the LCD and
+switching on the backlight. It's not the end of the world, but if it's
+not actually needed better avoid it.
+
+> If so, cc stable?
+
+I guess this is an edge case, were you could go either way. I'm fine
+with respinning and cc-ing stable.
