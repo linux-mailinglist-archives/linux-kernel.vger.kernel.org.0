@@ -2,75 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D5397479C1
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 07:45:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B5D348423
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 15:36:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725941AbfFQFpG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 01:45:06 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:54146 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725280AbfFQFpF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 01:45:05 -0400
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 9D02C83F45;
-        Mon, 17 Jun 2019 05:45:05 +0000 (UTC)
-Received: from sirius.home.kraxel.org (ovpn-116-33.ams2.redhat.com [10.36.116.33])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 031907BE7A;
-        Mon, 17 Jun 2019 05:45:01 +0000 (UTC)
-Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
-        id EB88B11AAF; Mon, 17 Jun 2019 07:45:00 +0200 (CEST)
-Date:   Mon, 17 Jun 2019 07:45:00 +0200
-From:   Gerd Hoffmann <kraxel@redhat.com>
-To:     Sam Bobroff <sbobroff@linux.ibm.com>
-Cc:     airlied@linux.ie, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, daniel@ffwll.ch,
-        virtualization@lists.linux-foundation.org
-Subject: Re: [EXTERNAL] Re: [PATCH 1/1] drm/bochs: Fix connector leak during
- driver unload
-Message-ID: <20190617054500.73am3e5yv5uzpga7@sirius.home.kraxel.org>
-References: <93b363ad62f4938d9ddf3e05b2a61e3f66b2dcd3.1558416473.git.sbobroff@linux.ibm.com>
- <20190521081029.dexgf7e7d3b7wxdw@sirius.home.kraxel.org>
- <20190617012033.GA1151@tungsten.ozlabs.ibm.com>
+        id S1727059AbfFQNgR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 09:36:17 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:18588 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726028AbfFQNgR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Jun 2019 09:36:17 -0400
+Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 04C8E30DBD65878B2088;
+        Mon, 17 Jun 2019 21:36:15 +0800 (CST)
+Received: from localhost.localdomain (10.175.34.53) by
+ DGGEMS405-HUB.china.huawei.com (10.3.19.205) with Microsoft SMTP Server id
+ 14.3.439.0; Mon, 17 Jun 2019 21:36:04 +0800
+From:   Xue Chaojing <xuechaojing@huawei.com>
+To:     <davem@davemloft.net>
+CC:     <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <luoshaokai@huawei.com>, <cloud.wangxiaoyun@huawei.com>,
+        <xuechaojing@huawei.com>, <chiqijun@huawei.com>,
+        <wulike1@huawei.com>
+Subject: [PATCH net-next v4 0/3] hinic: add rss support and rss parameters configuration
+Date:   Mon, 17 Jun 2019 05:45:58 +0000
+Message-ID: <20190617054601.3056-1-xuechaojing@huawei.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190617012033.GA1151@tungsten.ozlabs.ibm.com>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Mon, 17 Jun 2019 05:45:05 +0000 (UTC)
+Content-Type: text/plain
+X-Originating-IP: [10.175.34.53]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 17, 2019 at 11:20:34AM +1000, Sam Bobroff wrote:
-> On Tue, May 21, 2019 at 10:10:29AM +0200, Gerd Hoffmann wrote:
-> >   Hi,
-> > 
-> > The bug is in the driver, so ...
-> > 
-> > > Bisecting the issue for commits to drivers/gpu/drm/bochs/ points to:
-> > > 6579c39594ae ("drm/bochs: atomic: switch planes to atomic, wire up helpers.")
-> > > ... but the issue also seems to be due to a change in the generic drm code
-> > 
-> > ... this one is the culprit and should be listed.
-> > 
-> > > (reverting it separately fixes the issue):
-> > > 846c7dfc1193 ("drm/atomic: Try to preserve the crtc enabled state in drm_atomic_remove_fb, v2.")
-> > > ... so I've included both in the commit.  Is that the right thing to do?
-> > 
-> > That only triggers the driver bug.
-> > 
-> > I'll fix it up on commit,
-> >   Gerd
-> 
-> Sorry if I misunderstood, but were you going to take the patch and fix
-> it up or would you like me to post a v2?
+This series add rss support for HINIC driver and implement the ethtool
+interface related to rss parameter configuration. user can use ethtool
+configure rss parameters or show rss parameters.
 
-Patch is in drm-misc-next, I fixed it on commit.
+Xue Chaojing (3):
+  hinic: add rss support
+  hinic: move ethtool code into hinic_ethtool
+  hinic: add support for rss parameters with ethtool
 
-cheers,
-  Gerd
+ drivers/net/ethernet/huawei/hinic/Makefile    |   2 +-
+ drivers/net/ethernet/huawei/hinic/hinic_dev.h |  28 ++
+ .../net/ethernet/huawei/hinic/hinic_ethtool.c | 458 ++++++++++++++++++
+ .../net/ethernet/huawei/hinic/hinic_hw_dev.c  |  10 +-
+ .../net/ethernet/huawei/hinic/hinic_hw_dev.h  |  36 ++
+ .../net/ethernet/huawei/hinic/hinic_hw_wqe.h  |  16 +
+ .../net/ethernet/huawei/hinic/hinic_main.c    | 260 +++++-----
+ .../net/ethernet/huawei/hinic/hinic_port.c    | 389 +++++++++++++++
+ .../net/ethernet/huawei/hinic/hinic_port.h    | 129 +++++
+ 9 files changed, 1186 insertions(+), 142 deletions(-)
+ create mode 100644 drivers/net/ethernet/huawei/hinic/hinic_ethtool.c
+
+-- 
+2.17.1
 
