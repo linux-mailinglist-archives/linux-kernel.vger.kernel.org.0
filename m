@@ -2,92 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C2FA248800
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 17:55:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 192FF48803
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 17:56:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728552AbfFQPz0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 11:55:26 -0400
-Received: from casper.infradead.org ([85.118.1.10]:38560 "EHLO
-        casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725863AbfFQPz0 (ORCPT
+        id S1728580AbfFQP4K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 11:56:10 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:43942 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727999AbfFQP4J (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 11:55:26 -0400
+        Mon, 17 Jun 2019 11:56:09 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
-        MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:From:Date:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=+/5VA9ZuoXyLrG+BiiWydDZ/+oR7o3Vk3uSSQIEd16c=; b=gWNa6GaJ/p3/9QeUuIX0nsaxYa
-        2iVR/TxaDorIbG/lixhBnGTv/K/F8h/jNdQCRwn4NZpx55gNWejwIH9c7mghw2wHU3PEF6RMSVVTu
-        3jZSO6RQEurFZ/xoFL5QtSAzIA3CU1wYqyeBwatTPpNELSZOMYdeLcXNM2T7cLRcnqrxjIXVfjV9u
-        zO9KhUOkc32z7SPrBr7C9s/db4SLpfTyTOZkbgDp3R4iAi1JyugKBzaEwuLvL7ShOLTn0wooZ6FZ4
-        27otCZgKtA/D4/MwEjKdAlIaQS82//4REyeHJTueyzawe8KUFOmzeyshx08keOARG1UkgSvNNwtQU
-        qw6oNnvg==;
-Received: from 179.186.105.91.dynamic.adsl.gvt.net.br ([179.186.105.91] helo=coco.lan)
-        by casper.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hctyd-0000g2-26; Mon, 17 Jun 2019 15:55:23 +0000
-Date:   Mon, 17 Jun 2019 12:55:17 -0300
-From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-To:     Jonathan Corbet <corbet@lwn.net>
-Cc:     Markus Heiser <markus.heiser@darmarit.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab@infradead.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 14/14] docs: sphinx/kernel_abi.py: fix UTF-8 support
-Message-ID: <20190617125517.293fd50f@coco.lan>
-In-Reply-To: <20190617075608.696cf037@lwn.net>
-References: <cover.1560477540.git.mchehab+samsung@kernel.org>
-        <62c8ffe86df40c90299e80619a1cb5d50971c2c6.1560477540.git.mchehab+samsung@kernel.org>
-        <20190614161837.GA25206@kroah.com>
-        <20190614132530.7a013757@coco.lan>
-        <28aca947-4e88-7186-7f07-9a3ccb379649@darmarit.de>
-        <20190617061659.22596fc3@coco.lan>
-        <20190617075608.696cf037@lwn.net>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=mT2eF7yoMpbGbB1KKfo7CynIiGbmHbqUlQcCS6ws1RI=; b=NCFa6377EW/qugBywRCoVBAfQ
+        acgqut1lgAn+r20nUaLx8v5nuBaRoU6EeGM57Vfib2XU13lJhC+hJQWen9owL3HLDmdcmDquMyhYM
+        pfB81ZS0drLIcTXzoA6B3wKg+8oYrNeAyLxDW94U3pGeIVt6kbJ74OL1VzIAa4oaNeWZvf+T2o77X
+        43iCd+avZVLjZa0ZnycHYYM5oWIyagSAOB40K4eJoEyBUKmgp22P2i7TuY2moH9kxg6RDw7eaqM/I
+        XDih3DZ3l6OESu3Ic/pcTvFnoXb5uYM+JUzcDU1YOvI3DuuWqIX1vfD+KCC9S8ei4046MBP6lL8fS
+        rSe51LmcQ==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1hctz5-0001gi-8N; Mon, 17 Jun 2019 15:55:51 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id B9B7E201F4619; Mon, 17 Jun 2019 17:55:49 +0200 (CEST)
+Date:   Mon, 17 Jun 2019 17:55:49 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Qais Yousef <qais.yousef@arm.com>
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        linux-kernel@vger.kernel.org,
+        Pavankumar Kondeti <pkondeti@codeaurora.org>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Uwe Kleine-Konig <u.kleine-koenig@pengutronix.de>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Quentin Perret <quentin.perret@arm.com>
+Subject: Re: [PATCH v3 0/6] sched: Add new tracepoints required for EAS
+ testing
+Message-ID: <20190617155549.GI3436@hirez.programming.kicks-ass.net>
+References: <20190604111459.2862-1-qais.yousef@arm.com>
+ <20190617125122.ph4wb7mcvfjwpdce@e107158-lin.cambridge.arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190617125122.ph4wb7mcvfjwpdce@e107158-lin.cambridge.arm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Mon, 17 Jun 2019 07:56:08 -0600
-Jonathan Corbet <corbet@lwn.net> escreveu:
+On Mon, Jun 17, 2019 at 01:51:23PM +0100, Qais Yousef wrote:
+> Hi Peter
+> 
+> On 06/04/19 12:14, Qais Yousef wrote:
+> > Changes in v3:
+> > 	- Split pelt_rq TP into pelt_cfs, pelt_rq, pelt_dl and pelt_irq
+> > 	- Replace the fatty preprocessing wrappers with exported helper
+> > 	  functions to access data in unexported structures.
+> > 	- Remove the now unnecessary headers that were introduced in the
+> > 	  previous versions.
+> > 	- Postfix the tracepoints with '_tp' to make them standout more in the
+> > 	  code as bare tracepoints with no events associated.
+> > 	- Updated the example module in [2]
+> > 		- It demonstrates now how to convert the tracepoints into trace
+> > 		  events that extend the sched events subsystem in tracefs.
+> 
+> Does this look okay now? If you have further comments please let me know so
+> I can address them in time in hope it'd make it to the next merge window.
 
-> On Mon, 17 Jun 2019 06:16:59 -0300
-> Mauro Carvalho Chehab <mchehab+samsung@kernel.org> wrote:
->=20
-> > > No need to change, the emacs notation is also OK, see your link
-> > >=20
-> > >    """or (using formats recognized by popular editors):"""
-> > >=20
-> > >    https://www.python.org/dev/peps/pep-0263/#defining-the-encoding
-> > >=20
-> > > I prefer emacs notation, this is also evaluated by many other editors=
- / tools.   =20
-> >=20
-> > The usage of emacs notation is something that we don't like at the
-> > Linux Kernel. With ~4K developers per release, if we add tags to
-> > every single editor people use, it would be really messy, as one
-> > developer would be adding a tag and the next one replacing it by its
-> > some other favorite editor's tag. =20
->=20
-> So "we" like a language-specific notation instead?  That seems a little
-> strange to me.  Lots of things understand the Emacs notation, it doesn't
-> seem like something that needs to be actively avoided here.
-
-=46rom my side, I don't have any strong preference. Just saying that
-people usually complain when e-macs or vim specific tags appear at the
-Kernel. That's why I would prefer an editor-agnostic macro.
-
-It won't make any difference for me, anyway, as the editors I use
-don't recognize it.
-
-Whatever you want is OK to me, provided that we use the same notation on
-all Sphinx extensions... right now there's a mix of notations.
-
-Thanks,
-Mauro
+Picked them up (with some minor edits). I feel there is far too much
+#ifdef in patch #2, but I couldn't quickly come up with anything much
+saner either.
