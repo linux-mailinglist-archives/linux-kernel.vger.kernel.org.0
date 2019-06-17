@@ -2,98 +2,207 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4F0E447CCB
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 10:28:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 866A347C9F
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 10:27:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728061AbfFQI2J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 04:28:09 -0400
-Received: from mail-yb1-f202.google.com ([209.85.219.202]:51818 "EHLO
-        mail-yb1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728039AbfFQI2H (ORCPT
+        id S1727956AbfFQI1h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 04:27:37 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:57252 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726430AbfFQI1e (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 04:28:07 -0400
-Received: by mail-yb1-f202.google.com with SMTP id l3so10018457ybm.18
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2019 01:28:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=EsSBOAivkaHwi6D12Cv8eKMrxsdP+T6KPHsvwbMQYm0=;
-        b=C7EmzIa5t1p3To0eH+Btt+UKnk2zWoDCRcHlxDDez+EJGzuX5/OCX+VtE4f/+IBxBU
-         mGEeX0YKVsmTpTHqWxwdvH8hqIG3FELhUYhSlXikfd0094SnjH2SPp0dcm0R005htjts
-         6D/xP0jMwTBwY1jE9/ZxkY0+RYLVqYuSTLbgUEKmyJPUnfix1cU3MelrOVMNgQTKcGe9
-         cFGgfxb8WDzOX4wGL98vqfITN9oZvAZ6ZQuIixRxb8VtiucW8A40EeqqX9/1t6jRhzWX
-         B1r5Tw0xfFTV6bdsPqlvoEcQ0Y0C9kM0VAB1WtVyge15d2r4CngkCHzpB/WflMNr6YDF
-         mQ0Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=EsSBOAivkaHwi6D12Cv8eKMrxsdP+T6KPHsvwbMQYm0=;
-        b=fRe/4lYxvqS9lFgFFSmzyR1DyF8C3F3IHJ5zaLT6V8UsswpL1MFUrRWuBOxUesHMj9
-         4Hy2lgLhNIVTl3BjhOdySLt7H/uo/LRPEea7UCTRummSdLdbXbtjxC/fDxEj3FDExuzG
-         Xptm5rvFC0L6ClTWHh50O/nxUygc7qbx/c910VRz1Zh5eombdsRhn4mWXrbUjzqyAa+T
-         XgrFfTaqrGi/QVEX1EXITY0r7/6aQ3jSwy5jtobRjY7ByQ7HRgHoM860En6v6E5bmWtd
-         cHkKp950pm8iQ7PJ14/SY1uYOXnP6tT7wcCiH8al9U6K3em7RAYC89InZCW0Wffag7pd
-         hoKw==
-X-Gm-Message-State: APjAAAXtLjiOSxkWaNlcUap39b6wZH0PtAWT8u4Q8gfKz4a2EHHnEh3T
-        VfAOiXi4z+PrDgRmI4hywWtQfhiU7PwGBrW6ABJVNA==
-X-Google-Smtp-Source: APXvYqygaxiZVfos+CJ+dORKXgXbsd4xQo+Oa0IXMYwFW3jHO/QMUCpEYOoJXhDPIYS8TyQgU0luKfcb92R2UWUxnJ1x6Q==
-X-Received: by 2002:a25:7642:: with SMTP id r63mr57620375ybc.253.1560760086697;
- Mon, 17 Jun 2019 01:28:06 -0700 (PDT)
-Date:   Mon, 17 Jun 2019 01:26:13 -0700
-In-Reply-To: <20190617082613.109131-1-brendanhiggins@google.com>
-Message-Id: <20190617082613.109131-19-brendanhiggins@google.com>
-Mime-Version: 1.0
-References: <20190617082613.109131-1-brendanhiggins@google.com>
-X-Mailer: git-send-email 2.22.0.410.gd8fdbe21b5-goog
-Subject: [PATCH v5 18/18] MAINTAINERS: add proc sysctl KUnit test to PROC
- SYSCTL section
-From:   Brendan Higgins <brendanhiggins@google.com>
-To:     frowand.list@gmail.com, gregkh@linuxfoundation.org,
-        jpoimboe@redhat.com, keescook@google.com,
-        kieran.bingham@ideasonboard.com, mcgrof@kernel.org,
-        peterz@infradead.org, robh@kernel.org, sboyd@kernel.org,
-        shuah@kernel.org, tytso@mit.edu, yamada.masahiro@socionext.com
-Cc:     devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        kunit-dev@googlegroups.com, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kbuild@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-um@lists.infradead.org,
-        Alexander.Levin@microsoft.com, Tim.Bird@sony.com,
-        amir73il@gmail.com, dan.carpenter@oracle.com, daniel@ffwll.ch,
-        jdike@addtoit.com, joel@jms.id.au, julia.lawall@lip6.fr,
-        khilman@baylibre.com, knut.omang@oracle.com, logang@deltatee.com,
-        mpe@ellerman.id.au, pmladek@suse.com, rdunlap@infradead.org,
-        richard@nod.at, rientjes@google.com, rostedt@goodmis.org,
-        wfg@linux.intel.com, Brendan Higgins <brendanhiggins@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 17 Jun 2019 04:27:34 -0400
+Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5H8LscP011256
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2019 04:27:33 -0400
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2t65hjmexx-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2019 04:27:33 -0400
+Received: from localhost
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <freude@linux.ibm.com>;
+        Mon, 17 Jun 2019 09:27:31 +0100
+Received: from b06avi18626390.portsmouth.uk.ibm.com (9.149.26.192)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 17 Jun 2019 09:27:27 +0100
+Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
+        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x5H8RHes25887022
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 17 Jun 2019 08:27:17 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 5B8574203F;
+        Mon, 17 Jun 2019 08:27:25 +0000 (GMT)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 8422A4204C;
+        Mon, 17 Jun 2019 08:27:24 +0000 (GMT)
+Received: from [10.0.2.15] (unknown [9.152.224.114])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Mon, 17 Jun 2019 08:27:24 +0000 (GMT)
+Subject: Re: [PATCH v4 1/7] s390: vfio-ap: Refactor vfio_ap driver probe and
+ remove callbacks
+To:     Tony Krowiak <akrowiak@linux.ibm.com>, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Cc:     borntraeger@de.ibm.com, cohuck@redhat.com, frankja@linux.ibm.com,
+        david@redhat.com, mjrosato@linux.ibm.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, pmorel@linux.ibm.com,
+        pasic@linux.ibm.com, alex.williamson@redhat.com,
+        kwankhede@nvidia.com
+References: <1560454780-20359-1-git-send-email-akrowiak@linux.ibm.com>
+ <1560454780-20359-2-git-send-email-akrowiak@linux.ibm.com>
+From:   Harald Freudenberger <freude@linux.ibm.com>
+Date:   Mon, 17 Jun 2019 10:27:24 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
+MIME-Version: 1.0
+In-Reply-To: <1560454780-20359-2-git-send-email-akrowiak@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 19061708-0008-0000-0000-000002F462F7
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19061708-0009-0000-0000-000022617381
+Message-Id: <534f8ef2-ac7a-bda3-54cf-d475b2a47c02@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-17_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1906170079
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add entry for the new proc sysctl KUnit test to the PROC SYSCTL section.
-
-Signed-off-by: Brendan Higgins <brendanhiggins@google.com>
-Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Reviewed-by: Logan Gunthorpe <logang@deltatee.com>
----
- MAINTAINERS | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index f3fb3fc30853e..05cd8ffd33c8f 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -12718,6 +12718,7 @@ S:	Maintained
- F:	fs/proc/proc_sysctl.c
- F:	include/linux/sysctl.h
- F:	kernel/sysctl.c
-+F:	kernel/sysctl-test.c
- F:	tools/testing/selftests/sysctl/
- 
- PS3 NETWORK SUPPORT
--- 
-2.22.0.410.gd8fdbe21b5-goog
+On 13.06.19 21:39, Tony Krowiak wrote:
+> In order to limit the number of private mdev functions called from the
+> vfio_ap device driver as well as to provide a landing spot for dynamic
+> configuration code related to binding/unbinding AP queue devices to/from
+> the vfio_ap driver, the following changes are being introduced:
+>
+> * Move code from the vfio_ap driver's probe callback into a function
+>   defined in the mdev private operations file.
+>
+> * Move code from the vfio_ap driver's remove callback into a function
+>   defined in the mdev private operations file.
+>
+> Signed-off-by: Tony Krowiak <akrowiak@linux.ibm.com>
+> ---
+>  drivers/s390/crypto/vfio_ap_drv.c     | 27 ++++++++++-----------------
+>  drivers/s390/crypto/vfio_ap_ops.c     | 28 ++++++++++++++++++++++++++++
+>  drivers/s390/crypto/vfio_ap_private.h |  6 +++---
+>  3 files changed, 41 insertions(+), 20 deletions(-)
+>
+> diff --git a/drivers/s390/crypto/vfio_ap_drv.c b/drivers/s390/crypto/vfio_ap_drv.c
+> index 003662aa8060..3c60df70891b 100644
+> --- a/drivers/s390/crypto/vfio_ap_drv.c
+> +++ b/drivers/s390/crypto/vfio_ap_drv.c
+> @@ -49,15 +49,15 @@ MODULE_DEVICE_TABLE(vfio_ap, ap_queue_ids);
+>   */
+>  static int vfio_ap_queue_dev_probe(struct ap_device *apdev)
+>  {
+> -	struct vfio_ap_queue *q;
+> -
+> -	q = kzalloc(sizeof(*q), GFP_KERNEL);
+> -	if (!q)
+> -		return -ENOMEM;
+> -	dev_set_drvdata(&apdev->device, q);
+> -	q->apqn = to_ap_queue(&apdev->device)->qid;
+> -	q->saved_isc = VFIO_AP_ISC_INVALID;
+> +	int ret;
+> +	struct ap_queue *queue = to_ap_queue(&apdev->device);
+> +
+> +	ret = vfio_ap_mdev_probe_queue(queue);
+> +	if (ret)
+> +		return ret;
+> +
+>  	return 0;
+A simple
+  return vfio_ap_mdev_probe_queue(queue);
+would be enough.
+> +
+>  }
+>  
+>  /**
+> @@ -68,17 +68,10 @@ static int vfio_ap_queue_dev_probe(struct ap_device *apdev)
+>   */
+>  static void vfio_ap_queue_dev_remove(struct ap_device *apdev)
+>  {
+> -	struct vfio_ap_queue *q;
+> -	int apid, apqi;
+> +	struct ap_queue *queue = to_ap_queue(&apdev->device);
+>  
+>  	mutex_lock(&matrix_dev->lock);
+> -	q = dev_get_drvdata(&apdev->device);
+> -	dev_set_drvdata(&apdev->device, NULL);
+> -	apid = AP_QID_CARD(q->apqn);
+> -	apqi = AP_QID_QUEUE(q->apqn);
+> -	vfio_ap_mdev_reset_queue(apid, apqi, 1);
+> -	vfio_ap_irq_disable(q);
+> -	kfree(q);
+> +	vfio_ap_mdev_remove_queue(queue);
+>  	mutex_unlock(&matrix_dev->lock);
+>  }
+>  
+> diff --git a/drivers/s390/crypto/vfio_ap_ops.c b/drivers/s390/crypto/vfio_ap_ops.c
+> index 015174ff6f0a..bf2ab02b9a0b 100644
+> --- a/drivers/s390/crypto/vfio_ap_ops.c
+> +++ b/drivers/s390/crypto/vfio_ap_ops.c
+> @@ -1302,3 +1302,31 @@ void vfio_ap_mdev_unregister(void)
+>  {
+>  	mdev_unregister_device(&matrix_dev->device);
+>  }
+> +
+> +int vfio_ap_mdev_probe_queue(struct ap_queue *queue)
+> +{
+> +	struct vfio_ap_queue *q;
+> +
+> +	q = kzalloc(sizeof(*q), GFP_KERNEL);
+> +	if (!q)
+> +		return -ENOMEM;
+> +	dev_set_drvdata(&queue->ap_dev.device, q);
+> +	q->apqn = queue->qid;
+> +	q->saved_isc = VFIO_AP_ISC_INVALID;
+> +
+> +	return 0;
+> +}
+> +
+> +void vfio_ap_mdev_remove_queue(struct ap_queue *queue)
+> +{
+> +	struct vfio_ap_queue *q;
+> +	int apid, apqi;
+> +
+> +	q = dev_get_drvdata(&queue->ap_dev.device);
+> +	dev_set_drvdata(&queue->ap_dev.device, NULL);
+> +	apid = AP_QID_CARD(q->apqn);
+> +	apqi = AP_QID_QUEUE(q->apqn);
+> +	vfio_ap_mdev_reset_queue(apid, apqi, 1);
+> +	vfio_ap_irq_disable(q);
+> +	kfree(q);
+> +}
+> diff --git a/drivers/s390/crypto/vfio_ap_private.h b/drivers/s390/crypto/vfio_ap_private.h
+> index f46dde56b464..5cc3c2ebf151 100644
+> --- a/drivers/s390/crypto/vfio_ap_private.h
+> +++ b/drivers/s390/crypto/vfio_ap_private.h
+> @@ -90,8 +90,6 @@ struct ap_matrix_mdev {
+>  
+>  extern int vfio_ap_mdev_register(void);
+>  extern void vfio_ap_mdev_unregister(void);
+> -int vfio_ap_mdev_reset_queue(unsigned int apid, unsigned int apqi,
+> -			     unsigned int retry);
+>  
+>  struct vfio_ap_queue {
+>  	struct ap_matrix_mdev *matrix_mdev;
+> @@ -100,5 +98,7 @@ struct vfio_ap_queue {
+>  #define VFIO_AP_ISC_INVALID 0xff
+>  	unsigned char saved_isc;
+>  };
+> -struct ap_queue_status vfio_ap_irq_disable(struct vfio_ap_queue *q);
+> +int vfio_ap_mdev_probe_queue(struct ap_queue *queue);
+> +void vfio_ap_mdev_remove_queue(struct ap_queue *queue);
+> +
+>  #endif /* _VFIO_AP_PRIVATE_H_ */
 
