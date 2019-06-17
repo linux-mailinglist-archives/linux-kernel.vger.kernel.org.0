@@ -2,70 +2,149 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D8FD0482F4
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 14:50:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B5E5F47991
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 07:01:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726887AbfFQMtm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 08:49:42 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:46938 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725973AbfFQMtm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 08:49:42 -0400
-Received: by mail-qt1-f193.google.com with SMTP id h21so10424266qtn.13
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2019 05:49:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=d6cp5lLEYX1NgjT7O9JHG7TIte4Jp7jyu/1K24ySFWg=;
-        b=ktbQvFsJIf+N1fkXir10WlSccsP/1xfmsSWZa5mjM94aoc04b7AZ/pWGv8A4BdzF33
-         pWX/eXVWI3v3/CtafE4u22xrRuB6IUgmvJLr8+Acsa3n/vTJ4bmPNFhCMaBmPIQUWTv5
-         A9SqF/OCDsY+Kk8tBUWJuUY7INUyjKyaYmiK07Cj4feVm8YbxVgKHUh/6opXsPLUCvXG
-         czymtAyMGq9RxSjzhsYAxgPc3VtfWsSPWAKX/+thxq5jcRs5MYONHmwgYxtd0Np7Uh+7
-         QVWkZguv+6KuzFuEYGh7Y29ejYa5M4nR7HKT8JhTVlN9R8Zt1Lu9R267M6bHj/44Yu2T
-         YVbQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=d6cp5lLEYX1NgjT7O9JHG7TIte4Jp7jyu/1K24ySFWg=;
-        b=KwvV6gIssaz2RsMUs8qDvK0uL/6zlR6YL0O9mOIQNRFRwjYaxONUtIGztzjgvsY9aF
-         qYUWLJPg2BLFGLiAm6FIwBnuRn1WczO9p6gStIpgY4kfhdTdxJjDtYHmUu8G4We3GJR9
-         VmR2h3mMn9qROOoB+AJqMIEe0sj0tUBC+gvqkm35dDyKCVs72sohpOhBSK7sDF0JKkLf
-         IvBd99ivLB8zRXv9GX4NJqpaOFvCjsicHMoiGstXfXZF8AznX/rBPhDKxDGh2sVuHkti
-         tzE7mN6lKrL3h5Ukbwc2Q3fhGb5W0wvEJiYt/Phudpn/F57r30rDYMZAEMOsivDUIquV
-         3MQQ==
-X-Gm-Message-State: APjAAAUzk1FVChinxYW/O8D9nLcwwUCI/ZqCIebYvZdgN/EbZuoh+plh
-        7W/R2PURNM/ich8Z341RwIAY51JJywHwjbLxRQ==
-X-Google-Smtp-Source: APXvYqz4Vm5pQARMrZaAtyB6WEMg7T4Ny7+8+8wYOVrstwsWprpf7FHbwV6mwHskEkJkQmsN51bnhk9aVc9yGuTMIq0=
-X-Received: by 2002:a0c:9274:: with SMTP id 49mr5728943qvz.119.1560775781353;
- Mon, 17 Jun 2019 05:49:41 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:ac8:231c:0:0:0:0:0 with HTTP; Mon, 17 Jun 2019 05:49:40
- -0700 (PDT)
-Reply-To: eddywilliam0002@gmail.com
-From:   eddy william <smithhason13@gmail.com>
-Date:   Mon, 17 Jun 2019 14:49:40 +0200
-Message-ID: <CAE9dMzZbys2bf_9ytzsrf+UwgZupAbS2CS=va2=eSJ63woV4yQ@mail.gmail.com>
-Subject: hello
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+        id S1726063AbfFQFBZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 01:01:25 -0400
+Received: from mga01.intel.com ([192.55.52.88]:51879 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725372AbfFQFBY (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
+        Mon, 17 Jun 2019 01:01:24 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Jun 2019 22:01:24 -0700
+X-ExtLoop1: 1
+Received: from skl.sh.intel.com ([10.239.159.132])
+  by fmsmga008.fm.intel.com with ESMTP; 16 Jun 2019 22:01:22 -0700
+From:   Jin Yao <yao.jin@linux.intel.com>
+To:     acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
+        mingo@redhat.com, alexander.shishkin@linux.intel.com
+Cc:     Linux-kernel@vger.kernel.org, ak@linux.intel.com,
+        kan.liang@intel.com, yao.jin@intel.com,
+        Jin Yao <yao.jin@linux.intel.com>
+Subject: [PATCH v3 0/7] perf diff: diff cycles at basic block level
+Date:   Mon, 17 Jun 2019 20:50:50 +0800
+Message-Id: <1560775857-22355-1-git-send-email-yao.jin@linux.intel.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello
+In some cases small changes in hot loops can show big differences.
+But it's difficult to identify these differences.
 
-My name is Eddy William I am a lawyer by profession. I wish to offer you
-the next of kin to my client. You will inherit the sum of ($14.2 Million)
-dollars my client left in the bank before his death.
+perf diff currently can only diff symbols (functions). We can also expand
+it to diff cycles of individual programs blocks as reported by timed LBR.
+This would allow to identify changes in specific code accurately.
 
-My client is a citizen of your country who died in auto crash with his wife
-and only son. I will be entitled with 50% of the total fund while 50% will
-be for you.
+With this patch set, for example,
 
-Please contact my private email here for more details:eddywilliam0002@gmail.com
+ # perf record -b ./div
+ # perf record -b ./div
+ # perf diff -c cycles
 
-Many thanks in advance,
-Mr.Eddy William,
+ # Event 'cycles'
+ #
+ # Baseline         Block cycles diff [start:end]  Shared Object     Symbol
+ # ........  ....................................  ................  ....................................
+ #
+     49.03%        -9 [         4ef:         520]  div               [.] main
+     49.03%         0 [         4e8:         4ea]  div               [.] main
+     49.03%         0 [         4ef:         500]  div               [.] main
+     49.03%         0 [         4ef:         51c]  div               [.] main
+     49.03%         0 [         4ef:         535]  div               [.] main
+     18.82%         0 [       3ac40:       3ac4d]  libc-2.23.so      [.] __random_r
+     18.82%         0 [       3ac40:       3ac5c]  libc-2.23.so      [.] __random_r
+     18.82%         0 [       3ac40:       3ac76]  libc-2.23.so      [.] __random_r
+     18.82%         0 [       3ac40:       3ac88]  libc-2.23.so      [.] __random_r
+     18.82%         0 [       3ac90:       3ac9c]  libc-2.23.so      [.] __random_r
+     16.29%        -8 [       3aac0:       3aac0]  libc-2.23.so      [.] __random
+     16.29%         0 [       3aac0:       3aad2]  libc-2.23.so      [.] __random
+     16.29%         0 [       3aae0:       3aae7]  libc-2.23.so      [.] __random
+     16.29%         0 [       3ab03:       3ab0f]  libc-2.23.so      [.] __random
+     16.29%         0 [       3ab14:       3ab1b]  libc-2.23.so      [.] __random
+     16.29%         0 [       3ab28:       3ab2e]  libc-2.23.so      [.] __random
+     16.29%         0 [       3ab4a:       3ab53]  libc-2.23.so      [.] __random
+      8.11%         0 [         640:         644]  div               [.] compute_flag
+      8.11%         0 [         649:         659]  div               [.] compute_flag
+      5.46%         0 [       3af60:       3af60]  libc-2.23.so      [.] rand
+      5.46%         0 [       3af60:       3af64]  libc-2.23.so      [.] rand
+      2.25%         0 [         490:         490]  div               [.] rand@plt
+      0.01%        26 [      c00a27:      c00a27]  [kernel.vmlinux]  [k] native_irq_return_iret
+      0.00%      -157 [      2bf9f2:      2bfa63]  [kernel.vmlinux]  [k] update_blocked_averages
+      0.00%       -56 [      2bf980:      2bf9d3]  [kernel.vmlinux]  [k] update_blocked_averages
+      0.00%        48 [      2bf934:      2bf942]  [kernel.vmlinux]  [k] update_blocked_averages
+      0.00%         3 [      2bfb38:      2bfb67]  [kernel.vmlinux]  [k] update_blocked_averages
+
+The 'cycles' is a new perf-diff computation selection, which enables
+the displaying of cycles difference of same program basic block amongst
+two perf.data. The program basic block is the code block between two
+branches in a function.
+
+ v3:
+ ---
+ In v3, the major change is to move most of block stuffs from
+ 'struct hist_entry' to new structure 'struct block_hist' and
+ update the code accordingly. But we still have to keep the 
+ block_info in 'struct hist_entry' since we need to compare by 
+ block info when inserting new entry to hists.
+
+ Others are minor changes, such as abs() -> labs(), removing
+ duplicated ops and etc.
+
+ Changed patches:
+  perf diff: Use hists to manage basic blocks per symbol
+  perf diff: Link same basic blocks among different data
+  perf diff: Print the basic block cycles diff
+
+ v2:
+ ---
+ Keep standard perf diff format.
+
+ Following is the v1 output.
+
+ # perf diff --basic-block
+
+ # Cycles diff  Basic block (start:end)
+ # ...........  .......................
+ #
+          -208  hrtimer_interrupt (30b9e0:30ba42)
+          -157  update_blocked_averages (2bf9f2:2bfa63)
+          -126  interrupt_entry (c00880:c0093a)
+           -86  hrtimer_interrupt (30bb29:30bb32)
+           -74  hrtimer_interrupt (30ba65:30bac4)
+           -56  update_blocked_averages (2bf980:2bf9d3)
+            48  update_blocked_averages (2bf934:2bf942)
+           -35  native_write_msr (267900:26790b)
+            26  native_irq_return_iret (c00a27:c00a27)
+            22  rcu_check_callbacks (2febb6:2febdc)
+           -21  __hrtimer_run_queues (30b220:30b2a3)
+            19  pvclock_gtod_notify (14ba0:14c1b)
+           -18  task_tick_fair (2c5d29:2c5d41)
+
+Jin Yao (7):
+  perf util: Create block_info structure
+  perf util: Add block_info in hist_entry
+  perf diff: Check if all data files with branch stacks
+  perf diff: Use hists to manage basic blocks per symbol
+  perf diff: Link same basic blocks among different data
+  perf diff: Print the basic block cycles diff
+  perf diff: Documentation -c cycles option
+
+ tools/perf/Documentation/perf-diff.txt |  14 +-
+ tools/perf/builtin-diff.c              | 383 ++++++++++++++++++++++++++++++++-
+ tools/perf/ui/stdio/hist.c             |  27 +++
+ tools/perf/util/hist.c                 |  40 +++-
+ tools/perf/util/hist.h                 |   9 +
+ tools/perf/util/sort.h                 |  13 ++
+ tools/perf/util/symbol.c               |  22 ++
+ tools/perf/util/symbol.h               |  23 ++
+ tools/perf/util/symbol_conf.h          |   1 +
+ 9 files changed, 522 insertions(+), 10 deletions(-)
+
+-- 
+2.7.4
+
