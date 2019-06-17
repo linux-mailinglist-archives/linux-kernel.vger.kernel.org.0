@@ -2,86 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 997F048B81
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 20:11:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1ED7048BCD
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 20:21:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727611AbfFQSLU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 14:11:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45226 "EHLO mail.kernel.org"
+        id S1726669AbfFQSVO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 14:21:14 -0400
+Received: from mga03.intel.com ([134.134.136.65]:18866 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726091AbfFQSLU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 14:11:20 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C1BAF208C4;
-        Mon, 17 Jun 2019 18:11:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560795079;
-        bh=k/6IUap+LJ3ImKD1Dt0WyP5prD5549EXDjA7xO8kXVQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=PQ8yE8qayeS6FAihpMEK+9X7BTnf5UzlCr2WoM5lREbZitC7xzhPQRRR/abvR9Djh
-         uRrdOkm6g4/14fkiM35lNnR9nPFjK8r49QHmbZdCE3PO+mUoWfJDeGEdniCo2w2JQT
-         MLN+Hw3g6+CqaO+CQ72C5ItP51r42RqociYZHBpM=
-Date:   Mon, 17 Jun 2019 20:11:16 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Cc:     Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Mauro Carvalho Chehab <mchehab@infradead.org>,
-        linux-kernel@vger.kernel.org,
-        ksummit-discuss@lists.linuxfoundation.org
-Subject: Re: [PATCH RFC] scripts: add a script to handle
- Documentation/features
-Message-ID: <20190617181116.GA17114@kroah.com>
-References: <20190617142117.76478570@coco.lan>
- <98ce589a7c50e2693ab6be158e03afde19aed81e.1560794401.git.mchehab+samsung@kernel.org>
+        id S1725764AbfFQSVO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Jun 2019 14:21:14 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Jun 2019 11:21:13 -0700
+X-ExtLoop1: 1
+Received: from romley-ivt3.sc.intel.com ([172.25.110.60])
+  by fmsmga004.fm.intel.com with ESMTP; 17 Jun 2019 11:21:13 -0700
+Date:   Mon, 17 Jun 2019 11:11:42 -0700
+From:   Fenghua Yu <fenghua.yu@intel.com>
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        H Peter Anvin <hpa@zytor.com>,
+        Ashok Raj <ashok.raj@intel.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Ravi V Shankar <ravi.v.shankar@intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>, x86 <x86@kernel.org>
+Subject: Re: [PATCH v4 3/5] x86/umwait: Add sysfs interface to control umwait
+ C0.2 state
+Message-ID: <20190617181142.GA217081@romley-ivt3.sc.intel.com>
+References: <1559944837-149589-1-git-send-email-fenghua.yu@intel.com>
+ <1559944837-149589-4-git-send-email-fenghua.yu@intel.com>
+ <20190611085410.GT3436@hirez.programming.kicks-ass.net>
+ <0D67CEAC-9710-4ECB-9248-75B48542FF82@amacapital.net>
+ <20190611172717.GC3436@hirez.programming.kicks-ass.net>
+ <CALCETrW9gWtdHC3-b-VuWms5RRsSFuhhP1RsGrPDm0_bHZXK_A@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <98ce589a7c50e2693ab6be158e03afde19aed81e.1560794401.git.mchehab+samsung@kernel.org>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CALCETrW9gWtdHC3-b-VuWms5RRsSFuhhP1RsGrPDm0_bHZXK_A@mail.gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 17, 2019 at 03:05:07PM -0300, Mauro Carvalho Chehab wrote:
-> The Documentation/features contains a set of parseable files.
-> It is not worth converting them to ReST format, as they're
-> useful the way it is. It is, however, interesting to parse
-> them and produce output on different formats:
+On Mon, Jun 17, 2019 at 08:14:44AM -0700, Andy Lutomirski wrote:
+> On Tue, Jun 11, 2019 at 10:27 AM Peter Zijlstra <peterz@infradead.org> wrote:
+> >
+> >
+> > (can you, perchance, look at a MUA that isn't 'broken' ?)
+> >
+> > On Tue, Jun 11, 2019 at 09:04:30AM -0700, Andy Lutomirski wrote:
+> > >
+> > >
+> > > > On Jun 11, 2019, at 1:54 AM, Peter Zijlstra <peterz@infradead.org> wrote:
+> > > >
+> > > >> On Fri, Jun 07, 2019 at 03:00:35PM -0700, Fenghua Yu wrote:
+> > > >> C0.2 state in umwait and tpause instructions can be enabled or disabled
+> > > >> on a processor through IA32_UMWAIT_CONTROL MSR register.
+> > > >>
+> > > >> By default, C0.2 is enabled and the user wait instructions result in
+> > > >> lower power consumption with slower wakeup time.
+> > > >>
+> > > >> But in real time systems which require faster wakeup time although power
+> > > >> savings could be smaller, the administrator needs to disable C0.2 and all
+> > > >> C0.2 requests from user applications revert to C0.1.
+> > > >>
+> > > >> A sysfs interface "/sys/devices/system/cpu/umwait_control/enable_c02" is
+> > > >> created to allow the administrator to control C0.2 state during run time.
+> > > >
+> > > > We already have an interface for applications to convey their latency
+> > > > requirements (pm-qos). We do not need another magic sys variable.
+> > >
+> > > I’m not sure I agree.  This isn’t an overall latency request, and
+> > > setting an absurdly low pm_qos will badly hurt idle power and turbo
+> > > performance.  Also, pm_qos isn’t exactly beautiful.
+> > >
+> > > (I speak from some experience. I may be literally the only person to
+> > > write a driver that listens to dev_pm_qos latency requests. And, in my
+> > > production box, I directly disable c states instead of messing with
+> > > pm_qos.)
+> > >
+> > > I do wonder whether anyone will ever use this particular control, though.
+> >
+> > I agree that pm-qos is pretty terrible; but that doesn't mean we should
+> > just add random control files all over the place.
 > 
-> 1) Output the contents of a feature in ReST format;
+> I don't think pm-qos is expressive enough.  It seems entirely
+> reasonable to want to do a C0.1 wait for lower latency *while waiting*
+> but still want full power-saving idle when not waiting.
 > 
-> 2) Output what features a given architecture supports;
-> 
-> 3) Output a matrix with features x architectures.
-> 
-> Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-> ---
-> 
-> As commented at KS mailing list, converting the Documentation/features
-> file to ReST may not be the best way to handle it. 
-> 
-> This script allows validating the features files and to  generate ReST files 
-> on three different formats.
-> 
-> The goal is to support it via a sphinx extension, in order to be able to add
-> the features inside the Kernel documentation.
-> 
->  scripts/get_feat.pl | 470 ++++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 470 insertions(+)
->  create mode 100755 scripts/get_feat.pl
-> 
-> diff --git a/scripts/get_feat.pl b/scripts/get_feat.pl
-> new file mode 100755
-> index 000000000000..c5a267b12f49
-> --- /dev/null
-> +++ b/scripts/get_feat.pl
-> @@ -0,0 +1,470 @@
-> +#!/usr/bin/perl
-> +
+> Do we even know what the C0.2 and C0.1 latencies are?  And why is this
+> thing an MSR instead of a flag passed to UMWAIT?
 
-No SPDX line :(
+I will still keep this sysfs interface in the next version of patches, right?
 
+Thanks.
+
+-Fenghua
