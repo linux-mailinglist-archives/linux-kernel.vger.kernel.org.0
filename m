@@ -2,154 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ABAC247C0B
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 10:22:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C7D8147BF2
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 10:16:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727140AbfFQIWR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 04:22:17 -0400
-Received: from aclms3.advantech.com.tw ([125.252.70.86]:40383 "EHLO
-        ACLMS3.advantech.com.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725791AbfFQIWR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 04:22:17 -0400
-Received: from taipei08.ADVANTECH.CORP (unverified [172.20.0.235]) by ACLMS3.advantech.com.tw
- (Clearswift SMTPRS 5.6.0) with ESMTP id <Td872a26ee3ac1401c810b8@ACLMS3.advantech.com.tw>;
- Mon, 17 Jun 2019 16:16:23 +0800
-From:   <Amy.Shih@advantech.com.tw>
-To:     <she90122@gmail.com>
-CC:     <amy.shih@advantech.com.tw>, <oakley.ding@advantech.com.tw>,
-        <jia.sui@advantech.com.cn>, Jean Delvare <jdelvare@suse.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        <linux-hwmon@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [v2 8/9] hwmon: (nct7904) Fix wrong attribute names for temperature.
-Date:   Mon, 17 Jun 2019 08:16:09 +0000
-Message-ID: <f499d63b7a62447fedf466399f1f924eea6f016a.1560756733.git.amy.shih@advantech.com.tw>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <928e46508bbe1ebc0763c3d2403a5aebe95af552.1560756733.git.amy.shih@advantech.com.tw>
-References: <928e46508bbe1ebc0763c3d2403a5aebe95af552.1560756733.git.amy.shih@advantech.com.tw>
+        id S1727478AbfFQIQe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 04:16:34 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:59592 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725837AbfFQIQd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Jun 2019 04:16:33 -0400
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 8E8E33082E70;
+        Mon, 17 Jun 2019 08:16:33 +0000 (UTC)
+Received: from [10.72.12.67] (ovpn-12-67.pek2.redhat.com [10.72.12.67])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 3A8CE101F96B;
+        Mon, 17 Jun 2019 08:16:30 +0000 (UTC)
+Subject: Re: [PATCH] Fix tun: wake up waitqueues after IFF_UP is set
+From:   Jason Wang <jasowang@redhat.com>
+To:     Fei Li <lifei.shirley@bytedance.com>, davem@davemloft.net,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     zhengfeiran@bytedance.com, duanxiongchun@bytedance.com
+References: <20190617073320.69015-1-lifei.shirley@bytedance.com>
+ <28bef625-ce70-20a1-7d8b-296cd43015c4@redhat.com>
+Message-ID: <2d05dce3-e19a-2f0f-8b74-8defae38640d@redhat.com>
+Date:   Mon, 17 Jun 2019 16:16:28 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [172.17.10.58]
-X-ClientProxiedBy: ACLDAG.ADVANTECH.CORP (172.20.2.88) To
- taipei08.ADVANTECH.CORP (172.20.0.235)
-X-StopIT: No
+In-Reply-To: <28bef625-ce70-20a1-7d8b-296cd43015c4@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.46]); Mon, 17 Jun 2019 08:16:33 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "amy.shih" <amy.shih@advantech.com.tw>
 
-Emergency attributes without crit attributes are not acceptable.
-In datasheet there are registers labeled "critical", and there is
-no mention of "emergency". Thus, set the attribute names from
-"temp[1-*]_emergency" and "temp[1-*]_emergency_hyst" to
-"temp[1-*]_crit" and "temp[1-*]_crit_hyst".
+On 2019/6/17 下午4:10, Jason Wang wrote:
+>
+> On 2019/6/17 下午3:33, Fei Li wrote:
+>> Currently after setting tap0 link up, the tun code wakes tx/rx waited
+>> queues up in tun_net_open() when .ndo_open() is called, however the
+>> IFF_UP flag has not been set yet. If there's already a wait queue, it
+>> would fail to transmit when checking the IFF_UP flag in tun_sendmsg().
+>> Then the saving vhost_poll_start() will add the wq into wqh until it
+>> is waken up again. Although this works when IFF_UP flag has been set
+>> when tun_chr_poll detects; this is not true if IFF_UP flag has not
+>> been set at that time. Sadly the latter case is a fatal error, as
+>> the wq will never be waken up in future unless later manually
+>> setting link up on purpose.
+>>
+>> Fix this by moving the wakeup process into the NETDEV_UP event
+>> notifying process, this makes sure IFF_UP has been set before all
+>> waited queues been waken up.
 
-Signed-off-by: amy.shih <amy.shih@advantech.com.tw>
----
-Changes in v2:
-- Fix wrong attribute names for temperature.
 
- drivers/hwmon/nct7904.c | 48 ++++++++++++++++++++---------------------
- 1 file changed, 24 insertions(+), 24 deletions(-)
+Btw, the title needs some tweak. E.g you need use "net" as prefix since 
+it's a fix for net.git and "Fix" could be removed like:
 
-diff --git a/drivers/hwmon/nct7904.c b/drivers/hwmon/nct7904.c
-index c74f919c0181..fc145c73a4e7 100644
---- a/drivers/hwmon/nct7904.c
-+++ b/drivers/hwmon/nct7904.c
-@@ -407,12 +407,12 @@ static int nct7904_read_temp(struct device *dev, u32 attr, int channel,
- 		reg2 = TEMP_CH1_CH_REG;
- 		reg3 = DTS_T_CPU1_CH_REG;
- 		break;
--	case hwmon_temp_emergency:
-+	case hwmon_temp_crit:
- 		reg1 = LTD_HV_LL_REG;
- 		reg2 = TEMP_CH1_W_REG;
- 		reg3 = DTS_T_CPU1_W_REG;
- 		break;
--	case hwmon_temp_emergency_hyst:
-+	case hwmon_temp_crit_hyst:
- 		reg1 = LTD_LV_LL_REG;
- 		reg2 = TEMP_CH1_WH_REG;
- 		reg3 = DTS_T_CPU1_WH_REG;
-@@ -454,8 +454,8 @@ static umode_t nct7904_temp_is_visible(const void *_data, u32 attr, int channel)
- 		break;
- 	case hwmon_temp_max:
- 	case hwmon_temp_max_hyst:
--	case hwmon_temp_emergency:
--	case hwmon_temp_emergency_hyst:
-+	case hwmon_temp_crit:
-+	case hwmon_temp_crit_hyst:
- 		if (channel < 5) {
- 			if (data->tcpu_mask & BIT(channel))
- 				return 0644;
-@@ -516,12 +516,12 @@ static int nct7904_write_temp(struct device *dev, u32 attr, int channel,
- 		reg2 = TEMP_CH1_CH_REG;
- 		reg3 = DTS_T_CPU1_CH_REG;
- 		break;
--	case hwmon_temp_emergency:
-+	case hwmon_temp_crit:
- 		reg1 = LTD_HV_LL_REG;
- 		reg2 = TEMP_CH1_W_REG;
- 		reg3 = DTS_T_CPU1_W_REG;
- 		break;
--	case hwmon_temp_emergency_hyst:
-+	case hwmon_temp_crit_hyst:
- 		reg1 = LTD_LV_LL_REG;
- 		reg2 = TEMP_CH1_WH_REG;
- 		reg3 = DTS_T_CPU1_WH_REG;
-@@ -799,32 +799,32 @@ static const struct hwmon_channel_info *nct7904_info[] = {
- 			   HWMON_PWM_INPUT | HWMON_PWM_ENABLE),
- 	HWMON_CHANNEL_INFO(temp,
- 			   HWMON_T_INPUT | HWMON_T_ALARM | HWMON_T_MAX |
--			   HWMON_T_MAX_HYST | HWMON_T_TYPE | HWMON_T_EMERGENCY |
--			   HWMON_T_EMERGENCY_HYST,
-+			   HWMON_T_MAX_HYST | HWMON_T_TYPE | HWMON_T_CRIT |
-+			   HWMON_T_CRIT_HYST,
- 			   HWMON_T_INPUT | HWMON_T_ALARM | HWMON_T_MAX |
--			   HWMON_T_MAX_HYST | HWMON_T_TYPE | HWMON_T_EMERGENCY |
--			   HWMON_T_EMERGENCY_HYST,
-+			   HWMON_T_MAX_HYST | HWMON_T_TYPE | HWMON_T_CRIT |
-+			   HWMON_T_CRIT_HYST,
- 			   HWMON_T_INPUT | HWMON_T_ALARM | HWMON_T_MAX |
--			   HWMON_T_MAX_HYST | HWMON_T_TYPE | HWMON_T_EMERGENCY |
--			   HWMON_T_EMERGENCY_HYST,
-+			   HWMON_T_MAX_HYST | HWMON_T_TYPE | HWMON_T_CRIT |
-+			   HWMON_T_CRIT_HYST,
- 			   HWMON_T_INPUT | HWMON_T_ALARM | HWMON_T_MAX |
--			   HWMON_T_MAX_HYST | HWMON_T_TYPE | HWMON_T_EMERGENCY |
--			   HWMON_T_EMERGENCY_HYST,
-+			   HWMON_T_MAX_HYST | HWMON_T_TYPE | HWMON_T_CRIT |
-+			   HWMON_T_CRIT_HYST,
- 			   HWMON_T_INPUT | HWMON_T_ALARM | HWMON_T_MAX |
--			   HWMON_T_MAX_HYST | HWMON_T_TYPE | HWMON_T_EMERGENCY |
--			   HWMON_T_EMERGENCY_HYST,
-+			   HWMON_T_MAX_HYST | HWMON_T_TYPE | HWMON_T_CRIT |
-+			   HWMON_T_CRIT_HYST,
- 			   HWMON_T_INPUT | HWMON_T_ALARM | HWMON_T_MAX |
--			   HWMON_T_MAX_HYST | HWMON_T_TYPE | HWMON_T_EMERGENCY |
--			   HWMON_T_EMERGENCY_HYST,
-+			   HWMON_T_MAX_HYST | HWMON_T_TYPE | HWMON_T_CRIT |
-+			   HWMON_T_CRIT_HYST,
- 			   HWMON_T_INPUT | HWMON_T_ALARM | HWMON_T_MAX |
--			   HWMON_T_MAX_HYST | HWMON_T_TYPE | HWMON_T_EMERGENCY |
--			   HWMON_T_EMERGENCY_HYST,
-+			   HWMON_T_MAX_HYST | HWMON_T_TYPE | HWMON_T_CRIT |
-+			   HWMON_T_CRIT_HYST,
- 			   HWMON_T_INPUT | HWMON_T_ALARM | HWMON_T_MAX |
--			   HWMON_T_MAX_HYST | HWMON_T_TYPE | HWMON_T_EMERGENCY |
--			   HWMON_T_EMERGENCY_HYST,
-+			   HWMON_T_MAX_HYST | HWMON_T_TYPE | HWMON_T_CRIT |
-+			   HWMON_T_CRIT_HYST,
- 			   HWMON_T_INPUT | HWMON_T_ALARM | HWMON_T_MAX |
--			   HWMON_T_MAX_HYST | HWMON_T_TYPE | HWMON_T_EMERGENCY |
--			   HWMON_T_EMERGENCY_HYST),
-+			   HWMON_T_MAX_HYST | HWMON_T_TYPE | HWMON_T_CRIT |
-+			   HWMON_T_CRIT_HYST),
- 	NULL
- };
- 
--- 
-2.17.1
+[PATCH net] tun: wake up waitqueues after IFF_UP is set.
 
+Thanks
+
+
+>>
+>> Signed-off-by: Fei Li <lifei.shirley@bytedance.com>
+>> ---
+>>   drivers/net/tun.c | 17 +++++++++--------
+>>   1 file changed, 9 insertions(+), 8 deletions(-)
+>>
+>> diff --git a/drivers/net/tun.c b/drivers/net/tun.c
+>> index c452d6d831dd..a3c9cab5a4d0 100644
+>> --- a/drivers/net/tun.c
+>> +++ b/drivers/net/tun.c
+>> @@ -1015,17 +1015,9 @@ static void tun_net_uninit(struct net_device 
+>> *dev)
+>>   static int tun_net_open(struct net_device *dev)
+>>   {
+>>       struct tun_struct *tun = netdev_priv(dev);
+>> -    int i;
+>>         netif_tx_start_all_queues(dev);
+>>   -    for (i = 0; i < tun->numqueues; i++) {
+>> -        struct tun_file *tfile;
+>> -
+>> -        tfile = rtnl_dereference(tun->tfiles[i]);
+>> - tfile->socket.sk->sk_write_space(tfile->socket.sk);
+>> -    }
+>> -
+>>       return 0;
+>>   }
+>>   @@ -3634,6 +3626,7 @@ static int tun_device_event(struct 
+>> notifier_block *unused,
+>>   {
+>>       struct net_device *dev = netdev_notifier_info_to_dev(ptr);
+>>       struct tun_struct *tun = netdev_priv(dev);
+>> +    int i;
+>>         if (dev->rtnl_link_ops != &tun_link_ops)
+>>           return NOTIFY_DONE;
+>> @@ -3643,6 +3636,14 @@ static int tun_device_event(struct 
+>> notifier_block *unused,
+>>           if (tun_queue_resize(tun))
+>>               return NOTIFY_BAD;
+>>           break;
+>> +    case NETDEV_UP:
+>> +        for (i = 0; i < tun->numqueues; i++) {
+>> +            struct tun_file *tfile;
+>> +
+>> +            tfile = rtnl_dereference(tun->tfiles[i]);
+>> + tfile->socket.sk->sk_write_space(tfile->socket.sk);
+>> +        }
+>> +        break;
+>>       default:
+>>           break;
+>>       }
+>
+>
+> Acked-by: Jason Wang <jasowang@redhat.com)
+>
