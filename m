@@ -2,87 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8A12D49121
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 22:15:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CA10E49149
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 22:24:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727470AbfFQUPE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 16:15:04 -0400
-Received: from mout.kundenserver.de ([217.72.192.73]:32941 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726048AbfFQUPE (ORCPT
+        id S1728678AbfFQUY4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 16:24:56 -0400
+Received: from pio-pvt-msa1.bahnhof.se ([79.136.2.40]:53890 "EHLO
+        pio-pvt-msa1.bahnhof.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726343AbfFQUYz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 16:15:04 -0400
-Received: from orion.localdomain ([77.2.173.233]) by mrelayeu.kundenserver.de
- (mreue109 [212.227.15.183]) with ESMTPSA (Nemesis) id
- 1MiJhQ-1iEl1c20F4-00fSZo; Mon, 17 Jun 2019 22:15:02 +0200
-From:   "Enrico Weigelt, metux IT consult" <info@metux.net>
-To:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] lib: devres: devm_ioremap_resource() make res parameter const
-Date:   Mon, 17 Jun 2019 22:15:01 +0200
-Message-Id: <1560802501-26956-1-git-send-email-info@metux.net>
-X-Mailer: git-send-email 1.9.1
-X-Provags-ID: V03:K1:YhnmhRqTRDS4Imrf/9UQ5zF6995Hzn41OF7sKC4+b6bM+zx3bBn
- zZ2cosTlwkUFatCnEl91fBtB82S8oIgXvoymBQVWTH+vb2a0aUrtY0vDyjyTYbchsvURquM
- +Vg+l2FqrGi/nmzpY7+fZHSfDPJhxEkeu1OLaR79bLfoff5Hyel7VQb4XeDfxLPWn2rOEmJ
- cCW6lbpCGARf0kA9RREsw==
+        Mon, 17 Jun 2019 16:24:55 -0400
+X-Greylist: delayed 396 seconds by postgrey-1.27 at vger.kernel.org; Mon, 17 Jun 2019 16:24:55 EDT
+Received: from localhost (localhost [127.0.0.1])
+        by pio-pvt-msa1.bahnhof.se (Postfix) with ESMTP id 98259404EC;
+        Mon, 17 Jun 2019 22:18:20 +0200 (CEST)
+Authentication-Results: pio-pvt-msa1.bahnhof.se;
+        dkim=pass (1024-bit key; unprotected) header.d=shipmail.org header.i=@shipmail.org header.b=mnafpFme;
+        dkim-atps=neutral
+X-Virus-Scanned: Debian amavisd-new at bahnhof.se
 X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:c+C4ZPlINKM=:P1uf8g7FqxdU75QuXNxLxa
- +ovI4iBKbFThrwp5tiRD8YEVbFP+jegnrnTsJpuYPea+s2VDxGqdXfm4Oh0aHbIR9L/2MwhSO
- 9byh0pTxWkNtO0Od1w1Lgr+5FG5izZJPj2muwwdXujEtqQp1mYqKvPkHSoGS5qKjBxRrGPYzM
- 2vcYbOWbMHTuvTi/tw44T8k/p9glITIoZ//rMIFX62KARk1OmYVYulUk9e1R3lrS0PYu4sML3
- 4EMSEgoPW9pdH9x78BUpOF8uFxmb0++8Six+LAVdsHnlGBq8kIqpj/ps8yfII//WWIhkMMDpc
- JZQQAo+mzbVvjjqXZT+fOfuepKJWSGkbBdGzW6jOrVVnIyehEnUUpYxXd9CxnLgJrGVDcGjUZ
- sDNA7YMLPuo4I2wr660gDPzWmUpUWHMTxPa7hC++XebNtfInc4B8We4pvQnS6dvq6o66Eq1FU
- pCTiOqpi1T1xtthXL8QnyD933VFSdZxcNqDLToymzUoGEHS1E5B+hFEqNjsNo6qLb4++r6f4Y
- BTQ5UevUj5EeyZM69g1dQGYyiIuDCA4TCkJhRC3tyfcm19rN6hOqnYMxj+piHwyvb7cMsqPQY
- MSesvKMBhrEOtziveG7gzxLTwNlcsN50MzoGDXdB2MG+lO7+eVeuCPFVRaQZdypF8CWQHZnls
- A6e2l6UepIxbCnSjgCXnVAqXI/hJEUhBEv4YiSB+S1Y6Juzwiyq+x6h27k79Cqc5H21TzEZvn
- mVE1j5xx79PQnnBN4cufp0vY4oyM3J/jZi5+vA==
+X-Spam-Score: -3.099
+X-Spam-Level: 
+X-Spam-Status: No, score=-3.099 tagged_above=-999 required=6.31
+        tests=[ALL_TRUSTED=-1, BAYES_00=-1.9, DKIM_SIGNED=0.1,
+        DKIM_VALID=-0.1, DKIM_VALID_AU=-0.1, DKIM_VALID_EF=-0.1,
+        URIBL_BLOCKED=0.001] autolearn=ham autolearn_force=no
+Received: from pio-pvt-msa1.bahnhof.se ([127.0.0.1])
+        by localhost (pio-pvt-msa1.bahnhof.se [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id wMzdDbcLcI35; Mon, 17 Jun 2019 22:18:05 +0200 (CEST)
+Received: from mail1.shipmail.org (h-205-35.A357.priv.bahnhof.se [155.4.205.35])
+        (Authenticated sender: mb878879)
+        by pio-pvt-msa1.bahnhof.se (Postfix) with ESMTPA id 3E26F3F806;
+        Mon, 17 Jun 2019 22:18:04 +0200 (CEST)
+Received: from localhost.localdomain.localdomain (h-205-35.A357.priv.bahnhof.se [155.4.205.35])
+        by mail1.shipmail.org (Postfix) with ESMTPSA id BA38A360195;
+        Mon, 17 Jun 2019 22:18:04 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=shipmail.org; s=mail;
+        t=1560802684; bh=PScipI5AHw+qLkcTJBwlmyceItjajNZI6ZkbYCpIp5o=;
+        h=From:To:Cc:Subject:Date:From;
+        b=mnafpFmeQNH0EL9PxDDtoS88L4EEKidwRycfzY5O4F6w5cYXRS9jQd/8Sp41m7vbP
+         IGa3xwnPcNIRFsIpwMtIL54qlzHImXSrhOKD0YrKYP4PMF8OYntCihTR0BEOx6vTCo
+         WT3MhJYxH40T/yuSsoFkU1z+efK2N3j+ckFX8dPU=
+From:   =?UTF-8?q?Thomas=20Hellstr=C3=B6m=20=28VMware=29?= 
+        <thomas@shipmail.org>
+To:     dri-devel@lists.freedesktop.org
+Cc:     linux-graphics-maintainer@vmware.com, pv-drivers@vmware.com,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v7 0/9] Emulated coherent graphics memory
+Date:   Mon, 17 Jun 2019 22:17:47 +0200
+Message-Id: <20190617201756.12587-1-thomas@shipmail.org>
+X-Mailer: git-send-email 2.20.1
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-devm_ioremap_resource() doesn't change the passed struct resource,
-so it can be a const pointer.
+Planning to merge this through the drm/vmwgfx tree soon, so if there
+are any objections, please speak up.
 
-Now, calls sites w/ fixed resources can declare them static.
-(in some cases possibly even __initconst)
+Graphics APIs like OpenGL 4.4 and Vulkan require the graphics driver
+to provide coherent graphics memory, meaning that the GPU sees any
+content written to the coherent memory on the next GPU operation that
+touches that memory, and the CPU sees any content written by the GPU
+to that memory immediately after any fence object trailing the GPU
+operation has signaled.
 
-Signed-off-by: Enrico Weigelt <info@metux.net>
----
- include/linux/device.h | 3 ++-
- lib/devres.c           | 3 ++-
- 2 files changed, 4 insertions(+), 2 deletions(-)
+Paravirtual drivers that otherwise require explicit synchronization
+needs to do this by hooking up dirty tracking to pagefault handlers
+and buffer object validation. This is a first attempt to do that for
+the vmwgfx driver.
 
-diff --git a/include/linux/device.h b/include/linux/device.h
-index 848fc71..4a295e3 100644
---- a/include/linux/device.h
-+++ b/include/linux/device.h
-@@ -704,7 +704,8 @@ extern unsigned long devm_get_free_pages(struct device *dev,
- 					 gfp_t gfp_mask, unsigned int order);
- extern void devm_free_pages(struct device *dev, unsigned long addr);
- 
--void __iomem *devm_ioremap_resource(struct device *dev, struct resource *res);
-+void __iomem *devm_ioremap_resource(struct device *dev,
-+				    const struct resource *res);
- 
- void __iomem *devm_of_iomap(struct device *dev,
- 			    struct device_node *node, int index,
-diff --git a/lib/devres.c b/lib/devres.c
-index 69bed2f..6a0e9bd 100644
---- a/lib/devres.c
-+++ b/lib/devres.c
-@@ -131,7 +131,8 @@ void devm_iounmap(struct device *dev, void __iomem *addr)
-  *	if (IS_ERR(base))
-  *		return PTR_ERR(base);
-  */
--void __iomem *devm_ioremap_resource(struct device *dev, struct resource *res)
-+void __iomem *devm_ioremap_resource(struct device *dev,
-+				    const struct resource *res)
- {
- 	resource_size_t size;
- 	void __iomem *dest_ptr;
--- 
-1.9.1
+The mm patches has been out for RFC. I think I have addressed all the
+feedback I got, except a possible softdirty breakage. But although the
+dirty-tracking and softdirty may write-protect PTEs both care about,
+that shouldn't really cause any operation interference. In particular
+since we use the hardware dirty PTE bits and softdirty uses other PTE bits.
 
+For the TTM changes they are hopefully in line with the long-term
+strategy of making helpers out of what's left of TTM.
+
+The code has been tested and exercised by a tailored version of mesa
+where we disable all explicit synchronization and assume graphics memory
+is coherent. The performance loss varies of course; a typical number is
+around 5%.
+
+Changes v1-v2:
+- Addressed a number of typos and formatting issues.
+- Added a usage warning for apply_to_pfn_range() and apply_to_page_range()
+- Re-evaluated the decision to use apply_to_pfn_range() rather than
+  modifying the pagewalk.c. It still looks like generically handling the
+  transparent huge page cases requires the mmap_sem to be held at least
+  in read mode, so sticking with apply_to_pfn_range() for now.
+- The TTM page-fault helper vma copy argument was scratched in favour of
+  a pageprot_t argument.
+Changes v3:
+- Adapted to upstream API changes.
+Changes v4:
+- Adapted to upstream mmu_notifier changes. (Jerome?)
+- Fixed a couple of warnings on 32-bit x86
+- Fixed image offset computation on multisample images.
+Changes v5:
+- Updated usage warning in patch 3/9 after review comments from Nadav Amit.
+Changes v6:
+- Updated exports of new functionality in patch 3/9 to EXPORT_SYMBOL_GPL
+  after review comments from Christoph Hellwig.
+Changes v7:
+- Re-added removed comment in ttm_bo_vm.c (Review by Hillf Danton)
+- Fixed an error path regression in ttm_bo_vm.c
+  
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Matthew Wilcox <willy@infradead.org>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Rik van Riel <riel@surriel.com>
+Cc: Minchan Kim <minchan@kernel.org>
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: Huang Ying <ying.huang@intel.com>
+Cc: Souptick Joarder <jrdr.linux@gmail.com>
+Cc: "Jérôme Glisse" <jglisse@redhat.com>
+Cc: "Christian König" <christian.koenig@amd.com>
+Cc: linux-mm@kvack.org
