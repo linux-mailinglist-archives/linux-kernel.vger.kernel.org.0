@@ -2,40 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1187649305
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 23:26:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B9FF492C2
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 23:23:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730256AbfFQV0k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 17:26:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53232 "EHLO mail.kernel.org"
+        id S1729734AbfFQVXb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 17:23:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48574 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729690AbfFQV0g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 17:26:36 -0400
+        id S1726723AbfFQVX1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Jun 2019 17:23:27 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E341D20657;
-        Mon, 17 Jun 2019 21:26:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6110520657;
+        Mon, 17 Jun 2019 21:23:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560806796;
-        bh=GGkZ8H6QtJDpgX12M98TlWpBX61WM3Wh+L5sx7R8fao=;
+        s=default; t=1560806606;
+        bh=WRt3hZwVhxYc1hGY5XlW7OH/gGDtHJG3c1BdxS3erHc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2m8VYxHWlI4a3/LrJEekaFklL28JMjvDW9vg+xUO4ghX5eK83zUFNQaZYF81L2JLG
-         PXiKC9KofIVO/q3wPls5uB+1OV9TngFieYiitJFwCe9Naq2cvEs3LNvHBa7ehuFcxl
-         VnpmzYFCnvNJx+FFA717xeIi0R+8+Hx1RVHE+D2c=
+        b=BCfCbjb99QFjwZbrzkRV8NYwNyxFgal4g8ds133Dn3L26bRunwua0gt/XsEF+yTt5
+         ADhno82q7/uosIgOg95LOSgu4ZEAn/rVGOxEzlgepfqyyhiOatKn+cHDkB38JuoDJ8
+         iJ9tTIuZMF6I/TnMcSat1u4IJdfkpXEDgVmkB9hE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Douglas Anderson <dianders@chromium.org>,
-        Minas Harutyunyan <hminas@synopsys.com>,
-        Martin Schiller <ms@dev.tdt.de>,
-        Felipe Balbi <felipe.balbi@linux.intel.com>
-Subject: [PATCH 4.19 59/75] usb: dwc2: Fix DMA cache alignment issues
+        stable@vger.kernel.org, Baoquan He <bhe@redhat.com>,
+        Borislav Petkov <bp@suse.de>,
+        Kees Cook <keescook@chromium.org>,
+        "Kirill A. Shutemov" <kirill@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@kernel.org>,
+        kirill.shutemov@linux.intel.com,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>, x86-ml <x86@kernel.org>
+Subject: [PATCH 5.1 110/115] x86/mm/KASLR: Compute the size of the vmemmap section properly
 Date:   Mon, 17 Jun 2019 23:10:10 +0200
-Message-Id: <20190617210755.163508026@linuxfoundation.org>
+Message-Id: <20190617210805.524763038@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190617210752.799453599@linuxfoundation.org>
-References: <20190617210752.799453599@linuxfoundation.org>
+In-Reply-To: <20190617210759.929316339@linuxfoundation.org>
+References: <20190617210759.929316339@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,62 +51,88 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Martin Schiller <ms@dev.tdt.de>
+From: Baoquan He <bhe@redhat.com>
 
-commit 4a4863bf2e7932e584a3a462d3c6daf891142ddc upstream.
+commit 00e5a2bbcc31d5fea853f8daeba0f06c1c88c3ff upstream.
 
-Insert a padding between data and the stored_xfer_buffer pointer to
-ensure they are not on the same cache line.
+The size of the vmemmap section is hardcoded to 1 TB to support the
+maximum amount of system RAM in 4-level paging mode - 64 TB.
 
-Otherwise, the stored_xfer_buffer gets corrupted for IN URBs on
-non-cache-coherent systems. (In my case: Lantiq xRX200 MIPS)
+However, 1 TB is not enough for vmemmap in 5-level paging mode. Assuming
+the size of struct page is 64 Bytes, to support 4 PB system RAM in 5-level,
+64 TB of vmemmap area is needed:
 
-Fixes: 3bc04e28a030 ("usb: dwc2: host: Get aligned DMA in a more supported way")
-Fixes: 56406e017a88 ("usb: dwc2: Fix DMA alignment to start at allocated boundary")
-Cc: <stable@vger.kernel.org>
-Tested-by: Douglas Anderson <dianders@chromium.org>
-Reviewed-by: Douglas Anderson <dianders@chromium.org>
-Acked-by: Minas Harutyunyan <hminas@synopsys.com>
-Signed-off-by: Martin Schiller <ms@dev.tdt.de>
-Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
+  4 * 1000^5 PB / 4096 bytes page size * 64 bytes per page struct / 1000^4 TB = 62.5 TB.
+
+This hardcoding may cause vmemmap to corrupt the following
+cpu_entry_area section, if KASLR puts vmemmap very close to it and the
+actual vmemmap size is bigger than 1 TB.
+
+So calculate the actual size of the vmemmap region needed and then align
+it up to 1 TB boundary.
+
+In 4-level paging mode it is always 1 TB. In 5-level it's adjusted on
+demand. The current code reserves 0.5 PB for vmemmap on 5-level. With
+this change, the space can be saved and thus used to increase entropy
+for the randomization.
+
+ [ bp: Spell out how the 64 TB needed for vmemmap is computed and massage commit
+   message. ]
+
+Fixes: eedb92abb9bb ("x86/mm: Make virtual memory layout dynamic for CONFIG_X86_5LEVEL=y")
+Signed-off-by: Baoquan He <bhe@redhat.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Reviewed-by: Kees Cook <keescook@chromium.org>
+Acked-by: Kirill A. Shutemov <kirill@linux.intel.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: kirill.shutemov@linux.intel.com
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: stable <stable@vger.kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: x86-ml <x86@kernel.org>
+Link: https://lkml.kernel.org/r/20190523025744.3756-1-bhe@redhat.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/dwc2/hcd.c |   10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+ arch/x86/mm/kaslr.c |   11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
 
---- a/drivers/usb/dwc2/hcd.c
-+++ b/drivers/usb/dwc2/hcd.c
-@@ -2673,8 +2673,10 @@ static void dwc2_free_dma_aligned_buffer
- 		return;
+--- a/arch/x86/mm/kaslr.c
++++ b/arch/x86/mm/kaslr.c
+@@ -52,7 +52,7 @@ static __initdata struct kaslr_memory_re
+ } kaslr_regions[] = {
+ 	{ &page_offset_base, 0 },
+ 	{ &vmalloc_base, 0 },
+-	{ &vmemmap_base, 1 },
++	{ &vmemmap_base, 0 },
+ };
  
- 	/* Restore urb->transfer_buffer from the end of the allocated area */
--	memcpy(&stored_xfer_buffer, urb->transfer_buffer +
--	       urb->transfer_buffer_length, sizeof(urb->transfer_buffer));
-+	memcpy(&stored_xfer_buffer,
-+	       PTR_ALIGN(urb->transfer_buffer + urb->transfer_buffer_length,
-+			 dma_get_cache_alignment()),
-+	       sizeof(urb->transfer_buffer));
+ /* Get size in bytes used by the memory region */
+@@ -78,6 +78,7 @@ void __init kernel_randomize_memory(void
+ 	unsigned long rand, memory_tb;
+ 	struct rnd_state rand_state;
+ 	unsigned long remain_entropy;
++	unsigned long vmemmap_size;
  
- 	if (usb_urb_dir_in(urb)) {
- 		if (usb_pipeisoc(urb->pipe))
-@@ -2706,6 +2708,7 @@ static int dwc2_alloc_dma_aligned_buffer
- 	 * DMA
- 	 */
- 	kmalloc_size = urb->transfer_buffer_length +
-+		(dma_get_cache_alignment() - 1) +
- 		sizeof(urb->transfer_buffer);
+ 	vaddr_start = pgtable_l5_enabled() ? __PAGE_OFFSET_BASE_L5 : __PAGE_OFFSET_BASE_L4;
+ 	vaddr = vaddr_start;
+@@ -109,6 +110,14 @@ void __init kernel_randomize_memory(void
+ 	if (memory_tb < kaslr_regions[0].size_tb)
+ 		kaslr_regions[0].size_tb = memory_tb;
  
- 	kmalloc_ptr = kmalloc(kmalloc_size, mem_flags);
-@@ -2716,7 +2719,8 @@ static int dwc2_alloc_dma_aligned_buffer
- 	 * Position value of original urb->transfer_buffer pointer to the end
- 	 * of allocation for later referencing
- 	 */
--	memcpy(kmalloc_ptr + urb->transfer_buffer_length,
-+	memcpy(PTR_ALIGN(kmalloc_ptr + urb->transfer_buffer_length,
-+			 dma_get_cache_alignment()),
- 	       &urb->transfer_buffer, sizeof(urb->transfer_buffer));
- 
- 	if (usb_urb_dir_out(urb))
++	/*
++	 * Calculate the vmemmap region size in TBs, aligned to a TB
++	 * boundary.
++	 */
++	vmemmap_size = (kaslr_regions[0].size_tb << (TB_SHIFT - PAGE_SHIFT)) *
++			sizeof(struct page);
++	kaslr_regions[2].size_tb = DIV_ROUND_UP(vmemmap_size, 1UL << TB_SHIFT);
++
+ 	/* Calculate entropy available between regions */
+ 	remain_entropy = vaddr_end - vaddr_start;
+ 	for (i = 0; i < ARRAY_SIZE(kaslr_regions); i++)
 
 
