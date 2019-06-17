@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BDB9D49326
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 23:28:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D9053492CD
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 23:25:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730486AbfFQV2D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 17:28:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55098 "EHLO mail.kernel.org"
+        id S1729834AbfFQVYA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 17:24:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49330 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730471AbfFQV2A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 17:28:00 -0400
+        id S1729017AbfFQVX6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Jun 2019 17:23:58 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5B2EA2070B;
-        Mon, 17 Jun 2019 21:27:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 69CF22063F;
+        Mon, 17 Jun 2019 21:23:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560806879;
-        bh=fbGvPZ25gCe7rEIKGfc4261fjQ3/MdtuSPcqtlbZJsw=;
+        s=default; t=1560806637;
+        bh=Sqcme+VWlYgXM3RIsP6CG6OkhM/xpEogeAgWCEriq2g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XmM1yvRghidSaS7x+wmzshPbZpZyj5oFtvYgFxjZazLYP3AiPLrRLv5m/VdgmYCKF
-         lGuhis2Llgv45wuUw4ZTxLot/0BWvuuKcFeYzFk4RjZNr/Ag5huVtnrWy5Mmh7BJAp
-         vQxoOYHLGwQjB5+LAY611QQmNxRmE6PkpHWx7BxI=
+        b=NdenmgdGG2NtD7rWP49I5JXRBz3Qb4FSjgtMPbhkVs/XxXk9/lAJ+d5gn0heAALIr
+         RKF+IhmWoPB/oOP1IY1WWY2hskSteymfbRvl4iCRUK2u41Pzohbz6j345sZo1TVJpf
+         KvZNxT8iCbi/rfIh6Ewi7SMIArNtCCV/yE7PGulM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hans Verkuil <hans.verkuil@cisco.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Naresh Kamboju <naresh.kamboju@linaro.org>
-Subject: [PATCH 4.14 14/53] media: v4l2-ioctl: clear fields in s_parm
+        stable@vger.kernel.org, Douglas Anderson <dianders@chromium.org>,
+        Minas Harutyunyan <hminas@synopsys.com>,
+        Martin Schiller <ms@dev.tdt.de>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>
+Subject: [PATCH 5.1 097/115] usb: dwc2: Fix DMA cache alignment issues
 Date:   Mon, 17 Jun 2019 23:09:57 +0200
-Message-Id: <20190617210747.955616944@linuxfoundation.org>
+Message-Id: <20190617210804.850628684@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190617210745.104187490@linuxfoundation.org>
-References: <20190617210745.104187490@linuxfoundation.org>
+In-Reply-To: <20190617210759.929316339@linuxfoundation.org>
+References: <20190617210759.929316339@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,52 +45,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hans Verkuil <hans.verkuil@cisco.com>
+From: Martin Schiller <ms@dev.tdt.de>
 
-commit 8a7c5594c02022ca5fa7fb603e11b3e1feb76ed5 upstream.
+commit 4a4863bf2e7932e584a3a462d3c6daf891142ddc upstream.
 
-Zero the reserved capture/output array.
+Insert a padding between data and the stored_xfer_buffer pointer to
+ensure they are not on the same cache line.
 
-Zero the extendedmode (it is never used in drivers).
+Otherwise, the stored_xfer_buffer gets corrupted for IN URBs on
+non-cache-coherent systems. (In my case: Lantiq xRX200 MIPS)
 
-Clear all flags in capture/outputmode except for V4L2_MODE_HIGHQUALITY,
-as that is the only valid flag.
-
-Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
-Reviewed-by: Hans de Goede <hdegoede@redhat.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Cc: Naresh Kamboju <naresh.kamboju@linaro.org>
+Fixes: 3bc04e28a030 ("usb: dwc2: host: Get aligned DMA in a more supported way")
+Fixes: 56406e017a88 ("usb: dwc2: Fix DMA alignment to start at allocated boundary")
+Cc: <stable@vger.kernel.org>
+Tested-by: Douglas Anderson <dianders@chromium.org>
+Reviewed-by: Douglas Anderson <dianders@chromium.org>
+Acked-by: Minas Harutyunyan <hminas@synopsys.com>
+Signed-off-by: Martin Schiller <ms@dev.tdt.de>
+Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/media/v4l2-core/v4l2-ioctl.c |   17 ++++++++++++++++-
- 1 file changed, 16 insertions(+), 1 deletion(-)
+ drivers/usb/dwc2/hcd.c |   10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
---- a/drivers/media/v4l2-core/v4l2-ioctl.c
-+++ b/drivers/media/v4l2-core/v4l2-ioctl.c
-@@ -1945,7 +1945,22 @@ static int v4l_s_parm(const struct v4l2_
- 	struct v4l2_streamparm *p = arg;
- 	int ret = check_fmt(file, p->type);
+--- a/drivers/usb/dwc2/hcd.c
++++ b/drivers/usb/dwc2/hcd.c
+@@ -2664,8 +2664,10 @@ static void dwc2_free_dma_aligned_buffer
+ 		return;
  
--	return ret ? ret : ops->vidioc_s_parm(file, fh, p);
-+	if (ret)
-+		return ret;
-+
-+	/* Note: extendedmode is never used in drivers */
-+	if (V4L2_TYPE_IS_OUTPUT(p->type)) {
-+		memset(p->parm.output.reserved, 0,
-+		       sizeof(p->parm.output.reserved));
-+		p->parm.output.extendedmode = 0;
-+		p->parm.output.outputmode &= V4L2_MODE_HIGHQUALITY;
-+	} else {
-+		memset(p->parm.capture.reserved, 0,
-+		       sizeof(p->parm.capture.reserved));
-+		p->parm.capture.extendedmode = 0;
-+		p->parm.capture.capturemode &= V4L2_MODE_HIGHQUALITY;
-+	}
-+	return ops->vidioc_s_parm(file, fh, p);
- }
+ 	/* Restore urb->transfer_buffer from the end of the allocated area */
+-	memcpy(&stored_xfer_buffer, urb->transfer_buffer +
+-	       urb->transfer_buffer_length, sizeof(urb->transfer_buffer));
++	memcpy(&stored_xfer_buffer,
++	       PTR_ALIGN(urb->transfer_buffer + urb->transfer_buffer_length,
++			 dma_get_cache_alignment()),
++	       sizeof(urb->transfer_buffer));
  
- static int v4l_queryctrl(const struct v4l2_ioctl_ops *ops,
+ 	if (usb_urb_dir_in(urb)) {
+ 		if (usb_pipeisoc(urb->pipe))
+@@ -2697,6 +2699,7 @@ static int dwc2_alloc_dma_aligned_buffer
+ 	 * DMA
+ 	 */
+ 	kmalloc_size = urb->transfer_buffer_length +
++		(dma_get_cache_alignment() - 1) +
+ 		sizeof(urb->transfer_buffer);
+ 
+ 	kmalloc_ptr = kmalloc(kmalloc_size, mem_flags);
+@@ -2707,7 +2710,8 @@ static int dwc2_alloc_dma_aligned_buffer
+ 	 * Position value of original urb->transfer_buffer pointer to the end
+ 	 * of allocation for later referencing
+ 	 */
+-	memcpy(kmalloc_ptr + urb->transfer_buffer_length,
++	memcpy(PTR_ALIGN(kmalloc_ptr + urb->transfer_buffer_length,
++			 dma_get_cache_alignment()),
+ 	       &urb->transfer_buffer, sizeof(urb->transfer_buffer));
+ 
+ 	if (usb_urb_dir_out(urb))
 
 
