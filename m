@@ -2,49 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 567EA490FA
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 22:10:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C499C490F3
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 22:10:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729138AbfFQUKd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 16:10:33 -0400
-Received: from verein.lst.de ([213.95.11.211]:40726 "EHLO newverein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728932AbfFQUKa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 16:10:30 -0400
-Received: by newverein.lst.de (Postfix, from userid 2407)
-        id 0673468B02; Mon, 17 Jun 2019 22:09:58 +0200 (CEST)
-Date:   Mon, 17 Jun 2019 22:09:57 +0200
-From:   Christoph Hellwig <hch@lst.de>
-To:     Logan Gunthorpe <logang@deltatee.com>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        Dan Williams <dan.j.williams@intel.com>,
-        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Ben Skeggs <bskeggs@redhat.com>, linux-mm@kvack.org,
-        nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        linux-nvdimm@lists.01.org, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 08/25] memremap: move dev_pagemap callbacks into a
- separate structure
-Message-ID: <20190617200957.GA20645@lst.de>
-References: <20190617122733.22432-1-hch@lst.de> <20190617122733.22432-9-hch@lst.de> <d68c5e4c-b2de-95c3-0b75-1f2391b25a34@deltatee.com>
+        id S1728953AbfFQUKX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 16:10:23 -0400
+Received: from mail-io1-f65.google.com ([209.85.166.65]:39392 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726023AbfFQUKU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Jun 2019 16:10:20 -0400
+Received: by mail-io1-f65.google.com with SMTP id r185so18187229iod.6
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2019 13:10:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Zhz2d9XJe8nX7yclD2KabSz2ABSlxKrOqshNsQUbLNs=;
+        b=Y6+XH3rTuBpT3/+zGSEve8N2Cd4liXJXGlvGeJlSlgjF4gvKqhNYNQxq4gH2UmWvyX
+         JRm4nzTjgugm66g7l1Ku3kx7AtyeUDOjqK0/t+VGLauGNDrRYHMgRW4cdQWrRGcBinuJ
+         IJ2ILz0XYXRMpBMaqMofa8CyfHQqrj4BGtpAU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Zhz2d9XJe8nX7yclD2KabSz2ABSlxKrOqshNsQUbLNs=;
+        b=MzD2Lszj0sD7nu9v5eD7JQSB6SDVl2f3DF+uSPweTuttcUQ1R6rZAH+OPTmr6LnUh3
+         Z09JkyJMon8blyHrgKOX04vv+GxYUgEny211XwxE7kz4VKNrNwN/32qzTMzPpeHPquWx
+         3JBcaMlGsnMyiX2xSSJJEMl9yO2s6YRna/+obDGy9fQadY3N3xwI1Wi139BQ6o1Gn/5b
+         m/KlthZJ11IePnu+GVONz/3UEZqGvpCTR8XmIsfSsYAjaySn090gPNlHFUcioqelpJhI
+         bUugQ2al96VfmZfncI6B4fYpwCpJrYFZY8vkDdG59BExEk9yoyi0hXljLJhPgMiTOiiN
+         mErg==
+X-Gm-Message-State: APjAAAUR8cdXk1PdIiVraRL3jIcvz4wSG7DqcMoiCkIix52vwWw+sJ1I
+        fUNFCXJ1Wjdz2Fycm/+byVSmtg==
+X-Google-Smtp-Source: APXvYqyvSFVPICXlZ5qOrdYqNCjoeODwgIZegCYh7Y1Z/RNaw1BomNUYMBee5d7BAhV7K2HU9ro+EQ==
+X-Received: by 2002:a5d:9643:: with SMTP id d3mr18399719ios.227.1560802220123;
+        Mon, 17 Jun 2019 13:10:20 -0700 (PDT)
+Received: from localhost ([2620:15c:183:0:20b8:dee7:5447:d05])
+        by smtp.gmail.com with ESMTPSA id b6sm9755978iok.71.2019.06.17.13.10.19
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 17 Jun 2019 13:10:19 -0700 (PDT)
+From:   Raul E Rangel <rrangel@chromium.org>
+To:     linux-mmc@vger.kernel.org
+Cc:     ernest.zhang@bayhubtech.com, djkurtz@chromium.org,
+        Raul E Rangel <rrangel@chromium.org>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        linux-kernel@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>
+Subject: [PATCH v2 1/3] mmc: sdhci: sdhci-pci-o2micro: Correctly set bus width when tuning
+Date:   Mon, 17 Jun 2019 14:10:12 -0600
+Message-Id: <20190617201014.84503-1-rrangel@chromium.org>
+X-Mailer: git-send-email 2.22.0.410.gd8fdbe21b5-goog
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d68c5e4c-b2de-95c3-0b75-1f2391b25a34@deltatee.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 17, 2019 at 02:08:14PM -0600, Logan Gunthorpe wrote:
-> I just noticed this is missing a line to set pgmap->ops to
-> pci_p2pdma_pagemap_ops. I must have gotten confused by the other users
-> in my original review. Though I'm not sure how this compiles as the new
-> struct is static and unused. However, it is rendered moot in Patch 16
-> when this is all removed.
+The O2Micro controller only supports tuning at 4-bits. So the host driver
+needs to change the bus width while tuning and then set it back when done.
 
-It probably was there in the original and got lost in the merge conflicts
-from the rebase.  I should have dropped all the reviewed-bys for patches
-with non-trivial merge resolution, sorry.
+There was a bug in the original implementation in that mmc->ios.bus_width
+also wasn't updated. Thus setting the incorrect blocksize in
+sdhci_send_tuning which results in a tuning failure.
+
+Signed-off-by: Raul E Rangel <rrangel@chromium.org>
+Fixes: 0086fc217d5d7 ("mmc: sdhci: Add support for O2 hardware tuning")
+Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+---
+
+ drivers/mmc/host/sdhci-pci-o2micro.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/mmc/host/sdhci-pci-o2micro.c b/drivers/mmc/host/sdhci-pci-o2micro.c
+index b29bf4e7dcb48..dd21315922c87 100644
+--- a/drivers/mmc/host/sdhci-pci-o2micro.c
++++ b/drivers/mmc/host/sdhci-pci-o2micro.c
+@@ -115,6 +115,7 @@ static int sdhci_o2_execute_tuning(struct mmc_host *mmc, u32 opcode)
+ 	 */
+ 	if (mmc->ios.bus_width == MMC_BUS_WIDTH_8) {
+ 		current_bus_width = mmc->ios.bus_width;
++		mmc->ios.bus_width = MMC_BUS_WIDTH_4;
+ 		sdhci_set_bus_width(host, MMC_BUS_WIDTH_4);
+ 	}
+ 
+@@ -126,8 +127,10 @@ static int sdhci_o2_execute_tuning(struct mmc_host *mmc, u32 opcode)
+ 
+ 	sdhci_end_tuning(host);
+ 
+-	if (current_bus_width == MMC_BUS_WIDTH_8)
++	if (current_bus_width == MMC_BUS_WIDTH_8) {
++		mmc->ios.bus_width = MMC_BUS_WIDTH_8;
+ 		sdhci_set_bus_width(host, current_bus_width);
++	}
+ 
+ 	host->flags &= ~SDHCI_HS400_TUNING;
+ 	return 0;
+-- 
+2.22.0.410.gd8fdbe21b5-goog
+
