@@ -2,115 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CED654835D
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 15:02:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C6CCD48366
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 15:04:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727958AbfFQNBz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 09:01:55 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:45909 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725983AbfFQNBz (ORCPT
+        id S1727342AbfFQNEE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 09:04:04 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:48305 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726061AbfFQNED (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 09:01:55 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id E7E9680258; Mon, 17 Jun 2019 15:01:40 +0200 (CEST)
-Date:   Mon, 17 Jun 2019 15:01:51 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Matthias Kaehlcke <mka@chromium.org>
-Cc:     Daniel Thompson <daniel.thompson@linaro.org>,
-        Brian Norris <briannorris@google.com>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Doug Anderson <dianders@google.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Richard Purdie <rpurdie@rpsys.net>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Guenter Roeck <groeck@google.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Alexandru Stan <amstan@google.com>, linux-leds@vger.kernel.org,
-        devicetree <devicetree@vger.kernel.org>,
-        Linux Kernel <linux-kernel@vger.kernel.org>,
-        kernel@collabora.com
-Subject: Re: [PATCH v3 3/4] backlight: pwm_bl: compute brightness of LED
- linearly to human eye.
-Message-ID: <20190617130150.GA21113@amd>
-References: <20180208113032.27810-1-enric.balletbo@collabora.com>
- <20180208113032.27810-4-enric.balletbo@collabora.com>
- <20190607220947.GR40515@google.com>
- <20190608210226.GB2359@xo-6d-61-c0.localdomain>
- <20190610205233.GB137143@google.com>
- <20190611104913.egsbwcedshjdy3m5@holly.lan>
- <CA+ASDXOq7KQ+f4KMh0gaC9hvXaxBDdsbiJxiTbeOJ9ZVaeNJag@mail.gmail.com>
- <20190611223019.GH137143@google.com>
- <20190612110325.xdn3q2aod52oalge@holly.lan>
- <20190612192642.GK137143@google.com>
+        Mon, 17 Jun 2019 09:04:03 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <colin.king@canonical.com>)
+        id 1hcrIk-0005t8-W9; Mon, 17 Jun 2019 13:03:59 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Ian Abbott <abbotti@mev.co.uk>,
+        H Hartley Sweeten <hsweeten@visionengravers.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        devel@driverdev.osuosl.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] staging: comedi: usbdux: remove redundant initialization of fx2delay
+Date:   Mon, 17 Jun 2019 14:03:58 +0100
+Message-Id: <20190617130358.28749-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="sdtB3X0nJg68CQEu"
-Content-Disposition: inline
-In-Reply-To: <20190612192642.GK137143@google.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
---sdtB3X0nJg68CQEu
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Variable fx2delay is being initialized to a value that is never read
+and is being re-assigned a few statements later. The initialization
+is redundant and can be removed.
 
-Hi!
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/staging/comedi/drivers/usbdux.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> > Certainly "linear" (this device will work more or less correctly if the
-> > userspace applies perceptual curves). Not sure about logarithmic since
-> > what is actually useful is something that is "perceptually linear"
-> > (logarithmic is merely a way to approximate that).
-> >=20
-> > I do wonder about a compatible string like most-detailed to
-> > least-detailed description. This for a PWM with the auto-generated
-> > tables we'd see something like:
-> >=20
-> > cie-1991,perceptual,non-linear
-> >=20
-> > For something that is non-linear but we are not sure what its tables are
-> > we can offer just "non-linear".
->=20
-> Thanks for the feedback!
->=20
-> It seems clear that we want a string for the added flexibility. I can
-> work on a patch with the compatible string like description you
-> suggested and we can discuss in the review if we want to go with that
-> or prefer something else.
+diff --git a/drivers/staging/comedi/drivers/usbdux.c b/drivers/staging/comedi/drivers/usbdux.c
+index b8f54b7fb34a..0350f303d557 100644
+--- a/drivers/staging/comedi/drivers/usbdux.c
++++ b/drivers/staging/comedi/drivers/usbdux.c
+@@ -1226,7 +1226,7 @@ static int usbdux_pwm_period(struct comedi_device *dev,
+ 			     unsigned int period)
+ {
+ 	struct usbdux_private *devpriv = dev->private;
+-	int fx2delay = 255;
++	int fx2delay;
+ 
+ 	if (period < MIN_PWM_PERIOD)
+ 		return -EAGAIN;
+-- 
+2.20.1
 
-Compatible-like string seems overly complicated.
-
-> > Instead one valid value for the sysfs should be "unknown" and this be
-> > the default for drivers we have not analysed (this also makes it easy to
-> > introduce change here).
->=20
-> An "unknown" value sounds good, it allows userspace to just do what it
-> did/would hace done before this attribute existed.
-
-What about simply not presenting the attribute when we don't have the
-information?
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---sdtB3X0nJg68CQEu
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAl0Hjz4ACgkQMOfwapXb+vJICwCgw2oDqZxKwg0bd8+7Xh6ZsIX9
-/MsAn2woctEoRe0BmsGCFOw5p1KQMS68
-=vCQf
------END PGP SIGNATURE-----
-
---sdtB3X0nJg68CQEu--
