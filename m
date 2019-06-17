@@ -2,51 +2,51 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8C33348FA3
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 21:36:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EDB7A48FA7
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 21:36:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728103AbfFQTgC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 15:36:02 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:42575 "EHLO
+        id S1728824AbfFQTgt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 15:36:49 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:52871 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726747AbfFQTgC (ORCPT
+        with ESMTP id S1726427AbfFQTgt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 15:36:02 -0400
+        Mon, 17 Jun 2019 15:36:49 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x5HJYla33565434
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x5HJZTab3565605
         (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Mon, 17 Jun 2019 12:34:47 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x5HJYla33565434
+        Mon, 17 Jun 2019 12:35:29 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x5HJZTab3565605
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019051801; t=1560800088;
-        bh=zGzpSGjgF9H8nvJX5wum+QqIj+GeL325ZaPw2tf7Nhs=;
-        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
-        b=bfe8BfzDXsNP2YJ+fxZ5Zw1xclERoR8vJRhzTSLZTnczWYzbYmCsKSbpQBAN9Oqpz
-         E1eUPT3KcXAXCFIjG3vv5RzKYUG4FvW0Nd4wSALWLEE0iSOsWunq5pM1GVFeCIquQZ
-         iU7YWvfz3ZpmmFnCslFEuiJwXVO1/YPz+/O+hw8yJs719WFz/dvb4zD7rc8XvpTfb7
-         uTWPwmOCB19sBhJNUVeeKBz0FjHhM0Hk2Vv8TLfvjK1cIyTGj4lyZlIj7nT+gBq7Ff
-         MYsCLDhOYdt1d0aSWBd/TdW+TGYKDHhRwFNLcV0X6PoowfhUlJ9K1vJRZBXCP/XQzk
-         BkgNuUUgy7jZA==
+        s=2019051801; t=1560800130;
+        bh=MBXOwA4rpmjuC7sDNtWsv8DLbEfZSsKX8z7jw9/TwM0=;
+        h=Date:From:Cc:Reply-To:To:Subject:From;
+        b=OQATRfzOJ4RZ+8CpgujyJ+DYuGdvq3DqOFAHC//L6kgmitjzN8OCkhAfYQgltoHBw
+         +zx7HjiP5/iGEMoqXGJp/+ziwXKLtub+3Xh+E4wZqwwvGfEbEQMS8V86Jp2mL9s+0o
+         CyUGhaFVSh094yt6kCKVGaj5roe7s2qVUHCoFuwrmGY93nC0FXM6RChWqhoneX6WqJ
+         Jyr1BDM+VYvF0kWSbpRGq4IFXdkSnyfMUhQpGC6UWJEbOg8kXSD6poYKVtyBLuCvuW
+         rW6XmhJGnR/2Bq22Xv7mMTcwApmN2R9aJe+iG5kps0l/Jk4sLMApzn/S/xF3NS5feK
+         PdeziAH60Xsmw==
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x5HJYlS73565430;
-        Mon, 17 Jun 2019 12:34:47 -0700
-Date:   Mon, 17 Jun 2019 12:34:47 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x5HJZTUh3565601;
+        Mon, 17 Jun 2019 12:35:29 -0700
+Date:   Mon, 17 Jun 2019 12:35:29 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Kan Liang <tipbot@zytor.com>
-Message-ID: <tip-0ccdb8407a4660f6dbc5977bc060917d2c3e7986@git.kernel.org>
-Cc:     ak@linux.intel.com, mingo@kernel.org, jolsa@kernel.org,
-        tglx@linutronix.de, kan.liang@linux.intel.com,
-        linux-kernel@vger.kernel.org, acme@redhat.com,
-        peterz@infradead.org, hpa@zytor.com
-Reply-To: mingo@kernel.org, ak@linux.intel.com, jolsa@kernel.org,
-          tglx@linutronix.de, kan.liang@linux.intel.com,
-          linux-kernel@vger.kernel.org, acme@redhat.com,
-          peterz@infradead.org, hpa@zytor.com
-In-Reply-To: <1559688644-106558-5-git-send-email-kan.liang@linux.intel.com>
-References: <1559688644-106558-5-git-send-email-kan.liang@linux.intel.com>
+From:   tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
+Message-ID: <tip-nubi6mxp2n8ofvlx7ph6k3h6@git.kernel.org>
+Cc:     peterz@infradead.org, ak@linux.intel.com, mingo@kernel.org,
+        hpa@zytor.com, adrian.hunter@intel.com, tglx@linutronix.de,
+        kan.liang@linux.intel.com, acme@redhat.com, namhyung@kernel.org,
+        jolsa@kernel.org, linux-kernel@vger.kernel.org
+Reply-To: hpa@zytor.com, mingo@kernel.org, peterz@infradead.org,
+          ak@linux.intel.com, namhyung@kernel.org, acme@redhat.com,
+          jolsa@kernel.org, linux-kernel@vger.kernel.org,
+          adrian.hunter@intel.com, tglx@linutronix.de,
+          kan.liang@linux.intel.com
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf tools: Apply new CPU topology sysfs attributes
-Git-Commit-ID: 0ccdb8407a4660f6dbc5977bc060917d2c3e7986
+Subject: [tip:perf/core] perf data: Fix perf.data documentation for
+ HEADER_CPU_TOPOLOGY
+Git-Commit-ID: 36edfb940195b62c79bc8b148720c8275659a8c7
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -64,78 +64,76 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  0ccdb8407a4660f6dbc5977bc060917d2c3e7986
-Gitweb:     https://git.kernel.org/tip/0ccdb8407a4660f6dbc5977bc060917d2c3e7986
-Author:     Kan Liang <kan.liang@linux.intel.com>
-AuthorDate: Tue, 4 Jun 2019 15:50:44 -0700
+Commit-ID:  36edfb940195b62c79bc8b148720c8275659a8c7
+Gitweb:     https://git.kernel.org/tip/36edfb940195b62c79bc8b148720c8275659a8c7
+Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
+AuthorDate: Thu, 6 Jun 2019 17:03:18 -0300
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
 CommitDate: Mon, 10 Jun 2019 16:20:11 -0300
 
-perf tools: Apply new CPU topology sysfs attributes
+perf data: Fix perf.data documentation for HEADER_CPU_TOPOLOGY
 
-The existing "thread_siblings" and "thread_siblings_list" attribute will
-be deprecated.
+The 'die' info isn't in the same array as core and socket ids, and we
+missed the 'dies' string list, that comes right after the 'core' +
+'socket' id variable length array, followed by the VLA for the dies.
 
-Use the new CPU topology sysfs attributes, "core_cpus" and
-"core_cpus_list", which are synonymous with the deprecated attributes.
-
-Check the new name first. If not available, use the deprecated name to
-be compatible with old kernel.
-
-Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
-Reviewed-by: Jiri Olsa <jolsa@kernel.org>
+Cc: Adrian Hunter <adrian.hunter@intel.com>
 Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Kan Liang <kan.liang@linux.intel.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/1559688644-106558-5-git-send-email-kan.liang@linux.intel.com
+Fixes: c9cb12c5ba08 ("perf header: Add die information in CPU topology")
+Link: https://lkml.kernel.org/n/tip-nubi6mxp2n8ofvlx7ph6k3h6@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/cputopo.c | 8 +++++++-
- tools/perf/util/smt.c     | 8 ++++++--
- 2 files changed, 13 insertions(+), 3 deletions(-)
+ tools/perf/Documentation/perf.data-file-format.txt | 29 ++++++++++++++++------
+ 1 file changed, 22 insertions(+), 7 deletions(-)
 
-diff --git a/tools/perf/util/cputopo.c b/tools/perf/util/cputopo.c
-index 85fa87fc30cf..26e73a4bd4fe 100644
---- a/tools/perf/util/cputopo.c
-+++ b/tools/perf/util/cputopo.c
-@@ -15,6 +15,8 @@
- 	"%s/devices/system/cpu/cpu%d/topology/die_cpus_list"
- #define THRD_SIB_FMT \
- 	"%s/devices/system/cpu/cpu%d/topology/thread_siblings_list"
-+#define THRD_SIB_FMT_NEW \
-+	"%s/devices/system/cpu/cpu%d/topology/core_cpus_list"
- #define NODE_ONLINE_FMT \
- 	"%s/devices/system/node/online"
- #define NODE_MEMINFO_FMT \
-@@ -91,8 +93,12 @@ try_dies:
- 	ret = 0;
+diff --git a/tools/perf/Documentation/perf.data-file-format.txt b/tools/perf/Documentation/perf.data-file-format.txt
+index de78183f6881..5f54feb19977 100644
+--- a/tools/perf/Documentation/perf.data-file-format.txt
++++ b/tools/perf/Documentation/perf.data-file-format.txt
+@@ -151,20 +151,35 @@ struct {
  
- try_threads:
--	scnprintf(filename, MAXPATHLEN, THRD_SIB_FMT,
-+	scnprintf(filename, MAXPATHLEN, THRD_SIB_FMT_NEW,
- 		  sysfs__mountpoint(), cpu);
-+	if (access(filename, F_OK) == -1) {
-+		scnprintf(filename, MAXPATHLEN, THRD_SIB_FMT,
-+			  sysfs__mountpoint(), cpu);
-+	}
- 	fp = fopen(filename, "r");
- 	if (!fp)
- 		goto done;
-diff --git a/tools/perf/util/smt.c b/tools/perf/util/smt.c
-index 453f6f6f29f3..3b791ef2cd50 100644
---- a/tools/perf/util/smt.c
-+++ b/tools/perf/util/smt.c
-@@ -23,8 +23,12 @@ int smt_on(void)
- 		char fn[256];
+ 	HEADER_CPU_TOPOLOGY = 13,
  
- 		snprintf(fn, sizeof fn,
--			"devices/system/cpu/cpu%d/topology/thread_siblings",
--			cpu);
-+			"devices/system/cpu/cpu%d/topology/core_cpus", cpu);
-+		if (access(fn, F_OK) == -1) {
-+			snprintf(fn, sizeof fn,
-+				"devices/system/cpu/cpu%d/topology/thread_siblings",
-+				cpu);
-+		}
- 		if (sysfs__read_str(fn, &str, &strlen) < 0)
- 			continue;
- 		/* Entry is hex, but does not have 0x, so need custom parser */
+-String lists defining the core and CPU threads topology.
+-The string lists are followed by a variable length array
+-which contains core_id, die_id (for x86) and socket_id of each cpu.
+-The number of entries can be determined by the size of the
+-section minus the sizes of both string lists.
+-
+ struct {
++	/*
++	 * First revision of HEADER_CPU_TOPOLOGY
++	 *
++	 * See 'struct perf_header_string_list' definition earlier
++	 * in this file.
++	 */
++
+        struct perf_header_string_list cores; /* Variable length */
+        struct perf_header_string_list threads; /* Variable length */
++
++       /*
++        * Second revision of HEADER_CPU_TOPOLOGY, older tools
++        * will not consider what comes next
++        */
++
+        struct {
+ 	      uint32_t core_id;
+-	      uint32_t die_id;
+ 	      uint32_t socket_id;
+        } cpus[nr]; /* Variable length records */
++       /* 'nr' comes from previously processed HEADER_NRCPUS's nr_cpu_avail */
++
++        /*
++	 * Third revision of HEADER_CPU_TOPOLOGY, older tools
++	 * will not consider what comes next
++	 */
++
++	struct perf_header_string_list dies; /* Variable length */
++	uint32_t die_id[nr_cpus_avail]; /* from previously processed HEADER_NR_CPUS, VLA */
+ };
+ 
+ Example:
