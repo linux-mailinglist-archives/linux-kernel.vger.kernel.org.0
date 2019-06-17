@@ -2,38 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1FA4D49300
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 23:26:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0A2ED49388
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 23:31:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730202AbfFQV0V (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 17:26:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52762 "EHLO mail.kernel.org"
+        id S1730552AbfFQV21 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 17:28:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55462 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730188AbfFQV0Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 17:26:16 -0400
+        id S1730540AbfFQV2Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Jun 2019 17:28:24 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A19D320657;
-        Mon, 17 Jun 2019 21:26:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 795EC204FD;
+        Mon, 17 Jun 2019 21:28:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560806776;
-        bh=DPX5kHly0Vaj/cPp+9IgSW82tWe8Bf+gstYwWpwl3R8=;
+        s=default; t=1560806902;
+        bh=fGtbJQ6kKcFZ3yKxA5JiSkp/BT5jmQ8BQM8bi+sdqvc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qdU2wyB7i1FCAcYtrMRA2B5RUHgSY57DlSQbhHS+zjpb1SCmGhc563l0tPxR0umlm
-         jsw7sHRYB9MCFtX1XpmBhZtPtRmRvBQodXRAKnnPsBXkaXvLyu6Ue4CBMv/3hVG8X+
-         TRF4zZt5tWSYpnW/pqizyndmLUnWKuQwwV85l3Ew=
+        b=VELN3iBhDcPHMR7Dj1RKvgQdWvW9AdUlzwANQhpWGExJjB/lu7zzbfCY+yyXe8thN
+         1PbArDtmoD3ng9a7cyL6ukkTNXFoUdkahORwJDkTFYsVWEoTqjwlMRTPCgVTRkToaU
+         ex8uv1wlpUO1b26pT129qs+tdwBTX5819UNwqZiY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 53/75] KVM: x86/pmu: mask the result of rdpmc according to the width of the counters
+        stable@vger.kernel.org, Daniel Vetter <daniel.vetter@ffwll.ch>,
+        zardam@gmail.com,
+        =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= 
+        <ville.syrjala@linux.intel.com>, Imre Deak <imre.deak@intel.com>,
+        Jani Nikula <jani.nikula@intel.com>
+Subject: [PATCH 4.14 21/53] drm/i915/sdvo: Implement proper HDMI audio support for SDVO
 Date:   Mon, 17 Jun 2019 23:10:04 +0200
-Message-Id: <20190617210754.815585398@linuxfoundation.org>
+Message-Id: <20190617210749.512132543@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190617210752.799453599@linuxfoundation.org>
-References: <20190617210752.799453599@linuxfoundation.org>
+In-Reply-To: <20190617210745.104187490@linuxfoundation.org>
+References: <20190617210745.104187490@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,115 +46,184 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 0e6f467ee28ec97f68c7b74e35ec1601bb1368a7 ]
+From: Ville Syrjälä <ville.syrjala@linux.intel.com>
 
-This patch will simplify the changes in the next, by enforcing the
-masking of the counters to RDPMC and RDMSR.
+commit d74408f528261f900dddb9778f61b5c5a7a6249c upstream.
 
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Our SDVO audio support is pretty bogus. We can't push audio over the
+SDVO bus, so trying to enable audio in the SDVO control register doesn't
+do anything. In fact it looks like the SDVO encoder will always mix in
+the audio coming over HDA, and there's no (at least documented) way to
+disable that from our side. So HDMI audio does work currently on gen4
+but only by luck really. On gen3 it got broken by the referenced commit.
+And what has always been missing on every platform is the ELD.
+
+To pass the ELD to the audio driver we need to write it to magic buffer
+in the SDVO encoder hardware which then gets pulled out via HDA in the
+other end. Ie. pretty much the same thing we had for native HDMI before
+we started to just pass the ELD between the drivers. This sort of
+explains why we even have that silly hardware buffer with native HDMI.
+
+$ cat /proc/asound/card0/eld#1.0
+-monitor_present		0
+-eld_valid		0
++monitor_present		1
++eld_valid		1
++monitor_name		LG TV
++connection_type		HDMI
++...
+
+This also fixes our state readout since we can now query the SDVO
+encoder about the state of the "ELD valid" and "presence detect"
+bits. As mentioned those don't actually control whether audio
+gets sent over the HDMI cable, but it's the best we can do. And with
+the state checker appeased we can re-enable HDMI audio for gen3.
+
+Cc: stable@vger.kernel.org
+Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
+Cc: zardam@gmail.com
+Tested-by: zardam@gmail.com
+Bugzilla: https://bugs.freedesktop.org/show_bug.cgi?id=108976
+Fixes: de44e256b92c ("drm/i915/sdvo: Shut up state checker with hdmi cards on gen3")
+Signed-off-by: Ville Syrjälä <ville.syrjala@linux.intel.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/20190409144054.24561-3-ville.syrjala@linux.intel.com
+Reviewed-by: Imre Deak <imre.deak@intel.com>
+(cherry picked from commit dc49a56bd43bb04982e64b44436831da801d0237)
+Signed-off-by: Jani Nikula <jani.nikula@intel.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- arch/x86/kvm/pmu.c       | 10 +++-------
- arch/x86/kvm/pmu.h       |  3 ++-
- arch/x86/kvm/pmu_amd.c   |  2 +-
- arch/x86/kvm/pmu_intel.c | 13 +++++++++----
- 4 files changed, 15 insertions(+), 13 deletions(-)
+ drivers/gpu/drm/i915/intel_sdvo.c      |   58 ++++++++++++++++++++++++++-------
+ drivers/gpu/drm/i915/intel_sdvo_regs.h |    3 +
+ 2 files changed, 50 insertions(+), 11 deletions(-)
 
-diff --git a/arch/x86/kvm/pmu.c b/arch/x86/kvm/pmu.c
-index 58ead7db71a3..952aebd0a8a3 100644
---- a/arch/x86/kvm/pmu.c
-+++ b/arch/x86/kvm/pmu.c
-@@ -282,20 +282,16 @@ int kvm_pmu_rdpmc(struct kvm_vcpu *vcpu, unsigned idx, u64 *data)
+--- a/drivers/gpu/drm/i915/intel_sdvo.c
++++ b/drivers/gpu/drm/i915/intel_sdvo.c
+@@ -928,6 +928,13 @@ static bool intel_sdvo_set_colorimetry(s
+ 	return intel_sdvo_set_value(intel_sdvo, SDVO_CMD_SET_COLORIMETRY, &mode, 1);
+ }
+ 
++static bool intel_sdvo_set_audio_state(struct intel_sdvo *intel_sdvo,
++				       u8 audio_state)
++{
++	return intel_sdvo_set_value(intel_sdvo, SDVO_CMD_SET_AUDIO_STAT,
++				    &audio_state, 1);
++}
++
+ #if 0
+ static void intel_sdvo_dump_hdmi_buf(struct intel_sdvo *intel_sdvo)
  {
- 	bool fast_mode = idx & (1u << 31);
- 	struct kvm_pmc *pmc;
--	u64 ctr_val;
-+	u64 mask = fast_mode ? ~0u : ~0ull;
+@@ -1359,11 +1366,6 @@ static void intel_sdvo_pre_enable(struct
+ 	else
+ 		sdvox |= SDVO_PIPE_SEL(crtc->pipe);
  
- 	if (is_vmware_backdoor_pmc(idx))
- 		return kvm_pmu_rdpmc_vmware(vcpu, idx, data);
- 
--	pmc = kvm_x86_ops->pmu_ops->msr_idx_to_pmc(vcpu, idx);
-+	pmc = kvm_x86_ops->pmu_ops->msr_idx_to_pmc(vcpu, idx, &mask);
- 	if (!pmc)
- 		return 1;
- 
--	ctr_val = pmc_read_counter(pmc);
--	if (fast_mode)
--		ctr_val = (u32)ctr_val;
+-	if (crtc_state->has_audio) {
+-		WARN_ON_ONCE(INTEL_GEN(dev_priv) < 4);
+-		sdvox |= SDVO_AUDIO_ENABLE;
+-	}
 -
--	*data = ctr_val;
-+	*data = pmc_read_counter(pmc) & mask;
- 	return 0;
+ 	if (INTEL_GEN(dev_priv) >= 4) {
+ 		/* done in crtc_mode_set as the dpll_md reg must be written early */
+ 	} else if (IS_I945G(dev_priv) || IS_I945GM(dev_priv) ||
+@@ -1492,8 +1494,13 @@ static void intel_sdvo_get_config(struct
+ 	if (sdvox & HDMI_COLOR_RANGE_16_235)
+ 		pipe_config->limited_color_range = true;
+ 
+-	if (sdvox & SDVO_AUDIO_ENABLE)
+-		pipe_config->has_audio = true;
++	if (intel_sdvo_get_value(intel_sdvo, SDVO_CMD_GET_AUDIO_STAT,
++				 &val, 1)) {
++		u8 mask = SDVO_AUDIO_ELD_VALID | SDVO_AUDIO_PRESENCE_DETECT;
++
++		if ((val & mask) == mask)
++			pipe_config->has_audio = true;
++	}
+ 
+ 	if (intel_sdvo_get_value(intel_sdvo, SDVO_CMD_GET_ENCODE,
+ 				 &val, 1)) {
+@@ -1506,6 +1513,32 @@ static void intel_sdvo_get_config(struct
+ 	     pipe_config->pixel_multiplier, encoder_pixel_multiplier);
  }
  
-diff --git a/arch/x86/kvm/pmu.h b/arch/x86/kvm/pmu.h
-index ba8898e1a854..22dff661145a 100644
---- a/arch/x86/kvm/pmu.h
-+++ b/arch/x86/kvm/pmu.h
-@@ -25,7 +25,8 @@ struct kvm_pmu_ops {
- 	unsigned (*find_fixed_event)(int idx);
- 	bool (*pmc_is_enabled)(struct kvm_pmc *pmc);
- 	struct kvm_pmc *(*pmc_idx_to_pmc)(struct kvm_pmu *pmu, int pmc_idx);
--	struct kvm_pmc *(*msr_idx_to_pmc)(struct kvm_vcpu *vcpu, unsigned idx);
-+	struct kvm_pmc *(*msr_idx_to_pmc)(struct kvm_vcpu *vcpu, unsigned idx,
-+					  u64 *mask);
- 	int (*is_valid_msr_idx)(struct kvm_vcpu *vcpu, unsigned idx);
- 	bool (*is_valid_msr)(struct kvm_vcpu *vcpu, u32 msr);
- 	int (*get_msr)(struct kvm_vcpu *vcpu, u32 msr, u64 *data);
-diff --git a/arch/x86/kvm/pmu_amd.c b/arch/x86/kvm/pmu_amd.c
-index 1495a735b38e..41dff881e0f0 100644
---- a/arch/x86/kvm/pmu_amd.c
-+++ b/arch/x86/kvm/pmu_amd.c
-@@ -186,7 +186,7 @@ static int amd_is_valid_msr_idx(struct kvm_vcpu *vcpu, unsigned idx)
++static void intel_sdvo_disable_audio(struct intel_sdvo *intel_sdvo)
++{
++	intel_sdvo_set_audio_state(intel_sdvo, 0);
++}
++
++static void intel_sdvo_enable_audio(struct intel_sdvo *intel_sdvo,
++				    const struct intel_crtc_state *crtc_state,
++				    const struct drm_connector_state *conn_state)
++{
++	const struct drm_display_mode *adjusted_mode =
++		&crtc_state->base.adjusted_mode;
++	struct drm_connector *connector = conn_state->connector;
++	u8 *eld = connector->eld;
++
++	eld[6] = drm_av_sync_delay(connector, adjusted_mode) / 2;
++
++	intel_sdvo_set_audio_state(intel_sdvo, 0);
++
++	intel_sdvo_write_infoframe(intel_sdvo, SDVO_HBUF_INDEX_ELD,
++				   SDVO_HBUF_TX_DISABLED,
++				   eld, drm_eld_size(eld));
++
++	intel_sdvo_set_audio_state(intel_sdvo, SDVO_AUDIO_ELD_VALID |
++				   SDVO_AUDIO_PRESENCE_DETECT);
++}
++
+ static void intel_disable_sdvo(struct intel_encoder *encoder,
+ 			       struct intel_crtc_state *old_crtc_state,
+ 			       struct drm_connector_state *conn_state)
+@@ -1515,6 +1548,9 @@ static void intel_disable_sdvo(struct in
+ 	struct intel_crtc *crtc = to_intel_crtc(encoder->base.crtc);
+ 	u32 temp;
+ 
++	if (old_crtc_state->has_audio)
++		intel_sdvo_disable_audio(intel_sdvo);
++
+ 	intel_sdvo_set_active_outputs(intel_sdvo, 0);
+ 	if (0)
+ 		intel_sdvo_set_encoder_power_state(intel_sdvo,
+@@ -1598,6 +1634,9 @@ static void intel_enable_sdvo(struct int
+ 		intel_sdvo_set_encoder_power_state(intel_sdvo,
+ 						   DRM_MODE_DPMS_ON);
+ 	intel_sdvo_set_active_outputs(intel_sdvo, intel_sdvo->attached_output);
++
++	if (pipe_config->has_audio)
++		intel_sdvo_enable_audio(intel_sdvo, pipe_config, conn_state);
  }
  
- /* idx is the ECX register of RDPMC instruction */
--static struct kvm_pmc *amd_msr_idx_to_pmc(struct kvm_vcpu *vcpu, unsigned idx)
-+static struct kvm_pmc *amd_msr_idx_to_pmc(struct kvm_vcpu *vcpu, unsigned idx, u64 *mask)
+ static enum drm_mode_status
+@@ -2468,7 +2507,6 @@ static bool
+ intel_sdvo_dvi_init(struct intel_sdvo *intel_sdvo, int device)
  {
- 	struct kvm_pmu *pmu = vcpu_to_pmu(vcpu);
- 	struct kvm_pmc *counters;
-diff --git a/arch/x86/kvm/pmu_intel.c b/arch/x86/kvm/pmu_intel.c
-index 5ab4a364348e..ad7ea81fbfbf 100644
---- a/arch/x86/kvm/pmu_intel.c
-+++ b/arch/x86/kvm/pmu_intel.c
-@@ -126,7 +126,7 @@ static int intel_is_valid_msr_idx(struct kvm_vcpu *vcpu, unsigned idx)
- }
+ 	struct drm_encoder *encoder = &intel_sdvo->base.base;
+-	struct drm_i915_private *dev_priv = to_i915(encoder->dev);
+ 	struct drm_connector *connector;
+ 	struct intel_encoder *intel_encoder = to_intel_encoder(encoder);
+ 	struct intel_connector *intel_connector;
+@@ -2504,9 +2542,7 @@ intel_sdvo_dvi_init(struct intel_sdvo *i
+ 	encoder->encoder_type = DRM_MODE_ENCODER_TMDS;
+ 	connector->connector_type = DRM_MODE_CONNECTOR_DVID;
  
- static struct kvm_pmc *intel_msr_idx_to_pmc(struct kvm_vcpu *vcpu,
--					    unsigned idx)
-+					    unsigned idx, u64 *mask)
- {
- 	struct kvm_pmu *pmu = vcpu_to_pmu(vcpu);
- 	bool fixed = idx & (1u << 30);
-@@ -138,6 +138,7 @@ static struct kvm_pmc *intel_msr_idx_to_pmc(struct kvm_vcpu *vcpu,
- 	if (fixed && idx >= pmu->nr_arch_fixed_counters)
- 		return NULL;
- 	counters = fixed ? pmu->fixed_counters : pmu->gp_counters;
-+	*mask &= pmu->counter_bitmask[fixed ? KVM_PMC_FIXED : KVM_PMC_GP];
- 
- 	return &counters[idx];
- }
-@@ -183,9 +184,13 @@ static int intel_pmu_get_msr(struct kvm_vcpu *vcpu, u32 msr, u64 *data)
- 		*data = pmu->global_ovf_ctrl;
- 		return 0;
- 	default:
--		if ((pmc = get_gp_pmc(pmu, msr, MSR_IA32_PERFCTR0)) ||
--		    (pmc = get_fixed_pmc(pmu, msr))) {
--			*data = pmc_read_counter(pmc);
-+		if ((pmc = get_gp_pmc(pmu, msr, MSR_IA32_PERFCTR0))) {
-+			u64 val = pmc_read_counter(pmc);
-+			*data = val & pmu->counter_bitmask[KVM_PMC_GP];
-+			return 0;
-+		} else if ((pmc = get_fixed_pmc(pmu, msr))) {
-+			u64 val = pmc_read_counter(pmc);
-+			*data = val & pmu->counter_bitmask[KVM_PMC_FIXED];
- 			return 0;
- 		} else if ((pmc = get_gp_pmc(pmu, msr, MSR_P6_EVNTSEL0))) {
- 			*data = pmc->eventsel;
--- 
-2.20.1
-
+-	/* gen3 doesn't do the hdmi bits in the SDVO register */
+-	if (INTEL_GEN(dev_priv) >= 4 &&
+-	    intel_sdvo_is_hdmi_connector(intel_sdvo, device)) {
++	if (intel_sdvo_is_hdmi_connector(intel_sdvo, device)) {
+ 		connector->connector_type = DRM_MODE_CONNECTOR_HDMIA;
+ 		intel_sdvo->is_hdmi = true;
+ 	}
+--- a/drivers/gpu/drm/i915/intel_sdvo_regs.h
++++ b/drivers/gpu/drm/i915/intel_sdvo_regs.h
+@@ -707,6 +707,9 @@ struct intel_sdvo_enhancements_arg {
+ #define SDVO_CMD_GET_AUDIO_ENCRYPT_PREFER 0x90
+ #define SDVO_CMD_SET_AUDIO_STAT		0x91
+ #define SDVO_CMD_GET_AUDIO_STAT		0x92
++  #define SDVO_AUDIO_ELD_VALID		(1 << 0)
++  #define SDVO_AUDIO_PRESENCE_DETECT	(1 << 1)
++  #define SDVO_AUDIO_CP_READY		(1 << 2)
+ #define SDVO_CMD_SET_HBUF_INDEX		0x93
+   #define SDVO_HBUF_INDEX_ELD		0
+   #define SDVO_HBUF_INDEX_AVI_IF	1
 
 
