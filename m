@@ -2,70 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A03C479EC
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 08:17:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B733447A01
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 08:25:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725989AbfFQGPt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 02:15:49 -0400
-Received: from relay1.mentorg.com ([192.94.38.131]:34555 "EHLO
-        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725280AbfFQGPs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 02:15:48 -0400
-Received: from nat-ies.mentorg.com ([192.94.31.2] helo=svr-ies-mbx-02.mgc.mentorg.com)
-        by relay1.mentorg.com with esmtps (TLSv1.2:ECDHE-RSA-AES256-SHA384:256)
-        id 1hckvh-00071l-Df from Cedric_Hombourger@mentor.com ; Sun, 16 Jun 2019 23:15:45 -0700
-Received: from FRG-W10-HOMBOUR.world.mentorg.com (137.202.0.90) by
- svr-ies-mbx-02.mgc.mentorg.com (139.181.222.2) with Microsoft SMTP Server
- (TLS) id 15.0.1320.4; Mon, 17 Jun 2019 07:15:41 +0100
-From:   Cedric Hombourger <Cedric_Hombourger@mentor.com>
-CC:     <isar-users@googlegroups.com>,
-        Cedric Hombourger <Cedric_Hombourger@mentor.com>,
-        <yamada.masahiro@socionext.com>, <michal.lkml@markovi.net>,
-        <linux-kbuild@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH] builddeb: generate multi-arch friendly linux-libc-dev package
-Date:   Mon, 17 Jun 2019 08:14:56 +0200
-Message-ID: <1560752096-1323-1-git-send-email-Cedric_Hombourger@mentor.com>
-X-Mailer: git-send-email 2.7.4
+        id S1726043AbfFQGZI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 02:25:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49596 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725468AbfFQGZH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Jun 2019 02:25:07 -0400
+Received: from localhost (unknown [122.178.208.218])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D14202189F;
+        Mon, 17 Jun 2019 06:25:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1560752706;
+        bh=co4CH3+SDS8TMkRgK/NCJ9ECqQhqAHMJdhoNOGwoOuo=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=X8Pfmd/rIU96IjvzY+RN4dwMfiLLpJtl74U3hxuwtuKX/aTl4lbPWXvaSFakH+RUi
+         qzB5vRYtTNTN5ASjIF9dNN6HsKOMCJzQkTwiZEyN/jzyp/7Me3DJi6EuSi/Ywpm4en
+         J8eG7dVIMlCWxnrBDNra6ZL/TyA0skTChyzI2CT4=
+Date:   Mon, 17 Jun 2019 11:51:58 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        linux-arm-msm@vger.kernel.org,
+        Prasad Sodagudi <psodagud@codeaurora.org>,
+        Andy Gross <agross@kernel.org>,
+        David Brown <david.brown@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        "Isaac J . Manjarres" <isaacm@codeaurora.org>
+Subject: Re: [PATCH 1/2] dt-bindings: pinctrl: qcom: Add SM8150 pinctrl
+ binding
+Message-ID: <20190617062158.GG2962@vkoul-mobl>
+References: <20190614053032.24208-1-vkoul@kernel.org>
+ <20190617042032.GE750@tuxbook-pro>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [137.202.0.90]
-X-ClientProxiedBy: svr-ies-mbx-02.mgc.mentorg.com (139.181.222.2) To
- svr-ies-mbx-02.mgc.mentorg.com (139.181.222.2)
-To:     unlisted-recipients:; (no To-header on input)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190617042032.GE750@tuxbook-pro>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Debian-based distributions place libc header files in a machine
-specific directory (/usr/include/<libc-machine>) instead of
-/usr/include/asm to support installation of the linux-libc-dev
-package from multiple architectures. Move headers installed by
-"make headers_install" accordingly.
+On 16-06-19, 21:20, Bjorn Andersson wrote:
+> On Thu 13 Jun 22:30 PDT 2019, Vinod Koul wrote:
 
-Signed-off-by: Cedric Hombourger <Cedric_Hombourger@mentor.com>
-Reviewed-by: Henning Schild <henning.schild@siemens.com>
----
- scripts/package/builddeb | 5 +++++
- 1 file changed, 5 insertions(+)
+> > +- reg:
+> > +	Usage: required
+> > +	Value type: <prop-encoded-array>
+> > +	Definition: the base address and size of the north, south , west
+> 
+> Extra space after south.
 
-diff --git a/scripts/package/builddeb b/scripts/package/builddeb
-index b03dd56a4782..8f7afb3a84e9 100755
---- a/scripts/package/builddeb
-+++ b/scripts/package/builddeb
-@@ -132,6 +132,11 @@ fi
- if [ "$ARCH" != "um" ]; then
- 	$MAKE -f $srctree/Makefile headers_check
- 	$MAKE -f $srctree/Makefile headers_install INSTALL_HDR_PATH="$libc_headers_dir/usr"
-+	# move asm headers to /usr/include/<libc-machine>/asm to match the structure
-+	# used by Debian-based distros (to support multi-arch)
-+	libc_mach=$($CC -dumpmachine)
-+	mkdir $libc_headers_dir/usr/include/$libc_mach
-+	mv $libc_headers_dir/usr/include/asm $libc_headers_dir/usr/include/$libc_mach/
- fi
- 
- # Install the maintainer scripts
+Thanks will fix that
+
+> > +- #gpio-cells:
+> > +	Usage: required
+> > +	Value type: <u32>
+> > +	Definition: must be 2. Specifying the pin number and flags, as defined
+> > +		    in <dt-bindings/gpio/gpio.h>
+> > +
+> 
+> Please also document gpio-ranges and gpio-reserved-ranges.
+
+Will add
+
+> > +Example:
+> > +
+> > +	tlmm: pinctrl@3000000 {
+> > +		compatible = "qcom,sm8150-pinctrl";
+> > +		reg = <0x03100000 0x300000>,
+> > +		      <0x03500000 0x300000>,
+> > +		      <0x03900000 0x300000>,
+> > +		      <0x03D00000 0x300000>;
+> > +		reg-names = "west", "east", "north", "south";
+> > +		interrupts = <GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH>;
+> > +		gpio-controller;
+> > +		#gpio-cells = <2>;
+> > +		interrupt-controller;
+> > +		#interrupt-cells = <2>;
+> 
+> You're missing the required gpio-ranges from the example, see e.g.
+> msm8996 (and please send a patch to the binding you based this on).
+
+I ported this from downstream but did look at existing upstream
+examples so will do that
+
 -- 
-2.11.0
-
+~Vinod
