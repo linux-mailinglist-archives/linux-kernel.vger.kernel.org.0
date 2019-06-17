@@ -2,89 +2,154 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B377847FB0
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 12:31:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 92B5B47FB4
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 12:32:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728112AbfFQKbS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 06:31:18 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:38394 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726091AbfFQKbS (ORCPT
+        id S1727445AbfFQKc2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 06:32:28 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:40539 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726091AbfFQKc2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 06:31:18 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=TSyEikwRmMeCR1bDMoxiHnUHKSbz82o6XWDHp751sE8=; b=V0bCupC+fPPlIT6U9yltJLPOm
-        3m2GY3ZyZB8EzOkTf2juEOeWdQnkcC1qO276A140mr7s3g6n6wKcZjQn1b8dU+HF5+ML21PBO8Ar0
-        pF6bVAIAHmsdaUqWaWgWnj9VoChqZxrPKQxNY84eykDQiRbUR47VU/CIGh7Ss94nC3/Qo=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=finisterre.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1hcout-0001Ms-Qe; Mon, 17 Jun 2019 10:31:11 +0000
-Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
-        id 311C2440046; Mon, 17 Jun 2019 11:31:11 +0100 (BST)
-Date:   Mon, 17 Jun 2019 11:31:11 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Andreas Kemnade <andreas@kemnade.info>
-Cc:     tony@atomide.com, lgirdwood@gmail.com, linux-omap@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        sboyd@kernel.org, nm@ti.com, vireshk@kernel.org,
-        letux-kernel@openphoenux.org
-Subject: Re: [PATCH] regulator: twl: mark vdd1/2 as continuous on twl4030
-Message-ID: <20190617103111.GM5316@sirena.org.uk>
-Mail-Followup-To: Andreas Kemnade <andreas@kemnade.info>, tony@atomide.com,
-        lgirdwood@gmail.com, linux-omap@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        sboyd@kernel.org, nm@ti.com, vireshk@kernel.org,
-        letux-kernel@openphoenux.org
-References: <20190615163314.28173-1-andreas@kemnade.info>
+        Mon, 17 Jun 2019 06:32:28 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x5HAVnjm3369309
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Mon, 17 Jun 2019 03:31:49 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x5HAVnjm3369309
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019051801; t=1560767510;
+        bh=FKfxDG6dJMYpWrzCl1adpOClPJSHxmUfRMnxFDyTbM0=;
+        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
+        b=hUySENJ2JrZTlEGDqdcq5VIVHuX77lKE9vApmTAWmhA6w2owRF834cCmq+oGYVPwQ
+         oPAxmR8n9GwFh2vRPiGXJObXsPW+5EKv4WViy5NEkUf3vUZtFFvWoMZmiEZRsMl0lo
+         zwX13f5zVWyvwLcb6SLnFHGiZCwT3GGlztMGAiSnEPdmftO96vD27RYxghT5fq8aYi
+         wiTHW7LqoDzU7tEGZOADXSDjmlAwauGcLEJo09IxPKyFSbnskdU2tj35XueugNYTGW
+         bTqnMD8GjFL0YV6adeHZmy4pcMoM6Ja4PxITh7F1TOx1rMwnuSVW/JoHT/Rt7lqC0O
+         oX6/oIYwT1oLA==
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x5HAVnro3369306;
+        Mon, 17 Jun 2019 03:31:49 -0700
+Date:   Mon, 17 Jun 2019 03:31:49 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Christoph Hellwig <tipbot@zytor.com>
+Message-ID: <tip-6d79d86f9600510e08ad45c72b9d7e664e439e62@git.kernel.org>
+Cc:     mingo@kernel.org, hpa@zytor.com, hch@lst.de, bp@suse.de,
+        bigeasy@linutronix.de, x86@kernel.org, riel@surriel.com,
+        nstange@suse.de, tglx@linutronix.de, mingo@redhat.com,
+        dave.hansen@intel.com, linux-kernel@vger.kernel.org
+Reply-To: mingo@kernel.org, hpa@zytor.com, bigeasy@linutronix.de,
+          x86@kernel.org, hch@lst.de, bp@suse.de, riel@surriel.com,
+          nstange@suse.de, tglx@linutronix.de, dave.hansen@intel.com,
+          linux-kernel@vger.kernel.org, mingo@redhat.com
+In-Reply-To: <20190604071524.12835-3-hch@lst.de>
+References: <20190604071524.12835-3-hch@lst.de>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/fpu] x86/fpu: Simplify kernel_fpu_begin()
+Git-Commit-ID: 6d79d86f9600510e08ad45c72b9d7e664e439e62
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="bNLLTo5eXWXFd6av"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <20190615163314.28173-1-andreas@kemnade.info>
-X-Cookie: Editing is a rewording activity.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Spam-Status: No, score=-3.1 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF autolearn=ham
+        autolearn_force=no version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Commit-ID:  6d79d86f9600510e08ad45c72b9d7e664e439e62
+Gitweb:     https://git.kernel.org/tip/6d79d86f9600510e08ad45c72b9d7e664e439e62
+Author:     Christoph Hellwig <hch@lst.de>
+AuthorDate: Tue, 4 Jun 2019 09:15:23 +0200
+Committer:  Borislav Petkov <bp@suse.de>
+CommitDate: Mon, 17 Jun 2019 12:19:49 +0200
 
---bNLLTo5eXWXFd6av
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+x86/fpu: Simplify kernel_fpu_begin()
 
-On Sat, Jun 15, 2019 at 06:33:14PM +0200, Andreas Kemnade wrote:
+Merge two helpers into the main function, remove a pointless local
+variable and flatten a conditional.
 
-> The VDD1/VDD2 regulators on twl4030 are neither defined with
-> voltage lists nor with the continuous flag set, so
-> regulator_is_supported_voltage() returns false and an error
-> before above mentioned commit (which was considered success)
-> The result is that after the above mentioned commit cpufreq
-> does not work properly e.g. dm3730.
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Acked-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: Dave Hansen <dave.hansen@intel.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Nicolai Stange <nstange@suse.de>
+Cc: Rik van Riel <riel@surriel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: x86-ml <x86@kernel.org>
+Link: https://lkml.kernel.org/r/20190604071524.12835-3-hch@lst.de
+---
+ arch/x86/kernel/fpu/core.c | 36 ++++++++++++------------------------
+ 1 file changed, 12 insertions(+), 24 deletions(-)
 
-Why is this a good fix and not defining the supported voltages?  These
-look like fairly standard linear range regulators.
-
---bNLLTo5eXWXFd6av
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl0Ha+sACgkQJNaLcl1U
-h9CySgf/QMQ2EqpD1L/XFhmLo/ZBQ0MxTTbrhP3mxCoktiXaHq/8rC1GKin90FQ+
-63Z79sD50NvjwOao024deSYu+7MVpCoojPdVwdizjH/B2meplYkB5fw3yhHKvsKc
-+r1BYXVYODtZC590X8RcFCT4nO91acJoSbkA9dbHhp16+qnyjy/7sr9OmtDwTYkw
-qVjma1T5nDgWfw1G9bQ6WAdQHSdZtuo7LYmPbrvpPXNAaTv2Va2YssbniIOWNgsW
-sC/YRIuwWUztdeRwfhWIbyt3elAP0kUmoRVD1O3WzQx4STBpn97C++fDwjDwgn7H
-F99QnvGMDroMdwasCwHr5TcSfoWAKQ==
-=Awof
------END PGP SIGNATURE-----
-
---bNLLTo5eXWXFd6av--
+diff --git a/arch/x86/kernel/fpu/core.c b/arch/x86/kernel/fpu/core.c
+index 8e046068d20f..3f92cfad88f0 100644
+--- a/arch/x86/kernel/fpu/core.c
++++ b/arch/x86/kernel/fpu/core.c
+@@ -43,12 +43,6 @@ static DEFINE_PER_CPU(bool, in_kernel_fpu);
+  */
+ DEFINE_PER_CPU(struct fpu *, fpu_fpregs_owner_ctx);
+ 
+-static void kernel_fpu_disable(void)
+-{
+-	WARN_ON_FPU(this_cpu_read(in_kernel_fpu));
+-	this_cpu_write(in_kernel_fpu, true);
+-}
+-
+ static bool kernel_fpu_disabled(void)
+ {
+ 	return this_cpu_read(in_kernel_fpu);
+@@ -88,32 +82,26 @@ bool irq_fpu_usable(void)
+ }
+ EXPORT_SYMBOL(irq_fpu_usable);
+ 
+-static void __kernel_fpu_begin(void)
++void kernel_fpu_begin(void)
+ {
+-	struct fpu *fpu = &current->thread.fpu;
++	preempt_disable();
+ 
+ 	WARN_ON_FPU(!irq_fpu_usable());
++	WARN_ON_FPU(this_cpu_read(in_kernel_fpu));
+ 
+-	kernel_fpu_disable();
++	this_cpu_write(in_kernel_fpu, true);
+ 
+-	if (!(current->flags & PF_KTHREAD)) {
+-		if (!test_thread_flag(TIF_NEED_FPU_LOAD)) {
+-			set_thread_flag(TIF_NEED_FPU_LOAD);
+-			/*
+-			 * Ignore return value -- we don't care if reg state
+-			 * is clobbered.
+-			 */
+-			copy_fpregs_to_fpstate(fpu);
+-		}
++	if (!(current->flags & PF_KTHREAD) &&
++	    !test_thread_flag(TIF_NEED_FPU_LOAD)) {
++		set_thread_flag(TIF_NEED_FPU_LOAD);
++		/*
++		 * Ignore return value -- we don't care if reg state
++		 * is clobbered.
++		 */
++		copy_fpregs_to_fpstate(&current->thread.fpu);
+ 	}
+ 	__cpu_invalidate_fpregs_state();
+ }
+-
+-void kernel_fpu_begin(void)
+-{
+-	preempt_disable();
+-	__kernel_fpu_begin();
+-}
+ EXPORT_SYMBOL_GPL(kernel_fpu_begin);
+ 
+ void kernel_fpu_end(void)
