@@ -2,112 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4156A48DC1
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 21:17:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6FE1348DD5
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 21:17:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727767AbfFQTQ7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 15:16:59 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:44403 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725829AbfFQTQ6 (ORCPT
+        id S1728707AbfFQTRc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 15:17:32 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:47318 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725829AbfFQTR2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 15:16:58 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x5HJGiDA3559655
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Mon, 17 Jun 2019 12:16:44 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x5HJGiDA3559655
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019051801; t=1560799004;
-        bh=eUCp9JhHf8WkAAyD5RlGQtULz04H9ubyJ88+fv+pyuA=;
-        h=Date:From:Cc:Reply-To:To:Subject:From;
-        b=HANCXcA7rNX8grwCmfFwLPWQWNzg2+sgC1PMl2GDjl1DXOFMMfZdbLKurAbE4sTsW
-         19frMvgAsE54CyWqMlyfrfg6ok0FEqDwxHoq9kvyfkq6fUpM8vLrS6QRGzE8fE5j4t
-         vTodHIrofaa+lCRaJyNpM8irmQYYgwdYFTkMMfZb9Li1Qlzk6lMJ76K9u523n+889P
-         bOVMjBj16enFA50m9Z2yhzICsvHBV1HEvh7w83TznwrruIMv1a43pVZlmuWt8eYpW5
-         8v+09dPbU80nL28La8K47pv0JLy8DZocQnK73qv71HMgCq2GuE/Sd9oAPyXpzAYpBj
-         BBhL1gqzDAuNQ==
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x5HJGhbI3559652;
-        Mon, 17 Jun 2019 12:16:43 -0700
-Date:   Mon, 17 Jun 2019 12:16:43 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
-Message-ID: <tip-wjy7j4bk06g7atzwoz1mid24@git.kernel.org>
-Cc:     namhyung@kernel.org, jolsa@kernel.org, acme@redhat.com,
-        mingo@kernel.org, hpa@zytor.com, adrian.hunter@intel.com,
-        linux-kernel@vger.kernel.org, tglx@linutronix.de
-Reply-To: namhyung@kernel.org, jolsa@kernel.org, acme@redhat.com,
-          mingo@kernel.org, adrian.hunter@intel.com, hpa@zytor.com,
-          linux-kernel@vger.kernel.org, tglx@linutronix.de
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf trace: Associate more argument names with the
- filename beautifier
-Git-Commit-ID: dea87bfb7b280e8b14519eb6b5e8bafbbf4c66f2
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Mon, 17 Jun 2019 15:17:28 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5HJDblY117470;
+        Mon, 17 Jun 2019 19:17:18 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=N0fZ/pjg81/eD/DCiE/Dh3t4JVgGmGh6DJ1D5AK3Z3Q=;
+ b=VJvdI4tE4D/3ZymNHHArHH/jlE8zJGuCXu4vIJnrNn4uTKYkE2Fy2wfCXYCehc/MU59c
+ s2Fut7gx4dYV5eVgbDHUthGgxIhhVUKyIXqvrN19IvvQML8XqdlyYWvFF2fEO0cQCPlW
+ MajN4wuAEWwcD+RHuuTlrK2ieId0HOijUDcB5JY2dvT+MMogmbHMGQacVeA/SsprrROp
+ wumbb14BZPZ2EL+Fw8Wy+8tJhF/19bpUXiLw+A1gfDnScj+VkRu+ozqKzXE/6RPIcw+U
+ ibhFBW0fZINkMFl2v/QyZygvgVIsaaWI4wD0LujG1BAeA2HZoJ0K2J2UvR3xvRoPbgIF Jg== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by aserp2120.oracle.com with ESMTP id 2t4rmp09fh-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 17 Jun 2019 19:17:18 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5HJGPBS155680;
+        Mon, 17 Jun 2019 19:17:18 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserp3020.oracle.com with ESMTP id 2t5mgbhd9u-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 17 Jun 2019 19:17:18 +0000
+Received: from abhmp0009.oracle.com (abhmp0009.oracle.com [141.146.116.15])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x5HJHG0a003467;
+        Mon, 17 Jun 2019 19:17:16 GMT
+Received: from kadam (/41.57.98.10)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 17 Jun 2019 12:17:16 -0700
+Date:   Mon, 17 Jun 2019 22:17:08 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Colin King <colin.king@canonical.com>
+Cc:     Derek Chickles <dchickles@marvell.com>,
+        Satanand Burla <sburla@marvell.com>,
+        Felix Manlunas <fmanlunas@marvell.com>,
+        "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][V2] net: lio_core: fix potential sign-extension overflow
+ on large shift
+Message-ID: <20190617191708.GI28859@kadam>
+References: <20190617161249.28846-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-X-Spam-Status: No, score=-1.2 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        DATE_IN_FUTURE_06_12,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,
-        DKIM_VALID_EF autolearn=ham autolearn_force=no version=3.4.2
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
+In-Reply-To: <20190617161249.28846-1-colin.king@canonical.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9291 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1906170171
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9291 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1906170171
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  dea87bfb7b280e8b14519eb6b5e8bafbbf4c66f2
-Gitweb:     https://git.kernel.org/tip/dea87bfb7b280e8b14519eb6b5e8bafbbf4c66f2
-Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
-AuthorDate: Wed, 5 Jun 2019 10:53:06 -0300
-Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Wed, 5 Jun 2019 10:53:06 -0300
+On Mon, Jun 17, 2019 at 05:12:49PM +0100, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Left shifting the signed int value 1 by 31 bits has undefined behaviour
+> and the shift amount oq_no can be as much as 63.  Fix this by using
+> BIT_ULL(oq_no) instead.
+> 
+> Addresses-Coverity: ("Bad shift operation")
+> Fixes: f21fb3ed364b ("Add support of Cavium Liquidio ethernet adapters")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
 
-perf trace: Associate more argument names with the filename beautifier
+Looks good.  Thanks!
 
-For instance, the rename* family uses "oldname", "newname", so check if
-"name" is at the end and treat it as a filename.
+Reviewed-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Link: https://lkml.kernel.org/n/tip-wjy7j4bk06g7atzwoz1mid24@git.kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/builtin-trace.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+regards,
+dan carpenter
 
-diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
-index 905e57c336b0..f7e4e50bddbd 100644
---- a/tools/perf/builtin-trace.c
-+++ b/tools/perf/builtin-trace.c
-@@ -1431,10 +1431,11 @@ static int syscall__set_arg_fmts(struct syscall *sc)
- 		if (sc->fmt && sc->fmt->arg[idx].scnprintf)
- 			continue;
- 
-+		len = strlen(field->name);
-+
- 		if (strcmp(field->type, "const char *") == 0 &&
--			 (strcmp(field->name, "filename") == 0 ||
--			  strcmp(field->name, "path") == 0 ||
--			  strcmp(field->name, "pathname") == 0))
-+		    ((len >= 4 && strcmp(field->name + len - 4, "name") == 0) ||
-+		     strstr(field->name, "path") != NULL))
- 			sc->arg_fmt[idx].scnprintf = SCA_FILENAME;
- 		else if ((field->flags & TEP_FIELD_IS_POINTER) || strstr(field->name, "addr"))
- 			sc->arg_fmt[idx].scnprintf = SCA_PTR;
-@@ -1445,8 +1446,7 @@ static int syscall__set_arg_fmts(struct syscall *sc)
- 		else if ((strcmp(field->type, "int") == 0 ||
- 			  strcmp(field->type, "unsigned int") == 0 ||
- 			  strcmp(field->type, "long") == 0) &&
--			 (len = strlen(field->name)) >= 2 &&
--			 strcmp(field->name + len - 2, "fd") == 0) {
-+			 len >= 2 && strcmp(field->name + len - 2, "fd") == 0) {
- 			/*
- 			 * /sys/kernel/tracing/events/syscalls/sys_enter*
- 			 * egrep 'field:.*fd;' .../format|sed -r 's/.*field:([a-z ]+) [a-z_]*fd.+/\1/g'|sort|uniq -c
