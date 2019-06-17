@@ -2,79 +2,50 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2745A47E94
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 11:36:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EDA8747EA2
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 11:39:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727640AbfFQJgR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 05:36:17 -0400
-Received: from mx2.suse.de ([195.135.220.15]:44788 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725837AbfFQJgP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 05:36:15 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 96A65AF30;
-        Mon, 17 Jun 2019 09:36:14 +0000 (UTC)
-Subject: Re: [RFC PATCH 11/16] xen/grant-table: make grant-table xenhost aware
-To:     Ankur Arora <ankur.a.arora@oracle.com>,
-        linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org
-Cc:     pbonzini@redhat.com, boris.ostrovsky@oracle.com,
-        konrad.wilk@oracle.com, sstabellini@kernel.org,
-        joao.m.martins@oracle.com
-References: <20190509172540.12398-1-ankur.a.arora@oracle.com>
- <20190509172540.12398-12-ankur.a.arora@oracle.com>
-From:   Juergen Gross <jgross@suse.com>
-Message-ID: <71d3131a-cd14-6bf6-391a-6e4b0533fb23@suse.com>
-Date:   Mon, 17 Jun 2019 11:36:13 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S1727508AbfFQJju (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 05:39:50 -0400
+Received: from mga07.intel.com ([134.134.136.100]:20451 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725837AbfFQJju (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Jun 2019 05:39:50 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Jun 2019 02:39:48 -0700
+X-ExtLoop1: 1
+Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.157])
+  by fmsmga001.fm.intel.com with SMTP; 17 Jun 2019 02:39:44 -0700
+Received: by lahna (sSMTP sendmail emulation); Mon, 17 Jun 2019 12:39:44 +0300
+Date:   Mon, 17 Jun 2019 12:39:44 +0300
+From:   Mika Westerberg <mika.westerberg@linux.intel.com>
+To:     Suzuki K Poulose <suzuki.poulose@arm.com>
+Cc:     linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org,
+        rafael@kernel.org, Wolfram Sang <wsa@the-dreams.de>,
+        linux-i2c@vger.kernel.org, Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH v2 21/28] drivers: Introduce
+ bus_find_device_by_acpi_dev() helper
+Message-ID: <20190617093944.GP2640@lahna.fi.intel.com>
+References: <1560534863-15115-1-git-send-email-suzuki.poulose@arm.com>
+ <1560534863-15115-22-git-send-email-suzuki.poulose@arm.com>
 MIME-Version: 1.0
-In-Reply-To: <20190509172540.12398-12-ankur.a.arora@oracle.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: de-DE
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1560534863-15115-22-git-send-email-suzuki.poulose@arm.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09.05.19 19:25, Ankur Arora wrote:
-> Largely mechanical changes: the exported grant table symbols now take
-> xenhost_t * as a parameter. Also, move the grant table global state
-> inside xenhost_t.
+On Fri, Jun 14, 2019 at 06:54:16PM +0100, Suzuki K Poulose wrote:
+> Add a wrapper to bus_find_device() to search for a device
+> by the ACPI COMPANION device, reusing the generic match function.
+> Also convert the existing users to make use of the new helper.
 > 
-> If there's more than one xenhost, then initialize both.
-> 
-> Signed-off-by: Ankur Arora <ankur.a.arora@oracle.com>
-> ---
->   arch/x86/xen/grant-table.c |  71 +++--
->   drivers/xen/grant-table.c  | 611 +++++++++++++++++++++----------------
->   include/xen/grant_table.h  |  72 ++---
->   include/xen/xenhost.h      |  11 +
->   4 files changed, 443 insertions(+), 322 deletions(-)
-> 
-> diff --git a/include/xen/xenhost.h b/include/xen/xenhost.h
-> index 9e08627a9e3e..acee0c7872b6 100644
-> --- a/include/xen/xenhost.h
-> +++ b/include/xen/xenhost.h
-> @@ -129,6 +129,17 @@ typedef struct {
->   		const struct evtchn_ops *evtchn_ops;
->   		int **evtchn_to_irq;
->   	};
-> +
-> +	/* grant table private state */
-> +	struct {
-> +		/* private to drivers/xen/grant-table.c */
-> +		void *gnttab_private;
-> +
-> +		/* x86/xen/grant-table.c */
-> +		void *gnttab_shared_vm_area;
-> +		void *gnttab_status_vm_area;
-> +		void *auto_xlat_grant_frames;
+> Cc: Mika Westerberg <mika.westerberg@linux.intel.com>
 
-Please use proper types here instead of void *. This avoids lots of
-casts. It is okay to just add anonymous struct definitions and keep the
-real struct layout local to grant table code.
-
-
-Juergen
+Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
