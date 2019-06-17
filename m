@@ -2,303 +2,137 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C5F948DAB
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 21:13:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A675348DAE
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 21:13:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726074AbfFQTNR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 15:13:17 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:51568 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727844AbfFQTNP (ORCPT
+        id S1728774AbfFQTNd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 15:13:33 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:42051 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726673AbfFQTNd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 15:13:15 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Sender:Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
-        Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=iCSzZqLsrl4SZGgGSimNBkQcdOEuLjaMwS/hhvVK5Fk=; b=u7auIcW+tmc9bmzfLYkWWT3rAg
-        0P0iZcUQOKaIZX/3+91i7lpW1UT0YnAMEK3zpRUtu+oY2hqdvlBKhAQ/uhVI3S02CGggngVVt4S9A
-        fZp8EalVkrcaETQP6g3CXWuRciv7boICGYDe8qAWy8OZPizyiMtlXKvXlXAwxg1OMIZE6BhfpubEN
-        lAaxjcbvDNTw20GYxEV8z77ZCRUtHiB6KMcEc5kH6Z79zBX7YKFRt7YTJU2zo0E53HlkVksfUz7lH
-        cfABaGOFsfAjgLt/C50hTGjbEIUDnAU4iwSuxCD1KudliRQGnzbm+l55B7kloHseKILKfkXV4NTS7
-        RlNuNbsw==;
-Received: from 179.186.105.91.dynamic.adsl.gvt.net.br ([179.186.105.91] helo=bombadil.infradead.org)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hcx46-0003eM-Q1; Mon, 17 Jun 2019 19:13:15 +0000
-Received: from mchehab by bombadil.infradead.org with local (Exim 4.92)
-        (envelope-from <mchehab@bombadil.infradead.org>)
-        id 1hcx44-0001F2-H4; Mon, 17 Jun 2019 16:13:12 -0300
-From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jonathan Corbet <corbet@lwn.net>
-Cc:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Mauro Carvalho Chehab <mchehab@infradead.org>,
-        linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Alexey Budankov <alexey.budankov@linux.intel.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Changbin Du <changbin.du@intel.com>
-Subject: [PATCH 2/2] docs: admin-guide, x86: add a features list
-Date:   Mon, 17 Jun 2019 16:13:11 -0300
-Message-Id: <f6e5d5d23a970e9fce689963890655917d776996.1560798774.git.mchehab+samsung@kernel.org>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <02e7a3eb6ec8b86cda74b4b12355c50d746fc6f6.1560798774.git.mchehab+samsung@kernel.org>
-References: <02e7a3eb6ec8b86cda74b4b12355c50d746fc6f6.1560798774.git.mchehab+samsung@kernel.org>
+        Mon, 17 Jun 2019 15:13:33 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x5HJDFfB3558898
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Mon, 17 Jun 2019 12:13:16 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x5HJDFfB3558898
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019051801; t=1560798796;
+        bh=r1CfY9rcPUnd2q3fr1GZGCcyq9Ge3lFOzXVa0yuK7LM=;
+        h=Date:From:Cc:Reply-To:To:Subject:From;
+        b=P8Dv0StErRf+u3wX/m6nT5hkAj0JmVaQIvuzWIMmaznsCB6GtAtoczMI6Dmuc7j48
+         Af4f4kbmz/PWdDz5xgy/fz3HESkJJk8G33k1Mro8MbQeRRAu6JFBjV2R8rHcr1diC6
+         J462NakcSGvqXeO2829ZzLCMnIQ97Gv8IWi2BkTfTnDIZ1W3Dn2QOE7Q91pI+6O3oW
+         d7lX8RfhfjOWWEk1kwSZnqXj/4bkMXa59sQCSU8C58v3WdOOUA83CzIcxV692HErPX
+         Ikx4+uhs/6TlJQjSzeJGCTa34h1kCaOdFvoVLyx+Kgh8HM0ecNy9nwVGm360Ib34XK
+         Bnggw3LAOBWow==
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x5HJDFD13558895;
+        Mon, 17 Jun 2019 12:13:15 -0700
+Date:   Mon, 17 Jun 2019 12:13:15 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
+Message-ID: <tip-xdqtjexdyp81oomm1rkzeifl@git.kernel.org>
+Cc:     acme@redhat.com, brendan.d.gregg@gmail.com, namhyung@kernel.org,
+        lclaudio@redhat.com, jolsa@kernel.org,
+        linux-kernel@vger.kernel.org, hpa@zytor.com, tglx@linutronix.de,
+        adrian.hunter@intel.com, mingo@kernel.org
+Reply-To: adrian.hunter@intel.com, mingo@kernel.org, tglx@linutronix.de,
+          linux-kernel@vger.kernel.org, hpa@zytor.com, jolsa@kernel.org,
+          lclaudio@redhat.com, namhyung@kernel.org,
+          brendan.d.gregg@gmail.com, acme@redhat.com
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/core] perf augmented_raw_syscalls: Move the
+ probe_read_str to a separate function
+Git-Commit-ID: 0c95a7ff76fb1c5bb614e6ee438fce06d1b957c8
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
+X-Spam-Status: No, score=0.9 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DATE_IN_FUTURE_06_12,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,
+        DKIM_VALID_EF,FREEMAIL_FORGED_REPLYTO autolearn=no autolearn_force=no
+        version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a feature list matrix at the admin-guide and a x86-specific
-feature list to the respective Kernel books.
+Commit-ID:  0c95a7ff76fb1c5bb614e6ee438fce06d1b957c8
+Gitweb:     https://git.kernel.org/tip/0c95a7ff76fb1c5bb614e6ee438fce06d1b957c8
+Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
+AuthorDate: Tue, 4 Jun 2019 15:31:28 -0300
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Wed, 5 Jun 2019 09:47:58 -0300
 
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+perf augmented_raw_syscalls: Move the probe_read_str to a separate function
+
+One more step into copying multiple filenames to support syscalls like
+rename*.
+
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Brendan Gregg <brendan.d.gregg@gmail.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Luis Cláudio Gonçalves <lclaudio@redhat.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Link: https://lkml.kernel.org/n/tip-xdqtjexdyp81oomm1rkzeifl@git.kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- Documentation/admin-guide/features.rst |   3 +
- Documentation/admin-guide/index.rst    |   1 +
- Documentation/conf.py                  |   2 +-
- Documentation/sphinx/kernel_feat.py    | 169 +++++++++++++++++++++++++
- Documentation/x86/features.rst         |   3 +
- Documentation/x86/index.rst            |   1 +
- 6 files changed, 178 insertions(+), 1 deletion(-)
- create mode 100644 Documentation/admin-guide/features.rst
- create mode 100644 Documentation/sphinx/kernel_feat.py
- create mode 100644 Documentation/x86/features.rst
+ tools/perf/examples/bpf/augmented_raw_syscalls.c | 27 ++++++++++++++++--------
+ 1 file changed, 18 insertions(+), 9 deletions(-)
 
-diff --git a/Documentation/admin-guide/features.rst b/Documentation/admin-guide/features.rst
-new file mode 100644
-index 000000000000..8c167082a84f
---- /dev/null
-+++ b/Documentation/admin-guide/features.rst
-@@ -0,0 +1,3 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
-+.. kernel-feat:: $srctree/Documentation/features
-diff --git a/Documentation/admin-guide/index.rst b/Documentation/admin-guide/index.rst
-index 20c3020fd73c..14c8464f6ca9 100644
---- a/Documentation/admin-guide/index.rst
-+++ b/Documentation/admin-guide/index.rst
-@@ -17,6 +17,7 @@ etc.
-    kernel-parameters
-    devices
-    abi
-+   features
+diff --git a/tools/perf/examples/bpf/augmented_raw_syscalls.c b/tools/perf/examples/bpf/augmented_raw_syscalls.c
+index c9fd3b4d8e55..356513e81ec1 100644
+--- a/tools/perf/examples/bpf/augmented_raw_syscalls.c
++++ b/tools/perf/examples/bpf/augmented_raw_syscalls.c
+@@ -60,11 +60,27 @@ struct augmented_args_filename {
  
- This section describes CPU vulnerabilities and their mitigations.
+ bpf_map(augmented_filename_map, PERCPU_ARRAY, int, struct augmented_args_filename, 1);
  
-diff --git a/Documentation/conf.py b/Documentation/conf.py
-index 598256fb5c98..a0ef76ce5615 100644
---- a/Documentation/conf.py
-+++ b/Documentation/conf.py
-@@ -34,7 +34,7 @@ needs_sphinx = '1.3'
- # Add any Sphinx extension module names here, as strings. They can be
- # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
- # ones.
--extensions = ['kerneldoc', 'rstFlatTable', 'kernel_include', 'cdomain', 'kfigure', 'sphinx.ext.ifconfig', 'kernel_abi']
-+extensions = ['kerneldoc', 'rstFlatTable', 'kernel_include', 'cdomain', 'kfigure', 'sphinx.ext.ifconfig', 'kernel_abi', 'kernel_feat']
++static inline
++unsigned int augmented_args__read_filename(struct augmented_args_filename *augmented_args,
++					   const void *filename_arg, unsigned int filename_len)
++{
++	unsigned int len = sizeof(*augmented_args);
++
++	augmented_args->filename.reserved = 0;
++	augmented_args->filename.size = probe_read_str(&augmented_args->filename.value, filename_len, filename_arg);
++	if (augmented_args->filename.size < sizeof(augmented_args->filename.value)) {
++		len -= sizeof(augmented_args->filename.value) - augmented_args->filename.size;
++		len &= sizeof(augmented_args->filename.value) - 1;
++	}
++
++	return len;
++}
++
+ SEC("raw_syscalls:sys_enter")
+ int sys_enter(struct syscall_enter_args *args)
+ {
+ 	struct augmented_args_filename *augmented_args;
+-	unsigned int len = sizeof(*augmented_args), filename_len;
++	unsigned int len, filename_len;
+ 	const void *filename_arg = NULL;
+ 	struct syscall *syscall;
+ 	int key = 0;
+@@ -182,14 +198,7 @@ processed 46 insns (limit 1000000) max_states_per_insn 0 total_states 12 peak_st
+ 	loop_iter_last(5)
  
- # The name of the math extension changed on Sphinx 1.4
- if (major == 1 and minor > 3) or (major > 1):
-diff --git a/Documentation/sphinx/kernel_feat.py b/Documentation/sphinx/kernel_feat.py
-new file mode 100644
-index 000000000000..2fee04f1dedd
---- /dev/null
-+++ b/Documentation/sphinx/kernel_feat.py
-@@ -0,0 +1,169 @@
-+# coding=utf-8
-+# SPDX-License-Identifier: GPL-2.0
-+#
-+u"""
-+    kernel-feat
-+    ~~~~~~~~~~~
-+
-+    Implementation of the ``kernel-feat`` reST-directive.
-+
-+    :copyright:  Copyright (C) 2016  Markus Heiser
-+    :copyright:  Copyright (C) 2016-2019  Mauro Carvalho Chehab
-+    :maintained-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-+    :license:    GPL Version 2, June 1991 see Linux/COPYING for details.
-+
-+    The ``kernel-feat`` (:py:class:`KernelFeat`) directive calls the
-+    scripts/get_feat.pl script to parse the Kernel ABI files.
-+
-+    Overview of directive's argument and options.
-+
-+    .. code-block:: rst
-+
-+        .. kernel-feat:: <ABI directory location>
-+            :debug:
-+
-+    The argument ``<ABI directory location>`` is required. It contains the
-+    location of the ABI files to be parsed.
-+
-+    ``debug``
-+      Inserts a code-block with the *raw* reST. Sometimes it is helpful to see
-+      what reST is generated.
-+
-+"""
-+
-+import codecs
-+import os
-+import subprocess
-+import sys
-+
-+from os import path
-+
-+from docutils import nodes, statemachine
-+from docutils.statemachine import ViewList
-+from docutils.parsers.rst import directives, Directive
-+from docutils.utils.error_reporting import ErrorString
-+
-+#
-+# AutodocReporter is only good up to Sphinx 1.7
-+#
-+import sphinx
-+
-+Use_SSI = sphinx.__version__[:3] >= '1.7'
-+if Use_SSI:
-+    from sphinx.util.docutils import switch_source_input
-+else:
-+    from sphinx.ext.autodoc import AutodocReporter
-+
-+__version__  = '1.0'
-+
-+def setup(app):
-+
-+    app.add_directive("kernel-feat", KernelFeat)
-+    return dict(
-+        version = __version__
-+        , parallel_read_safe = True
-+        , parallel_write_safe = True
-+    )
-+
-+class KernelFeat(Directive):
-+
-+    u"""KernelFeat (``kernel-feat``) directive"""
-+
-+    required_arguments = 1
-+    optional_arguments = 2
-+    has_content = False
-+    final_argument_whitespace = True
-+
-+    option_spec = {
-+        "debug"     : directives.flag
-+    }
-+
-+    def warn(self, message, **replace):
-+        replace["fname"]   = self.state.document.current_source
-+        replace["line_no"] = replace.get("line_no", self.lineno)
-+        message = ("%(fname)s:%(line_no)s: [kernel-feat WARN] : " + message) % replace
-+        self.state.document.settings.env.app.warn(message, prefix="")
-+
-+    def run(self):
-+
-+        doc = self.state.document
-+        if not doc.settings.file_insertion_enabled:
-+            raise self.warning("docutils: file insertion disabled")
-+
-+        env = doc.settings.env
-+        cwd = path.dirname(doc.current_source)
-+        cmd = "get_feat.pl rest --dir "
-+        cmd += self.arguments[0]
-+
-+        if len(self.arguments) > 1:
-+            cmd += " --arch " + self.arguments[1]
-+
-+        srctree = path.abspath(os.environ["srctree"])
-+
-+        fname = cmd
-+
-+        # extend PATH with $(srctree)/scripts
-+        path_env = os.pathsep.join([
-+            srctree + os.sep + "scripts",
-+            os.environ["PATH"]
-+        ])
-+        shell_env = os.environ.copy()
-+        shell_env["PATH"]    = path_env
-+        shell_env["srctree"] = srctree
-+
-+        lines = self.runCmd(cmd, shell=True, cwd=cwd, env=shell_env)
-+        nodeList = self.nestedParse(lines, fname)
-+        return nodeList
-+
-+    def runCmd(self, cmd, **kwargs):
-+        u"""Run command ``cmd`` and return it's stdout as unicode."""
-+
-+        try:
-+            proc = subprocess.Popen(
-+                cmd
-+                , stdout = subprocess.PIPE
-+                , stderr = subprocess.PIPE
-+                , **kwargs
-+            )
-+            out, err = proc.communicate()
-+
-+            out, err = codecs.decode(out, 'utf-8'), codecs.decode(err, 'utf-8')
-+
-+            if proc.returncode != 0:
-+                raise self.severe(
-+                    u"command '%s' failed with return code %d"
-+                    % (cmd, proc.returncode)
-+                )
-+        except OSError as exc:
-+            raise self.severe(u"problems with '%s' directive: %s."
-+                              % (self.name, ErrorString(exc)))
-+        return out
-+
-+    def nestedParse(self, lines, fname):
-+        content = ViewList()
-+        node    = nodes.section()
-+
-+        if "debug" in self.options:
-+            code_block = "\n\n.. code-block:: rst\n    :linenos:\n"
-+            for l in lines.split("\n"):
-+                code_block += "\n    " + l
-+            lines = code_block + "\n\n"
-+
-+        for c, l in enumerate(lines.split("\n")):
-+            content.append(l, fname, c)
-+
-+        buf  = self.state.memo.title_styles, self.state.memo.section_level, self.state.memo.reporter
-+
-+        if Use_SSI:
-+            with switch_source_input(self.state, content):
-+                self.state.nested_parse(content, 0, node, match_titles=1)
-+        else:
-+            self.state.memo.title_styles  = []
-+            self.state.memo.section_level = 0
-+            self.state.memo.reporter      = AutodocReporter(content, self.state.memo.reporter)
-+            try:
-+                self.state.nested_parse(content, 0, node, match_titles=1)
-+            finally:
-+                self.state.memo.title_styles, self.state.memo.section_level, self.state.memo.reporter = buf
-+
-+        return node.children
-diff --git a/Documentation/x86/features.rst b/Documentation/x86/features.rst
-new file mode 100644
-index 000000000000..b663f15053ce
---- /dev/null
-+++ b/Documentation/x86/features.rst
-@@ -0,0 +1,3 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
-+.. kernel-feat:: $srctree/Documentation/features x86
-diff --git a/Documentation/x86/index.rst b/Documentation/x86/index.rst
-index ae36fc5fc649..ed42c8c9154d 100644
---- a/Documentation/x86/index.rst
-+++ b/Documentation/x86/index.rst
-@@ -29,3 +29,4 @@ x86-specific Documentation
-    usb-legacy-support
-    i386/index
-    x86_64/index
-+   features
--- 
-2.21.0
-
+ 	if (filename_arg != NULL && filename_len <= sizeof(augmented_args->filename.value)) {
+-		augmented_args->filename.reserved = 0;
+-		augmented_args->filename.size = probe_read_str(&augmented_args->filename.value,
+-							      filename_len,
+-							      filename_arg);
+-		if (augmented_args->filename.size < sizeof(augmented_args->filename.value)) {
+-			len -= sizeof(augmented_args->filename.value) - augmented_args->filename.size;
+-			len &= sizeof(augmented_args->filename.value) - 1;
+-		}
++		len = augmented_args__read_filename(augmented_args, filename_arg, filename_len);
+ 	} else {
+ 		len = sizeof(augmented_args->args);
+ 	}
