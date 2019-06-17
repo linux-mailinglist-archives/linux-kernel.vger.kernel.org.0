@@ -2,136 +2,152 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 587B3484FA
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 16:12:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 788804850E
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 16:15:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727627AbfFQOM4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 10:12:56 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:45374 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725906AbfFQOMz (ORCPT
+        id S1728215AbfFQOOl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 10:14:41 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:34849 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727690AbfFQOOk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 10:12:55 -0400
-Received: by mail-lj1-f195.google.com with SMTP id m23so9420791lje.12
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2019 07:12:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=UR02dBMpLO2IwgmJl+zzqfvWxW4b3uNT3A/fq8b3Xl8=;
-        b=ais7vmnlp64PLs4/yXLarwLc3vWBtVrRpvk2YVRLCu5vOynXF/ETKfQV3kRZdWVNd4
-         AHp8ZVFVSXxWboDrThV6ewKEIoHbd9p0HhILdPz/MdACLBMShrwayFTu7p68fLujVUpA
-         7QgSAMEcPGG8pk5jzEBlYJaUZxq5mjlgKzrocXpZfIuC+o7svmRuMipiT8lk1mPzseBJ
-         3B6aL30SNmWb5x3EbValwnSyXeV0QGAIs5ZXgxIw1CAP1Ewia2ASPyhh1EyVWVPkLgBW
-         iZUdOfLWIzgYGZgHNgxHtDyaqaplfikrHJgT3afxiLgYycfJpZk/SyQVnLvwV2i0xldT
-         dNhA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=UR02dBMpLO2IwgmJl+zzqfvWxW4b3uNT3A/fq8b3Xl8=;
-        b=scRRewJJXhViLN0mawYNza5JR8VcS7DjloTZSKSzlfZ+XrnIUFCeU7Irb89Rb/8Cgz
-         cCGiyaKQdLcNwwOTjjm/5NrkknrMmldTt4wNZeSF9DU5ShPg4cLBQFIPO2zKe0yRm2GO
-         0T2UO+HMsqA62FQI4pmGbqydF5IyRwmR3FAGcncAq5st0Uh7RQBZrY7X1GGdtwsmRVv2
-         Jeyf/3j9Z3YQeOGuvCYcpczjpMowgkMnO3+L41AuCloKsiSK+0SJ5srvO0Nz9KmC1SE/
-         6F/ozifqSNeHnwcIv6ZWfWy72U9z23Irni4auOkH5yIrUh9ZHkBb1fEyWgc//ZFosADJ
-         4gmA==
-X-Gm-Message-State: APjAAAUkDS0EyBEhqAV2sA/qh+Bb/Rh7JUaRGzAskCORzylWIjHZCJDa
-        qaQBbrmgYacCxkZMy44lb5s=
-X-Google-Smtp-Source: APXvYqz67dES8orYwdSlSUe3JHIspV1NctOeVCA4RYfKHZHj2HcSoZQBqbf24JEc9RSK1DCSvpM3ZA==
-X-Received: by 2002:a2e:988b:: with SMTP id b11mr17763540ljj.110.1560780773866;
-        Mon, 17 Jun 2019 07:12:53 -0700 (PDT)
-Received: from pc636 ([37.139.158.167])
-        by smtp.gmail.com with ESMTPSA id n3sm1784184lfh.3.2019.06.17.07.12.52
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 17 Jun 2019 07:12:53 -0700 (PDT)
-From:   Uladzislau Rezki <urezki@gmail.com>
-X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
-Date:   Mon, 17 Jun 2019 16:12:44 +0200
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     "Uladzislau Rezki (Sony)" <urezki@gmail.com>,
-        Roman Gushchin <guro@fb.com>, Michal Hocko <mhocko@suse.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Thomas Garnier <thgarnie@google.com>,
-        Oleksiy Avramchenko <oleksiy.avramchenko@sonymobile.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Joel Fernandes <joelaf@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@elte.hu>, Tejun Heo <tj@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Roman Penyaev <rpenyaev@suse.de>,
-        Rick Edgecombe <rick.p.edgecombe@intel.com>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Mike Rapoport <rppt@linux.ibm.com>, linux-mm@kvack.org,
+        Mon, 17 Jun 2019 10:14:40 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x5HED7Ge3451756
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Mon, 17 Jun 2019 07:13:07 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x5HED7Ge3451756
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019051801; t=1560780788;
+        bh=IVAF3u9sBf7OaHnuDR5O/sVczWfFLKJNP+gAO/yxOdI=;
+        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
+        b=seL5bmMEU5P3kFEoEc2McT0ac42Mfri48ZE7bcIckmZO4EAjlFTTDmZ971VrTePox
+         1UwzKfvdVU5z6IBEvtR1N6t4Iudrhbq2toRoGoHOGREdIYuWCHhGOzemoLOUGXATnz
+         f8k26ri8NBSrQk9WNmYQXLZyqvFyDxV6K7xR5YlWnLWepHzaIqZCdqgTPWCbuBK3So
+         U6V4JDEYbJRrZV90NDgDp8gn0JZOWMuuOWNsY08GHzVq9Bgg4rpdMl5bHQBFguHEge
+         D7trbDVCvFIm2dtyNaiX/i2xTFQrz/Sbj5H96zJuSvwXfsmUukYKML5MAL/ZbfUeJo
+         Um0bIb2/78hpw==
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x5HED6nZ3451753;
+        Mon, 17 Jun 2019 07:13:06 -0700
+Date:   Mon, 17 Jun 2019 07:13:06 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Daniel Bristot de Oliveira <tipbot@zytor.com>
+Message-ID: <tip-e1aacb3f4adc1bcd4273a1d538a2dc3e50f1cbb5@git.kernel.org>
+Cc:     peterz@infradead.org, rostedt@goodmis.org, williams@redhat.com,
+        jkosina@suse.cz, jbaron@akamai.com, swood@redhat.com,
+        crecklin@redhat.com, bristot@redhat.com, mhiramat@kernel.org,
+        hpa@zytor.com, tglx@linutronix.de, gregkh@linuxfoundation.org,
+        mtosatti@redhat.com, torvalds@linux-foundation.org,
+        mingo@kernel.org, bp@alien8.de, jpoimboe@redhat.com,
         linux-kernel@vger.kernel.org
-Subject: Re: [BUG]: mm/vmalloc: uninitialized variable access in
- pcpu_get_vm_areas
-Message-ID: <20190617141244.5x22nrylw7hodafp@pc636>
-References: <20190617121427.77565-1-arnd@arndb.de>
+Reply-To: hpa@zytor.com, tglx@linutronix.de, mtosatti@redhat.com,
+          gregkh@linuxfoundation.org, bp@alien8.de, mingo@kernel.org,
+          torvalds@linux-foundation.org, jpoimboe@redhat.com,
+          linux-kernel@vger.kernel.org, rostedt@goodmis.org,
+          peterz@infradead.org, jkosina@suse.cz, williams@redhat.com,
+          swood@redhat.com, jbaron@akamai.com, crecklin@redhat.com,
+          bristot@redhat.com, mhiramat@kernel.org
+In-Reply-To: <56b69bd3f8e644ed64f2dbde7c088030b8cbe76b.1560325897.git.bristot@redhat.com>
+References: <56b69bd3f8e644ed64f2dbde7c088030b8cbe76b.1560325897.git.bristot@redhat.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:locking/core] jump_label: Add a jump_label_can_update() helper
+Git-Commit-ID: e1aacb3f4adc1bcd4273a1d538a2dc3e50f1cbb5
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <20190617121427.77565-1-arnd@arndb.de>
-User-Agent: NeoMutt/20170113 (1.7.2)
+X-Spam-Status: No, score=-1.2 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DATE_IN_FUTURE_06_12,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,
+        DKIM_VALID_EF autolearn=ham autolearn_force=no version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 17, 2019 at 02:14:11PM +0200, Arnd Bergmann wrote:
-> gcc points out some obviously broken code in linux-next
-> 
-> mm/vmalloc.c: In function 'pcpu_get_vm_areas':
-> mm/vmalloc.c:991:4: error: 'lva' may be used uninitialized in this function [-Werror=maybe-uninitialized]
->     insert_vmap_area_augment(lva, &va->rb_node,
->     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->      &free_vmap_area_root, &free_vmap_area_list);
->      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> mm/vmalloc.c:916:20: note: 'lva' was declared here
->   struct vmap_area *lva;
->                     ^~~
-> 
-> Remove the obviously broken code. This is almost certainly
-> not the correct solution, but it's what I have applied locally
-> to get a clean build again.
-> 
-> Please fix this properly.
-> 
-> Fixes: 68ad4a330433 ("mm/vmalloc.c: keep track of free blocks for vmap allocation")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->  mm/vmalloc.c | 7 +------
->  1 file changed, 1 insertion(+), 6 deletions(-)
-> 
-> diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-> index a9213fc3802d..bfcf0124a773 100644
-> --- a/mm/vmalloc.c
-> +++ b/mm/vmalloc.c
-> @@ -984,14 +984,9 @@ adjust_va_to_fit_type(struct vmap_area *va,
->  		return -1;
->  	}
->  
-> -	if (type != FL_FIT_TYPE) {
-> +	if (type == FL_FIT_TYPE)
->  		augment_tree_propagate_from(va);
->  
-> -		if (type == NE_FIT_TYPE)
-> -			insert_vmap_area_augment(lva, &va->rb_node,
-> -				&free_vmap_area_root, &free_vmap_area_list);
-> -	}
-> -
->  	return 0;
->  }
->  
-> -- 
-> 2.20.0
-> 
-Please do not apply this. It will just break everything. As Roman
-pointed we can just set lva = NULL; in the beginning to make GCC happy. 
-For some reason GCC decides that it can be used uninitialized, but that
-is not true.
+Commit-ID:  e1aacb3f4adc1bcd4273a1d538a2dc3e50f1cbb5
+Gitweb:     https://git.kernel.org/tip/e1aacb3f4adc1bcd4273a1d538a2dc3e50f1cbb5
+Author:     Daniel Bristot de Oliveira <bristot@redhat.com>
+AuthorDate: Wed, 12 Jun 2019 11:57:26 +0200
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Mon, 17 Jun 2019 12:09:19 +0200
 
---
-Vlad Rezki
+jump_label: Add a jump_label_can_update() helper
+
+Move the check if a jump_entry is valid to a function. No functional
+change.
+
+Signed-off-by: Daniel Bristot de Oliveira <bristot@redhat.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Chris von Recklinghausen <crecklin@redhat.com>
+Cc: Clark Williams <williams@redhat.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Jason Baron <jbaron@akamai.com>
+Cc: Jiri Kosina <jkosina@suse.cz>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Marcelo Tosatti <mtosatti@redhat.com>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Scott Wood <swood@redhat.com>
+Cc: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Link: https://lkml.kernel.org/r/56b69bd3f8e644ed64f2dbde7c088030b8cbe76b.1560325897.git.bristot@redhat.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
+ kernel/jump_label.c | 29 ++++++++++++++++++-----------
+ 1 file changed, 18 insertions(+), 11 deletions(-)
+
+diff --git a/kernel/jump_label.c b/kernel/jump_label.c
+index 0bfa10f4410c..24f0d3b1526b 100644
+--- a/kernel/jump_label.c
++++ b/kernel/jump_label.c
+@@ -384,23 +384,30 @@ static enum jump_label_type jump_label_type(struct jump_entry *entry)
+ 	return enabled ^ branch;
+ }
+ 
++static bool jump_label_can_update(struct jump_entry *entry, bool init)
++{
++	/*
++	 * Cannot update code that was in an init text area.
++	 */
++	if (!init && jump_entry_is_init(entry))
++		return false;
++
++	if (!kernel_text_address(jump_entry_code(entry))) {
++		WARN_ONCE(1, "can't patch jump_label at %pS", (void *)jump_entry_code(entry));
++		return false;
++	}
++
++	return true;
++}
++
+ static void __jump_label_update(struct static_key *key,
+ 				struct jump_entry *entry,
+ 				struct jump_entry *stop,
+ 				bool init)
+ {
+ 	for (; (entry < stop) && (jump_entry_key(entry) == key); entry++) {
+-		/*
+-		 * An entry->code of 0 indicates an entry which has been
+-		 * disabled because it was in an init text area.
+-		 */
+-		if (init || !jump_entry_is_init(entry)) {
+-			if (kernel_text_address(jump_entry_code(entry)))
+-				arch_jump_label_transform(entry, jump_label_type(entry));
+-			else
+-				WARN_ONCE(1, "can't patch jump_label at %pS",
+-					  (void *)jump_entry_code(entry));
+-		}
++		if (jump_label_can_update(entry, init))
++			arch_jump_label_transform(entry, jump_label_type(entry));
+ 	}
+ }
+ 
