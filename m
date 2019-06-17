@@ -2,66 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 024F348338
+	by mail.lfdr.de (Postfix) with ESMTP id 6B19648339
 	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 14:56:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727856AbfFQMzm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        id S1727957AbfFQMzn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 08:55:43 -0400
+Received: from mga17.intel.com ([192.55.52.151]:3200 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726028AbfFQMzm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 17 Jun 2019 08:55:42 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:48083 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726028AbfFQMzl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 08:55:41 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
-        (Exim 4.76)
-        (envelope-from <colin.king@canonical.com>)
-        id 1hcrAX-0005Q0-EF; Mon, 17 Jun 2019 12:55:29 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Gao Xiang <gaoxiang25@huawei.com>, Chao Yu <yuchao0@huawei.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-erofs@lists.ozlabs.org, devel@driverdev.osuosl.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] staging: erofs: clean up initialization of pointer de
-Date:   Mon, 17 Jun 2019 13:55:29 +0100
-Message-Id: <20190617125529.28327-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.20.1
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Jun 2019 05:55:42 -0700
+X-ExtLoop1: 1
+Received: from pipin.fi.intel.com (HELO pipin) ([10.237.72.175])
+  by fmsmga004.fm.intel.com with ESMTP; 17 Jun 2019 05:55:39 -0700
+From:   Felipe Balbi <balbi@kernel.org>
+To:     Lee Jones <lee.jones@linaro.org>, alokc@codeaurora.org,
+        agross@kernel.org, david.brown@linaro.org,
+        bjorn.andersson@linaro.org, gregkh@linuxfoundation.org,
+        ard.biesheuvel@linaro.org, jlhugo@gmail.com,
+        linux-arm-msm@vger.kernel.org, linux-usb@vger.kernel.org
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Lee Jones <lee.jones@linaro.org>
+Subject: Re: [RESEND v4 0/4] I2C: DWC3 USB: Add support for ACPI based AArch64 Laptops
+In-Reply-To: <20190617125105.6186-1-lee.jones@linaro.org>
+References: <20190617125105.6186-1-lee.jones@linaro.org>
+Date:   Mon, 17 Jun 2019 15:55:35 +0300
+Message-ID: <87lfy0gym0.fsf@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha256; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+--=-=-=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-Currently pointer de is being initialized with a value that is
-never read and a few statements later de is being re-assigned. Clean
-this up by ininitialzing de and removing the re-assignment.
+Lee Jones <lee.jones@linaro.org> writes:
 
-Addresses-Coverity: ("Unused value")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/staging/erofs/dir.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+> This patch-set ensures the kernel is bootable on the newly released
+> AArch64 based Laptops using ACPI configuration tables.  The Pinctrl
+> changes have been accepted, leaving only I2C (keyboard, touchpad,
+> touchscreen, fingerprint, etc, HID device) and USB (root filesystem,
+> camera, networking, etc) enablement.
+>
+> RESEND: Stripped I2C patches as they have also been merged into
+>         their respective subsystem.
+>
+> v4:
+>  * Collecting Acks
+>  * Adding Andy Gross' new email
+>  * Removing applied Pinctrl patches
+>
+> Lee Jones (4):
+>   soc: qcom: geni: Add support for ACPI
+>   usb: dwc3: qcom: Add support for booting with ACPI
+>   usb: dwc3: qcom: Start USB in 'host mode' on the SDM845
+>   usb: dwc3: qcom: Improve error handling
 
-diff --git a/drivers/staging/erofs/dir.c b/drivers/staging/erofs/dir.c
-index 9bbc68729c11..dbf6a151886c 100644
---- a/drivers/staging/erofs/dir.c
-+++ b/drivers/staging/erofs/dir.c
-@@ -42,10 +42,9 @@ static int erofs_fill_dentries(struct dir_context *ctx,
- 			       void *dentry_blk, unsigned int *ofs,
- 			       unsigned int nameoff, unsigned int maxsize)
- {
--	struct erofs_dirent *de = dentry_blk;
-+	struct erofs_dirent *de = dentry_blk + *ofs;
- 	const struct erofs_dirent *end = dentry_blk + nameoff;
- 
--	de = dentry_blk + *ofs;
- 	while (de < end) {
- 		const char *de_name;
- 		unsigned int de_namelen;
--- 
-2.20.1
+pushed to testing/next
 
+=2D-=20
+balbi
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEElLzh7wn96CXwjh2IzL64meEamQYFAl0HjccACgkQzL64meEa
+mQZhsA/9GPXGmz10q8n644hKI3owpJviGwOTfR0L0fAavSjDtLvI3avmcYMZ1a+h
+oYvJDVOAZNvc97WMt8JeF1Dc9rfutyq+jtmkpRwTAZ1Xy8cg+9nu1GLSaajLu/OU
+kECtbgtUXf76/srOfseNyRk8aFnEW6YZXviTW0q1L6ayYhtxHibF8y1Z3ltKl8Wq
+xgFLb1EeffqtNfQze/6Fg7y20XfPA2VeeJGqy+e3IFN6p4GJsRtGhLtJUObxmclR
+vSaelq0UrPylodnFK+5GhcPHhXwYZKA28JNlZmw91kplKCvLHR32goJsfTY6fq4W
+xTZvHn54vnQ6xoNgxQCtzpFa4A9m5Eqabsq2HzrRzha/HbzCj5kKnFIhHxLV+N4a
+CGtDJzcB9nZbuspSsjTGrumTtKPKedrmwHkbxD9sWW/mMwTbavqu0MAiRqBkm/eU
+v1lGqBNjIvMX+246KG/iCLvfYZjANYM84cLxz//ODfKjS67WKrIgqCFHXGflEpd0
+DBjFHGtIX2JJKtCFOcSkzyxyPo4qiRvdM5wP+MStR2YNa9e+DZrd+DgRV1HlkOBR
+A/r4yTd8mqlCCw7F1gkP689+zCQUhZn4SASDwWeuXtqaQigXDFYuA8gMMbVbBG/Z
+ieiHtc8WmhlI11GgO5Qbj6ucJHNuzKhJcpKMeMf5d6jR1nNACdo=
+=yt0c
+-----END PGP SIGNATURE-----
+--=-=-=--
