@@ -2,255 +2,172 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EBBA3483DC
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 15:24:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E4682483D4
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 15:24:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727725AbfFQNYJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 09:24:09 -0400
-Received: from mout.kundenserver.de ([217.72.192.75]:60447 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726215AbfFQNYI (ORCPT
+        id S1727893AbfFQNXU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 09:23:20 -0400
+Received: from mail-yw1-f67.google.com ([209.85.161.67]:36637 "EHLO
+        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727763AbfFQNXU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 09:24:08 -0400
-Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
- (mreue106 [212.227.15.145]) with ESMTPA (Nemesis) id
- 1Mofx1-1iR4jU3wzZ-00p4sv; Mon, 17 Jun 2019 15:23:50 +0200
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>
-Cc:     Arnd Bergmann <arnd@arndb.de>, Eric Biggers <ebiggers@google.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Vitaly Chikunov <vt@altlinux.org>,
-        Gilad Ben-Yossef <gilad@benyossef.com>,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] crypto: testmgr - reduce stack usage in fuzzers
-Date:   Mon, 17 Jun 2019 15:23:02 +0200
-Message-Id: <20190617132343.2678836-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.20.0
+        Mon, 17 Jun 2019 09:23:20 -0400
+Received: by mail-yw1-f67.google.com with SMTP id t126so5053470ywf.3
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2019 06:23:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=02kfRFeWEhd6YUuolIO/Uq6FrIlQTeHIsl8qg/L1ER0=;
+        b=HD59OuSscHam75mFRRnjZG318f3rXqPeH28hTUkTCnl8Zbf0lQQGqF7txgk45Jfgce
+         XBQp0tW2lslW1/q1mO7UMQy2vwZiPy7vpkDBxAcpia968Wps6xitEr5J1cmto1PTUsd9
+         DLmsoveYNkQbu8qdvYofsxqK7UkdpJ3vvLNkhkU35lWS4B63vxPlG34dmxhhZtIheioc
+         nQJt+aSBDggXAmDQHAaZnVket7jrdU1dZxVPQy6VQOCbL7Yg3VwswJrPtGn1ik7Zjeha
+         djsZ2u7tP7ezZMTuJjlkVUZ3CMhlvPcy2fb6JDf0mjXLQfvscWo5hJHujSBncsJfVOFZ
+         FmMg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=02kfRFeWEhd6YUuolIO/Uq6FrIlQTeHIsl8qg/L1ER0=;
+        b=K5hjbW54RWWCKh/Q+mCPpEIE6/w8pqZnY+kT324k8kMLmbKKTwtSrQKPI+arWOT2XR
+         I+Gu9KQxhhkbF03FfclbsM2wcqa4HECdfVBopdWKPZhk1OSn/bU2ZzeWZ733PwoZauib
+         VbuOiivL1usuHhNhyNzMg3fnNyxiFQmRHj0JwFOG2TnNl7YIPwUp4Ovn8HU+CrPUWv1w
+         57mfXZPwQIebGUKS+cp40G+UdacDuiDEkVd7Z8Y2nKtVcJZxjfP8+R66weYniBkgcpey
+         /HIcvXEcZ2G3nqom9Dlci3yzlo7bkC6a3oIhE2DQ+90R/gn03onN0816LWI9FksyWEsp
+         hgSQ==
+X-Gm-Message-State: APjAAAUSkGiAOTOXesnCdcorZbovnDQcZaUiHTwfYU4zG8YefAhW5MNK
+        9fO4Sumf5YDfjIpyPEmqO4Iz69Gyo+xKR7um8iC3Eg==
+X-Google-Smtp-Source: APXvYqw07r8abFG4Ma8KQ5Kz56AyMcZLucz+Hht8aCZ1QixFnZRmEgnh4WLKFu8cyZ///tczttEEVjWPXvUKdgmUqPE=
+X-Received: by 2002:a81:90e:: with SMTP id 14mr18617403ywj.4.1560777798456;
+ Mon, 17 Jun 2019 06:23:18 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:FcRwzC9se0P11gJzOfwFRr1sHe4ttlAck8Hb394drcdEoCwQH8v
- V809DLMqf/KXADOpqBkJGBiEFcfZPH03hyOZKAXaO7I+irkUhoV1Uqc2VPH0Ssu00gM/ZGb
- OwUvWa7QnxF3ej4Q/AFE7TqT8g5ujL/x5gbeGWabcNkWmcnjRP7f0xfNOq0Ug4onvRYeso5
- EpJfq2RyEJl6MDBBCuOag==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:9B/XLO/4TtU=:vnNPNqTUR5bZd2L/IJG8/I
- Mcas5MJHCIBoAcPrZ+6sVAf6RSl8BOIcxNr/f81N5KwmZBuQ7A5Pb3mU2Fb6B378iXFg5sOV7
- Diocjb2wWhDVZfHbgnuTSQ0gogidLfluNQsnZO91G4J04L9n+X1EWYXnASM2ZyyaaRc3cq7NW
- vNlBiiE0M0uF4GNZV3Sqk3ETLtrA4pI4BLEHAkc0L7qOtDiw9ZLrUwUg/QYh3xjwmQPmQYkr0
- jVA3OdML6kmZrlDQSAscujcI2C5YwA4IsFh4pqaTn8CnRepmuSCRIHpl8VRS+FRUN8Q2Nlhpn
- ICOVHKkwsTGUPG1fzoW7tEXuXQyYb5wVWQfZqhBsJqjoIRprGYgGaWfe5s0EYw2LEyxRFxKHN
- oAJLlYHnD7BkveQU96ddd7T+TjKhWxb4buk9bhnGnyftJsRUUQ1npIAMZHOu3UOJdGKNTuXgp
- OIgGVEVoKTRGI7dfvgbZ1wBlwMCoRWl1Qd8ELP8J0OUXDJJbg9ET6ERNlxJJAxGUAV6QXD8LW
- bhuaug3TGQwf3IMvPYesBH2IHYCJc1WXC8Gc2FIKZ7K/1xR3QBc/8RExjr6fwGNhtj0roTXOU
- 0wz/X7TiRANOt2l2uE06mK/Ftw6CWuvMiou3dvUtWQd/jakScgetvN5Rrb/DSDVkJfm/vXUc3
- bdVcbsXmcjIzf9PnXYIzs3NgjO92dQrUryyszapuS5z7BT4Ug6eFvQ1iwpoLWsxtlkzA7ZiRv
- o46W7ETyFphLrfxGQgnonX93yU+m5deq25VjkruC4T9zbW0/jDKXPw9cbFs=
+References: <0000000000004143a5058b526503@google.com> <CALvZod72=KuBZkSd0ey5orJFGFpwx462XY=cZvO3NOXC0MogFw@mail.gmail.com>
+ <20190615134955.GA28441@dhcp22.suse.cz> <CALvZod4hT39PfGt9Ohj+g77om5=G0coHK=+G1=GKcm-PowkXsw@mail.gmail.com>
+ <5bb1fe5d-f0e1-678b-4f64-82c8d5d81f61@i-love.sakura.ne.jp>
+ <CALvZod4etSv9Hv4UD=E6D7U4vyjCqhxQgq61AoTUCd+VubofFg@mail.gmail.com>
+ <791594c6-45a3-d78a-70b5-901aa580ed9f@i-love.sakura.ne.jp>
+ <840fa9f1-07e2-e206-2fc0-725392f96baf@i-love.sakura.ne.jp> <c763afc8-f0ae-756a-56a7-395f625b95fc@i-love.sakura.ne.jp>
+In-Reply-To: <c763afc8-f0ae-756a-56a7-395f625b95fc@i-love.sakura.ne.jp>
+From:   Shakeel Butt <shakeelb@google.com>
+Date:   Mon, 17 Jun 2019 06:23:07 -0700
+Message-ID: <CALvZod5VPLVEwRzy83+wT=aA8vsrUkvoJJZvmQxyv4YbXvrQWw@mail.gmail.com>
+Subject: Re: general protection fault in oom_unkillable_task
+To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc:     Michal Hocko <mhocko@kernel.org>,
+        syzbot <syzbot+d0fc9d3c166bc5e4a94b@syzkaller.appspotmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Roman Gushchin <guro@fb.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        yuzhoujian@didichuxing.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On arm32, we get warnings about high stack usage in some of the functions:
+On Sun, Jun 16, 2019 at 8:14 AM Tetsuo Handa
+<penguin-kernel@i-love.sakura.ne.jp> wrote:
+>
+> On 2019/06/16 16:37, Tetsuo Handa wrote:
+> > On 2019/06/16 6:33, Tetsuo Handa wrote:
+> >> On 2019/06/16 3:50, Shakeel Butt wrote:
+> >>>> While dump_tasks() traverses only each thread group, mem_cgroup_scan_tasks()
+> >>>> traverses each thread.
+> >>>
+> >>> I think mem_cgroup_scan_tasks() traversing threads is not intentional
+> >>> and css_task_iter_start in it should use CSS_TASK_ITER_PROCS as the
+> >>> oom killer only cares about the processes or more specifically
+> >>> mm_struct (though two different thread groups can have same mm_struct
+> >>> but that is fine).
+> >>
+> >> We can't use CSS_TASK_ITER_PROCS from mem_cgroup_scan_tasks(). I've tried
+> >> CSS_TASK_ITER_PROCS in an attempt to evaluate only one thread from each
+> >> thread group, but I found that CSS_TASK_ITER_PROCS causes skipping whole
+> >> threads in a thread group (and trivially allowing "Out of memory and no
+> >> killable processes...\n" flood) if thread group leader has already exited.
+> >
+> > Seems that CSS_TASK_ITER_PROCS from mem_cgroup_scan_tasks() is now working.
+>
+>
+> I found a reproducer and the commit.
+>
+> ----------------------------------------
+> #define _GNU_SOURCE
+> #include <stdio.h>
+> #include <stdlib.h>
+> #include <sys/types.h>
+> #include <sys/stat.h>
+> #include <fcntl.h>
+> #include <unistd.h>
+> #include <sched.h>
+> #include <sys/mman.h>
+> #include <asm/unistd.h>
+>
+> static const unsigned long size = 1048576 * 200;
+> static int thread(void *unused)
+> {
+>         int fd = open("/dev/zero", O_RDONLY);
+>         char *buf = mmap(NULL, size, PROT_WRITE | PROT_READ,
+>                          MAP_ANONYMOUS | MAP_SHARED, EOF, 0);
+>         sleep(1);
+>         read(fd, buf, size);
+>         return syscall(__NR_exit, 0);
+> }
+> int main(int argc, char *argv[])
+> {
+>         FILE *fp;
+>         mkdir("/sys/fs/cgroup/memory/test1", 0755);
+>         fp = fopen("/sys/fs/cgroup/memory/test1/memory.limit_in_bytes", "w");
+>         fprintf(fp, "%lu\n", size);
+>         fclose(fp);
+>         fp = fopen("/sys/fs/cgroup/memory/test1/tasks", "w");
+>         fprintf(fp, "%u\n", getpid());
+>         fclose(fp);
+>         clone(thread, malloc(8192) + 4096, CLONE_SIGHAND | CLONE_THREAD | CLONE_VM, NULL);
+>         return syscall(__NR_exit, 0);
+> }
+> ----------------------------------------
+>
+> Here is a patch to use CSS_TASK_ITER_PROCS.
+>
+> From 415e52cf55bc4ad931e4f005421b827f0b02693d Mon Sep 17 00:00:00 2001
+> From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+> Date: Mon, 17 Jun 2019 00:09:38 +0900
+> Subject: [PATCH] mm: memcontrol: Use CSS_TASK_ITER_PROCS at mem_cgroup_scan_tasks().
+>
+> Since commit c03cd7738a83b137 ("cgroup: Include dying leaders with live
+> threads in PROCS iterations") corrected how CSS_TASK_ITER_PROCS works,
+> mem_cgroup_scan_tasks() can use CSS_TASK_ITER_PROCS in order to check
+> only one thread from each thread group.
+>
+> Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
 
-crypto/testmgr.c:2269:12: error: stack frame size of 1032 bytes in function 'alg_test_aead' [-Werror,-Wframe-larger-than=]
-static int alg_test_aead(const struct alg_test_desc *desc, const char *driver,
-           ^
-crypto/testmgr.c:1693:12: error: stack frame size of 1312 bytes in function '__alg_test_hash' [-Werror,-Wframe-larger-than=]
-static int __alg_test_hash(const struct hash_testvec *vecs,
-           ^
+Reviewed-by: Shakeel Butt <shakeelb@google.com>
 
-On of the larger objects on the stack here is struct testvec_config, so
-change that to dynamic allocation.
+Why not add the reproducer in the commit message?
 
-Fixes: 40153b10d91c ("crypto: testmgr - fuzz AEADs against their generic implementation")
-Fixes: d435e10e67be ("crypto: testmgr - fuzz skciphers against their generic implementation")
-Fixes: 9a8a6b3f0950 ("crypto: testmgr - fuzz hashes against their generic implementation")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
-I only compile-tested this, and it's not completely trivial, so please
-review carefully.
----
- crypto/testmgr.c | 61 +++++++++++++++++++++++++++++++++++-------------
- 1 file changed, 45 insertions(+), 16 deletions(-)
-
-diff --git a/crypto/testmgr.c b/crypto/testmgr.c
-index 6c28055d41ca..7928296cdcb3 100644
---- a/crypto/testmgr.c
-+++ b/crypto/testmgr.c
-@@ -1503,13 +1503,15 @@ static int test_hash_vec(const char *driver, const struct hash_testvec *vec,
-  * Generate a hash test vector from the given implementation.
-  * Assumes the buffers in 'vec' were already allocated.
-  */
--static void generate_random_hash_testvec(struct crypto_shash *tfm,
-+static int generate_random_hash_testvec(struct crypto_shash *tfm,
- 					 struct hash_testvec *vec,
- 					 unsigned int maxkeysize,
- 					 unsigned int maxdatasize,
- 					 char *name, size_t max_namelen)
- {
--	SHASH_DESC_ON_STACK(desc, tfm);
-+	struct shash_desc *desc = kmalloc(sizeof(*desc) + crypto_shash_descsize(tfm), GFP_KERNEL);
-+	if (!desc)
-+		return -ENOMEM;
- 
- 	/* Data */
- 	vec->psize = generate_random_length(maxdatasize);
-@@ -1541,6 +1543,10 @@ static void generate_random_hash_testvec(struct crypto_shash *tfm,
- done:
- 	snprintf(name, max_namelen, "\"random: psize=%u ksize=%u\"",
- 		 vec->psize, vec->ksize);
-+
-+	kfree(desc);
-+
-+	return 0;
- }
- 
- /*
-@@ -1565,7 +1571,7 @@ static int test_hash_vs_generic_impl(const char *driver,
- 	unsigned int i;
- 	struct hash_testvec vec = { 0 };
- 	char vec_name[64];
--	struct testvec_config cfg;
-+	struct testvec_config *cfg;
- 	char cfgname[TESTVEC_CONFIG_NAMELEN];
- 	int err;
- 
-@@ -1595,6 +1601,12 @@ static int test_hash_vs_generic_impl(const char *driver,
- 		return err;
- 	}
- 
-+	cfg = kzalloc(sizeof(*cfg), GFP_KERNEL);
-+	if (!cfg) {
-+		err = -ENOMEM;
-+		goto out;
-+	}
-+
- 	/* Check the algorithm properties for consistency. */
- 
- 	if (digestsize != crypto_shash_digestsize(generic_tfm)) {
-@@ -1626,12 +1638,14 @@ static int test_hash_vs_generic_impl(const char *driver,
- 	}
- 
- 	for (i = 0; i < fuzz_iterations * 8; i++) {
--		generate_random_hash_testvec(generic_tfm, &vec,
--					     maxkeysize, maxdatasize,
--					     vec_name, sizeof(vec_name));
--		generate_random_testvec_config(&cfg, cfgname, sizeof(cfgname));
-+		err = generate_random_hash_testvec(generic_tfm, &vec,
-+						   maxkeysize, maxdatasize,
-+						   vec_name, sizeof(vec_name));
-+		if (err)
-+			goto out;
-+		generate_random_testvec_config(cfg, cfgname, sizeof(cfgname));
- 
--		err = test_hash_vec_cfg(driver, &vec, vec_name, &cfg,
-+		err = test_hash_vec_cfg(driver, &vec, vec_name, cfg,
- 					req, desc, tsgl, hashstate);
- 		if (err)
- 			goto out;
-@@ -1639,6 +1653,7 @@ static int test_hash_vs_generic_impl(const char *driver,
- 	}
- 	err = 0;
- out:
-+	kfree(cfg);
- 	kfree(vec.key);
- 	kfree(vec.plaintext);
- 	kfree(vec.digest);
-@@ -2135,7 +2150,7 @@ static int test_aead_vs_generic_impl(const char *driver,
- 	unsigned int i;
- 	struct aead_testvec vec = { 0 };
- 	char vec_name[64];
--	struct testvec_config cfg;
-+	struct testvec_config *cfg;
- 	char cfgname[TESTVEC_CONFIG_NAMELEN];
- 	int err;
- 
-@@ -2165,6 +2180,12 @@ static int test_aead_vs_generic_impl(const char *driver,
- 		return err;
- 	}
- 
-+	cfg = kzalloc(sizeof(*cfg), GFP_KERNEL);
-+	if (!cfg) {
-+		err = -ENOMEM;
-+		goto out;
-+	}
-+
- 	generic_req = aead_request_alloc(generic_tfm, GFP_KERNEL);
- 	if (!generic_req) {
- 		err = -ENOMEM;
-@@ -2219,13 +2240,13 @@ static int test_aead_vs_generic_impl(const char *driver,
- 		generate_random_aead_testvec(generic_req, &vec,
- 					     maxkeysize, maxdatasize,
- 					     vec_name, sizeof(vec_name));
--		generate_random_testvec_config(&cfg, cfgname, sizeof(cfgname));
-+		generate_random_testvec_config(cfg, cfgname, sizeof(cfgname));
- 
--		err = test_aead_vec_cfg(driver, ENCRYPT, &vec, vec_name, &cfg,
-+		err = test_aead_vec_cfg(driver, ENCRYPT, &vec, vec_name, cfg,
- 					req, tsgls);
- 		if (err)
- 			goto out;
--		err = test_aead_vec_cfg(driver, DECRYPT, &vec, vec_name, &cfg,
-+		err = test_aead_vec_cfg(driver, DECRYPT, &vec, vec_name, cfg,
- 					req, tsgls);
- 		if (err)
- 			goto out;
-@@ -2233,6 +2254,7 @@ static int test_aead_vs_generic_impl(const char *driver,
- 	}
- 	err = 0;
- out:
-+	kfree(cfg);
- 	kfree(vec.key);
- 	kfree(vec.iv);
- 	kfree(vec.assoc);
-@@ -2682,7 +2704,7 @@ static int test_skcipher_vs_generic_impl(const char *driver,
- 	unsigned int i;
- 	struct cipher_testvec vec = { 0 };
- 	char vec_name[64];
--	struct testvec_config cfg;
-+	struct testvec_config *cfg;
- 	char cfgname[TESTVEC_CONFIG_NAMELEN];
- 	int err;
- 
-@@ -2716,6 +2738,12 @@ static int test_skcipher_vs_generic_impl(const char *driver,
- 		return err;
- 	}
- 
-+	cfg = kzalloc(sizeof(*cfg), GFP_KERNEL);
-+	if (!cfg) {
-+		err = -ENOMEM;
-+		goto out;
-+	}
-+
- 	generic_req = skcipher_request_alloc(generic_tfm, GFP_KERNEL);
- 	if (!generic_req) {
- 		err = -ENOMEM;
-@@ -2763,20 +2791,21 @@ static int test_skcipher_vs_generic_impl(const char *driver,
- 	for (i = 0; i < fuzz_iterations * 8; i++) {
- 		generate_random_cipher_testvec(generic_req, &vec, maxdatasize,
- 					       vec_name, sizeof(vec_name));
--		generate_random_testvec_config(&cfg, cfgname, sizeof(cfgname));
-+		generate_random_testvec_config(cfg, cfgname, sizeof(cfgname));
- 
- 		err = test_skcipher_vec_cfg(driver, ENCRYPT, &vec, vec_name,
--					    &cfg, req, tsgls);
-+					    cfg, req, tsgls);
- 		if (err)
- 			goto out;
- 		err = test_skcipher_vec_cfg(driver, DECRYPT, &vec, vec_name,
--					    &cfg, req, tsgls);
-+					    cfg, req, tsgls);
- 		if (err)
- 			goto out;
- 		cond_resched();
- 	}
- 	err = 0;
- out:
-+	kfree(cfg);
- 	kfree(vec.key);
- 	kfree(vec.iv);
- 	kfree(vec.ptext);
--- 
-2.20.0
-
+> ---
+>  mm/memcontrol.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+> index ba9138a..b09ff45 100644
+> --- a/mm/memcontrol.c
+> +++ b/mm/memcontrol.c
+> @@ -1163,7 +1163,7 @@ int mem_cgroup_scan_tasks(struct mem_cgroup *memcg,
+>                 struct css_task_iter it;
+>                 struct task_struct *task;
+>
+> -               css_task_iter_start(&iter->css, 0, &it);
+> +               css_task_iter_start(&iter->css, CSS_TASK_ITER_PROCS, &it);
+>                 while (!ret && (task = css_task_iter_next(&it)))
+>                         ret = fn(task, arg);
+>                 css_task_iter_end(&it);
+> --
+> 1.8.3.1
