@@ -2,105 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 84CCA4893E
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 18:48:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D2DA48944
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 18:49:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727940AbfFQQsz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 12:48:55 -0400
-Received: from mail-yw1-f68.google.com ([209.85.161.68]:37503 "EHLO
-        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726005AbfFQQsz (ORCPT
+        id S1728415AbfFQQtY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 12:49:24 -0400
+Received: from mout.kundenserver.de ([212.227.17.13]:35495 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725995AbfFQQtX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 12:48:55 -0400
-Received: by mail-yw1-f68.google.com with SMTP id 186so5352467ywo.4
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2019 09:48:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=+bhc7wfVjCBaM/En8KIXc3jvZNzrMiSbZDMErO7mmcg=;
-        b=DYbfUmrCCAumnmXWODR8+LTnOQ7KCdpvfaHsby+TAizkhkgf9X+hDwVKW4YCRvdsbR
-         /DOd5z4sNTjXhhHg4CBJHxUJprspmaW8XaWIiWkX+EV8vLcn2YwQSz+9l1BWRwYW+73b
-         sRLre+0lZ4TKnygun0iG/ayZWy5ATKzXzNZl5MrbxQC3DEEIjRdnA13dv/ZlgoicmAOp
-         g+jvdpAKS2ONslZ6WLqsoHuzSs2omaxjORyd3O7XTFtCOfvPuIEcfVq6Aw0u+QZRs2wk
-         T+cp2SBxHX7+kuygOvMGZO3uv0/dBlh/APwxh1cjz+fNoqmHVtoZvU29KFhUYSks2J70
-         GFHA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=+bhc7wfVjCBaM/En8KIXc3jvZNzrMiSbZDMErO7mmcg=;
-        b=jJoYU+Gr49RqF4b1lmy2Afo9EZ9fJQlvGCR8N6wKOrlgn22N5jYxocWdUPwBY7QCap
-         dXm5xYbvHW11Hg35ZKF1kVLCWIO6kNcnwwp+yIR/PWFjzhIfqR9JZU89fUHRfpUhWGCV
-         ouVbYT1f3MVGO0h8UF70K+E/YPpZ0TGuOECOjX3A4e0uCfn7bX+/DTIkchjFTxPmuQ99
-         7OX5jcfzL+XFTKjAWIupekXhvfZFyA1ekipdEPLD6n2uho8wmb0BriiEUWedUAUJChvG
-         cF6RekVVoulr2NGgklNxaXy+L3erwXIIxJn8PvQOdkZrEtVFRAVQp1RN9EXLzcMNGAxi
-         Latg==
-X-Gm-Message-State: APjAAAVt53HuY0KjN8v/ESKECTFDxOnb+rEPvalQ2MYIOCSf2wNTglX/
-        x8ugUSKwJJXK1rvJDC9YioIw1FuE3eZdzx/NjHZURB6o68Y3jQ==
-X-Google-Smtp-Source: APXvYqxYDlg2DGtdAFSTrNecvf6mKBN+e0hfaf7Tt/m0UWAiagrxescZo68t6wSXRTD7aC9x4EqbsMND7aHUQSudaIQ=
-X-Received: by 2002:a81:a55:: with SMTP id 82mr29118544ywk.205.1560790134326;
- Mon, 17 Jun 2019 09:48:54 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190617155954.155791-1-shakeelb@google.com> <20190617161702.GE1492@dhcp22.suse.cz>
-In-Reply-To: <20190617161702.GE1492@dhcp22.suse.cz>
-From:   Shakeel Butt <shakeelb@google.com>
-Date:   Mon, 17 Jun 2019 09:48:42 -0700
-Message-ID: <CALvZod6mO0-nK+aVP+-neFt3B95ztNGQMXLYFZ7oEeasTsXRCA@mail.gmail.com>
-Subject: Re: [PATCH] mm, oom: fix oom_unkillable_task for memcg OOMs
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Johannes Weiner <hannes@cmpxchg.org>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Roman Gushchin <guro@fb.com>, Linux MM <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 17 Jun 2019 12:49:23 -0400
+Received: from orion.localdomain ([77.2.173.233]) by mrelayeu.kundenserver.de
+ (mreue107 [212.227.15.183]) with ESMTPSA (Nemesis) id
+ 1MPGiR-1hzh1w0jJF-00PaW9; Mon, 17 Jun 2019 18:49:21 +0200
+From:   "Enrico Weigelt, metux IT consult" <info@metux.net>
+To:     linux-kernel@vger.kernel.org
+Cc:     linus.walleij@linaro.org, bgolaszewski@baylibre.com,
+        orsonzhai@gmail.com, baolin.wang@linaro.org, zhang.lyra@gmail.com,
+        linux-gpio@vger.kernel.org
+Subject: [PATCH 1/7] drivers: gpio: rcar: pedantic formatting
+Date:   Mon, 17 Jun 2019 18:49:14 +0200
+Message-Id: <1560790160-3372-1-git-send-email-info@metux.net>
+X-Mailer: git-send-email 1.9.1
+X-Provags-ID: V03:K1:SnjedU/ByefI/v0vNbinpChc6ZVtZNlZXKpElIxqUSAyHtl9+px
+ 07HnozTKE3SX9mBPjHneNa/sjo5Q7zEGb1/X8kGbR4FM6uEhfj5EHfg40sURf3U4DoFPB3p
+ 70L82paEJ6zUlXe5g70WkgJgg+3/KDbGXAPuslLcKR0pTBuYtagMMGkDZRch5Fe7ZEYW9Zx
+ udjHnVPs6o8AnzJKZkhIg==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:yFkVa1pZbcs=:NNJ0AO5YnYEUvwuMScIjYC
+ zHUH+52tXowPfQmcQSjHODmvaCxdiVAHDYOBBk5rPBIoxeqXTxVO1tyZtb/93N/sIo8K2yuzk
+ 2TZSCVhniXOZY0Q5xhEadiYtUh4FHKhiFcB+0/UcfdyY49oPDyFSvwsu1wV1Zhoqo8SAInyRz
+ 7Mr57nqdcE8AkVlPa6awQlPgAU+lMFcrUOuezntcJVPtI+2WeHPbeJ6b2wpDuqE5k5SgDLHkC
+ 77L3TUQ2pUxIizJJz0Ti3nrFk3v9tgUcftaRX4hJtfI4sH/ztOi0oHh8cgEOkwpcK25IDuivt
+ VV5hRxlIuhAO8iEUnBRCMbZCzqf6bOGdJo5kNuSXeHcRH4AiwDafOtyiboSpoD5d2rP4u94Jt
+ SAlRbpTyw3EJ1qaeUtPHk3035LT9seVRI2OQDEfGKyvpE/Kg7IYIRux7hccDwZ1DileJ5l7vg
+ NaNM6md1zafVefA+4rmXrF8NRUkups9+AlgCVLRucaxPBwmLL8BNWekwh9qARvhSccQsPVT8H
+ 2rnjLXbZdI/cW1KHCUKxIJiTjLWSTf20vmcG5944jSgu8N8ZC8X+eiHwcdERbt6ejihbpFw3T
+ 4qO6XYAQJoZ52WpxmYOT+UoJZkO6RjfOcIYdibYnq6LWCF231ll0Ca+cEuQS04+qQC1cExs3A
+ sIe82nKmobjJo/TOunyHfYNIYzwi8VJnsw4pcsDWQ0JJbLJgt3v/EGubcTJ01upiz72zFKDEG
+ /NrXlxLr9rE1fHp83pD5+Yg8IXpHLEJUYV8zjg==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 17, 2019 at 9:17 AM Michal Hocko <mhocko@kernel.org> wrote:
->
-> On Mon 17-06-19 08:59:54, Shakeel Butt wrote:
-> > Currently oom_unkillable_task() checks mems_allowed even for memcg OOMs
-> > which does not make sense as memcg OOMs can not be triggered due to
-> > numa constraints. Fixing that.
-> >
-> > Also if memcg is given, oom_unkillable_task() will check the task's
-> > memcg membership as well to detect oom killability. However all the
-> > memcg related code paths leading to oom_unkillable_task(), other than
-> > dump_tasks(), come through mem_cgroup_scan_tasks() which traverses
-> > tasks through memcgs. Once dump_tasks() is converted to use
-> > mem_cgroup_scan_tasks(), there is no need to do memcg membership check
-> > in oom_unkillable_task().
->
-> I think this patch just does too much in one go. Could you split out
-> the dump_tasks part and the oom_unkillable_task parts into two patches
-> please? It should be slightly easier to review.
->
+A tab sneaked in, where it shouldn't be.
 
-Yes, will do in v2.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Enrico Weigelt, metux IT consult <info@metux.net>
+---
+ drivers/gpio/gpio-rcar.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> [...]
-> > +static bool oom_unkillable_task(struct task_struct *p, struct oom_control *oc)
-> >  {
-> >       if (is_global_init(p))
-> >               return true;
-> >       if (p->flags & PF_KTHREAD)
-> >               return true;
-> > +     if (!oc)
-> > +             return false;
->
-> Bah, this is just too ugly. AFAICS this is only because oom_score still
-> uses oom_unkillable_task which is kinda dubious, no? While you are
-> touching this code, can we remove this part as well? I would be really
-> surprised if any code really depends on ineligible tasks reporting 0
-> oom_score.
+diff --git a/drivers/gpio/gpio-rcar.c b/drivers/gpio/gpio-rcar.c
+index 70e95fc..187984d 100644
+--- a/drivers/gpio/gpio-rcar.c
++++ b/drivers/gpio/gpio-rcar.c
+@@ -489,7 +489,7 @@ static int gpio_rcar_probe(struct platform_device *pdev)
+ 	irq_chip->irq_unmask = gpio_rcar_irq_enable;
+ 	irq_chip->irq_set_type = gpio_rcar_irq_set_type;
+ 	irq_chip->irq_set_wake = gpio_rcar_irq_set_wake;
+-	irq_chip->flags	= IRQCHIP_SET_TYPE_MASKED | IRQCHIP_MASK_ON_SUSPEND;
++	irq_chip->flags = IRQCHIP_SET_TYPE_MASKED | IRQCHIP_MASK_ON_SUSPEND;
+ 
+ 	ret = gpiochip_add_data(gpio_chip, p);
+ 	if (ret) {
+-- 
+1.9.1
 
-I think it is safer to just localize the is_global_init() and
-PF_KTHREAD checks in oom_badness() instead of invoking
-oom_unkillable_task(). Also I think cpuset_mems_allowed_intersects()
-check from /proc/[pid]/oom_score is unintentional.
-
-Shakeel
