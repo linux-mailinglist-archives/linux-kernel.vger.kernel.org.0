@@ -2,128 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3A44849263
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 23:19:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 07FC0491FB
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 23:09:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728931AbfFQVTt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 17:19:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43724 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728446AbfFQVTs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 17:19:48 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5963E2089E;
-        Mon, 17 Jun 2019 21:19:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560806386;
-        bh=S4e/gtUZeusv/WpAX1lvOIB/VF9tw+8nMleUNsOV9Ko=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1K7ZBzhM8zxS140h+MuwfaaOV+b10kbsUAyRlfdThazI30d+Iqbz9/BSUAmYZXA0s
-         j8K9yZIy6KeR5+MyPxmkV4KhvmxIo21KjhJnntSN+9NzO/4NHpxOvzzNm32ZDZ9mv5
-         DeNHNy2yfade5zEFp2pl1aWedS0GBrbuDydIwOPg=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tejun Heo <tj@kernel.org>
-Subject: [PATCH 5.1 033/115] cgroup: Use css_tryget() instead of css_tryget_online() in task_get_css()
-Date:   Mon, 17 Jun 2019 23:08:53 +0200
-Message-Id: <20190617210801.657189956@linuxfoundation.org>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190617210759.929316339@linuxfoundation.org>
-References: <20190617210759.929316339@linuxfoundation.org>
-User-Agent: quilt/0.66
+        id S1727637AbfFQVJE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 17:09:04 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:45710 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726593AbfFQVJE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Jun 2019 17:09:04 -0400
+Received: from p5b06daab.dip0.t-ipconnect.de ([91.6.218.171] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1hcys2-0005WT-Rm; Mon, 17 Jun 2019 23:08:55 +0200
+Date:   Mon, 17 Jun 2019 23:08:54 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Petr Mladek <pmladek@suse.com>
+cc:     Ingo Molnar <mingo@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Laurence Oberman <loberman@redhat.com>,
+        Vincent Whitchurch <vincent.whitchurch@axis.com>,
+        Michal Hocko <mhocko@suse.com>, linux-kernel@vger.kernel.org
+Subject: Re: [RFC 0/3] watchdog/softlockup: Make softlockup reports more
+ reliable and useful
+In-Reply-To: <20190605140954.28471-1-pmladek@suse.com>
+Message-ID: <alpine.DEB.2.21.1906172307260.1963@nanos.tec.linutronix.de>
+References: <20190605140954.28471-1-pmladek@suse.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tejun Heo <tj@kernel.org>
+On Wed, 5 Jun 2019, Petr Mladek wrote:
 
-commit 18fa84a2db0e15b02baa5d94bdb5bd509175d2f6 upstream.
+> Hi,
+> 
+> we were analyzing logs with several softlockup reports in flush_tlb_kernel_range().
+> They were confusing. Especially it was not clear whether it was deadlock,
+> livelock, or separate softlockups.
+> 
+> It went out that even a simple busy loop:
+> 
+> 	while (true)
+> 	      cpu_relax();
+> 
+> is able to produce several softlockups reports:
+> 
+> [  168.277520] watchdog: BUG: soft lockup - CPU#1 stuck for 22s! [cat:4865]
+> [  196.277604] watchdog: BUG: soft lockup - CPU#1 stuck for 22s! [cat:4865]
+> [  236.277522] watchdog: BUG: soft lockup - CPU#1 stuck for 23s! [cat:4865]
+> 
+> 
+> I tried to understand the tricky watchdog code and produced two patches
+> that would be helpful to debug the original real bug:
+> 
+>    1st patch prevents restart of the watchdog from unrelated locations.
+> 
+>    2nd patch helps to distinguish several possible situations by
+>    regular reports.
+> 
+>    3rd patch can be used for testing the problem.
+> 
+> 
+> The watchdog code might deserve even more clean up. Anyway, I would
+> like to hear other's opinion first.
 
-A PF_EXITING task can stay associated with an offline css.  If such
-task calls task_get_css(), it can get stuck indefinitely.  This can be
-triggered by BSD process accounting which writes to a file with
-PF_EXITING set when racing against memcg disable as in the backtrace
-at the end.
+Anything which improves debugability is welcome. Unfortunately you missed
+to add an example of the output after these patches are applied.
 
-After this change, task_get_css() may return a css which was already
-offline when the function was called.  None of the existing users are
-affected by this change.
+Thanks,
 
-  INFO: rcu_sched self-detected stall on CPU
-  INFO: rcu_sched detected stalls on CPUs/tasks:
-  ...
-  NMI backtrace for cpu 0
-  ...
-  Call Trace:
-   <IRQ>
-   dump_stack+0x46/0x68
-   nmi_cpu_backtrace.cold.2+0x13/0x57
-   nmi_trigger_cpumask_backtrace+0xba/0xca
-   rcu_dump_cpu_stacks+0x9e/0xce
-   rcu_check_callbacks.cold.74+0x2af/0x433
-   update_process_times+0x28/0x60
-   tick_sched_timer+0x34/0x70
-   __hrtimer_run_queues+0xee/0x250
-   hrtimer_interrupt+0xf4/0x210
-   smp_apic_timer_interrupt+0x56/0x110
-   apic_timer_interrupt+0xf/0x20
-   </IRQ>
-  RIP: 0010:balance_dirty_pages_ratelimited+0x28f/0x3d0
-  ...
-   btrfs_file_write_iter+0x31b/0x563
-   __vfs_write+0xfa/0x140
-   __kernel_write+0x4f/0x100
-   do_acct_process+0x495/0x580
-   acct_process+0xb9/0xdb
-   do_exit+0x748/0xa00
-   do_group_exit+0x3a/0xa0
-   get_signal+0x254/0x560
-   do_signal+0x23/0x5c0
-   exit_to_usermode_loop+0x5d/0xa0
-   prepare_exit_to_usermode+0x53/0x80
-   retint_user+0x8/0x8
-
-Signed-off-by: Tejun Heo <tj@kernel.org>
-Cc: stable@vger.kernel.org # v4.2+
-Fixes: ec438699a9ae ("cgroup, block: implement task_get_css() and use it in bio_associate_current()")
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- include/linux/cgroup.h |   10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
-
---- a/include/linux/cgroup.h
-+++ b/include/linux/cgroup.h
-@@ -487,7 +487,7 @@ static inline struct cgroup_subsys_state
-  *
-  * Find the css for the (@task, @subsys_id) combination, increment a
-  * reference on and return it.  This function is guaranteed to return a
-- * valid css.
-+ * valid css.  The returned css may already have been offlined.
-  */
- static inline struct cgroup_subsys_state *
- task_get_css(struct task_struct *task, int subsys_id)
-@@ -497,7 +497,13 @@ task_get_css(struct task_struct *task, i
- 	rcu_read_lock();
- 	while (true) {
- 		css = task_css(task, subsys_id);
--		if (likely(css_tryget_online(css)))
-+		/*
-+		 * Can't use css_tryget_online() here.  A task which has
-+		 * PF_EXITING set may stay associated with an offline css.
-+		 * If such task calls this function, css_tryget_online()
-+		 * will keep failing.
-+		 */
-+		if (likely(css_tryget(css)))
- 			break;
- 		cpu_relax();
- 	}
-
+	tglx
 
