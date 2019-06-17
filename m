@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 994B74933F
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 23:29:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7DB6649310
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 23:27:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730646AbfFQV3F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 17:29:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56166 "EHLO mail.kernel.org"
+        id S1730347AbfFQV1J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 17:27:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53916 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730625AbfFQV3B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 17:29:01 -0400
+        id S1730341AbfFQV1G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Jun 2019 17:27:06 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3C99620673;
-        Mon, 17 Jun 2019 21:29:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0F8C920B1F;
+        Mon, 17 Jun 2019 21:27:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560806940;
-        bh=tat8kJLMMzp6+0dG0uqa4TISq6Ol7sETiiDu8zf1xgQ=;
+        s=default; t=1560806825;
+        bh=LoHlJZBEv0RrFbmc7NuM7XQI0oTKz8RtuWr9Qov2/a8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EKSV1bZ91fNRHUjL1sIfcfOtKH8vjqtMbtkocD/OHFolSxbIL13SM40TWzR9/f+wj
-         zF/0K5rG5a/d8pZx1JEnG1blIz183mT9Zq2kLe0T0u47BKeEkd8ZbtPOBOyFHwH95N
-         NAO7TuQrYxzbHFYIhqmkywdzUrsHWDMAAOItPjJs=
+        b=yYrs1vgFDblZKJyi7idaz72Punntdn0IXe0n3poAhL0/wpwTw8iuFIisfWDNohu5u
+         C4I8JJCRoP6ww47xzq4R9/wrD8LcatiA/fSnZfJ9lUK5BS50ahFEvI+xA3N629NXM1
+         Zy93g1XFvZy4Y5mIkv2NxBpOlNdyHwF25tRl5LVw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
-        Saurav Kashyap <skashyap@marvell.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 35/53] scsi: bnx2fc: fix incorrect cast to u64 on shift operation
-Date:   Mon, 17 Jun 2019 23:10:18 +0200
-Message-Id: <20190617210751.446729352@linuxfoundation.org>
+        stable@vger.kernel.org, Cong Wang <xiyou.wangcong@gmail.com>,
+        Borislav Petkov <bp@suse.de>, Tony Luck <tony.luck@intel.com>,
+        linux-edac <linux-edac@vger.kernel.org>
+Subject: [PATCH 4.19 68/75] RAS/CEC: Fix binary search function
+Date:   Mon, 17 Jun 2019 23:10:19 +0200
+Message-Id: <20190617210755.803827591@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190617210745.104187490@linuxfoundation.org>
-References: <20190617210745.104187490@linuxfoundation.org>
+In-Reply-To: <20190617210752.799453599@linuxfoundation.org>
+References: <20190617210752.799453599@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,37 +44,91 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit d0c0d902339249c75da85fd9257a86cbb98dfaa5 ]
+From: Borislav Petkov <bp@suse.de>
 
-Currently an int is being shifted and the result is being cast to a u64
-which leads to undefined behaviour if the shift is more than 31 bits. Fix
-this by casting the integer value 1 to u64 before the shift operation.
+commit f3c74b38a55aefe1004200d15a83f109b510068c upstream.
 
-Addresses-Coverity: ("Bad shift operation")
-Fixes: 7b594769120b ("[SCSI] bnx2fc: Handle REC_TOV error code from firmware")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Acked-by: Saurav Kashyap <skashyap@marvell.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Switch to using Donald Knuth's binary search algorithm (The Art of
+Computer Programming, vol. 3, section 6.2.1). This should've been done
+from the very beginning but the author must've been smoking something
+very potent at the time.
+
+The problem with the current one was that it would return the wrong
+element index in certain situations:
+
+  https://lkml.kernel.org/r/CAM_iQpVd02zkVJ846cj-Fg1yUNuz6tY5q1Vpj4LrXmE06dPYYg@mail.gmail.com
+
+and the noodling code after the loop was fishy at best.
+
+So switch to using Knuth's binary search. The final result is much
+cleaner and straightforward.
+
+Fixes: 011d82611172 ("RAS: Add a Corrected Errors Collector")
+Reported-by: Cong Wang <xiyou.wangcong@gmail.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Cc: Tony Luck <tony.luck@intel.com>
+Cc: linux-edac <linux-edac@vger.kernel.org>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/scsi/bnx2fc/bnx2fc_hwi.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/ras/cec.c |   34 ++++++++++++++++++++--------------
+ 1 file changed, 20 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/scsi/bnx2fc/bnx2fc_hwi.c b/drivers/scsi/bnx2fc/bnx2fc_hwi.c
-index 26de61d65a4d..1bdff75ae903 100644
---- a/drivers/scsi/bnx2fc/bnx2fc_hwi.c
-+++ b/drivers/scsi/bnx2fc/bnx2fc_hwi.c
-@@ -830,7 +830,7 @@ ret_err_rqe:
- 			((u64)err_entry->data.err_warn_bitmap_hi << 32) |
- 			(u64)err_entry->data.err_warn_bitmap_lo;
- 		for (i = 0; i < BNX2FC_NUM_ERR_BITS; i++) {
--			if (err_warn_bit_map & (u64) (1 << i)) {
-+			if (err_warn_bit_map & ((u64)1 << i)) {
- 				err_warn = i;
- 				break;
- 			}
--- 
-2.20.1
-
+--- a/drivers/ras/cec.c
++++ b/drivers/ras/cec.c
+@@ -181,32 +181,38 @@ static void cec_work_fn(struct work_stru
+  */
+ static int __find_elem(struct ce_array *ca, u64 pfn, unsigned int *to)
+ {
++	int min = 0, max = ca->n - 1;
+ 	u64 this_pfn;
+-	int min = 0, max = ca->n;
+ 
+-	while (min < max) {
+-		int tmp = (max + min) >> 1;
++	while (min <= max) {
++		int i = (min + max) >> 1;
+ 
+-		this_pfn = PFN(ca->array[tmp]);
++		this_pfn = PFN(ca->array[i]);
+ 
+ 		if (this_pfn < pfn)
+-			min = tmp + 1;
++			min = i + 1;
+ 		else if (this_pfn > pfn)
+-			max = tmp;
+-		else {
+-			min = tmp;
+-			break;
++			max = i - 1;
++		else if (this_pfn == pfn) {
++			if (to)
++				*to = i;
++
++			return i;
+ 		}
+ 	}
+ 
++	/*
++	 * When the loop terminates without finding @pfn, min has the index of
++	 * the element slot where the new @pfn should be inserted. The loop
++	 * terminates when min > max, which means the min index points to the
++	 * bigger element while the max index to the smaller element, in-between
++	 * which the new @pfn belongs to.
++	 *
++	 * For more details, see exercise 1, Section 6.2.1 in TAOCP, vol. 3.
++	 */
+ 	if (to)
+ 		*to = min;
+ 
+-	this_pfn = PFN(ca->array[min]);
+-
+-	if (this_pfn == pfn)
+-		return min;
+-
+ 	return -ENOKEY;
+ }
+ 
 
 
