@@ -2,47 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6B16A487D5
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 17:51:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4A476487D7
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 17:51:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728342AbfFQPua (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 11:50:30 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:36758 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728248AbfFQPu3 (ORCPT
+        id S1728485AbfFQPuf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 11:50:35 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:44765 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728248AbfFQPuf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 11:50:29 -0400
-Received: by mail-pg1-f193.google.com with SMTP id f21so6058967pgi.3
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2019 08:50:29 -0700 (PDT)
+        Mon, 17 Jun 2019 11:50:35 -0400
+Received: by mail-pf1-f194.google.com with SMTP id t16so5897731pfe.11
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2019 08:50:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=+OUu5AC1XwEziNl7f2ObgXI6EJ5Z9lyfvlo4eWVagcU=;
-        b=ISCeUeI6xBkfCbqRsJ5hWj2ky7KLyS5Hxv+dAGBv9LfG6T8joklmRkz/DGgZ8Wr6pU
-         nV1z0yejTv+d7GgQL49ysUJX5AyfcfGY/UlEnA7vxXUAQgrgUA7ojdmn0cwgZREC3xql
-         fIN0GXBxoAY03Fdw5i2ZrYNPowSKBDHD74DaCUwpv/lbVKD1ai0n/LqaDpetWr7RjdPx
-         UvShSP1Ih3+GkTviWGhyjIJsYKOZMu6Wf2n5MRHa/mibVbnckXOKfGUhxLbl7kYz+pLd
-         Tx3SLkVSWTEkyC6GkpKsKjCOr4FciJsM8B5cJ4pJmN2AhfQ+Exf8C58jXIBGsXEvfy9T
-         iLQw==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=Zz2MERF3vMMa7M8ZtZ0+2jO5Nx0ESJTwlcECDNJk018=;
+        b=rZ0/h3WPcaOINELXKCdM+10e1Qd0n0fNd8AKVHRGSWUF2coevwMbg2QRnLtYYU4uHO
+         ZFf0Wz2rc3zBYLgwuT8jnOvEkJc4ZCdyp7Do1sY01x7Y7SZpnZP8xTVQBsHu1T6oBaqh
+         0j5Z0YszZ0pfuDy6VAfi3AET7hS+2LOpURyyqurDcW3ETmkpiimtVHgGXc2F+7mfAMqa
+         P9kLn8knOYSziTpVY8oX8lDiwjL5+T8WxZGJjhBEY/dr3ntcL3rKevs2EKMCOzWOQsr7
+         05d6XpXKCGVkGPTe4FRKtmqRSwxycuaaH75e06YtydM5iWUJRDLXeZ0gqJd3O71+Q0Ql
+         OIKw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=+OUu5AC1XwEziNl7f2ObgXI6EJ5Z9lyfvlo4eWVagcU=;
-        b=ZVhjZdmFJ5z91GNk8Ds4h5qcc/5UpKg6kiU/UZJNEpBHI7/qdqX6k8bob27MoEDKJl
-         Hmk/izQe56SZXxQIm4rlskgUZ5MOSb+BWTKqAcKTX6frlhmcBxX3w4TLzgvjw2zIpUeL
-         UnBjz/ch7OOViCFsb9xV5209FbBvFNhqpdtB1a6AsjJu2XoQQPdTfjxsxjDqmJhpjCUK
-         b/UcVrrpqNEv7JMhQdzBukzoQJlEW/DOlc5dNEPBXp7jvwxab4s2l+J83IsGXK1X9UTx
-         xcDFF/vrf2RrWEuex2Hx/yHldWjnezyLpolSm5Ch3bxDw5zHBgAwr+vZgnzJVbWTEie5
-         hiig==
-X-Gm-Message-State: APjAAAWgNxNtjFzotNK1GH7zJnwQF2BdCNbE12XAuNgJydVS+1+4nivF
-        6vZ02Xq3Hy5ily0CsT6nOEHcRxxClg==
-X-Google-Smtp-Source: APXvYqxhRVxSfwiE75iq8WYRByIXfkCZs+a89yfUsZH1N0GqbnvIBgo9g3IOMi9CcY/kejjNVhUwIQ==
-X-Received: by 2002:a65:5a42:: with SMTP id z2mr50893750pgs.421.1560786629007;
-        Mon, 17 Jun 2019 08:50:29 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=Zz2MERF3vMMa7M8ZtZ0+2jO5Nx0ESJTwlcECDNJk018=;
+        b=kPubW+Ug3TqMXyUO3xA5LO8+R5Mm9PM4M4BexoE3CbSqXl5ZyGsWDPAFSKvUI2WjBK
+         UYrBarWHx2hMsxSuDCfMM5T8nQo9A07HAV2xUYb1X26buQoCqyr1bvJ9TYfaR+HpycVh
+         ZxwasKYzAAQp2fI1B7fHp+ZpqXVQ7TSTPDA1zl6Jgcgj+D2cZrnTxUXlCeDoAWmEnwGA
+         djxdm6DhLL8zzSdJtZ7TTsVj5wNr4mDsqB1+IbI55dx4E8YllTGk9aHHOD8kd6QbRHqY
+         H5i/L+oca6xok4GIq7reXWgSenv0C9oTscD59ezpbzjA6STpfgNOZjjxJRrohBQ/0d8P
+         PqLA==
+X-Gm-Message-State: APjAAAWineHi9F35zoOs2xdvkFnEoh91rCc1JzITS0KxBzsknstoXXGC
+        ASOnN+AL/jFD4TKG8WLQvorMyrJqhg==
+X-Google-Smtp-Source: APXvYqxw/4Q8hUnVWwTcJVFxM+HFeyv37RJDbHjt8u0ActxcgByyLdHCE8k4iIwSGJR+h/Rs+VK2vw==
+X-Received: by 2002:a63:50a:: with SMTP id 10mr50886468pgf.213.1560786634300;
+        Mon, 17 Jun 2019 08:50:34 -0700 (PDT)
 Received: from localhost.localdomain ([2409:4072:629b:c246:9431:2a24:7932:6dba])
-        by smtp.gmail.com with ESMTPSA id n2sm11023603pff.104.2019.06.17.08.50.22
+        by smtp.gmail.com with ESMTPSA id n2sm11023603pff.104.2019.06.17.08.50.29
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 17 Jun 2019 08:50:28 -0700 (PDT)
+        Mon, 17 Jun 2019 08:50:33 -0700 (PDT)
 From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 To:     lee.jones@linaro.org, lgirdwood@gmail.com, broonie@kernel.org,
         robh+dt@kernel.org
@@ -50,65 +51,193 @@ Cc:     afaerber@suse.de, linux-actions@lists.infradead.org,
         linux-kernel@vger.kernel.org, thomas.liau@actions-semi.com,
         devicetree@vger.kernel.org, linus.walleij@linaro.org,
         Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH 0/4] Add MFD/Regulator support for ATC260x PMICs
-Date:   Mon, 17 Jun 2019 21:20:07 +0530
-Message-Id: <20190617155011.15376-1-manivannan.sadhasivam@linaro.org>
+Subject: [PATCH 1/4] dt-bindings: mfd: Add Actions Semi ATC260x PMIC binding
+Date:   Mon, 17 Jun 2019 21:20:08 +0530
+Message-Id: <20190617155011.15376-2-manivannan.sadhasivam@linaro.org>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190617155011.15376-1-manivannan.sadhasivam@linaro.org>
+References: <20190617155011.15376-1-manivannan.sadhasivam@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+Add devicetree binding for Actions Semi ATC260x PMICs.
 
-This patchset adds MFD core and Regulator support for Actions Semi ATC260x
-PMICs. ATC260x series PMICs integrates Audio Codec, Power management,
-Clock generation, and GPIO controller blocks. There are 3 variants of this
-PMIC series exist today:
-
-ATC2603A
-ATC2603C
-ATC2609A
-
-This patchset adds only ATC2609A PMIC support with regulator functionality.
-Regulator driver supports 4 DC-DC converters and 10 LDO regulators.
-
-This series has been tested on 96Boards Bubblegum96 board integrating
-ATC2609A. Since the board support depends on the SIRQ driver (being reviewed),
-I haven't added any dts changes for now!
-
-Thanks,
-Mani
-
-Manivannan Sadhasivam (4):
-  dt-bindings: mfd: Add Actions Semi ATC260x PMIC binding
-  mfd: Add initial MFD driver for ATC260x PMICs
-  regulator: Add regulator driver for ATC260x PMICs
-  MAINTAINERS: Add entry for ATC260x PMIC
-
- .../devicetree/bindings/mfd/atc260x.txt       | 162 ++++++++
- MAINTAINERS                                   |   9 +
- drivers/mfd/Kconfig                           |  22 +
- drivers/mfd/Makefile                          |   7 +
- drivers/mfd/atc2609a-helpers.c                |  91 ++++
- drivers/mfd/atc260x-core.c                    |  85 ++++
- drivers/mfd/atc260x-i2c.c                     |  98 +++++
- drivers/mfd/atc260x.h                         |  22 +
- drivers/regulator/Kconfig                     |   8 +
- drivers/regulator/Makefile                    |   1 +
- drivers/regulator/atc260x-regulator.c         | 389 ++++++++++++++++++
- include/linux/mfd/atc260x/atc2609a_regs.h     | 228 ++++++++++
- include/linux/mfd/atc260x/core.h              |  64 +++
- 13 files changed, 1186 insertions(+)
+Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+---
+ .../devicetree/bindings/mfd/atc260x.txt       | 162 ++++++++++++++++++
+ 1 file changed, 162 insertions(+)
  create mode 100644 Documentation/devicetree/bindings/mfd/atc260x.txt
- create mode 100644 drivers/mfd/atc2609a-helpers.c
- create mode 100644 drivers/mfd/atc260x-core.c
- create mode 100644 drivers/mfd/atc260x-i2c.c
- create mode 100644 drivers/mfd/atc260x.h
- create mode 100644 drivers/regulator/atc260x-regulator.c
- create mode 100644 include/linux/mfd/atc260x/atc2609a_regs.h
- create mode 100644 include/linux/mfd/atc260x/core.h
 
+diff --git a/Documentation/devicetree/bindings/mfd/atc260x.txt b/Documentation/devicetree/bindings/mfd/atc260x.txt
+new file mode 100644
+index 000000000000..c72790132ed7
+--- /dev/null
++++ b/Documentation/devicetree/bindings/mfd/atc260x.txt
+@@ -0,0 +1,162 @@
++Actions Semi ATC260X PMIC
++
++The atc260x family current members:
++atc2609a
++
++Required properties:
++- compatible: "actions,atc2609a"
++- reg: I2C slave address
++- interrupts: The interrupt line the IRQ signal for the device is connected to
++
++Optional ATC2609A properties:
++- vcc0-supply:  The input supply for DCDC_REG0
++- vcc1-supply:  The input supply for DCDC_REG1
++- vcc2-supply:  The input supply for DCDC_REG2
++- vcc3-supply:  The input supply for DCDC_REG3
++- vcc4-supply:  The input supply for DCDC_REG4
++- vcc5-supply:  The input supply for LDO_REG0
++- vcc6-supply:  The input supply for LDO_REG1
++- vcc7-supply:  The input supply for LDO_REG2
++- vcc8-supply:  The input supply for LDO_REG3
++- vcc9-supply:  The input supply for LDO_REG4
++- vcc10-supply:  The input supply for LDO_REG5
++- vcc11-supply:  The input supply for LDO_REG6
++- vcc12-supply: The input supply for LDO_REG7
++- vcc13-supply: The input supply for LDO_REG8
++- vcc14-supply: The input supply for LDO_REG9
++
++Regulators: All the regulators of ATC260X to be instantiated shall be
++listed in a child node named 'regulators'. Each regulator is represented
++by a child node of the 'regulators' node.
++
++	regulator-name {
++		/* standard regulator bindings here */
++	};
++
++Following regulators of the ATC2609A PMIC regulators are supported. Note that
++the 'n' in regulator name, as in DCDC_REGn or LDOn, represents the DCDC or LDO
++number as described in ATC2609A datasheet.
++
++	- DCDC_REGn
++		- valid values for n are 0 to 4.
++	- LDO_REGn
++		- valid values for n are 0 to 9
++
++Standard regulator bindings are used inside regulator subnodes. Check
++  Documentation/devicetree/bindings/regulator/regulator.txt
++for more details
++
++Example:
++	atc260x: pmic@65 {
++		compatible = "actions,atc2609a";
++		reg = <0x65>;
++		interrupt-parent = <&sirq>;
++		interrupts = <GIC_SPI 15 IRQ_TYPE_LEVEL_HIGH>;
++
++		vcc0-supply = <&reg_5v0>;
++		vcc1-supply = <&reg_5v0>;
++		vcc2-supply = <&reg_5v0>;
++		vcc3-supply = <&reg_5v0>;
++		vcc4-supply = <&reg_5v0>;
++		vcc5-supply = <&reg_3v1>;
++		vcc6-supply = <&reg_5v0>;
++		vcc7-supply = <&reg_5v0>;
++		vcc9-supply = <&reg_5v0>;
++		vcc10-supply = <&reg_5v0>;
++		vcc11-supply = <&reg_3v1>;
++		vcc12-supply = <&reg_3v1>;
++		vcc13-supply = <&reg_5v0>;
++		vddio-supply = <&reg_3v1>;
++
++		regulators {
++			vdd_core: DCDC_REG0 {
++				regulator-name = "vdd_core";
++				regulator-min-microvolt = <600000>;
++				regulator-max-microvolt = <1300000>;
++				regulator-always-on;
++				regulator-boot-on;
++			};
++
++			vdd_cpu: DCDC_REG1 {
++				regulator-name = "vdd_cpu";
++				regulator-min-microvolt = <600000>;
++				regulator-max-microvolt = <1300000>;
++				regulator-always-on;
++				regulator-boot-on;
++			};
++
++			vddq_1v2: DCDC_REG2 {
++				regulator-name = "vddq_1v2";
++				regulator-min-microvolt = <600000>;
++				regulator-max-microvolt = <1350000>;
++				regulator-always-on;
++				regulator-boot-on;
++			};
++
++			vcc_3v1: DCDC_REG3 {
++				regulator-name = "vcc_3v1";
++				regulator-min-microvolt = <600000>;
++				regulator-max-microvolt = <3500000>;
++				regulator-always-on;
++				regulator-boot-on;
++			};
++
++			vdd_cpum: DCDC_REG4 {
++				regulator-name = "vdd_cpum";
++				regulator-min-microvolt = <600000>;
++				regulator-max-microvolt = <1300000>;
++				regulator-always-on;
++				regulator-boot-on;
++			};
++
++			sd_vcc: LDO_REG0 {
++				regulator-name = "sd_vcc";
++				regulator-min-microvolt = <2300000>;
++				regulator-max-microvolt = <3400000>;
++				regulator-always-on;
++				regulator-boot-on;
++			};
++
++			wifi_3v3: LDO_REG1 {
++				regulator-name = "wifi_3v3";
++				regulator-min-microvolt = <2300000>;
++				regulator-max-microvolt = <3400000>;
++			};
++
++			avcc_3v1: LDO_REG2 {
++				regulator-name = "avcc_3v1";
++				regulator-min-microvolt = <2300000>;
++				regulator-max-microvolt = <3400000>;
++				regulator-always-on;
++				regulator-boot-on;
++			};
++
++			avcc_1v8: LDO_REG4 {
++				regulator-name = "avcc_1v8";
++				regulator-min-microvolt = <700000>;
++				regulator-max-microvolt = <2200000>;
++				regulator-always-on;
++				regulator-boot-on;
++			};
++
++			avcc_1v0: LDO_REG6 {
++				regulator-name = "avcc_1v0";
++				regulator-min-microvolt = <850000>;
++				regulator-max-microvolt = <2200000>;
++				regulator-always-on;
++				regulator-boot-on;
++			};
++
++			vcc1v8_io: LDO_REG7 {
++				regulator-name = "vcc1v8_io";
++				regulator-min-microvolt = <700000>;
++				regulator-max-microvolt = <2200000>;
++			};
++
++			tpvcc_3v1: LDO_REG8 {
++				regulator-name = "tpvcc_3v1";
++				regulator-min-microvolt = <2100000>;
++				regulator-max-microvolt = <3300000>;
++			};
++		};
++	};
 -- 
 2.17.1
 
