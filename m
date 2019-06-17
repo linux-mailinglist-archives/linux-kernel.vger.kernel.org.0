@@ -2,106 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F2EA848362
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 15:02:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E4CAF4835B
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 15:01:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728053AbfFQNCH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 09:02:07 -0400
-Received: from mout.kundenserver.de ([212.227.126.131]:41391 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725983AbfFQNCH (ORCPT
+        id S1727877AbfFQNBu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 09:01:50 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:40705 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725983AbfFQNBu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 09:02:07 -0400
-Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
- (mreue011 [212.227.15.129]) with ESMTPA (Nemesis) id
- 1MT9v5-1i3cOz1DcF-00UeXy; Mon, 17 Jun 2019 15:01:54 +0200
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     Santosh Shilimkar <ssantosh@kernel.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>, Lokesh Vutla <lokeshvutla@ti.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Olof Johansson <olof@lixom.net>,
-        Tony Lindgren <tony@atomide.com>, Nishanth Menon <nm@ti.com>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH] soc: ti: fix irq-ti-sci link error
-Date:   Mon, 17 Jun 2019 15:01:05 +0200
-Message-Id: <20190617130149.1782930-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.20.0
+        Mon, 17 Jun 2019 09:01:50 -0400
+Received: by mail-ed1-f65.google.com with SMTP id k8so16052978eds.7;
+        Mon, 17 Jun 2019 06:01:49 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=T87ic57rQt3UfwYy1X9DryRi6OUhzyqVbWtm9GM976Y=;
+        b=dHsueJQcDZtuv/eD+7UUJr9neQWrZAW4Hkedfz7gwd/0fJBQtSDXo3Twp2nrKdj+py
+         KJUl5z9VJ5Amf8T6RRYihnEI5eOeXRXs826/WVr2ggv0OvJCDweRTkmYy/SGVpHuRfKl
+         PFaZ5w0zTaFMdHYer9MrgXpRVwHgX6UlGcA19ctUnpNAOUec73yoe6coAFCED9PDxmQk
+         u9FEhXuGiz0Sthiz0V6ArBqO1EAd4+vjUdHtB2TG87gZsKMdD3ipDTmBMMf3MuZ4/zxA
+         ibN4eIIQgPNZtP23vOQktMa01yVRcSquILQmyY1f/Ox8BKl2Mg1giKOsGrk7pkDdIDGK
+         2IiA==
+X-Gm-Message-State: APjAAAXePZZ6AS54zp7S+hjQJFbURddSsBHGqL1lNDrwl5woc0FBwtKQ
+        4I8JTAwDa61Pi7jCFsKGICYn4HxMy5c=
+X-Google-Smtp-Source: APXvYqwAP0NtwmM3ET/jTI7jrWo8Uw0zRjTGoXmLzbyyKSuRNm2UV3i2mlX6S7Sq7ErI9W8wRY8N8A==
+X-Received: by 2002:a50:ad2c:: with SMTP id y41mr95836414edc.300.1560776507871;
+        Mon, 17 Jun 2019 06:01:47 -0700 (PDT)
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com. [209.85.128.46])
+        by smtp.gmail.com with ESMTPSA id v3sm1342180ejk.77.2019.06.17.06.01.47
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Mon, 17 Jun 2019 06:01:47 -0700 (PDT)
+Received: by mail-wm1-f46.google.com with SMTP id w9so4484776wmd.1;
+        Mon, 17 Jun 2019 06:01:47 -0700 (PDT)
+X-Received: by 2002:a1c:c545:: with SMTP id v66mr19389774wmf.51.1560776506243;
+ Mon, 17 Jun 2019 06:01:46 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:FRdEe6tjuV8KyxJSyrTdyhJaUWE5AS9D7M4jEyC+sBbLA/FibZc
- DYw+IyzPdm/Jp25ioQ6PWJYlw51JAUxTu7+Hfs80p/pul4o4y+21YGFbHBdYwE8p5ap0von
- g++GFuW5ry3GclAiTwmHWDNf+QQxkiLPWOp5mhatqbbgseGiluC8lTi2pLMXg69dVNYzfLv
- VlhXhp1PNhNWvhlccS/xg==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:Zd06hkM9Szw=:mMYc/1oT1VBq+1iFcHYDsw
- +dPi8sODpQ5PmH/geIGQNy+AiBUO5PB0DyfiOtJWGL4eksx8/x9XC3W9EWffYtiEFSAIhwpma
- K22sxiWrsBUKBRjuNuYMF5WkHymqHAaQg5r2ywmVlX96+8I6CL9gGjZ80wHzmBOWwJAmYoxgB
- RK5kA9QjgoKgsosNxy79ufYjSqtdRPxK9uU71EpIC6ofYCxJZdxNHAsNRCZEvSKEtq9CaHoah
- wLwmSWeNtfvnk3/Esi7H4Wy5hnRmDzQZqAazjWU2Sy6oWQDNvRrGlCaRhAYrSP1uZeOm8J4J2
- 9jp0JjgaUKqajvKGI14a4Ygt4ZpyJGmw0AY7fbVpGlkve4vufJsNUhZPdpLAfBdsgW9on7GEj
- q6dk0icEfK6IlX8XgEgPVyuNTefCgVlSW87o+KTS1McMUSKgxZ0aQtm5DEp/J64VcFxjN9iqD
- 8qAdv809c2TlJeP4ZwBw43I1w6vsJGFz74W43TVdOKP6WSac+0SYL1+YlByW3xzYMUKiHSvys
- kLmRn8U79CTj3GceSuGouRqIh2BuXx9ZtJCkXDcYj90HwHcYcuL2TbN552XEJfutO3brF0nI+
- QHLXDVFLNoX8fslO8ULdjA7gvinfTrDNZfLHaVnZ6SGsIl1iJBunfubMwER5BNMZ2ooemo3/G
- HSTCPBHRmEsKaswQRPNzLyg1U0NXBLBitKuDhgxs7kUS3wFu1EICV9SwQzhGm4+FrSKa4Eime
- jhYi5pax9Gkdd/2fLOmYX2vcXLxm/TaQ5IeYFQ==
+References: <20190614164324.9427-1-jagan@amarulasolutions.com>
+ <20190614164324.9427-6-jagan@amarulasolutions.com> <20190617114503.pclqsf6bo3ih47nt@flea>
+In-Reply-To: <20190617114503.pclqsf6bo3ih47nt@flea>
+From:   Chen-Yu Tsai <wens@csie.org>
+Date:   Mon, 17 Jun 2019 21:01:33 +0800
+X-Gmail-Original-Message-ID: <CAGb2v66RU=m0iA9VoBiYbake+mDoiiGcd5gGGXvNCBjhY2n+Dw@mail.gmail.com>
+Message-ID: <CAGb2v66RU=m0iA9VoBiYbake+mDoiiGcd5gGGXvNCBjhY2n+Dw@mail.gmail.com>
+Subject: Re: [linux-sunxi] Re: [PATCH v2 5/9] drm/sun4i: tcon_top: Register
+ clock gates in probe
+To:     Maxime Ripard <maxime.ripard@bootlin.com>
+Cc:     Jagan Teki <jagan@amarulasolutions.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        linux-sunxi <linux-sunxi@googlegroups.com>,
+        linux-amarula <linux-amarula@amarulasolutions.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The irqchip driver depends on the SoC specific driver, but we want
-to be able to compile-test it elsewhere:
+On Mon, Jun 17, 2019 at 7:45 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
+>
+> On Fri, Jun 14, 2019 at 10:13:20PM +0530, Jagan Teki wrote:
+> > TCON TOP have clock gates for TV0, TV1, dsi and right
+> > now these are register during bind call.
+> >
+> > Of which, dsi clock gate would required during DPHY probe
+> > but same can miss to get since tcon top is not bound at
+> > that time.
+> >
+> > To solve, this circular dependency move the clock gate
+> > registration from bind to probe so-that DPHY can get the
+> > dsi gate clock on time.
+>
+> It's not really clear to me what the circular dependency is?
+>
+> if you have a chain that is:
+>
+> tcon-top +-> DSI
+>          +-> D-PHY
+>
+> There's no loop, right?
 
-WARNING: unmet direct dependencies detected for TI_SCI_INTA_MSI_DOMAIN
-  Depends on [n]: SOC_TI [=n]
-  Selected by [y]:
-  - TI_SCI_INTA_IRQCHIP [=y] && TI_SCI_PROTOCOL [=y]
+Looking at how the DTSI patch structures things (without going into
+whether it is correct or accurate):
 
-drivers/irqchip/irq-ti-sci-inta.o: In function `ti_sci_inta_irq_domain_probe':
-irq-ti-sci-inta.c:(.text+0x204): undefined reference to `ti_sci_inta_msi_create_irq_domain'
+The D-PHY is not part of the component graph. However it requests
+the DSI gate clock from the TCON-TOP.
 
-Rearrange the Kconfig and Makefile so we build the soc driver whenever
-its users are there, regardless of the SOC_TI option.
+The TCON-TOP driver, in its current form, only registers the clocks
+it provides at component bind time. Thus the D-PHY can't successfully
+probe until the TCON-TOP has been bound.
 
-Fixes: 49b323157bf1 ("soc: ti: Add MSI domain bus support for Interrupt Aggregator")
-Fixes: f011df6179bd ("irqchip/ti-sci-inta: Add msi domain support")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/soc/Makefile   | 2 +-
- drivers/soc/ti/Kconfig | 4 ++--
- 2 files changed, 3 insertions(+), 3 deletions(-)
+The DSI interface requires the D-PHY to bind. It will return -EPROBE_DEFER
+if it cannot request it. This in turn goes into the error path of
+component_bind_all, which unbinds all previous components.
 
-diff --git a/drivers/soc/Makefile b/drivers/soc/Makefile
-index 524ecdc2a9bb..2ec355003524 100644
---- a/drivers/soc/Makefile
-+++ b/drivers/soc/Makefile
-@@ -22,7 +22,7 @@ obj-$(CONFIG_ARCH_ROCKCHIP)	+= rockchip/
- obj-$(CONFIG_SOC_SAMSUNG)	+= samsung/
- obj-y				+= sunxi/
- obj-$(CONFIG_ARCH_TEGRA)	+= tegra/
--obj-$(CONFIG_SOC_TI)		+= ti/
-+obj-y				+= ti/
- obj-$(CONFIG_ARCH_U8500)	+= ux500/
- obj-$(CONFIG_PLAT_VERSATILE)	+= versatile/
- obj-y				+= xilinx/
-diff --git a/drivers/soc/ti/Kconfig b/drivers/soc/ti/Kconfig
-index ea0859f7b185..d7d50d48d05d 100644
---- a/drivers/soc/ti/Kconfig
-+++ b/drivers/soc/ti/Kconfig
-@@ -75,10 +75,10 @@ config TI_SCI_PM_DOMAINS
- 	  called ti_sci_pm_domains. Note this is needed early in boot before
- 	  rootfs may be available.
- 
-+endif # SOC_TI
-+
- config TI_SCI_INTA_MSI_DOMAIN
- 	bool
- 	select GENERIC_MSI_IRQ_DOMAIN
- 	help
- 	  Driver to enable Interrupt Aggregator specific MSI Domain.
--
--endif # SOC_TI
--- 
-2.20.0
+So it's actually
 
+    D-PHY -> TCON-TOP -> DSI
+      ^                   |
+      |--------------------
+
+I've not checked, but I suspect there's no possibility of having other
+drivers probe (to deal with deferred probing) within component_bind_all.
+Otherwise we shouldn't run into this weird circular dependency issue.
+
+So the question for Jagan is that is this indeed the case? Does this
+patch solve it, or at least work around it.
+
+ChenYu
