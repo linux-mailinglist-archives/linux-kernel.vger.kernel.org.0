@@ -2,107 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D85247B19
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 09:37:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A94747B86
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 09:44:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727232AbfFQHhH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 03:37:07 -0400
-Received: from mga14.intel.com ([192.55.52.115]:55174 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726189AbfFQHhG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 03:37:06 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Jun 2019 00:37:06 -0700
-X-ExtLoop1: 1
-Received: from jnikula-mobl3.fi.intel.com (HELO localhost) ([10.237.66.150])
-  by fmsmga001.fm.intel.com with ESMTP; 17 Jun 2019 00:36:57 -0700
-From:   Jani Nikula <jani.nikula@linux.intel.com>
-To:     Alastair D'Silva <alastair@au1.ibm.com>, alastair@d-silva.org
-Cc:     Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Karsten Keil <isdn@linux-pingi.de>,
-        Jassi Brar <jassisinghbrar@gmail.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jose Abreu <Jose.Abreu@synopsys.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Stanislaw Gruszka <sgruszka@redhat.com>,
-        Benson Leung <bleung@chromium.org>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Petr Mladek <pmladek@suse.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        David Laight <David.Laight@ACULAB.COM>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        ath10k@lists.infradead.org, linux-wireless@vger.kernel.org,
-        linux-scsi@vger.kernel.org, linux-fbdev@vger.kernel.org,
-        devel@driverdev.osuosl.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v3 4/7] lib/hexdump.c: Replace ascii bool in hex_dump_to_buffer with flags
-In-Reply-To: <20190617020430.8708-5-alastair@au1.ibm.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20190617020430.8708-1-alastair@au1.ibm.com> <20190617020430.8708-5-alastair@au1.ibm.com>
-Date:   Mon, 17 Jun 2019 10:39:53 +0300
-Message-ID: <87imt4vewm.fsf@intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+        id S1726108AbfFQHn6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 03:43:58 -0400
+Received: from xavier.telenet-ops.be ([195.130.132.52]:42054 "EHLO
+        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725826AbfFQHn6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Jun 2019 03:43:58 -0400
+Received: from ramsan ([84.194.111.163])
+        by xavier.telenet-ops.be with bizsmtp
+        id Rjji2000G3XaVaC01jjiki; Mon, 17 Jun 2019 09:43:47 +0200
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan with esmtp (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1hcmIo-0000TT-2k; Mon, 17 Jun 2019 09:43:42 +0200
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1hcmIo-0003Kr-0l; Mon, 17 Jun 2019 09:43:42 +0200
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: [PATCH] initramfs: Fix populate_initrd_image() section mismatch
+Date:   Mon, 17 Jun 2019 09:43:40 +0200
+Message-Id: <20190617074340.12779-1-geert@linux-m68k.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 17 Jun 2019, "Alastair D'Silva" <alastair@au1.ibm.com> wrote:
-> From: Alastair D'Silva <alastair@d-silva.org>
->
-> In order to support additional features in hex_dump_to_buffer, replace
-> the ascii bool parameter with flags.
->
-> Signed-off-by: Alastair D'Silva <alastair@d-silva.org>
-> ---
->  drivers/gpu/drm/i915/intel_engine_cs.c            |  2 +-
->  drivers/isdn/hardware/mISDN/mISDNisar.c           |  6 ++++--
->  drivers/mailbox/mailbox-test.c                    |  2 +-
->  drivers/net/ethernet/amd/xgbe/xgbe-drv.c          |  2 +-
->  drivers/net/ethernet/synopsys/dwc-xlgmac-common.c |  2 +-
->  drivers/net/wireless/ath/ath10k/debug.c           |  3 ++-
->  drivers/net/wireless/intel/iwlegacy/3945-mac.c    |  2 +-
->  drivers/platform/chrome/wilco_ec/debugfs.c        |  2 +-
->  drivers/scsi/scsi_logging.c                       |  8 +++-----
->  drivers/staging/fbtft/fbtft-core.c                |  2 +-
->  fs/seq_file.c                                     |  3 ++-
->  include/linux/printk.h                            |  8 ++++----
->  lib/hexdump.c                                     | 15 ++++++++-------
->  lib/test_hexdump.c                                |  5 +++--
->  14 files changed, 33 insertions(+), 29 deletions(-)
->
-> diff --git a/drivers/gpu/drm/i915/intel_engine_cs.c b/drivers/gpu/drm/i915/intel_engine_cs.c
-> index eea9bec04f1b..5df5fffdb848 100644
-> --- a/drivers/gpu/drm/i915/intel_engine_cs.c
-> +++ b/drivers/gpu/drm/i915/intel_engine_cs.c
-> @@ -1340,7 +1340,7 @@ static void hexdump(struct drm_printer *m, const void *buf, size_t len)
->  		WARN_ON_ONCE(hex_dump_to_buffer(buf + pos, len - pos,
->  						rowsize, sizeof(u32),
->  						line, sizeof(line),
-> -						false) >= sizeof(line));
-> +						0) >= sizeof(line));
->  		drm_printf(m, "[%04zx] %s\n", pos, line);
->  
->  		prev = buf + pos;
+With gcc-4.6.3:
 
-On i915,
+    WARNING: vmlinux.o(.text.unlikely+0x140): Section mismatch in reference from the function populate_initrd_image() to the variable .init.ramfs.info:__initramfs_size
+    The function populate_initrd_image() references
+    the variable __init __initramfs_size.
+    This is often because populate_initrd_image lacks a __init
+    annotation or the annotation of __initramfs_size is wrong.
 
-Acked-by: Jani Nikula <jani.nikula@intel.com>
+    WARNING: vmlinux.o(.text.unlikely+0x14c): Section mismatch in reference from the function populate_initrd_image() to the function .init.text:unpack_to_rootfs()
+    The function populate_initrd_image() references
+    the function __init unpack_to_rootfs().
+    This is often because populate_initrd_image lacks a __init
+    annotation or the annotation of unpack_to_rootfs is wrong.
 
+    WARNING: vmlinux.o(.text.unlikely+0x198): Section mismatch in reference from the function populate_initrd_image() to the function .init.text:xwrite()
+    The function populate_initrd_image() references
+    the function __init xwrite().
+    This is often because populate_initrd_image lacks a __init
+    annotation or the annotation of xwrite is wrong.
 
+Indeed, if the compiler decides not to inline populate_initrd_image(), a
+warning is generated.
+
+Fix this by adding the missing __init annotations.
+
+Fixes: 7c184ecd262fe64f ("initramfs: factor out a helper to populate the initrd image")
+Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+---
+ init/initramfs.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/init/initramfs.c b/init/initramfs.c
+index 178130fd61c25d58..c47dad0884f7f10d 100644
+--- a/init/initramfs.c
++++ b/init/initramfs.c
+@@ -617,7 +617,7 @@ static inline void clean_rootfs(void)
+ #endif /* CONFIG_BLK_DEV_RAM */
+ 
+ #ifdef CONFIG_BLK_DEV_RAM
+-static void populate_initrd_image(char *err)
++static void __init populate_initrd_image(char *err)
+ {
+ 	ssize_t written;
+ 	int fd;
+@@ -637,7 +637,7 @@ static void populate_initrd_image(char *err)
+ 	ksys_close(fd);
+ }
+ #else
+-static void populate_initrd_image(char *err)
++static void __init populate_initrd_image(char *err)
+ {
+ 	printk(KERN_EMERG "Initramfs unpacking failed: %s\n", err);
+ }
 -- 
-Jani Nikula, Intel Open Source Graphics Center
+2.17.1
+
