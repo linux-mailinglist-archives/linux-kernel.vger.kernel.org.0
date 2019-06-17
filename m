@@ -2,142 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E84BD485C6
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 16:43:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 183A2485C2
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 16:43:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728427AbfFQOlA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 10:41:00 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:59537 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726331AbfFQOlA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 10:41:00 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x5HEeUWE3459597
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Mon, 17 Jun 2019 07:40:30 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x5HEeUWE3459597
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019051801; t=1560782431;
-        bh=eAJM4htAFO/RzIZtoc04Np59pK7nqAeE+SyVMIhV1bA=;
-        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
-        b=oCimyAhtQgeTeyRJ3OdeiczNQ37txvhWIku0cOm+wFGbqN0O8zyEbM3Z1hU3muNdI
-         PQ36tze5T7dXYSL9jhwDTZF5LEqQjbkhM6ebx3zqvBmfPsfE9RZSBIkOChSKN/U8tI
-         RnPcI+mfQo+t3wCv55Ec5XrDZfYRa6RPhFaKEQ+2BBzTGMe7DfioMtH0iDG3USExUD
-         ePwTsktTavTKso8EhZaozKBFLTSlL7IOQyfPSI9PsH1HZkwmNltm9X/vW7UwTkAlsx
-         tLgPMbZ8LoY59XO61AfzRwaXtxoUWTGt2d2qbM3/QiXTv4InYbP+2sQYB5nPrbM22q
-         y5KpRB0mJ4hrw==
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x5HEeUVx3459594;
-        Mon, 17 Jun 2019 07:40:30 -0700
-Date:   Mon, 17 Jun 2019 07:40:30 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Jiri Olsa <tipbot@zytor.com>
-Message-ID: <tip-b7c9b3927337b43b3c854064b9c17b84cb7ef0dc@git.kernel.org>
-Cc:     namhyung@kernel.org, hpa@zytor.com, torvalds@linux-foundation.org,
-        jolsa@redhat.com, alexander.shishkin@linux.intel.com,
-        peterz@infradead.org, linux-kernel@vger.kernel.org,
-        gregkh@linuxfoundation.org, mingo@kernel.org, acme@kernel.org,
-        tglx@linutronix.de, jolsa@kernel.org
-Reply-To: namhyung@kernel.org, torvalds@linux-foundation.org,
-          hpa@zytor.com, linux-kernel@vger.kernel.org,
-          alexander.shishkin@linux.intel.com, gregkh@linuxfoundation.org,
-          acme@kernel.org, jolsa@redhat.com, peterz@infradead.org,
-          mingo@kernel.org, jolsa@kernel.org, tglx@linutronix.de
-In-Reply-To: <20190524132152.GB26617@krava>
-References: <20190524132152.GB26617@krava>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf/x86/intel: Use ->is_visible callback for
- default group
-Git-Commit-ID: b7c9b3927337b43b3c854064b9c17b84cb7ef0dc
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        id S1728082AbfFQOke (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 10:40:34 -0400
+Received: from mx2.suse.de ([195.135.220.15]:54126 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726151AbfFQOke (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Jun 2019 10:40:34 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id D0D62AF60;
+        Mon, 17 Jun 2019 14:40:32 +0000 (UTC)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
-X-Spam-Status: No, score=-1.2 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        DATE_IN_FUTURE_06_12,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,
-        DKIM_VALID_EF autolearn=ham autolearn_force=no version=3.4.2
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Mon, 17 Jun 2019 16:40:31 +0200
+From:   Roman Penyaev <rpenyaev@suse.de>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     "Uladzislau Rezki (Sony)" <urezki@gmail.com>,
+        Roman Gushchin <guro@fb.com>, Michal Hocko <mhocko@suse.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Thomas Garnier <thgarnie@google.com>,
+        Oleksiy Avramchenko <oleksiy.avramchenko@sonymobile.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Joel Fernandes <joelaf@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@elte.hu>, Tejun Heo <tj@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Rick Edgecombe <rick.p.edgecombe@intel.com>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Linux-MM <linux-mm@kvack.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [BUG]: mm/vmalloc: uninitialized variable access in
+ pcpu_get_vm_areas
+In-Reply-To: <CAK8P3a0+jOW==OOx_CLj=TCsG5EBK2ni6kw1+PexJLAC2NEp_g@mail.gmail.com>
+References: <20190617121427.77565-1-arnd@arndb.de>
+ <457d8e5e453a18faf358bc1360a19003@suse.de>
+ <CAK8P3a0+jOW==OOx_CLj=TCsG5EBK2ni6kw1+PexJLAC2NEp_g@mail.gmail.com>
+Message-ID: <a05a92b2fdc7c8b7850e9e7c63f8e9e6@suse.de>
+X-Sender: rpenyaev@suse.de
+User-Agent: Roundcube Webmail
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  b7c9b3927337b43b3c854064b9c17b84cb7ef0dc
-Gitweb:     https://git.kernel.org/tip/b7c9b3927337b43b3c854064b9c17b84cb7ef0dc
-Author:     Jiri Olsa <jolsa@redhat.com>
-AuthorDate: Fri, 24 May 2019 15:21:52 +0200
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Mon, 17 Jun 2019 12:36:23 +0200
+On 2019-06-17 16:04, Arnd Bergmann wrote:
+> On Mon, Jun 17, 2019 at 3:49 PM Roman Penyaev <rpenyaev@suse.de> wrote:
+>> >               augment_tree_propagate_from(va);
+>> >
+>> > -             if (type == NE_FIT_TYPE)
+>> > -                     insert_vmap_area_augment(lva, &va->rb_node,
+>> > -                             &free_vmap_area_root, &free_vmap_area_list);
+>> > -     }
+>> > -
+>> >       return 0;
+>> >  }
+>> 
+>> 
+>> Hi Arnd,
+>> 
+>> Seems the proper fix is just setting lva to NULL.  The only place
+>> where lva is allocated and then used is when type == NE_FIT_TYPE,
+>> so according to my shallow understanding of the code everything
+>> should be fine.
+> 
+> I don't see how NULL could work here. insert_vmap_area_augment()
+> passes the va pointer into find_va_links() and link_va(), both of
+> which dereference the pointer, see
 
-perf/x86/intel: Use ->is_visible callback for default group
+Exactly, but insert_vmap_area_augement() accepts 'va', not 'lva',
+but in your variant 'va' is already freed (see type == FL_FIT_TYPE
+branch, on top of that function).  So that should be use-after-free.
 
-It's preffered to use group's ->is_visible callback, so
-we do not need to use condition attribute assignment.
+--
+Roman
 
-Suggested-by: Peter Zijlstra <peterz@infradead.org>
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lkml.kernel.org/r/20190524132152.GB26617@krava
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- arch/x86/events/intel/core.c | 15 ++++++++++++---
- 1 file changed, 12 insertions(+), 3 deletions(-)
-
-diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
-index 4377bf6a6f82..5e6ae481dee7 100644
---- a/arch/x86/events/intel/core.c
-+++ b/arch/x86/events/intel/core.c
-@@ -4391,7 +4391,7 @@ static DEVICE_ATTR(allow_tsx_force_abort, 0644,
- 
- static struct attribute *intel_pmu_attrs[] = {
- 	&dev_attr_freeze_on_smi.attr,
--	NULL, /* &dev_attr_allow_tsx_force_abort.attr.attr */
-+	&dev_attr_allow_tsx_force_abort.attr,
- 	NULL,
- };
- 
-@@ -4419,6 +4419,15 @@ exra_is_visible(struct kobject *kobj, struct attribute *attr, int i)
- 	return x86_pmu.version >= 2 ? attr->mode : 0;
- }
- 
-+static umode_t
-+default_is_visible(struct kobject *kobj, struct attribute *attr, int i)
-+{
-+	if (attr == &dev_attr_allow_tsx_force_abort.attr)
-+		return x86_pmu.flags & PMU_FL_TFA ? attr->mode : 0;
-+
-+	return attr->mode;
-+}
-+
- static struct attribute_group group_events_td  = {
- 	.name = "events",
- };
-@@ -4455,7 +4464,8 @@ static struct attribute_group group_format_extra_skl = {
- };
- 
- static struct attribute_group group_default = {
--	.attrs = intel_pmu_attrs,
-+	.attrs      = intel_pmu_attrs,
-+	.is_visible = default_is_visible,
- };
- 
- static const struct attribute_group *attr_update[] = {
-@@ -4979,7 +4989,6 @@ __init int intel_pmu_init(void)
- 			x86_pmu.get_event_constraints = tfa_get_event_constraints;
- 			x86_pmu.enable_all = intel_tfa_pmu_enable_all;
- 			x86_pmu.commit_scheduling = intel_tfa_commit_scheduling;
--			intel_pmu_attrs[1] = &dev_attr_allow_tsx_force_abort.attr;
- 		}
- 
- 		pr_cont("Skylake events, ");
