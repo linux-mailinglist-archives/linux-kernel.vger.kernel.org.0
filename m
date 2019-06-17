@@ -2,131 +2,135 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CE1B648CD9
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 20:47:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AE51E48CE0
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 20:47:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726731AbfFQSrM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 14:47:12 -0400
-Received: from mail-eopbgr760091.outbound.protection.outlook.com ([40.107.76.91]:3687
-        "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725844AbfFQSrL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 14:47:11 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=testarcselector01; d=microsoft.com; cv=none;
- b=dmiNxrXXn0BdDQNvqqurGNfVYVjCHJQbWH4E710+FHJBOSTY+GBh+44W+GeA+Wrgya5aZjLSyh0LbWnCTey/bKrqR/jzLZkNNSG4jfsqMVmUXmDxDrTW+9L9atSLavQU6Zpt+lAQrt1Uc7rEuqyjC5u2JPyYjgTBn2FWquC/8xY=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=testarcselector01;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=WFKC25shXYrQn1Zb+aiqUiGWjF6sjLeR8ccIU8ad7B0=;
- b=JTrkk45flZJSB5buKtHXmWB/0e4X2sFYwQWYrQgMAacIUXOJj6X6C79z1WH5Es08LK8q3UUNFVUKVqIkyaXWLfnzgHxcuz+Dxht0Qbg0rrxtgENFUOxsYoSXXh64VrblaN2xLaHIfPMeq5KQdC41XAabMr7zqe3tMR1ZK7CI254=
-ARC-Authentication-Results: i=1; test.office365.com
- 1;spf=none;dmarc=none;dkim=none;arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=WFKC25shXYrQn1Zb+aiqUiGWjF6sjLeR8ccIU8ad7B0=;
- b=UWwN4JHuuPuCbHHgaUqhh4oRei+v1jMwDhXlb/z16xGhX9Q7JB/FRq4mcD2n/R6KZI8N866xLcaLYGthElXJwM6LtUQg3xWhaeNPtAwPEupCaXZEYV4B/2J3xcwUR13XzwCoQT2XKitx9L1hEDbBemSrsmtCmtMrtm+WoyZe+K8=
-Received: from MW2PR2101MB1116.namprd21.prod.outlook.com (2603:10b6:302:a::33)
- by MW2PR2101MB1066.namprd21.prod.outlook.com (2603:10b6:302:a::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2008.3; Mon, 17 Jun
- 2019 18:47:08 +0000
-Received: from MW2PR2101MB1116.namprd21.prod.outlook.com
- ([fe80::a1f6:c002:82ba:ad47]) by MW2PR2101MB1116.namprd21.prod.outlook.com
- ([fe80::a1f6:c002:82ba:ad47%9]) with mapi id 15.20.2008.007; Mon, 17 Jun 2019
- 18:47:08 +0000
-From:   Sunil Muthuswamy <sunilmut@microsoft.com>
-To:     David Miller <davem@davemloft.net>,
-        Dexuan Cui <decui@microsoft.com>
-CC:     KY Srinivasan <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        "sashal@kernel.org" <sashal@kernel.org>,
-        Michael Kelley <mikelley@microsoft.com>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH net] hvsock: fix epollout hang from race condition
-Thread-Topic: [PATCH net] hvsock: fix epollout hang from race condition
-Thread-Index: AdUhY/kd1+XRZykcRS6vcxcYhC9DaQBvCbgAAAJcZAAAVwongAAsXmzA
-Date:   Mon, 17 Jun 2019 18:47:08 +0000
-Message-ID: <MW2PR2101MB111697FDA0BEDA81237FECB3C0EB0@MW2PR2101MB1116.namprd21.prod.outlook.com>
-References: <MW2PR2101MB11164C6EEAA5C511B395EF3AC0EC0@MW2PR2101MB1116.namprd21.prod.outlook.com>
-        <20190614.191456.407433636343988177.davem@davemloft.net>
-        <PU1P153MB0169BACDA500F94910849770BFE90@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM>
- <20190616.135445.822152500838073831.davem@davemloft.net>
-In-Reply-To: <20190616.135445.822152500838073831.davem@davemloft.net>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=sunilmut@microsoft.com; 
-x-originating-ip: [2001:4898:80e8:3:8d7e:cb94:2f88:ec90]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: ba657bec-d31d-49f8-aaa5-08d6f3543391
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:MW2PR2101MB1066;
-x-ms-traffictypediagnostic: MW2PR2101MB1066:
-x-microsoft-antispam-prvs: <MW2PR2101MB10664099FD6AA6F4E50CDFB9C0EB0@MW2PR2101MB1066.namprd21.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:8882;
-x-forefront-prvs: 0071BFA85B
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(376002)(136003)(366004)(396003)(39860400002)(13464003)(189003)(199004)(7696005)(81166006)(7736002)(8936002)(229853002)(76176011)(6506007)(53546011)(102836004)(81156014)(6436002)(8676002)(99286004)(52396003)(55016002)(74316002)(305945005)(9686003)(186003)(2906002)(76116006)(53936002)(86362001)(33656002)(4326008)(52536014)(1511001)(6246003)(66446008)(64756008)(66556008)(66476007)(66946007)(25786009)(8990500004)(446003)(11346002)(73956011)(10090500001)(316002)(22452003)(46003)(68736007)(10290500003)(478600001)(54906003)(110136005)(71200400001)(71190400001)(5660300002)(256004)(14444005)(14454004)(486006)(476003)(6636002)(6116002);DIR:OUT;SFP:1102;SCL:1;SRVR:MW2PR2101MB1066;H:MW2PR2101MB1116.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: microsoft.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: SBywSH2KhgdrlUaQrEgFsUHw7IwrKE4HPBOmpxZgRksG1bZH5R/FY7YURMSevygX4QNhowbiBsnisbG5d0dGiuRGhU76kwnkotTgRS/fJQgGdgLxCkHom+Nj67okhF0M6FyjPgO0YSTixyRxaPJcKcTtUBdWAWYRMM8gcJq6eDzHbexR6JRUHhCF6nFX6N/M9k1+o/XiCUllLezUSefkgiNzeuAqMvDUB3zKd03tNYEFRrKqiDvYMw0UbeFlcbfsjtUIBpu5AUEvrXaQYkxVKOssPohE2haIMLiZZu8PlAjn6WsjMqMfz5gY4LMnn6zJl/UFn37388fQbjvZYpCMH5IolshjjZvUgxlP01XllVYVOVzaZ7ogKVxVvqARfbdAMeP673evcGfo0UrWJ6J1YRpX0ATLGiEx/uLO8Xolzrk=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        id S1728558AbfFQSr0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 14:47:26 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:56298 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725829AbfFQSrZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Jun 2019 14:47:25 -0400
+Received: by mail-wm1-f68.google.com with SMTP id a15so486894wmj.5
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2019 11:47:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=brauner.io; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=jyz6fqs53F/qDL0teIid/cZMh/h4MCVWeZnSY+AMCoY=;
+        b=dpkZ/BaXFS1LG6+8QDEVPNUs8VTnwlkwRqxE2SkOPncRaIFYbT5UtO0rCbAE8wklPK
+         A+pM4bjs042iCCS63cjDb5nKJp6db4RHvVWRUuKWSDEOVVnTbO7OWr8WYlCextQ0QimK
+         hw4LLF1wNpVkzFD6V+ONmIlTnrY1+8k6e4TaZdpVoNDlKqkUuSqFVfBEQ+OJG1LDWSgP
+         m75VIMcL0EguIzRlli+ULY88ePkc83ABPa3Xgx6PJVjcudVyRfDrhq7dPFSQXwt/+NkE
+         589m46d9c9z40EJjutdnQmqYLs/FwabIdq2M/LnYeF6nxtc/3UfhKEjb+iwOPAalvC/K
+         5BLw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=jyz6fqs53F/qDL0teIid/cZMh/h4MCVWeZnSY+AMCoY=;
+        b=BG6QyltCX3CRW4XzowVXXj9Mkr+93CnYNYwbNpCQP5WG1iAb5jaUAQoKfaKS4EuhA/
+         VqXX2EbZyDJcKvKAsYrZ22YZVqx7tdJqiqp298zRxygEMHOPBlcAgKE/5CgIDtG/jcE7
+         UYgzBvz/S6PK4qqpYGY9PwbqlsUa3Z9zfU9kHndnDWbHtwN36h9tAJicEw7pRzwsD2if
+         eFlEpiyhtphokWWu/Y60NO7EYHEtYsqSQlGT0MfKxsXf9IzIFzI7jR9f0LF41ze7qk7w
+         JrtdSI/DH/7m4cOkceVdIi5I6HddAmlbPCDH87lY2dWn+qaPUR3ch2DkGpyqrHa475iR
+         uN/Q==
+X-Gm-Message-State: APjAAAWWUfxtL4XyPCyjTjoW9/n0zW7tJY36N/hFOqt9UcG+IFPfOAxa
+        p0Moy1ixssVi4wKc2f2wjcTnAA==
+X-Google-Smtp-Source: APXvYqwCog0WuntJNECNO7CxMrilOnBpLe8UZEZ8fB1Xecu0XDTNFGjWT/QTVqbrRp87QTWwXnKxrA==
+X-Received: by 2002:a1c:9a05:: with SMTP id c5mr63708wme.36.1560797243509;
+        Mon, 17 Jun 2019 11:47:23 -0700 (PDT)
+Received: from localhost.localdomain ([212.91.227.56])
+        by smtp.gmail.com with ESMTPSA id w23sm70389wmi.45.2019.06.17.11.47.21
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Mon, 17 Jun 2019 11:47:22 -0700 (PDT)
+From:   Christian Brauner <christian@brauner.io>
+To:     viro@zeniv.linux.org.uk, torvalds@linux-foundation.org,
+        ebiederm@xmission.com
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Christian Brauner <christian@brauner.io>,
+        stable@vger.kernel.org
+Subject: [PATCH] fs/namespace: fix unprivileged mount propagation
+Date:   Mon, 17 Jun 2019 20:47:11 +0200
+Message-Id: <20190617184711.21364-1-christian@brauner.io>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ba657bec-d31d-49f8-aaa5-08d6f3543391
-X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Jun 2019 18:47:08.6061
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: sunilmut@ntdev.microsoft.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW2PR2101MB1066
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+When propagating mounts across mount namespaces owned by different user
+namespaces it is not possible anymore to move or umount the mount in the
+less privileged mount namespace.
 
+Here is a reproducer:
 
-> -----Original Message-----
-> From: linux-hyperv-owner@vger.kernel.org <linux-hyperv-owner@vger.kernel.=
-org> On Behalf Of David Miller
-> Sent: Sunday, June 16, 2019 1:55 PM
-> To: Dexuan Cui <decui@microsoft.com>
-> Cc: Sunil Muthuswamy <sunilmut@microsoft.com>; KY Srinivasan <kys@microso=
-ft.com>; Haiyang Zhang <haiyangz@microsoft.com>;
-> Stephen Hemminger <sthemmin@microsoft.com>; sashal@kernel.org; Michael Ke=
-lley <mikelley@microsoft.com>;
-> netdev@vger.kernel.org; linux-hyperv@vger.kernel.org; linux-kernel@vger.k=
-ernel.org
-> Subject: Re: [PATCH net] hvsock: fix epollout hang from race condition
->=20
-> From: Dexuan Cui <decui@microsoft.com>
-> Date: Sat, 15 Jun 2019 03:22:32 +0000
->=20
-> > These warnings are not introduced by this patch from Sunil.
-> >
-> > I'm not sure why I didn't notice these warnings before.
-> > Probably my gcc version is not new eought?
-> >
-> > Actually these warnings are bogus, as I checked the related functions,
-> > which may confuse the compiler's static analysis.
-> >
-> > I'm going to make a patch to initialize the pointers to NULL to suppres=
-s
-> > the warnings. My patch will be based on the latest's net.git + this pat=
-ch
-> > from Sunil.
->=20
-> Sunil should then resubmit his patch against something that has the
-> warning suppression patch applied.
+  sudo mount -t tmpfs tmpfs /mnt
+  sudo --make-rshared /mnt
 
-David, Dexuan's patch to suppress the warnings seems to be applied now
-to the 'net' branch. Can we please get this patch applied as well?
+  # create unprivileged user + mount namespace and preserve propagation
+  unshare -U -m --map-root --propagation=unchanged
+
+  # now change back to the original mount namespace in another terminal:
+  sudo mkdir /mnt/aaa
+  sudo mount -t tmpfs tmpfs /mnt/aaa
+
+  # now in the unprivileged user + mount namespace
+  mount --move /mnt/aaa /opt
+
+Unfortunately, this is a pretty big deal for userspace since this is
+e.g. used to inject mounts into running unprivileged containers.
+So this regression really needs to go away rather quickly.
+
+The problem is that a recent change falsely locked the root of the newly
+added mounts by setting MNT_LOCKED. Fix this by only locking the mounts
+on copy_mnt_ns() and not when adding a new mount.
+
+Fixes: 3bd045cc9c4b ("separate copying and locking mount tree on cross-userns copies")
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: <stable@vger.kernel.org>
+Tested-by: Christian Brauner <christian@brauner.io>
+Acked-by: Christian Brauner <christian@brauner.io>
+Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
+Signed-off-by: Christian Brauner <christian@brauner.io>
+---
+ fs/namespace.c | 1 +
+ fs/pnode.c     | 3 +--
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/fs/namespace.c b/fs/namespace.c
+index b26778bdc236..44b540e6feb9 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -2105,6 +2105,7 @@ static int attach_recursive_mnt(struct mount *source_mnt,
+ 		/* Notice when we are propagating across user namespaces */
+ 		if (child->mnt_parent->mnt_ns->user_ns != user_ns)
+ 			lock_mnt_tree(child);
++		child->mnt.mnt_flags &= ~MNT_LOCKED;
+ 		commit_tree(child);
+ 	}
+ 	put_mountpoint(smp);
+diff --git a/fs/pnode.c b/fs/pnode.c
+index 595857a1883e..d118106fa631 100644
+--- a/fs/pnode.c
++++ b/fs/pnode.c
+@@ -257,11 +257,10 @@ static int propagate_one(struct mount *m)
+ 		if (IS_MNT_SHARED(m))
+ 			type |= CL_MAKE_SHARED;
+ 	}
+-		
++
+ 	child = copy_tree(last_source, last_source->mnt.mnt_root, type);
+ 	if (IS_ERR(child))
+ 		return PTR_ERR(child);
+-	child->mnt.mnt_flags &= ~MNT_LOCKED;
+ 	mnt_set_mountpoint(m, mp, child);
+ 	last_dest = m;
+ 	last_source = child;
+-- 
+2.21.0
+
