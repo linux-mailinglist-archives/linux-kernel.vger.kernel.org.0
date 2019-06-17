@@ -2,135 +2,174 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C43A247AC3
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 09:28:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BDD2E47A4E
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 08:57:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726204AbfFQH2U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 03:28:20 -0400
-Received: from mail-m963.mail.126.com ([123.126.96.3]:49322 "EHLO
-        mail-m963.mail.126.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725826AbfFQH2U (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 03:28:20 -0400
-X-Greylist: delayed 1883 seconds by postgrey-1.27 at vger.kernel.org; Mon, 17 Jun 2019 03:28:18 EDT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
-        s=s110527; h=Subject:From:Message-ID:Date:MIME-Version; bh=gmRVQ
-        eFD/AvA76XiNCTGu/tE4Cf08n894khgBNT06SI=; b=RmmWGbfuaCwybYrxa9B2n
-        0vsIOv+45oFhaYglUvudhvHLa8kkyUnVkTFksFJfxph+13IMctWkPX8e4InwT1Ww
-        vsvup0N52OSQgO/nsKOuDMvD3a+bP8cAfG4ibb2BjCAqRN6qZWMl4g8Xb9uV7/68
-        2Cug2IwENgFxvtbbmKic9s=
-Received: from [172.20.10.3] (unknown [124.64.16.121])
-        by smtp8 (Coremail) with SMTP id NORpCgCXti+bOQdd3TrACg--.697S2;
-        Mon, 17 Jun 2019 14:56:29 +0800 (CST)
-Subject: Re: [PATCH] 9p: Transport error uninitialized
-To:     Dominique Martinet <asmadeus@codewreck.org>
-Cc:     ericvh@gmail.com, lucho@ionkov.net, davem@davemloft.net,
-        v9fs-developer@lists.sourceforge.net, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20190613070854.10434-1-shuaibinglu@126.com>
- <20190613111027.GB9525@nautica>
-From:   Shuaibing Lu <shuaibinglu@126.com>
-Message-ID: <692e328c-3d4a-c39c-0e6d-ba86828c6b41@126.com>
-Date:   Mon, 17 Jun 2019 14:56:25 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        id S1726375AbfFQG47 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 02:56:59 -0400
+Received: from lhrrgout.huawei.com ([185.176.76.210]:33023 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725793AbfFQG46 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Jun 2019 02:56:58 -0400
+Received: from LHREML712-CAH.china.huawei.com (unknown [172.18.7.106])
+        by Forcepoint Email with ESMTP id B16C3488195E49602C2C;
+        Mon, 17 Jun 2019 07:56:56 +0100 (IST)
+Received: from [10.220.96.108] (10.220.96.108) by smtpsuk.huawei.com
+ (10.201.108.35) with Microsoft SMTP Server (TLS) id 14.3.408.0; Mon, 17 Jun
+ 2019 07:56:49 +0100
+Subject: Re: [PATCH v4 00/14] ima: introduce IMA Digest Lists extension
+To:     <zohar@linux.ibm.com>, <dmitry.kasatkin@huawei.com>,
+        <mjg59@google.com>
+CC:     <linux-integrity@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>,
+        <linux-fsdevel@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <silviu.vlasceanu@huawei.com>
+References: <20190614175513.27097-1-roberto.sassu@huawei.com>
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+Message-ID: <9029dd14-1077-ec89-ddc2-e677e16ad314@huawei.com>
+Date:   Mon, 17 Jun 2019 08:56:53 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-In-Reply-To: <20190613111027.GB9525@nautica>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190614175513.27097-1-roberto.sassu@huawei.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Language: en-US
-X-CM-TRANSID: NORpCgCXti+bOQdd3TrACg--.697S2
-X-Coremail-Antispam: 1Uf129KBjvJXoWxXrWrZr17GF1rCw1DXF17Awb_yoW5try5pr
-        sxKFWxCw4ktryjva1jya1kJF10yF4kA3W3Jr1fKr12k3WkGr1kAa4UtF4jgFyUur98AFy7
-        JFyjq390qr1UJw7anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07bIXocUUUUU=
-X-Originating-IP: [124.64.16.121]
-X-CM-SenderInfo: 5vkxtxpelqwzbx6rjloofrz/1tbinx3Wq1pD8zTPZwAAsJ
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.220.96.108]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-在 2019/6/13 下午7:10, Dominique Martinet 写道:
-> Lu Shuaibing wrote on Thu, Jun 13, 2019:
->> The p9_tag_alloc() does not initialize the transport error t_err field.
->> The struct p9_req_t *req is allocated and stored in a struct p9_client
->> variable. The field t_err is never initialized before p9_conn_cancel()
->> checks its value.
->>
->> KUMSAN(KernelUninitializedMemorySantizer, a new error detection tool)
->> reports this bug.
->>
->> ==================================================================
->> BUG: KUMSAN: use of uninitialized memory in p9_conn_cancel+0x2d9/0x3b0
->> Read of size 4 at addr ffff88805f9b600c by task kworker/1:2/1216
->>
->> CPU: 1 PID: 1216 Comm: kworker/1:2 Not tainted 5.2.0-rc4+ #28
->> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Ubuntu-1.8.2-1ubuntu1 04/01/2014
->> Workqueue: events p9_write_work
->> Call Trace:
->>  dump_stack+0x75/0xae
->>  __kumsan_report+0x17c/0x3e6
->>  kumsan_report+0xe/0x20
->>  p9_conn_cancel+0x2d9/0x3b0
->>  p9_write_work+0x183/0x4a0
->>  process_one_work+0x4d1/0x8c0
->>  worker_thread+0x6e/0x780
->>  kthread+0x1ca/0x1f0
->>  ret_from_fork+0x35/0x40
->>
->> Allocated by task 1979:
->>  save_stack+0x19/0x80
->>  __kumsan_kmalloc.constprop.3+0xbc/0x120
->>  kmem_cache_alloc+0xa7/0x170
->>  p9_client_prepare_req.part.9+0x3b/0x380
->>  p9_client_rpc+0x15e/0x880
->>  p9_client_create+0x3d0/0xac0
->>  v9fs_session_init+0x192/0xc80
->>  v9fs_mount+0x67/0x470
->>  legacy_get_tree+0x70/0xd0
->>  vfs_get_tree+0x4a/0x1c0
->>  do_mount+0xba9/0xf90
->>  ksys_mount+0xa8/0x120
->>  __x64_sys_mount+0x62/0x70
->>  do_syscall_64+0x6d/0x1e0
->>  entry_SYSCALL_64_after_hwframe+0x44/0xa9
->>
->> Freed by task 0:
->> (stack is not available)
->>
->> The buggy address belongs to the object at ffff88805f9b6008
->>  which belongs to the cache p9_req_t of size 144
->> The buggy address is located 4 bytes inside of
->>  144-byte region [ffff88805f9b6008, ffff88805f9b6098)
->> The buggy address belongs to the page:
->> page:ffffea00017e6d80 refcount:1 mapcount:0 mapping:ffff888068b63740 index:0xffff88805f9b7d90 compound_mapcount: 0
->> flags: 0x100000000010200(slab|head)
->> raw: 0100000000010200 ffff888068b66450 ffff888068b66450 ffff888068b63740
->> raw: ffff88805f9b7d90 0000000000100001 00000001ffffffff 0000000000000000
->> page dumped because: kumsan: bad access detected
->> ==================================================================
->>
->> Signed-off-by: Lu Shuaibing <shuaibinglu@126.com>
-> Looks good to me, will queue it up for -next after I've had time to run
-> some tests - probably early next week.
->
-> This made me realize that this refcount_set is too late, it is possible
-> in theory to find the request with p9_tag_lookup as soon as the tag
-> alloc worked so both this req->t_err and refcount initialization should
-> go before the idr chunk with the other field initializations.
->
-> I also checked by the way that no other fields were forgotten, the only
-> field that is not initialized now is ->aux, but that field is never used
-> so it might be just as fast to remove the field instead...
-> I'll submit a couple of patches to move these two inits up and remove
-> the aux field when I find time.
->
->
-> Thanks!
+On 6/14/2019 7:54 PM, Roberto Sassu wrote:
+> This patch set introduces a new IMA extension called IMA Digest Lists.
+> 
+> At early boot, the extension preloads in kernel memory reference digest
+> values, that can be compared with actual file digests when files are
+> accessed in the system.
+> 
+> The extension will open for new possibilities: PCR with predictable value,
+> that can be used for sealing policies associated to data or TPM keys;
+> appraisal based on reference digests already provided by Linux distribution
+> vendors in the software packages.
+> 
+> The first objective can be achieved because the PCR values does not depend
+> on which and when files are measured: the extension measures digest lists
+> sequentially and files whose digest is not in the digest list.
+> 
+> The second objective can be reached because the extension is able to
+> extract reference measurements from packages (with a user space tool) and
+> use it as a source for appraisal verification as the reference came from
+> the security.ima xattr. This approach will also reduce the overhead as only
+> one signature is verified for many files (as opposed to one signature for
+> each file with the current implementation).
+> 
+> This version of the patch set provides a clear separation between current
+> and new functionality. First, the new functionality must be explicitly
+> enabled from the kernel command line. Second, results of operations
+> performed by the extension can be distinguished from those obtained from
+> the existing code: measurement entries created by the extension have a
+> different PCR; mutable files appraised with the extension have a different
+> security.ima type.
+> 
+> The review of this patch set should start from patch 11 and 12, which
+> modify the IMA-Measure and IMA-Appraise submodules to use digest lists.
+> Patch 1 to 5 are prerequisites. Patch 6 to 10 adds support for digest
+> lists. Finally, patch 13 introduces two new policies to measure/appraise
+> rootfs and patch 14 adds the documentation (including a flow chart to
+> show how IMA has been modified).
+> 
+> The user space tools to configure digest lists are available at:
+> 
+> https://github.com/euleros/digest-list-tools/releases/tag/v0.3
+> 
+> The patch set applies on top of linux-integrity/next-queued-testing
+> (73589972b987).
+> 
+> It is necessary to apply also:
+> https://patchwork.kernel.org/cover/10957495/
 
-Thanks for your reply. The kumsan tool finds only one field is used
-initialized. The ->aux field could
+Another dependency is:
 
-be replaced.
+https://patchwork.kernel.org/cover/10979341/
 
+Roberto
+
+
+> To use appraisal, it is necessary to use a modified cpio and a modified
+> dracut:
+> 
+> https://github.com/euleros/cpio/tree/xattr-v1
+> https://github.com/euleros/dracut/tree/digest-lists
+> 
+> For now, please use it only in a testing environment.
+> 
+> 
+> Changelog
+> 
+> v3:
+> - move ima_lookup_loaded_digest() and ima_add_digest_data_entry() from
+>    ima_queue.c to ima_digest_list.c
+> - remove patch that introduces security.ima_algo
+> - add version number and type modifiers to the compact list header
+> - remove digest list metadata, all digest lists in the directory are
+>    accessed
+> - move loading of signing keys to user space
+> - add violation for both PCRs if they are selected
+> - introduce two new appraisal modes
+> 
+> v2:
+> - add support for multiple hash algorithms
+> - remove RPM parser from the kernel
+> - add support for parsing digest lists in user space
+> 
+> v1:
+> - add support for immutable/mutable files
+> - add support for appraisal with digest lists
+> 
+> 
+> Roberto Sassu (14):
+>    ima: read hash algorithm from security.ima even if appraisal is not
+>      enabled
+>    ima: generalize ima_read_policy()
+>    ima: generalize ima_write_policy() and raise uploaded data size limit
+>    ima: generalize policy file operations
+>    ima: use ima_show_htable_value to show violations and hash table data
+>    ima: add parser of compact digest list
+>    ima: restrict upload of converted digest lists
+>    ima: prevent usage of digest lists that are not measured/appraised
+>    ima: introduce new securityfs files
+>    ima: load parser digests and execute the parser at boot time
+>    ima: add support for measurement with digest lists
+>    ima: add support for appraisal with digest lists
+>    ima: introduce new policies initrd and appraise_initrd
+>    ima: add Documentation/security/IMA-digest-lists.txt
+> 
+>   .../admin-guide/kernel-parameters.txt         |  16 +-
+>   Documentation/security/IMA-digest-lists.txt   | 226 +++++++++++++
+>   include/linux/evm.h                           |   6 +
+>   include/linux/fs.h                            |   1 +
+>   security/integrity/evm/evm_main.c             |   2 +-
+>   security/integrity/iint.c                     |   1 +
+>   security/integrity/ima/Kconfig                |  25 ++
+>   security/integrity/ima/Makefile               |   1 +
+>   security/integrity/ima/ima.h                  |  32 +-
+>   security/integrity/ima/ima_api.c              |  43 ++-
+>   security/integrity/ima/ima_appraise.c         |  92 +++---
+>   security/integrity/ima/ima_digest_list.c      | 309 ++++++++++++++++++
+>   security/integrity/ima/ima_digest_list.h      |  69 ++++
+>   security/integrity/ima/ima_fs.c               | 224 ++++++++-----
+>   security/integrity/ima/ima_init.c             |   2 +-
+>   security/integrity/ima/ima_main.c             |  81 ++++-
+>   security/integrity/ima/ima_policy.c           |  29 +-
+>   security/integrity/integrity.h                |  22 ++
+>   18 files changed, 1018 insertions(+), 163 deletions(-)
+>   create mode 100644 Documentation/security/IMA-digest-lists.txt
+>   create mode 100644 security/integrity/ima/ima_digest_list.c
+>   create mode 100644 security/integrity/ima/ima_digest_list.h
+> 
+
+-- 
+HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
+Managing Director: Bo PENG, Jian LI, Yanli SHI
