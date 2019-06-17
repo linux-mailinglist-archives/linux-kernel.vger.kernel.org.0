@@ -2,112 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CA7F5483C8
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 15:22:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 622FA483AF
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 15:17:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727646AbfFQNVt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 09:21:49 -0400
-Received: from smtp113.ord1c.emailsrvr.com ([108.166.43.113]:50846 "EHLO
-        smtp113.ord1c.emailsrvr.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725884AbfFQNVs (ORCPT
+        id S1727972AbfFQNQt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 09:16:49 -0400
+Received: from mout.kundenserver.de ([217.72.192.74]:41529 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725884AbfFQNQs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 09:21:48 -0400
-X-Greylist: delayed 358 seconds by postgrey-1.27 at vger.kernel.org; Mon, 17 Jun 2019 09:21:47 EDT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mev.co.uk;
-        s=20190130-41we5z8j; t=1560777347;
-        bh=ZvJvYkjr7iE1RIXRXDlijzKzJL0BitvNBM9T5FqQAmw=;
-        h=Subject:To:From:Date:From;
-        b=Nl+Gx2+KTHlZUrgrlD4OPdHaDIh8UJfTuRA5MZVnySfiilIiWgnddpiJk4/aln5DA
-         OAo8bcON3aHKJNRIUHN2qprmbAq2BRvH2IUzshdVkvRvYeZuB2iOeftPYIjVWn6ziI
-         KuJnFj51kem220yEC5D7kahxijPjmtFu66j0THaY=
-X-Auth-ID: abbotti@mev.co.uk
-Received: by smtp7.relay.ord1c.emailsrvr.com (Authenticated sender: abbotti-AT-mev.co.uk) with ESMTPSA id D9002A01B2;
-        Mon, 17 Jun 2019 09:15:44 -0400 (EDT)
-X-Sender-Id: abbotti@mev.co.uk
-Received: from [10.0.0.62] (remote.quintadena.com [81.133.34.160])
-        (using TLSv1.2 with cipher AES128-SHA)
-        by 0.0.0.0:465 (trex/5.7.12);
-        Mon, 17 Jun 2019 09:15:47 -0400
-Subject: Re: [PATCH 12/16] staging/comedi: mark as broken
-To:     Christoph Hellwig <hch@lst.de>,
-        Greg KH <gregkh@linuxfoundation.org>
-Cc:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        H Hartley Sweeten <hsweeten@visionengravers.com>,
-        devel@driverdev.osuosl.org, linux-s390@vger.kernel.org,
-        Intel Linux Wireless <linuxwifi@intel.com>,
-        linux-rdma@vger.kernel.org, netdev@vger.kernel.org,
-        intel-gfx@lists.freedesktop.org, linux-wireless@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-mm@kvack.org, iommu@lists.linux-foundation.org,
-        "moderated list:ARM PORT" <linux-arm-kernel@lists.infradead.org>,
-        linux-media@vger.kernel.org
-References: <20190614134726.3827-1-hch@lst.de>
- <20190614134726.3827-13-hch@lst.de> <20190614140239.GA7234@kroah.com>
- <20190614144857.GA9088@lst.de> <20190614153032.GD18049@kroah.com>
- <20190614153428.GA10008@lst.de>
-From:   Ian Abbott <abbotti@mev.co.uk>
-Organization: MEV Ltd.
-Message-ID: <60c6af3d-d8e4-5745-8d2b-9791a2f4ff56@mev.co.uk>
-Date:   Mon, 17 Jun 2019 14:15:43 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        Mon, 17 Jun 2019 09:16:48 -0400
+Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
+ (mreue106 [212.227.15.145]) with ESMTPA (Nemesis) id
+ 1MrPVJ-1iNDSv3rCJ-00oWs2; Mon, 17 Jun 2019 15:16:27 +0200
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>, YueHaibing <yuehaibing@huawei.com>,
+        Ira Weiny <ira.weiny@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] video: fbdev: pvr2fb: fix link error for pvr2fb_pci_exit
+Date:   Mon, 17 Jun 2019 15:16:12 +0200
+Message-Id: <20190617131624.2382303-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.20.0
 MIME-Version: 1.0
-In-Reply-To: <20190614153428.GA10008@lst.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:Qe2+Mxqk7UNlW2kImG4dBpHk395qN3F7QKua6gNeiC02qC4dv/0
+ KyGHOwqMvARphB1xFvw1ZRVnRDGdoympCDhOCPbmLGZJ65qH0XZlGS8W5o8zpfeTn8G0p+j
+ U9ORexC2jg0VRUZbYphRu24L2mh7wPWzgPsqGF1zvefqLjoNciY31NbZSG5iTrZbcLPIGOz
+ abWHduBRPpuRTmnm5s9lA==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:H9A3Z1xLXVI=:eEoA67w9aBjQBcOJXDFqN9
+ /iPd9cib0USpQoPAxAgbr+tggKDwCqcHbtEd/RLlOqzgrcZg5La4xZ5LdT1EfW25hW9Ph4Xw6
+ RuC7sLlSXHw6P1f6UIJTz3bzlpt51WmCGjmd149e4GOZzD20TGerjeo2jUM0OHJiw8D7zO+1y
+ QyisIco/v5yYKC6aWgfujquqXdoSONt/L2UseizZ9xDAoXV2IQViMJGjZSogVb2YDOSgphU3U
+ SNU7fWESOViEn+FgCQSyC6IzDt4OZ19kcga4I/J3Em4FTUo6ibpWArH8fuwf4+287IbBU6A4c
+ +3EPuAjBwvDY1chWV0mxutSdWWw5780fYoYj0LtRkodIQ3E2aZew6zz5zaMvos49Hlj7Pp54B
+ U8WoS3QGbiytFpUlWHXAJJFdu7ms4neA11pQ76qMJuYVQbslqm1UpW1XPG2AdgIVafv/ty9ai
+ BY8maX8WzpyIfziRRvzQF6IsmZNgO/9v/DqCfUbpZLvs5kcnO7w6yyNNPqS3daxKosKAi+eIR
+ K5EsGbyK28TR6BORQzhdEMSa8iNDiIahXXWRh3QQSSmKxRmMuq6LMMs7U+AVDdzxe1SQ6nTPb
+ b8STQpqH9i6DejA9h00x5u3iDuxumt9mZQw+QGVQjqVu6z4Z2I4pLn0kgaYbRzdZGSJUDmqnU
+ IzFDQ2E0jWnqGNw5TzI9Aijz/2EyccZ8ugOgnnCK1Eg9IGF03w0MsLD9r4rZfxJfz/3YKfQnZ
+ anbQI8kXmNSznPe3mn5FG6wHjRu4hxB9lGjAfw==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 14/06/2019 16:34, Christoph Hellwig wrote:
-> On Fri, Jun 14, 2019 at 05:30:32PM +0200, Greg KH wrote:
->> On Fri, Jun 14, 2019 at 04:48:57PM +0200, Christoph Hellwig wrote:
->>> On Fri, Jun 14, 2019 at 04:02:39PM +0200, Greg KH wrote:
->>>> Perhaps a hint as to how we can fix this up?  This is the first time
->>>> I've heard of the comedi code not handling dma properly.
->>>
->>> It can be fixed by:
->>>
->>>   a) never calling virt_to_page (or vmalloc_to_page for that matter)
->>>      on dma allocation
->>>   b) never remapping dma allocation with conflicting cache modes
->>>      (no remapping should be doable after a) anyway).
->>
->> Ok, fair enough, have any pointers of drivers/core code that does this
->> correctly?  I can put it on my todo list, but might take a week or so...
-> 
-> Just about everyone else.  They just need to remove the vmap and
-> either do one large allocation, or live with the fact that they need
-> helpers to access multiple array elements instead of one net vmap,
-> which most of the users already seem to do anyway, with just a few
-> using the vmap (which might explain why we didn't see blowups yet).
+When the driver is built-in for PCI, we reference the exit function
+after discarding it:
 
-Avoiding the vmap in comedi should be do-able as it already has other 
-means to get at the buffer pages.
+`pvr2fb_pci_exit' referenced in section `.ref.data' of drivers/video/fbdev/pvr2fb.o: defined in discarded section `.exit.text' of drivers/video/fbdev/pvr2fb.o
 
-When comedi makes the buffer from DMA coherent memory, it currently 
-allocates it as a series of page-sized chunks.  That cannot be mmap'ed 
-in one go with dma_mmap_coherent(), so I see the following solutions.
+Just remove the __exit annotation as the easiest workaround.
 
-1. Change the buffer allocation to allocate a single chunk of DMA 
-coherent memory and use dma_mmap_coherent() to mmap it.
+Fixes: 0f5a5712ad1e ("video: fbdev: pvr2fb: add COMPILE_TEST support")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/video/fbdev/pvr2fb.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-2. Call dma_mmap_coherent() in a loop, adjusting vma->vm_start and 
-vma->vm_end for each iteration (vma->vm_pgoff will be 0), and restoring 
-the vma->vm_start and vma->vm_end at the end.
-
-I'm not sure if 2 is a legal option.
-
+diff --git a/drivers/video/fbdev/pvr2fb.c b/drivers/video/fbdev/pvr2fb.c
+index 299ea7db9220..cf9cfdc5e685 100644
+--- a/drivers/video/fbdev/pvr2fb.c
++++ b/drivers/video/fbdev/pvr2fb.c
+@@ -990,7 +990,7 @@ static int __init pvr2fb_pci_init(void)
+ 	return pci_register_driver(&pvr2fb_pci_driver);
+ }
+ 
+-static void __exit pvr2fb_pci_exit(void)
++static void pvr2fb_pci_exit(void)
+ {
+ 	pci_unregister_driver(&pvr2fb_pci_driver);
+ }
 -- 
--=( Ian Abbott <abbotti@mev.co.uk> || Web: www.mev.co.uk )=-
--=( MEV Ltd. is a company registered in England & Wales. )=-
--=( Registered number: 02862268.  Registered address:    )=-
--=( 15 West Park Road, Bramhall, STOCKPORT, SK7 3JZ, UK. )=-
+2.20.0
+
