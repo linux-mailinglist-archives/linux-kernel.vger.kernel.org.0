@@ -2,75 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B0DA481F9
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 14:26:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 900ED48208
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 14:27:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727625AbfFQM0B convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 17 Jun 2019 08:26:01 -0400
-Received: from mx1.emlix.com ([188.40.240.192]:37808 "EHLO mx1.emlix.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726424AbfFQM0B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 08:26:01 -0400
-Received: from mailer.emlix.com (unknown [81.20.119.6])
-        (using TLSv1.2 with cipher ADH-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mx1.emlix.com (Postfix) with ESMTPS id B25D4600A1;
-        Mon, 17 Jun 2019 14:25:59 +0200 (CEST)
-From:   Rolf Eike Beer <eb@emlix.com>
-To:     Palmer Dabbelt <palmer@sifive.com>
-Cc:     Albert Ou <aou@eecs.berkeley.edu>, linux-riscv@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: riscv: remove unused barrier defines
-Date:   Mon, 17 Jun 2019 14:25:59 +0200
-Message-ID: <1862877.fiP6YxjBP5@devpool35>
-Organization: emlix GmbH
+        id S1727092AbfFQM1s (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 08:27:48 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:42416 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726669AbfFQM1p (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Jun 2019 08:27:45 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=IiaLcJALEKaB7Li7OAHwGVaUV7J5HHtfGyRFzVhVT5I=; b=nRxanBbFaXKRrfonPCdCK8x8a
+        H13NLWpT/FYGEMhPawtjpKXuuFd5AsVGls0FU/bFblMxeQyfmVpGkj8pGsbrVCCWMJWTllTMnGpqR
+        lLvHY6XYJAnUlu8naiV+ey/kfflUSIzdOe46iLEfPoDAcpWQgUXfY+Hmls32zlkAUygawRFXkMCHP
+        wYZFnLlYcqST58xEgFnwklfAMQdGemLG8MCW+sf8MPt5vq44TqtytxlspPlDutukXjQTeeXjgmomc
+        DBnAvx70XsOhTxq4s1gUZqpsTkLMt1yioXaF7KDQUOS+v7Psp7YyIakjW17TKDyANImlYyLvulA8s
+        Kdy4HvCiw==;
+Received: from clnet-p19-102.ikbnet.co.at ([83.175.77.102] helo=localhost)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1hcqjZ-0008K6-5z; Mon, 17 Jun 2019 12:27:37 +0000
+From:   Christoph Hellwig <hch@lst.de>
+To:     Dan Williams <dan.j.williams@intel.com>,
+        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Ben Skeggs <bskeggs@redhat.com>
+Cc:     linux-mm@kvack.org, nouveau@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org, linux-nvdimm@lists.01.org,
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: dev_pagemap related cleanups v2
+Date:   Mon, 17 Jun 2019 14:27:08 +0200
+Message-Id: <20190617122733.22432-1-hch@lst.de>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From 947f9fe483dc6561e31f0d2294eb6fedc1d6d9bb Mon Sep 17 00:00:00 2001
-From: Rolf Eike Beer <eb@emlix.com>
-Date: Mon, 17 Jun 2019 14:22:37 +0200
-Subject: [PATCH] riscv: remove unused barrier defines
+Hi Dan, Jérôme and Jason,
 
-They were introduced in fab957c11efe2f405e08b9f0d080524bc2631428 long after
-2e39465abc4b7856a0ea6fcf4f6b4668bb5db877 removed the remnants of all previous
-instances from the tree.
+below is a series that cleans up the dev_pagemap interface so that
+it is more easily usable, which removes the need to wrap it in hmm
+and thus allowing to kill a lot of code
 
-Signed-off-by: Rolf Eike Beer <eb@emlix.com>
----
- arch/riscv/include/asm/bitops.h | 5 -----
- 1 file changed, 5 deletions(-)
+Note: this series is on top of the rdma/hmm branch + the dev_pagemap
+releas fix series from Dan that went into 5.2-rc5.
 
-diff --git a/arch/riscv/include/asm/bitops.h b/arch/riscv/include/asm/bitops.h
-index 3943be480af0..396a3303c537 100644
---- a/arch/riscv/include/asm/bitops.h
-+++ b/arch/riscv/include/asm/bitops.h
-@@ -15,11 +15,6 @@
- #include <asm/barrier.h>
- #include <asm/bitsperlong.h>
- 
--#ifndef smp_mb__before_clear_bit
--#define smp_mb__before_clear_bit()  smp_mb()
--#define smp_mb__after_clear_bit()   smp_mb()
--#endif /* smp_mb__before_clear_bit */
--
- #include <asm-generic/bitops/__ffs.h>
- #include <asm-generic/bitops/ffz.h>
- #include <asm-generic/bitops/fls.h>
--- 
-2.21.0
--- 
-Rolf Eike Beer, emlix GmbH, http://www.emlix.com
-Fon +49 551 30664-0, Fax +49 551 30664-11
-Gothaer Platz 3, 37083 Göttingen, Germany
-Sitz der Gesellschaft: Göttingen, Amtsgericht Göttingen HR B 3160
-Geschäftsführung: Heike Jordan, Dr. Uwe Kracke – Ust-IdNr.: DE 205 198 055
+Git tree:
 
-emlix - smart embedded open source
+    git://git.infradead.org/users/hch/misc.git hmm-devmem-cleanup.2
 
+Gitweb:
 
+    http://git.infradead.org/users/hch/misc.git/shortlog/refs/heads/hmm-devmem-cleanup.2
+
+Changes since v1:
+ - rebase
+ - also switch p2pdma to the internal refcount
+ - add type checking for pgmap->type
+ - rename the migrate method to migrate_to_ram
+ - cleanup the altmap_valid flag
+ - various tidbits from the reviews
