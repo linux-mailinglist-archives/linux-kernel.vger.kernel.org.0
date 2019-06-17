@@ -2,118 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 980FC4882D
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 18:03:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 955C648841
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 18:04:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726725AbfFQQDl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 12:03:41 -0400
-Received: from mga06.intel.com ([134.134.136.31]:3027 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725995AbfFQQDk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 12:03:40 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Jun 2019 09:03:40 -0700
-X-ExtLoop1: 1
-Received: from ray.jf.intel.com (HELO [10.7.201.126]) ([10.7.201.126])
-  by orsmga002.jf.intel.com with ESMTP; 17 Jun 2019 09:03:39 -0700
-Subject: Re: [RFC 00/10] Process-local memory allocations for hiding KVM
- secrets
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     Alexander Graf <graf@amazon.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Marius Hillenbrand <mhillenb@amazon.de>,
-        kvm list <kvm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux-MM <linux-mm@kvack.org>, Alexander Graf <graf@amazon.de>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>
-References: <20190612170834.14855-1-mhillenb@amazon.de>
- <eecc856f-7f3f-ed11-3457-ea832351e963@intel.com>
- <A542C98B-486C-4849-9DAC-2355F0F89A20@amacapital.net>
- <alpine.DEB.2.21.1906141618000.1722@nanos.tec.linutronix.de>
- <58788f05-04c3-e71c-12c3-0123be55012c@amazon.com>
- <63b1b249-6bc7-ffd9-99db-d36dd3f1a962@intel.com>
- <CALCETrXph3Zg907kWTn6gAsZVsPbCB3A2XuNf0hy5Ez2jm2aNQ@mail.gmail.com>
-From:   Dave Hansen <dave.hansen@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-Message-ID: <698ca264-123d-46ae-c165-ed62ea149896@intel.com>
+        id S1728248AbfFQQEH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 12:04:07 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:34303 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727996AbfFQQEE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Jun 2019 12:04:04 -0400
+Received: by mail-pf1-f195.google.com with SMTP id c85so5944036pfc.1;
+        Mon, 17 Jun 2019 09:04:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=NffYjCT+19kqu15C0XR6euahrUMgoS4xoGIubo2p80U=;
+        b=R3cBNid62KF9am1jU12o6Vn2rYWB32GFZt9Ocsfq6Zl0q4mIRtbdYY/CYx2PtfBQwU
+         Is+SPejpfpMVzkxVeMAwPldav5ZOicXXWNriEAaKO/GBIIiJvdmTMKWwWOuk8IYTfmCy
+         kk2j6S2hbeU8o4Pm6d+iORUrkJsKnsLo70IjKCKcyZbppSQabbXYrXVCme+7XIElmOo3
+         gYQ0O2PmLVy93JdBTDRMrtDp6ETe0QcF9YYl7TV9LeYc+f812hUJGkQYX//zFKUliOQc
+         YdFzZiKCGD+Pui/oFiCaIz61EGepuhmKXDJuzThekR+krWtKOAw8BVPHsoPrG381WNW7
+         YR/g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=NffYjCT+19kqu15C0XR6euahrUMgoS4xoGIubo2p80U=;
+        b=EO1hSGv3RJtnvJvl1Q+8Osq2HXdlAtNxpw8YP37qaP0z/p1HyphhZJBclSzRomdl9P
+         8g1dTlm9kpp7u/3pAzRMLoFdSEEY4duuDIjUGTM1JoVGK8zgCsbCN4JLLU0eXyly/fMw
+         F2qhwFh3Zf7dmyE1/iqRgBBMzWMESe3VJyc0rbSkWRIPFc4VZfdznPHTvF0/KuvgG2hq
+         DHqCJ4SioCNjH2hNiiSlTvOniS8cSo2V7TkdPNGcSTphZehuxANcXHwGn/hIsQJ9QdXC
+         Ur1TzZ0Be+epbr/0yb4kLp0ErnCCgKDE638UazPt6MWmEPtLl1702g0+XwndUv9wBtth
+         VRmQ==
+X-Gm-Message-State: APjAAAVtZ9/VeaERkEkaSxaDzM7YtA4n3AH9yAFtlj+SiiWdwHqoCRtU
+        HKExV7vvlxeycGEW/J/jjbj2dOpBD3k=
+X-Google-Smtp-Source: APXvYqwGL2+Nxya4XyPZRBn7XDI9RyxIsPE29y5kHHokxNLIRcofTWz35lXpf0khrx3oEdO4HI6kcQ==
+X-Received: by 2002:aa7:8394:: with SMTP id u20mr102119781pfm.252.1560787442976;
+        Mon, 17 Jun 2019 09:04:02 -0700 (PDT)
+Received: from localhost.lan (c-24-22-235-96.hsd1.wa.comcast.net. [24.22.235.96])
+        by smtp.gmail.com with ESMTPSA id d187sm12834073pfa.38.2019.06.17.09.04.01
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Mon, 17 Jun 2019 09:04:02 -0700 (PDT)
+From:   Andrey Smirnov <andrew.smirnov@gmail.com>
+To:     linux-crypto@vger.kernel.org
+Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
+        Chris Spencer <christopher.spencer@sea.co.uk>,
+        Cory Tusar <cory.tusar@zii.aero>,
+        Chris Healy <cphealy@gmail.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        =?UTF-8?q?Horia=20Geant=C4=83?= <horia.geanta@nxp.com>,
+        Aymen Sghaier <aymen.sghaier@nxp.com>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v3 5/5] crypto: caam - add clock entry for i.MX8MQ
 Date:   Mon, 17 Jun 2019 09:03:39 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+Message-Id: <20190617160339.29179-6-andrew.smirnov@gmail.com>
+X-Mailer: git-send-email 2.21.0
+In-Reply-To: <20190617160339.29179-1-andrew.smirnov@gmail.com>
+References: <20190617160339.29179-1-andrew.smirnov@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <CALCETrXph3Zg907kWTn6gAsZVsPbCB3A2XuNf0hy5Ez2jm2aNQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 6/17/19 8:54 AM, Andy Lutomirski wrote:
->>> Would that mean that with Meltdown affected CPUs we open speculation
->>> attacks against the mmlocal memory from KVM user space?
->> Not necessarily.  There would likely be a _set_ of local PGDs.  We could
->> still have pair of PTI PGDs just like we do know, they'd just be a local
->> PGD pair.
->>
-> Unfortunately, this would mean that we need to sync twice as many
-> top-level entries when we context switch.
+Add clock entry needed to support i.MX8MQ.
 
-Yeah, PTI sucks. :)
+Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
+Cc: Chris Spencer <christopher.spencer@sea.co.uk>
+Cc: Cory Tusar <cory.tusar@zii.aero>
+Cc: Chris Healy <cphealy@gmail.com>
+Cc: Lucas Stach <l.stach@pengutronix.de>
+Cc: Horia Geantă <horia.geanta@nxp.com>
+Cc: Aymen Sghaier <aymen.sghaier@nxp.com>
+Cc: Leonard Crestez <leonard.crestez@nxp.com>
+Cc: linux-crypto@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+---
+ drivers/crypto/caam/ctrl.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-For anyone following along at home, I'm going to go off into crazy
-per-cpu-pgds speculation mode now...  Feel free to stop reading now. :)
+diff --git a/drivers/crypto/caam/ctrl.c b/drivers/crypto/caam/ctrl.c
+index b9655957d369..888eacc7c17d 100644
+--- a/drivers/crypto/caam/ctrl.c
++++ b/drivers/crypto/caam/ctrl.c
+@@ -528,6 +528,7 @@ static const struct soc_device_attribute imx_soc[] = {
+ 	{ .soc_id = "i.MX6UL", .data = &caam_imx6ul_clk_data },
+ 	{ .soc_id = "i.MX6*",  .data = &caam_imx6_clk_data },
+ 	{ .soc_id = "i.MX7*",  .data = &caam_imx7_clk_data },
++	{ .soc_id = "i.MX8MQ", .data = &caam_imx7_clk_data },
+ 	{ .family = "Freescale i.MX" },
+ };
+ 
+-- 
+2.21.0
 
-But, I was thinking we could get away with not doing this on _every_
-context switch at least.  For instance, couldn't 'struct tlb_context'
-have PGD pointer (or two with PTI) in addition to the TLB info?  That
-way we only do the copying when we change the context.  Or does that tie
-the implementation up too much with PCIDs?
