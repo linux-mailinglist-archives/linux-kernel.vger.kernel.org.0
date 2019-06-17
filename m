@@ -2,122 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 096524830F
+	by mail.lfdr.de (Postfix) with ESMTP id DE01548311
 	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 14:52:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728035AbfFQMv0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 08:51:26 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:36993 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726694AbfFQMvN (ORCPT
+        id S1728097AbfFQMvc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 08:51:32 -0400
+Received: from mout.kundenserver.de ([212.227.126.133]:52071 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726694AbfFQMva (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 08:51:13 -0400
-Received: by mail-wr1-f66.google.com with SMTP id v14so9829562wrr.4
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2019 05:51:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=2C6MxhIF9Gjdvx3J9DYd/48/Suqux1auzpg7O20+XA4=;
-        b=MHuiL6Hd66D8KM0jn4ls2iBDOBivmXgGCkd0bRuw3BVISYThbeIBV65YPTVnC9S5pN
-         8kwD7l1LeRLhShtYuu/Ido0JQEJeak94CdUos+d7lXijbpc7lq70fcnle30NFz0tcJIj
-         fAbhj9eIhnoDKlZtfNVWfkzOAx8xp0EuIZ9g38860fnnolOIibyFhNmFCQEOV3JsQtou
-         UjFRWCn0iZbk4TdcLNFh4kMAKOur21h0NofVuZCw5wYBD3SEo5yr15DOn4ZrA5obTtoT
-         wSTQGINMn3kmRWVRTFv5WxMKEdA0kEwajLFNzSkDL3ycCAfLXhvSJF2ZlVcb1F43lutn
-         H4ew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=2C6MxhIF9Gjdvx3J9DYd/48/Suqux1auzpg7O20+XA4=;
-        b=BFaqTeh+t8g93B5Av056qBOLEiQPkVctvwG/oOYFHfBm4x9deahwZzessuIQ/QOQJ4
-         x8zUfazWdUYUDbdF3uzTmC5yH/4K2nEAb0ulIcilFhC8BPC9RO8iYFRmBf+FYkJpAFhh
-         ErSFoaZYmv9+wLA9EvWgMPnXj5f+BThkP5MokG3tL093B3otkEM0ww9s0af/+smYmXSZ
-         V3rx+ZPpI4DUHukFyj4ZgVL2KQgnr1nlTTlyXRLyU6tWt3FhWYIN1hjhlkec2kcwSi7R
-         q/h4IFZV08DYNM4heqYr5FycApuu9buAidXbVJiCEhEgMdVRG07vqazsUmnuW1sLRXCZ
-         lN+w==
-X-Gm-Message-State: APjAAAVM1EsfVQ/vxXq1gtKTySnx7oTJncmNV/5CsjSi8JD2g67AD+Ed
-        i+4aXcObmcV2QRbJUojUniZUGA==
-X-Google-Smtp-Source: APXvYqwC65DYERLdER2UmlNerHOaEQY3c4hwpSMWsWud6VpPKrL6rBW7xSk8iiKL0ioPg8v7UxK/qQ==
-X-Received: by 2002:adf:ebc6:: with SMTP id v6mr14844325wrn.222.1560775871713;
-        Mon, 17 Jun 2019 05:51:11 -0700 (PDT)
-Received: from dell.watershed.co.uk ([2.27.35.243])
-        by smtp.gmail.com with ESMTPSA id o11sm10477852wmh.37.2019.06.17.05.51.10
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 17 Jun 2019 05:51:11 -0700 (PDT)
-From:   Lee Jones <lee.jones@linaro.org>
-To:     alokc@codeaurora.org, agross@kernel.org, david.brown@linaro.org,
-        bjorn.andersson@linaro.org, balbi@kernel.org,
-        gregkh@linuxfoundation.org, ard.biesheuvel@linaro.org,
-        jlhugo@gmail.com, linux-arm-msm@vger.kernel.org,
-        linux-usb@vger.kernel.org, felipe.balbi@linux.intel.com
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Lee Jones <lee.jones@linaro.org>
-Subject: [RESEND v4 3/4] usb: dwc3: qcom: Start USB in 'host mode' on the SDM845
-Date:   Mon, 17 Jun 2019 13:51:04 +0100
-Message-Id: <20190617125105.6186-4-lee.jones@linaro.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190617125105.6186-1-lee.jones@linaro.org>
-References: <20190617125105.6186-1-lee.jones@linaro.org>
+        Mon, 17 Jun 2019 08:51:30 -0400
+Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
+ (mreue012 [212.227.15.129]) with ESMTPA (Nemesis) id
+ 1Mae7u-1iDYhN3MgU-00cAt7; Mon, 17 Jun 2019 14:51:23 +0200
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     "James (Qian) Wang" <james.qian.wang@arm.com>,
+        Liviu Dudau <liviu.dudau@arm.com>,
+        Brian Starkey <brian.starkey@arm.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        "Lowry Li (Arm Technology China)" <Lowry.Li@arm.com>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] drm/komeda: fix 32-bit komeda_crtc_update_clock_ratio
+Date:   Mon, 17 Jun 2019 14:51:04 +0200
+Message-Id: <20190617125121.1414507-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.20.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:YNZWWtAS0xzrrfM3pjl8AX7tgKroNKj7VFYbWmDIWP/c+QDu9S7
+ gDzeeip7x3tIK53FmtWpRwGHG5N939FLMnzAsoVcZaSW6/75zGoPpl5A3CoovOmO27pN0bu
+ +st/zT8a1j8o/NkZMy9MfDYpsgyizzJO+Zecj5us03TSbd2deNIluDsQ0DA0iiCQE4u6SJz
+ 5dh87wbTaBXhC9/NXsyfg==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:PW9GCohIInk=:aQ0AToBxA4KMITMsE6cbZd
+ juUFYtzR/V0Dv2gTDcYLEKSU9/lX85CRt9wTtq9n2K0GuoDniFeKoMSv3kH9wQsYyBSl1GOT+
+ Hxc2TIgRvv2yxH80NHgQ19qoblsq+tlaPGedNOsisEoFymDHTOj1qJ4ojrTJ53Ss826ZH0MRd
+ sDIyFNlw8Z3P0XU0qu7hDEqdY+Nu+pcACQwG3t+ywZyEcMzUoyQ4h/6DxGXUsqafWvTQSk5Bg
+ AT6JNPDPoxwlWvFbrnY9JkNyY7dg/5J5jT8i5Wu8dA8EFKBmMxoTUyG7mJZneJHTVR25U7J8r
+ 6NNgyAifw76O4YbYvkeMLGAV2MGjytvaKLDMI46qMwwy4wnF8ExI7ZEQoQdbnNjKIh/glQtQi
+ n9E47x1U/LYi/9LLltQZ9QJjlYb90ntJVC0j7GfroYkHKG+dYuClIJm7rUswXLPV4INl9mTky
+ zwMsdvJjxnkia4JBdDQjkcWNRaPXujcRI+TABRKxmt0GBRlqaKeOZ0bVC3+cUjSM0Vnpif//Z
+ xj8WVCPbVZ6mzuNoIA3aTVTq/uUn1g7FIqF97AKKiH176ZBXmPm/YRhFh6N5qrY5focL6IMQH
+ K8V9R7FwTpU+NQtAsoUOw0DbO4JXvdcof5aJdABDJl2e5l/Qa0DJarsKjVxmkDzKerCNBx/yo
+ I8cY6vMFjuZOtV+DKIjXufoz25+pUl4RkYQWVEBrVzwx9ckEoPO7C9jjOORUJb2BX74ud2lMz
+ oD0NTcn6AeHkjHNkWQEDtEUlePIiIhqs+nkvmA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When booting with Device Tree, the current default boot configuration
-table option, the request to boot via 'host mode' comes from the
-'dr_mode' property.  A property of the same name can be used inside
-ACPI tables too.  However it is missing from the SDM845's ACPI tables
-so we have to supply this information using Platform Device Properties
-instead.
+clang points out a bug in the clock calculation on 32-bit, that leads
+to the clock_ratio always being zero:
 
-This does not change the behaviour of any currently supported devices.
-The property is only set on ACPI enabled platforms, thus for H/W
-booting DT, unless a 'dr_mode' property is present, the default is
-still OTG (On-The-Go) as per [0].  Any new ACPI devices added will
-also be able to over-ride this implementation by providing a 'dr_mode'
-property in their ACPI tables.  In cases where 'dr_mode' is omitted
-from the tables AND 'host mode' should not be the default (very
-unlikely), then we will have to add some way of choosing between them
-at run time - most likely by ACPI HID.
+drivers/gpu/drm/arm/display/komeda/komeda_crtc.c:31:36: error: shift count >= width of type [-Werror,-Wshift-count-overflow]
+        aclk = komeda_calc_aclk(kcrtc_st) << 32;
 
-[0] Documentation/devicetree/bindings/usb/generic.txt
+Move the shift into the division to make it apply on a 64-bit
+variable. Also use the more expensive div64_u64() instead of div_u64()
+to account for pxlclk being a 64-bit integer.
 
-Signed-off-by: Lee Jones <lee.jones@linaro.org>
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Fixes: a962091227ed ("drm/komeda: Add engine clock requirement check for the downscaling")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- drivers/usb/dwc3/dwc3-qcom.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ drivers/gpu/drm/arm/display/komeda/komeda_crtc.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/usb/dwc3/dwc3-qcom.c b/drivers/usb/dwc3/dwc3-qcom.c
-index 0cb63f6c92d9..2d050303d564 100644
---- a/drivers/usb/dwc3/dwc3-qcom.c
-+++ b/drivers/usb/dwc3/dwc3-qcom.c
-@@ -444,6 +444,11 @@ static int dwc3_qcom_clk_init(struct dwc3_qcom *qcom, int count)
- 	return 0;
- }
- 
-+static const struct property_entry dwc3_qcom_acpi_properties[] = {
-+	PROPERTY_ENTRY_STRING("dr_mode", "host"),
-+	{}
-+};
-+
- static int dwc3_qcom_acpi_register_core(struct platform_device *pdev)
- {
- 	struct dwc3_qcom 	*qcom = platform_get_drvdata(pdev);
-@@ -488,6 +493,13 @@ static int dwc3_qcom_acpi_register_core(struct platform_device *pdev)
- 		goto out;
+diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_crtc.c b/drivers/gpu/drm/arm/display/komeda/komeda_crtc.c
+index cafb4457e187..3f222f464eb2 100644
+--- a/drivers/gpu/drm/arm/display/komeda/komeda_crtc.c
++++ b/drivers/gpu/drm/arm/display/komeda/komeda_crtc.c
+@@ -28,10 +28,9 @@ static void komeda_crtc_update_clock_ratio(struct komeda_crtc_state *kcrtc_st)
  	}
  
-+	ret = platform_device_add_properties(qcom->dwc3,
-+					     dwc3_qcom_acpi_properties);
-+	if (ret < 0) {
-+		dev_err(&pdev->dev, "failed to add properties\n");
-+		goto out;
-+	}
-+
- 	ret = platform_device_add(qcom->dwc3);
- 	if (ret)
- 		dev_err(&pdev->dev, "failed to add device\n");
+ 	pxlclk = kcrtc_st->base.adjusted_mode.clock * 1000;
+-	aclk = komeda_calc_aclk(kcrtc_st) << 32;
++	aclk = komeda_calc_aclk(kcrtc_st);
+ 
+-	do_div(aclk, pxlclk);
+-	kcrtc_st->clock_ratio = aclk;
++	kcrtc_st->clock_ratio = div64_u64(aclk << 32, pxlclk);
+ }
+ 
+ /**
 -- 
-2.17.1
+2.20.0
 
