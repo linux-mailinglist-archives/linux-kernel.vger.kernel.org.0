@@ -2,112 +2,226 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3FE1D48E68
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 21:24:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EF34948E6A
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 21:24:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728962AbfFQTYa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 15:24:30 -0400
-Received: from mail-eopbgr130072.outbound.protection.outlook.com ([40.107.13.72]:27430
-        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725938AbfFQTYa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 15:24:30 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=XJY3HURf4B+Uyav3u4C4mG294/93fmChqXHtGwXZY20=;
- b=WxJa7wXQ97WsplDi3QUelB3xlibQ4TtRLl+0p0LFnBhpQ3aYm19T6/1pVfwJ2xXgu53s8wp0SblVU1keD+/bBEZRuskV8p5SeRizgbRKbMqVzN3z/xbFlcrYyA1Tlu7/pBUq8LVx5QQdde3SFCN0+B0YwDUQrK/aLS9wiDCDHlI=
-Received: from VI1PR04MB5055.eurprd04.prod.outlook.com (20.177.50.140) by
- VI1PR04MB5470.eurprd04.prod.outlook.com (20.178.121.208) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1987.13; Mon, 17 Jun 2019 19:24:25 +0000
-Received: from VI1PR04MB5055.eurprd04.prod.outlook.com
- ([fe80::9577:379c:2078:19a1]) by VI1PR04MB5055.eurprd04.prod.outlook.com
- ([fe80::9577:379c:2078:19a1%7]) with mapi id 15.20.1987.014; Mon, 17 Jun 2019
- 19:24:25 +0000
-From:   Leonard Crestez <leonard.crestez@nxp.com>
-To:     Andrey Smirnov <andrew.smirnov@gmail.com>,
-        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-        Horia Geanta <horia.geanta@nxp.com>
-CC:     Chris Spencer <christopher.spencer@sea.co.uk>,
-        Aymen Sghaier <aymen.sghaier@nxp.com>,
-        Franck Lenormand <franck.lenormand@nxp.com>,
-        Cory Tusar <cory.tusar@zii.aero>,
-        Chris Healy <cphealy@gmail.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Iuliana Prodan <iuliana.prodan@nxp.com>
-Subject: Re: [PATCH v3 2/5] crypto: caam - correct DMA address size for the
- i.MX8
-Thread-Topic: [PATCH v3 2/5] crypto: caam - correct DMA address size for the
- i.MX8
-Thread-Index: AQHVJSZIVXANdmo1E06O+7eMXYofbw==
-Date:   Mon, 17 Jun 2019 19:24:25 +0000
-Message-ID: <VI1PR04MB5055A9A725CED589FCF9254DEEEB0@VI1PR04MB5055.eurprd04.prod.outlook.com>
-References: <20190617160339.29179-1-andrew.smirnov@gmail.com>
- <20190617160339.29179-3-andrew.smirnov@gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=leonard.crestez@nxp.com; 
-x-originating-ip: [192.88.166.1]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 5460fb4b-aa15-493e-9f26-08d6f35968f6
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:VI1PR04MB5470;
-x-ms-traffictypediagnostic: VI1PR04MB5470:
-x-microsoft-antispam-prvs: <VI1PR04MB5470F0BCBBA9D2E827605614EEEB0@VI1PR04MB5470.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:8882;
-x-forefront-prvs: 0071BFA85B
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(39860400002)(396003)(366004)(136003)(376002)(199004)(189003)(71190400001)(6506007)(53936002)(26005)(81156014)(102836004)(186003)(7696005)(486006)(476003)(53546011)(14454004)(8936002)(52536014)(74316002)(81166006)(446003)(478600001)(7736002)(64756008)(256004)(3846002)(76116006)(66946007)(110136005)(66476007)(86362001)(8676002)(66446008)(68736007)(5660300002)(6436002)(4326008)(25786009)(99286004)(54906003)(6116002)(73956011)(76176011)(91956017)(66556008)(2501003)(71200400001)(66066001)(316002)(55016002)(229853002)(4744005)(44832011)(6246003)(9686003)(33656002)(2906002)(6636002)(305945005);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB5470;H:VI1PR04MB5055.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: S2UadDtTlYG6ImNGOtp01+woYApGyG5djlxC6QWaaUbs9CZwHZ3OcoIJV6ly3jDlco8a89UbQMrtPY+qQeriHswNG1VdV7iC+GA5VRKFCbuWprZiwrsE4JyyEYaRdyWXQXlmbO0GeNfl7gEhBKohqgse7yeCDrqlqgBmpQcypDGc3/rkgnNDpmrm7wsW3vXqNpHo1UXo0ccCfMt1bdVMjdLFSSrx/QHSW9iUpArehsJzJhj6zVh/A6ihtQX5ubLoQZlVPj84ixkH4E6JqCTRhb8qY1z6ozbGzcsypg/ma/C7dnuvKajUf3Gt3r2+ynnHkJyAtLg0spzXz0jyahi5IykWEjl3pqN3zYbEBvVHw2RyhShGGHw6DZ7g7PKaypyuQs5r+In/9eJoRbgl8jqoARPE7d6//VdSuYpO/6jzGWM=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        id S1728973AbfFQTY6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 15:24:58 -0400
+Received: from foss.arm.com ([217.140.110.172]:60608 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725938AbfFQTY5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Jun 2019 15:24:57 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C9F482B;
+        Mon, 17 Jun 2019 12:24:56 -0700 (PDT)
+Received: from localhost (unknown [10.37.6.20])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4A64B3F246;
+        Mon, 17 Jun 2019 12:24:56 -0700 (PDT)
+Date:   Mon, 17 Jun 2019 20:24:54 +0100
+From:   Andrew Murray <andrew.murray@arm.com>
+To:     Xiang Zheng <zhengxiang9@huawei.com>
+Cc:     linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu,
+        linux-kernel@vger.kernel.org, marc.zyngier@arm.com,
+        Wang Haibin <wanghaibin.wang@huawei.com>
+Subject: Re: [PATCH] KVM: ARM64: Update perf event when setting PMU count
+ value
+Message-ID: <20190617192454.GO20984@e119886-lin.cambridge.arm.com>
+References: <20190519100559.7188-1-zhengxiang9@huawei.com>
+ <20190521164445.GW8268@e119886-lin.cambridge.arm.com>
+ <482838e5-64a4-ef99-2e51-4b58e18ba4b4@huawei.com>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5460fb4b-aa15-493e-9f26-08d6f35968f6
-X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Jun 2019 19:24:25.6516
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: leonard.crestez@nxp.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB5470
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <482838e5-64a4-ef99-2e51-4b58e18ba4b4@huawei.com>
+User-Agent: Mutt/1.10.1+81 (426a6c1) (2018-08-26)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 6/17/2019 7:04 PM, Andrey Smirnov wrote:=0A=
-> From: Chris Spencer <christopher.spencer@sea.co.uk>=0A=
-> =0A=
-> The i.MX8 is arm64, but its CAAM DMA address size is 32-bits.=0A=
-=0A=
-> +/*=0A=
-> + * On i.MX8 boards the arch is arm64 but the CAAM dma address size is=0A=
-> + * 32 bits on 8MQ and 36 bits on 8QM and 8QXP.=0A=
-> + * For 8QM and 8QXP there is a configurable field PS called pointer size=
-=0A=
-> + * in the MCFGR register to switch between 32 and 64 (default 32)=0A=
-> + * But this register is only accessible by the SECO and is left to its=
-=0A=
-> + * default value.=0A=
-> + * Here we set the CAAM dma address size to 32 bits for all i.MX8=0A=
-> + */=0A=
-> +#if defined(CONFIG_ARM64) && defined(CONFIG_ARCH_MXC)=0A=
-> +#define caam_dma_addr_t u32=0A=
-> +#else=0A=
-> +#define caam_dma_addr_t dma_addr_t=0A=
-> +#endif=0A=
-=0A=
-Wait, doesn't this break Layerscape? Support for multiple SOC families =0A=
-can be enabled at the same time and it is something that we actually =0A=
-want to support.=0A=
-=0A=
---=0A=
-Regards,=0A=
-Leonard=0A=
+On Wed, Jun 12, 2019 at 09:47:05PM +0800, Xiang Zheng wrote:
+> 
+> On 2019/5/22 0:44, Andrew Murray wrote:
+> > On Sun, May 19, 2019 at 06:05:59PM +0800, Xiang Zheng wrote:
+> >> Guest will adjust the sample period and set PMU counter value when
+> >> it takes a long time to handle the PMU interrupts.
+> >>
+> >> However, we don't have a corresponding change on the virtual PMU
+> >> which is emulated via a perf event. It could cause a large number
+> >> of PMU interrupts injected to guest. Then guest will get hang for
+> >> handling these interrupts.
+> > 
+> > Yes this is indeed an issue. I believe I've addressed this in my 'chained
+> > pmu' series - the relevant patch is here...
+> > 
+> > https://lists.cs.columbia.edu/pipermail/kvmarm/2019-May/035933.html
+> > 
+> > Some other comments below.
+> > 
+> 
+> Sorry for that I didn't notice your patches...
+> I will test your patch series.
+
+Thanks.
+
+> 
+> >>
+> >> So update the sample_period of perf event if the counter value is
+> >> changed to avoid this case.
+> >>
+> >> Signed-off-by: Xiang Zheng <zhengxiang9@huawei.com>
+> >> ---
+> >>  virt/kvm/arm/pmu.c | 54 +++++++++++++++++++++++++++++++++++++++++++++---------
+> >>  1 file changed, 45 insertions(+), 9 deletions(-)
+> >>
+> >> diff --git a/virt/kvm/arm/pmu.c b/virt/kvm/arm/pmu.c
+> >> index 1c5b76c..cbad3ec 100644
+> >> --- a/virt/kvm/arm/pmu.c
+> >> +++ b/virt/kvm/arm/pmu.c
+> >> @@ -24,6 +24,11 @@
+> >>  #include <kvm/arm_pmu.h>
+> >>  #include <kvm/arm_vgic.h>
+> >>  
+> >> +static void kvm_pmu_stop_counter(struct kvm_vcpu *vcpu, struct kvm_pmc *pmc);
+> >> +static struct perf_event *kvm_pmu_create_perf_event(struct kvm_vcpu *vcpu,
+> >> +						    struct kvm_pmc *pmc,
+> >> +						    struct perf_event_attr *attr);
+> >> +
+> >>  /**
+> >>   * kvm_pmu_get_counter_value - get PMU counter value
+> >>   * @vcpu: The vcpu pointer
+> >> @@ -57,11 +62,29 @@ u64 kvm_pmu_get_counter_value(struct kvm_vcpu *vcpu, u64 select_idx)
+> >>   */
+> >>  void kvm_pmu_set_counter_value(struct kvm_vcpu *vcpu, u64 select_idx, u64 val)
+> >>  {
+> >> -	u64 reg;
+> >> +	u64 reg, counter, old_sample_period;
+> >> +	struct kvm_pmu *pmu = &vcpu->arch.pmu;
+> >> +	struct kvm_pmc *pmc = &pmu->pmc[select_idx];
+> >> +	struct perf_event *event;
+> >> +	struct perf_event_attr attr;
+> >>  
+> >>  	reg = (select_idx == ARMV8_PMU_CYCLE_IDX)
+> >>  	      ? PMCCNTR_EL0 : PMEVCNTR0_EL0 + select_idx;
+> >>  	__vcpu_sys_reg(vcpu, reg) += (s64)val - kvm_pmu_get_counter_value(vcpu, select_idx);
+> >> +
+> >> +	if (pmc->perf_event) {
+> >> +		attr = pmc->perf_event->attr;
+> >> +		old_sample_period = attr.sample_period;
+> >> +		counter = kvm_pmu_get_counter_value(vcpu, select_idx);
+> >> +		attr.sample_period = (-counter) & pmc->bitmask;
+> >> +		if (attr.sample_period == old_sample_period)
+> >> +			return;
+> > 
+> > I'd be interested to know how often this would evaluate to true.
+> > 
+> 
+> I have counted it while running my test script, the result shows that there are 1552288
+> times evaluated to true and 8294235 times not.
+> 
+> I think different testcases may produce different results.
+
+You may find that this occurs more often when you are using pinned events, e.g.
+when the counter is pinned to a process. When this happens perf stops and starts
+the counter each time the process is switched in/out. The ARM pmu
+(drivers/perf/arm_pmu.c) resets the period each time the counter is restarted
+(armpmu_start), and thus rewrites the same value to the hardware counter (I think).
+
+If you run "perf stat -e instructions" you'll probably find the number reduces.
+
+I guess there is a balance between doing unnecessary work (recreating the kernel
+event) and code complexity here. However there is scope for similar optimisations
+such as not recreating the event when someone writes the same event type 
+(kvm_pmu_set_counter_event_type).
+
+> 
+> >> +
+> >> +		kvm_pmu_stop_counter(vcpu, pmc);
+> >> +		event = kvm_pmu_create_perf_event(vcpu, pmc, &attr);
+> > 
+> > I'm not sure it's necessary to change the prototype of kvm_pmu_create_perf_event
+> > as this function will recalculate the sample period based on the updated counter
+> > value anyway.
+> > 
+> 
+> In this patch, kvm_pmu_create_perf_event() will not recalculate the sample period. Maybe
+> you confuse it with your patch.:)
+
+Yes sorry!
+
+Thanks,
+
+Andrew Murray
+
+> 
+> > Thanks,
+> > 
+> > Andrew Murray
+> > 
+> >> +		if (event)
+> >> +			pmc->perf_event = event;
+> >> +	}
+> >>  }
+> >>  
+> >>  /**
+> >> @@ -303,6 +326,24 @@ static void kvm_pmu_perf_overflow(struct perf_event *perf_event,
+> >>  	}
+> >>  }
+> >>  
+> >> +static struct perf_event *kvm_pmu_create_perf_event(struct kvm_vcpu *vcpu,
+> >> +						    struct kvm_pmc *pmc,
+> >> +						    struct perf_event_attr *attr)
+> >> +{
+> >> +	struct perf_event *event;
+> >> +
+> >> +	event = perf_event_create_kernel_counter(attr, -1, current,
+> >> +						 kvm_pmu_perf_overflow, pmc);
+> >> +
+> >> +	if (IS_ERR(event)) {
+> >> +		pr_err_once("kvm: pmu event creation failed %ld\n",
+> >> +			    PTR_ERR(event));
+> >> +		return NULL;
+> >> +	}
+> >> +
+> >> +	return event;
+> >> +}
+> >> +
+> >>  /**
+> >>   * kvm_pmu_software_increment - do software increment
+> >>   * @vcpu: The vcpu pointer
+> >> @@ -416,15 +457,10 @@ void kvm_pmu_set_counter_event_type(struct kvm_vcpu *vcpu, u64 data,
+> >>  	/* The initial sample period (overflow count) of an event. */
+> >>  	attr.sample_period = (-counter) & pmc->bitmask;
+> >>  
+> >> -	event = perf_event_create_kernel_counter(&attr, -1, current,
+> >> -						 kvm_pmu_perf_overflow, pmc);
+> >> -	if (IS_ERR(event)) {
+> >> -		pr_err_once("kvm: pmu event creation failed %ld\n",
+> >> -			    PTR_ERR(event));
+> >> -		return;
+> >> -	}
+> >> +	event = kvm_pmu_create_perf_event(vcpu, pmc, &attr);
+> >>  
+> >> -	pmc->perf_event = event;
+> >> +	if (event)
+> >> +		pmc->perf_event = event;
+> >>  }
+> >>  
+> >>  bool kvm_arm_support_pmu_v3(void)
+> >> -- 
+> >> 1.8.3.1
+> >>
+> >>
+> >> _______________________________________________
+> >> kvmarm mailing list
+> >> kvmarm@lists.cs.columbia.edu
+> >> https://lists.cs.columbia.edu/mailman/listinfo/kvmarm
+> > 
+> > .
+> > 
+> -- 
+> 
+> Thanks,
+> Xiang
+> 
+> 
