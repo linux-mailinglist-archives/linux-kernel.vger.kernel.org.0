@@ -2,98 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4720C48082
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 13:20:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7490548169
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 13:59:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728108AbfFQLT7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 07:19:59 -0400
-Received: from mout.kundenserver.de ([212.227.126.130]:51601 "EHLO
+        id S1726969AbfFQL7S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 07:59:18 -0400
+Received: from mout.kundenserver.de ([212.227.17.10]:33899 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727846AbfFQLT7 (ORCPT
+        with ESMTP id S1725763AbfFQL7S (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 07:19:59 -0400
+        Mon, 17 Jun 2019 07:59:18 -0400
 Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
- (mreue010 [212.227.15.129]) with ESMTPA (Nemesis) id
- 1N0Fl9-1iW9Fr2hwl-00xL9C; Mon, 17 Jun 2019 13:19:40 +0200
+ (mreue109 [212.227.15.145]) with ESMTPA (Nemesis) id
+ 1N1Oft-1idn5x173T-012p0I; Mon, 17 Jun 2019 13:58:46 +0200
 From:   Arnd Bergmann <arnd@arndb.de>
-To:     "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>, Ondrej Zary <linux@zary.sk>,
-        Hannes Reinecke <hare@suse.com>,
-        Johannes Thumshirn <jthumshirn@suse.de>,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] scsi: fdomain: fix building pcmcia front-end
-Date:   Mon, 17 Jun 2019 13:19:17 +0200
-Message-Id: <20190617111937.2355936-1-arnd@arndb.de>
+To:     Mimi Zohar <zohar@linux.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] ima: dynamically allocate shash_desc
+Date:   Mon, 17 Jun 2019 13:20:37 +0200
+Message-Id: <20190617115838.2397872-1-arnd@arndb.de>
 X-Mailer: git-send-email 2.20.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:Ft7A+L+Rr9iEQAM1pAHYVAEso0+XdaZFK2sYmt+ngiJcm0laXJ1
- +o16oKqC3FRm99GEeCbWW7/pIFVs6UsAK8OhiPNLl8aGcSWI31a+Wtx3g2I61iVoBiUvoKc
- royoq8jozOIZBwCDMtFcO0q6nTa9PSANsErViZUz0ygbNXVIjgr/ou5m82EwWjfSjoe0V1f
- iRI/q0izxIvGXPQtxkJ9g==
+X-Provags-ID: V03:K1:Aok4LcHbJEGe4AaznFIfACC7Rx178p41ovN43L+MyVducbpJUmo
+ Ks3nYiQFYUumaQQDtFktb7FASBDgNt0aWrEmebIaB2QKuW7eKXp/C3mpmUcUcD6KVf3YWcB
+ cHciwJcVESXqtHG5EZm3ls+ZpDxsTRQTdcm0F/UvIc6M6Ypeq63DAIUrs/oUOxrkLyMFvCw
+ XFmMdwOf5uOdyLU9P5gpA==
 X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:q8l1WVXaUlI=:BUJ+7U6WS0M//LNrl2MEVu
- Kqex6414Zc60ujZ3auqcDTuSlEpwE/PJjDDLZ9/NoMqcg5LhQtfIpjnDKhTynoI7zVmYZjbP5
- vI3JpBtz8v1Tj8WrjjV6GJhXAoo21aXh0OZ4z75e6A/9Z3HnoJcBooHs5X4V2c6jGiJ658thc
- Tp2WYs3s1ZAbejnOfome6axeLy6l9vC1cwcgxbJeG9hovDgg7yqt+pzUB3g1LxMp+4awnEnNA
- pVV+ibuTbzj5L7twFEzl4pHCJtVS+NsjU6RFl0dvjpw07qocS4SZxkR/HgCM0KkGctOpBq9Ok
- PHp6hjbN+8xwEIgMcJkG9hNf8dqV6UsgLmqiVGZQ3ViW1vccNMDPEXN1eEr6lqa14y3MD2Y04
- w1ZSRaG451NPF5jGXh+/WObN7TGqzaodTa7bWrECEOZMabJpVuYVQSMCM5LJDvwVa35OvS82+
- HPYIw3T85UVTFAN/TC0STC0nmzi5QO6Ld+kfYlwU487siZ6ITQEooztQb4ylxsdNbukTPR0Hr
- gFak5Ue/dPUn20RdTq1aF15JnCZqUWFBn+pmg06+f94I8FnOpoxM6G2TEKyhQ/Y8Brl33n8Qb
- pFq2nqcuuJYVn7DmgbN5VrOF2ouxzj4KxMd0uDtry2rXQkl0T44SLmKVNRrCa2+LRkGN25USc
- 9AxLhjCy63uaRoyL1+3N/YFpxqBKmsC4F4mWEEDPkncGmXBs99dC3Gt9zBl4os0hM1cikkQLV
- D8MP/WoKnfg1gNyAdbuxaMJIw4md5wxv4vUEfw==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:jHvm8xVNDAg=:2tQYUYi5EHZK8Jj9NnbR8R
+ Eo7gZUfrH0IV231kubqyOXrM2KIdTUI7lkeT64oWq+/f71gkLCOBA3NzPI6XwDwGl8OwX+/5w
+ yVDiKGLnOGCxf+S0vbTYzsRNBq76ZlUCUzWuIjpHVVGjeN5SAyE6MywStp8xA1h/cRWcK3cSx
+ Bwgbt7JUQDgtp4jOKoxHjqlrVcLSbpbu8rpnkIYtSBmEobq2yDokeJyj1QugUmAg+hNXmMcM4
+ pVvePhrtr24jnquz/odgNTRAHaD5VQY3uTcDpF6QdL9zrmy6UCL8SCxFf5EeaJeTzSiiW+uPk
+ bCVCbyUWrELjuHEt22u1i1oJ2sBS1ldJ9xecgj7l+X+Sj5Jouj+A+Zbi5xcgrU/ngnLRiabOU
+ 5TLlpJZgM7xeHyJcibAzzh034agXYUkyVbw0mEZZW8Tjq5nL6IkBWYphrpAfGzFQ946pBaF1p
+ nPVIq+92AGgeXZ3Cv0v7IQ2bLUq3YUj5fsawacZO1BG8fAaSf+EgYJsPg6RYip3gbP5uDLPyF
+ Gi7rVAPX3uwg04Pe4uBMsw41abY2iVQBULvYBbFi9ohYBnVty966idrZjgx+Pyg3inltOFtVj
+ M/fpwbgM2WhO2KGKKzFiiOs+uajZha0drkVdDo1ZbPf2NM+4BAb+90WhFspBAfibbneJlHCMx
+ kakkUzVCB2p/ES21GFZU+Q2++wdThYh8RzHe6rYlRywsa2B879EEe/j1On0RzPHJxZa/QOEFJ
+ 3HYbjkqetrngw4zwpfpkit5NhMMqT6RJEFSXnA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We get a warning when CONFIG_SCSI_LOWLEVEL is disabled here:
+On 32-bit ARM, we get a warning about excessive stack usage when
+building with clang.
 
-WARNING: unmet direct dependencies detected for SCSI_FDOMAIN
-  Depends on [n]: SCSI_LOWLEVEL [=n] && SCSI [=y]
-  Selected by [m]:
-  - PCMCIA_FDOMAIN [=m] && SCSI_LOWLEVEL_PCMCIA [=y] && SCSI [=y] && PCMCIA [=y] && m && MODULES [=y]
+security/integrity/ima/ima_crypto.c:504:5: error: stack frame size of 1152 bytes in function 'ima_calc_field_array_hash' [-Werror,-Wframe-larger-than=]
 
-Move the common support outside of the SCSI_LOWLEVEL section.
-Alternatively, we could move all of SCSI_LOWLEVEL_PCMCIA into
-SCSI_LOWLEVEL. This would be more sensible, but might cause
-surprises for users that have SCSI_LOWLEVEL disabled.
+Using kmalloc to get the descriptor reduces this to 320 bytes.
 
-Fixes: 7d47fa065e62 ("scsi: fdomain: Add PCMCIA support")
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- drivers/scsi/Kconfig | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ security/integrity/ima/ima_crypto.c | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/scsi/Kconfig b/drivers/scsi/Kconfig
-index 75f66f8ad3ea..dffe4b31e205 100644
---- a/drivers/scsi/Kconfig
-+++ b/drivers/scsi/Kconfig
-@@ -642,10 +642,6 @@ config SCSI_DMX3191D
- 	  To compile this driver as a module, choose M here: the
- 	  module will be called dmx3191d.
+diff --git a/security/integrity/ima/ima_crypto.c b/security/integrity/ima/ima_crypto.c
+index d4c7b8e1b083..8a66bab4c435 100644
+--- a/security/integrity/ima/ima_crypto.c
++++ b/security/integrity/ima/ima_crypto.c
+@@ -461,16 +461,21 @@ static int ima_calc_field_array_hash_tfm(struct ima_field_data *field_data,
+ 					 struct ima_digest_data *hash,
+ 					 struct crypto_shash *tfm)
+ {
+-	SHASH_DESC_ON_STACK(shash, tfm);
++	struct shash_desc *shash;
+ 	int rc, i;
  
--config SCSI_FDOMAIN
--	tristate
--	depends on SCSI
--
- config SCSI_FDOMAIN_PCI
- 	tristate "Future Domain TMC-3260/AHA-2920A PCI SCSI support"
- 	depends on PCI && SCSI
-@@ -1527,6 +1523,10 @@ endif # SCSI_LOWLEVEL
- 
- source "drivers/scsi/pcmcia/Kconfig"
- 
-+config SCSI_FDOMAIN
-+	tristate
-+	depends on SCSI
++	shash = kmalloc(sizeof(struct shash_desc) + crypto_shash_descsize(tfm),
++			GFP_KERNEL);
++	if (!shash)
++		return -ENOMEM;
 +
- source "drivers/scsi/device_handler/Kconfig"
+ 	shash->tfm = tfm;
  
- endmenu
+ 	hash->length = crypto_shash_digestsize(tfm);
+ 
+ 	rc = crypto_shash_init(shash);
+ 	if (rc != 0)
+-		return rc;
++		goto out;
+ 
+ 	for (i = 0; i < num_fields; i++) {
+ 		u8 buffer[IMA_EVENT_NAME_LEN_MAX + 1] = { 0 };
+@@ -497,7 +502,8 @@ static int ima_calc_field_array_hash_tfm(struct ima_field_data *field_data,
+ 
+ 	if (!rc)
+ 		rc = crypto_shash_final(shash, hash->digest);
+-
++out:
++	kfree(shash);
+ 	return rc;
+ }
+ 
 -- 
 2.20.0
 
