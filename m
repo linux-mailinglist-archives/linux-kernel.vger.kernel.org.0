@@ -2,94 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DF654490DE
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 22:08:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CCC0B490E4
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 22:09:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728901AbfFQUIS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 16:08:18 -0400
-Received: from ale.deltatee.com ([207.54.116.67]:48412 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726023AbfFQUIS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 16:08:18 -0400
-Received: from guinness.priv.deltatee.com ([172.16.1.162])
-        by ale.deltatee.com with esmtp (Exim 4.89)
-        (envelope-from <logang@deltatee.com>)
-        id 1hcxvM-0004o2-QE; Mon, 17 Jun 2019 14:08:17 -0600
-To:     Christoph Hellwig <hch@lst.de>,
-        Dan Williams <dan.j.williams@intel.com>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Ben Skeggs <bskeggs@redhat.com>
-Cc:     linux-mm@kvack.org, nouveau@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org, linux-nvdimm@lists.01.org,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20190617122733.22432-1-hch@lst.de>
- <20190617122733.22432-9-hch@lst.de>
-From:   Logan Gunthorpe <logang@deltatee.com>
-Message-ID: <d68c5e4c-b2de-95c3-0b75-1f2391b25a34@deltatee.com>
-Date:   Mon, 17 Jun 2019 14:08:14 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.1
+        id S1727833AbfFQUJO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 16:09:14 -0400
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:45709 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726023AbfFQUJN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Jun 2019 16:09:13 -0400
+Received: by mail-qt1-f196.google.com with SMTP id j19so12347296qtr.12
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2019 13:09:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Al3ctU5Ww8ocaVDWU/5q96TvOispLUizRV1CFtDfOaI=;
+        b=qf2k/45sE6OZ+Gh5+DRtXE3WIuJUZT2CIDmri09NlrXYO4Btj+toXNyiwRb328WTSY
+         ddqXPu9rEVhtAPxNvE0K9CDxvTTzKJ0BWWz+j79PNc/TSbO8aw+FFoHXVc4o2PKt8xNE
+         +8jsRM9cZr6cLlby+GvBWV52Ce9fzKzF9u5dyTb3FEfd/G/6GPisk3ItT0GKNsFAcRDv
+         Gh0rYMhi8yC4VqJZqJDfvJ4y48ZkB4H1RhwI7V5LywTJZQ9BlboK1qHYtO6lb+CyKD+8
+         6fQspClujju8RzhFtk3VEotj1QcxYEPM9LEK3PBmY3sBJLGUu0IjerGPEGXV8M4h1plt
+         s7yw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Al3ctU5Ww8ocaVDWU/5q96TvOispLUizRV1CFtDfOaI=;
+        b=J+VLe+IHyliWSJh00+893WBhtlVVlXF5LjhfK1/YhhMl8Qm2RHoiXNk7BVTI7Zyxfr
+         16QLG1ANnnGvef7K4PIqI4K12TadTpK0BxZTVgSrxCE8vIkZiGW+f0WpWfqz9UTZFdRa
+         Wl/mP45T04Tw2dReQb9+yRU3LHvpT5tPfh3Dn+zwMr+SeaZUoJXjJ8gHFO26IBQ8w2VK
+         sKGSglqSWJKLCjWLZBZA6McojRhwj6znDIo074yI24ck1cMdL8zRDoTAKdGVDx3Fkof/
+         3WrxbxG76Adz0xHqBrPCHCVjViOKGVtzejUPTTUeoKfXuwBri6XRGEFdHUyYt0c1ZRAz
+         v0mQ==
+X-Gm-Message-State: APjAAAUtwCGcWUvHlUt0D7X19nNRAPXC3jhOZrZAhGxdb+zMKZa51fCG
+        qSqIENPKMtC2czAQz7mRbIHgXDoVbAgQGM7BhWA=
+X-Google-Smtp-Source: APXvYqw0XOx8hWQvkZc6V+ztD3J86tZW+NikUxFcZSuurS8j1Clx/hKHsSn2WYyavAruZHjK33NHIYroa03/SQ/r7LY=
+X-Received: by 2002:a0c:b66f:: with SMTP id q47mr23211411qvf.102.1560802152622;
+ Mon, 17 Jun 2019 13:09:12 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20190617122733.22432-9-hch@lst.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-CA
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 172.16.1.162
-X-SA-Exim-Rcpt-To: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, linux-nvdimm@lists.01.org, dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org, linux-mm@kvack.org, bskeggs@redhat.com, jgg@mellanox.com, jglisse@redhat.com, dan.j.williams@intel.com, hch@lst.de
-X-SA-Exim-Mail-From: logang@deltatee.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on ale.deltatee.com
-X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        GREYLIST_ISWHITE autolearn=ham autolearn_force=no version=3.4.2
-Subject: Re: [PATCH 08/25] memremap: move dev_pagemap callbacks into a
- separate structure
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+References: <CABXGCsN9mYmBD-4GaaeW_NrDu+FDXLzr_6x+XNxfmFV6QkYCDg@mail.gmail.com>
+ <CABXGCsNq4xTFeeLeUXBj7vXBz55aVu31W9q74r+pGM83DrPjfA@mail.gmail.com>
+ <20190529180931.GI18589@dhcp22.suse.cz> <CABXGCsPrk=WJzms_H+-KuwSRqWReRTCSs-GLMDsjUG_-neYP0w@mail.gmail.com>
+ <CABXGCsMjDn0VT0DmP6qeuiytce9cNBx8PywpqejiFNVhwd0UGg@mail.gmail.com> <ee245af2-a0ae-5c13-6f1f-2418f43d1812@suse.cz>
+In-Reply-To: <ee245af2-a0ae-5c13-6f1f-2418f43d1812@suse.cz>
+From:   Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>
+Date:   Tue, 18 Jun 2019 01:09:01 +0500
+Message-ID: <CABXGCsOfQjGLEN0nAt-iPo2Ay61fDY75Deq1Xn1Ymm_UsR3n_g@mail.gmail.com>
+Subject: Re: kernel BUG at mm/swap_state.c:170!
+To:     Vlastimil Babka <vbabka@suse.cz>
+Cc:     Michal Hocko <mhocko@kernel.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, 17 Jun 2019 at 17:17, Vlastimil Babka <vbabka@suse.cz> wrote:
+>
+> That's commit "tcp: fix retrans timestamp on passive Fast Open" which is
+> almost certainly not the culprit.
 
+Yes, I seen also content of this commit.
+And it looks like madness.
+But I can proving that my bisect are properly created.
+Here I saved all dmesg output from all bisecting steps:
+https://mega.nz/#F!00wFHACA!nmaLgkkbrlt46DteERjl7Q
+And only one of them ended without crash message "kernel BUG at
+mm/swap_state.c:170!"
+This is step5 with commit 3d21b6525cae.
 
-On 2019-06-17 6:27 a.m., Christoph Hellwig wrote:
-> diff --git a/drivers/pci/p2pdma.c b/drivers/pci/p2pdma.c
-> index a98126ad9c3a..e083567d26ef 100644
-> --- a/drivers/pci/p2pdma.c
-> +++ b/drivers/pci/p2pdma.c
-> @@ -100,7 +100,7 @@ static void pci_p2pdma_percpu_cleanup(struct percpu_ref *ref)
->  	struct p2pdma_pagemap *p2p_pgmap = to_p2p_pgmap(ref);
->  
->  	wait_for_completion(&p2p_pgmap->ref_done);
-> -	percpu_ref_exit(&p2p_pgmap->ref);
-> +	percpu_ref_exit(ref);
->  }
->  
->  static void pci_p2pdma_release(void *data)
-> @@ -152,6 +152,11 @@ static int pci_p2pdma_setup(struct pci_dev *pdev)
->  	return error;
->  }
->  
-> +static const struct dev_pagemap_ops pci_p2pdma_pagemap_ops = {
-> +	.kill		= pci_p2pdma_percpu_kill,
-> +	.cleanup	= pci_p2pdma_percpu_cleanup,
-> +};
-> +
->  /**
->   * pci_p2pdma_add_resource - add memory for use as p2p memory
->   * @pdev: the device to add the memory to
-> @@ -207,8 +212,6 @@ int pci_p2pdma_add_resource(struct pci_dev *pdev, int bar, size_t size,
->  	pgmap->type = MEMORY_DEVICE_PCI_P2PDMA;
->  	pgmap->pci_p2pdma_bus_offset = pci_bus_address(pdev, bar) -
->  		pci_resource_start(pdev, bar);
-> -	pgmap->kill = pci_p2pdma_percpu_kill;
-> -	pgmap->cleanup = pci_p2pdma_percpu_cleanup;
+I tried to cause kernel panic several times when kenel compiled from
+commit 3d21b6525cae would be launched and all my attempts was be
+unsuccessful.
 
-I just noticed this is missing a line to set pgmap->ops to
-pci_p2pdma_pagemap_ops. I must have gotten confused by the other users
-in my original review. Though I'm not sure how this compiles as the new
-struct is static and unused. However, it is rendered moot in Patch 16
-when this is all removed.
+So I can say that commit 3d21b6525cae is enough stable for me and I
+now sitting on it.
 
-Logan
+> You told bisect that 5.2-rc1 is good, but it probably isn't.
+> What you probably need to do is:
+> git bisect good v5.1
+> git bisect bad v5.2-rc2
+>
+> The presence of the other ext4 bug complicates the bisect, however.
+> According to tytso in the thread you linked, it should be fixed by
+> commit 0a944e8a6c66, while the bug was introduced by commit
+> 345c0dbf3a30. So in each step of bisect, before building the kernel, you
+> should cherry-pick the fix if the bug is there:
+>
+> git merge-base --is-ancestor 345c0dbf3a30 HEAD && git cherry-pick 0a944e8a6c66
+
+Oh, thanks for advise. But I am used another solution.
+(I applied the patch every time when bisect move to new step)
+
+> Also in case you see a completely different problem in some bisect step, try
+> 'git bisect skip' instead of guessing if it's good or bad.
+> Hopefully that will lead to a better result.
+
+If you take a look all my dmesg logs you can sure that all bad steps
+ended with crash "kernel BUG at mm/swap_state.c:170!".
+
+And yes, I look again at commit cd736d8b67fb still don't understand
+how it can broke my system.
+
+--
+Best Regards,
+Mike Gavrilov.
