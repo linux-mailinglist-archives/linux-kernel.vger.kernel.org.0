@@ -2,150 +2,154 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 36B444888E
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 18:15:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3CE9748886
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 18:15:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728578AbfFQQPT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 12:15:19 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:42107 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728467AbfFQQPS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 12:15:18 -0400
-Received: by mail-pg1-f195.google.com with SMTP id l19so6071754pgh.9;
-        Mon, 17 Jun 2019 09:15:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=AUIlWS4ZBAH1cCjNMwdLECp6SwpPOYQCnCUOnwztQcE=;
-        b=j57PaWe8f2HQwJIOYT9m1j5+oiTOKbhhzP7Ozk376nM+n+Ls/puznRCeBv7W333drA
-         IaYsFgkX8QyDlD3FMfOwOK6hHn/FBbS/0tncMjXmet8AkakkYItNITaG2D33VXbDbOaj
-         /wBDdyMVR9vtgDXKSCLo6CN8DI7pNp9uTSpyiRoOBf5/jm8lVQu3vbnABG5NxdEQrkQq
-         SkfVW4m1ZIN/P4UZe3ZlLrzLh/eysa8W0tr05jH7WoQj4F9QcIR0ry8ut4D3IDfnsG4R
-         Ebb403JTeg+Pgt58vuakR6N67dR9ndDXCoPoUkyX+EPjD4T3Yo66bmOXzYt9Y2gjpv8Q
-         S2Gg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=AUIlWS4ZBAH1cCjNMwdLECp6SwpPOYQCnCUOnwztQcE=;
-        b=R42wPPFAWohyTvgdIHnKEuMYI3mEyjfvL+dxu31d3/pWmeHOVD8n9ombswZVEdQgvZ
-         TlRngLuTsGgX1k38CkWO24qZwnzbX3V13QUuDvKNG5NNgUzqSAQDml7p0I/QBkceV1Cs
-         WAdOYpXcdI9kWryoGfyFlZvqap6m2LkkA5EMws+MtQhjcH96kYiJPSboK9Uth8RiAnIS
-         kZrS9yfVfdHsRBUfeCHqikH78ZwTHcLHknza4qLM8SXvVLLxd5ly4Q8HjqpsTybREKlL
-         VEDS1d5QPyWL1Plan2IgbM8u2TYI9EcAHhp0I1G0auJTS2dEE+MuHEy1FNepi3pVQupV
-         KKVw==
-X-Gm-Message-State: APjAAAX1vhbZTuv7MzrHOfmKdgHhcqNjz6X7u0Vcy64iFMgc4YMy5Uf+
-        RvkRht+xuYrne+XrQh48lAS6NGb+XHM=
-X-Google-Smtp-Source: APXvYqwkerfFt6cakaHg8ZDVj307zJCQpqVA783kXNJ3k6RBBcXucdcuy1juvFY6vatC438NjAfLqg==
-X-Received: by 2002:a63:306:: with SMTP id 6mr37099567pgd.263.1560788116897;
-        Mon, 17 Jun 2019 09:15:16 -0700 (PDT)
-Received: from localhost.lan (c-24-22-235-96.hsd1.wa.comcast.net. [24.22.235.96])
-        by smtp.gmail.com with ESMTPSA id c9sm14791953pfn.3.2019.06.17.09.15.15
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 17 Jun 2019 09:15:16 -0700 (PDT)
-From:   Andrey Smirnov <andrew.smirnov@gmail.com>
-To:     linux-pm@vger.kernel.org
-Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Chris Healy <cphealy@gmail.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Angus Ainslie <angus@akkea.ca>, linux-imx@nxp.com,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v6 07/12] thermal: qoriq: Convert driver to use devm_ioremap()
-Date:   Mon, 17 Jun 2019 09:14:53 -0700
-Message-Id: <20190617161458.3754-8-andrew.smirnov@gmail.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190617161458.3754-1-andrew.smirnov@gmail.com>
-References: <20190617161458.3754-1-andrew.smirnov@gmail.com>
+        id S1728128AbfFQQPA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 12:15:00 -0400
+Received: from foss.arm.com ([217.140.110.172]:55192 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726091AbfFQQPA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Jun 2019 12:15:00 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 92C4B28;
+        Mon, 17 Jun 2019 09:14:59 -0700 (PDT)
+Received: from e121166-lin.cambridge.arm.com (unknown [10.1.196.255])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E2F353F718;
+        Mon, 17 Jun 2019 09:14:56 -0700 (PDT)
+Date:   Mon, 17 Jun 2019 17:14:54 +0100
+From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To:     Dexuan Cui <decui@microsoft.com>
+Cc:     Michael Kelley <mikelley@microsoft.com>,
+        "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
+        "rjw@rjwysocki.net" <rjw@rjwysocki.net>,
+        "lenb@kernel.org" <lenb@kernel.org>,
+        "robert.moore@intel.com" <robert.moore@intel.com>,
+        "erik.schmauss@intel.com" <erik.schmauss@intel.com>,
+        Russell King <rmk+kernel@arm.linux.org.uk>,
+        Russ Dill <Russ.Dill@ti.com>,
+        Sebastian Capella <sebastian.capella@linaro.org>,
+        Pavel Machek <pavel@ucw.cz>,
+        "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        KY Srinivasan <kys@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Sasha Levin <Alexander.Levin@microsoft.com>,
+        "olaf@aepfle.de" <olaf@aepfle.de>,
+        "apw@canonical.com" <apw@canonical.com>,
+        "jasowang@redhat.com" <jasowang@redhat.com>,
+        vkuznets <vkuznets@redhat.com>,
+        "marcelo.cerri@canonical.com" <marcelo.cerri@canonical.com>
+Subject: Re: [PATCH] ACPI: PM: Export the function
+ acpi_sleep_state_supported()
+Message-ID: <20190617161454.GB27113@e121166-lin.cambridge.arm.com>
+References: <1560536224-35338-1-git-send-email-decui@microsoft.com>
+ <BL0PR2101MB134895BADA1D8E0FA631D532D7EE0@BL0PR2101MB1348.namprd21.prod.outlook.com>
+ <PU1P153MB01699020B5BC4287C58F5335BFEE0@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <PU1P153MB01699020B5BC4287C58F5335BFEE0@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Convert driver to use devm_ioremap() to simplify memory deallocation
-and error handling code. No functional change intended.
+On Fri, Jun 14, 2019 at 10:19:02PM +0000, Dexuan Cui wrote:
+> > -----Original Message-----
+> > From: Michael Kelley <mikelley@microsoft.com>
+> > Sent: Friday, June 14, 2019 1:48 PM
+> > To: Dexuan Cui <decui@microsoft.com>; linux-acpi@vger.kernel.org;
+> > rjw@rjwysocki.net; lenb@kernel.org; robert.moore@intel.com;
+> > erik.schmauss@intel.com
+> > Cc: linux-hyperv@vger.kernel.org; linux-kernel@vger.kernel.org; KY Srinivasan
+> > <kys@microsoft.com>; Stephen Hemminger <sthemmin@microsoft.com>;
+> > Haiyang Zhang <haiyangz@microsoft.com>; Sasha Levin
+> > <Alexander.Levin@microsoft.com>; olaf@aepfle.de; apw@canonical.com;
+> > jasowang@redhat.com; vkuznets <vkuznets@redhat.com>;
+> > marcelo.cerri@canonical.com
+> > Subject: RE: [PATCH] ACPI: PM: Export the function
+> > acpi_sleep_state_supported()
+> > 
+> > From: Dexuan Cui <decui@microsoft.com>  Sent: Friday, June 14, 2019 11:19
+> > AM
+> > >
+> > > In a Linux VM running on Hyper-V, when ACPI S4 is enabled, the balloon
+> > > driver (drivers/hv/hv_balloon.c) needs to ask the host not to do memory
+> > > hot-add/remove.
+> > >
+> > > So let's export acpi_sleep_state_supported() for the hv_balloon driver.
+> > > This might also be useful to the other drivers in the future.
+> > >
+> > > Signed-off-by: Dexuan Cui <decui@microsoft.com>
+> > > ---
+> > >  drivers/acpi/sleep.c    | 3 ++-
+> > >  include/acpi/acpi_bus.h | 2 ++
+> > >  2 files changed, 4 insertions(+), 1 deletion(-)
+> > >
+> > > diff --git a/drivers/acpi/sleep.c b/drivers/acpi/sleep.c
+> > > index a34deccd7317..69755411e008 100644
+> > > --- a/drivers/acpi/sleep.c
+> > > +++ b/drivers/acpi/sleep.c
+> > > @@ -79,7 +79,7 @@ static int acpi_sleep_prepare(u32 acpi_state)
+> > >  	return 0;
+> > >  }
+> > >
+> > > -static bool acpi_sleep_state_supported(u8 sleep_state)
+> > > +bool acpi_sleep_state_supported(u8 sleep_state)
+> > >  {
+> > >  	acpi_status status;
+> > >  	u8 type_a, type_b;
+> > > @@ -89,6 +89,7 @@ static bool acpi_sleep_state_supported(u8 sleep_state)
+> > >  		|| (acpi_gbl_FADT.sleep_control.address
+> > >  			&& acpi_gbl_FADT.sleep_status.address));
+> > >  }
+> > > +EXPORT_SYMBOL_GPL(acpi_sleep_state_supported);
+> > >
+> > >  #ifdef CONFIG_ACPI_SLEEP
+> > >  static u32 acpi_target_sleep_state = ACPI_STATE_S0;
+> > > diff --git a/include/acpi/acpi_bus.h b/include/acpi/acpi_bus.h
+> > > index 31b6c87d6240..5b102e7bbf25 100644
+> > > --- a/include/acpi/acpi_bus.h
+> > > +++ b/include/acpi/acpi_bus.h
+> > > @@ -651,6 +651,8 @@ static inline int acpi_pm_set_bridge_wakeup(struct
+> > device *dev,
+> > > bool enable)
+> > >  }
+> > >  #endif
+> > >
+> > > +bool acpi_sleep_state_supported(u8 sleep_state);
+> > > +
+> > >  #ifdef CONFIG_ACPI_SLEEP
+> > >  u32 acpi_target_system_state(void);
+> > >  #else
+> > > --
+> > > 2.19.1
+> > 
+> > It seems that sleep.c isn't built when on the ARM64 architecture.  Using
+> > acpi_sleep_state_supported() directly in hv_balloon.c will be problematic
+> > since hv_balloon.c needs to be architecture independent when the
+> > Hyper-V ARM64 support is added.  If that doesn't change, a per-architecture
+> > wrapper will be needed to give hv_balloon.c the correct information.  This
+> > may affect whether acpi_sleep_state_supported() needs to be exported vs.
+> > just removing the "static".   I'm not sure what the best approach is.
+> > 
+> > Michael
+> 
+> + some ARM experts who worked on arch/arm/kernel/hibernate.c.
+> 
+> drivers/acpi/sleep.c is only built if ACPI_SYSTEM_POWER_STATES_SUPPORT
+> is defined, but it looks this option is not defined on ARM.
+> 
+> It looks ARM does not support the ACPI S4 state, then how do we know 
+> if an ARM host supports hibernation or not?
 
-Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
-Reviewed-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-Tested-by: Lucas Stach <l.stach@pengutronix.de>
-Cc: Chris Healy <cphealy@gmail.com>
-Cc: Lucas Stach <l.stach@pengutronix.de>
-Cc: Eduardo Valentin <edubezval@gmail.com>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Angus Ainslie (Purism) <angus@akkea.ca>
-Cc: linux-imx@nxp.com
-Cc: linux-pm@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
----
- drivers/thermal/qoriq_thermal.c | 20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
+Maybe we should start from understanding why you need to know whether
+Hibernate is possible to answer your question ?
 
-diff --git a/drivers/thermal/qoriq_thermal.c b/drivers/thermal/qoriq_thermal.c
-index 62d7a0efb837..80fe9adcc313 100644
---- a/drivers/thermal/qoriq_thermal.c
-+++ b/drivers/thermal/qoriq_thermal.c
-@@ -193,6 +193,7 @@ static int qoriq_tmu_probe(struct platform_device *pdev)
- 	struct qoriq_tmu_data *data;
- 	struct device_node *np = pdev->dev.of_node;
- 	struct device *dev = &pdev->dev;
-+	struct resource *io;
- 
- 	data = devm_kzalloc(dev, sizeof(struct qoriq_tmu_data),
- 			    GFP_KERNEL);
-@@ -201,7 +202,13 @@ static int qoriq_tmu_probe(struct platform_device *pdev)
- 
- 	data->little_endian = of_property_read_bool(np, "little-endian");
- 
--	data->regs = of_iomap(np, 0);
-+	io = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	if (!io) {
-+		dev_err(dev, "Failed to get memory region\n");
-+		return -ENODEV;
-+	}
-+
-+	data->regs = devm_ioremap(dev, io->start, resource_size(io));
- 	if (!data->regs) {
- 		dev_err(dev, "Failed to get memory region\n");
- 		return -ENODEV;
-@@ -211,23 +218,17 @@ static int qoriq_tmu_probe(struct platform_device *pdev)
- 
- 	ret = qoriq_tmu_calibration(dev, data);	/* TMU calibration */
- 	if (ret < 0)
--		goto err_tmu;
-+		return ret;
- 
- 	ret = qoriq_tmu_register_tmu_zone(dev, data);
- 	if (ret < 0) {
- 		dev_err(dev, "Failed to register sensors\n");
--		ret = -ENODEV;
--		goto err_tmu;
-+		return -ENODEV;
- 	}
- 
- 	platform_set_drvdata(pdev, data);
- 
- 	return 0;
--
--err_tmu:
--	iounmap(data->regs);
--
--	return ret;
- }
- 
- static int qoriq_tmu_remove(struct platform_device *pdev)
-@@ -237,7 +238,6 @@ static int qoriq_tmu_remove(struct platform_device *pdev)
- 	/* Disable monitoring */
- 	tmu_write(data, TMR_DISABLE, &data->regs->tmr);
- 
--	iounmap(data->regs);
- 	platform_set_drvdata(pdev, NULL);
- 
- 	return 0;
--- 
-2.21.0
+On ARM64 platforms system states are entered through PSCI firmware
+interface that works for ACPI and device tree alike.
 
+Lorenzo
