@@ -2,66 +2,159 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AFAB848E7D
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 21:26:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C0EBD48EF8
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 21:28:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728936AbfFQT0h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 15:26:37 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:39950 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725938AbfFQT0h (ORCPT
+        id S1728787AbfFQT2d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 15:28:33 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:41313 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726357AbfFQT2c (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 15:26:37 -0400
-Received: by mail-wr1-f66.google.com with SMTP id p11so11267275wre.7
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2019 12:26:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:sender:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=OOw5x/J4wgJdDk11jX3bqqbWlKZgew2Sog0cRH396k8=;
-        b=o5c10gtWHlSNRl3/LiUvQ1cQ+z8kJuurDcVFdsIrkLY/cZz70eHHgNJfYIOPV2j3hG
-         7uIKUoFkcgGvVHfuBNqfzmZ972ASUQ2UObb8G0uOlsIEzB3KLgsHl3qKrpjEmstiRth2
-         CewjyMet1ebsrXQKT0aRgW8LTuZtzjf/+u0A21o/7zbL7ah7NqMQSySCYR1jeJEGWWfq
-         ZijOUJWPmsOv5Qf5Bo0pIv50sHgkYC1Shs4pn6H1oykiUAJEBb6TofPigDmg4X46Hs8s
-         nYvc3Dg24JQUezxoO0QR1Gg3kWgW6ph+1+uvcTp8tEhfrNjIK+T6a8T/QQkgv/az2CvW
-         ftnQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:sender:from:date
-         :message-id:subject:to:content-transfer-encoding;
-        bh=OOw5x/J4wgJdDk11jX3bqqbWlKZgew2Sog0cRH396k8=;
-        b=IV2sJp0C245inCsivxA9f3q42jJaJ5hzDuE2HUJLWalUDNwd7qQ0PmxcGK+Kvh/3+p
-         gWq0PN3s+sUqyezDLZOsgDJ9B8wA/R/PGAMWwI2xSdUVJeg4KOhq/Riaw1UR2rQH7ko3
-         W8amG6qBlQ6Y32GD/Kfyohu7kF0UvGta00Qz2nlqPtrbqd94vbkCjvFVw9+AhBFOB0vW
-         kywGBAPMPkUEVblZ0MM6JeOQ3njF8CXCc6HaSsR+CH86UED5a5AhQItxMj/4oLznUKK1
-         7PfEpHoWS8937cgvyjlSLDE3ArixE2pEKk4cgzs70ES9qeEkJopyo6VMGzjkvfTyEKor
-         UK9Q==
-X-Gm-Message-State: APjAAAWi3McRkRiMAZKNWcPPgQkEALGMaS5oq1HIsB0knyb0NjdrJxzJ
-        rxd0rlPVJ9UkJpIfXhQsXtukg4AWAsklQa474hA=
-X-Google-Smtp-Source: APXvYqzurknXhmjwvrJIyz7h0WqkiABR9N7lx1f44zjc7WNgmeUJ5mOVHNqk8Em0gdg81a+M1QsXxm8iDqoju6vH0dw=
-X-Received: by 2002:adf:9dcc:: with SMTP id q12mr8759894wre.6.1560799595225;
- Mon, 17 Jun 2019 12:26:35 -0700 (PDT)
+        Mon, 17 Jun 2019 15:28:32 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x5HJRABa3563789
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Mon, 17 Jun 2019 12:27:10 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x5HJRABa3563789
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019051801; t=1560799630;
+        bh=qVrqCOSxoxKaGACE3JUe0YlCveq6puWgKfAYyVMSSTg=;
+        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
+        b=bI22uc2GzGld7ya2PNv/R4vLEFGvK3BkGvhfjrHdvEoA5Ec5Yhfb24CIvRjDl4cLT
+         nx/63UJuCUd9tfjB9fnWnXJacReEtdjAHnBkdZhWLnU6dLcEBwrVigVmNOxd4Xw4Ey
+         5aUdditOa5whZ5jfq3bAZwrHk76ElJgw7kM7/FbJxqrRrtQGY9ykKBtdnBzVTBo1Kl
+         hKzk/zyNKL8DmiXmuJijoD8Na7ODtXVJBUfBCJtvy5AeN6pmAiCfpn41TZTjFgvfhg
+         jaocN3RyJ+zg+gsYl+hApGQhVCoZYYKvCTrcJ3tLCI9/4lgg0xgwaYWd+meMCncFQO
+         kXDRQB3yPfosA==
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x5HJR9GF3563786;
+        Mon, 17 Jun 2019 12:27:09 -0700
+Date:   Mon, 17 Jun 2019 12:27:09 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Mathieu Poirier <tipbot@zytor.com>
+Message-ID: <tip-3c21d7d813c55fa1688c2223fe15a1c5cb14a559@git.kernel.org>
+Cc:     jolsa@redhat.com, leo.yan@linaro.org, peterz@infradead.org,
+        mathieu.poirier@linaro.org, suzuki.poulose@arm.com,
+        linux-kernel@vger.kernel.org, alexander.shishkin@linux.intel.com,
+        hpa@zytor.com, acme@redhat.com, mingo@kernel.org,
+        namhyung@kernel.org, tglx@linutronix.de
+Reply-To: mathieu.poirier@linaro.org, peterz@infradead.org,
+          mingo@kernel.org, namhyung@kernel.org, tglx@linutronix.de,
+          linux-kernel@vger.kernel.org, alexander.shishkin@linux.intel.com,
+          suzuki.poulose@arm.com, leo.yan@linaro.org, jolsa@redhat.com,
+          hpa@zytor.com, acme@redhat.com
+In-Reply-To: <20190524173508.29044-12-mathieu.poirier@linaro.org>
+References: <20190524173508.29044-12-mathieu.poirier@linaro.org>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/core] perf cs-etm: Move thread to traceid_queue
+Git-Commit-ID: 3c21d7d813c55fa1688c2223fe15a1c5cb14a559
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Reply-To: ste1959bury@gmail.com
-Received: by 2002:a5d:42c2:0:0:0:0:0 with HTTP; Mon, 17 Jun 2019 12:26:32
- -0700 (PDT)
-From:   Steven Utonbury <stev1959bury@gmail.com>
-Date:   Mon, 17 Jun 2019 20:26:32 +0100
-X-Google-Sender-Auth: WBHMDGy9drUlZvBuo0JGvHM1jLc
-Message-ID: <CAMZQ8uChwAK0Mhg=GC3u2Ge6DtGAcNj=c6xLnNMpwO85tKF3og@mail.gmail.com>
-Subject: =?UTF-8?B?16nXnNeV150=?=
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
+X-Spam-Status: No, score=-1.2 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DATE_IN_FUTURE_06_12,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,
+        DKIM_VALID_EF autolearn=ham autolearn_force=no version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-16nXnNeV150sDQoNCteQ157XldeoINec15kg16nXp9eZ15HXnNeqINeQ16og15TXlNem16LXlCDX
-qdep15zXl9eq15kg15DXnNeZ15og15HXoNeV15LXoiDXnNeU16TXp9eT15Qg16nXnCDXlNec16fX
-ldeXINeU157XkNeV15fXqNeqINep15zXmSwNCteU15XXk9eiINec15kg15DXnSDXp9eZ15HXnNeq
-INeQ15XXqteUINeV15DXqiDXm9eV15XXoNeV16rXmdeaINeR16LXodenINeV15vXk9eZINec16rX
-qiDXnNeaINeQ16og15TXnteZ15PXoiDXldeb15nXpteTDQrXoNeZ16rXnyDXnNeU16nXmdeSINeZ
-16LXkyDXlteULiDXoNeh15Qg15XXl9eW15XXqCDXkNec15kuDQoNCteR15HXqNeb15QNCteh15jX
-mdeR158NCg==
+Commit-ID:  3c21d7d813c55fa1688c2223fe15a1c5cb14a559
+Gitweb:     https://git.kernel.org/tip/3c21d7d813c55fa1688c2223fe15a1c5cb14a559
+Author:     Mathieu Poirier <mathieu.poirier@linaro.org>
+AuthorDate: Fri, 24 May 2019 11:35:02 -0600
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Mon, 10 Jun 2019 15:50:02 -0300
+
+perf cs-etm: Move thread to traceid_queue
+
+The thread field of structure cs_etm_queue is CPU dependent and as such
+need to be part of the cs_etm_traceid_queue in order to support CPU-wide
+trace scenarios.
+
+Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+Tested-by: Leo Yan <leo.yan@linaro.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Suzuki Poulouse <suzuki.poulose@arm.com>
+Cc: coresight@lists.linaro.org
+Cc: linux-arm-kernel@lists.infradead.org
+Link: http://lkml.kernel.org/r/20190524173508.29044-12-mathieu.poirier@linaro.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/util/cs-etm.c | 17 ++++++++++-------
+ 1 file changed, 10 insertions(+), 7 deletions(-)
+
+diff --git a/tools/perf/util/cs-etm.c b/tools/perf/util/cs-etm.c
+index 531bbb355ba4..0d51d6d9a594 100644
+--- a/tools/perf/util/cs-etm.c
++++ b/tools/perf/util/cs-etm.c
+@@ -65,6 +65,7 @@ struct cs_etm_traceid_queue {
+ 	u64 period_instructions;
+ 	size_t last_branch_pos;
+ 	union perf_event *event_buf;
++	struct thread *thread;
+ 	struct branch_stack *last_branch;
+ 	struct branch_stack *last_branch_rb;
+ 	struct cs_etm_packet *prev_packet;
+@@ -74,7 +75,6 @@ struct cs_etm_traceid_queue {
+ 
+ struct cs_etm_queue {
+ 	struct cs_etm_auxtrace *etm;
+-	struct thread *thread;
+ 	struct cs_etm_decoder *decoder;
+ 	struct auxtrace_buffer *buffer;
+ 	unsigned int queue_nr;
+@@ -415,7 +415,7 @@ static void cs_etm__free_queue(void *priv)
+ 	if (!etmq)
+ 		return;
+ 
+-	thread__zput(etmq->thread);
++	thread__zput(etmq->traceid_queues->thread);
+ 	cs_etm_decoder__free(etmq->decoder);
+ 	zfree(&etmq->traceid_queues->event_buf);
+ 	zfree(&etmq->traceid_queues->last_branch);
+@@ -503,7 +503,7 @@ static u32 cs_etm__mem_access(struct cs_etm_queue *etmq, u64 address,
+ 	machine = etmq->etm->machine;
+ 	cpumode = cs_etm__cpu_mode(etmq, address);
+ 
+-	thread = etmq->thread;
++	thread = etmq->traceid_queues->thread;
+ 	if (!thread) {
+ 		if (cpumode != PERF_RECORD_MISC_KERNEL)
+ 			return 0;
+@@ -819,18 +819,21 @@ cs_etm__get_trace(struct cs_etm_queue *etmq)
+ static void cs_etm__set_pid_tid_cpu(struct cs_etm_auxtrace *etm,
+ 				    struct auxtrace_queue *queue)
+ {
++	struct cs_etm_traceid_queue *tidq;
+ 	struct cs_etm_queue *etmq = queue->priv;
+ 
++	tidq = cs_etm__etmq_get_traceid_queue(etmq, CS_ETM_PER_THREAD_TRACEID);
++
+ 	/* CPU-wide tracing isn't supported yet */
+ 	if (queue->tid == -1)
+ 		return;
+ 
+-	if ((!etmq->thread) && (etmq->tid != -1))
+-		etmq->thread = machine__find_thread(etm->machine, -1,
++	if ((!tidq->thread) && (etmq->tid != -1))
++		tidq->thread = machine__find_thread(etm->machine, -1,
+ 						    etmq->tid);
+ 
+-	if (etmq->thread)
+-		etmq->pid = etmq->thread->pid_;
++	if (tidq->thread)
++		etmq->pid = tidq->thread->pid_;
+ }
+ 
+ static int cs_etm__synth_instruction_sample(struct cs_etm_queue *etmq,
