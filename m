@@ -2,110 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9D3F647C09
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 10:22:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 912BE47C26
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 10:23:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726540AbfFQIWB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 04:22:01 -0400
-Received: from mx2.suse.de ([195.135.220.15]:52094 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725791AbfFQIWB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 04:22:01 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 642EFAF4C;
-        Mon, 17 Jun 2019 08:21:59 +0000 (UTC)
-Date:   Mon, 17 Jun 2019 10:21:56 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Alastair D'Silva <alastair@d-silva.org>
-Cc:     'Alastair D'Silva' <alastair@au1.ibm.com>,
-        'Arun KS' <arunks@codeaurora.org>,
-        'Mukesh Ojha' <mojha@codeaurora.org>,
-        'Logan Gunthorpe' <logang@deltatee.com>,
-        'Wei Yang' <richard.weiyang@gmail.com>,
-        'Peter Zijlstra' <peterz@infradead.org>,
-        'Ingo Molnar' <mingo@kernel.org>, linux-mm@kvack.org,
-        'Qian Cai' <cai@lca.pw>,
-        'Thomas Gleixner' <tglx@linutronix.de>,
-        'Andrew Morton' <akpm@linux-foundation.org>,
-        'Mike Rapoport' <rppt@linux.vnet.ibm.com>,
-        'Baoquan He' <bhe@redhat.com>,
-        'David Hildenbrand' <david@redhat.com>,
-        'Josh Poimboeuf' <jpoimboe@redhat.com>,
-        'Pavel Tatashin' <pasha.tatashin@soleen.com>,
-        'Juergen Gross' <jgross@suse.com>,
-        'Oscar Salvador' <osalvador@suse.com>,
-        'Jiri Kosina' <jkosina@suse.cz>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/5] mm/hotplug: Avoid RCU stalls when removing large
- amounts of memory
-Message-ID: <20190617082156.GA1492@dhcp22.suse.cz>
-References: <20190617043635.13201-1-alastair@au1.ibm.com>
- <20190617043635.13201-5-alastair@au1.ibm.com>
- <20190617074715.GE30420@dhcp22.suse.cz>
- <068b01d524e2$4a5f5c30$df1e1490$@d-silva.org>
+        id S1727601AbfFQIXW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 04:23:22 -0400
+Received: from aclms1.advantech.com.tw ([61.58.41.199]:53019 "EHLO
+        ACLMS1.advantech.com.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725862AbfFQIXW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Jun 2019 04:23:22 -0400
+Received: from taipei08.ADVANTECH.CORP (unverified [172.20.0.235]) by ACLMS1.advantech.com.tw
+ (Clearswift SMTPRS 5.6.0) with ESMTP id <Td872a8c9b5ac14014b1070@ACLMS1.advantech.com.tw>;
+ Mon, 17 Jun 2019 16:23:20 +0800
+From:   <Amy.Shih@advantech.com.tw>
+To:     <she90122@gmail.com>
+CC:     <amy.shih@advantech.com.tw>, <oakley.ding@advantech.com.tw>,
+        <jia.sui@advantech.com.cn>, Jean Delvare <jdelvare@suse.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        <linux-hwmon@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [v2 9/9] hwmon: (nct7904) Fix wrong registers setting for temperature.
+Date:   Mon, 17 Jun 2019 08:22:55 +0000
+Message-ID: <9b03a23bbb5385658c21bf5129a5b1c9b5065237.1560756733.git.amy.shih@advantech.com.tw>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <928e46508bbe1ebc0763c3d2403a5aebe95af552.1560756733.git.amy.shih@advantech.com.tw>
+References: <928e46508bbe1ebc0763c3d2403a5aebe95af552.1560756733.git.amy.shih@advantech.com.tw>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <068b01d524e2$4a5f5c30$df1e1490$@d-silva.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+X-Originating-IP: [172.17.10.58]
+X-ClientProxiedBy: ACLDAG.ADVANTECH.CORP (172.20.2.88) To
+ taipei08.ADVANTECH.CORP (172.20.0.235)
+X-StopIT: No
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 17-06-19 17:57:16, Alastair D'Silva wrote:
-> > -----Original Message-----
-> > From: Michal Hocko <mhocko@kernel.org>
-> > Sent: Monday, 17 June 2019 5:47 PM
-> > To: Alastair D'Silva <alastair@au1.ibm.com>
-> > Cc: alastair@d-silva.org; Arun KS <arunks@codeaurora.org>; Mukesh Ojha
-> > <mojha@codeaurora.org>; Logan Gunthorpe <logang@deltatee.com>; Wei
-> > Yang <richard.weiyang@gmail.com>; Peter Zijlstra <peterz@infradead.org>;
-> > Ingo Molnar <mingo@kernel.org>; linux-mm@kvack.org; Qian Cai
-> > <cai@lca.pw>; Thomas Gleixner <tglx@linutronix.de>; Andrew Morton
-> > <akpm@linux-foundation.org>; Mike Rapoport <rppt@linux.vnet.ibm.com>;
-> > Baoquan He <bhe@redhat.com>; David Hildenbrand <david@redhat.com>;
-> > Josh Poimboeuf <jpoimboe@redhat.com>; Pavel Tatashin
-> > <pasha.tatashin@soleen.com>; Juergen Gross <jgross@suse.com>; Oscar
-> > Salvador <osalvador@suse.com>; Jiri Kosina <jkosina@suse.cz>; linux-
-> > kernel@vger.kernel.org
-> > Subject: Re: [PATCH 4/5] mm/hotplug: Avoid RCU stalls when removing large
-> > amounts of memory
-> > 
-> > On Mon 17-06-19 14:36:30,  Alastair D'Silva  wrote:
-> > > From: Alastair D'Silva <alastair@d-silva.org>
-> > >
-> > > When removing sufficiently large amounts of memory, we trigger RCU
-> > > stall detection. By periodically calling cond_resched(), we avoid
-> > > bogus stall warnings.
-> > >
-> > > Signed-off-by: Alastair D'Silva <alastair@d-silva.org>
-> > > ---
-> > >  mm/memory_hotplug.c | 3 +++
-> > >  1 file changed, 3 insertions(+)
-> > >
-> > > diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c index
-> > > e096c987d261..382b3a0c9333 100644
-> > > --- a/mm/memory_hotplug.c
-> > > +++ b/mm/memory_hotplug.c
-> > > @@ -578,6 +578,9 @@ void __remove_pages(struct zone *zone, unsigned
-> > long phys_start_pfn,
-> > >  		__remove_section(zone, __pfn_to_section(pfn),
-> > map_offset,
-> > >  				 altmap);
-> > >  		map_offset = 0;
-> > > +
-> > > +		if (!(i & 0x0FFF))
-> > > +			cond_resched();
-> > 
-> > We already do have cond_resched before __remove_section. Why is an
-> > additional needed?
-> 
-> I was getting stalls when removing ~1TB of memory.
+From: "amy.shih" <amy.shih@advantech.com.tw>
 
-Have debugged what is the source of the stall? We do cond_resched once a
-memory section which should be a constant unit of work regardless of the
-total amount of memory to be removed.
+For "attributes temp[1-*]_max" and "temp[1-*]_max_hyst", should
+show the reading of "WARNING TEMPERATURE" and "WARNING TEMPERATURE
+HYSTERESIS" registers. For attribute "temp[1-*]_crit" and
+"temp[1-*]_crit_hyst", shuld show the reading of "CRITICAL TEMPERATURE"
+and "CRITICAL TEMPERATURE HYSTERESIS" registers in datasheet.
+
+Signed-off-by: amy.shih <amy.shih@advantech.com.tw>
+---
+Changes in v2:
+- Fix wrong registers setting for temperature.
+
+ drivers/hwmon/nct7904.c | 32 ++++++++++++++++----------------
+ 1 file changed, 16 insertions(+), 16 deletions(-)
+
+diff --git a/drivers/hwmon/nct7904.c b/drivers/hwmon/nct7904.c
+index fc145c73a4e7..d842c10ba11f 100644
+--- a/drivers/hwmon/nct7904.c
++++ b/drivers/hwmon/nct7904.c
+@@ -399,23 +399,23 @@ static int nct7904_read_temp(struct device *dev, u32 attr, int channel,
+ 		return 0;
+ 	case hwmon_temp_max:
+ 		reg1 = LTD_HV_HL_REG;
+-		reg2 = TEMP_CH1_C_REG;
+-		reg3 = DTS_T_CPU1_C_REG;
++		reg2 = TEMP_CH1_W_REG;
++		reg3 = DTS_T_CPU1_W_REG;
+ 		break;
+ 	case hwmon_temp_max_hyst:
+ 		reg1 = LTD_LV_HL_REG;
+-		reg2 = TEMP_CH1_CH_REG;
+-		reg3 = DTS_T_CPU1_CH_REG;
++		reg2 = TEMP_CH1_WH_REG;
++		reg3 = DTS_T_CPU1_WH_REG;
+ 		break;
+ 	case hwmon_temp_crit:
+ 		reg1 = LTD_HV_LL_REG;
+-		reg2 = TEMP_CH1_W_REG;
+-		reg3 = DTS_T_CPU1_W_REG;
++		reg2 = TEMP_CH1_C_REG;
++		reg3 = DTS_T_CPU1_C_REG;
+ 		break;
+ 	case hwmon_temp_crit_hyst:
+ 		reg1 = LTD_LV_LL_REG;
+-		reg2 = TEMP_CH1_WH_REG;
+-		reg3 = DTS_T_CPU1_WH_REG;
++		reg2 = TEMP_CH1_CH_REG;
++		reg3 = DTS_T_CPU1_CH_REG;
+ 		break;
+ 	default:
+ 		return -EOPNOTSUPP;
+@@ -508,23 +508,23 @@ static int nct7904_write_temp(struct device *dev, u32 attr, int channel,
+ 	switch (attr) {
+ 	case hwmon_temp_max:
+ 		reg1 = LTD_HV_HL_REG;
+-		reg2 = TEMP_CH1_C_REG;
+-		reg3 = DTS_T_CPU1_C_REG;
++		reg2 = TEMP_CH1_W_REG;
++		reg3 = DTS_T_CPU1_W_REG;
+ 		break;
+ 	case hwmon_temp_max_hyst:
+ 		reg1 = LTD_LV_HL_REG;
+-		reg2 = TEMP_CH1_CH_REG;
+-		reg3 = DTS_T_CPU1_CH_REG;
++		reg2 = TEMP_CH1_WH_REG;
++		reg3 = DTS_T_CPU1_WH_REG;
+ 		break;
+ 	case hwmon_temp_crit:
+ 		reg1 = LTD_HV_LL_REG;
+-		reg2 = TEMP_CH1_W_REG;
+-		reg3 = DTS_T_CPU1_W_REG;
++		reg2 = TEMP_CH1_C_REG;
++		reg3 = DTS_T_CPU1_C_REG;
+ 		break;
+ 	case hwmon_temp_crit_hyst:
+ 		reg1 = LTD_LV_LL_REG;
+-		reg2 = TEMP_CH1_WH_REG;
+-		reg3 = DTS_T_CPU1_WH_REG;
++		reg2 = TEMP_CH1_CH_REG;
++		reg3 = DTS_T_CPU1_CH_REG;
+ 		break;
+ 	default:
+ 		return -EOPNOTSUPP;
 -- 
-Michal Hocko
-SUSE Labs
+2.17.1
+
