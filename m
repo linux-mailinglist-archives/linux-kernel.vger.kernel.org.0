@@ -2,127 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D4BA3487D6
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 17:51:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 90BF0487E0
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 17:51:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728431AbfFQPud (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 11:50:33 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:39196 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728248AbfFQPub (ORCPT
+        id S1728573AbfFQPu4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 11:50:56 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:43746 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726962AbfFQPuz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 11:50:31 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=BR2md6n6Q18on79dMFcaXNz3srYx6Sfx4K07iFPAszA=; b=Q9HxfQrqVz+qo4SCuT0oYOUGY
-        s2zAOLRSQbww5wegoEzCwYdsqD7jW6FS56wDaXTzTFCAOd+Hi0z3HWWssf+Gn2Ilf3bfFHLug2JP7
-        +4LTrS5GXNNupL0/8f8fqBt3TYUmoICe5y64Vgbmg9h6WXWsp6eQb/+4/hj1B33TR8czRrK8vvlLZ
-        COXJJN+qpkiM5eEhvQqoIeardkUme6LKIOgjCvEma1iklypdDJverql/CC+FYraT0j/Gb7osmIpnK
-        Sb+miWQ6wXmNPCTaqqK9ykDY+KkFid/Skbutgsu7KAprjgGp7sweQWo5p7xt8fRgIM83+Fg1MR1Bs
-        UyDwHJF3w==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hcttc-0007YJ-4V; Mon, 17 Jun 2019 15:50:12 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 7D6CE201F4619; Mon, 17 Jun 2019 17:50:10 +0200 (CEST)
-Date:   Mon, 17 Jun 2019 17:50:10 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Qais Yousef <qais.yousef@arm.com>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        linux-kernel@vger.kernel.org,
-        Pavankumar Kondeti <pkondeti@codeaurora.org>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Uwe Kleine-Konig <u.kleine-koenig@pengutronix.de>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Quentin Perret <quentin.perret@arm.com>
-Subject: Re: [PATCH v3 5/6] sched: Add sched_overutilized tracepoint
-Message-ID: <20190617155010.GH3436@hirez.programming.kicks-ass.net>
-References: <20190604111459.2862-1-qais.yousef@arm.com>
- <20190604111459.2862-6-qais.yousef@arm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190604111459.2862-6-qais.yousef@arm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Mon, 17 Jun 2019 11:50:55 -0400
+Received: by mail-pl1-f193.google.com with SMTP id cl9so4248031plb.10
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2019 08:50:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=NQ6QeGRRwWpLQqcLyIgK5BRWjkN7YKs7Jyn+T3KU9nA=;
+        b=Fq8DdlBrF03jhPDYG0pss5OnBdYYhk3qiKfxgrtoJKAZ0OhtMQpnKTRQo85CMOPEV1
+         YokavXCe5BEJad2n3xc3F1yBy6ADyyNZD2hM/YbKBbwc0sTEFV0inhchm8/k3CU79N2g
+         bv2kw7CF8Iry5oYKahMVIriaEd6sETYdlsbRjtHs4JRGwFQzcUjLayrAcrf8IVFfC90d
+         4bK7yOxZ1aDhayshz7uyA0yoLHnBqBg1APmjeCNjJ1KE5+EyFXQAtjTt0RosoFvXZmr1
+         Ui2RLFNd8GiYoR6eEpj79QAAz1rs9hybUg//Nv5R4RSpXQ5DSqR4xCCl9ewCk4fba5GB
+         KnAg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=NQ6QeGRRwWpLQqcLyIgK5BRWjkN7YKs7Jyn+T3KU9nA=;
+        b=ekuU+3c0oji5Nq1JqgN+XKLngqFpDu5/zG6XIq2o+HY4pbvFE7f9zubHzFNq28Xaso
+         bfOxxX/sboJzE0nIvJDfQeE/vqH+HaWk1lcPXbAGBXjNYRWPRMRLr6v03a82lEw8mt+E
+         yqYx0IyXxrMXmNJa3LsEiI2RG9G5jfoSMZwNj37qfzW++QFIB6pUdxQfDXpfWT6VW/su
+         fuouDhwELG3fAlbN8n7nWobznpk6tzLBGvCqrzuLuc8AulCEOIhQTmj3EtkBOcj38Gwb
+         jiQPEMhvsmwyG1VxfZPiWfrP6qpduDzB05ve8ah3DlRk4/nSdXfsC58NKFb6+I1jgVOp
+         14wA==
+X-Gm-Message-State: APjAAAUVjjxU+vjtgp0cR9CuQ09ATneoEBXNUabAAFaHsnqqnm6kgzHy
+        8VPMIMmp61D98c34377PAYUD
+X-Google-Smtp-Source: APXvYqx0N7SKT7isauDwfe9f+VsvEdgvY9+gJTbRIvT8GbAMvhmKnl3qZ6FpjSaVY5WIbppfQps1nA==
+X-Received: by 2002:a17:902:8490:: with SMTP id c16mr28861348plo.1.1560786654595;
+        Mon, 17 Jun 2019 08:50:54 -0700 (PDT)
+Received: from localhost.localdomain ([2409:4072:629b:c246:9431:2a24:7932:6dba])
+        by smtp.gmail.com with ESMTPSA id n2sm11023603pff.104.2019.06.17.08.50.49
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 17 Jun 2019 08:50:54 -0700 (PDT)
+From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To:     lee.jones@linaro.org, lgirdwood@gmail.com, broonie@kernel.org,
+        robh+dt@kernel.org
+Cc:     afaerber@suse.de, linux-actions@lists.infradead.org,
+        linux-kernel@vger.kernel.org, thomas.liau@actions-semi.com,
+        devicetree@vger.kernel.org, linus.walleij@linaro.org,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: [PATCH 4/4] MAINTAINERS: Add entry for ATC260x PMIC
+Date:   Mon, 17 Jun 2019 21:20:11 +0530
+Message-Id: <20190617155011.15376-5-manivannan.sadhasivam@linaro.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190617155011.15376-1-manivannan.sadhasivam@linaro.org>
+References: <20190617155011.15376-1-manivannan.sadhasivam@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 04, 2019 at 12:14:58PM +0100, Qais Yousef wrote:
-> The new tracepoint allows us to track the changes in overutilized
-> status.
-> 
-> Overutilized status is associated with EAS. It indicates that the system
-> is in high performance state. EAS is disabled when the system is in this
-> state since there's not much energy savings while high performance tasks
-> are pushing the system to the limit and it's better to default to the
-> spreading behavior of the scheduler.
-> 
-> This tracepoint helps understanding and debugging the conditions under
-> which this happens.
-> 
-> Signed-off-by: Qais Yousef <qais.yousef@arm.com>
-> ---
->  include/trace/events/sched.h |  4 ++++
->  kernel/sched/fair.c          | 11 +++++++++--
->  2 files changed, 13 insertions(+), 2 deletions(-)
-> 
-> diff --git a/include/trace/events/sched.h b/include/trace/events/sched.h
-> index c7dd9bc7f001..edd96e04049f 100644
-> --- a/include/trace/events/sched.h
-> +++ b/include/trace/events/sched.h
-> @@ -621,6 +621,10 @@ DECLARE_TRACE(pelt_se_tp,
->  	TP_PROTO(struct sched_entity *se),
->  	TP_ARGS(se));
->  
-> +DECLARE_TRACE(sched_overutilized_tp,
-> +	TP_PROTO(int overutilized, struct root_domain *rd),
-> +	TP_ARGS(overutilized, rd));
-> +
+Add MAINTAINERS entry for ATC260x PMIC.
 
-strictly speaking you only need @rd :-)
+Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+---
+ MAINTAINERS | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
->  #endif /* _TRACE_SCHED_H */
->  
->  /* This part must be outside protection */
-> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> index 8e0015ebf109..e2418741608e 100644
-> --- a/kernel/sched/fair.c
-> +++ b/kernel/sched/fair.c
-> @@ -5179,8 +5179,10 @@ static inline bool cpu_overutilized(int cpu)
->  
->  static inline void update_overutilized_status(struct rq *rq)
->  {
-> -	if (!READ_ONCE(rq->rd->overutilized) && cpu_overutilized(rq->cpu))
-> +	if (!READ_ONCE(rq->rd->overutilized) && cpu_overutilized(rq->cpu)) {
->  		WRITE_ONCE(rq->rd->overutilized, SG_OVERUTILIZED);
-> +		trace_sched_overutilized_tp(1, rq->rd);
-> +	}
->  }
->  #else
->  static inline void update_overutilized_status(struct rq *rq) { }
-> @@ -8542,8 +8544,13 @@ static inline void update_sd_lb_stats(struct lb_env *env, struct sd_lb_stats *sd
->  
->  		/* Update over-utilization (tipping point, U >= 0) indicator */
->  		WRITE_ONCE(rd->overutilized, sg_status & SG_OVERUTILIZED);
-> +
-> +		trace_sched_overutilized_tp(!!(sg_status & SG_OVERUTILIZED), rd);
->  	} else if (sg_status & SG_OVERUTILIZED) {
-> -		WRITE_ONCE(env->dst_rq->rd->overutilized, SG_OVERUTILIZED);
-> +		struct root_domain *rd = env->dst_rq->rd;
-> +
-> +		WRITE_ONCE(rd->overutilized, SG_OVERUTILIZED);
-> +		trace_sched_overutilized_tp(1, rd);
->  	}
->  }
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 11d6937c4688..57112194cd90 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -2646,6 +2646,15 @@ S:	Supported
+ F:	Documentation/aoe/
+ F:	drivers/block/aoe/
+ 
++ATC260X PMIC MFD DRIVER
++M:	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
++S:	Maintained
++L:	linux-actions@lists.infradead.org
++F:	Documentation/devicetree/bindings/mfd/atc260x.txt
++F:	include/linux/mfd/atc260x/*
++F:	drivers/mfd/atc260*
++F:	drivers/regulator/atc260x-regulator.c
++
+ ATHEROS 71XX/9XXX GPIO DRIVER
+ M:	Alban Bedel <albeu@free.fr>
+ W:	https://github.com/AlbanBedel/linux
+-- 
+2.17.1
 
-But I figure since we need both values anyway, this isn't too much of a
-bother.
-
-I'm going to flip the argument order though.
