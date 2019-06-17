@@ -2,62 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E7AFC48BAA
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 20:13:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 76BC048BBE
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 20:16:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726990AbfFQSNn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 14:13:43 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:41002 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726074AbfFQSNl (ORCPT
+        id S1727890AbfFQSQZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 14:16:25 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:44695 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726121AbfFQSQY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 14:13:41 -0400
-Received: by mail-lj1-f193.google.com with SMTP id s21so10245802lji.8
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2019 11:13:40 -0700 (PDT)
+        Mon, 17 Jun 2019 14:16:24 -0400
+Received: by mail-lj1-f195.google.com with SMTP id k18so10216781ljc.11
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2019 11:16:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linux-foundation.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=J081FiTz/dcpmcwzq5O6GF0XKXf+1rYscrgrosKZT9c=;
-        b=HBku58NGVAv95CcjvbfqVxo4zSvDzDkjpBqEa1eT1BUBn499MwtAVYnMb8KuIY8q1x
-         tRdMVTbOCh2URPJ2ZL0QtQNOYWR65ySiiK8lBU7nvffrP+x6MGzSjtH5IXIMF7+XVEV/
-         Dp3mtWFQ74+2UcMPuzNH0qKa44Gwg/tiwMvL4=
+        bh=3KbGZcl0Gi0jNy9coPKcSJr5heE7ZQLRdeNj3JGzwpA=;
+        b=T15jTJllZ2uRduB3YrgRGX6wMT+z9NIUkv1VPJmC8yz0PENs8is1UxhM80bHpn8Wjc
+         LHml4nVfexaFPrpvousJxFP6ZKHWn6WTtjuwP5+9yj+P/JOWZf04CZCjP8YosgpSq8m6
+         YDg70VW3sT3LWCqjEU3XU9676uzdpl6cv7EhY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=J081FiTz/dcpmcwzq5O6GF0XKXf+1rYscrgrosKZT9c=;
-        b=TcntC5MqbQpn95gtO+RDweBgZIHsYJspgmWrqxO2kOr4rksgUvVmpMgHOe1qug5MYQ
-         XkgP4o64WVJ9ezfB54QFWrIeQgNg+r5rD0tQb8upTBvJPJKuKPK9WVR5Hs9MhGVEHl27
-         Y/bcOQP24z5i/HrfGhQ+gGlMfCPXg5Aj2w6JjtDeVVZMrKanTDXN1YurZZjZ7xBrtDJn
-         h6xDYN09ruSAtxt840oosx9bHWUiMshVmw8kHWTYBPXzHlSyY3y957fFta3sJaa69A3+
-         k3fJd9MjFE2VvhvcQ8IxIKuG8DWaK4HrVSL3+LHny22EmsOL8EMpMEL80hVSOgjzdehK
-         gBIQ==
-X-Gm-Message-State: APjAAAVjVtIAtLp69i657C3q79AJbKidjlbHKfjRNx2aRezYW/XxWzMA
-        u3pO9GSejC867kz/zXk1/6vW9xok7PA=
-X-Google-Smtp-Source: APXvYqxFjqH5wZ52Z6YED/Zrl6csxYtTShW0zQQvkbW4knsBSTV4CmadESYhENcbM3sr37ApEzkung==
-X-Received: by 2002:a2e:9dca:: with SMTP id x10mr28721200ljj.17.1560795219209;
-        Mon, 17 Jun 2019 11:13:39 -0700 (PDT)
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com. [209.85.208.182])
-        by smtp.gmail.com with ESMTPSA id i23sm2207516ljb.7.2019.06.17.11.13.36
+        bh=3KbGZcl0Gi0jNy9coPKcSJr5heE7ZQLRdeNj3JGzwpA=;
+        b=eWNwSny6epwDZ5lR2FwCTFWX0oVxQGS+kV3cneMKgzXn5f7NNIl/8yplTqVoLUNxw6
+         hLqWS3J6NvjjTZzq0VSy2iXobWZPL112WOsgo9VkbsR7YtPacmmCkAgluLMNRomYW/4A
+         c4IoHYGAEmVHjhjdRlRw1OBoOB+IUgy54dXp6+M+Q6u+zSjTGhaIsIdG0AuxO4Uly1TI
+         mdhZ5TR9SeKpB7dR2EfYj7e9idrZ0xtMB5vw1Q/4pcWfppHfHMSpuuJxZJVqBSbiSAms
+         rpCUiGFeuQdJcG8TqRihzk4PHnF1BVOthi+EpkP/2gtCPldL3NmcP0v4BKKVgqKXEECW
+         PFzQ==
+X-Gm-Message-State: APjAAAX+ObPUMw661Z1DNq9MFmS4Kj7JLLkrY4DnsrI3k+V0hah0BwVu
+        zLwnsWByFcrZa5xAK1bJtWsTcj6WzFE=
+X-Google-Smtp-Source: APXvYqxHnB1UbKmB3eRJZvwSjlvuIwfuMBL7dcnZ1kWC8iP5c9YPvObjRwOl7qz12ZKlLIHX+Re2vg==
+X-Received: by 2002:a2e:50e:: with SMTP id 14mr41612890ljf.5.1560795381890;
+        Mon, 17 Jun 2019 11:16:21 -0700 (PDT)
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com. [209.85.208.174])
+        by smtp.gmail.com with ESMTPSA id v7sm2253520ljj.3.2019.06.17.11.16.19
         for <linux-kernel@vger.kernel.org>
         (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Mon, 17 Jun 2019 11:13:37 -0700 (PDT)
-Received: by mail-lj1-f182.google.com with SMTP id p17so10286523ljg.1
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2019 11:13:36 -0700 (PDT)
-X-Received: by 2002:a2e:9bc6:: with SMTP id w6mr17483710ljj.156.1560795216288;
- Mon, 17 Jun 2019 11:13:36 -0700 (PDT)
+        Mon, 17 Jun 2019 11:16:19 -0700 (PDT)
+Received: by mail-lj1-f174.google.com with SMTP id v18so10271242ljh.6
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2019 11:16:19 -0700 (PDT)
+X-Received: by 2002:a2e:a0cf:: with SMTP id f15mr30169158ljm.180.1560795379164;
+ Mon, 17 Jun 2019 11:16:19 -0700 (PDT)
 MIME-Version: 1.0
 References: <20190319165123.3967889-1-arnd@arndb.de> <alpine.DEB.2.21.1905072249570.19308@digraph.polyomino.org.uk>
  <87tvd2j9ye.fsf@oldenburg2.str.redhat.com> <CAHk-=wio1e4=WUUwmo-Ph55BEgH_X3oXzBpvPyLQg2TxzfGYuw@mail.gmail.com>
  <871s05fd8o.fsf@oldenburg2.str.redhat.com> <CAHk-=wg4ijSoPq-w7ct_VuZvgHx+tUv_QX-We-62dEwK+AOf2w@mail.gmail.com>
  <87sgs8igfj.fsf@oldenburg2.str.redhat.com> <CAHk-=wjCwnk0nfgCcMYqqX6o9bBrutDtut_fzZ-2VwiZR1y4kw@mail.gmail.com>
- <87k1dkdr9c.fsf@oldenburg2.str.redhat.com>
-In-Reply-To: <87k1dkdr9c.fsf@oldenburg2.str.redhat.com>
+ <87k1dkdr9c.fsf@oldenburg2.str.redhat.com> <CAHk-=wgiZNERDN7p-bsCzzYGRjeqTQw7kJxJnXAHVjqqO8PGrg@mail.gmail.com>
+In-Reply-To: <CAHk-=wgiZNERDN7p-bsCzzYGRjeqTQw7kJxJnXAHVjqqO8PGrg@mail.gmail.com>
 From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Mon, 17 Jun 2019 11:13:20 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wgiZNERDN7p-bsCzzYGRjeqTQw7kJxJnXAHVjqqO8PGrg@mail.gmail.com>
-Message-ID: <CAHk-=wgiZNERDN7p-bsCzzYGRjeqTQw7kJxJnXAHVjqqO8PGrg@mail.gmail.com>
+Date:   Mon, 17 Jun 2019 11:16:03 -0700
+X-Gmail-Original-Message-ID: <CAHk-=whkCOVzXeju8H8iWeh-vWorpWSZG6USFKcOWQ36XokZMA@mail.gmail.com>
+Message-ID: <CAHk-=whkCOVzXeju8H8iWeh-vWorpWSZG6USFKcOWQ36XokZMA@mail.gmail.com>
 Subject: Re: [PATCH] uapi: avoid namespace conflict in linux/posix_types.h
 To:     Florian Weimer <fweimer@redhat.com>
 Cc:     Joseph Myers <joseph@codesourcery.com>,
@@ -75,18 +75,14 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 17, 2019 at 11:03 AM Florian Weimer <fweimer@redhat.com> wrote:
+On Mon, Jun 17, 2019 at 11:13 AM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
 >
-> There's also __kernel_fd_set in <linux/posix_types.h>.  I may have
-> lumped this up with <asm/posix_types.h>, but it has the same problem.
+> That one we might be able to just fix by renaming "fds_bits" to "__fds_bits".
 
-Hmm.
+That said, moving it to another file might be the better option anyway.
 
-That one we might be able to just fix by renaming "fds_bits" to "__fds_bits".
+I think fd_set and friends are now supposed to be in <sys/select.h>
+anyway, and the "it was in <sys/types.h>" is all legacy.
 
-Unlike the "val[]" thing, I don't think anybody is supposed to access
-those fields directly.
-
-Of course, "supposed to" and "does" are two very very different things ;)
-
-                  Linus
+                 Linus
