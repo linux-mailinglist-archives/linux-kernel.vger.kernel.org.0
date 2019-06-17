@@ -2,153 +2,420 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D85A4913B
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 22:22:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6FD3049147
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 22:24:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727529AbfFQUW4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 16:22:56 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:39798 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726023AbfFQUW4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 16:22:56 -0400
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 3E9A886658;
-        Mon, 17 Jun 2019 20:22:37 +0000 (UTC)
-Received: from tonnant.bos.jonmasters.org (ovpn-122-52.rdu2.redhat.com [10.10.122.52])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id A6AF37E5BB;
-        Mon, 17 Jun 2019 20:22:20 +0000 (UTC)
-To:     Tim Chen <tim.c.chen@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-Cc:     Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ben Greear <greearb@candelatech.com>, stable@vger.kernel.org,
-        Andi Kleen <ak@linux.intel.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Jun Nakajima <jun.nakajima@intel.com>,
-        Jiri Kosina <jikos@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        Asit Mallick <asit.k.mallick@intel.com>,
-        Arjan van de Ven <arjan@linux.intel.com>,
-        Waiman Long <longman9394@gmail.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Mark Gross <mgross@linux.intel.com>,
-        LKML <linux-kernel@vger.kernel.org>, x86@kernel.org
-References: <c63945d34bfc9df2412f813d0b9b3a321a65de5d.1560795378.git.tim.c.chen@linux.intel.com>
-From:   Jon Masters <jcm@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=jcm@redhat.com; keydata=
- mQINBE6Ll1oBEADNCMsChhQGT2JDjJPzACWwz2LgW9Scrzg7fMuB0QCZUWwYiFn8aSnWbF1D
- gW8zLaylIUBcoSZNNPQ3S03pHmFtCwCPESaCI/TikHlGA6c996jZzf1zLx/khEecBC1b4pFM
- VbWzE0RosgXotxu0MCaAp3mLOFWRZJu4BHGuSSuqbT4qfJ1euIN4uSD7+GG5M/O3ERIoYV3Q
- E8FBUUKKDRXdI8e1fq7iqg59Dq4P922iuhpbdwQRTRQmb+4uuRaJG7PMP5uBtN+Y0umvYK/y
- ha1kFqunGQ95GTSleD3E5ifjXWAOLjOldl4fxw6a5Z2fbX+uTancr8G85JLzhQp4+0Av5WfV
- MGe+UCUH8nlfJDzFE0q/oltgXDwE+4Pr9J8NSN4heF8XL5Cn6JnE9d/YvgIGEmyf6J/8WPQ+
- nWTqN+VvEkrvn5oHuJOuM16AFRptUFQOJQGCIK/hupwHkR6TjFMA2XLv6CXjAgvWK+z9SAw8
- zUFcqDN983qD3pc88lmSgPp7uArmMwBdCEpVayCLvu+M5kzZz9rty73u3Rv1MF0o+Rtdq4uc
- JLhjCd/FAMTXi5VzkBcuOufgcvqs0kFgloCvdL72+dyowYDJaC8Ir6KNrz3iOk9P56ESY8E3
- 70/wkoyfVnesrih7ntiqltISotRR7lDp4AD8oskaAcGqKy3AYQARAQABtDdKb24gTWFzdGVy
- cyAoSm9uYXRoYW4gQ2hhcmxlcyBNYXN0ZXJzKSA8amNtQHJlZGhhdC5jb20+iQI4BBMBAgAi
- BQJOi5fqAhsDBgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRDkIJuMiuip0RN0D/9Ck2/i
- xD+1F5iYvXwkSSlZzaoWuQiidaRdF4x4QD4QmPpva5CB1GpUcIjwyW9gBYLVMSJq8tcb1FnX
- Hce/pP/0K+p+wI9sH/xK4jQ+CkIHdw8o1i7EWKznxP3gEN5B5k2Qfh0XHoLjNyXQHZc47aFS
- I6W6m0iVpS1HNW22gk3TpN9GfOpiUA/BRmjsIPRdAd3kZAEmhCNwL0W5qfJPahIgYlcCk4R0
- Azw6bjvox87+bf3h36QLENcXKpA5Mv09gIsnNoa+bfHtoTkXW2le+/vM0VGEnMUUuUKGmxjY
- H9LyRyDEvq1XD9aF9WsHyRn7Kip2MrtwRdGpLobe8OIxYw2vkojfDI6cM/HwLeqNn1wBLkfq
- J8ZtOyGGlkTaNqLVDopNS4jJlMe59Ir345N4UaTrN5hJq0Utn/jsej1v8y5kH4ZRFasodTd+
- IytUO0k8lSod6xPF7lM3QmmXjhJFzmnLtyxeKH7csboejLX97b7Y93y3nNOTQJulb01mcLBY
- 6nW49fOAOVbTk4BdmIRMlhR/eX/dWEWLWV0RpQk1IgIFQULLBI5xLazCz41I1EyK0nmxnarw
- 5n4S5tBLxGdl/z8mmkPQkQklwEiEGgb773VTQQxHB3/4DTBHVZ5iYX3mt0Bm3Vm2GyJyMtPb
- Dl5TijAxP5i39cOizPIcoiU6PLdisLkCDQROi5daARAAuB7uqbo8oWZlkniNFb/AkTruoUp6
- ak+VKLrueaQ5HPVVx4maEUdTsk9mZRlBB6nPXQJAHW/jI0qBqG7hFmhZdRN9Ag2bjGbtuK44
- zg/9/dt86n8ASKqu8Q9z1MAslPwm++S9rE02Oif5mlfIl62zlUZhi+ChvaCM+NbZ7u17edo2
- 0QHnFIQwBqlA29xFzjq9pnzpIe0xxLLuuG8yFe/yWfwAnI1S9Yp5UlDdmF6GMtRroXtmxPud
- SnMk6K5wvtvY2mkBSc96ug4EYyZfFyUxjnAfcANFCRGnTyF6XxPOBzhKMeYDBu/SIHCyhF2V
- QFLdSYa0uGSdjqf0hgd09TDa/r7b/pytxJP8+6AZXgQ93JlB+rYfvaLcjypgmPhxXX8UugH8
- GaeZGaFZcYvkdsmjE6SWZuM0QfsML9BdSvFT6+Bf0c45rEhO2c8NTyFUsdqC51C1vamReR6R
- hTc7TFclT++/n29N0ns70edn2lMQ/lDN3uNkQV2xABXFrT1yXdkwN1/7dGnv/4Q+4ihrXJcr
- y6CP6DJJuIiIRK/x6AVszd4S/2PjmxLiSLpuPLjQ18ZsUJrzqDO7Cc46QTgizVTu+sTEL195
- J6quiELm3MB9Ut+6EKzSoJUdNnF/PE/HkzTssQlxZWdO8Yyw3GF2HtHfcyZrW6ZDrZEsnhUC
- otkmigsAEQEAAYkCHwQYAQIACQUCTouXWgIbDAAKCRDkIJuMiuip0eDBD/9rj2V4zO+DWtY0
- HCIn5Cz7HBSw8hRs8orv1QQYUoDZBn5zqIdmjc1SCyNOqTXEEBAnruPE9vxgI0QkuW9uyAWh
- wL7+rzHZefUx5H2HI1FPGfPL5we37gnpf1S+PhOKobd3KKaiQ0DFqdTqPlZIkGXChIXPF0bG
- g6HSY/vVHYC4Rqysj/Sw+74nGzJRSisNt60W0LPRcWdbEX4zEvdUJX4YAbUBoEKLOt1VmRXt
- UeC8hgVOuIxkIVsWlHgVlztn0e0BtOutlR5Lu28D/CWObjHJG6+Kq0PgUiFiHmUFpAhiuPyO
- nwZOLHdVxflxJBdO8GVRV6GqygZQ8fcg/neDb2waYRBUOROEMzNn5+tG11QBbbYLoBL8eKt3
- kgaSfasOaWV5e1+Y6OkZXfjlYqbLkgaFB7ZizUlfsq9sp/aAlAfU5hUISSCaSMinRUQTy6+y
- +9WGZrrwsWZO7wdq1ccGE6bXFRWhteq5UIJS8cg0m0vnrsv9GddFBeNaF34Ye9hlD05ofBuc
- PTfbCfHxsndrq+vPPR64uZrh9i7qO/KFZwKns4yGhO78umvHuyinOvEHA2Of1bOP/ohIbTAz
- VHjokMI4EXkVzgVP9EgwzBwX1PWi6OEFIG0yWltbmFXnn3clTIa/uG1c0VpCRuGtSEtqfC7n
- yrXvw9qg2waGcnb8WuoS+g==
-Subject: Re: [PATCH v3] Documentation: Add section about CPU vulnerabilities
- for Spectre
-Message-ID: <5ff842bb-e0b8-c4aa-134d-32c9d838a162@redhat.com>
-Date:   Mon, 17 Jun 2019 16:22:19 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        id S1728657AbfFQUYm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 16:24:42 -0400
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:35922 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726343AbfFQUYm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Jun 2019 16:24:42 -0400
+Received: by mail-qk1-f196.google.com with SMTP id g18so7082670qkl.3;
+        Mon, 17 Jun 2019 13:24:41 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=+yFGBWiYYs+LRkIy/wEHXx34ZrsVoCh+Sm8uDRzMJKA=;
+        b=TOeWRd/oiVW3hkcYmJmRYFoHKp7KO8dIHOSJ9n6th96EEnyBEiON0X0rS6Z9pKqQlT
+         mJeElW64yRqFa6R3CiLe/KXDcswstqYl3vLux1TJSIFVtK4nRfu/B6H7mQMK/cSDBjR2
+         OBH4VZvpe6cw1tki6XbYnXPxVKtiT0J0xO4ZOiOBRU+KwACWbxKRLHKJp2MH3xKKBan0
+         ehiGyvp6bdkGKRnGs+uGypNKwci9oYxsJ+SqYikg7qzEYe2iILBSbjgo4CruRvXvrtpN
+         EsWTr8x2Uf57CMLivVHptnZc/S02pxoF8R83YC095r4Q22RiBkcukQ60SIiqKOiA5zce
+         i/AQ==
+X-Gm-Message-State: APjAAAVoXH4aClRv+6kUaDSX1FSxZ6uFuTYTvrzYMAj8DDyDJ1wa3nA3
+        Ld5xDXwZ3ATj8XK939AucPA7SnM=
+X-Google-Smtp-Source: APXvYqym4tiaaaEKC75gTYvTvLTaUbQ3HkBwng9/q1W7bDpnlzdEEMOfGQfJIlO/lDSdMeniGNyLzg==
+X-Received: by 2002:a37:ef18:: with SMTP id j24mr89726609qkk.293.1560803080754;
+        Mon, 17 Jun 2019 13:24:40 -0700 (PDT)
+Received: from localhost.localdomain ([64.188.179.192])
+        by smtp.googlemail.com with ESMTPSA id p31sm2084119qtk.55.2019.06.17.13.24.39
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Mon, 17 Jun 2019 13:24:40 -0700 (PDT)
+From:   Rob Herring <robh@kernel.org>
+To:     devicetree@vger.kernel.org
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Will Deacon <will@kernel.org>
+Subject: [PATCH] dt-bindings: arm: Convert PSCI binding to json-schema
+Date:   Mon, 17 Jun 2019 14:22:38 -0600
+Message-Id: <20190617202238.29042-1-robh@kernel.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <c63945d34bfc9df2412f813d0b9b3a321a65de5d.1560795378.git.tim.c.chen@linux.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Mon, 17 Jun 2019 20:22:55 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Tim,
+Convert the PSCI binding to use DT schema format.
 
-Nice writeup. A few suggestions inline.
+Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Cc: Will Deacon <will@kernel.org>
+Signed-off-by: Rob Herring <robh@kernel.org>
+---
+Note that I didn't make cpu_suspend required for arm,psci as some 
+platforms didn't have that and the spec isn't clear if optional or 
+required. One board (artpec6-devboard.dts) also doesn't implement 
+cpu_off.
 
-On 6/17/19 3:11 PM, Tim Chen wrote:
+There's also 1 board (mt8173-evb.dts) that claims 0.1, 0.2, and 1.0
+compatibility. I guess that's valid, but not really clear in the binding
+doc. If we want to just allow any combination of versions, the schema
+for compatible could be simplified a bit.
 
-> +In Spectre variant 2 attacks, the attacker can steer speculative indirect
-> +branches in the victim to gadget code by poisoning the branch target
-> +buffer of a CPU used for predicting indirect branch addresses. Such
-> +poisoning could be done by indirect branching into existing code, with the
-> +address offset of the indirect branch under the attacker's control. Since
-> +the branch prediction hardware does not fully disambiguate branch address
-> +and uses the offset for prediction, this could cause privileged code's
-> +indirect branch to jump to a gadget code with the same offset.
 
-Maybe mention "on impacted hardware" (implied).
+ Documentation/arm64/booting.txt               |   2 +-
+ .../devicetree/bindings/arm/arm-boards        |   2 +-
+ .../devicetree/bindings/arm/idle-states.txt   |   2 +-
+ .../devicetree/bindings/arm/psci.txt          | 111 ------------
+ .../devicetree/bindings/arm/psci.yaml         | 163 ++++++++++++++++++
+ .../translations/zh_CN/arm64/booting.txt      |   2 +-
+ 6 files changed, 167 insertions(+), 115 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/arm/psci.txt
+ create mode 100644 Documentation/devicetree/bindings/arm/psci.yaml
 
-> +One other variant 2 attack vector is for the attacker to poison the
-> +return stack buffer (RSB) [13] to cause speculative RET execution to go
-> +to an gadget.  An attacker's imbalanced CALL instructions might "poison"
-> +entries in the return stack buffer which are later consumed by a victim's
-> +RET instruction.  This attack can be mitigated by flushing the return
-> +stack buffer on context switch, or VM exit.
-
-Maybe replace CALL and RET with generic equivalents or label as x86
-examples.
-
-> +   For kernel code that has been identified where data pointers could
-> +   potentially be influenced for Spectre attacks, new "nospec" accessor
-> +   macros are used to prevent speculative loading of data.
-
-Maybe explain that nospec (speculative clamping) relies on the absence
-of value prediction in the masking (in current hardware). It may NOT
-always be a safe approach in future hardware, where Spectre-v1 attacks
-are likely to persist but hardware may speculate about the mask value.
-
-> +   On x86, a user process can protect itself against Spectre variant
-> +   2 attacks by using the prctl() syscall to disable indirect branch
-> +   speculation for itself.
-
-This is not x86 specific. The same prctl is wired up elsewhere also.
-
-Jon.
-
+diff --git a/Documentation/arm64/booting.txt b/Documentation/arm64/booting.txt
+index fbab7e21d116..1a87dee739db 100644
+--- a/Documentation/arm64/booting.txt
++++ b/Documentation/arm64/booting.txt
+@@ -257,7 +257,7 @@ following manner:
+   processors") to bring CPUs into the kernel.
+ 
+   The device tree should contain a 'psci' node, as described in
+-  Documentation/devicetree/bindings/arm/psci.txt.
++  Documentation/devicetree/bindings/arm/psci.yaml.
+ 
+ - Secondary CPU general-purpose register settings
+   x0 = 0 (reserved for future use)
+diff --git a/Documentation/devicetree/bindings/arm/arm-boards b/Documentation/devicetree/bindings/arm/arm-boards
+index abff8d834a6a..6758ece324b1 100644
+--- a/Documentation/devicetree/bindings/arm/arm-boards
++++ b/Documentation/devicetree/bindings/arm/arm-boards
+@@ -197,7 +197,7 @@ Required nodes:
+ The description for the board must include:
+    - a "psci" node describing the boot method used for the secondary CPUs.
+      A detailed description of the bindings used for "psci" nodes is present
+-     in the psci.txt file.
++     in the psci.yaml file.
+    - a "cpus" node describing the available cores and their associated
+      "enable-method"s. For more details see cpus.txt file.
+ 
+diff --git a/Documentation/devicetree/bindings/arm/idle-states.txt b/Documentation/devicetree/bindings/arm/idle-states.txt
+index 3bdbe675b9e6..326f29b270ad 100644
+--- a/Documentation/devicetree/bindings/arm/idle-states.txt
++++ b/Documentation/devicetree/bindings/arm/idle-states.txt
+@@ -691,7 +691,7 @@ cpus {
+     Documentation/devicetree/bindings/arm/cpus.yaml
+ 
+ [2] ARM Linux Kernel documentation - PSCI bindings
+-    Documentation/devicetree/bindings/arm/psci.txt
++    Documentation/devicetree/bindings/arm/psci.yaml
+ 
+ [3] ARM Server Base System Architecture (SBSA)
+     http://infocenter.arm.com/help/index.jsp
+diff --git a/Documentation/devicetree/bindings/arm/psci.txt b/Documentation/devicetree/bindings/arm/psci.txt
+deleted file mode 100644
+index a2c4f1d52492..000000000000
+--- a/Documentation/devicetree/bindings/arm/psci.txt
++++ /dev/null
+@@ -1,111 +0,0 @@
+-* Power State Coordination Interface (PSCI)
+-
+-Firmware implementing the PSCI functions described in ARM document number
+-ARM DEN 0022A ("Power State Coordination Interface System Software on ARM
+-processors") can be used by Linux to initiate various CPU-centric power
+-operations.
+-
+-Issue A of the specification describes functions for CPU suspend, hotplug
+-and migration of secure software.
+-
+-Functions are invoked by trapping to the privilege level of the PSCI
+-firmware (specified as part of the binding below) and passing arguments
+-in a manner similar to that specified by AAPCS:
+-
+-	 r0		=> 32-bit Function ID / return value
+-	{r1 - r3}	=> Parameters
+-
+-Note that the immediate field of the trapping instruction must be set
+-to #0.
+-
+-
+-Main node required properties:
+-
+- - compatible    : should contain at least one of:
+-
+-     * "arm,psci"     : For implementations complying to PSCI versions prior
+-			to 0.2.
+-			For these cases function IDs must be provided.
+-
+-     * "arm,psci-0.2" : For implementations complying to PSCI 0.2.
+-			Function IDs are not required and should be ignored by
+-			an OS with PSCI 0.2 support, but are permitted to be
+-			present for compatibility with existing software when
+-			"arm,psci" is later in the compatible list.
+-
+-     * "arm,psci-1.0" : For implementations complying to PSCI 1.0.
+-			PSCI 1.0 is backward compatible with PSCI 0.2 with
+-			minor specification updates, as defined in the PSCI
+-			specification[2].
+-
+- - method        : The method of calling the PSCI firmware. Permitted
+-                   values are:
+-
+-                   "smc" : SMC #0, with the register assignments specified
+-		           in this binding.
+-
+-                   "hvc" : HVC #0, with the register assignments specified
+-		           in this binding.
+-
+-Main node optional properties:
+-
+- - cpu_suspend   : Function ID for CPU_SUSPEND operation
+-
+- - cpu_off       : Function ID for CPU_OFF operation
+-
+- - cpu_on        : Function ID for CPU_ON operation
+-
+- - migrate       : Function ID for MIGRATE operation
+-
+-Device tree nodes that require usage of PSCI CPU_SUSPEND function (ie idle
+-state nodes, as per bindings in [1]) must specify the following properties:
+-
+-- arm,psci-suspend-param
+-		Usage: Required for state nodes[1] if the corresponding
+-                       idle-states node entry-method property is set
+-                       to "psci".
+-		Value type: <u32>
+-		Definition: power_state parameter to pass to the PSCI
+-			    suspend call.
+-
+-Example:
+-
+-Case 1: PSCI v0.1 only.
+-
+-	psci {
+-		compatible	= "arm,psci";
+-		method		= "smc";
+-		cpu_suspend	= <0x95c10000>;
+-		cpu_off		= <0x95c10001>;
+-		cpu_on		= <0x95c10002>;
+-		migrate		= <0x95c10003>;
+-	};
+-
+-Case 2: PSCI v0.2 only
+-
+-	psci {
+-		compatible	= "arm,psci-0.2";
+-		method		= "smc";
+-	};
+-
+-Case 3: PSCI v0.2 and PSCI v0.1.
+-
+-	A DTB may provide IDs for use by kernels without PSCI 0.2 support,
+-	enabling firmware and hypervisors to support existing and new kernels.
+-	These IDs will be ignored by kernels with PSCI 0.2 support, which will
+-	use the standard PSCI 0.2 IDs exclusively.
+-
+-	psci {
+-		compatible = "arm,psci-0.2", "arm,psci";
+-		method = "hvc";
+-
+-		cpu_on = < arbitrary value >;
+-		cpu_off = < arbitrary value >;
+-
+-		...
+-	};
+-
+-[1] Kernel documentation - ARM idle states bindings
+-    Documentation/devicetree/bindings/arm/idle-states.txt
+-[2] Power State Coordination Interface (PSCI) specification
+-    http://infocenter.arm.com/help/topic/com.arm.doc.den0022c/DEN0022C_Power_State_Coordination_Interface.pdf
+diff --git a/Documentation/devicetree/bindings/arm/psci.yaml b/Documentation/devicetree/bindings/arm/psci.yaml
+new file mode 100644
+index 000000000000..7abdf58b335e
+--- /dev/null
++++ b/Documentation/devicetree/bindings/arm/psci.yaml
+@@ -0,0 +1,163 @@
++# SPDX-License-Identifier: GPL-2.0
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/arm/psci.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Power State Coordination Interface (PSCI)
++
++maintainers:
++  - Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
++
++description: |+
++  Firmware implementing the PSCI functions described in ARM document number
++  ARM DEN 0022A ("Power State Coordination Interface System Software on ARM
++  processors") can be used by Linux to initiate various CPU-centric power
++  operations.
++
++  Issue A of the specification describes functions for CPU suspend, hotplug
++  and migration of secure software.
++
++  Functions are invoked by trapping to the privilege level of the PSCI
++  firmware (specified as part of the binding below) and passing arguments
++  in a manner similar to that specified by AAPCS:
++
++     r0       => 32-bit Function ID / return value
++    {r1 - r3}	=> Parameters
++
++  Note that the immediate field of the trapping instruction must be set
++  to #0.
++
++  [2] Power State Coordination Interface (PSCI) specification
++    http://infocenter.arm.com/help/topic/com.arm.doc.den0022c/DEN0022C_Power_State_Coordination_Interface.pdf
++
++properties:
++  compatible:
++    oneOf:
++      - description:
++          For implementations complying to PSCI versions prior to 0.2.
++        const: arm,psci
++
++      - description:
++          For implementations complying to PSCI 0.2.
++        const: arm,psci-0.2
++
++      - description:
++          For implementations complying to PSCI 0.2.
++          Function IDs are not required and should be ignored by an OS with
++          PSCI 0.2 support, but are permitted to be present for compatibility
++          with existing software when "arm,psci" is later in the compatible
++          list.
++        items:
++          - const: arm,psci-0.2
++          - const: arm,psci
++
++      - description:
++          For implementations complying to PSCI 1.0.
++        const: arm,psci-1.0
++
++      - description:
++          For implementations complying to PSCI 1.0.
++          PSCI 1.0 is backward compatible with PSCI 0.2 with minor
++          specification updates, as defined in the PSCI specification[2].
++        items:
++          - const: arm,psci-1.0
++          - const: arm,psci-0.2
++
++  method:
++    description: The method of calling the PSCI firmware.
++    allOf:
++      - $ref: /schemas/types.yaml#/definitions/string-array
++      - enum:
++          # SMC #0, with the register assignments specified in this binding.
++          - smc
++          # HVC #0, with the register assignments specified in this binding.
++          - hvc
++
++  cpu_suspend:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    description: Function ID for CPU_SUSPEND operation
++
++  cpu_off:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    description: Function ID for CPU_OFF operation
++
++  cpu_on:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    description: Function ID for CPU_ON operation
++
++  migrate:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    description: Function ID for MIGRATE operation
++
++  arm,psci-suspend-param:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    description: |
++      power_state parameter to pass to the PSCI suspend call.
++
++      Device tree nodes that require usage of PSCI CPU_SUSPEND function (ie
++      idle state nodes with entry-method property is set to "psci", as per
++      bindings in [1]) must specify this property.
++
++      [1] Kernel documentation - ARM idle states bindings
++        Documentation/devicetree/bindings/arm/idle-states.txt
++
++
++required:
++  - compatible
++  - method
++
++allOf:
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: arm,psci
++    then:
++      required:
++        - cpu_off
++        - cpu_on
++
++examples:
++  - |+
++
++    // Case 1: PSCI v0.1 only.
++
++    psci {
++      compatible      = "arm,psci";
++      method          = "smc";
++      cpu_suspend     = <0x95c10000>;
++      cpu_off         = <0x95c10001>;
++      cpu_on          = <0x95c10002>;
++      migrate         = <0x95c10003>;
++    };
++
++  - |+
++
++    // Case 2: PSCI v0.2 only
++
++    psci {
++      compatible      = "arm,psci-0.2";
++      method          = "smc";
++    };
++
++
++  - |+
++
++    // Case 3: PSCI v0.2 and PSCI v0.1.
++
++    /*
++     * A DTB may provide IDs for use by kernels without PSCI 0.2 support,
++     * enabling firmware and hypervisors to support existing and new kernels.
++     * These IDs will be ignored by kernels with PSCI 0.2 support, which will
++     * use the standard PSCI 0.2 IDs exclusively.
++     */
++
++    psci {
++      compatible = "arm,psci-0.2", "arm,psci";
++      method = "hvc";
++
++      cpu_on = <0x95c10002>;
++      cpu_off = <0x95c10001>;
++    };
++...
+diff --git a/Documentation/translations/zh_CN/arm64/booting.txt b/Documentation/translations/zh_CN/arm64/booting.txt
+index c1dd968c5ee9..c84f2accb173 100644
+--- a/Documentation/translations/zh_CN/arm64/booting.txt
++++ b/Documentation/translations/zh_CN/arm64/booting.txt
+@@ -236,7 +236,7 @@ AArch64 内核当前没有提供自解压代码，因此如果使用了压缩内
+   *译者注: ARM DEN 0022A 已更新到 ARM DEN 0022C。
+ 
+   设备树必须包含一个 ‘psci’ 节点，请参考以下文档：
+-  Documentation/devicetree/bindings/arm/psci.txt
++  Documentation/devicetree/bindings/arm/psci.yaml
+ 
+ 
+ - 辅助 CPU 通用寄存器设置
 -- 
-Computer Architect | Sent with my Fedora powered laptop
+2.20.1
+
