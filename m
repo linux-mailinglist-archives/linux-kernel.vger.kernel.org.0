@@ -2,154 +2,339 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3280948F07
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 21:29:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2424948F09
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 21:29:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729000AbfFQT31 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 15:29:27 -0400
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:34418 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726331AbfFQT31 (ORCPT
+        id S1728646AbfFQT3j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 15:29:39 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:57945 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727443AbfFQT3i (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 15:29:27 -0400
-Received: by mail-qt1-f195.google.com with SMTP id m29so12256201qtu.1
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2019 12:29:26 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=/xlNlelotM+Dvc+xUSx9X17ASwHKHoVnlctg4TDQCb8=;
-        b=pnIKUK0yhUXApNPupv14FMaBkIH2OiOH6Sf3J5/ObemWPZtqBijS03f4MJgNGxY+uU
-         PhJtz6FV0/CPcYo0Yz989d5/JA13jRL4Zl5D3ohpxPH6pJG1XIr342CzeEVKwMhbj9kT
-         41KPSLxODNy8PDXnhqKeSesxdRJ5rqbbO0Jq2k1aB6SlG0LdsA/4O/UlXjmfS+jp7ODh
-         YcN/1qBq/82nId3P6X1y9+E28RctV/19t4rKqzwMaz2OpoSimP6wjxxp8Mdlzmv2Xtk/
-         c5fAYJm0AYrrJAWbFivZJ3vbr4dCYW5t7Z4dQAsyOoyyLYkR3QuZyDN0Cgl1/C6U4giC
-         sXBA==
-X-Gm-Message-State: APjAAAUuGgBlVANVGlYka7W7Sll3XIYusjpo2O1YNwTO9Pkn7eSEgJ2s
-        nzGxbuJ4L/62e1TAuCl7juX6SMa/02FIjsncfEg=
-X-Google-Smtp-Source: APXvYqzmfEEp6gZuCeDUa3GncclqO8Dliciq18czTA1lJjjPkfklni0CHo+I/ASPntOHr7eDK1ToeB1Yu+l+Zozbcl4=
-X-Received: by 2002:ac8:3485:: with SMTP id w5mr18630643qtb.142.1560799765930;
- Mon, 17 Jun 2019 12:29:25 -0700 (PDT)
+        Mon, 17 Jun 2019 15:29:38 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x5HJTELm3564137
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Mon, 17 Jun 2019 12:29:14 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x5HJTELm3564137
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019051801; t=1560799755;
+        bh=7IGzT8sCmCWCowQcRLDiHS22oOGwvPrzfAO/kAS2gc0=;
+        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
+        b=W4TdfdRVLv66j8T9tbYCU/QQxTiSLmWIm/Qu2R5hKKxi0NdpQIbciOlENlIzjw9mi
+         wJXlvSXwPwsYIcHBdYs9DweRVEPvYLxXMyUISMjiLc2fYSEpnzWztk3KI0eBnT84ct
+         eDfPTZGXva67an4ZQY6wpqRn7DA5Clg6A3z5pciqDa4GEguFFKlB6DloEAJvJphnQW
+         lH/KvbdGM2aLDoGFeKiaDmDApPF6MRI/akvfa9LvB6LFB+xUAV/IROKSzfgxLs6sk7
+         GymEtJLxh901Mn6QfY2xS1nBnbL3IHc5Svyf5bd/+yLAYC5yLDauJp9amXaZhHfQN7
+         SQEe1J5qMJ+ig==
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x5HJTEJE3564134;
+        Mon, 17 Jun 2019 12:29:14 -0700
+Date:   Mon, 17 Jun 2019 12:29:14 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Mathieu Poirier <tipbot@zytor.com>
+Message-ID: <tip-c152d4d49a358224d73cb7ce7cc6090676b04931@git.kernel.org>
+Cc:     peterz@infradead.org, alexander.shishkin@linux.intel.com,
+        mingo@kernel.org, acme@redhat.com, jolsa@redhat.com,
+        mathieu.poirier@linaro.org, leo.yan@linaro.org,
+        linux-kernel@vger.kernel.org, suzuki.poulose@arm.com,
+        tglx@linutronix.de, namhyung@kernel.org, hpa@zytor.com
+Reply-To: jolsa@redhat.com, mathieu.poirier@linaro.org, leo.yan@linaro.org,
+          peterz@infradead.org, mingo@kernel.org, acme@redhat.com,
+          alexander.shishkin@linux.intel.com, hpa@zytor.com,
+          linux-kernel@vger.kernel.org, suzuki.poulose@arm.com,
+          tglx@linutronix.de, namhyung@kernel.org
+In-Reply-To: <20190524173508.29044-15-mathieu.poirier@linaro.org>
+References: <20190524173508.29044-15-mathieu.poirier@linaro.org>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/core] perf cs-etm: Add support for multiple traceID
+ queues
+Git-Commit-ID: c152d4d49a358224d73cb7ce7cc6090676b04931
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-References: <20190617121427.77565-1-arnd@arndb.de> <20190617141244.5x22nrylw7hodafp@pc636>
- <CAK8P3a3sjuyeQBUprGFGCXUSDAJN_+c+2z=pCR5J05rByBVByQ@mail.gmail.com>
- <CAK8P3a0pnEnzfMkCi7Nb97-nG4vnAj7fOepfOaW0OtywP8TLpw@mail.gmail.com> <20190617165730.5l7z47n3vg73q7mp@pc636>
-In-Reply-To: <20190617165730.5l7z47n3vg73q7mp@pc636>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Mon, 17 Jun 2019 21:29:08 +0200
-Message-ID: <CAK8P3a1Ab2MVVgSh4EW0Yef_BsxcRbkxarknMzV7tOA+s79qsA@mail.gmail.com>
-Subject: Re: [BUG]: mm/vmalloc: uninitialized variable access in pcpu_get_vm_areas
-To:     Uladzislau Rezki <urezki@gmail.com>
-Cc:     Roman Gushchin <guro@fb.com>, Michal Hocko <mhocko@suse.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Thomas Garnier <thgarnie@google.com>,
-        Oleksiy Avramchenko <oleksiy.avramchenko@sonymobile.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Joel Fernandes <joelaf@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@elte.hu>, Tejun Heo <tj@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Roman Penyaev <rpenyaev@suse.de>,
-        Rick Edgecombe <rick.p.edgecombe@intel.com>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Linux-MM <linux-mm@kvack.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
+X-Spam-Status: No, score=-1.2 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DATE_IN_FUTURE_06_12,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,
+        DKIM_VALID_EF autolearn=ham autolearn_force=no version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 17, 2019 at 6:57 PM Uladzislau Rezki <urezki@gmail.com> wrote:
-> > diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-> > index a9213fc3802d..5b7e50de008b 100644
-> > --- a/mm/vmalloc.c
-> > +++ b/mm/vmalloc.c
-> > @@ -915,7 +915,8 @@ adjust_va_to_fit_type(struct vmap_area *va,
-> >  {
-> >         struct vmap_area *lva;
-> >
-> > -       if (type == FL_FIT_TYPE) {
-> > +       switch (type) {
-> > +       case FL_FIT_TYPE:
-> >                 /*
-> >                  * No need to split VA, it fully fits.
-> >                  *
-> > @@ -925,7 +926,8 @@ adjust_va_to_fit_type(struct vmap_area *va,
-> >                  */
-> >                 unlink_va(va, &free_vmap_area_root);
-> >                 kmem_cache_free(vmap_area_cachep, va);
-> > -       } else if (type == LE_FIT_TYPE) {
-> > +               break;
-> > +       case LE_FIT_TYPE:
-> >                 /*
-> >                  * Split left edge of fit VA.
-> >                  *
-> > @@ -934,7 +936,8 @@ adjust_va_to_fit_type(struct vmap_area *va,
-> >                  * |-------|-------|
-> >                  */
-> >                 va->va_start += size;
-> > -       } else if (type == RE_FIT_TYPE) {
-> > +               break;
-> > +       case RE_FIT_TYPE:
-> >                 /*
-> >                  * Split right edge of fit VA.
-> >                  *
-> > @@ -943,7 +946,8 @@ adjust_va_to_fit_type(struct vmap_area *va,
-> >                  * |-------|-------|
-> >                  */
-> >                 va->va_end = nva_start_addr;
-> > -       } else if (type == NE_FIT_TYPE) {
-> > +               break;
-> > +       case NE_FIT_TYPE:
-> >                 /*
-> >                  * Split no edge of fit VA.
-> >                  *
-> > @@ -980,7 +984,8 @@ adjust_va_to_fit_type(struct vmap_area *va,
-> >                  * Shrink this VA to remaining size.
-> >                  */
-> >                 va->va_start = nva_start_addr + size;
-> > -       } else {
-> > +               break;
-> > +       default:
-> >                 return -1;
-> >         }
-> >
-> To me it is not clear how it would solve the warning. It sounds like
-> your GCC after this change is able to keep track of that variable
-> probably because of less generated code. But i am not sure about
-> other versions. For example i have:
->
-> gcc version 6.3.0 20170516 (Debian 6.3.0-18+deb9u1)
->
-> and it totally OK, i.e. it does not emit any related warning.
+Commit-ID:  c152d4d49a358224d73cb7ce7cc6090676b04931
+Gitweb:     https://git.kernel.org/tip/c152d4d49a358224d73cb7ce7cc6090676b04931
+Author:     Mathieu Poirier <mathieu.poirier@linaro.org>
+AuthorDate: Fri, 24 May 2019 11:35:05 -0600
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Mon, 10 Jun 2019 15:50:02 -0300
 
-To provide some background here, I'm doing randconfig tests, and
-this warning might be one that only shows up with a specific combination
-of options that add complexity to the build.
+perf cs-etm: Add support for multiple traceID queues
 
-I do run into a lot -Wmaybe-uninitialized warnings, and most of the time
-can figure out to change the code to be more readable by both
-humans and compilers in a way that shuts up the warning. The
-underlying algorithm in the compiler is NP-complete, so it can't
-ever get it right 100%, but it is a valuable warning in general.
+When operating in CPU-wide trace mode with a source/sink topology of N:1
+packets with multiple traceID will end up in the same cs_etm_queue.  In
+order to properly decode packets they need to be split in different
+queues, i.e one queue per traceID.
 
-Using switch/case makes it easier for the compiler because it
-seems to turn this into a single conditional instead of a set of
-conditions. It also seems to be the much more common style
-in the kernel.
+As such add support for multiple traceID per cs_etm_queue by adding a
+new cs_etm_traceid_queue every time a new traceID is discovered in the
+trace stream.
 
-> Another thing is that, if we add mode code there or change the function
-> prototype, we might run into the same warning. Therefore i proposed that
-> we just set the variable to NULL, i.e. Initialize it.
+Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+Tested-by: Leo Yan <leo.yan@linaro.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Suzuki Poulouse <suzuki.poulose@arm.com>
+Cc: coresight@lists.linaro.org
+Cc: linux-arm-kernel@lists.infradead.org
+Link: http://lkml.kernel.org/r/20190524173508.29044-15-mathieu.poirier@linaro.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/Makefile.config |   3 ++
+ tools/perf/util/cs-etm.c   | 131 ++++++++++++++++++++++++++++++++++++---------
+ 2 files changed, 110 insertions(+), 24 deletions(-)
 
-The problem with adding explicit NULL initializations is that this is
-more likely to hide actual bugs if the code changes again, and the
-compiler no longer notices the problem, so I try to avoid ever
-initializing a variable to something that would cause a runtime
-bug in place of a compile time warning later.
-
-       Arnd
+diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
+index 85fbcd265351..51dd00f65709 100644
+--- a/tools/perf/Makefile.config
++++ b/tools/perf/Makefile.config
+@@ -413,6 +413,9 @@ ifdef CORESIGHT
+   $(call feature_check,libopencsd)
+   ifeq ($(feature-libopencsd), 1)
+     CFLAGS += -DHAVE_CSTRACE_SUPPORT $(LIBOPENCSD_CFLAGS)
++    ifeq ($(feature-reallocarray), 0)
++      CFLAGS += -DCOMPAT_NEED_REALLOCARRAY
++    endif
+     LDFLAGS += $(LIBOPENCSD_LDFLAGS)
+     EXTLIBS += $(OPENCSDLIBS)
+     $(call detected,CONFIG_LIBOPENCSD)
+diff --git a/tools/perf/util/cs-etm.c b/tools/perf/util/cs-etm.c
+index 2483293266d8..afc2491f9f2a 100644
+--- a/tools/perf/util/cs-etm.c
++++ b/tools/perf/util/cs-etm.c
+@@ -29,6 +29,7 @@
+ #include "thread.h"
+ #include "thread_map.h"
+ #include "thread-stack.h"
++#include <tools/libc_compat.h>
+ #include "util.h"
+ 
+ #define MAX_TIMESTAMP (~0ULL)
+@@ -82,7 +83,9 @@ struct cs_etm_queue {
+ 	u64 offset;
+ 	const unsigned char *buf;
+ 	size_t buf_len, buf_used;
+-	struct cs_etm_traceid_queue *traceid_queues;
++	/* Conversion between traceID and index in traceid_queues array */
++	struct intlist *traceid_queues_list;
++	struct cs_etm_traceid_queue **traceid_queues;
+ };
+ 
+ static int cs_etm__update_queues(struct cs_etm_auxtrace *etm);
+@@ -208,31 +211,71 @@ out:
+ static struct cs_etm_traceid_queue
+ *cs_etm__etmq_get_traceid_queue(struct cs_etm_queue *etmq, u8 trace_chan_id)
+ {
+-	struct cs_etm_traceid_queue *tidq;
++	int idx;
++	struct int_node *inode;
++	struct intlist *traceid_queues_list;
++	struct cs_etm_traceid_queue *tidq, **traceid_queues;
+ 	struct cs_etm_auxtrace *etm = etmq->etm;
+ 
+-	if (!etm->timeless_decoding)
+-		return NULL;
++	if (etm->timeless_decoding)
++		trace_chan_id = CS_ETM_PER_THREAD_TRACEID;
+ 
+-	tidq = etmq->traceid_queues;
++	traceid_queues_list = etmq->traceid_queues_list;
+ 
+-	if (tidq)
+-		return tidq;
++	/*
++	 * Check if the traceid_queue exist for this traceID by looking
++	 * in the queue list.
++	 */
++	inode = intlist__find(traceid_queues_list, trace_chan_id);
++	if (inode) {
++		idx = (int)(intptr_t)inode->priv;
++		return etmq->traceid_queues[idx];
++	}
+ 
++	/* We couldn't find a traceid_queue for this traceID, allocate one */
+ 	tidq = malloc(sizeof(*tidq));
+ 	if (!tidq)
+ 		return NULL;
+ 
+ 	memset(tidq, 0, sizeof(*tidq));
+ 
++	/* Get a valid index for the new traceid_queue */
++	idx = intlist__nr_entries(traceid_queues_list);
++	/* Memory for the inode is free'ed in cs_etm_free_traceid_queues () */
++	inode = intlist__findnew(traceid_queues_list, trace_chan_id);
++	if (!inode)
++		goto out_free;
++
++	/* Associate this traceID with this index */
++	inode->priv = (void *)(intptr_t)idx;
++
+ 	if (cs_etm__init_traceid_queue(etmq, tidq, trace_chan_id))
+ 		goto out_free;
+ 
+-	etmq->traceid_queues = tidq;
++	/* Grow the traceid_queues array by one unit */
++	traceid_queues = etmq->traceid_queues;
++	traceid_queues = reallocarray(traceid_queues,
++				      idx + 1,
++				      sizeof(*traceid_queues));
++
++	/*
++	 * On failure reallocarray() returns NULL and the original block of
++	 * memory is left untouched.
++	 */
++	if (!traceid_queues)
++		goto out_free;
++
++	traceid_queues[idx] = tidq;
++	etmq->traceid_queues = traceid_queues;
+ 
+-	return etmq->traceid_queues;
++	return etmq->traceid_queues[idx];
+ 
+ out_free:
++	/*
++	 * Function intlist__remove() removes the inode from the list
++	 * and delete the memory associated to it.
++	 */
++	intlist__remove(traceid_queues_list, inode);
+ 	free(tidq);
+ 
+ 	return NULL;
+@@ -412,6 +455,44 @@ static int cs_etm__flush_events(struct perf_session *session,
+ 	return cs_etm__process_timeless_queues(etm, -1);
+ }
+ 
++static void cs_etm__free_traceid_queues(struct cs_etm_queue *etmq)
++{
++	int idx;
++	uintptr_t priv;
++	struct int_node *inode, *tmp;
++	struct cs_etm_traceid_queue *tidq;
++	struct intlist *traceid_queues_list = etmq->traceid_queues_list;
++
++	intlist__for_each_entry_safe(inode, tmp, traceid_queues_list) {
++		priv = (uintptr_t)inode->priv;
++		idx = priv;
++
++		/* Free this traceid_queue from the array */
++		tidq = etmq->traceid_queues[idx];
++		thread__zput(tidq->thread);
++		zfree(&tidq->event_buf);
++		zfree(&tidq->last_branch);
++		zfree(&tidq->last_branch_rb);
++		zfree(&tidq->prev_packet);
++		zfree(&tidq->packet);
++		zfree(&tidq);
++
++		/*
++		 * Function intlist__remove() removes the inode from the list
++		 * and delete the memory associated to it.
++		 */
++		intlist__remove(traceid_queues_list, inode);
++	}
++
++	/* Then the RB tree itself */
++	intlist__delete(traceid_queues_list);
++	etmq->traceid_queues_list = NULL;
++
++	/* finally free the traceid_queues array */
++	free(etmq->traceid_queues);
++	etmq->traceid_queues = NULL;
++}
++
+ static void cs_etm__free_queue(void *priv)
+ {
+ 	struct cs_etm_queue *etmq = priv;
+@@ -419,14 +500,8 @@ static void cs_etm__free_queue(void *priv)
+ 	if (!etmq)
+ 		return;
+ 
+-	thread__zput(etmq->traceid_queues->thread);
+ 	cs_etm_decoder__free(etmq->decoder);
+-	zfree(&etmq->traceid_queues->event_buf);
+-	zfree(&etmq->traceid_queues->last_branch);
+-	zfree(&etmq->traceid_queues->last_branch_rb);
+-	zfree(&etmq->traceid_queues->prev_packet);
+-	zfree(&etmq->traceid_queues->packet);
+-	zfree(&etmq->traceid_queues);
++	cs_etm__free_traceid_queues(etmq);
+ 	free(etmq);
+ }
+ 
+@@ -497,19 +572,21 @@ static u32 cs_etm__mem_access(struct cs_etm_queue *etmq, u8 trace_chan_id,
+ 	u8  cpumode;
+ 	u64 offset;
+ 	int len;
+-	struct	 thread *thread;
+-	struct	 machine *machine;
+-	struct	 addr_location al;
+-
+-	(void)trace_chan_id;
++	struct thread *thread;
++	struct machine *machine;
++	struct addr_location al;
++	struct cs_etm_traceid_queue *tidq;
+ 
+ 	if (!etmq)
+ 		return 0;
+ 
+ 	machine = etmq->etm->machine;
+ 	cpumode = cs_etm__cpu_mode(etmq, address);
++	tidq = cs_etm__etmq_get_traceid_queue(etmq, trace_chan_id);
++	if (!tidq)
++		return 0;
+ 
+-	thread = etmq->traceid_queues->thread;
++	thread = tidq->thread;
+ 	if (!thread) {
+ 		if (cpumode != PERF_RECORD_MISC_KERNEL)
+ 			return 0;
+@@ -545,6 +622,10 @@ static struct cs_etm_queue *cs_etm__alloc_queue(struct cs_etm_auxtrace *etm)
+ 	if (!etmq)
+ 		return NULL;
+ 
++	etmq->traceid_queues_list = intlist__new(NULL);
++	if (!etmq->traceid_queues_list)
++		goto out_free;
++
+ 	/* Use metadata to fill in trace parameters for trace decoder */
+ 	t_params = zalloc(sizeof(*t_params) * etm->num_cpu);
+ 
+@@ -579,6 +660,7 @@ static struct cs_etm_queue *cs_etm__alloc_queue(struct cs_etm_auxtrace *etm)
+ out_free_decoder:
+ 	cs_etm_decoder__free(etmq->decoder);
+ out_free:
++	intlist__delete(etmq->traceid_queues_list);
+ 	free(etmq);
+ 
+ 	return NULL;
+@@ -1280,8 +1362,9 @@ static bool cs_etm__is_svc_instr(struct cs_etm_queue *etmq, u8 trace_chan_id,
+ 				 struct cs_etm_packet *packet,
+ 				 u64 end_addr)
+ {
+-	u16 instr16;
+-	u32 instr32;
++	/* Initialise to keep compiler happy */
++	u16 instr16 = 0;
++	u32 instr32 = 0;
+ 	u64 addr;
+ 
+ 	switch (packet->isa) {
