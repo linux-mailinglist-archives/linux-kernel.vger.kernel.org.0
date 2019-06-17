@@ -2,99 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E9027478B3
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 05:37:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 32A84478A4
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 05:29:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727684AbfFQDh5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 16 Jun 2019 23:37:57 -0400
-Received: from mga07.intel.com ([134.134.136.100]:59456 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727625AbfFQDh4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 16 Jun 2019 23:37:56 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Jun 2019 20:37:56 -0700
-X-ExtLoop1: 1
-Received: from romley-ivt3.sc.intel.com ([172.25.110.60])
-  by FMSMGA003.fm.intel.com with ESMTP; 16 Jun 2019 20:37:56 -0700
-Date:   Sun, 16 Jun 2019 20:28:26 -0700
-From:   Fenghua Yu <fenghua.yu@intel.com>
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, H Peter Anvin <hpa@zytor.com>,
-        Christopherson Sean J <sean.j.christopherson@intel.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Radim Krcmar <rkrcmar@redhat.com>,
-        Ravi V Shankar <ravi.v.shankar@intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>, x86 <x86@kernel.org>
-Subject: Re: [PATCH 1/3] x86/resctrl: Get max rmid and occupancy scale
- directly from CPUID instead of cpuinfo_x86
-Message-ID: <20190617032826.GB214090@romley-ivt3.sc.intel.com>
-References: <1560705250-211820-1-git-send-email-fenghua.yu@intel.com>
- <1560705250-211820-2-git-send-email-fenghua.yu@intel.com>
- <20190616175233.GA10821@zn.tnic>
+        id S1727641AbfFQD3i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 16 Jun 2019 23:29:38 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:37302 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727413AbfFQD3i (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 16 Jun 2019 23:29:38 -0400
+Received: by mail-ed1-f67.google.com with SMTP id w13so13917850eds.4;
+        Sun, 16 Jun 2019 20:29:36 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=sFjB0B2Yj7Wbf8qVffPV3cOdRNWRzp8gkqP8qHZXJ9A=;
+        b=jsfzMfsdWloq/J6ATyzGIVoDvsFo1+bBHE5Pm7g/SGPHf+zgNs43kLRHMOT48zjXPp
+         79Kybiiqp3XjABXzeBmBLwnFCeB8EN2cnl1S2gW0Vv+VAQmG9WGvDUEsRKMtO6tdhE1b
+         9M+C8TGC4v98NeTTizYEx1DnxBMc8HHWAR2PhYdMO5s5HzTme5B1YzzvBfdZKsuoM1IN
+         qq7i+Zu4aU6UWRihu/JPPF7XxS7Nmi5OfWH7vs1lAlQkykAAm5Dyd35pABclGJl6V9da
+         DDQ0D8cfpzyA3zYWiGKYzOdMJpZZq8w5rds6tI9GF6H6W9CxGwqtuoC8CZOAPZlTbPi9
+         tT3Q==
+X-Gm-Message-State: APjAAAUi4e9kizKaltR9RziiF5Mu7Y/7Ld+53LbsnDsunPodcCrgMYhn
+        SBRwk0QZK2/ZPDR5aKzlKx57/8A0AdI=
+X-Google-Smtp-Source: APXvYqwUGmot489/eBfMiHVs4cEG70kRwdMiO5DKoYERtSSKZcjIURlTZgkHHPL2N0Rb1xiTQJeJhA==
+X-Received: by 2002:a17:906:1c94:: with SMTP id g20mr9187614ejh.179.1560742175643;
+        Sun, 16 Jun 2019 20:29:35 -0700 (PDT)
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com. [209.85.221.50])
+        by smtp.gmail.com with ESMTPSA id i5sm3349681edc.20.2019.06.16.20.29.35
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Sun, 16 Jun 2019 20:29:35 -0700 (PDT)
+Received: by mail-wr1-f50.google.com with SMTP id p13so8197667wru.10;
+        Sun, 16 Jun 2019 20:29:35 -0700 (PDT)
+X-Received: by 2002:adf:fc85:: with SMTP id g5mr74039823wrr.324.1560742175356;
+ Sun, 16 Jun 2019 20:29:35 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190616175233.GA10821@zn.tnic>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+References: <20190614181040.67326-1-sboyd@kernel.org>
+In-Reply-To: <20190614181040.67326-1-sboyd@kernel.org>
+From:   Chen-Yu Tsai <wens@csie.org>
+Date:   Mon, 17 Jun 2019 11:29:25 +0800
+X-Gmail-Original-Message-ID: <CAGb2v67s0H2XWx09o=LTDb=9Pc01RZhnf=qxcmqGs7Vih4tRVA@mail.gmail.com>
+Message-ID: <CAGb2v67s0H2XWx09o=LTDb=9Pc01RZhnf=qxcmqGs7Vih4tRVA@mail.gmail.com>
+Subject: Re: [PATCH] clk: Do a DT parent lookup even when index < 0
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Alexandre Mergnat <amergnat@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jun 16, 2019 at 07:52:33PM +0200, Borislav Petkov wrote:
-> On Sun, Jun 16, 2019 at 10:14:08AM -0700, Fenghua Yu wrote:
-> > @@ -617,13 +617,20 @@ static void l3_mon_evt_init(struct rdt_resource *r)
-> >  		list_add_tail(&mbm_local_event.list, &r->evt_list);
-> >  }
-> >  
-> > -int rdt_get_mon_l3_config(struct rdt_resource *r)
-> > +int __init rdt_get_mon_l3_config(struct rdt_resource *r)
-> >  {
-> >  	unsigned int cl_size = boot_cpu_data.x86_cache_size;
-> > +	u32 eax, ebx, ecx, edx;
-> >  	int ret;
-> >  
-> > -	r->mon_scale = boot_cpu_data.x86_cache_occ_scale;
-> > -	r->num_rmid = boot_cpu_data.x86_cache_max_rmid + 1;
-> > +	/*
-> > +	 * At this point, CQM LLC and one of L3 occupancy, MBM total, and
-> > +	 * MBM local monitoring features must be supported. So sub-leaf
-> > +	 * (EAX=0xf, ECX=1) contains needed information for this resource.
-> > +	 */
-> > +	cpuid_count(0xf, 1, &eax, &ebx, &ecx, &edx);
-> > +	r->num_rmid = ecx + 1;
-> > +	r->mon_scale = ebx;
-> >  
-> >  	/*
-> >  	 * A reasonable upper limit on the max threshold is the number
-> 
-> This is simpler than that:
-> 
-> https://lkml.kernel.org/r/20190614174959.GF198207@romley-ivt3.sc.intel.com
-> 
-> Why?
+On Sat, Jun 15, 2019 at 2:10 AM Stephen Boyd <sboyd@kernel.org> wrote:
+>
+> We want to allow the parent lookup to happen even if the index is some
+> value less than 0. This may be the case if a clk provider only specifies
+> the .name member to match a string in the "clock-names" DT property. We
+> shouldn't require that the index be >= 0 to make this use case work.
+>
+> Fixes: 601b6e93304a ("clk: Allow parents to be specified via clkspec index")
+> Reported-by: Alexandre Mergnat <amergnat@baylibre.com>
+> Cc: Jerome Brunet <jbrunet@baylibre.com>
+> Cc: Chen-Yu Tsai <wens@csie.org>
+> Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 
-After think this code again, ecx and ebx in sub-leaf CPUID.f.1 actually
-contains the number of rmid and monitoring scale. The two variables are
-always valid if any of L3 occupancy, MBM total, and MBM local monitoring
-features is supported. So there is no need to check the features to get
-the info.
+FWIW,
 
-But seems this patch is not needed according to Thomas?
-
-Should I do the following changes in the next version of patch set?
-
-1. Remove patch #1
-2. Change patch #2 to the patch in https://lkml.org/lkml/2019/6/16/274
-3. Keep patch #3
-
-Please advice.
-
-Thanks.
-
--Fenghua
-
-
+Reviewed-by: Chen-Yu Tsai <wens@csie.org>
