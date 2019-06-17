@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E859B492C9
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 23:25:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A7E8C492F4
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 23:25:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728998AbfFQVXt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 17:23:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49056 "EHLO mail.kernel.org"
+        id S1730117AbfFQVZp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 17:25:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51964 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729791AbfFQVXr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 17:23:47 -0400
+        id S1730090AbfFQVZm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Jun 2019 17:25:42 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EABF920673;
-        Mon, 17 Jun 2019 21:23:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 29E4D2063F;
+        Mon, 17 Jun 2019 21:25:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560806626;
-        bh=y9xU1Vxcitkg//oxiKqJJWU15rcVRW0JaDrrJoaUWSg=;
+        s=default; t=1560806741;
+        bh=VYyhyrgg/DJ/e4Djl5XWxP6JTsXLLylVkZB6XxZ6LyA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PyXJTyBEW82lLMfiGIQ+U9zkBXsHASvSb0Xp8txy5XHHDPzvMUXwoI+4m1Kq1kcE8
-         GIqlFdsnreTR6TketzJajsw+0GFmOkVQ2Tw+Qshojl4nd5smsjBacVOZ9Idnbor1yJ
-         h0NCRrmWo6BmNZbgHTm0K7BaDyg90PA2cQn54aI4=
+        b=N7udcaNoPqhjvWEwg3u3KYCB2ueq0w6AQcsOUUZEMRYJvqPKLNYJgotD45Ob9B5u0
+         xQcvBRE6t5ROWxRJTa/Q3QR+bguv2L8R7+1g5qR5lrjjHH4PKhPXwonKggzXPQpBev
+         WgI44XwV1FvVTXQ8NPHnhnI13y3I40j1U8Jc7EKs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thomas Huth <thuth@redhat.com>,
-        Andrew Jones <drjones@redhat.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 093/115] kvm: selftests: aarch64: fix default vm mode
+        stable@vger.kernel.org, Kenneth Heitke <kenneth.heitke@intel.com>,
+        Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>,
+        Keith Busch <keith.busch@intel.com>,
+        Christoph Hellwig <hch@lst.de>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 42/75] nvme: release namespace SRCU protection before performing controller ioctls
 Date:   Mon, 17 Jun 2019 23:09:53 +0200
-Message-Id: <20190617210804.672328154@linuxfoundation.org>
+Message-Id: <20190617210754.386649678@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190617210759.929316339@linuxfoundation.org>
-References: <20190617210759.929316339@linuxfoundation.org>
+In-Reply-To: <20190617210752.799453599@linuxfoundation.org>
+References: <20190617210752.799453599@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,35 +45,70 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 55eda003f02f075bab0223a188e548dbf3ac8dfe ]
+[ Upstream commit 5fb4aac756acacf260b9ebd88747251effa3a2f2 ]
 
-VM_MODE_P52V48_4K is not a valid mode for AArch64. Replace its
-use in vm_create_default() with a mode that works and represents
-a good AArch64 default. (We didn't ever see a problem with this
-because we don't have any unit tests using vm_create_default(),
-but it's good to get it fixed in advance.)
+Holding the SRCU critical section protecting the namespace list can
+cause deadlocks when using the per-namespace admin passthrough ioctl to
+delete as namespace.  Release it earlier when performing per-controller
+ioctls to avoid that.
 
-Reported-by: Thomas Huth <thuth@redhat.com>
-Signed-off-by: Andrew Jones <drjones@redhat.com>
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+Reported-by: Kenneth Heitke <kenneth.heitke@intel.com>
+Reviewed-by: Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>
+Reviewed-by: Keith Busch <keith.busch@intel.com>
+Signed-off-by: Christoph Hellwig <hch@lst.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/testing/selftests/kvm/lib/aarch64/processor.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/nvme/host/core.c | 25 ++++++++++++++++++++-----
+ 1 file changed, 20 insertions(+), 5 deletions(-)
 
-diff --git a/tools/testing/selftests/kvm/lib/aarch64/processor.c b/tools/testing/selftests/kvm/lib/aarch64/processor.c
-index e8c42506a09d..fa6cd340137c 100644
---- a/tools/testing/selftests/kvm/lib/aarch64/processor.c
-+++ b/tools/testing/selftests/kvm/lib/aarch64/processor.c
-@@ -226,7 +226,7 @@ struct kvm_vm *vm_create_default(uint32_t vcpuid, uint64_t extra_mem_pages,
- 	uint64_t extra_pg_pages = (extra_mem_pages / ptrs_per_4k_pte) * 2;
- 	struct kvm_vm *vm;
+diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
+index 82f5f1d030d4..818788275406 100644
+--- a/drivers/nvme/host/core.c
++++ b/drivers/nvme/host/core.c
+@@ -1310,14 +1310,31 @@ static int nvme_ioctl(struct block_device *bdev, fmode_t mode,
+ 	if (unlikely(!ns))
+ 		return -EWOULDBLOCK;
  
--	vm = vm_create(VM_MODE_P52V48_4K, DEFAULT_GUEST_PHY_PAGES + extra_pg_pages, O_RDWR);
-+	vm = vm_create(VM_MODE_P40V48_4K, DEFAULT_GUEST_PHY_PAGES + extra_pg_pages, O_RDWR);
- 
- 	kvm_vm_elf_load(vm, program_invocation_name, 0, 0);
- 	vm_vcpu_add_default(vm, vcpuid, guest_code);
++	/*
++	 * Handle ioctls that apply to the controller instead of the namespace
++	 * seperately and drop the ns SRCU reference early.  This avoids a
++	 * deadlock when deleting namespaces using the passthrough interface.
++	 */
++	if (cmd == NVME_IOCTL_ADMIN_CMD || is_sed_ioctl(cmd)) {
++		struct nvme_ctrl *ctrl = ns->ctrl;
++
++		nvme_get_ctrl(ns->ctrl);
++		nvme_put_ns_from_disk(head, srcu_idx);
++
++		if (cmd == NVME_IOCTL_ADMIN_CMD)
++			ret = nvme_user_cmd(ctrl, NULL, argp);
++		else
++			ret = sed_ioctl(ctrl->opal_dev, cmd, argp);
++
++		nvme_put_ctrl(ctrl);
++		return ret;
++	}
++
+ 	switch (cmd) {
+ 	case NVME_IOCTL_ID:
+ 		force_successful_syscall_return();
+ 		ret = ns->head->ns_id;
+ 		break;
+-	case NVME_IOCTL_ADMIN_CMD:
+-		ret = nvme_user_cmd(ns->ctrl, NULL, argp);
+-		break;
+ 	case NVME_IOCTL_IO_CMD:
+ 		ret = nvme_user_cmd(ns->ctrl, ns, argp);
+ 		break;
+@@ -1327,8 +1344,6 @@ static int nvme_ioctl(struct block_device *bdev, fmode_t mode,
+ 	default:
+ 		if (ns->ndev)
+ 			ret = nvme_nvm_ioctl(ns, cmd, arg);
+-		else if (is_sed_ioctl(cmd))
+-			ret = sed_ioctl(ns->ctrl->opal_dev, cmd, argp);
+ 		else
+ 			ret = -ENOTTY;
+ 	}
 -- 
 2.20.1
 
