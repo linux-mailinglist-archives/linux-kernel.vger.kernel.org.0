@@ -2,126 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0FDB9478A0
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 05:25:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E9027478B3
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 05:37:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727614AbfFQDZK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 16 Jun 2019 23:25:10 -0400
-Received: from ozlabs.org ([203.11.71.1]:45715 "EHLO ozlabs.org"
+        id S1727684AbfFQDh5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 16 Jun 2019 23:37:57 -0400
+Received: from mga07.intel.com ([134.134.136.100]:59456 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727413AbfFQDZJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 16 Jun 2019 23:25:09 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45RxRN6tlcz9sBp;
-        Mon, 17 Jun 2019 13:25:04 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1560741906;
-        bh=ybZ9kfd8BqZ5IeQ7uWoB5rdf9MlwGRYtVyyb/7TehV4=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=ZYe8InBSjtvC0Rq4E0GsWn0uKWuK7Lml7+BhjfjebHEcNHsfyjvuCjzqefPOoFNwZ
-         JGk3EU3F5OtZV43FdCl9dzH44C7fY3N9NH0jbOxhSHROHZGP0xyP0X+ybBY62fREk2
-         8KmmPeOHp7nrSuD0AouplCthgdvT4yOCo+WRVkalVaN08DBoaQi2wbUIKPQuULRip/
-         TWFeVEGXaoea6NLKVXXVl/A9mUfeJtJIRYhDjcU9jA2empmyFUxH95hBm8OJpIcrh+
-         FBYiX/cqtXMbspBqgt+wgaguYUcxsCJPBImbBDOT0U9ZnFn2TUyHubPTobZqyMu3EZ
-         YIe1CMTFIU3UQ==
-Date:   Mon, 17 Jun 2019 13:25:04 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Intel Graphics <intel-gfx@lists.freedesktop.org>,
-        DRI <dri-devel@lists.freedesktop.org>,
-        Alex Deucher <alexdeucher@gmail.com>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Charlene Liu <charlene.liu@amd.com>,
-        Sam Ravnborg <sam@ravnborg.org>, Dave Airlie <airlied@linux.ie>
-Subject: Re: linux-next: manual merge of the drm-misc tree with the amdgpu
- tree
-Message-ID: <20190617132504.2cf70caf@canb.auug.org.au>
-In-Reply-To: <20190612114615.69a78655@canb.auug.org.au>
-References: <20190612114615.69a78655@canb.auug.org.au>
+        id S1727625AbfFQDh4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 16 Jun 2019 23:37:56 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Jun 2019 20:37:56 -0700
+X-ExtLoop1: 1
+Received: from romley-ivt3.sc.intel.com ([172.25.110.60])
+  by FMSMGA003.fm.intel.com with ESMTP; 16 Jun 2019 20:37:56 -0700
+Date:   Sun, 16 Jun 2019 20:28:26 -0700
+From:   Fenghua Yu <fenghua.yu@intel.com>
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, H Peter Anvin <hpa@zytor.com>,
+        Christopherson Sean J <sean.j.christopherson@intel.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Radim Krcmar <rkrcmar@redhat.com>,
+        Ravi V Shankar <ravi.v.shankar@intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>, x86 <x86@kernel.org>
+Subject: Re: [PATCH 1/3] x86/resctrl: Get max rmid and occupancy scale
+ directly from CPUID instead of cpuinfo_x86
+Message-ID: <20190617032826.GB214090@romley-ivt3.sc.intel.com>
+References: <1560705250-211820-1-git-send-email-fenghua.yu@intel.com>
+ <1560705250-211820-2-git-send-email-fenghua.yu@intel.com>
+ <20190616175233.GA10821@zn.tnic>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/pBbuo/mx.9ub.bLi2Nl_21V"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190616175233.GA10821@zn.tnic>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/pBbuo/mx.9ub.bLi2Nl_21V
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Sun, Jun 16, 2019 at 07:52:33PM +0200, Borislav Petkov wrote:
+> On Sun, Jun 16, 2019 at 10:14:08AM -0700, Fenghua Yu wrote:
+> > @@ -617,13 +617,20 @@ static void l3_mon_evt_init(struct rdt_resource *r)
+> >  		list_add_tail(&mbm_local_event.list, &r->evt_list);
+> >  }
+> >  
+> > -int rdt_get_mon_l3_config(struct rdt_resource *r)
+> > +int __init rdt_get_mon_l3_config(struct rdt_resource *r)
+> >  {
+> >  	unsigned int cl_size = boot_cpu_data.x86_cache_size;
+> > +	u32 eax, ebx, ecx, edx;
+> >  	int ret;
+> >  
+> > -	r->mon_scale = boot_cpu_data.x86_cache_occ_scale;
+> > -	r->num_rmid = boot_cpu_data.x86_cache_max_rmid + 1;
+> > +	/*
+> > +	 * At this point, CQM LLC and one of L3 occupancy, MBM total, and
+> > +	 * MBM local monitoring features must be supported. So sub-leaf
+> > +	 * (EAX=0xf, ECX=1) contains needed information for this resource.
+> > +	 */
+> > +	cpuid_count(0xf, 1, &eax, &ebx, &ecx, &edx);
+> > +	r->num_rmid = ecx + 1;
+> > +	r->mon_scale = ebx;
+> >  
+> >  	/*
+> >  	 * A reasonable upper limit on the max threshold is the number
+> 
+> This is simpler than that:
+> 
+> https://lkml.kernel.org/r/20190614174959.GF198207@romley-ivt3.sc.intel.com
+> 
+> Why?
 
-Hi all,
+After think this code again, ecx and ebx in sub-leaf CPUID.f.1 actually
+contains the number of rmid and monitoring scale. The two variables are
+always valid if any of L3 occupancy, MBM total, and MBM local monitoring
+features is supported. So there is no need to check the features to get
+the info.
 
-On Wed, 12 Jun 2019 11:46:15 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->
-> Hi all,
->=20
-> Today's linux-next merge of the drm-misc tree got a conflict in:
->=20
->   drivers/gpu/drm/amd/display/dc/dce/dce_audio.c
->=20
-> between commit:
->=20
->   c7c7192c56d2 ("drm/amd/display: add audio related regs")
->=20
-> from the amdgpu tree and commit:
->=20
->   4fc4dca8320e ("drm/amd: drop use of drmp.h in os_types.h")
->=20
-> from the drm-misc tree.
->=20
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
->=20
-> --=20
-> Cheers,
-> Stephen Rothwell
->=20
-> diff --cc drivers/gpu/drm/amd/display/dc/dce/dce_audio.c
-> index d43d5d924c19,9b078a71de2e..000000000000
-> --- a/drivers/gpu/drm/amd/display/dc/dce/dce_audio.c
-> +++ b/drivers/gpu/drm/amd/display/dc/dce/dce_audio.c
-> @@@ -22,7 -22,9 +22,10 @@@
->    * Authors: AMD
->    *
->    */
-> +=20
-> + #include <linux/slab.h>
-> +=20
->  +#include "../dc.h"
->   #include "reg_helper.h"
->   #include "dce_audio.h"
->   #include "dce/dce_11_0_d.h"
+But seems this patch is not needed according to Thomas?
 
-This is now a conflict between the drm tree and the amdgpu tree.
+Should I do the following changes in the next version of patch set?
 
---=20
-Cheers,
-Stephen Rothwell
+1. Remove patch #1
+2. Change patch #2 to the patch in https://lkml.org/lkml/2019/6/16/274
+3. Keep patch #3
 
---Sig_/pBbuo/mx.9ub.bLi2Nl_21V
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+Please advice.
 
------BEGIN PGP SIGNATURE-----
+Thanks.
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0HCBAACgkQAVBC80lX
-0GxBBwf8CoFB80pNJP6cX+YNjV2ZKobvI1VFUmzmEog2O/V8WCoCN5WupKfm4Gf1
-Ea0TELkV5+6TnObptjAVgBjxl0hSYJGZ56ncNpQl8Q8a8eo0L4PvEY4EF9CP2DBG
-rCY7GHqLnoh6vl6h4kXgiw1qS6EPsAauW/Dw2BSGpbEq9kj+o9v9VnloPBaNeFvy
-pDKoxqHXfQcq+srgFOxAR0LiigcJYBxXqLXp/YehfGRRP4FkHk94OnHFx8jM08JG
-7TZPMfvkxCxMIJ1pt0LroHy0v5TUe7Q/L/15UfC6E59WHChNaPWLKk0X6/h/lgHX
-TgCvoFy9JxWfxUTj2JH49z7N4HEkqQ==
-=glaT
------END PGP SIGNATURE-----
+-Fenghua
 
---Sig_/pBbuo/mx.9ub.bLi2Nl_21V--
+
