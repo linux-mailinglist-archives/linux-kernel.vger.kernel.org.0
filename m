@@ -2,112 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CCC0B490E4
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 22:09:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 567EA490FA
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 22:10:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727833AbfFQUJO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 16:09:14 -0400
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:45709 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726023AbfFQUJN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 16:09:13 -0400
-Received: by mail-qt1-f196.google.com with SMTP id j19so12347296qtr.12
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2019 13:09:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Al3ctU5Ww8ocaVDWU/5q96TvOispLUizRV1CFtDfOaI=;
-        b=qf2k/45sE6OZ+Gh5+DRtXE3WIuJUZT2CIDmri09NlrXYO4Btj+toXNyiwRb328WTSY
-         ddqXPu9rEVhtAPxNvE0K9CDxvTTzKJ0BWWz+j79PNc/TSbO8aw+FFoHXVc4o2PKt8xNE
-         +8jsRM9cZr6cLlby+GvBWV52Ce9fzKzF9u5dyTb3FEfd/G/6GPisk3ItT0GKNsFAcRDv
-         Gh0rYMhi8yC4VqJZqJDfvJ4y48ZkB4H1RhwI7V5LywTJZQ9BlboK1qHYtO6lb+CyKD+8
-         6fQspClujju8RzhFtk3VEotj1QcxYEPM9LEK3PBmY3sBJLGUu0IjerGPEGXV8M4h1plt
-         s7yw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Al3ctU5Ww8ocaVDWU/5q96TvOispLUizRV1CFtDfOaI=;
-        b=J+VLe+IHyliWSJh00+893WBhtlVVlXF5LjhfK1/YhhMl8Qm2RHoiXNk7BVTI7Zyxfr
-         16QLG1ANnnGvef7K4PIqI4K12TadTpK0BxZTVgSrxCE8vIkZiGW+f0WpWfqz9UTZFdRa
-         Wl/mP45T04Tw2dReQb9+yRU3LHvpT5tPfh3Dn+zwMr+SeaZUoJXjJ8gHFO26IBQ8w2VK
-         sKGSglqSWJKLCjWLZBZA6McojRhwj6znDIo074yI24ck1cMdL8zRDoTAKdGVDx3Fkof/
-         3WrxbxG76Adz0xHqBrPCHCVjViOKGVtzejUPTTUeoKfXuwBri6XRGEFdHUyYt0c1ZRAz
-         v0mQ==
-X-Gm-Message-State: APjAAAUtwCGcWUvHlUt0D7X19nNRAPXC3jhOZrZAhGxdb+zMKZa51fCG
-        qSqIENPKMtC2czAQz7mRbIHgXDoVbAgQGM7BhWA=
-X-Google-Smtp-Source: APXvYqw0XOx8hWQvkZc6V+ztD3J86tZW+NikUxFcZSuurS8j1Clx/hKHsSn2WYyavAruZHjK33NHIYroa03/SQ/r7LY=
-X-Received: by 2002:a0c:b66f:: with SMTP id q47mr23211411qvf.102.1560802152622;
- Mon, 17 Jun 2019 13:09:12 -0700 (PDT)
+        id S1729138AbfFQUKd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 16:10:33 -0400
+Received: from verein.lst.de ([213.95.11.211]:40726 "EHLO newverein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728932AbfFQUKa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Jun 2019 16:10:30 -0400
+Received: by newverein.lst.de (Postfix, from userid 2407)
+        id 0673468B02; Mon, 17 Jun 2019 22:09:58 +0200 (CEST)
+Date:   Mon, 17 Jun 2019 22:09:57 +0200
+From:   Christoph Hellwig <hch@lst.de>
+To:     Logan Gunthorpe <logang@deltatee.com>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        Dan Williams <dan.j.williams@intel.com>,
+        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Ben Skeggs <bskeggs@redhat.com>, linux-mm@kvack.org,
+        nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-nvdimm@lists.01.org, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 08/25] memremap: move dev_pagemap callbacks into a
+ separate structure
+Message-ID: <20190617200957.GA20645@lst.de>
+References: <20190617122733.22432-1-hch@lst.de> <20190617122733.22432-9-hch@lst.de> <d68c5e4c-b2de-95c3-0b75-1f2391b25a34@deltatee.com>
 MIME-Version: 1.0
-References: <CABXGCsN9mYmBD-4GaaeW_NrDu+FDXLzr_6x+XNxfmFV6QkYCDg@mail.gmail.com>
- <CABXGCsNq4xTFeeLeUXBj7vXBz55aVu31W9q74r+pGM83DrPjfA@mail.gmail.com>
- <20190529180931.GI18589@dhcp22.suse.cz> <CABXGCsPrk=WJzms_H+-KuwSRqWReRTCSs-GLMDsjUG_-neYP0w@mail.gmail.com>
- <CABXGCsMjDn0VT0DmP6qeuiytce9cNBx8PywpqejiFNVhwd0UGg@mail.gmail.com> <ee245af2-a0ae-5c13-6f1f-2418f43d1812@suse.cz>
-In-Reply-To: <ee245af2-a0ae-5c13-6f1f-2418f43d1812@suse.cz>
-From:   Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>
-Date:   Tue, 18 Jun 2019 01:09:01 +0500
-Message-ID: <CABXGCsOfQjGLEN0nAt-iPo2Ay61fDY75Deq1Xn1Ymm_UsR3n_g@mail.gmail.com>
-Subject: Re: kernel BUG at mm/swap_state.c:170!
-To:     Vlastimil Babka <vbabka@suse.cz>
-Cc:     Michal Hocko <mhocko@kernel.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d68c5e4c-b2de-95c3-0b75-1f2391b25a34@deltatee.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 17 Jun 2019 at 17:17, Vlastimil Babka <vbabka@suse.cz> wrote:
->
-> That's commit "tcp: fix retrans timestamp on passive Fast Open" which is
-> almost certainly not the culprit.
+On Mon, Jun 17, 2019 at 02:08:14PM -0600, Logan Gunthorpe wrote:
+> I just noticed this is missing a line to set pgmap->ops to
+> pci_p2pdma_pagemap_ops. I must have gotten confused by the other users
+> in my original review. Though I'm not sure how this compiles as the new
+> struct is static and unused. However, it is rendered moot in Patch 16
+> when this is all removed.
 
-Yes, I seen also content of this commit.
-And it looks like madness.
-But I can proving that my bisect are properly created.
-Here I saved all dmesg output from all bisecting steps:
-https://mega.nz/#F!00wFHACA!nmaLgkkbrlt46DteERjl7Q
-And only one of them ended without crash message "kernel BUG at
-mm/swap_state.c:170!"
-This is step5 with commit 3d21b6525cae.
-
-I tried to cause kernel panic several times when kenel compiled from
-commit 3d21b6525cae would be launched and all my attempts was be
-unsuccessful.
-
-So I can say that commit 3d21b6525cae is enough stable for me and I
-now sitting on it.
-
-> You told bisect that 5.2-rc1 is good, but it probably isn't.
-> What you probably need to do is:
-> git bisect good v5.1
-> git bisect bad v5.2-rc2
->
-> The presence of the other ext4 bug complicates the bisect, however.
-> According to tytso in the thread you linked, it should be fixed by
-> commit 0a944e8a6c66, while the bug was introduced by commit
-> 345c0dbf3a30. So in each step of bisect, before building the kernel, you
-> should cherry-pick the fix if the bug is there:
->
-> git merge-base --is-ancestor 345c0dbf3a30 HEAD && git cherry-pick 0a944e8a6c66
-
-Oh, thanks for advise. But I am used another solution.
-(I applied the patch every time when bisect move to new step)
-
-> Also in case you see a completely different problem in some bisect step, try
-> 'git bisect skip' instead of guessing if it's good or bad.
-> Hopefully that will lead to a better result.
-
-If you take a look all my dmesg logs you can sure that all bad steps
-ended with crash "kernel BUG at mm/swap_state.c:170!".
-
-And yes, I look again at commit cd736d8b67fb still don't understand
-how it can broke my system.
-
---
-Best Regards,
-Mike Gavrilov.
+It probably was there in the original and got lost in the merge conflicts
+from the rebase.  I should have dropped all the reviewed-bys for patches
+with non-trivial merge resolution, sorry.
