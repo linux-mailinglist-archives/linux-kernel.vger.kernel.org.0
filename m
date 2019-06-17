@@ -2,172 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E5B3B492E1
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 23:25:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E231549202
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 23:09:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729996AbfFQVYu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 17:24:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50522 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729986AbfFQVYo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 17:24:44 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A022020673;
-        Mon, 17 Jun 2019 21:24:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560806684;
-        bh=5/2JiO3y3S7WEs1kSBMXafw4iEBz3HJ6ihd/kswEY7A=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=j1FRv4D6FBloMYwswKoo/WV6cupm23BCsuJMrGE2CsRoAucsBYjEBj2WJtwf3Y50b
-         CpbCO48LEt4A48sAQw3MYVuMRnpKAePfOczvTfJKQiXWhJ8aOMiwoq+A+/ZDd56R6o
-         SdpOStXHkb5AeQ91lO7u0XjUSFacg1Y8SEc2+1vE=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Coly Li <colyli@suse.de>,
-        Rolf Fokkens <rolf@rolffokkens.nl>,
-        Pierre JUHEN <pierre.juhen@orange.fr>,
-        Shenghui Wang <shhuiw@foxmail.com>,
-        Kent Overstreet <kent.overstreet@gmail.com>,
-        Nix <nix@esperi.org.uk>, Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 4.19 21/75] bcache: fix stack corruption by PRECEDING_KEY()
-Date:   Mon, 17 Jun 2019 23:09:32 +0200
-Message-Id: <20190617210753.672658544@linuxfoundation.org>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190617210752.799453599@linuxfoundation.org>
-References: <20190617210752.799453599@linuxfoundation.org>
-User-Agent: quilt/0.66
+        id S1727924AbfFQVJi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 17:09:38 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:45712 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725497AbfFQVJh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Jun 2019 17:09:37 -0400
+Received: from p5b06daab.dip0.t-ipconnect.de ([91.6.218.171] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1hcyse-0005Xx-QB; Mon, 17 Jun 2019 23:09:33 +0200
+Date:   Mon, 17 Jun 2019 23:09:32 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     John Ogness <john.ogness@linutronix.de>
+cc:     linux-kernel@vger.kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrea Parri <andrea.parri@amarulasolutions.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Subject: Re: [RFC PATCH v2 0/2] printk: new ringbuffer implementation
+In-Reply-To: <20190607162349.18199-1-john.ogness@linutronix.de>
+Message-ID: <alpine.DEB.2.21.1906172309170.1963@nanos.tec.linutronix.de>
+References: <20190607162349.18199-1-john.ogness@linutronix.de>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Coly Li <colyli@suse.de>
+On Fri, 7 Jun 2019, John Ogness wrote:
 
-commit 31b90956b124240aa8c63250243ae1a53585c5e2 upstream.
+Polite ping ....
 
-Recently people report bcache code compiled with gcc9 is broken, one of
-the buggy behavior I observe is that two adjacent 4KB I/Os should merge
-into one but they don't. Finally it turns out to be a stack corruption
-caused by macro PRECEDING_KEY().
-
-See how PRECEDING_KEY() is defined in bset.h,
-437 #define PRECEDING_KEY(_k)                                       \
-438 ({                                                              \
-439         struct bkey *_ret = NULL;                               \
-440                                                                 \
-441         if (KEY_INODE(_k) || KEY_OFFSET(_k)) {                  \
-442                 _ret = &KEY(KEY_INODE(_k), KEY_OFFSET(_k), 0);  \
-443                                                                 \
-444                 if (!_ret->low)                                 \
-445                         _ret->high--;                           \
-446                 _ret->low--;                                    \
-447         }                                                       \
-448                                                                 \
-449         _ret;                                                   \
-450 })
-
-At line 442, _ret points to address of a on-stack variable combined by
-KEY(), the life range of this on-stack variable is in line 442-446,
-once _ret is returned to bch_btree_insert_key(), the returned address
-points to an invalid stack address and this address is overwritten in
-the following called bch_btree_iter_init(). Then argument 'search' of
-bch_btree_iter_init() points to some address inside stackframe of
-bch_btree_iter_init(), exact address depends on how the compiler
-allocates stack space. Now the stack is corrupted.
-
-Fixes: 0eacac22034c ("bcache: PRECEDING_KEY()")
-Signed-off-by: Coly Li <colyli@suse.de>
-Reviewed-by: Rolf Fokkens <rolf@rolffokkens.nl>
-Reviewed-by: Pierre JUHEN <pierre.juhen@orange.fr>
-Tested-by: Shenghui Wang <shhuiw@foxmail.com>
-Tested-by: Pierre JUHEN <pierre.juhen@orange.fr>
-Cc: Kent Overstreet <kent.overstreet@gmail.com>
-Cc: Nix <nix@esperi.org.uk>
-Cc: stable@vger.kernel.org
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- drivers/md/bcache/bset.c |   16 +++++++++++++---
- drivers/md/bcache/bset.h |   34 ++++++++++++++++++++--------------
- 2 files changed, 33 insertions(+), 17 deletions(-)
-
---- a/drivers/md/bcache/bset.c
-+++ b/drivers/md/bcache/bset.c
-@@ -887,12 +887,22 @@ unsigned int bch_btree_insert_key(struct
- 	struct bset *i = bset_tree_last(b)->data;
- 	struct bkey *m, *prev = NULL;
- 	struct btree_iter iter;
-+	struct bkey preceding_key_on_stack = ZERO_KEY;
-+	struct bkey *preceding_key_p = &preceding_key_on_stack;
- 
- 	BUG_ON(b->ops->is_extents && !KEY_SIZE(k));
- 
--	m = bch_btree_iter_init(b, &iter, b->ops->is_extents
--				? PRECEDING_KEY(&START_KEY(k))
--				: PRECEDING_KEY(k));
-+	/*
-+	 * If k has preceding key, preceding_key_p will be set to address
-+	 *  of k's preceding key; otherwise preceding_key_p will be set
-+	 * to NULL inside preceding_key().
-+	 */
-+	if (b->ops->is_extents)
-+		preceding_key(&START_KEY(k), &preceding_key_p);
-+	else
-+		preceding_key(k, &preceding_key_p);
-+
-+	m = bch_btree_iter_init(b, &iter, preceding_key_p);
- 
- 	if (b->ops->insert_fixup(b, k, &iter, replace_key))
- 		return status;
---- a/drivers/md/bcache/bset.h
-+++ b/drivers/md/bcache/bset.h
-@@ -434,20 +434,26 @@ static inline bool bch_cut_back(const st
- 	return __bch_cut_back(where, k);
- }
- 
--#define PRECEDING_KEY(_k)					\
--({								\
--	struct bkey *_ret = NULL;				\
--								\
--	if (KEY_INODE(_k) || KEY_OFFSET(_k)) {			\
--		_ret = &KEY(KEY_INODE(_k), KEY_OFFSET(_k), 0);	\
--								\
--		if (!_ret->low)					\
--			_ret->high--;				\
--		_ret->low--;					\
--	}							\
--								\
--	_ret;							\
--})
-+/*
-+ * Pointer '*preceding_key_p' points to a memory object to store preceding
-+ * key of k. If the preceding key does not exist, set '*preceding_key_p' to
-+ * NULL. So the caller of preceding_key() needs to take care of memory
-+ * which '*preceding_key_p' pointed to before calling preceding_key().
-+ * Currently the only caller of preceding_key() is bch_btree_insert_key(),
-+ * and it points to an on-stack variable, so the memory release is handled
-+ * by stackframe itself.
-+ */
-+static inline void preceding_key(struct bkey *k, struct bkey **preceding_key_p)
-+{
-+	if (KEY_INODE(k) || KEY_OFFSET(k)) {
-+		(**preceding_key_p) = KEY(KEY_INODE(k), KEY_OFFSET(k), 0);
-+		if (!(*preceding_key_p)->low)
-+			(*preceding_key_p)->high--;
-+		(*preceding_key_p)->low--;
-+	} else {
-+		(*preceding_key_p) = NULL;
-+	}
-+}
- 
- static inline bool bch_ptr_invalid(struct btree_keys *b, const struct bkey *k)
- {
-
-
+> This is a follow-up RFC on the work to reimplement much of
+> the core of printk. The original thread can be seen here[0].
+> 
+> One of the results of that thread was that the work needs to
+> be broken up into several pieces. A roadmap was laid out[1]
+> and this RFC is for the base component of the first piece:
+> a new ringbuffer implementation for printk.
+> 
+> This series does not touch any existing printk code. It is
+> only the ringbuffer implementation. I am particularly
+> interested in feedback relating to the design of the
+> ringbuffer and the use of memory barriers.
+> 
+> The series also includes a test module that performs some
+> heavy writer stress testing. I have successfully run these
+> tests on a 16-core ARM64 platform.
+> 
+> John Ogness
+> 
+> [0] https://lkml.kernel.org/r/20190212143003.48446-1-john.ogness@linutronix.de
+> [1] https://lkml.kernel.org/r/87y35hn6ih.fsf@linutronix.de
+> 
+> John Ogness (2):
+>   printk-rb: add a new printk ringbuffer implementation
+>   printk-rb: add test module
+> 
+>  Documentation/core-api/index.rst             |   1 +
+>  Documentation/core-api/printk-ringbuffer.rst | 104 +++
+>  include/linux/printk_ringbuffer.h            | 238 +++++++
+>  lib/Makefile                                 |   2 +
+>  lib/printk_ringbuffer.c                      | 924 +++++++++++++++++++++++++++
+>  lib/test_prb.c                               | 237 +++++++
+>  6 files changed, 1506 insertions(+)
+>  create mode 100644 Documentation/core-api/printk-ringbuffer.rst
+>  create mode 100644 include/linux/printk_ringbuffer.h
+>  create mode 100644 lib/printk_ringbuffer.c
+>  create mode 100644 lib/test_prb.c
+> 
+> -- 
+> 2.11.0
+> 
+> 
