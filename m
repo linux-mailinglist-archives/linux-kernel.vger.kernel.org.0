@@ -2,183 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1DD2C47A77
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 09:12:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0841447A92
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 09:15:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726524AbfFQHMS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 03:12:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51576 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725826AbfFQHMS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 03:12:18 -0400
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 15848218EA;
-        Mon, 17 Jun 2019 07:12:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560755536;
-        bh=auAmcgDb9/BI7xXD6SFrnCeWwfBK8vq66znDTU/qxiE=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=Qs2uqqAu8v+vqQAIjksCHS2nPH9Zl4cZ+Ai0T1xtiD9snX6vO+jyYNN1d0e0gSq92
-         ILe9zqcpQL1wTn5pqSUWgIdYvGceHH+DhjfAkg9ezLxnrQyw9ZIEsEHnQmO1vj6Mfv
-         YYur0sZUvJzSPFlG2FUf9dKL3kAPlBNbkQaa7PDc=
-Received: by mail-lj1-f173.google.com with SMTP id t28so8182108lje.9;
-        Mon, 17 Jun 2019 00:12:16 -0700 (PDT)
-X-Gm-Message-State: APjAAAXgsGofpJQvsq6vKf0/ODYJGNYSx8274opu8W4fXfu/G0cIS4Q1
-        MHWzS4iZj2CYrfdeJaWFVb8pdbsB7qDyOI7JjjI=
-X-Google-Smtp-Source: APXvYqxYdWi6u8+Af9xm4Ixw0NW9S2cn6fHEduei34f452pIJ4bgKmwQXZSGCJoSV5lYo97OVcCtb7ZtQ5e1o/emiPw=
-X-Received: by 2002:a2e:94c9:: with SMTP id r9mr12365447ljh.210.1560755534293;
- Mon, 17 Jun 2019 00:12:14 -0700 (PDT)
+        id S1726264AbfFQHPv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 03:15:51 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:40564 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725826AbfFQHPv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Jun 2019 03:15:51 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=gpRMsfGNXtpOHyXo1HHqlE0dlVAyPKBRJRDhBOKV9jk=; b=ciyWTDMrwSY3eNjL+rF5wFxvY
+        Hk0lkKZBcBzvIMyNlZFE0NW6MIWRBlxlwnMDVqs7KohK9iSwbzBy5AnCQbGRDRPTaWJDWsBEHbf6S
+        x2vJX1VhVXZiH6spDpYQwXl6RqXuKAeRagnraCMYavKvp+Sc/fsLkO/AHgrZtGSgDWkuGS781Vuej
+        UCWQr0KsCKYjfN/XoK5gwW2s3OqBX2wib/0PrlfQSff+SB3cwgBxTivqhBuUUuo0TcpdenkP5mOgs
+        nBHx8IXK+RndchBTpjqETN8U02sGo2U3SxhTEnnzA9GKAfbuiopJf2aHzCHL+/P6NlBB+1co33y6L
+        VDNnrnyjA==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
+        id 1hclrT-0005ke-Jx; Mon, 17 Jun 2019 07:15:27 +0000
+Date:   Mon, 17 Jun 2019 00:15:27 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Alastair D'Silva <alastair@d-silva.org>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        David Hildenbrand <david@redhat.com>,
+        Oscar Salvador <osalvador@suse.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Pavel Tatashin <pasha.tatashin@soleen.com>,
+        Wei Yang <richard.weiyang@gmail.com>,
+        Arun KS <arunks@codeaurora.org>, Qian Cai <cai@lca.pw>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Jiri Kosina <jkosina@suse.cz>,
+        Mukesh Ojha <mojha@codeaurora.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Baoquan He <bhe@redhat.com>,
+        Logan Gunthorpe <logang@deltatee.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux-nvdimm@lists.01.org
+Subject: Re: [PATCH 5/5] mm/hotplug: export try_online_node
+Message-ID: <20190617071527.GA14003@infradead.org>
+References: <20190617043635.13201-1-alastair@au1.ibm.com>
+ <20190617043635.13201-6-alastair@au1.ibm.com>
+ <20190617065921.GV3436@hirez.programming.kicks-ass.net>
+ <f1bad6f784efdd26508b858db46f0192a349c7a1.camel@d-silva.org>
 MIME-Version: 1.0
-References: <20190614163635.22413-1-enric.balletbo@collabora.com> <20190614163635.22413-11-enric.balletbo@collabora.com>
-In-Reply-To: <20190614163635.22413-11-enric.balletbo@collabora.com>
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-Date:   Mon, 17 Jun 2019 09:12:03 +0200
-X-Gmail-Original-Message-ID: <CAJKOXPetaMmeQyZWVWRUSzbe1pKMweCpUx=phy8QowVQHTrdLA@mail.gmail.com>
-Message-ID: <CAJKOXPetaMmeQyZWVWRUSzbe1pKMweCpUx=phy8QowVQHTrdLA@mail.gmail.com>
-Subject: Re: [PATCH v2 10/10] arm/arm64: defconfig: Update configs to use the
- new CROS_EC options
-To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Cc:     linux-kernel@vger.kernel.org, gwendal@chromium.org,
-        Guenter Roeck <groeck@chromium.org>,
-        Benson Leung <bleung@chromium.org>,
-        Lee Jones <lee.jones@linaro.org>, kernel@collabora.com,
-        dtor@chromium.org, Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>,
-        Olof Johansson <olof@lixom.net>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Dinh Nguyen <dinguyen@kernel.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Kukjin Kim <kgene@kernel.org>,
-        Jagan Teki <jagan@amarulasolutions.com>,
-        Daniel Mack <daniel@zonque.org>,
-        Russell King <linux@armlinux.org.uk>,
-        linux-arm-kernel@lists.infradead.org,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        =?UTF-8?Q?Yannick_Fertr=C3=A9?= <yannick.fertre@st.com>,
-        Robert Jarzmik <robert.jarzmik@free.fr>,
-        Tony Lindgren <tony@atomide.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f1bad6f784efdd26508b858db46f0192a349c7a1.camel@d-silva.org>
+User-Agent: Mutt/1.11.4 (2019-03-13)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 14 Jun 2019 at 18:37, Enric Balletbo i Serra
-<enric.balletbo@collabora.com> wrote:
->
-> Recently we refactored the CrOS EC drivers moving part of the code from
-> the MFD subsystem to the platform chrome subsystem. During this change
-> we needed to rename some config options, so, update the defconfigs
-> accordingly.
->
-> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-> ---
->
-> Changes in v2: None
->
->  arch/arm/configs/exynos_defconfig   | 4 +++-
->  arch/arm/configs/multi_v7_defconfig | 6 ++++--
->  arch/arm/configs/pxa_defconfig      | 4 +++-
->  arch/arm64/configs/defconfig        | 6 ++++--
->  4 files changed, 14 insertions(+), 6 deletions(-)
->
-> diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
-> index c95c54284da2..03448fba569f 100644
-> --- a/arch/arm/configs/exynos_defconfig
-> +++ b/arch/arm/configs/exynos_defconfig
-> @@ -154,7 +154,9 @@ CONFIG_CPU_THERMAL=y
->  CONFIG_THERMAL_EMULATION=y
->  CONFIG_WATCHDOG=y
->  CONFIG_S3C2410_WATCHDOG=y
-> -CONFIG_MFD_CROS_EC=y
-> +CONFIG_MFD_CROS_EC_DEV=y
-> +CONFIG_CHROME_PLATFORMS=y
-> +CONFIG_CROS_EC=y
->  CONFIG_CROS_EC_I2C=y
->  CONFIG_CROS_EC_SPI=y
->  CONFIG_MFD_MAX14577=y
+On Mon, Jun 17, 2019 at 05:05:30PM +1000, Alastair D'Silva wrote:
+> On Mon, 2019-06-17 at 08:59 +0200, Peter Zijlstra wrote:
+> > On Mon, Jun 17, 2019 at 02:36:31PM +1000, Alastair D'Silva wrote:
+> > > From: Alastair D'Silva <alastair@d-silva.org>
+> > > 
+> > > If an external driver module supplies physical memory and needs to
+> > > expose
+> > 
+> > Why would you ever want to allow a module to do such a thing?
+> > 
+> 
+> I'm working on a driver for Storage Class Memory, connected via an
+> OpenCAPI link.
+> 
+> The memory is only usable once the card says it's OK to access it.
 
-If you want to take it through mfd, arm-soc or other tree:
-For Exynos:
-Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
-
-Otherwise I could take exynos/multi_v7/arm64 changes but split per arm v7/v8.
-
-Best regards,
-Krzysztof
-
-
-> diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
-> index 6b748f214eae..9fe783abf3c5 100644
-> --- a/arch/arm/configs/multi_v7_defconfig
-> +++ b/arch/arm/configs/multi_v7_defconfig
-> @@ -510,10 +510,12 @@ CONFIG_MFD_BCM590XX=y
->  CONFIG_MFD_AC100=y
->  CONFIG_MFD_AXP20X_I2C=y
->  CONFIG_MFD_AXP20X_RSB=y
-> -CONFIG_MFD_CROS_EC=m
-> +CONFIG_MFD_CROS_EC_DEV=m
-> +CONFIG_CHROME_PLATFORMS=y
-> +CONFIG_CROS_EC=m
->  CONFIG_CROS_EC_I2C=m
->  CONFIG_CROS_EC_SPI=m
-> -CONFIG_MFD_CROS_EC_CHARDEV=m
-> +CONFIG_CROS_EC_CHARDEV=m
->  CONFIG_MFD_DA9063=m
->  CONFIG_MFD_MAX14577=y
->  CONFIG_MFD_MAX77686=y
-> diff --git a/arch/arm/configs/pxa_defconfig b/arch/arm/configs/pxa_defconfig
-> index 07ebbdce3645..e335b986cf70 100644
-> --- a/arch/arm/configs/pxa_defconfig
-> +++ b/arch/arm/configs/pxa_defconfig
-> @@ -394,7 +394,9 @@ CONFIG_SA1100_WATCHDOG=m
->  CONFIG_MFD_AS3711=y
->  CONFIG_MFD_BCM590XX=m
->  CONFIG_MFD_AXP20X=y
-> -CONFIG_MFD_CROS_EC=m
-> +CONFIG_MFD_CROS_EC_DEV=m
-> +CONFIG_CHROME_PLATFORMS=y
-> +CONFIG_CROS_EC=m
->  CONFIG_CROS_EC_I2C=m
->  CONFIG_CROS_EC_SPI=m
->  CONFIG_MFD_ASIC3=y
-> diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-> index 4d583514258c..b5bba5f04082 100644
-> --- a/arch/arm64/configs/defconfig
-> +++ b/arch/arm64/configs/defconfig
-> @@ -430,8 +430,7 @@ CONFIG_MFD_ALTERA_SYSMGR=y
->  CONFIG_MFD_BD9571MWV=y
->  CONFIG_MFD_AXP20X_I2C=y
->  CONFIG_MFD_AXP20X_RSB=y
-> -CONFIG_MFD_CROS_EC=y
-> -CONFIG_MFD_CROS_EC_CHARDEV=m
-> +CONFIG_MFD_CROS_EC_DEV=y
->  CONFIG_MFD_EXYNOS_LPASS=m
->  CONFIG_MFD_HI6421_PMIC=y
->  CONFIG_MFD_HI655X_PMIC=y
-> @@ -631,8 +630,11 @@ CONFIG_VIRTIO_BALLOON=y
->  CONFIG_VIRTIO_MMIO=y
->  CONFIG_XEN_GNTDEV=y
->  CONFIG_XEN_GRANT_DEV_ALLOC=y
-> +CONFIG_CHROME_PLATFORMS=y
-> +CONFIG_CROS_EC=y
->  CONFIG_CROS_EC_I2C=y
->  CONFIG_CROS_EC_SPI=y
-> +CONFIG_CROS_EC_CHARDEV=m
->  CONFIG_COMMON_CLK_RK808=y
->  CONFIG_COMMON_CLK_SCPI=y
->  CONFIG_COMMON_CLK_CS2000_CP=y
-> --
-> 2.20.1
->
+And all that should go through our pmem APIs, not not directly
+poke into mm internals.  And if you still need core patches send them
+along with the actual driver.
