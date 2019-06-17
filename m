@@ -2,83 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E89F249395
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 23:32:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D3A4C493A2
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 23:32:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729905AbfFQVcJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 17:32:09 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:47264 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728478AbfFQVcE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 17:32:04 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 6778333BCD;
-        Mon, 17 Jun 2019 21:32:04 +0000 (UTC)
-Received: from flask (unknown [10.43.2.199])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 481D178401;
-        Mon, 17 Jun 2019 21:32:02 +0000 (UTC)
-Received: by flask (sSMTP sendmail emulation); Mon, 17 Jun 2019 23:32:01 +0200
-Date:   Mon, 17 Jun 2019 23:32:01 +0200
-From:   Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
-To:     Wanpeng Li <kernellwp@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Marcelo Tosatti <mtosatti@redhat.com>
-Subject: Re: [PATCH v4 5/5] KVM: LAPIC: add advance timer support to
- pi_inject_timer
-Message-ID: <20190617213201.GA26346@flask>
-References: <1560770687-23227-1-git-send-email-wanpengli@tencent.com>
- <1560770687-23227-6-git-send-email-wanpengli@tencent.com>
+        id S1730288AbfFQVcW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 17:32:22 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:33662 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729121AbfFQVcT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Jun 2019 17:32:19 -0400
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92 #3 (Red Hat Linux))
+        id 1hczEZ-0008Fy-L0; Mon, 17 Jun 2019 21:32:11 +0000
+Date:   Mon, 17 Jun 2019 22:32:11 +0100
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Christian Brauner <christian@brauner.io>
+Cc:     torvalds@linux-foundation.org, ebiederm@xmission.com,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        stable@vger.kernel.org
+Subject: Re: [PATCH v1] fs/namespace: fix unprivileged mount propagation
+Message-ID: <20190617213211.GV17978@ZenIV.linux.org.uk>
+References: <20190617212214.29868-1-christian@brauner.io>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1560770687-23227-6-git-send-email-wanpengli@tencent.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Mon, 17 Jun 2019 21:32:04 +0000 (UTC)
+In-Reply-To: <20190617212214.29868-1-christian@brauner.io>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2019-06-17 19:24+0800, Wanpeng Li:
-> From: Wanpeng Li <wanpengli@tencent.com>
+On Mon, Jun 17, 2019 at 11:22:14PM +0200, Christian Brauner wrote:
+> When propagating mounts across mount namespaces owned by different user
+> namespaces it is not possible anymore to move or umount the mount in the
+> less privileged mount namespace.
 > 
-> Wait before calling posted-interrupt deliver function directly to add 
-> advance timer support to pi_inject_timer.
+> Here is a reproducer:
 > 
-> Cc: Paolo Bonzini <pbonzini@redhat.com>
-> Cc: Radim Krčmář <rkrcmar@redhat.com>
-> Cc: Marcelo Tosatti <mtosatti@redhat.com>
-> Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
-> ---
-
-Please merge this patch with [2/5], so bisection doesn't break.
-
->  arch/x86/kvm/lapic.c   | 6 ++++--
->  arch/x86/kvm/lapic.h   | 2 +-
->  arch/x86/kvm/svm.c     | 2 +-
->  arch/x86/kvm/vmx/vmx.c | 2 +-
->  4 files changed, 7 insertions(+), 5 deletions(-)
+>   sudo mount -t tmpfs tmpfs /mnt
+>   sudo --make-rshared /mnt
 > 
-> diff --git a/arch/x86/kvm/lapic.c b/arch/x86/kvm/lapic.c
-> index 1a31389..1a31ba5 100644
-> --- a/arch/x86/kvm/lapic.c
-> +++ b/arch/x86/kvm/lapic.c
-> @@ -1462,6 +1462,8 @@ static void apic_timer_expired(struct kvm_lapic *apic, bool can_pi_inject)
->  		return;
->  
->  	if (can_pi_inject && posted_interrupt_inject_timer(apic->vcpu)) {
-> +		if (apic->lapic_timer.timer_advance_ns)
-> +			kvm_wait_lapic_expire(vcpu, true);
+>   # create unprivileged user + mount namespace and preserve propagation
+>   unshare -U -m --map-root --propagation=unchanged
+> 
+>   # now change back to the original mount namespace in another terminal:
+>   sudo mkdir /mnt/aaa
+>   sudo mount -t tmpfs tmpfs /mnt/aaa
+> 
+>   # now in the unprivileged user + mount namespace
+>   mount --move /mnt/aaa /opt
+> 
+> Unfortunately, this is a pretty big deal for userspace since this is
+> e.g. used to inject mounts into running unprivileged containers.
+> So this regression really needs to go away rather quickly.
+> 
+> The problem is that a recent change falsely locked the root of the newly
+> added mounts by setting MNT_LOCKED. Fix this by only locking the mounts
+> on copy_mnt_ns() and not when adding a new mount.
 
-From where does kvm_wait_lapic_expire() take
-apic->lapic_timer.expired_tscdeadline?
+Applied.  Linus, if you want to apply it directly, feel free to add my
+Acked-by.  Alternatively, wait until tonight and I'll send a pull request
+with that (as well as missing mntget() in fsmount(2) fix, at least).
 
-(I think it would be best to take the functional core of
- kvm_wait_lapic_expire() and make it into a function that takes the
- expired_tscdeadline as an argument.)
-
-Thanks.
+Al, down to ~3Kmail in the pile...
