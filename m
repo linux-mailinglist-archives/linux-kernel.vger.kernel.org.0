@@ -2,175 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 48CE7483E0
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 15:26:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4C96F483E7
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 15:27:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727477AbfFQN0K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 09:26:10 -0400
-Received: from mout.kundenserver.de ([212.227.17.10]:41463 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725884AbfFQN0K (ORCPT
+        id S1727745AbfFQN0r (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 09:26:47 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:40469 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726028AbfFQN0p (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 09:26:10 -0400
-Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
- (mreue107 [212.227.15.145]) with ESMTPA (Nemesis) id
- 1MX0TX-1i9gNF0AcT-00XJq8; Mon, 17 Jun 2019 15:25:44 +0200
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     Corentin Labbe <clabbe.montjoie@gmail.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Eric Biggers <ebiggers@google.com>,
-        linux-crypto@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Mon, 17 Jun 2019 09:26:45 -0400
+Received: by mail-pl1-f194.google.com with SMTP id a93so4104206pla.7
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2019 06:26:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id;
+        bh=iNOXjuZREAy3pqMzT9qyi/Eg7jLleHcrbZVRNS23Pj8=;
+        b=yMnCM/bd6N4IgQjYrAHjB89GSMvMISjAxblDsKtRlxx6VTMWe2kKEcrL8FLDHixrz9
+         8uFgCNUDIcPHwdeusscgeQ5lFdTq8R+xkuEI4qabyQB8z41Scmdlwe9rWDxKmpPmZly5
+         xJShIZcxnENKNlRsWgyLcODf9fGH/1kSLf+QgBdAJgq9Z1Ty/rG5XT0bFnvw/3dM8B6/
+         /QR5sCDTz0obC713me79im/DGCodCmH1WJdrfdF+8mlB0cBeCUaMvbtKNfZG6pmi8G7S
+         f77DbylIEDUjyE/PZNcXKur1jnSEwCz9CT45Vt9CAtZmCzJCs86HEobm5ebzVTsOoGzi
+         Vy/A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=iNOXjuZREAy3pqMzT9qyi/Eg7jLleHcrbZVRNS23Pj8=;
+        b=ZVCA4mh4D9zvQbC2tg4F3qox3Hg+chkti1Dey9bL8obytenYbTJpOeR24Lo9K4YaKG
+         JFGHLlyYWM/KOotbSmkBqxj3DQzZBFCOfHVeh90DEXSZArg67wndmFddrC3Hn03ytB1O
+         A7Dd35HOcrN+X38Spec63pEIhktdHjYljfAO0JFzV4qfwHY7aKleOYbBQI7VE2MgNWdM
+         G4h4LU/Qy79fxhO+8pROrhHcW0D9AIBqEfffn3ljIwBXLRoYeeNUbB7qQiFtg832nxOd
+         B0mKffPieiRz3c+DzG/10SLsmjXQYpIIiqAPDGDPErpjrRYbvmjnYVPJXwNAz9LuAdH7
+         0gzQ==
+X-Gm-Message-State: APjAAAWdUWJYL0nslJqh/RVB1ippDFod0TVbnxLtcnVjF7+6EhmXlf1w
+        CtY8T6JKS9d3KEtG/R4y3pRdzw==
+X-Google-Smtp-Source: APXvYqw2iDq0Ab7tchmhG+MTOb9wfk/of2zsP9Ugq5BJmQ8olAgmk5dogawvPBuud6IfwEQQ3L7vew==
+X-Received: by 2002:a17:902:9a06:: with SMTP id v6mr89500786plp.71.1560778004780;
+        Mon, 17 Jun 2019 06:26:44 -0700 (PDT)
+Received: from bogon.bytedance.net ([61.120.150.76])
+        by smtp.gmail.com with ESMTPSA id 135sm16530362pfb.137.2019.06.17.06.26.41
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Mon, 17 Jun 2019 06:26:44 -0700 (PDT)
+From:   Fei Li <lifei.shirley@bytedance.com>
+To:     davem@davemloft.net, jasowang@redhat.com, netdev@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH] crypto: sun4i-ss - reduce stack usage
-Date:   Mon, 17 Jun 2019 15:25:17 +0200
-Message-Id: <20190617132538.2759714-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.20.0
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:dFwYisfe6d2an5iBSpuKsBUEx+RF3JE6zy3kMwlMfCg7C2kZf0c
- PJikbpLoKWB73dg8OZ7imWqut7mlrzfXDcXPVF7ZaYE0RbSUY+R7X/cUixMA94QK8XjJd21
- WZuqEXE7u2uV7j45rFWcWnO0Jk87FpZ1a7nxkWWLEk7FQH7/KbYMNlo+/IEFTtNltB6+9/S
- yJWrQw+tofrEr5PREnDfg==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:exdzb5w2Xvg=:CR0sH9nRwYSNSihZH7/ieP
- PqFOiHTJoHbbDqjQ4h4U4kp9gYCvssxRdDXHNk73s+boKIHlXHfX1VxeTCfAQ1KMxvk4obJbc
- 8DvnpBdS67DPeTimuip5YhBQHQSUFWO+y+hI4daiVknrVFSbSZOnMqbsc9jKoYRUJBMB5J/Jz
- iRLQIml9Y1ukfycCtY6x4Bf8eB7CyGJOe01JAtJZ0RMryNtNJlEBNyMh4YlUSO2OE+5IcJzqR
- B7EX8efA8KNgB2kCXXCbOAjrH+eebd9bHHBwMB908emBwSSW0pelmwQUZntZNbibogvJnIedQ
- wiAlAYa4RXc8eLAc7PUrDuO+QVHxugAnlEo+7f5OriGvDNP6d4Dafb6Q3BFZ0j+aPsmalwSI5
- m/7ZhXzZeN/q0lMp5QuffDXm1ggDDI3lJNvXwyCFwJxVzA9Q7Z8tEHoU9uwyIl6j6YmLtIEF8
- 2i4KeOl4UIhwApvdupvgnElE2J/0Gpd5WAnG4fUhsNQuj3FLeGTioPsNk7U361BNXEAzwgi0h
- JdtidaMv0V+WGpjTYgVG6duYDv1Ajo17MBMkjdSX5CuCMZO6pelE66pBr8luJyCvHsQbhC315
- Ggt3vpGPPepYDU26se02fp4WUTcILALRo4Hp4sn1aVzmO2tQNA/EKHxnDbd95H3WoAA6u6IVC
- Nzi+lXiJJNgp8D6PTYGrh/b4XbTUV0XZ5Ws4+Dw/O75R3OT25AJA6stsiyIuTXTtopOV/IyQR
- SaBO9W4HYbEj3e8+BSysPB5eyxlF2kB56t2dEw==
+Cc:     zhengfeiran@bytedance.com, duanxiongchun@bytedance.com,
+        Fei Li <lifei.shirley@bytedance.com>
+Subject: [PATCH net v2] tun: wake up waitqueues after IFF_UP is set
+Date:   Mon, 17 Jun 2019 21:26:36 +0800
+Message-Id: <20190617132636.72496-1-lifei.shirley@bytedance.com>
+X-Mailer: git-send-email 2.17.2 (Apple Git-113)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-After the latest addition, the stack usage of sun4i_ss_cipher_poll
-grew beyond the warning limit when KASAN is enabled:
+Currently after setting tap0 link up, the tun code wakes tx/rx waited
+queues up in tun_net_open() when .ndo_open() is called, however the
+IFF_UP flag has not been set yet. If there's already a wait queue, it
+would fail to transmit when checking the IFF_UP flag in tun_sendmsg().
+Then the saving vhost_poll_start() will add the wq into wqh until it
+is waken up again. Although this works when IFF_UP flag has been set
+when tun_chr_poll detects; this is not true if IFF_UP flag has not
+been set at that time. Sadly the latter case is a fatal error, as
+the wq will never be waken up in future unless later manually
+setting link up on purpose.
 
-drivers/crypto/sunxi-ss/sun4i-ss-cipher.c:118:12: error: stack frame size of 1152 bytes in function 'sun4i_ss_cipher_poll' [-Werror,-Wframe-larger-than=]
-static int sun4i_ss_cipher_poll(struct skcipher_request *areq)
+Fix this by moving the wakeup process into the NETDEV_UP event
+notifying process, this makes sure IFF_UP has been set before all
+waited queues been waken up.
 
-Reduce it in three ways:
-
-- split out the new code into a separate function so its stack
-  usage can overlap that of the sun4i_ss_opti_poll() code path
-- mark both special cases as noinline_for_stack, which should
-  ideally result in a tail call that frees the rest of the
-  stack
-- move the buf and obuf variables into the code blocks in
-  which they are used.
-
-The three separate functions now use 144, 640 and 304 bytes of kernel
-stack, respectively.
-
-Fixes: 0ae1f46c55f8 ("crypto: sun4i-ss - fallback when length is not multiple of blocksize")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Fei Li <lifei.shirley@bytedance.com>
+Acked-by: Jason Wang <jasowang@redhat.com>
 ---
- drivers/crypto/sunxi-ss/sun4i-ss-cipher.c | 47 +++++++++++++++--------
- 1 file changed, 30 insertions(+), 17 deletions(-)
+ drivers/net/tun.c | 19 +++++++++----------
+ 1 file changed, 9 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/crypto/sunxi-ss/sun4i-ss-cipher.c b/drivers/crypto/sunxi-ss/sun4i-ss-cipher.c
-index 7b0c42882830..4ab14d58e85b 100644
---- a/drivers/crypto/sunxi-ss/sun4i-ss-cipher.c
-+++ b/drivers/crypto/sunxi-ss/sun4i-ss-cipher.c
-@@ -12,7 +12,7 @@
-  */
- #include "sun4i-ss.h"
- 
--static int sun4i_ss_opti_poll(struct skcipher_request *areq)
-+static int noinline_for_stack sun4i_ss_opti_poll(struct skcipher_request *areq)
+diff --git a/drivers/net/tun.c b/drivers/net/tun.c
+index c452d6d831dd..d7c55e0fa8f4 100644
+--- a/drivers/net/tun.c
++++ b/drivers/net/tun.c
+@@ -1014,18 +1014,8 @@ static void tun_net_uninit(struct net_device *dev)
+ /* Net device open. */
+ static int tun_net_open(struct net_device *dev)
  {
- 	struct crypto_skcipher *tfm = crypto_skcipher_reqtfm(areq);
- 	struct sun4i_tfm_ctx *op = crypto_skcipher_ctx(tfm);
-@@ -114,6 +114,29 @@ static int sun4i_ss_opti_poll(struct skcipher_request *areq)
- 	return err;
+-	struct tun_struct *tun = netdev_priv(dev);
+-	int i;
+-
+ 	netif_tx_start_all_queues(dev);
+ 
+-	for (i = 0; i < tun->numqueues; i++) {
+-		struct tun_file *tfile;
+-
+-		tfile = rtnl_dereference(tun->tfiles[i]);
+-		tfile->socket.sk->sk_write_space(tfile->socket.sk);
+-	}
+-
+ 	return 0;
  }
  
-+
-+static int noinline_for_stack sun4i_ss_cipher_poll_fallback(struct skcipher_request *areq)
-+{
-+	struct crypto_skcipher *tfm = crypto_skcipher_reqtfm(areq);
-+	struct sun4i_tfm_ctx *op = crypto_skcipher_ctx(tfm);
-+	struct sun4i_cipher_req_ctx *ctx = skcipher_request_ctx(areq);
-+	SYNC_SKCIPHER_REQUEST_ON_STACK(subreq, op->fallback_tfm);
-+	int err;
-+
-+	skcipher_request_set_sync_tfm(subreq, op->fallback_tfm);
-+	skcipher_request_set_callback(subreq, areq->base.flags, NULL,
-+				      NULL);
-+	skcipher_request_set_crypt(subreq, areq->src, areq->dst,
-+				   areq->cryptlen, areq->iv);
-+	if (ctx->mode & SS_DECRYPTION)
-+		err = crypto_skcipher_decrypt(subreq);
-+	else
-+		err = crypto_skcipher_encrypt(subreq);
-+	skcipher_request_zero(subreq);
-+
-+	return err;
-+}
-+
- /* Generic function that support SG with size not multiple of 4 */
- static int sun4i_ss_cipher_poll(struct skcipher_request *areq)
+@@ -3634,6 +3624,7 @@ static int tun_device_event(struct notifier_block *unused,
  {
-@@ -140,8 +163,6 @@ static int sun4i_ss_cipher_poll(struct skcipher_request *areq)
- 	unsigned int todo;
- 	struct sg_mapping_iter mi, mo;
- 	unsigned int oi, oo;	/* offset for in and out */
--	char buf[4 * SS_RX_MAX];/* buffer for linearize SG src */
--	char bufo[4 * SS_TX_MAX]; /* buffer for linearize SG dst */
- 	unsigned int ob = 0;	/* offset in buf */
- 	unsigned int obo = 0;	/* offset in bufo*/
- 	unsigned int obl = 0;	/* length of data in bufo */
-@@ -178,20 +199,8 @@ static int sun4i_ss_cipher_poll(struct skcipher_request *areq)
- 	if (no_chunk == 1 && !need_fallback)
- 		return sun4i_ss_opti_poll(areq);
+ 	struct net_device *dev = netdev_notifier_info_to_dev(ptr);
+ 	struct tun_struct *tun = netdev_priv(dev);
++	int i;
  
--	if (need_fallback) {
--		SYNC_SKCIPHER_REQUEST_ON_STACK(subreq, op->fallback_tfm);
--		skcipher_request_set_sync_tfm(subreq, op->fallback_tfm);
--		skcipher_request_set_callback(subreq, areq->base.flags, NULL,
--					      NULL);
--		skcipher_request_set_crypt(subreq, areq->src, areq->dst,
--					   areq->cryptlen, areq->iv);
--		if (ctx->mode & SS_DECRYPTION)
--			err = crypto_skcipher_decrypt(subreq);
--		else
--			err = crypto_skcipher_encrypt(subreq);
--		skcipher_request_zero(subreq);
--		return err;
--	}
-+	if (need_fallback)
-+		return sun4i_ss_cipher_poll_fallback(areq);
- 
- 	spin_lock_irqsave(&ss->slock, flags);
- 
-@@ -224,6 +233,8 @@ static int sun4i_ss_cipher_poll(struct skcipher_request *areq)
- 
- 	while (oleft) {
- 		if (ileft) {
-+			char buf[4 * SS_RX_MAX];/* buffer for linearize SG src */
+ 	if (dev->rtnl_link_ops != &tun_link_ops)
+ 		return NOTIFY_DONE;
+@@ -3643,6 +3634,14 @@ static int tun_device_event(struct notifier_block *unused,
+ 		if (tun_queue_resize(tun))
+ 			return NOTIFY_BAD;
+ 		break;
++	case NETDEV_UP:
++		for (i = 0; i < tun->numqueues; i++) {
++			struct tun_file *tfile;
 +
- 			/*
- 			 * todo is the number of consecutive 4byte word that we
- 			 * can read from current SG
-@@ -281,6 +292,8 @@ static int sun4i_ss_cipher_poll(struct skcipher_request *areq)
- 				oo = 0;
- 			}
- 		} else {
-+			char bufo[4 * SS_TX_MAX]; /* buffer for linearize SG dst */
-+
- 			/*
- 			 * read obl bytes in bufo, we read at maximum for
- 			 * emptying the device
++			tfile = rtnl_dereference(tun->tfiles[i]);
++			tfile->socket.sk->sk_write_space(tfile->socket.sk);
++		}
++		break;
+ 	default:
+ 		break;
+ 	}
 -- 
-2.20.0
+2.11.0
 
