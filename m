@@ -2,238 +2,476 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 23B0E48F76
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 21:32:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B661648F9F
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 21:34:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729019AbfFQTcU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 15:32:20 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:38798 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727795AbfFQTcT (ORCPT
+        id S1728980AbfFQTeD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 15:34:03 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:46719 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726182AbfFQTeC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 15:32:19 -0400
-Received: by mail-wr1-f66.google.com with SMTP id d18so11282236wrs.5;
-        Mon, 17 Jun 2019 12:32:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=dpXSPuWpIMPnZbn0YA08V2hRW5djBjq/4Coqd/XvlZ8=;
-        b=O2BkvZ4aIrzqi3WsiJ/rU/Lv30O3FLgMpFrt+I7pKe3LHs4/Qkem+iYfMbG6xzqO9u
-         XLpbXxHJxBrHqJQr0rJE+EcM1CLtU7I/S8KRKg/fxuSVm2crx849MAANSPj+Dfy7Gwen
-         wOf3fM+NQydLpkbvH8mTJ+RROfOnwMrcgTauAGCDgQz1QM90Icv0E2WJ3h1QyLA0kPWj
-         SVnjKqhEjf9wSoqkqMBsCJtbSwkV6xTCYRuva8r5KBvw5no/TcqmYJjLrarVVhaRSty0
-         7t13891W6TsC/f/wWAJJAysgkWkP8v7pz8F+2HFdU1sTG25mBtRPt+wIeHDffMTaY+mV
-         +IcA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=dpXSPuWpIMPnZbn0YA08V2hRW5djBjq/4Coqd/XvlZ8=;
-        b=tR5Ese+hY3i2bU3XmpTNLa438RPR1rYsH7ihWllSA6X8IxY1dLK1ZcHKm8seRYJKJi
-         34iHT8hWuUBh0JOZjQcdOLWWmBnSON066x3oScyemep+LpJWi7I+/tlRRUEHl9AFqFHR
-         yosCY3avKDhaWO88iDsQOO8ks7A5OC3UOsc/FXDr9VGi4OOjWdExr1WougkSaxjAj98u
-         fGuGJPBSihHgG8HqzpueO87nlJzM+CcRu91QOop3z/Fh+UiNksc8VOXCi25ORTcv9YG2
-         K2HkLdY8yKrUmoZSVEXOZoHpVDj+GGjgV0vWIf9gQ9z0zUrl8UHU05tXSjZJTcsT3TDN
-         AVTg==
-X-Gm-Message-State: APjAAAVQAWtPMN2xq4QjIyLCgv7HlBwM0k/1pZg5P4vK+6tEn8ZXGXWb
-        7DssI4sALYlr3ZXcpItXSZQ=
-X-Google-Smtp-Source: APXvYqzmsinawMQIxqHIyYLJqzsjKmExMDxH3ru1lgHn5Z3kuqsb847XhlLzhPkKZGIO2b7KgSLjLg==
-X-Received: by 2002:adf:ce03:: with SMTP id p3mr52969392wrn.94.1560799936441;
-        Mon, 17 Jun 2019 12:32:16 -0700 (PDT)
-Received: from [192.168.2.145] (ppp91-79-162-197.pppoe.mtu-net.ru. [91.79.162.197])
-        by smtp.googlemail.com with ESMTPSA id g2sm229244wmh.0.2019.06.17.12.32.14
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 17 Jun 2019 12:32:15 -0700 (PDT)
-Subject: Re: [PATCH V6] i2c: tegra: remove BUG, BUG_ON
-To:     Bitan Biswas <bbiswas@nvidia.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Thierry Reding <treding@nvidia.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Peter Rosin <peda@axentia.se>,
-        Wolfram Sang <wsa@the-dreams.de>
-Cc:     Shardar Mohammed <smohammed@nvidia.com>,
-        Sowjanya Komatineni <skomatineni@nvidia.com>,
-        Mantravadi Karthik <mkarthik@nvidia.com>
-References: <1560527438-30150-1-git-send-email-bbiswas@nvidia.com>
- <504e19d0-05dd-dc80-3aaf-cdab8f88002d@gmail.com>
- <fee98b4f-630e-1685-05e3-e8dae0f412bd@nvidia.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <cadd6687-7b1b-ccce-b34b-a175adafa675@gmail.com>
-Date:   Mon, 17 Jun 2019 22:32:14 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.1
+        Mon, 17 Jun 2019 15:34:02 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x5HJWhAa3564885
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Mon, 17 Jun 2019 12:32:43 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x5HJWhAa3564885
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019051801; t=1560799964;
+        bh=4nLSxORKKfdtsedCu2qAk1aFuxmP7P25WZZBWJHuF5s=;
+        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
+        b=eY4GMr/ULqy51abLgAcJha9uht8lMl/J7pxJx5qwNPDvDZ9b8xZyXxFknmnydOLqp
+         6bgPqrYLrwgf19bGxMQ08QKLbLHbSxLEFqF2KLFJO0vJRKWr7+up8UjZN6VLHcVDGH
+         jn0HJd6abaGAT4dsyENZUd+clISFaYzNI3f8clQNb1beAgc9Ydg7kmJcYYG1dmS2z/
+         7V6EzPIKmUOB27iEIt33bVqkc/mNsJL+kgnT8oUHRNeNJwSn85bYEnOT9YhO7yg2Ag
+         UsyYTMcfkOE4zz+t7Duho3BEgwRlDsAhPoqLrmTmq0gKSI0AHvBekYtgpaZkCfgtSO
+         yX4xouRH+buTg==
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x5HJWhqs3564882;
+        Mon, 17 Jun 2019 12:32:43 -0700
+Date:   Mon, 17 Jun 2019 12:32:43 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Kan Liang <tipbot@zytor.com>
+Message-ID: <tip-acae8b36cded0ee62038dedd0a44d54d5d673a96@git.kernel.org>
+Cc:     mingo@kernel.org, jolsa@kernel.org, acme@redhat.com,
+        linux-kernel@vger.kernel.org, hpa@zytor.com,
+        kan.liang@linux.intel.com, ak@linux.intel.com,
+        peterz@infradead.org, tglx@linutronix.de
+Reply-To: mingo@kernel.org, jolsa@kernel.org, acme@redhat.com,
+          linux-kernel@vger.kernel.org, kan.liang@linux.intel.com,
+          hpa@zytor.com, ak@linux.intel.com, peterz@infradead.org,
+          tglx@linutronix.de
+In-Reply-To: <1559688644-106558-2-git-send-email-kan.liang@linux.intel.com>
+References: <1559688644-106558-2-git-send-email-kan.liang@linux.intel.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/core] perf header: Add die information in CPU topology
+Git-Commit-ID: acae8b36cded0ee62038dedd0a44d54d5d673a96
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-In-Reply-To: <fee98b4f-630e-1685-05e3-e8dae0f412bd@nvidia.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
+X-Spam-Status: No, score=-1.2 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DATE_IN_FUTURE_06_12,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,
+        DKIM_VALID_EF autolearn=ham autolearn_force=no version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-17.06.2019 22:08, Bitan Biswas пишет:
-> 
-> 
-> On 6/14/19 10:51 AM, Dmitry Osipenko wrote:
->> 14.06.2019 18:50, Bitan Biswas пишет:
->>> Remove redundant BUG_ON calls or replace with WARN_ON_ONCE
->>> as needed. Remove BUG() and mask Rx interrupt similar as Tx
->>> for message fully sent case. Add WARN_ON_ONCE check
->>> for non-zero rx_fifo_avail in tegra_i2c_empty_rx_fifo()
->>> after all processing. Error handling in tegra_i2c_empty_rx_fifo
->>> caller is also added.
->>>
->>> Signed-off-by: Bitan Biswas <bbiswas@nvidia.com>
->>> ---
->>>   drivers/i2c/busses/i2c-tegra.c | 46 ++++++++++++++++++++++++++++++++++--------
->>>   1 file changed, 38 insertions(+), 8 deletions(-)
->>>
->>> diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
->>> index 4dfb4c1..26a7c8c 100644
->>> --- a/drivers/i2c/busses/i2c-tegra.c
->>> +++ b/drivers/i2c/busses/i2c-tegra.c
->>> @@ -73,6 +73,7 @@
->>>   #define I2C_ERR_NO_ACK                BIT(0)
->>>   #define I2C_ERR_ARBITRATION_LOST        BIT(1)
->>>   #define I2C_ERR_UNKNOWN_INTERRUPT        BIT(2)
->>> +#define I2C_ERR_UNEXPECTED_STATUS        BIT(3)
->>
->> What about I2C_ERR_RX_BUFFER_OVERFLOW?
-> OK.
-> 
->>
->>>   #define PACKET_HEADER0_HEADER_SIZE_SHIFT    28
->>>   #define PACKET_HEADER0_PACKET_ID_SHIFT        16
->>> @@ -515,15 +516,23 @@ static int tegra_i2c_empty_rx_fifo(struct tegra_i2c_dev
->>> *i2c_dev)
->>>        * prevent overwriting past the end of buf
->>>        */
->>>       if (rx_fifo_avail > 0 && buf_remaining > 0) {
->>> -        BUG_ON(buf_remaining > 3);
->>> +        /* buf_remaining > 3 check not needed as rx_fifo_avail == 0
->>> +         * when (words_to_transfer was > rx_fifo_avail) earlier
->>> +         * in this function
->>> +         */
->>
->> Please start all multiline comments with an empty "/*", it should be the correct
->> style. There are some places in the kernel where style like yours is used, but I
->> assume they are not very correct. Besides, yours variant is not consistent with the
->> style of the rest of comments in this source file. And put a dot in the end for
->> completeness. Same for the other comments in this patch.
->>
-> OK
-> 
->>>           val = i2c_readl(i2c_dev, I2C_RX_FIFO);
->>>           val = cpu_to_le32(val);
->>>           memcpy(buf, &val, buf_remaining);
->>>           buf_remaining = 0;
->>>           rx_fifo_avail--;
->>>       }
->>
->> Please add a newline here. All logical parts of the code should be separated to ease
->> reading and following.
-> OK
-> 
->>
->>> +    if (WARN_ON_ONCE(rx_fifo_avail))
->>> +        return -EINVAL;
->>>   -    BUG_ON(rx_fifo_avail > 0 && buf_remaining > 0);
->>> +    /* buf_remaining > 0 at this point can only have rx_fifo_avail == 0
->>> +     * as this corresponds to (words_to_transfer was > rx_fifo_avail)
->>> +     * case earlier in this function
->>> +     */
->>>       i2c_dev->msg_buf_remaining = buf_remaining;
->>>       i2c_dev->msg_buf = buf;
->>>   @@ -581,7 +590,10 @@ static int tegra_i2c_fill_tx_fifo(struct tegra_i2c_dev
->>> *i2c_dev)
->>>        * boundary and fault.
->>>        */
->>>       if (tx_fifo_avail > 0 && buf_remaining > 0) {
->>> -        BUG_ON(buf_remaining > 3);
->>> +        /* buf_remaining > 3 check not needed as tx_fifo_avail == 0
->>> +         * when (words_to_transfer was > tx_fifo_avail) earlier
->>> +         * in this function for non-zero words_to_transfer
->>> +         */
->>>           memcpy(&val, buf, buf_remaining);
->>>           val = le32_to_cpu(val);
->>>   @@ -811,6 +823,7 @@ static irqreturn_t tegra_i2c_isr(int irq, void *dev_id)
->>>       u32 status;
->>>       const u32 status_err = I2C_INT_NO_ACK | I2C_INT_ARBITRATION_LOST;
->>>       struct tegra_i2c_dev *i2c_dev = dev_id;
->>> +    int err_val;
->>>         status = i2c_readl(i2c_dev, I2C_INT_STATUS);
->>>   @@ -847,10 +860,21 @@ static irqreturn_t tegra_i2c_isr(int irq, void *dev_id)
->>>         if (!i2c_dev->is_curr_dma_xfer) {
->>>           if (i2c_dev->msg_read && (status & I2C_INT_RX_FIFO_DATA_REQ)) {
->>> -            if (i2c_dev->msg_buf_remaining)
->>> -                tegra_i2c_empty_rx_fifo(i2c_dev);
->>> -            else
->>> -                BUG();
->>> +            err_val = tegra_i2c_empty_rx_fifo(i2c_dev);
->>> +            if ((!(i2c_dev->msg_buf_remaining)) &&
->>
->> Let's move this check into tegra_i2c_empty_rx_fifo() and return -EINVAL for that case.
->> This will make code to look cleaner.
-> OK.
-> 
-> 
->>
->>> +                (!(status & I2C_INT_PACKET_XFER_COMPLETE)) &&
->>
->> It shouldn't matter that XFER_COMPLETE is set if RX FIFO isn't fully emptied because
->> it always shall be emptied. Hence this check is not needed and we should error out
->> regardless.
-> OK
-> 
->>
->>> +                err_val) {
->>> +                /*
->>> +                 * Overflow error condition: message fully sent,
->>> +                 * with no XFER_COMPLETE interrupt but hardware
->>> +                 * asks to transfer more.
->>> +                 */
->>> +                tegra_i2c_mask_irq(i2c_dev,
->>> +                           I2C_INT_RX_FIFO_DATA_REQ);
->>
->> No need to mask RX_FIFO_DATA_REQ here because all interrupts are masked on "goto
->> err:", hence just remove the tegra_i2c_mask_irq().
->>
->>> +                i2c_dev->msg_err |=
->>> +                    I2C_ERR_UNEXPECTED_STATUS;
->>
->> No need to split this into two lines because it's less than 80 chars, write this in a
->> single line.
-> OK
-> 
->>
->>> +                goto err;
->>> +            }
->>>           }
->>>             if (!i2c_dev->msg_read && (status & I2C_INT_TX_FIFO_DATA_REQ)) {
->>> @@ -876,7 +900,13 @@ static irqreturn_t tegra_i2c_isr(int irq, void *dev_id)
->>>       if (status & I2C_INT_PACKET_XFER_COMPLETE) {
->>>           if (i2c_dev->is_curr_dma_xfer)
->>>               i2c_dev->msg_buf_remaining = 0;
->>> -        BUG_ON(i2c_dev->msg_buf_remaining);
->>> +        /* Underflow error condition: XFER_COMPLETE before message
->>> +         * fully sent.
->>> +         */
->>> +        if (WARN_ON_ONCE(i2c_dev->msg_buf_remaining)) {
->>> +            i2c_dev->msg_err |= I2C_ERR_UNKNOWN_INTERRUPT;
->>> +            goto err;
->>> +        }
->>>           complete(&i2c_dev->msg_complete);
->>>       }
->>>       goto done;
->>>
->>
->> Please address comments in the next revision.
->>
-> 
-> Sorry for the delayed reply. I shared Patch V7 with above changes earlier today.
+Commit-ID:  acae8b36cded0ee62038dedd0a44d54d5d673a96
+Gitweb:     https://git.kernel.org/tip/acae8b36cded0ee62038dedd0a44d54d5d673a96
+Author:     Kan Liang <kan.liang@linux.intel.com>
+AuthorDate: Tue, 4 Jun 2019 15:50:41 -0700
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Mon, 10 Jun 2019 15:50:02 -0300
 
-No problems, please take your time. The V7 is almost good, looking forward to v8!
+perf header: Add die information in CPU topology
+
+With the new CPUID.1F, a new level type of CPU topology, 'die', is
+introduced. The 'die' information in CPU topology should be added in
+perf header.
+
+To be compatible with old perf.data, the patch checks the section size
+before reading the die information. The new info is added at the end of
+the cpu_topology section, the old perf tool ignores the extra data.  It
+never reads data crossing the section boundary.
+
+The new perf tool with the patch can be used on legacy kernel. Add a new
+function has_die_topology() to check if die topology information is
+supported by kernel. The function only check X86 and CPU 0. Assuming
+other CPUs have same topology.
+
+Use similar method for core and socket to support die id and sibling
+dies string.
+
+Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+Reviewed-by: Jiri Olsa <jolsa@kernel.org>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Link: http://lkml.kernel.org/r/1559688644-106558-2-git-send-email-kan.liang@linux.intel.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/Documentation/perf.data-file-format.txt |  9 ++-
+ tools/perf/util/cputopo.c                          | 76 +++++++++++++++--
+ tools/perf/util/cputopo.h                          |  2 +
+ tools/perf/util/env.c                              |  1 +
+ tools/perf/util/env.h                              |  3 +
+ tools/perf/util/header.c                           | 94 ++++++++++++++++++++--
+ 6 files changed, 172 insertions(+), 13 deletions(-)
+
+diff --git a/tools/perf/Documentation/perf.data-file-format.txt b/tools/perf/Documentation/perf.data-file-format.txt
+index 6375e6fb8bac..0165e92e717e 100644
+--- a/tools/perf/Documentation/perf.data-file-format.txt
++++ b/tools/perf/Documentation/perf.data-file-format.txt
+@@ -153,7 +153,7 @@ struct {
+ 
+ String lists defining the core and CPU threads topology.
+ The string lists are followed by a variable length array
+-which contains core_id and socket_id of each cpu.
++which contains core_id, die_id (for x86) and socket_id of each cpu.
+ The number of entries can be determined by the size of the
+ section minus the sizes of both string lists.
+ 
+@@ -162,14 +162,19 @@ struct {
+        struct perf_header_string_list threads; /* Variable length */
+        struct {
+ 	      uint32_t core_id;
++	      uint32_t die_id;
+ 	      uint32_t socket_id;
+        } cpus[nr]; /* Variable length records */
+ };
+ 
+ Example:
+-	sibling cores   : 0-3
++	sibling cores   : 0-8
++	sibling dies	: 0-3
++	sibling dies	: 4-7
+ 	sibling threads : 0-1
+ 	sibling threads : 2-3
++	sibling threads : 4-5
++	sibling threads : 6-7
+ 
+ 	HEADER_NUMA_TOPOLOGY = 14,
+ 
+diff --git a/tools/perf/util/cputopo.c b/tools/perf/util/cputopo.c
+index ece0710249d4..85fa87fc30cf 100644
+--- a/tools/perf/util/cputopo.c
++++ b/tools/perf/util/cputopo.c
+@@ -1,5 +1,6 @@
+ // SPDX-License-Identifier: GPL-2.0
+ #include <sys/param.h>
++#include <sys/utsname.h>
+ #include <inttypes.h>
+ #include <api/fs/fs.h>
+ 
+@@ -8,9 +9,10 @@
+ #include "util.h"
+ #include "env.h"
+ 
+-
+ #define CORE_SIB_FMT \
+ 	"%s/devices/system/cpu/cpu%d/topology/core_siblings_list"
++#define DIE_SIB_FMT \
++	"%s/devices/system/cpu/cpu%d/topology/die_cpus_list"
+ #define THRD_SIB_FMT \
+ 	"%s/devices/system/cpu/cpu%d/topology/thread_siblings_list"
+ #define NODE_ONLINE_FMT \
+@@ -34,12 +36,12 @@ static int build_cpu_topology(struct cpu_topology *tp, int cpu)
+ 		  sysfs__mountpoint(), cpu);
+ 	fp = fopen(filename, "r");
+ 	if (!fp)
+-		goto try_threads;
++		goto try_dies;
+ 
+ 	sret = getline(&buf, &len, fp);
+ 	fclose(fp);
+ 	if (sret <= 0)
+-		goto try_threads;
++		goto try_dies;
+ 
+ 	p = strchr(buf, '\n');
+ 	if (p)
+@@ -57,6 +59,37 @@ static int build_cpu_topology(struct cpu_topology *tp, int cpu)
+ 	}
+ 	ret = 0;
+ 
++try_dies:
++	if (!tp->die_siblings)
++		goto try_threads;
++
++	scnprintf(filename, MAXPATHLEN, DIE_SIB_FMT,
++		  sysfs__mountpoint(), cpu);
++	fp = fopen(filename, "r");
++	if (!fp)
++		goto try_threads;
++
++	sret = getline(&buf, &len, fp);
++	fclose(fp);
++	if (sret <= 0)
++		goto try_threads;
++
++	p = strchr(buf, '\n');
++	if (p)
++		*p = '\0';
++
++	for (i = 0; i < tp->die_sib; i++) {
++		if (!strcmp(buf, tp->die_siblings[i]))
++			break;
++	}
++	if (i == tp->die_sib) {
++		tp->die_siblings[i] = buf;
++		tp->die_sib++;
++		buf = NULL;
++		len = 0;
++	}
++	ret = 0;
++
+ try_threads:
+ 	scnprintf(filename, MAXPATHLEN, THRD_SIB_FMT,
+ 		  sysfs__mountpoint(), cpu);
+@@ -98,21 +131,46 @@ void cpu_topology__delete(struct cpu_topology *tp)
+ 	for (i = 0 ; i < tp->core_sib; i++)
+ 		zfree(&tp->core_siblings[i]);
+ 
++	if (tp->die_sib) {
++		for (i = 0 ; i < tp->die_sib; i++)
++			zfree(&tp->die_siblings[i]);
++	}
++
+ 	for (i = 0 ; i < tp->thread_sib; i++)
+ 		zfree(&tp->thread_siblings[i]);
+ 
+ 	free(tp);
+ }
+ 
++static bool has_die_topology(void)
++{
++	char filename[MAXPATHLEN];
++	struct utsname uts;
++
++	if (uname(&uts) < 0)
++		return false;
++
++	if (strncmp(uts.machine, "x86_64", 6))
++		return false;
++
++	scnprintf(filename, MAXPATHLEN, DIE_SIB_FMT,
++		  sysfs__mountpoint(), 0);
++	if (access(filename, F_OK) == -1)
++		return false;
++
++	return true;
++}
++
+ struct cpu_topology *cpu_topology__new(void)
+ {
+ 	struct cpu_topology *tp = NULL;
+ 	void *addr;
+-	u32 nr, i;
++	u32 nr, i, nr_addr;
+ 	size_t sz;
+ 	long ncpus;
+ 	int ret = -1;
+ 	struct cpu_map *map;
++	bool has_die = has_die_topology();
+ 
+ 	ncpus = cpu__max_present_cpu();
+ 
+@@ -126,7 +184,11 @@ struct cpu_topology *cpu_topology__new(void)
+ 	nr = (u32)(ncpus & UINT_MAX);
+ 
+ 	sz = nr * sizeof(char *);
+-	addr = calloc(1, sizeof(*tp) + 2 * sz);
++	if (has_die)
++		nr_addr = 3;
++	else
++		nr_addr = 2;
++	addr = calloc(1, sizeof(*tp) + nr_addr * sz);
+ 	if (!addr)
+ 		goto out_free;
+ 
+@@ -134,6 +196,10 @@ struct cpu_topology *cpu_topology__new(void)
+ 	addr += sizeof(*tp);
+ 	tp->core_siblings = addr;
+ 	addr += sz;
++	if (has_die) {
++		tp->die_siblings = addr;
++		addr += sz;
++	}
+ 	tp->thread_siblings = addr;
+ 
+ 	for (i = 0; i < nr; i++) {
+diff --git a/tools/perf/util/cputopo.h b/tools/perf/util/cputopo.h
+index 47a97e71acdf..bae2f1d41856 100644
+--- a/tools/perf/util/cputopo.h
++++ b/tools/perf/util/cputopo.h
+@@ -7,8 +7,10 @@
+ 
+ struct cpu_topology {
+ 	u32	  core_sib;
++	u32	  die_sib;
+ 	u32	  thread_sib;
+ 	char	**core_siblings;
++	char	**die_siblings;
+ 	char	**thread_siblings;
+ };
+ 
+diff --git a/tools/perf/util/env.c b/tools/perf/util/env.c
+index 6a3eaf7d9353..1cc7a1837822 100644
+--- a/tools/perf/util/env.c
++++ b/tools/perf/util/env.c
+@@ -246,6 +246,7 @@ int perf_env__read_cpu_topology_map(struct perf_env *env)
+ 	for (cpu = 0; cpu < nr_cpus; ++cpu) {
+ 		env->cpu[cpu].core_id	= cpu_map__get_core_id(cpu);
+ 		env->cpu[cpu].socket_id	= cpu_map__get_socket_id(cpu);
++		env->cpu[cpu].die_id	= cpu_map__get_die_id(cpu);
+ 	}
+ 
+ 	env->nr_cpus_avail = nr_cpus;
+diff --git a/tools/perf/util/env.h b/tools/perf/util/env.h
+index 271a90b326c4..d5d9865aa812 100644
+--- a/tools/perf/util/env.h
++++ b/tools/perf/util/env.h
+@@ -9,6 +9,7 @@
+ 
+ struct cpu_topology_map {
+ 	int	socket_id;
++	int	die_id;
+ 	int	core_id;
+ };
+ 
+@@ -49,6 +50,7 @@ struct perf_env {
+ 
+ 	int			nr_cmdline;
+ 	int			nr_sibling_cores;
++	int			nr_sibling_dies;
+ 	int			nr_sibling_threads;
+ 	int			nr_numa_nodes;
+ 	int			nr_memory_nodes;
+@@ -57,6 +59,7 @@ struct perf_env {
+ 	char			*cmdline;
+ 	const char		**cmdline_argv;
+ 	char			*sibling_cores;
++	char			*sibling_dies;
+ 	char			*sibling_threads;
+ 	char			*pmu_mappings;
+ 	struct cpu_topology_map	*cpu;
+diff --git a/tools/perf/util/header.c b/tools/perf/util/header.c
+index 847ae51a524b..64976254431c 100644
+--- a/tools/perf/util/header.c
++++ b/tools/perf/util/header.c
+@@ -599,6 +599,27 @@ static int write_cpu_topology(struct feat_fd *ff,
+ 		if (ret < 0)
+ 			return ret;
+ 	}
++
++	if (!tp->die_sib)
++		goto done;
++
++	ret = do_write(ff, &tp->die_sib, sizeof(tp->die_sib));
++	if (ret < 0)
++		goto done;
++
++	for (i = 0; i < tp->die_sib; i++) {
++		ret = do_write_string(ff, tp->die_siblings[i]);
++		if (ret < 0)
++			goto done;
++	}
++
++	for (j = 0; j < perf_env.nr_cpus_avail; j++) {
++		ret = do_write(ff, &perf_env.cpu[j].die_id,
++			       sizeof(perf_env.cpu[j].die_id));
++		if (ret < 0)
++			return ret;
++	}
++
+ done:
+ 	cpu_topology__delete(tp);
+ 	return ret;
+@@ -1443,6 +1464,16 @@ static void print_cpu_topology(struct feat_fd *ff, FILE *fp)
+ 		str += strlen(str) + 1;
+ 	}
+ 
++	if (ph->env.nr_sibling_dies) {
++		nr = ph->env.nr_sibling_dies;
++		str = ph->env.sibling_dies;
++
++		for (i = 0; i < nr; i++) {
++			fprintf(fp, "# sibling dies    : %s\n", str);
++			str += strlen(str) + 1;
++		}
++	}
++
+ 	nr = ph->env.nr_sibling_threads;
+ 	str = ph->env.sibling_threads;
+ 
+@@ -1451,12 +1482,28 @@ static void print_cpu_topology(struct feat_fd *ff, FILE *fp)
+ 		str += strlen(str) + 1;
+ 	}
+ 
+-	if (ph->env.cpu != NULL) {
+-		for (i = 0; i < cpu_nr; i++)
+-			fprintf(fp, "# CPU %d: Core ID %d, Socket ID %d\n", i,
+-				ph->env.cpu[i].core_id, ph->env.cpu[i].socket_id);
+-	} else
+-		fprintf(fp, "# Core ID and Socket ID information is not available\n");
++	if (ph->env.nr_sibling_dies) {
++		if (ph->env.cpu != NULL) {
++			for (i = 0; i < cpu_nr; i++)
++				fprintf(fp, "# CPU %d: Core ID %d, "
++					    "Die ID %d, Socket ID %d\n",
++					    i, ph->env.cpu[i].core_id,
++					    ph->env.cpu[i].die_id,
++					    ph->env.cpu[i].socket_id);
++		} else
++			fprintf(fp, "# Core ID, Die ID and Socket ID "
++				    "information is not available\n");
++	} else {
++		if (ph->env.cpu != NULL) {
++			for (i = 0; i < cpu_nr; i++)
++				fprintf(fp, "# CPU %d: Core ID %d, "
++					    "Socket ID %d\n",
++					    i, ph->env.cpu[i].core_id,
++					    ph->env.cpu[i].socket_id);
++		} else
++			fprintf(fp, "# Core ID and Socket ID "
++				    "information is not available\n");
++	}
+ }
+ 
+ static void print_clockid(struct feat_fd *ff, FILE *fp)
+@@ -2214,6 +2261,7 @@ static int process_cpu_topology(struct feat_fd *ff, void *data __maybe_unused)
+ 			goto free_cpu;
+ 
+ 		ph->env.cpu[i].core_id = nr;
++		size += sizeof(u32);
+ 
+ 		if (do_read_u32(ff, &nr))
+ 			goto free_cpu;
+@@ -2225,6 +2273,40 @@ static int process_cpu_topology(struct feat_fd *ff, void *data __maybe_unused)
+ 		}
+ 
+ 		ph->env.cpu[i].socket_id = nr;
++		size += sizeof(u32);
++	}
++
++	/*
++	 * The header may be from old perf,
++	 * which doesn't include die information.
++	 */
++	if (ff->size <= size)
++		return 0;
++
++	if (do_read_u32(ff, &nr))
++		return -1;
++
++	ph->env.nr_sibling_dies = nr;
++	size += sizeof(u32);
++
++	for (i = 0; i < nr; i++) {
++		str = do_read_string(ff);
++		if (!str)
++			goto error;
++
++		/* include a NULL character at the end */
++		if (strbuf_add(&sb, str, strlen(str) + 1) < 0)
++			goto error;
++		size += string_size(str);
++		free(str);
++	}
++	ph->env.sibling_dies = strbuf_detach(&sb, NULL);
++
++	for (i = 0; i < (u32)cpu_nr; i++) {
++		if (do_read_u32(ff, &nr))
++			goto free_cpu;
++
++		ph->env.cpu[i].die_id = nr;
+ 	}
+ 
+ 	return 0;
