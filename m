@@ -2,229 +2,176 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 070DB495C3
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 01:18:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0652E495CB
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 01:23:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727102AbfFQXSR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 19:18:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58114 "EHLO mail.kernel.org"
+        id S1728285AbfFQXW6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 19:22:58 -0400
+Received: from mga05.intel.com ([192.55.52.43]:50493 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726121AbfFQXSR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 19:18:17 -0400
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2F0FA20673;
-        Mon, 17 Jun 2019 23:18:15 +0000 (UTC)
-Date:   Mon, 17 Jun 2019 19:18:13 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Jessica Yu <jeyu@kernel.org>, linux-kernel@vger.kernel.org,
-        jpoimboe@redhat.com, jikos@kernel.org, mbenes@suse.cz,
-        pmladek@suse.com, ast@kernel.org, daniel@iogearbox.net
-Subject: Re: [RFC][PATCH] module: Propagate MODULE_STATE_COMING notifier
- errors
-Message-ID: <20190617191813.2eb37be8@gandalf.local.home>
-In-Reply-To: <20190617090335.GX3436@hirez.programming.kicks-ass.net>
-References: <20190617090335.GX3436@hirez.programming.kicks-ass.net>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1726121AbfFQXW5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Jun 2019 19:22:57 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Jun 2019 16:22:57 -0700
+X-ExtLoop1: 1
+Received: from schen9-desk.jf.intel.com (HELO [10.54.74.162]) ([10.54.74.162])
+  by fmsmga008.fm.intel.com with ESMTP; 17 Jun 2019 16:22:56 -0700
+To:     Jonathan Corbet <corbet@lwn.net>,
+        Thomas Gleixner <tglx@linutronix.de>
+Cc:     Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ben Greear <greearb@candelatech.com>, stable@vger.kernel.org,
+        Andi Kleen <ak@linux.intel.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Jun Nakajima <jun.nakajima@intel.com>,
+        Jiri Kosina <jikos@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Asit Mallick <asit.k.mallick@intel.com>,
+        Arjan van de Ven <arjan@linux.intel.com>,
+        Jon Masters <jcm@redhat.com>,
+        Waiman Long <longman9394@gmail.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Mark Gross <mgross@linux.intel.com>,
+        LKML <linux-kernel@vger.kernel.org>, x86@kernel.org
+References: <c63945d34bfc9df2412f813d0b9b3a321a65de5d.1560795378.git.tim.c.chen@linux.intel.com>
+ <alpine.DEB.2.21.1906172217540.1963@nanos.tec.linutronix.de>
+ <20190617161600.77f5f5eb@lwn.net>
+From:   Tim Chen <tim.c.chen@linux.intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=tim.c.chen@linux.intel.com; prefer-encrypt=mutual; keydata=
+ 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
+ l50q2K/r651xphs7CGEdKi1nU0YJVbQxJQ==
+Subject: Re: [PATCH v3] Documentation: Add section about CPU vulnerabilities
+ for Spectre
+Message-ID: <c6c233d6-948e-a663-5e82-3a5cea2e0aeb@linux.intel.com>
+Date:   Mon, 17 Jun 2019 16:22:55 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20190617161600.77f5f5eb@lwn.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 17 Jun 2019 11:03:35 +0200
-Peter Zijlstra <peterz@infradead.org> wrote:
-
-> Some module notifiers; such as jump_label_module_notifier(),
-> tracepoint_module_notify(); can fail the MODULE_STATE_COMING callback
-> (due to -ENOMEM for example). However module.c:prepare_coming_module()
-> ignores all such errors, even though this function can already fail due
-> to klp_module_coming().
+On 6/17/19 3:16 PM, Jonathan Corbet wrote:
+> On Mon, 17 Jun 2019 22:21:51 +0200 (CEST)
+> Thomas Gleixner <tglx@linutronix.de> wrote:
 > 
-> Therefore, propagate the notifier error and ensure we call the GOING
-> notifier when we do fail, to ensure cleanup for all notifiers that
-> didn't fail. Auditing all notifiers to make sure calling GOING without
-> COMING first is OK found no obvious problems with that, but it did find
-> a whole bunch of issues with return values, so clean those up too.
+>>> +Spectre variant 1 attacks take advantage of speculative execution of
+>>> +conditional branches, while Spectre variant 2 attacks use speculative
+>>> +execution of indirect branches to leak privileged memory. See [1] [5]
+>>> +[7] [10] [11].  
+>>
+>> It would be great to actually link these [N] to the actual http link at the
+>> bottom. No idea what's the best way to do that.
+>>
+>> Jonathan?
 > 
-> Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-> Cc: Jiri Kosina <jikos@kernel.org>
-
-I think this patch should get a reviewed by from Josh or Jiri just to
-take a look at the change in error paths wrt klp_module_coming() and
-klp_module_going() updates.
-
-But other than that.
-
-Reviewed-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-
--- Steve
-
-
-> Cc: Miroslav Benes <mbenes@suse.cz>
-> Cc: Petr Mladek <pmladek@suse.com>
-> Cc: Steven Rostedt <rostedt@goodmis.org>
-> Cc: Alexei Starovoitov <ast@kernel.org>
-> Cc: Daniel Borkmann <daniel@iogearbox.net>
-> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> ---
->  drivers/oprofile/buffer_sync.c | 4 ++--
->  kernel/module.c                | 9 +++++----
->  kernel/trace/bpf_trace.c       | 8 ++++++--
->  kernel/trace/trace.c           | 2 +-
->  kernel/trace/trace_events.c    | 2 +-
->  kernel/trace/trace_printk.c    | 4 ++--
->  kernel/tracepoint.c            | 2 +-
->  7 files changed, 18 insertions(+), 13 deletions(-)
+> Append an underscore to the link text, so:
 > 
-> diff --git a/drivers/oprofile/buffer_sync.c b/drivers/oprofile/buffer_sync.c
-> index ac27f3d3fbb4..4f61b1b45e0d 100644
-> --- a/drivers/oprofile/buffer_sync.c
-> +++ b/drivers/oprofile/buffer_sync.c
-> @@ -116,7 +116,7 @@ module_load_notify(struct notifier_block *self, unsigned long val, void *data)
->  {
->  #ifdef CONFIG_MODULES
->  	if (val != MODULE_STATE_COMING)
-> -		return 0;
-> +		return NOTIFY_DONE;
->  
->  	/* FIXME: should we process all CPU buffers ? */
->  	mutex_lock(&buffer_mutex);
-> @@ -124,7 +124,7 @@ module_load_notify(struct notifier_block *self, unsigned long val, void *data)
->  	add_event_entry(MODULE_LOADED_CODE);
->  	mutex_unlock(&buffer_mutex);
->  #endif
-> -	return 0;
-> +	return NOTIFY_OK;
->  }
->  
->  
-> diff --git a/kernel/module.c b/kernel/module.c
-> index 80c7c09584cf..0c4831f46380 100644
-> --- a/kernel/module.c
-> +++ b/kernel/module.c
-> @@ -3638,9 +3638,10 @@ static int prepare_coming_module(struct module *mod)
->  	if (err)
->  		return err;
->  
-> -	blocking_notifier_call_chain(&module_notify_list,
-> -				     MODULE_STATE_COMING, mod);
-> -	return 0;
-> +	ret = blocking_notifier_call_chain(&module_notify_list,
-> +					   MODULE_STATE_COMING, mod);
-> +	ret = notifier_to_errno(ret);
-> +	return ret;
->  }
->  
->  static int unknown_module_param_cb(char *param, char *val, const char *modname,
-> @@ -3780,7 +3781,7 @@ static int load_module(struct load_info *info, const char __user *uargs,
->  
->  	err = prepare_coming_module(mod);
->  	if (err)
-> -		goto bug_cleanup;
-> +		goto coming_cleanup;
->  
->  	/* Module is ready to execute: parsing args may do that. */
->  	after_dashes = parse_args(mod->name, mod->args, mod->kp, mod->num_kp,
-> diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
-> index f92d6ad5e080..18afa75f5208 100644
-> --- a/kernel/trace/bpf_trace.c
-> +++ b/kernel/trace/bpf_trace.c
-> @@ -1302,10 +1302,11 @@ static int bpf_event_notify(struct notifier_block *nb, unsigned long op,
->  {
->  	struct bpf_trace_module *btm, *tmp;
->  	struct module *mod = module;
-> +	int ret = 0;
->  
->  	if (mod->num_bpf_raw_events == 0 ||
->  	    (op != MODULE_STATE_COMING && op != MODULE_STATE_GOING))
-> -		return 0;
-> +		goto out;
->  
->  	mutex_lock(&bpf_module_mutex);
->  
-> @@ -1315,6 +1316,8 @@ static int bpf_event_notify(struct notifier_block *nb, unsigned long op,
->  		if (btm) {
->  			btm->module = module;
->  			list_add(&btm->list, &bpf_trace_modules);
-> +		} else {
-> +			ret = -ENOMEM;
->  		}
->  		break;
->  	case MODULE_STATE_GOING:
-> @@ -1330,7 +1333,8 @@ static int bpf_event_notify(struct notifier_block *nb, unsigned long op,
->  
->  	mutex_unlock(&bpf_module_mutex);
->  
-> -	return 0;
-> +out:
-> +	return notifier_from_errno(ret);
->  }
->  
->  static struct notifier_block bpf_module_nb = {
-> diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-> index 1c80521fd436..6757e7392f1a 100644
-> --- a/kernel/trace/trace.c
-> +++ b/kernel/trace/trace.c
-> @@ -8685,7 +8685,7 @@ static int trace_module_notify(struct notifier_block *self,
->  		break;
->  	}
->  
-> -	return 0;
-> +	return NOTIFY_OK;
->  }
->  
->  static struct notifier_block trace_module_nb = {
-> diff --git a/kernel/trace/trace_events.c b/kernel/trace/trace_events.c
-> index 0ce3db67f556..32098dbab72e 100644
-> --- a/kernel/trace/trace_events.c
-> +++ b/kernel/trace/trace_events.c
-> @@ -2450,7 +2450,7 @@ static int trace_module_notify(struct notifier_block *self,
->  	mutex_unlock(&trace_types_lock);
->  	mutex_unlock(&event_mutex);
->  
-> -	return 0;
-> +	return NOTIFY_OK;
->  }
->  
->  static struct notifier_block trace_module_nb = {
-> diff --git a/kernel/trace/trace_printk.c b/kernel/trace/trace_printk.c
-> index c3fd849d4a8f..d5394e02163f 100644
-> --- a/kernel/trace/trace_printk.c
-> +++ b/kernel/trace/trace_printk.c
-> @@ -95,7 +95,7 @@ static int module_trace_bprintk_format_notify(struct notifier_block *self,
->  		if (val == MODULE_STATE_COMING)
->  			hold_module_trace_bprintk_format(start, end);
->  	}
-> -	return 0;
-> +	return NOTIFY_OK;
->  }
->  
->  /*
-> @@ -173,7 +173,7 @@ __init static int
->  module_trace_bprintk_format_notify(struct notifier_block *self,
->  		unsigned long val, void *data)
->  {
-> -	return 0;
-> +	return NOTIFY_OK;
->  }
->  static inline const char **
->  find_next_mod_format(int start_index, void *v, const char **fmt, loff_t *pos)
-> diff --git a/kernel/tracepoint.c b/kernel/tracepoint.c
-> index df3ade14ccbd..9ce0a510e6af 100644
-> --- a/kernel/tracepoint.c
-> +++ b/kernel/tracepoint.c
-> @@ -521,7 +521,7 @@ static int tracepoint_module_notify(struct notifier_block *self,
->  	case MODULE_STATE_UNFORMED:
->  		break;
->  	}
-> -	return ret;
-> +	return notifier_from_errno(ret);
->  }
->  
->  static struct notifier_block tracepoint_module_nb = {
+> 	See [1_] [5_] ...
+> 	
+> Then, when adding the links:
+> 
+> 	.. _1: https://.../
+> 
+> There are other ways; see
+> 
+>     http://docutils.sourceforge.net/docs/user/rst/quickref.html#external-hyperlink-targets 
+> 
+> for the list.
 
+Jonathan,
+
+I want to actually have a generated reference section.  The method you suggested will generate
+the reference link as a footer on the same page that refers to the link.  I haven't quite figured
+out how to generate a proper bibliography like reference section with hyperlink after googling
+for quite a while.
+
+
+> 
+>> The below renders horribly when converted to HTML
+>>
+>> You probably want to wrap these into a table
+>>
+>>> +	nospectre_v2	[X86] Disable all mitigations for the Spectre variant 2
+>>> +			(indirect branch prediction) vulnerability. System may
+>>> +			allow data leaks with this option, which is equivalent
+>>> +			to spectre_v2=off.
+>>> +
+>>> +
+>>> +        spectre_v2=     [X86] Control mitigation of Spectre variant 2
+>>> +			(indirect branch speculation) vulnerability.
+>>> +			The default operation protects the kernel from
+>>> +			user space attacks.  
+>>
+>> Maybe Jonathan has a better idea.
+> 
+> The easiest thing is probably a definition list:
+> 
+> 	nospectre_v2
+> 	    [X86] Disable all mitigations for the Spectre variant 2
+> 	    (indirect branch prediction) ...
+> 
+> 	spectrev2=
+> 	    ...
+> 
+> i.e. just move the descriptive text into an indented block below the term
+> of interest.
+> 
+
+Thanks for this suggestion.
+
+Tim
