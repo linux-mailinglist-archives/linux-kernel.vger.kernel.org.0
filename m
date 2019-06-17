@@ -2,40 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 204C14933E
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 23:29:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 145E54930F
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 23:27:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730639AbfFQV3B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 17:29:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56130 "EHLO mail.kernel.org"
+        id S1730338AbfFQV1F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 17:27:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53858 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730629AbfFQV26 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 17:28:58 -0400
+        id S1730332AbfFQV1D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Jun 2019 17:27:03 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 900A22082C;
-        Mon, 17 Jun 2019 21:28:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E279120673;
+        Mon, 17 Jun 2019 21:27:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560806938;
-        bh=ZWpMkuWmbfLwj0OMCJk7OZbjBGU0Sjk3VHvoQX/itak=;
+        s=default; t=1560806822;
+        bh=l2iPqIbRA3NdXoDeJJJLOAyo1gE2Xi1qHojbMW/AEHw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UC2BUCuX0IjK7wyTkFA6HcQDdwKGnuLYQTecdDWzuu0oEt1J8G9jqZ2tqrV7uBK4W
-         ekx65/De2tXWXsr9NCZw9upZM8p4Db+VoOiAJx0ILPmkwgC+POLAr4hBN76p4KyTvK
-         LvbiyJVuBumRgWpLNkel+BNnvtu2rN0B9w80wtg8=
+        b=o83NuleDa2JXeOlIOxiaF+ngC8SbgXYtGYJ8snrhbVK86xKSzLPiJj/ie3SW1/Z/W
+         vG/A93wL10+uzNYbZnEDNoCaNOcuFS8lsYAabLxO+2H/FzWsJWP5jOJOSfODD+Zox3
+         LEeI0O9OeSO/VCfox8uru7/obDF1y12cXAcnezRA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Steffen Dirkwinkel <s.dirkwinkel@beckhoff.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 34/53] platform/x86: pmc_atom: Add several Beckhoff Automation boards to critclk_systems DMI table
-Date:   Mon, 17 Jun 2019 23:10:17 +0200
-Message-Id: <20190617210751.371574901@linuxfoundation.org>
+        stable@vger.kernel.org, Cong Wang <xiyou.wangcong@gmail.com>,
+        Borislav Petkov <bp@suse.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tony Luck <tony.luck@intel.com>,
+        linux-edac <linux-edac@vger.kernel.org>
+Subject: [PATCH 4.19 67/75] RAS/CEC: Convert the timer callback to a workqueue
+Date:   Mon, 17 Jun 2019 23:10:18 +0200
+Message-Id: <20190617210755.733537007@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190617210745.104187490@linuxfoundation.org>
-References: <20190617210745.104187490@linuxfoundation.org>
+In-Reply-To: <20190617210752.799453599@linuxfoundation.org>
+References: <20190617210752.799453599@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,58 +46,142 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit d6423bd03031c020121da26c41a26bd5cc6d0da3 ]
+From: Cong Wang <xiyou.wangcong@gmail.com>
 
-There are several Beckhoff Automation industrial PC boards which use
-pmc_plt_clk* clocks for ethernet controllers. This adds affected boards
-to critclk_systems DMI table so the clocks are marked as CLK_CRITICAL and
-not turned off.
+commit 0ade0b6240c4853cf9725924c46c10f4251639d7 upstream.
 
-Fixes: 648e921888ad ("clk: x86: Stop marking clocks as CLK_IS_CRITICAL")
-Signed-off-by: Steffen Dirkwinkel <s.dirkwinkel@beckhoff.com>
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+cec_timer_fn() is a timer callback which reads ce_arr.array[] and
+updates its decay values. However, it runs in interrupt context and the
+mutex protection the CEC uses for that array, is inadequate. Convert the
+used timer to a workqueue to keep the tasks the CEC performs preemptible
+and thus low-prio.
+
+ [ bp: Rewrite commit message.
+   s/timer/decay/gi to make it agnostic as to what facility is used. ]
+
+Fixes: 011d82611172 ("RAS: Add a Corrected Errors Collector")
+Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Tony Luck <tony.luck@intel.com>
+Cc: linux-edac <linux-edac@vger.kernel.org>
+Cc: <stable@vger.kernel.org>
+Link: https://lkml.kernel.org/r/20190416213351.28999-2-xiyou.wangcong@gmail.com
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/platform/x86/pmc_atom.c | 24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
+ drivers/ras/cec.c |   46 ++++++++++++++++++++++------------------------
+ 1 file changed, 22 insertions(+), 24 deletions(-)
 
-diff --git a/drivers/platform/x86/pmc_atom.c b/drivers/platform/x86/pmc_atom.c
-index e3e1f83a2dd7..d4d089c37944 100644
---- a/drivers/platform/x86/pmc_atom.c
-+++ b/drivers/platform/x86/pmc_atom.c
-@@ -443,6 +443,30 @@ static const struct dmi_system_id critclk_systems[] = {
- 			DMI_MATCH(DMI_PRODUCT_NAME, "3I380D"),
- 		},
- 	},
-+	{
-+		/* pmc_plt_clk* - are used for ethernet controllers */
-+		.ident = "Beckhoff CB3163",
-+		.matches = {
-+			DMI_MATCH(DMI_SYS_VENDOR, "Beckhoff Automation"),
-+			DMI_MATCH(DMI_BOARD_NAME, "CB3163"),
-+		},
-+	},
-+	{
-+		/* pmc_plt_clk* - are used for ethernet controllers */
-+		.ident = "Beckhoff CB6263",
-+		.matches = {
-+			DMI_MATCH(DMI_SYS_VENDOR, "Beckhoff Automation"),
-+			DMI_MATCH(DMI_BOARD_NAME, "CB6263"),
-+		},
-+	},
-+	{
-+		/* pmc_plt_clk* - are used for ethernet controllers */
-+		.ident = "Beckhoff CB6363",
-+		.matches = {
-+			DMI_MATCH(DMI_SYS_VENDOR, "Beckhoff Automation"),
-+			DMI_MATCH(DMI_BOARD_NAME, "CB6363"),
-+		},
-+	},
- 	{ /*sentinel*/ }
- };
+--- a/drivers/ras/cec.c
++++ b/drivers/ras/cec.c
+@@ -2,6 +2,7 @@
+ #include <linux/mm.h>
+ #include <linux/gfp.h>
+ #include <linux/kernel.h>
++#include <linux/workqueue.h>
  
--- 
-2.20.1
-
+ #include <asm/mce.h>
+ 
+@@ -123,16 +124,12 @@ static u64 dfs_pfn;
+ /* Amount of errors after which we offline */
+ static unsigned int count_threshold = COUNT_MASK;
+ 
+-/*
+- * The timer "decays" element count each timer_interval which is 24hrs by
+- * default.
+- */
+-
+-#define CEC_TIMER_DEFAULT_INTERVAL	24 * 60 * 60	/* 24 hrs */
+-#define CEC_TIMER_MIN_INTERVAL		 1 * 60 * 60	/* 1h */
+-#define CEC_TIMER_MAX_INTERVAL	   30 *	24 * 60 * 60	/* one month */
+-static struct timer_list cec_timer;
+-static u64 timer_interval = CEC_TIMER_DEFAULT_INTERVAL;
++/* Each element "decays" each decay_interval which is 24hrs by default. */
++#define CEC_DECAY_DEFAULT_INTERVAL	24 * 60 * 60	/* 24 hrs */
++#define CEC_DECAY_MIN_INTERVAL		 1 * 60 * 60	/* 1h */
++#define CEC_DECAY_MAX_INTERVAL	   30 *	24 * 60 * 60	/* one month */
++static struct delayed_work cec_work;
++static u64 decay_interval = CEC_DECAY_DEFAULT_INTERVAL;
+ 
+ /*
+  * Decrement decay value. We're using DECAY_BITS bits to denote decay of an
+@@ -160,20 +157,21 @@ static void do_spring_cleaning(struct ce
+ /*
+  * @interval in seconds
+  */
+-static void cec_mod_timer(struct timer_list *t, unsigned long interval)
++static void cec_mod_work(unsigned long interval)
+ {
+ 	unsigned long iv;
+ 
+-	iv = interval * HZ + jiffies;
+-
+-	mod_timer(t, round_jiffies(iv));
++	iv = interval * HZ;
++	mod_delayed_work(system_wq, &cec_work, round_jiffies(iv));
+ }
+ 
+-static void cec_timer_fn(struct timer_list *unused)
++static void cec_work_fn(struct work_struct *work)
+ {
++	mutex_lock(&ce_mutex);
+ 	do_spring_cleaning(&ce_arr);
++	mutex_unlock(&ce_mutex);
+ 
+-	cec_mod_timer(&cec_timer, timer_interval);
++	cec_mod_work(decay_interval);
+ }
+ 
+ /*
+@@ -374,15 +372,15 @@ static int decay_interval_set(void *data
+ {
+ 	*(u64 *)data = val;
+ 
+-	if (val < CEC_TIMER_MIN_INTERVAL)
++	if (val < CEC_DECAY_MIN_INTERVAL)
+ 		return -EINVAL;
+ 
+-	if (val > CEC_TIMER_MAX_INTERVAL)
++	if (val > CEC_DECAY_MAX_INTERVAL)
+ 		return -EINVAL;
+ 
+-	timer_interval = val;
++	decay_interval = val;
+ 
+-	cec_mod_timer(&cec_timer, timer_interval);
++	cec_mod_work(decay_interval);
+ 	return 0;
+ }
+ DEFINE_DEBUGFS_ATTRIBUTE(decay_interval_ops, u64_get, decay_interval_set, "%lld\n");
+@@ -426,7 +424,7 @@ static int array_dump(struct seq_file *m
+ 
+ 	seq_printf(m, "Flags: 0x%x\n", ca->flags);
+ 
+-	seq_printf(m, "Timer interval: %lld seconds\n", timer_interval);
++	seq_printf(m, "Decay interval: %lld seconds\n", decay_interval);
+ 	seq_printf(m, "Decays: %lld\n", ca->decays_done);
+ 
+ 	seq_printf(m, "Action threshold: %d\n", count_threshold);
+@@ -472,7 +470,7 @@ static int __init create_debugfs_nodes(v
+ 	}
+ 
+ 	decay = debugfs_create_file("decay_interval", S_IRUSR | S_IWUSR, d,
+-				    &timer_interval, &decay_interval_ops);
++				    &decay_interval, &decay_interval_ops);
+ 	if (!decay) {
+ 		pr_warn("Error creating decay_interval debugfs node!\n");
+ 		goto err;
+@@ -508,8 +506,8 @@ void __init cec_init(void)
+ 	if (create_debugfs_nodes())
+ 		return;
+ 
+-	timer_setup(&cec_timer, cec_timer_fn, 0);
+-	cec_mod_timer(&cec_timer, CEC_TIMER_DEFAULT_INTERVAL);
++	INIT_DELAYED_WORK(&cec_work, cec_work_fn);
++	schedule_delayed_work(&cec_work, CEC_DECAY_DEFAULT_INTERVAL);
+ 
+ 	pr_info("Correctable Errors collector initialized.\n");
+ }
 
 
