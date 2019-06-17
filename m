@@ -2,123 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F0230478B2
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 05:36:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E5907478CD
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 05:43:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727686AbfFQDgf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 16 Jun 2019 23:36:35 -0400
-Received: from ozlabs.org ([203.11.71.1]:46449 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727652AbfFQDge (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 16 Jun 2019 23:36:34 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45Rxhb0gc9z9sBp;
-        Mon, 17 Jun 2019 13:36:30 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1560742592;
-        bh=LowPzVDsxLqs/C3kR5JDANavRyAIxtOAT539ZcPPyZQ=;
-        h=Date:From:To:Cc:Subject:From;
-        b=ntPi1qAnPvfrzZtNQRv/UNA55KCjBeBmVKeh4C5HSJNbl7WWVJtNu0zdII8na+3sS
-         rnIL++ATvJo0e+D7N6bQq/jsEX1K/3EMnOynYXZgeMBVutpl9/akwE84/N0yx6tBYv
-         91mCy+2YfHn3oqF829XYDp86SrzGD1XW2CqBgliOBbLhvcUf6i0SnvQ1ntTCN60TT0
-         UuJNKn60j/3IcCJwUDpbBTK/CsEqLO+huLHT1HBQ0k0JGj/+oBzMmYcSRSukojrRdd
-         Ws2KxW4lyhnn0psloZ3xiPt9ZBMsGZ33Fpe3mIh7L1g8H/JnlMDjrlF+GK+7afMPms
-         tduBur6RHbDIg==
-Date:   Mon, 17 Jun 2019 13:36:29 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Lucas Stach <l.stach@pengutronix.de>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Steve Longerbeam <slongerbeam@gmail.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Subject: linux-next: manual merge of the imx-drm tree with the v4l-vdb tree
-Message-ID: <20190617133629.7c276a67@canb.auug.org.au>
+        id S1727704AbfFQDnE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 16 Jun 2019 23:43:04 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:37207 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727643AbfFQDnE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 16 Jun 2019 23:43:04 -0400
+Received: by mail-pf1-f196.google.com with SMTP id 19so4879838pfa.4
+        for <linux-kernel@vger.kernel.org>; Sun, 16 Jun 2019 20:43:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=taZZTmqZDJ/thPE/pxrihvxmQccJO4Nc9IvueiEvDBc=;
+        b=LizGSr8PfLFiYmns24CLOA6uq9rPTN5J9LMubsnAbQe9RV6tkwJrBNTXdptYXq5mw6
+         2vnAvivFmjogvwYbXezf+fKUXJcvI0ecCe2WwoN+nfbyRhMIXvBOmBsgZXZt3TBt/2fj
+         2bHdNuQrZjAK3MXJeXs7UjYdTfWqIl3/vAdFohqW2i07pgBld5KNgDuU+Y7o/0NxgqMZ
+         7Oh3ewUcSgElC1cHriL60uKCNP919CvPmoBjHYgMoQydxVUWR5Og1bbD6uU7nkS8isH4
+         /0119BZ4/nBZy7YDTKG+phwyoX7Ze8Npbz4FRbVFGK964mxOh8Yds774GqIya6KgN5uK
+         zQsg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=taZZTmqZDJ/thPE/pxrihvxmQccJO4Nc9IvueiEvDBc=;
+        b=FKjT5N4S/QRr7Eoi32UO3rEBeeX9dUdHJP0+VZPLaDGwmJggUyE3UFsekStnUu9E/m
+         0UuVbRB3XXAWVcXvjddhrp+Ht8LBBZweXRWmkPEUTS6TOSmquEILRtOJ3jwXgsA/BCt4
+         aBYH/RbUHxcyT/ObpTNxz547C2GDCgDD0JYRGINmmF5oGQ4Fx/0YOrutKEg9kMEQlH4R
+         WhdyM+/Sx2He7JSFQLal9ekNd9b5kjvSEiU14z3t/nxbXhh4tWqjC88/uwZv32APf5qV
+         DOELntW6f94goGdCTvsVVHBxQGClwUWBfN4JLKtZnYUVpEkam++fZ1kqK/6ZFTMorbz+
+         SfmA==
+X-Gm-Message-State: APjAAAUZ1H6tMZAgVqjFleyl7BBn6Dr0AF4fHd7tz/DA2H+dmpdr1qHh
+        U5mw6TU4Y/4u3Doauod3pzj7kg==
+X-Google-Smtp-Source: APXvYqxi14hXWZ21/68Cghl+12pHyJ8hnJvsh96H3bdcGwm+nFCpyQijLNQF3h2LfUM4gAlDChUV4A==
+X-Received: by 2002:aa7:9ad2:: with SMTP id x18mr31710822pfp.192.1560742983352;
+        Sun, 16 Jun 2019 20:43:03 -0700 (PDT)
+Received: from tuxbook-pro (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id f7sm8791031pfd.43.2019.06.16.20.43.02
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Sun, 16 Jun 2019 20:43:02 -0700 (PDT)
+Date:   Sun, 16 Jun 2019 20:43:51 -0700
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Brian Masney <masneyb@onstation.org>
+Cc:     agross@kernel.org, david.brown@linaro.org, robdclark@gmail.com,
+        sean@poorly.run, robh+dt@kernel.org, airlied@linux.ie,
+        daniel@ffwll.ch, mark.rutland@arm.com, jonathan@marek.ca,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH 6/6] drm/msm/gpu: add ocmem init/cleanup functions
+Message-ID: <20190617034351.GA750@tuxbook-pro>
+References: <20190616132930.6942-1-masneyb@onstation.org>
+ <20190616132930.6942-7-masneyb@onstation.org>
+ <20190616180633.GS22737@tuxbook-pro>
+ <20190617001851.GA19038@onstation.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/gdQjnfksCTf=EUManH2KJQC"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190617001851.GA19038@onstation.org>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/gdQjnfksCTf=EUManH2KJQC
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Sun 16 Jun 17:18 PDT 2019, Brian Masney wrote:
 
-Hi all,
+> Hi Bjorn,
+> 
+> On Sun, Jun 16, 2019 at 11:06:33AM -0700, Bjorn Andersson wrote:
+> > > diff --git a/drivers/gpu/drm/msm/adreno/adreno_gpu.c b/drivers/gpu/drm/msm/adreno/adreno_gpu.c
+> > > index 6f7f4114afcf..e0a9409c8a32 100644
+> > > --- a/drivers/gpu/drm/msm/adreno/adreno_gpu.c
+> > > +++ b/drivers/gpu/drm/msm/adreno/adreno_gpu.c
+> > > @@ -29,6 +29,10 @@
+> > >  #include "msm_gem.h"
+> > >  #include "msm_mmu.h"
+> > >  
+> > > +#ifdef CONFIG_QCOM_OCMEM
+> > > +#  include <soc/qcom/ocmem.h>
+> > > +#endif
+> > 
+> > This file exists (after the previous patch), so no need to make its
+> > inclusion conditional.
+> > 
+> > > +
+> > >  static bool zap_available = true;
+> > >  
+> > >  static int zap_shader_load_mdt(struct msm_gpu *gpu, const char *fwname,
+> > > @@ -897,6 +901,43 @@ static int adreno_get_pwrlevels(struct device *dev,
+> > >  	return 0;
+> > >  }
+> > >  
+> > > +int adreno_gpu_ocmem_init(struct device *dev, struct adreno_gpu *adreno_gpu,
+> > > +			  struct adreno_ocmem *adreno_ocmem)
+> > > +{
+> > > +#ifdef CONFIG_QCOM_OCMEM
+> > 
+> > No need to make this conditional.
+> 
+> I have these #ifdefs for the a5xx and a6xx GPUs that don't have ocmem
+> in the SoC. Without the #ifdefs, those systems would need to have the
+> ocmem driver in their kernel.
+> 
 
-Today's linux-next merge of the imx-drm tree got a conflict in:
+In order to provide the means for compiling a kernel for a[56]xx without
+having to compile ocmem you should move these #ifdef to the ocmem
+header file and provide static inline dummies for the case when it's
+not.
 
-  drivers/staging/media/imx/imx-ic-prpencvf.c
+(and use #if IS_ENABLED(CONFIG_FOO))
 
-between commits:
+Don't forget to add
+	depends on QCOM_OCMEM || QCOM_OCMEM=n
 
-  6d01b7ff5233 ("media: staging/imx: Switch to sync registration for IPU su=
-bdevs")
-  34ff38745b16 ("media: staging/imx: Pass device to alloc/free_dma_buf")
+to the DRM_MSM config option, to allow the driver pair to be selected in
+all possible ways.
 
-from the v4l-vdb tree and commit:
+> Thanks for the quick review on the patch set!
+> 
 
-  f208b26e61df ("gpu: ipu-v3: ipu-ic: Fully describe colorspace conversions=
-")
-
-from the imx-drm tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc drivers/staging/media/imx/imx-ic-prpencvf.c
-index 82bba68c554e,f2fe3c11c70e..000000000000
---- a/drivers/staging/media/imx/imx-ic-prpencvf.c
-+++ b/drivers/staging/media/imx/imx-ic-prpencvf.c
-@@@ -460,7 -465,18 +461,18 @@@ static int prp_setup_rotation(struct pr
-  	incc =3D priv->cc[PRPENCVF_SINK_PAD];
-  	outcc =3D vdev->cc;
- =20
-+ 	ret =3D ipu_ic_calc_csc(&csc,
-+ 			      infmt->ycbcr_enc, infmt->quantization,
-+ 			      incc->cs,
-+ 			      outfmt->ycbcr_enc, outfmt->quantization,
-+ 			      outcc->cs);
-+ 	if (ret) {
-+ 		v4l2_err(&ic_priv->sd, "ipu_ic_calc_csc failed, %d\n",
-+ 			 ret);
-+ 		return ret;
-+ 	}
-+=20
- -	ret =3D imx_media_alloc_dma_buf(priv->md, &priv->rot_buf[0],
- +	ret =3D imx_media_alloc_dma_buf(ic_priv->ipu_dev, &priv->rot_buf[0],
-  				      outfmt->sizeimage);
-  	if (ret) {
-  		v4l2_err(&ic_priv->sd, "failed to alloc rot_buf[0], %d\n", ret);
-
---Sig_/gdQjnfksCTf=EUManH2KJQC
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0HCr0ACgkQAVBC80lX
-0GwE1wf/c+7+zpXahMO3i71+2SqwJ0Tqo+/OyPG/cNDOcCsPTP4k7KLp4J3KD//r
-6kfJ1StR2g22xkBwILN7Kj5yiirCa+/CQ2hgolTzILd2ai9GgCRYpPiNEOglc0oA
-FG71QZC5xMVxbAdbiJE82P5ffC0xrzhUP4YUWMiAgac4uIV0bDQbY3WzRw+g/ffC
-I7Usx+vYEwrbZmKV3NU5cCFCP6WgNZbBIZuTY9kU8d0A5AjYNQaIrQlgxn7WQDcE
-mAUHxMrBWfvmy4ijYgYjp8lI6AgDy2hpgld9cN6EzgvYYGOh0114ZOUP7s8CUiWF
-zsGgKjV39aEhzZ3TC7c4OFif93UVaA==
-=QW6x
------END PGP SIGNATURE-----
-
---Sig_/gdQjnfksCTf=EUManH2KJQC--
+Regards,
+Bjorn
