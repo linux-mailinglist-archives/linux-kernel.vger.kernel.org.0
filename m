@@ -2,141 +2,136 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E4F6B481FA
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 14:26:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EFD3F481EA
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 14:26:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727673AbfFQM0E (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 08:26:04 -0400
-Received: from mout.kundenserver.de ([212.227.126.133]:36747 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726509AbfFQM0C (ORCPT
+        id S1726809AbfFQMYy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 08:24:54 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:60712 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725962AbfFQMYx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 08:26:02 -0400
-Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
- (mreue010 [212.227.15.129]) with ESMTPA (Nemesis) id
- 1MhDIw-1iFm1T14Ik-00eILm; Mon, 17 Jun 2019 14:25:53 +0200
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     arm@kernel.org, Linus Walleij <linusw@kernel.org>,
-        Imre Kaloz <kaloz@openwrt.org>,
-        Krzysztof Halasa <khalasa@piap.pl>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 3/3] ARM: ixp4xx: include irqs.h where needed
-Date:   Mon, 17 Jun 2019 14:24:32 +0200
-Message-Id: <20190617122449.457744-3-arnd@arndb.de>
-X-Mailer: git-send-email 2.20.0
-In-Reply-To: <20190617122449.457744-1-arnd@arndb.de>
-References: <20190617122449.457744-1-arnd@arndb.de>
+        Mon, 17 Jun 2019 08:24:53 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=ogBWW673hHbNRpyPPNuCdeL95hTbjPj0Y1iyd8f4B90=; b=qDV9zLZM+exdC+5gLlvAskNoS
+        Pfm+u+Hf/zBCInkojkxzbNcIy1/6dISzvoL2sEukNZVvZNmxzc/a/LfixZL6/BGraSQD0OpwtzYjf
+        rhO3u80gpUL9NeL2z1HuPhj5NKNGTyavzAtgBS5SQKDsAilDy9g3GSr2lfZXzIfnldH1pHT5A+2Nq
+        CtBmTN0BYipdrUqhrImwujHgV2QtEYpHRWGVSBaS/CD8g4Lb4BoRUaMnwq7uU+IC8+Su8grgxp7mK
+        AwxdQneNr049LBTF3VvFwvY3IjTkGLhEdrZzk3ptKZI8xX5mV/0Sj6eTqvbBygV3paIgFLmMdyDoD
+        UehD9HIHw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1hcqgr-0007EJ-JZ; Mon, 17 Jun 2019 12:24:50 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 15DCE201D1C97; Mon, 17 Jun 2019 14:24:48 +0200 (CEST)
+Date:   Mon, 17 Jun 2019 14:24:48 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc:     linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
+        tglx@linutronix.de, John Ogness <john.ogness@linutronix.de>,
+        richard@nod.at
+Subject: Re: [PATCH] sched: Document =?utf-8?Q?that?=
+ =?utf-8?Q?_RT_task_priorities_are_1=E2=80=A699?=
+Message-ID: <20190617122448.GA3436@hirez.programming.kicks-ass.net>
+References: <20190403210821.10916-1-bigeasy@linutronix.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:ogxG53xxYtKSunk3MRNQJAEkPnjE5pExadqIw1wtkbMkNmusoj9
- aZO36fRS80Wu/8c4ipcqJ+zvnYjQNIkJR4SCcFvTYhva+3LV3IEq749pLMtw8R/r2KrLwWa
- FagBXt9Ly5NshVz8XjZe/q/y+qht9OjYIz8VcckwU498AqLWgRsBAQ2qnmu16n/lhR7Hx0E
- Yb0tA8yzzPP6mO9cbbGOw==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:DfHKUbhazqM=:YDY2/2Alqmy6ferl84BsB7
- aTPywctrbekMzh8cdM3EsbjDQAS4kYQ6x40t3G+jSNk1GCteQrQ9qaT8fJp2mp/2OCVzA8qsW
- kkSILkIdM8OVdMpuPg8+25kNURFM8JYrTL+TcbbHIx7k3Lq9R/vD0y+hU64s2LyqPPPh0slyn
- N3LnzMVWa4B1kQza2oz4IWYFWIhGuw4yPD4JOPm/ad6tagM9LxxM/TnaoBACJTKMLgQb8TpUb
- ZwuBcdk8NzAq9MYq3o0lou2x2/4ai9kFW+slBUVpBA6xGQkKz8+3xtq/OAkrBgrNlqdK++Djz
- tg4ZlQK6DbriSz0wargKxCiKpLafM6pwO28XW7V7aXdrBbcRivhAsohFrX7MqVhdlx9H3uiHN
- /8qILCdsv37YqYuxeFLHlcxdZoOmYpObWiDn3oe28Q0ks48ioZIstBoi6TW34Tk7Yh7LzBDuA
- QIJOBYHK2ybQccAFTmStPaVWx7bCXh44ts0sPkbzmDG/D8T2sq29iHcmy2biGDCeagMYL9H3A
- UI17s4Xo4o/GpKfGrVvHJCMRdchId8Zp79M0FLgG7WmremXejp11NuqPIPOKMgGK7xdmZi0Vq
- orq/NVKHc1ccDZL/aCh5You0KvzNWInt+AIj2ePLJNfiMNWt5Z8Pt7nvlCkDMIrGdKGE4paH8
- xMcxineZ/BYiWyGNDO77IJ5ZD6vqhh/8I54dPAAPmhlaFlGwH/D2bUmg8qz6U0Y9uGF+5CmY3
- gMlxUwAqfuMJLxF4+45prNpvpPB2L/RelpYWQw==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190403210821.10916-1-bigeasy@linutronix.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Multiple ixp4xx specific files require macros from irqs.h that
-were moved out from mach/irqs.h, e.g.:
+On Wed, Apr 03, 2019 at 11:08:21PM +0200, Sebastian Andrzej Siewior wrote:
+> John identified three files which claim that RT task priorities start at
+> zero. As far as I understand, 0 is used for DL and has nothing to do
+> wihich RT priorities as identified by the RT policy.
+> 
+> Correct the comment, valid RT priorities are in the range from 1 to 99.
 
-arch/arm/mach-ixp4xx/vulcan-pci.c:41:19: error: this function declaration is not a prototype [-Werror,-Wstrict-prototypes]
-arch/arm/mach-ixp4xx/vulcan-pci.c:49:10: error: implicit declaration of function 'IXP4XX_GPIO_IRQ' [-Werror,-Wimplicit-function-declaration]
-                return IXP4XX_GPIO_IRQ(INTA);
+It all depends on what view I'm afraid. User priorities go from 1-99, as
+per sched_get_priority_{min,max}(), but Kernel priority is:
 
-Include this header in all files that failed to build because of
-that.
+ kernel_prio := MAX_RT_PRIO-1 - user_prio
 
-Fixes: dc8ef8cd3a05 ("ARM: ixp4xx: Convert to SPARSE_IRQ")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- arch/arm/mach-ixp4xx/goramo_mlr.c   | 2 ++
- arch/arm/mach-ixp4xx/miccpt-pci.c   | 2 ++
- arch/arm/mach-ixp4xx/omixp-setup.c  | 2 ++
- arch/arm/mach-ixp4xx/vulcan-pci.c   | 2 ++
- arch/arm/mach-ixp4xx/vulcan-setup.c | 2 ++
- 5 files changed, 10 insertions(+)
+and that then gives [0-98], where 0 is max and 98 is min (see
+__sched_setscheduler() and normal_prio()).
 
-diff --git a/arch/arm/mach-ixp4xx/goramo_mlr.c b/arch/arm/mach-ixp4xx/goramo_mlr.c
-index 4d805080020e..a0e0b6b7dc5c 100644
---- a/arch/arm/mach-ixp4xx/goramo_mlr.c
-+++ b/arch/arm/mach-ixp4xx/goramo_mlr.c
-@@ -18,6 +18,8 @@
- #include <asm/mach/pci.h>
- #include <asm/system_info.h>
- 
-+#include "irqs.h"
-+
- #define SLOT_ETHA		0x0B	/* IDSEL = AD21 */
- #define SLOT_ETHB		0x0C	/* IDSEL = AD20 */
- #define SLOT_MPCI		0x0D	/* IDSEL = AD19 */
-diff --git a/arch/arm/mach-ixp4xx/miccpt-pci.c b/arch/arm/mach-ixp4xx/miccpt-pci.c
-index d114ccd2017c..ca889ef068a5 100644
---- a/arch/arm/mach-ixp4xx/miccpt-pci.c
-+++ b/arch/arm/mach-ixp4xx/miccpt-pci.c
-@@ -25,6 +25,8 @@
- #include <mach/hardware.h>
- #include <asm/mach-types.h>
- 
-+#include "irqs.h"
-+
- #define MAX_DEV		4
- #define IRQ_LINES	4
- 
-diff --git a/arch/arm/mach-ixp4xx/omixp-setup.c b/arch/arm/mach-ixp4xx/omixp-setup.c
-index 2d494b454376..c02fa6f48382 100644
---- a/arch/arm/mach-ixp4xx/omixp-setup.c
-+++ b/arch/arm/mach-ixp4xx/omixp-setup.c
-@@ -27,6 +27,8 @@
- 
- #include <mach/hardware.h>
- 
-+#include "irqs.h"
-+
- static struct resource omixp_flash_resources[] = {
- 	{
- 		.flags	= IORESOURCE_MEM,
-diff --git a/arch/arm/mach-ixp4xx/vulcan-pci.c b/arch/arm/mach-ixp4xx/vulcan-pci.c
-index a4220fa5e0c3..6e41e5ece4e1 100644
---- a/arch/arm/mach-ixp4xx/vulcan-pci.c
-+++ b/arch/arm/mach-ixp4xx/vulcan-pci.c
-@@ -21,6 +21,8 @@
- #include <asm/mach/pci.h>
- #include <asm/mach-types.h>
- 
-+#include "irqs.h"
-+
- /* PCI controller GPIO to IRQ pin mappings */
- #define INTA	2
- #define INTB	3
-diff --git a/arch/arm/mach-ixp4xx/vulcan-setup.c b/arch/arm/mach-ixp4xx/vulcan-setup.c
-index 2c03d2f6b647..d2ebb7c675a8 100644
---- a/arch/arm/mach-ixp4xx/vulcan-setup.c
-+++ b/arch/arm/mach-ixp4xx/vulcan-setup.c
-@@ -22,6 +22,8 @@
- #include <asm/mach/arch.h>
- #include <asm/mach/flash.h>
- 
-+#include "irqs.h"
-+
- static struct flash_platform_data vulcan_flash_data = {
- 	.map_name	= "cfi_probe",
- 	.width		= 2,
--- 
-2.20.0
+And DL uses kernel prio -1 (there is no user prio equivalent).
 
+Nice maps to:
+
+ kernel_prio := MAX_RT_PRIO + (MAX_NICE - MIN_NICE + 1) / 2 + user_nice
+
+which is: [100-139].
+
+Which then, as derRichard says, leaves (kernel) 99 unaccounted for.
+
+
+> Reported-by: John Ogness <john.ogness@linutronix.de>
+> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+> ---
+>  Documentation/scheduler/sched-rt-group.txt | 2 +-
+>  include/linux/sched/prio.h                 | 2 +-
+>  kernel/sched/cpupri.h                      | 2 +-
+>  3 files changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/Documentation/scheduler/sched-rt-group.txt b/Documentation/scheduler/sched-rt-group.txt
+> index d8fce3e784574..23f8f8465a775 100644
+> --- a/Documentation/scheduler/sched-rt-group.txt
+> +++ b/Documentation/scheduler/sched-rt-group.txt
+> @@ -175,7 +175,7 @@ get their allocated time.
+>  
+>  Implementing SCHED_EDF might take a while to complete. Priority Inheritance is
+>  the biggest challenge as the current linux PI infrastructure is geared towards
+> -the limited static priority levels 0-99. With deadline scheduling you need to
+> +the limited static priority levels 1-99. With deadline scheduling you need to
+>  do deadline inheritance (since priority is inversely proportional to the
+>  deadline delta (deadline - now)).
+>  
+
+This might be correct,.. but I feel we should strive to delete
+everything rt groups.
+
+> diff --git a/include/linux/sched/prio.h b/include/linux/sched/prio.h
+> index 7d64feafc408e..6986c32356842 100644
+> --- a/include/linux/sched/prio.h
+> +++ b/include/linux/sched/prio.h
+> @@ -8,7 +8,7 @@
+>  
+>  /*
+>   * Priority of a process goes from 0..MAX_PRIO-1, valid RT
+> - * priority is 0..MAX_RT_PRIO-1, and SCHED_NORMAL/SCHED_BATCH
+> + * priority is 1..MAX_RT_PRIO-1, and SCHED_NORMAL/SCHED_BATCH
+>   * tasks are in the range MAX_RT_PRIO..MAX_PRIO-1. Priority
+>   * values are inverted: lower p->prio value means higher priority.
+>   *
+
+So that comment talks about kernel prio, and there, as we've shown, 0 is
+an actual valid RR/FIFO priority (in fact, the highest).
+
+> diff --git a/kernel/sched/cpupri.h b/kernel/sched/cpupri.h
+> index 7dc20a3232e72..40257a97fb8f2 100644
+> --- a/kernel/sched/cpupri.h
+> +++ b/kernel/sched/cpupri.h
+> @@ -5,7 +5,7 @@
+>  #define CPUPRI_INVALID		-1
+>  #define CPUPRI_IDLE		 0
+>  #define CPUPRI_NORMAL		 1
+> -/* values 2-101 are RT priorities 0-99 */
+> +/* values 2-101 are RT priorities 1-99 */
+
+Again, this is kernel prios, not user prios.
+
+>  struct cpupri_vec {
+>  	atomic_t		count;
+> -- 
+> 2.20.1
+> 
