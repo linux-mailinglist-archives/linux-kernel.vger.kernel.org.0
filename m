@@ -2,143 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ACE6D48358
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 15:01:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F2EA848362
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 15:02:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727796AbfFQNA7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 09:00:59 -0400
-Received: from smtp-fw-9102.amazon.com ([207.171.184.29]:11128 "EHLO
-        smtp-fw-9102.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726286AbfFQNA6 (ORCPT
+        id S1728053AbfFQNCH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 09:02:07 -0400
+Received: from mout.kundenserver.de ([212.227.126.131]:41391 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725983AbfFQNCH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 09:00:58 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1560776457; x=1592312457;
-  h=subject:to:cc:references:from:message-id:date:
-   mime-version:in-reply-to:content-transfer-encoding;
-  bh=KnynchamP1yl4uXc3vaUNVtHe8Iw/fDe/Wyl73exxdc=;
-  b=Cu8MzXfQZmqppH6Kpru2u9O0Hhe0lCwhVFWhikWS3ou39ezkF6ryo9i8
-   zhUfQOw5x+oYjsmivTcds01SfTRoUWQAdqkV+WvVKe1ucYMvPXS3jvNdl
-   AV7P7OdWmAkp0Tka3pUANU2zPiZLIotOC2w+YCCaJGFmiUYZLST6od9pJ
-   I=;
-X-IronPort-AV: E=Sophos;i="5.62,385,1554768000"; 
-   d="scan'208";a="680326438"
-Received: from sea3-co-svc-lb6-vlan2.sea.amazon.com (HELO email-inbound-relay-1e-c7c08562.us-east-1.amazon.com) ([10.47.22.34])
-  by smtp-border-fw-out-9102.sea19.amazon.com with ESMTP; 17 Jun 2019 13:00:54 +0000
-Received: from EX13MTAUEA001.ant.amazon.com (iad55-ws-svc-p15-lb9-vlan2.iad.amazon.com [10.40.159.162])
-        by email-inbound-relay-1e-c7c08562.us-east-1.amazon.com (Postfix) with ESMTPS id 085A2240FF7;
-        Mon, 17 Jun 2019 13:00:50 +0000 (UTC)
-Received: from EX13D08UEE004.ant.amazon.com (10.43.62.182) by
- EX13MTAUEA001.ant.amazon.com (10.43.61.82) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Mon, 17 Jun 2019 13:00:50 +0000
-Received: from EX13MTAUEE001.ant.amazon.com (10.43.62.200) by
- EX13D08UEE004.ant.amazon.com (10.43.62.182) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Mon, 17 Jun 2019 13:00:50 +0000
-Received: from [10.107.3.17] (10.107.3.17) by mail-relay.amazon.com
- (10.43.62.226) with Microsoft SMTP Server (TLS) id 15.0.1367.3 via Frontend
- Transport; Mon, 17 Jun 2019 13:00:46 +0000
-Subject: Re: [PATCH 2/2] edac: add support for Amazon's Annapurna Labs EDAC
-To:     James Morse <james.morse@arm.com>
-CC:     <robh+dt@kernel.org>, <mark.rutland@arm.com>, <bp@alien8.de>,
-        <mchehab@kernel.org>, <davem@davemloft.net>,
-        <gregkh@linuxfoundation.org>, <nicolas.ferre@microchip.com>,
-        <paulmck@linux.ibm.com>, <dwmw@amazon.co.uk>, <benh@amazon.com>,
-        <ronenk@amazon.com>, <talel@amazon.com>, <jonnyc@amazon.com>,
-        <hanochu@amazon.com>, <linux-edac@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <1559211329-13098-1-git-send-email-hhhawa@amazon.com>
- <1559211329-13098-3-git-send-email-hhhawa@amazon.com>
- <3129ed19-0259-d227-0cff-e9f165ce5964@arm.com>
- <4514bfa2-68b2-2074-b817-2f5037650c4e@amazon.com>
- <fdc3b458-96eb-1734-c294-2463f37f2244@arm.com>
-From:   "Hawa, Hanna" <hhhawa@amazon.com>
-Message-ID: <bbb9b41d-8ffa-d4c5-c199-2400695cce8d@amazon.com>
-Date:   Mon, 17 Jun 2019 16:00:45 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.1
+        Mon, 17 Jun 2019 09:02:07 -0400
+Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
+ (mreue011 [212.227.15.129]) with ESMTPA (Nemesis) id
+ 1MT9v5-1i3cOz1DcF-00UeXy; Mon, 17 Jun 2019 15:01:54 +0200
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     Santosh Shilimkar <ssantosh@kernel.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>, Lokesh Vutla <lokeshvutla@ti.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Olof Johansson <olof@lixom.net>,
+        Tony Lindgren <tony@atomide.com>, Nishanth Menon <nm@ti.com>,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: [PATCH] soc: ti: fix irq-ti-sci link error
+Date:   Mon, 17 Jun 2019 15:01:05 +0200
+Message-Id: <20190617130149.1782930-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.20.0
 MIME-Version: 1.0
-In-Reply-To: <fdc3b458-96eb-1734-c294-2463f37f2244@arm.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:FRdEe6tjuV8KyxJSyrTdyhJaUWE5AS9D7M4jEyC+sBbLA/FibZc
+ DYw+IyzPdm/Jp25ioQ6PWJYlw51JAUxTu7+Hfs80p/pul4o4y+21YGFbHBdYwE8p5ap0von
+ g++GFuW5ry3GclAiTwmHWDNf+QQxkiLPWOp5mhatqbbgseGiluC8lTi2pLMXg69dVNYzfLv
+ VlhXhp1PNhNWvhlccS/xg==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:Zd06hkM9Szw=:mMYc/1oT1VBq+1iFcHYDsw
+ +dPi8sODpQ5PmH/geIGQNy+AiBUO5PB0DyfiOtJWGL4eksx8/x9XC3W9EWffYtiEFSAIhwpma
+ K22sxiWrsBUKBRjuNuYMF5WkHymqHAaQg5r2ywmVlX96+8I6CL9gGjZ80wHzmBOWwJAmYoxgB
+ RK5kA9QjgoKgsosNxy79ufYjSqtdRPxK9uU71EpIC6ofYCxJZdxNHAsNRCZEvSKEtq9CaHoah
+ wLwmSWeNtfvnk3/Esi7H4Wy5hnRmDzQZqAazjWU2Sy6oWQDNvRrGlCaRhAYrSP1uZeOm8J4J2
+ 9jp0JjgaUKqajvKGI14a4Ygt4ZpyJGmw0AY7fbVpGlkve4vufJsNUhZPdpLAfBdsgW9on7GEj
+ q6dk0icEfK6IlX8XgEgPVyuNTefCgVlSW87o+KTS1McMUSKgxZ0aQtm5DEp/J64VcFxjN9iqD
+ 8qAdv809c2TlJeP4ZwBw43I1w6vsJGFz74W43TVdOKP6WSac+0SYL1+YlByW3xzYMUKiHSvys
+ kLmRn8U79CTj3GceSuGouRqIh2BuXx9ZtJCkXDcYj90HwHcYcuL2TbN552XEJfutO3brF0nI+
+ QHLXDVFLNoX8fslO8ULdjA7gvinfTrDNZfLHaVnZ6SGsIl1iJBunfubMwER5BNMZ2ooemo3/G
+ HSTCPBHRmEsKaswQRPNzLyg1U0NXBLBitKuDhgxs7kUS3wFu1EICV9SwQzhGm4+FrSKa4Eime
+ jhYi5pax9Gkdd/2fLOmYX2vcXLxm/TaQ5IeYFQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The irqchip driver depends on the SoC specific driver, but we want
+to be able to compile-test it elsewhere:
 
->>>> +static void al_a57_edac_l2merrsr(void *arg)
->>>> +{
->>>
->>>> +    edac_device_handle_ce(edac_dev, 0, 0, "L2 Error");
->>>
->>> How do we know this is corrected?
-> 
->>> If looks like L2CTLR_EL1[20] might force fatal 1/0 to map to uncorrected/corrected. Is
->>> this what you are depending on here?
-> 
->> No - not on this. Reporting all the errors as corrected seems to be bad.
->>
->> Can i be depends on fatal field?
-> 
-> That is described as "set to 1 on the first memory error that caused a Data Abort". I
-> assume this is one of the parity-error external-aborts.
-> 
-> If the repeat counter shows, say, 2, and fatal is set, you only know that at least one of
-> these errors caused an abort. But it could have been all three. The repeat counter only
-> matches against the RAMID and friends, otherwise the error is counted in 'other'.
-> 
-> I don't think there is a right thing to do here, (other than increase the scrubbing
-> frequency). As you can only feed one error into edac at a time then:
-> 
->> if (fatal)
->>      edac_device_handle_ue(edac_dev, 0, 0, "L2 Error");
->> else
->>      edac_device_handle_ce(edac_dev, 0, 0, "L2 Error");
-> 
-> seems reasonable. You're reporting the most severe, and 'other/repeat' counter values just
-> go missing.
-I had print the values of 'other/repeat' to be noticed.
+WARNING: unmet direct dependencies detected for TI_SCI_INTA_MSI_DOMAIN
+  Depends on [n]: SOC_TI [=n]
+  Selected by [y]:
+  - TI_SCI_INTA_IRQCHIP [=y] && TI_SCI_PROTOCOL [=y]
 
-> 
-> 
->> How can L2CTLR_EL1[20] force fatal?
-> 
-> I don't think it can, on a second reading, it looks to be even more complicated than I
-> thought! That bit is described as disabling forwarding of uncorrected data, but it looks
-> like the uncorrected data never actually reaches the other end. (I'm unsure what 'flush'
-> means in this context.)
-> I was looking for reasons you could 'know' that any reported error was corrected. This was
-> just a bad suggestion!
-Is there interrupt for un-correctable error?
-Does 'asynchronous errors' in L2 used to report UE?
+drivers/irqchip/irq-ti-sci-inta.o: In function `ti_sci_inta_irq_domain_probe':
+irq-ti-sci-inta.c:(.text+0x204): undefined reference to `ti_sci_inta_msi_create_irq_domain'
 
-In case no interrupt, can we use die-notifier subsystem to check if any 
-error had occur while system shutdown?
+Rearrange the Kconfig and Makefile so we build the soc driver whenever
+its users are there, regardless of the SOC_TI option.
 
->>>> +        cluster = topology_physical_package_id(cpu);
->>>
->>> Hmm, I'm not sure cluster==package is guaranteed to be true forever.
->>>
->>> If you describe the L2MERRSR_EL1 cpu mapping in your DT you could use that. Otherwise
->>> pulling out the DT using something like the arch code's parse_cluster().
-> 
->> I rely on that it's alpine SoC specific driver.
-> 
-> ... and that the topology code hasn't changed to really know what a package is:
-> https://lore.kernel.org/lkml/20190529211340.17087-2-atish.patra@wdc.com/T/#u
-> 
-> As what you really want to know is 'same L2?', and you're holding the cpu_read_lock(),
-> would struct cacheinfo's shared_cpu_map be a better fit?
-> 
-> This would be done by something like a cpu-mask of cache:shared_cpu_map's for the L2's
-> you've visited. It removes the dependency on package==L2, and insulates you from the
-> cpu-numbering not being exactly as you expect.
-I'll add dt property that point to L2-cache node (phandle), then it'll 
-be easy to create cpu-mask with all cores that point to same l2 cache.
+Fixes: 49b323157bf1 ("soc: ti: Add MSI domain bus support for Interrupt Aggregator")
+Fixes: f011df6179bd ("irqchip/ti-sci-inta: Add msi domain support")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/soc/Makefile   | 2 +-
+ drivers/soc/ti/Kconfig | 4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
-Thanks,
-Hanna
-
+diff --git a/drivers/soc/Makefile b/drivers/soc/Makefile
+index 524ecdc2a9bb..2ec355003524 100644
+--- a/drivers/soc/Makefile
++++ b/drivers/soc/Makefile
+@@ -22,7 +22,7 @@ obj-$(CONFIG_ARCH_ROCKCHIP)	+= rockchip/
+ obj-$(CONFIG_SOC_SAMSUNG)	+= samsung/
+ obj-y				+= sunxi/
+ obj-$(CONFIG_ARCH_TEGRA)	+= tegra/
+-obj-$(CONFIG_SOC_TI)		+= ti/
++obj-y				+= ti/
+ obj-$(CONFIG_ARCH_U8500)	+= ux500/
+ obj-$(CONFIG_PLAT_VERSATILE)	+= versatile/
+ obj-y				+= xilinx/
+diff --git a/drivers/soc/ti/Kconfig b/drivers/soc/ti/Kconfig
+index ea0859f7b185..d7d50d48d05d 100644
+--- a/drivers/soc/ti/Kconfig
++++ b/drivers/soc/ti/Kconfig
+@@ -75,10 +75,10 @@ config TI_SCI_PM_DOMAINS
+ 	  called ti_sci_pm_domains. Note this is needed early in boot before
+ 	  rootfs may be available.
+ 
++endif # SOC_TI
++
+ config TI_SCI_INTA_MSI_DOMAIN
+ 	bool
+ 	select GENERIC_MSI_IRQ_DOMAIN
+ 	help
+ 	  Driver to enable Interrupt Aggregator specific MSI Domain.
+-
+-endif # SOC_TI
+-- 
+2.20.0
 
