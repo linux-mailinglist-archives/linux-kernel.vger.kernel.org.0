@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 533C2493E8
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 23:34:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 87DC3492E9
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 23:25:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730042AbfFQVZM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 17:25:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51088 "EHLO mail.kernel.org"
+        id S1730049AbfFQVZO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 17:25:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51152 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730028AbfFQVZI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 17:25:08 -0400
+        id S1730034AbfFQVZK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Jun 2019 17:25:10 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9F9362070B;
-        Mon, 17 Jun 2019 21:25:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 39D2920673;
+        Mon, 17 Jun 2019 21:25:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560806707;
-        bh=/b6D2v5AkpL+O5/7LJH+ix77sBO15xAX169kA2TaGH8=;
+        s=default; t=1560806709;
+        bh=7Iv5Ulhl84qu6JpysTXKjrWoWEeyUTjni8Mbp9/vFsk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ABL155fNibbSqx71RAbdlJ2PeIemAN8lD5nNNn/4xYOAUV455g8ju+EdDu+TdfVvy
-         aZqRt6WClSVjqfA16NXoYuK6GApTfhsyuJt45U99HeB/BcxVCrJD28ydGOoshxGsIs
-         kRTtsGfZydYBmaYzy2nTL94dt2nRNyU2LGeSdsMU=
+        b=l16vOfBTLwrYV4jWxVBVxm9fUkYbWvavT/o11TI7doRWWlMmDD58LuF6XmA1MNWa9
+         S5zZdC68fAUjbcagJWUWIHSPHAAXJFHOJWq3TThkq0BZkQBG8bqe45Ay1OkN8LU0Gg
+         jAoDHL9ZEAgm5RNNPqYVIkaZ58uC6NuOxtoBUEV8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jason Gerecke <jason.gerecke@wacom.com>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Subject: [PATCH 4.19 08/75] HID: wacom: Sync INTUOSP2_BT touch state after each frame if necessary
-Date:   Mon, 17 Jun 2019 23:09:19 +0200
-Message-Id: <20190617210753.170219676@linuxfoundation.org>
+        stable@vger.kernel.org, Hui Wang <hui.wang@canonical.com>,
+        Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.19 09/75] Revert "ALSA: hda/realtek - Improve the headset mic for Acer Aspire laptops"
+Date:   Mon, 17 Jun 2019 23:09:20 +0200
+Message-Id: <20190617210753.220340169@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190617210752.799453599@linuxfoundation.org>
 References: <20190617210752.799453599@linuxfoundation.org>
@@ -43,51 +43,59 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jason Gerecke <jason.gerecke@wacom.com>
+From: Hui Wang <hui.wang@canonical.com>
 
-commit 69dbdfffef20c715df9f381b2cee4e9e0a4efd93 upstream.
+commit 17d304604a88cf20c8dfd2c95d3decb9c4f8bca4 upstream.
 
-The Bluetooth interface of the 2nd-gen Intuos Pro batches together four
-independent "frames" of finger data into a single report. Each frame
-is essentially equivalent to a single USB report, with the up-to-10
-fingers worth of information being spread across two frames. At the
-moment the driver only calls `input_sync` after processing all four
-frames have been processed, which can result in the driver sending
-multiple updates for a single slot within the same SYN_REPORT. This
-can confuse userspace, so modify the driver to sync more often if
-necessary (i.e., after reporting the state of all fingers).
+This reverts commit 9cb40eb184c4220d244a532bd940c6345ad9dbd9.
 
-Fixes: 4922cd26f03c ("HID: wacom: Support 2nd-gen Intuos Pro's Bluetooth classic interface")
-Cc: <stable@vger.kernel.org> # 4.11+
-Signed-off-by: Jason Gerecke <jason.gerecke@wacom.com>
-Signed-off-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+This patch introduces noise and headphone playback issue after
+rebooting or suspending/resuming. Let us revert it.
+
+BugLink: https://bugzilla.kernel.org/show_bug.cgi?id=203831
+Fixes: 9cb40eb184c4 ("ALSA: hda/realtek - Improve the headset mic for Acer Aspire laptops")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Hui Wang <hui.wang@canonical.com>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/hid/wacom_wac.c |   10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+ sound/pci/hda/patch_realtek.c |   16 +++++-----------
+ 1 file changed, 5 insertions(+), 11 deletions(-)
 
---- a/drivers/hid/wacom_wac.c
-+++ b/drivers/hid/wacom_wac.c
-@@ -1369,11 +1369,17 @@ static void wacom_intuos_pro2_bt_touch(s
- 		if (wacom->num_contacts_left <= 0) {
- 			wacom->num_contacts_left = 0;
- 			wacom->shared->touch_down = wacom_wac_finger_count_touches(wacom);
-+			input_sync(touch_input);
- 		}
- 	}
- 
--	input_report_switch(touch_input, SW_MUTE_DEVICE, !(data[281] >> 7));
--	input_sync(touch_input);
-+	if (wacom->num_contacts_left == 0) {
-+		// Be careful that we don't accidentally call input_sync with
-+		// only a partial set of fingers of processed
-+		input_report_switch(touch_input, SW_MUTE_DEVICE, !(data[281] >> 7));
-+		input_sync(touch_input);
-+	}
-+
- }
- 
- static void wacom_intuos_pro2_bt_pad(struct wacom_wac *wacom)
+--- a/sound/pci/hda/patch_realtek.c
++++ b/sound/pci/hda/patch_realtek.c
+@@ -6084,15 +6084,13 @@ static const struct hda_fixup alc269_fix
+ 		.chain_id = ALC269_FIXUP_THINKPAD_ACPI,
+ 	},
+ 	[ALC255_FIXUP_ACER_MIC_NO_PRESENCE] = {
+-		.type = HDA_FIXUP_VERBS,
+-		.v.verbs = (const struct hda_verb[]) {
+-			/* Enable the Mic */
+-			{ 0x20, AC_VERB_SET_COEF_INDEX, 0x45 },
+-			{ 0x20, AC_VERB_SET_PROC_COEF, 0x5089 },
+-			{}
++		.type = HDA_FIXUP_PINS,
++		.v.pins = (const struct hda_pintbl[]) {
++			{ 0x19, 0x01a1913c }, /* use as headset mic, without its own jack detect */
++			{ }
+ 		},
+ 		.chained = true,
+-		.chain_id = ALC269_FIXUP_LIFEBOOK_EXTMIC
++		.chain_id = ALC255_FIXUP_HEADSET_MODE
+ 	},
+ 	[ALC255_FIXUP_ASUS_MIC_NO_PRESENCE] = {
+ 		.type = HDA_FIXUP_PINS,
+@@ -7124,10 +7122,6 @@ static const struct snd_hda_pin_quirk al
+ 		{0x19, 0x0181303F},
+ 		{0x21, 0x0221102f}),
+ 	SND_HDA_PIN_QUIRK(0x10ec0255, 0x1025, "Acer", ALC255_FIXUP_ACER_MIC_NO_PRESENCE,
+-		{0x12, 0x90a60140},
+-		{0x14, 0x90170120},
+-		{0x21, 0x02211030}),
+-	SND_HDA_PIN_QUIRK(0x10ec0255, 0x1025, "Acer", ALC255_FIXUP_ACER_MIC_NO_PRESENCE,
+ 		{0x12, 0x90a601c0},
+ 		{0x14, 0x90171120},
+ 		{0x21, 0x02211030}),
 
 
