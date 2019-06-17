@@ -2,442 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F234A48CE3
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 20:49:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 16CAD48CE9
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 20:49:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726942AbfFQStE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 14:49:04 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:45006 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725772AbfFQStE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 14:49:04 -0400
-Received: by mail-wr1-f65.google.com with SMTP id r16so11118394wrl.11;
-        Mon, 17 Jun 2019 11:49:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=yz43Dh2etdDTmtFHPWEOd/hXbirb+fd3e+eS3AkP88M=;
-        b=uxSi72cK90COf5iHz8q7HKvI6WN7nXoYzvpYf/PsaLBsCG+WzeiqhOZZ1aPB1Ce5wz
-         R2Xd3XAVqmuiFQeHF+joMV4mEe+2vdLpTLkWeM+T/86LpvY28Y7YKq5wjnLy0eBKUtdh
-         Jmzv3alopz5SxSXW7cD0QkYMFMjj3Esv62VYzMAzn+fpg6MbSlo5WZN/SNpTbbZCxvIl
-         XjlVdHl7ehz8pY/h4cnIHuLmm9yP4y2WOmlP1KlXOT6m/j7ZBnS1sAlfA2iDBK1PTT0Y
-         Oag8OgrHq+OxxmPkRrbQ80nWU5IR0ZscwUCCZOrRdqNNDljllkZUFzcqaBRi7A8HAIOQ
-         DTeQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=yz43Dh2etdDTmtFHPWEOd/hXbirb+fd3e+eS3AkP88M=;
-        b=tBFYC0agtFCrJ0mkyqt1zJhL0HAmzqzlgc2xGeKGPfr1V9r7fucu1hkwCriBP0sqah
-         3cyzzMKqmykU4ZOr2FKaaHNgdaT18O3hen//bGa5t23aBXMEwj4BnVOwgRPtpq+z6MVS
-         WeJ/sO/SSWNpjNe2nBcc3UMGJWt7PzvgpzYYFc+a+Vt86yTX0y7PSVaiuezek7JfkthT
-         MsqAb/rbVk8fo3MdH8nNdZoCqJgwshYL8YaM7jJjqXvUf+MPV5cJyxLJc3vF7Hp4NCNU
-         XtttyZ1Qwh4xRwlKImL+NUeEOgNwouCWf8noV3RFEsSbXM8rFH+HkedQLKpLA6kP77+J
-         dOEQ==
-X-Gm-Message-State: APjAAAWNrmubP9FzRb3+0FQFVar8ZKQwTZaUTU9dzsaS/gXHcZF/HnI5
-        spyIixwOOXhBWFoEUIpVed0=
-X-Google-Smtp-Source: APXvYqxnLKdyb6GtbkJP/eGOgPDkoHFFnTgdM49pzTjRvjSvOaO1CC9lFgAqx08xXAw0PGKSBRcopg==
-X-Received: by 2002:a5d:4286:: with SMTP id k6mr16070970wrq.151.1560797339582;
-        Mon, 17 Jun 2019 11:48:59 -0700 (PDT)
-Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id l1sm15288897wrf.46.2019.06.17.11.48.57
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 17 Jun 2019 11:48:58 -0700 (PDT)
-Date:   Mon, 17 Jun 2019 20:48:56 +0200
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     Thomas Gleixner <tglx@linutronix.de>, Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Clark Williams <williams@redhat.com>,
-        linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Alexey Budankov <alexey.budankov@linux.intel.com>,
-        Kan Liang <kan.liang@linux.intel.com>,
-        Leo Yan <leo.yan@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Song Liu <songliubraving@fb.com>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Thomas Richter <tmricht@linux.ibm.com>,
-        yuzhoujian <yuzhoujian@didichuxing.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: Re: [GIT PULL] perf/core improvements and fixes
-Message-ID: <20190617184856.GA37768@gmail.com>
-References: <20190611185911.11645-1-acme@kernel.org>
+        id S1726722AbfFQSty (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 14:49:54 -0400
+Received: from mga12.intel.com ([192.55.52.136]:13613 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726005AbfFQSty (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Jun 2019 14:49:54 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Jun 2019 11:49:53 -0700
+X-ExtLoop1: 1
+Received: from ray.jf.intel.com (HELO [10.7.201.126]) ([10.7.201.126])
+  by orsmga002.jf.intel.com with ESMTP; 17 Jun 2019 11:49:53 -0700
+Subject: Re: [RFC 00/10] Process-local memory allocations for hiding KVM
+ secrets
+To:     Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Cc:     Nadav Amit <nadav.amit@gmail.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Alexander Graf <graf@amazon.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Marius Hillenbrand <mhillenb@amazon.de>,
+        kvm list <kvm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Linux-MM <linux-mm@kvack.org>, Alexander Graf <graf@amazon.de>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>
+References: <eecc856f-7f3f-ed11-3457-ea832351e963@intel.com>
+ <A542C98B-486C-4849-9DAC-2355F0F89A20@amacapital.net>
+ <alpine.DEB.2.21.1906141618000.1722@nanos.tec.linutronix.de>
+ <58788f05-04c3-e71c-12c3-0123be55012c@amazon.com>
+ <63b1b249-6bc7-ffd9-99db-d36dd3f1a962@intel.com>
+ <CALCETrXph3Zg907kWTn6gAsZVsPbCB3A2XuNf0hy5Ez2jm2aNQ@mail.gmail.com>
+ <698ca264-123d-46ae-c165-ed62ea149896@intel.com>
+ <CALCETrVt=X+FB2cM5hMN9okvbcROFfT4_KMwaKaN2YVvc7UQTw@mail.gmail.com>
+ <5AA8BF10-8987-4FCB-870C-667A5228D97B@gmail.com>
+ <f6f352ed-750e-d735-a1c9-7ff133ca8aea@intel.com>
+ <20190617184536.GB11017@char.us.oracle.com>
+From:   Dave Hansen <dave.hansen@intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+Message-ID: <a1d1d375-53e4-58ba-7753-d01e7b3fa10f@intel.com>
+Date:   Mon, 17 Jun 2019 11:49:53 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190611185911.11645-1-acme@kernel.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190617184536.GB11017@char.us.oracle.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 6/17/19 11:45 AM, Konrad Rzeszutek Wilk wrote:
+>> The idea is that you have a per-cpu address space.  Certain kernel
+>> virtual addresses would map to different physical address based on where
+>> you are running.  Each of the physical addresses would be "owned" by a
+>> single CPU and would, by convention, never use a PGD that mapped an
+>> address unless that CPU that "owned" it.
+>>
+>> In that case, you never really invalidate those addresses.
+> But you would need to invalidate if the process moved to another CPU, correct?
 
-* Arnaldo Carvalho de Melo <acme@kernel.org> wrote:
+If you have a per-cpu PGD, the rule is that you never use the PGD on
+more than one CPU.  In that model, processes "take over" an existing PGD
+to run on the CPU rather than having the CPU use an existing PGD that
+came with the process.
 
-> Hi Ingo,
-> 
-> 	Please consider pulling,
-> 
-> Best regards,
-> 
-> Test results at the end of this message, as usual.
-> 
-> - Arnaldo
-> 
-> The following changes since commit 3384c78631dd722c2cdc5c57fbdd39fc1b5a9f2d:
-> 
->   Merge branch 'x86/topology' into perf/core, to prepare for new patches (2019-06-03 11:58:45 +0200)
-> 
-> are available in the Git repository at:
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/acme/linux.git tags/perf-core-for-mingo-5.3-20190611
-> 
-> for you to fetch changes up to 04c41bcb862bbec1fb225243ecf07a3219593f81:
-> 
->   perf trace: Skip unknown syscalls when expanding strace like syscall groups (2019-06-10 17:50:04 -0300)
-> 
-> ----------------------------------------------------------------
-> perf/core improvements and fixes:
-> 
-> perf record:
-> 
->   Alexey Budankov:
-> 
->   - Allow mixing --user-regs with --call-graph=dwarf, making sure that
->     the minimal set of registers for DWARF unwinding is present in the
->     set of user registers requested to be present in each sample, while
->     warning the user that this may make callchains unreliable if more
->     that the minimal set of registers is needed to unwind.
-> 
->   yuzhoujian:
-> 
->   - Add support to collect callchains from kernel or user space only,
->     IOW allow setting the perf_event_attr.exclude_callchain_{kernel,user}
->     bits from the command line.
-> 
-> perf trace:
-> 
->   Arnaldo Carvalho de Melo:
-> 
->   - Remove x86_64 specific syscall numbers from the augmented_raw_syscalls
->     BPF in-kernel collector of augmented raw_syscalls:sys_{enter,exit}
->     payloads, use instead the syscall numbers obtainer either by the
->     arch specific syscalltbl generators or from audit-libs.
-> 
->   - Allow 'perf trace' to ask for the number of bytes to collect for
->     string arguments, for now ask for PATH_MAX, i.e. the whole
->     pathnames, which ends up being just a way to speficy which syscall
->     args are pathnames and thus should be read using bpf_probe_read_str().
-> 
->   - Skip unknown syscalls when expanding strace like syscall groups.
->     This helps using the 'string' group of syscalls to work in arm64,
->     where some of the syscalls present in x86_64 that deal with
->     strings, for instance 'access', are deprecated and this should not
->     be asked for tracing.
-> 
->   Leo Yan:
-> 
->   - Exit when failing to build eBPF program.
-> 
-> perf config:
-> 
->   Arnaldo Carvalho de Melo:
-> 
->   - Bail out when a handler returns failure for a key-value pair. This
->     helps with cases where processing a key-value pair is not just a
->     matter of setting some tool specific knob, involving, for instance
->     building a BPF program to then attach to the list of events 'perf
->     trace' will use, e.g. augmented_raw_syscalls.c.
-> 
-> perf.data:
-> 
->   Kan Liang:
-> 
->   - Read and store die ID information available in new Intel processors
->     in CPUID.1F in the CPU topology written in the perf.data header.
-> 
-> perf stat:
-> 
->   Kan Liang:
-> 
->   - Support per-die aggregation.
-> 
-> Documentation:
-> 
->   Arnaldo Carvalho de Melo:
-> 
->   - Update perf.data documentation about the CPU_TOPOLOGY, MEM_TOPOLOGY,
->     CLOCKID and DIR_FORMAT headers.
-> 
->   Song Liu:
-> 
->   - Add description of headers HEADER_BPF_PROG_INFO and HEADER_BPF_BTF.
-> 
->   Leo Yan:
-> 
->   - Update default value for llvm.clang-bpf-cmd-template in 'man perf-config'.
-> 
-> JVMTI:
-> 
->   Jiri Olsa:
-> 
->   - Address gcc string overflow warning for strncpy()
-> 
-> core:
-> 
->   - Remove superfluous nthreads system_wide setup in perf_evsel__alloc_fd().
-> 
-> Intel PT:
-> 
->   Adrian Hunter:
-> 
->   - Add support for samples to contain IPC ratio, collecting cycles
->     information from CYC packets, showing the IPC info periodically, because
->     Intel PT does not update the cycle count on every branch or instruction,
->     the incremental values will often be zero.  When there are values, they
->     will be the number of instructions and number of cycles since the last
->     update, and thus represent the average IPC since the last IPC value.
-> 
->     E.g.:
-> 
->     # perf record --cpu 1 -m200000 -a -e intel_pt/cyc/u sleep 0.0001
->     rounding mmap pages size to 1024M (262144 pages)
->     [ perf record: Woken up 0 times to write data ]
->     [ perf record: Captured and wrote 2.208 MB perf.data ]
->     # perf script --insn-trace --xed -F+ipc,-dso,-cpu,-tid
->     #
->     <SNIP + add line numbering to make sense of IPC counts e.g.: (18/3)>
->     1   cc1 63501.650479626: 7f5219ac27bf _int_free+0x3f   jnz 0x7f5219ac2af0       IPC: 0.81 (36/44)
->     2   cc1 63501.650479626: 7f5219ac27c5 _int_free+0x45   cmp $0x1f, %rbp
->     3   cc1 63501.650479626: 7f5219ac27c9 _int_free+0x49   jbe 0x7f5219ac2b00
->     4   cc1 63501.650479626: 7f5219ac27cf _int_free+0x4f   test $0x8, %al
->     5   cc1 63501.650479626: 7f5219ac27d1 _int_free+0x51   jnz 0x7f5219ac2b00
->     6   cc1 63501.650479626: 7f5219ac27d7 _int_free+0x57   movq  0x13c58a(%rip), %rcx
->     7   cc1 63501.650479626: 7f5219ac27de _int_free+0x5e   mov %rdi, %r12
->     8   cc1 63501.650479626: 7f5219ac27e1 _int_free+0x61   movq  %fs:(%rcx), %rax
->     9   cc1 63501.650479626: 7f5219ac27e5 _int_free+0x65   test %rax, %rax
->    10   cc1 63501.650479626: 7f5219ac27e8 _int_free+0x68   jz 0x7f5219ac2821
->    11   cc1 63501.650479626: 7f5219ac27ea _int_free+0x6a   leaq  -0x11(%rbp), %rdi
->    12   cc1 63501.650479626: 7f5219ac27ee _int_free+0x6e   mov %rdi, %rsi
->    13   cc1 63501.650479626: 7f5219ac27f1 _int_free+0x71   shr $0x4, %rsi
->    14   cc1 63501.650479626: 7f5219ac27f5 _int_free+0x75   cmpq  %rsi, 0x13caf4(%rip)
->    15   cc1 63501.650479626: 7f5219ac27fc _int_free+0x7c   jbe 0x7f5219ac2821
->    16   cc1 63501.650479626: 7f5219ac2821 _int_free+0xa1   cmpq  0x13f138(%rip), %rbp
->    17   cc1 63501.650479626: 7f5219ac2828 _int_free+0xa8   jnbe 0x7f5219ac28d8
->    18   cc1 63501.650479626: 7f5219ac28d8 _int_free+0x158  testb  $0x2, 0x8(%rbx)
->    19   cc1 63501.650479628: 7f5219ac28dc _int_free+0x15c  jnz 0x7f5219ac2ab0       IPC: 6.00 (18/3)
->     <SNIP>
-> 
->   - Allow using time ranges with Intel PT, i.e. these features, already
->     present but not optimially usable with Intel PT, should be now:
-> 
->         Select the second 10% time slice:
-> 
->         $ perf script --time 10%/2
-> 
->         Select from 0% to 10% time slice:
-> 
->         $ perf script --time 0%-10%
-> 
->         Select the first and second 10% time slices:
-> 
->         $ perf script --time 10%/1,10%/2
-> 
->         Select from 0% to 10% and 30% to 40% slices:
-> 
->         $ perf script --time 0%-10%,30%-40%
-> 
-> cs-etm (ARM):
-> 
->   Mathieu Poirier:
-> 
->   - Add support for CPU-wide trace scenarios.
-> 
-> s390:
-> 
->   Thomas Richter:
-> 
->   - Fix missing kvm module load for s390.
-> 
->   - Fix OOM error in TUI mode on s390
-> 
->   - Support s390 diag event display when doing analysis on !s390
->     architectures.
-> 
-> Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-> 
-> ----------------------------------------------------------------
-> Adrian Hunter (38):
->       perf intel-pt: Factor out intel_pt_update_sample_time
->       perf intel-pt: Accumulate cycle count from CYC packets
->       perf tools: Add IPC information to perf_sample
->       perf intel-pt: Add support for samples to contain IPC ratio
->       perf script: Add output of IPC ratio
->       perf intel-pt: Record when decoding PSB+ packets
->       perf intel-pt: Re-factor TIP cases in intel_pt_walk_to_ip
->       perf intel-pt: Accumulate cycle count from TSC/TMA/MTC packets
->       perf intel-pt: Document IPC usage
->       perf thread-stack: Accumulate IPC information
->       perf db-export: Add brief documentation
->       perf db-export: Export IPC information
->       perf scripts python: export-to-sqlite.py: Export IPC information
->       perf scripts python: export-to-postgresql.py: Export IPC information
->       perf scripts python: exported-sql-viewer.py: Add IPC information to the Branch reports
->       perf scripts python: exported-sql-viewer.py: Add CallGraphModelParams
->       perf scripts python: exported-sql-viewer.py: Add IPC information to Call Graph Graph
->       perf scripts python: exported-sql-viewer.py: Add IPC information to Call Tree
->       perf scripts python: exported-sql-viewer.py: Select find text when find bar is activated
->       perf auxtrace: Add perf time interval to itrace_synth_ops
->       perf script: Set perf time interval in itrace_synth_ops
->       perf report: Set perf time interval in itrace_synth_ops
->       perf intel-pt: Add lookahead callback
->       perf intel-pt: Factor out intel_pt_8b_tsc()
->       perf intel-pt: Factor out intel_pt_reposition()
->       perf intel-pt: Add reposition parameter to intel_pt_get_data()
->       perf intel-pt: Add intel_pt_fast_forward()
->       perf intel-pt: Factor out intel_pt_get_buffer()
->       perf intel-pt: Add support for lookahead
->       perf intel-pt: Add support for efficient time interval filtering
->       perf time-utils: Treat time ranges consistently
->       perf time-utils: Factor out set_percent_time()
->       perf time-utils: Prevent percentage time range overlap
->       perf time-utils: Fix --time documentation
->       perf time-utils: Simplify perf_time__parse_for_ranges() error paths slightly
->       perf time-utils: Make perf_time__parse_for_ranges() more logical
->       perf tests: Add a test for time-utils
->       perf time-utils: Add support for multiple explicit time intervals
-> 
-> Alexey Budankov (1):
->       perf record: Allow mixing --user-regs with --call-graph=dwarf
-> 
-> Arnaldo Carvalho de Melo (13):
->       perf data: Document memory topology header: HEADER_MEM_TOPOLOGY
->       perf data: Document clockid header: HEADER_CLOCKID
->       perf data: Document directory format header: HEADER_DIR_FORMAT
->       perf augmented_raw_syscalls: Tell which args are filenames and how many bytes to copy
->       perf augmented_raw_syscalls: Move the probe_read_str to a separate function
->       perf augmented_raw_syscalls: Change helper to consider just the augmented_filename part
->       perf augmented_raw_syscalls: Move reading filename to the loop
->       perf trace: Consume the augmented_raw_syscalls payload
->       perf trace: Associate more argument names with the filename beautifier
->       perf config: Bail out when a handler returns failure for a key-value pair
->       perf data: Fix perf.data documentation for HEADER_CPU_TOPOLOGY
->       perf cs-etm: Remove duplicate GENMASK() define, use linux/bits.h instead
->       perf trace: Skip unknown syscalls when expanding strace like syscall groups
-> 
-> Jiri Olsa (2):
->       perf jvmti: Address gcc string overflow warning for strncpy()
->       perf evsel: Remove superfluous nthreads system_wide setup in alloc_fd()
-> 
-> Kan Liang (5):
->       perf cpumap: Retrieve die id information
->       perf header: Add die information in CPU topology
->       perf stat: Support per-die aggregation
->       perf header: Rename "sibling cores" to "sibling sockets"
->       perf tools: Apply new CPU topology sysfs attributes
-> 
-> Leo Yan (3):
->       perf symbols: Remove unused variable 'err'
->       perf trace: Exit when failing to build eBPF program
->       perf config: Update default value for llvm.clang-bpf-cmd-template
-> 
-> Mathieu Poirier (18):
->       perf cs-etm: Configure contextID tracing in CPU-wide mode
->       perf cs-etm: Configure timestamp generation in CPU-wide mode
->       perf cs-etm: Configure SWITCH_EVENTS in CPU-wide mode
->       perf cs-etm: Add handling of itrace start events
->       perf cs-etm: Add handling of switch-CPU-wide events
->       perf cs-etm: Refactor error path in cs_etm_decoder__new()
->       perf cs-etm: Move packet queue out of decoder structure
->       perf cs-etm: Fix indentation in function cs_etm__process_decoder_queue()
->       perf cs-etm: Introduce the concept of trace ID queues
->       perf cs-etm: Get rid of unused cpu in struct cs_etm_queue
->       perf cs-etm: Move thread to traceid_queue
->       perf cs-etm: Move tid/pid to traceid_queue
->       perf cs-etm: Use traceID aware memory callback API
->       perf cs-etm: Add support for multiple traceID queues
->       perf cs-etm: Linking PE contextID with perf thread mechanic
->       perf cs-etm: Add notion of time to decoding code
->       perf cs-etm: Add support for CPU-wide trace scenarios
->       perf cs-etm: Properly set the value of 'old' and 'head' in snapshot mode
-> 
-> Song Liu (1):
->       perf data: Add description of header HEADER_BPF_PROG_INFO and HEADER_BPF_BTF
-> 
-> Thomas Richter (3):
->       perf test 6: Fix missing kvm module load for s390
->       perf report: Fix OOM error in TUI mode on s390
->       perf report: Support s390 diag event display on x86
-> 
-> yuzhoujian (1):
->       perf record: Add support to collect callchains from kernel or user space only
-> 
->  tools/perf/Documentation/db-export.txt             |   41 +
->  tools/perf/Documentation/intel-pt.txt              |   30 +
->  tools/perf/Documentation/perf-config.txt           |    9 +-
->  tools/perf/Documentation/perf-diff.txt             |   14 +-
->  tools/perf/Documentation/perf-record.txt           |   11 +
->  tools/perf/Documentation/perf-report.txt           |    9 +-
->  tools/perf/Documentation/perf-script.txt           |   14 +-
->  tools/perf/Documentation/perf-stat.txt             |   10 +
->  tools/perf/Documentation/perf.data-file-format.txt |   97 +-
->  tools/perf/Makefile.config                         |    3 +
->  tools/perf/arch/arm/util/cs-etm.c                  |  313 +++++-
->  tools/perf/builtin-record.c                        |    4 +
->  tools/perf/builtin-report.c                        |    8 +-
->  tools/perf/builtin-script.c                        |   31 +-
->  tools/perf/builtin-stat.c                          |   87 +-
->  tools/perf/builtin-trace.c                         |   84 +-
->  tools/perf/examples/bpf/augmented_raw_syscalls.c   |  281 ++----
->  tools/perf/jvmti/libjvmti.c                        |    4 +-
->  tools/perf/perf.h                                  |    2 +
->  tools/perf/scripts/python/export-to-postgresql.py  |   36 +-
->  tools/perf/scripts/python/export-to-sqlite.py      |   36 +-
->  tools/perf/scripts/python/exported-sql-viewer.py   |  294 ++++--
->  tools/perf/tests/Build                             |    1 +
->  tools/perf/tests/builtin-test.c                    |    4 +
->  tools/perf/tests/parse-events.c                    |   27 +
->  tools/perf/tests/tests.h                           |    1 +
->  tools/perf/tests/time-utils-test.c                 |  251 +++++
->  tools/perf/util/annotate.c                         |    5 +-
->  tools/perf/util/auxtrace.h                         |   34 +
->  tools/perf/util/config.c                           |    8 +-
->  tools/perf/util/cpumap.c                           |   64 +-
->  tools/perf/util/cpumap.h                           |   10 +-
->  tools/perf/util/cputopo.c                          |   84 +-
->  tools/perf/util/cputopo.h                          |    2 +
->  tools/perf/util/cs-etm-decoder/cs-etm-decoder.c    |  268 +++--
->  tools/perf/util/cs-etm-decoder/cs-etm-decoder.h    |   39 +-
->  tools/perf/util/cs-etm.c                           | 1026 +++++++++++++++-----
->  tools/perf/util/cs-etm.h                           |   94 ++
->  tools/perf/util/env.c                              |    1 +
->  tools/perf/util/env.h                              |    3 +
->  tools/perf/util/event.h                            |    2 +
->  tools/perf/util/evsel.c                            |   16 +-
->  tools/perf/util/header.c                           |   96 +-
->  .../perf/util/intel-pt-decoder/intel-pt-decoder.c  |  329 ++++++-
->  .../perf/util/intel-pt-decoder/intel-pt-decoder.h  |    6 +
->  tools/perf/util/intel-pt.c                         |  354 ++++++-
->  tools/perf/util/perf_regs.h                        |    4 +
->  tools/perf/util/s390-cpumsf.c                      |   96 +-
->  .../util/scripting-engines/trace-event-python.c    |    8 +-
->  tools/perf/util/smt.c                              |    8 +-
->  tools/perf/util/stat-display.c                     |   29 +-
->  tools/perf/util/stat-shadow.c                      |    1 +
->  tools/perf/util/stat.c                             |    1 +
->  tools/perf/util/stat.h                             |    1 +
->  tools/perf/util/symbol-elf.c                       |    3 +-
->  tools/perf/util/thread-stack.c                     |   14 +
->  tools/perf/util/thread-stack.h                     |    4 +
->  tools/perf/util/time-utils.c                       |  132 ++-
->  58 files changed, 3581 insertions(+), 863 deletions(-)
->  create mode 100644 tools/perf/Documentation/db-export.txt
->  create mode 100644 tools/perf/tests/time-utils-test.c
-
-Pulled, thanks a lot Arnaldo!
-
-	Ingo
+But we've really hijacked the original thread at this point, which is
+probably causing a ton of confusion.
