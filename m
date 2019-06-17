@@ -2,77 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DEF1448D71
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 21:05:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 79A6A48D78
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 21:06:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728718AbfFQTF5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 15:05:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54732 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725497AbfFQTF4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 15:05:56 -0400
-Received: from localhost (lfbn-1-18355-218.w90-101.abo.wanadoo.fr [90.101.143.218])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CE28D208C0;
-        Mon, 17 Jun 2019 19:05:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560798356;
-        bh=gwzKMKnkmpb67LuXLZlwngatPFxjDRv5Gfxfrd5eRt0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=JN8AQdeqXwbZLY0TGP1Dn54Mw3jGKe3Db5jPGYTh1Ui3UoHhoNMeybWRQnEqir62z
-         GZspIYxrYFO6ED600iqleEgHADxoH12TxLn+uksww4mdqXBj4er0ZCRIPW+gShMHBQ
-         8tPEGvva7imgFptxqpivsZJiaYS413/0gqWYXUtg=
-Date:   Mon, 17 Jun 2019 21:05:53 +0200
-From:   Frederic Weisbecker <frederic@kernel.org>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Nicholas Piggin <npiggin@gmail.com>, linux-kernel@vger.kernel.org,
-        Ingo Molnar <mingo@redhat.com>
-Subject: Re: [PATCH] kernel/isolation: Asset that a housekeeping CPU comes up
- at boot time
-Message-ID: <20190617190552.GA10264@lerouge>
-References: <20190601113919.2678-1-npiggin@gmail.com>
- <1560151344.y4aukciain.astroid@bobo.none>
- <20190617155931.GK3436@hirez.programming.kicks-ass.net>
+        id S1728800AbfFQTG3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 15:06:29 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:50140 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726529AbfFQTG3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Jun 2019 15:06:29 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5HJ3dlE006806;
+        Mon, 17 Jun 2019 19:06:17 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : mime-version : content-type : in-reply-to;
+ s=corp-2018-07-02; bh=OaHbeR0lOY/DEBGaqTG6p1kztv8w3JP2A32htJKCwpk=;
+ b=2mPajXvU+J9LkdGoyF0fTtoih1vrC3SprPxHN7uv4HsbySfuNvTMb6s/CfDyjexfzd6s
+ EvXOHmymsiQ1GEXA/73SDyJeimba5snAnfo9eFEsUjXFkucunwSY7O4JLxgbLUP3PXT3
+ kcUMM6OyxqFWbcHgR/qcUrA3IhIArNdPZfGJejszE0f7Nfd8Gha1erlHdEk6OU9UFKRo
+ cshsbDlc09VoJ/UJto5SiqRhse8e6NPhgUvRFKiOZM9L7oImbTzYYuKLjUiH2NxKRWoh
+ RIEkELcWKDeYtCxmmkpxL9INKUxeYfgKDaBKdXsyJW8cdIJ8kY6Jtx/PE2IJeEMN1yEo Mg== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by userp2120.oracle.com with ESMTP id 2t4saq86qn-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 17 Jun 2019 19:06:17 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5HJ4PY0118043;
+        Mon, 17 Jun 2019 19:06:16 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserp3020.oracle.com with ESMTP id 2t5mgbh6nu-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 17 Jun 2019 19:06:16 +0000
+Received: from abhmp0007.oracle.com (abhmp0007.oracle.com [141.146.116.13])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x5HJ6ECm024547;
+        Mon, 17 Jun 2019 19:06:14 GMT
+Received: from mwanda (/41.57.98.10)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 17 Jun 2019 12:06:13 -0700
+Date:   Mon, 17 Jun 2019 22:06:05 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Lee Jones <lee.jones@linaro.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Amelie Delaunay <amelie.delaunay@st.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org
+Subject: [PATCH] mfd: stmfx: Fix an endian bug in stmfx_irq_handler()
+Message-ID: <20190617190605.GA21332@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190617155931.GK3436@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <CAHk-=wgTL5sYCGxX8+xQqyBRWRUE05GAdL58+UTG8bYwjFxMkw@mail.gmail.com>
+X-Mailer: git-send-email haha only kidding
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9291 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1906170169
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9291 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1906170169
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 17, 2019 at 05:59:31PM +0200, Peter Zijlstra wrote:
-> On Mon, Jun 10, 2019 at 05:24:32PM +1000, Nicholas Piggin wrote:
-> > Nicholas Piggin's on June 1, 2019 9:39 pm:
-> > > With the change to allow the boot CPU0 to be isolated, it is possible
-> > > to specify command line options that result in no housekeeping CPU
-> > > online at boot.
-> > > 
-> > > An 8 CPU system booted with "nohz_full=0-6 maxcpus=4", for example.
-> > > 
-> > > It is not easily possible at housekeeping init time to know all the
-> > > various SMP options that will result in an invalid configuration, so
-> > > this patch adds a sanity check after SMP init, to ensure that a
-> > > housekeeping CPU has been onlined.
-> > > 
-> > > The panic is undesirable, but it's better than the alternative of an
-> > > obscure non deterministic failure. The panic will reliably happen
-> > > when advanced parameters are used incorrectly.
-> > 
-> > Ping on this one? This should resolve Frederic's remaining objection
-> > to the series (at least until he solves it more generally).
-> > 
-> > As the series has already been merged, should we get this upstream
-> > before release?
-> 
-> I was hoping for feedback from Frederic, lacking that, I've queued it
-> now.
-> 
+It's not okay to cast a "u32 *" to "unsigned long *" when you are
+doing a for_each_set_bit() loop because that will break on big
+endian systems.
 
-Sorry I just came back from vacation. Any chance we can use a WARN() instead?
-I prefer to use panic() only when data is really threatened or such.
+Reported-by: Linus Torvalds <torvalds@linux-foundation.org>
+Fixes: 386145601b82 ("mfd: stmfx: Uninitialized variable in stmfx_irq_handler()")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/mfd/stmfx.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-Thanks.
+diff --git a/drivers/mfd/stmfx.c b/drivers/mfd/stmfx.c
+index 7c419c078688..857991cb3cbb 100644
+--- a/drivers/mfd/stmfx.c
++++ b/drivers/mfd/stmfx.c
+@@ -204,6 +204,7 @@ static struct irq_chip stmfx_irq_chip = {
+ static irqreturn_t stmfx_irq_handler(int irq, void *data)
+ {
+ 	struct stmfx *stmfx = data;
++	unsigned long bits;
+ 	u32 pending, ack;
+ 	int n, ret;
+ 
+@@ -222,7 +223,8 @@ static irqreturn_t stmfx_irq_handler(int irq, void *data)
+ 			return IRQ_NONE;
+ 	}
+ 
+-	for_each_set_bit(n, (unsigned long *)&pending, STMFX_REG_IRQ_SRC_MAX)
++	bits = pending;
++	for_each_set_bit(n, &bits, STMFX_REG_IRQ_SRC_MAX)
+ 		handle_nested_irq(irq_find_mapping(stmfx->irq_domain, n));
+ 
+ 	return IRQ_HANDLED;
+-- 
+2.20.1
+
