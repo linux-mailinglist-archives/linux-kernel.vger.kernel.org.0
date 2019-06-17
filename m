@@ -2,113 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6FD5348BFF
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 20:36:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6A3BC48C0A
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 20:36:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727048AbfFQSf5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 14:35:57 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:41397 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726121AbfFQSfz (ORCPT
+        id S1727687AbfFQSgv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 14:36:51 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:45842 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725844AbfFQSgu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 14:35:55 -0400
-Received: by mail-pl1-f194.google.com with SMTP id m7so858148pls.8;
-        Mon, 17 Jun 2019 11:35:55 -0700 (PDT)
+        Mon, 17 Jun 2019 14:36:50 -0400
+Received: by mail-pf1-f195.google.com with SMTP id r1so6134406pfq.12;
+        Mon, 17 Jun 2019 11:36:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=0IvJHoD0x6Z/N31hvvGGVGsE7+bjH2MX+F9HjOeromU=;
-        b=OExWykqYB1XFOJ0uAdfVjaD7+Rm+ptb+DGzRrFHXrfqUpNWmT+gyfF49bfYgfui6Gg
-         XgnxapiU1/pFppenKXF78Tu7baKT6rjno8xgPl58yrOR65sg1dst3gH8VSsDKA/fhM9g
-         Isxo4e0gzq+QSCl1q2FCeidJ5Ap8TyDOff9CzQzp5cu1gUWXogVIAKzBfTxNm8ycDqVJ
-         Wkj+iZe5wWKcb8IBJ6e1EvNehilkjWeMnCX9UFmw7k7UdUjXefP2Yz0hgoscpcim8r6o
-         W0OF8+PdpHRKyy5E2/VxK7rb5Fxq5MPaO6FA0PuTD6FFcV4G1VpWUFCZv6UIj/7e14Tv
-         rvTw==
+        h=from:to:cc:subject:date:message-id;
+        bh=LKGeNlPZwIGVNZZsS9uYLIodxN+fkjvFRMre01BWKLg=;
+        b=RRJM6381xq6M0GpIu/gfVDCailz8RcvtlHMPnWE8WwYag1fHjW13rFxzw0CbXmwyZU
+         y1X5Ovp/uCXCMC4nm+fmGkjfO8CsEY8xPZ/hWcihO+jCtgZLBmlHRCyQqr4qyY6r0P+2
+         PtOf3StZ7r09RdG1XVGr0aUH/ylCUi13eS7Ykgmsm+Q6h1xQ0MY39v27A4xA2S9px6Os
+         jC7DGXDFVcatK/e/qfkwAtifPNh2mN1wUslDh9b2nKKiAdZtCKlHJXhUGQsLgvCweN7m
+         PKYMnUKggWmUHs6KzSfkdgrJ3jnDIIefWfcPidclO7nOgyOuErxQsbLwfvbeNiweySQP
+         4A/A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=0IvJHoD0x6Z/N31hvvGGVGsE7+bjH2MX+F9HjOeromU=;
-        b=oz5QlQom1uknXgqzEIa1usPwjH6qkJL1Pa0R+oJpAQYpBLj8WHPK4lUxaoD7OGzYb5
-         rfMQcenJrjdvGMwjJr8Orcqy+CkC33O/F1AlNRfXvycZ/SP3+P59BmeqDz/WSQ58o+9t
-         QWIM5ZGcNZKy/bAz7RuG8zEP/086tqHwJaGyC39sZ1Kw8sYWdjBO3Wzrl7e5CAZvE3Md
-         jgLP+StlrjauGOjGH+eAFnB1RYCfPeqfynpQ/wpELpYjf9xFvc136SIhalPovdi63Hco
-         PICyRnnbN6vQ0xr+e2vG7hAshBog+Ib9oZ7EUGfPi5FHtrREoDhm+qarAedibNkwG71q
-         RAbA==
-X-Gm-Message-State: APjAAAW11g3MwFFTkqCwWt50/KVZeya7C5MwOW+dA5GdeDqwV4C+uGLJ
-        11Ad70ASsEbGgpS8NADl58ESXXD3
-X-Google-Smtp-Source: APXvYqzQntCtPL7/RfEPKtQ1u4ORO2tP31brIoKS1bdz/vxC7dsrRsL18sLgrnNiWQCGWGBm1k+E5Q==
-X-Received: by 2002:a17:902:6a4:: with SMTP id 33mr3796492plh.338.1560796554726;
-        Mon, 17 Jun 2019 11:35:54 -0700 (PDT)
-Received: from localhost.localdomain ([167.220.56.169])
-        by smtp.gmail.com with ESMTPSA id f186sm16552946pfb.5.2019.06.17.11.35.53
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 17 Jun 2019 11:35:54 -0700 (PDT)
-From:   Prakhar Srivastava <prsriva02@gmail.com>
-To:     linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     zohar@linux.ibm.com, roberto.sassu@huawei.com,
-        Prakhar Srivastava <prsriva02@gmail.com>
-Subject: [PATCH 3/3] KEXEC:Call ima_kexec_cmdline to measure the boot command line args
-Date:   Mon, 17 Jun 2019 11:35:07 -0700
-Message-Id: <20190617183507.14160-4-prsriva02@gmail.com>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20190617183507.14160-1-prsriva02@gmail.com>
-References: <20190617183507.14160-1-prsriva02@gmail.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=LKGeNlPZwIGVNZZsS9uYLIodxN+fkjvFRMre01BWKLg=;
+        b=kfDQ6+OU9BjRLHrnaJZgzYMCZpau/TpeYUxQL3mlPYOmA7rS4bzZU+OqUfoH3xZG7d
+         YvK72rIPodzLPJJyVInHoF0wyzaV5SIU04CJ+X8PsmMvffur9A5+ZHxnDe/3jBt4i/Bi
+         xbAEjd4/ImjNkiBnXfEFekxmIlkafmzWue3nj8BD6fGu+Yj4GuAeDqcViUMccQ0AHBvq
+         AC2W7y+aldcahUxkyDMGXKgnUuP4OMHWDrujcQKVkjBmQf29WgmKAtowum/BnC0OQ9LJ
+         84iivVqBo37lPfy3CX/nYhOS8fwhXoGsWaaaYxnnGParOx9UO+jns/+1pMPE4l++SHuD
+         4imQ==
+X-Gm-Message-State: APjAAAV8nNx9o+xDpca9qZXcZVw00CbKVKZwgTnYFn1Oj69gFzBkG/7z
+        aEGPytuol2NxCAli5mZc7Fa1Obsh
+X-Google-Smtp-Source: APXvYqyjy89E8tz6+xKj6FtuzHozyTb/rdTmJNYjxAKF9KzFUQVJZImITEuwiEwSuqcRVbLhOh8HXA==
+X-Received: by 2002:a62:a511:: with SMTP id v17mr112104356pfm.129.1560796608695;
+        Mon, 17 Jun 2019 11:36:48 -0700 (PDT)
+Received: from aw-bldr-10.qualcomm.com (i-global254.qualcomm.com. [199.106.103.254])
+        by smtp.gmail.com with ESMTPSA id 137sm13010823pfz.116.2019.06.17.11.36.46
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 17 Jun 2019 11:36:48 -0700 (PDT)
+From:   Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+Cc:     agross@kernel.org, bjorn.andersson@linaro.org, lgirdwood@gmail.com,
+        broonie@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+Subject: [PATCH v5 0/5] PM8005 and PMS405 regulator support
+Date:   Mon, 17 Jun 2019 11:36:43 -0700
+Message-Id: <20190617183643.13449-1-jeffrey.l.hugo@gmail.com>
+X-Mailer: git-send-email 2.17.1
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-During soft reboot(kexec_file_load) boot command line
-arguments are not measured.
+The MSM8998 MTP reference platform supplies VDD_GFX from s1 of the
+pm8005 PMIC.  VDD_GFX is needed to turn on the GPU.  As we are looking
+to bring up the GPU, add the support for pm8005 and wire up s1 in a
+basic manner so that we have this dependency out of the way and can
+focus on enabling the GPU driver.
 
-Call ima hook ima_kexec_cmdline to measure the boot command line
-arguments into IMA measurement list.
+The s3 regulator of PMS405 is used for voltage scaling of the CPU on
+QCS404.
 
-- call ima_kexec_cmdline from kexec_file_load.
-- move the call ima_add_kexec_buffer after the cmdline
-args have been measured.
+Both PMICs are very similar in design, so add the base support with one,
+and trivially add the support for the other on top.
 
-Signed-off-by: Prakhar Srivastava <prsriva02@gmail.com>
-Reviewed-by: James Morris <jamorris@linux.microsoft.com>
-Acked-by: Dave Young <dyoung@redhat.com>
----
- kernel/kexec_file.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+v5:
+-drop accepted changes
+-.get_voltage -> .get_voltage_sel
+-made set_mode be 1:1 between API and hw
 
-diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
-index 072b6ee55e3f..b0c724e5d86c 100644
---- a/kernel/kexec_file.c
-+++ b/kernel/kexec_file.c
-@@ -198,9 +198,6 @@ kimage_file_prepare_segments(struct kimage *image, int kernel_fd, int initrd_fd,
- 		return ret;
- 	image->kernel_buf_len = size;
- 
--	/* IMA needs to pass the measurement list to the next kernel. */
--	ima_add_kexec_buffer(image);
--
- 	/* Call arch image probe handlers */
- 	ret = arch_kexec_kernel_image_probe(image, image->kernel_buf,
- 					    image->kernel_buf_len);
-@@ -241,8 +238,14 @@ kimage_file_prepare_segments(struct kimage *image, int kernel_fd, int initrd_fd,
- 			ret = -EINVAL;
- 			goto out;
- 		}
-+
-+		ima_kexec_cmdline(image->cmdline_buf,
-+				  image->cmdline_buf_len - 1);
- 	}
- 
-+	/* IMA needs to pass the measurement list to the next kernel. */
-+	ima_add_kexec_buffer(image);
-+
- 	/* Call arch image load handlers */
- 	ldata = arch_kexec_kernel_image_load(image);
- 
+v4:
+-fix the linear range change to use the correct implementation
+-mask out the non-mode bits when reading the hardware reg
+-correct the pms405 supply pins listing
+-correct the pms405 s3 supply name in the match struct
+-correct subject names to be more aligned with the subsystem history
+
+v3:
+-Allow PMS405 regulators to be enabled and disabled, instead of the
+outdated "always on" concept
+
+v2:
+-Perform if statement cleanups per review discussion
+-Pull in linear range support since its related, and simple
+-Rework the PM8005 to minimize special cases in the driver
+-"common2" is now ftsmps426 since that design first implemented it
+-Reworked the PMS405 changes on top, since they are related to pm8005
+and trivial
+
+Jeffrey Hugo (3):
+  dt-bindings: qcom_spmi: Document PM8005 regulators
+  regulator: qcom_spmi: Add support for PM8005
+  arm64: dts: msm8998-mtp: Add pm8005_s1 regulator
+
+Jorge Ramirez (2):
+  dt-bindings: qcom_spmi: Document pms405 support
+  regulator: qcom_spmi: add PMS405 SPMI regulator
+
+ .../regulator/qcom,spmi-regulator.txt         |  22 ++
+ arch/arm64/boot/dts/qcom/msm8998-mtp.dtsi     |  17 ++
+ drivers/regulator/qcom_spmi-regulator.c       | 213 ++++++++++++++++++
+ 3 files changed, 252 insertions(+)
+
 -- 
-2.19.1
+2.17.1
 
