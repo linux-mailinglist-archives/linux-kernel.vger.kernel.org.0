@@ -2,105 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B172047D92
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 10:50:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9273947D9B
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 10:51:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727808AbfFQIuy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 04:50:54 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:2200 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725826AbfFQIuw (ORCPT
+        id S1727922AbfFQIvW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 04:51:22 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:36732 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727323AbfFQIvW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 04:50:52 -0400
-Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5H8faGH018088;
-        Mon, 17 Jun 2019 10:50:33 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
- : date : message-id : in-reply-to : references : mime-version :
- content-type; s=STMicroelectronics;
- bh=mKq6aXRt6yPdvv0WN1RsD2U79XJ8Gb1nUEC8uornMGc=;
- b=lXEL++QNAZxVCrBJMcQ3hfh4I5HKtmd5STDTD4YVF6nQjaTCtoEimMpUIUr9lyJhj9v0
- fEMxnPguKtPsD9ZLF6qf3K6Ct6/OkTIaYttCe3EgOljrxllyJoBeoN8517uSjrWWh7ty
- Ior/IDc/F4EM7Ni0o6/bw0kmUP9iE5nz+x0UWtQWIx4bgkkkRjE4YcTAbEY6tC317Xx+
- UWypLPYJZLEL7tVt5VEZVn/V/A0plkgXhZbRJgdUJ08bg/fL25kNA1AdVMMBfkg0yBN1
- D5SL7os/TCvcKZLzdy3zhXGVoGbaroguwZUa9Sr4gMGaPPD7PCdENpgCDZj9FOKOmxkW mQ== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2t4p519f5m-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Mon, 17 Jun 2019 10:50:33 +0200
-Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 737F538;
-        Mon, 17 Jun 2019 08:50:32 +0000 (GMT)
-Received: from Webmail-eu.st.com (Safex1hubcas21.st.com [10.75.90.44])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 4133D246F;
-        Mon, 17 Jun 2019 08:50:32 +0000 (GMT)
-Received: from SAFEX1HUBCAS24.st.com (10.75.90.95) by SAFEX1HUBCAS21.st.com
- (10.75.90.44) with Microsoft SMTP Server (TLS) id 14.3.439.0; Mon, 17 Jun
- 2019 10:50:31 +0200
-Received: from localhost (10.201.22.222) by webmail-ga.st.com (10.75.90.48)
- with Microsoft SMTP Server (TLS) id 14.3.439.0; Mon, 17 Jun 2019 10:50:31
- +0200
-From:   Christophe Roullier <christophe.roullier@st.com>
-To:     <robh@kernel.org>, <davem@davemloft.net>, <joabreu@synopsys.com>,
-        <mark.rutland@arm.com>, <mcoquelin.stm32@gmail.com>,
-        <alexandre.torgue@st.com>, <peppe.cavallaro@st.com>
-CC:     <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <netdev@vger.kernel.org>,
-        <christophe.roullier@st.com>, <andrew@lunn.ch>
-Subject: [PATCH  1/1] ARM: dts: stm32: replace rgmii mode with rgmii-id on stm32mp15 boards
-Date:   Mon, 17 Jun 2019 10:50:18 +0200
-Message-ID: <20190617085018.20352-2-christophe.roullier@st.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190617085018.20352-1-christophe.roullier@st.com>
-References: <20190617085018.20352-1-christophe.roullier@st.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.201.22.222]
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-17_05:,,
- signatures=0
+        Mon, 17 Jun 2019 04:51:22 -0400
+Received: by mail-pg1-f196.google.com with SMTP id f21so5427741pgi.3
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2019 01:51:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:from:to:cc:subject:date:message-id;
+        bh=+s0hvx2ZoDdfV9Um7bwyvmqpYaZupeqRGDBP/P7uEqg=;
+        b=OiX6cA+Hu3qeu3+KIo7CeyjC7JR3UwFUkyTATiVz4UmWKl6C63xQpHeWH979BnZHm+
+         mgJ+4s1Y5Yv+X5c6unYaHlZ3j6sdioCOzftaai399R1q8HHmcrEZo5QzLFEDtbAZX9b1
+         9bycHAoyiG6RVJu6IppS9DDiFTgEt1hl/t9KZupMtYkOD07aNyPIyocDd2QLhiAD0XiJ
+         4E3TMx3k16+rsIFw2YbiTF7Yu17TxIXReLLjQvwEJIsSmnCv4IKyur8w1azrbgwbQ2ei
+         pvkQJiWPDIVWoVSNO4gchOdVVxHKzzpBjc3jpJLgAvP56gAGE0GrXyA2FOhieGaUcdzE
+         QEcA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id;
+        bh=+s0hvx2ZoDdfV9Um7bwyvmqpYaZupeqRGDBP/P7uEqg=;
+        b=MqZlt7jA4PmT5ypDxLW8Z2cT8PrXHPHNIifPYYiY1Q1gclbuN18KpPOlNxCc9lxWvy
+         i59ra96v99Rl+9mv24I/M/BhY9p3lRnSd0yQ7dcJVgO6iF8OrVRnNDvWAP9l3IavPkAc
+         I4BwTj0M0Q8F0c0VT1j9UDYmSvKrEgmYDu4+7V4RCBFQm5m/yOnx0R51idX1K3SzbMtw
+         c25C21fbf919gdik8NYCK+DOMESEj4vUHNoMHOyRv/KpcPTaKi+13HYe3IBTVSZvtO7G
+         xvJw8yNcGALtAvmvJy49pmQ4pb2i4Y3VGhL8venZo/aWyal0jetvuSSu3T5cK40AfJQS
+         g09g==
+X-Gm-Message-State: APjAAAUJgZ26D1aTf11pNYZo6CRBLkZt+jt7Oew2poRYUgdaQsx9ksf3
+        DX7JH0JAuY24dx7upRFHzQ==
+X-Google-Smtp-Source: APXvYqxAEo7y/HvMWEyG3WkPe8qZn830M+JpmLvFyOCawIbIq2ysBhAs2UlmtTxoi2lAcl1KpmvryQ==
+X-Received: by 2002:a63:5d54:: with SMTP id o20mr45933531pgm.97.1560761481426;
+        Mon, 17 Jun 2019 01:51:21 -0700 (PDT)
+Received: from www9186uo.sakura.ne.jp (www9186uo.sakura.ne.jp. [153.121.56.200])
+        by smtp.gmail.com with ESMTPSA id d4sm9443514pju.19.2019.06.17.01.51.18
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 17 Jun 2019 01:51:20 -0700 (PDT)
+From:   Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+To:     linux-mm@kvack.org
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        xishi.qiuxishi@alibaba-inc.com,
+        "Chen, Jerry T" <jerry.t.chen@intel.com>,
+        "Zhuo, Qiuxu" <qiuxu.zhuo@intel.com>, linux-kernel@vger.kernel.org,
+        Anshuman Khandual <anshuman.khandual@arm.com>
+Subject: [PATCH v3 0/2] fix return value issue of soft offlining hugepages
+Date:   Mon, 17 Jun 2019 17:51:14 +0900
+Message-Id: <1560761476-4651-1-git-send-email-n-horiguchi@ah.jp.nec.com>
+X-Mailer: git-send-email 2.7.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On disco and eval board, Tx and Rx delay are applied (pull-up of 4.7k
-put on VDD) so which correspond to RGMII-ID mode with internal RX and TX
-delays provided by the PHY, the MAC should not add the RX or TX delays
-in this case
+Hi everyone,
 
-Signed-off-by: Christophe Roullier <christophe.roullier@st.com>
----
- arch/arm/boot/dts/stm32mp157a-dk1.dts | 2 +-
- arch/arm/boot/dts/stm32mp157c-ev1.dts | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+This is v3 of the fix of return value issue of hugepage soft-offlining
+(v2: https://lkml.org/lkml/2019/6/10/156).
+Straightforwardly applied feedbacks on v2.
 
-diff --git a/arch/arm/boot/dts/stm32mp157a-dk1.dts b/arch/arm/boot/dts/stm32mp157a-dk1.dts
-index 098dbfb06b61..2c105740dfad 100644
---- a/arch/arm/boot/dts/stm32mp157a-dk1.dts
-+++ b/arch/arm/boot/dts/stm32mp157a-dk1.dts
-@@ -51,7 +51,7 @@
- 	pinctrl-0 = <&ethernet0_rgmii_pins_a>;
- 	pinctrl-1 = <&ethernet0_rgmii_pins_sleep_a>;
- 	pinctrl-names = "default", "sleep";
--	phy-mode = "rgmii";
-+	phy-mode = "rgmii-id";
- 	max-speed = <1000>;
- 	phy-handle = <&phy0>;
- 
-diff --git a/arch/arm/boot/dts/stm32mp157c-ev1.dts b/arch/arm/boot/dts/stm32mp157c-ev1.dts
-index b6aca40b9b90..ab1393caf799 100644
---- a/arch/arm/boot/dts/stm32mp157c-ev1.dts
-+++ b/arch/arm/boot/dts/stm32mp157c-ev1.dts
-@@ -79,7 +79,7 @@
- 	pinctrl-0 = <&ethernet0_rgmii_pins_a>;
- 	pinctrl-1 = <&ethernet0_rgmii_pins_sleep_a>;
- 	pinctrl-names = "default", "sleep";
--	phy-mode = "rgmii";
-+	phy-mode = "rgmii-id";
- 	max-speed = <1000>;
- 	phy-handle = <&phy0>;
- 
--- 
-2.17.1
-
+Thanks,
+Naoya Horiguchi
