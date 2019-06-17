@@ -2,40 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E50524928C
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 23:21:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E9FD4492D6
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 23:25:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729332AbfFQVVT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 17:21:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45804 "EHLO mail.kernel.org"
+        id S1729921AbfFQVY1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 17:24:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49970 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728811AbfFQVVR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 17:21:17 -0400
+        id S1729910AbfFQVYY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Jun 2019 17:24:24 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0734B208E4;
-        Mon, 17 Jun 2019 21:21:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3062720657;
+        Mon, 17 Jun 2019 21:24:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560806476;
-        bh=ELvTOrk45EK+TWqLdnXanaRtbY3YzIW95jg6O2WUp2g=;
+        s=default; t=1560806663;
+        bh=z5SKF9DOlqPNls6ia41cYM6baailNmIznIbwfYklA1U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=eS51hMqH5UwkGZr8FHHnTBFrzeQnMV6H4eqMarcGrR4PxNyyeh4icuRrf8ljSxAt3
-         5v6IZfXdggetWzSAZs9fGzu/azKbHses6ZOB3n5s+5kgsDkD2AUcWx7B6GThcn/rEs
-         MsXu+UHkaEDg+hOVbYRoLovcjPsEMQCOoJ7/PaYo=
+        b=Dz7m3Mq1JAHhcharkasbeM3WVJ5OeBjRj+pCem74oaSeXouXszevFa1lSfSo79TZf
+         EnX5GpgREdz+mVPivD1mOVWNEaqXy+4F/B+RFgWq8VnYKJWWtfm9bpxLKrJSCrGJ2b
+         Xz6OKD4NVzowXLpt/VfFt6BUh7BCVluSEP1vFiNo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ming Lei <ming.lei@redhat.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Keith Busch <keith.busch@intel.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 065/115] nvme-pci: Fix controller freeze wait disabling
-Date:   Mon, 17 Jun 2019 23:09:25 +0200
-Message-Id: <20190617210803.490251928@linuxfoundation.org>
+        stable@vger.kernel.org, Wengang Wang <wen.gang.wang@oracle.com>,
+        Daniel Sobe <daniel.sobe@nxp.com>,
+        Changwei Ge <gechangwei@live.cn>,
+        Joseph Qi <joseph.qi@linux.alibaba.com>,
+        Mark Fasheh <mark@fasheh.com>,
+        Joel Becker <jlbec@evilplan.org>,
+        Junxiao Bi <junxiao.bi@oracle.com>, Gang He <ghe@suse.com>,
+        Jun Piao <piaojun@huawei.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.19 15/75] fs/ocfs2: fix race in ocfs2_dentry_attach_lock()
+Date:   Mon, 17 Jun 2019 23:09:26 +0200
+Message-Id: <20190617210753.468996710@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190617210759.929316339@linuxfoundation.org>
-References: <20190617210759.929316339@linuxfoundation.org>
+In-Reply-To: <20190617210752.799453599@linuxfoundation.org>
+References: <20190617210752.799453599@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,59 +51,97 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit e43269e6e5c49d7fec599e6bba71963935b0e4ba ]
+From: Wengang Wang <wen.gang.wang@oracle.com>
 
-If a controller disabling didn't start a freeze, don't wait for the
-operation to complete.
+commit be99ca2716972a712cde46092c54dee5e6192bf8 upstream.
 
-Reviewed-by: Ming Lei <ming.lei@redhat.com>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Keith Busch <keith.busch@intel.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+ocfs2_dentry_attach_lock() can be executed in parallel threads against the
+same dentry.  Make that race safe.  The race is like this:
+
+            thread A                               thread B
+
+(A1) enter ocfs2_dentry_attach_lock,
+seeing dentry->d_fsdata is NULL,
+and no alias found by
+ocfs2_find_local_alias, so kmalloc
+a new ocfs2_dentry_lock structure
+to local variable "dl", dl1
+
+               .....
+
+                                    (B1) enter ocfs2_dentry_attach_lock,
+                                    seeing dentry->d_fsdata is NULL,
+                                    and no alias found by
+                                    ocfs2_find_local_alias so kmalloc
+                                    a new ocfs2_dentry_lock structure
+                                    to local variable "dl", dl2.
+
+                                                   ......
+
+(A2) set dentry->d_fsdata with dl1,
+call ocfs2_dentry_lock() and increase
+dl1->dl_lockres.l_ro_holders to 1 on
+success.
+              ......
+
+                                    (B2) set dentry->d_fsdata with dl2
+                                    call ocfs2_dentry_lock() and increase
+				    dl2->dl_lockres.l_ro_holders to 1 on
+				    success.
+
+                                                  ......
+
+(A3) call ocfs2_dentry_unlock()
+and decrease
+dl2->dl_lockres.l_ro_holders to 0
+on success.
+             ....
+
+                                    (B3) call ocfs2_dentry_unlock(),
+                                    decreasing
+				    dl2->dl_lockres.l_ro_holders, but
+				    see it's zero now, panic
+
+Link: http://lkml.kernel.org/r/20190529174636.22364-1-wen.gang.wang@oracle.com
+Signed-off-by: Wengang Wang <wen.gang.wang@oracle.com>
+Reported-by: Daniel Sobe <daniel.sobe@nxp.com>
+Tested-by: Daniel Sobe <daniel.sobe@nxp.com>
+Reviewed-by: Changwei Ge <gechangwei@live.cn>
+Reviewed-by: Joseph Qi <joseph.qi@linux.alibaba.com>
+Cc: Mark Fasheh <mark@fasheh.com>
+Cc: Joel Becker <jlbec@evilplan.org>
+Cc: Junxiao Bi <junxiao.bi@oracle.com>
+Cc: Gang He <ghe@suse.com>
+Cc: Jun Piao <piaojun@huawei.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/nvme/host/pci.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ fs/ocfs2/dcache.c |   12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
-index 372d3f4a106a..f20da2e3da2c 100644
---- a/drivers/nvme/host/pci.c
-+++ b/drivers/nvme/host/pci.c
-@@ -2400,7 +2400,7 @@ static void nvme_pci_disable(struct nvme_dev *dev)
+--- a/fs/ocfs2/dcache.c
++++ b/fs/ocfs2/dcache.c
+@@ -310,6 +310,18 @@ int ocfs2_dentry_attach_lock(struct dent
  
- static void nvme_dev_disable(struct nvme_dev *dev, bool shutdown)
- {
--	bool dead = true;
-+	bool dead = true, freeze = false;
- 	struct pci_dev *pdev = to_pci_dev(dev->dev);
- 
- 	mutex_lock(&dev->shutdown_lock);
-@@ -2408,8 +2408,10 @@ static void nvme_dev_disable(struct nvme_dev *dev, bool shutdown)
- 		u32 csts = readl(dev->bar + NVME_REG_CSTS);
- 
- 		if (dev->ctrl.state == NVME_CTRL_LIVE ||
--		    dev->ctrl.state == NVME_CTRL_RESETTING)
-+		    dev->ctrl.state == NVME_CTRL_RESETTING) {
-+			freeze = true;
- 			nvme_start_freeze(&dev->ctrl);
-+		}
- 		dead = !!((csts & NVME_CSTS_CFS) || !(csts & NVME_CSTS_RDY) ||
- 			pdev->error_state  != pci_channel_io_normal);
- 	}
-@@ -2418,10 +2420,8 @@ static void nvme_dev_disable(struct nvme_dev *dev, bool shutdown)
- 	 * Give the controller a chance to complete all entered requests if
- 	 * doing a safe shutdown.
- 	 */
--	if (!dead) {
--		if (shutdown)
--			nvme_wait_freeze_timeout(&dev->ctrl, NVME_IO_TIMEOUT);
--	}
-+	if (!dead && shutdown && freeze)
-+		nvme_wait_freeze_timeout(&dev->ctrl, NVME_IO_TIMEOUT);
- 
- 	nvme_stop_queues(&dev->ctrl);
- 
--- 
-2.20.1
-
+ out_attach:
+ 	spin_lock(&dentry_attach_lock);
++	if (unlikely(dentry->d_fsdata && !alias)) {
++		/* d_fsdata is set by a racing thread which is doing
++		 * the same thing as this thread is doing. Leave the racing
++		 * thread going ahead and we return here.
++		 */
++		spin_unlock(&dentry_attach_lock);
++		iput(dl->dl_inode);
++		ocfs2_lock_res_free(&dl->dl_lockres);
++		kfree(dl);
++		return 0;
++	}
++
+ 	dentry->d_fsdata = dl;
+ 	dl->dl_count++;
+ 	spin_unlock(&dentry_attach_lock);
 
 
