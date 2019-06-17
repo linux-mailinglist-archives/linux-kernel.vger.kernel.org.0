@@ -2,90 +2,138 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E8CA4836C
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 15:05:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 794334837C
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 15:07:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727905AbfFQNFV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 09:05:21 -0400
-Received: from mout.kundenserver.de ([212.227.126.131]:56847 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725983AbfFQNFV (ORCPT
+        id S1727834AbfFQNHO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 09:07:14 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:52012 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725983AbfFQNHO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 09:05:21 -0400
-Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
- (mreue012 [212.227.15.129]) with ESMTPA (Nemesis) id
- 1MxHLs-1iaB902HqC-00xXc6; Mon, 17 Jun 2019 15:05:06 +0200
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     Ariel Elior <aelior@marvell.com>, GR-everest-linux-l2@marvell.com,
-        "David S. Miller" <davem@davemloft.net>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Ariel Elior <ariel.elior@marvell.com>,
-        Michal Kalderon <michal.kalderon@marvell.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Denis Bolotin <dbolotin@marvell.com>,
-        Tomer Tayar <tomer.tayar@cavium.com>,
-        Sudarsana Reddy Kalluru <skalluru@marvell.com>,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] qed: Fix -Wmaybe-uninitialized false positive
-Date:   Mon, 17 Jun 2019 15:04:49 +0200
-Message-Id: <20190617130504.1906523-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.20.0
+        Mon, 17 Jun 2019 09:07:14 -0400
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5HD09mS077636;
+        Mon, 17 Jun 2019 09:06:56 -0400
+Received: from ppma01wdc.us.ibm.com (fd.55.37a9.ip4.static.sl-reverse.com [169.55.85.253])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2t69mpcmxg-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 17 Jun 2019 09:06:56 -0400
+Received: from pps.filterd (ppma01wdc.us.ibm.com [127.0.0.1])
+        by ppma01wdc.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x5HD2nlr017232;
+        Mon, 17 Jun 2019 13:06:56 GMT
+Received: from b01cxnp22034.gho.pok.ibm.com (b01cxnp22034.gho.pok.ibm.com [9.57.198.24])
+        by ppma01wdc.us.ibm.com with ESMTP id 2t4ra6ddyn-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 17 Jun 2019 13:06:56 +0000
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp22034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x5HD6sxS18284920
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 17 Jun 2019 13:06:54 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 0E70BB2066;
+        Mon, 17 Jun 2019 13:06:54 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id E1D6EB205F;
+        Mon, 17 Jun 2019 13:06:53 +0000 (GMT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.85.132.58])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Mon, 17 Jun 2019 13:06:53 +0000 (GMT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id 5A87016C17E5; Mon, 17 Jun 2019 06:06:57 -0700 (PDT)
+Date:   Mon, 17 Jun 2019 06:06:57 -0700
+From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
+To:     Mark Rutland <mark.rutland@arm.com>
+Cc:     linux@arm.linux.org.uk, dietmar.eggemann@arm.com,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH arm] Use common outgoing-CPU-notification code
+Message-ID: <20190617130657.GL26519@linux.ibm.com>
+Reply-To: paulmck@linux.ibm.com
+References: <20190611192410.GA27930@linux.ibm.com>
+ <20190617115809.GA3767@lakrids.cambridge.arm.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:+mmC7KynQ+2sddMylzq2+ftuxPNGFt1OtXTkR+yN566PmwzbyDo
- bXQTUjpA9qOlN2+o2T1d4PREWunObLscF9GhNcjtYqOM3Oila0QWRY6wCKPGXk5HnxX83mB
- 7J7bfPlUP8j0k/MjxhJD/WSqEDpN54R9a9VwehJ4Qr9g0Ds9smgkEjTt6wtr7EAr8pPis3L
- gP0aW5mBEp4KV+qgU77kw==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:d5ZO6L8lGYg=:7/TFzafs/62j0Fn1qTS/5b
- stiTggZP23rEne6LpCi6BMHiVDqL2ELZLWImG7czTF87WsvjcAfOhtY8rQMFn65Dzc6jQIYzU
- Ms2fme/NnUJJtAJEVUDRYKLdQTiJ9mP+YcMrW+9AYiDDcnHxiZg6KepwSm8SeRPtByUri7MUD
- QvfhlXHmOpnFPAVQ0lSk+ITH736cojeZilzk9rZYHbx/rHdssa5qQNvJYjxF4RJsMJX5qMrlQ
- WIo2u9j2j0Z0IMSovIHTV+bh5ankUjIQqgZ8sAsieey3tX/8NTGo/U6JbpVGYnEId+0eGLWrM
- Zo2YPQZ1uuNJQd1m8kP2SYWjz2HrMhSJ8KpGfCO4rG9ymOJ0nAxXNgzg7jxI7In1fFyubMxEK
- iYNs/BxcvRs7IXte7L5IUrkv+kxb9YCBiVjl+Sp/Y9IxOYNz+3N5LCe4cKJ/gtBZ06W4E/yDb
- 1eIlTGu64vZQvYzDmPS9y3LRsJcubJ8qRrKzVHiX9AdTFmXmA6NshSODuB7X8Fn7tFk+fNI7F
- 4JWeQfzj/FIasmqD/o0vVAKs4k0zZdYuZ6rMtWMAga351UuqtWhhpeyCh3zUkTGOktCVtcQkG
- nWopkC8tgRYW10M5jqJdpZW4+Ylhaa8nvEU4Du0dEX4zGfRJqW7+ja7dZRQkoBWk1zXGP8ks1
- QEGtNDw9EetWIfPwFGowXEYELXq1QKpcC8/0CbTZb7k4cLGKYTOUzHh2f3oM3fR3lOdYO4vp/
- eKqqTg6LjCNnc4SF2Lw5baa4n7VeYfaotyUnjA==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190617115809.GA3767@lakrids.cambridge.arm.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-17_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1906170119
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A previous attempt to shut up the uninitialized variable use
-warning was apparently insufficient. When CONFIG_PROFILE_ANNOTATED_BRANCHES
-is set, gcc-8 still warns, because the unlikely() check in DP_NOTICE()
-causes it to no longer track the state of all variables correctly:
+On Mon, Jun 17, 2019 at 12:58:19PM +0100, Mark Rutland wrote:
+> On Tue, Jun 11, 2019 at 12:24:10PM -0700, Paul E. McKenney wrote:
+> > This commit removes the open-coded CPU-offline notification with new
+> > common code.  In particular, this change avoids calling scheduler code
+> > using RCU from an offline CPU that RCU is ignoring.  This is a minimal
+> > change.  A more intrusive change might invoke the cpu_check_up_prepare()
+> > and cpu_set_state_online() functions at CPU-online time, which would
+> > allow onlining throw an error if the CPU did not go offline properly.
+> > 
+> > Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+> > Cc: linux-arm-kernel@lists.infradead.org
+> > Cc: Russell King <linux@arm.linux.org.uk>
+> > Cc: Mark Rutland <mark.rutland@arm.com>
+> > Tested-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
+> 
+> FWIW:
+> 
+> Acked-by: Mark Rutland <mark.rutland@arm.com>
+> 
+> On the assumption that Russell is ok with this, I think this should be
+> dropped into the ARM patch system [1].
+> 
+> Paul, are you familiar with that, or would you prefer that someone else
+> submits the patch there? I can do so if you'd like.
 
-drivers/net/ethernet/qlogic/qed/qed_dev.c: In function 'qed_llh_set_ppfid_affinity':
-drivers/net/ethernet/qlogic/qed/qed_dev.c:798:47: error: 'abs_ppfid' may be used uninitialized in this function [-Werror=maybe-uninitialized]
-  addr = NIG_REG_PPF_TO_ENGINE_SEL + abs_ppfid * 0x4;
-                                     ~~~~~~~~~~^~~~~
+I never have used this system, so please do drop it in there!  Let me
+know when you have done so, and I will then drop it from -rcu.
 
-This is not a nice workaround, but always initializing the output from
-qed_llh_abs_ppfid() at least shuts up the false positive reliably.
+							Thanx, Paul
 
-Fixes: 79284adeb99e ("qed: Add llh ppfid interface and 100g support for offload protocols")
-Fixes: 8e2ea3ea9625 ("qed: Fix static checker warning")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/net/ethernet/qlogic/qed/qed_dev.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/net/ethernet/qlogic/qed/qed_dev.c b/drivers/net/ethernet/qlogic/qed/qed_dev.c
-index eec7cb65c7e6..a1ebc2b1ca0b 100644
---- a/drivers/net/ethernet/qlogic/qed/qed_dev.c
-+++ b/drivers/net/ethernet/qlogic/qed/qed_dev.c
-@@ -652,6 +652,7 @@ static int qed_llh_abs_ppfid(struct qed_dev *cdev, u8 ppfid, u8 *p_abs_ppfid)
- 		DP_NOTICE(cdev,
- 			  "ppfid %d is not valid, available indices are 0..%hhd\n",
- 			  ppfid, p_llh_info->num_ppfid - 1);
-+		*p_abs_ppfid = 0;
- 		return -EINVAL;
- 	}
- 
--- 
-2.20.0
-
+> Thanks,
+> Mark.
+> 
+> [1] https://www.armlinux.org.uk/developer/patches/info.php
+> 
+> > 
+> > diff --git a/arch/arm/kernel/smp.c b/arch/arm/kernel/smp.c
+> > index ebc53804d57b..8687d619260f 100644
+> > --- a/arch/arm/kernel/smp.c
+> > +++ b/arch/arm/kernel/smp.c
+> > @@ -267,15 +267,13 @@ int __cpu_disable(void)
+> >  	return 0;
+> >  }
+> >  
+> > -static DECLARE_COMPLETION(cpu_died);
+> > -
+> >  /*
+> >   * called on the thread which is asking for a CPU to be shutdown -
+> >   * waits until shutdown has completed, or it is timed out.
+> >   */
+> >  void __cpu_die(unsigned int cpu)
+> >  {
+> > -	if (!wait_for_completion_timeout(&cpu_died, msecs_to_jiffies(5000))) {
+> > +	if (!cpu_wait_death(cpu, 5)) {
+> >  		pr_err("CPU%u: cpu didn't die\n", cpu);
+> >  		return;
+> >  	}
+> > @@ -322,7 +320,7 @@ void arch_cpu_idle_dead(void)
+> >  	 * this returns, power and/or clocks can be removed at any point
+> >  	 * from this CPU and its cache by platform_cpu_kill().
+> >  	 */
+> > -	complete(&cpu_died);
+> > +	(void)cpu_report_death();
+> >  
+> >  	/*
+> >  	 * Ensure that the cache lines associated with that completion are
+> > 
+> 
