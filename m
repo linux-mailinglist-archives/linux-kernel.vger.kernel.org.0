@@ -2,81 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 429CE481CD
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 14:21:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 29FE6481D6
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 14:21:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727691AbfFQMU2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 08:20:28 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:59252 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727627AbfFQMUY (ORCPT
+        id S1727824AbfFQMUr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 08:20:47 -0400
+Received: from mail-vs1-f66.google.com ([209.85.217.66]:34929 "EHLO
+        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726957AbfFQMUp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 08:20:24 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
-        :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
-        :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=QmF+hMORbQndpCz32PB+cZz6ZyE8AYGsI14jgQiJTGk=; b=b/Db0BK20TJuwRjOioLVHLjfCP
-        h0tNT6G+x72Lb4VACGbEjLKCc2EuIorIcUIk9AjaDE40GJ1TGwMHfizV9PYWXJwG0aaxpjF6pssHC
-        n9KdkoApYCeHtw3BBhh3ksfCB0QgJ52hSU2Mz9QF8wrEXte7SlPAHC5AdHuL2Gqql87SxzSI2ivWh
-        9VdpkfuSLKJhmFJF3+1+1bolgO0OHXcQPBbYx10GjZxfvZLBw9JjG6NBOi6coBDLpbSZyVhmB4Lqr
-        wr8eE/xR16kTjIKNT7AOV9jfx2e8yqxuZTdBZ/Ev1K0ETjeySqndLq0HnXl8ymTavhst/9jyH3PK/
-        ZZ9NnB7A==;
-Received: from clnet-p19-102.ikbnet.co.at ([83.175.77.102] helo=localhost)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hcqcY-0004hd-7k; Mon, 17 Jun 2019 12:20:22 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     "Martin K . Petersen" <martin.petersen@oracle.com>
-Cc:     Sagi Grimberg <sagi@grimberg.me>, Max Gurtovoy <maxg@mellanox.com>,
-        Bart Van Assche <bvanassche@acm.org>,
-        linux-rdma@vger.kernel.org, linux-scsi@vger.kernel.org,
-        megaraidlinux.pdl@broadcom.com, MPT-FusionLinux.pdl@broadcom.com,
-        linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 8/8] megaraid_sas: set an unlimited max_segment_size
-Date:   Mon, 17 Jun 2019 14:20:00 +0200
-Message-Id: <20190617122000.22181-9-hch@lst.de>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190617122000.22181-1-hch@lst.de>
-References: <20190617122000.22181-1-hch@lst.de>
+        Mon, 17 Jun 2019 08:20:45 -0400
+Received: by mail-vs1-f66.google.com with SMTP id u124so5965261vsu.2
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2019 05:20:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=h6E2Ip34X/NLucxUj+SAkivtur6dQeITpi+3ydY7xI0=;
+        b=VaUgNytSxrZHTdPy4AHf679viycuTT6TSbjD97ksFXQstGJ82OF4pQ79sVLFQZQhN+
+         TAuv5O2zEPG++5ULYyed+wDJ5gD2Dqj0QNEzc6xYj4nzpZTwncw9qHWxhO6uVJGU+EYS
+         2EbluPNmffJYa8MDJ+KpRZqomOybDNanPvTv+/o3haL3l7jK1LYduPX7LAks6bEOSRAB
+         Ten84501wJz8bGfC9E0wLG4zBNZLaFYPikgrBwnDcGtcQe9IxcbgCH3GWG/SspfXvqP9
+         zgqRTcV4gdtH0YJ7d3VGLRfctNOdxQZCumldkSAga6QkZJaEAFxC0NobHLu/1cHYL9Qj
+         jdxQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=h6E2Ip34X/NLucxUj+SAkivtur6dQeITpi+3ydY7xI0=;
+        b=MYykcE7iVsYCDJT/vnNjb+D+yBxIck7UA93FNLBUWPNmny8fIVh+0WrBuUA4LbzwoP
+         b5cuz4tfoLGBsit8i91Le7tiI644NRWWcKavZ4oJmLBUqKYlGLxWx4jmkRo/y53DmbpL
+         PUB0AZo6WBGNHP/nr4JFQKQ74dfHeA3paPTQF8+sXmmjCiZN8x494h4jAuLbvjW/cwOq
+         FZ58RvLhx855w1/tVp+uXoLfbJSvRbcpHVEAD6HmhsbKFI4VdJeQNmxju0ajL8v/L6JQ
+         znBQ+JVjf6QQ7OHS+DiLjFBeNf5uZNTyY35Y3j4o9emz846/0eg665rKBC9fUOhmIE03
+         pbLg==
+X-Gm-Message-State: APjAAAU9PnZNedsmr2Zky55nZ6DvGwDYcNRW41y2xAsZB2N4hjtvMT8x
+        +UKU+tRqtS9623lFmQr0jaI8n9dGC26IV8k2Z81f7QLh
+X-Google-Smtp-Source: APXvYqxMJLMuFqwF6SNEbeLs9khmkOhZ5vp7TF3Ik3nkRvURQ4fTn76Oh+GhbDbYR/M64gcI1PcWhg4Eko/OqHDU99I=
+X-Received: by 2002:a67:6d44:: with SMTP id i65mr59348095vsc.106.1560774044360;
+ Mon, 17 Jun 2019 05:20:44 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+References: <CAOuPNLifSHQmi+jCMzRGYz3kzct+NB_vyv-yiwL91adRZPkTrQ@mail.gmail.com>
+ <CAOfkYf7BZ1Ttrm7iVioq4mxZcJy7V44gNmusavPzgi=59=TY6g@mail.gmail.com> <13999.1560455005@turing-police>
+In-Reply-To: <13999.1560455005@turing-police>
+From:   Pintu Agarwal <pintu.ping@gmail.com>
+Date:   Mon, 17 Jun 2019 17:50:32 +0530
+Message-ID: <CAOuPNLj4useN+BiPJvd2MRMntELt=_Kc_8x=mbxfrkgWh5v7Mw@mail.gmail.com>
+Subject: Re: Pause a process execution from external program
+To:     =?UTF-8?Q?Valdis_Kl=C4=93tnieks?= <valdis.kletnieks@vt.edu>
+Cc:     Shyam Saini <mayhs11saini@gmail.com>,
+        open list <linux-kernel@vger.kernel.org>, pedro@palves.net,
+        Kernelnewbies <kernelnewbies@kernelnewbies.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When using a virt_boundary_mask, as done for NVMe devices attached to
-megaraid_sas controllers we require an unlimited max_segment_size, as
-the virt boundary merging code assumes that.  But we also need to
-propagate that to the DMA mapping layer to make dma-debug happy.  The
-SCSI layer takes care of that when using the per-host virt_boundary
-setting, but given that megaraid_sas only wants to set the virt_boundary
-for actual NVMe devices we can't rely on that.  The DMA layer maximum
-segment is global to the HBA however, so we have to set it explicitly.
-This patch assumes that megaraid_sas does not have a segment size
-limitation, which seems true based on the SGL format, but will need
-to be verified.
-
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- drivers/scsi/megaraid/megaraid_sas_base.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/scsi/megaraid/megaraid_sas_base.c b/drivers/scsi/megaraid/megaraid_sas_base.c
-index 3dd1df472dc6..59f709dbbab9 100644
---- a/drivers/scsi/megaraid/megaraid_sas_base.c
-+++ b/drivers/scsi/megaraid/megaraid_sas_base.c
-@@ -3207,6 +3207,7 @@ static struct scsi_host_template megasas_template = {
- 	.shost_attrs = megaraid_host_attrs,
- 	.bios_param = megasas_bios_param,
- 	.change_queue_depth = scsi_change_queue_depth,
-+	.max_segment_size = 0xffffffff,
- 	.no_write_same = 1,
- };
- 
--- 
-2.20.1
-
+On Fri, Jun 14, 2019 at 1:13 AM Valdis Kl=C4=93tnieks
+<valdis.kletnieks@vt.edu> wrote:
+>
+> On Thu, 13 Jun 2019 13:22:12 +0530, Shyam Saini said:
+>
+> > from command line we use ctrl-z to stop execution of a foreground
+> > process but you can program
+> > SIGTSTP signal handler in your application code to do the same.
+>
+> Note that if you simply fail to include a signal handler for SIGSTOP and
+> SIGCONT, it will Do The Right Thing.  The only programs that need worry a=
+bout
+> SIGTSTP are ones like 'vi' that may want to do something (like restore th=
+e
+> terminal state from raw to cooked mode, etc) before they stop.  That's wh=
+y you
+> can control-z /bin/cat without it having to include a signal handler for =
+it.
+>
+> % kill -STOP `pidof process-to-stop`   # stop it
+> % kill -CONT `pidof process-to-stop`  # and make it run again.
+>
+> No source code modifications needed.  No source needed.
+>
+> Now, if you want to make it stop at a *specific point*, then you're into
+> ptrace territory, and source will be helpful.
+>
+Yes, I think ptrace can serve our purpose.
+Thank you so much.
