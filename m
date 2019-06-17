@@ -2,109 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C356A483D8
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 15:24:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AEDBC483DE
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 15:25:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727556AbfFQNXy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 09:23:54 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:34844 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726336AbfFQNXy (ORCPT
+        id S1727152AbfFQNZH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 09:25:07 -0400
+Received: from mout.kundenserver.de ([212.227.126.187]:49635 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725884AbfFQNZH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 09:23:54 -0400
-Received: by mail-wm1-f65.google.com with SMTP id c6so9109121wml.0
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2019 06:23:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=MCk0UOttsjHTOmjWH/1wGCIVEMWTEE7JSr9eSJt8E6U=;
-        b=bLYB71SoakdZWD0bbECjOZJpTdloiPafIY+LfUEJDGwY71oMCbzPqrfRdvuCruNWE2
-         Z+qz9f9vsaeBGq/9asrdH8Mbm5YhHQgJTCIuHyw354P4+ZrZ/6dFrkwbFECyXZxQ1Qlz
-         gth04rJNMbeXq3hzKkApLHYFKVjT6rW7WUaHWECkpti41bOC/FFL2Ce0zBEd5+qFBQaE
-         DkxDjumSNL1g1YJWqj5O+dUQ0d/aheJuKd6dTCgdgqZopQzAKfh+mkYcY9tdItS8wXiA
-         +KXAT4cV1mdqlwVJqq0b7RBPDVpQOtorkV1Wq/5Rw++d3HSWAaDPaUlkG8eOHiMz3G7m
-         rmeQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=MCk0UOttsjHTOmjWH/1wGCIVEMWTEE7JSr9eSJt8E6U=;
-        b=KB9iQH6IVhKlgI0F4qA8kSpKOuU73V04tdzcnG8Akb1hLQtZUHFJ49VwaotqJ/lXl/
-         k8kWdv0K87R/Ehl8KT65SWEE7oCUIzG5kSk+/awX1dChrtMHETMTAuCPfrVvkovDNaEX
-         v+nUO4JAuRRxHWgbzBqCN7+bAbAIqSBMXktLppAWnNnKSDBWY0lgxvQBR+nG+pDalOrx
-         xLAj8GHo1HjxPi+hopqKQ1yIOjmi+CMATlJN/cM2Xyl8lA7++vcdj0I5M51dnaEPdk1L
-         GGaHcyLUxML+TEVFuSBcDR9EuZLwHbnvtVkuGTkmLs66QMg444wyF41Gpok3KdUa2Y5+
-         GL/A==
-X-Gm-Message-State: APjAAAXJd8GVdES4IjLobf7b+mlG8KokXfdGfHr49UDAukmv+2xmFYH3
-        Xz1/N0k9GKIpkgogYYedg4sgtQ==
-X-Google-Smtp-Source: APXvYqyrzflhrnZXLI/k9VPq8CsskPBB/8KzjstR9LOm9dfd2dHTNp7j6C7TFEfXsWqkUzxuqmhaQA==
-X-Received: by 2002:a1c:be12:: with SMTP id o18mr443929wmf.21.1560777831804;
-        Mon, 17 Jun 2019 06:23:51 -0700 (PDT)
-Received: from dell ([2.27.35.243])
-        by smtp.gmail.com with ESMTPSA id u25sm9662835wmc.3.2019.06.17.06.23.50
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 17 Jun 2019 06:23:51 -0700 (PDT)
-Date:   Mon, 17 Jun 2019 14:23:49 +0100
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Felipe Balbi <balbi@kernel.org>
-Cc:     alokc@codeaurora.org, agross@kernel.org, david.brown@linaro.org,
-        bjorn.andersson@linaro.org, gregkh@linuxfoundation.org,
-        ard.biesheuvel@linaro.org, jlhugo@gmail.com,
-        linux-arm-msm@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [RESEND v4 0/4] I2C: DWC3 USB: Add support for ACPI based
- AArch64 Laptops
-Message-ID: <20190617132349.GI16364@dell>
-References: <20190617125105.6186-1-lee.jones@linaro.org>
- <87lfy0gym0.fsf@linux.intel.com>
+        Mon, 17 Jun 2019 09:25:07 -0400
+Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
+ (mreue012 [212.227.15.129]) with ESMTPA (Nemesis) id
+ 1MXXZf-1i81xr1oqd-00YxKf; Mon, 17 Jun 2019 15:24:44 +0200
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     Philipp Reisner <philipp.reisner@linbit.com>,
+        Lars Ellenberg <lars.ellenberg@linbit.com>,
+        Jens Axboe <axboe@kernel.dk>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Roland Kammerer <roland.kammerer@linbit.com>,
+        Eric Biggers <ebiggers@google.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Kees Cook <keescook@chromium.org>, drbd-dev@lists.linbit.com,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] drbd: dynamically allocate shash descriptor
+Date:   Mon, 17 Jun 2019 15:24:13 +0200
+Message-Id: <20190617132440.2721536-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.20.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <87lfy0gym0.fsf@linux.intel.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Provags-ID: V03:K1:yiXEMLOB97u6ow4J7zGkKBjm/BFhumDE+NdcmaYm9WjfiCT/Cmn
+ V/NLe0vmPNWXTdWF+BBYfUAJvJWRlM85gl+YQSPREoTkGVG39VyhcFa9g3lyJluG+07I775
+ AXtdbkBvHkHTTl1uCy+pvzXhZzO6TmBcczsVNfxvFbO6tNJbIYOMsjyNsSRKdCTx99cap6Z
+ ltLjUJek80sb/m+Ef1nZA==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:EWEazgR7ph8=:/k+pVgzJoirHCvy+vku4GX
+ U/pNEc+vgXaititlF5OBFvcboG67NR/1vD51ZrAxITevLt1CauK5gWVjqa+k8OpAS3/cA31QR
+ h6LUzbIe4ZQgWUut73QRxyaownsijzM9ZRSIuh8sg3RXYgXmw5fTp6dUU91c1H/vHL03Bdcia
+ G8j7M/5CuDcz0JSYRZ15tq0d0y63oOlPJKxWZ0XXkGdazN02xx2CgaF817+Dodb8CGKkENs1v
+ 3QMQL4n3tJNuNcb+94Nn1b5Q9FM7WAMS0dJ+CGHf+z4b9Z7wowoAR42sG/w7e7ykf26BMK1zw
+ QWZ9uUWHzrXC+JJQKnWTNE13fkCjEK66aLl8pI7uJVZ3e44fW2Leig/7QnWzmSPoo7yWjbeCJ
+ RLgOD/aBM5KZSM8ICvwgT3+7QzLPNjAEsHZu9itNaw32zC7wvBgqVKycY9gIkX7oQ4QputL6A
+ FHOFtuox0HfQ6aPffkTc5tt6Ktl85//G5nugsQ0tXLdR5G4ogyEGVkVhxRuLi/apfdSC+RHaL
+ IfsVmBzxOFDSduUK6ALIX7DtPYkCjAVaIVrkOWrg6+QU9qaEBYfwkJPUdpjyhPgPRcNOqCyjs
+ S8wo+bJ7Gnv/JenkujJOyd9k3LI4kL2Tlw6KJFnsWWHo2QjF5+uHfMZiSZMUhby2dWlU7xDND
+ RPkdtKAnd+tOxd8kDLeg50Xwxh8xRAS0T4HILVPT4dcjvF6l+WGmceFW6Br7H+PFBw0oPzqoq
+ BB4pvfjgpbOiolEk4nYfpVFLgrGV0LAflSvSwA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 17 Jun 2019, Felipe Balbi wrote:
+Building with clang and KASAN, we get a warning about an overly large
+stack frame on 32-bit architectures:
 
-> Lee Jones <lee.jones@linaro.org> writes:
-> 
-> > This patch-set ensures the kernel is bootable on the newly released
-> > AArch64 based Laptops using ACPI configuration tables.  The Pinctrl
-> > changes have been accepted, leaving only I2C (keyboard, touchpad,
-> > touchscreen, fingerprint, etc, HID device) and USB (root filesystem,
-> > camera, networking, etc) enablement.
-> >
-> > RESEND: Stripped I2C patches as they have also been merged into
-> >         their respective subsystem.
-> >
-> > v4:
-> >  * Collecting Acks
-> >  * Adding Andy Gross' new email
-> >  * Removing applied Pinctrl patches
-> >
-> > Lee Jones (4):
-> >   soc: qcom: geni: Add support for ACPI
-> >   usb: dwc3: qcom: Add support for booting with ACPI
-> >   usb: dwc3: qcom: Start USB in 'host mode' on the SDM845
-> >   usb: dwc3: qcom: Improve error handling
-> 
-> pushed to testing/next
+drivers/block/drbd/drbd_receiver.c:921:31: error: stack frame size of 1280 bytes in function 'conn_connect'
+      [-Werror,-Wframe-larger-than=]
 
-Sounds promising, thanks Felipe.
+We already allocate other data dynamically in this function, so
+just do the same for the shash descriptor, which makes up most of
+this memory.
 
-OOI, what is your process?
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/block/drbd/drbd_receiver.c | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
 
-How does do the patches typically sit in there?
-
+diff --git a/drivers/block/drbd/drbd_receiver.c b/drivers/block/drbd/drbd_receiver.c
+index 90ebfcae0ce6..10fb26e862d7 100644
+--- a/drivers/block/drbd/drbd_receiver.c
++++ b/drivers/block/drbd/drbd_receiver.c
+@@ -5417,7 +5417,7 @@ static int drbd_do_auth(struct drbd_connection *connection)
+ 	unsigned int key_len;
+ 	char secret[SHARED_SECRET_MAX]; /* 64 byte */
+ 	unsigned int resp_size;
+-	SHASH_DESC_ON_STACK(desc, connection->cram_hmac_tfm);
++	struct shash_desc *desc;
+ 	struct packet_info pi;
+ 	struct net_conf *nc;
+ 	int err, rv;
+@@ -5430,6 +5430,13 @@ static int drbd_do_auth(struct drbd_connection *connection)
+ 	memcpy(secret, nc->shared_secret, key_len);
+ 	rcu_read_unlock();
+ 
++	desc = kmalloc(sizeof(struct shash_desc) +
++			crypto_shash_descsize(connection->cram_hmac_tfm),
++		       GFP_KERNEL);
++	if (!desc) {
++		rv = -1;
++		goto fail;
++	}
+ 	desc->tfm = connection->cram_hmac_tfm;
+ 
+ 	rv = crypto_shash_setkey(connection->cram_hmac_tfm, (u8 *)secret, key_len);
+@@ -5572,6 +5579,7 @@ static int drbd_do_auth(struct drbd_connection *connection)
+ 	kfree(response);
+ 	kfree(right_response);
+ 	shash_desc_zero(desc);
++	kfree(desc);
+ 
+ 	return rv;
+ }
 -- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+2.20.0
+
