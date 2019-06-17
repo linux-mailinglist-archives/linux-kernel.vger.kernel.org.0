@@ -2,100 +2,161 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F39F049141
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 22:24:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B175E49176
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 22:36:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728409AbfFQUYE convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 17 Jun 2019 16:24:04 -0400
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:39264 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728281AbfFQUYD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 16:24:03 -0400
-Received: by mail-qt1-f195.google.com with SMTP id i34so7160447qta.6
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2019 13:24:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=4pItfmIF9BXCq+5fMpkHMPOAjCwD9tKzbQC2ATbU3XA=;
-        b=NNmMi9dYNpbgAUl/sXeJ5oaRAJfcToxpwvJT3AltTCAwbY4b6TMX1M5GGqlRQbpFmc
-         4UmosDyW8DCdZyUJakhKT35s6SFNOQtlCvDko/VVG/5r1UxsM9F/1waefNlNxDfuoi4R
-         A/eAVcH5/5aCmezqDJW3UZRwNBtpeUXHMfkwVTO3p0HEoKbio1DxulnRI8228Euo44Vf
-         OVirOymxBx7URTvXltn4t1wtIFK8XPzhj99bW4MFppFdJct4Y2WudhodGYJSgxtqhqHw
-         HZ//DFZwUWGrvtuNqTffN7gQc5PfoR+aLR5Kd0+l/Mv5wg1TagRH9+l4bPinipSuAmdo
-         ASgA==
-X-Gm-Message-State: APjAAAU5GCMeXve6NgYYwbBY5a+yKTc4oq5Bw8uzIE2lOY6ph/xf92wc
-        wMxVOLRdRKVbtSWiTkQfYHYIFFWnLRV2djbpaMMnXZ2x3+U=
-X-Google-Smtp-Source: APXvYqy4Unnhet8qqC3Cl960aIp24gAx2o6DWsJ4LQIbDl6e7igeVzc/mjRaois3hURJ4dbdc4vSQZ7O4vSJRTTTUiM=
-X-Received: by 2002:ac8:3485:: with SMTP id w5mr18860691qtb.142.1560803042716;
- Mon, 17 Jun 2019 13:24:02 -0700 (PDT)
+        id S1728659AbfFQUgf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 16:36:35 -0400
+Received: from mga18.intel.com ([134.134.136.126]:4819 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725844AbfFQUgf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Jun 2019 16:36:35 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Jun 2019 13:36:34 -0700
+X-ExtLoop1: 1
+Received: from romley-ivt3.sc.intel.com ([172.25.110.60])
+  by orsmga003.jf.intel.com with ESMTP; 17 Jun 2019 13:36:33 -0700
+Date:   Mon, 17 Jun 2019 13:27:03 -0700
+From:   Fenghua Yu <fenghua.yu@intel.com>
+To:     Andy Lutomirski <luto@amacapital.net>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        H Peter Anvin <hpa@zytor.com>,
+        Ashok Raj <ashok.raj@intel.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Ravi V Shankar <ravi.v.shankar@intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>, x86 <x86@kernel.org>
+Subject: Re: [PATCH v4 3/5] x86/umwait: Add sysfs interface to control umwait
+ C0.2 state
+Message-ID: <20190617202702.GB217081@romley-ivt3.sc.intel.com>
+References: <1559944837-149589-1-git-send-email-fenghua.yu@intel.com>
+ <1559944837-149589-4-git-send-email-fenghua.yu@intel.com>
+ <CALCETrXEqqc3cKyJ5guRV3T6LP9dpSExk3a7dvR4PF8TDgD_OA@mail.gmail.com>
+ <20190610035302.GA162238@romley-ivt3.sc.intel.com>
+ <CALCETrUSpk+_FDaPpA3a-duajUdF8kOK64AQJjsr7Pm0Gi04OA@mail.gmail.com>
+ <20190610060234.GD162238@romley-ivt3.sc.intel.com>
+ <F021B947-90E9-450A-9196-531B7EE965F1@amacapital.net>
 MIME-Version: 1.0
-References: <20190429081937.7544-1-geert@linux-m68k.org> <CAK8P3a1NbjYAGCTq2RUfqEX1OgppEV5mKmBJ0t=JiFF13zSytg@mail.gmail.com>
- <CAMuHMdUHnW13j07559peRijggGQwExrJ9TBaAW7ZqWcT1onpSg@mail.gmail.com>
-In-Reply-To: <CAMuHMdUHnW13j07559peRijggGQwExrJ9TBaAW7ZqWcT1onpSg@mail.gmail.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Mon, 17 Jun 2019 22:23:45 +0200
-Message-ID: <CAK8P3a3fvTPZKhASGA5cZE2WwTM8LgA45kgbm0XE2KjwCopTSA@mail.gmail.com>
-Subject: Re: [PATCH] m68k: io: Fix io{read,write}{16,32}be() for Coldfire peripherals
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Greg Ungerer <gerg@linux-m68k.org>,
-        Angelo Dureghello <angelo@sysam.it>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        linux-m68k <linux-m68k@lists.linux-m68k.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <F021B947-90E9-450A-9196-531B7EE965F1@amacapital.net>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 14, 2019 at 4:52 PM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> On Mon, Apr 29, 2019 at 2:40 PM Arnd Bergmann <arnd@arndb.de> wrote:
-> > On Mon, Apr 29, 2019 at 10:19 AM Geert Uytterhoeven
-> > This looks correct to me, but there are two points that stick out to me:
-> >
-> > - why do you only do this for mmio and not for pio?
->
-> Because no one had a need for it? ;-)
->
-> Now seriously, m68k only has MMIO, no PIO.  Any PIO, if used, is for ISA or
-> PCMCIA I/O accesses, which are little endian.
+On Mon, Jun 10, 2019 at 06:41:31AM -0700, Andy Lutomirski wrote:
+> 
+> 
+> > On Jun 9, 2019, at 11:02 PM, Fenghua Yu <fenghua.yu@intel.com> wrote:
+> > 
+> >> On Sun, Jun 09, 2019 at 09:24:18PM -0700, Andy Lutomirski wrote:
+> >>> On Sun, Jun 9, 2019 at 9:02 PM Fenghua Yu <fenghua.yu@intel.com> wrote:
+> >>> 
+> >>>> On Sat, Jun 08, 2019 at 03:50:32PM -0700, Andy Lutomirski wrote:
+> >>>>> On Fri, Jun 7, 2019 at 3:10 PM Fenghua Yu <fenghua.yu@intel.com> wrote:
+> >>>>> 
+> >>>>> C0.2 state in umwait and tpause instructions can be enabled or disabled
+> >>>>> on a processor through IA32_UMWAIT_CONTROL MSR register.
+> >>>>> 
+> >>>>> By default, C0.2 is enabled and the user wait instructions result in
+> >>>>> lower power consumption with slower wakeup time.
+> >>>>> 
+> >>>>> But in real time systems which require faster wakeup time although power
+> >>>>> savings could be smaller, the administrator needs to disable C0.2 and all
+> >>>>> C0.2 requests from user applications revert to C0.1.
+> >>>>> 
+> >>>>> A sysfs interface "/sys/devices/system/cpu/umwait_control/enable_c02" is
+> >>>>> created to allow the administrator to control C0.2 state during run time.
+> >>>> 
+> >>>> This looks better than the previous version.  I think the locking is
+> >>>> still rather confused.  You have a mutex that you hold while changing
+> >>>> the value, which is entirely reasonable.  But, of the code paths that
+> >>>> write the MSR, only one takes the mutex.
+> >>>> 
+> >>>> I think you should consider making a function that just does:
+> >>>> 
+> >>>> wrmsr(MSR_IA32_UMWAIT_CONTROL, READ_ONCE(umwait_control_cached), 0);
+> >>>> 
+> >>>> and using it in all the places that update the MSR.  The only thing
+> >>>> that should need the lock is the sysfs code to avoid accidentally
+> >>>> corrupting the value, but that code should also use WRITE_ONCE to do
+> >>>> its update.
+> >>> 
+> >>> Based on the comment, the illustrative CPU online and enable_c02 store
+> >>> functions would be:
+> >>> 
+> >>> umwait_cpu_online()
+> >>> {
+> >>>        wrmsr(MSR_IA32_UMWAIT_CONTROL, READ_ONCE(umwait_control_cached), 0);
+> >>>        return 0;
+> >>> }
+> >>> 
+> >>> enable_c02_store()
+> >>> {
+> >>>       mutex_lock(&umwait_lock);
+> >>>       umwait_control_c02 = (u32)!c02_enabled;
+> >>>       WRITE_ONCE(umwait_control_cached, 2 | get_umwait_control_max_time());
+> >>>       on_each_cpu(umwait_control_msr_update, NULL, 1);
+> >>>       mutex_unlock(&umwait_lock);
+> >>> }
+> >>> 
+> >>> Then suppose umwait_control_cached = 100000 initially and only CPU0 is
+> >>> running. Admin change bit 0 in MSR from 0 to 1 to disable C0.2 and is
+> >>> onlining CPU1 in the same time:
+> >>> 
+> >>> 1. On CPU1, read umwait_control_cached to eax as 100000 in
+> >>> umwait_cpu_online()
+> >>> 2. On CPU0, write 100001 to umwait_control_cached in enable_c02_store()
+> >>> 3. On CPU1, wrmsr with eax=100000 in umwaint_cpu_online()
+> >>> 4. On CPU0, wrmsr with 100001 in enabled_c02_store()
+> >>> 
+> >>> The result is CPU0 and CPU1 have different MSR values.
+> >> 
+> >> Yes, but only transiently, because you didn't finish your example.
+> >> 
+> >> Step 5: enable_c02_store() does on_each_cpu(), and CPU 1 gets updated.
+> > 
+> > There is no sync on wrmsr on CPU0 and CPU1.
+> 
+> What do you mean by sync?
+> 
+> > So a better sequence to
+> > describe the problem is changing the order of wrmsr:
+> > 
+> > 1. On CPU1, read umwait_control_cached to eax as 100000 in
+> > umwait_cpu_online()
+> > 2. On CPU0, write 100001 to umwait_control_cached in enable_c02_store()
+> > 3. On CPU0, wrmsr with 100001 in on_each_cpu() in enabled_c02_store()
+> > 4. On CPU1, wrmsr with eax=100000 in umwaint_cpu_online()
+> > 
+> > So CPU1 and CPU0 have different MSR values. This won't be transient.
+> 
+> You are still ignoring the wrmsr on CPU1 due to on_each_cpu().
+> 
 
-I suppose the majority of PIO operations are single-byte only,
-so endianess doesn't apply at all ;-). You are certainly right
-that big-endian PIO access has close to zero uses in the
-kernel (I could not find any either).
+Initially umwait_control_cached is 100000 and CPU0 is online while CPU1
+is going to be online:
 
-If you don't have ISA or PCMCIA devices, then using the
-trivial readl/writel based wrappers is clearly the easiest way.
+1. On CPU1, cpu_online_mask=0x3 in start_secondary()
+2. On CPU1, read umwait_control_cached to eax as 100000 in umwait_cpu_online()
+3. On CPU0, write 100001 to umwait_control_cached in enable_c02_store()
+4. On CPU0, execute one_each_cpu() in enabled_c02_store():
+    wrmsr with 100001 on CPU0
+    wrmsr with 100001 on CPU1
+5. On CPU1, wrmsr with eax=100000 in umwaint_cpu_online()
 
-If you do have PIO based devices, then defining pio_read16be
-etc would save a few bytes in lib/iomap.c.
+So the MSR is 100000 on CPU1 and 100001 on CPU0. The MSRs are different on
+the CPUs.
 
-> > - why do you even use the generic_iomap wrappers rather than
-> >   the trivial asm-generic versions of those functions?
->
-> Looking at git history, that was done to fix some link errors, which no
-> longer seem to happen with the more mature asm-generic infrastructure we
-> have now.
->
-> So probably we can drop the selection of GENERIC_IOMAP and inclusion
-> of <asm-generic/iomap.h>, after fixing a few compiler warnings like:
->
->     include/asm-generic/io.h: In function ‘ioread8_rep’
->     arch/m68k/include/asm/io_mm.h:371:44: warning: passing argument 1
-> of ‘raw_insb’ discard ‘const’ qualifier from pointer target type
-> [-Wdiscarded-qualifiers]
->      #define readsb(port, buf, nr)     raw_insb((port), (u8 *)(buf), (nr))
->     arch/m68k/include/asm/raw_io.h:101:50: note: expected ‘volatile u8
-> *’ {aka ‘volatile unsigned char *’} but argument is of type ‘const
-> volatile void *’
->     static inline void raw_insb(volatile u8 __iomem *port, u8 *buf,
-> unsigned int len)
+Is this a right sequence to demonstrate locking issue without the mutex
+locking?
 
-Those should just be missing 'volatile' and 'const' modifiers
-on the arguments.
+Thanks.
 
-         Arnd
+-Fenghua
+
