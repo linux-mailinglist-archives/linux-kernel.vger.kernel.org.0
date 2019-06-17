@@ -2,57 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1141548F13
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 21:30:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7942A48F18
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 21:30:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729069AbfFQT37 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 15:29:59 -0400
-Received: from mail-wr1-f47.google.com ([209.85.221.47]:38309 "EHLO
-        mail-wr1-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726947AbfFQT35 (ORCPT
+        id S1729108AbfFQTaH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 15:30:07 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:51550 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728990AbfFQT36 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 15:29:57 -0400
-Received: by mail-wr1-f47.google.com with SMTP id d18so11275614wrs.5
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2019 12:29:56 -0700 (PDT)
+        Mon, 17 Jun 2019 15:29:58 -0400
+Received: by mail-wm1-f66.google.com with SMTP id 207so635775wma.1
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2019 12:29:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=6SeONynbSMb/LpB25tjr9lmR6DQm+1ofOPgJs9DwU6s=;
-        b=KN3JUQFoVuq9g3d+sb2f+QypVLDr1ZifAcfACFXChB6X/9q8jBPhRVDdyiExH1m3mV
-         4OoN0VKm4Q/3iAeE0umwZfvRBP6JOtgaccSFJy6PXjkL3NYW9kywWAvrdlnw8csAHSDM
-         XsO58I/TyjFdNXZkQyYogh8K3AWIQv8GoCMsT9p4A+0mDVKDoAX3SzG/mivs6LQy02lc
-         kVIsRTxdYdTFHgFtzThiogIeEx2DttZ40TYOCUDkHUs1FP95hAiEfSnGL6P5J6qAe00n
-         2zQtUDESDqN1ma5jBS+d98sBvFN3jVzNS5e956lpY2eJWb6wzTFgbZ/VIAnRgTLOkNeR
-         neMw==
+        bh=pLDKBn/rLn9JtAy1R8FKXFV1pHYiHH80xHdW2AHq76o=;
+        b=DnkiSLYsEq+K6UwHvuKcniGNMtC1VAAJVH4kaIlIK99n01SJqwxnXECrKm5rOyiBk9
+         bkZUXZ8Mg+JGribMc6w1tilz4fe/n/lgi+P11r6Mprc0IQJDyhK0oTNjShwkIcCBxwM7
+         TNVYXcWi50BYWcMPwXChvRnGZlOqi8pJvR5uk8WE3p8vRL1JXzk0BLKWQ9zLQohZDb2t
+         ZAkRlxwj+prGx5/jOC0nOe8cxiiK5Bbl/LWGa4X9pw9JSWMdSveYfzJqI0zm64winfbc
+         NqlGBlsdKQv/ABACo38l3rvGDQxtX+6X2ETn+94nbPJx7xxASEAGzZSKgoVofjMFOlfU
+         yg6Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=6SeONynbSMb/LpB25tjr9lmR6DQm+1ofOPgJs9DwU6s=;
-        b=cOlUZfAfPO1kWD3XTJ7e4ZCcZscviGMiWKapbU/3SJInEivgPq/28WRNjUF0YDDJ2W
-         BQnpi+ZTL5sjvmd57tYRrOQVbeghVXFznYx8cpaVDCO2muiQ2aagLafLF0zwNTPx2Hqk
-         vu+LJserM8XmpdRrCX6fJvKO9VBrzDgoWnH2LF+KJtHEphIe64LIhbB3upzNXESKOKVm
-         dLtbisIAvbW7iIv2F94w/ikUEhxGlF431E7elbQQvnFMnYMebwNrHkvsDpcJ0JmLIwPA
-         LN1WOLfYoAzRjS9FwLmLrJ3GBe2HhTGYPh8Jniu1Hc7IyFOJb4aK2zQR/3j8YVlBVln6
-         k27A==
-X-Gm-Message-State: APjAAAWQTLmQCELXujg+u3C6CBvYMBJ5iEZ2dRvJgr0sIWlHQSSti1qZ
-        mcqk4sWJJm9rWKSYh72c/2WQ5w==
-X-Google-Smtp-Source: APXvYqxBW7xGdL5vy7Z5G05hC4Mb55jO/UL6X2jStGLj9tRh7aNLnmpN/x7su76+0qlemQjt8f9ntQ==
-X-Received: by 2002:adf:e705:: with SMTP id c5mr48983855wrm.270.1560799795842;
-        Mon, 17 Jun 2019 12:29:55 -0700 (PDT)
+        bh=pLDKBn/rLn9JtAy1R8FKXFV1pHYiHH80xHdW2AHq76o=;
+        b=YOiiC/ZblgNdYlfYz/oYUPAOigyDtEosJ1HdZbF4caINzxObnoolpSS1spBBpWz3lv
+         Mt9qVfi8zosQJcfIeL6V+Wr4ej/oOP4RE4MLoQ51aqVXRZSFXCZcusl/YDIl0LF6dUUP
+         JbEdyFxMG4LzO6CH6+XK7WvWPUteaAr9dq8xF/eWalj98STR+bUGjdwmgXJZll48psA+
+         8LEywvCmPh1lIIm3clJ/pwOrDb9KAnahe5nHXgrhOFlEGaK9D8ED1tKRVwysc89x1CcA
+         LZBZgISClLRwZ9nyjYcLgMwxAjQTIzV0CLBSkZb2RiQAouyJv8k4kUFKB+wUa6sxaKOn
+         zUyg==
+X-Gm-Message-State: APjAAAXYXJKgVe1NnTCDQEQhbqSc9AMJK4GSWBew07hH8Esgln15C23V
+        10MWZMZHK9N+ipDt8dHOpOyv3Q==
+X-Google-Smtp-Source: APXvYqwzSn6QF6/tx1P4ONWL+aQ1cDMzNSHZ+vQ7fVHmaZUy1tTyC2v6scoAFh5dLZLMBXMhszyC2Q==
+X-Received: by 2002:a7b:ca43:: with SMTP id m3mr158418wml.45.1560799796773;
+        Mon, 17 Jun 2019 12:29:56 -0700 (PDT)
 Received: from loys-ubuntu-BY1835A49200471.thefacebook.com (cust-west-pareq2-46-193-13-130.wb.wifirst.net. [46.193.13.130])
-        by smtp.googlemail.com with ESMTPSA id u18sm9412034wrr.11.2019.06.17.12.29.54
+        by smtp.googlemail.com with ESMTPSA id u18sm9412034wrr.11.2019.06.17.12.29.55
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 17 Jun 2019 12:29:55 -0700 (PDT)
+        Mon, 17 Jun 2019 12:29:56 -0700 (PDT)
 From:   Loys Ollivier <lollivier@baylibre.com>
 To:     Palmer Dabbelt <palmer@sifive.com>,
         Paul Walmsley <paul.walmsley@sifive.com>
 Cc:     Loys Ollivier <lollivier@baylibre.com>,
         linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org, Kevin Hilman <khilman@baylibre.com>
-Subject: [PATCH 1/3] arch: riscv: add config option for building SiFive's SoC resource
-Date:   Mon, 17 Jun 2019 21:29:48 +0200
-Message-Id: <1560799790-20287-2-git-send-email-lollivier@baylibre.com>
+Subject: [PATCH 2/3] riscv: select SiFive platform drivers with SOC_SIFIVE
+Date:   Mon, 17 Jun 2019 21:29:49 +0200
+Message-Id: <1560799790-20287-3-git-send-email-lollivier@baylibre.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1560799790-20287-1-git-send-email-lollivier@baylibre.com>
 References: <1560799790-20287-1-git-send-email-lollivier@baylibre.com>
@@ -61,54 +61,29 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Create a config option for building SiFive SoC specific resources
-e.g. SiFive device tree, platform drivers...
+On selection of SOC_SIFIVE select the corresponding platform drivers.
 
 Signed-off-by: Loys Ollivier <lollivier@baylibre.com>
-Cc: Paul Walmsley <paul.walmsley@sifive.com>
-Cc: Palmer Dabbelt <palmer@sifive.com>
 ---
- arch/riscv/Kconfig                  | 2 ++
- arch/riscv/Kconfig.socs             | 8 ++++++++
- arch/riscv/boot/dts/sifive/Makefile | 2 +-
- 3 files changed, 11 insertions(+), 1 deletion(-)
- create mode 100644 arch/riscv/Kconfig.socs
+ arch/riscv/Kconfig.socs | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
-index ee32c66e1af3..eace5857c9e9 100644
---- a/arch/riscv/Kconfig
-+++ b/arch/riscv/Kconfig
-@@ -94,6 +94,8 @@ config PGTABLE_LEVELS
- 	default 3 if 64BIT
- 	default 2
- 
-+source "arch/riscv/Kconfig.socs"
-+
- menu "Platform type"
- 
- choice
 diff --git a/arch/riscv/Kconfig.socs b/arch/riscv/Kconfig.socs
-new file mode 100644
-index 000000000000..60dae1b5f276
---- /dev/null
+index 60dae1b5f276..536c0ef4aee8 100644
+--- a/arch/riscv/Kconfig.socs
 +++ b/arch/riscv/Kconfig.socs
-@@ -0,0 +1,8 @@
-+menu "SoC selection"
-+
-+config SOC_SIFIVE
-+       bool "SiFive SoCs"
-+       help
-+         This enables support for SiFive SoC platform hardware.
-+
-+endmenu
-diff --git a/arch/riscv/boot/dts/sifive/Makefile b/arch/riscv/boot/dts/sifive/Makefile
-index baaeef9efdcb..6d6189e6e4af 100644
---- a/arch/riscv/boot/dts/sifive/Makefile
-+++ b/arch/riscv/boot/dts/sifive/Makefile
-@@ -1,2 +1,2 @@
- # SPDX-License-Identifier: GPL-2.0
--dtb-y += hifive-unleashed-a00.dtb
-+dtb-$(CONFIG_SOC_SIFIVE) += hifive-unleashed-a00.dtb
+@@ -2,6 +2,11 @@ menu "SoC selection"
+ 
+ config SOC_SIFIVE
+        bool "SiFive SoCs"
++       select SERIAL_SIFIVE
++       select SERIAL_SIFIVE_CONSOLE
++       select CLK_SIFIVE
++       select CLK_SIFIVE_FU540_PRCI
++       select SIFIVE_PLIC
+        help
+          This enables support for SiFive SoC platform hardware.
+ 
 -- 
 2.7.4
 
