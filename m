@@ -2,83 +2,161 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 96B1D4864C
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 16:58:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B25C548657
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 17:00:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728090AbfFQO64 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 10:58:56 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:36616 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726215AbfFQO64 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 10:58:56 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=KrQp+kHGo/s8VYNxSYJcNa3J6gA8cYR0tmZplHF5Dfw=; b=oJd2LEYu9LVw8yHwIIprxwQot
-        K4fJL9MOSXojhTUAcRT99AUXtqYnTjMiaybDUGAOkCcATtGdYG59fNIX57WtSUuWjTMbuFjSQwKI3
-        m5LWmuYa2HqBZURiLF4RZ9sjngucE+phqpi5dbFG/1u1RM+rG0IS1cd5xFBo3GSyKFAf0=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=finisterre.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1hct5x-0001sI-Oj; Mon, 17 Jun 2019 14:58:53 +0000
-Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
-        id 448F6440046; Mon, 17 Jun 2019 15:58:53 +0100 (BST)
-Date:   Mon, 17 Jun 2019 15:58:53 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
-Cc:     agross@kernel.org, bjorn.andersson@linaro.org, lgirdwood@gmail.com,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH v4 0/7] PM8005 and PMS405 regulator support
-Message-ID: <20190617145853.GT5316@sirena.org.uk>
-References: <20190613212436.6940-1-jeffrey.l.hugo@gmail.com>
+        id S1728369AbfFQPAF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 11:00:05 -0400
+Received: from mx1.mailbox.org ([80.241.60.212]:60066 "EHLO mx1.mailbox.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726065AbfFQPAF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Jun 2019 11:00:05 -0400
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:105:465:1:1:0])
+        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
+        (No client certificate requested)
+        by mx1.mailbox.org (Postfix) with ESMTPS id 05CCB51D9E;
+        Mon, 17 Jun 2019 17:00:03 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at heinlein-support.de
+Received: from smtp1.mailbox.org ([80.241.60.240])
+        by hefe.heinlein-support.de (hefe.heinlein-support.de [91.198.250.172]) (amavisd-new, port 10030)
+        with ESMTP id AUAwnw_0lkHo; Mon, 17 Jun 2019 16:59:53 +0200 (CEST)
+From:   Stefan Roese <sr@denx.de>
+To:     linux-serial@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Yegor Yefremov <yegorslists@googlemail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Giulio Benetti <giulio.benetti@micronovasrl.com>
+Subject: [PATCH 1/3 v7] serial: mctrl_gpio: Check if GPIO property exisits before requesting it
+Date:   Mon, 17 Jun 2019 16:59:50 +0200
+Message-Id: <20190617145952.4848-1-sr@denx.de>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="NZ00oluAJr3A0NMv"
-Content-Disposition: inline
-In-Reply-To: <20190613212436.6940-1-jeffrey.l.hugo@gmail.com>
-X-Cookie: Editing is a rewording activity.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This patch adds a check for the GPIOs property existence, before the
+GPIO is requested. This fixes an issue seen when the 8250 mctrl_gpio
+support is added (2nd patch in this patch series) on x86 platforms using
+ACPI.
 
---NZ00oluAJr3A0NMv
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Here Mika's comments from 2016-08-09:
 
-On Thu, Jun 13, 2019 at 02:24:36PM -0700, Jeffrey Hugo wrote:
-> The MSM8998 MTP reference platform supplies VDD_GFX from s1 of the
-> pm8005 PMIC.  VDD_GFX is needed to turn on the GPU.  As we are looking
-> to bring up the GPU, add the support for pm8005 and wire up s1 in a
-> basic manner so that we have this dependency out of the way and can
-> focus on enabling the GPU driver.
+"
+I noticed that with v4.8-rc1 serial console of some of our Broxton
+systems does not work properly anymore. I'm able to see output but input
+does not work.
 
-There's something really weird with the threading in how you posted
-these, a few of the patches are in reply to the prior patch so indented
-a level down.
+I bisected it down to commit 4ef03d328769eddbfeca1f1c958fdb181a69c341
+("tty/serial/8250: use mctrl_gpio helpers").
 
---NZ00oluAJr3A0NMv
-Content-Type: application/pgp-signature; name="signature.asc"
+The reason why it fails is that in ACPI we do not have names for GPIOs
+(except when _DSD is used) so we use the "idx" to index into _CRS GPIO
+resources. Now mctrl_gpio_init_noauto() goes through a list of GPIOs
+calling devm_gpiod_get_index_optional() passing "idx" of 0 for each. The
+UART device in Broxton has following (simplified) ACPI description:
 
------BEGIN PGP SIGNATURE-----
+    Device (URT4)
+    {
+        ...
+        Name (_CRS, ResourceTemplate () {
+            GpioIo (Exclusive, PullDefault, 0x0000, 0x0000, IoRestrictionOutputOnly,
+                    "\\_SB.GPO0", 0x00, ResourceConsumer)
+            {
+                0x003A
+            }
+            GpioIo (Exclusive, PullDefault, 0x0000, 0x0000, IoRestrictionOutputOnly,
+                    "\\_SB.GPO0", 0x00, ResourceConsumer)
+            {
+                0x003D
+            }
+        })
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl0HqqwACgkQJNaLcl1U
-h9D8RQf+OxNLRt9KY0qAKM/axbtNoK16v0PmHjNYLhYl5yBMi63SehdoXh1DkZY5
-pBVOnlHPnB3usazND0knM12bH9x/qWXJZeA4PPGCDwUz2SOJRxIYr7wsKNmNjV/u
-nZwsZ0dCbIFjRTZ8YCrc2FTsjCUVylqDeHzFJJ/I9nstD8POAs043rd5FIuNlGGS
-sb2Qhu94o6C8u7YUjWciJ3zjXtQM5rfcuxVpMpxX8dg55PPvk6cTeSnQwto+lpeU
-HypcRzk7F36tl5ElZPhf/WkPycNHdx8h+0oy85CVQ4/bqNb8rNDUFymfDE5qGI4o
-6qoIyaY8tuzHoiLnJNXFhtl6YzjKbw==
-=dHUK
------END PGP SIGNATURE-----
+In this case it finds the first GPIO (0x003A which happens to be RX pin
+for that UART), turns it into GPIO which then breaks input for the UART
+device. This also breaks systems with bluetooth connected to UART (those
+typically have some GPIOs in their _CRS).
 
---NZ00oluAJr3A0NMv--
+Any ideas how to fix this?
+
+We cannot just drop the _CRS index lookup fallback because that would
+break many existing machines out there so maybe we can limit this to
+only DT enabled machines. Or alternatively probe if the property first
+exists before trying to acquire the GPIOs (using
+device_property_present()).
+"
+
+This patch implements the fix suggested by Mika in his statement above.
+
+Signed-off-by: Stefan Roese <sr@denx.de>
+Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Yegor Yefremov <yegorslists@googlemail.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Giulio Benetti <giulio.benetti@micronovasrl.com>
+---
+v7:
+- Include <linux/property.h> to fix compile breakage on OMAP
+
+v6:
+- No change
+
+v5:
+- Simplified the code a bit (Andy)
+- Added gpio_str == NULL handling (Andy)
+
+v4:
+- Add missing free() calls (Johan)
+- Added Mika's reviewed by tag
+- Added Johan to Cc
+
+v3:
+- No change
+
+v2:
+- Include the problem description and analysis from Mika into the commit
+  text, as suggested by Greg.
+
+ drivers/tty/serial/serial_mctrl_gpio.c | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
+
+diff --git a/drivers/tty/serial/serial_mctrl_gpio.c b/drivers/tty/serial/serial_mctrl_gpio.c
+index 39ed56214cd3..2b400189be91 100644
+--- a/drivers/tty/serial/serial_mctrl_gpio.c
++++ b/drivers/tty/serial/serial_mctrl_gpio.c
+@@ -12,6 +12,7 @@
+ #include <linux/termios.h>
+ #include <linux/serial_core.h>
+ #include <linux/module.h>
++#include <linux/property.h>
+ 
+ #include "serial_mctrl_gpio.h"
+ 
+@@ -116,6 +117,19 @@ struct mctrl_gpios *mctrl_gpio_init_noauto(struct device *dev, unsigned int idx)
+ 
+ 	for (i = 0; i < UART_GPIO_MAX; i++) {
+ 		enum gpiod_flags flags;
++		char *gpio_str;
++		bool present;
++
++		/* Check if GPIO property exists and continue if not */
++		gpio_str = kasprintf(GFP_KERNEL, "%s-gpios",
++				     mctrl_gpios_desc[i].name);
++		if (!gpio_str)
++			continue;
++
++		present = device_property_present(dev, gpio_str);
++		kfree(gpio_str);
++		if (!present)
++			continue;
+ 
+ 		if (mctrl_gpios_desc[i].dir_out)
+ 			flags = GPIOD_OUT_LOW;
+-- 
+2.22.0
+
