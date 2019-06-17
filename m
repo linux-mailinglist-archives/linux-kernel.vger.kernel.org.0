@@ -2,126 +2,139 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E8B148533
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 16:22:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DACE248535
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 16:23:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727987AbfFQOVk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 10:21:40 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:43399 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726215AbfFQOVk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 10:21:40 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x5HELUfB3453635
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Mon, 17 Jun 2019 07:21:30 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x5HELUfB3453635
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019051801; t=1560781290;
-        bh=F8IsWyt3EteXIZmOWeWiBQayXeMA865ruphPYM3yGvI=;
-        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
-        b=qU3VPpgN5LnRUPx9XjnUz8nbcWlck7UPuzO1Cbf6+btwIM9HY5bfIwC4hy85EHgtA
-         YUgqMGkqwEBqbiCAib81l3DX+FX0jpSwUQYUbHbMEUmGTISeHcvNX7IlGZrhsSgUZ6
-         5pMGZFYANkEK4c+4AT0L/K9/0QiFFUVTz2G9JkZ8TW3iTY0mt8sezM1qbE/ymGWVOC
-         2vcJQATaibNBplWxAOegN4NJz9eaUY4lJHnEKckbf8bFupt+SeavJ9AcQ2uX1QlJeK
-         Rceps4dUM0Hcx1kBc5smWnQ0P+n4IIG8AxUivs6BkZgeO1wZQvs+L8wq4sidDGeF+8
-         NXPupClr2WbeQ==
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x5HELTpf3453632;
-        Mon, 17 Jun 2019 07:21:29 -0700
-Date:   Mon, 17 Jun 2019 07:21:29 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Qian Cai <tipbot@zytor.com>
-Message-ID: <tip-509466b7d480bc5d22e90b9fbe6122ae0e2fbe39@git.kernel.org>
-Cc:     mingo@kernel.org, linux-kernel@vger.kernel.org, hpa@zytor.com,
-        tglx@linutronix.de, peterz@infradead.org,
-        torvalds@linux-foundation.org, cai@lca.pw
-Reply-To: peterz@infradead.org, cai@lca.pw, torvalds@linux-foundation.org,
-          linux-kernel@vger.kernel.org, mingo@kernel.org,
-          tglx@linutronix.de, hpa@zytor.com
-In-Reply-To: <1559596304-31581-1-git-send-email-cai@lca.pw>
-References: <1559596304-31581-1-git-send-email-cai@lca.pw>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:sched/core] sched/fair: Fix "runnable_avg_yN_inv" not used
- warnings
-Git-Commit-ID: 509466b7d480bc5d22e90b9fbe6122ae0e2fbe39
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
-X-Spam-Status: No, score=-1.2 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        DATE_IN_FUTURE_06_12,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,
-        DKIM_VALID_EF autolearn=ham autolearn_force=no version=3.4.2
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
+        id S1728176AbfFQOW1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 10:22:27 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:51706 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726173AbfFQOW0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Jun 2019 10:22:26 -0400
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 6FB8A30C31B7;
+        Mon, 17 Jun 2019 14:22:15 +0000 (UTC)
+Received: from llong.com (dhcp-17-85.bos.redhat.com [10.18.17.85])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id DFB457E5CA;
+        Mon, 17 Jun 2019 14:22:02 +0000 (UTC)
+From:   Waiman Long <longman@redhat.com>
+To:     Christoph Lameter <cl@linux.com>,
+        Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Roman Gushchin <guro@fb.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Shakeel Butt <shakeelb@google.com>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Waiman Long <longman@redhat.com>
+Subject: [PATCH] mm, memcg: Report number of memcg caches in slabinfo
+Date:   Mon, 17 Jun 2019 10:21:49 -0400
+Message-Id: <20190617142149.5245-1-longman@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Mon, 17 Jun 2019 14:22:25 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  509466b7d480bc5d22e90b9fbe6122ae0e2fbe39
-Gitweb:     https://git.kernel.org/tip/509466b7d480bc5d22e90b9fbe6122ae0e2fbe39
-Author:     Qian Cai <cai@lca.pw>
-AuthorDate: Mon, 3 Jun 2019 17:11:44 -0400
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Mon, 17 Jun 2019 12:15:58 +0200
+There are concerns about memory leaks from extensive use of memory
+cgroups as each memory cgroup creates its own set of kmem caches. There
+is a possiblity that the memcg kmem caches may remain even after the
+memory cgroup removal.
 
-sched/fair: Fix "runnable_avg_yN_inv" not used warnings
+Therefore, it will be useful to show how many memcg caches are present
+for each of the kmem caches. As slabinfo reporting code has to iterate
+through all the memcg caches to get the final numbers anyway, there is
+no additional cost in reporting the number of memcg caches available.
 
-runnable_avg_yN_inv[] is only used in kernel/sched/pelt.c but was
-included in several other places because they need other macros all
-came from kernel/sched/sched-pelt.h which was generated by
-Documentation/scheduler/sched-pelt. As the result, it causes compilation
-a lot of warnings,
+The slabinfo version is bumped up to 2.2 as a new "<num_caches>" column
+is added at the end.
 
-  kernel/sched/sched-pelt.h:4:18: warning: 'runnable_avg_yN_inv' defined but not used [-Wunused-const-variable=]
-  kernel/sched/sched-pelt.h:4:18: warning: 'runnable_avg_yN_inv' defined but not used [-Wunused-const-variable=]
-  kernel/sched/sched-pelt.h:4:18: warning: 'runnable_avg_yN_inv' defined but not used [-Wunused-const-variable=]
-  ...
-
-Silence it by appending the __maybe_unused attribute for it, so all
-generated variables and macros can still be kept in the same file.
-
-Signed-off-by: Qian Cai <cai@lca.pw>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lkml.kernel.org/r/1559596304-31581-1-git-send-email-cai@lca.pw
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Waiman Long <longman@redhat.com>
 ---
- Documentation/scheduler/sched-pelt.c | 3 ++-
- kernel/sched/sched-pelt.h            | 2 +-
- 2 files changed, 3 insertions(+), 2 deletions(-)
+ mm/slab_common.c | 24 ++++++++++++++++--------
+ 1 file changed, 16 insertions(+), 8 deletions(-)
 
-diff --git a/Documentation/scheduler/sched-pelt.c b/Documentation/scheduler/sched-pelt.c
-index e4219139386a..7238b355919c 100644
---- a/Documentation/scheduler/sched-pelt.c
-+++ b/Documentation/scheduler/sched-pelt.c
-@@ -20,7 +20,8 @@ void calc_runnable_avg_yN_inv(void)
- 	int i;
- 	unsigned int x;
+diff --git a/mm/slab_common.c b/mm/slab_common.c
+index 58251ba63e4a..c7aa47a99b2b 100644
+--- a/mm/slab_common.c
++++ b/mm/slab_common.c
+@@ -1308,13 +1308,13 @@ static void print_slabinfo_header(struct seq_file *m)
+ 	 * without _too_ many complaints.
+ 	 */
+ #ifdef CONFIG_DEBUG_SLAB
+-	seq_puts(m, "slabinfo - version: 2.1 (statistics)\n");
++	seq_puts(m, "slabinfo - version: 2.2 (statistics)\n");
+ #else
+-	seq_puts(m, "slabinfo - version: 2.1\n");
++	seq_puts(m, "slabinfo - version: 2.2\n");
+ #endif
+ 	seq_puts(m, "# name            <active_objs> <num_objs> <objsize> <objperslab> <pagesperslab>");
+ 	seq_puts(m, " : tunables <limit> <batchcount> <sharedfactor>");
+-	seq_puts(m, " : slabdata <active_slabs> <num_slabs> <sharedavail>");
++	seq_puts(m, " : slabdata <active_slabs> <num_slabs> <sharedavail> <num_caches>");
+ #ifdef CONFIG_DEBUG_SLAB
+ 	seq_puts(m, " : globalstat <listallocs> <maxobjs> <grown> <reaped> <error> <maxfreeable> <nodeallocs> <remotefrees> <alienoverflow>");
+ 	seq_puts(m, " : cpustat <allochit> <allocmiss> <freehit> <freemiss>");
+@@ -1338,14 +1338,18 @@ void slab_stop(struct seq_file *m, void *p)
+ 	mutex_unlock(&slab_mutex);
+ }
  
--	printf("static const u32 runnable_avg_yN_inv[] = {");
-+	/* To silence -Wunused-but-set-variable warnings. */
-+	printf("static const u32 runnable_avg_yN_inv[] __maybe_unused = {");
- 	for (i = 0; i < HALFLIFE; i++) {
- 		x = ((1UL<<32)-1)*pow(y, i);
+-static void
++/*
++ * Return number of memcg caches.
++ */
++static unsigned int
+ memcg_accumulate_slabinfo(struct kmem_cache *s, struct slabinfo *info)
+ {
+ 	struct kmem_cache *c;
+ 	struct slabinfo sinfo;
++	unsigned int cnt = 0;
  
-diff --git a/kernel/sched/sched-pelt.h b/kernel/sched/sched-pelt.h
-index a26473674fb7..c529706bed11 100644
---- a/kernel/sched/sched-pelt.h
-+++ b/kernel/sched/sched-pelt.h
-@@ -1,7 +1,7 @@
- /* SPDX-License-Identifier: GPL-2.0 */
- /* Generated by Documentation/scheduler/sched-pelt; do not modify. */
+ 	if (!is_root_cache(s))
+-		return;
++		return 0;
  
--static const u32 runnable_avg_yN_inv[] = {
-+static const u32 runnable_avg_yN_inv[] __maybe_unused = {
- 	0xffffffff, 0xfa83b2da, 0xf5257d14, 0xefe4b99a, 0xeac0c6e6, 0xe5b906e6,
- 	0xe0ccdeeb, 0xdbfbb796, 0xd744fcc9, 0xd2a81d91, 0xce248c14, 0xc9b9bd85,
- 	0xc5672a10, 0xc12c4cc9, 0xbd08a39e, 0xb8fbaf46, 0xb504f333, 0xb123f581,
+ 	for_each_memcg_cache(c, s) {
+ 		memset(&sinfo, 0, sizeof(sinfo));
+@@ -1356,17 +1360,20 @@ memcg_accumulate_slabinfo(struct kmem_cache *s, struct slabinfo *info)
+ 		info->shared_avail += sinfo.shared_avail;
+ 		info->active_objs += sinfo.active_objs;
+ 		info->num_objs += sinfo.num_objs;
++		cnt++;
+ 	}
++	return cnt;
+ }
+ 
+ static void cache_show(struct kmem_cache *s, struct seq_file *m)
+ {
+ 	struct slabinfo sinfo;
++	unsigned int nr_memcg_caches;
+ 
+ 	memset(&sinfo, 0, sizeof(sinfo));
+ 	get_slabinfo(s, &sinfo);
+ 
+-	memcg_accumulate_slabinfo(s, &sinfo);
++	nr_memcg_caches = memcg_accumulate_slabinfo(s, &sinfo);
+ 
+ 	seq_printf(m, "%-17s %6lu %6lu %6u %4u %4d",
+ 		   cache_name(s), sinfo.active_objs, sinfo.num_objs, s->size,
+@@ -1374,8 +1381,9 @@ static void cache_show(struct kmem_cache *s, struct seq_file *m)
+ 
+ 	seq_printf(m, " : tunables %4u %4u %4u",
+ 		   sinfo.limit, sinfo.batchcount, sinfo.shared);
+-	seq_printf(m, " : slabdata %6lu %6lu %6lu",
+-		   sinfo.active_slabs, sinfo.num_slabs, sinfo.shared_avail);
++	seq_printf(m, " : slabdata %6lu %6lu %6lu %3u",
++		   sinfo.active_slabs, sinfo.num_slabs, sinfo.shared_avail,
++		   nr_memcg_caches);
+ 	slabinfo_show_stats(m, s);
+ 	seq_putc(m, '\n');
+ }
+-- 
+2.18.1
+
