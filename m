@@ -2,104 +2,167 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1FAC247B41
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 09:38:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B9F1247BBE
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 09:59:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727521AbfFQHiO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 03:38:14 -0400
-Received: from smtp-fw-2101.amazon.com ([72.21.196.25]:17391 "EHLO
-        smtp-fw-2101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725826AbfFQHiO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 03:38:14 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1560757091; x=1592293091;
-  h=subject:to:cc:references:from:message-id:date:
-   mime-version:in-reply-to:content-transfer-encoding;
-  bh=8xZP6BRYVHqRBD1v3aCylovGhFA01FEft+IhJzUopnA=;
-  b=lU0A/K514EP44LlSbe7+gAvDPtiOstqo0LpUj+nsacdnconLiACx9kTw
-   eEJWABrBVCs6WKnRLtbqL40F8UG7SZxepHUItn1WHzLolesXSb+0g7L7t
-   TLozrtFQNGmrF+R8mNqUmlOaEDLmQ+H2hD2CseAUNBRXNguRMYNfyoZ+A
-   U=;
-X-IronPort-AV: E=Sophos;i="5.62,384,1554768000"; 
-   d="scan'208";a="737725018"
-Received: from iad6-co-svc-p1-lb1-vlan2.amazon.com (HELO email-inbound-relay-1a-67b371d8.us-east-1.amazon.com) ([10.124.125.2])
-  by smtp-border-fw-out-2101.iad2.amazon.com with ESMTP; 17 Jun 2019 07:38:09 +0000
-Received: from EX13MTAUWC001.ant.amazon.com (iad55-ws-svc-p15-lb9-vlan3.iad.amazon.com [10.40.159.166])
-        by email-inbound-relay-1a-67b371d8.us-east-1.amazon.com (Postfix) with ESMTPS id 11569A2B0B;
-        Mon, 17 Jun 2019 07:38:07 +0000 (UTC)
-Received: from EX13D20UWC001.ant.amazon.com (10.43.162.244) by
- EX13MTAUWC001.ant.amazon.com (10.43.162.135) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Mon, 17 Jun 2019 07:38:07 +0000
-Received: from 38f9d3867b82.ant.amazon.com (10.43.160.69) by
- EX13D20UWC001.ant.amazon.com (10.43.162.244) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Mon, 17 Jun 2019 07:38:04 +0000
-Subject: Re: [RFC 00/10] Process-local memory allocations for hiding KVM
- secrets
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        Andy Lutomirski <luto@amacapital.net>
-CC:     Dave Hansen <dave.hansen@intel.com>,
-        Marius Hillenbrand <mhillenb@amazon.de>, <kvm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        <kernel-hardening@lists.openwall.com>, <linux-mm@kvack.org>,
-        Alexander Graf <graf@amazon.de>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        "Peter Zijlstra" <peterz@infradead.org>
-References: <20190612170834.14855-1-mhillenb@amazon.de>
- <eecc856f-7f3f-ed11-3457-ea832351e963@intel.com>
- <A542C98B-486C-4849-9DAC-2355F0F89A20@amacapital.net>
- <alpine.DEB.2.21.1906141618000.1722@nanos.tec.linutronix.de>
-From:   Alexander Graf <graf@amazon.com>
-Message-ID: <58788f05-04c3-e71c-12c3-0123be55012c@amazon.com>
-Date:   Mon, 17 Jun 2019 09:38:00 +0200
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
- Gecko/20100101 Thunderbird/60.7.0
+        id S1726417AbfFQH7b (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 03:59:31 -0400
+Received: from mail.avm.de ([212.42.244.120]:58506 "EHLO mail.avm.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725791AbfFQH7b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Jun 2019 03:59:31 -0400
+X-Greylist: delayed 864 seconds by postgrey-1.27 at vger.kernel.org; Mon, 17 Jun 2019 03:59:30 EDT
+Received: from mail-notes.avm.de (mail-notes.avm.de [172.16.0.1])
+        by mail.avm.de (8.15.2/8.15.2/Debian-3) with ESMTP id x5H7d19f012959;
+        Mon, 17 Jun 2019 09:39:01 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=avm.de; s=mail;
+        t=1560757141; bh=r/FcQUb3N2qSBatg63oxiav4UmylcSo1Y1G1sfJoF/Y=;
+        h=From:To:Cc:Subject:Date;
+        b=mDtU0ENR4vOBU+YhcvRRKTauQrbQf5TTRUlQjfl9fQXQR803PIhrz3TjGJv1G7AiQ
+         nws9UibPIhdoZPGDITS0wUj6sUBObH8j4cNBBO85LvAgvQQbpLf91Dv7dhgio+EAav
+         Q+gdGd+NuiEAIYuKk0PRl5WBpbY0hAB7zYZRcw3o=
+Received: from buildd.avm.de. ([172.16.0.225])
+          by mail-notes.avm.de (IBM Domino Release 10.0.1FP2)
+          with ESMTP id 2019061709390082-2087 ;
+          Mon, 17 Jun 2019 09:39:00 +0200 
+From:   "Nicolas Schier" <n.schier@avm.de>
+To:     "Miklos Szeredi" <miklos@szeredi.hu>
+Cc:     "Nicolas Schier" <nicolas@fjasle.eu>,
+        linux-unionfs@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] ovl: fix typo in MODULE_PARM_DESC
+Date:   Mon, 17 Jun 2019 09:39:00 +0200
+Message-Id: <20190617073900.31948-1-n.schier@avm.de>
+X-Mailer: git-send-email 2.11.0
+X-MIMETrack: Itemize by SMTP Server on ANIS1/AVM(Release 10.0.1FP2|May 24, 2019) at
+ 17.06.2019 09:39:00,
+        Serialize by Router on ANIS1/AVM(Release 10.0.1FP2|May 24, 2019) at
+ 17.06.2019 09:39:01,
+        Serialize complete at 17.06.2019 09:39:01
+X-TNEFEvaluated: 1
 MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.21.1906141618000.1722@nanos.tec.linutronix.de>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Originating-IP: [10.43.160.69]
-X-ClientProxiedBy: EX13D20UWC004.ant.amazon.com (10.43.162.41) To
- EX13D20UWC001.ant.amazon.com (10.43.162.244)
+X-purgate-type: clean
+X-purgate-Ad: Categorized by eleven eXpurgate (R) http://www.eleven.de
+X-purgate: clean
+X-purgate: This mail is considered clean (visit http://www.eleven.de for further information)
+X-purgate-size: 4938
+X-purgate-ID: 149429::1560757141-00001AFB-070550C8/0/0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Change first argument to MODULE_PARM_DESC() calls, that each of them
+matched the actual module parameter name.  The matching results in
+changing (the 'parm' section from) the output of `modinfo overlay` from:
 
-On 14.06.19 16:21, Thomas Gleixner wrote:
-> On Wed, 12 Jun 2019, Andy Lutomirski wrote:
->>> On Jun 12, 2019, at 12:55 PM, Dave Hansen <dave.hansen@intel.com> wrote:
->>>
->>>> On 6/12/19 10:08 AM, Marius Hillenbrand wrote:
->>>> This patch series proposes to introduce a region for what we call
->>>> process-local memory into the kernel's virtual address space.
->>> It might be fun to cc some x86 folks on this series.  They might have
->>> some relevant opinions. ;)
->>>
->>> A few high-level questions:
->>>
->>> Why go to all this trouble to hide guest state like registers if all the
->>> guest data itself is still mapped?
->>>
->>> Where's the context-switching code?  Did I just miss it?
->>>
->>> We've discussed having per-cpu page tables where a given PGD is only in
->>> use from one CPU at a time.  I *think* this scheme still works in such a
->>> case, it just adds one more PGD entry that would have to context-switched.
->> Fair warning: Linus is on record as absolutely hating this idea. He might
->> change his mind, but it’s an uphill battle.
-> Yes I know, but as a benefit we could get rid of all the GSBASE horrors in
-> the entry code as we could just put the percpu space into the local PGD.
+    parm: ovl_check_copy_up:Obsolete; does nothing
+    parm: redirect_max:ushort
+    parm: ovl_redirect_max:Maximum length of absolute redirect xattr value
+    parm: redirect_dir:bool
+    parm: ovl_redirect_dir_def:Default to on or off for the redirect_dir feature
+    parm: redirect_always_follow:bool
+    parm: ovl_redirect_always_follow:Follow redirects even if redirect_dir feature is turned off
+    parm: index:bool
+    parm: ovl_index_def:Default to on or off for the inodes index feature
+    parm: nfs_export:bool
+    parm: ovl_nfs_export_def:Default to on or off for the NFS export feature
+    parm: xino_auto:bool
+    parm: ovl_xino_auto_def:Auto enable xino feature
+    parm: metacopy:bool
+    parm: ovl_metacopy_def:Default to on or off for the metadata only copy up feature
 
+into:
 
-Would that mean that with Meltdown affected CPUs we open speculation 
-attacks against the mmlocal memory from KVM user space?
+    parm: check_copy_up:Obsolete; does nothing
+    parm: redirect_max:Maximum length of absolute redirect xattr value (ushort)
+    parm: redirect_dir:Default to on or off for the redirect_dir feature (bool)
+    parm: redirect_always_follow:Follow redirects even if redirect_dir feature is turned off (bool)
+    parm: index:Default to on or off for the inodes index feature (bool)
+    parm: nfs_export:Default to on or off for the NFS export feature (bool)
+    parm: xino_auto:Auto enable xino feature (bool)
+    parm: metacopy:Default to on or off for the metadata only copy up feature (bool)
 
+Signed-off-by: Nicolas Schier <n.schier@avm.de>
+---
+ fs/overlayfs/copy_up.c |  2 +-
+ fs/overlayfs/dir.c     |  2 +-
+ fs/overlayfs/super.c   | 12 ++++++------
+ 3 files changed, 8 insertions(+), 8 deletions(-)
 
-Alex
+diff --git a/fs/overlayfs/copy_up.c b/fs/overlayfs/copy_up.c
+index 9e62dcf06fc4..e9cdc453f247 100644
+--- a/fs/overlayfs/copy_up.c
++++ b/fs/overlayfs/copy_up.c
+@@ -37,7 +37,7 @@ static int ovl_ccup_get(char *buf, const struct kernel_param *param)
+ }
+ 
+ module_param_call(check_copy_up, ovl_ccup_set, ovl_ccup_get, NULL, 0644);
+-MODULE_PARM_DESC(ovl_check_copy_up, "Obsolete; does nothing");
++MODULE_PARM_DESC(check_copy_up, "Obsolete; does nothing");
+ 
+ int ovl_copy_xattr(struct dentry *old, struct dentry *new)
+ {
+diff --git a/fs/overlayfs/dir.c b/fs/overlayfs/dir.c
+index 82c129bfe58d..dbcb3ff588aa 100644
+--- a/fs/overlayfs/dir.c
++++ b/fs/overlayfs/dir.c
+@@ -21,7 +21,7 @@
+ 
+ static unsigned short ovl_redirect_max = 256;
+ module_param_named(redirect_max, ovl_redirect_max, ushort, 0644);
+-MODULE_PARM_DESC(ovl_redirect_max,
++MODULE_PARM_DESC(redirect_max,
+ 		 "Maximum length of absolute redirect xattr value");
+ 
+ static int ovl_set_redirect(struct dentry *dentry, bool samedir);
+diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
+index 0116735cc321..eb32e68f1a83 100644
+--- a/fs/overlayfs/super.c
++++ b/fs/overlayfs/super.c
+@@ -31,29 +31,29 @@ struct ovl_dir_cache;
+ 
+ static bool ovl_redirect_dir_def = IS_ENABLED(CONFIG_OVERLAY_FS_REDIRECT_DIR);
+ module_param_named(redirect_dir, ovl_redirect_dir_def, bool, 0644);
+-MODULE_PARM_DESC(ovl_redirect_dir_def,
++MODULE_PARM_DESC(redirect_dir,
+ 		 "Default to on or off for the redirect_dir feature");
+ 
+ static bool ovl_redirect_always_follow =
+ 	IS_ENABLED(CONFIG_OVERLAY_FS_REDIRECT_ALWAYS_FOLLOW);
+ module_param_named(redirect_always_follow, ovl_redirect_always_follow,
+ 		   bool, 0644);
+-MODULE_PARM_DESC(ovl_redirect_always_follow,
++MODULE_PARM_DESC(redirect_always_follow,
+ 		 "Follow redirects even if redirect_dir feature is turned off");
+ 
+ static bool ovl_index_def = IS_ENABLED(CONFIG_OVERLAY_FS_INDEX);
+ module_param_named(index, ovl_index_def, bool, 0644);
+-MODULE_PARM_DESC(ovl_index_def,
++MODULE_PARM_DESC(index,
+ 		 "Default to on or off for the inodes index feature");
+ 
+ static bool ovl_nfs_export_def = IS_ENABLED(CONFIG_OVERLAY_FS_NFS_EXPORT);
+ module_param_named(nfs_export, ovl_nfs_export_def, bool, 0644);
+-MODULE_PARM_DESC(ovl_nfs_export_def,
++MODULE_PARM_DESC(nfs_export,
+ 		 "Default to on or off for the NFS export feature");
+ 
+ static bool ovl_xino_auto_def = IS_ENABLED(CONFIG_OVERLAY_FS_XINO_AUTO);
+ module_param_named(xino_auto, ovl_xino_auto_def, bool, 0644);
+-MODULE_PARM_DESC(ovl_xino_auto_def,
++MODULE_PARM_DESC(xino_auto,
+ 		 "Auto enable xino feature");
+ 
+ static void ovl_entry_stack_free(struct ovl_entry *oe)
+@@ -66,7 +66,7 @@ static void ovl_entry_stack_free(struct ovl_entry *oe)
+ 
+ static bool ovl_metacopy_def = IS_ENABLED(CONFIG_OVERLAY_FS_METACOPY);
+ module_param_named(metacopy, ovl_metacopy_def, bool, 0644);
+-MODULE_PARM_DESC(ovl_metacopy_def,
++MODULE_PARM_DESC(metacopy,
+ 		 "Default to on or off for the metadata only copy up feature");
+ 
+ static void ovl_dentry_release(struct dentry *dentry)
+-- 
+2.20.1
 
