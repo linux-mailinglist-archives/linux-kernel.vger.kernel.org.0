@@ -2,91 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6CF7F485C7
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 16:43:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 48DB5485CB
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 16:43:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728484AbfFQOlO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 10:41:14 -0400
-Received: from asavdk4.altibox.net ([109.247.116.15]:46668 "EHLO
-        asavdk4.altibox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726331AbfFQOlO (ORCPT
+        id S1728505AbfFQOli (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 10:41:38 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:58509 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726215AbfFQOli (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 10:41:14 -0400
-Received: from ravnborg.org (unknown [158.248.194.18])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by asavdk4.altibox.net (Postfix) with ESMTPS id 73FDF804A8;
-        Mon, 17 Jun 2019 16:41:11 +0200 (CEST)
-Date:   Mon, 17 Jun 2019 16:41:09 +0200
-From:   Sam Ravnborg <sam@ravnborg.org>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Harry Wentland <harry.wentland@amd.com>,
-        Leo Li <sunpeng.li@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Thomas Lim <Thomas.Lim@amd.com>,
-        Eric Yang <eric.yang2@amd.com>,
-        Charlene Liu <charlene.liu@amd.com>,
-        Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>,
-        linux-kernel@vger.kernel.org, amd-gfx@lists.freedesktop.org,
-        Dmytro Laktyushkin <Dmytro.Laktyushkin@amd.com>,
-        dri-devel@lists.freedesktop.org, Tony Cheng <tony.cheng@amd.com>,
-        Anthony Koo <Anthony.Koo@amd.com>
-Subject: Re: [PATCH] drm/amd/display: include missing linux/delay.h
-Message-ID: <20190617144109.GA14528@ravnborg.org>
-References: <20190617123915.926526-1-arnd@arndb.de>
+        Mon, 17 Jun 2019 10:41:38 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x5HEfC8s3459686
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Mon, 17 Jun 2019 07:41:12 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x5HEfC8s3459686
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019051801; t=1560782473;
+        bh=UT+BHqdc16tCET8VK/b3ynxDCIkB4l744Y6wG/KJW+c=;
+        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
+        b=pn46uxJvT+RdbGZDVmAy07PavRhrToRL6kdvyRCgBuzBEFnZy/2TjCRUxmU3jcDfj
+         fkjItZrm+8wL76mUES/X3LkR42cJ+8ZdRQP1RK+8T4EMOylVbDVAnqiZ4lLcZrM5yN
+         YjTeHG7A+mNJtFAfCowOCyC2g/RrDtnkWW1cBpvb57KY2FagccJEh3cL9a1ZXAn5GZ
+         d6LpQKieQa1uO2zYVzmLtG0aH2NruOazsUDG5r4Ms5qzJcxOk9i0EgSmhOzMDdiurp
+         VgfdIdwEEUFOBtRi+eZMgazZZMWxS44KyJ/17//MX2mDxyhkG52JXhhVoRkFz4YM5s
+         jyWJ47vgwfxtA==
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x5HEfCeD3459683;
+        Mon, 17 Jun 2019 07:41:12 -0700
+Date:   Mon, 17 Jun 2019 07:41:12 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Jiri Olsa <tipbot@zytor.com>
+Message-ID: <tip-d0e1a507bdc761a14906f03399d933ea639a1756@git.kernel.org>
+Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        mingo@kernel.org, kan.liang@linux.intel.com, peterz@infradead.org,
+        acme@kernel.org, alexander.shishkin@linux.intel.com,
+        jolsa@redhat.com, jolsa@kernel.org, tom.vaden@hpe.com,
+        hpa@zytor.com, namhyung@kernel.org, tglx@linutronix.de
+Reply-To: acme@kernel.org, alexander.shishkin@linux.intel.com,
+          peterz@infradead.org, kan.liang@linux.intel.com,
+          linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+          mingo@kernel.org, hpa@zytor.com, namhyung@kernel.org,
+          tglx@linutronix.de, tom.vaden@hpe.com, jolsa@redhat.com,
+          jolsa@kernel.org
+In-Reply-To: <20190616141313.GD2500@krava>
+References: <20190616141313.GD2500@krava>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/core] perf/x86/intel: Disable check_msr for real HW
+Git-Commit-ID: d0e1a507bdc761a14906f03399d933ea639a1756
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <20190617123915.926526-1-arnd@arndb.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-CMAE-Score: 0
-X-CMAE-Analysis: v=2.3 cv=VcLZwmh9 c=1 sm=1 tr=0
-        a=UWs3HLbX/2nnQ3s7vZ42gw==:117 a=UWs3HLbX/2nnQ3s7vZ42gw==:17
-        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10
-        a=5bNecMADuYMHRIO7LrIA:9 a=CjuIK1q_8ugA:10
+X-Spam-Status: No, score=-1.2 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DATE_IN_FUTURE_06_12,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,
+        DKIM_VALID_EF autolearn=ham autolearn_force=no version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Arnd.
+Commit-ID:  d0e1a507bdc761a14906f03399d933ea639a1756
+Gitweb:     https://git.kernel.org/tip/d0e1a507bdc761a14906f03399d933ea639a1756
+Author:     Jiri Olsa <jolsa@redhat.com>
+AuthorDate: Sun, 16 Jun 2019 16:13:13 +0200
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Mon, 17 Jun 2019 12:36:24 +0200
 
-On Mon, Jun 17, 2019 at 02:38:55PM +0200, Arnd Bergmann wrote:
-> Some randconfig builds fail to compile the dcn10 code because of
-> a missing declaration:
-> 
-> drivers/gpu/drm/amd/amdgpu/../display/dc/dcn10/dcn10_hw_sequencer.c: In function 'dcn10_apply_ctx_for_surface':
-> drivers/gpu/drm/amd/amdgpu/../display/dc/dcn10/dcn10_hw_sequencer.c:2378:3: error: implicit declaration of function 'udelay' [-Werror=implicit-function-declaration]
-> 
-> Include the appropriate kernel header.
-> 
-> Fixes: 9ed43ef84d9d ("drm/amd/display: Add Underflow Asserts to dc")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->  drivers/gpu/drm/amd/display/dc/dcn10/dcn10_hw_sequencer.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_hw_sequencer.c b/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_hw_sequencer.c
-> index 1ac9a4f03990..d87ddc7de9c6 100644
-> --- a/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_hw_sequencer.c
-> +++ b/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_hw_sequencer.c
-> @@ -22,6 +22,7 @@
->   * Authors: AMD
->   *
->   */
-> +#include <linux/delay.h>
->  
->  #include <linux/delay.h>
->  #include "dm_services.h"
+perf/x86/intel: Disable check_msr for real HW
 
-Something has gone wrong here, as you add a second include of linux/delay.h.
+Tom Vaden reported false failure of the check_msr() function, because
+some servers can do POST tracing and enable LBR tracing during
+bootup.
 
-We had this problem before, which Alex fixed by applying a patch to
-include linux/delay.h
+Kan confirmed that check_msr patch was to fix a bug report in
+guest, so it's ok to disable it for real HW.
 
+Reported-by: Tom Vaden <tom.vaden@hpe.com>
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Acked-by: Tom Vaden <tom.vaden@hpe.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Liang Kan <kan.liang@linux.intel.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Link: https://lkml.kernel.org/r/20190616141313.GD2500@krava
+[ Readability edits. ]
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
+ arch/x86/events/intel/core.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-	Sam
+diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
+index 5e6ae481dee7..bda450ff51ee 100644
+--- a/arch/x86/events/intel/core.c
++++ b/arch/x86/events/intel/core.c
+@@ -20,6 +20,7 @@
+ #include <asm/intel-family.h>
+ #include <asm/apic.h>
+ #include <asm/cpu_device_id.h>
++#include <asm/hypervisor.h>
+ 
+ #include "../perf_event.h"
+ 
+@@ -4050,6 +4051,13 @@ static bool check_msr(unsigned long msr, u64 mask)
+ {
+ 	u64 val_old, val_new, val_tmp;
+ 
++	/*
++	 * Disable the check for real HW, so we don't
++	 * mess with potentionaly enabled registers:
++	 */
++	if (hypervisor_is_type(X86_HYPER_NATIVE))
++		return true;
++
+ 	/*
+ 	 * Read the current value, change it and read it back to see if it
+ 	 * matches, this is needed to detect certain hardware emulators
