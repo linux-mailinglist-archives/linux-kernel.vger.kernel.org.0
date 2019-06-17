@@ -2,121 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9A94248313
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 14:52:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7322048310
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 14:52:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728142AbfFQMvm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 08:51:42 -0400
-Received: from mail-vs1-f65.google.com ([209.85.217.65]:41809 "EHLO
-        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726121AbfFQMvl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 08:51:41 -0400
-Received: by mail-vs1-f65.google.com with SMTP id 2so2864413vso.8;
-        Mon, 17 Jun 2019 05:51:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=klPdjqqlVoeDREb75kQqStjinhVsI/mU0etQ6QnCaVA=;
-        b=Q7kHBLmkk8yeIcrJfSdKv0eDe8c6TIcykYfxeE+gtyxDGM7jTmWBX8X8LqO0Vz8wmh
-         l2H7Gj3rNds4mi0waYFOmJF58IVTdd8njCA3nt2QMsVA/in322QCir6CzFI8M8Jq+RI6
-         YLDvBk2D9gE6D8rmyfWqroIaIJxgFycHSyS4NRF7Zo2BY2Qag9JEILtsxLXUpFsVF9op
-         U3TVunfWmIcq5z0r1zZ3UousfHv+Y5FC10uYHhcLW+z/qmYV+1TCAl9OkJKcvx/K/+O1
-         zIAQ70uPMhRJ/QLvnR1n8XirV8I5X8DuBiVQLw5/I5wrY9+jsNdRYprh+F8aPtaKk29P
-         LX6g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=klPdjqqlVoeDREb75kQqStjinhVsI/mU0etQ6QnCaVA=;
-        b=SWKhRB0NKz7Nz4os0WwEMufS3VRQ9nsvGuvM9dFiBCl7fhEtSff/DmWEBTgDCTB4+d
-         411tYMqXTLAXDKkyHgYFgpzlCxmFOxPxrhOpRDgNM6czejboJAwjcXOWH9fCX3DPr1EU
-         F4IAz1YN6guhNNxhB3OsiK5kbZ3hJNG48Du19k/eHjZUwlWfgRZlQ06luhw5D8ltKUJy
-         DSc6fFl99g54hhuQZTRvmDGQ+knYP79siKibnMO5Qrnk7eeaAE7KK5n3+ie3RV9mvXFy
-         Jd4PRJ/Ln6ZvW2kK6nXpXUCMndAndrWKIMVS72uo+e1QZ3t7uU5tml+Gm40FeLpRsykj
-         xm+g==
-X-Gm-Message-State: APjAAAUmIyGv6ILaDhOEArTk2Sc6cpANJbTZhb2AuYjGFGz1t3conkzg
-        DrhBfoKdEkyM8/NdxFIL+Ihfvd87B3Rjk1/vv/I=
-X-Google-Smtp-Source: APXvYqwFeWgFnNJblZqkjL2ae02IOcVqxIIBQrv40Ft1GMFRwdqN43eWUISS8RdMVxsuA8gLkKAFkvwqWO2Ghp/c13c=
-X-Received: by 2002:a67:de0b:: with SMTP id q11mr4656005vsk.134.1560775900716;
- Mon, 17 Jun 2019 05:51:40 -0700 (PDT)
+        id S1728067AbfFQMv2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 08:51:28 -0400
+Received: from foss.arm.com ([217.140.110.172]:48786 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726694AbfFQMv1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Jun 2019 08:51:27 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B29512B;
+        Mon, 17 Jun 2019 05:51:26 -0700 (PDT)
+Received: from e107158-lin.cambridge.arm.com (e107158-lin.cambridge.arm.com [10.1.195.51])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 781E93F246;
+        Mon, 17 Jun 2019 05:51:25 -0700 (PDT)
+Date:   Mon, 17 Jun 2019 13:51:23 +0100
+From:   Qais Yousef <qais.yousef@arm.com>
+To:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Steven Rostedt <rostedt@goodmis.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Pavankumar Kondeti <pkondeti@codeaurora.org>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Uwe Kleine-Konig <u.kleine-koenig@pengutronix.de>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Quentin Perret <quentin.perret@arm.com>
+Subject: Re: [PATCH v3 0/6] sched: Add new tracepoints required for EAS
+ testing
+Message-ID: <20190617125122.ph4wb7mcvfjwpdce@e107158-lin.cambridge.arm.com>
+References: <20190604111459.2862-1-qais.yousef@arm.com>
 MIME-Version: 1.0
-References: <20190613154542.32438-1-sr@denx.de> <20190613154542.32438-3-sr@denx.de>
- <CAGm1_kuyt5ue_3CuvryXw8L0=z0Bti5BeQMA50yRYhFmffcJuQ@mail.gmail.com>
- <CAGm1_ksdQ5CNLGGNzHKBNKeLE3ByHvPyOkjYNoWWM+rw0q214Q@mail.gmail.com> <d62c1a2b-3e24-c109-a7fb-57190388d75f@denx.de>
-In-Reply-To: <d62c1a2b-3e24-c109-a7fb-57190388d75f@denx.de>
-From:   Yegor Yefremov <yegorslists@googlemail.com>
-Date:   Mon, 17 Jun 2019 14:51:15 +0200
-Message-ID: <CAGm1_ks0TWAkKGQ+k060hmwZi-i1jD2-KMqxex1QqrbujS00WQ@mail.gmail.com>
-Subject: Re: [PATCH 3/3 v6] tty/serial/8250: use mctrl_gpio helpers
-To:     Stefan Roese <sr@denx.de>
-Cc:     linux-serial@vger.kernel.org,
-        kernel list <linux-kernel@vger.kernel.org>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Giulio Benetti <giulio.benetti@micronovasrl.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20190604111459.2862-1-qais.yousef@arm.com>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 17, 2019 at 2:42 PM Stefan Roese <sr@denx.de> wrote:
->
-> On 17.06.19 11:51, Yegor Yefremov wrote:
->
-> <snip>
->
-> >>> @@ -1944,11 +1948,15 @@ unsigned int serial8250_do_get_mctrl(struct uart_port *port)
-> >>>   {
-> >>>          struct uart_8250_port *up = up_to_u8250p(port);
-> >>>          unsigned int status;
-> >>> +       unsigned int val = 0;
-> >>>
-> >>>          serial8250_rpm_get(up);
-> >>>          status = serial8250_modem_status(up);
-> >>>          serial8250_rpm_put(up);
-> >>>
-> >>> +       if (up->gpios)
-> >>> +               return mctrl_gpio_get(up->gpios, &val);
-> >>> +
-> >>
-> >> What happens when you have a mixed setup i.e. CTS controlled by UART
-> >> but other status pins controlled by GPIO? In this case CTS status
-> >> won't be returned. Do I see it right?
->
-> Yes, your analysis does seem to be correct. Please note that I did
-> not intentionally did change it this way. I was not thinking about
-> such a "mixed design".
->
-> > What about something like this:
-> >
-> > unsigned int serial8250_do_get_mctrl(struct uart_port *port)
-> >    {
-> >            struct uart_8250_port *up = up_to_u8250p(port);
-> >            unsigned int status;
-> >            unsigned int val;
-> >
-> >            serial8250_rpm_get(up);
-> >            status = serial8250_modem_status(up);
-> >            serial8250_rpm_put(up);
-> >
-> >            val = serial8250_MSR_to_TIOCM(status);
-> >            if (up->gpios)
-> >                    mctrl_gpio_get(up->gpios, &val);
-> >
-> >            return val;
-> >    }
->
-> Looks good to me, thanks. Do you have such a setup with some modem
-> control signal handled via GPIO and some via the UART? Could you
-> test such a change?
+Hi Peter
 
-I already have :-)
+On 06/04/19 12:14, Qais Yousef wrote:
+> Changes in v3:
+> 	- Split pelt_rq TP into pelt_cfs, pelt_rq, pelt_dl and pelt_irq
+> 	- Replace the fatty preprocessing wrappers with exported helper
+> 	  functions to access data in unexported structures.
+> 	- Remove the now unnecessary headers that were introduced in the
+> 	  previous versions.
+> 	- Postfix the tracepoints with '_tp' to make them standout more in the
+> 	  code as bare tracepoints with no events associated.
+> 	- Updated the example module in [2]
+> 		- It demonstrates now how to convert the tracepoints into trace
+> 		  events that extend the sched events subsystem in tracefs.
 
-This my DTS file:
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/arch/arm/boot/dts/am335x-baltos-ir5221.dts#n38
+Does this look okay now? If you have further comments please let me know so
+I can address them in time in hope it'd make it to the next merge window.
 
-Yegor
+Thanks
+
+--
+Qais Yousef
