@@ -2,83 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D6999491F5
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 23:06:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 01A17491BD
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 22:56:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727503AbfFQVGp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 17:06:45 -0400
-Received: from mga11.intel.com ([192.55.52.93]:47887 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725497AbfFQVGo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 17:06:44 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Jun 2019 14:06:44 -0700
-Received: from dwillia2-desk3.jf.intel.com (HELO dwillia2-desk3.amr.corp.intel.com) ([10.54.39.16])
-  by orsmga006-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Jun 2019 14:06:44 -0700
-Subject: [PATCH] libnvdimm: Enable unit test infrastructure compile checks
-From:   Dan Williams <dan.j.williams@intel.com>
-To:     linux-nvdimm@lists.01.org
-Cc:     =?utf-8?b?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Christoph Hellwig <hch@lst.de>, linux-kernel@vger.kernel.org
-Date:   Mon, 17 Jun 2019 13:52:27 -0700
-Message-ID: <156080474760.3765313.13075804303259765566.stgit@dwillia2-desk3.amr.corp.intel.com>
-User-Agent: StGit/0.18-2-gc94f
+        id S1726735AbfFQU4h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 16:56:37 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:43406 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725497AbfFQU4g (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Jun 2019 16:56:36 -0400
+Received: by mail-pl1-f195.google.com with SMTP id cl9so4638398plb.10;
+        Mon, 17 Jun 2019 13:56:36 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=oaUF+IVfxLkFEOX3EdWdqY0MW6ieO175zRASbw5HHZM=;
+        b=In45RciiYycSqmGUdJVle6PXKgp27Jun83jcfNaFIWxUh+nu6S7hGEwwIyxJocZJWT
+         mGlVFcevrfTBcxOXw6X2qvuIfTNXez1swbd03ntboTL0nem4WZrx31X4pjJoP84AKVFi
+         L+eU+ocYLl2Pe1qZ5fnOTe3E0DcC8zXsZVBXwB2Ia7EiEyTvkvN0SBnGM1OJanw1gcjt
+         gnbH6CCtegHpz+1xeU4F84+YmRqccWdXELzmRCC0iBnIl6FtWwwgM0a1hZevfmCcY+1b
+         7EefNT9Nm4Z6LbhWq7o8I+0WNkpcFfqD5jRPBKISAGXGFBPwESwFRXQlBl1rMMNr4q6H
+         UDjA==
+X-Gm-Message-State: APjAAAUTYWWzYCdpFb0vIbIXNS+5KK8cfm63DuzxCzC/U+utgDZMWRsB
+        lcoXQEJNarAhpKJpZFg2H4oe09jTYuI=
+X-Google-Smtp-Source: APXvYqyW1uX5YVD0oJTXzOf/KTeNCXdXhtPN2mMaP3rKDVGtTCu0tZAI6kQEifd7AGUdvUb3udfRmg==
+X-Received: by 2002:a17:902:760a:: with SMTP id k10mr89887792pll.83.1560804995269;
+        Mon, 17 Jun 2019 13:56:35 -0700 (PDT)
+Received: from desktop-bart.svl.corp.google.com ([2620:15c:2cd:202:4308:52a3:24b6:2c60])
+        by smtp.gmail.com with ESMTPSA id r9sm12006074pgv.24.2019.06.17.13.56.33
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Mon, 17 Jun 2019 13:56:34 -0700 (PDT)
+Subject: Re: [PATCH 2/8] scsi: take the DMA max mapping size into account
+To:     Christoph Hellwig <hch@lst.de>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>
+Cc:     Sagi Grimberg <sagi@grimberg.me>, Max Gurtovoy <maxg@mellanox.com>,
+        linux-rdma@vger.kernel.org, linux-scsi@vger.kernel.org,
+        megaraidlinux.pdl@broadcom.com, MPT-FusionLinux.pdl@broadcom.com,
+        linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20190617122000.22181-1-hch@lst.de>
+ <20190617122000.22181-3-hch@lst.de>
+From:   Bart Van Assche <bvanassche@acm.org>
+Message-ID: <5d143a03-edd5-5878-780b-45d87313a813@acm.org>
+Date:   Mon, 17 Jun 2019 13:56:32 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190617122000.22181-3-hch@lst.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The infrastructure to mock core libnvdimm routines for unit testing
-purposes is prone to bitrot relative to refactoring of that core.
-Arrange for the unit test core to be built when CONFIG_COMPILE_TEST=y.
-This does not result in a functional unit test environment, it is only a
-helper for 0day to catch unit test build regressions.
+On 6/17/19 5:19 AM, Christoph Hellwig wrote:
+> We need to limit the devices max_sectors to what the DMA mapping
+> implementation can support.  If not we risk running out of swiotlb
+> buffers easily.
+> 
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ---
+>   drivers/scsi/scsi_lib.c | 2 ++
+>   1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/scsi/scsi_lib.c b/drivers/scsi/scsi_lib.c
+> index d333bb6b1c59..f233bfd84cd7 100644
+> --- a/drivers/scsi/scsi_lib.c
+> +++ b/drivers/scsi/scsi_lib.c
+> @@ -1768,6 +1768,8 @@ void __scsi_init_queue(struct Scsi_Host *shost, struct request_queue *q)
+>   		blk_queue_max_integrity_segments(q, shost->sg_prot_tablesize);
+>   	}
+>   
+> +	shost->max_sectors = min_t(unsigned int, shost->max_sectors,
+> +			dma_max_mapping_size(dev) << SECTOR_SHIFT);
+>   	blk_queue_max_hw_sectors(q, shost->max_sectors);
+>   	if (shost->unchecked_isa_dma)
+>   		blk_queue_bounce_limit(q, BLK_BOUNCE_ISA);
 
-Cc: Jérôme Glisse <jglisse@redhat.com>
-Cc: Jason Gunthorpe <jgg@mellanox.com>
-Reported-by: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
----
- drivers/nvdimm/Kconfig  |   11 +++++++++++
- drivers/nvdimm/Makefile |    4 ++++
- 2 files changed, 15 insertions(+)
+Does dma_max_mapping_size() return a value in bytes? Is 
+shost->max_sectors a number of sectors? If so, are you sure that "<< 
+SECTOR_SHIFT" is the proper conversion? Shouldn't that be ">> 
+SECTOR_SHIFT" instead?
 
-diff --git a/drivers/nvdimm/Kconfig b/drivers/nvdimm/Kconfig
-index 54500798f23a..57d3a6c3ac70 100644
---- a/drivers/nvdimm/Kconfig
-+++ b/drivers/nvdimm/Kconfig
-@@ -118,4 +118,15 @@ config NVDIMM_KEYS
- 	depends on ENCRYPTED_KEYS
- 	depends on (LIBNVDIMM=ENCRYPTED_KEYS) || LIBNVDIMM=m
- 
-+config NVDIMM_TEST_BUILD
-+	bool "Build the unit test core"
-+	depends on COMPILE_TEST
-+	default COMPILE_TEST
-+	help
-+	  Build the core of the unit test infrastructure.  The result of
-+	  this build is non-functional for unit test execution, but it
-+	  otherwise helps catch build errors induced by changes to the
-+	  core devm_memremap_pages() implementation and other
-+	  infrastructure.
-+
- endif
-diff --git a/drivers/nvdimm/Makefile b/drivers/nvdimm/Makefile
-index 6f2a088afad6..40080c120363 100644
---- a/drivers/nvdimm/Makefile
-+++ b/drivers/nvdimm/Makefile
-@@ -28,3 +28,7 @@ libnvdimm-$(CONFIG_BTT) += btt_devs.o
- libnvdimm-$(CONFIG_NVDIMM_PFN) += pfn_devs.o
- libnvdimm-$(CONFIG_NVDIMM_DAX) += dax_devs.o
- libnvdimm-$(CONFIG_NVDIMM_KEYS) += security.o
-+
-+TOOLS := ../../tools
-+TEST_SRC := $(TOOLS)/testing/nvdimm/test
-+obj-$(CONFIG_NVDIMM_TEST_BUILD) := $(TEST_SRC)/iomap.o
+Additionally, how about adding a comment above dma_max_mapping_size() 
+that documents the unit of the returned number?
 
+Thanks,
+
+Bart.
