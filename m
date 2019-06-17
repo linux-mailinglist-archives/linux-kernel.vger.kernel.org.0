@@ -2,75 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 27306488BD
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 18:21:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 50B80488C0
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 18:21:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727997AbfFQQVq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 12:21:46 -0400
-Received: from conuserg-12.nifty.com ([210.131.2.79]:45807 "EHLO
-        conuserg-12.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727639AbfFQQVq (ORCPT
+        id S1727610AbfFQQV5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 12:21:57 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:35446 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725863AbfFQQV5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 12:21:46 -0400
-Received: from grover.flets-west.jp (softbank126125154139.bbtec.net [126.125.154.139]) (authenticated)
-        by conuserg-12.nifty.com with ESMTP id x5HGLP0a021960;
-        Tue, 18 Jun 2019 01:21:25 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-12.nifty.com x5HGLP0a021960
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1560788485;
-        bh=9Vm4Ynh/kWZgI3KQqSGTAag3aRK8FA3tSa76sSISXdg=;
-        h=From:To:Cc:Subject:Date:From;
-        b=jlmJDnmTI2akcO5J5J7XjrMV/pUBRF9GNH/gFAbyIFLtAgoE54PZSNIudD6klV6po
-         rnTCSBjGYlM33MilC4g/ejVOspJx9Cc4ArKA355ftACfIhH5W/9UVFfgahxbFsTApk
-         /FNz+ovCbmWvhVNviUlHRSdi+3w4aUBT3SKr12RmdSM9a3ufyBiO00YZP9Q0AxBpAk
-         X1rvtGKkXjnJvwdUM0kc/41GV5OXoCkbldysAMk+ga1VdX0RTgt7KBz7LX3Xy2eVM2
-         4ZPf1Pl+cPCEHZ7w/VQVE9IdcVRJaZDSoEeDzU+qLniBcD+gVfxxuP26FxsYM2oWLY
-         W2jXJYRBR8c4w==
-X-Nifty-SrcIP: [126.125.154.139]
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        devicetree@vger.kernel.org
-Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-kernel@vger.kernel.org, Rob Herring <robh@kernel.org>
-Subject: [PATCH] libfdt: reduce the number of headers included from libfdt_env.h
-Date:   Tue, 18 Jun 2019 01:21:23 +0900
-Message-Id: <20190617162123.24920-1-yamada.masahiro@socionext.com>
-X-Mailer: git-send-email 2.17.1
+        Mon, 17 Jun 2019 12:21:57 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
+        MIME-Version:Date:Message-ID:Subject:From:Cc:To:Sender:Reply-To:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=I+3dZymZ36bDT+SYPOPtFYrTLqbyyrx6FBC7YcP64m4=; b=pyZwABOhiF03uQ7pO88KTepolG
+        gJfIgqubE3Xu7VCulG5ILy+0XOzm1hQ5rRiurXcbjmtXZsEGtuSCCZ7JU1m8lH/MiZa5KvSc8lCAG
+        Ka/rLuHfNZutgYB/mKm+BhrkD+zuJujVaiwFvoKSM8hBRAVgQfMpqUJ7Kqu9+e17IT4x3dNc8m2rX
+        tb7v90vmBb6JtltQhMzZuafvyWNaEQpBZvMsUH3XUas8nh7CaR4ullem0UdebRSItFmJ2BADFJA3v
+        LM0ZSY+bUGWhGS4xg4Ga4Gf3cIgJS1bUb903//initn9ID+heZhXn94u8tpFMLuidvLqnpTPuzdeN
+        +QqnFq7w==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
+        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1hcuO7-0000qD-OH; Mon, 17 Jun 2019 16:21:44 +0000
+To:     LKML <linux-kernel@vger.kernel.org>, linux-iio@vger.kernel.org
+Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        Kjeld Flarup <kfa@deif.com>,
+        Patrick Havelange <patrick.havelange@essensium.com>,
+        William Breathitt Gray <vilhelm.gray@gmail.com>,
+        Richard Weinberger <richard@nod.at>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Subject: [PATCH] counter: fix ftm-quaddec build error on UML
+Message-ID: <e33254e5-3e8e-fc86-de72-b3dd2f6c310c@infradead.org>
+Date:   Mon, 17 Jun 2019 09:21:40 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently, libfdt_env.h includes <linux/kernel.h> just for INT_MAX.
+From: Randy Dunlap <rdunlap@infradead.org>
 
-<linux/kernel.h> pulls in a lots of broat.
+Fix build error on user-mode Linux, which does not set HAS_IOMEM,
+so devm_ioremap() is not available.  Fixes this build error:
 
-Thanks to commit 54d50897d544 ("linux/kernel.h: split *_MAX and *_MIN
-macros into <linux/limits.h>"), <linux/kernel.h> can be replaced with
-<linux/limits.h>.
+ERROR: "devm_ioremap" [drivers/counter/ftm-quaddec.ko] undefined!
 
-This saves including dozens of headers.
+Fixes: a3b9a99980d9 ("counter: add FlexTimer Module Quadrature decoder counter driver")
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: Kjeld Flarup <kfa@deif.com>
+Cc: Patrick Havelange <patrick.havelange@essensium.com>
+Cc: William Breathitt Gray <vilhelm.gray@gmail.com>
+Cc: linux-iio@vger.kernel.org
 ---
+BTW, please fix these lines to have ending '>' characters:
+MODULE_AUTHOR("Kjeld Flarup <kfa@deif.com");
+MODULE_AUTHOR("Patrick Havelange <patrick.havelange@essensium.com");
 
- include/linux/libfdt_env.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/counter/Kconfig |    1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/include/linux/libfdt_env.h b/include/linux/libfdt_env.h
-index edb0f0c30904..2231eb855e8f 100644
---- a/include/linux/libfdt_env.h
-+++ b/include/linux/libfdt_env.h
-@@ -2,7 +2,7 @@
- #ifndef LIBFDT_ENV_H
- #define LIBFDT_ENV_H
+--- lnx-52-rc5.orig/drivers/counter/Kconfig
++++ lnx-52-rc5/drivers/counter/Kconfig
+@@ -51,6 +51,7 @@ config STM32_LPTIMER_CNT
  
--#include <linux/kernel.h>	/* For INT_MAX */
-+#include <linux/limits.h>	/* For INT_MAX */
- #include <linux/string.h>
- 
- #include <asm/byteorder.h>
--- 
-2.17.1
+ config FTM_QUADDEC
+ 	tristate "Flex Timer Module Quadrature decoder driver"
++	depends on HAS_IOMEM
+ 	help
+ 	  Select this option to enable the Flex Timer Quadrature decoder
+ 	  driver.
+
 
