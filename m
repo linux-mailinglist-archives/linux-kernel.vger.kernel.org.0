@@ -2,126 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C0E14483A9
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 15:15:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CA7F5483C8
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 15:22:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728088AbfFQNPg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 09:15:36 -0400
-Received: from mout.kundenserver.de ([212.227.126.130]:53289 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725884AbfFQNPg (ORCPT
+        id S1727646AbfFQNVt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 09:21:49 -0400
+Received: from smtp113.ord1c.emailsrvr.com ([108.166.43.113]:50846 "EHLO
+        smtp113.ord1c.emailsrvr.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725884AbfFQNVs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 09:15:36 -0400
-Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
- (mreue012 [212.227.15.129]) with ESMTPA (Nemesis) id
- 1MYcy3-1i6v383M4x-00VdwG; Mon, 17 Jun 2019 15:15:17 +0200
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     Pablo Neira Ayuso <pablo@netfilter.org>,
-        Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
-        Florian Westphal <fw@strlen.de>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        "David S. Miller" <davem@davemloft.net>, wenxu <wenxu@ucloud.cn>,
-        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH net-next] netfilter: fix nf_conntrack_bridge/ipv6 link error
-Date:   Mon, 17 Jun 2019 15:15:04 +0200
-Message-Id: <20190617131515.2334941-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.20.0
+        Mon, 17 Jun 2019 09:21:48 -0400
+X-Greylist: delayed 358 seconds by postgrey-1.27 at vger.kernel.org; Mon, 17 Jun 2019 09:21:47 EDT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mev.co.uk;
+        s=20190130-41we5z8j; t=1560777347;
+        bh=ZvJvYkjr7iE1RIXRXDlijzKzJL0BitvNBM9T5FqQAmw=;
+        h=Subject:To:From:Date:From;
+        b=Nl+Gx2+KTHlZUrgrlD4OPdHaDIh8UJfTuRA5MZVnySfiilIiWgnddpiJk4/aln5DA
+         OAo8bcON3aHKJNRIUHN2qprmbAq2BRvH2IUzshdVkvRvYeZuB2iOeftPYIjVWn6ziI
+         KuJnFj51kem220yEC5D7kahxijPjmtFu66j0THaY=
+X-Auth-ID: abbotti@mev.co.uk
+Received: by smtp7.relay.ord1c.emailsrvr.com (Authenticated sender: abbotti-AT-mev.co.uk) with ESMTPSA id D9002A01B2;
+        Mon, 17 Jun 2019 09:15:44 -0400 (EDT)
+X-Sender-Id: abbotti@mev.co.uk
+Received: from [10.0.0.62] (remote.quintadena.com [81.133.34.160])
+        (using TLSv1.2 with cipher AES128-SHA)
+        by 0.0.0.0:465 (trex/5.7.12);
+        Mon, 17 Jun 2019 09:15:47 -0400
+Subject: Re: [PATCH 12/16] staging/comedi: mark as broken
+To:     Christoph Hellwig <hch@lst.de>,
+        Greg KH <gregkh@linuxfoundation.org>
+Cc:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        H Hartley Sweeten <hsweeten@visionengravers.com>,
+        devel@driverdev.osuosl.org, linux-s390@vger.kernel.org,
+        Intel Linux Wireless <linuxwifi@intel.com>,
+        linux-rdma@vger.kernel.org, netdev@vger.kernel.org,
+        intel-gfx@lists.freedesktop.org, linux-wireless@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-mm@kvack.org, iommu@lists.linux-foundation.org,
+        "moderated list:ARM PORT" <linux-arm-kernel@lists.infradead.org>,
+        linux-media@vger.kernel.org
+References: <20190614134726.3827-1-hch@lst.de>
+ <20190614134726.3827-13-hch@lst.de> <20190614140239.GA7234@kroah.com>
+ <20190614144857.GA9088@lst.de> <20190614153032.GD18049@kroah.com>
+ <20190614153428.GA10008@lst.de>
+From:   Ian Abbott <abbotti@mev.co.uk>
+Organization: MEV Ltd.
+Message-ID: <60c6af3d-d8e4-5745-8d2b-9791a2f4ff56@mev.co.uk>
+Date:   Mon, 17 Jun 2019 14:15:43 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:ffG0oEGFDr8AoakyTAVdhP3B7AKNLLG3JBgSsWHS4btNTkhoB1a
- nxW8SSPAesUa46zwzTQwKD7N5lcrt0rljJDuCGm2a/HV0XvlBRz5BfPy634OqmQDa38aH7G
- iojviMbZ8EQjarVdpdHhuKGvq0QcFxeiD1w2j9af4In6z8fqEfQ1dbDfkFZZJSRLOOgxtJ5
- CUyZgQgCcRgMeZ9Xl53VA==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:5G9iyEa0TYs=:2C1glk3K9ALdpIwcvXu/S8
- 4VTK8tqnpHtghO/u53o+qv+4cIDEcj6DZ53677TJSlo43+l4tDR1pw3BNwVOU7jd97GyMSWhS
- EecgllSIhHmrhfuMEED1R8EhLyNZz91+dHkbuMKQKHA0J5xV45PbiJIdFYmJZQXI7YdaidIdz
- CXenG6wOd4aXZpe+KBpStxmXib6mTBJcESMGVcz1LqiWobKkP+7UU99tw0q7a+44CDgcBjXZc
- tSsfiy/cysRrpiNZDaAFE2px39fR5YRECVinJKEldQyEUZXWq8ylD+O+UPtV6CzKFKD9f/CTk
- lezwZ1PWA0AUXBMkynDqNFrMiK5CIpmupY+9dGfgzbDE7z0zHX2+pKBluXVVSI6g17QfgxzW6
- HR7oVoSBOSJn4Wn473iQMn6wn7+x+iS8NtoZfHJciyJ/i0LsICHv/aG2tdYpnRqR98y7bDhMP
- bU0tPlvD43qmIhiKONvNBRfsnpDItqZTjWwuoTvvIRXsm5z2J96KbsuKx1sZNlHIcTm6+ZHJ2
- s31jiV0RRQCEVYdRsClLLkYPC4zt3DBUlnV1XZKLOSNLwn/NdUNx0VWsdUnQOtzuvY+UKem1M
- DDpekBNH+j0brexGCAAZGU8rkzafzkfY4XtkQQ8HNYxksuSopi2SCGhSrEhi4kEq/va9fG3tN
- Ia4ri3O3uVsvohA5/gSVMYPsdjNBeLLggbeCYh921ObSfHmB147DaOkDuHLNKoIXg9wl0/x4z
- 0Ll8sQfKPBgVqlta03hi50zZN1mG+6ZBrZeQJw==
+In-Reply-To: <20190614153428.GA10008@lst.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When CONFIG_IPV6 is disabled, the bridge netfilter code
-produces a link error:
+On 14/06/2019 16:34, Christoph Hellwig wrote:
+> On Fri, Jun 14, 2019 at 05:30:32PM +0200, Greg KH wrote:
+>> On Fri, Jun 14, 2019 at 04:48:57PM +0200, Christoph Hellwig wrote:
+>>> On Fri, Jun 14, 2019 at 04:02:39PM +0200, Greg KH wrote:
+>>>> Perhaps a hint as to how we can fix this up?  This is the first time
+>>>> I've heard of the comedi code not handling dma properly.
+>>>
+>>> It can be fixed by:
+>>>
+>>>   a) never calling virt_to_page (or vmalloc_to_page for that matter)
+>>>      on dma allocation
+>>>   b) never remapping dma allocation with conflicting cache modes
+>>>      (no remapping should be doable after a) anyway).
+>>
+>> Ok, fair enough, have any pointers of drivers/core code that does this
+>> correctly?  I can put it on my todo list, but might take a week or so...
+> 
+> Just about everyone else.  They just need to remove the vmap and
+> either do one large allocation, or live with the fact that they need
+> helpers to access multiple array elements instead of one net vmap,
+> which most of the users already seem to do anyway, with just a few
+> using the vmap (which might explain why we didn't see blowups yet).
 
-ERROR: "br_ip6_fragment" [net/bridge/netfilter/nf_conntrack_bridge.ko] undefined!
-ERROR: "nf_ct_frag6_gather" [net/bridge/netfilter/nf_conntrack_bridge.ko] undefined!
+Avoiding the vmap in comedi should be do-able as it already has other 
+means to get at the buffer pages.
 
-The problem is that it assumes that whenever IPV6 is not a loadable
-module, we can call the functions direction. This is clearly
-not true when IPV6 is disabled.
+When comedi makes the buffer from DMA coherent memory, it currently 
+allocates it as a series of page-sized chunks.  That cannot be mmap'ed 
+in one go with dma_mmap_coherent(), so I see the following solutions.
 
-There are two other functions defined like this in linux/netfilter_ipv6.h,
-so change them all the same way.
+1. Change the buffer allocation to allocate a single chunk of DMA 
+coherent memory and use dma_mmap_coherent() to mmap it.
 
-Fixes: 764dd163ac92 ("netfilter: nf_conntrack_bridge: add support for IPv6")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- include/linux/netfilter_ipv6.h | 16 ++++++++++++----
- 1 file changed, 12 insertions(+), 4 deletions(-)
+2. Call dma_mmap_coherent() in a loop, adjusting vma->vm_start and 
+vma->vm_end for each iteration (vma->vm_pgoff will be 0), and restoring 
+the vma->vm_start and vma->vm_end at the end.
 
-diff --git a/include/linux/netfilter_ipv6.h b/include/linux/netfilter_ipv6.h
-index 3a3dc4b1f0e7..85d61db88b05 100644
---- a/include/linux/netfilter_ipv6.h
-+++ b/include/linux/netfilter_ipv6.h
-@@ -70,8 +70,10 @@ static inline int nf_ipv6_chk_addr(struct net *net, const struct in6_addr *addr,
- 		return 1;
- 
- 	return v6_ops->chk_addr(net, addr, dev, strict);
--#else
-+#elif IS_BUILTIN(CONFIG_IPV6)
- 	return ipv6_chk_addr(net, addr, dev, strict);
-+#else
-+	return 1;
- #endif
- }
- 
-@@ -108,8 +110,10 @@ static inline int nf_ipv6_br_defrag(struct net *net, struct sk_buff *skb,
- 		return 1;
- 
- 	return v6_ops->br_defrag(net, skb, user);
--#else
-+#elif IS_BUILTIN(CONFIG_IPV6)
- 	return nf_ct_frag6_gather(net, skb, user);
-+#else
-+	return 1;
- #endif
- }
- 
-@@ -133,8 +137,10 @@ static inline int nf_br_ip6_fragment(struct net *net, struct sock *sk,
- 		return 1;
- 
- 	return v6_ops->br_fragment(net, sk, skb, data, output);
--#else
-+#elif IS_BUILTIN(CONFIG_IPV6)
- 	return br_ip6_fragment(net, sk, skb, data, output);
-+#else
-+	return 1;
- #endif
- }
- 
-@@ -149,8 +155,10 @@ static inline int nf_ip6_route_me_harder(struct net *net, struct sk_buff *skb)
- 		return -EHOSTUNREACH;
- 
- 	return v6_ops->route_me_harder(net, skb);
--#else
-+#elif IS_BUILTIN(CONFIG_IPV6)
- 	return ip6_route_me_harder(net, skb);
-+#else
-+	return -EHOSTUNREACH;
- #endif
- }
- 
+I'm not sure if 2 is a legal option.
+
 -- 
-2.20.0
-
+-=( Ian Abbott <abbotti@mev.co.uk> || Web: www.mev.co.uk )=-
+-=( MEV Ltd. is a company registered in England & Wales. )=-
+-=( Registered number: 02862268.  Registered address:    )=-
+-=( 15 West Park Road, Bramhall, STOCKPORT, SK7 3JZ, UK. )=-
