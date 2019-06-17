@@ -2,55 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8246B47F0C
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 12:01:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6E72C47F27
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 12:05:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728144AbfFQKBq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 06:01:46 -0400
-Received: from mx2.suse.de ([195.135.220.15]:49196 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726708AbfFQKBq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 06:01:46 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 63B89AC11;
-        Mon, 17 Jun 2019 10:01:44 +0000 (UTC)
-From:   Andreas Schwab <schwab@suse.de>
-To:     Paul Walmsley <paul.walmsley@sifive.com>
-Cc:     Yash Shah <yash.shah@sifive.com>, davem@davemloft.net,
-        devicetree@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        nicolas.ferre@microchip.com, palmer@sifive.com,
-        aou@eecs.berkeley.edu, ynezz@true.cz, sachin.ghadi@sifive.com
-Subject: Re: [PATCH v2 0/2] Add macb support for SiFive FU540-C000
-References: <1560745167-9866-1-git-send-email-yash.shah@sifive.com>
-        <mvmtvco62k9.fsf@suse.de>
-        <alpine.DEB.2.21.9999.1906170252410.19994@viisi.sifive.com>
-X-Yow:  Hey, waiter!  I want a NEW SHIRT and a PONY TAIL with lemon sauce!
-Date:   Mon, 17 Jun 2019 12:01:42 +0200
-In-Reply-To: <alpine.DEB.2.21.9999.1906170252410.19994@viisi.sifive.com> (Paul
-        Walmsley's message of "Mon, 17 Jun 2019 02:58:20 -0700 (PDT)")
-Message-ID: <mvmpnnc5y49.fsf@suse.de>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.2.90 (gnu/linux)
+        id S1728189AbfFQKE7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 06:04:59 -0400
+Received: from gate2.alliedtelesis.co.nz ([202.36.163.20]:50907 "EHLO
+        gate2.alliedtelesis.co.nz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728054AbfFQKEr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Jun 2019 06:04:47 -0400
+Received: from mmarshal3.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 5D8A3806A8;
+        Mon, 17 Jun 2019 22:04:44 +1200 (NZST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
+        s=mail181024; t=1560765884;
+        bh=9TpEGxHoVApXP2xLWWFd+WbRCiDRhmBeG+15sZtDkzI=;
+        h=From:To:Cc:Subject:Date;
+        b=egLGVkaJOy4SKnBeqUY9fYo6IV/6Ys5fal7z2qTJ/DlqBSCjr1hz6IJwJrNuY3EdE
+         e9p7YxcLRCp9k1cKlcWJTo9QUUGejZrk5+GE5eyPtoDUJukOg19BVxUa6mLChv2tns
+         LrATW1fxZWkBH7BVZ1NLuyIC4EKfxvaxHI9EgD0xgSjo0AmOe6UWC3Jz326GlOevjv
+         iu/3fd3fyigLsNiaH6ius07s3i/bXxr7SvB6s5iQ/ZgKNiINH6Skq758URaQsF/w2A
+         +psnuWVfbIo+gDvikFiuZZUl/Rgpb52CEHVB0MdnCEGICKpCrXeNgaatYGvG20X4+w
+         1sQGPDKbgVIqA==
+Received: from smtp (Not Verified[10.32.16.33]) by mmarshal3.atlnz.lc with Trustwave SEG (v7,5,8,10121)
+        id <B5d0765bc0000>; Mon, 17 Jun 2019 22:04:44 +1200
+Received: from chrisp-dl.ws.atlnz.lc (chrisp-dl.ws.atlnz.lc [10.33.22.30])
+        by smtp (Postfix) with ESMTP id 4985E13EED3;
+        Mon, 17 Jun 2019 22:04:45 +1200 (NZST)
+Received: by chrisp-dl.ws.atlnz.lc (Postfix, from userid 1030)
+        id 1E69B1E04F0; Mon, 17 Jun 2019 22:04:44 +1200 (NZST)
+From:   Chris Packham <chris.packham@alliedtelesis.co.nz>
+To:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, linus.walleij@linaro.org,
+        jason@lakedaemon.net, andrew@lunn.ch, gregory.clement@bootlin.com,
+        sebastian.hesselbarth@gmail.com, linux-gpio@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        Chris Packham <chris.packham@alliedtelesis.co.nz>
+Subject: [PATCH 0/4] Add support for Marvell 98DX1135
+Date:   Mon, 17 Jun 2019 22:04:28 +1200
+Message-Id: <20190617100432.13037-1-chris.packham@alliedtelesis.co.nz>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
+x-atlnz-ls: pat
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Jun 17 2019, Paul Walmsley <paul.walmsley@sifive.com> wrote:
+The Marvell 98DX1135 is a switch chip with an integrated ARMv5 CPU, it is
+similar to the 98DX4122 with differences in clocking and pin control.
 
-> Looks to me that it shouldn't have an impact unless the DT string is 
-> present, and even then, the impact might simply be that the MACB driver 
-> may not work?
+I haven't added a separate dts for the SoC since it would be so similar t=
+o
+kirkwood-98dx4122.dtsi.
 
-If the macb driver doesn't work you have an unusable system, of course.
+Chris Packham (4):
+  dt-bindings: pinctrl: mvebu: Document bindings for 98DX1135
+  dt-bindings: clock: mvebu: Add compatible string for 98dx1135 core
+    clock
+  pinctrl: mvebu: Add support for MV98DX1135
+  clk: kirkwood: Add support for MV98DX1135
 
-Andreas.
+ .../bindings/clock/mvebu-core-clock.txt       |   1 +
+ .../pinctrl/marvell,kirkwood-pinctrl.txt      |  44 +-
+ drivers/clk/mvebu/kirkwood.c                  |  17 +
+ drivers/pinctrl/mvebu/pinctrl-kirkwood.c      | 576 +++++++++---------
+ 4 files changed, 357 insertions(+), 281 deletions(-)
 
--- 
-Andreas Schwab, SUSE Labs, schwab@suse.de
-GPG Key fingerprint = 0196 BAD8 1CE9 1970 F4BE  1748 E4D4 88E3 0EEA B9D7
-"And now for something completely different."
+--=20
+2.21.0
+
