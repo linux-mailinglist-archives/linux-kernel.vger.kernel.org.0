@@ -2,80 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AB61A48BC7
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 20:19:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5AC0748BCF
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 20:21:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726829AbfFQSTx convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 17 Jun 2019 14:19:53 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:60978 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725764AbfFQSTx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 14:19:53 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id B211630056BF;
-        Mon, 17 Jun 2019 18:19:52 +0000 (UTC)
-Received: from oldenburg2.str.redhat.com (ovpn-116-59.ams2.redhat.com [10.36.116.59])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 38CEA69197;
-        Mon, 17 Jun 2019 18:19:50 +0000 (UTC)
-From:   Florian Weimer <fweimer@redhat.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Joseph Myers <joseph@codesourcery.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Netdev <netdev@vger.kernel.org>,
-        Laura Abbott <labbott@redhat.com>,
-        Paul Burton <pburton@wavecomp.com>,
-        Deepa Dinamani <deepa.kernel@gmail.com>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] uapi: avoid namespace conflict in linux/posix_types.h
-References: <20190319165123.3967889-1-arnd@arndb.de>
-        <alpine.DEB.2.21.1905072249570.19308@digraph.polyomino.org.uk>
-        <87tvd2j9ye.fsf@oldenburg2.str.redhat.com>
-        <CAHk-=wio1e4=WUUwmo-Ph55BEgH_X3oXzBpvPyLQg2TxzfGYuw@mail.gmail.com>
-        <871s05fd8o.fsf@oldenburg2.str.redhat.com>
-        <CAHk-=wg4ijSoPq-w7ct_VuZvgHx+tUv_QX-We-62dEwK+AOf2w@mail.gmail.com>
-        <87sgs8igfj.fsf@oldenburg2.str.redhat.com>
-        <CAHk-=wjCwnk0nfgCcMYqqX6o9bBrutDtut_fzZ-2VwiZR1y4kw@mail.gmail.com>
-        <87k1dkdr9c.fsf@oldenburg2.str.redhat.com>
-        <CAHk-=wgiZNERDN7p-bsCzzYGRjeqTQw7kJxJnXAHVjqqO8PGrg@mail.gmail.com>
-Date:   Mon, 17 Jun 2019 20:19:48 +0200
-In-Reply-To: <CAHk-=wgiZNERDN7p-bsCzzYGRjeqTQw7kJxJnXAHVjqqO8PGrg@mail.gmail.com>
-        (Linus Torvalds's message of "Mon, 17 Jun 2019 11:13:20 -0700")
-Message-ID: <87a7egdqgr.fsf@oldenburg2.str.redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.2 (gnu/linux)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Mon, 17 Jun 2019 18:19:52 +0000 (UTC)
+        id S1727117AbfFQSVd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 14:21:33 -0400
+Received: from mout.kundenserver.de ([212.227.126.187]:33719 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725764AbfFQSVd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Jun 2019 14:21:33 -0400
+Received: from orion.localdomain ([77.2.173.233]) by mrelayeu.kundenserver.de
+ (mreue009 [212.227.15.167]) with ESMTPSA (Nemesis) id
+ 1MOiLv-1hz7Zu2SKd-00QDnE; Mon, 17 Jun 2019 20:21:29 +0200
+From:   "Enrico Weigelt, metux IT consult" <info@metux.net>
+To:     linux-kernel@vger.kernel.org
+Cc:     kernel@pengutronix.de, linus.walleij@linaro.org,
+        bgolaszewski@baylibre.com, linux-gpio@vger.kernel.org
+Subject: [PATCH 1/2] include: linux: siox: more for declaring siox drivers
+Date:   Mon, 17 Jun 2019 20:21:27 +0200
+Message-Id: <1560795688-10496-1-git-send-email-info@metux.net>
+X-Mailer: git-send-email 1.9.1
+X-Provags-ID: V03:K1:7vJ2wmrYmI0W61NHnr71bP7yY7E8eVO9YdLHqHSjhdkXZiNtYsb
+ +8TGp7y/lXo+Wipqdrmr2v5k+SYlBo+t0bEWlrvOsL1AK2CM4uat3gBdMZIl6etlpVzhIKf
+ jNrxVMUfdRsMgRyw5Cy62zrWeidUjpzzkfZfLT8Ncv6tPH2AueDdnc6cMPVHkuHIyq9uBC7
+ E1Rd+MZRBnRtYXLH+Ytlg==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:8DuedVSRE1A=:KWUGVJkw3ZcjpE1Yj1toIN
+ 7170cXlAl2oWnaM6EUXEsaYNJDOXocPc6YWzEI+TrLtCAQMeeZIQh9PJo3JId7sYgKWpt9fYY
+ 1QTyNs0Ex8fGHLw4FSZ390w6XHCeML7umYIEwFkkA3zGN7+CeIWEWejX8Hhs+EEIzen4AP7CX
+ 8WrVOhiPV270wDd12w1oz6e4Acg6kWpFRaEuz7/3SyK+giPsSWONJM4sfCuIH3mFKqjphQHEw
+ QDoAVOSv0pkxUQy4Hp03nUjJZV4IoX2lQMiu9xr7s89AGtNDWX8jDK5YgcjCfSJ/o7snEVINm
+ JP1yGGeRiKdGCaslaC0OdpX1AcUQ4x1130JbFbvha7YWcDWkUtIWcUUFKpVUzKxIACiAju4do
+ OkwhHvnUML+buGtoygw6uedu5/TeO34Huz9WKnAboAtwYgJNeK+mdY5+q00zlVGxAuk4pj5te
+ MKE66RK2ydLBYtM71oAkYuzsJ0sF1S4Rl8y8T+FQ6kneQTq4vomvRLza25LV3EfDJ6zz8BbFJ
+ KB5rh/ENVzpwSw4x7znYv+bF/PtEdXaRW3PMhRKo12Cq7M1SnXSUXAFtqTkgSkbIk/WP2v8L4
+ PCgg6ZeYelF66xdx+/m1ZPaYkAyjET9zJtHwZ3umXlTil/ich13JQZDeeZ6f9QbYCH2VAghB8
+ WVa/cmREWy7VTvUcB1354/PS7KWhoI26Q0oKSnupyN3+/c7MmnBSMpHVvVV4CZikg8to9tfLo
+ Pzf2MLTHb70LZoQByL48oZ95uQBOvOkZ7vA/Pg==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Linus Torvalds:
+From: Enrico Weigelt <info@metux.net>
 
-> On Mon, Jun 17, 2019 at 11:03 AM Florian Weimer <fweimer@redhat.com> wrote:
->>
->> There's also __kernel_fd_set in <linux/posix_types.h>.  I may have
->> lumped this up with <asm/posix_types.h>, but it has the same problem.
->
-> Hmm.
->
-> That one we might be able to just fix by renaming "fds_bits" to "__fds_bits".
->
-> Unlike the "val[]" thing, I don't think anybody is supposed to access
-> those fields directly.
+Add more helper macros for trivial driver init cases, similar to the
+already existing module_platform_driver or module_i2c_driver().
 
-Well, glibc already calls it __val …
+This helps to reduce driver init boilerplate.
 
-> I think fd_set and friends are now supposed to be in <sys/select.h>
-> anyway, and the "it was in <sys/types.h>" is all legacy.
+Signed-off-by: Enrico Weigelt <info@metux.net>
+---
+ include/linux/siox.h | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-Do you suggest to create a <linux/select.h> header to mirror this?
+diff --git a/include/linux/siox.h b/include/linux/siox.h
+index d79624e..d53b2b2 100644
+--- a/include/linux/siox.h
++++ b/include/linux/siox.h
+@@ -75,3 +75,12 @@ static inline void siox_driver_unregister(struct siox_driver *sdriver)
+ {
+ 	return driver_unregister(&sdriver->driver);
+ }
++
++/* module_siox_driver() - Helper macro for drivers that don't do
++ * anything special in module init/exit.  This eliminates a lot of
++ * boilerplate.  Each module may only use this macro once, and
++ * calling it replaces module_init() and module_exit()
++ */
++#define module_siox_driver(__siox_driver) \
++	module_driver(__siox_driver, siox_driver_register, \
++			siox_driver_unregister)
+-- 
+1.9.1
 
-Thanks,
-Florian
