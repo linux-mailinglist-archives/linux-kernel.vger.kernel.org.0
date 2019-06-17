@@ -2,97 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 51ACC47E02
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 11:12:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 420A347DFD
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 11:12:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728070AbfFQJMN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 05:12:13 -0400
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:46014 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726753AbfFQJMM (ORCPT
+        id S1728005AbfFQJL7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 05:11:59 -0400
+Received: from casper.infradead.org ([85.118.1.10]:54208 "EHLO
+        casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726753AbfFQJL6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 05:12:12 -0400
-Received: by mail-ot1-f66.google.com with SMTP id x21so8543789otq.12
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2019 02:12:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=XkQKkEqj0Dk+yMwwMUT9kq+YcOABBfUMfQA+OLQkIhs=;
-        b=A97y2r8a4SElnnqWxEgYt9hqzUlV/cOq2E2WwDSEdCBsMl4m9cFtY2fwwCpdvcakGW
-         awt+SV7bLv8nxXRVmEnrNMG5nFwayb31HFNIpLayWLPTVlHkQNzKb7SuHGb/q/kFN1iG
-         KVV5NavH8nIx9y83mXraGlVjJ8aelPhg8mONarGKKwUmLvP7zgFt9KexSKptxXiLGBtB
-         AghmJ9J5muwb89JeCF2VbT9c8bxFbPOzohfyudUTv0h+bt9tmpFijVpS7R1W1toW/CwL
-         o9HaBfx9fAnEFi8vjuByIGu5qiqhE5bzRO7ym7pfTmOyYah4LXxvPFkfhV2bB4XvMmBB
-         qZjw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=XkQKkEqj0Dk+yMwwMUT9kq+YcOABBfUMfQA+OLQkIhs=;
-        b=Zv17fUOqDrR5uXhzs1TPTcIAeuc4glU91hCBkm94dS70PmgChUkz60VvuLMTqZhpJS
-         +XprgPQkPfszf8lmenkzYwIjGJf7Hy1+SRp9GGo9JrNZWj8cXD4aUmVUdnh69Roz4qtd
-         8U8MRVyTk1NgzSc01EhKuPwpDfN9T3girYQZPTudILsyNC1hzsxWjvzsS5mknLGeuhlL
-         B1dwmWH9xZsCLTTg35iQKyg+mA4nGn6D5sBRwCDo4gbPvf1uh9uuwGVwRC62ZiVyw0HO
-         CeWiju+B997MWnyLIBGneD/03rbsMrCq3o1Xeosam3hVRDCvsFOaxwVQ4N03GCd93aen
-         2g3Q==
-X-Gm-Message-State: APjAAAXTtiimRw6sN647JorYjGNJsvsmx6oozGmplZgzj+Qc8eQ4fID4
-        l3Jj2gUjSISUGrViQGgu9WRVGA==
-X-Google-Smtp-Source: APXvYqwsv0A5/ztfsCZbU16h7iBULFGTI4PThp2tCsCGD02xzLu83QPfwHz3CgMUuRTE/EiYGmWv6w==
-X-Received: by 2002:a9d:4b88:: with SMTP id k8mr61017358otf.285.1560762731712;
-        Mon, 17 Jun 2019 02:12:11 -0700 (PDT)
-Received: from localhost.localdomain (li964-79.members.linode.com. [45.33.10.79])
-        by smtp.gmail.com with ESMTPSA id l145sm4418324oib.6.2019.06.17.02.12.06
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 17 Jun 2019 02:12:11 -0700 (PDT)
-From:   Leo Yan <leo.yan@linaro.org>
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        bpf@vger.kernel.org
-Cc:     Leo Yan <leo.yan@linaro.org>
-Subject: [PATCH 2/2] perf trace: Handle NULL pointer dereference in trace__syscall_info()
-Date:   Mon, 17 Jun 2019 17:11:40 +0800
-Message-Id: <20190617091140.24372-2-leo.yan@linaro.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190617091140.24372-1-leo.yan@linaro.org>
-References: <20190617091140.24372-1-leo.yan@linaro.org>
+        Mon, 17 Jun 2019 05:11:58 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
+        MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:From:Date:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=WKDHPuqmk7aGpvs0dQcDhq3t2LeY5Da3Poe4nEoqjOs=; b=BTvmnwI/e5DfYlzQy5najumy0A
+        R+0T9W0Onos9CA3zxDpp8p7TbkUpYAXa7a8AIHv9rhltqLLRr3ckaORXF0ZjwMb19HrAmpZcMTEcF
+        qsGUyjYro1Z3rfocqhyvNcKgjF8sOEeybxxvn9HR4pSfGjiGjuN+zD1HUEgyZsDzKIuFBRwFifRIK
+        QanmVoQx6D4F76RwDF75i6JQ6t1yIDb3T+lKTKycddAD4P5LntUmPn9zYNvqtNvAurSb3DuTJpSvm
+        vzh/NPMFsnjtr+32G6icNMfXGqmJFf1Hfy2Re80hnI9G2xhZ5d9hPcE79J+/lzNIhNGU6X61IDEYj
+        DcKW/vOw==;
+Received: from 179.186.105.91.dynamic.adsl.gvt.net.br ([179.186.105.91] helo=coco.lan)
+        by casper.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1hcng9-0006tV-Il; Mon, 17 Jun 2019 09:11:54 +0000
+Date:   Mon, 17 Jun 2019 06:11:46 -0300
+From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+To:     Markus Heiser <markus.heiser@darmarit.de>
+Cc:     Jonathan Corbet <corbet@lwn.net>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mauro Carvalho Chehab <mchehab@s-opensource.com>,
+        Mauro Carvalho Chehab <mchehab@infradead.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 12/14] doc-rst: add ABI documentation to the admin-guide
+ book
+Message-ID: <20190617061146.06975213@coco.lan>
+In-Reply-To: <327067f6-2609-41e6-c987-e37620e7154e@darmarit.de>
+References: <cover.1560477540.git.mchehab+samsung@kernel.org>
+        <9da2a7f6ff57d9d53dcbb964eb310f7956522870.1560477540.git.mchehab+samsung@kernel.org>
+        <87o930uvur.fsf@intel.com>
+        <2955920a-3d6a-8e41-e8fe-b7db3cefed8b@darmarit.de>
+        <20190614081546.64101411@lwn.net>
+        <327067f6-2609-41e6-c987-e37620e7154e@darmarit.de>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-trace__init_bpf_map_syscall_args() invokes trace__syscall_info() to
-retrieve system calls information, it always passes NULL for 'evsel'
-argument; when id is an invalid value then the logging will try to
-output event name, this triggers NULL pointer dereference.
+Em Sun, 16 Jun 2019 18:04:01 +0200
+Markus Heiser <markus.heiser@darmarit.de> escreveu:
 
-This patch directly uses string "unknown" for event name when 'evsel'
-is NULL pointer.
+> Am 14.06.19 um 16:15 schrieb Jonathan Corbet:
+> > On Fri, 14 Jun 2019 16:10:31 +0200
+> > Markus Heiser <markus.heiser@darmarit.de> wrote:
+> >   
+> >> I agree with Jani. No matter how the decision ends, since I can't help here, I'd
+> >> rather not show up in the copyright.  
+> > 
+> > Is there something specific you are asking us to do here?
+> >   
+> 
+> 
+> I have lost the overview, but there was a patch Mauro added a
+> kernel_abi.py.  There was my name (Markus Heiser) listed with a
+> copyright notation.
+> 
+> I guess Mauro picked up some old RFC or an other old patch of
+> mine from 2016 and made some C&P .. whatever .. ATM I do not have
+> time to give any support on parsing ABI and I'am not interested
+> in holding copyrights on a C&P of a old source  ;)
 
-Signed-off-by: Leo Yan <leo.yan@linaro.org>
----
- tools/perf/builtin-trace.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Well, the code was basically written by you :-)
 
-diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
-index 5cd74651db4c..49dfb2fd393b 100644
---- a/tools/perf/builtin-trace.c
-+++ b/tools/perf/builtin-trace.c
-@@ -1764,7 +1764,7 @@ static struct syscall *trace__syscall_info(struct trace *trace,
- 		static u64 n;
+It was written to be a script capable of running a generic
+script. On that time, my contribution to it was basically
+to hardcode it to run "get_abi.pl".
+
+This came from an old branch where the last change was back in 2017. 
+It was resurrected due to a discussion at KS ML.
+
+There, the discussion was related to what's left to be converted
+to ReST.
+
+While I can't simply remove your copyright, would you be happy
+with something like that?
+
+
+Thanks,
+Mauro
+
+diff --git a/Documentation/sphinx/kernel_abi.py b/Documentation/sphinx/kernel_abi.py
+index 2d5d582207f7..ef91b1e1ff4b 100644
+--- a/Documentation/sphinx/kernel_abi.py
++++ b/Documentation/sphinx/kernel_abi.py
+@@ -7,7 +7,8 @@ u"""
+     Implementation of the ``kernel-abi`` reST-directive.
  
- 		pr_debug("Invalid syscall %d id, skipping (%s, %" PRIu64 ")\n",
--			 id, perf_evsel__name(evsel), ++n);
-+			 id, evsel ? perf_evsel__name(evsel) : "unknown", ++n);
- 		return NULL;
- 	}
+     :copyright:  Copyright (C) 2016  Markus Heiser
+-    :copyright:  Copyright (C) 2016  Mauro Carvalho Chehab
++    :copyright:  Copyright (C) 2016-2019  Mauro Carvalho Chehab
++    :maintained-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+     :license:    GPL Version 2, June 1991 see Linux/COPYING for details.
  
--- 
-2.17.1
+     The ``kernel-abi`` (:py:class:`KernelCmd`) directive calls the
+
 
