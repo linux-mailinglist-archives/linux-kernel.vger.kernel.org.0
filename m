@@ -2,70 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E94647A74
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 09:11:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3489247A69
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 09:06:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726476AbfFQHL3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 03:11:29 -0400
-Received: from lilium.sigma-star.at ([109.75.188.150]:34358 "EHLO
-        lilium.sigma-star.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725826AbfFQHLR (ORCPT
+        id S1726333AbfFQHDq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 03:03:46 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:34437 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725827AbfFQHDq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 03:11:17 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by lilium.sigma-star.at (Postfix) with ESMTP id AC3051802BB91;
-        Mon, 17 Jun 2019 09:03:38 +0200 (CEST)
-Subject: Re: [PATCH mtd-utils] ubi-tests: ubi_mkvol_request: Fully initialize
- 'struct ubi_mkvol_request req'
-To:     chengzhihao1@huawei.com, richard@nod.at,
-        boris.brezillon@bootlin.com, david@sigma-star.at,
-        artem.bityutskiy@linux.intel.com, yi.zhang@huawei.com
-Cc:     linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <1560514478-54276-1-git-send-email-chengzhihao1@huawei.com>
-From:   David Oberhollenzer <david.oberhollenzer@sigma-star.at>
-Openpgp: preference=signencrypt
-Autocrypt: addr=david.oberhollenzer@sigma-star.at; prefer-encrypt=mutual;
- keydata=
- mQENBFZyf0YBCADHyKhABhxthCC9n48pvsuk5p3IEdYXMs8Apenh1N/Z4cViAz/d/nSCZ+FG
- FX/PSubEzq8AilZLejchAltaORCvA1Y6FgTlpcdJ6gHDfStDbJL/vk5N8aL7YNF7VfjTRntB
- tKbhKcrG05nbdNjIioAm04pt9rx5mV5KMbf22/FdZpOSSsC6/N7b/cFH9+fx8kwi4pNFuJwr
- BkWRuQ7rEtCoSpd22t+Vh9qA7kymW9gWY405258jnN65jBO7ElqU2CCuGRPg6uryAHV3RVCB
- 9j9AE3HLacQReFtt5ylyydSQbaK4K9asnd7U2/C11vIuuciXCppX4bPap/pMnGpzw0UNABEB
- AAG0N0RhdmlkIE9iZXJob2xsZW56ZXIgPGRhdmlkLm9iZXJob2xsZW56ZXJAc2lnbWEtc3Rh
- ci5hdD6JATcEEwEIACEFAlZyf0YCGwMFCwkIBwIGFQgJCgsCBBYCAwECHgECF4AACgkQvOXc
- PHQaAtFuEAgArXOhaoaVvCMVCa5N25Q/+Q6K1wrVpPmkH89yhQqCmfM6f+2VM5MGFDPfaSJ3
- 5fBDH0iwBQwlXIb7NSXWtzdXX9rMvJkJqv45TgeKtJApf/sRhmcN+clrwzP8oZQbxkP1YWzo
- Vwo4lOb3Kv7aY9yeCjqNbdJJ57NpvYOUrzrCpGkrDPBBQOvKF3wbq3oU/o3dT23NDeQ20jXg
- quJf/PCw6WCzRxqg58wH02MdMDQe8vByzVig2bM2e7DErtt+hPK/Dmdsqgns+Z+SrQcOvRa3
- GMAHAuHB0u2LhYO6NyaNCgzdgutorilYcq7FEKr8XqwOnfVmZdCW3qGKmLbn6qMEdLkBDQRW
- cn9GAQgAvugF8cFjv2Zs4BBb44SnxGawBySC1bMRas/MjA9EMHUAx/StcecQmxnl6BzEyGpr
- +TRnXIzcb5xI8SxitBDU5MLvwsHgNvpYp9fscd4kWP7oMir9ta3Q8SvT4OLbO4FZBGaURzGP
- ak8JmjMMtOoOBh4meOjz6GrJe9UIGxT94aB01w7YohfBANzK8xyk4ykKC5Op4XgaaMKOEQUa
- h7wajcojYSlvgOiXqEisMHlRDAW6sXL2sEM7TIpvYhy9txMLllpkYb0Pu1BvUpY/unsybWKA
- FyiTmeiY+nEveUvqX6Ef7BWdClBeCk2UaRvtcoLd22VxMlKTniHQcNMOXlRRawARAQABiQEf
- BBgBCAAJBQJWcn9GAhsMAAoJELzl3Dx0GgLRPtcH/jD6rn2+VIKgrHdt3ao3Abpu2fqYfwbI
- yPAtpXOddDptVq+0A/2arXT1Y8+jNSZpbAg8K+bLaEAcSUEjviKMpfI7ppTUBuGKrpgc5xsi
- UpKkJCb7oB1ZraIBNBPtPPVUhbwLie4uW/LVt+8rBKz3W9KEDOsT0ZCG/pW8Ld+EpDR9l0fm
- qoVHaw8PhLAtez+B7HS7Hv7iJPDtX85kFYpud8kIPENXVn9EjZudyMWgZb2LhYlcavNcszgR
- 7In6ift5SNySojCOfAV0iKZb8QUXWktLleY8kQ8jltOsSRTuO4PDfzvtCQDixUw4tQ7WLwDT
- qyUpot0oG03vtSG4LIRCdxI=
-Organization: sigma star gmbh
-Message-ID: <9da3996f-7e94-a3a0-374f-261691d5045e@sigma-star.at>
-Date:   Mon, 17 Jun 2019 09:03:31 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        Mon, 17 Jun 2019 03:03:46 -0400
+Received: by mail-wr1-f68.google.com with SMTP id k11so8642968wrl.1
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2019 00:03:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=4+pITYSfaf6rsitQnMBBcSbRxuZE47ZzaATw3AkXEIY=;
+        b=GlJiJVygE2SJu2dlv813B1LT1RBKsB8OADALaafZKHFOhQ6+Veg/uRGRyHJ9lHmpoQ
+         y2JLsWtApQC7szDYnTKUWgYBQknS8vLCK0cl8EgERMGZ9zLX/OugYJ4McPN/eGHWAyHR
+         L2bLqp/FOdRjxFs0rgdKIKWFBxOjOAd9qRnR40dMDOpSH/V4oYJmqiUwimyX62BBsJ91
+         HLTyEfJb7c4L7wl+TgA/oEMGHFHnGjGk19dEK2ercGoMHw6rJ25h32PTHHW6HGF+FuiW
+         k2M/vsYAcUeBRxC84OvLHu1q3A2Vpv+fHsMVrc09tMivqGC0PoIRMU39XYBCoqGfaU2Z
+         FUEQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=4+pITYSfaf6rsitQnMBBcSbRxuZE47ZzaATw3AkXEIY=;
+        b=OTWjJyfPu8fSzIYAB6OtcyygQ6LUWVmVnPDQDZnUp7mMIvM8DQGjMwa632nbsrk6VJ
+         bmSlYE3yc+PMDop0RCwR2DsD0w/hLs653BkTZeuEgB01PwW0SIo4RueBNX67eprxoq5c
+         AUMAzOXpq24O04z3im+61VsK50Y/Iqyayg/WQrbCvtevafYXpd4tlchzT0QwguC1sZBI
+         xjfOwYEguBijiu3mH/pwQ/e9XnG1lGwf7O4APFMn7iA5vh8Vy6sH6FgDTJu5MI2Urcfc
+         0epLMvmK5DJ5NTfjSyZBenXzGL3C/JwAetgYc2D+9YWVWLdEKY/sWHcIhgTW8IcgeAjR
+         OXIA==
+X-Gm-Message-State: APjAAAUKffHnfZxfW9m+i15Na6pEDJ2w1hnjEZtYjVpGBGqH1TpweF4D
+        eCaWpsH95yIZGVd2zhfNE3qCaiy4q/A=
+X-Google-Smtp-Source: APXvYqzNat4IzfDWlts1T6Zm9jqhh/J1uCafDL7GG5Mn60bm6L8LeVgA4j3nnEkpv4fL1f34nwj4bA==
+X-Received: by 2002:a5d:5302:: with SMTP id e2mr59875456wrv.347.1560755023967;
+        Mon, 17 Jun 2019 00:03:43 -0700 (PDT)
+Received: from dell ([2.27.35.243])
+        by smtp.gmail.com with ESMTPSA id u23sm8108217wmj.33.2019.06.17.00.03.43
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 17 Jun 2019 00:03:43 -0700 (PDT)
+Date:   Mon, 17 Jun 2019 08:03:41 +0100
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Keerthy <j-keerthy@ti.com>
+Cc:     broonie@kernel.org, linux-kernel@vger.kernel.org,
+        linux-omap@vger.kernel.org, t-kristo@ti.com
+Subject: [GIT PULL] Immutable branch between MFD and Regulator due for the
+ v5.3 merge window
+Message-ID: <20190617070341.GC16364@dell>
+References: <20190612144620.28331-1-j-keerthy@ti.com>
 MIME-Version: 1.0
-In-Reply-To: <1560514478-54276-1-git-send-email-chengzhihao1@huawei.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190612144620.28331-1-j-keerthy@ti.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Applied to mtd-utils.git master.
+Enjoy!
 
-Thanks,
+The following changes since commit a188339ca5a396acc588e5851ed7e19f66b0ebd9:
 
-David
+  Linux 5.2-rc1 (2019-05-19 15:47:09 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git ib-mfd-regulator-v5.3
+
+for you to fetch changes up to 7ee63bd74750a2c6fac31805ca0ac67f2522bfa5:
+
+  regulator: lp87565: Add 4-phase lp87561 regulator support (2019-06-17 08:00:24 +0100)
+
+----------------------------------------------------------------
+Immutable branch between MFD and Regulator due for the v5.3 merge window
+
+----------------------------------------------------------------
+Keerthy (3):
+      dt-bindings: mfd: lp87565: Add LP87561 configuration
+      mfd: lp87565: Add support for 4-phase LP87561 combination
+      regulator: lp87565: Add 4-phase lp87561 regulator support
+
+ Documentation/devicetree/bindings/mfd/lp87565.txt | 36 +++++++++++++++++++++++
+ drivers/mfd/lp87565.c                             |  4 +++
+ drivers/regulator/lp87565-regulator.c             | 17 ++++++++++-
+ include/linux/mfd/lp87565.h                       |  2 ++
+ 4 files changed, 58 insertions(+), 1 deletion(-)
+
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
