@@ -2,261 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4CB8B4881D
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 18:00:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0C52A48821
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 18:00:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728557AbfFQP6m (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 11:58:42 -0400
-Received: from vps0.lunn.ch ([185.16.172.187]:33534 "EHLO vps0.lunn.ch"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726047AbfFQP6l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 11:58:41 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=IJWr5dvuEA2F3trxOKqiOmWoXJ+15Kb0YLvHJBxpplE=; b=LvOiZnTpFrjs6uHKxqq3mdymv7
-        203Y30f019Kur5cTvYiDKsFifpqIu2TOMP5+ruyvIh+iZOaKApXym45HQ1MYEtzOQ4JJ114RuJy97
-        2bw3K23vS/LNdJ90HcxCsK+H9sihBk6mWKBO7/XTqMPv5Q03tAYpArEc2NY6mgbfyFn8=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.89)
-        (envelope-from <andrew@lunn.ch>)
-        id 1hcu1i-0001Kh-CK; Mon, 17 Jun 2019 17:58:34 +0200
-Date:   Mon, 17 Jun 2019 17:58:34 +0200
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Yash Shah <yash.shah@sifive.com>
-Cc:     davem@davemloft.net, devicetree@vger.kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-riscv@lists.infradead.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, nicolas.ferre@microchip.com,
-        palmer@sifive.com, aou@eecs.berkeley.edu, paul.walmsley@sifive.com,
-        ynezz@true.cz, sachin.ghadi@sifive.com
-Subject: Re: [PATCH v2 2/2] macb: Add support for SiFive FU540-C000
-Message-ID: <20190617155834.GK25211@lunn.ch>
-References: <1560745167-9866-1-git-send-email-yash.shah@sifive.com>
- <1560745167-9866-3-git-send-email-yash.shah@sifive.com>
+        id S1728540AbfFQP7q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 11:59:46 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:35148 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726047AbfFQP7q (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Jun 2019 11:59:46 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=38YySIuBWDGCH+kJBVm7kEsuVhxcLDts6v3f1Sg1uSE=; b=LiH0vbSFLGaZrExrZ6z3On83x
+        DSETELwD4Fl/808GzekFxZWg7zoheZNzHN/qy0w/8462gyXQ85IaXnKAfJn5iiHdUpyA+a/BwXnwf
+        wJaAGhRIQmD9v3zU6qbQyWrpNuAXZzwD9qX6PztjHO6y79mKvSb/nJdKfSlLi0fQTvq+buSVgkgfU
+        9gG+NhMn58Lk/oDwI0Aprm2NKkZ39JfycL9ZkhBRK8Xz7yo/QHOF/NoTfkxpkQPVQH/TsgJCtYDGU
+        RYDYOchSP7VNLklSlvbtqMZ2oOcC1I6+WtQh8YPjzuSWZrEdV4Fk/YpzoKitPvoJ9qReZY5YNf0YZ
+        U9Ah/YdJw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1hcu2g-0000hZ-Bk; Mon, 17 Jun 2019 15:59:38 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 92229201F4619; Mon, 17 Jun 2019 17:59:31 +0200 (CEST)
+Date:   Mon, 17 Jun 2019 17:59:31 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Nicholas Piggin <npiggin@gmail.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>
+Subject: Re: [PATCH] kernel/isolation: Asset that a housekeeping CPU comes up
+ at boot time
+Message-ID: <20190617155931.GK3436@hirez.programming.kicks-ass.net>
+References: <20190601113919.2678-1-npiggin@gmail.com>
+ <1560151344.y4aukciain.astroid@bobo.none>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1560745167-9866-3-git-send-email-yash.shah@sifive.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <1560151344.y4aukciain.astroid@bobo.none>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 17, 2019 at 09:49:27AM +0530, Yash Shah wrote:
-> The management IP block is tightly coupled with the Cadence MACB IP
-> block on the FU540, and manages many of the boundary signals from the
-> MACB IP. This patch only controls the tx_clk input signal to the MACB
-> IP. Future patches may add support for monitoring or controlling other
-> IP boundary signals.
+On Mon, Jun 10, 2019 at 05:24:32PM +1000, Nicholas Piggin wrote:
+> Nicholas Piggin's on June 1, 2019 9:39 pm:
+> > With the change to allow the boot CPU0 to be isolated, it is possible
+> > to specify command line options that result in no housekeeping CPU
+> > online at boot.
+> > 
+> > An 8 CPU system booted with "nohz_full=0-6 maxcpus=4", for example.
+> > 
+> > It is not easily possible at housekeeping init time to know all the
+> > various SMP options that will result in an invalid configuration, so
+> > this patch adds a sanity check after SMP init, to ensure that a
+> > housekeeping CPU has been onlined.
+> > 
+> > The panic is undesirable, but it's better than the alternative of an
+> > obscure non deterministic failure. The panic will reliably happen
+> > when advanced parameters are used incorrectly.
 > 
-> Signed-off-by: Yash Shah <yash.shah@sifive.com>
-> ---
->  drivers/net/ethernet/cadence/Kconfig     |   6 ++
->  drivers/net/ethernet/cadence/macb_main.c | 129 +++++++++++++++++++++++++++++++
->  2 files changed, 135 insertions(+)
+> Ping on this one? This should resolve Frederic's remaining objection
+> to the series (at least until he solves it more generally).
 > 
-> diff --git a/drivers/net/ethernet/cadence/Kconfig b/drivers/net/ethernet/cadence/Kconfig
-> index b998401..d478fae 100644
-> --- a/drivers/net/ethernet/cadence/Kconfig
-> +++ b/drivers/net/ethernet/cadence/Kconfig
-> @@ -48,4 +48,10 @@ config MACB_PCI
->  	  To compile this driver as a module, choose M here: the module
->  	  will be called macb_pci.
->  
-> +config MACB_SIFIVE_FU540
-> +	bool "Cadence MACB/GEM support for SiFive FU540 SoC"
-> +	depends on MACB && GPIO_SIFIVE
-> +	help
-> +	  Enable the Cadence MACB/GEM support for SiFive FU540 SoC.
-> +
->  endif # NET_VENDOR_CADENCE
-> diff --git a/drivers/net/ethernet/cadence/macb_main.c b/drivers/net/ethernet/cadence/macb_main.c
-> index c049410..275b5e8 100644
-> --- a/drivers/net/ethernet/cadence/macb_main.c
-> +++ b/drivers/net/ethernet/cadence/macb_main.c
-> @@ -10,6 +10,7 @@
->  
->  #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
->  #include <linux/clk.h>
-> +#include <linux/clk-provider.h>
->  #include <linux/crc32.h>
->  #include <linux/module.h>
->  #include <linux/moduleparam.h>
-> @@ -40,6 +41,15 @@
->  #include <linux/pm_runtime.h>
->  #include "macb.h"
->  
-> +/* This structure is only used for MACB on SiFive FU540 devices */
-> +struct sifive_fu540_macb_mgmt {
-> +	void __iomem *reg;
-> +	unsigned long rate;
-> +	struct clk_hw hw;
-> +};
-> +
-> +static struct sifive_fu540_macb_mgmt *mgmt;
-> +
->  #define MACB_RX_BUFFER_SIZE	128
->  #define RX_BUFFER_MULTIPLE	64  /* bytes */
->  
-> @@ -3903,6 +3913,116 @@ static int at91ether_init(struct platform_device *pdev)
->  	return 0;
->  }
->  
-> +static unsigned long fu540_macb_tx_recalc_rate(struct clk_hw *hw,
-> +					       unsigned long parent_rate)
-> +{
-> +	return mgmt->rate;
-> +}
-> +
-> +static long fu540_macb_tx_round_rate(struct clk_hw *hw, unsigned long rate,
-> +				     unsigned long *parent_rate)
-> +{
-> +	if (WARN_ON(rate < 2500000))
-> +		return 2500000;
-> +	else if (rate == 2500000)
-> +		return 2500000;
-> +	else if (WARN_ON(rate < 13750000))
-> +		return 2500000;
-> +	else if (WARN_ON(rate < 25000000))
-> +		return 25000000;
-> +	else if (rate == 25000000)
-> +		return 25000000;
-> +	else if (WARN_ON(rate < 75000000))
-> +		return 25000000;
-> +	else if (WARN_ON(rate < 125000000))
-> +		return 125000000;
-> +	else if (rate == 125000000)
-> +		return 125000000;
-> +
-> +	WARN_ON(rate > 125000000);
-> +
-> +	return 125000000;
-> +}
-> +
-> +static int fu540_macb_tx_set_rate(struct clk_hw *hw, unsigned long rate,
-> +				  unsigned long parent_rate)
-> +{
-> +	rate = fu540_macb_tx_round_rate(hw, rate, &parent_rate);
-> +	if (rate != 125000000)
-> +		iowrite32(1, mgmt->reg);
-> +	else
-> +		iowrite32(0, mgmt->reg);
-> +	mgmt->rate = rate;
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct clk_ops fu540_c000_ops = {
-> +	.recalc_rate = fu540_macb_tx_recalc_rate,
-> +	.round_rate = fu540_macb_tx_round_rate,
-> +	.set_rate = fu540_macb_tx_set_rate,
-> +};
-> +
-> +static int fu540_c000_clk_init(struct platform_device *pdev, struct clk **pclk,
-> +			       struct clk **hclk, struct clk **tx_clk,
-> +			       struct clk **rx_clk, struct clk **tsu_clk)
-> +{
-> +	struct clk_init_data init;
-> +	int err = 0;
-> +
-> +	err = macb_clk_init(pdev, pclk, hclk, tx_clk, rx_clk, tsu_clk);
-> +	if (err)
-> +		return err;
-> +
-> +	mgmt = devm_kzalloc(&pdev->dev, sizeof(*mgmt), GFP_KERNEL);
-> +	if (!mgmt)
-> +		return -ENOMEM;
-> +
-> +	init.name = "sifive-gemgxl-mgmt";
-> +	init.ops = &fu540_c000_ops;
-> +	init.flags = 0;
-> +	init.num_parents = 0;
-> +
-> +	mgmt->rate = 0;
-> +	mgmt->hw.init = &init;
-> +
-> +	*tx_clk = clk_register(NULL, &mgmt->hw);
-> +	if (IS_ERR(*tx_clk))
-> +		return PTR_ERR(*tx_clk);
-> +
-> +	err = clk_prepare_enable(*tx_clk);
-> +	if (err)
-> +		dev_err(&pdev->dev, "failed to enable tx_clk (%u)\n", err);
-> +	else
-> +		dev_info(&pdev->dev, "Registered clk switch '%s'\n", init.name);
-> +
-> +	return 0;
-> +}
-> +
-> +static int fu540_c000_init(struct platform_device *pdev)
-> +{
-> +	struct resource *res;
-> +
-> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
-> +	if (!res)
-> +		return -ENODEV;
-> +
-> +	mgmt->reg = ioremap(res->start, resource_size(res));
-> +	if (!mgmt->reg)
-> +		return -ENOMEM;
-> +
-> +	return macb_init(pdev);
-> +}
-> +
-> +static const struct macb_config fu540_c000_config = {
-> +	.caps = MACB_CAPS_GIGABIT_MODE_AVAILABLE | MACB_CAPS_JUMBO |
-> +		MACB_CAPS_GEM_HAS_PTP,
-> +	.dma_burst_length = 16,
-> +	.clk_init = fu540_c000_clk_init,
-> +	.init = fu540_c000_init,
-> +	.jumbo_max_len = 10240,
-> +};
-> +
->  static const struct macb_config at91sam9260_config = {
->  	.caps = MACB_CAPS_USRIO_HAS_CLKEN | MACB_CAPS_USRIO_DEFAULT_IS_MII_GMII,
->  	.clk_init = macb_clk_init,
-> @@ -3992,6 +4112,9 @@ static int at91ether_init(struct platform_device *pdev)
->  	{ .compatible = "cdns,emac", .data = &emac_config },
->  	{ .compatible = "cdns,zynqmp-gem", .data = &zynqmp_config},
->  	{ .compatible = "cdns,zynq-gem", .data = &zynq_config },
-> +#ifdef CONFIG_MACB_SIFIVE_FU540
-> +	{ .compatible = "sifive,fu540-macb", .data = &fu540_c000_config },
-> +#endif
+> As the series has already been merged, should we get this upstream
+> before release?
 
-This #ifdef should not be needed.
+I was hoping for feedback from Frederic, lacking that, I've queued it
+now.
 
->  	{ /* sentinel */ }
->  };
->  MODULE_DEVICE_TABLE(of, macb_dt_ids);
-> @@ -4199,6 +4322,9 @@ static int macb_probe(struct platform_device *pdev)
->  
->  err_disable_clocks:
->  	clk_disable_unprepare(tx_clk);
-> +#ifdef CONFIG_MACB_SIFIVE_FU540
-> +	clk_unregister(tx_clk);
-> +#endif
-
-So long as tx_clk is NULL, you can call clk_unregister(). So please
-remove the #ifdef.
-
-
->  	clk_disable_unprepare(hclk);
->  	clk_disable_unprepare(pclk);
->  	clk_disable_unprepare(rx_clk);
-> @@ -4233,6 +4359,9 @@ static int macb_remove(struct platform_device *pdev)
->  		pm_runtime_dont_use_autosuspend(&pdev->dev);
->  		if (!pm_runtime_suspended(&pdev->dev)) {
->  			clk_disable_unprepare(bp->tx_clk);
-> +#ifdef CONFIG_MACB_SIFIVE_FU540
-> +			clk_unregister(bp->tx_clk);
-> +#endif
-
-Same here.
-
-In general try to avoid #ifdef in C code.
-
-   Andrew
