@@ -2,78 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9BA444826D
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 14:30:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5812848278
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 14:32:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727906AbfFQM3j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 08:29:39 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:39612 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725971AbfFQM3j (ORCPT
+        id S1727599AbfFQMbo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 08:31:44 -0400
+Received: from mout.kundenserver.de ([212.227.126.130]:53495 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726121AbfFQMbo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 08:29:39 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=Si8xIwmDMrAT8HXNiwXvhIHU0hreznP4YCiiLf9PZho=; b=m0dfZJr2CkMDRBJCgmiqfO17q
-        dK1d5TQRmkt9QT/kcvPkrhHKHmJHQgFPTp7sYviIo8guDXGQCjgbN9SyPAR3SwwKTPzmpWsNzl1kO
-        cXQPKY6b90IdQCOlG8kEHuyR3guRkbWnwQE+ADaYTVPG5ToBmaLIn2WtRP2T/Hv5KNSLU=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=finisterre.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1hcqlS-0001at-LD; Mon, 17 Jun 2019 12:29:34 +0000
-Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
-        id 33A7B440046; Mon, 17 Jun 2019 13:29:34 +0100 (BST)
-Date:   Mon, 17 Jun 2019 13:29:34 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>
-Subject: Re: [PATCH v1] driver core: regmap: Switch to bitmap_zalloc()
-Message-ID: <20190617122934.GQ5316@sirena.org.uk>
-References: <20190617115403.33241-1-andriy.shevchenko@linux.intel.com>
+        Mon, 17 Jun 2019 08:31:44 -0400
+Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
+ (mreue011 [212.227.15.129]) with ESMTPA (Nemesis) id
+ 1MhlbM-1iGKPA0jWS-00djt7; Mon, 17 Jun 2019 14:31:20 +0200
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        akpm@linux-foundation.org
+Cc:     Josh Poimboeuf <jpoimboe@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        stable@vger.kernel.org
+Subject: [PATCH] ubsan: mark ubsan_type_mismatch_common inline
+Date:   Mon, 17 Jun 2019 14:31:09 +0200
+Message-Id: <20190617123109.667090-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.20.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="2VmY8g3XFtK+hx8d"
-Content-Disposition: inline
-In-Reply-To: <20190617115403.33241-1-andriy.shevchenko@linux.intel.com>
-X-Cookie: Editing is a rewording activity.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:RdrPG7YYozPOO4moFcrupalm1fFjUIeD1Q8rHF6IwUGNo79JcXH
+ miKAhPNzei6GuU9U1bsgDZ8kG1jVk32osA4MHetoIE5ZsIYqMyTgCvnG+vMgAlYviqXB8aN
+ a9wfzrI6f8gpze1TZWcSRXEgaozaMk4T3JwjusG3CMr7ZP2P8xxhrSDPn+Hjdzc0nXiljhb
+ gAQj1zphITg1lfCVb1zlw==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:OtOLG0VadSQ=:XsrhptSTyA02Et1uaEtCuI
+ BLtI2n1fQrB7hHBYUluxjNkET7dy8P1RWzr6u8ltKIroe8fL3tMp5BOhzyD6oWF5sC62a1IKp
+ NVnjSaTn/KQN1TCXTF04NJBMGUzH2E1KS9tapWvGMgEsL+Xn5kSFBI6uQrkp9Em2V4Kt5Mczd
+ 8121xcgyrMya6GNS+xexw6fU2mfymI6X47yQefgyFsH64DN2ugUfEs2gyu/nYBYWt2C56Kp2o
+ rhhsZo5VIwK2Bug5WrzOWLr8ZNLkn27J55n0Hycluj6h5UNogfQv3rQDPd8aE5oMn6Lry/Nqs
+ SIDyZUuv3doxaFGfEY+xwB3ekAFtU/ZXk1biWw6OgvwZhj+CIbrZ09+1/9R1YoJLexrOM6ihz
+ ZauPN9BevksogYmUc5whKUqg4hLSolBCEZereObQRocrz6deopDGt7xJtcetvv91eYIRAXXLS
+ oUmmPVdFOgH2tuE7kjqOTO8gqrK34qrv7+40BwbH74izvdaKiM01Xs+p5t8KEQZFyvFgoscJY
+ E3KLyEzZkKU65G25+4A0G46Hx6m+zr1afShcfYNo5jsNIv1Oom057fImFi8zbm8z+hLAUj7nA
+ bV1uI8nRN4yZf9/KQuusEdi7XHXmLXnbcp1i8COCDZkIeNRLl9EKbADF6MFtcLqeC08RG85Hs
+ ekBZKOpRFi5YTyTKqTX7PCFsIyYHX1AdIfPQ8qpCz0cUxDNdsu1ni5GzxKHrXXzvIpa0q9WKj
+ Bhp8Ec+4/uFOookVQleHJ4RTlsMu3Nz/ieF8RQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+objtool points out a condition that it does not like:
 
---2VmY8g3XFtK+hx8d
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+lib/ubsan.o: warning: objtool: __ubsan_handle_type_mismatch()+0x4a: call to stackleak_track_stack() with UACCESS enabled
+lib/ubsan.o: warning: objtool: __ubsan_handle_type_mismatch_v1()+0x4a: call to stackleak_track_stack() with UACCESS enabled
 
-On Mon, Jun 17, 2019 at 02:54:03PM +0300, Andy Shevchenko wrote:
-> Switch to bitmap_zalloc() to show clearly what we are allocating.
-> Besides that it returns pointer of bitmap type instead of opaque void *.
+I guess this is related to the call ubsan_type_mismatch_common()
+not being inline before it calls user_access_restore(), though
+I don't fully understand why that is a problem.
 
-Please use subject lines matching the style for the subsystem.  This
-makes it easier for people to identify relevant patches.
+Marking the function inline shuts up the warning and might be
+the right thing to do. The patch that caused this is marked
+for stable backports, so this one should probably be backported
+as well.
 
---2VmY8g3XFtK+hx8d
-Content-Type: application/pgp-signature; name="signature.asc"
+Fixes: 42440c1f9911 ("lib/ubsan: add type mismatch handler for new GCC/Clang")
+Cc: stable@vger.kernel.org
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ lib/ubsan.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
------BEGIN PGP SIGNATURE-----
+diff --git a/lib/ubsan.c b/lib/ubsan.c
+index ecc179338094..3d8836f0fc5c 100644
+--- a/lib/ubsan.c
++++ b/lib/ubsan.c
+@@ -309,7 +309,7 @@ static void handle_object_size_mismatch(struct type_mismatch_data_common *data,
+ 	ubsan_epilogue(&flags);
+ }
+ 
+-static void ubsan_type_mismatch_common(struct type_mismatch_data_common *data,
++static __always_inline void ubsan_type_mismatch_common(struct type_mismatch_data_common *data,
+ 				unsigned long ptr)
+ {
+ 	unsigned long flags = user_access_save();
+-- 
+2.20.0
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl0Hh60ACgkQJNaLcl1U
-h9A3+gf/dhDyB0ENXPq2rau8Fw+LxFWczxrWyFPda+bkb/AgAIAZm6CQOic08heH
-KYlmngkyFnmCihwkZMKa3yAfGh6qa191tZ9jqRoS8K6CjPYacXjh2YoLTS1kHtlL
-LuY0i6ZbHlEUGkaH/vn5zoo1upXo+PQmmfZ8kwWcd90UVLd/LhBGwBGL3me92ZUm
-gauVvmsqRq64b9sbJiEFynXAKQqjXvjTGnOdCTP8USoNr9k3c+bpJne1xzLBmlVs
-yady6unZioC+JkHMINeTEbZc/c5WdAJb1GsnYW57k7rZpTMQBPgDi77T2qqfWo+I
-prfhvTFX9kxPz6wKe10xxLIvj1ubIg==
-=biwi
------END PGP SIGNATURE-----
-
---2VmY8g3XFtK+hx8d--
