@@ -2,46 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A66B149510
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 00:21:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8641A49516
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 00:21:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728865AbfFQWUv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 18:20:51 -0400
-Received: from mail-ed1-f50.google.com ([209.85.208.50]:33128 "EHLO
-        mail-ed1-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728754AbfFQWUr (ORCPT
+        id S1729036AbfFQWVH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 18:21:07 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:34167 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727349AbfFQWUt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 18:20:47 -0400
-Received: by mail-ed1-f50.google.com with SMTP id i11so18472601edq.0
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2019 15:20:46 -0700 (PDT)
+        Mon, 17 Jun 2019 18:20:49 -0400
+Received: by mail-ed1-f68.google.com with SMTP id s49so18483354edb.1
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2019 15:20:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=rasmusvillemoes.dk; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=N4X7F8q7eT9lTbwwuGST215m/GlU5pARTn7q/Pg4Vos=;
-        b=bjzoL3CjhKbyuTWrEBG2PRgwvp0EB6W1c1NsR59J79xw0G1RdUw5tlt6L9S9FMv98O
-         YLmlFdXZiN+ZNyE9ip3lqG/oZ1EEH9f4l8ki0WNXhTTd3poSJa7CJprcxLQhgXT7V/9n
-         qpbFiHNSuszy/5xdkuhjLhnQxtzqYzkuqnxOk=
+        bh=vRpZZ4IfQKGytYHR1q3gyvtG2oFgpC+iBYxFZ9TdPI4=;
+        b=Y92dmsqb2535eP39fja8Utwp0VjKIJ0UA79NymZgTkcN/lARsGyVCh60FZTZdZi8h7
+         Ct2XkOxATdDYCl2HC8jD7r9DBhcQ30mKLNPOetHYQYK393Pq2LQXECnt/JUVXIpKi55i
+         5FZwxX9EPUyqGfmN2+CwBdgS0BFeZJGVVvknc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=N4X7F8q7eT9lTbwwuGST215m/GlU5pARTn7q/Pg4Vos=;
-        b=d+wJhd3FpuYuuy4kxq9q5cnpdQzOwh17tr+tJlnczShBtopSMrLr5TRO6EWn5LLLEF
-         b27LVjMBqGFuBliWUyBXlJgojmPhc3YpGNwpWp2uuiyTWvVarqIntXrQJFSFA5d+EEdX
-         i7zhc5kGJa0hmP0QbV0UMjILsU3ZznZLPzG1VBN9CcJ+5BxiFfWBkvYiKsd3AiN8xalE
-         4x/pgayf/tM+MAIN8QgbN24AiKu22M2/g+31HIJNBdx4Z0pmh9nu35lQB5YOuQYFJrHk
-         PGdHjlN1QXyHUvRxkCA+uKPI//Tr5yHIswESI+2WstzUwQhKIi2Wfn9ABBp6aS8b6K9R
-         Kx7Q==
-X-Gm-Message-State: APjAAAW8AKg9BgEL+vMdTTUPK0V9IOG0hgP5nSGDqsevxfq2HpEna8u/
-        YCuTFoelAms5rFWomQ1qEy7fOw==
-X-Google-Smtp-Source: APXvYqxXobFMiwdnqnbuzTK2YoFCVT+c4EDoKVsVdnW7KJHbIYB1WcHaOMH+gtPstWAyIS3zOr8b9Q==
-X-Received: by 2002:a50:94d9:: with SMTP id t25mr86885694eda.32.1560810045932;
-        Mon, 17 Jun 2019 15:20:45 -0700 (PDT)
+        bh=vRpZZ4IfQKGytYHR1q3gyvtG2oFgpC+iBYxFZ9TdPI4=;
+        b=HjPEYJuXoDpok6wDK327xNAjIOxmHm16W+KTSLsrGCPyMm3pCJoqoLXgB8XQ9riBV2
+         qf1gr2kAT87qOs+KQjmeI98D/OpCoAtVZBcS9uoMw66/e28rQydER/ZZ6c+6wfSgl7M7
+         JEH7+gYyqmjYhUayBFEshWvaAkGkUBRrnG+SuhoaMBiYokDTqXXsONlTP6Nsu0yFcayi
+         pV2fQaVZo4HraW1B5yGMjNQbk6atA3TP96ALLeXpERsxAHtC7rcXEJPqKy8RvbD6WW7Q
+         lowChejMAQx+c98JLctL7gVlJbOtjARSi+U2wI8RviURfZk/HKbEMVqqifP6J5x7NTRj
+         hfew==
+X-Gm-Message-State: APjAAAUOrnyZQjI60nRDejopnxY+sxsaHM5R4glm6EI3n6F7Q4K1TEAV
+        ek/Ry+AqjACRV0aHKmSv4YJj2A==
+X-Google-Smtp-Source: APXvYqxB/HM4ILYgTyys6tHTEuR80fT28nBcYxtuuvetjHW+pjg0SeWF0rJbAVf0pEZpNGa1F7agCg==
+X-Received: by 2002:a17:906:e204:: with SMTP id gf4mr55594798ejb.302.1560810047454;
+        Mon, 17 Jun 2019 15:20:47 -0700 (PDT)
 Received: from prevas-ravi.prevas.se (ip-5-186-113-204.cgn.fibianet.dk. [5.186.113.204])
-        by smtp.gmail.com with ESMTPSA id 9sm1034852ejg.49.2019.06.17.15.20.44
+        by smtp.gmail.com with ESMTPSA id 9sm1034852ejg.49.2019.06.17.15.20.46
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 17 Jun 2019 15:20:45 -0700 (PDT)
+        Mon, 17 Jun 2019 15:20:46 -0700 (PDT)
 From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
 To:     Ingo Molnar <mingo@kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>
@@ -49,12 +49,10 @@ Cc:     Jason Baron <jbaron@akamai.com>,
         Nathan Chancellor <natechancellor@gmail.com>,
         Nick Desaulniers <ndesaulniers@google.com>,
         linux-kernel@vger.kernel.org,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Petr Mladek <pmladek@suse.com>,
-        Steven Rostedt <rostedt@goodmis.org>
-Subject: [PATCH v6 3/8] linux/printk.h: use unique identifier for each struct _ddebug
-Date:   Tue, 18 Jun 2019 00:20:29 +0200
-Message-Id: <20190617222034.10799-4-linux@rasmusvillemoes.dk>
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Subject: [PATCH v6 4/8] dynamic_debug: introduce accessors for string members of struct _ddebug
+Date:   Tue, 18 Jun 2019 00:20:30 +0200
+Message-Id: <20190617222034.10799-5-linux@rasmusvillemoes.dk>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190617222034.10799-1-linux@rasmusvillemoes.dk>
 References: <20190617222034.10799-1-linux@rasmusvillemoes.dk>
@@ -65,43 +63,136 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Changes on x86-64 later in this series require that all struct _ddebug
-descriptors in a translation unit uses distinct identifiers. Realize
-that for pr_debug_ratelimited by generating such an identifier via
-__UNIQUE_ID and pass that to an extra level of macros.
+When we introduce compact versions of these pointers (a la
+CONFIG_GENERIC_BUG_RELATIVE_POINTERS), all access to these members must
+go via appropriate accessors. This just mass-converts dynamic_debug.c to
+use the new accessors.
 
-No functional change.
-
-Acked-by: Petr Mladek <pmladek@suse.com>
 Acked-by: Jason Baron <jbaron@akamai.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>
 Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
 ---
- include/linux/printk.h | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ lib/dynamic_debug.c | 51 ++++++++++++++++++++++++++++++---------------
+ 1 file changed, 34 insertions(+), 17 deletions(-)
 
-diff --git a/include/linux/printk.h b/include/linux/printk.h
-index cefd374c47b1..54499c1a74fd 100644
---- a/include/linux/printk.h
-+++ b/include/linux/printk.h
-@@ -456,7 +456,7 @@ extern int kptr_restrict;
- /* If you are writing a driver, please use dev_dbg instead */
- #if defined(CONFIG_DYNAMIC_DEBUG)
- /* descriptor check is first to prevent flooding with "callbacks suppressed" */
--#define pr_debug_ratelimited(fmt, ...)					\
-+#define _pr_debug_ratelimited(descriptor, fmt, ...)			\
- do {									\
- 	static DEFINE_RATELIMIT_STATE(_rs,				\
- 				      DEFAULT_RATELIMIT_INTERVAL,	\
-@@ -466,6 +466,8 @@ do {									\
- 	    __ratelimit(&_rs))						\
- 		__dynamic_pr_debug(&descriptor, pr_fmt(fmt), ##__VA_ARGS__);	\
- } while (0)
-+#define pr_debug_ratelimited(fmt, ...)		\
-+	_pr_debug_ratelimited(__UNIQUE_ID(ddebug), fmt, ##__VA_ARGS__)
- #elif defined(DEBUG)
- #define pr_debug_ratelimited(fmt, ...)					\
- 	printk_ratelimited(KERN_DEBUG pr_fmt(fmt), ##__VA_ARGS__)
+diff --git a/lib/dynamic_debug.c b/lib/dynamic_debug.c
+index 8a16c2d498e9..3599c4c0361a 100644
+--- a/lib/dynamic_debug.c
++++ b/lib/dynamic_debug.c
+@@ -39,6 +39,23 @@
+ 
+ #include <rdma/ib_verbs.h>
+ 
++static inline const char *dd_modname(const struct _ddebug *dd)
++{
++	return dd->modname;
++}
++static inline const char *dd_function(const struct _ddebug *dd)
++{
++	return dd->function;
++}
++static inline const char *dd_filename(const struct _ddebug *dd)
++{
++	return dd->filename;
++}
++static inline const char *dd_format(const struct _ddebug *dd)
++{
++	return dd->format;
++}
++
+ extern struct _ddebug __start___verbose[];
+ extern struct _ddebug __stop___verbose[];
+ 
+@@ -160,21 +177,21 @@ static int ddebug_change(const struct ddebug_query *query,
+ 
+ 			/* match against the source filename */
+ 			if (query->filename &&
+-			    !match_wildcard(query->filename, dp->filename) &&
++			    !match_wildcard(query->filename, dd_filename(dp)) &&
+ 			    !match_wildcard(query->filename,
+-					   kbasename(dp->filename)) &&
++					   kbasename(dd_filename(dp))) &&
+ 			    !match_wildcard(query->filename,
+-					   trim_prefix(dp->filename)))
++					   trim_prefix(dd_filename(dp))))
+ 				continue;
+ 
+ 			/* match against the function */
+ 			if (query->function &&
+-			    !match_wildcard(query->function, dp->function))
++			    !match_wildcard(query->function, dd_function(dp)))
+ 				continue;
+ 
+ 			/* match against the format */
+ 			if (query->format &&
+-			    !strstr(dp->format, query->format))
++			    !strstr(dd_format(dp), query->format))
+ 				continue;
+ 
+ 			/* match against the line number range */
+@@ -199,8 +216,8 @@ static int ddebug_change(const struct ddebug_query *query,
+ #endif
+ 			dp->flags = newflags;
+ 			vpr_info("changed %s:%d [%s]%s =%s\n",
+-				 trim_prefix(dp->filename), dp->lineno,
+-				 dt->mod_name, dp->function,
++				 trim_prefix(dd_filename(dp)), dp->lineno,
++				 dt->mod_name, dd_function(dp),
+ 				 ddebug_describe_flags(dp, flagbuf,
+ 						       sizeof(flagbuf)));
+ 		}
+@@ -535,10 +552,10 @@ static char *dynamic_emit_prefix(const struct _ddebug *desc, char *buf)
+ 	pos_after_tid = pos;
+ 	if (desc->flags & _DPRINTK_FLAGS_INCL_MODNAME)
+ 		pos += snprintf(buf + pos, remaining(pos), "%s:",
+-				desc->modname);
++				dd_modname(desc));
+ 	if (desc->flags & _DPRINTK_FLAGS_INCL_FUNCNAME)
+ 		pos += snprintf(buf + pos, remaining(pos), "%s:",
+-				desc->function);
++				dd_function(desc));
+ 	if (desc->flags & _DPRINTK_FLAGS_INCL_LINENO)
+ 		pos += snprintf(buf + pos, remaining(pos), "%d:",
+ 				desc->lineno);
+@@ -827,10 +844,10 @@ static int ddebug_proc_show(struct seq_file *m, void *p)
+ 	}
+ 
+ 	seq_printf(m, "%s:%u [%s]%s =%s \"",
+-		   trim_prefix(dp->filename), dp->lineno,
+-		   iter->table->mod_name, dp->function,
++		   trim_prefix(dd_filename(dp)), dp->lineno,
++		   iter->table->mod_name, dd_function(dp),
+ 		   ddebug_describe_flags(dp, flagsbuf, sizeof(flagsbuf)));
+-	seq_escape(m, dp->format, "\t\r\n\"");
++	seq_escape(m, dd_format(dp), "\t\r\n\"");
+ 	seq_puts(m, "\"\n");
+ 
+ 	return 0;
+@@ -1024,20 +1041,20 @@ static int __init dynamic_debug_init(void)
+ 		return 1;
+ 	}
+ 	iter = __start___verbose;
+-	modname = iter->modname;
++	modname = dd_modname(iter);
+ 	iter_start = iter;
+ 	for (; iter < __stop___verbose; iter++) {
+ 		entries++;
+-		verbose_bytes += strlen(iter->modname) + strlen(iter->function)
+-			+ strlen(iter->filename) + strlen(iter->format);
++		verbose_bytes += strlen(dd_modname(iter)) + strlen(dd_function(iter))
++			+ strlen(dd_filename(iter)) + strlen(dd_format(iter));
+ 
+-		if (strcmp(modname, iter->modname)) {
++		if (strcmp(modname, dd_modname(iter))) {
+ 			modct++;
+ 			ret = ddebug_add_module(iter_start, n, modname);
+ 			if (ret)
+ 				goto out_err;
+ 			n = 0;
+-			modname = iter->modname;
++			modname = dd_modname(iter);
+ 			iter_start = iter;
+ 		}
+ 		n++;
 -- 
 2.20.1
 
