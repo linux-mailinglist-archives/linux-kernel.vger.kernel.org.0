@@ -2,112 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B25E1482A1
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 14:38:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CE22648295
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 14:37:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727696AbfFQMiR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 08:38:17 -0400
-Received: from mout.kundenserver.de ([212.227.126.187]:35919 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725962AbfFQMiQ (ORCPT
+        id S1727842AbfFQMfF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 08:35:05 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:36460 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725962AbfFQMfF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 08:38:16 -0400
-Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
- (mreue009 [212.227.15.129]) with ESMTPA (Nemesis) id
- 1MxmBi-1iYXoH0lbi-00zDkM; Mon, 17 Jun 2019 14:37:51 +0200
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     Jean Delvare <jdelvare@suse.com>,
-        Guenter Roeck <linux@roeck-us.net>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Jean-Francois Dagenais <jeff.dagenais@gmail.com>,
-        linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] hwmon: (max6650) Fix unused variable warning
-Date:   Mon, 17 Jun 2019 14:34:30 +0200
-Message-Id: <20190617123746.769592-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.20.0
+        Mon, 17 Jun 2019 08:35:05 -0400
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+        by mx08-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5HCVDen016387;
+        Mon, 17 Jun 2019 14:34:51 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=STMicroelectronics;
+ bh=Bf2mCAHJCk8x6Ixnh6dSc1NHiHAHnvfKgorvDCTAyto=;
+ b=fxfACKVNj9ccB9QXV/rSwNlnRBZyRuirF8gZAmOWFdFkcnq/QNamAG9mKqjxUkRygFJl
+ eMmtdQLPH+8oEhDel/Onx9vbwaJx2o1EQsx0Pe6fgP0nbCHpQ4PfJzmFHGJZ1kdpo80a
+ A7S7/wYgYt/BFcgUl7t7Hxg8kZ4ZIfR5WWgZZoln7Qs86Su6Yu4cT9GG8zx9BKeVrC5w
+ rzsGAqNSbL4Srh7uM94Dzb3sq7sti9Kox5HCfi0kxNN4QX4IwXZphIa3p1cFIRsd0tzf
+ VHT184Cw3OkzKtp3NtnbqURzo2mUDKpfcz2p1qWBBbKSZozQFJtoi6QoUZKwsqAaXc1H mg== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx08-00178001.pphosted.com with ESMTP id 2t4qjhtf0b-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Mon, 17 Jun 2019 14:34:51 +0200
+Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 916DE34;
+        Mon, 17 Jun 2019 12:34:50 +0000 (GMT)
+Received: from Webmail-eu.st.com (sfhdag3node2.st.com [10.75.127.8])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 673C029CD;
+        Mon, 17 Jun 2019 12:34:50 +0000 (GMT)
+Received: from [10.48.0.204] (10.75.127.48) by SFHDAG3NODE2.st.com
+ (10.75.127.8) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Mon, 17 Jun
+ 2019 14:34:49 +0200
+Subject: Re: [PATCH 1/1] ARM: dts: stm32: replace rgmii mode with rgmii-id on
+ stm32mp15 boards
+To:     Christophe Roullier <christophe.roullier@st.com>,
+        <robh@kernel.org>, <davem@davemloft.net>, <joabreu@synopsys.com>,
+        <mark.rutland@arm.com>, <mcoquelin.stm32@gmail.com>,
+        <peppe.cavallaro@st.com>
+CC:     <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <netdev@vger.kernel.org>,
+        <andrew@lunn.ch>
+References: <20190617085018.20352-1-christophe.roullier@st.com>
+ <20190617085018.20352-2-christophe.roullier@st.com>
+From:   Alexandre Torgue <alexandre.torgue@st.com>
+Message-ID: <c53808dd-f1d2-2865-7d45-fa2ca875b95a@st.com>
+Date:   Mon, 17 Jun 2019 14:34:49 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:Xy0G7nWZ1HhgposubGBIrjh7xHfAXCOeUEsKRN+33mNSf+GOxBQ
- LQoZlRmRXLntetmq3aPVZypOWkGAdNQLVjheLbVoyxagXm/gMi3m024uu6e5rxypfo0IRUu
- muZHjzdTyTCQJWUjTdlcygCfLHQA7Y9sNJznEhdU1d4ZSISGIQF1vVuQoIeFlkIwUDu+I4r
- M16Woaf4WZX3ajtxEA6IQ==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:/m+Ii4DQw8k=:bOZsuOyOr8ovi8tCCSSyhg
- TIW2NBWXS7CPVRgltVYsde29SNEk/8rMs7drSGlZoWD59qixqTTI+3mE2fbaeSBzn+jM1W88b
- E0UuWGz47TR9bz3lstdTWnsRvndbJvOtqVFF9FPVKejqlN0lvW7+fCzeRuTAoc8F2ddM7ekhV
- FsYQI7dTtPHbgpR7sfgTQfhR1nAs9aDGg99CFBm58zFXb9zysG+1kPvY3MrXQqoSIWHIrQTp/
- frwBVMbZkcML53RD+3ozbz8gbGnNuf9cs+GWD/x+X6P+/3JadT7kRTSmUG+aHx8y3AWVzgbkr
- /FyK+1VE8m/VRIPoq0PMWUGbWu7VhPsDdBpzdQFs0zh7iXmwVGLeWS+Eb+at+5XiE5hPXI3bb
- qxx3EvqXyZMLWMWnpzN9ppeQTqPCaausmEwbEYlQXx2o29WzT7dZ/45GtQ148w2TFC2snjd09
- W9EcjLSB2uf7sC3+edX5TJ8bGo7hGLd/IAqYoJ5b20yvJNCEmzaZnPkHC/iSHMBPy7C1wVXzh
- 8YiI+Kf859AQNeleitruWrODjoB5brtNEoFegJ5tQFD7UxqNFnC8M0jpTVVn2c7+yh8J+DKwN
- 5HAZhLhA0NyyjIK4nZp85Jt5nPaZPxpTT54yc0pXK3BidKVV8LERg41EBxqY3Zh1LdAiMV9Jl
- 4a66hA8EEoWeyraewbyH3ytLFzX2USsEVZGNY1kmju1AR/UHzuOuAQ1aP2aUmFllRo9KywOOr
- 9NS4Fq0Bw6kduit/8PX2AzDjk0xxs5rxomt65w==
+In-Reply-To: <20190617085018.20352-2-christophe.roullier@st.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.75.127.48]
+X-ClientProxiedBy: SFHDAG2NODE3.st.com (10.75.127.6) To SFHDAG3NODE2.st.com
+ (10.75.127.8)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-17_06:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The newly added variable is only used in an #if block:
+Hi Christophe
 
-drivers/hwmon/max6650.c: In function 'max6650_probe':
-drivers/hwmon/max6650.c:766:33: error: unused variable 'cooling_dev' [-Werror=unused-variable]
+On 6/17/19 10:50 AM, Christophe Roullier wrote:
+> On disco and eval board, Tx and Rx delay are applied (pull-up of 4.7k
+> put on VDD) so which correspond to RGMII-ID mode with internal RX and TX
+> delays provided by the PHY, the MAC should not add the RX or TX delays
+> in this case
+> 
+> Signed-off-by: Christophe Roullier <christophe.roullier@st.com>
+> ---
+>   arch/arm/boot/dts/stm32mp157a-dk1.dts | 2 +-
+>   arch/arm/boot/dts/stm32mp157c-ev1.dts | 2 +-
+>   2 files changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/arm/boot/dts/stm32mp157a-dk1.dts b/arch/arm/boot/dts/stm32mp157a-dk1.dts
+> index 098dbfb06b61..2c105740dfad 100644
+> --- a/arch/arm/boot/dts/stm32mp157a-dk1.dts
+> +++ b/arch/arm/boot/dts/stm32mp157a-dk1.dts
+> @@ -51,7 +51,7 @@
+>   	pinctrl-0 = <&ethernet0_rgmii_pins_a>;
+>   	pinctrl-1 = <&ethernet0_rgmii_pins_sleep_a>;
+>   	pinctrl-names = "default", "sleep";
+> -	phy-mode = "rgmii";
+> +	phy-mode = "rgmii-id";
+>   	max-speed = <1000>;
+>   	phy-handle = <&phy0>;
+>   
+> diff --git a/arch/arm/boot/dts/stm32mp157c-ev1.dts b/arch/arm/boot/dts/stm32mp157c-ev1.dts
+> index b6aca40b9b90..ab1393caf799 100644
+> --- a/arch/arm/boot/dts/stm32mp157c-ev1.dts
+> +++ b/arch/arm/boot/dts/stm32mp157c-ev1.dts
+> @@ -79,7 +79,7 @@
+>   	pinctrl-0 = <&ethernet0_rgmii_pins_a>;
+>   	pinctrl-1 = <&ethernet0_rgmii_pins_sleep_a>;
+>   	pinctrl-names = "default", "sleep";
+> -	phy-mode = "rgmii";
+> +	phy-mode = "rgmii-id";
+>   	max-speed = <1000>;
+>   	phy-handle = <&phy0>;
+>   
+> 
 
-Change the #if to if() so the compiler can see what is actually
-going on.
+Applied on stm32-next.
 
-Fixes: a8463754a5a9 ("hwmon: (max6650) Use devm function to register thermal device")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/hwmon/max6650.c | 19 +++++++++----------
- 1 file changed, 9 insertions(+), 10 deletions(-)
-
-diff --git a/drivers/hwmon/max6650.c b/drivers/hwmon/max6650.c
-index 5fdad4645cca..3d9d371c35b5 100644
---- a/drivers/hwmon/max6650.c
-+++ b/drivers/hwmon/max6650.c
-@@ -467,8 +467,6 @@ static int max6650_init_client(struct max6650_data *data,
- 	return 0;
- }
- 
--#if IS_ENABLED(CONFIG_THERMAL)
--
- static int max6650_get_max_state(struct thermal_cooling_device *cdev,
- 				 unsigned long *state)
- {
-@@ -517,7 +515,6 @@ static const struct thermal_cooling_device_ops max6650_cooling_ops = {
- 	.get_cur_state = max6650_get_cur_state,
- 	.set_cur_state = max6650_set_cur_state,
- };
--#endif
- 
- static int max6650_read(struct device *dev, enum hwmon_sensor_types type,
- 			u32 attr, int channel, long *val)
-@@ -795,14 +792,16 @@ static int max6650_probe(struct i2c_client *client,
- 	if (err)
- 		return err;
- 
--#if IS_ENABLED(CONFIG_THERMAL)
--	cooling_dev = devm_thermal_of_cooling_device_register(dev, dev->of_node,
--				client->name, data, &max6650_cooling_ops);
--	if (IS_ERR(cooling_dev)) {
--		dev_warn(dev, "thermal cooling device register failed: %ld\n",
--			 PTR_ERR(cooling_dev));
-+	if (IS_ENABLED(CONFIG_THERMAL)) {
-+		cooling_dev = devm_thermal_of_cooling_device_register(dev,
-+						dev->of_node, client->name,
-+						data, &max6650_cooling_ops);
-+		if (IS_ERR(cooling_dev)) {
-+			dev_warn(dev, "thermal cooling device register failed: %ld\n",
-+				 PTR_ERR(cooling_dev));
-+		}
- 	}
--#endif
-+
- 	return 0;
- }
- 
--- 
-2.20.0
-
+Thanks.
+Alex
