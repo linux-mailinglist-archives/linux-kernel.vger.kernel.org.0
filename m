@@ -2,96 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 219EB47A91
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 09:15:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 38F7A47A94
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 09:16:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726138AbfFQHPF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 03:15:05 -0400
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:51494 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725826AbfFQHPF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 03:15:05 -0400
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x5H7F2sh045275;
-        Mon, 17 Jun 2019 02:15:02 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1560755702;
-        bh=1KiWNol22bOYzL01WVy0sgNUkt47J5o6+/RPRsqVDlc=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=PkNPQh9JiJLF2L4LhcXUt2uveSVgOsls62y6XhwFUgsaf73c61j0d+CqocqP0Azz0
-         NvaLWILitMmJu2iR1EzjDfjE++A2q+fzBvcqvNWhzSCPgOSHSlaAaj9pTyW6xrfE/K
-         CRmB1SRUUj11VxGrT8fqYnapP/UZw4cXzm+Ps4SQ=
-Received: from DFLE101.ent.ti.com (dfle101.ent.ti.com [10.64.6.22])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x5H7F2SO123976
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 17 Jun 2019 02:15:02 -0500
-Received: from DFLE109.ent.ti.com (10.64.6.30) by DFLE101.ent.ti.com
- (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Mon, 17
- Jun 2019 02:15:02 -0500
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE109.ent.ti.com
- (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Mon, 17 Jun 2019 02:15:02 -0500
-Received: from [172.24.191.45] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id x5H7F0r4016991;
-        Mon, 17 Jun 2019 02:15:00 -0500
-Subject: Re: [GIT PULL] Immutable branch between MFD and Regulator due for the
- v5.3 merge window
-To:     Lee Jones <lee.jones@linaro.org>
-CC:     <broonie@kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-omap@vger.kernel.org>, <t-kristo@ti.com>
-References: <20190612144620.28331-1-j-keerthy@ti.com>
- <20190617070341.GC16364@dell>
-From:   Keerthy <j-keerthy@ti.com>
-Message-ID: <2a3240e2-75f5-ef87-8fa7-0162a84fb590@ti.com>
-Date:   Mon, 17 Jun 2019 12:45:48 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S1726372AbfFQHQJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 03:16:09 -0400
+Received: from mx2.suse.de ([195.135.220.15]:56046 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725826AbfFQHQI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Jun 2019 03:16:08 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 64B4CADAB;
+        Mon, 17 Jun 2019 07:16:07 +0000 (UTC)
+Date:   Mon, 17 Jun 2019 09:16:05 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Alastair D'Silva <alastair@d-silva.org>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Arun KS <arunks@codeaurora.org>,
+        Mukesh Ojha <mojha@codeaurora.org>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Wei Yang <richard.weiyang@gmail.com>,
+        Ingo Molnar <mingo@kernel.org>, linux-mm@kvack.org,
+        Qian Cai <cai@lca.pw>, Thomas Gleixner <tglx@linutronix.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Baoquan He <bhe@redhat.com>,
+        David Hildenbrand <david@redhat.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Pavel Tatashin <pasha.tatashin@soleen.com>,
+        Oscar Salvador <osalvador@suse.com>,
+        Jiri Kosina <jkosina@suse.cz>, linux-kernel@vger.kernel.org,
+        Jerome Glisse <jglisse@redhat.com>
+Subject: Re: [PATCH 5/5] mm/hotplug: export try_online_node
+Message-ID: <20190617071605.GD30420@dhcp22.suse.cz>
+References: <20190617043635.13201-1-alastair@au1.ibm.com>
+ <20190617043635.13201-6-alastair@au1.ibm.com>
+ <20190617065921.GV3436@hirez.programming.kicks-ass.net>
+ <f1bad6f784efdd26508b858db46f0192a349c7a1.camel@d-silva.org>
 MIME-Version: 1.0
-In-Reply-To: <20190617070341.GC16364@dell>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f1bad6f784efdd26508b858db46f0192a349c7a1.camel@d-silva.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+[Cc Jerome - email thread starts
+http://lkml.kernel.org/r/20190617043635.13201-1-alastair@au1.ibm.com]
 
+On Mon 17-06-19 17:05:30,  Alastair D'Silva  wrote:
+> On Mon, 2019-06-17 at 08:59 +0200, Peter Zijlstra wrote:
+> > On Mon, Jun 17, 2019 at 02:36:31PM +1000, Alastair D'Silva wrote:
+> > > From: Alastair D'Silva <alastair@d-silva.org>
+> > > 
+> > > If an external driver module supplies physical memory and needs to
+> > > expose
+> > 
+> > Why would you ever want to allow a module to do such a thing?
+> > 
+> 
+> I'm working on a driver for Storage Class Memory, connected via an
+> OpenCAPI link.
+> 
+> The memory is only usable once the card says it's OK to access it.
 
-On 17/06/19 12:33 PM, Lee Jones wrote:
-> Enjoy!
-> 
-> The following changes since commit a188339ca5a396acc588e5851ed7e19f66b0ebd9:
-> 
->    Linux 5.2-rc1 (2019-05-19 15:47:09 -0700)
-> 
-> are available in the Git repository at:
-> 
->    git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git ib-mfd-regulator-v5.3
-> 
-> for you to fetch changes up to 7ee63bd74750a2c6fac31805ca0ac67f2522bfa5:
-> 
->    regulator: lp87565: Add 4-phase lp87561 regulator support (2019-06-17 08:00:24 +0100)
-> 
-> ----------------------------------------------------------------
-> Immutable branch between MFD and Regulator due for the v5.3 merge window
-> 
-> ----------------------------------------------------------------
-> Keerthy (3):
->        dt-bindings: mfd: lp87565: Add LP87561 configuration
->        mfd: lp87565: Add support for 4-phase LP87561 combination
->        regulator: lp87565: Add 4-phase lp87561 regulator support
+Isn't this what HMM is aiming for? Could you give a more precise
+description of what the actual storage is, how it is going to be used
+etc... In other words describe the usecase?
 
-Thanks Lee Jones.
-
-> 
->   Documentation/devicetree/bindings/mfd/lp87565.txt | 36 +++++++++++++++++++++++
->   drivers/mfd/lp87565.c                             |  4 +++
->   drivers/regulator/lp87565-regulator.c             | 17 ++++++++++-
->   include/linux/mfd/lp87565.h                       |  2 ++
->   4 files changed, 58 insertions(+), 1 deletion(-)
-> 
+-- 
+Michal Hocko
+SUSE Labs
