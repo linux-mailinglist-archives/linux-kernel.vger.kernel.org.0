@@ -2,121 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 16CAD48CE9
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 20:49:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E04B548CEF
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 20:50:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726722AbfFQSty (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 14:49:54 -0400
-Received: from mga12.intel.com ([192.55.52.136]:13613 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726005AbfFQSty (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 14:49:54 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Jun 2019 11:49:53 -0700
-X-ExtLoop1: 1
-Received: from ray.jf.intel.com (HELO [10.7.201.126]) ([10.7.201.126])
-  by orsmga002.jf.intel.com with ESMTP; 17 Jun 2019 11:49:53 -0700
-Subject: Re: [RFC 00/10] Process-local memory allocations for hiding KVM
- secrets
-To:     Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Cc:     Nadav Amit <nadav.amit@gmail.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Alexander Graf <graf@amazon.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Marius Hillenbrand <mhillenb@amazon.de>,
-        kvm list <kvm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux-MM <linux-mm@kvack.org>, Alexander Graf <graf@amazon.de>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>
-References: <eecc856f-7f3f-ed11-3457-ea832351e963@intel.com>
- <A542C98B-486C-4849-9DAC-2355F0F89A20@amacapital.net>
- <alpine.DEB.2.21.1906141618000.1722@nanos.tec.linutronix.de>
- <58788f05-04c3-e71c-12c3-0123be55012c@amazon.com>
- <63b1b249-6bc7-ffd9-99db-d36dd3f1a962@intel.com>
- <CALCETrXph3Zg907kWTn6gAsZVsPbCB3A2XuNf0hy5Ez2jm2aNQ@mail.gmail.com>
- <698ca264-123d-46ae-c165-ed62ea149896@intel.com>
- <CALCETrVt=X+FB2cM5hMN9okvbcROFfT4_KMwaKaN2YVvc7UQTw@mail.gmail.com>
- <5AA8BF10-8987-4FCB-870C-667A5228D97B@gmail.com>
- <f6f352ed-750e-d735-a1c9-7ff133ca8aea@intel.com>
- <20190617184536.GB11017@char.us.oracle.com>
-From:   Dave Hansen <dave.hansen@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-Message-ID: <a1d1d375-53e4-58ba-7753-d01e7b3fa10f@intel.com>
-Date:   Mon, 17 Jun 2019 11:49:53 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        id S1727754AbfFQSue (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 14:50:34 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:40726 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726685AbfFQSud (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Jun 2019 14:50:33 -0400
+Received: by mail-lf1-f67.google.com with SMTP id a9so7324231lff.7
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2019 11:50:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=pJNgLRxBBn3ldusAk8vZnHSv/cw7OZUcPpU87Ds7axA=;
+        b=Bou8DRGEQCecEBNSUfFtTPeseoLHD0XaAFEIBsWSO0ipikvw3uK03pajREfMRg9xGJ
+         RHjbeoD4wiwvH1jw+HHfdArE6k8zcfMKGxTOigVfiqDD3yQNYZV/bHc7sTIEHfVYs6/a
+         BFygJ9Og1NqRb3jOobPB1z9rLh9rBzkbN9K0k=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=pJNgLRxBBn3ldusAk8vZnHSv/cw7OZUcPpU87Ds7axA=;
+        b=p5cRLihHCdHBHSDaJoQ13Fw/+vtMPwvtf/gABUCRng5QQnEtoMTLAp2k/T38AVjoQn
+         h6uQRivm1swl2Dp30woFNJ0lKPQqZ6Coa6WLaYQaKHIijYM3mDwG9/51VXXBq0BYUsk5
+         8psL7tQ3wgCBxkn+ZQ4V4RgANkt8ZZtdYQXpC1wkSH1iIO+4a27uDG28l7eVUKtNXTaf
+         FHScqw7mut044oDDK6QW5Ju2GjvS0iBs2W8Q1dJqaRT/0Ix7+Vi6Nziyjxmh8Uz3yK0P
+         9TbMpnV3Lh4Qj9wXtiLDDo12J2Wf6d5Nl6EJihug4AZTcJVf0Ad4ujn71uW+8CVBF0BL
+         6jMA==
+X-Gm-Message-State: APjAAAWinUXzWNZdKCysERMeLgGbEQSEWL1ZokADETswND9cDk9lRbuE
+        eMDgzvadR9gycF/H9J2d4x2KgtnR+5Q=
+X-Google-Smtp-Source: APXvYqybFYlyqxRAHkcUrwtRg6hTlG+MsbUQiJMuzbPwhr7S/5FXxew5BWAgXvGv3XXR34sMfpXxIQ==
+X-Received: by 2002:a19:9156:: with SMTP id y22mr10978398lfj.43.1560797430988;
+        Mon, 17 Jun 2019 11:50:30 -0700 (PDT)
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com. [209.85.208.171])
+        by smtp.gmail.com with ESMTPSA id z85sm2213274ljb.101.2019.06.17.11.50.30
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Mon, 17 Jun 2019 11:50:30 -0700 (PDT)
+Received: by mail-lj1-f171.google.com with SMTP id t28so10348861lje.9
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2019 11:50:30 -0700 (PDT)
+X-Received: by 2002:a2e:9a58:: with SMTP id k24mr14840250ljj.165.1560797429770;
+ Mon, 17 Jun 2019 11:50:29 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20190617184536.GB11017@char.us.oracle.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20190617184711.21364-1-christian@brauner.io>
+In-Reply-To: <20190617184711.21364-1-christian@brauner.io>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Mon, 17 Jun 2019 11:50:13 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wh+OWQ2s-NZC4RzfHtgNfhV9sbtP6dXV4WnsVRQ3A3hnA@mail.gmail.com>
+Message-ID: <CAHk-=wh+OWQ2s-NZC4RzfHtgNfhV9sbtP6dXV4WnsVRQ3A3hnA@mail.gmail.com>
+Subject: Re: [PATCH] fs/namespace: fix unprivileged mount propagation
+To:     Christian Brauner <christian@brauner.io>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        stable <stable@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 6/17/19 11:45 AM, Konrad Rzeszutek Wilk wrote:
->> The idea is that you have a per-cpu address space.  Certain kernel
->> virtual addresses would map to different physical address based on where
->> you are running.  Each of the physical addresses would be "owned" by a
->> single CPU and would, by convention, never use a PGD that mapped an
->> address unless that CPU that "owned" it.
->>
->> In that case, you never really invalidate those addresses.
-> But you would need to invalidate if the process moved to another CPU, correct?
+On Mon, Jun 17, 2019 at 11:47 AM Christian Brauner <christian@brauner.io> wrote:
+>
+> When propagating mounts across mount namespaces owned by different user
+> namespaces it is not possible anymore to move or umount the mount in the
+> less privileged mount namespace.
 
-If you have a per-cpu PGD, the rule is that you never use the PGD on
-more than one CPU.  In that model, processes "take over" an existing PGD
-to run on the CPU rather than having the CPU use an existing PGD that
-came with the process.
+I will wait a short while in the hope of getting Al's ack for this,
+but since it looks about as good as it likely can be, I suspect I'll
+just apply it later today even without such an ack..
 
-But we've really hijacked the original thread at this point, which is
-probably causing a ton of confusion.
+                    Linus
