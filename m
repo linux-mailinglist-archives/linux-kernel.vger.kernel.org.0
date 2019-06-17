@@ -2,127 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 032DD47BBC
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 09:57:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 448CA47BC4
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 10:00:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726285AbfFQH5Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 03:57:25 -0400
-Received: from ushosting.nmnhosting.com ([66.55.73.32]:44842 "EHLO
+        id S1727221AbfFQIAF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 04:00:05 -0400
+Received: from ushosting.nmnhosting.com ([66.55.73.32]:47010 "EHLO
         ushosting.nmnhosting.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725837AbfFQH5Y (ORCPT
+        with ESMTP id S1725791AbfFQIAF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 03:57:24 -0400
+        Mon, 17 Jun 2019 04:00:05 -0400
 Received: from mail2.nmnhosting.com (unknown [202.169.106.97])
-        by ushosting.nmnhosting.com (Postfix) with ESMTPS id 8FFB42DC007F;
-        Mon, 17 Jun 2019 03:57:23 -0400 (EDT)
+        by ushosting.nmnhosting.com (Postfix) with ESMTPS id 7DD8E2DC0032;
+        Mon, 17 Jun 2019 04:00:04 -0400 (EDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=d-silva.org;
-        s=201810a; t=1560758243;
-        bh=rFbuhIFz/h0VCo487ij807TQPU9Ah/028l0pxfTo07M=;
+        s=201810a; t=1560758404;
+        bh=5QkXNKOOo0s2HTA34p3+KiFaxnv3E6XBHbEwuPKBFG0=;
         h=From:To:Cc:References:In-Reply-To:Subject:Date:From;
-        b=VqhZZ2C9MXgQs4mWEU46L5rHGLqpnIRoTGpY24OzxvqlwI7dZXTTYB8Y5aUj0N7mi
-         6yh2PHcCD4RfBeHo5jvQ47NUczbORBQk3PkDSmo0jUSECUTG14CVtDdBzTYggcARMs
-         ov0YKiTLAO9aKWJjhBp9+yr2QFbljJZ+8UwThAaOO0lDNzeYbMHgWl7G+uH4KMs+R9
-         6P+FvhFcIo9JRvwTFwUBGFHUqAqMYuaAVNL71EdG28Qfhl5nw+kdcbduv4/FvViN8a
-         VPig2zlIymRNN+WfjFAG8fNGX2J5noMfMWQY1v7hZEThQ3EOebgS1hJMHT9TU6wleJ
-         V63ouJV7+Kf8gM5pf+YXMm8lRQQJ8yHcRMdtsVuzkB/7rULa6In1JGZs9CFF9IKBA7
-         rb8/aEtc1NIl36SEebXTOj/vqlZL/CnUsE+10n65b9mfGfkaThusbbMYO16F6wF5uW
-         iUBE/dndXK+Qeu8nUEmyp3n65aao0p/EtXy5SrDrlWgfuy73yQi0kv0hG5U+z9/69Y
-         Nkjsh+e7W9pQzI70dFHUMNZXX+c4L6DsME6TgMN8FOmM2JuYE3UUTOIt3P+m/xo4jY
-         hWza4hDgNn56Xyq7292bmWLpXV9CpzI7TpkQAo107TJeWQMj0kaJFWM1/ddpmQhfkf
-         nwLifMmxknexkWaFavoo+4Sw=
+        b=fpSn1XtkYo6WrcCUGmOHOdZNywi1QvmzZY4+xl5VCZcWBCS6cuFJZ4Bg2jHTm2zY8
+         aYj0YNe/GRufQBNqq5+D7BZJoH7Dn8clBz8eWh+9DhApm6D2taMEl1kfnO2F6+Wwzb
+         W/+P5ndUYX5vLbVjdyP/q4c9p8ZDU/KgUYY2gWgVt67XpYFuY/1smVdKIiqeVeDgUY
+         IMScq2G8iC8m3NQohxE0YI6tBs4TWuMudkSBjYzWLTSC87fTJvMfpwG+q9IMGNH5mD
+         RnVpWZi4IaX8NK6tE9+QSrU4P/kSXip/FRVYnW1+AJI3BwkbUp/NcXjaPLwWhKHsol
+         FxRQytR6bvv3iqTI+YFo7MYLtaJKh+WxmAU8njIhyNQx79yOWxYve4SwKeNQp50dHu
+         RxEim3BmKhIKnR2H4sLXR0ViD6QCTWOZdbrCXzx4MUJj28vB90o6g68qZ+X5iBAMpR
+         mfAG+vFEnT6PnOIFxsOcp0U29z01riqSThlWBY5r9dZ8PSrP/9EBD5QuVH7KTn7am6
+         bkB1UUJzPncn528VAjWChGL3S00VbOCyChWhvdfQYd9EvR2H1LSd3hJS2fhgjPjAel
+         GGjg9VwpTKbymgxG0K3NPax7j8K+tzKTYxHeuow6IFIG1vVdoXuMbECzFWtF7/Juz8
+         uTnUA0b1u27vtiMZkiQy2/TY=
 Received: from Hawking (ntp.lan [10.0.1.1])
         (authenticated bits=0)
-        by mail2.nmnhosting.com (8.15.2/8.15.2) with ESMTPSA id x5H7vGaN057238
+        by mail2.nmnhosting.com (8.15.2/8.15.2) with ESMTPSA id x5H800Al057250
         (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Mon, 17 Jun 2019 17:57:16 +1000 (AEST)
+        Mon, 17 Jun 2019 18:00:00 +1000 (AEST)
         (envelope-from alastair@d-silva.org)
 From:   "Alastair D'Silva" <alastair@d-silva.org>
-To:     "'Michal Hocko'" <mhocko@kernel.org>,
-        "'Alastair D'Silva'" <alastair@au1.ibm.com>
-Cc:     "'Arun KS'" <arunks@codeaurora.org>,
-        "'Mukesh Ojha'" <mojha@codeaurora.org>,
-        "'Logan Gunthorpe'" <logang@deltatee.com>,
-        "'Wei Yang'" <richard.weiyang@gmail.com>,
-        "'Peter Zijlstra'" <peterz@infradead.org>,
-        "'Ingo Molnar'" <mingo@kernel.org>, <linux-mm@kvack.org>,
-        "'Qian Cai'" <cai@lca.pw>,
-        "'Thomas Gleixner'" <tglx@linutronix.de>,
+To:     "'Christoph Hellwig'" <hch@infradead.org>
+Cc:     "'Peter Zijlstra'" <peterz@infradead.org>,
         "'Andrew Morton'" <akpm@linux-foundation.org>,
+        "'David Hildenbrand'" <david@redhat.com>,
+        "'Oscar Salvador'" <osalvador@suse.com>,
+        "'Michal Hocko'" <mhocko@suse.com>,
+        "'Pavel Tatashin'" <pasha.tatashin@soleen.com>,
+        "'Wei Yang'" <richard.weiyang@gmail.com>,
+        "'Arun KS'" <arunks@codeaurora.org>, "'Qian Cai'" <cai@lca.pw>,
+        "'Thomas Gleixner'" <tglx@linutronix.de>,
+        "'Ingo Molnar'" <mingo@kernel.org>,
+        "'Josh Poimboeuf'" <jpoimboe@redhat.com>,
+        "'Jiri Kosina'" <jkosina@suse.cz>,
+        "'Mukesh Ojha'" <mojha@codeaurora.org>,
         "'Mike Rapoport'" <rppt@linux.vnet.ibm.com>,
         "'Baoquan He'" <bhe@redhat.com>,
-        "'David Hildenbrand'" <david@redhat.com>,
-        "'Josh Poimboeuf'" <jpoimboe@redhat.com>,
-        "'Pavel Tatashin'" <pasha.tatashin@soleen.com>,
-        "'Juergen Gross'" <jgross@suse.com>,
-        "'Oscar Salvador'" <osalvador@suse.com>,
-        "'Jiri Kosina'" <jkosina@suse.cz>, <linux-kernel@vger.kernel.org>
-References: <20190617043635.13201-1-alastair@au1.ibm.com> <20190617043635.13201-5-alastair@au1.ibm.com> <20190617074715.GE30420@dhcp22.suse.cz>
-In-Reply-To: <20190617074715.GE30420@dhcp22.suse.cz>
-Subject: RE: [PATCH 4/5] mm/hotplug: Avoid RCU stalls when removing large amounts of memory
-Date:   Mon, 17 Jun 2019 17:57:16 +1000
-Message-ID: <068b01d524e2$4a5f5c30$df1e1490$@d-silva.org>
+        "'Logan Gunthorpe'" <logang@deltatee.com>, <linux-mm@kvack.org>,
+        <linux-kernel@vger.kernel.org>, <linux-nvdimm@lists.01.org>
+References: <20190617043635.13201-1-alastair@au1.ibm.com> <20190617043635.13201-6-alastair@au1.ibm.com> <20190617065921.GV3436@hirez.programming.kicks-ass.net> <f1bad6f784efdd26508b858db46f0192a349c7a1.camel@d-silva.org> <20190617071527.GA14003@infradead.org>
+In-Reply-To: <20190617071527.GA14003@infradead.org>
+Subject: RE: [PATCH 5/5] mm/hotplug: export try_online_node
+Date:   Mon, 17 Jun 2019 18:00:00 +1000
+Message-ID: <068d01d524e2$aa6f3000$ff4d9000$@d-silva.org>
 MIME-Version: 1.0
 Content-Type: text/plain;
         charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQKozGZqZYmaEl7M6DfiQR95qivs4QInXwcPAp6henSk0fuP8A==
+Thread-Index: AQKozGZqZYmaEl7M6DfiQR95qivs4QHbD3aSAzdXr9kBRRd62QEU+eDhpLzIGCA=
 Content-Language: en-au
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.6.2 (mail2.nmnhosting.com [10.0.1.20]); Mon, 17 Jun 2019 17:57:19 +1000 (AEST)
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.6.2 (mail2.nmnhosting.com [10.0.1.20]); Mon, 17 Jun 2019 18:00:00 +1000 (AEST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 > -----Original Message-----
-> From: Michal Hocko <mhocko@kernel.org>
-> Sent: Monday, 17 June 2019 5:47 PM
-> To: Alastair D'Silva <alastair@au1.ibm.com>
-> Cc: alastair@d-silva.org; Arun KS <arunks@codeaurora.org>; Mukesh Ojha
-> <mojha@codeaurora.org>; Logan Gunthorpe <logang@deltatee.com>; Wei
-> Yang <richard.weiyang@gmail.com>; Peter Zijlstra <peterz@infradead.org>;
-> Ingo Molnar <mingo@kernel.org>; linux-mm@kvack.org; Qian Cai
-> <cai@lca.pw>; Thomas Gleixner <tglx@linutronix.de>; Andrew Morton
-> <akpm@linux-foundation.org>; Mike Rapoport <rppt@linux.vnet.ibm.com>;
-> Baoquan He <bhe@redhat.com>; David Hildenbrand <david@redhat.com>;
-> Josh Poimboeuf <jpoimboe@redhat.com>; Pavel Tatashin
-> <pasha.tatashin@soleen.com>; Juergen Gross <jgross@suse.com>; Oscar
-> Salvador <osalvador@suse.com>; Jiri Kosina <jkosina@suse.cz>; linux-
-> kernel@vger.kernel.org
-> Subject: Re: [PATCH 4/5] mm/hotplug: Avoid RCU stalls when removing large
-> amounts of memory
+> From: Christoph Hellwig <hch@infradead.org>
+> Sent: Monday, 17 June 2019 5:15 PM
+> To: Alastair D'Silva <alastair@d-silva.org>
+> Cc: Peter Zijlstra <peterz@infradead.org>; Andrew Morton <akpm@linux-
+> foundation.org>; David Hildenbrand <david@redhat.com>; Oscar Salvador
+> <osalvador@suse.com>; Michal Hocko <mhocko@suse.com>; Pavel Tatashin
+> <pasha.tatashin@soleen.com>; Wei Yang <richard.weiyang@gmail.com>;
+> Arun KS <arunks@codeaurora.org>; Qian Cai <cai@lca.pw>; Thomas Gleixner
+> <tglx@linutronix.de>; Ingo Molnar <mingo@kernel.org>; Josh Poimboeuf
+> <jpoimboe@redhat.com>; Jiri Kosina <jkosina@suse.cz>; Mukesh Ojha
+> <mojha@codeaurora.org>; Mike Rapoport <rppt@linux.vnet.ibm.com>;
+> Baoquan He <bhe@redhat.com>; Logan Gunthorpe
+> <logang@deltatee.com>; linux-mm@kvack.org; linux-
+> kernel@vger.kernel.org; linux-nvdimm@lists.01.org
+> Subject: Re: [PATCH 5/5] mm/hotplug: export try_online_node
 > 
-> On Mon 17-06-19 14:36:30,  Alastair D'Silva  wrote:
-> > From: Alastair D'Silva <alastair@d-silva.org>
+> On Mon, Jun 17, 2019 at 05:05:30PM +1000, Alastair D'Silva wrote:
+> > On Mon, 2019-06-17 at 08:59 +0200, Peter Zijlstra wrote:
+> > > On Mon, Jun 17, 2019 at 02:36:31PM +1000, Alastair D'Silva wrote:
+> > > > From: Alastair D'Silva <alastair@d-silva.org>
+> > > >
+> > > > If an external driver module supplies physical memory and needs to
+> > > > expose
+> > >
+> > > Why would you ever want to allow a module to do such a thing?
+> > >
 > >
-> > When removing sufficiently large amounts of memory, we trigger RCU
-> > stall detection. By periodically calling cond_resched(), we avoid
-> > bogus stall warnings.
+> > I'm working on a driver for Storage Class Memory, connected via an
+> > OpenCAPI link.
 > >
-> > Signed-off-by: Alastair D'Silva <alastair@d-silva.org>
-> > ---
-> >  mm/memory_hotplug.c | 3 +++
-> >  1 file changed, 3 insertions(+)
-> >
-> > diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c index
-> > e096c987d261..382b3a0c9333 100644
-> > --- a/mm/memory_hotplug.c
-> > +++ b/mm/memory_hotplug.c
-> > @@ -578,6 +578,9 @@ void __remove_pages(struct zone *zone, unsigned
-> long phys_start_pfn,
-> >  		__remove_section(zone, __pfn_to_section(pfn),
-> map_offset,
-> >  				 altmap);
-> >  		map_offset = 0;
-> > +
-> > +		if (!(i & 0x0FFF))
-> > +			cond_resched();
+> > The memory is only usable once the card says it's OK to access it.
 > 
-> We already do have cond_resched before __remove_section. Why is an
-> additional needed?
+> And all that should go through our pmem APIs, not not directly poke into
+mm
+> internals.  And if you still need core patches send them along with the
+actual
+> driver.
 
-I was getting stalls when removing ~1TB of memory.
+I tried that, but I was getting crashes as the NUMA data structures for that
+node were not initialised.
 
+Calling this was required to prevent uninitialized accesses in the pmem
+library.
 
 -- 
 Alastair D'Silva           mob: 0423 762 819
