@@ -2,162 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 01B584827F
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 14:32:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EDCF44828A
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 14:34:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727962AbfFQMcX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 08:32:23 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:21595 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726005AbfFQMcW (ORCPT
+        id S1727483AbfFQMeG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 08:34:06 -0400
+Received: from mout.kundenserver.de ([212.227.17.13]:58319 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726005AbfFQMeF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 08:32:22 -0400
-X-UUID: f6edc7ac94bd449186c8b83a503b53db-20190617
-X-UUID: f6edc7ac94bd449186c8b83a503b53db-20190617
-Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw02.mediatek.com
-        (envelope-from <walter-zh.wu@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 904270075; Mon, 17 Jun 2019 20:32:16 +0800
-Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- mtkmbs08n2.mediatek.inc (172.21.101.56) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Mon, 17 Jun 2019 20:32:14 +0800
-Received: from [172.21.84.99] (172.21.84.99) by mtkcas08.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Mon, 17 Jun 2019 20:32:14 +0800
-Message-ID: <1560774735.15814.54.camel@mtksdccf07>
-Subject: Re: [PATCH v3] kasan: add memory corruption identification for
- software tag-based mode
-From:   Walter Wu <walter-zh.wu@mediatek.com>
-To:     Dmitry Vyukov <dvyukov@google.com>
-CC:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Alexander Potapenko <glider@google.com>,
-        Christoph Lameter <cl@linux.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        "Martin Schwidefsky" <schwidefsky@de.ibm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "Vasily Gorbik" <gor@linux.ibm.com>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        "Jason A . Donenfeld" <Jason@zx2c4.com>,
-        Miles Chen <miles.chen@mediatek.com>,
-        kasan-dev <kasan-dev@googlegroups.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        wsd_upstream <wsd_upstream@mediatek.com>
-Date:   Mon, 17 Jun 2019 20:32:15 +0800
-In-Reply-To: <CACT4Y+Y3uS59rXf92ByQuFK_G4v0H8NNnCY1tCbr4V+PaZF3ag@mail.gmail.com>
-References: <20190613081357.1360-1-walter-zh.wu@mediatek.com>
-         <da7591c9-660d-d380-d59e-6d70b39eaa6b@virtuozzo.com>
-         <1560447999.15814.15.camel@mtksdccf07>
-         <1560479520.15814.34.camel@mtksdccf07>
-         <1560744017.15814.49.camel@mtksdccf07>
-         <CACT4Y+Y3uS59rXf92ByQuFK_G4v0H8NNnCY1tCbr4V+PaZF3ag@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
-Content-Transfer-Encoding: 7bit
+        Mon, 17 Jun 2019 08:34:05 -0400
+Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
+ (mreue109 [212.227.15.145]) with ESMTPA (Nemesis) id
+ 1MMoXC-1htQJR3L4G-00Ihzj; Mon, 17 Jun 2019 14:33:53 +0200
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     Thierry Reding <treding@nvidia.com>, arm@kernel.org
+Cc:     linux-arm-kernel@lists.infradead.org,
+        Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org
+Subject: [PATCH] firmware: trusted_foundations: add ARMv7 dependency
+Date:   Mon, 17 Jun 2019 14:33:23 +0200
+Message-Id: <20190617123352.742876-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.20.0
 MIME-Version: 1.0
-X-TM-SNTS-SMTP: 792F3DD2252100ED132A309A0254155715B3B58D81E671EBE2156836FF5FF2582000:8
-X-MTK:  N
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:lG3EMn7eymquB1lgFAhu0K13XWBEH1PPENGNounZ6Xnzg65KD9H
+ K7KGoA6BDfG56L7Ecrfg52/nh0Wkl9GI4JMqNZ522rVXqelHcL5sgosETiLuFSnJaybdatK
+ tbzVbKcMFSV5HB4ECOima/g+smwK/Y4eXOe3AZLVnAwxeeNFCzZgJMp+Mrq2TcTDhEVbThS
+ MvyiJ2EXg1PGpN8yIODHw==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:cTIULY2r9us=:hIiDtNFP+qCUQBEtaqIitG
+ Us5dRrmiNDw0C8YsTQngg1k9y3yPLuoap1c4pB1wKOYDlGH/Z2b16Bk9xZrFp/FQj1Hiu/wD3
+ M//QdUVAb2bgRCGUtVDdGnG1sa92uumtSpwYWWKhQgN2YefSeDikjXsdBi+R4xq9j2vQCbqU2
+ 48xPo/MG1dT0JIlexAXxXnlvnco/uhOGGwkX8zHvQQN1uiNmlKAKRmnt16kzpsoQ9r0nycTSb
+ C4una3bkX0IpfkSC/TPpiabqZjrr95g6ITZNtT3vTZTpkldeKlbbxA2JjoLLv+o0hYfhAOlZc
+ chciSIdFB3VxMD85YlssJOZ8oWiomVtJA5b2yvI6VkycfpMCZpTaymq9+kUKT8SD4+SF6Oxpd
+ pcpExgIinHqr6rvf1yeYL2+e2TNiwdSYd+x5UEcHbQzGSg9eebgF+8O2o9oda5wFQtL00m5o/
+ sCf3EGTnr8n3tZoLP9c/cY9FT0abxqDdAUADI5pH+kuAmwD/nMSTPVTZkpeTVpcaetJGs05X5
+ k3c2/p7dneTigsuXTqH2zZ6FPxBsaFj3UFzUtrLXsBsPgzCJEBpPMNqWgpJLecJ7+hfmXGN6f
+ wYVUJf4iBTxyZ8qxUiIgBOpyr2ZltJ9RPgysB2b+R6xkawQx0dZ19TGLoyhl0yYx1OhlwuJRS
+ HTZ4GvuOP6kN27rNAr3OccFx6vWj3oQRgPIiVZVLqwx7fPuRlUCc2Wwed25LofcnhyAvURSwK
+ LX6RFXSSMmLOq5noEXwNhKFZiyqJUQXTB03q6Q==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2019-06-17 at 13:57 +0200, Dmitry Vyukov wrote:
-> On Mon, Jun 17, 2019 at 6:00 AM Walter Wu <walter-zh.wu@mediatek.com> wrote:
-> >
-> > On Fri, 2019-06-14 at 10:32 +0800, Walter Wu wrote:
-> > > On Fri, 2019-06-14 at 01:46 +0800, Walter Wu wrote:
-> > > > On Thu, 2019-06-13 at 15:27 +0300, Andrey Ryabinin wrote:
-> > > > >
-> > > > > On 6/13/19 11:13 AM, Walter Wu wrote:
-> > > > > > This patch adds memory corruption identification at bug report for
-> > > > > > software tag-based mode, the report show whether it is "use-after-free"
-> > > > > > or "out-of-bound" error instead of "invalid-access" error.This will make
-> > > > > > it easier for programmers to see the memory corruption problem.
-> > > > > >
-> > > > > > Now we extend the quarantine to support both generic and tag-based kasan.
-> > > > > > For tag-based kasan, the quarantine stores only freed object information
-> > > > > > to check if an object is freed recently. When tag-based kasan reports an
-> > > > > > error, we can check if the tagged addr is in the quarantine and make a
-> > > > > > good guess if the object is more like "use-after-free" or "out-of-bound".
-> > > > > >
-> > > > >
-> > > > >
-> > > > > We already have all the information and don't need the quarantine to make such guess.
-> > > > > Basically if shadow of the first byte of object has the same tag as tag in pointer than it's out-of-bounds,
-> > > > > otherwise it's use-after-free.
-> > > > >
-> > > > > In pseudo-code it's something like this:
-> > > > >
-> > > > > u8 object_tag = *(u8 *)kasan_mem_to_shadow(nearest_object(cacche, page, access_addr));
-> > > > >
-> > > > > if (access_addr_tag == object_tag && object_tag != KASAN_TAG_INVALID)
-> > > > >   // out-of-bounds
-> > > > > else
-> > > > >   // use-after-free
-> > > >
-> > > > Thanks your explanation.
-> > > > I see, we can use it to decide corruption type.
-> > > > But some use-after-free issues, it may not have accurate free-backtrace.
-> > > > Unfortunately in that situation, free-backtrace is the most important.
-> > > > please see below example
-> > > >
-> > > > In generic KASAN, it gets accurate free-backrace(ptr1).
-> > > > In tag-based KASAN, it gets wrong free-backtrace(ptr2). It will make
-> > > > programmer misjudge, so they may not believe tag-based KASAN.
-> > > > So We provide this patch, we hope tag-based KASAN bug report is the same
-> > > > accurate with generic KASAN.
-> > > >
-> > > > ---
-> > > >     ptr1 = kmalloc(size, GFP_KERNEL);
-> > > >     ptr1_free(ptr1);
-> > > >
-> > > >     ptr2 = kmalloc(size, GFP_KERNEL);
-> > > >     ptr2_free(ptr2);
-> > > >
-> > > >     ptr1[size] = 'x';  //corruption here
-> > > >
-> > > >
-> > > > static noinline void ptr1_free(char* ptr)
-> > > > {
-> > > >     kfree(ptr);
-> > > > }
-> > > > static noinline void ptr2_free(char* ptr)
-> > > > {
-> > > >     kfree(ptr);
-> > > > }
-> > > > ---
-> > > >
-> > > We think of another question about deciding by that shadow of the first
-> > > byte.
-> > > In tag-based KASAN, it is immediately released after calling kfree(), so
-> > > the slub is easy to be used by another pointer, then it will change
-> > > shadow memory to the tag of new pointer, it will not be the
-> > > KASAN_TAG_INVALID, so there are many false negative cases, especially in
-> > > small size allocation.
-> > >
-> > > Our patch is to solve those problems. so please consider it, thanks.
-> > >
-> > Hi, Andrey and Dmitry,
-> >
-> > I am sorry to bother you.
-> > Would you tell me what you think about this patch?
-> > We want to use tag-based KASAN, so we hope its bug report is clear and
-> > correct as generic KASAN.
-> >
-> > Thanks your review.
-> > Walter
-> 
-> Hi Walter,
-> 
-> I will probably be busy till the next week. Sorry for delays.
+The "+sec" extension is invalid for older ARM architectures, but
+the code can now be built on any ARM configuration:
 
-It's ok. Thanks your kindly help.
-I hope I can contribute to tag-based KASAN. It is a very important tool
-for us.
+/tmp/trusted_foundations-2d0882.s: Assembler messages:
+/tmp/trusted_foundations-2d0882.s:194: Error: architectural extension `sec' is not allowed for the current base architecture
+/tmp/trusted_foundations-2d0882.s:201: Error: selected processor does not support `smc #0' in ARM mode
+/tmp/trusted_foundations-2d0882.s:213: Error: architectural extension `sec' is not allowed for the current base architecture
+/tmp/trusted_foundations-2d0882.s:220: Error: selected processor does not support `smc #0' in ARM mode
+
+Add a dependency on ARMv7 for the build.
+
+Fixes: 4cb5d9eca143 ("firmware: Move Trusted Foundations support")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/firmware/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/firmware/Kconfig b/drivers/firmware/Kconfig
+index 35078c6f334a..53446e39a32c 100644
+--- a/drivers/firmware/Kconfig
++++ b/drivers/firmware/Kconfig
+@@ -256,7 +256,7 @@ config TI_SCI_PROTOCOL
+ 
+ config TRUSTED_FOUNDATIONS
+ 	bool "Trusted Foundations secure monitor support"
+-	depends on ARM
++	depends on ARM && CPU_V7
+ 	help
+ 	  Some devices (including most early Tegra-based consumer devices on
+ 	  the market) are booted with the Trusted Foundations secure monitor
+-- 
+2.20.0
 
