@@ -2,39 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EC550493B5
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 23:33:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B5910492C1
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 23:23:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730238AbfFQV0f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 17:26:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53116 "EHLO mail.kernel.org"
+        id S1729722AbfFQVX2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 17:23:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48488 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729266AbfFQV0b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 17:26:31 -0400
+        id S1729711AbfFQVXY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Jun 2019 17:23:24 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5671D20657;
-        Mon, 17 Jun 2019 21:26:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DD657206B7;
+        Mon, 17 Jun 2019 21:23:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560806790;
-        bh=5FKgHiwaps52oURHQqc1RE4Wu7mEfpAXnwncpeXbwZI=;
+        s=default; t=1560806603;
+        bh=mYhpHegnKzOHNL0fBQhB1WI/jHJUIg7YJUKcI2AzpYg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vHPbjfVM43XASP3zaaInNWR4/Rc/mZylqtAaNk0FIT8DgCZqN3dWLlAYUgxJm0KHI
-         YXAysyIxhyMn9H6S9anJr6JX6WpC9sr8a+LnmIB2ey7i5mT0V8QYGlAN67JXe87hHC
-         1Q8hWb7lSonrmdebvvPNRQTYSBYs5KPtMZb+5bBM=
+        b=SjsiOC0COmK45NXueurZ9eVgtIZMGw9TwCQl7QwS8CmeFwYsnWNnwzfdgjAlHAZ7Z
+         zQIHwp+WSr7jeSGT1HYD5TUD2C0Zfqwob/g+wZZ2GqWTiHvCde9EQSLN1aRMASj/O8
+         h2Mi70Sq0LgjOt4q/RaigV/IPSno9I4Enm+RruOU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Murray McAllister <murray.mcallister@gmail.com>,
-        Thomas Hellstrom <thellstrom@vmware.com>
-Subject: [PATCH 4.19 57/75] drm/vmwgfx: integer underflow in vmw_cmd_dx_set_shader() leading to an invalid read
-Date:   Mon, 17 Jun 2019 23:10:08 +0200
-Message-Id: <20190617210755.036336191@linuxfoundation.org>
+        "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Alexander Potapenko <glider@google.com>,
+        Dmitry Vyukov <dvyukov@google.com>, kasan-dev@googlegroups.com
+Subject: [PATCH 5.1 109/115] x86/kasan: Fix boot with 5-level paging and KASAN
+Date:   Mon, 17 Jun 2019 23:10:09 +0200
+Message-Id: <20190617210805.492186083@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190617210752.799453599@linuxfoundation.org>
-References: <20190617210752.799453599@linuxfoundation.org>
+In-Reply-To: <20190617210759.929316339@linuxfoundation.org>
+References: <20190617210759.929316339@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,39 +49,60 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Murray McAllister <murray.mcallister@gmail.com>
+From: Andrey Ryabinin <aryabinin@virtuozzo.com>
 
-commit 5ed7f4b5eca11c3c69e7c8b53e4321812bc1ee1e upstream.
+commit f3176ec9420de0c385023afa3e4970129444ac2f upstream.
 
-If SVGA_3D_CMD_DX_SET_SHADER is called with a shader ID
-of SVGA3D_INVALID_ID, and a shader type of
-SVGA3D_SHADERTYPE_INVALID, the calculated binding.shader_slot
-will be 4294967295, leading to an out-of-bounds read in vmw_binding_loc()
-when the offset is calculated.
+Since commit d52888aa2753 ("x86/mm: Move LDT remap out of KASLR region on
+5-level paging") kernel doesn't boot with KASAN on 5-level paging machines.
+The bug is actually in early_p4d_offset() and introduced by commit
+12a8cc7fcf54 ("x86/kasan: Use the same shadow offset for 4- and 5-level paging")
 
+early_p4d_offset() tries to convert pgd_val(*pgd) value to a physical
+address. This doesn't make sense because pgd_val() already contains the
+physical address.
+
+It did work prior to commit d52888aa2753 because the result of
+"__pa_nodebug(pgd_val(*pgd)) & PTE_PFN_MASK" was the same as "pgd_val(*pgd)
+& PTE_PFN_MASK". __pa_nodebug() just set some high bits which were masked
+out by applying PTE_PFN_MASK.
+
+After the change of the PAGE_OFFSET offset in commit d52888aa2753
+__pa_nodebug(pgd_val(*pgd)) started to return a value with more high bits
+set and PTE_PFN_MASK wasn't enough to mask out all of them. So it returns a
+wrong not even canonical address and crashes on the attempt to dereference
+it.
+
+Switch back to pgd_val() & PTE_PFN_MASK to cure the issue.
+
+Fixes: 12a8cc7fcf54 ("x86/kasan: Use the same shadow offset for 4- and 5-level paging")
+Reported-by: Kirill A. Shutemov <kirill@shutemov.name>
+Signed-off-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Alexander Potapenko <glider@google.com>
+Cc: Dmitry Vyukov <dvyukov@google.com>
+Cc: kasan-dev@googlegroups.com
+Cc: stable@vger.kernel.org
 Cc: <stable@vger.kernel.org>
-Fixes: d80efd5cb3de ("drm/vmwgfx: Initial DX support")
-Signed-off-by: Murray McAllister <murray.mcallister@gmail.com>
-Reviewed-by: Thomas Hellstrom <thellstrom@vmware.com>
-Signed-off-by: Thomas Hellstrom <thellstrom@vmware.com>
+Link: https://lkml.kernel.org/r/20190614143149.2227-1-aryabinin@virtuozzo.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-
 ---
- drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ arch/x86/mm/kasan_init_64.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c
-+++ b/drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c
-@@ -2493,7 +2493,8 @@ static int vmw_cmd_dx_set_shader(struct
+--- a/arch/x86/mm/kasan_init_64.c
++++ b/arch/x86/mm/kasan_init_64.c
+@@ -199,7 +199,7 @@ static inline p4d_t *early_p4d_offset(pg
+ 	if (!pgtable_l5_enabled())
+ 		return (p4d_t *)pgd;
  
- 	cmd = container_of(header, typeof(*cmd), header);
- 
--	if (cmd->body.type >= SVGA3D_SHADERTYPE_DX10_MAX) {
-+	if (cmd->body.type >= SVGA3D_SHADERTYPE_DX10_MAX ||
-+	    cmd->body.type < SVGA3D_SHADERTYPE_MIN) {
- 		DRM_ERROR("Illegal shader type %u.\n",
- 			  (unsigned) cmd->body.type);
- 		return -EINVAL;
+-	p4d = __pa_nodebug(pgd_val(*pgd)) & PTE_PFN_MASK;
++	p4d = pgd_val(*pgd) & PTE_PFN_MASK;
+ 	p4d += __START_KERNEL_map - phys_base;
+ 	return (p4d_t *)p4d + p4d_index(addr);
+ }
 
 
