@@ -2,161 +2,165 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B25C548657
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 17:00:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BB13148653
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 17:00:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728369AbfFQPAF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 11:00:05 -0400
-Received: from mx1.mailbox.org ([80.241.60.212]:60066 "EHLO mx1.mailbox.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726065AbfFQPAF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 11:00:05 -0400
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:105:465:1:1:0])
-        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
-        (No client certificate requested)
-        by mx1.mailbox.org (Postfix) with ESMTPS id 05CCB51D9E;
-        Mon, 17 Jun 2019 17:00:03 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at heinlein-support.de
-Received: from smtp1.mailbox.org ([80.241.60.240])
-        by hefe.heinlein-support.de (hefe.heinlein-support.de [91.198.250.172]) (amavisd-new, port 10030)
-        with ESMTP id AUAwnw_0lkHo; Mon, 17 Jun 2019 16:59:53 +0200 (CEST)
-From:   Stefan Roese <sr@denx.de>
-To:     linux-serial@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Yegor Yefremov <yegorslists@googlemail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Giulio Benetti <giulio.benetti@micronovasrl.com>
-Subject: [PATCH 1/3 v7] serial: mctrl_gpio: Check if GPIO property exisits before requesting it
-Date:   Mon, 17 Jun 2019 16:59:50 +0200
-Message-Id: <20190617145952.4848-1-sr@denx.de>
+        id S1728300AbfFQO74 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 10:59:56 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:38074 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726215AbfFQO7z (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Jun 2019 10:59:55 -0400
+Received: by mail-wm1-f66.google.com with SMTP id s15so9476985wmj.3
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2019 07:59:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=references:user-agent:from:to:cc:subject:in-reply-to:date
+         :message-id:mime-version:content-transfer-encoding;
+        bh=ghbiEfQ6eCAvNR3r+RTqQOdACpqT5ffcn6cO7EYSCQI=;
+        b=ingREZ1HqUKGlmG/guNYSpiJDuTNDsJ0go8J5yZCMurHP+Uu7wXwE1G75cLSbhlL3v
+         qLsZT+UPiey6CH1QT59tUW9FgGrUOe0UToIOB9AnuRaqf/W+WIKzVgmH/FkL7ZdB1AAe
+         c44+xWbOLjf2mCDY2E1y7GRWm4xvzmsDS1U7bROepRkLzIzbhaV09+ylFsWix8vF6Te3
+         pgopenGGUoCzG9iMGp3U3HZLVESHEdn3nZtBbKOCAWf60sP6cmtDtsvf6bmezTktY4/8
+         yZSfXxvOaE7uX9/+5O3mUiOz/ExnSgNpxTlwWz2JXVRiBgvq4Wch/RUA3yO7VaG3PELG
+         Bk5w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:references:user-agent:from:to:cc:subject
+         :in-reply-to:date:message-id:mime-version:content-transfer-encoding;
+        bh=ghbiEfQ6eCAvNR3r+RTqQOdACpqT5ffcn6cO7EYSCQI=;
+        b=gV210R/VdfdhajOIomrC0/i8YEKRk3KVnGaH47Bbz0mBP+HsbrdFdDT6f9EAgMu3Pc
+         wLc8/vR1agGGSP0NukXWwWdYSv7TEn8Ddnl4lMrwzpI1IDZ6Py+iFU3vTdPsgl7dp22q
+         175UGpdSkbJjnxGA/CXFFxKFNNZ8bdJTEkXdgfoPG+QCrjoIna+44+OnXVAm1lSuODNw
+         sXaUYCRF3rlZnfB37cHHvjnxdPNwiykNXO8TrKixq0PHu7xr6nCZGzRFA/AN4UZyyKnX
+         ZlvmL3BA0MAjLx04Bf4c0im+0esTgDI/NKXSsCFFBuI1NRgWrp8CPX3X51Z3DNJZiQB5
+         fKuA==
+X-Gm-Message-State: APjAAAUbn61zjVxJmCni7+UjAsfvuZ4HP5J9fJq0f5JZ3YAvV7Zc/LYp
+        C3m9Bog0okR/ABCohryIZBIE6Q==
+X-Google-Smtp-Source: APXvYqzyEjO+Stva9Hk5FhGPLNeui4HWadt++cOLvSfgor8T/7IhZMEgLGDRVw8RCUNOBQHGwAp6pw==
+X-Received: by 2002:a1c:f918:: with SMTP id x24mr12940842wmh.132.1560783592558;
+        Mon, 17 Jun 2019 07:59:52 -0700 (PDT)
+Received: from zen.linaroharston ([81.128.185.34])
+        by smtp.gmail.com with ESMTPSA id r2sm16240349wma.26.2019.06.17.07.59.51
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Mon, 17 Jun 2019 07:59:51 -0700 (PDT)
+Received: from zen (localhost [127.0.0.1])
+        by zen.linaroharston (Postfix) with ESMTP id 993AE1FF87;
+        Mon, 17 Jun 2019 15:59:51 +0100 (BST)
+References: <20190617104237.2082388-1-arnd@arndb.de> <20190617112652.GB30800@fuggles.cambridge.arm.com> <CAK8P3a2aJNiLTyfRDqazJa2sAc-Jf-QShSZ7+4-whHSxKbLUVQ@mail.gmail.com>
+User-agent: mu4e 1.3.2; emacs 26.1
+From:   Alex =?utf-8?Q?Benn=C3=A9e?= <alex.bennee@linaro.org>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Will Deacon <will.deacon@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Dave Martin <Dave.Martin@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Peter Maydell <peter.maydell@linaro.org>,
+        Alan Hayward <alan.hayward@arm.com>,
+        Julien Grall <julien.grall@arm.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Andrew Murray <andrew.murray@arm.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] arm64/sve: fix genksyms generation
+In-reply-to: <CAK8P3a2aJNiLTyfRDqazJa2sAc-Jf-QShSZ7+4-whHSxKbLUVQ@mail.gmail.com>
+Date:   Mon, 17 Jun 2019 15:59:51 +0100
+Message-ID: <87a7eg9s0o.fsf@zen.linaroharston>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds a check for the GPIOs property existence, before the
-GPIO is requested. This fixes an issue seen when the 8250 mctrl_gpio
-support is added (2nd patch in this patch series) on x86 platforms using
-ACPI.
 
-Here Mika's comments from 2016-08-09:
+Arnd Bergmann <arnd@arndb.de> writes:
 
-"
-I noticed that with v4.8-rc1 serial console of some of our Broxton
-systems does not work properly anymore. I'm able to see output but input
-does not work.
+> On Mon, Jun 17, 2019 at 1:26 PM Will Deacon <will.deacon@arm.com> wrote:
+>>
+>> Hi Arnd,
+>>
+>> On Mon, Jun 17, 2019 at 12:42:11PM +0200, Arnd Bergmann wrote:
+>> > genksyms does not understand __uint128_t, so we get a build failure
+>> > in the fpsimd module when it cannot export a symbol right:
+>>
+>> The fpsimd code is builtin, so which module is actually failing? My
+>> allmodconfig build succeeds, so I must be missing something.
+>
+> It happened for me on randconfig builds, you can find one such configurat=
+ion
+> at https://pastebin.com/cU8iQ4ta now. I was building this with clang
+> rather than gcc, which may affect the issue, but I assumed not.
+>
+>> > WARNING: EXPORT symbol "kernel_neon_begin" [vmlinux] version generatio=
+n failed, symbol will not be versioned.
+>> > /home/arnd/cross/x86_64/gcc-8.1.0-nolibc/aarch64-linux/bin/aarch64-lin=
+ux-ld: arch/arm64/kernel/fpsimd.o: relocation R_AARCH64_ABS32 against `__cr=
+c_kernel_neon_begin' can not be used when making a shared object
+>> > arch/arm64/kernel/fpsimd.o:(.data+0x0): dangerous relocation: unsuppor=
+ted relocation
+>> > arch/arm64/kernel/fpsimd.o:(".discard.addressable"+0x0): dangerous rel=
+ocation: unsupported relocation
+>> > arch/arm64/kernel/fpsimd.o:(".discard.addressable"+0x8): dangerous rel=
+ocation: unsupported relocation
+>> >
+>> > We could teach genksyms about the type, but it's easier to just
+>> > work around it by defining that type locally in a way that genksyms
+>> > understands.
+>> >
+>> > Fixes: 41040cf7c5f0 ("arm64/sve: Fix missing SVE/FPSIMD endianness con=
+versions")
+>>
+>> I can't see which part of that patch causes the problem, so I'm a bit wa=
+ry
+>> of the fix. We've been using __uint128_t for a while now, and I see ther=
+e's
+>> one in the x86 kvm code as well, so it would be nice to understand what's
+>> happening here so that we can avoid running into it in future as well.
+>
+> The problem is only in files that export a symbol. This is also the
+> case in arch/x86/kernel/kvm.c, but it may be lucky because the
+> type only appears /after/ the last export in that file.
+>
+>> > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+>> > ---
+>> >  arch/arm64/kernel/fpsimd.c | 3 +++
+>> >  1 file changed, 3 insertions(+)
+>> >
+>> > diff --git a/arch/arm64/kernel/fpsimd.c b/arch/arm64/kernel/fpsimd.c
+>> > index 07f238ef47ae..2aba07cccf50 100644
+>> > --- a/arch/arm64/kernel/fpsimd.c
+>> > +++ b/arch/arm64/kernel/fpsimd.c
+>> > @@ -400,6 +400,9 @@ static int __init sve_sysctl_init(void) { return 0=
+; }
+>> >  #define ZREG(sve_state, vq, n) ((char *)(sve_state) +                \
+>> >       (SVE_SIG_ZREG_OFFSET(vq, n) - SVE_SIG_REGS_OFFSET))
+>> >
+>> > +#ifdef __GENKSYMS__
+>> > +typedef __u64 __uint128_t[2];
+>> > +#endif
+>>
+>> I suspect I need to figure out what genksyms is doing, but I'm nervous
+>> about exposing this as an array type without understanding whether or
+>> not that has consequences for its operation.
+>
+> The entire point is genksyms is to ensure that types of exported symbols
+> are compatible. To do this, it has a limited parser for C source code that
+> understands the basic types (char, int, long, _Bool, etc) and how to
+> aggregate them into structs and function arguments. This process has
+> always been fragile, and it clearly breaks when it fails to understand a
+> particular type.
 
-I bisected it down to commit 4ef03d328769eddbfeca1f1c958fdb181a69c341
-("tty/serial/8250: use mctrl_gpio helpers").
+Shouldn't the solution for this be to fix genksyms to be less fragile
+and more understanding? The code base doesn't seem to be full of these
+sorts of ifdef workarounds.
 
-The reason why it fails is that in ACPI we do not have names for GPIOs
-(except when _DSD is used) so we use the "idx" to index into _CRS GPIO
-resources. Now mctrl_gpio_init_noauto() goes through a list of GPIOs
-calling devm_gpiod_get_index_optional() passing "idx" of 0 for each. The
-UART device in Broxton has following (simplified) ACPI description:
+>
+>           Arnd
 
-    Device (URT4)
-    {
-        ...
-        Name (_CRS, ResourceTemplate () {
-            GpioIo (Exclusive, PullDefault, 0x0000, 0x0000, IoRestrictionOutputOnly,
-                    "\\_SB.GPO0", 0x00, ResourceConsumer)
-            {
-                0x003A
-            }
-            GpioIo (Exclusive, PullDefault, 0x0000, 0x0000, IoRestrictionOutputOnly,
-                    "\\_SB.GPO0", 0x00, ResourceConsumer)
-            {
-                0x003D
-            }
-        })
 
-In this case it finds the first GPIO (0x003A which happens to be RX pin
-for that UART), turns it into GPIO which then breaks input for the UART
-device. This also breaks systems with bluetooth connected to UART (those
-typically have some GPIOs in their _CRS).
-
-Any ideas how to fix this?
-
-We cannot just drop the _CRS index lookup fallback because that would
-break many existing machines out there so maybe we can limit this to
-only DT enabled machines. Or alternatively probe if the property first
-exists before trying to acquire the GPIOs (using
-device_property_present()).
-"
-
-This patch implements the fix suggested by Mika in his statement above.
-
-Signed-off-by: Stefan Roese <sr@denx.de>
-Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Yegor Yefremov <yegorslists@googlemail.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Giulio Benetti <giulio.benetti@micronovasrl.com>
----
-v7:
-- Include <linux/property.h> to fix compile breakage on OMAP
-
-v6:
-- No change
-
-v5:
-- Simplified the code a bit (Andy)
-- Added gpio_str == NULL handling (Andy)
-
-v4:
-- Add missing free() calls (Johan)
-- Added Mika's reviewed by tag
-- Added Johan to Cc
-
-v3:
-- No change
-
-v2:
-- Include the problem description and analysis from Mika into the commit
-  text, as suggested by Greg.
-
- drivers/tty/serial/serial_mctrl_gpio.c | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
-
-diff --git a/drivers/tty/serial/serial_mctrl_gpio.c b/drivers/tty/serial/serial_mctrl_gpio.c
-index 39ed56214cd3..2b400189be91 100644
---- a/drivers/tty/serial/serial_mctrl_gpio.c
-+++ b/drivers/tty/serial/serial_mctrl_gpio.c
-@@ -12,6 +12,7 @@
- #include <linux/termios.h>
- #include <linux/serial_core.h>
- #include <linux/module.h>
-+#include <linux/property.h>
- 
- #include "serial_mctrl_gpio.h"
- 
-@@ -116,6 +117,19 @@ struct mctrl_gpios *mctrl_gpio_init_noauto(struct device *dev, unsigned int idx)
- 
- 	for (i = 0; i < UART_GPIO_MAX; i++) {
- 		enum gpiod_flags flags;
-+		char *gpio_str;
-+		bool present;
-+
-+		/* Check if GPIO property exists and continue if not */
-+		gpio_str = kasprintf(GFP_KERNEL, "%s-gpios",
-+				     mctrl_gpios_desc[i].name);
-+		if (!gpio_str)
-+			continue;
-+
-+		present = device_property_present(dev, gpio_str);
-+		kfree(gpio_str);
-+		if (!present)
-+			continue;
- 
- 		if (mctrl_gpios_desc[i].dir_out)
- 			flags = GPIOD_OUT_LOW;
--- 
-2.22.0
-
+--
+Alex Benn=C3=A9e
