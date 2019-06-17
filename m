@@ -2,57 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7942A48F18
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 21:30:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EF9FE48F15
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 21:30:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729108AbfFQTaH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 15:30:07 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:51550 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728990AbfFQT36 (ORCPT
+        id S1727072AbfFQTaB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 15:30:01 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:35862 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728631AbfFQTaA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 15:29:58 -0400
-Received: by mail-wm1-f66.google.com with SMTP id 207so635775wma.1
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2019 12:29:57 -0700 (PDT)
+        Mon, 17 Jun 2019 15:30:00 -0400
+Received: by mail-wr1-f65.google.com with SMTP id n4so3185890wrs.3
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2019 12:29:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=pLDKBn/rLn9JtAy1R8FKXFV1pHYiHH80xHdW2AHq76o=;
-        b=DnkiSLYsEq+K6UwHvuKcniGNMtC1VAAJVH4kaIlIK99n01SJqwxnXECrKm5rOyiBk9
-         bkZUXZ8Mg+JGribMc6w1tilz4fe/n/lgi+P11r6Mprc0IQJDyhK0oTNjShwkIcCBxwM7
-         TNVYXcWi50BYWcMPwXChvRnGZlOqi8pJvR5uk8WE3p8vRL1JXzk0BLKWQ9zLQohZDb2t
-         ZAkRlxwj+prGx5/jOC0nOe8cxiiK5Bbl/LWGa4X9pw9JSWMdSveYfzJqI0zm64winfbc
-         NqlGBlsdKQv/ABACo38l3rvGDQxtX+6X2ETn+94nbPJx7xxASEAGzZSKgoVofjMFOlfU
-         yg6Q==
+        bh=EkTsmPm54nV9I4eCV7klbBI2xmAyNZbDf6YnrgHdVW0=;
+        b=AmGxu5F0KkO3GEQ+Ip9mfFWBY+gHo846Sjgr7/Mu/jH0pE9VoO7pZ8yAl7ZzP1xgNv
+         oM1KZ0aJNGsTRu6qeMpzYy5xBvKeV/zhKXEfoRZCSPXxxuw+lE1meqg9Ldgwb/8SLQKP
+         PX9onnzJjT7tzw5wGIhQwOQ2F7fcB9J6k387s9l30NMFJ0RJiY8x4Jo7ZP5QFD7jVjVG
+         DBP4xEwe3rQX/S4eCkfcidL0fqh2msiwMk3NV1xO5kc53n6n/FJUQ4Ku6+rs/vKVVvw8
+         gJBxdh+YyBGwEIv8EOEGhEAY3sqkh5Qt2YBAEF98qNIc8yykvpK3RydN2xGe37fzTojI
+         tLyg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=pLDKBn/rLn9JtAy1R8FKXFV1pHYiHH80xHdW2AHq76o=;
-        b=YOiiC/ZblgNdYlfYz/oYUPAOigyDtEosJ1HdZbF4caINzxObnoolpSS1spBBpWz3lv
-         Mt9qVfi8zosQJcfIeL6V+Wr4ej/oOP4RE4MLoQ51aqVXRZSFXCZcusl/YDIl0LF6dUUP
-         JbEdyFxMG4LzO6CH6+XK7WvWPUteaAr9dq8xF/eWalj98STR+bUGjdwmgXJZll48psA+
-         8LEywvCmPh1lIIm3clJ/pwOrDb9KAnahe5nHXgrhOFlEGaK9D8ED1tKRVwysc89x1CcA
-         LZBZgISClLRwZ9nyjYcLgMwxAjQTIzV0CLBSkZb2RiQAouyJv8k4kUFKB+wUa6sxaKOn
-         zUyg==
-X-Gm-Message-State: APjAAAXYXJKgVe1NnTCDQEQhbqSc9AMJK4GSWBew07hH8Esgln15C23V
-        10MWZMZHK9N+ipDt8dHOpOyv3Q==
-X-Google-Smtp-Source: APXvYqwzSn6QF6/tx1P4ONWL+aQ1cDMzNSHZ+vQ7fVHmaZUy1tTyC2v6scoAFh5dLZLMBXMhszyC2Q==
-X-Received: by 2002:a7b:ca43:: with SMTP id m3mr158418wml.45.1560799796773;
-        Mon, 17 Jun 2019 12:29:56 -0700 (PDT)
+        bh=EkTsmPm54nV9I4eCV7klbBI2xmAyNZbDf6YnrgHdVW0=;
+        b=l0InBvjKmz/qVef3mpRCaqjWB3PsC7fXQORfVtyr8eDsudI3Cel9rcmwxjYEFi+IqR
+         bDEBBGTtYqoBsGQQdFtNb/KwpgAaxsAII2ReotaBpqablvYPSgW/ODllrv0D1ptKZ4/f
+         3Gw4Wg6M5u6+wjtF/FOM3ZDyoc77ovLdKDfpih55mM7XD9olrvIT+YRbywdOcN7gfV2j
+         jR3EgkhRZVz5H+FGS10yQPo4CgVuGZ0G1u4GAly1U0N4K1tGkXu4UDq9y2mLFZKgAgy/
+         ccTljbTnM91+66C9dJuxQsjc109t746bcjID6ikHIZnS2xe9NWl6Ua2KCUV3d2NdjqO2
+         /lcg==
+X-Gm-Message-State: APjAAAVPElj9WdxgHRiJyvA26zdYPwdS8WeeVgN1qT5PC2cFfD8P8LiF
+        WFFhRoHd8WtBLv+BpZUZnL4JXQ==
+X-Google-Smtp-Source: APXvYqyX0kVbSqS7aC4sfwCCNuTTDSn5b7E8alU67haUiF3ORjBg9no+KsXo3NxLtJPX9fne/yCrhw==
+X-Received: by 2002:adf:fecd:: with SMTP id q13mr7631641wrs.97.1560799797685;
+        Mon, 17 Jun 2019 12:29:57 -0700 (PDT)
 Received: from loys-ubuntu-BY1835A49200471.thefacebook.com (cust-west-pareq2-46-193-13-130.wb.wifirst.net. [46.193.13.130])
-        by smtp.googlemail.com with ESMTPSA id u18sm9412034wrr.11.2019.06.17.12.29.55
+        by smtp.googlemail.com with ESMTPSA id u18sm9412034wrr.11.2019.06.17.12.29.56
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 17 Jun 2019 12:29:56 -0700 (PDT)
+        Mon, 17 Jun 2019 12:29:57 -0700 (PDT)
 From:   Loys Ollivier <lollivier@baylibre.com>
 To:     Palmer Dabbelt <palmer@sifive.com>,
         Paul Walmsley <paul.walmsley@sifive.com>
 Cc:     Loys Ollivier <lollivier@baylibre.com>,
         linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org, Kevin Hilman <khilman@baylibre.com>
-Subject: [PATCH 2/3] riscv: select SiFive platform drivers with SOC_SIFIVE
-Date:   Mon, 17 Jun 2019 21:29:49 +0200
-Message-Id: <1560799790-20287-3-git-send-email-lollivier@baylibre.com>
+Subject: [PATCH 3/3] riscv: defconfig: enable SOC_SIFIVE
+Date:   Mon, 17 Jun 2019 21:29:50 +0200
+Message-Id: <1560799790-20287-4-git-send-email-lollivier@baylibre.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1560799790-20287-1-git-send-email-lollivier@baylibre.com>
 References: <1560799790-20287-1-git-send-email-lollivier@baylibre.com>
@@ -61,29 +61,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On selection of SOC_SIFIVE select the corresponding platform drivers.
+Enable SOC_SIFIVE so the default upstream config is bootable on the SiFive
+Unleashed Board.
+And have basic support for future boards based on the same SoC.
 
 Signed-off-by: Loys Ollivier <lollivier@baylibre.com>
 ---
- arch/riscv/Kconfig.socs | 5 +++++
- 1 file changed, 5 insertions(+)
+ arch/riscv/configs/defconfig | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
 
-diff --git a/arch/riscv/Kconfig.socs b/arch/riscv/Kconfig.socs
-index 60dae1b5f276..536c0ef4aee8 100644
---- a/arch/riscv/Kconfig.socs
-+++ b/arch/riscv/Kconfig.socs
-@@ -2,6 +2,11 @@ menu "SoC selection"
- 
- config SOC_SIFIVE
-        bool "SiFive SoCs"
-+       select SERIAL_SIFIVE
-+       select SERIAL_SIFIVE_CONSOLE
-+       select CLK_SIFIVE
-+       select CLK_SIFIVE_FU540_PRCI
-+       select SIFIVE_PLIC
-        help
-          This enables support for SiFive SoC platform hardware.
- 
+diff --git a/arch/riscv/configs/defconfig b/arch/riscv/configs/defconfig
+index 4f02967e55de..6e3e37aa8fd1 100644
+--- a/arch/riscv/configs/defconfig
++++ b/arch/riscv/configs/defconfig
+@@ -12,6 +12,7 @@ CONFIG_CHECKPOINT_RESTORE=y
+ CONFIG_BLK_DEV_INITRD=y
+ CONFIG_EXPERT=y
+ CONFIG_BPF_SYSCALL=y
++CONFIG_SOC_SIFIVE=y
+ CONFIG_SMP=y
+ CONFIG_MODULES=y
+ CONFIG_MODULE_UNLOAD=y
+@@ -49,8 +50,6 @@ CONFIG_SERIAL_8250=y
+ CONFIG_SERIAL_8250_CONSOLE=y
+ CONFIG_SERIAL_OF_PLATFORM=y
+ CONFIG_SERIAL_EARLYCON_RISCV_SBI=y
+-CONFIG_SERIAL_SIFIVE=y
+-CONFIG_SERIAL_SIFIVE_CONSOLE=y
+ CONFIG_HVC_RISCV_SBI=y
+ # CONFIG_PTP_1588_CLOCK is not set
+ CONFIG_DRM=y
+@@ -66,9 +65,6 @@ CONFIG_USB_OHCI_HCD_PLATFORM=y
+ CONFIG_USB_STORAGE=y
+ CONFIG_USB_UAS=y
+ CONFIG_VIRTIO_MMIO=y
+-CONFIG_CLK_SIFIVE=y
+-CONFIG_CLK_SIFIVE_FU540_PRCI=y
+-CONFIG_SIFIVE_PLIC=y
+ CONFIG_EXT4_FS=y
+ CONFIG_EXT4_FS_POSIX_ACL=y
+ CONFIG_AUTOFS4_FS=y
 -- 
 2.7.4
 
