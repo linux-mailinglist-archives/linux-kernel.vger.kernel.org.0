@@ -2,87 +2,153 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2B6ED48887
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 18:15:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C3944889B
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 18:15:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728279AbfFQQPF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 12:15:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55040 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728193AbfFQQPE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 12:15:04 -0400
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 58F4C2182B
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2019 16:15:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560788103;
-        bh=JVZ01VQ9q2BY9LSCSpDeGenC0gNyM0CCxXIGe7cpTRk=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=u0yPsNKYjsVDPjixo7eGt49hpgnj9Qzul0OjSRqTnkpQP/9jPpaQD4omedpzMB2lr
-         9051sf80GG3JB8m+1Z2RCtEy/6xh2uXK0IsU7wtiqF8+FXMLdRKWfssLvW2hnqbCzC
-         6R4kLuNGpy6jCcaZPdNYXNItJBk70On/mmPqEBsE=
-Received: by mail-wr1-f41.google.com with SMTP id p11so10634206wre.7
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2019 09:15:03 -0700 (PDT)
-X-Gm-Message-State: APjAAAWpACEn3Gvq9T5EkLVVh2od68uyQBUUjkGcOAaJM/FZURaBA+FK
-        lzedXZVpN/kRSMfAewordas5vJEM0urtIfcgzXrbVw==
-X-Google-Smtp-Source: APXvYqw+aKjGo1oOpxFBQkSUulEn15Px0suva6OwH4jzhCqa52shTOhsLX33dxRlw1A3thzjVwlJh2/YrXPs9J0TKOY=
-X-Received: by 2002:adf:cc85:: with SMTP id p5mr16200961wrj.47.1560788101765;
- Mon, 17 Jun 2019 09:15:01 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190612170834.14855-1-mhillenb@amazon.de> <eecc856f-7f3f-ed11-3457-ea832351e963@intel.com>
- <A542C98B-486C-4849-9DAC-2355F0F89A20@amacapital.net> <alpine.DEB.2.21.1906141618000.1722@nanos.tec.linutronix.de>
- <58788f05-04c3-e71c-12c3-0123be55012c@amazon.com> <63b1b249-6bc7-ffd9-99db-d36dd3f1a962@intel.com>
- <CALCETrXph3Zg907kWTn6gAsZVsPbCB3A2XuNf0hy5Ez2jm2aNQ@mail.gmail.com> <698ca264-123d-46ae-c165-ed62ea149896@intel.com>
-In-Reply-To: <698ca264-123d-46ae-c165-ed62ea149896@intel.com>
-From:   Andy Lutomirski <luto@kernel.org>
+        id S1728526AbfFQQPP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 12:15:15 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:46453 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728409AbfFQQPN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Jun 2019 12:15:13 -0400
+Received: by mail-pl1-f195.google.com with SMTP id e5so4264811pls.13;
+        Mon, 17 Jun 2019 09:15:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=WnAuUwzgMNkund4HFbyzfCfrHx67s1Khkw3zRwQVHks=;
+        b=VxKYExHdQwgyW+4bWrQQ3AJMfTS3QHqEqVyMf4RFHfMxJhZVKJVl05gUFt5t1txupr
+         F52vU+RbuJvDbXDpIeFAX2qVcLmvG0xmMibFQ6NiPInhs4fDKOtOojIVrSQl0H2+CuUz
+         IQvrq/eRmVPob8CiQVnFob4vkHgqMDDrt6ocxPN8xxtle5eUnB2BC9M7/OVlsdUjqkaL
+         tbZBd3h2WvnbF1I7ZOGdxtCxPZKZZe7LOGLsPKYr7EckWpf7I7AZBX9fzzw4w62viiE9
+         XY4Hy7mwON51ddkQv69dOX+DlyYMqd8Tso/aKl7lykdzCP4iOIDcBVvsbzOyu2usqDZY
+         Rp6g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=WnAuUwzgMNkund4HFbyzfCfrHx67s1Khkw3zRwQVHks=;
+        b=OsEv+sJ1TwlxSlfChhhik0ldLOxmIKCqZzc9pHxh5iXT41uliTpqA5ltcaEGlNu++Q
+         FkNAzhTrWpJ8PucuXj3EbMVjHQZIm4smc9oWfqAKoF8fFuEM1ldta4x27uUyYlNS8gDp
+         RD2rJ5MB+wfaBJrwEPx03LmRGZiJpWWAR6dBugaIWwklZcPV6FGdePGa+p6Qn5f9I9ZW
+         ZuDvTs7uRSF5DzKx5KKnqrOaEWLSo7iGkAmFrrRgDgcueaEr1ffOI8jyxPFLnNfLhaJD
+         YCIoHlsn3hZMzxKNBY2SO8Ko4Sak2wFEI4VJwIOFMADnpWMnI5rFVCH6MteBohBD/IEs
+         oFog==
+X-Gm-Message-State: APjAAAU373TNJC5P6c04joaNAtlNegKrLnpHZ4TmHae3lCFEpHaby0za
+        DB5nwA6Vw7wI6u/iirWP/zyBjVZ3AG8=
+X-Google-Smtp-Source: APXvYqw4UbH1JusNif6881cHAMpwV11NsOd0fQUIZ/zNAgVxASO7xwLoD9Yxr35X7AckprXu5DIcDg==
+X-Received: by 2002:a17:902:e512:: with SMTP id ck18mr2810622plb.53.1560788112874;
+        Mon, 17 Jun 2019 09:15:12 -0700 (PDT)
+Received: from localhost.lan (c-24-22-235-96.hsd1.wa.comcast.net. [24.22.235.96])
+        by smtp.gmail.com with ESMTPSA id c9sm14791953pfn.3.2019.06.17.09.15.11
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Mon, 17 Jun 2019 09:15:12 -0700 (PDT)
+From:   Andrey Smirnov <andrew.smirnov@gmail.com>
+To:     linux-pm@vger.kernel.org
+Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
+        Chris Healy <cphealy@gmail.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Angus Ainslie <angus@akkea.ca>, linux-imx@nxp.com,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v6 04/12] thermal: qoriq: Embed per-sensor data into struct qoriq_tmu_data
 Date:   Mon, 17 Jun 2019 09:14:50 -0700
-X-Gmail-Original-Message-ID: <CALCETrVt=X+FB2cM5hMN9okvbcROFfT4_KMwaKaN2YVvc7UQTw@mail.gmail.com>
-Message-ID: <CALCETrVt=X+FB2cM5hMN9okvbcROFfT4_KMwaKaN2YVvc7UQTw@mail.gmail.com>
-Subject: Re: [RFC 00/10] Process-local memory allocations for hiding KVM secrets
-To:     Dave Hansen <dave.hansen@intel.com>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Alexander Graf <graf@amazon.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Marius Hillenbrand <mhillenb@amazon.de>,
-        kvm list <kvm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux-MM <linux-mm@kvack.org>, Alexander Graf <graf@amazon.de>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Message-Id: <20190617161458.3754-5-andrew.smirnov@gmail.com>
+X-Mailer: git-send-email 2.21.0
+In-Reply-To: <20190617161458.3754-1-andrew.smirnov@gmail.com>
+References: <20190617161458.3754-1-andrew.smirnov@gmail.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 17, 2019 at 9:09 AM Dave Hansen <dave.hansen@intel.com> wrote:
->
-> On 6/17/19 8:54 AM, Andy Lutomirski wrote:
-> >>> Would that mean that with Meltdown affected CPUs we open speculation
-> >>> attacks against the mmlocal memory from KVM user space?
-> >> Not necessarily.  There would likely be a _set_ of local PGDs.  We could
-> >> still have pair of PTI PGDs just like we do know, they'd just be a local
-> >> PGD pair.
-> >>
-> > Unfortunately, this would mean that we need to sync twice as many
-> > top-level entries when we context switch.
->
-> Yeah, PTI sucks. :)
->
-> For anyone following along at home, I'm going to go off into crazy
-> per-cpu-pgds speculation mode now...  Feel free to stop reading now. :)
->
-> But, I was thinking we could get away with not doing this on _every_
-> context switch at least.  For instance, couldn't 'struct tlb_context'
-> have PGD pointer (or two with PTI) in addition to the TLB info?  That
-> way we only do the copying when we change the context.  Or does that tie
-> the implementation up too much with PCIDs?
+Embed per-sensor data into struct qoriq_tmu_data so we can drop the
+code allocating it. This also allows us to get rid of per-sensor back
+reference to struct qoriq_tmu_data since now its address can be
+caluclated using container_of().
 
-Hmm, that seems entirely reasonable.  I think the nasty bit would be
-figuring out all the interactions with PV TLB flushing.  PV TLB
-flushes already don't play so well with PCID tracking, and this will
-make it worse.  We probably need to rewrite all that code regardless.
+Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
+Cc: Chris Healy <cphealy@gmail.com>
+Cc: Lucas Stach <l.stach@pengutronix.de>
+Cc: Zhang Rui <rui.zhang@intel.com>
+Cc: Eduardo Valentin <edubezval@gmail.com>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: Angus Ainslie (Purism) <angus@akkea.ca>
+Cc: linux-imx@nxp.com
+Cc: linux-pm@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+---
+ drivers/thermal/qoriq_thermal.c | 23 ++++++++---------------
+ 1 file changed, 8 insertions(+), 15 deletions(-)
+
+diff --git a/drivers/thermal/qoriq_thermal.c b/drivers/thermal/qoriq_thermal.c
+index d74c6c494f77..4d5c74173f08 100644
+--- a/drivers/thermal/qoriq_thermal.c
++++ b/drivers/thermal/qoriq_thermal.c
+@@ -59,22 +59,24 @@ struct qoriq_tmu_regs {
+ 	u32 ttr3cr;		/* Temperature Range 3 Control Register */
+ };
+ 
+-struct qoriq_tmu_data;
+-
+ /*
+  * Thermal zone data
+  */
+ struct qoriq_sensor {
+-	struct qoriq_tmu_data		*qdata;
+ 	int				id;
+ };
+ 
+ struct qoriq_tmu_data {
+ 	struct qoriq_tmu_regs __iomem *regs;
+ 	bool little_endian;
+-	struct qoriq_sensor	*sensor[SITES_MAX];
++	struct qoriq_sensor	sensor[SITES_MAX];
+ };
+ 
++static struct qoriq_tmu_data *qoriq_sensor_to_data(struct qoriq_sensor *s)
++{
++	return container_of(s, struct qoriq_tmu_data, sensor[s->id]);
++}
++
+ static void tmu_write(struct qoriq_tmu_data *p, u32 val, void __iomem *addr)
+ {
+ 	if (p->little_endian)
+@@ -94,7 +96,7 @@ static u32 tmu_read(struct qoriq_tmu_data *p, void __iomem *addr)
+ static int tmu_get_temp(void *p, int *temp)
+ {
+ 	struct qoriq_sensor *qsensor = p;
+-	struct qoriq_tmu_data *qdata = qsensor->qdata;
++	struct qoriq_tmu_data *qdata = qoriq_sensor_to_data(qsensor);
+ 	u32 val;
+ 
+ 	val = tmu_read(qdata, &qdata->regs->site[qsensor->id].tritsr);
+@@ -114,18 +116,9 @@ static int qoriq_tmu_register_tmu_zone(struct platform_device *pdev)
+ 
+ 	for (id = 0; id < SITES_MAX; id++) {
+ 		struct thermal_zone_device *tzd;
+-		struct qoriq_sensor *sensor;
+-
+-		sensor = devm_kzalloc(&pdev->dev,
+-				      sizeof(struct qoriq_sensor),
+-				      GFP_KERNEL);
+-		if (!qdata->sensor[id])
+-			return -ENOMEM;
+-
+-		qdata->sensor[id] = sensor;
++		struct qoriq_sensor *sensor = &qdata->sensor[id];
+ 
+ 		sensor->id = id;
+-		sensor->qdata = qdata;
+ 
+ 		tzd = devm_thermal_zone_of_sensor_register(&pdev->dev, id,
+ 							   sensor,
+-- 
+2.21.0
+
