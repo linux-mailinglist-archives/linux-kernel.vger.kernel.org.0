@@ -2,119 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B156C47FAD
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 12:30:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 06AEB47FB3
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 12:32:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727425AbfFQKaD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 06:30:03 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:34321 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726823AbfFQKaC (ORCPT
+        id S1727106AbfFQKcS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 06:32:18 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:38435 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726091AbfFQKcS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 06:30:02 -0400
-Received: by mail-io1-f68.google.com with SMTP id k8so20101446iot.1
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2019 03:30:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=A3LvCS5kePEpWEvClGh/PP2SpGvm/yzihiihioMrY5k=;
-        b=jqOLuFeF4GE1iGwe0cDirezg+Mb6UQt3wXl2PORtVhgBmE9NFT/nmPOxg0c7AfaGQh
-         EgRs0yehyHSaINpG+JBfl2z9p4qjCTaHYSNjRWS7+//YkWGC9Z63BrC4T0eWwes7EQWK
-         Pb7HfML/Ga1WpDYchH7O24sH/hoVsOgWkj7So=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=A3LvCS5kePEpWEvClGh/PP2SpGvm/yzihiihioMrY5k=;
-        b=QhQKNzOvAzvu9mTuxBijCBZx9ufKmUtJe+gEnFBorN2/oDDYdTkFVB9OUtN9tKXXXw
-         +fiUA0ey/HY+O5rt2w8wRBqvMWIqkC9wVyDBpUi42BttX+kb7/IgaLW5157g/yi7djJ8
-         gWDSF6d4PPrAUDQvD3HS1ZZTJEUK9ODe0dd4gyVmj1QWA1IyrYNpueG0aRCRmK3/bz3d
-         QvoirsxXmDIXAuBQt+sw12GbfkC0Fe63pn3IvjDr1/INgoa7NRXnWTNllki6yJlFdQWM
-         Rl/nhqglm7/H2JBGKLNt1c3Old5WXgDXQiRI9QEK6CIdLBySeCt/5ON55sxhljs6Clqs
-         saQQ==
-X-Gm-Message-State: APjAAAXW+inKNMzW5TMpN3O/WBUwt82Peq3dTeeYYEAO6AYm+sMWS9c/
-        0PrdKDAJn1AeuQV1gdXkvR48K7TSxjWrM0g936hHsA==
-X-Google-Smtp-Source: APXvYqwFp+6Q3sGP5PFjt5uFYyYV/cL8x1qFEQcCbsgfGJqgag+OTV6Q8i7mdcX7I9kfq1V+jaLpKIKwbvN+TA1OVNU=
-X-Received: by 2002:a02:3217:: with SMTP id j23mr84513181jaa.79.1560767401947;
- Mon, 17 Jun 2019 03:30:01 -0700 (PDT)
+        Mon, 17 Jun 2019 06:32:18 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x5HAV8TZ3369191
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Mon, 17 Jun 2019 03:31:08 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x5HAV8TZ3369191
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019051801; t=1560767469;
+        bh=e0kXkJR0gIc7SXCshghIijZzrlmT1sJ/eJo84cwVjqc=;
+        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
+        b=b+GfRiSjUL/GyuJ5yOFMsKXtAiTWx5NJRtFsS0HjQx013ZE3BA4lZOBgFMkX6nyNI
+         O0mwhtsHbwzM5jAE7CHVt091qtNzJzosVEoCh/GOtsZCCmuNVBD+lCPSxwM79dVh5u
+         6DdIH+EwraX3rrB64xcjztZjcS1kSqXfrXcTpgqurG2G+qhaupwEb6xXyj0WIwHSBp
+         OrQIiIuAE+3zPbBK8NOSsR1T+OxnUJMxBB6dU5stydTDCBdk1+JosfJ42HN7GnwyF3
+         JVRTqzXJ91I9YjhFYZ0wnjjCSkkXaTrHXbs7NjTAslBvaeVStrdwlJNQCOkJRdjub2
+         GTyd4HkWiOj+g==
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x5HAV8tn3369188;
+        Mon, 17 Jun 2019 03:31:08 -0700
+Date:   Mon, 17 Jun 2019 03:31:08 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Christoph Hellwig <tipbot@zytor.com>
+Message-ID: <tip-b78ea19ac22fd7b32d7828066cce3d8f2db5226a@git.kernel.org>
+Cc:     tglx@linutronix.de, bigeasy@linutronix.de, hch@lst.de,
+        mingo@redhat.com, x86@kernel.org, linux-kernel@vger.kernel.org,
+        mingo@kernel.org, nstange@suse.de, dave.hansen@intel.com,
+        bp@suse.de, hpa@zytor.com, riel@surriel.com
+Reply-To: x86@kernel.org, mingo@redhat.com, riel@surriel.com,
+          hpa@zytor.com, dave.hansen@intel.com, bp@suse.de,
+          mingo@kernel.org, nstange@suse.de, linux-kernel@vger.kernel.org,
+          hch@lst.de, bigeasy@linutronix.de, tglx@linutronix.de
+In-Reply-To: <20190604071524.12835-2-hch@lst.de>
+References: <20190604071524.12835-2-hch@lst.de>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/fpu] x86/fpu: Simplify kernel_fpu_end()
+Git-Commit-ID: b78ea19ac22fd7b32d7828066cce3d8f2db5226a
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-References: <20190614164324.9427-1-jagan@amarulasolutions.com>
- <20190614164324.9427-6-jagan@amarulasolutions.com> <CAGb2v669MprYgy2wc_a7Kz8VpzzNGZxDxsj0z_Ujx5bV25+AWQ@mail.gmail.com>
-In-Reply-To: <CAGb2v669MprYgy2wc_a7Kz8VpzzNGZxDxsj0z_Ujx5bV25+AWQ@mail.gmail.com>
-From:   Jagan Teki <jagan@amarulasolutions.com>
-Date:   Mon, 17 Jun 2019 15:59:50 +0530
-Message-ID: <CAMty3ZDRYBPKrGQxAZoB+trFiDLJ5BxDfNUOnPzgd+UWcpwCoQ@mail.gmail.com>
-Subject: Re: [linux-sunxi] [PATCH v2 5/9] drm/sun4i: tcon_top: Register clock
- gates in probe
-To:     Chen-Yu Tsai <wens@csie.org>
-Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        linux-sunxi <linux-sunxi@googlegroups.com>,
-        linux-amarula <linux-amarula@amarulasolutions.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
+X-Spam-Status: No, score=-3.1 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF autolearn=ham
+        autolearn_force=no version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jun 16, 2019 at 11:01 AM Chen-Yu Tsai <wens@csie.org> wrote:
->
-> On Sat, Jun 15, 2019 at 12:44 AM Jagan Teki <jagan@amarulasolutions.com> wrote:
-> >
-> > TCON TOP have clock gates for TV0, TV1, dsi and right
-> > now these are register during bind call.
-> >
-> > Of which, dsi clock gate would required during DPHY probe
-> > but same can miss to get since tcon top is not bound at
-> > that time.
-> >
-> > To solve, this circular dependency move the clock gate
-> > registration from bind to probe so-that DPHY can get the
-> > dsi gate clock on time.
-> >
-> > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-> > ---
-> >  drivers/gpu/drm/sun4i/sun8i_tcon_top.c | 94 ++++++++++++++------------
-> >  1 file changed, 49 insertions(+), 45 deletions(-)
-> >
-> > diff --git a/drivers/gpu/drm/sun4i/sun8i_tcon_top.c b/drivers/gpu/drm/sun4i/sun8i_tcon_top.c
-> > index 465e9b0cdfee..a8978b3fe851 100644
-> > --- a/drivers/gpu/drm/sun4i/sun8i_tcon_top.c
-> > +++ b/drivers/gpu/drm/sun4i/sun8i_tcon_top.c
-> > @@ -124,7 +124,53 @@ static struct clk_hw *sun8i_tcon_top_register_gate(struct device *dev,
-> >  static int sun8i_tcon_top_bind(struct device *dev, struct device *master,
-> >                                void *data)
-> >  {
-> > -       struct platform_device *pdev = to_platform_device(dev);
-> > +       struct sun8i_tcon_top *tcon_top = dev_get_drvdata(dev);
-> > +       int ret;
-> > +
-> > +       ret = reset_control_deassert(tcon_top->rst);
-> > +       if (ret) {
-> > +               dev_err(dev, "Could not deassert ctrl reset control\n");
-> > +               return ret;
-> > +       }
-> > +
-> > +       ret = clk_prepare_enable(tcon_top->bus);
-> > +       if (ret) {
-> > +               dev_err(dev, "Could not enable bus clock\n");
-> > +               goto err_assert_reset;
-> > +       }
->
-> You have to de-assert the reset control and enable the clock before the
-> clocks it provides are registered. Otherwise a consumer may come in and
-> ask for the provided clock to be enabled, but since the TCON TOP's own
-> reset and clock are still disabled, you can't actually access the registers
-> that controls the provided clock.
+Commit-ID:  b78ea19ac22fd7b32d7828066cce3d8f2db5226a
+Gitweb:     https://git.kernel.org/tip/b78ea19ac22fd7b32d7828066cce3d8f2db5226a
+Author:     Christoph Hellwig <hch@lst.de>
+AuthorDate: Tue, 4 Jun 2019 09:15:22 +0200
+Committer:  Borislav Petkov <bp@suse.de>
+CommitDate: Mon, 17 Jun 2019 10:43:43 +0200
 
-These rst and bus are common reset and bus clocks not tcon top clocks
-that are trying to register here. ie reason I have not moved it in
-top.
+x86/fpu: Simplify kernel_fpu_end()
+
+Remove two little helpers and merge them into kernel_fpu_end() to
+streamline the function.
+
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Acked-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: Dave Hansen <dave.hansen@intel.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Nicolai Stange <nstange@suse.de>
+Cc: Rik van Riel <riel@surriel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: x86-ml <x86@kernel.org>
+Link: https://lkml.kernel.org/r/20190604071524.12835-2-hch@lst.de
+---
+ arch/x86/kernel/fpu/core.c | 15 +++------------
+ 1 file changed, 3 insertions(+), 12 deletions(-)
+
+diff --git a/arch/x86/kernel/fpu/core.c b/arch/x86/kernel/fpu/core.c
+index 649fbc3fcf9f..8e046068d20f 100644
+--- a/arch/x86/kernel/fpu/core.c
++++ b/arch/x86/kernel/fpu/core.c
+@@ -49,12 +49,6 @@ static void kernel_fpu_disable(void)
+ 	this_cpu_write(in_kernel_fpu, true);
+ }
+ 
+-static void kernel_fpu_enable(void)
+-{
+-	WARN_ON_FPU(!this_cpu_read(in_kernel_fpu));
+-	this_cpu_write(in_kernel_fpu, false);
+-}
+-
+ static bool kernel_fpu_disabled(void)
+ {
+ 	return this_cpu_read(in_kernel_fpu);
+@@ -115,11 +109,6 @@ static void __kernel_fpu_begin(void)
+ 	__cpu_invalidate_fpregs_state();
+ }
+ 
+-static void __kernel_fpu_end(void)
+-{
+-	kernel_fpu_enable();
+-}
+-
+ void kernel_fpu_begin(void)
+ {
+ 	preempt_disable();
+@@ -129,7 +118,9 @@ EXPORT_SYMBOL_GPL(kernel_fpu_begin);
+ 
+ void kernel_fpu_end(void)
+ {
+-	__kernel_fpu_end();
++	WARN_ON_FPU(!this_cpu_read(in_kernel_fpu));
++
++	this_cpu_write(in_kernel_fpu, false);
+ 	preempt_enable();
+ }
+ EXPORT_SYMBOL_GPL(kernel_fpu_end);
