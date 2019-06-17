@@ -2,141 +2,255 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F373A483CD
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 15:22:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EBBA3483DC
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 15:24:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727428AbfFQNWc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 09:22:32 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:47530 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726065AbfFQNWc (ORCPT
+        id S1727725AbfFQNYJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 09:24:09 -0400
+Received: from mout.kundenserver.de ([217.72.192.75]:60447 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726215AbfFQNYI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 09:22:32 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 8324260254; Mon, 17 Jun 2019 13:22:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1560777750;
-        bh=ew/xbajXtVboXMA/g2sJySnJBP6r87Wf7tJKswJnaqs=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=jMkkk91rJHyKHUc8qdhdkxnNyBUBpMgikXZ9N35782cqteuJ+Xwi7CzdeQq7Zqcqk
-         flbAmjU4UdQ4glqfRCTixYWtV1KlJviVUyr+YJnj98lDnOLJj+7ZfdtkZXfJdRe4RI
-         wQGHzC1Cs36FFO0PNWaxdndHTc96p4IIiOPWSAMM=
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        pdx-caf-mail.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
-        DKIM_INVALID,DKIM_SIGNED,SPF_NONE autolearn=no autolearn_force=no
-        version=3.4.0
-Received: from [10.204.78.89] (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: neeraju@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 7624B60265;
-        Mon, 17 Jun 2019 13:22:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1560777750;
-        bh=ew/xbajXtVboXMA/g2sJySnJBP6r87Wf7tJKswJnaqs=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=jMkkk91rJHyKHUc8qdhdkxnNyBUBpMgikXZ9N35782cqteuJ+Xwi7CzdeQq7Zqcqk
-         flbAmjU4UdQ4glqfRCTixYWtV1KlJviVUyr+YJnj98lDnOLJj+7ZfdtkZXfJdRe4RI
-         wQGHzC1Cs36FFO0PNWaxdndHTc96p4IIiOPWSAMM=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7624B60265
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=neeraju@codeaurora.org
-Subject: Re: Fwd: Re: [PATCH] pinctrl: qcom: Clear status bit on irq_unmask
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Hans Verkuil <hverkuil@xs4all.nl>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Tengfei Fan <tengfeif@codeaurora.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        MSM <linux-arm-msm@vger.kernel.org>, sramana@codeaurora.org
-References: <20190611185102.368ED21744@mail.kernel.org>
- <671f87d6-f4a4-6d2c-967b-e1aa0677d83e@codeaurora.org>
- <b0fdbcb1-4d5d-5c60-4150-7762a577cd10@codeaurora.org>
- <CACRpkdahUNNOhQdri3T86jHr+qOBmXH61_AMmoWpv_be2koMrw@mail.gmail.com>
-From:   Neeraj Upadhyay <neeraju@codeaurora.org>
-Message-ID: <e88903a2-9b07-6eee-3776-0fc0ad429a2d@codeaurora.org>
-Date:   Mon, 17 Jun 2019 18:52:24 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Mon, 17 Jun 2019 09:24:08 -0400
+Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
+ (mreue106 [212.227.15.145]) with ESMTPA (Nemesis) id
+ 1Mofx1-1iR4jU3wzZ-00p4sv; Mon, 17 Jun 2019 15:23:50 +0200
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>
+Cc:     Arnd Bergmann <arnd@arndb.de>, Eric Biggers <ebiggers@google.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Vitaly Chikunov <vt@altlinux.org>,
+        Gilad Ben-Yossef <gilad@benyossef.com>,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] crypto: testmgr - reduce stack usage in fuzzers
+Date:   Mon, 17 Jun 2019 15:23:02 +0200
+Message-Id: <20190617132343.2678836-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.20.0
 MIME-Version: 1.0
-In-Reply-To: <CACRpkdahUNNOhQdri3T86jHr+qOBmXH61_AMmoWpv_be2koMrw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:FcRwzC9se0P11gJzOfwFRr1sHe4ttlAck8Hb394drcdEoCwQH8v
+ V809DLMqf/KXADOpqBkJGBiEFcfZPH03hyOZKAXaO7I+irkUhoV1Uqc2VPH0Ssu00gM/ZGb
+ OwUvWa7QnxF3ej4Q/AFE7TqT8g5ujL/x5gbeGWabcNkWmcnjRP7f0xfNOq0Ug4onvRYeso5
+ EpJfq2RyEJl6MDBBCuOag==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:9B/XLO/4TtU=:vnNPNqTUR5bZd2L/IJG8/I
+ Mcas5MJHCIBoAcPrZ+6sVAf6RSl8BOIcxNr/f81N5KwmZBuQ7A5Pb3mU2Fb6B378iXFg5sOV7
+ Diocjb2wWhDVZfHbgnuTSQ0gogidLfluNQsnZO91G4J04L9n+X1EWYXnASM2ZyyaaRc3cq7NW
+ vNlBiiE0M0uF4GNZV3Sqk3ETLtrA4pI4BLEHAkc0L7qOtDiw9ZLrUwUg/QYh3xjwmQPmQYkr0
+ jVA3OdML6kmZrlDQSAscujcI2C5YwA4IsFh4pqaTn8CnRepmuSCRIHpl8VRS+FRUN8Q2Nlhpn
+ ICOVHKkwsTGUPG1fzoW7tEXuXQyYb5wVWQfZqhBsJqjoIRprGYgGaWfe5s0EYw2LEyxRFxKHN
+ oAJLlYHnD7BkveQU96ddd7T+TjKhWxb4buk9bhnGnyftJsRUUQ1npIAMZHOu3UOJdGKNTuXgp
+ OIgGVEVoKTRGI7dfvgbZ1wBlwMCoRWl1Qd8ELP8J0OUXDJJbg9ET6ERNlxJJAxGUAV6QXD8LW
+ bhuaug3TGQwf3IMvPYesBH2IHYCJc1WXC8Gc2FIKZ7K/1xR3QBc/8RExjr6fwGNhtj0roTXOU
+ 0wz/X7TiRANOt2l2uE06mK/Ftw6CWuvMiou3dvUtWQd/jakScgetvN5Rrb/DSDVkJfm/vXUc3
+ bdVcbsXmcjIzf9PnXYIzs3NgjO92dQrUryyszapuS5z7BT4Ug6eFvQ1iwpoLWsxtlkzA7ZiRv
+ o46W7ETyFphLrfxGQgnonX93yU+m5deq25VjkruC4T9zbW0/jDKXPw9cbFs=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thanks for the review, Linus.
+On arm32, we get warnings about high stack usage in some of the functions:
 
-On 6/17/19 5:20 PM, Linus Walleij wrote:
-> On Mon, Jun 17, 2019 at 12:35 PM Neeraj Upadhyay <neeraju@codeaurora.org> wrote:
->
->> Hi Stephen, there is one use case with is not covered by commit
->> b55326dc969e (
->>
->> "pinctrl: msm: Really mask level interrupts to prevent latching"). That
->> happens when
->>
->> gpio line is toggled between i/o mode and interrupt mode :
->>
->> 1. GPIO is configured as irq line. Peripheral raises interrupt.
->>
->> 2. IRQ handler runs and disables the irq line (through wq work).
->>
->> 3. GPIO is configured for input and and data is received from the
->> peripheral.
-> There is no distinction between using a GPIO line as input
-> and using it for IRQ. All input GPIOs can be used for IRQs,
-> if the hardware supports it (has an irqchip).
+crypto/testmgr.c:2269:12: error: stack frame size of 1032 bytes in function 'alg_test_aead' [-Werror,-Wframe-larger-than=]
+static int alg_test_aead(const struct alg_test_desc *desc, const char *driver,
+           ^
+crypto/testmgr.c:1693:12: error: stack frame size of 1312 bytes in function '__alg_test_hash' [-Werror,-Wframe-larger-than=]
+static int __alg_test_hash(const struct hash_testvec *vecs,
+           ^
 
-Ok
+On of the larger objects on the stack here is struct testvec_config, so
+change that to dynamic allocation.
 
->
->> 4. Now, when GPIO is re-enabled as irq, we see spurious irq, and there
->> isn't
->>
->> any data received on the gpio line, when it is read back after
->> configuring as input.
-> That's an interesting usecase. Hans Verkuil reworked the
-> GPIO irq support very elegantly exactly to support this type
-> of usecase (irq switch on and off dynamically), where he
-> was even switching the line into output mode between
-> the IRQ trains. (one-wire transcactions for CEC).
->
->> Patch https://lkml.org/lkml/2019/6/17/226 tries to cover this use case.
->> Can you please provide your comments?
-> What this patch does is clear all pending IRQs at irq
-> unmask. This is usually safe, unless there may be cases
-> where you *want* to catch any pending IRQs. I guess
-> normally you don't so it should be safe?
+Fixes: 40153b10d91c ("crypto: testmgr - fuzz AEADs against their generic implementation")
+Fixes: d435e10e67be ("crypto: testmgr - fuzz skciphers against their generic implementation")
+Fixes: 9a8a6b3f0950 ("crypto: testmgr - fuzz hashes against their generic implementation")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+I only compile-tested this, and it's not completely trivial, so please
+review carefully.
+---
+ crypto/testmgr.c | 61 +++++++++++++++++++++++++++++++++++-------------
+ 1 file changed, 45 insertions(+), 16 deletions(-)
 
-We want to clear pending status at irq enable. Afaik, no,
-
-we don't normally track these pending irqs. So, should be
-
-fine here.
-
->
-> The corner case is when you start some transaction
-> or whatever that gets ACKed by an IRQ and you actually
-> get the IRQ back before you had time to execute the code
-> enabling the IRQ.
->
-> That would be racy and bad code, as you should clearly
-> enable the IRQ first, then start the transaction. So I think
-> this patch is safe.
->
-> But let's see what Bjorn says.
->
-> Yours,
-> Linus Walleij
-
+diff --git a/crypto/testmgr.c b/crypto/testmgr.c
+index 6c28055d41ca..7928296cdcb3 100644
+--- a/crypto/testmgr.c
++++ b/crypto/testmgr.c
+@@ -1503,13 +1503,15 @@ static int test_hash_vec(const char *driver, const struct hash_testvec *vec,
+  * Generate a hash test vector from the given implementation.
+  * Assumes the buffers in 'vec' were already allocated.
+  */
+-static void generate_random_hash_testvec(struct crypto_shash *tfm,
++static int generate_random_hash_testvec(struct crypto_shash *tfm,
+ 					 struct hash_testvec *vec,
+ 					 unsigned int maxkeysize,
+ 					 unsigned int maxdatasize,
+ 					 char *name, size_t max_namelen)
+ {
+-	SHASH_DESC_ON_STACK(desc, tfm);
++	struct shash_desc *desc = kmalloc(sizeof(*desc) + crypto_shash_descsize(tfm), GFP_KERNEL);
++	if (!desc)
++		return -ENOMEM;
+ 
+ 	/* Data */
+ 	vec->psize = generate_random_length(maxdatasize);
+@@ -1541,6 +1543,10 @@ static void generate_random_hash_testvec(struct crypto_shash *tfm,
+ done:
+ 	snprintf(name, max_namelen, "\"random: psize=%u ksize=%u\"",
+ 		 vec->psize, vec->ksize);
++
++	kfree(desc);
++
++	return 0;
+ }
+ 
+ /*
+@@ -1565,7 +1571,7 @@ static int test_hash_vs_generic_impl(const char *driver,
+ 	unsigned int i;
+ 	struct hash_testvec vec = { 0 };
+ 	char vec_name[64];
+-	struct testvec_config cfg;
++	struct testvec_config *cfg;
+ 	char cfgname[TESTVEC_CONFIG_NAMELEN];
+ 	int err;
+ 
+@@ -1595,6 +1601,12 @@ static int test_hash_vs_generic_impl(const char *driver,
+ 		return err;
+ 	}
+ 
++	cfg = kzalloc(sizeof(*cfg), GFP_KERNEL);
++	if (!cfg) {
++		err = -ENOMEM;
++		goto out;
++	}
++
+ 	/* Check the algorithm properties for consistency. */
+ 
+ 	if (digestsize != crypto_shash_digestsize(generic_tfm)) {
+@@ -1626,12 +1638,14 @@ static int test_hash_vs_generic_impl(const char *driver,
+ 	}
+ 
+ 	for (i = 0; i < fuzz_iterations * 8; i++) {
+-		generate_random_hash_testvec(generic_tfm, &vec,
+-					     maxkeysize, maxdatasize,
+-					     vec_name, sizeof(vec_name));
+-		generate_random_testvec_config(&cfg, cfgname, sizeof(cfgname));
++		err = generate_random_hash_testvec(generic_tfm, &vec,
++						   maxkeysize, maxdatasize,
++						   vec_name, sizeof(vec_name));
++		if (err)
++			goto out;
++		generate_random_testvec_config(cfg, cfgname, sizeof(cfgname));
+ 
+-		err = test_hash_vec_cfg(driver, &vec, vec_name, &cfg,
++		err = test_hash_vec_cfg(driver, &vec, vec_name, cfg,
+ 					req, desc, tsgl, hashstate);
+ 		if (err)
+ 			goto out;
+@@ -1639,6 +1653,7 @@ static int test_hash_vs_generic_impl(const char *driver,
+ 	}
+ 	err = 0;
+ out:
++	kfree(cfg);
+ 	kfree(vec.key);
+ 	kfree(vec.plaintext);
+ 	kfree(vec.digest);
+@@ -2135,7 +2150,7 @@ static int test_aead_vs_generic_impl(const char *driver,
+ 	unsigned int i;
+ 	struct aead_testvec vec = { 0 };
+ 	char vec_name[64];
+-	struct testvec_config cfg;
++	struct testvec_config *cfg;
+ 	char cfgname[TESTVEC_CONFIG_NAMELEN];
+ 	int err;
+ 
+@@ -2165,6 +2180,12 @@ static int test_aead_vs_generic_impl(const char *driver,
+ 		return err;
+ 	}
+ 
++	cfg = kzalloc(sizeof(*cfg), GFP_KERNEL);
++	if (!cfg) {
++		err = -ENOMEM;
++		goto out;
++	}
++
+ 	generic_req = aead_request_alloc(generic_tfm, GFP_KERNEL);
+ 	if (!generic_req) {
+ 		err = -ENOMEM;
+@@ -2219,13 +2240,13 @@ static int test_aead_vs_generic_impl(const char *driver,
+ 		generate_random_aead_testvec(generic_req, &vec,
+ 					     maxkeysize, maxdatasize,
+ 					     vec_name, sizeof(vec_name));
+-		generate_random_testvec_config(&cfg, cfgname, sizeof(cfgname));
++		generate_random_testvec_config(cfg, cfgname, sizeof(cfgname));
+ 
+-		err = test_aead_vec_cfg(driver, ENCRYPT, &vec, vec_name, &cfg,
++		err = test_aead_vec_cfg(driver, ENCRYPT, &vec, vec_name, cfg,
+ 					req, tsgls);
+ 		if (err)
+ 			goto out;
+-		err = test_aead_vec_cfg(driver, DECRYPT, &vec, vec_name, &cfg,
++		err = test_aead_vec_cfg(driver, DECRYPT, &vec, vec_name, cfg,
+ 					req, tsgls);
+ 		if (err)
+ 			goto out;
+@@ -2233,6 +2254,7 @@ static int test_aead_vs_generic_impl(const char *driver,
+ 	}
+ 	err = 0;
+ out:
++	kfree(cfg);
+ 	kfree(vec.key);
+ 	kfree(vec.iv);
+ 	kfree(vec.assoc);
+@@ -2682,7 +2704,7 @@ static int test_skcipher_vs_generic_impl(const char *driver,
+ 	unsigned int i;
+ 	struct cipher_testvec vec = { 0 };
+ 	char vec_name[64];
+-	struct testvec_config cfg;
++	struct testvec_config *cfg;
+ 	char cfgname[TESTVEC_CONFIG_NAMELEN];
+ 	int err;
+ 
+@@ -2716,6 +2738,12 @@ static int test_skcipher_vs_generic_impl(const char *driver,
+ 		return err;
+ 	}
+ 
++	cfg = kzalloc(sizeof(*cfg), GFP_KERNEL);
++	if (!cfg) {
++		err = -ENOMEM;
++		goto out;
++	}
++
+ 	generic_req = skcipher_request_alloc(generic_tfm, GFP_KERNEL);
+ 	if (!generic_req) {
+ 		err = -ENOMEM;
+@@ -2763,20 +2791,21 @@ static int test_skcipher_vs_generic_impl(const char *driver,
+ 	for (i = 0; i < fuzz_iterations * 8; i++) {
+ 		generate_random_cipher_testvec(generic_req, &vec, maxdatasize,
+ 					       vec_name, sizeof(vec_name));
+-		generate_random_testvec_config(&cfg, cfgname, sizeof(cfgname));
++		generate_random_testvec_config(cfg, cfgname, sizeof(cfgname));
+ 
+ 		err = test_skcipher_vec_cfg(driver, ENCRYPT, &vec, vec_name,
+-					    &cfg, req, tsgls);
++					    cfg, req, tsgls);
+ 		if (err)
+ 			goto out;
+ 		err = test_skcipher_vec_cfg(driver, DECRYPT, &vec, vec_name,
+-					    &cfg, req, tsgls);
++					    cfg, req, tsgls);
+ 		if (err)
+ 			goto out;
+ 		cond_resched();
+ 	}
+ 	err = 0;
+ out:
++	kfree(cfg);
+ 	kfree(vec.key);
+ 	kfree(vec.iv);
+ 	kfree(vec.ptext);
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a
-member of the Code Aurora Forum, hosted by The Linux Foundation
+2.20.0
 
