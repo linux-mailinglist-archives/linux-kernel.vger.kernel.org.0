@@ -2,136 +2,157 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D71547EE4
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 11:55:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D81DE47F05
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 12:00:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727737AbfFQJzl convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 17 Jun 2019 05:55:41 -0400
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:41074 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726248AbfFQJzk (ORCPT
+        id S1727887AbfFQKAd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 06:00:33 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:46898 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727518AbfFQKAc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 05:55:40 -0400
-Received: by mail-ot1-f66.google.com with SMTP id 107so8666298otj.8;
-        Mon, 17 Jun 2019 02:55:40 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=J7SuI9vLUAwXvgnaQIuYQGNgcBOBLIEw7OPkq5rLb6s=;
-        b=pLJnrx8fXWIt6w654Ry6SXdJUWrdxmaaA5t/T8HlOW0vZOxdcM9IYY71DD0kRpt86+
-         ZxcM7055p2F7Wr953yYT1LVMGevexZasDUXXceTXxBD4JD9AXSWdPhvoRH9a6e1/v1/P
-         MHdIuaXMO0fIVKToe+muUWJwYKCWQocLEvb6qtpICPngmZYuk8iPguOXipFQHrujTCG3
-         sVFOb6Suz7M5aaqmcPqK1mZbSECVJIkcZOU74PDXob50lJwlP+B7KlF3qYDQJqbs4bCa
-         bsvD5Dq8xQeId7es/Va09qkgE6IZ+PE//F95M79sjQnxEadb3O9H7dRVQBXG8SOOf9CC
-         /rMw==
-X-Gm-Message-State: APjAAAWR5gEEWu3/SyWJZThMV2Z1pwtE4E8WRHLsYV6BI6to6gUdODZD
-        EtJMjm9lnapCt+C/ueiu474ok3a6pAZj1BHpGR4=
-X-Google-Smtp-Source: APXvYqzYcmzAzTrAIa6DT3XwBZdcJvm+cBivzLoRjMlWNgT2YPWkNLDO9ajhN4pNKdGLrNGl5CyR9/haPnJE33JN5ZE=
-X-Received: by 2002:a9d:5e99:: with SMTP id f25mr29823354otl.262.1560765339826;
- Mon, 17 Jun 2019 02:55:39 -0700 (PDT)
-MIME-Version: 1.0
-References: <39e46643-d799-94b7-4aa5-d6d99d738f99@web.de> <20190614133840.GN9224@smile.fi.intel.com>
- <20190614141004.GC7234@kroah.com>
-In-Reply-To: <20190614141004.GC7234@kroah.com>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Mon, 17 Jun 2019 11:55:28 +0200
-Message-ID: <CAJZ5v0iBSq+DHqkevbLS0kYbaKGM0zYjg0KAzNhqYjCXvrQ-RQ@mail.gmail.com>
-Subject: Re: [PATCH] drivers: Provide devm_platform_ioremap_resource_byname()
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Markus Elfring <Markus.Elfring@web.de>,
-        Jack Ping CHNG <jack.ping.chng@linux.intel.com>,
-        kernel-janitors@vger.kernel.org,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Enrico Weigelt <lkml@metux.net>,
-        Himanshu Jha <himanshujha199640@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+        Mon, 17 Jun 2019 06:00:32 -0400
+Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5H9xhCQ075430
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2019 06:00:31 -0400
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2t68au102x-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2019 06:00:30 -0400
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <huntbag@linux.vnet.ibm.com>;
+        Mon, 17 Jun 2019 11:00:28 +0100
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 17 Jun 2019 11:00:24 +0100
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x5HA0Nq642401928
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 17 Jun 2019 10:00:23 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 963AEA405D;
+        Mon, 17 Jun 2019 10:00:23 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 27194A404D;
+        Mon, 17 Jun 2019 10:00:22 +0000 (GMT)
+Received: from boston16h.aus.stglabs.ibm.com (unknown [9.3.23.78])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Mon, 17 Jun 2019 10:00:21 +0000 (GMT)
+From:   Abhishek Goel <huntbag@linux.vnet.ibm.com>
+To:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-pm@vger.kernel.org
+Cc:     rjw@rjwysocki.net, daniel.lezcano@linaro.org, mpe@ellerman.id.au,
+        dja@axtens.net, npiggin@gmail.com, ego@linux.vnet.ibm.com,
+        Abhishek Goel <huntbag@linux.vnet.ibm.com>
+Subject: [PATCH v2 0/1] Forced-wakeup for stop states on Powernv
+Date:   Mon, 17 Jun 2019 04:56:47 -0500
+X-Mailer: git-send-email 2.17.1
+X-TM-AS-GCONF: 00
+x-cbid: 19061710-0012-0000-0000-00000329CB13
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19061710-0013-0000-0000-00002162E1DC
+Message-Id: <20190617095648.18847-1-huntbag@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-17_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=828 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1906170093
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 14, 2019 at 4:10 PM Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> On Fri, Jun 14, 2019 at 04:38:40PM +0300, Andy Shevchenko wrote:
-> > +Cc: Jack Ping, who did internally the same
-> >
-> > On Fri, Jun 14, 2019 at 03:26:25PM +0200, Markus Elfring wrote:
-> > > From: Markus Elfring <elfring@users.sourceforge.net>
-> > > Date: Fri, 14 Jun 2019 15:15:14 +0200
-> > >
-> > > The functions “platform_get_resource_byname” and “devm_ioremap_resource”
-> > > are called together in 181 source files.
-> > > This implementation detail can be determined also with the help
-> > > of the semantic patch language (Coccinelle software).
-> > >
-> > > Wrap these two calls into another helper function.
-> > > Thus a local variable does not need to be declared for a resource
-> > > structure pointer before and a redundant argument can be omitted
-> > > for the resource type.
-> >
-> > This one makes sense.
-> > Though I'm not sure Greg will see your message.
->
-> Nope, didn't see it, don't want to see it, it will only cause more work
-> in the longrun...
->
-> > Rafael, maybe you can apply this one?
->
-> Um, don't go around maintainers please, that's rude.
+Currently, the cpuidle governors determine what idle state a idling CPU
+should enter into based on heuristics that depend on the idle history on
+that CPU. Given that no predictive heuristic is perfect, there are cases
+where the governor predicts a shallow idle state, hoping that the CPU will
+be busy soon. However, if no new workload is scheduled on that CPU in the
+near future, the CPU will end up in the shallow state.
 
-Totally agreed.
+Motivation
+----------
+In case of POWER, this is problematic, when the predicted state in the
+aforementioned scenario is a shallow stop state on a tickless system. As
+we might get stuck into shallow states even for hours, in absence of ticks
+or interrupts.
 
-And there would be no reason for me to even consider applying it, really.
+To address this, We forcefully wakeup the cpu by setting the decrementer.
+The decrementer is set to a value that corresponds with the residency of
+the next available state. Thus firing up a timer that will forcefully
+wakeup the cpu. Few such iterations will essentially train the governor to
+select a deeper state for that cpu, as the timer here corresponds to the
+next available cpuidle state residency. Thus, cpu will eventually end up
+in the deepest possible state and we won't get stuck in a shallow state
+for long duration.
 
-> There is a reason this specific developer is in my blacklist, and perhaps they should be
-> in yours as well :)
->
-> > FWIW,
-> > Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> >
-> > >
-> > > Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> > > ---
-> > >  drivers/base/platform.c | 18 ++++++++++++++++++
-> > >  1 file changed, 18 insertions(+)
-> > >
-> > > diff --git a/drivers/base/platform.c b/drivers/base/platform.c
-> > > index 4d1729853d1a..c1f19a479dd7 100644
-> > > --- a/drivers/base/platform.c
-> > > +++ b/drivers/base/platform.c
-> > > @@ -97,6 +97,24 @@ void __iomem *devm_platform_ioremap_resource(struct platform_device *pdev,
-> > >     return devm_ioremap_resource(&pdev->dev, res);
-> > >  }
-> > >  EXPORT_SYMBOL_GPL(devm_platform_ioremap_resource);
-> > > +
-> > > +/**
-> > > + * devm_platform_ioremap_resource_byname
-> > > + * Call devm_ioremap_resource() for a platform device
-> > > + *
-> > > + * @pdev: platform device to use both for memory resource lookup as well as
-> > > + *        resource management
-> > > + * @name: resource name
-> > > + */
-> > > +void __iomem *devm_platform_ioremap_resource_byname(struct platform_device *pdev,
-> > > +                                               const char *name)
-> > > +{
-> > > +   struct resource *res;
-> > > +
-> > > +   res = platform_get_resource_byname(pdev, IORESOURCE_MEM, name);
-> > > +   return devm_ioremap_resource(&pdev->dev, res);
-> > > +}
-> > > +EXPORT_SYMBOL_GPL(devm_platform_ioremap_resource_byname);
-> > >  #endif /* CONFIG_HAS_IOMEM */
->
-> I don't like adding new apis with no user.
+Experiment
+----------
+For earlier versions when this feature was meat to be only for shallow lite
+states, I performed experiments for three scenarios to collect some data.
 
-I agree with that too.
+case 1 :
+Without this patch and without tick retained, i.e. in a upstream kernel,
+It would spend more than even a second to get out of stop0_lite.
 
-Cheers!
+case 2 : With tick retained in a upstream kernel -
+
+Generally, we have a sched tick at 4ms(CONF_HZ = 250). Ideally I expected
+it to take 8 sched tick to get out of stop0_lite. Experimentally,
+observation was
+
+=========================================================
+sample          min            max           99percentile
+20              4ms            12ms          4ms
+=========================================================
+
+It would take atleast one sched tick to get out of stop0_lite.
+
+case 2 :  With this patch (not stopping tick, but explicitly queuing a
+          timer)
+
+============================================================
+sample          min             max             99percentile
+============================================================
+20              144us           192us           144us
+============================================================
+
+
+Description of current implementation
+-------------------------------------
+
+We calculate timeout for the current idle state as the residency value
+of the next available idle state. If the decrementer is set to be
+greater than this timeout, we update the decrementer value with the
+residency of next available idle state. Thus, essentially training the
+governor to select the next available deeper state until we reach the
+deepest state. Hence, we won't get stuck unnecessarily in shallow states
+for longer duration.
+
+--------------------------------
+v1 of auto-promotion : https://lkml.org/lkml/2019/3/22/58 This patch was
+implemented only for shallow lite state in generic cpuidle driver.
+
+v2 of auto-promotion : Removed timeout_needed and rebased to current
+upstream kernel
+
+Then, 
+v1 of forced-wakeup : Moved the code to cpuidle powernv driver and started
+as forced wakeup instead of auto-promotion
+
+v2 of forced-wakeup : Extended the forced wakeup logic for all states.
+Setting the decrementer instead of queuing up a hrtimer to implement the
+logic.
+
+Abhishek Goel (1):
+  cpuidle-powernv : forced wakeup for stop states
+
+ drivers/cpuidle/cpuidle-powernv.c | 38 +++++++++++++++++++++++++++++++
+ 1 file changed, 38 insertions(+)
+
+-- 
+2.17.1
+
