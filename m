@@ -2,88 +2,187 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AE32E490FC
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 22:10:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 47157490EF
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 22:10:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729114AbfFQUKb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 16:10:31 -0400
-Received: from mail-io1-f66.google.com ([209.85.166.66]:43594 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728974AbfFQUKZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 16:10:25 -0400
-Received: by mail-io1-f66.google.com with SMTP id k20so24069663ios.10
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2019 13:10:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=GmQHqjhHBWJi9EwLf/CG1WJEE+QuCC5/BPgepbsr0cM=;
-        b=H/fRfIgOLxZAjL30Tf02SNyuVL4rKUnrX2bKgFBJyd5IQUZx1ZP6q7691JqcjyC9nS
-         ++sCnwMqLy/QpEj+7Hi7jU5SjniVAjL78+/q92CgC7hs/S7yVAkyhXYXlfSH69K6ZbzC
-         a5AjFLd56W7UgJEv9EIhkxSJcgspEV81Jgn30=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=GmQHqjhHBWJi9EwLf/CG1WJEE+QuCC5/BPgepbsr0cM=;
-        b=PWE4QunMJVGOo1KE0AjoKjQnaJu/eEvWq8zBK4XABqQ7IN5memnjDkn70ne+mQpGNS
-         DJGy8TBj1xCu49KRahZ6WMqFzc1cmENe1p3uapgl2rTEtqH1sOkIA4eEjm9H/hXOoP9W
-         mYnJiFpaWJv8aS/fz3hjpZsVaYwRo3NwlMIVPYSxhJYtZy69Uiez9rP56GT0YMvzs8XG
-         /9h+U8ano/QmzL3IhTpGypsetsvd7+lnZkoLmX1dFu4K7VN5XePPpGeqVXQzp8SKrn7Q
-         HBPQwmrK4jZHwmCSh1urQd++pBVLgpJ5WK+LctsdiqJYR7A0KC0gNlU3gY/xN2M1hZ+g
-         5iVg==
-X-Gm-Message-State: APjAAAX9I+BXZtlPXNgF+bRgUUU0aZ9CxNpSRihJ3fVMqJe2Ilr8YLW1
-        Ll2QLlYV0sWSA9nCENXFMO+dMQ==
-X-Google-Smtp-Source: APXvYqwODDA3bqD50Y83iVab01joUoo1S7LoKNsRIrKC1JdP7WoFgOUSHbQOduVooAcoh4huWj9+dg==
-X-Received: by 2002:a6b:b257:: with SMTP id b84mr63639506iof.137.1560802224611;
-        Mon, 17 Jun 2019 13:10:24 -0700 (PDT)
-Received: from localhost ([2620:15c:183:0:20b8:dee7:5447:d05])
-        by smtp.gmail.com with ESMTPSA id s6sm9199236ioo.31.2019.06.17.13.10.23
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 17 Jun 2019 13:10:24 -0700 (PDT)
-From:   Raul E Rangel <rrangel@chromium.org>
-To:     linux-mmc@vger.kernel.org
-Cc:     ernest.zhang@bayhubtech.com, djkurtz@chromium.org,
-        Raul E Rangel <rrangel@chromium.org>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        linux-kernel@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH v2 3/3] mmc: sdhci: Fix indenting on SDHCI_CTRL_8BITBUS
-Date:   Mon, 17 Jun 2019 14:10:14 -0600
-Message-Id: <20190617201014.84503-3-rrangel@chromium.org>
-X-Mailer: git-send-email 2.22.0.410.gd8fdbe21b5-goog
-In-Reply-To: <20190617201014.84503-1-rrangel@chromium.org>
-References: <20190617201014.84503-1-rrangel@chromium.org>
+        id S1727879AbfFQUKT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 16:10:19 -0400
+Received: from ale.deltatee.com ([207.54.116.67]:48464 "EHLO ale.deltatee.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726023AbfFQUKT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Jun 2019 16:10:19 -0400
+Received: from guinness.priv.deltatee.com ([172.16.1.162])
+        by ale.deltatee.com with esmtp (Exim 4.89)
+        (envelope-from <logang@deltatee.com>)
+        id 1hcxxI-0004rl-Iq; Mon, 17 Jun 2019 14:10:17 -0600
+To:     Christoph Hellwig <hch@lst.de>,
+        Dan Williams <dan.j.williams@intel.com>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Ben Skeggs <bskeggs@redhat.com>
+Cc:     linux-nvdimm@lists.01.org, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-mm@kvack.org, nouveau@lists.freedesktop.org
+References: <20190617122733.22432-1-hch@lst.de>
+ <20190617122733.22432-17-hch@lst.de>
+From:   Logan Gunthorpe <logang@deltatee.com>
+Message-ID: <e404fb0b-4ed8-34bb-7df8-9b59cb760f53@deltatee.com>
+Date:   Mon, 17 Jun 2019 14:10:16 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190617122733.22432-17-hch@lst.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-CA
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 172.16.1.162
+X-SA-Exim-Rcpt-To: nouveau@lists.freedesktop.org, linux-mm@kvack.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, linux-nvdimm@lists.01.org, bskeggs@redhat.com, jgg@mellanox.com, jglisse@redhat.com, dan.j.williams@intel.com, hch@lst.de
+X-SA-Exim-Mail-From: logang@deltatee.com
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on ale.deltatee.com
+X-Spam-Level: 
+X-Spam-Status: No, score=-8.7 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        GREYLIST_ISWHITE,MYRULES_FREE autolearn=ham autolearn_force=no
+        version=3.4.2
+Subject: Re: [PATCH 16/25] PCI/P2PDMA: use the dev_pagemap internal refcount
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove whitespace in front of SDHCI_CTRL_8BITBUS. The value is not part
-of SDHCI_CTRL_DMA_MASK.
 
-Signed-off-by: Raul E Rangel <rrangel@chromium.org>
-Acked-by: Adrian Hunter <adrian.hunter@intel.com>
----
 
- drivers/mmc/host/sdhci.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On 2019-06-17 6:27 a.m., Christoph Hellwig wrote:
+> The functionality is identical to the one currently open coded in
+> p2pdma.c.
+> 
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
 
-diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
-index 199712e7adbb3..89fd96596a1f7 100644
---- a/drivers/mmc/host/sdhci.h
-+++ b/drivers/mmc/host/sdhci.h
-@@ -89,7 +89,7 @@
- #define   SDHCI_CTRL_ADMA32	0x10
- #define   SDHCI_CTRL_ADMA64	0x18
- #define   SDHCI_CTRL_ADMA3	0x18
--#define   SDHCI_CTRL_8BITBUS	0x20
-+#define  SDHCI_CTRL_8BITBUS	0x20
- #define  SDHCI_CTRL_CDTEST_INS	0x40
- #define  SDHCI_CTRL_CDTEST_EN	0x80
- 
--- 
-2.22.0.410.gd8fdbe21b5-goog
+Reviewed-by: Logan Gunthorpe <logang@deltatee.com>
 
+I also did a quick test with the full patch-set to ensure that the setup
+and tear down paths for p2pdma still work correctly and it all does.
+
+Thanks,
+
+Logan
+
+> ---
+>  drivers/pci/p2pdma.c | 56 ++++----------------------------------------
+>  1 file changed, 4 insertions(+), 52 deletions(-)
+> 
+> diff --git a/drivers/pci/p2pdma.c b/drivers/pci/p2pdma.c
+> index 48a88158e46a..608f84df604a 100644
+> --- a/drivers/pci/p2pdma.c
+> +++ b/drivers/pci/p2pdma.c
+> @@ -24,12 +24,6 @@ struct pci_p2pdma {
+>  	bool p2pmem_published;
+>  };
+>  
+> -struct p2pdma_pagemap {
+> -	struct dev_pagemap pgmap;
+> -	struct percpu_ref ref;
+> -	struct completion ref_done;
+> -};
+> -
+>  static ssize_t size_show(struct device *dev, struct device_attribute *attr,
+>  			 char *buf)
+>  {
+> @@ -78,32 +72,6 @@ static const struct attribute_group p2pmem_group = {
+>  	.name = "p2pmem",
+>  };
+>  
+> -static struct p2pdma_pagemap *to_p2p_pgmap(struct percpu_ref *ref)
+> -{
+> -	return container_of(ref, struct p2pdma_pagemap, ref);
+> -}
+> -
+> -static void pci_p2pdma_percpu_release(struct percpu_ref *ref)
+> -{
+> -	struct p2pdma_pagemap *p2p_pgmap = to_p2p_pgmap(ref);
+> -
+> -	complete(&p2p_pgmap->ref_done);
+> -}
+> -
+> -static void pci_p2pdma_percpu_kill(struct dev_pagemap *pgmap)
+> -{
+> -	percpu_ref_kill(pgmap->ref);
+> -}
+> -
+> -static void pci_p2pdma_percpu_cleanup(struct dev_pagemap *pgmap)
+> -{
+> -	struct p2pdma_pagemap *p2p_pgmap =
+> -		container_of(pgmap, struct p2pdma_pagemap, pgmap);
+> -
+> -	wait_for_completion(&p2p_pgmap->ref_done);
+> -	percpu_ref_exit(&p2p_pgmap->ref);
+> -}
+> -
+>  static void pci_p2pdma_release(void *data)
+>  {
+>  	struct pci_dev *pdev = data;
+> @@ -153,11 +121,6 @@ static int pci_p2pdma_setup(struct pci_dev *pdev)
+>  	return error;
+>  }
+>  
+> -static const struct dev_pagemap_ops pci_p2pdma_pagemap_ops = {
+> -	.kill		= pci_p2pdma_percpu_kill,
+> -	.cleanup	= pci_p2pdma_percpu_cleanup,
+> -};
+> -
+>  /**
+>   * pci_p2pdma_add_resource - add memory for use as p2p memory
+>   * @pdev: the device to add the memory to
+> @@ -171,7 +134,6 @@ static const struct dev_pagemap_ops pci_p2pdma_pagemap_ops = {
+>  int pci_p2pdma_add_resource(struct pci_dev *pdev, int bar, size_t size,
+>  			    u64 offset)
+>  {
+> -	struct p2pdma_pagemap *p2p_pgmap;
+>  	struct dev_pagemap *pgmap;
+>  	void *addr;
+>  	int error;
+> @@ -194,22 +156,12 @@ int pci_p2pdma_add_resource(struct pci_dev *pdev, int bar, size_t size,
+>  			return error;
+>  	}
+>  
+> -	p2p_pgmap = devm_kzalloc(&pdev->dev, sizeof(*p2p_pgmap), GFP_KERNEL);
+> -	if (!p2p_pgmap)
+> +	pgmap = devm_kzalloc(&pdev->dev, sizeof(*pgmap), GFP_KERNEL);
+> +	if (!pgmap)
+>  		return -ENOMEM;
+> -
+> -	init_completion(&p2p_pgmap->ref_done);
+> -	error = percpu_ref_init(&p2p_pgmap->ref,
+> -			pci_p2pdma_percpu_release, 0, GFP_KERNEL);
+> -	if (error)
+> -		goto pgmap_free;
+> -
+> -	pgmap = &p2p_pgmap->pgmap;
+> -
+>  	pgmap->res.start = pci_resource_start(pdev, bar) + offset;
+>  	pgmap->res.end = pgmap->res.start + size - 1;
+>  	pgmap->res.flags = pci_resource_flags(pdev, bar);
+> -	pgmap->ref = &p2p_pgmap->ref;
+>  	pgmap->type = MEMORY_DEVICE_PCI_P2PDMA;
+>  	pgmap->pci_p2pdma_bus_offset = pci_bus_address(pdev, bar) -
+>  		pci_resource_start(pdev, bar);
+> @@ -223,7 +175,7 @@ int pci_p2pdma_add_resource(struct pci_dev *pdev, int bar, size_t size,
+>  	error = gen_pool_add_owner(pdev->p2pdma->pool, (unsigned long)addr,
+>  			pci_bus_address(pdev, bar) + offset,
+>  			resource_size(&pgmap->res), dev_to_node(&pdev->dev),
+> -			&p2p_pgmap->ref);
+> +			pgmap->ref);
+>  	if (error)
+>  		goto pages_free;
+>  
+> @@ -235,7 +187,7 @@ int pci_p2pdma_add_resource(struct pci_dev *pdev, int bar, size_t size,
+>  pages_free:
+>  	devm_memunmap_pages(&pdev->dev, pgmap);
+>  pgmap_free:
+> -	devm_kfree(&pdev->dev, p2p_pgmap);
+> +	devm_kfree(&pdev->dev, pgmap);
+>  	return error;
+>  }
+>  EXPORT_SYMBOL_GPL(pci_p2pdma_add_resource);
+> 
