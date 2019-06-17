@@ -2,138 +2,144 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C214648508
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 16:15:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3B8B448513
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 16:16:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725906AbfFQOO3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 10:14:29 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:45142 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726151AbfFQOO2 (ORCPT
+        id S1728252AbfFQOPa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 10:15:30 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:41865 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726005AbfFQOPa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 10:14:28 -0400
-Received: by mail-io1-f68.google.com with SMTP id e3so21369475ioc.12
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2019 07:14:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=JohzNFDqmktDG38rF4I6wEqhVEhI+kZN53amqkDtO9w=;
-        b=iLTj9CW1lG44z6zG4g72qDio7OVGQ1qANRuf1odp+rHFRdGUwpC/crqtmZviZTJjha
-         UtbuW0PlSUt3tPiVOOOGTLydHXo9gGuO4n6AjAd9Ui2JaV31NFPjV2LvjHM7Lc94hAj3
-         2NoQNsPbAu20BCZqt728HIJTa2HSnRFbDzZ5I8vHPDybVf1pkrTRlkIQTt7rthVHXrAM
-         lHS78Ey4P/EiXWCuhSzCFdoxrAgtO7jORwoA76aPcjYfK1cFsylabCMWL2k6C+IUbYR4
-         GFg6aCzi53pHsNhbAN3fRtSC15Up6LfUVSf/tWR82B4diNQ+xrqBZiH+dX91u+09QU+k
-         cDxA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=JohzNFDqmktDG38rF4I6wEqhVEhI+kZN53amqkDtO9w=;
-        b=ck1o2VbyJskBr1wDeJhqaWNMJEyMJ8hGQMVxGxnX6xMDBTP9o7fFPzBXZ/IxFKNhzK
-         3Rhfma/2Wg6/2wpvUCHJlTdX64kSABtvHSxcEbr40rXuq+bak3VxzLRdnyQV0+4mBDIX
-         vKUAwuRksTIPVa6ba4CP0mKmCDrNe1G9+9KPsnHPIPK9WIXjRcRLS7uwzyCOcfJmsEXZ
-         F50qtBxEUrwMDqBzBJr+JmK60JIc/Qzx/xBK8y7x8PWCvC+Yyx69al9ikkH59nGtGd6H
-         VVAs/d5QzjCZye7Dw09xk4L6lJkc+8SIp8lyutqvCZ0D53v3rLYneS12qkxH89HAzgQk
-         MGLA==
-X-Gm-Message-State: APjAAAUOCk/I1YMBQ/qr/qZawH+Pt5ebBHbYKtxcV+VRQY+xeaTxQuv2
-        q3KOC4FT8P4QShC68gZO0K5ZuA==
-X-Google-Smtp-Source: APXvYqzNuUBfwfuXW1mSryelHWlKsBM9fYoJ3JGS5e7VGKacU4dkepDULY1G4gM/fW95GIKtGZpt+Q==
-X-Received: by 2002:a6b:fb02:: with SMTP id h2mr14476535iog.289.1560780867625;
-        Mon, 17 Jun 2019 07:14:27 -0700 (PDT)
-Received: from [192.168.1.196] ([216.160.37.230])
-        by smtp.gmail.com with ESMTPSA id c2sm8811901iok.53.2019.06.17.07.14.26
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 17 Jun 2019 07:14:27 -0700 (PDT)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 11.5 \(3445.9.1\))
-Subject: Re: [PATCH v2 0/2] Add macb support for SiFive FU540-C000
-From:   Troy Benjegerdes <troy.benjegerdes@sifive.com>
-In-Reply-To: <alpine.DEB.2.21.9999.1906170419010.19994@viisi.sifive.com>
-Date:   Mon, 17 Jun 2019 09:14:25 -0500
-Cc:     Andreas Schwab <schwab@suse.de>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org, Albert Ou <aou@eecs.berkeley.edu>,
-        netdev@vger.kernel.org, Palmer Dabbelt <palmer@sifive.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        nicolas.ferre@microchip.com,
-        Sachin Ghadi <sachin.ghadi@sifive.com>,
-        Yash Shah <yash.shah@sifive.com>, robh+dt@kernel.org,
-        ynezz@true.cz, linux-riscv@lists.infradead.org,
-        davem@davemloft.net, Jim Jacobsen <jamez@wit.com>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <F48A4F7F-0B0D-4191-91AD-DC51686D1E78@sifive.com>
-References: <1560745167-9866-1-git-send-email-yash.shah@sifive.com>
- <mvmtvco62k9.fsf@suse.de>
- <alpine.DEB.2.21.9999.1906170252410.19994@viisi.sifive.com>
- <mvmpnnc5y49.fsf@suse.de>
- <alpine.DEB.2.21.9999.1906170305020.19994@viisi.sifive.com>
- <mvmh88o5xi5.fsf@suse.de>
- <alpine.DEB.2.21.9999.1906170419010.19994@viisi.sifive.com>
-To:     Paul Walmsley <paul.walmsley@sifive.com>
-X-Mailer: Apple Mail (2.3445.9.1)
+        Mon, 17 Jun 2019 10:15:30 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x5HEEUjD3451965
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Mon, 17 Jun 2019 07:14:30 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x5HEEUjD3451965
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019051801; t=1560780871;
+        bh=NUM7WikzHXDWjnge0MpQUTTzBIAcUAAp0UB9kPwyqE0=;
+        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
+        b=B0S9FP1oHiWksmbiicNbl8kpbTFJb0GkPky0I9csG7m2UHX1tDUfkbPySc2l2c6NG
+         SqIHyrmrFj4/8EifxixzlH9EImYCUrJhrEV5eN9JJhgyRQ6fzHZ5ieW81voZpmX8qT
+         ZyChQIVXBTx87wlgLFV5OcWA6HaNlXFLK9R9NWLl8sYByMhBAH6lKKE0FWEIpM8meJ
+         +RSpWODKl+V614Gb/QXf42dZMGuW/uKyvO3yXYEVoiTvne3y88F43DBipHfV81+Dne
+         Dyqjzb3jnAcVrojvgmw7yCA+M4zM61RcXccaoyTltoBM/q4ZFJqz/tTg5GA/ev75ZM
+         Pel059skes9xg==
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x5HEEUng3451957;
+        Mon, 17 Jun 2019 07:14:30 -0700
+Date:   Mon, 17 Jun 2019 07:14:30 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Daniel Bristot de Oliveira <tipbot@zytor.com>
+Message-ID: <tip-0f133021bd82548a33580bfb7b055e8857f46c2a@git.kernel.org>
+Cc:     rostedt@goodmis.org, mhiramat@kernel.org, tglx@linutronix.de,
+        crecklin@redhat.com, gregkh@linuxfoundation.org, jbaron@akamai.com,
+        bp@alien8.de, peterz@infradead.org, jkosina@suse.cz,
+        linux-kernel@vger.kernel.org, mingo@kernel.org,
+        mtosatti@redhat.com, torvalds@linux-foundation.org,
+        williams@redhat.com, hpa@zytor.com, jpoimboe@redhat.com,
+        bristot@redhat.com, swood@redhat.com
+Reply-To: jpoimboe@redhat.com, hpa@zytor.com, bristot@redhat.com,
+          swood@redhat.com, peterz@infradead.org, jkosina@suse.cz,
+          mingo@kernel.org, linux-kernel@vger.kernel.org,
+          torvalds@linux-foundation.org, williams@redhat.com,
+          mtosatti@redhat.com, gregkh@linuxfoundation.org,
+          jbaron@akamai.com, bp@alien8.de, rostedt@goodmis.org,
+          mhiramat@kernel.org, crecklin@redhat.com, tglx@linutronix.de
+In-Reply-To: <f57ae83e0592418ba269866bb7ade570fc8632e0.1560325897.git.bristot@redhat.com>
+References: <f57ae83e0592418ba269866bb7ade570fc8632e0.1560325897.git.bristot@redhat.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:locking/core] jump_label: Sort entries of the same key by the
+ code
+Git-Commit-ID: 0f133021bd82548a33580bfb7b055e8857f46c2a
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
+X-Spam-Status: No, score=-1.2 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DATE_IN_FUTURE_06_12,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,
+        DKIM_VALID_EF autolearn=ham autolearn_force=no version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Commit-ID:  0f133021bd82548a33580bfb7b055e8857f46c2a
+Gitweb:     https://git.kernel.org/tip/0f133021bd82548a33580bfb7b055e8857f46c2a
+Author:     Daniel Bristot de Oliveira <bristot@redhat.com>
+AuthorDate: Wed, 12 Jun 2019 11:57:28 +0200
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Mon, 17 Jun 2019 12:09:21 +0200
 
+jump_label: Sort entries of the same key by the code
 
-> On Jun 17, 2019, at 6:34 AM, Paul Walmsley <paul.walmsley@sifive.com> =
-wrote:
->=20
-> On Mon, 17 Jun 2019, Andreas Schwab wrote:
->=20
->> On Jun 17 2019, Paul Walmsley <paul.walmsley@sifive.com> wrote:
->>=20
->>> On Mon, 17 Jun 2019, Andreas Schwab wrote:
->>>=20
->>>> On Jun 17 2019, Paul Walmsley <paul.walmsley@sifive.com> wrote:
->>>>=20
->>>>> Looks to me that it shouldn't have an impact unless the DT string =
-is=20
->>>>> present, and even then, the impact might simply be that the MACB =
-driver=20
->>>>> may not work?
->>>>=20
->>>> If the macb driver doesn't work you have an unusable system, of =
-course.
->>>=20
->>> Why?
->>=20
->> Because a system is useless without network.
->=20
-> =46rom an upstream Linux point of view, Yash's patches should be an=20
-> improvement over the current mainline kernel situation, since there's=20=
+In the batching mode, all the entries of a given key are updated at once.
+During the update of a key, a hit in the int3 handler will check if the
+hitting code address belongs to one of these keys.
 
-> currently no upstream support for the (SiFive-specific) TX clock =
-switch=20
-> register.  With the right DT data, and a bootloader that handles the =
-PHY=20
-> reset, I think networking should work after his patches are upstream =
---=20
-> although I myself haven't tried this yet.
->=20
+To optimize the search of a given code in the vector of entries being
+updated, a binary search is used. The binary search relies on the order
+of the entries of a key by its code. Hence the keys need to be sorted
+by the code too, so sort the entries of a given key by the code.
 
-Have we documented this tx clock switch register in something with a
-direct URL link (rather than a PDF)?
+Signed-off-by: Daniel Bristot de Oliveira <bristot@redhat.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Chris von Recklinghausen <crecklin@redhat.com>
+Cc: Clark Williams <williams@redhat.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Jason Baron <jbaron@akamai.com>
+Cc: Jiri Kosina <jkosina@suse.cz>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Marcelo Tosatti <mtosatti@redhat.com>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Scott Wood <swood@redhat.com>
+Cc: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Link: https://lkml.kernel.org/r/f57ae83e0592418ba269866bb7ade570fc8632e0.1560325897.git.bristot@redhat.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
+ kernel/jump_label.c | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-I=E2=80=99d like to update freedom-u-sdk (or yocto) to create bootable =
-images
-with a working U-boot (upstream or not, I don=E2=80=99t care, as long as =
-it works),
-and what I have right now is the old legacy HiFive U-boot[1] and a 4.19
-kernel with a bunch of extra patches.
-
-The legacy M-mode U-boot handles the phy reset already, and I=E2=80=99ve =
-been
-able to load upstream S-mode uboot as a payload via TFTP, and then=20
-load and boot a 4.19 kernel.=20
-
-It would be nice to get this all working with 5.x, however there are =
-still
-several missing pieces to really have it work well.
-
-
-[1] https://github.com/sifive/HiFive_U-Boot=
+diff --git a/kernel/jump_label.c b/kernel/jump_label.c
+index 24f0d3b1526b..ca00ac10d9b9 100644
+--- a/kernel/jump_label.c
++++ b/kernel/jump_label.c
+@@ -37,12 +37,26 @@ static int jump_label_cmp(const void *a, const void *b)
+ 	const struct jump_entry *jea = a;
+ 	const struct jump_entry *jeb = b;
+ 
++	/*
++	 * Entrires are sorted by key.
++	 */
+ 	if (jump_entry_key(jea) < jump_entry_key(jeb))
+ 		return -1;
+ 
+ 	if (jump_entry_key(jea) > jump_entry_key(jeb))
+ 		return 1;
+ 
++	/*
++	 * In the batching mode, entries should also be sorted by the code
++	 * inside the already sorted list of entries, enabling a bsearch in
++	 * the vector.
++	 */
++	if (jump_entry_code(jea) < jump_entry_code(jeb))
++		return -1;
++
++	if (jump_entry_code(jea) > jump_entry_code(jeb))
++		return 1;
++
+ 	return 0;
+ }
+ 
