@@ -2,136 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2BDF9487F7
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 17:54:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B17A5487FB
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 17:55:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728470AbfFQPye (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 11:54:34 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:36088 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726292AbfFQPyd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 11:54:33 -0400
-Received: by mail-ed1-f65.google.com with SMTP id k21so16883604edq.3
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2019 08:54:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google;
-        h=date:from:to:cc:subject:message-id:user-agent:mime-version;
-        bh=jV2fDJB1zhXMMMVqBq/8vXLMU9+s4P/AYpC16uvGS84=;
-        b=YuxppzVpxWjvgD7CQFa65TY2bCaxtM0JMcUuzRKkgHgT/8D4S59j6Oqhf/u44x7pg0
-         SowGT29iwxZyW14Rfac78gCP7sS6gISMriYhIAYJGSZlvi77MF1IzoVGhv/x5lTa4nOz
-         lcmrY6o0Lt7Li2Coi6VzXf4Rqwxg0adWSTzTFeOnmNy2wmqtDuOdoWKzxMH1hDnnJuCF
-         /WPTj/wWWXQu3xJ5z5WJbQUm75mGr90OFkAPkWSRNi3q85elB1t0aJw7j3LGt8zkDjyo
-         hogKo5k06xVWXdIb5KrxRbx+ZcQn5GAaQf193B8Ak3B9O1V+/iSCcV7TYZqPQKzkmdgU
-         Dyxg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:user-agent
-         :mime-version;
-        bh=jV2fDJB1zhXMMMVqBq/8vXLMU9+s4P/AYpC16uvGS84=;
-        b=kYSXpvNf4DfxnLX/5bbaxN77PeGUtLw8i+n7LxsC0iUGlS/imnsMlq0IN66LkzdpJj
-         v00ippmoYPVbhSdPfUKGZu3KtqN3PSe6Z7AXrUy5rW7XqVI1QtOKcDAgt2QqeeuUqiIO
-         Hj1Qbgnu2btNyPAcZZydnAyhZTd8DA786VtGmrbrU4fAdoSwDPwd7h7MHY8UzMuq87OC
-         Fd6z3jChCdeU68K1BNypSV/hxVawuL9oQz1dVUN36shmEHGxGD7R1vC5WErylaisbde4
-         jcwWOyKBBt+JNy1vQKjuBf5+/Lojw2hxYrxG0KdKoUNF1B+m47waoOfvQ52u5F1/9cU0
-         QCmg==
-X-Gm-Message-State: APjAAAXhhc3oulEun4h/Qy40YRQECp3eAmkoAaAbENPF53l1fi4cv7ln
-        Zu+y93sawp16+2U4onTFIctU29+BSqg=
-X-Google-Smtp-Source: APXvYqwkkzzQLh5Z3U9OcJIPb6Q6NL3JOaCnMfSdWkTBEdV3Tucxf1iPAKZ/7FaGkE+pBLCyQPcMBA==
-X-Received: by 2002:a17:906:c459:: with SMTP id ck25mr52234185ejb.32.1560786872016;
-        Mon, 17 Jun 2019 08:54:32 -0700 (PDT)
-Received: from localhost ([81.92.102.43])
-        by smtp.gmail.com with ESMTPSA id i1sm2239790ejb.80.2019.06.17.08.54.31
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 17 Jun 2019 08:54:31 -0700 (PDT)
-Date:   Mon, 17 Jun 2019 08:54:30 -0700 (PDT)
-From:   Paul Walmsley <paul.walmsley@sifive.com>
-X-X-Sender: paulw@viisi.sifive.com
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-cc:     linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] RISC-V patches for v5.2-rc6
-Message-ID: <alpine.DEB.2.21.9999.1906170846340.30717@viisi.sifive.com>
-User-Agent: Alpine 2.21.9999 (DEB 301 2018-08-15)
+        id S1728549AbfFQPyv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 11:54:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37708 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728519AbfFQPyu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Jun 2019 11:54:50 -0400
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E75932166E
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2019 15:54:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1560786890;
+        bh=aQEphLJjoGNsTWF7PUdVBXP9/NtJHbD77gDyFsJX9OY=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=qhOUahTGEyUHegfv4CFWy7tkV4dfGHY5ttlEqkwBP2tiXzGEfMzJPElZH2oeSSJA0
+         rsnYLYI8jLtjfOKiK5Ee2GKss2TnarwRGAOSUPGb+qZpd65W4APU5Itf6Ar+aac5xH
+         gguaXWWoFgjuokF/kcsWPV63ALSIUKuQ4QvaRPnU=
+Received: by mail-wr1-f50.google.com with SMTP id d18so10559945wrs.5
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2019 08:54:49 -0700 (PDT)
+X-Gm-Message-State: APjAAAWfZuN+U9JO6lqigHzzD2E+lK5jMVxF5ojdeVNXxAgUnJvw8z3n
+        qem0+sFJijAYaRS7OJxCev2mze+FHi/y4HIgurdedw==
+X-Google-Smtp-Source: APXvYqykHUxihfkEY2tiikg8dXKgA4M9BplCJytE01KiNZl2hAMC6m+RW666K7HHMIykrPzo3dGyP3UaxzXnfm7HuLw=
+X-Received: by 2002:a5d:6207:: with SMTP id y7mr55951191wru.265.1560786888514;
+ Mon, 17 Jun 2019 08:54:48 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+References: <20190612170834.14855-1-mhillenb@amazon.de> <eecc856f-7f3f-ed11-3457-ea832351e963@intel.com>
+ <A542C98B-486C-4849-9DAC-2355F0F89A20@amacapital.net> <alpine.DEB.2.21.1906141618000.1722@nanos.tec.linutronix.de>
+ <58788f05-04c3-e71c-12c3-0123be55012c@amazon.com> <63b1b249-6bc7-ffd9-99db-d36dd3f1a962@intel.com>
+In-Reply-To: <63b1b249-6bc7-ffd9-99db-d36dd3f1a962@intel.com>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Mon, 17 Jun 2019 08:54:36 -0700
+X-Gmail-Original-Message-ID: <CALCETrXph3Zg907kWTn6gAsZVsPbCB3A2XuNf0hy5Ez2jm2aNQ@mail.gmail.com>
+Message-ID: <CALCETrXph3Zg907kWTn6gAsZVsPbCB3A2XuNf0hy5Ez2jm2aNQ@mail.gmail.com>
+Subject: Re: [RFC 00/10] Process-local memory allocations for hiding KVM secrets
+To:     Dave Hansen <dave.hansen@intel.com>
+Cc:     Alexander Graf <graf@amazon.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Marius Hillenbrand <mhillenb@amazon.de>,
+        kvm list <kvm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Linux-MM <linux-mm@kvack.org>, Alexander Graf <graf@amazon.de>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Linus,
+On Mon, Jun 17, 2019 at 8:50 AM Dave Hansen <dave.hansen@intel.com> wrote:
+>
+> On 6/17/19 12:38 AM, Alexander Graf wrote:
+> >> Yes I know, but as a benefit we could get rid of all the GSBASE
+> >> horrors in
+> >> the entry code as we could just put the percpu space into the local PGD.
+> >
+> > Would that mean that with Meltdown affected CPUs we open speculation
+> > attacks against the mmlocal memory from KVM user space?
+>
+> Not necessarily.  There would likely be a _set_ of local PGDs.  We could
+> still have pair of PTI PGDs just like we do know, they'd just be a local
+> PGD pair.
+>
 
-The following changes since commit a188339ca5a396acc588e5851ed7e19f66b0ebd9:
-
-  Linux 5.2-rc1 (2019-05-19 15:47:09 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/riscv/linux.git tags/riscv-for-v5.2/fixes-rc6
-
-for you to fetch changes up to 259931fd3b96e4386b361b7f80c1d89b266234c8:
-
-  riscv: remove unused barrier defines (2019-06-17 07:09:43 -0700)
-
-----------------------------------------------------------------
-RISC-V patches for v5.2-rc6
-
-This tag contains fixes, defconfig, and DT data changes for the v5.2-rc
-series.  The fixes are relatively straightforward:
-
-- Addition of a TLB fence in the vmalloc_fault path, so the CPU doesn't
-  enter an infinite page fault loop;
-- Readdition of the pm_power_off export, so device drivers that
-  reassign it can now be built as modules;
-- A udelay() fix for RV32, fixing a miscomputation of the delay time;
-- Removal of deprecated smp_mb__*() barriers.
-
-The tag also adds initial DT data infrastructure for arch/riscv, along
-with initial data for the SiFive FU540-C000 SoC and the corresponding
-HiFive Unleashed board.
-
-We also update the RV64 defconfig to include some core drivers for the
-FU540 in the build.
-
-----------------------------------------------------------------
-Andreas Schwab (1):
-      riscv: export pm_power_off again
-
-Kevin Hilman (1):
-      RISC-V: defconfig: enable clocks, serial console
-
-Nick Hu (1):
-      riscv: Fix udelay in RV32.
-
-Paul Walmsley (5):
-      arch: riscv: add support for building DTB files from DT source data
-      dt-bindings: riscv: sifive: add YAML documentation for the SiFive FU540
-      dt-bindings: riscv: convert cpu binding to json-schema
-      riscv: dts: add initial support for the SiFive FU540-C000 SoC
-      riscv: dts: add initial board data for the SiFive HiFive Unleashed
-
-Rolf Eike Beer (1):
-      riscv: remove unused barrier defines
-
-ShihPo Hung (1):
-      riscv: mm: synchronize MMU after pte change
-
- Documentation/devicetree/bindings/riscv/cpus.yaml  | 168 ++++++++++++++++
- .../devicetree/bindings/riscv/sifive.yaml          |  25 +++
- MAINTAINERS                                        |   9 +
- arch/riscv/boot/dts/Makefile                       |   2 +
- arch/riscv/boot/dts/sifive/Makefile                |   2 +
- arch/riscv/boot/dts/sifive/fu540-c000.dtsi         | 215 +++++++++++++++++++++
- .../riscv/boot/dts/sifive/hifive-unleashed-a00.dts |  65 +++++++
- arch/riscv/configs/defconfig                       |   4 +
- arch/riscv/include/asm/bitops.h                    |   5 -
- arch/riscv/kernel/reset.c                          |   1 +
- arch/riscv/lib/delay.c                             |   2 +-
- arch/riscv/mm/fault.c                              |  13 ++
- 12 files changed, 505 insertions(+), 6 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/riscv/cpus.yaml
- create mode 100644 Documentation/devicetree/bindings/riscv/sifive.yaml
- create mode 100644 arch/riscv/boot/dts/Makefile
- create mode 100644 arch/riscv/boot/dts/sifive/Makefile
- create mode 100644 arch/riscv/boot/dts/sifive/fu540-c000.dtsi
- create mode 100644 arch/riscv/boot/dts/sifive/hifive-unleashed-a00.dts
+Unfortunately, this would mean that we need to sync twice as many
+top-level entries when we context switch.
