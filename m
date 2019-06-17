@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8DCCB49341
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 23:29:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E72B449311
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 23:27:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730216AbfFQV3L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 17:29:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56230 "EHLO mail.kernel.org"
+        id S1730354AbfFQV1M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 17:27:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53982 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730368AbfFQV3E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 17:29:04 -0400
+        id S1730344AbfFQV1J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Jun 2019 17:27:09 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E1CC9204FD;
-        Mon, 17 Jun 2019 21:29:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D151E20B1F;
+        Mon, 17 Jun 2019 21:27:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560806943;
-        bh=yv8DkqJKU8fMiKq+QS+HdTSIP2OK3r2/FzT0dXNjYZI=;
+        s=default; t=1560806828;
+        bh=KHBCZmoAoSC8wWq+9lyqmimJZJMLsLCc32XuJ2EdBII=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qZIa19YS/shfdaqDH7A2sVuMhYZmaG8+m3NNGHpPWnHEsb4+hgqE5yNogylcEgNiZ
-         sja/Kf9h8/PcBkSMrwgm/Jw43yI4bWWyODsXjj0MqFv000ap0c2uwk/h79oXYRYr2V
-         Gi33AahHeQsiV0XLiW7pNmVjKOAzGLdzewaEi3jQ=
+        b=L6iOkjzw9Oi6yauuaqoEnp8CQu2aqEoG7qWuW2QssjDndkKx5fuXRgsP//dbgGhTd
+         GJ1Gtl13btMng7hsgEVs26L/dneAz4U0K4HXdS1IkxWvj/V4IcqpcFzPRFppKzztev
+         pR0mBMFVZwIW43XO+Ovj5aHH5hW2vPJ3ZlQsk+Ug=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vishal Verma <vishal.l.verma@intel.com>,
-        Qian Cai <cai@lca.pw>, Dan Williams <dan.j.williams@intel.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 36/53] libnvdimm: Fix compilation warnings with W=1
-Date:   Mon, 17 Jun 2019 23:10:19 +0200
-Message-Id: <20190617210751.496808847@linuxfoundation.org>
+        stable@vger.kernel.org, Adric Blake <promarbler14@gmail.com>,
+        Borislav Petkov <bp@suse.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>, x86@kernel.org
+Subject: [PATCH 4.19 69/75] x86/microcode, cpuhotplug: Add a microcode loader CPU hotplug callback
+Date:   Mon, 17 Jun 2019 23:10:20 +0200
+Message-Id: <20190617210755.879289114@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190617210745.104187490@linuxfoundation.org>
-References: <20190617210745.104187490@linuxfoundation.org>
+In-Reply-To: <20190617210752.799453599@linuxfoundation.org>
+References: <20190617210752.799453599@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,86 +45,76 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit c01dafad77fea8d64c4fdca0a6031c980842ad65 ]
+From: Borislav Petkov <bp@suse.de>
 
-Several places (dimm_devs.c, core.c etc) include label.h but only
-label.c uses NSINDEX_SIGNATURE, so move its definition to label.c
-instead.
+commit 78f4e932f7760d965fb1569025d1576ab77557c5 upstream.
 
-In file included from drivers/nvdimm/dimm_devs.c:23:
-drivers/nvdimm/label.h:41:19: warning: 'NSINDEX_SIGNATURE' defined but
-not used [-Wunused-const-variable=]
+Adric Blake reported the following warning during suspend-resume:
 
-Also, some places abuse "/**" which is only reserved for the kernel-doc.
+  Enabling non-boot CPUs ...
+  x86: Booting SMP configuration:
+  smpboot: Booting Node 0 Processor 1 APIC 0x2
+  unchecked MSR access error: WRMSR to 0x10f (tried to write 0x0000000000000000) \
+   at rIP: 0xffffffff8d267924 (native_write_msr+0x4/0x20)
+  Call Trace:
+   intel_set_tfa
+   intel_pmu_cpu_starting
+   ? x86_pmu_dead_cpu
+   x86_pmu_starting_cpu
+   cpuhp_invoke_callback
+   ? _raw_spin_lock_irqsave
+   notify_cpu_starting
+   start_secondary
+   secondary_startup_64
+  microcode: sig=0x806ea, pf=0x80, revision=0x96
+  microcode: updated to revision 0xb4, date = 2019-04-01
+  CPU1 is up
 
-drivers/nvdimm/bus.c:648: warning: cannot understand function prototype:
-'struct attribute_group nd_device_attribute_group = '
-drivers/nvdimm/bus.c:677: warning: cannot understand function prototype:
-'struct attribute_group nd_numa_attribute_group = '
+The MSR in question is MSR_TFA_RTM_FORCE_ABORT and that MSR is emulated
+by microcode. The log above shows that the microcode loader callback
+happens after the PMU restoration, leading to the conjecture that
+because the microcode hasn't been updated yet, that MSR is not present
+yet, leading to the #GP.
 
-Those are just some member assignments for the "struct attribute_group"
-instances and it can't be expressed in the kernel-doc.
+Add a microcode loader-specific hotplug vector which comes before
+the PERF vectors and thus executes earlier and makes sure the MSR is
+present.
 
-Reviewed-by: Vishal Verma <vishal.l.verma@intel.com>
-Signed-off-by: Qian Cai <cai@lca.pw>
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Fixes: 400816f60c54 ("perf/x86/intel: Implement support for TSX Force Abort")
+Reported-by: Adric Blake <promarbler14@gmail.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: <stable@vger.kernel.org>
+Cc: x86@kernel.org
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=203637
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/nvdimm/bus.c   | 4 ++--
- drivers/nvdimm/label.c | 2 ++
- drivers/nvdimm/label.h | 2 --
- 3 files changed, 4 insertions(+), 4 deletions(-)
+ arch/x86/kernel/cpu/microcode/core.c |    2 +-
+ include/linux/cpuhotplug.h           |    1 +
+ 2 files changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/nvdimm/bus.c b/drivers/nvdimm/bus.c
-index a6746a1f20ae..2f1b54fab399 100644
---- a/drivers/nvdimm/bus.c
-+++ b/drivers/nvdimm/bus.c
-@@ -608,7 +608,7 @@ static struct attribute *nd_device_attributes[] = {
- 	NULL,
- };
+--- a/arch/x86/kernel/cpu/microcode/core.c
++++ b/arch/x86/kernel/cpu/microcode/core.c
+@@ -873,7 +873,7 @@ int __init microcode_init(void)
+ 		goto out_ucode_group;
  
--/**
-+/*
-  * nd_device_attribute_group - generic attributes for all devices on an nd bus
-  */
- struct attribute_group nd_device_attribute_group = {
-@@ -637,7 +637,7 @@ static umode_t nd_numa_attr_visible(struct kobject *kobj, struct attribute *a,
- 	return a->mode;
- }
+ 	register_syscore_ops(&mc_syscore_ops);
+-	cpuhp_setup_state_nocalls(CPUHP_AP_ONLINE_DYN, "x86/microcode:online",
++	cpuhp_setup_state_nocalls(CPUHP_AP_MICROCODE_LOADER, "x86/microcode:online",
+ 				  mc_cpu_online, mc_cpu_down_prep);
  
--/**
-+/*
-  * nd_numa_attribute_group - NUMA attributes for all devices on an nd bus
-  */
- struct attribute_group nd_numa_attribute_group = {
-diff --git a/drivers/nvdimm/label.c b/drivers/nvdimm/label.c
-index 6a16017cc0d9..1fb3a2491131 100644
---- a/drivers/nvdimm/label.c
-+++ b/drivers/nvdimm/label.c
-@@ -25,6 +25,8 @@ static guid_t nvdimm_btt2_guid;
- static guid_t nvdimm_pfn_guid;
- static guid_t nvdimm_dax_guid;
- 
-+static const char NSINDEX_SIGNATURE[] = "NAMESPACE_INDEX\0";
-+
- static u32 best_seq(u32 a, u32 b)
- {
- 	a &= NSINDEX_SEQ_MASK;
-diff --git a/drivers/nvdimm/label.h b/drivers/nvdimm/label.h
-index 1ebf4d3d01ba..9ed772db6900 100644
---- a/drivers/nvdimm/label.h
-+++ b/drivers/nvdimm/label.h
-@@ -38,8 +38,6 @@ enum {
- 	ND_NSINDEX_INIT = 0x1,
- };
- 
--static const char NSINDEX_SIGNATURE[] = "NAMESPACE_INDEX\0";
--
- /**
-  * struct nd_namespace_index - label set superblock
-  * @sig: NAMESPACE_INDEX\0
--- 
-2.20.1
-
+ 	pr_info("Microcode Update Driver: v%s.", DRIVER_VERSION);
+--- a/include/linux/cpuhotplug.h
++++ b/include/linux/cpuhotplug.h
+@@ -101,6 +101,7 @@ enum cpuhp_state {
+ 	CPUHP_AP_IRQ_BCM2836_STARTING,
+ 	CPUHP_AP_IRQ_MIPS_GIC_STARTING,
+ 	CPUHP_AP_ARM_MVEBU_COHERENCY,
++	CPUHP_AP_MICROCODE_LOADER,
+ 	CPUHP_AP_PERF_X86_AMD_UNCORE_STARTING,
+ 	CPUHP_AP_PERF_X86_STARTING,
+ 	CPUHP_AP_PERF_X86_AMD_IBS_STARTING,
 
 
