@@ -2,333 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3C931478A2
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 05:27:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8798047897
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 05:19:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727632AbfFQD1k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 16 Jun 2019 23:27:40 -0400
-Received: from mga18.intel.com ([134.134.136.126]:22102 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727413AbfFQD1k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 16 Jun 2019 23:27:40 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Jun 2019 20:27:39 -0700
-X-ExtLoop1: 1
-Received: from romley-ivt3.sc.intel.com ([172.25.110.60])
-  by FMSMGA003.fm.intel.com with ESMTP; 16 Jun 2019 20:27:38 -0700
-Date:   Sun, 16 Jun 2019 20:18:09 -0700
-From:   Fenghua Yu <fenghua.yu@intel.com>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        H Peter Anvin <hpa@zytor.com>,
-        Christopherson Sean J <sean.j.christopherson@intel.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Radim Krcmar <rkrcmar@redhat.com>,
-        Ravi V Shankar <ravi.v.shankar@intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        x86 <x86@kernel.org>, Jacob Pan <jacob.jun.pan@linux.intel.com>,
-        Len Brown <lenb@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>
-Subject: Re: [PATCH 1/3] x86/resctrl: Get max rmid and occupancy scale
- directly from CPUID instead of cpuinfo_x86
-Message-ID: <20190617031808.GA214090@romley-ivt3.sc.intel.com>
-References: <1560705250-211820-1-git-send-email-fenghua.yu@intel.com>
- <1560705250-211820-2-git-send-email-fenghua.yu@intel.com>
- <alpine.DEB.2.21.1906162141301.1760@nanos.tec.linutronix.de>
+        id S1727595AbfFQDTN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 16 Jun 2019 23:19:13 -0400
+Received: from esa6.hgst.iphmx.com ([216.71.154.45]:4430 "EHLO
+        esa6.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727383AbfFQDTN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 16 Jun 2019 23:19:13 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1560741552; x=1592277552;
+  h=from:to:cc:subject:date:message-id:references:
+   content-transfer-encoding:mime-version;
+  bh=83c7DmHWdGCQdYsUcr3GMDaxUdVq1wOVner+tJ0hhrM=;
+  b=m/xMF01QsBroF0hvkjrW7VtUnlw8cIrMXECe4TlhDRyWBQynzt1hoJsb
+   X3KL7jXc/P/eRTbtQLK9imRy9HUk6sLZ6OTJEGsfMXd5OJWmba9lF6ZQ0
+   Vq+Ts0/q6f6NGm7IClntNNLWxWd8FFCTpCPv3Uzq+giKaMPupXbfWXLnX
+   FcOaNOL+Bbfmayw5Qddf3+9+8U7ePe/tC6WWIx2oaGOjZuYFoK23f7sFs
+   EpMFMLgG52tEam7yN2NV3aECZbKSRuwzkS5PRXRwgqelAAZqR42c3YQDu
+   HQX3pkYfHIPHys9PqwUsEszXehOTqOQ/vFqvknG5WzIonyrbpKqO2uLye
+   A==;
+X-IronPort-AV: E=Sophos;i="5.63,383,1557158400"; 
+   d="scan'208";a="112368754"
+Received: from mail-co1nam05lp2055.outbound.protection.outlook.com (HELO NAM05-CO1-obe.outbound.protection.outlook.com) ([104.47.48.55])
+  by ob1.hgst.iphmx.com with ESMTP; 17 Jun 2019 11:19:12 +0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=XXRU3OIUR1Iq4Ff/qMgYnjzKjHT9Ti2qKIyweLj4uhQ=;
+ b=lXXluEGIljh+Vq0thlJznrtDkksfQK/DAYH8OszD8G8BJZo0WrlGgaLs/tJ4KsiMElCRjlk4RQgNIY6NXjNBmKIMbfc1lBSUCCCk67p2DJ3Eerqo6XszSz69RxWJfQeI9LPvHHE2eS37j3eEZ9cYHxkeB52afjxTW4W0XNL9oDc=
+Received: from BYAPR04MB5816.namprd04.prod.outlook.com (20.179.58.207) by
+ BYAPR04MB5238.namprd04.prod.outlook.com (20.178.48.159) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1987.13; Mon, 17 Jun 2019 03:19:10 +0000
+Received: from BYAPR04MB5816.namprd04.prod.outlook.com
+ ([fe80::d090:297a:d6ae:e757]) by BYAPR04MB5816.namprd04.prod.outlook.com
+ ([fe80::d090:297a:d6ae:e757%4]) with mapi id 15.20.1965.018; Mon, 17 Jun 2019
+ 03:19:10 +0000
+From:   Damien Le Moal <Damien.LeMoal@wdc.com>
+To:     Josef Bacik <josef@toxicpanda.com>,
+        Naohiro Aota <Naohiro.Aota@wdc.com>
+CC:     "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
+        David Sterba <dsterba@suse.com>, Chris Mason <clm@fb.com>,
+        Qu Wenruo <wqu@suse.com>, Nikolay Borisov <nborisov@suse.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Hannes Reinecke <hare@suse.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        =?iso-8859-1?Q?Matias_Bj=F8rling?= <mb@lightnvm.io>,
+        Johannes Thumshirn <jthumshirn@suse.de>,
+        Bart Van Assche <bvanassche@acm.org>
+Subject: Re: [PATCH 12/19] btrfs: expire submit buffer on timeout
+Thread-Topic: [PATCH 12/19] btrfs: expire submit buffer on timeout
+Thread-Index: AQHVHTKNw7/mCQKsqka4kbTmHgZhiA==
+Date:   Mon, 17 Jun 2019 03:19:10 +0000
+Message-ID: <BYAPR04MB5816CFF901A5BF10A2E51A52E7EB0@BYAPR04MB5816.namprd04.prod.outlook.com>
+References: <20190607131025.31996-1-naohiro.aota@wdc.com>
+ <20190607131025.31996-13-naohiro.aota@wdc.com>
+ <20190613141548.vlczaxiqqzbxgtzk@MacBook-Pro-91.local>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Damien.LeMoal@wdc.com; 
+x-originating-ip: [129.253.182.57]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 7e6c63a2-6e30-4828-96a2-08d6f2d290ec
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:BYAPR04MB5238;
+x-ms-traffictypediagnostic: BYAPR04MB5238:
+wdcipoutbound: EOP-TRUE
+x-microsoft-antispam-prvs: <BYAPR04MB523823A5D129F41A850BA9C2E7EB0@BYAPR04MB5238.namprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:8882;
+x-forefront-prvs: 0071BFA85B
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(346002)(136003)(376002)(366004)(39860400002)(199004)(189003)(256004)(72206003)(6506007)(3846002)(8676002)(81156014)(7416002)(305945005)(53936002)(7696005)(81166006)(66066001)(6636002)(86362001)(4744005)(66476007)(68736007)(71190400001)(71200400001)(14444005)(9686003)(229853002)(76176011)(478600001)(6436002)(446003)(6116002)(55016002)(486006)(52536014)(476003)(54906003)(64756008)(316002)(14454004)(5660300002)(4326008)(6246003)(110136005)(2906002)(66446008)(25786009)(76116006)(26005)(73956011)(186003)(99286004)(7736002)(8936002)(33656002)(66556008)(102836004)(66946007)(74316002)(53546011);DIR:OUT;SFP:1102;SCL:1;SRVR:BYAPR04MB5238;H:BYAPR04MB5816.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: 0cOIhPQh1+3AK4r7RkKNqA5ybHVRY6xYvDc5uVJDdsoIjOoQ0UuLAxQpnmfeZ31khiYKP7RdkyxiBwMYlWvWjP63NIAE8/ljra0KgDlBZs545vVzt22LY6t779Haqe5ugeR+ym3n77R0mAhJijb72ySvBU53rR6/y+eEVn46ov4mEom0+8EilGvSwj3cu0cABSIZp7qfphc+5HZrZI8dXGvN6YpSSTXaoNW6QqHSY320yBJ1mwpz+IBKmwiBTu44Fr00GfqTurSOWNz1wxhl5vwBwrqIxBA0JNoo6V6aChFIrfCoM/+WnupS0h5PvlcoJZ1wu5o9GIs1tc84mCNC3D1mlNvho8HXszcAyJKFrAz6UkUWXCnSsgKjHKUAWuA1ecXenPDax6PSN0PLA8fS0h3pJ6DENm/WFW0GkRvsw1g=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.1906162141301.1760@nanos.tec.linutronix.de>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+X-OriginatorOrg: wdc.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7e6c63a2-6e30-4828-96a2-08d6f2d290ec
+X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Jun 2019 03:19:10.6063
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: Damien.LeMoal@wdc.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR04MB5238
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jun 16, 2019 at 10:24:13PM +0200, Thomas Gleixner wrote:
-> On Sun, 16 Jun 2019, Fenghua Yu wrote:
-> 
-> > Although x86_cache_max_rmid and x86_cache_occ_scale are only read once
-> > during resctrl initialization, they are always stored in cpuinfo_x86 for
-> > each CPU during run time without usage. Even if resctrl is not
-> > configured, they still occupy space in cpuinfo_x86.
-> 
-> And that's a problem because?
-> 
-> > To save cpuinfo_x86 space and make CPU and resctrl initialization simpler,
-> > remove the two fields from cpuinfo_x86 and get max rmid and occupancy
-> 
-> What is simpler? The fact that more code fiddles with CPUID? That's exactly
-> the wrong direction.
-> 
-> The storage size of struct cpuinfo is largely uninteresting especially as
-> long as we keep num_online_cpus copies of the same information around.
-> 
-> Just grep for places which invoke CPUID and then look how many of them do
-> it over and over and even the code in arch/x86/kernel/cpu/ is an
-> unpenetrable mess for exactly this reason.
-> 
-> The right thing to do is to have one instance of the CPUID information
-> which is
-> 
->   - a proper data structure with named fields and named bits
-> 
->   - a single master instance which can be mapped to all CPUs
-> 
-> This data structure is filled in in one go by reading out all leaves and
-> not by the maze we have today which puts together selected parts piecewise
-> and never exposes a full and consistent picture.
-> 
-> This allows to remove all these custom copies of CPUID leaf readouts and
-> allows proper filtering/disabling at a central place.
-> 
-> Making it a proper data structure with fields and bits gets rid of all that
-> hex masking/shifting nonsense which is used to decode parts of those
-> fields.
-> 
-> That's not a performance issue because all performance critical code should
-> use static_cpu_has() anyway. For non critical code boot_cpu_has() is
-> sufficient.
-> 
-> Upcoming secondary CPUs would do a sanity check on their CPUID content to
-> check whether everything is symmetric. We should do that actually today
-> because not detecting asymetric features early leads to exactly the issue
-> which was fixed recently with loading the micro code earlier than perf.
-> But we can't because the information retrieval is done in a gazillion of
-> places.
->   
-> Now you might argue that the upcoming asymetric processors (SIGH!) will
-> require per CPU instances of the feature leafs. Sure that needs some
-> thought, but it needs thought even with the current code and I'm absolutely
-> not interested to duct tape that stuff into the current code.
-> 
-> The solution for this with the above scheme is to utilize the feature
-> mismatch detection and have a proper classification which features are
-> allowed to deviate and which are not. For those which can deviate, we can
-> provide separate storage as this information needs to be propagated to
-> other entities (fault handlers, placement code, xsave variants etc.). But
-> that's a limited amount of information and the bulk will still be the same.
-> 
-> This mismatch detection is essential for dealing with future asymetric
-> CPUs proper. When the kernel detects it, it can disable mismatching
-> features which are not yet handled by code which has to be aware of them.
-> 
-> And disabling them means that with that scheme we can actually trap CPUID
-> in userspace and provide it consistent and filtered information instead
-> of having the mismatch between kernel view and user space view.
-> 
-> Borislav has experimented with that already, but thanks to the marvelous
-> security features built into Intel (and other) CPUs this is still mostly a
-> drawing board exercise.
-> 
-> Just for the record. Before this cleanup takes place, I'm not even looking
-> at any patches which attempt to support asymetric processors. The current
-> supply of duct tape engineering horrors is sufficient for bad mood. No need
-> for more of that.
-
-I see. Then this patch #1 doesn't make sense.
-
-So in the next version, can I remove the patch #1, change the patch #2 as
-follows, and keep the patch #3?
-
-It's a waste for the four X86_FEATURE_CQM_* features to occupy two
-pure feature bits words. To better utilize feature words, re-define
-word 11 to host scattered features and move the four X86_FEATURE_CQM_*
-features into Linux defined word 11. More scattered features can be added
-in word 11 in the future.
-
-Leaf 11 in cpuid_leafs is renamed as CPUID_LNX_4 to reflect it's a Linux
-defined leaf.
-
-Although word 12 doesn't have any feature now, leaf 12 in cpuid_leafs
-still needs to be kept because cpuid_leafs must have NCAPINTS leafs.
-Rename leaf 12 as CPUID_DUMMY which will be replaced by a meaningful name
-in the next patch when CPUID.7.1:EAX occupies world 12.
-
-KVM doesn't support resctrl now. So it's safe to move the
-X86_FEATURE_CQM_* features to scattered features word 11 for KVM.
-
-Signed-off-by: Fenghua Yu <fenghua.yu@intel.com>
----
- arch/x86/include/asm/cpufeature.h  |  4 +--
- arch/x86/include/asm/cpufeatures.h | 17 ++++++----
- arch/x86/kernel/cpu/common.c       | 53 +++++++++++++++---------------
- arch/x86/kernel/cpu/cpuid-deps.c   |  3 ++
- arch/x86/kernel/cpu/scattered.c    |  4 +++
- arch/x86/kvm/cpuid.h               |  2 --
- 6 files changed, 45 insertions(+), 38 deletions(-)
-
-diff --git a/arch/x86/include/asm/cpufeature.h b/arch/x86/include/asm/cpufeature.h
-index 1d337c51f7e6..403f70c2e431 100644
---- a/arch/x86/include/asm/cpufeature.h
-+++ b/arch/x86/include/asm/cpufeature.h
-@@ -22,8 +22,8 @@ enum cpuid_leafs
- 	CPUID_LNX_3,
- 	CPUID_7_0_EBX,
- 	CPUID_D_1_EAX,
--	CPUID_F_0_EDX,
--	CPUID_F_1_EDX,
-+	CPUID_LNX_4,
-+	CPUID_DUMMY,
- 	CPUID_8000_0008_EBX,
- 	CPUID_6_EAX,
- 	CPUID_8000_000A_EDX,
-diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
-index 75f27ee2c263..4f0a3d093794 100644
---- a/arch/x86/include/asm/cpufeatures.h
-+++ b/arch/x86/include/asm/cpufeatures.h
-@@ -269,13 +269,16 @@
- #define X86_FEATURE_XGETBV1		(10*32+ 2) /* XGETBV with ECX = 1 instruction */
- #define X86_FEATURE_XSAVES		(10*32+ 3) /* XSAVES/XRSTORS instructions */
- 
--/* Intel-defined CPU QoS Sub-leaf, CPUID level 0x0000000F:0 (EDX), word 11 */
--#define X86_FEATURE_CQM_LLC		(11*32+ 1) /* LLC QoS if 1 */
--
--/* Intel-defined CPU QoS Sub-leaf, CPUID level 0x0000000F:1 (EDX), word 12 */
--#define X86_FEATURE_CQM_OCCUP_LLC	(12*32+ 0) /* LLC occupancy monitoring */
--#define X86_FEATURE_CQM_MBM_TOTAL	(12*32+ 1) /* LLC Total MBM monitoring */
--#define X86_FEATURE_CQM_MBM_LOCAL	(12*32+ 2) /* LLC Local MBM monitoring */
-+/*
-+ * Extended auxiliary flags: Linux defined - For features scattered in various
-+ * CPUID levels like 0xf, word 11.
-+ *
-+ * Reuse free bits when adding new feature flags!
-+ */
-+#define X86_FEATURE_CQM_LLC		(11*32+ 0) /* LLC QoS if 1 */
-+#define X86_FEATURE_CQM_OCCUP_LLC	(11*32+ 1) /* LLC occupancy monitoring */
-+#define X86_FEATURE_CQM_MBM_TOTAL	(11*32+ 2) /* LLC Total MBM monitoring */
-+#define X86_FEATURE_CQM_MBM_LOCAL	(11*32+ 3) /* LLC Local MBM monitoring */
- 
- /* AMD-defined CPU features, CPUID level 0x80000008 (EBX), word 13 */
- #define X86_FEATURE_CLZERO		(13*32+ 0) /* CLZERO instruction */
-diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-index 2c57fffebf9b..f080be35da41 100644
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -801,6 +801,31 @@ static void init_speculation_control(struct cpuinfo_x86 *c)
- 	}
- }
- 
-+static void get_cqm_info(struct cpuinfo_x86 *c)
-+{
-+	if (cpu_has(c, X86_FEATURE_CQM_LLC)) {
-+		u32 eax, ebx, ecx, edx;
-+
-+		/* QoS sub-leaf, EAX=0Fh, ECX=0 */
-+		cpuid_count(0x0000000F, 0, &eax, &ebx, &ecx, &edx);
-+		/* will be overridden if occupancy monitoring exists */
-+		c->x86_cache_max_rmid = ebx;
-+
-+		if (cpu_has(c, X86_FEATURE_CQM_OCCUP_LLC) ||
-+		    cpu_has(c, X86_FEATURE_CQM_MBM_TOTAL) ||
-+		    cpu_has(c, X86_FEATURE_CQM_MBM_LOCAL)) {
-+			/* QoS sub-leaf, EAX=0Fh, ECX=1 */
-+			cpuid_count(0x0000000F, 1, &eax, &ebx, &ecx, &edx);
-+
-+			c->x86_cache_max_rmid = ecx;
-+			c->x86_cache_occ_scale = ebx;
-+		}
-+	} else {
-+		c->x86_cache_max_rmid = -1;
-+		c->x86_cache_occ_scale = -1;
-+	}
-+}
-+
- void get_cpu_cap(struct cpuinfo_x86 *c)
- {
- 	u32 eax, ebx, ecx, edx;
-@@ -832,33 +857,6 @@ void get_cpu_cap(struct cpuinfo_x86 *c)
- 		c->x86_capability[CPUID_D_1_EAX] = eax;
- 	}
- 
--	/* Additional Intel-defined flags: level 0x0000000F */
--	if (c->cpuid_level >= 0x0000000F) {
--
--		/* QoS sub-leaf, EAX=0Fh, ECX=0 */
--		cpuid_count(0x0000000F, 0, &eax, &ebx, &ecx, &edx);
--		c->x86_capability[CPUID_F_0_EDX] = edx;
--
--		if (cpu_has(c, X86_FEATURE_CQM_LLC)) {
--			/* will be overridden if occupancy monitoring exists */
--			c->x86_cache_max_rmid = ebx;
--
--			/* QoS sub-leaf, EAX=0Fh, ECX=1 */
--			cpuid_count(0x0000000F, 1, &eax, &ebx, &ecx, &edx);
--			c->x86_capability[CPUID_F_1_EDX] = edx;
--
--			if ((cpu_has(c, X86_FEATURE_CQM_OCCUP_LLC)) ||
--			      ((cpu_has(c, X86_FEATURE_CQM_MBM_TOTAL)) ||
--			       (cpu_has(c, X86_FEATURE_CQM_MBM_LOCAL)))) {
--				c->x86_cache_max_rmid = ecx;
--				c->x86_cache_occ_scale = ebx;
--			}
--		} else {
--			c->x86_cache_max_rmid = -1;
--			c->x86_cache_occ_scale = -1;
--		}
--	}
--
- 	/* AMD-defined flags: level 0x80000001 */
- 	eax = cpuid_eax(0x80000000);
- 	c->extended_cpuid_level = eax;
-@@ -889,6 +887,7 @@ void get_cpu_cap(struct cpuinfo_x86 *c)
- 
- 	init_scattered_cpuid_features(c);
- 	init_speculation_control(c);
-+	get_cqm_info(c);
- 
- 	/*
- 	 * Clear/Set all flags overridden by options, after probe.
-diff --git a/arch/x86/kernel/cpu/cpuid-deps.c b/arch/x86/kernel/cpu/cpuid-deps.c
-index 2c0bd38a44ab..fa07a224e7b9 100644
---- a/arch/x86/kernel/cpu/cpuid-deps.c
-+++ b/arch/x86/kernel/cpu/cpuid-deps.c
-@@ -59,6 +59,9 @@ static const struct cpuid_dep cpuid_deps[] = {
- 	{ X86_FEATURE_AVX512_4VNNIW,	X86_FEATURE_AVX512F   },
- 	{ X86_FEATURE_AVX512_4FMAPS,	X86_FEATURE_AVX512F   },
- 	{ X86_FEATURE_AVX512_VPOPCNTDQ, X86_FEATURE_AVX512F   },
-+	{ X86_FEATURE_CQM_OCCUP_LLC,	X86_FEATURE_CQM_LLC   },
-+	{ X86_FEATURE_CQM_MBM_TOTAL,	X86_FEATURE_CQM_LLC   },
-+	{ X86_FEATURE_CQM_MBM_LOCAL,	X86_FEATURE_CQM_LLC   },
- 	{}
- };
- 
-diff --git a/arch/x86/kernel/cpu/scattered.c b/arch/x86/kernel/cpu/scattered.c
-index 94aa1c72ca98..adf9b71386ef 100644
---- a/arch/x86/kernel/cpu/scattered.c
-+++ b/arch/x86/kernel/cpu/scattered.c
-@@ -26,6 +26,10 @@ struct cpuid_bit {
- static const struct cpuid_bit cpuid_bits[] = {
- 	{ X86_FEATURE_APERFMPERF,       CPUID_ECX,  0, 0x00000006, 0 },
- 	{ X86_FEATURE_EPB,		CPUID_ECX,  3, 0x00000006, 0 },
-+	{ X86_FEATURE_CQM_LLC,		CPUID_EDX,  1, 0x0000000f, 0 },
-+	{ X86_FEATURE_CQM_OCCUP_LLC,	CPUID_EDX,  0, 0x0000000f, 1 },
-+	{ X86_FEATURE_CQM_MBM_TOTAL,	CPUID_EDX,  1, 0x0000000f, 1 },
-+	{ X86_FEATURE_CQM_MBM_LOCAL,	CPUID_EDX,  2, 0x0000000f, 1 },
- 	{ X86_FEATURE_CAT_L3,		CPUID_EBX,  1, 0x00000010, 0 },
- 	{ X86_FEATURE_CAT_L2,		CPUID_EBX,  2, 0x00000010, 0 },
- 	{ X86_FEATURE_CDP_L3,		CPUID_ECX,  2, 0x00000010, 1 },
-diff --git a/arch/x86/kvm/cpuid.h b/arch/x86/kvm/cpuid.h
-index 9a327d5b6d1f..d78a61408243 100644
---- a/arch/x86/kvm/cpuid.h
-+++ b/arch/x86/kvm/cpuid.h
-@@ -47,8 +47,6 @@ static const struct cpuid_reg reverse_cpuid[] = {
- 	[CPUID_8000_0001_ECX] = {0x80000001, 0, CPUID_ECX},
- 	[CPUID_7_0_EBX]       = {         7, 0, CPUID_EBX},
- 	[CPUID_D_1_EAX]       = {       0xd, 1, CPUID_EAX},
--	[CPUID_F_0_EDX]       = {       0xf, 0, CPUID_EDX},
--	[CPUID_F_1_EDX]       = {       0xf, 1, CPUID_EDX},
- 	[CPUID_8000_0008_EBX] = {0x80000008, 0, CPUID_EBX},
- 	[CPUID_6_EAX]         = {         6, 0, CPUID_EAX},
- 	[CPUID_8000_000A_EDX] = {0x8000000a, 0, CPUID_EDX},
--- 
-2.19.1
-
-
-Thanks.
-
--Fenghua
+On 2019/06/13 23:15, Josef Bacik wrote:=0A=
+> On Fri, Jun 07, 2019 at 10:10:18PM +0900, Naohiro Aota wrote:=0A=
+>> It is possible to have bios stalled in the submit buffer due to some bug=
+ or=0A=
+>> device problem. In such situation, btrfs stops working waiting for buffe=
+red=0A=
+>> bios completions. To avoid such hang, add a worker that will cancel the=
+=0A=
+>> stalled bios after a timeout.=0A=
+>>=0A=
+> =0A=
+> The block layer does this with it's request timeouts right?  So it'll tim=
+eout=0A=
+> and we'll get an EIO?  If that's not working then we need to fix the bloc=
+k=0A=
+> layer.  Thanks,=0A=
+=0A=
+Joseph,=0A=
+=0A=
+The block layer timeout is started only when the request is dispatched. The=
+=0A=
+timeout is not started on BIO/request allocation and so will not trigger fo=
+r=0A=
+bios stalled inside btrfs scheduler.=0A=
+=0A=
+=0A=
+-- =0A=
+Damien Le Moal=0A=
+Western Digital Research=0A=
