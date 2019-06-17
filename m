@@ -2,258 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 824D1480ED
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 13:37:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0DDBE4816D
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 14:01:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728344AbfFQLfX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 07:35:23 -0400
-Received: from mga12.intel.com ([192.55.52.136]:54390 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728322AbfFQLfU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 07:35:20 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Jun 2019 04:35:20 -0700
-X-ExtLoop1: 1
-Received: from xxx.igk.intel.com ([10.237.93.170])
-  by fmsmga006.fm.intel.com with ESMTP; 17 Jun 2019 04:35:18 -0700
-From:   =?UTF-8?q?Amadeusz=20S=C5=82awi=C5=84ski?= 
-        <amadeuszx.slawinski@linux.intel.com>
-To:     alsa-devel@alsa-project.org
-Cc:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Jie Yang <yang.jie@linux.intel.com>,
-        Cezary Rojewski <cezary.rojewski@intel.com>,
-        linux-kernel@vger.kernel.org,
-        =?UTF-8?q?Amadeusz=20S=C5=82awi=C5=84ski?= 
-        <amadeuszx.slawinski@linux.intel.com>
-Subject: [PATCH v2 11/11] ASoC: topology: Consolidate and fix asoc_tplg_dapm_widget_*_create flow
-Date:   Mon, 17 Jun 2019 13:36:44 +0200
-Message-Id: <20190617113644.25621-12-amadeuszx.slawinski@linux.intel.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190617113644.25621-1-amadeuszx.slawinski@linux.intel.com>
-References: <20190617113644.25621-1-amadeuszx.slawinski@linux.intel.com>
+        id S1726712AbfFQMAr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 08:00:47 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:42930 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725681AbfFQMAr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Jun 2019 08:00:47 -0400
+Received: by mail-lj1-f194.google.com with SMTP id t28so8989226lje.9
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2019 05:00:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lixom-net.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=xGIILVfXf7VmS4FvscoSNixWx+XWfKfE5N4G3kPEMwo=;
+        b=aZZBbp3yrNPfUMQPOcjDFQV9k2zoDpsVWrIXoMpLQrpqRYkS1vahaodU+eBIGDVXJz
+         kI2kTUdwax/aS4nnG3MDZ8DhyuYmE+cSOHvgZpgGL7RULOilnoUmCZi8TFDXiJsq2dQ+
+         BDXIMsDwFhMnB+kub7yEt6iq/RZj+KS6PSIXX6wqpENgJUYOK3OawX/qVRQQJX2KwO+S
+         HHnqnU1JnuYnXBYtxCW7kD12ik2XNeAcTqqjNuxYb0k6bGP2yZobZnr2hS0VSj613A2t
+         sC0sUqWRmHYL3D0TbyuoJmiMaRs0D0SUhux+mEGPiEkd6V+AStCgIEYq/1XeM6VFOGBi
+         5O9Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=xGIILVfXf7VmS4FvscoSNixWx+XWfKfE5N4G3kPEMwo=;
+        b=WaJX8ShswYDoj0u32UQ0Cra0CRuCtl+n0eO3dtDABb/kl8kXSqo6VLBZPn9Rr7m1x0
+         P0pXn69TPwkmNVfNSD0GxENpfnXQ1n57HxAUpE+NtieC+XRsJ+jTFDiXoZ/0Zn28tEzC
+         LTJxBOHGD4PG9ZHMQsVPchKsReB0giYtTg2Ekgv0YdqhKcr80BD7JCukVfR2hmN8L+75
+         0z/XWTmSwwn7CnIJwIdsgVQGdOu7FlaitwJ0mEjCn5VjE8h9YNIdvFlInKkM6ZsOfF/l
+         hiRLGGvNDvQWEb/ixaLJvENL3Tu3tS7FjEvyTF3VppzY1wRXg/SyICCt7zyu4CoHoJ61
+         Q9YQ==
+X-Gm-Message-State: APjAAAUvbMbI3eDnhK3VXh0d3b4525+qA90Q0f4so4//j/p1V8ax0OKf
+        HZRDtQeivIrjRGiUXyCy5090Mg==
+X-Google-Smtp-Source: APXvYqyp6cCFvtccc98Mr7cwSB/h75VTWC+F6gFL8fxb/D1x44pKnPB27rv0DjAhw1uUrmL7CbcgEw==
+X-Received: by 2002:a2e:8741:: with SMTP id q1mr31348628ljj.144.1560772845064;
+        Mon, 17 Jun 2019 05:00:45 -0700 (PDT)
+Received: from localhost (h85-30-9-151.cust.a3fiber.se. [85.30.9.151])
+        by smtp.gmail.com with ESMTPSA id m21sm1725308lfh.20.2019.06.17.05.00.43
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 17 Jun 2019 05:00:43 -0700 (PDT)
+Date:   Mon, 17 Jun 2019 04:40:22 -0700
+From:   Olof Johansson <olof@lixom.net>
+To:     Li Yang <leoyang.li@nxp.com>
+Cc:     arm@kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, shawnguo@kernel.org
+Subject: Re: [GIT PULL] updates to soc/fsl drivers for v5.3
+Message-ID: <20190617114022.54oznl3l35dzespw@localhost>
+References: <20190520195215.26515-1-leoyang.li@nxp.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190520195215.26515-1-leoyang.li@nxp.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There are a few soc_tplg_dapm_widget_*_create functions with similar
-content, but slightly different flow, unify their flow and make sure
-that we go to error handler and free memory in case of failure.
+On Mon, May 20, 2019 at 02:52:15PM -0500, Li Yang wrote:
+> Hi arm-soc maintainers,
+> 
+> This is a rebase of patches that missed 5.2 merge window.  Please
+> help to review and merge it.  Thanks.
+> 
+> 
+> Regards,
+> Leo
+> 
+> The following changes since commit a188339ca5a396acc588e5851ed7e19f66b0ebd9:
+> 
+>   Linux 5.2-rc1 (2019-05-19 15:47:09 -0700)
+> 
+> are available in the Git repository at:
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/leo/linux.git tags/soc-fsl-next-v5.3
+> 
+> for you to fetch changes up to 5d1d046e2868fc876a69231eb2f24f000b521f1c:
+> 
+>   soc: fsl: qbman_portals: add APIs to retrieve the probing status (2019-05-20 14:28:16 -0500)
 
-Signed-off-by: Amadeusz Sławiński <amadeuszx.slawinski@linux.intel.com>
----
- sound/soc/soc-topology.c | 77 ++++++++++++++++++----------------------
- 1 file changed, 35 insertions(+), 42 deletions(-)
+Merged, thanks!
 
-diff --git a/sound/soc/soc-topology.c b/sound/soc/soc-topology.c
-index a926c2afbe05..fc1f1d6f9e92 100644
---- a/sound/soc/soc-topology.c
-+++ b/sound/soc/soc-topology.c
-@@ -1310,14 +1310,15 @@ static struct snd_kcontrol_new *soc_tplg_dapm_widget_dmixer_create(
- 
- 	for (i = 0; i < num_kcontrols; i++) {
- 		mc = (struct snd_soc_tplg_mixer_control *)tplg->pos;
--		sm = kzalloc(sizeof(*sm), GFP_KERNEL);
--		if (sm == NULL)
--			goto err;
- 
- 		/* validate kcontrol */
- 		if (strnlen(mc->hdr.name, SNDRV_CTL_ELEM_ID_NAME_MAXLEN) ==
- 			SNDRV_CTL_ELEM_ID_NAME_MAXLEN)
--			goto err_str;
-+			goto err_sm;
-+
-+		sm = kzalloc(sizeof(*sm), GFP_KERNEL);
-+		if (sm == NULL)
-+			goto err_sm;
- 
- 		tplg->pos += (sizeof(struct snd_soc_tplg_mixer_control) +
- 			      le32_to_cpu(mc->priv.size));
-@@ -1327,7 +1328,7 @@ static struct snd_kcontrol_new *soc_tplg_dapm_widget_dmixer_create(
- 
- 		kc[i].name = kstrdup(mc->hdr.name, GFP_KERNEL);
- 		if (kc[i].name == NULL)
--			goto err_str;
-+			goto err_sm;
- 		kc[i].private_value = (long)sm;
- 		kc[i].iface = SNDRV_CTL_ELEM_IFACE_MIXER;
- 		kc[i].access = mc->hdr.access;
-@@ -1353,8 +1354,7 @@ static struct snd_kcontrol_new *soc_tplg_dapm_widget_dmixer_create(
- 		err = soc_tplg_kcontrol_bind_io(&mc->hdr, &kc[i], tplg);
- 		if (err) {
- 			soc_control_err(tplg, &mc->hdr, mc->hdr.name);
--			kfree(sm);
--			continue;
-+			goto err_sm;
- 		}
- 
- 		/* create any TLV data */
-@@ -1367,20 +1367,19 @@ static struct snd_kcontrol_new *soc_tplg_dapm_widget_dmixer_create(
- 			dev_err(tplg->dev, "ASoC: failed to init %s\n",
- 				mc->hdr.name);
- 			soc_tplg_free_tlv(tplg, &kc[i]);
--			kfree(sm);
--			continue;
-+			goto err_sm;
- 		}
- 	}
- 	return kc;
- 
--err_str:
--	kfree(sm);
--err:
--	for (--i; i >= 0; i--) {
--		kfree((void *)kc[i].private_value);
-+err_sm:
-+	for (; i >= 0; i--) {
-+		sm = (struct soc_mixer_control *)kc[i].private_value;
-+		kfree(sm);
- 		kfree(kc[i].name);
- 	}
- 	kfree(kc);
-+
- 	return NULL;
- }
- 
-@@ -1401,11 +1400,11 @@ static struct snd_kcontrol_new *soc_tplg_dapm_widget_denum_create(
- 		/* validate kcontrol */
- 		if (strnlen(ec->hdr.name, SNDRV_CTL_ELEM_ID_NAME_MAXLEN) ==
- 			    SNDRV_CTL_ELEM_ID_NAME_MAXLEN)
--			goto err;
-+			goto err_se;
- 
- 		se = kzalloc(sizeof(*se), GFP_KERNEL);
- 		if (se == NULL)
--			goto err;
-+			goto err_se;
- 
- 		tplg->pos += (sizeof(struct snd_soc_tplg_enum_control) +
- 				ec->priv.size);
-@@ -1414,10 +1413,8 @@ static struct snd_kcontrol_new *soc_tplg_dapm_widget_denum_create(
- 			ec->hdr.name);
- 
- 		kc[i].name = kstrdup(ec->hdr.name, GFP_KERNEL);
--		if (kc[i].name == NULL) {
--			kfree(se);
-+		if (kc[i].name == NULL)
- 			goto err_se;
--		}
- 		kc[i].private_value = (long)se;
- 		kc[i].iface = SNDRV_CTL_ELEM_IFACE_MIXER;
- 		kc[i].access = ec->hdr.access;
-@@ -1482,44 +1479,43 @@ static struct snd_kcontrol_new *soc_tplg_dapm_widget_denum_create(
- 	for (; i >= 0; i--) {
- 		/* free values and texts */
- 		se = (struct soc_enum *)kc[i].private_value;
--		if (!se)
--			continue;
- 
--		soc_tplg_denum_remove_values(se);
--		soc_tplg_denum_remove_texts(se);
-+		if (se) {
-+			soc_tplg_denum_remove_values(se);
-+			soc_tplg_denum_remove_texts(se);
-+		}
- 
- 		kfree(se);
- 		kfree(kc[i].name);
- 	}
--err:
- 	kfree(kc);
- 
- 	return NULL;
- }
- 
- static struct snd_kcontrol_new *soc_tplg_dapm_widget_dbytes_create(
--	struct soc_tplg *tplg, int count)
-+	struct soc_tplg *tplg, int num_kcontrols)
- {
- 	struct snd_soc_tplg_bytes_control *be;
--	struct soc_bytes_ext  *sbe;
-+	struct soc_bytes_ext *sbe;
- 	struct snd_kcontrol_new *kc;
- 	int i, err;
- 
--	kc = kcalloc(count, sizeof(*kc), GFP_KERNEL);
-+	kc = kcalloc(num_kcontrols, sizeof(*kc), GFP_KERNEL);
- 	if (!kc)
- 		return NULL;
- 
--	for (i = 0; i < count; i++) {
-+	for (i = 0; i < num_kcontrols; i++) {
- 		be = (struct snd_soc_tplg_bytes_control *)tplg->pos;
- 
- 		/* validate kcontrol */
- 		if (strnlen(be->hdr.name, SNDRV_CTL_ELEM_ID_NAME_MAXLEN) ==
- 			SNDRV_CTL_ELEM_ID_NAME_MAXLEN)
--			goto err;
-+			goto err_sbe;
- 
- 		sbe = kzalloc(sizeof(*sbe), GFP_KERNEL);
- 		if (sbe == NULL)
--			goto err;
-+			goto err_sbe;
- 
- 		tplg->pos += (sizeof(struct snd_soc_tplg_bytes_control) +
- 			      le32_to_cpu(be->priv.size));
-@@ -1529,10 +1525,8 @@ static struct snd_kcontrol_new *soc_tplg_dapm_widget_dbytes_create(
- 			be->hdr.name, be->hdr.access);
- 
- 		kc[i].name = kstrdup(be->hdr.name, GFP_KERNEL);
--		if (kc[i].name == NULL) {
--			kfree(sbe);
--			goto err;
--		}
-+		if (kc[i].name == NULL)
-+			goto err_sbe;
- 		kc[i].private_value = (long)sbe;
- 		kc[i].iface = SNDRV_CTL_ELEM_IFACE_MIXER;
- 		kc[i].access = be->hdr.access;
-@@ -1544,8 +1538,7 @@ static struct snd_kcontrol_new *soc_tplg_dapm_widget_dbytes_create(
- 		err = soc_tplg_kcontrol_bind_io(&be->hdr, &kc[i], tplg);
- 		if (err) {
- 			soc_control_err(tplg, &be->hdr, be->hdr.name);
--			kfree(sbe);
--			continue;
-+			goto err_sbe;
- 		}
- 
- 		/* pass control to driver for optional further init */
-@@ -1554,20 +1547,20 @@ static struct snd_kcontrol_new *soc_tplg_dapm_widget_dbytes_create(
- 		if (err < 0) {
- 			dev_err(tplg->dev, "ASoC: failed to init %s\n",
- 				be->hdr.name);
--			kfree(sbe);
--			continue;
-+			goto err_sbe;
- 		}
- 	}
- 
- 	return kc;
- 
--err:
--	for (--i; i >= 0; i--) {
--		kfree((void *)kc[i].private_value);
-+err_sbe:
-+	for (; i >= 0; i--) {
-+		sbe = (struct soc_bytes_ext *)kc[i].private_value;
-+		kfree(sbe);
- 		kfree(kc[i].name);
- 	}
--
- 	kfree(kc);
-+
- 	return NULL;
- }
- 
--- 
-2.17.1
 
+-Olof
