@@ -2,104 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7364E480FA
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 13:37:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E26BF480D8
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 13:35:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728396AbfFQLgC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 07:36:02 -0400
-Received: from mail-vs1-f65.google.com ([209.85.217.65]:46748 "EHLO
-        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728384AbfFQLgA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 07:36:00 -0400
-Received: by mail-vs1-f65.google.com with SMTP id l125so5844356vsl.13
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2019 04:36:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=nSqieASavyS4hAmtN+rUBOJEe/7rLoXSKUZrznGx70k=;
-        b=Wd26W2riDHjXKZhtVVDjaHoRTCo3KoqecNJUxQy7SdCiyicfZtJoeym4YslYZT5z8v
-         58FAKGSTKivZqRWpfOAzDJ4Pr9XgSsidHnKMLgqKgyZvBC52+7FTVUkntYHFZ+f6bjuY
-         l89inADrQtD0oHbROqE0XItxwIjwx5CpmrjJGpVRGKB9buM78uT9I97VIelAf7DlT2lT
-         IrzctmCvBIV/jHMH0bbeLC2q10Al44VCam3QbtG3HOlv/RZPBUVtPIS6wgTpwhZ1yJUg
-         L+g4CPHP/OQwONR3R31FLXGfe0NaHXDBM42kCPs+TNNlXRODzovt82/ksNWfvBBhB3S4
-         fLaA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=nSqieASavyS4hAmtN+rUBOJEe/7rLoXSKUZrznGx70k=;
-        b=fjOVJdh2rbysiWPedrKNgTx2PFFH9qweWtY9H2DRjBir1xYTfEEl0YVBALQorgvKGm
-         sXWkBWkkUBsZSvXO2cpJPEk3FjD59eQxM7a+ouvfKxZeGvTnRjzwVzKQX7QxtDFeTp+V
-         E1L4qE/FTi1UbUTMYns4VG/VHLBCsf7/MVj2acO/u0KH/lDze2rHmk+dNco+uvNz5nuq
-         wTzA90HJN7GMUuwq6YQxyunamQXeWCno63bdVGdlMGwUlfU1oqMTl4SO7a7GM0URKdmO
-         GL/+6tCbe2jvuZiVCQABRpYmzp05hXpZZDYD3HdeNjGxAJP2fSLryo5Fn0WyQtkGBrR0
-         z5Yw==
-X-Gm-Message-State: APjAAAWVG4LgZpEIoi8HpK5nDLrgKO/36FFczBtGSK3zX9kBxXhP3yxM
-        tLuh4eWRuyA2obv3VNw0VAuoelhWt2gkFijrX96cUQ==
-X-Google-Smtp-Source: APXvYqwea4hF3OfO89ZgAeSGr7Xa0nI6gfa9nK3JhRJFHcuT+oslVZoDfXzz+JPqCiNXWQ9lxrEmy511Wc3ZPMRiQug=
-X-Received: by 2002:a67:7a90:: with SMTP id v138mr11500943vsc.200.1560771359908;
- Mon, 17 Jun 2019 04:35:59 -0700 (PDT)
+        id S1727700AbfFQLey (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 07:34:54 -0400
+Received: from mga12.intel.com ([192.55.52.136]:54390 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725681AbfFQLev (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Jun 2019 07:34:51 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Jun 2019 04:34:51 -0700
+X-ExtLoop1: 1
+Received: from xxx.igk.intel.com ([10.237.93.170])
+  by fmsmga006.fm.intel.com with ESMTP; 17 Jun 2019 04:34:49 -0700
+From:   =?UTF-8?q?Amadeusz=20S=C5=82awi=C5=84ski?= 
+        <amadeuszx.slawinski@linux.intel.com>
+To:     alsa-devel@alsa-project.org
+Cc:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Jie Yang <yang.jie@linux.intel.com>,
+        Cezary Rojewski <cezary.rojewski@intel.com>,
+        linux-kernel@vger.kernel.org,
+        =?UTF-8?q?Amadeusz=20S=C5=82awi=C5=84ski?= 
+        <amadeuszx.slawinski@linux.intel.com>
+Subject: [PATCH v2 00/11] Fix driver reload issues
+Date:   Mon, 17 Jun 2019 13:36:33 +0200
+Message-Id: <20190617113644.25621-1-amadeuszx.slawinski@linux.intel.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-References: <20190614082954.39648-1-yinbo.zhu@nxp.com> <20190614082954.39648-2-yinbo.zhu@nxp.com>
-In-Reply-To: <20190614082954.39648-2-yinbo.zhu@nxp.com>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Mon, 17 Jun 2019 13:35:23 +0200
-Message-ID: <CAPDyKFrS94QhxT4mrF_=uSaMTLcJL6wZBj7N12Gq+o772oN4Ug@mail.gmail.com>
-Subject: Re: [PATCH v1] mmc: sdhci-of-esdhc: use 1/2 periperhal clock for ls1028a
-To:     Yinbo Zhu <yinbo.zhu@nxp.com>
-Cc:     Adrian Hunter <adrian.hunter@intel.com>,
-        Xiaobo Xie <xiaobo.xie@nxp.com>,
-        Jiafei Pan <jiafei.pan@nxp.com>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Yangbo Lu <yangbo.lu@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 14 Jun 2019 at 10:28, Yinbo Zhu <yinbo.zhu@nxp.com> wrote:
->
-> From: Yangbo Lu <yangbo.lu@nxp.com>
->
-> LS1028A used 1/2 periperhal clock as one reference clock.
->
-> Signed-off-by: Yangbo Lu <yangbo.lu@nxp.com>
+Hi,
 
-Applied for next, thanks!
+This series of patches introduces fixes to various issues found while
+trying to unload all snd* modules and then loading them again. This
+allows for modules to be really _modules_ and be unloaded and loaded on
+demand, making it easier to develop and test them without constant
+system reboots.
 
-Kind regards
-Uffe
+There are some fixes in flow, either we don't initialize things before
+cleaning them up, clean up in wrong places or don't clean up at all.
+Other patches fix memory management problems, mostly things are not
+being freed. And finally there is few miscellaneous patches, please
+refer to specific patches to see what they do.
 
+This series was tested on SKL, BXT, GLK & KBL.
 
-> ---
->  drivers/mmc/host/sdhci-of-esdhc.c | 9 +++++----
->  1 file changed, 5 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/mmc/host/sdhci-of-esdhc.c b/drivers/mmc/host/sdhci-of-esdhc.c
-> index c56c7d413a09..4dd43b1adf2c 100644
-> --- a/drivers/mmc/host/sdhci-of-esdhc.c
-> +++ b/drivers/mmc/host/sdhci-of-esdhc.c
-> @@ -1048,11 +1048,12 @@ static void esdhc_init(struct platform_device *pdev, struct sdhci_host *host)
->                 /*
->                  * esdhc->peripheral_clock would be assigned with a value
->                  * which is eSDHC base clock when use periperal clock.
-> -                * For ls1046a, the clock value got by common clk API is
-> -                * peripheral clock while the eSDHC base clock is 1/2
-> -                * peripheral clock.
-> +                * For some platforms, the clock value got by common clk
-> +                * API is peripheral clock while the eSDHC base clock is
-> +                * 1/2 peripheral clock.
->                  */
-> -               if (of_device_is_compatible(np, "fsl,ls1046a-esdhc"))
-> +               if (of_device_is_compatible(np, "fsl,ls1046a-esdhc") ||
-> +                   of_device_is_compatible(np, "fsl,ls1028a-esdhc"))
->                         esdhc->peripheral_clock = clk_get_rate(clk) / 2;
->                 else
->                         esdhc->peripheral_clock = clk_get_rate(clk);
-> --
-> 2.17.1
->
+Changes from previous patchset:
+  * followed suggetion by Pierre in "ALSA: hdac: Fix codec name after
+machine driver is unloaded and reloaded"
+  * dropped patches which were merged
+
+Amadeusz Sławiński (11):
+  ASoC: Intel: Skylake: Initialize lists before access so they are safe
+    to use
+  ALSA: hdac: Fix codec name after machine driver is unloaded and
+    reloaded
+  ASoC: compress: Fix memory leak from snd_soc_new_compress
+  ASoC: Intel: Skylake: Don't return failure on machine driver reload
+  ASoC: Intel: Skylake: Remove static table index when parsing topology
+  ASoC: Intel: Skylake: Add function to cleanup debugfs interface
+  ASoC: Intel: Skylake: Properly cleanup on component removal
+  ASoC: Intel: Skylake: Fix NULL ptr dereference when unloading clk dev
+  ASoC: Intel: hdac_hdmi: Set ops to NULL on remove
+  ASoC: topology: Consolidate how dtexts and dvalues are freed
+  ASoC: topology: Consolidate and fix asoc_tplg_dapm_widget_*_create
+    flow
+
+ sound/hda/ext/hdac_ext_bus.c           |   8 +-
+ sound/soc/codecs/hdac_hdmi.c           |   6 ++
+ sound/soc/intel/skylake/skl-debug.c    |   9 ++
+ sound/soc/intel/skylake/skl-pcm.c      |  16 ++--
+ sound/soc/intel/skylake/skl-ssp-clk.c  |  16 ++--
+ sound/soc/intel/skylake/skl-topology.c |  50 ++++++-----
+ sound/soc/intel/skylake/skl-topology.h |   2 +
+ sound/soc/intel/skylake/skl.c          |   7 +-
+ sound/soc/intel/skylake/skl.h          |   5 ++
+ sound/soc/soc-compress.c               |  17 ++--
+ sound/soc/soc-topology.c               | 114 ++++++++++++-------------
+ 11 files changed, 136 insertions(+), 114 deletions(-)
+
+-- 
+2.17.1
+
