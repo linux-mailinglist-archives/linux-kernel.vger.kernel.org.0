@@ -2,91 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1CFE347BE5
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 10:14:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 29B0047BE9
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 10:15:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726401AbfFQIOq convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 17 Jun 2019 04:14:46 -0400
-Received: from relay12.mail.gandi.net ([217.70.178.232]:48903 "EHLO
-        relay12.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725791AbfFQIOp (ORCPT
+        id S1727138AbfFQIO7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 04:14:59 -0400
+Received: from aclms3.advantech.com.tw ([125.252.70.86]:39405 "EHLO
+        ACLMS3.advantech.com.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726248AbfFQIO6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 04:14:45 -0400
-Received: from xps13 (aaubervilliers-681-1-81-150.w90-88.abo.wanadoo.fr [90.88.23.150])
-        (Authenticated sender: miquel.raynal@bootlin.com)
-        by relay12.mail.gandi.net (Postfix) with ESMTPSA id 0372B200003;
-        Mon, 17 Jun 2019 08:14:35 +0000 (UTC)
-Date:   Mon, 17 Jun 2019 10:14:34 +0200
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     linux-mtd@lists.infradead.org,
-        David Woodhouse <dwmw2@infradead.org>,
-        Richard Weinberger <richard@nod.at>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] jffs2: do not use C++ style comments in uapi header
-Message-ID: <20190617101434.3d29808c@xps13>
-In-Reply-To: <20190603165027.11831-1-yamada.masahiro@socionext.com>
-References: <20190603165027.11831-1-yamada.masahiro@socionext.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Mon, 17 Jun 2019 04:14:58 -0400
+Received: from taipei08.ADVANTECH.CORP (unverified [172.20.0.235]) by ACLMS3.advantech.com.tw
+ (Clearswift SMTPRS 5.6.0) with ESMTP id <Td872a11b14ac1401c810b8@ACLMS3.advantech.com.tw>;
+ Mon, 17 Jun 2019 16:14:56 +0800
+From:   <Amy.Shih@advantech.com.tw>
+To:     <she90122@gmail.com>
+CC:     <amy.shih@advantech.com.tw>, <oakley.ding@advantech.com.tw>,
+        <jia.sui@advantech.com.cn>, Jean Delvare <jdelvare@suse.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        <linux-hwmon@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [v2 6/9] hwmon: (nct7904) Fix wrong return code in function nct7904_write_fan.
+Date:   Mon, 17 Jun 2019 08:14:35 +0000
+Message-ID: <70e520dfcf80c58045d2238a0af972d9cdbb6ac4.1560756733.git.amy.shih@advantech.com.tw>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <928e46508bbe1ebc0763c3d2403a5aebe95af552.1560756733.git.amy.shih@advantech.com.tw>
+References: <928e46508bbe1ebc0763c3d2403a5aebe95af552.1560756733.git.amy.shih@advantech.com.tw>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain
+X-Originating-IP: [172.17.10.58]
+X-ClientProxiedBy: ACLDAG.ADVANTECH.CORP (172.20.2.88) To
+ taipei08.ADVANTECH.CORP (172.20.0.235)
+X-StopIT: No
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Masahiro,
+From: "amy.shih" <amy.shih@advantech.com.tw>
 
-Masahiro Yamada <yamada.masahiro@socionext.com> wrote on Tue,  4 Jun
-2019 01:50:27 +0900:
+In function nct7904_write_fan, the return code is either 0 or an
+error code. 0x1fff is not a valid return code. Thus, set return
+code to 0 when setting value is smaller or equal to 0.
 
-> Linux kernel tolerates C++ style comments these days. Actually, the
-> SPDX License Identifier for .c files uses C++ comment style.
-> 
-> On the other hand, uapi headers are strict, where the C++ comment
-> style is banned.
-> 
-> Looks like these lines are temporarily commented out, so I did not
-> use the block comment style.
-> 
-> Having said that, they have been commented out since the pre-git era.
-> (so, at least 14 years). 'Maybe later' may not happen. Alternative fix
-> might be to delete these lines entirely.
+Signed-off-by: amy.shih <amy.shih@advantech.com.tw>
+---
+Changes in v2:
+- Fix wrong return code 0x1fff in function nct7904_write_fan.
 
-Richard's POV on the question would be interesting but mine would be to
-simple drop these lines.
+ drivers/hwmon/nct7904.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> 
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> ---
-> 
->  include/uapi/linux/jffs2.h | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/include/uapi/linux/jffs2.h b/include/uapi/linux/jffs2.h
-> index a18b719f49d4..5dee6d930d5b 100644
-> --- a/include/uapi/linux/jffs2.h
-> +++ b/include/uapi/linux/jffs2.h
-> @@ -77,10 +77,10 @@
->  
->  #define JFFS2_ACL_VERSION		0x0001
->  
-> -// Maybe later...
-> -//#define JFFS2_NODETYPE_CHECKPOINT (JFFS2_FEATURE_RWCOMPAT_DELETE | JFFS2_NODE_ACCURATE | 3)
-> -//#define JFFS2_NODETYPE_OPTIONS (JFFS2_FEATURE_RWCOMPAT_COPY | JFFS2_NODE_ACCURATE | 4)
-> -
-> +/* Maybe later...
-> +#define JFFS2_NODETYPE_CHECKPOINT (JFFS2_FEATURE_RWCOMPAT_DELETE | JFFS2_NODE_ACCURATE | 3)
-> +#define JFFS2_NODETYPE_OPTIONS (JFFS2_FEATURE_RWCOMPAT_COPY | JFFS2_NODE_ACCURATE | 4)
-> +*/
->  
->  #define JFFS2_INO_FLAG_PREREAD	  1	/* Do read_inode() for this one at
->  					   mount time, don't wait for it to
+diff --git a/drivers/hwmon/nct7904.c b/drivers/hwmon/nct7904.c
+index 95348eebe8e4..3fa3eb31d176 100644
+--- a/drivers/hwmon/nct7904.c
++++ b/drivers/hwmon/nct7904.c
+@@ -551,7 +551,7 @@ static int nct7904_write_fan(struct device *dev, u32 attr, int channel,
+ 	switch (attr) {
+ 	case hwmon_fan_min:
+ 		if (val <= 0)
+-			return 0x1fff;
++			return 0;
+ 
+ 		val = clamp_val((1350000 + (val >> 1)) / val, 1, 0x1fff);
+ 		tmp = (val >> 5) & 0xff;
+-- 
+2.17.1
 
-Thanks,
-Miquèl
