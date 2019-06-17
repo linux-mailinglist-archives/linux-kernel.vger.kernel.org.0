@@ -2,70 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5D0A547A72
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 09:11:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CE41B47A68
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 09:06:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726202AbfFQHLR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 03:11:17 -0400
-Received: from lilium.sigma-star.at ([109.75.188.150]:34362 "EHLO
-        lilium.sigma-star.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725837AbfFQHLR (ORCPT
+        id S1726027AbfFQHFx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 03:05:53 -0400
+Received: from ushosting.nmnhosting.com ([66.55.73.32]:39872 "EHLO
+        ushosting.nmnhosting.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725778AbfFQHFx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 03:11:17 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by lilium.sigma-star.at (Postfix) with ESMTP id C817D1801420A;
-        Mon, 17 Jun 2019 09:04:14 +0200 (CEST)
-Subject: Re: [PATCH mtd-utils] ubi-tests: fm_param: Replace 'fm_auto' with
- 'fm_autoconvert'
-To:     chengzhihao1@huawei.com, richard@nod.at,
-        boris.brezillon@bootlin.com, david@sigma-star.at,
-        artem.bityutskiy@linux.intel.com, yi.zhang@huawei.com
-Cc:     linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <1560514790-55222-1-git-send-email-chengzhihao1@huawei.com>
-From:   David Oberhollenzer <david.oberhollenzer@sigma-star.at>
-Openpgp: preference=signencrypt
-Autocrypt: addr=david.oberhollenzer@sigma-star.at; prefer-encrypt=mutual;
- keydata=
- mQENBFZyf0YBCADHyKhABhxthCC9n48pvsuk5p3IEdYXMs8Apenh1N/Z4cViAz/d/nSCZ+FG
- FX/PSubEzq8AilZLejchAltaORCvA1Y6FgTlpcdJ6gHDfStDbJL/vk5N8aL7YNF7VfjTRntB
- tKbhKcrG05nbdNjIioAm04pt9rx5mV5KMbf22/FdZpOSSsC6/N7b/cFH9+fx8kwi4pNFuJwr
- BkWRuQ7rEtCoSpd22t+Vh9qA7kymW9gWY405258jnN65jBO7ElqU2CCuGRPg6uryAHV3RVCB
- 9j9AE3HLacQReFtt5ylyydSQbaK4K9asnd7U2/C11vIuuciXCppX4bPap/pMnGpzw0UNABEB
- AAG0N0RhdmlkIE9iZXJob2xsZW56ZXIgPGRhdmlkLm9iZXJob2xsZW56ZXJAc2lnbWEtc3Rh
- ci5hdD6JATcEEwEIACEFAlZyf0YCGwMFCwkIBwIGFQgJCgsCBBYCAwECHgECF4AACgkQvOXc
- PHQaAtFuEAgArXOhaoaVvCMVCa5N25Q/+Q6K1wrVpPmkH89yhQqCmfM6f+2VM5MGFDPfaSJ3
- 5fBDH0iwBQwlXIb7NSXWtzdXX9rMvJkJqv45TgeKtJApf/sRhmcN+clrwzP8oZQbxkP1YWzo
- Vwo4lOb3Kv7aY9yeCjqNbdJJ57NpvYOUrzrCpGkrDPBBQOvKF3wbq3oU/o3dT23NDeQ20jXg
- quJf/PCw6WCzRxqg58wH02MdMDQe8vByzVig2bM2e7DErtt+hPK/Dmdsqgns+Z+SrQcOvRa3
- GMAHAuHB0u2LhYO6NyaNCgzdgutorilYcq7FEKr8XqwOnfVmZdCW3qGKmLbn6qMEdLkBDQRW
- cn9GAQgAvugF8cFjv2Zs4BBb44SnxGawBySC1bMRas/MjA9EMHUAx/StcecQmxnl6BzEyGpr
- +TRnXIzcb5xI8SxitBDU5MLvwsHgNvpYp9fscd4kWP7oMir9ta3Q8SvT4OLbO4FZBGaURzGP
- ak8JmjMMtOoOBh4meOjz6GrJe9UIGxT94aB01w7YohfBANzK8xyk4ykKC5Op4XgaaMKOEQUa
- h7wajcojYSlvgOiXqEisMHlRDAW6sXL2sEM7TIpvYhy9txMLllpkYb0Pu1BvUpY/unsybWKA
- FyiTmeiY+nEveUvqX6Ef7BWdClBeCk2UaRvtcoLd22VxMlKTniHQcNMOXlRRawARAQABiQEf
- BBgBCAAJBQJWcn9GAhsMAAoJELzl3Dx0GgLRPtcH/jD6rn2+VIKgrHdt3ao3Abpu2fqYfwbI
- yPAtpXOddDptVq+0A/2arXT1Y8+jNSZpbAg8K+bLaEAcSUEjviKMpfI7ppTUBuGKrpgc5xsi
- UpKkJCb7oB1ZraIBNBPtPPVUhbwLie4uW/LVt+8rBKz3W9KEDOsT0ZCG/pW8Ld+EpDR9l0fm
- qoVHaw8PhLAtez+B7HS7Hv7iJPDtX85kFYpud8kIPENXVn9EjZudyMWgZb2LhYlcavNcszgR
- 7In6ift5SNySojCOfAV0iKZb8QUXWktLleY8kQ8jltOsSRTuO4PDfzvtCQDixUw4tQ7WLwDT
- qyUpot0oG03vtSG4LIRCdxI=
-Organization: sigma star gmbh
-Message-ID: <d137856c-1437-f937-4c88-57908255dfb9@sigma-star.at>
-Date:   Mon, 17 Jun 2019 09:04:13 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        Mon, 17 Jun 2019 03:05:53 -0400
+Received: from mail2.nmnhosting.com (unknown [202.169.106.97])
+        by ushosting.nmnhosting.com (Postfix) with ESMTPS id 31E9E2DC00DD;
+        Mon, 17 Jun 2019 03:05:50 -0400 (EDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=d-silva.org;
+        s=201810a; t=1560755150;
+        bh=TotXHfC7mkapkJQ2eQkYpljIPSR0AGxVy5++z04zxGQ=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=NGiJvBHcjG+CIJgh2IA052h5ANspPN8jd6fbOzhRCeYoBkvDtYW+xqsOtyM2owh+k
+         4I9pLIhjyYJt5cgWRd28JYXp0bTSacf9BS/6eJz79G4zkKDIgkw9/n0k8lHtFL3LYp
+         v6tzGJy8rz0AsiUeHmLRARxW04mbdQIaGytijoRJI+CsPgvLrNSlEWtF8+pQvi/FLC
+         q0pXW1PJbIhDE4w+Es0IRXymmb6XQY8I2CCHKSA0okkQJOroNpGsWvNPvzkkluzmSe
+         nI7bFZ3e2yV6m+5WsqT9A3jJepIOzW9z8JppoC0qktOWqNlBfmgSlBIWhb/PoN81MJ
+         JKgebF9nGgSxXHZsWCTsEeDnYxPk/FCZlReafmBAy4zMLzfAKV/09mSMxtjxVl3hbi
+         Iv4+6f6qw0YG+ODfXXtHDaPBQyac3wi6mHDBVabHjDUGlUpxQ/9oBxTIGVnSXjkcOr
+         TMZ2EN5AYJY6QToHs1sZLafhiOVj3hh66/5+qwuTIpzwKMGQgiJ5lWeiZBLgrWz4P5
+         EKcMctBcYaUoVyx6Fo4znLsXbgY2xD8wLUao2qjobGSSPvVBSrmKc0p6YuWv5cNS9X
+         JmmB1UF1DlY3K1Sj4QirQKVF2VopERlT4pcRhBeBhtPSbH2KloRI6VOS0aoo0bLBWT
+         qX8Q1bXR5rLneh8uTOVhd0rI=
+Received: from adsilva.ozlabs.ibm.com (static-82-10.transact.net.au [122.99.82.10] (may be forged))
+        (authenticated bits=0)
+        by mail2.nmnhosting.com (8.15.2/8.15.2) with ESMTPSA id x5H75Utj056973
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+        Mon, 17 Jun 2019 17:05:46 +1000 (AEST)
+        (envelope-from alastair@d-silva.org)
+Message-ID: <f1bad6f784efdd26508b858db46f0192a349c7a1.camel@d-silva.org>
+Subject: Re: [PATCH 5/5] mm/hotplug: export try_online_node
+From:   "Alastair D'Silva" <alastair@d-silva.org>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        David Hildenbrand <david@redhat.com>,
+        Oscar Salvador <osalvador@suse.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Pavel Tatashin <pasha.tatashin@soleen.com>,
+        Wei Yang <richard.weiyang@gmail.com>,
+        Arun KS <arunks@codeaurora.org>, Qian Cai <cai@lca.pw>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Jiri Kosina <jkosina@suse.cz>,
+        Mukesh Ojha <mojha@codeaurora.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Baoquan He <bhe@redhat.com>,
+        Logan Gunthorpe <logang@deltatee.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Date:   Mon, 17 Jun 2019 17:05:30 +1000
+In-Reply-To: <20190617065921.GV3436@hirez.programming.kicks-ass.net>
+References: <20190617043635.13201-1-alastair@au1.ibm.com>
+         <20190617043635.13201-6-alastair@au1.ibm.com>
+         <20190617065921.GV3436@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.32.2 (3.32.2-1.fc30) 
 MIME-Version: 1.0
-In-Reply-To: <1560514790-55222-1-git-send-email-chengzhihao1@huawei.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.6.2 (mail2.nmnhosting.com [10.0.1.20]); Mon, 17 Jun 2019 17:05:46 +1000 (AEST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Applied to mtd-utils.git master.
+On Mon, 2019-06-17 at 08:59 +0200, Peter Zijlstra wrote:
+> On Mon, Jun 17, 2019 at 02:36:31PM +1000, Alastair D'Silva wrote:
+> > From: Alastair D'Silva <alastair@d-silva.org>
+> > 
+> > If an external driver module supplies physical memory and needs to
+> > expose
+> 
+> Why would you ever want to allow a module to do such a thing?
+> 
 
-Thanks,
+I'm working on a driver for Storage Class Memory, connected via an
+OpenCAPI link.
 
-David
+The memory is only usable once the card says it's OK to access it.
+
+-- 
+Alastair D'Silva           mob: 0423 762 819
+skype: alastair_dsilva    
+Twitter: @EvilDeece
+blog: http://alastair.d-silva.org
+
+
