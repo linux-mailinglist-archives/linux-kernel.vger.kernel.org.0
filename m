@@ -2,77 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 86406481E9
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 14:26:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6554B481EB
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 14:26:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726557AbfFQMYP convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 17 Jun 2019 08:24:15 -0400
-Received: from mx1.emlix.com ([188.40.240.192]:37784 "EHLO mx1.emlix.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725962AbfFQMYO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 08:24:14 -0400
-Received: from mailer.emlix.com (unknown [81.20.119.6])
-        (using TLSv1.2 with cipher ADH-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mx1.emlix.com (Postfix) with ESMTPS id EC211600A1;
-        Mon, 17 Jun 2019 14:24:12 +0200 (CEST)
-From:   Rolf Eike Beer <eb@emlix.com>
-To:     Yoshinori Sato <ysato@users.sourceforge.jp>
-Cc:     uclinux-h8-devel@lists.sourceforge.jp, linux-kernel@vger.kernel.org
-Subject: [PATCH RESEND] H8300: remove unused barrier defines
-Date:   Mon, 17 Jun 2019 14:24:12 +0200
-Message-ID: <5435162.LEDey6R3HY@devpool35>
-Organization: emlix GmbH
-In-Reply-To: <2401183.V4Yr0kgUre@devpool21>
-References: <2401183.V4Yr0kgUre@devpool21>
+        id S1727026AbfFQMZC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 08:25:02 -0400
+Received: from mout.kundenserver.de ([212.227.126.134]:40503 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725962AbfFQMZC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Jun 2019 08:25:02 -0400
+Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
+ (mreue010 [212.227.15.129]) with ESMTPA (Nemesis) id
+ 1My2pz-1iYGtf3Fa3-00zX9v; Mon, 17 Jun 2019 14:24:52 +0200
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     arm@kernel.org, Linus Walleij <linusw@kernel.org>,
+        Imre Kaloz <kaloz@openwrt.org>,
+        Krzysztof Halasa <khalasa@piap.pl>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 1/3] ARM: ixp4xx: don't select SERIAL_OF_PLATFORM
+Date:   Mon, 17 Jun 2019 14:24:30 +0200
+Message-Id: <20190617122449.457744-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.20.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:izgkkqiYW3AxUHIzeLBlbI6TmUm8js3/ausmRdZTi/CUk41VLa9
+ 9uUs0EqvMRyhEz1jdbrH9qH6zS/8Pv0IwVKAIGPqTim15RwAqastjBBINHUBtpf6wRpDBxi
+ zHlpMkLW2JLoBoUvgxkXY9brNtuux8UgfBUD697Lg7hwF3PomP3zhb6GmVPeN41pSlV3Urj
+ 2tZu7AQ/6U54PeHUDxzLg==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:z6sxF1MZXgA=:hBHpgT3dNHS17k7G+0miEh
+ 5X1qSU25Zi9I3CfnGXHI7EKElzzgYmsLcU6gQ5sDSrd46KHOz2hiNOzxgxGPKDPiSv9+tL9Fb
+ 1mD8TTqBwbjAxrXxJUlcbeas8LZGS4n5CtoI4FoKrHzup3aAalavHvsGYrSWewu/zUvHx8LwP
+ CWNIDnOHKgjQNb7xqXkTDyyXuNEiQ6RW08PI/p4gmPo16QixkrruddPAml7iebWL1iEEszmla
+ N0GzFkPDc3iJrCXKGF9ttu4nE+NpwfaFzQK2iPR62rGqDUT5KdRiFMFzVbZK8AkNGpekv68T4
+ DGpYRQv/cyvtkRhaNk2lSV+lJzq/abF6yvvxTF/l6+w2g1C+k8IQlxw11KbAOjtJkxmQlEh9J
+ BPcm9SPKGiHEDRMst2B7ggYJt1g/Xgia/XihoNueRTx5N3ek8mxcZ3LHxbBj5mpGvmB2Nwfl1
+ pJNQEn+428ZqhT3x0Gv5jGQk1vnRzPahdV+7CGlFMYwypb1iWdaKfVsietcY8jEoD5NEQBjci
+ TeZakT3nauDqGyWFd6TVNcmbz+zL6nAZkHsbM11+sp0TN2gTqDM6T8Q5TAxRzwFLepkT9yqV3
+ oc1RpOW779Drw4pScIlWNVG6mUkxyhp9QkbDxroEdmyyy4vvmQVsFmR9N647EMj/NEg61gT6Z
+ MUKd8v4gYWTD28wszdMT/qH5IizeXpEwjlykTnPDAkyDt27PhYxPPfmLXQE9HSCdp28XP7Z5P
+ 6hteye4loSfIIqcazkMN7/3VUyK8rRTlFFL3nA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From c907e749917f430e3dc62048985c8419778572f9 Mon Sep 17 00:00:00 2001
-From: Rolf Eike Beer <eb@emlix.com>
-Date: Fri, 14 Jul 2017 11:19:08 +0200
-Subject: [PATCH] H8300: remove unused barrier defines
+Platforms should not normally select all the device drivers, leave that
+up to the user and the defconfig file.
 
-They were introduced in d2a5f4999f6c211adf30d9788349e13988d6f2a7 long after
-2e39465abc4b7856a0ea6fcf4f6b4668bb5db877 removed the remnants of all previous
-instances from the tree.
+In this case, we get a warning for randconfig builds:
 
-Signed-off-by: Rolf Eike Beer <eb@emlix.com>
+WARNING: unmet direct dependencies detected for SERIAL_OF_PLATFORM
+  Depends on [n]: TTY [=y] && HAS_IOMEM [=y] && SERIAL_8250 [=n] && OF [=y]
+  Selected by [y]:
+  - MACH_IXP4XX_OF [=y] && ARCH_IXP4XX [=y]
+
+Fixes: 9540724ca29d ("ARM: ixp4xx: Add device tree boot support")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- arch/h8300/include/asm/bitops.h | 6 ------
- 1 file changed, 6 deletions(-)
+ arch/arm/mach-ixp4xx/Kconfig | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/arch/h8300/include/asm/bitops.h b/arch/h8300/include/asm/bitops.h
-index 647a83bd40b7..7aa16c732aa9 100644
---- a/arch/h8300/include/asm/bitops.h
-+++ b/arch/h8300/include/asm/bitops.h
-@@ -51,12 +51,6 @@ static inline void FNAME(int nr, volatile unsigned long *addr)	\
- 	}							\
- }
- 
--/*
-- * clear_bit() doesn't provide any barrier for the compiler.
-- */
--#define smp_mb__before_clear_bit()	barrier()
--#define smp_mb__after_clear_bit()	barrier()
--
- H8300_GEN_BITOP(set_bit,    "bset")
- H8300_GEN_BITOP(clear_bit,  "bclr")
- H8300_GEN_BITOP(change_bit, "bnot")
+diff --git a/arch/arm/mach-ixp4xx/Kconfig b/arch/arm/mach-ixp4xx/Kconfig
+index 2f052c56cd9e..fc5378b00f3d 100644
+--- a/arch/arm/mach-ixp4xx/Kconfig
++++ b/arch/arm/mach-ixp4xx/Kconfig
+@@ -13,7 +13,6 @@ config MACH_IXP4XX_OF
+ 	select I2C
+ 	select I2C_IOP3XX
+ 	select PCI
+-	select SERIAL_OF_PLATFORM
+ 	select TIMER_OF
+ 	select USE_OF
+ 	help
 -- 
-2.21.0
--- 
-Rolf Eike Beer, emlix GmbH, http://www.emlix.com
-Fon +49 551 30664-0, Fax +49 551 30664-11
-Gothaer Platz 3, 37083 Göttingen, Germany
-Sitz der Gesellschaft: Göttingen, Amtsgericht Göttingen HR B 3160
-Geschäftsführung: Heike Jordan, Dr. Uwe Kracke – Ust-IdNr.: DE 205 198 055
-
-emlix - smart embedded open source
-
+2.20.0
 
