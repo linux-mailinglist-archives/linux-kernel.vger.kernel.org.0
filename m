@@ -2,67 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EE79548275
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 14:32:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ABE4A4827B
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 14:32:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727619AbfFQMbP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 08:31:15 -0400
-Received: from mx2.suse.de ([195.135.220.15]:34136 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726121AbfFQMbP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 08:31:15 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 1A2A2AF8E;
-        Mon, 17 Jun 2019 12:31:14 +0000 (UTC)
-Received: by ds.suse.cz (Postfix, from userid 10065)
-        id 80A1DDA8D1; Mon, 17 Jun 2019 14:32:02 +0200 (CEST)
-Date:   Mon, 17 Jun 2019 14:32:02 +0200
-From:   David Sterba <dsterba@suse.cz>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
-        Anand Jain <anand.jain@oracle.com>,
-        Filipe Manana <FdManana@suse.com>,
-        Nikolay Borisov <nborisov@suse.com>,
-        linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] btrfs: shut up bogus -Wmaybe-uninitialized warning
-Message-ID: <20190617123202.GD19057@suse.cz>
-Reply-To: dsterba@suse.cz
-Mail-Followup-To: dsterba@suse.cz, Arnd Bergmann <arnd@arndb.de>,
-        Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
-        Anand Jain <anand.jain@oracle.com>,
-        Filipe Manana <FdManana@suse.com>,
-        Nikolay Borisov <nborisov@suse.com>, linux-btrfs@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20190617110738.2085060-1-arnd@arndb.de>
+        id S1727702AbfFQMcS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 08:32:18 -0400
+Received: from mga12.intel.com ([192.55.52.136]:57562 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726005AbfFQMcS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Jun 2019 08:32:18 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Jun 2019 05:32:17 -0700
+X-ExtLoop1: 1
+Received: from pipin.fi.intel.com (HELO pipin) ([10.237.72.175])
+  by orsmga005.jf.intel.com with ESMTP; 17 Jun 2019 05:32:13 -0700
+From:   Felipe Balbi <balbi@kernel.org>
+To:     Lee Jones <lee.jones@linaro.org>, alokc@codeaurora.org,
+        agross@kernel.org, david.brown@linaro.org,
+        wsa+renesas@sang-engineering.com, bjorn.andersson@linaro.org,
+        gregkh@linuxfoundation.org, ard.biesheuvel@linaro.org,
+        jlhugo@gmail.com
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-i2c@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-usb@vger.kernel.org
+Subject: Re: [PATCH v4 4/6] usb: dwc3: qcom: Add support for booting with ACPI
+In-Reply-To: <20190617102146.GG16364@dell>
+References: <20190612142654.9639-1-lee.jones@linaro.org> <20190612142654.9639-5-lee.jones@linaro.org> <20190617102146.GG16364@dell>
+Date:   Mon, 17 Jun 2019 15:32:07 +0300
+Message-ID: <87y320gzp4.fsf@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190617110738.2085060-1-arnd@arndb.de>
-User-Agent: Mutt/1.5.23.1 (2014-03-12)
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha256; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 17, 2019 at 01:07:28PM +0200, Arnd Bergmann wrote:
-> gcc sometimes can't determine whether a variable has been initialized
-> when both the initialization and the use are conditional:
-> 
-> fs/btrfs/props.c: In function 'inherit_props':
-> fs/btrfs/props.c:389:4: error: 'num_bytes' may be used uninitialized in this function [-Werror=maybe-uninitialized]
->     btrfs_block_rsv_release(fs_info, trans->block_rsv,
-> 
-> This code is fine. Unfortunately, I cannot think of a good way to
-> rephrase it in a way that makes gcc understand this, so I add
-> a bogus initialization the way one should not.
+--=-=-=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-Looks ok, patch added to devel queue, thanks.
-> 
-> Fixes: d7400ee1b476 ("btrfs: use the existing reserved items for our first prop for inheritance")
+Hi,
 
-I'd rather not add the Fixes tag here as it's just a compilation warning
-for some old unknown version of gcc. I've checked that 8.3.1 and 9.1.1
-don't print the warning and I consider any other version to be up to the
-user of such environment to apply fixups as needed, but not to let the
-stable machinery pick it up.
+Lee Jones <lee.jones@linaro.org> writes:
+>> In Linux, the DWC3 core exists as its own independent platform device.
+>> Thus when describing relationships in Device Tree, the current default
+>> boot configuration table option, the DWC3 core often resides as a child
+>> of the platform specific node.  Both of which are given their own
+>> address space descriptions and the drivers can be mostly agnostic to
+>> each other.
+>>=20
+>> However, other Operating Systems have taken a more monolithic approach,
+>> which is evident in the configuration ACPI tables for the Qualcomm
+>> Snapdragon SDM850, where all DWC3 (core and platform) components are
+>> described under a single IO memory region.
+>>=20
+>> To ensure successful booting using the supplied ACPI tables, we need to
+>> devise a way to chop up the address regions provided and subsequently
+>> register the DWC3 core with the resultant information, which is
+>> precisely what this patch aims to achieve.
+>>=20
+>> Signed-off-by: Lee Jones <lee.jones@linaro.org>
+>> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+>> ---
+>>  drivers/usb/dwc3/Kconfig     |   2 +-
+>>  drivers/usb/dwc3/dwc3-qcom.c | 206 ++++++++++++++++++++++++++++++-----
+>>  2 files changed, 179 insertions(+), 29 deletions(-)
+>
+> I'm starting to get a little twitchy about these patches now.  Due to
+> the release cadence of the larger Linux distros, it's pretty important
+> that these changes land in v5.3.  Without them, it is impossible to
+> install Linux on some pretty high profile emerging platforms.
+>
+> It's already -rc5 and I'm concerned that we're going to miss the
+> merge-window.  Would you be kind enough to review these patches
+> please?  The Pinctrl and I2C parts of the set have already been
+> merged.
+
+I don't seem to have this series in my inbox. This is the only email I
+have in this series.
+
+=2D-=20
+balbi
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEElLzh7wn96CXwjh2IzL64meEamQYFAl0HiEkACgkQzL64meEa
+mQZgTg/+MvWLo+0fVFNR04KSqTX6nZcqLk/4KwBc7uy1RsD4WMFa3zcKE/jB8scd
+KN48Szwr6TxXj6/nboP7PeKF+u2ftbYw8L1Ggtd1Okq/Fn8mUcM+vY1xGotjgrao
+ZXbOLcI393gCADUuEgHbOZDXPeLtgF2K/RQ06CPJ+wPunpx3pDwJVaMumW5Inocu
+Yz/eMkd5XP2QXDfL8F+27ZfnZQ6oNbEa+RV0cakbyvjHWDbkeiCW2DN5YFM3gJpC
+T9RXeqzKIUkfWd3mLcBq54Z3wCh51nw2UfThE1bQK2XlPKPXnU9P/Oi7ZIJYn5X4
+hF9PoBRoYWoaS5v9TJxL+78F+salna/FVsr6jKtbmVQjr4t3H+2i3SKXUmcMtaP9
+/jXg8jRCni44640ri7F4xN52TdkE/K7eAShOTp2izyRydKkZRxCOgW0xPh1Yi6Yx
+DGFxy4TQPUc6uAchzWfB/DIQywLYMDChFGMc525vTiw3ATnWf5dK7c/G0FufNs+g
+YcXsD9HyhYs9puAp4DBUZmXZGiuPHT8Se78aTfYqAvY7oFH5puh2Mg8UDLeeiatr
+A67I1jpWh9RvTGFPpBABobbaItB4lMcitFy2MqxByxNmJt9l5bbExTRmdXLFzbZK
+db8+BiVaO0xw70s0j9BuGwO/YolXOiX2i4lP4Qzhc7WjniL3FPw=
+=l8qE
+-----END PGP SIGNATURE-----
+--=-=-=--
