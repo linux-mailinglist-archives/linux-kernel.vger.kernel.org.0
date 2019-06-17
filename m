@@ -2,133 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 650934813F
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 13:49:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 54D0B48170
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Jun 2019 14:01:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726636AbfFQLs6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 07:48:58 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:46120 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725763AbfFQLs5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 07:48:57 -0400
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 443A130872E6;
-        Mon, 17 Jun 2019 11:48:57 +0000 (UTC)
-Received: from xz-x1 (ovpn-12-34.pek2.redhat.com [10.72.12.34])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id D05847DF6F;
-        Mon, 17 Jun 2019 11:48:54 +0000 (UTC)
-Date:   Mon, 17 Jun 2019 19:48:51 +0800
-From:   Peter Xu <peterx@redhat.com>
-To:     Wanpeng Li <kernellwp@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Marcelo Tosatti <mtosatti@redhat.com>
-Subject: Re: [PATCH v4 1/5] KVM: LAPIC: Make lapic timer unpinned
-Message-ID: <20190617114850.GC30983@xz-x1>
-References: <1560770687-23227-1-git-send-email-wanpengli@tencent.com>
- <1560770687-23227-2-git-send-email-wanpengli@tencent.com>
+        id S1727385AbfFQMA4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 08:00:56 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:34480 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727159AbfFQMAy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Jun 2019 08:00:54 -0400
+Received: by mail-lj1-f193.google.com with SMTP id p17so9041440ljg.1
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2019 05:00:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lixom-net.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=nleIE9ePi5skSHo052Xl0bardtZ3IpqSGXLP+XjhobU=;
+        b=raAxo0etEdipbUmleEts6OLEsC8B1ii1er9sNc53iO+ucv+O5CUPdOq4zQP7ZRoiPQ
+         S70dn0e+SLyL8AJw86Gt23gG+NnaO9yUebcrklSUqq2roiPX3JefNWuL13UXDON5t9Fj
+         yf/0xULOgk5brkXPCp5al74EGEI3mO2hiQ8mLfwF3eOl6NUEeZqzMb7SXQ3nouaPNzwO
+         RAIu7PygtuwmShhaSLY2RqsICL06qpkLvGKgGMRynXIBZIlua4hAsp6VGNfcAWSQz89J
+         0flWSgUij5FkXsa7S8O9I/FBQPdg8i+L9tWck1Y1EJyYHL2iM608ggVjMDmbr3+/HxtE
+         oLAQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=nleIE9ePi5skSHo052Xl0bardtZ3IpqSGXLP+XjhobU=;
+        b=jIk81LEWBou+zjPD8kgWViSDatXUv2QO4nGVORqCOeZEyMqz+NwymHHeT/0TBUtpKf
+         VMBFd74Y7PDj4+V6WM+z3+FsALW7DMa5990tF+1/6p/wrIsLxuCZ6bcsjD/nr9MAvRIz
+         KUNImx1TMuUBIoPNw5KJrauIXFIH8Cm/ZNhmiKpRHyKdO5LBx9r3Lc+RC+FxpVeM1FiL
+         NAQCLgYtdgYbUx6/halHPrrKB2DvoCJVDt0f4baD8Xl0oWPae15tI0KkN2KLlAv92Pb0
+         WHfBJtxqtxfoUOqOirrvSu735vKxkeHDE/mx2H+bIaBzrTo/Da6V9iPFQwbF3XqhhVwm
+         raUg==
+X-Gm-Message-State: APjAAAWSUncQPcQgeUwr82qYlRZvNXKrkbtlSzhBeNA0lZhYz4vP4vqb
+        /71W02AS1p1YbstyQiF5naZlxw==
+X-Google-Smtp-Source: APXvYqyvY+d9qaHyNXcrAGDLi4O4nxgI3uhriSPZBNVI+IjOaAqBEDljJgrhSL887w+/AyzyjVHasA==
+X-Received: by 2002:a2e:5bdd:: with SMTP id m90mr49607117lje.46.1560772852116;
+        Mon, 17 Jun 2019 05:00:52 -0700 (PDT)
+Received: from localhost (h85-30-9-151.cust.a3fiber.se. [85.30.9.151])
+        by smtp.gmail.com with ESMTPSA id n1sm1718747lfl.77.2019.06.17.05.00.50
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 17 Jun 2019 05:00:51 -0700 (PDT)
+Date:   Mon, 17 Jun 2019 04:49:48 -0700
+From:   Olof Johansson <olof@lixom.net>
+To:     Li Yang <leoyang.li@nxp.com>
+Cc:     arm@kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, shawnguo@kernel.org
+Subject: Re: [GIT PULL v2] updates to soc/fsl drivers for next(v5.3)
+Message-ID: <20190617114948.7xxtpivve52c2jnb@localhost>
+References: <20190605194511.12127-1-leoyang.li@nxp.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1560770687-23227-2-git-send-email-wanpengli@tencent.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Mon, 17 Jun 2019 11:48:57 +0000 (UTC)
+In-Reply-To: <20190605194511.12127-1-leoyang.li@nxp.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 17, 2019 at 07:24:43PM +0800, Wanpeng Li wrote:
-> From: Wanpeng Li <wanpengli@tencent.com>
+On Wed, Jun 05, 2019 at 02:45:11PM -0500, Li Yang wrote:
+> Hi arm-soc maintainers,
 > 
-> Make lapic timer unpinned when timer is injected by posted-interrupt,
+> This is a rebase of patches that missed 5.2 merge window together with
+> some new patches for QE.  Please help to review and merge it.  We would
+> like this to be merged earlier because there are other patches depending
+> on patches in this pull request.  After this is merged in arm-soc, we can
+> ask other sub-system maintainers to pull from this tag and apply additional
+> patches.  Thanks.
 
-It has nothing to do with PI, yet?
+Li,
 
-And, how about mentioning 61abdbe0bc and telling that this could be
-another solution for that problem (but will be used in follow up
-patches)?
+You never followed up with a reply, or removed, the previous tag. So when we
+process the pull requests that come in, we've already merged it.
 
-> the emulated timer can be offload to the housekeeping cpus, kick after 
-> setting the pending timer request as alternative to commit 61abdbe0bcc.
-> 
-> Cc: Paolo Bonzini <pbonzini@redhat.com>
-> Cc: Radim Krčmář <rkrcmar@redhat.com>
-> Cc: Marcelo Tosatti <mtosatti@redhat.com>
-> Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
-> ---
->  arch/x86/kvm/lapic.c | 8 ++++----
->  arch/x86/kvm/x86.c   | 6 +-----
->  2 files changed, 5 insertions(+), 9 deletions(-)
-> 
-> diff --git a/arch/x86/kvm/lapic.c b/arch/x86/kvm/lapic.c
-> index e82a18c..87ecb56 100644
-> --- a/arch/x86/kvm/lapic.c
-> +++ b/arch/x86/kvm/lapic.c
-> @@ -1578,7 +1578,7 @@ static void start_sw_tscdeadline(struct kvm_lapic *apic)
->  	    likely(ns > apic->lapic_timer.timer_advance_ns)) {
->  		expire = ktime_add_ns(now, ns);
->  		expire = ktime_sub_ns(expire, ktimer->timer_advance_ns);
-> -		hrtimer_start(&ktimer->timer, expire, HRTIMER_MODE_ABS_PINNED);
-> +		hrtimer_start(&ktimer->timer, expire, HRTIMER_MODE_ABS);
->  	} else
->  		apic_timer_expired(apic);
->  
-> @@ -1680,7 +1680,7 @@ static void start_sw_period(struct kvm_lapic *apic)
->  
->  	hrtimer_start(&apic->lapic_timer.timer,
->  		apic->lapic_timer.target_expiration,
-> -		HRTIMER_MODE_ABS_PINNED);
-> +		HRTIMER_MODE_ABS);
->  }
->  
->  bool kvm_lapic_hv_timer_in_use(struct kvm_vcpu *vcpu)
-> @@ -2317,7 +2317,7 @@ int kvm_create_lapic(struct kvm_vcpu *vcpu, int timer_advance_ns)
->  	apic->vcpu = vcpu;
->  
->  	hrtimer_init(&apic->lapic_timer.timer, CLOCK_MONOTONIC,
-> -		     HRTIMER_MODE_ABS_PINNED);
-> +		     HRTIMER_MODE_ABS);
->  	apic->lapic_timer.timer.function = apic_timer_fn;
->  	if (timer_advance_ns == -1) {
->  		apic->lapic_timer.timer_advance_ns = 1000;
-> @@ -2506,7 +2506,7 @@ void __kvm_migrate_apic_timer(struct kvm_vcpu *vcpu)
->  
->  	timer = &vcpu->arch.apic->lapic_timer.timer;
->  	if (hrtimer_cancel(timer))
-> -		hrtimer_start_expires(timer, HRTIMER_MODE_ABS_PINNED);
-> +		hrtimer_start_expires(timer, HRTIMER_MODE_ABS);
->  }
->  
->  /*
-> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> index 0a05a4e..9450a16 100644
-> --- a/arch/x86/kvm/x86.c
-> +++ b/arch/x86/kvm/x86.c
-> @@ -1437,12 +1437,8 @@ static void update_pvclock_gtod(struct timekeeper *tk)
->  
->  void kvm_set_pending_timer(struct kvm_vcpu *vcpu)
->  {
-> -	/*
-> -	 * Note: KVM_REQ_PENDING_TIMER is implicitly checked in
-> -	 * vcpu_enter_guest.  This function is only called from
-> -	 * the physical CPU that is running vcpu.
-> -	 */
->  	kvm_make_request(KVM_REQ_PENDING_TIMER, vcpu);
-> +	kvm_vcpu_kick(vcpu);
->  }
->  
->  static void kvm_write_wall_clock(struct kvm *kvm, gpa_t wall_clock)
-> -- 
-> 2.7.4
-> 
+So, I've merged the previous version. Can you send an incremental pull request
+on top of that branch/tag instead of a rebase like this was, please?
 
-Regards,
 
--- 
-Peter Xu
+Thanks!
+
+-Olof
