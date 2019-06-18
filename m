@@ -2,101 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 57D2A4A136
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 14:56:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 097A54A143
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 14:58:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728815AbfFRM4Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Jun 2019 08:56:25 -0400
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:40057 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725913AbfFRM4Z (ORCPT
+        id S1728834AbfFRM6w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Jun 2019 08:58:52 -0400
+Received: from relay12.mail.gandi.net ([217.70.178.232]:43581 "EHLO
+        relay12.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725988AbfFRM6w (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Jun 2019 08:56:25 -0400
-Received: by mail-qt1-f196.google.com with SMTP id a15so15085108qtn.7;
-        Tue, 18 Jun 2019 05:56:24 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=fCf5iHrLfN/sCDfBuv4fsEiVMo3wKaNoIwbeEHLt/rc=;
-        b=PT6Pa5D4n6l9kyKzExM2NFZe3+YbP5u3ymXhF58YTPTEVzVyC/cQUq3I5UyRs9e9KK
-         IIU4AFvTFcxwSibJk2iTDRd1rq7aVptJFfBkTesyFFl4gAREmkyBm8qnrAjhdEK7Rc9X
-         nJe0+HsA92fEOapnYSxVu/JyGrtucL0KzpFMclthtIdLG6JSqx4st/wdGSVaPU+mZwhy
-         oqvbaIDKDWpRZwIIVLeWcgK6aZ6fts0ScOgi3JLe/PN4vF7YvtbDCar/X/TWK64IL5Eg
-         jX+FYdK9XHSHYh5Dm7zb3kB64Y/kBv3ZooIEq+bIsQYA2B8lsuMa1UG+sviCNBX2BGs0
-         ymxg==
-X-Gm-Message-State: APjAAAXU3TDFruLNvyVp2nCCVH8eUshP8qtra7ZmSC1iI9f4SEtLahCQ
-        dS1gmURlintfCcrRSjjpfifbYmE2EG2lq/Sg9eshoyPkBUY=
-X-Google-Smtp-Source: APXvYqwCVpXxqSfg0MzgdN3t4njvASb5EphGuU2IedZxTHyAW5Lc4aDC1ZXBq7xmQcAheuz7YuaPjxEgHvyJiCiNl9E=
-X-Received: by 2002:a0c:b758:: with SMTP id q24mr27130440qve.45.1560862584288;
- Tue, 18 Jun 2019 05:56:24 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190617123109.667090-1-arnd@arndb.de> <20190617140210.GB3436@hirez.programming.kicks-ass.net>
-In-Reply-To: <20190617140210.GB3436@hirez.programming.kicks-ass.net>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Tue, 18 Jun 2019 14:56:07 +0200
-Message-ID: <CAK8P3a3iwWOkMBL-H3h5aSaHKjKWFce22rvydvVE=3uMfeOhVg@mail.gmail.com>
-Subject: Re: [PATCH] ubsan: mark ubsan_type_mismatch_common inline
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "# 3.4.x" <stable@vger.kernel.org>
+        Tue, 18 Jun 2019 08:58:52 -0400
+Received: from aptenodytes (aaubervilliers-681-1-81-150.w90-88.abo.wanadoo.fr [90.88.23.150])
+        (Authenticated sender: paul.kocialkowski@bootlin.com)
+        by relay12.mail.gandi.net (Postfix) with ESMTPSA id 551DF200008;
+        Tue, 18 Jun 2019 12:58:48 +0000 (UTC)
+Message-ID: <bee40295b2c6b489468d4e1fc12d7a1ac122cb9b.camel@bootlin.com>
+Subject: Re: [PATCH] backlight: gpio-backlight: Set power state instead of
+ brightness at probe
+From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+To:     dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Lee Jones <lee.jones@linaro.org>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Date:   Tue, 18 Jun 2019 14:58:47 +0200
+In-Reply-To: <20190517150546.4508-1-paul.kocialkowski@bootlin.com>
+References: <20190517150546.4508-1-paul.kocialkowski@bootlin.com>
+Organization: Bootlin
 Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.32.2 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 17, 2019 at 4:02 PM Peter Zijlstra <peterz@infradead.org> wrote:
->
-> On Mon, Jun 17, 2019 at 02:31:09PM +0200, Arnd Bergmann wrote:
-> > objtool points out a condition that it does not like:
-> >
-> > lib/ubsan.o: warning: objtool: __ubsan_handle_type_mismatch()+0x4a: call to stackleak_track_stack() with UACCESS enabled
-> > lib/ubsan.o: warning: objtool: __ubsan_handle_type_mismatch_v1()+0x4a: call to stackleak_track_stack() with UACCESS enabled
-> >
-> > I guess this is related to the call ubsan_type_mismatch_common()
-> > not being inline before it calls user_access_restore(), though
-> > I don't fully understand why that is a problem.
->
-> The rules are that when AC is set, one is not allowed to CALL schedule,
-> because scheduling does not save/restore AC.  Preemption, through the
-> exceptions is fine, because the exceptions do save/restore AC.
->
-> And while most functions do not appear to call into schedule, function
-> trace ensures that every single call does in fact call into schedule.
-> Therefore any CALL (with AC set) is invalid.
+Hi,
 
-I see that stackleak_track_stack is already marked 'notrace',
-since we must ensure we don't recurse when calling into it from
-any of the function trace logic.
+On Fri, 2019-05-17 at 17:05 +0200, Paul Kocialkowski wrote:
+> On a trivial gpio-backlight setup with a panel using the backlight but
+> no boot software to enable it beforehand, we fall in a case where the
+> backlight is disabled (not just blanked) and thus remains disabled when
+> the panel gets enabled.
+> 
+> Setting gbl->def_value via the device-tree prop allows enabling the
+> backlight in this situation, but it will be unblanked straight away,
+> in compliance with the binding. This does not work well when there was no
+> boot software to display something before, since we really need to unblank
+> by the time the panel is enabled, not before.
+> 
+> Resolve the situation by setting the brightness to 1 at probe and
+> managing the power state accordingly, a bit like it's done in
+> pwm-backlight.
 
-Does that mean we could just mark it as another safe call?
+Any feedback on this? I was under the impression that it could be quite
+controversial, as it implies that the backlight can no longer be
+enabled without a bound panel (which IMO makes good sense but could be
+a matter to debate).
 
---- a/tools/objtool/check.c
-+++ b/tools/objtool/check.c
-@@ -486,6 +486,7 @@ static const char *uaccess_safe_builtin[] = {
-        "__ubsan_handle_type_mismatch",
-        "__ubsan_handle_type_mismatch_v1",
-        /* misc */
-+       "stackleak_track_stack",
-        "csum_partial_copy_generic",
-        "__memcpy_mcsafe",
-        "ftrace_likely_update", /* CONFIG_TRACE_BRANCH_PROFILING */
+Cheers,
 
+Paul
 
-> Maybe we should disable stackleak when building ubsan instead? We
-> already disable stack-protector when building ubsan.
+> Fixes: 8b770e3c9824 ("backlight: Add GPIO-based backlight driver")
+> Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+> ---
+>  drivers/video/backlight/gpio_backlight.c | 19 ++++++++++++++++++-
+>  1 file changed, 18 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/video/backlight/gpio_backlight.c b/drivers/video/backlight/gpio_backlight.c
+> index e470da95d806..c9cb97fa13d0 100644
+> --- a/drivers/video/backlight/gpio_backlight.c
+> +++ b/drivers/video/backlight/gpio_backlight.c
+> @@ -57,6 +57,21 @@ static const struct backlight_ops gpio_backlight_ops = {
+>  	.check_fb	= gpio_backlight_check_fb,
+>  };
+>  
+> +static int gpio_backlight_initial_power_state(struct gpio_backlight *gbl)
+> +{
+> +	struct device_node *node = gbl->dev->of_node;
+> +
+> +	/* If we absolutely want the backlight enabled at boot. */
+> +	if (gbl->def_value)
+> +		return FB_BLANK_UNBLANK;
+> +
+> +	/* If there's no panel to unblank the backlight later. */
+> +	if (!node || !node->phandle)
+> +		return FB_BLANK_UNBLANK;
+> +
+> +	return FB_BLANK_POWERDOWN;
+> +}
+> +
+>  static int gpio_backlight_probe_dt(struct platform_device *pdev,
+>  				   struct gpio_backlight *gbl)
+>  {
+> @@ -142,7 +157,9 @@ static int gpio_backlight_probe(struct platform_device *pdev)
+>  		return PTR_ERR(bl);
+>  	}
+>  
+> -	bl->props.brightness = gbl->def_value;
+> +	bl->props.brightness = 1;
+> +	bl->props.power = gpio_backlight_initial_power_state(gbl);
+> +
+>  	backlight_update_status(bl);
+>  
+>  	platform_set_drvdata(pdev, bl);
+-- 
+Paul Kocialkowski, Bootlin
+Embedded Linux and kernel engineering
+https://bootlin.com
 
-I couldn't find out how that is done.
-
-> > Fixes: 42440c1f9911 ("lib/ubsan: add type mismatch handler for new GCC/Clang")
->
-> I don't think this is quite right, because back then there wasn't any
-> uaccess validation.
-
-Right.
-
-       Arnd
