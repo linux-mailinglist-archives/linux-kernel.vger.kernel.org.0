@@ -2,73 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5225049CA8
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 11:08:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1FB7C49CDB
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 11:17:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729402AbfFRJIA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Jun 2019 05:08:00 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:44118 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728754AbfFRJIA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Jun 2019 05:08:00 -0400
-Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 56F96EED4A9EEE8FAC4D;
-        Tue, 18 Jun 2019 17:07:57 +0800 (CST)
-Received: from localhost.localdomain.localdomain (10.175.113.25) by
- DGGEMS403-HUB.china.huawei.com (10.3.19.203) with Microsoft SMTP Server id
- 14.3.439.0; Tue, 18 Jun 2019 17:07:48 +0800
-From:   Kefeng Wang <wangkefeng.wang@huawei.com>
-To:     Marc Zyngier <marc.zyngier@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        <linux-kernel@vger.kernel.org>
-CC:     <guohanjun@huawei.com>, Kefeng Wang <wangkefeng.wang@huawei.com>
-Subject: [PATCH v2] irqchip/mbigen: stop printing kernel addresses
-Date:   Tue, 18 Jun 2019 17:15:05 +0800
-Message-ID: <20190618091505.151466-1-wangkefeng.wang@huawei.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190618032202.11087-1-wangkefeng.wang@huawei.com>
-References: <20190618032202.11087-1-wangkefeng.wang@huawei.com>
+        id S1729313AbfFRJRa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Jun 2019 05:17:30 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:39599 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729220AbfFRJR3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Jun 2019 05:17:29 -0400
+Received: by mail-lf1-f66.google.com with SMTP id p24so8692936lfo.6
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2019 02:17:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=rJanYe36yi/CmGKqaCrG1otgHpkv5KX5H3hS1IRh33g=;
+        b=RiJtJdWoPD8zAWLrRuFlXYtFDm2X0N6/21V3ItMvPDDbdX9jIMVD2NDDE50Evpd7c5
+         NP91pnFt1FTIfxm71pG+sw/GLrffxSGkjN5FKLqFCZzFnGDzFCMG19dHtlagjO53JVr/
+         80CRzxaL1cN4BtODGKh0tEiNCVJAKGD2hlezCr0t0JeIi0cngbJDXFeAYYfVdH4xapR0
+         1nFQQDgIcTIQ1+QHAOYncbIigzuTHyGJIGn5wK5x+yFT1HBY5GkQFMYtVVGMYtPf8zk4
+         6jr/zmJsnunS/onnUn73MCCqmxxeoLyyYlMOV/H4O9N6tMze7daUZL+ggyMfqPaVWAIO
+         OQZg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=rJanYe36yi/CmGKqaCrG1otgHpkv5KX5H3hS1IRh33g=;
+        b=Wfr1uerZpU26NrrcQWfigM0tQAEB5/WcVEO0jw/u4YKOquKMC4Ya5VzEmnvJT6gLDk
+         ux68fDEODlPk13yhptrIReP7E7qumqM3OZ9bSWPTM5a66di1QerPekb7CQdCaipHhdIt
+         iwCa8uA0caoHtfbBXVRCmzjMpf0/+0Qhdvu77AKvdxYHyL/VCHmz4oLDVFD5yQIPAk3i
+         lBZri9nknwTC303XAtrknJg0A+5Ma75L2otsNDs9BpdTWDx/70Lp79XsAk+pp0uFOwS0
+         rUUlImJS/w8+qdCnmOF0i+k6+wTi+ySoaSt3NrF3jwoNRHzFEROvDQxWF8Rt+13DcILI
+         T+0A==
+X-Gm-Message-State: APjAAAWp5n6uTFgZFWEEwLgv5xvaAnsgU555C3lrJ+9wQUVlMaO9dfzR
+        GmRVOSPjGVsL3RxL+PTqFBiE3w==
+X-Google-Smtp-Source: APXvYqzZIY8KYRJ7T3S77TJbee+KXLTlqzbOJRplLldZUlUxRX5u3jYNnsAy45fO6GHH7GsxDOvD1w==
+X-Received: by 2002:ac2:482d:: with SMTP id 13mr14129676lft.132.1560849447214;
+        Tue, 18 Jun 2019 02:17:27 -0700 (PDT)
+Received: from localhost.localdomain ([212.45.67.2])
+        by smtp.googlemail.com with ESMTPSA id b9sm2497444ljj.92.2019.06.18.02.17.25
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Tue, 18 Jun 2019 02:17:26 -0700 (PDT)
+From:   Georgi Djakov <georgi.djakov@linaro.org>
+To:     linux-pm@vger.kernel.org
+Cc:     daidavid1@codeaurora.org, vincent.guittot@linaro.org,
+        bjorn.andersson@linaro.org, amit.kucheria@linaro.org,
+        evgreen@chromium.org, dianders@chromium.org,
+        seansw@qti.qualcomm.com, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, georgi.djakov@linaro.org
+Subject: [PATCH v2 0/2] interconnect: Add path tagging support
+Date:   Tue, 18 Jun 2019 12:17:22 +0300
+Message-Id: <20190618091724.28232-1-georgi.djakov@linaro.org>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.175.113.25]
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-After commit ad67b74d2469d9b8 ("printk: hash addresses printed with %p"),
-it will print "____ptrval____" instead of actual addresses when mbigen
-create domain fails,
+SoCs that have multiple coexisting CPUs and DSPs, may have shared
+interconnect buses between them. In such cases, each CPU/DSP may have
+different bandwidth needs, depending on whether it is active or sleeping.
+This means that we have to keep different bandwidth configurations for
+the CPU (active/sleep). In such systems, usually there is a way to
+communicate and synchronize this information with some firmware or pass
+it to another processor responsible for monitoring and switching the
+interconnect configurations based on the state of each CPU/DSP.
 
-  Hisilicon MBIGEN-V2 HISI0152:00: Failed to create mbi-gen@(____ptrval____) irqdomain
-  Hisilicon MBIGEN-V2: probe of HISI0152:00 failed with error -12
+The above problem can be solved by introducing the path tagging concept,
+that allows consumers to optionally attach a tag to each path they use.
+This tag is used to differentiate between the aggregated bandwidth values
+for each state. The tag is generic and how it's handled is up to the
+platform specific interconnect provider drivers.
 
-dev_xxx() helper contains the device info, HISI0152:00, which stands for
-mbigen ACPI HID and its UID, we can identify the failing probed mbigen,
-so just remove the printing "mgn_chip->base", and also add missing "\n".
+v2:
+- Store tag with the request. (Evan)
+- Reorganize the code to save bandwidth values into buckets and use the
+  tag as a bitfield. (Evan)
+- Clear the aggregated values after icc_set().
 
-Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
----
- drivers/irqchip/irq-mbigen.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+v1: https://lore.kernel.org/lkml/20190208172152.1807-1-georgi.djakov@linaro.org/
 
-diff --git a/drivers/irqchip/irq-mbigen.c b/drivers/irqchip/irq-mbigen.c
-index 98b6e1d4b1a6..c0f65ea0ae0f 100644
---- a/drivers/irqchip/irq-mbigen.c
-+++ b/drivers/irqchip/irq-mbigen.c
-@@ -355,8 +355,7 @@ static int mbigen_device_probe(struct platform_device *pdev)
- 		err = -EINVAL;
- 
- 	if (err) {
--		dev_err(&pdev->dev, "Failed to create mbi-gen@%p irqdomain",
--			mgn_chip->base);
-+		dev_err(&pdev->dev, "Failed to create mbi-gen irqdomain\n");
- 		return err;
- 	}
- 
--- 
-2.20.1
+
+David Dai (1):
+  interconnect: qcom: Add tagging and wake/sleep support for sdm845
+
+Georgi Djakov (1):
+  interconnect: Add support for path tags
+
+ drivers/interconnect/core.c           |  24 ++++-
+ drivers/interconnect/qcom/sdm845.c    | 131 +++++++++++++++++++-------
+ include/linux/interconnect-provider.h |   4 +-
+ include/linux/interconnect.h          |   5 +
+ 4 files changed, 129 insertions(+), 35 deletions(-)
 
