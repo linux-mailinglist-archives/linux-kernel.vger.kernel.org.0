@@ -2,46 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D42B44AC4F
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 22:57:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3612F4AC33
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 22:57:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731007AbfFRUzI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Jun 2019 16:55:08 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:50868 "EHLO
+        id S1730873AbfFRUyI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Jun 2019 16:54:08 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:51020 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730759AbfFRUx6 (ORCPT
+        with ESMTP id S1730784AbfFRUyA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Jun 2019 16:53:58 -0400
+        Tue, 18 Jun 2019 16:54:00 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Sender:Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
         Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From:
         Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=GntXfWvv3Kib071YwaPKih5y5ex+thT7vmhRle4jSaM=; b=I60fMXQcbk7KT2JMxo9qkVck7p
-        Eroc/rYV+xoO3wobndpXGPpi3ohG0TqtCXuiILuykV1VgeDxBbIzL2JGOk6NPxh8auJDxTRvp6Nyc
-        dWA0q8zesE7AqUzQ0CD9dbi+Xb2At8eY5XDRJRGGFiIDAc90kZ4Yx/20o1xS0v/R+nhxE72R8mbU/
-        lc7cOJ+3hpXM8GXOGcRuifjV5MLUZZmgJPqpXy0nScNqIRTykgfqHRzy06SHRTXlHyTshYz2JYYSK
-        hxf3xWZDHE5bkDSFT4sSfTiNYW6XJauUn3kAjMsiVlUcQbej5PGczdYgrL6QiHW2zdOhpNbGY5HQn
-        OY7X0n7Q==;
+        bh=eones6QuDT9PdWjV+tkuB9RT4tJAbIFaVBOMCYjookk=; b=M1rqmtQIrdKSFwD2BYCXqZ9tU9
+        DR50IPRkzzZlNmlASh5/E/ipDLQqHdgQLyzA6zouoovQA1+XHc7ZrY/XobvvMXdhjsxuDJIAQ7w38
+        /s6iGJ1ID4McnQTryGq+E3r3IMdffMfWRuR1Vh/Jn0FDP7ckLco5sKAy20fH4nvEi5dTCLnvvitfP
+        MiXM9YcPyw0y1ox6Gfu4jPgBpuE5JkgssijJLtnDY2+2n7/orfFep3Hq5zFTG6gfU04B7kJJVWU4u
+        CQNjdG1vGU06Ji8PBDysdeP1YWoizGu4dpoarqJzqt8xeUVPspXaYW8eZ06ITE4DPxIyMm+KyIQ8A
+        rn1h4B+g==;
 Received: from 177.133.86.196.dynamic.adsl.gvt.net.br ([177.133.86.196] helo=bombadil.infradead.org)
         by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hdL77-0008R6-00; Tue, 18 Jun 2019 20:53:57 +0000
+        id 1hdL77-0008Sl-Tm; Tue, 18 Jun 2019 20:53:58 +0000
 Received: from mchehab by bombadil.infradead.org with local (Exim 4.92)
         (envelope-from <mchehab@bombadil.infradead.org>)
-        id 1hdL6z-0001zE-P2; Tue, 18 Jun 2019 17:53:49 -0300
+        id 1hdL6z-0001zI-Q0; Tue, 18 Jun 2019 17:53:49 -0300
 From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>
 Cc:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Mauro Carvalho Chehab <mchehab@infradead.org>,
-        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>, dri-devel@lists.freedesktop.org,
-        linux-fbdev@vger.kernel.org
-Subject: [PATCH v2 06/29] docs: console.txt: convert docs to ReST and rename to *.rst
-Date:   Tue, 18 Jun 2019 17:53:24 -0300
-Message-Id: <00ddb1bc19e07b7ce4d1e7cda457733a37cf1693.1560890800.git.mchehab+samsung@kernel.org>
+        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>
+Subject: [PATCH v2 07/29] docs: pti_intel_mid.txt: convert it to pti_intel_mid.rst
+Date:   Tue, 18 Jun 2019 17:53:25 -0300
+Message-Id: <8700e4276022bc1f920f1d2481d71619d60d5bff.1560890800.git.mchehab+samsung@kernel.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <cover.1560890800.git.mchehab+samsung@kernel.org>
 References: <cover.1560890800.git.mchehab+samsung@kernel.org>
@@ -52,196 +48,239 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Convert this small file to ReST in preparation for adding it to
-the driver-api book.
+Convert this small file to ReST format and rename it.
 
-While this is not part of the driver-api book, mark it as
-:orphan:, in order to avoid build warnings.
+Most of the conversion were related to adjusting whitespaces
+in order for each section to be properly parsed.
+
+While this is not part of any book, mark it as :orphan:, in order
+to avoid build warnings.
 
 Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 ---
- .../console/{console.txt => console.rst}      | 63 ++++++++++---------
- Documentation/fb/fbcon.rst                    |  4 +-
- drivers/tty/Kconfig                           |  2 +-
- 3 files changed, 38 insertions(+), 31 deletions(-)
- rename Documentation/console/{console.txt => console.rst} (80%)
+ Documentation/pti/pti_intel_mid.rst | 106 ++++++++++++++++++++++++++++
+ Documentation/pti/pti_intel_mid.txt |  99 --------------------------
+ 2 files changed, 106 insertions(+), 99 deletions(-)
+ create mode 100644 Documentation/pti/pti_intel_mid.rst
+ delete mode 100644 Documentation/pti/pti_intel_mid.txt
 
-diff --git a/Documentation/console/console.txt b/Documentation/console/console.rst
-similarity index 80%
-rename from Documentation/console/console.txt
-rename to Documentation/console/console.rst
-index d73c2ab4beda..b374141b027e 100644
---- a/Documentation/console/console.txt
-+++ b/Documentation/console/console.rst
-@@ -1,3 +1,6 @@
+diff --git a/Documentation/pti/pti_intel_mid.rst b/Documentation/pti/pti_intel_mid.rst
+new file mode 100644
+index 000000000000..ea05725174cb
+--- /dev/null
++++ b/Documentation/pti/pti_intel_mid.rst
+@@ -0,0 +1,106 @@
 +:orphan:
 +
-+===============
- Console Drivers
- ===============
- 
-@@ -17,25 +20,26 @@ of driver occupying the consoles.) They can only take over the console that is
- occupied by the system driver. In the same token, if the modular driver is
- released by the console, the system driver will take over.
- 
--Modular drivers, from the programmer's point of view, have to call:
-+Modular drivers, from the programmer's point of view, have to call::
- 
- 	 do_take_over_console() - load and bind driver to console layer
- 	 give_up_console() - unload driver; it will only work if driver
- 			     is fully unbound
- 
--In newer kernels, the following are also available:
-+In newer kernels, the following are also available::
- 
- 	 do_register_con_driver()
- 	 do_unregister_con_driver()
- 
- If sysfs is enabled, the contents of /sys/class/vtconsole can be
- examined. This shows the console backends currently registered by the
--system which are named vtcon<n> where <n> is an integer from 0 to 15. Thus:
-+system which are named vtcon<n> where <n> is an integer from 0 to 15.
-+Thus::
- 
-        ls /sys/class/vtconsole
-        .  ..  vtcon0  vtcon1
- 
--Each directory in /sys/class/vtconsole has 3 files:
-+Each directory in /sys/class/vtconsole has 3 files::
- 
-      ls /sys/class/vtconsole/vtcon0
-      .  ..  bind  name  uevent
-@@ -46,27 +50,29 @@ What do these files signify?
-         read, or acts to bind or unbind the driver to the virtual consoles
-         when written to. The possible values are:
- 
--	0 - means the driver is not bound and if echo'ed, commands the driver
-+	0
-+	  - means the driver is not bound and if echo'ed, commands the driver
- 	    to unbind
- 
--        1 - means the driver is bound and if echo'ed, commands the driver to
-+        1
-+	  - means the driver is bound and if echo'ed, commands the driver to
- 	    bind
- 
--     2. name - read-only file. Shows the name of the driver in this format:
-+     2. name - read-only file. Shows the name of the driver in this format::
- 
--	cat /sys/class/vtconsole/vtcon0/name
--	(S) VGA+
-+	  cat /sys/class/vtconsole/vtcon0/name
-+	  (S) VGA+
- 
--	    '(S)' stands for a (S)ystem driver, i.e., it cannot be directly
--	    commanded to bind or unbind
-+	      '(S)' stands for a (S)ystem driver, i.e., it cannot be directly
-+	      commanded to bind or unbind
- 
--	    'VGA+' is the name of the driver
-+	      'VGA+' is the name of the driver
- 
--	cat /sys/class/vtconsole/vtcon1/name
--	(M) frame buffer device
-+	  cat /sys/class/vtconsole/vtcon1/name
-+	  (M) frame buffer device
- 
--	    In this case, '(M)' stands for a (M)odular driver, one that can be
--	    directly commanded to bind or unbind.
-+	      In this case, '(M)' stands for a (M)odular driver, one that can be
-+	      directly commanded to bind or unbind.
- 
-      3. uevent - ignore this file
- 
-@@ -75,14 +81,17 @@ driver takes over the consoles vacated by the driver. Binding, on the other
- hand, will bind the driver to the consoles that are currently occupied by a
- system driver.
- 
--NOTE1: Binding and unbinding must be selected in Kconfig. It's under:
-+NOTE1:
-+  Binding and unbinding must be selected in Kconfig. It's under::
- 
--Device Drivers -> Character devices -> Support for binding and unbinding
--console drivers
-+    Device Drivers ->
-+	Character devices ->
-+		Support for binding and unbinding console drivers
- 
--NOTE2: If any of the virtual consoles are in KD_GRAPHICS mode, then binding or
--unbinding will not succeed. An example of an application that sets the console
--to KD_GRAPHICS is X.
-+NOTE2:
-+  If any of the virtual consoles are in KD_GRAPHICS mode, then binding or
-+  unbinding will not succeed. An example of an application that sets the
-+  console to KD_GRAPHICS is X.
- 
- How useful is this feature? This is very useful for console driver
- developers. By unbinding the driver from the console layer, one can unload the
-@@ -92,10 +101,10 @@ framebuffer console to VGA console and vice versa, this feature also makes
- this possible. (NOTE NOTE NOTE: Please read fbcon.txt under Documentation/fb
- for more details.)
- 
--Notes for developers:
--=====================
-+Notes for developers
-+====================
- 
--do_take_over_console() is now broken up into:
-+do_take_over_console() is now broken up into::
- 
-      do_register_con_driver()
-      do_bind_con_driver() - private function
-@@ -104,7 +113,7 @@ give_up_console() is a wrapper to do_unregister_con_driver(), and a driver must
- be fully unbound for this call to succeed. con_is_bound() will check if the
- driver is bound or not.
- 
--Guidelines for console driver writers:
-+Guidelines for console driver writers
- =====================================
- 
- In order for binding to and unbinding from the console to properly work,
-@@ -140,6 +149,4 @@ The current crop of console drivers should still work correctly, but binding
- and unbinding them may cause problems. With minimal fixes, these drivers can
- be made to work correctly.
- 
--==========================
- Antonino Daplas <adaplas@pol.net>
++=============
++Intel MID PTI
++=============
++
++The Intel MID PTI project is HW implemented in Intel Atom
++system-on-a-chip designs based on the Parallel Trace
++Interface for MIPI P1149.7 cJTAG standard.  The kernel solution
++for this platform involves the following files::
++
++	./include/linux/pti.h
++	./drivers/.../n_tracesink.h
++	./drivers/.../n_tracerouter.c
++	./drivers/.../n_tracesink.c
++	./drivers/.../pti.c
++
++pti.c is the driver that enables various debugging features
++popular on platforms from certain mobile manufacturers.
++n_tracerouter.c and n_tracesink.c allow extra system information to
++be collected and routed to the pti driver, such as trace
++debugging data from a modem.  Although n_tracerouter
++and n_tracesink are a part of the complete PTI solution,
++these two line disciplines can work separately from
++pti.c and route any data stream from one /dev/tty node
++to another /dev/tty node via kernel-space.  This provides
++a stable, reliable connection that will not break unless
++the user-space application shuts down (plus avoids
++kernel->user->kernel context switch overheads of routing
++data).
++
++An example debugging usage for this driver system:
++
++  * Hook /dev/ttyPTI0 to syslogd.  Opening this port will also start
++    a console device to further capture debugging messages to PTI.
++  * Hook /dev/ttyPTI1 to modem debugging data to write to PTI HW.
++    This is where n_tracerouter and n_tracesink are used.
++  * Hook /dev/pti to a user-level debugging application for writing
++    to PTI HW.
++  * `Use mipi_` Kernel Driver API in other device drivers for
++    debugging to PTI by first requesting a PTI write address via
++    mipi_request_masterchannel(1).
++
++Below is example pseudo-code on how a 'privileged' application
++can hook up n_tracerouter and n_tracesink to any tty on
++a system.  'Privileged' means the application has enough
++privileges to successfully manipulate the ldisc drivers
++but is not just blindly executing as 'root'. Keep in mind
++the use of ioctl(,TIOCSETD,) is not specific to the n_tracerouter
++and n_tracesink line discpline drivers but is a generic
++operation for a program to use a line discpline driver
++on a tty port other than the default n_tty::
++
++  /////////// To hook up n_tracerouter and n_tracesink /////////
++
++  // Note that n_tracerouter depends on n_tracesink.
++  #include <errno.h>
++  #define ONE_TTY "/dev/ttyOne"
++  #define TWO_TTY "/dev/ttyTwo"
++
++  // needed global to hand onto ldisc connection
++  static int g_fd_source = -1;
++  static int g_fd_sink  = -1;
++
++  // these two vars used to grab LDISC values from loaded ldisc drivers
++  // in OS.  Look at /proc/tty/ldiscs to get the right numbers from
++  // the ldiscs loaded in the system.
++  int source_ldisc_num, sink_ldisc_num = -1;
++  int retval;
++
++  g_fd_source = open(ONE_TTY, O_RDWR); // must be R/W
++  g_fd_sink   = open(TWO_TTY, O_RDWR); // must be R/W
++
++  if (g_fd_source <= 0) || (g_fd_sink <= 0) {
++     // doubt you'll want to use these exact error lines of code
++     printf("Error on open(). errno: %d\n",errno);
++     return errno;
++  }
++
++  retval = ioctl(g_fd_sink, TIOCSETD, &sink_ldisc_num);
++  if (retval < 0) {
++     printf("Error on ioctl().  errno: %d\n", errno);
++     return errno;
++  }
++
++  retval = ioctl(g_fd_source, TIOCSETD, &source_ldisc_num);
++  if (retval < 0) {
++     printf("Error on ioctl().  errno: %d\n", errno);
++     return errno;
++  }
++
++  /////////// To disconnect n_tracerouter and n_tracesink ////////
++
++  // First make sure data through the ldiscs has stopped.
++
++  // Second, disconnect ldiscs.  This provides a
++  // little cleaner shutdown on tty stack.
++  sink_ldisc_num = 0;
++  source_ldisc_num = 0;
++  ioctl(g_fd_uart, TIOCSETD, &sink_ldisc_num);
++  ioctl(g_fd_gadget, TIOCSETD, &source_ldisc_num);
++
++  // Three, program closes connection, and cleanup:
++  close(g_fd_uart);
++  close(g_fd_gadget);
++  g_fd_uart = g_fd_gadget = NULL;
+diff --git a/Documentation/pti/pti_intel_mid.txt b/Documentation/pti/pti_intel_mid.txt
+deleted file mode 100644
+index e7a5b6d1f7a9..000000000000
+--- a/Documentation/pti/pti_intel_mid.txt
++++ /dev/null
+@@ -1,99 +0,0 @@
+-The Intel MID PTI project is HW implemented in Intel Atom
+-system-on-a-chip designs based on the Parallel Trace
+-Interface for MIPI P1149.7 cJTAG standard.  The kernel solution
+-for this platform involves the following files:
 -
-diff --git a/Documentation/fb/fbcon.rst b/Documentation/fb/fbcon.rst
-index cfb9f7c38f18..22112718dd5d 100644
---- a/Documentation/fb/fbcon.rst
-+++ b/Documentation/fb/fbcon.rst
-@@ -187,7 +187,7 @@ the hardware. Thus, in a VGA console::
- Assuming the VGA driver can be unloaded, one must first unbind the VGA driver
- from the console layer before unloading the driver.  The VGA driver cannot be
- unloaded if it is still bound to the console layer. (See
--Documentation/console/console.txt for more information).
-+Documentation/console/console.rst for more information).
- 
- This is more complicated in the case of the framebuffer console (fbcon),
- because fbcon is an intermediate layer between the console and the drivers::
-@@ -204,7 +204,7 @@ fbcon. Thus, there is no need to explicitly unbind the fbdev drivers from
- fbcon.
- 
- So, how do we unbind fbcon from the console? Part of the answer is in
--Documentation/console/console.txt. To summarize:
-+Documentation/console/console.rst. To summarize:
- 
- Echo a value to the bind file that represents the framebuffer console
- driver. So assuming vtcon1 represents fbcon, then::
-diff --git a/drivers/tty/Kconfig b/drivers/tty/Kconfig
-index 0e3e4dacbc12..1cb50f19d58c 100644
---- a/drivers/tty/Kconfig
-+++ b/drivers/tty/Kconfig
-@@ -93,7 +93,7 @@ config VT_HW_CONSOLE_BINDING
-          select the console driver that will serve as the backend for the
-          virtual terminals.
- 
--	 See <file:Documentation/console/console.txt> for more
-+	 See <file:Documentation/console/console.rst> for more
- 	 information. For framebuffer console users, please refer to
- 	 <file:Documentation/fb/fbcon.rst>.
- 
+-./include/linux/pti.h
+-./drivers/.../n_tracesink.h
+-./drivers/.../n_tracerouter.c
+-./drivers/.../n_tracesink.c
+-./drivers/.../pti.c
+-
+-pti.c is the driver that enables various debugging features
+-popular on platforms from certain mobile manufacturers.
+-n_tracerouter.c and n_tracesink.c allow extra system information to
+-be collected and routed to the pti driver, such as trace
+-debugging data from a modem.  Although n_tracerouter
+-and n_tracesink are a part of the complete PTI solution,
+-these two line disciplines can work separately from
+-pti.c and route any data stream from one /dev/tty node
+-to another /dev/tty node via kernel-space.  This provides
+-a stable, reliable connection that will not break unless
+-the user-space application shuts down (plus avoids
+-kernel->user->kernel context switch overheads of routing
+-data).
+-
+-An example debugging usage for this driver system:
+-   *Hook /dev/ttyPTI0 to syslogd.  Opening this port will also start
+-    a console device to further capture debugging messages to PTI.
+-   *Hook /dev/ttyPTI1 to modem debugging data to write to PTI HW.
+-    This is where n_tracerouter and n_tracesink are used.
+-   *Hook /dev/pti to a user-level debugging application for writing
+-    to PTI HW.
+-   *Use mipi_* Kernel Driver API in other device drivers for
+-    debugging to PTI by first requesting a PTI write address via
+-    mipi_request_masterchannel(1).
+-
+-Below is example pseudo-code on how a 'privileged' application
+-can hook up n_tracerouter and n_tracesink to any tty on
+-a system.  'Privileged' means the application has enough
+-privileges to successfully manipulate the ldisc drivers
+-but is not just blindly executing as 'root'. Keep in mind
+-the use of ioctl(,TIOCSETD,) is not specific to the n_tracerouter
+-and n_tracesink line discpline drivers but is a generic
+-operation for a program to use a line discpline driver
+-on a tty port other than the default n_tty.
+-
+-/////////// To hook up n_tracerouter and n_tracesink /////////
+-
+-// Note that n_tracerouter depends on n_tracesink.
+-#include <errno.h>
+-#define ONE_TTY "/dev/ttyOne"
+-#define TWO_TTY "/dev/ttyTwo"
+-
+-// needed global to hand onto ldisc connection
+-static int g_fd_source = -1;
+-static int g_fd_sink  = -1;
+-
+-// these two vars used to grab LDISC values from loaded ldisc drivers
+-// in OS.  Look at /proc/tty/ldiscs to get the right numbers from
+-// the ldiscs loaded in the system.
+-int source_ldisc_num, sink_ldisc_num = -1;
+-int retval;
+-
+-g_fd_source = open(ONE_TTY, O_RDWR); // must be R/W
+-g_fd_sink   = open(TWO_TTY, O_RDWR); // must be R/W
+-
+-if (g_fd_source <= 0) || (g_fd_sink <= 0) {
+-   // doubt you'll want to use these exact error lines of code
+-   printf("Error on open(). errno: %d\n",errno);
+-   return errno;
+-}
+-
+-retval = ioctl(g_fd_sink, TIOCSETD, &sink_ldisc_num);
+-if (retval < 0) {
+-   printf("Error on ioctl().  errno: %d\n", errno);
+-   return errno;
+-}
+-
+-retval = ioctl(g_fd_source, TIOCSETD, &source_ldisc_num);
+-if (retval < 0) {
+-   printf("Error on ioctl().  errno: %d\n", errno);
+-   return errno;
+-}
+-
+-/////////// To disconnect n_tracerouter and n_tracesink ////////
+-
+-// First make sure data through the ldiscs has stopped.
+-
+-// Second, disconnect ldiscs.  This provides a
+-// little cleaner shutdown on tty stack.
+-sink_ldisc_num = 0;
+-source_ldisc_num = 0;
+-ioctl(g_fd_uart, TIOCSETD, &sink_ldisc_num);
+-ioctl(g_fd_gadget, TIOCSETD, &source_ldisc_num);
+-
+-// Three, program closes connection, and cleanup:
+-close(g_fd_uart);
+-close(g_fd_gadget);
+-g_fd_uart = g_fd_gadget = NULL;
 -- 
 2.21.0
 
