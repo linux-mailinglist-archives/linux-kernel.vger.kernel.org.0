@@ -2,53 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C2D9E499A4
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 08:59:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ADED8499A6
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 08:59:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728730AbfFRG7Y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Jun 2019 02:59:24 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:54684 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726248AbfFRG7X (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Jun 2019 02:59:23 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=hhqWgjBEP1JDDjQFjFNZlS8HG66TBGkF9/IRb4uAt24=; b=K8EHUHzJZc1WfxOIdvz1/7lTM
-        BBR3nIrgl0dBPhs/f2TNf0c1983Sqje8gxyJw04tgBSm6BzbaoUh6AcxK5KRLJA1yLA5k7SQOvPV0
-        TmVz6SANdrHtJaBHV6/gjat1XWIcQnefeBfwjAsdk8F73Re606PTvbAKuz5gdJ0jEumgpDzjqZDRo
-        5vXG3+COcLnOI70oLFYT88rzBn8Bxmmbqf6sF6v6UEH0/htUp3DstaoukMTHTDBAcyEBS9xizmKtl
-        9LmZnXy38HXNaIpcPfxYjj0tsum/LZDx8yZ+m8nuDMkYkiAq2pA0YR0NVSxzjbF5FzARaWwSvyrRO
-        iCg7kDg3A==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
-        id 1hd85Q-0004Yp-9c; Tue, 18 Jun 2019 06:59:20 +0000
-Date:   Mon, 17 Jun 2019 23:59:20 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Puranjay Mohan <puranjay12@gmail.com>
-Cc:     Shuah Khan <skhan@linuxfoundation.org>,
-        linux-kernel-mentees@lists.linuxfoundation.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RESEND] fs: cramfs_fs.h: Fix shifting signed 32-bit value
- by 31 bits problem
-Message-ID: <20190618065920.GA3620@infradead.org>
-References: <20190618041257.5401-1-puranjay12@gmail.com>
+        id S1728911AbfFRG7e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Jun 2019 02:59:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59836 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725829AbfFRG7d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Jun 2019 02:59:33 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0C9FE20673;
+        Tue, 18 Jun 2019 06:59:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1560841172;
+        bh=5ecne3rCtVqpWXP+h0ZrAWJGGu531cJx7E9w2U9xOz0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=nW10Hu++sUQrj/S3YQTKUNgZJgfWeNCSb95YUyAw0/gQlWPavg1CfR91PTbv60Cgy
+         HaE+ZOhu3Vdc25N0ZC7bJvT20lGMLHaT0eu850YiT8QH35rZ9nlejaP2LGHkgtFCY2
+         gJl1cK8K4kK5wU7MDBxhKaP6wHa8fVWD4MoeEFCI=
+Date:   Tue, 18 Jun 2019 08:59:30 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Hariprasad Kelam <hariprasad.kelam@gmail.com>
+Cc:     Jeeeun Evans <jeeeunevans@gmail.com>,
+        Larry Finger <Larry.Finger@lwfinger.net>,
+        Quytelda Kahja <quytelda@tamalin.org>,
+        Omer Efrat <omer.efrat@tandemg.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Puranjay Mohan <puranjay12@gmail.com>,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] staging: rtl8723bs: os_dep: Make use rtw_zmalloc
+Message-ID: <20190618065930.GB15358@kroah.com>
+References: <20190616051619.GA15036@hari-Inspiron-1545>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190618041257.5401-1-puranjay12@gmail.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20190616051619.GA15036@hari-Inspiron-1545>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> -#define CRAMFS_BLK_FLAG_UNCOMPRESSED	(1 << 31)
-> +#define CRAMFS_BLK_FLAG_UNCOMPRESSED	(1U << 31)
->  #define CRAMFS_BLK_FLAG_DIRECT_PTR	(1 << 30)
+On Sun, Jun 16, 2019 at 10:46:19AM +0530, Hariprasad Kelam wrote:
+> rtw_malloc with memset can be replaced with rtw_zmalloc.
+> 
+> Signed-off-by: Hariprasad Kelam <hariprasad.kelam@gmail.com>
+> ---
+>  drivers/staging/rtl8723bs/os_dep/ioctl_cfg80211.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
+> 
+> diff --git a/drivers/staging/rtl8723bs/os_dep/ioctl_cfg80211.c b/drivers/staging/rtl8723bs/os_dep/ioctl_cfg80211.c
+> index 9bc6856..aa7cc50 100644
+> --- a/drivers/staging/rtl8723bs/os_dep/ioctl_cfg80211.c
+> +++ b/drivers/staging/rtl8723bs/os_dep/ioctl_cfg80211.c
+> @@ -1078,12 +1078,10 @@ static int cfg80211_rtw_add_key(struct wiphy *wiphy, struct net_device *ndev,
+>  	DBG_871X("pairwise =%d\n", pairwise);
+>  
+>  	param_len = sizeof(struct ieee_param) + params->key_len;
+> -	param = rtw_malloc(param_len);
+> +	param = rtw_zmalloc(param_len);
 
-Please use the unsigned constants for all flags, not just one.
+
+No, please call the "real" kernel function instead.
+
+thanks,
+
+greg k-h
