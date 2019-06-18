@@ -2,85 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CD1E84A379
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 16:09:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 35D2B4A37E
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 16:10:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729552AbfFROJw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Jun 2019 10:09:52 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:42262 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726248AbfFROJw (ORCPT
+        id S1729614AbfFROK1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Jun 2019 10:10:27 -0400
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:44719 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725919AbfFROK0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Jun 2019 10:09:52 -0400
-Received: by mail-qt1-f193.google.com with SMTP id s15so15418887qtk.9;
-        Tue, 18 Jun 2019 07:09:51 -0700 (PDT)
+        Tue, 18 Jun 2019 10:10:26 -0400
+Received: by mail-qk1-f195.google.com with SMTP id p144so8593588qke.11;
+        Tue, 18 Jun 2019 07:10:26 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=GyQ7NHmIrnNmBSgVyVESd2wNXZg9DCHFi2yId0sHyBk=;
-        b=PdPzkB6/dua425wtW3F0dvMUs/GCYBeQX5UxO6oDjU+MUc5yjhLO7zMX9SnVYRbO45
-         T/D5kA30TBE9IQc3hdZw8lBsNKbVnSGzP0xrA2jMIS3a5AdFb/12kBs4BcQL4YuYCV+B
-         ztvqAfdeCI7lK6hVkpaOq+EkAw1w2kIEODIyWj8d9Yoxu8VzhQj7pZuzsK8f5sQVAkuF
-         FwBBLkTMLCn5ViyShaKslUMSZ75UmpPJics44VHeEdrh+Fya6F67S2Worla+a9KkTUD7
-         uJwHVQFiMBo2vsUHGImwRjnf7PwOMQb9ge+M8c3CVYaNsmaaxDuMdaKVric7cR3ya95j
-         eTCA==
-X-Gm-Message-State: APjAAAXS+Sn+qJ8QcNxudDxI+YMD0uTiVndhf34CHVNmW0d2VkXb8Ny2
-        8Znie1Cq8fDFaybT6It5iQ==
-X-Google-Smtp-Source: APXvYqy9m96oP9T8hp2Tshk/w80pIqjMUf7CXez4snhNRdVA9CnKuTOFT+BYdJIoAUJv31L+/KSzPw==
-X-Received: by 2002:ac8:3908:: with SMTP id s8mr99042910qtb.224.1560866990989;
-        Tue, 18 Jun 2019 07:09:50 -0700 (PDT)
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=ymzVRv+HbWASk9IbK9IR5jfXe4p30txsWn7MI2aWfko=;
+        b=DOOWp3vW4HwawykDQ1Pi4PSzyzJfFkgUpAfvf3igvw4gXZF41Mzo4LPMBc/wFuOxyj
+         E/2KT3DTrrLJ+sEeEXDFA7EpBmwI5jBOS/TYM08CsTGFQmWSFxaTueKQlgqylOxWgWe3
+         Spj7JsDpBU3rvPrzEO93Nexo0Zc1GM34St7cdpKA9YwHEiFGhEclq3L9+GpgFxO+LKRu
+         svzvOg+fZ9PFaxV67ZYcGW2o7+SkUt9jyOy3GhjF8vt/X+2nhdSJuSizZyF4CXe5R2Bt
+         4kmgX36oU8/3yA9m3KUBn/M2PaLTWftzs/4MXiei4dNijc5WKT/ZAdYmmsUUmEjsEePq
+         dfbg==
+X-Gm-Message-State: APjAAAWncFOW1ieSn3+JMmOVhYFVZn6YzLJ0qtz2gPRxP3p2Pa/Z1d7Q
+        FWVUbVEXcn3EF5gZ/a4XtQ==
+X-Google-Smtp-Source: APXvYqzTd+SUScnI+raBK375orxhwOZtIjBl7LTQ+SrdOuzX+fB6KoQ7w06WVT6SBK2QaP+LwnqcBg==
+X-Received: by 2002:a37:9ece:: with SMTP id h197mr75339469qke.50.1560867025673;
+        Tue, 18 Jun 2019 07:10:25 -0700 (PDT)
 Received: from localhost ([64.188.179.192])
-        by smtp.gmail.com with ESMTPSA id x10sm10883256qtc.34.2019.06.18.07.09.49
+        by smtp.gmail.com with ESMTPSA id s11sm9602685qte.49.2019.06.18.07.10.24
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 18 Jun 2019 07:09:50 -0700 (PDT)
-Date:   Tue, 18 Jun 2019 08:09:48 -0600
+        Tue, 18 Jun 2019 07:10:25 -0700 (PDT)
+Date:   Tue, 18 Jun 2019 08:10:23 -0600
 From:   Rob Herring <robh@kernel.org>
-To:     Kefeng Wang <wangkefeng.wang@huawei.com>
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Kefeng Wang <wangkefeng.wang@huawei.com>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Frank Rowand <frowand.list@gmail.com>
-Subject: Re: [PATCH next v2] of/fdt: Fix defined but not used compiler warning
-Message-ID: <20190618140948.GA18305@bogus>
-References: <20190612010011.90185-1-wangkefeng.wang@huawei.com>
- <20190615030343.96524-1-wangkefeng.wang@huawei.com>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     Mark Rutland <mark.rutland@arm.com>, openbmc@lists.ozlabs.org,
+        openipmi-developer@lists.sourceforge.net,
+        devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
+        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: Re: [PATCH] dt-bindings: Add missing newline at end of file
+Message-ID: <20190618141023.GA20154@bogus>
+References: <20190617143322.4332-1-geert+renesas@glider.be>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190615030343.96524-1-wangkefeng.wang@huawei.com>
+In-Reply-To: <20190617143322.4332-1-geert+renesas@glider.be>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 15 Jun 2019 11:03:43 +0800, Kefeng Wang wrote:
-> When CONFIG_OF_EARLY_FLATTREE is disabled, there is a compiler
-> warning,
+On Mon, 17 Jun 2019 16:33:22 +0200, Geert Uytterhoeven wrote:
+> "git diff" says:
 > 
-> drivers/of/fdt.c:129:19: warning: ‘of_fdt_match’ defined but not used [-Wunused-function]
->  static int __init of_fdt_match(const void *blob, unsigned long node,
+>     \ No newline at end of file
 > 
-> Since the only caller of of_fdt_match() is of_flat_dt_match(),
-> let's move the body of of_fdt_match() into of_flat_dt_match()
-> and eliminate of_fdt_match().
+> after modifying the files.
 > 
-> Meanwhile, move of_fdt_is_compatible() under CONFIG_OF_EARLY_FLATTREE,
-> as all callers are over there.
-> 
-> Cc: Stephen Boyd <swboyd@chromium.org>
-> Cc: Rob Herring <robh@kernel.org>
-> Cc: Frank Rowand <frowand.list@gmail.com>
-> Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 > ---
-> v2:
-> -Move the body of of_fdt_match() into of_flat_dt_match(), suggested by Frank.
-> 
->  drivers/of/fdt.c | 99 ++++++++++++++++++++++--------------------------
->  1 file changed, 45 insertions(+), 54 deletions(-)
+>  Documentation/devicetree/bindings/ipmi/npcm7xx-kcs-bmc.txt      | 2 +-
+>  .../devicetree/bindings/pinctrl/nuvoton,npcm7xx-pinctrl.txt     | 2 +-
+>  Documentation/devicetree/bindings/regulator/pv88060.txt         | 2 +-
+>  Documentation/devicetree/bindings/sound/cs42l73.txt             | 2 +-
+>  4 files changed, 4 insertions(+), 4 deletions(-)
 > 
 
 Applied, thanks.
