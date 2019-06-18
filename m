@@ -2,388 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D3ADF4A2AC
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 15:47:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5FD114A2B3
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 15:48:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729416AbfFRNrQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Jun 2019 09:47:16 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:33318 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726248AbfFRNrP (ORCPT
+        id S1729474AbfFRNsD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Jun 2019 09:48:03 -0400
+Received: from iolanthe.rowland.org ([192.131.102.54]:39862 "HELO
+        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with SMTP id S1726248AbfFRNsC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Jun 2019 09:47:15 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 028A06090F; Tue, 18 Jun 2019 13:47:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1560865634;
-        bh=W4hJPq0D0iObYhyXaM/7Mh+sRRkJOAUhKcey2qQUBNc=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jqt0pHjdV53bCRMHcNMYOurIUHI80DPhoG41URmNkdTprQ1FqXCIgFsTM72KrySTt
-         y+rLpB4MqJxyklEP9PTBMmnKm/d5W9VX0dWx6fjpuMpT0uJK7Hj/LudHUWJ+SwFBZ6
-         y4ITPDjWCuFf2Ti4WGHs2yAtz1YxWX6SDrWRwjc4=
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        pdx-caf-mail.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
-        DKIM_INVALID,DKIM_SIGNED,SPF_NONE autolearn=no autolearn_force=no
-        version=3.4.0
-Received: from mojha-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: mojha@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id CCD58602F1;
-        Tue, 18 Jun 2019 13:47:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1560865631;
-        bh=W4hJPq0D0iObYhyXaM/7Mh+sRRkJOAUhKcey2qQUBNc=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kzan1Yc/8auicgIer+v0JUUHTskl1oO4N8Dpn9OoIpyJXi7fvUsdsKT+idrDX033I
-         ZDCSIXNz+SHljE+l+FcbvXbl3v1ShNlghOnpMwg5CsFsTX82p4Nd4zdTBzDCZJVJV5
-         jkKlqGYgpFLlJ7fEwcr/Hon6JAJosdVARYTtMhLM=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org CCD58602F1
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=mojha@codeaurora.org
-From:   Mukesh Ojha <mojha@codeaurora.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Mukesh Ojha <mojha@codeaurora.org>,
-        Raghavendra Rao Ananta <rananta@codeaurora.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Alexei Starovoitov <ast@kernel.org>
-Subject: [PATCH RESEND V4 1/1] perf: event preserve and create across cpu hotplug
-Date:   Tue, 18 Jun 2019 19:16:57 +0530
-Message-Id: <1560865617-7881-2-git-send-email-mojha@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1560865617-7881-1-git-send-email-mojha@codeaurora.org>
-References: <1560848091-15694-1-git-send-email-mojha@codeaurora.org>
- <1560865617-7881-1-git-send-email-mojha@codeaurora.org>
+        Tue, 18 Jun 2019 09:48:02 -0400
+Received: (qmail 2328 invoked by uid 2102); 18 Jun 2019 09:48:01 -0400
+Received: from localhost (sendmail-bs@127.0.0.1)
+  by localhost with SMTP; 18 Jun 2019 09:48:01 -0400
+Date:   Tue, 18 Jun 2019 09:48:01 -0400 (EDT)
+From:   Alan Stern <stern@rowland.harvard.edu>
+X-X-Sender: stern@iolanthe.rowland.org
+To:     Marcos Paulo de Souza <marcos.souza.org@gmail.com>
+cc:     Kernel development list <linux-kernel@vger.kernel.org>,
+        SCSI development list <linux-scsi@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "open list:USB MASS STORAGE DRIVER" <linux-usb@vger.kernel.org>,
+        "open list:USB MASS STORAGE DRIVER" 
+        <usb-storage@lists.one-eyed-alien.net>
+Subject: Re: [PATCH 2/2] usb: storage: scsiglue: Do not skip VPD if try_vpd_pages
+ is set
+In-Reply-To: <20190618013146.21961-3-marcos.souza.org@gmail.com>
+Message-ID: <Pine.LNX.4.44L0.1906180946160.1659-100000@iolanthe.rowland.org>
+MIME-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Perf framework doesn't allow preserving CPU events across
-CPU hotplugs. The events are scheduled out as and when the
-CPU walks offline. Moreover, the framework also doesn't
-allow the clients to create events on an offline CPU. As
-a result, the clients have to keep on monitoring the CPU
-state until it comes back online.
+On Mon, 17 Jun 2019, Marcos Paulo de Souza wrote:
 
-Therefore, introducing the perf framework to support creation
-and preserving of (CPU) events for offline CPUs. Through
-this, the CPU's online state would be transparent to the
-client and it not have to worry about monitoring the CPU's
-state. Success would be returned to the client even while
-creating the event on an offline CPU. If during the lifetime
-of the event the CPU walks offline, the event would be
-preserved and would continue to count as soon as (and if) the
-CPU comes back online.
+> If BLIST_TRY_VPD_PAGES is set for a device, even for an USB, it should
+> be honored, so only set skip_vpd_pages is try_vpd_pages is not set.
+> 
+> Signed-off-by: Marcos Paulo de Souza <marcos.souza.org@gmail.com>
+> ---
+>  drivers/usb/storage/scsiglue.c | 7 +++++--
+>  1 file changed, 5 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/usb/storage/scsiglue.c b/drivers/usb/storage/scsiglue.c
+> index 59190d88fa9f..0a9520780771 100644
+> --- a/drivers/usb/storage/scsiglue.c
+> +++ b/drivers/usb/storage/scsiglue.c
+> @@ -195,8 +195,11 @@ static int slave_configure(struct scsi_device *sdev)
+>  		 */
+>  		sdev->skip_ms_page_8 = 1;
+>  
+> -		/* Some devices don't handle VPD pages correctly */
+> -		sdev->skip_vpd_pages = 1;
+> +		/*
+> +		 * Some devices don't handle VPD pages correctly, so skip vpd
+> +		 * pages if not forced by SCSI layer.
+> +		 */
+> +		sdev->skip_vpd_pages = sdev->try_vpd_pages == 0;
+>  
+>  		/* Do not attempt to use REPORT SUPPORTED OPERATION CODES */
+>  		sdev->no_report_opcodes = 1;
 
-Co-authored-by: Peter Zijlstra <peterz@infradead.org>
-Signed-off-by: Raghavendra Rao Ananta <rananta@codeaurora.org>
-Signed-off-by: Mukesh Ojha <mojha@codeaurora.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Alexei Starovoitov <ast@kernel.org>
----
-Change in V4:
-=============
-- Released, __get_cpu_context would not be correct way to get the
-  cpu context of the cpu which is offline, instead use
-  container_of to get the cpuctx from ctx.
+Acked-by: Alan Stern <stern@rowland.harvard.edu>
 
-- Changed the goto label name inside event_function_call from
-  'remove_event_from_context' to 'out'.
+Although I think it would be clearer to write:
 
-Change in V3:
-=============
-- Jiri has tried perf stat -a and removed one of the cpu from the other
-  terminal. This resulted in a crash. Crash was because in
-  event_function_call(), we were passing NULL as cpuctx in 
-  func(event, NULL, ctx, data).Fixed it in this patch.
+		sdev->skip_vpd_pages = !sdev->try_vpd_pages;
 
-Change in V2:
-=============
-As per long back discussion happened at
-https://lkml.org/lkml/2018/2/15/1324
+But that's just personal preference.  This is okay as it is.
 
-Peter.Z. has suggested to do thing in different way and shared
-patch as well. This patch fixes the issue seen while trying
-to achieve the purpose.
-
-Fixed issue on top of Peter's patch:
-===================================
-1. Added a NULL check on task to avoid crash in __perf_install_in_context.
-
-2. while trying to add event to context when cpu is offline.
-   Inside add_event_to_ctx() to make consistent state machine while hotplug.
-
--event->state += PERF_EVENT_STATE_HOTPLUG_OFFSET;
-+event->state = PERF_EVENT_STATE_HOTPLUG_OFFSET;
-
-3. In event_function_call(), added a label 'remove_event_from_ctx' to
-   delete events from context list while cpu is offline.
-
- include/linux/perf_event.h |   1 +
- kernel/events/core.c       | 123 ++++++++++++++++++++++++++++-----------------
- 2 files changed, 79 insertions(+), 45 deletions(-)
-
-diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
-index 3dc01cf..52b14b2 100644
---- a/include/linux/perf_event.h
-+++ b/include/linux/perf_event.h
-@@ -511,6 +511,7 @@ enum perf_event_state {
- 	PERF_EVENT_STATE_OFF		= -1,
- 	PERF_EVENT_STATE_INACTIVE	=  0,
- 	PERF_EVENT_STATE_ACTIVE		=  1,
-+	PERF_EVENT_STATE_HOTPLUG_OFFSET	= -32,
- };
- 
- struct file;
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index 118ad1a..82b5106 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -248,6 +248,8 @@ static int event_function(void *info)
- static void event_function_call(struct perf_event *event, event_f func, void *data)
- {
- 	struct perf_event_context *ctx = event->ctx;
-+	struct perf_cpu_context *cpuctx =
-+				container_of(ctx, struct perf_cpu_context, ctx);
- 	struct task_struct *task = READ_ONCE(ctx->task); /* verified in event_function */
- 	struct event_function_struct efs = {
- 		.event = event,
-@@ -264,17 +266,18 @@ static void event_function_call(struct perf_event *event, event_f func, void *da
- 		lockdep_assert_held(&ctx->mutex);
- 	}
- 
--	if (!task) {
--		cpu_function_call(event->cpu, event_function, &efs);
--		return;
--	}
--
- 	if (task == TASK_TOMBSTONE)
- 		return;
- 
- again:
--	if (!task_function_call(task, event_function, &efs))
--		return;
-+	if (task) {
-+		if (!task_function_call(task, event_function, &efs))
-+			return;
-+	} else {
-+		if (!cpu_function_call(event->cpu, event_function, &efs))
-+			return;
-+	}
-+
- 
- 	raw_spin_lock_irq(&ctx->lock);
- 	/*
-@@ -286,11 +289,17 @@ static void event_function_call(struct perf_event *event, event_f func, void *da
- 		raw_spin_unlock_irq(&ctx->lock);
- 		return;
- 	}
-+
-+	if (!task)
-+		goto out;
-+
- 	if (ctx->is_active) {
- 		raw_spin_unlock_irq(&ctx->lock);
- 		goto again;
- 	}
--	func(event, NULL, ctx, data);
-+
-+out:
-+	func(event, cpuctx, ctx, data);
- 	raw_spin_unlock_irq(&ctx->lock);
- }
- 
-@@ -2310,7 +2319,7 @@ static void perf_set_shadow_time(struct perf_event *event,
- 	struct perf_event *event, *partial_group = NULL;
- 	struct pmu *pmu = ctx->pmu;
- 
--	if (group_event->state == PERF_EVENT_STATE_OFF)
-+	if (group_event->state <= PERF_EVENT_STATE_OFF)
- 		return 0;
- 
- 	pmu->start_txn(pmu, PERF_PMU_TXN_ADD);
-@@ -2389,6 +2398,14 @@ static int group_can_go_on(struct perf_event *event,
- static void add_event_to_ctx(struct perf_event *event,
- 			       struct perf_event_context *ctx)
- {
-+	if (!ctx->task) {
-+		struct perf_cpu_context *cpuctx =
-+			container_of(ctx, struct perf_cpu_context, ctx);
-+
-+		if (!cpuctx->online)
-+			event->state = PERF_EVENT_STATE_HOTPLUG_OFFSET;
-+	}
-+
- 	list_add_event(event, ctx);
- 	perf_group_attach(event);
- }
-@@ -2576,11 +2593,6 @@ static int  __perf_install_in_context(void *info)
- 	 */
- 	smp_store_release(&event->ctx, ctx);
- 
--	if (!task) {
--		cpu_function_call(cpu, __perf_install_in_context, event);
--		return;
--	}
--
- 	/*
- 	 * Should not happen, we validate the ctx is still alive before calling.
- 	 */
-@@ -2619,8 +2631,14 @@ static int  __perf_install_in_context(void *info)
- 	 */
- 	smp_mb();
- again:
--	if (!task_function_call(task, __perf_install_in_context, event))
--		return;
-+
-+	if (task) {
-+		if (!task_function_call(task, __perf_install_in_context, event))
-+			return;
-+	} else {
-+		if (!cpu_function_call(cpu, __perf_install_in_context, event))
-+			return;
-+	}
- 
- 	raw_spin_lock_irq(&ctx->lock);
- 	task = ctx->task;
-@@ -2637,7 +2655,7 @@ static int  __perf_install_in_context(void *info)
- 	 * If the task is not running, ctx->lock will avoid it becoming so,
- 	 * thus we can safely install the event.
- 	 */
--	if (task_curr(task)) {
-+	if (task && task_curr(task)) {
- 		raw_spin_unlock_irq(&ctx->lock);
- 		goto again;
- 	}
-@@ -11022,16 +11040,7 @@ static int perf_event_set_clock(struct perf_event *event, clockid_t clk_id)
- 	}
- 
- 	if (!task) {
--		/*
--		 * Check if the @cpu we're creating an event for is online.
--		 *
--		 * We use the perf_cpu_context::ctx::mutex to serialize against
--		 * the hotplug notifiers. See perf_event_{init,exit}_cpu().
--		 */
--		struct perf_cpu_context *cpuctx =
--			container_of(ctx, struct perf_cpu_context, ctx);
--
--		if (!cpuctx->online) {
-+		if (!cpu_possible(cpu)) {
- 			err = -ENODEV;
- 			goto err_locked;
- 		}
-@@ -11213,15 +11222,7 @@ struct perf_event *
- 	}
- 
- 	if (!task) {
--		/*
--		 * Check if the @cpu we're creating an event for is online.
--		 *
--		 * We use the perf_cpu_context::ctx::mutex to serialize against
--		 * the hotplug notifiers. See perf_event_{init,exit}_cpu().
--		 */
--		struct perf_cpu_context *cpuctx =
--			container_of(ctx, struct perf_cpu_context, ctx);
--		if (!cpuctx->online) {
-+		if (!cpu_possible(cpu)) {
- 			err = -ENODEV;
- 			goto err_unlock;
- 		}
-@@ -11949,17 +11950,48 @@ static void perf_swevent_init_cpu(unsigned int cpu)
- }
- 
- #if defined CONFIG_HOTPLUG_CPU || defined CONFIG_KEXEC_CORE
-+static void __perf_event_init_cpu_context(void *__info)
-+{
-+	struct perf_cpu_context *cpuctx = __info;
-+	struct perf_event_context *ctx = &cpuctx->ctx;
-+	struct perf_event_context *task_ctx = cpuctx->task_ctx;
-+	struct perf_event *event;
-+
-+	perf_ctx_lock(cpuctx, task_ctx);
-+	ctx_sched_out(ctx, cpuctx, EVENT_ALL);
-+	if (task_ctx)
-+		ctx_sched_out(task_ctx, cpuctx, EVENT_ALL);
-+
-+	list_for_each_entry_rcu(event, &ctx->event_list, event_entry)
-+		perf_event_set_state(event, event->state - PERF_EVENT_STATE_HOTPLUG_OFFSET);
-+
-+	perf_event_sched_in(cpuctx, task_ctx, current);
-+	perf_ctx_unlock(cpuctx, task_ctx);
-+}
-+
-+static void _perf_event_init_cpu_context(int cpu, struct perf_cpu_context *cpuctx)
-+{
-+	smp_call_function_single(cpu, __perf_event_init_cpu_context, cpuctx, 1);
-+}
-+
- static void __perf_event_exit_context(void *__info)
- {
--	struct perf_event_context *ctx = __info;
--	struct perf_cpu_context *cpuctx = __get_cpu_context(ctx);
-+	struct perf_cpu_context *cpuctx = __info;
-+	struct perf_event_context *ctx = &cpuctx->ctx;
-+	struct perf_event_context *task_ctx = cpuctx->task_ctx;
- 	struct perf_event *event;
- 
--	raw_spin_lock(&ctx->lock);
--	ctx_sched_out(ctx, cpuctx, EVENT_TIME);
--	list_for_each_entry(event, &ctx->event_list, event_entry)
--		__perf_remove_from_context(event, cpuctx, ctx, (void *)DETACH_GROUP);
--	raw_spin_unlock(&ctx->lock);
-+	perf_ctx_lock(cpuctx, task_ctx);
-+	ctx_sched_out(ctx, cpuctx, EVENT_ALL);
-+	if (task_ctx)
-+		ctx_sched_out(task_ctx, cpuctx, EVENT_ALL);
-+
-+	list_for_each_entry_rcu(event, &ctx->event_list, event_entry)
-+		perf_event_set_state(event,
-+			event->state + PERF_EVENT_STATE_HOTPLUG_OFFSET);
-+
-+	perf_event_sched_in(cpuctx, task_ctx, current);
-+	perf_ctx_unlock(cpuctx, task_ctx);
- }
- 
- static void perf_event_exit_cpu_context(int cpu)
-@@ -11974,7 +12006,7 @@ static void perf_event_exit_cpu_context(int cpu)
- 		ctx = &cpuctx->ctx;
- 
- 		mutex_lock(&ctx->mutex);
--		smp_call_function_single(cpu, __perf_event_exit_context, ctx, 1);
-+		smp_call_function_single(cpu, __perf_event_exit_context, cpuctx, 1);
- 		cpuctx->online = 0;
- 		mutex_unlock(&ctx->mutex);
- 	}
-@@ -11982,7 +12014,7 @@ static void perf_event_exit_cpu_context(int cpu)
- 	mutex_unlock(&pmus_lock);
- }
- #else
--
-+static void _perf_event_init_cpu_context(int cpu, struct perf_cpu_context *cpuctx) { }
- static void perf_event_exit_cpu_context(int cpu) { }
- 
- #endif
-@@ -12003,6 +12035,7 @@ int perf_event_init_cpu(unsigned int cpu)
- 
- 		mutex_lock(&ctx->mutex);
- 		cpuctx->online = 1;
-+		_perf_event_init_cpu_context(cpu, cpuctx);
- 		mutex_unlock(&ctx->mutex);
- 	}
- 	mutex_unlock(&pmus_lock);
--- 
-Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center,
-Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project
+Alan Stern
 
