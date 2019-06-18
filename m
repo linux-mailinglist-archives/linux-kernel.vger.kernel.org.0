@@ -2,151 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 882A549951
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 08:50:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 952FB49900
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 08:42:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728602AbfFRGuo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Jun 2019 02:50:44 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:10931 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725919AbfFRGun (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Jun 2019 02:50:43 -0400
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 45SdXb0twlz9v2g3;
-        Tue, 18 Jun 2019 08:31:59 +0200 (CEST)
-Authentication-Results: localhost; dkim=pass
-        reason="1024-bit key; insecure key"
-        header.d=c-s.fr header.i=@c-s.fr header.b=OmzqKc6+; dkim-adsp=pass;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id TZILph5M7jCf; Tue, 18 Jun 2019 08:31:59 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 45SdXZ6xSBz9v2g2;
-        Tue, 18 Jun 2019 08:31:58 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
-        t=1560839519; bh=TE8cI41mSPy/enSR8a1lyKFDOW5JBtL6McA/5Yz5l78=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=OmzqKc6+Wv8ufXUWHDj3EK2h8DFvl0fTvJkxdDH/p+wfrsBPHVeDOAUuz09Qmw1zM
-         jkEKEfpMfJSyknKwQCKuinjfVNKG80s91tSt1HMdJFzi/zLgPWdWWrzoYr9nTWNrdt
-         LTFus4bhtqcPNOnFcigRiHvkB//GqIGnXyumsLkY=
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 006408B884;
-        Tue, 18 Jun 2019 08:31:58 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id qAwZ7WmJ_x5P; Tue, 18 Jun 2019 08:31:58 +0200 (CEST)
-Received: from PO15451 (unknown [192.168.4.90])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 19A068B78B;
-        Tue, 18 Jun 2019 08:31:58 +0200 (CEST)
-Subject: Re: [PATCH 4/5] Powerpc/hw-breakpoint: Optimize disable path
-To:     Ravi Bangoria <ravi.bangoria@linux.ibm.com>, mpe@ellerman.id.au
-Cc:     benh@kernel.crashing.org, paulus@samba.org, mikey@neuling.org,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        npiggin@gmail.com, naveen.n.rao@linux.vnet.ibm.com
-References: <20190618042732.5582-1-ravi.bangoria@linux.ibm.com>
- <20190618042732.5582-5-ravi.bangoria@linux.ibm.com>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Message-ID: <6e7c6054-b152-40db-c7d3-89901949460f@c-s.fr>
-Date:   Tue, 18 Jun 2019 08:31:57 +0200
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.1
+        id S1728377AbfFRGmi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Jun 2019 02:42:38 -0400
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:16189 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726446AbfFRGm0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Jun 2019 02:42:26 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5d08858e0000>; Mon, 17 Jun 2019 23:32:46 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Mon, 17 Jun 2019 23:32:45 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Mon, 17 Jun 2019 23:32:45 -0700
+Received: from [10.26.11.141] (172.20.13.39) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 18 Jun
+ 2019 06:32:42 +0000
+Subject: Re: [PATCH V1] i2c: tegra: disable irq in tegra_i2c_xfer_msg
+To:     Bitan Biswas <bbiswas@nvidia.com>,
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        Thierry Reding <treding@nvidia.com>,
+        <linux-i2c@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Peter Rosin <peda@axentia.se>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Dmitry Osipenko <digetx@gmail.com>
+CC:     Shardar Mohammed <smohammed@nvidia.com>,
+        Sowjanya Komatineni <skomatineni@nvidia.com>,
+        Mantravadi Karthik <mkarthik@nvidia.com>
+References: <1560835386-2865-1-git-send-email-bbiswas@nvidia.com>
+From:   Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <30d1d048-f474-f1fb-6415-ee6389900032@nvidia.com>
+Date:   Tue, 18 Jun 2019 07:32:40 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-In-Reply-To: <20190618042732.5582-5-ravi.bangoria@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <1560835386-2865-1-git-send-email-bbiswas@nvidia.com>
+X-Originating-IP: [172.20.13.39]
+X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1560839566; bh=36AfYXlVRsIoRYgUu6dWpzivHUbZQ39MsVKao4WnHfE=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=kY0hE6X5Z5s5Kt/F5TcMUn842rvnQIIrOM8tb1SCa2FxEQYtNnoJBGWfFzCSSJvzH
+         EubDQzNfMSuSGsgWi/37RYYEw/cUNWGCLIyaVFd7IYd3Kd/U9JG4vwGxV9rvMzP+f2
+         KhVt/Dkph9ZaaL3xEVZrPuEpEiQBw687VetjNgzIrwKp89qIRBWSbh9st2o/4ixpsJ
+         VW8gNsiOX8aSQal9sL69b7+kw1BpXiSb3fsXbokFtwEozpMK049eo1z6trKatajUtl
+         +detDi5RcfTMtBYxEXi08tlEZ2kXNeGRlDugGL7sp9GR7yEpAO9BthfyHfaZ9e17nk
+         3pW2Im5oNYYpQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
+On 18/06/2019 06:23, Bitan Biswas wrote:
+> Synchronize ISR and tegra_i2c_xfer_msg execution
+> by disabling interrupt. This avoids spinlock usage
+> for same purpose.
 
-Le 18/06/2019 à 06:27, Ravi Bangoria a écrit :
-> Directly setting dawr and dawrx with 0 should be enough to
-> disable watchpoint. No need to reset individual bits in
-> variable and then set in hw.
-> 
-> Signed-off-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-> ---
->   arch/powerpc/include/asm/hw_breakpoint.h |  3 ++-
->   arch/powerpc/kernel/process.c            | 12 ++++++++++++
->   2 files changed, 14 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/powerpc/include/asm/hw_breakpoint.h b/arch/powerpc/include/asm/hw_breakpoint.h
-> index 78202d5fb13a..8acbbdd4a2d5 100644
-> --- a/arch/powerpc/include/asm/hw_breakpoint.h
-> +++ b/arch/powerpc/include/asm/hw_breakpoint.h
-> @@ -19,6 +19,7 @@ struct arch_hw_breakpoint {
->   /* Note: Don't change the the first 6 bits below as they are in the same order
->    * as the dabr and dabrx.
->    */
-> +#define HW_BRK_TYPE_DISABLE		0x00
+I think that you need to explain the motivation/benefit of this. It is
+not immediately clear to me. Sorry if I have missed some previous
+discussion.
 
-I'd rather call it HW_BRK_TYPE_NONE
+Jon
 
->   #define HW_BRK_TYPE_READ		0x01
->   #define HW_BRK_TYPE_WRITE		0x02
->   #define HW_BRK_TYPE_TRANSLATE		0x04
-> @@ -68,7 +69,7 @@ static inline void hw_breakpoint_disable(void)
->   	struct arch_hw_breakpoint brk;
->   
->   	brk.address = 0;
-> -	brk.type = 0;
-> +	brk.type = HW_BRK_TYPE_DISABLE;
->   	brk.len = 0;
->   	if (ppc_breakpoint_available())
->   		__set_breakpoint(&brk);
-> diff --git a/arch/powerpc/kernel/process.c b/arch/powerpc/kernel/process.c
-> index f002d2ffff86..265fac9fb3a4 100644
-> --- a/arch/powerpc/kernel/process.c
-> +++ b/arch/powerpc/kernel/process.c
-> @@ -793,10 +793,22 @@ static inline int set_dabr(struct arch_hw_breakpoint *brk)
->   	return __set_dabr(dabr, dabrx);
->   }
->   
-> +static int disable_dawr(void)
-> +{
-> +	if (ppc_md.set_dawr)
-> +		return ppc_md.set_dawr(0, 0);
-> +
-> +	mtspr(SPRN_DAWRX, 0);
-
-And SPRN_DAWR ?
-
-The above code looks pretty similar to the one at the end of set_dawr(). 
-You should factorise it, for instance
-
-static int __set_dawr(int dawr, int dawrx)
-{
-	if (ppc_md.set_dawr)
-		return ppc_md.set_dawr(dawr, dawrx);
-	mtspr(SPRN_DAWR, dawr);
-	mtspr(SPRN_DAWRX, dawrx);
-	return 0;
-}
-
-> +	return 0;
-> +}
-> +
->   int set_dawr(struct arch_hw_breakpoint *brk)
->   {
->   	unsigned long dawr, dawrx, mrd;
->   
-> +	if (brk->type == HW_BRK_TYPE_DISABLE)
-> +		return disable_dawr();
-
-Then replace by __set_dawr(0, 0);
-
-> +
->   	dawr = brk->address;
->   
->   	dawrx  = (brk->type & HW_BRK_TYPE_RDWR) << (63 - 58);
-> 
-
-And use the new helper at the end of the function too.
-
-Christophe
+-- 
+nvpublic
