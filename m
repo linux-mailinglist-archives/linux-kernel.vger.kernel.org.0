@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BB3D24A3F4
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 16:29:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 407034A3FD
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 16:29:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729668AbfFRO3Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Jun 2019 10:29:16 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:50566 "EHLO
+        id S1729813AbfFRO3i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Jun 2019 10:29:38 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:50510 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729550AbfFRO3I (ORCPT
+        by vger.kernel.org with ESMTP id S1729386AbfFRO3H (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Jun 2019 10:29:08 -0400
+        Tue, 18 Jun 2019 10:29:07 -0400
 Received: from [167.98.27.226] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hdF6e-0007nK-Cl; Tue, 18 Jun 2019 15:29:04 +0100
+        id 1hdF6e-0007nN-9x; Tue, 18 Jun 2019 15:29:04 +0100
 Received: from ben by deadeye with local (Exim 4.92)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hdF6d-0000HN-DL; Tue, 18 Jun 2019 15:29:03 +0100
+        id 1hdF6d-0000I1-Oy; Tue, 18 Jun 2019 15:29:03 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,23 +27,19 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Matthew Wilcox" <willy@infradead.org>,
-        "Michal Hocko" <mhocko@suse.com>,
-        "Dave Chinner" <david@fromorbit.com>,
-        "Kevin Easton" <kevin@guarana.org>,
-        "Josh Snyder" <joshs@netflix.com>,
-        "Andy Lutomirski" <luto@amacapital.net>,
-        "Tejun Heo" <tj@kernel.org>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>,
-        "Linus Torvalds" <torvalds@linux-foundation.org>,
-        "Vlastimil Babka" <vbabka@suse.cz>,
-        "Daniel Gruss" <daniel@gruss.cc>, "Cyril Hrubis" <chrubis@suse.cz>,
-        "Jiri Kosina" <jkosina@suse.cz>
+        "David S. Miller" <davem@davemloft.net>,
+        "Jonathan Lemon" <jonathan.lemon@gmail.com>,
+        "Jonathan Looney" <jtl@netflix.com>,
+        "Eric Dumazet" <edumazet@google.com>,
+        "Yuchung Cheng" <ycheng@google.com>,
+        "Bruce Curtis" <brucec@netflix.com>,
+        "Neal Cardwell" <ncardwell@google.com>,
+        "Tyler Hicks" <tyhicks@canonical.com>
 Date:   Tue, 18 Jun 2019 15:28:02 +0100
-Message-ID: <lsq.1560868082.552948978@decadent.org.uk>
+Message-ID: <lsq.1560868082.100664112@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 02/10] mm/mincore.c: make mincore() more conservative
+Subject: [PATCH 3.16 10/10] tcp: enforce tcp_min_snd_mss in tcp_mtu_probing()
 In-Reply-To: <lsq.1560868079.359853905@decadent.org.uk>
 X-SA-Exim-Connect-IP: 167.98.27.226
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -57,88 +53,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jiri Kosina <jkosina@suse.cz>
+From: Eric Dumazet <edumazet@google.com>
 
-commit 134fca9063ad4851de767d1768180e5dede9a881 upstream.
+commit 967c05aee439e6e5d7d805e195b3a20ef5c433d6 upstream.
 
-The semantics of what mincore() considers to be resident is not
-completely clear, but Linux has always (since 2.3.52, which is when
-mincore() was initially done) treated it as "page is available in page
-cache".
+If mtu probing is enabled tcp_mtu_probing() could very well end up
+with a too small MSS.
 
-That's potentially a problem, as that [in]directly exposes
-meta-information about pagecache / memory mapping state even about
-memory not strictly belonging to the process executing the syscall,
-opening possibilities for sidechannel attacks.
+Use the new sysctl tcp_min_snd_mss to make sure MSS search
+is performed in an acceptable range.
 
-Change the semantics of mincore() so that it only reveals pagecache
-information for non-anonymous mappings that belog to files that the
-calling process could (if it tried to) successfully open for writing;
-otherwise we'd be including shared non-exclusive mappings, which
+CVE-2019-11479 -- tcp mss hardcoded to 48
 
- - is the sidechannel
-
- - is not the usecase for mincore(), as that's primarily used for data,
-   not (shared) text
-
-[jkosina@suse.cz: v2]
-  Link: http://lkml.kernel.org/r/20190312141708.6652-2-vbabka@suse.cz
-[mhocko@suse.com: restructure can_do_mincore() conditions]
-Link: http://lkml.kernel.org/r/nycvar.YFH.7.76.1903062342020.19912@cbobk.fhfr.pm
-Signed-off-by: Jiri Kosina <jkosina@suse.cz>
-Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
-Acked-by: Josh Snyder <joshs@netflix.com>
-Acked-by: Michal Hocko <mhocko@suse.com>
-Originally-by: Linus Torvalds <torvalds@linux-foundation.org>
-Originally-by: Dominique Martinet <asmadeus@codewreck.org>
-Cc: Andy Lutomirski <luto@amacapital.net>
-Cc: Dave Chinner <david@fromorbit.com>
-Cc: Kevin Easton <kevin@guarana.org>
-Cc: Matthew Wilcox <willy@infradead.org>
-Cc: Cyril Hrubis <chrubis@suse.cz>
-Cc: Tejun Heo <tj@kernel.org>
-Cc: Kirill A. Shutemov <kirill@shutemov.name>
-Cc: Daniel Gruss <daniel@gruss.cc>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-[bwh: Backported to 3.16: adjust context]
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Reported-by: Jonathan Lemon <jonathan.lemon@gmail.com>
+Cc: Jonathan Looney <jtl@netflix.com>
+Acked-by: Neal Cardwell <ncardwell@google.com>
+Cc: Yuchung Cheng <ycheng@google.com>
+Cc: Tyler Hicks <tyhicks@canonical.com>
+Cc: Bruce Curtis <brucec@netflix.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+[Salvatore Bonaccorso: Backport for context changes in 4.9.168]
+[bwh: Backported to 3.16: The sysctl is global]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
---- a/mm/mincore.c
-+++ b/mm/mincore.c
-@@ -212,6 +212,22 @@ static void mincore_page_range(struct vm
- 	} while (pgd++, addr = next, addr != end);
- }
- 
-+static inline bool can_do_mincore(struct vm_area_struct *vma)
-+{
-+	if (vma_is_anonymous(vma))
-+		return true;
-+	if (!vma->vm_file)
-+		return false;
-+	/*
-+	 * Reveal pagecache information only for non-anonymous mappings that
-+	 * correspond to the files the calling process could (if tried) open
-+	 * for writing; otherwise we'd be including shared non-exclusive
-+	 * mappings, which opens a side channel.
-+	 */
-+	return inode_owner_or_capable(file_inode(vma->vm_file)) ||
-+		inode_permission(file_inode(vma->vm_file), MAY_WRITE) == 0;
-+}
-+
- /*
-  * Do a chunk of "sys_mincore()". We've already checked
-  * all the arguments, we hold the mmap semaphore: we should
-@@ -227,6 +243,11 @@ static long do_mincore(unsigned long add
- 		return -ENOMEM;
- 
- 	end = min(vma->vm_end, addr + (pages << PAGE_SHIFT));
-+	if (!can_do_mincore(vma)) {
-+		unsigned long pages = DIV_ROUND_UP(end - addr, PAGE_SIZE);
-+		memset(vec, 1, pages);
-+		return pages;
-+	}
- 
- 	if (is_vm_hugetlb_page(vma))
- 		mincore_hugetlb_page_range(vma, addr, end, vec);
+ net/ipv4/tcp_timer.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+--- a/net/ipv4/tcp_timer.c
++++ b/net/ipv4/tcp_timer.c
+@@ -113,6 +113,7 @@ static void tcp_mtu_probing(struct inet_
+ 			mss = tcp_mtu_to_mss(sk, icsk->icsk_mtup.search_low) >> 1;
+ 			mss = min(sysctl_tcp_base_mss, mss);
+ 			mss = max(mss, 68 - tp->tcp_header_len);
++			mss = max(mss, sysctl_tcp_min_snd_mss);
+ 			icsk->icsk_mtup.search_low = tcp_mss_to_mtu(sk, mss);
+ 			tcp_sync_mss(sk, icsk->icsk_pmtu_cookie);
+ 		}
 
