@@ -2,93 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DD5B2499DE
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 09:06:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B25C499C6
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 09:03:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728951AbfFRHGA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Jun 2019 03:06:00 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:36677 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726158AbfFRHF7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Jun 2019 03:05:59 -0400
-Received: by mail-pf1-f196.google.com with SMTP id r7so7101409pfl.3;
-        Tue, 18 Jun 2019 00:05:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=KY0hOmAa86HuZE0h9c7QHLSN/sFybZcvdeeWuBmi/OU=;
-        b=Ue8LR2Qk7y+EWsK1kXFMPLzPeXzkdfH0ztEPZVb5Jfusm1NYSEeT8qzhlDfQo/Mo7m
-         l9409MLPWW+t0N0zo++a14pi+SGGltJ0SS42uhY4SXXGgGi8HAOE+LIGSyFLRA3NfbtE
-         zisJAa/0g+CPDB7AKAO2nYYFmLPH0ypBESfc0UCOavmrIrB0PoXhmASaaXN1DbY2quVq
-         lIdZ3KIjdRBUdJMe5gTa05BWd2YrDH+OAptQsADdxajQOZBK8XWvB/Rz4HWFSdGFYwBy
-         gvcj70OXo+RRh5f5nWUyIdktSspfSuZQBQ3QsJqNz1KMuGqDklr9UxiZHVATVylJMcyH
-         4Gpw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=KY0hOmAa86HuZE0h9c7QHLSN/sFybZcvdeeWuBmi/OU=;
-        b=iTPL4beohlgK0QWR+SH1a9kEirgWvihaXVFnjMi76HFnxjASzOzBJRVIUvJU2WGVzV
-         WzfI3VOgjHyV9An/oKIo6DLaDYp7z3R/tzDq0XsFSBbfooj2AHYv0vrweMJp3gKiuuid
-         oahgx2lVr76P3UTgsxW8b0sNqb88Rua2Hy3UvYxk1NZ4CmHyzDDUKZ0//ktFSkW4985v
-         MCpY/3dSSQayj6HCq3as9jYVnl4yRepxF8ktvWlJ/WD+adHnvBwbv2m3ifZ3mMouyB6h
-         V0Cqgxy7w6UHjP8G8HQfj9Tn7FY7rCT3TAPSLZHiEGFbkxLj+OIlKi400UvJD7SJ5OpJ
-         Um+g==
-X-Gm-Message-State: APjAAAVvjP6uulz8yfrrg/2KJ0w4wH2eN21mH5Ae3ozVSKfo9hrEQPng
-        8WrNN2kjfqo90q6+qb2UTpVgJ1JsWJA=
-X-Google-Smtp-Source: APXvYqxTytyfk9wnV8foDumcE1FOZD+ACJGrgFdfF44453aFg6xoz3efdMevejBUgM67y8CrZf3Wng==
-X-Received: by 2002:a17:90a:9b08:: with SMTP id f8mr3264521pjp.103.1560838638921;
-        Mon, 17 Jun 2019 23:17:18 -0700 (PDT)
-Received: from maya190131 ([13.66.160.195])
-        by smtp.gmail.com with ESMTPSA id y185sm14143581pfy.110.2019.06.17.23.17.18
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 17 Jun 2019 23:17:18 -0700 (PDT)
-Date:   Tue, 18 Jun 2019 06:17:18 +0000
-From:   Maya Nakamura <m.maya.nakamura@gmail.com>
-To:     mikelley@microsoft.com, kys@microsoft.com, haiyangz@microsoft.com,
-        sthemmin@microsoft.com, sashal@kernel.org
-Cc:     x86@kernel.org, linux-hyperv@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v3 5/5] Input: hv: Remove dependencies on PAGE_SIZE for ring
- buffer
-Message-ID: <78f6e9646f762c51febba6c5a52eb777c238d4aa.1560837096.git.m.maya.nakamura@gmail.com>
-References: <cover.1560837096.git.m.maya.nakamura@gmail.com>
+        id S1728851AbfFRHDr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Jun 2019 03:03:47 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:18634 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725829AbfFRHDq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Jun 2019 03:03:46 -0400
+Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 97152D46B26BDBAF397B;
+        Tue, 18 Jun 2019 14:18:13 +0800 (CST)
+Received: from [10.151.23.176] (10.151.23.176) by smtp.huawei.com
+ (10.3.19.205) with Microsoft SMTP Server (TLS) id 14.3.439.0; Tue, 18 Jun
+ 2019 14:18:05 +0800
+Subject: Re: [RFC PATCH 0/8] staging: erofs: decompression inplace approach
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     <devel@driverdev.osuosl.org>, Miao Xie <miaoxie@huawei.com>,
+        <chao@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        <weidu.du@huawei.com>, Fang Wei <fangwei1@huawei.com>,
+        <linux-fsdevel@vger.kernel.org>, <linux-erofs@lists.ozlabs.org>
+References: <20190614181619.64905-1-gaoxiang25@huawei.com>
+ <20190617203609.GA22034@kroah.com>
+ <c86d3fc0-8b4a-6583-4309-911960fbe862@huawei.com>
+ <20190618054709.GA4271@kroah.com>
+From:   Gao Xiang <gaoxiang25@huawei.com>
+Message-ID: <df18d7f9-f65a-5697-c7c4-edb1ad846c3e@huawei.com>
+Date:   Tue, 18 Jun 2019 14:18:00 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1560837096.git.m.maya.nakamura@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20190618054709.GA4271@kroah.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.151.23.176]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Define the ring buffer size as a constant expression because it should
-not depend on the guest page size.
 
-Signed-off-by: Maya Nakamura <m.maya.nakamura@gmail.com>
-Reviewed-by: Michael Kelley <mikelley@microsoft.com>
----
- drivers/input/serio/hyperv-keyboard.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/input/serio/hyperv-keyboard.c b/drivers/input/serio/hyperv-keyboard.c
-index 8e457e50f837..88ae7c2ac3c8 100644
---- a/drivers/input/serio/hyperv-keyboard.c
-+++ b/drivers/input/serio/hyperv-keyboard.c
-@@ -75,8 +75,8 @@ struct synth_kbd_keystroke {
- 
- #define HK_MAXIMUM_MESSAGE_SIZE 256
- 
--#define KBD_VSC_SEND_RING_BUFFER_SIZE		(10 * PAGE_SIZE)
--#define KBD_VSC_RECV_RING_BUFFER_SIZE		(10 * PAGE_SIZE)
-+#define KBD_VSC_SEND_RING_BUFFER_SIZE		(40 * 1024)
-+#define KBD_VSC_RECV_RING_BUFFER_SIZE		(40 * 1024)
- 
- #define XTKBD_EMUL0     0xe0
- #define XTKBD_EMUL1     0xe1
--- 
-2.17.1
+On 2019/6/18 13:47, Greg Kroah-Hartman wrote:
+> On Tue, Jun 18, 2019 at 09:47:08AM +0800, Gao Xiang wrote:
+>>
+>>
+>> On 2019/6/18 4:36, Greg Kroah-Hartman wrote:
+>>> On Sat, Jun 15, 2019 at 02:16:11AM +0800, Gao Xiang wrote:
+>>>> At last, this is RFC patch v1, which means it is not suitable for
+>>>> merging soon... I'm still working on it, testing its stability
+>>>> these days and hope these patches get merged for 5.3 LTS
+>>>> (if 5.3 is a LTS version).
+>>>
+>>> Why would 5.3 be a LTS kernel?
+>>>
+>>> curious as to how you came up with that :)
+>>
+>> My personal thought is about one LTS kernel one year...
+>> Usually 5 versions after the previous kernel...(4.4 -> 4.9 -> 4.14 -> 4.19),
+>> which is not suitable for all historical LTSs...just prepare for 5.3...
+> 
+> I try to pick the "last" kernel that is released each year, which
+> sometimes is 5 kernels, sometimes 4, sometimes 6, depending on the
+> release cycle.
+> 
+> So odds are it will be 5.4 for the next LTS kernel, but we will not know
+> more until it gets closer to release time.
 
+Thanks for kindly explanation :)
+
+Anyway, I will test these patches, land to our commerical products and try the best
+efforts on making it more stable for Linux upstream to merge.
+
+Thanks,
+Gao Xiang
+
+> 
+> thanks,
+> 
+> greg k-h
+> 
