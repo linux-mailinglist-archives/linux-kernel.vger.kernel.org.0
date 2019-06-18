@@ -2,83 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DFD144AADF
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 21:09:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 93AB24AAE0
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 21:10:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730365AbfFRTJj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Jun 2019 15:09:39 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:42221 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727386AbfFRTJj (ORCPT
+        id S1730460AbfFRTKY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Jun 2019 15:10:24 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:36759 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727386AbfFRTKX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Jun 2019 15:09:39 -0400
-Received: by mail-wr1-f68.google.com with SMTP id x17so661381wrl.9
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2019 12:09:38 -0700 (PDT)
+        Tue, 18 Jun 2019 15:10:23 -0400
+Received: by mail-lj1-f196.google.com with SMTP id i21so689574ljj.3
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2019 12:10:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:sender:from:date:message-id:subject:to;
-        bh=ErChJqHXwD7RnIC2uSuwE7jcIfkZcXN1KqzRYICXdY4=;
-        b=RK9ROuJ3/LYB647KQ6OS4Rits8FO0xjRa8AAaFGbykO5Tr1m15bTHINTJl2uvBuWC8
-         +W3hdodacsfjEGzVtBNdA/xZjvWU+/jR7/S4y/iHAxGLo9lLfxpnHUP77IlGKBp/vmDn
-         q3v0p1xncMMi605YzzslJGM34ARk3klbREVgVD97FduBqAnhuiUWvtGQ/qyUuliN5C2m
-         PYJD0wcj2Twy+my3iHmPMrRAKcEn3QhLkSqn/E0PXW4ZT0jMqexc38bGWT0h38S5DTGt
-         LULg46zG92ocx4bBNs40FHml1h+BJTk6Sa7fvgI6LSHM5qKFiCp+0Dheg+3D5GsKSngi
-         yLsg==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=u69+nLXPtFpbs6TaePvjeaTV79sjBn+0kMLOo8QV9dQ=;
+        b=NmHlXE549XG+CtzrGl8FRRUnyJMBn0Ba3aS5JivNDC+A5JPz2Yu7wHyIBXn4Xp8E6V
+         +tknKiyvaCuv7ze4AXJHR1qp5i7fvOJbOcw0iJuAu8/91zOGW2QYkqYeW/ZI+k12mSww
+         yEB2J+NHetS/6lLWvIHXYEa6iGpBEbKM3+uhjB+46CZxoFqr6MT/QQKwf/g+FPF8/EVX
+         O/C88+IQ8Ukt0L/7G3GXgQizQAp2VJqMnGDnMDKs1x3n7CHM9tmtaSJw+YQPD5aUGWei
+         chsoQnxg+awKflDM5STp2/1scSzQmrXB9sZ15ScrhAFF2S0zvQ0N6eAS+i1ovwkGolRH
+         5sRQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:sender:from:date
-         :message-id:subject:to;
-        bh=ErChJqHXwD7RnIC2uSuwE7jcIfkZcXN1KqzRYICXdY4=;
-        b=I/krpY4EyZeLdorc9w3dbJlzMV+jFeeuhXbbiZkAH4Q95Z+dLgZYr2dcxnvZr+asO4
-         Ar1HgBcU490du83ns5xEP2xsevbfLgrRz48+BW6cNOwc1zlrs6CdPxaZyb9j2Xj/gHYH
-         jm0/1pl8Fw/drI3DYc+ZqgKaxNrp2GsFHamjFj8BKLs7DzA6qOvN/K1n1d5aWnbdM5UF
-         doQkYKESCJj6giq+oZEgNwolt7AIAbH0UVjTqejCg3q+MkbqCBPm/9k4INkV2WRKoPn1
-         8y3WCTXb5TuegnLFIAjHkEjgtokUOBqtu+vUG0Ru0kXWe78itSXNbHcrS9RZq6HaBzjt
-         hHTA==
-X-Gm-Message-State: APjAAAX4+YLj70UR0QO0/koW1clq9rGEYku8IqPns0mphJxYoY5ziRRq
-        WV1yG7ffwt35CEHNpYgGnUsoP/MhyNKDW59XMJA=
-X-Google-Smtp-Source: APXvYqw2CmekZkmdgmtI3icgzyjX9c3B7Gd7/4nJYijLyDrMNHNlTSx7dvXAjaDfBm6H+Tb9Oy16bbRhe2YTHIrcXeU=
-X-Received: by 2002:a5d:400f:: with SMTP id n15mr20663898wrp.312.1560884977445;
- Tue, 18 Jun 2019 12:09:37 -0700 (PDT)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=u69+nLXPtFpbs6TaePvjeaTV79sjBn+0kMLOo8QV9dQ=;
+        b=tl6mwz1JivHP4kI1BRP1vrh0OvtR4T5ucAkmxWpUP3b7U0R3nzBuWoSZ2aMp95cpq+
+         cF7FwYLSjmcszjkBSz8csJv60wzGL08ro9ZKRmbHZVxQy/W6ykCegWmcvwC7q4LldRja
+         cMI/LXo1jalcZi9Tr4WnfZ9H/b0oQj57t1l0uJ+i5X/teJQbIIVsg1lc9aI1+GksftBF
+         BK/W0f/S+BdWkPn2ssn2wCUqNPNcpXF6KTxxdVfBLNIRoRXEEnCUgWDRFZdTnvnO4IPG
+         J3cXj6cOyruta2rzOAPmfFELHg+gZiv9yPaZ69yWaQphWmhQUOSupWI0QGEgjcAOzrl/
+         lWHA==
+X-Gm-Message-State: APjAAAUaGwNsD/CJexll/NhEyA6dwgOPJgNxk77rk2jrSKEYP/PWskO/
+        X6rUtZiJTM1CQklp3NkrgTSd/Rsj1gr3m1seuijNDQ==
+X-Google-Smtp-Source: APXvYqwLkpvNF/wVs3KqDx5UiSroFjYcsfziiGdNbJ6lJvw8dk/WsNpJ1kNCKjRCMErTB4agKCXbrCz8Hl94x0zS+io=
+X-Received: by 2002:a2e:4a1a:: with SMTP id x26mr47206359lja.207.1560885021249;
+ Tue, 18 Jun 2019 12:10:21 -0700 (PDT)
 MIME-Version: 1.0
-Reply-To: mrrocksteven505@gmail.com
-Received: by 2002:a1c:b609:0:0:0:0:0 with HTTP; Tue, 18 Jun 2019 12:09:37
- -0700 (PDT)
-From:   "Mr.Rock Steven" <mrcaraluda05@gmail.com>
-Date:   Tue, 18 Jun 2019 21:09:37 +0200
-X-Google-Sender-Auth: kHQ7oObDiF8brOnVTQLPjrgGQqc
-Message-ID: <CAL90gPjrC_-T+d+Y_Mti75JjtFbQTDUKWvzSMU=NrDSBbLfYjw@mail.gmail.com>
-Subject: VERY URGENT!!
-To:     undisclosed-recipients:;
+References: <20190614194854.208436-1-fletcherw@chromium.org>
+ <20190614194854.208436-4-fletcherw@chromium.org> <4e560e12-4c20-8d5d-b3f9-587a55da279d@intel.com>
+ <CAN-6NYZzMqwDaw2oDyms4P9uKFPJvuQOtGbqMWLtFV3kDyQHJQ@mail.gmail.com>
+ <CAOReqxhETC9xAojXyDWLMOJ3W22Zn4GNGry44=XC=t_k7SCHqA@mail.gmail.com> <20190618184710.GP5316@sirena.org.uk>
+In-Reply-To: <20190618184710.GP5316@sirena.org.uk>
+From:   Curtis Malainey <cujomalainey@google.com>
+Date:   Tue, 18 Jun 2019 12:10:10 -0700
+Message-ID: <CAOReqxj+9WH70P5oDN12KdDqkX8Kp18NBdTswOZSC8u=AwS_LQ@mail.gmail.com>
+Subject: Re: [PATCH v7 3/4] ASoC: rt5677: clear interrupts by polarity flip
+To:     Mark Brown <broonie@kernel.org>
+Cc:     Fletcher Woodruff <fletcherw@chromium.org>,
+        Cezary Rojewski <cezary.rojewski@intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Oder Chiou <oder_chiou@realtek.com>,
+        Takashi Iwai <tiwai@suse.com>,
+        Curtis Malainey <cujomalainey@chromium.org>,
+        Ross Zwisler <zwisler@chromium.org>,
+        ALSA development <alsa-devel@alsa-project.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dear friend.
-I assume you and your family are in good health. I am the foreign
-operations Manager at one of the leading generation bank here in West
-Africa.
-
-This being a wide world in which it can be difficult to make new
-acquaintances and because it is virtually impossible to know who is
-trustworthy and who can be believed, i have decided to repose
-confidence in you after much fasting and prayer. It is only because of
-this that I have decided to confide in you and to share with you this
-confidential business.
-
-In my bank; there resides an overdue and unclaimed sum of $15.5m,
-(Fifteen Million Five Hundred Thousand Dollars Only) When the account
-holder suddenly passed on, he left no beneficiary who would be
-entitled to the receipt of this fund. For this reason, I have found it
-expedient to transfer this fund to a trustworthy individual with
-capacity to act as foreign business partner. Thus i humbly request
-your assistance to claim this fund.
-
-Upon the transfer of this fund in your account, you will take 45% as
-your share from the total fund, 10% will be shared to Charity
-Organizations in both country and 45% will be for me. Please if you
-are really sure you can handle this project, contact me immediately.
-Yours Faithful,
-Mr.Rock Steven,
+On Tue, Jun 18, 2019 at 11:47 AM Mark Brown <broonie@kernel.org> wrote:
+>
+> On Tue, Jun 18, 2019 at 11:12:58AM -0700, Curtis Malainey wrote:
+> > On Tue, Jun 18, 2019 at 11:01 AM Fletcher Woodruff
+> > > On Sun, Jun 16, 2019 at 10:56 AM Cezary Rojewski
+> > > > On 2019-06-14 21:48, Fletcher Woodruff wrote:
+>
+> > > > > +     ret = regmap_read(rt5677->regmap, RT5677_IRQ_CTRL1, &reg_irq);
+> > > > > +     if (ret) {
+> > > > > +             pr_err("rt5677: failed reading IRQ status: %d\n", ret);
+>
+> > > > The entire rt5677 makes use of dev_XXX with the exception of.. this very
+> > > > function. Consider reusing "component" field which is already part of
+> > > > struct rt5677_priv and removing pr_XXX.
+>
+> > > I was using dev_XXX, but I believe Curtis found that 'component' was
+> > > sometimes uninitialized when this function was called, so I switched
+> > > back to pr_XXX. I may be misremembering though, so I'll let Curtis
+> > > comment as well.
+>
+> > The issue here is that the IRQ is setup in the i2c probe and the
+> > component is setup in the codec probe. In theory if the hardware is in
+>
+> The component is not needed for a struct device, you must have a struct
+> device if you have a regmap or have probed at all.
+Ah yes, we could modify the struct and store the i2c device and get
+the device out of that as well. That will likely be simpler. Ok lets
+do that.
