@@ -2,101 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 316464AE10
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 00:47:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C25F74AE14
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 00:48:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730941AbfFRWrG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Jun 2019 18:47:06 -0400
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:32980 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730341AbfFRWrE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Jun 2019 18:47:04 -0400
-Received: by mail-qk1-f193.google.com with SMTP id r6so9740482qkc.0;
-        Tue, 18 Jun 2019 15:47:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=rJ2uZJ6XqB8/2Fk6uQ8PHbaqDyVHTlFhc7tBGwxJahY=;
-        b=kVC13Eod3AfTi6bVjTwaWvE25nMGmsoUfESPEb/DTyq0GmaaWZcNaymkesOL5AN9Fl
-         /opIrrNlTBw52esOfMKS/ZznjP+EBsfkDFug5ZLT+GMIEXssJ3P9x8a7jAmVbvEp8ZRz
-         S8/9s92bZWq4Z3EqkutzGnISv1r4UXjq/sqtDVJZIoj0ifEe3AZEi2zxGv03WrHM08t7
-         xD5ykdEcAx37+djj79xGHHcpFr7Lv53ekIp3NBJjalzBGU2p06oQr/0oWYELDqY9KHNW
-         77xn8gYh47g3twkAqbHifox/lFsh04HNeWAY346CXxwdu+upuul9iG0q2SPA7r+kNIOx
-         oFDA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=rJ2uZJ6XqB8/2Fk6uQ8PHbaqDyVHTlFhc7tBGwxJahY=;
-        b=E7gXQz3T3GP9lG4sTCX52XMAKO4piFiJ4gWTYPGB9W3dA17Fpc3S5d1xP7fFaEn6LD
-         a3Fuk4rVLoet8VdWqPRf4HcOTlq4KuZwXcL9cZXwZmQ+kJwoZQlzFWoQRAZ5M361kNpw
-         sb4HCgHZ6X5SxvK1MCp7vEFb9WqB01nha9F00Sb8j21g09p4lL/+tdUVV8MMongrJnB8
-         nAXU6mFAJM3K742scPcSTe0cJdcIcZq2haSHF0SwV+Qq9KNnrvTjNmYs1vhawf9HnEQ4
-         N2Z1zAa7Dyf794rfQyqyfJObTURJu3zx9zsMw/w3EyU4QpySjY/w4kllsaskZ2GJuJ3c
-         7lEg==
-X-Gm-Message-State: APjAAAWddOihuRCU1yTAc1UrIirUz+DAh+Ygvk4rUqfpBnUdUJs1eEDM
-        /1+ocz8qL9B4rQrvnPEsO+CIZiO1ka4=
-X-Google-Smtp-Source: APXvYqxZRxGEhPfD1o5gmQKDINNgHyFWAU6ItUa0Mmw/JFz4B8sShNRfJA/OmSM+KFJqrfhQIwZuiQ==
-X-Received: by 2002:a37:4d16:: with SMTP id a22mr94974865qkb.103.1560898023004;
-        Tue, 18 Jun 2019 15:47:03 -0700 (PDT)
-Received: from continental ([186.212.50.252])
-        by smtp.gmail.com with ESMTPSA id b23sm10253809qte.19.2019.06.18.15.47.00
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 18 Jun 2019 15:47:02 -0700 (PDT)
-Date:   Tue, 18 Jun 2019 19:47:36 -0300
-From:   Marcos Paulo de Souza <marcos.souza.org@gmail.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        "open list:SCSI SUBSYSTEM" <linux-scsi@vger.kernel.org>
-Subject: Re: [PATCH] scsi: scsi_sysfs.c: Hide wwid sdev attr if VPD is not
- supported
-Message-ID: <20190618224734.GB11899@continental>
-References: <20190612020828.8140-1-marcos.souza.org@gmail.com>
+        id S1730897AbfFRWsB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Jun 2019 18:48:01 -0400
+Received: from mga07.intel.com ([134.134.136.100]:48766 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730341AbfFRWsA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Jun 2019 18:48:00 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Jun 2019 15:48:00 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.63,390,1557212400"; 
+   d="scan'208";a="160196152"
+Received: from ranerica-svr.sc.intel.com ([172.25.110.23])
+  by fmsmga008.fm.intel.com with ESMTP; 18 Jun 2019 15:47:59 -0700
+Date:   Tue, 18 Jun 2019 15:47:38 -0700
+From:   Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@suse.de>,
+        Ashok Raj <ashok.raj@intel.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Andi Kleen <andi.kleen@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Suravee Suthikulpanit <Suravee.Suthikulpanit@amd.com>,
+        Stephane Eranian <eranian@google.com>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        Randy Dunlap <rdunlap@infradead.org>, x86@kernel.org,
+        linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org,
+        Ricardo Neri <ricardo.neri@intel.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Jacob Pan <jacob.jun.pan@intel.com>,
+        Juergen Gross <jgross@suse.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Wincy Van <fanwenyi0529@gmail.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Baoquan He <bhe@redhat.com>,
+        Jan Kiszka <jan.kiszka@siemens.com>,
+        Lu Baolu <baolu.lu@linux.intel.com>
+Subject: Re: [RFC PATCH v4 18/21] x86/apic: Add a parameter for the APIC
+ delivery mode
+Message-ID: <20190618224738.GC30488@ranerica-svr.sc.intel.com>
+References: <1558660583-28561-1-git-send-email-ricardo.neri-calderon@linux.intel.com>
+ <1558660583-28561-19-git-send-email-ricardo.neri-calderon@linux.intel.com>
+ <alpine.DEB.2.21.1906161151240.1760@nanos.tec.linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190612020828.8140-1-marcos.souza.org@gmail.com>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+In-Reply-To: <alpine.DEB.2.21.1906161151240.1760@nanos.tec.linutronix.de>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ping? Can anybody take a look at this patch?
+On Sun, Jun 16, 2019 at 11:55:03AM +0200, Thomas Gleixner wrote:
+> On Thu, 23 May 2019, Ricardo Neri wrote:
+> >  
+> >  struct irq_cfg {
+> > -	unsigned int		dest_apicid;
+> > -	unsigned int		vector;
+> > +	unsigned int				dest_apicid;
+> > +	unsigned int				vector;
+> > +	enum ioapic_irq_destination_types	delivery_mode;
+> 
+> And how is this related to IOAPIC?
 
-Thanks,
-Marcos
+In my view, IOAPICs can also be programmed with a delivery mode. Mode
+values are the same for MSI interrupts.
 
-On Tue, Jun 11, 2019 at 11:08:28PM -0300, Marcos Paulo de Souza wrote:
-> WWID composed from VPD data from device, specifically page 0x83. So,
-> when a device does not have VPD support, for example USB storage devices
-> where VPD is specifically disabled, a read into <blk device>/device/wwid
-> file will always return ENXIO. To avoid this, change the
-> scsi_sdev_attr_is_visible function to hide wwid sysfs file when the
-> devices does not support VPD.
+> I know this enum exists already, but in
+> connection with MSI this does not make any sense at all.
+
+Is the issue here the name of the enumeration?
+
 > 
-> Signed-off-by: Marcos Paulo de Souza <marcos.souza.org@gmail.com>
-> ---
->  drivers/scsi/scsi_sysfs.c | 3 +++
->  1 file changed, 3 insertions(+)
+> > +
+> > +		/*
+> > +		 * Initialize the delivery mode of this irq to match the
+> > +		 * default delivery mode of the APIC. This is useful for
+> > +		 * children irq domains which want to take the delivery
+> > +		 * mode from the individual irq configuration rather
+> > +		 * than from the APIC.
+> > +		 */
+> > +		 apicd->hw_irq_cfg.delivery_mode = apic->irq_delivery_mode;
 > 
-> diff --git a/drivers/scsi/scsi_sysfs.c b/drivers/scsi/scsi_sysfs.c
-> index dbb206c90ecf..bfd890fa0c69 100644
-> --- a/drivers/scsi/scsi_sysfs.c
-> +++ b/drivers/scsi/scsi_sysfs.c
-> @@ -1159,6 +1159,9 @@ static umode_t scsi_sdev_attr_is_visible(struct kobject *kobj,
->  	struct device *dev = container_of(kobj, struct device, kobj);
->  	struct scsi_device *sdev = to_scsi_device(dev);
->  
-> +	/* do not present wwid if the device does not support VPD */
-> +	if (attr == &dev_attr_wwid.attr && sdev->skip_vpd_pages)
-> +		return 0;
->  
->  	if (attr == &dev_attr_queue_depth.attr &&
->  	    !sdev->host->hostt->change_queue_depth)
-> -- 
-> 2.21.0
-> 
+> And here it's initialized from apic->irq_delivery_mode, which is an
+> u32. Intuitive and consistent - NOT!
+
+Yes, this is wrong. Then should the member in the structure above be an
+u32 instead of enum ioapic_irq_destination_types?
+
+Thanks and BR,
+Ricardo
