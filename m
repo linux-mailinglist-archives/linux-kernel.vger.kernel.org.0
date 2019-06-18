@@ -2,152 +2,174 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C4FDE49D24
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 11:28:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4405949D2A
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 11:29:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729372AbfFRJ2t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Jun 2019 05:28:49 -0400
-Received: from mx0a-0016f401.pphosted.com ([67.231.148.174]:35970 "EHLO
-        mx0b-0016f401.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729113AbfFRJ2s (ORCPT
+        id S1729446AbfFRJ3B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Jun 2019 05:29:01 -0400
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:53194 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729381AbfFRJ26 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Jun 2019 05:28:48 -0400
-Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
-        by mx0a-0016f401.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5I9Po14013985;
-        Tue, 18 Jun 2019 02:28:42 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=from : to : cc :
- subject : date : message-id : references : in-reply-to : content-type :
- content-transfer-encoding : mime-version; s=pfpt0818;
- bh=2OMFaY3DvEdNQscN/Z79rzD5wQAQXAiehbS+Tsi/kqw=;
- b=MP7flYTOiu4LCXAMLtfsv3L7EfSBlEHfpLyq8s3uPwMexZnWXM4dHZBmNDIq+2levbmr
- gLgnJVRydDfl7MOXegaeeWkUEBxznfEba06kW3w02Mx4hWGxl9Fbg5N9CVb6443AK4I9
- NfQvbEtPK0B0GfaxLaJFGxVDP41CGmDfX3vnW9kdEeczypgeqwW+QipiYh3uraOFwRHQ
- p/XV2bXKip61CE0kKS1ykTm17f6EfOySsEY+oLLW8YvGhHiCsIomygShKdgIpNz28wx7
- MabAptoaCnuseRw5b2d7D2PlvxzTWGK0GNhCm45tctlkO6htynjvY7FqZt9GJ+jD7iM/ jQ== 
-Received: from sc-exch02.marvell.com ([199.233.58.182])
-        by mx0a-0016f401.pphosted.com with ESMTP id 2t6qgp98x1-8
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
-        Tue, 18 Jun 2019 02:28:42 -0700
-Received: from SC-EXCH04.marvell.com (10.93.176.84) by SC-EXCH02.marvell.com
- (10.93.176.82) with Microsoft SMTP Server (TLS) id 15.0.1367.3; Tue, 18 Jun
- 2019 02:27:34 -0700
-Received: from NAM04-SN1-obe.outbound.protection.outlook.com (104.47.44.59) by
- SC-EXCH04.marvell.com (10.93.176.84) with Microsoft SMTP Server (TLS) id
- 15.0.1367.3 via Frontend Transport; Tue, 18 Jun 2019 02:27:34 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=marvell.onmicrosoft.com; s=selector2-marvell-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=2OMFaY3DvEdNQscN/Z79rzD5wQAQXAiehbS+Tsi/kqw=;
- b=JI4+b7lrDFYwfK7SrBkUGrPtIzn8mhCUzokBaeoyxkdjOKd3bY0IIvuhZEtW1VMlik2jef0yzqBqtMeAV0aY55s6yCj05J+pbadiOGooV5h/V49SGJ/mvOW84cN042cHroDG+x2nhbFEt4FXFVI8Ei4zwINRuv2X8tHtPH/J96E=
-Received: from MN2PR18MB3182.namprd18.prod.outlook.com (10.255.236.143) by
- MN2PR18MB2384.namprd18.prod.outlook.com (20.179.80.150) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1987.12; Tue, 18 Jun 2019 09:27:29 +0000
-Received: from MN2PR18MB3182.namprd18.prod.outlook.com
- ([fe80::9880:2b8b:52e5:b413]) by MN2PR18MB3182.namprd18.prod.outlook.com
- ([fe80::9880:2b8b:52e5:b413%3]) with mapi id 15.20.1987.014; Tue, 18 Jun 2019
- 09:27:28 +0000
-From:   Michal Kalderon <mkalderon@marvell.com>
-To:     Arnd Bergmann <arnd@arndb.de>, Ariel Elior <aelior@marvell.com>,
-        GR-everest-linux-l2 <GR-everest-linux-l2@marvell.com>,
-        "David S. Miller" <davem@davemloft.net>
-CC:     Ariel Elior <aelior@marvell.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Denis Bolotin <dbolotin@marvell.com>,
-        Tomer Tayar <tomer.tayar@cavium.com>,
-        Sudarsana Reddy Kalluru <skalluru@marvell.com>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH] qed: Fix -Wmaybe-uninitialized false positive
-Thread-Topic: [PATCH] qed: Fix -Wmaybe-uninitialized false positive
-Thread-Index: AQHVJQ1RjdAP7KlUu0KWNfQZMWSgEaahJdXw
-Date:   Tue, 18 Jun 2019 09:27:28 +0000
-Message-ID: <MN2PR18MB318218F121EBE1144A4AA36EA1EA0@MN2PR18MB3182.namprd18.prod.outlook.com>
-References: <20190617130504.1906523-1-arnd@arndb.de>
-In-Reply-To: <20190617130504.1906523-1-arnd@arndb.de>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [212.199.69.1]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 203523ef-8246-450f-00af-08d6f3cf2ee4
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:MN2PR18MB2384;
-x-ms-traffictypediagnostic: MN2PR18MB2384:
-x-microsoft-antispam-prvs: <MN2PR18MB23842DF7EF97073DAA581DBCA1EA0@MN2PR18MB2384.namprd18.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:6108;
-x-forefront-prvs: 007271867D
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(396003)(346002)(39860400002)(366004)(376002)(189003)(199004)(305945005)(7736002)(229853002)(102836004)(71190400001)(2906002)(6436002)(68736007)(52536014)(76116006)(33656002)(66476007)(66946007)(64756008)(66556008)(6246003)(73956011)(66446008)(25786009)(316002)(4326008)(86362001)(11346002)(446003)(476003)(486006)(76176011)(186003)(9686003)(14444005)(26005)(8936002)(71200400001)(54906003)(110136005)(8676002)(256004)(5660300002)(7696005)(55016002)(99286004)(478600001)(74316002)(6506007)(66066001)(14454004)(81166006)(53936002)(3846002)(81156014)(6116002);DIR:OUT;SFP:1101;SCL:1;SRVR:MN2PR18MB2384;H:MN2PR18MB3182.namprd18.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: marvell.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: RHdU2ycBejTqu/Y0rE/iEne+MXO9TsxKf+nMoA+lndUH+hUqL8/+e4jsZtRO0H3xkCHN2VbcZ5/FZi3CgE2BsyLwCtvgIybXk7s2ynLRxaTicw1FLBMKp4hsYBwhJ2l2jVj1uhd9SwgHmUsIR6cM9iPf1JCCFdxGkBLOgG5B4T03kb8qoX6vczCih+GKz46Ssrexcq5rAPe+K4rFvqjoNuO0utketsMvACz5rYt+F/KcBcRilRj3R3g96InuJ7bubZGCI59yBOYZZaF+DDPvoLwh9EM9voldj6O6Shr1RLZm+4N6YfUGTRsL9YM/+Dm+NLrdz4MHEl8g+5svPjy4kOd9Mxd/LNsuUQfboZdvkVAMz0La5v8CR+7HNE2JnOgKqKeqLLZLeT3MkK6sozwUQpVRq2nZkMIwAusgAZNF4a0=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        Tue, 18 Jun 2019 05:28:58 -0400
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x5I9SOg3084397;
+        Tue, 18 Jun 2019 04:28:24 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1560850104;
+        bh=Kw8nG2OFHl2HBlGRL+a2UliJaSPF/WqQQvZMqq7/T4s=;
+        h=From:To:CC:Subject:Date;
+        b=c4JeQcHIUouBKyFdsZqQAdYiWcrqhOOUabfp/itwz6tBKuSfQa4E4GCw0TLl8BPRj
+         eucqu8HvN3G0oYi2HRVE4Txh9R3OUS+f+P6qx30MlBlhXciRoNVEgEPar40andtfS4
+         U4owmVSquQPdClpByjp6N2YZPe0GOkJIW8jvO8Jc=
+Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x5I9SOxF042590
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 18 Jun 2019 04:28:24 -0500
+Received: from DLEE101.ent.ti.com (157.170.170.31) by DLEE115.ent.ti.com
+ (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Tue, 18
+ Jun 2019 04:28:23 -0500
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE101.ent.ti.com
+ (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Tue, 18 Jun 2019 04:28:23 -0500
+Received: from a0132425.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id x5I9SJRv067156;
+        Tue, 18 Jun 2019 04:28:19 -0500
+From:   Vignesh Raghavendra <vigneshr@ti.com>
+To:     Vignesh Raghavendra <vigneshr@ti.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Boris Brezillon <bbrezillon@kernel.org>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Rob Herring <robh+dt@kernel.org>
+CC:     <linux-mtd@lists.infradead.org>,
+        Tudor Ambarus <Tudor.Ambarus@microchip.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Joakim Tjernlund <Joakim.Tjernlund@infinera.com>,
+        <devicetree@vger.kernel.org>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Mason Yang <masonccyang@mxic.com.tw>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH v6 0/5] MTD: Add Initial Hyperbus support
+Date:   Tue, 18 Jun 2019 14:58:56 +0530
+Message-ID: <20190618092901.31764-1-vigneshr@ti.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 203523ef-8246-450f-00af-08d6f3cf2ee4
-X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Jun 2019 09:27:28.8478
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 70e1fb47-1155-421d-87fc-2e58f638b6e0
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: mkalderon@marvell.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR18MB2384
-X-OriginatorOrg: marvell.com
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-18_05:,,
- signatures=0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> From: Arnd Bergmann <arnd@arndb.de>
-> Sent: Monday, June 17, 2019 4:05 PM
->=20
-> A previous attempt to shut up the uninitialized variable use warning was
-> apparently insufficient. When CONFIG_PROFILE_ANNOTATED_BRANCHES is
-> set, gcc-8 still warns, because the unlikely() check in DP_NOTICE() cause=
-s it to
-> no longer track the state of all variables correctly:
->=20
-> drivers/net/ethernet/qlogic/qed/qed_dev.c: In function
-> 'qed_llh_set_ppfid_affinity':
-> drivers/net/ethernet/qlogic/qed/qed_dev.c:798:47: error: 'abs_ppfid' may
-> be used uninitialized in this function [-Werror=3Dmaybe-uninitialized]
->   addr =3D NIG_REG_PPF_TO_ENGINE_SEL + abs_ppfid * 0x4;
->                                      ~~~~~~~~~~^~~~~
->=20
-> This is not a nice workaround, but always initializing the output from
-> qed_llh_abs_ppfid() at least shuts up the false positive reliably.
->=20
-> Fixes: 79284adeb99e ("qed: Add llh ppfid interface and 100g support for
-> offload protocols")
-> Fixes: 8e2ea3ea9625 ("qed: Fix static checker warning")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->  drivers/net/ethernet/qlogic/qed/qed_dev.c | 1 +
->  1 file changed, 1 insertion(+)
->=20
-> diff --git a/drivers/net/ethernet/qlogic/qed/qed_dev.c
-> b/drivers/net/ethernet/qlogic/qed/qed_dev.c
-> index eec7cb65c7e6..a1ebc2b1ca0b 100644
-> --- a/drivers/net/ethernet/qlogic/qed/qed_dev.c
-> +++ b/drivers/net/ethernet/qlogic/qed/qed_dev.c
-> @@ -652,6 +652,7 @@ static int qed_llh_abs_ppfid(struct qed_dev *cdev, u8
-> ppfid, u8 *p_abs_ppfid)
->  		DP_NOTICE(cdev,
->  			  "ppfid %d is not valid, available indices are
-> 0..%hhd\n",
->  			  ppfid, p_llh_info->num_ppfid - 1);
-> +		*p_abs_ppfid =3D 0;
->  		return -EINVAL;
->  	}
->=20
-> --
-> 2.20.0
+Change log:
+Since v5:
+Fix up DT bindings comments for TI HBMC driver
+Move calibration sequence out of core into TI HBMC driver
 
-Thanks,=A0
+Since v4:
+Fix Rob's comments on dt-bindings of TI HBMC driver
 
-Acked-by: Michal Kalderon=A0<michal.kalderon@marvell.com>
+Since v3:
+* Drop reading QRY string twice in hyperbus_calibrate()
+* Fix doc/misc comments on v3.
 
+Since RFC v2:
+* use map_word_xxx() for handling status register to support interleaved
+  flashes as suggested by Joakim Tjernlund <Joakim.Tjernlund@infinera.com>
+* Report error status/messages on erase/program failure by looking at
+  status register bits.
+* Add "cfi-flash" as fallback compatible for cypress,hyperflash
+* Add support to select between HyperBus and OSPI using mmio mux
+
+Since RFC v1:
+* Re-work Hyperbus core to provide separate struct representation for
+  controller and slave devices
+* Rename all files and func names to have hyperbus_ prefix
+* Provide default calibration routine for use by controller drivers
+* Fix up errors with patch spliting
+* Address comments by Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+
+
+Cypress HyperBus is Low Signal Count, High Performance Double Data Rate Bus
+interface between a host system master and one or more slave interfaces.
+HyperBus is used to connect microprocessor, microcontroller, or ASIC
+devices with random access NOR flash memory(called HyperFlash) or
+self refresh DRAM(called HyperRAM).
+
+Its a 8-bit data bus (DQ[7:0]) with  Read-Write Data Strobe (RWDS)
+signal and either Single-ended clock(3.0V parts) or Differential clock
+(1.8V parts). It uses ChipSelect lines to select b/w multiple slaves.
+At bus level, it follows a separate protocol described in HyperBus
+specification[1].
+
+HyperFlash follows CFI AMD/Fujitsu Extended Command Set (0x0002) similar
+to that of existing parallel NORs. Since Hyperbus is x8 DDR bus,
+its equivalent to x16 parallel NOR flash wrt bits per clk. But Hyperbus
+operates at >166MHz frequencies.
+HyperRAM provides direct random read/write access to flash memory
+array.
+Framework is modelled along the lines of spi-nor framework. HyperBus
+memory controller(HBMC) drivers call hyperbus_register_device() to register a
+single HyperFlash device. HyperFlash core parses MMIO access
+information from DT, sets up the map_info struct, probes CFI flash and
+registers it with MTD framework.
+
+This is an early RFC, to know if its okay to use maps framework and existing
+CFI compliant flash support code to support Hyperflash
+Also would like input on different types of HBMC master IPs out there
+and their programming sequences.
+Would appreciate any testing/review.
+
+Tested on modified TI AM654 EVM with Cypress Hyperflash S26KS512 by
+creating a UBIFS partition and writing and reading files to it.
+Stress tested by writing/reading 16MB flash repeatedly at different
+offsets using dd commmand.
+
+HyperBus specification can be found at[1]
+HyperFlash datasheet can be found at[2]
+TI's HBMC controller details at[3]
+
+[1] https://www.cypress.com/file/213356/download
+[2] https://www.cypress.com/file/213346/download
+[3] http://www.ti.com/lit/ug/spruid7b/spruid7b.pdf
+    Table 12-5741. HyperFlash Access Sequence
+
+
+Vignesh Raghavendra (5):
+  mtd: cfi_cmdset_0002: Add support for polling status register
+  dt-bindings: mtd: Add binding documentation for HyperFlash
+  mtd: Add support for HyperBus memory devices
+  dt-bindings: mtd: Add bindings for TI's AM654 HyperBus memory
+    controller
+  mtd: hyperbus: Add driver for TI's HyperBus memory controller
+
+ .../bindings/mtd/cypress,hyperflash.txt       |  13 ++
+ .../devicetree/bindings/mtd/ti,am654-hbmc.txt |  51 ++++++
+ MAINTAINERS                                   |   8 +
+ drivers/mtd/Kconfig                           |   2 +
+ drivers/mtd/Makefile                          |   1 +
+ drivers/mtd/chips/cfi_cmdset_0002.c           |  90 ++++++++++
+ drivers/mtd/hyperbus/Kconfig                  |  23 +++
+ drivers/mtd/hyperbus/Makefile                 |   4 +
+ drivers/mtd/hyperbus/hbmc-am654.c             | 141 ++++++++++++++++
+ drivers/mtd/hyperbus/hyperbus-core.c          | 154 ++++++++++++++++++
+ include/linux/mtd/cfi.h                       |   5 +
+ include/linux/mtd/hyperbus.h                  |  86 ++++++++++
+ 12 files changed, 578 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/mtd/cypress,hyperflash.txt
+ create mode 100644 Documentation/devicetree/bindings/mtd/ti,am654-hbmc.txt
+ create mode 100644 drivers/mtd/hyperbus/Kconfig
+ create mode 100644 drivers/mtd/hyperbus/Makefile
+ create mode 100644 drivers/mtd/hyperbus/hbmc-am654.c
+ create mode 100644 drivers/mtd/hyperbus/hyperbus-core.c
+ create mode 100644 include/linux/mtd/hyperbus.h
+
+-- 
+2.21.0
 
