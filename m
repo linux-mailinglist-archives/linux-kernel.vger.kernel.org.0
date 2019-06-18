@@ -2,98 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D332A4A269
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 15:36:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BA75E4AD6E
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 23:39:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729257AbfFRNgb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Jun 2019 09:36:31 -0400
-Received: from mga07.intel.com ([134.134.136.100]:21689 "EHLO mga07.intel.com"
+        id S1730649AbfFRViK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Jun 2019 17:38:10 -0400
+Received: from sauhun.de ([88.99.104.3]:45320 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729253AbfFRNgY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Jun 2019 09:36:24 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Jun 2019 06:36:24 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.63,389,1557212400"; 
-   d="scan'208";a="164705654"
-Received: from wvoon-ilbpg2.png.intel.com ([10.88.227.88])
-  by orsmga006.jf.intel.com with ESMTP; 18 Jun 2019 06:36:21 -0700
-From:   Voon Weifeng <weifeng.voon@intel.com>
-To:     "David S. Miller" <davem@davemloft.net>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jose Abreu <joabreu@synopsys.com>,
-        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Vinicius Costa Gomes <vinicius.gomes@intel.com>,
-        Ong Boon Leong <boon.leong.ong@intel.com>,
-        Voon Weifeng <weifeng.voon@intel.com>
-Subject: [RFC net-next 5/5] net: stmmac: Set TSN HW tunable after tsn setup
-Date:   Wed, 19 Jun 2019 05:36:18 +0800
-Message-Id: <1560893778-6838-6-git-send-email-weifeng.voon@intel.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1560893778-6838-1-git-send-email-weifeng.voon@intel.com>
-References: <1560893778-6838-1-git-send-email-weifeng.voon@intel.com>
+        id S1730176AbfFRViK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Jun 2019 17:38:10 -0400
+Received: from localhost (p5486CE06.dip0.t-ipconnect.de [84.134.206.6])
+        by pokefinder.org (Postfix) with ESMTPSA id 6249B2C047A;
+        Tue, 18 Jun 2019 23:38:07 +0200 (CEST)
+Date:   Tue, 18 Jun 2019 23:38:07 +0200
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Cc:     Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab@infradead.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Ruslan Babayev <ruslan@babayev.com>,
+        Andrew de Quincey <adq_dvb@lidskialf.net>,
+        Michael Buesch <m@bues.ch>,
+        Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: [PATCH] media: tua6100: Remove some ugly defines
+Message-ID: <20190618213807.GA8356@kunai>
+References: <20190612081929.GA1687@kunai>
+ <fa93fecaa9d8e33f7d3b335872e9082893b775ae.1560338665.git.mchehab+samsung@kernel.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="pf9I7BMVVzbSWLtt"
+Content-Disposition: inline
+In-Reply-To: <fa93fecaa9d8e33f7d3b335872e9082893b775ae.1560338665.git.mchehab+samsung@kernel.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-TSN HW tunable data for PTP Time Offset Value(PTOV),
-Current Time Offset Value(CTOV) and Time Interval Shift
-Amount(TILS) are added as platform data. These platform
-data are set after tsn setup.
 
-Signed-off-by: Voon Weifeng <weifeng.voon@intel.com>
----
- drivers/net/ethernet/stmicro/stmmac/stmmac_main.c | 16 ++++++++++++++++
- include/linux/stmmac.h                            |  3 +++
- 2 files changed, 19 insertions(+)
+--pf9I7BMVVzbSWLtt
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-index a443c42fa58b..d3ce86abdc69 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-@@ -2533,6 +2533,22 @@ static int stmmac_hw_setup(struct net_device *dev, bool init_ptp)
- 	/* Setup for TSN capability */
- 	dwmac_tsn_setup(priv->ioaddr);
- 
-+	/* Set TSN HW tunable */
-+	if (priv->plat->ptov)
-+		stmmac_set_tsn_hwtunable(priv, priv->ioaddr,
-+					 TSN_HWTUNA_TX_EST_PTOV,
-+					 &priv->plat->ptov);
-+
-+	if (priv->plat->ctov)
-+		stmmac_set_tsn_hwtunable(priv, priv->ioaddr,
-+					 TSN_HWTUNA_TX_EST_CTOV,
-+					 &priv->plat->ctov);
-+
-+	if (priv->plat->tils)
-+		stmmac_set_tsn_hwtunable(priv, priv->ioaddr,
-+					 TSN_HWTUNA_TX_EST_TILS,
-+					 &priv->plat->tils);
-+
- 	return 0;
- }
- 
-diff --git a/include/linux/stmmac.h b/include/linux/stmmac.h
-index d4a90f48e49b..792aa8b3e138 100644
---- a/include/linux/stmmac.h
-+++ b/include/linux/stmmac.h
-@@ -176,5 +176,8 @@ struct plat_stmmacenet_data {
- 	int mac_port_sel_speed;
- 	bool en_tx_lpi_clockgating;
- 	int has_xgmac;
-+	unsigned int ptov;
-+	unsigned int ctov;
-+	unsigned int tils;
- };
- #endif
--- 
-1.9.1
+On Wed, Jun 12, 2019 at 08:25:03AM -0300, Mauro Carvalho Chehab wrote:
+> As reported by Stephen:
+>=20
+> > After merging the i2c tree, today's linux-next build (x86_64 allmodconf=
+ig)
+> > produced this warning:
+> >
+> > drivers/media/dvb-frontends/tua6100.c: In function 'tua6100_set_params':
+> > drivers/media/dvb-frontends/tua6100.c:71: warning: "_P" redefined
+> >  #define _P 32
+> >
+> > In file included from include/acpi/platform/aclinux.h:54,
+> >                  from include/acpi/platform/acenv.h:152,
+> >                  from include/acpi/acpi.h:22,
+> >                  from include/linux/acpi.h:21,
+> >                  from include/linux/i2c.h:17,
+> >                  from drivers/media/dvb-frontends/tua6100.h:22,
+> >                  from drivers/media/dvb-frontends/tua6100.c:24:
+> > include/linux/ctype.h:14: note: this is the location of the previous de=
+finition
+> >  #define _P 0x10 /* punct */
+> >
+> > Exposed by commit
+> >
+> >   5213d7efc8ec ("i2c: acpi: export i2c_acpi_find_adapter_by_handle")
+> >
+> > Since that included <linux/acpi.h> from <linux/i2c.h>
+> >
+> > Originally introduced by commit
+> >
+> >   00be2e7c6415 ("V4L/DVB (4606): Add driver for TUA6100")
+> >
+> > The _P in <linux/ctype.h> has existed since before git.
+>=20
+> The addition of include <linux/ctype.h> at the I2C code caused a
+> breakage at the tua6100 driver. The reason is that the code there
+> used defines for 3 parameters used at the calculus for the
+> divide ratio.
+>=20
+> In thesis, those are board-dependent, but, as there's just one
+> driver using it (ttpci/budget-av), there was no need to make
+> the code more generic. While it sounds unlikely that this old
+> DVB-S frontend would ever be used on new projects, one might
+> some day come with a variant using a different configuration. So,
+> let's do the right thing and store those values at its private
+> struct.
+>=20
+> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 
+I see there is a build-fix from davem now in linux-next. Shall I still
+apply this patch to my i2c tree once Mauro applied it to his?
+
+
+--pf9I7BMVVzbSWLtt
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAl0JWboACgkQFA3kzBSg
+Kbaa/w//dkLZr3BGmVtNIAhtFtIVjejosTZf8PSX+avUaQH4EJQqe8kEwVzWHN7P
+o90IAkHqohbxmtgryeqROQQpzy8QIjKsr0zzqYIZlacU5z694Jev6AGhpw0dYx/j
+3uYth51SjXmY/efoVQa+Z0tTCj5zNh8crkGQqitPgl0I0zzGBHDmfOh8pdJBYgYo
+HCuVP0NdugdIBOWcbiDEtF0mik7k71Zh1J1ZGcJw/LC5WrZ2WNS2ILHFH1yKDjVe
+1WLFb8yE/Ea313X+f1Hgh3BSVxUszkFSRyfZvMabvdZb2jzzkUlxzHd78ZoAvvEb
+HjQ7oocJCy6XP312JllhG+TdLChu92HcNpaSbh4vxo15ilCQtcVPMXQIehvtgme0
+Wn7MpuA3hjX1cltpjfsMYjl+LsAe1MlHPF5xFZusiA2N1OUIVhEcMTSvm5me44MB
+/syQnj8oCnOEtoPE7JaMwKxO0kj/z2HJrv7WEJg9eqRdigFq89SsXYt8UM0oh+UN
+pKPhHsdr5s2hY8Z2vw/p2K+um53tGCDwwswOJ1BC/I3LhOM9vg/dLDigA7bOpmmt
+7HXf1cpBVJ/pDumoBq1sKfGIy4IqWNRw++/a7jjTMBogNSE14H7xAG17D9AowMkc
+ncqhh0FIPFr9DPZzFdLSHwvXIrbR6UOr0yuimIG3ukxOyTiktUg=
+=/ckW
+-----END PGP SIGNATURE-----
+
+--pf9I7BMVVzbSWLtt--
