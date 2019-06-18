@@ -2,136 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6159249B14
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 09:47:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 25F5F49B35
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 09:47:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729134AbfFRHrE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Jun 2019 03:47:04 -0400
-Received: from mail-io1-f65.google.com ([209.85.166.65]:35409 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729109AbfFRHrC (ORCPT
+        id S1729283AbfFRHrd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Jun 2019 03:47:33 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:40668 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726768AbfFRHrc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Jun 2019 03:47:02 -0400
-Received: by mail-io1-f65.google.com with SMTP id m24so27669561ioo.2
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2019 00:47:01 -0700 (PDT)
+        Tue, 18 Jun 2019 03:47:32 -0400
+Received: by mail-pf1-f193.google.com with SMTP id p184so7154085pfp.7
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2019 00:47:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=vxKYkLgA5MVuzsXMSMGfzla77yJINMaSigfo4ssAuus=;
-        b=RjIbAgrDl9/qI0Gii7VVzjfDkkA4UNrDQYVufYwYf/7w9vv+rUari1Sq1mvxZKpVXv
-         HaIXkNWo7j6M5sCPdtYLiEMFaEoOc1VdJf/4sMfMFzLfEb8cS2GpcVmxlv3o5DgQrlIr
-         /0peXvokP7Oc2S5VY+81T7ibHogSkES0k5wnA=
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=m9kWU4Wyh0nUtIn5ZBz57UUg5pTNFygG2evwRUANN1M=;
+        b=i9Kme+VbcXRi1zjpBD7iIzvpMagzeVyhTd4n/VvOx4aaVfkgJh/bzhahGNYtAwCCOA
+         DwDF6m7/Xucseh1RMtbpnynAOM8o9ukJePgNWNAQUcgS8sx7k5GKF/vLxGQSpmAXwV4f
+         buEqIn1OqmfOGJh63tAffQ0Uw8DnWuzX3ATtRm54T2N8DhTzeTVct40nlRbLaFlWoDH+
+         JLZ0k8dG8L5EZ/Rjv1GHyAWDooqo06Om6s2QGClxw4rE5HWBOu4U1L1Wr8JsKxWMrLTI
+         cMSmddzuJYIidMUaGNAajZOVOPx0GEN2iNuZJMDjksiomojZf3DDcYdxC7Bi53cp4P/P
+         KK+Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=vxKYkLgA5MVuzsXMSMGfzla77yJINMaSigfo4ssAuus=;
-        b=ZNWgTVi6nUGqG76VegjphRVDKmFMapzrPNJfJkoaf2mPi25PWmxuFJNo7BWcfahM6o
-         EzZkyToQTjPc3xixHgvPnsDY89o7ktk58MTdaKnD9Vk3fOJvaWC8cY4oINFRuH7rcC8V
-         xbFy8IYFNYfpPG7vBzEYv3H2xfbPqYrzZPWtB9Z5TxFXbAb2zDSSxkkOoiGafZzNztqD
-         YMVuRLJwZKT27YM1koF8OGMRCZ4RRFouDkRMzl9ZuzYFkLErSEmkz1XocYcfvFmBWiaZ
-         AaWE0ZdaKwG+zYDrPfmBrw2RGHX1aqUB1/N7BKE9eHTN+VIv2r9e31oOhQPPTmOIO6A2
-         PpDw==
-X-Gm-Message-State: APjAAAW5i87aFBOGbaoNmt+SRJfN97BPLwPeXH4daFPTBPKG9BL8kyJZ
-        mJEfOmFK8+uLI46fl+O9EBBbpvC7OpQasVyV7DBtWw==
-X-Google-Smtp-Source: APXvYqycTbdlGgVagVEKSPFXn3d5LsyT9I6EZwTdqQk/dkFhmrBl6uOW3Kl4M+fU023lwzcVYQVx/JhGLarll+uzkVY=
-X-Received: by 2002:a02:380c:: with SMTP id b12mr67109907jaa.85.1560844021305;
- Tue, 18 Jun 2019 00:47:01 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=m9kWU4Wyh0nUtIn5ZBz57UUg5pTNFygG2evwRUANN1M=;
+        b=Kqmy+onl1W3qHwY1chxnqU+TmViTwwai8mBb61vflXo37vWEMJM6jKzyYN+LT24vhX
+         vmI78Lm9FA7lfETm1987XH3tSwrDA9MUbSzbqkv28GHcxtcV8BhnpftqRHpZJVtcTqM0
+         bZxnSHn249q/27WarMAXwRCF01pDuQ+qryedXX0Xo6vlafrUFOrZGwsk1pl+dXa+3hMO
+         UV+fMY58Bb4kPhaWae+asiPq+9oZreTTe2j8faNbH96Tinqo/EXFrTFaRaFFJkg/Wq/3
+         ogUCXLiwGuTvFFH0GScutStyIXSlLavR52QZLQ8SsmU48zcCSo9/YkZx0lzfzuIfiT5U
+         i58g==
+X-Gm-Message-State: APjAAAU5WRQgvSN7VXu1J8GATIyT4IJOPNeceqhAynetrCHssLfg72P5
+        zmVNBaSNyDxbM82oDvpdS7fyUg==
+X-Google-Smtp-Source: APXvYqzoZrCGfiZDIky+YWcabe0Ihtb/5V8EZ1kNy9BbFLukJBpuUb2/MKlZVKIwOuQqI7eyR0AS8w==
+X-Received: by 2002:a63:1d10:: with SMTP id d16mr1416444pgd.446.1560844051594;
+        Tue, 18 Jun 2019 00:47:31 -0700 (PDT)
+Received: from localhost ([122.172.66.84])
+        by smtp.gmail.com with ESMTPSA id ci15sm2914468pjb.12.2019.06.18.00.47.29
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 18 Jun 2019 00:47:30 -0700 (PDT)
+Date:   Tue, 18 Jun 2019 13:17:28 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     "Rafael J. Wysocki" <rafael@kernel.org>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Quentin Perret <quentin.perret@arm.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>
+Subject: Re: [PATCH] sched/fair: Introduce fits_capacity()
+Message-ID: <20190618074728.gf6wugkbndhhcqql@vireshk-i7>
+References: <b477ac75a2b163048bdaeb37f57b4c3f04f75a31.1559631700.git.viresh.kumar@linaro.org>
+ <20190605091644.w3g7hc7r3eiscz4f@queper01-lin>
+ <20190606025204.qe5v7j6fysjkgxc6@vireshk-i7>
+ <20190617150204.GG3436@hirez.programming.kicks-ass.net>
+ <20190618031217.63md32da5pzydqia@vireshk-i7>
+ <CAJZ5v0g4shiz+Hq+0fS1GQjQX7tK5EyLiX-SOpDoTm4xswV8bg@mail.gmail.com>
 MIME-Version: 1.0
-References: <20190614164324.9427-1-jagan@amarulasolutions.com>
- <20190614164324.9427-6-jagan@amarulasolutions.com> <20190617114503.pclqsf6bo3ih47nt@flea>
- <CAGb2v66RU=m0iA9VoBiYbake+mDoiiGcd5gGGXvNCBjhY2n+Dw@mail.gmail.com>
- <CAMty3ZA0J+2fSRwX+tS-waJDLMyTOf6UY_1pHjXe0qOk5QuzrQ@mail.gmail.com> <CAGb2v64htYr+iRUnLx0hKkqCtYa0GbzZJEvb-ViyJFAYzU1sig@mail.gmail.com>
-In-Reply-To: <CAGb2v64htYr+iRUnLx0hKkqCtYa0GbzZJEvb-ViyJFAYzU1sig@mail.gmail.com>
-From:   Jagan Teki <jagan@amarulasolutions.com>
-Date:   Tue, 18 Jun 2019 13:16:50 +0530
-Message-ID: <CAMty3ZBDjNa+Sso4hmKxXOg_LT8giNYQAuJCgjZW8AeVQhAtyQ@mail.gmail.com>
-Subject: Re: [linux-sunxi] Re: [PATCH v2 5/9] drm/sun4i: tcon_top: Register
- clock gates in probe
-To:     Chen-Yu Tsai <wens@csie.org>
-Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        linux-sunxi <linux-sunxi@googlegroups.com>,
-        linux-amarula <linux-amarula@amarulasolutions.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJZ5v0g4shiz+Hq+0fS1GQjQX7tK5EyLiX-SOpDoTm4xswV8bg@mail.gmail.com>
+User-Agent: NeoMutt/20180716-391-311a52
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 18, 2019 at 12:53 PM Chen-Yu Tsai <wens@csie.org> wrote:
->
-> On Tue, Jun 18, 2019 at 3:12 PM Jagan Teki <jagan@amarulasolutions.com> wrote:
+On 18-06-19, 09:26, Rafael J. Wysocki wrote:
+> On Tue, Jun 18, 2019 at 5:12 AM Viresh Kumar <viresh.kumar@linaro.org> wrote:
 > >
-> > On Mon, Jun 17, 2019 at 6:31 PM Chen-Yu Tsai <wens@csie.org> wrote:
-> > >
-> > > On Mon, Jun 17, 2019 at 7:45 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
-> > > >
-> > > > On Fri, Jun 14, 2019 at 10:13:20PM +0530, Jagan Teki wrote:
-> > > > > TCON TOP have clock gates for TV0, TV1, dsi and right
-> > > > > now these are register during bind call.
-> > > > >
-> > > > > Of which, dsi clock gate would required during DPHY probe
-> > > > > but same can miss to get since tcon top is not bound at
-> > > > > that time.
-> > > > >
-> > > > > To solve, this circular dependency move the clock gate
-> > > > > registration from bind to probe so-that DPHY can get the
-> > > > > dsi gate clock on time.
-> > > >
-> > > > It's not really clear to me what the circular dependency is?
-> > > >
-> > > > if you have a chain that is:
-> > > >
-> > > > tcon-top +-> DSI
-> > > >          +-> D-PHY
-> > > >
-> > > > There's no loop, right?
-> > >
-> > > Looking at how the DTSI patch structures things (without going into
-> > > whether it is correct or accurate):
-> > >
-> > > The D-PHY is not part of the component graph. However it requests
-> > > the DSI gate clock from the TCON-TOP.
-> > >
-> > > The TCON-TOP driver, in its current form, only registers the clocks
-> > > it provides at component bind time. Thus the D-PHY can't successfully
-> > > probe until the TCON-TOP has been bound.
-> > >
-> > > The DSI interface requires the D-PHY to bind. It will return -EPROBE_DEFER
-> > > if it cannot request it. This in turn goes into the error path of
-> > > component_bind_all, which unbinds all previous components.
-> > >
-> > > So it's actually
-> > >
-> > >     D-PHY -> TCON-TOP -> DSI
-> > >       ^                   |
-> > >       |--------------------
-> > >
-> > > I've not checked, but I suspect there's no possibility of having other
-> > > drivers probe (to deal with deferred probing) within component_bind_all.
-> > > Otherwise we shouldn't run into this weird circular dependency issue.
-> > >
-> > > So the question for Jagan is that is this indeed the case? Does this
-> > > patch solve it, or at least work around it.
+> > +Rafael
 > >
-> > Yes, this is what I was mentioned in initial version, since the "dsi"
-> > gate in tcon top is registering during bind, the dphy of dsi
-> > controller won't get the associated clock for "mod" so it is keep on
-> > returning -EPROBE_DEFER. By moving the clock gate registration to
-> > probe, everything bound as expected.
->
-> I believe you failed to mention the DSI block, which is the part that
-> completes the circular dependency. Don't expect others to have full
-> awareness of the context. You have to provide it in your commit log.
+> > On 17-06-19, 17:02, Peter Zijlstra wrote:
+> > > On Thu, Jun 06, 2019 at 08:22:04AM +0530, Viresh Kumar wrote:
+> > > > Hmm, even if the values are same currently I am not sure if we want
+> > > > the same for ever. I will write a patch for it though, if Peter/Rafael
+> > > > feel the same as you.
+> > >
+> > > Is it really the same variable or just two numbers that happen to be the
+> > > same?
+> >
+> > In both cases we are trying to keep the load under 80% of what can be supported.
+> > But I am not sure of the answer to your question.
+> >
+> > Maybe Rafael knows :)
+> 
+> Which variable?
 
-I have mentioned DPHY and yes it is possible to give more information
-will update in next version, no problem. thanks for mentioning that.
+Schedutil multiplies the target frequency by 1.25 (20% more capacity eventually)
+to get enough room for more load and similar thing is done in fair.c at several
+places to see if the new task can fit in a runqueue without overloading it.
+
+Quentin suggested to use common code for this calculation and that is what is
+getting discussed here.
+
+-- 
+viresh
