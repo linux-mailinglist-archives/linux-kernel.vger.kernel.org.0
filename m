@@ -2,96 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5D013499AA
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 09:00:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 30DB6499AF
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 09:01:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726292AbfFRHAW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Jun 2019 03:00:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60216 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725829AbfFRHAW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Jun 2019 03:00:22 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CEB1B20665;
-        Tue, 18 Jun 2019 07:00:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560841221;
-        bh=zyoTbA/X8DjK3gQ0rzJxs92dPQZZnv6PtxgiKe9KUbI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=UMqfrvGmoZKS6fDsGggwuNfWr0M4aOYHDvAEomPqWZK5kBsXiByGfxwWulvle/eGL
-         3LajHF7zPGnjoHdAURTpA3CkD7zeNLMjXhLy8BqsaD6Wc6FjS6D/GvkM5OK9eD003v
-         xIr81+VyroIKqPGMUuUJCVv7+hRFJ7xaWonj4rGc=
-Date:   Tue, 18 Jun 2019 09:00:19 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Shobhit Kukreti <shobhitkukreti@gmail.com>
-Cc:     Joe Perches <joe@perches.com>, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
-        Bastien Nocera <hadess@hadess.net>,
-        Larry Finger <Larry.Finger@lwfinger.net>
-Subject: Re: [PATCH v3 1/3] staging: rtl8723bs: Resolve checkpatch error
- "that open brace { should be on the previous line" in the rtl8723 driver
-Message-ID: <20190618070019.GA20601@kroah.com>
-References: <cover.1560701271.git.shobhitkukreti@gmail.com>
- <387734fb053e04eb44a0813ab3531a1f4344fdb2.1560701271.git.shobhitkukreti@gmail.com>
+        id S1727523AbfFRHBl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Jun 2019 03:01:41 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:53196 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725829AbfFRHBl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Jun 2019 03:01:41 -0400
+Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 97DBE610982C05AA1866;
+        Tue, 18 Jun 2019 15:01:38 +0800 (CST)
+Received: from [10.134.22.195] (10.134.22.195) by smtp.huawei.com
+ (10.3.19.201) with Microsoft SMTP Server (TLS) id 14.3.439.0; Tue, 18 Jun
+ 2019 15:01:37 +0800
+Subject: Re: [PATCH 4.19 034/118] f2fs: fix to avoid panic in
+ f2fs_inplace_write_data()
+To:     Pavel Machek <pavel@ucw.cz>
+CC:     <linux-kernel@vger.kernel.org>, Jaegeuk Kim <jaegeuk@kernel.org>,
+        "Sasha Levin" <sashal@kernel.org>
+References: <20190613075643.642092651@linuxfoundation.org>
+ <20190613075645.482628218@linuxfoundation.org> <20190616195430.GC6676@amd>
+From:   Chao Yu <yuchao0@huawei.com>
+Message-ID: <73f254f6-c74d-fccb-2531-7b2951a2a418@huawei.com>
+Date:   Tue, 18 Jun 2019 15:01:36 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <387734fb053e04eb44a0813ab3531a1f4344fdb2.1560701271.git.shobhitkukreti@gmail.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <20190616195430.GC6676@amd>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.134.22.195]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jun 16, 2019 at 09:19:49AM -0700, Shobhit Kukreti wrote:
-> Cleaned up the code from the following files to get rid of
-> check patch error "that open brace { should be on the previous line"
+Hi Pavel,
+
+On 2019/6/17 3:54, Pavel Machek wrote:
+> Hi!
 > 
-> drivers/staging/rtl8723bs/os_dep/mlme_linux.c
-> drivers/staging/rtl8723bs/os_dep/recv_linux.c
-> drivers/staging/rtl8723bs/os_dep/rtw_proc.c
-> drivers/staging/rtl8723bs/os_dep/sdio_intf.c
-> drivers/staging/rtl8723bs/os_dep/sdio_ops_linux.c
+>> [ Upstream commit 05573d6ccf702df549a7bdeabef31e4753df1a90 ]
+>>
+>> As Jungyeon reported in bugzilla:
+>>
+>> https://bugzilla.kernel.org/show_bug.cgi?id=203239
+>>
+>> - Overview
+>> When mounting the attached crafted image and running program, following errors are reported.
+>> Additionally, it hangs on sync after running program.
+>>
+>> The image is intentionally fuzzed from a normal f2fs image for testing.
+>> Compile options for F2FS are as follows.
+>> CONFIG_F2FS_FS=y
+> ...
+>> The reason is f2fs_inplace_write_data() will trigger kernel panic due
+>> to data block locates in node type segment.
+>>
+>> To avoid panic, let's just return error code and set SBI_NEED_FSCK to
+>> give a hint to fsck for latter repairing.
 > 
-> Signed-off-by: Shobhit Kukreti <shobhitkukreti@gmail.com>
-> ---
->  drivers/staging/rtl8723bs/os_dep/mlme_linux.c     | 15 +++--
->  drivers/staging/rtl8723bs/os_dep/recv_linux.c     | 77 ++++++++---------------
->  drivers/staging/rtl8723bs/os_dep/rtw_proc.c       |  6 +-
->  drivers/staging/rtl8723bs/os_dep/sdio_intf.c      | 15 ++---
->  drivers/staging/rtl8723bs/os_dep/sdio_ops_linux.c | 24 +++----
->  5 files changed, 49 insertions(+), 88 deletions(-)
+>> index 03fa2c4d3d79..8fc3edb6760c 100644
+>> --- a/fs/f2fs/segment.c
+>> +++ b/fs/f2fs/segment.c
+>> @@ -3069,13 +3069,18 @@ int f2fs_inplace_write_data(struct f2fs_io_info *fio)
+>>  {
+>>  	int err;
+>>  	struct f2fs_sb_info *sbi = fio->sbi;
+>> +	unsigned int segno;
+>>  
+>>  	fio->new_blkaddr = fio->old_blkaddr;
+>>  	/* i/o temperature is needed for passing down write hints */
+>>  	__get_segment_type(fio);
+>>  
+>> -	f2fs_bug_on(sbi, !IS_DATASEG(get_seg_entry(sbi,
+>> -			GET_SEGNO(sbi, fio->new_blkaddr))->type));
+>> +	segno = GET_SEGNO(sbi, fio->new_blkaddr);
+>> +
+>> +	if (!IS_DATASEG(get_seg_entry(sbi, segno)->type)) {
+>> +		set_sbi_flag(sbi, SBI_NEED_FSCK);
+>> +		return -EFAULT;
+>> +	}
+>>  
 > 
-> diff --git a/drivers/staging/rtl8723bs/os_dep/mlme_linux.c b/drivers/staging/rtl8723bs/os_dep/mlme_linux.c
-> index aa2499f..4631b68 100644
-> --- a/drivers/staging/rtl8723bs/os_dep/mlme_linux.c
-> +++ b/drivers/staging/rtl8723bs/os_dep/mlme_linux.c
-> @@ -46,8 +46,7 @@ void rtw_os_indicate_connect(struct adapter *adapter)
->  	struct mlme_priv *pmlmepriv = &(adapter->mlmepriv);
->  
->  	if ((check_fwstate(pmlmepriv, WIFI_ADHOC_MASTER_STATE) == true) ||
-> -		(check_fwstate(pmlmepriv, WIFI_ADHOC_STATE) == true))
-> -	{
-> +		(check_fwstate(pmlmepriv, WIFI_ADHOC_STATE) == true)) {
->  		rtw_cfg80211_ibss_indicate_connect(adapter);
->  	}
->  	else
-> @@ -77,8 +76,8 @@ void rtw_reset_securitypriv(struct adapter *adapter)
->  
->  	spin_lock_bh(&adapter->security_key_mutex);
->  
-> -	if (adapter->securitypriv.dot11AuthAlgrthm == dot11AuthAlgrthm_8021X)/* 802.1x */
-> -	{
-> +	if (adapter->securitypriv.dot11AuthAlgrthm == dot11AuthAlgrthm_8021X) { /* 802.1x */
-> +
+> Would it make sense to print some kind of debug message, as we do in
+> the other error cases?
 
-Why the blank line?
+Although it's corner case, I think it will be better to do that, let me add it
+in another patch.
 
-And don't keep the comment on the right side, that's just a pain to work
-with.
+Thanks for reminding. :)
 
-thanks,
+Thanks,
 
-greg k-h
+> 
+> Best regards,
+> 									Pavel
+> 
