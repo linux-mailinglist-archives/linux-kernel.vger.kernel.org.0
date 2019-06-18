@@ -2,94 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 303374ABC9
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 22:27:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E78CD4ABD4
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 22:31:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730635AbfFRU12 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Jun 2019 16:27:28 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:51764 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730607AbfFRU11 (ORCPT
+        id S1730589AbfFRUbs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Jun 2019 16:31:48 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:48706 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729961AbfFRUbs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Jun 2019 16:27:27 -0400
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92 #3 (Red Hat Linux))
-        id 1hdKhN-0003PQ-66; Tue, 18 Jun 2019 20:27:21 +0000
-Date:   Tue, 18 Jun 2019 21:27:21 +0100
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Sami Tolvanen <samitolvanen@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        linux-mtd@lists.infradead.org, linux-nfs@vger.kernel.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/4] jffs2: pass the correct prototype to read_cache_page
-Message-ID: <20190618202721.GD17978@ZenIV.linux.org.uk>
-References: <20190520055731.24538-1-hch@lst.de>
- <20190520055731.24538-4-hch@lst.de>
+        Tue, 18 Jun 2019 16:31:48 -0400
+Received: from p5b06daab.dip0.t-ipconnect.de ([91.6.218.171] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1hdKld-0002Cf-QM; Tue, 18 Jun 2019 22:31:45 +0200
+Date:   Tue, 18 Jun 2019 22:31:40 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     LKML <linux-kernel@vger.kernel.org>
+cc:     x86@kernel.org, Borislav Petkov <bp@alien8.de>
+Subject: [PATCH] x86/microcode: Fix the microcode load on CPU hotplug for
+ real
+Message-ID: <alpine.DEB.2.21.1906182228350.1766@nanos.tec.linutronix.de>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190520055731.24538-4-hch@lst.de>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 20, 2019 at 07:57:30AM +0200, Christoph Hellwig wrote:
-> Fix the callback jffs2 passes to read_cache_page to actually have the
-> proper type expected.  Casting around function pointers can easily
-> hide typing bugs, and defeats control flow protection.
+A recent change moved the microcode loader hotplug callback into the early
+startup phase, which is running with interrupts disabled. It missed that
+the callbacks invoke sysfs functions which might sleep causing nice 'might
+sleep' splats with proper debugging enabled.
 
-FWIW, this
-unsigned char *jffs2_gc_fetch_page(struct jffs2_sb_info *c,
-                                   struct jffs2_inode_info *f,
-                                   unsigned long offset,
-                                   unsigned long *priv)
-{
-        struct inode *inode = OFNI_EDONI_2SFFJ(f);
-        struct page *pg;
+Split the callbacks and only load the microcode in the early startup phase
+and move the sysfs handling back into the later threaded and preemptible
+bringup phase where it was before.
 
-        pg = read_cache_page(inode->i_mapping, offset >> PAGE_SHIFT,
-                             (void *)jffs2_do_readpage_unlock, inode);
-        if (IS_ERR(pg))
-                return (void *)pg;
+Fixes: 78f4e932f776 ("x86/microcode, cpuhotplug: Add a microcode loader CPU hotplug callback")
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: stable@vger.kernel.org
+---
+ arch/x86/kernel/cpu/microcode/core.c |   15 ++++++++++-----
+ 1 file changed, 10 insertions(+), 5 deletions(-)
 
-        *priv = (unsigned long)pg;
-        return kmap(pg);
-}
-looks like crap.  And so does this:
-void jffs2_gc_release_page(struct jffs2_sb_info *c,
-                           unsigned char *ptr,
-                           unsigned long *priv)
-{
-        struct page *pg = (void *)*priv;
-
-        kunmap(pg);
-        put_page(pg);
-}
-
-	First of all, there's only one caller for each of those, and both
-are direct calls.  So passing struct page * around that way is ridiculous.
-What's more, there is no reason not to do kmap() in caller (i.e. in
-jffs2_garbage_collect_dnode()).  That way jffs2_gc_fetch_page() would
-simply be return read_cache_page(....), and in the caller we'd have
-
-        struct page *pg;
-        unsigned char *pg_ptr;
-...
-        mutex_unlock(&f->sem);
-        pg = jffs2_gc_fetch_page(c, f, start);
-        if (IS_ERR(pg)) {
-		mutex_lock(&f->sem);
-                pr_warn("read_cache_page() returned error: %ld\n", PTR_ERR(pg));
-                return PTR_ERR(pg);
-        }
-	pg_ptr = kmap(pg);
-	mutex_lock(&f->sem);
-...
-	kunmap(pg);
-	put_page(pg);
-
-and that's it, preserving the current locking and with saner types...
+--- a/arch/x86/kernel/cpu/microcode/core.c
++++ b/arch/x86/kernel/cpu/microcode/core.c
+@@ -789,13 +789,16 @@ static struct syscore_ops mc_syscore_ops
+ 	.resume			= mc_bp_resume,
+ };
+ 
+-static int mc_cpu_online(unsigned int cpu)
++static int mc_cpu_starting(unsigned int cpu)
+ {
+-	struct device *dev;
+-
+-	dev = get_cpu_device(cpu);
+ 	microcode_update_cpu(cpu);
+ 	pr_debug("CPU%d added\n", cpu);
++	return 0;
++}
++
++static int mc_cpu_online(unsigned int cpu)
++{
++	struct device *dev = get_cpu_device(cpu);
+ 
+ 	if (sysfs_create_group(&dev->kobj, &mc_attr_group))
+ 		pr_err("Failed to create group for CPU%d\n", cpu);
+@@ -872,7 +875,9 @@ int __init microcode_init(void)
+ 		goto out_ucode_group;
+ 
+ 	register_syscore_ops(&mc_syscore_ops);
+-	cpuhp_setup_state_nocalls(CPUHP_AP_MICROCODE_LOADER, "x86/microcode:online",
++	cpuhp_setup_state_nocalls(CPUHP_AP_MICROCODE_LOADER, "x86/microcode:starting",
++				  mc_cpu_starting, NULL);
++	cpuhp_setup_state_nocalls(CPUHP_AP_ONLINE_DYN, "x86/microcode:online",
+ 				  mc_cpu_online, mc_cpu_down_prep);
+ 
+ 	pr_info("Microcode Update Driver: v%s.", DRIVER_VERSION);
