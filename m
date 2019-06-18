@@ -2,89 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AF4774A28B
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 15:41:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 85AEF4A296
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 15:44:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729425AbfFRNle (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Jun 2019 09:41:34 -0400
-Received: from sauhun.de ([88.99.104.3]:40424 "EHLO pokefinder.org"
+        id S1729263AbfFRNoC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Jun 2019 09:44:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59154 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728905AbfFRNle (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Jun 2019 09:41:34 -0400
-Received: from localhost (p5486CE06.dip0.t-ipconnect.de [84.134.206.6])
-        by pokefinder.org (Postfix) with ESMTPSA id 95E122C047A;
-        Tue, 18 Jun 2019 15:41:30 +0200 (CEST)
-Date:   Tue, 18 Jun 2019 15:41:30 +0200
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Cc:     Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab@infradead.org>,
-        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>, Ajay Gupta <ajayg@nvidia.com>,
-        Amit Kucheria <amit.kucheria@linaro.org>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Otto Sabart <ottosabart@seberm.com>,
-        Li Yang <leoyang.li@nxp.com>,
-        Will Deacon <will.deacon@arm.com>, devicetree@vger.kernel.org,
-        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        linux-i2c@vger.kernel.org
-Subject: Re: [PATCH] docs: fix some broken references due to txt->rst renames
-Message-ID: <20190618134130.GA4516@kunai>
-References: <6f09587b7678f2fb378d736f45a02ffa9412cc99.1560864716.git.mchehab+samsung@kernel.org>
+        id S1726248AbfFRNoB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Jun 2019 09:44:01 -0400
+Received: from dragon (li1322-146.members.linode.com [45.79.223.146])
+        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7B70A2084B;
+        Tue, 18 Jun 2019 13:43:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1560865441;
+        bh=jpwi1yqOwmzINvYa264hjoNAwgtlAPkdvF2LHsGZuSw=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=dlTPHTxwnt6PhDNTjiSnVbxHAQANydojYv4DrMm3pkhiAXugUYFIMnhX+G7B2B7Wx
+         IG8xYOWcz/LHNiHMjHJYNcz/eV7MO8/42BaSqdopxg+ZmAT3HztnggMQ4JswjFOzPp
+         YkXA7B1KnSAyciFqCVVrG3o61qq6FrwjrNCZv4R8=
+Date:   Tue, 18 Jun 2019 21:42:55 +0800
+From:   Shawn Guo <shawnguo@kernel.org>
+To:     Nathan Chancellor <natechancellor@gmail.com>
+Cc:     Abel Vesa <abel.vesa@nxp.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, clang-built-linux@googlegroups.com,
+        Nick Desaulniers <ndesaulniers@google.com>
+Subject: Re: [PATCH] clk: imx6q: Annotate imx6q_obtain_fixed_clk_hw with
+ __init
+Message-ID: <20190618134253.GK1959@dragon>
+References: <20190618022405.27952-1-natechancellor@gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="d6Gm4EdcadzBjdND"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <6f09587b7678f2fb378d736f45a02ffa9412cc99.1560864716.git.mchehab+samsung@kernel.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190618022405.27952-1-natechancellor@gmail.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Jun 17, 2019 at 07:24:05PM -0700, Nathan Chancellor wrote:
+> When building with clang, the following modpost warning occurs:
+> 
+> WARNING: vmlinux.o(.text+0x974dbc): Section mismatch in reference from
+> the function imx6q_obtain_fixed_clk_hw() to the function
+> .init.text:imx_obtain_fixed_clock_hw()
+> The function imx6q_obtain_fixed_clk_hw() references
+> the function __init imx_obtain_fixed_clock_hw().
+> This is often because imx6q_obtain_fixed_clk_hw lacks a __init
+> annotation or the annotation of imx_obtain_fixed_clock_hw is wrong.
+> 
+> imx6q_obtain_fixed_clk_hw is only used in imx6q_clocks_init, which is
+> marked __init so do that to imx6q_obtain_fixed_clk_hw to avoid this
+> warning.
+> 
+> Fixes: 992b703b5b38 ("clk: imx6q: Switch to clk_hw based API")
+> Link: https://github.com/ClangBuiltLinux/linux/issues/541
+> Reported-by: Nick Desaulniers <ndesaulniers@google.com>
+> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
 
---d6Gm4EdcadzBjdND
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Thanks for the patch, Nathan.  But we already queued up a patch [1]
+from Arnd for that.
 
-On Tue, Jun 18, 2019 at 10:33:58AM -0300, Mauro Carvalho Chehab wrote:
-> There are three left-overs from the recent file renames,
-> probably due to some other conflicting patch.
->=20
-> Fix them.
->=20
-> Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Shawn
 
-Thanks!
+[1] https://lkml.org/lkml/2019/6/17/317
 
-Acked-by: Wolfram Sang <wsa@the-dreams.de>
-
-
---d6Gm4EdcadzBjdND
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAl0I6gIACgkQFA3kzBSg
-KbYPmw//S9ererLqN6V1mN1Ixbn0CfKZGd1MAB4a/0PZiXPpCngdRfAog04KBXjI
-xYSX76wEzxv0+SiwU8kElhD15w/9Vjm9vZ8SCYRv2xBSE7W3xd+fv2gDAQf+pb2p
-bHJ5pTs8PRCqJcVLmZirsJ2vvOA1C6NYmb9Sjb4hH4u4+i9fqc0RKjOrO2OZCHx2
-3T6xcu0INuJm1RNX0gHHk06mGjfMUm6unYYHJkOMeup4HTUqDmYvX4U1g/3sIAIy
-kOPwW1ggkEJDebdxyc1uNft0yZKznjx7iOkP/p6wacCUI56jmCMniAt36f76OV8L
-C9Bks/dr9tp4M3z0Jbxa9oJWhc+e8KA/WNgXXnyCCDVg1idhaGgWkW59S05Spu0H
-PgprhEo5QYdT1GvEO28eP+kuFKi7HN5VvOJy794jFkjOPH0A9HK/f1CXmjp9cv3V
-nZhMOzohbh18AXwOG3T4eF9gL3u0WsPK2EH35oFjxH7ty6tmV5CkpVBgzWH1EBxq
-K44uWCs6H6SX3e0Cq5FRgGdvjlpFwQZT4Hbf3IfmukTzurdCi9YSPI228IdLmCPa
-uncvdbThBK4o/O6ndCqx04bEmPEUJdzcYuBlqi38lTonwzN4jvOyabM65Mt/HhW7
-4sy6hg/cLkPuX8tBpKWJoT13jqVTjRvjnxemkSq06yAmOznSxs4=
-=lZcZ
------END PGP SIGNATURE-----
-
---d6Gm4EdcadzBjdND--
+> ---
+>  drivers/clk/imx/clk-imx6q.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/clk/imx/clk-imx6q.c b/drivers/clk/imx/clk-imx6q.c
+> index 2caa71e91119..18914e0a1850 100644
+> --- a/drivers/clk/imx/clk-imx6q.c
+> +++ b/drivers/clk/imx/clk-imx6q.c
+> @@ -418,8 +418,9 @@ static void disable_anatop_clocks(void __iomem *anatop_base)
+>  	writel_relaxed(reg, anatop_base + CCM_ANALOG_PLL_VIDEO);
+>  }
+>  
+> -static struct clk_hw *imx6q_obtain_fixed_clk_hw(struct device_node *np,
+> -						const char *name, unsigned long rate)
+> +static struct clk_hw __init *imx6q_obtain_fixed_clk_hw(struct device_node *np,
+> +							const char *name,
+> +							unsigned long rate)
+>  {
+>  	struct clk *clk = of_clk_get_by_name(np, name);
+>  	struct clk_hw *hw;
+> -- 
+> 2.22.0
+> 
