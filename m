@@ -2,118 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D0B9C49AA3
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 09:32:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 290404998F
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 08:57:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728939AbfFRHcl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Jun 2019 03:32:41 -0400
-Received: from mail-pf1-f174.google.com ([209.85.210.174]:36797 "EHLO
-        mail-pf1-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725970AbfFRHck (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Jun 2019 03:32:40 -0400
-Received: by mail-pf1-f174.google.com with SMTP id r7so7144709pfl.3
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2019 00:32:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=cNzM2YMgB5QeOFqcE5XWudMdVUdieIunz+pw2P2nkps=;
-        b=aHxwffp9j1MuUtfKW9XicOHm7mPw/i8Dm7DrqoJfs0QQJhFSy9piSmKPw2fRGqaCuT
-         FJygeuUaisRAmeI6dI6mA2O7CBRKaMX0cALjItDW567ZxjdyTPNmMb08qVvPSCUGgT7Z
-         S57CNfTHcNt+WD885RoBDwLz13vcgo6D+DQOo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=cNzM2YMgB5QeOFqcE5XWudMdVUdieIunz+pw2P2nkps=;
-        b=tQ+C5pVTuSpgtfkjCEbaBqeGQv2mRsFir0me/U5epQvlOWmZwX/EydyEli1N0b7GzP
-         jxY2vLZ+WBt4Gf+LRJ4AaeVzEdeUZqzfuIx8tqRbWx5i8QV7457pO3nwOBbaT9XuzdY6
-         rg+qp/heqBk2/WNpW4tI4awMFNrY+LHOzU5fIRrL0KurQftVBcLBmi/BC78hMPbD1rJm
-         7KvpWRhmlFKwBvcT++SQYmbVsV6GX9xHO34V2yX2kNiZSVwMvQhdK5nodlQfgZ/0HsUY
-         of7X7IYjz4BWFW0QOeVdBuYolRucLPsC9LlWOC+6XsAQcyJ1iTXVHKcBy0vpVxopx8Mg
-         rZxQ==
-X-Gm-Message-State: APjAAAWtiBASYGatxj7oaHyQYSVOIo/szYXsM9Wp9BbyAGkq8sRgctfG
-        h7PS2wSJZx68o/vqxlE4jmXg3j9igCPrcA==
-X-Google-Smtp-Source: APXvYqxn5zv7Vekhs0XYFSBVPMRKfnBoqvJIOiHchJjuRLxEyoQhCqoP/ayzffUK9jSqUj3vSTcjZg==
-X-Received: by 2002:a62:6303:: with SMTP id x3mr101686139pfb.261.1560836502925;
-        Mon, 17 Jun 2019 22:41:42 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id u20sm12277118pgm.56.2019.06.17.22.41.41
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 17 Jun 2019 22:41:42 -0700 (PDT)
-Date:   Mon, 17 Jun 2019 22:41:41 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Will Deacon <will.deacon@arm.com>
-Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Jayachandran Chandrasekharan Nair <jnair@marvell.com>,
-        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-        Jan Glauber <jglauber@marvell.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [RFC] Disable lockref on arm64
-Message-ID: <201906172233.F753B92@keescook>
-References: <20190614095846.GC10506@fuggles.cambridge.arm.com>
- <CAKv+Gu_Kdq=UPijjA84FpmO=ZsdEO9EyyF7GeOQ+WmfqtO_hMg@mail.gmail.com>
- <20190614103850.GG10659@fuggles.cambridge.arm.com>
- <201906142026.1BC27EDB1E@keescook>
- <CAKv+Gu_XuhgUCYOeykrbaxJz-wL1HFrc_O+HeZHqaGkMHd2J9Q@mail.gmail.com>
- <201906150654.FF4400F7C8@keescook>
- <CAKv+Gu9-rZ16Nb9t3=knzW0BHu0eNxQoPwWS4c8UMMm=2iqiuw@mail.gmail.com>
- <201906161429.BCE1083@keescook>
- <CAKv+Gu_8ibO4D01DZv6KjL2GnvKuVBVnt=doxkN0w=4utJ7NvQ@mail.gmail.com>
- <20190617172620.GK30800@fuggles.cambridge.arm.com>
+        id S1728807AbfFRG5Y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Jun 2019 02:57:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58934 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726037AbfFRG5Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Jun 2019 02:57:24 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E069C20863;
+        Tue, 18 Jun 2019 05:42:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1560836521;
+        bh=+QRebg6toQEXk2xt0KfLP2gEAhm9ZZ14Nl8WNSxXxVs=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=S03fz8RyICJEbA23G+syKb/UQ6INJlvQIhsYIdMJbm/ohR8isujjpXGMw+ffSPkpc
+         3jrEooBnvIdpTh4wF2XMUIaaXB72foaiczdVOCGkdL11jpaWK+LqcsUHYAQmtEFX7+
+         XPvWrK5y8IRFC39MMv4XBbASVs1bbjt+T2L91GNQ=
+Date:   Tue, 18 Jun 2019 07:41:58 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Puranjay Mohan <puranjay12@gmail.com>
+Cc:     Shuah Khan <skhan@linuxfoundation.org>, linux-doc@vger.kernel.org,
+        linux-kernel-mentees@lists.linuxfoundation.org,
+        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>
+Subject: Re: [Linux-kernel-mentees] [PATCH] Documentation: platform: convert
+ x86-laptop-drivers.txt to reST
+Message-ID: <20190618054158.GA3713@kroah.com>
+References: <20190618053227.31678-1-puranjay12@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190617172620.GK30800@fuggles.cambridge.arm.com>
+In-Reply-To: <20190618053227.31678-1-puranjay12@gmail.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 17, 2019 at 06:26:20PM +0100, Will Deacon wrote:
-> On Mon, Jun 17, 2019 at 01:33:19PM +0200, Ard Biesheuvel wrote:
-> > On my single core TX2, the comparative performance is as follows
-> > 
-> > Baseline: REFCOUNT_TIMING test using REFCOUNT_FULL (LSE cmpxchg)
-> >       191057942484      cycles                    #    2.207 GHz
-> >       148447589402      instructions              #    0.78  insn per
-> > cycle
-> > 
-> >       86.568269904 seconds time elapsed
-> > 
-> > Upper bound: ATOMIC_TIMING
-> >       116252672661      cycles                    #    2.207 GHz
-> >        28089216452      instructions              #    0.24  insn per
-> > cycle
-> > 
-> >       52.689793525 seconds time elapsed
-> > 
-> > REFCOUNT_TIMING test using LSE atomics
-> >       127060259162      cycles                    #    2.207 GHz
+On Tue, Jun 18, 2019 at 11:02:27AM +0530, Puranjay Mohan wrote:
+> This converts the plain text documentation to reStructuredText format.
+> No essential content change.
 > 
-> Ok, so assuming JC's complaint is valid, then these numbers are compelling.
-> In particular, my understanding of this thread is that your optimised
-> implementation doesn't actually sacrifice any precision; it just changes
-> the saturation behaviour in a way that has no material impact. Kees, is that
-> right?
+> Signed-off-by: Puranjay Mohan <puranjay12@gmail.com>
+> ---
+>  Documentation/platform/x86-laptop-drivers.rst | 23 +++++++++++++++++++
+>  Documentation/platform/x86-laptop-drivers.txt | 18 ---------------
+>  2 files changed, 23 insertions(+), 18 deletions(-)
+>  create mode 100644 Documentation/platform/x86-laptop-drivers.rst
+>  delete mode 100644 Documentation/platform/x86-laptop-drivers.txt
 
-That is my understanding, yes. There is no loss to detection precision.
-But for clarity, I should point out it has one behavioral change that is
-the same change as on x86: the counter is now effectively a 31 bit counter
-not a 32 bit counter, as the signed bit is being used for saturation.
+Don't you also need to hook it up to the documentation build process
+when doing this?
 
-> If so, I'm not against having this for arm64, with the premise that we can
-> hide the REFCOUNT_FULL option entirely given that it would only serve to
-> confuse if exposed.
+thanks,
 
-If the LSE atomics version has overflow, dec-to-zero, and inc-from-zero
-protections, then as far as I'm concerned, REFCOUNT_FULL doesn't need
-to exist for arm64. On the Kconfig front, as long as there isn't a way
-to revert refcount_t to atomic_t, I'm happy. :)
-
--- 
-Kees Cook
+greg k-h
