@@ -2,103 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F34554999F
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 08:58:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C30FB4999B
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 08:57:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728929AbfFRG6F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Jun 2019 02:58:05 -0400
-Received: from mga01.intel.com ([192.55.52.88]:62901 "EHLO mga01.intel.com"
+        id S1728910AbfFRG54 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Jun 2019 02:57:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59258 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726037AbfFRG6E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Jun 2019 02:58:04 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Jun 2019 23:58:04 -0700
-X-ExtLoop1: 1
-Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.198]) ([10.237.72.198])
-  by orsmga008.jf.intel.com with ESMTP; 17 Jun 2019 23:58:02 -0700
-Subject: Re: [PATCH v2 2/3] mmc: sdhci: sdhci-pci-o2micro: Check if controller
- supports 8-bit width
-To:     Raul E Rangel <rrangel@chromium.org>, linux-mmc@vger.kernel.org
-Cc:     ernest.zhang@bayhubtech.com, djkurtz@chromium.org,
-        linux-kernel@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>
-References: <20190617201014.84503-1-rrangel@chromium.org>
- <20190617201014.84503-2-rrangel@chromium.org>
-From:   Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-Message-ID: <866e6b54-7e4b-472d-7134-e322b2f0810e@intel.com>
-Date:   Tue, 18 Jun 2019 09:56:45 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        id S1726037AbfFRG54 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Jun 2019 02:57:56 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id EF7DD20665;
+        Tue, 18 Jun 2019 06:57:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1560841075;
+        bh=BoadilkCYTPnIl3QEBERI4uj2lKdwRcXmzIyAhRqQSE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=1mDdjMBHX1dV0hIrfNV3qExLK8CSEFyjXK4h0fBH9Tcj1qmVv2gXbs6/Ybxywbzd0
+         C4NKkMeTJecd7TG/crMhIjhR51Bsei5HdYiJsTdhSrgeZ3hVKCdvPT3H9vjmid+OTC
+         mxRAltCZxo9DSh88tM+i6ytmY5JJkIfPOA3jTGBI=
+Date:   Tue, 18 Jun 2019 08:57:53 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Hariprasad Kelam <hariprasad.kelam@gmail.com>
+Cc:     Michael Straube <straube.linux@gmail.com>,
+        Mamta Shukla <mamtashukla555@gmail.com>,
+        Nishka Dasgupta <nishkadg.linux@gmail.com>,
+        Emanuel Bennici <benniciemanuel78@gmail.com>,
+        Puranjay Mohan <puranjay12@gmail.com>,
+        Shobhit Kukreti <shobhitkukreti@gmail.com>,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+Subject: Re: [Patch v2] staging: rtl8723bs: os_dep: ioctl_linux: make use of
+ kzalloc
+Message-ID: <20190618065753.GA15358@kroah.com>
+References: <20190618014410.GA8505@hari-Inspiron-1545>
 MIME-Version: 1.0
-In-Reply-To: <20190617201014.84503-2-rrangel@chromium.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190618014410.GA8505@hari-Inspiron-1545>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 17/06/19 11:10 PM, Raul E Rangel wrote:
-> The O2 controller supports 8-bit EMMC access.
-> 
-> JESD84-B51 section A.6.3.a defines the bus testing procedure that
-> `mmc_select_bus_width()` implements. This is used to determine the actual
-> bus width of the eMMC.
-> 
-> Signed-off-by: Raul E Rangel <rrangel@chromium.org>
+On Tue, Jun 18, 2019 at 07:14:10AM +0530, Hariprasad Kelam wrote:
+> kmalloc with memset can be replaced with kzalloc.
 
-Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+Yes, but did you audit the call-paths of this to ensure that GFP_KERNEL
+is the correct value for kzalloc() here?  If so, please document that in
+the changelog.
 
-> ---
-> I tested this on an AMD chromebook.
-> 
-> $ cat /sys/kernel/debug/mmc1/ios
-> clock:          200000000 Hz
-> actual clock:   200000000 Hz
-> vdd:            21 (3.3 ~ 3.4 V)
-> bus mode:       2 (push-pull)
-> chip select:    0 (don't care)
-> power mode:     2 (on)
-> bus width:      3 (8 bits)
-> timing spec:    9 (mmc HS200)
-> signal voltage: 1 (1.80 V)
-> driver type:    0 (driver type B)
-> 
-> Before this patch only 4 bit was negotiated.
-> 
->  drivers/mmc/host/sdhci-pci-o2micro.c | 12 +++++++++++-
->  1 file changed, 11 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/mmc/host/sdhci-pci-o2micro.c b/drivers/mmc/host/sdhci-pci-o2micro.c
-> index dd21315922c87..9dc4548271b4b 100644
-> --- a/drivers/mmc/host/sdhci-pci-o2micro.c
-> +++ b/drivers/mmc/host/sdhci-pci-o2micro.c
-> @@ -395,11 +395,21 @@ int sdhci_pci_o2_probe_slot(struct sdhci_pci_slot *slot)
->  {
->  	struct sdhci_pci_chip *chip;
->  	struct sdhci_host *host;
-> -	u32 reg;
-> +	u32 reg, caps;
->  	int ret;
->  
->  	chip = slot->chip;
->  	host = slot->host;
-> +
-> +	caps = sdhci_readl(host, SDHCI_CAPABILITIES);
-> +
-> +	/*
-> +	 * mmc_select_bus_width() will test the bus to determine the actual bus
-> +	 * width.
-> +	 */
-> +	if (caps & SDHCI_CAN_DO_8BIT)
-> +		host->mmc->caps |= MMC_CAP_8_BIT_DATA;
-> +
->  	switch (chip->pdev->device) {
->  	case PCI_DEVICE_ID_O2_SDS0:
->  	case PCI_DEVICE_ID_O2_SEABIRD0:
-> 
+thanks,
 
+greg k-h
