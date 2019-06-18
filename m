@@ -2,140 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E5F6D4AC72
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 23:02:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BD4724AC7B
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 23:05:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730571AbfFRVCb convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 18 Jun 2019 17:02:31 -0400
-Received: from mail.fireflyinternet.com ([109.228.58.192]:52039 "EHLO
-        fireflyinternet.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1730102AbfFRVCb (ORCPT
+        id S1730723AbfFRVFe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Jun 2019 17:05:34 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:41227 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730655AbfFRVFe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Jun 2019 17:02:31 -0400
-X-Default-Received-SPF: pass (skip=forwardok (res=PASS)) x-ip-name=78.156.65.138;
-Received: from localhost (unverified [78.156.65.138]) 
-        by fireflyinternet.com (Firefly Internet (M1)) with ESMTP (TLS) id 16945877-1500050 
-        for multiple; Tue, 18 Jun 2019 22:02:17 +0100
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-To:     Lu Baolu <baolu.lu@linux.intel.com>, dwmw2@infradead.org,
-        joro@8bytes.org
-From:   Chris Wilson <chris@chris-wilson.co.uk>
-In-Reply-To: <20190521073016.27525-1-baolu.lu@linux.intel.com>
-Cc:     ashok.raj@intel.com, jacob.jun.pan@linux.intel.com,
-        Kevin Tian <kevin.tian@intel.com>,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        Dave Jiang <dave.jiang@intel.com>
-References: <20190521073016.27525-1-baolu.lu@linux.intel.com>
-Message-ID: <156089173816.31375.3686352361646791464@skylake-alporthouse-com>
-User-Agent: alot/0.6
-Subject: Re: [PATCH 1/2] iommu/vt-d: Fix lock inversion between iommu->lock and
- device_domain_lock
-Date:   Tue, 18 Jun 2019 22:02:18 +0100
+        Tue, 18 Jun 2019 17:05:34 -0400
+Received: by mail-wr1-f65.google.com with SMTP id c2so976932wrm.8;
+        Tue, 18 Jun 2019 14:05:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=Owfnfi210bHG1KCwxED8o2q5fezVlInfI5jl0eNKEeI=;
+        b=tXd4wZnAEtzG4ZCi51jSRC5yJgInu58CiLl+5O15+09xhtHxypQT/Imiq+WzTDyEjm
+         zvcz8EcTQjHl0gIguBkTqXOPx7pzy12CArANSNhjbWiQKzwpU6x2rq6QwiN8Zup/zmbu
+         y+L5WbDuSvQ/gj4+uA7H0XEjoOG26XMxIBCAYIf6buwDzg/1Di5Vqdv0ElixvmD18fhY
+         PtZmkzlpAZpYDxotPNXTzDT1UCiRnEqKQvJfePHNUeM7dXz4lMLWzfd5ZWYnbkfpB5nV
+         mTDSiWbbANfAWDMw/jY2JetRSDmZoe8C68VvhQkZzhKHlxXWddGxUwQlt2qYWKChocls
+         /yNw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=Owfnfi210bHG1KCwxED8o2q5fezVlInfI5jl0eNKEeI=;
+        b=Xqi4wSrEuN3BBHk0AULYOEGy+uzQAxtZVIDBXjVOUttGH4upZuupHMr+JEniwfxM65
+         6znZj+CWGzdvPJ7ED6S4vG0SAH0+tssRcdGMYWQwxkrjkvxMS26nbqAfVsMD6Lv14QQJ
+         TFjFlciOHLxRUVxASFUKjtcw8qBvoigtz3MNjoz2ydNRSdjevnOMMbU/44i1rVYQEWk0
+         zOQ5tO6zoLC/i/F3trH4ONzYMjupUQX4gKmiDI4M3xOVGobeu6lMoD8feJNpKilkw6SU
+         d76sY+iuKB0VFuRThadZn4z0c2t6FcTnCMbeikPECwJuJyxpNuINCT8P0nmxBdfNtqYl
+         zAyw==
+X-Gm-Message-State: APjAAAXCI3AC36Ms4PhF5b0hsO2u+WhFZZ8ELEhd00j+13s3ZLsV0j60
+        dRyyJyZqhNsbzwfYDyr/4Z4=
+X-Google-Smtp-Source: APXvYqzuuLGELMPFkAg7k0kkbez3Tn1R9vAHVUTeupwHe3hO4aYZSehvzMHMRdchUTaBQrP0/ZOduw==
+X-Received: by 2002:adf:edcd:: with SMTP id v13mr4292343wro.210.1560891931820;
+        Tue, 18 Jun 2019 14:05:31 -0700 (PDT)
+Received: from localhost.localdomain ([188.27.67.107])
+        by smtp.gmail.com with ESMTPSA id v27sm31492545wrv.45.2019.06.18.14.05.30
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 18 Jun 2019 14:05:31 -0700 (PDT)
+From:   Daniel Baluta <daniel.baluta@gmail.com>
+X-Google-Original-From: Daniel Baluta <daniel.baluta@nxp.com>
+To:     shawnguo@kernel.org
+Cc:     mark.rutland@arm.com, robh+dt@kernel.org, s.hauer@pengutronix.de,
+        kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
+        aisheng.dong@nxp.com, anson.huang@nxp.com,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, shengjiu.wang@nxp.com,
+        Daniel Baluta <daniel.baluta@nxp.com>
+Subject: [PATCH] arm64: dts: imx8qxp: Add lsio_mu13 node
+Date:   Wed, 19 Jun 2019 00:05:16 +0300
+Message-Id: <20190618210516.28866-1-daniel.baluta@nxp.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Lu Baolu (2019-05-21 08:30:15)
-> From: Dave Jiang <dave.jiang@intel.com>
-> 
-> Lockdep debug reported lock inversion related with the iommu code
-> caused by dmar_insert_one_dev_info() grabbing the iommu->lock and
-> the device_domain_lock out of order versus the code path in
-> iommu_flush_dev_iotlb(). Expanding the scope of the iommu->lock and
-> reversing the order of lock acquisition fixes the issue.
+lsio_mu13 node is used to communicate with DSP.
 
-Which of course violates the property that device_domain_lock is the
-outer lock...
+Signed-off-by: Daniel Baluta <daniel.baluta@nxp.com>
+---
+ arch/arm64/boot/dts/freescale/imx8qxp.dtsi | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-<4>[    1.252997] ======================================================
-<4>[    1.252999] WARNING: possible circular locking dependency detected
-<4>[    1.253002] 5.2.0-rc5-CI-CI_DRM_6299+ #1 Not tainted
-<4>[    1.253004] ------------------------------------------------------
-<4>[    1.253006] swapper/0/1 is trying to acquire lock:
-<4>[    1.253009] 0000000091462475 (&(&iommu->lock)->rlock){+.+.}, at: domain_context_mapping_one+0xa0/0x4f0
-<4>[    1.253015]
-                  but task is already holding lock:
-<4>[    1.253017] 0000000069266737 (device_domain_lock){....}, at: domain_context_mapping_one+0x88/0x4f0
-<4>[    1.253021]
-                  which lock already depends on the new lock.
+diff --git a/arch/arm64/boot/dts/freescale/imx8qxp.dtsi b/arch/arm64/boot/dts/freescale/imx8qxp.dtsi
+index b2cb818c76c6..dcdbd86897ed 100644
+--- a/arch/arm64/boot/dts/freescale/imx8qxp.dtsi
++++ b/arch/arm64/boot/dts/freescale/imx8qxp.dtsi
+@@ -448,6 +448,14 @@
+ 			status = "disabled";
+ 		};
+ 
++		lsio_mu13: mailbox@5d280000 {
++			compatible = "fsl,imx8qxp-mu", "fsl,imx6sx-mu";
++			reg = <0x5d280000 0x10000>;
++			interrupts = <GIC_SPI 192 IRQ_TYPE_LEVEL_HIGH>;
++			#mbox-cells = <2>;
++			power-domains = <&pd IMX_SC_R_MU_13A>;
++		};
++
+ 		lsio_gpio0: gpio@5d080000 {
+ 			compatible = "fsl,imx8qxp-gpio", "fsl,imx35-gpio";
+ 			reg = <0x5d080000 0x10000>;
+-- 
+2.17.1
 
-<4>[    1.253024]
-                  the existing dependency chain (in reverse order) is:
-<4>[    1.253027]
-                  -> #1 (device_domain_lock){....}:
-<4>[    1.253031]        _raw_spin_lock_irqsave+0x33/0x50
-<4>[    1.253034]        dmar_insert_one_dev_info+0xb8/0x520
-<4>[    1.253036]        set_domain_for_dev+0x66/0xf0
-<4>[    1.253039]        iommu_prepare_identity_map+0x48/0x95
-<4>[    1.253042]        intel_iommu_init+0xfd8/0x138d
-<4>[    1.253045]        pci_iommu_init+0x11/0x3a
-<4>[    1.253048]        do_one_initcall+0x58/0x300
-<4>[    1.253051]        kernel_init_freeable+0x2c0/0x359
-<4>[    1.253054]        kernel_init+0x5/0x100
-<4>[    1.253056]        ret_from_fork+0x3a/0x50
-<4>[    1.253058]
-                  -> #0 (&(&iommu->lock)->rlock){+.+.}:
-<4>[    1.253062]        lock_acquire+0xa6/0x1c0
-<4>[    1.253064]        _raw_spin_lock+0x2a/0x40
-<4>[    1.253067]        domain_context_mapping_one+0xa0/0x4f0
-<4>[    1.253070]        pci_for_each_dma_alias+0x2b/0x160
-<4>[    1.253072]        dmar_insert_one_dev_info+0x44e/0x520
-<4>[    1.253075]        set_domain_for_dev+0x66/0xf0
-<4>[    1.253077]        iommu_prepare_identity_map+0x48/0x95
-<4>[    1.253080]        intel_iommu_init+0xfd8/0x138d
-<4>[    1.253082]        pci_iommu_init+0x11/0x3a
-<4>[    1.253084]        do_one_initcall+0x58/0x300
-<4>[    1.253086]        kernel_init_freeable+0x2c0/0x359
-<4>[    1.253089]        kernel_init+0x5/0x100
-<4>[    1.253091]        ret_from_fork+0x3a/0x50
-<4>[    1.253093]
-                  other info that might help us debug this:
-
-<4>[    1.253095]  Possible unsafe locking scenario:
-
-<4>[    1.253095]        CPU0                    CPU1
-<4>[    1.253095]        ----                    ----
-<4>[    1.253095]   lock(device_domain_lock);
-<4>[    1.253095]                                lock(&(&iommu->lock)->rlock);
-<4>[    1.253095]                                lock(device_domain_lock);
-<4>[    1.253095]   lock(&(&iommu->lock)->rlock);
-<4>[    1.253095]
-                   *** DEADLOCK ***
-
-<4>[    1.253095] 2 locks held by swapper/0/1:
-<4>[    1.253095]  #0: 0000000076465a1e (dmar_global_lock){++++}, at: intel_iommu_init+0x1d3/0x138d
-<4>[    1.253095]  #1: 0000000069266737 (device_domain_lock){....}, at: domain_context_mapping_one+0x88/0x4f0
-<4>[    1.253095]
-                  stack backtrace:
-<4>[    1.253095] CPU: 0 PID: 1 Comm: swapper/0 Not tainted 5.2.0-rc5-CI-CI_DRM_6299+ #1
-<4>[    1.253095] Hardware name:  /NUC5i7RYB, BIOS RYBDWi35.86A.0362.2017.0118.0940 01/18/2017
-<4>[    1.253095] Call Trace:
-<4>[    1.253095]  dump_stack+0x67/0x9b
-<4>[    1.253095]  print_circular_bug+0x1c8/0x2b0
-<4>[    1.253095]  __lock_acquire+0x1ce9/0x24c0
-<4>[    1.253095]  ? lock_acquire+0xa6/0x1c0
-<4>[    1.253095]  lock_acquire+0xa6/0x1c0
-<4>[    1.253095]  ? domain_context_mapping_one+0xa0/0x4f0
-<4>[    1.253095]  _raw_spin_lock+0x2a/0x40
-<4>[    1.253095]  ? domain_context_mapping_one+0xa0/0x4f0
-<4>[    1.253095]  domain_context_mapping_one+0xa0/0x4f0
-<4>[    1.253095]  ? domain_context_mapping_one+0x4f0/0x4f0
-<4>[    1.253095]  pci_for_each_dma_alias+0x2b/0x160
-<4>[    1.253095]  dmar_insert_one_dev_info+0x44e/0x520
-<4>[    1.253095]  set_domain_for_dev+0x66/0xf0
-<4>[    1.253095]  iommu_prepare_identity_map+0x48/0x95
-<4>[    1.253095]  intel_iommu_init+0xfd8/0x138d
-<4>[    1.253095]  ? set_debug_rodata+0xc/0xc
-<4>[    1.253095]  ? set_debug_rodata+0xc/0xc
-<4>[    1.253095]  ? e820__memblock_setup+0x5b/0x5b
-<4>[    1.253095]  ? pci_iommu_init+0x11/0x3a
-<4>[    1.253095]  ? set_debug_rodata+0xc/0xc
-<4>[    1.253095]  pci_iommu_init+0x11/0x3a
-<4>[    1.253095]  do_one_initcall+0x58/0x300
-<4>[    1.253095]  kernel_init_freeable+0x2c0/0x359
-<4>[    1.253095]  ? rest_init+0x250/0x250
-<4>[    1.253095]  kernel_init+0x5/0x100
-<4>[    1.253095]  ret_from_fork+0x3a/0x50
