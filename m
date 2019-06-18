@@ -2,83 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 007D74A564
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 17:30:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 191B14A56A
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 17:31:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729626AbfFRPaf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Jun 2019 11:30:35 -0400
-Received: from iolanthe.rowland.org ([192.131.102.54]:40204 "HELO
-        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with SMTP id S1729209AbfFRPaf (ORCPT
+        id S1729727AbfFRPbO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Jun 2019 11:31:14 -0400
+Received: from mail-qt1-f173.google.com ([209.85.160.173]:43016 "EHLO
+        mail-qt1-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729209AbfFRPbN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Jun 2019 11:30:35 -0400
-Received: (qmail 5734 invoked by uid 2102); 18 Jun 2019 11:30:34 -0400
-Received: from localhost (sendmail-bs@127.0.0.1)
-  by localhost with SMTP; 18 Jun 2019 11:30:34 -0400
-Date:   Tue, 18 Jun 2019 11:30:34 -0400 (EDT)
-From:   Alan Stern <stern@rowland.harvard.edu>
-X-X-Sender: stern@iolanthe.rowland.org
-To:     Suwan Kim <suwan.kim027@gmail.com>
-cc:     shuah@kernel.org, <valentina.manea.m@gmail.com>,
-        <gregkh@linuxfoundation.org>, <linux-usb@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] usbip: Implement map_urb_for_dma function for vhci to
- skip dma mapping
-In-Reply-To: <20190618142817.16844-1-suwan.kim027@gmail.com>
-Message-ID: <Pine.LNX.4.44L0.1906181129450.1659-100000@iolanthe.rowland.org>
+        Tue, 18 Jun 2019 11:31:13 -0400
+Received: by mail-qt1-f173.google.com with SMTP id w17so9424317qto.10
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2019 08:31:13 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=enVeaDd9KA1FhkBFIcyRHmn1gPk9Dn42G5cz03oOzOw=;
+        b=WlQhDiy5r2TgAdy/PEfiRLrSBa3v7ra8/croHxIValHSi33FepF+RxnGadm9ta2CnI
+         pEo2TUoaO5FwiVa9kZVUHfauOafxAxyzQZiYnkgEnD15eFSErktLdzXMtOlYntjVm3t4
+         IVfyMRApDCPiiVXyCLOcGI2R2qz8AjYrPLIH4a4nXc4kh1TvoJ408BYkYPm0MULk18Cx
+         ZaBOX9RuIj6ykEvz1lm89PoPwyoPQlcLXg/w6FzBb6F5EXKYr8wABBzFzZCaMg84b1BN
+         aMemsnvQ4aktE7095l07zRimY2Htl+QsEGqlO7sVI4BpAHB4bgJ6amJ952XLbth2de9+
+         umIQ==
+X-Gm-Message-State: APjAAAVTspok+vxQUH6s7b1c1WQrV+PFLMFmtX2xr3KVDcdKjMvIvkvl
+        z66SY9Dyt4bMIOU8LhG/7Kc6HrpNrJs2oOW5Flw=
+X-Google-Smtp-Source: APXvYqzapZcyoXvg/K9EJjtdZZMPh8k1zuhs32ixPde8PXyTRUBF8PG/4CP94Bb7WQNtLtRHg8lQle5wZPdwdvBvQuU=
+X-Received: by 2002:aed:33a4:: with SMTP id v33mr66076417qtd.18.1560871872815;
+ Tue, 18 Jun 2019 08:31:12 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+References: <20190618095347.3850490-1-arnd@arndb.de> <5ac26e68-8b75-1b06-eecd-950987550451@virtuozzo.com>
+In-Reply-To: <5ac26e68-8b75-1b06-eecd-950987550451@virtuozzo.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Tue, 18 Jun 2019 17:30:55 +0200
+Message-ID: <CAK8P3a1CAKecyinhzG9Mc7UzZ9U15o6nacbcfSvb4EBSaWvCTw@mail.gmail.com>
+Subject: Re: [PATCH] [v2] page flags: prioritize kasan bits over last-cpuid
+To:     Andrey Ryabinin <aryabinin@virtuozzo.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Alexander Potapenko <glider@google.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        kasan-dev <kasan-dev@googlegroups.com>,
+        Linux-MM <linux-mm@kvack.org>,
+        Andrey Konovalov <andreyknvl@google.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Christoph Lameter <cl@linux.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 18 Jun 2019, Suwan Kim wrote:
+On Tue, Jun 18, 2019 at 4:30 PM Andrey Ryabinin <aryabinin@virtuozzo.com> wrote:
+> On 6/18/19 12:53 PM, Arnd Bergmann wrote:
+> > ARM64 randdconfig builds regularly run into a build error, especially
+> > when NUMA_BALANCING and SPARSEMEM are enabled but not SPARSEMEM_VMEMMAP:
+> >
+> >  #error "KASAN: not enough bits in page flags for tag"
+> >
+> > The last-cpuid bits are already contitional on the available space,
+> > so the result of the calculation is a bit random on whether they
+> > were already left out or not.
+> >
+> > Adding the kasan tag bits before last-cpuid makes it much more likely
+> > to end up with a successful build here, and should be reliable for
+> > randconfig at least, as long as that does not randomize NR_CPUS
+> > or NODES_SHIFT but uses the defaults.
+> >
+> > In order for the modified check to not trigger in the x86 vdso32 code
+> > where all constants are wrong (building with -m32), enclose all the
+> > definitions with an #ifdef.
+> >
+>
+> Why not keep "#error "KASAN: not enough bits in page flags for tag"" under "#ifdef CONFIG_KASAN_SW_TAGS" ?
 
-> vhci doesn’t do dma for remote device. Actually, the real dma
-> operation is done by network card driver. So, vhci doesn’t use and
-> need dma address of transfer buffer of urb.
-> 
-> But hcd provides dma mapping function by defualt in usb_hcd_submit_urb()
-> and it causes unnecessary dma mapping which will be done again at
-> NIC driver and it wastes CPU cycles. So, implement map_urb_for_dma
-> function for vhci in order to skip the dma mapping procedure.
-> 
-> Signed-off-by: Suwan Kim <suwan.kim027@gmail.com>
-> ---
->  drivers/usb/usbip/vhci_hcd.c | 8 ++++++++
->  1 file changed, 8 insertions(+)
-> 
-> diff --git a/drivers/usb/usbip/vhci_hcd.c b/drivers/usb/usbip/vhci_hcd.c
-> index 667d9c0ec905..9df4d9e36788 100644
-> --- a/drivers/usb/usbip/vhci_hcd.c
-> +++ b/drivers/usb/usbip/vhci_hcd.c
-> @@ -1287,6 +1287,13 @@ static int vhci_free_streams(struct usb_hcd *hcd, struct usb_device *udev,
->  	return 0;
->  }
->  
-> +static int vhci_map_urb_for_dma(struct usb_hcd *hcd, struct urb *urb,
-> +			    gfp_t mem_flags)
-> +{
-> +	dev_dbg(hcd->self.controller, "vhci does not map urb for dma\n");
-> +	return 0;
-> +}
-> +
->  static const struct hc_driver vhci_hc_driver = {
->  	.description	= driver_name,
->  	.product_desc	= driver_desc,
-> @@ -1302,6 +1309,7 @@ static const struct hc_driver vhci_hc_driver = {
->  	.urb_dequeue	= vhci_urb_dequeue,
->  
->  	.get_frame_number = vhci_get_frame_number,
-> +	.map_urb_for_dma = vhci_map_urb_for_dma,
->  
->  	.hub_status_data = vhci_hub_status,
->  	.hub_control    = vhci_hub_control,
+I think I had meant the #error to leave out the mention of KASAN, as there
+might be other reasons for using up all the bits, but then I did not change
+it in the end.
 
-If the goal is to avoid wasting CPU cycles, you probably should have a 
-vhci_unmap_urb_for_dma routine as well.
+Should I remove the "KASAN" word or add the #ifdef when resending?
 
-Alan Stern
-
+     Arnd
