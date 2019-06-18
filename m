@@ -2,100 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5A0EF49872
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 06:55:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F2D64987D
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 06:57:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726706AbfFREzJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Jun 2019 00:55:09 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:42787 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725934AbfFREzI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Jun 2019 00:55:08 -0400
-Received: by mail-pf1-f193.google.com with SMTP id q10so6897730pff.9
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2019 21:55:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=QsQC2UzpT6NyTsbVwUSVvnO0Ud1PYkMdAize/TKgzcI=;
-        b=nhXQMKA3pqnFMskPYlyfzfiZ0m1EDAn1/34A37MARMPc0vR6VdJcP0BLE/CZWd3K4G
-         MV5zR19K/bY3u5fi7NY094sNRBhUptzdF+DEyNdptTYK+e8hw1nlN6XpuTFbcUGTB68s
-         3p5aDl6HPjUBNt8/I3w6OE5IVo6Xj4pFf93yo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=QsQC2UzpT6NyTsbVwUSVvnO0Ud1PYkMdAize/TKgzcI=;
-        b=PbTtCQ717Qh+QL4NLzqMoJxteMgm9MBBAyx/RwsRXK2XOfFcBR7G/lyk9mREFTqgep
-         C06exGc/VgQqvKypHUBRCZR/l+ZXbIpaLiAS2rBqGFri/BghRNucFOem7oVR4eWVEIzm
-         u8FFW1DLx9p8BlPVaeZbYEIiEEh66X28X7yoykozZ4tKNK/bgvUq6lBVckDkGqJccYmP
-         ktBjg9UIrNnofFkB0H1zYZDIIX3f3dZ8wpQz1diB+ILIrh9/AmZcihbrMDnohzJ9vwc2
-         qENorztEOA9QEdnigzWD5w/tXxig8D6nMhGHriSoVqpiIjk22oSZL3Zvp3it7408l6Dt
-         xMYg==
-X-Gm-Message-State: APjAAAWC0ogNNVaNV1hdP1zaTaCxYljwlrAKqRFiQpG0cRKK+X6RRfrA
-        qD9ix4+6eo0vBWG06bGDbpH+NA==
-X-Google-Smtp-Source: APXvYqzvoUCCIV/j/VUYbcljjbnLQAQDKu3Bb56KK/h8GtlbpUAufcbOlyMYfYfo58429sKdsQp80g==
-X-Received: by 2002:a17:90a:1785:: with SMTP id q5mr2950312pja.106.1560833708115;
-        Mon, 17 Jun 2019 21:55:08 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id i25sm13705186pfr.73.2019.06.17.21.55.06
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 17 Jun 2019 21:55:06 -0700 (PDT)
-From:   Kees Cook <keescook@chromium.org>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>, x86@kernel.org,
+        id S1726548AbfFRE5x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Jun 2019 00:57:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47188 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725900AbfFRE5x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Jun 2019 00:57:53 -0400
+Received: from localhost.localdomain (c-73-223-200-170.hsd1.ca.comcast.net [73.223.200.170])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 655802085A;
+        Tue, 18 Jun 2019 04:57:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1560833871;
+        bh=w+gB2F5dYye00PGW41w3Ta0fKYcvbRLeUI20zlmMIcs=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=PzYEh9w15oAHl/5+DWIcKrLey234a0uiq0n8QAcsKIIvkD+9bOlHnZiXlY3FTrD8z
+         QbGYu0AkfxcGrKu700nhTv5AAxsUusMx2xVPd71iWWvU71sO7HwW6NZ3yMOVjWY/tl
+         ddlDhLRXEMz8eUrp9pUXynA3sqlPR14qWsnLehLo=
+Date:   Mon, 17 Jun 2019 21:57:50 -0700
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Nadav Amit <namit@vmware.com>
+Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Borislav Petkov <bp@suse.de>, Toshi Kani <toshi.kani@hpe.com>,
         Peter Zijlstra <peterz@infradead.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        linux-kernel@vger.kernel.org, kernel-hardening@lists.openwall.com
-Subject: [PATCH v3 3/3] x86/asm: Pin sensitive CR0 bits
-Date:   Mon, 17 Jun 2019 21:55:03 -0700
-Message-Id: <20190618045503.39105-4-keescook@chromium.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190618045503.39105-1-keescook@chromium.org>
-References: <20190618045503.39105-1-keescook@chromium.org>
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Ingo Molnar <mingo@kernel.org>
+Subject: Re: [PATCH 3/3] resource: Introduce resource cache
+Message-Id: <20190617215750.8e46ae846c09cd5c1f22fdf9@linux-foundation.org>
+In-Reply-To: <20190613045903.4922-4-namit@vmware.com>
+References: <20190613045903.4922-1-namit@vmware.com>
+        <20190613045903.4922-4-namit@vmware.com>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-With sensitive CR4 bits pinned now, it's possible that the WP bit for
-CR0 might become a target as well. Following the same reasoning for
-the CR4 pinning, this pins CR0's WP bit (but this can be done with a
-static value).
+On Wed, 12 Jun 2019 21:59:03 -0700 Nadav Amit <namit@vmware.com> wrote:
 
-Suggested-by: Peter Zijlstra <peterz@infradead.org>
-Signed-off-by: Kees Cook <keescook@chromium.org>
----
- arch/x86/include/asm/special_insns.h | 15 ++++++++++++++-
- 1 file changed, 14 insertions(+), 1 deletion(-)
+> For efficient search of resources, as needed to determine the memory
+> type for dax page-faults, introduce a cache of the most recently used
+> top-level resource. Caching the top-level should be safe as ranges in
+> that level do not overlap (unlike those of lower levels).
+> 
+> Keep the cache per-cpu to avoid possible contention. Whenever a resource
+> is added, removed or changed, invalidate all the resources. The
+> invalidation takes place when the resource_lock is taken for write,
+> preventing possible races.
+> 
+> This patch provides relatively small performance improvements over the
+> previous patch (~0.5% on sysbench), but can benefit systems with many
+> resources.
 
-diff --git a/arch/x86/include/asm/special_insns.h b/arch/x86/include/asm/special_insns.h
-index c8c8143ab27b..b2e84d113f2a 100644
---- a/arch/x86/include/asm/special_insns.h
-+++ b/arch/x86/include/asm/special_insns.h
-@@ -31,7 +31,20 @@ static inline unsigned long native_read_cr0(void)
- 
- static inline void native_write_cr0(unsigned long val)
- {
--	asm volatile("mov %0,%%cr0": : "r" (val), "m" (__force_order));
-+	unsigned long bits_missing = 0;
-+
-+set_register:
-+	asm volatile("mov %0,%%cr0": "+r" (val), "+m" (__force_order));
-+
-+	if (static_branch_likely(&cr_pinning)) {
-+		if (unlikely((val & X86_CR0_WP) != X86_CR0_WP)) {
-+			bits_missing = X86_CR0_WP;
-+			val |= bits_missing;
-+			goto set_register;
-+		}
-+		/* Warn after we've set the missing bits. */
-+		WARN_ONCE(bits_missing, "CR0 WP bit went missing!?\n");
-+	}
- }
- 
- static inline unsigned long native_read_cr2(void)
--- 
-2.17.1
+> --- a/kernel/resource.c
+> +++ b/kernel/resource.c
+> @@ -53,6 +53,12 @@ struct resource_constraint {
+>  
+>  static DEFINE_RWLOCK(resource_lock);
+>  
+> +/*
+> + * Cache of the top-level resource that was most recently use by
+> + * find_next_iomem_res().
+> + */
+> +static DEFINE_PER_CPU(struct resource *, resource_cache);
 
+A per-cpu cache which is accessed under a kernel-wide read_lock looks a
+bit odd - the latency getting at that rwlock will swamp the benefit of
+isolating the CPUs from each other when accessing resource_cache.
+
+On the other hand, if we have multiple CPUs running
+find_next_iomem_res() concurrently then yes, I see the benefit.  Has
+the benefit of using a per-cpu cache (rather than a kernel-wide one)
+been quantified?
+
+
+> @@ -262,9 +268,20 @@ static void __release_child_resources(struct resource *r)
+>  	}
+>  }
+>  
+> +static void invalidate_resource_cache(void)
+> +{
+> +	int cpu;
+> +
+> +	lockdep_assert_held_exclusive(&resource_lock);
+> +
+> +	for_each_possible_cpu(cpu)
+> +		per_cpu(resource_cache, cpu) = NULL;
+> +}
+
+All the calls to invalidate_resource_cache() are rather a
+maintainability issue - easy to miss one as the code evolves.
+
+Can't we just make find_next_iomem_res() smarter?  For example, start
+the lookup from the cached point and if that failed, do a full sweep?
+
+> +	invalidate_resource_cache();
+> +	invalidate_resource_cache();
+> +	invalidate_resource_cache();
+> +	invalidate_resource_cache();
+> +	invalidate_resource_cache();
+> +	invalidate_resource_cache();
+> +	invalidate_resource_cache();
+> +	invalidate_resource_cache();
+> +	invalidate_resource_cache();
+> +	invalidate_resource_cache();
+> +	invalidate_resource_cache();
+> +			invalidate_resource_cache();
+> +	invalidate_resource_cache();
+> +	invalidate_resource_cache();
+
+Ow.  I guess the maintainability situation can be improved by renaming
+resource_lock to something else (to avoid mishaps) then adding wrapper
+functions.  But still.  I can't say this is a super-exciting patch :(
