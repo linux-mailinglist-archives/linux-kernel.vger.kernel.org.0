@@ -2,74 +2,167 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C4715499B8
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 09:02:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EE2D6499F8
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 09:12:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728919AbfFRHCY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Jun 2019 03:02:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33110 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725829AbfFRHCY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Jun 2019 03:02:24 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1726672AbfFRHMO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Jun 2019 03:12:14 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:38480 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725919AbfFRHMO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Jun 2019 03:12:14 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id F2B3160867; Tue, 18 Jun 2019 05:52:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1560837174;
+        bh=PQiidX3rlEJZDQPRPGrV2WaiptWcCY0MMTVz1XTm+Vw=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=PVJPsoCsmC9KX5WBAGB9i4Nto6OzQsYk7G4k7nMDJ2UVULDUwqWg0r9ZlZZp2dWjb
+         u4biZnH3LJamg+gw6LxFuQBPz4ZpdI9dWmEZmUbh3R6VLsn8oBe1khQ94vav0UPaTA
+         wOK3Zxa9nn6Up0cYEQK7IdrF0BQcau276c1mzvUQ=
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        pdx-caf-mail.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_INVALID,DKIM_SIGNED,SPF_NONE autolearn=no autolearn_force=no
+        version=3.4.0
+Received: from [192.168.43.187] (unknown [223.227.13.236])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F1F6C213F2;
-        Tue, 18 Jun 2019 05:47:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560836832;
-        bh=2ugJ+4jbEDNf3IaKlqSNtduwn51MkrS5VDiaJCRhmYc=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=siWcg5jv7S7enP/dNIGa2avKBd20kFJLLKKmDQOd50TmtgVpdF/ODiH9jSweJauM4
-         nNPzX4HXmKyOyAqer94mO0tPqUW5raXp9pZaSocIvPrazoQm2xEnZMfxq9gCL/zAqe
-         yPvtYsSUnHMEpRz+yzv515R9CO3+aPiZgySE+QsE=
-Date:   Tue, 18 Jun 2019 07:47:09 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Gao Xiang <gaoxiang25@huawei.com>
-Cc:     devel@driverdev.osuosl.org, Miao Xie <miaoxie@huawei.com>,
-        chao@kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        weidu.du@huawei.com, Fang Wei <fangwei1@huawei.com>,
-        linux-fsdevel@vger.kernel.org, linux-erofs@lists.ozlabs.org
-Subject: Re: [RFC PATCH 0/8] staging: erofs: decompression inplace approach
-Message-ID: <20190618054709.GA4271@kroah.com>
-References: <20190614181619.64905-1-gaoxiang25@huawei.com>
- <20190617203609.GA22034@kroah.com>
- <c86d3fc0-8b4a-6583-4309-911960fbe862@huawei.com>
+        (Authenticated sender: nishakumari@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 1B41E60850;
+        Tue, 18 Jun 2019 05:52:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1560837173;
+        bh=PQiidX3rlEJZDQPRPGrV2WaiptWcCY0MMTVz1XTm+Vw=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=PVRx87wJ6CrV7mjmO4a8/JvzMLLpAm9s/pFBTc0ujgud0QmtFZX6XxJu4ubhD8x4M
+         a3tcSL8Xmh9Uo8WneLLGFNazwOELBQOBJ4i1z/nTAKlhh0i/hwYBPUwVhKYJtykJW/
+         ReOET0L3XV7kYgs/2ai4pIpqfgA3u//1jy34yi/o=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1B41E60850
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=nishakumari@codeaurora.org
+Subject: Re: [PATCH 1/4] dt-bindings: regulator: Add labibb regulator
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     broonie@kernel.org, robh+dt@kernel.org,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        agross@kernel.org, lgirdwood@gmail.com, mark.rutland@arm.com,
+        david.brown@linaro.org, linux-kernel@vger.kernel.org,
+        kgunda@codeaurora.org, rnayak@codeaurora.org
+References: <1560337252-27193-1-git-send-email-nishakumari@codeaurora.org>
+ <1560337252-27193-2-git-send-email-nishakumari@codeaurora.org>
+ <20190613162808.GG22737@tuxbook-pro>
+From:   Nisha Kumari <nishakumari@codeaurora.org>
+Message-ID: <ed756c36-2b0d-b48e-b4fd-32e2d60aa38a@codeaurora.org>
+Date:   Tue, 18 Jun 2019 11:22:45 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c86d3fc0-8b4a-6583-4309-911960fbe862@huawei.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <20190613162808.GG22737@tuxbook-pro>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 18, 2019 at 09:47:08AM +0800, Gao Xiang wrote:
-> 
-> 
-> On 2019/6/18 4:36, Greg Kroah-Hartman wrote:
-> > On Sat, Jun 15, 2019 at 02:16:11AM +0800, Gao Xiang wrote:
-> >> At last, this is RFC patch v1, which means it is not suitable for
-> >> merging soon... I'm still working on it, testing its stability
-> >> these days and hope these patches get merged for 5.3 LTS
-> >> (if 5.3 is a LTS version).
-> > 
-> > Why would 5.3 be a LTS kernel?
-> > 
-> > curious as to how you came up with that :)
-> 
-> My personal thought is about one LTS kernel one year...
-> Usually 5 versions after the previous kernel...(4.4 -> 4.9 -> 4.14 -> 4.19),
-> which is not suitable for all historical LTSs...just prepare for 5.3...
 
-I try to pick the "last" kernel that is released each year, which
-sometimes is 5 kernels, sometimes 4, sometimes 6, depending on the
-release cycle.
-
-So odds are it will be 5.4 for the next LTS kernel, but we will not know
-more until it gets closer to release time.
-
-thanks,
-
-greg k-h
+On 6/13/2019 9:58 PM, Bjorn Andersson wrote:
+> On Wed 12 Jun 04:00 PDT 2019, Nisha Kumari wrote:
+>
+>> Adding the devicetree binding for labibb regulator.
+>>
+>> Signed-off-by: Nisha Kumari <nishakumari@codeaurora.org>
+>> ---
+>>   .../bindings/regulator/qcom-labibb-regulator.txt   | 57 ++++++++++++++++++++++
+>>   1 file changed, 57 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/regulator/qcom-labibb-regulator.txt
+>>
+>> diff --git a/Documentation/devicetree/bindings/regulator/qcom-labibb-regulator.txt b/Documentation/devicetree/bindings/regulator/qcom-labibb-regulator.txt
+>> new file mode 100644
+>> index 0000000..79aad6f4
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/regulator/qcom-labibb-regulator.txt
+>> @@ -0,0 +1,57 @@
+>> +Qualcomm's LAB(LCD AMOLED Boost)/IBB(Inverting Buck Boost) Regulator
+>> +
+>> +LAB can be used as a positive boost power supply and IBB can be used as a negative
+>> +boost power supply for display panels.
+>> +
+>> +Main node required properties:
+>> +
+>> +- compatible:			Must be:
+>> +				"qcom,lab-ibb-regulator"
+> In order to handle variations in future LABIBB implementations, make
+> this "qcom,pmi8998-lab-ibb";
+Sure, i will do that.
+>
+>> +- #address-cells:		Must be 1
+>> +- #size-cells:			Must be 0
+>> +
+>> +LAB subnode required properties:
+>> +
+>> +- reg:				Specifies the SPMI address and size for this peripheral.
+>> +- regulator-name:		A string used to describe the regulator.
+>> +- interrupts:			Specify the interrupts as per the interrupt
+>> +				encoding.
+>> +- interrupt-names:		Interrupt names to match up 1-to-1 with
+>> +				the interrupts specified in 'interrupts'
+>> +				property.
+>> +
+>> +IBB subnode required properties:
+>> +
+>> +- reg:				Specifies the SPMI address and size for this peripheral.
+>> +- regulator-name:		A string used to describe the regulator.
+>> +- interrupts:			Specify the interrupts as per the interrupt
+>> +				encoding.
+>> +- interrupt-names:		Interrupt names to match up 1-to-1 with
+>> +				the interrupts specified in 'interrupts'
+>> +				property.
+>> +
+>> +Example:
+>> +	pmi8998_lsid1: pmic@3 {
+>> +		qcom-labibb-regulator {
+> We typically want to use generic names here, but as the spmi regulator
+> binding suggest the use of "regulators" without a unit address that
+> wouldn't work.
+>
+> But you can shorten this to either "labibb" or at least
+> "labibb-regulator".
+Sure, i will do that.
+>> +			compatible = "qcom,lab-ibb-regulator";
+>> +			#address-cells = <1>;
+>> +			#size-cells = <0>;
+>> +
+>> +			lab_regulator: qcom,lab@de00 {
+> Don't use "qcom," in the node names.
+ok
+>
+>> +				reg = <0xde00>;
+> Please follow the spmi-regulator and hide these in the driver.
+ok
+>> +				regulator-name = "lab_reg";
+> We know it's a regulator, so no need for _reg, which means that if you
+> drop "qcom," from the node name and use the node name as the default
+> regulator name you don't need this.
+Sure, i will do that.
+>
+>> +
+>> +				interrupts = <0x3 0xde 0x0 IRQ_TYPE_EDGE_RISING>;
+>> +				interrupt-names = "lab-sc-err";
+>> +			};
+>> +
+>> +			ibb_regulator: qcom,ibb@dc00 {
+>> +				reg = <0xdc00>;
+>> +				regulator-name = "ibb_reg";
+>> +
+>> +				interrupts = <0x3 0xdc 0x2 IRQ_TYPE_EDGE_RISING>;
+>> +				interrupt-names = "ibb-sc-err";
+>> +			};
+>> +
+>> +		};
+>> +	};
+> Regards,
+> Bjorn
