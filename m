@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8AB424A3EF
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 16:29:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CC5A64A400
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 16:30:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729546AbfFRO3I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Jun 2019 10:29:08 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:50480 "EHLO
+        id S1729473AbfFRO3G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Jun 2019 10:29:06 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:50478 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729377AbfFRO3G (ORCPT
+        by vger.kernel.org with ESMTP id S1725919AbfFRO3G (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 18 Jun 2019 10:29:06 -0400
 Received: from [167.98.27.226] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hdF6e-0007nE-6M; Tue, 18 Jun 2019 15:29:04 +0100
+        id 1hdF6e-0007nF-0i; Tue, 18 Jun 2019 15:29:04 +0100
 Received: from ben by deadeye with local (Exim 4.92)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hdF6d-0000HZ-HL; Tue, 18 Jun 2019 15:29:03 +0100
+        id 1hdF6d-0000Hd-Id; Tue, 18 Jun 2019 15:29:03 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,14 +27,13 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Sriram Rajagopalan" <sriramr@arista.com>,
-        "Theodore Ts'o" <tytso@mit.edu>
+        "Young Xiao" <YangX92@hotmail.com>,
+        "Marcel Holtmann" <marcel@holtmann.org>
 Date:   Tue, 18 Jun 2019 15:28:02 +0100
-Message-ID: <lsq.1560868082.824384310@decadent.org.uk>
+Message-ID: <lsq.1560868082.707403898@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 05/10] ext4: zero out the unused memory region in the
- extent tree block
+Subject: [PATCH 3.16 06/10] Bluetooth: hidp: fix buffer overflow
 In-Reply-To: <lsq.1560868079.359853905@decadent.org.uk>
 X-SA-Exim-Connect-IP: 167.98.27.226
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -48,79 +47,31 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sriram Rajagopalan <sriramr@arista.com>
+From: Young Xiao <YangX92@hotmail.com>
 
-commit 592acbf16821288ecdc4192c47e3774a4c48bb64 upstream.
+commit a1616a5ac99ede5d605047a9012481ce7ff18b16 upstream.
 
-This commit zeroes out the unused memory region in the buffer_head
-corresponding to the extent metablock after writing the extent header
-and the corresponding extent node entries.
+Struct ca is copied from userspace. It is not checked whether the "name"
+field is NULL terminated, which allows local users to obtain potentially
+sensitive information from kernel stack memory, via a HIDPCONNADD command.
 
-This is done to prevent random uninitialized data from getting into
-the filesystem when the extent block is synced.
+This vulnerability is similar to CVE-2011-1079.
 
-This fixes CVE-2019-11833.
-
-Signed-off-by: Sriram Rajagopalan <sriramr@arista.com>
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Signed-off-by: Young Xiao <YangX92@hotmail.com>
+Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- fs/ext4/extents.c | 17 +++++++++++++++--
- 1 file changed, 15 insertions(+), 2 deletions(-)
+ net/bluetooth/hidp/sock.c | 1 +
+ 1 file changed, 1 insertion(+)
 
---- a/fs/ext4/extents.c
-+++ b/fs/ext4/extents.c
-@@ -1016,6 +1016,7 @@ static int ext4_ext_split(handle_t *hand
- 	__le32 border;
- 	ext4_fsblk_t *ablocks = NULL; /* array of allocated blocks */
- 	int err = 0;
-+	size_t ext_size = 0;
- 
- 	/* make decision: where to split? */
- 	/* FIXME: now decision is simplest: at current extent */
-@@ -1107,6 +1108,10 @@ static int ext4_ext_split(handle_t *hand
- 		le16_add_cpu(&neh->eh_entries, m);
- 	}
- 
-+	/* zero out unused area in the extent block */
-+	ext_size = sizeof(struct ext4_extent_header) +
-+		sizeof(struct ext4_extent) * le16_to_cpu(neh->eh_entries);
-+	memset(bh->b_data + ext_size, 0, inode->i_sb->s_blocksize - ext_size);
- 	ext4_extent_block_csum_set(inode, neh);
- 	set_buffer_uptodate(bh);
- 	unlock_buffer(bh);
-@@ -1186,6 +1191,11 @@ static int ext4_ext_split(handle_t *hand
- 				sizeof(struct ext4_extent_idx) * m);
- 			le16_add_cpu(&neh->eh_entries, m);
+--- a/net/bluetooth/hidp/sock.c
++++ b/net/bluetooth/hidp/sock.c
+@@ -76,6 +76,7 @@ static int hidp_sock_ioctl(struct socket
+ 			sockfd_put(csock);
+ 			return err;
  		}
-+		/* zero out unused area in the extent block */
-+		ext_size = sizeof(struct ext4_extent_header) +
-+		   (sizeof(struct ext4_extent) * le16_to_cpu(neh->eh_entries));
-+		memset(bh->b_data + ext_size, 0,
-+			inode->i_sb->s_blocksize - ext_size);
- 		ext4_extent_block_csum_set(inode, neh);
- 		set_buffer_uptodate(bh);
- 		unlock_buffer(bh);
-@@ -1251,6 +1261,7 @@ static int ext4_ext_grow_indepth(handle_
- 	struct buffer_head *bh;
- 	ext4_fsblk_t newblock;
- 	int err = 0;
-+	size_t ext_size = 0;
++		ca.name[sizeof(ca.name)-1] = 0;
  
- 	newblock = ext4_ext_new_meta_block(handle, inode, NULL,
- 		newext, &err, flags);
-@@ -1268,9 +1279,11 @@ static int ext4_ext_grow_indepth(handle_
- 		goto out;
- 	}
- 
-+	ext_size = sizeof(EXT4_I(inode)->i_data);
- 	/* move top-level index/leaf into new block */
--	memmove(bh->b_data, EXT4_I(inode)->i_data,
--		sizeof(EXT4_I(inode)->i_data));
-+	memmove(bh->b_data, EXT4_I(inode)->i_data, ext_size);
-+	/* zero out unused area in the extent block */
-+	memset(bh->b_data + ext_size, 0, inode->i_sb->s_blocksize - ext_size);
- 
- 	/* set size of new block */
- 	neh = ext_block_hdr(bh);
+ 		err = hidp_connection_add(&ca, csock, isock);
+ 		if (!err && copy_to_user(argp, &ca, sizeof(ca)))
 
