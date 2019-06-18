@@ -2,22 +2,22 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ADF3A4A5A1
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 17:41:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DAFA94BE3B
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 18:31:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729712AbfFRPlx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Jun 2019 11:41:53 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:38608 "EHLO huawei.com"
+        id S1729877AbfFSQb1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Jun 2019 12:31:27 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:19042 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729349AbfFRPlx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Jun 2019 11:41:53 -0400
-Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id CF6C394442611AB97EC6;
-        Tue, 18 Jun 2019 23:41:44 +0800 (CST)
-Received: from localhost (10.202.226.61) by DGGEMS404-HUB.china.huawei.com
- (10.3.19.204) with Microsoft SMTP Server id 14.3.439.0; Tue, 18 Jun 2019
- 23:41:40 +0800
-Date:   Tue, 18 Jun 2019 16:41:28 +0100
+        id S1725899AbfFSQb1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Jun 2019 12:31:27 -0400
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 2C9DE10BDBC801D2AD92;
+        Thu, 20 Jun 2019 00:31:24 +0800 (CST)
+Received: from localhost (10.202.226.61) by DGGEMS408-HUB.china.huawei.com
+ (10.3.19.208) with Microsoft SMTP Server id 14.3.439.0; Thu, 20 Jun 2019
+ 00:31:02 +0800
+Date:   Tue, 18 Jun 2019 16:41:58 +0100
 From:   Jonathan Cameron <jonathan.cameron@huawei.com>
 To:     Jacob Pan <jacob.jun.pan@linux.intel.com>
 CC:     <iommu@lists.linux-foundation.org>,
@@ -27,21 +27,19 @@ CC:     <iommu@lists.linux-foundation.org>,
         "Eric Auger" <eric.auger@redhat.com>,
         Alex Williamson <alex.williamson@redhat.com>,
         Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
-        Yi L <yi.l.liu@linux.intel.com>,
         "Tian, Kevin" <kevin.tian@intel.com>,
         Raj Ashok <ashok.raj@intel.com>,
-        <Liu@mail.linuxfoundation.org>,
         Andriy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH v4 08/22] iommu: Introduce attach/detach_pasid_table API
-Message-ID: <20190618164128.0000204f@huawei.com>
-In-Reply-To: <1560087862-57608-9-git-send-email-jacob.jun.pan@linux.intel.com>
+Subject: Re: [PATCH v4 03/22] iommu: Introduce device fault report API
+Message-ID: <20190618164158.0000489c@huawei.com>
+In-Reply-To: <1560087862-57608-4-git-send-email-jacob.jun.pan@linux.intel.com>
 References: <1560087862-57608-1-git-send-email-jacob.jun.pan@linux.intel.com>
-        <1560087862-57608-9-git-send-email-jacob.jun.pan@linux.intel.com>
+        <1560087862-57608-4-git-send-email-jacob.jun.pan@linux.intel.com>
 Organization: Huawei
 X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; i686-w64-mingw32)
-MIME-Version: 1.0
 Content-Type: text/plain; charset="US-ASCII"
 Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
 X-Originating-IP: [10.202.226.61]
 X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
@@ -49,191 +47,278 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 9 Jun 2019 06:44:08 -0700
+On Sun, 9 Jun 2019 06:44:03 -0700
 Jacob Pan <jacob.jun.pan@linux.intel.com> wrote:
 
-> In virtualization use case, when a guest is assigned
-> a PCI host device, protected by a virtual IOMMU on the guest,
-> the physical IOMMU must be programmed to be consistent with
-> the guest mappings. If the physical IOMMU supports two
-> translation stages it makes sense to program guest mappings
-> onto the first stage/level (ARM/Intel terminology) while the host
-> owns the stage/level 2.
+> Traditionally, device specific faults are detected and handled within
+> their own device drivers. When IOMMU is enabled, faults such as DMA
+> related transactions are detected by IOMMU. There is no generic
+> reporting mechanism to report faults back to the in-kernel device
+> driver or the guest OS in case of assigned devices.
 > 
-> In that case, it is mandated to trap on guest configuration
-> settings and pass those to the physical iommu driver.
+> This patch introduces a registration API for device specific fault
+> handlers. This differs from the existing iommu_set_fault_handler/
+> report_iommu_fault infrastructures in several ways:
+> - it allows to report more sophisticated fault events (both
+>   unrecoverable faults and page request faults) due to the nature
+>   of the iommu_fault struct
+> - it is device specific and not domain specific.
 > 
-> This patch adds a new API to the iommu subsystem that allows
-> to set/unset the pasid table information.
+> The current iommu_report_device_fault() implementation only handles
+> the "shoot and forget" unrecoverable fault case. Handling of page
+> request faults or stalled faults will come later.
 > 
-> A generic iommu_pasid_table_config struct is introduced in
-> a new iommu.h uapi header. This is going to be used by the VFIO
-> user API.
-
-Another case where strictly speaking stuff is introduced that this series
-doesn't use.  I don't know what the plans are to merge the various
-related series though so this might make sense in general. Right now
-it just bloats this series a bit..
-> 
-> Signed-off-by: Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
-> Signed-off-by: Liu, Yi L <yi.l.liu@linux.intel.com>
-> Signed-off-by: Ashok Raj <ashok.raj@intel.com>
 > Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
+> Signed-off-by: Ashok Raj <ashok.raj@intel.com>
+> Signed-off-by: Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
 > Signed-off-by: Eric Auger <eric.auger@redhat.com>
-> Reviewed-by: Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
+
+A few nitpicks and minor suggestions inline.
+
 > ---
->  drivers/iommu/iommu.c      | 19 +++++++++++++++++
->  include/linux/iommu.h      | 18 ++++++++++++++++
->  include/uapi/linux/iommu.h | 52 ++++++++++++++++++++++++++++++++++++++++++++++
->  3 files changed, 89 insertions(+)
+>  drivers/iommu/iommu.c | 127 +++++++++++++++++++++++++++++++++++++++++++++++++-
+>  include/linux/iommu.h |  33 ++++++++++++-
+>  2 files changed, 157 insertions(+), 3 deletions(-)
 > 
 > diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
-> index 166adb8..4496ccd 100644
+> index 67ee662..7955184 100644
 > --- a/drivers/iommu/iommu.c
 > +++ b/drivers/iommu/iommu.c
-> @@ -1619,6 +1619,25 @@ int iommu_page_response(struct device *dev,
->  }
->  EXPORT_SYMBOL_GPL(iommu_page_response);
+> @@ -644,6 +644,13 @@ int iommu_group_add_device(struct iommu_group *group, struct device *dev)
+>  		goto err_free_name;
+>  	}
 >  
-> +int iommu_attach_pasid_table(struct iommu_domain *domain,
-> +			     struct iommu_pasid_table_config *cfg)
+> +	dev->iommu_param = kzalloc(sizeof(*dev->iommu_param), GFP_KERNEL);
+> +	if (!dev->iommu_param) {
+> +		ret = -ENOMEM;
+> +		goto err_free_name;
+> +	}
+> +	mutex_init(&dev->iommu_param->lock);
+> +
+>  	kobject_get(group->devices_kobj);
+>  
+>  	dev->iommu_group = group;
+> @@ -674,6 +681,7 @@ int iommu_group_add_device(struct iommu_group *group, struct device *dev)
+>  	mutex_unlock(&group->mutex);
+>  	dev->iommu_group = NULL;
+>  	kobject_put(group->devices_kobj);
+> +	kfree(dev->iommu_param);
+>  err_free_name:
+>  	kfree(device->name);
+>  err_remove_link:
+> @@ -720,7 +728,7 @@ void iommu_group_remove_device(struct device *dev)
+>  	sysfs_remove_link(&dev->kobj, "iommu_group");
+>  
+>  	trace_remove_device_from_group(group->id, dev);
+> -
+> +	kfree(dev->iommu_param);
+>  	kfree(device->name);
+>  	kfree(device);
+>  	dev->iommu_group = NULL;
+> @@ -855,6 +863,123 @@ int iommu_group_unregister_notifier(struct iommu_group *group,
+>  EXPORT_SYMBOL_GPL(iommu_group_unregister_notifier);
+>  
+>  /**
+> + * iommu_register_device_fault_handler() - Register a device fault handler
+> + * @dev: the device
+> + * @handler: the fault handler
+> + * @data: private data passed as argument to the handler
+> + *
+> + * When an IOMMU fault event is received, this handler gets called with the
+> + * fault event and data as argument.
+> + *
+> + * Return 0 if the fault handler was installed successfully, or an error.
+> + */
+> +int iommu_register_device_fault_handler(struct device *dev,
+> +					iommu_dev_fault_handler_t handler,
+> +					void *data)
 > +{
-> +	if (unlikely(!domain->ops->attach_pasid_table))
-> +		return -ENODEV;
+> +	struct iommu_param *param = dev->iommu_param;
+> +	int ret = 0;
 > +
-> +	return domain->ops->attach_pasid_table(domain, cfg);
+> +	/*
+> +	 * Device iommu_param should have been allocated when device is
+> +	 * added to its iommu_group.
+> +	 */
+> +	if (!param)
+> +		return -EINVAL;
+> +
+> +	mutex_lock(&param->lock);
+> +	/* Only allow one fault handler registered for each device */
+> +	if (param->fault_param) {
+> +		ret = -EBUSY;
+> +		goto done_unlock;
+> +	}
+> +
+> +	get_device(dev);
+> +	param->fault_param =
+> +		kzalloc(sizeof(struct iommu_fault_param), GFP_KERNEL);
+> +	if (!param->fault_param) {
+> +		put_device(dev);
+> +		ret = -ENOMEM;
+> +		goto done_unlock;
+> +	}
+> +	param->fault_param->handler = handler;
+> +	param->fault_param->data = data;
+> +
+> +done_unlock:
+> +	mutex_unlock(&param->lock);
+> +
+> +	return ret;
 > +}
-> +EXPORT_SYMBOL_GPL(iommu_attach_pasid_table);
+> +EXPORT_SYMBOL_GPL(iommu_register_device_fault_handler);
 > +
-> +void iommu_detach_pasid_table(struct iommu_domain *domain)
+> +/**
+> + * iommu_unregister_device_fault_handler() - Unregister the device fault handler
+> + * @dev: the device
+> + *
+> + * Remove the device fault handler installed with
+> + * iommu_register_device_fault_handler().
+> + *
+> + * Return 0 on success, or an error.
+> + */
+> +int iommu_unregister_device_fault_handler(struct device *dev)
 > +{
-> +	if (unlikely(!domain->ops->detach_pasid_table))
-> +		return;
+> +	struct iommu_param *param = dev->iommu_param;
+> +	int ret = 0;
 > +
-> +	domain->ops->detach_pasid_table(domain);
+> +	if (!param)
+> +		return -EINVAL;
+> +
+> +	mutex_lock(&param->lock);
+> +
+> +	if (!param->fault_param)
+> +		goto unlock;
+> +
+> +	kfree(param->fault_param);
+> +	param->fault_param = NULL;
+> +	put_device(dev);
+> +unlock:
+> +	mutex_unlock(&param->lock);
+> +
+> +	return ret;
 > +}
-> +EXPORT_SYMBOL_GPL(iommu_detach_pasid_table);
+> +EXPORT_SYMBOL_GPL(iommu_unregister_device_fault_handler);
 > +
->  static void __iommu_detach_device(struct iommu_domain *domain,
->  				  struct device *dev)
->  {
+
+One blank line probably enough.. (my personal favourite
+stylistic nitpick ;)
+
+> +
+> +/**
+> + * iommu_report_device_fault() - Report fault event to device
+> + * @dev: the device
+> + * @evt: fault event data
+> + *
+> + * Called by IOMMU drivers when a fault is detected, typically in a threaded IRQ
+> + * handler.
+
+What constraints does that put on it?  We probably don't care about the
+fact it is in a threaded irq as such, rather something that is true as
+a result of that?
+
+> + *
+> + * Return 0 on success, or an error.
+> + */
+> +int iommu_report_device_fault(struct device *dev, struct iommu_fault_event *evt)
+> +{
+> +	struct iommu_param *param = dev->iommu_param;
+> +	struct iommu_fault_param *fparam;
+> +	int ret = 0;
+> +
+> +	/* iommu_param is allocated when device is added to group */
+> +	if (!param || !evt)
+> +		return -EINVAL;
+> +
+> +	/* we only report device fault if there is a handler registered */
+> +	mutex_lock(&param->lock);
+> +	fparam = param->fault_param;
+> +	if (!fparam || !fparam->handler) {
+> +		ret = -EINVAL;
+> +		goto done_unlock;
+> +	}
+> +	ret = fparam->handler(evt, fparam->data);
+> +done_unlock:
+> +	mutex_unlock(&param->lock);
+> +	return ret;
+> +}
+> +EXPORT_SYMBOL_GPL(iommu_report_device_fault);
+> +
+> +/**
+>   * iommu_group_id - Return ID for a group
+>   * @group: the group to ID
+>   *
 > diff --git a/include/linux/iommu.h b/include/linux/iommu.h
-> index 950347b..d3edb10 100644
+> index 7890a92..b87b74c 100644
 > --- a/include/linux/iommu.h
 > +++ b/include/linux/iommu.h
-> @@ -264,6 +264,8 @@ struct page_response_msg {
->   * @sva_unbind: Unbind process address space from device
->   * @sva_get_pasid: Get PASID associated to a SVA handle
->   * @page_response: handle page request response
-> + * @attach_pasid_table: attach a pasid table
-> + * @detach_pasid_table: detach the pasid table
->   * @pgsize_bitmap: bitmap of all possible supported page sizes
+> @@ -322,9 +322,9 @@ struct iommu_fault_event {
+>  
+>  /**
+>   * struct iommu_fault_param - per-device IOMMU fault data
+> - * @dev_fault_handler: Callback function to handle IOMMU faults at device level
+> - * @data: handler private data
+>   *
+> + * @handler: Callback function to handle IOMMU faults at device level
+
+This should be in the previous patch, not this one.
+
+> + * @data: handler private data
 >   */
->  struct iommu_ops {
-> @@ -323,6 +325,9 @@ struct iommu_ops {
->  				      void *drvdata);
->  	void (*sva_unbind)(struct iommu_sva *handle);
->  	int (*sva_get_pasid)(struct iommu_sva *handle);
-> +	int (*attach_pasid_table)(struct iommu_domain *domain,
-> +				  struct iommu_pasid_table_config *cfg);
-> +	void (*detach_pasid_table)(struct iommu_domain *domain);
+>  struct iommu_fault_param {
+>  	iommu_dev_fault_handler_t handler;
+> @@ -341,6 +341,7 @@ struct iommu_fault_param {
+>   *	struct iommu_fwspec	*iommu_fwspec;
+>   */
+>  struct iommu_param {
+> +	struct mutex lock;
+
+Structure has kernel doc so this should be added to that.
+
+>  	struct iommu_fault_param *fault_param;
+>  };
 >  
->  	int (*page_response)(struct device *dev, struct page_response_msg *msg);
->  
-> @@ -434,6 +439,9 @@ extern int iommu_attach_device(struct iommu_domain *domain,
->  			       struct device *dev);
->  extern void iommu_detach_device(struct iommu_domain *domain,
->  				struct device *dev);
-> +extern int iommu_attach_pasid_table(struct iommu_domain *domain,
-> +				    struct iommu_pasid_table_config *cfg);
-> +extern void iommu_detach_pasid_table(struct iommu_domain *domain);
->  extern struct iommu_domain *iommu_get_domain_for_dev(struct device *dev);
->  extern struct iommu_domain *iommu_get_dma_domain(struct device *dev);
->  extern int iommu_map(struct iommu_domain *domain, unsigned long iova,
-> @@ -947,6 +955,13 @@ iommu_aux_get_pasid(struct iommu_domain *domain, struct device *dev)
->  	return -ENODEV;
+> @@ -433,6 +434,15 @@ extern int iommu_group_register_notifier(struct iommu_group *group,
+>  					 struct notifier_block *nb);
+>  extern int iommu_group_unregister_notifier(struct iommu_group *group,
+>  					   struct notifier_block *nb);
+> +extern int iommu_register_device_fault_handler(struct device *dev,
+> +					iommu_dev_fault_handler_t handler,
+> +					void *data);
+> +
+> +extern int iommu_unregister_device_fault_handler(struct device *dev);
+> +
+> +extern int iommu_report_device_fault(struct device *dev,
+> +				     struct iommu_fault_event *evt);
+> +
+>  extern int iommu_group_id(struct iommu_group *group);
+>  extern struct iommu_group *iommu_group_get_for_dev(struct device *dev);
+>  extern struct iommu_domain *iommu_group_default_domain(struct iommu_group *);
+> @@ -741,6 +751,25 @@ static inline int iommu_group_unregister_notifier(struct iommu_group *group,
+>  	return 0;
 >  }
 >  
 > +static inline
-> +int iommu_attach_pasid_table(struct iommu_domain *domain,
-> +			     struct iommu_pasid_table_config *cfg)
+> +int iommu_register_device_fault_handler(struct device *dev,
+> +					iommu_dev_fault_handler_t handler,
+> +					void *data)
 > +{
 > +	return -ENODEV;
 > +}
 > +
->  static inline struct iommu_sva *
->  iommu_sva_bind_device(struct device *dev, struct mm_struct *mm, void *drvdata)
->  {
-> @@ -968,6 +983,9 @@ static inline int iommu_sva_get_pasid(struct iommu_sva *handle)
->  	return IOMMU_PASID_INVALID;
->  }
->  
+> +static inline int iommu_unregister_device_fault_handler(struct device *dev)
+> +{
+> +	return 0;
+> +}
+> +
 > +static inline
-> +void iommu_detach_pasid_table(struct iommu_domain *domain) {}
+> +int iommu_report_device_fault(struct device *dev, struct iommu_fault_event *evt)
+> +{
+> +	return -ENODEV;
+> +}
 > +
->  #endif /* CONFIG_IOMMU_API */
->  
->  #ifdef CONFIG_IOMMU_DEBUGFS
-> diff --git a/include/uapi/linux/iommu.h b/include/uapi/linux/iommu.h
-> index aaa3b6a..3976767 100644
-> --- a/include/uapi/linux/iommu.h
-> +++ b/include/uapi/linux/iommu.h
-> @@ -115,4 +115,56 @@ struct iommu_fault {
->  		struct iommu_fault_page_request prm;
->  	};
->  };
-> +
-> +/**
-> + * struct iommu_pasid_smmuv3 - ARM SMMUv3 Stream Table Entry stage 1 related
-> + *     information
-> + * @version: API version of this structure
-> + * @s1fmt: STE s1fmt (format of the CD table: single CD, linear table
-> + *         or 2-level table)
-> + * @s1dss: STE s1dss (specifies the behavior when @pasid_bits != 0
-> + *         and no PASID is passed along with the incoming transaction)
-> + * @padding: reserved for future use (should be zero)
-> + *
-> + * The PASID table is referred to as the Context Descriptor (CD) table on ARM
-> + * SMMUv3. Please refer to the ARM SMMU 3.x spec (ARM IHI 0070A) for full
-> + * details.
-> + */
-> +struct iommu_pasid_smmuv3 {
-> +#define PASID_TABLE_SMMUV3_CFG_VERSION_1 1
-> +	__u32	version;
-> +	__u8	s1fmt;
-> +	__u8	s1dss;
-> +	__u8	padding[2];
-> +};
-> +
-> +/**
-> + * struct iommu_pasid_table_config - PASID table data used to bind guest PASID
-> + *     table to the host IOMMU
-> + * @version: API version to prepare for future extensions
-> + * @format: format of the PASID table
-> + * @base_ptr: guest physical address of the PASID table
-> + * @pasid_bits: number of PASID bits used in the PASID table
-> + * @config: indicates whether the guest translation stage must
-> + *          be translated, bypassed or aborted.
-> + * @padding: reserved for future use (should be zero)
-> + * @smmuv3: table information when @format is %IOMMU_PASID_FORMAT_SMMUV3
-> + */
-> +struct iommu_pasid_table_config {
-> +#define PASID_TABLE_CFG_VERSION_1 1
-> +	__u32	version;
-> +#define IOMMU_PASID_FORMAT_SMMUV3	1
-> +	__u32	format;
-> +	__u64	base_ptr;
-> +	__u8	pasid_bits;
-> +#define IOMMU_PASID_CONFIG_TRANSLATE	1
-> +#define IOMMU_PASID_CONFIG_BYPASS	2
-> +#define IOMMU_PASID_CONFIG_ABORT	3
-> +	__u8	config;
-> +	__u8    padding[6];
-> +	union {
-> +		struct iommu_pasid_smmuv3 smmuv3;
-> +	};
-> +};
-> +
->  #endif /* _UAPI_IOMMU_H */
+>  static inline int iommu_group_id(struct iommu_group *group)
+>  {
+>  	return -ENODEV;
 
 
