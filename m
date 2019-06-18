@@ -2,97 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9C78049AA6
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 09:33:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8FDCC49AAB
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 09:34:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729011AbfFRHds (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Jun 2019 03:33:48 -0400
-Received: from mga11.intel.com ([192.55.52.93]:22887 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725934AbfFRHds (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Jun 2019 03:33:48 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Jun 2019 00:33:48 -0700
-X-ExtLoop1: 1
-Received: from pipin.fi.intel.com (HELO pipin) ([10.237.72.175])
-  by fmsmga004.fm.intel.com with ESMTP; 18 Jun 2019 00:33:45 -0700
-From:   Felipe Balbi <balbi@kernel.org>
-To:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Vladimir Zapolskiy <vz@mleia.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Sylvain Lemieux <slemieux.tyco@gmail.com>,
-        James Grant <james.grant@jci.com>, linux-usb@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>
-Subject: Re: [PATCH] usb: gadget: udc: lpc32xx: allocate descriptor with GFP_ATOMIC
-In-Reply-To: <20190510124248.2430-1-alexandre.belloni@bootlin.com>
-References: <20190510124248.2430-1-alexandre.belloni@bootlin.com>
-Date:   Tue, 18 Jun 2019 10:33:41 +0300
-Message-ID: <87zhmffiui.fsf@linux.intel.com>
+        id S1729080AbfFRHeK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Jun 2019 03:34:10 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:42579 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725919AbfFRHeJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Jun 2019 03:34:09 -0400
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id 04222802F9; Tue, 18 Jun 2019 09:33:57 +0200 (CEST)
+Date:   Tue, 18 Jun 2019 09:34:08 +0200
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Joe Perches <joe@perches.com>
+Cc:     Shawn Landden <shawn@git.icu>, linux-kernel@vger.kernel.org,
+        "Gustavo A . R . Silva" <gustavo@embeddedor.com>,
+        Andy Whitcroft <apw@canonical.com>
+Subject: Re: [PATCH] Use fall-through attribute rather than magic comments
+Message-ID: <20190618073407.GA786@amd>
+References: <20190316033841.7659-1-shawn@git.icu>
+ <20190617155643.GA32544@amd>
+ <45e070039e66b1cb1490a78d4805bc73cc09f571.camel@perches.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha256; protocol="application/pgp-signature"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="J/dobhs11T7y2rNN"
+Content-Disposition: inline
+In-Reply-To: <45e070039e66b1cb1490a78d4805bc73cc09f571.camel@perches.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
+
+--J/dobhs11T7y2rNN
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Alexandre Belloni <alexandre.belloni@bootlin.com> writes:
+On Mon 2019-06-17 09:25:56, Joe Perches wrote:
+> On Mon, 2019-06-17 at 17:56 +0200, Pavel Machek wrote:
+> > Hi!
+> >=20
+> > > +/*
+> > > + *   gcc: https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#in=
+dex-Wimplicit-fallthrough
+> > > + *   gcc: https://developers.redhat.com/blog/2017/03/10/wimplicit-fa=
+llthrough-in-gcc-7/
+> > > + */
+> > > +#if __has_attribute(__fallthrough__)
+> > > +# define __fallthrough                    __attribute__((__fallthrou=
+gh__))
+> > > +#else
+> > > +# define __fallthrough
+> > > +#endif
+> >=20
+> > Is it good idea to add the __'s ? They look kind of ugly.=20
+>=20
+> Dunno.
+>=20
+> I agree it's kind of ugly, but it should always work.
+>=20
+> I think the generic problem is introducing a new unprefixed
+> reserved identifier.  Underscored identifiers are reserved.
 
-> Gadget drivers may queue request in interrupt context. This would lead to
-> a descriptor allocation in that context. In that case we would hit
-> BUG_ON(in_interrupt()) in __get_vm_area_node.
->
-> Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
-> ---
->  drivers/usb/gadget/udc/lpc32xx_udc.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/usb/gadget/udc/lpc32xx_udc.c b/drivers/usb/gadget/ud=
-c/lpc32xx_udc.c
-> index d8f1c60793ed..b706d9c85a35 100644
-> --- a/drivers/usb/gadget/udc/lpc32xx_udc.c
-> +++ b/drivers/usb/gadget/udc/lpc32xx_udc.c
-> @@ -938,7 +938,7 @@ static struct lpc32xx_usbd_dd_gad *udc_dd_alloc(struc=
-t lpc32xx_udc *udc)
->  	struct lpc32xx_usbd_dd_gad	*dd;
->=20=20
->  	dd =3D (struct lpc32xx_usbd_dd_gad *) dma_pool_alloc(
-> -			udc->dd_cache, (GFP_KERNEL | GFP_DMA), &dma);
-> +			udc->dd_cache, (GFP_ATOMIC | GFP_DMA), &dma);
+We are not userland, and we control whole codebase. These rules don't
+apply.
 
-doesn't apply:
+We can use unprefixed identifier and fix up any problems... I don't
+expect too many.
 
-checking file drivers/usb/gadget/udc/lpc32xx_udc.c
-Hunk #1 FAILED at 938.
 
-=2D-=20
-balbi
+								Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
 
---=-=-=
+--J/dobhs11T7y2rNN
 Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
-iQIzBAEBCAAdFiEElLzh7wn96CXwjh2IzL64meEamQYFAl0Ik9UACgkQzL64meEa
-mQZe/BAA1Wmem2fEj1kGc0BIPALzcahe+BFPQjo2Rm2du+gW/LJhZXH7KZnPXSLj
-CaJGl79vPA0+cG+50uf25eAL3Q9DjuJPSENwD723ZNGdM+eLUnW5a+q8kLnGgSyk
-wqgvrXzwnmiIY6v5fM4s1+gfmqZEssA9VnG+/JhODxJpVmbSEIc5WSGWmQ4zdRyO
-t/82DKMnCkYRhgNzxSqVfm7Rua2bfW47UL9B4X4vm9Lgm6K5qwBAF9+AghFPDoyP
-OHM1d6tPgoO1bVByW7yU3HVYKiVXnqlxo3E1M7Zm+dinuYgDrvQ7SDU9wfbhx42n
-8x8NaHShxval8T2v0knz/9F0SwjU/FHAoCO3XHMzqs5u0BCFyE8FBJ0+oFCFuX90
-nDBGNnIkPt3bZRdAPd1qkxBnu1tpKU8h0yguKuecPhnnm1da3/ec5pLWaLBPGlzH
-5NSQt/ROyJzJAfLRiiRgFeFr6iLV4cZqM0xPdJzA8EJwZ+vQjiQKroSxAZ+6oyuW
-xrd6CZaR1r1sm1OPIGOJZxb9YNfttNiOtDDe7rcP42EpyC7+IXYqmYAcHsWSr1lr
-Xr6MdIJlGBH9/2F7dl3exjfe4xD8bOkwqD3LrQ8eSnNdlsRR74UcREx4llhqA/c+
-PTKq6k/wEu8h2skItle3dBJX8YvNVY5JMWoGO5s78MIW7Zkf8Co=
-=U+ZK
+iEYEARECAAYFAl0Ik+8ACgkQMOfwapXb+vLOwgCgvriCQhIYZWhr2ay7huZtGWFq
+zXUAoKglke0tIaPtTjtW0uiT7mopf3Mf
+=WAYC
 -----END PGP SIGNATURE-----
---=-=-=--
+
+--J/dobhs11T7y2rNN--
