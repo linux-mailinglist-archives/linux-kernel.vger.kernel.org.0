@@ -2,140 +2,176 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5A1FD49677
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 02:56:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D9F3049688
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 03:04:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726819AbfFRA4k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 20:56:40 -0400
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:38277 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725829AbfFRA4k (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 20:56:40 -0400
-Received: by mail-ot1-f65.google.com with SMTP id d17so11836051oth.5;
-        Mon, 17 Jun 2019 17:56:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=LAof2iPuEsmEYY4js8fXji44icMGLEIkpZjnqdzAtFI=;
-        b=NAIs7vmQcsIIa8lS+vTvC5bC1yt5vtdlN596xVfEf8KBK7ly+kPIH49W5sZweA/Ar5
-         PA4/gqSU3x5eUZ0EtsBshtI91HVoJKNqtK6Ou+yQB7Gjsm7MZm4cqPjgpzW7RlbVFSN6
-         YhnqPmRSGWE8NntPKcZ7CCpEftrq4oNhfZgDPcSVKNyBk4zxI+veE9QHenHLTUzhnipp
-         bbtUbg36mT3JQA7Wl9g2HSRNGKbn+tMG/JW+aNYQ79yVEzzhX2bpOcGEBtQz8/JiIjHC
-         CDmw6qkhEzYvCzD5tjXQocYSqYRGCH72DeLaqI2NIS2py8OQegBrJOaMTbMUjTyAVbey
-         K1tA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=LAof2iPuEsmEYY4js8fXji44icMGLEIkpZjnqdzAtFI=;
-        b=KNPyi8GGgDO7fT4XB7t0G9psPPDhBDiCMwmMSNSzMbdLq567rkhbaj0aoU/Zxb1PId
-         ee4RY2CVUCNNCVM2QklmTbLdxXzgbkkUnArQl6ylQt1Hg+OJu4ZqbVjmdTX2TGLJ+njz
-         +L7S+GkB0/7rMMZz7HLr2tCsWXZnhVAJXlI5TWDi8xfBcMqghLEYZujFUFtdfc0q/U5z
-         53U+gmjllhFNVSCgjUKojeMcXBR3ZzXl+ODJWcP1Ww/XqM75iLzrbUFTBWgFPmsjC4Wd
-         am9kYMq644kTmJzCNXIQ24jaE3/BhCJ3MmNQgX4nVf3A92EuuurMHNI2eIxpxEVjLDkv
-         CZuA==
-X-Gm-Message-State: APjAAAVuUbMkdq+LRIWD0kazYKj15BbtxUYwqGGNqkdfaGWl/lRCXkNn
-        xYpUNdy6QGqWYDfQZui4Zp03jnxxrkPuLuUxBpy78HfS
-X-Google-Smtp-Source: APXvYqxStP/pRcAOqf4HKAwAeLrfDpYbv22OnkQz8YMUT/lESO9FbeQpHSXEliXQuDp75dLIJfSM1BhMkWzVmdHmgDU=
-X-Received: by 2002:a9d:62c4:: with SMTP id z4mr45374362otk.56.1560819399619;
- Mon, 17 Jun 2019 17:56:39 -0700 (PDT)
+        id S1726286AbfFRBER (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 21:04:17 -0400
+Received: from mga02.intel.com ([134.134.136.20]:5766 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725829AbfFRBER (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Jun 2019 21:04:17 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Jun 2019 18:04:16 -0700
+X-ExtLoop1: 1
+Received: from richard.sh.intel.com (HELO localhost) ([10.239.159.54])
+  by FMSMGA003.fm.intel.com with ESMTP; 17 Jun 2019 18:04:14 -0700
+Date:   Tue, 18 Jun 2019 09:03:51 +0800
+From:   Wei Yang <richardw.yang@linux.intel.com>
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     Wei Yang <richard.weiyang@gmail.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Pavel Tatashin <pasha.tatashin@soleen.com>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Oscar Salvador <osalvador@suse.de>
+Subject: Re: [PATCH v9 02/12] mm/sparsemem: Add helpers track active portions
+ of a section at boot
+Message-ID: <20190618010351.GC18161@richard>
+Reply-To: Wei Yang <richardw.yang@linux.intel.com>
+References: <155977186863.2443951.9036044808311959913.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <155977187919.2443951.8925592545929008845.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <20190617222156.v6eaujbdrmkz35wr@master>
+ <CAPcyv4hdsvNL0QfA2ACHAaGZE+21RmAnfKYfrZsKGKUxu3eKRQ@mail.gmail.com>
 MIME-Version: 1.0
-References: <1560770687-23227-1-git-send-email-wanpengli@tencent.com>
- <1560770687-23227-6-git-send-email-wanpengli@tencent.com> <20190617213201.GA26346@flask>
- <CANRm+Cxrn51mJUvjH7df+U-HpPPLJJzsRf+BMebxDogSabex3g@mail.gmail.com>
-In-Reply-To: <CANRm+Cxrn51mJUvjH7df+U-HpPPLJJzsRf+BMebxDogSabex3g@mail.gmail.com>
-From:   Wanpeng Li <kernellwp@gmail.com>
-Date:   Tue, 18 Jun 2019 08:57:15 +0800
-Message-ID: <CANRm+CwBY3xku7uE5fHRNBoHEctc1k-AS0DSny8jKKDsOUZs=g@mail.gmail.com>
-Subject: Re: [PATCH v4 5/5] KVM: LAPIC: add advance timer support to pi_inject_timer
-To:     =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>, kvm <kvm@vger.kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Marcelo Tosatti <mtosatti@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAPcyv4hdsvNL0QfA2ACHAaGZE+21RmAnfKYfrZsKGKUxu3eKRQ@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 18 Jun 2019 at 08:44, Wanpeng Li <kernellwp@gmail.com> wrote:
+On Mon, Jun 17, 2019 at 03:32:45PM -0700, Dan Williams wrote:
+>On Mon, Jun 17, 2019 at 3:22 PM Wei Yang <richard.weiyang@gmail.com> wrote:
+>>
+>> On Wed, Jun 05, 2019 at 02:57:59PM -0700, Dan Williams wrote:
+>> >Prepare for hot{plug,remove} of sub-ranges of a section by tracking a
+>> >sub-section active bitmask, each bit representing a PMD_SIZE span of the
+>> >architecture's memory hotplug section size.
+>> >
+>> >The implications of a partially populated section is that pfn_valid()
+>> >needs to go beyond a valid_section() check and read the sub-section
+>> >active ranges from the bitmask. The expectation is that the bitmask
+>> >(subsection_map) fits in the same cacheline as the valid_section() data,
+>> >so the incremental performance overhead to pfn_valid() should be
+>> >negligible.
+>> >
+>> >Cc: Michal Hocko <mhocko@suse.com>
+>> >Cc: Vlastimil Babka <vbabka@suse.cz>
+>> >Cc: Logan Gunthorpe <logang@deltatee.com>
+>> >Cc: Oscar Salvador <osalvador@suse.de>
+>> >Cc: Pavel Tatashin <pasha.tatashin@soleen.com>
+>> >Tested-by: Jane Chu <jane.chu@oracle.com>
+>> >Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+>> >---
+>> > include/linux/mmzone.h |   29 ++++++++++++++++++++++++++++-
+>> > mm/page_alloc.c        |    4 +++-
+>> > mm/sparse.c            |   35 +++++++++++++++++++++++++++++++++++
+>> > 3 files changed, 66 insertions(+), 2 deletions(-)
+>> >
+>> >diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
+>> >index ac163f2f274f..6dd52d544857 100644
+>> >--- a/include/linux/mmzone.h
+>> >+++ b/include/linux/mmzone.h
+>> >@@ -1199,6 +1199,8 @@ struct mem_section_usage {
+>> >       unsigned long pageblock_flags[0];
+>> > };
+>> >
+>> >+void subsection_map_init(unsigned long pfn, unsigned long nr_pages);
+>> >+
+>> > struct page;
+>> > struct page_ext;
+>> > struct mem_section {
+>> >@@ -1336,12 +1338,36 @@ static inline struct mem_section *__pfn_to_section(unsigned long pfn)
+>> >
+>> > extern int __highest_present_section_nr;
+>> >
+>> >+static inline int subsection_map_index(unsigned long pfn)
+>> >+{
+>> >+      return (pfn & ~(PAGE_SECTION_MASK)) / PAGES_PER_SUBSECTION;
+>> >+}
+>> >+
+>> >+#ifdef CONFIG_SPARSEMEM_VMEMMAP
+>> >+static inline int pfn_section_valid(struct mem_section *ms, unsigned long pfn)
+>> >+{
+>> >+      int idx = subsection_map_index(pfn);
+>> >+
+>> >+      return test_bit(idx, ms->usage->subsection_map);
+>> >+}
+>> >+#else
+>> >+static inline int pfn_section_valid(struct mem_section *ms, unsigned long pfn)
+>> >+{
+>> >+      return 1;
+>> >+}
+>> >+#endif
+>> >+
+>> > #ifndef CONFIG_HAVE_ARCH_PFN_VALID
+>> > static inline int pfn_valid(unsigned long pfn)
+>> > {
+>> >+      struct mem_section *ms;
+>> >+
+>> >       if (pfn_to_section_nr(pfn) >= NR_MEM_SECTIONS)
+>> >               return 0;
+>> >-      return valid_section(__nr_to_section(pfn_to_section_nr(pfn)));
+>> >+      ms = __nr_to_section(pfn_to_section_nr(pfn));
+>> >+      if (!valid_section(ms))
+>> >+              return 0;
+>> >+      return pfn_section_valid(ms, pfn);
+>> > }
+>> > #endif
+>> >
+>> >@@ -1373,6 +1399,7 @@ void sparse_init(void);
+>> > #define sparse_init() do {} while (0)
+>> > #define sparse_index_init(_sec, _nid)  do {} while (0)
+>> > #define pfn_present pfn_valid
+>> >+#define subsection_map_init(_pfn, _nr_pages) do {} while (0)
+>> > #endif /* CONFIG_SPARSEMEM */
+>> >
+>> > /*
+>> >diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+>> >index c6d8224d792e..bd773efe5b82 100644
+>> >--- a/mm/page_alloc.c
+>> >+++ b/mm/page_alloc.c
+>> >@@ -7292,10 +7292,12 @@ void __init free_area_init_nodes(unsigned long *max_zone_pfn)
+>> >
+>> >       /* Print out the early node map */
+>> >       pr_info("Early memory node ranges\n");
+>> >-      for_each_mem_pfn_range(i, MAX_NUMNODES, &start_pfn, &end_pfn, &nid)
+>> >+      for_each_mem_pfn_range(i, MAX_NUMNODES, &start_pfn, &end_pfn, &nid) {
+>> >               pr_info("  node %3d: [mem %#018Lx-%#018Lx]\n", nid,
+>> >                       (u64)start_pfn << PAGE_SHIFT,
+>> >                       ((u64)end_pfn << PAGE_SHIFT) - 1);
+>> >+              subsection_map_init(start_pfn, end_pfn - start_pfn);
+>> >+      }
+>>
+>> Just curious about why we set subsection here?
+>>
+>> Function free_area_init_nodes() mostly handles pgdat, if I am correct. Setup
+>> subsection here looks like touching some lower level system data structure.
 >
-> On Tue, 18 Jun 2019 at 05:32, Radim Kr=C4=8Dm=C3=A1=C5=99 <rkrcmar@redhat=
-.com> wrote:
-> >
-> > 2019-06-17 19:24+0800, Wanpeng Li:
-> > > From: Wanpeng Li <wanpengli@tencent.com>
-> > >
-> > > Wait before calling posted-interrupt deliver function directly to add
-> > > advance timer support to pi_inject_timer.
-> > >
-> > > Cc: Paolo Bonzini <pbonzini@redhat.com>
-> > > Cc: Radim Kr=C4=8Dm=C3=A1=C5=99 <rkrcmar@redhat.com>
-> > > Cc: Marcelo Tosatti <mtosatti@redhat.com>
-> > > Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
-> > > ---
-> >
-> > Please merge this patch with [2/5], so bisection doesn't break.
+>Correct, I'm not sure how it ended up there, but it was the source of
+>a bug that was fixed with this change:
 >
-> Agreed.
->
-> >
-> > >  arch/x86/kvm/lapic.c   | 6 ++++--
-> > >  arch/x86/kvm/lapic.h   | 2 +-
-> > >  arch/x86/kvm/svm.c     | 2 +-
-> > >  arch/x86/kvm/vmx/vmx.c | 2 +-
-> > >  4 files changed, 7 insertions(+), 5 deletions(-)
-> > >
-> > > diff --git a/arch/x86/kvm/lapic.c b/arch/x86/kvm/lapic.c
-> > > index 1a31389..1a31ba5 100644
-> > > --- a/arch/x86/kvm/lapic.c
-> > > +++ b/arch/x86/kvm/lapic.c
-> > > @@ -1462,6 +1462,8 @@ static void apic_timer_expired(struct kvm_lapic=
- *apic, bool can_pi_inject)
-> > >               return;
-> > >
-> > >       if (can_pi_inject && posted_interrupt_inject_timer(apic->vcpu))=
- {
-> > > +             if (apic->lapic_timer.timer_advance_ns)
-> > > +                     kvm_wait_lapic_expire(vcpu, true);
-> >
-> > From where does kvm_wait_lapic_expire() take
-> > apic->lapic_timer.expired_tscdeadline?
->
-> Sorry, I failed to understand this.
-> https://git.kernel.org/pub/scm/virt/kvm/kvm.git/tree/arch/x86/kvm/lapic.c=
-?h=3Dqueue#n1541
-> We can get apic->lapic_timer.expired_tscdeadline in
-> kvm_wait_lapic_expire() directly.
+>https://lore.kernel.org/lkml/CAPcyv4hjvBPDYKpp2Gns3-cc2AQ0AVS1nLk-K3fwXeRUvvzQLg@mail.gmail.com/
 
-Oh, miss the latest expired_tscdeadline, how about something like below?
+So this one is moved to sparse_init_nid().
 
-diff --git a/arch/x86/kvm/lapic.c b/arch/x86/kvm/lapic.c
-index 1a31ba5..7cd95ea 100644
---- a/arch/x86/kvm/lapic.c
-+++ b/arch/x86/kvm/lapic.c
-@@ -1461,6 +1461,9 @@ static void apic_timer_expired(struct kvm_lapic
-*apic, bool can_pi_inject)
-     if (atomic_read(&apic->lapic_timer.pending))
-         return;
+The bug is strange, while the code now is more reasonable to me.
 
-+    if (apic_lvtt_tscdeadline(apic) || ktimer->hv_timer_in_use)
-+        ktimer->expired_tscdeadline =3D ktimer->tscdeadline;
-+
-     if (can_pi_inject && posted_interrupt_inject_timer(apic->vcpu)) {
-         if (apic->lapic_timer.timer_advance_ns)
-             kvm_wait_lapic_expire(vcpu, true);
-@@ -1477,9 +1480,6 @@ static void apic_timer_expired(struct kvm_lapic
-*apic, bool can_pi_inject)
-      */
-     if (swait_active(q))
-         swake_up_one(q);
--
--    if (apic_lvtt_tscdeadline(apic) || ktimer->hv_timer_in_use)
--        ktimer->expired_tscdeadline =3D ktimer->tscdeadline;
- }
+Thanks :-)
 
- /*
+>_______________________________________________
+>Linux-nvdimm mailing list
+>Linux-nvdimm@lists.01.org
+>https://lists.01.org/mailman/listinfo/linux-nvdimm
+
+-- 
+Wei Yang
+Help you, Help me
