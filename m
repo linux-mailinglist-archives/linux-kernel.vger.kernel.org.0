@@ -2,90 +2,152 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E4D644AC01
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 22:43:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 17A0C4AC79
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 23:05:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730676AbfFRUnI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Jun 2019 16:43:08 -0400
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:35701 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730341AbfFRUnI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Jun 2019 16:43:08 -0400
-Received: by mail-ot1-f68.google.com with SMTP id j19so16903607otq.2;
-        Tue, 18 Jun 2019 13:43:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=QyVmAgn2/ADZTeFvTvc5soQ9bwH2xTxtcHLwxv1lczw=;
-        b=qa1wjVgI5rCT8ZKRcGF119YgCb/1p+uRb2IXiLAELUbmvypJNrkJKmdXVKbHWPNKc7
-         kL5DmRPCHoXkd78jv4xuO06ZrFt5G8Kx8mvjb4CcEDPYTjQmBpCcJXtqgCJEE4pWq4sP
-         1RzSc/9FHA7hI9rHoAUBNTY2wWtB+jKOubmvsByOLwOdbgyQZyyHntZjd6+8LkpXIXTi
-         jZRBWRG6R6QvKIa0IGYysZ3MsX9E4eY+JZ1rrgqiAUwVOFIbZenlNkh7GgUwGO7JRuq0
-         vHvHrsqZaDY9Sy8mG6vDSrudEZDKts9sd7RWptF1lO4SDVpbLuIInXC77PNaMb+9cFUT
-         FUAQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=QyVmAgn2/ADZTeFvTvc5soQ9bwH2xTxtcHLwxv1lczw=;
-        b=ZjPfgHjLuyu4s6rX7QlvWNy0SzxjQoRbq/kRfR9woSZzEgqpBMuHZ1qsrHZAs2Arkp
-         QOA8UpGy2dJmTZ/fCXOOeCsuuQKiFAf3FHSqzB1jE66b64AQJDobRgqWAX7/bDFUFffQ
-         Ma+IzqsUbpqM03TMEjKan/KO67T+oRYlDSADAXrfLNoGGpAq3bQW5mST4JJd+khhlTTX
-         wUpsaG2/dUYpBW4S1dGjlUX2g0ELNZtkCXfaNjWuBo/WhWRtYnSZyTLFbs7ve53O4D1r
-         WMLG/l266HaJ9jfvl/4OOBktzWtZOr8kYH8M7jSc1AJ3EaPBXk4ah0I3qYl6aS8XdY/a
-         lTrg==
-X-Gm-Message-State: APjAAAVcwm8YrzpEX2uJ44H8Ec9ONbnak1UMEocAeV+3JTaFFdn+AlDW
-        K4UJZm3pqrHgh4o0CN3/OZ4XzWjQx/6RnC6dZ9s=
-X-Google-Smtp-Source: APXvYqx3uypgm5u60182DZP002f1pXqni8MBRmNseHSnue/Gn6NM0Z6mwoXhO4bu4UBXMRrIuhYQlNWFgrS8bSAw4yQ=
-X-Received: by 2002:a9d:39a6:: with SMTP id y35mr23888615otb.81.1560890584820;
- Tue, 18 Jun 2019 13:43:04 -0700 (PDT)
-MIME-Version: 1.0
-References: <5d089fb6.1c69fb81.4f92.9134@mx.google.com> <7hr27qdedo.fsf@baylibre.com>
-In-Reply-To: <7hr27qdedo.fsf@baylibre.com>
-From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date:   Tue, 18 Jun 2019 22:42:53 +0200
-Message-ID: <CAFBinCCrpQNU_JtL0SwEGbwWZ2Qy-b2m5rdjuE0__nDRORGTiQ@mail.gmail.com>
-Subject: Re: next/master boot bisection: next-20190617 on sun8i-h2-plus-orangepi-zero
-To:     Kevin Hilman <khilman@baylibre.com>
-Cc:     "kernelci.org bot" <bot@kernelci.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        tomeu.vizoso@collabora.com, guillaume.tucker@collabora.com,
-        mgalka@collabora.com, broonie@kernel.org, matthew.hart@linaro.org,
-        enric.balletbo@collabora.com, Jose Abreu <joabreu@synopsys.com>,
-        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+        id S1730637AbfFRVFC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Jun 2019 17:05:02 -0400
+Received: from smtp.nue.novell.com ([195.135.221.5]:49063 "EHLO
+        smtp.nue.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730102AbfFRVFB (ORCPT
+        <rfc822;groupwise-linux-kernel@vger.kernel.org:0:0>);
+        Tue, 18 Jun 2019 17:05:01 -0400
+Received: from emea4-mta.ukb.novell.com ([10.120.13.87])
+        by smtp.nue.novell.com with ESMTP (TLS encrypted); Tue, 18 Jun 2019 23:05:00 +0200
+Received: from linux-r8p5.suse.de (nwb-a10-snat.microfocus.com [10.120.13.201])
+        by emea4-mta.ukb.novell.com with ESMTP (TLS encrypted); Tue, 18 Jun 2019 21:44:15 +0100
+From:   Davidlohr Bueso <dave@stgolabs.net>
+To:     tglx@linutronix.de
+Cc:     john.stultz@linaro.org, dave@stgolabs.net,
+        linux-kernel@vger.kernel.org, Davidlohr Bueso <dbueso@suse.de>
+Subject: [PATCH -tip] lib/timerqueue: Rely on rbtree semantics for next timer
+Date:   Tue, 18 Jun 2019 13:44:05 -0700
+Message-Id: <20190618204405.27956-1-dave@stgolabs.net>
+X-Mailer: git-send-email 2.16.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 18, 2019 at 6:53 PM Kevin Hilman <khilman@baylibre.com> wrote:
-[...]
-> This seems to have broken on several sunxi SoCs, but also a MIPS SoC
-> (pistachio_marduk):
->
-> https://storage.kernelci.org/next/master/next-20190618/mips/pistachio_defconfig/gcc-8/lab-baylibre-seattle/boot-pistachio_marduk.html
-today I learned why initializing arrays on the stack is important
-too bad gcc didn't warn that I was about to shoot myself (or someone
-else) in the foot :/
+Simplify the timerqueue code by using cached rbtrees and rely on the tree
+leftmost node semantics to get the timer with earliest expiration time.
+This is a drop in conversion, and therefore semantics remain untouched.
 
-I just sent a fix: [0]
+The runtime overhead of cached rbtrees is be pretty much the same as the
+current head->next method, noting that when removing the leftmost node,
+a common operation for the timerqueue, the rb_next(leftmost) is O(1) as
+well, so the next timer will either be the right node or its parent.
+Therefore no extra pointer chasing. Finally, the size of the struct
+timerqueue_head remains the same.
 
-sorry for this issue and thanks to Kernel CI for even pointing out the
-offending commit (this makes things a lot easier than just yelling
-that "something is broken")
+Passes several hours of rcutorture.
 
+Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
+---
+ include/linux/timerqueue.h | 13 ++++++-------
+ lib/timerqueue.c           | 28 +++++++++++-----------------
+ 2 files changed, 17 insertions(+), 24 deletions(-)
 
-Martin
+diff --git a/include/linux/timerqueue.h b/include/linux/timerqueue.h
+index 78b8cc73f12f..aff122f1062a 100644
+--- a/include/linux/timerqueue.h
++++ b/include/linux/timerqueue.h
+@@ -12,8 +12,7 @@ struct timerqueue_node {
+ };
+ 
+ struct timerqueue_head {
+-	struct rb_root head;
+-	struct timerqueue_node *next;
++	struct rb_root_cached rb_root;
+ };
+ 
+ 
+@@ -29,13 +28,14 @@ extern struct timerqueue_node *timerqueue_iterate_next(
+  *
+  * @head: head of timerqueue
+  *
+- * Returns a pointer to the timer node that has the
+- * earliest expiration time.
++ * Returns a pointer to the timer node that has the earliest expiration time.
+  */
+ static inline
+ struct timerqueue_node *timerqueue_getnext(struct timerqueue_head *head)
+ {
+-	return head->next;
++	struct rb_node *leftmost = rb_first_cached(&head->rb_root);
++
++	return rb_entry(leftmost, struct timerqueue_node, node);
+ }
+ 
+ static inline void timerqueue_init(struct timerqueue_node *node)
+@@ -45,7 +45,6 @@ static inline void timerqueue_init(struct timerqueue_node *node)
+ 
+ static inline void timerqueue_init_head(struct timerqueue_head *head)
+ {
+-	head->head = RB_ROOT;
+-	head->next = NULL;
++	head->rb_root = RB_ROOT_CACHED;
+ }
+ #endif /* _LINUX_TIMERQUEUE_H */
+diff --git a/lib/timerqueue.c b/lib/timerqueue.c
+index bc7e64df27df..892d2bdc27f0 100644
+--- a/lib/timerqueue.c
++++ b/lib/timerqueue.c
+@@ -26,9 +26,10 @@
+  */
+ bool timerqueue_add(struct timerqueue_head *head, struct timerqueue_node *node)
+ {
+-	struct rb_node **p = &head->head.rb_node;
++	struct rb_node **p = &head->rb_root.rb_root.rb_node;
+ 	struct rb_node *parent = NULL;
+-	struct timerqueue_node  *ptr;
++	struct timerqueue_node *ptr;
++	bool leftmost = true;
+ 
+ 	/* Make sure we don't add nodes that are already added */
+ 	WARN_ON_ONCE(!RB_EMPTY_NODE(&node->node));
+@@ -38,17 +39,15 @@ bool timerqueue_add(struct timerqueue_head *head, struct timerqueue_node *node)
+ 		ptr = rb_entry(parent, struct timerqueue_node, node);
+ 		if (node->expires < ptr->expires)
+ 			p = &(*p)->rb_left;
+-		else
++		else {
+ 			p = &(*p)->rb_right;
++			leftmost = false;
++		}
+ 	}
+ 	rb_link_node(&node->node, parent, p);
+-	rb_insert_color(&node->node, &head->head);
++	rb_insert_color_cached(&node->node, &head->rb_root, leftmost);
+ 
+-	if (!head->next || node->expires < head->next->expires) {
+-		head->next = node;
+-		return true;
+-	}
+-	return false;
++	return leftmost;
+ }
+ EXPORT_SYMBOL_GPL(timerqueue_add);
+ 
+@@ -65,15 +64,10 @@ bool timerqueue_del(struct timerqueue_head *head, struct timerqueue_node *node)
+ {
+ 	WARN_ON_ONCE(RB_EMPTY_NODE(&node->node));
+ 
+-	/* update next pointer */
+-	if (head->next == node) {
+-		struct rb_node *rbn = rb_next(&node->node);
+-
+-		head->next = rb_entry_safe(rbn, struct timerqueue_node, node);
+-	}
+-	rb_erase(&node->node, &head->head);
++	rb_erase_cached(&node->node, &head->rb_root);
+ 	RB_CLEAR_NODE(&node->node);
+-	return head->next != NULL;
++
++	return !RB_EMPTY_ROOT(&head->rb_root.rb_root);
+ }
+ EXPORT_SYMBOL_GPL(timerqueue_del);
+ 
+-- 
+2.16.4
 
-
-[0] https://patchwork.ozlabs.org/patch/1118313/
