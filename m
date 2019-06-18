@@ -2,61 +2,56 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 212CA4994C
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 08:49:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 75C0649960
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 08:52:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728518AbfFRGtv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Jun 2019 02:49:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54828 "EHLO mail.kernel.org"
+        id S1728900AbfFRGwN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Jun 2019 02:52:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56560 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726985AbfFRGtu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Jun 2019 02:49:50 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1728455AbfFRGwM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Jun 2019 02:52:12 -0400
+Received: from dragon (li1322-146.members.linode.com [45.79.223.146])
+        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8566F20665;
-        Tue, 18 Jun 2019 06:49:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1D39020679;
+        Tue, 18 Jun 2019 06:52:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560840590;
-        bh=bIi66gaYK+wfzmGH4HMnydyY0rtpJnZnNJJbf+Jgc8M=;
+        s=default; t=1560840731;
+        bh=aCHd527iEyPOQrGtxKzpIz/rVHqvtEEHCM75bJPOonc=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=iS19t7OMR5MWIylWzImy5y/xOzvn3RG+Euuhzse92eoz9CgEZNO27qb9RzwVMbtC8
-         9cQAup9O7sol9MsqrEK5FTGqCq2zjaAtpGv4kY+3d3TtDb50qqIXPxxpH/Zdko0mqn
-         B/CN6uj4yFxndJ3rPGrMiwfQyCFRqm47nvpwvwCA=
-Date:   Tue, 18 Jun 2019 08:49:47 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Marcos Paulo de Souza <marcos.souza.org@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org,
-        Alan Stern <stern@rowland.harvard.edu>,
-        "open list:USB MASS STORAGE DRIVER" <linux-usb@vger.kernel.org>,
-        "open list:USB MASS STORAGE DRIVER" 
-        <usb-storage@lists.one-eyed-alien.net>
-Subject: Re: [PATCH 2/2] usb: storage: scsiglue: Do not skip VPD if
- try_vpd_pages is set
-Message-ID: <20190618064947.GB22457@kroah.com>
-References: <20190618013146.21961-1-marcos.souza.org@gmail.com>
- <20190618013146.21961-3-marcos.souza.org@gmail.com>
+        b=OiTQ44nLfa5pPquo//DDSOvtfEk9pMHAkszfOQdVf6bDJr+dp3yEgN/oBFVFVDFRk
+         Xeqtmq5acyTULJq+UNzhMIQ7oe7AT2foIANW1p9z7WG3zO9wvTzCU4GHMv4F75M4MC
+         cQ07bkLQKCeeu3Flpf8XiLjLf0pWa7zhbpmm1ujU=
+Date:   Tue, 18 Jun 2019 14:51:17 +0800
+From:   Shawn Guo <shawnguo@kernel.org>
+To:     Anson.Huang@nxp.com
+Cc:     mturquette@baylibre.com, sboyd@kernel.org, s.hauer@pengutronix.de,
+        kernel@pengutronix.de, festevam@gmail.com, abel.vesa@nxp.com,
+        l.stach@pengutronix.de, ccaione@baylibre.com,
+        leonard.crestez@nxp.com, aisheng.dong@nxp.com,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, Linux-imx@nxp.com
+Subject: Re: [PATCH 1/2] clk: imx: Remove __init for imx_check_clocks() API
+Message-ID: <20190618065116.GA29881@dragon>
+References: <20190610053634.14339-1-Anson.Huang@nxp.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190618013146.21961-3-marcos.souza.org@gmail.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <20190610053634.14339-1-Anson.Huang@nxp.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 17, 2019 at 10:31:46PM -0300, Marcos Paulo de Souza wrote:
-> If BLIST_TRY_VPD_PAGES is set for a device, even for an USB, it should
-> be honored, so only set skip_vpd_pages is try_vpd_pages is not set.
+On Mon, Jun 10, 2019 at 01:36:33PM +0800, Anson.Huang@nxp.com wrote:
+> From: Anson Huang <Anson.Huang@nxp.com>
 > 
-> Signed-off-by: Marcos Paulo de Souza <marcos.souza.org@gmail.com>
-> ---
->  drivers/usb/storage/scsiglue.c | 7 +++++--
->  1 file changed, 5 insertions(+), 2 deletions(-)
+> Some of i.MX SoCs' clock driver use platform driver model,
+> and they need to call imx_check_clocks() API, so
+> imx_check_clocks() API should NOT be in .init section.
+> 
+> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 
-Where is patch 1/2 of this series?
-
-confused,
-
-greg k-h
+Applied both, thanks.
