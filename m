@@ -2,106 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 23E264A254
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 15:35:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E93EF4A267
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 15:36:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729385AbfFRNfV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Jun 2019 09:35:21 -0400
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:34925 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729213AbfFRNfU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Jun 2019 09:35:20 -0400
-Received: by mail-qk1-f194.google.com with SMTP id l128so8553703qke.2
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2019 06:35:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toxicpanda-com.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=eK5CJpBaboC0hEciRwXZ1C92olmsKQDqEljQyovaSOk=;
-        b=YiOIvK80pvLydz0Im11/2kCXM2Q0lUk5O+a5AZ31v1AzEl3ej4o/STSbJdcXX7ZraH
-         +GGCVaNrn9LDGqvkcfri9GbBuDCEmFegVmn/iknd2QUnX+RSbIlFFUZUg2qtuetXPiPM
-         fjbZZb+dHRGhp6NSOeuGscXvchIXuS/ArJydWEHllez8zvYJw29+mtkc5suxgAUZUxvH
-         5Juf+4m7vbsy0ubcdX7FAogWdjuyya45XbnwY7S4GjhdxiayBWhwt2lPp+mANs+neTDl
-         O64zdCjP6r3v7lqVCFQC4kPESsjGi7VflBVxF2a17Y1ijMCHMMkjhdG118TQtm8CZ5uT
-         VwBA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=eK5CJpBaboC0hEciRwXZ1C92olmsKQDqEljQyovaSOk=;
-        b=lJ5kD8jBZUyUhpXWsgNbfC20u+TeNk/swoXerzucFlCzyCDy8VIwdmFQ5SeLNnOJrp
-         28EoZI+3ah5JxyzRyhDNet/ZGm1S+kKTRymMuy/4aJ/1GuoWaVyq2qI2k9WN2jm35wed
-         5Yjny+RXHV4CLmAwbnhtMmHyiuTHJ4SYEQL2cxO6LbyzpQQZvJfF02A4wJjobHuJ+6kL
-         rqoJpU8Q9k4cR8/b30EAK0maA+Qulez1alvPFSvGLNd+RmR6fYESJlx3bqV9+KoRdES3
-         /lEUhnGFXbuwrJdYj5rJtuerJaCHSf6Xr6SZyqAOehuaq+e74B+2Gzh5un8YMMtPf1YV
-         RQTQ==
-X-Gm-Message-State: APjAAAVLRjfQo28jEQ/BtgGxqlnoLyUd7sOoICeT3G2Zmvib9v/c8Mvk
-        /7uDANQVgB5RRGkfITMmiw3eug==
-X-Google-Smtp-Source: APXvYqwaGvkUTLPL4DeUKFYdt9gDCaWFB8CBgJI60dAMnRNNCBM8p/c0pVpCPwsG2XyYSuc2ymA8SQ==
-X-Received: by 2002:a05:620a:44:: with SMTP id t4mr5034628qkt.189.1560864919497;
-        Tue, 18 Jun 2019 06:35:19 -0700 (PDT)
-Received: from localhost ([2620:10d:c091:480::a0ec])
-        by smtp.gmail.com with ESMTPSA id f25sm10849540qta.81.2019.06.18.06.35.18
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 18 Jun 2019 06:35:18 -0700 (PDT)
-Date:   Tue, 18 Jun 2019 09:35:17 -0400
-From:   Josef Bacik <josef@toxicpanda.com>
-To:     Naohiro Aota <Naohiro.Aota@wdc.com>
-Cc:     Josef Bacik <josef@toxicpanda.com>,
-        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
-        David Sterba <dsterba@suse.com>, Chris Mason <clm@fb.com>,
-        Qu Wenruo <wqu@suse.com>, Nikolay Borisov <nborisov@suse.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Hannes Reinecke <hare@suse.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        Damien Le Moal <Damien.LeMoal@wdc.com>,
-        Matias =?utf-8?B?QmrDuHJsaW5n?= <mb@lightnvm.io>,
-        Johannes Thumshirn <jthumshirn@suse.de>,
-        Bart Van Assche <bvanassche@acm.org>
-Subject: Re: [PATCH 08/19] btrfs: make unmirroed BGs readonly only if we have
- at least one writable BG
-Message-ID: <20190618133516.giriyfzpnhdquuot@MacBook-Pro-91.local>
-References: <20190607131025.31996-1-naohiro.aota@wdc.com>
- <20190607131025.31996-9-naohiro.aota@wdc.com>
- <20190613140921.a2kmty5p6lzqztej@MacBook-Pro-91.local>
- <SN6PR04MB5231CACF687ED7001C73111A8CEA0@SN6PR04MB5231.namprd04.prod.outlook.com>
+        id S1729547AbfFRNg0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Jun 2019 09:36:26 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:60010 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729493AbfFRNgX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Jun 2019 09:36:23 -0400
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 5369430860A0;
+        Tue, 18 Jun 2019 13:36:22 +0000 (UTC)
+Received: from amt.cnet (ovpn-112-7.gru2.redhat.com [10.97.112.7])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id CA61F1001DE7;
+        Tue, 18 Jun 2019 13:36:21 +0000 (UTC)
+Received: from amt.cnet (localhost [127.0.0.1])
+        by amt.cnet (Postfix) with ESMTP id 07144105165;
+        Tue, 18 Jun 2019 10:35:50 -0300 (BRT)
+Received: (from marcelo@localhost)
+        by amt.cnet (8.14.7/8.14.7/Submit) id x5IDZkZI027558;
+        Tue, 18 Jun 2019 10:35:46 -0300
+Date:   Tue, 18 Jun 2019 10:35:42 -0300
+From:   Marcelo Tosatti <mtosatti@redhat.com>
+To:     Wanpeng Li <kernellwp@gmail.com>,
+        Paolo Bonzini <pbonzini@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
+Subject: Re: [PATCH v4 2/5] KVM: LAPIC: inject lapic timer interrupt by
+ posted interrupt
+Message-ID: <20190618133541.GA3932@amt.cnet>
+References: <1560770687-23227-1-git-send-email-wanpengli@tencent.com>
+ <1560770687-23227-3-git-send-email-wanpengli@tencent.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <SN6PR04MB5231CACF687ED7001C73111A8CEA0@SN6PR04MB5231.namprd04.prod.outlook.com>
-User-Agent: NeoMutt/20180716
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1560770687-23227-3-git-send-email-wanpengli@tencent.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Tue, 18 Jun 2019 13:36:22 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 18, 2019 at 07:42:46AM +0000, Naohiro Aota wrote:
-> On 2019/06/13 23:09, Josef Bacik wrote:
-> > On Fri, Jun 07, 2019 at 10:10:14PM +0900, Naohiro Aota wrote:
-> >> If the btrfs volume has mirrored block groups, it unconditionally makes
-> >> un-mirrored block groups read only. When we have mirrored block groups, but
-> >> don't have writable block groups, this will drop all writable block groups.
-> >> So, check if we have at least one writable mirrored block group before
-> >> setting un-mirrored block groups read only.
-> >>
-> > 
-> > I don't understand why you want this.  Thanks,
-> > 
-> > Josef
-> > 
+On Mon, Jun 17, 2019 at 07:24:44PM +0800, Wanpeng Li wrote:
+> From: Wanpeng Li <wanpengli@tencent.com>
 > 
-> This is necessary to handle e.g. btrfs/124 case.
+> Dedicated instances are currently disturbed by unnecessary jitter due 
+> to the emulated lapic timers fire on the same pCPUs which vCPUs resident.
+> There is no hardware virtual timer on Intel for guest like ARM. Both 
+> programming timer in guest and the emulated timer fires incur vmexits.
+> This patch tries to avoid vmexit which is incurred by the emulated 
+> timer fires in dedicated instance scenario. 
 > 
-> When we mount degraded RAID1 FS and write to it, and then
-> re-mount with full device, the write pointers of corresponding
-> zones of written BG differ.  The patch 07 mark such block group
-> as "wp_broken" and make it read only.  In this situation, we only
-> have read only RAID1 BGs because of "wp_broken" and un-mirrored BGs
-> are also marked read only, because we have RAID1 BGs.
-> As a result, all the BGs are now read only, so that we
-> cannot even start the rebalance to fix the situation.
+> When nohz_full is enabled in dedicated instances scenario, the emulated 
+> timers can be offload to the nearest busy housekeeping cpus since APICv 
+> is really common in recent years. The guest timer interrupt is injected 
+> by posted-interrupt which is delivered by housekeeping cpu once the emulated 
+> timer fires. 
+> 
+> The host admin should fine tuned, e.g. dedicated instances scenario w/ 
+> nohz_full cover the pCPUs which vCPUs resident, several pCPUs surplus 
+> for busy housekeeping, disable mwait/hlt/pause vmexits to keep in non-root  
+> mode, ~3% redis performance benefit can be observed on Skylake server.
+> 
+> w/o patch:
+> 
+>             VM-EXIT  Samples  Samples%  Time%   Min Time  Max Time   Avg time
+> 
+> EXTERNAL_INTERRUPT    42916    49.43%   39.30%   0.47us   106.09us   0.71us ( +-   1.09% )
+> 
+> w/ patch:
+> 
+>             VM-EXIT  Samples  Samples%  Time%   Min Time  Max Time         Avg time
+> 
+> EXTERNAL_INTERRUPT    6871     9.29%     2.96%   0.44us    57.88us   0.72us ( +-   4.02% )
+> 
+> Cc: Paolo Bonzini <pbonzini@redhat.com>
+> Cc: Radim Krčmář <rkrcmar@redhat.com>
+> Cc: Marcelo Tosatti <mtosatti@redhat.com>
+> Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
+> ---
+>  arch/x86/kvm/lapic.c            | 33 ++++++++++++++++++++++++++-------
+>  arch/x86/kvm/lapic.h            |  1 +
+>  arch/x86/kvm/vmx/vmx.c          |  3 ++-
+>  arch/x86/kvm/x86.c              |  5 +++++
+>  arch/x86/kvm/x86.h              |  2 ++
+>  include/linux/sched/isolation.h |  2 ++
+>  kernel/sched/isolation.c        |  6 ++++++
+>  7 files changed, 44 insertions(+), 8 deletions(-)
+> 
+> diff --git a/arch/x86/kvm/lapic.c b/arch/x86/kvm/lapic.c
+> index 87ecb56..9ceeee5 100644
+> --- a/arch/x86/kvm/lapic.c
+> +++ b/arch/x86/kvm/lapic.c
+> @@ -122,6 +122,13 @@ static inline u32 kvm_x2apic_id(struct kvm_lapic *apic)
+>  	return apic->vcpu->vcpu_id;
+>  }
+>  
+> +bool posted_interrupt_inject_timer(struct kvm_vcpu *vcpu)
+> +{
+> +	return pi_inject_timer && kvm_vcpu_apicv_active(vcpu) &&
+> +		kvm_hlt_in_guest(vcpu->kvm);
+> +}
+> +EXPORT_SYMBOL_GPL(posted_interrupt_inject_timer);
 
-Ah ok, please add this explanation to the changelog.  Thanks,
+Paolo, can you explain the reasoning behind this?
 
-Josef
+Should not be necessary...
+
