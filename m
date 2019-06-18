@@ -2,120 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4F3D54A23B
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 15:32:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 714C44A24D
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 15:34:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729286AbfFRNcc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Jun 2019 09:32:32 -0400
-Received: from foss.arm.com ([217.140.110.172]:41266 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726088AbfFRNcc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Jun 2019 09:32:32 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2CBDA2B;
-        Tue, 18 Jun 2019 06:32:31 -0700 (PDT)
-Received: from e103592.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 956973F718;
-        Tue, 18 Jun 2019 06:32:27 -0700 (PDT)
-Date:   Tue, 18 Jun 2019 14:32:25 +0100
-From:   Dave Martin <Dave.Martin@arm.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Florian Weimer <fweimer@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Yu-cheng Yu <yu-cheng.yu@intel.com>, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-mm@kvack.org, linux-arch@vger.kernel.org,
-        linux-api@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Balbir Singh <bsingharora@gmail.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Eugene Syromiatnikov <esyr@redhat.com>,
-        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>
-Subject: Re: [PATCH v7 22/27] binfmt_elf: Extract .note.gnu.property from an
- ELF file
-Message-ID: <20190618133223.GD2790@e103592.cambridge.arm.com>
-References: <87lfy9cq04.fsf@oldenburg2.str.redhat.com>
- <20190611114109.GN28398@e103592.cambridge.arm.com>
- <031bc55d8dcdcf4f031e6ff27c33fd52c61d33a5.camel@intel.com>
- <20190612093238.GQ28398@e103592.cambridge.arm.com>
- <87imt4jwpt.fsf@oldenburg2.str.redhat.com>
- <alpine.DEB.2.21.1906171418220.1854@nanos.tec.linutronix.de>
- <20190618091248.GB2790@e103592.cambridge.arm.com>
- <20190618124122.GH3419@hirez.programming.kicks-ass.net>
- <87ef3r9i2j.fsf@oldenburg2.str.redhat.com>
- <20190618125512.GJ3419@hirez.programming.kicks-ass.net>
+        id S1729326AbfFRNeI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Jun 2019 09:34:08 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:42476 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728699AbfFRNeG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Jun 2019 09:34:06 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Sender:Content-Transfer-Encoding:
+        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Reply-To:Content-Type:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=3pt+lvuNJTl0R7q+cDc7mElDC2SrbdpyQw7HovUZcjM=; b=B6VLnbVASmJOveAXuJlXWMBGF
+        cSjBXTuJTPybZr5q2iqqH16k8QN3sWX1eMGy5BwQ4lCWRMhZsV13dyWkcfxYVKKtF3G9QcWYi0lVg
+        tDoc3QPZ9bMIixzCfhriR7kObOttuGy6QFB1/BYdyYLTEkzGBS1ht7Npm/+6HGwWMl3VsTczEHrPt
+        3O4zLgvWja0VUNS6T2Vmovv1T0tbVpA6/cnI7iWw+gqpuBiLe50Xq39mlVx3HauhSewrto+ThH0C6
+        V2NLcWvLD6tw7b2Vaoy71tmCLHR00npK04ddP9L2StMkyKDlfYIczIU7Wz2iat3RYJgfttxfBsWVj
+        rFRhknlAg==;
+Received: from 179.186.105.91.dynamic.adsl.gvt.net.br ([179.186.105.91] helo=bombadil.infradead.org)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1hdEFP-0007CG-72; Tue, 18 Jun 2019 13:34:03 +0000
+Received: from mchehab by bombadil.infradead.org with local (Exim 4.92)
+        (envelope-from <mchehab@bombadil.infradead.org>)
+        id 1hdEFM-00008f-4G; Tue, 18 Jun 2019 10:34:00 -0300
+From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>
+Cc:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Mauro Carvalho Chehab <mchehab@infradead.org>,
+        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>, Ajay Gupta <ajayg@nvidia.com>,
+        Amit Kucheria <amit.kucheria@linaro.org>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Otto Sabart <ottosabart@seberm.com>,
+        Li Yang <leoyang.li@nxp.com>,
+        Will Deacon <will.deacon@arm.com>, devicetree@vger.kernel.org,
+        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-i2c@vger.kernel.org
+Subject: [PATCH] docs: fix some broken references due to txt->rst renames
+Date:   Tue, 18 Jun 2019 10:33:58 -0300
+Message-Id: <6f09587b7678f2fb378d736f45a02ffa9412cc99.1560864716.git.mchehab+samsung@kernel.org>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190618125512.GJ3419@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 18, 2019 at 02:55:12PM +0200, Peter Zijlstra wrote:
-> On Tue, Jun 18, 2019 at 02:47:00PM +0200, Florian Weimer wrote:
-> > * Peter Zijlstra:
-> > 
-> > > I'm not sure I read Thomas' comment like that. In my reading keeping the
-> > > PT_NOTE fallback is exactly one of those 'fly workarounds'. By not
-> > > supporting PT_NOTE only the 'fine' people already shit^Hpping this out
-> > > of tree are affected, and we don't have to care about them at all.
-> > 
-> > Just to be clear here: There was an ABI document that required PT_NOTE
-> > parsing.
-> 
-> URGH.
-> 
-> > The Linux kernel does *not* define the x86-64 ABI, it only
-> > implements it.  The authoritative source should be the ABI document.
-> >
-> > In this particularly case, so far anyone implementing this ABI extension
-> > tried to provide value by changing it, sometimes successfully.  Which
-> > makes me wonder why we even bother to mainatain ABI documentation.  The
-> > kernel is just very late to the party.
-> 
-> How can the kernel be late to the party if all of this is spinning
-> wheels without kernel support?
+There are three left-overs from the recent file renames,
+probably due to some other conflicting patch.
 
-PT_GNU_PROPERTY is mentioned and allocated a p_type value in hjl's
-spec [1], but otherwise seems underspecified.
+Fix them.
 
-In particular, it's not clear whether a PT_GNU_PROPERTY phdr _must_ be
-emitted for NT_GNU_PROPERTY_TYPE_0.  While it seems a no-brainer to emit
-it, RHEL's linker already doesn't IIUC, and there are binaries in the
-wild.
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+---
 
-Maybe this phdr type is a late addition -- I haven't attempted to dig
-through the history.
+This patch is against today's next-20190617 branch. Not sure if it
+will apply cleanly at -docs tree. If not,  Please let me know for me to
+split.
+
+ Documentation/devicetree/bindings/arm/idle-states.txt | 2 +-
+ drivers/gpu/drm/i915/intel_runtime_pm.h               | 2 +-
+ drivers/i2c/busses/i2c-nvidia-gpu.c                   | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/arm/idle-states.txt b/Documentation/devicetree/bindings/arm/idle-states.txt
+index 3bdbe675b9e6..d8d9aa7167e8 100644
+--- a/Documentation/devicetree/bindings/arm/idle-states.txt
++++ b/Documentation/devicetree/bindings/arm/idle-states.txt
+@@ -703,4 +703,4 @@ cpus {
+     https://www.devicetree.org/specifications/
+ 
+ [6] ARM Linux Kernel documentation - Booting AArch64 Linux
+-    Documentation/arm64/booting.txt
++    Documentation/arm64/booting.rst
+diff --git a/drivers/gpu/drm/i915/intel_runtime_pm.h b/drivers/gpu/drm/i915/intel_runtime_pm.h
+index f2d6299a8161..3cb391cd81c1 100644
+--- a/drivers/gpu/drm/i915/intel_runtime_pm.h
++++ b/drivers/gpu/drm/i915/intel_runtime_pm.h
+@@ -44,7 +44,7 @@ enum i915_drm_suspend_mode {
+  * to be disabled. This shouldn't happen and we'll print some error messages in
+  * case it happens.
+  *
+- * For more, read the Documentation/power/runtime_pm.txt.
++ * For more, read the Documentation/power/runtime_pm.rst.
+  */
+ struct intel_runtime_pm {
+ 	atomic_t wakeref_count;
+diff --git a/drivers/i2c/busses/i2c-nvidia-gpu.c b/drivers/i2c/busses/i2c-nvidia-gpu.c
+index cfc76b5de726..5a1235fd86bb 100644
+--- a/drivers/i2c/busses/i2c-nvidia-gpu.c
++++ b/drivers/i2c/busses/i2c-nvidia-gpu.c
+@@ -364,7 +364,7 @@ static void gpu_i2c_remove(struct pci_dev *pdev)
+ /*
+  * We need gpu_i2c_suspend() even if it is stub, for runtime pm to work
+  * correctly. Without it, lspci shows runtime pm status as "D0" for the card.
+- * Documentation/power/pci.txt also insists for driver to provide this.
++ * Documentation/power/pci.rst also insists for driver to provide this.
+  */
+ static __maybe_unused int gpu_i2c_suspend(struct device *dev)
+ {
+-- 
+2.21.0
 
 
-For arm64 we don't have this out-of-tree legacy to support, so we can
-avoid exhausitvely searching for the note: no PT_GNU_PROPERTY ->
-no note.
-
-So, can we do the same for x86, forcing RHEL to carry some code out of
-tree to support their legacy binaries?  Or do we accept that there is
-already a de facto ABI and try to be compatible with it?
-
-
-From my side, I want to avoid duplication between x86 and arm64, and
-keep unneeded complexity out of the ELF loader where possible.
-
-Cheers
----Dave
-
-
-[1] https://github.com/hjl-tools/linux-abi/wiki/Linux-Extensions-to-gABI
