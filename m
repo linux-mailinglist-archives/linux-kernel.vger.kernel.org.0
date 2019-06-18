@@ -2,48 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E242D4A9F4
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 20:34:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 657F84A9E1
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 20:33:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730444AbfFRSeD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Jun 2019 14:34:03 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:48622 "EHLO
+        id S1730316AbfFRSdV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Jun 2019 14:33:21 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:47398 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730161AbfFRSeC (ORCPT
+        with ESMTP id S1727616AbfFRSdV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Jun 2019 14:34:02 -0400
+        Tue, 18 Jun 2019 14:33:21 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=9jVltIl21FZuPZEOLXycKl4a9yd+tYMkYLMqll/9ksI=; b=EOXCX6BxMA7B
-        apNQnpN1fb+5MCytdunf+6VnzPPbNyBkbBEYu6PMeh96kfipAQBlRn2y7xYMIhUbcw79haquTvqcH
-        5SF9dIdWw+N3+yV1Ls0K8o4JMv5Kl4MXyHvNHSkmqpNRVcmlW1Ws77ovVqQ1Vbx84joOeQLaWCvBx
-        /Fns4=;
+        List-Archive; bh=C2fpSVPGJzPVwTzmH0qlyt9DQ91m4qmAVn0xCQzB2fc=; b=qft/z5p0A3Yr
+        B7HKHLZ4QxZTXkEFS05lfFVUEkTGe0NUO4cB4VRQwn7tjqzLhEhzCfKhFJkhy9J21KhdoBdJm9nf/
+        sMDTgzaJEAv7JkoSrg/idfvWUmhzA1H/TANCVKe28F03iIh87xT5oV3ZH0CVIa2T3HvJh786yNbml
+        DnhHA=;
 Received: from [2001:470:1f1d:6b5:7e7a:91ff:fede:4a45] (helo=finisterre.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1hdIus-0005K8-SE; Tue, 18 Jun 2019 18:33:10 +0000
+        id 1hdIut-0005KG-Nw; Tue, 18 Jun 2019 18:33:11 +0000
 Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
-        id 19CE7440046; Tue, 18 Jun 2019 19:33:10 +0100 (BST)
+        id 391D0440046; Tue, 18 Jun 2019 19:33:11 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
-To:     Nilkanth Ahirrao <anilkanth@jp.adit-jv.com>
-Cc:     alsa-devel@alsa-project.org, broonie@kernel.org,
-        Jiada Wang <jiada_wang@mentor.com>, jiada_wang@mentor.com,
-        kuninori.morimoto.gx@renesas.com,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        lgirdwood@gmail.com, linux-kernel@vger.kernel.org,
-        Mark Brown <broonie@kernel.org>, perex@perex.cz,
-        sudipi@jp.adit-jv.com, Suresh Udipi <sudipi@jp.adit-jv.com>,
-        tiwai@suse.com
-Subject: Applied "ASoC: rsnd: fixup mod ID calculation in rsnd_ctu_probe_" to the asoc tree
-In-Reply-To: <20190618051953.13419-1-jiada_wang@mentor.com>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     alsa-devel@alsa-project.org,
+        Banajit Goswami <bgoswami@codeaurora.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Mark Brown <broonie@kernel.org>,
+        Patrick Lai <plai@codeaurora.org>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Takashi Iwai <tiwai@suse.com>
+Subject: Applied "ASoC: qcom: common: Mark links as nonatomic" to the asoc tree
+In-Reply-To: <20190618052909.32586-1-bjorn.andersson@linaro.org>
 X-Patchwork-Hint: ignore
-Message-Id: <20190618183310.19CE7440046@finisterre.sirena.org.uk>
-Date:   Tue, 18 Jun 2019 19:33:10 +0100 (BST)
+Message-Id: <20190618183311.391D0440046@finisterre.sirena.org.uk>
+Date:   Tue, 18 Jun 2019 19:33:11 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -51,11 +52,11 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: rsnd: fixup mod ID calculation in rsnd_ctu_probe_
+   ASoC: qcom: common: Mark links as nonatomic
 
 has been applied to the asoc tree at
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.3
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.2
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
@@ -76,46 +77,34 @@ to this mail.
 Thanks,
 Mark
 
-From ac28ec07ae1c5c1e18ed6855eb105a328418da88 Mon Sep 17 00:00:00 2001
-From: Nilkanth Ahirrao <anilkanth@jp.adit-jv.com>
-Date: Tue, 18 Jun 2019 14:19:53 +0900
-Subject: [PATCH] ASoC: rsnd: fixup mod ID calculation in rsnd_ctu_probe_
+From c054b41690a44e6534eb2a1beda1b655f3994c5b Mon Sep 17 00:00:00 2001
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Date: Mon, 17 Jun 2019 22:29:09 -0700
+Subject: [PATCH] ASoC: qcom: common: Mark links as nonatomic
 
-commit c16015f36cc1 ("ASoC: rsnd: add .get_id/.get_id_sub")
-introduces rsnd_ctu_id which calcualates and gives
-the main Device id of the CTU by dividing the id by 4.
-rsnd_mod_id uses this interface to get the CTU main
-Device id. But this commit forgets to revert the main
-Device id calcution previously done in rsnd_ctu_probe_
-which also divides the id by 4. This path corrects the
-same to get the correct main Device id.
+The interface used to communicate with the DSP can sleep, so mark the
+links as nonatomic. This prevents various sleep while atomic errors when
+bringing up the audio interface.
 
-The issue is observered when rsnd_ctu_probe_ is done for CTU1
-
-Fixes: c16015f36cc1 ("ASoC: rsnd: add .get_id/.get_id_sub")
-
-Signed-off-by: Nilkanth Ahirrao <anilkanth@jp.adit-jv.com>
-Signed-off-by: Suresh Udipi <sudipi@jp.adit-jv.com>
-Signed-off-by: Jiada Wang <jiada_wang@mentor.com>
-Acked-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Suggested-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/sh/rcar/ctu.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ sound/soc/qcom/common.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/sound/soc/sh/rcar/ctu.c b/sound/soc/sh/rcar/ctu.c
-index 8cb06dab234e..7647b3d4c0ba 100644
---- a/sound/soc/sh/rcar/ctu.c
-+++ b/sound/soc/sh/rcar/ctu.c
-@@ -108,7 +108,7 @@ static int rsnd_ctu_probe_(struct rsnd_mod *mod,
- 			   struct rsnd_dai_stream *io,
- 			   struct rsnd_priv *priv)
- {
--	return rsnd_cmd_attach(io, rsnd_mod_id(mod) / 4);
-+	return rsnd_cmd_attach(io, rsnd_mod_id(mod));
- }
+diff --git a/sound/soc/qcom/common.c b/sound/soc/qcom/common.c
+index 5661025e8cec..a612d860ad26 100644
+--- a/sound/soc/qcom/common.c
++++ b/sound/soc/qcom/common.c
+@@ -97,6 +97,7 @@ int qcom_snd_parse_of(struct snd_soc_card *card)
+ 			goto err;
+ 		}
  
- static void rsnd_ctu_value_init(struct rsnd_dai_stream *io,
++		link->nonatomic = 1;
+ 		link->dpcm_playback = 1;
+ 		link->dpcm_capture = 1;
+ 		link->stream_name = link->name;
 -- 
 2.20.1
 
