@@ -2,793 +2,608 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0FD764ACA8
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 23:08:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D722C4AD04
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 23:09:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730945AbfFRVGE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Jun 2019 17:06:04 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:35226 "EHLO
+        id S1731168AbfFRVHw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Jun 2019 17:07:52 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:34530 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730925AbfFRVGC (ORCPT
+        with ESMTP id S1730792AbfFRVFx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Jun 2019 17:06:02 -0400
+        Tue, 18 Jun 2019 17:05:53 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Sender:Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
-        Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Content-Type:MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:
+        To:From:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
         Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=dcxf7zwOHu3l7RO//1d7a3XSJTm3UME8I19tl0QnMeA=; b=fyVuvuOiBPFbAq2oLDnTbiPd2N
-        i/xvJzrZS6IB3adrs0C0PFv9KT1Ois0Rd5gsCeQmfpH0UlHjRToz0nb5n0i4ar9kNXRP+zYfd2IOv
-        SuGmy654YswOpsw8z115Rs9LL8jvQuwKeWavHnQYlAxMb3xHmqQ+bny1VZQRDc9+SNwA3+rb7ij+7
-        XZiaZqDonOWK0UxdsT0VSRmi2xi35+K059kPCsu7i8l1cSK1DyjGK1x4+ixnxb7p71L8YPutP4MoR
-        L+gkxXIUW/att93iINsR5AHEZa1IHYsfGgvUkyDQWVxT3CfxkaBVytENVfZZTq6zk1vilzM9Mb/lb
-        +1GR5V1w==;
+        bh=LlVQ5AgDnGeVreoNQv5wQOL6WOl9jGIbq69M3UI1xTA=; b=ZaZuy9l6/Ggb2QQVZs1T38/Jiv
+        CtntnfPNCLjMC3OvceIzJ9DrBsVXwc1XE3p+C/np1rrU265Okcg/ne/X4p46hD/Jw/rYeNgBZ73Pa
+        ZIm/HbtFDoz1x6v3K2O4lo9zWrgczxl+dfRqTlvVf1VQIAz9l0y13RhVE/itGt+mB0z6hwntGy0FK
+        4NaIs1AlYQBCaWq9AtnGuFQc13k05oXiA9XddnRY42yEI8HuzANN6Pr8nCZIyTYhskzt5T4BWiDjR
+        CJCl2jQqimjNcJw1sbb35YKu4vF9XR32EMe5h3gsCQFLhZae58cWzJJoHMhP/ayEmHRKAKSAc9+0E
+        cyJQTmEQ==;
 Received: from 177.133.86.196.dynamic.adsl.gvt.net.br ([177.133.86.196] helo=bombadil.infradead.org)
         by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hdLIm-00079V-9W; Tue, 18 Jun 2019 21:06:01 +0000
+        id 1hdLIc-0006zA-J3; Tue, 18 Jun 2019 21:05:51 +0000
 Received: from mchehab by bombadil.infradead.org with local (Exim 4.92)
         (envelope-from <mchehab@bombadil.infradead.org>)
-        id 1hdLIa-0002Ci-0k; Tue, 18 Jun 2019 18:05:48 -0300
+        id 1hdLIa-0002Cp-1p; Tue, 18 Jun 2019 18:05:48 -0300
 From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>
 Cc:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Mauro Carvalho Chehab <mchehab@infradead.org>,
         linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Oliver Neukum <oneukum@suse.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
         Alan Stern <stern@rowland.harvard.edu>,
-        Johan Hovold <johan@kernel.org>,
-        Valentina Manea <valentina.manea.m@gmail.com>,
-        Shuah Khan <shuah@kernel.org>, Felipe Balbi <balbi@kernel.org>,
-        linux-usb@vger.kernel.org
-Subject: [PATCH v1 14/22] docs: usb: rename files to .rst and add them to drivers-api
-Date:   Tue, 18 Jun 2019 18:05:38 -0300
-Message-Id: <c05aecb424e4f835e3f7872ecb5818e1d2f3267c.1560891322.git.mchehab+samsung@kernel.org>
+        Andrea Parri <andrea.parri@amarulasolutions.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        David Howells <dhowells@redhat.com>,
+        Jade Alglave <j.alglave@ucl.ac.uk>,
+        Luc Maranget <luc.maranget@inria.fr>,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>,
+        Akira Yokosawa <akiyks@gmail.com>,
+        Daniel Lustig <dlustig@nvidia.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+        Helge Deller <deller@gmx.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Christoph Hellwig <hch@lst.de>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Robin Murphy <robin.murphy@arm.com>, linux-pci@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-ia64@vger.kernel.org,
+        linux-parisc@vger.kernel.org, iommu@lists.linux-foundation.org
+Subject: [PATCH v1 15/22] docs: driver-api: add a chapter for memory-related API
+Date:   Tue, 18 Jun 2019 18:05:39 -0300
+Message-Id: <5a67bbb44d92b4fb07e3eef5b291608524f72ff3.1560891322.git.mchehab+samsung@kernel.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <cover.1560891322.git.mchehab+samsung@kernel.org>
 References: <cover.1560891322.git.mchehab+samsung@kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-While there are a mix of things here, most of the stuff
-were written from Kernel developer's PoV. So, add them to
-the driver-api book.
-
-A follow up for this patch would be to move documents from
-there that are specific to sysadmins, adding them to the
-admin-guide.
+There are some DMA files under the main dir. Move them to the
+new chapter and add an index file for them.
 
 Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 ---
- Documentation/index.rst                       |  1 +
- Documentation/usb/{acm.txt => acm.rst}        |  0
- .../{authorization.txt => authorization.rst}  |  0
- .../usb/{chipidea.txt => chipidea.rst}        |  0
- Documentation/usb/{dwc3.txt => dwc3.rst}      |  0
- Documentation/usb/{ehci.txt => ehci.rst}      |  0
- .../usb/{functionfs.txt => functionfs.rst}    |  0
- ...{gadget-testing.txt => gadget-testing.rst} |  4 +-
- ...adget_configfs.txt => gadget_configfs.rst} |  0
- .../usb/{gadget_hid.txt => gadget_hid.rst}    |  0
- .../{gadget_multi.txt => gadget_multi.rst}    |  0
- ...{gadget_printer.txt => gadget_printer.rst} |  0
- .../{gadget_serial.txt => gadget_serial.rst}  |  0
- Documentation/usb/index.rst                   | 39 +++++++++++++++++++
- .../usb/{iuu_phoenix.txt => iuu_phoenix.rst}  |  0
- .../{mass-storage.txt => mass-storage.rst}    |  0
- ...{misc_usbsevseg.txt => misc_usbsevseg.rst} |  0
- .../usb/{mtouchusb.txt => mtouchusb.rst}      |  0
- Documentation/usb/{ohci.txt => ohci.rst}      |  0
- Documentation/usb/{rio.txt => rio.rst}        |  0
- Documentation/usb/text_files.rst              | 29 ++++++++++++++
- .../usb/{usb-help.txt => usb-help.rst}        |  0
- .../usb/{usb-serial.txt => usb-serial.rst}    |  0
- ...{usbip_protocol.txt => usbip_protocol.rst} |  0
- Documentation/usb/{usbmon.txt => usbmon.rst}  |  0
- ...-overview.txt => wusb-design-overview.rst} |  0
- MAINTAINERS                                   | 12 +++---
- drivers/usb/Kconfig                           |  2 +-
- drivers/usb/class/Kconfig                     |  2 +-
- drivers/usb/gadget/Kconfig                    |  6 +--
- drivers/usb/gadget/function/f_mass_storage.c  |  2 +-
- drivers/usb/gadget/legacy/Kconfig             |  6 +--
- drivers/usb/host/Kconfig                      |  2 +-
- drivers/usb/misc/Kconfig                      |  2 +-
- drivers/usb/mon/Kconfig                       |  2 +-
- drivers/usb/serial/Kconfig                    | 10 ++---
- drivers/usb/serial/belkin_sa.c                |  2 +-
- drivers/usb/serial/belkin_sa.h                |  2 +-
- drivers/usb/serial/cypress_m8.c               |  2 +-
- drivers/usb/serial/empeg.c                    |  2 +-
- drivers/usb/serial/ftdi_sio.c                 |  2 +-
- drivers/usb/serial/ir-usb.c                   |  2 +-
- drivers/usb/serial/keyspan_pda.c              |  2 +-
- drivers/usb/serial/omninet.c                  |  2 +-
- drivers/usb/serial/oti6858.c                  |  2 +-
- drivers/usb/serial/pl2303.c                   |  2 +-
- drivers/usb/serial/usb-serial.c               |  2 +-
- drivers/usb/serial/visor.c                    |  2 +-
- drivers/usb/serial/visor.h                    |  2 +-
- drivers/usb/serial/whiteheat.c                |  2 +-
- drivers/usb/serial/whiteheat.h                |  2 +-
- 51 files changed, 109 insertions(+), 40 deletions(-)
- rename Documentation/usb/{acm.txt => acm.rst} (100%)
- rename Documentation/usb/{authorization.txt => authorization.rst} (100%)
- rename Documentation/usb/{chipidea.txt => chipidea.rst} (100%)
- rename Documentation/usb/{dwc3.txt => dwc3.rst} (100%)
- rename Documentation/usb/{ehci.txt => ehci.rst} (100%)
- rename Documentation/usb/{functionfs.txt => functionfs.rst} (100%)
- rename Documentation/usb/{gadget-testing.txt => gadget-testing.rst} (99%)
- rename Documentation/usb/{gadget_configfs.txt => gadget_configfs.rst} (100%)
- rename Documentation/usb/{gadget_hid.txt => gadget_hid.rst} (100%)
- rename Documentation/usb/{gadget_multi.txt => gadget_multi.rst} (100%)
- rename Documentation/usb/{gadget_printer.txt => gadget_printer.rst} (100%)
- rename Documentation/usb/{gadget_serial.txt => gadget_serial.rst} (100%)
- create mode 100644 Documentation/usb/index.rst
- rename Documentation/usb/{iuu_phoenix.txt => iuu_phoenix.rst} (100%)
- rename Documentation/usb/{mass-storage.txt => mass-storage.rst} (100%)
- rename Documentation/usb/{misc_usbsevseg.txt => misc_usbsevseg.rst} (100%)
- rename Documentation/usb/{mtouchusb.txt => mtouchusb.rst} (100%)
- rename Documentation/usb/{ohci.txt => ohci.rst} (100%)
- rename Documentation/usb/{rio.txt => rio.rst} (100%)
- create mode 100644 Documentation/usb/text_files.rst
- rename Documentation/usb/{usb-help.txt => usb-help.rst} (100%)
- rename Documentation/usb/{usb-serial.txt => usb-serial.rst} (100%)
- rename Documentation/usb/{usbip_protocol.txt => usbip_protocol.rst} (100%)
- rename Documentation/usb/{usbmon.txt => usbmon.rst} (100%)
- rename Documentation/usb/{WUSB-Design-overview.txt => wusb-design-overview.rst} (100%)
+ Documentation/PCI/pci.rst                        |  6 +++---
+ Documentation/block/biodoc.rst                   |  2 +-
+ .../driver-api/bus-virt-phys-mapping.rst         |  2 +-
+ Documentation/driver-api/index.rst               |  2 ++
+ .../mm/dma-api-howto.rst}                        |  2 --
+ .../{DMA-API.rst => driver-api/mm/dma-api.rst}   |  8 +++-----
+ .../mm/dma-attributes.rst}                       |  2 --
+ .../mm/dma-isa-lpc.rst}                          |  4 +---
+ Documentation/driver-api/mm/index.rst            | 11 +++++++++++
+ Documentation/driver-api/usb/dma.rst             |  6 +++---
+ Documentation/memory-barriers.txt                |  6 +++---
+ .../translations/ko_KR/memory-barriers.txt       |  6 +++---
+ arch/ia64/hp/common/sba_iommu.c                  | 12 ++++++------
+ arch/ia64/sn/pci/pci_dma.c                       |  4 ++--
+ arch/parisc/kernel/pci-dma.c                     |  2 +-
+ arch/x86/include/asm/dma-mapping.h               |  4 ++--
+ arch/x86/kernel/amd_gart_64.c                    |  2 +-
+ drivers/parisc/sba_iommu.c                       | 16 ++++++++--------
+ include/linux/dma-mapping.h                      |  2 +-
+ include/media/videobuf-dma-sg.h                  |  2 +-
+ kernel/dma/debug.c                               |  2 +-
+ 21 files changed, 54 insertions(+), 49 deletions(-)
+ rename Documentation/{DMA-API-HOWTO.rst => driver-api/mm/dma-api-howto.rst} (99%)
+ rename Documentation/{DMA-API.rst => driver-api/mm/dma-api.rst} (99%)
+ rename Documentation/{DMA-attributes.rst => driver-api/mm/dma-attributes.rst} (99%)
+ rename Documentation/{DMA-ISA-LPC.rst => driver-api/mm/dma-isa-lpc.rst} (98%)
+ create mode 100644 Documentation/driver-api/mm/index.rst
 
-diff --git a/Documentation/index.rst b/Documentation/index.rst
-index a57d975e969a..2f9bf37b8989 100644
---- a/Documentation/index.rst
-+++ b/Documentation/index.rst
-@@ -103,6 +103,7 @@ needed).
-    vm/index
-    bpf/index
-    PCI/index
-+   usb/index
-    misc-devices/index
+diff --git a/Documentation/PCI/pci.rst b/Documentation/PCI/pci.rst
+index 0f52d172c9ac..8665209eda40 100644
+--- a/Documentation/PCI/pci.rst
++++ b/Documentation/PCI/pci.rst
+@@ -265,7 +265,7 @@ Set the DMA mask size
+ ---------------------
+ .. note::
+    If anything below doesn't make sense, please refer to
+-   Documentation/DMA-API.rst. This section is just a reminder that
++   Documentation/driver-api/mm/dma-api.rst. This section is just a reminder that
+    drivers need to indicate DMA capabilities of the device and is not
+    an authoritative source for DMA interfaces.
  
- Architecture-specific documentation
-diff --git a/Documentation/usb/acm.txt b/Documentation/usb/acm.rst
-similarity index 100%
-rename from Documentation/usb/acm.txt
-rename to Documentation/usb/acm.rst
-diff --git a/Documentation/usb/authorization.txt b/Documentation/usb/authorization.rst
-similarity index 100%
-rename from Documentation/usb/authorization.txt
-rename to Documentation/usb/authorization.rst
-diff --git a/Documentation/usb/chipidea.txt b/Documentation/usb/chipidea.rst
-similarity index 100%
-rename from Documentation/usb/chipidea.txt
-rename to Documentation/usb/chipidea.rst
-diff --git a/Documentation/usb/dwc3.txt b/Documentation/usb/dwc3.rst
-similarity index 100%
-rename from Documentation/usb/dwc3.txt
-rename to Documentation/usb/dwc3.rst
-diff --git a/Documentation/usb/ehci.txt b/Documentation/usb/ehci.rst
-similarity index 100%
-rename from Documentation/usb/ehci.txt
-rename to Documentation/usb/ehci.rst
-diff --git a/Documentation/usb/functionfs.txt b/Documentation/usb/functionfs.rst
-similarity index 100%
-rename from Documentation/usb/functionfs.txt
-rename to Documentation/usb/functionfs.rst
-diff --git a/Documentation/usb/gadget-testing.txt b/Documentation/usb/gadget-testing.rst
+@@ -291,7 +291,7 @@ Many 64-bit "PCI" devices (before PCI-X) and some PCI-X devices are
+ Setup shared control data
+ -------------------------
+ Once the DMA masks are set, the driver can allocate "consistent" (a.k.a. shared)
+-memory.  See Documentation/DMA-API.rst for a full description of
++memory.  See Documentation/driver-api/mm/dma-api.rst for a full description of
+ the DMA APIs. This section is just a reminder that it needs to be done
+ before enabling DMA on the device.
+ 
+@@ -421,7 +421,7 @@ owners if there is one.
+ 
+ Then clean up "consistent" buffers which contain the control data.
+ 
+-See Documentation/DMA-API.rst for details on unmapping interfaces.
++See Documentation/driver-api/mm/dma-api.rst for details on unmapping interfaces.
+ 
+ 
+ Unregister from other subsystems
+diff --git a/Documentation/block/biodoc.rst b/Documentation/block/biodoc.rst
+index 59bd93bec8fc..2206c88e7dee 100644
+--- a/Documentation/block/biodoc.rst
++++ b/Documentation/block/biodoc.rst
+@@ -195,7 +195,7 @@ a virtual address mapping (unlike the earlier scheme of virtual address
+ do not have a corresponding kernel virtual address space mapping) and
+ low-memory pages.
+ 
+-Note: Please refer to Documentation/DMA-API-HOWTO.rst for a discussion
++Note: Please refer to Documentation/driver-api/mm/dma-api-howto.rst for a discussion
+ on PCI high mem DMA aspects and mapping of scatter gather lists, and support
+ for 64 bit PCI.
+ 
+diff --git a/Documentation/driver-api/bus-virt-phys-mapping.rst b/Documentation/driver-api/bus-virt-phys-mapping.rst
+index 80972916e88c..18b6fdf618d2 100644
+--- a/Documentation/driver-api/bus-virt-phys-mapping.rst
++++ b/Documentation/driver-api/bus-virt-phys-mapping.rst
+@@ -8,7 +8,7 @@ How to access I/O mapped memory from within device drivers
+ 
+ 	The virt_to_bus() and bus_to_virt() functions have been
+ 	superseded by the functionality provided by the PCI DMA interface
+-	(see Documentation/DMA-API-HOWTO.rst).  They continue
++	(see Documentation/driver-api/mm/dma-api-howto.rst).  They continue
+ 	to be documented below for historical purposes, but new code
+ 	must not use them. --davidm 00/12/12
+ 
+diff --git a/Documentation/driver-api/index.rst b/Documentation/driver-api/index.rst
+index bb2621b17212..492b96003af2 100644
+--- a/Documentation/driver-api/index.rst
++++ b/Documentation/driver-api/index.rst
+@@ -16,6 +16,7 @@ available subsections can be seen below.
+ 
+    basics
+    infrastructure
++   mm/index
+    pm/index
+    clk
+    device-io
+@@ -59,6 +60,7 @@ available subsections can be seen below.
+    fpga/index
+    acpi/index
+    generic-counter
++   mm/index
+ 
+    atomic_bitops
+    bt8xxgpio
+diff --git a/Documentation/DMA-API-HOWTO.rst b/Documentation/driver-api/mm/dma-api-howto.rst
 similarity index 99%
-rename from Documentation/usb/gadget-testing.txt
-rename to Documentation/usb/gadget-testing.rst
-index 7d7f2340af42..2eeb3e9299e4 100644
---- a/Documentation/usb/gadget-testing.txt
-+++ b/Documentation/usb/gadget-testing.rst
-@@ -254,7 +254,7 @@ Device:
- - connect the gadget to a host, preferably not the one used
-   to control the gadget
- - run a program which writes to /dev/hidg<N>, e.g.
--  a userspace program found in Documentation/usb/gadget_hid.txt::
-+  a userspace program found in Documentation/usb/gadget_hid.rst::
+rename from Documentation/DMA-API-HOWTO.rst
+rename to Documentation/driver-api/mm/dma-api-howto.rst
+index db9f8fcebe1f..358d495456d1 100644
+--- a/Documentation/DMA-API-HOWTO.rst
++++ b/Documentation/driver-api/mm/dma-api-howto.rst
+@@ -1,5 +1,3 @@
+-:orphan:
+-
+ =========================
+ Dynamic DMA mapping Guide
+ =========================
+diff --git a/Documentation/DMA-API.rst b/Documentation/driver-api/mm/dma-api.rst
+similarity index 99%
+rename from Documentation/DMA-API.rst
+rename to Documentation/driver-api/mm/dma-api.rst
+index 2f26857f97ff..c2c4d0b456b1 100644
+--- a/Documentation/DMA-API.rst
++++ b/Documentation/driver-api/mm/dma-api.rst
+@@ -1,5 +1,3 @@
+-:orphan:
+-
+ ============================================
+ Dynamic DMA mapping using the generic device
+ ============================================
+@@ -7,7 +5,7 @@ Dynamic DMA mapping using the generic device
+ :Author: James E.J. Bottomley <James.Bottomley@HansenPartnership.com>
  
- 	$ ./hid_gadget_test /dev/hidg0 keyboard
+ This document describes the DMA API.  For a more gentle introduction
+-of the API (and actual examples), see Documentation/DMA-API-HOWTO.rst.
++of the API (and actual examples), see Documentation/driver-api/mm/dma-api-howto.rst.
  
-@@ -886,7 +886,7 @@ host::
- 	# cat /dev/usb/lp0
+ This API is split into two pieces.  Part I describes the basic API.
+ Part II describes extensions for supporting non-consistent memory
+@@ -465,7 +463,7 @@ without the _attrs suffixes, except that they pass an optional
+ dma_attrs.
  
- More advanced testing can be done with the prn_example
--described in Documentation/usb/gadget_printer.txt.
-+described in Documentation/usb/gadget_printer.rst.
+ The interpretation of DMA attributes is architecture-specific, and
+-each attribute should be documented in Documentation/DMA-attributes.rst.
++each attribute should be documented in Documentation/driver-api/mm/dma-attributes.rst.
  
+ If dma_attrs are 0, the semantics of each of these functions
+ is identical to those of the corresponding function
+@@ -478,7 +476,7 @@ for DMA::
  
- 20. UAC1 function (virtual ALSA card, using u_audio API)
-diff --git a/Documentation/usb/gadget_configfs.txt b/Documentation/usb/gadget_configfs.rst
-similarity index 100%
-rename from Documentation/usb/gadget_configfs.txt
-rename to Documentation/usb/gadget_configfs.rst
-diff --git a/Documentation/usb/gadget_hid.txt b/Documentation/usb/gadget_hid.rst
-similarity index 100%
-rename from Documentation/usb/gadget_hid.txt
-rename to Documentation/usb/gadget_hid.rst
-diff --git a/Documentation/usb/gadget_multi.txt b/Documentation/usb/gadget_multi.rst
-similarity index 100%
-rename from Documentation/usb/gadget_multi.txt
-rename to Documentation/usb/gadget_multi.rst
-diff --git a/Documentation/usb/gadget_printer.txt b/Documentation/usb/gadget_printer.rst
-similarity index 100%
-rename from Documentation/usb/gadget_printer.txt
-rename to Documentation/usb/gadget_printer.rst
-diff --git a/Documentation/usb/gadget_serial.txt b/Documentation/usb/gadget_serial.rst
-similarity index 100%
-rename from Documentation/usb/gadget_serial.txt
-rename to Documentation/usb/gadget_serial.rst
-diff --git a/Documentation/usb/index.rst b/Documentation/usb/index.rst
+ 	#include <linux/dma-mapping.h>
+ 	/* DMA_ATTR_FOO should be defined in linux/dma-mapping.h and
+-	* documented in Documentation/DMA-attributes.rst */
++	* documented in Documentation/driver-api/mm/dma-attributes.rst */
+ 	...
+ 
+ 		unsigned long attr;
+diff --git a/Documentation/DMA-attributes.rst b/Documentation/driver-api/mm/dma-attributes.rst
+similarity index 99%
+rename from Documentation/DMA-attributes.rst
+rename to Documentation/driver-api/mm/dma-attributes.rst
+index 471c5c38f9d9..8f8d97f65d73 100644
+--- a/Documentation/DMA-attributes.rst
++++ b/Documentation/driver-api/mm/dma-attributes.rst
+@@ -1,5 +1,3 @@
+-:orphan:
+-
+ ==============
+ DMA attributes
+ ==============
+diff --git a/Documentation/DMA-ISA-LPC.rst b/Documentation/driver-api/mm/dma-isa-lpc.rst
+similarity index 98%
+rename from Documentation/DMA-ISA-LPC.rst
+rename to Documentation/driver-api/mm/dma-isa-lpc.rst
+index 205a379c2d62..6ae393d391cf 100644
+--- a/Documentation/DMA-ISA-LPC.rst
++++ b/Documentation/driver-api/mm/dma-isa-lpc.rst
+@@ -1,5 +1,3 @@
+-:orphan:
+-
+ ============================
+ DMA with ISA and LPC devices
+ ============================
+@@ -19,7 +17,7 @@ To do ISA style DMA you need to include two headers::
+ 	#include <asm/dma.h>
+ 
+ The first is the generic DMA API used to convert virtual addresses to
+-bus addresses (see Documentation/DMA-API.rst for details).
++bus addresses (see Documentation/driver-api/mm/dma-api.rst for details).
+ 
+ The second contains the routines specific to ISA DMA transfers. Since
+ this is not present on all platforms make sure you construct your
+diff --git a/Documentation/driver-api/mm/index.rst b/Documentation/driver-api/mm/index.rst
 new file mode 100644
-index 000000000000..e55386a4abfb
+index 000000000000..e34c7ee4a4b9
 --- /dev/null
-+++ b/Documentation/usb/index.rst
-@@ -0,0 +1,39 @@
-+===========
-+USB support
-+===========
++++ b/Documentation/driver-api/mm/index.rst
+@@ -0,0 +1,11 @@
++==========================
++Memory Related Kernel APIs
++==========================
 +
 +.. toctree::
-+    :maxdepth: 1
++   :maxdepth: 1
 +
-+    acm
-+    authorization
-+    chipidea
-+    dwc3
-+    ehci
-+    functionfs
-+    gadget_configfs
-+    gadget_hid
-+    gadget_multi
-+    gadget_printer
-+    gadget_serial
-+    gadget-testing
-+    iuu_phoenix
-+    mass-storage
-+    misc_usbsevseg
-+    mtouchusb
-+    ohci
-+    rio
-+    usbip_protocol
-+    usbmon
-+    usb-serial
-+    wusb-design-overview
-+
-+    usb-help
-+    text_files
-+
-+.. only::  subproject and html
-+
-+   Indices
-+   =======
-+
-+   * :ref:`genindex`
-diff --git a/Documentation/usb/iuu_phoenix.txt b/Documentation/usb/iuu_phoenix.rst
-similarity index 100%
-rename from Documentation/usb/iuu_phoenix.txt
-rename to Documentation/usb/iuu_phoenix.rst
-diff --git a/Documentation/usb/mass-storage.txt b/Documentation/usb/mass-storage.rst
-similarity index 100%
-rename from Documentation/usb/mass-storage.txt
-rename to Documentation/usb/mass-storage.rst
-diff --git a/Documentation/usb/misc_usbsevseg.txt b/Documentation/usb/misc_usbsevseg.rst
-similarity index 100%
-rename from Documentation/usb/misc_usbsevseg.txt
-rename to Documentation/usb/misc_usbsevseg.rst
-diff --git a/Documentation/usb/mtouchusb.txt b/Documentation/usb/mtouchusb.rst
-similarity index 100%
-rename from Documentation/usb/mtouchusb.txt
-rename to Documentation/usb/mtouchusb.rst
-diff --git a/Documentation/usb/ohci.txt b/Documentation/usb/ohci.rst
-similarity index 100%
-rename from Documentation/usb/ohci.txt
-rename to Documentation/usb/ohci.rst
-diff --git a/Documentation/usb/rio.txt b/Documentation/usb/rio.rst
-similarity index 100%
-rename from Documentation/usb/rio.txt
-rename to Documentation/usb/rio.rst
-diff --git a/Documentation/usb/text_files.rst b/Documentation/usb/text_files.rst
-new file mode 100644
-index 000000000000..6a8d3fcf64b6
---- /dev/null
-+++ b/Documentation/usb/text_files.rst
-@@ -0,0 +1,29 @@
-+Linux CDC ACM inf
-+-----------------
-+
-+.. include:: linux-cdc-acm.inf
-+    :literal:
-+
-+Linux inf
-+---------
-+
-+.. include:: linux.inf
-+    :literal:
-+
-+USB devfs drop permissions source
-+---------------------------------
-+
-+.. literalinclude:: usbdevfs-drop-permissions.c
-+    :language: c
-+
-+WUSB command line script to manipulate auth credentials
-+-------------------------------------------------------
-+
-+.. literalinclude:: wusb-cbaf
-+   :language: shell
-+
-+Credits
-+-------
-+
-+.. include:: CREDITS
-+    :literal:
-diff --git a/Documentation/usb/usb-help.txt b/Documentation/usb/usb-help.rst
-similarity index 100%
-rename from Documentation/usb/usb-help.txt
-rename to Documentation/usb/usb-help.rst
-diff --git a/Documentation/usb/usb-serial.txt b/Documentation/usb/usb-serial.rst
-similarity index 100%
-rename from Documentation/usb/usb-serial.txt
-rename to Documentation/usb/usb-serial.rst
-diff --git a/Documentation/usb/usbip_protocol.txt b/Documentation/usb/usbip_protocol.rst
-similarity index 100%
-rename from Documentation/usb/usbip_protocol.txt
-rename to Documentation/usb/usbip_protocol.rst
-diff --git a/Documentation/usb/usbmon.txt b/Documentation/usb/usbmon.rst
-similarity index 100%
-rename from Documentation/usb/usbmon.txt
-rename to Documentation/usb/usbmon.rst
-diff --git a/Documentation/usb/WUSB-Design-overview.txt b/Documentation/usb/wusb-design-overview.rst
-similarity index 100%
-rename from Documentation/usb/WUSB-Design-overview.txt
-rename to Documentation/usb/wusb-design-overview.rst
-diff --git a/MAINTAINERS b/MAINTAINERS
-index b7364119ce83..e07cbd44d48a 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -3761,7 +3761,7 @@ F:	scripts/extract-cert.c
- CERTIFIED WIRELESS USB (WUSB) SUBSYSTEM:
- L:	linux-usb@vger.kernel.org
- S:	Orphan
--F:	Documentation/usb/WUSB-Design-overview.txt
-+F:	Documentation/usb/wusb-design-overview.rst
- F:	Documentation/usb/wusb-cbaf
- F:	drivers/usb/host/hwa-hc.c
- F:	drivers/usb/host/whci/
-@@ -16315,7 +16315,7 @@ USB ACM DRIVER
- M:	Oliver Neukum <oneukum@suse.com>
- L:	linux-usb@vger.kernel.org
- S:	Maintained
--F:	Documentation/usb/acm.txt
-+F:	Documentation/usb/acm.rst
- F:	drivers/usb/class/cdc-acm.*
++   dma-api
++   dma-api-howto
++   dma-attributes
++   dma-isa-lpc
+diff --git a/Documentation/driver-api/usb/dma.rst b/Documentation/driver-api/usb/dma.rst
+index 12955a77c7fe..8ef36aa2278d 100644
+--- a/Documentation/driver-api/usb/dma.rst
++++ b/Documentation/driver-api/usb/dma.rst
+@@ -10,7 +10,7 @@ API overview
  
- USB AR5523 WIRELESS DRIVER
-@@ -16368,7 +16368,7 @@ USB EHCI DRIVER
- M:	Alan Stern <stern@rowland.harvard.edu>
- L:	linux-usb@vger.kernel.org
- S:	Maintained
--F:	Documentation/usb/ehci.txt
-+F:	Documentation/usb/ehci.rst
- F:	drivers/usb/host/ehci*
+ The big picture is that USB drivers can continue to ignore most DMA issues,
+ though they still must provide DMA-ready buffers (see
+-``Documentation/DMA-API-HOWTO.rst``).  That's how they've worked through
++``Documentation/driver-api/mm/dma-api-howto.rst``).  That's how they've worked through
+ the 2.4 (and earlier) kernels, or they can now be DMA-aware.
  
- USB GADGET/PERIPHERAL SUBSYSTEM
-@@ -16442,7 +16442,7 @@ USB OHCI DRIVER
- M:	Alan Stern <stern@rowland.harvard.edu>
- L:	linux-usb@vger.kernel.org
- S:	Maintained
--F:	Documentation/usb/ohci.txt
-+F:	Documentation/usb/ohci.rst
- F:	drivers/usb/host/ohci*
+ DMA-aware usb drivers:
+@@ -60,7 +60,7 @@ and effects like cache-trashing can impose subtle penalties.
+   force a consistent memory access ordering by using memory barriers.  It's
+   not using a streaming DMA mapping, so it's good for small transfers on
+   systems where the I/O would otherwise thrash an IOMMU mapping.  (See
+-  ``Documentation/DMA-API-HOWTO.rst`` for definitions of "coherent" and
++  ``Documentation/driver-api/mm/dma-api-howto.rst`` for definitions of "coherent" and
+   "streaming" DMA mappings.)
  
- USB OTG FSM (Finite State Machine)
-@@ -16458,7 +16458,7 @@ M:	Shuah Khan <shuah@kernel.org>
- M:	Shuah Khan <skhan@linuxfoundation.org>
- L:	linux-usb@vger.kernel.org
- S:	Maintained
--F:	Documentation/usb/usbip_protocol.txt
-+F:	Documentation/usb/usbip_protocol.rst
- F:	drivers/usb/usbip/
- F:	tools/usb/usbip/
- F:	tools/testing/selftests/drivers/usb/usbip/
-@@ -16506,7 +16506,7 @@ M:	Johan Hovold <johan@kernel.org>
- L:	linux-usb@vger.kernel.org
- T:	git git://git.kernel.org/pub/scm/linux/kernel/git/johan/usb-serial.git
- S:	Maintained
--F:	Documentation/usb/usb-serial.txt
-+F:	Documentation/usb/usb-serial.rst
- F:	drivers/usb/serial/
- F:	include/linux/usb/serial.h
+   Asking for 1/Nth of a page (as well as asking for N pages) is reasonably
+@@ -91,7 +91,7 @@ Working with existing buffers
+ Existing buffers aren't usable for DMA without first being mapped into the
+ DMA address space of the device.  However, most buffers passed to your
+ driver can safely be used with such DMA mapping.  (See the first section
+-of Documentation/DMA-API-HOWTO.rst, titled "What memory is DMA-able?")
++of Documentation/driver-api/mm/dma-api-howto.rst, titled "What memory is DMA-able?")
  
-diff --git a/drivers/usb/Kconfig b/drivers/usb/Kconfig
-index 389c57d8eba7..6e59d370ef81 100644
---- a/drivers/usb/Kconfig
-+++ b/drivers/usb/Kconfig
-@@ -75,7 +75,7 @@ config USB
- 	  After choosing your HCD, then select drivers for the USB peripherals
- 	  you'll be using.  You may want to check out the information provided
- 	  in <file:Documentation/usb/> and especially the links given in
--	  <file:Documentation/usb/usb-help.txt>.
-+	  <file:Documentation/usb/usb-help.rst>.
+ - When you're using scatterlists, you can map everything at once.  On some
+   systems, this kicks in an IOMMU and turns the scatterlists into single
+diff --git a/Documentation/memory-barriers.txt b/Documentation/memory-barriers.txt
+index 4a44f00478db..087b0d864a94 100644
+--- a/Documentation/memory-barriers.txt
++++ b/Documentation/memory-barriers.txt
+@@ -549,8 +549,8 @@ There are certain things that the Linux kernel memory barriers do not guarantee:
+ 	[*] For information on bus mastering DMA and coherency please read:
  
- 	  To compile this driver as a module, choose M here: the
- 	  module will be called usbcore.
-diff --git a/drivers/usb/class/Kconfig b/drivers/usb/class/Kconfig
-index 52f3a531a82f..f8a798900093 100644
---- a/drivers/usb/class/Kconfig
-+++ b/drivers/usb/class/Kconfig
-@@ -10,7 +10,7 @@ config USB_ACM
- 	---help---
- 	  This driver supports USB modems and ISDN adapters which support the
- 	  Communication Device Class Abstract Control Model interface.
--	  Please read <file:Documentation/usb/acm.txt> for details.
-+	  Please read <file:Documentation/usb/acm.rst> for details.
+ 	    Documentation/PCI/pci.rst
+-	    Documentation/DMA-API-HOWTO.rst
+-	    Documentation/DMA-API.rst
++	    Documentation/driver-api/mm/dma-api-howto.rst
++	    Documentation/driver-api/mm/dma-api.rst
  
- 	  If your modem only reports "Cls=ff(vend.)" in the descriptors in
- 	  /sys/kernel/debug/usb/devices, then your modem will not work with this
-diff --git a/drivers/usb/gadget/Kconfig b/drivers/usb/gadget/Kconfig
-index ec189d7855a0..02ff850278b1 100644
---- a/drivers/usb/gadget/Kconfig
-+++ b/drivers/usb/gadget/Kconfig
-@@ -228,7 +228,7 @@ config USB_CONFIGFS
- 	  specified simply by creating appropriate directories in configfs.
- 	  Associating functions with configurations is done by creating
- 	  appropriate symbolic links.
--	  For more information see Documentation/usb/gadget_configfs.txt.
-+	  For more information see Documentation/usb/gadget_configfs.rst.
  
- config USB_CONFIGFS_SERIAL
- 	bool "Generic serial bulk in/out"
-@@ -441,7 +441,7 @@ config USB_CONFIGFS_F_HID
- 	  The HID function driver provides generic emulation of USB
- 	  Human Interface Devices (HID).
+ DATA DEPENDENCY BARRIERS (HISTORICAL)
+@@ -1933,7 +1933,7 @@ There are some more advanced barrier functions:
+      here.
  
--	  For more information, see Documentation/usb/gadget_hid.txt.
-+	  For more information, see Documentation/usb/gadget_hid.rst.
+      See the subsection "Kernel I/O barrier effects" for more information on
+-     relaxed I/O accessors and the Documentation/DMA-API.rst file for more
++     relaxed I/O accessors and the Documentation/driver-api/mm/dma-api.rst file for more
+      information on consistent memory.
  
- config USB_CONFIGFS_F_UVC
- 	bool "USB Webcam function"
-@@ -466,7 +466,7 @@ config USB_CONFIGFS_F_PRINTER
- 	  receive or send printer data. It can use ioctl calls to
- 	  the device file to get or set printer status.
  
--	  For more information, see Documentation/usb/gadget_printer.txt
-+	  For more information, see Documentation/usb/gadget_printer.rst
- 	  which includes sample code for accessing the device file.
+diff --git a/Documentation/translations/ko_KR/memory-barriers.txt b/Documentation/translations/ko_KR/memory-barriers.txt
+index 03c06a7800c3..7b86ac9f15d2 100644
+--- a/Documentation/translations/ko_KR/memory-barriers.txt
++++ b/Documentation/translations/ko_KR/memory-barriers.txt
+@@ -570,8 +570,8 @@ ACQUIRE 는 해당 오퍼레이션의 로드 부분에만 적용되고 RELEASE 
+ 	[*] 버스 마스터링 DMA 와 일관성에 대해서는 다음을 참고하시기 바랍니다:
  
- config USB_CONFIGFS_F_TCM
-diff --git a/drivers/usb/gadget/function/f_mass_storage.c b/drivers/usb/gadget/function/f_mass_storage.c
-index 043f97ad8f22..29cc5693e05c 100644
---- a/drivers/usb/gadget/function/f_mass_storage.c
-+++ b/drivers/usb/gadget/function/f_mass_storage.c
-@@ -47,7 +47,7 @@
+ 	    Documentation/PCI/pci.rst
+-	    Documentation/DMA-API-HOWTO.rst
+-	    Documentation/DMA-API.rst
++	    Documentation/driver-api/mm/dma-api-howto.rst
++	    Documentation/driver-api/mm/dma-api.rst
+ 
+ 
+ 데이터 의존성 배리어 (역사적)
+@@ -1904,7 +1904,7 @@ Mandatory 배리어들은 SMP 시스템에서도 UP 시스템에서도 SMP 효
+ 
+      writel_relaxed() 와 같은 완화된 I/O 접근자들에 대한 자세한 내용을 위해서는
+      "커널 I/O 배리어의 효과" 섹션을, consistent memory 에 대한 자세한 내용을
+-     위해선 Documentation/DMA-API.rst 문서를 참고하세요.
++     위해선 Documentation/driver-api/mm/dma-api.rst 문서를 참고하세요.
+ 
+ 
+ MMIO 쓰기 배리어
+diff --git a/arch/ia64/hp/common/sba_iommu.c b/arch/ia64/hp/common/sba_iommu.c
+index 8f97d42316e8..0b0b5084e6c8 100644
+--- a/arch/ia64/hp/common/sba_iommu.c
++++ b/arch/ia64/hp/common/sba_iommu.c
+@@ -912,7 +912,7 @@ sba_mark_invalid(struct ioc *ioc, dma_addr_t iova, size_t byte_cnt)
+  * @dir: dma direction
+  * @attrs: optional dma attributes
   *
-  * For more information about MSF and in particular its module
-  * parameters and sysfs interface read the
-- * <Documentation/usb/mass-storage.txt> file.
-+ * <Documentation/usb/mass-storage.rst> file.
+- * See Documentation/DMA-API-HOWTO.rst
++ * See Documentation/driver-api/mm/dma-api-howto.rst
   */
+ static dma_addr_t sba_map_page(struct device *dev, struct page *page,
+ 			       unsigned long poff, size_t size,
+@@ -1033,7 +1033,7 @@ sba_mark_clean(struct ioc *ioc, dma_addr_t iova, size_t size)
+  * @dir:  R/W or both.
+  * @attrs: optional dma attributes
+  *
+- * See Documentation/DMA-API-HOWTO.rst
++ * See Documentation/driver-api/mm/dma-api-howto.rst
+  */
+ static void sba_unmap_page(struct device *dev, dma_addr_t iova, size_t size,
+ 			   enum dma_data_direction dir, unsigned long attrs)
+@@ -1110,7 +1110,7 @@ static void sba_unmap_page(struct device *dev, dma_addr_t iova, size_t size,
+  * @size:  number of bytes mapped in driver buffer.
+  * @dma_handle:  IOVA of new buffer.
+  *
+- * See Documentation/DMA-API-HOWTO.rst
++ * See Documentation/driver-api/mm/dma-api-howto.rst
+  */
+ static void *
+ sba_alloc_coherent(struct device *dev, size_t size, dma_addr_t *dma_handle,
+@@ -1167,7 +1167,7 @@ sba_alloc_coherent(struct device *dev, size_t size, dma_addr_t *dma_handle,
+  * @vaddr:  virtual address IOVA of "consistent" buffer.
+  * @dma_handler:  IO virtual address of "consistent" buffer.
+  *
+- * See Documentation/DMA-API-HOWTO.rst
++ * See Documentation/driver-api/mm/dma-api-howto.rst
+  */
+ static void sba_free_coherent(struct device *dev, size_t size, void *vaddr,
+ 			      dma_addr_t dma_handle, unsigned long attrs)
+@@ -1430,7 +1430,7 @@ static void sba_unmap_sg_attrs(struct device *dev, struct scatterlist *sglist,
+  * @dir:  R/W or both.
+  * @attrs: optional dma attributes
+  *
+- * See Documentation/DMA-API-HOWTO.rst
++ * See Documentation/driver-api/mm/dma-api-howto.rst
+  */
+ static int sba_map_sg_attrs(struct device *dev, struct scatterlist *sglist,
+ 			    int nents, enum dma_data_direction dir,
+@@ -1529,7 +1529,7 @@ static int sba_map_sg_attrs(struct device *dev, struct scatterlist *sglist,
+  * @dir:  R/W or both.
+  * @attrs: optional dma attributes
+  *
+- * See Documentation/DMA-API-HOWTO.rst
++ * See Documentation/driver-api/mm/dma-api-howto.rst
+  */
+ static void sba_unmap_sg_attrs(struct device *dev, struct scatterlist *sglist,
+ 			       int nents, enum dma_data_direction dir,
+diff --git a/arch/ia64/sn/pci/pci_dma.c b/arch/ia64/sn/pci/pci_dma.c
+index f475fccea152..a06ae52117f0 100644
+--- a/arch/ia64/sn/pci/pci_dma.c
++++ b/arch/ia64/sn/pci/pci_dma.c
+@@ -5,7 +5,7 @@
+  *
+  * Copyright (C) 2000,2002-2005 Silicon Graphics, Inc. All rights reserved.
+  *
+- * Routines for PCI DMA mapping.  See Documentation/DMA-API.rst for
++ * Routines for PCI DMA mapping.  See Documentation/driver-api/mm/dma-api.rst for
+  * a description of how these routines should be used.
+  */
+ 
+@@ -72,7 +72,7 @@ EXPORT_SYMBOL(sn_dma_set_mask);
+  * that @dma_handle will have the %PCIIO_DMA_CMD flag set.
+  *
+  * This interface is usually used for "command" streams (e.g. the command
+- * queue for a SCSI controller).  See Documentation/DMA-API.rst for
++ * queue for a SCSI controller).  See Documentation/driver-api/mm/dma-api.rst for
+  * more information.
+  */
+ static void *sn_dma_alloc_coherent(struct device *dev, size_t size,
+diff --git a/arch/parisc/kernel/pci-dma.c b/arch/parisc/kernel/pci-dma.c
+index 2bb63062f6c3..08e7ff08fa94 100644
+--- a/arch/parisc/kernel/pci-dma.c
++++ b/arch/parisc/kernel/pci-dma.c
+@@ -3,7 +3,7 @@
+ ** PARISC 1.1 Dynamic DMA mapping support.
+ ** This implementation is for PA-RISC platforms that do not support
+ ** I/O TLBs (aka DMA address translation hardware).
+-** See Documentation/DMA-API-HOWTO.rst for interface definitions.
++** See Documentation/driver-api/mm/dma-api-howto.rst for interface definitions.
+ **
+ **      (c) Copyright 1999,2000 Hewlett-Packard Company
+ **      (c) Copyright 2000 Grant Grundler
+diff --git a/arch/x86/include/asm/dma-mapping.h b/arch/x86/include/asm/dma-mapping.h
+index dfa443fe17c2..ff9ff85529fc 100644
+--- a/arch/x86/include/asm/dma-mapping.h
++++ b/arch/x86/include/asm/dma-mapping.h
+@@ -3,8 +3,8 @@
+ #define _ASM_X86_DMA_MAPPING_H
  
  /*
-diff --git a/drivers/usb/gadget/legacy/Kconfig b/drivers/usb/gadget/legacy/Kconfig
-index 94fc3c462930..69ff7f8c86f5 100644
---- a/drivers/usb/gadget/legacy/Kconfig
-+++ b/drivers/usb/gadget/legacy/Kconfig
-@@ -287,7 +287,7 @@ config USB_G_SERIAL
- 	  Say "y" to link the driver statically, or "m" to build a
- 	  dynamically linked module called "g_serial".
- 
--	  For more information, see Documentation/usb/gadget_serial.txt
-+	  For more information, see Documentation/usb/gadget_serial.rst
- 	  which includes instructions and a "driver info file" needed to
- 	  make MS-Windows work with CDC ACM.
- 
-@@ -321,7 +321,7 @@ config USB_G_PRINTER
- 	  Say "y" to link the driver statically, or "m" to build a
- 	  dynamically linked module called "g_printer".
- 
--	  For more information, see Documentation/usb/gadget_printer.txt
-+	  For more information, see Documentation/usb/gadget_printer.rst
- 	  which includes sample code for accessing the device file.
- 
- if TTY
-@@ -436,7 +436,7 @@ config USB_G_HID
- 	  The HID gadget driver provides generic emulation of USB
- 	  Human Interface Devices (HID).
- 
--	  For more information, see Documentation/usb/gadget_hid.txt which
-+	  For more information, see Documentation/usb/gadget_hid.rst which
- 	  includes sample code for accessing the device files.
- 
- 	  Say "y" to link the driver statically, or "m" to build a
-diff --git a/drivers/usb/host/Kconfig b/drivers/usb/host/Kconfig
-index fb3406ea8592..40b5de597112 100644
---- a/drivers/usb/host/Kconfig
-+++ b/drivers/usb/host/Kconfig
-@@ -114,7 +114,7 @@ config USB_EHCI_HCD
- 	  Controller Driver or UHCI (for Via motherboards) Host Controller
- 	  Driver too.
- 
--	  You may want to read <file:Documentation/usb/ehci.txt>.
-+	  You may want to read <file:Documentation/usb/ehci.rst>.
- 
- 	  To compile this driver as a module, choose M here: the
- 	  module will be called ehci-hcd.
-diff --git a/drivers/usb/misc/Kconfig b/drivers/usb/misc/Kconfig
-index 4a88e1ca25c0..bdae62b2ffe0 100644
---- a/drivers/usb/misc/Kconfig
-+++ b/drivers/usb/misc/Kconfig
-@@ -51,7 +51,7 @@ config USB_RIO500
- 	tristate "USB Diamond Rio500 support"
- 	help
- 	  Say Y here if you want to connect a USB Rio500 mp3 player to your
--	  computer's USB port. Please read <file:Documentation/usb/rio.txt>
-+	  computer's USB port. Please read <file:Documentation/usb/rio.rst>
- 	  for more information.
- 
- 	  To compile this driver as a module, choose M here: the
-diff --git a/drivers/usb/mon/Kconfig b/drivers/usb/mon/Kconfig
-index 48f1b2dadb24..ffc7cd422874 100644
---- a/drivers/usb/mon/Kconfig
-+++ b/drivers/usb/mon/Kconfig
-@@ -8,6 +8,6 @@ config USB_MON
- 	help
- 	  If you select this option, a component which captures the USB traffic
- 	  between peripheral-specific drivers and HC drivers will be built.
--	  For more information, see <file:Documentation/usb/usbmon.txt>.
-+	  For more information, see <file:Documentation/usb/usbmon.rst>.
- 
- 	  If unsure, say Y, if allowed, otherwise M.
-diff --git a/drivers/usb/serial/Kconfig b/drivers/usb/serial/Kconfig
-index 7d031911d04e..67279c6bce33 100644
---- a/drivers/usb/serial/Kconfig
-+++ b/drivers/usb/serial/Kconfig
-@@ -11,7 +11,7 @@ menuconfig USB_SERIAL
- 	  ports, or acts like a serial device, and you want to connect it to
- 	  your USB bus.
- 
--	  Please read <file:Documentation/usb/usb-serial.txt> for more
-+	  Please read <file:Documentation/usb/usb-serial.rst> for more
- 	  information on the specifics of the different devices that are
- 	  supported, and on how to use them.
- 
-@@ -47,7 +47,7 @@ config USB_SERIAL_GENERIC
- 	bool "USB Generic Serial Driver"
- 	help
- 	  Say Y here if you want to use the generic USB serial driver.  Please
--	  read <file:Documentation/usb/usb-serial.txt> for more information on
-+	  read <file:Documentation/usb/usb-serial.rst> for more information on
- 	  using this driver.  It is recommended that the "USB Serial converter
- 	  support" be compiled as a module for this driver to be used
- 	  properly.
-@@ -163,7 +163,7 @@ config USB_SERIAL_EMPEG
- 	help
- 	  Say Y here if you want to connect to your Empeg empeg-car Mark I/II
- 	  mp3 player via USB.  The driver uses a single ttyUSB{0,1,2,...}
--	  device node.  See <file:Documentation/usb/usb-serial.txt> for more
-+	  device node.  See <file:Documentation/usb/usb-serial.rst> for more
- 	  tidbits of information.
- 
- 	  To compile this driver as a module, choose M here: the
-@@ -199,7 +199,7 @@ config USB_SERIAL_IPAQ
- 	  Say Y here if you want to connect to your Compaq iPAQ, HP Jornada
- 	  or any other PDA running Windows CE 3.0 or PocketPC 2002
- 	  using a USB cradle/cable. For information on using the driver,
--	  read <file:Documentation/usb/usb-serial.txt>.
-+	  read <file:Documentation/usb/usb-serial.rst>.
- 
- 	  To compile this driver as a module, choose M here: the
- 	  module will be called ipaq.
-@@ -334,7 +334,7 @@ config USB_SERIAL_KLSI
- 	  adapter sold by Palm Inc. for use with their Palm III and Palm V
- 	  series PDAs.
- 
--	  Please read <file:Documentation/usb/usb-serial.txt> for more
-+	  Please read <file:Documentation/usb/usb-serial.rst> for more
- 	  information.
- 
- 	  To compile this driver as a module, choose M here: the
-diff --git a/drivers/usb/serial/belkin_sa.c b/drivers/usb/serial/belkin_sa.c
-index c1235d5b9fba..9bb123ab9bc9 100644
---- a/drivers/usb/serial/belkin_sa.c
-+++ b/drivers/usb/serial/belkin_sa.c
-@@ -10,7 +10,7 @@
-  *  and associated source files.  Please see the usb/serial files for
-  *  individual credits and copyrights.
-  *
-- * See Documentation/usb/usb-serial.txt for more information on using this
-+ * See Documentation/usb/usb-serial.rst for more information on using this
-  * driver
-  *
-  * TODO:
-diff --git a/drivers/usb/serial/belkin_sa.h b/drivers/usb/serial/belkin_sa.h
-index 51bc06287603..a13a98d284f2 100644
---- a/drivers/usb/serial/belkin_sa.h
-+++ b/drivers/usb/serial/belkin_sa.h
-@@ -9,7 +9,7 @@
-  *  and associated source files.  Please see the usb/serial files for
-  *  individual credits and copyrights.
-  *
-- * See Documentation/usb/usb-serial.txt for more information on using this
-+ * See Documentation/usb/usb-serial.rst for more information on using this
-  * driver
-  *
-  * 12-Mar-2001 gkh
-diff --git a/drivers/usb/serial/cypress_m8.c b/drivers/usb/serial/cypress_m8.c
-index 72d3ae1ebc64..216edd5826ca 100644
---- a/drivers/usb/serial/cypress_m8.c
-+++ b/drivers/usb/serial/cypress_m8.c
-@@ -7,7 +7,7 @@
-  *	Copyright (C) 2003,2004
-  *	    Neil Whelchel (koyama@firstlight.net)
-  *
-- * See Documentation/usb/usb-serial.txt for more information on using this
-+ * See Documentation/usb/usb-serial.rst for more information on using this
-  * driver
-  *
-  * See http://geocities.com/i0xox0i for information on this driver and the
-diff --git a/drivers/usb/serial/empeg.c b/drivers/usb/serial/empeg.c
-index d680bec62547..405e835e93dd 100644
---- a/drivers/usb/serial/empeg.c
-+++ b/drivers/usb/serial/empeg.c
-@@ -8,7 +8,7 @@
-  *	Copyright (C) 1999 - 2001
-  *	    Greg Kroah-Hartman (greg@kroah.com)
-  *
-- * See Documentation/usb/usb-serial.txt for more information on using this
-+ * See Documentation/usb/usb-serial.rst for more information on using this
-  * driver
+- * IOMMU interface. See Documentation/DMA-API-HOWTO.rst and
+- * Documentation/DMA-API.rst for documentation.
++ * IOMMU interface. See Documentation/driver-api/mm/dma-api-howto.rst and
++ * Documentation/driver-api/mm/dma-api.rst for documentation.
   */
  
-diff --git a/drivers/usb/serial/ftdi_sio.c b/drivers/usb/serial/ftdi_sio.c
-index 1d8461ae2c34..8b15bbf545d4 100644
---- a/drivers/usb/serial/ftdi_sio.c
-+++ b/drivers/usb/serial/ftdi_sio.c
-@@ -10,7 +10,7 @@
-  *	Copyright (C) 2002
-  *	    Kuba Ober (kuba@mareimbrium.org)
-  *
-- * See Documentation/usb/usb-serial.txt for more information on using this
-+ * See Documentation/usb/usb-serial.rst for more information on using this
-  * driver
-  *
-  * See http://ftdi-usb-sio.sourceforge.net for up to date testing info
-diff --git a/drivers/usb/serial/ir-usb.c b/drivers/usb/serial/ir-usb.c
-index 7643716b5299..302eb9530859 100644
---- a/drivers/usb/serial/ir-usb.c
-+++ b/drivers/usb/serial/ir-usb.c
-@@ -16,7 +16,7 @@
-  * was written by Roman Weissgaerber <weissg@vienna.at>, Dag Brattli
-  * <dag@brattli.net>, and Jean Tourrilhes <jt@hpl.hp.com>
-  *
-- * See Documentation/usb/usb-serial.txt for more information on using this
-+ * See Documentation/usb/usb-serial.rst for more information on using this
-  * driver
-  */
- 
-diff --git a/drivers/usb/serial/keyspan_pda.c b/drivers/usb/serial/keyspan_pda.c
-index 38d43c4b7ce5..bf988f77d400 100644
---- a/drivers/usb/serial/keyspan_pda.c
-+++ b/drivers/usb/serial/keyspan_pda.c
+ #include <linux/scatterlist.h>
+diff --git a/arch/x86/kernel/amd_gart_64.c b/arch/x86/kernel/amd_gart_64.c
+index 03108de30105..397c2cdd19d8 100644
+--- a/arch/x86/kernel/amd_gart_64.c
++++ b/arch/x86/kernel/amd_gart_64.c
 @@ -6,7 +6,7 @@
-  * Copyright (C) 1999, 2000 Brian Warner	<warner@lothar.com>
-  * Copyright (C) 2000 Al Borchers		<borchers@steinerpoint.com>
+  * This allows to use PCI devices that only support 32bit addresses on systems
+  * with more than 4GB.
   *
-- * See Documentation/usb/usb-serial.txt for more information on using this
-+ * See Documentation/usb/usb-serial.rst for more information on using this
-  * driver
+- * See Documentation/DMA-API-HOWTO.rst for the interface specification.
++ * See Documentation/driver-api/mm/dma-api-howto.rst for the interface specification.
+  *
+  * Copyright 2002 Andi Kleen, SuSE Labs.
   */
+diff --git a/drivers/parisc/sba_iommu.c b/drivers/parisc/sba_iommu.c
+index 267ceb5f7838..349b4a2f21a1 100644
+--- a/drivers/parisc/sba_iommu.c
++++ b/drivers/parisc/sba_iommu.c
+@@ -666,7 +666,7 @@ sba_mark_invalid(struct ioc *ioc, dma_addr_t iova, size_t byte_cnt)
+  * @dev: instance of PCI owned by the driver that's asking
+  * @mask:  number of address bits this PCI device can handle
+  *
+- * See Documentation/DMA-API-HOWTO.rst
++ * See Documentation/driver-api/mm/dma-api-howto.rst
+  */
+ static int sba_dma_supported( struct device *dev, u64 mask)
+ {
+@@ -678,7 +678,7 @@ static int sba_dma_supported( struct device *dev, u64 mask)
+ 		return(0);
+ 	}
  
-diff --git a/drivers/usb/serial/omninet.c b/drivers/usb/serial/omninet.c
-index e51c9464ea42..5b6e982a9376 100644
---- a/drivers/usb/serial/omninet.c
-+++ b/drivers/usb/serial/omninet.c
-@@ -4,7 +4,7 @@
+-	/* Documentation/DMA-API-HOWTO.rst tells drivers to try 64-bit
++	/* Documentation/driver-api/mm/dma-api-howto.rst tells drivers to try 64-bit
+ 	 * first, then fall back to 32-bit if that fails.
+ 	 * We are just "encouraging" 32-bit DMA masks here since we can
+ 	 * never allow IOMMU bypass unless we add special support for ZX1.
+@@ -706,7 +706,7 @@ static int sba_dma_supported( struct device *dev, u64 mask)
+  * @size:  number of bytes to map in driver buffer.
+  * @direction:  R/W or both.
   *
-  * Copyright (C) 2013,2017 Johan Hovold <johan@kernel.org>
-  *
-- * See Documentation/usb/usb-serial.txt for more information on using this
-+ * See Documentation/usb/usb-serial.rst for more information on using this
-  * driver
-  *
-  * Please report both successes and troubles to the author at omninet@kroah.com
-diff --git a/drivers/usb/serial/oti6858.c b/drivers/usb/serial/oti6858.c
-index 38ae0fc826cc..8151dd7a45e8 100644
---- a/drivers/usb/serial/oti6858.c
-+++ b/drivers/usb/serial/oti6858.c
-@@ -22,7 +22,7 @@
-  * So, THIS CODE CAN DESTROY OTi-6858 AND ANY OTHER DEVICES, THAT ARE
-  * CONNECTED TO IT!
-  *
-- * See Documentation/usb/usb-serial.txt for more information on using this
-+ * See Documentation/usb/usb-serial.rst for more information on using this
-  * driver
-  *
-  * TODO:
-diff --git a/drivers/usb/serial/pl2303.c b/drivers/usb/serial/pl2303.c
-index d7abde14b3cf..9d27b76c5c6e 100644
---- a/drivers/usb/serial/pl2303.c
-+++ b/drivers/usb/serial/pl2303.c
-@@ -7,7 +7,7 @@
-  *
-  * Original driver for 2.2.x by anonymous
-  *
-- * See Documentation/usb/usb-serial.txt for more information on using this
-+ * See Documentation/usb/usb-serial.rst for more information on using this
-  * driver
+- * See Documentation/DMA-API-HOWTO.rst
++ * See Documentation/driver-api/mm/dma-api-howto.rst
   */
+ static dma_addr_t
+ sba_map_single(struct device *dev, void *addr, size_t size,
+@@ -796,7 +796,7 @@ sba_map_page(struct device *dev, struct page *page, unsigned long offset,
+  * @size:  number of bytes mapped in driver buffer.
+  * @direction:  R/W or both.
+  *
+- * See Documentation/DMA-API-HOWTO.rst
++ * See Documentation/driver-api/mm/dma-api-howto.rst
+  */
+ static void
+ sba_unmap_page(struct device *dev, dma_addr_t iova, size_t size,
+@@ -875,7 +875,7 @@ sba_unmap_page(struct device *dev, dma_addr_t iova, size_t size,
+  * @size:  number of bytes mapped in driver buffer.
+  * @dma_handle:  IOVA of new buffer.
+  *
+- * See Documentation/DMA-API-HOWTO.rst
++ * See Documentation/driver-api/mm/dma-api-howto.rst
+  */
+ static void *sba_alloc(struct device *hwdev, size_t size, dma_addr_t *dma_handle,
+ 		gfp_t gfp, unsigned long attrs)
+@@ -906,7 +906,7 @@ static void *sba_alloc(struct device *hwdev, size_t size, dma_addr_t *dma_handle
+  * @vaddr:  virtual address IOVA of "consistent" buffer.
+  * @dma_handler:  IO virtual address of "consistent" buffer.
+  *
+- * See Documentation/DMA-API-HOWTO.rst
++ * See Documentation/driver-api/mm/dma-api-howto.rst
+  */
+ static void
+ sba_free(struct device *hwdev, size_t size, void *vaddr,
+@@ -941,7 +941,7 @@ int dump_run_sg = 0;
+  * @nents:  number of entries in list
+  * @direction:  R/W or both.
+  *
+- * See Documentation/DMA-API-HOWTO.rst
++ * See Documentation/driver-api/mm/dma-api-howto.rst
+  */
+ static int
+ sba_map_sg(struct device *dev, struct scatterlist *sglist, int nents,
+@@ -1025,7 +1025,7 @@ sba_map_sg(struct device *dev, struct scatterlist *sglist, int nents,
+  * @nents:  number of entries in list
+  * @direction:  R/W or both.
+  *
+- * See Documentation/DMA-API-HOWTO.rst
++ * See Documentation/driver-api/mm/dma-api-howto.rst
+  */
+ static void 
+ sba_unmap_sg(struct device *dev, struct scatterlist *sglist, int nents,
+diff --git a/include/linux/dma-mapping.h b/include/linux/dma-mapping.h
+index 7ff3fcd73cec..eb234c3f466b 100644
+--- a/include/linux/dma-mapping.h
++++ b/include/linux/dma-mapping.h
+@@ -14,7 +14,7 @@
  
-diff --git a/drivers/usb/serial/usb-serial.c b/drivers/usb/serial/usb-serial.c
-index 676c296103a2..a3179fea38c8 100644
---- a/drivers/usb/serial/usb-serial.c
-+++ b/drivers/usb/serial/usb-serial.c
-@@ -10,7 +10,7 @@
-  * This driver was originally based on the ACM driver by Armin Fuerst (which was
-  * based on a driver by Brad Keryan)
+ /**
+  * List of possible attributes associated with a DMA mapping. The semantics
+- * of each attribute should be defined in Documentation/DMA-attributes.rst.
++ * of each attribute should be defined in Documentation/driver-api/mm/dma-attributes.rst.
   *
-- * See Documentation/usb/usb-serial.txt for more information on using this
-+ * See Documentation/usb/usb-serial.rst for more information on using this
-  * driver
-  */
- 
-diff --git a/drivers/usb/serial/visor.c b/drivers/usb/serial/visor.c
-index 8ddbecc25d89..4412834db21c 100644
---- a/drivers/usb/serial/visor.c
-+++ b/drivers/usb/serial/visor.c
-@@ -6,7 +6,7 @@
-  *	Copyright (C) 1999 - 2004
-  *	    Greg Kroah-Hartman (greg@kroah.com)
+  * DMA_ATTR_WRITE_BARRIER: DMA to a memory region with this attribute
+  * forces all pending DMA writes to complete.
+diff --git a/include/media/videobuf-dma-sg.h b/include/media/videobuf-dma-sg.h
+index 50a549e5b477..60f2df32bf39 100644
+--- a/include/media/videobuf-dma-sg.h
++++ b/include/media/videobuf-dma-sg.h
+@@ -34,7 +34,7 @@
+  *	does memory allocation too using vmalloc_32().
   *
-- * See Documentation/usb/usb-serial.txt for more information on using this
-+ * See Documentation/usb/usb-serial.rst for more information on using this
-  * driver
+  * videobuf_dma_*()
+- *	see Documentation/DMA-API-HOWTO.rst, these functions to
++ *	see Documentation/driver-api/mm/dma-api-howto.rst, these functions to
+  *	basically the same.  The map function does also build a
+  *	scatterlist for the buffer (and unmap frees it ...)
   *
-  */
-diff --git a/drivers/usb/serial/visor.h b/drivers/usb/serial/visor.h
-index fe290243f1ce..4bd69d047036 100644
---- a/drivers/usb/serial/visor.h
-+++ b/drivers/usb/serial/visor.h
-@@ -5,7 +5,7 @@
-  *	Copyright (C) 1999 - 2003
-  *	    Greg Kroah-Hartman (greg@kroah.com)
-  *
-- * See Documentation/usb/usb-serial.txt for more information on using this
-+ * See Documentation/usb/usb-serial.rst for more information on using this
-  * driver.
-  *
-  */
-diff --git a/drivers/usb/serial/whiteheat.c b/drivers/usb/serial/whiteheat.c
-index aefd84f88b59..79314d8c94a4 100644
---- a/drivers/usb/serial/whiteheat.c
-+++ b/drivers/usb/serial/whiteheat.c
-@@ -8,7 +8,7 @@
-  *	Copyright (C) 1999 - 2001
-  *	    Greg Kroah-Hartman (greg@kroah.com)
-  *
-- * See Documentation/usb/usb-serial.txt for more information on using this
-+ * See Documentation/usb/usb-serial.rst for more information on using this
-  * driver
-  */
- 
-diff --git a/drivers/usb/serial/whiteheat.h b/drivers/usb/serial/whiteheat.h
-index 72c1b0cf4063..00398149cd8d 100644
---- a/drivers/usb/serial/whiteheat.h
-+++ b/drivers/usb/serial/whiteheat.h
-@@ -8,7 +8,7 @@
-  *      Copyright (C) 1999, 2000
-  *          Greg Kroah-Hartman (greg@kroah.com)
-  *
-- * See Documentation/usb/usb-serial.txt for more information on using this
-+ * See Documentation/usb/usb-serial.rst for more information on using this
-  * driver
-  *
-  */
+diff --git a/kernel/dma/debug.c b/kernel/dma/debug.c
+index 616919c774a5..1d3f9b8de6df 100644
+--- a/kernel/dma/debug.c
++++ b/kernel/dma/debug.c
+@@ -1069,7 +1069,7 @@ static void check_unmap(struct dma_debug_entry *ref)
+ 	/*
+ 	 * Drivers should use dma_mapping_error() to check the returned
+ 	 * addresses of dma_map_single() and dma_map_page().
+-	 * If not, print this warning message. See Documentation/DMA-API.rst.
++	 * If not, print this warning message. See Documentation/driver-api/mm/dma-api.rst.
+ 	 */
+ 	if (entry->map_err_type == MAP_ERR_NOT_CHECKED) {
+ 		err_printk(ref->dev, entry,
 -- 
 2.21.0
 
