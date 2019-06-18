@@ -2,153 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A308D49954
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 08:50:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5F160498F4
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 08:42:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728814AbfFRGuz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Jun 2019 02:50:55 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:10503 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725900AbfFRGuo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Jun 2019 02:50:44 -0400
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 45SdK14Rfwz9vBJt;
-        Tue, 18 Jun 2019 08:21:57 +0200 (CEST)
-Authentication-Results: localhost; dkim=pass
-        reason="1024-bit key; insecure key"
-        header.d=c-s.fr header.i=@c-s.fr header.b=TKNZzGvX; dkim-adsp=pass;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id KSmGm5VL72on; Tue, 18 Jun 2019 08:21:57 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 45SdK13G6fz9vBJp;
-        Tue, 18 Jun 2019 08:21:57 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
-        t=1560838917; bh=FCB7CdEBbBFcFNkuD3v6ni+zfUzz8NqMtrHA12Q714w=;
+        id S1726151AbfFRGmN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Jun 2019 02:42:13 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:48346 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725829AbfFRGmN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Jun 2019 02:42:13 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 576DC6086B; Tue, 18 Jun 2019 06:24:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1560839046;
+        bh=pcGOA1XuslGJrQpiDC/6Oj6FBvnMaBf3n7aBV/kUwXw=;
         h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=TKNZzGvXPy40kaL9LaUOHSsIwHMuZxENX96THuEAeEJRimn1kuU1dGmvPR3FDaC2W
-         7Jt9nzVF8LwISZuxamxBPn4InCA1/e/hEO+sHFsgDydB+M6A285DccUC2R40a5SeyN
-         e9Ibc5LkeplbAUMVNVKaZfFvrL0Gl9nkNuo8TnHo=
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 6DA238B86C;
-        Tue, 18 Jun 2019 08:21:57 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id qbpbh5PAMYh3; Tue, 18 Jun 2019 08:21:57 +0200 (CEST)
-Received: from PO15451 (unknown [192.168.4.90])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 78A5A8B78B;
-        Tue, 18 Jun 2019 08:21:56 +0200 (CEST)
-Subject: Re: [PATCH 2/5] Powerpc/hw-breakpoint: Refactor
- hw_breakpoint_arch_parse()
-To:     Ravi Bangoria <ravi.bangoria@linux.ibm.com>, mpe@ellerman.id.au
-Cc:     benh@kernel.crashing.org, paulus@samba.org, mikey@neuling.org,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        npiggin@gmail.com, naveen.n.rao@linux.vnet.ibm.com
-References: <20190618042732.5582-1-ravi.bangoria@linux.ibm.com>
- <20190618042732.5582-3-ravi.bangoria@linux.ibm.com>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Message-ID: <66e70f57-befa-f241-9476-8e06519bac90@c-s.fr>
-Date:   Tue, 18 Jun 2019 08:21:56 +0200
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+        b=gR6/FPDeoNZ90kiWz351DZS0sKyMU7g/WWhXpX7DUVpZhRQBuDd0I1jm/bjMPClv1
+         TuxteIW8ZJeO9jvZ0tMtZj6bl+SwrQT6J519/pxJ1KEj+m3ii9YnVH3ypBwTIGIJg5
+         GMz4VWNut6+E1LnaBb1HmZuXdMsZbRUfK6yYBY8A=
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        pdx-caf-mail.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_INVALID,DKIM_SIGNED,SPF_NONE autolearn=no autolearn_force=no
+        version=3.4.0
+Received: from [192.168.43.187] (unknown [223.227.13.236])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: nishakumari@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 1196C6086B;
+        Tue, 18 Jun 2019 06:24:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1560839045;
+        bh=pcGOA1XuslGJrQpiDC/6Oj6FBvnMaBf3n7aBV/kUwXw=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=MujEB7/qmXQmRR7mC/iDoaBy/yeJBuZcpD3R0h8Dij0SY2rPIO7o67Um8bmUrOPKn
+         6H4JneM0ZCNcDS1jRDF7QzUvwIg3kq6PDpZc4hjozRMZKU4BkDA8Ks0ErUcIvXRdC7
+         132zpX/d/LjpIAHbCHAncsZ1Rotb1v0JUsUqfuY4=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1196C6086B
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=nishakumari@codeaurora.org
+Subject: Re: [PATCH 4/4] regulator: adding interrupt handling in labibb
+ regulator
+To:     Mark Brown <broonie@kernel.org>
+Cc:     bjorn.andersson@linaro.org, robh+dt@kernel.org,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        agross@kernel.org, lgirdwood@gmail.com, mark.rutland@arm.com,
+        david.brown@linaro.org, linux-kernel@vger.kernel.org,
+        kgunda@codeaurora.org, rnayak@codeaurora.org
+References: <1560337252-27193-1-git-send-email-nishakumari@codeaurora.org>
+ <1560337252-27193-5-git-send-email-nishakumari@codeaurora.org>
+ <20190613172738.GO5316@sirena.org.uk>
+From:   Nisha Kumari <nishakumari@codeaurora.org>
+Message-ID: <8294996d-84ee-dff2-7369-00c17348a09c@codeaurora.org>
+Date:   Tue, 18 Jun 2019 11:53:57 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
  Thunderbird/60.7.1
 MIME-Version: 1.0
-In-Reply-To: <20190618042732.5582-3-ravi.bangoria@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190613172738.GO5316@sirena.org.uk>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
+On 6/13/2019 10:57 PM, Mark Brown wrote:
+> On Wed, Jun 12, 2019 at 04:30:52PM +0530, Nisha Kumari wrote:
+>
+>> +static void labibb_sc_err_recovery_work(void *_labibb)
+>> +{
+>> +	int ret;
+>> +	struct qcom_labibb *labibb = (struct qcom_labibb *)_labibb;
+>> +
+>> +	labibb->ibb_vreg.vreg_enabled = 0;
+>> +	labibb->lab_vreg.vreg_enabled = 0;
+>> +
+>> +	ret = qcom_ibb_regulator_enable(labibb->lab_vreg.rdev);
+> The driver should *never* enable the regulator itself, it should only do
+> this if the core told it to.
+Ok, I will change it
+>
+>> +	/*
+>> +	 * The SC(short circuit) fault would trigger PBS(Portable Batch
+>> +	 * System) to disable regulators for protection. This would
+>> +	 * cause the SC_DETECT status being cleared so that it's not
+>> +	 * able to get the SC fault status.
+>> +	 * Check if LAB/IBB regulators are enabled in the driver but
+>> +	 * disabled in hardware, this means a SC fault had happened
+>> +	 * and SCP handling is completed by PBS.
+>> +	 */
+> Let the core worry about this, the driver should just report the problem
+> to the core like all other devices do (and this driver doesn't...).
 
-Le 18/06/2019 à 06:27, Ravi Bangoria a écrit :
-> Move feature availability check at the start of the function.
-> Rearrange comment to it's associated code. Use hw->address and
-> hw->len in the 512 bytes boundary check(to write if statement
-> in a single line). Add spacing between code blocks.
+Ok
 
-Are those cosmetic changes in the boundary check worth it since they 
-disappear in the final patch ?
 
-Christophe
+Thanks,
 
-> 
-> Signed-off-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-> ---
->   arch/powerpc/kernel/hw_breakpoint.c | 34 +++++++++++++++--------------
->   1 file changed, 18 insertions(+), 16 deletions(-)
-> 
-> diff --git a/arch/powerpc/kernel/hw_breakpoint.c b/arch/powerpc/kernel/hw_breakpoint.c
-> index 1908e4fcc132..36bcf705df65 100644
-> --- a/arch/powerpc/kernel/hw_breakpoint.c
-> +++ b/arch/powerpc/kernel/hw_breakpoint.c
-> @@ -133,10 +133,13 @@ int hw_breakpoint_arch_parse(struct perf_event *bp,
->   			     const struct perf_event_attr *attr,
->   			     struct arch_hw_breakpoint *hw)
->   {
-> -	int ret = -EINVAL, length_max;
-> +	int length_max;
-> +
-> +	if (!ppc_breakpoint_available())
-> +		return -ENODEV;
->   
->   	if (!bp)
-> -		return ret;
-> +		return -EINVAL;
->   
->   	hw->type = HW_BRK_TYPE_TRANSLATE;
->   	if (attr->bp_type & HW_BREAKPOINT_R)
-> @@ -145,34 +148,33 @@ int hw_breakpoint_arch_parse(struct perf_event *bp,
->   		hw->type |= HW_BRK_TYPE_WRITE;
->   	if (hw->type == HW_BRK_TYPE_TRANSLATE)
->   		/* must set alteast read or write */
-> -		return ret;
-> +		return -EINVAL;
-> +
->   	if (!attr->exclude_user)
->   		hw->type |= HW_BRK_TYPE_USER;
->   	if (!attr->exclude_kernel)
->   		hw->type |= HW_BRK_TYPE_KERNEL;
->   	if (!attr->exclude_hv)
->   		hw->type |= HW_BRK_TYPE_HYP;
-> +
->   	hw->address = attr->bp_addr;
->   	hw->len = attr->bp_len;
->   
-> -	/*
-> -	 * Since breakpoint length can be a maximum of HW_BREAKPOINT_LEN(8)
-> -	 * and breakpoint addresses are aligned to nearest double-word
-> -	 * HW_BREAKPOINT_ALIGN by rounding off to the lower address, the
-> -	 * 'symbolsize' should satisfy the check below.
-> -	 */
-> -	if (!ppc_breakpoint_available())
-> -		return -ENODEV;
->   	length_max = 8; /* DABR */
->   	if (dawr_enabled()) {
->   		length_max = 512 ; /* 64 doublewords */
-> -		/* DAWR region can't cross 512 boundary */
-> -		if ((attr->bp_addr >> 9) !=
-> -		    ((attr->bp_addr + attr->bp_len - 1) >> 9))
-> +		/* DAWR region can't cross 512 bytes boundary */
-> +		if ((hw->address >> 9) != ((hw->address + hw->len - 1) >> 9))
->   			return -EINVAL;
->   	}
-> -	if (hw->len >
-> -	    (length_max - (hw->address & HW_BREAKPOINT_ALIGN)))
-> +
-> +	/*
-> +	 * Since breakpoint length can be a maximum of length_max and
-> +	 * breakpoint addresses are aligned to nearest double-word
-> +	 * HW_BREAKPOINT_ALIGN by rounding off to the lower address,
-> +	 * the 'symbolsize' should satisfy the check below.
-> +	 */
-> +	if (hw->len > (length_max - (hw->address & HW_BREAKPOINT_ALIGN)))
->   		return -EINVAL;
->   	return 0;
->   }
-> 
+Nisha
+
