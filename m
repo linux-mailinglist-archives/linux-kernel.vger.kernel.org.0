@@ -2,132 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 32AA94AC6F
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 22:59:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8C74F4AC74
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 23:02:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730729AbfFRU7X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Jun 2019 16:59:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33748 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730102AbfFRU7X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Jun 2019 16:59:23 -0400
-Received: from akpm3.svl.corp.google.com (unknown [104.133.8.65])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 57C2C20863;
-        Tue, 18 Jun 2019 20:59:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560891562;
-        bh=OKekjAHMHDSKBX7i8AEyG++qk2Jq9H3Y71jv2y4IdLU=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=dRPi+E6V6BOa4jcRdwiJTpkttXzbzF7JzL+etbTckkndfBqAq8OEfjCMcljvaUl5A
-         Y0dguz5W/QAQY/rZu34ZBxhJDhgFbNBRj3YPGSV5CsXkQLhMnGgPxgOMaInyd2e2yY
-         /VadGoXzYEJuUjtFcTrb9+vrKqIoxTcf+93+SKaU=
-Date:   Tue, 18 Jun 2019 13:59:20 -0700
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Uladzislau Rezki <urezki@gmail.com>
-Cc:     Joel Fernandes <joelaf@google.com>, Arnd Bergmann <arnd@arndb.de>,
-        Roman Penyaev <rpenyaev@suse.de>,
-        "open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>,
-        Roman Gushchin <guro@fb.com>, Michal Hocko <mhocko@suse.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Thomas Garnier <thgarnie@google.com>,
-        Oleksiy Avramchenko <oleksiy.avramchenko@sonymobile.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@elte.hu>, Tejun Heo <tj@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Rick Edgecombe <rick.p.edgecombe@intel.com>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] mm/vmalloc: avoid bogus -Wmaybe-uninitialized warning
-Message-Id: <20190618135920.9dd7bdc78fc0ce33ee65d99c@linux-foundation.org>
-In-Reply-To: <20190618140622.bbak3is7yv32hfjn@pc636>
-References: <20190618092650.2943749-1-arnd@arndb.de>
-        <CAJWu+oqzd8MJqusRV0LAK=Xnm7VSRSu3QbNZ-j5h9_MbzcFhhg@mail.gmail.com>
-        <20190618140622.bbak3is7yv32hfjn@pc636>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1730742AbfFRVCi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Jun 2019 17:02:38 -0400
+Received: from s3.sipsolutions.net ([144.76.43.62]:48164 "EHLO
+        sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730102AbfFRVCi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Jun 2019 17:02:38 -0400
+Received: by sipsolutions.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <johannes@sipsolutions.net>)
+        id 1hdLFE-0007LA-Ng; Tue, 18 Jun 2019 23:02:20 +0200
+Message-ID: <6e7f0fb2f85d5062a9e23d37c47d311e10aa4624.camel@sipsolutions.net>
+Subject: Re: [PATCH v2 00/17] net: introduce Qualcomm IPA driver
+From:   Johannes Berg <johannes@sipsolutions.net>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Alex Elder <elder@linaro.org>, abhishek.esse@gmail.com,
+        Ben Chan <benchan@google.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        cpratapa@codeaurora.org, David Miller <davem@davemloft.net>,
+        Dan Williams <dcbw@redhat.com>,
+        DTML <devicetree@vger.kernel.org>,
+        Eric Caruso <ejcaruso@google.com>, evgreen@chromium.org,
+        Ilias Apalodimas <ilias.apalodimas@linaro.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-arm-msm@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-soc@vger.kernel.org, Networking <netdev@vger.kernel.org>,
+        Subash Abhinov Kasiviswanathan <subashab@codeaurora.org>,
+        syadagir@codeaurora.org
+Date:   Tue, 18 Jun 2019 23:02:18 +0200
+In-Reply-To: <CAK8P3a2onXpxiE4y9PzRwuPM2dh=h_BKz7Eb0=LLPgBbZoK1bQ@mail.gmail.com> (sfid-20190618_225543_624686_3B7D51E7)
+References: <380a6185-7ad1-6be0-060b-e6e5d4126917@linaro.org>
+         <a94676381a5ca662c848f7a725562f721c43ce76.camel@sipsolutions.net>
+         <CAK8P3a0kV-i7BJJ2X6C=5n65rSGfo8fUiC4J_G-+M8EctYKbkg@mail.gmail.com>
+         <066e9b39f937586f0f922abf801351553ec2ba1d.camel@sipsolutions.net>
+         <b3686626-e2d8-bc9c-6dd0-9ebb137715af@linaro.org>
+         <b23a83c18055470c5308fcd1eed018056371fc1d.camel@sipsolutions.net>
+         <CAK8P3a1FeUQR3pgoQxHoRK05JGORyR+TFATVQiijLWtFKTv6OQ@mail.gmail.com>
+         <613cdfde488eb23d7207c7ba6258662702d04840.camel@sipsolutions.net>
+         <CAK8P3a2onXpxiE4y9PzRwuPM2dh=h_BKz7Eb0=LLPgBbZoK1bQ@mail.gmail.com>
+         (sfid-20190618_225543_624686_3B7D51E7)
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5 (3.28.5-2.fc28) 
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 18 Jun 2019 16:06:22 +0200 Uladzislau Rezki <urezki@gmail.com> wrote:
-
-> On Tue, Jun 18, 2019 at 09:40:28AM -0400, Joel Fernandes wrote:
-> > On Tue, Jun 18, 2019 at 5:27 AM Arnd Bergmann <arnd@arndb.de> wrote:
-> > >
-> > > gcc gets confused in pcpu_get_vm_areas() because there are too many
-> > > branches that affect whether 'lva' was initialized before it gets
-> > > used:
-> > >
-> > > mm/vmalloc.c: In function 'pcpu_get_vm_areas':
-> > > mm/vmalloc.c:991:4: error: 'lva' may be used uninitialized in this function [-Werror=maybe-uninitialized]
-> > >     insert_vmap_area_augment(lva, &va->rb_node,
-> > >     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> > >      &free_vmap_area_root, &free_vmap_area_list);
-> > >      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> > > mm/vmalloc.c:916:20: note: 'lva' was declared here
-> > >   struct vmap_area *lva;
-> > >                     ^~~
-> > >
-> > > Add an intialization to NULL, and check whether this has changed
-> > > before the first use.
-> > >
-> > > Fixes: 68ad4a330433 ("mm/vmalloc.c: keep track of free blocks for vmap allocation")
-> > > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> > > ---
-> > >  mm/vmalloc.c | 9 +++++++--
-> > >  1 file changed, 7 insertions(+), 2 deletions(-)
-> > >
-> > > diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-> > > index a9213fc3802d..42a6f795c3ee 100644
-> > > --- a/mm/vmalloc.c
-> > > +++ b/mm/vmalloc.c
-> > > @@ -913,7 +913,12 @@ adjust_va_to_fit_type(struct vmap_area *va,
-> > >         unsigned long nva_start_addr, unsigned long size,
-> > >         enum fit_type type)
-> > >  {
-> > > -       struct vmap_area *lva;
-> > > +       /*
-> > > +        * GCC cannot always keep track of whether this variable
-> > > +        * was initialized across many branches, therefore set
-> > > +        * it NULL here to avoid a warning.
-> > > +        */
-> > > +       struct vmap_area *lva = NULL;
+On Tue, 2019-06-18 at 22:55 +0200, Arnd Bergmann wrote:
+> On Tue, Jun 18, 2019 at 10:36 PM Johannes Berg
+> <johannes@sipsolutions.net> wrote:
 > > 
-> > Fair enough, but is this 5-line comment really needed here?
+> > On Tue, 2019-06-18 at 21:59 +0200, Arnd Bergmann wrote:
+> > > 
+> > > From my understanding, the ioctl interface would create the lower
+> > > netdev after talking to the firmware, and then user space would use
+> > > the rmnet interface to create a matching upper-level device for that.
+> > > This is an artifact of the strong separation of ipa and rmnet in the
+> > > code.
 > > 
-> How it is rewritten now, probably not. I would just set it NULL and
-> leave the comment, but that is IMHO. Anyway
+> > Huh. But if rmnet has muxing, and IPA supports that, why would you ever
+> > need multiple lower netdevs?
 > 
+> From my reading of the code, there is always exactly a 1:1 relationship
+> between an rmnet netdev an an ipa netdev. rmnet does the encapsulation/
+> decapsulation of the qmap data and forwards it to the ipa netdev,
+> which then just passes data through between a hardware queue and
+> its netdevice.
 
-I agree - given that the patch does this:
+I'll take your word for it. Seems very odd, given that the whole point
+of the QMAP header seems to be ... muxing?
 
-@@ -972,7 +977,7 @@ adjust_va_to_fit_type(struct vmap_area *
- 	if (type != FL_FIT_TYPE) {
- 		augment_tree_propagate_from(va);
- 
--		if (type == NE_FIT_TYPE)
-+		if (lva)
- 			insert_vmap_area_augment(lva, &va->rb_node,
- 				&free_vmap_area_root, &free_vmap_area_list);
- 	}
+> [side note: on top of that, rmnet also does "aggregation", which may
+>  be a confusing term that only means transferring multiple frames
+>  at once]
 
-the comment simply isn't relevant any more.  Although I guess this
-might be a bit helpful:
+Right, but it's not all that much interesting in the context of this
+discussion.
 
-@@ -977,7 +972,7 @@ adjust_va_to_fit_type(struct vmap_area *
- 	if (type != FL_FIT_TYPE) {
- 		augment_tree_propagate_from(va);
- 
--		if (lva)
-+		if (lva)	/* type == NE_FIT_TYPE */
- 			insert_vmap_area_augment(lva, &va->rb_node,
- 				&free_vmap_area_root, &free_vmap_area_list);
- 	}
+> Sure, I definitely understand what you mean, and I agree that would
+> be the right way to do it. All I said is that this is not how it was done
+> in rmnet (this was again my main concern about the rmnet design
+> after I learned it was required for ipa) ;-)
+
+:-)
+
+Well, I guess though if the firmware wants us to listen to those on/off
+messages we'll have to do that one way or the other.
+
+Oh. Maybe it's just *because* rmnet is layered on top, and thus you
+fundamentally cannot do flow control the way I described - not because
+you have multiple session on the same hardware ring, but because you
+abstracted the hardware ring away too much ...
+
+
+johannes
 
