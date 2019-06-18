@@ -2,80 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2A2A24A27C
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 15:39:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 38B314A27F
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 15:40:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729322AbfFRNjx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Jun 2019 09:39:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55960 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726248AbfFRNjw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Jun 2019 09:39:52 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1729380AbfFRNkd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Jun 2019 09:40:33 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:53392 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727584AbfFRNkc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Jun 2019 09:40:32 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 9A48F60A00; Tue, 18 Jun 2019 13:40:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1560865231;
+        bh=3S920kb9n9ahqKRzh5GewJNZfwKu57RH7nMn5VmTegs=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=l4aW6nnPwElZx+0tcypQKi7XbSu6KOxNtbIfky2jofdFgmEUfQqXjEwvRwQR24N7J
+         +FEhGWq3Q+zdbl68+wCqqK8k5nNx3LJnItZEW2JDY6MmXoljFxjsq/A8ZJBuipwLlL
+         XjLxPCa66cilnVCEN43ACwh0BSd2qbDkpY8KBZr8=
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        pdx-caf-mail.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_INVALID,DKIM_SIGNED,SPF_NONE autolearn=no autolearn_force=no
+        version=3.4.0
+Received: from [10.204.79.15] (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EB40520823;
-        Tue, 18 Jun 2019 13:39:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560865191;
-        bh=70c0tfx2NKpPi9Gpr2q7gCR4QPX5rIxB+dP6jDanaxw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Jz1v+Fs9V1Xn8xJhqc+0MBMnEX0Tauy2tNQtP4QpgHbatyu2r3lUTxIXU3VlBa9Ay
-         PW4bMxlasbWVFCOeYJYmJfb3FG2Q67RhuuiSHeVrDv+TdKjwV4kK13Rc65ZCI+orMh
-         VQLAVkCAQGU0LwjFV56bsvPkuIJq8Rw6LCNc8H1M=
-Date:   Tue, 18 Jun 2019 15:39:48 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Jonathan Corbet <corbet@lwn.net>
-Cc:     Puranjay Mohan <puranjay12@gmail.com>,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        linux-doc@vger.kernel.org,
-        linux-kernel-mentees@lists.linuxfoundation.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [Linux-kernel-mentees] [PATCH] Documentation: platform: convert
- x86-laptop-drivers.txt to reST
-Message-ID: <20190618133948.GB5416@kroah.com>
-References: <20190618053227.31678-1-puranjay12@gmail.com>
- <20190618054158.GA3713@kroah.com>
- <20190618071717.2132a1b7@lwn.net>
+        (Authenticated sender: mojha@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 64D4060A00;
+        Tue, 18 Jun 2019 13:40:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1560865227;
+        bh=3S920kb9n9ahqKRzh5GewJNZfwKu57RH7nMn5VmTegs=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=XtLSKjLWrLutIGH8KwFxjxolWP6E5fuG4T9J870AB6WdXIVg5pfxa4gyAyTQ7WTWp
+         ahuSaYp9ihiEQVDisIqsmz0CUG6ePwoq2ECYZ/+o99JdQLHEuFKc1AI8/d/mLGOEDX
+         hz8H/kQZWGOxB9+59FW14lzmDNMvtUPvvRDKcZ0I=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 64D4060A00
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=mojha@codeaurora.org
+Subject: Re: [PATCH V4] perf: event preserve and create across cpu hotplug
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Raghavendra Rao Ananta <rananta@codeaurora.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Alexei Starovoitov <ast@kernel.org>
+References: <1560337045-13298-1-git-send-email-mojha@codeaurora.org>
+ <1560848091-15694-1-git-send-email-mojha@codeaurora.org>
+ <20190618122329.GE3419@hirez.programming.kicks-ass.net>
+From:   Mukesh Ojha <mojha@codeaurora.org>
+Message-ID: <cc01dc2b-8992-cd95-e181-3400fc1ce82f@codeaurora.org>
+Date:   Tue, 18 Jun 2019 19:10:13 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190618071717.2132a1b7@lwn.net>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <20190618122329.GE3419@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 18, 2019 at 07:17:17AM -0600, Jonathan Corbet wrote:
-> On Tue, 18 Jun 2019 07:41:58 +0200
-> Greg KH <gregkh@linuxfoundation.org> wrote:
-> 
-> > On Tue, Jun 18, 2019 at 11:02:27AM +0530, Puranjay Mohan wrote:
-> > > This converts the plain text documentation to reStructuredText format.
-> > > No essential content change.
-> > > 
-> > > Signed-off-by: Puranjay Mohan <puranjay12@gmail.com>
-> > > ---
-> > >  Documentation/platform/x86-laptop-drivers.rst | 23 +++++++++++++++++++
-> > >  Documentation/platform/x86-laptop-drivers.txt | 18 ---------------
-> > >  2 files changed, 23 insertions(+), 18 deletions(-)
-> > >  create mode 100644 Documentation/platform/x86-laptop-drivers.rst
-> > >  delete mode 100644 Documentation/platform/x86-laptop-drivers.txt  
-> > 
-> > Don't you also need to hook it up to the documentation build process
-> > when doing this?
-> 
-> Hooking it into the TOC tree is a good thing, but I think it's also good
-> to think about the exercise in general.  This is a document dropped into
-> place five years ago and never touched again.  It's a short list of
-> seemingly ancient laptops with no explanation of what it means.  So the
-> real question, IMO, is whether this document is useful to anybody and, if
-> not, whether it should just be deleted instead.
 
-I bet it should be deleted, but we should ask the platform driver
-maintainers first before we do that :)
+On 6/18/2019 5:53 PM, Peter Zijlstra wrote:
+> On Tue, Jun 18, 2019 at 02:24:51PM +0530, Mukesh Ojha wrote:
+>> Perf framework doesn't allow preserving CPU events across
+>> CPU hotplugs. The events are scheduled out as and when the
+>> CPU walks offline. Moreover, the framework also doesn't
+>> allow the clients to create events on an offline CPU. As
+>> a result, the clients have to keep on monitoring the CPU
+>> state until it comes back online.
+>>
+>> Therefore,
+> That's not a therefore. There's a distinct lack of rationale here. Why
+> do you want this?
 
-thanks,
+Thanks Peter for coming back on this.
 
-greg k-h
+Missed to send the coverletter,
+https://lkml.org/lkml/2019/5/31/438
+Will resend this with coverletter.
+
+Btw,  This patch
+
+is based on suggestion given by you on this
+https://lkml.org/lkml/2018/2/16/763
+
+
+Thanks.
+Mukesh
+
+
+Thanks.
+Mukesh
+
