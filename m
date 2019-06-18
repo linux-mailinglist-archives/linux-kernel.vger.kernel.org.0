@@ -2,171 +2,142 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 875C74990E
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 08:43:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4DA644993D
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 08:47:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728728AbfFRGm5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Jun 2019 02:42:57 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:35830 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725919AbfFRGm4 (ORCPT
+        id S1728857AbfFRGrj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Jun 2019 02:47:39 -0400
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:39881 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726579AbfFRGrf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Jun 2019 02:42:56 -0400
-Received: by mail-lj1-f196.google.com with SMTP id x25so2291052ljh.2
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2019 23:42:55 -0700 (PDT)
+        Tue, 18 Jun 2019 02:47:35 -0400
+Received: by mail-ot1-f65.google.com with SMTP id r21so9845579otq.6
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2019 23:47:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=lgpzRv5/vynNFVxE3s7Hk+KSeLSqjof34qro8UmBm8o=;
-        b=ndvLQD4k5zwfsFqkCbpeU/GdORiZuLt2tQGPpLggKjVnArKNlOlBe01TuLIDNUq31V
-         YDKYozo8e5N0MIWhExz6KSZh5eu2+kcH5NWyGnXBlECDSH5Y+fIDPGDHQO1ZCI9gE6lS
-         uRnU62oK5BRiTw29kLb5SU/3z/yCyljtzmHvh5DFJ+SfwbQoT33keMUVnET74f7coWSU
-         xm04O86GOb1XopcpqRZz08BElMK4i0EaaO5bb+LQGPppA9yhmFzr7XFDCJAuv8wWzrcX
-         pAyUlw0Xjgt7m07w4e3fiL3NDYoYRZUzQNL7ayeS+BDw7s+n2ydNPhTMTPWKv1+pnW+q
-         fY5w==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=PSGQkiA0RTI8/zzM/PYhJFV7uoveyRIL9DcSm94XU9M=;
+        b=K3YrzhH9knSVg0opN5pMXGhkU64WtQRcrTBMXdiJN7CLHG6jerHxWRWu4ostAajrwu
+         ikNE+RINxAVHNPRepCq10CAskzoDIrnQUTRxTN22rMOosA1Q1REL2vHwJppsWN1Fosts
+         cVFoYxw/JO3JoGeWFX5Rh9E1CHYKcOcebw4IS2xIJ0kNlZZcSuJxbTuW9lN5poIWnTeW
+         7UyXWNymgk6NIv1skfmyFT8P2TgsdCFhJ+j0uP1GyoAF4YIZ9jRF1Dv6CK2wI/gAWt3w
+         IkzY1eIbGHFbigJcytrKhQ96VsJoWp0xFfS7XX4dWC1Y8vwbx5UG0k9dyuajDJKSCyVF
+         +OXg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=lgpzRv5/vynNFVxE3s7Hk+KSeLSqjof34qro8UmBm8o=;
-        b=P6jynHYA6GW0ljkj3I7bpiJ+xFISycb1knZcqq6dHWFD8OFED02ZkOaxXVMXtqwqdN
-         enwdNtIkoHe3xhsB0E9BgxGEskzwgGhm7w7Bz7MIB8RUYq9pietduHE2bCMxScbKgcTn
-         ugoxLyIN7OW+CcsyZEEg+zGmIY4kQNprtaT6C09CeERVgzdJCJv4RBTCc98BYqQLqrvu
-         V/yRV7s5ZPC3XlFJPNyYD2+O2Wmg2FermmF2etCigrhtNuxgBcv/syi3KE7JQQsKF/N8
-         mEOI/vrmUqsbAznoQp94PnPzinykZRXbmO8+ofNZReGYuBi+V6Vy5dNXILaYETCtk002
-         zfSQ==
-X-Gm-Message-State: APjAAAWHP6dC0ufSmY6TA7ba0uSZLHPw7xaU/oH4ml/BNzCwjRyOMMNV
-        fwMyxlEelfjTq4moE0fZg6IwlkKbudua0K9+VoOGKg==
-X-Google-Smtp-Source: APXvYqysx31qoiT/uxvMzQli9uOZPuPw935uTXzuZMOOepVzmNXRBmm8ahGu34wMTrts4UWwpQRpMCKlnOxf9U4V5Bo=
-X-Received: by 2002:a2e:8495:: with SMTP id b21mr20543162ljh.149.1560839768102;
- Mon, 17 Jun 2019 23:36:08 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=PSGQkiA0RTI8/zzM/PYhJFV7uoveyRIL9DcSm94XU9M=;
+        b=q8NJherHBjmaOLjl69uggWnXDtT2/m8XMzHdCCNgrvMmaUkpU25cdxAt7nD+j1oebd
+         v/uwz5W/agJowBaAId+/Twwd+1X5eTR/c/a5+Sg6I7wF9HRIvl2fmlPC9zPxYkZBeNeA
+         r6YxcvCiiNEG6remJquuc4JJW2R0ls42Tj85En9r6XgCPAbYpHv+a792HoSPYojScQiH
+         KQ2dpcEDXM7aD541teARPO1NtQTqar+YLNh86sfMnt5Mi17pBCieRE7NyjtEZuoZfo6I
+         xSYNA96W0UwQt6dWO58Mv02tKGfyauFG4NUX5U5QA/4bfCy54gBNMBN2locEBH+kg5Wa
+         DO3Q==
+X-Gm-Message-State: APjAAAW+Nmv3Dae+yDJyBYfIZWe7/X20AwYDfRs0q6fE8TezU4HqbyVM
+        xG9VlhR8cq9sTjQQ6wqlAlCCPA==
+X-Google-Smtp-Source: APXvYqz1110ewdb9NUAeSTkRxzg85X1SuQAXuN8x7GHnMUBwOu5l7oTLYjyfwq1iIOpaqYNvbf+HJg==
+X-Received: by 2002:a9d:6f91:: with SMTP id h17mr13797401otq.67.1560839991255;
+        Mon, 17 Jun 2019 23:39:51 -0700 (PDT)
+Received: from leoy-ThinkPad-X240s (li964-79.members.linode.com. [45.33.10.79])
+        by smtp.gmail.com with ESMTPSA id n7sm5347496oih.18.2019.06.17.23.39.45
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 17 Jun 2019 23:39:50 -0700 (PDT)
+Date:   Tue, 18 Jun 2019 14:39:37 +0800
+From:   Leo Yan <leo.yan@linaro.org>
+To:     Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
+Cc:     Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        bpf@vger.kernel.org
+Subject: Re: [PATCH 2/2] perf trace: Handle NULL pointer dereference in
+ trace__syscall_info()
+Message-ID: <20190618063937.GB24549@leoy-ThinkPad-X240s>
+References: <20190617091140.24372-1-leo.yan@linaro.org>
+ <20190617091140.24372-2-leo.yan@linaro.org>
+ <20190617173203.GA23094@kernel.org>
 MIME-Version: 1.0
-References: <20190617210745.104187490@linuxfoundation.org>
-In-Reply-To: <20190617210745.104187490@linuxfoundation.org>
-From:   Naresh Kamboju <naresh.kamboju@linaro.org>
-Date:   Tue, 18 Jun 2019 12:05:57 +0530
-Message-ID: <CA+G9fYueq_CFv59aYSguU_yq_nd9zwpcpnJKrqVtx_VOCSZ+9A@mail.gmail.com>
-Subject: Re: [PATCH 4.14 00/53] 4.14.128-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     open list <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        lkft-triage@lists.linaro.org,
-        linux- stable <stable@vger.kernel.org>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190617173203.GA23094@kernel.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 18 Jun 2019 at 02:58, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> This is the start of the stable review cycle for the 4.14.128 release.
-> There are 53 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Wed 19 Jun 2019 09:06:21 PM UTC.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-=
-4.14.128-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-4.14.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+On Mon, Jun 17, 2019 at 02:32:03PM -0300, Arnaldo Carvalho de Melo wrote:
+> Em Mon, Jun 17, 2019 at 05:11:40PM +0800, Leo Yan escreveu:
+> > trace__init_bpf_map_syscall_args() invokes trace__syscall_info() to
+> > retrieve system calls information, it always passes NULL for 'evsel'
+> > argument; when id is an invalid value then the logging will try to
+> > output event name, this triggers NULL pointer dereference.
+> > 
+> > This patch directly uses string "unknown" for event name when 'evsel'
+> > is NULL pointer.
+> > 
+> > Signed-off-by: Leo Yan <leo.yan@linaro.org>
+> > ---
+> >  tools/perf/builtin-trace.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
+> > index 5cd74651db4c..49dfb2fd393b 100644
+> > --- a/tools/perf/builtin-trace.c
+> > +++ b/tools/perf/builtin-trace.c
+> > @@ -1764,7 +1764,7 @@ static struct syscall *trace__syscall_info(struct trace *trace,
+> >  		static u64 n;
+> >  
+> >  		pr_debug("Invalid syscall %d id, skipping (%s, %" PRIu64 ")\n",
+> > -			 id, perf_evsel__name(evsel), ++n);
+> > +			 id, evsel ? perf_evsel__name(evsel) : "unknown", ++n);
+> >  		return NULL;
+> 
+> What do you think of this instead?
 
-Results from Linaro=E2=80=99s test farm.
-No regressions on arm64, arm, x86_64, and i386.
+Yes, I agree the below change is right thing to do.  FWIW:
 
-NOTE:
-Backported patch media: v4l2-ioctl: clear fields in s_parm
-fixed v4l2-compliance test case VIDIOC_G-S_PARM
+Reviewed-by: Leo Yan <leo.yan@linaro.org>
 
-Summary
-------------------------------------------------------------------------
+BTW, my patch followed the code in [1], after apply below your change,
+could consider to simplify code in [1] for without checking 'evsel' is
+NULL pointer anymore.
 
-kernel: 4.14.128-rc1
-git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
-le-rc.git
-git branch: linux-4.14.y
-git commit: 16102d7ed8409bff0d3b105d08bb2ca26343c539
-git describe: v4.14.127-54-g16102d7ed840
-Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.14-oe/bu=
-ild/v4.14.127-54-g16102d7ed840
+Thanks,
+Leo
 
-No regressions (compared to build v4.14.127)
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/acme/linux.git/tree/tools/perf/builtin-report.c?h=perf/core#n301
 
-Fixes (compared to build v4.14.127)
-------------------------------------------------------------------------
-  v4l2-compliance:
-    * VIDIOC_G-S_PARM
-
-Ran 22198 total tests in the following environments and test suites.
-
-Environments
---------------
-- dragonboard-410c - arm64
-- hi6220-hikey - arm64
-- i386
-- juno-r2 - arm64
-- qemu_arm
-- qemu_arm64
-- qemu_i386
-- qemu_x86_64
-- x15 - arm
-- x86_64
-
-Test Suites
------------
-* build
-* install-android-platform-tools-r2600
-* kselftest
-* libhugetlbfs
-* ltp-cap_bounds-tests
-* ltp-commands-tests
-* ltp-containers-tests
-* ltp-cpuhotplug-tests
-* ltp-cve-tests
-* ltp-dio-tests
-* ltp-fcntl-locktests-tests
-* ltp-filecaps-tests
-* ltp-fs-tests
-* ltp-fs_bind-tests
-* ltp-fs_perms_simple-tests
-* ltp-fsx-tests
-* ltp-hugetlb-tests
-* ltp-io-tests
-* ltp-ipc-tests
-* ltp-math-tests
-* ltp-mm-tests
-* ltp-nptl-tests
-* ltp-pty-tests
-* ltp-sched-tests
-* ltp-securebits-tests
-* ltp-syscalls-tests
-* ltp-timers-tests
-* network-basic-tests
-* perf
-* spectre-meltdown-checker-test
-* v4l2-compliance
-* ltp-open-posix-tests
-* kvm-unit-tests
-* kselftest-vsyscall-mode-native
-* kselftest-vsyscall-mode-none
-
---=20
-Linaro LKFT
-https://lkft.linaro.org
+> diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
+> index 68beef8f47ff..1d6af95b9207 100644
+> --- a/tools/perf/util/evsel.c
+> +++ b/tools/perf/util/evsel.c
+> @@ -590,6 +590,9 @@ const char *perf_evsel__name(struct perf_evsel *evsel)
+>  {
+>  	char bf[128];
+>  
+> +	if (!evsel)
+> +		goto out_unknown;
+> +
+>  	if (evsel->name)
+>  		return evsel->name;
+>  
+> @@ -629,7 +632,10 @@ const char *perf_evsel__name(struct perf_evsel *evsel)
+>  
+>  	evsel->name = strdup(bf);
+>  
+> -	return evsel->name ?: "unknown";
+> +	if (evsel->name)
+> +		return evsel->name;
+> +out_unknown:
+> +	return "unknown";
+>  }
+>  
+>  const char *perf_evsel__group_name(struct perf_evsel *evsel)
