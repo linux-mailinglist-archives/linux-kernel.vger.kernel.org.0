@@ -2,57 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 576E64987B
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 06:56:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 51DEE49875
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 06:55:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728637AbfFRE4W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Jun 2019 00:56:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46392 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725900AbfFRE4V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Jun 2019 00:56:21 -0400
-Received: from localhost (unknown [122.178.226.130])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 639A12085A;
-        Tue, 18 Jun 2019 04:56:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560833781;
-        bh=p/1WgzjyDGLLUL8w56446SHwaaWDO2rQKvXQxt/cSOE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=mLARzcNdUkEGgZ6QGRCy1f8/hT1C52+XCSQoCJtQofiim3IBDE61VXQboKn7OSnQB
-         kl9r5cEauFP3BdsUQkFjXA9tz42XRh9QCI6hydwe+7mFnSxAy39pQskRuJfSc+Eo9X
-         tHV3NswGQd/50ocwL2XpOHmRGf5i66vfC7zJt4LE=
-Date:   Tue, 18 Jun 2019 10:23:12 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc:     dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, sricharan@codeaurora.org
-Subject: Re: [PATCH] dmaengine: qcom-bam: fix circular buffer handling
-Message-ID: <20190618045312.GK2962@vkoul-mobl>
-References: <20190614142012.31384-1-srinivas.kandagatla@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190614142012.31384-1-srinivas.kandagatla@linaro.org>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+        id S1726376AbfFREzJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Jun 2019 00:55:09 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:41672 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725870AbfFREzI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Jun 2019 00:55:08 -0400
+Received: by mail-pg1-f195.google.com with SMTP id 83so6964134pgg.8
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2019 21:55:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=fASSq0Wc774NJxzj3o2gVuE5L9Puh7p/qKeMYZ6n7cI=;
+        b=kfXDN39x37u2gUdXh+31TVmw16KUbhKiGXOUmJK5IjvAQyqqoQGsF+yxC7w6YsYspo
+         YdKYEmiFvEROnpcEaCue7cQjW/ReQiiP8z3EhSEYK8o8dzSJrngcUUMOH5G1jQibPf+U
+         at0UlIUZFTfO7GkFUTJI6I7V89g/bXLxrdJ7A=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=fASSq0Wc774NJxzj3o2gVuE5L9Puh7p/qKeMYZ6n7cI=;
+        b=IYjZpBtv7gIjztT7+H+nSxznapZu8dv0OMJ4t3VTCr5NIvYLM7LLZ9WmjLkdZbRms7
+         byxamejEXqD/uStB1SYI76XycOonl+cpfBlVfWlzYrzTaGrRgjRGjMJTLeMPDb4XJXfc
+         DwqX+nyauf/ne2pYLihKuoJGp+ssbWYNSdTArLBjoOrL+s3GyyI6clsf66FiB8m3aUBQ
+         LLUzfwSj5nEcGkVFSuSCQVU1ReVK7pjENPdNU1voSboR9hElFsbovMN2iJyZlYP/5zOW
+         ahL7A3uqybfnIgE9SZ+gTXxobpW2h8g8pd3WcOXaXTb8oC2GisCWnNxrhgYboTa5Ic8U
+         UkEg==
+X-Gm-Message-State: APjAAAVgRst8qVqIubm9adkXUiq78B6fJbBLfVNKmiBuLlaprwrETY8i
+        wIIr3LIM8n9CFimur/LH5AwHUw==
+X-Google-Smtp-Source: APXvYqzQ6ivjg+w9Tcb/dlwC09AhFIwKHfALRY+f+pu5Z7NUCBWf3NtYl2A0C3qWH168n0z7jQNATw==
+X-Received: by 2002:a63:905:: with SMTP id 5mr863624pgj.173.1560833707635;
+        Mon, 17 Jun 2019 21:55:07 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id f7sm11967580pfd.43.2019.06.17.21.55.06
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 17 Jun 2019 21:55:06 -0700 (PDT)
+From:   Kees Cook <keescook@chromium.org>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>, x86@kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        linux-kernel@vger.kernel.org, kernel-hardening@lists.openwall.com
+Subject: [PATCH v3 0/3] x86/asm: Pin sensitive CR4 and CR0 bits
+Date:   Mon, 17 Jun 2019 21:55:00 -0700
+Message-Id: <20190618045503.39105-1-keescook@chromium.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 14-06-19, 15:20, Srinivas Kandagatla wrote:
-> For some reason arguments to most of the circular buffers
-> macros are used in reverse, tail is used for head and vice versa.
-> 
-> This leads to bam thinking that there is an extra descriptor at the
-> end and leading to retransmitting descriptor which was not scheduled
-> by any driver. This happens after MAX_DESCRIPTORS (4096) are scheduled
-> and done, so most of the drivers would not notice this, unless they are
-> heavily using bam dma. Originally found this issue while testing
-> SoundWire over SlimBus on DB845c which uses DMA very heavily for
-> read/writes.
+Hi,
 
-Applied and copied stable, thanks
--- 
-~Vinod
+This updates the cr pinning series to allow for no silent papering-over
+of pinning bugs (thanks to tglx to pointing out where I needed to poke
+cr4 harder). I've tested with under normal boot and hibernation.
+
+-Kees
+
+Kees Cook (3):
+  lkdtm: Check for SMEP clearing protections
+  x86/asm: Pin sensitive CR4 bits
+  x86/asm: Pin sensitive CR0 bits
+
+ arch/x86/include/asm/special_insns.h | 37 +++++++++++++++-
+ arch/x86/kernel/cpu/common.c         | 20 +++++++++
+ arch/x86/kernel/smpboot.c            |  8 +++-
+ drivers/misc/lkdtm/bugs.c            | 66 ++++++++++++++++++++++++++++
+ drivers/misc/lkdtm/core.c            |  1 +
+ drivers/misc/lkdtm/lkdtm.h           |  1 +
+ 6 files changed, 130 insertions(+), 3 deletions(-)
+
+--
+2.17.1
+
