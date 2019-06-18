@@ -2,108 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 918094A6A9
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 18:20:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E014A4A6AD
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 18:21:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729888AbfFRQUO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Jun 2019 12:20:14 -0400
-Received: from foss.arm.com ([217.140.110.172]:48748 "EHLO foss.arm.com"
+        id S1729944AbfFRQVG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Jun 2019 12:21:06 -0400
+Received: from foss.arm.com ([217.140.110.172]:48818 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729272AbfFRQUN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Jun 2019 12:20:13 -0400
+        id S1729295AbfFRQVF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Jun 2019 12:21:05 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B4DBB344;
-        Tue, 18 Jun 2019 09:20:12 -0700 (PDT)
-Received: from e103592.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 284273F246;
-        Tue, 18 Jun 2019 09:20:09 -0700 (PDT)
-Date:   Tue, 18 Jun 2019 17:20:07 +0100
-From:   Dave Martin <Dave.Martin@arm.com>
-To:     Yu-cheng Yu <yu-cheng.yu@intel.com>
-Cc:     Florian Weimer <fweimer@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-mm@kvack.org, linux-arch@vger.kernel.org,
-        linux-api@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Balbir Singh <bsingharora@gmail.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Eugene Syromiatnikov <esyr@redhat.com>,
-        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>
-Subject: Re: [PATCH v7 22/27] binfmt_elf: Extract .note.gnu.property from an
- ELF file
-Message-ID: <20190618162005.GF2790@e103592.cambridge.arm.com>
-References: <20190618091248.GB2790@e103592.cambridge.arm.com>
- <20190618124122.GH3419@hirez.programming.kicks-ass.net>
- <87ef3r9i2j.fsf@oldenburg2.str.redhat.com>
- <20190618125512.GJ3419@hirez.programming.kicks-ass.net>
- <20190618133223.GD2790@e103592.cambridge.arm.com>
- <d54fe81be77b9edd8578a6d208c72cd7c0b8c1dd.camel@intel.com>
- <87pnna7v1d.fsf@oldenburg2.str.redhat.com>
- <1ca57aaae8a2121731f2dcb1a137b92eed39a0d2.camel@intel.com>
- <87blyu7ubf.fsf@oldenburg2.str.redhat.com>
- <b0491cb517ba377da6496fe91a98fdbfca4609a9.camel@intel.com>
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9D0E0CFC;
+        Tue, 18 Jun 2019 09:21:02 -0700 (PDT)
+Received: from fuggles.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B3A563F246;
+        Tue, 18 Jun 2019 09:21:01 -0700 (PDT)
+Date:   Tue, 18 Jun 2019 17:20:21 +0100
+From:   Will Deacon <will.deacon@arm.com>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Dave Martin <dave.martin@arm.com>,
+        Richard Henderson <rth@twiddle.net>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Subject: Re: [PATCH] genksyms: Teach parser about 128-bit built-in types
+Message-ID: <20190618162021.GA4270@fuggles.cambridge.arm.com>
+References: <20190618131048.543-1-will.deacon@arm.com>
+ <CAK8P3a3phkiL8LFQM_AewMCE0EpQaCTOmgkVJe4x9oV84F4_7g@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <b0491cb517ba377da6496fe91a98fdbfca4609a9.camel@intel.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <CAK8P3a3phkiL8LFQM_AewMCE0EpQaCTOmgkVJe4x9oV84F4_7g@mail.gmail.com>
+User-Agent: Mutt/1.11.1+86 (6f28e57d73f2) ()
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 18, 2019 at 09:00:35AM -0700, Yu-cheng Yu wrote:
-> On Tue, 2019-06-18 at 18:05 +0200, Florian Weimer wrote:
-> > * Yu-cheng Yu:
-> > 
-> > > > I assumed that it would also parse the main executable and make
-> > > > adjustments based on that.
-> > > 
-> > > Yes, Linux also looks at the main executable's header, but not its
-> > > NT_GNU_PROPERTY_TYPE_0 if there is a loader.
-> > > 
-> > > > 
-> > > > ld.so can certainly provide whatever the kernel needs.  We need to tweak
-> > > > the existing loader anyway.
-> > > > 
-> > > > No valid statically-linked binaries exist today, so this is not a
-> > > > consideration at this point.
-> > > 
-> > > So from kernel, we look at only PT_GNU_PROPERTY?
-> > 
-> > If you don't parse notes/segments in the executable for CET, then yes.
-> > We can put PT_GNU_PROPERTY into the loader.
+Hi Arnd,
+
+On Tue, Jun 18, 2019 at 04:17:35PM +0200, Arnd Bergmann wrote:
+> On Tue, Jun 18, 2019 at 3:10 PM Will Deacon <will.deacon@arm.com> wrote:
+> >
+> > +       { "__int128", BUILTIN_INT_KEYW },
+> > +       { "__int128_t", BUILTIN_INT_KEYW },
+> > +       { "__uint128_t", BUILTIN_INT_KEYW },
 > 
-> Thanks!
+> I wonder if it's safe to treat them as the same type, since
+> __int128_t and __uint128_t differ in signedness.
+> 
+> If someone exports a symbol with one and changes it to the other, they
+> would appear to be the same type.
 
-Would this require the kernel and ld.so to be updated in a particular
-order to avoid breakage?  I don't know enough about RHEL to know how
-controversial that might be.
+My understanding is that the actual CRC generation for normal symbols is
+based purely on the string-representation of the function signature, and
+so the underlying type information isn't relevant to that. I can also
+confirm that the CRC for an exported symbol that returns a __uint128_t
+is not the same if you change it to return a __int128_t instead.
 
-Also:
-
-What about static binaries distrubited as part of RHEL?
-
-A user would also reasonably expect static binaries built using the
-distro toolchain to work on top of the distro kernel...  which might
-be broken by this.
-
-
-(When I say "broken" I mean that the binary would run, but CET
-protections would be silently turned off.)
-
-Cheers
----Dave
+Will
