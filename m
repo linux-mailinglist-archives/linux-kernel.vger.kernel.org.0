@@ -2,66 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E6FF49B3F
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 09:47:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B9B8449A81
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 09:26:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729314AbfFRHrm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Jun 2019 03:47:42 -0400
-Received: from mail1.protonmail.ch ([185.70.40.18]:53008 "EHLO
-        mail1.protonmail.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725934AbfFRHrj (ORCPT
+        id S1726307AbfFRH0T (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Jun 2019 03:26:19 -0400
+Received: from relay1.mentorg.com ([192.94.38.131]:55869 "EHLO
+        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725870AbfFRH0T (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Jun 2019 03:47:39 -0400
-Date:   Tue, 18 Jun 2019 05:18:01 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=emersion.fr;
-        s=protonmail; t=1560835085;
-        bh=ROX6bjPyMCjURrFP35KVTXnHB9n+5ry9VMvQqgDRnxs=;
-        h=Date:To:From:Cc:Reply-To:Subject:In-Reply-To:References:
-         Feedback-ID:From;
-        b=A5W2o0HxvP2s920wLWi3sSQvkYYoUu1v9V6xJZwg0tGUAIcxCec8MHDd5Yal57vnR
-         uPZAIAwajPfNNDS1N4QayDL9CFvSyvAs64WDV9CRw4DtRGi4vg87uHf/2hqGUOr1Z8
-         yjnjFJUp70yORYIvnVHGveLvz4Vb83XIGODkYL5U=
-To:     Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
-From:   Simon Ser <contact@emersion.fr>
-Cc:     Brian Starkey <brian.starkey@arm.com>,
-        Liviu Dudau <liviu.dudau@arm.com>,
-        Haneen Mohammed <hamohammed.sa@gmail.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Reply-To: Simon Ser <contact@emersion.fr>
-Subject: Re: [PATCH 1/2] drm/vkms: Use index instead of 0 in possible crtc
-Message-ID: <WQuF2MGabt8DxA1rdWhTcZIGSaXav-5XOae4hkdkxq51gom6tklMqrfOLnyN6WSm9TY5sLXp_fxoNQhtC3E7zY9A3dLEpfZ1phdw23m0SI8=@emersion.fr>
-In-Reply-To: <20190618021944.7ilhgaswme2a6amt@smtp.gmail.com>
-References: <cover.1559860606.git.rodrigosiqueiramelo@gmail.com>
- <e3bc263b273d91182e0577ed820b1c4f096834ec.1559860606.git.rodrigosiqueiramelo@gmail.com>
- <20190607073957.GB21222@phenom.ffwll.local>
- <CADKXj+7OLRLrGo+YbxZjR7f90WNPPjT_rkcyt3GrxomCAjOjHA@mail.gmail.com>
- <20190607150420.GI21222@phenom.ffwll.local>
- <20190618021944.7ilhgaswme2a6amt@smtp.gmail.com>
-Feedback-ID: FsVprHBOgyvh0T8bxcZ0CmvJCosWkwVUg658e_lOUQMnA9qynD8O1lGeniuBDfPSkDAUuhiKfOIXUZBfarMyvA==:Ext:ProtonMail
+        Tue, 18 Jun 2019 03:26:19 -0400
+Received: from svr-orw-mbx-03.mgc.mentorg.com ([147.34.90.203])
+        by relay1.mentorg.com with esmtps (TLSv1.2:ECDHE-RSA-AES256-SHA384:256)
+        id 1hd6Wy-0004az-Q0 from Jiada_Wang@mentor.com ; Mon, 17 Jun 2019 22:19:40 -0700
+Received: from jiwang-OptiPlex-980.tokyo.mentorg.com (147.34.91.1) by
+ svr-orw-mbx-03.mgc.mentorg.com (147.34.90.203) with Microsoft SMTP Server
+ (TLS) id 15.0.1320.4; Mon, 17 Jun 2019 22:19:37 -0700
+From:   Jiada Wang <jiada_wang@mentor.com>
+To:     <lgirdwood@gmail.com>, <broonie@kernel.org>, <perex@perex.cz>,
+        <tiwai@suse.com>, <kuninori.morimoto.gx@renesas.com>
+CC:     <jiada_wang@mentor.com>, <sudipi@jp.adit-jv.com>,
+        <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v2 1/1] ASoC: rsnd: fixup mod ID calculation in rsnd_ctu_probe_
+Date:   Tue, 18 Jun 2019 14:19:53 +0900
+Message-ID: <20190618051953.13419-1-jiada_wang@mentor.com>
+X-Mailer: git-send-email 2.19.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-1.2 required=7.0 tests=ALL_TRUSTED,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF autolearn=ham
-        autolearn_force=no version=3.4.2
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on mail.protonmail.ch
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-ClientProxiedBy: svr-orw-mbx-04.mgc.mentorg.com (147.34.90.204) To
+ svr-orw-mbx-03.mgc.mentorg.com (147.34.90.203)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tuesday, June 18, 2019 5:19 AM, Rodrigo Siqueira <rodrigosiqueiramelo@gm=
-ail.com> wrote:
-> I made the patch, but when I started to write the commit message, I just
-> realized that I did not understand why possible_crtcs should not be
-> equal zero. Why can we not use zero?
+From: Nilkanth Ahirrao <anilkanth@jp.adit-jv.com>
 
-Hi,
+commit c16015f36cc1 ("ASoC: rsnd: add .get_id/.get_id_sub")
+introduces rsnd_ctu_id which calcualates and gives
+the main Device id of the CTU by dividing the id by 4.
+rsnd_mod_id uses this interface to get the CTU main
+Device id. But this commit forgets to revert the main
+Device id calcution previously done in rsnd_ctu_probe_
+which also divides the id by 4. This path corrects the
+same to get the correct main Device id.
 
-possible_crtcs is a bitfield. If it's zero, it means the plane cannot
-be attached to any CRTC, which makes it rather useless.
+The issue is observered when rsnd_ctu_probe_ is done for CTU1
 
-Thanks,
+Fixes: c16015f36cc1 ("ASoC: rsnd: add .get_id/.get_id_sub")
 
-Simon
+Signed-off-by: Nilkanth Ahirrao <anilkanth@jp.adit-jv.com>
+Signed-off-by: Suresh Udipi <sudipi@jp.adit-jv.com>
+Signed-off-by: Jiada Wang <jiada_wang@mentor.com>
+---
+v2: fixed commit id
+
+v1: initial version
+---
+ sound/soc/sh/rcar/ctu.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/sound/soc/sh/rcar/ctu.c b/sound/soc/sh/rcar/ctu.c
+index 8cb06dab234e..7647b3d4c0ba 100644
+--- a/sound/soc/sh/rcar/ctu.c
++++ b/sound/soc/sh/rcar/ctu.c
+@@ -108,7 +108,7 @@ static int rsnd_ctu_probe_(struct rsnd_mod *mod,
+ 			   struct rsnd_dai_stream *io,
+ 			   struct rsnd_priv *priv)
+ {
+-	return rsnd_cmd_attach(io, rsnd_mod_id(mod) / 4);
++	return rsnd_cmd_attach(io, rsnd_mod_id(mod));
+ }
+ 
+ static void rsnd_ctu_value_init(struct rsnd_dai_stream *io,
+-- 
+2.19.2
+
