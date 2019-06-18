@@ -2,85 +2,153 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BA64849A92
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 09:29:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EE1C449A97
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 09:30:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728977AbfFRH3H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Jun 2019 03:29:07 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:59258 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725870AbfFRH3H (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Jun 2019 03:29:07 -0400
-Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: bbrezillon)
-        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id 6B5CB260C4A;
-        Tue, 18 Jun 2019 08:29:04 +0100 (BST)
-Date:   Tue, 18 Jun 2019 09:29:01 +0200
-From:   Boris Brezillon <boris.brezillon@collabora.com>
-To:     masonccyang@mxic.com.tw
-Cc:     "Miquel Raynal" <miquel.raynal@bootlin.com>, bbrezillon@kernel.org,
-        broonie@kernel.org, christophe.kerello@st.com,
-        computersforpeace@gmail.com, devicetree@vger.kernel.org,
-        dwmw2@infradead.org, geert@linux-m68k.org, juliensu@mxic.com.tw,
-        lee.jones@linaro.org, liang.yang@amlogic.com,
-        linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org,
-        linux-spi@vger.kernel.org, marcel.ziswiler@toradex.com,
-        marek.vasut@gmail.com, mark.rutland@arm.com, paul.burton@mips.com,
-        richard@nod.at, robh+dt@kernel.org, stefan@agner.ch,
-        zhengxunli@mxic.com.tw
-Subject: Re: [PATCH v3 2/4] mtd: rawnand: Add Macronix MX25F0A NAND
- controller
-Message-ID: <20190618092901.3bdd9f61@collabora.com>
-In-Reply-To: <20190618081436.5d488320@collabora.com>
-References: <1555320234-15802-1-git-send-email-masonccyang@mxic.com.tw>
-        <1555320234-15802-3-git-send-email-masonccyang@mxic.com.tw>
-        <20190512151820.4f2dd9da@xps13>
-        <OF074A1F06.5C1A58BE-ON482583FD.0031CD95-482583FD.003437AD@mxic.com.tw>
-        <20190520142333.390091d5@xps13>
-        <OFADC47344.0F9941B2-ON48258403.002336E3-48258403.003141F0@mxic.com.tw>
-        <20190527144250.71908bd9@xps13>
-        <OFE923A8E5.50375C30-ON48258409.0009AE1B-48258409.00119767@mxic.com.tw>
-        <20190617143510.4ded5728@xps13>
-        <OF1C1397B4.241DC339-ON4825841D.000482A2-4825841D.0007B67E@mxic.com.tw>
-        <20190618081436.5d488320@collabora.com>
-Organization: Collabora
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        id S1729040AbfFRHaA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Jun 2019 03:30:00 -0400
+Received: from ns.iliad.fr ([212.27.33.1]:44094 "EHLO ns.iliad.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725870AbfFRH37 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Jun 2019 03:29:59 -0400
+Received: from ns.iliad.fr (localhost [127.0.0.1])
+        by ns.iliad.fr (Postfix) with ESMTP id 0410020514;
+        Tue, 18 Jun 2019 09:29:57 +0200 (CEST)
+Received: from [192.168.108.49] (freebox.vlq16.iliad.fr [213.36.7.13])
+        by ns.iliad.fr (Postfix) with ESMTP id E080821961;
+        Tue, 18 Jun 2019 09:29:56 +0200 (CEST)
+Subject: Re: [PATCH v1] scsi: Don't select SCSI_PROC_FS by default
+To:     Finn Thain <fthain@telegraphics.com.au>,
+        Douglas Gilbert <dgilbert@interlog.com>
+Cc:     Bart Van Assche <bvanassche@acm.org>,
+        James Bottomley <jejb@linux.ibm.com>,
+        Martin Petersen <martin.petersen@oracle.com>,
+        SCSI <linux-scsi@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>
+References: <2de15293-b9be-4d41-bc67-a69417f27f7a@free.fr>
+ <621306ee-7ab6-9cd2-e934-94b3d6d731fc@acm.org>
+ <fb2d2e74-6725-4bf2-cf6c-63c0a2a10f4f@interlog.com>
+ <alpine.LNX.2.21.1906181107240.287@nippy.intranet>
+From:   Marc Gonzalez <marc.w.gonzalez@free.fr>
+Message-ID: <017cf3cf-ecd8-19c2-3bbd-7e7c28042c3c@free.fr>
+Date:   Tue, 18 Jun 2019 09:29:56 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <alpine.LNX.2.21.1906181107240.287@nippy.intranet>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-Virus-Scanned: ClamAV using ClamSMTP ; ns.iliad.fr ; Tue Jun 18 09:29:57 2019 +0200 (CEST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 18 Jun 2019 08:14:36 +0200
-Boris Brezillon <boris.brezillon@collabora.com> wrote:
+On 18/06/2019 03:08, Finn Thain wrote:
 
-> > > > > > 
-> > > > > > How to make all #CS keep high for NAND to enter 
-> > > > > > low-power standby mode if driver don't use "legacy.select_chip()"     
-> > ?   
-> > > > > 
-> > > > > See commit 02b4a52604a4 ("mtd: rawnand: Make ->select_chip()     
-> > optional  
-> > > > > when ->exec_op() is implemented") which states:
-> > > > > 
-> > > > >         "When [->select_chip() is] not implemented, the core is     
-> > assuming  
-> > > > >    the CS line is automatically asserted/deasserted by the driver     
-> > > > >    ->exec_op() implementation."     
-> > > > > 
-> > > > > Of course, the above is right only when the controller driver     
-> > supports  
-> > > > > the ->exec_op() interface.     
-> > > > 
-> > > > Currently, it seems that we will get the incorrect data and error
-> > > > operation due to CS in error toggling if CS line is controlled in     
-> > > > ->exec_op().     
+> On Mon, 17 Jun 2019, Douglas Gilbert wrote:
+> 
+>> On 2019-06-17 5:11 p.m., Bart Van Assche wrote:
+>>
+>>> On 6/12/19 6:59 AM, Marc Gonzalez wrote:
+>>>
+>>>> According to the option's help message, SCSI_PROC_FS has been
+>>>> superseded for ~15 years. Don't select it by default anymore.
+>>>>
+>>>> Signed-off-by: Marc Gonzalez <marc.w.gonzalez@free.fr>
+>>>> ---
+>>>>   drivers/scsi/Kconfig | 3 ---
+>>>>   1 file changed, 3 deletions(-)
+>>>>
+>>>> diff --git a/drivers/scsi/Kconfig b/drivers/scsi/Kconfig
+>>>> index 73bce9b6d037..8c95e9ad6470 100644
+>>>> --- a/drivers/scsi/Kconfig
+>>>> +++ b/drivers/scsi/Kconfig
+>>>> @@ -54,14 +54,11 @@ config SCSI_NETLINK
+>>>>   config SCSI_PROC_FS
+>>>>       bool "legacy /proc/scsi/ support"
+>>>>       depends on SCSI && PROC_FS
+>>>> -    default y
+>>>>       ---help---
+>>>>         This option enables support for the various files in
+>>>>         /proc/scsi.  In Linux 2.6 this has been superseded by
+>>>>         files in sysfs but many legacy applications rely on this.
+>>>> -      If unsure say Y.
+>>>> -
+>>>>   comment "SCSI support type (disk, tape, CD-ROM)"
+>>>>       depends on SCSI
+>>>
+>>> Hi Doug,
+>>>
+>>> If I run grep "/proc/scsi" over the sg3_utils source code then grep reports
+>>> 38 matches for that string. Does sg3_utils break with SCSI_PROC_FS=n?
+>>
+>> First, the sg driver. If placing
+>> #undef CONFIG_SCSI_PROC_FS
+>>
+>> prior to the includes in sg.c is a valid way to test that then the
+>> answer is no. Ah, but you are talking about sg3_utils .
+>>
+>> Or are you? For sg3_utils:
+>>
+>> $ find . -name '*.c' -exec grep "/proc/scsi" {} \; -print
+>> static const char * proc_allow_dio = "/proc/scsi/sg/allow_dio";
+>> ./src/sg_read.c
+>> static const char * proc_allow_dio = "/proc/scsi/sg/allow_dio";
+>> ./src/sgp_dd.c
+>> static const char * proc_allow_dio = "/proc/scsi/sg/allow_dio";
+>> ./src/sgm_dd.c
+>> static const char * proc_allow_dio = "/proc/scsi/sg/allow_dio";
+>> ./src/sg_dd.c
+>>                 "'echo 1 > /proc/scsi/sg/allow_dio'\n", q_len, dirio_count);
+>> ./testing/sg_tst_bidi.c
+>> static const char * proc_allow_dio = "/proc/scsi/sg/allow_dio";
+>> ./examples/sgq_dd.c
+>>
+>>
+>> That is 6 (not 38) by my count. Those 6 are all for direct IO
+>> (see below) which is off by default. I suspect old scanning
+>> utilities like sg_scan and sg_map might also use /proc/scsi/* .
+>> That is one reason why I wrote lsscsi. However I can't force folks
+>> to use lsscsi. As a related example, I still get bug reports for
+>> sginfo which I inherited from Eric Youngdale.
+>>
+>> If I was asked to debug a problem with the sg driver in a
+>> system without CONFIG_SCSI_PROC_FS defined, I would decline.
+>>
+>> The absence of /proc/scsi/sg/debug would be my issue. Can this
+>> be set up to do the same thing:
+>>     cat /sys/class/scsi_generic/debug
+>>   Is that breaking any sysfs rules?
+>>
+>>
+>> Also folks who rely on this to work:
+>>    cat /proc/scsi/sg/devices
+>> 0	0	0	0	0	1	255	0	1
+>> 0	0	0	1	0	1	255	0	1
+>> 0	0	0	2	0	1	255	0	1
+>>
+>> would be disappointed. Further I note that setting allow_dio via
+>> /proc/scsi/sg/allow_dio can also be done via /sys/module/sg/allow_dio .
+>> So that would be an interface breakage, but with an alternative.
+> 
+> You can grep for /proc/scsi/ across all Debian packages:
+> https://codesearch.debian.net/
+> 
+> This reveals that /proc/scsi/sg/ appears in smartmontools and other 
+> packages, for example.
 
-Oh, and please provide the modifications you added on top of this patch.
-Right now we're speculating on what you've done which is definitely not
-an efficient way to debug this sort of issues.
+Hello everyone,
+
+Please note that I am _in no way_ suggesting that we remove any code.
+
+I just think it might be time to stop forcing CONFIG_SCSI_PROC_FS into
+every config, and instead require one to explicitly request the aging
+feature (which makes CONFIG_SCSI_PROC_FS show up in a defconfig).
+
+Maybe we could add CONFIG_SCSI_PROC_FS to arch/x86/configs/foo ?
+(For which foo? In a separate patch or squashed with this one?)
+
+Regards.
