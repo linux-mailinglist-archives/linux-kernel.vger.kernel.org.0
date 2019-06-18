@@ -2,185 +2,137 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 30E2B4A9CD
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 20:26:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1DAC94A9D6
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 20:28:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730344AbfFRS04 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Jun 2019 14:26:56 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:40945 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727616AbfFRS04 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Jun 2019 14:26:56 -0400
-Received: by mail-lf1-f66.google.com with SMTP id a9so10058686lff.7;
-        Tue, 18 Jun 2019 11:26:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=yidQ/JoteqePmrNToanD1FIIm5PIfhjC5P+85GqoSXo=;
-        b=AcEFUp2/gfNe+FIlVyznfRqaCq766VcPH3by9YSNylW2HcG1LpRed+HCwDsWB+3kqn
-         9FnX02StNBCRlsSBY+zdKDEsE3VcjpwViCngstHzMkR7Ymt9jpoZ2hhremG9JVsgFMga
-         q6t8Zke/wB0JavdQQM5M4lxwFA/8r9ruamAz95yb5LMSpWpRD1M9+UIGLM8t39d644QV
-         CngnyI+nmLDVq729klEzV5NskyK//cbwVnzRWk7njV91fMPQGm7+CeP11BC9WZQ9JjXz
-         xttnVJm/ivBJaNbhzGmcpH4++agS9zkHWT5iaOC6cwWYo/G/wTTgPqK2J5H69U2GSyD/
-         6kAA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=yidQ/JoteqePmrNToanD1FIIm5PIfhjC5P+85GqoSXo=;
-        b=blM91wgxiab/NIKNoRfcbIYq4+chWLx0VvMMuyqHSLC33k9iGQxhvyX4LrRIQi00vk
-         BtWZUdyR5ZA3k5/cN3bgqv5d4jBoEn7SKQATfNrHz8WYFWyZgbrLayrYgQf25/0VCMj9
-         80pC/VR+VNhAEo4K92q+WcmMwkl0uh3MELxLapQhhu2tOa+o3P1tmuNmFRvlqX/OoR5e
-         lprNOqJiT/7PlDLi/L50G2aWzNDi0MABlF+9Vg/gFp0aVcom11H057RFEpcnp6LJleSQ
-         xelVmIHtAdpsj6seKr0B4xtpp5pZXfrwr1fecvsd4ANEEg4JzIL2m8bhuichCM2aUEUC
-         b7+g==
-X-Gm-Message-State: APjAAAVAFf+IJAkxSghAtNtEBtq6rNi0Hq0zjvEG20DgP+iRezJq0Qwz
-        Wngruc9W+BApfarM5Egc7/w=
-X-Google-Smtp-Source: APXvYqwMuI2ursOsy+CrF8ir3Ch7WCOQc4IyMeY71CthSm6OZIy5lGwis8NRfH05k7PyHsO2DIFckA==
-X-Received: by 2002:a19:6e41:: with SMTP id q1mr52075192lfk.20.1560882412849;
-        Tue, 18 Jun 2019 11:26:52 -0700 (PDT)
-Received: from [192.168.2.145] (ppp91-79-162-197.pppoe.mtu-net.ru. [91.79.162.197])
-        by smtp.googlemail.com with ESMTPSA id b6sm2580242lfa.54.2019.06.18.11.26.51
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 18 Jun 2019 11:26:52 -0700 (PDT)
-Subject: Re: [PATCH V2] i2c: tegra: disable irq in tegra_i2c_xfer_msg
-To:     Bitan Biswas <bbiswas@nvidia.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Thierry Reding <treding@nvidia.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Peter Rosin <peda@axentia.se>,
-        Wolfram Sang <wsa@the-dreams.de>
-Cc:     Shardar Mohammed <smohammed@nvidia.com>,
-        Sowjanya Komatineni <skomatineni@nvidia.com>,
-        Mantravadi Karthik <mkarthik@nvidia.com>
-References: <1560847368-16069-1-git-send-email-bbiswas@nvidia.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <cda89c10-c597-ce90-98dd-5cc13ee9b83d@gmail.com>
-Date:   Tue, 18 Jun 2019 21:26:51 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.1
+        id S1730223AbfFRS2w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Jun 2019 14:28:52 -0400
+Received: from mx2.suse.de ([195.135.220.15]:49042 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729642AbfFRS2v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Jun 2019 14:28:51 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 5D800AE5D;
+        Tue, 18 Jun 2019 18:28:49 +0000 (UTC)
+Date:   Tue, 18 Jun 2019 20:28:48 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Yang Shi <yang.shi@linux.alibaba.com>
+Cc:     akpm@linux-foundation.org, vbabka@suse.cz,
+        mgorman@techsingularity.net, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org
+Subject: Re: [PATCH] mm: mempolicy: handle vma with unmovable pages mapped
+ correctly in mbind
+Message-ID: <20190618182848.GJ3318@dhcp22.suse.cz>
+References: <1560797290-42267-1-git-send-email-yang.shi@linux.alibaba.com>
+ <20190618130253.GH3318@dhcp22.suse.cz>
+ <cf33b724-fdd5-58e3-c06a-1bc563525311@linux.alibaba.com>
 MIME-Version: 1.0
-In-Reply-To: <1560847368-16069-1-git-send-email-bbiswas@nvidia.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cf33b724-fdd5-58e3-c06a-1bc563525311@linux.alibaba.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-18.06.2019 11:42, Bitan Biswas пишет:
-> tegra_i2c_xfer_msg initiates the I2C transfer in DMA
-> or PIO mode. It involves steps that need FIFO register
-> access, DMA API calls like dma_sync_single_for_device, etc.
-> Tegra I2C ISR has calls to tegra_i2c_empty_rx_fifo in PIO mode
-> and in DMA/PIO mode writes different I2C registers including
-> I2C interrupt status. ISR cannot start processing
-> before the preparation step at tegra_i2c_xfer_msg is complete.
-> Hence, a synchronization between ISR and tegra_i2c_xfer_msg
-> is in place today using spinlock.
-
-Please use full 75 chars per-line, this should make commit message to look better.
-
-> Spinlock busy waits and can add avoidable delays.
+On Tue 18-06-19 10:06:54, Yang Shi wrote:
 > 
-> In this patch needed synchronization is achieved by disabling
-> I2C interrupt during preparation step and enabling interrupt
-> once preparation is over and spinlock is no longer needed.
 > 
-> Signed-off-by: Bitan Biswas <bbiswas@nvidia.com>
-> ---
->  drivers/i2c/busses/i2c-tegra.c | 17 ++++++++---------
->  1 file changed, 8 insertions(+), 9 deletions(-)
+> On 6/18/19 6:02 AM, Michal Hocko wrote:
+> > [Cc networking people - see a question about setsockopt below]
+> > 
+> > On Tue 18-06-19 02:48:10, Yang Shi wrote:
+> > > When running syzkaller internally, we ran into the below bug on 4.9.x
+> > > kernel:
+> > > 
+> > > kernel BUG at mm/huge_memory.c:2124!
+> > What is the BUG_ON because I do not see any BUG_ON neither in v4.9 nor
+> > the latest stable/linux-4.9.y
 > 
-> diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-> index 6fb545e..ccc7fae 100644
-> --- a/drivers/i2c/busses/i2c-tegra.c
-> +++ b/drivers/i2c/busses/i2c-tegra.c
-> @@ -240,7 +240,6 @@ struct tegra_i2c_hw_feature {
->   * @bus_clk_rate: current I2C bus clock rate
->   * @clk_divisor_non_hs_mode: clock divider for non-high-speed modes
->   * @is_multimaster_mode: track if I2C controller is in multi-master mode
-> - * @xfer_lock: lock to serialize transfer submission and processing
->   * @tx_dma_chan: DMA transmit channel
->   * @rx_dma_chan: DMA receive channel
->   * @dma_phys: handle to DMA resources
-> @@ -270,8 +269,6 @@ struct tegra_i2c_dev {
->  	u32 bus_clk_rate;
->  	u16 clk_divisor_non_hs_mode;
->  	bool is_multimaster_mode;
-> -	/* xfer_lock: lock to serialize transfer submission and processing */
-> -	spinlock_t xfer_lock;
->  	struct dma_chan *tx_dma_chan;
->  	struct dma_chan *rx_dma_chan;
->  	dma_addr_t dma_phys;
-> @@ -835,7 +832,6 @@ static irqreturn_t tegra_i2c_isr(int irq, void *dev_id)
->  
->  	status = i2c_readl(i2c_dev, I2C_INT_STATUS);
->  
-> -	spin_lock(&i2c_dev->xfer_lock);
->  	if (status == 0) {
->  		dev_warn(i2c_dev->dev, "irq status 0 %08x %08x %08x\n",
->  			 i2c_readl(i2c_dev, I2C_PACKET_TRANSFER_STATUS),
-> @@ -935,7 +931,6 @@ static irqreturn_t tegra_i2c_isr(int irq, void *dev_id)
->  
->  	complete(&i2c_dev->msg_complete);
->  done:
-> -	spin_unlock(&i2c_dev->xfer_lock);
->  	return IRQ_HANDLED;
->  }
->  
-> @@ -1054,7 +1049,6 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
->  	u32 packet_header;
->  	u32 int_mask;
->  	unsigned long time_left;
-> -	unsigned long flags;
->  	size_t xfer_size;
->  	u32 *buffer = NULL;
->  	int err = 0;
-> @@ -1085,7 +1079,10 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
->  	 */
->  	xfer_time += DIV_ROUND_CLOSEST(((xfer_size * 9) + 2) * MSEC_PER_SEC,
->  					i2c_dev->bus_clk_rate);
-> -	spin_lock_irqsave(&i2c_dev->xfer_lock, flags);
-> +	if (!i2c_dev->irq_disabled) {
-> +		disable_irq_nosync(i2c_dev->irq);
-> +		i2c_dev->irq_disabled = true;
-> +	}
+> The line number might be not exactly same with upstream 4.9 since there
+> might be some our internal patches.
+> 
+> It is line 2096 at mm/huge_memory.c in 4.9.182.
 
-1) Peter correctly pointed out in the other email that the disabling should be synced.
-But see more below in 3.
+So it is 
+	VM_BUG_ON_PAGE(!PageSwapBacked(page), page);
+that is later mentioned that has been removed. Good. Thanks for the
+clarification!
 
-2) i2c_dev->irq_disabled == true can't ever be the case here because tegra_i2c_init()
-re-enables interrupt in a case of error condition. Hence interrupt always enabled at
-the beginning of the transfer.
+> > > invalid opcode: 0000 [#1] SMP KASAN
+> > [...]
+> > > Code: c7 80 1c 02 00 e8 26 0a 76 01 <0f> 0b 48 c7 c7 40 46 45 84 e8 4c
+> > > RIP  [<ffffffff81895d6b>] split_huge_page_to_list+0x8fb/0x1030 mm/huge_memory.c:2124
+> > >   RSP <ffff88006899f980>
+> > > 
+> > > with the below test:
+> > > 
+> > > ---8<---
+> > > 
+> > > uint64_t r[1] = {0xffffffffffffffff};
+> > > 
+> > > int main(void)
+> > > {
+> > > 	syscall(__NR_mmap, 0x20000000, 0x1000000, 3, 0x32, -1, 0);
+> > > 				intptr_t res = 0;
+> > > 	res = syscall(__NR_socket, 0x11, 3, 0x300);
+> > > 	if (res != -1)
+> > > 		r[0] = res;
+> > > *(uint32_t*)0x20000040 = 0x10000;
+> > > *(uint32_t*)0x20000044 = 1;
+> > > *(uint32_t*)0x20000048 = 0xc520;
+> > > *(uint32_t*)0x2000004c = 1;
+> > > 	syscall(__NR_setsockopt, r[0], 0x107, 0xd, 0x20000040, 0x10);
+> > > 	syscall(__NR_mmap, 0x20fed000, 0x10000, 0, 0x8811, r[0], 0);
+> > > *(uint64_t*)0x20000340 = 2;
+> > > 	syscall(__NR_mbind, 0x20ff9000, 0x4000, 0x4002, 0x20000340,
+> > > 0x45d4, 3);
+> > > 	return 0;
+> > > }
+> > > 
+> > > ---8<---
+> > > 
+> > > Actually the test does:
+> > > 
+> > > mmap(0x20000000, 16777216, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_ANONYMOUS, -1, 0) = 0x20000000
+> > > socket(AF_PACKET, SOCK_RAW, 768)        = 3
+> > > setsockopt(3, SOL_PACKET, PACKET_TX_RING, {block_size=65536, block_nr=1, frame_size=50464, frame_nr=1}, 16) = 0
+> > > mmap(0x20fed000, 65536, PROT_NONE, MAP_SHARED|MAP_FIXED|MAP_POPULATE|MAP_DENYWRITE, 3, 0) = 0x20fed000
+> > > mbind(..., MPOL_MF_STRICT|MPOL_MF_MOVE) = 0
+> > Ughh. Do I get it right that that this setsockopt allows an arbitrary
+> > contiguous memory allocation size to be requested by a unpriviledged
+> > user? Or am I missing something that restricts there any restriction?
+> 
+> It needs CAP_NET_RAW to call socket() to set socket type to RAW. The test is
+> run by root user.
 
-3) In my previous answer I was suggesting to request IRQ in a disabled state, this
-will allow to remove i2c_dev->irq_disabled completely.
+OK, good. That is much better. I just didn't see the capability check. I
+can see one in packet_create but I do not see any in setsockopt. Maybe I
+just got lost in indirection or implied security model.
+ 
+[...]
+> > > Change migrate_page_add() to check if the page is movable or not, if it
+> > > is unmovable, just return -EIO.  We don't have to check non-LRU movable
+> > > pages since just zsmalloc and virtio-baloon support this.  And, they
+> > > should be not able to reach here.
+> > You are not checking whether the page is movable, right? You only rely
+> > on PageLRU check which is not really an equivalent thing. There are
+> > movable pages which are not LRU and also pages might be off LRU
+> > temporarily for many reasons so this could lead to false positives.
+> 
+> I'm supposed non-LRU movable pages could not reach here. Since most of them
+> are not mmapable, i.e. virtio-balloon, zsmalloc. zram device is mmapable,
+> but the page fault to that vma would end up allocating user space pages
+> which are on LRU. If I miss something please let me know.
 
-Then the tegra_i2c_xfer_msg() will have to enable IRQ after completion of the
-transfer-preparation process and disable IRQ once transfer is done (both success and
-failure cases). This is actually not a bad additional motivation for this patch, to
-keep CPU's interrupt disabled while idling and not to only rely on interrupt masking
-of the I2C hardware.
+That might be true right now but it is a very subtle assumption that
+might break easily in the future. The point is still that even LRU pages
+might be isolated from the LRU list temporarily and you do not want this
+to cause the failure easily.
 
-4) ISR should simply return IRQ_NONE when interrupt status is 0 and allow kernel core
-to disable the faulty interrupt itself. There will be "unhandled interrupt" error
-message in KMSG log, following the disabling.
-
-5) In order to request IRQ in a disabled state, the IRQ_NOAUTOEN flag need to be set
-before the requesting, like this:
-
-    irq_set_status_flags(irq, IRQ_NOAUTOEN);
-
-    devm_request_irq(&pdev->dev, irq...);
-
-In a result of combining 3-5, both i2c_dev->irq_disabled and i2c_dev->irq variables
-become obsolete and could be removed in addition to xfer_lock. That all is a good
-cleanup in my opinion.
-
-[snip]
+-- 
+Michal Hocko
+SUSE Labs
