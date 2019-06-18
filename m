@@ -2,75 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0476F4ADE1
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 00:34:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B6E774ADE6
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 00:37:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730706AbfFRWey (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Jun 2019 18:34:54 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:56122 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729982AbfFRWey (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Jun 2019 18:34:54 -0400
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 2FE433092674;
-        Tue, 18 Jun 2019 22:34:54 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-57.rdu2.redhat.com [10.10.120.57])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 68C6C100996F;
-        Tue, 18 Jun 2019 22:34:50 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <CAJfpegutheVtnmN6BFSjzrmz8p9+DpZxFoKa4CoShoh4MW+5gQ@mail.gmail.com>
-References: <CAJfpegutheVtnmN6BFSjzrmz8p9+DpZxFoKa4CoShoh4MW+5gQ@mail.gmail.com> <155905626142.1662.18430571708534506785.stgit@warthog.procyon.org.uk> <155905629702.1662.7233272785972036117.stgit@warthog.procyon.org.uk>
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     dhowells@redhat.com, Al Viro <viro@zeniv.linux.org.uk>,
-        Ian Kent <raven@themaw.net>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Miklos Szeredi <mszeredi@redhat.com>
-Subject: Re: [PATCH 04/25] vfs: Implement parameter value retrieval with fsinfo() [ver #13]
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <24126.1560897289.1@warthog.procyon.org.uk>
-Date:   Tue, 18 Jun 2019 23:34:49 +0100
-Message-ID: <24127.1560897289@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Tue, 18 Jun 2019 22:34:54 +0000 (UTC)
+        id S1730788AbfFRWgr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Jun 2019 18:36:47 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:36874 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729982AbfFRWgr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Jun 2019 18:36:47 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5IMXaDi107210;
+        Tue, 18 Jun 2019 22:36:31 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=content-type :
+ mime-version : subject : from : in-reply-to : date : cc :
+ content-transfer-encoding : message-id : references : to;
+ s=corp-2018-07-02; bh=8RgNe7nRFwWepfnFBvzlDwjlM6F4o/z+i9rBVj0AheY=;
+ b=A0VwO1r5pE6mC+nS1A1UwVsONWNMBZXsvrUWujPaT313Y8i7U/7/Oaz4Y/agtktiLE3p
+ a4gFWMnZxK3WuAkqnk6Phfx5KA9/OU+P2dLdvrAKAjbGIXGCHnam68R2Z8ahWW5OHduH
+ 3Un8Xtv0GNCMdJh//nkyD5jYkuANE3u8p5QW4kvKRJ7Wmjan3Q+LlC+NmNpY/c+Jg7z4
+ bt/mBgdlPBbuzEbsMWwgk0xXBw8Svhf+LNk5HzBgFNRrpK1vvlbtJ7CJEdj4Ei7iKFXB
+ yCHN+KuGO7uyw6jnI4qZmpgiuFE+eJuaYajXXBEctKoam36TpBpEkuqV96TNNmqeaz06 RQ== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by userp2120.oracle.com with ESMTP id 2t780985ah-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 18 Jun 2019 22:36:31 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5IMaR37045061;
+        Tue, 18 Jun 2019 22:36:30 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserp3020.oracle.com with ESMTP id 2t77yngmys-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 18 Jun 2019 22:36:30 +0000
+Received: from abhmp0018.oracle.com (abhmp0018.oracle.com [141.146.116.24])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x5IMaTUt005813;
+        Tue, 18 Jun 2019 22:36:29 GMT
+Received: from [10.30.3.14] (/213.57.127.2)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 18 Jun 2019 15:36:28 -0700
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 11.1 \(3445.4.7\))
+Subject: Re: [PATCH v2] KVM: x86: Modify struct kvm_nested_state to have
+ explicit fields for data
+From:   Liran Alon <liran.alon@oracle.com>
+In-Reply-To: <1560875046-26279-1-git-send-email-pbonzini@redhat.com>
+Date:   Wed, 19 Jun 2019 01:36:25 +0300
+Cc:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <D2867F96-6B8D-4A1D-9F6F-CF0F171614BC@oracle.com>
+References: <1560875046-26279-1-git-send-email-pbonzini@redhat.com>
+To:     Paolo Bonzini <pbonzini@redhat.com>
+X-Mailer: Apple Mail (2.3445.4.7)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9292 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=958
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1906180181
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9292 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1906180181
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Miklos Szeredi <miklos@szeredi.hu> wrote:
 
-> Again, don't blindly transform s_flags into options, because some of
-> them may have been internally manipulated by the filesystem.
 
-In what filesystems do I need to undo this manipulation?
+> On 18 Jun 2019, at 19:24, Paolo Bonzini <pbonzini@redhat.com> wrote:
+>=20
+> From: Liran Alon <liran.alon@oracle.com>
+>=20
+> Improve the KVM_{GET,SET}_NESTED_STATE structs by detailing the format
+> of VMX nested state data in a struct.
+>=20
+> In order to avoid changing the ioctl values of
+> KVM_{GET,SET}_NESTED_STATE, there is a need to preserve
+> sizeof(struct kvm_nested_state). This is done by defining the data
+> struct as "data.vmx[0]". It was the most elegant way I found to
+> preserve struct size while still keeping struct readable and easy to
+> maintain. It does have a misfortunate side-effect that now it has to =
+be
+> accessed as "data.vmx[0]" rather than just "data.vmx".
+>=20
+> Because we are already modifying these structs, I also modified the
+> following:
+> * Define the "format" field values as macros.
+> * Rename vmcs_pa to vmcs12_pa for better readability.
+>=20
+> Signed-off-by: Liran Alon <liran.alon@oracle.com>
+> [Remove SVM stubs, add KVM_STATE_NESTED_VMX_VMCS12_SIZE. - Paolo]
 
-> You could do a helper for filesystems that does the the common ones
-> (ro/sync/dirsync) but all of that *should* go through the filesystem.
+1) Why should we remove SVM stubs? I think it makes the interface =
+intention more clear.
+Do you see any disadvantage of having them?
 
-I don't agree, but since you keep insisting, I've changed the helper function
-that renders these so that it now takes s_flags as an argument and is called
-from generic_fsinfo() if the filesystem doesn't handle FSINFO_ATTR_PARAMETERS.
+2) What is the advantage of defining a separate =
+KVM_STATE_NESTED_VMX_VMCS12_SIZE
+rather than just moving VMCS12_SIZE to userspace header?
 
-Therefore, every filesystem that handles FSINFO_ATTR_PARAMETERS, *must* call
-the function itself (or do the noting directly) otherwise these parameters
-will not get rendered.
+-Liran
 
-The helper function has been exported, and the calling filesystem can give any
-s_flags it likes.  All the filesystems so far just use
-path->dentry->d_sb->s_flags.
+> Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+> ---
 
-> Same goes for vfs_parse_sb_flag() btw.   It should be moved into each
-> filesystem's ->parse_param() and not be a mandatory thing.
-
-I disagree.  Every filesystem *must* be able to accept these standard flags,
-even if it then ignores them.
-
-David
