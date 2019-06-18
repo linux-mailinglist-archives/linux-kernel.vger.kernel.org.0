@@ -2,158 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B7944A5A4
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 17:42:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B8B064A5CC
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 17:48:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729782AbfFRPmB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Jun 2019 11:42:01 -0400
-Received: from wind.enjellic.com ([76.10.64.91]:35716 "EHLO wind.enjellic.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729349AbfFRPmA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Jun 2019 11:42:00 -0400
-Received: from wind.enjellic.com (localhost [127.0.0.1])
-        by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id x5IFegEV006176;
-        Tue, 18 Jun 2019 10:40:42 -0500
-Received: (from greg@localhost)
-        by wind.enjellic.com (8.15.2/8.15.2/Submit) id x5IFeepQ006175;
-        Tue, 18 Jun 2019 10:40:40 -0500
-Date:   Tue, 18 Jun 2019 10:40:40 -0500
-From:   "Dr. Greg" <greg@enjellic.com>
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        Cedric Xing <cedric.xing@intel.com>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        selinux@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        linux-sgx@vger.kernel.org,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Paul Moore <paul@paul-moore.com>,
-        Eric Paris <eparis@parisplace.org>,
-        Jethro Beekman <jethro@fortanix.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>, nhorman@redhat.com,
-        pmccallum@redhat.com, "Ayoun, Serge" <serge.ayoun@intel.com>,
-        "Katz-zamir, Shay" <shay.katz-zamir@intel.com>,
-        "Huang, Haitao" <haitao.huang@intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        "Svahn, Kai" <kai.svahn@intel.com>, Borislav Petkov <bp@alien8.de>,
-        Josh Triplett <josh@joshtriplett.org>,
-        "Huang, Kai" <kai.huang@intel.com>,
-        David Rientjes <rientjes@google.com>,
-        "Roberts, William C" <william.c.roberts@intel.com>,
-        Philip Tricca <philip.b.tricca@intel.com>
-Subject: Re: [RFC PATCH v1 2/3] LSM/x86/sgx: Implement SGX specific hooks in SELinux
-Message-ID: <20190618154040.GA4603@wind.enjellic.com>
-Reply-To: "Dr. Greg" <greg@enjellic.com>
-References: <cover.1560131039.git.cedric.xing@intel.com> <a382d46f66756e13929ca9244479dd9f689c470e.1560131039.git.cedric.xing@intel.com> <b6f099cd-c0eb-d5cf-847d-27a15ac5ceaf@tycho.nsa.gov> <20190611220243.GB3416@linux.intel.com> <8d99d8fb-a921-286a-8cf0-cd522e09b37c@tycho.nsa.gov> <20190614004600.GF18385@linux.intel.com> <20190614153840.GC12191@linux.intel.com> <CALCETrXcOQkvMHdh5DgdQ6JAgzsZCNFVEtnQz-5RbNr4vsadDQ@mail.gmail.com> <20190617164915.GA25085@linux.intel.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190617164915.GA25085@linux.intel.com>
-User-Agent: Mutt/1.4i
-X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Tue, 18 Jun 2019 10:40:42 -0500 (CDT)
+        id S1729837AbfFRPsZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Jun 2019 11:48:25 -0400
+Received: from avon.wwwdotorg.org ([104.237.132.123]:60274 "EHLO
+        avon.wwwdotorg.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729209AbfFRPsX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Jun 2019 11:48:23 -0400
+X-Greylist: delayed 435 seconds by postgrey-1.27 at vger.kernel.org; Tue, 18 Jun 2019 11:48:22 EDT
+Received: from [10.20.204.51] (unknown [216.228.112.24])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by avon.wwwdotorg.org (Postfix) with ESMTPSA id 95AB01C015A;
+        Tue, 18 Jun 2019 09:41:05 -0600 (MDT)
+X-Virus-Status: Clean
+X-Virus-Scanned: clamav-milter 0.100.3 at avon.wwwdotorg.org
+Subject: Re: [PATCH V3 02/17] pinctrl: tegra: add suspend and resume support
+To:     Dmitry Osipenko <digetx@gmail.com>,
+        Sowjanya Komatineni <skomatineni@nvidia.com>
+Cc:     thierry.reding@gmail.com, jonathanh@nvidia.com, tglx@linutronix.de,
+        jason@lakedaemon.net, marc.zyngier@arm.com,
+        linus.walleij@linaro.org, stefan@agner.ch, mark.rutland@arm.com,
+        pdeschrijver@nvidia.com, pgaikwad@nvidia.com, sboyd@kernel.org,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+        jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org,
+        devicetree@vger.kernel.org
+References: <1560843991-24123-1-git-send-email-skomatineni@nvidia.com>
+ <1560843991-24123-3-git-send-email-skomatineni@nvidia.com>
+ <7706a287-44b7-3ad6-37ff-47e97172a798@gmail.com>
+ <a23ffbae-dd85-c023-7aae-3b81e0b17ebc@gmail.com>
+From:   Stephen Warren <swarren@wwwdotorg.org>
+Message-ID: <fd415362-7479-6f98-c8db-1b7758fd3f1d@wwwdotorg.org>
+Date:   Tue, 18 Jun 2019 09:41:03 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
+MIME-Version: 1.0
+In-Reply-To: <a23ffbae-dd85-c023-7aae-3b81e0b17ebc@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 17, 2019 at 09:49:15AM -0700, Sean Christopherson wrote:
+On 6/18/19 3:30 AM, Dmitry Osipenko wrote:
+> 18.06.2019 12:22, Dmitry Osipenko пишет:
+>> 18.06.2019 10:46, Sowjanya Komatineni пишет:
+>>> This patch adds suspend and resume support for Tegra pinctrl driver
+>>> and registers them to syscore so the pinmux settings are restored
+>>> before the devices resume.
+>>>
+>>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+>>> ---
+>>>   drivers/pinctrl/tegra/pinctrl-tegra.c    | 62 ++++++++++++++++++++++++++++++++
+>>>   drivers/pinctrl/tegra/pinctrl-tegra.h    |  5 +++
+>>>   drivers/pinctrl/tegra/pinctrl-tegra114.c |  1 +
+>>>   drivers/pinctrl/tegra/pinctrl-tegra124.c |  1 +
+>>>   drivers/pinctrl/tegra/pinctrl-tegra20.c  |  1 +
+>>>   drivers/pinctrl/tegra/pinctrl-tegra210.c | 13 +++++++
+>>>   drivers/pinctrl/tegra/pinctrl-tegra30.c  |  1 +
+>>>   7 files changed, 84 insertions(+)
+>>>
+>>> diff --git a/drivers/pinctrl/tegra/pinctrl-tegra.c b/drivers/pinctrl/tegra/pinctrl-tegra.c
+>>> index 34596b246578..ceced30d8bd1 100644
+>>> --- a/drivers/pinctrl/tegra/pinctrl-tegra.c
+>>> +++ b/drivers/pinctrl/tegra/pinctrl-tegra.c
+>>> @@ -20,11 +20,16 @@
+>>>   #include <linux/pinctrl/pinmux.h>
+>>>   #include <linux/pinctrl/pinconf.h>
+>>>   #include <linux/slab.h>
+>>> +#include <linux/syscore_ops.h>
+>>>   
+>>>   #include "../core.h"
+>>>   #include "../pinctrl-utils.h"
+>>>   #include "pinctrl-tegra.h"
+>>>   
+>>> +#define EMMC2_PAD_CFGPADCTRL_0			0x1c8
+>>> +#define EMMC4_PAD_CFGPADCTRL_0			0x1e0
+>>> +#define EMMC_DPD_PARKING			(0x1fff << 14)
+>>> +
+>>>   static inline u32 pmx_readl(struct tegra_pmx *pmx, u32 bank, u32 reg)
+>>>   {
+>>>   	return readl(pmx->regs[bank] + reg);
+>>> @@ -619,6 +624,48 @@ static void tegra_pinctrl_clear_parked_bits(struct tegra_pmx *pmx)
+>>>   			pmx_writel(pmx, val, g->mux_bank, g->mux_reg);
+>>>   		}
+>>>   	}
+>>> +
+>>> +	if (pmx->soc->has_park_padcfg) {
+>>> +		val = pmx_readl(pmx, 0, EMMC2_PAD_CFGPADCTRL_0);
+>>> +		val &= ~EMMC_DPD_PARKING;
+>>> +		pmx_writel(pmx, val, 0, EMMC2_PAD_CFGPADCTRL_0);
+>>> +
+>>> +		val = pmx_readl(pmx, 0, EMMC4_PAD_CFGPADCTRL_0);
+>>> +		val &= ~EMMC_DPD_PARKING;
+>>> +		pmx_writel(pmx, val, 0, EMMC4_PAD_CFGPADCTRL_0);
+>>> +	}
+>>> +}
+>>
+>> Is there any reason why parked_bit can't be changed to parked_bitmask like I was
+>> asking in a comment to v2?
+>>
+>> I suppose that it's more preferable to keep pinctrl-tegra.c platform-agnostic for
+>> consistency when possible, hence adding platform specifics here should be discouraged.
+>> And then the parked_bitmask will also result in a proper hardware description in the code.
+>>
+> 
+> I'm now also vaguely recalling that Stephen Warren had some kind of a "code generator"
+> for the pinctrl drivers. So I guess all those tables were auto-generated initially.
+> 
+> Stephen, maybe you could adjust the generator to take into account the bitmask (of
+> course if that's a part of the generated code) and then re-gen it all for Sowjanya?
 
-Good morning to everyone.
-
-> On Sun, Jun 16, 2019 at 03:14:51PM -0700, Andy Lutomirski wrote:
-> > The most significant issue I see is the following.  Consider two
-> > cases. First, an SGX2 enclave that dynamically allocates memory but
-> > doesn't execute code from dynamic memory.  Second, an SGX2 enclave
-> > that *does* execute code from dynamic memory.  In #1, the untrusted
-> > stack needs to decide whether to ALLOW_EXEC when the memory is
-> > allocated, which means that it either needs to assume the worst or it
-> > needs to know at allocation time whether the enclave ever intends to
-> > change the permission to X.
-
-> I'm just not convinced that folks running enclaves that can't
-> communicate their basic functionality will care one whit about
-> SELinux restrictions, i.e. will happily give EXECMOD even if it's
-> not strictly necessary.
-
-Hence the comments in my mail from last Friday.
-
-It seems to us that the path forward is to require the enclave
-author/signer to express their intent to implement executable dynamic
-memory, see below.
-
-> > I suppose there's a middle ground.  The driver could use model #1 for
-> > driver-filled pages and model #2 for dynamic pages.  I haven't tried
-> > to fully work it out, but I think there would be the ALLOW_READ /
-> > ALLOW_WRITE / ALLOW_EXEC flag for EADD-ed pages but, for EAUG-ed
-> > pages, there would be a different policy.  This might be as simple as
-> > internally having four flags instead of three:
-> > 
-> > ALLOW_READ, ALLOW_WRITE, ALLOW_EXEC: as before
-> > 
-> > ALLOW_EXEC_COND: set implicitly by the driver for EAUG.
-> > 
-> > As in #1, if you try to mmap or protect a page with neither ALLOW_EXEC
-> > variant, it fails (-EACCES, perhaps).  But, if you try to mmap or
-> > mprotect an ALLOW_EXEC_COND page with PROT_EXEC, you ask LSM for
-> > permission.  There is no fancy DIRTY tracking here, since it's
-> > reasonable to just act as though *every* ALLOW_EXEC_COND page is
-> > dirty.  There is no real auditing issue here, since LSM can just log
-> > what permission is missing.
-> > 
-> > Does this seem sensible?  It might give us the best of #1 and #2.
-
-> It would work and is easy to implement *if* SELinux ties permissions
-> to the process, as the SIGSTRUCT vma/file won't be available at
-> EAUG+mprotect().  I already have a set of patches to that effect,
-> I'll send 'em out in a bit.
-
-The VMA that is crafted from the enclave file is going to exist for
-the life of the enclave.  If the intent to use executable dynamic
-memory is specified when the enclave image is being built, or as a
-component of enclave initialization, the driver is in a position to
-log/deny a request to EAUG+mprotect whenever it occurs.  The sensitive
-criteria would seem to be any request for dynamically allocated memory
-with executable status.
-
-The potential security impact of dynamically executable content is
-something that is dependent on the enclave author rather then the
-context of execution that is requesting pages to be allocated for such
-purposes.  There is going to be an LSM hook to evaluate the SIGSTRUCT
-at the time of EINIT, so all of the necessary information is there to
-make a decision on whether or not to flag the VMA as being allowed to
-support dynamically executable content.
-
-It doesn't seem like an onerous requirement for this information to be
-specified in the enclave metadata.  For optimum security, one could
-perhaps argue that the ability to implement dynamic memory should have
-been a specifiable attribute of the enclave, similar to the debug,
-launch and provisioning attributes.
-
-As we have indicated in the past, once the enclave is initialized with
-permissions for dynamically executable content, the platform is
-completely dependent on the security intentions of the author of the
-enclave.  Given that, the notion of enduring significant LSM
-complexity does not seem to be justified.
-
-Which opens up another set of security implications to discuss but we will let
-those lie for the moment.
-
-Have a good day.
-
-Dr. Greg
-
-As always,
-Dr. G.W. Wettstein, Ph.D.   Enjellic Systems Development, LLC.
-4206 N. 19th Ave.           Specializing in information infra-structure
-Fargo, ND  58102            development.
-PH: 701-281-1686            EMAIL: greg@enjellic.com
-------------------------------------------------------------------------------
-"More people are killed every year by pigs than by sharks, which shows
- you how good we are at evaluating risk."
-                                -- Bruce Schneier
-                                   Beyond Fear
+https://github.com/NVIDIA/tegra-pinmux-scripts holds the scripts that 
+generate tegra-pinctrlNNN.c. See  	soc-to-kernel-pinctrl-driver.py. 
+IIRC, tegra-pinctrl.c (the core file) isn't auto-generated. Sowjanya is 
+welcome to send a patch to that repo if the code needs to be updated.
