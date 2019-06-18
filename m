@@ -2,151 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B4615498FA
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 08:42:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 861FA49977
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 08:54:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726983AbfFRGm3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Jun 2019 02:42:29 -0400
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:16186 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726579AbfFRGmZ (ORCPT
+        id S1728876AbfFRGyH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Jun 2019 02:54:07 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:40645 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726007AbfFRGyG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Jun 2019 02:42:25 -0400
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5d0875460003>; Mon, 17 Jun 2019 22:23:18 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Mon, 17 Jun 2019 22:23:17 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Mon, 17 Jun 2019 22:23:17 -0700
-Received: from HQMAIL105.nvidia.com (172.20.187.12) by HQMAIL108.nvidia.com
- (172.18.146.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 18 Jun
- 2019 05:23:17 +0000
-Received: from hqnvemgw01.nvidia.com (172.20.150.20) by HQMAIL105.nvidia.com
- (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Tue, 18 Jun 2019 05:23:17 +0000
-Received: from dhcp-10-19-65-14.client.nvidia.com (Not Verified[10.19.65.14]) by hqnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5d0875420002>; Mon, 17 Jun 2019 22:23:17 -0700
-From:   Bitan Biswas <bbiswas@nvidia.com>
-To:     Laxman Dewangan <ldewangan@nvidia.com>,
-        Thierry Reding <treding@nvidia.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        <linux-i2c@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Peter Rosin <peda@axentia.se>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Dmitry Osipenko <digetx@gmail.com>
-CC:     Shardar Mohammed <smohammed@nvidia.com>,
-        Sowjanya Komatineni <skomatineni@nvidia.com>,
-        Mantravadi Karthik <mkarthik@nvidia.com>,
-        Bitan Biswas <bbiswas@nvidia.com>
-Subject: [PATCH V1] i2c: tegra: disable irq in tegra_i2c_xfer_msg
-Date:   Mon, 17 Jun 2019 22:23:06 -0700
-Message-ID: <1560835386-2865-1-git-send-email-bbiswas@nvidia.com>
-X-Mailer: git-send-email 2.7.4
-X-NVConfidentiality: public
-MIME-Version: 1.0
-Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1560835398; bh=ek2QlnEku1LWWQhyrwcm5zlLW9WTvoLiW1Kx+VIPSbY=;
-        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
-         X-NVConfidentiality:MIME-Version:Content-Type;
-        b=aCpVsXO9iy+/3KuNJWWG+V22pb6KND0WVsZwZ80F1nWG6DezlK7WQhmFhKt1oeFv0
-         z4KG6Fztx+ImjL7euCdm7+CUv/WkPg0vh7YdF9fMs2gUo7bWL0+OdFuvjLiNEWsbCg
-         o80gX0rUynmhUuzOFpLwO71zVQaZI22QL7UaVMV7qtqE7ddKcRONK3vK8VrpNBlynq
-         qJZOoFeZVQ4CrluNxQbZkgJCR1kD0jFVGhRcN3uy5YC3s18MuFFo7niaroGAytGz/J
-         coYYIlk3BpKPZltBKVOjCPZ3E8qG0F2qnxuG8cI6/mGa/kPPnwWKWfqCImsBgl2U0B
-         +cLLtk1lT61Ug==
+        Tue, 18 Jun 2019 02:54:06 -0400
+Received: by mail-pl1-f193.google.com with SMTP id a93so5297103pla.7
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2019 23:54:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=XxKJMd1N/7H2JNZBrL0GjfLdKt5XA0nEjEVfgW6l7ug=;
+        b=Jkt/1rMftJP6m6z7TQi0Lj1ts9T3Bnft1lLH1k2/Owsf4O6uyB/NJkikR2b6Q0tUXr
+         1kDMpWHVWBProI1B8MbJAdCZEcEfO/Y9IG/ZrI7gS4taTpy1gBOivJvCRfWR0qC2XOxe
+         BPPsOVw5JyWj75xjUV7B5MdRajEhBAT7mVVSX9U5n+QPQ9SLfGWzGlcqPO2fGJ0X29Zc
+         fKA7I8t6MkanAjFWFHIbB6v5pr8oYDzMF6lI2BuxrqIi2RD1DhZad0R98LZ8/9jYXA98
+         H1RLSvZy5PSNx4VTR0BQWFaUKkTkruE7bG6+R4oeNcqymIzPx/SPutl9YlXg+2GPBauk
+         lnjw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=XxKJMd1N/7H2JNZBrL0GjfLdKt5XA0nEjEVfgW6l7ug=;
+        b=aY2Hx4SkY7GbLv45bQXP6K3VaO4GspOO2590ge8qLxcAcl+9mFh+L+Yx6Kc1O0Kn6Y
+         ekygdB7v4dckTlvmoEjHQ7nB5wgnIWNRRaiGbPD5WaditdMr0W019h/bo1HACZXWkLoZ
+         ZcO3FbfOv6dIA7sFYBGozcFDmaNdbOLj7SQlTawjQT/+scsl7ECdN+Ifl0i8Mn2iKueE
+         nsPgjpP528NWUD2FSEVALWNAWBkekwSCAuClpNAOBEKs36qzt020pPmMSF9wcwPQ45Tr
+         kZrJcZyAJUSokixzD0NO8goQqHAFq5EZ4OGWQpszFwlumsE1X3cxuA+AlRUcT/YfEY38
+         l6uA==
+X-Gm-Message-State: APjAAAXFTtfEqoL3NzhhGOgTjZRCVzuJNlE5BtKuyHDtJQESJZpoK2qg
+        pgF5fkGEe/Ad4aHgS69VU4JOwg==
+X-Google-Smtp-Source: APXvYqyC9+nnRj/+oVT15o3AC/A4OCdMwP0JLaEdRTbNBGjixQ6Fv5rz5PMgpGflDjfBe/pKedGKIw==
+X-Received: by 2002:a17:902:d897:: with SMTP id b23mr22622007plz.214.1560835430352;
+        Mon, 17 Jun 2019 22:23:50 -0700 (PDT)
+Received: from localhost.localdomain (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id j2sm16457065pfn.135.2019.06.17.22.23.49
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 17 Jun 2019 22:23:49 -0700 (PDT)
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Andy Gross <agross@kernel.org>
+Cc:     David Brown <david.brown@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Subject: [PATCH] arm64: dts: qcom: msm8996: Enable SMMUs
+Date:   Mon, 17 Jun 2019 22:23:46 -0700
+Message-Id: <20190618052346.32239-1-bjorn.andersson@linaro.org>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Synchronize ISR and tegra_i2c_xfer_msg execution
-by disabling interrupt. This avoids spinlock usage
-for same purpose.
+Enable SMMUs on 8996 now that the WRZ workaround in the arm-smmu driver
+has landed.
 
-Signed-off-by: Bitan Biswas <bbiswas@nvidia.com>
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 ---
- drivers/i2c/busses/i2c-tegra.c | 17 ++++++++---------
- 1 file changed, 8 insertions(+), 9 deletions(-)
+ arch/arm64/boot/dts/qcom/msm8996.dtsi | 6 ------
+ 1 file changed, 6 deletions(-)
 
-diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-index 6fb545e..ccc7fae 100644
---- a/drivers/i2c/busses/i2c-tegra.c
-+++ b/drivers/i2c/busses/i2c-tegra.c
-@@ -240,7 +240,6 @@ struct tegra_i2c_hw_feature {
-  * @bus_clk_rate: current I2C bus clock rate
-  * @clk_divisor_non_hs_mode: clock divider for non-high-speed modes
-  * @is_multimaster_mode: track if I2C controller is in multi-master mode
-- * @xfer_lock: lock to serialize transfer submission and processing
-  * @tx_dma_chan: DMA transmit channel
-  * @rx_dma_chan: DMA receive channel
-  * @dma_phys: handle to DMA resources
-@@ -270,8 +269,6 @@ struct tegra_i2c_dev {
- 	u32 bus_clk_rate;
- 	u16 clk_divisor_non_hs_mode;
- 	bool is_multimaster_mode;
--	/* xfer_lock: lock to serialize transfer submission and processing */
--	spinlock_t xfer_lock;
- 	struct dma_chan *tx_dma_chan;
- 	struct dma_chan *rx_dma_chan;
- 	dma_addr_t dma_phys;
-@@ -835,7 +832,6 @@ static irqreturn_t tegra_i2c_isr(int irq, void *dev_id)
+diff --git a/arch/arm64/boot/dts/qcom/msm8996.dtsi b/arch/arm64/boot/dts/qcom/msm8996.dtsi
+index 1e3143c4fe8f..2ecd9d775d61 100644
+--- a/arch/arm64/boot/dts/qcom/msm8996.dtsi
++++ b/arch/arm64/boot/dts/qcom/msm8996.dtsi
+@@ -1177,7 +1177,6 @@
+ 			clock-names = "iface",
+ 				      "bus";
+ 			#iommu-cells = <1>;
+-			status = "disabled";
+ 		};
  
- 	status = i2c_readl(i2c_dev, I2C_INT_STATUS);
+ 		camss: camss@a00000 {
+@@ -1330,8 +1329,6 @@
+ 			clock-names = "iface", "bus";
  
--	spin_lock(&i2c_dev->xfer_lock);
- 	if (status == 0) {
- 		dev_warn(i2c_dev->dev, "irq status 0 %08x %08x %08x\n",
- 			 i2c_readl(i2c_dev, I2C_PACKET_TRANSFER_STATUS),
-@@ -935,7 +931,6 @@ static irqreturn_t tegra_i2c_isr(int irq, void *dev_id)
+ 			power-domains = <&mmcc GPU_GDSC>;
+-
+-			status = "disabled";
+ 		};
  
- 	complete(&i2c_dev->msg_complete);
- done:
--	spin_unlock(&i2c_dev->xfer_lock);
- 	return IRQ_HANDLED;
- }
+ 		mdp_smmu: arm,smmu@d00000 {
+@@ -1348,8 +1345,6 @@
+ 			clock-names = "iface", "bus";
  
-@@ -1054,7 +1049,6 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
- 	u32 packet_header;
- 	u32 int_mask;
- 	unsigned long time_left;
--	unsigned long flags;
- 	size_t xfer_size;
- 	u32 *buffer = NULL;
- 	int err = 0;
-@@ -1085,7 +1079,10 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
- 	 */
- 	xfer_time += DIV_ROUND_CLOSEST(((xfer_size * 9) + 2) * MSEC_PER_SEC,
- 					i2c_dev->bus_clk_rate);
--	spin_lock_irqsave(&i2c_dev->xfer_lock, flags);
-+	if (!i2c_dev->irq_disabled) {
-+		disable_irq_nosync(i2c_dev->irq);
-+		i2c_dev->irq_disabled = true;
-+	}
+ 			power-domains = <&mmcc MDSS_GDSC>;
+-
+-			status = "disabled";
+ 		};
  
- 	int_mask = I2C_INT_NO_ACK | I2C_INT_ARBITRATION_LOST;
- 	tegra_i2c_unmask_irq(i2c_dev, int_mask);
-@@ -1180,7 +1177,10 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
- 		i2c_readl(i2c_dev, I2C_INT_MASK));
+ 		lpass_q6_smmu: arm,smmu-lpass_q6@1600000 {
+@@ -1376,7 +1371,6 @@
+ 			clocks = <&gcc GCC_HLOS1_VOTE_LPASS_CORE_SMMU_CLK>,
+ 				 <&gcc GCC_HLOS1_VOTE_LPASS_ADSP_SMMU_CLK>;
+ 			clock-names = "iface", "bus";
+-			status = "disabled";
+ 		};
  
- unlock:
--	spin_unlock_irqrestore(&i2c_dev->xfer_lock, flags);
-+	if (i2c_dev->irq_disabled) {
-+		i2c_dev->irq_disabled = false;
-+		enable_irq(i2c_dev->irq);
-+	}
- 
- 	if (dma) {
- 		if (err)
-@@ -1576,7 +1576,6 @@ static int tegra_i2c_probe(struct platform_device *pdev)
- 				I2C_PACKET_HEADER_SIZE;
- 	init_completion(&i2c_dev->msg_complete);
- 	init_completion(&i2c_dev->dma_complete);
--	spin_lock_init(&i2c_dev->xfer_lock);
- 
- 	if (!i2c_dev->hw->has_single_clk_source) {
- 		fast_clk = devm_clk_get(&pdev->dev, "fast-clk");
+ 		agnoc@0 {
 -- 
-2.7.4
+2.18.0
 
