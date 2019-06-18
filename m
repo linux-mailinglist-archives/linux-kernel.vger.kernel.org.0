@@ -2,96 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5515D4A640
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 18:08:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8CC424A60C
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 18:01:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729854AbfFRQIq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Jun 2019 12:08:46 -0400
-Received: from mga03.intel.com ([134.134.136.65]:12038 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729247AbfFRQIp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Jun 2019 12:08:45 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Jun 2019 09:08:44 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.63,389,1557212400"; 
-   d="scan'208";a="358310992"
-Received: from yyu32-desk1.sc.intel.com ([10.144.153.205])
-  by fmsmga006.fm.intel.com with ESMTP; 18 Jun 2019 09:08:44 -0700
-Message-ID: <b0491cb517ba377da6496fe91a98fdbfca4609a9.camel@intel.com>
-Subject: Re: [PATCH v7 22/27] binfmt_elf: Extract .note.gnu.property from an
- ELF file
-From:   Yu-cheng Yu <yu-cheng.yu@intel.com>
-To:     Florian Weimer <fweimer@redhat.com>
-Cc:     Dave Martin <Dave.Martin@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-mm@kvack.org, linux-arch@vger.kernel.org,
-        linux-api@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Balbir Singh <bsingharora@gmail.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Eugene Syromiatnikov <esyr@redhat.com>,
-        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>
-Date:   Tue, 18 Jun 2019 09:00:35 -0700
-In-Reply-To: <87blyu7ubf.fsf@oldenburg2.str.redhat.com>
-References: <87lfy9cq04.fsf@oldenburg2.str.redhat.com>
-         <20190611114109.GN28398@e103592.cambridge.arm.com>
-         <031bc55d8dcdcf4f031e6ff27c33fd52c61d33a5.camel@intel.com>
-         <20190612093238.GQ28398@e103592.cambridge.arm.com>
-         <87imt4jwpt.fsf@oldenburg2.str.redhat.com>
-         <alpine.DEB.2.21.1906171418220.1854@nanos.tec.linutronix.de>
-         <20190618091248.GB2790@e103592.cambridge.arm.com>
-         <20190618124122.GH3419@hirez.programming.kicks-ass.net>
-         <87ef3r9i2j.fsf@oldenburg2.str.redhat.com>
-         <20190618125512.GJ3419@hirez.programming.kicks-ass.net>
-         <20190618133223.GD2790@e103592.cambridge.arm.com>
-         <d54fe81be77b9edd8578a6d208c72cd7c0b8c1dd.camel@intel.com>
-         <87pnna7v1d.fsf@oldenburg2.str.redhat.com>
-         <1ca57aaae8a2121731f2dcb1a137b92eed39a0d2.camel@intel.com>
-         <87blyu7ubf.fsf@oldenburg2.str.redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.1-2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1729831AbfFRQBW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Jun 2019 12:01:22 -0400
+Received: from smtp-fw-4101.amazon.com ([72.21.198.25]:21858 "EHLO
+        smtp-fw-4101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729563AbfFRQBW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Jun 2019 12:01:22 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1560873681; x=1592409681;
+  h=from:to:cc:subject:date:message-id:mime-version;
+  bh=m5c+QxuC5TZHuXYLARbeSntlW7rvO+1YgCMe8NcYLYo=;
+  b=AWY6F9P55ufZNf3CyBk5pIfZquaC+9J5i2d0w3ix+EWW4a2vZZd39gog
+   DsvGIeHYwzoaQkVyusEbdVO3pzXxVC405Q6cHbqO2zzbqPyq0VeFffRzO
+   1u4aBTDjN07Uxqkro8Q/FXmWFZxaNtOGtqBCANP264WVnR0xwPKB4RHtM
+   w=;
+X-IronPort-AV: E=Sophos;i="5.62,389,1554768000"; 
+   d="scan'208";a="770859253"
+Received: from iad6-co-svc-p1-lb1-vlan3.amazon.com (HELO email-inbound-relay-1e-c7c08562.us-east-1.amazon.com) ([10.124.125.6])
+  by smtp-border-fw-out-4101.iad4.amazon.com with ESMTP; 18 Jun 2019 16:01:20 +0000
+Received: from EX13MTAUWB001.ant.amazon.com (iad55-ws-svc-p15-lb9-vlan2.iad.amazon.com [10.40.159.162])
+        by email-inbound-relay-1e-c7c08562.us-east-1.amazon.com (Postfix) with ESMTPS id A48A524209F;
+        Tue, 18 Jun 2019 16:01:17 +0000 (UTC)
+Received: from EX13D21UWB001.ant.amazon.com (10.43.161.108) by
+ EX13MTAUWB001.ant.amazon.com (10.43.161.207) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Tue, 18 Jun 2019 16:01:17 +0000
+Received: from EX13MTAUWB001.ant.amazon.com (10.43.161.207) by
+ EX13D21UWB001.ant.amazon.com (10.43.161.108) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Tue, 18 Jun 2019 16:01:16 +0000
+Received: from 8c859006a84e.ant.amazon.com (172.26.203.28) by
+ mail-relay.amazon.com (10.43.161.249) with Microsoft SMTP Server id
+ 15.0.1367.3 via Frontend Transport; Tue, 18 Jun 2019 16:01:15 +0000
+From:   <alpawi@amazon.com>
+CC:     Benjamin Herrenschmidt <benh@amazon.com>,
+        Patrick Williams <alpawi@amazon.com>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        "Sebastian Hesselbarth" <sebastian.hesselbarth@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-gpio@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH 0/2] pinctl: armada-37xx: fix for pins 32+
+Date:   Tue, 18 Jun 2019 11:01:03 -0500
+Message-ID: <20190618160105.26343-1-alpawi@amazon.com>
+X-Mailer: git-send-email 2.17.2 (Apple Git-113)
+MIME-Version: 1.0
+Content-Type: text/plain
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2019-06-18 at 18:05 +0200, Florian Weimer wrote:
-> * Yu-cheng Yu:
-> 
-> > > I assumed that it would also parse the main executable and make
-> > > adjustments based on that.
-> > 
-> > Yes, Linux also looks at the main executable's header, but not its
-> > NT_GNU_PROPERTY_TYPE_0 if there is a loader.
-> > 
-> > > 
-> > > ld.so can certainly provide whatever the kernel needs.  We need to tweak
-> > > the existing loader anyway.
-> > > 
-> > > No valid statically-linked binaries exist today, so this is not a
-> > > consideration at this point.
-> > 
-> > So from kernel, we look at only PT_GNU_PROPERTY?
-> 
-> If you don't parse notes/segments in the executable for CET, then yes.
-> We can put PT_GNU_PROPERTY into the loader.
+From: Patrick Williams <alpawi@amazon.com>
 
-Thanks!
+The 37xx GPIO config registers are only 32 bits long and
+span 2 registers for the NB GPIO controller.  The function
+to calculate the offset was missing the increase to the
+config register.
+
+I have tested both raw gpio access and interrupts using
+libgpiod utilities on an Espressonbin.
+
+The first patch is a simple rename of a function because
+the original name implied it was doing IO itself ("update
+reg").  This patch could be dropped if undesired.
+
+The second patch contains the fix for GPIOs 32+.
+
+Patrick Williams (2):
+  pinctrl: armada-37xx: rename reg-offset function
+  pinctrl: armada-37xx: fix control of pins 32 and up
+
+ drivers/pinctrl/mvebu/pinctrl-armada-37xx.c | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
+
+-- 
+2.17.2 (Apple Git-113)
+
