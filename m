@@ -2,67 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 94E0E4A406
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 16:30:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7DD614A40C
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 16:32:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729840AbfFRO3z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Jun 2019 10:29:55 -0400
-Received: from relay.sw.ru ([185.231.240.75]:51888 "EHLO relay.sw.ru"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729102AbfFRO3z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Jun 2019 10:29:55 -0400
-Received: from [172.16.25.12]
-        by relay.sw.ru with esmtp (Exim 4.92)
-        (envelope-from <aryabinin@virtuozzo.com>)
-        id 1hdF7P-00025K-Kt; Tue, 18 Jun 2019 17:29:51 +0300
-Subject: Re: [PATCH] [v2] page flags: prioritize kasan bits over last-cpuid
-To:     Arnd Bergmann <arnd@arndb.de>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     Alexander Potapenko <glider@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>, kasan-dev@googlegroups.com,
-        linux-mm@kvack.org, Andrey Konovalov <andreyknvl@google.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Christoph Lameter <cl@linux.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel@vger.kernel.org
-References: <20190618095347.3850490-1-arnd@arndb.de>
-From:   Andrey Ryabinin <aryabinin@virtuozzo.com>
-Message-ID: <5ac26e68-8b75-1b06-eecd-950987550451@virtuozzo.com>
-Date:   Tue, 18 Jun 2019 17:30:02 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        id S1729341AbfFRObG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Jun 2019 10:31:06 -0400
+Received: from mail-io1-f68.google.com ([209.85.166.68]:43450 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726047AbfFRObG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Jun 2019 10:31:06 -0400
+Received: by mail-io1-f68.google.com with SMTP id k20so30222387ios.10
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2019 07:31:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=diggpJT5e6+/r+/RVt1IInno0xPhWWTLkaKy0oYQaNs=;
+        b=Tp4/O6xrPvZ/BMBc2WBnv/9ssKRDf7QAkUNjjTJpDLU5EPEje8k2euXxdUdiLbZPXa
+         pR2L/8UCsDaMOAlR8LWpRyr5rrW1Yf+PP560uPD4C2r7f4Ar9gdzI8jNXV5b6vJJzwf2
+         7jSVK1klFVhif+L1dr4OHMhf4IcZx+WsUU+SI0IYf/D2y0TkXXKAccbdSMGCMjsn+KWk
+         wc0SEmEMuS5nQgDjeRU1L3Qi+W4cYLpX8k4YzY3BnVTsMjeQTqGpVVs12MgFV6UrRXXP
+         HcR5m0dnic7uyYH4cPibssW3EpNaLM8VgODVo31R44YOrGOdChpFcazXDMSuQFlAxxOh
+         NY3w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=diggpJT5e6+/r+/RVt1IInno0xPhWWTLkaKy0oYQaNs=;
+        b=PJzHgywLDgyU53f16Bawtm5cog7kkOjSsCn++Ko6d8dLXFK0mJSSVBsl5X9h0G7J5C
+         q4AbgQpvIv23ThHJAcngWxq1qDUw9w2mBa8cXuHd4L9mdias7YfWA9aJ6PISG0Ua+zKk
+         pLdmkwobsJa0ChGm/vLn5hmDwWMbSsJtjjBwfP5McbV1OV1nEemk3q1t4VeWZcrsPoeM
+         Uhom4VBCbrcpzbKfWk/AfgtfRTA/yTAzVpVMwX3eeGVXlpyDwxYrcuTOUJQIOqMWTjkD
+         50XpHk80mYCdeJBlHwyrRxQ2YyMnTOwJraudhsJZU1lBjwMAveyh2gn1nJIbDqFCsqwW
+         5ATg==
+X-Gm-Message-State: APjAAAXNQabcweXw2v27I2ohHAodD/S/wh1Ov8cRWLCZSIjI+wQstdrz
+        GH1T0IXpgvk51V1YvUBlHbwFOkCoZn6h3x7QcSI=
+X-Google-Smtp-Source: APXvYqzRjrKQIJs0drPGsgKsiO2xASDG+BuxVlvnQ3Z19WGnvymmDhaL+EtJ1iovg2iArRclAX/xpJlT05YpdXCPMxQ=
+X-Received: by 2002:a5d:9d97:: with SMTP id 23mr5627593ion.204.1560868265389;
+ Tue, 18 Jun 2019 07:31:05 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20190618095347.3850490-1-arnd@arndb.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Received: by 2002:a4f:95c1:0:0:0:0:0 with HTTP; Tue, 18 Jun 2019 07:31:02
+ -0700 (PDT)
+Reply-To: michellegoodman45@gmail.com
+From:   Shayma <shaymamarwan08@gmail.com>
+Date:   Tue, 18 Jun 2019 14:31:02 +0000
+Message-ID: <CA+HOoT3dmCP9_Egqukd1YF0CKXxWo60YAT=ue-XFyF5VkcSyUQ@mail.gmail.com>
+Subject: Hallo
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 6/18/19 12:53 PM, Arnd Bergmann wrote:
-> ARM64 randdconfig builds regularly run into a build error, especially
-> when NUMA_BALANCING and SPARSEMEM are enabled but not SPARSEMEM_VMEMMAP:
-> 
->  #error "KASAN: not enough bits in page flags for tag"
-> 
-> The last-cpuid bits are already contitional on the available space,
-> so the result of the calculation is a bit random on whether they
-> were already left out or not.
-> 
-> Adding the kasan tag bits before last-cpuid makes it much more likely
-> to end up with a successful build here, and should be reliable for
-> randconfig at least, as long as that does not randomize NR_CPUS
-> or NODES_SHIFT but uses the defaults.
-> 
-> In order for the modified check to not trigger in the x86 vdso32 code
-> where all constants are wrong (building with -m32), enclose all the
-> definitions with an #ifdef.
-> 
-
-Why not keep "#error "KASAN: not enough bits in page flags for tag"" under "#ifdef CONFIG_KASAN_SW_TAGS" ?
-
+Hallo liebe bitte hoffe du bekommst meine nachricht bitte ich brauche deine
+dringende Antwort jetzt
+Vielen Dank
+Michelle
