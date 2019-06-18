@@ -2,82 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8A1F049ECD
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 13:00:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8917349EB1
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 12:56:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729697AbfFRLA0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Jun 2019 07:00:26 -0400
-Received: from mail-io1-f65.google.com ([209.85.166.65]:32960 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725934AbfFRLA0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Jun 2019 07:00:26 -0400
-Received: by mail-io1-f65.google.com with SMTP id u13so28829204iop.0
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2019 04:00:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lixom-net.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=DaUfQSe+T4PXrUh+yjDH7J9YyQk9TYH+wIjQcd4C0mc=;
-        b=yGFZ4yE2r9iiiOX/b/1l1cS8T4RP7RmwpYwvoN0pX8eO6/FG/A/lK54vD9VAHkPo64
-         K4o3Av5VNGUe2K/m9DRpu4QjqbN8RytMx1y9iBO3Qhyje+JjShVpJBmTXKczis601gxS
-         GjeHDYJpp9lGQM6Qn6Q9U27iczkM2CIXZm8BfKSz2Di8dPRMaS94xGKnptqhxN5dzv0I
-         OMaahuzBHUqjddIUUFwqLeTVNSNnbobMPe4ppXDe253vY/BZs+7UvGsp5Dsge2LRSwbl
-         0HVlM+8Tf/mb/lZAqWmZcfU+3sXWt9GY6FjhEkeOoloCdijrvdXqB1xjORt4hCG5zl5R
-         +5FA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=DaUfQSe+T4PXrUh+yjDH7J9YyQk9TYH+wIjQcd4C0mc=;
-        b=UZGYHHrz87g1pq9Zquvz+hN0c58sfGeknerWL5xl6C/n4DkRAhjnM1uSz8qCWf419O
-         A7TZL4ALF8/jpngJGI73c1MHyb5Mf69GELnqnd0JsSFPxbkqKDL86OXYgY42dDpnMquv
-         FXI4HM1wP948KhfL8I1XL6ki37XE2xCnoOC+jOKiIZOEmbgppn/NOg1nB7I0P1uBks9Q
-         ZO9pI5qU2jgY9CF/7XZTyZ558FUYHYJtYEicweqE0/njxAessfyY0w+81DGJ0Q3J/M+l
-         ObFQ3OFwDZftxsaZXU06UBGN0aljqwCGXQUk+E/UYkXot+kv/fiCLV5Jbn5HvxG2JCGx
-         w+cw==
-X-Gm-Message-State: APjAAAXGN2PvwwsoDrXBEZhMtmnyul+O4sNv6BtLuLVitCcZoL1DWXyo
-        +QqjGs4Uwn633STUefcuTEr5udFvZVjJjVTbHmcviQ==
-X-Google-Smtp-Source: APXvYqzeoST4FgKipJrRZ7jKQsTY7JIuBYyvJQNh1cSbscvXOHK1EAwHRDXsATV7nI72tqRnIzkcKeO4lNL52R+FSN4=
-X-Received: by 2002:a5d:915a:: with SMTP id y26mr2712336ioq.207.1560855625832;
- Tue, 18 Jun 2019 04:00:25 -0700 (PDT)
+        id S1729574AbfFRK4W convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 18 Jun 2019 06:56:22 -0400
+Received: from mga07.intel.com ([134.134.136.100]:15500 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726037AbfFRK4V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Jun 2019 06:56:21 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Jun 2019 03:56:20 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.63,388,1557212400"; 
+   d="scan'208";a="161833962"
+Received: from xxx.igk.intel.com (HELO xxx) ([10.237.93.170])
+  by orsmga003.jf.intel.com with ESMTP; 18 Jun 2019 03:56:18 -0700
+Date:   Tue, 18 Jun 2019 13:00:15 +0200
+From:   Amadeusz =?UTF-8?B?U8WCYXdpxYRza2k=?= 
+        <amadeuszx.slawinski@linux.intel.com>
+To:     Ranjani Sridharan <ranjani.sridharan@linux.intel.com>
+Cc:     alsa-devel@alsa-project.org,
+        Cezary Rojewski <cezary.rojewski@intel.com>,
+        linux-kernel@vger.kernel.org, Takashi Iwai <tiwai@suse.com>,
+        Jie Yang <yang.jie@linux.intel.com>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>
+Subject: Re: [alsa-devel] [PATCH v2 09/11] ASoC: Intel: hdac_hdmi: Set ops
+ to NULL on remove
+Message-ID: <20190618130015.0fc388b4@xxx>
+In-Reply-To: <75be86354032f4886cbaf7d430de2aa89eaab573.camel@linux.intel.com>
+References: <20190617113644.25621-1-amadeuszx.slawinski@linux.intel.com>
+ <20190617113644.25621-10-amadeuszx.slawinski@linux.intel.com>
+ <75be86354032f4886cbaf7d430de2aa89eaab573.camel@linux.intel.com>
 MIME-Version: 1.0
-References: <20190617122449.457744-1-arnd@arndb.de> <20190617122449.457744-3-arnd@arndb.de>
-In-Reply-To: <20190617122449.457744-3-arnd@arndb.de>
-From:   Olof Johansson <olof@lixom.net>
-Date:   Tue, 18 Jun 2019 12:00:14 +0100
-Message-ID: <CAOesGMgUvT87UzNLM=CpjB6nnuwPGn4+cK85ZW8nPUyOzkse6A@mail.gmail.com>
-Subject: Re: [PATCH 3/3] ARM: ixp4xx: include irqs.h where needed
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     ARM-SoC Maintainers <arm@kernel.org>,
-        Linus Walleij <linusw@kernel.org>,
-        Imre Kaloz <kaloz@openwrt.org>,
-        Krzysztof Halasa <khalasa@piap.pl>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 17, 2019 at 1:26 PM Arnd Bergmann <arnd@arndb.de> wrote:
->
-> Multiple ixp4xx specific files require macros from irqs.h that
-> were moved out from mach/irqs.h, e.g.:
->
-> arch/arm/mach-ixp4xx/vulcan-pci.c:41:19: error: this function declaration is not a prototype [-Werror,-Wstrict-prototypes]
-> arch/arm/mach-ixp4xx/vulcan-pci.c:49:10: error: implicit declaration of function 'IXP4XX_GPIO_IRQ' [-Werror,-Wimplicit-function-declaration]
->                 return IXP4XX_GPIO_IRQ(INTA);
->
-> Include this header in all files that failed to build because of
-> that.
->
-> Fixes: dc8ef8cd3a05 ("ARM: ixp4xx: Convert to SPARSE_IRQ")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+On Mon, 17 Jun 2019 13:51:42 -0700
+Ranjani Sridharan <ranjani.sridharan@linux.intel.com> wrote:
 
-Applied to arm/fixes. Thanks!
+> On Mon, 2019-06-17 at 13:36 +0200, Amadeusz Sławiński wrote:
+> > When we unload Skylake driver we may end up calling
+> > hdac_component_master_unbind(), it uses acomp->audio_ops, which we
+> > set
+> > in hdmi_codec_probe(), so we need to set it to NULL in
+> > hdmi_codec_remove(),
+> > otherwise we will dereference no longer existing pointer.  
+> 
+> Hi Amadeusz,
+> 
+> It looks like the audio_ops should be deleted snd_hdac_acomp_exit().
+> Also, this doesnt seem to be the case with when the SOF driver is
+> removed.
+> Could you please give a bit more context on what error you see when
+> this happens?
 
+Hi,
 
--Olof
+I get Oops. This is what happens with all other patches in this series and only this one reverted:
+
+root@APL:~# rmmod snd_soc_sst_bxt_rt298
+root@APL:~# rmmod snd_soc_hdac_hdmi
+root@APL:~# rmmod snd_soc_skl
+Killed
+
+[   57.007783] BUG: unable to handle page fault for address: fffffbfff4067038
+[   57.007956] #PF: supervisor read access in kernel mode
+[   57.008065] #PF: error_code(0x0000) - not-present page
+[   57.008173] PGD 268266067 P4D 268266067 PUD 23809a067 PMD 22b545067 PTE 0
+[   57.008322] Oops: 0000 [#1] PREEMPT SMP DEBUG_PAGEALLOC KASAN PTI
+[   57.008453] CPU: 3 PID: 1045 Comm: rmmod Tainted: G                T 5.2.0-rc4-dev #824
+[   57.008617] Hardware name: Intel Corp. Broxton P/Apollolake RVP1C, BIOS APLKRVPA.X64.0151.B25.1609151411 09/15/2016
+[   57.008834] RIP: 0010:__asan_load8+0x39/0x90
+[   57.008931] Code: ff ff ff ff 7f ff ff 48 39 c3 76 40 48 8d 43 07 48 89 c2 83 e2 07 48 83 fa 07 75 19 48 ba 00 00 00 00 00 fc ff df 48 c1 e8 03 <0f> b6 04 10 84 c0 75 2c 5b 5d c3 48 be 00 00 00 00 00 f
+c ff df 48
+[   57.009299] RSP: 0018:ffff88822431fa68 EFLAGS: 00010203
+[   57.009411] RAX: 1ffffffff4067038 RBX: ffffffffa03381c0 RCX: ffffffffa01bd8a4
+[   57.009557] RDX: dffffc0000000000 RSI: dffffc0000000000 RDI: ffffffffa03381c0
+[   57.009704] RBP: ffff88822431fa70 R08: ffffed1046a6d8f3 R09: ffffed1046a6d8f3
+[   57.009851] R10: ffffed1046a6d8f3 R11: 0000000000000000 R12: ffff88823536c4b0
+[   57.009998] R13: ffffffffa03381a0 R14: ffffffffa01bd860 R15: ffff888223108538
+[   57.010147] FS:  00007fedb579f540(0000) GS:ffff888237780000(0000) knlGS:0000000000000000
+[   57.010312] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[   57.010433] CR2: fffffbfff4067038 CR3: 000000022260a000 CR4: 00000000003406e0
+[   57.010580] Call Trace:
+[   57.010667]  hdac_component_master_unbind+0x44/0xb0 [snd_hda_core]
+[   57.010822]  ? snd_hdac_acomp_exit+0x130/0x130 [snd_hda_core]
+[   57.010949]  take_down_master+0x53/0x80
+[   57.011037]  component_master_del+0x76/0xa0
+[   57.011144]  snd_hdac_acomp_exit+0x97/0x130 [snd_hda_core]
+[   57.011275]  ? snd_hdac_display_power+0x12e/0x1d0 [snd_hda_core]
+[   57.011414]  skl_free+0xbf/0xd0 [snd_soc_skl]
+[   57.011519]  skl_remove+0xf1/0x110 [snd_soc_skl]
+[   57.011623]  pci_device_remove+0xd9/0x1f0
+[   57.011714]  ? pcibios_free_irq+0x10/0x10
+[   57.011806]  ? preempt_count_sub+0x18/0xd0
+[   57.011898]  ? _raw_spin_unlock_irqrestore+0x26/0x40
+[   57.012009]  device_release_driver_internal+0x140/0x270
+[   57.012124]  driver_detach+0x7a/0xe0
+[   57.012207]  bus_remove_driver+0x95/0x160
+[   57.012303]  driver_unregister+0x43/0x60
+[   57.012392]  pci_unregister_driver+0x29/0x110
+[   57.012501]  skl_driver_exit+0x10/0x1b [snd_soc_skl]
+[   57.012610]  __x64_sys_delete_module+0x235/0x3d0
+[   57.012712]  ? free_module+0x380/0x380
+[   57.012804]  do_syscall_64+0xcd/0x650
+[   57.012887]  ? syscall_return_slowpath+0x1e0/0x1e0
+[   57.012998]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+[   57.013107] RIP: 0033:0x7fedb52bc1b7
+[   57.013189] Code: 73 01 c3 48 8b 0d d1 8c 2c 00 f7 d8 64 89 01 48 83 c8 ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 b8 b0 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d a1 8c 2c 00 f7 d8 64 89 01 48
+[   57.013556] RSP: 002b:00007ffcfc17ce18 EFLAGS: 00000206 ORIG_RAX: 00000000000000b0
+[   57.013712] RAX: ffffffffffffffda RBX: 00007ffcfc17ce78 RCX: 00007fedb52bc1b7
+[   57.013858] RDX: 000000000000000a RSI: 0000000000000800 RDI: 00005649a5309a98
+[   57.014004] RBP: 00005649a5309a30 R08: 00007ffcfc17bd91 R09: 0000000000000000
+[   57.014149] R10: 00007fedb5338cc0 R11: 0000000000000206 R12: 00007ffcfc17d040
+[   57.014294] R13: 00007ffcfc17e79b R14: 00005649a5309260 R15: 00005649a5309a30
+[   57.014446] Modules linked in: i2c_designware_platform i2c_designware_core snd_soc_dmic joydev x86_pkg_temp_thermal intel_powerclamp coretemp crc32c_intel serio_raw pwm_lpss_pci pwm_lpss intel_lpss_pci intel_lpss snd_soc_rt298 mei_me mei snd_soc_rt286 snd_soc_rl6347a snd_soc_skl(-) snd_soc_skl_ipc snd_soc_sst_ipc snd_soc_sst_dsp snd_hda_ext_core snd_hda_core snd_soc_acpi_intel_match snd_soc_acpi snd_soc_core snd_compress snd_pcm_dmaengine snd_pcm snd_timer parport_pc lp parport ip_tables x_tables igb dca pinctrl_broxton pinctrl_intel [last unloaded: snd_soc_hdac_hdmi]
+[   57.015477] CR2: fffffbfff4067038
+[   57.015556] ---[ end trace 794bf9fb0862965b ]---
+
+Amadeusz
