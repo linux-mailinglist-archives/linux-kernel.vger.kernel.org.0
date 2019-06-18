@@ -2,131 +2,194 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8917349EB1
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 12:56:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BE13B49ED4
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 13:02:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729574AbfFRK4W convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 18 Jun 2019 06:56:22 -0400
-Received: from mga07.intel.com ([134.134.136.100]:15500 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726037AbfFRK4V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Jun 2019 06:56:21 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Jun 2019 03:56:20 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.63,388,1557212400"; 
-   d="scan'208";a="161833962"
-Received: from xxx.igk.intel.com (HELO xxx) ([10.237.93.170])
-  by orsmga003.jf.intel.com with ESMTP; 18 Jun 2019 03:56:18 -0700
-Date:   Tue, 18 Jun 2019 13:00:15 +0200
-From:   Amadeusz =?UTF-8?B?U8WCYXdpxYRza2k=?= 
-        <amadeuszx.slawinski@linux.intel.com>
-To:     Ranjani Sridharan <ranjani.sridharan@linux.intel.com>
-Cc:     alsa-devel@alsa-project.org,
-        Cezary Rojewski <cezary.rojewski@intel.com>,
-        linux-kernel@vger.kernel.org, Takashi Iwai <tiwai@suse.com>,
-        Jie Yang <yang.jie@linux.intel.com>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>
-Subject: Re: [alsa-devel] [PATCH v2 09/11] ASoC: Intel: hdac_hdmi: Set ops
- to NULL on remove
-Message-ID: <20190618130015.0fc388b4@xxx>
-In-Reply-To: <75be86354032f4886cbaf7d430de2aa89eaab573.camel@linux.intel.com>
-References: <20190617113644.25621-1-amadeuszx.slawinski@linux.intel.com>
- <20190617113644.25621-10-amadeuszx.slawinski@linux.intel.com>
- <75be86354032f4886cbaf7d430de2aa89eaab573.camel@linux.intel.com>
+        id S1729646AbfFRLCb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Jun 2019 07:02:31 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:39352 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725934AbfFRLCb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Jun 2019 07:02:31 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id B736160C60; Tue, 18 Jun 2019 11:02:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1560855749;
+        bh=QlHoC2q27QNg37TXurhV+oC6ZcdcvhESvo3u67o1qHk=;
+        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+        b=ls5pxqoH+OIyl1ASAa+lWCfxrVKCyJX1IciUbmyR8mTr7J5J6BtYRRMYClFCfrUQz
+         5BCid13ZtgLUIRXjc/eXYpyg++8aAFlsIjOhTaS6lKTeWqUjUO6pZxCi+fgbgxwdWg
+         WvkxbabbGkaYpDNW0ArDeMBHfygZ/77+LTTKutOQ=
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        pdx-caf-mail.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_INVALID,DKIM_SIGNED,SPF_NONE autolearn=no autolearn_force=no
+        version=3.4.0
+Received: from potku.adurom.net (88-114-240-156.elisa-laajakaista.fi [88.114.240.156])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: kvalo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 21C9960254;
+        Tue, 18 Jun 2019 11:02:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1560855739;
+        bh=QlHoC2q27QNg37TXurhV+oC6ZcdcvhESvo3u67o1qHk=;
+        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+        b=oDNcoYN1h5jNMgAIxxicOVZkBHA7RBMLqFRAuLfOfR0EFgEvxQ5ZTuIAZZu0AjOLo
+         QSUKDBy3L9J7bukHuHU4AwRqijb/zbm0QQeIPkYKAW+qjEeBYyrlz1PyEYr74jAPtV
+         AXyFtObhvg/VS4mgGl1qNf0xEzWeuveD4uFLs/YM=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 21C9960254
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
+From:   Kalle Valo <kvalo@codeaurora.org>
+To:     Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     Douglas Anderson <dianders@chromium.org>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Arend van Spriel <arend.vanspriel@broadcom.com>,
+        brcm80211-dev-list.pdl@broadcom.com,
+        "open list\:ARM\/Rockchip SoC..." 
+        <linux-rockchip@lists.infradead.org>,
+        Double Lo <double.lo@cypress.com>,
+        Brian Norris <briannorris@chromium.org>,
+        linux-wireless <linux-wireless@vger.kernel.org>,
+        Naveen Gupta <naveen.gupta@cypress.com>,
+        Madhan Mohan R <madhanmohan.r@cypress.com>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Wright Feng <wright.feng@cypress.com>,
+        Chi-Hsien Lin <chi-hsien.lin@cypress.com>,
+        netdev <netdev@vger.kernel.org>,
+        brcm80211-dev-list <brcm80211-dev-list@cypress.com>,
+        YueHaibing <yuehaibing@huawei.com>,
+        Allison Randal <allison@lohutok.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Hante Meuleman <hante.meuleman@broadcom.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Niklas =?utf-8?Q?S=C3=B6derl?= =?utf-8?Q?und?= 
+        <niklas.soderlund+renesas@ragnatech.se>,
+        Ritesh Harjani <riteshh@codeaurora.org>,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Franky Lin <franky.lin@broadcom.com>,
+        Ondrej Jirman <megous@megous.com>,
+        Jiong Wu <lohengrin1024@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        "linux-mmc\@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Avri Altman <avri.altman@wdc.com>
+Subject: Re: [PATCH v5 0/5] brcmfmac: sdio: Deal better w/ transmission errors related to idle
+References: <20190617175653.21756-1-dianders@chromium.org>
+        <CAPDyKFpaX6DSM_BjtghAHUf7qYCyEG+wMagXPUdgz3Eutovqfw@mail.gmail.com>
+Date:   Tue, 18 Jun 2019 14:02:04 +0300
+In-Reply-To: <CAPDyKFpaX6DSM_BjtghAHUf7qYCyEG+wMagXPUdgz3Eutovqfw@mail.gmail.com>
+        (Ulf Hansson's message of "Mon, 17 Jun 2019 20:38:49 +0200")
+Message-ID: <87v9x39mxf.fsf@kamboji.qca.qualcomm.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 17 Jun 2019 13:51:42 -0700
-Ranjani Sridharan <ranjani.sridharan@linux.intel.com> wrote:
+Ulf Hansson <ulf.hansson@linaro.org> writes:
 
-> On Mon, 2019-06-17 at 13:36 +0200, Amadeusz Sławiński wrote:
-> > When we unload Skylake driver we may end up calling
-> > hdac_component_master_unbind(), it uses acomp->audio_ops, which we
-> > set
-> > in hdmi_codec_probe(), so we need to set it to NULL in
-> > hdmi_codec_remove(),
-> > otherwise we will dereference no longer existing pointer.  
-> 
-> Hi Amadeusz,
-> 
-> It looks like the audio_ops should be deleted snd_hdac_acomp_exit().
-> Also, this doesnt seem to be the case with when the SOF driver is
-> removed.
-> Could you please give a bit more context on what error you see when
-> this happens?
+> On Mon, 17 Jun 2019 at 19:57, Douglas Anderson <dianders@chromium.org> wrote:
+>>
+>> This series attempts to deal better with the expected transmission
+>> errors related to the idle states (handled by the Always-On-Subsystem
+>> or AOS) on the SDIO-based WiFi on rk3288-veyron-minnie,
+>> rk3288-veyron-speedy, and rk3288-veyron-mickey.
+>>
+>> Some details about those errors can be found in
+>> <https://crbug.com/960222>, but to summarize it here: if we try to
+>> send the wakeup command to the WiFi card at the same time it has
+>> decided to wake up itself then it will behave badly on the SDIO bus.
+>> This can cause timeouts or CRC errors.
+>>
+>> When I tested on 4.19 and 4.20 these CRC errors can be seen to cause
+>> re-tuning.  Since I am currently developing on 4.19 this was the
+>> original problem I attempted to solve.
+>>
+>> On mainline it turns out that you don't see the retuning errors but
+>> you see tons of spam about timeouts trying to wakeup from sleep.  I
+>> tracked down the commit that was causing that and have partially
+>> reverted it here.  I have no real knowledge about Broadcom WiFi, but
+>> the commit that was causing problems sounds (from the descriptioin) to
+>> be a hack commit penalizing all Broadcom WiFi users because of a bug
+>> in a Cypress SD controller.  I will let others comment if this is
+>> truly the case and, if so, what the right solution should be.
+>>
+>> For v3 of this series I have added 2 patches to the end of the series
+>> to address errors that would show up on systems with these same SDIO
+>> WiFi cards when used on controllers that do periodic retuning.  These
+>> systems need an extra fix to prevent the retuning from happening when
+>> the card is asleep.
+>>
+>> I believe v5 of this series is all ready to go assuming Kalle Valo is
+>> good with it.  I've added after-the-cut notes to patches awaiting his
+>> Ack and have added other tags collected so far.
+>>
+>> Changes in v5:
+>> - Add missing sdio_retune_crc_enable() in comments (Ulf).
+>> - /s/reneable/re-enable (Ulf).
+>> - Remove leftover prototypes: mmc_expect_errors_begin() / end() (Ulf).
+>> - Rewording of "sleep command" in commit message (Arend).
+>>
+>> Changes in v4:
+>> - Moved to SDIO API only (Adrian, Ulf).
+>> - Renamed to make it less generic, now retune_crc_disable (Ulf).
+>> - Function header makes it clear host must be claimed (Ulf).
+>> - No more WARN_ON (Ulf).
+>> - Adjust to API rename (Adrian, Ulf).
+>> - Moved retune hold/release to SDIO API (Adrian).
+>> - Adjust to API rename (Adrian).
+>>
+>> Changes in v3:
+>> - Took out the spinlock since I believe this is all in one context.
+>> - Expect errors for all of brcmf_sdio_kso_control() (Adrian).
+>> - ("mmc: core: Export mmc_retune_hold_now() mmc_retune_release()") new for v3.
+>> - ("brcmfmac: sdio: Don't tune while the card is off") new for v3.
+>>
+>> Changes in v2:
+>> - A full revert, not just a partial one (Arend).  ...with explicit Cc.
+>> - Updated commit message to clarify based on discussion of v1.
+>>
+>> Douglas Anderson (5):
+>>   Revert "brcmfmac: disable command decode in sdio_aos"
+>>   mmc: core: API to temporarily disable retuning for SDIO CRC errors
+>>   brcmfmac: sdio: Disable auto-tuning around commands expected to fail
+>>   mmc: core: Add sdio_retune_hold_now() and sdio_retune_release()
+>>   brcmfmac: sdio: Don't tune while the card is off
+>>
+>>  drivers/mmc/core/core.c                       |  5 +-
+>>  drivers/mmc/core/sdio_io.c                    | 77 +++++++++++++++++++
+>>  .../broadcom/brcm80211/brcmfmac/sdio.c        | 17 ++--
+>>  include/linux/mmc/host.h                      |  1 +
+>>  include/linux/mmc/sdio_func.h                 |  6 ++
+>>  5 files changed, 99 insertions(+), 7 deletions(-)
+>>
+>> --
+>> 2.22.0.410.gd8fdbe21b5-goog
+>>
+>
+> Applied for fixes, thanks!
+>
+> Some minor changes:
+> 1) Dropped the a few "commit notes", that was more related to version
+> and practical information about the series.
+> 2) Dropped fixes tags for patch 2->5, but instead put a stable tag
+> targeted for v4.18+.
+>
+> Awaiting an ack from Kalle before sending the PR to Linus.
+>
+> Kalle, perhaps you prefer to pick patch 1, as it could go separate.
+> Then please tell - and/or if there is anything else you want me to
+> change.
 
-Hi,
+TBH I haven't followed the thread (or patches) that closely :) So feel
+free to take them and push them to Linus.
 
-I get Oops. This is what happens with all other patches in this series and only this one reverted:
-
-root@APL:~# rmmod snd_soc_sst_bxt_rt298
-root@APL:~# rmmod snd_soc_hdac_hdmi
-root@APL:~# rmmod snd_soc_skl
-Killed
-
-[   57.007783] BUG: unable to handle page fault for address: fffffbfff4067038
-[   57.007956] #PF: supervisor read access in kernel mode
-[   57.008065] #PF: error_code(0x0000) - not-present page
-[   57.008173] PGD 268266067 P4D 268266067 PUD 23809a067 PMD 22b545067 PTE 0
-[   57.008322] Oops: 0000 [#1] PREEMPT SMP DEBUG_PAGEALLOC KASAN PTI
-[   57.008453] CPU: 3 PID: 1045 Comm: rmmod Tainted: G                T 5.2.0-rc4-dev #824
-[   57.008617] Hardware name: Intel Corp. Broxton P/Apollolake RVP1C, BIOS APLKRVPA.X64.0151.B25.1609151411 09/15/2016
-[   57.008834] RIP: 0010:__asan_load8+0x39/0x90
-[   57.008931] Code: ff ff ff ff 7f ff ff 48 39 c3 76 40 48 8d 43 07 48 89 c2 83 e2 07 48 83 fa 07 75 19 48 ba 00 00 00 00 00 fc ff df 48 c1 e8 03 <0f> b6 04 10 84 c0 75 2c 5b 5d c3 48 be 00 00 00 00 00 f
-c ff df 48
-[   57.009299] RSP: 0018:ffff88822431fa68 EFLAGS: 00010203
-[   57.009411] RAX: 1ffffffff4067038 RBX: ffffffffa03381c0 RCX: ffffffffa01bd8a4
-[   57.009557] RDX: dffffc0000000000 RSI: dffffc0000000000 RDI: ffffffffa03381c0
-[   57.009704] RBP: ffff88822431fa70 R08: ffffed1046a6d8f3 R09: ffffed1046a6d8f3
-[   57.009851] R10: ffffed1046a6d8f3 R11: 0000000000000000 R12: ffff88823536c4b0
-[   57.009998] R13: ffffffffa03381a0 R14: ffffffffa01bd860 R15: ffff888223108538
-[   57.010147] FS:  00007fedb579f540(0000) GS:ffff888237780000(0000) knlGS:0000000000000000
-[   57.010312] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[   57.010433] CR2: fffffbfff4067038 CR3: 000000022260a000 CR4: 00000000003406e0
-[   57.010580] Call Trace:
-[   57.010667]  hdac_component_master_unbind+0x44/0xb0 [snd_hda_core]
-[   57.010822]  ? snd_hdac_acomp_exit+0x130/0x130 [snd_hda_core]
-[   57.010949]  take_down_master+0x53/0x80
-[   57.011037]  component_master_del+0x76/0xa0
-[   57.011144]  snd_hdac_acomp_exit+0x97/0x130 [snd_hda_core]
-[   57.011275]  ? snd_hdac_display_power+0x12e/0x1d0 [snd_hda_core]
-[   57.011414]  skl_free+0xbf/0xd0 [snd_soc_skl]
-[   57.011519]  skl_remove+0xf1/0x110 [snd_soc_skl]
-[   57.011623]  pci_device_remove+0xd9/0x1f0
-[   57.011714]  ? pcibios_free_irq+0x10/0x10
-[   57.011806]  ? preempt_count_sub+0x18/0xd0
-[   57.011898]  ? _raw_spin_unlock_irqrestore+0x26/0x40
-[   57.012009]  device_release_driver_internal+0x140/0x270
-[   57.012124]  driver_detach+0x7a/0xe0
-[   57.012207]  bus_remove_driver+0x95/0x160
-[   57.012303]  driver_unregister+0x43/0x60
-[   57.012392]  pci_unregister_driver+0x29/0x110
-[   57.012501]  skl_driver_exit+0x10/0x1b [snd_soc_skl]
-[   57.012610]  __x64_sys_delete_module+0x235/0x3d0
-[   57.012712]  ? free_module+0x380/0x380
-[   57.012804]  do_syscall_64+0xcd/0x650
-[   57.012887]  ? syscall_return_slowpath+0x1e0/0x1e0
-[   57.012998]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-[   57.013107] RIP: 0033:0x7fedb52bc1b7
-[   57.013189] Code: 73 01 c3 48 8b 0d d1 8c 2c 00 f7 d8 64 89 01 48 83 c8 ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 b8 b0 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d a1 8c 2c 00 f7 d8 64 89 01 48
-[   57.013556] RSP: 002b:00007ffcfc17ce18 EFLAGS: 00000206 ORIG_RAX: 00000000000000b0
-[   57.013712] RAX: ffffffffffffffda RBX: 00007ffcfc17ce78 RCX: 00007fedb52bc1b7
-[   57.013858] RDX: 000000000000000a RSI: 0000000000000800 RDI: 00005649a5309a98
-[   57.014004] RBP: 00005649a5309a30 R08: 00007ffcfc17bd91 R09: 0000000000000000
-[   57.014149] R10: 00007fedb5338cc0 R11: 0000000000000206 R12: 00007ffcfc17d040
-[   57.014294] R13: 00007ffcfc17e79b R14: 00005649a5309260 R15: 00005649a5309a30
-[   57.014446] Modules linked in: i2c_designware_platform i2c_designware_core snd_soc_dmic joydev x86_pkg_temp_thermal intel_powerclamp coretemp crc32c_intel serio_raw pwm_lpss_pci pwm_lpss intel_lpss_pci intel_lpss snd_soc_rt298 mei_me mei snd_soc_rt286 snd_soc_rl6347a snd_soc_skl(-) snd_soc_skl_ipc snd_soc_sst_ipc snd_soc_sst_dsp snd_hda_ext_core snd_hda_core snd_soc_acpi_intel_match snd_soc_acpi snd_soc_core snd_compress snd_pcm_dmaengine snd_pcm snd_timer parport_pc lp parport ip_tables x_tables igb dca pinctrl_broxton pinctrl_intel [last unloaded: snd_soc_hdac_hdmi]
-[   57.015477] CR2: fffffbfff4067038
-[   57.015556] ---[ end trace 794bf9fb0862965b ]---
-
-Amadeusz
+-- 
+Kalle Valo
