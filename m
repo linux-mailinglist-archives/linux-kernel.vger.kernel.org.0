@@ -2,133 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A35F4995D
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 08:52:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1308549927
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 08:45:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728841AbfFRGv7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Jun 2019 02:51:59 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:44064 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726248AbfFRGv6 (ORCPT
+        id S1728922AbfFRGpd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Jun 2019 02:45:33 -0400
+Received: from mail-vk1-f196.google.com ([209.85.221.196]:44122 "EHLO
+        mail-vk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726158AbfFRGpb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Jun 2019 02:51:58 -0400
-Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5I67JCL109869
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2019 02:13:11 -0400
-Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2t6r0jcq58-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2019 02:13:10 -0400
-Received: from localhost
-        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
-        Tue, 18 Jun 2019 07:13:08 +0100
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 18 Jun 2019 07:13:03 +0100
-Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x5I6D2jD61210840
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 18 Jun 2019 06:13:02 GMT
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 79475A4040;
-        Tue, 18 Jun 2019 06:13:02 +0000 (GMT)
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 7A0E8A4051;
-        Tue, 18 Jun 2019 06:13:01 +0000 (GMT)
-Received: from rapoport-lnx (unknown [9.148.8.53])
-        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Tue, 18 Jun 2019 06:13:01 +0000 (GMT)
-Date:   Tue, 18 Jun 2019 09:12:59 +0300
-From:   Mike Rapoport <rppt@linux.ibm.com>
-To:     Will Deacon <will.deacon@arm.com>
-Cc:     Mark Rutland <mark.rutland@arm.com>, Qian Cai <cai@lca.pw>,
-        akpm@linux-foundation.org, Roman Gushchin <guro@fb.com>,
-        catalin.marinas@arm.com, linux-kernel@vger.kernel.org,
-        mhocko@kernel.org, linux-mm@kvack.org, vdavydov.dev@gmail.com,
-        hannes@cmpxchg.org, cgroups@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH -next] arm64/mm: fix a bogus GFP flag in pgd_alloc()
-References: <1559656836-24940-1-git-send-email-cai@lca.pw>
- <20190604142338.GC24467@lakrids.cambridge.arm.com>
- <20190610114326.GF15979@fuggles.cambridge.arm.com>
- <1560187575.6132.70.camel@lca.pw>
- <20190611100348.GB26409@lakrids.cambridge.arm.com>
- <20190613121100.GB25164@rapoport-lnx>
- <20190617151252.GF16810@rapoport-lnx>
- <20190617163630.GH30800@fuggles.cambridge.arm.com>
+        Tue, 18 Jun 2019 02:45:31 -0400
+Received: by mail-vk1-f196.google.com with SMTP id w186so2571389vkd.11;
+        Mon, 17 Jun 2019 23:45:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=ReyzkEJ0mqgLcwXEOt1orApmxGBjw7txCjk9AIkHxWA=;
+        b=ADV+E6NpxQ50gJHp6hd6dI8C+jQrTYyObZBldrnzIVa2WLszDwucTA6CiLBcDnQN8X
+         frAmZ+MA9IHvI6SgjVQ2/FWtdzYAIe694fBaqFbSgJVFAntiKq+9xDjM7s7YJB/6NYy8
+         cwu/oggvpOHjdlFzfMvswb8dkQp4bEUN49s9uhxnhIu5+st3CiIlBvfi5v/36zNgVnAm
+         Ju4rLyYDS9/RXQa1+R/Qy+v/HMgA4mmtdqXvBUKFj58eprQ8q6GqLAqc8hGd70x8RIc4
+         hfqGJ0zshAxEBeH0exILboBmbeo/1cE14rKdd3TYx6ioCx+QVF0G9fqq819K9D0L5Py7
+         YOjA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=ReyzkEJ0mqgLcwXEOt1orApmxGBjw7txCjk9AIkHxWA=;
+        b=PBC9pdiUUlXEfP0n1f0RVRvp5KgFqYNg59alKMpldhkwfPNbH/d+K97yjPQIAct0H1
+         vF8nuGm/vpsNtaOxIv2PHWEVbmHR34NmDjcsW5XSBupjfYW4OIC+9mTAZTGmPJEbphgq
+         JUau1MjmcoDzz2hIIFC/B+1kJ+/8h3NKYfHwJPC4iVdrZUPpdSUXF6qV8iPahhvvhb/F
+         OP23TbczqLK1YgXL7vbTrs4kyf9innKz7BYF4FOlFVRjUkA75Qt9Vn//4piJppwQ1Flw
+         wS/SZbzMQyIyUTD2pTLZem2Fa5WXmQ0sc3DX/rStyQsk8YIqdsVPBhiPxPXWnv8mB7O3
+         7VJQ==
+X-Gm-Message-State: APjAAAWhwNdKLCj91WudWf+2KNKwf+D2v6EnS3x6+lRCtws79gIieY/7
+        jxhQQsZVfqcsuclopvatG/1UZRVuFHk=
+X-Google-Smtp-Source: APXvYqwlkXGD+qYFV6HV681y30CFFECs91e5IG9gbYhPtEYIiiGhdfnV9MsIND0ZgcRhLhSp6r4tDQ==
+X-Received: by 2002:a63:e649:: with SMTP id p9mr1109979pgj.276.1560838389298;
+        Mon, 17 Jun 2019 23:13:09 -0700 (PDT)
+Received: from maya190131 ([13.66.160.195])
+        by smtp.gmail.com with ESMTPSA id z74sm6415835pgz.41.2019.06.17.23.13.09
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Mon, 17 Jun 2019 23:13:09 -0700 (PDT)
+Date:   Tue, 18 Jun 2019 06:13:08 +0000
+From:   Maya Nakamura <m.maya.nakamura@gmail.com>
+To:     mikelley@microsoft.com, kys@microsoft.com, haiyangz@microsoft.com,
+        sthemmin@microsoft.com, sashal@kernel.org
+Cc:     x86@kernel.org, linux-hyperv@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v3 2/5] x86: hv: hv_init.c: Add functions to
+ allocate/deallocate page for Hyper-V
+Message-ID: <d19c28cda88bf1706baff883380dfd321da30a68.1560837096.git.m.maya.nakamura@gmail.com>
+References: <cover.1560837096.git.m.maya.nakamura@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190617163630.GH30800@fuggles.cambridge.arm.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-TM-AS-GCONF: 00
-x-cbid: 19061806-0008-0000-0000-000002F4A996
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19061806-0009-0000-0000-00002261BF41
-Message-Id: <20190618061259.GB15497@rapoport-lnx>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-18_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=27 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=937 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1906180050
+In-Reply-To: <cover.1560837096.git.m.maya.nakamura@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 17, 2019 at 05:36:30PM +0100, Will Deacon wrote:
-> Hi Mike,
-> 
-> On Mon, Jun 17, 2019 at 06:12:52PM +0300, Mike Rapoport wrote:
-> > Andrew, can you please add the patch below as an incremental fix?
-> > 
-> > With this the arm64::pgd_alloc() should be in the right shape.
-> > 
-> > 
-> > From 1c1ef0bc04c655689c6c527bd03b140251399d87 Mon Sep 17 00:00:00 2001
-> > From: Mike Rapoport <rppt@linux.ibm.com>
-> > Date: Mon, 17 Jun 2019 17:37:43 +0300
-> > Subject: [PATCH] arm64/mm: don't initialize pgd_cache twice
-> > 
-> > When PGD_SIZE != PAGE_SIZE, arm64 uses kmem_cache for allocation of PGD
-> > memory. That cache was initialized twice: first through
-> > pgtable_cache_init() alias and then as an override for weak
-> > pgd_cache_init().
-> > 
-> > After enabling accounting for the PGD memory, this created a confusion for
-> > memcg and slub sysfs code which resulted in the following errors:
-> > 
-> > [   90.608597] kobject_add_internal failed for pgd_cache(13:init.scope) (error: -2 parent: cgroup)
-> > [   90.678007] kobject_add_internal failed for pgd_cache(13:init.scope) (error: -2 parent: cgroup)
-> > [   90.713260] kobject_add_internal failed for pgd_cache(21:systemd-tmpfiles-setup.service) (error: -2 parent: cgroup)
-> > 
-> > Removing the alias from pgtable_cache_init() and keeping the only pgd_cache
-> > initialization in pgd_cache_init() resolves the problem and allows
-> > accounting of PGD memory.
-> > 
-> > Reported-by: Qian Cai <cai@lca.pw>
-> > Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
-> > ---
-> >  arch/arm64/include/asm/pgtable.h | 3 +--
-> >  arch/arm64/mm/pgd.c              | 5 +----
-> >  2 files changed, 2 insertions(+), 6 deletions(-)
-> 
-> Looks like this actually fixes caa841360134 ("x86/mm: Initialize PGD cache
-> during mm initialization") due to an unlucky naming conflict!
-> 
-> In which case, I'd actually prefer to take this fix asap via the arm64
-> tree. Is that ok?
+Introduce two new functions, hv_alloc_hyperv_page() and
+hv_free_hyperv_page(), to allocate/deallocate memory with the size and
+alignment that Hyper-V expects as a page. Although currently they are
+not used, they are ready to be used to allocate/deallocate memory on x86
+when their ARM64 counterparts are implemented, keeping symmetry between
+architectures with potentially different guest page sizes.
 
-I suppose so, it just won't apply as is. Would you like a patch against the
-current upstream?
+Link: https://lore.kernel.org/lkml/87muindr9c.fsf@vitty.brq.redhat.com/
+Signed-off-by: Maya Nakamura <m.maya.nakamura@gmail.com>
+Reviewed-by: Michael Kelley <mikelley@microsoft.com>
+Reviewed-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+---
+ arch/x86/hyperv/hv_init.c | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-> Will
-
+diff --git a/arch/x86/hyperv/hv_init.c b/arch/x86/hyperv/hv_init.c
+index 0e033ef11a9f..e8960a83add7 100644
+--- a/arch/x86/hyperv/hv_init.c
++++ b/arch/x86/hyperv/hv_init.c
+@@ -37,6 +37,20 @@ EXPORT_SYMBOL_GPL(hyperv_pcpu_input_arg);
+ u32 hv_max_vp_index;
+ EXPORT_SYMBOL_GPL(hv_max_vp_index);
+ 
++void *hv_alloc_hyperv_page(void)
++{
++	BUILD_BUG_ON(PAGE_SIZE != HV_HYP_PAGE_SIZE);
++
++	return (void *)__get_free_page(GFP_KERNEL);
++}
++EXPORT_SYMBOL_GPL(hv_alloc_hyperv_page);
++
++void hv_free_hyperv_page(unsigned long addr)
++{
++	free_page(addr);
++}
++EXPORT_SYMBOL_GPL(hv_free_hyperv_page);
++
+ static int hv_cpu_init(unsigned int cpu)
+ {
+ 	u64 msr_vp_index;
 -- 
-Sincerely yours,
-Mike.
+2.17.1
 
