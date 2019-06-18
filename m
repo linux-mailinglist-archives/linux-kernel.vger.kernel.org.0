@@ -2,121 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 732394A2BD
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 15:49:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9FEE34A2CD
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 15:50:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729567AbfFRNsq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Jun 2019 09:48:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34090 "EHLO mail.kernel.org"
+        id S1729062AbfFRNuv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Jun 2019 09:50:51 -0400
+Received: from foss.arm.com ([217.140.110.172]:42176 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726158AbfFRNsp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Jun 2019 09:48:45 -0400
-Received: from linux-8ccs (nat.nue.novell.com [195.135.221.2])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2CEE72147A;
-        Tue, 18 Jun 2019 13:48:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560865724;
-        bh=kqvLDynoT6YHnTiAE/gTCfzjU9srFEwHE+TRF1flpjQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ZtIpHqpAj8xXrh/vjVKiGeoAAgm0AAWEgw/y7ofkaiBH+Vx2ElLRRttexsrL2K4/b
-         O4CoJ+Z4xGLek7yv+v4cB1/qNN5IyvjiqBS7AM5segCJ8LaSpC+ZkoBtiibwu89Xqb
-         VEWyxHfzDxuVOaur0EgPvWUmF/Zg3U0L9+RRD+6o=
-Date:   Tue, 18 Jun 2019 15:48:39 +0200
-From:   Jessica Yu <jeyu@kernel.org>
-To:     Yang Yingliang <yangyingliang@huawei.com>
-Cc:     linux-kernel@vger.kernel.org, peterz@infradead.org,
-        namit@vmware.com, cj.chengjian@huawei.com
-Subject: Re: [PATCH] modules: fix BUG when load module with rodata=n
-Message-ID: <20190618134839.GA31349@linux-8ccs>
-References: <1560754797-40683-1-git-send-email-yangyingliang@huawei.com>
+        id S1726248AbfFRNuu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Jun 2019 09:50:50 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CC7CD2B;
+        Tue, 18 Jun 2019 06:50:49 -0700 (PDT)
+Received: from fuggles.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 412343F718;
+        Tue, 18 Jun 2019 06:50:48 -0700 (PDT)
+Date:   Tue, 18 Jun 2019 14:50:46 +0100
+From:   Will Deacon <will.deacon@arm.com>
+To:     Anisse Astier <aastier@freebox.fr>
+Cc:     Dave Martin <Dave.Martin@arm.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Kristina Martsenko <kristina.martsenko@arm.com>,
+        Richard Henderson <richard.henderson@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-kernel@vger.kernel.org, Rich Felker <dalias@aerifal.cx>,
+        "Dmitry V . Levin" <ldv@altlinux.org>,
+        Ricardo Salveti <ricardo@foundries.io>,
+        Sasha Levin <sashal@kernel.org>
+Subject: Re: [PATCH v3 2/2] arm64/sve: <uapi/asm/ptrace.h> should not depend
+ on <uapi/linux/prctl.h>
+Message-ID: <20190618135046.GH31041@fuggles.cambridge.arm.com>
+References: <20190617084545.GA38959@anisse-station>
+ <20190617132222.32182-1-aastier@freebox.fr>
+ <20190617132222.32182-2-aastier@freebox.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1560754797-40683-1-git-send-email-yangyingliang@huawei.com>
-X-OS:   Linux linux-8ccs 5.1.0-rc1-lp150.12.28-default+ x86_64
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190617132222.32182-2-aastier@freebox.fr>
+User-Agent: Mutt/1.11.1+86 (6f28e57d73f2) ()
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-+++ Yang Yingliang [17/06/19 14:59 +0800]:
->When loading a module with rodata=n, it causes an executing
->NX-protected page BUG.
->
->[   32.379191] kernel tried to execute NX-protected page - exploit attempt? (uid: 0)
->[   32.382917] BUG: unable to handle page fault for address: ffffffffc0005000
->[   32.385947] #PF: supervisor instruction fetch in kernel mode
->[   32.387662] #PF: error_code(0x0011) - permissions violation
->[   32.389352] PGD 240c067 P4D 240c067 PUD 240e067 PMD 421a52067 PTE 8000000421a53063
->[   32.391396] Oops: 0011 [#1] SMP PTI
->[   32.392478] CPU: 7 PID: 2697 Comm: insmod Tainted: G           O      5.2.0-rc5+ #202
->[   32.394588] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.12.1-0-ga5cab58e9a3f-prebuilt.qemu.org 04/01/2014
->[   32.398157] RIP: 0010:ko_test_init+0x0/0x1000 [ko_test]
->[   32.399662] Code: Bad RIP value.
->[   32.400621] RSP: 0018:ffffc900029f3ca8 EFLAGS: 00010246
->[   32.402171] RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000000
->[   32.404332] RDX: 00000000000004c7 RSI: 0000000000000cc0 RDI: ffffffffc0005000
->[   32.406347] RBP: ffffffffc0005000 R08: ffff88842fbebc40 R09: ffffffff810ede4a
->[   32.408392] R10: ffffea00108e3480 R11: 0000000000000000 R12: ffff88842bee21a0
->[   32.410472] R13: 0000000000000001 R14: 0000000000000001 R15: ffffc900029f3e78
->[   32.412609] FS:  00007fb4f0c0a700(0000) GS:ffff88842fbc0000(0000) knlGS:0000000000000000
->[   32.414722] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->[   32.416290] CR2: ffffffffc0004fd6 CR3: 0000000421a90004 CR4: 0000000000020ee0
->[   32.418471] Call Trace:
->[   32.419136]  do_one_initcall+0x41/0x1df
->[   32.420199]  ? _cond_resched+0x10/0x40
->[   32.421433]  ? kmem_cache_alloc_trace+0x36/0x160
->[   32.422827]  do_init_module+0x56/0x1f7
->[   32.423946]  load_module+0x1e67/0x2580
->[   32.424947]  ? __alloc_pages_nodemask+0x150/0x2c0
->[   32.426413]  ? map_vm_area+0x2d/0x40
->[   32.427530]  ? __vmalloc_node_range+0x1ef/0x260
->[   32.428850]  ? __do_sys_init_module+0x135/0x170
->[   32.430060]  ? _cond_resched+0x10/0x40
->[   32.431249]  __do_sys_init_module+0x135/0x170
->[   32.432547]  do_syscall_64+0x43/0x120
->[   32.433853]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
->
->Because if rodata=n, set_memory_x() cann't be called, fix this by
->calling set_memory_x in complete_formation();
->
->Fixes: f2c65fb3221a ("x86/modules: Avoid breaking W^X while loading modules")
->Suggested-by: Jian Cheng <cj.chengjian@huawei.com>
->Signed-off-by: Yang Yingliang <yangyingliang@huawei.com>
->---
-> kernel/module.c | 9 +++++++--
-> 1 file changed, 7 insertions(+), 2 deletions(-)
->
->diff --git a/kernel/module.c b/kernel/module.c
->index 80c7c09584cf..1a5d879573c3 100644
->--- a/kernel/module.c
->+++ b/kernel/module.c
->@@ -1949,12 +1949,10 @@ void module_enable_ro(const struct module *mod, bool after_init)
-> 	set_vm_flush_reset_perms(mod->core_layout.base);
-> 	set_vm_flush_reset_perms(mod->init_layout.base);
-> 	frob_text(&mod->core_layout, set_memory_ro);
->-	frob_text(&mod->core_layout, set_memory_x);
->
-> 	frob_rodata(&mod->core_layout, set_memory_ro);
->
-> 	frob_text(&mod->init_layout, set_memory_ro);
->-	frob_text(&mod->init_layout, set_memory_x);
->
-> 	frob_rodata(&mod->init_layout, set_memory_ro);
+On Mon, Jun 17, 2019 at 03:22:22PM +0200, Anisse Astier wrote:
+> Otherwise this will create userspace build issues for any program
+> (strace, qemu) that includes both <sys/prctl.h> (with musl libc) and
+> <linux/ptrace.h> (which then includes <asm/ptrace.h>), like this:
+> 
+> 	error: redefinition of 'struct prctl_mm_map'
+> 	 struct prctl_mm_map {
+> 
+> See https://github.com/foundriesio/meta-lmp/commit/6d4a106e191b5d79c41b9ac78fd321316d3013c0
+> for a public example of people working around this issue.
+> 
+> Copying the defines is a bit imperfect here, but better than creating a
+> whole other header for just two defines that would never change, as part
+> of the kernel ABI.
+> 
+> This patch depends on patch "arm64: ssbd: explicitly depend on
+> <linux/prctl.h>" for kernel >= 4.18
+> 
+> Fixes: 43d4da2c45b2 ("arm64/sve: ptrace and ELF coredump support")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Anisse Astier <aastier@freebox.fr>
+> ---
+>  arch/arm64/include/uapi/asm/ptrace.h | 8 +++-----
+>  1 file changed, 3 insertions(+), 5 deletions(-)
 
-Just a style-related nit: could you also please shrink down this chunk
-and remove the empty lines between the frob_* calls?
+I've pushed these two out to the arm64 fixes branch [1], with Dave's Ack
+on this one. Note that I reworked the commit messages a bit to explain
+better what's going on.
 
->@@ -2018,6 +2016,12 @@ void set_all_modules_text_ro(void)
-> static void module_enable_nx(const struct module *mod) { }
-> #endif
+Cheers,
 
-And note that we will need a stub for module_enable_x() here as well.
+Will
 
-Thanks!
-
-Jessica
-
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git/log/?h=for-next/fixes
