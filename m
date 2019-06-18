@@ -2,81 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 109D64AC62
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 22:57:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3D9F14AC6C
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 22:58:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731074AbfFRUzv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Jun 2019 16:55:51 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:35252 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730851AbfFRUzt (ORCPT
+        id S1730703AbfFRU6h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Jun 2019 16:58:37 -0400
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:40801 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730102AbfFRU6f (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Jun 2019 16:55:49 -0400
-Received: by mail-lf1-f66.google.com with SMTP id a25so10343321lfg.2
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2019 13:55:48 -0700 (PDT)
+        Tue, 18 Jun 2019 16:58:35 -0400
+Received: by mail-ot1-f66.google.com with SMTP id e8so15969250otl.7;
+        Tue, 18 Jun 2019 13:58:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
+        d=googlemail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=Rgyz2cVF6lciICHj9aRxm3g8t9416ctrHS5B3PoGzGM=;
-        b=er8IX2IUKbXU9cahan+PR49raLMPgXXPPUR2yIHqZPbkQsvl37yRNMqfD0QJCdAjv/
-         Js7XnzEYA+84AFVz+WBmB839fafHCxPz6VNvQMgMq5clTEv658MFIY2euF6/qDtGFn5n
-         /mCm3ynK8OYbMKS6yBEJaYs5AYJ0Te0crzo84=
+        bh=eWOlIQpBoXx+dBn8lseeqeYMHmFuOji9HYHAzsBj+Yo=;
+        b=lTtpIIik85r71kD7QuF+ci8JCVP6HSQJwrWbglXjJOHHWVSCFPBaEzidFE1P1szIvW
+         uyN+6I3/3CeGSgDFBJSKpUqJ+bZFNFvPbIvkugH31w9jGgajx5rZp5S8eX2eafs3HYEA
+         z7U6sC9z6XhaKTgQ5usQK1k+KMV30FqPrWd0nyr/PzUKElTBMHWSdyA4/po+vihp3lhW
+         QIPsR7HmvZG6opDQNl9Y2AKrLZHeJHdKe8x+5iR/vZcdjXA6NKSdcsPeHuKrMnZ1e04i
+         M9hcai3YmZYBqE8NU7og9mjkzIv+vTOG6eYHIrGm5HsehFPmEkqhjr57nrOXc0aeskRk
+         SpNw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=Rgyz2cVF6lciICHj9aRxm3g8t9416ctrHS5B3PoGzGM=;
-        b=uYEPxC+4NAixwpZy7ca7rxyOiKqK8FopW6atlE7/+sYgOea8gFOpSA3V+rOMiL1ELH
-         l1SNR38SyoK8Wo3OYRAYEWHqPfAn+26LK7OZoEurwkjx4NvUciq0d/MgSj21uDkuB1Eu
-         0HtDHYF2yYaE4r0/fEB4CLorjIJXwvJyLUJRxS87CquXfcK0c6g9wXukvc/x0+VlHpf8
-         ZCl6NuADu/MKY6f2JapLrZSkzVre4yFxhRz8qpZ8GfAmGZWngbmqcy+dniYHehliygoy
-         +hKi8hqBhu5c1HUuONqa7Vc7stgGfBCAT/JIqMu+c+Pp+nERKtUM2vzwQgXVxHsYatPY
-         6Yyg==
-X-Gm-Message-State: APjAAAVoUfXG6OfWS+CjxG7oPyPbWOrVKEmBiDMKh+hqaIeq+3NgdNOu
-        wX37CNWdf6HxvL1jx6zsHfFHO6s/exA=
-X-Google-Smtp-Source: APXvYqzoc7bR4/eXX8wpWiL+XCe+dFu1BR2a2mfV5V5tjViyPdHstKZwOgA9iW43Ta+/FoADWhc+2w==
-X-Received: by 2002:ac2:42ca:: with SMTP id n10mr19654405lfl.121.1560891346826;
-        Tue, 18 Jun 2019 13:55:46 -0700 (PDT)
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com. [209.85.167.41])
-        by smtp.gmail.com with ESMTPSA id q1sm2360140lfc.79.2019.06.18.13.55.45
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Tue, 18 Jun 2019 13:55:45 -0700 (PDT)
-Received: by mail-lf1-f41.google.com with SMTP id u10so10313215lfm.12
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2019 13:55:45 -0700 (PDT)
-X-Received: by 2002:a19:f808:: with SMTP id a8mr6231181lff.29.1560891345414;
- Tue, 18 Jun 2019 13:55:45 -0700 (PDT)
+        bh=eWOlIQpBoXx+dBn8lseeqeYMHmFuOji9HYHAzsBj+Yo=;
+        b=bmP/hPxqcDWrCOCipNHesGWbE1nusTlrqTutvqRqRrHi6lRgxm4L1cxcy6DAjKTB3n
+         eZtV/3hzHiSIHqPB25peN46tJayaRE/Ep+gfmSDQCbM3yD3Pp85PXnMLIO3vwkN0+9NO
+         E/d24MxtaEsVLScob86hcb0IcQSQACgXYc2i65MKBgvOgR56DVnjCn0+rNzCq3GI0Izj
+         BTghP6sFGOIeC6Gpk8u5pityUrg/drpWXI9hviRFGSvxgNT1XKyuhjnRx+qGPvaVnDas
+         bxK3h0gbZCYRGeGQhRjTypN9wdtkI9WvYSMXpjXsKyD1tx5mkduVcHaeK448Y6+lJWye
+         NHTw==
+X-Gm-Message-State: APjAAAX9UdpgD37f55mtCeDh7iv3kNkaB7WKGJmBUSpa4T8Vvoc4R9GB
+        YAcfdixE1mcHjsW8EkWRmLWXiBf0GvGzNgkDU3E=
+X-Google-Smtp-Source: APXvYqwkdc6hhspveBKMMLkcBtJO+FzMapbB2HHbr7srIo2djZJcZ+0uZld5b+z55f3sgyxFjDXdwUv6VaCslijIKmw=
+X-Received: by 2002:a9d:6405:: with SMTP id h5mr54059515otl.42.1560891514777;
+ Tue, 18 Jun 2019 13:58:34 -0700 (PDT)
 MIME-Version: 1.0
-References: <CAHk-=wgTL5sYCGxX8+xQqyBRWRUE05GAdL58+UTG8bYwjFxMkw@mail.gmail.com>
- <20190617190605.GA21332@mwanda> <20190618081645.GM16364@dell>
-In-Reply-To: <20190618081645.GM16364@dell>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Tue, 18 Jun 2019 13:55:29 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wghW+AKvRGevUiVWwTqWObygSZSdq6Dz2ad81H73VeuRQ@mail.gmail.com>
-Message-ID: <CAHk-=wghW+AKvRGevUiVWwTqWObygSZSdq6Dz2ad81H73VeuRQ@mail.gmail.com>
-Subject: Re: [PATCH] mfd: stmfx: Fix an endian bug in stmfx_irq_handler()
-To:     Lee Jones <lee.jones@linaro.org>
-Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Amelie Delaunay <amelie.delaunay@st.com>,
+References: <5d089fb6.1c69fb81.4f92.9134@mx.google.com> <7hr27qdedo.fsf@baylibre.com>
+ <CAFBinCCrpQNU_JtL0SwEGbwWZ2Qy-b2m5rdjuE0__nDRORGTiQ@mail.gmail.com> <7d0a9da1-0b42-d4e9-0690-32d58a6d27de@collabora.com>
+In-Reply-To: <7d0a9da1-0b42-d4e9-0690-32d58a6d27de@collabora.com>
+From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date:   Tue, 18 Jun 2019 22:58:23 +0200
+Message-ID: <CAFBinCA7gMLJ=jPqgRgHcBABBvC7bWVt8VJhLZ5uN=03WL1UWQ@mail.gmail.com>
+Subject: Re: next/master boot bisection: next-20190617 on sun8i-h2-plus-orangepi-zero
+To:     Guillaume Tucker <guillaume.tucker@collabora.com>
+Cc:     Kevin Hilman <khilman@baylibre.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        tomeu.vizoso@collabora.com, mgalka@collabora.com,
+        broonie@kernel.org, matthew.hart@linaro.org,
+        enric.balletbo@collabora.com, Jose Abreu <joabreu@synopsys.com>,
+        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
         Alexandre Torgue <alexandre.torgue@st.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Andrew Lunn <andrew@lunn.ch>,
         linux-stm32@st-md-mailman.stormreply.com,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org
+        linux-arm-kernel@lists.infradead.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 18, 2019 at 1:16 AM Lee Jones <lee.jones@linaro.org> wrote:
->
-> > Reported-by: Linus Torvalds <torvalds@linux-foundation.org>
->
-> Ideally we can get a review too.
+Hi Guillaume,
 
-Looks fine to me, but obviously somebody should actually _test_ it too.
+On Tue, Jun 18, 2019 at 10:53 PM Guillaume Tucker
+<guillaume.tucker@collabora.com> wrote:
+>
+> On 18/06/2019 21:42, Martin Blumenstingl wrote:
+> > On Tue, Jun 18, 2019 at 6:53 PM Kevin Hilman <khilman@baylibre.com> wrote:
+> > [...]
+> >> This seems to have broken on several sunxi SoCs, but also a MIPS SoC
+> >> (pistachio_marduk):
+> >>
+> >> https://storage.kernelci.org/next/master/next-20190618/mips/pistachio_defconfig/gcc-8/lab-baylibre-seattle/boot-pistachio_marduk.html
+> > today I learned why initializing arrays on the stack is important
+> > too bad gcc didn't warn that I was about to shoot myself (or someone
+> > else) in the foot :/
+> >
+> > I just sent a fix: [0]
+> >
+> > sorry for this issue and thanks to Kernel CI for even pointing out the
+> > offending commit (this makes things a lot easier than just yelling
+> > that "something is broken")
+>
+> Glad that helped :)
+>
+> If you would be so kind as to credit our robot friend in your
+> patch, it'll be forever grateful:
+>
+>   Reported-by: "kernelci.org bot" <bot@kernelci.org>
+sure
+do you want me to re-send my other patch or should I just reply to it
+adding the Reported-by tag and hope that Dave will catch it when
+applying the patch?
+in either case: I did mention in the patch description that Kernel CI caught it
 
-              Linus
+by the way: I didn't know how to credit the Kernel CI bot.
+syzbot / syzkaller makes that bit easy as it's mentioned in the
+generated email, see [0] for a (random) example
+have you considered adding the Reported-by to the generated email?
+
+
+Martin
+
+
+[0] https://lkml.org/lkml/2019/4/19/638
