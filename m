@@ -2,150 +2,136 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E56C4A7CB
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 19:02:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7205D4A7D5
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 19:05:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729946AbfFRRB5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Jun 2019 13:01:57 -0400
-Received: from mga01.intel.com ([192.55.52.88]:31480 "EHLO mga01.intel.com"
+        id S1730075AbfFRRFZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Jun 2019 13:05:25 -0400
+Received: from foss.arm.com ([217.140.110.172]:50702 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729319AbfFRRB5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Jun 2019 13:01:57 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Jun 2019 10:01:56 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.63,389,1557212400"; 
-   d="scan'208";a="334915185"
-Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.7.199.155])
-  by orsmga005.jf.intel.com with ESMTP; 18 Jun 2019 10:01:56 -0700
-Date:   Tue, 18 Jun 2019 10:05:08 -0700
-From:   Jacob Pan <jacob.jun.pan@linux.intel.com>
-To:     Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
-Cc:     Jonathan Cameron <jonathan.cameron@huawei.com>,
-        Mark Rutland <Mark.Rutland@arm.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Will Deacon <Will.Deacon@arm.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        Robin Murphy <Robin.Murphy@arm.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        jacob.jun.pan@linux.intel.com
-Subject: Re: [PATCH 1/8] iommu: Add I/O ASID allocator
-Message-ID: <20190618100508.7835780f@jacob-builder>
-In-Reply-To: <13e19d8c-8918-a3bb-f398-2ac41c71d307@arm.com>
-References: <20190610184714.6786-1-jean-philippe.brucker@arm.com>
-        <20190610184714.6786-2-jean-philippe.brucker@arm.com>
-        <20190611103625.00001399@huawei.com>
-        <62d1f310-0cba-4d55-0f16-68bba3c64927@arm.com>
-        <20190611111333.425ce809@jacob-builder>
-        <13e19d8c-8918-a3bb-f398-2ac41c71d307@arm.com>
-Organization: OTC
-X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+        id S1729541AbfFRRFY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Jun 2019 13:05:24 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F3905344;
+        Tue, 18 Jun 2019 10:05:23 -0700 (PDT)
+Received: from e107155-lin (e107155-lin.cambridge.arm.com [10.1.196.42])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 83A243F246;
+        Tue, 18 Jun 2019 10:05:22 -0700 (PDT)
+Date:   Tue, 18 Jun 2019 18:05:20 +0100
+From:   Sudeep Holla <sudeep.holla@arm.com>
+To:     Jeremy Linton <jeremy.linton@arm.com>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-acpi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, catalin.marinas@arm.com,
+        will.deacon@arm.com, rjw@rjwysocki.net, lenb@kernel.org,
+        mark.rutland@arm.com, lorenzo.pieralisi@arm.com,
+        Sudeep Holla <sudeep.holla@arm.com>
+Subject: Re: [PATCH 3/4] arm_pmu: acpi: spe: Add initial MADT/SPE probing
+Message-ID: <20190618170520.GB1360@e107155-lin>
+References: <20190615010910.33921-1-jeremy.linton@arm.com>
+ <20190615010910.33921-4-jeremy.linton@arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190615010910.33921-4-jeremy.linton@arm.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 18 Jun 2019 15:22:20 +0100
-Jean-Philippe Brucker <jean-philippe.brucker@arm.com> wrote:
-
-> On 11/06/2019 19:13, Jacob Pan wrote:
-> >>>> +/**
-> >>>> + * ioasid_find - Find IOASID data
-> >>>> + * @set: the IOASID set
-> >>>> + * @ioasid: the IOASID to find
-> >>>> + * @getter: function to call on the found object
-> >>>> + *
-> >>>> + * The optional getter function allows to take a reference to
-> >>>> the found object
-> >>>> + * under the rcu lock. The function can also check if the object
-> >>>> is still valid:
-> >>>> + * if @getter returns false, then the object is invalid and NULL
-> >>>> is returned.
-> >>>> + *
-> >>>> + * If the IOASID has been allocated for this set, return the
-> >>>> private pointer
-> >>>> + * passed to ioasid_alloc. Private data can be NULL if not set.
-> >>>> Return an error
-> >>>> + * if the IOASID is not found or does not belong to the set.    
-> >>>
-> >>> Perhaps should make it clear that @set can be null.    
-> >>
-> >> Indeed. But I'm not sure allowing @set to be NULL is such a good
-> >> idea, because the data type associated to an ioasid depends on its
-> >> set. For example SVA will put an mm_struct in there, and auxiliary
-> >> domains use some structure private to the IOMMU domain.
-> >>  
-> > I am not sure we need to count on @set to decipher data type.
-> > Whoever does the allocation and owns the IOASID should knows its
-> > own data type. My thought was that @set is only used to group IDs,
-> > permission check etc.
-> >   
-> >> Jacob, could me make @set mandatory, or do you see a use for a
-> >> global search? If @set is NULL, then callers can check if the
-> >> return pointer is NULL, but will run into trouble if they try to
-> >> dereference it. 
-> > A global search use case can be for PRQ. IOMMU driver gets a IOASID
-> > (first interrupt then retrieve from a queue), it has no idea which
-> > @set it belongs to. But the data types are the same for all IOASIDs
-> > used by the IOMMU.  
+On Fri, Jun 14, 2019 at 08:09:09PM -0500, Jeremy Linton wrote:
+> ACPI 6.3 adds additional fields to the MADT GICC
+> structure to describe SPE PPI's. We pick these out
+> of the cached reference to the madt_gicc structure
+> similarly to the core PMU code. We then create a platform
+> device referring to the IRQ and let the user/module loader
+> decide whether to load the SPE driver.
 > 
-> They aren't when we use a generic SVA handler. Following a call to
-> iommu_sva_bind_device(), iommu-sva.c allocates an IOASID and store an
-> mm_struct. If auxiliary domains are also enabled for the device,
-> following a call to iommu_aux_attach_device() the IOMMU driver
-> allocates an IOASID and stores some private object.
+> Signed-off-by: Jeremy Linton <jeremy.linton@arm.com>
+> ---
+>  arch/arm64/include/asm/acpi.h |  3 ++
+>  drivers/perf/arm_pmu_acpi.c   | 75 +++++++++++++++++++++++++++++++++++
+>  include/linux/perf/arm_pmu.h  |  2 +
+>  3 files changed, 80 insertions(+)
 > 
-> Now for example the IOMMU driver receives a PPR and calls
-> ioasid_find() with @set = NULL. ioasid_find() may return either an
-> mm_struct or a private object, and the driver cannot know which it is
-> so the returned value is unusable.
-I think we might have a misunderstanding of what ioasid_set is. Or i
-have misused your original intention for it:) So my understanding of an
-ioasid_set is to identify a sub set of IOASIDs that
-1. shares the same data type
-2. belongs to the same permission group, owner.
+> diff --git a/arch/arm64/include/asm/acpi.h b/arch/arm64/include/asm/acpi.h
+> index 7628efbe6c12..d10399b9f998 100644
+> --- a/arch/arm64/include/asm/acpi.h
+> +++ b/arch/arm64/include/asm/acpi.h
+> @@ -41,6 +41,9 @@
+>  	(!(entry) || (entry)->header.length < ACPI_MADT_GICC_MIN_LENGTH || \
+>  	(unsigned long)(entry) + (entry)->header.length > (end))
+>  
+> +#define ACPI_MADT_GICC_SPE  (ACPI_OFFSET(struct acpi_madt_generic_interrupt, \
+> +	spe_interrupt) + sizeof(u16))
+> +
+>  /* Basic configuration for ACPI */
+>  #ifdef	CONFIG_ACPI
+>  pgprot_t __acpi_get_mem_attribute(phys_addr_t addr);
+> diff --git a/drivers/perf/arm_pmu_acpi.c b/drivers/perf/arm_pmu_acpi.c
+> index 0f197516d708..f5df100bc4f4 100644
+> --- a/drivers/perf/arm_pmu_acpi.c
+> +++ b/drivers/perf/arm_pmu_acpi.c
+> @@ -74,6 +74,79 @@ static void arm_pmu_acpi_unregister_irq(int cpu)
+>  	acpi_unregister_gsi(gsi);
+>  }
+>  
+> +#if IS_ENABLED(CONFIG_ARM_SPE_PMU)
+> +static struct resource spe_resources[] = {
+> +	{
+> +		/* irq */
+> +		.flags          = IORESOURCE_IRQ,
+> +	}
+> +};
+> +
+> +static struct platform_device spe_dev = {
+> +	.name = ARMV8_SPE_PDEV_NAME,
+> +	.id = -1,
+> +	.resource = spe_resources,
+> +	.num_resources = ARRAY_SIZE(spe_resources)
+> +};
+> +
+> +/*
+> + * For lack of a better place, hook the normal PMU MADT walk
+> + * and create a SPE device if we detect a recent MADT with
+> + * a homogeneous PPI mapping.
+> + */
+> +static int arm_spe_acpi_register_device(void)
+> +{
+> +	int cpu, hetid, irq, ret;
+> +	bool first = true;
+> +	u16 gsi = 0;
+> +
+> +	/*
+> +	 * sanity check all the GICC tables for the same interrupt number
+> +	 * for now we only support homogeneous ACPI/SPE machines.
+> +	 */
+> +	for_each_possible_cpu(cpu) {
+> +		struct acpi_madt_generic_interrupt *gicc;
+> +
+> +		gicc = acpi_cpu_get_madt_gicc(cpu);
+> +		if (gicc->header.length < ACPI_MADT_GICC_SPE)
+> +			return -ENODEV;
+> +
+> +		if (first) {
+> +			gsi = gicc->spe_interrupt;
+> +			if (!gsi)
+> +				return -ENODEV;
+> +			hetid = find_acpi_cpu_topology_hetero_id(cpu);
+> +			first = false;
+> +		} else if ((gsi != gicc->spe_interrupt) ||
+> +			   (hetid != find_acpi_cpu_topology_hetero_id(cpu))) {
 
-Our usage is #2., we put a mm_struct as the set to do permission
-check. E.g VFIO can check guest PASID ownership based on QEMU process
-mm. This will make sure IOASID allocated by one guest can only be used
-by the same guest.
+OK, after checking ACPI specification again and checking with people
+involved in dynamic ACPI table generation, I think my earlier concerns
+can be addressed by having a root node in any system(including
+multi-socket ones) with IDENTICAL flag set in that root node.
 
-For IOASID used for sva bind, let it be native or guest sva, we always
-have the same data type. Therefore, when page request handler gets
-called to search with ioasid_find(), it knows its data type. An
-additional flag will tell if it is a guest bind or native bind.
+With that note for archiving reasons so that we can refer people to
+in future,
 
-I was under the assumption that aux domain and its IOASID is a 1:1
-mapping, there is no need for a search. Or even it needs to search, it
-will be searched by the same caller that did the allocation, therefore
-it knows what private data type is.
+Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
 
-In addition, aux domain is used for request w/o PASID. And PPR for
-request w/o PASID is not to be supported. So there would not be a need
-to search from page request handler.
-
-Now if we take the above assumption away, and use ioasid_set strictly
-to differentiate the data types (Usage #1). Then I agree we can get
-rid of NULL set and global search.
-
-That would require we converge on the generic sva_bind for both
-native and guest. The additional implication is that VFIO layer has to
-be SVA struct aware in order to sanitize the mm_struct for guest bind.
-i.e. check guest ownership by using QEMU process mm. Whereas we have
-today, VFIO just use IOASID set as mm to check ownership, no need to
-know the type.
-
-Can we keep the NULL set for now and remove it __after__ we converge on
-the sva bind flows?
-
-Thanks,
-
-Jacob
+--
+Regards,
+Sudeep
