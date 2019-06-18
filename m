@@ -2,66 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5E42A4A0CF
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 14:31:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DED2D4A0DF
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 14:33:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726232AbfFRMbh convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 18 Jun 2019 08:31:37 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:42101 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725913AbfFRMbh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Jun 2019 08:31:37 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45SnWN5bq5z9s9y;
-        Tue, 18 Jun 2019 22:31:28 +1000 (AEST)
-From:   Michael Ellerman <mpe@ellerman.id.au>
-To:     Christophe Leroy <christophe.leroy@c-s.fr>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>, erhard_f@mailbox.org
-Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] powerpc/32s: fix initial setup of segment registers on secondary CPU
-In-Reply-To: <b60946f5-dc70-61ce-e266-af91890cb702@c-s.fr>
-References: <be07403806abc56ec027f6d47468411876e18bb5.1560267983.git.christophe.leroy@c-s.fr> <b60946f5-dc70-61ce-e266-af91890cb702@c-s.fr>
-Date:   Tue, 18 Jun 2019 22:31:26 +1000
-Message-ID: <87h88noz1d.fsf@concordia.ellerman.id.au>
+        id S1728890AbfFRMd1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Jun 2019 08:33:27 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:37312 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725919AbfFRMd1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Jun 2019 08:33:27 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=PuSthhtBsD3xNWn1JKgPDThsL5pdTkosJjBNbFp/O/I=; b=piVITSQZXA3DRkDf975Sx4/Ki
+        9woGPs8Kula9K1X3CjBcmzfF57pm4S4Zt0nEk74LpwZnX18rfV6E0HHr57w9iA6aNUgALZppe0W6n
+        s7MKq3rheb93FNVUUd0LqSPi6Kw49BCXkC8pFyG35Sl1aMU2S4jpC4JlEheAZpdgyqWF4J7DZKbID
+        0U5JvwQgY+YHIylh7hYkKe1/0Befos38lrx3X9tsQZlB2IEYMvRY6eE3tsA4SPqlERLTu8sTZVLTF
+        8nQZTJAwjBwT7blS/HM+LuVrUm/OYkhqpsAOcLO8reqKWz26MxbiCK++kM9m8MHlLEFhRZvezh962
+        8KMmlKHyw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1hdDIe-0001mw-8r; Tue, 18 Jun 2019 12:33:20 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id A227A209C88F8; Tue, 18 Jun 2019 14:33:18 +0200 (CEST)
+Date:   Tue, 18 Jun 2019 14:33:18 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Matt Fleming <matt@codeblueprint.co.uk>
+Cc:     "Lendacky, Thomas" <Thomas.Lendacky@amd.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Suthikulpanit, Suravee" <Suravee.Suthikulpanit@amd.com>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Borislav Petkov <bp@alien8.de>
+Subject: Re: [PATCH] sched/topology: Improve load balancing on AMD EPYC
+Message-ID: <20190618123318.GG3419@hirez.programming.kicks-ass.net>
+References: <20190605155922.17153-1-matt@codeblueprint.co.uk>
+ <20190605180035.GA3402@hirez.programming.kicks-ass.net>
+ <20190610212620.GA4772@codeblueprint.co.uk>
+ <18994abb-a2a8-47f4-9a35-515165c75942@amd.com>
+ <20190618104319.GB4772@codeblueprint.co.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190618104319.GB4772@codeblueprint.co.uk>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Christophe Leroy <christophe.leroy@c-s.fr> writes:
-> Le 11/06/2019 à 17:47, Christophe Leroy a écrit :
->> The patch referenced below moved the loading of segment registers
->> out of load_up_mmu() in order to do it earlier in the boot sequence.
->> However, the secondary CPU still needs it to be done when loading up
->> the MMU.
->> 
->> Reported-by: Erhard F. <erhard_f@mailbox.org>
->> Fixes: 215b823707ce ("powerpc/32s: set up an early static hash table for KASAN")
->
-> Cc: stable@vger.kernel.org
+On Tue, Jun 18, 2019 at 11:43:19AM +0100, Matt Fleming wrote:
+> This works for me under all my tests. Thoughts?
+> 
+> --->8---
+> 
+> diff --git a/arch/x86/kernel/cpu/amd.c b/arch/x86/kernel/cpu/amd.c
+> index 80a405c2048a..4db4e9e7654b 100644
+> --- a/arch/x86/kernel/cpu/amd.c
+> +++ b/arch/x86/kernel/cpu/amd.c
+> @@ -8,6 +8,7 @@
+>  #include <linux/sched.h>
+>  #include <linux/sched/clock.h>
+>  #include <linux/random.h>
+> +#include <linux/topology.h>
+>  #include <asm/processor.h>
+>  #include <asm/apic.h>
+>  #include <asm/cacheinfo.h>
+> @@ -824,6 +825,8 @@ static void init_amd_zn(struct cpuinfo_x86 *c)
+>  {
+>  	set_cpu_cap(c, X86_FEATURE_ZEN);
+>  
 
-Sorry patchwork didn't pick that up and I missed it. The AUTOSEL bot
-will probably pick it up anyway though.
+I'm thinking this deserves a comment. Traditionally the SLIT table held
+relative memory latency. So where the identity is 10, 16 would indicate
+1.6 times local latency and 32 would be 3.2 times local.
 
-cheers
+Now, even very early on BIOS monkeys went about their business and put
+in random values in an attempt to 'tune' the system based on how
+$random-os behaved, which is all sorts of fu^Wwrong.
 
->> diff --git a/arch/powerpc/kernel/head_32.S b/arch/powerpc/kernel/head_32.S
->> index 1d5f1bd0dacd..f255e22184b4 100644
->> --- a/arch/powerpc/kernel/head_32.S
->> +++ b/arch/powerpc/kernel/head_32.S
->> @@ -752,6 +752,7 @@ __secondary_start:
->>   	stw	r0,0(r3)
->>   
->>   	/* load up the MMU */
->> +	bl	load_segment_registers
->>   	bl	load_up_mmu
->>   
->>   	/* ptr to phys current thread */
->> 
+Now, I suppose my question is; is that 32 Zen puts in an actual relative
+memory latency metric, or a random value we somehow have to deal with.
+And can we pretty please describe the whole sordid story behind this
+'tunable' somewhere?
+
+> +	node_reclaim_distance = 32;
+> +
+>  	/* Fix erratum 1076: CPB feature bit not being set in CPUID. */
+>  	if (!cpu_has(c, X86_FEATURE_CPB))
+>  		set_cpu_cap(c, X86_FEATURE_CPB);
