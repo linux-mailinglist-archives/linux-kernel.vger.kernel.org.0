@@ -2,111 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BC2A44A035
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 14:06:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 38DAF4A075
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 14:13:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726852AbfFRMGA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Jun 2019 08:06:00 -0400
-Received: from mail-eopbgr80075.outbound.protection.outlook.com ([40.107.8.75]:58519
-        "EHLO EUR04-VI1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725934AbfFRMGA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Jun 2019 08:06:00 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Mellanox.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=gcWx94Q5Uyanjwk94sd/nnI7jx4KAUy+b3+ehsY3k4Q=;
- b=E957Zdrl47Xy2d8/21jBLw0AoGcaRpypw9uoK2UYZY7K54Tp7SCKA5NE1/0ZOD0DzvzkDp3yPVLrp0jXvMFOHURpZt2uu6Qrp6XB8oEzqyPprDIKzHu8vS6xHJNWhBOa6ctXkObdt1XIiEASjFMdiwtSWEpEHQ+jXxMaspoPmPw=
-Received: from DB6PR0501MB2342.eurprd05.prod.outlook.com (10.168.56.21) by
- DB6PR0501MB2328.eurprd05.prod.outlook.com (10.168.56.27) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1987.15; Tue, 18 Jun 2019 12:05:56 +0000
-Received: from DB6PR0501MB2342.eurprd05.prod.outlook.com
- ([fe80::ec3d:c810:e8d8:8aef]) by DB6PR0501MB2342.eurprd05.prod.outlook.com
- ([fe80::ec3d:c810:e8d8:8aef%9]) with mapi id 15.20.1987.014; Tue, 18 Jun 2019
- 12:05:56 +0000
-From:   Shalom Toledo <shalomt@mellanox.com>
-To:     Nathan Chancellor <natechancellor@gmail.com>,
-        Ido Schimmel <idosch@mellanox.com>,
-        Jiri Pirko <jiri@mellanox.com>
-CC:     Petr Machata <petrm@mellanox.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: arm32 build failure after
- 992aa864dca068554802a65a467a2640985cc213
-Thread-Topic: arm32 build failure after
- 992aa864dca068554802a65a467a2640985cc213
-Thread-Index: AQHVJXeaQJyu+P7LqEmJZmmYcFVfYqahUWoA
-Date:   Tue, 18 Jun 2019 12:05:56 +0000
-Message-ID: <60390608-aec3-503d-e4f2-2b4e93aeefaa@mellanox.com>
-References: <20190618014604.GA17174@archlinux-epyc>
-In-Reply-To: <20190618014604.GA17174@archlinux-epyc>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
- Gecko/20100101 Thunderbird/60.7.1
-x-clientproxiedby: AM5PR0201CA0015.eurprd02.prod.outlook.com
- (2603:10a6:203:3d::25) To DB6PR0501MB2342.eurprd05.prod.outlook.com
- (2603:10a6:4:4c::21)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=shalomt@mellanox.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [193.47.165.251]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 0d7db394-8708-4c76-2692-08d6f3e55194
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:DB6PR0501MB2328;
-x-ms-traffictypediagnostic: DB6PR0501MB2328:
-x-microsoft-antispam-prvs: <DB6PR0501MB23288EBC24C169DBF5E3CA7EC5EA0@DB6PR0501MB2328.eurprd05.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:1751;
-x-forefront-prvs: 007271867D
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(396003)(346002)(39860400002)(136003)(366004)(51914003)(189003)(199004)(53754006)(7736002)(86362001)(316002)(73956011)(58126008)(66476007)(110136005)(5660300002)(71190400001)(36756003)(256004)(31696002)(54906003)(6246003)(65826007)(66556008)(71200400001)(14444005)(486006)(2906002)(99286004)(26005)(11346002)(446003)(476003)(52116002)(76176011)(6506007)(386003)(53546011)(186003)(102836004)(2616005)(66946007)(25786009)(64126003)(3846002)(14454004)(81166006)(8936002)(68736007)(6486002)(6436002)(31686004)(229853002)(6636002)(53936002)(66066001)(64756008)(65806001)(65956001)(81156014)(66446008)(8676002)(4326008)(6116002)(478600001)(305945005)(6512007);DIR:OUT;SFP:1101;SCL:1;SRVR:DB6PR0501MB2328;H:DB6PR0501MB2342.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: mellanox.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: JZqeNadyxCBG0pjfPIS/PUFi5/pT5/Ool9jbNQfGp4aRCGd6TNyCPkuaoisN/nqGOTni65IUOOQAoLrpzOLV/3pI5pWuTeuD3SSsgyMBphmu6Ik7SkTE3sgsJV7Fgrqlk1z4V1fVPn7emwQEbdxoZASrjuRM9YIMFHeooHgoTs134AUhYzch+1Pr3iwxF+fWwj55sgpJ//OyuoRnL+HL/XwAtXzZfbBEyrNLW7wjfSMOrnEvtm5tpK683b6VFCgZQyGAAe86aVR6FyO4PFxoi3mplxt5+6qG5YV2lvUltwkHRDVqCOMwNRZzc8yhXyswcdDjDDUpL4+XgVQMPzPn42f/PwXgYl8ENVIwa0qNM2Pkbl6dTTKaMdt1HwF1GRhuiBb7CO6T6SHVK+5/Jr47eKHQuP8DR5N1pWmMNK8EGBo=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <94E9B454FC28BD4A9154D89988536B10@eurprd05.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        id S1728997AbfFRMNC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Jun 2019 08:13:02 -0400
+Received: from mail.intenta.de ([178.249.25.132]:32330 "EHLO mail.intenta.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725955AbfFRMNC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Jun 2019 08:13:02 -0400
+X-Greylist: delayed 336 seconds by postgrey-1.27 at vger.kernel.org; Tue, 18 Jun 2019 08:13:01 EDT
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=intenta.de; s=dkim1;
+        h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:CC:To:From:Date; bh=HPlPJ4uGAfuFI4JxO/9dnycfR2aDEbR0VS4Uhr7HO0w=;
+        b=G0fwpmGa+PGXLtujI3SLrLjxixit8AZtbiSbq1UgPIh2R6FWkSN2zlzZGO6aBGepfwrEeY4MceyuFugtojP+hRQdLiC09ka+bACkIODAJ5Fnt+vMy6i6jKy/s0LLRcIUAiATXroX+ykuQdAIy48Fe4duEiyPC1rzRBHrx91X/NdFglqmPtchtR7IwGRePpTpgI0cVvs89ay+azAepZBuCPjClzZYKfQvwkzMJ0TipCtYBGsSZzzhdsDisY1Q/oOLGbjoM2MDwwgk0LrdH5m3JVXN5senlC9rTagZMZEi9HoSOo05JmYzZoMho7B/w8YQHCY33qizRgGiJaQbtwSfqA==;
+X-CTCH-RefID: str=0001.0A0C020C.5D08D3F8.00C0,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
+Date:   Tue, 18 Jun 2019 14:07:21 +0200
+From:   Helmut Grohne <helmut.grohne@intenta.de>
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>
+CC:     <tglx@linutronix.de>, <linux-kernel@vger.kernel.org>,
+        David Abdurachmanov <david.abdurachmanov@gmail.com>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        "Albert Ou" <aou@eecs.berkeley.edu>,
+        "open list:RISC-V ARCHITECTURE" <linux-riscv@lists.infradead.org>
+Subject: Re: [PATCH 02/15] clocksource/drivers/sp804: Add COMPILE_TEST to
+ CONFIG_ARM_TIMER_SP804
+Message-ID: <20190618120719.a4kgyiuljm5uivfq@laureti-dev>
+References: <7e786ba3-a664-8fd9-dd17-6a5be996a712@linaro.org>
+ <20190509111048.11151-1-daniel.lezcano@linaro.org>
+ <20190509111048.11151-2-daniel.lezcano@linaro.org>
 MIME-Version: 1.0
-X-OriginatorOrg: Mellanox.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0d7db394-8708-4c76-2692-08d6f3e55194
-X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Jun 2019 12:05:56.6742
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: a652971c-7d2e-4d9b-a6a4-d149256f461b
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: shalomt@mellanox.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB6PR0501MB2328
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20190509111048.11151-2-daniel.lezcano@linaro.org>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-ClientProxiedBy: ICSMA002.intenta.de (10.10.16.48) To ICSMA002.intenta.de
+ (10.10.16.48)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gMTgvMDYvMjAxOSA0OjQ2LCBOYXRoYW4gQ2hhbmNlbGxvciB3cm90ZToNCj4gSGkgYWxsLA0K
-PiANCj4gQSAzMi1iaXQgQVJNIGFsbHllc2NvbmZpZyBmYWlscyB0byBsaW5rIGFmdGVyIGNvbW1p
-dCA5OTJhYTg2NGRjYTANCj4gKCJtbHhzdzogc3BlY3RydW1fcHRwOiBBZGQgaW1wbGVtZW50YXRp
-b24gZm9yIHBoeXNpY2FsIGhhcmR3YXJlIGNsb2NrDQo+IG9wZXJhdGlvbnMiKSBiZWNhdXNlIG9m
-IDY0LWJpdCBkaXZpc2lvbjoNCj4gDQo+IGFybS1saW51eC1nbnVlYWJpLWxkOg0KPiBkcml2ZXJz
-L25ldC9ldGhlcm5ldC9tZWxsYW5veC9tbHhzdy9zcGVjdHJ1bV9wdHAubzogaW4gZnVuY3Rpb24N
-Cj4gYG1seHN3X3NwMV9wdHBfcGhjX3NldHRpbWUnOg0KPiBzcGVjdHJ1bV9wdHAuYzooLnRleHQr
-MHgzOWMpOiB1bmRlZmluZWQgcmVmZXJlbmNlIHRvIGBfX2FlYWJpX3VsZGl2bW9kJw0KPiANCj4g
-VGhlIGZvbGxvd2luZyBkaWZmIGZpeGVzIGl0IGJ1dCBJIGhhdmUgbm8gaWRlYSBpZiBpdCBpcyBw
-cm9wZXIgb3Igbm90DQo+IChoZW5jZSByZWFjaGluZyBvdXQgYmVmb3JlIHNlbmRpbmcgaXQsIGlu
-IGNhc2Ugb25lIG9mIHlvdSBoYXMgYSBtb3JlDQo+IHByb3BlciBpZGVhKS4NCj4gDQo+IENoZWVy
-cywNCj4gTmF0aGFuDQo+IA0KPiAtLS0NCj4gDQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL25ldC9l
-dGhlcm5ldC9tZWxsYW5veC9tbHhzdy9zcGVjdHJ1bV9wdHAuYyBiL2RyaXZlcnMvbmV0L2V0aGVy
-bmV0L21lbGxhbm94L21seHN3L3NwZWN0cnVtX3B0cC5jDQo+IGluZGV4IDJhOWJiYzkwMjI1ZS4u
-NjU2ODZmMGI2ODM0IDEwMDY0NA0KPiAtLS0gYS9kcml2ZXJzL25ldC9ldGhlcm5ldC9tZWxsYW5v
-eC9tbHhzdy9zcGVjdHJ1bV9wdHAuYw0KPiArKysgYi9kcml2ZXJzL25ldC9ldGhlcm5ldC9tZWxs
-YW5veC9tbHhzdy9zcGVjdHJ1bV9wdHAuYw0KPiBAQCAtODcsNyArODcsNyBAQCBtbHhzd19zcDFf
-cHRwX3BoY19zZXR0aW1lKHN0cnVjdCBtbHhzd19zcF9wdHBfY2xvY2sgKmNsb2NrLCB1NjQgbnNl
-YykNCj4gICAgICAgICB1MzIgbmV4dF9zZWM7DQo+ICAgICAgICAgaW50IGVycjsNCj4gIA0KPiAt
-ICAgICAgIG5leHRfc2VjID0gbnNlYyAvIE5TRUNfUEVSX1NFQyArIDE7DQo+ICsgICAgICAgbmV4
-dF9zZWMgPSAodTMyKWRpdjY0X3U2NChuc2VjLCBOU0VDX1BFUl9TRUMgKyAxKTsNCj4gICAgICAg
-ICBuZXh0X3NlY19pbl9uc2VjID0gbmV4dF9zZWMgKiBOU0VDX1BFUl9TRUM7DQo+ICANCj4gICAg
-ICAgICBzcGluX2xvY2soJmNsb2NrLT5sb2NrKTsNCj4gDQo+IA0KDQoNCg0KVGhhbmtzIGZvciB0
-aGUgcmVwb3J0LiBJIHdpbGwgc2VuZCBhIGZpeC4NCg==
+On Thu, May 09, 2019 at 01:10:35PM +0200, Daniel Lezcano wrote:
+> From: David Abdurachmanov <david.abdurachmanov@gmail.com>
+> 
+> This is only used on arm and arm64 platforms. Add COMPILE_TEST option.
+
+This patch breaks selecting CONFIG_ARM_TIMER_SP804 here. I don't quite
+understand why, but commit dfc82faad72520769ca146f857e65c23632eed5a is
+where bisection stops.
+
+When I try make allnoconfig with a KCONFIG_ALLCONFIG that explicitly
+enables this option, it remains disabled.
+
+When I try make menuconfig, the clocksource menu is empty.
+
+If I apply the patch below, the option is selectable in menuconfig and
+with KCONFIG_ALLCONFIG again. It could be used as an alternative
+implementation, but I don't have a good rationale for why the previous
+approach breaks.
+
+My reading of the kconfig documentation indicates that the "if
+condition" should only influence the default value, but it seems like it
+entirely disables the option here. I'm left wondering why.
+
+Can we revert the patch until this is sorted out?
+
+Helmut
+
+--- a/drivers/clocksource/Kconfig
++++ b/drivers/clocksource/Kconfig
+@@ -388,7 +388,8 @@ config ARM_GLOBAL_TIMER
+ 	  This options enables support for the ARM global timer unit
+ 
+ config ARM_TIMER_SP804
+-	bool "Support for Dual Timer SP804 module" if COMPILE_TEST
++	bool "Support for Dual Timer SP804 module"
++	depends on ARM || ARM64 || COMPILE_TEST
+ 	depends on GENERIC_SCHED_CLOCK && CLKDEV_LOOKUP
+ 	select CLKSRC_MMIO
+ 	select TIMER_OF if OF
