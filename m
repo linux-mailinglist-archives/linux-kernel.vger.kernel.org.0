@@ -2,56 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 75C0649960
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 08:52:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C505E49968
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 08:52:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728900AbfFRGwN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Jun 2019 02:52:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56560 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728455AbfFRGwM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Jun 2019 02:52:12 -0400
-Received: from dragon (li1322-146.members.linode.com [45.79.223.146])
-        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1D39020679;
-        Tue, 18 Jun 2019 06:52:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560840731;
-        bh=aCHd527iEyPOQrGtxKzpIz/rVHqvtEEHCM75bJPOonc=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=OiTQ44nLfa5pPquo//DDSOvtfEk9pMHAkszfOQdVf6bDJr+dp3yEgN/oBFVFVDFRk
-         Xeqtmq5acyTULJq+UNzhMIQ7oe7AT2foIANW1p9z7WG3zO9wvTzCU4GHMv4F75M4MC
-         cQ07bkLQKCeeu3Flpf8XiLjLf0pWa7zhbpmm1ujU=
-Date:   Tue, 18 Jun 2019 14:51:17 +0800
-From:   Shawn Guo <shawnguo@kernel.org>
-To:     Anson.Huang@nxp.com
-Cc:     mturquette@baylibre.com, sboyd@kernel.org, s.hauer@pengutronix.de,
-        kernel@pengutronix.de, festevam@gmail.com, abel.vesa@nxp.com,
-        l.stach@pengutronix.de, ccaione@baylibre.com,
-        leonard.crestez@nxp.com, aisheng.dong@nxp.com,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, Linux-imx@nxp.com
-Subject: Re: [PATCH 1/2] clk: imx: Remove __init for imx_check_clocks() API
-Message-ID: <20190618065116.GA29881@dragon>
-References: <20190610053634.14339-1-Anson.Huang@nxp.com>
+        id S1728984AbfFRGwn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Jun 2019 02:52:43 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:18633 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728158AbfFRGwm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Jun 2019 02:52:42 -0400
+Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 43AAFAF366D1653AD995;
+        Tue, 18 Jun 2019 14:52:38 +0800 (CST)
+Received: from [10.151.23.176] (10.151.23.176) by smtp.huawei.com
+ (10.3.19.206) with Microsoft SMTP Server (TLS) id 14.3.439.0; Tue, 18 Jun
+ 2019 14:52:28 +0800
+Subject: Re: [RFC PATCH 0/8] staging: erofs: decompression inplace approach
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     <devel@driverdev.osuosl.org>, Miao Xie <miaoxie@huawei.com>,
+        <chao@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        <weidu.du@huawei.com>, Fang Wei <fangwei1@huawei.com>,
+        <linux-fsdevel@vger.kernel.org>, <linux-erofs@lists.ozlabs.org>
+References: <20190614181619.64905-1-gaoxiang25@huawei.com>
+ <20190617203609.GA22034@kroah.com>
+ <c86d3fc0-8b4a-6583-4309-911960fbe862@huawei.com>
+ <20190618054709.GA4271@kroah.com>
+ <df18d7f9-f65a-5697-c7c4-edb1ad846c3e@huawei.com>
+ <20190618064523.GA6015@kroah.com>
+From:   Gao Xiang <gaoxiang25@huawei.com>
+Message-ID: <2a6abbf9-20a9-c1dd-0091-d8e3009037eb@huawei.com>
+Date:   Tue, 18 Jun 2019 14:52:21 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190610053634.14339-1-Anson.Huang@nxp.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20190618064523.GA6015@kroah.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.151.23.176]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 10, 2019 at 01:36:33PM +0800, Anson.Huang@nxp.com wrote:
-> From: Anson Huang <Anson.Huang@nxp.com>
-> 
-> Some of i.MX SoCs' clock driver use platform driver model,
-> and they need to call imx_check_clocks() API, so
-> imx_check_clocks() API should NOT be in .init section.
-> 
-> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 
-Applied both, thanks.
+
+On 2019/6/18 14:45, Greg Kroah-Hartman wrote:
+> On Tue, Jun 18, 2019 at 02:18:00PM +0800, Gao Xiang wrote:
+>>
+>>
+>> On 2019/6/18 13:47, Greg Kroah-Hartman wrote:
+>>> On Tue, Jun 18, 2019 at 09:47:08AM +0800, Gao Xiang wrote:
+>>>>
+>>>>
+>>>> On 2019/6/18 4:36, Greg Kroah-Hartman wrote:
+>>>>> On Sat, Jun 15, 2019 at 02:16:11AM +0800, Gao Xiang wrote:
+>>>>>> At last, this is RFC patch v1, which means it is not suitable for
+>>>>>> merging soon... I'm still working on it, testing its stability
+>>>>>> these days and hope these patches get merged for 5.3 LTS
+>>>>>> (if 5.3 is a LTS version).
+>>>>>
+>>>>> Why would 5.3 be a LTS kernel?
+>>>>>
+>>>>> curious as to how you came up with that :)
+>>>>
+>>>> My personal thought is about one LTS kernel one year...
+>>>> Usually 5 versions after the previous kernel...(4.4 -> 4.9 -> 4.14 -> 4.19),
+>>>> which is not suitable for all historical LTSs...just prepare for 5.3...
+>>>
+>>> I try to pick the "last" kernel that is released each year, which
+>>> sometimes is 5 kernels, sometimes 4, sometimes 6, depending on the
+>>> release cycle.
+>>>
+>>> So odds are it will be 5.4 for the next LTS kernel, but we will not know
+>>> more until it gets closer to release time.
+>>
+>> Thanks for kindly explanation :)
+>>
+>> Anyway, I will test these patches, land to our commerical products and try the best
+>> efforts on making it more stable for Linux upstream to merge.
+> 
+> Sounds great.
+> 
+> But why do you need to add compression to get this code out of staging?
+> Why not move it out now and then add compression and other new features
+> to it then?
+
+Move out of staging could be over several linux versions since I'd like to get
+majority fs people agreed to this.
+
+Decompression inplace is an important part of erofs to show its performance
+benefits over existed compress filesystems and I tend to merge it in advance.
+
+Thanks,
+Gao Xiang
+
+> 
+> thanks,
+> 
+> greg k-h
+> 
