@@ -2,112 +2,178 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F3EEA49A5F
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 09:21:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A2FD49945
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 08:49:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729034AbfFRHVR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Jun 2019 03:21:17 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:35202 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725913AbfFRHVQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Jun 2019 03:21:16 -0400
-Received: by mail-pf1-f196.google.com with SMTP id d126so7126621pfd.2
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2019 00:21:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=uMkMCv3BUoXLIY8oihfQPbNdvfEpRTYBkVyHKvMXCxo=;
-        b=UP65qTPR+PVH9R0yUIf3Ua5dHgffMfh1HjiizGbyeCEXQQUsZFNt0BjYxnfbEPb5e2
-         kZwfswFy6tbao8QG4VlChvqNNFukKdpctn9FAr9GtQd7OtbChbaAPuetVqBYc1Blz0Ym
-         Orx2Bct4ZzJVysUVAoWLSWwruldUs6tZ41avYyUzE6F67T1emdnH2W1/bQVKrLrLOFp1
-         71U3k6pGrAM+iAkp1Y6ZHWu00zVise80ZQJ+Vk4x71o51zkVP7JIovJy4wkrjXQXxGwl
-         uaVDgxs6aV+yDxqakjKg0Vc1CeuofaTiBaRnTefmmeJMRRZoVVLBsgHPZWWuhErnTo9e
-         8uYg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=uMkMCv3BUoXLIY8oihfQPbNdvfEpRTYBkVyHKvMXCxo=;
-        b=seqBxaPxSBA8U/Rc1AFeyYvJFGeOtaGXj92+FEKJWQWeKuOddAU6sVmuaG5jn9dele
-         mBYv2WUU6Rp2akt/z1At+1WjXLgrxFrtVXa27ZqlpA/GQGmPuJtG0T3xnH1992jR2Qep
-         Zrvye2OOt8SyzFv0h7NiQnJalD/DVdD7TK66FGmjm9+Wpkw5u30+FDFyVK5zqX7SPodZ
-         YAW1r5W22ZVgxD7X71wCPVYqpXvh0Ekg1nQnmT/pP5+HNIn9qQBzK/Pj+ZXa8+lXibBu
-         k75ZabCvTVrgNomCHSyXBjl6dBnEIUSFtu2n0TQZLr7hKHTFFnBLL2ufjdf/HGIhX4dx
-         Y17g==
-X-Gm-Message-State: APjAAAW9F8Hvxf0QQK5nM3JFbXUsAkvHy3GMbuHifNW5gSIUhWeJBbSV
-        /yC56I7bUYXqg+QKiFJuQ7H/lA==
-X-Google-Smtp-Source: APXvYqzT9yDFgrWXzL17w6F+6WzZOHPFNClSCnrZ/Me4Pzh7JrexSnochsWdQoaHG6kWd9P0e63z2g==
-X-Received: by 2002:a62:fb10:: with SMTP id x16mr119211653pfm.112.1560835484882;
-        Mon, 17 Jun 2019 22:24:44 -0700 (PDT)
-Received: from localhost.localdomain (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id b15sm13176070pfi.141.2019.06.17.22.24.44
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 17 Jun 2019 22:24:44 -0700 (PDT)
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Andy Gross <agross@kernel.org>
-Cc:     David Brown <david.brown@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [PATCH] arm64: dts: qcom: msm8996: Rename smmu nodes
-Date:   Mon, 17 Jun 2019 22:24:41 -0700
-Message-Id: <20190618052441.32306-1-bjorn.andersson@linaro.org>
-X-Mailer: git-send-email 2.18.0
+        id S1726546AbfFRGtO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Jun 2019 02:49:14 -0400
+Received: from mail-eopbgr70070.outbound.protection.outlook.com ([40.107.7.70]:14340
+        "EHLO EUR04-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725988AbfFRGtO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Jun 2019 02:49:14 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
+ s=selector2-armh-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=jg11UFsuG8yLgVKAb2iXZ6Brtbhmfy1eccVVMXVHDCs=;
+ b=s6U4V5I8bfnzzLIGfz5NbozkSc6px9SzEBmlkGR6cgG1YRLyJKGgUy29JQvSqP1X5Cmhzja3YhLbvZee6BAlGt0IKBbZeBVGcjZQ0t4TyEwI9z7bP2N3EsURbYqtCwV7GQ81H01VWvlUuaadODjkZkmnrcLkSF6r1N8EKJYVN/U=
+Received: from VE1PR08MB5006.eurprd08.prod.outlook.com (10.255.159.31) by
+ VE1PR08MB5071.eurprd08.prod.outlook.com (20.179.29.149) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1987.12; Tue, 18 Jun 2019 05:24:46 +0000
+Received: from VE1PR08MB5006.eurprd08.prod.outlook.com
+ ([fe80::206b:5cf6:97e:1358]) by VE1PR08MB5006.eurprd08.prod.outlook.com
+ ([fe80::206b:5cf6:97e:1358%7]) with mapi id 15.20.1987.014; Tue, 18 Jun 2019
+ 05:24:46 +0000
+From:   "james qian wang (Arm Technology China)" <james.qian.wang@arm.com>
+To:     Ayan Halder <Ayan.Halder@arm.com>
+CC:     Liviu Dudau <Liviu.Dudau@arm.com>,
+        Brian Starkey <Brian.Starkey@arm.com>,
+        "airlied@linux.ie" <airlied@linux.ie>,
+        "daniel@ffwll.ch" <daniel@ffwll.ch>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        nd <nd@arm.com>
+Subject: Re: [v2] drm/komeda: Make Komeda interrupts shareable
+Thread-Topic: [v2] drm/komeda: Make Komeda interrupts shareable
+Thread-Index: AQHVJZYkGje/vtT4XU6VNPIgpehS3Q==
+Date:   Tue, 18 Jun 2019 05:24:46 +0000
+Message-ID: <20190618052439.GA3638@james-ThinkStation-P300>
+References: <20190613151257.32297-1-ayan.halder@arm.com>
+In-Reply-To: <20190613151257.32297-1-ayan.halder@arm.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Mutt/1.9.4 (2018-02-28)
+x-originating-ip: [113.29.88.7]
+x-clientproxiedby: HK0PR03CA0082.apcprd03.prod.outlook.com
+ (2603:1096:203:72::22) To VE1PR08MB5006.eurprd08.prod.outlook.com
+ (2603:10a6:803:113::31)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=james.qian.wang@arm.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 04387cfc-5d06-45ac-b66a-08d6f3ad46cc
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(7168020)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:VE1PR08MB5071;
+x-ms-traffictypediagnostic: VE1PR08MB5071:
+nodisclaimer: True
+x-microsoft-antispam-prvs: <VE1PR08MB5071E1C3C230A6043E06C21DB3EA0@VE1PR08MB5071.eurprd08.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:104;
+x-forefront-prvs: 007271867D
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(7916004)(39860400002)(136003)(366004)(346002)(396003)(376002)(199004)(189003)(66066001)(71200400001)(9686003)(6636002)(71190400001)(5660300002)(6512007)(52116002)(229853002)(256004)(7736002)(11346002)(6436002)(4326008)(5024004)(99286004)(66446008)(55236004)(102836004)(64756008)(14454004)(66946007)(14444005)(6506007)(76176011)(66476007)(305945005)(1076003)(66556008)(68736007)(81166006)(476003)(54906003)(2906002)(8676002)(81156014)(73956011)(386003)(6486002)(478600001)(26005)(86362001)(186003)(53936002)(486006)(6862004)(446003)(3846002)(58126008)(33656002)(316002)(25786009)(6116002)(8936002)(33716001)(6246003);DIR:OUT;SFP:1101;SCL:1;SRVR:VE1PR08MB5071;H:VE1PR08MB5006.eurprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: arm.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: V4BnsgEQnxRnEl6z0SjII9ddPoYF07BJX3FaWMhOgsh6dSyqqarKXgR1JevWgjJPUd4fyAzrs64FRFVJoOMJqosQsN9Hdh0+7kWIkdbjqsyXVN0HH8WHxLY0JMhaM7hZbnbX7kYB9EOk9wh9fyVgftdkJi30k73/5x+UDMhdE1bg1NDWnKL69GdqqUoDfK9uy9mtDXkSihz44UPQmd73R46RoLPLQfmEePBuPZHimbWMy0lFJY524VhZJNBioG36SzexGzBtqYUG+5tSaLxK8DTkr1AWDFrnEe61XLr2VucGIlw8N0x1xFt14qzdlv9PlIr3s/tntXxU3OP6eVCvrgBSHaw0X5Z3UJMHiydEaLKezhPG+XFgSPbuTFKkPvr1LG9KB2QotCmI+JXUB1tTYN71dbgkdgBJlRKOgGpX5MY=
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <F05A4150F9974B4CB2FCB81ED970D441@eurprd08.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: arm.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 04387cfc-5d06-45ac-b66a-08d6f3ad46cc
+X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Jun 2019 05:24:46.5055
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: f34e5979-57d9-4aaa-ad4d-b122a662184d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: james.qian.wang@arm.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VE1PR08MB5071
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Node names shouldn't include "qcom," and should whenever possible use
-a generic identifier. Resolve this by renaming the smmu nodes "iommu".
+On Thu, Jun 13, 2019 at 03:13:10PM +0000, Ayan Halder wrote:
+> Komeda interrupts may be shared with other hardware blocks.
+> One needs to use devm_request_irq() with IRQF_SHARED to create a shared
+>  interrupt handler.
+> As a result of not using drm_irq_install() api, one needs to set
+> "(struct drm_device *)->irq_enabled =3D true/false" to enable/disable
+> vblank interrupts.
+>=20
+> Changes from v1:-
+> 1. Squashed the following two patches into one (as the second patch is a
+> consequence of the first one):-
+>    drm/komeda: Avoid using DRIVER_IRQ_SHARED
+>    drm/komeda: Enable/Disable vblank interrupts
+> 2. Fixed the commit message (as pointed by Daniel Vetter)
+> 3. Removed calls to 'drm_irq_uninstall()' as we are no longer using
+> drm_irq_install()
+> 4. Removed the struct member 'komeda_kms_driver.irq_handler' as it is not
+> used anywhere.
+>=20
+> Signed-off-by: Ayan Kumar halder <ayan.halder@arm.com>
+> ---
+>  drivers/gpu/drm/arm/display/komeda/komeda_kms.c | 16 +++++++++-------
+>  1 file changed, 9 insertions(+), 7 deletions(-)
+>=20
+> --=20
+> 2.21.0
+> Reviewed-by: Liviu Dudau <liviu.dudau@arm.com>
+>=20
 
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
----
- arch/arm64/boot/dts/qcom/msm8996.dtsi | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+looks good to me.
 
-diff --git a/arch/arm64/boot/dts/qcom/msm8996.dtsi b/arch/arm64/boot/dts/qcom/msm8996.dtsi
-index 2ecd9d775d61..c934e00434c7 100644
---- a/arch/arm64/boot/dts/qcom/msm8996.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8996.dtsi
-@@ -1163,7 +1163,7 @@
- 			};
- 		};
- 
--		vfe_smmu: arm,smmu@da0000 {
-+		vfe_smmu: iommu@da0000 {
- 			compatible = "qcom,msm8996-smmu-v2", "qcom,smmu-v2";
- 			reg = <0xda0000 0x10000>;
- 
-@@ -1314,7 +1314,7 @@
- 			};
- 		};
- 
--		adreno_smmu: arm,smmu@b40000 {
-+		adreno_smmu: iommu@b40000 {
- 			compatible = "qcom,msm8996-smmu-v2", "qcom,smmu-v2";
- 			reg = <0xb40000 0x10000>;
- 
-@@ -1331,7 +1331,7 @@
- 			power-domains = <&mmcc GPU_GDSC>;
- 		};
- 
--		mdp_smmu: arm,smmu@d00000 {
-+		mdp_smmu: iommu@d00000 {
- 			compatible = "qcom,msm8996-smmu-v2", "qcom,smmu-v2";
- 			reg = <0xd00000 0x10000>;
- 
-@@ -1347,7 +1347,7 @@
- 			power-domains = <&mmcc MDSS_GDSC>;
- 		};
- 
--		lpass_q6_smmu: arm,smmu-lpass_q6@1600000 {
-+		lpass_q6_smmu: iommu@1600000 {
- 			compatible = "qcom,msm8996-smmu-v2", "qcom,smmu-v2";
- 			reg = <0x1600000 0x20000>;
- 			#iommu-cells = <1>;
--- 
-2.18.0
+Thank you Ayan.
 
+Reviewed-by: James Qian Wang (Arm Technology China) <james.qian.wang@arm.co=
+m>
+> diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_kms.c b/drivers/gp=
+u/drm/arm/display/komeda/komeda_kms.c
+> index 86f6542afb40..bb2bffc0e022 100644
+> --- a/drivers/gpu/drm/arm/display/komeda/komeda_kms.c
+> +++ b/drivers/gpu/drm/arm/display/komeda/komeda_kms.c
+> @@ -58,7 +58,6 @@ static struct drm_driver komeda_kms_driver =3D {
+>  	.driver_features =3D DRIVER_GEM | DRIVER_MODESET | DRIVER_ATOMIC |
+>  			   DRIVER_PRIME | DRIVER_HAVE_IRQ,
+>  	.lastclose			=3D drm_fb_helper_lastclose,
+> -	.irq_handler			=3D komeda_kms_irq_handler,
+>  	.gem_free_object_unlocked	=3D drm_gem_cma_free_object,
+>  	.gem_vm_ops			=3D &drm_gem_cma_vm_ops,
+>  	.dumb_create			=3D komeda_gem_cma_dumb_create,
+> @@ -194,23 +193,26 @@ struct komeda_kms_dev *komeda_kms_attach(struct kom=
+eda_dev *mdev)
+> =20
+>  	drm_mode_config_reset(drm);
+> =20
+> -	err =3D drm_irq_install(drm, mdev->irq);
+> +	err =3D devm_request_irq(drm->dev, mdev->irq,
+> +			       komeda_kms_irq_handler, IRQF_SHARED,
+> +			       drm->driver->name, drm);
+>  	if (err)
+>  		goto cleanup_mode_config;
+> =20
+>  	err =3D mdev->funcs->enable_irq(mdev);
+>  	if (err)
+> -		goto uninstall_irq;
+> +		goto cleanup_mode_config;
+> +
+> +	drm->irq_enabled =3D true;
+> =20
+>  	err =3D drm_dev_register(drm, 0);
+>  	if (err)
+> -		goto uninstall_irq;
+> +		goto cleanup_mode_config;
+> =20
+>  	return kms;
+> =20
+> -uninstall_irq:
+> -	drm_irq_uninstall(drm);
+>  cleanup_mode_config:
+> +	drm->irq_enabled =3D false;
+>  	drm_mode_config_cleanup(drm);
+>  	komeda_kms_cleanup_private_objs(kms);
+>  free_kms:
+> @@ -223,9 +225,9 @@ void komeda_kms_detach(struct komeda_kms_dev *kms)
+>  	struct drm_device *drm =3D &kms->base;
+>  	struct komeda_dev *mdev =3D drm->dev_private;
+> =20
+> +	drm->irq_enabled =3D false;
+>  	mdev->funcs->disable_irq(mdev);
+>  	drm_dev_unregister(drm);
+> -	drm_irq_uninstall(drm);
+>  	component_unbind_all(mdev->dev, drm);
+>  	komeda_kms_cleanup_private_objs(kms);
+>  	drm_mode_config_cleanup(drm);
