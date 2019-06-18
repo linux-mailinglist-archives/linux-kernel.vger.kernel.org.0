@@ -2,141 +2,245 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9B99B4A7DD
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 19:07:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 125074A7E6
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 19:08:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729992AbfFRRHG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Jun 2019 13:07:06 -0400
-Received: from mail-io1-f69.google.com ([209.85.166.69]:33296 "EHLO
-        mail-io1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729774AbfFRRHF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Jun 2019 13:07:05 -0400
-Received: by mail-io1-f69.google.com with SMTP id n4so16973336ioc.0
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2019 10:07:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=s/tCv7ORrW73a2psUexWQSgK0fyQJua02afP9zd5sIs=;
-        b=YPs3ABbS2RigAWEkUmP6KzG9EUUM3aWnYa5e0tcWBTxgaWts32FGwZVXwEm9/qlV2p
-         r9pmZzLB5Kte9aZHAEYhAZqfcYqXzm/NggV0ihZGBH4P5xMblCZr43hOUgtlv51s9shT
-         i0PLYV8hNIvRdGr9JUqnCSY7xHLo28okbVvfspYhJiRjm/qh/AeOXrUKBJhdgxIkc+mQ
-         tHCD5bijOSwTB1FnKJVr39/KqZoJlX2X564EHXe7hdHIDHLK3I5MVPPJpxHg03raXhLv
-         62zXIWFvaGCU/lEBbkTXUZ+DL37g79eeyhBL5Cu+rC7FvBrZRWpCmEsW36KPh7sRryHH
-         bjiw==
-X-Gm-Message-State: APjAAAXH8GKcpVbv5hO/TFN0uPNtUkOXSl6P5fyGhGc/UzOAhUu7XTi1
-        YJW9DPqi2UTgvDyq2t09s1sbOZjc5X0fpF9HNXq/tcdtRDzn
-X-Google-Smtp-Source: APXvYqxfTGq8SSC9uNyzZexUavfJbP8V9+mDisuId9rK+m0vzwPmIbZh0qjUsip47AujUnOsLrMwZoBUlzHqWT9PYekTzUvP75Qw
+        id S1730093AbfFRRIX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Jun 2019 13:08:23 -0400
+Received: from mx.allycomm.com ([138.68.30.55]:29570 "EHLO mx.allycomm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729491AbfFRRIW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Jun 2019 13:08:22 -0400
+Received: from allycomm.com (unknown [IPv6:2601:647:5401:2210::49])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mx.allycomm.com (Postfix) with ESMTPSA id 050ED26F4B;
+        Tue, 18 Jun 2019 10:08:20 -0700 (PDT)
+From:   Jeff Kletsky <lede@allycomm.com>
+To:     Schrempf Frieder <frieder.schrempf@kontron.de>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Vignesh Raghavendra <vigneshr@ti.com>
+Cc:     Jeff Kletsky <git-commits@allycomm.com>,
+        linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org
+Subject: [PATCH v2] mtd: spinand: Add initial support for Paragon PN26G0xA
+Date:   Tue, 18 Jun 2019 10:08:05 -0700
+Message-Id: <20190618170805.7187-1-lede@allycomm.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-X-Received: by 2002:a6b:14c2:: with SMTP id 185mr428045iou.69.1560877625127;
- Tue, 18 Jun 2019 10:07:05 -0700 (PDT)
-Date:   Tue, 18 Jun 2019 10:07:05 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000623c45058b9c2479@google.com>
-Subject: WARNING in fanotify_handle_event
-From:   syzbot <syzbot+c277e8e2f46414645508@syzkaller.appspotmail.com>
-To:     amir73il@gmail.com, jack@suse.cz, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+From: Jeff Kletsky <git-commits@allycomm.com>
 
-syzbot found the following crash on:
+Add initial support for Paragon Technology
+PN26G01Axxxxx and PN26G02Axxxxx SPI NAND
 
-HEAD commit:    963172d9 Merge branch 'x86-urgent-for-linus' of git://git...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=17c090eaa00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=fa9f7e1b6a8bb586
-dashboard link: https://syzkaller.appspot.com/bug?extid=c277e8e2f46414645508
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15a32f46a00000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13a7dc9ea00000
+Datasheets available at
+http://www.xtxtech.com/upfile/2016082517274590.pdf
+http://www.xtxtech.com/upfile/2016082517282329.pdf
 
-The bug was bisected to:
-
-commit 77115225acc67d9ac4b15f04dd138006b9cd1ef2
-Author: Amir Goldstein <amir73il@gmail.com>
-Date:   Thu Jan 10 17:04:37 2019 +0000
-
-     fanotify: cache fsid in fsnotify_mark_connector
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=12bfcb66a00000
-final crash:    https://syzkaller.appspot.com/x/report.txt?x=11bfcb66a00000
-console output: https://syzkaller.appspot.com/x/log.txt?x=16bfcb66a00000
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+c277e8e2f46414645508@syzkaller.appspotmail.com
-Fixes: 77115225acc6 ("fanotify: cache fsid in fsnotify_mark_connector")
-
-WARNING: CPU: 0 PID: 8994 at fs/notify/fanotify/fanotify.c:359  
-fanotify_get_fsid fs/notify/fanotify/fanotify.c:359 [inline]
-WARNING: CPU: 0 PID: 8994 at fs/notify/fanotify/fanotify.c:359  
-fanotify_handle_event+0x5ff/0xc6d fs/notify/fanotify/fanotify.c:418
-Kernel panic - not syncing: panic_on_warn set ...
-CPU: 0 PID: 8994 Comm: rs:main Q:Reg Not tainted 5.2.0-rc4+ #27
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x172/0x1f0 lib/dump_stack.c:113
-  panic+0x2cb/0x744 kernel/panic.c:219
-  __warn.cold+0x20/0x4d kernel/panic.c:576
-  report_bug+0x263/0x2b0 lib/bug.c:186
-  fixup_bug arch/x86/kernel/traps.c:179 [inline]
-  fixup_bug arch/x86/kernel/traps.c:174 [inline]
-  do_error_trap+0x11b/0x200 arch/x86/kernel/traps.c:272
-  do_invalid_op+0x37/0x50 arch/x86/kernel/traps.c:291
-  invalid_op+0x14/0x20 arch/x86/entry/entry_64.S:986
-RIP: 0010:fanotify_get_fsid fs/notify/fanotify/fanotify.c:359 [inline]
-RIP: 0010:fanotify_handle_event+0x5ff/0xc6d  
-fs/notify/fanotify/fanotify.c:418
-Code: 06 00 00 8b 5b 40 31 ff 8b b5 fc fe ff ff 09 de 89 b5 f0 fe ff ff e8  
-f0 64 ab ff 8b b5 f0 fe ff ff 85 f6 75 55 e8 61 63 ab ff <0f> 0b e8 5a 63  
-ab ff 41 83 c6 01 bf 03 00 00 00 44 89 f6 e8 c9 64
-RSP: 0018:ffff8880a66dfb80 EFLAGS: 00010293
-RAX: ffff888087bf0640 RBX: 0000000000000000 RCX: ffffffff81c55df0
-RDX: 0000000000000000 RSI: ffffffff81c55dff RDI: 0000000000000005
-RBP: ffff8880a66dfcc8 R08: ffff888087bf0640 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000002
-R13: 0000000000000000 R14: 0000000000000002 R15: dffffc0000000000
-  send_to_group fs/notify/fsnotify.c:271 [inline]
-  fsnotify+0x71f/0xbc0 fs/notify/fsnotify.c:409
-  fsnotify_path include/linux/fsnotify.h:54 [inline]
-  fsnotify_path include/linux/fsnotify.h:47 [inline]
-  fsnotify_modify include/linux/fsnotify.h:230 [inline]
-  vfs_write+0x4dc/0x580 fs/read_write.c:560
-  ksys_write+0x14f/0x290 fs/read_write.c:611
-  __do_sys_write fs/read_write.c:623 [inline]
-  __se_sys_write fs/read_write.c:620 [inline]
-  __x64_sys_write+0x73/0xb0 fs/read_write.c:620
-  do_syscall_64+0xfd/0x680 arch/x86/entry/common.c:301
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x7f4cdf18519d
-Code: d1 20 00 00 75 10 b8 01 00 00 00 0f 05 48 3d 01 f0 ff ff 73 31 c3 48  
-83 ec 08 e8 be fa ff ff 48 89 04 24 b8 01 00 00 00 0f 05 <48> 8b 3c 24 48  
-89 c2 e8 07 fb ff ff 48 89 d0 48 83 c4 08 48 3d 01
-RSP: 002b:00007f4cdd726000 EFLAGS: 00000293 ORIG_RAX: 0000000000000001
-RAX: ffffffffffffffda RBX: 0000000000000155 RCX: 00007f4cdf18519d
-RDX: 0000000000000155 RSI: 00000000008bda90 RDI: 0000000000000001
-RBP: 00000000008bda90 R08: 6573753a725f7463 R09: 745f656d6f685f72
-R10: 0000000000000000 R11: 0000000000000293 R12: 0000000000000000
-R13: 00007f4cdd726480 R14: 0000000000000001 R15: 00000000008bd890
-Kernel Offset: disabled
-Rebooting in 86400 seconds..
-
-
+Signed-off-by: Jeff Kletsky <git-commits@allycomm.com>
 ---
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+ drivers/mtd/nand/spi/Makefile  |   2 +-
+ drivers/mtd/nand/spi/core.c    |   1 +
+ drivers/mtd/nand/spi/paragon.c | 147 +++++++++++++++++++++++++++++++++
+ include/linux/mtd/spinand.h    |   1 +
+ 4 files changed, 150 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/mtd/nand/spi/paragon.c
 
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+diff --git a/drivers/mtd/nand/spi/Makefile b/drivers/mtd/nand/spi/Makefile
+index 753125082640..9662b9c1d5a9 100644
+--- a/drivers/mtd/nand/spi/Makefile
++++ b/drivers/mtd/nand/spi/Makefile
+@@ -1,3 +1,3 @@
+ # SPDX-License-Identifier: GPL-2.0
+-spinand-objs := core.o gigadevice.o macronix.o micron.o toshiba.o winbond.o
++spinand-objs := core.o gigadevice.o macronix.o micron.o paragon.o toshiba.o winbond.o
+ obj-$(CONFIG_MTD_SPI_NAND) += spinand.o
+diff --git a/drivers/mtd/nand/spi/core.c b/drivers/mtd/nand/spi/core.c
+index 556bfdb34455..f0f3528aab8f 100644
+--- a/drivers/mtd/nand/spi/core.c
++++ b/drivers/mtd/nand/spi/core.c
+@@ -757,6 +757,7 @@ static const struct spinand_manufacturer *spinand_manufacturers[] = {
+ 	&gigadevice_spinand_manufacturer,
+ 	&macronix_spinand_manufacturer,
+ 	&micron_spinand_manufacturer,
++	&paragon_spinand_manufacturer,
+ 	&toshiba_spinand_manufacturer,
+ 	&winbond_spinand_manufacturer,
+ };
+diff --git a/drivers/mtd/nand/spi/paragon.c b/drivers/mtd/nand/spi/paragon.c
+new file mode 100644
+index 000000000000..52307681cbd0
+--- /dev/null
++++ b/drivers/mtd/nand/spi/paragon.c
+@@ -0,0 +1,147 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (C) 2019 Jeff Kletsky
++ *
++ * Author: Jeff Kletsky <git-commits@allycomm.com>
++ */
++
++#include <linux/device.h>
++#include <linux/kernel.h>
++#include <linux/mtd/spinand.h>
++
++
++#define SPINAND_MFR_PARAGON	0xa1
++
++
++#define PN26G0XA_STATUS_ECC_BITMASK		(3 << 4)
++
++#define PN26G0XA_STATUS_ECC_NONE_DETECTED	(0 << 4)
++#define PN26G0XA_STATUS_ECC_1_7_CORRECTED	(1 << 4)
++#define PN26G0XA_STATUS_ECC_ERRORED		(2 << 4)
++#define PN26G0XA_STATUS_ECC_8_CORRECTED		(3 << 4)
++
++
++static SPINAND_OP_VARIANTS(read_cache_variants,
++		SPINAND_PAGE_READ_FROM_CACHE_QUADIO_OP(0, 2, NULL, 0),
++		SPINAND_PAGE_READ_FROM_CACHE_X4_OP(0, 1, NULL, 0),
++		SPINAND_PAGE_READ_FROM_CACHE_DUALIO_OP(0, 1, NULL, 0),
++		SPINAND_PAGE_READ_FROM_CACHE_X2_OP(0, 1, NULL, 0),
++		SPINAND_PAGE_READ_FROM_CACHE_OP(true, 0, 1, NULL, 0),
++		SPINAND_PAGE_READ_FROM_CACHE_OP(false, 0, 1, NULL, 0));
++
++static SPINAND_OP_VARIANTS(write_cache_variants,
++		SPINAND_PROG_LOAD_X4(true, 0, NULL, 0),
++		SPINAND_PROG_LOAD(true, 0, NULL, 0));
++
++static SPINAND_OP_VARIANTS(update_cache_variants,
++		SPINAND_PROG_LOAD_X4(false, 0, NULL, 0),
++		SPINAND_PROG_LOAD(false, 0, NULL, 0));
++
++
++static int pn26g0xa_ooblayout_ecc(struct mtd_info *mtd, int section,
++				   struct mtd_oob_region *region)
++{
++	if (section > 3)
++		return -ERANGE;
++
++	region->offset = 6 + (15 * section); /* 4 BBM + 2 user bytes */
++	region->length = 13;
++
++	return 0;
++}
++
++static int pn26g0xa_ooblayout_free(struct mtd_info *mtd, int section,
++				   struct mtd_oob_region *region)
++{
++	if (section > 4)
++		return -ERANGE;
++
++	if (section == 4) {
++		region->offset = 64;
++		region->length = 64;
++	} else {
++		region->offset = 4 + (15 * section);
++		region->length = 2;
++	}
++
++	return 0;
++}
++
++static int pn26g0xa_ecc_get_status(struct spinand_device *spinand,
++				   u8 status)
++{
++	switch (status & PN26G0XA_STATUS_ECC_BITMASK) {
++	case PN26G0XA_STATUS_ECC_NONE_DETECTED:
++		return 0;
++
++	case PN26G0XA_STATUS_ECC_1_7_CORRECTED:
++		return 7;	/* Return upper limit by convention */
++
++	case PN26G0XA_STATUS_ECC_8_CORRECTED:
++		return 8;
++
++	case PN26G0XA_STATUS_ECC_ERRORED:
++		return -EBADMSG;
++
++	default:
++		break;
++	}
++
++	return -EINVAL;
++}
++
++static const struct mtd_ooblayout_ops pn26g0xa_ooblayout = {
++	.ecc = pn26g0xa_ooblayout_ecc,
++	.free = pn26g0xa_ooblayout_free,
++};
++
++
++static const struct spinand_info paragon_spinand_table[] = {
++	SPINAND_INFO("PN26G01A", 0xe1,
++		     NAND_MEMORG(1, 2048, 128, 64, 1024, 21, 1, 1, 1),
++		     NAND_ECCREQ(8, 512),
++		     SPINAND_INFO_OP_VARIANTS(&read_cache_variants,
++					      &write_cache_variants,
++					      &update_cache_variants),
++		     0,
++		     SPINAND_ECCINFO(&pn26g0xa_ooblayout,
++				     pn26g0xa_ecc_get_status)),
++	SPINAND_INFO("PN26G02A", 0xe2,
++		     NAND_MEMORG(1, 2048, 128, 64, 2048, 41, 1, 1, 1),
++		     NAND_ECCREQ(8, 512),
++		     SPINAND_INFO_OP_VARIANTS(&read_cache_variants,
++					      &write_cache_variants,
++					      &update_cache_variants),
++		     0,
++		     SPINAND_ECCINFO(&pn26g0xa_ooblayout,
++				     pn26g0xa_ecc_get_status)),
++};
++
++static int paragon_spinand_detect(struct spinand_device *spinand)
++{
++	u8 *id = spinand->id.data;
++	int ret;
++
++	/* Read ID returns [0][MID][DID] */
++
++	if (id[1] != SPINAND_MFR_PARAGON)
++		return 0;
++
++	ret = spinand_match_and_init(spinand, paragon_spinand_table,
++				     ARRAY_SIZE(paragon_spinand_table),
++				     id[2]);
++	if (ret)
++		return ret;
++
++	return 1;
++}
++
++static const struct spinand_manufacturer_ops paragon_spinand_manuf_ops = {
++	.detect = paragon_spinand_detect,
++};
++
++const struct spinand_manufacturer paragon_spinand_manufacturer = {
++	.id = SPINAND_MFR_PARAGON,
++	.name = "Paragon",
++	.ops = &paragon_spinand_manuf_ops,
++};
+diff --git a/include/linux/mtd/spinand.h b/include/linux/mtd/spinand.h
+index fbc0423bb4ae..4ea558bd3c46 100644
+--- a/include/linux/mtd/spinand.h
++++ b/include/linux/mtd/spinand.h
+@@ -227,6 +227,7 @@ struct spinand_manufacturer {
+ extern const struct spinand_manufacturer gigadevice_spinand_manufacturer;
+ extern const struct spinand_manufacturer macronix_spinand_manufacturer;
+ extern const struct spinand_manufacturer micron_spinand_manufacturer;
++extern const struct spinand_manufacturer paragon_spinand_manufacturer;
+ extern const struct spinand_manufacturer toshiba_spinand_manufacturer;
+ extern const struct spinand_manufacturer winbond_spinand_manufacturer;
+ 
+-- 
+2.20.1
+
