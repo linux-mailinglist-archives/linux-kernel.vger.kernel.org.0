@@ -2,63 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8284249958
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 08:51:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C4715499B8
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 09:02:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728816AbfFRGv0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Jun 2019 02:51:26 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:33669 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726023AbfFRGvZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Jun 2019 02:51:25 -0400
-Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1hd6x7-0003Mq-1S; Tue, 18 Jun 2019 07:46:41 +0200
-Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1hd6x5-0003Pm-CD; Tue, 18 Jun 2019 07:46:39 +0200
-Date:   Tue, 18 Jun 2019 07:46:39 +0200
-From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     "Enrico Weigelt, metux IT consult" <info@metux.net>
-Cc:     linux-kernel@vger.kernel.org, bgolaszewski@baylibre.com,
-        linus.walleij@linaro.org, kernel@pengutronix.de,
-        linux-gpio@vger.kernel.org
-Subject: Re: [PATCH 2/2] drivers: gpio: pca953x: use module_siox_driver()
-Message-ID: <20190618054639.ovpb6jgzl45pkp3d@pengutronix.de>
-References: <1560795688-10496-1-git-send-email-info@metux.net>
- <1560795688-10496-2-git-send-email-info@metux.net>
+        id S1728919AbfFRHCY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Jun 2019 03:02:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33110 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725829AbfFRHCY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Jun 2019 03:02:24 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id F1F6C213F2;
+        Tue, 18 Jun 2019 05:47:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1560836832;
+        bh=2ugJ+4jbEDNf3IaKlqSNtduwn51MkrS5VDiaJCRhmYc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=siWcg5jv7S7enP/dNIGa2avKBd20kFJLLKKmDQOd50TmtgVpdF/ODiH9jSweJauM4
+         nNPzX4HXmKyOyAqer94mO0tPqUW5raXp9pZaSocIvPrazoQm2xEnZMfxq9gCL/zAqe
+         yPvtYsSUnHMEpRz+yzv515R9CO3+aPiZgySE+QsE=
+Date:   Tue, 18 Jun 2019 07:47:09 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Gao Xiang <gaoxiang25@huawei.com>
+Cc:     devel@driverdev.osuosl.org, Miao Xie <miaoxie@huawei.com>,
+        chao@kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        weidu.du@huawei.com, Fang Wei <fangwei1@huawei.com>,
+        linux-fsdevel@vger.kernel.org, linux-erofs@lists.ozlabs.org
+Subject: Re: [RFC PATCH 0/8] staging: erofs: decompression inplace approach
+Message-ID: <20190618054709.GA4271@kroah.com>
+References: <20190614181619.64905-1-gaoxiang25@huawei.com>
+ <20190617203609.GA22034@kroah.com>
+ <c86d3fc0-8b4a-6583-4309-911960fbe862@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1560795688-10496-2-git-send-email-info@metux.net>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+In-Reply-To: <c86d3fc0-8b4a-6583-4309-911960fbe862@huawei.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 17, 2019 at 08:21:28PM +0200, Enrico Weigelt, metux IT consult wrote:
-> From: Enrico Weigelt <info@metux.net>
+On Tue, Jun 18, 2019 at 09:47:08AM +0800, Gao Xiang wrote:
 > 
-> Reduce driver init boilerplate by using the new
-> module_siox_driver() macro.
 > 
-> Signed-off-by: Enrico Weigelt <info@metux.net>
+> On 2019/6/18 4:36, Greg Kroah-Hartman wrote:
+> > On Sat, Jun 15, 2019 at 02:16:11AM +0800, Gao Xiang wrote:
+> >> At last, this is RFC patch v1, which means it is not suitable for
+> >> merging soon... I'm still working on it, testing its stability
+> >> these days and hope these patches get merged for 5.3 LTS
+> >> (if 5.3 is a LTS version).
+> > 
+> > Why would 5.3 be a LTS kernel?
+> > 
+> > curious as to how you came up with that :)
+> 
+> My personal thought is about one LTS kernel one year...
+> Usually 5 versions after the previous kernel...(4.4 -> 4.9 -> 4.14 -> 4.19),
+> which is not suitable for all historical LTSs...just prepare for 5.3...
 
-The subject is wrong, this isn't about pca953x.
+I try to pick the "last" kernel that is released each year, which
+sometimes is 5 kernels, sometimes 4, sometimes 6, depending on the
+release cycle.
 
-Best regards
-Uwe
+So odds are it will be 5.4 for the next LTS kernel, but we will not know
+more until it gets closer to release time.
 
--- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+thanks,
+
+greg k-h
