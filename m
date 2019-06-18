@@ -2,132 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1ADCC4A3E8
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 16:28:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9DC024A408
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 16:30:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729279AbfFRO20 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Jun 2019 10:28:26 -0400
-Received: from foss.arm.com ([217.140.110.172]:43888 "EHLO foss.arm.com"
+        id S1729852AbfFROaF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Jun 2019 10:30:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52248 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725919AbfFRO2Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Jun 2019 10:28:25 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5A2EB2B;
-        Tue, 18 Jun 2019 07:28:25 -0700 (PDT)
-Received: from e121166-lin.cambridge.arm.com (unknown [10.1.196.255])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C29C43F718;
-        Tue, 18 Jun 2019 07:28:23 -0700 (PDT)
-Date:   Tue, 18 Jun 2019 15:28:21 +0100
-From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To:     Vidya Sagar <vidyas@nvidia.com>
-Cc:     jingoohan1@gmail.com, gustavo.pimentel@synopsys.com,
-        bhelgaas@google.com, Jisheng.Zhang@synaptics.com,
-        thierry.reding@gmail.com, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kthota@nvidia.com,
-        mmaddireddy@nvidia.com, sagar.tv@gmail.com, kishon@ti.com
-Subject: Re: [PATCH V4 1/2] PCI: dwc: Add API support to de-initialize host
-Message-ID: <20190618142821.GC9002@e121166-lin.cambridge.arm.com>
-References: <20190502170426.28688-1-vidyas@nvidia.com>
- <20190503112338.GA25649@e121166-lin.cambridge.arm.com>
- <dec5ecb2-863e-a1db-10c9-2d91f860a2c6@nvidia.com>
- <37697830-5a94-0f8e-a5cf-3347bc4850cb@nvidia.com>
- <b560f3c3-b69e-d9b5-2dae-1ede52af0ea6@nvidia.com>
- <011b52b6-9fcd-8930-1313-6b546226c7b9@nvidia.com>
- <8a6696e0-fc53-2e6b-536b-d1d2668e0f21@nvidia.com>
- <07c3dd04-cfd0-2d52-5917-25d0e40ad00b@nvidia.com>
- <20190618093657.GA30711@e121166-lin.cambridge.arm.com>
- <eb0e5b1e-7e91-4dc6-681f-b497f087c62d@nvidia.com>
+        id S1729102AbfFROaE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Jun 2019 10:30:04 -0400
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2D4FD21479;
+        Tue, 18 Jun 2019 14:30:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1560868204;
+        bh=qrGh8QmMAHY5D7lfxcxyW1W2MYQ27xZ+iv3w/FkGJYI=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=Q0LyzPLxIgHIEMpUNOWx5GmUsP9eHO+vomsvt3DWjPFP308P/W4k4GVLLDsA1Di6Z
+         GLoNf3m1AMTbywxoTx4j1Et71C9dW6Ce6HEt1IaXAtwj8epMVyF/xNa3ted7eq5Wyx
+         GYY93MWi1eqN/Fs+dtjSJZByw+vgF0slv4piIOSA=
+Received: by mail-ed1-f53.google.com with SMTP id p15so22015562eds.8;
+        Tue, 18 Jun 2019 07:30:04 -0700 (PDT)
+X-Gm-Message-State: APjAAAW0B0EeDOzERl3O13Umzb6e1Gc4BV+4IVQ1zev0qSjtzZHuxD6g
+        6pz2ak7OpIoR8wWDqT+senbXlnTMS60iI9moyZE=
+X-Google-Smtp-Source: APXvYqw7lSFSu4b7VLHIRkNIMtAtb3UUorWS/RBTRM0Fu8WpXYbUxTDgNagTS4CciRrv/Hb7dLozVOZFNNliLBQpXV0=
+X-Received: by 2002:a50:84a1:: with SMTP id 30mr21976093edq.44.1560868202728;
+ Tue, 18 Jun 2019 07:30:02 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <eb0e5b1e-7e91-4dc6-681f-b497f087c62d@nvidia.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <20190617031113.4506-1-atull@kernel.org> <20190618071751.GA4159@kroah.com>
+In-Reply-To: <20190618071751.GA4159@kroah.com>
+From:   Alan Tull <atull@kernel.org>
+Date:   Tue, 18 Jun 2019 09:29:25 -0500
+X-Gmail-Original-Message-ID: <CANk1AXRq35TWCjsz_mFfecZ-9Yx5UCT9+NLGv3EWBC=r_KTJXg@mail.gmail.com>
+Message-ID: <CANk1AXRq35TWCjsz_mFfecZ-9Yx5UCT9+NLGv3EWBC=r_KTJXg@mail.gmail.com>
+Subject: Re: [PATCH] MAINTAINERS: fpga: hand off maintainership to Moritz
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Moritz Fischer <mdf@kernel.org>, Dinh Nguyen <dinguyen@kernel.org>,
+        Thor Thayer <thor.thayer@linux.intel.com>,
+        Richard Gong <richard.gong@linux.intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-fpga@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 18, 2019 at 04:21:17PM +0530, Vidya Sagar wrote:
+On Tue, Jun 18, 2019 at 2:17 AM Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> On Sun, Jun 16, 2019 at 10:11:13PM -0500, Alan Tull wrote:
+> > I'm moving on to a new position and stepping down as FPGA subsystem
+> > maintainer.  Moritz has graciously agreed to take over the
+> > maintainership.
+> >
+> > Signed-off-by: Alan Tull <atull@kernel.org>
+>
+> Thanks for all the work you have done on this subsystem getting it into
+> mergable shape and then maintaining it for a while.
+>
+> good luck on your future endeavors, hopefully it still involves kernel
+> programming :)
 
-[...]
+Thanks for all your guidance and help!
 
-> > 2) It is not related to this patch but I fail to see the reasoning
-> >     behind the __ in __dw_pci_read_dbi(), there is no no-underscore
-> >     equivalent so its definition is somewhat questionable, maybe
-> >     we should clean-it up (for dbi2 alike).
-> Separate no-underscore versions are present in pcie-designware.h for
-> each width (i.e. l/w/b) as inline and are calling __ versions passing
-> size as argument.
+Alan
 
-I understand - the __ prologue was added in b50b2db266d8 maybe
-Kishon can help us understand the __ rationale.
-
-I am happy to merge it as is, I was just curious about the
-__ annotation (not related to this patch).
-
-Lorenzo
-
-> > Lorenzo
-> > 
-> > > Thanks,
-> > > Vidya Sagar
-> > > 
-> > > > 
-> > > > > 
-> > > > > > > 
-> > > > > > > > 
-> > > > > > > > > 
-> > > > > > > > > Thanks,
-> > > > > > > > > Lorenzo
-> > > > > > > > > 
-> > > > > > > > > > diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/pci/controller/dwc/pcie-designware-host.c
-> > > > > > > > > > index 77db32529319..d069e4290180 100644
-> > > > > > > > > > --- a/drivers/pci/controller/dwc/pcie-designware-host.c
-> > > > > > > > > > +++ b/drivers/pci/controller/dwc/pcie-designware-host.c
-> > > > > > > > > > @@ -496,6 +496,14 @@ int dw_pcie_host_init(struct pcie_port *pp)
-> > > > > > > > > >        return ret;
-> > > > > > > > > >    }
-> > > > > > > > > > +void dw_pcie_host_deinit(struct pcie_port *pp)
-> > > > > > > > > > +{
-> > > > > > > > > > +    pci_stop_root_bus(pp->root_bus);
-> > > > > > > > > > +    pci_remove_root_bus(pp->root_bus);
-> > > > > > > > > > +    if (pci_msi_enabled() && !pp->ops->msi_host_init)
-> > > > > > > > > > +        dw_pcie_free_msi(pp);
-> > > > > > > > > > +}
-> > > > > > > > > > +
-> > > > > > > > > >    static int dw_pcie_access_other_conf(struct pcie_port *pp, struct pci_bus *bus,
-> > > > > > > > > >                         u32 devfn, int where, int size, u32 *val,
-> > > > > > > > > >                         bool write)
-> > > > > > > > > > diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
-> > > > > > > > > > index deab426affd3..4f48ec78c7b9 100644
-> > > > > > > > > > --- a/drivers/pci/controller/dwc/pcie-designware.h
-> > > > > > > > > > +++ b/drivers/pci/controller/dwc/pcie-designware.h
-> > > > > > > > > > @@ -348,6 +348,7 @@ void dw_pcie_msi_init(struct pcie_port *pp);
-> > > > > > > > > >    void dw_pcie_free_msi(struct pcie_port *pp);
-> > > > > > > > > >    void dw_pcie_setup_rc(struct pcie_port *pp);
-> > > > > > > > > >    int dw_pcie_host_init(struct pcie_port *pp);
-> > > > > > > > > > +void dw_pcie_host_deinit(struct pcie_port *pp);
-> > > > > > > > > >    int dw_pcie_allocate_domains(struct pcie_port *pp);
-> > > > > > > > > >    #else
-> > > > > > > > > >    static inline irqreturn_t dw_handle_msi_irq(struct pcie_port *pp)
-> > > > > > > > > > @@ -372,6 +373,10 @@ static inline int dw_pcie_host_init(struct pcie_port *pp)
-> > > > > > > > > >        return 0;
-> > > > > > > > > >    }
-> > > > > > > > > > +static inline void dw_pcie_host_deinit(struct pcie_port *pp)
-> > > > > > > > > > +{
-> > > > > > > > > > +}
-> > > > > > > > > > +
-> > > > > > > > > >    static inline int dw_pcie_allocate_domains(struct pcie_port *pp)
-> > > > > > > > > >    {
-> > > > > > > > > >        return 0;
-> > > > > > > > > > -- 
-> > > > > > > > > > 2.17.1
-> > > > > > > > > > 
-> > > > > > > > 
-> > > > > > > 
-> > > > > > 
-> > > > > 
-> > > > 
-> > > 
-> 
+>
+> greg k-h
