@@ -2,105 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8B75C49CCC
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 11:14:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D7CFA49CD4
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 11:15:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729355AbfFRJN7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Jun 2019 05:13:59 -0400
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:19235 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728385AbfFRJN7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Jun 2019 05:13:59 -0400
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5d08ab560001>; Tue, 18 Jun 2019 02:13:58 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Tue, 18 Jun 2019 02:13:58 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Tue, 18 Jun 2019 02:13:58 -0700
-Received: from [10.21.132.148] (172.20.13.39) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 18 Jun
- 2019 09:13:56 +0000
-Subject: Re: [PATCH V2] i2c: tegra: disable irq in tegra_i2c_xfer_msg
-To:     Bitan Biswas <bbiswas@nvidia.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Thierry Reding <treding@nvidia.com>,
-        <linux-i2c@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Peter Rosin <peda@axentia.se>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Dmitry Osipenko <digetx@gmail.com>
-CC:     Shardar Mohammed <smohammed@nvidia.com>,
-        Sowjanya Komatineni <skomatineni@nvidia.com>,
-        Mantravadi Karthik <mkarthik@nvidia.com>
-References: <1560847368-16069-1-git-send-email-bbiswas@nvidia.com>
-From:   Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <61c2dbcd-85f2-2094-7596-78ac01f55421@nvidia.com>
-Date:   Tue, 18 Jun 2019 10:13:54 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        id S1729403AbfFRJPl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Jun 2019 05:15:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50238 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728385AbfFRJPk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Jun 2019 05:15:40 -0400
+Received: from dragon (li1322-146.members.linode.com [45.79.223.146])
+        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 55CE4206BA;
+        Tue, 18 Jun 2019 09:15:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1560849340;
+        bh=gA2YgqZkn0Wi5r13BQk+BBwL1hF7Y6PBm5f+5w9qDqI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=pp6ieOAEYOEwunUaoY5CXNUYhXinz+c5vNQxqrWJvgbFUtPzEsYuJwy9EBfV3oHKr
+         M6OXEtFbG+jD1EGPrZYfF1JCua1MXePEbLHYapmQVdSNnP8bmY3YzL7Mme5OwCe4no
+         wHteUl8FhhCoZnjFrT2v3738Im/QqoU1mk6jZjTk=
+Date:   Tue, 18 Jun 2019 17:14:45 +0800
+From:   Shawn Guo <shawnguo@kernel.org>
+To:     Anson.Huang@nxp.com
+Cc:     s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
+        leonard.crestez@nxp.com, viresh.kumar@linaro.org,
+        abel.vesa@nxp.com, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, Linux-imx@nxp.com
+Subject: Re: [PATCH V2 2/2] soc: imx8: Use existing of_root directly
+Message-ID: <20190618091442.GM29881@dragon>
+References: <20190614080748.32997-1-Anson.Huang@nxp.com>
+ <20190614080748.32997-2-Anson.Huang@nxp.com>
 MIME-Version: 1.0
-In-Reply-To: <1560847368-16069-1-git-send-email-bbiswas@nvidia.com>
-X-Originating-IP: [172.20.13.39]
-X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1560849238; bh=wILUXSk3M+mIm+w2CtNgTykFq01uFJEP4Obi9FpU5M0=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=qILK04eeri8qQhFnL8rV1025VphF23Pt0ebqRmRec0O4R8TFSsRfzTy28jnfnvIj9
-         zMrBtEMPVNA+T1GMHLGrsKgYU+wm63D2+eF4XttWRnAwXav8R/A5Za1iNEi3k3+1JT
-         tn/+l9ahEz/TDk6bqTA5/g2vpV7w0zd4zvXxko0JXrrFl0PDz2OeAzPxUWSy9FVh/q
-         oJMaNWcgYHNJP8hsLT/40FEPG+5OFoJA7gRPMvWvAEpHYAGXIX/SADyTkstOlB/nrk
-         dLw+7Nx/VbJOnodrxgQ2VPh62IFMvvjEfmjO+feJ8lt9OcYInSyBHYcWvfJRwy4z9e
-         U6rw0SXSMoHQg==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190614080748.32997-2-Anson.Huang@nxp.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-On 18/06/2019 09:42, Bitan Biswas wrote:
-> tegra_i2c_xfer_msg initiates the I2C transfer in DMA
-> or PIO mode. It involves steps that need FIFO register
-> access, DMA API calls like dma_sync_single_for_device, etc.
-> Tegra I2C ISR has calls to tegra_i2c_empty_rx_fifo in PIO mode
-> and in DMA/PIO mode writes different I2C registers including
-> I2C interrupt status. ISR cannot start processing
-> before the preparation step at tegra_i2c_xfer_msg is complete.
-> Hence, a synchronization between ISR and tegra_i2c_xfer_msg
-> is in place today using spinlock.
+On Fri, Jun 14, 2019 at 04:07:48PM +0800, Anson.Huang@nxp.com wrote:
+> From: Anson Huang <Anson.Huang@nxp.com>
 > 
-> Spinlock busy waits and can add avoidable delays.
+> There is common of_root for reference, no need to find it
+> from DT again, use of_root directly to make driver simple.
 > 
-> In this patch needed synchronization is achieved by disabling
-> I2C interrupt during preparation step and enabling interrupt
-> once preparation is over and spinlock is no longer needed.
-Sorry but I still don't understand the problem you are trying to solve.
-Yes spinlocks are busy waits but is this busy wait an actual problem? If
-so what is the problem with this?
+> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+> Reviewed-by: Dong Aisheng <aisheng.dong@nxp.com>
 
-It appears that the spinlock was added to prevent error interrupts
-occurring until the transfer has started. If this is for error cases,
-then probably it is not often that the CPU is stuck busy waiting on the
-spinlock.
+It cannot be applied.  Please resend by basing on my imx/drivers branch.
 
-Furthermore, in addition to the spinlock we also have calls to
-tegra_i2c_unmask_irq/tegra_i2c_mask_irq. Therefore, if we are going to
-change this it would seem like a good idea to consolidate the
-masking/unmasking of IRQs and the spinlock, if possible.
+Shawn
 
-Finally, I still see that we have a spinlock in the downstream kernels
-we are shipping and so I would prefer to see such a change also be
-tested in the downstream kernels we are releasing.
-
-Cheers
-Jon
-
--- 
-nvpublic
+> ---
+> No changes.
+> ---
+>  drivers/soc/imx/soc-imx8.c | 9 ++-------
+>  1 file changed, 2 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/soc/imx/soc-imx8.c b/drivers/soc/imx/soc-imx8.c
+> index 5c7f330..b459bf2 100644
+> --- a/drivers/soc/imx/soc-imx8.c
+> +++ b/drivers/soc/imx/soc-imx8.c
+> @@ -105,7 +105,6 @@ static int __init imx8_soc_init(void)
+>  {
+>  	struct soc_device_attribute *soc_dev_attr;
+>  	struct soc_device *soc_dev;
+> -	struct device_node *root;
+>  	const struct of_device_id *id;
+>  	u32 soc_rev = 0;
+>  	const struct imx8_soc_data *data;
+> @@ -117,12 +116,11 @@ static int __init imx8_soc_init(void)
+>  
+>  	soc_dev_attr->family = "Freescale i.MX";
+>  
+> -	root = of_find_node_by_path("/");
+> -	ret = of_property_read_string(root, "model", &soc_dev_attr->machine);
+> +	ret = of_property_read_string(of_root, "model", &soc_dev_attr->machine);
+>  	if (ret)
+>  		goto free_soc;
+>  
+> -	id = of_match_node(imx8_soc_match, root);
+> +	id = of_match_node(imx8_soc_match, of_root);
+>  	if (!id) {
+>  		ret = -ENODEV;
+>  		goto free_soc;
+> @@ -147,8 +145,6 @@ static int __init imx8_soc_init(void)
+>  		goto free_rev;
+>  	}
+>  
+> -	of_node_put(root);
+> -
+>  	if (IS_ENABLED(CONFIG_ARM_IMX_CPUFREQ_DT))
+>  		platform_device_register_simple("imx-cpufreq-dt", -1, NULL, 0);
+>  
+> @@ -159,7 +155,6 @@ static int __init imx8_soc_init(void)
+>  		kfree(soc_dev_attr->revision);
+>  free_soc:
+>  	kfree(soc_dev_attr);
+> -	of_node_put(root);
+>  	return ret;
+>  }
+>  device_initcall(imx8_soc_init);
+> -- 
+> 2.7.4
+> 
