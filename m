@@ -2,127 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 57F8B4A27E
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 15:40:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8D46C4A282
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 15:40:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729364AbfFRNkW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Jun 2019 09:40:22 -0400
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:42466 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728575AbfFRNkW (ORCPT
+        id S1729438AbfFRNkl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Jun 2019 09:40:41 -0400
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:34598 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728572AbfFRNkk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Jun 2019 09:40:22 -0400
-Received: by mail-qt1-f195.google.com with SMTP id s15so15277294qtk.9;
-        Tue, 18 Jun 2019 06:40:21 -0700 (PDT)
+        Tue, 18 Jun 2019 09:40:40 -0400
+Received: by mail-qk1-f194.google.com with SMTP id t8so8569074qkt.1
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2019 06:40:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=sip8yqMGL5HYkSNzPjSutbtzx9pAVqlJddD+spZ1ESY=;
-        b=pp21Rn8pPivLH1E0kWFM/2lZm6bAb6etwe8om3ogOsCmNAdAZr/20x0WkVbcH+Ts8i
-         Gy/sKFAitaG1OGtu7+E9oy0LRLWKIfDm6sdI0ppIyu5x0DwTvHcM5MbWY2Y8H2nUHoW8
-         vs/KIMEB5EIrydlsRkjo7HuxXD1zFkfSIgrzCdSVd6BxZ6j+UvWTwBxL7qS0UbEwxj7l
-         U8Vu4joCvZcx85u86932CARZXbVX8cFH2eZ3gZ30vDx3rHxNLgS/MYPvNS1ocLhfkBbP
-         yvxey/ZWIq4Mvh4TIIz4olDxKv7cIwLtFkjI5L0sXh3RNlbuWS2+nwR64rI2Zhca/DXR
-         /QhA==
+         :cc;
+        bh=ZI5wHdiFgtuzsQeLY+E22h5PJMnK0tB2yGyNBxZfSqI=;
+        b=QooPXmn9aHah5NAlG4PfOfya5KeBRPEo/cvd64QxdYAB2AkodS68j+GjfPi84y88a8
+         DuB0moLc60pdiekoXOCOsAxtghv/tzyS0Zmk+0MTZYsCOMvXwdivw9V7wUKoLv6q4Axg
+         5s6bDCqaOyBCLr0QLrvUxRJ36c87CczbZqr7489CDIbk5w73LorhbzV6/p+ILdWmi3EO
+         QBo9JXpFB/Ht4FqcBxvorRa1+QvlOIMjcuwGXXSs2RW1sMA4cGX4JDaIo7BcsPKhNArX
+         7PXLzk7LUCtr49cSwuHKA+oMLhBIasoWAkwIyRCAeENSKRYKtox2kQoezDn3ZK5Mwul7
+         Q7yw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=sip8yqMGL5HYkSNzPjSutbtzx9pAVqlJddD+spZ1ESY=;
-        b=YoyxoTklf6QckrWr4lukK3kiiUvHXz4zTRapfnIOz4KBwY1U16T53V2+gvBQ6e2mRK
-         KGZF29Yarx+w0/YcCD1wB7ULmmi6MHsEuw/031K05LoYKH5la6waVQrYsN+1ehByf9+I
-         0wIPMMT0kc6YFVqDbBGF8r1unowVVMos7T4s9MKE112dKIf1gKTm4K6PeI1UhyVsGqMk
-         1aHNjp/HgDQIPcM7y4ZgcbmI53K+2ATTkBVm3CjAmUTct+/R8tOSzQNA+TjI9ehawFhU
-         9fxTyCQqzQYc3ihBujliOrrobmpYr2mgMfq3+FnyjdWtPfoU2jyYFHPlAMbs7n54LXDz
-         YPaA==
-X-Gm-Message-State: APjAAAVR5U7EYIZebCuYBjvUY/Wu2Tw3vihABJCV9VDXEtDp2GnTgw/Y
-        kp6Akoz0xEGk9rPqAp6CmpFFgjrvhgMe8FAUIwk=
-X-Google-Smtp-Source: APXvYqwTfW9SHCCil6M0GXO+K/MKJJdO+3TnQJ+aCdN91TMQKTLKOVFZggy0oZ+qNvBcOUNJoMdhkSoLWnhSiYaDxL0=
-X-Received: by 2002:a0c:b159:: with SMTP id r25mr26932527qvc.219.1560865221304;
- Tue, 18 Jun 2019 06:40:21 -0700 (PDT)
+         :message-id:subject:to:cc;
+        bh=ZI5wHdiFgtuzsQeLY+E22h5PJMnK0tB2yGyNBxZfSqI=;
+        b=iGqRE13xAKQhYLuPV1EqgRcrYp9V4eWdIqBitFMmV1NUedOjsRg/Ez2aBm1Utx48dq
+         fkyKV48lgLJtxazso8QbsAjM7LRp8EWsg2EucCazlyViPZ9rEIGm+WyCrCD4UwH53f+q
+         aU/ZmH9WMiz50CG9EvuEg5IHcELYKYpCLwDI+9c7u62ZPqL+HJ7iKXRhh/3kRL0zGb7P
+         xhq0uS7PbAGAZrMNEBuVfnCtzIcpQJZhCbJ4XvU+9LDjCn8Lmo0l9fAYehGKlHBEMAP5
+         5UJjcS6RsnWzPHtJlaTwvYbnpVidSy83sbHx/abSx8hpR95KxLcF46ECFfavykGo9Zmg
+         dufw==
+X-Gm-Message-State: APjAAAWav3Vopoynh1NWbOUtlP6opQRWgbeAF9tYffU6L1fvp2BJdRux
+        XK3vx2utWQ4mR6LLZCFQhEZnY5MZvjrWg4IBPmmcBA==
+X-Google-Smtp-Source: APXvYqydIfBeJNwoqU7hLKDek16QVNj311nTvALhVsaWemQl/rKnPG8IXP59Ccqe5Lnh87RqflvTK1whFaMyh7g4f+8=
+X-Received: by 2002:a37:696:: with SMTP id 144mr91098200qkg.250.1560865239273;
+ Tue, 18 Jun 2019 06:40:39 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190516142342.28019-1-smuchun@gmail.com> <20190524190443.GB29565@kroah.com>
- <CAPSr9jH3sowszuNtBaTM1Wdi9vW+iakYX1G3arj+2_r5r7bYwQ@mail.gmail.com>
-In-Reply-To: <CAPSr9jH3sowszuNtBaTM1Wdi9vW+iakYX1G3arj+2_r5r7bYwQ@mail.gmail.com>
-From:   Muchun Song <smuchun@gmail.com>
-Date:   Tue, 18 Jun 2019 21:40:13 +0800
-Message-ID: <CAPSr9jFG17YnQC3UZrTZjqytB5wpTMeqqqOcJ7Sf6gAr8o5Uhg@mail.gmail.com>
-Subject: Re: [PATCH v4] driver core: Fix use-after-free and double free on
- glue directory
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Prateek Sood <prsood@codeaurora.org>,
-        Mukesh Ojha <mojha@codeaurora.org>, gkohli@codeaurora.org,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        zhaowuyun@wingtech.com
+References: <20190618092650.2943749-1-arnd@arndb.de>
+In-Reply-To: <20190618092650.2943749-1-arnd@arndb.de>
+From:   Joel Fernandes <joelaf@google.com>
+Date:   Tue, 18 Jun 2019 09:40:28 -0400
+Message-ID: <CAJWu+oqzd8MJqusRV0LAK=Xnm7VSRSu3QbNZ-j5h9_MbzcFhhg@mail.gmail.com>
+Subject: Re: [PATCH] mm/vmalloc: avoid bogus -Wmaybe-uninitialized warning
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Roman Penyaev <rpenyaev@suse.de>,
+        Uladzislau Rezki <urezki@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>,
+        Roman Gushchin <guro@fb.com>, Michal Hocko <mhocko@suse.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Thomas Garnier <thgarnie@google.com>,
+        Oleksiy Avramchenko <oleksiy.avramchenko@sonymobile.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@elte.hu>, Tejun Heo <tj@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Rick Edgecombe <rick.p.edgecombe@intel.com>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Ping guys ? I think this is worth fixing.
+On Tue, Jun 18, 2019 at 5:27 AM Arnd Bergmann <arnd@arndb.de> wrote:
+>
+> gcc gets confused in pcpu_get_vm_areas() because there are too many
+> branches that affect whether 'lva' was initialized before it gets
+> used:
+>
+> mm/vmalloc.c: In function 'pcpu_get_vm_areas':
+> mm/vmalloc.c:991:4: error: 'lva' may be used uninitialized in this function [-Werror=maybe-uninitialized]
+>     insert_vmap_area_augment(lva, &va->rb_node,
+>     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>      &free_vmap_area_root, &free_vmap_area_list);
+>      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> mm/vmalloc.c:916:20: note: 'lva' was declared here
+>   struct vmap_area *lva;
+>                     ^~~
+>
+> Add an intialization to NULL, and check whether this has changed
+> before the first use.
+>
+> Fixes: 68ad4a330433 ("mm/vmalloc.c: keep track of free blocks for vmap allocation")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  mm/vmalloc.c | 9 +++++++--
+>  1 file changed, 7 insertions(+), 2 deletions(-)
+>
+> diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+> index a9213fc3802d..42a6f795c3ee 100644
+> --- a/mm/vmalloc.c
+> +++ b/mm/vmalloc.c
+> @@ -913,7 +913,12 @@ adjust_va_to_fit_type(struct vmap_area *va,
+>         unsigned long nva_start_addr, unsigned long size,
+>         enum fit_type type)
+>  {
+> -       struct vmap_area *lva;
+> +       /*
+> +        * GCC cannot always keep track of whether this variable
+> +        * was initialized across many branches, therefore set
+> +        * it NULL here to avoid a warning.
+> +        */
+> +       struct vmap_area *lva = NULL;
 
-Muchun Song <smuchun@gmail.com> =E4=BA=8E2019=E5=B9=B45=E6=9C=8825=E6=97=A5=
-=E5=91=A8=E5=85=AD =E4=B8=8B=E5=8D=888:15=E5=86=99=E9=81=93=EF=BC=9A
+Fair enough, but is this 5-line comment really needed here?
 
->
-> Hi greg k-h,
->
-> Greg KH <gregkh@linuxfoundation.org> =E4=BA=8E2019=E5=B9=B45=E6=9C=8825=
-=E6=97=A5=E5=91=A8=E5=85=AD =E4=B8=8A=E5=8D=883:04=E5=86=99=E9=81=93=EF=BC=
-=9A
-> >
-> > On Thu, May 16, 2019 at 10:23:42PM +0800, Muchun Song wrote:
-> > > There is a race condition between removing glue directory and adding =
-a new
-> > > device under the glue directory. It can be reproduced in following te=
-st:
-> >
-> > <snip>
-> >
-> > Is this related to:
-> >         Subject: [PATCH v3] drivers: core: Remove glue dirs early only =
-when refcount is 1
-> >
-> > ?
-> >
-> > If so, why is the solution so different?
->
-> In the v1 patch, the solution is that remove glue dirs early only when
-> refcount is 1. So
-> the v1 patch like below:
->
-> @@ -1825,7 +1825,7 @@ static void cleanup_glue_dir(struct device *dev,
-> struct kobject *glue_dir)
->                 return;
->
->         mutex_lock(&gdp_mutex);
-> -       if (!kobject_has_children(glue_dir))
-> +       if (!kobject_has_children(glue_dir) && kref_read(&glue_dir->kref)=
- =3D=3D 1)
->                 kobject_del(glue_dir);
->         kobject_put(glue_dir);
->         mutex_unlock(&gdp_mutex);
-> -----------------------------------------------------------------------
->
-> But from Ben's suggestion as below:
->
-> I find relying on the object count for such decisions rather fragile as
-> it could be taken temporarily for other reasons, couldn't it ? In which
-> case we would just fail...
->
-> Ideally, the looking up of the glue dir and creation of its child
-> should be protected by the same lock instance (the gdp_mutex in that
-> case).
-> -----------------------------------------------------------------------
->
-> So another solution is used from Ben's suggestion in the v2 patch. But
-> I forgot to update the commit message until the v4 patch. Thanks.
->
-> Yours,
-> Muchun
+- Joel
