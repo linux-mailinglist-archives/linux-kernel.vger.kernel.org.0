@@ -2,82 +2,51 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 38DAF4A075
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 14:13:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 24A774A03B
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 14:07:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728997AbfFRMNC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Jun 2019 08:13:02 -0400
-Received: from mail.intenta.de ([178.249.25.132]:32330 "EHLO mail.intenta.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725955AbfFRMNC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Jun 2019 08:13:02 -0400
-X-Greylist: delayed 336 seconds by postgrey-1.27 at vger.kernel.org; Tue, 18 Jun 2019 08:13:01 EDT
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=intenta.de; s=dkim1;
-        h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:CC:To:From:Date; bh=HPlPJ4uGAfuFI4JxO/9dnycfR2aDEbR0VS4Uhr7HO0w=;
-        b=G0fwpmGa+PGXLtujI3SLrLjxixit8AZtbiSbq1UgPIh2R6FWkSN2zlzZGO6aBGepfwrEeY4MceyuFugtojP+hRQdLiC09ka+bACkIODAJ5Fnt+vMy6i6jKy/s0LLRcIUAiATXroX+ykuQdAIy48Fe4duEiyPC1rzRBHrx91X/NdFglqmPtchtR7IwGRePpTpgI0cVvs89ay+azAepZBuCPjClzZYKfQvwkzMJ0TipCtYBGsSZzzhdsDisY1Q/oOLGbjoM2MDwwgk0LrdH5m3JVXN5senlC9rTagZMZEi9HoSOo05JmYzZoMho7B/w8YQHCY33qizRgGiJaQbtwSfqA==;
-X-CTCH-RefID: str=0001.0A0C020C.5D08D3F8.00C0,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
-Date:   Tue, 18 Jun 2019 14:07:21 +0200
-From:   Helmut Grohne <helmut.grohne@intenta.de>
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>
-CC:     <tglx@linutronix.de>, <linux-kernel@vger.kernel.org>,
-        David Abdurachmanov <david.abdurachmanov@gmail.com>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        "Albert Ou" <aou@eecs.berkeley.edu>,
-        "open list:RISC-V ARCHITECTURE" <linux-riscv@lists.infradead.org>
-Subject: Re: [PATCH 02/15] clocksource/drivers/sp804: Add COMPILE_TEST to
- CONFIG_ARM_TIMER_SP804
-Message-ID: <20190618120719.a4kgyiuljm5uivfq@laureti-dev>
-References: <7e786ba3-a664-8fd9-dd17-6a5be996a712@linaro.org>
- <20190509111048.11151-1-daniel.lezcano@linaro.org>
- <20190509111048.11151-2-daniel.lezcano@linaro.org>
+        id S1728454AbfFRMHZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Jun 2019 08:07:25 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:59698 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725919AbfFRMHZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Jun 2019 08:07:25 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=l2WBiCb5duYJRA9nKpihqrJOH1Qjg6utSrFiu8qAdtc=; b=Ch/iHhwArRi8hX6kUYbvEKciG
+        lAblvR5q93+SsoQrZb2FiJMskj/41UflFC7Lh4m/TiaUeRAE8/9xR6TfmQBb2J/B8jU1ouDXFA5ER
+        ekj72PEGNL0TMfy7XvGR9HKmQUvR1BrhKf6gtIJTsnBdIb5gLhtGclkf1pb0eVhrDj3Y02oVWNfYm
+        GKPgb7ksqQH/MNeJn5ozfnrezGXnOB9bcDh/RXL0of0ZXXH7/jUq6HAFttA1hfvQpS9dpzhs6IPJE
+        ngFF8N9TAlGvnI1I1rU2Vv5+TNnSf2XlCLn5d+mwKid2pI6blYHTUcCFTmXFGuFK/B2ZloyCGPG5J
+        YUnQw0QLw==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
+        id 1hdCtW-0002aZ-Lo; Tue, 18 Jun 2019 12:07:22 +0000
+Date:   Tue, 18 Jun 2019 05:07:22 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Puranjay Mohan <puranjay12@gmail.com>
+Cc:     Shuah Khan <skhan@linuxfoundation.org>,
+        linux-kernel-mentees@lists.linuxfoundation.org,
+        linux-kernel@vger.kernel.org, hch@infradead.org
+Subject: Re: [PATCH v2] fs: cramfs_fs.h: Fix shifting signed 32-bit value by
+ 31 bits problem
+Message-ID: <20190618120722.GA9911@infradead.org>
+References: <20190618114947.10563-1-puranjay12@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190509111048.11151-2-daniel.lezcano@linaro.org>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-ClientProxiedBy: ICSMA002.intenta.de (10.10.16.48) To ICSMA002.intenta.de
- (10.10.16.48)
+In-Reply-To: <20190618114947.10563-1-puranjay12@gmail.com>
+User-Agent: Mutt/1.11.4 (2019-03-13)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 09, 2019 at 01:10:35PM +0200, Daniel Lezcano wrote:
-> From: David Abdurachmanov <david.abdurachmanov@gmail.com>
-> 
-> This is only used on arm and arm64 platforms. Add COMPILE_TEST option.
+Looks good,
 
-This patch breaks selecting CONFIG_ARM_TIMER_SP804 here. I don't quite
-understand why, but commit dfc82faad72520769ca146f857e65c23632eed5a is
-where bisection stops.
-
-When I try make allnoconfig with a KCONFIG_ALLCONFIG that explicitly
-enables this option, it remains disabled.
-
-When I try make menuconfig, the clocksource menu is empty.
-
-If I apply the patch below, the option is selectable in menuconfig and
-with KCONFIG_ALLCONFIG again. It could be used as an alternative
-implementation, but I don't have a good rationale for why the previous
-approach breaks.
-
-My reading of the kconfig documentation indicates that the "if
-condition" should only influence the default value, but it seems like it
-entirely disables the option here. I'm left wondering why.
-
-Can we revert the patch until this is sorted out?
-
-Helmut
-
---- a/drivers/clocksource/Kconfig
-+++ b/drivers/clocksource/Kconfig
-@@ -388,7 +388,8 @@ config ARM_GLOBAL_TIMER
- 	  This options enables support for the ARM global timer unit
- 
- config ARM_TIMER_SP804
--	bool "Support for Dual Timer SP804 module" if COMPILE_TEST
-+	bool "Support for Dual Timer SP804 module"
-+	depends on ARM || ARM64 || COMPILE_TEST
- 	depends on GENERIC_SCHED_CLOCK && CLKDEV_LOOKUP
- 	select CLKSRC_MMIO
- 	select TIMER_OF if OF
+Reviewed-by: Christoph Hellwig <hch@lst.de>
