@@ -2,129 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BD4014A9DF
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 20:32:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E242D4A9F4
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 20:34:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730258AbfFRSci (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Jun 2019 14:32:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56128 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729922AbfFRSch (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Jun 2019 14:32:37 -0400
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 01DB32084B;
-        Tue, 18 Jun 2019 18:32:35 +0000 (UTC)
-Date:   Tue, 18 Jun 2019 14:32:34 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Nicholas Piggin <npiggin@gmail.com>
-Subject: Re: [PATCH 5/7] powerpc/ftrace: Update ftrace_location() for
- powerpc -mprofile-kernel
-Message-ID: <20190618143234.78539805@gandalf.local.home>
-In-Reply-To: <1560881840.vz9llflvnf.naveen@linux.ibm.com>
-References: <cover.1560868106.git.naveen.n.rao@linux.vnet.ibm.com>
-        <186656540d3e6225abd98374e791a13d10d86fab.1560868106.git.naveen.n.rao@linux.vnet.ibm.com>
-        <20190618114509.5b1acbe5@gandalf.local.home>
-        <1560881411.p0i6a1dkwk.naveen@linux.ibm.com>
-        <1560881840.vz9llflvnf.naveen@linux.ibm.com>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1730444AbfFRSeD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Jun 2019 14:34:03 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:48622 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730161AbfFRSeC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Jun 2019 14:34:02 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
+        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
+        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
+        List-Archive; bh=9jVltIl21FZuPZEOLXycKl4a9yd+tYMkYLMqll/9ksI=; b=EOXCX6BxMA7B
+        apNQnpN1fb+5MCytdunf+6VnzPPbNyBkbBEYu6PMeh96kfipAQBlRn2y7xYMIhUbcw79haquTvqcH
+        5SF9dIdWw+N3+yV1Ls0K8o4JMv5Kl4MXyHvNHSkmqpNRVcmlW1Ws77ovVqQ1Vbx84joOeQLaWCvBx
+        /Fns4=;
+Received: from [2001:470:1f1d:6b5:7e7a:91ff:fede:4a45] (helo=finisterre.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1hdIus-0005K8-SE; Tue, 18 Jun 2019 18:33:10 +0000
+Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
+        id 19CE7440046; Tue, 18 Jun 2019 19:33:10 +0100 (BST)
+From:   Mark Brown <broonie@kernel.org>
+To:     Nilkanth Ahirrao <anilkanth@jp.adit-jv.com>
+Cc:     alsa-devel@alsa-project.org, broonie@kernel.org,
+        Jiada Wang <jiada_wang@mentor.com>, jiada_wang@mentor.com,
+        kuninori.morimoto.gx@renesas.com,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        lgirdwood@gmail.com, linux-kernel@vger.kernel.org,
+        Mark Brown <broonie@kernel.org>, perex@perex.cz,
+        sudipi@jp.adit-jv.com, Suresh Udipi <sudipi@jp.adit-jv.com>,
+        tiwai@suse.com
+Subject: Applied "ASoC: rsnd: fixup mod ID calculation in rsnd_ctu_probe_" to the asoc tree
+In-Reply-To: <20190618051953.13419-1-jiada_wang@mentor.com>
+X-Patchwork-Hint: ignore
+Message-Id: <20190618183310.19CE7440046@finisterre.sirena.org.uk>
+Date:   Tue, 18 Jun 2019 19:33:10 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 18 Jun 2019 23:53:11 +0530
-"Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com> wrote:
+The patch
 
-> Naveen N. Rao wrote:
-> > Steven Rostedt wrote:  
-> >> On Tue, 18 Jun 2019 20:17:04 +0530
-> >> "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com> wrote:
-> >>   
-> >>> @@ -1551,7 +1551,7 @@ unsigned long ftrace_location_range(unsigned long start, unsigned long end)
-> >>>  	key.flags = end;	/* overload flags, as it is unsigned long */
-> >>>  
-> >>>  	for (pg = ftrace_pages_start; pg; pg = pg->next) {
-> >>> -		if (end < pg->records[0].ip ||
-> >>> +		if (end <= pg->records[0].ip ||  
-> >> 
-> >> This breaks the algorithm. "end" is inclusive. That is, if you look for
-> >> a single byte, where "start" and "end" are the same, and it happens to
-> >> be the first ip on the pg page, it will be skipped, and not found.  
-> > 
-> > Thanks. It looks like I should be over-riding ftrace_location() instead.  
-> > I will update this patch.  
-> 
-> I think I will have ftrace own the two instruction range, regardless of 
-> whether the preceding instruction is a 'mflr r0' or not. This simplifies 
-> things and I don't see an issue with it as of now. I will do more 
-> testing to confirm.
-> 
-> - Naveen
-> 
-> 
-> --- a/arch/powerpc/kernel/trace/ftrace.c
-> +++ b/arch/powerpc/kernel/trace/ftrace.c
-> @@ -951,6 +951,16 @@ void arch_ftrace_update_code(int command)
->  }
->  
->  #ifdef CONFIG_MPROFILE_KERNEL
-> +/*
-> + * We consider two instructions -- 'mflr r0', 'bl _mcount' -- to be part
-> + * of ftrace. When checking for the first instruction, we want to include
-> + * the next instruction in the range check.
-> + */
-> +unsigned long ftrace_location(unsigned long ip)
-> +{
-> +	return ftrace_location_range(ip, ip + MCOUNT_INSN_SIZE);
-> +}
-> +
->  /* Returns 1 if we patched in the mflr */
->  static int __ftrace_make_call_prep(struct dyn_ftrace *rec)
->  {
-> diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
-> index 21d8e201ee80..122e2bb4a739 100644
-> --- a/kernel/trace/ftrace.c
-> +++ b/kernel/trace/ftrace.c
-> @@ -1573,7 +1573,7 @@ unsigned long ftrace_location_range(unsigned long start, unsigned long end)
->   * the function tracer. It checks the ftrace internal tables to
->   * determine if the address belongs or not.
->   */
-> -unsigned long ftrace_location(unsigned long ip)
-> +unsigned long __weak ftrace_location(unsigned long ip)
->  {
->  	return ftrace_location_range(ip, ip);
->  }
+   ASoC: rsnd: fixup mod ID calculation in rsnd_ctu_probe_
 
-Actually, instead of making this a weak function, let's do this:
+has been applied to the asoc tree at
 
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.3
 
-In include/ftrace.h:
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
-#ifndef FTRACE_IP_EXTENSION
-# define FTRACE_IP_EXTENSION	0
-#endif
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
-In arch/powerpc/include/asm/ftrace.h
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
-#define FTRACE_IP_EXTENSION	MCOUNT_INSN_SIZE
+Thanks,
+Mark
 
+From ac28ec07ae1c5c1e18ed6855eb105a328418da88 Mon Sep 17 00:00:00 2001
+From: Nilkanth Ahirrao <anilkanth@jp.adit-jv.com>
+Date: Tue, 18 Jun 2019 14:19:53 +0900
+Subject: [PATCH] ASoC: rsnd: fixup mod ID calculation in rsnd_ctu_probe_
 
-Then we can just have:
+commit c16015f36cc1 ("ASoC: rsnd: add .get_id/.get_id_sub")
+introduces rsnd_ctu_id which calcualates and gives
+the main Device id of the CTU by dividing the id by 4.
+rsnd_mod_id uses this interface to get the CTU main
+Device id. But this commit forgets to revert the main
+Device id calcution previously done in rsnd_ctu_probe_
+which also divides the id by 4. This path corrects the
+same to get the correct main Device id.
 
-unsigned long ftrace_location(unsigned long ip)
-{
-	return ftrace_location_range(ip, ip + FTRACE_IP_EXTENSION);
-}
+The issue is observered when rsnd_ctu_probe_ is done for CTU1
 
--- Steve
+Fixes: c16015f36cc1 ("ASoC: rsnd: add .get_id/.get_id_sub")
+
+Signed-off-by: Nilkanth Ahirrao <anilkanth@jp.adit-jv.com>
+Signed-off-by: Suresh Udipi <sudipi@jp.adit-jv.com>
+Signed-off-by: Jiada Wang <jiada_wang@mentor.com>
+Acked-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ sound/soc/sh/rcar/ctu.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/sound/soc/sh/rcar/ctu.c b/sound/soc/sh/rcar/ctu.c
+index 8cb06dab234e..7647b3d4c0ba 100644
+--- a/sound/soc/sh/rcar/ctu.c
++++ b/sound/soc/sh/rcar/ctu.c
+@@ -108,7 +108,7 @@ static int rsnd_ctu_probe_(struct rsnd_mod *mod,
+ 			   struct rsnd_dai_stream *io,
+ 			   struct rsnd_priv *priv)
+ {
+-	return rsnd_cmd_attach(io, rsnd_mod_id(mod) / 4);
++	return rsnd_cmd_attach(io, rsnd_mod_id(mod));
+ }
+ 
+ static void rsnd_ctu_value_init(struct rsnd_dai_stream *io,
+-- 
+2.20.1
+
