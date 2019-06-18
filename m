@@ -2,90 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E18D4AB52
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 22:03:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 69BD94AB60
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 22:05:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730467AbfFRUC6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Jun 2019 16:02:58 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:39781 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730189AbfFRUC5 (ORCPT
+        id S1730567AbfFRUFU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Jun 2019 16:05:20 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:44938 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729331AbfFRUFU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Jun 2019 16:02:57 -0400
-Received: by mail-lf1-f65.google.com with SMTP id p24so10253573lfo.6;
-        Tue, 18 Jun 2019 13:02:56 -0700 (PDT)
+        Tue, 18 Jun 2019 16:05:20 -0400
+Received: by mail-ed1-f66.google.com with SMTP id k8so23459731edr.11;
+        Tue, 18 Jun 2019 13:05:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=cVl3SIklS0nHd797FYY4cxHoZEAnPslNYDQOv5OhMDM=;
-        b=D4LqXjauq6e8L92SXdCI8dBOeZ9g3qnR+MvRfoDQP4UPl32roBpvGWprF3TjlmHSja
-         eZ/6/ZjWzgRN9htttHJTrPzVJCoFvbIqpDA3vC1Cl8utSLu6XzXuxp7AabXcEV/Om6He
-         yHiGKcbb2hB4xqghyhAsPiwk4UDzPPVak57pe2KgOS495X1pgno1vQnCtMEqE80s7SDd
-         b/xHq26uOBUeyQq+iykM4OWAPJ5VZU59856GZ2QUrHkBfHjmAmn1pe6xmy0ce97q8t4y
-         IfDjJ3INQeQbB5asZ/xxIwCfBifBBZjV8Yfyh2WDBB5G9dWZfMSeieDwA07Xq9c2du8P
-         K49g==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=KWnI481UmCPDjIZ0XrCY42jsxMovXIO86L/MeMLISRM=;
+        b=n0KpQEdSGQ5PKuTkB+/Z06u4nECf6mkQJz7Meo5OnYtsgDl9meBsiq2o00SAdXNvet
+         TTZnNi4aG81ep1rsOQ8bk27QDuNzIaEBHYHNCna/jJ3ZA0e/oihc+yT36MSr0WpbMkvm
+         GmmY4tcpSFcxjVLPzAmitdto6JN00+J3BuG+IOnATyFlzwZ++y9lQmnJYKiUHTDNfBOV
+         KEScEjf/R/o9RXWmtxuqWvS92gPK7Ifh/FzIPaSCgpt2iV87dA3DHuDM1FBKPfblIrTk
+         3/Cez3+C6gwBf/Uab6uUaVzjgf5mngEVZQNwRe4lGCKRWhdGXHe4R2v4IsOtz2fjpnWl
+         3gCQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=cVl3SIklS0nHd797FYY4cxHoZEAnPslNYDQOv5OhMDM=;
-        b=L+Mw5H2tzDvLIImNk+lqFdo/mYtJN4BEMzCzzEVGODbbeSfr7IGM+GLypvYdOAa6h/
-         Q1aoHhe40DvtMx2y5e9xNQb2TQ8T2ktYrDABU6RVhk+DZfGluuE1fMH+7mK0wDjpiXmE
-         YJEdUTXMTwZKmbRxtrF5Qj54ZlEjaXd4roWCtbN1slPBmX2Y6x8bk2VOIYjp94Zf1hxY
-         qBTwk50bQ3WKs0vdaXU6UDYuNp8PjibeZ3eM4s21gEu5f1aW8g3X/p9iTwGOw85OloTN
-         2XEhzpgUaBT7Q13MJ8XF91p8RQ1SDeZ3HMKYiwAX73D3huBEdcLePjTffCkD/VAols+b
-         exSQ==
-X-Gm-Message-State: APjAAAVxactIGjKsD2BvM0z4i+IPMcbVsUSG7HWws/7qqjpGNpfhMg3a
-        +bHSEg8wR1KH8veoIB64IqksEHY3BDA=
-X-Google-Smtp-Source: APXvYqzKO9zG2G36ym9WsDHSLpShB5YrpwSynDJM7DvNbZeZWMwp4g4634Uhi3PMXIvAfLocbMbxAg==
-X-Received: by 2002:a05:6512:29a:: with SMTP id j26mr26109062lfp.44.1560888175432;
-        Tue, 18 Jun 2019 13:02:55 -0700 (PDT)
-Received: from esperanza ([176.120.239.149])
-        by smtp.gmail.com with ESMTPSA id j23sm1621386lfb.93.2019.06.18.13.02.54
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 18 Jun 2019 13:02:54 -0700 (PDT)
-Date:   Tue, 18 Jun 2019 23:02:51 +0300
-From:   Vladimir Davydov <vdavydov.dev@gmail.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Colin King <colin.king@canonical.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>, linux-mm@kvack.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mm: idle-page: fix oops because end_pfn is larger than
- max_pfn
-Message-ID: <20190618200251.hd2uk6qzyvsy55py@esperanza>
-References: <20190618124352.28307-1-colin.king@canonical.com>
- <20190618124502.7b9c32a00a54f0c618a12ca4@linux-foundation.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=KWnI481UmCPDjIZ0XrCY42jsxMovXIO86L/MeMLISRM=;
+        b=In4HBfPtd4k9ssz2Xcy8uoAXmbGyq2t8VtVnpMGzOkdXudsnsnsra6h2LD1rNu9oFG
+         su1iPoJRNWOAdM9wC/U5GhD4GmggFVZB8SJzTgDIHr4E/icOkWONqLGMlhL4gzU/PkUv
+         NA9rNnJT4Nb01o5nKEgWDA9Gag5r+tAn3EwXs3hTd5En23F6Un0dV4EQbkZoZ7LgEcJf
+         dVaFj1jk/myu0PtqzaigRGmZXd8eWDbYrTXhL1uRqoWpvDV8O+TqPfAA4RUTZUoBI1Ut
+         HoLBIwauL+Ng4Kgz+9Ej22cwuOPQVFxZS5Ho4kSvSWhxwkbVVTsjnyKl3Qp9qrAgf7XX
+         HNmA==
+X-Gm-Message-State: APjAAAUjQzUx88/QGkEfgyipqQB0DjmTXSKnvKhTUWAY5PZtp9RGWmb9
+        uaRt4Su7HM4RxwbRQO4uVxisAckjQ2mEvNslq4w=
+X-Google-Smtp-Source: APXvYqzqoo0HXHFjoJtbtPpzDUDsVTfLgbc+FKH9YUlmQ4CiuTBdrnO5gZfvmnGS+KnlnynqpcJaiC2XfJXdmzWQW9I=
+X-Received: by 2002:a50:a53a:: with SMTP id y55mr110598370edb.147.1560888318156;
+ Tue, 18 Jun 2019 13:05:18 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190618124502.7b9c32a00a54f0c618a12ca4@linux-foundation.org>
+References: <CA+FuTSfBFqRViKfG5crEv8xLMgAkp3cZ+yeuELK5TVv61xT=Yw@mail.gmail.com>
+ <20190618161036.GA28190@kroah.com> <CAF=yD-JnTHdDE8K-EaJM2fH9awvjAmOJkoZbtU+Wi58pPnyAxw@mail.gmail.com>
+ <20190618.094759.539007481404905339.davem@davemloft.net> <20190618171516.GA17547@kroah.com>
+ <CAF=yD-+pNrAo1wByHY6f5AZCq8xT0FDMKM-WzPkfZ36Jxj4mNg@mail.gmail.com>
+ <20190618173906.GB3649@kroah.com> <CA+FuTSdrphico4044QTD_-8VbanFFJx0FJuH+vVMfuHqbphkjw@mail.gmail.com>
+In-Reply-To: <CA+FuTSdrphico4044QTD_-8VbanFFJx0FJuH+vVMfuHqbphkjw@mail.gmail.com>
+From:   Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+Date:   Tue, 18 Jun 2019 16:04:42 -0400
+Message-ID: <CAF=yD-L8ZRwVJmp4WJcNW-B_1JdSAM9QmMHOQJ=x_nd24v5Qnw@mail.gmail.com>
+Subject: Re: 4.19: udpgso_bench_tx: setsockopt zerocopy: Unknown error 524
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     David Miller <davem@davemloft.net>,
+        Naresh Kamboju <naresh.kamboju@linaro.org>,
+        Network Development <netdev@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        Fred Klassen <fklassen@appneta.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 18, 2019 at 12:45:02PM -0700, Andrew Morton wrote:
-> On Tue, 18 Jun 2019 13:43:52 +0100 Colin King <colin.king@canonical.com> wrote:
-> 
-> > From: Colin Ian King <colin.king@canonical.com>
-> > 
-> > Currently the calcuation of end_pfn can round up the pfn number to
-> > more than the actual maximum number of pfns, causing an Oops. Fix
-> > this by ensuring end_pfn is never more than max_pfn.
-> > 
-> > This can be easily triggered when on systems where the end_pfn gets
-> > rounded up to more than max_pfn using the idle-page stress-ng
-> > stress test:
-> > 
-> 
-> cc Vladimir.  This seems rather obvious - I'm wondering if the code was
-> that way for some subtle reason?
+On Tue, Jun 18, 2019 at 2:59 PM Willem de Bruijn
+<willemdebruijn.kernel@gmail.com> wrote:
+>
+> On Tue, Jun 18, 2019 at 1:39 PM Greg KH <gregkh@linuxfoundation.org> wrote:
+> >
+> > On Tue, Jun 18, 2019 at 01:27:14PM -0400, Willem de Bruijn wrote:
+> > > On Tue, Jun 18, 2019 at 1:15 PM Greg KH <gregkh@linuxfoundation.org> wrote:
+> > > >
+> > > > On Tue, Jun 18, 2019 at 09:47:59AM -0700, David Miller wrote:
+> > > > > From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+> > > > > Date: Tue, 18 Jun 2019 12:37:33 -0400
+> > > > >
+> > > > > > Specific to the above test, I can add a check command testing
+> > > > > > setsockopt SO_ZEROCOPY  return value. AFAIK kselftest has no explicit
+> > > > > > way to denote "skipped", so this would just return "pass". Sounds a
+> > > > > > bit fragile, passing success when a feature is absent.
+> > > > >
+> > > > > Especially since the feature might be absent because the 'config'
+> > > > > template forgot to include a necessary Kconfig option.
+> > > >
+> > > > That is what the "skip" response is for, don't return "pass" if the
+> > > > feature just isn't present.  That lets people run tests on systems
+> > > > without the config option enabled as you say, or on systems without the
+> > > > needed userspace tools present.
+> > >
+> > > I was not aware that kselftest had this feature.
+> > >
+> > > But it appears that exit code KSFT_SKIP (4) will achieve this. Okay,
+> > > I'll send a patch and will keep that in mind for future tests.
+> >
+> > Wonderful, thanks for doing that!
+>
+> One complication: an exit code works for a single test, but here
+> multiple test variants are run from a single shell script.
+>
+> I see that in similar such cases that use the test harness
+> (ksft_test_result_skip) the overall test returns success as long as
+> all individual cases return either success or skip.
+>
+> I think it's preferable to return KSFT_SKIP if any of the cases did so
+> (and none returned an error). I'll do that unless anyone objects.
 
-No subtle reason at all - just a bug. The patch looks good to me,
+http://patchwork.ozlabs.org/patch/1118309/
 
-Acked-by: Vladimir Davydov <vdavydov.dev@gmail.com>
+The shell script scaffolding can perhaps be reused for other similar tests.
