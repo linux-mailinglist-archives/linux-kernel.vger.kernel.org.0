@@ -2,56 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D3434AD63
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 23:33:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 74CF04AD69
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 23:36:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730462AbfFRVdJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Jun 2019 17:33:09 -0400
-Received: from vps0.lunn.ch ([185.16.172.187]:38500 "EHLO vps0.lunn.ch"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729196AbfFRVdJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Jun 2019 17:33:09 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=HFlUGfwI29OnXEJ+MFr4KVMqjeFlOdA1xe8uQe9XuvY=; b=OJaBJ2dA3JnZLzHBuTprMuMBgq
-        FagHrrCnx3j473aG+UCapG0Vgf1R6cNscK3HcKYXW9+sZFh25xTez8tsV5BSaL8Oi0kXOurWUa95N
-        29XVHWxr1xD2I+7qjodqhuPRbSlXXRXnXCkBG4+OUwwdV6hnrBpSKRhJcX1Q6UHfgr+8=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.89)
-        (envelope-from <andrew@lunn.ch>)
-        id 1hdLiu-00043l-0w; Tue, 18 Jun 2019 23:33:00 +0200
-Date:   Tue, 18 Jun 2019 23:32:59 +0200
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Parshuram Thombare <pthombar@cadence.com>
-Cc:     nicolas.ferre@microchip.com, davem@davemloft.net,
-        f.fainelli@gmail.com, netdev@vger.kernel.org, hkallweit1@gmail.com,
-        linux-kernel@vger.kernel.org, rafalc@cadence.com,
-        aniljoy@cadence.com, piotrs@cadence.com,
-        Russell King <rmk+kernel@arm.linux.org.uk>
-Subject: Re: [PATCH v2 1/6] net: macb: add phylink support
-Message-ID: <20190618213259.GB18352@lunn.ch>
-References: <1560642367-26425-1-git-send-email-pthombar@cadence.com>
- <1560883265-6057-1-git-send-email-pthombar@cadence.com>
+        id S1730501AbfFRVgt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Jun 2019 17:36:49 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:35808 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730176AbfFRVgt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Jun 2019 17:36:49 -0400
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: ezequiel)
+        with ESMTPSA id BB3BF2610BE
+From:   Ezequiel Garcia <ezequiel@collabora.com>
+To:     dri-devel@lists.freedesktop.org
+Cc:     linux-rockchip@lists.infradead.org,
+        =?UTF-8?q?Heiko=20St=C3=BCbner?= <heiko@sntech.de>,
+        Sandy Huang <hjc@rock-chips.com>, kernel@collabora.com,
+        Sean Paul <seanpaul@chromium.org>,
+        Boris Brezillon <boris.brezillon@collabora.com>,
+        Douglas Anderson <dianders@chromium.org>,
+        Jacopo Mondi <jacopo@jmondi.org>,
+        Ilia Mirkin <imirkin@alum.mit.edu>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Ezequiel Garcia <ezequiel@collabora.com>
+Subject: [PATCH 0/3] RK3288 Gamma LUT
+Date:   Tue, 18 Jun 2019 18:34:03 -0300
+Message-Id: <20190618213406.7667-1-ezequiel@collabora.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1560883265-6057-1-git-send-email-pthombar@cadence.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 18, 2019 at 07:41:05PM +0100, Parshuram Thombare wrote:
-> This patch replace phylib API's by phylink API's.
+Let's support Gamma LUT configuration on RK3288 SoCs.
 
-Hi Parshuram
+In order to do so, this series adds a new and optional
+address resource.
+    
+A separate address resource is required because on this RK3288,
+the LUT address is after the MMU address, which is requested
+by the iommu driver. This prevents the DRM driver
+from requesting an entire register space.
 
-When you repost as a proper threaded patchset, please Cc: Russell
-King, the phylink maintainer.
+The current implementation works for RGB 10-bit tables, as that
+is what seems to work on RK3288.
 
-      Thanks
-	Andrew
+This has been tested on Rock2 Square board, using
+a hacked 'modetest' tool, with legacy and atomic APIs. 
+
+Thanks,
+Eze
+
+Changes from RFC:
+* Request (an optional) address resource for the LUT.
+* Add devicetree changes.
+* Drop support for RK3399, which doesn't seem to work
+  out of the box and needs more research.
+* Support pass-thru setting when GAMMA_LUT is NULL.
+* Add a check for the gamma size, as suggested by Ilia.
+* Move gamma setting to atomic_commit_tail, as pointed
+  out by Jacopo/Laurent, is the correct way.
+
+Ezequiel Garcia (3):
+  dt-bindings: display: rockchip: document VOP gamma LUT address
+  drm/rockchip: Add optional support for CRTC gamma LUT
+  ARM: dts: rockchip: Add RK3288 VOP gamma LUT address
+
+ .../display/rockchip/rockchip-vop.txt         |  10 +-
+ arch/arm/boot/dts/rk3288.dtsi                 |   6 +-
+ drivers/gpu/drm/rockchip/rockchip_drm_fb.c    |   3 +
+ drivers/gpu/drm/rockchip/rockchip_drm_vop.c   | 106 ++++++++++++++++++
+ drivers/gpu/drm/rockchip/rockchip_drm_vop.h   |   7 ++
+ drivers/gpu/drm/rockchip/rockchip_vop_reg.c   |   2 +
+ 6 files changed, 131 insertions(+), 3 deletions(-)
+
+-- 
+2.20.1
+
