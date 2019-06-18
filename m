@@ -2,78 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 492B749BA7
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 10:01:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C96B749BB2
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 10:06:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728711AbfFRIBo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Jun 2019 04:01:44 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:37435 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725913AbfFRIBo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Jun 2019 04:01:44 -0400
-Received: by mail-qt1-f193.google.com with SMTP id y57so14193320qtk.4
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2019 01:01:43 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ELlMVonpbEABBkseUdTxSk6vYaA7MdUkuNEpzt+TAlo=;
-        b=gfkLRYFxATadm93Lgu4d5Qrt3vKxEBDMzY/Z6wXu+OZDZubJLkH0qprYVBRLNkydT8
-         ZxQUSwChvf9KSSFhC6QWkOAv4/j7EtXD2fhPfSDM26LvZeBHT23jKKF+MkMO+TVTevC6
-         yIPBm6+xdBKGSkAjCBOC3iYRRNJGOwt9bUc20De+QFQnxULmwWEd8izVodWvTGKMwqIE
-         ri1hj3qC6y4DHX6HsZwlYW1vDllbUy+LtviFWp6olBj5LzCgiKsoQU2GDVxSVOR/xR4a
-         8F+FR4uNCK6tTs5AYHPT7AcAsP0rCSbaMTs//cmBtaivZDUb+G2WwBzmweAdmtNWR67J
-         LKYQ==
-X-Gm-Message-State: APjAAAVIR+KheVIyEUdyvGSbHKdxFo0yHoi5msEgqxvlRWgYhnhWvbzG
-        s9k14M9lQFLsjjxcGYU/DPGRNeMMEYNRZAHjhw4=
-X-Google-Smtp-Source: APXvYqynQ5w36BP/oae5cSk/XmTmxDHjsYOb6nmmK9VfbUuACv+qzschtpJZO5zjFMzBPDMzYItF9huO7MOjqr8Yc28=
-X-Received: by 2002:aed:3e7c:: with SMTP id m57mr93398121qtf.204.1560844903063;
- Tue, 18 Jun 2019 01:01:43 -0700 (PDT)
+        id S1727016AbfFRIGs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Jun 2019 04:06:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42636 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725913AbfFRIGs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Jun 2019 04:06:48 -0400
+Received: from dragon (li1322-146.members.linode.com [45.79.223.146])
+        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 17F0B20B1F;
+        Tue, 18 Jun 2019 08:06:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1560845207;
+        bh=vmefZDb3xtY3+JowXEb+2DJa4rQS3eadY9mZe/G1U6w=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=VoktxTNdHtevrzP7U/eM2kWLQmPRycjEGRerlVkaqvp4TTfnrdiFaRNLQa0AgvIga
+         nADj9NOwBH0xKjVZsYjDRMY2B9xPWle7eF11+UNxRYon2qznz49oG5ZXJ7oerxrN1i
+         XupcfTaHmp3W5qNKdtqwQEkHwnIC0rBeeVikWRRY=
+Date:   Tue, 18 Jun 2019 16:05:58 +0800
+From:   Shawn Guo <shawnguo@kernel.org>
+To:     Andrey Smirnov <andrew.smirnov@gmail.com>
+Cc:     linux-arm-kernel@lists.infradead.org,
+        Chris Healy <cphealy@gmail.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] ARM: dts: imx7d-zii-rpu2: Fix incorrrect
+ 'stdout-path'
+Message-ID: <20190618080557.GK29881@dragon>
+References: <20190614074348.17210-1-andrew.smirnov@gmail.com>
 MIME-Version: 1.0
-References: <20190617121427.77565-1-arnd@arndb.de> <20190617141244.5x22nrylw7hodafp@pc636>
- <CAK8P3a3sjuyeQBUprGFGCXUSDAJN_+c+2z=pCR5J05rByBVByQ@mail.gmail.com>
- <CAK8P3a0pnEnzfMkCi7Nb97-nG4vnAj7fOepfOaW0OtywP8TLpw@mail.gmail.com>
- <20190617165730.5l7z47n3vg73q7mp@pc636> <CAK8P3a1Ab2MVVgSh4EW0Yef_BsxcRbkxarknMzV7tOA+s79qsA@mail.gmail.com>
-In-Reply-To: <CAK8P3a1Ab2MVVgSh4EW0Yef_BsxcRbkxarknMzV7tOA+s79qsA@mail.gmail.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Tue, 18 Jun 2019 10:01:26 +0200
-Message-ID: <CAK8P3a0965MhQfpygCqxqnocLt9f4L80-mF-UgoP5OdAoLCCqw@mail.gmail.com>
-Subject: Re: [BUG]: mm/vmalloc: uninitialized variable access in pcpu_get_vm_areas
-To:     Uladzislau Rezki <urezki@gmail.com>
-Cc:     Roman Gushchin <guro@fb.com>, Michal Hocko <mhocko@suse.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Thomas Garnier <thgarnie@google.com>,
-        Oleksiy Avramchenko <oleksiy.avramchenko@sonymobile.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Joel Fernandes <joelaf@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@elte.hu>, Tejun Heo <tj@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Roman Penyaev <rpenyaev@suse.de>,
-        Rick Edgecombe <rick.p.edgecombe@intel.com>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Linux-MM <linux-mm@kvack.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190614074348.17210-1-andrew.smirnov@gmail.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 17, 2019 at 9:29 PM Arnd Bergmann <arnd@arndb.de> wrote:
-> On Mon, Jun 17, 2019 at 6:57 PM Uladzislau Rezki <urezki@gmail.com> wrote:
+On Fri, Jun 14, 2019 at 12:43:47AM -0700, Andrey Smirnov wrote:
+> RPU2 uses UART2 as a serial console and UART1 is not used at all. Fix
+> incorrrectly specified 'stdout-path' to reflect that.
+> 
+> Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
+> Cc: Shawn Guo <shawnguo@kernel.org>
+> Cc: Chris Healy <cphealy@gmail.com>
+> Cc: Fabio Estevam <festevam@gmail.com>
+> Cc: Lucas Stach <l.stach@pengutronix.de>
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-kernel@vger.kernel.org
 
-> Using switch/case makes it easier for the compiler because it
-> seems to turn this into a single conditional instead of a set of
-> conditions. It also seems to be the much more common style
-> in the kernel.
-
-Nevermind, the warning came back after all. It's now down to
-one out of 2000 randconfig builds I tested, but that's not good
-enough. I'll send a patch the way you suggested.
-
-      Arnd
+Applied both, thanks.
