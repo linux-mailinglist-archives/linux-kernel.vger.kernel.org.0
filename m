@@ -2,106 +2,142 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F160498F4
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 08:42:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B1424996C
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 08:53:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726151AbfFRGmN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Jun 2019 02:42:13 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:48346 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725829AbfFRGmN (ORCPT
+        id S1728784AbfFRGxJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Jun 2019 02:53:09 -0400
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:45308 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726307AbfFRGxJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Jun 2019 02:42:13 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 576DC6086B; Tue, 18 Jun 2019 06:24:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1560839046;
-        bh=pcGOA1XuslGJrQpiDC/6Oj6FBvnMaBf3n7aBV/kUwXw=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=gR6/FPDeoNZ90kiWz351DZS0sKyMU7g/WWhXpX7DUVpZhRQBuDd0I1jm/bjMPClv1
-         TuxteIW8ZJeO9jvZ0tMtZj6bl+SwrQT6J519/pxJ1KEj+m3ii9YnVH3ypBwTIGIJg5
-         GMz4VWNut6+E1LnaBb1HmZuXdMsZbRUfK6yYBY8A=
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        pdx-caf-mail.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
-        DKIM_INVALID,DKIM_SIGNED,SPF_NONE autolearn=no autolearn_force=no
-        version=3.4.0
-Received: from [192.168.43.187] (unknown [223.227.13.236])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: nishakumari@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 1196C6086B;
-        Tue, 18 Jun 2019 06:24:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1560839045;
-        bh=pcGOA1XuslGJrQpiDC/6Oj6FBvnMaBf3n7aBV/kUwXw=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=MujEB7/qmXQmRR7mC/iDoaBy/yeJBuZcpD3R0h8Dij0SY2rPIO7o67Um8bmUrOPKn
-         6H4JneM0ZCNcDS1jRDF7QzUvwIg3kq6PDpZc4hjozRMZKU4BkDA8Ks0ErUcIvXRdC7
-         132zpX/d/LjpIAHbCHAncsZ1Rotb1v0JUsUqfuY4=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1196C6086B
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=nishakumari@codeaurora.org
-Subject: Re: [PATCH 4/4] regulator: adding interrupt handling in labibb
- regulator
-To:     Mark Brown <broonie@kernel.org>
-Cc:     bjorn.andersson@linaro.org, robh+dt@kernel.org,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        agross@kernel.org, lgirdwood@gmail.com, mark.rutland@arm.com,
-        david.brown@linaro.org, linux-kernel@vger.kernel.org,
-        kgunda@codeaurora.org, rnayak@codeaurora.org
-References: <1560337252-27193-1-git-send-email-nishakumari@codeaurora.org>
- <1560337252-27193-5-git-send-email-nishakumari@codeaurora.org>
- <20190613172738.GO5316@sirena.org.uk>
-From:   Nisha Kumari <nishakumari@codeaurora.org>
-Message-ID: <8294996d-84ee-dff2-7369-00c17348a09c@codeaurora.org>
-Date:   Tue, 18 Jun 2019 11:53:57 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.1
+        Tue, 18 Jun 2019 02:53:09 -0400
+Received: by mail-ot1-f65.google.com with SMTP id x21so12741110otq.12
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2019 23:53:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=F1uNa6FtFexED8BrkdYi+QJ3mxVBvnGOiE6mNV8TMuQ=;
+        b=Ai3DslE7sIcJd3lwcHv/nfIW3mBphyUfgA4ERiWbp1nKmnX57EUkIBMuGeFXdT7pfG
+         FW+l44ZOS6pT9YQMmmsJBwXjhCDuIbnT+EOSiX2bhs8hcy9G4XTUuePQGu5bCIvclU9N
+         M+Q5UcimomCZHO0VG2aTeQedTT1QWSp5ft8A387fC/cCeZBWRu6+r4n8Z8vmMPVmwT22
+         gEaGXNF9qds6fOLOwgu/tSpiXP/frXgklI4Ddj4OfJdKCVtItW3YXraLNJuTPqYKdLbu
+         fWogpJYS9Wfejc2Q5oTyxJKmSPjosEPlFfapUcOS7yE1nA0uBHKC3rVMhHJLvqMEZf5I
+         RRRA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=F1uNa6FtFexED8BrkdYi+QJ3mxVBvnGOiE6mNV8TMuQ=;
+        b=sallf8DDEmBQzGzzSbh68p86chsTAIV5mOP7R2fPY1MmzSBAd63T0YpPEt4UcBcjGC
+         WgXN7RX7DMCalH/q5SEaGbcz87lz8QItAiM6AbUNYL5c7q6rUYGyp5EIjo5/i9quLAuj
+         B7OApg+n6DchVbtogdoh3h3ziau2BU5M8HDYA8gHQAlAJ34DNZPXUUqQ2UHcIhv13lRV
+         yeyEz9A9RdjUs1svkFija6zXvb+ZaNM+QjV6sNwJiMKMkTb7juKGx7J+vMjcPQODPgLI
+         QIpxfeMHQnoegJZxQOtsev/OCkWzljkJpXMbGsluioID6/kuRiVXsg/wzWueIrMD7ANx
+         Upuw==
+X-Gm-Message-State: APjAAAXncvIQLUGCr0LSEaXkfyBnM3eWumzGb6UX5xI3HzQembfWBNxj
+        PPkRcrqkHIMCkK0SeN04Lca23g==
+X-Google-Smtp-Source: APXvYqzF6FAEm6X6iuXvqsBEPGfwrQNDfuWjFLfRsqVOsMs1hrhtT+EOaKTXLQrddSKqFiN5L3rpxw==
+X-Received: by 2002:a05:6830:1319:: with SMTP id p25mr2977936otq.224.1560839074504;
+        Mon, 17 Jun 2019 23:24:34 -0700 (PDT)
+Received: from leoy-ThinkPad-X240s (li964-79.members.linode.com. [45.33.10.79])
+        by smtp.gmail.com with ESMTPSA id k3sm5360435otr.1.2019.06.17.23.24.28
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 17 Jun 2019 23:24:33 -0700 (PDT)
+Date:   Tue, 18 Jun 2019 14:24:23 +0800
+From:   Leo Yan <leo.yan@linaro.org>
+To:     Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
+Cc:     Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        bpf@vger.kernel.org
+Subject: Re: [PATCH 1/2] perf trace: Use pr_debug() instead of fprintf() for
+ logging
+Message-ID: <20190618062423.GA24549@leoy-ThinkPad-X240s>
+References: <20190617091140.24372-1-leo.yan@linaro.org>
+ <20190617152412.GJ1402@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20190613172738.GO5316@sirena.org.uk>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190617152412.GJ1402@kernel.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Jun 17, 2019 at 12:24:12PM -0300, Arnaldo Carvalho de Melo wrote:
+> Em Mon, Jun 17, 2019 at 05:11:39PM +0800, Leo Yan escreveu:
+> > In the function trace__syscall_info(), it explicitly checks verbose
+> > level and print out log with fprintf().  Actually, we can use
+> > pr_debug() to do the same thing for debug logging.
+> > 
+> > This patch uses pr_debug() instead of fprintf() for debug logging; it
+> > includes a minor fixing for 'space before tab in indent', which
+> > dismisses git warning when apply it.
+> 
+> But those are not fprintf(stdout,), they explicitely redirect to the
+> output file that the user may have specified using 'perf trace --output
+> filename.trace' :-)
 
-On 6/13/2019 10:57 PM, Mark Brown wrote:
-> On Wed, Jun 12, 2019 at 04:30:52PM +0530, Nisha Kumari wrote:
->
->> +static void labibb_sc_err_recovery_work(void *_labibb)
->> +{
->> +	int ret;
->> +	struct qcom_labibb *labibb = (struct qcom_labibb *)_labibb;
->> +
->> +	labibb->ibb_vreg.vreg_enabled = 0;
->> +	labibb->lab_vreg.vreg_enabled = 0;
->> +
->> +	ret = qcom_ibb_regulator_enable(labibb->lab_vreg.rdev);
-> The driver should *never* enable the regulator itself, it should only do
-> this if the core told it to.
-Ok, I will change it
->
->> +	/*
->> +	 * The SC(short circuit) fault would trigger PBS(Portable Batch
->> +	 * System) to disable regulators for protection. This would
->> +	 * cause the SC_DETECT status being cleared so that it's not
->> +	 * able to get the SC fault status.
->> +	 * Check if LAB/IBB regulators are enabled in the driver but
->> +	 * disabled in hardware, this means a SC fault had happened
->> +	 * and SCP handling is completed by PBS.
->> +	 */
-> Let the core worry about this, the driver should just report the problem
-> to the core like all other devices do (and this driver doesn't...).
-
-Ok
-
+Thanks for pointing out, sorry for noise. Please drop this patch.
 
 Thanks,
+Leo Yan
 
-Nisha
-
+> > Signed-off-by: Leo Yan <leo.yan@linaro.org>
+> > ---
+> >  tools/perf/builtin-trace.c | 21 +++++++++------------
+> >  1 file changed, 9 insertions(+), 12 deletions(-)
+> > 
+> > diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
+> > index bd1f00e7a2eb..5cd74651db4c 100644
+> > --- a/tools/perf/builtin-trace.c
+> > +++ b/tools/perf/builtin-trace.c
+> > @@ -1760,12 +1760,11 @@ static struct syscall *trace__syscall_info(struct trace *trace,
+> >  		 * grep "NR -1 " /t/trace_pipe
+> >  		 *
+> >  		 * After generating some load on the machine.
+> > - 		 */
+> > -		if (verbose > 1) {
+> > -			static u64 n;
+> > -			fprintf(trace->output, "Invalid syscall %d id, skipping (%s, %" PRIu64 ") ...\n",
+> > -				id, perf_evsel__name(evsel), ++n);
+> > -		}
+> > +		 */
+> > +		static u64 n;
+> > +
+> > +		pr_debug("Invalid syscall %d id, skipping (%s, %" PRIu64 ")\n",
+> > +			 id, perf_evsel__name(evsel), ++n);
+> >  		return NULL;
+> >  	}
+> >  
+> > @@ -1779,12 +1778,10 @@ static struct syscall *trace__syscall_info(struct trace *trace,
+> >  	return &trace->syscalls.table[id];
+> >  
+> >  out_cant_read:
+> > -	if (verbose > 0) {
+> > -		fprintf(trace->output, "Problems reading syscall %d", id);
+> > -		if (id <= trace->syscalls.max && trace->syscalls.table[id].name != NULL)
+> > -			fprintf(trace->output, "(%s)", trace->syscalls.table[id].name);
+> > -		fputs(" information\n", trace->output);
+> > -	}
+> > +	pr_debug("Problems reading syscall %d", id);
+> > +	if (id <= trace->syscalls.max && trace->syscalls.table[id].name != NULL)
+> > +		pr_debug("(%s)", trace->syscalls.table[id].name);
+> > +	pr_debug(" information\n");
+> >  	return NULL;
+> >  }
+> >  
+> > -- 
+> > 2.17.1
+> 
+> -- 
+> 
+> - Arnaldo
