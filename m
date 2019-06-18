@@ -2,97 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AFB284AA2C
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 20:45:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 76E824AA34
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 20:47:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730402AbfFRSph (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Jun 2019 14:45:37 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:42063 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730073AbfFRSpg (ORCPT
+        id S1730239AbfFRSrv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Jun 2019 14:47:51 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:43626 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730147AbfFRSrv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Jun 2019 14:45:36 -0400
-Received: by mail-pl1-f193.google.com with SMTP id ay6so3844366plb.9
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2019 11:45:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=jQCPKFxQyeSljUm6aB/gqdIOd3dtcUj6g8UhIWN1Is8=;
-        b=eTLQc07PucKs+X7BOPweNGE+V+Q9FmEWSs8OWmT7a5cmubwmy2LVuja1aiT3ZV4mYe
-         AYCQ1hHwNCGgGe2HNK41ICyUFLMpjAswoA9BVxN2YzEGiQPBBscEQoZyQKGhIb+JoUAp
-         BHwZBRhCBo6lonJBzzgVZ9OHHuP8THWAtX7Cw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=jQCPKFxQyeSljUm6aB/gqdIOd3dtcUj6g8UhIWN1Is8=;
-        b=pCwTWs+sBzvp4hzxrZaHNXB76Sqr4kMiV81kFiSvOGVX82XooRw/fYcqR5+3eVkaWm
-         OrDk4zIA7+Z/YL16B46LAC3PxkIykJd/WLMtYzYvVLG+Y91EahOSaLxlTSewz7jz3TF/
-         QG/YZYJdZAJ425oVpvKd4RZj+kt1RlsbGBQ33tuGqKV8CDwxOhaMqAnl+2Otcb/zNSeE
-         ClFyN6JLPhwvzVD3bjffyERXGFB6CMw5MXTTLYcQ+x5ELiZu9eBrrE5CL9soEuB0WTCX
-         lQr74/FoFCSttpF4kUAbfnAl+lCeGCDRzFQP8+ZVyPR6YDiUKIs23HIAvbJiIiXLQ4xY
-         uKJA==
-X-Gm-Message-State: APjAAAXG2OpiOWiLZDEiiixneJcd8vXqGAdL+fqgC3tNUvk38kiM0qfg
-        dl3gvOICflP9FWD2lLzu3T6mdQ==
-X-Google-Smtp-Source: APXvYqzdyMQm5ebsWKiLT9a2PALu7WQE/3ZGEacfk5lHvzhAmUbdQoYOrxUvz1QdNdOGzC4K4Ppfkw==
-X-Received: by 2002:a17:902:e282:: with SMTP id cf2mr93052072plb.301.1560883536360;
-        Tue, 18 Jun 2019 11:45:36 -0700 (PDT)
-Received: from localhost ([2620:15c:202:1:75a:3f6e:21d:9374])
-        by smtp.gmail.com with ESMTPSA id g1sm847758pjx.22.2019.06.18.11.45.35
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 18 Jun 2019 11:45:35 -0700 (PDT)
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     Heiko Stuebner <heiko@sntech.de>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc:     linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Pavel Machek <pavel@ucw.cz>,
-        Douglas Anderson <dianders@chromium.org>,
-        Matthias Kaehlcke <mka@chromium.org>
-Subject: [PATCH v2] Revert "ARM: dts: rockchip: set PWM delay backlight settings for Minnie"
-Date:   Tue, 18 Jun 2019 11:45:31 -0700
-Message-Id: <20190618184531.1137-1-mka@chromium.org>
-X-Mailer: git-send-email 2.22.0.410.gd8fdbe21b5-goog
+        Tue, 18 Jun 2019 14:47:51 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=2GybvW+pvKzG30g9GQw9L9iwbdt1DhKvlt4DtJh360k=; b=b7Qz7KSSZmxUpMZGWWHLF/qPy
+        Uh/Abr8TZ673wGtXFfudJl1y/K7E4W8HXP/+s41ygKirEKIhzJT5eAxS18YynY2vFz/Uj0FOUatgK
+        s0dc6mT6tLv4CFDqS2GkyCX3hksbgV+QqUQhyc+JsXZJQoyBSUh8h0C3cdsdFF66iTNyg=;
+Received: from [2001:470:1f1d:6b5:7e7a:91ff:fede:4a45] (helo=finisterre.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1hdJ8R-0005Ms-30; Tue, 18 Jun 2019 18:47:11 +0000
+Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
+        id 61995440046; Tue, 18 Jun 2019 19:47:10 +0100 (BST)
+Date:   Tue, 18 Jun 2019 19:47:10 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Curtis Malainey <cujomalainey@google.com>
+Cc:     Fletcher Woodruff <fletcherw@chromium.org>,
+        Cezary Rojewski <cezary.rojewski@intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Oder Chiou <oder_chiou@realtek.com>,
+        Takashi Iwai <tiwai@suse.com>,
+        Curtis Malainey <cujomalainey@chromium.org>,
+        Ross Zwisler <zwisler@chromium.org>,
+        ALSA development <alsa-devel@alsa-project.org>
+Subject: Re: [PATCH v7 3/4] ASoC: rt5677: clear interrupts by polarity flip
+Message-ID: <20190618184710.GP5316@sirena.org.uk>
+References: <20190614194854.208436-1-fletcherw@chromium.org>
+ <20190614194854.208436-4-fletcherw@chromium.org>
+ <4e560e12-4c20-8d5d-b3f9-587a55da279d@intel.com>
+ <CAN-6NYZzMqwDaw2oDyms4P9uKFPJvuQOtGbqMWLtFV3kDyQHJQ@mail.gmail.com>
+ <CAOReqxhETC9xAojXyDWLMOJ3W22Zn4GNGry44=XC=t_k7SCHqA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="BQstn4t8nd6twlV3"
+Content-Disposition: inline
+In-Reply-To: <CAOReqxhETC9xAojXyDWLMOJ3W22Zn4GNGry44=XC=t_k7SCHqA@mail.gmail.com>
+X-Cookie: Editing is a rewording activity.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This reverts commit 288ceb85b505c19abe1895df068dda5ed20cf482.
 
-The commit assumes that the minnie panel is a AUO B101EAN01.1 (LVDS
-interface), however it is a AUO B101EAN01.8 (eDP interface). The eDP
-panel doesn't need the 200 ms delay.
+--BQstn4t8nd6twlV3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
-Reviewed-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
----
-Changes in v2:
-- updated commit message with details about the source of the
-  confusion
-- added Enric's "Reviewed-by" tag
----
- arch/arm/boot/dts/rk3288-veyron-minnie.dts | 2 --
- 1 file changed, 2 deletions(-)
+On Tue, Jun 18, 2019 at 11:12:58AM -0700, Curtis Malainey wrote:
+> On Tue, Jun 18, 2019 at 11:01 AM Fletcher Woodruff
+> > On Sun, Jun 16, 2019 at 10:56 AM Cezary Rojewski
+> > > On 2019-06-14 21:48, Fletcher Woodruff wrote:
 
-diff --git a/arch/arm/boot/dts/rk3288-veyron-minnie.dts b/arch/arm/boot/dts/rk3288-veyron-minnie.dts
-index 468a1818545d..28cbe07f96ec 100644
---- a/arch/arm/boot/dts/rk3288-veyron-minnie.dts
-+++ b/arch/arm/boot/dts/rk3288-veyron-minnie.dts
-@@ -86,8 +86,6 @@
- 			240 241 242 243 244 245 246 247
- 			248 249 250 251 252 253 254 255>;
- 	power-supply = <&backlight_regulator>;
--	post-pwm-on-delay-ms = <200>;
--	pwm-off-delay-ms = <200>;
- };
- 
- &emmc {
--- 
-2.22.0.410.gd8fdbe21b5-goog
+> > > > +     ret = regmap_read(rt5677->regmap, RT5677_IRQ_CTRL1, &reg_irq);
+> > > > +     if (ret) {
+> > > > +             pr_err("rt5677: failed reading IRQ status: %d\n", ret);
 
+> > > The entire rt5677 makes use of dev_XXX with the exception of.. this very
+> > > function. Consider reusing "component" field which is already part of
+> > > struct rt5677_priv and removing pr_XXX.
+
+> > I was using dev_XXX, but I believe Curtis found that 'component' was
+> > sometimes uninitialized when this function was called, so I switched
+> > back to pr_XXX. I may be misremembering though, so I'll let Curtis
+> > comment as well.
+
+> The issue here is that the IRQ is setup in the i2c probe and the
+> component is setup in the codec probe. In theory if the hardware is in
+
+The component is not needed for a struct device, you must have a struct
+device if you have a regmap or have probed at all.
+
+--BQstn4t8nd6twlV3
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl0JMa0ACgkQJNaLcl1U
+h9DZcQf/ccl646Fq6MOoLNN1gJ8spcWeyqqS0N9BX8AF0sxJxnubO0NtjYtWNrqS
+yRwufehgJtFHiEubQEyDR75hAO69qzV/vdYOMyohwCo2wcS8c/l3pZqKomHdRsBb
+UJQbxFdW1M1nlgfOWza83Ko9dT7cV/DnXQZquAKmwbLYaAp0BrBEoDIcjIuD7GdN
+pKnmw6/oAcpcVahvg/uVSriAcRjjvaykpzXnmDB78vqJ5yRs0thrTlBtkvlE3b4B
+lkymwUB3X1rSbrIMP2+8RC9vEsS96D0uyp4uL4IHFPqeOGxcdOd7k6dV/qbj8OH2
+LRRkK3adUQg1tGf/ksckR/q/1Em4Rw==
+=AmR9
+-----END PGP SIGNATURE-----
+
+--BQstn4t8nd6twlV3--
