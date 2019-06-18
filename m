@@ -2,74 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9D57A499DC
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 09:05:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8284249958
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 08:51:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728565AbfFRHFr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Jun 2019 03:05:47 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:46485 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725955AbfFRHFr (ORCPT
+        id S1728816AbfFRGv0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Jun 2019 02:51:26 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:33669 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726023AbfFRGvZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Jun 2019 03:05:47 -0400
-Received: from p5b06daab.dip0.t-ipconnect.de ([91.6.218.171] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1hd6uL-0006Wk-1p; Tue, 18 Jun 2019 07:43:49 +0200
-Date:   Tue, 18 Jun 2019 07:43:48 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Fenghua Yu <fenghua.yu@intel.com>
-cc:     Andy Lutomirski <luto@kernel.org>, Ingo Molnar <mingo@redhat.com>,
-        Borislav Petkov <bp@alien8.de>, H Peter Anvin <hpa@zytor.com>,
-        Ashok Raj <ashok.raj@intel.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Ravi V Shankar <ravi.v.shankar@intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>, x86 <x86@kernel.org>
-Subject: Re: [PATCH v4 2/5] x86/umwait: Initialize umwait control values
-In-Reply-To: <20190617204619.GC217081@romley-ivt3.sc.intel.com>
-Message-ID: <alpine.DEB.2.21.1906180741440.1963@nanos.tec.linutronix.de>
-References: <1559944837-149589-1-git-send-email-fenghua.yu@intel.com> <1559944837-149589-3-git-send-email-fenghua.yu@intel.com> <CALCETrWtmrwqjThkMKU9YpTDK4o95V4HBb2_yQF2tvx5JZ9Ukw@mail.gmail.com> <20190610041343.GC162238@romley-ivt3.sc.intel.com>
- <alpine.DEB.2.21.1906112242410.2214@nanos.tec.linutronix.de> <20190617204619.GC217081@romley-ivt3.sc.intel.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Tue, 18 Jun 2019 02:51:25 -0400
+Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1hd6x7-0003Mq-1S; Tue, 18 Jun 2019 07:46:41 +0200
+Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1hd6x5-0003Pm-CD; Tue, 18 Jun 2019 07:46:39 +0200
+Date:   Tue, 18 Jun 2019 07:46:39 +0200
+From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     "Enrico Weigelt, metux IT consult" <info@metux.net>
+Cc:     linux-kernel@vger.kernel.org, bgolaszewski@baylibre.com,
+        linus.walleij@linaro.org, kernel@pengutronix.de,
+        linux-gpio@vger.kernel.org
+Subject: Re: [PATCH 2/2] drivers: gpio: pca953x: use module_siox_driver()
+Message-ID: <20190618054639.ovpb6jgzl45pkp3d@pengutronix.de>
+References: <1560795688-10496-1-git-send-email-info@metux.net>
+ <1560795688-10496-2-git-send-email-info@metux.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1560795688-10496-2-git-send-email-info@metux.net>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 17 Jun 2019, Fenghua Yu wrote:
-> On Tue, Jun 11, 2019 at 10:46:55PM +0200, Thomas Gleixner wrote:
-> > On Sun, 9 Jun 2019, Fenghua Yu wrote:
-> > > > Sounds good, but:
-> > > > 
-> > > > > +#define MSR_IA32_UMWAIT_CONTROL_C02            BIT(0)
-> > > > 
-> > > > > +static u32 umwait_control_cached = 100000;
-> > > > 
-> > > > The code seems to disagree.
-> > > 
-> > > The definition of bit[0] is: C0.2 is disabled when bit[0]=1. So
-> > > 100000 means C0.2 is enabled (and max time is 100000).
-> > 
-> > which is totally non obvious. If you have to encode the control bit, then
-> > please make it explicit, i.e. mask out the disable bit in the initializer.
+On Mon, Jun 17, 2019 at 08:21:28PM +0200, Enrico Weigelt, metux IT consult wrote:
+> From: Enrico Weigelt <info@metux.net>
 > 
-> Is this right?
+> Reduce driver init boilerplate by using the new
+> module_siox_driver() macro.
 > 
-> static u32 umwait_control_cached = 100000 & ~MSR_IA32_UMWAIT_CONTROL_C02_DISABLED;
+> Signed-off-by: Enrico Weigelt <info@metux.net>
 
-Works, but looks pretty odd. I'd rather create an explicit initializer
-macro, something like:
+The subject is wrong, this isn't about pca953x.
 
-    	   UMWAIT_CTRL_VAL(100000, UMWAIT_DISABLED);
+Best regards
+Uwe
 
-Hmm?
-
-Thanks,
-
-	tglx
+-- 
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
