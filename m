@@ -2,78 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C8C1B4A2BC
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 15:48:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 50C584A2BF
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 15:49:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729557AbfFRNse (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Jun 2019 09:48:34 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:34814 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726158AbfFRNse (ORCPT
+        id S1729604AbfFRNsx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Jun 2019 09:48:53 -0400
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:35096 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726158AbfFRNsw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Jun 2019 09:48:34 -0400
-Received: by mail-lf1-f68.google.com with SMTP id y198so9358280lfa.1;
-        Tue, 18 Jun 2019 06:48:32 -0700 (PDT)
+        Tue, 18 Jun 2019 09:48:52 -0400
+Received: by mail-qt1-f194.google.com with SMTP id d23so15363849qto.2;
+        Tue, 18 Jun 2019 06:48:52 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=7+kbZiOiDbTggEs3A0ulB7sqbr27Je5jHR0L0MU0TsE=;
-        b=rCpIzM7ymmVf2VRmNyeFxRGTn4XPC9PmWCUojZ6U91rMP4va3LXpXL4bzq83AdMvw+
-         9F/FFl4d/uAqZxl7qKs8F+QNrM4q2JqW9Yo9NQAwIzIJyqQ8mHpLgstpnaKE1sf5ei/8
-         QRRzuDlU+OIIJ0hX0cbMg+HwaF1cqJCMfZTmA6lkI2s0P50zajMUNkKYTfpPd8I7itMq
-         yuZ/k7q8YGtQM3FYgwsWH76D2RQ6Ne7BJbV9H6CJ303vW5OyXEKuXo61JM1yCLG37Cec
-         Kv3L0+QKOY3auayjwsSCWs959KpLIzNTG+sHR7v6XVTDYWPIM8pWLDRN8rcCTA9t9ejV
-         T0AA==
-X-Gm-Message-State: APjAAAVVvhbAGgf9Q/T8wGxhfSoggZxePnI1Po9oZ3X+xWHudqTO4JQq
-        /0DW7EcmDBCotOSkdP4r6Q+669+asitKBj9g0AI=
-X-Google-Smtp-Source: APXvYqxqOA3vkIL5x1Kbge9cboaZKPpIerLuVqib804+WziaW6ixFgv8msm2r2GTrKBXTSdNmxibXmZ5wRzkaYfdgzQ=
-X-Received: by 2002:ac2:5467:: with SMTP id e7mr35125442lfn.23.1560865711756;
- Tue, 18 Jun 2019 06:48:31 -0700 (PDT)
+        bh=adlKPrwpF847OzhxpvAIaUJHnKpv+DcgWsB6FU5ma+M=;
+        b=g28SISNBz50q7A99LjE5M18cWIZlm6vRN+3UCA7OqcaxUDZecvAOeTl4512khAESXt
+         hjq7Qecf9LP2QhYgLS85/oIlUTSm+bX68dGrmSfkbxjPqdY2pGgf9zCh0b7IAaKvpHW/
+         GPmBIyABkND63KP/u0j82NJmz3+qRBSA+hrjdyPNlXWWKBsnsdGQFUuFI7STv2LnMOqj
+         M7Sd4K8HVmboM532kxixvZ6WwT13c69N9+/gQ3Wx9DSdwuzC2KsG6Z2/pTOYL2cXSrFv
+         588HvWsbm7sgBzZ4gb0C29CUCFIK3vTrq8qYhzO33ypusWtuSveFB0tciOQeM6HdYjGI
+         SzRg==
+X-Gm-Message-State: APjAAAX8OaYUjEQMYD6xHb5nzFLkvi8w2xK0ii6NUDdLYyJPGATzt47B
+        t0lJXcmekMcFCQStj0HX/tPMdEi0gTxhXBLXYYNUWsMrYz0=
+X-Google-Smtp-Source: APXvYqwe5peIXb0dsyQ2lB/6iiVZYwjfA6+1m0/GVEMvpLamKwpY6BkfJDyFTbULruc/oWfp/h23fC2OdT9a520+YBw=
+X-Received: by 2002:a0c:8b49:: with SMTP id d9mr26718089qvc.63.1560865731462;
+ Tue, 18 Jun 2019 06:48:51 -0700 (PDT)
 MIME-Version: 1.0
-References: <1560796840-18207-1-git-send-email-info@metux.net> <1560796840-18207-2-git-send-email-info@metux.net>
-In-Reply-To: <1560796840-18207-2-git-send-email-info@metux.net>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 18 Jun 2019 15:48:19 +0200
-Message-ID: <CAMuHMdVhW+5YVJWW8q59XKgXGbre0wH6pYDJKCY_2LWV6UEX5w@mail.gmail.com>
-Subject: Re: [PATCH 2/3] drivers: gpio: pcf857x: use subsys_spi_driver()
-To:     "Enrico Weigelt, metux IT consult" <info@metux.net>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Mark Brown <broonie@kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-spi <linux-spi@vger.kernel.org>
+References: <380a6185-7ad1-6be0-060b-e6e5d4126917@linaro.org>
+ <a94676381a5ca662c848f7a725562f721c43ce76.camel@sipsolutions.net>
+ <CAK8P3a0kV-i7BJJ2X6C=5n65rSGfo8fUiC4J_G-+M8EctYKbkg@mail.gmail.com>
+ <066e9b39f937586f0f922abf801351553ec2ba1d.camel@sipsolutions.net> <b3686626-e2d8-bc9c-6dd0-9ebb137715af@linaro.org>
+In-Reply-To: <b3686626-e2d8-bc9c-6dd0-9ebb137715af@linaro.org>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Tue, 18 Jun 2019 15:48:32 +0200
+Message-ID: <CAK8P3a0sL+nPmduZd=DNSsntq62e+o3upYsWg=iPNwzvgBp+Mg@mail.gmail.com>
+Subject: Re: [PATCH v2 00/17] net: introduce Qualcomm IPA driver
+To:     Alex Elder <elder@linaro.org>
+Cc:     Johannes Berg <johannes@sipsolutions.net>, abhishek.esse@gmail.com,
+        Ben Chan <benchan@google.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        cpratapa@codeaurora.org, David Miller <davem@davemloft.net>,
+        Dan Williams <dcbw@redhat.com>,
+        DTML <devicetree@vger.kernel.org>,
+        Eric Caruso <ejcaruso@google.com>, evgreen@chromium.org,
+        Ilias Apalodimas <ilias.apalodimas@linaro.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-arm-msm@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-soc@vger.kernel.org, Networking <netdev@vger.kernel.org>,
+        Subash Abhinov Kasiviswanathan <subashab@codeaurora.org>,
+        syadagir@codeaurora.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Enrico,
-
-On Mon, Jun 17, 2019 at 8:41 PM Enrico Weigelt, metux IT consult
-<info@metux.net> wrote:
-> From: Enrico Weigelt <info@metux.net>
+On Tue, Jun 18, 2019 at 3:16 PM Alex Elder <elder@linaro.org> wrote:
+> On 6/17/19 6:28 AM, Johannes Berg wrote:
+> > On Tue, 2019-06-11 at 13:56 +0200, Arnd Bergmann wrote:
 >
-> Reduce driver init boilerplate by using the new
-> subsys_spi_driver() macro.
+> I'm probably missing something, but I think the checksum
+> offload could be handled by the IPA driver rather than
+> rmnet.  It seems to be an add-on that is completely
+> independent of the multiplexing and aggregation capabilities
+> that QMAP provides.
+
+My best guess is that it is part of rmnet simply because this can
+be done in a generic way for any qmap based back-end, and rmnet
+was intended as the abstraction for qmap.
+
+A better implementation of the checksumming might be to split
+it out into a library that is in turn used by qmap drivers. Since this
+should be transparent to the user interface, it can be moved
+there later.
+
+> >>> If true though, then I think this would be the killer argument *in
+> >>> favour* of *not* merging this - because that would mean we *don't* have
+> >>> to actually keep the rmnet API around for all foreseeable future.
 >
-> Signed-off-by: Enrico Weigelt <info@metux.net>
+> This is because it's a user space API?  If so I now understand
+> what you mean.
 
-Thanks for your patch!
+Yes, I think agreeing on the general user interface is (as usual) the
+one thing that has to be done as a prerequisite. I had originally
+hoped that by removing the ioctl interface portion of the driver,
+this could be avoided, but that was before I had any idea on the
+upper layers.
 
->  drivers/gpio/gpio-max7301.c | 13 +------------
-
-s/pcf857x/max7301/ in subject.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+     Arnd
