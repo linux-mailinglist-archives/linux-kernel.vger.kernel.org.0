@@ -2,219 +2,150 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 17B0849791
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 04:42:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A1B74978B
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 04:39:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727540AbfFRCly (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 22:41:54 -0400
-Received: from mga02.intel.com ([134.134.136.20]:9457 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725870AbfFRCly (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 22:41:54 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Jun 2019 19:41:53 -0700
-X-ExtLoop1: 1
-Received: from romley-ivt3.sc.intel.com ([172.25.110.60])
-  by fmsmga006.fm.intel.com with ESMTP; 17 Jun 2019 19:41:53 -0700
-Date:   Mon, 17 Jun 2019 19:32:22 -0700
-From:   Fenghua Yu <fenghua.yu@intel.com>
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        H Peter Anvin <hpa@zytor.com>,
-        Ashok Raj <ashok.raj@intel.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Ravi V Shankar <ravi.v.shankar@intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>, x86 <x86@kernel.org>
-Subject: Re: [PATCH v4 3/5] x86/umwait: Add sysfs interface to control umwait
- C0.2 state
-Message-ID: <20190618023222.GI217081@romley-ivt3.sc.intel.com>
-References: <20190610035302.GA162238@romley-ivt3.sc.intel.com>
- <CALCETrUSpk+_FDaPpA3a-duajUdF8kOK64AQJjsr7Pm0Gi04OA@mail.gmail.com>
- <20190610060234.GD162238@romley-ivt3.sc.intel.com>
- <F021B947-90E9-450A-9196-531B7EE965F1@amacapital.net>
- <20190617202702.GB217081@romley-ivt3.sc.intel.com>
- <CALCETrVENokx8VUCxdUzGeMA2oMOZ0kHRiP_O0KygyrAhf07Rg@mail.gmail.com>
- <20190617231104.GF217081@romley-ivt3.sc.intel.com>
- <CALCETrXpB+3TjHacjfUZK6pu_L54upe+JHKKRs4x1HaHOeGbzA@mail.gmail.com>
- <20190618000014.GH217081@romley-ivt3.sc.intel.com>
- <CALCETrUqPC5wzg9vUUHuUCYv-FeJdxPbe2t2F4_-9jauijeT1Q@mail.gmail.com>
+        id S1726243AbfFRCjV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 22:39:21 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:39351 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725829AbfFRCjV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Jun 2019 22:39:21 -0400
+Received: by mail-pf1-f196.google.com with SMTP id j2so6720009pfe.6
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2019 19:39:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=D2ULf8qwvOBwy3f46dg2e3I/gGjBRzByDR6nlqf/Poo=;
+        b=r3MZmS+Z+I1cKNS7BeGAWJUdN0PvL3JKwYaxcFev5JWsA8qVzMlBOBmGJXCEEdkPd7
+         D91dibNWsZPlz7G+caLULqx8SCg5UsaP7EhoUrcJH6sDXGTdaT1m0kt2BxkEZkbcppMR
+         q8llZ6m7wxB5W1wTHKTsYG99urZtrbmt6USA+lNx4b4sjBAkn2lyOrlQg2+BKokFjQNi
+         z6HHRHW/eqdc0EzQGbasTEZSViAWTAHX3pwhp3ldLLIPMPMuDB5xSaqQ1CQniDLiawgF
+         ordyt96nEKMyPzZfe7ktdJ8XecCBWiMGVKRsiUM6eWqpqAVW9G50+Rkolls3Rhl3KAdL
+         H4pA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=D2ULf8qwvOBwy3f46dg2e3I/gGjBRzByDR6nlqf/Poo=;
+        b=GnjQ9WWEcn1vy13V4vyCS+RolEvzKYC6vLsATKLi/WSVqgu/OjSnqW/OAHY64Wxfir
+         Nd+kLzTdhenS4o8SaFc1fyTmSeTpywMZgrWB1z0TuR9pauGHJfDdhi+ImHvk4PPpI7Qo
+         y6q9gPZCyl1VWtABF6l2bdrnVlje6arIEtJZXyO7BG5s9Zthm+FgQTGV4nDnRvIQyQVK
+         IrZjqo1QM64xWWfCSmJ0QsNEp8Wyxo9tQrl0WXp06Fmx0vnbvZB0asnfhhiOTdx+BLYs
+         N3B3l1JyjxmTg/KXNXlqdzNuH3z4uCswq3hCiQrWmQjYAlMqq35oN3AUw52Cdw6hfPUM
+         +nUg==
+X-Gm-Message-State: APjAAAVnED2aVW+CZPxU2O347cKrJCl/s6O3u9uQdz5iUhJiPXSq9mDd
+        FxLzZ+oJTCyCmk1eBYG61BY=
+X-Google-Smtp-Source: APXvYqzcIPqZDnf5snxqTSXapBqCegfFEqducV4HlYMAM8ZDlJ7T/MpiD8ZpFSxY5ih0Ezbbvqowpw==
+X-Received: by 2002:a62:b503:: with SMTP id y3mr115834632pfe.4.1560825560519;
+        Mon, 17 Jun 2019 19:39:20 -0700 (PDT)
+Received: from hari-Inspiron-1545 ([183.83.92.187])
+        by smtp.gmail.com with ESMTPSA id o13sm16571452pgr.86.2019.06.17.19.39.17
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 17 Jun 2019 19:39:19 -0700 (PDT)
+Date:   Tue, 18 Jun 2019 08:09:14 +0530
+From:   Hariprasad Kelam <hariprasad.kelam@gmail.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Payal Kshirsagar <payal.s.kshirsagar.98@gmail.com>,
+        Hariprasad Kelam <hariprasad.kelam@gmail.com>,
+        Quytelda Kahja <quytelda@tamalin.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+Subject: [Patch v3] staging: rtl8723bs: hal: odm_HWConfig: Unneeded variable:
+ "result". Return "HAL_STATUS_SUCCESS"
+Message-ID: <20190618023914.GA14730@hari-Inspiron-1545>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CALCETrUqPC5wzg9vUUHuUCYv-FeJdxPbe2t2F4_-9jauijeT1Q@mail.gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 17, 2019 at 05:19:02PM -0700, Andy Lutomirski wrote:
-> On Mon, Jun 17, 2019 at 5:09 PM Fenghua Yu <fenghua.yu@intel.com> wrote:
-> But you're already using a mutex and a comment.  And you're hoping
-> that the syscore resume callback reads something sensible despite the
-> lack of READ_ONCE / WRITE_ONCE.  The compiler is unlikely to butcher
-> this too badly, but still.
+Remove function ODM_ConfigMACWithHeaderFile as trace is not necessary
+and as it is getting called only once and call direct function
+"ODM_ReadAndConfig_MP_8723B_MAC_REG"
 
-You are right, syscore_resume will be wrong if suspend in middle of
-sysfs writing.
+Issue identified by coccicheck
 
-Ok. I change this patch based on your proposed locking. Is this patch
-right? Should I use WRITE_ONCE/READ_ONCE on each access of
-umwait_control_cached?
+Signed-off-by: Hariprasad Kelam <hariprasad.kelam@gmail.com>
+----
+changes v2: fixed typo in commit message
+changes v3: Remove function ODM_ConfigMACWithHeaderFile and replace
+            with ODM_ReadAndConfig_MP_8723B_MAC_REG
+---
+---
+ drivers/staging/rtl8723bs/hal/odm_HWConfig.c    | 29 -------------------------
+ drivers/staging/rtl8723bs/hal/odm_HWConfig.h    |  2 --
+ drivers/staging/rtl8723bs/hal/rtl8723b_phycfg.c |  2 +-
+ 3 files changed, 1 insertion(+), 32 deletions(-)
 
-Thanks.
-
--Fenghua
-
-diff --git a/arch/x86/power/umwait.c b/arch/x86/power/umwait.c
-index 9594af9f657e..d17572605c1a 100644
---- a/arch/x86/power/umwait.c
-+++ b/arch/x86/power/umwait.c
-@@ -11,10 +11,34 @@
-  */
- static u32 umwait_control_cached = 100000 & ~MSR_IA32_UMWAIT_CONTROL_C02_DISABLED;
- 
-+/*
-+ * Serialize access to umwait_control_cached and IA32_UMWAIT_CONTROL MSR
-+ * in writing sysfs to ensure all CPUs have the same MSR value.
-+ */
-+static DEFINE_MUTEX(umwait_lock);
-+
-+static void update_this_cpu_umwait_control_msr(void)
-+{
-+	unsigned long flags;
-+
-+	/*
-+	 * We need to prevent umwait_control_cached from being changed *and*
-+	 * completing its WRMSR between our read and our WRMSR. By turning
-+	 * IRQs off here, ensure that no sysfs write happens on this CPU
-+	 * and we also make sure that any concurrent sysfs write from a
-+	 * different CPU will not finish updating us via IPI until we're done.
-+	 */
-+	local_irq_save(flags);
-+
-+	wrmsr(MSR_IA32_UMWAIT_CONTROL, READ_ONCE(umwait_control_cached), 0);
-+
-+	local_irq_restore(flags);
-+}
-+
- /* Set up IA32_UMWAIT_CONTROL MSR on CPU using the current global setting. */
- static int umwait_cpu_online(unsigned int cpu)
- {
--	wrmsr(MSR_IA32_UMWAIT_CONTROL, umwait_control_cached, 0);
-+	update_this_cpu_umwait_control_msr();
- 
- 	return 0;
- }
-@@ -30,24 +54,102 @@ static int umwait_cpu_online(unsigned int cpu)
-  */
- static void umwait_syscore_resume(void)
- {
--	wrmsr(MSR_IA32_UMWAIT_CONTROL, umwait_control_cached, 0);
-+	update_this_cpu_umwait_control_msr();
+diff --git a/drivers/staging/rtl8723bs/hal/odm_HWConfig.c b/drivers/staging/rtl8723bs/hal/odm_HWConfig.c
+index d802a1f..22f7410 100644
+--- a/drivers/staging/rtl8723bs/hal/odm_HWConfig.c
++++ b/drivers/staging/rtl8723bs/hal/odm_HWConfig.c
+@@ -496,32 +496,3 @@ HAL_STATUS ODM_ConfigBBWithHeaderFile(
+ 	return HAL_STATUS_SUCCESS;
  }
  
- static struct syscore_ops umwait_syscore_ops = {
- 	.resume	= umwait_syscore_resume,
- };
+-HAL_STATUS ODM_ConfigMACWithHeaderFile(PDM_ODM_T pDM_Odm)
+-{
+-	u8 result = HAL_STATUS_SUCCESS;
+-
+-	ODM_RT_TRACE(
+-		pDM_Odm,
+-		ODM_COMP_INIT,
+-		ODM_DBG_LOUD,
+-		(
+-			"===>ODM_ConfigMACWithHeaderFile (%s)\n",
+-			(pDM_Odm->bIsMPChip) ? "MPChip" : "TestChip"
+-		)
+-	);
+-	ODM_RT_TRACE(
+-		pDM_Odm,
+-		ODM_COMP_INIT,
+-		ODM_DBG_LOUD,
+-		(
+-			"pDM_Odm->SupportPlatform: 0x%X, pDM_Odm->SupportInterface: 0x%X, pDM_Odm->BoardType: 0x%X\n",
+-			pDM_Odm->SupportPlatform,
+-			pDM_Odm->SupportInterface,
+-			pDM_Odm->BoardType
+-		)
+-	);
+-
+-	READ_AND_CONFIG(8723B, _MAC_REG);
+-
+-	return result;
+-}
+diff --git a/drivers/staging/rtl8723bs/hal/odm_HWConfig.h b/drivers/staging/rtl8723bs/hal/odm_HWConfig.h
+index d3af1ca..945366b 100644
+--- a/drivers/staging/rtl8723bs/hal/odm_HWConfig.h
++++ b/drivers/staging/rtl8723bs/hal/odm_HWConfig.h
+@@ -140,8 +140,6 @@ HAL_STATUS ODM_ConfigBBWithHeaderFile(
+ 	PDM_ODM_T pDM_Odm, ODM_BB_Config_Type ConfigType
+ );
  
-+static void umwait_control_msr_update(void *unused)
-+{
-+	update_this_cpu_umwait_control_msr();
-+}
-+
-+static u32 get_umwait_control_c02(void)
-+{
-+	return READ_ONCE(umwait_control_cached) & MSR_IA32_UMWAIT_CONTROL_C02_DISABLED;
-+}
-+
-+static u32 get_umwait_control_max_time(void)
-+{
-+	return READ_ONCE(umwait_control_cached) & MSR_IA32_UMWAIT_CONTROL_MAX_TIME;
-+}
-+
-+static ssize_t
-+enable_c02_show(struct device *dev, struct device_attribute *attr, char *buf)
-+{
-+	 /*
-+	  * When bit 0 in IA32_UMWAIT_CONTROL MSR is 1, C0.2 is disabled.
-+	  * Otherwise, C0.2 is enabled. Show the opposite of bit 0.
-+	  */
-+	return sprintf(buf, "%d\n", !(bool)get_umwait_control_c02());
-+}
-+
-+static ssize_t enable_c02_store(struct device *dev,
-+				struct device_attribute *attr,
-+				const char *buf, size_t count)
-+{
-+	u32 umwait_control_c02;
-+	bool c02_enabled;
-+	int ret;
-+
-+	ret = kstrtobool(buf, &c02_enabled);
-+	if (ret)
-+		return ret;
-+
-+	mutex_lock(&umwait_lock);
-+
-+	/*
-+	 * The value of bit 0 in IA32_UMWAIT_CONTROL MSR is opposite of
-+	 * c02_enabled.
-+	 */
-+	umwait_control_c02 = (u32)!c02_enabled;
-+	if (umwait_control_c02 == get_umwait_control_c02())
-+		goto out_unlock;
-+
-+	WRITE_ONCE(umwait_control_cached, umwait_control_c02 | get_umwait_control_max_time());
-+	/* Enable/disable C0.2 state on all CPUs */
-+	on_each_cpu(umwait_control_msr_update, NULL, 1);
-+
-+out_unlock:
-+	mutex_unlock(&umwait_lock);
-+
-+	return count;
-+}
-+static DEVICE_ATTR_RW(enable_c02);
-+
-+static struct attribute *umwait_attrs[] = {
-+	&dev_attr_enable_c02.attr,
-+	NULL
-+};
-+
-+static struct attribute_group umwait_attr_group = {
-+	.attrs = umwait_attrs,
-+	.name = "umwait_control",
-+};
-+
- static int __init umwait_init(void)
- {
-+	struct device *dev;
- 	int ret;
- 
- 	if (!boot_cpu_has(X86_FEATURE_WAITPKG))
- 		return -ENODEV;
- 
-+	/* Add umwait control interface. */
-+	dev = cpu_subsys.dev_root;
-+	ret = sysfs_create_group(&dev->kobj, &umwait_attr_group);
-+	if (ret)
-+		return ret;
-+
- 	ret = cpuhp_setup_state(CPUHP_AP_ONLINE_DYN, "umwait/intel:online",
- 				umwait_cpu_online, NULL);
--	if (ret < 0)
-+	if (ret < 0) {
-+		sysfs_remove_group(&dev->kobj, &umwait_attr_group);
-+
- 		return ret;
-+	}
- 
- 	register_syscore_ops(&umwait_syscore_ops);
+-HAL_STATUS ODM_ConfigMACWithHeaderFile(PDM_ODM_T pDM_Odm);
+-
+ HAL_STATUS ODM_ConfigFWWithHeaderFile(
+ 	PDM_ODM_T pDM_Odm,
+ 	ODM_FW_Config_Type ConfigType,
+diff --git a/drivers/staging/rtl8723bs/hal/rtl8723b_phycfg.c b/drivers/staging/rtl8723bs/hal/rtl8723b_phycfg.c
+index 6da7f8e..25c75b9 100644
+--- a/drivers/staging/rtl8723bs/hal/rtl8723b_phycfg.c
++++ b/drivers/staging/rtl8723bs/hal/rtl8723b_phycfg.c
+@@ -375,7 +375,7 @@ s32 PHY_MACConfig8723B(struct adapter *Adapter)
+ 	/*  */
+ 	rtStatus = phy_ConfigMACWithParaFile(Adapter, pszMACRegFile);
+ 	if (rtStatus == _FAIL) {
+-		ODM_ConfigMACWithHeaderFile(&pHalData->odmpriv);
++		ODM_ReadAndConfig_MP_8723B_MAC_REG(&pHalData->odmpriv);
+ 		rtStatus = _SUCCESS;
+ 	}
  
 -- 
-2.19.1
-
+2.7.4
 
