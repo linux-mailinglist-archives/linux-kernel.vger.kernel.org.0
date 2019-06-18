@@ -2,124 +2,237 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8A99E4AD9A
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 00:03:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 75C754ADAC
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 00:11:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730633AbfFRWDP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Jun 2019 18:03:15 -0400
-Received: from mail-eopbgr700075.outbound.protection.outlook.com ([40.107.70.75]:54785
-        "EHLO NAM04-SN1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730301AbfFRWDO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Jun 2019 18:03:14 -0400
+        id S1730741AbfFRWJD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Jun 2019 18:09:03 -0400
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:35363 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729982AbfFRWJD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Jun 2019 18:09:03 -0400
+Received: by mail-qk1-f196.google.com with SMTP id l128so9664380qke.2;
+        Tue, 18 Jun 2019 15:09:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amdcloud.onmicrosoft.com; s=selector1-amdcloud-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=+tIqnb0xSLpG4prfLnuuJC9S1+byft/BgU3/2cdeb2I=;
- b=JT6f8lrjqJPE8m84fMoIacoPWDUo1xAZT1KkSkTWOpx1iyCYdWXzUuc599pIHmnjAAoMD31cNChvb5bO3aGMxP/+XG+JXf2g35vLJrIltKTpXuW16uwXJlWLTQymysxRCvXekA/7uOA7OK436giqTlTzgiL6LMVUVKc5fo/Kn/E=
-Received: from DM5PR12MB1449.namprd12.prod.outlook.com (10.172.40.14) by
- DM5PR12MB1707.namprd12.prod.outlook.com (10.175.86.21) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1987.11; Tue, 18 Jun 2019 22:03:05 +0000
-Received: from DM5PR12MB1449.namprd12.prod.outlook.com
- ([fe80::34ed:dc98:e87d:50c4]) by DM5PR12MB1449.namprd12.prod.outlook.com
- ([fe80::34ed:dc98:e87d:50c4%7]) with mapi id 15.20.1987.014; Tue, 18 Jun 2019
- 22:03:05 +0000
-From:   "Hook, Gary" <Gary.Hook@amd.com>
-To:     "dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
-        "vkoul@kernel.org" <vkoul@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: [PATCH v2] dmaengine: dmatest: timeout value of -1 should specify
- infinite wait
-Thread-Topic: [PATCH v2] dmaengine: dmatest: timeout value of -1 should
- specify infinite wait
-Thread-Index: AQHVJiGaU+h52VIstkGzsXq6WB9IFw==
-Date:   Tue, 18 Jun 2019 22:03:04 +0000
-Message-ID: <156089501718.8121.12070116684408969349.stgit@taos>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: DM5PR1401CA0006.namprd14.prod.outlook.com
- (2603:10b6:4:4a::16) To DM5PR12MB1449.namprd12.prod.outlook.com
- (2603:10b6:4:10::14)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Gary.Hook@amd.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [165.204.78.1]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: cfd88940-3b1c-440e-c3c5-08d6f438bcfc
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:DM5PR12MB1707;
-x-ms-traffictypediagnostic: DM5PR12MB1707:
-x-microsoft-antispam-prvs: <DM5PR12MB17076DC46214A87E46216B0FFDEA0@DM5PR12MB1707.namprd12.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:7691;
-x-forefront-prvs: 007271867D
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(7916004)(396003)(346002)(376002)(39860400002)(136003)(366004)(199004)(189003)(68736007)(2501003)(6486002)(81156014)(5660300002)(81166006)(7736002)(305945005)(99286004)(72206003)(102836004)(64756008)(6506007)(66946007)(66446008)(8676002)(478600001)(71200400001)(6116002)(3846002)(14454004)(33716001)(386003)(71190400001)(103116003)(66476007)(66556008)(256004)(316002)(2906002)(110136005)(6436002)(9686003)(6512007)(486006)(8936002)(476003)(86362001)(25786009)(53936002)(73956011)(26005)(186003)(52116002)(66066001)(2201001);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR12MB1707;H:DM5PR12MB1449.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: amd.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: 49c6rRmEmDvqfOSTj2FXRDqSziAxivwWfX754WHROSEhaMHSHCZ+9DkKKAVXAIM3+CLBv7SwL9WbayGLl+9+HTqOC2sCJ27aeG9usA1+IUsRjmxyrFIyFjRAhyeQWC6lPXV85ehhdXRVT4SDbmmkwirP4CA0oxKt6SEUw27Ddj4QYD50M+U3bduKiZ6c3O6AmZ509ijuZLL5Eb6pmY4LzzoPopM+yG0neeeQm5xrMmXu0pUOJirRDZrWKyQl2Hlun83SeAG70j6+x4vmNTVVPjPbchpf20edGdF5Mty+J1qNcFqBdje+U8d0nVmPUPLgrKJktvIXAtxUDJjWPIgN5SNDJGUvXUZV8cVAv+JCZqxSLFR29d8Qk136lRptD0AC7KqfPjlwkkUr9RPMX0pisEdZ1QGnN+3j/OWNXQmIqe4=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <222D7D8F7DA46E4B8F00B712C9AAE5D3@namprd12.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=cJhXDMxlF4zheXAyGu3M3eT8etAp0t6lqkCYLG9eTSw=;
+        b=CXSwSzE51QWj1ILTdavUUdyYP6c4dh8l3QvL7B3g8uOCApTR6sH8sOoBVhsk4iv/DQ
+         bPZ8eHn0JGlb6n/uQjDOa2kCLmHO1TBHobdkQLUmLw96ZmSkkcGN0N2PkPhWo2mBzA8q
+         PqQWcSY5ifW+THF7Ldb/w5H+s+wlfgUqKiMFFcPht5P/iu0P4+jNPG7yiRvGkcqyM71Q
+         O70Z9qefifoLXxhXkfDbkbguuacRR1mIAo51BlFGFExnioxXH+6IfPoQ0wMak8BQnhBl
+         4/b3W4G5sdCGu7wjwqMbPL3nXRRF14AWAecpm927lNfcVpp4XFzlxQ9L+Hmge+AQ5GbK
+         a8nw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=cJhXDMxlF4zheXAyGu3M3eT8etAp0t6lqkCYLG9eTSw=;
+        b=V9OP3x7fnQAI2Am3nPFENN78C/i0qMAbX5ivUu5xF1moDxbeK/niRgFjUhCsPYPuh/
+         sGEiaXyEkSlr6CshX8D3WJR9jJI0s2OlPhAUvKxCWa48jZhUQvMN+w5CMEbA/bWBOMDj
+         IgycaTUvMMq3vad4bntlm/MOxy46QacCLyR+FZ0hcYIv1E47pyCG3VjwYcNVO1dAd3+M
+         VyidWarOBUUP1NdJ8cuQXFRtsHoHROgvvFqhEGrn60kGYLkaojfbe7pb+Wobsy5yaonu
+         VrD9Y6yEsseqg1PAVdfQb8hpul0D9PL0OhUpiTJUer04B0HBOMIZtsj5FrHOJ5qJpJPy
+         vMWQ==
+X-Gm-Message-State: APjAAAWFu/Ei8vzYi87xRnFDwKF5w24uLkYbhQTMuUA4bbOAUrMIZqm0
+        q5F0xsexRhgyFUBI7JCm6OQ=
+X-Google-Smtp-Source: APXvYqzc1T0VGAVbk/RXJTV/GOSaLsqraz6xSZH/YcEwB4vSAx0bQB+JEm91YRYaehTRr3zI758p5g==
+X-Received: by 2002:a37:9c16:: with SMTP id f22mr96843097qke.261.1560895741514;
+        Tue, 18 Jun 2019 15:09:01 -0700 (PDT)
+Received: from localhost.localdomain (mtrlpq02hsy-lp140-01-174-93-144-21.dsl.bell.ca. [174.93.144.21])
+        by smtp.gmail.com with ESMTPSA id 41sm11912767qtp.32.2019.06.18.15.09.00
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Tue, 18 Jun 2019 15:09:00 -0700 (PDT)
+From:   Detlev Casanova <detlev.casanova@gmail.com>
+To:     Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Detlev Casanova <detlev.casanova@gmail.com>
+Subject: [PATCH v2] e1000e: Make watchdog use delayed work
+Date:   Tue, 18 Jun 2019 18:08:46 -0400
+Message-Id: <20190618220846.19486-1-detlev.casanova@gmail.com>
+X-Mailer: git-send-email 2.22.0
 MIME-Version: 1.0
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: cfd88940-3b1c-440e-c3c5-08d6f438bcfc
-X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Jun 2019 22:03:04.8564
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: ghook@amd.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR12MB1707
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The dmatest module parameter 'timeout' is documented as accepting a
--1 to mean "infinite timeout". Howver, an infinite timeout is not
-advised, nor possible since the module parameter is an unsigned int,
-which won't accept a negative value. Change the parameter
-comment to reflect current behavior, which allows values from 0 up to
-4294967295 (0xFFFFFFFF).
+Use delayed work instead of timers to run the watchdog of the e1000e
+driver.
 
-Signed-off-by: Gary R Hook <gary.hook@amd.com>
+Simplify the code with one less middle function.
+
+Signed-off-by: Detlev Casanova <detlev.casanova@gmail.com>
 ---
- drivers/dma/dmatest.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/net/ethernet/intel/e1000e/e1000.h  |  3 +-
+ drivers/net/ethernet/intel/e1000e/netdev.c | 54 ++++++++++++----------
+ 2 files changed, 30 insertions(+), 27 deletions(-)
 
-diff --git a/drivers/dma/dmatest.c b/drivers/dma/dmatest.c
-index b96814a7dceb..e0c229aa1353 100644
---- a/drivers/dma/dmatest.c
-+++ b/drivers/dma/dmatest.c
-@@ -65,7 +65,7 @@ MODULE_PARM_DESC(pq_sources,
- static int timeout =3D 3000;
- module_param(timeout, uint, S_IRUGO | S_IWUSR);
- MODULE_PARM_DESC(timeout, "Transfer Timeout in msec (default: 3000), "
--		 "Pass -1 for infinite timeout");
-+		 "Pass 0xFFFFFFFF (4294967295) for maximum timeout");
-=20
- static bool noverify;
- module_param(noverify, bool, S_IRUGO | S_IWUSR);
-@@ -97,7 +97,7 @@ MODULE_PARM_DESC(transfer_size, "Optional custom transfer=
- size in bytes (default
-  * @iterations:		iterations before stopping test
-  * @xor_sources:	number of xor source buffers
-  * @pq_sources:		number of p+q source buffers
-- * @timeout:		transfer timeout in msec, -1 for infinite timeout
-+ * @timeout:		transfer timeout in msec, 0 - 0xFFFFFFFF (4294967295)
-  */
- struct dmatest_params {
- 	unsigned int	buf_size;
-@@ -108,7 +108,7 @@ struct dmatest_params {
- 	unsigned int	iterations;
- 	unsigned int	xor_sources;
- 	unsigned int	pq_sources;
--	int		timeout;
-+	unsigned int	timeout;
- 	bool		noverify;
- 	bool		norandom;
- 	int		alignment;
+diff --git a/drivers/net/ethernet/intel/e1000e/e1000.h b/drivers/net/ethernet/intel/e1000e/e1000.h
+index be13227f1697..942ab74030ca 100644
+--- a/drivers/net/ethernet/intel/e1000e/e1000.h
++++ b/drivers/net/ethernet/intel/e1000e/e1000.h
+@@ -186,12 +186,11 @@ struct e1000_phy_regs {
+ 
+ /* board specific private data structure */
+ struct e1000_adapter {
+-	struct timer_list watchdog_timer;
+ 	struct timer_list phy_info_timer;
+ 	struct timer_list blink_timer;
+ 
+ 	struct work_struct reset_task;
+-	struct work_struct watchdog_task;
++	struct delayed_work watchdog_task;
+ 
+ 	const struct e1000_info *ei;
+ 
+diff --git a/drivers/net/ethernet/intel/e1000e/netdev.c b/drivers/net/ethernet/intel/e1000e/netdev.c
+index 0e09bede42a2..22a5d594115f 100644
+--- a/drivers/net/ethernet/intel/e1000e/netdev.c
++++ b/drivers/net/ethernet/intel/e1000e/netdev.c
+@@ -39,6 +39,8 @@ static int debug = -1;
+ module_param(debug, int, 0);
+ MODULE_PARM_DESC(debug, "Debug level (0=none,...,16=all)");
+ 
++static struct workqueue_struct *e1000_workqueue;
++
+ static const struct e1000_info *e1000_info_tbl[] = {
+ 	[board_82571]		= &e1000_82571_info,
+ 	[board_82572]		= &e1000_82572_info,
+@@ -1780,7 +1782,8 @@ static irqreturn_t e1000_intr_msi(int __always_unused irq, void *data)
+ 		}
+ 		/* guard against interrupt when we're going down */
+ 		if (!test_bit(__E1000_DOWN, &adapter->state))
+-			mod_timer(&adapter->watchdog_timer, jiffies + 1);
++			queue_delayed_work(e1000_workqueue,
++					   &adapter->watchdog_task, 1);
+ 	}
+ 
+ 	/* Reset on uncorrectable ECC error */
+@@ -1860,7 +1863,8 @@ static irqreturn_t e1000_intr(int __always_unused irq, void *data)
+ 		}
+ 		/* guard against interrupt when we're going down */
+ 		if (!test_bit(__E1000_DOWN, &adapter->state))
+-			mod_timer(&adapter->watchdog_timer, jiffies + 1);
++			queue_delayed_work(e1000_workqueue,
++					   &adapter->watchdog_task, 1);
+ 	}
+ 
+ 	/* Reset on uncorrectable ECC error */
+@@ -1905,7 +1909,8 @@ static irqreturn_t e1000_msix_other(int __always_unused irq, void *data)
+ 		hw->mac.get_link_status = true;
+ 		/* guard against interrupt when we're going down */
+ 		if (!test_bit(__E1000_DOWN, &adapter->state))
+-			mod_timer(&adapter->watchdog_timer, jiffies + 1);
++			queue_delayed_work(e1000_workqueue,
++					   &adapter->watchdog_task, 1);
+ 	}
+ 
+ 	if (!test_bit(__E1000_DOWN, &adapter->state))
+@@ -4278,7 +4283,6 @@ void e1000e_down(struct e1000_adapter *adapter, bool reset)
+ 
+ 	napi_synchronize(&adapter->napi);
+ 
+-	del_timer_sync(&adapter->watchdog_timer);
+ 	del_timer_sync(&adapter->phy_info_timer);
+ 
+ 	spin_lock(&adapter->stats64_lock);
+@@ -5150,25 +5154,11 @@ static void e1000e_check_82574_phy_workaround(struct e1000_adapter *adapter)
+ 	}
+ }
+ 
+-/**
+- * e1000_watchdog - Timer Call-back
+- * @data: pointer to adapter cast into an unsigned long
+- **/
+-static void e1000_watchdog(struct timer_list *t)
+-{
+-	struct e1000_adapter *adapter = from_timer(adapter, t, watchdog_timer);
+-
+-	/* Do the rest outside of interrupt context */
+-	schedule_work(&adapter->watchdog_task);
+-
+-	/* TODO: make this use queue_delayed_work() */
+-}
+-
+ static void e1000_watchdog_task(struct work_struct *work)
+ {
+ 	struct e1000_adapter *adapter = container_of(work,
+ 						     struct e1000_adapter,
+-						     watchdog_task);
++						     watchdog_task.work);
+ 	struct net_device *netdev = adapter->netdev;
+ 	struct e1000_mac_info *mac = &adapter->hw.mac;
+ 	struct e1000_phy_info *phy = &adapter->hw.phy;
+@@ -5395,8 +5385,8 @@ static void e1000_watchdog_task(struct work_struct *work)
+ 
+ 	/* Reset the timer */
+ 	if (!test_bit(__E1000_DOWN, &adapter->state))
+-		mod_timer(&adapter->watchdog_timer,
+-			  round_jiffies(jiffies + 2 * HZ));
++		queue_delayed_work(e1000_workqueue, &adapter->watchdog_task,
++				   round_jiffies(2 * HZ));
+ }
+ 
+ #define E1000_TX_FLAGS_CSUM		0x00000001
+@@ -7251,11 +7241,20 @@ static int e1000_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 		goto err_eeprom;
+ 	}
+ 
+-	timer_setup(&adapter->watchdog_timer, e1000_watchdog, 0);
++	e1000_workqueue = alloc_workqueue("%s", WQ_MEM_RECLAIM, 0,
++					  e1000e_driver_name);
++
++	if (!e1000_workqueue) {
++		err = -ENOMEM;
++		goto err_workqueue;
++	}
++
++	INIT_DELAYED_WORK(&adapter->watchdog_task, e1000_watchdog_task);
++	queue_delayed_work(e1000_workqueue, &adapter->watchdog_task, 0);
++
+ 	timer_setup(&adapter->phy_info_timer, e1000_update_phy_info, 0);
+ 
+ 	INIT_WORK(&adapter->reset_task, e1000_reset_task);
+-	INIT_WORK(&adapter->watchdog_task, e1000_watchdog_task);
+ 	INIT_WORK(&adapter->downshift_task, e1000e_downshift_workaround);
+ 	INIT_WORK(&adapter->update_phy_task, e1000e_update_phy_task);
+ 	INIT_WORK(&adapter->print_hang_task, e1000_print_hw_hang);
+@@ -7349,6 +7348,9 @@ static int e1000_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 	return 0;
+ 
+ err_register:
++	flush_workqueue(e1000_workqueue);
++	destroy_workqueue(e1000_workqueue);
++err_workqueue:
+ 	if (!(adapter->flags & FLAG_HAS_AMT))
+ 		e1000e_release_hw_control(adapter);
+ err_eeprom:
+@@ -7395,15 +7397,17 @@ static void e1000_remove(struct pci_dev *pdev)
+ 	 */
+ 	if (!down)
+ 		set_bit(__E1000_DOWN, &adapter->state);
+-	del_timer_sync(&adapter->watchdog_timer);
+ 	del_timer_sync(&adapter->phy_info_timer);
+ 
+ 	cancel_work_sync(&adapter->reset_task);
+-	cancel_work_sync(&adapter->watchdog_task);
+ 	cancel_work_sync(&adapter->downshift_task);
+ 	cancel_work_sync(&adapter->update_phy_task);
+ 	cancel_work_sync(&adapter->print_hang_task);
+ 
++	cancel_delayed_work(&adapter->watchdog_task);
++	flush_workqueue(e1000_workqueue);
++	destroy_workqueue(e1000_workqueue);
++
+ 	if (adapter->flags & FLAG_HAS_HW_TIMESTAMP) {
+ 		cancel_work_sync(&adapter->tx_hwtstamp_work);
+ 		if (adapter->tx_hwtstamp_skb) {
+-- 
+2.22.0
 
