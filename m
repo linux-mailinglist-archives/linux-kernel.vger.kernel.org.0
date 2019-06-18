@@ -2,55 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CA93049EC1
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 12:59:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E64349EC6
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 12:59:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729649AbfFRK7Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Jun 2019 06:59:25 -0400
-Received: from mail-io1-f66.google.com ([209.85.166.66]:33645 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725934AbfFRK7Y (ORCPT
+        id S1729677AbfFRK7q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Jun 2019 06:59:46 -0400
+Received: from mail-io1-f65.google.com ([209.85.166.65]:45625 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729604AbfFRK7p (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Jun 2019 06:59:24 -0400
-Received: by mail-io1-f66.google.com with SMTP id u13so28822755iop.0
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2019 03:59:24 -0700 (PDT)
+        Tue, 18 Jun 2019 06:59:45 -0400
+Received: by mail-io1-f65.google.com with SMTP id e3so28613786ioc.12
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2019 03:59:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=lixom-net.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=wDeuVf27dsWWQyi/G9Z1cR/nnFqjHy2XRRgIkWDwa+w=;
-        b=T1wUG2r/CYW88UkEOUiQ7rn3R1tausZPc1kdqBEQIfxIQ9SSbgVOaTVYT/BDN6Z0Am
-         hYXDY1Zib0Da5pwz+bxOXhsIs1AC7/iyzbrD6oihoif/2Rnd+FaZFJQYpHF1VLgYpKXo
-         O6tD8pDILAHb9l68gGlzhLCUoZsRZY4jOGlPY/Rn2nMREMwL1N+U2BidEBPQUNfXWUYz
-         2NkneM3j9QBpX2/lr9Rzjo9cX1ohCBkXmbjI8Vb0X8uNy0cTN4e8NwQedi7v+OHHRoZL
-         4sBXCMpNc3bqtjIMZ22yHkjrRzfMvvcVrzyQc5JTtmBsGspb8vHTNwY1Yq5c0W7aSHhz
-         223Q==
+        bh=zE+SX6SmJuqniQ7NjAmJGscRWAHfDF73kRsg3p1vW/I=;
+        b=ZRA8R31dARjasR829hrnWSoWnChAdV/Q4AnU2qy6oX7CcVMxtq2xlkRcVwLc0YoXCk
+         uoKI6z+j33CzVT9lUiD/FxtpEtT1/pjthqE6evUlvx3z7DZpW3m11ZgIOm5umqWxKR0H
+         5iJljS0EZ6Tz9nnkzZcclLjU46FHU9nc8v4+gbWcimyLnTNlwy2NVYiqx/z3uCLMAdaf
+         N50hrnatqW8la1sYYWWTPFRX/es0ErzyJJ0uBodBxdc44Ipu5acCz6QlcrCQW0/Gwva0
+         fj5AD1MbNn6ozSckHKhLzkZ4Qd0ERLxg9QKjT+wA32PNehHQUlPCbxTlqtmpisAwpQuc
+         Zi+g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=wDeuVf27dsWWQyi/G9Z1cR/nnFqjHy2XRRgIkWDwa+w=;
-        b=kLWtU6pJGgmDzuQt7nBWK4gNRvIoLd/nxGBUcKx3oFLRpFwqb5PV66j3m//YiMFpOK
-         8K5vDAgyQLlpTvIas1sbVkszxpP2x8j04QSzIKlxRQtxPNIihpCu3yf2FZAT0x+/l10Z
-         L+x00vgwQOG5w+VuG4k0kiXYYjezXBe6YmVeebSCwVqwjXGsXenFpKPbV63WMrhTmDKh
-         pH9Ky5dUSpiPsLXY6+SFFkit4owO0DBSp2cFeEN4gIIl/I3Qn+mv0wNw9H05url2D8Zo
-         ShkPUC2e91guAhUZw5qHUVTHxZ7s9z7ZP+bT2i8hw+PBJG0lUvMdjPsnPue4dLD/3Qzq
-         YG6A==
-X-Gm-Message-State: APjAAAXO2oyXD8A3evRB13xFjVxy5p65AgnOClTD9eX1ITtpdT4dg8RE
-        Msai9OOnN++odNdBp2H+YlKr4dusGhF137uQR4waPQ==
-X-Google-Smtp-Source: APXvYqygUc9NtkUKqHAZsrJLDcE1z7TbO5n2M0BkA4Kg2xoRZpQqn8fUKR360iFU7smgRnci3PL6o8QOmteT2MwzdH8=
-X-Received: by 2002:a6b:9257:: with SMTP id u84mr2859483iod.278.1560855563794;
- Tue, 18 Jun 2019 03:59:23 -0700 (PDT)
+        bh=zE+SX6SmJuqniQ7NjAmJGscRWAHfDF73kRsg3p1vW/I=;
+        b=COtg9IOD691klMnE1lQtW8cDxjfCPoC/yyXPaGMsUuHNP68tC3NWvU+iIzJpSnKcdR
+         NvUTOkalyywuIniIxqD2fmEgnTQP7AFpR9rJVIPzYCUkMHrwz5Oubduge4PO5q2yL9vW
+         lE/c2sKZdGxza4SBm6F+W1xf3GbeZ7ktl+KzzAk8jd4EtyoXYdDSa8YicFGCDlbhMPWO
+         DPV0QlSDKy1yIk098BsSBV8XaErKysEbihabYj8HzlTHjLENDg9/YAsd8YxzP/wuA/tz
+         ipyAu8bvpa40VSTCf5v29XZuITCSs7oOREhbIYe8zAYaWv/AJnDwsBBE16shdIVMbmN8
+         E0CA==
+X-Gm-Message-State: APjAAAW6MYaVrzNw6iX6MAsoPsJVn5qHoBht5Rs/wegk+EOTDLsbHk6p
+        cMMaCsxHS6/zzEpK2rwrLYsow8aYWDZUF8xm4Gyx2g==
+X-Google-Smtp-Source: APXvYqzjhXGg+TvQJGun9Olmz9fMYejbvTP9+tvJZTNfj66Ln++Fr+249qMlKBOev8QrSa5z7CguoXzfCqnyT5uNyfs=
+X-Received: by 2002:a02:c519:: with SMTP id s25mr9785849jam.11.1560855584996;
+ Tue, 18 Jun 2019 03:59:44 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190617123352.742876-1-arnd@arndb.de>
-In-Reply-To: <20190617123352.742876-1-arnd@arndb.de>
+References: <20190617122449.457744-1-arnd@arndb.de>
+In-Reply-To: <20190617122449.457744-1-arnd@arndb.de>
 From:   Olof Johansson <olof@lixom.net>
-Date:   Tue, 18 Jun 2019 11:59:12 +0100
-Message-ID: <CAOesGMjEwQw05g7ARDddQNgfnuk9yUXkmVz7BTOEe8FKknSL4A@mail.gmail.com>
-Subject: Re: [PATCH] firmware: trusted_foundations: add ARMv7 dependency
+Date:   Tue, 18 Jun 2019 11:59:33 +0100
+Message-ID: <CAOesGMgx2OrKnLyQAu748eoqx9a4N9BhjiFw6qkHFYmWbTMvrg@mail.gmail.com>
+Subject: Re: [PATCH 1/3] ARM: ixp4xx: don't select SERIAL_OF_PLATFORM
 To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Thierry Reding <treding@nvidia.com>,
-        ARM-SoC Maintainers <arm@kernel.org>,
+Cc:     ARM-SoC Maintainers <arm@kernel.org>,
+        Linus Walleij <linusw@kernel.org>,
+        Imre Kaloz <kaloz@openwrt.org>,
+        Krzysztof Halasa <khalasa@piap.pl>,
+        Linus Walleij <linus.walleij@linaro.org>,
         Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
@@ -59,20 +62,19 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 17, 2019 at 1:34 PM Arnd Bergmann <arnd@arndb.de> wrote:
+On Mon, Jun 17, 2019 at 1:25 PM Arnd Bergmann <arnd@arndb.de> wrote:
 >
-> The "+sec" extension is invalid for older ARM architectures, but
-> the code can now be built on any ARM configuration:
+> Platforms should not normally select all the device drivers, leave that
+> up to the user and the defconfig file.
 >
-> /tmp/trusted_foundations-2d0882.s: Assembler messages:
-> /tmp/trusted_foundations-2d0882.s:194: Error: architectural extension `sec' is not allowed for the current base architecture
-> /tmp/trusted_foundations-2d0882.s:201: Error: selected processor does not support `smc #0' in ARM mode
-> /tmp/trusted_foundations-2d0882.s:213: Error: architectural extension `sec' is not allowed for the current base architecture
-> /tmp/trusted_foundations-2d0882.s:220: Error: selected processor does not support `smc #0' in ARM mode
+> In this case, we get a warning for randconfig builds:
 >
-> Add a dependency on ARMv7 for the build.
+> WARNING: unmet direct dependencies detected for SERIAL_OF_PLATFORM
+>   Depends on [n]: TTY [=y] && HAS_IOMEM [=y] && SERIAL_8250 [=n] && OF [=y]
+>   Selected by [y]:
+>   - MACH_IXP4XX_OF [=y] && ARCH_IXP4XX [=y]
 >
-> Fixes: 4cb5d9eca143 ("firmware: Move Trusted Foundations support")
+> Fixes: 9540724ca29d ("ARM: ixp4xx: Add device tree boot support")
 > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
 Applied to arm/fixes. Thanks!
