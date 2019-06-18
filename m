@@ -2,65 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 95EC649966
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 08:52:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DD5B2499DE
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 09:06:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728963AbfFRGw1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Jun 2019 02:52:27 -0400
-Received: from ozlabs.org ([203.11.71.1]:38681 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726687AbfFRGwY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Jun 2019 02:52:24 -0400
-Received: from neuling.org (localhost [127.0.0.1])
-        by ozlabs.org (Postfix) with ESMTP id 45SdCW5P9Fz9sNT;
-        Tue, 18 Jun 2019 16:17:11 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=neuling.org;
-        s=201811; t=1560838631;
-        bh=hjnDP1X53F9+JxiYVHuk5dMlaqbiLqfcJICtYM3IoQk=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=eEMk/1WuABimOGZcS3sBsCcicLTRiiwgpGP2oCzD0Iqnfv5MXEuAmg2CGUI+xR9SK
-         5RGCb6hp9lCTRWcsF1ewHedu+gMsw8IEuLI82yZuqr9cewGo531bzjwALU/kWXcDsj
-         GUyM3wfEMgQBo52csiOpeDNtsOr619ngd0oxTtiH4iD3Irsj25a6Ltqav1kkf0qd9E
-         bprS72JfhXeVAw82GPHp6Y//lIajLSzDVd7ihoKquwyJwdPJQtyaYGfQ+Ecf53uOec
-         38YFv1EFzx1fwsxZ3lsTHSttwY1lJO6M7s7QJEGBZx8m91ocFVR6eLl9L/2aXgp6p7
-         CQ9TWY94XD/4w==
-Received: by neuling.org (Postfix, from userid 1000)
-        id A1CED2A2538; Tue, 18 Jun 2019 16:17:11 +1000 (AEST)
-Message-ID: <85d5494d2a5d4a887e739c379105436e498217a8.camel@neuling.org>
-Subject: Re: [PATCH 0/5] Powerpc/hw-breakpoint: Fixes plus Code refactor
-From:   Michael Neuling <mikey@neuling.org>
-To:     Christophe Leroy <christophe.leroy@c-s.fr>,
-        Ravi Bangoria <ravi.bangoria@linux.ibm.com>, mpe@ellerman.id.au
-Cc:     benh@kernel.crashing.org, paulus@samba.org,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        npiggin@gmail.com, naveen.n.rao@linux.vnet.ibm.com
-Date:   Tue, 18 Jun 2019 16:17:11 +1000
-In-Reply-To: <2344165b-b55b-d1b9-fd96-e057500e8c74@c-s.fr>
-References: <20190618042732.5582-1-ravi.bangoria@linux.ibm.com>
-         <2344165b-b55b-d1b9-fd96-e057500e8c74@c-s.fr>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.32.2 (3.32.2-1.fc30) 
+        id S1728951AbfFRHGA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Jun 2019 03:06:00 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:36677 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726158AbfFRHF7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Jun 2019 03:05:59 -0400
+Received: by mail-pf1-f196.google.com with SMTP id r7so7101409pfl.3;
+        Tue, 18 Jun 2019 00:05:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=KY0hOmAa86HuZE0h9c7QHLSN/sFybZcvdeeWuBmi/OU=;
+        b=Ue8LR2Qk7y+EWsK1kXFMPLzPeXzkdfH0ztEPZVb5Jfusm1NYSEeT8qzhlDfQo/Mo7m
+         l9409MLPWW+t0N0zo++a14pi+SGGltJ0SS42uhY4SXXGgGi8HAOE+LIGSyFLRA3NfbtE
+         zisJAa/0g+CPDB7AKAO2nYYFmLPH0ypBESfc0UCOavmrIrB0PoXhmASaaXN1DbY2quVq
+         lIdZ3KIjdRBUdJMe5gTa05BWd2YrDH+OAptQsADdxajQOZBK8XWvB/Rz4HWFSdGFYwBy
+         gvcj70OXo+RRh5f5nWUyIdktSspfSuZQBQ3QsJqNz1KMuGqDklr9UxiZHVATVylJMcyH
+         4Gpw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=KY0hOmAa86HuZE0h9c7QHLSN/sFybZcvdeeWuBmi/OU=;
+        b=iTPL4beohlgK0QWR+SH1a9kEirgWvihaXVFnjMi76HFnxjASzOzBJRVIUvJU2WGVzV
+         WzfI3VOgjHyV9An/oKIo6DLaDYp7z3R/tzDq0XsFSBbfooj2AHYv0vrweMJp3gKiuuid
+         oahgx2lVr76P3UTgsxW8b0sNqb88Rua2Hy3UvYxk1NZ4CmHyzDDUKZ0//ktFSkW4985v
+         MCpY/3dSSQayj6HCq3as9jYVnl4yRepxF8ktvWlJ/WD+adHnvBwbv2m3ifZ3mMouyB6h
+         V0Cqgxy7w6UHjP8G8HQfj9Tn7FY7rCT3TAPSLZHiEGFbkxLj+OIlKi400UvJD7SJ5OpJ
+         Um+g==
+X-Gm-Message-State: APjAAAVvjP6uulz8yfrrg/2KJ0w4wH2eN21mH5Ae3ozVSKfo9hrEQPng
+        8WrNN2kjfqo90q6+qb2UTpVgJ1JsWJA=
+X-Google-Smtp-Source: APXvYqxTytyfk9wnV8foDumcE1FOZD+ACJGrgFdfF44453aFg6xoz3efdMevejBUgM67y8CrZf3Wng==
+X-Received: by 2002:a17:90a:9b08:: with SMTP id f8mr3264521pjp.103.1560838638921;
+        Mon, 17 Jun 2019 23:17:18 -0700 (PDT)
+Received: from maya190131 ([13.66.160.195])
+        by smtp.gmail.com with ESMTPSA id y185sm14143581pfy.110.2019.06.17.23.17.18
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Mon, 17 Jun 2019 23:17:18 -0700 (PDT)
+Date:   Tue, 18 Jun 2019 06:17:18 +0000
+From:   Maya Nakamura <m.maya.nakamura@gmail.com>
+To:     mikelley@microsoft.com, kys@microsoft.com, haiyangz@microsoft.com,
+        sthemmin@microsoft.com, sashal@kernel.org
+Cc:     x86@kernel.org, linux-hyperv@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v3 5/5] Input: hv: Remove dependencies on PAGE_SIZE for ring
+ buffer
+Message-ID: <78f6e9646f762c51febba6c5a52eb777c238d4aa.1560837096.git.m.maya.nakamura@gmail.com>
+References: <cover.1560837096.git.m.maya.nakamura@gmail.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1560837096.git.m.maya.nakamura@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2019-06-18 at 08:01 +0200, Christophe Leroy wrote:
->=20
-> Le 18/06/2019 =C3=A0 06:27, Ravi Bangoria a =C3=A9crit :
-> > patch 1-3: Code refactor
-> > patch 4: Speedup disabling breakpoint
-> > patch 5: Fix length calculation for unaligned targets
->=20
-> While you are playing with hw breakpoints, did you have a look at=20
-> https://github.com/linuxppc/issues/issues/38 ?
+Define the ring buffer size as a constant expression because it should
+not depend on the guest page size.
 
-Agreed and also:=20
+Signed-off-by: Maya Nakamura <m.maya.nakamura@gmail.com>
+Reviewed-by: Michael Kelley <mikelley@microsoft.com>
+---
+ drivers/input/serio/hyperv-keyboard.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-https://github.com/linuxppc/issues/issues/170
+diff --git a/drivers/input/serio/hyperv-keyboard.c b/drivers/input/serio/hyperv-keyboard.c
+index 8e457e50f837..88ae7c2ac3c8 100644
+--- a/drivers/input/serio/hyperv-keyboard.c
++++ b/drivers/input/serio/hyperv-keyboard.c
+@@ -75,8 +75,8 @@ struct synth_kbd_keystroke {
+ 
+ #define HK_MAXIMUM_MESSAGE_SIZE 256
+ 
+-#define KBD_VSC_SEND_RING_BUFFER_SIZE		(10 * PAGE_SIZE)
+-#define KBD_VSC_RECV_RING_BUFFER_SIZE		(10 * PAGE_SIZE)
++#define KBD_VSC_SEND_RING_BUFFER_SIZE		(40 * 1024)
++#define KBD_VSC_RECV_RING_BUFFER_SIZE		(40 * 1024)
+ 
+ #define XTKBD_EMUL0     0xe0
+ #define XTKBD_EMUL1     0xe1
+-- 
+2.17.1
 
-https://github.com/linuxppc/issues/issues/128=20
-
-Mikey
