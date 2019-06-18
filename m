@@ -2,86 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D119E4AA4F
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 20:51:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 262184AA4D
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 20:51:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730430AbfFRSvf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Jun 2019 14:51:35 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:51874 "EHLO
+        id S1730383AbfFRSvb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Jun 2019 14:51:31 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:51852 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729642AbfFRSv3 (ORCPT
+        with ESMTP id S1730232AbfFRSv3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 18 Jun 2019 14:51:29 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Sender:Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
-        Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Content-Type:MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:
+        To:From:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
         Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=wbE5UrmSnIxQ7ynjsp5tlChHxu7Tyq/gXbjLpmbx1Vc=; b=D7M7GC9AiZdbQ24Tz/iMR/Lu/b
-        FXq+8kuNJVqFauTBdsQDiNFi7kIVMvhMrywkLlVK8a0iv93ACgjlxGMVfLmNmBnIdDBeqZBYaZKkS
-        3DEcofDMlKZojkHKgVzGnqmiZE+mpviBHGyIdIhIt3qkuS8Txvj9wbCXgKo5sCluWGwsB6EbdDgQ1
-        sm8tE2QBSgz8aOHxwTLwFd0uFtjr+9V75EudZZoVTSW117F1TSgOwXHssV3FWttlQrWJHIHMXZ/q7
-        xQICX4b9FBWOTIRWCi6CVv9VCKsWIZs3q4tCoUJq3ph7zlck6uiyl6UZ15ShpDkQO3kVvFxy61nmr
-        YVZsRn4g==;
+        bh=d0EmehjDEcPvjTqcuyADKrAIO42zpO1/X9qF5qqS+x0=; b=GuL+f1a4TZRQrA4Qhfph4m6U0L
+        I+y1AJoGcCHH+KWW/e8A4LCnl+E6J4/RJqw2eyqLykimGPlSc7ywUnvPr4aSDREuCSd7OBLgj+Yw3
+        2hDGENHdND/vQJaiV43Lbs4KVomhjLe8TKtNYKwHDt0A5w/z4getVLEWtpUh6v1gTMBfwqktXX5zL
+        xTUKeDRKVov9YOqieoYBF/J6kYWXZJnZGZXgB1rBDzX46UsmDXVg3KYYuEGlT0gdii18oKTrBIK1d
+        LOodwleO047qiiU0Ps1AApMRVG6TPa9/pC1j3pxO+CiDWHYweaWMz6e0PciI99Xr5fvPlbKvAuf32
+        bt3uuHrA==;
 Received: from 177.133.86.196.dynamic.adsl.gvt.net.br ([177.133.86.196] helo=bombadil.infradead.org)
         by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hdJCa-0006RL-75; Tue, 18 Jun 2019 18:51:28 +0000
+        id 1hdJCa-0006RH-6Z; Tue, 18 Jun 2019 18:51:28 +0000
 Received: from mchehab by bombadil.infradead.org with local (Exim 4.92)
         (envelope-from <mchehab@bombadil.infradead.org>)
-        id 1hdJCW-0006UF-Bd; Tue, 18 Jun 2019 15:51:24 -0300
+        id 1hdJCW-0006UJ-CP; Tue, 18 Jun 2019 15:51:24 -0300
 From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>
 Cc:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Mauro Carvalho Chehab <mchehab@infradead.org>,
         linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        George Spelvin <lkml@sdf.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Andrey Abramov <st5pub@yandex.ru>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Subject: [PATCH 3/6] lib: list_sort.c: add a blank line to avoid kernel-doc warnings
-Date:   Tue, 18 Jun 2019 15:51:19 -0300
-Message-Id: <019c38a60bdc87124e58f8acd541b484fc9893bb.1560883872.git.mchehab+samsung@kernel.org>
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: [PATCH 4/6] time: hrtimer: use a bullet for the returns bullet list
+Date:   Tue, 18 Jun 2019 15:51:20 -0300
+Message-Id: <a4cab6020e0475e7a4afc65dc5854756dd1bfbe9.1560883872.git.mchehab+samsung@kernel.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <a83ea390bc28784518fce772b4c961ea1c976f14.1560883872.git.mchehab+samsung@kernel.org>
 References: <a83ea390bc28784518fce772b4c961ea1c976f14.1560883872.git.mchehab+samsung@kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In order for a list to be recognized as such, blank lines
-are required.
+That gets rid of this warning:
 
-Solve those Sphinx warnings:
+	./kernel/time/hrtimer.c:1119: WARNING: Block quote ends without a blank line; unexpected unindent.
 
-./lib/list_sort.c:162: WARNING: Unexpected indentation.
-./lib/list_sort.c:163: WARNING: Block quote ends without a blank line; unexpected unindent.
+and displays nicely both at the source code and at the produced
+documentation.
 
 Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 ---
- lib/list_sort.c | 2 ++
- 1 file changed, 2 insertions(+)
+ kernel/time/hrtimer.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/lib/list_sort.c b/lib/list_sort.c
-index 712ed1f4eb64..52f0c258c895 100644
---- a/lib/list_sort.c
-+++ b/lib/list_sort.c
-@@ -157,9 +157,11 @@ static void merge_final(void *priv, cmp_func cmp, struct list_head *head,
+diff --git a/kernel/time/hrtimer.c b/kernel/time/hrtimer.c
+index edb230aba3d1..49f78453892f 100644
+--- a/kernel/time/hrtimer.c
++++ b/kernel/time/hrtimer.c
+@@ -1114,9 +1114,10 @@ EXPORT_SYMBOL_GPL(hrtimer_start_range_ns);
+  * @timer:	hrtimer to stop
   *
-  * The number of pending lists of size 2^k is determined by the
-  * state of bit k of "count" plus two extra pieces of information:
+  * Returns:
+- *  0 when the timer was not active
+- *  1 when the timer was active
+- * -1 when the timer is currently executing the callback function and
 + *
-  * - The state of bit k-1 (when k == 0, consider bit -1 always set), and
-  * - Whether the higher-order bits are zero or non-zero (i.e.
-  *   is count >= 2^(k+1)).
-+ *
-  * There are six states we distinguish.  "x" represents some arbitrary
-  * bits, and "y" represents some arbitrary non-zero bits:
-  * 0:  00x: 0 pending of size 2^k;           x pending of sizes < 2^k
++ *  •  0 when the timer was not active
++ *  •  1 when the timer was active
++ *  • -1 when the timer is currently executing the callback function and
+  *    cannot be stopped
+  */
+ int hrtimer_try_to_cancel(struct hrtimer *timer)
 -- 
 2.21.0
 
