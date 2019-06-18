@@ -2,14 +2,14 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AEDED4AC81
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 23:05:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CBCD64AC9C
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 23:08:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730862AbfFRVF4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Jun 2019 17:05:56 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:34356 "EHLO
+        id S1730823AbfFRVFy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Jun 2019 17:05:54 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:34372 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730555AbfFRVFv (ORCPT
+        with ESMTP id S1730755AbfFRVFv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 18 Jun 2019 17:05:51 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
@@ -18,30 +18,30 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From:
         Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=CXPCxH7Lws1zZBtVuZGQ87uuuQGJFqeUbiijE3bn4Sg=; b=lCejP9DfRshQseK0a6xTNEBK9L
-        CQS7BxStHtUa8OrAENFWL+tMA/5rs4TNjQA5lL5eEpMdXJCnUxX1DBu7o80fhvRJkQcKWt1Xa/lyw
-        x6CkTgKj/mds/bGxvCPWTiAwE6qqQpYP2UgpR8/uxMEwbiv/Mu15tRmTIeKBexH4WdLVZaZHuqbhT
-        gaX8KWBpY3J59xvg4K5oZCYrE1gng5zbFEIzKOJlUuqyiXKKIO1x4UFS0oPVTtA54BJeuBY5/Cwcr
-        NsWdaDyht5LAKwYJAVpq8nqD0NaNgUFaU8ipTCTCjM/K5pJHX9FpVqIgWIidA/sl7Y7dBFNHka50j
-        nyQILsnw==;
+        bh=QtAOSZpbxXOSMRds/InKAMA97jUuNyRQoI3TiAtqpG0=; b=Hxp8HlZxCL0r0RBpZtpnPfhJ07
+        MA2ajCjn8jMepM0CVyv7IpS7yRLjKgj7T/Bkv2hkQ5MKV1B0KKD5x496LKATfe9tTGtpXevb68uVC
+        nUfLV1KNGWiwtJzf6p6PuRNKxB5kQXsZP1K2PFQoECHXKdu8yRAx6HFzroDYVtRr/3dcQooV8wruO
+        4ag+iQ5ZXOUdbVWgfHr6eqqPUK4gN6PA/86heKmhGZhEgMCVUN63RJg3s3dsC5lhbfJxVJ9JyOexJ
+        KAb7gzNb1syryLjXbO+DOHbTjaze9I3sMgc9LAOMiX5VFpQ1LhBGdymgbaoPB7JJ85a3r/E/k2i9Q
+        nUuJ8pog==;
 Received: from 177.133.86.196.dynamic.adsl.gvt.net.br ([177.133.86.196] helo=bombadil.infradead.org)
         by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hdLIc-0006yt-8f; Tue, 18 Jun 2019 21:05:50 +0000
+        id 1hdLIc-0006yv-82; Tue, 18 Jun 2019 21:05:50 +0000
 Received: from mchehab by bombadil.infradead.org with local (Exim 4.92)
         (envelope-from <mchehab@bombadil.infradead.org>)
-        id 1hdLIa-0002D4-5K; Tue, 18 Jun 2019 18:05:48 -0300
+        id 1hdLIa-0002D9-69; Tue, 18 Jun 2019 18:05:48 -0300
 From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>
 Cc:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Mauro Carvalho Chehab <mchehab@infradead.org>,
         linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        Sudeep Dutt <sudeep.dutt@intel.com>,
-        Ashutosh Dixit <ashutosh.dixit@intel.com>,
-        Kamil Debski <kamil@wypas.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH v1 19/22] docs: driver-api: add remaining converted dirs to it
-Date:   Tue, 18 Jun 2019 18:05:43 -0300
-Message-Id: <03844b56f5b36b3cf8495764c8687d2ae15c1120.1560891322.git.mchehab+samsung@kernel.org>
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org
+Subject: [PATCH v1 20/22] docs: extcon: move it to acpi dir and convert it to ReST
+Date:   Tue, 18 Jun 2019 18:05:44 -0300
+Message-Id: <b6d199c3e7c8c868acbb313a1a516ea8aed042ee.1560891322.git.mchehab+samsung@kernel.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <cover.1560891322.git.mchehab+samsung@kernel.org>
 References: <cover.1560891322.git.mchehab+samsung@kernel.org>
@@ -52,63 +52,104 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There are a number of driver-specific descriptions that contain a
-mix of userspace and kernelspace documentation. Just like we did
-with other similar subsystems, add them at the driver-api
-groupset, but don't move the directories.
+The intel-int3496.txt file is a documentation for an ACPI driver.
+
+There's no reason to keep it on a separate directory.
+
+So, instead of keeping it on some random location, move it
+to a sub-directory inside the ACPI documentation dir.
+
+For now, keep it with .txt extension, in order to avoid
+Sphinx build noise. A later patch should change it to .rst
+and movin it to be together with other acpi docs.
 
 Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 ---
- Documentation/index.rst            | 3 +++
- Documentation/mic/index.rst        | 2 --
- Documentation/phy/samsung-usb2.rst | 2 --
- Documentation/scheduler/index.rst  | 2 --
- 4 files changed, 3 insertions(+), 6 deletions(-)
+ .../acpi/extcon-intel-int3496.rst}                 | 14 ++++++++++----
+ Documentation/firmware-guide/acpi/index.rst        |  1 +
+ MAINTAINERS                                        |  6 +++---
+ 3 files changed, 14 insertions(+), 7 deletions(-)
+ rename Documentation/{extcon/intel-int3496.txt => firmware-guide/acpi/extcon-intel-int3496.rst} (66%)
 
-diff --git a/Documentation/index.rst b/Documentation/index.rst
-index 82cd9528dff0..b4a48979e15a 100644
---- a/Documentation/index.rst
-+++ b/Documentation/index.rst
-@@ -105,6 +105,9 @@ needed).
-    PCI/index
-    usb/index
-    misc-devices/index
-+   mic/index
-+   phy/samsung-usb2
-+   scheduler/index
+diff --git a/Documentation/extcon/intel-int3496.txt b/Documentation/firmware-guide/acpi/extcon-intel-int3496.rst
+similarity index 66%
+rename from Documentation/extcon/intel-int3496.txt
+rename to Documentation/firmware-guide/acpi/extcon-intel-int3496.rst
+index 8155dbc7fad3..5137ca834b54 100644
+--- a/Documentation/extcon/intel-int3496.txt
++++ b/Documentation/firmware-guide/acpi/extcon-intel-int3496.rst
+@@ -1,5 +1,6 @@
++=====================================================
+ Intel INT3496 ACPI device extcon driver documentation
+------------------------------------------------------
++=====================================================
  
- Architecture-specific documentation
- -----------------------------------
-diff --git a/Documentation/mic/index.rst b/Documentation/mic/index.rst
-index 082fa8f6a260..3a8d06367ef1 100644
---- a/Documentation/mic/index.rst
-+++ b/Documentation/mic/index.rst
-@@ -1,5 +1,3 @@
--:orphan:
--
- =============================================
- Intel Many Integrated Core (MIC) architecture
- =============================================
-diff --git a/Documentation/phy/samsung-usb2.rst b/Documentation/phy/samsung-usb2.rst
-index 98b5952fcb97..c48c8b9797b9 100644
---- a/Documentation/phy/samsung-usb2.rst
-+++ b/Documentation/phy/samsung-usb2.rst
-@@ -1,5 +1,3 @@
--:orphan:
--
- ====================================
- Samsung USB 2.0 PHY adaptation layer
- ====================================
-diff --git a/Documentation/scheduler/index.rst b/Documentation/scheduler/index.rst
-index 058be77a4c34..69074e5de9c4 100644
---- a/Documentation/scheduler/index.rst
-+++ b/Documentation/scheduler/index.rst
-@@ -1,5 +1,3 @@
--:orphan:
--
- ===============
- Linux Scheduler
- ===============
+ The Intel INT3496 ACPI device extcon driver is a driver for ACPI
+ devices with an acpi-id of INT3496, such as found for example on
+@@ -13,15 +14,20 @@ between an USB host and an USB peripheral controller.
+ The ACPI devices exposes this functionality by returning an array with up
+ to 3 gpio descriptors from its ACPI _CRS (Current Resource Settings) call:
+ 
+-Index 0: The input gpio for the id-pin, this is always present and valid
+-Index 1: The output gpio for enabling Vbus output from the device to the otg
++=======  =====================================================================
++Index 0  The input gpio for the id-pin, this is always present and valid
++Index 1  The output gpio for enabling Vbus output from the device to the otg
+          port, write 1 to enable the Vbus output (this gpio descriptor may
+          be absent or invalid)
+-Index 2: The output gpio for muxing of the data pins between the USB host and
++Index 2  The output gpio for muxing of the data pins between the USB host and
+          the USB peripheral controller, write 1 to mux to the peripheral
+          controller
++=======  =====================================================================
+ 
+ There is a mapping between indices and GPIO connection IDs as follows
++
++	======= =======
+ 	id	index 0
+ 	vbus	index 1
+ 	mux	index 2
++	======= =======
+diff --git a/Documentation/firmware-guide/acpi/index.rst b/Documentation/firmware-guide/acpi/index.rst
+index ae609eec4679..90c90d42d9ad 100644
+--- a/Documentation/firmware-guide/acpi/index.rst
++++ b/Documentation/firmware-guide/acpi/index.rst
+@@ -24,3 +24,4 @@ ACPI Support
+    acpi-lid
+    lpit
+    video_extension
++   extcon-intel-int3496
+diff --git a/MAINTAINERS b/MAINTAINERS
+index e07cbd44d48a..b7c81bd0f8e8 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -321,7 +321,7 @@ F:	drivers/pnp/pnpacpi/
+ F:	include/linux/acpi.h
+ F:	include/linux/fwnode.h
+ F:	include/acpi/
+-F:	Documentation/acpi/
++F:	Documentation/firmware-guide/acpi/
+ F:	Documentation/ABI/testing/sysfs-bus-acpi
+ F:	Documentation/ABI/testing/configfs-acpi
+ F:	drivers/pci/*acpi*
+@@ -4881,7 +4881,7 @@ S:	Maintained
+ F:	Documentation/
+ F:	scripts/kernel-doc
+ X:	Documentation/ABI/
+-X:	Documentation/acpi/
++X:	Documentation/firmware-guide/acpi/
+ X:	Documentation/devicetree/
+ X:	Documentation/i2c/
+ X:	Documentation/media/
+@@ -6057,7 +6057,7 @@ S:	Maintained
+ F:	drivers/extcon/
+ F:	include/linux/extcon/
+ F:	include/linux/extcon.h
+-F:	Documentation/extcon/
++F:	Documentation/firmware-guide/acpi/extcon-intel-int3496.rst
+ F:	Documentation/devicetree/bindings/extcon/
+ 
+ EXYNOS DP DRIVER
 -- 
 2.21.0
 
