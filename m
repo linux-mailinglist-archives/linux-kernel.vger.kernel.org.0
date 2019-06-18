@@ -2,187 +2,171 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DA99D49924
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 08:45:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 875C74990E
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 08:43:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728937AbfFRGpe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Jun 2019 02:45:34 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:49698 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726403AbfFRGpc (ORCPT
+        id S1728728AbfFRGm5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Jun 2019 02:42:57 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:35830 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725919AbfFRGm4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Jun 2019 02:45:32 -0400
-X-UUID: c955ef6297754fd299307ade39fb6010-20190618
-X-UUID: c955ef6297754fd299307ade39fb6010-20190618
-Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw02.mediatek.com
-        (envelope-from <ck.hu@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 442174043; Tue, 18 Jun 2019 14:35:20 +0800
-Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- mtkmbs07n2.mediatek.inc (172.21.101.141) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Tue, 18 Jun 2019 14:35:19 +0800
-Received: from [172.21.77.4] (172.21.77.4) by mtkcas08.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Tue, 18 Jun 2019 14:35:19 +0800
-Message-ID: <1560839719.3736.0.camel@mtksdaap41>
-Subject: Re: [PATCH v2 08/12] drm/mediatek: Get rid of mtk_smi_larb_get/put
-From:   CK Hu <ck.hu@mediatek.com>
-To:     Yong Wu <yong.wu@mediatek.com>
-CC:     Matthias Brugger <matthias.bgg@gmail.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Evan Green <evgreen@chromium.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Tomasz Figa <tfiga@google.com>,
-        Will Deacon <will.deacon@arm.com>,
-        <linux-mediatek@lists.infradead.org>,
-        <srv_heupstream@mediatek.com>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <iommu@lists.linux-foundation.org>, <yingjoe.chen@mediatek.com>,
-        <youlin.pei@mediatek.com>, Nicolas Boichat <drinkcat@chromium.org>,
-        <anan.sun@mediatek.com>, Philipp Zabel <p.zabel@pengutronix.de>
-Date:   Tue, 18 Jun 2019 14:35:19 +0800
-In-Reply-To: <1560171313-28299-9-git-send-email-yong.wu@mediatek.com>
-References: <1560171313-28299-1-git-send-email-yong.wu@mediatek.com>
-         <1560171313-28299-9-git-send-email-yong.wu@mediatek.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu2 
+        Tue, 18 Jun 2019 02:42:56 -0400
+Received: by mail-lj1-f196.google.com with SMTP id x25so2291052ljh.2
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2019 23:42:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=lgpzRv5/vynNFVxE3s7Hk+KSeLSqjof34qro8UmBm8o=;
+        b=ndvLQD4k5zwfsFqkCbpeU/GdORiZuLt2tQGPpLggKjVnArKNlOlBe01TuLIDNUq31V
+         YDKYozo8e5N0MIWhExz6KSZh5eu2+kcH5NWyGnXBlECDSH5Y+fIDPGDHQO1ZCI9gE6lS
+         uRnU62oK5BRiTw29kLb5SU/3z/yCyljtzmHvh5DFJ+SfwbQoT33keMUVnET74f7coWSU
+         xm04O86GOb1XopcpqRZz08BElMK4i0EaaO5bb+LQGPppA9yhmFzr7XFDCJAuv8wWzrcX
+         pAyUlw0Xjgt7m07w4e3fiL3NDYoYRZUzQNL7ayeS+BDw7s+n2ydNPhTMTPWKv1+pnW+q
+         fY5w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=lgpzRv5/vynNFVxE3s7Hk+KSeLSqjof34qro8UmBm8o=;
+        b=P6jynHYA6GW0ljkj3I7bpiJ+xFISycb1knZcqq6dHWFD8OFED02ZkOaxXVMXtqwqdN
+         enwdNtIkoHe3xhsB0E9BgxGEskzwgGhm7w7Bz7MIB8RUYq9pietduHE2bCMxScbKgcTn
+         ugoxLyIN7OW+CcsyZEEg+zGmIY4kQNprtaT6C09CeERVgzdJCJv4RBTCc98BYqQLqrvu
+         V/yRV7s5ZPC3XlFJPNyYD2+O2Wmg2FermmF2etCigrhtNuxgBcv/syi3KE7JQQsKF/N8
+         mEOI/vrmUqsbAznoQp94PnPzinykZRXbmO8+ofNZReGYuBi+V6Vy5dNXILaYETCtk002
+         zfSQ==
+X-Gm-Message-State: APjAAAWHP6dC0ufSmY6TA7ba0uSZLHPw7xaU/oH4ml/BNzCwjRyOMMNV
+        fwMyxlEelfjTq4moE0fZg6IwlkKbudua0K9+VoOGKg==
+X-Google-Smtp-Source: APXvYqysx31qoiT/uxvMzQli9uOZPuPw935uTXzuZMOOepVzmNXRBmm8ahGu34wMTrts4UWwpQRpMCKlnOxf9U4V5Bo=
+X-Received: by 2002:a2e:8495:: with SMTP id b21mr20543162ljh.149.1560839768102;
+ Mon, 17 Jun 2019 23:36:08 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-MTK:  N
+References: <20190617210745.104187490@linuxfoundation.org>
+In-Reply-To: <20190617210745.104187490@linuxfoundation.org>
+From:   Naresh Kamboju <naresh.kamboju@linaro.org>
+Date:   Tue, 18 Jun 2019 12:05:57 +0530
+Message-ID: <CA+G9fYueq_CFv59aYSguU_yq_nd9zwpcpnJKrqVtx_VOCSZ+9A@mail.gmail.com>
+Subject: Re: [PATCH 4.14 00/53] 4.14.128-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     open list <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        lkft-triage@lists.linaro.org,
+        linux- stable <stable@vger.kernel.org>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Yong:
+On Tue, 18 Jun 2019 at 02:58, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 4.14.128 release.
+> There are 53 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Wed 19 Jun 2019 09:06:21 PM UTC.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-=
+4.14.128-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-4.14.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-On Mon, 2019-06-10 at 20:55 +0800, Yong Wu wrote:
-> MediaTek IOMMU has already added the device_link between the consumer
-> and smi-larb device. If the drm device call the pm_runtime_get_sync,
-> the smi-larb's pm_runtime_get_sync also be called automatically.
-> 
-> CC: CK Hu <ck.hu@mediatek.com>
-> CC: Philipp Zabel <p.zabel@pengutronix.de>
-> Signed-off-by: Yong Wu <yong.wu@mediatek.com>
-> Reviewed-by: Evan Green <evgreen@chromium.org>
-> ---
->  drivers/gpu/drm/mediatek/mtk_drm_crtc.c     | 11 -----------
->  drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c | 26 --------------------------
->  drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.h |  1 -
->  3 files changed, 38 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/mediatek/mtk_drm_crtc.c b/drivers/gpu/drm/mediatek/mtk_drm_crtc.c
-> index acad088..3a21a48 100644
-> --- a/drivers/gpu/drm/mediatek/mtk_drm_crtc.c
-> +++ b/drivers/gpu/drm/mediatek/mtk_drm_crtc.c
-> @@ -18,7 +18,6 @@
->  #include <drm/drm_probe_helper.h>
->  #include <linux/clk.h>
->  #include <linux/pm_runtime.h>
-> -#include <soc/mediatek/smi.h>
->  
->  #include "mtk_drm_drv.h"
->  #include "mtk_drm_crtc.h"
-> @@ -371,20 +370,12 @@ static void mtk_drm_crtc_atomic_enable(struct drm_crtc *crtc,
->  				       struct drm_crtc_state *old_state)
->  {
->  	struct mtk_drm_crtc *mtk_crtc = to_mtk_crtc(crtc);
-> -	struct mtk_ddp_comp *comp = mtk_crtc->ddp_comp[0];
->  	int ret;
->  
->  	DRM_DEBUG_DRIVER("%s %d\n", __func__, crtc->base.id);
->  
-> -	ret = mtk_smi_larb_get(comp->larb_dev);
-> -	if (ret) {
-> -		DRM_ERROR("Failed to get larb: %d\n", ret);
-> -		return;
-> -	}
-> -
->  	ret = mtk_crtc_ddp_hw_init(mtk_crtc);
->  	if (ret) {
-> -		mtk_smi_larb_put(comp->larb_dev);
->  		return;
->  	}
+Results from Linaro=E2=80=99s test farm.
+No regressions on arm64, arm, x86_64, and i386.
 
-Remove {}.
+NOTE:
+Backported patch media: v4l2-ioctl: clear fields in s_parm
+fixed v4l2-compliance test case VIDIOC_G-S_PARM
 
-Regards,
-CK
+Summary
+------------------------------------------------------------------------
 
->  
-> @@ -396,7 +387,6 @@ static void mtk_drm_crtc_atomic_disable(struct drm_crtc *crtc,
->  					struct drm_crtc_state *old_state)
->  {
->  	struct mtk_drm_crtc *mtk_crtc = to_mtk_crtc(crtc);
-> -	struct mtk_ddp_comp *comp = mtk_crtc->ddp_comp[0];
->  	int i;
->  
->  	DRM_DEBUG_DRIVER("%s %d\n", __func__, crtc->base.id);
-> @@ -419,7 +409,6 @@ static void mtk_drm_crtc_atomic_disable(struct drm_crtc *crtc,
->  
->  	drm_crtc_vblank_off(crtc);
->  	mtk_crtc_ddp_hw_fini(mtk_crtc);
-> -	mtk_smi_larb_put(comp->larb_dev);
->  
->  	mtk_crtc->enabled = false;
->  }
-> diff --git a/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c b/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c
-> index 54ca794..ede15c9 100644
-> --- a/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c
-> +++ b/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c
-> @@ -265,8 +265,6 @@ int mtk_ddp_comp_init(struct device *dev, struct device_node *node,
->  		      const struct mtk_ddp_comp_funcs *funcs)
->  {
->  	enum mtk_ddp_comp_type type;
-> -	struct device_node *larb_node;
-> -	struct platform_device *larb_pdev;
->  
->  	if (comp_id < 0 || comp_id >= DDP_COMPONENT_ID_MAX)
->  		return -EINVAL;
-> @@ -296,30 +294,6 @@ int mtk_ddp_comp_init(struct device *dev, struct device_node *node,
->  	if (IS_ERR(comp->clk))
->  		return PTR_ERR(comp->clk);
->  
-> -	/* Only DMA capable components need the LARB property */
-> -	comp->larb_dev = NULL;
-> -	if (type != MTK_DISP_OVL &&
-> -	    type != MTK_DISP_RDMA &&
-> -	    type != MTK_DISP_WDMA)
-> -		return 0;
-> -
-> -	larb_node = of_parse_phandle(node, "mediatek,larb", 0);
-> -	if (!larb_node) {
-> -		dev_err(dev,
-> -			"Missing mediadek,larb phandle in %pOF node\n", node);
-> -		return -EINVAL;
-> -	}
-> -
-> -	larb_pdev = of_find_device_by_node(larb_node);
-> -	if (!larb_pdev) {
-> -		dev_warn(dev, "Waiting for larb device %pOF\n", larb_node);
-> -		of_node_put(larb_node);
-> -		return -EPROBE_DEFER;
-> -	}
-> -	of_node_put(larb_node);
-> -
-> -	comp->larb_dev = &larb_pdev->dev;
-> -
->  	return 0;
->  }
->  
-> diff --git a/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.h b/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.h
-> index 8399229..b8dc17e 100644
-> --- a/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.h
-> +++ b/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.h
-> @@ -91,7 +91,6 @@ struct mtk_ddp_comp {
->  	struct clk *clk;
->  	void __iomem *regs;
->  	int irq;
-> -	struct device *larb_dev;
->  	enum mtk_ddp_comp_id id;
->  	const struct mtk_ddp_comp_funcs *funcs;
->  };
+kernel: 4.14.128-rc1
+git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
+le-rc.git
+git branch: linux-4.14.y
+git commit: 16102d7ed8409bff0d3b105d08bb2ca26343c539
+git describe: v4.14.127-54-g16102d7ed840
+Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.14-oe/bu=
+ild/v4.14.127-54-g16102d7ed840
 
+No regressions (compared to build v4.14.127)
 
+Fixes (compared to build v4.14.127)
+------------------------------------------------------------------------
+  v4l2-compliance:
+    * VIDIOC_G-S_PARM
+
+Ran 22198 total tests in the following environments and test suites.
+
+Environments
+--------------
+- dragonboard-410c - arm64
+- hi6220-hikey - arm64
+- i386
+- juno-r2 - arm64
+- qemu_arm
+- qemu_arm64
+- qemu_i386
+- qemu_x86_64
+- x15 - arm
+- x86_64
+
+Test Suites
+-----------
+* build
+* install-android-platform-tools-r2600
+* kselftest
+* libhugetlbfs
+* ltp-cap_bounds-tests
+* ltp-commands-tests
+* ltp-containers-tests
+* ltp-cpuhotplug-tests
+* ltp-cve-tests
+* ltp-dio-tests
+* ltp-fcntl-locktests-tests
+* ltp-filecaps-tests
+* ltp-fs-tests
+* ltp-fs_bind-tests
+* ltp-fs_perms_simple-tests
+* ltp-fsx-tests
+* ltp-hugetlb-tests
+* ltp-io-tests
+* ltp-ipc-tests
+* ltp-math-tests
+* ltp-mm-tests
+* ltp-nptl-tests
+* ltp-pty-tests
+* ltp-sched-tests
+* ltp-securebits-tests
+* ltp-syscalls-tests
+* ltp-timers-tests
+* network-basic-tests
+* perf
+* spectre-meltdown-checker-test
+* v4l2-compliance
+* ltp-open-posix-tests
+* kvm-unit-tests
+* kselftest-vsyscall-mode-native
+* kselftest-vsyscall-mode-none
+
+--=20
+Linaro LKFT
+https://lkft.linaro.org
