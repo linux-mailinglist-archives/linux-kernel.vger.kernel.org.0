@@ -2,73 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 74BDE4ABE7
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 22:35:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6EF754ABEB
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 22:36:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730731AbfFRUej (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Jun 2019 16:34:39 -0400
-Received: from mx2.suse.de ([195.135.220.15]:37354 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730621AbfFRUeh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Jun 2019 16:34:37 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 92FAAAE04;
-        Tue, 18 Jun 2019 20:34:36 +0000 (UTC)
-From:   Takashi Iwai <tiwai@suse.de>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org
-Subject: [PATCH RFC 3/3] fonts: Prefer a bigger font for high resolution screens
-Date:   Tue, 18 Jun 2019 22:34:25 +0200
-Message-Id: <20190618203425.10723-4-tiwai@suse.de>
-X-Mailer: git-send-email 2.16.4
-In-Reply-To: <20190618203425.10723-1-tiwai@suse.de>
-References: <20190618203425.10723-1-tiwai@suse.de>
+        id S1730636AbfFRUgy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Jun 2019 16:36:54 -0400
+Received: from s3.sipsolutions.net ([144.76.43.62]:47786 "EHLO
+        sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729961AbfFRUgy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Jun 2019 16:36:54 -0400
+Received: by sipsolutions.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <johannes@sipsolutions.net>)
+        id 1hdKqN-0006ry-3T; Tue, 18 Jun 2019 22:36:39 +0200
+Message-ID: <613cdfde488eb23d7207c7ba6258662702d04840.camel@sipsolutions.net>
+Subject: Re: [PATCH v2 00/17] net: introduce Qualcomm IPA driver
+From:   Johannes Berg <johannes@sipsolutions.net>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Alex Elder <elder@linaro.org>, abhishek.esse@gmail.com,
+        Ben Chan <benchan@google.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        cpratapa@codeaurora.org, David Miller <davem@davemloft.net>,
+        Dan Williams <dcbw@redhat.com>,
+        DTML <devicetree@vger.kernel.org>,
+        Eric Caruso <ejcaruso@google.com>, evgreen@chromium.org,
+        Ilias Apalodimas <ilias.apalodimas@linaro.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-arm-msm@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-soc@vger.kernel.org, Networking <netdev@vger.kernel.org>,
+        Subash Abhinov Kasiviswanathan <subashab@codeaurora.org>,
+        syadagir@codeaurora.org
+Date:   Tue, 18 Jun 2019 22:36:35 +0200
+In-Reply-To: <CAK8P3a1FeUQR3pgoQxHoRK05JGORyR+TFATVQiijLWtFKTv6OQ@mail.gmail.com> (sfid-20190618_215938_912601_E3CB8D3C)
+References: <380a6185-7ad1-6be0-060b-e6e5d4126917@linaro.org>
+         <a94676381a5ca662c848f7a725562f721c43ce76.camel@sipsolutions.net>
+         <CAK8P3a0kV-i7BJJ2X6C=5n65rSGfo8fUiC4J_G-+M8EctYKbkg@mail.gmail.com>
+         <066e9b39f937586f0f922abf801351553ec2ba1d.camel@sipsolutions.net>
+         <b3686626-e2d8-bc9c-6dd0-9ebb137715af@linaro.org>
+         <b23a83c18055470c5308fcd1eed018056371fc1d.camel@sipsolutions.net>
+         <CAK8P3a1FeUQR3pgoQxHoRK05JGORyR+TFATVQiijLWtFKTv6OQ@mail.gmail.com>
+         (sfid-20190618_215938_912601_E3CB8D3C)
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5 (3.28.5-2.fc28) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Although we may have multiple fonts in kernel, the small 8x16 font is
-chosen as default usually unless user specify the boot option.  This
-is suboptimal for monitors with high resolutions.
+On Tue, 2019-06-18 at 21:59 +0200, Arnd Bergmann wrote:
+> 
+> From my understanding, the ioctl interface would create the lower
+> netdev after talking to the firmware, and then user space would use
+> the rmnet interface to create a matching upper-level device for that.
+> This is an artifact of the strong separation of ipa and rmnet in the
+> code.
 
-This patch tries to assign a bigger font for such a high resolution by
-calculating some penalty value.  This won't change anything for a
-standard monitor like Full HD (1920x1080), but for a high res monitor
-like UHD 4K, a bigger font like TER16x32 will be chosen once when
-enabled in Kconfig.
+Huh. But if rmnet has muxing, and IPA supports that, why would you ever
+need multiple lower netdevs?
 
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
----
- lib/fonts/fonts.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+> > > > The software bridging [...]
+> 
+> My understanding for this was that the idea is to use it for
+> connecting bridging between distinct hardware devices behind
+> ipa: if IPA drives both a USB-ether gadget and the 5G modem,
+> you can use to talk to Linux running rmnet, but you can also
+> use rmnet to provide fast usb tethering to 5g and bypass the
+> rest of the network stack. That again may have been a wrong
+> guess on my part.
 
-diff --git a/lib/fonts/fonts.c b/lib/fonts/fonts.c
-index a8e31e9d6fc5..e7258d8c252b 100644
---- a/lib/fonts/fonts.c
-+++ b/lib/fonts/fonts.c
-@@ -106,7 +106,7 @@ EXPORT_SYMBOL(find_font);
- const struct font_desc *get_default_font(int xres, int yres, u32 font_w,
- 					 u32 font_h)
- {
--	int i, c, cc;
-+	int i, c, cc, res;
- 	const struct font_desc *f, *g;
- 
- 	g = NULL;
-@@ -127,6 +127,11 @@ const struct font_desc *get_default_font(int xres, int yres, u32 font_w,
- 		if ((yres < 400) == (f->height <= 8))
- 			c += 1000;
- 
-+		/* prefer a bigger font for high resolution */
-+		res = (xres / f->width) * (yres / f->height) / 1000;
-+		if (res > 20)
-+			c += 20 - res;
-+
- 		if ((font_w & (1 << (f->width - 1))) &&
- 		    (font_h & (1 << (f->height - 1))))
- 			c += 1000;
--- 
-2.16.4
+Hmm. Interesting. It didn't really look to me like that, but I'm really
+getting lost in the code. Anyway, it seems weird, because then you'd
+just bridge the upper netdev with the other ethernet and don't need
+special logic? And I don't see how the ethernet headers would work with
+this now.
+
+> ipa definitely has multiple hardware queues, and the Alex'
+> driver does implement  the data path on those, just not the
+> configuration to enable them.
+
+OK, but perhaps you don't actually have enough to use one for each
+session?
+
+> Guessing once more, I suspect the the XON/XOFF flow control
+> was a workaround for the fact that rmnet and ipa have separate
+> queues. The hardware channel on IPA may fill up, but user space
+> talks to rmnet and still add more frames to it because it doesn't
+> know IPA is busy.
+> 
+> Another possible explanation would be that this is actually
+> forwarding state from the base station to tell the driver to
+> stop sending data over the air.
+
+Yeah, but if you actually have a hardware queue per upper netdev then
+you don't really need this - you just stop the netdev queue when the
+hardware queue is full, and you have flow control automatically.
+
+So I really don't see any reason to have these messages going back and
+forth unless you plan to have multiple sessions muxed on a single
+hardware queue.
+
+And really, if you don't mux multiple sessions onto a single hardware
+queue, you don't need a mux header either, so it all adds up :-)
+
+johannes
 
