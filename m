@@ -2,163 +2,153 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EE27C4A45A
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 16:48:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 34E324A46E
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 16:49:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729622AbfFROsB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Jun 2019 10:48:01 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:29078 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727105AbfFROsB (ORCPT
+        id S1729709AbfFROtx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Jun 2019 10:49:53 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:38091 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729406AbfFROtx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Jun 2019 10:48:01 -0400
-Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5IElFC5071300
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2019 10:48:00 -0400
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2t71axtmpk-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2019 10:48:00 -0400
-Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <naveen.n.rao@linux.vnet.ibm.com>;
-        Tue, 18 Jun 2019 15:47:58 +0100
-Received: from b06avi18626390.portsmouth.uk.ibm.com (9.149.26.192)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 18 Jun 2019 15:47:55 +0100
-Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x5IElkLZ15991058
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 18 Jun 2019 14:47:46 GMT
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 6846D11C05B;
-        Tue, 18 Jun 2019 14:47:54 +0000 (GMT)
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 82F7811C04C;
-        Tue, 18 Jun 2019 14:47:52 +0000 (GMT)
-Received: from naverao1-tp.ibmuc.com (unknown [9.85.74.6])
-        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Tue, 18 Jun 2019 14:47:52 +0000 (GMT)
-From:   "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>
-To:     Michael Ellerman <mpe@ellerman.id.au>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Nicholas Piggin <npiggin@gmail.com>
-Cc:     <linuxppc-dev@lists.ozlabs.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH 7/7] powerpc/kprobes: Allow probing on any ftrace address
-Date:   Tue, 18 Jun 2019 20:17:06 +0530
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <cover.1560868106.git.naveen.n.rao@linux.vnet.ibm.com>
-References: <cover.1560868106.git.naveen.n.rao@linux.vnet.ibm.com>
+        Tue, 18 Jun 2019 10:49:53 -0400
+Received: by mail-wm1-f66.google.com with SMTP id s15so3576502wmj.3
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2019 07:49:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=Bw9Az1sDvYftv6OoenbcNn/WFNLrPeZPeUya6SiZhJE=;
+        b=udv6A62ft/6+VkDzxa/PEOUwv3/ZITu7g/8w9iRR9ReSzG9lypxa62Pi4r9SN/Hhll
+         FxiwNMpXKfogjWbeqkzE2jV1lTTjRsI5u2Ncn8o1StwJg3GwNsiQ0HTrn5K0u/7RXh8S
+         e1Q4tcAQsalTh9bGi3YD4OfZYOGVt+uw3PnER43NYbFCThzlpqmKHcTqPQw3ZVPe9tWG
+         PH1NVJSU5xUCVBCrz1s0Olr29daX709FTtmsAxJ+DWL2f1e3r2fWhIlvai+QmhWcokqz
+         +sesl3yqFuJNNFqf70VfLr0azantLnGN1l0EabSUQ1F3+PVqxu2f2zGH9FeOGs9C6sdr
+         aP+A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Bw9Az1sDvYftv6OoenbcNn/WFNLrPeZPeUya6SiZhJE=;
+        b=dTLwo/wZMTxMd1TxTYLhGokmpxYfsEWCliP9sPAyDBdbNNXL7kQIo82ylUPPSF7ay/
+         VmNmo5BqdbirJTlIomEjmY+c8WNO81trG2JUIeMYZW/6S1aRtSfIFd0FzuUkihCBhpDb
+         d+fIr/n2O/IBfQWwZCptf4yixunBPtLf8BU/XyYfcoUxqMjdrU/pFNetjONinRqVRFFJ
+         mIDS0GHc+SFhB/S2cKre1ggbSqML6DAqtEPgqo2AsZsTLTNipserr/VaO1hioe1tDIrT
+         H4JmKQ+26KSlXlm/hWDD3W7LCxS1f+mus7AO1sUkn4pg+zHeEPXGuNX7aHZBvgzy/2U6
+         1aDw==
+X-Gm-Message-State: APjAAAW/YUaJw5hisylEzDLAE5dYIb579OddOuUfjV/Uan516llAPA0Q
+        pGCbYBbdGsXqZUZiNUmmxxGdbg==
+X-Google-Smtp-Source: APXvYqy81kOsWTfc3qI9cyUFMvjSdlsf4pF4JIm5L+OGMDjbnEgEg9Dfd3m/D9WpbJsDGd8xvzXW1Q==
+X-Received: by 2002:a7b:c74a:: with SMTP id w10mr3834115wmk.99.1560869390770;
+        Tue, 18 Jun 2019 07:49:50 -0700 (PDT)
+Received: from [192.168.86.34] (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
+        by smtp.googlemail.com with ESMTPSA id j189sm3881237wmb.48.2019.06.18.07.49.49
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 18 Jun 2019 07:49:50 -0700 (PDT)
+Subject: Re: [PATCH] dmaengine: qcom-bam: fix circular buffer handling
+To:     Sricharan R <sricharan@codeaurora.org>, vkoul@kernel.org
+Cc:     dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org
+References: <20190614142012.31384-1-srinivas.kandagatla@linaro.org>
+ <f4522b78-b406-954c-57b7-923e6ab31f96@codeaurora.org>
+From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Message-ID: <ab29c08b-d509-a275-f208-ace1041a27af@linaro.org>
+Date:   Tue, 18 Jun 2019 15:49:49 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19061814-0020-0000-0000-0000034B28F5
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19061814-0021-0000-0000-0000219E7782
-Message-Id: <d26f5467577ff0aeecea55e7035ea64e303bdf17.1560868106.git.naveen.n.rao@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-18_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=238 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1906180119
+In-Reply-To: <f4522b78-b406-954c-57b7-923e6ab31f96@codeaurora.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-With KPROBES_ON_FTRACE, kprobe is allowed to be inserted on instructions
-that branch to _mcount (referred to as ftrace location). With
--mprofile-kernel, we now include the preceding 'mflr r0' as being part
-of the ftrace location.
+Hi Sricharan,
 
-However, by default, probing on an instruction that is not actually the
-branch to _mcount() is prohibited, as that is considered to not be at an
-instruction boundary. This is not the case on powerpc, so allow the same
-by overriding arch_check_ftrace_location()
+On 18/06/2019 08:13, Sricharan R wrote:
+> Hi Srini,
+> 
+> On 6/14/2019 7:50 PM, Srinivas Kandagatla wrote:
+>> For some reason arguments to most of the circular buffers
+>> macros are used in reverse, tail is used for head and vice versa.
+>>
+>> This leads to bam thinking that there is an extra descriptor at the
+>> end and leading to retransmitting descriptor which was not scheduled
+>> by any driver. This happens after MAX_DESCRIPTORS (4096) are scheduled
+>> and done, so most of the drivers would not notice this, unless they are
+>> heavily using bam dma. Originally found this issue while testing
+>> SoundWire over SlimBus on DB845c which uses DMA very heavily for
+>> read/writes.
+>>
+>> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+>> ---
+>>   drivers/dma/qcom/bam_dma.c | 9 ++++-----
+>>   1 file changed, 4 insertions(+), 5 deletions(-)
+>>
+>> diff --git a/drivers/dma/qcom/bam_dma.c b/drivers/dma/qcom/bam_dma.c
+>> index cb860cb53c27..43d7b0a9713a 100644
+>> --- a/drivers/dma/qcom/bam_dma.c
+>> +++ b/drivers/dma/qcom/bam_dma.c
+>> @@ -350,8 +350,8 @@ static const struct reg_offset_data bam_v1_7_reg_info[] = {
+>>   #define BAM_DESC_FIFO_SIZE	SZ_32K
+>>   #define MAX_DESCRIPTORS (BAM_DESC_FIFO_SIZE / sizeof(struct bam_desc_hw) - 1)
+>>   #define BAM_FIFO_SIZE	(SZ_32K - 8)
+>> -#define IS_BUSY(chan)	(CIRC_SPACE(bchan->tail, bchan->head,\
+>> -			 MAX_DESCRIPTORS + 1) == 0)
+>> +#define IS_BUSY(chan)	(CIRC_SPACE(bchan->head, bchan->tail,\
+>> +			 MAX_DESCRIPTORS) == 0)
+>>   
+>>   struct bam_chan {
+>>   	struct virt_dma_chan vc;
+>> @@ -806,7 +806,7 @@ static u32 process_channel_irqs(struct bam_device *bdev)
+>>   		offset /= sizeof(struct bam_desc_hw);
+>>   
+>>   		/* Number of bytes available to read */
+>> -		avail = CIRC_CNT(offset, bchan->head, MAX_DESCRIPTORS + 1);
+>> +		avail = CIRC_CNT(bchan->head, offset, MAX_DESCRIPTORS);
+>>
+>   one question, so MAX_DESCRIPTORS is already a mask,
+>      #define MAX_DESCRIPTORS (BAM_DESC_FIFO_SIZE / sizeof(struct bam_desc_hw) - 1)
+> 
+>   CIRC_CNT/SPACE macros also does a size - 1, so would it not be a problem if we
+>   just pass MAX_DESCRIPTORS ?
 
-In addition, we update kprobe_ftrace_handler() to detect this scenarios
-and to pass the proper nip to the pre and post probe handlers.
+Thanks for looking at this,
+TBH, usage of CIRC_* macros is only valid for power-of-2 buffers,
+In bam case MAX_DESCRIPTORS is 4095.
+Am really not sure why 8 bytes have been removed from fifo data buffer size.
+So basically usage of these macros is incorrect in bam case, this need 
+to be fixed properly.
 
-Signed-off-by: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
----
- arch/powerpc/kernel/kprobes-ftrace.c | 30 ++++++++++++++++++++++++++++
- 1 file changed, 30 insertions(+)
+Do you agree?
 
-diff --git a/arch/powerpc/kernel/kprobes-ftrace.c b/arch/powerpc/kernel/kprobes-ftrace.c
-index 972cb28174b2..6a0bd3c16cb6 100644
---- a/arch/powerpc/kernel/kprobes-ftrace.c
-+++ b/arch/powerpc/kernel/kprobes-ftrace.c
-@@ -12,14 +12,34 @@
- #include <linux/preempt.h>
- #include <linux/ftrace.h>
- 
-+/*
-+ * With -mprofile-kernel, we patch two instructions -- the branch to _mcount
-+ * as well as the preceding 'mflr r0'. Both these instructions are claimed
-+ * by ftrace and we should allow probing on either instruction.
-+ */
-+int arch_check_ftrace_location(struct kprobe *p)
-+{
-+	if (ftrace_location((unsigned long)p->addr))
-+		p->flags |= KPROBE_FLAG_FTRACE;
-+	return 0;
-+}
-+
- /* Ftrace callback handler for kprobes */
- void kprobe_ftrace_handler(unsigned long nip, unsigned long parent_nip,
- 			   struct ftrace_ops *ops, struct pt_regs *regs)
- {
- 	struct kprobe *p;
-+	int mflr_kprobe = 0;
- 	struct kprobe_ctlblk *kcb;
- 
- 	p = get_kprobe((kprobe_opcode_t *)nip);
-+	if (unlikely(!p)) {
-+		p = get_kprobe((kprobe_opcode_t *)(nip - MCOUNT_INSN_SIZE));
-+		if (!p)
-+			return;
-+		mflr_kprobe = 1;
-+	}
-+
- 	if (unlikely(!p) || kprobe_disabled(p))
- 		return;
- 
-@@ -33,6 +53,9 @@ void kprobe_ftrace_handler(unsigned long nip, unsigned long parent_nip,
- 		 */
- 		regs->nip -= MCOUNT_INSN_SIZE;
- 
-+		if (mflr_kprobe)
-+			regs->nip -= MCOUNT_INSN_SIZE;
-+
- 		__this_cpu_write(current_kprobe, p);
- 		kcb->kprobe_status = KPROBE_HIT_ACTIVE;
- 		if (!p->pre_handler || !p->pre_handler(p, regs)) {
-@@ -45,6 +68,8 @@ void kprobe_ftrace_handler(unsigned long nip, unsigned long parent_nip,
- 				kcb->kprobe_status = KPROBE_HIT_SSDONE;
- 				p->post_handler(p, regs, 0);
- 			}
-+			if (mflr_kprobe)
-+				regs->nip += MCOUNT_INSN_SIZE;
- 		}
- 		/*
- 		 * If pre_handler returns !0, it changes regs->nip. We have to
-@@ -57,6 +82,11 @@ NOKPROBE_SYMBOL(kprobe_ftrace_handler);
- 
- int arch_prepare_kprobe_ftrace(struct kprobe *p)
- {
-+	if ((unsigned long)p->addr & 0x03) {
-+		printk("Attempt to register kprobe at an unaligned address\n");
-+		return -EILSEQ;
-+	}
-+
- 	p->ainsn.insn = NULL;
- 	p->ainsn.boostable = -1;
- 	return 0;
--- 
-2.22.0
+Vinod, can you hold off with this patch, I will try to find some time 
+this week to cook up a better patch removing the usage of these macros.
 
+
+
+thanks,
+srini
+
+> 
+> Regards,
+>   Sricharan
+>    
+>>   		list_for_each_entry_safe(async_desc, tmp,
+>>   					 &bchan->desc_list, desc_node) {
+>> @@ -997,8 +997,7 @@ static void bam_start_dma(struct bam_chan *bchan)
+>>   			bam_apply_new_config(bchan, async_desc->dir);
+>>   
+>>   		desc = async_desc->curr_desc;
+>> -		avail = CIRC_SPACE(bchan->tail, bchan->head,
+>> -				   MAX_DESCRIPTORS + 1);
+>> +		avail = CIRC_SPACE(bchan->head, bchan->tail, MAX_DESCRIPTORS);
+>>   
+>>   		if (async_desc->num_desc > avail)
+>>   			async_desc->xfer_len = avail;
+>>
+> 
