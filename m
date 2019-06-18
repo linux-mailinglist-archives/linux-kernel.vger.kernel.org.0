@@ -2,127 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5621149DF3
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 12:03:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 277EA49E16
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 12:12:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729139AbfFRKDF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Jun 2019 06:03:05 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:27384 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726023AbfFRKDC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Jun 2019 06:03:02 -0400
-Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5IA1kqT030835;
-        Tue, 18 Jun 2019 12:02:45 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
- : date : message-id : in-reply-to : references : mime-version :
- content-type; s=STMicroelectronics;
- bh=ZNwrI9/E19QXLogxcwXLV+/wtFzsSvuPA6hnm0JPcRM=;
- b=pKMdFCu6z9l+iNvnnuFWzm/ITOJ4O7pD3VwiAG1XRPj/EB74vBLEw9mGVCi62jp2V5X5
- RjADxoXBtw/U9b/GCXEAfxfHiMYwkJXGI5Gn6qLPyYbpQc+I0Qo6stg4MqxSDer2tBN5
- L4mqGeMTarLq8Kl/+5adGTt4SDB9/1dBIKMgdYNmSS870lUw+A8L2npVXeztPIxUIRmp
- 1cAEHe/3YSBft1VMmwYslw9wRl3BTvDm25TYlOGgdzrrYZGmU9CmzZs6zsFXvgM4Ec9x
- TIpUF7DcIxoi1jwFxLdZ1vc8OlxFpsDDMs5FplvHeTTLvb5lpfNAHiRdaXy4EmSC+oy3 HA== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2t68n3nv0e-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Tue, 18 Jun 2019 12:02:45 +0200
-Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id C84553A;
-        Tue, 18 Jun 2019 10:02:43 +0000 (GMT)
-Received: from Webmail-eu.st.com (Safex1hubcas21.st.com [10.75.90.44])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id A704725DD;
-        Tue, 18 Jun 2019 10:02:43 +0000 (GMT)
-Received: from SAFEX1HUBCAS23.st.com (10.75.90.47) by SAFEX1HUBCAS21.st.com
- (10.75.90.44) with Microsoft SMTP Server (TLS) id 14.3.439.0; Tue, 18 Jun
- 2019 12:02:43 +0200
-Received: from localhost (10.201.23.31) by webmail-ga.st.com (10.75.90.48)
- with Microsoft SMTP Server (TLS) id 14.3.439.0; Tue, 18 Jun 2019 12:02:43
- +0200
-From:   Erwan Le Ray <erwan.leray@st.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        "Alexandre Torgue" <alexandre.torgue@st.com>
-CC:     <linux-serial@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        "Erwan Le Ray" <erwan.leray@st.com>,
-        Fabrice Gasnier <fabrice.gasnier@st.com>
-Subject: [PATCH 5/5] serial: stm32: add RX and TX FIFO flush
-Date:   Tue, 18 Jun 2019 12:02:26 +0200
-Message-ID: <1560852146-3393-6-git-send-email-erwan.leray@st.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1560852146-3393-1-git-send-email-erwan.leray@st.com>
-References: <1560852146-3393-1-git-send-email-erwan.leray@st.com>
+        id S1729045AbfFRKMA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Jun 2019 06:12:00 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:42254 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725988AbfFRKL7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Jun 2019 06:11:59 -0400
+Received: from zn.tnic (p200300EC2F07D6004142CF2FAC564D4B.dip0.t-ipconnect.de [IPv6:2003:ec:2f07:d600:4142:cf2f:ac56:4d4b])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id CEF0D1EC09E2;
+        Tue, 18 Jun 2019 12:11:57 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1560852717;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=MoWVPmpMAbs1bfVejPZhyhsg72fZJLKwwn2XNif5WfM=;
+        b=Q5GnsCpQ54V6Z8IyXAEBDNG2k+kEe1heRl6f7EKCSm93wgSioxWrc77FZXYECUirzuhjx5
+        OVk7OFTVHR3xvnwJy3araxJm6p2mUDX+f38bNdhUhTeW3u2Uzn8PcFTjSXxH7D28M5cVfK
+        JCEXX4FT/C8745VrTR/s1ftextMWFl8=
+Date:   Tue, 18 Jun 2019 12:11:49 +0200
+From:   Borislav Petkov <bp@alien8.de>
+To:     "Lendacky, Thomas" <Thomas.Lendacky@amd.com>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "x86@kernel.org" <x86@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Baoquan He <bhe@redhat.com>, Lianbo Jiang <lijiang@redhat.com>
+Subject: Re: [PATCH v2 2/2] x86/mm: Create an SME workarea in the kernel for
+ early encryption
+Message-ID: <20190618101149.GB5629@zn.tnic>
+References: <cover.1560546537.git.thomas.lendacky@amd.com>
+ <cdb1fab3558ae11a50c922d8f373c2125c862e10.1560546537.git.thomas.lendacky@amd.com>
+ <20190617110241.GH27127@zn.tnic>
+ <9e7e1757-2f2f-ae34-5b31-cca5e164a6a9@amd.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.201.23.31]
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-18_05:,,
- signatures=0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <9e7e1757-2f2f-ae34-5b31-cca5e164a6a9@amd.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Adds a flush of RX and TX FIFOs, and fixes some errors:
-- adds RX FIFO flush in startup fonction
-- removes the useless transmitter enabling in startup fonction
-  (e.g. receiver only, see Documentation/serial/driver)
-- configures FIFO threshold before enabling it, rather than after
-- flushes both TX and RX in set_termios function
+On Tue, Jun 18, 2019 at 01:49:13AM +0000, Lendacky, Thomas wrote:
+> Whoever uses it in the future could rename it if desired.  But I can do
+> that now. Is there a preferred name?  I can leave it as .early_scratch
+> or .early_workarea.
 
-Signed-off-by: Erwan Le Ray <erwan.leray@st.com>
+So looking at readelf output of vmlinux, we already have .init.*
+sections for stuff which gets freed after booting but I'm guessing we
+can't have the SME scratch area in the middle because you need to be
+able to say which range gets encrypted without encrypting the scratch
+area itself...
 
-diff --git a/drivers/tty/serial/stm32-usart.c b/drivers/tty/serial/stm32-usart.c
-index 4083145..21dc380 100644
---- a/drivers/tty/serial/stm32-usart.c
-+++ b/drivers/tty/serial/stm32-usart.c
-@@ -602,11 +602,11 @@ static int stm32_startup(struct uart_port *port)
- 	if (ret)
- 		return ret;
- 
--	val = stm32_port->cr1_irq | USART_CR1_TE | USART_CR1_RE;
--	if (stm32_port->fifoen)
--		val |= USART_CR1_FIFOEN;
--	stm32_set_bits(port, ofs->cr1, val);
-+	/* RX FIFO Flush */
-+	if (ofs->rqr != UNDEF_REG)
-+		stm32_set_bits(port, ofs->rqr, USART_RQR_RXFRQ);
- 
-+	/* Tx and RX FIFO configuration */
- 	if (stm32_port->fifoen) {
- 		val = readl_relaxed(port->membase + ofs->cr3);
- 		val &= ~(USART_CR3_TXFTCFG_MASK | USART_CR3_RXFTCFG_MASK);
-@@ -615,6 +615,12 @@ static int stm32_startup(struct uart_port *port)
- 		writel_relaxed(val, port->membase + ofs->cr3);
- 	}
- 
-+	/* RX FIFO enabling */
-+	val = stm32_port->cr1_irq | USART_CR1_RE;
-+	if (stm32_port->fifoen)
-+		val |= USART_CR1_FIFOEN;
-+	stm32_set_bits(port, ofs->cr1, val);
-+
- 	return 0;
- }
- 
-@@ -697,8 +703,12 @@ static void stm32_set_termios(struct uart_port *port, struct ktermios *termios,
- 	/* Stop serial port and reset value */
- 	writel_relaxed(0, port->membase + ofs->cr1);
- 
--	cr1 = USART_CR1_TE | USART_CR1_RE;
-+	/* flush RX & TX FIFO */
-+	if (ofs->rqr != UNDEF_REG)
-+		stm32_set_bits(port, ofs->rqr,
-+			       USART_RQR_TXFRQ | USART_RQR_RXFRQ);
- 
-+	cr1 = USART_CR1_TE | USART_CR1_RE;
- 	if (stm32_port->fifoen)
- 		cr1 |= USART_CR1_FIFOEN;
- 	cr2 = 0;
+But you could call it .init.scratch or so, so that it fits with the
+already existing naming nomenclature for ranges which get freed after
+init.
+
+> I think it's easier to show the alignment requirements that SME has for
+> this section by having it be its own section.
+
+Not only that, from ld.info:
+
+"   The special output section name '/DISCARD/' may be used to discard
+input sections.  Any input sections which are assigned to an output
+section named '/DISCARD/' are not included in the output file."
+
+but you want that section present in the output file.
+
+Thx.
+
 -- 
-1.9.1
+Regards/Gruss,
+    Boris.
 
+Good mailing practices for 400: avoid top-posting and trim the reply.
