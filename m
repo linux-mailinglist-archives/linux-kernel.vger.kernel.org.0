@@ -2,37 +2,45 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 758244A3F1
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 16:29:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 557804A3FB
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 16:29:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729595AbfFRO3J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Jun 2019 10:29:09 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:50484 "EHLO
+        id S1729765AbfFRO31 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Jun 2019 10:29:27 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:50504 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729381AbfFRO3G (ORCPT
+        by vger.kernel.org with ESMTP id S1729394AbfFRO3H (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Jun 2019 10:29:06 -0400
+        Tue, 18 Jun 2019 10:29:07 -0400
 Received: from [167.98.27.226] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hdF6e-0007nD-4h; Tue, 18 Jun 2019 15:29:04 +0100
+        id 1hdF6e-0007nJ-5U; Tue, 18 Jun 2019 15:29:04 +0100
 Received: from ben by deadeye with local (Exim 4.92)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hdF6d-0000HG-Bs; Tue, 18 Jun 2019 15:29:03 +0100
+        id 1hdF6d-0000Hh-Jm; Tue, 18 Jun 2019 15:29:03 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     torvalds@linux-foundation.org, Guenter Roeck <linux@roeck-us.net>,
-        akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>
-Date:   Tue, 18 Jun 2019 15:27:59 +0100
-Message-ID: <lsq.1560868079.359853905@decadent.org.uk>
+CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
+        "Jonathan Lemon" <jonathan.lemon@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        "Jonathan Looney" <jtl@netflix.com>,
+        "Eric Dumazet" <edumazet@google.com>,
+        "Yuchung Cheng" <ycheng@google.com>,
+        "Neal Cardwell" <ncardwell@google.com>,
+        "Tyler Hicks" <tyhicks@canonical.com>,
+        "Bruce Curtis" <brucec@netflix.com>
+Date:   Tue, 18 Jun 2019 15:28:02 +0100
+Message-ID: <lsq.1560868082.58770032@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 00/10] 3.16.69-rc1 review
+Subject: [PATCH 3.16 07/10] tcp: limit payload size of sacked skbs
+In-Reply-To: <lsq.1560868079.359853905@decadent.org.uk>
 X-SA-Exim-Connect-IP: 167.98.27.226
 X-SA-Exim-Mail-From: ben@decadent.org.uk
 X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
@@ -41,78 +49,176 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is the start of the stable review cycle for the 3.16.69 release.
-There are 10 patches in this series, which will be posted as responses
-to this one.  If anyone has any issues with these being applied, please
-let me know.
+3.16.69-rc1 review patch.  If anyone has any objections, please let me know.
 
-Responses should be made by Thu Jun 20 14:27:59 UTC 2019.
-Anything received after that time might be too late.
+------------------
 
-All the patches have also been committed to the linux-3.16.y-rc branch of
-https://git.kernel.org/pub/scm/linux/kernel/git/bwh/linux-stable-rc.git .
-A shortlog and diffstat can be found below.
+From: Eric Dumazet <edumazet@google.com>
 
-Ben.
+commit 3b4929f65b0d8249f19a50245cd88ed1a2f78cff upstream.
 
--------------
+Jonathan Looney reported that TCP can trigger the following crash
+in tcp_shifted_skb() :
 
-Dan Carpenter (1):
-      drivers/virt/fsl_hypervisor.c: prevent integer overflow in ioctl
-         [6a024330650e24556b8a18cc654ad00cfecf6c6c]
+	BUG_ON(tcp_skb_pcount(skb) < pcount);
 
-Eric Dumazet (4):
-      tcp: add tcp_min_snd_mss sysctl
-         [5f3e2bf008c2221478101ee72f5cb4654b9fc363]
-      tcp: enforce tcp_min_snd_mss in tcp_mtu_probing()
-         [967c05aee439e6e5d7d805e195b3a20ef5c433d6]
-      tcp: limit payload size of sacked skbs
-         [3b4929f65b0d8249f19a50245cd88ed1a2f78cff]
-      tcp: tcp_fragment() should apply sane memory limits
-         [f070ef2ac66716357066b683fb0baf55f8191a2e]
+This can happen if the remote peer has advertized the smallest
+MSS that linux TCP accepts : 48
 
-Jason Yan (1):
-      scsi: megaraid_sas: return error when create DMA pool failed
-         [bcf3b67d16a4c8ffae0aa79de5853435e683945c]
+An skb can hold 17 fragments, and each fragment can hold 32KB
+on x86, or 64KB on PowerPC.
 
-Jiri Kosina (1):
-      mm/mincore.c: make mincore() more conservative
-         [134fca9063ad4851de767d1768180e5dede9a881]
+This means that the 16bit witdh of TCP_SKB_CB(skb)->tcp_gso_segs
+can overflow.
 
-Oleg Nesterov (1):
-      mm: introduce vma_is_anonymous(vma) helper
-         [b5330628546616af14ff23075fbf8d4ad91f6e25]
+Note that tcp_sendmsg() builds skbs with less than 64KB
+of payload, so this problem needs SACK to be enabled.
+SACK blocks allow TCP to coalesce multiple skbs in the retransmit
+queue, thus filling the 17 fragments to maximal capacity.
 
-Sriram Rajagopalan (1):
-      ext4: zero out the unused memory region in the extent tree block
-         [592acbf16821288ecdc4192c47e3774a4c48bb64]
+CVE-2019-11477 -- u16 overflow of TCP_SKB_CB(skb)->tcp_gso_segs
 
-Young Xiao (1):
-      Bluetooth: hidp: fix buffer overflow
-         [a1616a5ac99ede5d605047a9012481ce7ff18b16]
+Backport notes, provided by Joao Martins <joao.m.martins@oracle.com>
 
- Documentation/networking/ip-sysctl.txt    |  8 ++++++++
- Makefile                                  |  4 ++--
- drivers/scsi/megaraid/megaraid_sas_base.c |  1 +
- drivers/virt/fsl_hypervisor.c             |  3 +++
- fs/ext4/extents.c                         | 17 +++++++++++++++--
- include/linux/mm.h                        |  5 +++++
- include/linux/tcp.h                       |  3 +++
- include/net/tcp.h                         |  3 +++
- include/uapi/linux/snmp.h                 |  1 +
- mm/memory.c                               |  8 ++++----
- mm/mincore.c                              | 21 +++++++++++++++++++++
- net/bluetooth/hidp/sock.c                 |  1 +
- net/ipv4/proc.c                           |  1 +
- net/ipv4/sysctl_net_ipv4.c                | 11 +++++++++++
- net/ipv4/tcp.c                            |  1 +
- net/ipv4/tcp_input.c                      | 27 ++++++++++++++++++++++-----
- net/ipv4/tcp_output.c                     |  9 +++++++--
- net/ipv4/tcp_timer.c                      |  1 +
- 18 files changed, 110 insertions(+), 15 deletions(-)
+v4.15 or since commit 737ff314563 ("tcp: use sequence distance to
+detect reordering") had switched from the packet-based FACK tracking and
+switched to sequence-based.
 
--- 
-Ben Hutchings
-I'm always amazed by the number of people who take up solipsism because
-they heard someone else explain it. - E*Borg on alt.fan.pratchett
+v4.14 and older still have the old logic and hence on
+tcp_skb_shift_data() needs to retain its original logic and have
+@fack_count in sync. In other words, we keep the increment of pcount with
+tcp_skb_pcount(skb) to later used that to update fack_count. To make it
+more explicit we track the new skb that gets incremented to pcount in
+@next_pcount, and we get to avoid the constant invocation of
+tcp_skb_pcount(skb) all together.
+
+Fixes: 832d11c5cd07 ("tcp: Try to restore large SKBs while SACK processing")
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Reported-by: Jonathan Looney <jtl@netflix.com>
+Acked-by: Neal Cardwell <ncardwell@google.com>
+Reviewed-by: Tyler Hicks <tyhicks@canonical.com>
+Cc: Yuchung Cheng <ycheng@google.com>
+Cc: Bruce Curtis <brucec@netflix.com>
+Cc: Jonathan Lemon <jonathan.lemon@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+[Salvatore Bonaccorso: Adjust for context changes to backport to
+4.9.168]
+[bwh: Backported to 3.16: adjust context]
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+---
+ include/linux/tcp.h   |  4 ++++
+ include/net/tcp.h     |  2 ++
+ net/ipv4/tcp.c        |  1 +
+ net/ipv4/tcp_input.c  | 26 ++++++++++++++++++++------
+ net/ipv4/tcp_output.c |  6 +++---
+ 5 files changed, 30 insertions(+), 9 deletions(-)
+
+--- a/include/linux/tcp.h
++++ b/include/linux/tcp.h
+@@ -394,4 +394,7 @@ static inline int fastopen_init_queue(st
+ 	return 0;
+ }
+ 
++int tcp_skb_shift(struct sk_buff *to, struct sk_buff *from, int pcount,
++		  int shiftlen);
++
+ #endif	/* _LINUX_TCP_H */
+--- a/include/net/tcp.h
++++ b/include/net/tcp.h
+@@ -55,6 +55,8 @@ void tcp_time_wait(struct sock *sk, int
+ 
+ #define MAX_TCP_HEADER	(128 + MAX_HEADER)
+ #define MAX_TCP_OPTION_SPACE 40
++#define TCP_MIN_SND_MSS		48
++#define TCP_MIN_GSO_SIZE	(TCP_MIN_SND_MSS - MAX_TCP_OPTION_SPACE)
+ 
+ /* 
+  * Never offer a window over 32767 without using window scaling. Some
+--- a/net/ipv4/tcp.c
++++ b/net/ipv4/tcp.c
+@@ -3169,6 +3169,7 @@ void __init tcp_init(void)
+ 	int max_rshare, max_wshare, cnt;
+ 	unsigned int i;
+ 
++	BUILD_BUG_ON(TCP_MIN_SND_MSS <= MAX_TCP_OPTION_SPACE);
+ 	BUILD_BUG_ON(sizeof(struct tcp_skb_cb) > sizeof(skb->cb));
+ 
+ 	percpu_counter_init(&tcp_sockets_allocated, 0);
+--- a/net/ipv4/tcp_input.c
++++ b/net/ipv4/tcp_input.c
+@@ -1296,7 +1296,7 @@ static bool tcp_shifted_skb(struct sock
+ 	TCP_SKB_CB(skb)->seq += shifted;
+ 
+ 	skb_shinfo(prev)->gso_segs += pcount;
+-	BUG_ON(skb_shinfo(skb)->gso_segs < pcount);
++	WARN_ON_ONCE(tcp_skb_pcount(skb) < pcount);
+ 	skb_shinfo(skb)->gso_segs -= pcount;
+ 
+ 	/* When we're adding to gso_segs == 1, gso_size will be zero,
+@@ -1362,6 +1362,21 @@ static int skb_can_shift(const struct sk
+ 	return !skb_headlen(skb) && skb_is_nonlinear(skb);
+ }
+ 
++int tcp_skb_shift(struct sk_buff *to, struct sk_buff *from,
++		  int pcount, int shiftlen)
++{
++	/* TCP min gso_size is 8 bytes (TCP_MIN_GSO_SIZE)
++	 * Since TCP_SKB_CB(skb)->tcp_gso_segs is 16 bits, we need
++	 * to make sure not storing more than 65535 * 8 bytes per skb,
++	 * even if current MSS is bigger.
++	 */
++	if (unlikely(to->len + shiftlen >= 65535 * TCP_MIN_GSO_SIZE))
++		return 0;
++	if (unlikely(tcp_skb_pcount(to) + pcount > 65535))
++		return 0;
++	return skb_shift(to, from, shiftlen);
++}
++
+ /* Try collapsing SACK blocks spanning across multiple skbs to a single
+  * skb.
+  */
+@@ -1373,6 +1388,7 @@ static struct sk_buff *tcp_shift_skb_dat
+ 	struct tcp_sock *tp = tcp_sk(sk);
+ 	struct sk_buff *prev;
+ 	int mss;
++	int next_pcount;
+ 	int pcount = 0;
+ 	int len;
+ 	int in_sack;
+@@ -1467,7 +1483,7 @@ static struct sk_buff *tcp_shift_skb_dat
+ 	if (!after(TCP_SKB_CB(skb)->seq + len, tp->snd_una))
+ 		goto fallback;
+ 
+-	if (!skb_shift(prev, skb, len))
++	if (!tcp_skb_shift(prev, skb, pcount, len))
+ 		goto fallback;
+ 	if (!tcp_shifted_skb(sk, skb, state, pcount, len, mss, dup_sack))
+ 		goto out;
+@@ -1486,9 +1502,10 @@ static struct sk_buff *tcp_shift_skb_dat
+ 		goto out;
+ 
+ 	len = skb->len;
+-	if (skb_shift(prev, skb, len)) {
+-		pcount += tcp_skb_pcount(skb);
+-		tcp_shifted_skb(sk, skb, state, tcp_skb_pcount(skb), len, mss, 0);
++	next_pcount = tcp_skb_pcount(skb);
++	if (tcp_skb_shift(prev, skb, next_pcount, len)) {
++		pcount += next_pcount;
++		tcp_shifted_skb(sk, skb, state, next_pcount, len, mss, 0);
+ 	}
+ 
+ out:
+--- a/net/ipv4/tcp_output.c
++++ b/net/ipv4/tcp_output.c
+@@ -1254,8 +1254,8 @@ static inline int __tcp_mtu_to_mss(struc
+ 	mss_now -= icsk->icsk_ext_hdr_len;
+ 
+ 	/* Then reserve room for full set of TCP options and 8 bytes of data */
+-	if (mss_now < 48)
+-		mss_now = 48;
++	if (mss_now < TCP_MIN_SND_MSS)
++		mss_now = TCP_MIN_SND_MSS;
+ 	return mss_now;
+ }
+ 
 
