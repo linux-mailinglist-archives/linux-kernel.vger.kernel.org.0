@@ -2,96 +2,145 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B5DE04A87B
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 19:33:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6A09A4A87F
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 19:35:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729963AbfFRRdM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Jun 2019 13:33:12 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:41983 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728572AbfFRRdM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Jun 2019 13:33:12 -0400
-Received: by mail-pg1-f194.google.com with SMTP id 83so8050290pgg.8
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2019 10:33:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=+2YaykVn++bx3Y+KHfNzRgksUkYd1b1acyBCPmK1ESg=;
-        b=nP9AQBSFgnWkiOmTl5JuSjlUIjru21cKetedkVCknU4uibtUwP8x3JBiF+KIaUmF9i
-         MWD6RVEFFdb5jDE+htDOk8e6og5Zmse54tZaqA8IHb4BFz3VlJoFyi0tzcaU2my3XO4D
-         Gfu4u3ZklbxntrED5I0pvVQYoARSj3MScZpEQre325s9DLcXh8SUSy16XAn9rvKRTABh
-         m4cElPAUa+T0t5p4uMGhErlTMBjHfgVBt/BR5tOQKiTFW+WcvZQHy1LtaUwUZcfnpEPi
-         THeUpF3Eelz+9+3p7Mp76VSdJ3fdhTLBJccKS+bHNy8upBr+MOJZHKLr+pyMyafTO/Ak
-         r6ow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=+2YaykVn++bx3Y+KHfNzRgksUkYd1b1acyBCPmK1ESg=;
-        b=ucflYMxl3Vh5Vt6Vd0JBejkrkgMV6kIY0wNWrf9rYIwQ7h4J6HU+vj03IHlQxr4pVJ
-         VVHotsxXNrlZY4ScGy1EThs2urUCYHoE3qevT6jgw2H2kGzfVs+c7lFOUcgKc0ctvDJ6
-         /FgyawltW2/VdCdBa06WDadBLG5hlRxIrrvIqt8rgPFyPJeeq9U3ZKmtECDJCTMjh1Jw
-         zVD1WzHkIfiu1KhvPz2jdjat24bx7ykG8lnMAcH9hxijZFqEzHaS/hcRpXlJXDhqZNWL
-         iowgeg+pfjcAK7XT4wAgxZndNIOAyF/vCR7ZJaesQZdNEh4qZ8Nj9uuynALv68PlZ1LK
-         oQQQ==
-X-Gm-Message-State: APjAAAWhcnOUQdOkAwrVy0kjCu05oxofGfMWmQDkQbsAsARewK4tv4Qe
-        NE2lCWREIWvbE7DIBJ68+Cg=
-X-Google-Smtp-Source: APXvYqyBsqmtBMnp7Z7YAXsHQY8QimuRAZp2vUDpUXc0RAHt+cIJtpblpYxaO3236O5oZKHs9zp0yA==
-X-Received: by 2002:a62:8643:: with SMTP id x64mr87048095pfd.7.1560879191390;
-        Tue, 18 Jun 2019 10:33:11 -0700 (PDT)
-Received: from hari-Inspiron-1545 ([183.83.92.187])
-        by smtp.gmail.com with ESMTPSA id 14sm17529219pfj.36.2019.06.18.10.33.07
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 18 Jun 2019 10:33:10 -0700 (PDT)
-Date:   Tue, 18 Jun 2019 23:03:05 +0530
-From:   Hariprasad Kelam <hariprasad.kelam@gmail.com>
-To:     Larry Finger <Larry.Finger@lwfinger.net>,
-        Florian Schilhabel <florian.c.schilhabel@googlemail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Julia Lawall <julia.lawall@lip6.fr>,
-        Michael Straube <straube.linux@gmail.com>,
-        Hariprasad Kelam <hariprasad.kelam@gmail.com>,
-        Dafna Hirschfeld <dafna3@gmail.com>,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] staging: rtl8712: rtl87x_io : make use of kzalloc
-Message-ID: <20190618173305.GA4776@hari-Inspiron-1545>
+        id S1730053AbfFRRei (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Jun 2019 13:34:38 -0400
+Received: from frisell.zx2c4.com ([192.95.5.64]:59741 "EHLO frisell.zx2c4.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729477AbfFRRei (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Jun 2019 13:34:38 -0400
+Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTP id dc3a0052
+        for <linux-kernel@vger.kernel.org>;
+        Tue, 18 Jun 2019 17:01:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=zx2c4.com; h=mime-version
+        :references:in-reply-to:from:date:message-id:subject:to:cc
+        :content-type; s=mail; bh=CRsWCAgoSojlFaaV/iJ0W+G6JQ0=; b=xFUka6
+        W1ocvTxiqRgpv6WFRyfZDG4I269hBbjfN0UoQWRjR+Lkb86Wv/yrfwbfMSQDTb8P
+        8urWGi++8gFY/fTm9G+2xSgIFMNAFzVtlUC33pFx1S8T0BI0OLCAEYj5dHVLxV/+
+        i6GyCw25pzL6CEwhBu+1jc1QL+v+n/5R/aRCTB6CmcZoAvArUoTKslNQIqaFk1zR
+        nNXcOtCZifVkjZEj738/dYy3XvB+AC2rO0daNATxYts7t5g8zYCteMu3rm/EAsTe
+        dAfzKZjRguMD2byFrHhVwyXPquXkLTB/624p5CFk4e5jCl3QRgGU2jpWSl2dKgjB
+        TBTGP+1CSjvqQgPg==
+Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id e61c639a (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256:NO)
+        for <linux-kernel@vger.kernel.org>;
+        Tue, 18 Jun 2019 17:01:34 +0000 (UTC)
+Received: by mail-ot1-f46.google.com with SMTP id r6so16098099oti.3
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2019 10:34:35 -0700 (PDT)
+X-Gm-Message-State: APjAAAUOEntq+MDMGNUTL/VQW+aP2FkF8N4Chn6dkzAJGBRsovLNGrk7
+        g1PaNY3KGVv3C74lCAyY0WvdTQR9fvQCFCdB5VQ=
+X-Google-Smtp-Source: APXvYqxi72+7BrxQDq+XhOhsqy6yiDIKS8cT9yCkQ7K6T49DqCwH+SLeB+cm7CZGpCIwkwvH2PfoQWqNVuAAch22eI8=
+X-Received: by 2002:a9d:67d5:: with SMTP id c21mr9745045otn.243.1560879275230;
+ Tue, 18 Jun 2019 10:34:35 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
+References: <CAHmME9qBDtO1vJrA2Ch3SQigsu435wR7Q3vTm_3R=u=BE49S-Q@mail.gmail.com>
+ <alpine.DEB.2.21.1906112257120.2214@nanos.tec.linutronix.de>
+ <20190612090257.GF3436@hirez.programming.kicks-ass.net> <CAHmME9obwzZ5x=p3twDfNYux+kg0h4QAGe0ePAkZ2KqvguBK3g@mail.gmail.com>
+ <20190612122843.GJ3436@hirez.programming.kicks-ass.net>
+In-Reply-To: <20190612122843.GJ3436@hirez.programming.kicks-ass.net>
+From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
+Date:   Tue, 18 Jun 2019 19:34:23 +0200
+X-Gmail-Original-Message-ID: <CAHmME9pZpJj3zL3nEmz6CSouZs8pmt4D1VO26Zv8imVEPuJFeA@mail.gmail.com>
+Message-ID: <CAHmME9pZpJj3zL3nEmz6CSouZs8pmt4D1VO26Zv8imVEPuJFeA@mail.gmail.com>
+Subject: Re: infinite loop in read_hpet from ktime_get_boot_fast_ns
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Clemens Ladisch <clemens@ladisch.de>,
+        Sultan Alsawaf <sultan@kerneltoast.com>,
+        Waiman Long <longman@redhat.com>, X86 ML <x86@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-kmalloc followed by memset can be replaced with kzalloc.
+Hi Peter,
 
-Signed-off-by: Hariprasad Kelam <hariprasad.kelam@gmail.com>
----
- drivers/staging/rtl8712/rtl871x_io.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+On Wed, Jun 12, 2019 at 2:29 PM Peter Zijlstra <peterz@infradead.org> wrote:
+> > and the comment at the top mentions explicit sleep hooks. I wasn't
+> > sure which function to use from here, though.
+>
+> Either local_clock() or cpu_clock(cpu). The sleep hooks are not
+> something the consumer has to worry about.
 
-diff --git a/drivers/staging/rtl8712/rtl871x_io.c b/drivers/staging/rtl8712/rtl871x_io.c
-index 17dafef..87024d6 100644
---- a/drivers/staging/rtl8712/rtl871x_io.c
-+++ b/drivers/staging/rtl8712/rtl871x_io.c
-@@ -107,13 +107,11 @@ uint r8712_alloc_io_queue(struct _adapter *adapter)
- 	INIT_LIST_HEAD(&pio_queue->processing);
- 	INIT_LIST_HEAD(&pio_queue->pending);
- 	spin_lock_init(&pio_queue->lock);
--	pio_queue->pallocated_free_ioreqs_buf = kmalloc(NUM_IOREQ *
-+	pio_queue->pallocated_free_ioreqs_buf = kzalloc(NUM_IOREQ *
- 						(sizeof(struct io_req)) + 4,
- 						GFP_ATOMIC);
- 	if ((pio_queue->pallocated_free_ioreqs_buf) == NULL)
- 		goto alloc_io_queue_fail;
--	memset(pio_queue->pallocated_free_ioreqs_buf, 0,
--			(NUM_IOREQ * (sizeof(struct io_req)) + 4));
- 	pio_queue->free_ioreqs_buf = pio_queue->pallocated_free_ioreqs_buf + 4
- 			- ((addr_t)(pio_queue->pallocated_free_ioreqs_buf)
- 			& 3);
--- 
-2.7.4
+I'm not sure whether this is another bug or just a misunderstanding on
+what we meant about sleep, but I observed the following behavior,
+below, with local_clock(). Notably, local_clock() isn't advanced
+during sleep in the way that the other mechanisms are.
 
+Regards,
+Jason
+
+[50865.699714] wireguard: local_clock: 1, jiffies: 1,
+jiffies_monotoany: 1, ktime_boot: 1, ktime_boot_coarse: 1
+[50866.723923] wireguard: local_clock: 2, jiffies: 2,
+jiffies_monotoany: 2, ktime_boot: 2, ktime_boot_coarse: 2
+[50867.747896] wireguard: local_clock: 3, jiffies: 3,
+jiffies_monotoany: 3, ktime_boot: 3, ktime_boot_coarse: 3
+[50868.772297] wireguard: local_clock: 4, jiffies: 4,
+jiffies_monotoany: 4, ktime_boot: 4, ktime_boot_coarse: 4
+[50869.796419] wireguard: local_clock: 5, jiffies: 5,
+jiffies_monotoany: 5, ktime_boot: 5, ktime_boot_coarse: 5
+[50870.820719] wireguard: local_clock: 6, jiffies: 6,
+jiffies_monotoany: 6, ktime_boot: 6, ktime_boot_coarse: 6
+[50871.834768] wireguard: local_clock: 7, jiffies: 7,
+jiffies_monotoany: 10, ktime_boot: 10, ktime_boot_coarse: 10
+[50869.918760] PM: suspend entry (deep)
+[50872.846134] PM: suspend exit
+[50872.874955] wireguard: local_clock: 8, jiffies: 8,
+jiffies_monotoany: 11, ktime_boot: 11, ktime_boot_coarse: 11
+[50873.899142] wireguard: local_clock: 9, jiffies: 9,
+jiffies_monotoany: 12, ktime_boot: 12, ktime_boot_coarse: 12
+[50874.923368] wireguard: local_clock: 10, jiffies: 10,
+jiffies_monotoany: 13, ktime_boot: 13, ktime_boot_coarse: 13
+[50875.947641] wireguard: local_clock: 11, jiffies: 11,
+jiffies_monotoany: 14, ktime_boot: 14, ktime_boot_coarse: 14
+[50876.971833] wireguard: local_clock: 12, jiffies: 12,
+jiffies_monotoany: 15, ktime_boot: 15, ktime_boot_coarse: 15
+[50877.995969] wireguard: local_clock: 13, jiffies: 13,
+jiffies_monotoany: 16, ktime_boot: 16, ktime_boot_coarse: 16
+[50879.020220] wireguard: local_clock: 14, jiffies: 14,
+jiffies_monotoany: 17, ktime_boot: 17, ktime_boot_coarse: 17
+[50880.044395] wireguard: local_clock: 15, jiffies: 15,
+jiffies_monotoany: 18, ktime_boot: 18, ktime_boot_coarse: 18
+
+static void ugh(struct work_struct *w)
+{
+  int i;
+  u64 start_localclock = local_clock(), end_localclock;
+  u64 start_jiffies = jiffies64_to_nsecs(get_jiffies_64()), end_jiffies;
+  u64 start_jiffiesmonotoany =
+ktime_to_ns(ktime_mono_to_any(ns_to_ktime(jiffies64_to_nsecs(get_jiffies_64())),
+TK_OFFS_BOOT)), end_jiffiesmonotoany;
+  u64 start_ktimeboot = ktime_get_boot_ns(), end_ktimeboot;
+  u64 start_ktimebootcoarse =
+ktime_to_ns(ktime_get_coarse_boottime()), end_ktimebootcoarse;
+
+  for (i = 0; i < 15; ++i) {
+    msleep(1000);
+    end_localclock = local_clock();
+    end_jiffies = jiffies64_to_nsecs(get_jiffies_64());
+    end_jiffiesmonotoany =
+ktime_to_ns(ktime_mono_to_any(ns_to_ktime(jiffies64_to_nsecs(get_jiffies_64())),
+TK_OFFS_BOOT));
+    end_ktimeboot = ktime_get_boot_ns();
+    end_ktimebootcoarse = ktime_to_ns(ktime_get_coarse_boottime());
+    pr_err("local_clock: %llu, jiffies: %llu, jiffies_monotoany: %llu,
+ktime_boot: %llu, ktime_boot_coarse: %llu\n",
+           (end_localclock - start_localclock) / NSEC_PER_SEC,
+           (end_jiffies - start_jiffies) / NSEC_PER_SEC,
+           (end_jiffiesmonotoany - start_jiffiesmonotoany) / NSEC_PER_SEC,
+           (end_ktimeboot - start_ktimeboot) / NSEC_PER_SEC,
+           (end_ktimebootcoarse - start_ktimebootcoarse) / NSEC_PER_SEC);
+  }
+}
+
+static DECLARE_WORK(blah, ugh);
+
+static int __init mod_init(void)
+{
+  schedule_work(&blah);
+  return 0;
+}
