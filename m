@@ -2,83 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A398F49DD4
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 11:55:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C660E49DE2
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 11:57:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729039AbfFRJz0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Jun 2019 05:55:26 -0400
-Received: from relay9-d.mail.gandi.net ([217.70.183.199]:34991 "EHLO
-        relay9-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725900AbfFRJzZ (ORCPT
+        id S1729051AbfFRJ5x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Jun 2019 05:57:53 -0400
+Received: from cmccmta2.chinamobile.com ([221.176.66.80]:2497 "EHLO
+        cmccmta2.chinamobile.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725900AbfFRJ5x (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Jun 2019 05:55:25 -0400
-X-Originating-IP: 92.137.69.152
-Received: from localhost (alyon-656-1-672-152.w92-137.abo.wanadoo.fr [92.137.69.152])
-        (Authenticated sender: alexandre.belloni@bootlin.com)
-        by relay9-d.mail.gandi.net (Postfix) with ESMTPSA id 95FB3FF81A;
-        Tue, 18 Jun 2019 09:55:22 +0000 (UTC)
-Date:   Tue, 18 Jun 2019 11:55:21 +0200
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     Claudiu.Beznea@microchip.com
-Cc:     mturquette@baylibre.com, sboyd@kernel.org,
-        Nicolas.Ferre@microchip.com, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        claudiu.beznea@gmail.com
-Subject: Re: [PATCH 0/7] clk: at91: sckc: improve error path
-Message-ID: <20190618095521.GE23549@piout.net>
-References: <1560440205-4604-1-git-send-email-claudiu.beznea@microchip.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1560440205-4604-1-git-send-email-claudiu.beznea@microchip.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+        Tue, 18 Jun 2019 05:57:53 -0400
+Received: from spf.mail.chinamobile.com (unknown[172.16.121.11]) by rmmx-syy-dmz-app05-12005 (RichMail) with SMTP id 2ee55d08b5840db-7b1a6; Tue, 18 Jun 2019 17:57:24 +0800 (CST)
+X-RM-TRANSID: 2ee55d08b5840db-7b1a6
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG: 00000000
+Received: from localhost.localdomain (unknown[223.105.0.243])
+        by rmsmtp-syy-appsvr06-12006 (RichMail) with SMTP id 2ee65d08b583eb7-6d771;
+        Tue, 18 Jun 2019 17:57:24 +0800 (CST)
+X-RM-TRANSID: 2ee65d08b583eb7-6d771
+From:   Ding Xiang <dingxiang@cmss.chinamobile.com>
+To:     srinivas.kandagatla@linaro.org
+Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] slimbus: remove redundant dev_err message
+Date:   Tue, 18 Jun 2019 17:56:29 +0800
+Message-Id: <1560851789-12228-1-git-send-email-dingxiang@cmss.chinamobile.com>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 13/06/2019 15:37:06+0000, Claudiu.Beznea@microchip.com wrote:
-> From: Claudiu Beznea <claudiu.beznea@microchip.com>
-> 
-> Hi,
-> 
-> This series tries to improve error path for slow clock registrations
-> by adding functions to free resources and using them on failures.
-> 
+devm_ioremap_resource already contains error message, so remove
+the redundant dev_err message
 
-Does the platform even boot when the slow clock is not available? 
+Signed-off-by: Ding Xiang <dingxiang@cmss.chinamobile.com>
+---
+ drivers/slimbus/qcom-ctrl.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-The TCB clocksource would fail at:
-
-        tc.slow_clk = of_clk_get_by_name(node->parent, "slow_clk");
-        if (IS_ERR(tc.slow_clk))
-                return PTR_ERR(tc.slow_clk);
-
-
-> It is created on top of patch series at [1].
-> 
-> Thank you,
-> Claudiu Beznea
-> 
-> [1] https://lore.kernel.org/lkml/1558433454-27971-1-git-send-email-claudiu.beznea@microchip.com/
-> 
-> Claudiu Beznea (7):
->   clk: at91: sckc: add support to free slow oscillator
->   clk: at91: sckc: add support to free slow rc oscillator
->   clk: at91: sckc: add support to free slow clock osclillator
->   clk: at91: sckc: improve error path for sam9x5 sck register
->   clk: at91: sckc: remove unnecessary line
->   clk: at91: sckc: improve error path for sama5d4 sck registration
->   clk: at91: sckc: use dedicated functions to unregister clock
-> 
->  drivers/clk/at91/sckc.c | 122 ++++++++++++++++++++++++++++++++++--------------
->  1 file changed, 86 insertions(+), 36 deletions(-)
-> 
-> -- 
-> 2.7.4
-> 
-
+diff --git a/drivers/slimbus/qcom-ctrl.c b/drivers/slimbus/qcom-ctrl.c
+index ad3e2e23..a444badd 100644
+--- a/drivers/slimbus/qcom-ctrl.c
++++ b/drivers/slimbus/qcom-ctrl.c
+@@ -528,10 +528,8 @@ static int qcom_slim_probe(struct platform_device *pdev)
+ 
+ 	slim_mem = platform_get_resource_byname(pdev, IORESOURCE_MEM, "ctrl");
+ 	ctrl->base = devm_ioremap_resource(ctrl->dev, slim_mem);
+-	if (IS_ERR(ctrl->base)) {
+-		dev_err(&pdev->dev, "IOremap failed\n");
++	if (IS_ERR(ctrl->base))
+ 		return PTR_ERR(ctrl->base);
+-	}
+ 
+ 	sctrl->set_laddr = qcom_set_laddr;
+ 	sctrl->xfer_msg = qcom_xfer_msg;
 -- 
-Alexandre Belloni, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+1.9.1
+
+
+
