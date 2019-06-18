@@ -2,87 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8D62A4A8DD
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 19:55:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1047D4A8E3
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 19:55:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729997AbfFRRzV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Jun 2019 13:55:21 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:35371 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729285AbfFRRzV (ORCPT
+        id S1730190AbfFRRzr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Jun 2019 13:55:47 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:43782 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729285AbfFRRzr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Jun 2019 13:55:21 -0400
-Received: by mail-pg1-f194.google.com with SMTP id s27so8108822pgl.2
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2019 10:55:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=sZQNDbvRCX1/xmAgz48y9nkM0uP28/QjVvVkkR3CQOA=;
-        b=C4Iz1IGyiHO+KxnxVZJMXrvK0VMpgE0VV8M58ezWEBhGaMJqGoxNPncfAY9jQXro1a
-         q2Dzr43f5dlfHfhfUcftvrpCzA/BC3JWfBqDig80Yi+GH7GTGVcyEBvjlU4h93NUMTU2
-         +Vklf+mbjyEb6tgJFqATVI5ElgnQ8aZb5U95w6io2EoG9i6QBhq77xIblzZdHUys2JRy
-         0LBU6WNQ2ZZsau9C761+3HwY60Nx2/yUBgCKfAonztX4KVHD1vomR22vIfTmFOCMSPqV
-         q6Gl2llLemRxkoD0x8cQq0zZfmEQmxMSNapLKLrpIX0CTkoiBtCm7l+1eaHX3ykn+one
-         WwpA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=sZQNDbvRCX1/xmAgz48y9nkM0uP28/QjVvVkkR3CQOA=;
-        b=JeilnJL+XHr+xAsdDy5Er7eZcuXh2BMyhchCCJNHdfvQkSPE1t8JIeDsTcoOpFfd1n
-         H0oQ6BL5vsi+IjoorrQhdDts4KYpiXcDtYoQEvbDP77fMb94KU5G+cKZrz6M9LhptPyv
-         SU7aBT5ymQnhIxE2e1vDFXsVwlS3tQYU4pjN7M2dlSC7415LirHyg952y+SfYH0s+/UE
-         TYE/XdvyzCWjk3rtDZOYNymhJ97vVgRXzJDuFGsZcK2Jd8QUdlItTs6SKWSDhyVMBBdd
-         3MwQOYmneKGDCpwPL0rsh/O6mEQwYfqJNwRCIpv6TqDfuShZibrqj0Pxz66DLd/azo+p
-         PpsQ==
-X-Gm-Message-State: APjAAAWu7zd8S329jvYCgscJjwnRDeO4da77TdfB99fcVdB4P0fsK0+3
-        aatugqAtcRBo5WkL8wJikNQ=
-X-Google-Smtp-Source: APXvYqx96I5XvE7xRAPdGzOeTmm+5O+cLVaDcbbg2VIuBv+nd9XhInsanHzz00TGwE4M8MslR6ab5w==
-X-Received: by 2002:a17:90a:e397:: with SMTP id b23mr6347869pjz.140.1560880520698;
-        Tue, 18 Jun 2019 10:55:20 -0700 (PDT)
-Received: from hari-Inspiron-1545 ([183.83.92.187])
-        by smtp.gmail.com with ESMTPSA id c18sm17498763pfc.180.2019.06.18.10.55.18
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 18 Jun 2019 10:55:20 -0700 (PDT)
-Date:   Tue, 18 Jun 2019 23:25:16 +0530
-From:   Hariprasad Kelam <hariprasad.kelam@gmail.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        John Whitmore <johnfwhitmore@gmail.com>,
-        Hariprasad Kelam <hariprasad.kelam@gmail.com>,
-        Puranjay Mohan <puranjay12@gmail.com>,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] staging: rtl8192u: ieee80211: Remove redundant memset
-Message-ID: <20190618175516.GA6518@hari-Inspiron-1545>
+        Tue, 18 Jun 2019 13:55:47 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5IHrkdQ192936;
+        Tue, 18 Jun 2019 17:55:33 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=hRFOK+pjnetQHO1VbczYeIM67ED6Qp4/xDYjAsyHg0Y=;
+ b=duqFJcbLo0ULPOq2ei4bvjgi9cATMVZgQJD+V3y+jt4MrMtO0NaxV9tb3/6PTsmoiaiL
+ JFlD9+CcThW1ctgAMj7UtErFYTYYhYG3KN6rTqpLlHxg3Rmid4wkU6YfW+7a9HBCz9aO
+ yevFg+iwtdJa+B24KFPywrI6D6eopuRC2EmsPfAVKcjRX7toXFnd6pJM3ubnFiguI6s/
+ PxXUgR/Y8CkEuEhhpNgYDREND86pAfsQ/FKMynBRQnB5CuOQrKTGdQHC7qoM2IfwFP0G
+ JUs49S3k+Xo3jtVc7bHvUq2U5k9KUWCSfPS/Z+IUeySsGSijMWi1zbhl7orlHoKYswa7 xw== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by aserp2120.oracle.com with ESMTP id 2t4rmp60gn-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 18 Jun 2019 17:55:32 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5IHt79E081741;
+        Tue, 18 Jun 2019 17:55:32 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userp3020.oracle.com with ESMTP id 2t5h5tw6d1-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 18 Jun 2019 17:55:31 +0000
+Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x5IHtTve008642;
+        Tue, 18 Jun 2019 17:55:29 GMT
+Received: from [192.168.1.222] (/71.63.128.209)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 18 Jun 2019 10:55:28 -0700
+Subject: Re: [PATCH v3 2/2] mm: hugetlb: soft-offline:
+ dissolve_free_huge_page() return zero on !PageHuge
+To:     Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>, linux-mm@kvack.org
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        xishi.qiuxishi@alibaba-inc.com,
+        "Chen, Jerry T" <jerry.t.chen@intel.com>,
+        "Zhuo, Qiuxu" <qiuxu.zhuo@intel.com>, linux-kernel@vger.kernel.org,
+        Anshuman Khandual <anshuman.khandual@arm.com>
+References: <1560761476-4651-1-git-send-email-n-horiguchi@ah.jp.nec.com>
+ <1560761476-4651-3-git-send-email-n-horiguchi@ah.jp.nec.com>
+From:   Mike Kravetz <mike.kravetz@oracle.com>
+Message-ID: <53844c4d-966e-48d3-f174-b0d3598c180c@oracle.com>
+Date:   Tue, 18 Jun 2019 10:55:27 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <1560761476-4651-3-git-send-email-n-horiguchi@ah.jp.nec.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9292 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1906180143
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9292 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=2 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1906180143
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-alloc_etherdev function internally calls kvzalloc . So we may not need
-explicit memset after this call.
+On 6/17/19 1:51 AM, Naoya Horiguchi wrote:
+> madvise(MADV_SOFT_OFFLINE) often returns -EBUSY when calling soft offline
+> for hugepages with overcommitting enabled. That was caused by the suboptimal
+> code in current soft-offline code. See the following part:
+> 
+>     ret = migrate_pages(&pagelist, new_page, NULL, MPOL_MF_MOVE_ALL,
+>                             MIGRATE_SYNC, MR_MEMORY_FAILURE);
+>     if (ret) {
+>             ...
+>     } else {
+>             /*
+>              * We set PG_hwpoison only when the migration source hugepage
+>              * was successfully dissolved, because otherwise hwpoisoned
+>              * hugepage remains on free hugepage list, then userspace will
+>              * find it as SIGBUS by allocation failure. That's not expected
+>              * in soft-offlining.
+>              */
+>             ret = dissolve_free_huge_page(page);
+>             if (!ret) {
+>                     if (set_hwpoison_free_buddy_page(page))
+>                             num_poisoned_pages_inc();
+>             }
+>     }
+>     return ret;
+> 
+> Here dissolve_free_huge_page() returns -EBUSY if the migration source page
+> was freed into buddy in migrate_pages(), but even in that case we actually
+> has a chance that set_hwpoison_free_buddy_page() succeeds. So that means
+> current code gives up offlining too early now.
+> 
+> dissolve_free_huge_page() checks that a given hugepage is suitable for
+> dissolving, where we should return success for !PageHuge() case because
+> the given hugepage is considered as already dissolved.
+> 
+> This change also affects other callers of dissolve_free_huge_page(),
+> which are cleaned up together.
+> 
+> Reported-by: Chen, Jerry T <jerry.t.chen@intel.com>
+> Tested-by: Chen, Jerry T <jerry.t.chen@intel.com>
+> Signed-off-by: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
 
-Signed-off-by: Hariprasad Kelam <hariprasad.kelam@gmail.com>
----
- drivers/staging/rtl8192u/ieee80211/ieee80211_module.c | 1 -
- 1 file changed, 1 deletion(-)
+Thanks,
 
-diff --git a/drivers/staging/rtl8192u/ieee80211/ieee80211_module.c b/drivers/staging/rtl8192u/ieee80211/ieee80211_module.c
-index 3532ea9..4a6c3f6 100644
---- a/drivers/staging/rtl8192u/ieee80211/ieee80211_module.c
-+++ b/drivers/staging/rtl8192u/ieee80211/ieee80211_module.c
-@@ -109,7 +109,6 @@ struct net_device *alloc_ieee80211(int sizeof_priv)
- 	}
- 
- 	ieee = netdev_priv(dev);
--	memset(ieee, 0, sizeof(struct ieee80211_device) + sizeof_priv);
- 	ieee->dev = dev;
- 
- 	err = ieee80211_networks_allocate(ieee);
+Reviewed-by: Mike Kravetz <mike.kravetz@oracle.com>
+
 -- 
-2.7.4
-
+Mike Kravetz
