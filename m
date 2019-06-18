@@ -2,70 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0588C4ABE4
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 22:35:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0533B4ABE6
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 22:35:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730679AbfFRUeZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Jun 2019 16:34:25 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:49168 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730176AbfFRUeZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Jun 2019 16:34:25 -0400
-Received: from zn.tnic (p200300EC2F07D6009033472370AB0B0E.dip0.t-ipconnect.de [IPv6:2003:ec:2f07:d600:9033:4723:70ab:b0e])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 01E671EC08BF;
-        Tue, 18 Jun 2019 22:34:23 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1560890064;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=3Me18gZ4G0D32oI7Ykod1+DIQFZ1PZOVqgmun10TTO4=;
-        b=h8ccuIFHDMdBvsVgdC3shdMPiM/G+BF2nYA51jFJrWXa3KRnbVTm+wmNvSNraqFXzXoyXJ
-        DDpsOrrFvWWHmb1rCIx7/T98nKWT40nqBPI6Zlv1xDmJPkyPfAbpP8TGXRd03yCFWrjeez
-        2bdRNSJ4uraw8Zs5HBVKxBUc9M4nooQ=
-Date:   Tue, 18 Jun 2019 22:34:16 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     LKML <linux-kernel@vger.kernel.org>, x86@kernel.org
-Subject: Re: [PATCH] x86/microcode: Fix the microcode load on CPU hotplug for
- real
-Message-ID: <20190618203348.GA16699@zn.tnic>
-References: <alpine.DEB.2.21.1906182228350.1766@nanos.tec.linutronix.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.1906182228350.1766@nanos.tec.linutronix.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S1730702AbfFRUei (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Jun 2019 16:34:38 -0400
+Received: from mx2.suse.de ([195.135.220.15]:37346 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730176AbfFRUeh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Jun 2019 16:34:37 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 6FCE0ABE3;
+        Tue, 18 Jun 2019 20:34:36 +0000 (UTC)
+From:   Takashi Iwai <tiwai@suse.de>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org
+Subject: [PATCH RFC 0/3] Automatically choose a bigger font for high resolution screens
+Date:   Tue, 18 Jun 2019 22:34:22 +0200
+Message-Id: <20190618203425.10723-1-tiwai@suse.de>
+X-Mailer: git-send-email 2.16.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 18, 2019 at 10:31:40PM +0200, Thomas Gleixner wrote:
-> A recent change moved the microcode loader hotplug callback into the early
-> startup phase, which is running with interrupts disabled. It missed that
-> the callbacks invoke sysfs functions which might sleep causing nice 'might
-> sleep' splats with proper debugging enabled.
-> 
-> Split the callbacks and only load the microcode in the early startup phase
-> and move the sysfs handling back into the later threaded and preemptible
-> bringup phase where it was before.
-> 
-> Fixes: 78f4e932f776 ("x86/microcode, cpuhotplug: Add a microcode loader CPU hotplug callback")
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-> Cc: stable@vger.kernel.org
-> ---
->  arch/x86/kernel/cpu/microcode/core.c |   15 ++++++++++-----
->  1 file changed, 10 insertions(+), 5 deletions(-)
+Hi,
 
-Acked-by: Borislav Petkov <bp@suse.de>
+this is an RFC patch for automatically selecting a bigger font for
+high resolution monitors if available.  Although we recently got a
+16x32 sized font support in the kernel, using it still requires some
+extra kernel option.  This patch reduces this and the kernel will pick
+up a bigger font.
 
-Thanks for fixing that!
+The logic is simply checking the text screen size.  If it's over a
+threshold, the penalty is given to the function that chooses the
+default font.
+
+The threshold was chosen so that the normal display up to Full HD
+won't be affected.
+
+There are two preliminary patches and they are merely cleanups.  They
+can be applied no matter whether to take the last patch or not.
+
+
+thanks,
+
+Takashi
+
+===
+
+Takashi Iwai (3):
+  fonts: Fix coding style
+  fonts: Use BUILD_BUG_ON() for checking empty font table
+  fonts: Prefer a bigger font for high resolution screens
+
+ lib/fonts/fonts.c | 103 ++++++++++++++++++++++++------------------------------
+ 1 file changed, 46 insertions(+), 57 deletions(-)
 
 -- 
-Regards/Gruss,
-    Boris.
+2.16.4
 
-Good mailing practices for 400: avoid top-posting and trim the reply.
