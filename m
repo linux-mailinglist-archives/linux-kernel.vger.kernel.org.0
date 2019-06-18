@@ -2,80 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B825D4A0F0
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 14:37:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 936364A0F9
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 14:39:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726640AbfFRMhx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Jun 2019 08:37:53 -0400
-Received: from mx2.suse.de ([195.135.220.15]:34060 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725913AbfFRMhx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Jun 2019 08:37:53 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 425E1AD0B;
-        Tue, 18 Jun 2019 12:37:52 +0000 (UTC)
-Date:   Tue, 18 Jun 2019 14:37:50 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Waiman Long <longman@redhat.com>
-Cc:     Christoph Lameter <cl@linux.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Roman Gushchin <guro@fb.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Shakeel Butt <shakeelb@google.com>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        linux-api@vger.kernel.org
-Subject: Re: [PATCH] mm, memcg: Report number of memcg caches in slabinfo
-Message-ID: <20190618123750.GG3318@dhcp22.suse.cz>
-References: <20190617142149.5245-1-longman@redhat.com>
- <20190617143842.GC1492@dhcp22.suse.cz>
- <9e165eae-e354-04c4-6362-0f80fe819469@redhat.com>
+        id S1728792AbfFRMjk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Jun 2019 08:39:40 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:44139 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725913AbfFRMjk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Jun 2019 08:39:40 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45Snhl0Bsrz9sCJ;
+        Tue, 18 Jun 2019 22:39:34 +1000 (AEST)
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     Jonathan Corbet <corbet@lwn.net>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Cc:     Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab@infradead.org>,
+        linux-kernel@vger.kernel.org,
+        Linas Vepstas <linasvepstas@gmail.com>,
+        Russell Currey <ruscur@russell.cc>,
+        Sam Bobroff <sbobroff@linux.ibm.com>,
+        Oliver O'Halloran <oohall@gmail.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Frederic Barrat <fbarrat@linux.ibm.com>,
+        Andrew Donnellan <ajd@linux.ibm.com>,
+        "Manoj N. Kumar" <manoj@linux.ibm.com>,
+        "Matthew R. Ochs" <mrochs@linux.ibm.com>,
+        Uma Krishnan <ukrishn@linux.ibm.com>,
+        Qiang Zhao <qiang.zhao@nxp.com>, Li Yang <leoyang.li@nxp.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>, linux-pci@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-scsi@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Andrew Donnellan <andrew.donnellan@au1.ibm.com>
+Subject: Re: [PATCH v4 19/28] docs: powerpc: convert docs to ReST and rename to *.rst
+In-Reply-To: <20190614143635.3aff154d@lwn.net>
+References: <cover.1560361364.git.mchehab+samsung@kernel.org> <63560c1ee7174952e148a353840a17969fe0be2d.1560361364.git.mchehab+samsung@kernel.org> <20190614143635.3aff154d@lwn.net>
+Date:   Tue, 18 Jun 2019 22:39:32 +1000
+Message-ID: <87blyvoynv.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <9e165eae-e354-04c4-6362-0f80fe819469@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 17-06-19 10:50:23, Waiman Long wrote:
-> On 6/17/19 10:38 AM, Michal Hocko wrote:
-> > [Cc linux-api]
-> >
-> > On Mon 17-06-19 10:21:49, Waiman Long wrote:
-> >> There are concerns about memory leaks from extensive use of memory
-> >> cgroups as each memory cgroup creates its own set of kmem caches. There
-> >> is a possiblity that the memcg kmem caches may remain even after the
-> >> memory cgroup removal.
-> >>
-> >> Therefore, it will be useful to show how many memcg caches are present
-> >> for each of the kmem caches.
-> > How is a user going to use that information?  Btw. Don't we have an
-> > interface to display the number of (dead) cgroups?
-> 
-> The interface to report dead cgroups is for cgroup v2 (cgroup.stat)
-> only. I don't think there is a way to find that for cgroup v1.
+Jonathan Corbet <corbet@lwn.net> writes:
+> On Wed, 12 Jun 2019 14:52:55 -0300
+> Mauro Carvalho Chehab <mchehab+samsung@kernel.org> wrote:
+>
+>> Convert docs to ReST and add them to the arch-specific
+>> book.
+>> 
+>> The conversion here was trivial, as almost every file there
+>> was already using an elegant format close to ReST standard.
+>> 
+>> The changes were mostly to mark literal blocks and add a few
+>> missing section title identifiers.
+>> 
+>> One note with regards to "--": on Sphinx, this can't be used
+>> to identify a list, as it will format it badly. This can be
+>> used, however, to identify a long hyphen - and "---" is an
+>> even longer one.
+>> 
+>> At its new index.rst, let's add a :orphan: while this is not linked to
+>> the main index.rst file, in order to avoid build warnings.
+>> 
+>> Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+>> Acked-by: Andrew Donnellan <andrew.donnellan@au1.ibm.com> # cxl
+>
+> This one fails to apply because ...
+>
+> [...]
+>
+>> diff --git a/Documentation/PCI/pci-error-recovery.rst b/Documentation/PCI/pci-error-recovery.rst
+>> index 83db42092935..acc21ecca322 100644
+>> --- a/Documentation/PCI/pci-error-recovery.rst
+>> +++ b/Documentation/PCI/pci-error-recovery.rst
+>> @@ -422,3 +422,24 @@ That is, the recovery API only requires that:
+>>     - drivers/net/cxgb3
+>>     - drivers/net/s2io.c
+>>     - drivers/net/qlge
+>> +
+>> +>>> As of this writing, there is a growing list of device drivers with
+>> +>>> patches implementing error recovery. Not all of these patches are in
+>> +>>> mainline yet. These may be used as "examples":
+>> +>>>
+>> +>>> drivers/scsi/ipr
+>> +>>> drivers/scsi/sym53c8xx_2
+>> +>>> drivers/scsi/qla2xxx
+>> +>>> drivers/scsi/lpfc
+>> +>>> drivers/next/bnx2.c
+>> +>>> drivers/next/e100.c
+>> +>>> drivers/net/e1000
+>> +>>> drivers/net/e1000e
+>> +>>> drivers/net/ixgb
+>> +>>> drivers/net/ixgbe
+>> +>>> drivers/net/cxgb3
+>> +>>> drivers/net/s2io.c
+>> +>>> drivers/net/qlge  
+>
+> ...of this, which has the look of a set of conflict markers that managed
+> to get committed...?
 
-Doesn't debug_legacy_files provide the information for both cgroups
-APIs?
+I don't think so.
 
-> Also the
-> number of memcg kmem caches may not be the same as the number of
-> memcg's. It can range from 0 to above the number of memcg's.  So it is
-> an interesting number by itself.
+There's some other uses of >>> in that file, eg about line 162:
 
-Is this useful enough to put into slabinfo? Doesn't this sound more like
-a debugfs kinda a thing?
+  >>> The current powerpc implementation assumes that a device driver will
+  >>> *not* schedule or semaphore in this routine; the current powerpc
+  >>> implementation uses one kernel thread to notify all devices;
+  >>> thus, if one device sleeps/schedules, all devices are affected.
+  >>> Doing better requires complex multi-threaded logic in the error
+  >>> recovery implementation (e.g. waiting for all notification threads
+  >>> to "join" before proceeding with recovery.)  This seems excessively
+  >>> complex and not worth implementing.
 
-> From the user perspective, if the numbers is way above the number of
-> memcg's, there is probably something wrong there.
 
--- 
-Michal Hocko
-SUSE Labs
+So it's just an odd choice of emphasis device I think.
+
+cheers
