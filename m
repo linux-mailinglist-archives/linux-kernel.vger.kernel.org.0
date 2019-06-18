@@ -2,78 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B63174AD82
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 23:43:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7EBEB4A25C
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 15:36:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730775AbfFRVnb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Jun 2019 17:43:31 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:35874 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729982AbfFRVna (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Jun 2019 17:43:30 -0400
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: ezequiel)
-        with ESMTPSA id 5B2E8285674
-From:   Ezequiel Garcia <ezequiel@collabora.com>
-To:     dri-devel@lists.freedesktop.org
-Cc:     linux-rockchip@lists.infradead.org,
-        =?UTF-8?q?Heiko=20St=C3=BCbner?= <heiko@sntech.de>,
-        Sandy Huang <hjc@rock-chips.com>, kernel@collabora.com,
-        Sean Paul <seanpaul@chromium.org>,
-        Boris Brezillon <boris.brezillon@collabora.com>,
-        Douglas Anderson <dianders@chromium.org>,
-        Jacopo Mondi <jacopo@jmondi.org>,
-        Ilia Mirkin <imirkin@alum.mit.edu>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Ezequiel Garcia <ezequiel@collabora.com>
-Subject: [PATCH 3/3] ARM: dts: rockchip: Add RK3288 VOP gamma LUT address
-Date:   Tue, 18 Jun 2019 18:34:06 -0300
-Message-Id: <20190618213406.7667-4-ezequiel@collabora.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190618213406.7667-1-ezequiel@collabora.com>
-References: <20190618213406.7667-1-ezequiel@collabora.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S1729323AbfFRNgH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Jun 2019 09:36:07 -0400
+Received: from mga07.intel.com ([134.134.136.100]:21689 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725919AbfFRNgG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Jun 2019 09:36:06 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Jun 2019 06:36:06 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.63,389,1557212400"; 
+   d="scan'208";a="164705578"
+Received: from wvoon-ilbpg2.png.intel.com ([10.88.227.88])
+  by orsmga006.jf.intel.com with ESMTP; 18 Jun 2019 06:36:03 -0700
+From:   Voon Weifeng <weifeng.voon@intel.com>
+To:     "David S. Miller" <davem@davemloft.net>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jose Abreu <joabreu@synopsys.com>,
+        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Vinicius Costa Gomes <vinicius.gomes@intel.com>,
+        Ong Boon Leong <boon.leong.ong@intel.com>,
+        Voon Weifeng <weifeng.voon@intel.com>
+Subject: [RFC net-next 0/5] net: stmmac: Introducing IEEE802.1Qbv feature
+Date:   Wed, 19 Jun 2019 05:36:13 +0800
+Message-Id: <1560893778-6838-1-git-send-email-weifeng.voon@intel.com>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-RK3288 SoC VOPs have optional support Gamma LUT setting,
-which requires specifying the Gamma LUT address in the devicetree.
+Enabling IEEE 802.1Qbv Enhancements for Scheduled Traffics (EST) which
+is available in EQoS ver5.xx. The EST features can be configured using
+tc taprio hw offload which proposed by Vinicius. A few hw tunable data
+are configured through platform data.
 
-Signed-off-by: Ezequiel Garcia <ezequiel@collabora.com>
----
- arch/arm/boot/dts/rk3288.dtsi | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+Ong Boon Leong (1):
+  net: stmmac: introduce IEEE 802.1Qbv configuration functionalities
 
-diff --git a/arch/arm/boot/dts/rk3288.dtsi b/arch/arm/boot/dts/rk3288.dtsi
-index aa017abf4f42..dd40c189b1f0 100644
---- a/arch/arm/boot/dts/rk3288.dtsi
-+++ b/arch/arm/boot/dts/rk3288.dtsi
-@@ -1025,7 +1025,8 @@
- 
- 	vopb: vop@ff930000 {
- 		compatible = "rockchip,rk3288-vop";
--		reg = <0x0 0xff930000 0x0 0x19c>;
-+		reg = <0x0 0xff930000 0x0 0x19c>, <0x0 0xff931000 0x0 0x1000>;
-+		reg-names = "base", "lut";
- 		interrupts = <GIC_SPI 15 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&cru ACLK_VOP0>, <&cru DCLK_VOP0>, <&cru HCLK_VOP0>;
- 		clock-names = "aclk_vop", "dclk_vop", "hclk_vop";
-@@ -1075,7 +1076,8 @@
- 
- 	vopl: vop@ff940000 {
- 		compatible = "rockchip,rk3288-vop";
--		reg = <0x0 0xff940000 0x0 0x19c>;
-+		reg = <0x0 0xff940000 0x0 0x19c>, <0x0 0xff941000 0x0 0x1000>;
-+		reg-names = "base", "lut";
- 		interrupts = <GIC_SPI 16 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&cru ACLK_VOP1>, <&cru DCLK_VOP1>, <&cru HCLK_VOP1>;
- 		clock-names = "aclk_vop", "dclk_vop", "hclk_vop";
+Vinicius Costa Gomes (1):
+  taprio: Add support for hardware offloading
+
+Voon Weifeng (3):
+  net: stmmac: gcl errors reporting and its interrupt handling
+  net: stmmac: enable HW offloading for tc taprio
+  net: stmmac: Set TSN HW tunable after tsn setup
+
+ drivers/net/ethernet/stmicro/stmmac/Makefile      |   2 +-
+ drivers/net/ethernet/stmicro/stmmac/common.h      |   4 +
+ drivers/net/ethernet/stmicro/stmmac/dw_tsn_lib.c  | 913 ++++++++++++++++++++++
+ drivers/net/ethernet/stmicro/stmmac/dw_tsn_lib.h  | 218 ++++++
+ drivers/net/ethernet/stmicro/stmmac/dwmac4_core.c |  16 +
+ drivers/net/ethernet/stmicro/stmmac/hwif.h        |  66 ++
+ drivers/net/ethernet/stmicro/stmmac/stmmac_main.c |  71 ++
+ drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c   |  96 +++
+ include/linux/netdevice.h                         |   1 +
+ include/linux/stmmac.h                            |   4 +
+ include/net/pkt_sched.h                           |  18 +
+ include/uapi/linux/pkt_sched.h                    |   4 +
+ net/sched/sch_taprio.c                            | 263 ++++++-
+ 13 files changed, 1673 insertions(+), 3 deletions(-)
+ create mode 100644 drivers/net/ethernet/stmicro/stmmac/dw_tsn_lib.c
+ create mode 100644 drivers/net/ethernet/stmicro/stmmac/dw_tsn_lib.h
+
 -- 
-2.20.1
+1.9.1
 
