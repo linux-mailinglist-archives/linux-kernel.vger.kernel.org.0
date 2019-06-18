@@ -2,62 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 290404998F
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 08:57:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9D57A499DC
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 09:05:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728807AbfFRG5Y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Jun 2019 02:57:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58934 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726037AbfFRG5Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Jun 2019 02:57:24 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E069C20863;
-        Tue, 18 Jun 2019 05:42:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560836521;
-        bh=+QRebg6toQEXk2xt0KfLP2gEAhm9ZZ14Nl8WNSxXxVs=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=S03fz8RyICJEbA23G+syKb/UQ6INJlvQIhsYIdMJbm/ohR8isujjpXGMw+ffSPkpc
-         3jrEooBnvIdpTh4wF2XMUIaaXB72foaiczdVOCGkdL11jpaWK+LqcsUHYAQmtEFX7+
-         XPvWrK5y8IRFC39MMv4XBbASVs1bbjt+T2L91GNQ=
-Date:   Tue, 18 Jun 2019 07:41:58 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Puranjay Mohan <puranjay12@gmail.com>
-Cc:     Shuah Khan <skhan@linuxfoundation.org>, linux-doc@vger.kernel.org,
-        linux-kernel-mentees@lists.linuxfoundation.org,
-        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>
-Subject: Re: [Linux-kernel-mentees] [PATCH] Documentation: platform: convert
- x86-laptop-drivers.txt to reST
-Message-ID: <20190618054158.GA3713@kroah.com>
-References: <20190618053227.31678-1-puranjay12@gmail.com>
+        id S1728565AbfFRHFr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Jun 2019 03:05:47 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:46485 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725955AbfFRHFr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Jun 2019 03:05:47 -0400
+Received: from p5b06daab.dip0.t-ipconnect.de ([91.6.218.171] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1hd6uL-0006Wk-1p; Tue, 18 Jun 2019 07:43:49 +0200
+Date:   Tue, 18 Jun 2019 07:43:48 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Fenghua Yu <fenghua.yu@intel.com>
+cc:     Andy Lutomirski <luto@kernel.org>, Ingo Molnar <mingo@redhat.com>,
+        Borislav Petkov <bp@alien8.de>, H Peter Anvin <hpa@zytor.com>,
+        Ashok Raj <ashok.raj@intel.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Ravi V Shankar <ravi.v.shankar@intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>, x86 <x86@kernel.org>
+Subject: Re: [PATCH v4 2/5] x86/umwait: Initialize umwait control values
+In-Reply-To: <20190617204619.GC217081@romley-ivt3.sc.intel.com>
+Message-ID: <alpine.DEB.2.21.1906180741440.1963@nanos.tec.linutronix.de>
+References: <1559944837-149589-1-git-send-email-fenghua.yu@intel.com> <1559944837-149589-3-git-send-email-fenghua.yu@intel.com> <CALCETrWtmrwqjThkMKU9YpTDK4o95V4HBb2_yQF2tvx5JZ9Ukw@mail.gmail.com> <20190610041343.GC162238@romley-ivt3.sc.intel.com>
+ <alpine.DEB.2.21.1906112242410.2214@nanos.tec.linutronix.de> <20190617204619.GC217081@romley-ivt3.sc.intel.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190618053227.31678-1-puranjay12@gmail.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 18, 2019 at 11:02:27AM +0530, Puranjay Mohan wrote:
-> This converts the plain text documentation to reStructuredText format.
-> No essential content change.
+On Mon, 17 Jun 2019, Fenghua Yu wrote:
+> On Tue, Jun 11, 2019 at 10:46:55PM +0200, Thomas Gleixner wrote:
+> > On Sun, 9 Jun 2019, Fenghua Yu wrote:
+> > > > Sounds good, but:
+> > > > 
+> > > > > +#define MSR_IA32_UMWAIT_CONTROL_C02            BIT(0)
+> > > > 
+> > > > > +static u32 umwait_control_cached = 100000;
+> > > > 
+> > > > The code seems to disagree.
+> > > 
+> > > The definition of bit[0] is: C0.2 is disabled when bit[0]=1. So
+> > > 100000 means C0.2 is enabled (and max time is 100000).
+> > 
+> > which is totally non obvious. If you have to encode the control bit, then
+> > please make it explicit, i.e. mask out the disable bit in the initializer.
 > 
-> Signed-off-by: Puranjay Mohan <puranjay12@gmail.com>
-> ---
->  Documentation/platform/x86-laptop-drivers.rst | 23 +++++++++++++++++++
->  Documentation/platform/x86-laptop-drivers.txt | 18 ---------------
->  2 files changed, 23 insertions(+), 18 deletions(-)
->  create mode 100644 Documentation/platform/x86-laptop-drivers.rst
->  delete mode 100644 Documentation/platform/x86-laptop-drivers.txt
+> Is this right?
+> 
+> static u32 umwait_control_cached = 100000 & ~MSR_IA32_UMWAIT_CONTROL_C02_DISABLED;
 
-Don't you also need to hook it up to the documentation build process
-when doing this?
+Works, but looks pretty odd. I'd rather create an explicit initializer
+macro, something like:
 
-thanks,
+    	   UMWAIT_CTRL_VAL(100000, UMWAIT_DISABLED);
 
-greg k-h
+Hmm?
+
+Thanks,
+
+	tglx
