@@ -2,151 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 74D1F49911
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 08:43:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 38FF9499A5
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 08:59:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728764AbfFRGnX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Jun 2019 02:43:23 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:34099 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726676AbfFRGnX (ORCPT
+        id S1728809AbfFRG7b convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 18 Jun 2019 02:59:31 -0400
+Received: from lithops.sigma-star.at ([195.201.40.130]:34080 "EHLO
+        lithops.sigma-star.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726158AbfFRG7b (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Jun 2019 02:43:23 -0400
-Received: by mail-wr1-f68.google.com with SMTP id k11so12592555wrl.1
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2019 23:43:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=2qhMEjTGxN0dhDss7cc7zfKbD1VT4IQism6fVgX1NpE=;
-        b=dvsdqA01/pZ+815FjjW8tFL5UWf7khLLQ82Ejhqn6TxNO1tCDktEgPtkMa4HNv7OLR
-         1U39nh2EFsrtSmlNZcgDcq/9sa+nGn3SUOMpDbfIAp95GzajjL3XI+3GbjB5ULFzEoSH
-         IwACWh8kuOmwu5jEKWjMzofeGDXqP9safEXyJXu8ve2REW9BQaUclrQL8parNOK0OQjD
-         B3wkQTkyxFJk8UmfoMVdfQg+Tn/UTwLgckw83gJpr19cDBf/Gz90iGpXy7nsEYrqDA2m
-         eZwEj4HpXDoxWiOrmV6yaBfhp8pBtJeFO0hOjxV5cmt7gkv5WG1rUgP3mWcFMvMsVNL0
-         dfKw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=2qhMEjTGxN0dhDss7cc7zfKbD1VT4IQism6fVgX1NpE=;
-        b=DkSmx4Nb1RhjoXK/0y9qmwA1gbCKZggEC4YQHe5jaEdj8K7NpPjeJb89LGLn/bpTH2
-         EUU3xU5WYOC+mOmcstL69l3e2MUKfu3tg5nU1tw/43kNZFXgMyIL/O748sUB8wr53NfO
-         NHoB1mGNRpAe+W3fJk9FsOJFFcS1Pc0VimpgV95t+JXjnN6rPMSxuDgONtvsoskMOptz
-         zKtU6oFUwj9v92pOa3vg2Dma39eYnoYV9BTmDfLN2g9s7pv2LZzkTrNbwGHbsfQ8PkYD
-         BBKQZU/myhMNyEKd111AtiA5ti6PyHsfVqAjxvrL9/f9tkgZc4RWvdKVvNLG/hULdlHJ
-         HkTw==
-X-Gm-Message-State: APjAAAXdu0TbPqeGm3aqnuRA+jR+qCZKPCNbTzw5UsLoIG961NT2K4fm
-        G//FHgW2ghmw3AXFvRwFBkJDxFtpkLECd8CKVsq9VM0c
-X-Google-Smtp-Source: APXvYqyc9odfP5kl53sVaAJSFZ9kxou4Lg+4NAUEX3RWJa1eraarQrRn5NVyE6c41JtA+QlG76Va2MCtJMEgh2C9gYE=
-X-Received: by 2002:a5d:4b43:: with SMTP id w3mr14892373wrs.166.1560838760111;
- Mon, 17 Jun 2019 23:19:20 -0700 (PDT)
+        Tue, 18 Jun 2019 02:59:31 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by lithops.sigma-star.at (Postfix) with ESMTP id A81DE60A3581;
+        Tue, 18 Jun 2019 08:19:47 +0200 (CEST)
+Received: from lithops.sigma-star.at ([127.0.0.1])
+        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id 9pWdrJ7_AVmW; Tue, 18 Jun 2019 08:19:45 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by lithops.sigma-star.at (Postfix) with ESMTP id DA9546074CF4;
+        Tue, 18 Jun 2019 08:19:45 +0200 (CEST)
+Received: from lithops.sigma-star.at ([127.0.0.1])
+        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id 87yI62wPtELB; Tue, 18 Jun 2019 08:19:45 +0200 (CEST)
+Received: from lithops.sigma-star.at (lithops.sigma-star.at [195.201.40.130])
+        by lithops.sigma-star.at (Postfix) with ESMTP id 99655611C994;
+        Tue, 18 Jun 2019 08:19:45 +0200 (CEST)
+Date:   Tue, 18 Jun 2019 08:19:45 +0200 (CEST)
+From:   Richard Weinberger <richard@nod.at>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     linux-mtd <linux-mtd@lists.infradead.org>,
+        Boris Brezillon <bbrezillon@kernel.org>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Message-ID: <1318390798.95477.1560838785550.JavaMail.zimbra@nod.at>
+In-Reply-To: <20190618030926.30616-1-yamada.masahiro@socionext.com>
+References: <20190618030926.30616-1-yamada.masahiro@socionext.com>
+Subject: Re: [PATCH v2] jffs2: remove C++ style comments from uapi header
 MIME-Version: 1.0
-References: <1560169080-27134-1-git-send-email-yong.wu@mediatek.com> <1560169080-27134-15-git-send-email-yong.wu@mediatek.com>
-In-Reply-To: <1560169080-27134-15-git-send-email-yong.wu@mediatek.com>
-From:   Tomasz Figa <tfiga@google.com>
-Date:   Tue, 18 Jun 2019 15:19:07 +0900
-Message-ID: <CAAFQd5A5GUn1Zq1xF2_2V0MReNPd5bra2F=nquvodSAZUua5AQ@mail.gmail.com>
-Subject: Re: [PATCH v7 14/21] iommu/mediatek: Add mmu1 support
-To:     Yong Wu <yong.wu@mediatek.com>
-Cc:     Joerg Roedel <joro@8bytes.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Evan Green <evgreen@chromium.org>,
-        Will Deacon <will.deacon@arm.com>,
-        "moderated list:ARM/Mediatek SoC support" 
-        <linux-mediatek@lists.infradead.org>,
-        srv_heupstream <srv_heupstream@mediatek.com>,
-        devicetree@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg
-        Roedel <joro@8bytes.org>," <linux-arm-kernel@lists.infradead.org>,
-        "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg
-        Roedel <joro@8bytes.org>," <iommu@lists.linux-foundation.org>,
-        =?UTF-8?B?WWluZ2pvZSBDaGVuICjpmbPoi7HmtLIp?= 
-        <yingjoe.chen@mediatek.com>, youlin.pei@mediatek.com,
-        Nicolas Boichat <drinkcat@chromium.org>, anan.sun@mediatek.com,
-        Matthias Kaehlcke <mka@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
+X-Originating-IP: [195.201.40.130]
+X-Mailer: Zimbra 8.8.8_GA_3025 (ZimbraWebClient - FF60 (Linux)/8.8.8_GA_1703)
+Thread-Topic: jffs2: remove C++ style comments from uapi header
+Thread-Index: deI3m5cpEftGIaGOraBr3ypIKbYSRQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 10, 2019 at 9:21 PM Yong Wu <yong.wu@mediatek.com> wrote:
->
-> Normally the M4U HW connect EMI with smi. the diagram is like below:
->               EMI
->                |
->               M4U
->                |
->             smi-common
->                |
->        -----------------
->        |    |    |     |    ...
->     larb0 larb1  larb2 larb3
->
-> Actually there are 2 mmu cells in the M4U HW, like this diagram:
->
->               EMI
->            ---------
->             |     |
->            mmu0  mmu1     <- M4U
->             |     |
->            ---------
->                |
->             smi-common
->                |
->        -----------------
->        |    |    |     |    ...
->     larb0 larb1  larb2 larb3
->
-> This patch add support for mmu1. In order to get better performance,
-> we could adjust some larbs go to mmu1 while the others still go to
-> mmu0. This is controlled by a SMI COMMON register SMI_BUS_SEL(0x220).
->
-> mt2712, mt8173 and mt8183 M4U HW all have 2 mmu cells. the default
-> value of that register is 0 which means all the larbs go to mmu0
-> defaultly.
->
-> This is a preparing patch for adjusting SMI_BUS_SEL for mt8183.
->
-> Signed-off-by: Yong Wu <yong.wu@mediatek.com>
-> Reviewed-by: Evan Green <evgreen@chromium.org>
-> ---
->  drivers/iommu/mtk_iommu.c | 46 +++++++++++++++++++++++++++++-----------------
->  1 file changed, 29 insertions(+), 17 deletions(-)
->
-> diff --git a/drivers/iommu/mtk_iommu.c b/drivers/iommu/mtk_iommu.c
-> index 3a14301..ec4ce74 100644
-> --- a/drivers/iommu/mtk_iommu.c
-> +++ b/drivers/iommu/mtk_iommu.c
-> @@ -72,26 +72,32 @@
->  #define F_INT_CLR_BIT                          BIT(12)
->
->  #define REG_MMU_INT_MAIN_CONTROL               0x124
-> -#define F_INT_TRANSLATION_FAULT                        BIT(0)
-> -#define F_INT_MAIN_MULTI_HIT_FAULT             BIT(1)
-> -#define F_INT_INVALID_PA_FAULT                 BIT(2)
-> -#define F_INT_ENTRY_REPLACEMENT_FAULT          BIT(3)
-> -#define F_INT_TLB_MISS_FAULT                   BIT(4)
-> -#define F_INT_MISS_TRANSACTION_FIFO_FAULT      BIT(5)
-> -#define F_INT_PRETETCH_TRANSATION_FIFO_FAULT   BIT(6)
-> +                                               /* mmu0 | mmu1 */
-> +#define F_INT_TRANSLATION_FAULT                        (BIT(0) | BIT(7))
-> +#define F_INT_MAIN_MULTI_HIT_FAULT             (BIT(1) | BIT(8))
-> +#define F_INT_INVALID_PA_FAULT                 (BIT(2) | BIT(9))
-> +#define F_INT_ENTRY_REPLACEMENT_FAULT          (BIT(3) | BIT(10))
-> +#define F_INT_TLB_MISS_FAULT                   (BIT(4) | BIT(11))
-> +#define F_INT_MISS_TRANSACTION_FIFO_FAULT      (BIT(5) | BIT(12))
-> +#define F_INT_PRETETCH_TRANSATION_FIFO_FAULT   (BIT(6) | BIT(13))
+----- Ursprüngliche Mail -----
+> Von: "Masahiro Yamada" <yamada.masahiro@socionext.com>
+> An: "linux-mtd" <linux-mtd@lists.infradead.org>
+> CC: "Boris Brezillon" <bbrezillon@kernel.org>, "Miquel Raynal" <miquel.raynal@bootlin.com>, "Brian Norris"
+> <computersforpeace@gmail.com>, "Vignesh Raghavendra" <vigneshr@ti.com>, "Marek Vasut" <marek.vasut@gmail.com>,
+> "Masahiro Yamada" <yamada.masahiro@socionext.com>, "richard" <richard@nod.at>, "David Woodhouse" <dwmw2@infradead.org>,
+> "linux-kernel" <linux-kernel@vger.kernel.org>
+> Gesendet: Dienstag, 18. Juni 2019 05:09:26
+> Betreff: [PATCH v2] jffs2: remove C++ style comments from uapi header
 
-If there are two IOMMUs, shouldn't we have two driver instances handle
-them, instead of making the driver combine them two internally?
+> Linux kernel tolerates C++ style comments these days. Actually, the
+> SPDX License tags for .c files start with //.
+> 
+> On the other hand, uapi headers are written in more strict C, where
+> the C++ comment style is forbidden.
+> 
+> I simply dropped these lines instead of fixing the comment style.
+> 
+> This code has been always commented out since it was added around
+> Linux 2.4.9 (i.e. commented out for more than 17 years).
+> 
+> 'Maybe later...' will never happen.
 
-And, what is even more important from security point of view actually,
-have two separate page tables (aka IOMMU groups) for them?
+:-)
+ 
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 
-Best regards,
-Tomasz
+Acked-by: Richard Weinberger <richard@nod.at>
+
+Thanks,
+//richard
