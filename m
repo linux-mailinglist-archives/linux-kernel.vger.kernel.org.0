@@ -2,109 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 912BC4A280
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 15:40:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AF4774A28B
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 15:41:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729408AbfFRNkf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Jun 2019 09:40:35 -0400
-Received: from foss.arm.com ([217.140.110.172]:41698 "EHLO foss.arm.com"
+        id S1729425AbfFRNle (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Jun 2019 09:41:34 -0400
+Received: from sauhun.de ([88.99.104.3]:40424 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728572AbfFRNkd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Jun 2019 09:40:33 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E46682B;
-        Tue, 18 Jun 2019 06:40:32 -0700 (PDT)
-Received: from e103592.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 726B63F718;
-        Tue, 18 Jun 2019 06:40:31 -0700 (PDT)
-Date:   Tue, 18 Jun 2019 14:40:29 +0100
-From:   Dave Martin <Dave.Martin@arm.com>
-To:     Anisse Astier <aastier@freebox.fr>
-Cc:     Will Deacon <will.deacon@arm.com>,
-        linux-arm-kernel@lists.infradead.org,
+        id S1728905AbfFRNle (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Jun 2019 09:41:34 -0400
+Received: from localhost (p5486CE06.dip0.t-ipconnect.de [84.134.206.6])
+        by pokefinder.org (Postfix) with ESMTPSA id 95E122C047A;
+        Tue, 18 Jun 2019 15:41:30 +0200 (CEST)
+Date:   Tue, 18 Jun 2019 15:41:30 +0200
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Cc:     Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab@infradead.org>,
+        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+        Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Rich Felker <dalias@aerifal.cx>, linux-kernel@vger.kernel.org,
-        Kristina Martsenko <kristina.martsenko@arm.com>,
-        "Dmitry V . Levin" <ldv@altlinux.org>,
-        Ricardo Salveti <ricardo@foundries.io>,
-        Richard Henderson <richard.henderson@linaro.org>
-Subject: Re: [PATCH v2] arm64/sve: <uapi/asm/ptrace.h> should not depend on
- <uapi/linux/prctl.h>
-Message-ID: <20190618134029.GE2790@e103592.cambridge.arm.com>
-References: <20190613163801.21949-1-aastier@freebox.fr>
- <20190614164600.36966-1-aastier@freebox.fr>
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>, Ajay Gupta <ajayg@nvidia.com>,
+        Amit Kucheria <amit.kucheria@linaro.org>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Otto Sabart <ottosabart@seberm.com>,
+        Li Yang <leoyang.li@nxp.com>,
+        Will Deacon <will.deacon@arm.com>, devicetree@vger.kernel.org,
+        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-i2c@vger.kernel.org
+Subject: Re: [PATCH] docs: fix some broken references due to txt->rst renames
+Message-ID: <20190618134130.GA4516@kunai>
+References: <6f09587b7678f2fb378d736f45a02ffa9412cc99.1560864716.git.mchehab+samsung@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="d6Gm4EdcadzBjdND"
 Content-Disposition: inline
-In-Reply-To: <20190614164600.36966-1-aastier@freebox.fr>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <6f09587b7678f2fb378d736f45a02ffa9412cc99.1560864716.git.mchehab+samsung@kernel.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 14, 2019 at 06:46:00PM +0200, Anisse Astier wrote:
-> Otherwise this will create userspace build issues for any program
-> (strace, qemu) that includes both <sys/prctl.h> (with musl libc) and
-> <linux/ptrace.h> (which then includes <asm/ptrace.h>), like this:
-> 
-> 	error: redefinition of 'struct prctl_mm_map'
-> 	 struct prctl_mm_map {
-> 
-> See https://github.com/foundriesio/meta-lmp/commit/6d4a106e191b5d79c41b9ac78fd321316d3013c0
-> for a public example of people working around this issue.
-> 
-> Copying the defines is a bit imperfect here, but better than creating a
-> whole other header for just two defines that would never change, as part
-> of the kernel ABI.
-> 
-> Fixes: 43d4da2c45b2 ("arm64/sve: ptrace and ELF coredump support")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Anisse Astier <aastier@freebox.fr>
-> ---
-> Changes since v1:
->  - made a bit more explicit that we copied defined symbols, in commit
->    and code.
->  - Use Fixes: tag in commit message
-> 
-> Thanks to Dave Martin and Will Deacon for the review.
-> 
-> ---
->  arch/arm64/include/uapi/asm/ptrace.h | 8 +++-----
->  1 file changed, 3 insertions(+), 5 deletions(-)
-> 
-> diff --git a/arch/arm64/include/uapi/asm/ptrace.h b/arch/arm64/include/uapi/asm/ptrace.h
-> index d78623acb649..438759e7e8a7 100644
-> --- a/arch/arm64/include/uapi/asm/ptrace.h
-> +++ b/arch/arm64/include/uapi/asm/ptrace.h
-> @@ -65,8 +65,6 @@
->  
->  #ifndef __ASSEMBLY__
->  
-> -#include <linux/prctl.h>
-> -
->  /*
->   * User structures for general purpose, floating point and debug registers.
->   */
-> @@ -113,10 +111,10 @@ struct user_sve_header {
->  
->  /*
->   * Common SVE_PT_* flags:
-> - * These must be kept in sync with prctl interface in <linux/ptrace.h>
-> + * These must be kept in sync with prctl interface in <linux/prctl.h>
->   */
-> -#define SVE_PT_VL_INHERIT		(PR_SVE_VL_INHERIT >> 16)
-> -#define SVE_PT_VL_ONEXEC		(PR_SVE_SET_VL_ONEXEC >> 16)
-> +#define SVE_PT_VL_INHERIT		((1 << 17) /* PR_SVE_VL_INHERIT */ >> 16)
-> +#define SVE_PT_VL_ONEXEC		((1 << 18) /* PR_SVE_SET_VL_ONEXEC */ >> 16)
 
-FWIW,
-Acked-by: Dave Martin <Dave.Martin@arm.com>
+--d6Gm4EdcadzBjdND
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Ideally we would create a common <uapi/asm/prctl.h> that arm64 could
-specialise as appropriate, but since x86 already has a similar header
-shadowing this, it may be more trouble than it's worth to generalise it.
+On Tue, Jun 18, 2019 at 10:33:58AM -0300, Mauro Carvalho Chehab wrote:
+> There are three left-overs from the recent file renames,
+> probably due to some other conflicting patch.
+>=20
+> Fix them.
+>=20
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 
-Cheers
----Dave
+Thanks!
+
+Acked-by: Wolfram Sang <wsa@the-dreams.de>
+
+
+--d6Gm4EdcadzBjdND
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAl0I6gIACgkQFA3kzBSg
+KbYPmw//S9ererLqN6V1mN1Ixbn0CfKZGd1MAB4a/0PZiXPpCngdRfAog04KBXjI
+xYSX76wEzxv0+SiwU8kElhD15w/9Vjm9vZ8SCYRv2xBSE7W3xd+fv2gDAQf+pb2p
+bHJ5pTs8PRCqJcVLmZirsJ2vvOA1C6NYmb9Sjb4hH4u4+i9fqc0RKjOrO2OZCHx2
+3T6xcu0INuJm1RNX0gHHk06mGjfMUm6unYYHJkOMeup4HTUqDmYvX4U1g/3sIAIy
+kOPwW1ggkEJDebdxyc1uNft0yZKznjx7iOkP/p6wacCUI56jmCMniAt36f76OV8L
+C9Bks/dr9tp4M3z0Jbxa9oJWhc+e8KA/WNgXXnyCCDVg1idhaGgWkW59S05Spu0H
+PgprhEo5QYdT1GvEO28eP+kuFKi7HN5VvOJy794jFkjOPH0A9HK/f1CXmjp9cv3V
+nZhMOzohbh18AXwOG3T4eF9gL3u0WsPK2EH35oFjxH7ty6tmV5CkpVBgzWH1EBxq
+K44uWCs6H6SX3e0Cq5FRgGdvjlpFwQZT4Hbf3IfmukTzurdCi9YSPI228IdLmCPa
+uncvdbThBK4o/O6ndCqx04bEmPEUJdzcYuBlqi38lTonwzN4jvOyabM65Mt/HhW7
+4sy6hg/cLkPuX8tBpKWJoT13jqVTjRvjnxemkSq06yAmOznSxs4=
+=lZcZ
+-----END PGP SIGNATURE-----
+
+--d6Gm4EdcadzBjdND--
