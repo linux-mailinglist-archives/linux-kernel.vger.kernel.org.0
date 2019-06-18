@@ -2,58 +2,135 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E0C3749A41
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 09:17:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2997549A54
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 09:20:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728856AbfFRHRz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Jun 2019 03:17:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41140 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725919AbfFRHRz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Jun 2019 03:17:55 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 21CFC20679;
-        Tue, 18 Jun 2019 07:17:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560842274;
-        bh=gEZIWfSOuWSYvHeslOMpZAj8awrdOD0XeQd46740XIQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=SR2zTKt9NEzCCluJkxlhVi2rFZbbvqHYE93i10IRn7t74A9kfSBuV+jx2qcH2+HD3
-         xievCMWBg/HaUfv7LqW6fJMN0tqMB5agUi9ckFzn/qCCW3d33wipTAS+y0V6yslmxs
-         Yw7oNOrtK2W4bLRHRf1Bmn7MfVpT9ILlqYQCEk5Y=
-Date:   Tue, 18 Jun 2019 09:17:51 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Alan Tull <atull@kernel.org>
-Cc:     Moritz Fischer <mdf@kernel.org>, Dinh Nguyen <dinguyen@kernel.org>,
-        Thor Thayer <thor.thayer@linux.intel.com>,
-        Richard Gong <richard.gong@linux.intel.com>,
-        linux-kernel@vger.kernel.org, linux-fpga@vger.kernel.org
-Subject: Re: [PATCH] MAINTAINERS: fpga: hand off maintainership to Moritz
-Message-ID: <20190618071751.GA4159@kroah.com>
-References: <20190617031113.4506-1-atull@kernel.org>
+        id S1728935AbfFRHT7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Jun 2019 03:19:59 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:43060 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725870AbfFRHT6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Jun 2019 03:19:58 -0400
+Received: by mail-ed1-f68.google.com with SMTP id e3so20067246edr.10;
+        Tue, 18 Jun 2019 00:19:57 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=lGRhkqGQodehH6nOoVQY2z539WKIaQS1uhzFQI2YTfU=;
+        b=WzKsDHIEFHczbq/J2T/YOkqRNTa36biQLm6LHr/8Jwt+JTl5zG66QuilQfQdV9TqiT
+         VG7eVTaaaXk1BM/XLK6oif4DoJ+LqW5GXJ+YUiwNdHHLDXp19EnLNHdi8jHGGS6FlSLb
+         ULn+dLPxqFDS3KggbLqMyvPMM2CGju/CJidJNDb1o4jq/8FfZE2siDMrLMa3BMp2HMhk
+         EUrTHaRGOQkR6ddUaOd9ldBkGqMKOlkI0Oz0eJ3Ela14yu9F7KYoR0Fbdq88vUzT+MiF
+         CFDACafRCF8RHbyMrqu/QmJHLDKBMFmVcb4xTYcfS1UT/a4OdFeKvATMmWOiiU7D1khL
+         Y9XQ==
+X-Gm-Message-State: APjAAAUgsiK4su2d4/VwIdUwLc+3+l0i8UKDWt2IDZwHPVvOVIj/bqBT
+        yhfjm6CrKWjC4mUGMnOMzy4MoC/C40s=
+X-Google-Smtp-Source: APXvYqzcG3APtYOZnBeiAD13Yn7O3Vg7wtLwG5Gu4gHTUzOTigqxXsownapKhFF24hrU8g0psCUEOQ==
+X-Received: by 2002:a50:cac1:: with SMTP id f1mr121475009edi.97.1560842396545;
+        Tue, 18 Jun 2019 00:19:56 -0700 (PDT)
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com. [209.85.221.54])
+        by smtp.gmail.com with ESMTPSA id a9sm4608267edc.44.2019.06.18.00.19.55
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Tue, 18 Jun 2019 00:19:55 -0700 (PDT)
+Received: by mail-wr1-f54.google.com with SMTP id k11so12700785wrl.1;
+        Tue, 18 Jun 2019 00:19:55 -0700 (PDT)
+X-Received: by 2002:adf:fc85:: with SMTP id g5mr79869381wrr.324.1560842394887;
+ Tue, 18 Jun 2019 00:19:54 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190617031113.4506-1-atull@kernel.org>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+References: <20190614164324.9427-1-jagan@amarulasolutions.com>
+ <20190614164324.9427-6-jagan@amarulasolutions.com> <CAGb2v669MprYgy2wc_a7Kz8VpzzNGZxDxsj0z_Ujx5bV25+AWQ@mail.gmail.com>
+ <CAMty3ZDRYBPKrGQxAZoB+trFiDLJ5BxDfNUOnPzgd+UWcpwCoQ@mail.gmail.com>
+In-Reply-To: <CAMty3ZDRYBPKrGQxAZoB+trFiDLJ5BxDfNUOnPzgd+UWcpwCoQ@mail.gmail.com>
+From:   Chen-Yu Tsai <wens@csie.org>
+Date:   Tue, 18 Jun 2019 15:19:43 +0800
+X-Gmail-Original-Message-ID: <CAGb2v67uNhie9mb2-m04FGEi4Z7q7TYChOogGj2HgmSmEo4Arg@mail.gmail.com>
+Message-ID: <CAGb2v67uNhie9mb2-m04FGEi4Z7q7TYChOogGj2HgmSmEo4Arg@mail.gmail.com>
+Subject: Re: [linux-sunxi] [PATCH v2 5/9] drm/sun4i: tcon_top: Register clock
+ gates in probe
+To:     Jagan Teki <jagan@amarulasolutions.com>
+Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        linux-sunxi <linux-sunxi@googlegroups.com>,
+        linux-amarula <linux-amarula@amarulasolutions.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jun 16, 2019 at 10:11:13PM -0500, Alan Tull wrote:
-> I'm moving on to a new position and stepping down as FPGA subsystem
-> maintainer.  Moritz has graciously agreed to take over the
-> maintainership.
-> 
-> Signed-off-by: Alan Tull <atull@kernel.org>
+On Mon, Jun 17, 2019 at 6:30 PM Jagan Teki <jagan@amarulasolutions.com> wrote:
+>
+> On Sun, Jun 16, 2019 at 11:01 AM Chen-Yu Tsai <wens@csie.org> wrote:
+> >
+> > On Sat, Jun 15, 2019 at 12:44 AM Jagan Teki <jagan@amarulasolutions.com> wrote:
+> > >
+> > > TCON TOP have clock gates for TV0, TV1, dsi and right
+> > > now these are register during bind call.
+> > >
+> > > Of which, dsi clock gate would required during DPHY probe
+> > > but same can miss to get since tcon top is not bound at
+> > > that time.
+> > >
+> > > To solve, this circular dependency move the clock gate
+> > > registration from bind to probe so-that DPHY can get the
+> > > dsi gate clock on time.
+> > >
+> > > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+> > > ---
+> > >  drivers/gpu/drm/sun4i/sun8i_tcon_top.c | 94 ++++++++++++++------------
+> > >  1 file changed, 49 insertions(+), 45 deletions(-)
+> > >
+> > > diff --git a/drivers/gpu/drm/sun4i/sun8i_tcon_top.c b/drivers/gpu/drm/sun4i/sun8i_tcon_top.c
+> > > index 465e9b0cdfee..a8978b3fe851 100644
+> > > --- a/drivers/gpu/drm/sun4i/sun8i_tcon_top.c
+> > > +++ b/drivers/gpu/drm/sun4i/sun8i_tcon_top.c
+> > > @@ -124,7 +124,53 @@ static struct clk_hw *sun8i_tcon_top_register_gate(struct device *dev,
+> > >  static int sun8i_tcon_top_bind(struct device *dev, struct device *master,
+> > >                                void *data)
+> > >  {
+> > > -       struct platform_device *pdev = to_platform_device(dev);
+> > > +       struct sun8i_tcon_top *tcon_top = dev_get_drvdata(dev);
+> > > +       int ret;
+> > > +
+> > > +       ret = reset_control_deassert(tcon_top->rst);
+> > > +       if (ret) {
+> > > +               dev_err(dev, "Could not deassert ctrl reset control\n");
+> > > +               return ret;
+> > > +       }
+> > > +
+> > > +       ret = clk_prepare_enable(tcon_top->bus);
+> > > +       if (ret) {
+> > > +               dev_err(dev, "Could not enable bus clock\n");
+> > > +               goto err_assert_reset;
+> > > +       }
+> >
+> > You have to de-assert the reset control and enable the clock before the
+> > clocks it provides are registered. Otherwise a consumer may come in and
+> > ask for the provided clock to be enabled, but since the TCON TOP's own
+> > reset and clock are still disabled, you can't actually access the registers
+> > that controls the provided clock.
+>
+> These rst and bus are common reset and bus clocks not tcon top clocks
+> that are trying to register here. ie reason I have not moved it in
+> top.
 
-Thanks for all the work you have done on this subsystem getting it into
-mergable shape and then maintaining it for a while.
+And you're sure that toggling bits in the TCON TOP block doesn't require
+the reset to be de-asserted and the bus clock enabled?
 
-good luck on your future endeavors, hopefully it still involves kernel
-programming :)
+Somehow I doubt that.
 
-greg k-h
+Once the driver register the clocks it provides, they absolutely must work.
+They can't only work after the bind phase when the reset gets de-asserted
+and the bus clock enabled. Or you should provide proper error reporting
+in the clock ops. I doubt you want to go that way either.
+
+ChenYu
