@@ -2,119 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 87EE84A4B8
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 17:04:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F3C204A4C6
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 17:07:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729516AbfFRPEj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Jun 2019 11:04:39 -0400
-Received: from mail-io1-f67.google.com ([209.85.166.67]:37858 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729356AbfFRPEj (ORCPT
+        id S1729545AbfFRPG7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Jun 2019 11:06:59 -0400
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:34324 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727097AbfFRPG6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Jun 2019 11:04:39 -0400
-Received: by mail-io1-f67.google.com with SMTP id e5so30662783iok.4
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2019 08:04:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=n+Ql3wVC/12fF84n4zpf2k7UpDcKmujEt1DaiiPw9qM=;
-        b=S5z34YtusjYEDrmJRpYdDkLNkEyqZu2h0VztZzhWaBFSPMcfGjsfL4fPxA8epFlCl0
-         7EYgCFMMMOJi+6eDL60CzSqoLl22mrz9wj837Byc3ao3hmvAIEgkqvGh252sQt+oHfQJ
-         88csRkNqH6wPqPa8M6QrcTns38DwR0C+hDyr4=
+        Tue, 18 Jun 2019 11:06:58 -0400
+Received: by mail-qt1-f196.google.com with SMTP id m29so15745984qtu.1;
+        Tue, 18 Jun 2019 08:06:58 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=n+Ql3wVC/12fF84n4zpf2k7UpDcKmujEt1DaiiPw9qM=;
-        b=ZMlONPUDLODm5ZO8UvNISADjBdvB6N2oYIZr8j7rZWHDCzMZvUZVQQGAWwafo25zZf
-         5wMIIDm8J8XWEM+o7nyRLBSJiwKBu/++d1VGQJYKEyZmG6+/anlrNcgFV+Rqejg4Cjq5
-         i78uZNq0+0ghmlVzz6hznCBU0rwyxY8fUIiE0DgUlbVM4fQhUjCtGZwzgfM2h7zrNfiI
-         RtvLr12HjhDR6UgfOtRlIyIWszhPDSC6ZoxDfJOmlNUpsuTq/9shKDWAlX1ZfLzQ3RQt
-         MEATOwbqHWNl7OyUI7oSLuW1tJk5x9ntEBSHcTEqaFX8hJAYi3BX2QDzF3eQ6Yn6Cyq6
-         WZog==
-X-Gm-Message-State: APjAAAX051GZyhOfDDbgZ8ff5SU4utQ0rK02tauYQPbG6zAQaBzpS4eo
-        M7VIUbFemweNejwxRwWi34BiLQ==
-X-Google-Smtp-Source: APXvYqxj0KuCDj3+zY6rRSN6uEABJMKSdM9JnxVOi3emiC+fs8zDQXFdWYHimb0In4JQsTwcp1rg4g==
-X-Received: by 2002:a5e:a712:: with SMTP id b18mr6336031iod.220.1560870278397;
-        Tue, 18 Jun 2019 08:04:38 -0700 (PDT)
-Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net. [24.9.64.241])
-        by smtp.gmail.com with ESMTPSA id n7sm16602070ioo.79.2019.06.18.08.04.37
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 18 Jun 2019 08:04:37 -0700 (PDT)
-Subject: Re: [Linux-kernel-mentees] [PATCH] Documentation: platform: convert
- x86-laptop-drivers.txt to reST
-To:     Greg KH <gregkh@linuxfoundation.org>,
-        Jonathan Corbet <corbet@lwn.net>, cezary.jackiewicz@gmail.com,
-        Darren Hart <dvhart@infradead.org>, andy@infradead.org,
-        Shuah Khan <skhan@linuxfoundation.org>
-Cc:     Puranjay Mohan <puranjay12@gmail.com>, linux-doc@vger.kernel.org,
-        linux-kernel-mentees@lists.linuxfoundation.org,
-        linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org
-References: <20190618053227.31678-1-puranjay12@gmail.com>
- <20190618054158.GA3713@kroah.com> <20190618071717.2132a1b7@lwn.net>
- <20190618133948.GB5416@kroah.com>
-From:   Shuah Khan <skhan@linuxfoundation.org>
-Message-ID: <8aeb222a-ee44-4125-45fd-ce9a741e7ecc@linuxfoundation.org>
-Date:   Tue, 18 Jun 2019 09:04:36 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=NSTbZII6CFZgYZ4ha7ois9c79JsFHc6lXj+oBGA25dE=;
+        b=Z1v+XDsapzwmyzZpyvkCT3Ed1WrCWHMoDPUhazDasHcyWLLUof9RZlQe9kJVx+i6+I
+         h+jphI4o8EgoxzB4OKzd7or1fpBCeQteUCTcAeiNncptmlWedE9SsEqCACHFWb1bOMDV
+         zqRxdAyEZHM8/rbuWNUHQJqTLeXe5XaqwyDOTb8b7cjAPnh9TGQw7im/KUfEsyMp3YbY
+         sH6omHdJeCrkzkjFAxN2y7ScZZVueVuMwOqnkT7ZYOj2dk4/6kpphaJCA1rGeXbJbHFY
+         hvcECK/blg4qU/R5JVo91T/HIi9g1yyLhBdd2Sp0cv42jdT5jexp159dQDc3jKPJYVdD
+         JuuA==
+X-Gm-Message-State: APjAAAVHOd9++2kvd6VALzN8M7UevNjn8xdho6ccBuW4Q6PCk9f0usDj
+        rtDBseO1RrhIAdklzi1dGmny3CM3ECoRmRBuWD4=
+X-Google-Smtp-Source: APXvYqyxk5sbuVIhdcXdtak1JiLgBG3rOdIY72VJKoe4UEXZFDi2s9WaEZrSOm8hY+p6d/NV3S9io+PUKYur4PHTigY=
+X-Received: by 2002:a0c:87ab:: with SMTP id 40mr26958568qvj.93.1560870417626;
+ Tue, 18 Jun 2019 08:06:57 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20190618133948.GB5416@kroah.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20190617123109.667090-1-arnd@arndb.de> <20190617140210.GB3436@hirez.programming.kicks-ass.net>
+ <CAK8P3a3iwWOkMBL-H3h5aSaHKjKWFce22rvydvVE=3uMfeOhVg@mail.gmail.com>
+ <fc10bc69-0628-59eb-c243-9cd1dd3b47a4@virtuozzo.com> <20190618135911.GR3436@hirez.programming.kicks-ass.net>
+In-Reply-To: <20190618135911.GR3436@hirez.programming.kicks-ass.net>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Tue, 18 Jun 2019 17:06:39 +0200
+Message-ID: <CAK8P3a1ZgSYMuD0Xy_fxTqzPhg=U6rqG2Lcfc+3Bni=ZijiE3A@mail.gmail.com>
+Subject: Re: [PATCH] ubsan: mark ubsan_type_mismatch_common inline
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "# 3.4.x" <stable@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 6/18/19 7:39 AM, Greg KH wrote:
-> On Tue, Jun 18, 2019 at 07:17:17AM -0600, Jonathan Corbet wrote:
->> On Tue, 18 Jun 2019 07:41:58 +0200
->> Greg KH <gregkh@linuxfoundation.org> wrote:
->>
->>> On Tue, Jun 18, 2019 at 11:02:27AM +0530, Puranjay Mohan wrote:
->>>> This converts the plain text documentation to reStructuredText format.
->>>> No essential content change.
->>>>
->>>> Signed-off-by: Puranjay Mohan <puranjay12@gmail.com>
->>>> ---
->>>>   Documentation/platform/x86-laptop-drivers.rst | 23 +++++++++++++++++++
->>>>   Documentation/platform/x86-laptop-drivers.txt | 18 ---------------
->>>>   2 files changed, 23 insertions(+), 18 deletions(-)
->>>>   create mode 100644 Documentation/platform/x86-laptop-drivers.rst
->>>>   delete mode 100644 Documentation/platform/x86-laptop-drivers.txt
->>>
->>> Don't you also need to hook it up to the documentation build process
->>> when doing this?
->>
->> Hooking it into the TOC tree is a good thing, but I think it's also good
->> to think about the exercise in general.  This is a document dropped into
->> place five years ago and never touched again.  It's a short list of
->> seemingly ancient laptops with no explanation of what it means.  So the
->> real question, IMO, is whether this document is useful to anybody and, if
->> not, whether it should just be deleted instead.
-> 
-> I bet it should be deleted, but we should ask the platform driver
-> maintainers first before we do that :)
-> 
+On Tue, Jun 18, 2019 at 3:59 PM Peter Zijlstra <peterz@infradead.org> wrote:
+> On Tue, Jun 18, 2019 at 04:27:45PM +0300, Andrey Ryabinin wrote:
+> > On 6/18/19 3:56 PM, Arnd Bergmann wrote:
+> > > On Mon, Jun 17, 2019 at 4:02 PM Peter Zijlstra <peterz@infradead.org> wrote:
 
-Adding Platform driver maintainers Darren Hart and Andy Shevchenko, and
-Compal laptop maintainer Cezary Jackiewicz to the discussion.
+> > I guess this:
+> > ccflags-y += $(DISABLE_STACKLEAK_PLUGIN)
+>
+> Or more specifically this, I guess:
+>
+> CFLAGS_ubsan.o := $(call cc-option, -fno-conserve-stack -fno-stack-protector) $(DISABLE_STACKLEAK_PLUGIN)
+>
+> we'd not want to exclude all of lib/ from stackleak I figure.
+>
+> Of these two options, I think I prefer the latter, because a smaller
+> whitelist is a better whitelist and since we already disable
+> stack protector, it is only consistent to also disable stack leak.
 
-+ platform-driver-x86@vger.kernel.org
+Ok, sounds good to me. Can you send that upstream then, or should
+I write it up as a proper patch?
 
-Hi Darren, Andy, and Cezary,
-
-Would it be okay to remove the x86-laptop-drivers.txt or should it be
-converted to .rst and kept around?
-
-thanks,
--- Shuah
-
-
-
-
-
+       Arnd
