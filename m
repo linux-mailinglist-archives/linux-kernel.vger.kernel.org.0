@@ -2,87 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A6A6F4A9BC
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 20:25:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F20BD4A9CE
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 20:27:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730257AbfFRSZP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Jun 2019 14:25:15 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:35797 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729943AbfFRSZO (ORCPT
+        id S1730356AbfFRS1J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Jun 2019 14:27:09 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:36310 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727616AbfFRS1I (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Jun 2019 14:25:14 -0400
-Received: by mail-pl1-f194.google.com with SMTP id p1so6060002plo.2;
-        Tue, 18 Jun 2019 11:25:14 -0700 (PDT)
+        Tue, 18 Jun 2019 14:27:08 -0400
+Received: by mail-pg1-f196.google.com with SMTP id f21so8150783pgi.3
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2019 11:27:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=ZWfAOAxoVbPij4WvtmFyrhlxSXKOQxDJzGR7xW1Qhl4=;
-        b=rDDlyAvvtsHMAO0xf644R8e0EQPSxem326pnG6VLJloD9q3ZMMlpOAT4t7gkgQdhM2
-         W0iC9W2W+DXCoN3BdpkExKZC8QJVpYhOF4C7WGszSQu+nbKhuZn/4yNEI2JzFzWuCdBC
-         2Y4U40rJJVg210CmG/P2ljebo+D3yeS778WgJ/Plevek8DAFFhEv1kpeb21htZJO60FZ
-         6X2XaSN+NQnjAd1q9XviYtXbTzX56n9Ro6AVEd8VUeOkvbXTb1Pe0FO2u3bBhX3YsMk0
-         DfjjvIYO5U1An9bvFbST4qIVrqRdK2r8SeX9cAG5ewyr/FdHqls6r2bgRd2Lxi20sAiH
-         VP+Q==
+        h=from:to:cc:subject:date:message-id;
+        bh=mO472utuFQ+nV4A29aUiVfjK/XWRxLa6xDQ8sQgJqmI=;
+        b=R/sM1rUxhjbZRW6SG/PJTnw0z5LYinOBGI/dRLlrIOlSjumvc0CKHCyD+SMw89XEH6
+         O7uIcv+A5w/ApFurMpH4xh7R3mPPWYax8BkSssi4IrzM40/LE0nWs9C5qP0CBqnhw93d
+         clouyVq+ZVdkUUfxHYdC0zSYpk71dNOtiQXtbtgazRGaEHxgXCbkPR/qnaWClOsp2shk
+         D+KO0r0HepQKf8JCu2vxSMIVODaXsuBWxXTDpRPSXh7anxLjXJIfSKTzEYJtvT/HaDmw
+         X0GDP/F88ssZTO1V5Z7TRVHRwMb15k96oMB4LUW3bOjZgodr58GmQanpz/1i7OrY0SuN
+         htEQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=ZWfAOAxoVbPij4WvtmFyrhlxSXKOQxDJzGR7xW1Qhl4=;
-        b=OqD+z1hzD82mjGQQzhNbwzAwR5DWmpnx03oXi29LgBRw8tcddyOBzEeIPCm5Doxowy
-         9IXLOBPauIB6tgqwt+PHnAogrncuLjhAdr7YSZixkObN/0W/aU4ZRM5Xad8ztKwT0MTI
-         nZZaY8LAciP17SjtYtLQGlh+zVa69/PHvcvQWqAtEPYKyvj4IzQQy8TwinaynSN93muS
-         4vS0CLvFUcxQhH9usHT3RL4fpvKrOsUh0mCLyuDgU5fvF04NxvbMrMSb/XQgeU1EUvK9
-         W18FbxOK9Li7r9s5fd1rd0sTbEILXnRPhKZWixrNZIlddzhfHzNsF7vMpSJf7qqc8ORD
-         n/1g==
-X-Gm-Message-State: APjAAAXoOoeCO9MVA66kKoyBoiXC/tlEy9fqX/pLUH2VJ8Uniz7adhUT
-        nNTlCCmyvv2SIGOv1JsqXXY=
-X-Google-Smtp-Source: APXvYqz8piH56vYUozmcdQ6KNkkF1F+FrG6bOMilJRTIj1HC6m3jGo47OqTa5F1u9LkmBbos6unY4A==
-X-Received: by 2002:a17:902:b70f:: with SMTP id d15mr32734935pls.318.1560882313798;
-        Tue, 18 Jun 2019 11:25:13 -0700 (PDT)
-Received: from hari-Inspiron-1545 ([183.83.92.187])
-        by smtp.gmail.com with ESMTPSA id w14sm10510083pfn.47.2019.06.18.11.25.11
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=mO472utuFQ+nV4A29aUiVfjK/XWRxLa6xDQ8sQgJqmI=;
+        b=MefftpFlmoYfYVkInNXO3Z0GXKAqzElgrV+TMOu0j+oIQTTOLIimEGRRBDb3Kcxu7L
+         LKsrYno6ugPz/Hd+Fg7uIB18oWXmSOR0pL8r77TFvEeHo6ZmQDSJtEF3aWOoCYHEyKwe
+         u3N0wdxnKHJQ8Od14bLGrlHiPQhbCrm28d0knA/L0y9Iw1M/N2RceQzvOQLiYGfnTaao
+         V00lvEJJ8vRs2XhsvubtkSWLVf5+dIFGcEkZOoYebY2NYXWjq4QdZyf82qMBQeImus4C
+         W/kYRPPdnZCzuPEx2fYrnb1pHbUUXQqojUB/M+F3cV5g5eSQOSEuVAhztYGyR5CDcSgn
+         l34A==
+X-Gm-Message-State: APjAAAW2sIKCPsglU9MNhUafE34Xs2ohJ4kBKNbd7msbLRS6RrW90ydx
+        DdU08av1M2wBeO+Sp/R6JqM=
+X-Google-Smtp-Source: APXvYqxTZ4eWDDY0GFYbRMxO2F8ZVnxImzZ5rLTeOMtXnl7NUQclELdAN0qKO+IgHFm8gnB56XWusg==
+X-Received: by 2002:a17:90a:9905:: with SMTP id b5mr6758464pjp.70.1560882427917;
+        Tue, 18 Jun 2019 11:27:07 -0700 (PDT)
+Received: from mail.broadcom.com ([192.19.231.250])
+        by smtp.gmail.com with ESMTPSA id k4sm6639480pfk.42.2019.06.18.11.27.05
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 18 Jun 2019 11:25:12 -0700 (PDT)
-Date:   Tue, 18 Jun 2019 23:55:07 +0530
-From:   Hariprasad Kelam <hariprasad.kelam@gmail.com>
-To:     Adham Abozaeid <adham.abozaeid@microchip.com>,
-        Ajay Singh <ajay.kathat@microchip.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-wireless@vger.kernel.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] staging: wilc1000: Remove redundant memset
-Message-ID: <20190618182506.GA9007@hari-Inspiron-1545>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        Tue, 18 Jun 2019 11:27:07 -0700 (PDT)
+From:   Kamal Dasu <kdasu.kdev@gmail.com>
+To:     linux-mtd@lists.infradead.org
+Cc:     bcm-kernel-feedback-list@broadcom.com,
+        linux-kernel@vger.kernel.org, Kamal Dasu <kdasu.kdev@gmail.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        Vignesh Raghavendra <vigneshr@ti.com>
+Subject: [PATCH v4 1/2] mtd: Add flag to indicate panic_write
+Date:   Tue, 18 Jun 2019 14:26:42 -0400
+Message-Id: <1560882420-727-1-git-send-email-kdasu.kdev@gmail.com>
+X-Mailer: git-send-email 1.9.0.138.g2de3478
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-alloc_etherdev function internally calls kvzalloc . So we may not need
-explicit memset after this call.
+Added a flag to indicate a panic_write so that low level drivers can
+use it to take required action where applicable, to ensure oops data
+gets written to assigned mtd device.
 
-Signed-off-by: Hariprasad Kelam <hariprasad.kelam@gmail.com>
+Signed-off-by: Kamal Dasu <kdasu.kdev@gmail.com>
 ---
- drivers/staging/wilc1000/wilc_netdev.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/mtd/mtdcore.c   | 3 +++
+ include/linux/mtd/mtd.h | 6 ++++++
+ 2 files changed, 9 insertions(+)
 
-diff --git a/drivers/staging/wilc1000/wilc_netdev.c b/drivers/staging/wilc1000/wilc_netdev.c
-index ba78c08..c4efec2 100644
---- a/drivers/staging/wilc1000/wilc_netdev.c
-+++ b/drivers/staging/wilc1000/wilc_netdev.c
-@@ -1010,7 +1010,6 @@ int wilc_netdev_init(struct wilc **wilc, struct device *dev, int io_type,
- 		}
+diff --git a/drivers/mtd/mtdcore.c b/drivers/mtd/mtdcore.c
+index 453242d..2e04627 100644
+--- a/drivers/mtd/mtdcore.c
++++ b/drivers/mtd/mtdcore.c
+@@ -1124,6 +1124,9 @@ int mtd_panic_write(struct mtd_info *mtd, loff_t to, size_t len, size_t *retlen,
+ 		return -EROFS;
+ 	if (!len)
+ 		return 0;
++
++	mtd->panic_write_triggered = true;
++
+ 	return mtd->_panic_write(mtd, to, len, retlen, buf);
+ }
+ EXPORT_SYMBOL_GPL(mtd_panic_write);
+diff --git a/include/linux/mtd/mtd.h b/include/linux/mtd/mtd.h
+index 936a3fd..02dce49 100644
+--- a/include/linux/mtd/mtd.h
++++ b/include/linux/mtd/mtd.h
+@@ -316,6 +316,12 @@ struct mtd_info {
+ 	int (*_get_device) (struct mtd_info *mtd);
+ 	void (*_put_device) (struct mtd_info *mtd);
  
- 		vif = netdev_priv(ndev);
--		memset(vif, 0, sizeof(struct wilc_vif));
++	/*
++	 * flag indicates a panic write, low level drivers can take appropriate
++	 * action if required to ensure writes go through
++	 */
++	bool panic_write_triggered;
++
+ 	struct notifier_block reboot_notifier;  /* default mode before reboot */
  
- 		if (i == 0) {
- 			strcpy(ndev->name, "wlan%d");
+ 	/* ECC status information */
 -- 
-2.7.4
+1.9.0.138.g2de3478
 
