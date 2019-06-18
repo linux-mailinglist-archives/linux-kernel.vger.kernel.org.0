@@ -2,85 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A077E49695
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 03:11:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D8DF4496AD
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 03:28:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726608AbfFRBL3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 21:11:29 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:33798 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725829AbfFRBL3 (ORCPT
+        id S1727027AbfFRB21 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 21:28:27 -0400
+Received: from mx6378.ciavia.eu ([178.156.202.117]:59987 "EHLO
+        slot0.presuure.ga" rhost-flags-OK-FAIL-OK-OK) by vger.kernel.org
+        with ESMTP id S1725829AbfFRB20 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 21:11:29 -0400
-Received: by mail-ed1-f67.google.com with SMTP id s49so19009172edb.1
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2019 18:11:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=qkCiUVj0VugFone9Q9W6ljAve1bW+OW0QjoILb3tipw=;
-        b=nsUwJUj/lnoFntRkDnKVwnq/d9FeGFWNDPrx740De1flmr61SPj8PnVj9Lai/iUZe+
-         akX+bwe46jgvXe5eiSMOmY3eg6w4zRb4auJSbTpbgnJxzJ7BxCrqcwXEt66oI4EcFz9c
-         aYOVWfuAEy0tnnSTZrOIJxC0ZUII/ATh1YqPRmvx2Mu1ffBpJDNgt4BKSqk5G4OuL/ep
-         K1ERuFDRzRuPx/Z2ENWDMPsWGzSUQwFD7nbjnfSpUSBbeHyTXX99UtMf7U/G0o1gJ9k3
-         Pixz5m/1o7PUAvKEZQXtVNem0tnvAMLGiMfHrG3115k9TkDOXV6QrEy1l0W6ciLVW3Ef
-         mruw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=qkCiUVj0VugFone9Q9W6ljAve1bW+OW0QjoILb3tipw=;
-        b=BJCh4sJM4TiWFS6H/aQkx6TjVmSfTZ9WtkTGrKffURD28BcleX3VQpj1oKntn7cY2G
-         0aUUX0PXc5vafD1Wgdmddzq/OXPJljO51mKiUsj5qWLm65JRyz2ZRLQNYQ9g0Dp2T6Ow
-         Ww8enS7Nx9ptXl4QaU1uzwppPO50xi9VqFnFX9wrc3yo6UgXDePDNh95n0eGhUrxuNLm
-         MhqioDwK82Mkm6/OrFdrMQARTfv0ek9O/9Mn+hqfdIksFzZx9s3ptF7tHIJOEZhFYt5f
-         AXm9CCD/OyMPATfd+p72yRA/DJkImL+7HwNp58bEorITDDc2s4MxSprQjFHTCYUUCbZ0
-         Mbqw==
-X-Gm-Message-State: APjAAAUdCH/cpNGbd4QVoU4poKbKfC/b+jGDZv0ubtZsb4jV2EgRydf6
-        qqJxztAh65c1vQX78UZcGlo=
-X-Google-Smtp-Source: APXvYqx9ccbJtoSHa26LPIc3BFE0FBLwxaIr/ZcAkWyuy0BkRFQO8MmPJEMmdpQ66+pUqnLE8HpP4A==
-X-Received: by 2002:a50:b0e3:: with SMTP id j90mr2980661edd.26.1560820287270;
-        Mon, 17 Jun 2019 18:11:27 -0700 (PDT)
-Received: from archlinux-epyc ([2a01:4f9:2b:2b15::2])
-        by smtp.gmail.com with ESMTPSA id p37sm4185558edc.14.2019.06.17.18.11.26
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 17 Jun 2019 18:11:26 -0700 (PDT)
-Date:   Mon, 17 Jun 2019 18:11:24 -0700
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Anthony Koo <Anthony.Koo@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>
-Cc:     Jun Lei <Jun.Lei@amd.com>,
-        Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>,
-        Harry Wentland <harry.wentland@amd.com>,
-        Leo Li <sunpeng.li@amd.com>,
-        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
-        amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org
-Subject: arm32 build failure after abe882a39a9c ("drm/amd/display: fix issue
- with eDP not detected on driver load")
-Message-ID: <20190618011124.GA67760@archlinux-epyc>
+        Mon, 17 Jun 2019 21:28:26 -0400
+X-Greylist: delayed 601 seconds by postgrey-1.27 at vger.kernel.org; Mon, 17 Jun 2019 21:28:25 EDT
+DKIM-Signature: v=1; a=rsa-sha1; c=relaxed/relaxed; s=dkim; d=presuure.ga;
+ h=Content-Type:MIME-Version:Content-Transfer-Encoding:Content-Description:Subject:To:From:Date:Reply-To:Message-ID; i=nuekwa@presuure.ga;
+ bh=EclTUBt0EgOxKrPKBvCtV8KGfLA=;
+ b=Ic0Rz1tLwT57lIL/IEQUBS4weesRdXNyxOMsq7/Fqij0Tdd3PpwE6Sl7TBRqfyVGvKCckUGpYAsK
+   RshxzuzGXLM/4LRouIjUPO1xgm7WuA5DEmxYxs+dpMAevRdcBVuCJOEEZ4qIOR6/fnoYIfu/szGY
+   5TPTDXCGvRBUuNUIo8fR1x7K6TQwU6o6ulQ+gJwn1H2HvDKcAS0wNSVRBE4rDgSrA9DItABHJbW7
+   fx4sJTgzP7Ag4ilfkd671hErqrlIPoeod7sBSBL8AfYzFAs2dtc4/LDw/Jzt2sgTiI29u6jQtY/o
+   hTrfL6t8ERjQj0ES1q++KTEiD7tedRR8Xkl7xw==
+DomainKey-Signature: a=rsa-sha1; c=nofws; q=dns; s=dkim; d=presuure.ga;
+ b=dP5VmnCYk+Si2OycLa75hajsClgP//gNGbuAKrFWmVDalbSrsJxUmBuotjY12HRGteNH1dsDzcmG
+   l4TLFOs7W7RdlHmrHsB2w4iHaTB5eDZHk6zfHkB/wkmqrK5VDm9+nc8l293XNWDQMzQvacVcJRjL
+   um/YNHzlsUUZn1lKq0nQfsXYhoyZ53RIXk4BMhXmr8TSq8ioC/CmEX/IF9B6eTd9KWuUTSUMD8/t
+   bwWSS8ISWJ7o9pOf8rE3MAcNrITd3wmBmODXxQ7L1CmukxKnm4l69ipfFAEzQ7mmnmV+9Xl548E3
+   mstM/JCPrIyhnguM6TI/mcGxOU8FTAJrj5qAOw==;
+Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.12.1 (2019-06-15)
+Content-Transfer-Encoding: quoted-printable
+Content-Description: Mail message body
+Subject: June inquiry
+To:     Recipients <nuekwa@presuure.ga>
+From:   "Marketing Dept" <nuekwa@presuure.ga>
+Date:   Tue, 18 Jun 2019 04:18:15 +0300
+Reply-To: great.pacific@aol.com
+Message-ID: <0.0.E.456.1D52573AC9616FA.0@slot0.presuure.ga>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi all,
+Hello dear,
+ =
 
-After commit abe882a39a9c ("drm/amd/display: fix issue with eDP not
-detected on driver load") in -next, arm32 allyesconfig builds start
-failing at link time:
+We are in the market for your products after meeting at your stand during l=
+ast expo.
+ =
 
-arm-linux-gnueabi-ld: drivers/gpu/drm/amd/display/dc/core/dc_link.o: in
-function `dc_link_detect':
-dc_link.c:(.text+0x260c): undefined reference to `__bad_udelay'
+Please kindly send us your latest catalog and price list so as to start a n=
+ew project/order as promised during the exhibition. =
 
-arm32 only allows a udelay value of up to 2000, see
-arch/arm/include/asm/delay.h for more info.
+ =
 
-Please look into this when you have a chance!
-Nathan
+I would appreciate your response about the above details required so we can=
+ revert back to you asap.
+ =
+
+Kind regards
+ =
+
+Hyuan Cloe
