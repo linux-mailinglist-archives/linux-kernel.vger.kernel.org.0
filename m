@@ -2,140 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C71AF4A3D6
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 16:24:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 758244A3F1
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 16:29:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729481AbfFROY2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Jun 2019 10:24:28 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:34230 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726248AbfFROY1 (ORCPT
+        id S1729595AbfFRO3J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Jun 2019 10:29:09 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:50484 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729381AbfFRO3G (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Jun 2019 10:24:27 -0400
-Received: by mail-ed1-f68.google.com with SMTP id s49so22085764edb.1
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2019 07:24:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=uHnXFlY19ajG5XeU4b9Sa8dKBSgR+uGugZ79Ne3Ctiw=;
-        b=acF128CBhxF2kvltkkX7fAoQeLnvbBcYHTDB+c8gopqzYOIsw9tTUJ9TFqlQIBtdsI
-         zQ7Uznscg2mpVIHwI3qm21u+gRcRbt8R0sFUeDu8Ycy0Bvx2MmgX11qp5AOMBLjPvlfX
-         rGEIWltU5HEOeqcOVjNzNnEtGRD6vsJyhCDrk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=uHnXFlY19ajG5XeU4b9Sa8dKBSgR+uGugZ79Ne3Ctiw=;
-        b=gc14Zdq9dXTfGX5nygSUcBNqBhkBgwtp29/QSpA+hlU1bEdHYvA2y5+SyjNKQH9e8V
-         xhYqwbbca+DuOI8FvSB4Up1LXbEDmC+bNSehteIrbFNjWz9il6Z0sTg9dy3nQrZYt6+T
-         6J4FDSHDskHDY/NMlYi+CHIi3MgfWN24RQSLGu6ebIeRz++p/z/zubu08oVpiE3RSWcx
-         UYAzF5CPINALPhULWL0D7Ooq06Db/wzPfx8nt+qdW77sdu8wmlwgqlCl9T/RLLnceu0e
-         QXxAOb/YXIRaMoAdCMY+idQIy2Tp47EJ3VrKuk5GXkw/7mvbk5eCHQ7xRtdDCHs/YAHB
-         Si/Q==
-X-Gm-Message-State: APjAAAUid6W+m6MNVw3Qf2cp1ETQjU5/tDMu8NJCC44oRWVbs+hZnGh1
-        rPkRLU1RjX9+K4QSqnVRE82MvQ==
-X-Google-Smtp-Source: APXvYqxx5Ar/sJIj7A18c3YwjZinSwD1QAHaWKUNoAbyM4MPKWCKRVpPSd25DOefwPVv3Oq0Yp24Jw==
-X-Received: by 2002:a17:906:924c:: with SMTP id c12mr37650490ejx.60.1560867866173;
-        Tue, 18 Jun 2019 07:24:26 -0700 (PDT)
-Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
-        by smtp.gmail.com with ESMTPSA id w35sm2253983edd.32.2019.06.18.07.24.25
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 18 Jun 2019 07:24:25 -0700 (PDT)
-Date:   Tue, 18 Jun 2019 16:24:23 +0200
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Gerd Hoffmann <kraxel@redhat.com>
-Cc:     dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        "open list:VIRTIO GPU DRIVER" 
-        <virtualization@lists.linux-foundation.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 08/12] drm/virtio: rework virtio_gpu_object_create
- fencing
-Message-ID: <20190618142423.GE12905@phenom.ffwll.local>
-Mail-Followup-To: Gerd Hoffmann <kraxel@redhat.com>,
-        dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>,
-        "open list:VIRTIO GPU DRIVER" <virtualization@lists.linux-foundation.org>,
-        open list <linux-kernel@vger.kernel.org>
-References: <20190618135821.8644-1-kraxel@redhat.com>
- <20190618135821.8644-9-kraxel@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+        Tue, 18 Jun 2019 10:29:06 -0400
+Received: from [167.98.27.226] (helo=deadeye)
+        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1hdF6e-0007nD-4h; Tue, 18 Jun 2019 15:29:04 +0100
+Received: from ben by deadeye with local (Exim 4.92)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1hdF6d-0000HG-Bs; Tue, 18 Jun 2019 15:29:03 +0100
+Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
-In-Reply-To: <20190618135821.8644-9-kraxel@redhat.com>
-X-Operating-System: Linux phenom 4.19.0-5-amd64 
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+From:   Ben Hutchings <ben@decadent.org.uk>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+CC:     torvalds@linux-foundation.org, Guenter Roeck <linux@roeck-us.net>,
+        akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>
+Date:   Tue, 18 Jun 2019 15:27:59 +0100
+Message-ID: <lsq.1560868079.359853905@decadent.org.uk>
+X-Mailer: LinuxStableQueue (scripts by bwh)
+X-Patchwork-Hint: ignore
+Subject: [PATCH 3.16 00/10] 3.16.69-rc1 review
+X-SA-Exim-Connect-IP: 167.98.27.226
+X-SA-Exim-Mail-From: ben@decadent.org.uk
+X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 18, 2019 at 03:58:16PM +0200, Gerd Hoffmann wrote:
-> Use gem reservation helpers and direct reservation_object_* calls
-> instead of ttm.
-> 
-> Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
-> ---
->  drivers/gpu/drm/virtio/virtgpu_object.c | 28 +++++++------------------
->  1 file changed, 8 insertions(+), 20 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/virtio/virtgpu_object.c b/drivers/gpu/drm/virtio/virtgpu_object.c
-> index 82bfbf983fd2..461f15f26517 100644
-> --- a/drivers/gpu/drm/virtio/virtgpu_object.c
-> +++ b/drivers/gpu/drm/virtio/virtgpu_object.c
-> @@ -141,34 +141,22 @@ int virtio_gpu_object_create(struct virtio_gpu_device *vgdev,
->  
->  	if (fence) {
->  		struct virtio_gpu_fence_driver *drv = &vgdev->fence_drv;
-> -		struct list_head validate_list;
-> -		struct ttm_validate_buffer mainbuf;
-> +		struct drm_gem_object *obj = &bo->gem_base;
->  		struct ww_acquire_ctx ticket;
->  		unsigned long irq_flags;
-> -		bool signaled;
->  
-> -		INIT_LIST_HEAD(&validate_list);
-> -		memset(&mainbuf, 0, sizeof(struct ttm_validate_buffer));
-> -
-> -		/* use a gem reference since unref list undoes them */
-> -		drm_gem_object_get(&bo->gem_base);
-> -		mainbuf.bo = &bo->tbo;
-> -		list_add(&mainbuf.head, &validate_list);
-> -
-> -		ret = virtio_gpu_object_list_validate(&ticket, &validate_list);
-> +		drm_gem_object_get(obj);
-> +		ret = drm_gem_lock_reservations(&obj, 1, &ticket);
->  		if (ret == 0) {
->  			spin_lock_irqsave(&drv->lock, irq_flags);
-> -			signaled = virtio_fence_signaled(&fence->f);
-> -			if (!signaled)
-> +			if (!virtio_fence_signaled(&fence->f))
->  				/* virtio create command still in flight */
-> -				ttm_eu_fence_buffer_objects(&ticket, &validate_list,
-> -							    &fence->f);
+This is the start of the stable review cycle for the 3.16.69 release.
+There are 10 patches in this series, which will be posted as responses
+to this one.  If anyone has any issues with these being applied, please
+let me know.
 
-Same issue with the refcounting gone wrong here as in the previous patch.
--Daniel
+Responses should be made by Thu Jun 20 14:27:59 UTC 2019.
+Anything received after that time might be too late.
 
-> +				reservation_object_add_excl_fence(obj->resv,
-> +								  &fence->f);
->  			spin_unlock_irqrestore(&drv->lock, irq_flags);
-> -			if (signaled)
-> -				/* virtio create command finished */
-> -				ttm_eu_backoff_reservation(&ticket, &validate_list);
->  		}
-> -		virtio_gpu_unref_list(&validate_list);
-> +		drm_gem_unlock_reservations(&obj, 1, &ticket);
-> +		drm_gem_object_put_unlocked(obj);
->  	}
->  
->  	*bo_ptr = bo;
-> -- 
-> 2.18.1
-> 
+All the patches have also been committed to the linux-3.16.y-rc branch of
+https://git.kernel.org/pub/scm/linux/kernel/git/bwh/linux-stable-rc.git .
+A shortlog and diffstat can be found below.
+
+Ben.
+
+-------------
+
+Dan Carpenter (1):
+      drivers/virt/fsl_hypervisor.c: prevent integer overflow in ioctl
+         [6a024330650e24556b8a18cc654ad00cfecf6c6c]
+
+Eric Dumazet (4):
+      tcp: add tcp_min_snd_mss sysctl
+         [5f3e2bf008c2221478101ee72f5cb4654b9fc363]
+      tcp: enforce tcp_min_snd_mss in tcp_mtu_probing()
+         [967c05aee439e6e5d7d805e195b3a20ef5c433d6]
+      tcp: limit payload size of sacked skbs
+         [3b4929f65b0d8249f19a50245cd88ed1a2f78cff]
+      tcp: tcp_fragment() should apply sane memory limits
+         [f070ef2ac66716357066b683fb0baf55f8191a2e]
+
+Jason Yan (1):
+      scsi: megaraid_sas: return error when create DMA pool failed
+         [bcf3b67d16a4c8ffae0aa79de5853435e683945c]
+
+Jiri Kosina (1):
+      mm/mincore.c: make mincore() more conservative
+         [134fca9063ad4851de767d1768180e5dede9a881]
+
+Oleg Nesterov (1):
+      mm: introduce vma_is_anonymous(vma) helper
+         [b5330628546616af14ff23075fbf8d4ad91f6e25]
+
+Sriram Rajagopalan (1):
+      ext4: zero out the unused memory region in the extent tree block
+         [592acbf16821288ecdc4192c47e3774a4c48bb64]
+
+Young Xiao (1):
+      Bluetooth: hidp: fix buffer overflow
+         [a1616a5ac99ede5d605047a9012481ce7ff18b16]
+
+ Documentation/networking/ip-sysctl.txt    |  8 ++++++++
+ Makefile                                  |  4 ++--
+ drivers/scsi/megaraid/megaraid_sas_base.c |  1 +
+ drivers/virt/fsl_hypervisor.c             |  3 +++
+ fs/ext4/extents.c                         | 17 +++++++++++++++--
+ include/linux/mm.h                        |  5 +++++
+ include/linux/tcp.h                       |  3 +++
+ include/net/tcp.h                         |  3 +++
+ include/uapi/linux/snmp.h                 |  1 +
+ mm/memory.c                               |  8 ++++----
+ mm/mincore.c                              | 21 +++++++++++++++++++++
+ net/bluetooth/hidp/sock.c                 |  1 +
+ net/ipv4/proc.c                           |  1 +
+ net/ipv4/sysctl_net_ipv4.c                | 11 +++++++++++
+ net/ipv4/tcp.c                            |  1 +
+ net/ipv4/tcp_input.c                      | 27 ++++++++++++++++++++++-----
+ net/ipv4/tcp_output.c                     |  9 +++++++--
+ net/ipv4/tcp_timer.c                      |  1 +
+ 18 files changed, 110 insertions(+), 15 deletions(-)
 
 -- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+Ben Hutchings
+I'm always amazed by the number of people who take up solipsism because
+they heard someone else explain it. - E*Borg on alt.fan.pratchett
+
