@@ -2,142 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5B1424996C
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 08:53:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5078449953
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 08:50:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728784AbfFRGxJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Jun 2019 02:53:09 -0400
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:45308 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726307AbfFRGxJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Jun 2019 02:53:09 -0400
-Received: by mail-ot1-f65.google.com with SMTP id x21so12741110otq.12
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2019 23:53:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=F1uNa6FtFexED8BrkdYi+QJ3mxVBvnGOiE6mNV8TMuQ=;
-        b=Ai3DslE7sIcJd3lwcHv/nfIW3mBphyUfgA4ERiWbp1nKmnX57EUkIBMuGeFXdT7pfG
-         FW+l44ZOS6pT9YQMmmsJBwXjhCDuIbnT+EOSiX2bhs8hcy9G4XTUuePQGu5bCIvclU9N
-         M+Q5UcimomCZHO0VG2aTeQedTT1QWSp5ft8A387fC/cCeZBWRu6+r4n8Z8vmMPVmwT22
-         gEaGXNF9qds6fOLOwgu/tSpiXP/frXgklI4Ddj4OfJdKCVtItW3YXraLNJuTPqYKdLbu
-         fWogpJYS9Wfejc2Q5oTyxJKmSPjosEPlFfapUcOS7yE1nA0uBHKC3rVMhHJLvqMEZf5I
-         RRRA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=F1uNa6FtFexED8BrkdYi+QJ3mxVBvnGOiE6mNV8TMuQ=;
-        b=sallf8DDEmBQzGzzSbh68p86chsTAIV5mOP7R2fPY1MmzSBAd63T0YpPEt4UcBcjGC
-         WgXN7RX7DMCalH/q5SEaGbcz87lz8QItAiM6AbUNYL5c7q6rUYGyp5EIjo5/i9quLAuj
-         B7OApg+n6DchVbtogdoh3h3ziau2BU5M8HDYA8gHQAlAJ34DNZPXUUqQ2UHcIhv13lRV
-         yeyEz9A9RdjUs1svkFija6zXvb+ZaNM+QjV6sNwJiMKMkTb7juKGx7J+vMjcPQODPgLI
-         QIpxfeMHQnoegJZxQOtsev/OCkWzljkJpXMbGsluioID6/kuRiVXsg/wzWueIrMD7ANx
-         Upuw==
-X-Gm-Message-State: APjAAAXncvIQLUGCr0LSEaXkfyBnM3eWumzGb6UX5xI3HzQembfWBNxj
-        PPkRcrqkHIMCkK0SeN04Lca23g==
-X-Google-Smtp-Source: APXvYqzF6FAEm6X6iuXvqsBEPGfwrQNDfuWjFLfRsqVOsMs1hrhtT+EOaKTXLQrddSKqFiN5L3rpxw==
-X-Received: by 2002:a05:6830:1319:: with SMTP id p25mr2977936otq.224.1560839074504;
-        Mon, 17 Jun 2019 23:24:34 -0700 (PDT)
-Received: from leoy-ThinkPad-X240s (li964-79.members.linode.com. [45.33.10.79])
-        by smtp.gmail.com with ESMTPSA id k3sm5360435otr.1.2019.06.17.23.24.28
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 17 Jun 2019 23:24:33 -0700 (PDT)
-Date:   Tue, 18 Jun 2019 14:24:23 +0800
-From:   Leo Yan <leo.yan@linaro.org>
-To:     Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-Cc:     Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        bpf@vger.kernel.org
-Subject: Re: [PATCH 1/2] perf trace: Use pr_debug() instead of fprintf() for
- logging
-Message-ID: <20190618062423.GA24549@leoy-ThinkPad-X240s>
-References: <20190617091140.24372-1-leo.yan@linaro.org>
- <20190617152412.GJ1402@kernel.org>
+        id S1728767AbfFRGuv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Jun 2019 02:50:51 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:7898 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726292AbfFRGuo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Jun 2019 02:50:44 -0400
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 45SdNQ5LxPz9v2hq;
+        Tue, 18 Jun 2019 08:24:54 +0200 (CEST)
+Authentication-Results: localhost; dkim=pass
+        reason="1024-bit key; insecure key"
+        header.d=c-s.fr header.i=@c-s.fr header.b=cFsBO9Zs; dkim-adsp=pass;
+        dkim-atps=neutral
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id rONjPKrv_eoG; Tue, 18 Jun 2019 08:24:54 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 45SdNQ4J7Tz9v2hp;
+        Tue, 18 Jun 2019 08:24:54 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
+        t=1560839094; bh=t8EkGCrHzuXsMOhfuoBqjBOp4EePACQOfRiTKQzo240=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=cFsBO9ZsKYA6Rxu22NwSnfmVa4rWolVMT4MyHRVXUn1cxkA0aVhlqdmv9QVHxiu32
+         Caam8qSl7zZ8sBIpLx3p3zs2JpEUNXUqhlWXVikc39OUEbtrjhcZJeijlHHaOUylYk
+         ELYEzQ0F3erX2aXD4mYoICx28x5KH+hM2pjhnoCM=
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 95EFD8B86D;
+        Tue, 18 Jun 2019 08:24:54 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id LCs9YYj1ow45; Tue, 18 Jun 2019 08:24:54 +0200 (CEST)
+Received: from PO15451 (unknown [192.168.4.90])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id DC5E08B78B;
+        Tue, 18 Jun 2019 08:24:53 +0200 (CEST)
+Subject: Re: [PATCH 3/5] Powerpc/hw-breakpoint: Refactor set_dawr()
+To:     Ravi Bangoria <ravi.bangoria@linux.ibm.com>, mpe@ellerman.id.au
+Cc:     benh@kernel.crashing.org, paulus@samba.org, mikey@neuling.org,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        npiggin@gmail.com, naveen.n.rao@linux.vnet.ibm.com
+References: <20190618042732.5582-1-ravi.bangoria@linux.ibm.com>
+ <20190618042732.5582-4-ravi.bangoria@linux.ibm.com>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Message-ID: <36044d6d-d46f-8c7b-c597-0e5d156fd9db@c-s.fr>
+Date:   Tue, 18 Jun 2019 08:24:53 +0200
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190617152412.GJ1402@kernel.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20190618042732.5582-4-ravi.bangoria@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: fr
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 17, 2019 at 12:24:12PM -0300, Arnaldo Carvalho de Melo wrote:
-> Em Mon, Jun 17, 2019 at 05:11:39PM +0800, Leo Yan escreveu:
-> > In the function trace__syscall_info(), it explicitly checks verbose
-> > level and print out log with fprintf().  Actually, we can use
-> > pr_debug() to do the same thing for debug logging.
-> > 
-> > This patch uses pr_debug() instead of fprintf() for debug logging; it
-> > includes a minor fixing for 'space before tab in indent', which
-> > dismisses git warning when apply it.
-> 
-> But those are not fprintf(stdout,), they explicitely redirect to the
-> output file that the user may have specified using 'perf trace --output
-> filename.trace' :-)
 
-Thanks for pointing out, sorry for noise. Please drop this patch.
 
-Thanks,
-Leo Yan
+Le 18/06/2019 à 06:27, Ravi Bangoria a écrit :
+> Remove unnecessary comments. Code itself is self explanatory.
+> And, ISA already talks about MRD field. I Don't think we need
+> to re-describe it.
 
-> > Signed-off-by: Leo Yan <leo.yan@linaro.org>
-> > ---
-> >  tools/perf/builtin-trace.c | 21 +++++++++------------
-> >  1 file changed, 9 insertions(+), 12 deletions(-)
-> > 
-> > diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
-> > index bd1f00e7a2eb..5cd74651db4c 100644
-> > --- a/tools/perf/builtin-trace.c
-> > +++ b/tools/perf/builtin-trace.c
-> > @@ -1760,12 +1760,11 @@ static struct syscall *trace__syscall_info(struct trace *trace,
-> >  		 * grep "NR -1 " /t/trace_pipe
-> >  		 *
-> >  		 * After generating some load on the machine.
-> > - 		 */
-> > -		if (verbose > 1) {
-> > -			static u64 n;
-> > -			fprintf(trace->output, "Invalid syscall %d id, skipping (%s, %" PRIu64 ") ...\n",
-> > -				id, perf_evsel__name(evsel), ++n);
-> > -		}
-> > +		 */
-> > +		static u64 n;
-> > +
-> > +		pr_debug("Invalid syscall %d id, skipping (%s, %" PRIu64 ")\n",
-> > +			 id, perf_evsel__name(evsel), ++n);
-> >  		return NULL;
-> >  	}
-> >  
-> > @@ -1779,12 +1778,10 @@ static struct syscall *trace__syscall_info(struct trace *trace,
-> >  	return &trace->syscalls.table[id];
-> >  
-> >  out_cant_read:
-> > -	if (verbose > 0) {
-> > -		fprintf(trace->output, "Problems reading syscall %d", id);
-> > -		if (id <= trace->syscalls.max && trace->syscalls.table[id].name != NULL)
-> > -			fprintf(trace->output, "(%s)", trace->syscalls.table[id].name);
-> > -		fputs(" information\n", trace->output);
-> > -	}
-> > +	pr_debug("Problems reading syscall %d", id);
-> > +	if (id <= trace->syscalls.max && trace->syscalls.table[id].name != NULL)
-> > +		pr_debug("(%s)", trace->syscalls.table[id].name);
-> > +	pr_debug(" information\n");
-> >  	return NULL;
-> >  }
-> >  
-> > -- 
-> > 2.17.1
+In an RFC patch you may "don't think".
+But in the final patch you need to make a decision and write it as such.
+
+Ie, you should write: "We don't need to re-describe it."
+
+
 > 
-> -- 
+> Signed-off-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+> ---
+>   arch/powerpc/kernel/process.c | 17 +++++------------
+>   1 file changed, 5 insertions(+), 12 deletions(-)
 > 
-> - Arnaldo
+> diff --git a/arch/powerpc/kernel/process.c b/arch/powerpc/kernel/process.c
+> index f0fbbf6a6a1f..f002d2ffff86 100644
+> --- a/arch/powerpc/kernel/process.c
+> +++ b/arch/powerpc/kernel/process.c
+> @@ -799,18 +799,11 @@ int set_dawr(struct arch_hw_breakpoint *brk)
+>   
+>   	dawr = brk->address;
+>   
+> -	dawrx  = (brk->type & (HW_BRK_TYPE_READ | HW_BRK_TYPE_WRITE)) \
+> -		                   << (63 - 58); //* read/write bits */
+> -	dawrx |= ((brk->type & (HW_BRK_TYPE_TRANSLATE)) >> 2) \
+> -		                   << (63 - 59); //* translate */
+> -	dawrx |= (brk->type & (HW_BRK_TYPE_PRIV_ALL)) \
+> -		                   >> 3; //* PRIM bits */
+> -	/* dawr length is stored in field MDR bits 48:53.  Matches range in
+> -	   doublewords (64 bits) baised by -1 eg. 0b000000=1DW and
+> -	   0b111111=64DW.
+> -	   brk->len is in bytes.
+> -	   This aligns up to double word size, shifts and does the bias.
+> -	*/
+> +	dawrx  = (brk->type & HW_BRK_TYPE_RDWR) << (63 - 58);
+> +	dawrx |= ((brk->type & HW_BRK_TYPE_TRANSLATE) >> 2) << (63 - 59);
+> +	dawrx |= (brk->type & HW_BRK_TYPE_PRIV_ALL) >> 3;
+> +
+> +	/* brk->len is in bytes. */
+>   	mrd = ((brk->len + 7) >> 3) - 1;
+>   	dawrx |= (mrd & 0x3f) << (63 - 53);
+>   
+> 
