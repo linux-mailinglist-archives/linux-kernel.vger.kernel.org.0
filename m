@@ -2,97 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 435DF49939
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 08:47:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6F90249A3E
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 09:17:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728783AbfFRGr0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Jun 2019 02:47:26 -0400
-Received: from ozlabs.org ([203.11.71.1]:46175 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728195AbfFRGrZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Jun 2019 02:47:25 -0400
-Received: from neuling.org (localhost [127.0.0.1])
-        by ozlabs.org (Postfix) with ESMTP id 45Sd4w30GDz9sDX;
-        Tue, 18 Jun 2019 16:11:28 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=neuling.org;
-        s=201811; t=1560838288;
-        bh=uLeN3JvliJrrWmBBPBEg+QalZIGnGRnRT7IRnPElTPo=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=AMlvJ74llgIPBvEBzG1nNMm7QQtDD7fDcC6V8gqITcdfNDndxaXnsrlAuPixXs29a
-         0nIFFLgtySP4DzClUAseH5nloiXZ4wg/wPXBHV77xN9aZwKBkm0UPlA3O1ediVxRD3
-         bZMCWcZWyWQeGxoXV/by1cIA1/T75CbIhX3E2TmxsUue9HHqo7VhWr96lv7ueHWcQI
-         e5d1chyRCxCbdF6Sx/pQ9VjH5nj8hMpgUxV1rHWk1Lk937v5f/D8dKJjpG28UjCsrg
-         B09oWpbxAK9StLsRmkp7yMvErJBxxm2UFPQdEgBAJ7ZvYSvZDtdtB51Y0WcObcCdDc
-         kNWUorW49OC4w==
-Received: by neuling.org (Postfix, from userid 1000)
-        id 512FA2A2538; Tue, 18 Jun 2019 16:11:28 +1000 (AEST)
-Message-ID: <b8d8682c8cf13d307ca1e936f924f31a9eac3227.camel@neuling.org>
-Subject: Re: [PATCH 3/5] Powerpc/hw-breakpoint: Refactor set_dawr()
-From:   Michael Neuling <mikey@neuling.org>
-To:     Ravi Bangoria <ravi.bangoria@linux.ibm.com>, mpe@ellerman.id.au
-Cc:     benh@kernel.crashing.org, paulus@samba.org,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        npiggin@gmail.com, christophe.leroy@c-s.fr,
-        naveen.n.rao@linux.vnet.ibm.com
-Date:   Tue, 18 Jun 2019 16:11:28 +1000
-In-Reply-To: <20190618042732.5582-4-ravi.bangoria@linux.ibm.com>
-References: <20190618042732.5582-1-ravi.bangoria@linux.ibm.com>
-         <20190618042732.5582-4-ravi.bangoria@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
+        id S1728847AbfFRHRf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Jun 2019 03:17:35 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:33985 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725955AbfFRHRf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Jun 2019 03:17:35 -0400
+Received: by mail-pl1-f196.google.com with SMTP id i2so5316851plt.1;
+        Tue, 18 Jun 2019 00:17:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:thread-topic:thread-index:date:message-id
+         :references:in-reply-to:accept-language:content-language
+         :content-transfer-encoding:mime-version;
+        bh=6ls+i1u+lWJagjHM7534F8Uv5sC5LPRBjSxm2ecigcI=;
+        b=WUyn0HUpRkDvaQuENXAK0PGnCB5TxeJa5MJFSJVY5qlfM2PUnK5Rh65Uup9Zxg+KlC
+         Sd7mPCIvGKAePXHwuo+zAEW9XGDehg/1O3k+rWNlq4dsrDKDlTqcZ7Krh/T2g686FARo
+         Y92y/YV8KouEjNRAqpL94FZuxw3zyVxYzezozpU8W826c6QXnef6F2C45Pvx/FX4i23d
+         7wHDKsUcvU7W4QE2h3LvEKfROtqzhJB0WnLsRhzQn6x2sAR+arNrGkHwRn7UeY+dOm3r
+         jWWxUQXsgdp9BpXZVBvrscdbNgS4iVXRHYv2mvojh4ZIfG8xhb+7MV44tCh8qitjES6f
+         buoQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:thread-topic:thread-index
+         :date:message-id:references:in-reply-to:accept-language
+         :content-language:content-transfer-encoding:mime-version;
+        bh=6ls+i1u+lWJagjHM7534F8Uv5sC5LPRBjSxm2ecigcI=;
+        b=BjWqy5hwAU2Rh7ung8oxvWkXNhO+Dtfc5oY8XOp+tfyU6OydjjHbs1j/HsYjebCBZg
+         cCvkHivt+Bc3RosICDP5FMrvd9Z+q1wUGZZnPIdfHJztptFD5UVEt07qPCQRwRA199NY
+         +tLtCOxCpgKNTuNwjbBfKu33TaOadPdvM1Fka6333McHUoivGTcy6ESSxpMiExbJLtqq
+         nAgD/OXkUNxtDapV1m0rfKzuozwc02bqZ1XAFIpCWGXIFx69A4d9U2jnO3doy4zackcr
+         4htfFP5l9nAfo4JMIYaDdLHdDXej9O0FZfrm5fwOW+o52GT6EQAVonXCjXRlYcn1q7Ab
+         nZXw==
+X-Gm-Message-State: APjAAAVRnu+UMabGw3tS6C0Ngc3ydJO6Y+oNq9kQev8ryq3rQwU8CKFG
+        GYekJQSFcgwi/ClIXSR8YOYrcpFE
+X-Google-Smtp-Source: APXvYqyINnOm+mjTZ+CUFcz86nookJ6AW/68jaX/bNlGiAR7RzP3b1FIxJN6D1gmjwWmvIHE04lGQA==
+X-Received: by 2002:a17:902:a504:: with SMTP id s4mr42724651plq.117.1560838363437;
+        Mon, 17 Jun 2019 23:12:43 -0700 (PDT)
+Received: from PSXP216MB0662.KORP216.PROD.OUTLOOK.COM ([40.100.44.181])
+        by smtp.gmail.com with ESMTPSA id m96sm1195616pjb.1.2019.06.17.23.12.40
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 17 Jun 2019 23:12:42 -0700 (PDT)
+From:   Jingoo Han <jingoohan1@gmail.com>
+To:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+CC:     Han Jingoo <jingoohan1@gmail.com>,
+        "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] video: fbdev: s3c-fb: add COMPILE_TEST support
+Thread-Topic: [PATCH] video: fbdev: s3c-fb: add COMPILE_TEST support
+Thread-Index: AWIzNHA0y3vT+npVfJhuNQKkYC3mSWVjM2Fi4rm3H+w=
+X-MS-Exchange-MessageSentRepresentingType: 1
+Date:   Tue, 18 Jun 2019 06:12:27 +0000
+Message-ID: <PSXP216MB0662B10864E4DDEC1EC1823CAAEA0@PSXP216MB0662.KORP216.PROD.OUTLOOK.COM>
+References: <CGME20190614144634eucas1p1b04dcfcc040c3c886d2b33592c501d3b@eucas1p1.samsung.com>
+ <e771b89b-0e38-a712-b635-8d53cbf95a8e@samsung.com>
+In-Reply-To: <e771b89b-0e38-a712-b635-8d53cbf95a8e@samsung.com>
+Accept-Language: ko-KR, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-Exchange-Organization-SCL: -1
+X-MS-TNEF-Correlator: 
+X-MS-Exchange-Organization-RecordReviewCfmType: 0
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.32.2 (3.32.2-1.fc30) 
 MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is going to collide with this patch=20
-https://patchwork.ozlabs.org/patch/1109594/
-
-Mikey
-
-
-On Tue, 2019-06-18 at 09:57 +0530, Ravi Bangoria wrote:
-> Remove unnecessary comments. Code itself is self explanatory.
-> And, ISA already talks about MRD field. I Don't think we need
-> to re-describe it.
+On 6/14/19, 11:46 PM, Bartlomiej Zolnierkiewicz wrote:
 >=20
-> Signed-off-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+> Add COMPILE_TEST support to s3c-fb driver for better compile
+> testing coverage.
+>
+> Cc: Jingoo Han <jingoohan1@gmail.com>
+Acked-by: Jingoo Han <jingoohan1@gmail.com>
+> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 > ---
->  arch/powerpc/kernel/process.c | 17 +++++------------
->  1 file changed, 5 insertions(+), 12 deletions(-)
->=20
-> diff --git a/arch/powerpc/kernel/process.c b/arch/powerpc/kernel/process.=
-c
-> index f0fbbf6a6a1f..f002d2ffff86 100644
-> --- a/arch/powerpc/kernel/process.c
-> +++ b/arch/powerpc/kernel/process.c
-> @@ -799,18 +799,11 @@ int set_dawr(struct arch_hw_breakpoint *brk)
+>  drivers/video/fbdev/Kconfig |    3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+>
+> Index: b/drivers/video/fbdev/Kconfig
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> --- a/drivers/video/fbdev/Kconfig
+> +++ b/drivers/video/fbdev/Kconfig
+> @@ -1877,7 +1877,8 @@ config FB_TMIO_ACCELL
 > =20
->  	dawr =3D brk->address;
-> =20
-> -	dawrx  =3D (brk->type & (HW_BRK_TYPE_READ | HW_BRK_TYPE_WRITE)) \
-> -		                   << (63 - 58); //* read/write bits */
-> -	dawrx |=3D ((brk->type & (HW_BRK_TYPE_TRANSLATE)) >> 2) \
-> -		                   << (63 - 59); //* translate */
-> -	dawrx |=3D (brk->type & (HW_BRK_TYPE_PRIV_ALL)) \
-> -		                   >> 3; //* PRIM bits */
-> -	/* dawr length is stored in field MDR bits 48:53.  Matches range in
-> -	   doublewords (64 bits) baised by -1 eg. 0b000000=3D1DW and
-> -	   0b111111=3D64DW.
-> -	   brk->len is in bytes.
-> -	   This aligns up to double word size, shifts and does the bias.
-> -	*/
-> +	dawrx  =3D (brk->type & HW_BRK_TYPE_RDWR) << (63 - 58);
-> +	dawrx |=3D ((brk->type & HW_BRK_TYPE_TRANSLATE) >> 2) << (63 - 59);
-> +	dawrx |=3D (brk->type & HW_BRK_TYPE_PRIV_ALL) >> 3;
-> +
-> +	/* brk->len is in bytes. */
->  	mrd =3D ((brk->len + 7) >> 3) - 1;
->  	dawrx |=3D (mrd & 0x3f) << (63 - 53);
-> =20
-
-
-
-
+>  config FB_S3C
+>  	tristate "Samsung S3C framebuffer support"
+> -	depends on FB && (CPU_S3C2416 || ARCH_S3C64XX)
+> +	depends on FB && HAVE_CLK && HAS_IOMEM
+> +	depends on (CPU_S3C2416 || ARCH_S3C64XX) || COMPILE_TEST
+>  	select FB_CFB_FILLRECT
+>  	select FB_CFB_COPYAREA
+>  	select FB_CFB_IMAGEBLIT
