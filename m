@@ -2,58 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CF8EE4A354
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 16:05:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E75194A34B
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 16:04:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729400AbfFROEl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Jun 2019 10:04:41 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:40675 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728881AbfFROEi (ORCPT
+        id S1729493AbfFROEm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Jun 2019 10:04:42 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:43623 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726047AbfFROEj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Jun 2019 10:04:38 -0400
-Received: by mail-lf1-f65.google.com with SMTP id a9so9381971lff.7;
-        Tue, 18 Jun 2019 07:04:37 -0700 (PDT)
+        Tue, 18 Jun 2019 10:04:39 -0400
+Received: by mail-lf1-f68.google.com with SMTP id j29so9371640lfk.10;
+        Tue, 18 Jun 2019 07:04:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=yGzib6MseACehIYRzaxs9YRxFXUiKKW6eF2jOufVeio=;
-        b=MgTfYh3stqNxgZlQmWUAd5MtiRvA8vV9zxm5ODNoW81j6wPb+fsJCp5dUYyKv9bP8E
-         yuX/o0r/TKpul8P9pj1rWOUZHLZfWHh+jgnWqUbWj29oaf1ieCatmN/NcDFzRWyQq2Hq
-         ueRvYqsWfCtVRTrodxA0ha4A13zhAmb1c3m834EGq03J7v595rcjclCfwwO7xTohMRec
-         yyZVtTCzzWrIxFBe2lBx/Li73KC0TV72MWFdVOltErm+B1yDy3g6ndbEyHPPUSe2APpl
-         LRilz50ilPnuUwJUy8ve6CUHjJ2jkzaExnJ9PuwV6oTieMxTyxi8P5vSVP8R7uti/ohc
-         u45g==
+        bh=UStQDGBIbRw+o+Dqy3P0eYDxpcISKuZis1Sl1FbafX8=;
+        b=RPxmMbTOPcLqQg1Hr+WSf0nwKlYtrefWWyKMevAQUHGSTiUn7rz9hmMaoAjajXpyVt
+         TGwlrw0hT5bDPsghDSOMs2zfEzMDk0YpPBAJ9znP/XBXObCxCz/vlRbWgetMcqlL3aac
+         18itnZwLMGBS3VL8eJl6fPR0rLD+1IfH0/Uv/TiHYxeM65vzv1C5jhcgOAb+Twio1u4u
+         7FLUZJq58PO4NtG4WSPkCqDYd+ksUtF8x1syiipODUjAPPgIFNzGmTWBcOBjT8SZhTFU
+         0N8UHGmEwHaGCUfDaV4IzbtokxL7yl7H7mZbyjbnAqtyVoVf9hRfOcj+LvYHNIXQv3EA
+         6z+Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=yGzib6MseACehIYRzaxs9YRxFXUiKKW6eF2jOufVeio=;
-        b=gQF9b4gjNIZeTAIpdiWob2ph9Rom9iaFpHg1z49x9eU5zpNT9OnEiR3AmCbmKxvCK1
-         5A5PcKNjuxmz+v6PfQb4DS9b8Lgm2PCs7hTcVirlwYkbpM28GyyZTgUSuCnrajsFMHcx
-         X/NayYDGkEM0VVsgRoxNc4990m7M0Z7tkk8+Fb2U5lyEH9KQSw5uBNKEmfJ4i7jOqRmT
-         OYDQNyGYETpApVzR8OdM3GVgRXuA5GtAs7+noK6AhewS35+geycGhUFrtJ6C9c26umP2
-         FVSrQr62iNbm58lfCmN/tAE0Y+V1lAy6xCHj2mzAbRLyMBP1NSpXvOgzi7omlD0WC6vg
-         RYdw==
-X-Gm-Message-State: APjAAAUjdjy1SbjBOiCd5g1zC6PN1sUi9DgIMr/PVjox0+d+2WZl25dm
-        R4L1aFytNQlJ0uHqISUqJXUxTvai
-X-Google-Smtp-Source: APXvYqyzCxDjGqJ4TwXFRFbmGVmL+naY4sTKxFD7FCosi9P7Ush/adZz52ViR+l73kD+nBZed1Px5Q==
-X-Received: by 2002:a19:c14f:: with SMTP id r76mr11251171lff.70.1560866676585;
-        Tue, 18 Jun 2019 07:04:36 -0700 (PDT)
+        bh=UStQDGBIbRw+o+Dqy3P0eYDxpcISKuZis1Sl1FbafX8=;
+        b=UUeKjDeDcMWzGTHfpaqsFoKWnpVKYZdu7PlVqirE08/IKV0wSn8UO1Nx/TrwPtoYKj
+         ItORhcklNIWtANSf+Qhh9N3Tlb6Ip/xUU1benjdob7wg7NlyKzAag3do/1IhTLPZRiQi
+         REFbmCKtDkt/Fm/4qCHY5P5jAiXeFdrz8E+DgZedW3dB2UVTfaI17W8tfjqdPXVY9jbl
+         uUnlLeSOAcHbJip7BnoYvXNLNHaHR/EzrPps2m1lYDix9vJ7+Y6wSen2UhOsx35RYWhu
+         GcNGoCKzzQ+LEymYdw4WuegVJwW+IAjjrsw2KaJIqNxAF3XsKrkIxGJFA/Ao2mplFasV
+         xU9A==
+X-Gm-Message-State: APjAAAXVDfUq2UygfiwIePrvW+JPUD6baZJZAr7NQo87wLm/85nSvQVZ
+        bIhL2Bjs63ouWlxCpDUOsUM=
+X-Google-Smtp-Source: APXvYqyrR8/B20wPjKesgsV525ItCFwgjVA7KeHqnnw38W69svkMVZ2/sZYP0xJLuJUxIyij+bgfcQ==
+X-Received: by 2002:a19:c301:: with SMTP id t1mr60468781lff.137.1560866677530;
+        Tue, 18 Jun 2019 07:04:37 -0700 (PDT)
 Received: from localhost.localdomain (ppp91-79-162-197.pppoe.mtu-net.ru. [91.79.162.197])
-        by smtp.gmail.com with ESMTPSA id q6sm2650538lji.70.2019.06.18.07.04.35
+        by smtp.gmail.com with ESMTPSA id q6sm2650538lji.70.2019.06.18.07.04.36
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 18 Jun 2019 07:04:36 -0700 (PDT)
+        Tue, 18 Jun 2019 07:04:37 -0700 (PDT)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Daniel Lezcano <daniel.lezcano@linaro.org>,
         Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
         Peter De Schrijver <pdeschrijver@nvidia.com>
 Cc:     linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3 1/8] clocksource/drivers/tegra: Restore timer rate on Tegra210
-Date:   Tue, 18 Jun 2019 17:03:51 +0300
-Message-Id: <20190618140358.13148-2-digetx@gmail.com>
+Subject: [PATCH v3 2/8] clocksource/drivers/tegra: Remove duplicated use of per_cpu_ptr
+Date:   Tue, 18 Jun 2019 17:03:52 +0300
+Message-Id: <20190618140358.13148-3-digetx@gmail.com>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190618140358.13148-1-digetx@gmail.com>
 References: <20190618140358.13148-1-digetx@gmail.com>
@@ -64,31 +64,84 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The clocksource rate is initialized only for the first per-CPU clocksource
-and then that rate shall be replicated for the rest of clocksource's
-because they are initialized manually in the code.
+It was left unnoticed by accident, which means that the code could be
+cleaned up a tad more.
 
-Fixes: 3be2a85a0b61 ("clocksource/drivers/tegra: Support per-CPU timers on all Tegra's")
 Acked-by: Jon Hunter <jonathanh@nvidia.com>
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/clocksource/timer-tegra.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/clocksource/timer-tegra.c | 42 ++++++++++++++++++-------------
+ 1 file changed, 25 insertions(+), 17 deletions(-)
 
 diff --git a/drivers/clocksource/timer-tegra.c b/drivers/clocksource/timer-tegra.c
-index 1cc5847a1030..501071f09fa8 100644
+index 501071f09fa8..ff5a4ccb5d52 100644
 --- a/drivers/clocksource/timer-tegra.c
 +++ b/drivers/clocksource/timer-tegra.c
-@@ -277,6 +277,8 @@ static int __init tegra_init_timer(struct device_node *np, bool tegra20,
- 		 */
- 		if (tegra20)
- 			cpu_to->of_clk.rate = 1000000;
-+		else
-+			cpu_to->of_clk.rate = timer_of_rate(to);
+@@ -216,6 +216,19 @@ static inline unsigned int tegra_irq_idx_for_cpu(int cpu, bool tegra20)
+ 	return TIMER10_IRQ_IDX + cpu;
+ }
  
- 		cpu_to = per_cpu_ptr(&tegra_to, cpu);
- 		cpu_to->of_base.base = timer_reg_base + base;
++static inline unsigned long tegra_rate_for_timer(struct timer_of *to,
++						 bool tegra20)
++{
++	/*
++	 * TIMER1-9 are fixed to 1MHz, TIMER10-13 are running off the
++	 * parent clock.
++	 */
++	if (tegra20)
++		return 1000000;
++
++	return timer_of_rate(to);
++}
++
+ static int __init tegra_init_timer(struct device_node *np, bool tegra20,
+ 				   int rating)
+ {
+@@ -268,32 +281,27 @@ static int __init tegra_init_timer(struct device_node *np, bool tegra20,
+ 
+ 	for_each_possible_cpu(cpu) {
+ 		struct timer_of *cpu_to = per_cpu_ptr(&tegra_to, cpu);
++		unsigned long flags = IRQF_TIMER | IRQF_NOBALANCING;
++		unsigned long rate = tegra_rate_for_timer(to, tegra20);
+ 		unsigned int base = tegra_base_for_cpu(cpu, tegra20);
+ 		unsigned int idx = tegra_irq_idx_for_cpu(cpu, tegra20);
++		unsigned int irq = irq_of_parse_and_map(np, idx);
+ 
+-		/*
+-		 * TIMER1-9 are fixed to 1MHz, TIMER10-13 are running off the
+-		 * parent clock.
+-		 */
+-		if (tegra20)
+-			cpu_to->of_clk.rate = 1000000;
+-		else
+-			cpu_to->of_clk.rate = timer_of_rate(to);
+-
+-		cpu_to = per_cpu_ptr(&tegra_to, cpu);
+-		cpu_to->of_base.base = timer_reg_base + base;
+-		cpu_to->clkevt.rating = rating;
+-		cpu_to->clkevt.cpumask = cpumask_of(cpu);
+-		cpu_to->clkevt.irq = irq_of_parse_and_map(np, idx);
+-		if (!cpu_to->clkevt.irq) {
++		if (!irq) {
+ 			pr_err("failed to map irq for cpu%d\n", cpu);
+ 			ret = -EINVAL;
+ 			goto out_irq;
+ 		}
+ 
++		cpu_to->clkevt.irq = irq;
++		cpu_to->clkevt.rating = rating;
++		cpu_to->clkevt.cpumask = cpumask_of(cpu);
++		cpu_to->of_base.base = timer_reg_base + base;
++		cpu_to->of_clk.rate = rate;
++
+ 		irq_set_status_flags(cpu_to->clkevt.irq, IRQ_NOAUTOEN);
+-		ret = request_irq(cpu_to->clkevt.irq, tegra_timer_isr,
+-				  IRQF_TIMER | IRQF_NOBALANCING,
++
++		ret = request_irq(cpu_to->clkevt.irq, tegra_timer_isr, flags,
+ 				  cpu_to->clkevt.name, &cpu_to->clkevt);
+ 		if (ret) {
+ 			pr_err("failed to set up irq for cpu%d: %d\n",
 -- 
 2.22.0
 
