@@ -2,14 +2,14 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AFA444A9E6
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 20:33:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B94F4A9E3
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 20:33:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730382AbfFRSd0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Jun 2019 14:33:26 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:47536 "EHLO
+        id S1730394AbfFRSd1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Jun 2019 14:33:27 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:47568 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730326AbfFRSdZ (ORCPT
+        with ESMTP id S1730358AbfFRSdZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 18 Jun 2019 14:33:25 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
@@ -18,29 +18,25 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=sJ1/yFnBoKTboXWrZrp0z327Jb8us3etQDsMDSr/xWA=; b=UUWWrbjBHjzS
-        NvuSUGoCX5thvmDc4uE7WHy2gDb9QsfA4WD3pxSzMdSbukghUC/MBcb3XsLpunFQr9eOFVu/n8lPb
-        G4GHATQLxc3GmSEif98KtLdO2X/s2VsYVKMBpW3I89NdESP4iz0BVlxXQluHotG7dF8r0Yffgk5NA
-        IFBX0=;
+        List-Archive; bh=TPsujIWTKKE1424oPCy7XooqmWFVUeyhp6UwM7y6KlE=; b=r7yXU3t3v2Ej
+        X8PNK1F9ZGRCM5GtXrRTJWqBox/dfKlcpmqa0PqVwBLnlGSLEpB3OhUkAz7e0VEcQ2Yv7zgSXqpQe
+        yv3sdGd8EIxZNWNgw7/gko1jP3I6bqunftZKq6MSBo6ryWspMojiek8dPE3vvu716ajOZeBgSfEpY
+        5q2us=;
 Received: from [2001:470:1f1d:6b5:7e7a:91ff:fede:4a45] (helo=finisterre.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1hdIv3-0005L8-Q4; Tue, 18 Jun 2019 18:33:21 +0000
+        id 1hdIv5-0005LO-Vh; Tue, 18 Jun 2019 18:33:24 +0000
 Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
-        id 4C87F440046; Tue, 18 Jun 2019 19:33:21 +0100 (BST)
+        id 78864440046; Tue, 18 Jun 2019 19:33:23 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
-To:     Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
-Cc:     agross@kernel.org, bjorn.andersson@linaro.org, broonie@kernel.org,
-        devicetree@vger.kernel.org, lgirdwood@gmail.com,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Mark Brown <broonie@kernel.org>, mark.rutland@arm.com,
-        robh+dt@kernel.org
-Subject: Applied "dt-bindings: qcom_spmi: Document PM8005 regulators" to the regulator tree
-In-Reply-To: <20190617183716.13501-1-jeffrey.l.hugo@gmail.com>
+To:     Mark Brown <broonie@kernel.org>
+Cc:     linux-kernel@vger.kernel.org
+Subject: Applied "regulator: core: Make entire header comment C++ style" to the regulator tree
+In-Reply-To: 
 X-Patchwork-Hint: ignore
-Message-Id: <20190618183321.4C87F440046@finisterre.sirena.org.uk>
-Date:   Tue, 18 Jun 2019 19:33:21 +0100 (BST)
+Message-Id: <20190618183323.78864440046@finisterre.sirena.org.uk>
+Date:   Tue, 18 Jun 2019 19:33:23 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -48,11 +44,11 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   dt-bindings: qcom_spmi: Document PM8005 regulators
+   regulator: core: Make entire header comment C++ style
 
 has been applied to the regulator tree at
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-5.3
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git 
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
@@ -73,43 +69,63 @@ to this mail.
 Thanks,
 Mark
 
-From 4fe0676b04edc5032ffdc3fed00b670e1cfef049 Mon Sep 17 00:00:00 2001
-From: Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
-Date: Mon, 17 Jun 2019 11:37:16 -0700
-Subject: [PATCH] dt-bindings: qcom_spmi: Document PM8005 regulators
+From f2c6203fdd1197d8254073a8f3f3372b0d3d9e6b Mon Sep 17 00:00:00 2001
+From: Mark Brown <broonie@kernel.org>
+Date: Mon, 17 Jun 2019 18:16:52 +0100
+Subject: [PATCH] regulator: core: Make entire header comment C++ style
 
-Document the dt bindings for the PM8005 regulators which are usually used
-for VDD of standalone blocks on a SoC like the GPU.
+Makes things look more consistent.
 
-Signed-off-by: Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- .../devicetree/bindings/regulator/qcom,spmi-regulator.txt     | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/regulator/core.c    | 15 +++++++--------
+ drivers/regulator/helpers.c | 11 +++++------
+ 2 files changed, 12 insertions(+), 14 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/regulator/qcom,spmi-regulator.txt b/Documentation/devicetree/bindings/regulator/qcom,spmi-regulator.txt
-index 406f2e570c50..ba94bc2d407a 100644
---- a/Documentation/devicetree/bindings/regulator/qcom,spmi-regulator.txt
-+++ b/Documentation/devicetree/bindings/regulator/qcom,spmi-regulator.txt
-@@ -4,6 +4,7 @@ Qualcomm SPMI Regulators
- 	Usage: required
- 	Value type: <string>
- 	Definition: must be one of:
-+			"qcom,pm8005-regulators"
- 			"qcom,pm8841-regulators"
- 			"qcom,pm8916-regulators"
- 			"qcom,pm8941-regulators"
-@@ -120,6 +121,9 @@ The regulator node houses sub-nodes for each regulator within the device. Each
- sub-node is identified using the node's name, with valid values listed for each
- of the PMICs below.
+diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
+index 85f61e5dc312..9d3ed13b7f12 100644
+--- a/drivers/regulator/core.c
++++ b/drivers/regulator/core.c
+@@ -1,12 +1,11 @@
+ // SPDX-License-Identifier: GPL-2.0-or-later
+-/*
+- * core.c  --  Voltage/Current Regulator framework.
+- *
+- * Copyright 2007, 2008 Wolfson Microelectronics PLC.
+- * Copyright 2008 SlimLogic Ltd.
+- *
+- * Author: Liam Girdwood <lrg@slimlogic.co.uk>
+- */
++//
++// core.c  --  Voltage/Current Regulator framework.
++//
++// Copyright 2007, 2008 Wolfson Microelectronics PLC.
++// Copyright 2008 SlimLogic Ltd.
++//
++// Author: Liam Girdwood <lrg@slimlogic.co.uk>
  
-+pm8005:
-+	s1, s2, s3, s4
-+
- pm8841:
- 	s1, s2, s3, s4, s5, s6, s7, s8
+ #include <linux/kernel.h>
+ #include <linux/init.h>
+diff --git a/drivers/regulator/helpers.c b/drivers/regulator/helpers.c
+index b9ae45d2d199..4986cc5064a1 100644
+--- a/drivers/regulator/helpers.c
++++ b/drivers/regulator/helpers.c
+@@ -1,10 +1,9 @@
+ // SPDX-License-Identifier: GPL-2.0-or-later
+-/*
+- * helpers.c  --  Voltage/Current Regulator framework helper functions.
+- *
+- * Copyright 2007, 2008 Wolfson Microelectronics PLC.
+- * Copyright 2008 SlimLogic Ltd.
+- */
++//
++// helpers.c  --  Voltage/Current Regulator framework helper functions.
++//
++// Copyright 2007, 2008 Wolfson Microelectronics PLC.
++// Copyright 2008 SlimLogic Ltd.
  
+ #include <linux/kernel.h>
+ #include <linux/err.h>
 -- 
 2.20.1
 
