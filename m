@@ -2,133 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 964ED4A8E2
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 19:55:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 892484A8E4
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 19:55:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730153AbfFRRzl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Jun 2019 13:55:41 -0400
-Received: from foss.arm.com ([217.140.110.172]:52732 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729285AbfFRRzl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Jun 2019 13:55:41 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 30238344;
-        Tue, 18 Jun 2019 10:55:40 -0700 (PDT)
-Received: from fuggles.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B30693F738;
-        Tue, 18 Jun 2019 10:55:38 -0700 (PDT)
-Date:   Tue, 18 Jun 2019 18:55:36 +0100
-From:   Will Deacon <will.deacon@arm.com>
-To:     Vivek Gautam <vivek.gautam@codeaurora.org>
-Cc:     agross@kernel.org, robh+dt@kernel.org, robin.murphy@arm.com,
-        joro@8bytes.org, bjorn.andersson@linaro.org,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        david.brown@linaro.org
-Subject: Re: [PATCH v3 1/4] firmware: qcom_scm-64: Add atomic version of
- qcom_scm_call
-Message-ID: <20190618175536.GI4270@fuggles.cambridge.arm.com>
-References: <20190612071554.13573-1-vivek.gautam@codeaurora.org>
- <20190612071554.13573-2-vivek.gautam@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190612071554.13573-2-vivek.gautam@codeaurora.org>
-User-Agent: Mutt/1.11.1+86 (6f28e57d73f2) ()
+        id S1730230AbfFRRzu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Jun 2019 13:55:50 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:51006 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729285AbfFRRzt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Jun 2019 13:55:49 -0400
+Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::3d5])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id B00C21510A308;
+        Tue, 18 Jun 2019 10:55:48 -0700 (PDT)
+Date:   Tue, 18 Jun 2019 10:55:48 -0700 (PDT)
+Message-Id: <20190618.105548.2200622033433520074.davem@davemloft.net>
+To:     lifei.shirley@bytedance.com
+Cc:     jasowang@redhat.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, zhengfeiran@bytedance.com,
+        duanxiongchun@bytedance.com
+Subject: Re: [PATCH net v2] tun: wake up waitqueues after IFF_UP is set
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <20190617132636.72496-1-lifei.shirley@bytedance.com>
+References: <20190617132636.72496-1-lifei.shirley@bytedance.com>
+X-Mailer: Mew version 6.8 on Emacs 26.1
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Tue, 18 Jun 2019 10:55:48 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 12, 2019 at 12:45:51PM +0530, Vivek Gautam wrote:
-> There are scnenarios where drivers are required to make a
-> scm call in atomic context, such as in one of the qcom's
-> arm-smmu-500 errata [1].
+From: Fei Li <lifei.shirley@bytedance.com>
+Date: Mon, 17 Jun 2019 21:26:36 +0800
+
+> Currently after setting tap0 link up, the tun code wakes tx/rx waited
+> queues up in tun_net_open() when .ndo_open() is called, however the
+> IFF_UP flag has not been set yet. If there's already a wait queue, it
+> would fail to transmit when checking the IFF_UP flag in tun_sendmsg().
+> Then the saving vhost_poll_start() will add the wq into wqh until it
+> is waken up again. Although this works when IFF_UP flag has been set
+> when tun_chr_poll detects; this is not true if IFF_UP flag has not
+> been set at that time. Sadly the latter case is a fatal error, as
+> the wq will never be waken up in future unless later manually
+> setting link up on purpose.
 > 
-> [1] ("https://source.codeaurora.org/quic/la/kernel/msm-4.9/commit/
->       drivers/iommu/arm-smmu.c?h=CogSystems-msm-49/
->       msm-4.9&id=da765c6c75266b38191b38ef086274943f353ea7")
+> Fix this by moving the wakeup process into the NETDEV_UP event
+> notifying process, this makes sure IFF_UP has been set before all
+> waited queues been waken up.
 > 
-> Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
-> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> ---
->  drivers/firmware/qcom_scm-64.c | 136 ++++++++++++++++++++++++++++-------------
->  1 file changed, 92 insertions(+), 44 deletions(-)
-> 
-> diff --git a/drivers/firmware/qcom_scm-64.c b/drivers/firmware/qcom_scm-64.c
-> index 91d5ad7cf58b..b6dca32c5ac4 100644
-> --- a/drivers/firmware/qcom_scm-64.c
-> +++ b/drivers/firmware/qcom_scm-64.c
-> @@ -62,32 +62,71 @@ static DEFINE_MUTEX(qcom_scm_lock);
->  #define FIRST_EXT_ARG_IDX 3
->  #define N_REGISTER_ARGS (MAX_QCOM_SCM_ARGS - N_EXT_QCOM_SCM_ARGS + 1)
->  
-> -/**
-> - * qcom_scm_call() - Invoke a syscall in the secure world
-> - * @dev:	device
-> - * @svc_id:	service identifier
-> - * @cmd_id:	command identifier
-> - * @desc:	Descriptor structure containing arguments and return values
-> - *
-> - * Sends a command to the SCM and waits for the command to finish processing.
-> - * This should *only* be called in pre-emptible context.
-> -*/
-> -static int qcom_scm_call(struct device *dev, u32 svc_id, u32 cmd_id,
-> -			 const struct qcom_scm_desc *desc,
-> -			 struct arm_smccc_res *res)
-> +static void __qcom_scm_call_do(const struct qcom_scm_desc *desc,
-> +			       struct arm_smccc_res *res, u32 fn_id,
-> +			       u64 x5, u32 type)
-> +{
-> +	u64 cmd;
-> +	struct arm_smccc_quirk quirk = {.id = ARM_SMCCC_QUIRK_QCOM_A6};
-> +
-> +	cmd = ARM_SMCCC_CALL_VAL(type, qcom_smccc_convention,
-> +				 ARM_SMCCC_OWNER_SIP, fn_id);
-> +
-> +	quirk.state.a6 = 0;
-> +
-> +	do {
-> +		arm_smccc_smc_quirk(cmd, desc->arginfo, desc->args[0],
-> +				    desc->args[1], desc->args[2], x5,
-> +				    quirk.state.a6, 0, res, &quirk);
-> +
-> +		if (res->a0 == QCOM_SCM_INTERRUPTED)
-> +			cmd = res->a0;
-> +
-> +	} while (res->a0 == QCOM_SCM_INTERRUPTED);
-> +}
-> +
-> +static void qcom_scm_call_do(const struct qcom_scm_desc *desc,
-> +			     struct arm_smccc_res *res, u32 fn_id,
-> +			     u64 x5, bool atomic)
-> +{
+> Signed-off-by: Fei Li <lifei.shirley@bytedance.com>
+> Acked-by: Jason Wang <jasowang@redhat.com>
 
-Maybe pass in the call type (ARM_SMCCC_FAST_CALL vs ARM_SMCCC_STD_CALL)
-instead of "bool atomic"? Would certainly make the callsites easier to
-understand.
-
-> +	int retry_count = 0;
-> +
-> +	if (!atomic) {
-> +		do {
-> +			mutex_lock(&qcom_scm_lock);
-> +
-> +			__qcom_scm_call_do(desc, res, fn_id, x5,
-> +					   ARM_SMCCC_STD_CALL);
-> +
-> +			mutex_unlock(&qcom_scm_lock);
-> +
-> +			if (res->a0 == QCOM_SCM_V2_EBUSY) {
-> +				if (retry_count++ > QCOM_SCM_EBUSY_MAX_RETRY)
-> +					break;
-> +				msleep(QCOM_SCM_EBUSY_WAIT_MS);
-> +			}
-> +		}  while (res->a0 == QCOM_SCM_V2_EBUSY);
-> +	} else {
-> +		__qcom_scm_call_do(desc, res, fn_id, x5, ARM_SMCCC_FAST_CALL);
-> +	}
-
-Is it safe to make concurrent FAST calls?
-
-Will
+Applied and queued up for -stable, thanks.
