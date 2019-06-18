@@ -2,47 +2,47 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C25349A23
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 09:14:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5209649A42
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 09:18:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729018AbfFRHOs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Jun 2019 03:14:48 -0400
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:39072 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726037AbfFRHOs (ORCPT
+        id S1728892AbfFRHSI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Jun 2019 03:18:08 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:39334 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725919AbfFRHSI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Jun 2019 03:14:48 -0400
-Received: by mail-oi1-f194.google.com with SMTP id m202so8290591oig.6
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2019 00:14:48 -0700 (PDT)
+        Tue, 18 Jun 2019 03:18:08 -0400
+Received: by mail-pf1-f195.google.com with SMTP id j2so7113803pfe.6
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2019 00:18:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id;
-        bh=SqAd1fx2aqjUroAge2OaNB4tSLlvMkP+JhWERXOSN8Y=;
-        b=VuEodqM3GEhgspN5BcSZBejRWyu1yfMzsvbt/tZcCt5AtPf01DDmMcr/YxPt5la51Y
-         eAazo1sgyFm7hHAzmylz7IJwsHgTOpM5k1si7TJ3FbDsRl6PPeJHejJL0OEIt4gS1GKH
-         jR0XlMVF4O6H8x0vXenyxoUWmPaZQPyQb/Q46CfiDuoDd4AejRu2OH2TcvcoLt1KVvXz
-         hUTwDSqW+gWtikzfUEbdnp2rkDshNdXzeKLjxt1jXI6h6gfIJ88g9KwpGLNLUDwgO1Hu
-         R3Dd1X0fhutxGN+CDAGj/KHsrlAQKUqMMf725VQBhO+S4DbDoMz4CoqO6L9Amo24rp2K
-         RHZw==
+        bh=Lj4Or491uCz2tJJXb3WzbO2VXWNk3Hk7nTOtYQN43sI=;
+        b=mPvW2e6mcV/CIqhidFpo+Yurn5TdvkXOW1QdaK3u5WTFGziti+wTCsJW/eOOr02fqG
+         J9JT0PVET8S1CLVBiYeXo2sKcEPICn18rwWbomdjPf2FiLN4VjQzlUsjJufdGHsHnIl/
+         yucipCljbwALWRVvWM6KF4m8FqUC2+lBTG3jYhsyOODebLlB5k6xtqgnNbW6rZWsrHBN
+         +ls1KOFsQeRhllGKvOrw9dfca9T45nBQEH7T4VCNFlpTSgvYvAJ3jh+83VBphd3ftRIL
+         nZl+2bwQZIS7GAI/obVHxanKvqbfkrHlqkWTaG4cJGi3M4vUQGG4EWgtvcuI2qzN5EqR
+         RdqA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=SqAd1fx2aqjUroAge2OaNB4tSLlvMkP+JhWERXOSN8Y=;
-        b=JpQZqMhumd03a7j8Edm3EK9RT5hY2pCQxJVxofLhqjqUbnCyQoX7u4Y6D8a+JJnUNN
-         9tIoeV6n441OhklG2yv1g4oslGN4BLi4vbZ378z3RMTu4K/xregs8f46D17ceH7mpaHI
-         rLqEkrExXzd8lIu5lLfKNLZ0Y/6U5wPF4GLi8+1eyQX85N8k0v4/5hrzZiqGd5LuPnZt
-         s/qrNZ7ZRBhXNxygOW1dwJIU3qDRvvBrX+GpoCYme7z6Pt3xEn3ij/5Z6oLUQEIFBkaN
-         2tkehz62jfrlFpyzaQKtVvrrHnQe+hq0/eTpO1djflwHkdOUlCZaQarsvhuJhUFKVDSr
-         IOJg==
-X-Gm-Message-State: APjAAAW0FjNyDnT4tBa/ryjnqQCK9mH6TdbOKDyCgKeaDyzB7Mnx2r6D
-        RqPLWXDRzkwPkmky5NLhJj3hDwaOCio=
-X-Google-Smtp-Source: APXvYqz4ODTWIjG3AqGUUeq6vsPQMClqM7BcnsAUOQ3cPzIUXZ5ipOaid/o/JhY/P+BpjDaxGb6eZQ==
-X-Received: by 2002:a63:4a1f:: with SMTP id x31mr972877pga.150.1560835696219;
-        Mon, 17 Jun 2019 22:28:16 -0700 (PDT)
+        bh=Lj4Or491uCz2tJJXb3WzbO2VXWNk3Hk7nTOtYQN43sI=;
+        b=DpyHwcZH0bWZF3nBvvE+hO1GSF2P1/MvdEL9lcnGcF/BUjRfex6qUktO+xElUO5pPZ
+         aXQjqECiUmjuOuu6qrZpoMx3Olnw6bLaDr5/rlsS5VdfPVr01MujgKNACNfoWZrfP7zc
+         idqyClXibkRrkKMS333BniWd4IoE1o1S+2pED0zx/gZrYaCPzGKA+U7R6t4m92yDv2/a
+         J75i5YA3odTVAsY6o5kWjzYXIgrPnOCoS534YM2VB4MLW5d8rmDOJpkXgjb5ixF7lOt4
+         Ss/dq+p7WgWClJIoofsvQYeUGoemRMv2FXEYxchDNBSh5GG6g8fqGIMHY0myblb9HAaF
+         O1Ng==
+X-Gm-Message-State: APjAAAWgDUDQgd/AW9TNCr4N0Ts5iDMbS1eohERU7jc5Ao7Y0kBmMixr
+        DW2OPNWbiPRqQqPT/gj670mOzQ==
+X-Google-Smtp-Source: APXvYqzVQmDQx7MS4P1iKQ8RlVJhSS2xJyaB9wF2eydxpDgmsaFQMWNabJZt0GUQO5Ds3AbcW/Ei9Q==
+X-Received: by 2002:a17:90a:a385:: with SMTP id x5mr3088727pjp.76.1560835753055;
+        Mon, 17 Jun 2019 22:29:13 -0700 (PDT)
 Received: from localhost.localdomain (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id 188sm13934085pfg.11.2019.06.17.22.28.15
+        by smtp.gmail.com with ESMTPSA id b6sm13477601pgd.5.2019.06.17.22.29.12
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 17 Jun 2019 22:28:15 -0700 (PDT)
+        Mon, 17 Jun 2019 22:29:12 -0700 (PDT)
 From:   Bjorn Andersson <bjorn.andersson@linaro.org>
 To:     Patrick Lai <plai@codeaurora.org>,
         Banajit Goswami <bgoswami@codeaurora.org>,
@@ -52,58 +52,37 @@ To:     Patrick Lai <plai@codeaurora.org>,
 Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
         linux-arm-msm@vger.kernel.org,
         Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [PATCH] ASoC: qcom: common: Fix NULL pointer in of parser
-Date:   Mon, 17 Jun 2019 22:28:13 -0700
-Message-Id: <20190618052813.32523-1-bjorn.andersson@linaro.org>
+Subject: [PATCH] ASoC: qcom: common: Mark links as nonatomic
+Date:   Mon, 17 Jun 2019 22:29:09 -0700
+Message-Id: <20190618052909.32586-1-bjorn.andersson@linaro.org>
 X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A snd_soc_dai_link_component is allocated and associated with the first
-link, so when the code tries to assign the of_node of the second link's
-"cpu" member it dereferences a NULL pointer.
+The interface used to communicate with the DSP can sleep, so mark the
+links as nonatomic. This prevents various sleep while atomic errors when
+bringing up the audio interface.
 
-Fix this by moving the allocation and assignement of
-snd_soc_dai_link_components into the loop, giving us one pair per link.
-
-Fixes: 1e36ea360ab9 ("ASoC: qcom: common: use modern dai_link style")
+Suggested-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 ---
- sound/soc/qcom/common.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+ sound/soc/qcom/common.c | 1 +
+ 1 file changed, 1 insertion(+)
 
 diff --git a/sound/soc/qcom/common.c b/sound/soc/qcom/common.c
-index c7a878507220..97488b5cc515 100644
+index 97488b5cc515..2c7348ddbbb3 100644
 --- a/sound/soc/qcom/common.c
 +++ b/sound/soc/qcom/common.c
-@@ -42,17 +42,17 @@ int qcom_snd_parse_of(struct snd_soc_card *card)
- 	card->num_links = num_links;
- 	link = card->dai_link;
+@@ -116,6 +116,7 @@ int qcom_snd_parse_of(struct snd_soc_card *card)
+ 			goto err;
+ 		}
  
--	dlc = devm_kzalloc(dev, 2 * sizeof(*dlc), GFP_KERNEL);
--	if (!dlc)
--		return -ENOMEM;
-+	for_each_child_of_node(dev->of_node, np) {
-+		dlc = devm_kzalloc(dev, 2 * sizeof(*dlc), GFP_KERNEL);
-+		if (!dlc)
-+			return -ENOMEM;
- 
--	link->cpus	= &dlc[0];
--	link->platforms	= &dlc[1];
-+		link->cpus	= &dlc[0];
-+		link->platforms	= &dlc[1];
- 
--	link->num_cpus		= 1;
--	link->num_platforms	= 1;
-+		link->num_cpus		= 1;
-+		link->num_platforms	= 1;
- 
--	for_each_child_of_node(dev->of_node, np) {
- 		cpu = of_get_child_by_name(np, "cpu");
- 		platform = of_get_child_by_name(np, "platform");
- 		codec = of_get_child_by_name(np, "codec");
++		link->nonatomic = 1;
+ 		link->dpcm_playback = 1;
+ 		link->dpcm_capture = 1;
+ 		link->stream_name = link->name;
 -- 
 2.18.0
 
