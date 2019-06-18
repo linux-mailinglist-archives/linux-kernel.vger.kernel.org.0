@@ -2,163 +2,218 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CCDD549624
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 01:59:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B81754962F
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 02:09:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728329AbfFQX70 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 19:59:26 -0400
-Received: from mga01.intel.com ([192.55.52.88]:46877 "EHLO mga01.intel.com"
+        id S1727903AbfFRAJr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 20:09:47 -0400
+Received: from mga07.intel.com ([134.134.136.100]:59974 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726427AbfFQX70 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 19:59:26 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
+        id S1726568AbfFRAJq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Jun 2019 20:09:46 -0400
+X-Amp-Result: UNSCANNABLE
 X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Jun 2019 16:59:25 -0700
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Jun 2019 17:09:46 -0700
 X-ExtLoop1: 1
-Received: from khuang2-desk.gar.corp.intel.com ([10.255.91.82])
-  by orsmga005.jf.intel.com with ESMTP; 17 Jun 2019 16:59:20 -0700
-Message-ID: <1560815959.5187.57.camel@linux.intel.com>
-Subject: Re: [PATCH, RFC 45/62] mm: Add the encrypt_mprotect() system call
- for MKTME
-From:   Kai Huang <kai.huang@linux.intel.com>
-To:     Dave Hansen <dave.hansen@intel.com>,
-        Andy Lutomirski <luto@kernel.org>
-Cc:     "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        X86 ML <x86@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Borislav Petkov <bp@alien8.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        David Howells <dhowells@redhat.com>,
-        Kees Cook <keescook@chromium.org>,
-        Jacob Pan <jacob.jun.pan@linux.intel.com>,
-        Alison Schofield <alison.schofield@intel.com>,
-        Linux-MM <linux-mm@kvack.org>, kvm list <kvm@vger.kernel.org>,
-        keyrings@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Tom Lendacky <thomas.lendacky@amd.com>
-Date:   Tue, 18 Jun 2019 11:59:19 +1200
-In-Reply-To: <5cbfa2da-ba2e-ed91-d0e8-add67753fc12@intel.com>
-References: <20190508144422.13171-1-kirill.shutemov@linux.intel.com>
-         <20190508144422.13171-46-kirill.shutemov@linux.intel.com>
-         <CALCETrVCdp4LyCasvGkc0+S6fvS+dna=_ytLdDPuD2xeAr5c-w@mail.gmail.com>
-         <3c658cce-7b7e-7d45-59a0-e17dae986713@intel.com>
-         <CALCETrUPSv4Xae3iO+2i_HecJLfx4mqFfmtfp+cwBdab8JUZrg@mail.gmail.com>
-         <5cbfa2da-ba2e-ed91-d0e8-add67753fc12@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.24.6 (3.24.6-1.fc26) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Received: from romley-ivt3.sc.intel.com ([172.25.110.60])
+  by orsmga008.jf.intel.com with ESMTP; 17 Jun 2019 17:09:45 -0700
+Date:   Mon, 17 Jun 2019 17:00:14 -0700
+From:   Fenghua Yu <fenghua.yu@intel.com>
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        H Peter Anvin <hpa@zytor.com>,
+        Ashok Raj <ashok.raj@intel.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Ravi V Shankar <ravi.v.shankar@intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>, x86 <x86@kernel.org>
+Subject: Re: [PATCH v4 3/5] x86/umwait: Add sysfs interface to control umwait
+ C0.2 state
+Message-ID: <20190618000014.GH217081@romley-ivt3.sc.intel.com>
+References: <1559944837-149589-4-git-send-email-fenghua.yu@intel.com>
+ <CALCETrXEqqc3cKyJ5guRV3T6LP9dpSExk3a7dvR4PF8TDgD_OA@mail.gmail.com>
+ <20190610035302.GA162238@romley-ivt3.sc.intel.com>
+ <CALCETrUSpk+_FDaPpA3a-duajUdF8kOK64AQJjsr7Pm0Gi04OA@mail.gmail.com>
+ <20190610060234.GD162238@romley-ivt3.sc.intel.com>
+ <F021B947-90E9-450A-9196-531B7EE965F1@amacapital.net>
+ <20190617202702.GB217081@romley-ivt3.sc.intel.com>
+ <CALCETrVENokx8VUCxdUzGeMA2oMOZ0kHRiP_O0KygyrAhf07Rg@mail.gmail.com>
+ <20190617231104.GF217081@romley-ivt3.sc.intel.com>
+ <CALCETrXpB+3TjHacjfUZK6pu_L54upe+JHKKRs4x1HaHOeGbzA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CALCETrXpB+3TjHacjfUZK6pu_L54upe+JHKKRs4x1HaHOeGbzA@mail.gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2019-06-17 at 11:27 -0700, Dave Hansen wrote:
-> Tom Lendacky, could you take a look down in the message to the talk of
-> SEV?  I want to make sure I'm not misrepresenting what it does today.
-> ...
+On Mon, Jun 17, 2019 at 04:41:38PM -0700, Andy Lutomirski wrote:
+> On Mon, Jun 17, 2019 at 4:20 PM Fenghua Yu <fenghua.yu@intel.com> wrote:
+> >
+> > On Mon, Jun 17, 2019 at 04:02:50PM -0700, Andy Lutomirski wrote:
+> > > On Mon, Jun 17, 2019 at 1:36 PM Fenghua Yu <fenghua.yu@intel.com> wrote:
+> > > >
+> > > > On Mon, Jun 10, 2019 at 06:41:31AM -0700, Andy Lutomirski wrote:
+> > > > >
+> > > > >
+> > > > > > On Jun 9, 2019, at 11:02 PM, Fenghua Yu <fenghua.yu@intel.com> wrote:
+> > > > > >
+> > > > > >> On Sun, Jun 09, 2019 at 09:24:18PM -0700, Andy Lutomirski wrote:
+> > > > > >>> On Sun, Jun 9, 2019 at 9:02 PM Fenghua Yu <fenghua.yu@intel.com> wrote:
+> > > > > >>>
+> > > > > >>>> On Sat, Jun 08, 2019 at 03:50:32PM -0700, Andy Lutomirski wrote:
+> > > > > >>>>> On Fri, Jun 7, 2019 at 3:10 PM Fenghua Yu <fenghua.yu@intel.com> wrote:
+> > > > > >>>>>
+> > > > > >>>>> C0.2 state in umwait and tpause instructions can be enabled or disabled
+> > > > > >>>>> on a processor through IA32_UMWAIT_CONTROL MSR register.
+> > > > > >>>>>
+> > > > > >>>>> By default, C0.2 is enabled and the user wait instructions result in
+> > > > > >>>>> lower power consumption with slower wakeup time.
+> > > > > >>>>>
+> > > > > >>>>> But in real time systems which require faster wakeup time although power
+> > > > > >>>>> savings could be smaller, the administrator needs to disable C0.2 and all
+> > > > > >>>>> C0.2 requests from user applications revert to C0.1.
+> > > > > >>>>>
+> > > > > >>>>> A sysfs interface "/sys/devices/system/cpu/umwait_control/enable_c02" is
+> > > > > >>>>> created to allow the administrator to control C0.2 state during run time.
+> > > > > >>>>
+> > > > > >>>> This looks better than the previous version.  I think the locking is
+> > > > > >>>> still rather confused.  You have a mutex that you hold while changing
+> > > > > >>>> the value, which is entirely reasonable.  But, of the code paths that
+> > > > > >>>> write the MSR, only one takes the mutex.
+> > > > > >>>>
+> > > > > >>>> I think you should consider making a function that just does:
+> > > > > >>>>
+> > > > > >>>> wrmsr(MSR_IA32_UMWAIT_CONTROL, READ_ONCE(umwait_control_cached), 0);
+> > > > > >>>>
+> > > > > >>>> and using it in all the places that update the MSR.  The only thing
+> > > > > >>>> that should need the lock is the sysfs code to avoid accidentally
+> > > > > >>>> corrupting the value, but that code should also use WRITE_ONCE to do
+> > > > > >>>> its update.
+> > > > > >>>
+> > > > > >>> Based on the comment, the illustrative CPU online and enable_c02 store
+> > > > > >>> functions would be:
+> > > > > >>>
+> > > > > >>> umwait_cpu_online()
+> > > > > >>> {
+> > > > > >>>        wrmsr(MSR_IA32_UMWAIT_CONTROL, READ_ONCE(umwait_control_cached), 0);
+> > > > > >>>        return 0;
+> > > > > >>> }
+> > > > > >>>
+> > > > > >>> enable_c02_store()
+> > > > > >>> {
+> > > > > >>>       mutex_lock(&umwait_lock);
+> > > > > >>>       umwait_control_c02 = (u32)!c02_enabled;
+> > > > > >>>       WRITE_ONCE(umwait_control_cached, 2 | get_umwait_control_max_time());
+> > > > > >>>       on_each_cpu(umwait_control_msr_update, NULL, 1);
+> > > > > >>>       mutex_unlock(&umwait_lock);
+> > > > > >>> }
+> > > > > >>>
+> > > > > >>> Then suppose umwait_control_cached = 100000 initially and only CPU0 is
+> > > > > >>> running. Admin change bit 0 in MSR from 0 to 1 to disable C0.2 and is
+> > > > > >>> onlining CPU1 in the same time:
+> > > > > >>>
+> > > > > >>> 1. On CPU1, read umwait_control_cached to eax as 100000 in
+> > > > > >>> umwait_cpu_online()
+> > > > > >>> 2. On CPU0, write 100001 to umwait_control_cached in enable_c02_store()
+> > > > > >>> 3. On CPU1, wrmsr with eax=100000 in umwaint_cpu_online()
+> > > > > >>> 4. On CPU0, wrmsr with 100001 in enabled_c02_store()
+> > > > > >>>
+> > > > > >>> The result is CPU0 and CPU1 have different MSR values.
+> > > > > >>
+> > > > > >> Yes, but only transiently, because you didn't finish your example.
+> > > > > >>
+> > > > > >> Step 5: enable_c02_store() does on_each_cpu(), and CPU 1 gets updated.
+> > > > > >
+> > > > > > There is no sync on wrmsr on CPU0 and CPU1.
+> > > > >
+> > > > > What do you mean by sync?
+> > > > >
+> > > > > > So a better sequence to
+> > > > > > describe the problem is changing the order of wrmsr:
+> > > > > >
+> > > > > > 1. On CPU1, read umwait_control_cached to eax as 100000 in
+> > > > > > umwait_cpu_online()
+> > > > > > 2. On CPU0, write 100001 to umwait_control_cached in enable_c02_store()
+> > > > > > 3. On CPU0, wrmsr with 100001 in on_each_cpu() in enabled_c02_store()
+> > > > > > 4. On CPU1, wrmsr with eax=100000 in umwaint_cpu_online()
+> > > > > >
+> > > > > > So CPU1 and CPU0 have different MSR values. This won't be transient.
+> > > > >
+> > > > > You are still ignoring the wrmsr on CPU1 due to on_each_cpu().
+> > > > >
+> > > >
+> > > > Initially umwait_control_cached is 100000 and CPU0 is online while CPU1
+> > > > is going to be online:
+> > > >
+> > > > 1. On CPU1, cpu_online_mask=0x3 in start_secondary()
+> > > > 2. On CPU1, read umwait_control_cached to eax as 100000 in umwait_cpu_online()
+> > > > 3. On CPU0, write 100001 to umwait_control_cached in enable_c02_store()
+> > > > 4. On CPU0, execute one_each_cpu() in enabled_c02_store():
+> > > >     wrmsr with 100001 on CPU0
+> > > >     wrmsr with 100001 on CPU1
+> > > > 5. On CPU1, wrmsr with eax=100000 in umwaint_cpu_online()
+> > > >
+> > > > So the MSR is 100000 on CPU1 and 100001 on CPU0. The MSRs are different on
+> > > > the CPUs.
+> > > >
+> > > > Is this a right sequence to demonstrate locking issue without the mutex
+> > > > locking?
+> > > >
+> > >
+> > > Fair enough.  I would fix it differently, though:
+> > >
+> > > static void update_this_cpu_umwait_msr(void)
+> > > {
+> > >   WARN_ON_ONCE(!irqs_disabled());  /* or local_irq_save() */
+> > >
+> > >   /* We need to prevent umwait_control from being changed *and*
+> > > completing its WRMSR between our read and our WRMSR.  By turning IRQs
+> > > off here, we ensure that no sysfs write happens on this CPU and we
+> > > also make sure that any concurrent sysfs write from a different CPU
+> > > will not finish updating us via IPI until we're done. */
+> > >   wrmsrl(MSR_..., READ_ONCE(umwait_control), 0);
+> > > }
+> >
+> > If no other objections, then I will keep the current mutex lock/unlock to
+> > protect wrmsr and the umwait_control_cached variable.
+> >
 > 
-> 
-> > > I actually don't care all that much which one we end up with.  It's not
-> > > like the extra syscall in the second options means much.
-> > 
-> > The benefit of the second one is that, if sys_encrypt is absent, it
-> > just works.  In the first model, programs need a fallback because
-> > they'll segfault of mprotect_encrypt() gets ENOSYS.
-> 
-> Well, by the time they get here, they would have already had to allocate
-> and set up the encryption key.  I don't think this would really be the
-> "normal" malloc() path, for instance.
-> 
-> > >  How do we
-> > > eventually stack it on top of persistent memory filesystems or Device
-> > > DAX?
-> > 
-> > How do we stack anonymous memory on top of persistent memory or Device
-> > DAX?  I'm confused.
-> 
-> If our interface to MKTME is:
-> 
-> 	fd = open("/dev/mktme");
-> 	ptr = mmap(fd);
-> 
-> Then it's hard to combine with an interface which is:
-> 
-> 	fd = open("/dev/dax123");
-> 	ptr = mmap(fd);
-> 
-> Where if we have something like mprotect() (or madvise() or something
-> else taking pointer), we can just do:
-> 
-> 	fd = open("/dev/anything987");
-> 	ptr = mmap(fd);
-> 	sys_encrypt(ptr);
-> 
-> Now, we might not *do* it that way for dax, for instance, but I'm just
-> saying that if we go the /dev/mktme route, we never get a choice.
-> 
-> > I think that, in the long run, we're going to have to either expand
-> > the core mm's concept of what "memory" is or just have a whole
-> > parallel set of mechanisms for memory that doesn't work like memory.
-> 
-> ...
-> > I expect that some day normal memory will  be able to be repurposed as
-> > SGX pages on the fly, and that will also look a lot more like SEV or
-> > XPFO than like the this model of MKTME.
-> 
-> I think you're drawing the line at pages where the kernel can manage
-> contents vs. not manage contents.  I'm not sure that's the right
-> distinction to make, though.  The thing that is important is whether the
-> kernel can manage the lifetime and location of the data in the page.
-> 
-> Basically: Can the kernel choose where the page comes from and get the
-> page back when it wants?
-> 
-> I really don't like the current state of things like with SEV or with
-> KVM direct device assignment where the physical location is quite locked
-> down and the kernel really can't manage the memory.  I'm trying really
-> hard to make sure future hardware is more permissive about such things.
->  My hope is that these are a temporary blip and not the new normal.
-> 
-> > So, if we upstream MKTME as anonymous memory with a magic config
-> > syscall, I predict that, in a few years, it will be end up inheriting
-> > all downsides of both approaches with few of the upsides.  Programs
-> > like QEMU will need to learn to manipulate pages that can't be
-> > accessed outside the VM without special VM buy-in, so the fact that
-> > MKTME pages are fully functional and can be GUP-ed won't be very
-> > useful.  And the VM will learn about all these things, but MKTME won't
-> > really fit in.
-> 
-> Kai Huang (who is on cc) has been doing the QEMU enabling and might want
-> to weigh in.  I'd also love to hear from the AMD folks in case I'm not
-> grokking some aspect of SEV.
-> 
-> But, my understanding is that, even today, neither QEMU nor the kernel
-> can see SEV-encrypted guest memory.  So QEMU should already understand
-> how to not interact with guest memory.  I _assume_ it's also already
-> doing this with anonymous memory, without needing /dev/sme or something.
+> I don't think that's sufficient.  In your current code, you hold the
+> mutex in some places and not in others, and there's no explanation.
 
-Correct neither Qemu nor kernel can see SEV-encrypted guest memory. Qemu requires guest's
-cooperation when it needs to interacts with guest, i.e. to support virtual DMA (of virtual devices
-in SEV-guest), qemu requires SEV-guest to setup bounce buffer (which will not be SEV-encrypted
-memory, but shared memory can be accessed from host side too), so that guest kernel can copy DMA
-data from bounce buffer to its own SEV-encrypted memory after qemu/host kernel puts DMA data to
-bounce buffer.
+The mutex is used in sysfs writing and cpu online.
 
-And yes from my reading (better to have AMD guys to confirm) SEV guest uses anonymous memory, but it
-also pins all guest memory (by calling GUP from KVM -- SEV specifically introduced 2 KVM ioctls for
-this purpose), since SEV architecturally cannot support swapping, migraiton of SEV-encrypted guest
-memory, because SME/SEV also uses physical address as "tweak", and there's no way that kernel can
-get or use SEV-guest's memory encryption key. In order to swap/migrate SEV-guest memory, we need SGX
-EPC eviction/reload similar thing, which SEV doesn't have today.
+But it's not used in syscore resume because only BP is running syscore
+resume.
 
-From this perspective, I think driver proposal kinda makes sense since we already have security
-feature which uses normal memory some kind like "device memory" (no swap, no migration, etc), so it
-makes sense that MKTME just follows that (although from HW MKTME can support swap, page migration,
-etc). The downside of driver proposal for MKTME I think is, like Dave mentioned, it's hard (or not
-sure whether it is possible) to extend to support NVDIMM (and file backed guest memory), since for
-virtual NVDIMM, Qemu needs to call mmap against fd of NVDIMM.
+> And I think you're relying on the IRQs-off protection in at least one
+> code path already, so you're not gaining any simplicity. 
 
-Thanks,
--Kai
+I don't rely on IRQs-off protection. I only use mutex to protect.
+
+> At the very
+> least, you need to add some extensive comments everywhere if you want
+> to keep the mutex, 
+
+I have comment on why no need for mutex protection in syscore resume. But
+I can add more comments on the locking.
+
+> but I think it's simpler and clearer if you just
+> use the same logic everywhere, for example, as I proposed above.
+
+But using irqs_disabled() before wrmsr() and READ_ONCE/WRITE_ONCE for
+umwait_control_cached alone are not sufficient. The mutex is still needed
+to protect sysfs writing, is that right? Without mutex, one_each_cpu()
+can write different values on CPUs, right?
+
+If irqs disabling, READ_ONCE/WRITE_ONCE, and mutex are all used to protect,
+isn't that more complex than just using mutex?
+
+Thanks.
+
+-Fenghua
