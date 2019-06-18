@@ -2,100 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B2FB249EC4
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 12:59:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5827649EC9
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 13:00:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729663AbfFRK7l (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Jun 2019 06:59:41 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:47608 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725934AbfFRK7k (ORCPT
+        id S1729680AbfFRLAF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Jun 2019 07:00:05 -0400
+Received: from mail-io1-f68.google.com ([209.85.166.68]:39800 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725934AbfFRLAF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Jun 2019 06:59:40 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=Q2jJFJeqAvHW5xjduMI/BTDoLMuuZxXoXruOimW2zSI=; b=ZlTWG/CJBcnrLlZPmdiOAf3yG
-        TTqKHnwT2VevOiAAtguh0Qwc/04W2njZ37TI5hdm1YGsBa0qVrSs7qKTF1mayVxVTREfbMGtCPcUA
-        aVudYh0OL3vEna9c1pzwa80ChEldhHITnGE3lIP0JUchiMTtNU9Ul09f3agMhxEp2FrjQ=;
-Received: from [2001:470:1f1d:6b5:7e7a:91ff:fede:4a45] (helo=finisterre.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1hdBpw-0004vy-1d; Tue, 18 Jun 2019 10:59:36 +0000
-Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
-        id 7A4E2440046; Tue, 18 Jun 2019 11:59:35 +0100 (BST)
-Date:   Tue, 18 Jun 2019 11:59:35 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Nisha Kumari <nishakumari@codeaurora.org>
-Cc:     bjorn.andersson@linaro.org, robh+dt@kernel.org,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        agross@kernel.org, lgirdwood@gmail.com, mark.rutland@arm.com,
-        david.brown@linaro.org, linux-kernel@vger.kernel.org,
-        kgunda@codeaurora.org, rnayak@codeaurora.org
-Subject: Re: [PATCH 3/4] regulator: Add labibb driver
-Message-ID: <20190618105935.GM5316@sirena.org.uk>
-References: <1560337252-27193-1-git-send-email-nishakumari@codeaurora.org>
- <1560337252-27193-4-git-send-email-nishakumari@codeaurora.org>
- <20190613172518.GN5316@sirena.org.uk>
- <577d6e90-0bed-ff2e-32dc-e64c3118458f@codeaurora.org>
+        Tue, 18 Jun 2019 07:00:05 -0400
+Received: by mail-io1-f68.google.com with SMTP id r185so22740888iod.6
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2019 04:00:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lixom-net.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=kO+Ld9oYjzAATMOMgs9ipgnAjY1R155cPSoZsGOuzvw=;
+        b=k38HwrCbmC3eCmrmtgABfdfrVM7qEZtCCm57u1eT0iBPWQTRkN9T279vnl54dQsROk
+         VZps4HuMSCod0NNe+C0Wx4K7EA3G/tUYAnBoS+itZKD4yvF37EfGtB2zC84Vdt3v3SW7
+         l7JR3JfrZmQktJuK5PTfW+Iwj24COPpoDb/VojmW9Rq64ZP2X7bW8YXODnEcG+nBZoW4
+         n3IPWiPSnclpe75r5M2CsaVSbPA5QKAiiYlF0WSSH60C3g9Z6PVBS8H2slAvAS5VU7vN
+         9g1Tus6PQ5hO9i3PEBGnTrBcsBrpYX5qjq1KnAU0s/VJIu7LoyzVUCfcrCDtPYCV0Brw
+         57BA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=kO+Ld9oYjzAATMOMgs9ipgnAjY1R155cPSoZsGOuzvw=;
+        b=STQ3S7hZ74IwwB5cmhQbckazY4HgBsPoS4kagfDRzjpcoj7oxLn89VXhnlS4MoA4gG
+         0BoB/BbzZP0rxfPBsnQ7LCNz5C4lB4QgnPdQcI1/v7ZEqv6d7QbGA2EYUoiBAyV9IkOA
+         jYxJFXcYiiKYr6FZVAWdvYt27dlm8xI65oY1gORr/GfQHZhyQ6WU8YCJpkNZHRcrWUQa
+         OeGkfmD5hZDtiTD68tiSg8Q2q6ZsCzEesy9euI8SC0yiDmkQ2KKG39tRANFXdbylMkxg
+         lfKk2LIw3T05VwuEDP1Y/+2GaVdvQlHYDXDFAiHP3omApmeNrtvAwk7DZYpPJYW92LTo
+         TjTg==
+X-Gm-Message-State: APjAAAULz6daeklm9BeAWY/OWMe/7/XlXxL866NpcqZiIJL8diyOqq7J
+        h+spQQfK0jMYeDsdwrVzy49RvyzDQf7SX4gnOUdEiw==
+X-Google-Smtp-Source: APXvYqwXvXgzzgcpl5G2fh6wX92HRT8JWqYU42X7PPvD/O88q1XVoNNuNUd+bUFwaXY/YrFLbvjH5EKejj0YJ1h8ZwE=
+X-Received: by 2002:a5d:94d0:: with SMTP id y16mr33611523ior.123.1560855604399;
+ Tue, 18 Jun 2019 04:00:04 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="sbU44GGDGzBBUYp9"
-Content-Disposition: inline
-In-Reply-To: <577d6e90-0bed-ff2e-32dc-e64c3118458f@codeaurora.org>
-X-Cookie: Editing is a rewording activity.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190617122449.457744-1-arnd@arndb.de> <20190617122449.457744-2-arnd@arndb.de>
+In-Reply-To: <20190617122449.457744-2-arnd@arndb.de>
+From:   Olof Johansson <olof@lixom.net>
+Date:   Tue, 18 Jun 2019 11:59:52 +0100
+Message-ID: <CAOesGMhU9OHg_4xAiGy20KmXXLU62kONQxZ6DV5Tj+PKeBSJTg@mail.gmail.com>
+Subject: Re: [PATCH 2/3] ARM: ixp4xx: mark ixp4xx_irq_setup as __init
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     ARM-SoC Maintainers <arm@kernel.org>,
+        Linus Walleij <linusw@kernel.org>,
+        Imre Kaloz <kaloz@openwrt.org>,
+        Krzysztof Halasa <khalasa@piap.pl>,
+        Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Jun 17, 2019 at 1:25 PM Arnd Bergmann <arnd@arndb.de> wrote:
+>
+> Kbuild complains about ixp4xx_irq_setup not being __init
+> itself in some configurations:
+>
+> WARNING: vmlinux.o(.text+0x85bae4): Section mismatch in reference from the function ixp4xx_irq_setup() to the function .init.text:set_handle_irq()
+> The function ixp4xx_irq_setup() references
+> the function __init set_handle_irq().
+> This is often because ixp4xx_irq_setup lacks a __init
+> annotation or the annotation of set_handle_irq is wrong.
+>
+> I suspect it normally gets inlined, so we get no such warning,
+> but clang makes this obvious when the function is left out
+> of line.
+>
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
---sbU44GGDGzBBUYp9
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Applied to arm/fixes. Thanks!
 
-On Tue, Jun 18, 2019 at 11:51:18AM +0530, Nisha Kumari wrote:
-> On 6/13/2019 10:55 PM, Mark Brown wrote:
 
-> > > +	labibb->lab_vreg.vreg_enabled = 1;
-> > What function does this serve?  It never seems to be read.
-> Its used in next patch for handling interrupts
-
-It'd be better to move this code into the patch where it's used then.
-
-> > > +		if (val & IBB_STATUS1_VREG_OK_BIT) {
-> > > +			labibb->ibb_vreg.vreg_enabled = 1;
-> > > +			return 0;
-> > > +		}
-> > > +	}
-
-> > This is doing more than the other regulator was but it's not clear why -
-> > is it just that the delays are different for the two regulators?
-
-> LAB regulator comes up in first try, so we did not added much delay in that
-> like IBB. Planning to make equal no of retries for both in next patch so
-> that code can be reused.
-
-Is there actually a need for polling at all?
-
---sbU44GGDGzBBUYp9
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl0IxBYACgkQJNaLcl1U
-h9DGQQf9Fn7TqN/dXa0DWnKZiNKqKqQOQ0wKS8WelZLNW4v6/5KFIyrz+82a3s8p
-r7RFFxI24fxs2p8pztsKCXeh1izQCVTOW/FbP5rML9FGkMVoNeGw7YseKvmiIPpn
-vF9XsDTNRe9RIQ4UOMqwMNvauR5eHR9aPtLDtZ0tspewoj2fNtszc40LqZJsA+Kq
-pzf6Mk4JZr6ZcteH3fnBoGDsW9mNEYmc3Iq1ypR4nuxcLwOUpilFssOzYAziTt2D
-we0Cz/kP/ANEk7/f6YJLfDMKiKJMhddbI37MvIktRpMuLw7chcQJcS9buuvIHAiE
-wQNNKWGz/eyWI+Ke81ZfjeXzLO8Raw==
-=im0z
------END PGP SIGNATURE-----
-
---sbU44GGDGzBBUYp9--
+-Olof
