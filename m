@@ -2,141 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 05AF749C2E
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 10:40:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B118549C31
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 10:41:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729222AbfFRIka (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Jun 2019 04:40:30 -0400
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:17253 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726091AbfFRIk3 (ORCPT
+        id S1729237AbfFRIk7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Jun 2019 04:40:59 -0400
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:42884 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725913AbfFRIk7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Jun 2019 04:40:29 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5d08a37c0000>; Tue, 18 Jun 2019 01:40:28 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Tue, 18 Jun 2019 01:40:28 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Tue, 18 Jun 2019 01:40:28 -0700
-Received: from [10.21.132.148] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 18 Jun
- 2019 08:40:27 +0000
-Subject: Re: [PATCH v2 3/6] clocksource/drivers/tegra: Set and use timer's
- period
-To:     Dmitry Osipenko <digetx@gmail.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Joseph Lo <josephl@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>
-CC:     <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20190610164400.11830-1-digetx@gmail.com>
- <20190610164400.11830-4-digetx@gmail.com>
- <ac8a1da8-9b82-3d5a-5fa6-0c1cc7f627f1@nvidia.com>
- <3e941c50-ac62-719e-aac1-7072e9a3bcd0@gmail.com>
- <660f3645-3fa6-175c-75a6-3fcc79e972ad@nvidia.com>
- <e0e1b708-7dd4-a58a-7906-05bf3065cbda@gmail.com>
-From:   Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <b92383e6-31e4-0797-1e7a-76410ebfba6c@nvidia.com>
-Date:   Tue, 18 Jun 2019 09:40:25 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        Tue, 18 Jun 2019 04:40:59 -0400
+Received: by mail-ot1-f67.google.com with SMTP id l15so3559143otn.9;
+        Tue, 18 Jun 2019 01:40:58 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=10IeNowX3RW92UWladQLU7AhfNf5XVgPFvZ0Azmp+VA=;
+        b=spmP1yx4Enan68cGYYcYM+py9PB+2pagjyUFfQ55L+jWv09pG8lxpQIoRECfVnJloo
+         m4SytzTVh70lGwfIhCbQ8Bjhpf9Pyk0NpY5HGb+2ghECa0SZuxRiwz2fGuqfWwh2f7cJ
+         OSTSN19kqfzN4xUfF3u4S0RAj7NUtAHWqKHRAM3QgRlR3mgsEpDIDU+mf7K0TLYBMdnd
+         JM7JGkFQv3iRXxep6myG706XNg95z6OQ9+XT/5ABnPsOOgBJrmwMo1k8EfETNCM33ZP4
+         OzcrovLx1z3dNyNbXmvnAL5ZX8RwuUWQjyDlC5cZ59jv9A/+rocSvbiCNehf+oP8RqdO
+         rN5Q==
+X-Gm-Message-State: APjAAAWHbvUFrZCarvvVJnUOlbF7w1TDNKW2KKTUCBykd0ysTMF/BKRg
+        jRwPeVWFrgcMsK1nZkG9DrAnSM/i2oOGsAew3NI=
+X-Google-Smtp-Source: APXvYqzBVXcfP7421rR8eXKYNY60z485ksnyrEI6OHcVnL1LP/bfIxHUVleiZmesIilT4xH9Q19toeV6i3LPcS7zT9U=
+X-Received: by 2002:a9d:6a4b:: with SMTP id h11mr2146423otn.266.1560847258138;
+ Tue, 18 Jun 2019 01:40:58 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <e0e1b708-7dd4-a58a-7906-05bf3065cbda@gmail.com>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL104.nvidia.com (172.18.146.11) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1560847228; bh=uu8oQenvSHld2AvajCP3nExj7WMFx6UMW1gqyl1qM+I=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=n4zGH4E1lK28Rylw2DnhYLMnrBo/4XoRObVPUU/3fGVC8I24FLXZQSbX4H9P2M34/
-         t6CshJrpYp5zsMj/78hTsZJWoI2LTCz3zlFQWTdCic5qpTK+ecKoH//AbBLt1602Y9
-         6Q68wMfO7aaQJ8bTJzT9HUDv1pcjMntqtgTU9stxJ+tBXPTv4ZROE3GSP3jLR5FK9H
-         HbFCk+/2J9b5SKuRFfztLcDsRcGgQS0TmjaETJTWfY3Dgg0fUaoANubWo2TJ+PHcOG
-         WPCPsN/PqedFmmd9QRVl1Wi5TnS8het9r5S5yxcZgUpL0u+eE151omPj8JLnfPayEG
-         OCMZDwiJxTyPw==
+References: <1560534863-15115-1-git-send-email-suzuki.poulose@arm.com>
+ <1560534863-15115-10-git-send-email-suzuki.poulose@arm.com>
+ <CAJZ5v0gi2vpr5y3USnPnPBHjPA1YAwfqjsJppfLgBP5CcycGog@mail.gmail.com> <85f942fc-52fd-c4ed-29b3-f28c55a6a7bb@arm.com>
+In-Reply-To: <85f942fc-52fd-c4ed-29b3-f28c55a6a7bb@arm.com>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Tue, 18 Jun 2019 10:40:47 +0200
+Message-ID: <CAJZ5v0io59U1yy4RnX0fSXFyQ-PSHb1wXjLp7XLi8SzO3hSdVA@mail.gmail.com>
+Subject: Re: [PATCH v2 09/28] drivers: Add generic match helper by
+ ACPI_COMPANION device
+To:     Suzuki K Poulose <suzuki.poulose@arm.com>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Len Brown <lenb@kernel.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        linux-spi <linux-spi@vger.kernel.org>,
+        Mark Brown <broonie@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Jun 18, 2019 at 10:38 AM Suzuki K Poulose
+<suzuki.poulose@arm.com> wrote:
+>
+> Hi Rafael,
+>
+> On 17/06/2019 23:07, Rafael J. Wysocki wrote:
+> > On Fri, Jun 14, 2019 at 7:55 PM Suzuki K Poulose <suzuki.poulose@arm.com> wrote:
+> >>
+> >> Add a generic helper to match a device by the ACPI_COMPANION device.
+> >> This will be later used for providing wrappers for
+> >> (bus/class/driver)_find_device().
+> >>
+> >> Cc: Len Brown <lenb@kernel.org>
+> >> Cc: linux-acpi@vger.kernel.org
+> >> Cc: linux-spi@vger.kernel.org
+> >> Cc: Mark Brown <broonie@kernel.org>
+> >> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> >> Cc: "Rafael J. Wysocki" <rafael@kernel.org>
+> >> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+> >
+> > Please fold this change into the patch adding users of device_match_acpi_dev().
+>
+> There are variants of this by class/bus/driver and all of them are introduced
+> as separate patches with the respective users. If we do for this, we have to
+> do the same for other matches as well.
+>
+> i.e, [ device_match_by_attr + class_find_device_by_attr & users +
+> driver_find_device_by_attr & users + bus_find_device_by_attr & users ]
+>
+> And that becomes a large chunk, which could make the review painful.
+>
+> If you would still like that approach, I could do that in the next revision.
 
-On 17/06/2019 15:04, Dmitry Osipenko wrote:
-> 17.06.2019 13:51, Jon Hunter =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->>
->> On 14/06/2019 17:45, Dmitry Osipenko wrote:
->>> 14.06.2019 18:48, Jon Hunter =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->>>>
->>>> On 10/06/2019 17:43, Dmitry Osipenko wrote:
->>>>> The of_clk structure has a period field that is set up initially by
->>>>> timer_of_clk_init(), that period value need to be adjusted for a case=
- of
->>>>> TIMER1-9 that are running at a fixed rate that doesn't match the cloc=
-k's
->>>>> rate. Note that the period value is currently used only by some of th=
-e
->>>>> clocksource drivers internally and hence this is just a minor cleanup
->>>>> change that doesn't fix anything.
->>>>>
->>>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->>>>> ---
->>>>>  drivers/clocksource/timer-tegra.c | 5 +++--
->>>>>  1 file changed, 3 insertions(+), 2 deletions(-)
->>>>>
->>>>> diff --git a/drivers/clocksource/timer-tegra.c b/drivers/clocksource/=
-timer-tegra.c
->>>>> index 810b4e7435cf..646b3530c2d2 100644
->>>>> --- a/drivers/clocksource/timer-tegra.c
->>>>> +++ b/drivers/clocksource/timer-tegra.c
->>>>> @@ -71,9 +71,9 @@ static int tegra_timer_shutdown(struct clock_event_=
-device *evt)
->>>>>  static int tegra_timer_set_periodic(struct clock_event_device *evt)
->>>>>  {
->>>>>  	void __iomem *reg_base =3D timer_of_base(to_timer_of(evt));
->>>>> +	unsigned long period =3D timer_of_period(to_timer_of(evt));
->>>>> =20
->>>>> -	writel_relaxed(TIMER_PTV_EN | TIMER_PTV_PER |
->>>>> -		       ((timer_of_rate(to_timer_of(evt)) / HZ) - 1),
->>>>> +	writel_relaxed(TIMER_PTV_EN | TIMER_PTV_PER | (period - 1),
->>>>>  		       reg_base + TIMER_PTV);
->>>>> =20
->>>>>  	return 0;
->>>>> @@ -297,6 +297,7 @@ static int __init tegra_init_timer(struct device_=
-node *np, bool tegra20,
->>>>>  		cpu_to->clkevt.rating =3D rating;
->>>>>  		cpu_to->clkevt.cpumask =3D cpumask_of(cpu);
->>>>>  		cpu_to->of_base.base =3D timer_reg_base + base;
->>>>> +		cpu_to->of_clk.period =3D DIV_ROUND_UP(rate, HZ);
->>>>
->>>> Any reason you made this a round-up?
->>>
->>> That's what timer_of_clk_init() does, I assume it should be a more corr=
-ect variant.
->>
->> Sounds to me like this should be 2 patches, because you are changing the
->> value. This is not just purely cleanup IMO.
->=20
-> Indeed, that could be at least mentioned in the commit message. Probably =
-I just
-> assumed that this is such a minor change that not worth anything. A hundr=
-ed of
-> microseconds is hardly noticeable.
->=20
-> I'm not really sure if this really worth a re-spin at this point. Jon, ar=
-e you insisting?
-
-At a minimum the changelog needs to be udpated to reflect what is going
-on here. Yes it may not be a massive difference, but I prefer not to
-change things without any rationale.
-
-Cheers
-Jon
-
---=20
-nvpublic
+Yes, please.
