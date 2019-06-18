@@ -2,204 +2,187 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E4C1C49905
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 08:42:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DA99D49924
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 08:45:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726558AbfFRGmn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Jun 2019 02:42:43 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:41186 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726640AbfFRGmd (ORCPT
+        id S1728937AbfFRGpe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Jun 2019 02:45:34 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:49698 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726403AbfFRGpc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Jun 2019 02:42:33 -0400
-Received: by mail-pg1-f193.google.com with SMTP id 83so7110497pgg.8;
-        Mon, 17 Jun 2019 23:42:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:thread-topic:thread-index:date:message-id
-         :references:in-reply-to:accept-language:content-language
-         :content-transfer-encoding:mime-version;
-        bh=AwdujDdMY1xkfO2MFtISLAJ7c2q8GQgPX1OyMyL8iRQ=;
-        b=gc2T8mZda1iOBIUmBR+zjgUg7PzAigxme6RC6t0LcJNLaNAGfWI8VT0+Hl16YajImI
-         dt8LgXYjCOCR5b+h3pZ0JCkE2PdcwIhrIfXcm4fNt4PhNwdMwPlVL18i8VJpHnqjRblO
-         7Z5Yjbyk/4A8NUfguEKdBgIeWYbcSE6+pMxYQszys+hq8z6wtL/7bMF1s5n0ZJKRU8c6
-         deHly0PG/anOfsaEeErCt2F8+ui2INpvBvCFodzBg78FPYttPGrATfvLeXcMzTdZvNK3
-         5ZQ3OEpWMwqP1ZYHv077vlJ8LaPXwWZDbW/QlKKRPhTpg0ZMXXhImyw8m8M1Ltlox0xa
-         /Ldw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:thread-topic:thread-index
-         :date:message-id:references:in-reply-to:accept-language
-         :content-language:content-transfer-encoding:mime-version;
-        bh=AwdujDdMY1xkfO2MFtISLAJ7c2q8GQgPX1OyMyL8iRQ=;
-        b=is1cRqJPXhAaP71bRPI9ANiQI5+gLAQfjP9R+ufbdQV26D2boA0cmBZ9pypkAFP/Cq
-         VNb8Betj0+fQWk2qNVWyvZFL2uu03l9zawSrRKCVZbgC7ovj7AyMogLyeMAbwQhKd/JI
-         hlbaFmar8RgK4nm2ca1+iBOnRcEA4VtfQDC7rQWkYoKDaA1/EaPb24PtguYct7wThSyF
-         1PphLpi7MhMMRRr5AJUqSA6/7GT28QxuFX8qNtPPK9foeAtlBmz9IhT2GlJhFG5ZIrQq
-         4ZR2wDqqbIeVv0TZEvzG5ICZpNGhz54/vfmcgST+EHjezGH1sxInjFrDUsSlz1gKIzIM
-         0fXg==
-X-Gm-Message-State: APjAAAW7QpWASIRYicoPG/1fsL/IjiIghH8YYIEhpA+2CKve0vKdyEVk
-        0QmmCYS1mBwnYOAwNwaNXnk=
-X-Google-Smtp-Source: APXvYqx9gUXNF4RnA0Ob4Cvlv0zMqP0GxfJNKUQHMuobER/vyaq4K+0A2QDhVIk6qSAyLUTOu5nexg==
-X-Received: by 2002:a17:90a:ca0f:: with SMTP id x15mr218820pjt.82.1560839660866;
-        Mon, 17 Jun 2019 23:34:20 -0700 (PDT)
-Received: from PSXP216MB0662.KORP216.PROD.OUTLOOK.COM ([40.100.44.181])
-        by smtp.gmail.com with ESMTPSA id y1sm1204874pjw.5.2019.06.17.23.34.15
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 17 Jun 2019 23:34:19 -0700 (PDT)
-From:   Jingoo Han <jingoohan1@gmail.com>
-To:     Vidya Sagar <vidyas@nvidia.com>,
-        "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>,
-        "bhelgaas@google.com" <bhelgaas@google.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
-        "jonathanh@nvidia.com" <jonathanh@nvidia.com>,
-        "kishon@ti.com" <kishon@ti.com>,
-        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-        "will.deacon@arm.com" <will.deacon@arm.com>,
-        "gustavo.pimentel@synopsys.com" <gustavo.pimentel@synopsys.com>
-CC:     "digetx@gmail.com" <digetx@gmail.com>,
-        "mperttunen@nvidia.com" <mperttunen@nvidia.com>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
+        Tue, 18 Jun 2019 02:45:32 -0400
+X-UUID: c955ef6297754fd299307ade39fb6010-20190618
+X-UUID: c955ef6297754fd299307ade39fb6010-20190618
+Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw02.mediatek.com
+        (envelope-from <ck.hu@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 442174043; Tue, 18 Jun 2019 14:35:20 +0800
+Received: from mtkcas08.mediatek.inc (172.21.101.126) by
+ mtkmbs07n2.mediatek.inc (172.21.101.141) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Tue, 18 Jun 2019 14:35:19 +0800
+Received: from [172.21.77.4] (172.21.77.4) by mtkcas08.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Tue, 18 Jun 2019 14:35:19 +0800
+Message-ID: <1560839719.3736.0.camel@mtksdaap41>
+Subject: Re: [PATCH v2 08/12] drm/mediatek: Get rid of mtk_smi_larb_get/put
+From:   CK Hu <ck.hu@mediatek.com>
+To:     Yong Wu <yong.wu@mediatek.com>
+CC:     Matthias Brugger <matthias.bgg@gmail.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Evan Green <evgreen@chromium.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Tomasz Figa <tfiga@google.com>,
+        Will Deacon <will.deacon@arm.com>,
+        <linux-mediatek@lists.infradead.org>,
+        <srv_heupstream@mediatek.com>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
-        "kthota@nvidia.com" <kthota@nvidia.com>,
-        "mmaddireddy@nvidia.com" <mmaddireddy@nvidia.com>,
-        "sagar.tv@gmail.com" <sagar.tv@gmail.com>,
-        Han Jingoo <jingoohan1@gmail.com>
-Subject: Re: [PATCH V10 03/15] PCI: dwc: Perform dbi regs write lock towards
- the end
-Thread-Topic: [PATCH V10 03/15] PCI: dwc: Perform dbi regs write lock towards
- the end
-Thread-Index: AQHVJZgV1RcRQMIdqU6FIMIehEk3Laag9HhB
-X-MS-Exchange-MessageSentRepresentingType: 1
-Date:   Tue, 18 Jun 2019 06:34:12 +0000
-Message-ID: <PSXP216MB066293334CA5E29E14C41B9FAAEA0@PSXP216MB0662.KORP216.PROD.OUTLOOK.COM>
-References: <20190612095339.20118-1-vidyas@nvidia.com>
- <20190612095339.20118-4-vidyas@nvidia.com>
-In-Reply-To: <20190612095339.20118-4-vidyas@nvidia.com>
-Accept-Language: ko-KR, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-Exchange-Organization-SCL: -1
-X-MS-TNEF-Correlator: 
-X-MS-Exchange-Organization-RecordReviewCfmType: 0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        <iommu@lists.linux-foundation.org>, <yingjoe.chen@mediatek.com>,
+        <youlin.pei@mediatek.com>, Nicolas Boichat <drinkcat@chromium.org>,
+        <anan.sun@mediatek.com>, Philipp Zabel <p.zabel@pengutronix.de>
+Date:   Tue, 18 Jun 2019 14:35:19 +0800
+In-Reply-To: <1560171313-28299-9-git-send-email-yong.wu@mediatek.com>
+References: <1560171313-28299-1-git-send-email-yong.wu@mediatek.com>
+         <1560171313-28299-9-git-send-email-yong.wu@mediatek.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
 MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 6/12/19, 6:54 PM, Vidya Sagar wrote:
->
-> Remove multiple write enable and disable sequences of dbi registers as
-> Tegra194 implements writes to BAR-0 register (offset: 0x10) controlled by
-> DBI write-lock enable bit thereby not allowing any further writes to BAR-=
-0
-> register in config space to take place. Hence enabling write permission a=
-t
-> the start of function and disabling the same only towards the end.
->
-> Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
-> Reviewed-by: Thierry Reding <treding@nvidia.com>
+Hi, Yong:
 
-Acked-by: Jingoo Han  <jingoohan1@gmail.com>
-
-Sorry for being late. I read the previous threads. I don't think that this =
-patch
-has any harmful effects. This patch looks good to me.
-Thank you.
-
-Best regards,
-Jingoo Han
-
+On Mon, 2019-06-10 at 20:55 +0800, Yong Wu wrote:
+> MediaTek IOMMU has already added the device_link between the consumer
+> and smi-larb device. If the drm device call the pm_runtime_get_sync,
+> the smi-larb's pm_runtime_get_sync also be called automatically.
+> 
+> CC: CK Hu <ck.hu@mediatek.com>
+> CC: Philipp Zabel <p.zabel@pengutronix.de>
+> Signed-off-by: Yong Wu <yong.wu@mediatek.com>
+> Reviewed-by: Evan Green <evgreen@chromium.org>
 > ---
-> Changes since [v9]:
-> * None
->
-> Changes since [v8]:
-> * None
->
-> Changes since [v7]:
-> * None
->
-> Changes since [v6]:
-> * None
->
-> Changes since [v5]:
-> * Moved write enable to the beginning of the API and write disable to the=
- end
->
-> Changes since [v4]:
-> * None
->
-> Changes since [v3]:
-> * None
->
-> Changes since [v2]:
-> * None
->
-> Changes since [v1]:
-> * None
->
->  drivers/pci/controller/dwc/pcie-designware-host.c | 14 ++++++++------
->  1 file changed, 8 insertions(+), 6 deletions(-)
->
-> diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/=
-pci/controller/dwc/pcie-designware-host.c
-> index f93252d0da5b..d3156446ff27 100644
-> --- a/drivers/pci/controller/dwc/pcie-designware-host.c
-> +++ b/drivers/pci/controller/dwc/pcie-designware-host.c
-> @@ -628,6 +628,12 @@ void dw_pcie_setup_rc(struct pcie_port *pp)
->  	u32 val, ctrl, num_ctrls;
->  	struct dw_pcie *pci =3D to_dw_pcie_from_pp(pp);
-> =20
-> +	/*
-> +	 * Enable DBI read-only registers for writing/updating configuration.
-> +	 * Write permission gets disabled towards the end of this function.
-> +	 */
-> +	dw_pcie_dbi_ro_wr_en(pci);
-> +
->  	dw_pcie_setup(pci);
-> =20
->  	if (!pp->ops->msi_host_init) {
-> @@ -650,12 +656,10 @@ void dw_pcie_setup_rc(struct pcie_port *pp)
->  	dw_pcie_writel_dbi(pci, PCI_BASE_ADDRESS_1, 0x00000000);
-> =20
->  	/* Setup interrupt pins */
-> -	dw_pcie_dbi_ro_wr_en(pci);
->  	val =3D dw_pcie_readl_dbi(pci, PCI_INTERRUPT_LINE);
->  	val &=3D 0xffff00ff;
->  	val |=3D 0x00000100;
->  	dw_pcie_writel_dbi(pci, PCI_INTERRUPT_LINE, val);
-> -	dw_pcie_dbi_ro_wr_dis(pci);
-> =20
->  	/* Setup bus numbers */
->  	val =3D dw_pcie_readl_dbi(pci, PCI_PRIMARY_BUS);
-> @@ -687,15 +691,13 @@ void dw_pcie_setup_rc(struct pcie_port *pp)
-> =20
->  	dw_pcie_wr_own_conf(pp, PCI_BASE_ADDRESS_0, 4, 0);
-> =20
-> -	/* Enable write permission for the DBI read-only register */
-> -	dw_pcie_dbi_ro_wr_en(pci);
->  	/* Program correct class for RC */
->  	dw_pcie_wr_own_conf(pp, PCI_CLASS_DEVICE, 2, PCI_CLASS_BRIDGE_PCI);
-> -	/* Better disable write permission right after the update */
-> -	dw_pcie_dbi_ro_wr_dis(pci);
-> =20
->  	dw_pcie_rd_own_conf(pp, PCIE_LINK_WIDTH_SPEED_CONTROL, 4, &val);
->  	val |=3D PORT_LOGIC_SPEED_CHANGE;
->  	dw_pcie_wr_own_conf(pp, PCIE_LINK_WIDTH_SPEED_CONTROL, 4, val);
-> +
-> +	dw_pcie_dbi_ro_wr_dis(pci);
+>  drivers/gpu/drm/mediatek/mtk_drm_crtc.c     | 11 -----------
+>  drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c | 26 --------------------------
+>  drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.h |  1 -
+>  3 files changed, 38 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/mediatek/mtk_drm_crtc.c b/drivers/gpu/drm/mediatek/mtk_drm_crtc.c
+> index acad088..3a21a48 100644
+> --- a/drivers/gpu/drm/mediatek/mtk_drm_crtc.c
+> +++ b/drivers/gpu/drm/mediatek/mtk_drm_crtc.c
+> @@ -18,7 +18,6 @@
+>  #include <drm/drm_probe_helper.h>
+>  #include <linux/clk.h>
+>  #include <linux/pm_runtime.h>
+> -#include <soc/mediatek/smi.h>
+>  
+>  #include "mtk_drm_drv.h"
+>  #include "mtk_drm_crtc.h"
+> @@ -371,20 +370,12 @@ static void mtk_drm_crtc_atomic_enable(struct drm_crtc *crtc,
+>  				       struct drm_crtc_state *old_state)
+>  {
+>  	struct mtk_drm_crtc *mtk_crtc = to_mtk_crtc(crtc);
+> -	struct mtk_ddp_comp *comp = mtk_crtc->ddp_comp[0];
+>  	int ret;
+>  
+>  	DRM_DEBUG_DRIVER("%s %d\n", __func__, crtc->base.id);
+>  
+> -	ret = mtk_smi_larb_get(comp->larb_dev);
+> -	if (ret) {
+> -		DRM_ERROR("Failed to get larb: %d\n", ret);
+> -		return;
+> -	}
+> -
+>  	ret = mtk_crtc_ddp_hw_init(mtk_crtc);
+>  	if (ret) {
+> -		mtk_smi_larb_put(comp->larb_dev);
+>  		return;
+>  	}
+
+Remove {}.
+
+Regards,
+CK
+
+>  
+> @@ -396,7 +387,6 @@ static void mtk_drm_crtc_atomic_disable(struct drm_crtc *crtc,
+>  					struct drm_crtc_state *old_state)
+>  {
+>  	struct mtk_drm_crtc *mtk_crtc = to_mtk_crtc(crtc);
+> -	struct mtk_ddp_comp *comp = mtk_crtc->ddp_comp[0];
+>  	int i;
+>  
+>  	DRM_DEBUG_DRIVER("%s %d\n", __func__, crtc->base.id);
+> @@ -419,7 +409,6 @@ static void mtk_drm_crtc_atomic_disable(struct drm_crtc *crtc,
+>  
+>  	drm_crtc_vblank_off(crtc);
+>  	mtk_crtc_ddp_hw_fini(mtk_crtc);
+> -	mtk_smi_larb_put(comp->larb_dev);
+>  
+>  	mtk_crtc->enabled = false;
 >  }
->  EXPORT_SYMBOL_GPL(dw_pcie_setup_rc);
-> --=20
-> 2.17.1
+> diff --git a/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c b/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c
+> index 54ca794..ede15c9 100644
+> --- a/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c
+> +++ b/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c
+> @@ -265,8 +265,6 @@ int mtk_ddp_comp_init(struct device *dev, struct device_node *node,
+>  		      const struct mtk_ddp_comp_funcs *funcs)
+>  {
+>  	enum mtk_ddp_comp_type type;
+> -	struct device_node *larb_node;
+> -	struct platform_device *larb_pdev;
+>  
+>  	if (comp_id < 0 || comp_id >= DDP_COMPONENT_ID_MAX)
+>  		return -EINVAL;
+> @@ -296,30 +294,6 @@ int mtk_ddp_comp_init(struct device *dev, struct device_node *node,
+>  	if (IS_ERR(comp->clk))
+>  		return PTR_ERR(comp->clk);
+>  
+> -	/* Only DMA capable components need the LARB property */
+> -	comp->larb_dev = NULL;
+> -	if (type != MTK_DISP_OVL &&
+> -	    type != MTK_DISP_RDMA &&
+> -	    type != MTK_DISP_WDMA)
+> -		return 0;
+> -
+> -	larb_node = of_parse_phandle(node, "mediatek,larb", 0);
+> -	if (!larb_node) {
+> -		dev_err(dev,
+> -			"Missing mediadek,larb phandle in %pOF node\n", node);
+> -		return -EINVAL;
+> -	}
+> -
+> -	larb_pdev = of_find_device_by_node(larb_node);
+> -	if (!larb_pdev) {
+> -		dev_warn(dev, "Waiting for larb device %pOF\n", larb_node);
+> -		of_node_put(larb_node);
+> -		return -EPROBE_DEFER;
+> -	}
+> -	of_node_put(larb_node);
+> -
+> -	comp->larb_dev = &larb_pdev->dev;
+> -
+>  	return 0;
+>  }
+>  
+> diff --git a/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.h b/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.h
+> index 8399229..b8dc17e 100644
+> --- a/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.h
+> +++ b/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.h
+> @@ -91,7 +91,6 @@ struct mtk_ddp_comp {
+>  	struct clk *clk;
+>  	void __iomem *regs;
+>  	int irq;
+> -	struct device *larb_dev;
+>  	enum mtk_ddp_comp_id id;
+>  	const struct mtk_ddp_comp_funcs *funcs;
+>  };
+
 
