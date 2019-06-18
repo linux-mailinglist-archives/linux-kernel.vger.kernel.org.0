@@ -2,100 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6156149A2D
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 09:16:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AC4EC49952
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 08:50:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729032AbfFRHQX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Jun 2019 03:16:23 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:42778 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725955AbfFRHQX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Jun 2019 03:16:23 -0400
-Received: by mail-pl1-f196.google.com with SMTP id ay6so3083807plb.9;
-        Tue, 18 Jun 2019 00:16:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=HNJi6hiuYdfL3u8IXlFr2ptQbwtW7ZdNyo5Hq+iVFb0=;
-        b=Y+ThJ5pCj+BAiwHO4j2p2nYITjKlpl+FSuLSTNOe+TBAgWSMDCYqb8cPLlvg0F1dth
-         HnhM5kNjqYivCUy7GrQd16xPch7qNWQX18sl65tAEEtv2Df2RwLmv2I0D+LUcee1jdVX
-         KGaclhr/o20kE66rX6k4zqkjW2TIjWOUzINkK/LYswE9neLxBEuDN+PAnIUsgXtgSBgx
-         AQPuhtt8NnsINJQNjvoNXPgmbajWFp9UtDyJ2kZSvPNkmyi+964tUXmqTiwhy21ZhtPT
-         AvgX+EE4PPKYe1X/jfll6qk8oltbqEu4yW3hADikabGGGThnwh0+BNCoQXmNd2V37UEi
-         aorg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=HNJi6hiuYdfL3u8IXlFr2ptQbwtW7ZdNyo5Hq+iVFb0=;
-        b=NAdxBpHrDzKwyjsqWUqBvfN78Soq1paImQTbXMniFZ7uDQVL5obhxofqHM+w5VakJz
-         UgssxdH7goOMeaCwQkZkwNn3uZrAZzquh5KV0TBfmT8x6HcBX66brZoT/UV+hT7jA2B9
-         BSR68vjXg5+H53+qqXPYVNNaXZi9h0wN9q/0Dc6mlyu190SDNUaVUKbpEO9gtWKtZ+7H
-         g85D7W/ZfgtEXxhE+ues1iR7trCP2CQ7MTbL2g9f+sY4dEqs5C85UvU169S8Riiqv0l7
-         ZgPwbNfRpMhnOgAV/d9jLGVN+vhCaASCpChk7CnFVSEEpXTdWuj/UX84WLPDdA6zEbDl
-         CWpQ==
-X-Gm-Message-State: APjAAAUQ3rhkujsWpTPHtfs/hsfKua0ISM9swD7/520xKAhH7OEMxsbE
-        q/AVNiC6ofEWrSecF5PVvRFUeMSxm8Y=
-X-Google-Smtp-Source: APXvYqzQY3y9xEauwLFI59PlhTMcKf6K26shYUvaumGkoTV5SyH8/M3fZ5Z05bsG0ptz3yCTmUM1sg==
-X-Received: by 2002:a17:902:d715:: with SMTP id w21mr112846469ply.234.1560838478885;
-        Mon, 17 Jun 2019 23:14:38 -0700 (PDT)
-Received: from maya190131 ([13.66.160.195])
-        by smtp.gmail.com with ESMTPSA id a7sm13038951pgj.42.2019.06.17.23.14.38
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 17 Jun 2019 23:14:38 -0700 (PDT)
-Date:   Tue, 18 Jun 2019 06:14:38 +0000
-From:   Maya Nakamura <m.maya.nakamura@gmail.com>
-To:     mikelley@microsoft.com, kys@microsoft.com, haiyangz@microsoft.com,
-        sthemmin@microsoft.com, sashal@kernel.org
-Cc:     x86@kernel.org, linux-hyperv@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v3 3/5] hv: vmbus: Replace page definition with Hyper-V
- specific one
-Message-ID: <aef1958c0b0a5d005899620d205a55b2c91f7f78.1560837096.git.m.maya.nakamura@gmail.com>
-References: <cover.1560837096.git.m.maya.nakamura@gmail.com>
+        id S1728715AbfFRGus (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Jun 2019 02:50:48 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:28760 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725934AbfFRGun (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Jun 2019 02:50:43 -0400
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 45Sd911hX5z9v32x;
+        Tue, 18 Jun 2019 08:15:01 +0200 (CEST)
+Authentication-Results: localhost; dkim=pass
+        reason="1024-bit key; insecure key"
+        header.d=c-s.fr header.i=@c-s.fr header.b=Kez0CNpF; dkim-adsp=pass;
+        dkim-atps=neutral
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id M3PGQrwHcKMg; Tue, 18 Jun 2019 08:15:01 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 45Sd910ccgz9v32w;
+        Tue, 18 Jun 2019 08:15:01 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
+        t=1560838501; bh=I7JZ9gFH0idmpMT36+ZfnaVxZu1dS6ov87xVghAIsHI=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=Kez0CNpFgGZ3NO9Di1I6CyWydEgSaGBOUXCnxjRlwzyPH/feGNWpybrn9vWiZUNum
+         VSREH721pYnrFfPLh5AbaKfQCUzVfax5o0bHPZXYq7J7u+RGb7mcBL5uWlkjfBCgLz
+         qhRDSqMjghVBqNHreAcgwU4+hfHUXZMHIKr9Y3m0=
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 0ED818B880;
+        Tue, 18 Jun 2019 08:15:01 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id IJKu8cZ1nbSz; Tue, 18 Jun 2019 08:15:00 +0200 (CEST)
+Received: from PO15451 (unknown [192.168.4.90])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 46ED58B78B;
+        Tue, 18 Jun 2019 08:15:00 +0200 (CEST)
+Subject: Re: [PATCH 1/5] Powerpc/hw-breakpoint: Replace stale do_dabr() with
+ do_break()
+To:     Ravi Bangoria <ravi.bangoria@linux.ibm.com>, mpe@ellerman.id.au
+Cc:     benh@kernel.crashing.org, paulus@samba.org, mikey@neuling.org,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        npiggin@gmail.com, naveen.n.rao@linux.vnet.ibm.com
+References: <20190618042732.5582-1-ravi.bangoria@linux.ibm.com>
+ <20190618042732.5582-2-ravi.bangoria@linux.ibm.com>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Message-ID: <ad944298-3418-cc94-c120-554ba0f03f0c@c-s.fr>
+Date:   Tue, 18 Jun 2019 08:14:59 +0200
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1560837096.git.m.maya.nakamura@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20190618042732.5582-2-ravi.bangoria@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: fr
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Replace PAGE_SIZE with HV_HYP_PAGE_SIZE because the guest page size may
-not be 4096 on all architectures and Hyper-V always runs with a page
-size of 4096.
+The subject text should mention you are changing comments. Here it 
+suggests you are changing code text.
 
-Signed-off-by: Maya Nakamura <m.maya.nakamura@gmail.com>
-Reviewed-by: Michael Kelley <mikelley@microsoft.com>
-Reviewed-by: Vitaly Kuznetsov <vkuznets@redhat.com>
----
- drivers/hv/hyperv_vmbus.h | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+Le 18/06/2019 à 06:27, Ravi Bangoria a écrit :
+> do_dabr() was renamed with do_break() long ago. But I still see
+> some comments mentioning do_dabr(). Replace it.
 
-diff --git a/drivers/hv/hyperv_vmbus.h b/drivers/hv/hyperv_vmbus.h
-index 362e70e9d145..019469c3cbca 100644
---- a/drivers/hv/hyperv_vmbus.h
-+++ b/drivers/hv/hyperv_vmbus.h
-@@ -192,11 +192,11 @@ int hv_ringbuffer_read(struct vmbus_channel *channel,
- 		       u64 *requestid, bool raw);
- 
- /*
-- * Maximum channels is determined by the size of the interrupt page
-- * which is PAGE_SIZE. 1/2 of PAGE_SIZE is for send endpoint interrupt
-- * and the other is receive endpoint interrupt
-+ * Maximum channels, 16348, is determined by the size of the interrupt page,
-+ * which is HV_HYP_PAGE_SIZE. 1/2 of HV_HYP_PAGE_SIZE is to send endpoint
-+ * interrupt, and the other is to receive endpoint interrupt.
-  */
--#define MAX_NUM_CHANNELS	((PAGE_SIZE >> 1) << 3)	/* 16348 channels */
-+#define MAX_NUM_CHANNELS	((HV_HYP_PAGE_SIZE >> 1) << 3)
- 
- /* The value here must be in multiple of 32 */
- /* TODO: Need to make this configurable */
--- 
-2.17.1
+s/Replace it/Replace them/
 
+Christophe
+
+> 
+> Signed-off-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+> ---
+>   arch/powerpc/kernel/hw_breakpoint.c | 2 +-
+>   arch/powerpc/kernel/ptrace.c        | 2 +-
+>   2 files changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/powerpc/kernel/hw_breakpoint.c b/arch/powerpc/kernel/hw_breakpoint.c
+> index a293a53b4365..1908e4fcc132 100644
+> --- a/arch/powerpc/kernel/hw_breakpoint.c
+> +++ b/arch/powerpc/kernel/hw_breakpoint.c
+> @@ -232,7 +232,7 @@ int hw_breakpoint_handler(struct die_args *args)
+>   	 * Return early after invoking user-callback function without restoring
+>   	 * DABR if the breakpoint is from ptrace which always operates in
+>   	 * one-shot mode. The ptrace-ed process will receive the SIGTRAP signal
+> -	 * generated in do_dabr().
+> +	 * generated in do_break().
+>   	 */
+>   	if (bp->overflow_handler == ptrace_triggered) {
+>   		perf_bp_event(bp, regs);
+> diff --git a/arch/powerpc/kernel/ptrace.c b/arch/powerpc/kernel/ptrace.c
+> index 684b0b315c32..44b823e5e8c8 100644
+> --- a/arch/powerpc/kernel/ptrace.c
+> +++ b/arch/powerpc/kernel/ptrace.c
+> @@ -2373,7 +2373,7 @@ void ptrace_triggered(struct perf_event *bp,
+>   	/*
+>   	 * Disable the breakpoint request here since ptrace has defined a
+>   	 * one-shot behaviour for breakpoint exceptions in PPC64.
+> -	 * The SIGTRAP signal is generated automatically for us in do_dabr().
+> +	 * The SIGTRAP signal is generated automatically for us in do_break().
+>   	 * We don't have to do anything about that here
+>   	 */
+>   	attr = bp->attr;
+> 
