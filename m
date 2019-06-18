@@ -2,197 +2,136 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 99FCF4A685
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 18:17:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5892C4A65D
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 18:15:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729999AbfFRQQj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Jun 2019 12:16:39 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:34263 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729958AbfFRQQh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Jun 2019 12:16:37 -0400
-Received: by mail-lj1-f196.google.com with SMTP id p17so176491ljg.1;
-        Tue, 18 Jun 2019 09:16:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=M9elc0PQ+TI8jbg2PmLg+UuOO6GjGx+5PwCXytaA0Wc=;
-        b=O/pn7VfDOFwqdv15F3iQkKn3V4qI1G+IU3hn3oDAncam27yuMK0zyPSh0axdj7pNBT
-         qjcE/cfkXlJXFyZj45vWJbzHOHm3UsbQ69UKeg9eQHCCAdd/h7xclqyEicFrzrNt16N2
-         KPxz+cPgkfG0HtY+938BK6Xb9b4ieoogOOT3IIKGJMr/xfxQoDi3bCvAx7t8eIfNmVDa
-         sAQGOioA2Rhv3n2FPqkAtSGSfRcuB27FBrQnvaXiy79yKM8Jf6yufxY9CcIlU6u9LJVh
-         XVaitU2gCXpZC8vWCFm7QXDch3Fj3+4aHg/L/ZdoefLVjU1NDG/Knjhf+bpcw9r8Tou5
-         ofDQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=M9elc0PQ+TI8jbg2PmLg+UuOO6GjGx+5PwCXytaA0Wc=;
-        b=g3Ta9Si9sKbygUUf8CjLWTznRKy4JGNakVpQRPV4cdztzgqj0jNs/ZSXPDk6jBcPQK
-         PCIZiDvrHywpQOAIAQygIZE02LCN5TINcJGqScJd0FkF4QTGyubnjoNRIQCvAkJoQKKz
-         0oF3k8/dfyW5cwxMlFko03Ye2q3G063nEUCpGjUHk35PM+iw+cbJOOXcZVV5Utgv/Yi7
-         vTPDkBgL6t0hgSg5IzIpycmAyOxymipExmNqj4Ov1VwBS8FUICBWuYSxvMC9ZxnJCfHd
-         IysQUcay4MZWdpWNoH7vR+DzLMnnWEfoelXXSEp6Fm9xkAQMNer9pXBGZIGF7JZTzOYj
-         MFjA==
-X-Gm-Message-State: APjAAAUl3ypVgoFxguKRXHoCSrBSmbTEId0a9F8dKoT4k5jLZGOWscDM
-        Lu0Zw1Wm4IGH0y97Ox+Fq2U=
-X-Google-Smtp-Source: APXvYqx7PzGgocqiXoAMJo2xgjOlIYUwHli5qhQR5fD8FLxuQPyq/dImXrGmtvQKGt6P85jtFdwlAw==
-X-Received: by 2002:a2e:9ac6:: with SMTP id p6mr35542859ljj.100.1560874594123;
-        Tue, 18 Jun 2019 09:16:34 -0700 (PDT)
-Received: from localhost.localdomain (ppp91-79-162-197.pppoe.mtu-net.ru. [91.79.162.197])
-        by smtp.gmail.com with ESMTPSA id v15sm2273295lfd.53.2019.06.18.09.16.33
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 18 Jun 2019 09:16:33 -0700 (PDT)
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Rob Herring <robh+dt@kernel.org>
-Cc:     linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/4] staging: media: tegra-vde: Manually pack UAPI structures
-Date:   Tue, 18 Jun 2019 19:14:56 +0300
-Message-Id: <20190618161458.20499-6-digetx@gmail.com>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190618161458.20499-1-digetx@gmail.com>
-References: <20190618161458.20499-1-digetx@gmail.com>
+        id S1729249AbfFRQPN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Jun 2019 12:15:13 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:36040 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729835AbfFRQPM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Jun 2019 12:15:12 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id EAF6F30C1AE7;
+        Tue, 18 Jun 2019 16:15:11 +0000 (UTC)
+Received: from gondolin (dhcp-192-192.str.redhat.com [10.33.192.192])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 13E425C225;
+        Tue, 18 Jun 2019 16:14:58 +0000 (UTC)
+Date:   Tue, 18 Jun 2019 18:14:56 +0200
+From:   Cornelia Huck <cohuck@redhat.com>
+To:     Tony Krowiak <akrowiak@linux.ibm.com>
+Cc:     linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, freude@linux.ibm.com, borntraeger@de.ibm.com,
+        frankja@linux.ibm.com, david@redhat.com, mjrosato@linux.ibm.com,
+        schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
+        pmorel@linux.ibm.com, pasic@linux.ibm.com,
+        alex.williamson@redhat.com, kwankhede@nvidia.com
+Subject: Re: [PATCH v4 1/7] s390: vfio-ap: Refactor vfio_ap driver probe and
+ remove callbacks
+Message-ID: <20190618181456.0252227b.cohuck@redhat.com>
+In-Reply-To: <1560454780-20359-2-git-send-email-akrowiak@linux.ibm.com>
+References: <1560454780-20359-1-git-send-email-akrowiak@linux.ibm.com>
+        <1560454780-20359-2-git-send-email-akrowiak@linux.ibm.com>
+Organization: Red Hat GmbH
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Tue, 18 Jun 2019 16:15:12 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The __packed macro isn't available in userspace with the kernel headers.
-Checkpatch asks to use the macro, which is unwanted in a case of a UAPI
-header. There is no much benefit in a tight packing of the structures,
-hence let's pack them manually to cleanup things a tad. Note that there
-is no old-stable userspace that will suffer from this change, hence it's
-fine to change the ABI. In a result also more space is reserved for a
-possible future expansion of the UAPI as it was already shown that more
-fields will be needed for a later SoC generations.
+On Thu, 13 Jun 2019 15:39:34 -0400
+Tony Krowiak <akrowiak@linux.ibm.com> wrote:
 
-Suggested-by: Thierry Reding <thierry.reding@gmail.com>
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- drivers/staging/media/tegra-vde/tegra-vde.c | 13 +++++-
- drivers/staging/media/tegra-vde/uapi.h      | 44 +++++++++++----------
- 2 files changed, 34 insertions(+), 23 deletions(-)
+> In order to limit the number of private mdev functions called from the
+> vfio_ap device driver as well as to provide a landing spot for dynamic
+> configuration code related to binding/unbinding AP queue devices to/from
+> the vfio_ap driver, the following changes are being introduced:
+> 
+> * Move code from the vfio_ap driver's probe callback into a function
+>   defined in the mdev private operations file.
+> 
+> * Move code from the vfio_ap driver's remove callback into a function
+>   defined in the mdev private operations file.
+> 
+> Signed-off-by: Tony Krowiak <akrowiak@linux.ibm.com>
+> ---
+>  drivers/s390/crypto/vfio_ap_drv.c     | 27 ++++++++++-----------------
+>  drivers/s390/crypto/vfio_ap_ops.c     | 28 ++++++++++++++++++++++++++++
+>  drivers/s390/crypto/vfio_ap_private.h |  6 +++---
+>  3 files changed, 41 insertions(+), 20 deletions(-)
+> 
+> diff --git a/drivers/s390/crypto/vfio_ap_drv.c b/drivers/s390/crypto/vfio_ap_drv.c
+> index 003662aa8060..3c60df70891b 100644
+> --- a/drivers/s390/crypto/vfio_ap_drv.c
+> +++ b/drivers/s390/crypto/vfio_ap_drv.c
+> @@ -49,15 +49,15 @@ MODULE_DEVICE_TABLE(vfio_ap, ap_queue_ids);
+>   */
+>  static int vfio_ap_queue_dev_probe(struct ap_device *apdev)
+>  {
+> -	struct vfio_ap_queue *q;
+> -
+> -	q = kzalloc(sizeof(*q), GFP_KERNEL);
+> -	if (!q)
+> -		return -ENOMEM;
+> -	dev_set_drvdata(&apdev->device, q);
+> -	q->apqn = to_ap_queue(&apdev->device)->qid;
+> -	q->saved_isc = VFIO_AP_ISC_INVALID;
+> +	int ret;
+> +	struct ap_queue *queue = to_ap_queue(&apdev->device);
+> +
+> +	ret = vfio_ap_mdev_probe_queue(queue);
+> +	if (ret)
+> +		return ret;
+> +
+>  	return 0;
+> +
 
-diff --git a/drivers/staging/media/tegra-vde/tegra-vde.c b/drivers/staging/media/tegra-vde/tegra-vde.c
-index a5020dbf6eef..cc4244da2705 100644
---- a/drivers/staging/media/tegra-vde/tegra-vde.c
-+++ b/drivers/staging/media/tegra-vde/tegra-vde.c
-@@ -795,7 +795,7 @@ static int tegra_vde_ioctl_decode_h264(struct tegra_vde *vde,
- {
- 	struct device *dev = vde->miscdev.parent;
- 	struct tegra_vde_h264_decoder_ctx ctx;
--	struct tegra_vde_h264_frame frames[17];
-+	struct tegra_vde_h264_frame *frames;
- 	struct tegra_vde_h264_frame __user *frames_user;
- 	struct video_frame *dpb_frames;
- 	struct dma_buf_attachment *bitstream_data_dmabuf_attachment;
-@@ -830,11 +830,17 @@ static int tegra_vde_ioctl_decode_h264(struct tegra_vde *vde,
- 	if (ret)
- 		return ret;
- 
-+	frames = kmalloc_array(ctx.dpb_frames_nb, sizeof(*frames), GFP_KERNEL);
-+	if (!frames) {
-+		ret = -ENOMEM;
-+		goto release_bitstream_dmabuf;
-+	}
-+
- 	dpb_frames = kcalloc(ctx.dpb_frames_nb, sizeof(*dpb_frames),
- 			     GFP_KERNEL);
- 	if (!dpb_frames) {
- 		ret = -ENOMEM;
--		goto release_bitstream_dmabuf;
-+		goto free_frames;
- 	}
- 
- 	macroblocks_nb = ctx.pic_width_in_mbs * ctx.pic_height_in_mbs;
-@@ -955,6 +961,9 @@ static int tegra_vde_ioctl_decode_h264(struct tegra_vde *vde,
- free_dpb_frames:
- 	kfree(dpb_frames);
- 
-+free_frames:
-+	kfree(frames);
-+
- release_bitstream_dmabuf:
- 	tegra_vde_detach_and_put_dmabuf(bitstream_data_dmabuf_attachment,
- 					bitstream_sgt, DMA_TO_DEVICE);
-diff --git a/drivers/staging/media/tegra-vde/uapi.h b/drivers/staging/media/tegra-vde/uapi.h
-index dd3e4a8c9f7e..ffb4983e5bb6 100644
---- a/drivers/staging/media/tegra-vde/uapi.h
-+++ b/drivers/staging/media/tegra-vde/uapi.h
-@@ -21,40 +21,42 @@ struct tegra_vde_h264_frame {
- 	__u32 frame_num;
- 	__u32 flags;
- 
--	__u32 reserved;
--} __attribute__((packed));
-+	// Must be zero'ed
-+	__u32 reserved[6];
-+};
- 
- struct tegra_vde_h264_decoder_ctx {
- 	__s32 bitstream_data_fd;
- 	__u32 bitstream_data_offset;
- 
- 	__u64 dpb_frames_ptr;
--	__u8  dpb_frames_nb;
--	__u8  dpb_ref_frames_with_earlier_poc_nb;
-+	__u32 dpb_frames_nb;
-+	__u32 dpb_ref_frames_with_earlier_poc_nb;
- 
- 	// SPS
--	__u8  baseline_profile;
--	__u8  level_idc;
--	__u8  log2_max_pic_order_cnt_lsb;
--	__u8  log2_max_frame_num;
--	__u8  pic_order_cnt_type;
--	__u8  direct_8x8_inference_flag;
--	__u8  pic_width_in_mbs;
--	__u8  pic_height_in_mbs;
-+	__u32 baseline_profile;
-+	__u32 level_idc;
-+	__u32 log2_max_pic_order_cnt_lsb;
-+	__u32 log2_max_frame_num;
-+	__u32 pic_order_cnt_type;
-+	__u32 direct_8x8_inference_flag;
-+	__u32 pic_width_in_mbs;
-+	__u32 pic_height_in_mbs;
- 
- 	// PPS
--	__u8  pic_init_qp;
--	__u8  deblocking_filter_control_present_flag;
--	__u8  constrained_intra_pred_flag;
--	__u8  chroma_qp_index_offset;
--	__u8  pic_order_present_flag;
-+	__u32 pic_init_qp;
-+	__u32 deblocking_filter_control_present_flag;
-+	__u32 constrained_intra_pred_flag;
-+	__u32 chroma_qp_index_offset;
-+	__u32 pic_order_present_flag;
- 
- 	// Slice header
--	__u8  num_ref_idx_l0_active_minus1;
--	__u8  num_ref_idx_l1_active_minus1;
-+	__u32 num_ref_idx_l0_active_minus1;
-+	__u32 num_ref_idx_l1_active_minus1;
- 
--	__u32 reserved;
--} __attribute__((packed));
-+	// Must be zero'ed
-+	__u32 reserved[11];
-+};
- 
- #define VDE_IOCTL_BASE			('v' + 0x20)
- 
--- 
-2.22.0
+Maybe you could even condense this into a simple
+
+return vfio_ap_mdev_probe_queue(to_ap_queue(&apdev->device));
+
+(Unless you plan to do more things with queue in a future patch, of
+course.)
+
+>  }
+>  
+>  /**
+
+(...)
+
+> diff --git a/drivers/s390/crypto/vfio_ap_private.h b/drivers/s390/crypto/vfio_ap_private.h
+> index f46dde56b464..5cc3c2ebf151 100644
+> --- a/drivers/s390/crypto/vfio_ap_private.h
+> +++ b/drivers/s390/crypto/vfio_ap_private.h
+> @@ -90,8 +90,6 @@ struct ap_matrix_mdev {
+>  
+>  extern int vfio_ap_mdev_register(void);
+>  extern void vfio_ap_mdev_unregister(void);
+> -int vfio_ap_mdev_reset_queue(unsigned int apid, unsigned int apqi,
+> -			     unsigned int retry);
+
+If you don't need that function across files anymore, you probably want
+to make it static.
+
+>  
+>  struct vfio_ap_queue {
+>  	struct ap_matrix_mdev *matrix_mdev;
+> @@ -100,5 +98,7 @@ struct vfio_ap_queue {
+>  #define VFIO_AP_ISC_INVALID 0xff
+>  	unsigned char saved_isc;
+>  };
+> -struct ap_queue_status vfio_ap_irq_disable(struct vfio_ap_queue *q);
+
+Same here.
+
+> +int vfio_ap_mdev_probe_queue(struct ap_queue *queue);
+> +void vfio_ap_mdev_remove_queue(struct ap_queue *queue);
+> +
+>  #endif /* _VFIO_AP_PRIVATE_H_ */
 
