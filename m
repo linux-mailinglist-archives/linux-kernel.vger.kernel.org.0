@@ -2,130 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6B94F4A9E3
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 20:33:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ECAE74A9F6
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 20:34:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730394AbfFRSd1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Jun 2019 14:33:27 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:47568 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730358AbfFRSdZ (ORCPT
+        id S1730457AbfFRSeM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Jun 2019 14:34:12 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:38424 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729642AbfFRSeM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Jun 2019 14:33:25 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
-        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
-        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=TPsujIWTKKE1424oPCy7XooqmWFVUeyhp6UwM7y6KlE=; b=r7yXU3t3v2Ej
-        X8PNK1F9ZGRCM5GtXrRTJWqBox/dfKlcpmqa0PqVwBLnlGSLEpB3OhUkAz7e0VEcQ2Yv7zgSXqpQe
-        yv3sdGd8EIxZNWNgw7/gko1jP3I6bqunftZKq6MSBo6ryWspMojiek8dPE3vvu716ajOZeBgSfEpY
-        5q2us=;
-Received: from [2001:470:1f1d:6b5:7e7a:91ff:fede:4a45] (helo=finisterre.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1hdIv5-0005LO-Vh; Tue, 18 Jun 2019 18:33:24 +0000
-Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
-        id 78864440046; Tue, 18 Jun 2019 19:33:23 +0100 (BST)
-From:   Mark Brown <broonie@kernel.org>
-To:     Mark Brown <broonie@kernel.org>
-Cc:     linux-kernel@vger.kernel.org
-Subject: Applied "regulator: core: Make entire header comment C++ style" to the regulator tree
-In-Reply-To: 
-X-Patchwork-Hint: ignore
-Message-Id: <20190618183323.78864440046@finisterre.sirena.org.uk>
-Date:   Tue, 18 Jun 2019 19:33:23 +0100 (BST)
+        Tue, 18 Jun 2019 14:34:12 -0400
+Received: by mail-lj1-f195.google.com with SMTP id r9so568603ljg.5;
+        Tue, 18 Jun 2019 11:34:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=LUTcC8R+5dFr9R0YY+BhHcC1Z9+J2f6PapOJUQzgkSs=;
+        b=DAlZdM4CzRLCjdt8CtdqrU2BUOC0C2LJP2ZSloK1/ylQ8IApeYFnaQuSmIcYq2W3ny
+         M0lzE7674VSrYkq1Qyff0punD6tR9xtE7+F+Z8STbBxP+M+/izpIxQOa5MtYBK19okQq
+         Jpx0XcywJlMf8ERGPCjJV86UKlfUvhXegjIpYgRgZyUjHIMCKQ+9WpbdxPt1EyLDgAB/
+         61/r9ftEtynbLQpOpshnYdeHnFltFZQZrKmfaibN2o73F5OXj88m9RN9P/zMsdVusbEO
+         IHy6Uyb3nwNXyC050fVkvWfwjm66VfCy8vCYQD1llUCrHjTf+yibrlzd/MUlf+9GQJLY
+         7Apw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=LUTcC8R+5dFr9R0YY+BhHcC1Z9+J2f6PapOJUQzgkSs=;
+        b=hMM3ragAd8rxhwDFZ0YA6IhqeMq8EGSSrFOr4dhOpF0nXtQC0eYx7/8mcC0d5CL13n
+         JhGOey924T4Jh8sngwxes998BnUIHw5ExuI++JusFA4MK+YQZRojqltb8cXLiGtuOBD7
+         3qNW5v+YmtmEqbiSKBcpM/jh7Sc+7RrfYKltibq9O4NsBGOuo9IiwHlEyWcZ+IpxTxZt
+         Hhlpuuece8DReD+UdWT5m+E6Xj9TI8VUQw2g99xV5vTS4msOUt76sNhY0qHnboO7ZV+L
+         JTP2WkTXUAbW/JrUFJdbbhcMV1f7J5fOyLTuw0stvZPn2EgC7htSbs8exyJTOWKoEcLc
+         sZKA==
+X-Gm-Message-State: APjAAAVYN2Fk5QGA/7SpOfb0PF5SKBHQ2Z3gNa4+QtNNijUsJD6Gxbj3
+        g8k1B9dDk6JJPGb98OyfRso=
+X-Google-Smtp-Source: APXvYqwgIyXPVkyoagm4bVZF4xt0brYs6vaWPpojnz7lmpws28SY8JiVu2fVW7oUCLUCkbIc+710iw==
+X-Received: by 2002:a2e:89ca:: with SMTP id c10mr4868002ljk.106.1560882850067;
+        Tue, 18 Jun 2019 11:34:10 -0700 (PDT)
+Received: from [192.168.2.145] (ppp91-79-162-197.pppoe.mtu-net.ru. [91.79.162.197])
+        by smtp.googlemail.com with ESMTPSA id l15sm3031426ljh.0.2019.06.18.11.34.08
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 18 Jun 2019 11:34:09 -0700 (PDT)
+Subject: Re: [PATCH V2] i2c: tegra: disable irq in tegra_i2c_xfer_msg
+To:     Jon Hunter <jonathanh@nvidia.com>,
+        Bitan Biswas <bbiswas@nvidia.com>,
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        Thierry Reding <treding@nvidia.com>, linux-i2c@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Peter Rosin <peda@axentia.se>, Wolfram Sang <wsa@the-dreams.de>
+Cc:     Shardar Mohammed <smohammed@nvidia.com>,
+        Sowjanya Komatineni <skomatineni@nvidia.com>,
+        Mantravadi Karthik <mkarthik@nvidia.com>
+References: <1560847368-16069-1-git-send-email-bbiswas@nvidia.com>
+ <61c2dbcd-85f2-2094-7596-78ac01f55421@nvidia.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <28cd06ca-3bd4-87e1-6d52-504cd00e1adb@gmail.com>
+Date:   Tue, 18 Jun 2019 21:34:08 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.1
+MIME-Version: 1.0
+In-Reply-To: <61c2dbcd-85f2-2094-7596-78ac01f55421@nvidia.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
+18.06.2019 12:13, Jon Hunter пишет:
+> 
+> On 18/06/2019 09:42, Bitan Biswas wrote:
+>> tegra_i2c_xfer_msg initiates the I2C transfer in DMA
+>> or PIO mode. It involves steps that need FIFO register
+>> access, DMA API calls like dma_sync_single_for_device, etc.
+>> Tegra I2C ISR has calls to tegra_i2c_empty_rx_fifo in PIO mode
+>> and in DMA/PIO mode writes different I2C registers including
+>> I2C interrupt status. ISR cannot start processing
+>> before the preparation step at tegra_i2c_xfer_msg is complete.
+>> Hence, a synchronization between ISR and tegra_i2c_xfer_msg
+>> is in place today using spinlock.
+>>
+>> Spinlock busy waits and can add avoidable delays.
+>>
+>> In this patch needed synchronization is achieved by disabling
+>> I2C interrupt during preparation step and enabling interrupt
+>> once preparation is over and spinlock is no longer needed.
+> Sorry but I still don't understand the problem you are trying to solve.
+> Yes spinlocks are busy waits but is this busy wait an actual problem? If
+> so what is the problem with this?
 
-   regulator: core: Make entire header comment C++ style
+There is no real problem here, the intent is to clean up the code more and that should
+be mentioned in the commit message for clarity. This was actually my suggestion that
+Bitan is now started to implement, which is very nice! It should be a good result in
+the end.
 
-has been applied to the regulator tree at
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From f2c6203fdd1197d8254073a8f3f3372b0d3d9e6b Mon Sep 17 00:00:00 2001
-From: Mark Brown <broonie@kernel.org>
-Date: Mon, 17 Jun 2019 18:16:52 +0100
-Subject: [PATCH] regulator: core: Make entire header comment C++ style
-
-Makes things look more consistent.
-
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- drivers/regulator/core.c    | 15 +++++++--------
- drivers/regulator/helpers.c | 11 +++++------
- 2 files changed, 12 insertions(+), 14 deletions(-)
-
-diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
-index 85f61e5dc312..9d3ed13b7f12 100644
---- a/drivers/regulator/core.c
-+++ b/drivers/regulator/core.c
-@@ -1,12 +1,11 @@
- // SPDX-License-Identifier: GPL-2.0-or-later
--/*
-- * core.c  --  Voltage/Current Regulator framework.
-- *
-- * Copyright 2007, 2008 Wolfson Microelectronics PLC.
-- * Copyright 2008 SlimLogic Ltd.
-- *
-- * Author: Liam Girdwood <lrg@slimlogic.co.uk>
-- */
-+//
-+// core.c  --  Voltage/Current Regulator framework.
-+//
-+// Copyright 2007, 2008 Wolfson Microelectronics PLC.
-+// Copyright 2008 SlimLogic Ltd.
-+//
-+// Author: Liam Girdwood <lrg@slimlogic.co.uk>
- 
- #include <linux/kernel.h>
- #include <linux/init.h>
-diff --git a/drivers/regulator/helpers.c b/drivers/regulator/helpers.c
-index b9ae45d2d199..4986cc5064a1 100644
---- a/drivers/regulator/helpers.c
-+++ b/drivers/regulator/helpers.c
-@@ -1,10 +1,9 @@
- // SPDX-License-Identifier: GPL-2.0-or-later
--/*
-- * helpers.c  --  Voltage/Current Regulator framework helper functions.
-- *
-- * Copyright 2007, 2008 Wolfson Microelectronics PLC.
-- * Copyright 2008 SlimLogic Ltd.
-- */
-+//
-+// helpers.c  --  Voltage/Current Regulator framework helper functions.
-+//
-+// Copyright 2007, 2008 Wolfson Microelectronics PLC.
-+// Copyright 2008 SlimLogic Ltd.
- 
- #include <linux/kernel.h>
- #include <linux/err.h>
--- 
-2.20.1
-
+> It appears that the spinlock was added to prevent error interrupts
+> occurring until the transfer has started. If this is for error cases,
+> then probably it is not often that the CPU is stuck busy waiting on the
+> spinlock.
+> 
+> Furthermore, in addition to the spinlock we also have calls to
+> tegra_i2c_unmask_irq/tegra_i2c_mask_irq. Therefore, if we are going to
+> change this it would seem like a good idea to consolidate the
+> masking/unmasking of IRQs and the spinlock, if possible.
+> 
+> Finally, I still see that we have a spinlock in the downstream kernels
+> we are shipping and so I would prefer to see such a change also be
+> tested in the downstream kernels we are releasing.
