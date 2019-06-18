@@ -2,95 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ADCA14AAF9
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 21:22:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F3C234AB02
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 21:28:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730370AbfFRTWb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Jun 2019 15:22:31 -0400
-Received: from s3.sipsolutions.net ([144.76.43.62]:46278 "EHLO
-        sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727386AbfFRTWb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Jun 2019 15:22:31 -0400
-Received: by sipsolutions.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <johannes@sipsolutions.net>)
-        id 1hdJgO-0005LX-Ie; Tue, 18 Jun 2019 21:22:16 +0200
-Message-ID: <b90977f94df020986c6bb490e7fd0262603726b0.camel@sipsolutions.net>
-Subject: Re: [PATCH v2 00/17] net: introduce Qualcomm IPA driver
-From:   Johannes Berg <johannes@sipsolutions.net>
-To:     Alex Elder <elder@linaro.org>, Arnd Bergmann <arnd@arndb.de>
-Cc:     abhishek.esse@gmail.com, Ben Chan <benchan@google.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        cpratapa@codeaurora.org, David Miller <davem@davemloft.net>,
-        Dan Williams <dcbw@redhat.com>,
-        DTML <devicetree@vger.kernel.org>,
-        Eric Caruso <ejcaruso@google.com>, evgreen@chromium.org,
-        Ilias Apalodimas <ilias.apalodimas@linaro.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-arm-msm@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-soc@vger.kernel.org, Networking <netdev@vger.kernel.org>,
-        Subash Abhinov Kasiviswanathan <subashab@codeaurora.org>,
-        syadagir@codeaurora.org
-Date:   Tue, 18 Jun 2019 21:22:14 +0200
-In-Reply-To: <31c2c94c-c6d3-595b-c138-faa54d0bfc00@linaro.org> (sfid-20190618_160100_881541_6AD64A3C)
-References: <380a6185-7ad1-6be0-060b-e6e5d4126917@linaro.org>
-         <a94676381a5ca662c848f7a725562f721c43ce76.camel@sipsolutions.net>
-         <CAK8P3a0kV-i7BJJ2X6C=5n65rSGfo8fUiC4J_G-+M8EctYKbkg@mail.gmail.com>
-         <583907409fad854bd3c18be688ec2724ad7a60e9.camel@sipsolutions.net>
-         <31c2c94c-c6d3-595b-c138-faa54d0bfc00@linaro.org>
-         (sfid-20190618_160100_881541_6AD64A3C)
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 (3.28.5-2.fc28) 
-Mime-Version: 1.0
+        id S1730406AbfFRT12 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Jun 2019 15:27:28 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:49344 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727553AbfFRT11 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Jun 2019 15:27:27 -0400
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 6938458E42;
+        Tue, 18 Jun 2019 19:27:27 +0000 (UTC)
+Received: from llong.remote.csb (dhcp-17-85.bos.redhat.com [10.18.17.85])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 6D4CA19C5B;
+        Tue, 18 Jun 2019 19:27:25 +0000 (UTC)
+Subject: Re: [PATCH] mm, memcg: Report number of memcg caches in slabinfo
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Christoph Lameter <cl@linux.com>,
+        Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Roman Gushchin <guro@fb.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Shakeel Butt <shakeelb@google.com>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        linux-api@vger.kernel.org
+References: <20190617142149.5245-1-longman@redhat.com>
+ <20190617143842.GC1492@dhcp22.suse.cz>
+ <9e165eae-e354-04c4-6362-0f80fe819469@redhat.com>
+ <20190618123750.GG3318@dhcp22.suse.cz>
+ <dee4dee2-1f4f-a7c9-0014-dca54b991377@redhat.com>
+ <20190618183208.GK3318@dhcp22.suse.cz>
+From:   Waiman Long <longman@redhat.com>
+Organization: Red Hat
+Message-ID: <681ed4dc-e8a5-afcf-98b6-c17544c6094d@redhat.com>
+Date:   Tue, 18 Jun 2019 15:27:24 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
+MIME-Version: 1.0
+In-Reply-To: <20190618183208.GK3318@dhcp22.suse.cz>
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Tue, 18 Jun 2019 19:27:27 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2019-06-18 at 09:00 -0500, Alex Elder wrote:
+On 6/18/19 2:32 PM, Michal Hocko wrote:
+> On Tue 18-06-19 12:59:24, Waiman Long wrote:
+>> On 6/18/19 8:37 AM, Michal Hocko wrote:
+> [...]
+>>> Is this useful enough to put into slabinfo? Doesn't this sound more like
+>>> a debugfs kinda a thing?
+>> I guess it is probably more on the debug side of things. I add it to
+>> slabinfo as the data is readily available. It will be much more work if
+>> we need to export the data via debugfs.
+>>
+>> We are seeing the kmem_cache slab growing continuously overtime when
+>> running a container-based workloads. Roman's kmem_cache reparenting
+>> patch will hopefully solve a major part of the problem, but we still
+>> need a way to confirm that by looking at how many memcg kmem_caches are
+>> associated with each root kmem_cache.
+> I am not disputing usefulness. Dead memcgs are showing up as a problem
+> for a longer time and having a more debugging information is definitely
+> useful. I am just not really sure that /proc/slabinfo is the proper
+> vehicle for that information. It might be just easier to stick it there
+> but that is not the best justification for adding something we will have
+> to maintain for ever. Not to mention that the number of dead memcgs
+> might not be enough to debug further when we can easily end up needing
+> to provide more in something less "carved in stone" kinda interface like
+> debugfs.
+>
+Fair enough.
 
-> Deaggregation is a connection property, not a channel property.
+I will rework the patch and expose the information via debugfs then.
 
-That'd make sense, yes.
-
-> And it looks like that's exactly how it's used in the rmnet
-> driver.  
-
-Yeah, I think you're right. I got confused by the whole use of "port"
-there, but it seems like "port" actually refers to the underlying
-netdev.
-
-Which is really strange too, btw, because you configure the "port" to
-agg/non-agg when you add a new channel to it ... So it seems like it's
-part of the channel configuration, when it's not!
-
-Anyway, I think for now we could probably live with not having this
-configurable for the IPA driver, and if it *does* need to be
-configurable, it seems like it should be a driver configuration, not a
-channel configuration - so something like a debugfs hook if you really
-just need to play with it for performance testing, or a module
-parameter, or something else?
-
-Or even, in the WWAN framework, a knob that we provide there for the
-WWAN device, rather than for the (newly created) channel.
-
-> The hardware is capable of aggregating QMAP packets
-> arriving on a connection into a single buffer, so this provides
-> a way of requesting it do that.
-> 
-> > > #define RMNET_FLAGS_INGRESS_MAP_COMMANDS          (1U << 1)
-> > 
-> > Similar here? If you have flow control you probably want to use it?
-> 
-> I agree with that, though perhaps there are cases where it
-> is pointless, or can't be supported, so one might want to
-> simply *not* implement/advertise the feature.  I don't know.
-
-Sure, but then that's likely something the driver would need to know,
-not necessarily userspace?
-
-johannes
+Cheers,
+Longman
 
