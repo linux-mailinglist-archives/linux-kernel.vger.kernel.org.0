@@ -2,22 +2,22 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DAFA94BE3B
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 18:31:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DBD224A5A8
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 17:42:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729877AbfFSQb1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Jun 2019 12:31:27 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:19042 "EHLO huawei.com"
+        id S1729815AbfFRPmf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Jun 2019 11:42:35 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:39396 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725899AbfFSQb1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Jun 2019 12:31:27 -0400
-Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 2C9DE10BDBC801D2AD92;
-        Thu, 20 Jun 2019 00:31:24 +0800 (CST)
+        id S1729655AbfFRPme (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Jun 2019 11:42:34 -0400
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id EE96F1CCB746BD506137;
+        Tue, 18 Jun 2019 23:42:30 +0800 (CST)
 Received: from localhost (10.202.226.61) by DGGEMS408-HUB.china.huawei.com
- (10.3.19.208) with Microsoft SMTP Server id 14.3.439.0; Thu, 20 Jun 2019
- 00:31:02 +0800
-Date:   Tue, 18 Jun 2019 16:41:58 +0100
+ (10.3.19.208) with Microsoft SMTP Server id 14.3.439.0; Tue, 18 Jun 2019
+ 23:42:27 +0800
+Date:   Tue, 18 Jun 2019 16:42:15 +0100
 From:   Jonathan Cameron <jonathan.cameron@huawei.com>
 To:     Jacob Pan <jacob.jun.pan@linux.intel.com>
 CC:     <iommu@lists.linux-foundation.org>,
@@ -27,19 +27,21 @@ CC:     <iommu@lists.linux-foundation.org>,
         "Eric Auger" <eric.auger@redhat.com>,
         Alex Williamson <alex.williamson@redhat.com>,
         Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
+        Yi L <yi.l.liu@linux.intel.com>,
         "Tian, Kevin" <kevin.tian@intel.com>,
         Raj Ashok <ashok.raj@intel.com>,
+        <Liu@mail.linuxfoundation.org>,
         Andriy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH v4 03/22] iommu: Introduce device fault report API
-Message-ID: <20190618164158.0000489c@huawei.com>
-In-Reply-To: <1560087862-57608-4-git-send-email-jacob.jun.pan@linux.intel.com>
+Subject: Re: [PATCH v4 02/22] iommu: Introduce device fault data
+Message-ID: <20190618164215.00001772@huawei.com>
+In-Reply-To: <1560087862-57608-3-git-send-email-jacob.jun.pan@linux.intel.com>
 References: <1560087862-57608-1-git-send-email-jacob.jun.pan@linux.intel.com>
-        <1560087862-57608-4-git-send-email-jacob.jun.pan@linux.intel.com>
+        <1560087862-57608-3-git-send-email-jacob.jun.pan@linux.intel.com>
 Organization: Huawei
 X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; i686-w64-mingw32)
+MIME-Version: 1.0
 Content-Type: text/plain; charset="US-ASCII"
 Content-Transfer-Encoding: 7bit
-MIME-Version: 1.0
 X-Originating-IP: [10.202.226.61]
 X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
@@ -47,278 +49,263 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 9 Jun 2019 06:44:03 -0700
+On Sun, 9 Jun 2019 06:44:02 -0700
 Jacob Pan <jacob.jun.pan@linux.intel.com> wrote:
 
-> Traditionally, device specific faults are detected and handled within
-> their own device drivers. When IOMMU is enabled, faults such as DMA
-> related transactions are detected by IOMMU. There is no generic
-> reporting mechanism to report faults back to the in-kernel device
-> driver or the guest OS in case of assigned devices.
+> Device faults detected by IOMMU can be reported outside the IOMMU
+> subsystem for further processing. This patch introduces
+> a generic device fault data structure.
 > 
-> This patch introduces a registration API for device specific fault
-> handlers. This differs from the existing iommu_set_fault_handler/
-> report_iommu_fault infrastructures in several ways:
-> - it allows to report more sophisticated fault events (both
->   unrecoverable faults and page request faults) due to the nature
->   of the iommu_fault struct
-> - it is device specific and not domain specific.
+> The fault can be either an unrecoverable fault or a page request,
+> also referred to as a recoverable fault.
 > 
-> The current iommu_report_device_fault() implementation only handles
-> the "shoot and forget" unrecoverable fault case. Handling of page
-> request faults or stalled faults will come later.
+> We only care about non internal faults that are likely to be reported
+> to an external subsystem.
 > 
 > Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
-> Signed-off-by: Ashok Raj <ashok.raj@intel.com>
 > Signed-off-by: Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
+> Signed-off-by: Liu, Yi L <yi.l.liu@linux.intel.com>
+> Signed-off-by: Ashok Raj <ashok.raj@intel.com>
 > Signed-off-by: Eric Auger <eric.auger@redhat.com>
 
-A few nitpicks and minor suggestions inline.
+A few trivial nitpicks in here.
 
+Otherwise looks straight forward and sensible to me.
+
+Jonathan
 > ---
->  drivers/iommu/iommu.c | 127 +++++++++++++++++++++++++++++++++++++++++++++++++-
->  include/linux/iommu.h |  33 ++++++++++++-
->  2 files changed, 157 insertions(+), 3 deletions(-)
+>  include/linux/iommu.h      |  44 +++++++++++++++++
+>  include/uapi/linux/iommu.h | 118 +++++++++++++++++++++++++++++++++++++++++++++
+>  2 files changed, 162 insertions(+)
+>  create mode 100644 include/uapi/linux/iommu.h
 > 
-> diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
-> index 67ee662..7955184 100644
-> --- a/drivers/iommu/iommu.c
-> +++ b/drivers/iommu/iommu.c
-> @@ -644,6 +644,13 @@ int iommu_group_add_device(struct iommu_group *group, struct device *dev)
->  		goto err_free_name;
->  	}
->  
-> +	dev->iommu_param = kzalloc(sizeof(*dev->iommu_param), GFP_KERNEL);
-> +	if (!dev->iommu_param) {
-> +		ret = -ENOMEM;
-> +		goto err_free_name;
-> +	}
-> +	mutex_init(&dev->iommu_param->lock);
-> +
->  	kobject_get(group->devices_kobj);
->  
->  	dev->iommu_group = group;
-> @@ -674,6 +681,7 @@ int iommu_group_add_device(struct iommu_group *group, struct device *dev)
->  	mutex_unlock(&group->mutex);
->  	dev->iommu_group = NULL;
->  	kobject_put(group->devices_kobj);
-> +	kfree(dev->iommu_param);
->  err_free_name:
->  	kfree(device->name);
->  err_remove_link:
-> @@ -720,7 +728,7 @@ void iommu_group_remove_device(struct device *dev)
->  	sysfs_remove_link(&dev->kobj, "iommu_group");
->  
->  	trace_remove_device_from_group(group->id, dev);
-> -
-> +	kfree(dev->iommu_param);
->  	kfree(device->name);
->  	kfree(device);
->  	dev->iommu_group = NULL;
-> @@ -855,6 +863,123 @@ int iommu_group_unregister_notifier(struct iommu_group *group,
->  EXPORT_SYMBOL_GPL(iommu_group_unregister_notifier);
->  
->  /**
-> + * iommu_register_device_fault_handler() - Register a device fault handler
-> + * @dev: the device
-> + * @handler: the fault handler
-> + * @data: private data passed as argument to the handler
-> + *
-> + * When an IOMMU fault event is received, this handler gets called with the
-> + * fault event and data as argument.
-> + *
-> + * Return 0 if the fault handler was installed successfully, or an error.
-> + */
-> +int iommu_register_device_fault_handler(struct device *dev,
-> +					iommu_dev_fault_handler_t handler,
-> +					void *data)
-> +{
-> +	struct iommu_param *param = dev->iommu_param;
-> +	int ret = 0;
-> +
-> +	/*
-> +	 * Device iommu_param should have been allocated when device is
-> +	 * added to its iommu_group.
-> +	 */
-> +	if (!param)
-> +		return -EINVAL;
-> +
-> +	mutex_lock(&param->lock);
-> +	/* Only allow one fault handler registered for each device */
-> +	if (param->fault_param) {
-> +		ret = -EBUSY;
-> +		goto done_unlock;
-> +	}
-> +
-> +	get_device(dev);
-> +	param->fault_param =
-> +		kzalloc(sizeof(struct iommu_fault_param), GFP_KERNEL);
-> +	if (!param->fault_param) {
-> +		put_device(dev);
-> +		ret = -ENOMEM;
-> +		goto done_unlock;
-> +	}
-> +	param->fault_param->handler = handler;
-> +	param->fault_param->data = data;
-> +
-> +done_unlock:
-> +	mutex_unlock(&param->lock);
-> +
-> +	return ret;
-> +}
-> +EXPORT_SYMBOL_GPL(iommu_register_device_fault_handler);
-> +
-> +/**
-> + * iommu_unregister_device_fault_handler() - Unregister the device fault handler
-> + * @dev: the device
-> + *
-> + * Remove the device fault handler installed with
-> + * iommu_register_device_fault_handler().
-> + *
-> + * Return 0 on success, or an error.
-> + */
-> +int iommu_unregister_device_fault_handler(struct device *dev)
-> +{
-> +	struct iommu_param *param = dev->iommu_param;
-> +	int ret = 0;
-> +
-> +	if (!param)
-> +		return -EINVAL;
-> +
-> +	mutex_lock(&param->lock);
-> +
-> +	if (!param->fault_param)
-> +		goto unlock;
-> +
-> +	kfree(param->fault_param);
-> +	param->fault_param = NULL;
-> +	put_device(dev);
-> +unlock:
-> +	mutex_unlock(&param->lock);
-> +
-> +	return ret;
-> +}
-> +EXPORT_SYMBOL_GPL(iommu_unregister_device_fault_handler);
-> +
-
-One blank line probably enough.. (my personal favourite
-stylistic nitpick ;)
-
-> +
-> +/**
-> + * iommu_report_device_fault() - Report fault event to device
-> + * @dev: the device
-> + * @evt: fault event data
-> + *
-> + * Called by IOMMU drivers when a fault is detected, typically in a threaded IRQ
-> + * handler.
-
-What constraints does that put on it?  We probably don't care about the
-fact it is in a threaded irq as such, rather something that is true as
-a result of that?
-
-> + *
-> + * Return 0 on success, or an error.
-> + */
-> +int iommu_report_device_fault(struct device *dev, struct iommu_fault_event *evt)
-> +{
-> +	struct iommu_param *param = dev->iommu_param;
-> +	struct iommu_fault_param *fparam;
-> +	int ret = 0;
-> +
-> +	/* iommu_param is allocated when device is added to group */
-> +	if (!param || !evt)
-> +		return -EINVAL;
-> +
-> +	/* we only report device fault if there is a handler registered */
-> +	mutex_lock(&param->lock);
-> +	fparam = param->fault_param;
-> +	if (!fparam || !fparam->handler) {
-> +		ret = -EINVAL;
-> +		goto done_unlock;
-> +	}
-> +	ret = fparam->handler(evt, fparam->data);
-> +done_unlock:
-> +	mutex_unlock(&param->lock);
-> +	return ret;
-> +}
-> +EXPORT_SYMBOL_GPL(iommu_report_device_fault);
-> +
-> +/**
->   * iommu_group_id - Return ID for a group
->   * @group: the group to ID
->   *
 > diff --git a/include/linux/iommu.h b/include/linux/iommu.h
-> index 7890a92..b87b74c 100644
+> index a815cf6..7890a92 100644
 > --- a/include/linux/iommu.h
 > +++ b/include/linux/iommu.h
-> @@ -322,9 +322,9 @@ struct iommu_fault_event {
+> @@ -25,6 +25,7 @@
+>  #include <linux/errno.h>
+>  #include <linux/err.h>
+>  #include <linux/of.h>
+> +#include <uapi/linux/iommu.h>
 >  
->  /**
->   * struct iommu_fault_param - per-device IOMMU fault data
-> - * @dev_fault_handler: Callback function to handle IOMMU faults at device level
-> - * @data: handler private data
->   *
-> + * @handler: Callback function to handle IOMMU faults at device level
-
-This should be in the previous patch, not this one.
-
-> + * @data: handler private data
->   */
->  struct iommu_fault_param {
->  	iommu_dev_fault_handler_t handler;
-> @@ -341,6 +341,7 @@ struct iommu_fault_param {
->   *	struct iommu_fwspec	*iommu_fwspec;
->   */
->  struct iommu_param {
-> +	struct mutex lock;
-
-Structure has kernel doc so this should be added to that.
-
->  	struct iommu_fault_param *fault_param;
+>  #define IOMMU_READ	(1 << 0)
+>  #define IOMMU_WRITE	(1 << 1)
+> @@ -49,6 +50,7 @@ struct device;
+>  struct iommu_domain;
+>  struct notifier_block;
+>  struct iommu_sva;
+> +struct iommu_fault_event;
+>  
+>  /* iommu fault flags */
+>  #define IOMMU_FAULT_READ	0x0
+> @@ -58,6 +60,7 @@ typedef int (*iommu_fault_handler_t)(struct iommu_domain *,
+>  			struct device *, unsigned long, int, void *);
+>  typedef int (*iommu_mm_exit_handler_t)(struct device *dev, struct iommu_sva *,
+>  				       void *);
+> +typedef int (*iommu_dev_fault_handler_t)(struct iommu_fault_event *, void *);
+>  
+>  struct iommu_domain_geometry {
+>  	dma_addr_t aperture_start; /* First address that can be mapped    */
+> @@ -301,6 +304,46 @@ struct iommu_device {
+>  	struct device *dev;
 >  };
 >  
-> @@ -433,6 +434,15 @@ extern int iommu_group_register_notifier(struct iommu_group *group,
->  					 struct notifier_block *nb);
->  extern int iommu_group_unregister_notifier(struct iommu_group *group,
->  					   struct notifier_block *nb);
-> +extern int iommu_register_device_fault_handler(struct device *dev,
-> +					iommu_dev_fault_handler_t handler,
-> +					void *data);
+> +/**
+> + * struct iommu_fault_event - Generic fault event
+> + *
+> + * Can represent recoverable faults such as a page requests or
+> + * unrecoverable faults such as DMA or IRQ remapping faults.
+> + *
+> + * @fault: fault descriptor
+> + * @iommu_private: used by the IOMMU driver for storing fault-specific
+> + *                 data. Users should not modify this field before
+> + *                 sending the fault response.
+> + */
+> +struct iommu_fault_event {
+> +	struct iommu_fault fault;
+> +	u64 iommu_private;
+> +};
 > +
-> +extern int iommu_unregister_device_fault_handler(struct device *dev);
+> +/**
+> + * struct iommu_fault_param - per-device IOMMU fault data
+> + * @dev_fault_handler: Callback function to handle IOMMU faults at device level
+> + * @data: handler private data
+> + *
+
+No need for this blank line.  Seems inconsistent with other docs in here.
+
+Also, there is a docs fixup in patch 3 which should be pulled back to here.
+
+> + */
+> +struct iommu_fault_param {
+> +	iommu_dev_fault_handler_t handler;
+> +	void *data;
+> +};
 > +
-> +extern int iommu_report_device_fault(struct device *dev,
-> +				     struct iommu_fault_event *evt);
+> +/**
+> + * struct iommu_param - collection of per-device IOMMU data
+> + *
+> + * @fault_param: IOMMU detected device fault reporting data
+> + *
+> + * TODO: migrate other per device data pointers under iommu_dev_data, e.g.
+> + *	struct iommu_group	*iommu_group;
+> + *	struct iommu_fwspec	*iommu_fwspec;
+> + */
+> +struct iommu_param {
+> +	struct iommu_fault_param *fault_param;
+Is it actually worth having the indirection of a pointer here as opposed
+to just embedding the actual structure?  The null value is used in places
+but can just use the handler being null for the same job I think...
+
+It reduces the code needed in patch 3 a bit.
+
+It gets a bit bigger in patch 4, but is still only about 16 bytes.
+
+> +};
 > +
->  extern int iommu_group_id(struct iommu_group *group);
->  extern struct iommu_group *iommu_group_get_for_dev(struct device *dev);
->  extern struct iommu_domain *iommu_group_default_domain(struct iommu_group *);
-> @@ -741,6 +751,25 @@ static inline int iommu_group_unregister_notifier(struct iommu_group *group,
->  	return 0;
->  }
+>  int  iommu_device_register(struct iommu_device *iommu);
+>  void iommu_device_unregister(struct iommu_device *iommu);
+>  int  iommu_device_sysfs_add(struct iommu_device *iommu,
+> @@ -504,6 +547,7 @@ struct iommu_ops {};
+>  struct iommu_group {};
+>  struct iommu_fwspec {};
+>  struct iommu_device {};
+> +struct iommu_fault_param {};
 >  
-> +static inline
-> +int iommu_register_device_fault_handler(struct device *dev,
-> +					iommu_dev_fault_handler_t handler,
-> +					void *data)
-> +{
-> +	return -ENODEV;
-> +}
-> +
-> +static inline int iommu_unregister_device_fault_handler(struct device *dev)
-> +{
-> +	return 0;
-> +}
-> +
-> +static inline
-> +int iommu_report_device_fault(struct device *dev, struct iommu_fault_event *evt)
-> +{
-> +	return -ENODEV;
-> +}
-> +
->  static inline int iommu_group_id(struct iommu_group *group)
+>  static inline bool iommu_present(struct bus_type *bus)
 >  {
->  	return -ENODEV;
+> diff --git a/include/uapi/linux/iommu.h b/include/uapi/linux/iommu.h
+> new file mode 100644
+> index 0000000..aaa3b6a
+> --- /dev/null
+> +++ b/include/uapi/linux/iommu.h
+> @@ -0,0 +1,118 @@
+> +/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+> +/*
+> + * IOMMU user API definitions
+> + */
+> +
+> +#ifndef _UAPI_IOMMU_H
+> +#define _UAPI_IOMMU_H
+> +
+> +#include <linux/types.h>
+> +
+> +#define IOMMU_FAULT_PERM_READ	(1 << 0) /* read */
+> +#define IOMMU_FAULT_PERM_WRITE	(1 << 1) /* write */
+> +#define IOMMU_FAULT_PERM_EXEC	(1 << 2) /* exec */
+> +#define IOMMU_FAULT_PERM_PRIV	(1 << 3) /* privileged */
+> +
+> +/* Generic fault types, can be expanded IRQ remapping fault */
+> +enum iommu_fault_type {
+> +	IOMMU_FAULT_DMA_UNRECOV = 1,	/* unrecoverable fault */
+> +	IOMMU_FAULT_PAGE_REQ,		/* page request fault */
+> +};
+> +
+> +enum iommu_fault_reason {
+> +	IOMMU_FAULT_REASON_UNKNOWN = 0,
+> +
+> +	/* Could not access the PASID table (fetch caused external abort) */
+> +	IOMMU_FAULT_REASON_PASID_FETCH,
+> +
+> +	/* PASID entry is invalid or has configuration errors */
+> +	IOMMU_FAULT_REASON_BAD_PASID_ENTRY,
+> +
+> +	/*
+> +	 * PASID is out of range (e.g. exceeds the maximum PASID
+> +	 * supported by the IOMMU) or disabled.
+> +	 */
+> +	IOMMU_FAULT_REASON_PASID_INVALID,
+> +
+> +	/*
+> +	 * An external abort occurred fetching (or updating) a translation
+> +	 * table descriptor
+> +	 */
+> +	IOMMU_FAULT_REASON_WALK_EABT,
+> +
+> +	/*
+> +	 * Could not access the page table entry (Bad address),
+> +	 * actual translation fault
+> +	 */
+> +	IOMMU_FAULT_REASON_PTE_FETCH,
+> +
+> +	/* Protection flag check failed */
+> +	IOMMU_FAULT_REASON_PERMISSION,
+> +
+> +	/* access flag check failed */
+
+Nitpick: Inconsistent capitalization of first word in comment :)
+
+> +	IOMMU_FAULT_REASON_ACCESS,
+> +
+> +	/* Output address of a translation stage caused Address Size fault */
+> +	IOMMU_FAULT_REASON_OOR_ADDRESS,
+> +};
+> +
+> +/**
+> + * struct iommu_fault_unrecoverable - Unrecoverable fault data
+> + * @reason: reason of the fault, from &enum iommu_fault_reason
+> + * @flags: parameters of this fault (IOMMU_FAULT_UNRECOV_* values)
+> + * @pasid: Process Address Space ID
+> + * @perm: Requested permission access using by the incoming transaction
+> + *        (IOMMU_FAULT_PERM_* values)
+> + * @addr: offending page address
+> + * @fetch_addr: address that caused a fetch abort, if any
+> + */
+> +struct iommu_fault_unrecoverable {
+> +	__u32	reason;
+> +#define IOMMU_FAULT_UNRECOV_PASID_VALID		(1 << 0)
+> +#define IOMMU_FAULT_UNRECOV_ADDR_VALID		(1 << 1)
+> +#define IOMMU_FAULT_UNRECOV_FETCH_ADDR_VALID	(1 << 2)
+> +	__u32	flags;
+> +	__u32	pasid;
+> +	__u32	perm;
+> +	__u64	addr;
+> +	__u64	fetch_addr;
+> +};
+> +
+> +/**
+> + * struct iommu_fault_page_request - Page Request data
+> + * @flags: encodes whether the corresponding fields are valid and whether this
+> + *         is the last page in group (IOMMU_FAULT_PAGE_REQUEST_* values)
+> + * @pasid: Process Address Space ID
+> + * @grpid: Page Request Group Index
+> + * @perm: requested page permissions (IOMMU_FAULT_PERM_* values)
+> + * @addr: page address
+> + * @private_data: device-specific private information
+> + */
+
+Slightly surprised to see this given cover letter says no PRS.
+I guess it is part of the original patch rather than intended
+for this series.. Not a problem as far as I'm concerned.
+
+> +struct iommu_fault_page_request {
+> +#define IOMMU_FAULT_PAGE_REQUEST_PASID_VALID	(1 << 0)
+> +#define IOMMU_FAULT_PAGE_REQUEST_LAST_PAGE	(1 << 1)
+> +#define IOMMU_FAULT_PAGE_REQUEST_PRIV_DATA	(1 << 2)
+> +	__u32	flags;
+> +	__u32	pasid;
+> +	__u32	grpid;
+> +	__u32	perm;
+> +	__u64	addr;
+> +	__u64	private_data[2];
+> +};
+> +
+> +/**
+> + * struct iommu_fault - Generic fault data
+> + * @type: fault type from &enum iommu_fault_type
+> + * @padding: reserved for future use (should be zero)
+> + * @event: Fault event, when @type is %IOMMU_FAULT_DMA_UNRECOV
+> + * @prm: Page Request message, when @type is %IOMMU_FAULT_PAGE_REQ
+> + */
+> +struct iommu_fault {
+> +	__u32	type;
+> +	__u32	padding;
+> +	union {
+> +		struct iommu_fault_unrecoverable event;
+> +		struct iommu_fault_page_request prm;
+> +	};
+> +};
+> +#endif /* _UAPI_IOMMU_H */
 
 
