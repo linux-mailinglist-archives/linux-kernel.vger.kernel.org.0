@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C57034AABC
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 21:06:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 878424AAC4
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 21:06:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730602AbfFRTGT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Jun 2019 15:06:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41210 "EHLO mail.kernel.org"
+        id S1730617AbfFRTGZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Jun 2019 15:06:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41312 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730196AbfFRTGT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Jun 2019 15:06:19 -0400
+        id S1730196AbfFRTGY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Jun 2019 15:06:24 -0400
 Received: from localhost.localdomain (unknown [194.230.155.186])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 001EF20863;
-        Tue, 18 Jun 2019 19:06:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 11A9620B1F;
+        Tue, 18 Jun 2019 19:06:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560884778;
-        bh=LkRvvcttoJNDSKrNrdMMav77ZqbcaMUvQH3Jz5hTWcY=;
+        s=default; t=1560884783;
+        bh=U1Sq2C8IHuHyw6zehGQwxbLEKHLGFo/rZxykEE20tJc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=j1vVpE1EGeSmNFa3mwdOVVNIgWI7vFcXQyL4hgaC7+vyZzPqaI7ezBj5zsfqOzA6X
-         b6RLRbGyb+uKjxOZbIE5f8knTPRBv3BJjXsn4ektLwdQ56d5gue7Xwt0nXz1kplSVq
-         x5iYr6U4bPLJhxg4O+BE0WERjGXOYF/Z0ve/pB08=
+        b=GOJlh6xX8RowOZwKzGM/sZj/b6cHPgAWKCLHuKqSgWi7kuEA9bODYFmGFXib7vcqK
+         pCu42ENT2P9W/tfQUVbFMlTmg6xdX+tSo1xo0abbKciDKR1Zzkd9zl442fInpXrqOz
+         3NI8uy35FQ1m7j+pAZEGBT23Tpar+4JgO5oZa0jg=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
         Rob Herring <robh+dt@kernel.org>,
@@ -45,9 +45,9 @@ Cc:     Joseph Kogut <joseph.kogut@gmail.com>,
         Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
         Inki Dae <inki.dae@samsung.com>,
         Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [RFT 06/10] arm64: dts: exynos: Add GPU/Mali T760 node to Exynos5433
-Date:   Tue, 18 Jun 2019 21:05:30 +0200
-Message-Id: <20190618190534.4951-7-krzk@kernel.org>
+Subject: [RFT 07/10] arm64: dts: exynos: Add GPU/Mali T760 node to Exynos7
+Date:   Tue, 18 Jun 2019 21:05:31 +0200
+Message-Id: <20190618190534.4951-8-krzk@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190618190534.4951-1-krzk@kernel.org>
 References: <20190618190534.4951-1-krzk@kernel.org>
@@ -56,21 +56,23 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add nodes for GPU (Mali T760) to Exynos5433.  Missing element is the
-cooling device.  Not tested on HW.
+Add nodes for GPU (Mali T760) to Exynos7.  Current support for Exynos7
+misses a lot, including proper clocks, power domains, frequency and
+voltage scaling and cooling.  However this still can provide basic GPU
+description.  Not tested on HW.
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- .../dts/exynos/exynos5433-tm2-common.dtsi     |  5 ++
- arch/arm64/boot/dts/exynos/exynos5433.dtsi    | 51 +++++++++++++++++++
- 2 files changed, 56 insertions(+)
+ arch/arm64/boot/dts/exynos/exynos7-espresso.dts |  5 +++++
+ arch/arm64/boot/dts/exynos/exynos7.dtsi         | 11 +++++++++++
+ 2 files changed, 16 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi b/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
-index d2de16645e10..6f90b0e62cba 100644
---- a/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
-+++ b/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
-@@ -350,6 +350,11 @@
- 	pinctrl-0 = <&te_irq>;
+diff --git a/arch/arm64/boot/dts/exynos/exynos7-espresso.dts b/arch/arm64/boot/dts/exynos/exynos7-espresso.dts
+index 00dd89b92b42..080e0f56e108 100644
+--- a/arch/arm64/boot/dts/exynos/exynos7-espresso.dts
++++ b/arch/arm64/boot/dts/exynos/exynos7-espresso.dts
+@@ -59,6 +59,11 @@
+ 	clock-frequency = <24000000>;
  };
  
 +&gpu {
@@ -78,70 +80,30 @@ index d2de16645e10..6f90b0e62cba 100644
 +	status = "okay";
 +};
 +
- &hdmi {
- 	hpd-gpios = <&gpa3 0 GPIO_ACTIVE_HIGH>;
+ &serial_2 {
  	status = "okay";
-diff --git a/arch/arm64/boot/dts/exynos/exynos5433.dtsi b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-index d29d13f4694f..a76f620f7f35 100644
---- a/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-+++ b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-@@ -249,6 +249,57 @@
+ };
+diff --git a/arch/arm64/boot/dts/exynos/exynos7.dtsi b/arch/arm64/boot/dts/exynos/exynos7.dtsi
+index 077d23478901..bcb9d8cee267 100644
+--- a/arch/arm64/boot/dts/exynos/exynos7.dtsi
++++ b/arch/arm64/boot/dts/exynos/exynos7.dtsi
+@@ -78,6 +78,17 @@
  		};
  	};
  
 +	gpu: gpu@14ac0000 {
 +		compatible = "samsung,exynos5433-mali", "arm,mali-t760";
 +		reg = <0x14ac0000 0x5000>;
-+		interrupts = <GIC_SPI 282 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 283 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 281 IRQ_TYPE_LEVEL_HIGH>;
++		interrupts = <GIC_SPI 241 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 242 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>;
 +		interrupt-names = "job", "mmu", "gpu";
-+		clocks = <&cmu_g3d CLK_ACLK_G3D>;
-+		clock-names = "core";
-+		power-domains = <&pd_g3d>;
-+		operating-points-v2 = <&gpu_opp_table>;
 +		status = "disabled";
-+
-+		gpu_opp_table: opp_table {
-+			compatible = "operating-points-v2";
-+
-+			opp-160000000 {
-+				opp-hz = /bits/ 64 <160000000>;
-+				opp-microvolt = <1000000>;
-+			};
-+			opp-267000000 {
-+				opp-hz = /bits/ 64 <267000000>;
-+				opp-microvolt = <1000000>;
-+			};
-+			opp-350000000 {
-+				opp-hz = /bits/ 64 <350000000>;
-+				opp-microvolt = <1025000>;
-+			};
-+			opp-420000000 {
-+				opp-hz = /bits/ 64 <420000000>;
-+				opp-microvolt = <1025000>;
-+			};
-+			opp-500000000 {
-+				opp-hz = /bits/ 64 <500000000>;
-+				opp-microvolt = <1075000>;
-+			};
-+			opp-550000000 {
-+				opp-hz = /bits/ 64 <550000000>;
-+				opp-microvolt = <1125000>;
-+			};
-+			opp-600000000 {
-+				opp-hz = /bits/ 64 <600000000>;
-+				opp-microvolt = <1150000>;
-+			};
-+			opp-700000000 {
-+				opp-hz = /bits/ 64 <700000000>;
-+				opp-microvolt = <1150000>;
-+			};
-+		};
++		/* TODO: operating points for DVFS, cooling device */
 +	};
 +
  	psci {
- 		compatible = "arm,psci";
+ 		compatible = "arm,psci-0.2";
  		method = "smc";
 -- 
 2.17.1
