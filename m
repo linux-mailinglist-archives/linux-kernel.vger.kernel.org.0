@@ -2,126 +2,140 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B4C634ABC2
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 22:25:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9D2764ABAB
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 22:24:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730718AbfFRUZt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Jun 2019 16:25:49 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:37592 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725909AbfFRUZt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Jun 2019 16:25:49 -0400
-Received: by mail-qt1-f193.google.com with SMTP id y57so17122531qtk.4;
-        Tue, 18 Jun 2019 13:25:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=/mPcWOq6bvI/Rz9hbv+lJlmkKRg/e135jxE2BAg50pM=;
-        b=A2+Re1WBNBOftakVI6RS8tTdogZIEpHTmvSLUhBTnj7jSO/1JQdBvuHU/GTYpThg0v
-         cNvGiwlhpFX0Rz2L8uikLorkH5Z/VMo1TnBSwP42FrbPhRvGpVGF7e39yOIA6ZKNiGoZ
-         +2SGJOttWeg/zmqDYPVPw+6CyZAVzyXYcF5HGKf+sMEhPyYOsgvTm/Q6iiV1SDd+yz3L
-         CjiqL5/kToemOxQnH4GQmfNFh8XpH2atSaXIUBwZmBZvMeT3k0qW83KjwBANJ+Sg1/Qj
-         LIrPeFDjUPu95ncOTwy6lieNtH+gTWDuHPnAwp4p3Rb3UDe/rkQYIq5ayV+7UmMU5Rb5
-         XFXw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=/mPcWOq6bvI/Rz9hbv+lJlmkKRg/e135jxE2BAg50pM=;
-        b=JZKVCzFPtclhgsAqLF3q1DAEUUdUmbSu70rlD5at2foECv7xANz6wAuX6LTTyMg1Dx
-         FZwZuLBQrLNuAtYuJRQsb5mwQkczhqyaOryagLVEPBdA2B8L3lFMUnzXERvZnLQ7AXJX
-         r+SXwnpZ1fBF7nwBxnTU1BnayR+aUgsNID1PzTcPj09s3JnmWfNL31FlZ8nhb9ui7Onk
-         aCajpFldcUCwxh2l6ZD04c66Fwllz4ib6FBPyieTicSUkYX9rIy8uBnuDIl4oIcCDteF
-         hb67fpGRtCbQ86leVvl718msle3a+dbzDjq4HNWRCWSPCTJ5n76jYqnqv5pu3Q5YqDIJ
-         RI+w==
-X-Gm-Message-State: APjAAAVvibroXaRyJMPT/0B7M76AaZo0wmsSOy69dJ9SxGT1RHdUoUZY
-        OlXYFsd8uFcND3y8whx1zsC0K39ON+Y=
-X-Google-Smtp-Source: APXvYqzyUL3X9E0qats7YR3PmXv//sVXhdaUp8xpUF8LRBxNUszW3/xqagPXh7quc7KRYLUMfm2cWw==
-X-Received: by 2002:ac8:38a8:: with SMTP id f37mr101708974qtc.150.1560889547868;
-        Tue, 18 Jun 2019 13:25:47 -0700 (PDT)
-Received: from localhost ([2601:184:4780:7861:5010:5849:d76d:b714])
-        by smtp.gmail.com with ESMTPSA id c16sm4004494qke.43.2019.06.18.13.25.47
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 18 Jun 2019 13:25:47 -0700 (PDT)
-From:   Rob Clark <robdclark@gmail.com>
-To:     dri-devel@lists.freedesktop.org
-Cc:     linux-arm-msm@vger.kernel.org, Sean Paul <seanpaul@chromium.org>,
-        Georgi Djakov <georgi.djakov@linaro.org>,
-        Rob Clark <robdclark@chromium.org>,
-        Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Rajesh Yadav <ryadav@codeaurora.org>,
-        Boris Brezillon <bbrezillon@kernel.org>,
-        Mamta Shukla <mamtashukla555@gmail.com>,
-        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 5/5] drm/msm/mdp5: Use the interconnect API
-Date:   Tue, 18 Jun 2019 13:24:13 -0700
-Message-Id: <20190618202425.15259-6-robdclark@gmail.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190618202425.15259-1-robdclark@gmail.com>
-References: <20190618202425.15259-1-robdclark@gmail.com>
+        id S1730642AbfFRUYm convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 18 Jun 2019 16:24:42 -0400
+Received: from mga09.intel.com ([134.134.136.24]:12871 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730510AbfFRUYl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Jun 2019 16:24:41 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Jun 2019 13:24:40 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.63,390,1557212400"; 
+   d="scan'208";a="357972736"
+Received: from orsmsx103.amr.corp.intel.com ([10.22.225.130])
+  by fmsmga005.fm.intel.com with ESMTP; 18 Jun 2019 13:24:39 -0700
+Received: from orsmsx110.amr.corp.intel.com ([169.254.10.92]) by
+ ORSMSX103.amr.corp.intel.com ([169.254.5.135]) with mapi id 14.03.0439.000;
+ Tue, 18 Jun 2019 13:24:37 -0700
+From:   "Moore, Robert" <robert.moore@intel.com>
+To:     Nikolaus Voss <nv@vosn.de>
+CC:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>,
+        "Schmauss, Erik" <erik.schmauss@intel.com>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        "open list:ACPI COMPONENT ARCHITECTURE (ACPICA)" <devel@acpica.org>,
+        "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>,
+        Linux PWM List <linux-pwm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v2 1/3] ACPI: Resolve objects on host-directed table
+ loads
+Thread-Topic: [PATCH v2 1/3] ACPI: Resolve objects on host-directed table
+ loads
+Thread-Index: AQHVIPn/qqDB5Bv4z0aSsleXlAnDw6abVhaAgAADpwD///G0sIAEkokAgACES6CAAT+dAIAANdnAgAALWnCAAAJ3oA==
+Date:   Tue, 18 Jun 2019 20:24:37 +0000
+Message-ID: <94F2FBAB4432B54E8AACC7DFDE6C92E3B95FB097@ORSMSX110.amr.corp.intel.com>
+References: <cover.1560327219.git.nikolaus.voss@loewensteinmedical.de>
+ <e2a4ddfd93a904b50b7ccc074e00e14dc4661963.1560327219.git.nikolaus.voss@loewensteinmedical.de>
+ <CAJZ5v0jqxWs=PPik-TCDqQiyxCSyRP7HTue1WsdWP9e-nik2eA@mail.gmail.com>
+ <alpine.DEB.2.20.1906141114490.6579@fox.voss.local>
+ <94F2FBAB4432B54E8AACC7DFDE6C92E3B95EFB26@ORSMSX110.amr.corp.intel.com>
+ <alpine.DEB.2.20.1906170746150.12344@fox.voss.local>
+ <94F2FBAB4432B54E8AACC7DFDE6C92E3B95F9EC6@ORSMSX110.amr.corp.intel.com>
+ <alpine.DEB.2.20.1906181030240.24846@fox.voss.local>  
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiYWYzNDM4MzQtOGVmNS00ZTRiLWJkZTktZDExNTM1YTg5ZDk3IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoialA3Y1d2Z3ZkMnZ2VUpzaXc3aDBTaWxGMFFmdEE4QUdvRCtYSHUrWWozN0g3cnRLckZMc1hwbEdXZkdmditHZiJ9
+x-ctpclassification: CTP_NT
+dlp-product: dlpe-windows
+dlp-version: 11.0.600.7
+dlp-reaction: no-action
+x-originating-ip: [10.22.254.140]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Georgi Djakov <georgi.djakov@linaro.org>
+If it is in fact the AcpiLoadTable interface that is incorrect, that of course is different. I'll check that out next.
 
-The interconnect API provides an interface for consumer drivers to
-express their bandwidth needs in the SoC. This data is aggregated
-and the on-chip interconnect hardware is configured to the most
-appropriate power/performance profile.
 
-Use the API to configure the interconnects and request bandwidth
-between DDR and the display hardware (MDP port(s) and rotator
-downscaler).
-
-v2: update the path names to be consistent with dpu, handle the NULL
-    path case, updated commit msg from Georgi.
-
-Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
-Signed-off-by: Rob Clark <robdclark@chromium.org>
----
- drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.c | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
-
-diff --git a/drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.c b/drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.c
-index 97179bec8902..eeac429acf40 100644
---- a/drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.c
-+++ b/drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.c
-@@ -16,6 +16,7 @@
-  * this program.  If not, see <http://www.gnu.org/licenses/>.
-  */
- 
-+#include <linux/interconnect.h>
- #include <linux/of_irq.h>
- 
- #include "msm_drv.h"
-@@ -1050,6 +1051,19 @@ static const struct component_ops mdp5_ops = {
- 
- static int mdp5_dev_probe(struct platform_device *pdev)
- {
-+	struct icc_path *path0 = of_icc_get(&pdev->dev, "mdp0-mem");
-+	struct icc_path *path1 = of_icc_get(&pdev->dev, "mdp1-mem");
-+	struct icc_path *path_rot = of_icc_get(&pdev->dev, "rotator-mem");
-+
-+	if (IS_ERR_OR_NULL(path0))
-+		return PTR_ERR_OR_ZERO(path0);
-+	icc_set_bw(path0, 0, MBps_to_icc(6400));
-+
-+	if (!IS_ERR_OR_NULL(path1))
-+		icc_set_bw(path1, 0, MBps_to_icc(6400));
-+	if (!IS_ERR_OR_NULL(path_rot))
-+		icc_set_bw(path_rot, 0, MBps_to_icc(6400));
-+
- 	DBG("");
- 	return component_add(&pdev->dev, &mdp5_ops);
- }
--- 
-2.20.1
+> -----Original Message-----
+> From: Moore, Robert
+> Sent: Tuesday, June 18, 2019 1:23 PM
+> To: 'Nikolaus Voss' <nv@vosn.de>
+> Cc: 'Rafael J. Wysocki' <rafael@kernel.org>; 'Rafael J. Wysocki'
+> <rjw@rjwysocki.net>; 'Len Brown' <lenb@kernel.org>; Schmauss, Erik
+> <erik.schmauss@intel.com>; 'Jacek Anaszewski'
+> <jacek.anaszewski@gmail.com>; 'Pavel Machek' <pavel@ucw.cz>; 'Dan
+> Murphy' <dmurphy@ti.com>; 'Thierry Reding' <thierry.reding@gmail.com>;
+> 'ACPI Devel Maling List' <linux-acpi@vger.kernel.org>; 'open list:ACPI
+> COMPONENT ARCHITECTURE (ACPICA)' <devel@acpica.org>; 'linux-
+> leds@vger.kernel.org' <linux-leds@vger.kernel.org>; 'Linux PWM List'
+> <linux-pwm@vger.kernel.org>; 'Linux Kernel Mailing List' <linux-
+> kernel@vger.kernel.org>
+> Subject: RE: [PATCH v2 1/3] ACPI: Resolve objects on host-directed table
+> loads
+> 
+> It looks to me that the package objects are being initialized properly
+> already, unless I'm missing something. Please check the examples below
+> and in the attached files.
+> 
+> Attached is a small test case that dynamically loads an SSDT which
+> contains a package object which in turn contains references to other
+> objects.
+> 
+> 
+> Main DSDT:
+>     Method (LD1)
+>     {
+>         Load (BUF1, HNDL)      // SSDT is in BUF1
+>         Store (HNDL, Debug)
+>         Return
+>     }
+> 
+> Loaded table:
+>     External (DEV1, DeviceObj)
+>     Name (PKG1, Package() {
+>         1,2, DEV2, DEV1, 4})
+>     Device (DEV2) {}
+> 
+> 
+> AcpiExec Output:
+> - ev ld1
+> Evaluating \LD1
+> ACPI: Dynamic OEM Table Load:
+> ACPI: SSDT 0x00000000006DEEB8 000051 (v02 Intel  Load     00000001 INTL
+> 20190509)
+> ACPI Exec: Table Event INSTALL, [SSDT] 006DEEB8
+> Table [SSDT: Load    ] (id 06) -    5 Objects with   1 Devices,   0
+> Regions,    1 Methods
+> ACPI Exec: Table Event LOAD, [SSDT] 006DEEB8 ACPI Debug:  Reference
+> [DdbHandle] Table Index 0x3
+> 0x7 Outstanding allocations after evaluation of \LD1 Evaluation of \LD1
+> returned object 006D2FE8, external buffer length 18
+>   [Integer] = 0000000000000000
+> 
+> - ev pkg1
+> Evaluating \PKG1
+> Evaluation of \PKG1 returned object 006D2FE8, external buffer length 90
+>   [Package] Contains 5 Elements:
+>     [Integer] = 0000000000000001
+>     [Integer] = 0000000000000002
+>     [Object Reference] = 006DDF88 <Node>            Name DEV2 Device
+>     [Object Reference] = 006DD608 <Node>            Name DEV1 Device
+>     [Integer] = 0000000000000004
 
