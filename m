@@ -2,115 +2,151 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2DB924993A
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 08:47:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 882A549951
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 08:50:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728701AbfFRGr0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Jun 2019 02:47:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53896 "EHLO mail.kernel.org"
+        id S1728602AbfFRGuo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Jun 2019 02:50:44 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:10931 "EHLO pegase1.c-s.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726238AbfFRGrX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Jun 2019 02:47:23 -0400
-Received: from dragon (li1322-146.members.linode.com [45.79.223.146])
-        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0ADC12166E;
-        Tue, 18 Jun 2019 06:32:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560839527;
-        bh=VejpOgqd5R4dMXfFuMAOUrMQQHjjtWsjAe1WJUq7tzE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=o9lgizXWTgD+9aai+vLwwtARXKwM5HOKlNCOCmCgEGt+S9gFyV6yEFZLYmjT86xhI
-         /Z/8CMZTqodJdtW30kwJFw7O8SG2nwR+YGgHikRJ9kOOCMTCd5otlbTQNPzk+NT++Q
-         fc070xBZggbbSzDwsPwfeBHXhp0RsTxetBmdRJ98=
-Date:   Tue, 18 Jun 2019 14:31:16 +0800
-From:   Shawn Guo <shawnguo@kernel.org>
-To:     Leo Li <leoyang.li@nxp.com>
-Cc:     Madalin-cristian Bucur <madalin.bucur@nxp.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Aisheng Dong <aisheng.dong@nxp.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        Grant Likely <grant.likely@arm.com>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        "wsa@the-dreams.de" <wsa@the-dreams.de>
-Subject: Re: [PATCH] arm64: defconfig: Enable FSL_EDMA driver
-Message-ID: <20190618063114.GA29468@dragon>
-References: <20190422183056.16375-1-leoyang.li@nxp.com>
- <20190510030525.GC15856@dragon>
- <CADRPPNT2G20j2pvSEyqX=_WNDPrcNR+xCR_XZukbnSW19wFLNA@mail.gmail.com>
- <20190613004508.GA20747@dragon>
- <VE1PR04MB6687EE0E22DA0697A0A7038F8FEF0@VE1PR04MB6687.eurprd04.prod.outlook.com>
+        id S1725919AbfFRGun (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Jun 2019 02:50:43 -0400
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 45SdXb0twlz9v2g3;
+        Tue, 18 Jun 2019 08:31:59 +0200 (CEST)
+Authentication-Results: localhost; dkim=pass
+        reason="1024-bit key; insecure key"
+        header.d=c-s.fr header.i=@c-s.fr header.b=OmzqKc6+; dkim-adsp=pass;
+        dkim-atps=neutral
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id TZILph5M7jCf; Tue, 18 Jun 2019 08:31:59 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 45SdXZ6xSBz9v2g2;
+        Tue, 18 Jun 2019 08:31:58 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
+        t=1560839519; bh=TE8cI41mSPy/enSR8a1lyKFDOW5JBtL6McA/5Yz5l78=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=OmzqKc6+Wv8ufXUWHDj3EK2h8DFvl0fTvJkxdDH/p+wfrsBPHVeDOAUuz09Qmw1zM
+         jkEKEfpMfJSyknKwQCKuinjfVNKG80s91tSt1HMdJFzi/zLgPWdWWrzoYr9nTWNrdt
+         LTFus4bhtqcPNOnFcigRiHvkB//GqIGnXyumsLkY=
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 006408B884;
+        Tue, 18 Jun 2019 08:31:58 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id qAwZ7WmJ_x5P; Tue, 18 Jun 2019 08:31:58 +0200 (CEST)
+Received: from PO15451 (unknown [192.168.4.90])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 19A068B78B;
+        Tue, 18 Jun 2019 08:31:58 +0200 (CEST)
+Subject: Re: [PATCH 4/5] Powerpc/hw-breakpoint: Optimize disable path
+To:     Ravi Bangoria <ravi.bangoria@linux.ibm.com>, mpe@ellerman.id.au
+Cc:     benh@kernel.crashing.org, paulus@samba.org, mikey@neuling.org,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        npiggin@gmail.com, naveen.n.rao@linux.vnet.ibm.com
+References: <20190618042732.5582-1-ravi.bangoria@linux.ibm.com>
+ <20190618042732.5582-5-ravi.bangoria@linux.ibm.com>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Message-ID: <6e7c6054-b152-40db-c7d3-89901949460f@c-s.fr>
+Date:   Tue, 18 Jun 2019 08:31:57 +0200
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <VE1PR04MB6687EE0E22DA0697A0A7038F8FEF0@VE1PR04MB6687.eurprd04.prod.outlook.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20190618042732.5582-5-ravi.bangoria@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: fr
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 13, 2019 at 02:01:11PM +0000, Leo Li wrote:
+
+
+Le 18/06/2019 à 06:27, Ravi Bangoria a écrit :
+> Directly setting dawr and dawrx with 0 should be enough to
+> disable watchpoint. No need to reset individual bits in
+> variable and then set in hw.
 > 
+> Signed-off-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+> ---
+>   arch/powerpc/include/asm/hw_breakpoint.h |  3 ++-
+>   arch/powerpc/kernel/process.c            | 12 ++++++++++++
+>   2 files changed, 14 insertions(+), 1 deletion(-)
 > 
-> > -----Original Message-----
-> > From: Shawn Guo <shawnguo@kernel.org>
-> > Sent: Wednesday, June 12, 2019 7:45 PM
-> > To: Leo Li <leoyang.li@nxp.com>
-> > Cc: Madalin-cristian Bucur <madalin.bucur@nxp.com>; Rob Herring
-> > <robh+dt@kernel.org>; Aisheng Dong <aisheng.dong@nxp.com>; Vinod Koul
-> > <vkoul@kernel.org>; Grant Likely <grant.likely@arm.com>; moderated
-> > list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE <linux-arm-
-> > kernel@lists.infradead.org>; lkml <linux-kernel@vger.kernel.org>
-> > Subject: Re: [PATCH] arm64: defconfig: Enable FSL_EDMA driver
-> > 
-> > On Wed, Jun 12, 2019 at 03:01:29PM -0500, Li Yang wrote:
-> > > On Thu, May 9, 2019 at 10:15 PM Shawn Guo <shawnguo@kernel.org>
-> > wrote:
-> > > >
-> > > > On Mon, Apr 22, 2019 at 01:30:56PM -0500, Li Yang wrote:
-> > > > > Enables the FSL EDMA driver by default.  This also works around an
-> > > > > issue that imx-i2c driver keeps deferring the probe because of the
-> > > > > DMA is not ready.  And currently the DMA engine framework can not
-> > > > > correctly tell if the DMA channels will truly become available
-> > > > > later (it will never be available if the DMA driver is not enabled).
-> > > > >
-> > > > > This will cause indefinite messages like below:
-> > > > > [    3.335829] imx-i2c 2180000.i2c: can't get pinctrl, bus recovery not
-> > supported
-> > > > > [    3.344455] ina2xx 0-0040: power monitor ina220 (Rshunt = 1000
-> > uOhm)
-> > > > > [    3.350917] lm90 0-004c: 0-004c supply vcc not found, using dummy
-> > regulator
-> > > > > [    3.362089] imx-i2c 2180000.i2c: can't get pinctrl, bus recovery not
-> > supported
-> > > > > [    3.370741] ina2xx 0-0040: power monitor ina220 (Rshunt = 1000
-> > uOhm)
-> > > > > [    3.377205] lm90 0-004c: 0-004c supply vcc not found, using dummy
-> > regulator
-> > > > > [    3.388455] imx-i2c 2180000.i2c: can't get pinctrl, bus recovery not
-> > supported
-> > > > > .....
-> > > > >
-> > > > > Signed-off-by: Li Yang <leoyang.li@nxp.com>
-> > > >
-> > > > Applied, thanks.
-> > >
-> > > Hi Shawn,
-> > >
-> > > Is it possible to move this patch to the -fix series so that it can
-> > > reach the mainline earlier?  It is having a boot failure in mainline
-> > > for platforms using this device without this workaround.
-> > 
-> > Why would I2C device deferring cause boot failure on a platform?  I'm just
-> > trying to understand severity of the problem.
-> 
-> Currently the probe of imx-i2c will be retried immediately after it is deferred when the optional dependency on DMA driver is not met.  This will cause an indefinite loop of probe-defer-probe and keep printing the message as shown in the commit message.
+> diff --git a/arch/powerpc/include/asm/hw_breakpoint.h b/arch/powerpc/include/asm/hw_breakpoint.h
+> index 78202d5fb13a..8acbbdd4a2d5 100644
+> --- a/arch/powerpc/include/asm/hw_breakpoint.h
+> +++ b/arch/powerpc/include/asm/hw_breakpoint.h
+> @@ -19,6 +19,7 @@ struct arch_hw_breakpoint {
+>   /* Note: Don't change the the first 6 bits below as they are in the same order
+>    * as the dabr and dabrx.
+>    */
+> +#define HW_BRK_TYPE_DISABLE		0x00
+
+I'd rather call it HW_BRK_TYPE_NONE
+
+>   #define HW_BRK_TYPE_READ		0x01
+>   #define HW_BRK_TYPE_WRITE		0x02
+>   #define HW_BRK_TYPE_TRANSLATE		0x04
+> @@ -68,7 +69,7 @@ static inline void hw_breakpoint_disable(void)
+>   	struct arch_hw_breakpoint brk;
+>   
+>   	brk.address = 0;
+> -	brk.type = 0;
+> +	brk.type = HW_BRK_TYPE_DISABLE;
+>   	brk.len = 0;
+>   	if (ppc_breakpoint_available())
+>   		__set_breakpoint(&brk);
+> diff --git a/arch/powerpc/kernel/process.c b/arch/powerpc/kernel/process.c
+> index f002d2ffff86..265fac9fb3a4 100644
+> --- a/arch/powerpc/kernel/process.c
+> +++ b/arch/powerpc/kernel/process.c
+> @@ -793,10 +793,22 @@ static inline int set_dabr(struct arch_hw_breakpoint *brk)
+>   	return __set_dabr(dabr, dabrx);
+>   }
+>   
+> +static int disable_dawr(void)
+> +{
+> +	if (ppc_md.set_dawr)
+> +		return ppc_md.set_dawr(0, 0);
+> +
+> +	mtspr(SPRN_DAWRX, 0);
+
+And SPRN_DAWR ?
+
+The above code looks pretty similar to the one at the end of set_dawr(). 
+You should factorise it, for instance
+
+static int __set_dawr(int dawr, int dawrx)
+{
+	if (ppc_md.set_dawr)
+		return ppc_md.set_dawr(dawr, dawrx);
+	mtspr(SPRN_DAWR, dawr);
+	mtspr(SPRN_DAWRX, dawrx);
+	return 0;
+}
+
+> +	return 0;
+> +}
+> +
+>   int set_dawr(struct arch_hw_breakpoint *brk)
+>   {
+>   	unsigned long dawr, dawrx, mrd;
+>   
+> +	if (brk->type == HW_BRK_TYPE_DISABLE)
+> +		return disable_dawr();
+
+Then replace by __set_dawr(0, 0);
+
+> +
+>   	dawr = brk->address;
+>   
+>   	dawrx  = (brk->type & HW_BRK_TYPE_RDWR) << (63 - 58);
 > 
 
-Indefinite loop of probe-defer-probe is not a boot failure to me.  But I
-will try to send it as fix, and see if arm-soc folk will take it.
+And use the new helper at the end of the function too.
 
-Shawn
+Christophe
