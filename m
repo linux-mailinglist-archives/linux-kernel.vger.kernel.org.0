@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D5A44AACF
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 21:06:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8516A4AAD3
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 21:06:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730647AbfFRTGg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Jun 2019 15:06:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41552 "EHLO mail.kernel.org"
+        id S1730663AbfFRTGl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Jun 2019 15:06:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41640 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730196AbfFRTGf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Jun 2019 15:06:35 -0400
+        id S1730196AbfFRTGl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Jun 2019 15:06:41 -0400
 Received: from localhost.localdomain (unknown [194.230.155.186])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E5AA521530;
-        Tue, 18 Jun 2019 19:06:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4296B215EA;
+        Tue, 18 Jun 2019 19:06:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560884794;
-        bh=tKuxna/c/tPIwWl1WEp9bAthDvfo4BrsL1N8qcs17h4=;
+        s=default; t=1560884800;
+        bh=8Pg1RVM5aZ3oBKkDdus18bslAtYlcoTCIBdsEfOp1J8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=b4uMAxQv22mXkzeQdF8lt4/9t4lWbHJD4LXhNOCdcCsbDuW1PDrvBxMWrPrNwRE4c
-         jPdhEkVBWANBLW7n/II52Scd5EQVKsFMZ3ZzvHIUQaqL14nbTFWGLuXetPCaXmmkTl
-         BuebAaWOYZIC/6f2+FmBKxd0j+OIjBRn4ShWoD2M=
+        b=Vk8uLH50kEOnB6d+lSctcgXbT/0T5J440YyatXboLJSV1EBGNGlMnCIzatFDPkfmV
+         Eeyxb5SHQYUwqqOAvh9A/ZEVR+9/m/lhzp+bWeU0OBIzSGtjK8zVj8XfOcR58ibPUY
+         uqK940pnUfzEPj6JfiIL4HZohgjI/JcKeSOuSXh0=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
         Rob Herring <robh+dt@kernel.org>,
@@ -45,9 +45,9 @@ Cc:     Joseph Kogut <joseph.kogut@gmail.com>,
         Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
         Inki Dae <inki.dae@samsung.com>,
         Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [RFT 09/10] ARM: exynos_defconfig: Enable Panfrost and LIMA drivers
-Date:   Tue, 18 Jun 2019 21:05:33 +0200
-Message-Id: <20190618190534.4951-10-krzk@kernel.org>
+Subject: [RFT 10/10] arm64: defconfig: Enable Panfrost driver
+Date:   Tue, 18 Jun 2019 21:05:34 +0200
+Message-Id: <20190618190534.4951-11-krzk@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190618190534.4951-1-krzk@kernel.org>
 References: <20190618190534.4951-1-krzk@kernel.org>
@@ -56,37 +56,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Enable support for Mali GPU with Panfrost and LIMA drivers.  Most of
-Exynos chipsets come with Mali GPUs:
-1. Mali 400 (Exynos3250, Exynos4210, Exynos4412),
-2. Mali T7xx (Exynos542x).
+Enable support for Mali GPU with Panfrost driver, e.g. for Exynos5433
+and Exynos7 (having Mali T760).
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- arch/arm/configs/exynos_defconfig | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ arch/arm64/configs/defconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
-index 8d08eed99aa1..f140532ddca7 100644
---- a/arch/arm/configs/exynos_defconfig
-+++ b/arch/arm/configs/exynos_defconfig
-@@ -212,6 +212,8 @@ CONFIG_DRM_NXP_PTN3460=y
- CONFIG_DRM_PARADE_PS8622=y
- CONFIG_DRM_SII9234=y
- CONFIG_DRM_TOSHIBA_TC358764=y
-+CONFIG_DRM_LIMA=y
-+CONFIG_DRM_PANFROST=y
- CONFIG_LCD_CLASS_DEVICE=y
- CONFIG_LCD_PLATFORM=y
- CONFIG_BACKLIGHT_PWM=y
-@@ -284,7 +286,6 @@ CONFIG_CROS_EC_SPI=y
- CONFIG_COMMON_CLK_MAX77686=y
- CONFIG_COMMON_CLK_S2MPS11=y
- CONFIG_EXYNOS_IOMMU=y
--CONFIG_PM_DEVFREQ=y
- CONFIG_DEVFREQ_GOV_PERFORMANCE=y
- CONFIG_DEVFREQ_GOV_POWERSAVE=y
- CONFIG_DEVFREQ_GOV_USERSPACE=y
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index 6b4f5cf23324..972b17239f13 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -517,6 +517,7 @@ CONFIG_DRM_HISI_HIBMC=m
+ CONFIG_DRM_HISI_KIRIN=m
+ CONFIG_DRM_MESON=m
+ CONFIG_DRM_PL111=m
++CONFIG_DRM_PANFROST=m
+ CONFIG_FB=y
+ CONFIG_FB_MODE_HELPERS=y
+ CONFIG_BACKLIGHT_GENERIC=m
+@@ -717,7 +718,6 @@ CONFIG_ARCH_TEGRA_194_SOC=y
+ CONFIG_ARCH_K3_AM6_SOC=y
+ CONFIG_SOC_TI=y
+ CONFIG_TI_SCI_PM_DOMAINS=y
+-CONFIG_DEVFREQ_GOV_SIMPLE_ONDEMAND=y
+ CONFIG_EXTCON_USB_GPIO=y
+ CONFIG_EXTCON_USBC_CROS_EC=y
+ CONFIG_MEMORY=y
 -- 
 2.17.1
 
