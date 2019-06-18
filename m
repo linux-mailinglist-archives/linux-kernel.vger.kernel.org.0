@@ -2,86 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 38FF9499A5
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 08:59:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D9D1A4A387
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 16:11:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728809AbfFRG7b convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 18 Jun 2019 02:59:31 -0400
-Received: from lithops.sigma-star.at ([195.201.40.130]:34080 "EHLO
-        lithops.sigma-star.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726158AbfFRG7b (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Jun 2019 02:59:31 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by lithops.sigma-star.at (Postfix) with ESMTP id A81DE60A3581;
-        Tue, 18 Jun 2019 08:19:47 +0200 (CEST)
-Received: from lithops.sigma-star.at ([127.0.0.1])
-        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id 9pWdrJ7_AVmW; Tue, 18 Jun 2019 08:19:45 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        by lithops.sigma-star.at (Postfix) with ESMTP id DA9546074CF4;
-        Tue, 18 Jun 2019 08:19:45 +0200 (CEST)
-Received: from lithops.sigma-star.at ([127.0.0.1])
-        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id 87yI62wPtELB; Tue, 18 Jun 2019 08:19:45 +0200 (CEST)
-Received: from lithops.sigma-star.at (lithops.sigma-star.at [195.201.40.130])
-        by lithops.sigma-star.at (Postfix) with ESMTP id 99655611C994;
-        Tue, 18 Jun 2019 08:19:45 +0200 (CEST)
-Date:   Tue, 18 Jun 2019 08:19:45 +0200 (CEST)
-From:   Richard Weinberger <richard@nod.at>
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     linux-mtd <linux-mtd@lists.infradead.org>,
-        Boris Brezillon <bbrezillon@kernel.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Message-ID: <1318390798.95477.1560838785550.JavaMail.zimbra@nod.at>
-In-Reply-To: <20190618030926.30616-1-yamada.masahiro@socionext.com>
-References: <20190618030926.30616-1-yamada.masahiro@socionext.com>
-Subject: Re: [PATCH v2] jffs2: remove C++ style comments from uapi header
+        id S1729805AbfFROLK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Jun 2019 10:11:10 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:19037 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729042AbfFROLG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Jun 2019 10:11:06 -0400
+Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 894898EEA09397824F9B;
+        Tue, 18 Jun 2019 22:11:02 +0800 (CST)
+Received: from localhost.localdomain (10.175.34.53) by
+ DGGEMS405-HUB.china.huawei.com (10.3.19.205) with Microsoft SMTP Server id
+ 14.3.439.0; Tue, 18 Jun 2019 22:10:54 +0800
+From:   Xue Chaojing <xuechaojing@huawei.com>
+To:     <davem@davemloft.net>
+CC:     <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <luoshaokai@huawei.com>, <cloud.wangxiaoyun@huawei.com>,
+        <xuechaojing@huawei.com>, <chiqijun@huawei.com>,
+        <wulike1@huawei.com>
+Subject: [PATCH net-next v5 0/3] hinic: add rss support and rss parameters configuration
+Date:   Tue, 18 Jun 2019 06:20:50 +0000
+Message-ID: <20190618062053.7545-1-xuechaojing@huawei.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-X-Originating-IP: [195.201.40.130]
-X-Mailer: Zimbra 8.8.8_GA_3025 (ZimbraWebClient - FF60 (Linux)/8.8.8_GA_1703)
-Thread-Topic: jffs2: remove C++ style comments from uapi header
-Thread-Index: deI3m5cpEftGIaGOraBr3ypIKbYSRQ==
+Content-Type: text/plain
+X-Originating-IP: [10.175.34.53]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
------ Ursprüngliche Mail -----
-> Von: "Masahiro Yamada" <yamada.masahiro@socionext.com>
-> An: "linux-mtd" <linux-mtd@lists.infradead.org>
-> CC: "Boris Brezillon" <bbrezillon@kernel.org>, "Miquel Raynal" <miquel.raynal@bootlin.com>, "Brian Norris"
-> <computersforpeace@gmail.com>, "Vignesh Raghavendra" <vigneshr@ti.com>, "Marek Vasut" <marek.vasut@gmail.com>,
-> "Masahiro Yamada" <yamada.masahiro@socionext.com>, "richard" <richard@nod.at>, "David Woodhouse" <dwmw2@infradead.org>,
-> "linux-kernel" <linux-kernel@vger.kernel.org>
-> Gesendet: Dienstag, 18. Juni 2019 05:09:26
-> Betreff: [PATCH v2] jffs2: remove C++ style comments from uapi header
+This series add rss support for HINIC driver and implement the ethtool
+interface related to rss parameter configuration. user can use ethtool
+configure rss parameters or show rss parameters.
 
-> Linux kernel tolerates C++ style comments these days. Actually, the
-> SPDX License tags for .c files start with //.
-> 
-> On the other hand, uapi headers are written in more strict C, where
-> the C++ comment style is forbidden.
-> 
-> I simply dropped these lines instead of fixing the comment style.
-> 
-> This code has been always commented out since it was added around
-> Linux 2.4.9 (i.e. commented out for more than 17 years).
-> 
-> 'Maybe later...' will never happen.
+Xue Chaojing (3):
+  hinic: add rss support
+  hinic: move ethtool code into hinic_ethtool
+  hinic: add support for rss parameters with ethtool
 
-:-)
- 
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+ drivers/net/ethernet/huawei/hinic/Makefile    |   2 +-
+ drivers/net/ethernet/huawei/hinic/hinic_dev.h |  28 ++
+ .../net/ethernet/huawei/hinic/hinic_ethtool.c | 458 ++++++++++++++++++
+ .../net/ethernet/huawei/hinic/hinic_hw_dev.c  |  10 +-
+ .../net/ethernet/huawei/hinic/hinic_hw_dev.h  |  36 ++
+ .../net/ethernet/huawei/hinic/hinic_hw_wqe.h  |  16 +
+ .../net/ethernet/huawei/hinic/hinic_main.c    | 260 +++++-----
+ .../net/ethernet/huawei/hinic/hinic_port.c    | 389 +++++++++++++++
+ .../net/ethernet/huawei/hinic/hinic_port.h    | 129 +++++
+ 9 files changed, 1186 insertions(+), 142 deletions(-)
+ create mode 100644 drivers/net/ethernet/huawei/hinic/hinic_ethtool.c
 
-Acked-by: Richard Weinberger <richard@nod.at>
+-- 
+2.17.1
 
-Thanks,
-//richard
