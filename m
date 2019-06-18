@@ -2,93 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5CF4F4978E
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 04:40:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AA53649792
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 04:42:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727349AbfFRCkX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 22:40:23 -0400
-Received: from mga14.intel.com ([192.55.52.115]:46433 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725829AbfFRCkX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 22:40:23 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Jun 2019 19:40:22 -0700
-X-ExtLoop1: 1
-Received: from txu2-mobl.ccr.corp.intel.com (HELO [10.239.196.224]) ([10.239.196.224])
-  by orsmga003.jf.intel.com with ESMTP; 17 Jun 2019 19:40:19 -0700
-Subject: Re: [PATCH RESEND v3 2/3] KVM: vmx: Emulate MSR IA32_UMWAIT_CONTROL
-To:     =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Xiaoyao Li <xiaoyao.li@linux.intel.com>
-Cc:     pbonzini@redhat.com, corbet@lwn.net, tglx@linutronix.de,
-        mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
-        sean.j.christopherson@intel.com, fenghua.yu@intel.com,
-        kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        jingqi.liu@intel.com
-References: <20190616095555.20978-1-tao3.xu@intel.com>
- <20190616095555.20978-3-tao3.xu@intel.com>
- <d99b2ae1-38fc-0b71-2613-8131decc923a@intel.com>
- <ea1fc40b-8f80-d5f0-6c97-adb245599e07@linux.intel.com>
- <20190617155038.GA13955@flask>
-From:   Tao Xu <tao3.xu@intel.com>
-Message-ID: <afc6182b-8e78-5032-c579-35bf2732b740@intel.com>
-Date:   Tue, 18 Jun 2019 10:40:18 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.1
+        id S1728060AbfFRCmC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 22:42:02 -0400
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:34715 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726331AbfFRCmB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 17 Jun 2019 22:42:01 -0400
+Received: by mail-qt1-f196.google.com with SMTP id m29so13498036qtu.1
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2019 19:42:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=IVz6BAknW6t/cZoUe0OsXuR9J6By+25KR1QWnphRfwQ=;
+        b=uyNS/GgoiPmcE5pagyeBrTmsGE9qnYmNPJTsBX8mwc/tslW/kqrSuhBYGFUSP776cf
+         7RcDrg+2k+HBRegVEYZg9OEcra+jV5ZBehCwxdonN5aKo+n5Rw8ygsCRkFLQDbsJXncZ
+         h9hcfuP0L/BQVpvAN8bYNyj9AcpsDpI3jrVjdb9lbJdI+OYCzSqm8FQIAyNKHEU5v2qT
+         59rJVJKWtZO0CubKK0FgtYUR1iBN/rCLZgU9DVvH1709zbnf/fKH9l7+jd2v3M04REqW
+         DF8X0emOJktfBVF6ui9grAPjVfcHhrfHAzJn10KGAAAQ8jRWHid8ONlGrl3UWN9T4XMe
+         r3jQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=IVz6BAknW6t/cZoUe0OsXuR9J6By+25KR1QWnphRfwQ=;
+        b=aRJGYQFFQRCLrq3ZJr1YcoRkOZnTZksqOzRMTFMAQcfopuDTMKRsDaRiO1G+Mhzz8U
+         QFdVJXAJ6CwDhZe+IWJ9nOM6mmJDc1bMqGkutfrRjScq7WfW9gPoxoCDZWtDquHdlLar
+         A1Rf9U4C1iDtJ9ZaEKU1PKxLsCUXq01w2tBF5L3knOlZYCIhtDYmkyJ6RiWam8QXq0Dz
+         1lG5zmyVIBdoVS4lI0iwmKnZ3yBVLytpbMlV3TopzY2do/8i4dPJ+a8TJs3f0YQBypsB
+         uP2eA5rP1U7PnVvGE8Glkvdr1wKDjWzzQKJKnF0omJx+nTWfOJAbCMhJzVVpEXzpm9yf
+         IbAA==
+X-Gm-Message-State: APjAAAWrD8siesUzwomF6W+tgsuO3TeaJgqR+qR2Wk2/XRJF5SqpB0uG
+        O3bbVnrqVUf6HA/cwqNnIS4=
+X-Google-Smtp-Source: APXvYqxmov6aRqBgVgEHQVi8PRdHCcaCQsKljpg1j8I85jrk0Kp3f23uBl6FNdvQ3E04Jdsdhxi0sA==
+X-Received: by 2002:ac8:3345:: with SMTP id u5mr99447735qta.219.1560825720545;
+        Mon, 17 Jun 2019 19:42:00 -0700 (PDT)
+Received: from smtp.gmail.com ([187.121.151.146])
+        by smtp.gmail.com with ESMTPSA id j184sm7209111qkc.65.2019.06.17.19.41.57
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Mon, 17 Jun 2019 19:42:00 -0700 (PDT)
+Date:   Mon, 17 Jun 2019 23:41:55 -0300
+From:   Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
+To:     Brian Starkey <brian.starkey@arm.com>,
+        Liviu Dudau <liviu.dudau@arm.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Haneen Mohammed <hamohammed.sa@gmail.com>,
+        Simon Ser <contact@emersion.fr>
+Cc:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: [PATCH V2 0/5] drm/vkms: Introduces writeback support
+Message-ID: <cover.1560820888.git.rodrigosiqueiramelo@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20190617155038.GA13955@flask>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 6/17/2019 11:50 PM, Radim Krčmář wrote:
-> 2019-06-17 14:31+0800, Xiaoyao Li:
->> On 6/17/2019 11:32 AM, Xiaoyao Li wrote:
->>> On 6/16/2019 5:55 PM, Tao Xu wrote:
->>>> +    if (vmx->msr_ia32_umwait_control != host_umwait_control)
->>>> +        add_atomic_switch_msr(vmx, MSR_IA32_UMWAIT_CONTROL,
->>>> +                      vmx->msr_ia32_umwait_control,
->>>> +                      host_umwait_control, false);
->>>
->>> The bit 1 is reserved, at least, we need to do below to ensure not
->>> modifying the reserved bit:
->>>
->>>       guest_val = (vmx->msr_ia32_umwait_control & ~BIT_ULL(1)) |
->>>               (host_val & BIT_ULL(1))
->>>
->>
->> I find a better solution to ensure reserved bit 1 not being modified in
->> vmx_set_msr() as below:
->>
->> 	if((data ^ umwait_control_cached) & BIT_ULL(1))
->> 		return 1;
-> 
-> We could just be checking
-> 
-> 	if (data & BIT_ULL(1))
-> 
-> because the guest cannot change its visible reserved value and KVM
-> currently initializes the value to 0.
-> 
-> The arch/x86/kernel/cpu/umwait.c series assumes that the reserved bit
-> is 0 (hopefully deliberately) and I would do the same in KVM as it
-> simplifies the logic.  (We don't have to even think about migrations
-> between machines with a different reserved value and making it play
-> nicely with possible future implementations of that bit.)
-> 
-> Thanks.
-> 
-Thank you Radim and xiaoyao's review, I will improve it in the next 
-version. Xiaoyao's suggestion remind me another thing. And I am 
-wondering if we need to initialize the value of MSR_IA32_UMWAIT_CONTROL 
-in KVM to 0x186a0(umwait_control = 100000, as host does).
+This patchset introduces the writeback support to vkms. As a pre-work,
+the first set of patches separates part of the code inside vkms_crc to a
+new file named vkms_composer; this change allows that other parts of the
+vkms take advantage of composing functions. Next, there's a patch that
+enables the virtual encoder to be compatible with the crtc when we have
+multiple encoders. The final patch adds the required implementation to
+enable writeback in the vkms. With this patchset, vkms can successfully
+pass all the kms_writeback tests from IGT.
 
-Although the guest with new kernel(has umwait host patch)can initialize 
-the value to 0x186a0. But there is a case that a guest with a old kernel 
-and the host with the new kernel and has the cpuid of WAITPKG. Because 
-the msr value is 0, the guest umwait will have no max time by default.
+Note: This patchset depends on Daniel's rework of CRC, see it at
+https://patchwork.freedesktop.org/series/61737/
+
+Rodrigo Siqueira (5):
+  drm/vkms: Move functions from vkms_crc to vkms_composer
+  drm/vkms: Rename crc_enabled to composer_enabled
+  drm/vkms: Rename vkms_crc_data to vkms_data
+  drm/vkms: Use index instead of 0 in possible crtc
+  drm/vkms: Add support for writeback
+
+ drivers/gpu/drm/vkms/Makefile         |  10 +-
+ drivers/gpu/drm/vkms/vkms_composer.c  |  69 +++++++++++
+ drivers/gpu/drm/vkms/vkms_composer.h  |  12 ++
+ drivers/gpu/drm/vkms/vkms_crc.c       |  81 ++-----------
+ drivers/gpu/drm/vkms/vkms_crtc.c      |   2 +-
+ drivers/gpu/drm/vkms/vkms_drv.c       |   9 +-
+ drivers/gpu/drm/vkms/vkms_drv.h       |  18 ++-
+ drivers/gpu/drm/vkms/vkms_output.c    |  12 +-
+ drivers/gpu/drm/vkms/vkms_plane.c     |  40 +++----
+ drivers/gpu/drm/vkms/vkms_writeback.c | 166 ++++++++++++++++++++++++++
+ 10 files changed, 315 insertions(+), 104 deletions(-)
+ create mode 100644 drivers/gpu/drm/vkms/vkms_composer.c
+ create mode 100644 drivers/gpu/drm/vkms/vkms_composer.h
+ create mode 100644 drivers/gpu/drm/vkms/vkms_writeback.c
+
+-- 
+2.21.0
