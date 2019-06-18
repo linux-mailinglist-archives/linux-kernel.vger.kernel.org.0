@@ -2,387 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 702AE49C6D
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 10:55:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D232249C73
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 10:56:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729241AbfFRIzI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Jun 2019 04:55:08 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:44852 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728991AbfFRIzI (ORCPT
+        id S1729302AbfFRI4L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Jun 2019 04:56:11 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:41576 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728748AbfFRI4L (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Jun 2019 04:55:08 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 94858602BC; Tue, 18 Jun 2019 08:55:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1560848106;
-        bh=W4hJPq0D0iObYhyXaM/7Mh+sRRkJOAUhKcey2qQUBNc=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KL1GY6zGha4jr/GHz11JkGHezA0JB3AZKC0fiCSa5dhcNWZ5kzkHWvfrHh8IO3J98
-         455aT8x6LUoAU41r9ChRkm6xY4WAz2LVWETrGO25WwFWb+VVk5cwXnFicso0QgWCjQ
-         tp6K0EwXruvTXmEpD60z2d5I6juV9jgx4anf4dN8=
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        pdx-caf-mail.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
-        DKIM_INVALID,DKIM_SIGNED,SPF_NONE autolearn=no autolearn_force=no
-        version=3.4.0
-Received: from mojha-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: mojha@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 39C7E60254;
-        Tue, 18 Jun 2019 08:55:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1560848105;
-        bh=W4hJPq0D0iObYhyXaM/7Mh+sRRkJOAUhKcey2qQUBNc=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZCNff+GEOjX9YPEBT+GM9lvrchg8R7VfUv288vHHhOM5mU7yFw03ThsRtTWnFbm6z
-         1GucojKD5q38v7tnf9QpkyjPUpGsyMw5JG5sluGR7fmSc6Hik7f0PJh0hMJKvc2KrQ
-         utXRQ05jkCRrwzrn51hcnmkKq7Q575tNHTL/OpZI=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 39C7E60254
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=mojha@codeaurora.org
-From:   Mukesh Ojha <mojha@codeaurora.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Mukesh Ojha <mojha@codeaurora.org>,
-        Raghavendra Rao Ananta <rananta@codeaurora.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Alexei Starovoitov <ast@kernel.org>
-Subject: [PATCH V4] perf: event preserve and create across cpu hotplug
-Date:   Tue, 18 Jun 2019 14:24:51 +0530
-Message-Id: <1560848091-15694-1-git-send-email-mojha@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1560337045-13298-1-git-send-email-mojha@codeaurora.org>
-References: <1560337045-13298-1-git-send-email-mojha@codeaurora.org>
+        Tue, 18 Jun 2019 04:56:11 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5I8rYYH121174;
+        Tue, 18 Jun 2019 08:56:04 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=N4RH0cwrpdeDoVRKfcDnUfAwZ5Y7e3pZpXdIwgGwtyU=;
+ b=Aa+6dcAvpXYCHQ2ip/cIcsjE1eSzhw68hyzP7HfX0GAt8MTw8OULBP9Db7LXMIC3o6a6
+ edkbZfV42yhIICie3nEWGFUVUdagWZvQPSPgYdw57gZ+poPDx2AJdntcYAmC9Ln0Kngm
+ n8O8lAL/F7pYKuM6Cf+ui53H33JQXlBNrHmmnbKimfiDSUm3TMqsenphR1bg5E8oPvPx
+ wCqglANR1zLar5iqQNaFsyWXmZb8yK+ikN9zRw/uDsYxu9Etl/c3eMmZcyRJe3KQmhf8
+ rs4feYkfX4lo/15AC6AgkobUcIraMlA4j0h7kDCSZEfANNQdxGwA72oihUM8IGTog1kq ZQ== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by aserp2120.oracle.com with ESMTP id 2t4rmp32w2-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 18 Jun 2019 08:56:04 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5I8tYPb146055;
+        Tue, 18 Jun 2019 08:56:03 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userp3030.oracle.com with ESMTP id 2t59gdq7ua-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 18 Jun 2019 08:56:03 +0000
+Received: from abhmp0007.oracle.com (abhmp0007.oracle.com [141.146.116.13])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x5I8u0ba002118;
+        Tue, 18 Jun 2019 08:56:01 GMT
+Received: from kadam (/41.57.98.10)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 18 Jun 2019 01:56:00 -0700
+Date:   Tue, 18 Jun 2019 11:55:24 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Hariprasad Kelam <hariprasad.kelam@gmail.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Michael Straube <straube.linux@gmail.com>,
+        Mamta Shukla <mamtashukla555@gmail.com>,
+        Nishka Dasgupta <nishkadg.linux@gmail.com>,
+        Emanuel Bennici <benniciemanuel78@gmail.com>,
+        Puranjay Mohan <puranjay12@gmail.com>,
+        Shobhit Kukreti <shobhitkukreti@gmail.com>,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+Subject: Re: [Patch v2] staging: rtl8723bs: os_dep: ioctl_linux: make use of
+ kzalloc
+Message-ID: <20190618085524.GJ28859@kadam>
+References: <20190618014410.GA8505@hari-Inspiron-1545>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190618014410.GA8505@hari-Inspiron-1545>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9291 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=605
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1906180075
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9291 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=654 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1906180075
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Perf framework doesn't allow preserving CPU events across
-CPU hotplugs. The events are scheduled out as and when the
-CPU walks offline. Moreover, the framework also doesn't
-allow the clients to create events on an offline CPU. As
-a result, the clients have to keep on monitoring the CPU
-state until it comes back online.
+On Tue, Jun 18, 2019 at 07:14:10AM +0530, Hariprasad Kelam wrote:
+> kmalloc with memset can be replaced with kzalloc.
+> 
+> Signed-off-by: Hariprasad Kelam <hariprasad.kelam@gmail.com>
+> -----
+> changes in v2: Replace rtw_zmalloc with kzalloc
+> ---
+> ---
 
-Therefore, introducing the perf framework to support creation
-and preserving of (CPU) events for offline CPUs. Through
-this, the CPU's online state would be transparent to the
-client and it not have to worry about monitoring the CPU's
-state. Success would be returned to the client even while
-creating the event on an offline CPU. If during the lifetime
-of the event the CPU walks offline, the event would be
-preserved and would continue to count as soon as (and if) the
-CPU comes back online.
 
-Co-authored-by: Peter Zijlstra <peterz@infradead.org>
-Signed-off-by: Raghavendra Rao Ananta <rananta@codeaurora.org>
-Signed-off-by: Mukesh Ojha <mojha@codeaurora.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Alexei Starovoitov <ast@kernel.org>
----
-Change in V4:
-=============
-- Released, __get_cpu_context would not be correct way to get the
-  cpu context of the cpu which is offline, instead use
-  container_of to get the cpuctx from ctx.
+The changelog should say something like:
 
-- Changed the goto label name inside event_function_call from
-  'remove_event_from_context' to 'out'.
+    This patch is a cleanup which replaces rtw_malloc(wep_total_len)
+    with kzalloc() and removes the memset().
 
-Change in V3:
-=============
-- Jiri has tried perf stat -a and removed one of the cpu from the other
-  terminal. This resulted in a crash. Crash was because in
-  event_function_call(), we were passing NULL as cpuctx in 
-  func(event, NULL, ctx, data).Fixed it in this patch.
+    The rtw_malloc() does GFP_ATOMIC allocations when in_atomic() is true.
+    But as the comments for in_atomic() describe, the in_atomic() check
+    should not be used in driver code.  The in_atomic() check is not
+    accurate when preempt is disabled.
 
-Change in V2:
-=============
-As per long back discussion happened at
-https://lkml.org/lkml/2018/2/15/1324
+    In this code we are not in IRQ context and we are not holding any
+    spin_locks so GFP_KERNEL is safe.
 
-Peter.Z. has suggested to do thing in different way and shared
-patch as well. This patch fixes the issue seen while trying
-to achieve the purpose.
-
-Fixed issue on top of Peter's patch:
-===================================
-1. Added a NULL check on task to avoid crash in __perf_install_in_context.
-
-2. while trying to add event to context when cpu is offline.
-   Inside add_event_to_ctx() to make consistent state machine while hotplug.
-
--event->state += PERF_EVENT_STATE_HOTPLUG_OFFSET;
-+event->state = PERF_EVENT_STATE_HOTPLUG_OFFSET;
-
-3. In event_function_call(), added a label 'remove_event_from_ctx' to
-   delete events from context list while cpu is offline.
-
- include/linux/perf_event.h |   1 +
- kernel/events/core.c       | 123 ++++++++++++++++++++++++++++-----------------
- 2 files changed, 79 insertions(+), 45 deletions(-)
-
-diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
-index 3dc01cf..52b14b2 100644
---- a/include/linux/perf_event.h
-+++ b/include/linux/perf_event.h
-@@ -511,6 +511,7 @@ enum perf_event_state {
- 	PERF_EVENT_STATE_OFF		= -1,
- 	PERF_EVENT_STATE_INACTIVE	=  0,
- 	PERF_EVENT_STATE_ACTIVE		=  1,
-+	PERF_EVENT_STATE_HOTPLUG_OFFSET	= -32,
- };
- 
- struct file;
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index 118ad1a..82b5106 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -248,6 +248,8 @@ static int event_function(void *info)
- static void event_function_call(struct perf_event *event, event_f func, void *data)
- {
- 	struct perf_event_context *ctx = event->ctx;
-+	struct perf_cpu_context *cpuctx =
-+				container_of(ctx, struct perf_cpu_context, ctx);
- 	struct task_struct *task = READ_ONCE(ctx->task); /* verified in event_function */
- 	struct event_function_struct efs = {
- 		.event = event,
-@@ -264,17 +266,18 @@ static void event_function_call(struct perf_event *event, event_f func, void *da
- 		lockdep_assert_held(&ctx->mutex);
- 	}
- 
--	if (!task) {
--		cpu_function_call(event->cpu, event_function, &efs);
--		return;
--	}
--
- 	if (task == TASK_TOMBSTONE)
- 		return;
- 
- again:
--	if (!task_function_call(task, event_function, &efs))
--		return;
-+	if (task) {
-+		if (!task_function_call(task, event_function, &efs))
-+			return;
-+	} else {
-+		if (!cpu_function_call(event->cpu, event_function, &efs))
-+			return;
-+	}
-+
- 
- 	raw_spin_lock_irq(&ctx->lock);
- 	/*
-@@ -286,11 +289,17 @@ static void event_function_call(struct perf_event *event, event_f func, void *da
- 		raw_spin_unlock_irq(&ctx->lock);
- 		return;
- 	}
-+
-+	if (!task)
-+		goto out;
-+
- 	if (ctx->is_active) {
- 		raw_spin_unlock_irq(&ctx->lock);
- 		goto again;
- 	}
--	func(event, NULL, ctx, data);
-+
-+out:
-+	func(event, cpuctx, ctx, data);
- 	raw_spin_unlock_irq(&ctx->lock);
- }
- 
-@@ -2310,7 +2319,7 @@ static void perf_set_shadow_time(struct perf_event *event,
- 	struct perf_event *event, *partial_group = NULL;
- 	struct pmu *pmu = ctx->pmu;
- 
--	if (group_event->state == PERF_EVENT_STATE_OFF)
-+	if (group_event->state <= PERF_EVENT_STATE_OFF)
- 		return 0;
- 
- 	pmu->start_txn(pmu, PERF_PMU_TXN_ADD);
-@@ -2389,6 +2398,14 @@ static int group_can_go_on(struct perf_event *event,
- static void add_event_to_ctx(struct perf_event *event,
- 			       struct perf_event_context *ctx)
- {
-+	if (!ctx->task) {
-+		struct perf_cpu_context *cpuctx =
-+			container_of(ctx, struct perf_cpu_context, ctx);
-+
-+		if (!cpuctx->online)
-+			event->state = PERF_EVENT_STATE_HOTPLUG_OFFSET;
-+	}
-+
- 	list_add_event(event, ctx);
- 	perf_group_attach(event);
- }
-@@ -2576,11 +2593,6 @@ static int  __perf_install_in_context(void *info)
- 	 */
- 	smp_store_release(&event->ctx, ctx);
- 
--	if (!task) {
--		cpu_function_call(cpu, __perf_install_in_context, event);
--		return;
--	}
--
- 	/*
- 	 * Should not happen, we validate the ctx is still alive before calling.
- 	 */
-@@ -2619,8 +2631,14 @@ static int  __perf_install_in_context(void *info)
- 	 */
- 	smp_mb();
- again:
--	if (!task_function_call(task, __perf_install_in_context, event))
--		return;
-+
-+	if (task) {
-+		if (!task_function_call(task, __perf_install_in_context, event))
-+			return;
-+	} else {
-+		if (!cpu_function_call(cpu, __perf_install_in_context, event))
-+			return;
-+	}
- 
- 	raw_spin_lock_irq(&ctx->lock);
- 	task = ctx->task;
-@@ -2637,7 +2655,7 @@ static int  __perf_install_in_context(void *info)
- 	 * If the task is not running, ctx->lock will avoid it becoming so,
- 	 * thus we can safely install the event.
- 	 */
--	if (task_curr(task)) {
-+	if (task && task_curr(task)) {
- 		raw_spin_unlock_irq(&ctx->lock);
- 		goto again;
- 	}
-@@ -11022,16 +11040,7 @@ static int perf_event_set_clock(struct perf_event *event, clockid_t clk_id)
- 	}
- 
- 	if (!task) {
--		/*
--		 * Check if the @cpu we're creating an event for is online.
--		 *
--		 * We use the perf_cpu_context::ctx::mutex to serialize against
--		 * the hotplug notifiers. See perf_event_{init,exit}_cpu().
--		 */
--		struct perf_cpu_context *cpuctx =
--			container_of(ctx, struct perf_cpu_context, ctx);
--
--		if (!cpuctx->online) {
-+		if (!cpu_possible(cpu)) {
- 			err = -ENODEV;
- 			goto err_locked;
- 		}
-@@ -11213,15 +11222,7 @@ struct perf_event *
- 	}
- 
- 	if (!task) {
--		/*
--		 * Check if the @cpu we're creating an event for is online.
--		 *
--		 * We use the perf_cpu_context::ctx::mutex to serialize against
--		 * the hotplug notifiers. See perf_event_{init,exit}_cpu().
--		 */
--		struct perf_cpu_context *cpuctx =
--			container_of(ctx, struct perf_cpu_context, ctx);
--		if (!cpuctx->online) {
-+		if (!cpu_possible(cpu)) {
- 			err = -ENODEV;
- 			goto err_unlock;
- 		}
-@@ -11949,17 +11950,48 @@ static void perf_swevent_init_cpu(unsigned int cpu)
- }
- 
- #if defined CONFIG_HOTPLUG_CPU || defined CONFIG_KEXEC_CORE
-+static void __perf_event_init_cpu_context(void *__info)
-+{
-+	struct perf_cpu_context *cpuctx = __info;
-+	struct perf_event_context *ctx = &cpuctx->ctx;
-+	struct perf_event_context *task_ctx = cpuctx->task_ctx;
-+	struct perf_event *event;
-+
-+	perf_ctx_lock(cpuctx, task_ctx);
-+	ctx_sched_out(ctx, cpuctx, EVENT_ALL);
-+	if (task_ctx)
-+		ctx_sched_out(task_ctx, cpuctx, EVENT_ALL);
-+
-+	list_for_each_entry_rcu(event, &ctx->event_list, event_entry)
-+		perf_event_set_state(event, event->state - PERF_EVENT_STATE_HOTPLUG_OFFSET);
-+
-+	perf_event_sched_in(cpuctx, task_ctx, current);
-+	perf_ctx_unlock(cpuctx, task_ctx);
-+}
-+
-+static void _perf_event_init_cpu_context(int cpu, struct perf_cpu_context *cpuctx)
-+{
-+	smp_call_function_single(cpu, __perf_event_init_cpu_context, cpuctx, 1);
-+}
-+
- static void __perf_event_exit_context(void *__info)
- {
--	struct perf_event_context *ctx = __info;
--	struct perf_cpu_context *cpuctx = __get_cpu_context(ctx);
-+	struct perf_cpu_context *cpuctx = __info;
-+	struct perf_event_context *ctx = &cpuctx->ctx;
-+	struct perf_event_context *task_ctx = cpuctx->task_ctx;
- 	struct perf_event *event;
- 
--	raw_spin_lock(&ctx->lock);
--	ctx_sched_out(ctx, cpuctx, EVENT_TIME);
--	list_for_each_entry(event, &ctx->event_list, event_entry)
--		__perf_remove_from_context(event, cpuctx, ctx, (void *)DETACH_GROUP);
--	raw_spin_unlock(&ctx->lock);
-+	perf_ctx_lock(cpuctx, task_ctx);
-+	ctx_sched_out(ctx, cpuctx, EVENT_ALL);
-+	if (task_ctx)
-+		ctx_sched_out(task_ctx, cpuctx, EVENT_ALL);
-+
-+	list_for_each_entry_rcu(event, &ctx->event_list, event_entry)
-+		perf_event_set_state(event,
-+			event->state + PERF_EVENT_STATE_HOTPLUG_OFFSET);
-+
-+	perf_event_sched_in(cpuctx, task_ctx, current);
-+	perf_ctx_unlock(cpuctx, task_ctx);
- }
- 
- static void perf_event_exit_cpu_context(int cpu)
-@@ -11974,7 +12006,7 @@ static void perf_event_exit_cpu_context(int cpu)
- 		ctx = &cpuctx->ctx;
- 
- 		mutex_lock(&ctx->mutex);
--		smp_call_function_single(cpu, __perf_event_exit_context, ctx, 1);
-+		smp_call_function_single(cpu, __perf_event_exit_context, cpuctx, 1);
- 		cpuctx->online = 0;
- 		mutex_unlock(&ctx->mutex);
- 	}
-@@ -11982,7 +12014,7 @@ static void perf_event_exit_cpu_context(int cpu)
- 	mutex_unlock(&pmus_lock);
- }
- #else
--
-+static void _perf_event_init_cpu_context(int cpu, struct perf_cpu_context *cpuctx) { }
- static void perf_event_exit_cpu_context(int cpu) { }
- 
- #endif
-@@ -12003,6 +12035,7 @@ int perf_event_init_cpu(unsigned int cpu)
- 
- 		mutex_lock(&ctx->mutex);
- 		cpuctx->online = 1;
-+		_perf_event_init_cpu_context(cpu, cpuctx);
- 		mutex_unlock(&ctx->mutex);
- 	}
- 	mutex_unlock(&pmus_lock);
--- 
-Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center,
-Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project
+regards,
+dan carpenter
 
