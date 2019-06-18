@@ -2,87 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 97AC349DA8
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 11:43:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 447DF49D9F
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 11:41:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729441AbfFRJna (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Jun 2019 05:43:30 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:41017 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729230AbfFRJna (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Jun 2019 05:43:30 -0400
-Received: by mail-wr1-f68.google.com with SMTP id c2so13172811wrm.8
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2019 02:43:28 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=7H+CZItQJTM8gOKdEIO6tgbmZC/1DVL8U5ona3SCpCI=;
-        b=OSXDR6nlPxra75do/Xp6yXf7P7utAhZYhdjBd83k54Wil3HKXsTgKNiKQisaukgzfa
-         gUqYTs8bKMqHc9p4YIK7sgyba5S0gA9bPDoIZBWTOxNrIiCynoyIywBaNZ/yJTSB41Vs
-         yFrWgI66vRfSAZAoPId2tS3xWWeEqqLLnL3ij2EG8jE4+4mbot5GT8/PFUB4Mi/pBG69
-         RtnN5HJM7mOYZh0+qGmN/fwMFJhO4avDpVpYwwekW8w5XsSUAhzQGnIzc7hVKA8bQRSr
-         YEpcf8JjtsCVYca69W0dr+G17icEGNfOU5vECH9HNd2GE7S87esO9/yYMZocurhlkgVG
-         6piQ==
-X-Gm-Message-State: APjAAAV1X/az0Ftl8m//pgjCg+PE5o2BqH+Ykes/dVC97+DN+ZsnvIPJ
-        nwMKyClwtNVdVp5eOc8TL4ZFsA==
-X-Google-Smtp-Source: APXvYqx1u72NgLWUSb0cmYjIEFnfvl7lohvWUsuD8u7IfbzZrWhSU9lechEAXsHLnsuA/1rkasQ/sQ==
-X-Received: by 2002:adf:ff84:: with SMTP id j4mr2988875wrr.71.1560851007943;
-        Tue, 18 Jun 2019 02:43:27 -0700 (PDT)
-Received: from ?IPv6:2001:b07:6468:f312:1da0:213e:1763:a1a8? ([2001:b07:6468:f312:1da0:213e:1763:a1a8])
-        by smtp.gmail.com with ESMTPSA id x8sm1752029wmc.5.2019.06.18.02.43.22
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Tue, 18 Jun 2019 02:43:27 -0700 (PDT)
-Subject: Re: [PATCH 22/43] KVM: nVMX: Don't dump VMCS if virtual APIC page
- can't be mapped
-To:     Sean Christopherson <sean.j.christopherson@intel.com>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        vkuznets@redhat.com, stable@vger.kernel.org
-References: <1560445409-17363-1-git-send-email-pbonzini@redhat.com>
- <1560445409-17363-23-git-send-email-pbonzini@redhat.com>
- <20190617191724.GA26860@flask> <20190617200700.GA30158@linux.intel.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Message-ID: <0d59375c-9313-d31a-4af9-d68115e05d55@redhat.com>
-Date:   Tue, 18 Jun 2019 11:43:29 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
-MIME-Version: 1.0
-In-Reply-To: <20190617200700.GA30158@linux.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        id S1729457AbfFRJl5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Jun 2019 05:41:57 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:57626 "EHLO inva021.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729230AbfFRJl4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Jun 2019 05:41:56 -0400
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 4BFD72003B7;
+        Tue, 18 Jun 2019 11:41:55 +0200 (CEST)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 2936C200269;
+        Tue, 18 Jun 2019 11:41:51 +0200 (CEST)
+Received: from localhost.localdomain (mega.ap.freescale.net [10.192.208.232])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id BEF8A402A0;
+        Tue, 18 Jun 2019 17:41:45 +0800 (SGT)
+From:   Anson.Huang@nxp.com
+To:     shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+        festevam@gmail.com, leonard.crestez@nxp.com, abel.vesa@nxp.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     Linux-imx@nxp.com
+Subject: [PATCH RESEND V2] soc: imx8: Use existing of_root directly
+Date:   Tue, 18 Jun 2019 17:43:38 +0800
+Message-Id: <20190618094338.11183-1-Anson.Huang@nxp.com>
+X-Mailer: git-send-email 2.17.1
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 17/06/19 22:07, Sean Christopherson wrote:
-> On Mon, Jun 17, 2019 at 09:17:24PM +0200, Radim Krčmář wrote:
->> 2019-06-13 19:03+0200, Paolo Bonzini:
->>> From: Sean Christopherson <sean.j.christopherson@intel.com>
->>>
->>> ... as a malicious userspace can run a toy guest to generate invalid
->>> virtual-APIC page addresses in L1, i.e. flood the kernel log with error
->>> messages.
->>>
->>> Fixes: 690908104e39d ("KVM: nVMX: allow tests to use bad virtual-APIC page address")
->>> Cc: stable@vger.kernel.org
->>> Cc: Paolo Bonzini <pbonzini@redhat.com>
->>> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
->>> Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
->>> ---
->>
->> Makes me wonder why it looks like this in kvm/queue. :)
-> 
-> Presumably something is wonky in Paolo's workflow, this happened before.
+From: Anson Huang <Anson.Huang@nxp.com>
 
-It's more my non-workflow... when I cannot find a patch for some reason
-(deleted by mistake, eaten by Gmane, etc.), I search it with Google and
-sometimes spinics.net comes up which mangles the domain.  I should just
-subscribe to kvm@vger.kernel.org since Gmane has gotten less reliable,
-or set up a Patchew instance for it.
+There is common of_root for reference, no need to find it
+from DT again, use of_root directly to make driver simple.
 
-Paolo
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+---
+ drivers/soc/imx/soc-imx8.c | 9 ++-------
+ 1 file changed, 2 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/soc/imx/soc-imx8.c b/drivers/soc/imx/soc-imx8.c
+index ef2406f..34ab993 100644
+--- a/drivers/soc/imx/soc-imx8.c
++++ b/drivers/soc/imx/soc-imx8.c
+@@ -94,7 +94,6 @@ static int __init imx8_soc_init(void)
+ {
+ 	struct soc_device_attribute *soc_dev_attr;
+ 	struct soc_device *soc_dev;
+-	struct device_node *root;
+ 	const struct of_device_id *id;
+ 	u32 soc_rev = 0;
+ 	const struct imx8_soc_data *data;
+@@ -106,12 +105,11 @@ static int __init imx8_soc_init(void)
+ 
+ 	soc_dev_attr->family = "Freescale i.MX";
+ 
+-	root = of_find_node_by_path("/");
+-	ret = of_property_read_string(root, "model", &soc_dev_attr->machine);
++	ret = of_property_read_string(of_root, "model", &soc_dev_attr->machine);
+ 	if (ret)
+ 		goto free_soc;
+ 
+-	id = of_match_node(imx8_soc_match, root);
++	id = of_match_node(imx8_soc_match, of_root);
+ 	if (!id) {
+ 		ret = -ENODEV;
+ 		goto free_soc;
+@@ -136,8 +134,6 @@ static int __init imx8_soc_init(void)
+ 		goto free_rev;
+ 	}
+ 
+-	of_node_put(root);
+-
+ 	return 0;
+ 
+ free_rev:
+@@ -145,7 +141,6 @@ static int __init imx8_soc_init(void)
+ 		kfree(soc_dev_attr->revision);
+ free_soc:
+ 	kfree(soc_dev_attr);
+-	of_node_put(root);
+ 	return ret;
+ }
+ device_initcall(imx8_soc_init);
+-- 
+2.7.4
+
