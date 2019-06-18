@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 407034A3FD
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 16:29:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 624B04A3F9
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 16:29:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729813AbfFRO3i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Jun 2019 10:29:38 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:50510 "EHLO
+        id S1729713AbfFRO3X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Jun 2019 10:29:23 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:50516 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729386AbfFRO3H (ORCPT
+        by vger.kernel.org with ESMTP id S1729406AbfFRO3H (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 18 Jun 2019 10:29:07 -0400
 Received: from [167.98.27.226] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hdF6e-0007nN-9x; Tue, 18 Jun 2019 15:29:04 +0100
+        id 1hdF6e-0007nG-6t; Tue, 18 Jun 2019 15:29:04 +0100
 Received: from ben by deadeye with local (Exim 4.92)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hdF6d-0000I1-Oy; Tue, 18 Jun 2019 15:29:03 +0100
+        id 1hdF6d-0000HR-Ef; Tue, 18 Jun 2019 15:29:03 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,19 +27,17 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        "Jonathan Lemon" <jonathan.lemon@gmail.com>,
-        "Jonathan Looney" <jtl@netflix.com>,
-        "Eric Dumazet" <edumazet@google.com>,
-        "Yuchung Cheng" <ycheng@google.com>,
-        "Bruce Curtis" <brucec@netflix.com>,
-        "Neal Cardwell" <ncardwell@google.com>,
-        "Tyler Hicks" <tyhicks@canonical.com>
+        "Dan Carpenter" <dan.carpenter@oracle.com>,
+        "Linus Torvalds" <torvalds@linux-foundation.org>,
+        "Timur Tabi" <timur@freescale.com>,
+        "Mihai Caraman" <mihai.caraman@freescale.com>,
+        "Kumar Gala" <galak@kernel.crashing.org>
 Date:   Tue, 18 Jun 2019 15:28:02 +0100
-Message-ID: <lsq.1560868082.100664112@decadent.org.uk>
+Message-ID: <lsq.1560868082.893490119@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 10/10] tcp: enforce tcp_min_snd_mss in tcp_mtu_probing()
+Subject: [PATCH 3.16 03/10] drivers/virt/fsl_hypervisor.c: prevent integer
+ overflow in ioctl
 In-Reply-To: <lsq.1560868079.359853905@decadent.org.uk>
 X-SA-Exim-Connect-IP: 167.98.27.226
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -53,41 +51,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eric Dumazet <edumazet@google.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-commit 967c05aee439e6e5d7d805e195b3a20ef5c433d6 upstream.
+commit 6a024330650e24556b8a18cc654ad00cfecf6c6c upstream.
 
-If mtu probing is enabled tcp_mtu_probing() could very well end up
-with a too small MSS.
+The "param.count" value is a u64 thatcomes from the user.  The code
+later in the function assumes that param.count is at least one and if
+it's not then it leads to an Oops when we dereference the ZERO_SIZE_PTR.
 
-Use the new sysctl tcp_min_snd_mss to make sure MSS search
-is performed in an acceptable range.
+Also the addition can have an integer overflow which would lead us to
+allocate a smaller "pages" array than required.  I can't immediately
+tell what the possible run times implications are, but it's safest to
+prevent the overflow.
 
-CVE-2019-11479 -- tcp mss hardcoded to 48
-
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Reported-by: Jonathan Lemon <jonathan.lemon@gmail.com>
-Cc: Jonathan Looney <jtl@netflix.com>
-Acked-by: Neal Cardwell <ncardwell@google.com>
-Cc: Yuchung Cheng <ycheng@google.com>
-Cc: Tyler Hicks <tyhicks@canonical.com>
-Cc: Bruce Curtis <brucec@netflix.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-[Salvatore Bonaccorso: Backport for context changes in 4.9.168]
-[bwh: Backported to 3.16: The sysctl is global]
+Link: http://lkml.kernel.org/r/20181218082129.GE32567@kadam
+Fixes: 6db7199407ca ("drivers/virt: introduce Freescale hypervisor management driver")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
+Cc: Timur Tabi <timur@freescale.com>
+Cc: Mihai Caraman <mihai.caraman@freescale.com>
+Cc: Kumar Gala <galak@kernel.crashing.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- net/ipv4/tcp_timer.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/virt/fsl_hypervisor.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/net/ipv4/tcp_timer.c
-+++ b/net/ipv4/tcp_timer.c
-@@ -113,6 +113,7 @@ static void tcp_mtu_probing(struct inet_
- 			mss = tcp_mtu_to_mss(sk, icsk->icsk_mtup.search_low) >> 1;
- 			mss = min(sysctl_tcp_base_mss, mss);
- 			mss = max(mss, 68 - tp->tcp_header_len);
-+			mss = max(mss, sysctl_tcp_min_snd_mss);
- 			icsk->icsk_mtup.search_low = tcp_mss_to_mtu(sk, mss);
- 			tcp_sync_mss(sk, icsk->icsk_pmtu_cookie);
- 		}
+--- a/drivers/virt/fsl_hypervisor.c
++++ b/drivers/virt/fsl_hypervisor.c
+@@ -215,6 +215,9 @@ static long ioctl_memcpy(struct fsl_hv_i
+ 	 * hypervisor.
+ 	 */
+ 	lb_offset = param.local_vaddr & (PAGE_SIZE - 1);
++	if (param.count == 0 ||
++	    param.count > U64_MAX - lb_offset - PAGE_SIZE + 1)
++		return -EINVAL;
+ 	num_pages = (param.count + lb_offset + PAGE_SIZE - 1) >> PAGE_SHIFT;
+ 
+ 	/* Allocate the buffers we need */
 
