@@ -2,179 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 03D7049BAB
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 10:02:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9A96B49AA4
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 09:32:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728864AbfFRICG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Jun 2019 04:02:06 -0400
-Received: from goliath.siemens.de ([192.35.17.28]:35895 "EHLO
-        goliath.siemens.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725913AbfFRICG (ORCPT
+        id S1726643AbfFRHck (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Jun 2019 03:32:40 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:44456 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725870AbfFRHck (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Jun 2019 04:02:06 -0400
-X-Greylist: delayed 1731 seconds by postgrey-1.27 at vger.kernel.org; Tue, 18 Jun 2019 04:02:04 EDT
-Received: from mail1.sbs.de (mail1.sbs.de [192.129.41.35])
-        by goliath.siemens.de (8.15.2/8.15.2) with ESMTPS id x5I7WDWe031030
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 18 Jun 2019 09:32:14 +0200
-Received: from [167.87.39.124] ([167.87.39.124])
-        by mail1.sbs.de (8.15.2/8.15.2) with ESMTP id x5I7WB2o021067;
-        Tue, 18 Jun 2019 09:32:12 +0200
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>, linux-kernel@vger.kernel.org
-From:   Jan Kiszka <jan.kiszka@siemens.com>
-Subject: [PATCH] x86: Optimize load_mm_cr4 to load_mm_cr4_irqsoff
-Message-ID: <0fbbcb64-5f26-4ffb-1bb9-4f5f48426893@siemens.com>
-Date:   Tue, 18 Jun 2019 09:32:11 +0200
-User-Agent: Mozilla/5.0 (X11; U; Linux i686 (x86_64); de; rv:1.8.1.12)
- Gecko/20080226 SUSE/2.0.0.12-1.1 Thunderbird/2.0.0.12 Mnenhy/0.7.5.666
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Tue, 18 Jun 2019 03:32:40 -0400
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5I7SVn7104593
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2019 03:32:38 -0400
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2t6ta4b7mt-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2019 03:32:38 -0400
+Received: from localhost
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
+        Tue, 18 Jun 2019 08:32:37 +0100
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 18 Jun 2019 08:32:33 +0100
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x5I7WWdI32702618
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 18 Jun 2019 07:32:32 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 94A9C4C046;
+        Tue, 18 Jun 2019 07:32:32 +0000 (GMT)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id DFB6B4C063;
+        Tue, 18 Jun 2019 07:32:30 +0000 (GMT)
+Received: from rapoport-lnx (unknown [9.148.8.53])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Tue, 18 Jun 2019 07:32:30 +0000 (GMT)
+Received: by rapoport-lnx (sSMTP sendmail emulation); Tue, 18 Jun 2019 10:32:30 +0300
+From:   Mike Rapoport <rppt@linux.ibm.com>
+To:     Will Deacon <will.deacon@arm.com>
+Cc:     Mark Rutland <mark.rutland@arm.com>, Qian Cai <cai@lca.pw>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-arm-kernel@lists.infradead.org,
+        Mike Rapoport <rppt@linux.ibm.com>
+Subject: [PATCH] arm64/mm: don't initialize pgd_cache twice
+Date:   Tue, 18 Jun 2019 10:32:29 +0300
+X-Mailer: git-send-email 2.7.4
+X-TM-AS-GCONF: 00
+x-cbid: 19061807-0016-0000-0000-0000028A04C9
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19061807-0017-0000-0000-000032E7538F
+Message-Id: <1560843149-13845-1-git-send-email-rppt@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-18_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=857 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1906180062
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jan Kiszka <jan.kiszka@siemens.com>
+When PGD_SIZE != PAGE_SIZE, arm64 uses kmem_cache for allocation of PGD
+memory. That cache was initialized twice: first through
+pgtable_cache_init() alias and then as an override for weak
+pgd_cache_init().
 
-We only call load_mm_cr4 with interrupts disabled:
- - switch_mm_irqs_off
- - refresh_pce (on_each_cpu callback)
+Remove the alias from pgtable_cache_init() and keep the only pgd_cache
+initialization in pgd_cache_init().
 
-Thus, we can avoid disabling interrupts again in cr4_set/clear_bits.
-
-Instead, provide cr4_set/clear_bits_irqsoffs and call those helpers from
-load_mm_cr4_irqsoff. The renaming in combination with the checks
-in __cr4_set shall ensure that any changes in the boundary conditions of
-the invocations will be detected.
-
-Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
+Fixes: caa841360134 ("x86/mm: Initialize PGD cache during mm initialization")
+Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
 ---
+ arch/arm64/include/asm/pgtable.h | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-Found while porting Xenomai with its virtualized interrupt
-infrastructure to a newer kernel.
-
- arch/x86/events/core.c             |  2 +-
- arch/x86/include/asm/mmu_context.h |  8 ++++----
- arch/x86/include/asm/tlbflush.h    | 30 +++++++++++++++++++++++-------
- arch/x86/mm/tlb.c                  |  2 +-
- 4 files changed, 29 insertions(+), 13 deletions(-)
-
-diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
-index f315425d8468..78a3fba28c62 100644
---- a/arch/x86/events/core.c
-+++ b/arch/x86/events/core.c
-@@ -2161,7 +2161,7 @@ static int x86_pmu_event_init(struct perf_event *event)
+diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
+index 2c41b04..851c68d 100644
+--- a/arch/arm64/include/asm/pgtable.h
++++ b/arch/arm64/include/asm/pgtable.h
+@@ -812,8 +812,7 @@ extern int kern_addr_valid(unsigned long addr);
  
- static void refresh_pce(void *ignored)
- {
--	load_mm_cr4(this_cpu_read(cpu_tlbstate.loaded_mm));
-+	load_mm_cr4_irqsoff(this_cpu_read(cpu_tlbstate.loaded_mm));
- }
+ #include <asm-generic/pgtable.h>
  
- static void x86_pmu_event_mapped(struct perf_event *event, struct mm_struct *mm)
-diff --git a/arch/x86/include/asm/mmu_context.h b/arch/x86/include/asm/mmu_context.h
-index 9024236693d2..16ae821483c8 100644
---- a/arch/x86/include/asm/mmu_context.h
-+++ b/arch/x86/include/asm/mmu_context.h
-@@ -28,16 +28,16 @@ static inline void paravirt_activate_mm(struct mm_struct *prev,
+-void pgd_cache_init(void);
+-#define pgtable_cache_init	pgd_cache_init
++static inline void pgtable_cache_init(void) { }
  
- DECLARE_STATIC_KEY_FALSE(rdpmc_always_available_key);
- 
--static inline void load_mm_cr4(struct mm_struct *mm)
-+static inline void load_mm_cr4_irqsoff(struct mm_struct *mm)
- {
- 	if (static_branch_unlikely(&rdpmc_always_available_key) ||
- 	    atomic_read(&mm->context.perf_rdpmc_allowed))
--		cr4_set_bits(X86_CR4_PCE);
-+		cr4_set_bits_irqsoff(X86_CR4_PCE);
- 	else
--		cr4_clear_bits(X86_CR4_PCE);
-+		cr4_clear_bits_irqsoff(X86_CR4_PCE);
- }
- #else
--static inline void load_mm_cr4(struct mm_struct *mm) {}
-+static inline void load_mm_cr4_irqsoff(struct mm_struct *mm) {}
- #endif
- 
- #ifdef CONFIG_MODIFY_LDT_SYSCALL
-diff --git a/arch/x86/include/asm/tlbflush.h b/arch/x86/include/asm/tlbflush.h
-index dee375831962..6f66d841262d 100644
---- a/arch/x86/include/asm/tlbflush.h
-+++ b/arch/x86/include/asm/tlbflush.h
-@@ -290,26 +290,42 @@ static inline void __cr4_set(unsigned long cr4)
- }
- 
- /* Set in this cpu's CR4. */
--static inline void cr4_set_bits(unsigned long mask)
-+static inline void cr4_set_bits_irqsoff(unsigned long mask)
- {
--	unsigned long cr4, flags;
-+	unsigned long cr4;
- 
--	local_irq_save(flags);
- 	cr4 = this_cpu_read(cpu_tlbstate.cr4);
- 	if ((cr4 | mask) != cr4)
- 		__cr4_set(cr4 | mask);
--	local_irq_restore(flags);
- }
- 
- /* Clear in this cpu's CR4. */
--static inline void cr4_clear_bits(unsigned long mask)
-+static inline void cr4_clear_bits_irqsoff(unsigned long mask)
- {
--	unsigned long cr4, flags;
-+	unsigned long cr4;
- 
--	local_irq_save(flags);
- 	cr4 = this_cpu_read(cpu_tlbstate.cr4);
- 	if ((cr4 & ~mask) != cr4)
- 		__cr4_set(cr4 & ~mask);
-+}
-+
-+/* Set in this cpu's CR4. */
-+static inline void cr4_set_bits(unsigned long mask)
-+{
-+	unsigned long flags;
-+
-+	local_irq_save(flags);
-+	cr4_set_bits_irqsoff(mask);
-+	local_irq_restore(flags);
-+}
-+
-+/* Clear in this cpu's CR4. */
-+static inline void cr4_clear_bits(unsigned long mask)
-+{
-+	unsigned long flags;
-+
-+	local_irq_save(flags);
-+	cr4_clear_bits_irqsoff(mask);
- 	local_irq_restore(flags);
- }
- 
-diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
-index 91f6db92554c..8fc1eaa55b6e 100644
---- a/arch/x86/mm/tlb.c
-+++ b/arch/x86/mm/tlb.c
-@@ -440,7 +440,7 @@ void switch_mm_irqs_off(struct mm_struct *prev, struct mm_struct *next,
- 	this_cpu_write(cpu_tlbstate.loaded_mm_asid, new_asid);
- 
- 	if (next != real_prev) {
--		load_mm_cr4(next);
-+		load_mm_cr4_irqsoff(next);
- 		switch_ldt(real_prev, next);
- 	}
- }
+ /*
+  * On AArch64, the cache coherency is handled via the set_pte_at() function.
 -- 
-2.16.4
+2.7.4
+
