@@ -2,102 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 25F5F49B35
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 09:47:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AD37449B79
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 09:49:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729283AbfFRHrd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Jun 2019 03:47:33 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:40668 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726768AbfFRHrc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Jun 2019 03:47:32 -0400
-Received: by mail-pf1-f193.google.com with SMTP id p184so7154085pfp.7
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2019 00:47:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=m9kWU4Wyh0nUtIn5ZBz57UUg5pTNFygG2evwRUANN1M=;
-        b=i9Kme+VbcXRi1zjpBD7iIzvpMagzeVyhTd4n/VvOx4aaVfkgJh/bzhahGNYtAwCCOA
-         DwDF6m7/Xucseh1RMtbpnynAOM8o9ukJePgNWNAQUcgS8sx7k5GKF/vLxGQSpmAXwV4f
-         buEqIn1OqmfOGJh63tAffQ0Uw8DnWuzX3ATtRm54T2N8DhTzeTVct40nlRbLaFlWoDH+
-         JLZ0k8dG8L5EZ/Rjv1GHyAWDooqo06Om6s2QGClxw4rE5HWBOu4U1L1Wr8JsKxWMrLTI
-         cMSmddzuJYIidMUaGNAajZOVOPx0GEN2iNuZJMDjksiomojZf3DDcYdxC7Bi53cp4P/P
-         KK+Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=m9kWU4Wyh0nUtIn5ZBz57UUg5pTNFygG2evwRUANN1M=;
-        b=Kqmy+onl1W3qHwY1chxnqU+TmViTwwai8mBb61vflXo37vWEMJM6jKzyYN+LT24vhX
-         vmI78Lm9FA7lfETm1987XH3tSwrDA9MUbSzbqkv28GHcxtcV8BhnpftqRHpZJVtcTqM0
-         bZxnSHn249q/27WarMAXwRCF01pDuQ+qryedXX0Xo6vlafrUFOrZGwsk1pl+dXa+3hMO
-         UV+fMY58Bb4kPhaWae+asiPq+9oZreTTe2j8faNbH96Tinqo/EXFrTFaRaFFJkg/Wq/3
-         ogUCXLiwGuTvFFH0GScutStyIXSlLavR52QZLQ8SsmU48zcCSo9/YkZx0lzfzuIfiT5U
-         i58g==
-X-Gm-Message-State: APjAAAU5WRQgvSN7VXu1J8GATIyT4IJOPNeceqhAynetrCHssLfg72P5
-        zmVNBaSNyDxbM82oDvpdS7fyUg==
-X-Google-Smtp-Source: APXvYqzoZrCGfiZDIky+YWcabe0Ihtb/5V8EZ1kNy9BbFLukJBpuUb2/MKlZVKIwOuQqI7eyR0AS8w==
-X-Received: by 2002:a63:1d10:: with SMTP id d16mr1416444pgd.446.1560844051594;
-        Tue, 18 Jun 2019 00:47:31 -0700 (PDT)
-Received: from localhost ([122.172.66.84])
-        by smtp.gmail.com with ESMTPSA id ci15sm2914468pjb.12.2019.06.18.00.47.29
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 18 Jun 2019 00:47:30 -0700 (PDT)
-Date:   Tue, 18 Jun 2019 13:17:28 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Quentin Perret <quentin.perret@arm.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>
-Subject: Re: [PATCH] sched/fair: Introduce fits_capacity()
-Message-ID: <20190618074728.gf6wugkbndhhcqql@vireshk-i7>
-References: <b477ac75a2b163048bdaeb37f57b4c3f04f75a31.1559631700.git.viresh.kumar@linaro.org>
- <20190605091644.w3g7hc7r3eiscz4f@queper01-lin>
- <20190606025204.qe5v7j6fysjkgxc6@vireshk-i7>
- <20190617150204.GG3436@hirez.programming.kicks-ass.net>
- <20190618031217.63md32da5pzydqia@vireshk-i7>
- <CAJZ5v0g4shiz+Hq+0fS1GQjQX7tK5EyLiX-SOpDoTm4xswV8bg@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAJZ5v0g4shiz+Hq+0fS1GQjQX7tK5EyLiX-SOpDoTm4xswV8bg@mail.gmail.com>
-User-Agent: NeoMutt/20180716-391-311a52
+        id S1728954AbfFRHtO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Jun 2019 03:49:14 -0400
+Received: from foss.arm.com ([217.140.110.172]:55246 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725870AbfFRHtN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Jun 2019 03:49:13 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E3FD328;
+        Tue, 18 Jun 2019 00:49:12 -0700 (PDT)
+Received: from big-swifty.misterjones.org (unknown [172.31.20.19])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 86EF23F246;
+        Tue, 18 Jun 2019 00:49:11 -0700 (PDT)
+Date:   Tue, 18 Jun 2019 08:48:56 +0100
+Message-ID: <86h88npc47.wl-marc.zyngier@arm.com>
+From:   Marc Zyngier <marc.zyngier@arm.com>
+To:     Kefeng Wang <wangkefeng.wang@huawei.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        <linux-kernel@vger.kernel.org>, <guohanjun@huawei.com>
+Subject: Re: [PATCH] irqchip/mbigen: stop printing kernel addresses
+In-Reply-To: <20190618032202.11087-1-wangkefeng.wang@huawei.com>
+References: <20190618032202.11087-1-wangkefeng.wang@huawei.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 EasyPG/1.0.0 Emacs/26
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+Organization: ARM Ltd
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 18-06-19, 09:26, Rafael J. Wysocki wrote:
-> On Tue, Jun 18, 2019 at 5:12 AM Viresh Kumar <viresh.kumar@linaro.org> wrote:
-> >
-> > +Rafael
-> >
-> > On 17-06-19, 17:02, Peter Zijlstra wrote:
-> > > On Thu, Jun 06, 2019 at 08:22:04AM +0530, Viresh Kumar wrote:
-> > > > Hmm, even if the values are same currently I am not sure if we want
-> > > > the same for ever. I will write a patch for it though, if Peter/Rafael
-> > > > feel the same as you.
-> > >
-> > > Is it really the same variable or just two numbers that happen to be the
-> > > same?
-> >
-> > In both cases we are trying to keep the load under 80% of what can be supported.
-> > But I am not sure of the answer to your question.
-> >
-> > Maybe Rafael knows :)
+Hi Kefeng,
+
+On Tue, 18 Jun 2019 04:22:02 +0100,
+Kefeng Wang <wangkefeng.wang@huawei.com> wrote:
 > 
-> Which variable?
+> After commit ad67b74d2469d9b8 ("printk: hash addresses printed with %p"),
+> it will print "____ptrval____" instead of actual addresses when mbigen
+> create domain fails,
+> 
+>   Hisilicon MBIGEN-V2 HISI0152:00: Failed to create mbi-gen@(____ptrval____) irqdomain
+>   Hisilicon MBIGEN-V2: probe of HISI0152:00 failed with error -12
+> 
+> Instead of changing the print to "%px", and leaking kernel addresses,
+> just remove the print completely.
+> 
+> Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
+> ---
+>  drivers/irqchip/irq-mbigen.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> diff --git a/drivers/irqchip/irq-mbigen.c b/drivers/irqchip/irq-mbigen.c
+> index 98b6e1d4b1a6..d0cf596c801b 100644
+> --- a/drivers/irqchip/irq-mbigen.c
+> +++ b/drivers/irqchip/irq-mbigen.c
+> @@ -355,8 +355,7 @@ static int mbigen_device_probe(struct platform_device *pdev)
+>  		err = -EINVAL;
+>  
+>  	if (err) {
+> -		dev_err(&pdev->dev, "Failed to create mbi-gen@%p irqdomain",
+> -			mgn_chip->base);
+> +		dev_err(&pdev->dev, "Failed to create mbi-gen irqdomain");
 
-Schedutil multiplies the target frequency by 1.25 (20% more capacity eventually)
-to get enough room for more load and similar thing is done in fair.c at several
-places to see if the new task can fit in a runqueue without overloading it.
+The alternative would be to print res as a resource, which would still
+help identifying the offending device by printing its physical
+layout, and still not reveal much.
 
-Quentin suggested to use common code for this calculation and that is what is
-getting discussed here.
+Just let me know what you prefer.
+
+Thanks,
+
+	M.
+
+>  		return err;
+>  	}
+>  
+> -- 
+> 2.20.1
+> 
 
 -- 
-viresh
+Jazz is not dead, it just smells funny.
