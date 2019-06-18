@@ -2,140 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9D2764ABAB
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 22:24:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F2CCE4ABC6
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 22:27:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730642AbfFRUYm convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 18 Jun 2019 16:24:42 -0400
-Received: from mga09.intel.com ([134.134.136.24]:12871 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730510AbfFRUYl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Jun 2019 16:24:41 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Jun 2019 13:24:40 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.63,390,1557212400"; 
-   d="scan'208";a="357972736"
-Received: from orsmsx103.amr.corp.intel.com ([10.22.225.130])
-  by fmsmga005.fm.intel.com with ESMTP; 18 Jun 2019 13:24:39 -0700
-Received: from orsmsx110.amr.corp.intel.com ([169.254.10.92]) by
- ORSMSX103.amr.corp.intel.com ([169.254.5.135]) with mapi id 14.03.0439.000;
- Tue, 18 Jun 2019 13:24:37 -0700
-From:   "Moore, Robert" <robert.moore@intel.com>
-To:     Nikolaus Voss <nv@vosn.de>
-CC:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>,
-        "Schmauss, Erik" <erik.schmauss@intel.com>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        "open list:ACPI COMPONENT ARCHITECTURE (ACPICA)" <devel@acpica.org>,
-        "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>,
-        Linux PWM List <linux-pwm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v2 1/3] ACPI: Resolve objects on host-directed table
- loads
-Thread-Topic: [PATCH v2 1/3] ACPI: Resolve objects on host-directed table
- loads
-Thread-Index: AQHVIPn/qqDB5Bv4z0aSsleXlAnDw6abVhaAgAADpwD///G0sIAEkokAgACES6CAAT+dAIAANdnAgAALWnCAAAJ3oA==
-Date:   Tue, 18 Jun 2019 20:24:37 +0000
-Message-ID: <94F2FBAB4432B54E8AACC7DFDE6C92E3B95FB097@ORSMSX110.amr.corp.intel.com>
-References: <cover.1560327219.git.nikolaus.voss@loewensteinmedical.de>
- <e2a4ddfd93a904b50b7ccc074e00e14dc4661963.1560327219.git.nikolaus.voss@loewensteinmedical.de>
- <CAJZ5v0jqxWs=PPik-TCDqQiyxCSyRP7HTue1WsdWP9e-nik2eA@mail.gmail.com>
- <alpine.DEB.2.20.1906141114490.6579@fox.voss.local>
- <94F2FBAB4432B54E8AACC7DFDE6C92E3B95EFB26@ORSMSX110.amr.corp.intel.com>
- <alpine.DEB.2.20.1906170746150.12344@fox.voss.local>
- <94F2FBAB4432B54E8AACC7DFDE6C92E3B95F9EC6@ORSMSX110.amr.corp.intel.com>
- <alpine.DEB.2.20.1906181030240.24846@fox.voss.local>  
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiYWYzNDM4MzQtOGVmNS00ZTRiLWJkZTktZDExNTM1YTg5ZDk3IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoialA3Y1d2Z3ZkMnZ2VUpzaXc3aDBTaWxGMFFmdEE4QUdvRCtYSHUrWWozN0g3cnRLckZMc1hwbEdXZkdmditHZiJ9
-x-ctpclassification: CTP_NT
-dlp-product: dlpe-windows
-dlp-version: 11.0.600.7
-dlp-reaction: no-action
-x-originating-ip: [10.22.254.140]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        id S1730599AbfFRU1W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Jun 2019 16:27:22 -0400
+Received: from mail-yw1-f67.google.com ([209.85.161.67]:38823 "EHLO
+        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725909AbfFRU1W (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Jun 2019 16:27:22 -0400
+Received: by mail-yw1-f67.google.com with SMTP id k125so7290397ywe.5;
+        Tue, 18 Jun 2019 13:27:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=7QMKaBxL4CnjzjmwadmOPe4XGvcXSwVBiLXM53oPLnQ=;
+        b=T+Dq0x7EPaLEza5d0zMKW1NvBlc7WCBqZ+ukuGL2lbxDTMhAQhjyRaZMsSlHWnz0b9
+         /NZLi/7k0NU6v3Ss1efP5H1LgDf5cReCDPURqtuDLd/xtTYqzCBKrOmPCwUC7Qx47+LH
+         VSfo829s+FB+SvzSurYMnZK4WTt9duhifHFO+wlg02GGu+z3j6OkRVeIRaHu7/lUMVGB
+         VzeYWdBIfhLkk/NzUgloOk9HcYQjLqKg3tQwarad3Tpf7tfq70D3kkGYMnaap6Ir6cZX
+         uyKKRaFq+/v5+TdS9xos5awfWpyq/fmp6+4qWOjRqa6fJpcE4s/w/50za6dTISqYPoj0
+         6ImA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=7QMKaBxL4CnjzjmwadmOPe4XGvcXSwVBiLXM53oPLnQ=;
+        b=RQOpqinHFODawXZo8pVEg/yk3rwQJ0vs4Gh8b+pd3BigE0P181S3i0VVDQqRvphRFD
+         F0Vl43I2cdjl51l0QlX28t22zZBx3pYXkjfc8orBadJMrYVRMblRO5g71rFrv5G/eb3r
+         PO8ea+yBNFWFptRbscmJjox8QYUa3t7cj7bLasOI8pmDVMs4ggj/km36M76yqiPwbbr+
+         4osR0cWL4Bp5u8tcOwyY8HS1n2C4p6jlYhlklhbJpx4yqY8lTTdwlrdlM6mCp4ekF/DR
+         LFyfQfMVkJjdLH5avW9HDH43k1U7BA+HhnsKXsF2Vn6jwTqrJVTmPtwzjlPndCktFbz8
+         i+uA==
+X-Gm-Message-State: APjAAAUqjpXfZtQbTT+nMJ9m6gMgESYiN3azYW9mWaJlNklU2kQ2rEZq
+        hQ4itJncGTxRg9vBZfe7tCcwCA/5Q9l5GvK6dhU=
+X-Google-Smtp-Source: APXvYqzOmIwVBwcmvQvSRdvCPmiYYWYbAEJNnMJ3QxF6seY1ZPR0HzYHP2MAVg0VNKuRWH6wVnKCGsD7iOmD9ELl3dY=
+X-Received: by 2002:a81:3956:: with SMTP id g83mr65870477ywa.183.1560889641067;
+ Tue, 18 Jun 2019 13:27:21 -0700 (PDT)
 MIME-Version: 1.0
+References: <000000000000623c45058b9c2479@google.com>
+In-Reply-To: <000000000000623c45058b9c2479@google.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Tue, 18 Jun 2019 23:27:09 +0300
+Message-ID: <CAOQ4uxhsnOXXVCuOT4p4c_koBMFfprWwdtCPGNGhzprFaJZwRA@mail.gmail.com>
+Subject: Re: WARNING in fanotify_handle_event
+To:     Jan Kara <jack@suse.cz>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        syzbot <syzbot+c277e8e2f46414645508@syzkaller.appspotmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If it is in fact the AcpiLoadTable interface that is incorrect, that of course is different. I'll check that out next.
+On Tue, Jun 18, 2019 at 8:07 PM syzbot
+<syzbot+c277e8e2f46414645508@syzkaller.appspotmail.com> wrote:
+>
+> Hello,
+>
+> syzbot found the following crash on:
+>
+> HEAD commit:    963172d9 Merge branch 'x86-urgent-for-linus' of git://git...
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=17c090eaa00000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=fa9f7e1b6a8bb586
+> dashboard link: https://syzkaller.appspot.com/bug?extid=c277e8e2f46414645508
+> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15a32f46a00000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13a7dc9ea00000
+>
+> The bug was bisected to:
+>
+> commit 77115225acc67d9ac4b15f04dd138006b9cd1ef2
+> Author: Amir Goldstein <amir73il@gmail.com>
+> Date:   Thu Jan 10 17:04:37 2019 +0000
+>
+>      fanotify: cache fsid in fsnotify_mark_connector
+>
+> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=12bfcb66a00000
+> final crash:    https://syzkaller.appspot.com/x/report.txt?x=11bfcb66a00000
+> console output: https://syzkaller.appspot.com/x/log.txt?x=16bfcb66a00000
+>
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+c277e8e2f46414645508@syzkaller.appspotmail.com
+> Fixes: 77115225acc6 ("fanotify: cache fsid in fsnotify_mark_connector")
+>
+> WARNING: CPU: 0 PID: 8994 at fs/notify/fanotify/fanotify.c:359
+> fanotify_get_fsid fs/notify/fanotify/fanotify.c:359 [inline]
 
+Oops, we forgot to update conn->fsid when the first mark added
+for inode has no fsid (e.g. inotify) and the second mark has fid,
+which is more or less the only thing the repro does.
+And if we are going to update conn->fsid, we do no have the
+cmpxchg to guaranty setting fsid atomically.
 
-> -----Original Message-----
-> From: Moore, Robert
-> Sent: Tuesday, June 18, 2019 1:23 PM
-> To: 'Nikolaus Voss' <nv@vosn.de>
-> Cc: 'Rafael J. Wysocki' <rafael@kernel.org>; 'Rafael J. Wysocki'
-> <rjw@rjwysocki.net>; 'Len Brown' <lenb@kernel.org>; Schmauss, Erik
-> <erik.schmauss@intel.com>; 'Jacek Anaszewski'
-> <jacek.anaszewski@gmail.com>; 'Pavel Machek' <pavel@ucw.cz>; 'Dan
-> Murphy' <dmurphy@ti.com>; 'Thierry Reding' <thierry.reding@gmail.com>;
-> 'ACPI Devel Maling List' <linux-acpi@vger.kernel.org>; 'open list:ACPI
-> COMPONENT ARCHITECTURE (ACPICA)' <devel@acpica.org>; 'linux-
-> leds@vger.kernel.org' <linux-leds@vger.kernel.org>; 'Linux PWM List'
-> <linux-pwm@vger.kernel.org>; 'Linux Kernel Mailing List' <linux-
-> kernel@vger.kernel.org>
-> Subject: RE: [PATCH v2 1/3] ACPI: Resolve objects on host-directed table
-> loads
-> 
-> It looks to me that the package objects are being initialized properly
-> already, unless I'm missing something. Please check the examples below
-> and in the attached files.
-> 
-> Attached is a small test case that dynamically loads an SSDT which
-> contains a package object which in turn contains references to other
-> objects.
-> 
-> 
-> Main DSDT:
->     Method (LD1)
->     {
->         Load (BUF1, HNDL)      // SSDT is in BUF1
->         Store (HNDL, Debug)
->         Return
->     }
-> 
-> Loaded table:
->     External (DEV1, DeviceObj)
->     Name (PKG1, Package() {
->         1,2, DEV2, DEV1, 4})
->     Device (DEV2) {}
-> 
-> 
-> AcpiExec Output:
-> - ev ld1
-> Evaluating \LD1
-> ACPI: Dynamic OEM Table Load:
-> ACPI: SSDT 0x00000000006DEEB8 000051 (v02 Intel  Load     00000001 INTL
-> 20190509)
-> ACPI Exec: Table Event INSTALL, [SSDT] 006DEEB8
-> Table [SSDT: Load    ] (id 06) -    5 Objects with   1 Devices,   0
-> Regions,    1 Methods
-> ACPI Exec: Table Event LOAD, [SSDT] 006DEEB8 ACPI Debug:  Reference
-> [DdbHandle] Table Index 0x3
-> 0x7 Outstanding allocations after evaluation of \LD1 Evaluation of \LD1
-> returned object 006D2FE8, external buffer length 18
->   [Integer] = 0000000000000000
-> 
-> - ev pkg1
-> Evaluating \PKG1
-> Evaluation of \PKG1 returned object 006D2FE8, external buffer length 90
->   [Package] Contains 5 Elements:
->     [Integer] = 0000000000000001
->     [Integer] = 0000000000000002
->     [Object Reference] = 006DDF88 <Node>            Name DEV2 Device
->     [Object Reference] = 006DD608 <Node>            Name DEV1 Device
->     [Integer] = 0000000000000004
+I am thinking a set-once flag on connector FSNOTIFY_CONN_HAS_FSID
+checked before smp_rmb() in fanotify_get_fsid().
+If the flag is not set then call vfs_get_fsid() instead of using fsid cache.
+conn->fsid can be updated in fsnotify_add_mark_list() under conn->lock,
+and flag set after smp_wmb().
 
+Does that sound correct?
+
+Thanks,
+Amir.
