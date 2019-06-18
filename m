@@ -2,102 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E743F49DB3
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 11:46:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0C63C49DBA
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 11:47:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729580AbfFRJqF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Jun 2019 05:46:05 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:39021 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729325AbfFRJqF (ORCPT
+        id S1729610AbfFRJrH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Jun 2019 05:47:07 -0400
+Received: from smtprelay-out1.synopsys.com ([198.182.47.102]:60240 "EHLO
+        smtprelay-out1.synopsys.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729203AbfFRJrG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Jun 2019 05:46:05 -0400
-Received: by mail-lj1-f196.google.com with SMTP id v18so12430301ljh.6
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2019 02:46:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=dFNO/LKvYXvmFansFhyqwV2emff3osiWobNFjm+LOZY=;
-        b=KoP3nBVtEN46bstqiMPFdsUTbbPqY93iN7frcTYWr8sCkKcBebn35gCjj5jqcvfKhd
-         fAuG3oSUIsxzueLCci8XKFWf5vyJEcjs8vc/tenn/7tedfBJnIjkrUS2emDtyh1XcVKN
-         oJDo3aSm0I9kNs8kSqe8S7BpxGPY/S1XIGyrpqJwXiVoAjJ21EkDkul6gD/j+g2k7chV
-         1q8IYd1jAabrLTjzTFW+sNKXtfxKxoVVe4Tv2xbq9ilJGzSX2Xwu1c6FkoVxQK/B9d7O
-         5xswsVa1q7duPRYnUKJhxEn70tEaolrLmQiQYoN4UFh8A5Cuug+J++VyRPd/hcvZEWkl
-         4ciw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=dFNO/LKvYXvmFansFhyqwV2emff3osiWobNFjm+LOZY=;
-        b=tuM3mcKIBdRsj0oyb+jA4LHjPpp/lR0KLIfPcMpq+VzeAhmQzAPOpooQs96TStF9KC
-         4dt10SoXtzHUT46Ju5ApFu0wyCuXqqmcGwkBnHOZLTWQgp1UD7GUjPtQCKgZ8hi4QMor
-         cWPVXTAhnAKw/Sb/5jL+Mrg9o94J3Tj2Y3bCRv6jHsfqnUqTKOqrVBwtcdeal1/T/57j
-         Zy0xPO1m/DZ46X0FHzKgnF6DAJyipy7OkP4LVRaMy4xldXCUTCto9lV4O5dhNmBAbJVM
-         CC8UALTI+Ca08D1ZPygZvFjwD1yCDKKDxj32PINVUG+Q3VaLyPj1Uv7X8FR5eI3xYJHW
-         e6Vw==
-X-Gm-Message-State: APjAAAUGtQ4ywyiwVch66Cee0WUnEWhQxs+aatQQS3cnj7r+iSr5Cax7
-        Q6p5WYsqN8a3TkrTAPCehckXkRLu/9XM2JTxzLg73Q==
-X-Google-Smtp-Source: APXvYqwLdmo7/UQzJICTwX7MmW1II8rP/12ROJHu2fbSKBjfNIwSirb55B1kWr5B7bMLEWjTiNO044PrL3t15XUYJ7U=
-X-Received: by 2002:a2e:1290:: with SMTP id 16mr43089752ljs.88.1560851163194;
- Tue, 18 Jun 2019 02:46:03 -0700 (PDT)
-MIME-Version: 1.0
-References: <1560783617-5827-1-git-send-email-vincent.guittot@linaro.org>
- <c8030f30-0899-070b-df3c-3839ec7e1909@arm.com> <20190618093453.GN3436@hirez.programming.kicks-ass.net>
-In-Reply-To: <20190618093453.GN3436@hirez.programming.kicks-ass.net>
-From:   Vincent Guittot <vincent.guittot@linaro.org>
-Date:   Tue, 18 Jun 2019 11:45:52 +0200
-Message-ID: <CAKfTPtAcV-CS_6hibJa0N6U925KASw1Eg7OSDcBt-Hw_frQkXw@mail.gmail.com>
-Subject: Re: [PATCH] sched/topology: remove unused sd param from arch_scale_cpu_capacity()
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Valentin Schneider <valentin.schneider@arm.com>,
-        "open list:THERMAL" <linux-pm@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        LAK <linux-arm-kernel@lists.infradead.org>,
+        Tue, 18 Jun 2019 05:47:06 -0400
+Received: from mailhost.synopsys.com (dc8-mailhost2.synopsys.com [10.13.135.210])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (No client certificate requested)
+        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id E01AFC01A4;
+        Tue, 18 Jun 2019 09:47:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1560851225; bh=Rqzx3uY9EUXjmjAhh+pT/tAUt/DkvOXA2RUyG7eB3Iw=;
+        h=From:To:CC:Subject:Date:References:In-Reply-To:From;
+        b=g8ZVwcnSCkJKtPUHXp0Z1d10qnnDXGbwdJiU0N+Psize73SDO8WvWLcvttGR4lqvi
+         ZZntyzawO7F+5/3p66R2eojzGp3/oe/++bkIM/NueynMti1iyofEPQIwNOs3UwIq85
+         8Pc5Z3afimrmtbymhO1uMDf7jvX0fRYgc6qWDoUL3JeO2zea4yb/gRV+3dOnhnBX2c
+         Hcr20yDRg+i+D6OO4yyZmH6XzRbVIvg7MentW4GcjBOdVv7h7tT9/169gRWzXQmrb9
+         e1tgpnLl9ohqwIBcCEXdjr4lJR5XWgxw2sF/YF5tZOsuU2ciGzRTjfiGs9wM/kGU2y
+         YeCkp0sDLxgCA==
+Received: from us01wehtc1.internal.synopsys.com (us01wehtc1-vip.internal.synopsys.com [10.12.239.236])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mailhost.synopsys.com (Postfix) with ESMTPS id 15B30A0067;
+        Tue, 18 Jun 2019 09:47:00 +0000 (UTC)
+Received: from DE02WEHTCA.internal.synopsys.com (10.225.19.92) by
+ us01wehtc1.internal.synopsys.com (10.12.239.231) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Tue, 18 Jun 2019 02:47:00 -0700
+Received: from DE02WEMBXB.internal.synopsys.com ([fe80::95ce:118a:8321:a099])
+ by DE02WEHTCA.internal.synopsys.com ([::1]) with mapi id 14.03.0415.000; Tue,
+ 18 Jun 2019 11:46:58 +0200
+From:   Jose Abreu <Jose.Abreu@synopsys.com>
+To:     Jon Hunter <jonathanh@nvidia.com>,
+        Jose Abreu <Jose.Abreu@synopsys.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>
+CC:     Joao Pinto <Joao.Pinto@synopsys.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
         Russell King <linux@armlinux.org.uk>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        viresh kumar <viresh.kumar@linaro.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Quentin Perret <quentin.perret@arm.com>
-Content-Type: text/plain; charset="UTF-8"
+        Andrew Lunn <andrew@lunn.ch>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        linux-tegra <linux-tegra@vger.kernel.org>
+Subject: RE: [PATCH net-next 3/3] net: stmmac: Convert to phylink and remove
+ phylib logic
+Thread-Topic: [PATCH net-next 3/3] net: stmmac: Convert to phylink and
+ remove phylib logic
+Thread-Index: AQHVIGkArVRmnWNiHUiOZ+Vq9aFNYKahDpUAgAAiuoD//+CkgIAAIfYQ
+Date:   Tue, 18 Jun 2019 09:46:57 +0000
+Message-ID: <78EB27739596EE489E55E81C33FEC33A0B9C8DD9@DE02WEMBXB.internal.synopsys.com>
+References: <cover.1560266175.git.joabreu@synopsys.com>
+ <6226d6a0de5929ed07d64b20472c52a86e71383d.1560266175.git.joabreu@synopsys.com>
+ <d9ffce3d-4827-fa4a-89e8-0492c4bc1848@nvidia.com>
+ <78EB27739596EE489E55E81C33FEC33A0B9C8D6E@DE02WEMBXB.internal.synopsys.com>
+ <26cfaeff-a310-3b79-5b57-fd9c93bd8929@nvidia.com>
+In-Reply-To: <26cfaeff-a310-3b79-5b57-fd9c93bd8929@nvidia.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.107.19.15]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 18 Jun 2019 at 11:34, Peter Zijlstra <peterz@infradead.org> wrote:
->
-> On Mon, Jun 17, 2019 at 06:07:29PM +0100, Valentin Schneider wrote:
-> > Hi,
-> >
-> > On 17/06/2019 16:00, Vincent Guittot wrote:
-> > > struct sched_domain *sd parameter is not used anymore in
-> > > arch_scale_cpu_capacity() so we can remove it.
-> > >
-> >
-> > I think it can't hurt to give a bit of background. The *sd parameter used
-> > to be there for smt_gain, which got snipped out by:
-> >
-> >   765d0af19f5f ("sched/topology: Remove the ::smt_gain field from 'struct sched_domain'")
-> >
-> > I'd appreciate having that commit mentioned in the log.
-> >
-> > > Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
-> >
-> > Other than that, the changes look fine to me.
-> >
-> > Reviewed-by: Valentin Schneider <valentin.schneider@arm.com>
->
-> The commit log now reads:
->
-> ---
-> The 'struct sched_domain *sd' argument to arch_scale_cpu_capacity() is
-> unused since commit:
->
->   765d0af19f5f ("sched/topology: Remove the ::smt_gain field from 'struct sched_domain'")
->
-> remove it.
-> ---
-
-Thanks
+RnJvbTogSm9uIEh1bnRlciA8am9uYXRoYW5oQG52aWRpYS5jb20+DQoNCj4gSSBhbSBub3QgY2Vy
+dGFpbiBidXQgSSBkb24ndCBiZWxpZXZlIHNvLiBXZSBhcmUgdXNpbmcgYSBzdGF0aWMgSVAgYWRk
+cmVzcw0KPiBhbmQgbW91bnRpbmcgdGhlIHJvb3QgZmlsZS1zeXN0ZW0gdmlhIE5GUyB3aGVuIHdl
+IHNlZSB0aGlzIC4uLg0KDQpDYW4geW91IHBsZWFzZSBhZGQgYSBjYWxsIHRvIG5hcGlfc3luY2hy
+b25pemUoKSBiZWZvcmUgZXZlcnkgDQpuYXBpX2Rpc2FibGUoKSBjYWxscywgbGlrZSB0aGlzOg0K
+DQppZiAocXVldWUgPCByeF9xdWV1ZXNfY250KSB7DQoJbmFwaV9zeW5jaHJvbml6ZSgmY2gtPnJ4
+X25hcGkpOw0KCW5hcGlfZGlzYWJsZSgmY2gtPnJ4X25hcGkpOw0KfQ0KDQppZiAocXVldWUgPCB0
+eF9xdWV1ZXNfY250KSB7DQoJbmFwaV9zeW5jaHJvbml6ZSgmY2gtPnR4X25hcGkpOw0KCW5hcGlf
+ZGlzYWJsZSgmY2gtPnR4X25hcGkpOw0KfQ0KDQpbIEkgY2FuIHNlbmQgeW91IGEgcGF0Y2ggaWYg
+eW91IHByZWZlciBdDQoNClRoYW5rcywNCkpvc2UgTWlndWVsIEFicmV1DQo=
