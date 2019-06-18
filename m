@@ -2,25 +2,26 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C25F74AE14
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 00:48:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F7EA4AE19
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 00:48:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730897AbfFRWsB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Jun 2019 18:48:01 -0400
-Received: from mga07.intel.com ([134.134.136.100]:48766 "EHLO mga07.intel.com"
+        id S1730974AbfFRWsX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Jun 2019 18:48:23 -0400
+Received: from mga05.intel.com ([192.55.52.43]:51598 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730341AbfFRWsA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Jun 2019 18:48:00 -0400
-X-Amp-Result: UNSCANNABLE
+        id S1730341AbfFRWsW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Jun 2019 18:48:22 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
 Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Jun 2019 15:48:00 -0700
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Jun 2019 15:48:22 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.63,390,1557212400"; 
-   d="scan'208";a="160196152"
+   d="scan'208";a="160196241"
 Received: from ranerica-svr.sc.intel.com ([172.25.110.23])
-  by fmsmga008.fm.intel.com with ESMTP; 18 Jun 2019 15:47:59 -0700
-Date:   Tue, 18 Jun 2019 15:47:38 -0700
+  by fmsmga008.fm.intel.com with ESMTP; 18 Jun 2019 15:48:22 -0700
+Date:   Tue, 18 Jun 2019 15:48:00 -0700
 From:   Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
 To:     Thomas Gleixner <tglx@linutronix.de>
 Cc:     Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@suse.de>,
@@ -34,69 +35,105 @@ Cc:     Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@suse.de>,
         Randy Dunlap <rdunlap@infradead.org>, x86@kernel.org,
         linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org,
         Ricardo Neri <ricardo.neri@intel.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Jacob Pan <jacob.jun.pan@intel.com>,
-        Juergen Gross <jgross@suse.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Wincy Van <fanwenyi0529@gmail.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
+        "H. Peter Anvin" <hpa@zytor.com>, Tony Luck <tony.luck@intel.com>,
+        Clemens Ladisch <clemens@ladisch.de>,
+        Arnd Bergmann <arnd@arndb.de>,
         Philippe Ombredanne <pombredanne@nexb.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Baoquan He <bhe@redhat.com>,
-        Jan Kiszka <jan.kiszka@siemens.com>,
-        Lu Baolu <baolu.lu@linux.intel.com>
-Subject: Re: [RFC PATCH v4 18/21] x86/apic: Add a parameter for the APIC
- delivery mode
-Message-ID: <20190618224738.GC30488@ranerica-svr.sc.intel.com>
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Subject: Re: [RFC PATCH v4 03/21] x86/hpet: Calculate ticks-per-second in a
+ separate function
+Message-ID: <20190618224800.GD30488@ranerica-svr.sc.intel.com>
 References: <1558660583-28561-1-git-send-email-ricardo.neri-calderon@linux.intel.com>
- <1558660583-28561-19-git-send-email-ricardo.neri-calderon@linux.intel.com>
- <alpine.DEB.2.21.1906161151240.1760@nanos.tec.linutronix.de>
+ <1558660583-28561-4-git-send-email-ricardo.neri-calderon@linux.intel.com>
+ <alpine.DEB.2.21.1906141749330.1722@nanos.tec.linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.1906161151240.1760@nanos.tec.linutronix.de>
+In-Reply-To: <alpine.DEB.2.21.1906141749330.1722@nanos.tec.linutronix.de>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jun 16, 2019 at 11:55:03AM +0200, Thomas Gleixner wrote:
+On Fri, Jun 14, 2019 at 05:54:05PM +0200, Thomas Gleixner wrote:
 > On Thu, 23 May 2019, Ricardo Neri wrote:
 > >  
-> >  struct irq_cfg {
-> > -	unsigned int		dest_apicid;
-> > -	unsigned int		vector;
-> > +	unsigned int				dest_apicid;
-> > +	unsigned int				vector;
-> > +	enum ioapic_irq_destination_types	delivery_mode;
-> 
-> And how is this related to IOAPIC?
-
-In my view, IOAPICs can also be programmed with a delivery mode. Mode
-values are the same for MSI interrupts.
-
-> I know this enum exists already, but in
-> connection with MSI this does not make any sense at all.
-
-Is the issue here the name of the enumeration?
-
-> 
+> > +u64 hpet_get_ticks_per_sec(u64 hpet_caps)
+> > +{
+> > +	u64 ticks_per_sec, period;
 > > +
-> > +		/*
-> > +		 * Initialize the delivery mode of this irq to match the
-> > +		 * default delivery mode of the APIC. This is useful for
-> > +		 * children irq domains which want to take the delivery
-> > +		 * mode from the individual irq configuration rather
-> > +		 * than from the APIC.
-> > +		 */
-> > +		 apicd->hw_irq_cfg.delivery_mode = apic->irq_delivery_mode;
+> > +	period = (hpet_caps & HPET_COUNTER_CLK_PERIOD_MASK) >>
+> > +		 HPET_COUNTER_CLK_PERIOD_SHIFT; /* fs, 10^-15 */
+> > +
+> > +	/*
+> > +	 * The frequency is the reciprocal of the period. The period is given
+> > +	 * in femtoseconds per second. Thus, prepare a dividend to obtain the
+> > +	 * frequency in ticks per second.
+> > +	 */
+> > +
+> > +	/* 10^15 femtoseconds per second */
+> > +	ticks_per_sec = 1000000000000000ULL;
+> > +	ticks_per_sec += period >> 1; /* round */
+> > +
+> > +	/* The quotient is put in the dividend. We drop the remainder. */
+> > +	do_div(ticks_per_sec, period);
+> > +
+> > +	return ticks_per_sec;
+> > +}
+> > +
+> >  int hpet_alloc(struct hpet_data *hdp)
+> >  {
+> >  	u64 cap, mcfg;
+> > @@ -844,7 +867,6 @@ int hpet_alloc(struct hpet_data *hdp)
+> >  	struct hpets *hpetp;
+> >  	struct hpet __iomem *hpet;
+> >  	static struct hpets *last;
+> > -	unsigned long period;
+> >  	unsigned long long temp;
+> >  	u32 remainder;
+> >  
+> > @@ -894,12 +916,7 @@ int hpet_alloc(struct hpet_data *hdp)
+> >  
+> >  	last = hpetp;
+> >  
+> > -	period = (cap & HPET_COUNTER_CLK_PERIOD_MASK) >>
+> > -		HPET_COUNTER_CLK_PERIOD_SHIFT; /* fs, 10^-15 */
+> > -	temp = 1000000000000000uLL; /* 10^15 femtoseconds per second */
+> > -	temp += period >> 1; /* round */
+> > -	do_div(temp, period);
+> > -	hpetp->hp_tick_freq = temp; /* ticks per second */
+> > +	hpetp->hp_tick_freq = hpet_get_ticks_per_sec(cap);
 > 
-> And here it's initialized from apic->irq_delivery_mode, which is an
-> u32. Intuitive and consistent - NOT!
+> Why are we actually computing this over and over?
+> 
+> In hpet_enable() which is the first function invoked we have:
+> 
+>         /*
+>          * The period is a femto seconds value. Convert it to a
+>          * frequency.
+>          */
+>         freq = FSEC_PER_SEC;
+>         do_div(freq, hpet_period);
+>         hpet_freq = freq;
+> 
+> So we already have ticks per second, aka frequency, right? So why do we
+> need yet another function instead of using the value which is computed
+> once? The frequency of the HPET channels has to be identical no matter
+> what. If it's not HPET is broken beyond repair.
 
-Yes, this is wrong. Then should the member in the structure above be an
-u32 instead of enum ioapic_irq_destination_types?
+I don't think it needs to be recomputed again. I missed the fact that
+the frequency was already computed here.
+
+Also, the hpet char driver has its own frequency computation. Perhaps it
+could also obtain it from here, right?
 
 Thanks and BR,
 Ricardo
+> 
+> Thanks,
+> 
+> 	tglx
+> 
+> 
