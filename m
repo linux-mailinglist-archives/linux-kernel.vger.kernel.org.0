@@ -2,14 +2,14 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AE0614AC2C
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 22:56:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C623E4AC2A
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 22:56:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730817AbfFRUyD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Jun 2019 16:54:03 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:50812 "EHLO
+        id S1730801AbfFRUyB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Jun 2019 16:54:01 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:50772 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730742AbfFRUx6 (ORCPT
+        with ESMTP id S1730739AbfFRUx6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 18 Jun 2019 16:53:58 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
@@ -18,26 +18,26 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From:
         Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=A2e3twB+4rjm1JBun22GZTEDrNTolWfsSR8lN10YJY4=; b=bwzyDOc54aiEVEOy69k9oibYI1
-        L+Alwk3UnqYyKSfQI9eRWSHYm6rA8FLb3PMpqrM0mpO8OM6AmWW7SD2nkXHdR3C/qPjjbYEewaHGJ
-        K9qFOvr78PkdoJYhNAoWaazk/wt+HaicYxPSeBCiDck4XlfbeRA9RPJ3+0c+y7ldMQcq8yPcMeyDk
-        kXp/Us4FZFUs4spBBnPSQ0Aqa6L+4VQHXcwmoKyidc9Kz9WAE5115Bddw89mQVMTjMVMa5LFEEo0A
-        ysBcwNilvCqYyLLybSbwDbxGT2odokivRx1D5biHhz41Ko0nO44EpXbdeBF94yODn4Ubwzc9z45/u
-        GATOTfEw==;
+        bh=5SfYNoI2veL+EyE/1v6HXSjfJsKXEwialcjlovAv4sY=; b=KaM4aDL40giM6QvI/jsAUrV0E3
+        AkqJaP1WWuZlMn/sdrD8zBgr2uHkrLumYJaZearrmxJjOxInT83IO/3KQQEJvPZC+mLDKUleWeAd/
+        xGIFbR6mdqSM9Vs9AT6Fl44QbT8af8MdwHrYNBV+8iZvKs6l4XHxOkl9wcmUEuLWWwMoTJJfX7nTD
+        b2DmiWbMXE5JHA/z3tJ8bSxZd/Ov4rzKxOPfYYGLtilRX0h76jnS1UuMKVqByQTTtOfVeEyUPfUYk
+        COzzmD2hK+qCWXeRys0itcvMP6HsM4sycopZil0CpTBytgfVnThm1PgUAdvr3vNSlDLvHsfFnZZbq
+        IrlbT8Mg==;
 Received: from 177.133.86.196.dynamic.adsl.gvt.net.br ([177.133.86.196] helo=bombadil.infradead.org)
         by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hdL77-0008Rb-Ak; Tue, 18 Jun 2019 20:53:57 +0000
+        id 1hdL77-0008Ra-5F; Tue, 18 Jun 2019 20:53:57 +0000
 Received: from mchehab by bombadil.infradead.org with local (Exim 4.92)
         (envelope-from <mchehab@bombadil.infradead.org>)
-        id 1hdL6z-0001yy-LD; Tue, 18 Jun 2019 17:53:49 -0300
+        id 1hdL6z-0001z2-Ly; Tue, 18 Jun 2019 17:53:49 -0300
 From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>
 Cc:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Mauro Carvalho Chehab <mchehab@infradead.org>,
         linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>
-Subject: [PATCH v2 02/29] docs: lcd-panel-cgram.txt: convert docs to ReST and rename to *.rst
-Date:   Tue, 18 Jun 2019 17:53:20 -0300
-Message-Id: <3da3e0379da562d703e6896ded6a7839d1272494.1560890800.git.mchehab+samsung@kernel.org>
+Subject: [PATCH v2 03/29] docs: lp855x-driver.txt: convert to ReST and move to kernel-api
+Date:   Tue, 18 Jun 2019 17:53:21 -0300
+Message-Id: <335fddb362664bbcc7b7360b35e56a8d347880d9.1560890800.git.mchehab+samsung@kernel.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <cover.1560890800.git.mchehab+samsung@kernel.org>
 References: <cover.1560890800.git.mchehab+samsung@kernel.org>
@@ -48,64 +48,200 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This small text file describes the usage of parallel port LCD
-displays from userspace PoV. So, a good candidate for the
-admin guide.
+This small file seems to be an attempt to start documenting
+backlight drivers.
 
-While this is not part of the admin-guide book, mark it as
+It contains descriptions of the controls for the driver
+with could sound as an somewhat user-faced description, but
+it's main focus is to describe, instead, the data that should
+be passed via platform data and some driver-specific stuff.
+
+While this is not part of the driver-api book, mark it as
 :orphan:, in order to avoid build warnings.
 
 Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 ---
- .../{lcd-panel-cgram.txt => lcd-panel-cgram.rst}         | 9 +++++++--
- MAINTAINERS                                              | 2 +-
- 2 files changed, 8 insertions(+), 3 deletions(-)
- rename Documentation/auxdisplay/{lcd-panel-cgram.txt => lcd-panel-cgram.rst} (88%)
+ Documentation/backlight/lp855x-driver.rst | 83 +++++++++++++++++++++++
+ Documentation/backlight/lp855x-driver.txt | 66 ------------------
+ MAINTAINERS                               |  2 +-
+ 3 files changed, 84 insertions(+), 67 deletions(-)
+ create mode 100644 Documentation/backlight/lp855x-driver.rst
+ delete mode 100644 Documentation/backlight/lp855x-driver.txt
 
-diff --git a/Documentation/auxdisplay/lcd-panel-cgram.txt b/Documentation/auxdisplay/lcd-panel-cgram.rst
-similarity index 88%
-rename from Documentation/auxdisplay/lcd-panel-cgram.txt
-rename to Documentation/auxdisplay/lcd-panel-cgram.rst
-index 7f82c905763d..dfef50286018 100644
---- a/Documentation/auxdisplay/lcd-panel-cgram.txt
-+++ b/Documentation/auxdisplay/lcd-panel-cgram.rst
-@@ -1,3 +1,9 @@
+diff --git a/Documentation/backlight/lp855x-driver.rst b/Documentation/backlight/lp855x-driver.rst
+new file mode 100644
+index 000000000000..62b7ed847a77
+--- /dev/null
++++ b/Documentation/backlight/lp855x-driver.rst
+@@ -0,0 +1,83 @@
 +:orphan:
 +
-+======================================
-+Parallel port LCD/Keypad Panel support
-+======================================
++====================
++Kernel driver lp855x
++====================
 +
- Some LCDs allow you to define up to 8 characters, mapped to ASCII
- characters 0 to 7. The escape code to define a new character is
- '\e[LG' followed by one digit from 0 to 7, representing the character
-@@ -7,7 +13,7 @@ illuminated pixel with LSB on the right. Lines are numbered from the
- top of the character to the bottom. On a 5x7 matrix, only the 5 lower
- bits of the 7 first bytes are used for each character. If the string
- is incomplete, only complete lines will be redefined. Here are some
--examples :
-+examples::
- 
-   printf "\e[LG0010101050D1F0C04;"  => 0 = [enter]
-   printf "\e[LG1040E1F0000000000;"  => 1 = [up]
-@@ -21,4 +27,3 @@ examples :
-   printf "\e[LG00002061E1E060200;"  => small speaker
- 
- Willy
++Backlight driver for LP855x ICs
++
++Supported chips:
++
++	Texas Instruments LP8550, LP8551, LP8552, LP8553, LP8555, LP8556 and
++	LP8557
++
++Author: Milo(Woogyom) Kim <milo.kim@ti.com>
++
++Description
++-----------
++
++* Brightness control
++
++  Brightness can be controlled by the pwm input or the i2c command.
++  The lp855x driver supports both cases.
++
++* Device attributes
++
++  1) bl_ctl_mode
++
++  Backlight control mode.
++
++  Value: pwm based or register based
++
++  2) chip_id
++
++  The lp855x chip id.
++
++  Value: lp8550/lp8551/lp8552/lp8553/lp8555/lp8556/lp8557
++
++Platform data for lp855x
++------------------------
++
++For supporting platform specific data, the lp855x platform data can be used.
++
++* name:
++	Backlight driver name. If it is not defined, default name is set.
++* device_control:
++	Value of DEVICE CONTROL register.
++* initial_brightness:
++	Initial value of backlight brightness.
++* period_ns:
++	Platform specific PWM period value. unit is nano.
++	Only valid when brightness is pwm input mode.
++* size_program:
++	Total size of lp855x_rom_data.
++* rom_data:
++	List of new eeprom/eprom registers.
++
++Examples
++========
++
++1) lp8552 platform data: i2c register mode with new eeprom data::
++
++    #define EEPROM_A5_ADDR	0xA5
++    #define EEPROM_A5_VAL	0x4f	/* EN_VSYNC=0 */
++
++    static struct lp855x_rom_data lp8552_eeprom_arr[] = {
++	{EEPROM_A5_ADDR, EEPROM_A5_VAL},
++    };
++
++    static struct lp855x_platform_data lp8552_pdata = {
++	.name = "lcd-bl",
++	.device_control = I2C_CONFIG(LP8552),
++	.initial_brightness = INITIAL_BRT,
++	.size_program = ARRAY_SIZE(lp8552_eeprom_arr),
++	.rom_data = lp8552_eeprom_arr,
++    };
++
++2) lp8556 platform data: pwm input mode with default rom data::
++
++    static struct lp855x_platform_data lp8556_pdata = {
++	.device_control = PWM_CONFIG(LP8556),
++	.initial_brightness = INITIAL_BRT,
++	.period_ns = 1000000,
++    };
+diff --git a/Documentation/backlight/lp855x-driver.txt b/Documentation/backlight/lp855x-driver.txt
+deleted file mode 100644
+index 01bce243d3d7..000000000000
+--- a/Documentation/backlight/lp855x-driver.txt
++++ /dev/null
+@@ -1,66 +0,0 @@
+-Kernel driver lp855x
+-====================
 -
+-Backlight driver for LP855x ICs
+-
+-Supported chips:
+-	Texas Instruments LP8550, LP8551, LP8552, LP8553, LP8555, LP8556 and
+-	LP8557
+-
+-Author: Milo(Woogyom) Kim <milo.kim@ti.com>
+-
+-Description
+------------
+-
+-* Brightness control
+-
+-Brightness can be controlled by the pwm input or the i2c command.
+-The lp855x driver supports both cases.
+-
+-* Device attributes
+-
+-1) bl_ctl_mode
+-Backlight control mode.
+-Value : pwm based or register based
+-
+-2) chip_id
+-The lp855x chip id.
+-Value : lp8550/lp8551/lp8552/lp8553/lp8555/lp8556/lp8557
+-
+-Platform data for lp855x
+-------------------------
+-
+-For supporting platform specific data, the lp855x platform data can be used.
+-
+-* name : Backlight driver name. If it is not defined, default name is set.
+-* device_control : Value of DEVICE CONTROL register.
+-* initial_brightness : Initial value of backlight brightness.
+-* period_ns : Platform specific PWM period value. unit is nano.
+-	     Only valid when brightness is pwm input mode.
+-* size_program : Total size of lp855x_rom_data.
+-* rom_data : List of new eeprom/eprom registers.
+-
+-example 1) lp8552 platform data : i2c register mode with new eeprom data
+-
+-#define EEPROM_A5_ADDR	0xA5
+-#define EEPROM_A5_VAL	0x4f	/* EN_VSYNC=0 */
+-
+-static struct lp855x_rom_data lp8552_eeprom_arr[] = {
+-	{EEPROM_A5_ADDR, EEPROM_A5_VAL},
+-};
+-
+-static struct lp855x_platform_data lp8552_pdata = {
+-	.name = "lcd-bl",
+-	.device_control = I2C_CONFIG(LP8552),
+-	.initial_brightness = INITIAL_BRT,
+-	.size_program = ARRAY_SIZE(lp8552_eeprom_arr),
+-	.rom_data = lp8552_eeprom_arr,
+-};
+-
+-example 2) lp8556 platform data : pwm input mode with default rom data
+-
+-static struct lp855x_platform_data lp8556_pdata = {
+-	.device_control = PWM_CONFIG(LP8556),
+-	.initial_brightness = INITIAL_BRT,
+-	.period_ns = 1000000,
+-};
 diff --git a/MAINTAINERS b/MAINTAINERS
-index e20a1762ec0b..d64d8bb46323 100644
+index d64d8bb46323..3e43c7ab3d6a 100644
 --- a/MAINTAINERS
 +++ b/MAINTAINERS
-@@ -11935,7 +11935,7 @@ PARALLEL LCD/KEYPAD PANEL DRIVER
- M:	Willy Tarreau <willy@haproxy.com>
- M:	Ksenija Stanojevic <ksenija.stanojevic@gmail.com>
- S:	Odd Fixes
--F:	Documentation/auxdisplay/lcd-panel-cgram.txt
-+F:	Documentation/auxdisplay/lcd-panel-cgram.rst
- F:	drivers/auxdisplay/panel.c
+@@ -15831,7 +15831,7 @@ F:	sound/soc/codecs/isabelle*
+ TI LP855x BACKLIGHT DRIVER
+ M:	Milo Kim <milo.kim@ti.com>
+ S:	Maintained
+-F:	Documentation/backlight/lp855x-driver.txt
++F:	Documentation/backlight/lp855x-driver.rst
+ F:	drivers/video/backlight/lp855x_bl.c
+ F:	include/linux/platform_data/lp855x.h
  
- PARALLEL PORT SUBSYSTEM
 -- 
 2.21.0
 
