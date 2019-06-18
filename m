@@ -2,214 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 146234A658
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 18:14:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F3FF04A676
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 18:17:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729781AbfFRQOQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Jun 2019 12:14:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51342 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729249AbfFRQOQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Jun 2019 12:14:16 -0400
-Received: from devnote2 (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0650620B1F;
-        Tue, 18 Jun 2019 16:14:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560874454;
-        bh=egoUPIc76Sf5T7nKd062qiafaTUZxHWbYuR2f2xFkzU=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=GBQIN/K/TEe4n+DSyg+h7rmTq0XQQuj/bv7S8efeIOw+GpaAjubK/BiyVbeoTqUzM
-         W7dmXyClVG0DcfcRAa8Jv59FZchQXcSxlHW24m7++r+fwMGfgGIUPYc9wYR0bA3ma+
-         e09iHx20wA9GG63Crb5vqe5SkSCVZl4LjoZyoq68=
-Date:   Wed, 19 Jun 2019 01:14:09 +0900
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
-        Tom Zanussi <tom.zanussi@linux.intel.com>,
-        Ravi Bangoria <ravi.bangoria@linux.ibm.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>
-Subject: Re: [PATCH 10/21] tracing/probe: Split trace_event related data
- from trace_probe
-Message-Id: <20190619011409.1a459906c14b8c851a5eb518@kernel.org>
-In-Reply-To: <20190617215643.05a33541@oasis.local.home>
-References: <155931578555.28323.16360245959211149678.stgit@devnote2>
-        <155931589667.28323.6107724588059072406.stgit@devnote2>
-        <20190617215643.05a33541@oasis.local.home>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1729939AbfFRQQc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Jun 2019 12:16:32 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:39929 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729496AbfFRQQb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Jun 2019 12:16:31 -0400
+Received: by mail-lj1-f193.google.com with SMTP id v18so141250ljh.6;
+        Tue, 18 Jun 2019 09:16:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=d8ND7EMqaMTRopWlb9o22BJGzZDsnY6w/hHhefd0ijU=;
+        b=ct1sAJ72OfB3a7/VItKwWaSDmJQErSldkaPh8Hg2zwhb8dkdhBO5l07HrG1HPzr2Cq
+         BX8/hcHEi2jUxzEJODMJlesBskFGwyntCcRmWSczwh6xGsPgzAyCUFU3T1ebFaJ3u0vo
+         r3LmRCsAr1Aw+S8iXpRppPZo+pFNLxa3QsfZDFri5Sf54zrxIgLFWGpfPbMW4XQ5tnfZ
+         RdKXQc2j3dX3p/G17K0qbRg/so9Uh9IoY80w0UjAK+pOTTKvJPSq5GwqSzDWZfPbC2Dl
+         2QgF8Oxi9A6EjHtGuiAIiULB+VTVINjT3tHmjF5xCi5PZ3vvGPp5+Gsd34vHF1EONBZS
+         4HHA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=d8ND7EMqaMTRopWlb9o22BJGzZDsnY6w/hHhefd0ijU=;
+        b=Xa3dA/aDQAldD4IVxuZMwAO/uOiLNXeeNQ+1OEnjzx/WHwX8AifLPMmoDgoa47SePL
+         mSK0XeCFexb9S1FCTIE/eE0HrBGC16BMBmW022/YrPleKJvhx/sXF3yhZNQRY8mxPO5H
+         vmhaw3xD7UKIHklwHIxiqPHFexwXDr1hBgYv8E4Y6J87AJuAPBQXTNIzclOMfOL7pN9E
+         W6wbXuJ/m0MBtWw7iF96phOOxdm/ikslevF02GyDsSbl8Jlx0NWoUZyi2dG7ptbNGDZq
+         gDvU6JbPJSYMBEhEwWfcqnuTvz7oOU+sSHDMqkPLJLgU9f4hGYueHKi7hh+Yexv3UXXD
+         t4yw==
+X-Gm-Message-State: APjAAAWAULMWbmK4wQO3SET6ejdv6VHLHvCejw3NgEzAA2I6EbVglzHa
+        RP88KI94YWAt07Sx3nhh+l+Jrdza
+X-Google-Smtp-Source: APXvYqzQZqoqlL5858/34W8b9dFe+28g3zDpsZLYQzftoSykaQpl1uH4YqhI48VZjTWooCY0JCYU+A==
+X-Received: by 2002:a2e:868e:: with SMTP id l14mr22398515lji.16.1560874588806;
+        Tue, 18 Jun 2019 09:16:28 -0700 (PDT)
+Received: from localhost.localdomain (ppp91-79-162-197.pppoe.mtu-net.ru. [91.79.162.197])
+        by smtp.gmail.com with ESMTPSA id v15sm2273295lfd.53.2019.06.18.09.16.27
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 18 Jun 2019 09:16:27 -0700 (PDT)
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Rob Herring <robh+dt@kernel.org>
+Cc:     linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/4] NVIDIA Tegra Video Decoder driver improvements
+Date:   Tue, 18 Jun 2019 19:14:51 +0300
+Message-Id: <20190618161458.20499-1-digetx@gmail.com>
+X-Mailer: git-send-email 2.22.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 17 Jun 2019 21:56:43 -0400
-Steven Rostedt <rostedt@goodmis.org> wrote:
+Hello,
 
-> On Sat,  1 Jun 2019 00:18:16 +0900
-> Masami Hiramatsu <mhiramat@kernel.org> wrote:
-> 
-> > Split the trace_event related data from trace_probe data structure
-> > and introduce trace_probe_event data structure for its folder.
-> > This trace_probe_event data structure can have multiple trace_probe.
-> > 
-> > Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-> > ---
-> >  kernel/trace/trace_kprobe.c |   99 ++++++++++++++++++++++-------------
-> >  kernel/trace/trace_probe.c  |   53 +++++++++++++------
-> >  kernel/trace/trace_probe.h  |   48 +++++++++++++----
-> >  kernel/trace/trace_uprobe.c |  123 +++++++++++++++++++++++++++++--------------
-> >  4 files changed, 221 insertions(+), 102 deletions(-)
-> > 
-> > diff --git a/kernel/trace/trace_kprobe.c b/kernel/trace/trace_kprobe.c
-> > index 9d483ad9bb6c..633edb88cd0e 100644
-> > --- a/kernel/trace/trace_kprobe.c
-> > +++ b/kernel/trace/trace_kprobe.c
-> > @@ -180,9 +180,17 @@ unsigned long trace_kprobe_address(struct trace_kprobe *tk)
-> >  	return addr;
-> >  }
-> >  
-> > +static nokprobe_inline struct trace_kprobe *
-> > +trace_kprobe_primary_from_call(struct trace_event_call *call)
-> > +{
-> > +	struct trace_probe *tp = trace_probe_primary_from_call(call);
-> > +
-> > +	return container_of(tp, struct trace_kprobe, tp);
-> 
-> 
-> Hmm, is there a possibility that trace_probe_primary_from_call() may
-> not have a primary?
+This series cleans up some of minor shortcomings that are caused by
+checkpatch recommendations that are not very applicable for the driver.
+Then IOMMU support is added to the driver and now it can handle sparse
+memory buffers that GPU hands to VDE in a default kernel configuration
+on Tegra30+.
 
-Good question! Of course if given event_call is not a kprobe event,
-it doesn't have primary (or any) trace_probe. But that must not happen
-unless user misuses it.
-And that list never be the empty, when the last trace probe is released,
-the event_call also unregistered and released. See unregister_trace_kprobe()
-for details. If there is no siblings on the list, the event_call is also
-unregistered before unregistering kprobes, and after unregistering kprobes
-the list is unlinked.
- (Note that unregister_kprobe() will wait a quiescence period
-before return. This means all probe handlers are done before that.)
+Changelog:
 
-> > +}
-> > +
-> >  bool trace_kprobe_on_func_entry(struct trace_event_call *call)
-> >  {
-> > -	struct trace_kprobe *tk = (struct trace_kprobe *)call->data;
-> > +	struct trace_kprobe *tk = trace_kprobe_primary_from_call(call);
-> >  
-> >  	return kprobe_on_func_entry(tk->rp.kp.addr,
-> >  			tk->rp.kp.addr ? NULL : tk->rp.kp.symbol_name,
-> > @@ -191,7 +199,7 @@ bool trace_kprobe_on_func_entry(struct trace_event_call *call)
-> >  
-> >  bool trace_kprobe_error_injectable(struct trace_event_call *call)
-> >  {
-> > -	struct trace_kprobe *tk = (struct trace_kprobe *)call->data;
-> > +	struct trace_kprobe *tk = trace_kprobe_primary_from_call(call);
-> >  
-> >  	return within_error_injection_list(trace_kprobe_address(tk));
-> >  }
-> > @@ -295,28 +303,40 @@ static inline int __enable_trace_kprobe(struct trace_kprobe *tk)
-> >   * Enable trace_probe
-> >   * if the file is NULL, enable "perf" handler, or enable "trace" handler.
-> >   */
-> > -static int
-> > -enable_trace_kprobe(struct trace_kprobe *tk, struct trace_event_file *file)
-> > +static int enable_trace_kprobe(struct trace_event_call *call,
-> > +				struct trace_event_file *file)
-> >  {
-> > -	bool enabled = trace_probe_is_enabled(&tk->tp);
-> > -	int ret = 0;
-> > +	struct trace_probe *pos, *tp = trace_probe_primary_from_call(call);
-> > +	struct trace_kprobe *tk;
-> > +	bool enabled = trace_probe_is_enabled(tp);
-> > +	int ret = 0, ecode;
-> >  
-> >  	if (file) {
-> > -		ret = trace_probe_add_file(&tk->tp, file);
-> > +		ret = trace_probe_add_file(tp, file);
-> >  		if (ret)
-> >  			return ret;
-> >  	} else
-> > -		trace_probe_set_flag(&tk->tp, TP_FLAG_PROFILE);
-> > +		trace_probe_set_flag(tp, TP_FLAG_PROFILE);
-> >  
-> >  	if (enabled)
-> >  		return 0;
-> >  
-> > -	ret = __enable_trace_kprobe(tk);
-> > -	if (ret) {
-> > +	enabled = false;
-> > +	list_for_each_entry(pos, trace_probe_probe_list(tp), list) {
-> > +		tk = container_of(pos, struct trace_kprobe, tp);
-> > +		ecode = __enable_trace_kprobe(tk);
-> > +		if (ecode)
-> > +			ret = ecode;	/* Save the last error code */
-> > +		else
-> > +			enabled = true;
-> 
-> So, if we have some enabled but return an error code, what should a
-> caller think of that? Wouldn't it be an inconsistent state?
+v2: - Fixed use-after-free bug and uninitialized-variable warning that
+      were reported by smatch and pointed out by Hans Verkuil in the
+      review comment to v1.
 
-Oops, good catch!
-This part is related to caller (ftrace/perf) so should be more careful.
-Usually, kprobe enablement should not fail. If one of them has
-gone (like a probe on unloaded module), it can be fail but that
-should be ignored. I would like to add some additional check so that
-- If all kprobes are on the module which is unloaded, enablement
-  must be failed and return error.
-- If any kprobe is enabled, and others are on non-exist modules,
-  it should succeeded and return OK.
-- If any kprobe caused an error not because of unloaded module,
-  all other enablement should be canceled and return error.
+    - Fixed build failure when CONFIG_ARM_DMA_USE_IOMMU=y and tested this
+      case properly (multi-platform kernel config).
 
-Is that OK for you?
+    - Made some extra minor changes, prettifying code a tad more.
 
-Thank you,
+Dmitry Osipenko (4):
+  staging: media: tegra-vde: Remove BIT() macro from UAPI header
+  staging: media: tegra-vde: Manually pack UAPI structures
+  staging: media: tegra-vde: Add IOMMU support
+  staging: media: tegra-vde: Defer dmabuf's unmapping
 
-> 
-> -- Steve
-> 
-> 
-> > +	}
-> > +
-> > +	if (!enabled) {
-> > +		/* No probe is enabled. Roll back */
-> >  		if (file)
-> > -			trace_probe_remove_file(&tk->tp, file);
-> > +			trace_probe_remove_file(tp, file);
-> >  		else
-> > -			trace_probe_clear_flag(&tk->tp, TP_FLAG_PROFILE);
-> > +			trace_probe_clear_flag(tp, TP_FLAG_PROFILE);
-> >  	}
-> >  
-> >
-> 
-> 
-> > +static inline struct trace_probe_event *
-> > +trace_probe_event_from_call(struct trace_event_call *event_call)
-> > +{
-> > +	return container_of(event_call, struct trace_probe_event, call);
-> > +}
-> > +
-> > +static inline struct trace_probe *
-> > +trace_probe_primary_from_call(struct trace_event_call *call)
-> > +{
-> > +	struct trace_probe_event *tpe = trace_probe_event_from_call(call);
-> > +
-> > +	return list_first_entry(&tpe->probes, struct trace_probe, list);
-> > +}
-> > +
-> > +static inline struct list_head *trace_probe_probe_list(struct trace_probe *tp)
-> > +{
-> > +	return &tp->event->probes;
-> >  }
-> >  
-
+ drivers/staging/media/tegra-vde/Kconfig       |   1 +
+ drivers/staging/media/tegra-vde/Makefile      |   1 +
+ .../staging/media/tegra-vde/dmabuf-cache.c    | 226 ++++++++++++++++++
+ drivers/staging/media/tegra-vde/iommu.c       | 149 ++++++++++++
+ drivers/staging/media/tegra-vde/trace.h       |   2 +
+ drivers/staging/media/tegra-vde/uapi.h        |  48 ++--
+ .../media/tegra-vde/{tegra-vde.c => vde.c}    | 212 ++++++----------
+ drivers/staging/media/tegra-vde/vde.h         | 105 ++++++++
+ 8 files changed, 581 insertions(+), 163 deletions(-)
+ create mode 100644 drivers/staging/media/tegra-vde/dmabuf-cache.c
+ create mode 100644 drivers/staging/media/tegra-vde/iommu.c
+ rename drivers/staging/media/tegra-vde/{tegra-vde.c => vde.c} (88%)
+ create mode 100644 drivers/staging/media/tegra-vde/vde.h
 
 -- 
-Masami Hiramatsu <mhiramat@kernel.org>
+2.22.0
+
