@@ -2,104 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2ED9D4A10B
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 14:44:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 91FCC4A2DC
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 15:55:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728525AbfFRMoF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Jun 2019 08:44:05 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:2131 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725913AbfFRMoE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Jun 2019 08:44:04 -0400
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 45Snnt4lwTz9tyqH;
-        Tue, 18 Jun 2019 14:44:02 +0200 (CEST)
-Authentication-Results: localhost; dkim=pass
-        reason="1024-bit key; insecure key"
-        header.d=c-s.fr header.i=@c-s.fr header.b=n36fD+f8; dkim-adsp=pass;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id nbcFWjQId3Oz; Tue, 18 Jun 2019 14:44:02 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 45Snnt3jXQz9tyqF;
-        Tue, 18 Jun 2019 14:44:02 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
-        t=1560861842; bh=PPGY0wzKrjpG/skXEgA6qaUxme8C35MPyZr+/HeM9oE=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=n36fD+f80hVDyGSeJHi3msRfk1FDLx2PFiNYGR9SCRR4TK+UOAJTcn8MUxK3gfFm5
-         bpR37iwIxh2lzWcPYg4lUUVeos+okdbcJSv32eVdIOYxn1wQODcEiHWvace5St9lDy
-         FB4IDUr/CCcRLkWPM34aXzKAIwJFAcync8a4NPuY=
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 0EFDC8B8AA;
-        Tue, 18 Jun 2019 14:44:03 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id 6TmhG7-Z5gS9; Tue, 18 Jun 2019 14:44:02 +0200 (CEST)
-Received: from PO15451 (unknown [192.168.4.90])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 6EC678B872;
-        Tue, 18 Jun 2019 14:44:02 +0200 (CEST)
-Subject: Re: [PATCH] powerpc/32s: fix initial setup of segment registers on
- secondary CPU
-To:     Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>, erhard_f@mailbox.org
-Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-References: <be07403806abc56ec027f6d47468411876e18bb5.1560267983.git.christophe.leroy@c-s.fr>
- <b60946f5-dc70-61ce-e266-af91890cb702@c-s.fr>
- <87h88noz1d.fsf@concordia.ellerman.id.au>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Message-ID: <81d8101a-c0b6-a316-5844-e0901300e4e4@c-s.fr>
-Date:   Tue, 18 Jun 2019 14:44:02 +0200
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.1
-MIME-Version: 1.0
-In-Reply-To: <87h88noz1d.fsf@concordia.ellerman.id.au>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
+        id S1729122AbfFRNzo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Jun 2019 09:55:44 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:6180 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726047AbfFRNzo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Jun 2019 09:55:44 -0400
+Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5IDovN0032974
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2019 09:55:42 -0400
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2t6yqamu7r-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2019 09:55:42 -0400
+Received: from localhost
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Tue, 18 Jun 2019 14:55:40 +0100
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 18 Jun 2019 14:55:36 +0100
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x5IDtaKP49086586
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 18 Jun 2019 13:55:36 GMT
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id E8B35A4054;
+        Tue, 18 Jun 2019 13:55:35 +0000 (GMT)
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id F244DA405B;
+        Tue, 18 Jun 2019 13:55:34 +0000 (GMT)
+Received: from dhcp-9-31-103-88.watson.ibm.com (unknown [9.31.103.88])
+        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Tue, 18 Jun 2019 13:55:34 +0000 (GMT)
+Subject: Re: [PATCH] ima: dynamically allocate shash_desc
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        linux-integrity@vger.kernel.org,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+In-Reply-To: <CAK8P3a1Q2JG3KBYNYgWg0_XtGUufNc6zuqcUBqiGSaBRp+au-w@mail.gmail.com>
+References: <20190617115838.2397872-1-arnd@arndb.de>
+         <1560786951.4072.103.camel@linux.ibm.com>
+         <1560794826.4072.169.camel@linux.ibm.com>
+         <CAK8P3a1Q2JG3KBYNYgWg0_XtGUufNc6zuqcUBqiGSaBRp+au-w@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Date:   Tue, 18 Jun 2019 08:44:38 -0400
+Mime-Version: 1.0
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
 Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19061813-0008-0000-0000-000002F4CB64
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19061813-0009-0000-0000-00002261E300
+Message-Id: <1560861878.9530.17.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-18_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=3 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1906180113
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-Le 18/06/2019 à 14:31, Michael Ellerman a écrit :
-> Christophe Leroy <christophe.leroy@c-s.fr> writes:
->> Le 11/06/2019 à 17:47, Christophe Leroy a écrit :
->>> The patch referenced below moved the loading of segment registers
->>> out of load_up_mmu() in order to do it earlier in the boot sequence.
->>> However, the secondary CPU still needs it to be done when loading up
->>> the MMU.
->>>
->>> Reported-by: Erhard F. <erhard_f@mailbox.org>
->>> Fixes: 215b823707ce ("powerpc/32s: set up an early static hash table for KASAN")
->>
->> Cc: stable@vger.kernel.org
+On Mon, 2019-06-17 at 22:08 +0200, Arnd Bergmann wrote:
+> On Mon, Jun 17, 2019 at 8:08 PM Mimi Zohar <zohar@linux.ibm.com> wrote:
+> >
+> > On Mon, 2019-06-17 at 11:55 -0400, Mimi Zohar wrote:
+> > > On Mon, 2019-06-17 at 13:20 +0200, Arnd Bergmann wrote:
+> > > > On 32-bit ARM, we get a warning about excessive stack usage when
+> > > > building with clang.
+> > > >
+> > > > security/integrity/ima/ima_crypto.c:504:5: error: stack frame size
+> > > > of 1152 bytes in function 'ima_calc_field_array_hash' [-Werror,-
+> > > > Wframe-larger-than=]
+> > >
+> > > I'm definitely not seeing this.  Is this problem a result of non
+> > > upstreamed patches?  For sha1, currently the only possible hash
+> > > algorithm, I'm seeing 664.
 > 
-> Sorry patchwork didn't pick that up and I missed it. The AUTOSEL bot
-> will probably pick it up anyway though.
-
-Don't worry, this was unneeded because we added KASAN in 5.2.
-My mistake.
-Christophe
-
+> You won't see it with gcc, only with clang in some randconfig builds,
+> I suppose only when KASAN is enabled.
 > 
-> cheers
+> > Every time a measurement is added to the measurement list, the memory
+> > would be allocated/freed.  The frequency of new measurements is policy
+> > dependent.  For performance reasons, I'd prefer if the allocation
+> > remains on the stack.
 > 
->>> diff --git a/arch/powerpc/kernel/head_32.S b/arch/powerpc/kernel/head_32.S
->>> index 1d5f1bd0dacd..f255e22184b4 100644
->>> --- a/arch/powerpc/kernel/head_32.S
->>> +++ b/arch/powerpc/kernel/head_32.S
->>> @@ -752,6 +752,7 @@ __secondary_start:
->>>    	stw	r0,0(r3)
->>>    
->>>    	/* load up the MMU */
->>> +	bl	load_segment_registers
->>>    	bl	load_up_mmu
->>>    
->>>    	/* ptr to phys current thread */
->>>
+> Is there a way to preallocate the shash_desc instead? That would
+> avoid the overhead.
+
+There are 3 other SHASH_DESC_ON_STACK definitions in just
+ima_crypto.c, with a total of ~55 other places in the kernel.  Before
+fixing this particular function, I'd like to know if the "excessive
+stack usage" warning is limited to ima_calc_field_array_hash_tfm().
+ If so, what is so special about its usage of SHASH_DESC_ON_STACK?
+
+thanks,
+
+Mimi
+
