@@ -2,17 +2,17 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 618794A0B1
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 14:23:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7D5714A0AE
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 14:23:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729043AbfFRMXU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Jun 2019 08:23:20 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:18639 "EHLO huawei.com"
+        id S1728281AbfFRMXN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Jun 2019 08:23:13 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:18637 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726047AbfFRMXS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Jun 2019 08:23:18 -0400
+        id S1725913AbfFRMXL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Jun 2019 08:23:11 -0400
 Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id AAE13FEECF18CAF8C6D5;
+        by Forcepoint Email with ESMTP id A76C98FF936F9BCDD3DB;
         Tue, 18 Jun 2019 20:23:08 +0800 (CST)
 Received: from RH5885H-V3.huawei.com (10.90.53.225) by
  DGGEMS414-HUB.china.huawei.com (10.3.19.214) with Microsoft SMTP Server id
@@ -20,9 +20,9 @@ Received: from RH5885H-V3.huawei.com (10.90.53.225) by
 From:   SunKe <sunke32@huawei.com>
 To:     <jlbec@evilplan.org>, <hch@lst.de>, <linux-kernel@vger.kernel.org>,
         <sunke32@huawei.com>
-Subject: [PATCH 1/2] sample_configfs: bin_file read and write
-Date:   Tue, 18 Jun 2019 20:28:28 +0800
-Message-ID: <1560860909-51059-2-git-send-email-sunke32@huawei.com>
+Subject: [PATCH 2/2] sample_configfs: soft link creat and delete
+Date:   Tue, 18 Jun 2019 20:28:29 +0800
+Message-ID: <1560860909-51059-3-git-send-email-sunke32@huawei.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1560860909-51059-1-git-send-email-sunke32@huawei.com>
 References: <1560860909-51059-1-git-send-email-sunke32@huawei.com>
@@ -35,79 +35,70 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add bin_file read and write function
+Add soft link creation and deletion
 
 Signed-off-by: SunKe <sunke32@huawei.com>
 ---
- samples/configfs/configfs_sample.c | 43 ++++++++++++++++++++++++++++++++++++++
- 1 file changed, 43 insertions(+)
+ samples/configfs/configfs_sample.c | 41 ++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 41 insertions(+)
 
 diff --git a/samples/configfs/configfs_sample.c b/samples/configfs/configfs_sample.c
-index 004a4e2..c76b784 100644
+index c76b784..58915b8 100644
 --- a/samples/configfs/configfs_sample.c
 +++ b/samples/configfs/configfs_sample.c
-@@ -146,6 +146,8 @@ static struct childless childless_subsys = {
- struct simple_child {
- 	struct config_item item;
- 	int storeme;
-+	void *data;
-+	size_t len;
- };
+@@ -392,6 +392,46 @@ static struct configfs_subsystem group_children_subsys = {
+ /* ----------------------------------------------------------------- */
  
- static inline struct simple_child *to_simple_child(struct config_item *item)
-@@ -153,6 +155,46 @@ static inline struct simple_child *to_simple_child(struct config_item *item)
- 	return item ? container_of(item, struct simple_child, item) : NULL;
- }
- 
-+static ssize_t simple_child_bin_storeme_bin_write(struct config_item *item,
-+				    const void *data, size_t size)
+ /*
++ * 04-link-children
++ *
++ */
++static int link_children_allow_link(struct config_item *parent,
++		struct config_item *target)
 +{
-+	struct simple_child *simple_child = to_simple_child(item);
-+
-+	kfree(simple_child->data);
-+	simple_child->data = NULL;
-+
-+	simple_child->data = kmemdup(data, size, GFP_KERNEL);
-+	if (!simple_child->data)
-+		return -ENOMEM;
-+	simple_child->len = size;
-+
 +	return 0;
 +}
 +
-+static ssize_t simple_child_bin_storeme_bin_read(struct config_item *item,
-+				   void *data, size_t size)
++static void link_children_drop_link(struct config_item *parent,
++		struct config_item *target)
 +{
-+	struct simple_child *simple_child = to_simple_child(item);
 +
-+	if (!data) {
-+		size = simple_child->len;
-+	} else {
-+		memcpy(data, simple_child->data, simple_child->len);
-+		size = simple_child->len;
-+	}
-+
-+	return size;
 +}
 +
-+#define MAX_SIZE (128 * 1024)
 +
-+CONFIGFS_BIN_ATTR(simple_child_bin_, storeme_bin, NULL, MAX_SIZE);
-+
-+static struct configfs_bin_attribute *simple_child_bin_attrs[] = {
-+	&simple_child_bin_attr_storeme_bin,
-+	NULL,
++static struct configfs_item_operations link_children_item_ops = {
++	.allow_link		= link_children_allow_link,
++	.drop_link		= link_children_drop_link,
 +};
 +
- static ssize_t simple_child_storeme_show(struct config_item *item, char *page)
- {
- 	return sprintf(page, "%d\n", to_simple_child(item)->storeme);
-@@ -196,6 +238,7 @@ static struct configfs_item_operations simple_child_item_ops = {
- static const struct config_item_type simple_child_type = {
- 	.ct_item_ops	= &simple_child_item_ops,
- 	.ct_attrs	= simple_child_attrs,
-+	.ct_bin_attrs	= simple_child_bin_attrs,
- 	.ct_owner	= THIS_MODULE,
++
++static const struct config_item_type link_children_type = {
++	.ct_item_ops		= &link_children_item_ops,
++	.ct_owner		= THIS_MODULE,
++
++};
++
++static struct configfs_subsystem link_children_subsys = {
++	.su_group = {
++		.cg_item = {
++			.ci_namebuf = "04-link-children",
++			.ci_type = &link_children_type,
++		},
++	},
++};
++
++/* ----------------------------------------------------------------- */
++
++/*
+  * We're now done with our subsystem definitions.
+  * For convenience in this module, here's a list of them all.  It
+  * allows the init function to easily register them.  Most modules
+@@ -402,6 +442,7 @@ static struct configfs_subsystem *example_subsys[] = {
+ 	&childless_subsys.subsys,
+ 	&simple_children_subsys,
+ 	&group_children_subsys,
++	&link_children_subsys,
+ 	NULL,
  };
  
 -- 
