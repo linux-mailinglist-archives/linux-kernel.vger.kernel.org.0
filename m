@@ -2,98 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 883CF4A72C
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 18:39:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 567314A737
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 18:41:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730038AbfFRQjR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Jun 2019 12:39:17 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:47053 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729774AbfFRQjR (ORCPT
+        id S1729883AbfFRQlg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Jun 2019 12:41:36 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:40536 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729319AbfFRQlf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Jun 2019 12:39:17 -0400
-Received: by mail-pg1-f193.google.com with SMTP id v9so7965276pgr.13
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2019 09:39:17 -0700 (PDT)
+        Tue, 18 Jun 2019 12:41:35 -0400
+Received: by mail-wm1-f66.google.com with SMTP id v19so3957370wmj.5
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2019 09:41:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=android.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=XrrW0E+Aq0ZK5ZEW02c85rKGyeAIqMgJzZ8XI50g1cw=;
-        b=gwSjnibm9Blbi+bN6jrixv5dthYVRSRqHZk61Qze0Vo7hNCpvdHYRI6M2c4OZyZ5+8
-         fHdlBbj+BuL+tQTYoYjtJmRSUtzeYwF5f9ISF3Upb+gGbPWS+MWV8zZP8IeH6qhpQ9s5
-         2RQYMhRUkfwoGoK8RRr7EvQomQNaWzd6zx0Gbghhw+crVZPNaSjxqFdkeXgok1m1ibMZ
-         g/TxSmcFb7TvSYaAm411mVFCipQzcGYOMsCqqbfelS46Kb+Zelh7o8YvhvyY68NcrtN0
-         C4O6Qr/5jk1dPGXdY+DKXGYVH+xq4QgRqfV3JiT7CXQAs3rhk66WnEs+8ICl8byim+hK
-         4AJg==
+        bh=/9WPnwDs6vWyGGIV0ZU0O19QmFJGO7b/u3NuHDRcr/U=;
+        b=sGZA352weKhrdLLfesdqJofGJKNOj4XHPdoIe53SrTjsIqtk4mqdDgEMsqW6t6TvLz
+         p5JcyZVCHjBWf90ZzgSY/R8x4J8RZVymPqFr1uK8+HaHAr+aHZP4dYy/Lp64gx0rf6io
+         v3MjJVXdbQxDFzWcl9IzizQjd7J3L7C8bjsp/WeYFGhxg9BqiVxLXzPg9LTxWU65Y5VC
+         lM0tzTP8eul9ppIdj0OjeFd2wjPG2YlTNHO8zCaC654CpN3o3bL9cYD6ecSuIqqGyau1
+         2pxiBoQXCYXYicxpgTbuiiMWBo5xWW0opYWsLURZsalCiDZejNG+JS5K/vveYult3lHA
+         GZug==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=XrrW0E+Aq0ZK5ZEW02c85rKGyeAIqMgJzZ8XI50g1cw=;
-        b=s2Wa3lBIEZhZbOlWUWjURt9SIeTGCTTcNdUXt+j+SO8cMxJheopP8iiLMaOgfyeqO4
-         F9XacfX/mH1Jqa9dJ/TzMGFN1Qpi1mjTcIrzzyqQwTKAgtMkXRFoU8FEuHC177U+qrtM
-         I+BJ/8pBdDJx58tUQ9CpqUM/KbSKWN3G3GyGLlUtJ45Q9xrmtzJp+T+N+riRt5OneLRU
-         7I7ToFks2cOfH0Qy+kO6P8w4sh9gTWijNRapvNpuaCNbkMEHqIOURLFxhU3KIGj1j75F
-         XhCieRkbAUnk9PwXNhkDkxJhJd+/dV7sGi2Si0PMNH2JwZxKx/2vjRY48lK3v6etTcNy
-         O5Zg==
-X-Gm-Message-State: APjAAAWFY9fkMk1GCqHMihzmeKABwSoPQ0G+PBS/h3kKrHTiXdN6+JFX
-        p2zzYNndD2YL3+OBF34SHojhREIumhgKGA==
-X-Google-Smtp-Source: APXvYqwc0c95/fcpzG4//NN/qwaK+yEAGX9GpR/HxZM6zgrRYhhB50BmH1cGBlGtS7u9BrO6skGcaA==
-X-Received: by 2002:a17:90a:a385:: with SMTP id x5mr6079766pjp.76.1560875956573;
-        Tue, 18 Jun 2019 09:39:16 -0700 (PDT)
-Received: from arch ([112.196.181.128])
-        by smtp.gmail.com with ESMTPSA id d4sm2587754pju.19.2019.06.18.09.39.14
+        bh=/9WPnwDs6vWyGGIV0ZU0O19QmFJGO7b/u3NuHDRcr/U=;
+        b=a7CVN47U2i2MGF/nxpsF185OQbrZitGRcKO+eNe/VpwZ5pKDm0ljTv9io+xlpR5nSR
+         IzS+keX4Wve6toYDr2iBqdIckCXL6APIJ4VR1AV97z8Y6kRfCahg78Vwwi82L/W06hnb
+         7KEWAT1Kwx6I8jw8Lj4kgKtb6imU96nnQEbj2FWVh2khdp5rdvudSkqLH7L3Qh3b/LL8
+         yS1lxHra5EGVlqqSuZQBJJ1H6C24PKheJZnPyhxSFiMU0M4SBnTmNnDH7+L2BbZv0sJA
+         hAsto9ADb0XEegr50jCWv7RZ3B1kxriIfUxoapTwtLiZ7GIKMdIXYpYS8N5jBsl5C3vG
+         OHbw==
+X-Gm-Message-State: APjAAAVZTwmjU0NQdxN+f20YT7HfD7jrKZ8I4kmhiFqa7hO0JwOOxchc
+        3CiRbFdnf7EoFqyu/FwUcO/PtQ==
+X-Google-Smtp-Source: APXvYqw+WEkXeZglwFOJhRG7aWRo/6GuKbXu43lAOCD1nW4ClKyUR/NaFPcrRHQxzd/etQwW2xePeA==
+X-Received: by 2002:a05:600c:2149:: with SMTP id v9mr4370443wml.141.1560876093692;
+        Tue, 18 Jun 2019 09:41:33 -0700 (PDT)
+Received: from google.com ([2a00:79e0:d:203:fc05:dec:5003:37b1])
+        by smtp.gmail.com with ESMTPSA id n3sm10963364wro.59.2019.06.18.09.41.32
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 18 Jun 2019 09:39:16 -0700 (PDT)
-Date:   Tue, 18 Jun 2019 22:08:37 +0530
-From:   Puranjay Mohan <puranjay12@gmail.com>
-To:     Shuah Khan <skhan@linuxfoundation.org>
-Cc:     hch@infradead.org, linux-kernel-mentees@lists.linuxfoundation.org,
-        linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org
-Subject: Re: [Linux-kernel-mentees] [PATCH v2] fs: cramfs_fs.h: Fix shifting
- signed 32-bit value by 31 bits problem
-Message-ID: <20190618163835.GA4766@arch>
-References: <20190618114947.10563-1-puranjay12@gmail.com>
- <20190618160847.GC27611@kroah.com>
- <777ee79c-9371-956a-07df-be866796047b@linuxfoundation.org>
+        Tue, 18 Jun 2019 09:41:33 -0700 (PDT)
+Date:   Tue, 18 Jun 2019 17:41:31 +0100
+From:   Alessio Balsini <balsini@android.com>
+To:     Luca Abeni <luca.abeni@santannapisa.it>
+Cc:     linux-kernel@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        "Paul E . McKenney" <paulmck@linux.ibm.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Quentin Perret <quentin.perret@arm.com>,
+        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>,
+        Patrick Bellasi <patrick.bellasi@arm.com>,
+        Tommaso Cucinotta <tommaso.cucinotta@santannapisa.it>
+Subject: Re: [RFC PATCH 1/6] sched/dl: Improve deadline admission control for
+ asymmetric CPU capacities
+Message-ID: <20190618164131.GA88066@google.com>
+References: <20190506044836.2914-1-luca.abeni@santannapisa.it>
+ <20190506044836.2914-2-luca.abeni@santannapisa.it>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <777ee79c-9371-956a-07df-be866796047b@linuxfoundation.org>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+In-Reply-To: <20190506044836.2914-2-luca.abeni@santannapisa.it>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 18, 2019 at 10:15:11AM -0600, Shuah Khan wrote:
-> On 6/18/19 10:08 AM, Greg KH wrote:
-> > On Tue, Jun 18, 2019 at 05:19:47PM +0530, Puranjay Mohan wrote:
-> > > Fix CRAMFS_BLK_FLAG_UNCOMPRESSED to use "U" cast to avoid shifting signed
-> > > 32-bit value by 31 bits problem. This isn't a problem for kernel builds
-> > > with gcc.
-> > > 
-> > > This could be problem since this header is part of public API which
-> > > could be included for builds using compilers that don't handle this
-> > > condition safely resulting in undefined behavior.
-> > > 
-> > > Signed-off-by: Puranjay Mohan <puranjay12@gmail.com>
-> > 
-> > Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > 
-> > You should resend this and cc: Nicolas Pitre <nico@fluxnic.net> as he is
-> > the cramfs maintainer.
-> > 
-> 
-> Puranjay! You can add all the Reviewed-by tags when you resend the patch
-> with Nicolas Pitre <nico@fluxnic.net> on the thread.
-> 
-> 
-> Reviewed-by: Shuah Khan <skhan@linuxfoundation.org>
-> 
-> thanks,
-> -- Shuah
+Hi Luca,
 
-Thanks, I have sent the mail with Nicolas Pitre in CC.
+On Mon, May 06, 2019 at 06:48:31AM +0200, Luca Abeni wrote:
+> From: luca abeni <luca.abeni@santannapisa.it>
+>  
+>  extern void dl_change_utilization(struct task_struct *p, u64 new_bw);
+> @@ -785,6 +786,8 @@ struct root_domain {
+>  	unsigned long		max_cpu_capacity;
+>  	unsigned long		min_cpu_capacity;
+>  
+> +	unsigned long           rd_capacity;
+>
 
---Puranjay
+An easy one: we are already in root_domain, can't we
+s/rd_capacity/capacity/g ?
+
+Thanks for the series, looking forward to seeing an updated version
+soon. In the meanwhile, I started backporting and testing it.
+
+Cheers,
+Alessio
