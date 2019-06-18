@@ -2,103 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 91D8A499B2
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 09:01:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7C25349A23
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 09:14:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728880AbfFRHB5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Jun 2019 03:01:57 -0400
-Received: from gate.crashing.org ([63.228.1.57]:44279 "EHLO gate.crashing.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725829AbfFRHB4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Jun 2019 03:01:56 -0400
-Received: from localhost (localhost.localdomain [127.0.0.1])
-        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id x5I5RJD1009174;
-        Tue, 18 Jun 2019 00:27:22 -0500
-Message-ID: <e406c7bc73971a3626cf587f3ee9970973b0782a.camel@kernel.crashing.org>
-Subject: Re: [PATCH v3 2/2] PCI: Fix disabling of bridge BARs when assigning
- bus resources
-From:   Benjamin Herrenschmidt <benh@kernel.crashing.org>
-To:     Bjorn Helgaas <helgaas@kernel.org>,
-        Logan Gunthorpe <logang@deltatee.com>
-Cc:     linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-        Kit Chow <kchow@gigaio.com>, Yinghai Lu <yinghai@kernel.org>
-Date:   Tue, 18 Jun 2019 15:27:18 +1000
-In-Reply-To: <20190617135307.GA13533@google.com>
-References: <20190531171216.20532-1-logang@deltatee.com>
-         <20190531171216.20532-3-logang@deltatee.com>
-         <20190617135307.GA13533@google.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1729018AbfFRHOs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Jun 2019 03:14:48 -0400
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:39072 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726037AbfFRHOs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Jun 2019 03:14:48 -0400
+Received: by mail-oi1-f194.google.com with SMTP id m202so8290591oig.6
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2019 00:14:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=SqAd1fx2aqjUroAge2OaNB4tSLlvMkP+JhWERXOSN8Y=;
+        b=VuEodqM3GEhgspN5BcSZBejRWyu1yfMzsvbt/tZcCt5AtPf01DDmMcr/YxPt5la51Y
+         eAazo1sgyFm7hHAzmylz7IJwsHgTOpM5k1si7TJ3FbDsRl6PPeJHejJL0OEIt4gS1GKH
+         jR0XlMVF4O6H8x0vXenyxoUWmPaZQPyQb/Q46CfiDuoDd4AejRu2OH2TcvcoLt1KVvXz
+         hUTwDSqW+gWtikzfUEbdnp2rkDshNdXzeKLjxt1jXI6h6gfIJ88g9KwpGLNLUDwgO1Hu
+         R3Dd1X0fhutxGN+CDAGj/KHsrlAQKUqMMf725VQBhO+S4DbDoMz4CoqO6L9Amo24rp2K
+         RHZw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=SqAd1fx2aqjUroAge2OaNB4tSLlvMkP+JhWERXOSN8Y=;
+        b=JpQZqMhumd03a7j8Edm3EK9RT5hY2pCQxJVxofLhqjqUbnCyQoX7u4Y6D8a+JJnUNN
+         9tIoeV6n441OhklG2yv1g4oslGN4BLi4vbZ378z3RMTu4K/xregs8f46D17ceH7mpaHI
+         rLqEkrExXzd8lIu5lLfKNLZ0Y/6U5wPF4GLi8+1eyQX85N8k0v4/5hrzZiqGd5LuPnZt
+         s/qrNZ7ZRBhXNxygOW1dwJIU3qDRvvBrX+GpoCYme7z6Pt3xEn3ij/5Z6oLUQEIFBkaN
+         2tkehz62jfrlFpyzaQKtVvrrHnQe+hq0/eTpO1djflwHkdOUlCZaQarsvhuJhUFKVDSr
+         IOJg==
+X-Gm-Message-State: APjAAAW0FjNyDnT4tBa/ryjnqQCK9mH6TdbOKDyCgKeaDyzB7Mnx2r6D
+        RqPLWXDRzkwPkmky5NLhJj3hDwaOCio=
+X-Google-Smtp-Source: APXvYqz4ODTWIjG3AqGUUeq6vsPQMClqM7BcnsAUOQ3cPzIUXZ5ipOaid/o/JhY/P+BpjDaxGb6eZQ==
+X-Received: by 2002:a63:4a1f:: with SMTP id x31mr972877pga.150.1560835696219;
+        Mon, 17 Jun 2019 22:28:16 -0700 (PDT)
+Received: from localhost.localdomain (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id 188sm13934085pfg.11.2019.06.17.22.28.15
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 17 Jun 2019 22:28:15 -0700 (PDT)
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Patrick Lai <plai@codeaurora.org>,
+        Banajit Goswami <bgoswami@codeaurora.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
+Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Subject: [PATCH] ASoC: qcom: common: Fix NULL pointer in of parser
+Date:   Mon, 17 Jun 2019 22:28:13 -0700
+Message-Id: <20190618052813.32523-1-bjorn.andersson@linaro.org>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2019-06-17 at 08:53 -0500, Bjorn Helgaas wrote:
-> On Fri, May 31, 2019 at 11:12:16AM -0600, Logan Gunthorpe wrote:
-> > One odd quirk of PLX switches is that their upstream bridge port has
-> > 256K of space allocated behind its BAR0 (most other bridge
-> > implementations do not report any BAR space).
-> 
-> Somewhat unusual, but completely legal, of course.
+A snd_soc_dai_link_component is allocated and associated with the first
+link, so when the code tries to assign the of_node of the second link's
+"cpu" member it dereferences a NULL pointer.
 
-Ah yes, I've seen these. They have an MMIO path to their internal
-registers in addition to cfg. Can be annoying.
+Fix this by moving the allocation and assignement of
+snd_soc_dai_link_components into the loop, giving us one pair per link.
 
-> If a bridge has memory BARs, AFAIK it is impossible to enable a memory
-> window without also enabling the BARs, so if we want to use the bridge
-> at all, we *must* allocate space for its BARs, just like for any other
-> device.
+Fixes: 1e36ea360ab9 ("ASoC: qcom: common: use modern dai_link style")
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+---
+ sound/soc/qcom/common.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-Right.
-
- .../... (agreeing violently)
-
-> In my ideal world we wouldn't zap the flags of any resource.  I think
-> we should derive the flags from the device's config space *once*
-> during enumeration and remember them for the life of the device.
-
-Amen brother. It will take a little while to get there. One thing we
-should do is have a clearer way to mark a resource that failed to
-assign/allocate (though technically parent=NULL is it really, as long
-as all archs these days claim properly, it used not to be the case).
-
-We do wipe *bridge* windows (nor BARs) all over the place, that is less
-of an issue I suppose though I would be more comfortable if we also
-wrote to the bridge to close those windows as we do so...
-
-The problem of course is how much old weird quirky will break due to
-subtle assumptions as we "fix" these things :-)
-
-> This patch preserves res->flags for bridge BARs just like for any
-> other device, so I think this is definitely a step in the right
-> direction.
-> 
-> I'm not sure the "dev->subordinate" test is really correct, though.
-
-Right, shouldn't it be pci_is_bridge() ?
-
-> I think the original intent of this code was to clear res->flags for
-> bridge windows under the assumptions that (a) we can identify bridges
-> by "dev->subordinate" being non-zero, and (b) bridges only have
-> windows and didn't have BARs.
-> 
-> This patch fixes assumption (b), but I think (a) is false, and we
-> should fix it as well.  One can imagine a bridge device without a
-> subordinate bus (maybe we ran out of bus numbers), so I don't think we
-> should test dev->subordinate.
-
-Yup.
-
-> We could test something like pci_is_bridge(), although testing for idx
-> being in the PCI_BRIDGE_RESOURCES range should be sufficient because I
-> don't think we use those resource for anything other than windows.
-
-Yeah quite possibly.
-
-Cheers,
-Ben.
-
+diff --git a/sound/soc/qcom/common.c b/sound/soc/qcom/common.c
+index c7a878507220..97488b5cc515 100644
+--- a/sound/soc/qcom/common.c
++++ b/sound/soc/qcom/common.c
+@@ -42,17 +42,17 @@ int qcom_snd_parse_of(struct snd_soc_card *card)
+ 	card->num_links = num_links;
+ 	link = card->dai_link;
+ 
+-	dlc = devm_kzalloc(dev, 2 * sizeof(*dlc), GFP_KERNEL);
+-	if (!dlc)
+-		return -ENOMEM;
++	for_each_child_of_node(dev->of_node, np) {
++		dlc = devm_kzalloc(dev, 2 * sizeof(*dlc), GFP_KERNEL);
++		if (!dlc)
++			return -ENOMEM;
+ 
+-	link->cpus	= &dlc[0];
+-	link->platforms	= &dlc[1];
++		link->cpus	= &dlc[0];
++		link->platforms	= &dlc[1];
+ 
+-	link->num_cpus		= 1;
+-	link->num_platforms	= 1;
++		link->num_cpus		= 1;
++		link->num_platforms	= 1;
+ 
+-	for_each_child_of_node(dev->of_node, np) {
+ 		cpu = of_get_child_by_name(np, "cpu");
+ 		platform = of_get_child_by_name(np, "platform");
+ 		codec = of_get_child_by_name(np, "codec");
+-- 
+2.18.0
 
