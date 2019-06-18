@@ -2,120 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E0D1249801
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 06:19:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4EBC649806
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 06:20:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726331AbfFRETR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Jun 2019 00:19:17 -0400
-Received: from mga17.intel.com ([192.55.52.151]:42165 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725870AbfFRETQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Jun 2019 00:19:16 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Jun 2019 21:19:16 -0700
-X-ExtLoop1: 1
-Received: from rmbutler-mobl.amr.corp.intel.com ([10.255.231.126])
-  by fmsmga004.fm.intel.com with ESMTP; 17 Jun 2019 21:19:15 -0700
-Message-ID: <1fd4af8e1b4bad5eda6f1e2f747b7988c74408fb.camel@linux.intel.com>
-Subject: Re: [alsa-devel] [PATCH v2 09/11] ASoC: Intel: hdac_hdmi: Set ops
- to NULL on remove
-From:   Ranjani Sridharan <ranjani.sridharan@linux.intel.com>
-To:     Takashi Iwai <tiwai@suse.de>
-Cc:     alsa-devel@alsa-project.org,
-        "\"Amadeusz" =?UTF-8?Q?S=C5=82awi=C5=84ski=22?= 
-        <amadeuszx.slawinski@linux.intel.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Cezary Rojewski <cezary.rojewski@intel.com>,
-        Mark Brown <broonie@kernel.org>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Jie Yang <yang.jie@linux.intel.com>,
-        linux-kernel@vger.kernel.org
-Date:   Mon, 17 Jun 2019 21:19:15 -0700
-In-Reply-To: <s5h7e9jc2s1.wl-tiwai@suse.de>
-References: <20190617113644.25621-1-amadeuszx.slawinski@linux.intel.com>
-         <20190617113644.25621-10-amadeuszx.slawinski@linux.intel.com>
-         <75be86354032f4886cbaf7d430de2aa89eaab573.camel@linux.intel.com>
-         <s5h7e9jc2s1.wl-tiwai@suse.de>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.1 
-Mime-Version: 1.0
+        id S1726901AbfFREUb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Jun 2019 00:20:31 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:35583 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725826AbfFREUa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Jun 2019 00:20:30 -0400
+Received: by mail-pg1-f196.google.com with SMTP id s27so6947488pgl.2;
+        Mon, 17 Jun 2019 21:20:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=LbbvFzyAk/3ZDe/bSvDvggcgdm6o3bhDdilBCg54z4I=;
+        b=RcItK+gfLQn3m5Gtyd91++f+8ka0ruF0rgYKJ8XA5/BTYPpoC3GzJp0F4Xlitdiz90
+         eb4H6qLzRAMIWlqT7c/xQYJAYl0zLdGQUXnvk1pmuyNGnyXM/QLM7OhTX25JkqZVTCXI
+         LMtsKrDznHdM2G6M2mh/CMkx3mKVe873iiaxoQ5/BzV3ZHO16/6UphVCnMDVl5iPZJo5
+         heb8gZBtbsGLDkgy2z2FfzeJgH/eLolY3iPjJXFxL27m7JzrKdsBEKJRCI3yIBpU2mNa
+         iV89qoFESFLoBlRyj17SEFqSlt94KKz222lpsrxLOjQvN9vrQZri7qgMUyXJsapbzAk8
+         6q0w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=LbbvFzyAk/3ZDe/bSvDvggcgdm6o3bhDdilBCg54z4I=;
+        b=W7l+p1utEtX8Jp5a92UIXDht3TNszvLX4Drd1LvRQTjMMQm43OUwJdHVgncSMbOFps
+         xWiOE5wO1zwUhCDOx0vtzw/8P4pzV8mrqCQXEmTWJV9bBjzzJsw80zE04UDgnYOuxD3E
+         DOyDhPEW9u08XGHZK23SL8C/tQ44UeyVaIDL2qnNUgVtvMgIxq41IUcCxlCAPVqQNuG7
+         qPArzBlsgkR6qXUI0coqu/PW7xWuiAolisPLtNBBcvLZhNBFDuuGx7b8nO/vOhhKlFLM
+         EtEzis0coELAvipQClOFN+ySL2xoAHwVCLxrMQNy7+e1Bq7mSnVjDCsmydhFap4uhvDY
+         tThQ==
+X-Gm-Message-State: APjAAAXcMYqnAuQiR1i8rce220I/jq5pzBkLnJh4+D/pPxTZIroF5W4y
+        dws5jGU4i6fP2iy+6dHUQbY=
+X-Google-Smtp-Source: APXvYqzaFgEYUFu0k3lhSwDZqW9fQ4Ot24RTXYB/4ZKdkXmvjxy9zlwbjDrV80uwzH4cs86vGKbAaw==
+X-Received: by 2002:a17:90a:1c1:: with SMTP id 1mr2877558pjd.72.1560831629494;
+        Mon, 17 Jun 2019 21:20:29 -0700 (PDT)
+Received: from localhost.localdomain ([112.196.181.128])
+        by smtp.googlemail.com with ESMTPSA id e22sm13571288pgb.9.2019.06.17.21.20.26
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Mon, 17 Jun 2019 21:20:28 -0700 (PDT)
+From:   Puranjay Mohan <puranjay12@gmail.com>
+To:     Shuah Khan <skhan@linuxfoundation.org>
+Cc:     Puranjay Mohan <puranjay12@gmail.com>, linux-media@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-kernel-mentees@lists.linuxfoundation.org
+Subject: [PATCH RESEND] media: pci: cx88: Change the type of 'missed' to u64
+Date:   Tue, 18 Jun 2019 09:49:37 +0530
+Message-Id: <20190618041937.8424-1-puranjay12@gmail.com>
+X-Mailer: git-send-email 2.21.0
+MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2019-06-17 at 23:36 +0200, Takashi Iwai wrote:
-> On Mon, 17 Jun 2019 22:51:42 +0200,
-> Ranjani Sridharan wrote:
-> > 
-> > On Mon, 2019-06-17 at 13:36 +0200, Amadeusz Sławiński wrote:
-> > > When we unload Skylake driver we may end up calling
-> > > hdac_component_master_unbind(), it uses acomp->audio_ops, which
-> > > we
-> > > set
-> > > in hdmi_codec_probe(), so we need to set it to NULL in
-> > > hdmi_codec_remove(),
-> > > otherwise we will dereference no longer existing pointer.
-> > 
-> > Hi Amadeusz,
-> > 
-> > It looks like the audio_ops should be deleted
-> > snd_hdac_acomp_exit().
-> 
-> It's a different one.  The codec driver registers / de-registers the
-> notifier at its probe/remove, while the controller driver takes care
-> of snd_hdac_acomp_init().  snd_hdac_acomp_exit() is usually not
-> needed
-> to be called explicitly, as it's managed via devres.
+Callers of hrtimer_forward_now() should save the return value in u64.
+change type of missed from unsigned long to u64.
 
-Makes sense, thanks Takashi. But I am still wondering why we havent
-seen this issue with SOF yet. We run the module unload/reload stress
-test as well and havent seen this yet. 
+Signed-off-by: Puranjay Mohan <puranjay12@gmail.com>
+---
+RESEND - Added required mailing lists in CC
 
-Thanks,
-Ranjani
-> 
-> 
-> Takashi
-> 
-> > Also, this doesnt seem to be the case with when the SOF driver is
-> > removed.
-> > Could you please give a bit more context on what error you see when
-> > this happens?
-> > 
-> > Thanks,
-> > Ranjani
-> > > 
-> > > Signed-off-by: Amadeusz Sławiński <
-> > > amadeuszx.slawinski@linux.intel.com>
-> > > ---
-> > >  sound/soc/codecs/hdac_hdmi.c | 6 ++++++
-> > >  1 file changed, 6 insertions(+)
-> > > 
-> > > diff --git a/sound/soc/codecs/hdac_hdmi.c
-> > > b/sound/soc/codecs/hdac_hdmi.c
-> > > index 911bb6e2a1ac..9ee1bff548d8 100644
-> > > --- a/sound/soc/codecs/hdac_hdmi.c
-> > > +++ b/sound/soc/codecs/hdac_hdmi.c
-> > > @@ -1890,6 +1890,12 @@ static void hdmi_codec_remove(struct
-> > > snd_soc_component *component)
-> > >  {
-> > >  	struct hdac_hdmi_priv *hdmi =
-> > > snd_soc_component_get_drvdata(component);
-> > >  	struct hdac_device *hdev = hdmi->hdev;
-> > > +	int ret;
-> > > +
-> > > +	ret = snd_hdac_acomp_register_notifier(hdev->bus, NULL);
-> > > +	if (ret < 0)
-> > > +		dev_err(&hdev->dev, "notifier unregister failed: err:
-> > > %d\n",
-> > > +				ret);
-> > >  
-> > >  	pm_runtime_disable(&hdev->dev);
-> > >  }
-> > 
-> > 
+ drivers/media/pci/cx88/cx88-input.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/media/pci/cx88/cx88-input.c b/drivers/media/pci/cx88/cx88-input.c
+index 27f690b54e0c..fa5ce464b0ba 100644
+--- a/drivers/media/pci/cx88/cx88-input.c
++++ b/drivers/media/pci/cx88/cx88-input.c
+@@ -167,7 +167,7 @@ static void cx88_ir_handle_key(struct cx88_IR *ir)
+ 
+ static enum hrtimer_restart cx88_ir_work(struct hrtimer *timer)
+ {
+-	unsigned long missed;
++	u64 missed;
+ 	struct cx88_IR *ir = container_of(timer, struct cx88_IR, timer);
+ 
+ 	cx88_ir_handle_key(ir);
+-- 
+2.21.0
 
