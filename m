@@ -2,112 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0F22D49A46
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 09:19:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 435DF49939
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 08:47:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728916AbfFRHS6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Jun 2019 03:18:58 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:46526 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725900AbfFRHS5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Jun 2019 03:18:57 -0400
-Received: by mail-pl1-f193.google.com with SMTP id e5so5298741pls.13;
-        Tue, 18 Jun 2019 00:18:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=9SP9uqBfa577y4F42b9AqTEJcR+B1XMFG1PF2pX07MA=;
-        b=lb4q+R/UEvyQZ08PlnQSuDevHiuHIIzSn3Yj2DIGmGAmeFS4FEmMtMhFckfnYzUQzY
-         QCHqN8k0Hw7suErE73R1n6sI7J3TAlgJYrIIgD69u89pgJFmriA8Zdas3ZVnjnXBCyyJ
-         wUqDlAVj1R8nfl/Q79fu5ntbUOoReEnibFyntGAf/KQPeUTLQR8DnqZ/hRfa6LI2K5DR
-         ynRXu3b5B38DE91u/jsOgfpvPEtCpeQJ4zkyd1HR5uVqaM1v6WXIrokR1E+fLUdIH/ZM
-         zxNsrmj2Wy/CZXdBAZuXu/KcyPDHYIWb8bWV/VwV6b5BneJP5P2vBo/iOOntaWbeIxf3
-         ET4g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=9SP9uqBfa577y4F42b9AqTEJcR+B1XMFG1PF2pX07MA=;
-        b=AIDApinv4ZFTNVVgVkfE5yLR0ZHcEjuh0oiOmn+onLfutt24vy6aWdEgFxp218Rrpx
-         HLg/991rpa+lpSSOMb6XnjKWeDN3Q97Zfv6vuXBWnBSDO6YZXSFNKXtSHAVsAE48iM3s
-         P+w/kxvBh1fFxpRWJFGo5vVaRpJxoRgcqHwt5k8td/L1Pw/x3UzvkJ84g+PtmbjnuLds
-         86aK7QMpHBKOqIe6niBMuZam0W0ntf1FMYXIn6z4h+5iIGosL+uvbU7uqpKVDf1k7Ryo
-         hQGvJqZlU/dT8sFmOQGI6Qp+bcWVPmHAGZhs9rkiVA91OlrhAIopJ/IthBHDH1OJcPi5
-         7foQ==
-X-Gm-Message-State: APjAAAUcYHUVqHhCxQeAX+jYnn0NoMBsC1ckHotBYhTYDwKUdhnSLJ99
-        VZZoM+S7HTWaQqnKqovnKEMvgLJvpBk=
-X-Google-Smtp-Source: APXvYqz60fEoiLIuJqC3LO7Hilm9ePItQ9CaC2RXYfG74Fs73qPxiydc3yBZyWxTxPkAY/XPAuXN7A==
-X-Received: by 2002:a17:902:3103:: with SMTP id w3mr2257057plb.84.1560838283094;
-        Mon, 17 Jun 2019 23:11:23 -0700 (PDT)
-Received: from maya190131 ([13.66.160.195])
-        by smtp.gmail.com with ESMTPSA id c26sm13070476pfr.71.2019.06.17.23.11.22
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 17 Jun 2019 23:11:23 -0700 (PDT)
-Date:   Tue, 18 Jun 2019 06:11:22 +0000
-From:   Maya Nakamura <m.maya.nakamura@gmail.com>
-To:     mikelley@microsoft.com, kys@microsoft.com, haiyangz@microsoft.com,
-        sthemmin@microsoft.com, sashal@kernel.org
-Cc:     x86@kernel.org, linux-hyperv@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v3 1/5] x86: hv: hyperv-tlfs.h: Create and use Hyper-V page
- definitions
-Message-ID: <01d19ae7b855d72f6f4fa09bd954aeb3863d170f.1560837096.git.m.maya.nakamura@gmail.com>
-References: <cover.1560837096.git.m.maya.nakamura@gmail.com>
+        id S1728783AbfFRGr0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Jun 2019 02:47:26 -0400
+Received: from ozlabs.org ([203.11.71.1]:46175 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728195AbfFRGrZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Jun 2019 02:47:25 -0400
+Received: from neuling.org (localhost [127.0.0.1])
+        by ozlabs.org (Postfix) with ESMTP id 45Sd4w30GDz9sDX;
+        Tue, 18 Jun 2019 16:11:28 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=neuling.org;
+        s=201811; t=1560838288;
+        bh=uLeN3JvliJrrWmBBPBEg+QalZIGnGRnRT7IRnPElTPo=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=AMlvJ74llgIPBvEBzG1nNMm7QQtDD7fDcC6V8gqITcdfNDndxaXnsrlAuPixXs29a
+         0nIFFLgtySP4DzClUAseH5nloiXZ4wg/wPXBHV77xN9aZwKBkm0UPlA3O1ediVxRD3
+         bZMCWcZWyWQeGxoXV/by1cIA1/T75CbIhX3E2TmxsUue9HHqo7VhWr96lv7ueHWcQI
+         e5d1chyRCxCbdF6Sx/pQ9VjH5nj8hMpgUxV1rHWk1Lk937v5f/D8dKJjpG28UjCsrg
+         B09oWpbxAK9StLsRmkp7yMvErJBxxm2UFPQdEgBAJ7ZvYSvZDtdtB51Y0WcObcCdDc
+         kNWUorW49OC4w==
+Received: by neuling.org (Postfix, from userid 1000)
+        id 512FA2A2538; Tue, 18 Jun 2019 16:11:28 +1000 (AEST)
+Message-ID: <b8d8682c8cf13d307ca1e936f924f31a9eac3227.camel@neuling.org>
+Subject: Re: [PATCH 3/5] Powerpc/hw-breakpoint: Refactor set_dawr()
+From:   Michael Neuling <mikey@neuling.org>
+To:     Ravi Bangoria <ravi.bangoria@linux.ibm.com>, mpe@ellerman.id.au
+Cc:     benh@kernel.crashing.org, paulus@samba.org,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        npiggin@gmail.com, christophe.leroy@c-s.fr,
+        naveen.n.rao@linux.vnet.ibm.com
+Date:   Tue, 18 Jun 2019 16:11:28 +1000
+In-Reply-To: <20190618042732.5582-4-ravi.bangoria@linux.ibm.com>
+References: <20190618042732.5582-1-ravi.bangoria@linux.ibm.com>
+         <20190618042732.5582-4-ravi.bangoria@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.32.2 (3.32.2-1.fc30) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1560837096.git.m.maya.nakamura@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Define HV_HYP_PAGE_SHIFT, HV_HYP_PAGE_SIZE, and HV_HYP_PAGE_MASK because
-the Linux guest page size and hypervisor page size concepts are
-different, even though they happen to be the same value on x86.
+This is going to collide with this patch=20
+https://patchwork.ozlabs.org/patch/1109594/
 
-Also, replace PAGE_SIZE with HV_HYP_PAGE_SIZE.
+Mikey
 
-Signed-off-by: Maya Nakamura <m.maya.nakamura@gmail.com>
-Reviewed-by: Michael Kelley <mikelley@microsoft.com>
-Reviewed-by: Vitaly Kuznetsov <vkuznets@redhat.com>
----
- arch/x86/include/asm/hyperv-tlfs.h | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/include/asm/hyperv-tlfs.h b/arch/x86/include/asm/hyperv-tlfs.h
-index af78cd72b8f3..4097edf552b3 100644
---- a/arch/x86/include/asm/hyperv-tlfs.h
-+++ b/arch/x86/include/asm/hyperv-tlfs.h
-@@ -12,6 +12,16 @@
- #include <linux/types.h>
- #include <asm/page.h>
- 
-+/*
-+ * While not explicitly listed in the TLFS, Hyper-V always runs with a page size
-+ * of 4096. These definitions are used when communicating with Hyper-V using
-+ * guest physical pages and guest physical page addresses, since the guest page
-+ * size may not be 4096 on all architectures.
-+ */
-+#define HV_HYP_PAGE_SHIFT	12
-+#define HV_HYP_PAGE_SIZE	BIT(HV_HYP_PAGE_SHIFT)
-+#define HV_HYP_PAGE_MASK	(~(HV_HYP_PAGE_SIZE - 1))
-+
- /*
-  * The below CPUID leaves are present if VersionAndFeatures.HypervisorPresent
-  * is set by CPUID(HvCpuIdFunctionVersionAndFeatures).
-@@ -847,7 +857,7 @@ union hv_gpa_page_range {
-  * count is equal with how many entries of union hv_gpa_page_range can
-  * be populated into the input parameter page.
-  */
--#define HV_MAX_FLUSH_REP_COUNT ((PAGE_SIZE - 2 * sizeof(u64)) /	\
-+#define HV_MAX_FLUSH_REP_COUNT ((HV_HYP_PAGE_SIZE - 2 * sizeof(u64)) / \
- 				sizeof(union hv_gpa_page_range))
- 
- struct hv_guest_mapping_flush_list {
--- 
-2.17.1
+On Tue, 2019-06-18 at 09:57 +0530, Ravi Bangoria wrote:
+> Remove unnecessary comments. Code itself is self explanatory.
+> And, ISA already talks about MRD field. I Don't think we need
+> to re-describe it.
+>=20
+> Signed-off-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+> ---
+>  arch/powerpc/kernel/process.c | 17 +++++------------
+>  1 file changed, 5 insertions(+), 12 deletions(-)
+>=20
+> diff --git a/arch/powerpc/kernel/process.c b/arch/powerpc/kernel/process.=
+c
+> index f0fbbf6a6a1f..f002d2ffff86 100644
+> --- a/arch/powerpc/kernel/process.c
+> +++ b/arch/powerpc/kernel/process.c
+> @@ -799,18 +799,11 @@ int set_dawr(struct arch_hw_breakpoint *brk)
+> =20
+>  	dawr =3D brk->address;
+> =20
+> -	dawrx  =3D (brk->type & (HW_BRK_TYPE_READ | HW_BRK_TYPE_WRITE)) \
+> -		                   << (63 - 58); //* read/write bits */
+> -	dawrx |=3D ((brk->type & (HW_BRK_TYPE_TRANSLATE)) >> 2) \
+> -		                   << (63 - 59); //* translate */
+> -	dawrx |=3D (brk->type & (HW_BRK_TYPE_PRIV_ALL)) \
+> -		                   >> 3; //* PRIM bits */
+> -	/* dawr length is stored in field MDR bits 48:53.  Matches range in
+> -	   doublewords (64 bits) baised by -1 eg. 0b000000=3D1DW and
+> -	   0b111111=3D64DW.
+> -	   brk->len is in bytes.
+> -	   This aligns up to double word size, shifts and does the bias.
+> -	*/
+> +	dawrx  =3D (brk->type & HW_BRK_TYPE_RDWR) << (63 - 58);
+> +	dawrx |=3D ((brk->type & HW_BRK_TYPE_TRANSLATE) >> 2) << (63 - 59);
+> +	dawrx |=3D (brk->type & HW_BRK_TYPE_PRIV_ALL) >> 3;
+> +
+> +	/* brk->len is in bytes. */
+>  	mrd =3D ((brk->len + 7) >> 3) - 1;
+>  	dawrx |=3D (mrd & 0x3f) << (63 - 53);
+> =20
+
+
+
 
