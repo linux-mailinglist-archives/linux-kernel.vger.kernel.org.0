@@ -2,63 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D8DF4496AD
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 03:28:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 79AB74969F
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Jun 2019 03:20:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727027AbfFRB21 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 17 Jun 2019 21:28:27 -0400
-Received: from mx6378.ciavia.eu ([178.156.202.117]:59987 "EHLO
-        slot0.presuure.ga" rhost-flags-OK-FAIL-OK-OK) by vger.kernel.org
-        with ESMTP id S1725829AbfFRB20 (ORCPT
+        id S1726357AbfFRBUM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 17 Jun 2019 21:20:12 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:38785 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725829AbfFRBUM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 17 Jun 2019 21:28:26 -0400
-X-Greylist: delayed 601 seconds by postgrey-1.27 at vger.kernel.org; Mon, 17 Jun 2019 21:28:25 EDT
-DKIM-Signature: v=1; a=rsa-sha1; c=relaxed/relaxed; s=dkim; d=presuure.ga;
- h=Content-Type:MIME-Version:Content-Transfer-Encoding:Content-Description:Subject:To:From:Date:Reply-To:Message-ID; i=nuekwa@presuure.ga;
- bh=EclTUBt0EgOxKrPKBvCtV8KGfLA=;
- b=Ic0Rz1tLwT57lIL/IEQUBS4weesRdXNyxOMsq7/Fqij0Tdd3PpwE6Sl7TBRqfyVGvKCckUGpYAsK
-   RshxzuzGXLM/4LRouIjUPO1xgm7WuA5DEmxYxs+dpMAevRdcBVuCJOEEZ4qIOR6/fnoYIfu/szGY
-   5TPTDXCGvRBUuNUIo8fR1x7K6TQwU6o6ulQ+gJwn1H2HvDKcAS0wNSVRBE4rDgSrA9DItABHJbW7
-   fx4sJTgzP7Ag4ilfkd671hErqrlIPoeod7sBSBL8AfYzFAs2dtc4/LDw/Jzt2sgTiI29u6jQtY/o
-   hTrfL6t8ERjQj0ES1q++KTEiD7tedRR8Xkl7xw==
-DomainKey-Signature: a=rsa-sha1; c=nofws; q=dns; s=dkim; d=presuure.ga;
- b=dP5VmnCYk+Si2OycLa75hajsClgP//gNGbuAKrFWmVDalbSrsJxUmBuotjY12HRGteNH1dsDzcmG
-   l4TLFOs7W7RdlHmrHsB2w4iHaTB5eDZHk6zfHkB/wkmqrK5VDm9+nc8l293XNWDQMzQvacVcJRjL
-   um/YNHzlsUUZn1lKq0nQfsXYhoyZ53RIXk4BMhXmr8TSq8ioC/CmEX/IF9B6eTd9KWuUTSUMD8/t
-   bwWSS8ISWJ7o9pOf8rE3MAcNrITd3wmBmODXxQ7L1CmukxKnm4l69ipfFAEzQ7mmnmV+9Xl548E3
-   mstM/JCPrIyhnguM6TI/mcGxOU8FTAJrj5qAOw==;
-Content-Type: text/plain; charset="iso-8859-1"
+        Mon, 17 Jun 2019 21:20:12 -0400
+Received: by mail-pl1-f195.google.com with SMTP id f97so4968266plb.5
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Jun 2019 18:20:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=AuHccIdSxPbt86ZJkXZzP91IaZ8/7FsD2wmDGIVu61M=;
+        b=gbHv0ugum9zXI3n7MsAdeKtL3MTfXanNJBbnNSGb+cUVrX9fJmnj2pKhTm1F2nsD9d
+         a5EAtPuIZCywAG1YhzX/PBFeCqnKlbHe+e0cALtBivbUz3WO13WyEUv1Wxxy7hOb+5Z8
+         m8CKot7KkocPxV5DaCPWnWGhlZo9FLGDSMpNO98qXEiOXMuWkPJq/GfWIDxourXzRjWE
+         ETXRRAv/+E8m65I5r+eTblPVFJ/RbDY9F7xSPWVJj3/xjZ66G7N53NFLE1M/MkQz3fn+
+         yYKNoazoG5Mh5DztKJXb5Ia02uaDQDHImDQlSFGvRW5TpFvvgCXAzCC60PrvqLS9d8SK
+         eg2w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=AuHccIdSxPbt86ZJkXZzP91IaZ8/7FsD2wmDGIVu61M=;
+        b=loPZGAGeNPS4eqH+v7Pidr1sI39JwAyzpicjkPgitquYSjV55WrIz/meKpZvW6qIl/
+         314LX4cqx39udyDlVpLWXVLX/t93atVXenDcicHggqnM2K239kvEvhIcBgd0RvaX+fxN
+         /79lnIwRNMIjXIMmhF6jACDwToWcphVwo3E4g8ZXLKi343T6ejM9A1qDkPO0HCbxJS5E
+         g0PFXnZIRPBZL9Hs4QcGpyAWfgsyV3P/fmfwlKulbAF2erIuynHqjPYlKUUrQpBvPrwO
+         t5O6M+YA+XBWZ/ZGqy8pGPl/MOSX8z/9NDp2S8kBq5eOjopinDfKCethsp1Edcji3333
+         RZNw==
+X-Gm-Message-State: APjAAAVPMkKx4BrqpBCb6/OVgbAWQmpyDFNPv9tsjazJe+zpWpD4etPJ
+        FkNG4rbVQXnyKOhkPzLjd24=
+X-Google-Smtp-Source: APXvYqwyQ1urEoas4pLxiFnN/OcxePRhS51EIPNamFdJr3m1TCl0OnaXoJfEWuhuzFCUaOHkzluMmA==
+X-Received: by 2002:a17:902:42a5:: with SMTP id h34mr74671190pld.16.1560820811540;
+        Mon, 17 Jun 2019 18:20:11 -0700 (PDT)
+Received: from hari-Inspiron-1545 ([183.83.92.187])
+        by smtp.gmail.com with ESMTPSA id a3sm11674246pff.122.2019.06.17.18.20.09
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 17 Jun 2019 18:20:11 -0700 (PDT)
+Date:   Tue, 18 Jun 2019 06:50:07 +0530
+From:   Hariprasad Kelam <hariprasad.kelam@gmail.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Hariprasad Kelam <hariprasad.kelam@gmail.com>,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] staging: rtl8723bs: hal: rtl8723b_rf6052: fix spaces
+ preferred around unary operator
+Message-ID: <20190618012007.GA7871@hari-Inspiron-1545>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Description: Mail message body
-Subject: June inquiry
-To:     Recipients <nuekwa@presuure.ga>
-From:   "Marketing Dept" <nuekwa@presuure.ga>
-Date:   Tue, 18 Jun 2019 04:18:15 +0300
-Reply-To: great.pacific@aol.com
-Message-ID: <0.0.E.456.1D52573AC9616FA.0@slot0.presuure.ga>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello dear,
- =
+ERROR: spaces required around that '<<' (ctx:VxV)
 
-We are in the market for your products after meeting at your stand during l=
-ast expo.
- =
+Signed-off-by: Hariprasad Kelam <hariprasad.kelam@gmail.com>
+---
+ drivers/staging/rtl8723bs/hal/rtl8723b_rf6052.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-Please kindly send us your latest catalog and price list so as to start a n=
-ew project/order as promised during the exhibition. =
+diff --git a/drivers/staging/rtl8723bs/hal/rtl8723b_rf6052.c b/drivers/staging/rtl8723bs/hal/rtl8723b_rf6052.c
+index aa45a84..c205345 100644
+--- a/drivers/staging/rtl8723bs/hal/rtl8723b_rf6052.c
++++ b/drivers/staging/rtl8723bs/hal/rtl8723b_rf6052.c
+@@ -114,12 +114,12 @@ static int phy_RF6052_Config_ParaFile(struct adapter *Adapter)
+ 			break;
+ 		case RF_PATH_B:
+ 		case RF_PATH_D:
+-			u4RegValue = PHY_QueryBBReg(Adapter, pPhyReg->rfintfs, bRFSI_RFENV<<16);
++			u4RegValue = PHY_QueryBBReg(Adapter, pPhyReg->rfintfs, bRFSI_RFENV << 16);
+ 			break;
+ 		}
+ 
+ 		/*----Set RF_ENV enable----*/
+-		PHY_SetBBReg(Adapter, pPhyReg->rfintfe, bRFSI_RFENV<<16, 0x1);
++		PHY_SetBBReg(Adapter, pPhyReg->rfintfe, bRFSI_RFENV << 16, 0x1);
+ 		udelay(1);/* PlatformStallExecution(1); */
+ 
+ 		/*----Set RF_ENV output high----*/
+@@ -163,7 +163,7 @@ static int phy_RF6052_Config_ParaFile(struct adapter *Adapter)
+ 			break;
+ 		case RF_PATH_B:
+ 		case RF_PATH_D:
+-			PHY_SetBBReg(Adapter, pPhyReg->rfintfs, bRFSI_RFENV<<16, u4RegValue);
++			PHY_SetBBReg(Adapter, pPhyReg->rfintfs, bRFSI_RFENV << 16, u4RegValue);
+ 			break;
+ 		}
+ 
+-- 
+2.7.4
 
- =
-
-I would appreciate your response about the above details required so we can=
- revert back to you asap.
- =
-
-Kind regards
- =
-
-Hyuan Cloe
