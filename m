@@ -2,59 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6C5D24B426
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 10:35:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2C17B4B422
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 10:35:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731355AbfFSIfr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Jun 2019 04:35:47 -0400
-Received: from foss.arm.com ([217.140.110.172]:55812 "EHLO foss.arm.com"
+        id S1731292AbfFSIfK convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 19 Jun 2019 04:35:10 -0400
+Received: from mga04.intel.com ([192.55.52.120]:58054 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730783AbfFSIfq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Jun 2019 04:35:46 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id ED6B9CFC;
-        Wed, 19 Jun 2019 01:35:45 -0700 (PDT)
-Received: from queper01-lin (queper01-lin.cambridge.arm.com [10.1.195.48])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 105993F246;
-        Wed, 19 Jun 2019 01:35:43 -0700 (PDT)
-Date:   Wed, 19 Jun 2019 09:35:42 +0100
-From:   Quentin Perret <quentin.perret@arm.com>
-To:     edubezval@gmail.com, rui.zhang@intel.com, javi.merino@kernel.org,
-        viresh.kumar@linaro.org, amit.kachhap@gmail.com, rjw@rjwysocki.net,
-        will.deacon@arm.com, catalin.marinas@arm.com,
-        daniel.lezcano@linaro.org, dietmar.eggemann@arm.com,
-        ionela.voinescu@arm.com, mka@chromium.org,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v5 0/3] Make IPA use PM_EM
-Message-ID: <20190619083539.mveyly5celgs5pmg@queper01-lin>
-References: <20190530092038.12020-1-quentin.perret@arm.com>
+        id S1730783AbfFSIfK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Jun 2019 04:35:10 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Jun 2019 01:35:09 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.63,392,1557212400"; 
+   d="scan'208";a="162147085"
+Received: from xxx.igk.intel.com (HELO xxx) ([10.237.93.170])
+  by orsmga003.jf.intel.com with ESMTP; 19 Jun 2019 01:35:05 -0700
+Date:   Wed, 19 Jun 2019 10:38:59 +0200
+From:   Amadeusz =?UTF-8?B?U8WCYXdpxYRza2k=?= 
+        <amadeuszx.slawinski@linux.intel.com>
+To:     Ranjani Sridharan <ranjani.sridharan@linux.intel.com>
+Cc:     alsa-devel@alsa-project.org, Liam Girdwood <lgirdwood@gmail.com>,
+        linux-kernel@vger.kernel.org,
+        Cezary Rojewski <cezary.rojewski@intel.com>,
+        Jie Yang <yang.jie@linux.intel.com>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Takashi Iwai <tiwai@suse.com>, Mark Brown <broonie@kernel.org>
+Subject: Re: [alsa-devel] [PATCH v2 09/11] ASoC: Intel: hdac_hdmi: Set ops
+ to NULL on remove
+Message-ID: <20190619103859.15bf51c5@xxx>
+In-Reply-To: <bd8855a7ab7a9958113631b76706120fd4427631.camel@linux.intel.com>
+References: <20190617113644.25621-1-amadeuszx.slawinski@linux.intel.com>
+        <20190617113644.25621-10-amadeuszx.slawinski@linux.intel.com>
+        <75be86354032f4886cbaf7d430de2aa89eaab573.camel@linux.intel.com>
+        <20190618130015.0fc388b4@xxx>
+        <bd8855a7ab7a9958113631b76706120fd4427631.camel@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190530092038.12020-1-quentin.perret@arm.com>
-User-Agent: NeoMutt/20171215
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thursday 30 May 2019 at 10:20:35 (+0100), Quentin Perret wrote:
-> Quentin Perret (3):
->   arm64: defconfig: Enable CONFIG_ENERGY_MODEL
->   thermal: cpu_cooling: Make the power-related code depend on IPA
->   thermal: cpu_cooling: Migrate to using the EM framework
+On Tue, 18 Jun 2019 08:58:22 -0700
+Ranjani Sridharan <ranjani.sridharan@linux.intel.com> wrote:
+
+> On Tue, 2019-06-18 at 13:00 +0200, Amadeusz Sławiński wrote:
+> > On Mon, 17 Jun 2019 13:51:42 -0700
+> > Ranjani Sridharan <ranjani.sridharan@linux.intel.com> wrote:
+> >   
+> > > On Mon, 2019-06-17 at 13:36 +0200, Amadeusz Sławiński wrote:  
+> > > > When we unload Skylake driver we may end up calling
+> > > > hdac_component_master_unbind(), it uses acomp->audio_ops, which
+> > > > we
+> > > > set
+> > > > in hdmi_codec_probe(), so we need to set it to NULL in
+> > > > hdmi_codec_remove(),
+> > > > otherwise we will dereference no longer existing pointer.    
+> > > 
+> > > Hi Amadeusz,
+> > > 
+> > > It looks like the audio_ops should be deleted
+> > > snd_hdac_acomp_exit().
+> > > Also, this doesnt seem to be the case with when the SOF driver is
+> > > removed.
+> > > Could you please give a bit more context on what error you see
+> > > when this happens?  
+> > 
+> > Hi,
+> > 
+> > I get Oops. This is what happens with all other patches in this
+> > series and only this one reverted:
+> > 
+> > root@APL:~# rmmod snd_soc_sst_bxt_rt298
+> > root@APL:~# rmmod snd_soc_hdac_hdmi
+> > root@APL:~# rmmod snd_soc_skl  
 > 
->  arch/arm64/configs/defconfig  |   1 +
->  drivers/thermal/Kconfig       |   1 +
->  drivers/thermal/cpu_cooling.c | 428 ++++++++++++++--------------------
->  3 files changed, 178 insertions(+), 252 deletions(-)
+> Thanks, Amadeusz. I think the order in which the drivers are removed
+> is what's causing the oops in your case. With SOF, the order we
+> remove is
+> 
+> 1. rmmod sof_pci_dev
+> 2. rmmod snd_soc_sst_bxt_rt298
+> 3. rmmod snd_soc_hdac_hdmi
+> 
 
-Gentle ping on this :-)
+Well, there is nothing enforcing the order in which modules can be
+unloaded (and I see no reason to force it), as you can see from
+following excerpt, you can either start unloading from
+snd_soc_sst_bxt_rt298 or snd_soc_skl, and yes if you start from
+snd_soc_skl, there is no problem.
 
-Is there any chance for the series to make it in 5.3 ? Or is it too late
-already ? In any case do let me know if there is anything I can do about
-it.
+snd_soc_sst_bxt_rt298    40960  0
+snd_soc_hdac_hdmi      45056  1 snd_soc_sst_bxt_rt298
+snd_soc_dmic           16384  1
+snd_soc_rt298          65536  2 snd_soc_sst_bxt_rt298
+snd_soc_rt286          61440  0
+snd_soc_rl6347a        16384  2 snd_soc_rt298,snd_soc_rt286
+snd_soc_skl           372736  0
+snd_soc_sst_ipc        20480  1 snd_soc_skl
+snd_soc_sst_dsp        36864  1 snd_soc_skl
+snd_hda_ext_core       28672  2 snd_soc_hdac_hdmi,snd_soc_skl
+snd_hda_core          139264  3
+snd_hda_ext_core,snd_soc_hdac_hdmi,snd_soc_skl
+snd_soc_acpi_intel_match    53248  1 snd_soc_skl snd_soc_acpi
+16384  2 snd_soc_acpi_intel_match,snd_soc_skl snd_soc_core
+405504  6
+snd_soc_rt298,snd_soc_rt286,snd_soc_hdac_hdmi,snd_soc_skl,snd_soc_dmic,snd_soc_sst_bxt_rt298
+snd_compress           36864  2 snd_soc_core,snd_soc_skl
+snd_pcm_dmaengine      16384  1 snd_soc_core snd_pcm
+163840  10
+snd_soc_rt298,snd_soc_rt286,snd_hda_ext_core,snd_soc_hdac_hdmi,snd_compress,snd_soc_core,snd_soc_skl,snd_hda_core,snd_soc_sst_bxt_rt298,snd_pcm_dmaengine
+snd_timer              53248  1 snd_pcm
 
-Many thanks,
-Quentin
+Amadeusz
