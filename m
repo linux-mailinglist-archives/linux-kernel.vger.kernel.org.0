@@ -2,82 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AA85F4BCD8
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 17:31:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AC62E4BCE8
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 17:36:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729695AbfFSPbU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Jun 2019 11:31:20 -0400
-Received: from frisell.zx2c4.com ([192.95.5.64]:40405 "EHLO frisell.zx2c4.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726009AbfFSPbT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Jun 2019 11:31:19 -0400
-Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTP id ec707413
-        for <linux-kernel@vger.kernel.org>;
-        Wed, 19 Jun 2019 14:58:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=zx2c4.com; h=mime-version
-        :references:in-reply-to:from:date:message-id:subject:to:cc
-        :content-type; s=mail; bh=w8y7eK0gVXHkM1cVaxVMErYvvqU=; b=xsyBW9
-        KOz4qEpl9uSATvc2OFtNLrg8oRCJLKhF15N784Cmlzvmfcj066WuTpJXytVFhHAy
-        D+msNk0cvg0h0kglREJtxYQzkiWC9lSAzFIwI8TjL3b9RbKG6migxtStAySVmcWL
-        cU0TzkiIawQs8PsqMYM3Wss0f6ZEevYWQYUKmfeEDUF+KgpJOaNAkqOuQRIl0Pb5
-        1L3Pp0Rm1RVBoCFEYCUpZKApsQSxsE6NipUdg0YD8XZy1fe+IlYDLYo999lvd3EO
-        Zd1sbzcuUY0iX8OzQh+5NiOZG4zFH91UB0JROhJ0tLYyLKn4rqhtnD8yyfoRWFNy
-        u90ZHNkYn2q6WkwA==
-Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 0ac3de95 (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256:NO)
-        for <linux-kernel@vger.kernel.org>;
-        Wed, 19 Jun 2019 14:58:07 +0000 (UTC)
-Received: by mail-ot1-f41.google.com with SMTP id s20so19722462otp.4
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2019 08:31:16 -0700 (PDT)
-X-Gm-Message-State: APjAAAUWlqVLKCsy+JdRnkAVmt3HIG9a1zczsnvtYBZvyDk/3X3SuuTX
-        4p5M9RYxq3vQYUo6Y41EaeQ/K2OVdN5tZIuiFgQ=
-X-Google-Smtp-Source: APXvYqyfw4ZVlo60FlVyqNYz5xzxMIXNGpzXGGxUIYNTkQmPXihsmO6CDl56Fxpa0mkKltcza+pecaT9i1llY8r1KpE=
-X-Received: by 2002:a05:6830:2148:: with SMTP id r8mr19880801otd.179.1560958275697;
- Wed, 19 Jun 2019 08:31:15 -0700 (PDT)
+        id S1729582AbfFSPgE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Jun 2019 11:36:04 -0400
+Received: from mail-yw1-f65.google.com ([209.85.161.65]:37822 "EHLO
+        mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726428AbfFSPgA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Jun 2019 11:36:00 -0400
+Received: by mail-yw1-f65.google.com with SMTP id 186so8466025ywo.4
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2019 08:35:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=dwSXE2HJvCidsxfi3LfOlPWV76WiyrJo+zGle1/Posk=;
+        b=shPcVD/RnA32q5R954zhbHbCNmUv9WV3y1RqIyqvsdpscKxDrx898pdEDLhp5LN0to
+         DbXYXu+gvach7KLfWm2FSbsVhYhvyvmXGjhENsRkiMKSnzsr2EcXvlHfynmEaSSmHkie
+         5Yts8FyiwXSFtBQH6RFnmuWPot9WB3/pECxotkeyoOEWY/zSS12ndpAUC0/eRSSv0R9U
+         yZ3R5iGCjfEkm/U8Cqn+k5IXrPvpygVj1VJXilucmRW00bBqpvtpm69ynGQS7hLw53mK
+         vTA414ToCI8UTtvUA421mNTNbwrVbYtIQ7ja94Ya4nfK98Lsk+qkHykltGKqlw+41fs5
+         JPBQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=dwSXE2HJvCidsxfi3LfOlPWV76WiyrJo+zGle1/Posk=;
+        b=d+38NmZneiBChFmJAfUjRafTlqdkDXjhQmKRXX84smHPSZWPxn/cAhvRZ9ifjgyxyC
+         dBCfR/sv/2dUYu0QDU6oqOdVkMQhAPLdTthqcuNS3BzPvHIBhoFDiAJRzlHAn/OzSL1x
+         Lzq+lJ6VwJbCW7G/mf8xPz9cdt0nzv57x5LXu4hetl6XnlEWeinZOvwuzSGP9qipxtnP
+         RdMfh8Y3W8/ppEQP+d7CS+gk9LGuGlKt+10tEnIESLDppQuE/oCwlFiooL6sXIZa0TAv
+         uICLg5cOwHekjfP0wMe3s9qKsd6BPmkBLrPY88K732TXZc2rHykId7VK6gsiJ554zA0c
+         tHYA==
+X-Gm-Message-State: APjAAAUoGbR14rPeZxQC0PjldJJRDJtM451yqmZzdZ+Pswi4FdwGCF2P
+        tq0Qa3zUY05cOh4cJPpvL15mZCK4dJdW4R2zoLw9iw==
+X-Google-Smtp-Source: APXvYqxkP5tURjFEv1pLRgOMle49c6W6qB/eYRu2b+HirEU7vb0z2HAUJr63bUo2XJQhzwumW474OnOIqm7cAPB2g2Y=
+X-Received: by 2002:a81:3a0f:: with SMTP id h15mr70130882ywa.34.1560958558977;
+ Wed, 19 Jun 2019 08:35:58 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190619142350.1985-1-Jason@zx2c4.com> <CAK8P3a10PfTOhLA9d3vMTV_YXqymKLNeqCg6r7dLiNA1BwJbmA@mail.gmail.com>
-In-Reply-To: <CAK8P3a10PfTOhLA9d3vMTV_YXqymKLNeqCg6r7dLiNA1BwJbmA@mail.gmail.com>
-From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
-Date:   Wed, 19 Jun 2019 17:31:04 +0200
-X-Gmail-Original-Message-ID: <CAHmME9rYgKxNyLH4MFJwaj4188O5N6vjseQRHwF0n5pZhU8kuw@mail.gmail.com>
-Message-ID: <CAHmME9rYgKxNyLH4MFJwaj4188O5N6vjseQRHwF0n5pZhU8kuw@mail.gmail.com>
-Subject: Re: [PATCH v2] timekeeping: get_jiffies_boot_64() for jiffies that
- include sleep time
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>
+References: <20190619144610.12520-1-longman@redhat.com> <CALvZod5yHbtYe2x3TGQKGtxjvTDpAGjvSc8Pvphbn00pdRfs2g@mail.gmail.com>
+ <20831975-590f-ecab-53db-5d7e6b1a053f@redhat.com>
+In-Reply-To: <20831975-590f-ecab-53db-5d7e6b1a053f@redhat.com>
+From:   Shakeel Butt <shakeelb@google.com>
+Date:   Wed, 19 Jun 2019 08:35:47 -0700
+Message-ID: <CALvZod6T31z2P+wdUz3LVYO3dTSbOc89cKDn=8LKpN+ZovL8jw@mail.gmail.com>
+Subject: Re: [PATCH] mm, memcg: Add a memcg_slabinfo debugfs file
+To:     Waiman Long <longman@redhat.com>
+Cc:     Christoph Lameter <cl@linux.com>,
+        Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux MM <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Michal Hocko <mhocko@kernel.org>, Roman Gushchin <guro@fb.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Arnd,
+On Wed, Jun 19, 2019 at 8:30 AM Waiman Long <longman@redhat.com> wrote:
+>
+> On 6/19/19 11:18 AM, Shakeel Butt wrote:
+> > On Wed, Jun 19, 2019 at 7:46 AM Waiman Long <longman@redhat.com> wrote:
+> >> There are concerns about memory leaks from extensive use of memory
+> >> cgroups as each memory cgroup creates its own set of kmem caches. There
+> >> is a possiblity that the memcg kmem caches may remain even after the
+> >> memory cgroup removal. Therefore, it will be useful to show how many
+> >> memcg caches are present for each of the kmem caches.
+> >>
+> >> This patch introduces a new <debugfs>/memcg_slabinfo file which is
+> >> somewhat similar to /proc/slabinfo in format, but lists only slabs that
+> >> are in memcg kmem caches. Information available in /proc/slabinfo are
+> >> not repeated in memcg_slabinfo.
+> >>
+> > At Google, we have an interface /proc/slabinfo_full which shows each
+> > kmem cache (root and memcg) on a separate line i.e. no accumulation.
+> > This interface has helped us a lot for debugging zombies and memory
+> > leaks. The name of the memcg kmem caches include the memcg name, css
+> > id and "dead" for offlined memcgs. I think these extra information is
+> > much more useful for debugging. What do you think?
+> >
+> > Shakeel
+>
+> Yes, I think that can be a good idea. My only concern is that it can be
+> very verbose. Will work on a v2 patch.
+>
 
-On Wed, Jun 19, 2019 at 5:08 PM Arnd Bergmann <arnd@arndb.de> wrote:
-> Can you quantify how much this gains you over ktime_get_coarse_boottime
-> in practice? You are effectively adding yet another abstraction for time,
-> which is something I'd hope to avoid unless you have a strong reason other
-> than it being faster in theory.
+Yes, it is very verbose but it is only for debugging and normal users
+should not be (continuously) reading that interface.
 
-Excellent idea. It turns out to be precisely 0 (see below). A
-motivation still remains, though: this allows comparison with units
-specified in terms of jiffies, which means that the unit being
-compared matches the exact tick of the clock, making those comparisons
-as precise as possible, for what they are. I suppose you could argue,
-on the other hand, that nanoseconds give so much precision already,
-that approximations using them amount practically to the same thing.
-I'm not sure which way to reason about that.
-
-For interest, here are a few comparisons taken with kbench9000:
-
-get_jiffies_boot_64 26
-ktime_get_coarse_boottime 26
-ktime_get_boot_fast_ns with tsc 70
-ktime_get_boot_fast_ns with hpet 4922
-ktime_get_boot_fast_ns with acpi_pm 1884
-
-As expected, hpet is really quite painful.
-
-Jason
+Shakeel
