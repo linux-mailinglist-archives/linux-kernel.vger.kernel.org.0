@@ -2,93 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 407734BDB4
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 18:08:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BECC14BDB8
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 18:09:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729371AbfFSQIl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Jun 2019 12:08:41 -0400
-Received: from foss.arm.com ([217.140.110.172]:46740 "EHLO foss.arm.com"
+        id S1730005AbfFSQJ3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Jun 2019 12:09:29 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:55808 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727242AbfFSQIl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Jun 2019 12:08:41 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3E0E1344;
-        Wed, 19 Jun 2019 09:08:40 -0700 (PDT)
-Received: from [10.1.195.43] (e107049-lin.cambridge.arm.com [10.1.195.43])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4BC9F3F246;
-        Wed, 19 Jun 2019 09:08:39 -0700 (PDT)
-Subject: Re: [RFC PATCH 1/7] PM: Introduce em_pd_get_higher_freq()
-To:     Patrick Bellasi <patrick.bellasi@arm.com>,
-        Quentin Perret <quentin.perret@arm.com>
-Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        mingo@redhat.com, peterz@infradead.org, dietmar.eggemann@arm.com
-References: <20190508174301.4828-1-douglas.raillard@arm.com>
- <20190508174301.4828-2-douglas.raillard@arm.com>
- <20190516124200.opxczohjelhvrzmo@e110439-lin>
- <20190516130148.uhq55ptut47usnae@queper01-lin>
- <20190516132250.hedtianse7rnk3wq@e110439-lin>
-From:   Douglas Raillard <douglas.raillard@arm.com>
-Organization: ARM
-Message-ID: <11976c37-65d3-e0c6-034d-cfec9ebb5b49@arm.com>
-Date:   Wed, 19 Jun 2019 17:08:37 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S1726109AbfFSQJ3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Jun 2019 12:09:29 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 032EB2E95AF;
+        Wed, 19 Jun 2019 16:09:29 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-57.rdu2.redhat.com [10.10.120.57])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id D55765C225;
+        Wed, 19 Jun 2019 16:09:26 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <156096036064.6697.2432500504898119675.stgit@warthog.procyon.org.uk>
+References: <156096036064.6697.2432500504898119675.stgit@warthog.procyon.org.uk>
+Cc:     dhowells@redhat.com, ebiederm@xmission.com,
+        keyrings@vger.kernel.org, linux-cifs@vger.kernel.org,
+        linux-nfs@vger.kernel.org, netdev@vger.kernel.org,
+        linux-afs@lists.infradead.org, dwalsh@redhat.com,
+        vgoyal@redhat.com, linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/9] keys: Namespacing [ver #4]
 MIME-Version: 1.0
-In-Reply-To: <20190516132250.hedtianse7rnk3wq@e110439-lin>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB-large
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <10071.1560960566.1@warthog.procyon.org.uk>
+Date:   Wed, 19 Jun 2019 17:09:26 +0100
+Message-ID: <10072.1560960566@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Wed, 19 Jun 2019 16:09:29 +0000 (UTC)
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Patrick,
+Apologies...  A couple of the patches don't compile because I forgot to commit
+a change:-(
 
-On 5/16/19 2:22 PM, Patrick Bellasi wrote:
-> On 16-May 14:01, Quentin Perret wrote:
->> On Thursday 16 May 2019 at 13:42:00 (+0100), Patrick Bellasi wrote:
->>>> +static inline unsigned long em_pd_get_higher_freq(struct em_perf_domain *pd,
->>>> +	unsigned long min_freq, unsigned long cost_margin)
->>>> +{
->>>> +	unsigned long max_cost = 0;
->>>> +	struct em_cap_state *cs;
->>>> +	int i;
->>>> +
->>>> +	if (!pd)
->>>> +		return min_freq;
->>>> +
->>>> +	/* Compute the maximum allowed cost */
->>>> +	for (i = 0; i < pd->nr_cap_states; i++) {
->>>> +		cs = &pd->table[i];
->>>> +		if (cs->frequency >= min_freq) {
->>>> +			max_cost = cs->cost + (cs->cost * cost_margin) / 1024;
->>>                                                                           ^^^^
->>> ... end here we should probably better use SCHED_CAPACITY_SCALE
->>> instead of hard-coding in values, isn't it?
->>
->> I'm not sure to agree. This isn't part of the scheduler per se, and the
->> cost thing isn't in units of capacity, but in units of power, so I don't
->> think SCHED_CAPACITY_SCALE is correct here.
-> 
-> Right, I get the units do not match and it would not be elegant to use
-> it here...
-> 
->> But I agree these hard coded values (that one, and the 512 in one of the
->> following patches) could use some motivation :-)
-> 
-> ... ultimately SCHED_CAPACITY_SCALE is just SCHED_FIXEDPOINT_SCALE,
-> which is adimensional. Perhaps we should use that or yet another alias
-> for the same.
+Will repush and repost.
 
-Would it be a good idea to use SCHED_FIXEDPOINT_SCALE in energy.c ?
-Since it's not part of the scheduler, maybe there is a scale covering a wider scope,
-or we can introduce a similar ENERGY_FIXEDPOINT_SCALE in energy_model.h.
-
-
->> Thanks,
->> Quentin
-> 
-
-Thanks,
-Douglas
+David
