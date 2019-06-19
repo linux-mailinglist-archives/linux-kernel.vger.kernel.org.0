@@ -2,78 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0A2284B295
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 09:04:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A3764B2EA
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 09:16:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731155AbfFSHEW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Jun 2019 03:04:22 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:32985 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731118AbfFSHEV (ORCPT
+        id S1730982AbfFSHQG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Jun 2019 03:16:06 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:39212 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725946AbfFSHQG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Jun 2019 03:04:21 -0400
-Received: by mail-pf1-f193.google.com with SMTP id x15so9175840pfq.0
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2019 00:04:21 -0700 (PDT)
+        Wed, 19 Jun 2019 03:16:06 -0400
+Received: by mail-pl1-f196.google.com with SMTP id b7so6817090pls.6
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2019 00:16:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:subject:to:cc:references:in-reply-to:mime-version
+         :user-agent:message-id:content-transfer-encoding;
+        bh=sNH3esuo89MvVnkmn0pBqZBXKoLraPEAQm1KehvPJ+A=;
+        b=rjbVsfxt9ERQsJXWee+b5RBgj6pFFU/IJp7Cj3eX9eC9jBjMnzteAgKHvn/24xy9f6
+         h2XDU1eS1RkeOKM2zMnm/xgaQUmlejdoNBZTTqRlo2HE5WsNSGX/D3N9d4mKF8po7WDr
+         t8PwQEUIOrTHiychpBhRpTl39fhcgOxxfcUBtNFoeMWJDD4fwMLToYaB6q5FOBlceNVy
+         xNlcGaULm9R1xKuigoLTcQWwDk06EpI+L6fBwkzUeMbqh2C5giP0oYmUBenJt1gM9pRD
+         MvwgUIjaWr/EMSKV5b4KYssnIXwkzKRgtDKnwfA85/mCnBYmvVicnXxj/CcAyfwBFbDK
+         3TmA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:subject:in-reply-to:cc:from:to:message-id
-         :mime-version:content-transfer-encoding;
-        bh=GRtGy7EtU8jAUy4yjm+riLlSPb0h7m/0LVZFMRonxGc=;
-        b=mlRxdRXyZpQX/7PePompFthb6sPVAsTP+PGk6HHyOFeNXVLrjNw9K/l1JnGKQOQavE
-         3248AtV9OPKb7AspfolrS0EYydjYFdtjfDWr++OxHaFn9u0GSv9RqAlpkX/iLhUcZRZb
-         6igLOZ/PXR4jYdRpdonErADvqLhWLHtB0BXV+JI+QlCrc/Ipb1wYU1ILuhf4JdPTcbP3
-         NzAJyLYAB1NC4zSvLJ6NB08bYQwC347hIZheixgQfNL1nUR7zXFFxJPDoCWONhfqR8tY
-         mK7LHqW/P1ulBnWPSbhrgsF4ej/h4W961eKLWxWKV0N2Cq3AY0PVytMl+g6K0dPafIok
-         KHmA==
-X-Gm-Message-State: APjAAAUl7yWq4uFxoUMyevBMig41KjETFl4HPytQeYPGbzgX85TQbcyX
-        Cf1Y4uiLu2Y6L1NSiP5c/H3yrg==
-X-Google-Smtp-Source: APXvYqyRdGXM+Smc3hV/EoxiTjkWKnX1cbCHAGS/7j+K5uF7RUjeUIGPuiQ6LZuMklZ2vjFNydYcfA==
-X-Received: by 2002:a63:5b1d:: with SMTP id p29mr6212374pgb.297.1560927860195;
-        Wed, 19 Jun 2019 00:04:20 -0700 (PDT)
-Received: from localhost (amx-tls3.starhub.net.sg. [203.116.164.13])
-        by smtp.gmail.com with ESMTPSA id v23sm17622559pff.185.2019.06.19.00.04.19
+        h=x-gm-message-state:date:from:subject:to:cc:references:in-reply-to
+         :mime-version:user-agent:message-id:content-transfer-encoding;
+        bh=sNH3esuo89MvVnkmn0pBqZBXKoLraPEAQm1KehvPJ+A=;
+        b=R8rdYTVWaio5JDzHiSMB8hfrhBakUDgB0i2xXTljZO61HQXL+BEi0nYm5m8OTJmG+d
+         nAXPqnX6xtUUlvZIBmIeF0hrr8sLl3a08MtSvzBbiqNg3DVmVd2o6LCD3Nn7UVwLX8Ox
+         MA/n+d+WWDIpCJOMd5V9vs08yZE287GvqVn1fRv8KI9rdua8UspYF2eYQ3ZnZJsYcwIh
+         IAN3CLYImKrVpTFKbLAmPWM+5RxBD06lDFTKckI0Ou56KkxoP3ClB8F09qmrig0h+lt+
+         6+8aMuGMB11IPYA+762J48eVpOAUmfxX4cjRBXvzgwCy/P5oBELZT6QTKEs/fZkH0uJs
+         o5xQ==
+X-Gm-Message-State: APjAAAX4OZgKMhd6oH3I3B8cJ9uVXdWoGqptxxGIMmpianIpsKLAfy76
+        cfeCeoY4HUJQrMW872+HSvfC9vLv
+X-Google-Smtp-Source: APXvYqznH/Lv//49vNUEP8+M16EK9CA4iLmPTEN5+8c+5GM5h3VHXyjcSWO57rMh5hqlHbGTuV64MA==
+X-Received: by 2002:a17:902:e082:: with SMTP id cb2mr266867plb.274.1560928565577;
+        Wed, 19 Jun 2019 00:16:05 -0700 (PDT)
+Received: from localhost (193-116-92-108.tpgi.com.au. [193.116.92.108])
+        by smtp.gmail.com with ESMTPSA id x5sm885939pjp.21.2019.06.19.00.16.03
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 19 Jun 2019 00:04:19 -0700 (PDT)
-Date:   Wed, 19 Jun 2019 00:04:19 -0700 (PDT)
-X-Google-Original-Date: Wed, 19 Jun 2019 00:03:34 PDT (-0700)
-Subject:     Re: [PATCH 2/3] riscv: select SiFive platform drivers with SOC_SIFIVE
-In-Reply-To: <1560799790-20287-3-git-send-email-lollivier@baylibre.com>
-CC:     Paul Walmsley <paul.walmsley@sifive.com>, lollivier@baylibre.com,
-        linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, khilman@baylibre.com
-From:   Palmer Dabbelt <palmer@sifive.com>
-To:     lollivier@baylibre.com
-Message-ID: <mhng-e248d181-8676-4355-9825-d06049606d85@palmer-si-x1e>
-Mime-Version: 1.0 (MHng)
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+        Wed, 19 Jun 2019 00:16:04 -0700 (PDT)
+Date:   Wed, 19 Jun 2019 17:10:52 +1000
+From:   Nicholas Piggin <npiggin@gmail.com>
+Subject: Re: [PATCH 4/7] powerpc/ftrace: Additionally nop out the preceding
+ mflr with -mprofile-kernel
+To:     Masami Hiramatsu <mhiramat@kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
+        Steven Rostedt <rostedt@goodmis.org>
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+References: <cover.1560868106.git.naveen.n.rao@linux.vnet.ibm.com>
+        <72492bc769cd6f40a536e689fc3195570d07fd5c.1560868106.git.naveen.n.rao@linux.vnet.ibm.com>
+        <877e9idum7.fsf@concordia.ellerman.id.au>
+In-Reply-To: <877e9idum7.fsf@concordia.ellerman.id.au>
+MIME-Version: 1.0
+User-Agent: astroid/0.14.0 (https://github.com/astroidmail/astroid)
+Message-Id: <1560927184.kqsg9x9bd1.astroid@bobo.none>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 17 Jun 2019 12:29:49 PDT (-0700), lollivier@baylibre.com wrote:
-> On selection of SOC_SIFIVE select the corresponding platform drivers.
->
-> Signed-off-by: Loys Ollivier <lollivier@baylibre.com>
-> ---
->  arch/riscv/Kconfig.socs | 5 +++++
->  1 file changed, 5 insertions(+)
->
-> diff --git a/arch/riscv/Kconfig.socs b/arch/riscv/Kconfig.socs
-> index 60dae1b5f276..536c0ef4aee8 100644
-> --- a/arch/riscv/Kconfig.socs
-> +++ b/arch/riscv/Kconfig.socs
-> @@ -2,6 +2,11 @@ menu "SoC selection"
->
->  config SOC_SIFIVE
->         bool "SiFive SoCs"
-> +       select SERIAL_SIFIVE
-> +       select SERIAL_SIFIVE_CONSOLE
-> +       select CLK_SIFIVE
-> +       select CLK_SIFIVE_FU540_PRCI
-> +       select SIFIVE_PLIC
->         help
->           This enables support for SiFive SoC platform hardware.
+Michael Ellerman's on June 19, 2019 3:14 pm:
+> Hi Naveen,
+>=20
+> Sorry I meant to reply to this earlier .. :/
+>=20
+> "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com> writes:
+>> With -mprofile-kernel, gcc emits 'mflr r0', followed by 'bl _mcount' to
+>> enable function tracing and profiling. So far, with dynamic ftrace, we
+>> used to only patch out the branch to _mcount(). However, mflr is
+>> executed by the branch unit that can only execute one per cycle on
+>> POWER9 and shared with branches, so it would be nice to avoid it where
+>> possible.
+>>
+>> We cannot simply nop out the mflr either. When enabling function
+>> tracing, there can be a race if tracing is enabled when some thread was
+>> interrupted after executing a nop'ed out mflr. In this case, the thread
+>> would execute the now-patched-in branch to _mcount() without having
+>> executed the preceding mflr.
+>>
+>> To solve this, we now enable function tracing in 2 steps: patch in the
+>> mflr instruction, use synchronize_rcu_tasks() to ensure all existing
+>> threads make progress, and then patch in the branch to _mcount(). We
+>> override ftrace_replace_code() with a powerpc64 variant for this
+>> purpose.
+>=20
+> According to the ISA we're not allowed to patch mflr at runtime. See the
+> section on "CMODX".
 
-Reviewed-by: Palmer Dabbelt <palmer@sifive.com>
+According to "quasi patch class" engineering note, we can patch
+anything with a preferred nop. But that's written as an optional
+facility, which we don't have a feature to test for.
+
+>=20
+> I'm also not convinced the ordering between the two patches is
+> guaranteed by the ISA, given that there's possibly no isync on the other
+> CPU.
+
+Will they go through a context synchronizing event?
+
+synchronize_rcu_tasks() should ensure a thread is scheduled away, but
+I'm not actually sure it guarantees CSI if it's kernel->kernel. Could
+do a smp_call_function to do the isync on each CPU to be sure.
+
+Thanks,
+Nick
+
+=
