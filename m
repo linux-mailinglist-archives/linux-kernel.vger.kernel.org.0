@@ -2,93 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E08CA4B7C4
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 14:14:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EF2994B7DB
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 14:17:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731586AbfFSMOp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Jun 2019 08:14:45 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:51448 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726999AbfFSMOo (ORCPT
+        id S1731686AbfFSMPr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Jun 2019 08:15:47 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:40444 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727076AbfFSMPr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Jun 2019 08:14:44 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=k3P3++6GQiP2ImSaOTC4gPs5tYB1KrKrlADh55M4Y7c=; b=GLoxLkGT3DKYUTbegAR4dtLvl
-        JAcOZ35M+taNnvlktiRr/9cbCSk4qpR/PmFqAoCqDXh//hiD5SZ/ynCIud2p0Hd/FMTUNsYa+qiIS
-        NKWiVYV6bxLxxM2DoLQCNcZfdjWSFUQK/qNwEbUZxmd1Y41Khiv3C6QLu3DgXsKGS/4zU=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=finisterre.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1hdZUA-0007EJ-9X; Wed, 19 Jun 2019 12:14:42 +0000
-Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
-        id D7BDC440046; Wed, 19 Jun 2019 13:14:41 +0100 (BST)
-Date:   Wed, 19 Jun 2019 13:14:41 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     "Enrico Weigelt, metux IT consult" <info@metux.net>
-Cc:     linux-kernel@vger.kernel.org, linus.walleij@linaro.org,
-        bgolaszewski@baylibre.com, linux-gpio@vger.kernel.org,
-        linux-spi@vger.kernel.org
-Subject: Re: [PATCH 1/3] include: linux: spi: more helpers for declaring spi
- drivers
-Message-ID: <20190619121441.GS5316@sirena.org.uk>
-Mail-Followup-To: "Enrico Weigelt, metux IT consult" <info@metux.net>,
-        linux-kernel@vger.kernel.org, linus.walleij@linaro.org,
-        bgolaszewski@baylibre.com, linux-gpio@vger.kernel.org,
-        linux-spi@vger.kernel.org
-References: <1560796840-18207-1-git-send-email-info@metux.net>
+        Wed, 19 Jun 2019 08:15:47 -0400
+Received: from localhost.localdomain (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: bbrezillon)
+        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id 7767C26069F;
+        Wed, 19 Jun 2019 13:15:44 +0100 (BST)
+From:   Boris Brezillon <boris.brezillon@collabora.com>
+To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Sakari Ailus <sakari.ailus@iki.fi>, linux-media@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, Tomasz Figa <tfiga@chromium.org>,
+        Nicolas Dufresne <nicolas@ndufresne.ca>, kernel@collabora.com,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        Ezequiel Garcia <ezequiel@collabora.com>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        linux-rockchip@lists.infradead.org,
+        Heiko Stuebner <heiko@sntech.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Boris Brezillon <boris.brezillon@collabora.com>
+Subject: [PATCH 0/9] media: hantro: Add support for H264 decoding
+Date:   Wed, 19 Jun 2019 14:15:31 +0200
+Message-Id: <20190619121540.29320-1-boris.brezillon@collabora.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="6s/G0Ait2f6IH9MX"
-Content-Disposition: inline
-In-Reply-To: <1560796840-18207-1-git-send-email-info@metux.net>
-X-Cookie: Editing is a rewording activity.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hello,
 
---6s/G0Ait2f6IH9MX
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+This patch series adds support H264 decoding support to the hantro
+driver and doing some consilidation cleanup in the driver along the
+way.
 
-On Mon, Jun 17, 2019 at 08:40:38PM +0200, Enrico Weigelt, metux IT consult wrote:
+Some details about the patches forming this patchset:
 
-> +/* subsys_spi_driver() - Helper macro for drivers that don't do
-> + * anything special in module init/exit.  This eliminates a lot of
-> + * boilerplate.  Each module may only use this macro once, and
-> + * calling it replaces subsys_initcall() and module_exit()
-> + */
-> +#define subsys_spi_driver(__spi_driver) \
+* The first patch is adding support for the sort_r() variant and has
+  been posted separately by Rasmus. I put it back there because Andrew
+  told me to repost it with the patch series using this new variant.
+  As mentioned in the patch itself, I'd like this patch to be merged
+  as soon as possible to avoid the synchronisation burden that might
+  appear if we decide to delay it.
 
-I'm not convinced we want to be encouraging anyone to be using
-subsys_initcall() for SPI drivers in the first place - my guess would be
-that with deferred probing none of that is needed anyway and the driver
-could just use module_spi_driver().  Certainly if the drivers do
-actually need subsys_initcall() I'd like to understand why before going
-forward with something like this, and ideally we'd be able to remove the
-need.
+* Patch 2 is needed to properly propagate the output buf timestamp to
+  the capture buf one, which is required for intra-frame references.
 
---6s/G0Ait2f6IH9MX
-Content-Type: application/pgp-signature; name="signature.asc"
+* Patches 3 to 6 are consolidating the code by providing helpers that
+  can be used by all hantro backend and simplifying the ctrl
+  initialization logic. We also constify the controls array.
 
------BEGIN PGP SIGNATURE-----
+* Patches 7 to 8 are adding common H264 decoding bits and patch 9 is
+  enabling H264 decoding on rk3288
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl0KJzAACgkQJNaLcl1U
-h9DeUQf+PgOAkyo4pT4LasAHcsQL8bXxE3hqloJcMpaFpRgnSp4/I5Pc/Jg04XCu
-CI2k7QnDLDIcUq1FlrI+eVvb0SKhzeEkIfJyaL8dX1kRPea2n9WbP0ZF5GcnQQ2d
-ZidAKFQNB7eSWEhgPUIvkNHIvGm7TUNST35PbhZCd+j4ACcErdrKhGpZPm2hmHRN
-7T7nUtkLFL5YvCH8QqdPLUzg2Co6BFik3jiseCAIi1PH4+zIA9QPi3g47VDPQ6aF
-nTUg51S5Y4aduklIOTW8G+D47tUTsjFiKb3g2ZqUz1wbgmJlyd6q48h4lR55gSj8
-xJYmx5diMemXIks5Ksr1Ny2mhGsXqg==
-=szr+
------END PGP SIGNATURE-----
+Now, a few words about the dependencies. Unfortunately there are a lot,
+and that'd be great to have some of them merged.
 
---6s/G0Ait2f6IH9MX--
+* This series is based on top of Ezequiel's VP8 work [1].
+* It depends on [2] which defines/described the H264 decoding mode
+  control.
+* Depends on [3] since I'm using vb2_get_buffer() to retrieve a
+  reference buffer
+* The final dep is a fix I sent this morning allowing me to simplify the
+  ctrl initialization logic
+
+Regards,
+
+Boris
+
+Boris Brezillon (5):
+  media: hantro: Move copy_metadata() before doing a decode operation
+  media: hantro: Constify the control array
+  media: hantro: Simplify the controls creation logic
+  media: hantro: Add hantro_get_{src,dst}_buf() helpers
+  media: hantro: Add helpers to prepare/finish a run
+
+Hertz Wong (3):
+  media: hantro: Add core bits to support H264 decoding
+  media: hantro: Add support for H264 decoding on G1
+  media: hantro: Enable H264 decoding on rk3288
+
+Rasmus Villemoes (1):
+  lib/sort.c: implement sort() variant taking context argument
+
+ drivers/staging/media/hantro/Makefile         |   2 +
+ drivers/staging/media/hantro/hantro.h         |  24 +-
+ drivers/staging/media/hantro/hantro_drv.c     |  95 ++-
+ .../staging/media/hantro/hantro_g1_h264_dec.c | 295 ++++++++
+ .../media/hantro/hantro_g1_mpeg2_dec.c        |  14 +-
+ .../staging/media/hantro/hantro_g1_vp8_dec.c  |  17 +-
+ .../staging/media/hantro/hantro_h1_jpeg_enc.c |  11 +-
+ drivers/staging/media/hantro/hantro_h264.c    | 638 ++++++++++++++++++
+ drivers/staging/media/hantro/hantro_hw.h      |  55 ++
+ drivers/staging/media/hantro/hantro_v4l2.c    |  15 +-
+ drivers/staging/media/hantro/rk3288_vpu_hw.c  |  21 +-
+ .../media/hantro/rk3399_vpu_hw_jpeg_enc.c     |  12 +-
+ .../media/hantro/rk3399_vpu_hw_mpeg2_dec.c    |  14 +-
+ include/linux/sort.h                          |   5 +
+ lib/sort.c                                    |  34 +-
+ 15 files changed, 1175 insertions(+), 77 deletions(-)
+ create mode 100644 drivers/staging/media/hantro/hantro_g1_h264_dec.c
+ create mode 100644 drivers/staging/media/hantro/hantro_h264.c
+
+-- 
+2.20.1
+
