@@ -2,169 +2,211 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E4B54B933
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 14:55:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B784B4B939
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 14:56:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731945AbfFSMzu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Jun 2019 08:55:50 -0400
-Received: from imap1.codethink.co.uk ([176.9.8.82]:41584 "EHLO
-        imap1.codethink.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727129AbfFSMzu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Jun 2019 08:55:50 -0400
-Received: from 92.40.248.88.threembb.co.uk ([92.40.248.88] helo=[192.168.43.158])
-        by imap1.codethink.co.uk with esmtpsa (Exim 4.84_2 #1 (Debian))
-        id 1hda7t-0005rZ-UF; Wed, 19 Jun 2019 13:55:46 +0100
-Subject: Re: [PATCH v1] dmaengine: tegra-apb: Support per-burst residue
- granularity
-To:     Dmitry Osipenko <digetx@gmail.com>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>
-Cc:     dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20190613210849.10382-1-digetx@gmail.com>
- <f2290604-12f4-019b-47e7-4e4e29a433d4@codethink.co.uk>
- <7354d471-95e1-ffcd-db65-578e9aa425ac@gmail.com>
- <1db9bac2-957d-3c0a-948a-429bc59f1b72@nvidia.com>
- <c8bccb6e-27f8-d6c8-cfdb-10ab5ae98b26@gmail.com>
- <49d087fe-a634-4a53-1caa-58a0e52ef1ba@nvidia.com>
- <73d5cdb7-0462-944a-1f9a-3dc02f179385@gmail.com>
-From:   Ben Dooks <ben.dooks@codethink.co.uk>
-Organization: Codethink Limited.
-Message-ID: <2e355ba0-2a77-3b39-7cec-cf580cd609b4@codethink.co.uk>
-Date:   Wed, 19 Jun 2019 13:55:43 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        id S1731970AbfFSM4Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Jun 2019 08:56:16 -0400
+Received: from mx2.suse.de ([195.135.220.15]:56228 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1731757AbfFSM4P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Jun 2019 08:56:15 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 78E24AFE9;
+        Wed, 19 Jun 2019 12:56:13 +0000 (UTC)
+Date:   Wed, 19 Jun 2019 14:56:12 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Minchan Kim <minchan@kernel.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        linux-mm <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>, linux-api@vger.kernel.org,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Tim Murray <timmurray@google.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Daniel Colascione <dancol@google.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Sonny Rao <sonnyrao@google.com>,
+        Brian Geffon <bgeffon@google.com>, jannh@google.com,
+        oleg@redhat.com, christian@brauner.io, oleksandr@redhat.com,
+        hdanton@sina.com, lizeb@google.com
+Subject: Re: [PATCH v2 1/5] mm: introduce MADV_COLD
+Message-ID: <20190619125611.GO2968@dhcp22.suse.cz>
+References: <20190610111252.239156-1-minchan@kernel.org>
+ <20190610111252.239156-2-minchan@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <73d5cdb7-0462-944a-1f9a-3dc02f179385@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190610111252.239156-2-minchan@kernel.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 19/06/2019 12:10, Dmitry Osipenko wrote:
-> 19.06.2019 13:55, Jon Hunter пишет:
->>
->> On 19/06/2019 11:27, Dmitry Osipenko wrote:
->>> 19.06.2019 13:04, Jon Hunter пишет:
->>>>
->>>> On 19/06/2019 00:27, Dmitry Osipenko wrote:
->>>>> 19.06.2019 1:22, Ben Dooks пишет:
->>>>>> On 13/06/2019 22:08, Dmitry Osipenko wrote:
->>>>>>> Tegra's APB DMA engine updates words counter after each transferred burst
->>>>>>> of data, hence it can report transfer's residual with more fidelity which
->>>>>>> may be required in cases like audio playback. In particular this fixes
->>>>>>> audio stuttering during playback in a chromiuim web browser. The patch is
->>>>>>> based on the original work that was made by Ben Dooks [1]. It was tested
->>>>>>> on Tegra20 and Tegra30 devices.
->>>>>>>
->>>>>>> [1] https://lore.kernel.org/lkml/20190424162348.23692-1-ben.dooks@codethink.co.uk/
->>>>>>>
->>>>>>> Inspired-by: Ben Dooks <ben.dooks@codethink.co.uk>
->>>>>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->>>>>>> ---
->>>>>>>    drivers/dma/tegra20-apb-dma.c | 35 ++++++++++++++++++++++++++++-------
->>>>>>>    1 file changed, 28 insertions(+), 7 deletions(-)
->>>>>>>
->>>>>>> diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
->>>>>>> index 79e9593815f1..c5af8f703548 100644
->>>>>>> --- a/drivers/dma/tegra20-apb-dma.c
->>>>>>> +++ b/drivers/dma/tegra20-apb-dma.c
->>>>>>> @@ -797,12 +797,36 @@ static int tegra_dma_terminate_all(struct dma_chan *dc)
->>>>>>>        return 0;
->>>>>>>    }
->>>>>>>    +static unsigned int tegra_dma_update_residual(struct tegra_dma_channel *tdc,
->>>>>>> +                          struct tegra_dma_sg_req *sg_req,
->>>>>>> +                          struct tegra_dma_desc *dma_desc,
->>>>>>> +                          unsigned int residual)
->>>>>>> +{
->>>>>>> +    unsigned long status, wcount = 0;
->>>>>>> +
->>>>>>> +    if (!list_is_first(&sg_req->node, &tdc->pending_sg_req))
->>>>>>> +        return residual;
->>>>>>> +
->>>>>>> +    if (tdc->tdma->chip_data->support_separate_wcount_reg)
->>>>>>> +        wcount = tdc_read(tdc, TEGRA_APBDMA_CHAN_WORD_TRANSFER);
->>>>>>> +
->>>>>>> +    status = tdc_read(tdc, TEGRA_APBDMA_CHAN_STATUS);
->>>>>>> +
->>>>>>> +    if (!tdc->tdma->chip_data->support_separate_wcount_reg)
->>>>>>> +        wcount = status;
->>>>>>> +
->>>>>>> +    if (status & TEGRA_APBDMA_STATUS_ISE_EOC)
->>>>>>> +        return residual - sg_req->req_len;
->>>>>>> +
->>>>>>> +    return residual - get_current_xferred_count(tdc, sg_req, wcount);
->>>>>>> +}
->>>>>>
->>>>>> I am unfortunately nowhere near my notes, so can't completely
->>>>>> review this. I think the complexity of my patch series is due
->>>>>> to an issue with the count being updated before the EOC IRQ
->>>>>> is actually flagged (and most definetly before it gets to the
->>>>>> CPU IRQ handler).
->>>>>>
->>>>>> The test system I was using, which i've not really got any
->>>>>> access to at the moment would show these internal inconsistent
->>>>>> states every few hours, however it was moving 48kHz 8ch 16bit
->>>>>> TDM data.
->>>>>>
->>>>>> Thanks for looking into this, I am not sure if I am going to
->>>>>> get any time to look into this within the next couple of
->>>>>> months.
->>>>>
->>>>> I'll try to add some debug checks to try to catch the case where count is updated before EOC
->>>>> is set. Thank you very much for the clarification of the problem. So far I haven't spotted
->>>>> anything going wrong.
->>>>>
->>>>> Jon / Laxman, are you aware about the possibility to get such inconsistency of words count
->>>>> vs EOC? Assuming the cyclic transfer mode.
->>>>
->>>> I can't say that I am. However, for the case of cyclic transfer, given
->>>> that the next transfer is always programmed into the registers before
->>>> the last one completes, I could see that by the time the interrupt is
->>>> serviced that the DMA has moved on to the next transfer (which I assume
->>>> would reset the count).
->>>>
->>>> Interestingly, our downstream kernel implemented a change to avoid the
->>>> count appearing to move backwards. I am curious if this also works,
->>>> which would be a lot simpler that what Ben has implemented and may
->>>> mitigate that race condition that Ben is describing.
->>>>
->>>> Cheers
->>>> Jon
->>>>
->>>> [0]
->>>> https://nv-tegra.nvidia.com/gitweb/?p=linux-4.4.git;a=commit;h=c7bba40c6846fbf3eaad35c4472dcc7d8bbc02e5
->>>>
->>>
->>> The downstream patch doesn't check for EOC and has no comments about it, so it's hard to
->>> tell if it's intentional. Secondly, looks like the downstream patch is mucked up because it
->>> doesn't check whether the dma_desc is *the active* transfer and not a pending!
->>
->> I agree that it should check to see if it is active. I assume that what
->> this patch is doing is not updating the dma position if it appears to
->> have gone backwards, implying we have moved on to the next buffer. Yes
->> this is still probably not as accurate as Ben's implementation because
->> most likely we have finished that transfer and this patch would report
->> that it is not quite finished.
->>
->> If Ben's patch works for you then why not go with this?
+On Mon 10-06-19 20:12:48, Minchan Kim wrote:
+> When a process expects no accesses to a certain memory range, it could
+> give a hint to kernel that the pages can be reclaimed when memory pressure
+> happens but data should be preserved for future use.  This could reduce
+> workingset eviction so it ends up increasing performance.
 > 
-> Because I'm doubtful that it is really the case and not something else. It will be very odd
-> if hardware updates words count and sets EOC asynchronously, I'd call it as a faulty design
-> and thus a bug that need to worked around in software if that's really happening.
+> This patch introduces the new MADV_COLD hint to madvise(2) syscall.
+> MADV_COLD can be used by a process to mark a memory range as not expected
+> to be used in the near future. The hint can help kernel in deciding which
+> pages to evict early during memory pressure.
+> 
+> It works for every LRU pages like MADV_[DONTNEED|FREE]. IOW, It moves
+> 
+> 	active file page -> inactive file LRU
+> 	active anon page -> inacdtive anon LRU
+> 
+> Unlike MADV_FREE, it doesn't move active anonymous pages to inactive
+> file LRU's head because MADV_COLD is a little bit different symantic.
+> MADV_FREE means it's okay to discard when the memory pressure because
+> the content of the page is *garbage* so freeing such pages is almost zero
+> overhead since we don't need to swap out and access afterward causes just
+> minor fault. Thus, it would make sense to put those freeable pages in
+> inactive file LRU to compete other used-once pages. It makes sense for
+> implmentaion point of view, too because it's not swapbacked memory any
+> longer until it would be re-dirtied. Even, it could give a bonus to make
+> them be reclaimed on swapless system. However, MADV_COLD doesn't mean
+> garbage so reclaiming them requires swap-out/in in the end so it's bigger
+> cost. Since we have designed VM LRU aging based on cost-model, anonymous
+> cold pages would be better to position inactive anon's LRU list, not file
+> LRU. Furthermore, it would help to avoid unnecessary scanning if system
+> doesn't have a swap device. Let's start simpler way without adding
+> complexity at this moment.
 
-Unfortunately someone designed hardware which does not update all the
-state in one go. Find the designer and make them explain why they did
-this.
+I would only add that it is a caveat that workloads with a lot of page
+cache are likely to ignore MADV_COLD on anonymous memory because we
+rarely age anonymous LRU lists.
 
+[...]
+> +static int madvise_cold_pte_range(pmd_t *pmd, unsigned long addr,
+> +				unsigned long end, struct mm_walk *walk)
+> +{
+
+This is duplicating a large part of madvise_free_pte_range with some
+subtle differences which are not explained anywhere (e.g. why does
+madvise_free_huge_pmd need try_lock on a page while not here? etc.).
+
+Why cannot we reuse a large part of that code and differ essentially on
+the reclaim target check and action? Have you considered to consolidate
+the code to share as much as possible? Maybe that is easier said than
+done because the devil is always in details...
+
+I would definitely feel much more comfortable to review the code without
+thinking about all those subtle details that have been already solved
+before. Especially all the THP ones.
+
+Other than that the patch looks sane to me.
+
+> +	struct mmu_gather *tlb = walk->private;
+> +	struct mm_struct *mm = tlb->mm;
+> +	struct vm_area_struct *vma = walk->vma;
+> +	pte_t *orig_pte, *pte, ptent;
+> +	spinlock_t *ptl;
+> +	struct page *page;
+> +	unsigned long next;
+> +
+> +	next = pmd_addr_end(addr, end);
+> +	if (pmd_trans_huge(*pmd)) {
+> +		pmd_t orig_pmd;
+> +
+> +		tlb_change_page_size(tlb, HPAGE_PMD_SIZE);
+> +		ptl = pmd_trans_huge_lock(pmd, vma);
+> +		if (!ptl)
+> +			return 0;
+> +
+> +		orig_pmd = *pmd;
+> +		if (is_huge_zero_pmd(orig_pmd))
+> +			goto huge_unlock;
+> +
+> +		if (unlikely(!pmd_present(orig_pmd))) {
+> +			VM_BUG_ON(thp_migration_supported() &&
+> +					!is_pmd_migration_entry(orig_pmd));
+> +			goto huge_unlock;
+> +		}
+> +
+> +		page = pmd_page(orig_pmd);
+> +		if (next - addr != HPAGE_PMD_SIZE) {
+> +			int err;
+> +
+> +			if (page_mapcount(page) != 1)
+> +				goto huge_unlock;
+> +
+> +			get_page(page);
+> +			spin_unlock(ptl);
+> +			lock_page(page);
+> +			err = split_huge_page(page);
+> +			unlock_page(page);
+> +			put_page(page);
+> +			if (!err)
+> +				goto regular_page;
+> +			return 0;
+> +		}
+> +
+> +		if (pmd_young(orig_pmd)) {
+> +			pmdp_invalidate(vma, addr, pmd);
+> +			orig_pmd = pmd_mkold(orig_pmd);
+> +
+> +			set_pmd_at(mm, addr, pmd, orig_pmd);
+> +			tlb_remove_pmd_tlb_entry(tlb, pmd, addr);
+> +		}
+> +
+> +		test_and_clear_page_young(page);
+> +		deactivate_page(page);
+> +huge_unlock:
+> +		spin_unlock(ptl);
+> +		return 0;
+> +	}
+> +
+> +	if (pmd_trans_unstable(pmd))
+> +		return 0;
+> +
+> +regular_page:
+> +	tlb_change_page_size(tlb, PAGE_SIZE);
+> +	orig_pte = pte = pte_offset_map_lock(vma->vm_mm, pmd, addr, &ptl);
+> +	flush_tlb_batched_pending(mm);
+> +	arch_enter_lazy_mmu_mode();
+> +	for (; addr < end; pte++, addr += PAGE_SIZE) {
+> +		ptent = *pte;
+> +
+> +		if (pte_none(ptent))
+> +			continue;
+> +
+> +		if (!pte_present(ptent))
+> +			continue;
+> +
+> +		page = vm_normal_page(vma, addr, ptent);
+> +		if (!page)
+> +			continue;
+> +
+> +		if (pte_young(ptent)) {
+> +			ptent = ptep_get_and_clear_full(mm, addr, pte,
+> +							tlb->fullmm);
+> +			ptent = pte_mkold(ptent);
+> +			set_pte_at(mm, addr, pte, ptent);
+> +			tlb_remove_tlb_entry(tlb, pte, addr);
+> +		}
+> +
+> +		/*
+> +		 * We are deactivating a page for accelerating reclaiming.
+> +		 * VM couldn't reclaim the page unless we clear PG_young.
+> +		 * As a side effect, it makes confuse idle-page tracking
+> +		 * because they will miss recent referenced history.
+> +		 */
+> +		test_and_clear_page_young(page);
+> +		deactivate_page(page);
+> +	}
+> +
+> +	arch_enter_lazy_mmu_mode();
+> +	pte_unmap_unlock(orig_pte, ptl);
+> +	cond_resched();
+> +
+> +	return 0;
+> +}
 -- 
-Ben Dooks				http://www.codethink.co.uk/
-Senior Engineer				Codethink - Providing Genius
-
-https://www.codethink.co.uk/privacy.html
+Michal Hocko
+SUSE Labs
