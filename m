@@ -2,92 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 762214B1C7
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 08:04:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 635644B1CF
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 08:06:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730923AbfFSGDJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Jun 2019 02:03:09 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:48726 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725866AbfFSGDI (ORCPT
+        id S1730953AbfFSGF4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Jun 2019 02:05:56 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:52193 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726246AbfFSGFv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Jun 2019 02:03:08 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5J5x9E5005962;
-        Wed, 19 Jun 2019 06:03:00 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=fPuaHyuoIZdDjft/e+uZtMrJ1AQaUg3H7A6qexguayA=;
- b=Xdp6jmAIDA9gQIaHvu7BwfB+YVlf6RCzPuoJGagELUGOF8qqQ+2SmaQxYY2vnu0vfeTa
- AW1u/aH0WvN16qt56kJ97K9hp6a3u5v1twzbIE9yKHTajlDWLGIw9oUgrdROyrcspip3
- iLXR3IIyLD1ri564nFrCHARhMeH3rygRcj7NonC3gJUIwB5net+tiiJJV2BhacwwHYrX
- MLY7Ph51+CahFF1l5btLy+zcphFtL2t1M6HGV7ZrdVvy3PPojDeG10WmENmI+BhDAh+D
- YMahWKm2jkv1mIJ64HP+23tj1nP3MW6AZLhIeRpDk5t84r2Q3X3Ce9yAgL0n04wlWRxU /g== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by userp2120.oracle.com with ESMTP id 2t7809987f-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 19 Jun 2019 06:03:00 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5J618QG126352;
-        Wed, 19 Jun 2019 06:03:00 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by userp3020.oracle.com with ESMTP id 2t77ymvqtq-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 19 Jun 2019 06:03:00 +0000
-Received: from abhmp0012.oracle.com (abhmp0012.oracle.com [141.146.116.18])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x5J62wxS019790;
-        Wed, 19 Jun 2019 06:02:58 GMT
-Received: from kadam (/41.57.98.10)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 18 Jun 2019 23:02:57 -0700
-Date:   Wed, 19 Jun 2019 09:02:50 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Logan Gunthorpe <logang@deltatee.com>
-Cc:     Jon Mason <jdmason@kudzu.us>, Dave Jiang <dave.jiang@intel.com>,
-        Allen Hubbe <allenbh@gmail.com>, linux-ntb@googlegroups.com,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] NTB: test: remove a duplicate check
-Message-ID: <20190619060250.GH18776@kadam>
-References: <20190619053205.GA10452@mwanda>
- <2f4dea74-d78e-8b53-8dec-df8dc032759c@deltatee.com>
+        Wed, 19 Jun 2019 02:05:51 -0400
+Received: by mail-wm1-f65.google.com with SMTP id 207so347400wma.1
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2019 23:05:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=gAuvNEON1/svyE5y5H38rhLBVdlEdqq6m64304VJxxs=;
+        b=ZG5JbVEDRi1cEztR9JPWFYHH4s7iBIKyn45vzLAIoPXuizb+BCH+2XrkPjcbPH+1Ge
+         cxejIXjDRzw9xLk+MnT9Zih7O2ENvIdCKSZiDYiW51dEI6MpvHstHy/nIbOL0QiMtuTX
+         KogdXhG2DKT8In8hoZGJq/KEpY62ZH6MuYMvKrzmUHM4qxAN9s6yQ3UJnarzkakBYySQ
+         tHt79MEzHGr/Uog534lU+QVR4htpUZqCBlkM95IoYurqq0tY7LhLQGkmQSP8wSOqHWuo
+         bX3VmRDo5xrT5yc7eQqIo3N2WlUYb1rEokBD4QOEKdDAcyY8XSkIczKfymTMszhPZIxw
+         lZfQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=gAuvNEON1/svyE5y5H38rhLBVdlEdqq6m64304VJxxs=;
+        b=Lma6Z/LYX+Fi89tOCWK25IhytbF/1adRKBDSDew5XjaLqmz1nrW8LPwuMhGGPhqUl3
+         AENkvWnE7KIWQ5W924oEWnqhcLy3H2bTiZ05TNsJM8b3cCctPfUEWhsfjPxfE03CNguw
+         Y4LMHT/ld2y7uxSyGwOcgy4z/94uoQXwxqVgylZ4swWer7k8v0KdMloXEqfcwN+8ICfJ
+         GyBOF6uckyW0TWaYp5CMn3AMznPOSD1w5Y7dO4SUNhlDQ9y0UFK8S3cEyTQJD61o0l7j
+         Lm41eG2nJWrsq/ItMQMkfHIOPX7Fxn0E3hYqt2tdiFO/DKRjslJY1lUbZYJGlVnN9/sy
+         YS6g==
+X-Gm-Message-State: APjAAAWBus6iPHFIKp0ESEP6KsN41hoyMgW58ZIS3mQa2mqfN7JowJ4q
+        asIcSGXPyaKY7cp92UXW84skaQ==
+X-Google-Smtp-Source: APXvYqw9N8Sn2vt43SeeNig+fvTZyfd4FhrFCZQ8nv6+4b2CTetI7wo1XDje3ODj4gCpw+qO/iboMw==
+X-Received: by 2002:a1c:e90f:: with SMTP id q15mr6736132wmc.89.1560924349841;
+        Tue, 18 Jun 2019 23:05:49 -0700 (PDT)
+Received: from dell ([2.27.35.243])
+        by smtp.gmail.com with ESMTPSA id c4sm13697164wrt.86.2019.06.18.23.05.49
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 18 Jun 2019 23:05:49 -0700 (PDT)
+Date:   Wed, 19 Jun 2019 07:05:47 +0100
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Andy Gross <agross@kernel.org>
+Cc:     alokc@codeaurora.org, david.brown@linaro.org,
+        bjorn.andersson@linaro.org, balbi@kernel.org,
+        gregkh@linuxfoundation.org, ard.biesheuvel@linaro.org,
+        jlhugo@gmail.com, linux-arm-msm@vger.kernel.org,
+        linux-usb@vger.kernel.org, felipe.balbi@linux.intel.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [RESEND v4 1/4] soc: qcom: geni: Add support for ACPI
+Message-ID: <20190619060547.GG18371@dell>
+References: <20190617125105.6186-1-lee.jones@linaro.org>
+ <20190617125105.6186-2-lee.jones@linaro.org>
+ <20190619055207.GA14273@hector.attlocal.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <2f4dea74-d78e-8b53-8dec-df8dc032759c@deltatee.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190619055207.GA14273@hector.attlocal.net>
 User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9292 signatures=668687
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=941
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1906190048
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9292 signatures=668687
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=994 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1906190048
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It's not a huge deal obviously but your commit was a6bed7a54165 ("NTB:
-Introduce NTB MSI Test Client") but you know that if I had sent a patch
-called ("NTB: remove a duplicate check") people would have correctly
-complained because the patch prefix is too vague.
+On Wed, 19 Jun 2019, Andy Gross wrote:
 
-What I'm saying is we do this all the time:
+> On Mon, Jun 17, 2019 at 01:51:02PM +0100, Lee Jones wrote:
+> > When booting with ACPI as the active set of configuration tables,
+> > all; clocks, regulators, pin functions ect are expected to be at
+> > their ideal values/levels/rates, thus the associated frameworks
+> > are unavailable.  Ensure calls to these APIs are shielded when
+> > ACPI is enabled.
+> > 
+> > Signed-off-by: Lee Jones <lee.jones@linaro.org>
+> > Acked-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+> 
+> Applied.
 
-[PATCH] NTB: add a new foobazle driver
+Thanks Bjorn and Andy.
 
-But it should be:
-
-[PATCH] NTB: foobazle: add a new foobazle driver
-
-Then I can just copy and paste your patch prefix instead of trying
-invent one.
-
-regards,
-dan carpenter
-
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
