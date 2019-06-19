@@ -2,52 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E6A44BC86
+	by mail.lfdr.de (Postfix) with ESMTP id B84ED4BC87
 	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 17:09:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730277AbfFSPJK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Jun 2019 11:09:10 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:33021 "EHLO mx1.redhat.com"
+        id S1730521AbfFSPJP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Jun 2019 11:09:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38180 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727002AbfFSPJJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Jun 2019 11:09:09 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1730211AbfFSPJK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Jun 2019 11:09:10 -0400
+Received: from localhost.localdomain (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 5E62230198AA;
-        Wed, 19 Jun 2019 15:09:04 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-57.rdu2.redhat.com [10.10.120.57])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 35D075D9C6;
-        Wed, 19 Jun 2019 15:09:02 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-cc:     dhowells@redhat.com,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: 
+        by mail.kernel.org (Postfix) with ESMTPSA id C2A5C21880;
+        Wed, 19 Jun 2019 15:09:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1560956950;
+        bh=k1BQ1yPh+N7XX9pqjnPlfC0pXckaeVezrpKaJrNHvGs=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=HPAoJ2lg9WKlOUkAYtMD80/G8+vrICiMuV7Psbm1nM5nUWGIRI/PyGtcDgf9HvCBJ
+         nnh6wHoVROHBhp8PaQ4E5LujAuqV6UALQykPm3sVCBtqYEdGeFW5HPVPKM6e0ZxUTQ
+         04YuWK/qXA5qENIKFw/+zoiY+QwyuhpjtsEaNKsg=
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Masami Hiramatsu <mhiramat@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        Ravi Bangoria <ravi.bangoria@linux.ibm.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>
+Subject: [PATCH v2 12/12] selftests/ftrace: Add syntax error test for multiprobe
+Date:   Thu, 20 Jun 2019 00:09:05 +0900
+Message-Id: <156095694541.28024.11918630805148623119.stgit@devnote2>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <156095682948.28024.14190188071338900568.stgit@devnote2>
+References: <156095682948.28024.14190188071338900568.stgit@devnote2>
+User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <18974.1560956941.1@warthog.procyon.org.uk>
-Date:   Wed, 19 Jun 2019 16:09:01 +0100
-Message-ID: <18975.1560956941@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Wed, 19 Jun 2019 15:09:09 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Stephen,
+Add syntax error test cases for multiprobe appending
+errors.
 
-Could you add my keys-next and afs-next branches to linux-next?  They can be
-found here:
+Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+---
+ tools/testing/selftests/ftrace/test.d/functions    |    2 +-
+ .../ftrace/test.d/kprobe/kprobe_syntax_errors.tc   |   10 ++++++++++
+ 2 files changed, 11 insertions(+), 1 deletion(-)
 
-git://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git#keys-next
-git://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git#afs-next
+diff --git a/tools/testing/selftests/ftrace/test.d/functions b/tools/testing/selftests/ftrace/test.d/functions
+index 779ec11f61bd..1cac8cc2cb35 100644
+--- a/tools/testing/selftests/ftrace/test.d/functions
++++ b/tools/testing/selftests/ftrace/test.d/functions
+@@ -115,7 +115,7 @@ ftrace_errlog_check() { # err-prefix command-with-error-pos-by-^ command-file
+     command=$(echo "$2" | tr -d ^)
+     echo "Test command: $command"
+     echo > error_log
+-    (! echo "$command" > "$3" ) 2> /dev/null
++    (! echo "$command" >> "$3" ) 2> /dev/null
+     grep "$1: error:" -A 3 error_log
+     N=$(tail -n 1 error_log | wc -c)
+     # "  Command: " and "^\n" => 13
+diff --git a/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_syntax_errors.tc b/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_syntax_errors.tc
+index aa59944bcace..39ef7ac1f51c 100644
+--- a/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_syntax_errors.tc
++++ b/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_syntax_errors.tc
+@@ -87,4 +87,14 @@ case $(uname -m) in
+     ;;
+ esac
+ 
++# multiprobe errors
++if grep -q "Create/append/" README && grep -q "imm-value" README; then
++echo 'p:kprobes/testevent _do_fork' > kprobe_events
++check_error '^r:kprobes/testevent do_exit'	# DIFF_PROBE_TYPE
++echo 'p:kprobes/testevent _do_fork abcd=\1' > kprobe_events
++check_error 'p:kprobes/testevent _do_fork ^bcd=\1'	# DIFF_ARG_TYPE
++check_error 'p:kprobes/testevent _do_fork ^abcd=\1:u8'	# DIFF_ARG_TYPE
++check_error 'p:kprobes/testevent _do_fork ^abcd=\"foo"'	# DIFF_ARG_TYPE
++fi
++
+ exit 0
 
-Thanks,
-David
