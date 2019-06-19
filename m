@@ -2,97 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CBF8F4B528
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 11:44:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5D75A4B52D
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 11:45:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731519AbfFSJoO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Jun 2019 05:44:14 -0400
-Received: from mga06.intel.com ([134.134.136.31]:19303 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726958AbfFSJoN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Jun 2019 05:44:13 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Jun 2019 02:44:13 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.63,392,1557212400"; 
-   d="scan'208";a="358562827"
-Received: from taniyasi-mobl.ger.corp.intel.com (HELO [10.252.35.15]) ([10.252.35.15])
-  by fmsmga006.fm.intel.com with ESMTP; 19 Jun 2019 02:44:08 -0700
-Subject: Re: [PATCH] fbcon: Export fbcon_update_vcs
-To:     Daniel Vetter <daniel.vetter@ffwll.ch>,
-        LKML <linux-kernel@vger.kernel.org>
-Cc:     kbuild test robot <lkp@intel.com>, Sam Ravnborg <sam@ravnborg.org>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Yisheng Xie <ysxie@foxmail.com>,
-        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
-        Peter Rosin <peda@axentia.se>,
-        Mikulas Patocka <mpatocka@redhat.com>,
-        linux-fbdev@vger.kernel.org, Gerd Hoffmann <kraxel@redhat.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Lukas Wunner <lukas@wunner.de>, dri-devel@lists.freedesktop.org
-References: <20190619081115.27921-1-daniel.vetter@ffwll.ch>
-From:   Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-Message-ID: <2849b344-5cdb-a06f-5998-075cf91e15ed@linux.intel.com>
-Date:   Wed, 19 Jun 2019 11:44:07 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.1
+        id S1731529AbfFSJpR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Jun 2019 05:45:17 -0400
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:46062 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726958AbfFSJpQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Jun 2019 05:45:16 -0400
+Received: by mail-qt1-f196.google.com with SMTP id j19so19027637qtr.12;
+        Wed, 19 Jun 2019 02:45:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=6yzdUzmo404LE41DAFTy9JSL/AHqS+IofJkeqyqlqXM=;
+        b=YSQsPBdeVFqPO4k13m19F3LD8n08NG8MIn8ioPb1XG58y0cb9sh9s2inNUBQZ2ViiW
+         An/UM8unZjM82w8J4wrfPZPqVnewNa4/p2kqYw4lmUwb8t2Ib7GzvWX8+9+/fUynGDHS
+         aC58zCRNqpWGrVgy/NHjasLEfX/AOTqda4pdvgAaoQ8lbR3Vid4PEdOl5XUtGeusLODS
+         avj2sCcioN0Wu9HJH+cIbWogVYUqSqVt4KoJ67zJDnoMqYh6m+B3vt5Y2tcSL+XSsmzk
+         1haaRyFLLB7R1mo2H8v1rlQgauVDYGIz/GoYDwaFeCPNPuV8OdIK/Bz/lTXznSw6pJjt
+         9pgA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=6yzdUzmo404LE41DAFTy9JSL/AHqS+IofJkeqyqlqXM=;
+        b=lWJM60FVDLDJ10zJS1sCtSb5EECE2/TgliNXkcdtcVqMcpUCGlq69KYE+jBr6ZORv+
+         XoV8xHWzbWMNWGHD/ikK4cOqJJg2ti/DjgqzkfvcwSXYJmH4SHPZ9NO5KECF+4NseY8q
+         c0ePKS95V04xWaLPheSj5seqG4uoKkyVx7SwRL3+JTvg5Rya3NLcmuxO7GQlM/oBxFgX
+         OhNj2vpPwZinRkxGCr4kAbE/lTErnYD3PKUK8XSDlOZWRUET4Xrkmqwc+WPyLpYCyWXp
+         cEiSjQo3HPggGVIIjoe57co6STDgGi7eN8YQgSmsWck8qKtmn7d5GYnhQRIcGHXt9oMK
+         DRHg==
+X-Gm-Message-State: APjAAAUYHhGJe+CvxLODT8fv+aYOt4TKg6GtlV9cUVXg6Jrpv01Ee4HF
+        KDw0Am8i5aUpudZ4AnIGq+pqdfs6Lls=
+X-Google-Smtp-Source: APXvYqwkgLAF0LrMgAIKw/7vQrmKnZS+4+KL47Na2ywBqsjuimj4HEiHz7IiwfCRl6Qfje+SSMtOww==
+X-Received: by 2002:aed:33e6:: with SMTP id v93mr105873713qtd.157.1560937515388;
+        Wed, 19 Jun 2019 02:45:15 -0700 (PDT)
+Received: from continental ([186.212.50.252])
+        by smtp.gmail.com with ESMTPSA id t197sm9802121qke.2.2019.06.19.02.45.12
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Wed, 19 Jun 2019 02:45:14 -0700 (PDT)
+Date:   Wed, 19 Jun 2019 06:45:43 -0300
+From:   Marcos Paulo de Souza <marcos.souza.org@gmail.com>
+To:     "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc:     linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>
+Subject: Re: [PATCH 1/2] scsi: devinfo: BLIST_TRY_VPD_PAGES for SanDisk
+ Cruzer Blade
+Message-ID: <20190619094540.GA26980@continental>
+References: <20190618013146.21961-1-marcos.souza.org@gmail.com>
+ <20190618013146.21961-2-marcos.souza.org@gmail.com>
+ <yq1r27quuod.fsf@oracle.com>
 MIME-Version: 1.0
-In-Reply-To: <20190619081115.27921-1-daniel.vetter@ffwll.ch>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <yq1r27quuod.fsf@oracle.com>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Op 19-06-2019 om 10:11 schreef Daniel Vetter:
-> I failed to spot this while compile-testing. Oops.
->
-> Reported-by: kbuild test robot <lkp@intel.com>
-> Fixes: 9e1467002630 ("fbcon: replace FB_EVENT_MODE_CHANGE/_ALL with direct calls")
-> Cc: Sam Ravnborg <sam@ravnborg.org>
-> Cc: Daniel Vetter <daniel.vetter@intel.com>
-> Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-> Cc: Daniel Thompson <daniel.thompson@linaro.org>
-> Cc: Lee Jones <lee.jones@linaro.org>
-> Cc: Jingoo Han <jingoohan1@gmail.com>
-> Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
-> Cc: Hans de Goede <hdegoede@redhat.com>
-> Cc: Yisheng Xie <ysxie@foxmail.com>
-> Cc: "Michał Mirosław" <mirq-linux@rere.qmqm.pl>
-> Cc: Peter Rosin <peda@axentia.se>
-> Cc: Mikulas Patocka <mpatocka@redhat.com>
-> Cc: linux-fbdev@vger.kernel.org
-> Cc: Gerd Hoffmann <kraxel@redhat.com>
-> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-> Cc: Lukas Wunner <lukas@wunner.de>
-> Cc: dri-devel@lists.freedesktop.org
-> Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
-> ---
->  drivers/video/fbdev/core/fbcon.c | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/drivers/video/fbdev/core/fbcon.c b/drivers/video/fbdev/core/fbcon.c
-> index b8067e07f8a8..c9235a2f42f8 100644
-> --- a/drivers/video/fbdev/core/fbcon.c
-> +++ b/drivers/video/fbdev/core/fbcon.c
-> @@ -3037,6 +3037,7 @@ void fbcon_update_vcs(struct fb_info *info, bool all)
->  	else
->  		fbcon_modechanged(info);
->  }
-> +EXPORT_SYMBOL(fbcon_update_vcs);
->  
->  int fbcon_mode_deleted(struct fb_info *info,
->  		       struct fb_videomode *mode)
+On Tue, Jun 18, 2019 at 11:21:22PM -0400, Martin K. Petersen wrote:
+> 
+> Marcos,
+> 
+> > Currently, all USB devices skip VPD pages, even when the device
+> > supports them (SPC-3 and later), but some of them support VPD, like
+> > Cruzer Blade.
+> 
+> What's your confidence level wrt. all Cruzer Blades handling this
+> correctly? How many devices have you tested this change with?
 
-Thanks, pushed to topic branch. :)
+I've tested three Cruzer Blades that I have at hand, and all  of them have VPD
+support, and also checked with a friend of mine that also have one. I can't say
+about "all others" but so far, 4/4 devices that I tested have VPD. (They were all
+SPC-3 or SPC-4 compliant).
 
+> 
+> -- 
+> Martin K. Petersen	Oracle Linux Engineering
