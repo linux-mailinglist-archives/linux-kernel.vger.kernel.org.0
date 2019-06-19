@@ -2,90 +2,260 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A94A24B87A
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 14:31:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EA59D4B8E1
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 14:42:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732002AbfFSMbb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Jun 2019 08:31:31 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:1545 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1731976AbfFSMb0 (ORCPT
+        id S1731795AbfFSMmQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Jun 2019 08:42:16 -0400
+Received: from mail1.bemta26.messagelabs.com ([85.158.142.112]:34224 "EHLO
+        mail1.bemta26.messagelabs.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727314AbfFSMmP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Jun 2019 08:31:26 -0400
-Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-        by mx08-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5JCQNaW013623;
-        Wed, 19 Jun 2019 14:30:55 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
- : date : message-id : in-reply-to : references : mime-version :
- content-type; s=STMicroelectronics;
- bh=kxAUn6YKO/6reWm+S4P6PSKzShP240Rigo7ZQoE8C8M=;
- b=Ar7HMxacmbYTf5gEF8rpp907cGkQmoofbHV19CJ0Hr2/E9baYNAfy6tMHFBRX93GYGh5
- xswIqwZUXSVAt1Rv+YCY9d4J2r4/vzuYnaG57C9amNcCOvy++MlwKpUg0OwygIPmmJVG
- ijZ/YBnE1X9QSXps+3lv3SbuDIIuuUaHxZp6edTfBGO/bEpB9bHNtOXFBBkLTPM6S77N
- Z/hJloy+zPpflVsemzEvgM+xvOdvA65AYq9EXlQ8F2NVFZu5raRbqQ8fhRWCmkEJ16tz
- AvCyFM5UlNsOUpJ1mcbCEyeFcNO7dYQiJrJD+J9qVHSi6MZa0TojAVYDRc3wiuIOfhnH nw== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx08-00178001.pphosted.com with ESMTP id 2t781uux8t-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Wed, 19 Jun 2019 14:30:55 +0200
-Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 1233634;
-        Wed, 19 Jun 2019 12:30:55 +0000 (GMT)
-Received: from Webmail-eu.st.com (sfhdag5node3.st.com [10.75.127.15])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id E500D27A5;
-        Wed, 19 Jun 2019 12:30:54 +0000 (GMT)
-Received: from localhost (10.75.127.44) by SFHDAG5NODE3.st.com (10.75.127.15)
- with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 19 Jun 2019 14:30:54
- +0200
-From:   Fabrice Gasnier <fabrice.gasnier@st.com>
-To:     <jic23@kernel.org>, <robh+dt@kernel.org>, <alexandre.torgue@st.com>
-CC:     <mark.rutland@arm.com>, <mcoquelin.stm32@gmail.com>,
-        <lars@metafoo.de>, <knaack.h@gmx.de>, <pmeerw@pmeerw.net>,
-        <fabrice.gasnier@st.com>, <linux-iio@vger.kernel.org>,
-        <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH 5/5] ARM: dts: stm32: add missing vdda-supply to adc on stm32h743i-eval
-Date:   Wed, 19 Jun 2019 14:29:58 +0200
-Message-ID: <1560947398-11592-6-git-send-email-fabrice.gasnier@st.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1560947398-11592-1-git-send-email-fabrice.gasnier@st.com>
-References: <1560947398-11592-1-git-send-email-fabrice.gasnier@st.com>
+        Wed, 19 Jun 2019 08:42:15 -0400
+Received: from [85.158.142.194] (using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256 bits))
+        by server-1.bemta.az-b.eu-central-1.aws.symcld.net id BB/FA-01646-3AD2A0D5; Wed, 19 Jun 2019 12:42:11 +0000
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrIIsWRWlGSWpSXmKPExsVy8IPnUd3Fuly
+  xBi2/JC2mPnzCZvFz0jQWi/tfjzJafLvSwWRxedccNgdWj52z7rJ7bFrVyeZx59oeNo9ntxex
+  eHzeJBfAGsWamZeUX5HAmnFj43vWgrl2FWu6lrI3MB4y6WLk4hASWM8oMaVrBXsXIyeQUyFxv
+  XMqE4jNJmAoMe/Ne0YQm0VAVWLlv/msILawQKjE08NzmEGaRQQmM0rMezWXDSTBLBArcX7eUh
+  YQm1fAQWLX+ZVMELagxMmZT1ggaiQkDr54AdTMAbRMS2L5sUiQsISAvcT091fBwhIC+hKNx2I
+  hwoYS32d9Y4GwzSX+fOtlnMDIPwvJ0FlIhi5gZFrFaJFUlJmeUZKbmJmja2hgoGtoaKxromth
+  qJdYpZukl1qqm5yaV1KUCJTUSywv1iuuzE3OSdHLSy3ZxAgM7ZRClsAdjE+OvNY7xCjJwaQky
+  qv8gTNWiC8pP6UyI7E4I76oNCe1+BCjDAeHkgSvrg5XrJBgUWp6akVaZg4wzmDSEhw8SiK82S
+  Bp3uKCxNzizHSI1ClGXY6125csYhZiycvPS5US53XTBioSACnKKM2DGwGL+UuMslLCvIwMDAx
+  CPAWpRbmZJajyrxjFORiVhHnvgkzhycwrgdv0CugIJqAjHi1lAzmiJBEhJdXA1Gngv1ZmU2jH
+  TIsKoegVJ46wb3X1CNQ2Tdt2+mLFvy2J76va8gOuF6te8lrr0TO1PECS+VlCy3vlwlkalW9vq
+  v8INC9v6I1PatD3PxsUfE55ooFU0mxtqbyTW5wuJ7n+vZ3k9JsvUerhuk+txU2H7532+O/Jd/
+  ek8JP1zSU/uZQPFZezvGB9tba4NofLV+kA84UKDRmh9J/rEpdzKoXXZf/X+Wl0YVvjJf6zZRx
+  sL3WXpN3v+FAu9/624bU/ifrxi4SC9ptpuTy3Zb3wMFxwpfHbDe0ch1ftTedYkPB0xScznusn
+  BB39avK5Xr82KVhw0Jlhqqy7sD2n3ksR++cFJWIVK/VMnrE/KFWu7FdiKc5INNRiLipOBABfW
+  RlhdAMAAA==
+X-Env-Sender: stwiss.opensource@diasemi.com
+X-Msg-Ref: server-6.tower-239.messagelabs.com!1560948130!480407!1
+X-Originating-IP: [193.240.73.197]
+X-SYMC-ESS-Client-Auth: outbound-route-from=pass
+X-StarScan-Received: 
+X-StarScan-Version: 9.43.9; banners=-,-,-
+X-VirusChecked: Checked
+Received: (qmail 25934 invoked from network); 19 Jun 2019 12:42:11 -0000
+Received: from unknown (HELO sw-ex-cashub01.diasemi.com) (193.240.73.197)
+  by server-6.tower-239.messagelabs.com with AES128-SHA256 encrypted SMTP; 19 Jun 2019 12:42:11 -0000
+Received: from swsrvapps-01.diasemi.com (10.20.28.141) by
+ SW-EX-CASHUB01.diasemi.com (10.20.16.140) with Microsoft SMTP Server id
+ 14.3.408.0; Wed, 19 Jun 2019 13:42:09 +0100
+Received: by swsrvapps-01.diasemi.com (Postfix, from userid 22547)      id
+ BE6863FB35; Wed, 19 Jun 2019 13:42:09 +0100 (BST)
+From:   Steve Twiss <stwiss.opensource@diasemi.com>
+Date:   Wed, 19 Jun 2019 13:30:00 +0100
+Subject: [PATCH V2] regulator: da9061/62: Adjust LDO voltage selection minimum
+ value
+To:     Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        "Lee Jones" <lee.jones@linaro.org>,
+        Felix Riemann <Felix.Riemann@sma.de>
+CC:     Support Opensource <support.opensource@diasemi.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Message-ID: <20190619124209.BE6863FB35@swsrvapps-01.diasemi.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-X-Originating-IP: [10.75.127.44]
-X-ClientProxiedBy: SFHDAG4NODE2.st.com (10.75.127.11) To SFHDAG5NODE3.st.com
- (10.75.127.15)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-19_07:,,
- signatures=0
+X-KSE-AttachmentFiltering-Interceptor-Info: protection disabled
+X-KSE-ServerInfo: sw-ex-cashub01.diasemi.com, 9
+X-KSE-Antivirus-Interceptor-Info: scan successful
+X-KSE-Antivirus-Info: Clean, bases: 19/06/2019 10:27:00
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add missing vdda-supply required by STM32 ADC.
+From: Felix Riemann <felix.riemann@sma.de>
 
-Fixes: 090992a9ca54 ("ARM: dts: stm32: enable ADC on stm32h743i-eval
-board")
+According to the DA9061 and DA9062 datasheets the LDO voltage selection
+registers have a lower value of 0x02. This applies to voltage registers
+VLDO1_A, VLDO2_A, VLDO3_A and VLDO4_A. This linear offset of 0x02 was
+previously not observed by the driver, causing the LDO output voltage to
+be systematically lower by two steps (= 0.1V).
 
-Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
+This patch fixes the minimum linear selector offset by setting it to a
+value of 2 and increases the n_voltages by the same amount allowing
+voltages in the range 0x02 -> 0.9V to 0x38 -> 3.6V to be correctly
+selected. Also fixes an incorrect calculaton for the n_voltages value in
+the regulator LDO2.
+
+These fixes effect all LDO regulators for DA9061 and DA9062.
+
+Acked-by: Steve Twiss <stwiss.opensource@diasemi.com>
+Tested-by: Steve Twiss <stwiss.opensource@diasemi.com>
+Signed-off-by: Felix Riemann <felix.riemann@sma.de>
 ---
- arch/arm/boot/dts/stm32h743i-eval.dts | 1 +
- 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm/boot/dts/stm32h743i-eval.dts b/arch/arm/boot/dts/stm32h743i-eval.dts
-index ab78ad5..e4d3c58 100644
---- a/arch/arm/boot/dts/stm32h743i-eval.dts
-+++ b/arch/arm/boot/dts/stm32h743i-eval.dts
-@@ -87,6 +87,7 @@
- };
+Hi Felix,
+
+I have taken your previous patch, fixed the whitespace like we discussed
+and updated the commit message to add more details. Also, I have
+simplified your original patch slightly by using a single define in the
+include file instead of repeating the same value for each LDO[1-4].
+
+Finally, I added a minor typo fix which I found when calculating the
+LDO2 n_voltages, there was a calculation of (3600-600)/50 instead of
+(3600-900)/50.
+
+I've finished my testing for DA9061 and DA9062 and so I've Acked your
+patch and added a Tested-by tag. If you are happy with those changes to
+your patch, I guess you can let the Maintainers take a look.
+
+Regards,
+Steve
+
+ drivers/regulator/da9062-regulator.c | 40 +++++++++++++++++++++---------------
+ include/linux/mfd/da9062/registers.h |  3 +++
+ 2 files changed, 27 insertions(+), 16 deletions(-)
+
+diff --git a/drivers/regulator/da9062-regulator.c b/drivers/regulator/da9062-regulator.c
+index a02e048..1cadaae 100644
+--- a/drivers/regulator/da9062-regulator.c
++++ b/drivers/regulator/da9062-regulator.c
+@@ -493,12 +493,13 @@ static int da9062_ldo_set_suspend_mode(struct regulator_dev *rdev,
+ 		.desc.ops = &da9062_ldo_ops,
+ 		.desc.min_uV = (900) * 1000,
+ 		.desc.uV_step = (50) * 1000,
+-		.desc.n_voltages = ((3600) - (900))/(50) + 1,
++		.desc.n_voltages = ((3600) - (900))/(50) + 1
++				+ DA9062AA_VLDO_A_MIN_SEL,
+ 		.desc.enable_reg = DA9062AA_LDO1_CONT,
+ 		.desc.enable_mask = DA9062AA_LDO1_EN_MASK,
+ 		.desc.vsel_reg = DA9062AA_VLDO1_A,
+ 		.desc.vsel_mask = DA9062AA_VLDO1_A_MASK,
+-		.desc.linear_min_sel = 0,
++		.desc.linear_min_sel = DA9062AA_VLDO_A_MIN_SEL,
+ 		.sleep = REG_FIELD(DA9062AA_VLDO1_A,
+ 			__builtin_ffs((int)DA9062AA_LDO1_SL_A_MASK) - 1,
+ 			sizeof(unsigned int) * 8 -
+@@ -525,12 +526,13 @@ static int da9062_ldo_set_suspend_mode(struct regulator_dev *rdev,
+ 		.desc.ops = &da9062_ldo_ops,
+ 		.desc.min_uV = (900) * 1000,
+ 		.desc.uV_step = (50) * 1000,
+-		.desc.n_voltages = ((3600) - (600))/(50) + 1,
++		.desc.n_voltages = ((3600) - (900))/(50) + 1
++				+ DA9062AA_VLDO_A_MIN_SEL,
+ 		.desc.enable_reg = DA9062AA_LDO2_CONT,
+ 		.desc.enable_mask = DA9062AA_LDO2_EN_MASK,
+ 		.desc.vsel_reg = DA9062AA_VLDO2_A,
+ 		.desc.vsel_mask = DA9062AA_VLDO2_A_MASK,
+-		.desc.linear_min_sel = 0,
++		.desc.linear_min_sel = DA9062AA_VLDO_A_MIN_SEL,
+ 		.sleep = REG_FIELD(DA9062AA_VLDO2_A,
+ 			__builtin_ffs((int)DA9062AA_LDO2_SL_A_MASK) - 1,
+ 			sizeof(unsigned int) * 8 -
+@@ -557,12 +559,13 @@ static int da9062_ldo_set_suspend_mode(struct regulator_dev *rdev,
+ 		.desc.ops = &da9062_ldo_ops,
+ 		.desc.min_uV = (900) * 1000,
+ 		.desc.uV_step = (50) * 1000,
+-		.desc.n_voltages = ((3600) - (900))/(50) + 1,
++		.desc.n_voltages = ((3600) - (900))/(50) + 1
++				+ DA9062AA_VLDO_A_MIN_SEL,
+ 		.desc.enable_reg = DA9062AA_LDO3_CONT,
+ 		.desc.enable_mask = DA9062AA_LDO3_EN_MASK,
+ 		.desc.vsel_reg = DA9062AA_VLDO3_A,
+ 		.desc.vsel_mask = DA9062AA_VLDO3_A_MASK,
+-		.desc.linear_min_sel = 0,
++		.desc.linear_min_sel = DA9062AA_VLDO_A_MIN_SEL,
+ 		.sleep = REG_FIELD(DA9062AA_VLDO3_A,
+ 			__builtin_ffs((int)DA9062AA_LDO3_SL_A_MASK) - 1,
+ 			sizeof(unsigned int) * 8 -
+@@ -589,12 +592,13 @@ static int da9062_ldo_set_suspend_mode(struct regulator_dev *rdev,
+ 		.desc.ops = &da9062_ldo_ops,
+ 		.desc.min_uV = (900) * 1000,
+ 		.desc.uV_step = (50) * 1000,
+-		.desc.n_voltages = ((3600) - (900))/(50) + 1,
++		.desc.n_voltages = ((3600) - (900))/(50) + 1
++				+ DA9062AA_VLDO_A_MIN_SEL,
+ 		.desc.enable_reg = DA9062AA_LDO4_CONT,
+ 		.desc.enable_mask = DA9062AA_LDO4_EN_MASK,
+ 		.desc.vsel_reg = DA9062AA_VLDO4_A,
+ 		.desc.vsel_mask = DA9062AA_VLDO4_A_MASK,
+-		.desc.linear_min_sel = 0,
++		.desc.linear_min_sel = DA9062AA_VLDO_A_MIN_SEL,
+ 		.sleep = REG_FIELD(DA9062AA_VLDO4_A,
+ 			__builtin_ffs((int)DA9062AA_LDO4_SL_A_MASK) - 1,
+ 			sizeof(unsigned int) * 8 -
+@@ -769,12 +773,13 @@ static int da9062_ldo_set_suspend_mode(struct regulator_dev *rdev,
+ 		.desc.ops = &da9062_ldo_ops,
+ 		.desc.min_uV = (900) * 1000,
+ 		.desc.uV_step = (50) * 1000,
+-		.desc.n_voltages = ((3600) - (900))/(50) + 1,
++		.desc.n_voltages = ((3600) - (900))/(50) + 1
++							+ DA9062AA_VLDO_A_MIN_SEL,
+ 		.desc.enable_reg = DA9062AA_LDO1_CONT,
+ 		.desc.enable_mask = DA9062AA_LDO1_EN_MASK,
+ 		.desc.vsel_reg = DA9062AA_VLDO1_A,
+ 		.desc.vsel_mask = DA9062AA_VLDO1_A_MASK,
+-		.desc.linear_min_sel = 0,
++		.desc.linear_min_sel = DA9062AA_VLDO_A_MIN_SEL,
+ 		.sleep = REG_FIELD(DA9062AA_VLDO1_A,
+ 			__builtin_ffs((int)DA9062AA_LDO1_SL_A_MASK) - 1,
+ 			sizeof(unsigned int) * 8 -
+@@ -801,12 +806,13 @@ static int da9062_ldo_set_suspend_mode(struct regulator_dev *rdev,
+ 		.desc.ops = &da9062_ldo_ops,
+ 		.desc.min_uV = (900) * 1000,
+ 		.desc.uV_step = (50) * 1000,
+-		.desc.n_voltages = ((3600) - (600))/(50) + 1,
++		.desc.n_voltages = ((3600) - (900))/(50) + 1
++							+ DA9062AA_VLDO_A_MIN_SEL,
+ 		.desc.enable_reg = DA9062AA_LDO2_CONT,
+ 		.desc.enable_mask = DA9062AA_LDO2_EN_MASK,
+ 		.desc.vsel_reg = DA9062AA_VLDO2_A,
+ 		.desc.vsel_mask = DA9062AA_VLDO2_A_MASK,
+-		.desc.linear_min_sel = 0,
++		.desc.linear_min_sel = DA9062AA_VLDO_A_MIN_SEL,
+ 		.sleep = REG_FIELD(DA9062AA_VLDO2_A,
+ 			__builtin_ffs((int)DA9062AA_LDO2_SL_A_MASK) - 1,
+ 			sizeof(unsigned int) * 8 -
+@@ -833,12 +839,13 @@ static int da9062_ldo_set_suspend_mode(struct regulator_dev *rdev,
+ 		.desc.ops = &da9062_ldo_ops,
+ 		.desc.min_uV = (900) * 1000,
+ 		.desc.uV_step = (50) * 1000,
+-		.desc.n_voltages = ((3600) - (900))/(50) + 1,
++		.desc.n_voltages = ((3600) - (900))/(50) + 1
++							+ DA9062AA_VLDO_A_MIN_SEL,
+ 		.desc.enable_reg = DA9062AA_LDO3_CONT,
+ 		.desc.enable_mask = DA9062AA_LDO3_EN_MASK,
+ 		.desc.vsel_reg = DA9062AA_VLDO3_A,
+ 		.desc.vsel_mask = DA9062AA_VLDO3_A_MASK,
+-		.desc.linear_min_sel = 0,
++		.desc.linear_min_sel = DA9062AA_VLDO_A_MIN_SEL,
+ 		.sleep = REG_FIELD(DA9062AA_VLDO3_A,
+ 			__builtin_ffs((int)DA9062AA_LDO3_SL_A_MASK) - 1,
+ 			sizeof(unsigned int) * 8 -
+@@ -865,12 +872,13 @@ static int da9062_ldo_set_suspend_mode(struct regulator_dev *rdev,
+ 		.desc.ops = &da9062_ldo_ops,
+ 		.desc.min_uV = (900) * 1000,
+ 		.desc.uV_step = (50) * 1000,
+-		.desc.n_voltages = ((3600) - (900))/(50) + 1,
++		.desc.n_voltages = ((3600) - (900))/(50) + 1
++							+ DA9062AA_VLDO_A_MIN_SEL,
+ 		.desc.enable_reg = DA9062AA_LDO4_CONT,
+ 		.desc.enable_mask = DA9062AA_LDO4_EN_MASK,
+ 		.desc.vsel_reg = DA9062AA_VLDO4_A,
+ 		.desc.vsel_mask = DA9062AA_VLDO4_A_MASK,
+-		.desc.linear_min_sel = 0,
++		.desc.linear_min_sel = DA9062AA_VLDO_A_MIN_SEL,
+ 		.sleep = REG_FIELD(DA9062AA_VLDO4_A,
+ 			__builtin_ffs((int)DA9062AA_LDO4_SL_A_MASK) - 1,
+ 			sizeof(unsigned int) * 8 -
+diff --git a/include/linux/mfd/da9062/registers.h b/include/linux/mfd/da9062/registers.h
+index fe04b70..090213a 100644
+--- a/include/linux/mfd/da9062/registers.h
++++ b/include/linux/mfd/da9062/registers.h
+@@ -797,6 +797,9 @@
+ #define DA9062AA_BUCK3_SL_A_SHIFT	7
+ #define DA9062AA_BUCK3_SL_A_MASK	BIT(7)
  
- &adc_12 {
-+	vdda-supply = <&vdda>;
- 	vref-supply = <&vdda>;
- 	status = "okay";
- 	adc1: adc@0 {
++/* DA9062AA_VLDO[1-4]_A common */
++#define DA9062AA_VLDO_A_MIN_SEL		2
++
+ /* DA9062AA_VLDO1_A = 0x0A9 */
+ #define DA9062AA_VLDO1_A_SHIFT		0
+ #define DA9062AA_VLDO1_A_MASK		0x3f
 -- 
-2.7.4
+1.9.3
 
