@@ -2,86 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4CEA14AF18
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 02:39:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0D92A4AF20
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 02:41:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729674AbfFSAi6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Jun 2019 20:38:58 -0400
-Received: from mail-ed1-f47.google.com ([209.85.208.47]:33841 "EHLO
-        mail-ed1-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726023AbfFSAi6 (ORCPT
+        id S1729496AbfFSAlL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Jun 2019 20:41:11 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:53704 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726023AbfFSAlK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Jun 2019 20:38:58 -0400
-Received: by mail-ed1-f47.google.com with SMTP id s49so24449566edb.1;
-        Tue, 18 Jun 2019 17:38:56 -0700 (PDT)
+        Tue, 18 Jun 2019 20:41:10 -0400
+Received: by mail-wm1-f68.google.com with SMTP id x15so5147617wmj.3;
+        Tue, 18 Jun 2019 17:41:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=bzqQ+p0cZVycGM5xoroio2oFHWU/EFJ7b4KcGZXlaeg=;
-        b=HN7jxVczRQw8BuODliUaJx1krrC5u0bSv6wNlzTeiaqxI5/WxtVswZ3/DAWD3LA5YL
-         Y4gfFvi+vdPHwY/bthNBq0K4X5A4wkbn/CJSKU+yQF80lHT3Ml2rM1UgkGs9mKdS6+ht
-         VHyufg+NObVes7lMGYtjCZKxeMJOMk4tXMNWgWvvSjy71Wq2AEHIByUOIvEz0cBuZ/Xn
-         hl8/zmqnKCTgz4hPtyq1O7QGfbDe+sgnz5pfCJzXH3iX1/1YxGLL1miyo79m1tQDcX75
-         UeICZSDBK3SsYI9YBBDuXE6F98sbyGg7BrtQoadRSa3hewpRQkIPWgF+Rf69Nxd44/Ua
-         2Dvg==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=4SHCjBMan004B+ijIlPx4Pn3xROU+n7uFgrQp2KsfSs=;
+        b=eL+CRB0yQi9G/o531hvb2YOujfgf1xcnevSWIFFukShk/sDef498WkAoHShxPC0m5T
+         rqVJ2SJmmL98sI2FQeVeYLw/N85A/Zud1WJ1MTjr0HoolcTeFcV6EHzwFE7mWNmpBldY
+         bIyiM9by8ogLGzdelWaDbzAAsKwCfAeIPeTSpagrI+6N9btBBid0mHUDvxGzdEmTifF7
+         GjmxXLlLfVfv78OSH1Wa5CXrNhb0WwRLUNpvqGyf2ft/h9xYqcMFtG+I4jUJc0Y0fJsn
+         qtPk/rLLEkEwbhZ8FwyzVDSpfmPI/OIXbw4u857NjtcZNrir+ke/9Oz1ZB9cIB20vfY1
+         8kFA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=bzqQ+p0cZVycGM5xoroio2oFHWU/EFJ7b4KcGZXlaeg=;
-        b=bMDrGpGyRinb958rmRD+SfWzQnwkI7kPx0STyP88utqpjuQ2Vx2ckVnMv/JVlZjY0/
-         rr35q+pYRKXQHByl0qaV+yEpKtfIecCAwoBp8mEdip+3Hvhl9xr+Dt3a6znfwmiX4S2k
-         hiR4chahwlbrDVheyixQVC+7v9+tn3bYyN2+lwTd56oP+HJIwTe+oB8GGdyySEtCxcqz
-         ob/ZUJHUZ8Vbk8oyTQ28I6CaxA8OeMeC5decS0yipGoxI6ro3LVX7WpMejtaA/9kxRmT
-         HGdsJBqUD4+4lxs4GeQftf9fJhgoA8wsFbsIzLO4rgWIrEAZveufpvtQa0ioz5m4ba6L
-         zH9w==
-X-Gm-Message-State: APjAAAVHWTSQAbf9iuuqPJ0SE1dNEk8tCLyuDnAy9qKbpqRK6cH6cSwa
-        njOTMFOIZB358y3p7X/O7OVpBmivYTd8E/62bJM=
-X-Google-Smtp-Source: APXvYqz2nfPfBq4jE5jWuxHzrHdBZZE1KQ51bus1GR9GIax2909JzFg58fQoGJ5fTXlFX/pPbOunF2yaU9+f9tl+EgY=
-X-Received: by 2002:a50:9153:: with SMTP id f19mr21543708eda.70.1560904736103;
- Tue, 18 Jun 2019 17:38:56 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=4SHCjBMan004B+ijIlPx4Pn3xROU+n7uFgrQp2KsfSs=;
+        b=K2dUuDi79vUqAu0W06t7NuZkQ7Zde/yhEtl1mnGG8Z2swlxEULgQXEudDw0DhoFDix
+         zVs1+BBb68bFGyTNLa2ipAdifDPl1XWvBjpC9F92ndrTk82mLaQ4HN36cvwxWeiVUJ2J
+         JHRvlmpKsWsqilecA6mUpwGKV3GlZcNfNsTOJcpXZC+XgJEOxn+ewwcm2TYUuWR9y70w
+         dyKZo/SmXlx77b/+7+NeZlHwZ/sdqYNS8k5mSdvi2axnWGl//HOXSS4pQcGm43TN7wEd
+         ny5ic0nOWdF9iKqz/UZ5aFLoOhiQJTVTRwNKenf9mYtgk4OopVCInRU3y8D+mpOKv4AL
+         f91A==
+X-Gm-Message-State: APjAAAV83LmFJjGzt0HItD/wkrLxkZkNKCensHkLZ2imexhcC5azFSIC
+        CL8De1DTLGw6R8YYDr+9JChzAg7a
+X-Google-Smtp-Source: APXvYqyM5EDqjy/4xxrG+0PX2bsz4GstmJ3Q06xdocP3+YhT8u2Fk4bpcgwr500Dp8PQQLTiXPHvrA==
+X-Received: by 2002:a1c:a686:: with SMTP id p128mr157437wme.163.1560904867553;
+        Tue, 18 Jun 2019 17:41:07 -0700 (PDT)
+Received: from [192.168.2.145] (ppp91-79-162-197.pppoe.mtu-net.ru. [91.79.162.197])
+        by smtp.googlemail.com with ESMTPSA id n10sm15767722wrw.83.2019.06.18.17.41.06
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 18 Jun 2019 17:41:06 -0700 (PDT)
+Subject: Re: [PATCH v3 3/8] clocksource/drivers/tegra: Set and use timer's
+ period
+To:     Jon Hunter <jonathanh@nvidia.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc:     linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20190618140358.13148-1-digetx@gmail.com>
+ <20190618140358.13148-4-digetx@gmail.com>
+ <16c20c1b-d106-cb1e-6d67-bdd402ecf57f@nvidia.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <17556fe2-8481-258a-9be9-2598da0a67eb@gmail.com>
+Date:   Wed, 19 Jun 2019 03:41:05 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.1
 MIME-Version: 1.0
-References: <CAF=yD-+pNrAo1wByHY6f5AZCq8xT0FDMKM-WzPkfZ36Jxj4mNg@mail.gmail.com>
- <20190618173906.GB3649@kroah.com> <CA+FuTSdrphico4044QTD_-8VbanFFJx0FJuH+vVMfuHqbphkjw@mail.gmail.com>
- <20190618.184409.2227845117139305004.davem@davemloft.net>
-In-Reply-To: <20190618.184409.2227845117139305004.davem@davemloft.net>
-From:   Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-Date:   Tue, 18 Jun 2019 20:38:19 -0400
-Message-ID: <CAF=yD-JPxx8EQ6ezs5dm+hsXQc8BVTLU8RnMLcw8qYR=OcU8XQ@mail.gmail.com>
-Subject: Re: 4.19: udpgso_bench_tx: setsockopt zerocopy: Unknown error 524
-To:     David Miller <davem@davemloft.net>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Naresh Kamboju <naresh.kamboju@linaro.org>,
-        Network Development <netdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        Fred Klassen <fklassen@appneta.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <16c20c1b-d106-cb1e-6d67-bdd402ecf57f@nvidia.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 18, 2019 at 6:44 PM David Miller <davem@davemloft.net> wrote:
->
-> From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-> Date: Tue, 18 Jun 2019 14:58:26 -0400
->
-> > I see that in similar such cases that use the test harness
-> > (ksft_test_result_skip) the overall test returns success as long as
-> > all individual cases return either success or skip.
-> >
-> > I think it's preferable to return KSFT_SKIP if any of the cases did so
-> > (and none returned an error). I'll do that unless anyone objects.
->
-> I guess this is a question of semantics.
->
-> I mean, if you report skip at the top level does that mean that all
-> sub tests were skipped?  People may think so... :)
+18.06.2019 19:32, Jon Hunter пишет:
+> 
+> On 18/06/2019 15:03, Dmitry Osipenko wrote:
+>> The of_clk structure has a period field that is set up initially by
+>> timer_of_clk_init(), that period value need to be adjusted for a case of
+>> TIMER1-9 that are running at a fixed rate that doesn't match the clock's
+>> rate. Note that the period value is currently used only by some of the
+>> clocksource drivers internally and hence this is just a minor cleanup
+>> change that doesn't fix anything.
+>>
+>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>> ---
+>>  drivers/clocksource/timer-tegra.c | 5 +++--
+>>  1 file changed, 3 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/clocksource/timer-tegra.c b/drivers/clocksource/timer-tegra.c
+>> index ff5a4ccb5d52..e6221e070499 100644
+>> --- a/drivers/clocksource/timer-tegra.c
+>> +++ b/drivers/clocksource/timer-tegra.c
+>> @@ -71,9 +71,9 @@ static int tegra_timer_shutdown(struct clock_event_device *evt)
+>>  static int tegra_timer_set_periodic(struct clock_event_device *evt)
+>>  {
+>>  	void __iomem *reg_base = timer_of_base(to_timer_of(evt)); 
+>> +	unsigned long period = timer_of_period(to_timer_of(evt));
+>>  
+>> -	writel_relaxed(TIMER_PTV_EN | TIMER_PTV_PER |
+>> -		       ((timer_of_rate(to_timer_of(evt)) / HZ) - 1),
+>> +	writel_relaxed(TIMER_PTV_EN | TIMER_PTV_PER | (period - 1),
+>>  		       reg_base + TIMER_PTV);
+>>  
+>>  	return 0;
+>> @@ -297,6 +297,7 @@ static int __init tegra_init_timer(struct device_node *np, bool tegra20,
+>>  		cpu_to->clkevt.rating = rating;
+>>  		cpu_to->clkevt.cpumask = cpumask_of(cpu);
+>>  		cpu_to->of_base.base = timer_reg_base + base;
+>> +		cpu_to->of_clk.period = rate / HZ;
+>>  		cpu_to->of_clk.rate = rate;
+>>  
+>>  		irq_set_status_flags(cpu_to->clkevt.irq, IRQ_NOAUTOEN);
+> 
+> Acked-by: Jon Hunter <jonathanh@nvidia.com>
 
-Yes, it's not ideal. Erring on the side of caution? Unlike pass, it is
-a signal that an admin may or may not choose to act on. I run a
-selected subset of tests from tools/testing that are all expected to
-pass, so if one returns skip, I would want to take a closer look.
+Thanks!
