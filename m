@@ -2,117 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F33FE4BE65
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 18:38:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C63914BE6B
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 18:39:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729902AbfFSQir (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Jun 2019 12:38:47 -0400
-Received: from mga02.intel.com ([134.134.136.20]:48104 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725843AbfFSQir (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Jun 2019 12:38:47 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Jun 2019 09:38:46 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.63,392,1557212400"; 
-   d="scan'208";a="162094727"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga007.fm.intel.com with ESMTP; 19 Jun 2019 09:38:44 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 0CF3B55; Wed, 19 Jun 2019 19:38:44 +0300 (EEST)
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Miguel Ojeda Sandonis <miguel.ojeda.sandonis@gmail.com>,
-        linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Mans Rullgard <mans@mansr.com>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v1 2/2] auxdisplay: charlcd: Deduplicate simple_strtoul()
-Date:   Wed, 19 Jun 2019 19:38:43 +0300
-Message-Id: <20190619163843.26918-2-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190619163843.26918-1-andriy.shevchenko@linux.intel.com>
-References: <20190619163843.26918-1-andriy.shevchenko@linux.intel.com>
+        id S1730052AbfFSQj5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Jun 2019 12:39:57 -0400
+Received: from out30-56.freemail.mail.aliyun.com ([115.124.30.56]:56916 "EHLO
+        out30-56.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726091AbfFSQj4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Jun 2019 12:39:56 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R181e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04394;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=9;SR=0;TI=SMTPD_---0TUccqUw_1560962390;
+Received: from US-143344MP.local(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0TUccqUw_1560962390)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Thu, 20 Jun 2019 00:39:52 +0800
+Subject: Re: [PATCH] mm: mempolicy: handle vma with unmovable pages mapped
+ correctly in mbind
+To:     Vlastimil Babka <vbabka@suse.cz>, Michal Hocko <mhocko@kernel.org>
+Cc:     akpm@linux-foundation.org, mgorman@techsingularity.net,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Eric Dumazet <edumazet@google.com>,
+        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org
+References: <1560797290-42267-1-git-send-email-yang.shi@linux.alibaba.com>
+ <20190618130253.GH3318@dhcp22.suse.cz>
+ <cf33b724-fdd5-58e3-c06a-1bc563525311@linux.alibaba.com>
+ <2c30d86f-43e4-f43c-411d-c916fb1de44e@suse.cz>
+From:   Yang Shi <yang.shi@linux.alibaba.com>
+Message-ID: <68b67faf-d1c3-bc36-3db4-c86c6dfd8f11@linux.alibaba.com>
+Date:   Wed, 19 Jun 2019 09:39:48 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
+ Gecko/20100101 Thunderbird/52.7.0
 MIME-Version: 1.0
+In-Reply-To: <2c30d86f-43e4-f43c-411d-c916fb1de44e@suse.cz>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Like in the commit
-  8b2303de399f ("serial: core: Fix handling of options after MMIO address")
-we may use simple_strtoul() which in comparison to kstrtoul() can do conversion
-in-place without additional and unnecessary code to be written.
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/auxdisplay/charlcd.c | 34 +++++++---------------------------
- 1 file changed, 7 insertions(+), 27 deletions(-)
 
-diff --git a/drivers/auxdisplay/charlcd.c b/drivers/auxdisplay/charlcd.c
-index 92745efefb54..45e2e451253a 100644
---- a/drivers/auxdisplay/charlcd.c
-+++ b/drivers/auxdisplay/charlcd.c
-@@ -287,31 +287,6 @@ static int charlcd_init_display(struct charlcd *lcd)
- 	return 0;
- }
- 
--/*
-- * Parses an unsigned integer from a string, until a non-digit character
-- * is found. The empty string is not accepted. No overflow checks are done.
-- *
-- * Returns whether the parsing was successful. Only in that case
-- * the output parameters are written to.
-- *
-- * TODO: If the kernel adds an inplace version of kstrtoul(), this function
-- * could be easily replaced by that.
-- */
--static bool parse_n(const char *s, unsigned long *res, const char **next_s)
--{
--	if (!isdigit(*s))
--		return false;
--
--	*res = 0;
--	while (isdigit(*s)) {
--		*res = *res * 10 + (*s - '0');
--		++s;
--	}
--
--	*next_s = s;
--	return true;
--}
--
- /*
-  * Parses a movement command of the form "(.*);", where the group can be
-  * any number of subcommands of the form "(x|y)[0-9]+".
-@@ -336,6 +311,7 @@ static bool parse_xy(const char *s, unsigned long *x, unsigned long *y)
- {
- 	unsigned long new_x = *x;
- 	unsigned long new_y = *y;
-+	const char *p;
- 
- 	for (;;) {
- 		if (!*s)
-@@ -345,11 +321,15 @@ static bool parse_xy(const char *s, unsigned long *x, unsigned long *y)
- 			break;
- 
- 		if (*s == 'x') {
--			if (!parse_n(s + 1, &new_x, &s))
-+			new_x = simple_strtoul(s + 1, &p, 10);
-+			if (p == s + 1)
- 				return false;
-+			s = p;
- 		} else if (*s == 'y') {
--			if (!parse_n(s + 1, &new_y, &s))
-+			new_y = simple_strtoul(s + 1, &p, 10);
-+			if (p == s + 1)
- 				return false;
-+			s = p;
- 		} else {
- 			return false;
- 		}
--- 
-2.20.1
+On 6/19/19 1:18 AM, Vlastimil Babka wrote:
+> On 6/18/19 7:06 PM, Yang Shi wrote:
+>> The BUG_ON was removed by commit
+>> d44d363f65780f2ac2ec672164555af54896d40d ("mm: don't assume anonymous
+>> pages have SwapBacked flag") since 4.12.
+> Perhaps that commit should be sent to stable@ ? Although with
+> VM_BUG_ON() this is less critical than plain BUG_ON().
+
+I don't think we have to. I agree it is less critical,  VM_DEBUG should 
+be not enabled for production environment.
+
+And, it doesn't actually break anything since split_huge_page would just 
+return error, and those unmovable pages are silently ignored by isolate.
+
 
