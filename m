@@ -2,95 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BB2264BA2F
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 15:39:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B1B484B9EC
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 15:27:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731216AbfFSNj1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Jun 2019 09:39:27 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:37422 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730904AbfFSNjY (ORCPT
+        id S1729627AbfFSN1z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Jun 2019 09:27:55 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:43812 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726013AbfFSN1z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Jun 2019 09:39:24 -0400
-Received: by mail-lf1-f65.google.com with SMTP id d11so12167905lfb.4
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2019 06:39:24 -0700 (PDT)
+        Wed, 19 Jun 2019 09:27:55 -0400
+Received: by mail-lf1-f67.google.com with SMTP id j29so12114230lfk.10;
+        Wed, 19 Jun 2019 06:27:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lixom-net.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=poQTjuhtDsupGdVClN0ALov7TDRSULG2jSa2vmjVCU4=;
-        b=l0/gF9/OzFgtGmzu7Ddh94ZXY54MyG2jXNCKTSFXAdsBC/fnoN5fG8IjW/eOgNukxP
-         Ge373wE/T0YzSFbHLkXp6XkrtHU9mUmwjk7EHw+f2TeVxkgML3d9iDSEvjNajpa+6746
-         yQdmuYz36CveVabg5LDbdCLwdMklqodT2SjIvIpGoP+x6PzsZNlG8/lox1bj7i/NL2Ki
-         N0gSC8rBoz7T5YInhwaB6YKHfeP5/SMeNjw1NWhrKZXNSem0XOZ/OOLbEFF1/+nnrBFQ
-         n3mN0QBoDJo4oGA+e2ID+94wEft9iVNHGoVAxH/PiA6Y39yWM+Mc57ZyDDFsez8ElW+R
-         QzuA==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=WLdN0ETsTns+dZs6DKliEgFh9OL/ylVkF+bq8ufBcyM=;
+        b=GmkC7RYJkON0ALUMtKgH2gM5xUOoLg9yKMZPDrhQgh675JhIF5GiBOMPHn6FKGc2R1
+         VA1L7FLv+M+owW5JSsAP+D2lbp9goB92wEiu2BeXPjIRbutyBjFbxSqGC7CIGftPRGz4
+         N06BOYoWDuVwXxAhFgqscXMf7/wr67Cnd5kgh10xstwS1vaipNIzQJ4xi3Qa0XikISKS
+         6kr9gsE0C+TvdR9EyCuGpdHOeWGCnF9NgAxBkTgnJ6+Z0LyyWBnFDdlN64ZM52YplIif
+         3wxKSuC8rUqyOH87RNPyzM9OXapx5ym3eGFRZ/467U902446tetXoLxrdr8I9/KtPQgR
+         zs3Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=poQTjuhtDsupGdVClN0ALov7TDRSULG2jSa2vmjVCU4=;
-        b=KZFH1SDFwU2fp7nbTeVwEdvYsVsx4Lke7Qhugxf9azi6cuO2/GvSmdYUvGW56IaWf7
-         wvyRZ9seNqmmCiDYejmydFBRgB8BznPSgUzN3+GI3oeyraPTJN+b7yvlzZ0tP2oW32Dh
-         OA2e/X7lMj+fyutwq4YuJ4FfzVuQSvfPagxDbeJt2rxjtx4k7y6tCDFPqkng/eo5JmRe
-         3+SgER9WerXKBU24YvedxwZ2sNIzHfU4zGedrua2x9Yp9w/yyg2UffEidbGqIFacmL8a
-         ueUHHdSyX6in1X/fx3qsJrLED1OSpywdy4FbpP0hGfeaRwzU9caNQsdiEA6LO+VUlTr2
-         tuJw==
-X-Gm-Message-State: APjAAAWWIlR6VEA0OzfAdRBN1iot7gcewr3Pk0R2O0CSBHKV6BO4ppEX
-        0bLHyc3jUSr6Qo7dBwEvu5SbhA==
-X-Google-Smtp-Source: APXvYqxKjnVwguoOB08XOnRxBMmddtcMtOfbSZXzkSUZWCk4zT6Htfabazmn5u6TTmwmpHl9zyBoRA==
-X-Received: by 2002:a19:491d:: with SMTP id w29mr45756307lfa.149.1560951563329;
-        Wed, 19 Jun 2019 06:39:23 -0700 (PDT)
-Received: from localhost (h85-30-9-151.cust.a3fiber.se. [85.30.9.151])
-        by smtp.gmail.com with ESMTPSA id n1sm2648220lfl.77.2019.06.19.06.39.21
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 19 Jun 2019 06:39:22 -0700 (PDT)
-Date:   Wed, 19 Jun 2019 06:27:50 -0700
-From:   Olof Johansson <olof@lixom.net>
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>, arm@kernel.org,
-        Kukjin Kim <kgene@kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [GIT PULL] ARM: dts: exynos: Pull for v5.3
-Message-ID: <20190619132750.crkv5cvdt2w5jt3h@localhost>
-References: <20190616175513.3681-1-krzk@kernel.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=WLdN0ETsTns+dZs6DKliEgFh9OL/ylVkF+bq8ufBcyM=;
+        b=htOIRWS1Wvax4RNWK7rJmmQ/NG+MfYZCv+hDMUebFGc/DQqBjvs9T3PR6wsMGBFISL
+         ZGpENGRGJP/qHgLvlbY8wUkurROMduZB252vW62a793/HQvKj6VSEDjh/gd1Lqo00Nc/
+         UbmGxbBoGrllDrRidMC4imeLFYk8jTokbxb6jbW7E4fn0nrgVZAvh+v3VNxkhIJb3wE8
+         xJy84jjWk47lE1D4SR/jdo/GzjnaNgDAqdWMLLE8DOCdqsQ3Hc1nFrSrADYuqzmBTeLr
+         Cu+8wvwFv+wFxIMkEadzVhSnfGieerSCI8CtdQbLhgVqCXlfjIW0BMLcaLf6NBeiT7h7
+         XvTA==
+X-Gm-Message-State: APjAAAXNUrNmMU4pOniMx2oYbKqGJMPbtTD9SSTVJfdOCOzh08XeEUJU
+        /V+l12s/sn0rSNWhgfhOTCYlZlQrnaDtwrtdR4w=
+X-Google-Smtp-Source: APXvYqxut0jGXYnHUHWRv5exjD18glXwg/4LLtkINuNKm47kn0WiC3XuzDKL/3Rf31Idbf0hTMmRP8e2v6I90koglFw=
+X-Received: by 2002:ac2:4303:: with SMTP id l3mr6008405lfh.107.1560950873078;
+ Wed, 19 Jun 2019 06:27:53 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190616175513.3681-1-krzk@kernel.org>
-User-Agent: NeoMutt/20170113 (1.7.2)
+References: <1560864646-1468-1-git-send-email-robert.chiras@nxp.com> <1560864646-1468-3-git-send-email-robert.chiras@nxp.com>
+In-Reply-To: <1560864646-1468-3-git-send-email-robert.chiras@nxp.com>
+From:   Fabio Estevam <festevam@gmail.com>
+Date:   Wed, 19 Jun 2019 10:28:05 -0300
+Message-ID: <CAOMZO5C_4QxioSx4JEAV+1dDxYJgdTCzmBLZyUCB4dWeRqLFng@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] drm/panel: Add support for Raydium RM67191 panel driver
+To:     Robert Chiras <robert.chiras@nxp.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        DRI mailing list <dri-devel@lists.freedesktop.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        NXP Linux Team <linux-imx@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jun 16, 2019 at 07:55:13PM +0200, Krzysztof Kozlowski wrote:
-> The following changes since commit a188339ca5a396acc588e5851ed7e19f66b0ebd9:
-> 
->   Linux 5.2-rc1 (2019-05-19 15:47:09 -0700)
-> 
-> are available in the Git repository at:
-> 
->   https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-dt-5.3
-> 
-> for you to fetch changes up to d2cac68e0d9b038da7207c0b63e1399c4f9f60c4:
-> 
->   ARM: dts: exynos: Add ADC node to Exynos5410 and Odroid XU (2019-06-11 20:37:21 +0200)
-> 
-> ----------------------------------------------------------------
-> Samsung DTS ARM changes for v5.3
-> 
-> 1. Fixes for minor warnings.
-> 2. Enable ADC on Exynos5410 Odroid XU board.
-> 
-> ----------------------------------------------------------------
-> Krzysztof Kozlowski (3):
->       ARM: dts: exynos: Move CPU OPP tables out of SoC node on Exynos5420
->       ARM: dts: exynos: Raise maximum buck regulator voltages on Arndale Octa
->       ARM: dts: exynos: Add ADC node to Exynos5410 and Odroid XU
+Hi Robert,
 
-Merged, thanks!
+On Tue, Jun 18, 2019 at 10:31 AM Robert Chiras <robert.chiras@nxp.com> wrote:
 
+> +static const struct display_timing rad_default_timing = {
+> +       .pixelclock = { 66000000, 132000000, 132000000 },
+> +       .hactive = { 1080, 1080, 1080 },
+> +       .hfront_porch = { 20, 20, 20 },
+> +       .hsync_len = { 2, 2, 2 },
+> +       .hback_porch = { 34, 34, 34 },
+> +       .vactive = { 1920, 1920, 1920 },
+> +       .vfront_porch = { 10, 10, 10 },
+> +       .vsync_len = { 2, 2, 2 },
+> +       .vback_porch = { 4, 4, 4 },
 
--Olof
+Are you sure that the sync_len and porch parameters are the same for
+both 66MHz and 132MHz?
