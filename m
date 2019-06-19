@@ -2,143 +2,189 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 345964B960
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 15:05:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8B8C84B963
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 15:05:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731976AbfFSNEn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Jun 2019 09:04:43 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:56302 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1731812AbfFSNEl (ORCPT
+        id S1732003AbfFSNE6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Jun 2019 09:04:58 -0400
+Received: from casper.infradead.org ([85.118.1.10]:58188 "EHLO
+        casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731422AbfFSNE5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Jun 2019 09:04:41 -0400
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5JD0iGL124868;
-        Wed, 19 Jun 2019 09:04:33 -0400
-Received: from ppma03dal.us.ibm.com (b.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.11])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2t7m3hwae4-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 19 Jun 2019 09:04:32 -0400
-Received: from pps.filterd (ppma03dal.us.ibm.com [127.0.0.1])
-        by ppma03dal.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x5JCsT70007498;
-        Wed, 19 Jun 2019 13:04:22 GMT
-Received: from b01cxnp23034.gho.pok.ibm.com (b01cxnp23034.gho.pok.ibm.com [9.57.198.29])
-        by ppma03dal.us.ibm.com with ESMTP id 2t4ra62vhq-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 19 Jun 2019 13:04:22 +0000
-Received: from b01ledav001.gho.pok.ibm.com (b01ledav001.gho.pok.ibm.com [9.57.199.106])
-        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x5JD4JAl42664256
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 19 Jun 2019 13:04:19 GMT
-Received: from b01ledav001.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 477C128064;
-        Wed, 19 Jun 2019 13:04:19 +0000 (GMT)
-Received: from b01ledav001.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 8EFC328059;
-        Wed, 19 Jun 2019 13:04:18 +0000 (GMT)
-Received: from [9.85.194.193] (unknown [9.85.194.193])
-        by b01ledav001.gho.pok.ibm.com (Postfix) with ESMTP;
-        Wed, 19 Jun 2019 13:04:18 +0000 (GMT)
-Subject: Re: [PATCH v4 3/7] s390: zcrypt: driver callback to indicate resource
- in use
-To:     Cornelia Huck <cohuck@redhat.com>
-Cc:     linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, freude@linux.ibm.com, borntraeger@de.ibm.com,
-        frankja@linux.ibm.com, david@redhat.com, mjrosato@linux.ibm.com,
-        schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
-        pmorel@linux.ibm.com, pasic@linux.ibm.com,
-        alex.williamson@redhat.com, kwankhede@nvidia.com
-References: <1560454780-20359-1-git-send-email-akrowiak@linux.ibm.com>
- <1560454780-20359-4-git-send-email-akrowiak@linux.ibm.com>
- <20190618182558.7d7e025a.cohuck@redhat.com>
-From:   Tony Krowiak <akrowiak@linux.ibm.com>
-Message-ID: <2366c6b6-fd9e-0c32-0e9d-018cd601a0ad@linux.ibm.com>
-Date:   Wed, 19 Jun 2019 09:04:18 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Wed, 19 Jun 2019 09:04:57 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
+        MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:From:Date:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=q/WTcjyOBpwvuJ+QVqRXy4uVu6c2/vfcA6WupQADJMI=; b=YTJGhL/roGk88lmexW/uHWOlaQ
+        EgYa65sYpAqt0Ty0JEH4izzuNiP8UlBPniX9w/09Bqsj2KUJQHW4ztl63QKu76k0ZvNdASWQFW+dO
+        EjKefNvevynwr1e32AJywF2TY4nSKlGjfRKrux47BVetV4ZtRdeKlPhgbfye+Xk0/gRKIdXWSPpFW
+        /HAavLrrm1omA+AZ8SBiG2YiW3TCjVyIM7aQx3exufHXxNUfexymhQssSFRRyXgVNeGCSOFIGP0V9
+        jvRooAWWvXgmz5j4/1Op3L5VSdVIBa2yjcirDpeemqYN12m7ov/r/Oty89RWEM2XZLFtps2XGTJg/
+        S6rJGcdA==;
+Received: from 177.133.86.196.dynamic.adsl.gvt.net.br ([177.133.86.196] helo=coco.lan)
+        by casper.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1hdaGm-0001Hv-9H; Wed, 19 Jun 2019 13:04:56 +0000
+Date:   Wed, 19 Jun 2019 10:04:50 -0300
+From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Daniel Vetter <daniel@ffwll.ch>
+Subject: Re: [PATCH v1 12/22] docs: driver-api: add .rst files from the main
+ dir
+Message-ID: <20190619100450.26d4d6f7@coco.lan>
+In-Reply-To: <20190619104239.GM3419@hirez.programming.kicks-ass.net>
+References: <cover.1560890771.git.mchehab+samsung@kernel.org>
+        <b0d24e805d5368719cc64e8104d64ee9b5b89dd0.1560890772.git.mchehab+samsung@kernel.org>
+        <CAKMK7uGM1aZz9yg1kYM8w2gw_cS6Eaynmar-uVurXjK5t6WouQ@mail.gmail.com>
+        <20190619072218.4437f891@coco.lan>
+        <20190619104239.GM3419@hirez.programming.kicks-ass.net>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <20190618182558.7d7e025a.cohuck@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-19_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1906190108
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 6/18/19 12:25 PM, Cornelia Huck wrote:
-> On Thu, 13 Jun 2019 15:39:36 -0400
-> Tony Krowiak <akrowiak@linux.ibm.com> wrote:
+Em Wed, 19 Jun 2019 12:42:39 +0200
+Peter Zijlstra <peterz@infradead.org> escreveu:
+
+(reduced the C/C to just the relevant ML/people)
+
+> On Wed, Jun 19, 2019 at 07:22:18AM -0300, Mauro Carvalho Chehab wrote:
+> > Hi Daniel,
+> > 
+> > Em Wed, 19 Jun 2019 11:05:57 +0200
+> > Daniel Vetter <daniel@ffwll.ch> escreveu:
+> >   
+> > > On Tue, Jun 18, 2019 at 10:55 PM Mauro Carvalho Chehab
+> > > <mchehab+samsung@kernel.org> wrote:  
+> > > > diff --git a/Documentation/gpu/drm-mm.rst b/Documentation/gpu/drm-mm.rst
+> > > > index fa30dfcfc3c8..b0f948d8733b 100644
+> > > > --- a/Documentation/gpu/drm-mm.rst
+> > > > +++ b/Documentation/gpu/drm-mm.rst
+> > > > @@ -320,7 +320,7 @@ struct :c:type:`struct file_operations <file_operations>` get_unmapped_area
+> > > >  field with a pointer on :c:func:`drm_gem_cma_get_unmapped_area`.
+> > > >
+> > > >  More detailed information about get_unmapped_area can be found in
+> > > > -Documentation/nommu-mmap.rst
+> > > > +Documentation/driver-api/nommu-mmap.rst    
+> > > 
+> > > Random drive-by comment: Could we convert these into hyperlinks within
+> > > sphinx somehow, without making them less useful as raw file references
+> > > (with vim I can just type 'gf' and it works, emacs probably the same).
+> > > -Daniel  
+> > 
+> > Short answer: I don't know how vim/emacs would recognize Sphinx tags.  
 > 
->> Introduces a new driver callback to prevent a root user from unbinding
->> an AP queue from its device driver if the queue is in use. This prevents
->> a root user from inadvertently taking a queue away from a guest and
->> giving it to the host, or vice versa. The callback will be invoked
->> whenever a change to the AP bus's apmask or aqmask sysfs interfaces may
->> result in one or more AP queues being removed from its driver. If the
->> callback responds in the affirmative for any driver queried, the change
->> to the apmask or aqmask will be rejected with a device in use error.
->>
->> For this patch, only non-default drivers will be queried. Currently,
->> there is only one non-default driver, the vfio_ap device driver. The
->> vfio_ap device driver manages AP queues passed through to one or more
->> guests and we don't want to unexpectedly take AP resources away from
->> guests which are most likely independently administered.
->>
->> Signed-off-by: Tony Krowiak <akrowiak@linux.ibm.com>
->> ---
->>   drivers/s390/crypto/ap_bus.c | 138 +++++++++++++++++++++++++++++++++++++++++--
->>   drivers/s390/crypto/ap_bus.h |   3 +
->>   2 files changed, 135 insertions(+), 6 deletions(-)
+> No, the other way around, Sphinx can recognize local files and treat
+> them special. That way we keep the text readable.
 > 
-> Hm... I recall objecting to this patch before, fearing that it makes it
-> possible for a bad actor to hog resources that can't be removed by
-> root, even forcefully. (I have not had time to look at the intervening
-> versions, so I might be missing something.)
-> 
-> Is there a way for root to forcefully override this?
+> Same with that :c:func:'foo' crap, that needs to die, and Sphinx needs
+> to be taught about foo().
 
-You recall correctly; however, after many internal crypto team
-discussions, it was decided that this feature was important
-and should be kept.
+Just did a test today with Jon's extension with is meant to replace
+:c:func:'foo' (with is currently on a separate 'automarkup' branch).
+At least the version therestill needs some work, as it currently 
+mangles with titles and tables. like on those warnings/errors:
 
-Allow me to first address your fear that a bad actor can hog
-resources that can't be removed by root. With this enhancement,
-there is nothing preventing a root user from taking resources
-from a matrix mdev, it simply forces him/her to follow the
-proper procedure. The resources to be removed must first be
-unassigned from the matrix mdev to which they are assigned.
-The AP bus's /sys/bus/ap/apmask and /sys/bus/ap/aqmask
-sysfs attributes can then be edited to transfer ownership
-of the resources to zcrypt.
-
-The rationale for keeping this feature is:
-
-* It is a bad idea to steal an adapter in use from a guest. In the worst
-   case, the guest could end up without access to any crypto adapters
-   without knowing why. This could lead to performance issues on guests
-   that rely heavily on crypto such as guests used for blockchain
-   transactions.
-
-* There are plenty of examples in linux of the kernel preventing a root
-   user from performing a task. For example, a module can't be removed
-   if references are still held for it. Another example would be trying
-   to bind a CEX4 adapter to a device driver not registered for CEX4;
-   this action will also be rejected.
-
-* The semantics are much cleaner and the logic is far less complicated.
-
-* It forces the use of the proper procedure to change ownership of AP
-   queues.
+	6.4 :c:func:`resync_start()`, :c:func:`resync_finish()`
+	-----------------------------------
+	/devel/v4l/docs/Documentation/driver-api/md/md-cluster.rst:323: WARNING: Title underline too short.
 
 
-> 
+	/devel/v4l/docs/Documentation/driver-api/serial/tty.rst:74: WARNING: Malformed table.
+	Text in column margin in table line 34.
+
+	======================= =======================================================
+	:c:func:`open()`                        Called when the line discipline is attached to
+
+-
+
+That's said, once it gets fixed to address those complex cases, a
+regex like:
+
+	\bDocumentation/([\w\d\-\_\/]+)\.rst\b
+
+could be used to convert to :doc: tag. It should be smart enough to convert
+the relative paths, as we refer to the files from the git root directory
+(with makes a lot sense to me), while Sphinx :doc: use relative patches
+from the location where the parsed file is.
+
+Something like the enclosed patch. 
+
+Thanks,
+Mauro
+
+[PATCH] automarkup.py: convert Documentation/* to hyperlinks
+
+Auto-create hyperlinks when it finds a Documentation/.. occurrence.
+
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+
+diff --git a/Documentation/sphinx/automarkup.py b/Documentation/sphinx/automarkup.py
+index 39c8f4d5af82..9d6926b61241 100644
+--- a/Documentation/sphinx/automarkup.py
++++ b/Documentation/sphinx/automarkup.py
+@@ -9,6 +9,7 @@
+ from __future__ import print_function
+ import re
+ import sphinx
++#import sys		# Just for debug
+ 
+ #
+ # Regex nastiness.  Of course.
+@@ -31,10 +32,26 @@ RE_literal = re.compile(r'^(\s*)(.*::\s*|\.\.\s+code-block::.*)$')
+ #
+ RE_whitesp = re.compile(r'^(\s*)')
+ 
++#
++# Get a documentation reference
++#
++RE_doc_links = re.compile(r'\bDocumentation/([\w\d\-\_\/]+)\.rst\b')
++
++#
++# Doc link false-positives
++#
++RE_false_doc_links = re.compile(r':ref:`\s*Documentation/[\w\d\-\_\/]+\.rst')
++
+ def MangleFile(app, docname, text):
+     ret = [ ]
+     previous = ''
+     literal = False
++
++    rel_dir = ''
++
++    for depth in range(0, docname.count('/')):
++        rel_dir += "../"
++
+     for line in text[0].split('\n'):
+         #
+         # See if we might be ending a literal block, as denoted by
+@@ -63,7 +80,17 @@ def MangleFile(app, docname, text):
+         # Normal line - perform substitutions.
+         #
+         else:
+-            ret.append(RE_function.sub(r'\1:c:func:`\2`\3', line))
++            new_line = RE_function.sub(r'\1:c:func:`\2`\3', line)
++
++            if not RE_false_doc_links.search(new_line):
++                new_line = RE_doc_links.sub(r':doc:`' + rel_dir + r'\1`', new_line)
++
++ #           # Just for debug - should be removed on production
++ #           if new_line != line:
++ #               print ("===>" + new_line, file=sys.stderr)
++
++            ret.append(new_line)
++
+         #
+         # Might we be starting a literal block?  If so make note of
+         # the fact.
+
 
