@@ -2,149 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DB4534BAC4
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 16:08:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D90C94BC58
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 17:06:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727882AbfFSOIG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Jun 2019 10:08:06 -0400
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:35225 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726332AbfFSOIF (ORCPT
+        id S1730045AbfFSPF7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Jun 2019 11:05:59 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:41787 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726496AbfFSPF6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Jun 2019 10:08:05 -0400
-Received: by mail-ot1-f68.google.com with SMTP id j19so19423882otq.2
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2019 07:08:05 -0700 (PDT)
+        Wed, 19 Jun 2019 11:05:58 -0400
+Received: by mail-lj1-f196.google.com with SMTP id s21so3605481lji.8
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2019 08:05:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:reply-to:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=pAiH03kncavoXyLc1Eknk+svRY2+Ge1NcF9vyuUm92A=;
-        b=dpgCYgV+kWHJKNjqwnayFjgikgytQOekff4vmPGqKiXN9ziupaPpZj6+0HUvI9TcUk
-         1jdifpAXy7T1+b/VH4nikcXUu7/DjT7ivqggirJN9Cl36mrTpDNqeoin3rh25NztOjqB
-         sZCONy61pZiDv5Uf5dsX3sQsh53jkRS+h3c68ozprkjrOskso+Ctf6mog9okrbvhpkGs
-         Q9qelni5rGHgJwE3BCdFfzcooS3IxqrlXXJtPlBYwoo+DQ+Im23UXz1HYimuDnknmxGd
-         akuFghcS3V/1P+rsMjIdSCd0QfSNCnj3pkvUVBb1fVIUREhHGZAdrJjLNnKhg8+Ve8KX
-         9Lyw==
+        d=lixom-net.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=BDvPZcVC+gwwybYP6ypnMMEtrxI72JBl/3PlooRRbfQ=;
+        b=nwNBXy7ugHOIpZRcqq/rviBTBBpICuuG2sMFsTUx8q7ghVnffYjoh226yLeNczTF5Q
+         QiiYiaiIc65I16YWjKfCI1sKStqQmEeYP5ZcV45bAlTGIMUkZsZn+RJXNVF4M2oHZ9DJ
+         Kv97PrR2qOCaBip2yTuA05gd2YQGXd+2Xdtcdkp5/Al/FmzdmGFC+Zwg3xHcO/Fz67Vp
+         8OmnowgxqSMY+JeKLQ/9d6rMl4QVb1w8OGdoW2l3JbxbmsUZAkqjy5LhLC8R9awH0MIj
+         h8ijKFkzC6ZYj2MLpaebB5Jl/XaJPRrnAZL6FT89ThmOITgCtC1jdtrivJusj7h//Rbs
+         /xYg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :reply-to:references:mime-version:content-disposition:in-reply-to
-         :user-agent;
-        bh=pAiH03kncavoXyLc1Eknk+svRY2+Ge1NcF9vyuUm92A=;
-        b=ettTuyMQcOIcSPGextyfNrUWvXSSxEnI5af7202tt+kygW+Jx2UZqHFR9NkPxW5f9T
-         zEF2kxAkT2FSojvmRcC3Lr5mIPsrM84IBePdB1o/QjBFq2j5axl+lPcEVNgEDh6BJXd5
-         aRmpPBnTK08uWxqSkYXGDz+EmJ7HC0c8BAkDr2G/61V/840SOxyvuxYxouk5VgSwJBmy
-         6m6RgqhGgYcWTYYbM0hKq/3Yrln+FI5FIFIuUTRdSDvKHrVUNjDoHwI3c4Q+lnsAhInG
-         a04UwHiu+YFkK/4byrXiIpNCKYdBPm+T3wKnZVrN+nsDopDmQSNFQfOJ55KJHYUt8PP3
-         svCQ==
-X-Gm-Message-State: APjAAAVNI+sYIC1sdlEidzCgwO+15zMnEkZ3NwosdrawRkQHMgSbDc1j
-        Q/M8TNNn1DBG1PjCZmx0CeSrgEs=
-X-Google-Smtp-Source: APXvYqxpYFHJG2nhLsugZY7xZIOIvhW0nXQTNOsL8SUKG9gxcyHsUg0YhQr++tfaOBQauJN45wQZxw==
-X-Received: by 2002:a9d:6e93:: with SMTP id a19mr6113364otr.216.1560953284891;
-        Wed, 19 Jun 2019 07:08:04 -0700 (PDT)
-Received: from serve.minyard.net ([47.184.134.43])
-        by smtp.gmail.com with ESMTPSA id w17sm6834733oia.24.2019.06.19.07.08.04
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 19 Jun 2019 07:08:04 -0700 (PDT)
-Received: from minyard.net (unknown [IPv6:2001:470:b8f6:1b:5546:341d:943c:c2a3])
-        by serve.minyard.net (Postfix) with ESMTPSA id E51B31800CE;
-        Wed, 19 Jun 2019 14:08:03 +0000 (UTC)
-Date:   Wed, 19 Jun 2019 09:08:02 -0500
-From:   Corey Minyard <minyard@acm.org>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Asmaa Mnebhi <Asmaa@mellanox.com>, vadimp@mellanox.com,
-        Corey Minyard <cminyard@mvista.com>,
-        openipmi-developer@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ipmi: ipmb: don't allocate i2c_client on stack
-Message-ID: <20190619140802.GB7168@minyard.net>
-Reply-To: minyard@acm.org
-References: <20190619125045.918700-1-arnd@arndb.de>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=BDvPZcVC+gwwybYP6ypnMMEtrxI72JBl/3PlooRRbfQ=;
+        b=nsL4lvPvqKBU+ctjkAXIx0GcHwBdFzWpoRMcLBv5TR7t88QGqDC6I0DoZHgc7WaP9K
+         Rslil1hUWsr8hJk0Av11xHTagoz0rZAqHmN/obz+Fzt/1pHyqnjvdq+LwvHnWRcr8dpI
+         uVST+GFnaCEm9YVxI5zQLICKtCM36ST1kZQ6DXO9qwxMlnKrhjyMuNX6vOpksaG3Fnb8
+         00HWB3dej4SLtT8z/oosn5k4G56+b9cRXTf4qFMwcqjqTeGBmWbz6x+q0XkL3w9fBdwK
+         fCpS8oEwmB3/H39BpssEGuS323VzqV06EbyDtObWLNUY0HAKOfrdtUHTH5t0wM+Bv4sI
+         CFag==
+X-Gm-Message-State: APjAAAW65wQ5GTzN4k/LcGEvecwMYYBSHiVD63MrMMjJsj8ViuC0O4ea
+        GOZE2bikSNu2ZKSKCvfPaadXgg==
+X-Google-Smtp-Source: APXvYqwx5U2uWXAu+vwQMCy9hcnvOqeOjcjGcEeeSmsWGmC1iZtQE4bHSeFmxejgtQLupjolK6lIwQ==
+X-Received: by 2002:a2e:9188:: with SMTP id f8mr7118830ljg.33.1560956756417;
+        Wed, 19 Jun 2019 08:05:56 -0700 (PDT)
+Received: from localhost (h85-30-9-151.cust.a3fiber.se. [85.30.9.151])
+        by smtp.gmail.com with ESMTPSA id q1sm2736416lfc.79.2019.06.19.08.05.54
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 19 Jun 2019 08:05:54 -0700 (PDT)
+Date:   Wed, 19 Jun 2019 07:09:24 -0700
+From:   Olof Johansson <olof@lixom.net>
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     arm@kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Russell King <linux@armlinux.org.uk>,
+        Joel Stanley <joel@jms.id.au>,
+        Andrew Jeffery <andrew@aj.id.au>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Vladimir Zapolskiy <vz@mleia.com>,
+        Sylvain Lemieux <slemieux.tyco@gmail.com>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Aaro Koskinen <aaro.koskinen@iki.fi>,
+        Tony Lindgren <tony@atomide.com>,
+        Dinh Nguyen <dinguyen@kernel.org>,
+        Marc Gonzalez <marc.w.gonzalez@free.fr>,
+        Mans Rullgard <mans@mansr.com>,
+        Liviu Dudau <liviu.dudau@arm.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-aspeed@lists.ozlabs.org, linux-omap@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: Re: [PATCH v2] ARM: configs: Remove useless UEVENT_HELPER_PATH
+Message-ID: <20190619140924.cl33iuqndoigldgi@localhost>
+References: <1559636093-26005-1-git-send-email-krzk@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190619125045.918700-1-arnd@arndb.de>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <1559636093-26005-1-git-send-email-krzk@kernel.org>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 19, 2019 at 02:50:34PM +0200, Arnd Bergmann wrote:
-> The i2c_client structure can be fairly large, which leads to
-> a warning about possible kernel stack overflow in some
-> configurations:
+On Tue, Jun 04, 2019 at 10:14:53AM +0200, Krzysztof Kozlowski wrote:
+> Remove the CONFIG_UEVENT_HELPER_PATH because:
+> 1. It is disabled since commit 1be01d4a5714 ("driver: base: Disable
+>    CONFIG_UEVENT_HELPER by default") as its dependency (UEVENT_HELPER) was
+>    made default to 'n',
+> 2. It is not recommended (help message: "This should not be used today
+>    [...] creates a high system load") and was kept only for ancient
+>    userland,
+> 3. Certain userland specifically requests it to be disabled (systemd
+>    README: "Legacy hotplug slows down the system and confuses udev").
 > 
-> drivers/char/ipmi/ipmb_dev_int.c:115:16: error: stack frame size of 1032 bytes in function 'ipmb_write' [-Werror,-Wframe-larger-than=]
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
 > 
-> There is no real reason to even declare an i2c_client, as we can simply
-> call i2c_smbus_xfer() directly instead of the i2c_smbus_write_block_data()
-> wrapper.
-> 
-> Convert the ipmb_write() to use an open-coded i2c_smbus_write_block_data()
-> here, without changing the behavior.
-> 
-> It seems that there is another problem with this implementation;
-> when user space passes a length of more than I2C_SMBUS_BLOCK_MAX
-> bytes, all the rest is silently ignored. This should probably be
-> addressed in a separate patch, but I don't know what the intended
-> behavior is here.
-> 
-> Fixes: 51bd6f291583 ("Add support for IPMB driver")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-
-I broke up the line with the call to i2c_smbus_xfer(), which was
-longer than 80 characters, but that's it, it's in the IPMI next queue.
-
-Thanks,
-
--corey
-
 > ---
->  drivers/char/ipmi/ipmb_dev_int.c | 20 ++++++++++----------
->  1 file changed, 10 insertions(+), 10 deletions(-)
 > 
-> diff --git a/drivers/char/ipmi/ipmb_dev_int.c b/drivers/char/ipmi/ipmb_dev_int.c
-> index 2895abf72e61..c9724f6cf32d 100644
-> --- a/drivers/char/ipmi/ipmb_dev_int.c
-> +++ b/drivers/char/ipmi/ipmb_dev_int.c
-> @@ -117,7 +117,7 @@ static ssize_t ipmb_write(struct file *file, const char __user *buf,
->  {
->  	struct ipmb_dev *ipmb_dev = to_ipmb_dev(file);
->  	u8 rq_sa, netf_rq_lun, msg_len;
-> -	struct i2c_client rq_client;
-> +	union i2c_smbus_data data;
->  	u8 msg[MAX_MSG_LEN];
->  	ssize_t ret;
->  
-> @@ -138,17 +138,17 @@ static ssize_t ipmb_write(struct file *file, const char __user *buf,
->  
->  	/*
->  	 * subtract rq_sa and netf_rq_lun from the length of the msg passed to
-> -	 * i2c_smbus_write_block_data_local
-> +	 * i2c_smbus_xfer
->  	 */
->  	msg_len = msg[IPMB_MSG_LEN_IDX] - SMBUS_MSG_HEADER_LENGTH;
-> -
-> -	strcpy(rq_client.name, "ipmb_requester");
-> -	rq_client.adapter = ipmb_dev->client->adapter;
-> -	rq_client.flags = ipmb_dev->client->flags;
-> -	rq_client.addr = rq_sa;
-> -
-> -	ret = i2c_smbus_write_block_data(&rq_client, netf_rq_lun, msg_len,
-> -					msg + SMBUS_MSG_IDX_OFFSET);
-> +	if (msg_len > I2C_SMBUS_BLOCK_MAX)
-> +		msg_len = I2C_SMBUS_BLOCK_MAX;
-> +
-> +	data.block[0] = msg_len;
-> +	memcpy(&data.block[1], msg + SMBUS_MSG_IDX_OFFSET, msg_len);
-> +	ret = i2c_smbus_xfer(ipmb_dev->client->adapter, rq_sa, ipmb_dev->client->flags,
-> +			     I2C_SMBUS_WRITE, netf_rq_lun,
-> +			     I2C_SMBUS_BLOCK_DATA, &data);
->  
->  	return ret ? : count;
->  }
-> -- 
-> 2.20.0
-> 
+> Changes since v2:
+> 1. Remove unrelated files.
+> 2. Add Geert's ack.
+
+So your other patch added mini2440 in a follow-up patch, but this one doesn't?!
+
+Applied with that fixup.
+
+
+-Olof
