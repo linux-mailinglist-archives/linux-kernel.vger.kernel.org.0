@@ -2,85 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9FECB4C0DE
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 20:36:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E2CA04C0D5
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 20:36:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730422AbfFSSgy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Jun 2019 14:36:54 -0400
-Received: from smtprelay-out1.synopsys.com ([198.182.47.102]:58612 "EHLO
-        smtprelay-out1.synopsys.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726109AbfFSSgt (ORCPT
+        id S1730080AbfFSSgm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Jun 2019 14:36:42 -0400
+Received: from hosting.gsystem.sk ([212.5.213.30]:40510 "EHLO
+        hosting.gsystem.sk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726109AbfFSSgm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Jun 2019 14:36:49 -0400
-Received: from mailhost.synopsys.com (mdc-mailhost1.synopsys.com [10.225.0.209])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        Wed, 19 Jun 2019 14:36:42 -0400
+Received: from [192.168.0.2] (188-167-68-178.dynamic.chello.sk [188.167.68.178])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id 91AA7C0CAF;
-        Wed, 19 Jun 2019 18:36:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1560969408; bh=wuJso1hif5l+TevIvXSskXT7xugWbLyyyXYKC8aX+1k=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
-         References:From;
-        b=M7B34DN6cpwZaD9kNltLdZxt93WgCPJrq5KPIU7CkwC0Pd6auNAse1s0zDm5K1Fh4
-         xNrPKE6DMP4NFsCrAuKUcTTAMxznXl8lwK/u/BgafjlaaqFEDdT8eLfQrWGWxLBy1p
-         /JjPtp6LPF5cQNEpkVbkOoLR0dOiUmxmuEgzu4EZo1DwjmDfvI73v58o48SXWasqDt
-         qUMwxF+YgHygoCPMMYvb9FzcF+gTE1MST4bOjc/I689Z8ZohrPEWokZ92V+GIjNWD4
-         k+c6iy4geXZgarVdWzX+wQiBOeNujoZYenADu3qEraBN1i+ffxY6L8UZ+4eoxEWtx2
-         +LBA0tjkwzXTQ==
-Received: from de02.synopsys.com (de02.internal.synopsys.com [10.225.17.21])
-        by mailhost.synopsys.com (Postfix) with ESMTP id 11BA5A0064;
-        Wed, 19 Jun 2019 18:36:45 +0000 (UTC)
-Received: from de02dwia024.internal.synopsys.com (de02dwia024.internal.synopsys.com [10.225.19.81])
-        by de02.synopsys.com (Postfix) with ESMTP id B39D83F21A;
-        Wed, 19 Jun 2019 20:36:45 +0200 (CEST)
-From:   Vitor Soares <Vitor.Soares@synopsys.com>
-To:     linux-i3c@lists.infradead.org, Joao.Pinto@synopsys.com
-Cc:     Vitor Soares <Vitor.Soares@synopsys.com>,
-        Boris Brezillon <bbrezillon@kernel.org>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v4 3/3] i3c: dw: add limited bus mode support
-Date:   Wed, 19 Jun 2019 20:36:33 +0200
-Message-Id: <10b810c9afa9f06515b52a8fd580720f239e0a99.1560968688.git.vitor.soares@synopsys.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <cover.1560968688.git.vitor.soares@synopsys.com>
-References: <cover.1560968688.git.vitor.soares@synopsys.com>
-In-Reply-To: <cover.1560968688.git.vitor.soares@synopsys.com>
-References: <cover.1560968688.git.vitor.soares@synopsys.com>
+        by hosting.gsystem.sk (Postfix) with ESMTPSA id 2E7187A0318;
+        Wed, 19 Jun 2019 20:36:41 +0200 (CEST)
+From:   Ondrej Zary <linux@zary.sk>
+To:     "Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: Re: [PATCH] scsi: fdomain: fix building pcmcia front-end
+Date:   Wed, 19 Jun 2019 20:36:37 +0200
+User-Agent: KMail/1.9.10
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        Hannes Reinecke <hare@suse.com>,
+        Johannes Thumshirn <jthumshirn@suse.de>,
+        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20190617111937.2355936-1-arnd@arndb.de> <yq1v9x2uv2a.fsf@oracle.com>
+In-Reply-To: <yq1v9x2uv2a.fsf@oracle.com>
+X-KMail-QuotePrefix: > 
+MIME-Version: 1.0
+Content-Type: Text/Plain;
+  charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+Message-Id: <201906192036.37384.linux@zary.sk>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch add limited bus mode support for DesignWare i3c master
+On Wednesday 19 June 2019 05:13:01 Martin K. Petersen wrote:
+> 
+> Arnd,
+> 
+> > Move the common support outside of the SCSI_LOWLEVEL section.
+> > Alternatively, we could move all of SCSI_LOWLEVEL_PCMCIA into
+> > SCSI_LOWLEVEL. This would be more sensible, but might cause surprises
+> > for users that have SCSI_LOWLEVEL disabled.
+> 
+> It seems messy to me that PCMCIA lives outside of the LOWLEVEL section.
+> 
+> Given that the number of users that rely on PCMCIA for their system disk
+> is probably pretty low, I think I'm leaning towards cleaning things up
+> instead of introducing a nonsensical top level option.
+> 
+> Or even better: Get rid of SCSI_FDOMAIN as a user-visible option and
+> select it if either of the PCI/ISA/PCMCIA drivers are enabled.
 
-Signed-off-by: Vitor Soares <vitor.soares@synopsys.com>
-Cc: Boris Brezillon <bbrezillon@kernel.org>
-Cc: <linux-kernel@vger.kernel.org>
----
-Changes in v4:
-  None
+SCSI_FDOMAIN is not an user-visible option. PCI/ISA/PCMCIA drivers select it:
 
-Changes in v3:
-  None
+Symbol: PCMCIA_FDOMAIN [=m]
+Type  : tristate
+Prompt: Future Domain PCMCIA support
+  Location:
+    -> Device Drivers
+      -> SCSI device support
+        -> PCMCIA SCSI adapter support (SCSI_LOWLEVEL_PCMCIA [=y])
+  Defined at drivers/scsi/pcmcia/Kconfig:22
+  Depends on: SCSI_LOWLEVEL_PCMCIA [=y] && SCSI [=y] && PCMCIA [=m] && m && MODULES [=y]
+  Selects: SCSI_FDOMAIN [=m]
 
-Changes in v2:
-  None
 
- drivers/i3c/master/dw-i3c-master.c | 1 +
- 1 file changed, 1 insertion(+)
+Symbol: SCSI_FDOMAIN [=m]
+Type  : tristate
+  Defined at drivers/scsi/Kconfig:666
+  Depends on: SCSI_LOWLEVEL [=y] && SCSI [=y]
+  Selected by [m]:
+  - SCSI_FDOMAIN_PCI [=m] && SCSI_LOWLEVEL [=y] && PCI [=y] && SCSI [=y]
+  - SCSI_FDOMAIN_ISA [=m] && SCSI_LOWLEVEL [=y] && ISA [=y] && SCSI [=y]
+  - PCMCIA_FDOMAIN [=m] && SCSI_LOWLEVEL_PCMCIA [=y] && SCSI [=y] && PCMCIA [=m] && m && MODULES [=y]
 
-diff --git a/drivers/i3c/master/dw-i3c-master.c b/drivers/i3c/master/dw-i3c-master.c
-index 1d83c97..9612d93 100644
---- a/drivers/i3c/master/dw-i3c-master.c
-+++ b/drivers/i3c/master/dw-i3c-master.c
-@@ -599,6 +599,7 @@ static int dw_i3c_master_bus_init(struct i3c_master_controller *m)
- 
- 	switch (bus->mode) {
- 	case I3C_BUS_MODE_MIXED_FAST:
-+	case I3C_BUS_MODE_MIXED_LIMITED:
- 		ret = dw_i2c_clk_cfg(master);
- 		if (ret)
- 			return ret;
+
+Symbol: SCSI_FDOMAIN_ISA [=m]
+Type  : tristate
+Prompt: Future Domain 16xx ISA SCSI support
+  Location:
+    -> Device Drivers
+      -> SCSI device support
+        -> SCSI low-level drivers (SCSI_LOWLEVEL [=y])
+  Defined at drivers/scsi/Kconfig:687
+  Depends on: SCSI_LOWLEVEL [=y] && ISA [=y] && SCSI [=y]
+  Selects: CHECK_SIGNATURE [=y] && SCSI_FDOMAIN [=m]
+
+
+Symbol: SCSI_FDOMAIN_PCI [=m]
+Type  : tristate
+Prompt: Future Domain TMC-3260/AHA-2920A PCI SCSI support
+  Location:
+    -> Device Drivers
+      -> SCSI device support
+        -> SCSI low-level drivers (SCSI_LOWLEVEL [=y])
+  Defined at drivers/scsi/Kconfig:670
+  Depends on: SCSI_LOWLEVEL [=y] && PCI [=y] && SCSI [=y]
+  Selects: SCSI_FDOMAIN [=m]
+
+
+
 -- 
-2.7.4
-
+Ondrej Zary
