@@ -2,103 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B72A74BAF5
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 16:15:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7BE914BAFB
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 16:16:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729157AbfFSOPc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Jun 2019 10:15:32 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:34808 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725899AbfFSOPc (ORCPT
+        id S1729737AbfFSOQB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Jun 2019 10:16:01 -0400
+Received: from relay5-d.mail.gandi.net ([217.70.183.197]:51295 "EHLO
+        relay5-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726047AbfFSOQA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Jun 2019 10:15:32 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:
-        From:Date:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=NBYZM4x4vonQf9U9PegTdJ8Gr3lWbvulPmcaW6blw1o=; b=dPqOh1g1u6+Gx0sBalb5rkX2u
-        wIbBMtAEdIsAee3Ub7W9KYWOgt2mtCWo8S4Q3A8BuyYcZpFXJIBFKLK93DcM0OgM4m/inlhuMxd4i
-        xv4bXL13yE2S6AOwvmz7dbVWGoNRlTOpVocD4rVyrbv1GF1YVK56MDdeJUJ2TJdyUU/i7LDzPPxwk
-        q5bBzKUGnZGKBhiO1stiWprfqZmaUIaVdpkulYzUlK2rGWSYmI7ne0f+vptRKQfKdDsKioHcQ3HVY
-        ZLJmnIxZLL9Wg8XwEkfcleJ+3FQYhKRtXa8W53asUfOJcitK/KfLJc7dkOM7cGkK88AajNUpeKd7M
-        OSliQfZFw==;
-Received: from 177.133.86.196.dynamic.adsl.gvt.net.br ([177.133.86.196] helo=coco.lan)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hdbN5-0002AD-M9; Wed, 19 Jun 2019 14:15:32 +0000
-Date:   Wed, 19 Jun 2019 11:15:28 -0300
-From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-To:     David Howells <dhowells@redhat.com>
-Cc:     Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        Linux MM <linux-mm@kvack.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v1 12/22] docs: driver-api: add .rst files from the main
- dir
-Message-ID: <20190619111528.3e2665e3@coco.lan>
-In-Reply-To: <11422.1560951550@warthog.procyon.org.uk>
-References: <20190619072218.4437f891@coco.lan>
-        <cover.1560890771.git.mchehab+samsung@kernel.org>
-        <b0d24e805d5368719cc64e8104d64ee9b5b89dd0.1560890772.git.mchehab+samsung@kernel.org>
-        <CAKMK7uGM1aZz9yg1kYM8w2gw_cS6Eaynmar-uVurXjK5t6WouQ@mail.gmail.com>
-        <11422.1560951550@warthog.procyon.org.uk>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        Wed, 19 Jun 2019 10:16:00 -0400
+X-Originating-IP: 92.137.69.152
+Received: from localhost (alyon-656-1-672-152.w92-137.abo.wanadoo.fr [92.137.69.152])
+        (Authenticated sender: gregory.clement@bootlin.com)
+        by relay5-d.mail.gandi.net (Postfix) with ESMTPSA id 6C9761C0020;
+        Wed, 19 Jun 2019 14:15:54 +0000 (UTC)
+From:   Gregory CLEMENT <gregory.clement@bootlin.com>
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Mike Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        Jason Cooper <jason@lakedaemon.net>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Gregory CLEMENT <gregory.clement@bootlin.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Antoine Tenart <antoine.tenart@bootlin.com>,
+        =?UTF-8?q?Miqu=C3=A8l=20Raynal?= <miquel.raynal@bootlin.com>,
+        Maxime Chevallier <maxime.chevallier@bootlin.com>
+Subject: [PATCH v6 0/6] Add CPU clock support for Armada 7K/8K
+Date:   Wed, 19 Jun 2019 16:15:33 +0200
+Message-Id: <20190619141539.16884-1-gregory.clement@bootlin.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi David,
+Hello,
 
-Em Wed, 19 Jun 2019 14:39:10 +0100
-David Howells <dhowells@redhat.com> escreveu:
+This is the sixth version of a series allowing to manage the cpu clock
+for Armada 7K/8K.
 
-> Mauro Carvalho Chehab <mchehab+samsung@kernel.org> wrote:
-> 
-> > > > -Documentation/nommu-mmap.rst
-> > > > +Documentation/driver-api/nommu-mmap.rst    
-> 
-> Why is this moving to Documentation/driver-api?  
+For these SoCs, the CPUs share the same clock by cluster, so actually
+the clock management is done at cluster level.
 
-Good point. I tried to do my best with those document renames, but
-I'm pretty sure some of them ended by going to the wrong place - or
-at least there are arguments in favor of moving it to different
-places :-)
+As for the other Armada 7K/8K clocks it is possible to have multiple
+AP so here again we need to have unique name: the purpose of the second
+patch is to share a common code which will be used in 3 drivers.
 
-The driver-api ended to be where most of the stuff has been moved,
-as this is the main kAPI dir (there is also a core-api dir for kAPI too).
+The last 2 patch enable the driver at dt and platform level and will
+be applied through the mvebu subsystem.
 
-I tend to place there stuff that has a mix of kAPI and uAPI at
-driver-api, as usually such documents are written assuming that
-the one that would be reading it is a Kernel developer.
+Changelog v5->v6:
 
-> It's less to do with drivers
-> than with the userspace mapping interface.  Documentation/vm/ would seem a
-> better home.
-> 
-> Or should we institute a Documentation/uapi/?  Though that might be seen to
-> overlap with man2.  Actually, should this be in man7?
+   - Restraint the reg property for the child node to not overlap the
+     other node.
+   - Give a specific compatible to ap_syscon1.
 
-Actually, there is an userspace-api dir too. While the logs show that
-this was created back on 2017, I only noticed it very recently.
+Changelog v4->v5:
 
-Re-checking the file, I see your point: there are lots of
-userspace-relevant contents there. Yet, it also mentions kAPI internals,
-like a reference for file and vm ops (at "Providing shareable character
-device support" session):
+ - As requested by the device tree maintainer make the reg property
+   mandatory
 
-	file->f_op->get_unmapped_area()
-	file->f_op->mmap()
-	vm_ops->close()
+ - Updated the device tree files accordingly with the new binding
 
-It is up to MM people and Jon to decide where to place it.
+Changelog v3->v4:
+ - Rebased on v5.1-rc1
+ - Mention in the binding that a reg property can be used to make the
+   device tree maintainer happy in the hope that there will be finally
+   a review on this patch blocking the whole series.
 
-In any case, the best (long term) seems to split it on separate files, 
-one with kAPI and another one with uAPI (just like may other subsystem
-specific docs).
+Changelog v2->v3:
+ - Add back the first patch documenting the binding
 
-Thanks,
-Mauro
+Changelog v1->v2:
+ - Header cleanup
+ - Use unsigned int instead of it for cluster member of the ap_cpu_clk struct
+ - Use clk_hw instead of clk
+ - Use regmap_read_poll_timeout
+ - Use for_each_of_cpu_node
+ - Remove unnecessary WARN_ON()
+ - Remove headers from armada_ap_cp_helper.h
+ - Few other minor cleanup
+
+Gregory CLEMENT (6):
+  dt-bindings: ap806: add the cluster clock node in the syscon file
+  clk: mvebu: add helper file for Armada AP and CP clocks
+  clk: mvebu: add CPU clock driver for Armada 7K/8K
+  clk: mvebu: ap806: Fix clock name for the cluster
+  arm64: marvell: enable the  Armada 7K/8K CPU clk driver
+  arm64: dts: marvell: Add cpu clock node on Armada 7K/8K
+
+ .../arm/marvell/ap806-system-controller.txt   |  25 ++
+ arch/arm64/Kconfig.platforms                  |   1 +
+ .../boot/dts/marvell/armada-ap806-quad.dtsi   |   4 +
+ arch/arm64/boot/dts/marvell/armada-ap806.dtsi |   7 +
+ drivers/clk/mvebu/Kconfig                     |   8 +
+ drivers/clk/mvebu/Makefile                    |   2 +
+ drivers/clk/mvebu/ap-cpu-clk.c                | 259 ++++++++++++++++++
+ drivers/clk/mvebu/ap806-system-controller.c   |  24 +-
+ drivers/clk/mvebu/armada_ap_cp_helper.c       |  30 ++
+ drivers/clk/mvebu/armada_ap_cp_helper.h       |  11 +
+ drivers/clk/mvebu/cp110-system-controller.c   |  32 +--
+ 11 files changed, 361 insertions(+), 42 deletions(-)
+ create mode 100644 drivers/clk/mvebu/ap-cpu-clk.c
+ create mode 100644 drivers/clk/mvebu/armada_ap_cp_helper.c
+ create mode 100644 drivers/clk/mvebu/armada_ap_cp_helper.h
+
+-- 
+2.20.1
+
