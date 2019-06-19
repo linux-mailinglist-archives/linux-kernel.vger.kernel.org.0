@@ -2,68 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5BD734C32B
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 23:41:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A1524C33C
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 23:45:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730561AbfFSVla (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Jun 2019 17:41:30 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:40994 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725908AbfFSVla (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Jun 2019 17:41:30 -0400
-Received: from localhost (unknown [144.121.20.163])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 48D78147D11D9;
-        Wed, 19 Jun 2019 14:41:29 -0700 (PDT)
-Date:   Wed, 19 Jun 2019 17:41:28 -0400 (EDT)
-Message-Id: <20190619.174128.213376833708672164.davem@davemloft.net>
-To:     martin.blumenstingl@googlemail.com
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        joabreu@synopsys.com, alexandre.torgue@st.com,
-        peppe.cavallaro@st.com, khilman@baylibre.com
-Subject: Re: [PATCH net-next v1] net: stmmac: initialize the reset delay
- array
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20190618203927.5862-1-martin.blumenstingl@googlemail.com>
-References: <20190618203927.5862-1-martin.blumenstingl@googlemail.com>
-X-Mailer: Mew version 6.8 on Emacs 26.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Wed, 19 Jun 2019 14:41:29 -0700 (PDT)
+        id S1730643AbfFSVpF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Jun 2019 17:45:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56864 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730574AbfFSVpE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Jun 2019 17:45:04 -0400
+Received: from localhost (unknown [69.71.4.100])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8E1D4208CA;
+        Wed, 19 Jun 2019 21:45:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1560980703;
+        bh=xq3nh0b03CKV7/ml8UOF1l5b9iR5UaRfb5yS2tTRobE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=s68rn5cWw2JOtOq9KGBN4KE3onSVG07yaJh4C0Gbk5tMytYF4TcV+5Y4/1QRVWiAD
+         AyKU8mo5SwKIRGA+be5GMlmZi5DLDFKnrrbzYHXh2PTHfAYWr6mGxJUGH3fTID8PMP
+         fj62g/96hZadZbVVuDhk1LacvotRxOEs0q06soXo=
+Date:   Wed, 19 Jun 2019 16:45:02 -0500
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Logan Gunthorpe <logang@deltatee.com>
+Cc:     "linux-pci @ vger . kernel . org" <linux-pci@vger.kernel.org>,
+        linux-kernel@vger.kernel.org,
+        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+        Christoph Hellwig <hch@lst.de>
+Subject: Re: [PATCH v2] PCI/P2PDMA: Root complex whitelist should not apply
+ when an IOMMU is present
+Message-ID: <20190619214502.GE143205@google.com>
+References: <20190619185626.15806-1-logang@deltatee.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190619185626.15806-1-logang@deltatee.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date: Tue, 18 Jun 2019 22:39:27 +0200
-
-> Commit ce4ab73ab0c27c ("net: stmmac: drop the reset delays from struct
-> stmmac_mdio_bus_data") moved the reset delay array from struct
-> stmmac_mdio_bus_data to a stack variable.
-> The values from the array inside struct stmmac_mdio_bus_data were
-> previously initialized to 0 because the struct was allocated using
-> devm_kzalloc(). The array on the stack has to be initialized
-> explicitly, else we might be reading garbage values.
+On Wed, Jun 19, 2019 at 12:56:26PM -0600, Logan Gunthorpe wrote:
+> Presently, there is no path to DMA map P2PDMA memory, so if a TLP
+> targeting this memory hits the root complex and an IOMMU is present,
+> the IOMMU will reject the transaction, even if the RC would support
+> P2PDMA.
 > 
-> Initialize all reset delays to 0 to ensure that the values are 0 if the
-> "snps,reset-delays-us" property is not defined.
-> This fixes booting at least two boards (MIPS pistachio marduk and ARM
-> sun8i H2+ Orange Pi Zero). These are hanging during boot when
-> initializing the stmmac Ethernet controller (as found by Kernel CI).
-> Both have in common that they don't define the "snps,reset-delays-us"
-> property.
+> So until the kernel knows to map these DMA addresses in the IOMMU,
+> we should not enable the whitelist when an IOMMU is present.
 > 
-> Fixes: ce4ab73ab0c27c ("net: stmmac: drop the reset delays from struct stmmac_mdio_bus_data")
-> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+> Link: https://lore.kernel.org/linux-pci/20190522201252.2997-1-logang@deltatee.com/
+> Fixes: 0f97da831026 ("PCI/P2PDMA: Allow P2P DMA between any devices under AMD ZEN Root Complex")
+> Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
+> Reviewed-by: Christian König <christian.koenig@amd.com>
+> Cc: Bjorn Helgaas <bhelgaas@google.com>
+> Cc: Christoph Hellwig <hch@lst.de>
 
-Applied, thanks.
+Applied to for-linus for v5.2, since we merged 0f97da831026 during the v5.2
+merge window, thanks!
 
-> Please feel free to squash this into net-next commit ce4ab73ab0c27c.
-
-We do not "squash" things into existing net-next commits, as commits in
-my tree(s) are permanent and immutable.
+> ---
+>  drivers/pci/p2pdma.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/drivers/pci/p2pdma.c b/drivers/pci/p2pdma.c
+> index a98126ad9c3a..a4994aa3acc0 100644
+> --- a/drivers/pci/p2pdma.c
+> +++ b/drivers/pci/p2pdma.c
+> @@ -18,6 +18,7 @@
+>  #include <linux/percpu-refcount.h>
+>  #include <linux/random.h>
+>  #include <linux/seq_buf.h>
+> +#include <linux/iommu.h>
+>  
+>  struct pci_p2pdma {
+>  	struct gen_pool *pool;
+> @@ -299,6 +300,9 @@ static bool root_complex_whitelist(struct pci_dev *dev)
+>  	struct pci_dev *root = pci_get_slot(host->bus, PCI_DEVFN(0, 0));
+>  	unsigned short vendor, device;
+>  
+> +	if (iommu_present(dev->dev.bus))
+> +		return false;
+> +
+>  	if (!root)
+>  		return false;
+>  
+> -- 
+> 2.20.1
+> 
