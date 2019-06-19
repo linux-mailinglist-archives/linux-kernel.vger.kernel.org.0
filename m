@@ -2,48 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 951404AFB6
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 03:53:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7C71E4AFBF
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 03:56:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729566AbfFSBw5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Jun 2019 21:52:57 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:56452 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726037AbfFSBw4 (ORCPT
+        id S1729528AbfFSB4u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Jun 2019 21:56:50 -0400
+Received: from mail-io1-f45.google.com ([209.85.166.45]:46654 "EHLO
+        mail-io1-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726037AbfFSB4u (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Jun 2019 21:52:56 -0400
-Received: from localhost (unknown [8.46.76.24])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id E721714D08ED1;
-        Tue, 18 Jun 2019 18:52:48 -0700 (PDT)
-Date:   Tue, 18 Jun 2019 21:52:43 -0400 (EDT)
-Message-Id: <20190618.215243.219004228932777039.davem@davemloft.net>
-To:     xuechaojing@huawei.com
-Cc:     linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        luoshaokai@huawei.com, cloud.wangxiaoyun@huawei.com,
-        chiqijun@huawei.com, wulike1@huawei.com
-Subject: Re: [PATCH net-next v5 0/3] hinic: add rss support and rss
- parameters configuration
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20190618062053.7545-1-xuechaojing@huawei.com>
-References: <20190618062053.7545-1-xuechaojing@huawei.com>
-X-Mailer: Mew version 6.8 on Emacs 26.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Tue, 18 Jun 2019 18:52:55 -0700 (PDT)
+        Tue, 18 Jun 2019 21:56:50 -0400
+Received: by mail-io1-f45.google.com with SMTP id i10so34349961iol.13;
+        Tue, 18 Jun 2019 18:56:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=ix5Dfi/dkMWuL6+NBxIipP5XBxtV2JHvQAM496TixnA=;
+        b=NM7iFiBm9AcwTZxgpCTJ7ENufhBoK11MdreuVOpDr7vpYCvD0JqtkxVhZOgz9NMc5g
+         KBw23PzXOi7mBrqmkM6x+B9rpubLHjFsFysldj3GsgQOTnQRl1v5RO6NtDaloNA5vdMn
+         NXo56YzvzutWit29DNI6yW9d0cjSR91eJW360xShk7g6SbYEJaiJAEeY58gt9ktTH5//
+         LqXLqy1MbuGWV6X3cLbu1T8ecAJNX4iiEvuHb9Ft9NlSqPKRF38thaKUe8Zof1++09Bq
+         6/6S2p3o+kkspD1z0DmuF2rkkh8t1mnL4omb/h9aVHsDN0jUQ3nqf/v1D5y8vGWkJDpQ
+         y98A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=ix5Dfi/dkMWuL6+NBxIipP5XBxtV2JHvQAM496TixnA=;
+        b=ShqPPE4J+1bokV+pkq/6xZ7WvvEtu56Y85ruRglDSgnTaFh5QkFjd1YNVJFZdfixEH
+         uf16OJTJmgXnQFAXfyKhhA78+/uCfenh+pUyF85XPUGA2WgbHmxO5inwKd0FljdQZ3Wp
+         hq6tK45Y9AziaK0uV9+E/6hSA/9g5eNb8xZjEwjpkCgj0z2DTeLksi7U7KBQBkTMgpkR
+         891dYWTZAL3x8EZAN718o5pyHcZL5dBY854eRiYARzdv65N+A9sO5RgJt6c5/T2lzxy6
+         lCVv+cD0wfPcv7wx7LPGk0efkqmeYpSFhllMypSUHXeiRdsZldcSdWn/bINPinczzSUk
+         9LMA==
+X-Gm-Message-State: APjAAAXYlKo489s1KNu0hs1a7NpT41zfRnyXvMWU3YA5fPgyOFzHLE0f
+        BdUhDHfrjUlZq9CSkcf/BA==
+X-Google-Smtp-Source: APXvYqxYo1AvZW5YC39VWmRxsXda+tg6UF5zULyzvOQPoEKPBoQiFHtI9M9DOtcpQXMU++wkpulVEw==
+X-Received: by 2002:a05:6638:3d6:: with SMTP id r22mr5999891jaq.71.1560909409374;
+        Tue, 18 Jun 2019 18:56:49 -0700 (PDT)
+Received: from Test-Virtual-Machine (d24-141-106-246.home.cgocable.net. [24.141.106.246])
+        by smtp.gmail.com with ESMTPSA id n17sm13670828iog.63.2019.06.18.18.56.48
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 18 Jun 2019 18:56:48 -0700 (PDT)
+Date:   Tue, 18 Jun 2019 21:56:46 -0400
+From:   Branden Bonaby <brandonbonaby94@gmail.com>
+To:     "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc:     kys@microsoft.com, haiyangz@microsoft.com, sthemmin@microsoft.com,
+        sashal@kernel.org, jejb@linux.ibm.com,
+        linux-hyperv@vger.kernel.org, linux-scsi@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] scsi: storvsc: Add ability to change scsi queue depth
+Message-ID: <20190619015646.GA21617@Test-Virtual-Machine>
+References: <20190614234822.5193-1-brandonbonaby94@gmail.com>
+ <yq1fto6xtxw.fsf@oracle.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <yq1fto6xtxw.fsf@oracle.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Xue Chaojing <xuechaojing@huawei.com>
-Date: Tue, 18 Jun 2019 06:20:50 +0000
+On Tue, Jun 18, 2019 at 09:08:59PM -0400, Martin K. Petersen wrote:
+> 
+> Branden,
+> 
+> > Adding functionality to allow the SCSI queue depth to be changed, by
+> > utilizing the "scsi_change_queue_depth" function.
+> 
+> Applied to 5.3/scsi-queue. Please run checkpatch before submission. I
+> fixed it up this time.
+> 
+> Thanks!
 
-> This series add rss support for HINIC driver and implement the ethtool
-> interface related to rss parameter configuration. user can use ethtool
-> configure rss parameters or show rss parameters.
-
-Series applied, thanks.
+Oh I see what you mean about the brackets, thanks will do next time.
