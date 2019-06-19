@@ -2,127 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 48E404C303
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 23:34:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 698204C2EB
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 23:25:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730568AbfFSVeU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Jun 2019 17:34:20 -0400
-Received: from mga11.intel.com ([192.55.52.93]:10056 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730435AbfFSVeU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Jun 2019 17:34:20 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Jun 2019 14:34:19 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.63,394,1557212400"; 
-   d="scan'208";a="182867800"
-Received: from romley-ivt3.sc.intel.com ([172.25.110.60])
-  by fmsmga004.fm.intel.com with ESMTP; 19 Jun 2019 14:34:19 -0700
-Date:   Wed, 19 Jun 2019 14:24:45 -0700
-From:   Fenghua Yu <fenghua.yu@intel.com>
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, H Peter Anvin <hpa@zytor.com>,
-        Christopherson Sean J <sean.j.christopherson@intel.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Radim Krcmar <rkrcmar@redhat.com>,
-        Ravi V Shankar <ravi.v.shankar@intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>, x86 <x86@kernel.org>
-Subject: Re: [PATCH v2 1/2] x86/cpufeatures: Combine word 11 and 12 into new
- scattered features word 11
-Message-ID: <20190619212445.GA234387@romley-ivt3.sc.intel.com>
-References: <1560794416-217638-1-git-send-email-fenghua.yu@intel.com>
- <1560794416-217638-2-git-send-email-fenghua.yu@intel.com>
- <20190619173628.GI9574@zn.tnic>
+        id S1726175AbfFSVZm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Jun 2019 17:25:42 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:36404 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726244AbfFSVZm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Jun 2019 17:25:42 -0400
+Received: by mail-pf1-f196.google.com with SMTP id r7so342328pfl.3
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2019 14:25:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=y9mMQK9sKtWkYVn2tTLrqE2pA0vjVcq3E0qdtFwjDm0=;
+        b=P5V/sT+i6r81AGxDHVHYVwgTBdH9hf/mud3jTlfe52eCS6W+5ngfmHBS5Z0sHkjZdw
+         P/hyp+SElxNTgemRSGOtbTDIUYWWHxkBwrIyTDtPXANTdBjE7SWyRMT0/BHQiAkYqtPc
+         CSlOqLbY6l+1vYT1oVdeGzUXQmPLiA74Y4dL0y1Zj8En/UvVab1vDGuLxQtsk4rddVhb
+         OcAr5e4o52ldWylZ/rrctkX2uy8M7eUQyGn8gsZDMCHYREcdFW24LXs34IwCBkBGl5ae
+         N8iqEYxxI6acRivHQIYSUz5sAU6zqbAlhwwRES74c0CoBDLOtl1msA3bIVAvdRuQwNoZ
+         KoRw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=y9mMQK9sKtWkYVn2tTLrqE2pA0vjVcq3E0qdtFwjDm0=;
+        b=OPPv6fNdEIMdY0rD0WG/KagNBzt5mstz/D+0BbMJWXdW8viQs+/3XtDlnzBdu7oHlz
+         Yr2wzv5ptqqC6BKZhmeThZ94dStkPtXHlxST/SwgMSj5Nmkv956hgSUxxGDjwfVmWWgD
+         R2U1Apx4/DnEOMVWT4WiD6oVUbYx0mODyPZs7ZIi9VJJ7HzU4+Tet4jRWg3hfOhZGLlo
+         neWGc0d8+2Tp3ezIUqNoo2noh6NY4O6ik4Y9SYM4dpKbPC8f7nu0lDDXwZMeu82/rTmG
+         /3qTUP7eyaN/p1yICHzAvWAhstgcfCWZopBqW8DoddpuwZbjk6IKLzxO18tvppy4t0We
+         bKHA==
+X-Gm-Message-State: APjAAAXkMrlc79u4b8kmLZN5FNvO3Fha2z2kXCLaJZOg/d+5zt3wfNSB
+        AvhtuKs3QD+ujOeLxSD+KM8w5Sv2g3dvQSz+KW+8wA==
+X-Google-Smtp-Source: APXvYqztE1b64ddvyGSTrs/viqOnx1s8V4PiJRCg0njvbgRaqHL43xEmtPe+sNLTtcWqmb9QiWUsUoMuerCidUN8TiA=
+X-Received: by 2002:a63:c94f:: with SMTP id y15mr9670654pgg.159.1560979540781;
+ Wed, 19 Jun 2019 14:25:40 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190619173628.GI9574@zn.tnic>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+References: <20190619205009.4176588-1-taoren@fb.com>
+In-Reply-To: <20190619205009.4176588-1-taoren@fb.com>
+From:   Brendan Higgins <brendanhiggins@google.com>
+Date:   Wed, 19 Jun 2019 14:25:29 -0700
+Message-ID: <CAFd5g45TMtXcuqONdkpN_K+c0O+wUw8wkGzcQfV+sO8p5Krc9w@mail.gmail.com>
+Subject: Re: [PATCH 1/2] i2c: aspeed: allow to customize base clock divisor
+To:     Tao Ren <taoren@fb.com>
+Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Joel Stanley <joel@jms.id.au>,
+        Andrew Jeffery <andrew@aj.id.au>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, linux-i2c@vger.kernel.org,
+        OpenBMC Maillist <openbmc@lists.ozlabs.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-aspeed@lists.ozlabs.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 19, 2019 at 07:36:28PM +0200, Borislav Petkov wrote:
-> On Mon, Jun 17, 2019 at 11:00:15AM -0700, Fenghua Yu wrote:
-> > @@ -832,33 +857,6 @@ void get_cpu_cap(struct cpuinfo_x86 *c)
-> >  		c->x86_capability[CPUID_D_1_EAX] = eax;
-> > -	/* Additional Intel-defined flags: level 0x0000000F */
-> > -	if (c->cpuid_level >= 0x0000000F) {
-> What I meant with having a separate patch doing the carve out is to have
-> a single patch doing *only* code movement - no changes, no nothing. So
-> that it is clear what happens. Intermixing code movement and changes is
-> a bad idea and hard to review.
-> 
-> IOW, I did this:
-> 
-> ---
-> From cef4f58a3da0465bbff33b2d669cc600b775f3ba Mon Sep 17 00:00:00 2001
-> From: Borislav Petkov <bp@suse.de>
-> Date: Wed, 19 Jun 2019 17:24:34 +0200
-> Subject: [PATCH] x86/cpufeatures: Carve out CQM features retrieval
-> 
-> ... into a separate function for better readability. Split out from a
-> patch from Fenghua Yu <fenghua.yu@intel.com> to keep the mechanical,
-> sole code movement separate for easy review.
-> 
-> No functional changes.
-> 
-> Signed-off-by: Borislav Petkov <bp@suse.de>
-> Cc: Fenghua Yu <fenghua.yu@intel.com>
-> Cc: x86@kernel.org
-> ---
->  arch/x86/kernel/cpu/common.c | 60 ++++++++++++++++++++----------------
->  1 file changed, 33 insertions(+), 27 deletions(-)
-> 
-> diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-> index 2c57fffebf9b..fe6ed9696467 100644
-> --- a/arch/x86/kernel/cpu/common.c
-> +++ b/arch/x86/kernel/cpu/common.c
-> @@ -801,6 +801,38 @@ static void init_speculation_control(struct cpuinfo_x86 *c)
->  	}
->  }
->  
-> +static void init_cqm(struct cpuinfo_x86 *c)
-> +{
-> +	u32 eax, ebx, ecx, edx;
-> 
-> This way you have *pure* code movement only.
-> 
-> And then your second patch turns into this, which shows *exactly* what
-> has been changed in init_cqm().
+On Wed, Jun 19, 2019 at 2:00 PM Tao Ren <taoren@fb.com> wrote:
+>
+> Some intermittent I2C transaction failures are observed on Facebook CMM and
+> Minipack (ast2500) BMC platforms, because slave devices (such as CPLD, BIC
+> and etc.) NACK the address byte sometimes. The issue can be resolved by
+> increasing base clock divisor which affects ASPEED I2C Controller's base
+> clock and other AC timing parameters.
+>
+> This patch allows to customize ASPEED I2C Controller's base clock divisor
+> in device tree.
 
-Yes, the added patch makes this patch set more clear and readable.
+First off, are you sure you actually need this?
 
-> 
-> Please have a look and send me only the now third patch with corrected
-> commit message.
-> 
-> From e33527b8cde8bef84cdc90651d1a1c7a9a5234d7 Mon Sep 17 00:00:00 2001
-> From: Fenghua Yu <fenghua.yu@intel.com>
-> Date: Wed, 19 Jun 2019 18:51:09 +0200
-> Subject: [PATCH] x86/cpufeatures: Combine word 11 and 12 into a new
->  scattered features word
-> MIME-Version: 1.0
-> Content-Type: text/plain; charset=UTF-8
-> Content-Transfer-Encoding: 8bit
-> 
-> It's a waste for the four X86_FEATURE_CQM_* feature bits to occupy two
-> whole feature bits words. To better utilize feature words, re-define
-> word 11 to host scattered features and move the four X86_FEATURE_CQM_*
-> features into Linux defined word 11. More scattered features can be
-> added in word 11 in the future.
+You should be able to achieve an effectively equivalent result by just
+lowering the `bus-frequency` property specified in the DT. The
+`bus-frequency` property ultimately determines all the register
+values, and you should be able to set it to whatever you want by
+refering to the Aspeed documentation.
 
-I checked and tested the updated patch set (now three patches). They
-look much better than v2.
+Nevertheless, the code that determines the correct dividers from the
+frequency is based on the tables in the Aspeed documentation. I don't
+think the equation makes sense when the base_clk_divisor is fixed; I
+mean it will probably just set the other divisor to max or min
+depending on the values chosen. I think if someone really wants to
+program this parameter manually, they probably want to set the other
+parameters manually too.
 
-I will send you the now third patch with corrected commit message
-in the other email thread.
-
-Thanks.
-
--Fenghua
+[snip]
