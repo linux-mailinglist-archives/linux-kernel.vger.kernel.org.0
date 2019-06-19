@@ -2,156 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BDAE54B68F
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 12:56:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 232504B6A3
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 13:05:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731575AbfFSKzu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Jun 2019 06:55:50 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:45267 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726751AbfFSKzt (ORCPT
+        id S1731556AbfFSLFY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Jun 2019 07:05:24 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:38422 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731267AbfFSLFY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Jun 2019 06:55:49 -0400
-Received: by mail-ed1-f67.google.com with SMTP id a14so26501363edv.12
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2019 03:55:48 -0700 (PDT)
+        Wed, 19 Jun 2019 07:05:24 -0400
+Received: by mail-io1-f67.google.com with SMTP id j6so7517608ioa.5
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2019 04:05:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=XdKjQFlqc/Q5NG+TosVNuzBQ5q1pFNnMu9irob0Brm0=;
-        b=TG/JK0xKXjriwqgBw8cF41pSSLLme+TnHnULLKVFltVObM+DBW7ii5OQBU587ewcUL
-         CekLOuXDtRbkH2jrQPgPrFxp6hh5nzpM/EndSk/C4/eNmNj/3t3FnYKFGwkks9eDwAWb
-         XBruiYUUm9LC06kmZZ3Nc6S8HcC7B1c6XJ+ng=
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=rCYlhd274MLja1aUjw9jbduFZsTE4iqm0XJqesczC2M=;
+        b=uRIbyl+LBSLzrLgEFoRCXr89GPeHdisG96TJxaKDMULVeZsHUdogijixV+ND5zVaqX
+         MJVl5pKFkSpIUFYawtVhoagKOYReGf58P5kKHrWQB0sNmS75c+iKdm4YsGisvFLz+gHi
+         nOCGvdxlTADF7UIkLMfSOq1pRDe3YHqR1DbU08nx95eTqBsM0Dg4nVtiPpFGWkOZ0O7e
+         KC/7kyd5JLcj/Dne4UaPNNjtzozxEhqgDc1TfSVWzrV2TpsRBOmjqu0s+l993ORMyK5R
+         ifgZk01ODPnZjlQNqYJdVMFeQEn+P9cbmGapOLUoWemFJ7MAB2ZyRycuZg8/D5tbsSXE
+         +WUw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=XdKjQFlqc/Q5NG+TosVNuzBQ5q1pFNnMu9irob0Brm0=;
-        b=U5C5c+MGglyAav4yqFa5SUS6TbGTBfvKgGCeLv6Odwpkium09C7w2bUSZncDUUfbGy
-         xD4E6GDe08a4l3/6hQw1obn5OFSPW3AsuoZH8A6wdMRsFEOfRz4rQDymAOCyN3ngI2OP
-         TQ0DK+RzP/npGL70Cpa9Y5temeieQsdaWa6r/3ajrFI1vFNv3uzih8R7vvJyErSvuAPf
-         Grgk6ycjBMAz9pr+qGR6GzPHU83OwnlkWE8eUXPJjNfUovL2x8dFh21spJ4a0bTfcn/5
-         fRokxzcPxSWWSCLQVyL11ZXCYpxXUNXXjPqjXKAh43s8ocZQeQK6d4XBdq4nbsOlHFyX
-         qzSA==
-X-Gm-Message-State: APjAAAXYS6bUVaxEOLsWJD4nEKfY9gTrNhOL6k+iR+gcVESy6k3bxSZV
-        ClTgNC8+gbgCJgjT4a+S5PB7vg==
-X-Google-Smtp-Source: APXvYqxbjH7iT/XwqoXc7vNkC8vrzVel8iukb4rPT+Y5xARzuliTDpYTj3ZbNZYgkEs3Hvc6tZtY2A==
-X-Received: by 2002:a05:6402:6cb:: with SMTP id n11mr17462574edy.101.1560941748065;
-        Wed, 19 Jun 2019 03:55:48 -0700 (PDT)
-Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
-        by smtp.gmail.com with ESMTPSA id l50sm5687128edb.77.2019.06.19.03.55.47
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 19 Jun 2019 03:55:47 -0700 (PDT)
-Date:   Wed, 19 Jun 2019 12:55:44 +0200
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Gerd Hoffmann <kraxel@redhat.com>
-Cc:     dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        "open list:VIRTIO GPU DRIVER" 
-        <virtualization@lists.linux-foundation.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 06/12] drm/virtio: drop no_wait argument from
- virtio_gpu_object_reserve
-Message-ID: <20190619105543.GN12905@phenom.ffwll.local>
-Mail-Followup-To: Gerd Hoffmann <kraxel@redhat.com>,
-        dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>,
-        "open list:VIRTIO GPU DRIVER" <virtualization@lists.linux-foundation.org>,
-        open list <linux-kernel@vger.kernel.org>
-References: <20190619090420.6667-1-kraxel@redhat.com>
- <20190619090420.6667-7-kraxel@redhat.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=rCYlhd274MLja1aUjw9jbduFZsTE4iqm0XJqesczC2M=;
+        b=V156o9C0PC3EXayi4DE9UJ9unaXrg7qxEH/KdZAlV0sH1f8bHclO+WHHcw3B0JxUtP
+         FYNb3YJQGXpK2aG0ql0r8n0QJMVdLkKnXkySrMPgqnYnf7Hkft5pKcbc8uDi9klbB08T
+         8p5A015BZUHOeBk+SMlJE6DIWH7jZySge7GuLbBqr8hOg4wVe2Q4vYKGwt0A0D694maf
+         WLVsmQGC3CCxHS0+17GQZJCjv2H2e4nnCduH4hOb3zZtD8638UNMw0FMrJZrV+1J4x8l
+         /j8AfJKtWRHUCZ3j77wZi7fhULey3GraPiBqkCI24TL3zIG9+qbyomOkQ6kQmYND6z3V
+         Qu5Q==
+X-Gm-Message-State: APjAAAVPQJMZ7xnkxhBgp3ix0MsYw575qbx6X63lbyYt3u2WqJu1w1zn
+        +lejBqCdcg7Ke3OUfgrwYdLYnyYMpkG3RWeGyaNAFg==
+X-Google-Smtp-Source: APXvYqzVSJCHAIJzw2Ki3xuEU2OcQ/reJ6yVjoNZ0bCjDZE+rA3BhQAMsiKRSNqwKqr3zDdwk7MKk4vF1gx3otshkzc=
+X-Received: by 2002:a5d:8845:: with SMTP id t5mr6046407ios.37.1560942323320;
+ Wed, 19 Jun 2019 04:05:23 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190619090420.6667-7-kraxel@redhat.com>
-X-Operating-System: Linux phenom 4.19.0-5-amd64 
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190521105203.154043-1-darekm@google.com> <16889839-b4e9-9984-2e36-5f07ceb7d7f2@xs4all.nl>
+In-Reply-To: <16889839-b4e9-9984-2e36-5f07ceb7d7f2@xs4all.nl>
+From:   Dariusz Marcinkiewicz <darekm@google.com>
+Date:   Wed, 19 Jun 2019 13:05:11 +0200
+Message-ID: <CALFZZQEao3vqVxKO-3mT5ATtC=ZWO+bc3dA_Xo-mgpqmna_fMQ@mail.gmail.com>
+Subject: Re: [PATCH v7 1/3] media: cec: expose HDMI connector to CEC dev mapping
+To:     Hans Verkuil <hverkuil@xs4all.nl>
+Cc:     linux-media@vger.kernel.org, hans.verkuil@cisco.com,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 19, 2019 at 11:04:14AM +0200, Gerd Hoffmann wrote:
-> All callers pass no_wait = false.
-> 
-> Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+Hi Hans.
 
-Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+I would like to come back to this thread.
 
-> ---
->  drivers/gpu/drm/virtio/virtgpu_drv.h   | 5 ++---
->  drivers/gpu/drm/virtio/virtgpu_gem.c   | 4 ++--
->  drivers/gpu/drm/virtio/virtgpu_ioctl.c | 4 ++--
->  3 files changed, 6 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/virtio/virtgpu_drv.h b/drivers/gpu/drm/virtio/virtgpu_drv.h
-> index 2cd96256ba37..06cc0e961df6 100644
-> --- a/drivers/gpu/drm/virtio/virtgpu_drv.h
-> +++ b/drivers/gpu/drm/virtio/virtgpu_drv.h
-> @@ -398,12 +398,11 @@ static inline u64 virtio_gpu_object_mmap_offset(struct virtio_gpu_object *bo)
->  	return drm_vma_node_offset_addr(&bo->tbo.vma_node);
->  }
->  
-> -static inline int virtio_gpu_object_reserve(struct virtio_gpu_object *bo,
-> -					 bool no_wait)
-> +static inline int virtio_gpu_object_reserve(struct virtio_gpu_object *bo)
->  {
->  	int r;
->  
-> -	r = ttm_bo_reserve(&bo->tbo, true, no_wait, NULL);
-> +	r = ttm_bo_reserve(&bo->tbo, true, false, NULL);
->  	if (unlikely(r != 0)) {
->  		if (r != -ERESTARTSYS) {
->  			struct virtio_gpu_device *qdev =
-> diff --git a/drivers/gpu/drm/virtio/virtgpu_gem.c b/drivers/gpu/drm/virtio/virtgpu_gem.c
-> index 1e49e08dd545..9c9ad3b14080 100644
-> --- a/drivers/gpu/drm/virtio/virtgpu_gem.c
-> +++ b/drivers/gpu/drm/virtio/virtgpu_gem.c
-> @@ -140,7 +140,7 @@ int virtio_gpu_gem_object_open(struct drm_gem_object *obj,
->  	if (!vgdev->has_virgl_3d)
->  		return 0;
->  
-> -	r = virtio_gpu_object_reserve(qobj, false);
-> +	r = virtio_gpu_object_reserve(qobj);
->  	if (r)
->  		return r;
->  
-> @@ -161,7 +161,7 @@ void virtio_gpu_gem_object_close(struct drm_gem_object *obj,
->  	if (!vgdev->has_virgl_3d)
->  		return;
->  
-> -	r = virtio_gpu_object_reserve(qobj, false);
-> +	r = virtio_gpu_object_reserve(qobj);
->  	if (r)
->  		return;
->  
-> diff --git a/drivers/gpu/drm/virtio/virtgpu_ioctl.c b/drivers/gpu/drm/virtio/virtgpu_ioctl.c
-> index 313c770ea2c5..5cffd2e54c04 100644
-> --- a/drivers/gpu/drm/virtio/virtgpu_ioctl.c
-> +++ b/drivers/gpu/drm/virtio/virtgpu_ioctl.c
-> @@ -375,7 +375,7 @@ static int virtio_gpu_transfer_from_host_ioctl(struct drm_device *dev,
->  
->  	qobj = gem_to_virtio_gpu_obj(gobj);
->  
-> -	ret = virtio_gpu_object_reserve(qobj, false);
-> +	ret = virtio_gpu_object_reserve(qobj);
->  	if (ret)
->  		goto out;
->  
-> @@ -425,7 +425,7 @@ static int virtio_gpu_transfer_to_host_ioctl(struct drm_device *dev, void *data,
->  
->  	qobj = gem_to_virtio_gpu_obj(gobj);
->  
-> -	ret = virtio_gpu_object_reserve(qobj, false);
-> +	ret = virtio_gpu_object_reserve(qobj);
->  	if (ret)
->  		goto out;
->  
-> -- 
-> 2.18.1
-> 
+On Fri, May 24, 2019 at 11:21 AM Hans Verkuil <hverkuil@xs4all.nl> wrote:
+>
+> Hi Dariusz,
+>
+> I did some more testing with the Khadas VIM2 and found another problem,
+> something that will, unfortunately, require some redesign.
+>
+> See my comments below...
+>
+...
+>
+> Another issue here is that when the HDMI driver removes the notifier,
+> then it should also zero the connector info. Remember that both the
+> HDMI and the CEC drivers can be loaded and unloaded independently from
+> one another.
+>
 
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+I took a peek at the changes in
+https://git.linuxtv.org/hverkuil/media_tree.git/log/?h=cec-conn. Do I
+understand it correctly, that the above problem is addressed there by
+unregistering an adapter in cec_notifier_conn_unregister (which will
+result in /dev/cecX node going away)? I wonder to what degree this
+solves the problem of HDMI and CEC drivers being loaded and unloaded
+independently. It seems that in cases where HDMI driver is unloaded
+and then loaded again, counterintuitively, the /dev/cecX might not
+come back again, is this right, or am I missing something? Also, is it
+guaranteed that adapter drivers won't try to access an adapter once it
+gets removed by cec_notifier_conn_unregister?
+
+Thank you.
