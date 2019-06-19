@@ -2,89 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BA4A14B046
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 04:57:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 84A214B04C
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 05:01:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730100AbfFSC50 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Jun 2019 22:57:26 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:42672 "EHLO
+        id S1729647AbfFSDBa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Jun 2019 23:01:30 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:44992 "EHLO
         userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726689AbfFSC50 (ORCPT
+        with ESMTP id S1726037AbfFSDBa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Jun 2019 22:57:26 -0400
+        Tue, 18 Jun 2019 23:01:30 -0400
 Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5J2mvxB063861;
-        Wed, 19 Jun 2019 02:57:13 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
- from : references : date : in-reply-to : message-id : mime-version :
- content-type; s=corp-2018-07-02;
- bh=jOw2OdivlqkkGBM0Pa1lRxjpLqeeu3++qv7MZf0yotc=;
- b=uCOy5cIQ0+DHvEuvHOzF2o3VVdQD8a8oYwmMScOnE8ueSHNvOMxtUCbOjY3dkEOyQ7uc
- mpY1t9Snub/olPyosCfiy5Vhkq7IEfInuSf8G5NWhQVYXsUVYGchVJjvu7KgTRJu3tzY
- Ht52ASqKjr7GqEsGjsF3UWnq+uLs43PdArRbadBuddHoV6l4d8Hf3v8gKUMq6bg5f/FS
- Sk/7HdKDMuOdWKRL6HiGnWbt+3lFaOn/KwbdfrzedHmpTuowUeHLVpvcHV2ir9pdukWw
- p6vjQjFwthwslzJ33gModuxx2arm+vFpZcuEsbLiYgAzurBwJk0yTaohb4uhQlsBQ6V0 8A== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by userp2130.oracle.com with ESMTP id 2t78098qmn-1
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5J2xYt0070365;
+        Wed, 19 Jun 2019 03:00:58 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=PU/QrzBhX1uRODKyqt1OB2b+ZI2Y0GRQ2fyxY3ZZbo0=;
+ b=HuDXGRU7GQwxXiFXtOKnyASfppsjV52cCnaFNBeV+I7vIMTLNUP5rmbhk0FL7p5TxcpJ
+ FFSM34/PVM70T/rzInzVvcaEo2ET9J7PwBD2TTDBQwrKxTi+6VtUvb3SiilFLLgVFZeC
+ aQOHB6Tdk/Tf+5LAmHZ2c8C2/Neu96Oe3NdSvxrUhimkdWXoZ+PNa7kSckbxtDcu5RGC
+ OPq/gQGdQUP0C3urjtz/M6w+RKpPVW1JITRrnFRv0wyWbgVVf0X6VkZX4WTjvnPOOYSL
+ Kq2LPogVFA5dHfqSZwu433L6yvwPPCl8LYFncAtg7slPyshJAGyqR9ktrNXBuc/NCCo2 rw== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by userp2130.oracle.com with ESMTP id 2t78098qva-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 19 Jun 2019 02:57:13 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5J2uXQE104616;
-        Wed, 19 Jun 2019 02:57:13 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserp3020.oracle.com with ESMTP id 2t77ynjw1r-1
+        Wed, 19 Jun 2019 03:00:58 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5J2vpmm044585;
+        Wed, 19 Jun 2019 02:58:57 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserp3030.oracle.com with ESMTP id 2t77yn2wew-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 19 Jun 2019 02:57:12 +0000
-Received: from abhmp0011.oracle.com (abhmp0011.oracle.com [141.146.116.17])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x5J2vA4T016828;
-        Wed, 19 Jun 2019 02:57:10 GMT
-Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
+        Wed, 19 Jun 2019 02:58:57 +0000
+Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x5J2wuUd007233;
+        Wed, 19 Jun 2019 02:58:56 GMT
+Received: from [10.156.74.184] (/10.156.74.184)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 18 Jun 2019 19:57:09 -0700
-To:     Lee Jones <lee.jones@linaro.org>
-Cc:     agross@kernel.org, david.brown@linaro.org, alim.akhtar@samsung.com,
-        avri.altman@wdc.com, pedrom.sousa@synopsys.com, jejb@linux.ibm.com,
-        martin.petersen@oracle.com, linux-arm-msm@vger.kernel.org,
-        linux-scsi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, ard.biesheuvel@linaro.org,
-        jlhugo@gmail.com, bjorn.andersson@linaro.org
-Subject: Re: [PATCH 1/1] scsi: ufs-qcom: Add support for platforms booting ACPI
-From:   "Martin K. Petersen" <martin.petersen@oracle.com>
-Organization: Oracle Corporation
-References: <20190617115454.3226-1-lee.jones@linaro.org>
-Date:   Tue, 18 Jun 2019 22:57:06 -0400
-In-Reply-To: <20190617115454.3226-1-lee.jones@linaro.org> (Lee Jones's message
-        of "Mon, 17 Jun 2019 12:54:54 +0100")
-Message-ID: <yq1zhmeuvst.fsf@oracle.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1.92 (gnu/linux)
+        with ESMTP ; Tue, 18 Jun 2019 19:58:55 -0700
+Subject: Re: [RFC PATCH 14/16] xen/blk: gnttab, evtchn, xenbus API changes
+To:     Juergen Gross <jgross@suse.com>, linux-kernel@vger.kernel.org,
+        xen-devel@lists.xenproject.org
+Cc:     pbonzini@redhat.com, boris.ostrovsky@oracle.com,
+        konrad.wilk@oracle.com, sstabellini@kernel.org,
+        joao.m.martins@oracle.com
+References: <20190509172540.12398-1-ankur.a.arora@oracle.com>
+ <20190509172540.12398-15-ankur.a.arora@oracle.com>
+ <1a4e2fe7-ed2d-05f1-9f2f-f0a940b30151@suse.com>
+From:   Ankur Arora <ankur.a.arora@oracle.com>
+Message-ID: <54f3f690-4e71-325a-6544-6867174a0f0c@oracle.com>
+Date:   Tue, 18 Jun 2019 19:59:39 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <1a4e2fe7-ed2d-05f1-9f2f-f0a940b30151@suse.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9292 signatures=668687
 X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=836
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
  adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1906190021
+ engine=8.0.1-1810050000 definitions=main-1906190022
 X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9292 signatures=668687
 X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=888 adultscore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1906190021
+ definitions=main-1906190022
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 6/17/19 3:14 AM, Juergen Gross wrote:
+> On 09.05.19 19:25, Ankur Arora wrote:
+>> For the most part, we now pass xenhost_t * as a parameter.
+>>
+>> Co-developed-by: Joao Martins <joao.m.martins@oracle.com>
+>> Signed-off-by: Ankur Arora <ankur.a.arora@oracle.com>
+> 
+> I don't see how this can be a patch on its own.
+Yes, the reason this was separate was that given this was an
+RFC, I didn't want to pollute the logic page with lots of
+mechanical changes.
 
-Lee,
+> 
+> The only way to be able to use a patch for each driver would be to
+> keep the original grant-, event- and xenbus-interfaces and add the
+> new ones taking xenhost * with a new name. The original interfaces
+> could then use xenhost_default and you can switch them to the new
+> interfaces one by one. The last patch could then remove the old
+> interfaces when there is no user left.
+Yes, this makes sense.
 
-> New Qualcomm AArch64 based laptops are now available which use UFS
-> as their primary data storage medium.  These devices are supplied
-> with ACPI support out of the box.  This patch ensures the Qualcomm
-> UFS driver will be bound when the "QCOM24A5" H/W device is
-> advertised as present.
+Ankur
 
-Applied to 5.3/scsi-queue. Thanks!
-
--- 
-Martin K. Petersen	Oracle Linux Engineering
+> 
+> 
+> Juergen
