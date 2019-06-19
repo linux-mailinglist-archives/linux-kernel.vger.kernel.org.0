@@ -2,75 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ECC764B3E4
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 10:19:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 88E614B378
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 09:58:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731391AbfFSISx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Jun 2019 04:18:53 -0400
-Received: from mail.acehprov.go.id ([123.108.97.111]:54192 "EHLO
-        mail.acehprov.go.id" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731065AbfFSISw (ORCPT
+        id S1731287AbfFSH6C (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Jun 2019 03:58:02 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:40006 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726142AbfFSH6C (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Jun 2019 04:18:52 -0400
-X-Greylist: delayed 1159 seconds by postgrey-1.27 at vger.kernel.org; Wed, 19 Jun 2019 04:18:49 EDT
-Received: from localhost (localhost [127.0.0.1])
-        by mail.acehprov.go.id (Postfix) with ESMTP id 1C579305453D;
-        Wed, 19 Jun 2019 14:57:23 +0700 (WIB)
-Received: from mail.acehprov.go.id ([127.0.0.1])
-        by localhost (mail.acehprov.go.id [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id bI57k7SkImp7; Wed, 19 Jun 2019 14:57:22 +0700 (WIB)
-Received: from mail.acehprov.go.id (localhost [127.0.0.1])
-        by mail.acehprov.go.id (Postfix) with ESMTPS id E36B730545E1;
-        Wed, 19 Jun 2019 14:57:19 +0700 (WIB)
-DKIM-Filter: OpenDKIM Filter v2.8.0 mail.acehprov.go.id E36B730545E1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acehprov.go.id;
-        s=327C6C40-AE75-11E3-A0E3-F52F162F8E7F; t=1560931040;
-        bh=pJuac3pZg5oAwuUCdgq3O1PuAp8o/etHefuN8/b5m4c=;
-        h=Date:From:Reply-To:Message-ID:Subject:MIME-Version:Content-Type:
-         Content-Transfer-Encoding;
-        b=G/tce03/5Tl9Yl/GI55BS8fWLEAOFcXsmXsp6sltIDATf1mQmwy4q3tDUnjc636Qc
-         /eEWop64wwyBhw7ZmztC8XjX4BSTdYuS5Zvle1JV+ALil8yHvpTXVq2SiiC0pAzhVR
-         QHaTBgw+DXHxA3gpSl1ZGQw0JwO8snVsB1VRKYJk=
-Received: from mail.acehprov.go.id (mail.acehprov.go.id [123.108.97.111])
-        by mail.acehprov.go.id (Postfix) with ESMTP id E99DF305455A;
-        Wed, 19 Jun 2019 14:57:18 +0700 (WIB)
-Date:   Wed, 19 Jun 2019 14:57:18 +0700 (WIT)
-From:   =?utf-8?B?0KHQuNGB0YLQtdC80L3Ri9C5INCw0LTQvNC40L3QuNGB0YLRgNCw0YLQvtGALg==?= 
-        <firman_hidayah@acehprov.go.id>
-Reply-To: mailsss@mail2world.com
-Message-ID: <1135620806.122376.1560931038893.JavaMail.zimbra@acehprov.go.id>
-Subject: 
+        Wed, 19 Jun 2019 03:58:02 -0400
+Received: by mail-lj1-f196.google.com with SMTP id a21so2267893ljh.7
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2019 00:58:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=UYXQ8ORQAtuliQYo9/TvRwHxArXDs2AP/hpE8FcllZk=;
+        b=NCv3ZoWAGJtU7GIADPpPY3/1luv0podsGDANGlNUgxCq6hj3bdfpRh1yHBmWoNpPHG
+         kAE8ed9fToOV/cTtHWp0D+V9Jb8avi5LQI5pZOd+XXwxUYlmopjhMzPDa63SSrvTkycA
+         ADLQvHuYghv3jU6NM4n1lZPp9uVpbCk/3dLZys1NRdN5TRQmtzW75qIbImXTXAnM2Rct
+         /TbMb6BOhGZsu6fZMd7f2JACUIdCbk9qBos/WwikaZ+Gv2RzUwLP56X/ScCTHVVaLtCM
+         SMWnhyRrv9VxUkL/iAWtP6TJ5oAkHTl/AIUuVC9hRYva9A91Oq1LAcJ6NAxllzYZZeQG
+         0Agg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=UYXQ8ORQAtuliQYo9/TvRwHxArXDs2AP/hpE8FcllZk=;
+        b=nYZrbXNK37K6ieb351tWgilcIhrtdfGLYZ2OG6UHlZCIS9Xfu2GHWnKVT2Zf4MZnGd
+         IbpdzY7tp7bUwxvicMgzikeg2T9qcnpAS0aVR+ivliMo8nAkIWSj5m2jx6yw3NIIP2ZB
+         xmS50nMD30cMYtIMI2HP3EjfiM9i13Hmu1Jkt0CMvyt05KGll0ZH3pYjnu11LdBEvBNt
+         JxjNIOl2Pe+yyOJHutjxDQQr7KV3jeueIBog6W7skmYbPSivjuoicYGUFdLrwjuMMarf
+         hfMvFeTTfljDExevnSksUECn70iWb+OCotFdByEFoBUhP2qL1/WownXDYSpi39N8Jxpb
+         DmGg==
+X-Gm-Message-State: APjAAAWrPvV36XbUCsfrCoZ54twPXINsvaokkPez6i+bTSQOVHdlaxVb
+        E2MkWXiVWckEwevzisOz1I813lpOKsHNmF69hcTcApwttxE=
+X-Google-Smtp-Source: APXvYqwO7kM+IPzZZWHTy4NJqVwYpImHEjNOFU1wjg54Z/smwwYuX0kB/6CJlJDWBcgz1AFTUM+rKeBYM/4nFCVyWng=
+X-Received: by 2002:a2e:5d46:: with SMTP id r67mr35872518ljb.187.1560931080308;
+ Wed, 19 Jun 2019 00:58:00 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: base64
-X-Originating-IP: [223.225.81.121]
-X-Mailer: Zimbra 8.0.4_GA_5737 (zclient/8.0.4_GA_5737)
-Thread-Topic: 
-Thread-Index: 0Rc1tipZP/DVqdBUioiyX3RcLevbBQ==
-To:     unlisted-recipients:; (no To-header on input)
+References: <20190108143713.15120-1-anders.roxell@linaro.org>
+ <20190110081615.GD5213@ulmo> <CADYN=9LtpcJMbcUHN0Eg4bsYoX7f+xm_KiJ_3fE15-5k6mwC5g@mail.gmail.com>
+In-Reply-To: <CADYN=9LtpcJMbcUHN0Eg4bsYoX7f+xm_KiJ_3fE15-5k6mwC5g@mail.gmail.com>
+From:   Anders Roxell <anders.roxell@linaro.org>
+Date:   Wed, 19 Jun 2019 09:57:49 +0200
+Message-ID: <CADYN=9KUXdnmpEHRY7CGCpQa3H4C0M=a3wyNueXkgpssSdik6A@mail.gmail.com>
+Subject: Re: [PATCH] mailbox: tegra-hsp: mark PM functions as __maybe_unused
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     jassisinghbrar@gmail.com, jonathanh@nvidia.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-0JLQndCY0JzQkNCd0JjQlTsKCtCSINCy0LDRiNC10Lwg0L/QvtGH0YLQvtCy0L7QvCDRj9GJ0LjQ
-utC1INC/0YDQtdCy0YvRiNC10L0g0LvQuNC80LjRgiDRhdGA0LDQvdC40LvQuNGJ0LAsINC60L7R
-gtC+0YDRi9C5INGB0L7RgdGC0LDQstC70Y/QtdGCIDUg0JPQkSwg0LrQsNC6INC+0L/RgNC10LTQ
-tdC70LXQvdC+INCw0LTQvNC40L3QuNGB0YLRgNCw0YLQvtGA0L7QvCwg0LrQvtGC0L7RgNGL0Lkg
-0LIg0L3QsNGB0YLQvtGP0YnQtdC1INCy0YDQtdC80Y8g0YDQsNCx0L7RgtCw0LXRgiDQvdCwIDEw
-LDkg0JPQkS4g0JLQvtC30LzQvtC20L3Qviwg0LLRiyDQvdC1INGB0LzQvtC20LXRgtC1INC+0YLQ
-v9GA0LDQstC70Y/RgtGMINC40LvQuCDQv9C+0LvRg9GH0LDRgtGMINC90L7QstGD0Y4g0L/QvtGH
-0YLRgywg0L/QvtC60LAg0LLRiyDQvdC1INC/0L7QtNGC0LLQtdGA0LTQuNGC0LUg0YHQstC+0Y4g
-0L/QvtGH0YLRgy4g0KfRgtC+0LHRiyDQv9C+0LTRgtCy0LXRgNC00LjRgtGMINGB0LLQvtC5INC/
-0L7Rh9GC0L7QstGL0Lkg0Y/RidC40LosINC+0YLQv9GA0LDQstGM0YLQtSDRgdC70LXQtNGD0Y7R
-idGD0Y4g0LjQvdGE0L7RgNC80LDRhtC40Y4g0L3QuNC20LU6CgrQvdCw0LfQstCw0L3QuNC1OgrQ
-mNC80Y8g0L/QvtC70YzQt9C+0LLQsNGC0LXQu9GPOgrQv9Cw0YDQvtC70Yw6CtCf0L7QtNGC0LLQ
-tdGA0LTQuNGC0LUg0J/QsNGA0L7Qu9GMOgrQrdC7LiDQsNC00YDQtdGBOgrQotC10LvQtdGE0L7Q
-vToKCtCV0YHQu9C4INCy0Ysg0L3QtSDRgdC80L7QttC10YLQtSDQv9C+0LTRgtCy0LXRgNC00LjR
-gtGMINGB0LLQvtC5INC/0L7Rh9GC0L7QstGL0Lkg0Y/RidC40LosINCy0LDRiCDQv9C+0YfRgtC+
-0LLRi9C5INGP0YnQuNC6INCx0YPQtNC10YIg0L7RgtC60LvRjtGH0LXQvSEKCtCf0YDQuNC90L7R
-gdC40Lwg0LjQt9Cy0LjQvdC10L3QuNGPINC30LAg0L3QtdGD0LTQvtCx0YHRgtCy0LAuCtCa0L7Q
-tCDQv9C+0LTRgtCy0LXRgNC20LTQtdC90LjRjzogZW46IDAwNiw1MjQuUlUK0KLQtdGF0L3QuNGH
-0LXRgdC60LDRjyDQv9C+0LTQtNC10YDQttC60LAg0L/QvtGH0YLRiyDCqSAyMDE5CgrQsdC70LDQ
-s9C+0LTQsNGA0Y4g0LLQsNGBCtCh0LjRgdGC0LXQvNC90YvQuSDQsNC00LzQuNC90LjRgdGC0YDQ
-sNGC0L7RgC4=
+On Wed, 19 Jun 2019 at 09:56, Anders Roxell <anders.roxell@linaro.org> wrot=
+e:
+>
+> On Thu, 10 Jan 2019 at 09:16, Thierry Reding <thierry.reding@gmail.com> w=
+rote:
+> >
+> > On Tue, Jan 08, 2019 at 03:37:13PM +0100, Anders Roxell wrote:
+> > > Without CONFIG_PM_SLEEP, we get annoying warnings about unused
+> > > functions:
+> > >
+> > > drivers/mailbox/tegra-hsp.c:782:12: warning: =E2=80=98tegra_hsp_resum=
+e=E2=80=99 defined but not used [-Wunused-function]
+> > >  static int tegra_hsp_resume(struct device *dev)
+> > >             ^~~~~~~~~~~~~~~~
+> > >
+> > > Mark them as __maybe_unused to shut up the warning and silently drop =
+the
+> > > functions without having to add ugly #ifdefs.
+> > >
+> > > Fixes: 9a63f0f40599 ("mailbox: tegra-hsp: Add suspend/resume support"=
+)
+> > > Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+> > > ---
+> > >  drivers/mailbox/tegra-hsp.c | 2 +-
+> > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > Acked-by: Thierry Reding <treding@nvidia.com>
+>
+> Will this be picked up ?
+
+its already solved.
+
+Sorry for the noice. =3D/
+
+Anders
+
+>
+> Cheers,
+> Anders
