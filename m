@@ -2,71 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2A0D14B329
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 09:36:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 46CEC4B330
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 09:37:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731202AbfFSHgI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Jun 2019 03:36:08 -0400
-Received: from foss.arm.com ([217.140.110.172]:53664 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725854AbfFSHgH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Jun 2019 03:36:07 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 14CB6344;
-        Wed, 19 Jun 2019 00:36:07 -0700 (PDT)
-Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 103953F246;
-        Wed, 19 Jun 2019 00:36:05 -0700 (PDT)
-Date:   Wed, 19 Jun 2019 08:36:01 +0100
-From:   Mark Rutland <mark.rutland@arm.com>
-To:     Palmer Dabbelt <palmer@sifive.com>
-Cc:     linux-riscv@lists.infradead.org,
-        Paul Walmsley <paul.walmsley@sifive.com>, marco@decred.org,
-        me@carlosedp.com, joel@sing.id.au, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] RISC-V: Break load reservations during switch_to
-Message-ID: <20190619073600.GA29918@lakrids.cambridge.arm.com>
-References: <20190607222222.15300-1-palmer@sifive.com>
+        id S1731225AbfFSHhB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Jun 2019 03:37:01 -0400
+Received: from twhmllg3.macronix.com ([122.147.135.201]:54836 "EHLO
+        TWHMLLG3.macronix.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725854AbfFSHg5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Jun 2019 03:36:57 -0400
+Received: from twhfmlp1.macronix.com (twhfm1p1.macronix.com [172.17.20.91])
+        by TWHMLLG3.macronix.com with ESMTP id x5J7aIhW016432;
+        Wed, 19 Jun 2019 15:36:18 +0800 (GMT-8)
+        (envelope-from masonccyang@mxic.com.tw)
+Received: from MXML06C.mxic.com.tw (mxml06c.macronix.com [172.17.14.55])
+        by Forcepoint Email with ESMTP id AEE003E5F394D6571948;
+        Wed, 19 Jun 2019 15:36:18 +0800 (CST)
+In-Reply-To: <2671d488-82a1-8720-d9a1-03554d955a38@gmail.com>
+References: <1558423174-10748-1-git-send-email-masonccyang@mxic.com.tw> <1558423174-10748-4-git-send-email-masonccyang@mxic.com.tw> <0e2994d6-6efc-9f36-f681-609199f20b9f@cogentembedded.com> <20190603130428.GX4797@dell> <02addf64-9f6e-ccc1-2f94-8983456e3ebc@cogentembedded.com> <OFDA7648A0.F1733EA5-ON48258411.002946DF-48258411.002A2F0D@mxic.com.tw> <2671d488-82a1-8720-d9a1-03554d955a38@gmail.com>
+To:     "Marek Vasut" <marek.vasut@gmail.com>
+Cc:     bbrezillon@kernel.org, broonie@kernel.org,
+        devicetree@vger.kernel.org,
+        "Geert Uytterhoeven" <geert+renesas@glider.be>,
+        "Simon Horman" <horms@verge.net.au>, juliensu@mxic.com.tw,
+        "Lee Jones" <lee.jones@linaro.org>, linux-kernel@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, linux-spi@vger.kernel.org,
+        mark.rutland@arm.com, miquel.raynal@bootlin.com,
+        robh+dt@kernel.org,
+        "Sergei Shtylyov" <sergei.shtylyov@cogentembedded.com>
+Subject: Re: [PATCH v13 3/3] dt-bindings: mfd: Document Renesas R-Car Gen3 RPC-IF
+ controller bindings
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190607222222.15300-1-palmer@sifive.com>
-User-Agent: Mutt/1.11.1+11 (2f07cb52) (2018-12-01)
+X-KeepSent: E8CD77A1:CDBE040B-4825841E:00288DA8;
+ type=4; name=$KeepSent
+X-Mailer: Lotus Notes Release 8.5.3FP4 SHF90 June 10, 2013
+Message-ID: <OFE8CD77A1.CDBE040B-ON4825841E.00288DA8-4825841E.0029C76F@mxic.com.tw>
+From:   masonccyang@mxic.com.tw
+Date:   Wed, 19 Jun 2019 15:36:20 +0800
+X-MIMETrack: Serialize by Router on MXML06C/TAIWAN/MXIC(Release 9.0.1FP10 HF265|July 25, 2018) at
+ 2019/06/19 PM 03:36:18,
+        Serialize complete at 2019/06/19 PM 03:36:18
+Content-Type: text/plain; charset="US-ASCII"
+X-MAIL: TWHMLLG3.macronix.com x5J7aIhW016432
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 07, 2019 at 03:22:22PM -0700, Palmer Dabbelt wrote:
-> The comment describes why in detail.  This was found because QEMU never
-> gives up load reservations, the issue is unlikely to manifest on real
-> hardware.
+
+Hi Marek, 
+
+> Subject
 > 
-> Thanks to Carlos Eduardo for finding the bug!
+> Re: [PATCH v13 3/3] dt-bindings: mfd: Document Renesas R-Car Gen3 RPC-IF 
 
-> @@ -330,6 +330,17 @@ ENTRY(__switch_to)
->  	add   a3, a0, a4
->  	add   a4, a1, a4
->  	REG_S ra,  TASK_THREAD_RA_RA(a3)
-> +	/*
-> +	 * The Linux ABI allows programs to depend on load reservations being
-> +	 * broken on context switches, but the ISA doesn't require that the
-> +	 * hardware ever breaks a load reservation.  The only way to break a
-> +	 * load reservation is with a store conditional, so we emit one here.
-> +	 * Since nothing ever takes a load reservation on TASK_THREAD_RA_RA we
-> +	 * know this will always fail, but just to be on the safe side this
-> +	 * writes the same value that was unconditionally written by the
-> +	 * previous instruction.
-> +	 */
+> controller bindings
+> 
+> On 6/6/19 9:40 AM, masonccyang@mxic.com.tw wrote:
+> [...]
+> 
+> > RPC-IF works either in SPI or HyperFlash is decided by external 
+hardware 
+> > pins 
+> > configuration and it can NOT switch it's operation mode in the run 
+time. 
+> > This is not like my understanding of MFD.
+> 
+> Which external hardware pins decide the RPC configuration ?
+> 
+> It seems to me like PHYCNT register, PHYMEM bitfield, selects what
+> device is connected, and then a couple of other bits control the
+> communication, but I see nothing which would be tied to any external
+> configuration pins.
+> 
 
-I suspect that you need to do the same as 32-bit ARM, and clear this in
-your exception return path, rather than in __switch_to, since handlers
-for interrupts and other exceptions could leave a dangling reservation.
+You may refer to R-Car D3 Draak Eva. board hardware manual 
+and start-up guide, i.e., 
+Table 2.12 Pin Multiplexing of R-Car D3 Mode setting pins and
+set by hardware switch 1, 2, 3, 13, 31 and 10 to configure
+booting from SPI mode or HyperFlash mode.
 
-For ARM, the architecture permits a store-exclusive to succeed even if
-the address differed from the load-exclusive. I don't know if the same
-applies here, but regardless I believe the case above applies if an IRQ
-is taken from kernel context, since the handler can manipulate the same
-variable as the interrupted code.
+thanks & best regards,
+Mason
 
-Thanks,
-Mark.
+CONFIDENTIALITY NOTE:
+
+This e-mail and any attachments may contain confidential information 
+and/or personal data, which is protected by applicable laws. Please be 
+reminded that duplication, disclosure, distribution, or use of this e-mail 
+(and/or its attachments) or any part thereof is prohibited. If you receive 
+this e-mail in error, please notify us immediately and delete this mail as 
+well as its attachment(s) from your system. In addition, please be 
+informed that collection, processing, and/or use of personal data is 
+prohibited unless expressly permitted by personal data protection laws. 
+Thank you for your attention and cooperation.
+
+Macronix International Co., Ltd.
+
+=====================================================================
+
+
+
+============================================================================
+
+CONFIDENTIALITY NOTE:
+
+This e-mail and any attachments may contain confidential information and/or personal data, which is protected by applicable laws. Please be reminded that duplication, disclosure, distribution, or use of this e-mail (and/or its attachments) or any part thereof is prohibited. If you receive this e-mail in error, please notify us immediately and delete this mail as well as its attachment(s) from your system. In addition, please be informed that collection, processing, and/or use of personal data is prohibited unless expressly permitted by personal data protection laws. Thank you for your attention and cooperation.
+
+Macronix International Co., Ltd.
+
+=====================================================================
+
