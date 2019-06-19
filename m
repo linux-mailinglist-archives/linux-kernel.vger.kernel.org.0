@@ -2,117 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A3764B2EA
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 09:16:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A69004B2AE
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 09:11:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730982AbfFSHQG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Jun 2019 03:16:06 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:39212 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725946AbfFSHQG (ORCPT
+        id S1730888AbfFSHLB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Jun 2019 03:11:01 -0400
+Received: from mail-io1-f71.google.com ([209.85.166.71]:44067 "EHLO
+        mail-io1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725946AbfFSHLB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Jun 2019 03:16:06 -0400
-Received: by mail-pl1-f196.google.com with SMTP id b7so6817090pls.6
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2019 00:16:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:subject:to:cc:references:in-reply-to:mime-version
-         :user-agent:message-id:content-transfer-encoding;
-        bh=sNH3esuo89MvVnkmn0pBqZBXKoLraPEAQm1KehvPJ+A=;
-        b=rjbVsfxt9ERQsJXWee+b5RBgj6pFFU/IJp7Cj3eX9eC9jBjMnzteAgKHvn/24xy9f6
-         h2XDU1eS1RkeOKM2zMnm/xgaQUmlejdoNBZTTqRlo2HE5WsNSGX/D3N9d4mKF8po7WDr
-         t8PwQEUIOrTHiychpBhRpTl39fhcgOxxfcUBtNFoeMWJDD4fwMLToYaB6q5FOBlceNVy
-         xNlcGaULm9R1xKuigoLTcQWwDk06EpI+L6fBwkzUeMbqh2C5giP0oYmUBenJt1gM9pRD
-         MvwgUIjaWr/EMSKV5b4KYssnIXwkzKRgtDKnwfA85/mCnBYmvVicnXxj/CcAyfwBFbDK
-         3TmA==
+        Wed, 19 Jun 2019 03:11:01 -0400
+Received: by mail-io1-f71.google.com with SMTP id i133so19651187ioa.11
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2019 00:11:01 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:subject:to:cc:references:in-reply-to
-         :mime-version:user-agent:message-id:content-transfer-encoding;
-        bh=sNH3esuo89MvVnkmn0pBqZBXKoLraPEAQm1KehvPJ+A=;
-        b=R8rdYTVWaio5JDzHiSMB8hfrhBakUDgB0i2xXTljZO61HQXL+BEi0nYm5m8OTJmG+d
-         nAXPqnX6xtUUlvZIBmIeF0hrr8sLl3a08MtSvzBbiqNg3DVmVd2o6LCD3Nn7UVwLX8Ox
-         MA/n+d+WWDIpCJOMd5V9vs08yZE287GvqVn1fRv8KI9rdua8UspYF2eYQ3ZnZJsYcwIh
-         IAN3CLYImKrVpTFKbLAmPWM+5RxBD06lDFTKckI0Ou56KkxoP3ClB8F09qmrig0h+lt+
-         6+8aMuGMB11IPYA+762J48eVpOAUmfxX4cjRBXvzgwCy/P5oBELZT6QTKEs/fZkH0uJs
-         o5xQ==
-X-Gm-Message-State: APjAAAX4OZgKMhd6oH3I3B8cJ9uVXdWoGqptxxGIMmpianIpsKLAfy76
-        cfeCeoY4HUJQrMW872+HSvfC9vLv
-X-Google-Smtp-Source: APXvYqznH/Lv//49vNUEP8+M16EK9CA4iLmPTEN5+8c+5GM5h3VHXyjcSWO57rMh5hqlHbGTuV64MA==
-X-Received: by 2002:a17:902:e082:: with SMTP id cb2mr266867plb.274.1560928565577;
-        Wed, 19 Jun 2019 00:16:05 -0700 (PDT)
-Received: from localhost (193-116-92-108.tpgi.com.au. [193.116.92.108])
-        by smtp.gmail.com with ESMTPSA id x5sm885939pjp.21.2019.06.19.00.16.03
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 19 Jun 2019 00:16:04 -0700 (PDT)
-Date:   Wed, 19 Jun 2019 17:10:52 +1000
-From:   Nicholas Piggin <npiggin@gmail.com>
-Subject: Re: [PATCH 4/7] powerpc/ftrace: Additionally nop out the preceding
- mflr with -mprofile-kernel
-To:     Masami Hiramatsu <mhiramat@kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
-        Steven Rostedt <rostedt@goodmis.org>
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-References: <cover.1560868106.git.naveen.n.rao@linux.vnet.ibm.com>
-        <72492bc769cd6f40a536e689fc3195570d07fd5c.1560868106.git.naveen.n.rao@linux.vnet.ibm.com>
-        <877e9idum7.fsf@concordia.ellerman.id.au>
-In-Reply-To: <877e9idum7.fsf@concordia.ellerman.id.au>
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=dA0fKhI3N29hx55QN7yMpshQ+ovUMn3cPeA5Fhie0RE=;
+        b=SBQEyM8XUj7IDVjQp4BuKaz034DB92LZ+QcaZixT2aLRdA5kJqE0PBFZ/F0dF24KwZ
+         r4YrD2QJyWUeL25LTMzSJOggDDgEHVgGY07fT/x4Gr8mDL9QjMtx39bqw1mSf5o4w+Su
+         ZcuBc5CU07lAkodTgPU2jHMOsWlQWKl3xyMCW6mI0bJeTA5pzRLsxibIQ+mH0oslyR9A
+         q+FNDkYILI3wzgmdI0Ws1UxUyVRJYkb3maZn2etEtkDyfAdJLK3J8H52gel5XaNGru95
+         pkJn4ompdkydewdMZJ9rU6plZC/eAcP/KDRsXjLlYd5/UfNTPNkUxw97PeOgu/EfprHY
+         o0TA==
+X-Gm-Message-State: APjAAAU10/LkYX2GDx8YAWK55nJHzivf5PctSTLJX/AZWPSiL21OhW4n
+        K8NEI5xgGpQN8LSUUNHk/aOR/9hrR45HvpdKAoU/uD+7Rdvw
+X-Google-Smtp-Source: APXvYqzkZp+PQ3mAuNYicnp5VPclFiKPKMckf04v2MwIJjKZTDInYOMm5BJwnLwOHlRr8iun7rJpj/mL0PeHTluH7712LhbuVY20
 MIME-Version: 1.0
-User-Agent: astroid/0.14.0 (https://github.com/astroidmail/astroid)
-Message-Id: <1560927184.kqsg9x9bd1.astroid@bobo.none>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+X-Received: by 2002:a05:6602:2248:: with SMTP id o8mr17747825ioo.90.1560928260665;
+ Wed, 19 Jun 2019 00:11:00 -0700 (PDT)
+Date:   Wed, 19 Jun 2019 00:11:00 -0700
+In-Reply-To: <CAOQ4uxh9ZWghUNS3i_waNq5huitwwypEwY9xEWddFo1JHYu88g@mail.gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000803cc4058ba7eef7@google.com>
+Subject: Re: WARNING in fanotify_handle_event
+From:   syzbot <syzbot+c277e8e2f46414645508@syzkaller.appspotmail.com>
+To:     amir73il@gmail.com, jack@suse.cz, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mbobrowski@mbobrowski.org,
+        syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Michael Ellerman's on June 19, 2019 3:14 pm:
-> Hi Naveen,
->=20
-> Sorry I meant to reply to this earlier .. :/
->=20
-> "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com> writes:
->> With -mprofile-kernel, gcc emits 'mflr r0', followed by 'bl _mcount' to
->> enable function tracing and profiling. So far, with dynamic ftrace, we
->> used to only patch out the branch to _mcount(). However, mflr is
->> executed by the branch unit that can only execute one per cycle on
->> POWER9 and shared with branches, so it would be nice to avoid it where
->> possible.
->>
->> We cannot simply nop out the mflr either. When enabling function
->> tracing, there can be a race if tracing is enabled when some thread was
->> interrupted after executing a nop'ed out mflr. In this case, the thread
->> would execute the now-patched-in branch to _mcount() without having
->> executed the preceding mflr.
->>
->> To solve this, we now enable function tracing in 2 steps: patch in the
->> mflr instruction, use synchronize_rcu_tasks() to ensure all existing
->> threads make progress, and then patch in the branch to _mcount(). We
->> override ftrace_replace_code() with a powerpc64 variant for this
->> purpose.
->=20
-> According to the ISA we're not allowed to patch mflr at runtime. See the
-> section on "CMODX".
+Hello,
 
-According to "quasi patch class" engineering note, we can patch
-anything with a preferred nop. But that's written as an optional
-facility, which we don't have a feature to test for.
+syzbot has tested the proposed patch and the reproducer did not trigger  
+crash:
 
->=20
-> I'm also not convinced the ordering between the two patches is
-> guaranteed by the ISA, given that there's possibly no isync on the other
-> CPU.
+Reported-and-tested-by:  
+syzbot+c277e8e2f46414645508@syzkaller.appspotmail.com
 
-Will they go through a context synchronizing event?
+Tested on:
 
-synchronize_rcu_tasks() should ensure a thread is scheduled away, but
-I'm not actually sure it guarantees CSI if it's kernel->kernel. Could
-do a smp_call_function to do the isync on each CPU to be sure.
+commit:         a6a3fd5c fanotify: update connector fsid cache on add mark
+git tree:       https://github.com/amir73il/linux.git  
+fsnotify-fix-fsid-cache
+kernel config:  https://syzkaller.appspot.com/x/.config?x=fa9f7e1b6a8bb586
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
 
-Thanks,
-Nick
-
-=
+Note: testing is done by a robot and is best-effort only.
