@@ -2,85 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 913E44AF4D
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 03:05:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ED0204AF57
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 03:09:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729755AbfFSBFZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Jun 2019 21:05:25 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:51248 "EHLO inva020.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726037AbfFSBFY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Jun 2019 21:05:24 -0400
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 331FD1A0126;
-        Wed, 19 Jun 2019 03:05:23 +0200 (CEST)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id A71BD1A04E6;
-        Wed, 19 Jun 2019 03:05:18 +0200 (CEST)
-Received: from localhost.localdomain (mega.ap.freescale.net [10.192.208.232])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 2DF46402F0;
-        Wed, 19 Jun 2019 09:05:13 +0800 (SGT)
-From:   Anson.Huang@nxp.com
-To:     shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
-        festevam@gmail.com, leonard.crestez@nxp.com, abel.vesa@nxp.com,
-        viresh.kumar@linaro.org, linux-arm-kernel@lists.infradead.org,
+        id S1729449AbfFSBJK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Jun 2019 21:09:10 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:36508 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725988AbfFSBJK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 18 Jun 2019 21:09:10 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5J14MIZ192415;
+        Wed, 19 Jun 2019 01:09:04 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
+ from : references : date : in-reply-to : message-id : mime-version :
+ content-type; s=corp-2018-07-02;
+ bh=O0Ag6RZRGGfE7EiTJNqvl7FmPVNtYsR6M0cJqHhvRaQ=;
+ b=ALiwAPeHZpWcQeuIU/Mw8YWcHJAqhKvNc03R+vD3Cs0hShAYykcS9Jm9olLHk3qoOgXg
+ KJVoGBCzJwcX9ukQqnBrKlCPF6BSBYJ6Kb8Mj2UI12qb8ywbabgV40WzNS+ZyZA2Mqo7
+ 53QywJU5BHQF6yfqlgNHrr6Aact1yLyfETrV4x8K5wagWXjJ3+27cxCY3ynYPPt6LPIo
+ L/lu87YGuVgOSkZlqdlrlih9R5+cnsSmqkYs0FOy0MSe08fpOm5eW51gjRt0JzgmaGYG
+ 5B9YOpBiuhSGVKRXSucurFnqeZurTLBxDhWGFVAe6Ozw8Udv6cxw9Y7Y9liQMBljjcOX IA== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by userp2130.oracle.com with ESMTP id 2t78098fyp-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 19 Jun 2019 01:09:03 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5J17dQ8051946;
+        Wed, 19 Jun 2019 01:09:03 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserp3030.oracle.com with ESMTP id 2t77yn1yxb-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 19 Jun 2019 01:09:03 +0000
+Received: from abhmp0016.oracle.com (abhmp0016.oracle.com [141.146.116.22])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x5J192bR005720;
+        Wed, 19 Jun 2019 01:09:02 GMT
+Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 18 Jun 2019 18:09:01 -0700
+To:     Branden Bonaby <brandonbonaby94@gmail.com>
+Cc:     kys@microsoft.com, haiyangz@microsoft.com, sthemmin@microsoft.com,
+        sashal@kernel.org, jejb@linux.ibm.com, martin.petersen@oracle.com,
+        linux-hyperv@vger.kernel.org, linux-scsi@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Cc:     Linux-imx@nxp.com
-Subject: [PATCH V2] soc: imx: Add i.MX8MN SoC driver support
-Date:   Wed, 19 Jun 2019 09:07:08 +0800
-Message-Id: <20190619010708.31412-1-Anson.Huang@nxp.com>
-X-Mailer: git-send-email 2.17.1
-X-Virus-Scanned: ClamAV using ClamSMTP
+Subject: Re: [PATCH] scsi: storvsc: Add ability to change scsi queue depth
+From:   "Martin K. Petersen" <martin.petersen@oracle.com>
+Organization: Oracle Corporation
+References: <20190614234822.5193-1-brandonbonaby94@gmail.com>
+Date:   Tue, 18 Jun 2019 21:08:59 -0400
+In-Reply-To: <20190614234822.5193-1-brandonbonaby94@gmail.com> (Branden
+        Bonaby's message of "Fri, 14 Jun 2019 19:48:22 -0400")
+Message-ID: <yq1fto6xtxw.fsf@oracle.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1.92 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9292 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=798
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1906190007
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9292 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=862 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1906190007
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Anson Huang <Anson.Huang@nxp.com>
 
-This patch adds i.MX8MN SoC driver support:
+Branden,
 
-root@imx8mnevk:~# cat /sys/devices/soc0/family
-Freescale i.MX
+> Adding functionality to allow the SCSI queue depth to be changed, by
+> utilizing the "scsi_change_queue_depth" function.
 
-root@imx8mnevk:~# cat /sys/devices/soc0/machine
-NXP i.MX8MNano DDR4 EVK board
+Applied to 5.3/scsi-queue. Please run checkpatch before submission. I
+fixed it up this time.
 
-root@imx8mnevk:~# cat /sys/devices/soc0/soc_id
-i.MX8MN
+Thanks!
 
-root@imx8mnevk:~# cat /sys/devices/soc0/revision
-1.0
-
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
----
-Changes since V1:
-	- i.MX8MN's anatop is fully compatible with i.MX8MM, so just use "fsl,imx8mm-anatop" as fallback
-	  compatible in i.MX8MN DT can avoid the machine check.
----
- drivers/soc/imx/soc-imx8.c | 6 ++++++
- 1 file changed, 6 insertions(+)
-
-diff --git a/drivers/soc/imx/soc-imx8.c b/drivers/soc/imx/soc-imx8.c
-index 315311f..f924ae8 100644
---- a/drivers/soc/imx/soc-imx8.c
-+++ b/drivers/soc/imx/soc-imx8.c
-@@ -79,9 +79,15 @@ static const struct imx8_soc_data imx8mm_soc_data = {
- 	.soc_revision = imx8mm_soc_revision,
- };
- 
-+static const struct imx8_soc_data imx8mn_soc_data = {
-+	.name = "i.MX8MN",
-+	.soc_revision = imx8mm_soc_revision,
-+};
-+
- static const struct of_device_id imx8_soc_match[] = {
- 	{ .compatible = "fsl,imx8mq", .data = &imx8mq_soc_data, },
- 	{ .compatible = "fsl,imx8mm", .data = &imx8mm_soc_data, },
-+	{ .compatible = "fsl,imx8mn", .data = &imx8mn_soc_data, },
- 	{ }
- };
- 
 -- 
-2.7.4
-
+Martin K. Petersen	Oracle Linux Engineering
