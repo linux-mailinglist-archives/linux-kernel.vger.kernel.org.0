@@ -2,111 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 17A704BB6F
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 16:27:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7853B4BC64
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 17:06:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730613AbfFSO07 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Jun 2019 10:26:59 -0400
-Received: from gateway30.websitewelcome.com ([192.185.179.30]:35053 "EHLO
-        gateway30.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729423AbfFSO06 (ORCPT
+        id S1730240AbfFSPGZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Jun 2019 11:06:25 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:42077 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729179AbfFSPGY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Jun 2019 10:26:58 -0400
-Received: from cm13.websitewelcome.com (cm13.websitewelcome.com [100.42.49.6])
-        by gateway30.websitewelcome.com (Postfix) with ESMTP id DAF17329E46B
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2019 09:26:57 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id dbY9huOwyYTGMdbY9hq1H0; Wed, 19 Jun 2019 09:26:57 -0500
-X-Authority-Reason: nr=8
-Received: from cablelink-187-160-61-213.pcs.intercable.net ([187.160.61.213]:37806 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.92)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1hdbY8-0025CT-Tf; Wed, 19 Jun 2019 09:26:56 -0500
-Date:   Wed, 19 Jun 2019 09:26:55 -0500
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc:     linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] Input: gpio_keys_polled - use struct_size() in devm_kzalloc()
-Message-ID: <20190619142655.GA20218@embeddedor>
+        Wed, 19 Jun 2019 11:06:24 -0400
+Received: by mail-lj1-f194.google.com with SMTP id t28so1350994lje.9
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2019 08:06:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lixom-net.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=nDfkV8NBGFiURwassxD7ytfC0t1CNDepFq+TNmyLZT8=;
+        b=oqMO/sHA/5NxzzT0yRXmVS1fov/gCBmlfxV3B0SZ3ubCH3qvBQq6dq2bhZA/OUg3Xv
+         1mwhfi7d8DblOgSZg2KH27JNOEFCkUGTmTIjqBQa5tkKbJRLWZLzYFT16hcJh+j/Syp+
+         29LEvGQIXavrXVXrXbaS/KFO2Wit0+kCy7JgfWxWX69KL6iZth0DCR3slFQqOx6/HW4V
+         LdXg/GimvZP4Ccsge79zv2H1Ozk8Mif58qENy+l8WgHm4+SvduSJkkwCYioICI7g0ggr
+         6dyQdufK1G3ho2rZBJi6gxJqSqooFfquIN1xmQ/iAGtGW0gnqs1RAE2rGfofviAc1my7
+         wvMg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=nDfkV8NBGFiURwassxD7ytfC0t1CNDepFq+TNmyLZT8=;
+        b=cpqijaWhrp7tz/TsSQ5AYSI6jS5vlkK4z3gYGLRpv1SVhUgVWNkjDJezXG7tmnLpXW
+         Q7ruySISHQRRNnLPpPAkWvLJJ00TFOECoxmGuRh9c2IOsdNIReeI5DNcVhUOp6DJ/kvP
+         18EgzrGH2Ozm+VU02+zPt/EKanXsZOYg/xv8kSQuMGoXqvTKEPghwUwHC96lk2bozhHv
+         97SIblh0YmQdsZeke5NqRdGuoEyCdnb2VqNxH7zA1hy5xvron7wUwcDUu9fHaA9ACBsb
+         vwnELv2Vz4HGeAmxHATt5QAhBHY4MJQjEpM+SUdBS0uz9prJEDz1WUKV/w2m5MAlLqpD
+         kGYA==
+X-Gm-Message-State: APjAAAVHDmWICMcTelGZSqHedbZWVIw5I6Jpk6m3PxFqaey7ByH4rJsR
+        jfFryWCW74G8S2cHDTmMYBRWFLYB++PRrg==
+X-Google-Smtp-Source: APXvYqwiPMgPFpFbn6wMYwgtQdGcIZYTj3+AlxXKYiQQRRTPfzxTxIpULnMpbXQpRHYQpiV76HJLNw==
+X-Received: by 2002:a2e:5b0f:: with SMTP id p15mr48417670ljb.82.1560956783120;
+        Wed, 19 Jun 2019 08:06:23 -0700 (PDT)
+Received: from localhost (h85-30-9-151.cust.a3fiber.se. [85.30.9.151])
+        by smtp.gmail.com with ESMTPSA id p2sm1747407lfc.89.2019.06.19.08.06.21
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 19 Jun 2019 08:06:22 -0700 (PDT)
+Date:   Wed, 19 Jun 2019 07:27:22 -0700
+From:   Olof Johansson <olof@lixom.net>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     arm@kernel.org, Nathan Chancellor <natechancellor@gmail.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Paul Walmsley <paul@pwsan.com>, linux-omap@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ARM: omap2: remove incorrect __init annotation
+Message-ID: <20190619142722.hsujtf3svd7p2pt4@localhost>
+References: <20190619130529.1502322-1-arnd@arndb.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 187.160.61.213
-X-Source-L: No
-X-Exim-ID: 1hdbY8-0025CT-Tf
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: cablelink-187-160-61-213.pcs.intercable.net (embeddedor) [187.160.61.213]:37806
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 7
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+In-Reply-To: <20190619130529.1502322-1-arnd@arndb.de>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-One of the more common cases of allocation size calculations is finding
-the size of a structure that has a zero-sized array at the end, along
-with memory for some number of elements for that array. For example:
+On Wed, Jun 19, 2019 at 03:04:54PM +0200, Arnd Bergmann wrote:
+> omap3xxx_prm_enable_io_wakeup() is marked __init, but its caller is not, so
+> we get a warning with clang-8:
+> 
+> WARNING: vmlinux.o(.text+0x343c8): Section mismatch in reference from the function omap3xxx_prm_late_init() to the function .init.text:omap3xxx_prm_enable_io_wakeup()
+> The function omap3xxx_prm_late_init() references
+> the function __init omap3xxx_prm_enable_io_wakeup().
+> This is often because omap3xxx_prm_late_init lacks a __init
+> annotation or the annotation of omap3xxx_prm_enable_io_wakeup is wrong.
+> 
+> When building with gcc, omap3xxx_prm_enable_io_wakeup() is always
+> inlined, so we never noticed in the past.
+> 
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> Reviewed-by: Nathan Chancellor <natechancellor@gmail.com>
+> Acked-by: Tony Lindgren <tony@atomide.com>
 
-struct gpio_keys_polled_dev {
-	...
-        struct gpio_keys_button_data data[0];
-};
+Applied to fixes. Thanks!
 
-size = sizeof(struct gpio_keys_polled_dev) + count * sizeof(struct gpio_keys_button_data);
-instance = devm_kzalloc(dev, size, GFP_KERNEL);
 
-Instead of leaving these open-coded and prone to type mistakes, we can
-now use the new struct_size() helper:
-
-instance = devm_kzalloc(dev, struct_size(instance, data, count), GFP_KERNEL);
-
-Notice that, in this case, variable size is not necessary, hence it
-is removed.
-
-This code was detected with the help of Coccinelle.
-
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- drivers/input/keyboard/gpio_keys_polled.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/input/keyboard/gpio_keys_polled.c b/drivers/input/keyboard/gpio_keys_polled.c
-index edc7262103b9..c4087be0c2e0 100644
---- a/drivers/input/keyboard/gpio_keys_polled.c
-+++ b/drivers/input/keyboard/gpio_keys_polled.c
-@@ -235,7 +235,6 @@ static int gpio_keys_polled_probe(struct platform_device *pdev)
- 	struct gpio_keys_polled_dev *bdev;
- 	struct input_polled_dev *poll_dev;
- 	struct input_dev *input;
--	size_t size;
- 	int error;
- 	int i;
- 
-@@ -250,9 +249,8 @@ static int gpio_keys_polled_probe(struct platform_device *pdev)
- 		return -EINVAL;
- 	}
- 
--	size = sizeof(struct gpio_keys_polled_dev) +
--			pdata->nbuttons * sizeof(struct gpio_keys_button_data);
--	bdev = devm_kzalloc(dev, size, GFP_KERNEL);
-+	bdev = devm_kzalloc(dev, struct_size(bdev, data, pdata->nbuttons),
-+			    GFP_KERNEL);
- 	if (!bdev) {
- 		dev_err(dev, "no memory for private data\n");
- 		return -ENOMEM;
--- 
-2.21.0
-
+-Olof
