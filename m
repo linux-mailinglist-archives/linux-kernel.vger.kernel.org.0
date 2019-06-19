@@ -2,128 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CD7064BE78
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 18:42:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5EBD54BE11
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 18:28:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729938AbfFSQm4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Jun 2019 12:42:56 -0400
-Received: from mail180-24.suw31.mandrillapp.com ([198.2.180.24]:56391 "EHLO
-        mail180-24.suw31.mandrillapp.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725843AbfFSQmz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Jun 2019 12:42:55 -0400
-X-Greylist: delayed 900 seconds by postgrey-1.27 at vger.kernel.org; Wed, 19 Jun 2019 12:42:54 EDT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; s=mandrill; d=nexedi.com;
- h=From:Subject:To:Cc:Message-Id:References:In-Reply-To:Date:MIME-Version:Content-Type:Content-Transfer-Encoding; i=kirr@nexedi.com;
- bh=fV7NQkOm47Fi2EjqYPKStwQJEWlNbrKyKdGaNA4YDHc=;
- b=Q5bY2sFh3B5MqFCAkB0DD53mk0btrJsrX8O1tKvCe2+IlI3r0uzwTwduKO4bKCkyurmpjyY5US9x
-   FfeZbOdOQd48vkbroc1EpECJqgwYrPgUjeC86i5Rhg4TmVBdWnCMKeizXnUNHkBClnmmgX8GFL8E
-   CzlsHit3U6YntaskkAY=
-Received: from pmta03.mandrill.prod.suw01.rsglab.com (127.0.0.1) by mail180-24.suw31.mandrillapp.com id h19j0s22sc06 for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2019 16:27:53 +0000 (envelope-from <bounce-md_31050260.5d0a6289.v1-bf199a7d311746269764e1f8955aa275@mandrillapp.com>)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mandrillapp.com; 
- i=@mandrillapp.com; q=dns/txt; s=mandrill; t=1560961673; h=From : 
- Subject : To : Cc : Message-Id : References : In-Reply-To : Date : 
- MIME-Version : Content-Type : Content-Transfer-Encoding : From : 
- Subject : Date : X-Mandrill-User : List-Unsubscribe; 
- bh=fV7NQkOm47Fi2EjqYPKStwQJEWlNbrKyKdGaNA4YDHc=; 
- b=W7qBgaaNz34EPnx48sOEFAXxcFbilh/31qdpg+aLcmxvNJhwGavd3T7rEQfKhxIyh9n+Xu
- M/LOkpq9g1VinIo9jBl97WB34OIWLCn5HztLIViK1zp3XgNC2uFyKWGWE41JOx2uxKf9jBrA
- flZ+mpJotM0momx802Um6eQphtI84=
-From:   Kirill Smelkov <kirr@nexedi.com>
-Subject: Re: [PATCH] pci/switchtec: fix stream_open.cocci warnings (fwd)
-Received: from [87.98.221.171] by mandrillapp.com id bf199a7d311746269764e1f8955aa275; Wed, 19 Jun 2019 16:27:53 +0000
-To:     Julia Lawall <julia.lawall@lip6.fr>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc:     Kurt Schwemmer <kurt.schwemmer@microsemi.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Bjorn Helgaas <helgaas@kernel.org>,
-        <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kbuild-all@01.org>
-Message-Id: <20190619162713.GA19859@deco.navytux.spb.ru>
-References: <alpine.DEB.2.20.1906191227430.3726@hadrien>
-In-Reply-To: <alpine.DEB.2.20.1906191227430.3726@hadrien>
-X-Report-Abuse: Please forward a copy of this message, including all headers, to abuse@mandrill.com
-X-Report-Abuse: You can also report abuse here: http://mandrillapp.com/contact/abuse?id=31050260.bf199a7d311746269764e1f8955aa275
-X-Mandrill-User: md_31050260
-Date:   Wed, 19 Jun 2019 16:27:53 +0000
+        id S1730106AbfFSQ2N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Jun 2019 12:28:13 -0400
+Received: from lhrrgout.huawei.com ([185.176.76.210]:33028 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726251AbfFSQ2M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Jun 2019 12:28:12 -0400
+Received: from LHREML710-CAH.china.huawei.com (unknown [172.18.7.106])
+        by Forcepoint Email with ESMTP id 980B6A667165A875910C;
+        Wed, 19 Jun 2019 17:28:08 +0100 (IST)
+Received: from [127.0.0.1] (10.202.227.157) by LHREML710-CAH.china.huawei.com
+ (10.201.108.33) with Microsoft SMTP Server id 14.3.408.0; Wed, 19 Jun 2019
+ 17:27:58 +0100
+Subject: Re: [PATCH] arm64: dts: hisilicon: Switch to SPDX header
+To:     Lubomir Rintel <lkundrak@v3.sk>
+CC:     Pengcheng Li <lipengcheng8@huawei.com>,
+        Leo Yan <leo.yan@linaro.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20190611072009.2978447-1-lkundrak@v3.sk>
+From:   Wei Xu <xuwei5@hisilicon.com>
+Message-ID: <52f3ed62-79c0-2730-03c6-f480b0558af2@hisilicon.com>
+Date:   Wed, 19 Jun 2019 17:27:58 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20190611072009.2978447-1-lkundrak@v3.sk>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.202.227.157]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Julia, everyone.
+Hi Lubomir,
 
-On Wed, Jun 19, 2019 at 12:28:47PM +0200, Julia Lawall wrote:
-> Hi,
+On 6/11/2019 8:20 AM, Lubomir Rintel wrote:
+> The original license text had a typo ("publishhed") which would be
+> likely to confuse automated licensing auditing tools. Let's just switch
+> to SPDX instead of fixing the wording.
 > 
-> Can you forward this patch to the people below if you think it is
-> appropriate?
+> Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
 
-Yes, this patch is appropriate. It was actually part of
-git.kernel.org/linus/c5bf68fe0c86 . It should be safe, (and desirable as
-it removes a chance for deadlock) to apply it. 
+Thanks!
+I found linux-next has already fix this.
 
-Sebastian, Kurt, Logan, Bjorn, please consider picking it up.
+Best Regards,
+Wei
 
-> Could I tell the kbuild people to add you to the CC list for
-> this semantic patch?
-
-Yes, sure. Please feel free to add me to CC list for stream_open.cocci
-related patches.
-
-Kirill
-
-
-> thanks,
-> julia
-> 
-> ---------- Forwarded message ----------
-> Date: Wed, 19 Jun 2019 18:23:18 +0800
-> From: kbuild test robot <lkp@intel.com>
-> To: kbuild@01.org
-> Cc: Julia Lawall <julia.lawall@lip6.fr>
-> Subject: [PATCH] pci/switchtec: fix stream_open.cocci warnings
-> 
-> CC: kbuild-all@01.org
-> TO: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-> CC: Kurt Schwemmer <kurt.schwemmer@microsemi.com>
-> CC: Logan Gunthorpe <logang@deltatee.com>
-> CC: Bjorn Helgaas <helgaas@kernel.org>
-> CC: linux-pci@vger.kernel.org
-> CC: linux-kernel@vger.kernel.org
-> 
-> From: kbuild test robot <lkp@intel.com>
-> 
-> drivers/pci/switch/switchtec.c:395:1-17: ERROR: switchtec_fops: .read() can deadlock .write(); change nonseekable_open -> stream_open to fix.
-> 
-> Generated by: scripts/coccinelle/api/stream_open.cocci
-> 
-> Fixes: a3a1e895d4fa ("pci/switchtec: Don't use completion's wait queue")
-> Signed-off-by: kbuild test robot <lkp@intel.com>
-> ---
-> 
-> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/rt/linux-rt-devel.git linux-5.0.y-rt-rebase
-> head:   31cc76d5590f5e60c2f26f029e40bc7d0441d93f
-> commit: a3a1e895d4fa0508e11ac9107ace883a5b2a4d3b [171/305] pci/switchtec: Don't use completion's wait queue
-> :::::: branch date: 6 days ago
-> :::::: commit date: 6 days ago
-> 
-> Please take the patch only if it's a positive warning. Thanks!
-> 
->  switchtec.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> --- a/drivers/pci/switch/switchtec.c
-> +++ b/drivers/pci/switch/switchtec.c
-> @@ -392,7 +392,7 @@ static int switchtec_dev_open(struct ino
->  		return PTR_ERR(stuser);
-> 
->  	filp->private_data = stuser;
-> -	nonseekable_open(inode, filp);
-> +	stream_open(inode, filp);
-> 
->  	dev_dbg(&stdev->dev, "%s: %p\n", __func__, stuser);
->
