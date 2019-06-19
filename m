@@ -2,94 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 635644B1CF
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 08:06:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C590C4B1EE
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 08:07:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730953AbfFSGF4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Jun 2019 02:05:56 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:52193 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726246AbfFSGFv (ORCPT
+        id S1731247AbfFSGHN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Jun 2019 02:07:13 -0400
+Received: from mail-ua1-f65.google.com ([209.85.222.65]:33853 "EHLO
+        mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730756AbfFSGHN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Jun 2019 02:05:51 -0400
-Received: by mail-wm1-f65.google.com with SMTP id 207so347400wma.1
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2019 23:05:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=gAuvNEON1/svyE5y5H38rhLBVdlEdqq6m64304VJxxs=;
-        b=ZG5JbVEDRi1cEztR9JPWFYHH4s7iBIKyn45vzLAIoPXuizb+BCH+2XrkPjcbPH+1Ge
-         cxejIXjDRzw9xLk+MnT9Zih7O2ENvIdCKSZiDYiW51dEI6MpvHstHy/nIbOL0QiMtuTX
-         KogdXhG2DKT8In8hoZGJq/KEpY62ZH6MuYMvKrzmUHM4qxAN9s6yQ3UJnarzkakBYySQ
-         tHt79MEzHGr/Uog534lU+QVR4htpUZqCBlkM95IoYurqq0tY7LhLQGkmQSP8wSOqHWuo
-         bX3VmRDo5xrT5yc7eQqIo3N2WlUYb1rEokBD4QOEKdDAcyY8XSkIczKfymTMszhPZIxw
-         lZfQ==
+        Wed, 19 Jun 2019 02:07:13 -0400
+Received: by mail-ua1-f65.google.com with SMTP id c4so8623226uad.1
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2019 23:07:12 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=gAuvNEON1/svyE5y5H38rhLBVdlEdqq6m64304VJxxs=;
-        b=Lma6Z/LYX+Fi89tOCWK25IhytbF/1adRKBDSDew5XjaLqmz1nrW8LPwuMhGGPhqUl3
-         AENkvWnE7KIWQ5W924oEWnqhcLy3H2bTiZ05TNsJM8b3cCctPfUEWhsfjPxfE03CNguw
-         Y4LMHT/ld2y7uxSyGwOcgy4z/94uoQXwxqVgylZ4swWer7k8v0KdMloXEqfcwN+8ICfJ
-         GyBOF6uckyW0TWaYp5CMn3AMznPOSD1w5Y7dO4SUNhlDQ9y0UFK8S3cEyTQJD61o0l7j
-         Lm41eG2nJWrsq/ItMQMkfHIOPX7Fxn0E3hYqt2tdiFO/DKRjslJY1lUbZYJGlVnN9/sy
-         YS6g==
-X-Gm-Message-State: APjAAAWBus6iPHFIKp0ESEP6KsN41hoyMgW58ZIS3mQa2mqfN7JowJ4q
-        asIcSGXPyaKY7cp92UXW84skaQ==
-X-Google-Smtp-Source: APXvYqw9N8Sn2vt43SeeNig+fvTZyfd4FhrFCZQ8nv6+4b2CTetI7wo1XDje3ODj4gCpw+qO/iboMw==
-X-Received: by 2002:a1c:e90f:: with SMTP id q15mr6736132wmc.89.1560924349841;
-        Tue, 18 Jun 2019 23:05:49 -0700 (PDT)
-Received: from dell ([2.27.35.243])
-        by smtp.gmail.com with ESMTPSA id c4sm13697164wrt.86.2019.06.18.23.05.49
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 18 Jun 2019 23:05:49 -0700 (PDT)
-Date:   Wed, 19 Jun 2019 07:05:47 +0100
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Andy Gross <agross@kernel.org>
-Cc:     alokc@codeaurora.org, david.brown@linaro.org,
-        bjorn.andersson@linaro.org, balbi@kernel.org,
-        gregkh@linuxfoundation.org, ard.biesheuvel@linaro.org,
-        jlhugo@gmail.com, linux-arm-msm@vger.kernel.org,
-        linux-usb@vger.kernel.org, felipe.balbi@linux.intel.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [RESEND v4 1/4] soc: qcom: geni: Add support for ACPI
-Message-ID: <20190619060547.GG18371@dell>
-References: <20190617125105.6186-1-lee.jones@linaro.org>
- <20190617125105.6186-2-lee.jones@linaro.org>
- <20190619055207.GA14273@hector.attlocal.net>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=g7O7qmxDa1+JZ1Dry7qEOvSBzhak1PoCcmHKeNT1e3A=;
+        b=QXX1rqEauMzaFl9ODWKKdQhrNUxifyagXrlzNU01YgHH368TaxvQT1+TWuTH/zp+i4
+         dXRviN3aI6EHzoXxq2bQ4+RAeNNRvRVgvQh631Z2j40zHwgAvPAmdRgTjMJm5fD4OTIN
+         EJPsWsQjCupepcDUc6r8BsHpMX04KGar7CtKLM5GGcx88mLVjW7K4G6pBOPZh0TEXmT4
+         lwSazCJldaLXsJXC4Lf+X3Q1Gr2E0mMlGMnjeqoV7kYXR7P4iKlqrX8bVd3oRYLjlFHE
+         PqWJIbg/OVxE1TEP4HMAqXMsjh/oQIePq2U4QdQMLOMLnjhzGbMexfDyUhYA/mPzrexC
+         lLzw==
+X-Gm-Message-State: APjAAAX96DUC0lmPeho+yE0eIVffKExX7/zkk9mTAEsPB87Nuji0RygL
+        dT4LT9jkFW13CrMRb/U1HzhZc13B8KxrXuIgJ0U=
+X-Google-Smtp-Source: APXvYqznQPXDIKRXoJvK3+CwHCpZWFSP/RAkMIJMI+24ug7p/kTDAhLtwibkBeVBbwT5pg09jFCvdFfX5IqIFV81Gsw=
+X-Received: by 2002:a9f:31a2:: with SMTP id v31mr13162830uad.15.1560924431935;
+ Tue, 18 Jun 2019 23:07:11 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190619055207.GA14273@hector.attlocal.net>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <20190614024957.GA9645@jagdpanzerIV> <20190619050811.GA15221@jagdpanzerIV>
+ <CAKb7UvhdN=RUdfrnWswT4ANK5UwPcM-upDP85=84zsCF+a5-bg@mail.gmail.com> <20190619054826.GA2059@jagdpanzerIV>
+In-Reply-To: <20190619054826.GA2059@jagdpanzerIV>
+From:   Ilia Mirkin <imirkin@alum.mit.edu>
+Date:   Wed, 19 Jun 2019 02:07:00 -0400
+Message-ID: <CAKb7UvgkEXtmJV67EXeBctgaOxM1D91fBbKw9oFMUaB1ZViZQg@mail.gmail.com>
+Subject: Re: nouveau: DRM: GPU lockup - switching to software fbcon
+To:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Cc:     Ben Skeggs <bskeggs@redhat.com>, David Airlie <airlied@linux.ie>,
+        nouveau <nouveau@lists.freedesktop.org>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 19 Jun 2019, Andy Gross wrote:
+On Wed, Jun 19, 2019 at 1:48 AM Sergey Senozhatsky
+<sergey.senozhatsky.work@gmail.com> wrote:
+>
+> On (06/19/19 01:20), Ilia Mirkin wrote:
+> > On Wed, Jun 19, 2019 at 1:08 AM Sergey Senozhatsky
+> > <sergey.senozhatsky.work@gmail.com> wrote:
+> > >
+> > > On (06/14/19 11:50), Sergey Senozhatsky wrote:
+> > > > dmesg
+> > > >
+> > > >  nouveau 0000:01:00.0: DRM: GPU lockup - switching to software fbcon
+> > > >  nouveau 0000:01:00.0: fifo: SCHED_ERROR 0a [CTXSW_TIMEOUT]
+> > > >  nouveau 0000:01:00.0: fifo: runlist 0: scheduled for recovery
+> > > >  nouveau 0000:01:00.0: fifo: channel 5: killed
+> > > >  nouveau 0000:01:00.0: fifo: engine 6: scheduled for recovery
+> > > >  nouveau 0000:01:00.0: fifo: engine 0: scheduled for recovery
+> > > >  nouveau 0000:01:00.0: firefox[476]: channel 5 killed!
+> > > >  nouveau 0000:01:00.0: firefox[476]: failed to idle channel 5 [firefox[476]]
+> > > >
+> > > > It lockups several times a day. Twice in just one hour today.
+> > > > Can we fix this?
+> > >
+> > > Unusable
+> >
+> > Are you using a GTX 660 by any chance? You've provided rather minimal
+> > system info.
+>
+> 01:00.0 VGA compatible controller: NVIDIA Corporation GK208B [GeForce GT 730] (rev a1)
 
-> On Mon, Jun 17, 2019 at 01:51:02PM +0100, Lee Jones wrote:
-> > When booting with ACPI as the active set of configuration tables,
-> > all; clocks, regulators, pin functions ect are expected to be at
-> > their ideal values/levels/rates, thus the associated frameworks
-> > are unavailable.  Ensure calls to these APIs are shielded when
-> > ACPI is enabled.
-> > 
-> > Signed-off-by: Lee Jones <lee.jones@linaro.org>
-> > Acked-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-> 
-> Applied.
+Quite literally the same GPU I have plugged in...
 
-Thanks Bjorn and Andy.
+02:00.0 VGA compatible controller [0300]: NVIDIA Corporation GK208B
+[GeForce GT 730] [10de:1287] (rev a1)
 
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Works great here! Only other thing I can think of is that I avoid
+applications with the letters "G" and "K" in their names, and I'm
+using xf86-video-nouveau ddx, whereas you might be using the "modeset"
+ddx with glamor.
+
+If all else fails, just remove nouveau_dri.so and/or boot with
+nouveau.noaccel=1 -- should be perfect.
+
+Cheers,
+
+  -ilia
