@@ -2,102 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B6114BAA0
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 16:02:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3F1964BC56
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 17:05:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728385AbfFSOCb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Jun 2019 10:02:31 -0400
-Received: from gateway32.websitewelcome.com ([192.185.145.18]:30200 "EHLO
-        gateway32.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725893AbfFSOCa (ORCPT
+        id S1729949AbfFSPFx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Jun 2019 11:05:53 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:36453 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726496AbfFSPFx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Jun 2019 10:02:30 -0400
-Received: from cm14.websitewelcome.com (cm14.websitewelcome.com [100.42.49.7])
-        by gateway32.websitewelcome.com (Postfix) with ESMTP id B358C3D1F7
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2019 09:02:29 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id dbAThfcYU2qH7dbAThpYxz; Wed, 19 Jun 2019 09:02:29 -0500
-X-Authority-Reason: nr=8
-Received: from cablelink-187-160-61-213.pcs.intercable.net ([187.160.61.213]:49078 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.92)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1hdbAS-001mAC-H7; Wed, 19 Jun 2019 09:02:28 -0500
-Date:   Wed, 19 Jun 2019 09:02:27 -0500
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc:     linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] scsi: mvsas: Use struct_size() in kzalloc()
-Message-ID: <20190619140227.GA9877@embeddedor>
+        Wed, 19 Jun 2019 11:05:53 -0400
+Received: by mail-lj1-f195.google.com with SMTP id i21so3627686ljj.3
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2019 08:05:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lixom-net.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=/la8YhxZ2cr5zsG/Mj3bf2KoRNJCvpbpOWf93KaGA8M=;
+        b=n2Rcmy/bvTvujq0Mp0NgQKBCE14/CMC0O4fTI+A+a4Kvj4+M50RkihtSc9uRfk8Z1w
+         /mveI+IdabqrlEOJE+jEoSSpQkBHb6VyAKB7JcK8o2xixedM8kCsl6Fk6MUwMMuZQG5z
+         TlOTnbmuCaPaFaXBuKMUNFE1QlmI1nXMVlK0Dg1gkQK0qFAh8SnJFPUh5xKa+PBdpJeI
+         UrOUDg7RfSI4cAEsRYH3a9ZtlwCJBGphcOqDZRoGHhrglqoJmzzFsTVlR/CNbrJrkReH
+         dnG7kL0wcOBxSymEJRCdlhyM724zEicdRxWhlrUwwsyftCxRCTtA+HSZMqPszi0d7Zpa
+         4MXg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=/la8YhxZ2cr5zsG/Mj3bf2KoRNJCvpbpOWf93KaGA8M=;
+        b=ZJ9Hib7pCCbQUOB66hYTkYIP3Ss+jwHR6pGY825Pp9VccRQynDpwmDJ9m4a4xEpDFx
+         0LwzPLvSAgIpNytgq9OwkM/Frh7lSk06p0e33FqoanfjP7gREGIp7lOmG5YAoKLSyzGj
+         d9+EB7AM9dnYy3nKZ+1pBaejiaBal4tev308OZYhmtyIc3TSwC5qgjcyJ9oX0IYl0dtc
+         o19x+RWm8LHtiZW3o57dYawth0+GpGdJ/GbCcmbt5C5d/gmvOmdD0ZejE2sdVTzjgaOW
+         3md1gQh6jha+4pWWLjE+WiUX8aFj3cgyje+hQJ4MpqPvj/d3Brp/EgPOPGVBYiylAV7A
+         tQgQ==
+X-Gm-Message-State: APjAAAVk/xvppVCgylxqTMMDPLOH9QgibYEFTJj9UdX2gtphPhFp/k9A
+        +uV4FS9RJusF4SMIpAsP+gAlyQ==
+X-Google-Smtp-Source: APXvYqxJ83jJylZF4/0OSKRawqgT1V4DMOOY2IfhVDxokK2wW4QaZ/7KhrJCKCQaKHgjSaTQiMvx/w==
+X-Received: by 2002:a2e:9685:: with SMTP id q5mr18130200lji.227.1560956751539;
+        Wed, 19 Jun 2019 08:05:51 -0700 (PDT)
+Received: from localhost (h85-30-9-151.cust.a3fiber.se. [85.30.9.151])
+        by smtp.gmail.com with ESMTPSA id p76sm2628684ljb.49.2019.06.19.08.05.50
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 19 Jun 2019 08:05:50 -0700 (PDT)
+Date:   Wed, 19 Jun 2019 07:02:32 -0700
+From:   Olof Johansson <olof@lixom.net>
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     Russell King <linux@armlinux.org.uk>,
+        Vladimir Zapolskiy <vz@mleia.com>,
+        Sylvain Lemieux <slemieux.tyco@gmail.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Aaro Koskinen <aaro.koskinen@iki.fi>,
+        Tony Lindgren <tony@atomide.com>,
+        Liviu Dudau <liviu.dudau@arm.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-omap@vger.kernel.org, arm@kernel.org,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Alexander Shiyan <shc_work@mail.ru>
+Subject: Re: [PATCH v2] ARM: config: Remove left-over BACKLIGHT_LCD_SUPPORT
+Message-ID: <20190619140232.hkhrq63ly4mlb3yi@localhost>
+References: <1559633061-28003-1-git-send-email-krzk@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 187.160.61.213
-X-Source-L: No
-X-Exim-ID: 1hdbAS-001mAC-H7
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: cablelink-187-160-61-213.pcs.intercable.net (embeddedor) [187.160.61.213]:49078
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 4
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+In-Reply-To: <1559633061-28003-1-git-send-email-krzk@kernel.org>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-One of the more common cases of allocation size calculations is finding
-the size of a structure that has a zero-sized array at the end, along
-with memory for some number of elements for that array. For example:
+On Tue, Jun 04, 2019 at 09:24:21AM +0200, Krzysztof Kozlowski wrote:
+> The CONFIG_BACKLIGHT_LCD_SUPPORT was removed in commit 8c5dc8d9f19c
+> ("video: backlight: Remove useless BACKLIGHT_LCD_SUPPORT kernel
+> symbol"). Options protected by CONFIG_BACKLIGHT_LCD_SUPPORT are now
+> available directly.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-struct mvs_info {
-        ...
-        struct mvs_slot_info slot_info[0];
-};
 
-instance = kzalloc(sizeof(sizeof(*mvi) + count * sizeof(struct mvs_slot_info),
-                   GFP_KERNEL);
+Applied, thanks.
 
-Instead of leaving these open-coded and prone to type mistakes, we can
-now use the new struct_size() helper:
 
-instance = kzalloc(struct_size(mvi, slot_info, count), GFP_KERNEL);
-
-This code was detected with the help of Coccinelle.
-
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- drivers/scsi/mvsas/mv_init.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/scsi/mvsas/mv_init.c b/drivers/scsi/mvsas/mv_init.c
-index da719b0694dc..3f2022fd2335 100644
---- a/drivers/scsi/mvsas/mv_init.c
-+++ b/drivers/scsi/mvsas/mv_init.c
-@@ -350,9 +350,9 @@ static struct mvs_info *mvs_pci_alloc(struct pci_dev *pdev,
- 	struct mvs_info *mvi = NULL;
- 	struct sas_ha_struct *sha = SHOST_TO_SAS_HA(shost);
- 
--	mvi = kzalloc(sizeof(*mvi) +
--		(1L << mvs_chips[ent->driver_data].slot_width) *
--		sizeof(struct mvs_slot_info), GFP_KERNEL);
-+	mvi = kzalloc(struct_size(mvi, slot_info,
-+		      1L << mvs_chips[ent->driver_data].slot_width),
-+		      GFP_KERNEL);
- 	if (!mvi)
- 		return NULL;
- 
--- 
-2.21.0
-
+-Olof
