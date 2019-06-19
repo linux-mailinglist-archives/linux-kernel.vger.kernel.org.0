@@ -2,148 +2,141 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B0A3F4BC70
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 17:08:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 055964BA93
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 15:56:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730291AbfFSPHV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Jun 2019 11:07:21 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:18182 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729642AbfFSPHU (ORCPT
+        id S1727069AbfFSN4i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Jun 2019 09:56:38 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:47314 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726047AbfFSN4i (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Jun 2019 11:07:20 -0400
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5JF3EEF099408
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2019 11:07:19 -0400
-Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2t7q1k9cya-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2019 11:07:19 -0400
-Received: from localhost
-        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Wed, 19 Jun 2019 16:07:17 +0100
-Received: from b06avi18878370.portsmouth.uk.ibm.com (9.149.26.194)
-        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 19 Jun 2019 16:07:15 +0100
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06avi18878370.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x5JF7E0l34537948
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 19 Jun 2019 15:07:14 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 846BE52052;
-        Wed, 19 Jun 2019 15:07:14 +0000 (GMT)
-Received: from dhcp-9-31-103-88.watson.ibm.com (unknown [9.31.103.88])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id E0C7E52050;
-        Wed, 19 Jun 2019 15:07:13 +0000 (GMT)
-Subject: Re: [PATCH 2/3] IMA:Define a new template field buf
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Prakhar Srivastava <prsriva02@gmail.com>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     roberto.sassu@huawei.com
-In-Reply-To: <20190617183507.14160-3-prsriva02@gmail.com>
-References: <20190617183507.14160-1-prsriva02@gmail.com>
-         <20190617183507.14160-3-prsriva02@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Date:   Wed, 19 Jun 2019 09:54:26 -0400
-Mime-Version: 1.0
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19061915-0028-0000-0000-0000037BB7E0
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19061915-0029-0000-0000-0000243BC627
-Message-Id: <1560952466.3975.40.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-19_09:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=3 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1906190122
+        Wed, 19 Jun 2019 09:56:38 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:
+        From:Date:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=vs3lq9W8ecN8AOibEdB+lMHYvJb+tdRA2lymEIS3aZY=; b=qv5azAkUbWT/qFwdLJJ7OVUiR
+        KTot7UkL3UrUVK8a4Wwr7UwiPLCW4rAIf6l2RTgs8ru578UpYp9BaRkDsPGLeyshBJaie55vvKQ6B
+        7Ap7+MglsrD9N1sDuT7n/9Al1nxDo76qDeiLvdJKdPxcpO3MBE3jOEr66ljzYJwzZ+QxFVLOiUWIZ
+        qNwFwTPvw+Q2ophHAY8SH4TOj90jMyddUJBgEJDoBvIlPisCEYToZ47OO4JxM8k6YgmxKJttk3aho
+        e/K1ChlXz+8hMq2HpwWf+1a01w0tXcjo59q5t9uXXMqsoh3hlHa5RS4HUxZkrf+UIG6uxe1kr+h0B
+        +BNm5kRKg==;
+Received: from 177.133.86.196.dynamic.adsl.gvt.net.br ([177.133.86.196] helo=coco.lan)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1hdb4n-00028r-8f; Wed, 19 Jun 2019 13:56:37 +0000
+Date:   Wed, 19 Jun 2019 10:56:33 -0300
+From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+To:     Johan Hovold <johan@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab@s-opensource.com>,
+        Mauro Carvalho Chehab <mchehab@infradead.org>,
+        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+        Stefan Achatz <erazor_de@users.sourceforge.net>
+Subject: Re: [PATCH 04/14] ABI: better identificate tables
+Message-ID: <20190619105633.7f7315a5@coco.lan>
+In-Reply-To: <20190619125135.GG25248@localhost>
+References: <cover.1560477540.git.mchehab+samsung@kernel.org>
+        <6bc45c0d5d464d25d4d16eceac48a2f407166944.1560477540.git.mchehab+samsung@kernel.org>
+        <20190619125135.GG25248@localhost>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2019-06-17 at 11:35 -0700, Prakhar Srivastava wrote:
-> A buffer(kexec boot command line arguments) measured into IMA
-> measuremnt list cannot be appraised, without already being
-> aware of the buffer contents. Since hashes are non-reversible,
-> raw buffer is needed for validation or regenerating hash for
-> appraisal/attestation.
+Hi Johan,
+
+Em Wed, 19 Jun 2019 14:51:35 +0200
+Johan Hovold <johan@kernel.org> escreveu:
+
+> On Thu, Jun 13, 2019 at 11:04:10PM -0300, Mauro Carvalho Chehab wrote:
+> > From: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+> > 
+> > When parsing via script, it is important to know if the script
+> > should consider a description as a literal block that should
+> > be displayed as-is, or if the description can be considered
+> > as a normal text.
+> > 
+> > Change descriptions to ensure that the preceding line of a table
+> > ends with a colon. That makes easy to identify the need of a
+> > literal block.  
 > 
-> Add support to store/read the buffer contents in HEX.
-> The kexec cmdline hash is stored in the "d-ng" field of the
-> template data,it can be verified using
-> sudo cat /sys/kernel/security/integrity/ima/ascii_runtime_measurements |
->   grep  kexec-cmdline | cut -d' ' -f 6 | xxd -r -p | sha256sum
-> 
-> - Add two new fields to ima_event_data to hold the buf and
-> buf_len [Suggested by Roberto]
-> - Add a new temaplte field 'buf' to be used to store/read
-> the buffer data.[Suggested by Mimi]
-> - Updated process_buffer_meaurement to add the buffer to
-> ima_event_data. process_buffer_measurement added in
-> "Define a new IMA hook to measure the boot command line
->  arguments"
-> - Add a new template policy name ima-buf to represent
-> 'd-ng|n-ng|buf'
-> 
-> Signed-off-by: Prakhar Srivastava <prsriva02@gmail.com>
-> Reviewed-by: Roberto Sassu <roberto.sassu@huawei.com>
-> Reviewed-by: James Morris <jamorris@linux.microsoft.com>
+> In the cover letter you say that the first four patches of this series,
+> including this one, "fix some ABI descriptions that are violating the
+> syntax described at Documentation/ABI/README". This seems a bit harsh,
+> given that it's you that is now *introducing* a new syntax requirement
+> to assist your script.
 
-Thanks, looking much better.
+Yeah, what's there at the cover letter doesn't apply to this specific
+patch. The thing is that I wrote this series a lot of time ago (2016/17).
 
->  
->  /* IMA template field data definition */
-> diff --git a/security/integrity/ima/ima_api.c b/security/integrity/ima/ima_api.c
-> index ea7d8cbf712f..83ca99d65e4b 100644
-> --- a/security/integrity/ima/ima_api.c
-> +++ b/security/integrity/ima/ima_api.c
-> @@ -140,7 +140,7 @@ void ima_add_violation(struct file *file, const unsigned char *filename,
->  	struct ima_template_entry *entry;
->  	struct inode *inode = file_inode(file);
->  	struct ima_event_data event_data = {iint, file, filename, NULL, 0,
-> -					    cause};
-> +					    cause, NULL, 0};
->  	int violation = 1;
->  	int result;
->  
-> @@ -296,7 +296,7 @@ void ima_store_measurement(struct integrity_iint_cache *iint,
->  	struct inode *inode = file_inode(file);
->  	struct ima_template_entry *entry;
->  	struct ima_event_data event_data = {iint, file, filename, xattr_value,
-> -					    xattr_len, NULL};
-> +					    xattr_len, NULL, NULL, 0};
->  	int violation = 0;
->  
->  	if (iint->measured_pcrs & (0x1 << pcr))
-> diff --git a/security/integrity/ima/ima_init.c b/security/integrity/ima/ima_init.c
-> index 993d0f1915ff..c8591406c0e2 100644
-> --- a/security/integrity/ima/ima_init.c
-> +++ b/security/integrity/ima/ima_init.c
-> @@ -50,7 +50,7 @@ static int __init ima_add_boot_aggregate(void)
->  	struct ima_template_entry *entry;
->  	struct integrity_iint_cache tmp_iint, *iint = &tmp_iint;
->  	struct ima_event_data event_data = {iint, NULL, boot_aggregate_name,
-> -					    NULL, 0, NULL};
-> +					    NULL, 0, NULL, NULL, 0};
->  	int result = -ENOMEM;
->  	int violation = 0;
->  	struct {
-> 
+I revived those per a request at KS ML, as we still need to expose the
+ABI content on some book that will be used by userspace people.
 
-These changes shouldn't be necessary.  Please rebase these patches on
-top of the latest next-queued-testing branch (git remote update).  "IMA: support for per
-policy rule template formats" is still changing. 
+So, I just rebased it on the top of curent Kernel, add a cover letter
+with the things I remembered and re-sent.
 
-Minor nit.  When re-posting the patches please update the patch titles
-so that there is a space between the subsystem name and the patch
-title (eg. "ima: define ...").
+In the specific case of this patch, the ":" there actually makes sense
+for someone that it is reading it as a text file, and it is an easy
+hack to make it parse better.
 
-Mimi
+> Specifically, this new requirement isn't documented anywhere AFAICT, so
+> how will anyone adding new ABI descriptions learn about it?
 
+Yeah, either that or provide an alternative to "Description" tag, to be
+used with more complex ABI descriptions.
+
+One of the things that occurred to me, back on 2017, is that we should
+have a way to to specify that an specific ABI description would have
+a rich format. Something like:
+
+What:		/sys/bus/usb/devices/<busnum>-<devnum>:<config num>.<interface num>/<hid-bus>:<vendor-id>:<product-id>.<num>/pyra/roccatpyra<minor>/actual_cpi
+Date:		August 2010
+Contact:	Stefan Achatz <erazor_de@users.sourceforge.net>
+RST-Description:
+		It is possible to switch the cpi setting of the mouse with the
+		press of a button.
+		When read, this file returns the raw number of the actual cpi
+		setting reported by the mouse. This number has to be further
+		processed to receive the real dpi value:
+
+		===== =====
+		VALUE DPI
+		===== =====
+		1     400
+		2     800
+		4     1600
+		===== =====
+
+With that, the script will know that the description contents will be using
+the ReST markup, and parse it accordingly. Right now, what it does, instead,
+is to place the description on a code-block, e. g. it will produce this
+output for the description:
+
+::
+
+		It is possible to switch the cpi setting of the mouse with the
+		press of a button.
+		When read, this file returns the raw number of the actual cpi
+		setting reported by the mouse. This number has to be further
+		processed to receive the real dpi value:
+
+		VALUE DPI
+		1     400
+		2     800
+		4     1600
+
+
+Greg, 
+
+what do you think?
+
+Thanks,
+Mauro
