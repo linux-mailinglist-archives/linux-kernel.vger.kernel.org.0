@@ -2,140 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 51C004AF0B
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 02:34:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 570C54AF10
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 02:38:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729285AbfFSAev (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Jun 2019 20:34:51 -0400
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:39949 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725988AbfFSAev (ORCPT
+        id S1729163AbfFSAiC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Jun 2019 20:38:02 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:43951 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726023AbfFSAiC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Jun 2019 20:34:51 -0400
-Received: by mail-ot1-f65.google.com with SMTP id e8so16485968otl.7;
-        Tue, 18 Jun 2019 17:34:51 -0700 (PDT)
+        Tue, 18 Jun 2019 20:38:02 -0400
+Received: by mail-pg1-f194.google.com with SMTP id f25so8581457pgv.10
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2019 17:38:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=ZXR7tAPaEkwGsGkQZyrZdvvi0BeI2lp41nwHf5CBMnU=;
-        b=tIZk7NtZsCu5f5iH8jH7Sa9+vz4sThRbI8n900KepBBMPO2KBKQ4P0tmwTLwU+t4c0
-         iEbUWDIPY/MBKqIEUNWjnEKN/vHeUN9U9LUMOHm41ETRZ2S1HBBvgkBjRF9ReJjfIhFq
-         YiHSgQsCcRgDQ/PJOsxP5TEMBXgCZMFZVXRK4EvagCy+O4FBmQDyqRmHeP0yw3vcjL5b
-         LSDJM7RVbToEUj/1LDk+K9x7/qEZ/yh3k3hcAiGmPEUrIf+Xm4COAT8BuRH/TtVRr19D
-         BkjvlVpM3qYoErrvF3tXVWK4wMZaLwLftJywBnznYDxLJkE5nqUN87pGVHKp2dwivtNk
-         j7WA==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=agM/b/1RXAjKiubWTAZW6LuccQyVOpmmqDojN/lnWHE=;
+        b=WKAkZRSHI/AYhiwsXzthvjH70oaW1GrtTg9KwScp9VvvHfezdwUwCfHZ3yqN0t7prL
+         C/Py1NdsppCl/rcHWzyYMO8zs2RCObT4NGgo6iC5XJ2KmpJ5hqjTOdSFZ3n7vw1UW1B4
+         MUaUclRzueAjOudiXzD5JHNzjhoxZYhzEQQ48voP8/4cEvoy7PwboB/ZkkcQXumJN1qa
+         EUfid+NhIJ1/01j4fZJvd34HOur9tovNhwBUEdtnMLp9P3izEkd4us74wSKjCQ0ta1MP
+         qnY2JIDaafCD9liBFTBJ3QFP1QzoHVl+nh2Q2VoACynOHOEBAv+1mCH206toANQySwxt
+         FKcg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=ZXR7tAPaEkwGsGkQZyrZdvvi0BeI2lp41nwHf5CBMnU=;
-        b=ALIVh11S7t/lyFaeU6jDkShP+skQYsr99xTWJpt4Gdt6eif7CBnCYxMF8hW9fHPV2K
-         lWlzySeSnD2aONFNe8HLxXudtoLIjxMR6NSZnZIE8o27L3cW1G/CqhmlXqSAwSjlg5Oz
-         3CdfN1JjIxotHQX0bmOIlG0UmKkxjm6zM6/QO8+JlAjne3of9kSJ06DsfrGpn3GOftDk
-         9I7iTtM1E0BztIcDf/ikqjzlGZm3vJb01mMjJeeBPGYyAo9HfnB1b1c9csPNZek1k4c1
-         AoNe3U9CeOGkdE+VtlQCcsX83ngmyOeTiKRrPbQwCMKna+w3kT2aDL+cPzMjLk27KarU
-         UpBw==
-X-Gm-Message-State: APjAAAXD/ZYdJiPfj5AncUXeh558lEjNgSRcU2R+KJsLGGuQaWvA+g7C
-        RTI8cryAqHsiE/WFD3LfcdRv4Mazz/5zQQvZTDzCnt4y
-X-Google-Smtp-Source: APXvYqyLWELQU60MDNt3lIlb8HFuSYqw22oFeQKzWoTpxaujCa+AaNrf8aiXAq7J85SDUVP0OwkvWPK4s7kqYrhLRmw=
-X-Received: by 2002:a9d:2c47:: with SMTP id f65mr69195620otb.185.1560904490828;
- Tue, 18 Jun 2019 17:34:50 -0700 (PDT)
-MIME-Version: 1.0
-References: <1560770687-23227-1-git-send-email-wanpengli@tencent.com>
- <1560770687-23227-3-git-send-email-wanpengli@tencent.com> <20190618133541.GA3932@amt.cnet>
-In-Reply-To: <20190618133541.GA3932@amt.cnet>
-From:   Wanpeng Li <kernellwp@gmail.com>
-Date:   Wed, 19 Jun 2019 08:36:06 +0800
-Message-ID: <CANRm+Cz0v1VfDaCCWX+5RzCusTV7g9Hwr+OLGDRijeyqFx=Kzw@mail.gmail.com>
-Subject: Re: [PATCH v4 2/5] KVM: LAPIC: inject lapic timer interrupt by posted interrupt
-To:     Marcelo Tosatti <mtosatti@redhat.com>
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>, kvm <kvm@vger.kernel.org>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=agM/b/1RXAjKiubWTAZW6LuccQyVOpmmqDojN/lnWHE=;
+        b=fcILqJYBwZV6qjQw40dEo2q60+9r340QTst0JXWWY23Xun1qzCZnwnS9bFFxiFF5Ji
+         FcOYfw5PylfmfTmFf6UZx+jJUCti4xHKPtobNGQi74mn6mQIJkSQhiBMn8pi2bAhmxFs
+         fBQgC+gnwzhANILaEqcpHk+clWhF3SPmiIgnv/fjbY6zb6BwAwWyWCWIZuRcVolGusrA
+         N0Cm1/bgVJmPL3CLRuWKFVQQrBan0qR+9K24UcbA4uxKYA4fV54Oo4qaRqLzPf/r6tq1
+         aKCaBy+q5z/nM9oDg44ANLVqJi22GqNiOBCv4i7AkSO6WCE6iP5x1gKmIqBZ/FFrnSGe
+         AMeA==
+X-Gm-Message-State: APjAAAUxCx7k+H+Xd3mQ7xLZHBClC6k08LsvIIMFTTxfO/qn/lKlMcJ1
+        gr1ZnjszzIwVVOdKXW2ArW4=
+X-Google-Smtp-Source: APXvYqwco0n5stGzjoAENRb7ii/UzIYN4bk44cmg5+NkYLemziHhT4Bc78SnhsI3lcZ5mJhko1s8aA==
+X-Received: by 2002:a17:90a:2567:: with SMTP id j94mr8108665pje.121.1560904681349;
+        Tue, 18 Jun 2019 17:38:01 -0700 (PDT)
+Received: from localhost.localdomain (c-98-210-58-162.hsd1.ca.comcast.net. [98.210.58.162])
+        by smtp.gmail.com with ESMTPSA id x26sm14217860pfq.69.2019.06.18.17.37.59
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Tue, 18 Jun 2019 17:38:00 -0700 (PDT)
+From:   Shobhit Kukreti <shobhitkukreti@gmail.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Bastien Nocera <hadess@hadess.net>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Larry Finger <Larry.Finger@lwfinger.net>,
+        Joe Perches <joe@perches.com>, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org,
+        Shobhit Kukreti <shobhitkukreti@gmail.com>
+Subject: [PATCH v4 0/3] Resolve if/else brace-style errors
+Date:   Tue, 18 Jun 2019 17:37:31 -0700
+Message-Id: <cover.1560903975.git.shobhitkukreti@gmail.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <20190618070019.GA20601@kroah.com>
+References: <20190618070019.GA20601@kroah.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 18 Jun 2019 at 21:36, Marcelo Tosatti <mtosatti@redhat.com> wrote:
->
-> On Mon, Jun 17, 2019 at 07:24:44PM +0800, Wanpeng Li wrote:
-> > From: Wanpeng Li <wanpengli@tencent.com>
-> >
-> > Dedicated instances are currently disturbed by unnecessary jitter due
-> > to the emulated lapic timers fire on the same pCPUs which vCPUs residen=
-t.
-> > There is no hardware virtual timer on Intel for guest like ARM. Both
-> > programming timer in guest and the emulated timer fires incur vmexits.
-> > This patch tries to avoid vmexit which is incurred by the emulated
-> > timer fires in dedicated instance scenario.
-> >
-> > When nohz_full is enabled in dedicated instances scenario, the emulated
-> > timers can be offload to the nearest busy housekeeping cpus since APICv
-> > is really common in recent years. The guest timer interrupt is injected
-> > by posted-interrupt which is delivered by housekeeping cpu once the emu=
-lated
-> > timer fires.
-> >
-> > The host admin should fine tuned, e.g. dedicated instances scenario w/
-> > nohz_full cover the pCPUs which vCPUs resident, several pCPUs surplus
-> > for busy housekeeping, disable mwait/hlt/pause vmexits to keep in non-r=
-oot
-> > mode, ~3% redis performance benefit can be observed on Skylake server.
-> >
-> > w/o patch:
-> >
-> >             VM-EXIT  Samples  Samples%  Time%   Min Time  Max Time   Av=
-g time
-> >
-> > EXTERNAL_INTERRUPT    42916    49.43%   39.30%   0.47us   106.09us   0.=
-71us ( +-   1.09% )
-> >
-> > w/ patch:
-> >
-> >             VM-EXIT  Samples  Samples%  Time%   Min Time  Max Time     =
-    Avg time
-> >
-> > EXTERNAL_INTERRUPT    6871     9.29%     2.96%   0.44us    57.88us   0.=
-72us ( +-   4.02% )
-> >
-> > Cc: Paolo Bonzini <pbonzini@redhat.com>
-> > Cc: Radim Kr=C4=8Dm=C3=A1=C5=99 <rkrcmar@redhat.com>
-> > Cc: Marcelo Tosatti <mtosatti@redhat.com>
-> > Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
-> > ---
-> >  arch/x86/kvm/lapic.c            | 33 ++++++++++++++++++++++++++-------
-> >  arch/x86/kvm/lapic.h            |  1 +
-> >  arch/x86/kvm/vmx/vmx.c          |  3 ++-
-> >  arch/x86/kvm/x86.c              |  5 +++++
-> >  arch/x86/kvm/x86.h              |  2 ++
-> >  include/linux/sched/isolation.h |  2 ++
-> >  kernel/sched/isolation.c        |  6 ++++++
-> >  7 files changed, 44 insertions(+), 8 deletions(-)
-> >
-> > diff --git a/arch/x86/kvm/lapic.c b/arch/x86/kvm/lapic.c
-> > index 87ecb56..9ceeee5 100644
-> > --- a/arch/x86/kvm/lapic.c
-> > +++ b/arch/x86/kvm/lapic.c
-> > @@ -122,6 +122,13 @@ static inline u32 kvm_x2apic_id(struct kvm_lapic *=
-apic)
-> >       return apic->vcpu->vcpu_id;
-> >  }
-> >
-> > +bool posted_interrupt_inject_timer(struct kvm_vcpu *vcpu)
-> > +{
-> > +     return pi_inject_timer && kvm_vcpu_apicv_active(vcpu) &&
-> > +             kvm_hlt_in_guest(vcpu->kvm);
-> > +}
-> > +EXPORT_SYMBOL_GPL(posted_interrupt_inject_timer);
->
-> Paolo, can you explain the reasoning behind this?
->
-> Should not be necessary...
+This patchset fixes the following errors reported by checkpatch in the 
+staging/rtl8723bs driver.
 
-Here some new discussions:
-https://lkml.org/lkml/2019/6/13/1423
-https://lkml.org/lkml/2019/6/13/1420
+Patch[1/3]: Fix check patch error "that open brace { should be on the 
+previous line"
+
+Patch[2/3]: Fix the error else should follow close brace '}' 
+
+Patch[3/3]: Fix Indentation Error
+
+The patch should be applied in the sequence of 1-3. 
+Each patch performs one clean up operation.
+
+version 4 changes:
+	- Moved comments to a new line
+	- Removed an extra blank line
+
+version 3 changes:
+	- Converted the patch to a patchset
+	- Resolve checkpatch errors:
+		else should follow  close brace '}'
+		Fixed Indentation Error to use tabs
+	- Compiles and builds, untested on real hardware.
+	
+version 2 changes:
+	- Removed Trailing whitespace introduced in the previous patch
+        - Moved comments to a new line in the else statement
+
+Shobhit Kukreti (3):
+  staging: rtl8723bs: Resolve checkpatch error "that open brace { should
+    be on the previous line" in the rtl8723 driver
+  staging: rtl8723bs: Resolve the checkpatch error: else should follow
+    close brace '}'
+  staging: rtl8723bs: Fix Indentation Error: code indent should use tabs
+    where possible
+
+ drivers/staging/rtl8723bs/os_dep/mlme_linux.c     | 18 ++---
+ drivers/staging/rtl8723bs/os_dep/recv_linux.c     | 89 ++++++++---------------
+ drivers/staging/rtl8723bs/os_dep/rtw_proc.c       |  6 +-
+ drivers/staging/rtl8723bs/os_dep/sdio_intf.c      | 54 ++++++--------
+ drivers/staging/rtl8723bs/os_dep/sdio_ops_linux.c | 24 ++----
+ 5 files changed, 69 insertions(+), 122 deletions(-)
+
+-- 
+2.7.4
+
