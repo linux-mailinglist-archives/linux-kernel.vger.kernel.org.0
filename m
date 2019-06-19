@@ -2,62 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D74EC4B1B6
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 07:53:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 74EA04B1E1
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 08:06:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731075AbfFSFwK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Jun 2019 01:52:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52002 "EHLO mail.kernel.org"
+        id S1731142AbfFSGGa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Jun 2019 02:06:30 -0400
+Received: from mga01.intel.com ([192.55.52.88]:2515 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725854AbfFSFwJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Jun 2019 01:52:09 -0400
-Received: from localhost (107-207-74-175.lightspeed.austtx.sbcglobal.net [107.207.74.175])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DB91920B1F;
-        Wed, 19 Jun 2019 05:52:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560923529;
-        bh=ZkuAsgequni95HbNK6ONBqjvUgeSIKHzcp8y3cXEKz8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=MWH4DBJfxrXWzAFsqaWAnBOD2tH+jkU0ekX2LD7Z3/LcYKnoODJ0/ScFaGDx0YCEd
-         DBbDYukz3hvGCkGRlVb7osPPAHbwx6kCjoZM2lMrTmz2Q+SgBrCvGNFkSqJGpDyAC1
-         NY8t6HUR8T/k9LDqdHZEecD6DRxa5VVYh75tiJZQ=
-Date:   Wed, 19 Jun 2019 00:52:07 -0500
-From:   Andy Gross <agross@kernel.org>
-To:     Lee Jones <lee.jones@linaro.org>
-Cc:     alokc@codeaurora.org, david.brown@linaro.org,
-        bjorn.andersson@linaro.org, balbi@kernel.org,
-        gregkh@linuxfoundation.org, ard.biesheuvel@linaro.org,
-        jlhugo@gmail.com, linux-arm-msm@vger.kernel.org,
-        linux-usb@vger.kernel.org, felipe.balbi@linux.intel.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [RESEND v4 1/4] soc: qcom: geni: Add support for ACPI
-Message-ID: <20190619055207.GA14273@hector.attlocal.net>
-References: <20190617125105.6186-1-lee.jones@linaro.org>
- <20190617125105.6186-2-lee.jones@linaro.org>
+        id S1730853AbfFSGG3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Jun 2019 02:06:29 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Jun 2019 23:06:29 -0700
+X-IronPort-AV: E=Sophos;i="5.63,392,1557212400"; 
+   d="scan'208";a="182640932"
+Received: from dwillia2-desk3.jf.intel.com (HELO dwillia2-desk3.amr.corp.intel.com) ([10.54.39.16])
+  by fmsmga004-auth.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Jun 2019 23:06:29 -0700
+Subject: [PATCH v10 07/13] mm: Kill is_dev_zone() helper
+From:   Dan Williams <dan.j.williams@intel.com>
+To:     akpm@linux-foundation.org
+Cc:     Michal Hocko <mhocko@suse.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        David Hildenbrand <david@redhat.com>,
+        Oscar Salvador <osalvador@suse.de>,
+        Pavel Tatashin <pasha.tatashin@soleen.com>,
+        Wei Yang <richardw.yang@linux.intel.com>, linux-mm@kvack.org,
+        linux-nvdimm@lists.01.org, linux-kernel@vger.kernel.org
+Date:   Tue, 18 Jun 2019 22:52:12 -0700
+Message-ID: <156092353211.979959.1489004866360828964.stgit@dwillia2-desk3.amr.corp.intel.com>
+In-Reply-To: <156092349300.979959.17603710711957735135.stgit@dwillia2-desk3.amr.corp.intel.com>
+References: <156092349300.979959.17603710711957735135.stgit@dwillia2-desk3.amr.corp.intel.com>
+User-Agent: StGit/0.18-2-gc94f
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190617125105.6186-2-lee.jones@linaro.org>
-User-Agent: Mutt/1.5.23.1 (2014-03-12)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 17, 2019 at 01:51:02PM +0100, Lee Jones wrote:
-> When booting with ACPI as the active set of configuration tables,
-> all; clocks, regulators, pin functions ect are expected to be at
-> their ideal values/levels/rates, thus the associated frameworks
-> are unavailable.  Ensure calls to these APIs are shielded when
-> ACPI is enabled.
-> 
-> Signed-off-by: Lee Jones <lee.jones@linaro.org>
-> Acked-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Given there are no more usages of is_dev_zone() outside of 'ifdef
+CONFIG_ZONE_DEVICE' protection, kill off the compilation helper.
 
-Applied.
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: Logan Gunthorpe <logang@deltatee.com>
+Acked-by: David Hildenbrand <david@redhat.com>
+Reviewed-by: Oscar Salvador <osalvador@suse.de>
+Reviewed-by: Pavel Tatashin <pasha.tatashin@soleen.com>
+Reviewed-by: Wei Yang <richardw.yang@linux.intel.com>
+Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+---
+ include/linux/mmzone.h |   12 ------------
+ mm/page_alloc.c        |    2 +-
+ 2 files changed, 1 insertion(+), 13 deletions(-)
 
-Thanks,
+diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
+index c4e8843e283c..e976faf57292 100644
+--- a/include/linux/mmzone.h
++++ b/include/linux/mmzone.h
+@@ -855,18 +855,6 @@ static inline int local_memory_node(int node_id) { return node_id; };
+  */
+ #define zone_idx(zone)		((zone) - (zone)->zone_pgdat->node_zones)
+ 
+-#ifdef CONFIG_ZONE_DEVICE
+-static inline bool is_dev_zone(const struct zone *zone)
+-{
+-	return zone_idx(zone) == ZONE_DEVICE;
+-}
+-#else
+-static inline bool is_dev_zone(const struct zone *zone)
+-{
+-	return false;
+-}
+-#endif
+-
+ /*
+  * Returns true if a zone has pages managed by the buddy allocator.
+  * All the reclaim decisions have to use this function rather than
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index 8e7215fb6976..12b2afd3a529 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -5881,7 +5881,7 @@ void __ref memmap_init_zone_device(struct zone *zone,
+ 	unsigned long start = jiffies;
+ 	int nid = pgdat->node_id;
+ 
+-	if (WARN_ON_ONCE(!pgmap || !is_dev_zone(zone)))
++	if (WARN_ON_ONCE(!pgmap || zone_idx(zone) != ZONE_DEVICE))
+ 		return;
+ 
+ 	/*
 
-Andy
