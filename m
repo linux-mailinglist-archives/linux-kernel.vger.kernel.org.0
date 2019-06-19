@@ -2,143 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E520C4B192
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 07:43:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B9D6D4B19A
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 07:48:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730998AbfFSFnS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Jun 2019 01:43:18 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:36821 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730785AbfFSFnR (ORCPT
+        id S1730470AbfFSFse (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Jun 2019 01:48:34 -0400
+Received: from mail-pg1-f170.google.com ([209.85.215.170]:39690 "EHLO
+        mail-pg1-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725866AbfFSFsd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Jun 2019 01:43:17 -0400
-Received: by mail-pl1-f194.google.com with SMTP id k8so5743872plt.3
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2019 22:43:17 -0700 (PDT)
+        Wed, 19 Jun 2019 01:48:33 -0400
+Received: by mail-pg1-f170.google.com with SMTP id 196so9007883pgc.6
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2019 22:48:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
+        d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=RcMrhNV2rA8CLALBPr7bDQwyiJXyMuKwxFa8vNfUS7I=;
-        b=LPLVcncCQs9OSVRTUCWqEJNKz0UKrN7gDxzSi2ofWu/7iy/NAVMPbpK4CBtIjhI9iR
-         /T64O1dhPTXBGQkFAN0qw59FwQ8wsOYayBbkU9vsY7lznOvYYj2a/S4fvTWeOSGBvmvw
-         RfXXtWINQHMHeJXJxKrnBVK7SbMYMzwxr0cqX/hB+lGeNjFF5Rbf6ETkvhUPfzMciqMT
-         Ukdj0XgDCpUiJ/xag6fRqCk5/RWe5UM73SCm3ehcPXWO7kPf/X15XT0nniOkyWNnH1hY
-         PTb2uehPnlTTxPms5OhFL37oAViZKA/LNjKIup6lcHKt9Bn3DZE+X32m3ZQLnXjKoQEW
-         s8LA==
+        bh=vRg33IzeZ7gCOlL1rfll5ZpLs+PXtNmVRt29cMs9Ajc=;
+        b=jvlEAYgQ6zuc/XSMlLEyWt5CEKHcyEO5ngn7/7JaxQxZarajMzxweS/Q/5RU6m6ja0
+         b/MLx3TAsLCqLAkLlrPn0+bzP+c9BHhgIttJIPg6kU8Tbn6GAQ0IBI3b4Nh3dmaLZzsS
+         YhwE7j1sl/UqisvUCFuolR8siBYAtY3W9VkavTzO6uOWq/dvbHvZfPGHQ4tZPHDamSj2
+         FUMpdfQbRL5RO01O90pBewn74uFHOzqwo1Lw+qLEYpb8r3skVKi+oYMq7QFBZ4IHSfJI
+         8nF059Gxn3zgoE+Vx2RPD1fiMRg/dlU++1m4QemPqEUCunBdQUBu2ne9B9orpj19d82J
+         gaww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=RcMrhNV2rA8CLALBPr7bDQwyiJXyMuKwxFa8vNfUS7I=;
-        b=m+aYk6BQINJmyM3yyls/3PYpzJxe8jVIHLnZbRsMwseWz21H6Bd6JBYUjZ1XlkXHVp
-         zNWHXUUV+cVMcdD4WUvwNO4Ju5IQe4dTdGDlI8CHWC6fv10utJ1BKM3HKDAWZzERntKx
-         9xJQDecU5kCBDEdhVg94vzRq5p+cTIz/MVzQO9DHh+mK+Vnm35Iip6VcYcB3S+uBh5lh
-         o6BJgmp+wOl63lMYpZFItcWBsWq4pV898l9xZtofOcy8bj443cKZFaQr3OfxcUoptjT4
-         eZDUVC1EYcdKdEZjZAkkhoZfZ/3R/ZU//q6MISFNJA1dQj4XqUoTOzNh/fadfTKFyWI0
-         qeMg==
-X-Gm-Message-State: APjAAAXnY64bSooCFBhp30P43h9PGtnos1ZZJ4I/3lMW5FbQS6fcz1Es
-        O34RmRG9zX7X4ZCeqqa/vxftHzVtKFk=
-X-Google-Smtp-Source: APXvYqwQeIEFEJ28689Z3bGKlhY9VryoQA0Cf7rC3shUrKuMbmxfKOaXEntcBMTxDNNw8iuz5EjbVQ==
-X-Received: by 2002:a17:902:4a:: with SMTP id 68mr118225810pla.235.1560922996994;
-        Tue, 18 Jun 2019 22:43:16 -0700 (PDT)
-Received: from minitux (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id 25sm17432761pfp.76.2019.06.18.22.43.15
+        bh=vRg33IzeZ7gCOlL1rfll5ZpLs+PXtNmVRt29cMs9Ajc=;
+        b=WuI5qCVKlfh2p/liQ+ZMmcrOFbsKJkPbpMzeHgT5RCsHW9+1lBnV85JbgwC0nc/z9H
+         nGu/Bxy8WJX7FM7ZNsKFLsu/lBzRJXyECk4CXwxF8c1KZGBaHQ8UbefABWxGkAFl+ISq
+         +pJw4sxh4v2OFbYrGJNfghRwPDcpHBTx9MkRIs/GvTZgZO9xm0U32yHSP0xPxKm88g9m
+         Osuucp6QPCdDGqY93Eo8lkZ3aNrvbhpY6ibTOv42TgtEAw0nU1aIvdeBYhqFTSY2gCQg
+         GUJbd4sLveNNi3MP1SaeU1ULfAzkVMqQ36gRfM37AyuaSTBRy4EqppDjOj9nqdkipLDc
+         ed+A==
+X-Gm-Message-State: APjAAAWUjvLrA7AASdWj9p0Ix0izorSH7tcyR3MxVAhclx3MEI8xNN5c
+        Uct2qNrT7FEgW4vE14aS6Yc=
+X-Google-Smtp-Source: APXvYqxIrkvJkpuuCUfCLmGtf+uSzSyTMm722+WFRYk41A34FHPZZZZLFplSLkkrVJXx+p9f7yrzNA==
+X-Received: by 2002:a63:ca0f:: with SMTP id n15mr5914157pgi.197.1560923310824;
+        Tue, 18 Jun 2019 22:48:30 -0700 (PDT)
+Received: from localhost ([175.223.10.253])
+        by smtp.gmail.com with ESMTPSA id y21sm13843971pfe.172.2019.06.18.22.48.29
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 18 Jun 2019 22:43:16 -0700 (PDT)
-Date:   Tue, 18 Jun 2019 22:43:14 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Lee Jones <lee.jones@linaro.org>
-Cc:     alokc@codeaurora.org, agross@kernel.org, david.brown@linaro.org,
-        wsa+renesas@sang-engineering.com, balbi@kernel.org,
-        gregkh@linuxfoundation.org, ard.biesheuvel@linaro.org,
-        jlhugo@gmail.com, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-usb@vger.kernel.or
-Subject: Re: [PATCH v4 3/6] soc: qcom: geni: Add support for ACPI
-Message-ID: <20190619054314.GJ4814@minitux>
-References: <20190612142654.9639-1-lee.jones@linaro.org>
- <20190612142654.9639-4-lee.jones@linaro.org>
+        Tue, 18 Jun 2019 22:48:30 -0700 (PDT)
+Date:   Wed, 19 Jun 2019 14:48:26 +0900
+From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+To:     Ilia Mirkin <imirkin@alum.mit.edu>
+Cc:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Ben Skeggs <bskeggs@redhat.com>,
+        David Airlie <airlied@linux.ie>,
+        nouveau <nouveau@lists.freedesktop.org>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: nouveau: DRM: GPU lockup - switching to software fbcon
+Message-ID: <20190619054826.GA2059@jagdpanzerIV>
+References: <20190614024957.GA9645@jagdpanzerIV>
+ <20190619050811.GA15221@jagdpanzerIV>
+ <CAKb7UvhdN=RUdfrnWswT4ANK5UwPcM-upDP85=84zsCF+a5-bg@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190612142654.9639-4-lee.jones@linaro.org>
-User-Agent: Mutt/1.12.0 (2019-05-25)
+In-Reply-To: <CAKb7UvhdN=RUdfrnWswT4ANK5UwPcM-upDP85=84zsCF+a5-bg@mail.gmail.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 12 Jun 07:26 PDT 2019, Lee Jones wrote:
-
-> When booting with ACPI as the active set of configuration tables,
-> all; clocks, regulators, pin functions ect are expected to be at
-> their ideal values/levels/rates, thus the associated frameworks
-> are unavailable.  Ensure calls to these APIs are shielded when
-> ACPI is enabled.
+On (06/19/19 01:20), Ilia Mirkin wrote:
+> On Wed, Jun 19, 2019 at 1:08 AM Sergey Senozhatsky
+> <sergey.senozhatsky.work@gmail.com> wrote:
+> >
+> > On (06/14/19 11:50), Sergey Senozhatsky wrote:
+> > > dmesg
+> > >
+> > >  nouveau 0000:01:00.0: DRM: GPU lockup - switching to software fbcon
+> > >  nouveau 0000:01:00.0: fifo: SCHED_ERROR 0a [CTXSW_TIMEOUT]
+> > >  nouveau 0000:01:00.0: fifo: runlist 0: scheduled for recovery
+> > >  nouveau 0000:01:00.0: fifo: channel 5: killed
+> > >  nouveau 0000:01:00.0: fifo: engine 6: scheduled for recovery
+> > >  nouveau 0000:01:00.0: fifo: engine 0: scheduled for recovery
+> > >  nouveau 0000:01:00.0: firefox[476]: channel 5 killed!
+> > >  nouveau 0000:01:00.0: firefox[476]: failed to idle channel 5 [firefox[476]]
+> > >
+> > > It lockups several times a day. Twice in just one hour today.
+> > > Can we fix this?
+> >
+> > Unusable
 > 
+> Are you using a GTX 660 by any chance? You've provided rather minimal
+> system info.
 
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+01:00.0 VGA compatible controller: NVIDIA Corporation GK208B [GeForce GT 730] (rev a1)
 
-> Signed-off-by: Lee Jones <lee.jones@linaro.org>
-> Acked-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-> ---
->  drivers/soc/qcom/qcom-geni-se.c | 21 +++++++++++++++------
->  1 file changed, 15 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/soc/qcom/qcom-geni-se.c b/drivers/soc/qcom/qcom-geni-se.c
-> index 6b8ef01472e9..d5cf953b4337 100644
-> --- a/drivers/soc/qcom/qcom-geni-se.c
-> +++ b/drivers/soc/qcom/qcom-geni-se.c
-> @@ -1,6 +1,7 @@
->  // SPDX-License-Identifier: GPL-2.0
->  // Copyright (c) 2017-2018, The Linux Foundation. All rights reserved.
->  
-> +#include <linux/acpi.h>
->  #include <linux/clk.h>
->  #include <linux/slab.h>
->  #include <linux/dma-mapping.h>
-> @@ -450,6 +451,9 @@ int geni_se_resources_off(struct geni_se *se)
->  {
->  	int ret;
->  
-> +	if (has_acpi_companion(se->dev))
-> +		return 0;
-> +
->  	ret = pinctrl_pm_select_sleep_state(se->dev);
->  	if (ret)
->  		return ret;
-> @@ -487,6 +491,9 @@ int geni_se_resources_on(struct geni_se *se)
->  {
->  	int ret;
->  
-> +	if (has_acpi_companion(se->dev))
-> +		return 0;
-> +
->  	ret = geni_se_clks_on(se);
->  	if (ret)
->  		return ret;
-> @@ -724,12 +731,14 @@ static int geni_se_probe(struct platform_device *pdev)
->  	if (IS_ERR(wrapper->base))
->  		return PTR_ERR(wrapper->base);
->  
-> -	wrapper->ahb_clks[0].id = "m-ahb";
-> -	wrapper->ahb_clks[1].id = "s-ahb";
-> -	ret = devm_clk_bulk_get(dev, NUM_AHB_CLKS, wrapper->ahb_clks);
-> -	if (ret) {
-> -		dev_err(dev, "Err getting AHB clks %d\n", ret);
-> -		return ret;
-> +	if (!has_acpi_companion(&pdev->dev)) {
-> +		wrapper->ahb_clks[0].id = "m-ahb";
-> +		wrapper->ahb_clks[1].id = "s-ahb";
-> +		ret = devm_clk_bulk_get(dev, NUM_AHB_CLKS, wrapper->ahb_clks);
-> +		if (ret) {
-> +			dev_err(dev, "Err getting AHB clks %d\n", ret);
-> +			return ret;
-> +		}
->  	}
->  
->  	dev_set_drvdata(dev, wrapper);
-> -- 
-> 2.17.1
-> 
+	-ss
