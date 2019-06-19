@@ -2,161 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 233EF4B8FB
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 14:45:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AFB314B919
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 14:51:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731873AbfFSMpq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Jun 2019 08:45:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37862 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727244AbfFSMpq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Jun 2019 08:45:46 -0400
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1C9052166E;
-        Wed, 19 Jun 2019 12:45:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560948345;
-        bh=sEeH2sT3LMrzoDDsjD18KBOTynl4B2h/n5bC8qrGlLA=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=lQOVQfiWVIDBuQhl4xvXos+TNmoQ7adeIRtMkpW81/tZxPOj1BLoQZhxT5c6NpWHr
-         uTwCNObEalqCsDI5YLv2eEFgOIBSkBI2sLrpcX1uM/cbCKvklC0sOJ8vO6U8b14cio
-         GT4s/wC0jxjpYxs+u9AlJPoa88tx+EniuYD45itQ=
-Received: by mail-lj1-f172.google.com with SMTP id v24so3075100ljg.13;
-        Wed, 19 Jun 2019 05:45:45 -0700 (PDT)
-X-Gm-Message-State: APjAAAWvQ6+a7vQnbbC8ln9SQ6bVxcos+xsNAFhm0/fmg0uA8sJrkuDx
-        tlQedkusEDiiQNv0nonUUOXlrIi70DErqqIrzNA=
-X-Google-Smtp-Source: APXvYqyCd6gEigqXG0m6yG+w6Iq0Ycl9FJo+wIQEITv0L+zl4sCahXyDcYoY2flJBy9Y1rF+qCkEjR1aVh0+UC2VaDA=
-X-Received: by 2002:a2e:12dc:: with SMTP id 89mr2724626ljs.40.1560948343329;
- Wed, 19 Jun 2019 05:45:43 -0700 (PDT)
+        id S1731829AbfFSMvB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Jun 2019 08:51:01 -0400
+Received: from mout.kundenserver.de ([212.227.126.135]:57401 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727134AbfFSMvB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Jun 2019 08:51:01 -0400
+Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
+ (mreue009 [212.227.15.129]) with ESMTPA (Nemesis) id
+ 1Mnq0I-1iNKvN22aA-00pLEE; Wed, 19 Jun 2019 14:50:47 +0200
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     Corey Minyard <minyard@acm.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>, Asmaa Mnebhi <Asmaa@mellanox.com>,
+        vadimp@mellanox.com, Corey Minyard <cminyard@mvista.com>,
+        openipmi-developer@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] ipmi: ipmb: don't allocate i2c_client on stack
+Date:   Wed, 19 Jun 2019 14:50:34 +0200
+Message-Id: <20190619125045.918700-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.20.0
 MIME-Version: 1.0
-References: <1560938081892.33415@sensor-technik.de>
-In-Reply-To: <1560938081892.33415@sensor-technik.de>
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-Date:   Wed, 19 Jun 2019 14:45:32 +0200
-X-Gmail-Original-Message-ID: <CAJKOXPej57MJKe6ShinG+VJdG+XM4qhpeD3rQ2ZHzRTmO43+GA@mail.gmail.com>
-Message-ID: <CAJKOXPej57MJKe6ShinG+VJdG+XM4qhpeD3rQ2ZHzRTmO43+GA@mail.gmail.com>
-Subject: Re: [PATCH] gpio: Fix return value mismatch of function gpiod_get_from_of_node()
-To:     Waibel Georg <Georg.Waibel@sensor-technik.de>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Support Opensource <support.opensource@diasemi.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Sangbeom Kim <sbkim73@samsung.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:U/wB7UGi/dDxj5A2YvCRhhrBeJdf03T+zz3oLyZzEkzwOOPJNyr
+ 0v/6xQZAkHibPImBjjuHoTDeZpFulHUsqJiQgOL4MNe8qSODthws2+ofq7rB+lm8sDB0PfS
+ 4R5YdlujOpraLS4FBTREtZXKDs4DK03DJzQbiJXVz5Ufvxby2SJinlA7bdY7NGSvS2MSxmZ
+ 5fnZOHbf/m9HrscTRLiHA==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:c9iVaAom99Y=:uVulYndpfo1TRDNFPrwY1o
+ 1PciT+4/gIxN7Sb23Zw5CK8zDzE6Gl6zK5t6EbhCf+uYEuw6LTDG3yoanh7PgUgYLyI+h+nzQ
+ ZXPdt6m2VFRM0ekvg2J/25lnIutbI2C2sHXZRx7Hfoskb0b+xBQry016I519tETURMxOjvnYN
+ ci5TRhmXl0i24UFsWntV117ryinEFeGAcTxGALcfRnEb7H2sPgbMOLv8Vnd4IMlcAPtT1s6r3
+ LScY1tWILu7U+Sydmb3Jryrk4Nw/143jYf13STD2BzauCI0YDr7TB+TqcTuIpjirZDCaP9pqU
+ CzyAZEroFZs8LdEhgWJtRBEKqm6ULorSRKj3vBk39pciraBk1fOzyime+SygFMhiEUbUyka8K
+ t8DJb12G2H0QF0ZB4No8zvw+SzhRw9ENXMsALCIQR/ctUszE8aPkUgjVsSJHzf7mMfIolL3Zc
+ oZXJcLGleB+VNJLW2BMhCR7c6a6baB6vOk4v+J12byVjBTsiX2U2FaZpbX4GYWLIsZwkOMhFE
+ KORj/TcKHPV5AwnsiPCJPN7CIu4qNsGRHlMP9qnWKYKrnNUlYFl/012zhXaA2B1VkVLurOGn4
+ FNlqu59H9DX3B0ht2TlZw0tPYP0VC+L3PogyMneskmezn0Y+69/vFLyGVTo68CLa1E5aOEFb1
+ 7TTWerVbzEWrRsWKDLCz01b4H5v04NOu1J+v5FcFcssBsZzQdSU4yDFBe2RO+AAb84Yg2KvXW
+ rVIlzwAm343TserpmnsP0AJ7R8odWKP0S6IWew==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 19 Jun 2019 at 11:56, Waibel Georg
-<Georg.Waibel@sensor-technik.de> wrote:
->
-> In case the requested gpio property is not found in the device tree, some
-> callers of gpiod_get_from_of_node() expect a return value of NULL, others
-> expect -ENOENT.
-> In particular devm_fwnode_get_index_gpiod_from_child() expects -ENOENT.
-> Currently it gets a NULL, which breaks the loop that tries all
-> gpio_suffixes. The result is that a gpio property is not found, even
-> though it is there.
->
-> This patch changes gpiod_get_from_of_node() to return -ENOENT instead
-> of NULL when the requested gpio property is not found in the device
-> tree. Additionally it modifies all calling functions to properly
-> evaluate the return value.
->
-> Another approach would be to leave the return value of
-> gpiod_get_from_of_node() as is and fix the bug in
-> devm_fwnode_get_index_gpiod_from_child(). Other callers would still need
-> to be reworked. The effort would be the same as with the chosen solution.
->
-> Signed-off-by: Georg Waibel <georg.waibel@sensor-technik.de>
-> ---
->  drivers/gpio/gpiolib.c                 | 6 +-----
->  drivers/regulator/da9211-regulator.c   | 2 ++
->  drivers/regulator/s2mps11.c            | 4 +++-
->  drivers/regulator/s5m8767.c            | 4 +++-
->  drivers/regulator/tps65090-regulator.c | 7 ++++---
->  5 files changed, 13 insertions(+), 10 deletions(-)
->
-> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-> index e013d417a936..be1d1d2f8aaa 100644
-> --- a/drivers/gpio/gpiolib.c
-> +++ b/drivers/gpio/gpiolib.c
-> @@ -4244,8 +4244,7 @@ EXPORT_SYMBOL_GPL(gpiod_get_index);
->   *
->   * Returns:
->   * On successful request the GPIO pin is configured in accordance with
-> - * provided @dflags. If the node does not have the requested GPIO
-> - * property, NULL is returned.
-> + * provided @dflags.
->   *
->   * In case of error an ERR_PTR() is returned.
->   */
-> @@ -4267,9 +4266,6 @@ struct gpio_desc *gpiod_get_from_of_node(struct device_node *node,
->                                         index, &flags);
->
->         if (!desc || IS_ERR(desc)) {
-> -               /* If it is not there, just return NULL */
-> -               if (PTR_ERR(desc) == -ENOENT)
-> -                       return NULL;
->                 return desc;
->         }
->
-> diff --git a/drivers/regulator/da9211-regulator.c b/drivers/regulator/da9211-regulator.c
-> index da37b4ccd834..0309823d2c72 100644
-> --- a/drivers/regulator/da9211-regulator.c
-> +++ b/drivers/regulator/da9211-regulator.c
-> @@ -289,6 +289,8 @@ static struct da9211_pdata *da9211_parse_regulators_dt(
->                                   0,
->                                   GPIOD_OUT_HIGH | GPIOD_FLAGS_BIT_NONEXCLUSIVE,
->                                   "da9211-enable");
-> +               if (IS_ERR(pdata->gpiod_ren[n]))
-> +                       pdata->gpiod_ren[n] = NULL;
->                 n++;
->         }
->
-> diff --git a/drivers/regulator/s2mps11.c b/drivers/regulator/s2mps11.c
-> index 134c62db36c5..b518a81f75a3 100644
-> --- a/drivers/regulator/s2mps11.c
-> +++ b/drivers/regulator/s2mps11.c
-> @@ -821,7 +821,9 @@ static void s2mps14_pmic_dt_parse_ext_control_gpio(struct platform_device *pdev,
->                                 0,
->                                 GPIOD_OUT_HIGH | GPIOD_FLAGS_BIT_NONEXCLUSIVE,
->                                 "s2mps11-regulator");
-> -               if (IS_ERR(gpio[reg])) {
-> +               if (PTR_ERR(gpio[reg]) == -ENOENT)
-> +                       gpio[reg] = NULL;
-> +               else if (IS_ERR(gpio[reg])) {
->                         dev_err(&pdev->dev, "Failed to get control GPIO for %d/%s\n",
->                                 reg, rdata[reg].name);
->                         continue;
-> diff --git a/drivers/regulator/s5m8767.c b/drivers/regulator/s5m8767.c
-> index bb9d1a083299..6ca27e9d5ef7 100644
-> --- a/drivers/regulator/s5m8767.c
-> +++ b/drivers/regulator/s5m8767.c
-> @@ -574,7 +574,9 @@ static int s5m8767_pmic_dt_parse_pdata(struct platform_device *pdev,
->                         0,
->                         GPIOD_OUT_HIGH | GPIOD_FLAGS_BIT_NONEXCLUSIVE,
->                         "s5m8767");
-> -               if (IS_ERR(rdata->ext_control_gpiod))
-> +               if (PTR_ERR(rdata->ext_control_gpiod) == -ENOENT)
-> +                       rdata->ext_control_gpiod = NULL;
-> +               else if (IS_ERR(rdata->ext_control_gpiod))
->                         return PTR_ERR(rdata->ext_control_gpiod);
->
+The i2c_client structure can be fairly large, which leads to
+a warning about possible kernel stack overflow in some
+configurations:
 
-For s2mps11 and s5m8767 bits:
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+drivers/char/ipmi/ipmb_dev_int.c:115:16: error: stack frame size of 1032 bytes in function 'ipmb_write' [-Werror,-Wframe-larger-than=]
 
-The s2mps11 code brought a bug to my attention so you might rebase on top of it.
+There is no real reason to even declare an i2c_client, as we can simply
+call i2c_smbus_xfer() directly instead of the i2c_smbus_write_block_data()
+wrapper.
 
-Best regards,
-Krzysztof
+Convert the ipmb_write() to use an open-coded i2c_smbus_write_block_data()
+here, without changing the behavior.
+
+It seems that there is another problem with this implementation;
+when user space passes a length of more than I2C_SMBUS_BLOCK_MAX
+bytes, all the rest is silently ignored. This should probably be
+addressed in a separate patch, but I don't know what the intended
+behavior is here.
+
+Fixes: 51bd6f291583 ("Add support for IPMB driver")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/char/ipmi/ipmb_dev_int.c | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
+
+diff --git a/drivers/char/ipmi/ipmb_dev_int.c b/drivers/char/ipmi/ipmb_dev_int.c
+index 2895abf72e61..c9724f6cf32d 100644
+--- a/drivers/char/ipmi/ipmb_dev_int.c
++++ b/drivers/char/ipmi/ipmb_dev_int.c
+@@ -117,7 +117,7 @@ static ssize_t ipmb_write(struct file *file, const char __user *buf,
+ {
+ 	struct ipmb_dev *ipmb_dev = to_ipmb_dev(file);
+ 	u8 rq_sa, netf_rq_lun, msg_len;
+-	struct i2c_client rq_client;
++	union i2c_smbus_data data;
+ 	u8 msg[MAX_MSG_LEN];
+ 	ssize_t ret;
+ 
+@@ -138,17 +138,17 @@ static ssize_t ipmb_write(struct file *file, const char __user *buf,
+ 
+ 	/*
+ 	 * subtract rq_sa and netf_rq_lun from the length of the msg passed to
+-	 * i2c_smbus_write_block_data_local
++	 * i2c_smbus_xfer
+ 	 */
+ 	msg_len = msg[IPMB_MSG_LEN_IDX] - SMBUS_MSG_HEADER_LENGTH;
+-
+-	strcpy(rq_client.name, "ipmb_requester");
+-	rq_client.adapter = ipmb_dev->client->adapter;
+-	rq_client.flags = ipmb_dev->client->flags;
+-	rq_client.addr = rq_sa;
+-
+-	ret = i2c_smbus_write_block_data(&rq_client, netf_rq_lun, msg_len,
+-					msg + SMBUS_MSG_IDX_OFFSET);
++	if (msg_len > I2C_SMBUS_BLOCK_MAX)
++		msg_len = I2C_SMBUS_BLOCK_MAX;
++
++	data.block[0] = msg_len;
++	memcpy(&data.block[1], msg + SMBUS_MSG_IDX_OFFSET, msg_len);
++	ret = i2c_smbus_xfer(ipmb_dev->client->adapter, rq_sa, ipmb_dev->client->flags,
++			     I2C_SMBUS_WRITE, netf_rq_lun,
++			     I2C_SMBUS_BLOCK_DATA, &data);
+ 
+ 	return ret ? : count;
+ }
+-- 
+2.20.0
+
