@@ -2,140 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 311B84B931
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 14:55:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B8984B92C
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 14:55:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731941AbfFSMzX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Jun 2019 08:55:23 -0400
-Received: from mout.kundenserver.de ([212.227.126.133]:52609 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731770AbfFSMzW (ORCPT
+        id S1731769AbfFSMzB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Jun 2019 08:55:01 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:35556 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727129AbfFSMzA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Jun 2019 08:55:22 -0400
-Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
- (mreue011 [212.227.15.129]) with ESMTPA (Nemesis) id
- 1M2w4S-1hcUib3o9k-003KN8; Wed, 19 Jun 2019 14:55:06 +0200
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     Pablo Neira Ayuso <pablo@netfilter.org>,
-        Jozsef Kadlecsik <kadlec@netfilter.org>,
-        Florian Westphal <fw@strlen.de>,
-        "David S. Miller" <davem@davemloft.net>,
-        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
-        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Fernando Fernandez Mancera <ffmancera@riseup.net>,
-        wenxu <wenxu@ucloud.cn>, netfilter-devel@vger.kernel.org,
-        coreteam@netfilter.org, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org
-Subject: [PATCH] netfilter: synproxy: fix building syncookie calls
-Date:   Wed, 19 Jun 2019 14:54:36 +0200
-Message-Id: <20190619125500.1054426-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.20.0
+        Wed, 19 Jun 2019 08:55:00 -0400
+Received: by mail-wm1-f68.google.com with SMTP id c6so1743173wml.0
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2019 05:54:58 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=oUKHb/HhBZ0gnG9oANdx2Pjudz3ATWiOMMw4XgDgVpU=;
+        b=JvQfrphQXkVWSfIagw/eBDh5vH/gwWNHVDnQS2v6akb5SoGE2fQ3UVb1sSazTnndY/
+         qrtwpDkv/FLSG44A3/cs9jCzlsHNg0JBCziwhiOvgKyma0R6ELEDp2I2yHAtsfC4Y2oT
+         SQxGvvHcpD0hhJ1SMYbeorXpO/aF2caQ+EVnVuXGCpoDF7Ghyk/YvdL3QuCtCAx4GC7Z
+         BGPvdbSRwAIaMujOlZppnbxlUkDX851Wqou/2VKpwzHhK5sHq013fnBa0Qdjg2LnDI7j
+         PLynTKeGEzs+ptB4IuVLPW7eZpy0bx6ek7fWT+m9UFMSIlZ7LlAC25bPdICzqa8BkG/6
+         NSHg==
+X-Gm-Message-State: APjAAAWWig+5G2fleSxo856a3ZHU7JcB8sPKBqqEmXLRGmu2NN9qW4Y4
+        0hdbbPNB3OfDDV018bmxrulS3Q==
+X-Google-Smtp-Source: APXvYqw3i0VpSjIBS+93VI0Apn4ELLqPvHfMOQQF7nzI3bFhxPrXEygph6zjfl8uXvwK80wNW3qTeA==
+X-Received: by 2002:a1c:4956:: with SMTP id w83mr8147505wma.67.1560948898067;
+        Wed, 19 Jun 2019 05:54:58 -0700 (PDT)
+Received: from miu.piliscsaba.redhat.com (catv-212-96-48-140.catv.broadband.hu. [212.96.48.140])
+        by smtp.gmail.com with ESMTPSA id l12sm42800918wrb.81.2019.06.19.05.54.56
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Wed, 19 Jun 2019 05:54:57 -0700 (PDT)
+From:   Miklos Szeredi <mszeredi@redhat.com>
+To:     David Howells <dhowells@redhat.com>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>, Ian Kent <raven@themaw.net>,
+        linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2 05/13] vfs: don't parse "silent" option
+Date:   Wed, 19 Jun 2019 14:54:52 +0200
+Message-Id: <20190619125452.28303-1-mszeredi@redhat.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:xZ3TMz67ZOJPH0ye7NMGfik9gT3NNsynu5AzNJdutOeiOL4FIS+
- WAWs6+suEpnTzZ0LzUoZyVkCVr1RxNHd20j4ksTpwlFIPQxcMO5a9ZcyxLcotOgwe3uGlOB
- 1rUhA3r55CeT4b39lG/fNvkOu+NH9MlldXRpHp+zIZHBl1jlpZXUFAeA7s2aAzOnrbYgInB
- CM/7zqvrJ+PwsLR9lYTaA==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:QNzBUpn2b2I=:HHSLfW4VycGyqlqjJGBf1q
- fdgoN5ybxex4s6O5gaO7m7glXbbkeG+zpqnv/+J7PcPaAZsuJI4jX0awEBftE3tWXouk5AFBQ
- 7wGCEYH8Krmv7DfRx/lRWw/NT2Ud9NaS89PZ30JNeHPpPcGcMoYvGOXp4wBoVFOuLXlwLPRaw
- k6p4G94DRpiD1U2mzw5j0Gw0aQJHIG0IeC7kpwrmdgwc2Kf9+tu0wnUI3EzSHccyelPMn7fyo
- LPlyIcZOUcjRrjhO+rBz1w03EOWL6TAFzMJMJYJkB3u0SaGz0OzeLyf82QM0o79WOxMRSIR1L
- MT57jVBhuAdsTmoV+sesjbAgvjAHdSx1tOd+OmFFVTd/UNTEmKFSYA4EDlrB1IH0g9aaRX2bB
- oV6debd+6899coOTyIyk95qQzAYbdhIe/Rpf5mpimOfki6Tefm9mP7xFoG4y4EjEl/OqbhzVC
- 0SbQJc8NNXij6OMRadEflf+DZ2FgdNF7F6pCBV19bmV0Rzb87yl+hTeGvSphxSxvi5JobW5pC
- Umgre0T3SfAhvELEsXFq4m51iCssETNixScH3NREJc4kHeexV+g3T96PfeTxk7o3KR2YcuA6R
- PCrVKn+sFcl2xO7yqHKc2UWl1zjkegg8D+h3k5QkksWlDhU7slSUB9VMqbdRBRzpe+j3MpziH
- dUf3TFpYKj0d7WmJnQ37eH7enuwxokIPfPARLkLtvkU/CBQiEF+Un91ncd7TjWboRs/r44J6/
- C4qzRdDKXLFuITe/kDDoYHGEjFZ0JXQtp7bbFw==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When either CONFIG_IPV6 or CONFIG_SYN_COOKIES are disabled, the kernel
-fails to build:
+While this is a standard option as documented in mount(8), it is ignored by
+most filesystems.  So reject, unless filesystem explicitly wants to handle
+it.
 
-include/linux/netfilter_ipv6.h:180:9: error: implicit declaration of function '__cookie_v6_init_sequence'
-      [-Werror,-Wimplicit-function-declaration]
-        return __cookie_v6_init_sequence(iph, th, mssp);
-include/linux/netfilter_ipv6.h:194:9: error: implicit declaration of function '__cookie_v6_check'
-      [-Werror,-Wimplicit-function-declaration]
-        return __cookie_v6_check(iph, th, cookie);
-net/ipv6/netfilter.c:237:26: error: use of undeclared identifier '__cookie_v6_init_sequence'; did you mean 'cookie_init_sequence'?
-net/ipv6/netfilter.c:238:21: error: use of undeclared identifier '__cookie_v6_check'; did you mean '__cookie_v4_check'?
+The exception is unconverted filesystems, where it is unknown if the
+filesystem handles this or not.
 
-Fix the IS_ENABLED() checks to match the function declaration
-and definitions for these.
+Any implementation, such as mount(8) that needs to parse this option
+without failing should simply ignore the return value from fsconfig().
 
-Fixes: 3006a5224f15 ("netfilter: synproxy: remove module dependency on IPv6 SYNPROXY")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
 ---
- include/linux/netfilter_ipv6.h | 14 ++++++++------
- net/ipv6/netfilter.c           |  2 ++
- 2 files changed, 10 insertions(+), 6 deletions(-)
+Changes:
+ - v1 didn't return on matching option in legacy_parse_param()
+ 
+ fs/fs_context.c | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
 
-diff --git a/include/linux/netfilter_ipv6.h b/include/linux/netfilter_ipv6.h
-index 1aa3a23744df..7beb681e1ce5 100644
---- a/include/linux/netfilter_ipv6.h
-+++ b/include/linux/netfilter_ipv6.h
-@@ -171,31 +171,33 @@ static inline u32 nf_ipv6_cookie_init_sequence(const struct ipv6hdr *iph,
- 					       const struct tcphdr *th,
- 					       u16 *mssp)
- {
-+#if IS_ENABLED(CONFIG_SYN_COOKIES)
- #if IS_MODULE(CONFIG_IPV6)
- 	const struct nf_ipv6_ops *v6_ops = nf_get_ipv6_ops();
+diff --git a/fs/fs_context.c b/fs/fs_context.c
+index 49636e541293..bd8f8ab8358b 100644
+--- a/fs/fs_context.c
++++ b/fs/fs_context.c
+@@ -51,7 +51,6 @@ static const struct constant_table common_clear_sb_flag[] = {
+ 	{ "nolazytime",	SB_LAZYTIME },
+ 	{ "nomand",	SB_MANDLOCK },
+ 	{ "rw",		SB_RDONLY },
+-	{ "silent",	SB_SILENT },
+ };
  
- 	if (v6_ops)
- 		return v6_ops->cookie_init_sequence(iph, th, mssp);
--
--	return 0;
--#else
-+#elif IS_BUILTIN(CONFIG_IPV6)
- 	return __cookie_v6_init_sequence(iph, th, mssp);
- #endif
-+#endif
-+	return 0;
- }
+ /*
+@@ -535,6 +534,15 @@ static int legacy_parse_param(struct fs_context *fc, struct fs_parameter *param)
+ 	if (ret != -ENOPARAM)
+ 		return ret;
  
- static inline int nf_cookie_v6_check(const struct ipv6hdr *iph,
- 				     const struct tcphdr *th, __u32 cookie)
- {
-+#if IS_ENABLED(CONFIG_SYN_COOKIES)
- #if IS_MODULE(CONFIG_IPV6)
- 	const struct nf_ipv6_ops *v6_ops = nf_get_ipv6_ops();
- 
- 	if (v6_ops)
- 		return v6_ops->cookie_v6_check(iph, th, cookie);
--
--	return 0;
--#else
-+#elif IS_BUILTIN(CONFIG_IPV6)
- 	return __cookie_v6_check(iph, th, cookie);
- #endif
-+#endif
-+	return 0;
- }
- 
- __sum16 nf_ip6_checksum(struct sk_buff *skb, unsigned int hook,
-diff --git a/net/ipv6/netfilter.c b/net/ipv6/netfilter.c
-index dffb10fdc3e8..61819ed858b1 100644
---- a/net/ipv6/netfilter.c
-+++ b/net/ipv6/netfilter.c
-@@ -234,8 +234,10 @@ static const struct nf_ipv6_ops ipv6ops = {
- 	.route_me_harder	= ip6_route_me_harder,
- 	.dev_get_saddr		= ipv6_dev_get_saddr,
- 	.route			= __nf_ip6_route,
-+#if IS_ENABLED(CONFIG_SYN_COOKIES)
- 	.cookie_init_sequence	= __cookie_v6_init_sequence,
- 	.cookie_v6_check	= __cookie_v6_check,
-+#endif
- #endif
- 	.route_input		= ip6_route_input,
- 	.fragment		= ip6_fragment,
++	if (strcmp(param->key, "silent") == 0) {
++		if (param->type != fs_value_is_flag)
++			return invalf(fc, "%s: Unexpected value for '%s'",
++				      fc->fs_type->name, param->key);
++
++		fc->sb_flags |= SB_SILENT;
++		return 0;
++	}
++
+ 	if (strcmp(param->key, "source") == 0) {
+ 		if (param->type != fs_value_is_string)
+ 			return invalf(fc, "VFS: Legacy: Non-string source");
 -- 
-2.20.0
+2.21.0
 
