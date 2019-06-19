@@ -2,84 +2,170 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6FB224BC57
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 17:06:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C78EB4BAAE
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 16:04:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730011AbfFSPF4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Jun 2019 11:05:56 -0400
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:38821 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726496AbfFSPF4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Jun 2019 11:05:56 -0400
-Received: by mail-lf1-f67.google.com with SMTP id b11so12413794lfa.5
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2019 08:05:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lixom-net.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=rLIkqlGn9cUlPf38s8MiT2bIRqxvXG+Su9LV/bpHzd0=;
-        b=A80Z3wePQk+3ikueP3DX3ZYZi5GH6ORG5QlDkVy+ZFzIpC7UJEN2CEyfM87XGy2Kml
-         UMB7BDT2oVm8cajDJkV6PAUOakeu+92GVcs/QkoaiNhn/gyGbY1QZCMs1B9TvgOdWxqN
-         kR8/cuu487HIgBWxwrnQWUUEwU8bLwivUxGncg0azOcql7GuF8DDnk2ML030xCGds8uG
-         jIdqharE+JH/Fw1qdVwPBC2R4uFcaSsIHy+nmcqynRMdH5ro5KP8E/ITzF2H4yDnD1A5
-         nuY6r5xUO9S09bTcjrPtGb66vRplTzhfcWwTa5rLXbmBJ2/P0VLWpkbh5axjvezbhd0c
-         EIow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=rLIkqlGn9cUlPf38s8MiT2bIRqxvXG+Su9LV/bpHzd0=;
-        b=oum8wrNECzPZmDIalDf4cf2Fn7p5BrCKY+x/+ywNOvVVb6UbntuqmaB68zk9MxepQ7
-         WFx07s0MrjKeql3QtZSWY9S1Fy6qLke0sQ+vCb+pY2HD115LkRGBEx/KAZaymI2ygDa7
-         v/2+BMYAi9/SxmcUbY4T+WvKYAnjSodndWMc+hEzkFQPxvXXAVcvEGdW/lAhiblUCbRJ
-         2P/bAhV59pDTQYMnIsxCX14h4yvNDG4wsedEQuDECPi3aYudeTdU57bFtPF9CbGQ1PxS
-         vb2tciefwUsVr7GdqwgzCYNXCJzL7ZlTpawFDDC5QgYUGLljhVIQl8Am0p+Ha+y1tqns
-         J+uw==
-X-Gm-Message-State: APjAAAVURUjl/hhx33Mmc8XB1p2KfeA/YiH4v7zhNk5447q2Gm7LSHnA
-        v+hTPmIR/kd0TPEC7wOZamSyYw==
-X-Google-Smtp-Source: APXvYqxmdNV7xq5YR13Vg4a3/65Jiq4IWvBSJdIVrPquKzCKn0zJgudmzb7b2ZjN0LydNtOJs2ajbA==
-X-Received: by 2002:a19:710b:: with SMTP id m11mr56799598lfc.135.1560956753593;
-        Wed, 19 Jun 2019 08:05:53 -0700 (PDT)
-Received: from localhost (h85-30-9-151.cust.a3fiber.se. [85.30.9.151])
-        by smtp.gmail.com with ESMTPSA id y18sm3123964ljh.1.2019.06.19.08.05.52
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 19 Jun 2019 08:05:52 -0700 (PDT)
-Date:   Wed, 19 Jun 2019 07:03:51 -0700
-From:   Olof Johansson <olof@lixom.net>
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        arm@kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: Re: [PATCH] arm64: configs: Remove useless UEVENT_HELPER_PATH
-Message-ID: <20190619140351.okscbbzudzwv5gup@localhost>
-References: <1559634748-19546-1-git-send-email-krzk@kernel.org>
+        id S1729159AbfFSOEl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Jun 2019 10:04:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53504 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726047AbfFSOEl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Jun 2019 10:04:41 -0400
+Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D9C3421783;
+        Wed, 19 Jun 2019 14:04:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1560953080;
+        bh=97TXVH65mMfV5w2HMYzAftt020yRE8J8woo9idTWyrg=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=GQZtA9m+aghgtLbTJCTLcGQ2xOJmpH9TSP6kwXyqDJH8/KylAnsD4ksi6rh2PBElb
+         G4NgmXmOXpadOPgNMQVx3mLhNE/5Dpvjtrq6LHqg9kkEJeCRQ6KMdKoBryc+XUcEyi
+         XYNUrXyBXJ5191ROp35tXbR3dWhCMEJkziIBE9mU=
+Received: by mail-qk1-f179.google.com with SMTP id g18so10973899qkl.3;
+        Wed, 19 Jun 2019 07:04:39 -0700 (PDT)
+X-Gm-Message-State: APjAAAWrMpW4SlPmlOOBuklVyNRu5S+xi+twFI52+yqbbrqFfZwSmfIS
+        YEGn1MnFOBCHzNea8ewuxcUz/1vG2598ZAdOhw==
+X-Google-Smtp-Source: APXvYqwi/+mIBYNi4WCbUWLHb/9h3vhdYu6+esugFSfRU1ol2StHjeOdJMtIkOrVHWDAo5UnQj67m17DYpcF1eu6pDg=
+X-Received: by 2002:a05:620a:5b1:: with SMTP id q17mr33634246qkq.174.1560953079014;
+ Wed, 19 Jun 2019 07:04:39 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1559634748-19546-1-git-send-email-krzk@kernel.org>
-User-Agent: NeoMutt/20170113 (1.7.2)
+References: <20190506123456.6777-1-peter.ujfalusi@ti.com> <20190506123456.6777-10-peter.ujfalusi@ti.com>
+ <20190613181626.GA7039@bogus> <e0d6a264-96b5-31a6-e70b-3b1c2d863988@ti.com>
+ <CAL_JsqJNMkKL_FubZfjKY6jLebMetmgR24EoendHoPM2ckrUQA@mail.gmail.com> <e811d674-b79f-4da8-c632-c7a90844b6c5@ti.com>
+In-Reply-To: <e811d674-b79f-4da8-c632-c7a90844b6c5@ti.com>
+From:   Rob Herring <robh@kernel.org>
+Date:   Wed, 19 Jun 2019 08:04:26 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqJTWNKTB1D2wNysonzasgL9awLLvr1HdOckUnQbpgsDQw@mail.gmail.com>
+Message-ID: <CAL_JsqJTWNKTB1D2wNysonzasgL9awLLvr1HdOckUnQbpgsDQw@mail.gmail.com>
+Subject: Re: [PATCH 09/16] dt-bindings: dma: ti: Add document for K3 UDMA
+To:     Peter Ujfalusi <peter.ujfalusi@ti.com>
+Cc:     Vinod <vkoul@kernel.org>, Nishanth Menon <nm@ti.com>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        "open list:DMA GENERIC OFFLOAD ENGINE SUBSYSTEM" 
+        <dmaengine@vger.kernel.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>, devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        Lokesh Vutla <lokeshvutla@ti.com>,
+        Tero Kristo <t-kristo@ti.com>, Tony Lindgren <tony@atomide.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 04, 2019 at 09:52:28AM +0200, Krzysztof Kozlowski wrote:
-> Remove the CONFIG_UEVENT_HELPER_PATH because:
-> 1. It is disabled since commit 1be01d4a5714 ("driver: base: Disable
->    CONFIG_UEVENT_HELPER by default") as its dependency (UEVENT_HELPER) was
->    made default to 'n',
-> 2. It is not recommended (help message: "This should not be used today
->    [...] creates a high system load") and was kept only for ancient
->    userland,
-> 3. Certain userland specifically requests it to be disabled (systemd
->    README: "Legacy hotplug slows down the system and confuses udev").
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+On Fri, Jun 14, 2019 at 7:42 AM Peter Ujfalusi <peter.ujfalusi@ti.com> wrot=
+e:
+>
+>
+> On 14/06/2019 16.20, Rob Herring wrote:
+> > On Thu, Jun 13, 2019 at 2:33 PM Peter Ujfalusi <peter.ujfalusi@ti.com> =
+wrote:
+> >>
+> >> Rob,
+> >>
+> >> On 13/06/2019 21.16, Rob Herring wrote:
+> >>>> +Remote PSI-L endpoint
+> >>>> +
+> >>>> +Required properties:
+> >>>> +--------------------
+> >>>> +- ti,psil-base:             PSI-L thread ID base of the endpoint
+> >>>> +
+> >>>> +Within the PSI-L endpoint node thread configuration subnodes must p=
+resent with:
+> >>>> +ti,psil-configX naming convention, where X is the thread ID offset.
+> >>>
+> >>> Don't use vendor prefixes on node names.
+> >>
+> >> OK.
+> >>
+> >>>> +
+> >>>> +Configuration node Required properties:
+> >>>> +--------------------
+> >>>> +- linux,udma-mode:  Channel mode, can be:
+> >>>> +                    - UDMA_PKT_MODE: for Packet mode channels (peri=
+pherals)
+> >>>> +                    - UDMA_TR_MODE: for Third-Party mode
+> >>>
+> >>> This is hardly a common linux thing. What determines the value here.
+> >>
+> >> Unfortunately it is.
+> >
+> > No, it's a feature of your h/w and in no way is something linux
+> > defined which is the point of 'linux' prefix.
+>
+> The channel can be either Packet or TR mode. The HW is really flexible
+> on this (and on other things as well).
+> It just happens that Linux need to use specific channels in a specific mo=
+de.
+>
+> Would it help if we assume that all channels are used in Packet mode,
+> but we have linux,tr-mode bool to indicate that the given channel in
+> Linux need to be used in TR mode.
 
-Applied, thanks.
+Your use of 'linux' prefix is wrong. Stop using it.
 
+> >> Each channel can be configured to Packet or TR mode. For some
+> >> peripherals it is true that they only support packet mode, these are t=
+he
+> >> newer PSI-L native peripherals.
+> >> For these channels a udma-mode property would be correct.
+> >>
+> >> But we have legacy peripherals as well and they are serviced by PDMA
+> >> (which is a native peripheral designed to talk to the given legacy IP)=
+.
+> >> We can use either packet or TR mode in UDMAP to talk to PDMAs, it is i=
+n
+> >> most cases clear what to use, but for example for audio (McASP) channe=
+ls
+> >> Linux is using TR channel because we need cyclic DMA while for example
+> >> RTOS is using Packet mode as it fits their needs better.
+> >>
+> >> Here I need to prefix the udma-mode with linux as the mode is used by
+> >> Linux, but other OS might opt to use different channel mode.
+> >
+> > So you'd need <os>,udma-mode? That doesn't work... If the setting is
+> > per OS, then it belongs in the OS because the same dtb should work
+> > across OS's.
+>
+> So I should have a table for the thread IDs in the DMA driver and mark
+> channels as TR or Packet in there for Linux use?
 
--Olof
+Perhaps. I haven't heard any reasons why you need this in DT. If Linux
+is dictating the modes, then sounds like it should be in Linux.
+
+But really, I don't fully understand what you are doing here to tell
+you what to do beyond using 'linux' prefix is wrong.
+
+> Or just an array which would mark the non packet PSI-L thread IDs?
+>
+> I still prefer to have this coming via DT as a Linux parameter as other
+> OS is free to ignore the linux,udma-mode, but as I said there are
+> certain channels which must be used in Linux in certain mode while
+> others in different mode.
+
+A DT client is free to ignore any DT property. You don't need a client
+prefix for that.
+
+> >> The reason why this needs to be in the DT is that when the channel is
+> >> requested we need to configure the mode and it can not be swapped
+> >> runtime easily between Packet and TR mode.
+> >
+> > So when the client makes the channel request, why doesn't it specify th=
+e mode?
+>
+> This is UDMAP internal information on what type of Descriptors the
+> channel will expect and how it is going to dispatch the work.
+>
+> Packet and TR mode at the end does the same thing, but in a completely
+> different way.
+>
+> - P=C3=A9ter
+>
+> Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+> Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
