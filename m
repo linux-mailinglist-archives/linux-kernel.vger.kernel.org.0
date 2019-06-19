@@ -2,141 +2,152 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BEA7A4BE8D
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 18:46:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5245D4BE96
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 18:46:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730217AbfFSQqc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Jun 2019 12:46:32 -0400
-Received: from mail-io1-f65.google.com ([209.85.166.65]:34964 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726143AbfFSQqc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Jun 2019 12:46:32 -0400
-Received: by mail-io1-f65.google.com with SMTP id m24so104503ioo.2
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2019 09:46:31 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=18Kg5MWKnGyDk/Hk0hs3jQay0Br3d6t8dYYP1QSodXI=;
-        b=DT0RdVXn2dKNzpYbMJfT8D70c2HjbwHWd7+GGMcDkus+rqAqHuKU8UOQsg6LcdFrtf
-         nHPuuhcYDsmi/1Bg8z3grKm8d4oE+xUL6YatmCRzZQLnpm167xBezLvgaikgKr3hwOUg
-         ZfOoTKvqBDeYBf7P/bdfGfvKmZ7AKj2tHngt3+KRaJ6AtAOgHSnc0XpBfcdyCcfHDWI/
-         ylIgIM0VRWYaxgYc19dseRY6P9tzD+yk5eUuhN/708c3Rnaa2Epjq2uatMJZAW1b9vm7
-         /jw5R5KRAv3Jn4DiV8l/BLAQy1KGUlq0KMFY2NEK5WGbK6oG+HNlsi8ntsZg+Qtfi3I3
-         4e3Q==
-X-Gm-Message-State: APjAAAVTQQt2sezry3PwDwcCuAlHKD4BB3peudTXmZUsT4S7q4Yzt7mq
-        4gGw2Df0YSQyYXFJR0RD9ccTzQ==
-X-Google-Smtp-Source: APXvYqwlrenhz7SGY4ppdH5b4KqvGgeKH2qtdHOslNv0XodC4c1mNe523GdL5Na20VfbkbwdPmjrRA==
-X-Received: by 2002:a5d:8195:: with SMTP id u21mr15862298ion.260.1560962791001;
-        Wed, 19 Jun 2019 09:46:31 -0700 (PDT)
-Received: from google.com ([2620:15c:183:0:20b8:dee7:5447:d05])
-        by smtp.gmail.com with ESMTPSA id t19sm13739147iog.41.2019.06.19.09.46.28
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 19 Jun 2019 09:46:29 -0700 (PDT)
-Date:   Wed, 19 Jun 2019 10:46:25 -0600
-From:   Raul Rangel <rrangel@chromium.org>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     stable@vger.kernel.org, linux-mmc@vger.kernel.org,
-        djkurtz@google.com, adrian.hunter@intel.com, zwisler@chromium.org,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-kernel@vger.kernel.org, Chris Boot <bootc@bootc.net>,
-        =?iso-8859-1?Q?Cl=E9ment_P=E9ron?= <peron.clem@gmail.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Subject: Re: [stable/4.14.y PATCH 0/3] mmc: Fix a potential resource leak
- when shutting down request queue.
-Message-ID: <20190619164625.GA85539@google.com>
-References: <20190513175521.84955-1-rrangel@chromium.org>
- <20190514091933.GA27269@kroah.com>
+        id S1730315AbfFSQqn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Jun 2019 12:46:43 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:50417 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726689AbfFSQqh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Jun 2019 12:46:37 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 90A8E356C4;
+        Wed, 19 Jun 2019 16:46:36 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-57.rdu2.redhat.com [10.10.120.57])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 1ECD35D96E;
+        Wed, 19 Jun 2019 16:46:31 +0000 (UTC)
+Subject: [PATCH 0/9] keys: Namespacing [ver #4]
+From:   David Howells <dhowells@redhat.com>
+To:     ebiederm@xmission.com, keyrings@vger.kernel.org
+Cc:     linux-cifs@vger.kernel.org, linux-nfs@vger.kernel.org,
+        netdev@vger.kernel.org, linux-afs@lists.infradead.org,
+        dhowells@redhat.com, dwalsh@redhat.com, vgoyal@redhat.com,
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Wed, 19 Jun 2019 17:46:31 +0100
+Message-ID: <156096279115.28733.8761881995303698232.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/unknown-version
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190514091933.GA27269@kroah.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Wed, 19 Jun 2019 16:46:36 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 14, 2019 at 11:19:34AM +0200, Greg Kroah-Hartman wrote:
-> On Mon, May 13, 2019 at 11:55:18AM -0600, Raul E Rangel wrote:
-> > I think we should cherry-pick 41e3efd07d5a02c80f503e29d755aa1bbb4245de
-> > https://lore.kernel.org/patchwork/patch/856512/ into 4.14. It fixes a
-> > potential resource leak when shutting down the request queue.
-> 
-> Potential meaning "it does happen", or "it can happen if we do this", or
-> just "maybe it might happen, we really do not know?"
-It does happen if the AMD SDHCI patches are cherry-picked into 4.14.
-https://lkml.org/lkml/2019/5/1/398
-It can be mitigated by changing the line in the patch with
-`mmc_detect_change(host, 0)` to mmc_detect_change(host, 200)`, but
-that's just a workaround to play with the timing so the race condition
-doesn't happen.
-> 
-> > Once this patch is applied, there is a potential for a null pointer dereference.
-> > That's what the second patch fixes.
-> 
-> What is the git id of that upstream fix?
-So there is no specific upstream fix. There was a large patch set that
-migrated mmc to using blk-mq, so the bug just kind of went away.
-https://lwn.net/Articles/739774/ or 0fbfd12518303e9b32ac9fd231439459eac848f9
 
-> 
-> > The third patch is just an optimization to stop processing earlier.
-> 
-> That's not how stable kernels work :(
-Oops, I guess we can ignore that patch. It just prevents mmc_init_request
-from being called, but it doesn't matter since the 2nd patch actually
-checks for NULL now.
-> 
-> > See https://patchwork.kernel.org/patch/10925469/ for the initial motivation.
-> 
-> I don't understand the motivation from that link at all :(
-> 
-> > This commit applies to v4.14.116. It is already included in 4.19. 4.19 doesn't
-> > suffer from the null pointer dereference because later commits migrate the mmc
-> > stack to blk-mq.
-> 
-> What are those later commits?
-Commit 0fbfd12518303e9b32ac9fd231439459eac848f9 specifically deletes the
-code for the 2nd patch. As I said above, the NULL pointer dereference
-just kind of went away as part of the blk-mq migration, so there is no
-upstream fix :(
+Here are some patches to make keys and keyrings more namespace aware.
 
-> 
-> > I tested this patch set by randomly connecting/disconnecting the SD
-> > card. I got over 189650 itarations without a problem.
-> 
-> And if you do not have these patches, on 4.14.y, how many iterations
-> cause a problem?  If you just apply the first patch, does that work?
-If I apply the AMD SDHCI patches and nothing else, then I can cause a
-resource leak within 10 iterations. If I apply just the first patch then
-I can cause a NULL pointer error within 10 iterations. If I apply both 1
-and 2, then everything works as expected and I can't cause a problem.
-> 
-> _EVERY_ time we take a patch that is not upstream, something usually is
-> broken and needs to be fixed.  We have a long long long history of this,
-> so if you want to have a patch that is not upstream applied to a stable
-> kernel release, you need a whole lot of justification and explanation
-> and begging.  And you need to be around to fix the fallout for when it
-> breaks :)
+Firstly some miscellaneous patches to make the process easier:
 
-It also looks like 2361bfb055f948eac6583fa3c75a014da84fe554 includes a
-fix for 41e3efd07d5a02c80f503e29d755aa1bbb4245de, so that would need to
-be cherry picked in.
+ (1) Simplify key index_key handling so that the word-sized chunks
+     assoc_array requires don't have to be shifted about, making it easier
+     to add more bits into the key.
 
-I guess I should have included a fixes: line in my second patch.
+ (2) Cache the hash value in the key so that we don't have to calculate on
+     every key we examine during a search (it involves a bunch of
+     multiplications).
 
-So to summarize:
-- cherry-pick 41e3efd07d5a02c80f503e29d755aa1bbb4245de
-- cherry-pick 2361bfb055f948eac6583fa3c75a014da84fe554
-- apply 2nd patch but add to commit message:
-  Fixes: 41e3efd07d5a ("mmc: block: Simplify cleaning up the queue")
-- Ignore patch 3 since it's an optimization.
-> 
-> thanks,
-> 
-> greg k-h
-Thanks again for your time, and sorry for the really late response!
+ (3) Allow keying_search() to search non-recursively.
 
-Raul
+Then the main patches:
+
+ (4) Make it so that keyring names are per-user_namespace from the point of
+     view of KEYCTL_JOIN_SESSION_KEYRING so that they're not accessible
+     cross-user_namespace.
+
+     keyctl_capabilities() shows KEYCTL_CAPS1_NS_KEYRING_NAME for this.
+
+ (5) Move the user and user-session keyrings to the user_namespace rather
+     than the user_struct.  This prevents them propagating directly across
+     user_namespaces boundaries (ie. the KEY_SPEC_* flags will only pick
+     from the current user_namespace).
+
+ (6) Make it possible to include the target namespace in which the key shall
+     operate in the index_key.  This will allow the possibility of multiple
+     keys with the same description, but different target domains to be held
+     in the same keyring.
+
+     keyctl_capabilities() shows KEYCTL_CAPS1_NS_KEY_TAG for this.
+
+ (7) Make it so that keys are implicitly invalidated by removal of a domain
+     tag, causing them to be garbage collected.
+
+ (8) Institute a network namespace domain tag that allows keys to be
+     differentiated by the network namespace in which they operate.  New keys
+     that are of a type marked 'KEY_TYPE_NET_DOMAIN' are assigned the network
+     domain in force when they are created.
+
+ (9) Make it so that the desired network namespace can be handed down into the
+     request_key() mechanism.  This allows AFS, NFS, etc. to request keys
+     specific to the network namespace of the superblock.
+
+     This also means that the keys in the DNS record cache are thenceforth
+     namespaced, provided network filesystems pass the appropriate network
+     namespace down into dns_query().
+
+     For DNS, AFS and NFS are good; CIFS and Ceph are not.  Other cache
+     keyrings, such as idmapper keyrings, also need to set the domain tag -
+     for which they need access to the network namespace of the superblock.
+
+The patches can be found on the following branch:
+
+	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log/?h=keys-namespace
+
+David
+---
+David Howells (9):
+      keys: Simplify key description management
+      keys: Cache the hash value to avoid lots of recalculation
+      keys: Add a 'recurse' flag for keyring searches
+      keys: Namespace keyring names
+      keys: Move the user and user-session keyrings to the user_namespace
+      keys: Include target namespace in match criteria
+      keys: Garbage collect keys for which the domain has been removed
+      keys: Network namespace domain tag
+      keys: Pass the network namespace into request_key mechanism
+
+
+ Documentation/security/keys/core.rst        |   38 +++-
+ Documentation/security/keys/request-key.rst |   29 ++-
+ certs/blacklist.c                           |    2 
+ crypto/asymmetric_keys/asymmetric_type.c    |    2 
+ fs/afs/addr_list.c                          |    4 
+ fs/afs/dynroot.c                            |    8 +
+ fs/cifs/dns_resolve.c                       |    3 
+ fs/nfs/dns_resolve.c                        |    3 
+ fs/nfs/nfs4idmap.c                          |    2 
+ include/linux/dns_resolver.h                |    3 
+ include/linux/key-type.h                    |    3 
+ include/linux/key.h                         |   81 ++++++++
+ include/linux/sched/user.h                  |   14 -
+ include/linux/user_namespace.h              |   12 +
+ include/net/net_namespace.h                 |    3 
+ include/uapi/linux/keyctl.h                 |    2 
+ kernel/user.c                               |    8 -
+ kernel/user_namespace.c                     |    9 -
+ lib/digsig.c                                |    2 
+ net/ceph/messenger.c                        |    3 
+ net/core/net_namespace.c                    |   19 ++
+ net/dns_resolver/dns_key.c                  |    1 
+ net/dns_resolver/dns_query.c                |    7 +
+ net/rxrpc/key.c                             |    6 -
+ net/rxrpc/security.c                        |    2 
+ security/integrity/digsig_asymmetric.c      |    4 
+ security/keys/gc.c                          |    2 
+ security/keys/internal.h                    |   10 +
+ security/keys/key.c                         |    5 -
+ security/keys/keyctl.c                      |    8 +
+ security/keys/keyring.c                     |  263 +++++++++++++++------------
+ security/keys/persistent.c                  |   10 +
+ security/keys/proc.c                        |    3 
+ security/keys/process_keys.c                |  262 +++++++++++++++++----------
+ security/keys/request_key.c                 |   62 ++++--
+ security/keys/request_key_auth.c            |    3 
+ 36 files changed, 588 insertions(+), 310 deletions(-)
+
