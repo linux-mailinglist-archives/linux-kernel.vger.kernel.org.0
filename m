@@ -2,180 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F14A74B58F
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 11:52:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F66D4B577
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 11:51:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731408AbfFSJwm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Jun 2019 05:52:42 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:13226 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726826AbfFSJwk (ORCPT
+        id S1731296AbfFSJvi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Jun 2019 05:51:38 -0400
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:46097 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726826AbfFSJvh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Jun 2019 05:52:40 -0400
-Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-        by mx08-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5J9kvaL028234;
-        Wed, 19 Jun 2019 11:52:17 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
- : date : message-id : in-reply-to : references : mime-version :
- content-type; s=STMicroelectronics;
- bh=rXR4M7t22XwNh12WImA9EjQhM49Lilzc8OvfTApgm+o=;
- b=iGGsogxeuihyRqyf+NUuAHw1UY8OdhkL66YAdnA03GETYkx8MvSRj/acGEsad8Bv9CZL
- yflRA4BVX68NOhqfBKkYR/ldH4q0H8mtoDXk2198JgawTSuSfYxANORwl2rpz1OukU8M
- p3owuyH3jdgaxsSwaxE/KgkD0q72El3OGyLNFocpuuPvI3MQmPgdPdrszukc0K+q8J+V
- K8jHfRrbQAdHf5AVdAMbJ0Mtqngvm+ckjur9u7Mb3+d4cg6sIZ8Nl8Y40hNwvQ32Nw1p
- fnar9ce4L7R/af3VHInsrXbCJV/hIw3WvWLlNSjapiA/BLoVzHRZTsiWvVm9FDa/3vlv Lg== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx08-00178001.pphosted.com with ESMTP id 2t781uu6dm-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Wed, 19 Jun 2019 11:52:17 +0200
-Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 2E17634;
-        Wed, 19 Jun 2019 09:52:17 +0000 (GMT)
-Received: from Webmail-eu.st.com (sfhdag5node3.st.com [10.75.127.15])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 126D124CA;
-        Wed, 19 Jun 2019 09:52:17 +0000 (GMT)
-Received: from localhost (10.75.127.44) by SFHDAG5NODE3.st.com (10.75.127.15)
- with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 19 Jun 2019 11:52:16
- +0200
-From:   Fabrice Gasnier <fabrice.gasnier@st.com>
-To:     <thierry.reding@gmail.com>, <robh+dt@kernel.org>,
-        <alexandre.torgue@st.com>
-CC:     <mark.rutland@arm.com>, <linux@armlinux.org.uk>,
-        <mcoquelin.stm32@gmail.com>, <fabrice.gasnier@st.com>,
-        <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-pwm@vger.kernel.org>,
-        <benjamin.gaignard@st.com>,
-        <linux-stm32@st-md-mailman.stormreply.com>
-Subject: [PATCH 5/5] ARM: dts: stm32: add pwm cells to stm32f746
-Date:   Wed, 19 Jun 2019 11:52:05 +0200
-Message-ID: <1560937925-8990-6-git-send-email-fabrice.gasnier@st.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1560937925-8990-1-git-send-email-fabrice.gasnier@st.com>
-References: <1560937925-8990-1-git-send-email-fabrice.gasnier@st.com>
+        Wed, 19 Jun 2019 05:51:37 -0400
+Received: by mail-qt1-f193.google.com with SMTP id h21so19027996qtn.13;
+        Wed, 19 Jun 2019 02:51:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=3eEZ2qQ0T+vNBvySVU2f2K2n0PUB27s0eFB2a2GHHpw=;
+        b=Ky3SesKJdQbqCg6lv2g/uWL5yTM5H21azkmaCE5DUZGzH7yfJ4LSMV8Zb26vGJbmqZ
+         cDFJROUQLq4vKzYRjGbAuo381vwuIFZb4Wa9kgbHVSd2T4tfdZJl1SAcJk8Dz09rJBDS
+         HR7nrt7HpYtm8rwO6wo9TvW3zgOnPa/CGc4hX6/AOgOXoCp49teZ9JiHZ560D2TyemSr
+         DVR7LfcNpU7Y5Wb+gYtDZXthnNz4hUhVMF3KNA0j8DkOhC3Bf09mMhXi8AmiuXlGTi47
+         HKVuKHudef9vuuqYNjjtxyX9cnlHkTfgJ2cb/skXM5JmyvFg/VlLbBi2A8fuF1YE3FpG
+         zdGw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=3eEZ2qQ0T+vNBvySVU2f2K2n0PUB27s0eFB2a2GHHpw=;
+        b=WJGrwPOOJ0T5I1TPqbV0c7mmrEY6RCzJLMexRh6g/FT4rrwnFPODnYANaeQoVBN/uM
+         kg3ybL6EdE9RAt1/X17Lw/gc0p2ztUgyPKpaM+WxKInba+xVnNCMWszSW07zMpdIQ1tJ
+         NPByIRb2E9F4zVn491owU4HGL4PnlHrjnrYRtQ2ORnrMG78tpSANjRnGqJeYG7T2eU0N
+         d22h4DgpkmN5cNwj6UTDfzEGAoSD5xmOCpZp4+GiEes4XMMQZT4vN34ypQIeSRMTBa3C
+         B8SgeDFnpkKTBGMP7Nfy856hN+2xlwTWdjftegKjk26DPLgxbcYtc3KIywzrxeEXC7Ey
+         pHBQ==
+X-Gm-Message-State: APjAAAUdzbQToIutpF7BGeEpwFI2aprx6PqUM9uGZLUbOs1zKzMAFNqr
+        fVb9FYthUQXX++rwA4p4Orbcb//ZJi4=
+X-Google-Smtp-Source: APXvYqxY9AqHFrq4Px1xuxAzlm+uOWclwFVuRwuqndIRWiVaBEWV0tK9BgMpqoe3H3v/8lcSK1F9ZA==
+X-Received: by 2002:ac8:3971:: with SMTP id t46mr85568562qtb.164.1560937896697;
+        Wed, 19 Jun 2019 02:51:36 -0700 (PDT)
+Received: from continental ([186.212.50.252])
+        by smtp.gmail.com with ESMTPSA id c18sm10048430qkk.73.2019.06.19.02.51.33
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Wed, 19 Jun 2019 02:51:35 -0700 (PDT)
+Date:   Wed, 19 Jun 2019 06:52:09 -0300
+From:   Marcos Paulo de Souza <marcos.souza.org@gmail.com>
+To:     Hannes Reinecke <hare@suse.com>
+Cc:     "Martin K. Petersen" <martin.petersen@oracle.com>,
+        linux-kernel@vger.kernel.org,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        linux-scsi@vger.kernel.org
+Subject: Re: [PATCH] scsi: scsi_sysfs.c: Hide wwid sdev attr if VPD is not
+ supported
+Message-ID: <20190619095208.GB26980@continental>
+References: <20190612020828.8140-1-marcos.souza.org@gmail.com>
+ <yq1muieuu17.fsf@oracle.com>
+ <850765d7-da85-3fc1-7bf4-f0edcb63f8d8@suse.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.75.127.44]
-X-ClientProxiedBy: SFHDAG5NODE3.st.com (10.75.127.15) To SFHDAG5NODE3.st.com
- (10.75.127.15)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-19_05:,,
- signatures=0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <850765d7-da85-3fc1-7bf4-f0edcb63f8d8@suse.com>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-STM32 Timers support generic 3 cells PWM to encode PWM number, period and
-polarity.
+On Wed, Jun 19, 2019 at 08:34:56AM +0200, Hannes Reinecke wrote:
+> On 6/19/19 5:35 AM, Martin K. Petersen wrote:
+> > 
+> > Marcos,
+> > 
+> >> WWID composed from VPD data from device, specifically page 0x83. So,
+> >> when a device does not have VPD support, for example USB storage
+> >> devices where VPD is specifically disabled, a read into <blk
+> >> device>/device/wwid file will always return ENXIO. To avoid this,
+> >> change the scsi_sdev_attr_is_visible function to hide wwid sysfs file
+> >> when the devices does not support VPD.
+> > 
+> > Not a big fan of attribute files that come and go.
+> > 
+> > Why not just return an empty string? Hannes?
+> > 
+> Actually, the intention of the 'wwid' attribute was to have a common
+> place where one could look up the global id.
+> As such it actually serves a dual purpose, namely indicating that there
+> _is_ a global ID _and_ that this kernel (version) has support for 'wwid'
+> attribute. This is to resolve one big issue we have to udev nowadays,
+> which is figuring out if a specific sysfs attribute is actually
+> supported on this particular kernel.
+> Dynamic attributes are 'nicer' on a conceptual level, but make the above
+> test nearly impossible, as we now have _two_ possibilities why a
+> specific attribute is not present.
+> So making 'wwid' conditional would actually defeat its very purpose, and
+> we should leave it blank if not supported.
 
-Fixes: 9bd7b77af8e4 ("ARM: dts: stm32: add Timers driver for stm32f746
-MCU")
+My intention was to apply the same approach used for VPD pages, which currently
+also hides the attributes if not supported by the device. So, if vpd pages are
+hidden, there is no usage for wwid. But I also like the idea of the vpd pages
+being blank if not supported by the device.
 
-Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
----
- arch/arm/boot/dts/stm32f746.dtsi | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
-
-diff --git a/arch/arm/boot/dts/stm32f746.dtsi b/arch/arm/boot/dts/stm32f746.dtsi
-index a25b700..d26f93f 100644
---- a/arch/arm/boot/dts/stm32f746.dtsi
-+++ b/arch/arm/boot/dts/stm32f746.dtsi
-@@ -94,6 +94,7 @@
- 
- 			pwm {
- 				compatible = "st,stm32-pwm";
-+				#pwm-cells = <3>;
- 				status = "disabled";
- 			};
- 
-@@ -123,6 +124,7 @@
- 
- 			pwm {
- 				compatible = "st,stm32-pwm";
-+				#pwm-cells = <3>;
- 				status = "disabled";
- 			};
- 
-@@ -152,6 +154,7 @@
- 
- 			pwm {
- 				compatible = "st,stm32-pwm";
-+				#pwm-cells = <3>;
- 				status = "disabled";
- 			};
- 
-@@ -180,6 +183,7 @@
- 
- 			pwm {
- 				compatible = "st,stm32-pwm";
-+				#pwm-cells = <3>;
- 				status = "disabled";
- 			};
- 
-@@ -249,6 +253,7 @@
- 
- 			pwm {
- 				compatible = "st,stm32-pwm";
-+				#pwm-cells = <3>;
- 				status = "disabled";
- 			};
- 
-@@ -270,6 +275,7 @@
- 
- 			pwm {
- 				compatible = "st,stm32-pwm";
-+				#pwm-cells = <3>;
- 				status = "disabled";
- 			};
- 		};
-@@ -285,6 +291,7 @@
- 
- 			pwm {
- 				compatible = "st,stm32-pwm";
-+				#pwm-cells = <3>;
- 				status = "disabled";
- 			};
- 		};
-@@ -419,6 +426,7 @@
- 
- 			pwm {
- 				compatible = "st,stm32-pwm";
-+				#pwm-cells = <3>;
- 				status = "disabled";
- 			};
- 
-@@ -440,6 +448,7 @@
- 
- 			pwm {
- 				compatible = "st,stm32-pwm";
-+				#pwm-cells = <3>;
- 				status = "disabled";
- 			};
- 
-@@ -512,6 +521,7 @@
- 
- 			pwm {
- 				compatible = "st,stm32-pwm";
-+				#pwm-cells = <3>;
- 				status = "disabled";
- 			};
- 
-@@ -533,6 +543,7 @@
- 
- 			pwm {
- 				compatible = "st,stm32-pwm";
-+				#pwm-cells = <3>;
- 				status = "disabled";
- 			};
- 		};
-@@ -548,6 +559,7 @@
- 
- 			pwm {
- 				compatible = "st,stm32-pwm";
-+				#pwm-cells = <3>;
- 				status = "disabled";
- 			};
- 		};
--- 
-2.7.4
-
+> 
+> Cheers,
+> 
+> Hannes
+> -- 
+> Dr. Hannes Reinecke		               zSeries & Storage
+> hare@suse.com			               +49 911 74053 688
+> SUSE LINUX GmbH, Maxfeldstr. 5, 90409 Nürnberg
+> GF: F. Imendörffer, J. Smithard, D. Upmanyu, G. Norton
+> HRB 21284 (AG Nürnberg)
