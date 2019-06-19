@@ -2,76 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EEF3B4B1E0
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 08:06:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D74EC4B1B6
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 07:53:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731126AbfFSGGZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Jun 2019 02:06:25 -0400
-Received: from mga03.intel.com ([134.134.136.65]:49117 "EHLO mga03.intel.com"
+        id S1731075AbfFSFwK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Jun 2019 01:52:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52002 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730882AbfFSGGY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Jun 2019 02:06:24 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Jun 2019 23:06:23 -0700
-X-IronPort-AV: E=Sophos;i="5.63,392,1557212400"; 
-   d="scan'208";a="358087805"
-Received: from dwillia2-desk3.jf.intel.com (HELO dwillia2-desk3.amr.corp.intel.com) ([10.54.39.16])
-  by fmsmga005-auth.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Jun 2019 23:06:23 -0700
-Subject: [PATCH v10 06/13] mm/hotplug: Kill is_dev_zone() usage in
- __remove_pages()
-From:   Dan Williams <dan.j.williams@intel.com>
-To:     akpm@linux-foundation.org
-Cc:     Michal Hocko <mhocko@suse.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Pavel Tatashin <pasha.tatashin@soleen.com>,
-        David Hildenbrand <david@redhat.com>,
-        Oscar Salvador <osalvador@suse.de>, linux-mm@kvack.org,
-        linux-nvdimm@lists.01.org, linux-kernel@vger.kernel.org
-Date:   Tue, 18 Jun 2019 22:52:06 -0700
-Message-ID: <156092352642.979959.6664333788149363039.stgit@dwillia2-desk3.amr.corp.intel.com>
-In-Reply-To: <156092349300.979959.17603710711957735135.stgit@dwillia2-desk3.amr.corp.intel.com>
-References: <156092349300.979959.17603710711957735135.stgit@dwillia2-desk3.amr.corp.intel.com>
-User-Agent: StGit/0.18-2-gc94f
+        id S1725854AbfFSFwJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Jun 2019 01:52:09 -0400
+Received: from localhost (107-207-74-175.lightspeed.austtx.sbcglobal.net [107.207.74.175])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id DB91920B1F;
+        Wed, 19 Jun 2019 05:52:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1560923529;
+        bh=ZkuAsgequni95HbNK6ONBqjvUgeSIKHzcp8y3cXEKz8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=MWH4DBJfxrXWzAFsqaWAnBOD2tH+jkU0ekX2LD7Z3/LcYKnoODJ0/ScFaGDx0YCEd
+         DBbDYukz3hvGCkGRlVb7osPPAHbwx6kCjoZM2lMrTmz2Q+SgBrCvGNFkSqJGpDyAC1
+         NY8t6HUR8T/k9LDqdHZEecD6DRxa5VVYh75tiJZQ=
+Date:   Wed, 19 Jun 2019 00:52:07 -0500
+From:   Andy Gross <agross@kernel.org>
+To:     Lee Jones <lee.jones@linaro.org>
+Cc:     alokc@codeaurora.org, david.brown@linaro.org,
+        bjorn.andersson@linaro.org, balbi@kernel.org,
+        gregkh@linuxfoundation.org, ard.biesheuvel@linaro.org,
+        jlhugo@gmail.com, linux-arm-msm@vger.kernel.org,
+        linux-usb@vger.kernel.org, felipe.balbi@linux.intel.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [RESEND v4 1/4] soc: qcom: geni: Add support for ACPI
+Message-ID: <20190619055207.GA14273@hector.attlocal.net>
+References: <20190617125105.6186-1-lee.jones@linaro.org>
+ <20190617125105.6186-2-lee.jones@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190617125105.6186-2-lee.jones@linaro.org>
+User-Agent: Mutt/1.5.23.1 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The zone type check was a leftover from the cleanup that plumbed altmap
-through the memory hotplug path, i.e. commit da024512a1fa "mm: pass the
-vmem_altmap to arch_remove_memory and __remove_pages".
+On Mon, Jun 17, 2019 at 01:51:02PM +0100, Lee Jones wrote:
+> When booting with ACPI as the active set of configuration tables,
+> all; clocks, regulators, pin functions ect are expected to be at
+> their ideal values/levels/rates, thus the associated frameworks
+> are unavailable.  Ensure calls to these APIs are shielded when
+> ACPI is enabled.
+> 
+> Signed-off-by: Lee Jones <lee.jones@linaro.org>
+> Acked-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 
-Cc: Michal Hocko <mhocko@suse.com>
-Cc: Logan Gunthorpe <logang@deltatee.com>
-Cc: Pavel Tatashin <pasha.tatashin@soleen.com>
-Reviewed-by: David Hildenbrand <david@redhat.com>
-Reviewed-by: Oscar Salvador <osalvador@suse.de>
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
----
- mm/memory_hotplug.c |    7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+Applied.
 
-diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
-index 647859a1d119..4b882c57781a 100644
---- a/mm/memory_hotplug.c
-+++ b/mm/memory_hotplug.c
-@@ -535,11 +535,8 @@ void __remove_pages(struct zone *zone, unsigned long phys_start_pfn,
- 	unsigned long map_offset = 0;
- 	int sections_to_remove;
- 
--	/* In the ZONE_DEVICE case device driver owns the memory region */
--	if (is_dev_zone(zone)) {
--		if (altmap)
--			map_offset = vmem_altmap_offset(altmap);
--	}
-+	if (altmap)
-+		map_offset = vmem_altmap_offset(altmap);
- 
- 	clear_zone_contiguous(zone);
- 
+Thanks,
 
+Andy
