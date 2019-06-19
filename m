@@ -2,190 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CF7FC4C337
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 23:43:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CC5F24C309
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 23:34:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730533AbfFSVnj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Jun 2019 17:43:39 -0400
-Received: from mga04.intel.com ([192.55.52.120]:31057 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725908AbfFSVnj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Jun 2019 17:43:39 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Jun 2019 14:43:38 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.63,394,1557212400"; 
-   d="scan'208";a="182870099"
-Received: from romley-ivt3.sc.intel.com ([172.25.110.60])
-  by fmsmga004.fm.intel.com with ESMTP; 19 Jun 2019 14:43:38 -0700
-Date:   Wed, 19 Jun 2019 14:34:04 -0700
-From:   Fenghua Yu <fenghua.yu@intel.com>
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, H Peter Anvin <hpa@zytor.com>,
-        Christopherson Sean J <sean.j.christopherson@intel.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Radim Krcmar <rkrcmar@redhat.com>,
-        Ravi V Shankar <ravi.v.shankar@intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>, x86 <x86@kernel.org>
-Subject: Re: [PATCH v2 2/2] x86/cpufeatures: Enumerate new AVX512 BFLOAT16
- instructions
-Message-ID: <20190619213404.GB234387@romley-ivt3.sc.intel.com>
-References: <1560794416-217638-1-git-send-email-fenghua.yu@intel.com>
- <1560794416-217638-3-git-send-email-fenghua.yu@intel.com>
- <20190619173140.GH9574@zn.tnic>
+        id S1730620AbfFSVeo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Jun 2019 17:34:44 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:37781 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726246AbfFSVen (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Jun 2019 17:34:43 -0400
+Received: by mail-pg1-f194.google.com with SMTP id 145so373073pgh.4
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2019 14:34:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=codeblueprint-co-uk.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=4YTe0mi4ZxYNQPShR/fx2ImvNIhyeL2zs0OLpOYBsos=;
+        b=bi0a8D3x1KgFO63QC0XpxHJIQkVcye5xXvU3rqa8RRDg9t8A70k+pnRA8FS/QqzAL6
+         qJXHfM42VK1PvSYQonU8I1zwSmAWKY9M07YBfd8vcohLbG8RpkORCL7itDWqxv0+Droc
+         sJO/UBTeDjuagFCmSHTp0ZuVjhTIB/2PrfY0ECtGJC5rxtXiTPkHTvDEPseYrYuZr8co
+         ENTlFqtXbT4gd2kbq/6j6KJNgFV24NPkXwRO4ern0Ge+wgX+USFxewDblaNWpJ57pcVG
+         TYlchEzPjorf+uB1nKgO8L1OU0amFk/iO9kTwTn+oCJYaPuzrPJDZ2/zqXn4Yg5VfktI
+         RmTA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=4YTe0mi4ZxYNQPShR/fx2ImvNIhyeL2zs0OLpOYBsos=;
+        b=KfUl0zXrCrYF689IcNO2Pz5PKOZj1i0TZIkKjQ+TnVXhE3tmP2ks1Qn7jv6xOZdTtM
+         87bgiV5zkBMzEwFxW3/KeqwW27A4cMk+dilVPoXpQL2MsCXLRAUJT4KjTnyRiw3KtKzl
+         PFzNd8VUW2FwyweE0cZUhyugu+ld0YapT1wBlmDOEbGFb/tquWgCv07ojSZOBBv8biw0
+         tP6QLTjKrzLbCQWSvh2m8sFZjmLkgb/Mp1HLNPcwW9zNdBOGyXmc+dMNpP0SZlspIPp8
+         U3RpYeyFwdEsbUNYL3P673KcL+KywQQhWWxIOnBFwYfPhOL0trUdrwr9aIU/9+zCv/5K
+         3cIg==
+X-Gm-Message-State: APjAAAXh/hV8LagNlJnxrpYic01KSO23s+BFFaj5OHE7nxkxaa9vvLNB
+        V9ivv3OEYSS95IEY2ayfC2ecqhbPULo=
+X-Google-Smtp-Source: APXvYqwDomnTeh/DjS3/X4tZNcPxna4L10NikMMfe+t5tbCRfyzEJALEjeyIVM0tz+Rx5AKIG9nBFA==
+X-Received: by 2002:a63:a1a:: with SMTP id 26mr9500823pgk.265.1560980082749;
+        Wed, 19 Jun 2019 14:34:42 -0700 (PDT)
+Received: from localhost ([94.1.151.203])
+        by smtp.gmail.com with ESMTPSA id q63sm14018422pfb.81.2019.06.19.14.34.41
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 19 Jun 2019 14:34:42 -0700 (PDT)
+Date:   Wed, 19 Jun 2019 22:34:37 +0100
+From:   Matt Fleming <matt@codeblueprint.co.uk>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     "Lendacky, Thomas" <Thomas.Lendacky@amd.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Suthikulpanit, Suravee" <Suravee.Suthikulpanit@amd.com>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Borislav Petkov <bp@alien8.de>
+Subject: Re: [PATCH] sched/topology: Improve load balancing on AMD EPYC
+Message-ID: <20190619213437.GA6909@codeblueprint.co.uk>
+References: <20190605155922.17153-1-matt@codeblueprint.co.uk>
+ <20190605180035.GA3402@hirez.programming.kicks-ass.net>
+ <20190610212620.GA4772@codeblueprint.co.uk>
+ <18994abb-a2a8-47f4-9a35-515165c75942@amd.com>
+ <20190618104319.GB4772@codeblueprint.co.uk>
+ <20190618123318.GG3419@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190619173140.GH9574@zn.tnic>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20190618123318.GG3419@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 19, 2019 at 07:31:40PM +0200, Borislav Petkov wrote:
-> On Mon, Jun 17, 2019 at 11:00:16AM -0700, Fenghua Yu wrote:
-> > AVX512 Vector Neural Network Instructions (VNNI) in Intel Deep Learning
-> > Boost support BFLOAT16 format (BF16).
-> 
-> That sentence is a mouthful and I have no clue what it means. Marketing
-> junk? If so, either rewrite it for mere mortals or kill it.
-> 
-> > BF16 is a short version of FP32
-> 
-> FP32?
-> 
-> Please write out.
-> 
-> > and has several advantages over FP16.
-> 
-> Ditto.
-> 
-> > BF16 offers more than enough range for
-> > deep learning training tasks and doesn't need to handle hardware exception
-> > as this is a performance optimization. FP32 accumulation after the
-> > multiply is essential to achieve sufficient numerical behavior on an
-> > application level.
+On Tue, 18 Jun, at 02:33:18PM, Peter Zijlstra wrote:
+> On Tue, Jun 18, 2019 at 11:43:19AM +0100, Matt Fleming wrote:
+> > This works for me under all my tests. Thoughts?
 > > 
-> > AVX512 BFLOAT16 instructions can be enumerated by:
-> > 	CPUID.7.1:EAX[bit 5] AVX512_BF16
+> > --->8---
 > > 
-> > Use word 12, which is empty now, to hold features in CPUID.7.1:EAX
-> > including AVX512_BF16.
+> > diff --git a/arch/x86/kernel/cpu/amd.c b/arch/x86/kernel/cpu/amd.c
+> > index 80a405c2048a..4db4e9e7654b 100644
+> > --- a/arch/x86/kernel/cpu/amd.c
+> > +++ b/arch/x86/kernel/cpu/amd.c
+> > @@ -8,6 +8,7 @@
+> >  #include <linux/sched.h>
+> >  #include <linux/sched/clock.h>
+> >  #include <linux/random.h>
+> > +#include <linux/topology.h>
+> >  #include <asm/processor.h>
+> >  #include <asm/apic.h>
+> >  #include <asm/cacheinfo.h>
+> > @@ -824,6 +825,8 @@ static void init_amd_zn(struct cpuinfo_x86 *c)
+> >  {
+> >  	set_cpu_cap(c, X86_FEATURE_ZEN);
+> >  
 > 
-> ... because that leaf is features only, right?
+> I'm thinking this deserves a comment. Traditionally the SLIT table held
+> relative memory latency. So where the identity is 10, 16 would indicate
+> 1.6 times local latency and 32 would be 3.2 times local.
 > 
-> > Leaf CPUID_DUMMY is renamed as CPUID_7_1_EAX.
+> Now, even very early on BIOS monkeys went about their business and put
+> in random values in an attempt to 'tune' the system based on how
+> $random-os behaved, which is all sorts of fu^Wwrong.
 > 
-> That's obvious from the patch, ain't it?
-> 
+> Now, I suppose my question is; is that 32 Zen puts in an actual relative
+> memory latency metric, or a random value we somehow have to deal with.
+> And can we pretty please describe the whole sordid story behind this
+> 'tunable' somewhere?
 
-Hi, Boris,
+This is one for the AMD folks. I don't know if the memory latency
+really is 3.2 times or not, only that that's the value in all the Zen
+machines I have access to. Even this 2-socket one:
 
-I corrected the commit message per your comment. Except the commit
-message, I didn't change anything else.
+node distances:
+node   0   1 
+  0:  10  32 
+  1:  32  10 
 
-Now I send the updated patch here. Is the patch right now?
-Should I send the patch to you in another thread?
-
-Thanks.
-
--Fenghua
-
-
-From 6265ae0a0fac5ecf7e67b8bfc4b6791afb88e56c Mon Sep 17 00:00:00 2001
-From: Fenghua Yu <fenghua.yu@intel.com>
-Date: Tue, 11 Jun 2019 23:06:05 +0000
-Subject: [PATCH v3 3/3] x86/cpufeatures: Enumerate new AVX512 BFLOAT16
- instructions
-
-AVX512 BFLOAT16 instructions support 16-bit BFLOAT16 floating-point
-format (BF16) for deep learning optimization.
-
-BF16 is a short version of 32-bit single-precision floating-point
-format (FP32) and has several advantages over 16-bit half-precision
-floating-point format (FP16). BF16 keeps FP32 accumulation after
-multiplication without loss of precision, offers more than enough
-range for deep learning training tasks, and doesn't need to handle
-hardware exception.
-
-AVX512 BFLOAT16 instructions can be enumerated by:
-	CPUID.7.1:EAX[bit 5] AVX512_BF16
-
-CPUID.7.1:EAX contains only feature bits. Re-define currently empty
-word 12 as a pure features word to hold the feature bits including
-AVV512_BF16.
-
-Detailed information of the CPUID bit and AVX512 BFLOAT16 instructions
-can be found in the latest Intel Architecture Instruction Set Extensions
-and Future Features Programming Reference.
-
-Signed-off-by: Fenghua Yu <fenghua.yu@intel.com>
----
- arch/x86/include/asm/cpufeature.h  | 2 +-
- arch/x86/include/asm/cpufeatures.h | 3 +++
- arch/x86/kernel/cpu/common.c       | 3 +++
- arch/x86/kernel/cpu/cpuid-deps.c   | 1 +
- 4 files changed, 8 insertions(+), 1 deletion(-)
-
-diff --git a/arch/x86/include/asm/cpufeature.h b/arch/x86/include/asm/cpufeature.h
-index 403f70c2e431..58acda503817 100644
---- a/arch/x86/include/asm/cpufeature.h
-+++ b/arch/x86/include/asm/cpufeature.h
-@@ -23,7 +23,7 @@ enum cpuid_leafs
- 	CPUID_7_0_EBX,
- 	CPUID_D_1_EAX,
- 	CPUID_LNX_4,
--	CPUID_DUMMY,
-+	CPUID_7_1_EAX,
- 	CPUID_8000_0008_EBX,
- 	CPUID_6_EAX,
- 	CPUID_8000_000A_EDX,
-diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
-index 7103007abe17..a49498834c6c 100644
---- a/arch/x86/include/asm/cpufeatures.h
-+++ b/arch/x86/include/asm/cpufeatures.h
-@@ -280,6 +280,9 @@
- #define X86_FEATURE_CQM_MBM_TOTAL	(11*32+ 2) /* LLC Total MBM monitoring */
- #define X86_FEATURE_CQM_MBM_LOCAL	(11*32+ 3) /* LLC Local MBM monitoring */
- 
-+/* Intel-defined CPU features, CPUID level 0x00000007:1 (EAX), word 12 */
-+#define X86_FEATURE_AVX512_BF16		(12*32+ 5) /* AVX512 BFLOAT16 instructions */
-+
- /* AMD-defined CPU features, CPUID level 0x80000008 (EBX), word 13 */
- #define X86_FEATURE_CLZERO		(13*32+ 0) /* CLZERO instruction */
- #define X86_FEATURE_IRPERF		(13*32+ 1) /* Instructions Retired Count */
-diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-index efb114298cfb..4910cb421b82 100644
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -847,6 +847,9 @@ void get_cpu_cap(struct cpuinfo_x86 *c)
- 		c->x86_capability[CPUID_7_0_EBX] = ebx;
- 		c->x86_capability[CPUID_7_ECX] = ecx;
- 		c->x86_capability[CPUID_7_EDX] = edx;
-+
-+		cpuid_count(0x00000007, 1, &eax, &ebx, &ecx, &edx);
-+		c->x86_capability[CPUID_7_1_EAX] = eax;
- 	}
- 
- 	/* Extended state features: level 0x0000000d */
-diff --git a/arch/x86/kernel/cpu/cpuid-deps.c b/arch/x86/kernel/cpu/cpuid-deps.c
-index fa07a224e7b9..a444028d8145 100644
---- a/arch/x86/kernel/cpu/cpuid-deps.c
-+++ b/arch/x86/kernel/cpu/cpuid-deps.c
-@@ -62,6 +62,7 @@ static const struct cpuid_dep cpuid_deps[] = {
- 	{ X86_FEATURE_CQM_OCCUP_LLC,	X86_FEATURE_CQM_LLC   },
- 	{ X86_FEATURE_CQM_MBM_TOTAL,	X86_FEATURE_CQM_LLC   },
- 	{ X86_FEATURE_CQM_MBM_LOCAL,	X86_FEATURE_CQM_LLC   },
-+	{ X86_FEATURE_AVX512_BF16,	X86_FEATURE_AVX512VL  },
- 	{}
- };
- 
--- 
-2.19.1
-
-
+Tom, Suravee?
