@@ -2,198 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DA3714B41D
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 10:33:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2BF6A4B424
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 10:35:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731319AbfFSIdO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Jun 2019 04:33:14 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:46257 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731063AbfFSIdN (ORCPT
+        id S1731327AbfFSIfa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Jun 2019 04:35:30 -0400
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:37014 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730783AbfFSIfa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Jun 2019 04:33:13 -0400
-Received: by mail-wr1-f68.google.com with SMTP id n4so2308093wrw.13;
-        Wed, 19 Jun 2019 01:33:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=5jKn7IDzs6cCNKoPOLjaDiJN+tHr2DuoxatfoHUDWkQ=;
-        b=CMzGEE1l0Mo2Ch9OjsAPz7PMVNdT1cTevOWXor/nelyFcqWhYcyTT9t/ho1TNlk4UN
-         WZBR3upqEPfFjaXuUgkbiZsZctqAoUsrBfoGub9M4gGLk1cmLPXVFs5vjoMZkYZNTbTB
-         cdHCWow4CEyItoe3r/zuuPXEaDFQ3Ya515pP5u7t55yGeUmlOk0jw+XCQ/IJTtWUjrZZ
-         /LZi4AZSVKhErGR92RwBPLRZR21RzXyZX/8RXxXf2BbRVQSEAg1yd0lqc5yRHfVCf7o+
-         ON/b+eNQJUgY4cGL7TI26dqJatyJMemmZQWfOD0hvH8laK3BKrO2NjEjK3Jy8SPrjZUO
-         W11Q==
+        Wed, 19 Jun 2019 04:35:30 -0400
+Received: by mail-ot1-f66.google.com with SMTP id s20so18459269otp.4;
+        Wed, 19 Jun 2019 01:35:30 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=5jKn7IDzs6cCNKoPOLjaDiJN+tHr2DuoxatfoHUDWkQ=;
-        b=ZbLK4gjW/PTa0WypNANP9DSXqZbCuWD3Wmn7GCyiFohTAOZi0M3yXC4xlDb0R/Ig6U
-         IL+DW8xBRQe41t4rFJZwvqyi73ZDDP2it7iL6ohg9hBWFA57yRd8+6Nf2FLzOxPzu8ok
-         HzsmPQqYAP5B6dr/3QuOvFFkN2pzvRq82DcGNInp1yuxPuBbOG9JyKVEI7PP25qnVw+S
-         hu3cygCNmJwdTY1lMEtaaA90z+r7/vtT6e5I1LV5svGImTQdrOpNPVjWD8DmW2njX51H
-         OEB8cOUnor+5b3E9XtyCn2/7vnxmneTQv3YzMvAuVDF9cF4tNZluC+MBu93p8Nv6kfjx
-         o3QA==
-X-Gm-Message-State: APjAAAVRj0uTxc+Stne+VJUAQR8Qtwk6lqCmKuW7EB0veOXG4I6sZ+rl
-        eCSVl3w/f/Wn/ukf1RxCRIsfR4MgjNg=
-X-Google-Smtp-Source: APXvYqx+Zywg2gJIQoDpj4jnpGmZvOXQHrYpWSW4oHCdl9oL1FbLXiBB6A6MZL1AK5TLoMUdpaB7GA==
-X-Received: by 2002:adf:b60f:: with SMTP id f15mr19615343wre.283.1560933190598;
-        Wed, 19 Jun 2019 01:33:10 -0700 (PDT)
-Received: from localhost (p2E5BEF36.dip0.t-ipconnect.de. [46.91.239.54])
-        by smtp.gmail.com with ESMTPSA id t7sm12098689wrn.52.2019.06.19.01.33.09
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 19 Jun 2019 01:33:09 -0700 (PDT)
-Date:   Wed, 19 Jun 2019 10:33:08 +0200
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Stephen Warren <swarren@wwwdotorg.org>
-Cc:     Dmitry Osipenko <digetx@gmail.com>,
-        Sowjanya Komatineni <skomatineni@nvidia.com>,
-        jonathanh@nvidia.com, tglx@linutronix.de, jason@lakedaemon.net,
-        marc.zyngier@arm.com, linus.walleij@linaro.org, stefan@agner.ch,
-        mark.rutland@arm.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com,
-        sboyd@kernel.org, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org, jckuo@nvidia.com, josephl@nvidia.com,
-        talho@nvidia.com, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mperttunen@nvidia.com,
-        spatra@nvidia.com, robh+dt@kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH V3 02/17] pinctrl: tegra: add suspend and resume support
-Message-ID: <20190619083308.GM3187@ulmo>
-References: <1560843991-24123-1-git-send-email-skomatineni@nvidia.com>
- <1560843991-24123-3-git-send-email-skomatineni@nvidia.com>
- <7706a287-44b7-3ad6-37ff-47e97172a798@gmail.com>
- <a23ffbae-dd85-c023-7aae-3b81e0b17ebc@gmail.com>
- <fd415362-7479-6f98-c8db-1b7758fd3f1d@wwwdotorg.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=K+aGgdCq18WEu7EQPUxRISqQBQ1QUiTsnK0wg2Fi8nU=;
+        b=AZeWNQC1MMLPIbILx9t/S0XkvKEQxXoS8SKx/GQTaxWYq9yXFYJXKwPmYSlda158Ql
+         EPWu0P4Whdd72zAufciBzlwIydT7HLJ57c5kpCG46SCw7LiF4YfqoUFoqGvVuEJ+s4ki
+         +umc7JOasatoxYt6H1o9jAYv3wu1gZtdP9XbsPhrbfrgExUBp7vQReYr5njYUDAD6fVy
+         JNXcqFZJp1G7TUSpCoOeFxTYjdliFD7Y6XV4bshlIH0GDq4Gpe3Tn5+It8RCrhqwmCva
+         wtmB1H5BM1H0IPenIHV3F9K6oZndFAT+EUJtI20aewZXsugOt0ERaDR+/Nu7aupl1fU6
+         xQlw==
+X-Gm-Message-State: APjAAAVnAm3c90YInB1qsYMapQzpcV3QZH5fZRVmvIOyxwU6PSVPlx20
+        vum60zpFaHt5dIfsC3As2gkoUcdV97ZY2ijLJhs=
+X-Google-Smtp-Source: APXvYqyN4AtDJW6N60l0QS5TUvuJdK74OUuvpF3lXn5+gy2GELjZ0UJfDiusOR1H1yQpaIqFIeM41kJBgNQMTYaVjAI=
+X-Received: by 2002:a9d:5d15:: with SMTP id b21mr911689oti.262.1560933329596;
+ Wed, 19 Jun 2019 01:35:29 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="Nj4mAaUCx+wbOcQD"
-Content-Disposition: inline
-In-Reply-To: <fd415362-7479-6f98-c8db-1b7758fd3f1d@wwwdotorg.org>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+References: <CANA+-vCThdRivg7nrMK5QoFu8SGUzEVSvSyp0H2CPyy9==Tqog@mail.gmail.com>
+ <CANA+-vARQ9Ao=W1oEArrAQ0sqh757orq=-=kytdVPhstm-3E9w@mail.gmail.com>
+ <20190618182502.GC203031@google.com> <4587569.x9DSL43cXO@kreacher>
+ <CANA+-vCMK6u1n9gXf2+v5dFn_tGfr1PT8d7W4d2BCzw+B-HvYw@mail.gmail.com> <CAJWu+oo7kwmEyMXQN0yfswV2=J-Fa9QybhAUx-SOGG_ipsBErQ@mail.gmail.com>
+In-Reply-To: <CAJWu+oo7kwmEyMXQN0yfswV2=J-Fa9QybhAUx-SOGG_ipsBErQ@mail.gmail.com>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Wed, 19 Jun 2019 10:35:17 +0200
+Message-ID: <CAJZ5v0gvzCx-7qS9qkxB=sGKjQJKMR7yCc21f=_vqrbZxMSWNg@mail.gmail.com>
+Subject: Re: Alternatives to /sys/kernel/debug/wakeup_sources
+To:     Joel Fernandes <joelaf@google.com>
+Cc:     Tri Vo <trong@android.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Sandeep Patil <sspatil@android.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Hridya Valsaraju <hridya@google.com>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        "Cc: Android Kernel" <kernel-team@android.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Jun 19, 2019 at 1:52 AM Joel Fernandes <joelaf@google.com> wrote:
+>
+> On Tue, Jun 18, 2019 at 7:15 PM Tri Vo <trong@android.com> wrote:
+> [snip]
+> > > > > >
+> > > > > > Android userspace reading wakeup_sources is not ideal because:
+> > > > > > - Debugfs API is not stable, i.e. Android tools built on top of it are
+> > > > > > not guaranteed to be backward/forward compatible.
+> > > > > > - This file requires debugfs to be mounted, which itself is
+> > > > > > undesirable for security reasons.
+> > > > > >
+> > > > > > To address these problems, we want to contribute a way to expose these
+> > > > > > statistics that doesn't depend on debugfs.
+> > > > > >
+> > > > > > Some initial thoughts/questions: Should we expose the stats in sysfs?
+> > > > > > Or maybe implement eBPF-based solution? What do you think?
+> > > >
+> > > > We are going through Android's out-of-tree kernel dependencies along with
+> > > > userspace APIs that are not necessarily considered "stable and forever
+> > > > supported" upstream. The debugfs dependencies showed up on our radar as a
+> > > > result and so we are wondering if we should worry about changes in debugfs
+> > > > interface and hence the question(s) below.
+> > > >
+> > > > So, can we rely on /d/wakeup_sources to be considered a userspace API and
+> > > > hence maintained stable as we do for other /proc and /sys entries?
+> > > >
+> > > > If yes, then we will go ahead and add tests for this in LTP or
+> > > > somewhere else suitable.
+> > >
+> > > No, debugfs is not ABI.
+> > >
+> > > > If no, then we would love to hear suggestions for any changes that need to be
+> > > > made or we simply just move the debugfs entry into somewhere like
+> > > > /sys/power/ ?
+> > >
+> > > No, moving that entire file from debugfs into sysfs is not an option either.
+> > >
+> > > The statistics for the wakeup sources associated with devices are already there
+> > > under /sys/devices/.../power/ , but I guess you want all wakeup sources?
+> > >
+> > > That would require adding a kobject to struct wakeup_source and exposing
+> > > all of the statistics as separate attributes under it.  In which case it would be
+> > > good to replace the existing wakeup statistics under /sys/devices/.../power/
+> > > with symbolic links to the attributes under the wakeup_source kobject.
+> >
+> > Thanks for your input, Rafael! Your suggestion makes sense. I'll work
+> > on a patch for this.
+>
+> Does that entail making each wake up source, a new sysfs node under a
+> particular device, and then adding stats under that new node?
 
---Nj4mAaUCx+wbOcQD
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Not under a device, because there are wakeup source objects without
+associated devices.
 
-On Tue, Jun 18, 2019 at 09:41:03AM -0600, Stephen Warren wrote:
-> On 6/18/19 3:30 AM, Dmitry Osipenko wrote:
-> > 18.06.2019 12:22, Dmitry Osipenko =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> > > 18.06.2019 10:46, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> > > > This patch adds suspend and resume support for Tegra pinctrl driver
-> > > > and registers them to syscore so the pinmux settings are restored
-> > > > before the devices resume.
-> > > >=20
-> > > > Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
-> > > > ---
-> > > >   drivers/pinctrl/tegra/pinctrl-tegra.c    | 62 +++++++++++++++++++=
-+++++++++++++
-> > > >   drivers/pinctrl/tegra/pinctrl-tegra.h    |  5 +++
-> > > >   drivers/pinctrl/tegra/pinctrl-tegra114.c |  1 +
-> > > >   drivers/pinctrl/tegra/pinctrl-tegra124.c |  1 +
-> > > >   drivers/pinctrl/tegra/pinctrl-tegra20.c  |  1 +
-> > > >   drivers/pinctrl/tegra/pinctrl-tegra210.c | 13 +++++++
-> > > >   drivers/pinctrl/tegra/pinctrl-tegra30.c  |  1 +
-> > > >   7 files changed, 84 insertions(+)
-> > > >=20
-> > > > diff --git a/drivers/pinctrl/tegra/pinctrl-tegra.c b/drivers/pinctr=
-l/tegra/pinctrl-tegra.c
-> > > > index 34596b246578..ceced30d8bd1 100644
-> > > > --- a/drivers/pinctrl/tegra/pinctrl-tegra.c
-> > > > +++ b/drivers/pinctrl/tegra/pinctrl-tegra.c
-> > > > @@ -20,11 +20,16 @@
-> > > >   #include <linux/pinctrl/pinmux.h>
-> > > >   #include <linux/pinctrl/pinconf.h>
-> > > >   #include <linux/slab.h>
-> > > > +#include <linux/syscore_ops.h>
-> > > >   #include "../core.h"
-> > > >   #include "../pinctrl-utils.h"
-> > > >   #include "pinctrl-tegra.h"
-> > > > +#define EMMC2_PAD_CFGPADCTRL_0			0x1c8
-> > > > +#define EMMC4_PAD_CFGPADCTRL_0			0x1e0
-> > > > +#define EMMC_DPD_PARKING			(0x1fff << 14)
-> > > > +
-> > > >   static inline u32 pmx_readl(struct tegra_pmx *pmx, u32 bank, u32 =
-reg)
-> > > >   {
-> > > >   	return readl(pmx->regs[bank] + reg);
-> > > > @@ -619,6 +624,48 @@ static void tegra_pinctrl_clear_parked_bits(st=
-ruct tegra_pmx *pmx)
-> > > >   			pmx_writel(pmx, val, g->mux_bank, g->mux_reg);
-> > > >   		}
-> > > >   	}
-> > > > +
-> > > > +	if (pmx->soc->has_park_padcfg) {
-> > > > +		val =3D pmx_readl(pmx, 0, EMMC2_PAD_CFGPADCTRL_0);
-> > > > +		val &=3D ~EMMC_DPD_PARKING;
-> > > > +		pmx_writel(pmx, val, 0, EMMC2_PAD_CFGPADCTRL_0);
-> > > > +
-> > > > +		val =3D pmx_readl(pmx, 0, EMMC4_PAD_CFGPADCTRL_0);
-> > > > +		val &=3D ~EMMC_DPD_PARKING;
-> > > > +		pmx_writel(pmx, val, 0, EMMC4_PAD_CFGPADCTRL_0);
-> > > > +	}
-> > > > +}
-> > >=20
-> > > Is there any reason why parked_bit can't be changed to parked_bitmask=
- like I was
-> > > asking in a comment to v2?
-> > >=20
-> > > I suppose that it's more preferable to keep pinctrl-tegra.c platform-=
-agnostic for
-> > > consistency when possible, hence adding platform specifics here shoul=
-d be discouraged.
-> > > And then the parked_bitmask will also result in a proper hardware des=
-cription in the code.
-> > >=20
-> >=20
-> > I'm now also vaguely recalling that Stephen Warren had some kind of a "=
-code generator"
-> > for the pinctrl drivers. So I guess all those tables were auto-generate=
-d initially.
-> >=20
-> > Stephen, maybe you could adjust the generator to take into account the =
-bitmask (of
-> > course if that's a part of the generated code) and then re-gen it all f=
-or Sowjanya?
->=20
-> https://github.com/NVIDIA/tegra-pinmux-scripts holds the scripts that
-> generate tegra-pinctrlNNN.c. See  	soc-to-kernel-pinctrl-driver.py. IIRC,
-> tegra-pinctrl.c (the core file) isn't auto-generated. Sowjanya is welcome=
- to
-> send a patch to that repo if the code needs to be updated.
+It is conceivable to have a "wakeup_sources" directory under
+/sys/power/ and sysfs nodes for all wakeup sources in there.
 
-If we want to do that, we may need to start off by bringing the pinmux
-scripts up to date with the latest version of the generated files. There
-have been a number of changes in the meantime that cause the scripts to
-generate a bit of diff with regards to what's currently upstream. Sounds
-like something fairly trivial, though.
+Then, instead of exposing wakeup statistics directly under
+/sys/devices/.../power/, there can be symbolic links from there to the
+new wakeup source nodes under "wakeup_sources" (so as to avoid
+exposing the same data in two different places in sysfs, which may be
+confusing).
 
-Thierry
-
---Nj4mAaUCx+wbOcQD
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl0J80QACgkQ3SOs138+
-s6FBAg/7Bf4pKVuUgiXaL2ZpSW6kr69XzJ449U10mrw9x3AFaYkWRN+8naxPQgWS
-c338JFDAEDEOLmCY45MzLuD7UYyoSKTVqO5H5GHxnpCARKtkfRY0av6yXyf/C2qN
-FCdr7w4POoTfg9XlqddT8dTxYth3w8Y95shLpj6gSbc9gVqKNPVYyiB/YG8sPI6H
-G9c9dXFiRheXgLOkpk8AROj1iSh5F0DDDvcSBbds/KvYJKJGR62odzBBAzEd4Izq
-U+a+CBZDCN+x5UM3WEeh3/sXuDBnZUjAynKfsa/yPcdyKtnGENqjsVNfnWbk45r8
-8cv601Pw110Co51JHS0slvvSCoTuzvq5cErKmIj52eFhstYNKek1evcNZMLSuF3R
-EEqh4ob3Rbt5kj2YJUT+H9WRzkzIZjx5AnS/CHAQVPTmqNC9FMPuFAL8FbVIYNFF
-SH0GVXmOdAGvHdQEkMe1BKb1nKv2U2o5KAGJgft4RBDVxu/KiuJNto1xEdbab3dK
-Lgz2WUuUoOwTwiZhT3vr2UWym78uwSk+D2hxT8o9aABXv8wGKlXg9gjIi7r6famJ
-rvLdWy6VjDsdJz9jeK89AfsWB40vix6AhLtZ7SqfZ6cXOIFXJXk5SUQZuWO3qM+r
-n8QVJCMaJWFCXSmnBpihGlICrr+/0SKA/axw7uLBypTj1EF1jk0=
-=sP7K
------END PGP SIGNATURE-----
-
---Nj4mAaUCx+wbOcQD--
+Cheers!
