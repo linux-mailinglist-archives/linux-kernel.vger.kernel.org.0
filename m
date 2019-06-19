@@ -2,165 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A99324B66F
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 12:47:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E3F1E4B662
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 12:44:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731590AbfFSKrB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Jun 2019 06:47:01 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:35864 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726751AbfFSKrA (ORCPT
+        id S1731399AbfFSKoC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Jun 2019 06:44:02 -0400
+Received: from casper.infradead.org ([85.118.1.10]:45556 "EHLO
+        casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726751AbfFSKoC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Jun 2019 06:47:00 -0400
-Received: by mail-pg1-f196.google.com with SMTP id f21so9456673pgi.3
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2019 03:47:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:subject:to:cc:references:in-reply-to:mime-version
-         :user-agent:message-id:content-transfer-encoding;
-        bh=200XxydEFi55bUNsx9pcWTaDk7SFbRW+2sQbTbQJgsM=;
-        b=aaHRBZYWPczbQFqJe9JJFA0dlLlJzzBJC/oTJXqGKCNuMLuBOY+dTvIh9dbUV+V+z1
-         M/S9iuWU9FuhO/8Lgi6ik9IeD4gD9wfBvILBynTUQBfUQqb810rGAg7Bmy1wY688mP7+
-         7r+hqoXD403MfWK6HCdotz2jLosUibL/qmzWQwAzx7fQ+D8noSJRamt/6HjG2MpPximC
-         PQcbcuLZ1v1c5lqOpuBGkAOgGjG4OY+Ulj5cLZ+QfyiZY/fv0AkL3k2SEKxDFHkAFCXx
-         nmlFw9MABm5Z4uKJNy4JGtlZdpjiixAU9s/oCG13IzJo7pN8wv3jcDuuuf+E1Vt25rrg
-         ibXw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:subject:to:cc:references:in-reply-to
-         :mime-version:user-agent:message-id:content-transfer-encoding;
-        bh=200XxydEFi55bUNsx9pcWTaDk7SFbRW+2sQbTbQJgsM=;
-        b=UhlrlQSO1gqAl1JOM+cmBm+DPgh+UkGq2HI5i950oUKju38fsPn3/ImfIso9d5Kndp
-         4+Gca1LsI+D3J26Gicq4O+zNCmNLFvmwe4wavNJ8d1c9yPUXpEuxsKdsWF1MMhYQa6IC
-         wQc7QxPI+lVUiqmM4CsyIDAyZ4puFSemqBt9nSQobuWm0czXU9vToIXweYXKuj5M62Qw
-         CuY0fKd7bt4DccopovfSHnGbNENv/A9yHrFF9xp0bpQ2mZmE+nj5EhLYBfVT6fjkPgoz
-         HTjTvsGlDJgSr/4fqLtX5MhwncX/Y0SyMgIaeQiTj14E1/+O2H6HvJTYq+SNTpUtjla7
-         SnRA==
-X-Gm-Message-State: APjAAAUvu+hY4NiuaoXalI7KBwAJ/1lqayxyw7NSFGakXW4JyiNMN0NV
-        bRdIWZjy8bkq1BaKeQDC3WY=
-X-Google-Smtp-Source: APXvYqyUoVCDTnkdi8S5XBhHAWD7lToyn4p07rWUBoIE9b24JPYzcTPmfroVgY3GX4XQa3wGy24piA==
-X-Received: by 2002:aa7:9786:: with SMTP id o6mr38027796pfp.222.1560941219859;
-        Wed, 19 Jun 2019 03:46:59 -0700 (PDT)
-Received: from localhost (193-116-72-140.tpgi.com.au. [193.116.72.140])
-        by smtp.gmail.com with ESMTPSA id v10sm14141318pfe.163.2019.06.19.03.46.58
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 19 Jun 2019 03:46:59 -0700 (PDT)
-Date:   Wed, 19 Jun 2019 20:41:41 +1000
-From:   Nicholas Piggin <npiggin@gmail.com>
-Subject: Re: [PATCH 4/7] powerpc/ftrace: Additionally nop out the preceding
- mflr with -mprofile-kernel
-To:     Masami Hiramatsu <mhiramat@kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
-        Steven Rostedt <rostedt@goodmis.org>
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-References: <cover.1560868106.git.naveen.n.rao@linux.vnet.ibm.com>
-        <72492bc769cd6f40a536e689fc3195570d07fd5c.1560868106.git.naveen.n.rao@linux.vnet.ibm.com>
-        <877e9idum7.fsf@concordia.ellerman.id.au>
-        <1560927184.kqsg9x9bd1.astroid@bobo.none>
-        <1560935530.70niyxru6o.naveen@linux.ibm.com>
-In-Reply-To: <1560935530.70niyxru6o.naveen@linux.ibm.com>
+        Wed, 19 Jun 2019 06:44:02 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
+        MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:From:Date:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=WKW/0TRPIb29ZUwqdiEIWuQ61spuUdkZV5X/uIQH8S0=; b=t84WOhRQC7YxmEGug4+IeE6ZG2
+        f+hoPyDbMpZ1t1RdL04ORAisWEtnBm7TBzZCei4viOpDDvy0Bz37Dzse0a6sB91zznwDqLFIavFPZ
+        L2+aMBp0o3rBIpixd9Gbfy2CXTASqIiKw/0YX1jH4qmI2yIxEVvhclGLgH9oz2oQfnMjq5r3Ma7FH
+        VPBesNLK0jlZm/X+Azr5T27AVvWUO6/aNwXoUAVTdV9RvkWs8SrgtucdWogeS+Xl0RSaxeOX7X+4Y
+        bTSgdODUhdMY6pcuFbSLEtjyuA2CUsklO6h4/EoWuCbjvgnNaiwS5whTX9PyKRUDIjnU/OmVMIVdt
+        t6pOk19w==;
+Received: from 177.133.86.196.dynamic.adsl.gvt.net.br ([177.133.86.196] helo=coco.lan)
+        by casper.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1hdY4M-0003f9-Vr; Wed, 19 Jun 2019 10:43:59 +0000
+Date:   Wed, 19 Jun 2019 07:43:52 -0300
+From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc:     Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab@infradead.org>,
+        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org
+Subject: Re: [PATCH v1 20/22] docs: extcon: move it to acpi dir and convert
+ it to ReST
+Message-ID: <20190619074352.79993138@coco.lan>
+In-Reply-To: <4701210.Ilfu9VLqBR@kreacher>
+References: <cover.1560891322.git.mchehab+samsung@kernel.org>
+        <b6d199c3e7c8c868acbb313a1a516ea8aed042ee.1560891322.git.mchehab+samsung@kernel.org>
+        <4701210.Ilfu9VLqBR@kreacher>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-User-Agent: astroid/0.14.0 (https://github.com/astroidmail/astroid)
-Message-Id: <1560939496.ovo51ph4i4.astroid@bobo.none>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Naveen N. Rao's on June 19, 2019 7:53 pm:
-> Nicholas Piggin wrote:
->> Michael Ellerman's on June 19, 2019 3:14 pm:
->>> Hi Naveen,
->>>=20
->>> Sorry I meant to reply to this earlier .. :/
->=20
-> No problem. Thanks for the questions.
->=20
->>>=20
->>> "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com> writes:
->>>> With -mprofile-kernel, gcc emits 'mflr r0', followed by 'bl _mcount' t=
-o
->>>> enable function tracing and profiling. So far, with dynamic ftrace, we
->>>> used to only patch out the branch to _mcount(). However, mflr is
->>>> executed by the branch unit that can only execute one per cycle on
->>>> POWER9 and shared with branches, so it would be nice to avoid it where
->>>> possible.
->>>>
->>>> We cannot simply nop out the mflr either. When enabling function
->>>> tracing, there can be a race if tracing is enabled when some thread wa=
-s
->>>> interrupted after executing a nop'ed out mflr. In this case, the threa=
-d
->>>> would execute the now-patched-in branch to _mcount() without having
->>>> executed the preceding mflr.
->>>>
->>>> To solve this, we now enable function tracing in 2 steps: patch in the
->>>> mflr instruction, use synchronize_rcu_tasks() to ensure all existing
->>>> threads make progress, and then patch in the branch to _mcount(). We
->>>> override ftrace_replace_code() with a powerpc64 variant for this
->>>> purpose.
->>>=20
->>> According to the ISA we're not allowed to patch mflr at runtime. See th=
-e
->>> section on "CMODX".
->>=20
->> According to "quasi patch class" engineering note, we can patch
->> anything with a preferred nop. But that's written as an optional
->> facility, which we don't have a feature to test for.
->>=20
->=20
-> Hmm... I wonder what the implications are. We've been patching in a=20
-> 'trap' for kprobes for a long time now, along with having to patch back=20
-> the original instruction (which can be anything), when the probe is=20
-> removed.
+Em Wed, 19 Jun 2019 11:59:18 +0200
+"Rafael J. Wysocki" <rjw@rjwysocki.net> escreveu:
 
-Will have to check what implementations support "quasi patch class"
-instructions. IIRC recent POWER processors are okay. May have to add
-a feature test though.
+> On Tuesday, June 18, 2019 11:05:44 PM CEST Mauro Carvalho Chehab wrote:
+> > The intel-int3496.txt file is a documentation for an ACPI driver.
+> > 
+> > There's no reason to keep it on a separate directory.
+> > 
+> > So, instead of keeping it on some random location, move it
+> > to a sub-directory inside the ACPI documentation dir.
+> > 
+> > For now, keep it with .txt extension, in order to avoid
+> > Sphinx build noise. A later patch should change it to .rst
+> > and movin it to be together with other acpi docs.
+> > 
+> > Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>  
+> 
+> Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> 
+> Or please let me know if you want me to pick up this one.
 
->>>=20
->>> I'm also not convinced the ordering between the two patches is
->>> guaranteed by the ISA, given that there's possibly no isync on the othe=
-r
->>> CPU.
->>=20
->> Will they go through a context synchronizing event?
->>=20
->> synchronize_rcu_tasks() should ensure a thread is scheduled away, but
->> I'm not actually sure it guarantees CSI if it's kernel->kernel. Could
->> do a smp_call_function to do the isync on each CPU to be sure.
->=20
-> Good point. Per=20
-> Documentation/RCU/Design/Requirements/Requirements.html#Tasks RCU:
-> "The solution, in the form of Tasks RCU, is to have implicit read-side=20
-> critical sections that are delimited by voluntary context switches, that=20
-> is, calls to schedule(), cond_resched(), and synchronize_rcu_tasks(). In=20
-> addition, transitions to and from userspace execution also delimit=20
-> tasks-RCU read-side critical sections."
->=20
-> I suppose transitions to/from userspace, as well as calls to schedule()=20
-> result in context synchronizing instruction being executed. But, if some=20
-> tasks call cond_resched() and synchronize_rcu_tasks(), we probably won't=20
-> have a CSI executed.
->=20
-> Also:
-> "In CONFIG_PREEMPT=3Dn kernels, trampolines cannot be preempted, so these=
-=20
-> APIs map to call_rcu(), synchronize_rcu(), and rcu_barrier(),=20
-> respectively."
->=20
-> In this scenario as well, I think we won't have a CSI executed in case=20
-> of cond_resched().
->=20
-> Should we enhance patch_instruction() to handle that?
+Feel free to pick it.
 
-Well, not sure. Do we have many post-boot callers of it? Should
-they take care of their own synchronization requirements?
 
 Thanks,
-Nick
-=
+Mauro
