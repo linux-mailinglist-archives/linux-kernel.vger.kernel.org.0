@@ -2,121 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AFAEF4B1F8
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 08:12:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A3EDC4B1FE
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 08:15:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731104AbfFSGMc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Jun 2019 02:12:32 -0400
-Received: from mga11.intel.com ([192.55.52.93]:30045 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725892AbfFSGM3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Jun 2019 02:12:29 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Jun 2019 23:12:29 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.63,392,1557212400"; 
-   d="scan'208";a="311258922"
-Received: from tao-optiplex-7060.sh.intel.com ([10.239.13.104])
-  by orsmga004.jf.intel.com with ESMTP; 18 Jun 2019 23:12:27 -0700
-From:   Tao Xu <tao3.xu@intel.com>
-To:     pbonzini@redhat.com, rkrcmar@redhat.com, corbet@lwn.net,
-        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
-        sean.j.christopherson@intel.com
-Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        fenghua.yu@intel.com, xiaoyao.li@linux.intel.com,
-        jingqi.liu@intel.com, tao3.xu@intel.com
-Subject: [PATCH v4 3/3] KVM: vmx: handle vm-exit for UMWAIT and TPAUSE
-Date:   Wed, 19 Jun 2019 14:09:45 +0800
-Message-Id: <20190619060945.14104-4-tao3.xu@intel.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190619060945.14104-1-tao3.xu@intel.com>
-References: <20190619060945.14104-1-tao3.xu@intel.com>
+        id S1730935AbfFSGPC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Jun 2019 02:15:02 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:48898 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725854AbfFSGPC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Jun 2019 02:15:02 -0400
+Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5J6CLH3103706
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2019 02:15:01 -0400
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2t7en6tdfd-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2019 02:15:01 -0400
+Received: from localhost
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <ravi.bangoria@linux.ibm.com>;
+        Wed, 19 Jun 2019 07:14:58 +0100
+Received: from b06avi18626390.portsmouth.uk.ibm.com (9.149.26.192)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 19 Jun 2019 07:14:53 +0100
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x5J6EiKx36241820
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 19 Jun 2019 06:14:44 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id EA440A4051;
+        Wed, 19 Jun 2019 06:14:52 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 54168A4055;
+        Wed, 19 Jun 2019 06:14:51 +0000 (GMT)
+Received: from [9.124.31.60] (unknown [9.124.31.60])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed, 19 Jun 2019 06:14:51 +0000 (GMT)
+Subject: Re: [PATCH 4/5] Powerpc/hw-breakpoint: Optimize disable path
+To:     Christophe Leroy <christophe.leroy@c-s.fr>
+Cc:     mpe@ellerman.id.au, benh@kernel.crashing.org, paulus@samba.org,
+        mikey@neuling.org, linuxppc-dev@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org, npiggin@gmail.com,
+        naveen.n.rao@linux.vnet.ibm.com,
+        Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+References: <20190618042732.5582-1-ravi.bangoria@linux.ibm.com>
+ <20190618042732.5582-5-ravi.bangoria@linux.ibm.com>
+ <6e7c6054-b152-40db-c7d3-89901949460f@c-s.fr>
+From:   Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+Date:   Wed, 19 Jun 2019 11:44:50 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
+In-Reply-To: <6e7c6054-b152-40db-c7d3-89901949460f@c-s.fr>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19061906-0016-0000-0000-0000028A5AFF
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19061906-0017-0000-0000-000032E7AF8A
+Message-Id: <6eb4afef-3277-a920-70d2-cadf34a05be6@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-19_03:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=670 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1906190050
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As the latest Intel 64 and IA-32 Architectures Software Developer's
-Manual, UMWAIT and TPAUSE instructions cause a VM exit if the
-RDTSC exiting and enable user wait and pause VM-execution
-controls are both 1.
 
-This patch is to handle the vm-exit for UMWAIT and TPAUSE as this
-should never happen.
 
-Co-developed-by: Jingqi Liu <jingqi.liu@intel.com>
-Signed-off-by: Jingqi Liu <jingqi.liu@intel.com>
-Signed-off-by: Tao Xu <tao3.xu@intel.com>
----
+On 6/18/19 12:01 PM, Christophe Leroy wrote:
+>> diff --git a/arch/powerpc/kernel/process.c b/arch/powerpc/kernel/process.c
+>> index f002d2ffff86..265fac9fb3a4 100644
+>> --- a/arch/powerpc/kernel/process.c
+>> +++ b/arch/powerpc/kernel/process.c
+>> @@ -793,10 +793,22 @@ static inline int set_dabr(struct arch_hw_breakpoint *brk)
+>>       return __set_dabr(dabr, dabrx);
+>>   }
+>>   +static int disable_dawr(void)
+>> +{
+>> +    if (ppc_md.set_dawr)
+>> +        return ppc_md.set_dawr(0, 0);
+>> +
+>> +    mtspr(SPRN_DAWRX, 0);
+> 
+> And SPRN_DAWR ?
 
-no changes in v4
----
- arch/x86/include/uapi/asm/vmx.h |  6 +++++-
- arch/x86/kvm/vmx/vmx.c          | 16 ++++++++++++++++
- 2 files changed, 21 insertions(+), 1 deletion(-)
-
-diff --git a/arch/x86/include/uapi/asm/vmx.h b/arch/x86/include/uapi/asm/vmx.h
-index d213ec5c3766..d88d7a68849b 100644
---- a/arch/x86/include/uapi/asm/vmx.h
-+++ b/arch/x86/include/uapi/asm/vmx.h
-@@ -85,6 +85,8 @@
- #define EXIT_REASON_PML_FULL            62
- #define EXIT_REASON_XSAVES              63
- #define EXIT_REASON_XRSTORS             64
-+#define EXIT_REASON_UMWAIT              67
-+#define EXIT_REASON_TPAUSE              68
- 
- #define VMX_EXIT_REASONS \
- 	{ EXIT_REASON_EXCEPTION_NMI,         "EXCEPTION_NMI" }, \
-@@ -142,7 +144,9 @@
- 	{ EXIT_REASON_RDSEED,                "RDSEED" }, \
- 	{ EXIT_REASON_PML_FULL,              "PML_FULL" }, \
- 	{ EXIT_REASON_XSAVES,                "XSAVES" }, \
--	{ EXIT_REASON_XRSTORS,               "XRSTORS" }
-+	{ EXIT_REASON_XRSTORS,               "XRSTORS" }, \
-+	{ EXIT_REASON_UMWAIT,                "UMWAIT" }, \
-+	{ EXIT_REASON_TPAUSE,                "TPAUSE" }
- 
- #define VMX_ABORT_SAVE_GUEST_MSR_FAIL        1
- #define VMX_ABORT_LOAD_HOST_PDPTE_FAIL       2
-diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-index eb13ff9759d3..46125553b180 100644
---- a/arch/x86/kvm/vmx/vmx.c
-+++ b/arch/x86/kvm/vmx/vmx.c
-@@ -5336,6 +5336,20 @@ static int handle_monitor(struct kvm_vcpu *vcpu)
- 	return handle_nop(vcpu);
- }
- 
-+static int handle_umwait(struct kvm_vcpu *vcpu)
-+{
-+	kvm_skip_emulated_instruction(vcpu);
-+	WARN(1, "this should never happen\n");
-+	return 1;
-+}
-+
-+static int handle_tpause(struct kvm_vcpu *vcpu)
-+{
-+	kvm_skip_emulated_instruction(vcpu);
-+	WARN(1, "this should never happen\n");
-+	return 1;
-+}
-+
- static int handle_invpcid(struct kvm_vcpu *vcpu)
- {
- 	u32 vmx_instruction_info;
-@@ -5546,6 +5560,8 @@ static int (*kvm_vmx_exit_handlers[])(struct kvm_vcpu *vcpu) = {
- 	[EXIT_REASON_VMFUNC]		      = handle_vmx_instruction,
- 	[EXIT_REASON_PREEMPTION_TIMER]	      = handle_preemption_timer,
- 	[EXIT_REASON_ENCLS]		      = handle_encls,
-+	[EXIT_REASON_UMWAIT]                  = handle_umwait,
-+	[EXIT_REASON_TPAUSE]                  = handle_tpause,
- };
- 
- static const int kvm_vmx_max_exit_handlers =
--- 
-2.20.1
+Setting DAWRx with 0 should be enough to disable the breakpoint.
 
