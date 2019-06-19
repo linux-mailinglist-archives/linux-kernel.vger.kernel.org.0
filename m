@@ -2,80 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 740D64B9F9
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 15:31:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 46D194BA09
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 15:32:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730309AbfFSNbg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Jun 2019 09:31:36 -0400
-Received: from mout.kundenserver.de ([212.227.126.131]:38789 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725562AbfFSNbf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Jun 2019 09:31:35 -0400
-Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
- (mreue010 [212.227.15.129]) with ESMTPA (Nemesis) id
- 1MvKL3-1iUrtQ41zN-00rI0D; Wed, 19 Jun 2019 15:31:30 +0200
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     Jiri Pirko <jiri@mellanox.com>, Ido Schimmel <idosch@mellanox.com>,
-        "David S. Miller" <davem@davemloft.net>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Shalom Toledo <shalomt@mellanox.com>,
-        Petr Machata <petrm@mellanox.com>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] mlxsw: spectrum_ptp: fix 32-bit build
-Date:   Wed, 19 Jun 2019 15:31:20 +0200
-Message-Id: <20190619133128.2259960-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.20.0
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:1TWk/Z00tbKqf5RqEcaX5nccgV/fe9V9aNFZmpdUUYBakGdbGvV
- C+8I324XtE3JT/iwJHKTqKf1+NU7h1FM9RiZJoUaisjO1vKrymmldWMUctjLMLiZLcCGIix
- YYekoaHxNiKne20tF5Y62n7BA7XD4z5k5uDEobwOxEdN8dPVjfGTQs90R+yRoynQ4/1W6Ev
- Ygo3OIn9RDZA4vrnpVGUw==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:hijGal6cEgc=:RGWiW7YwuVIpQI4lNop8tf
- R1vbjyIRNCvZb9IH8qwZaAtofbWWx2zA+vrPrTxI9C4+4oEI8Rwrcpkv8jtfM3tAtbjDN/ZoG
- rwrga+kU4m97DPnxFvVxxXJXNUTgIngENLbgegyonF8Qe6Xj8H5vLSz9Mu8OKY/F63iT1OGGv
- n8iaA5fGA8yJ3Eb9ZNpYE+4Tz66SbauxsYhrkVrydCY7Xm00UfpJeHoAkKo/9T6irlfkHwEAN
- /v2hHCn2bjZCWrY6R6K/LKuDu9zQmzZh8mtQcvzOMG0MOr+JYS9iGygAXR7YdalOAPmhePqE6
- t2XEfMUYsEQSV6KWQpw6mB/itCX1jrurN9SzA/uGcpxuPtKKqc3SaD2kGllf4ELGiUEO3/Ck3
- NNVfq5rV/Co/hAbB8AmDhsqM97ufmDR8IZhUMqymqt21nzher4HYghw+SvnGBfppllbUVL2wd
- SrlIR8KuKjyIKBmIFHLIgTpnMusbdZqsfShztCjRXQYeJJXXhuaoAGv0RryxX/UYRK+E/JOb5
- QtL5feupo7TwWfLmSoaVIc+YtZ1abfFRgOhYIYIe3WUrOIa8vHthCHq324GTo9JWxHOAVmzkQ
- UwYI0u6D5G44bvKQ+yQkKdh4fjr5R2iiyc8unWCG+4EHXI7FuwgNoiInhCXEZRuq+2EOrobc1
- zcKb82PdwCk91FEhFSk5D3sL1pnXTDy+UFNd1E1Tf5YBwwabk39lLJiszyuc5+1Hk4XW0xNZu
- fWKIg9P+u3Wb2uxHysiODn/4KxZlcDN2rpPqmQ==
+        id S1730993AbfFSNcp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Jun 2019 09:32:45 -0400
+Received: from gate.crashing.org ([63.228.1.57]:50445 "EHLO gate.crashing.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726143AbfFSNcp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Jun 2019 09:32:45 -0400
+Received: from localhost (localhost.localdomain [127.0.0.1])
+        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id x5JDVjMj029809;
+        Wed, 19 Jun 2019 08:31:53 -0500
+Message-ID: <a5fc355e44fb5edea41274329f7c5d04a8dff6fc.camel@kernel.crashing.org>
+Subject: Re: [PATCH] powerpc: enable a 30-bit ZONE_DMA for 32-bit pmac
+From:   Benjamin Herrenschmidt <benh@kernel.crashing.org>
+To:     Michael Ellerman <mpe@ellerman.id.au>,
+        Christoph Hellwig <hch@lst.de>, paulus@samba.org
+Cc:     Larry.Finger@lwfinger.net, linuxppc-dev@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org, aaro.koskinen@iki.fi
+Date:   Wed, 19 Jun 2019 23:31:44 +1000
+In-Reply-To: <87tvcldacn.fsf@concordia.ellerman.id.au>
+References: <20190613082446.18685-1-hch@lst.de>
+         <20190619105039.GA10118@lst.de> <87tvcldacn.fsf@concordia.ellerman.id.au>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 32-bit architectures, we cannot easily device 64-bit numbers:
+On Wed, 2019-06-19 at 22:32 +1000, Michael Ellerman wrote:
+> Christoph Hellwig <hch@lst.de> writes:
+> > Any chance this could get picked up to fix the regression?
+> 
+> Was hoping Ben would Ack it. He's still powermac maintainer :)
+> 
+> I guess he OK'ed it in the other thread, will add it to my queue.
 
-ERROR: "__aeabi_uldivmod" [drivers/net/ethernet/mellanox/mlxsw/mlxsw_spectrum.ko] undefined!
+Yeah ack. If I had written it myself, I would have made the DMA bits a
+variable and only set it down to 30 if I see that device in the DT
+early on, but I can't be bothered now, if it works, ship it :-)
 
-Use do_div() to annotate the fact that we know this is an
-expensive operation.
+Note: The patch affects all ppc32, though I don't think it will cause
+any significant issue on those who don't need it.
 
-Fixes: 992aa864dca0 ("mlxsw: spectrum_ptp: Add implementation for physical hardware clock operations")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/net/ethernet/mellanox/mlxsw/spectrum_ptp.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Cheers,
+Ben.
 
-diff --git a/drivers/net/ethernet/mellanox/mlxsw/spectrum_ptp.c b/drivers/net/ethernet/mellanox/mlxsw/spectrum_ptp.c
-index 2a9bbc90225e..618e329e1490 100644
---- a/drivers/net/ethernet/mellanox/mlxsw/spectrum_ptp.c
-+++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum_ptp.c
-@@ -87,7 +87,7 @@ mlxsw_sp1_ptp_phc_settime(struct mlxsw_sp_ptp_clock *clock, u64 nsec)
- 	u32 next_sec;
- 	int err;
- 
--	next_sec = nsec / NSEC_PER_SEC + 1;
-+	next_sec = div_u64(nsec, NSEC_PER_SEC) + 1;
- 	next_sec_in_nsec = next_sec * NSEC_PER_SEC;
- 
- 	spin_lock(&clock->lock);
--- 
-2.20.0
+> cheers
+> 
+> > On Thu, Jun 13, 2019 at 10:24:46AM +0200, Christoph Hellwig wrote:
+> > > With the strict dma mask checking introduced with the switch to
+> > > the generic DMA direct code common wifi chips on 32-bit
+> > > powerbooks
+> > > stopped working.  Add a 30-bit ZONE_DMA to the 32-bit pmac builds
+> > > to allow them to reliably allocate dma coherent memory.
+> > > 
+> > > Fixes: 65a21b71f948 ("powerpc/dma: remove
+> > > dma_nommu_dma_supported")
+> > > Reported-by: Aaro Koskinen <aaro.koskinen@iki.fi>
+> > > Signed-off-by: Christoph Hellwig <hch@lst.de>
+> > > ---
+> > >  arch/powerpc/include/asm/page.h         | 7 +++++++
+> > >  arch/powerpc/mm/mem.c                   | 3 ++-
+> > >  arch/powerpc/platforms/powermac/Kconfig | 1 +
+> > >  3 files changed, 10 insertions(+), 1 deletion(-)
+> > > 
+> > > diff --git a/arch/powerpc/include/asm/page.h
+> > > b/arch/powerpc/include/asm/page.h
+> > > index b8286a2013b4..0d52f57fca04 100644
+> > > --- a/arch/powerpc/include/asm/page.h
+> > > +++ b/arch/powerpc/include/asm/page.h
+> > > @@ -319,6 +319,13 @@ struct vm_area_struct;
+> > >  #endif /* __ASSEMBLY__ */
+> > >  #include <asm/slice.h>
+> > >  
+> > > +/*
+> > > + * Allow 30-bit DMA for very limited Broadcom wifi chips on many
+> > > powerbooks.
+> > > + */
+> > > +#ifdef CONFIG_PPC32
+> > > +#define ARCH_ZONE_DMA_BITS 30
+> > > +#else
+> > >  #define ARCH_ZONE_DMA_BITS 31
+> > > +#endif
+> > >  
+> > >  #endif /* _ASM_POWERPC_PAGE_H */
+> > > diff --git a/arch/powerpc/mm/mem.c b/arch/powerpc/mm/mem.c
+> > > index cba29131bccc..2540d3b2588c 100644
+> > > --- a/arch/powerpc/mm/mem.c
+> > > +++ b/arch/powerpc/mm/mem.c
+> > > @@ -248,7 +248,8 @@ void __init paging_init(void)
+> > >  	       (long int)((top_of_ram - total_ram) >> 20));
+> > >  
+> > >  #ifdef CONFIG_ZONE_DMA
+> > > -	max_zone_pfns[ZONE_DMA]	= min(max_low_pfn, 0x7fffffffUL
+> > > >> PAGE_SHIFT);
+> > > +	max_zone_pfns[ZONE_DMA]	= min(max_low_pfn,
+> > > +			((1UL << ARCH_ZONE_DMA_BITS) - 1) >>
+> > > PAGE_SHIFT);
+> > >  #endif
+> > >  	max_zone_pfns[ZONE_NORMAL] = max_low_pfn;
+> > >  #ifdef CONFIG_HIGHMEM
+> > > diff --git a/arch/powerpc/platforms/powermac/Kconfig
+> > > b/arch/powerpc/platforms/powermac/Kconfig
+> > > index f834a19ed772..c02d8c503b29 100644
+> > > --- a/arch/powerpc/platforms/powermac/Kconfig
+> > > +++ b/arch/powerpc/platforms/powermac/Kconfig
+> > > @@ -7,6 +7,7 @@ config PPC_PMAC
+> > >  	select PPC_INDIRECT_PCI if PPC32
+> > >  	select PPC_MPC106 if PPC32
+> > >  	select PPC_NATIVE
+> > > +	select ZONE_DMA if PPC32
+> > >  	default y
+> > >  
+> > >  config PPC_PMAC64
+> > > -- 
+> > > 2.20.1
+> > 
+> > ---end quoted text---
 
