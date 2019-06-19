@@ -2,191 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B9ECC4BD1A
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 17:40:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3C9024BD23
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 17:41:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729732AbfFSPkC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Jun 2019 11:40:02 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:37526 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725899AbfFSPkC (ORCPT
+        id S1729885AbfFSPlM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Jun 2019 11:41:12 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:43968 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726839AbfFSPlM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Jun 2019 11:40:02 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 4836560300; Wed, 19 Jun 2019 15:40:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1560958800;
-        bh=N7OYhxJf4HieDElspvISZS06uvWIa6aZs0RQzxGXlFw=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=KzSJtbNsOFKEL2Fn7y6uxBTqGbhwDR5SFtOyOdCNwGDGfrHNBQoWptwJItgbT9UbY
-         Y5sIDfaGBfOwZiorqyv/J19mtNkgTmMtQdM2UByYRNNN8FKWuNeNrrumVIjLDXNQNC
-         UnqT2Ha0GGvHyD5iWkIUzZsAyLcMkZDpEzyPZZ58=
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        pdx-caf-mail.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
-        DKIM_INVALID,DKIM_SIGNED,SPF_NONE autolearn=no autolearn_force=no
-        version=3.4.0
-Received: from [10.226.58.28] (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: jhugo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 6286E60850;
-        Wed, 19 Jun 2019 15:39:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1560958799;
-        bh=N7OYhxJf4HieDElspvISZS06uvWIa6aZs0RQzxGXlFw=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=AOXyrESbQfXfIszltxu3JVMVMxIhqIRrmSvIvxz5LEUst3PaE6xkZ95dHsURHsgGi
-         YN7LK0nGinFaRgSj46bqQOze8GJAFpjY6wv+i8C7okau93fAlE+/dIX5OoCV/SdX6+
-         F9/1gg+WzU+hY8k4/9YFHpOVrL1DY1fBa0JDcEOg=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 6286E60850
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jhugo@codeaurora.org
-Subject: Re: [PATCH v6 2/5] HID: quirks: Refactor ELAN 400 and 401 handling
-To:     Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc:     Jeffrey Hugo <jeffrey.l.hugo@gmail.com>,
-        Jiri Kosina <jikos@kernel.org>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Lee Jones <lee.jones@linaro.org>, xnox@ubuntu.com,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
-        DTML <devicetree@vger.kernel.org>,
-        MSM <linux-arm-msm@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>
-References: <20190612212604.32089-1-jeffrey.l.hugo@gmail.com>
- <20190612212721.32195-1-jeffrey.l.hugo@gmail.com>
- <20190612214636.GA40779@dtor-ws>
- <84e7d83f-e133-0281-612a-94d8c4319040@codeaurora.org>
- <CAO-hwJJUivfzFj-Downqt8nY3iTwF8-oq_iBqs1Dxyx92HdYPw@mail.gmail.com>
-From:   Jeffrey Hugo <jhugo@codeaurora.org>
-Message-ID: <e480240e-993b-5f09-f29c-7b5c57a67260@codeaurora.org>
-Date:   Wed, 19 Jun 2019 09:39:57 -0600
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        Wed, 19 Jun 2019 11:41:12 -0400
+Received: by mail-pf1-f195.google.com with SMTP id i189so9975728pfg.10;
+        Wed, 19 Jun 2019 08:41:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=QkiWE/zp1jKsrQI1Q/KB+EfF9ySaqYmDKlecitQY2q8=;
+        b=IasK3Q2dzh9JkLOqt7ZBHvPQPADVvU4ZUITgyCdLoyZqug28NxK1MQrI0EFgX3mo+C
+         HtXnQSnhskx8pVPRR/06ExunX+ork4XkS/01gn/Lc1dneohLRWs5zaK9G0Ys4Zoc6P0e
+         BYdFP3iq3W0BFeggmAvIyYjnryYearr+WECJg3gFHV/PWOqVJ1N8xsqrwhHEyasNf0gy
+         iKLc2btANa924FtL2CYfZwEzRdC2QUoN/1OIfktShivCeICvZdVr6e2dkqAwiq+0w2XY
+         I72ZnbK0XUFRq/gIbZFoh7BHz2IfIGkD8jszT0+EIkDCXU/hBcnHc2hO1cl86M0la2gH
+         y8xQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=QkiWE/zp1jKsrQI1Q/KB+EfF9ySaqYmDKlecitQY2q8=;
+        b=NtjdHQqeQVw4P7HFoN54ZcxHKbwXZyRaYjrhW5Iafh1SB7kP8PkIgZcx3udAOur16M
+         AFtAweRfhbwvQ7z8U7fJH0p3DG0qoLzD2qwgAWje3cpRWZ1O8rfIaTSrx98Ip9KLR6sO
+         stdXmEudj9QH9cQm22ZQheTdx69IM/784bKJhun6V/m2yBMHloGdf2BniuhVxAuZgtZl
+         EDuQyxzu3jvROdQ+K3bfCGyghiG4qs1neAR3rp2aqLU7j9OAu5WCLKAkcphQBF5oOWcN
+         MV6rYUpxsAdPX/yhSCzPWu9GQGqSG3cyNYx5USEHmt2V05vo3WeqIjQEoVYWPXEujy14
+         mgHA==
+X-Gm-Message-State: APjAAAWETTk7S9PHRIv7qbhUY9gNqtNyp65hT2vTXMLljC50wKMADmx5
+        IUgb/6PCL4TUl1yydBPze8c=
+X-Google-Smtp-Source: APXvYqwcTU2aL/9y/rjim5bCbUsnDIM5QBVqan2+nXDiqUpYU7ZAFkgSGbSK2RyRvr3oBekFECwRlA==
+X-Received: by 2002:a17:90a:aa0a:: with SMTP id k10mr12094988pjq.43.1560958871261;
+        Wed, 19 Jun 2019 08:41:11 -0700 (PDT)
+Received: from localhost.localdomain ([125.142.23.13])
+        by smtp.googlemail.com with ESMTPSA id 85sm20966823pgb.52.2019.06.19.08.41.09
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Wed, 19 Jun 2019 08:41:10 -0700 (PDT)
+From:   Suwan Kim <suwan.kim027@gmail.com>
+To:     shuah@kernel.org, valentina.manea.m@gmail.com,
+        gregkh@linuxfoundation.org
+Cc:     linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+        stern@rowland.harvard.edu, Suwan Kim <suwan.kim027@gmail.com>
+Subject: [PATCH v2] usbip: Skip DMA mapping and unmapping for urb at vhci
+Date:   Thu, 20 Jun 2019 00:40:41 +0900
+Message-Id: <20190619154041.30363-1-suwan.kim027@gmail.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <CAO-hwJJUivfzFj-Downqt8nY3iTwF8-oq_iBqs1Dxyx92HdYPw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 6/13/2019 2:55 AM, Benjamin Tissoires wrote:
-> On Thu, Jun 13, 2019 at 12:20 AM Jeffrey Hugo <jhugo@codeaurora.org> wrote:
->>
->> On 6/12/2019 3:46 PM, Dmitry Torokhov wrote:
->>> On Wed, Jun 12, 2019 at 02:27:21PM -0700, Jeffrey Hugo wrote:
->>>> There needs to be coordination between hid-quirks and the elan_i2c driver
->>>> about which devices are handled by what drivers.  Currently, both use
->>>> whitelists, which results in valid devices being unhandled by default,
->>>> when they should not be rejected by hid-quirks.  This is quickly becoming
->>>> an issue.
->>>>
->>>> Since elan_i2c has a maintained whitelist of what devices it will handle,
->>>> which is now in a header file that hid-quirks can access, use that to
->>>> implement a blacklist in hid-quirks so that only the devices that need to
->>>> be handled by elan_i2c get rejected by hid-quirks, and everything else is
->>>> handled by default.
->>>>
->>>> Suggested-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
->>>> Signed-off-by: Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
->>>> ---
->>>>    drivers/hid/hid-quirks.c | 27 ++++++++++++++++-----------
->>>>    1 file changed, 16 insertions(+), 11 deletions(-)
->>>>
->>>> diff --git a/drivers/hid/hid-quirks.c b/drivers/hid/hid-quirks.c
->>>> index e5ca6fe2ca57..bd81bb090222 100644
->>>> --- a/drivers/hid/hid-quirks.c
->>>> +++ b/drivers/hid/hid-quirks.c
->>>> @@ -16,6 +16,7 @@
->>>>    #include <linux/export.h>
->>>>    #include <linux/slab.h>
->>>>    #include <linux/mutex.h>
->>>> +#include <linux/input/elan-i2c-ids.h>
->>>>
->>>>    #include "hid-ids.h"
->>>>
->>>> @@ -914,6 +915,8 @@ static const struct hid_device_id hid_mouse_ignore_list[] = {
->>>>
->>>>    bool hid_ignore(struct hid_device *hdev)
->>>>    {
->>>> +    int i;
->>>> +
->>>>       if (hdev->quirks & HID_QUIRK_NO_IGNORE)
->>>>               return false;
->>>>       if (hdev->quirks & HID_QUIRK_IGNORE)
->>>> @@ -978,18 +981,20 @@ bool hid_ignore(struct hid_device *hdev)
->>>>               break;
->>>>       case USB_VENDOR_ID_ELAN:
->>>>               /*
->>>> -             * Many Elan devices have a product id of 0x0401 and are handled
->>>> -             * by the elan_i2c input driver. But the ACPI HID ELAN0800 dev
->>>> -             * is not (and cannot be) handled by that driver ->
->>>> -             * Ignore all 0x0401 devs except for the ELAN0800 dev.
->>>> +             * Blacklist of everything that gets handled by the elan_i2c
->>>> +             * input driver.  This avoids disabling valid touchpads and
->>>> +             * other ELAN devices.
->>>>                */
->>>> -            if (hdev->product == 0x0401 &&
->>>> -                strncmp(hdev->name, "ELAN0800", 8) != 0)
->>>> -                    return true;
->>>> -            /* Same with product id 0x0400 */
->>>> -            if (hdev->product == 0x0400 &&
->>>> -                strncmp(hdev->name, "QTEC0001", 8) != 0)
->>>> -                    return true;
->>>> +            if ((hdev->product == 0x0401 || hdev->product == 0x0400)) {
->>>> +                    for (i = 0; strlen(elan_acpi_id[i].id); ++i)
->>>> +                            if (!strncmp(hdev->name, elan_acpi_id[i].id,
->>>> +                                         strlen(elan_acpi_id[i].id)))
->>>> +                                    return true;
->>>> +                    for (i = 0; strlen(elan_of_match[i].name); ++i)
->>>> +                            if (!strncmp(hdev->name, elan_of_match[i].name,
->>>> +                                         strlen(elan_of_match[i].name)))
->>>> +                                    return true;
->>>
->>> Do we really need to blacklist the OF case here? I thought that in ACPI
->>> case we have clashes as HID gets matched by elan_i2c and CID is matched
->>> by i2c-hid, but I do not believe we'll run into the same situation on OF
->>> systems.
->>
->> I think its the safer approach.
->>
->> On an OF system, such as patch 3 in the series, the "hid-over-i2c" will
->> end up running through this (kind of the whole reason why this series
->> exists).  The vendor and product ids will still match, so we'll end up
->> going through the lists to see if the hdev->name (the compatible string)
->> will match the blacklist.  "hid-over-i2c" won't match the blacklist, but
->> if there is a more specific compatible, it might.
->>
->> In that case, not matching OF would work, however how it could break
->> today is if both "hid-over-i2c" and "elan,ekth3000" were listed for the
->> same device, and elan_i2c was not compiled.  In that case, if we skip
->> the OF part of the black list, hid-quirks will not reject the device,
->> and you'll probably have some odd behavior instead of the obvious "the
->> device doesn't work because the correct driver isn't present" behavior.
->>
->> While that scenario might be far fetched since having both
->> "hid-over-i2c" and "elan,ekth3000" probably violates the OF bindings,
->> its still safer to include the OF case in the blacklist against future
->> scenarios.
->>
->>
-> 
-> Dmitry, if you are happy with Jeffrey's answer, feel free to take this
-> through your tree and add:
-> Acked-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
-> 
-> I don't expect any major conflicts given on where the code is located.
+vhci doesn’t do dma for remote device. Actually, the real dma
+operation is done by network card driver. So, vhci doesn’t use and
+need dma address of transfer buffer of urb.
 
-Ping?
+But hcd provides dma mapping and unmapping function by defualt and
+it causes unnecessary dma mapping and unmapping which will be done
+again at the NIC driver and it wastes CPU cycles. So, implement
+map_urb_for_dma and unmap_urb_for_dma function for vhci in order to
+skip the dma mapping and unmapping procedure.
 
-Dmitry, are you happy with things?  I would really like to see this 
-queued for 5.3, and it seems like the window to do so is rapidly closing.
+Signed-off-by: Suwan Kim <suwan.kim027@gmail.com>
+---
+v2 
+ - Rename the subject of the patch
+ - Add unmap_urb_for_dma function according to Alan's comment
+---
+ drivers/usb/usbip/vhci_hcd.c | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
+
+diff --git a/drivers/usb/usbip/vhci_hcd.c b/drivers/usb/usbip/vhci_hcd.c
+index 667d9c0ec905..e26ce22c1b0f 100644
+--- a/drivers/usb/usbip/vhci_hcd.c
++++ b/drivers/usb/usbip/vhci_hcd.c
+@@ -1287,6 +1287,18 @@ static int vhci_free_streams(struct usb_hcd *hcd, struct usb_device *udev,
+ 	return 0;
+ }
+ 
++static int vhci_map_urb_for_dma(struct usb_hcd *hcd, struct urb *urb,
++			    gfp_t mem_flags)
++{
++	dev_dbg(&hcd->self.root_hub->dev, "vhci does not map for dma\n");
++	return 0;
++}
++
++static void vhci_unmap_urb_for_dma(struct usb_hcd *hcd, struct urb *urb)
++{
++	dev_dbg(&hcd->self.root_hub->dev, "vhci does not unmap for dma\n");
++}
++
+ static const struct hc_driver vhci_hc_driver = {
+ 	.description	= driver_name,
+ 	.product_desc	= driver_desc,
+@@ -1303,6 +1315,9 @@ static const struct hc_driver vhci_hc_driver = {
+ 
+ 	.get_frame_number = vhci_get_frame_number,
+ 
++	.map_urb_for_dma = vhci_map_urb_for_dma,
++	.unmap_urb_for_dma = vhci_unmap_urb_for_dma,
++
+ 	.hub_status_data = vhci_hub_status,
+ 	.hub_control    = vhci_hub_control,
+ 	.bus_suspend	= vhci_bus_suspend,
+-- 
+2.20.1
 
