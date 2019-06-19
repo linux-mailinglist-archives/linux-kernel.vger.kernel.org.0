@@ -2,82 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6B5064B70C
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 13:27:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E43F14B712
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 13:30:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731657AbfFSL1W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Jun 2019 07:27:22 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:35518 "EHLO mx1.redhat.com"
+        id S1731593AbfFSLa0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Jun 2019 07:30:26 -0400
+Received: from mga02.intel.com ([134.134.136.20]:34293 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727076AbfFSL1W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Jun 2019 07:27:22 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 7906530860AF;
-        Wed, 19 Jun 2019 11:27:22 +0000 (UTC)
-Received: from sirius.home.kraxel.org (ovpn-116-212.ams2.redhat.com [10.36.116.212])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 432005D9C6;
-        Wed, 19 Jun 2019 11:27:20 +0000 (UTC)
-Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
-        id 7E84E11AAB; Wed, 19 Jun 2019 13:27:23 +0200 (CEST)
-Date:   Wed, 19 Jun 2019 13:27:23 +0200
-From:   Gerd Hoffmann <kraxel@redhat.com>
-To:     Emil Velikov <emil.l.velikov@gmail.com>
-Cc:     dri-devel@lists.freedesktop.org,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        David Airlie <airlied@linux.ie>, Sean Paul <sean@poorly.run>
-Subject: Re: [PATCH v3 01/12] drm: add gem array helpers
-Message-ID: <20190619112723.sktnns3qfdfh3lvi@sirius.home.kraxel.org>
-References: <20190619090420.6667-1-kraxel@redhat.com>
- <20190619090420.6667-2-kraxel@redhat.com>
- <20190619103212.GA1896@arch-x1c3>
+        id S1727126AbfFSLaZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Jun 2019 07:30:25 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Jun 2019 04:30:22 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.63,392,1557212400"; 
+   d="scan'208";a="358585188"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.68.145])
+  by fmsmga006.fm.intel.com with ESMTP; 19 Jun 2019 04:30:20 -0700
+Received: from andy by smile with local (Exim 4.92)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1hdYnD-0004Xq-R3; Wed, 19 Jun 2019 14:30:19 +0300
+Date:   Wed, 19 Jun 2019 14:30:19 +0300
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Stefan Roese <sr@denx.de>
+Cc:     linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Yegor Yefremov <yegorslists@googlemail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Giulio Benetti <giulio.benetti@micronovasrl.com>
+Subject: Re: [PATCH 1/3 v8] serial: mctrl_gpio: Check if GPIO property
+ exisits before requesting it
+Message-ID: <20190619113019.GE9224@smile.fi.intel.com>
+References: <20190618083200.30234-1-sr@denx.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190619103212.GA1896@arch-x1c3>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Wed, 19 Jun 2019 11:27:22 +0000 (UTC)
+In-Reply-To: <20190618083200.30234-1-sr@denx.de>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> > +struct drm_gem_object_array*
-> > +drm_gem_array_from_handles(struct drm_file *drm_file, u32 *handles, u32 nents)
-> > +{
-> > +	struct drm_gem_object_array *objs;
-> > +	u32 i;
-> > +
-> > +	objs = drm_gem_array_alloc(nents);
-> > +	if (!objs)
-> > +		return NULL;
-> > +
-> > +	for (i = 0; i < nents; i++) {
-> > +		objs->objs[i] = drm_gem_object_lookup(drm_file, handles[i]);
-> > +		if (!objs->objs[i]) {
-> Missing object put for the 0..i-1 handles. Personally I would:
+On Tue, Jun 18, 2019 at 10:31:58AM +0200, Stefan Roese wrote:
+> This patch adds a check for the GPIOs property existence, before the
+> GPIO is requested. This fixes an issue seen when the 8250 mctrl_gpio
+> support is added (2nd patch in this patch series) on x86 platforms using
+> ACPI.
 
-No. drm_gem_array_alloc initializes objs->nents and
-drm_gem_array_put_free() loops over the whole array,
-skipping NULL pointers.
+Looks like you need to rebase against tty-next again.
 
-> > +			drm_gem_array_put_free(objs);
-> > +			return NULL;
-> > +		}
-> > +	}
-> > +	return objs;
-> > +}
-> Missing EXPORT_SYMBOL?
+-- 
+With Best Regards,
+Andy Shevchenko
 
-Oops.  I had that fixed.  Possibly squashed into the wrong patch.
-
-> Ditto?
-
-Yes.
-
-cheers,
-  Gerd
 
