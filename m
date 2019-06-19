@@ -2,130 +2,192 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0D8234B9C1
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 15:24:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DF6E74B9DE
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 15:25:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729984AbfFSNYy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Jun 2019 09:24:54 -0400
-Received: from mx2.suse.de ([195.135.220.15]:34082 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726109AbfFSNYx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Jun 2019 09:24:53 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id A63F2AD96;
-        Wed, 19 Jun 2019 13:24:51 +0000 (UTC)
-Date:   Wed, 19 Jun 2019 15:24:50 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Minchan Kim <minchan@kernel.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        linux-mm <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>, linux-api@vger.kernel.org,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Tim Murray <timmurray@google.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Daniel Colascione <dancol@google.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Sonny Rao <sonnyrao@google.com>,
-        Brian Geffon <bgeffon@google.com>, jannh@google.com,
-        oleg@redhat.com, christian@brauner.io, oleksandr@redhat.com,
-        hdanton@sina.com, lizeb@google.com
-Subject: Re: [PATCH v2 4/5] mm: introduce MADV_PAGEOUT
-Message-ID: <20190619132450.GQ2968@dhcp22.suse.cz>
-References: <20190610111252.239156-1-minchan@kernel.org>
- <20190610111252.239156-5-minchan@kernel.org>
+        id S1730696AbfFSNZw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Jun 2019 09:25:52 -0400
+Received: from asavdk3.altibox.net ([109.247.116.14]:59484 "EHLO
+        asavdk3.altibox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726060AbfFSNZw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Jun 2019 09:25:52 -0400
+Received: from ravnborg.org (unknown [158.248.194.18])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by asavdk3.altibox.net (Postfix) with ESMTPS id 9B5C520023;
+        Wed, 19 Jun 2019 15:25:47 +0200 (CEST)
+Date:   Wed, 19 Jun 2019 15:25:46 +0200
+From:   Sam Ravnborg <sam@ravnborg.org>
+To:     Robert Chiras <robert.chiras@nxp.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-imx@nxp.com
+Subject: Re: [PATCH v2 2/2] drm/panel: Add support for Raydium RM67191 panel
+ driver
+Message-ID: <20190619132546.GB31903@ravnborg.org>
+References: <1560864646-1468-1-git-send-email-robert.chiras@nxp.com>
+ <1560864646-1468-3-git-send-email-robert.chiras@nxp.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190610111252.239156-5-minchan@kernel.org>
+In-Reply-To: <1560864646-1468-3-git-send-email-robert.chiras@nxp.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
+X-CMAE-Score: 0
+X-CMAE-Analysis: v=2.3 cv=dqr19Wo4 c=1 sm=1 tr=0
+        a=UWs3HLbX/2nnQ3s7vZ42gw==:117 a=UWs3HLbX/2nnQ3s7vZ42gw==:17
+        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=8AirrxEcAAAA:8
+        a=7gkXJVJtAAAA:8 a=Ec1C81j2VkJbqId89Q8A:9 a=CjuIK1q_8ugA:10
+        a=ST-jHhOKWsTCqRlWije3:22 a=E9Po1WZjFZOl8hwRPBS3:22
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 10-06-19 20:12:51, Minchan Kim wrote:
-[...]
-> +static int madvise_pageout_pte_range(pmd_t *pmd, unsigned long addr,
-> +				unsigned long end, struct mm_walk *walk)
+On Tue, Jun 18, 2019 at 04:30:46PM +0300, Robert Chiras wrote:
+> This patch adds Raydium RM67191 TFT LCD panel driver (MIPI-DSI
+> protocol).
+> 
+> Signed-off-by: Robert Chiras <robert.chiras@nxp.com>
+Please include in the changelog a list of what was updated - like this:
 
-Again the same question about a potential code reuse...
-[...]
-> +regular_page:
-> +	tlb_change_page_size(tlb, PAGE_SIZE);
-> +	orig_pte = pte = pte_offset_map_lock(vma->vm_mm, pmd, addr, &ptl);
-> +	flush_tlb_batched_pending(mm);
-> +	arch_enter_lazy_mmu_mode();
-> +	for (; addr < end; pte++, addr += PAGE_SIZE) {
-> +		ptent = *pte;
-> +		if (!pte_present(ptent))
-> +			continue;
-> +
-> +		page = vm_normal_page(vma, addr, ptent);
-> +		if (!page)
-> +			continue;
-> +
-> +		if (isolate_lru_page(page))
-> +			continue;
-> +
-> +		isolated++;
-> +		if (pte_young(ptent)) {
-> +			ptent = ptep_get_and_clear_full(mm, addr, pte,
-> +							tlb->fullmm);
-> +			ptent = pte_mkold(ptent);
-> +			set_pte_at(mm, addr, pte, ptent);
-> +			tlb_remove_tlb_entry(tlb, pte, addr);
-> +		}
-> +		ClearPageReferenced(page);
-> +		test_and_clear_page_young(page);
-> +		list_add(&page->lru, &page_list);
-> +		if (isolated >= SWAP_CLUSTER_MAX) {
+v2:
+- added kconif symbol sorted (sam)
+- another nitpick (foo)
+- etc
 
-Why do we need SWAP_CLUSTER_MAX batching? Especially when we need ...
-[...]
+In general try to namme who gave feedback to give them some credit.
 
-> +unsigned long reclaim_pages(struct list_head *page_list)
+Who is maintainer for this onwards?
+
+> ---
+>  drivers/gpu/drm/panel/Kconfig                 |   9 +
+>  drivers/gpu/drm/panel/Makefile                |   1 +
+>  drivers/gpu/drm/panel/panel-raydium-rm67191.c | 709 ++++++++++++++++++++++++++
+>  3 files changed, 719 insertions(+)
+>  create mode 100644 drivers/gpu/drm/panel/panel-raydium-rm67191.c
+> 
+> +static int rad_panel_prepare(struct drm_panel *panel)
 > +{
-> +	int nid = -1;
-> +	unsigned long nr_reclaimed = 0;
-> +	LIST_HEAD(node_page_list);
-> +	struct reclaim_stat dummy_stat;
-> +	struct scan_control sc = {
-> +		.gfp_mask = GFP_KERNEL,
-> +		.priority = DEF_PRIORITY,
-> +		.may_writepage = 1,
-> +		.may_unmap = 1,
-> +		.may_swap = 1,
-> +	};
+> +	struct rad_panel *rad = to_rad_panel(panel);
 > +
-> +	while (!list_empty(page_list)) {
-> +		struct page *page;
+> +	if (rad->prepared)
+> +		return 0;
 > +
-> +		page = lru_to_page(page_list);
-> +		if (nid == -1) {
-> +			nid = page_to_nid(page);
-> +			INIT_LIST_HEAD(&node_page_list);
-> +		}
-> +
-> +		if (nid == page_to_nid(page)) {
-> +			list_move(&page->lru, &node_page_list);
-> +			continue;
-> +		}
-> +
-> +		nr_reclaimed += shrink_page_list(&node_page_list,
-> +						NODE_DATA(nid),
-> +						&sc, 0,
-> +						&dummy_stat, false);
+> +	if (rad->reset) {
+> +		gpiod_set_value_cansleep(rad->reset, 1);
+> +		usleep_range(3000, 5000);
+> +		gpiod_set_value_cansleep(rad->reset, 0);
 
-per-node batching in fact. Other than that nothing really jumped at me.
-Except for the shared page cache side channel timing aspect not being
-considered AFAICS. To be more specific. Pushing out a shared page cache
-is possible even now but this interface gives a much easier tool to
-evict shared state and perform all sorts of timing attacks. Unless I am
-missing something we should be doing something similar to mincore and
-ignore shared pages without a writeable access or at least document why
-we do not care.
--- 
-Michal Hocko
-SUSE Labs
+So writing a 0 will release reset.
+> +		usleep_range(18000, 20000);
+> +	}
+> +
+> +	rad->prepared = true;
+> +
+> +	return 0;
+> +}
+> +
+> +static int rad_panel_unprepare(struct drm_panel *panel)
+> +{
+> +	struct rad_panel *rad = to_rad_panel(panel);
+> +
+> +	if (!rad->prepared)
+> +		return 0;
+> +
+> +	if (rad->reset) {
+> +		gpiod_set_value_cansleep(rad->reset, 1);
+> +		usleep_range(15000, 17000);
+> +		gpiod_set_value_cansleep(rad->reset, 0);
+Looks strange that reset is released in unprepare.
+I would expect it to stay reset to minimize power etc.
+
+> +
+> +	ret = drm_display_info_set_bus_formats(&connector->display_info,
+> +					       rad_bus_formats,
+> +					       ARRAY_SIZE(rad_bus_formats));
+
+Other drivers has this as the last stement in their enable function.
+I did not check why, but maybe something to invest a few minutes into.
+Be different only if there is a reason to do so.
+
+> +	if (ret)
+> +		return ret;
+> +
+> +	drm_mode_probed_add(panel->connector, mode);
+> +
+> +	return 1;
+> +}
+> +
+> +
+> +#ifdef CONFIG_PM
+> +static int rad_panel_suspend(struct device *dev)
+> +{
+> +	struct rad_panel *rad = dev_get_drvdata(dev);
+> +
+> +	if (!rad->reset)
+> +		return 0;
+> +
+> +	devm_gpiod_put(dev, rad->reset);
+> +	rad->reset = NULL;
+> +
+> +	return 0;
+> +}
+> +
+> +static int rad_panel_resume(struct device *dev)
+> +{
+> +	struct rad_panel *rad = dev_get_drvdata(dev);
+> +
+> +	if (rad->reset)
+> +		return 0;
+> +
+> +	rad->reset = devm_gpiod_get(dev, "reset", GPIOD_OUT_LOW);
+> +	if (IS_ERR(rad->reset))
+> +		rad->reset = NULL;
+> +
+> +	return PTR_ERR_OR_ZERO(rad->reset);
+> +}
+> +
+> +#endif
+
+Use __maybe_unused for the tw functions above.
+And loose the ifdef...
+
+> +
+> +static const struct dev_pm_ops rad_pm_ops = {
+> +	SET_RUNTIME_PM_OPS(rad_panel_suspend, rad_panel_resume, NULL)
+> +	SET_SYSTEM_SLEEP_PM_OPS(rad_panel_suspend, rad_panel_resume)
+> +};
+> +
+> +static const struct of_device_id rad_of_match[] = {
+> +	{ .compatible = "raydium,rm67191", },
+> +	{ }
+We often, but not always, write this as { /* sentinal */ },
+
+> +};
+> +MODULE_DEVICE_TABLE(of, rad_of_match);
+> +
+> +static struct mipi_dsi_driver rad_panel_driver = {
+> +	.driver = {
+> +		.name = "panel-raydium-rm67191",
+> +		.of_match_table = rad_of_match,
+> +		.pm	= &rad_pm_ops,
+> +	},
+> +	.probe = rad_panel_probe,
+> +	.remove = rad_panel_remove,
+> +	.shutdown = rad_panel_shutdown,
+> +};
+> +module_mipi_dsi_driver(rad_panel_driver);
+> +
+> +MODULE_AUTHOR("Robert Chiras <robert.chiras@nxp.com>");
+> +MODULE_DESCRIPTION("DRM Driver for Raydium RM67191 MIPI DSI panel");
+> +MODULE_LICENSE("GPL v2");
+
+With the above trivialities considered/fixed:
+Reviewed-by: Sam Ravnborg <sam@ravnborg.org>
+
+	Sam
