@@ -2,60 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4DB0C4B405
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 10:26:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 950E14B408
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 10:28:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731304AbfFSI0w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Jun 2019 04:26:52 -0400
-Received: from mail-40130.protonmail.ch ([185.70.40.130]:24275 "EHLO
-        mail-40130.protonmail.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731135AbfFSI0w (ORCPT
+        id S1731252AbfFSI2R (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Jun 2019 04:28:17 -0400
+Received: from [192.198.146.188] ([192.198.146.188]:13318 "EHLO
+        E6440.gar.corp.intel.com" rhost-flags-FAIL-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1731134AbfFSI2R (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Jun 2019 04:26:52 -0400
-Date:   Wed, 19 Jun 2019 08:26:45 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
-        s=default; t=1560932809;
-        bh=xvDvj/ZqD9xOzGES683tyHBmCgAnao6fztT0E4snrME=;
-        h=Date:To:From:Reply-To:Subject:Feedback-ID:From;
-        b=RRqt+qBBgVyVFLuhNsUorMe2EPqMBDrd/28tW3ZNrpo3wU8qXsImj126InP4pp9Qe
-         VyaR9VQb3jeb0/K/dMIWKarT3/UaPxoioJuumbzt/v1PEQHWm7pVM1FwnCS2bryHnx
-         0biYm16q2YF/Flmwi9xy7gNbkmH3J6ChnK7DH/6Y=
-To:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-From:   =?UTF-8?Q?Ywe_C=C3=A6rlyn?= <ywecrn@protonmail.com>
-Reply-To: =?UTF-8?Q?Ywe_C=C3=A6rlyn?= <ywecrn@protonmail.com>
-Subject: Re: Linux behaviour problems comes down to GNU idol based on Morphine Psychosis
-Message-ID: <bus18IucrPXDoFhhMBpBI-VzbXJcCKyKgxbMv_4ppwWMd-tpQpMnLTGk4Diu3c4C5HdEhHcC9mNGkVCkCfGQmXWCIF-3B1vvQ5X-9R40_ys=@protonmail.com>
-Feedback-ID: jE8CP55NmWCGfbi9g5qzrOGkxuwuSXpchSI6fmYzjd5UEveHXeJrmiWc0_sgJdqIHM8YAKf9EEyPwffaRmhZ0A==:Ext:ProtonMail
+        Wed, 19 Jun 2019 04:28:17 -0400
+Received: from E6440.gar.corp.intel.com (localhost [127.0.0.1])
+        by E6440.gar.corp.intel.com (Postfix) with ESMTP id 414CDC1165;
+        Wed, 19 Jun 2019 16:28:14 +0800 (CST)
+From:   Harry Pan <harry.pan@intel.com>
+To:     LKML <linux-kernel@vger.kernel.org>
+Cc:     gs0622@gmail.com, Harry Pan <harry.pan@intel.com>,
+        Vishwanath Somayaji <vishwanath.somayaji@intel.com>,
+        Andy Shevchenko <andy@infradead.org>,
+        platform-driver-x86@vger.kernel.org,
+        Rajneesh Bhardwaj <rajneesh.bhardwaj@intel.com>,
+        Darren Hart <dvhart@infradead.org>
+Subject: [PATCH v3] platform/x86: intel_pmc_core: transform Pkg C-state residency from TSC ticks into microseconds
+Date:   Wed, 19 Jun 2019 16:28:01 +0800
+Message-Id: <20190619082801.21699-1-harry.pan@intel.com>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190528025727.6014-1-harry.pan@intel.com>
+References: <20190528025727.6014-1-harry.pan@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-1.2 required=7.0 tests=ALL_TRUSTED,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM autolearn=ham
-        autolearn_force=no version=3.4.2
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on mail.protonmail.ch
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Yes, then I think we have solved the behavioural problem of Linux, and it s=
-eems to come down to the GNU idol, that seems based on Morphine Psychosis. =
-And such the worst Stallman fans, have irate behaviour.
+Refer to the Intel SDM Vol.4, the package C-state residency counters
+of modern IA micro-architecture are all ticking in TSC frequency,
+hence we can apply simple math to transform the ticks into microseconds.
+i.e.,
+residency (ms) = count / tsc_khz
+residency (us) = count / tsc_khz * 1000
 
-And much have pointed to that already, and much criticism done, and indeed =
-the GNU idol should be gone.
+This also aligns to other sysfs debug entries of residency counter in
+the same metric in microseconds, benefits reading and scripting.
 
-And indeed I concluded this a while back, and suggested a Fair Labour=C2=
-=A0 direction for the OS instead. And replacing LSD culture, with Intercult=
-ure, and Islam as the Bible is altered with Thorian belief, similar to LSD.=
- then we keep the relevant of developments, and replace the irrelevant with=
- interculture. And indeed the "acid" type never could do finances. Getting =
-the Thor/Odin out, with it sectunrest and reality in. (Nor could they do ma=
-stering indeed, and rather than loudnesswar, we do suggest -10dB RMS master=
-s too :)).
+v2: restore the accidentally deleted newline, no function change.
+v3: apply kernel do_div() macro to calculate division
 
-Peace (Go With Thee), as was the original greeting, and As-Salam is indeed =
-a name of The Divine.
+Signed-off-by: Harry Pan <harry.pan@intel.com>
 
-Eyx OS
-https://www.youtube.com/channel/UCR3gmLVjHS5A702wo4bol_Q
+---
+
+ drivers/platform/x86/intel_pmc_core.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/platform/x86/intel_pmc_core.c b/drivers/platform/x86/intel_pmc_core.c
+index f2c621b55f49..ab798efacc85 100644
+--- a/drivers/platform/x86/intel_pmc_core.c
++++ b/drivers/platform/x86/intel_pmc_core.c
+@@ -24,6 +24,7 @@
+ #include <asm/cpu_device_id.h>
+ #include <asm/intel-family.h>
+ #include <asm/msr.h>
++#include <asm/tsc.h>
+ 
+ #include "intel_pmc_core.h"
+ 
+@@ -738,7 +739,9 @@ static int pmc_core_pkgc_show(struct seq_file *s, void *unused)
+ 		if (rdmsrl_safe(map[index].bit_mask, &pcstate_count))
+ 			continue;
+ 
+-		seq_printf(s, "%-8s : 0x%llx\n", map[index].name,
++		pcstate_count *= 1000;
++		do_div(pcstate_count, tsc_khz);
++		seq_printf(s, "%-8s : %llu\n", map[index].name,
+ 			   pcstate_count);
+ 	}
+ 
+-- 
+2.20.1
+
