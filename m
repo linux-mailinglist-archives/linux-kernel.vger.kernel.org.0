@@ -2,91 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A141E4B779
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 13:54:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 979424B784
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 13:56:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731647AbfFSLyR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Jun 2019 07:54:17 -0400
-Received: from foss.arm.com ([217.140.110.172]:35630 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727067AbfFSLyR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Jun 2019 07:54:17 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 89DB6360;
-        Wed, 19 Jun 2019 04:54:16 -0700 (PDT)
-Received: from [10.1.196.129] (ostrya.cambridge.arm.com [10.1.196.129])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 71F893F738;
-        Wed, 19 Jun 2019 04:56:01 -0700 (PDT)
-Subject: Re: [PATCH 3/8] iommu/arm-smmu-v3: Support platform SSID
-To:     Will Deacon <will.deacon@arm.com>
-Cc:     "joro@8bytes.org" <joro@8bytes.org>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        Mark Rutland <Mark.Rutland@arm.com>,
-        Robin Murphy <Robin.Murphy@arm.com>,
-        "jacob.jun.pan@linux.intel.com" <jacob.jun.pan@linux.intel.com>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "eric.auger@redhat.com" <eric.auger@redhat.com>
-References: <20190610184714.6786-1-jean-philippe.brucker@arm.com>
- <20190610184714.6786-4-jean-philippe.brucker@arm.com>
- <20190618180851.GK4270@fuggles.cambridge.arm.com>
-From:   Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
-Message-ID: <73cfb797-5ae7-b9d9-01ea-fe98a1bed5c3@arm.com>
-Date:   Wed, 19 Jun 2019 12:53:46 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        id S1731623AbfFSL4o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Jun 2019 07:56:44 -0400
+Received: from mx2.suse.de ([195.135.220.15]:42246 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727067AbfFSL4o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Jun 2019 07:56:44 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 39582AF7C;
+        Wed, 19 Jun 2019 11:56:43 +0000 (UTC)
+Date:   Wed, 19 Jun 2019 13:56:42 +0200
+From:   Petr Mladek <pmladek@suse.com>
+To:     Miroslav Benes <mbenes@suse.cz>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Jessica Yu <jeyu@kernel.org>, linux-kernel@vger.kernel.org,
+        jpoimboe@redhat.com, jikos@kernel.org, rostedt@goodmis.org,
+        ast@kernel.org, daniel@iogearbox.net
+Subject: Re: [RFC][PATCH] module: Propagate MODULE_STATE_COMING notifier
+ errors
+Message-ID: <20190619115642.xzemjebbbl2llabu@pathway.suse.cz>
+References: <20190617090335.GX3436@hirez.programming.kicks-ass.net>
+ <alpine.LSU.2.21.1906191251380.23337@pobox.suse.cz>
 MIME-Version: 1.0
-In-Reply-To: <20190618180851.GK4270@fuggles.cambridge.arm.com>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.LSU.2.21.1906191251380.23337@pobox.suse.cz>
+User-Agent: NeoMutt/20170912 (1.9.0)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 18/06/2019 19:08, Will Deacon wrote:
->> +	/*
->> +	 * If the SMMU doesn't support 2-stage CD, limit the linear
->> +	 * tables to a reasonable number of contexts, let's say
->> +	 * 64kB / sizeof(ctx_desc) = 1024 = 2^10
->> +	 */
->> +	if (!(smmu->features & ARM_SMMU_FEAT_2_LVL_CDTAB))
->> +		master->ssid_bits = min(master->ssid_bits, 10U);
+On Wed 2019-06-19 13:12:12, Miroslav Benes wrote:
+> On Mon, 17 Jun 2019, Peter Zijlstra wrote:
+> > --- a/kernel/module.c
+> > +++ b/kernel/module.c
+> > @@ -3638,9 +3638,10 @@ static int prepare_coming_module(struct module *mod)
+> >  	if (err)
+> >  		return err;
+> >  
+> > -	blocking_notifier_call_chain(&module_notify_list,
+> > -				     MODULE_STATE_COMING, mod);
+> > -	return 0;
+> > +	ret = blocking_notifier_call_chain(&module_notify_list,
+> > +					   MODULE_STATE_COMING, mod);
+> > +	ret = notifier_to_errno(ret);
+> > +	return ret;
+> >  }
+> >  
+> >  static int unknown_module_param_cb(char *param, char *val, const char *modname,
+> > @@ -3780,7 +3781,7 @@ static int load_module(struct load_info *info, const char __user *uargs,
+> >  
+> >  	err = prepare_coming_module(mod);
+> >  	if (err)
+> > -		goto bug_cleanup;
+> > +		goto coming_cleanup;
 > 
-> Please introduce a #define for the 10, so that it is computed in the way
-> you describe in the comment (a bit like we do for things like queue sizes).
+> Not good. klp_module_going() is not prepared to be called without 
+> klp_module_coming() succeeding. "Funny" things might happen.
 
-Ok
+We have discussed it with Miroslav. The best solution seems to
+be to allow to call klp_module_going() even when
+klp_module_comming() failed. Something like:
 
->> +
->>  	group = iommu_group_get_for_dev(dev);
->>  	if (!IS_ERR(group)) {
->>  		iommu_group_put(group);
->> diff --git a/drivers/iommu/of_iommu.c b/drivers/iommu/of_iommu.c
->> index f04a6df65eb8..04f4f6b95d82 100644
->> --- a/drivers/iommu/of_iommu.c
->> +++ b/drivers/iommu/of_iommu.c
->> @@ -206,8 +206,12 @@ const struct iommu_ops *of_iommu_configure(struct device *dev,
->>  			if (err)
->>  				break;
->>  		}
->> -	}
->>  
->> +		fwspec = dev_iommu_fwspec_get(dev);
->> +		if (!err && fwspec)
->> +			of_property_read_u32(master_np, "pasid-num-bits",
->> +					     &fwspec->num_pasid_bits);
->> +	}
-> 
-> Hmm. Do you know if there's anything in ACPI for this?
+diff --git a/kernel/livepatch/core.c b/kernel/livepatch/core.c
+index c4ce08f43bd6..42d72b62edb2 100644
+--- a/kernel/livepatch/core.c
++++ b/kernel/livepatch/core.c
+@@ -1188,6 +1188,10 @@ void klp_module_going(struct module *mod)
+                return;
+ 
+        mutex_lock(&klp_mutex);
++
++       /* Nope when klp_module_comming failed */
++       if (!mod->klp_alive)
++               goto out;
+        /*
+         * Each module has to know that klp_module_going()
+         * has been called. We never know what module will
+@@ -1196,7 +1200,7 @@ void klp_module_going(struct module *mod)
+        mod->klp_alive = false;
+ 
+        klp_cleanup_module_patches_limited(mod, NULL);
+-
++out:
+        mutex_unlock(&klp_mutex);
+ }
 
-Yes, IORT version D introduced a "substream width" field for the Named
-component node (platform device). I don't think it existed last time I
-checked, so I'll see about supporting it.
+Peter's patch actually allows to convert the klp hooks into
+proper module notifiers. But we could do it later once this
+patch is upstream or queued.
 
-Thanks,
-Jean
+Best Regards,
+Petr
