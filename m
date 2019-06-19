@@ -2,91 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 054334BDB5
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 18:09:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 470FB4BD79
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 18:04:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729414AbfFSQJA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Jun 2019 12:09:00 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:42132 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726251AbfFSQI7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Jun 2019 12:08:59 -0400
-Received: by mail-lj1-f193.google.com with SMTP id t28so1562416lje.9
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2019 09:08:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lixom-net.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=EV7Nd8ArFTdSsnM2yNQ22mJq4w9w0n+rqtDMUrqyLjM=;
-        b=Xo6LWNf2yW8bsdWQcU/oU567sPXnlZCujiLaOIOOP1Y8fQk1Ug7fgb3Ehn+NqQe1C0
-         Im0wRTB19X9kj9Tsl8KdUSjD9ysDk78nLuPoHqVZPEtHv3dZ4292JPwc0dMoLPBwyQrI
-         1gbhS6/kuz2tM+XUgRhC02EnGaZzP034GfWdwwWPF206n992N1YqKspXdKhSJGJ61ESw
-         uLRJdmJPVNOIPuASNhFSpGeAycunZRDnL67AZ47C2DitlbNKLIlLxz81bxDxTfAEggdZ
-         acg/NAGAlYe/uYQ2BsoiC+nEQ12cUe61mY1gNmv+HLSUwX7kcHJ4dlMdu7H7W9+Bhrq8
-         yN0w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=EV7Nd8ArFTdSsnM2yNQ22mJq4w9w0n+rqtDMUrqyLjM=;
-        b=toRTya36+8LJA0ijCJVRLZeXiAmEvsiWgTXhLdSLLqImtWcxMhDW/siNKQ6Nx+hPQN
-         Pdknnlnt9dgUYH29gDYP/FE4wLethQjm0igXIB4moi0/sjrj3KBwLSdEVSJedhYNuy1C
-         5r43F2z8FQ9Xg0NlGPtvCGLW/2DVdv0IyKkA/6l4mdFF0he/8siR8BpD6+356WUShcQx
-         z5YWoWIVVuOKgdhLZyEtNd672NhKC2073xDknhjKOFcWoxuQdrp8wRdvl/FzBFd6f8CB
-         KnZgMFKE5x5JOlbOCAU2TIcWma5XFrRPtQLcrctptTAWjp+3aFOl8kzMpOHOgwgQle67
-         YEJQ==
-X-Gm-Message-State: APjAAAVBJ2ccLPWYHgO1wvWCR7VZQ7UovwiDm/qdf4bMS0WwF7Uf4pC8
-        NA15zVhdZIbLzmcEa/m3oeQkxQ==
-X-Google-Smtp-Source: APXvYqzFHehp6jLxcD5jNWdD2OG4cJNUp3yrxOQ9It+m0Y+iLtkPEadbsk97iPVl1BSg7AO+I/lQow==
-X-Received: by 2002:a2e:8696:: with SMTP id l22mr8123756lji.201.1560960537936;
-        Wed, 19 Jun 2019 09:08:57 -0700 (PDT)
-Received: from localhost (h85-30-9-151.cust.a3fiber.se. [85.30.9.151])
-        by smtp.gmail.com with ESMTPSA id k12sm3050356lfm.90.2019.06.19.09.08.56
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 19 Jun 2019 09:08:56 -0700 (PDT)
-Date:   Wed, 19 Jun 2019 09:03:12 -0700
-From:   Olof Johansson <olof@lixom.net>
-To:     Santosh Shilimkar <santosh.shilimkar@oracle.com>
-Cc:     arm@kernel.org, linux-arm-kernel@lists.infradead.org,
-        khilman@kernel.org, arnd@arndb.de, linux-kernel@vger.kernel.org
-Subject: Re: [GIT PULL] ARM: TI SOC updates for v5.3
-Message-ID: <20190619160312.l2yfxrmzs4nygi4s@localhost>
-References: <1560919218-3847-1-git-send-email-santosh.shilimkar@oracle.com>
+        id S1729916AbfFSQE3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Jun 2019 12:04:29 -0400
+Received: from mail.us.es ([193.147.175.20]:34046 "EHLO mail.us.es"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727222AbfFSQE2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Jun 2019 12:04:28 -0400
+Received: from antivirus1-rhel7.int (unknown [192.168.2.11])
+        by mail.us.es (Postfix) with ESMTP id 78578F2691
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2019 18:04:25 +0200 (CEST)
+Received: from antivirus1-rhel7.int (localhost [127.0.0.1])
+        by antivirus1-rhel7.int (Postfix) with ESMTP id 672D3DA713
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2019 18:04:25 +0200 (CEST)
+Received: by antivirus1-rhel7.int (Postfix, from userid 99)
+        id 5C21ADA707; Wed, 19 Jun 2019 18:04:25 +0200 (CEST)
+X-Spam-Checker-Version: SpamAssassin 3.4.1 (2015-04-28) on antivirus1-rhel7.int
+X-Spam-Level: 
+X-Spam-Status: No, score=-108.2 required=7.5 tests=ALL_TRUSTED,BAYES_50,
+        SMTPAUTH_US2,USER_IN_WHITELIST autolearn=disabled version=3.4.1
+Received: from antivirus1-rhel7.int (localhost [127.0.0.1])
+        by antivirus1-rhel7.int (Postfix) with ESMTP id 07631DA70E;
+        Wed, 19 Jun 2019 18:04:23 +0200 (CEST)
+Received: from 192.168.1.97 (192.168.1.97)
+ by antivirus1-rhel7.int (F-Secure/fsigk_smtp/550/antivirus1-rhel7.int);
+ Wed, 19 Jun 2019 18:04:23 +0200 (CEST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/antivirus1-rhel7.int)
+Received: from us.es (sys.soleta.eu [212.170.55.40])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: 1984lsi)
+        by entrada.int (Postfix) with ESMTPSA id D1B614265A2F;
+        Wed, 19 Jun 2019 18:04:22 +0200 (CEST)
+Date:   Wed, 19 Jun 2019 18:04:22 +0200
+X-SMTPAUTHUS: auth mail.us.es
+From:   Pablo Neira Ayuso <pablo@netfilter.org>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Jozsef Kadlecsik <kadlec@netfilter.org>,
+        Florian Westphal <fw@strlen.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        Fernando Fernandez Mancera <ffmancera@riseup.net>,
+        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] netfilter: synproxy: fix nf_synproxy_ipv{4,6}_init()
+ return code
+Message-ID: <20190619160422.t33ckepbusdtfjzq@salvia>
+References: <20190619125314.1005993-1-arnd@arndb.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1560919218-3847-1-git-send-email-santosh.shilimkar@oracle.com>
+In-Reply-To: <20190619125314.1005993-1-arnd@arndb.de>
 User-Agent: NeoMutt/20170113 (1.7.2)
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 18, 2019 at 09:40:18PM -0700, Santosh Shilimkar wrote:
-> The following changes since commit cd6c84d8f0cdc911df435bb075ba22ce3c605b07:
+On Wed, Jun 19, 2019 at 02:53:07PM +0200, Arnd Bergmann wrote:
+> We return an uninitialized variable on success:
 > 
->   Linux 5.2-rc2 (2019-05-26 16:49:19 -0700)
+> net/netfilter/nf_synproxy_core.c:793:6: error: variable 'err' is used uninitialized whenever 'if' condition is false [-Werror,-Wsometimes-uninitialized]
+>         if (snet->hook_ref4 == 0) {
+>             ^~~~~~~~~~~~~~~~~~~~
 > 
-> are available in the git repository at:
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/ssantosh/linux-keystone.git tags/drivers_soc_for_5.3
-> 
-> for you to fetch changes up to 4c960505df44b94001178575a505dd8315086edc:
-> 
->   firmware: ti_sci: Fix gcc unused-but-set-variable warning (2019-06-18 21:32:25 -0700)
-> 
-> ----------------------------------------------------------------
-> SOC: TI SCI updates for v5.3
-> 
-> - Couple of fixes to handle resource ranges and
->   requesting response always from firmware;
-> - Add processor control
-> - Add support APIs for DMA
-> - Fix the SPDX license plate
-> - Unused varible warning fix
+> Initialize the return code to zero first.
 
-Merged to arm/drivers. Thanks.
+Thanks Arnd. We got a fix for this:
 
-
--Olof
+https://git.kernel.org/pub/scm/linux/kernel/git/pablo/nf-next.git/commit/?id=72c5e11854afb842e157353be0291d65b91725f5
