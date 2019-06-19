@@ -2,70 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6BC3C4B17E
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 07:39:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 80C9F4B18D
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 07:42:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730920AbfFSFjv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Jun 2019 01:39:51 -0400
-Received: from ale.deltatee.com ([207.54.116.67]:45700 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725854AbfFSFjt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Jun 2019 01:39:49 -0400
-Received: from s0106602ad0811846.cg.shawcable.net ([68.147.191.165] helo=[192.168.0.12])
-        by ale.deltatee.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.89)
-        (envelope-from <logang@deltatee.com>)
-        id 1hdTJz-00072o-5Y; Tue, 18 Jun 2019 23:39:47 -0600
-To:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Jon Mason <jdmason@kudzu.us>
-Cc:     Dave Jiang <dave.jiang@intel.com>, Allen Hubbe <allenbh@gmail.com>,
-        linux-ntb@googlegroups.com, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-References: <20190619053205.GA10452@mwanda>
-From:   Logan Gunthorpe <logang@deltatee.com>
-Message-ID: <2f4dea74-d78e-8b53-8dec-df8dc032759c@deltatee.com>
-Date:   Tue, 18 Jun 2019 23:39:44 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.1
+        id S1730963AbfFSFmq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Jun 2019 01:42:46 -0400
+Received: from relay2-d.mail.gandi.net ([217.70.183.194]:57845 "EHLO
+        relay2-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725899AbfFSFmp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Jun 2019 01:42:45 -0400
+X-Originating-IP: 79.86.19.127
+Received: from alex.numericable.fr (127.19.86.79.rev.sfr.net [79.86.19.127])
+        (Authenticated sender: alex@ghiti.fr)
+        by relay2-d.mail.gandi.net (Postfix) with ESMTPSA id B0F1240011;
+        Wed, 19 Jun 2019 05:42:27 +0000 (UTC)
+From:   Alexandre Ghiti <alex@ghiti.fr>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     "James E . J . Bottomley" <James.Bottomley@HansenPartnership.com>,
+        Helge Deller <deller@gmx.de>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        linux-parisc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+        sparclinux@vger.kernel.org, linux-mm@kvack.org,
+        Alexandre Ghiti <alex@ghiti.fr>
+Subject: [PATCH RESEND 0/8] Fix mmap base in bottom-up mmap 
+Date:   Wed, 19 Jun 2019 01:42:16 -0400
+Message-Id: <20190619054224.5983-1-alex@ghiti.fr>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <20190619053205.GA10452@mwanda>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 68.147.191.165
-X-SA-Exim-Rcpt-To: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux-ntb@googlegroups.com, allenbh@gmail.com, dave.jiang@intel.com, jdmason@kudzu.us, dan.carpenter@oracle.com
-X-SA-Exim-Mail-From: logang@deltatee.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on ale.deltatee.com
-X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=5.0 tests=ALL_TRUSTED,BAYES_00
-        autolearn=ham autolearn_force=no version=3.4.2
-Subject: Re: [PATCH] NTB: test: remove a duplicate check
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-,,
+This series fixes the fallback of the top-down mmap: in case of
+failure, a bottom-up scheme can be tried as a last resort between
+the top-down mmap base and the stack, hoping for a large unused stack
+limit.
 
-On 2019-06-18 11:32 p.m., Dan Carpenter wrote:
-> We already verified that the "nm->isr_ctx" allocation succeeded so there
-> is no need to check again here.
-> 
-> Fixes: a6bed7a54165 ("NTB: Introduce NTB MSI Test Client")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Lots of architectures and even mm code start this fallback
+at TASK_UNMAPPED_BASE, which is useless since the top-down scheme
+already failed on the whole address space: instead, simply use
+mmap_base.
 
-Hmm, yup, not sure how that slipped through, must have been a bad rebase
-or something. Thanks Dan!
+Along the way, it allows to get rid of of mmap_legacy_base and
+mmap_compat_legacy_base from mm_struct.
 
-Reviewed-by: Logan Gunthorpe <logang@deltatee.com>
+Note that arm and mips already implement this behaviour.  
 
-> ---
-> Hey Logan, can pick a patch prefix when you're introducing a new module?
-> "[PATCH] NTB/test: Introduce NTB MSI Test Client" or whatever.
+Alexandre Ghiti (8):
+  s390: Start fallback of top-down mmap at mm->mmap_base
+  sh: Start fallback of top-down mmap at mm->mmap_base
+  sparc: Start fallback of top-down mmap at mm->mmap_base
+  x86, hugetlbpage: Start fallback of top-down mmap at mm->mmap_base
+  mm: Start fallback top-down mmap at mm->mmap_base
+  parisc: Use mmap_base, not mmap_legacy_base, as low_limit for
+    bottom-up mmap
+  x86: Use mmap_*base, not mmap_*legacy_base, as low_limit for bottom-up
+    mmap
+  mm: Remove mmap_legacy_base and mmap_compat_legacy_code fields from
+    mm_struct
 
-I don't quite follow you there. NTB doesn't really have a good standard
-for prefixes. NTB/test might have made sense.
+ arch/parisc/kernel/sys_parisc.c  |  8 +++-----
+ arch/s390/mm/mmap.c              |  2 +-
+ arch/sh/mm/mmap.c                |  2 +-
+ arch/sparc/kernel/sys_sparc_64.c |  2 +-
+ arch/sparc/mm/hugetlbpage.c      |  2 +-
+ arch/x86/include/asm/elf.h       |  2 +-
+ arch/x86/kernel/sys_x86_64.c     |  4 ++--
+ arch/x86/mm/hugetlbpage.c        |  7 ++++---
+ arch/x86/mm/mmap.c               | 20 +++++++++-----------
+ include/linux/mm_types.h         |  2 --
+ mm/debug.c                       |  4 ++--
+ mm/mmap.c                        |  2 +-
+ 12 files changed, 26 insertions(+), 31 deletions(-)
 
-Logan
+-- 
+2.20.1
+
