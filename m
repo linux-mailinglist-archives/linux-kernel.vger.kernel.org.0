@@ -2,105 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 36C4C4B773
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 13:53:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 77E414B77F
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 13:55:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731667AbfFSLwp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Jun 2019 07:52:45 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:57598 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727244AbfFSLwp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Jun 2019 07:52:45 -0400
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 9AF03308792E;
-        Wed, 19 Jun 2019 11:52:38 +0000 (UTC)
-Received: from hive.brq.redhat.com (unknown [10.43.2.95])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 40C4460FDE;
-        Wed, 19 Jun 2019 11:52:32 +0000 (UTC)
-From:   Petr Oros <poros@redhat.com>
-To:     netdev@vger.kernel.org
-Cc:     sathya.perla@broadcom.com, ajit.khaparde@broadcom.com,
-        sriharsha.basavapatna@broadcom.com, somnath.kotur@broadcom.com,
-        davem@davemloft.net, linux-kernel@vger.kernel.org,
-        ivecera@redhat.com
-Subject: [PATCH net] be2net: fix link failure after ethtool offline test
-Date:   Wed, 19 Jun 2019 13:52:31 +0200
-Message-Id: <20190619115231.6020-1-poros@redhat.com>
+        id S1731668AbfFSLyq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Jun 2019 07:54:46 -0400
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:51152 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727067AbfFSLyq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Jun 2019 07:54:46 -0400
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x5JBrda1035621;
+        Wed, 19 Jun 2019 06:53:39 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1560945219;
+        bh=3j+Hx7J6UIRaUMzrnC2olgBVhCErI1MY48NNqOIHyYY=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=ZldXZqV2ajRvFOh5Xc3RmrMxeWp/jwvnvO7cE7c0S6Uz1xeynDttTxYllxLQqhrde
+         RGnZPc76Ro6Yiaszg3BmIcsL3KSmslq64OUxJRS3GMGToJS067QdWws+xD2t3QlNgM
+         5qqbQ/5czms25mb4+YvCQCuoQUxNgm09nmXE4Suc=
+Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x5JBrdLw015952
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 19 Jun 2019 06:53:39 -0500
+Received: from DLEE111.ent.ti.com (157.170.170.22) by DLEE100.ent.ti.com
+ (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Wed, 19
+ Jun 2019 06:53:38 -0500
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE111.ent.ti.com
+ (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Wed, 19 Jun 2019 06:53:38 -0500
+Received: from [172.24.190.172] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id x5JBrZSd026049;
+        Wed, 19 Jun 2019 06:53:36 -0500
+Subject: Re: [RFC v3 0/2] clocksource: davinci-timer: new driver
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Kevin Hilman <khilman@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        David Lechner <david@lechnology.com>
+CC:     <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+References: <20190605083334.22383-1-brgl@bgdev.pl>
+ <1ac8cfcf-1d77-9b6b-4aab-4171f6cf80fc@ti.com>
+ <67e4688a-09d5-61a3-7406-a91f55045004@linaro.org>
+ <5250ca8e-81bf-6b93-1f00-8121605e9baf@linaro.org>
+From:   Sekhar Nori <nsekhar@ti.com>
+Message-ID: <92ed1030-db75-9da6-b990-0ff92c169fbe@ti.com>
+Date:   Wed, 19 Jun 2019 17:23:35 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Wed, 19 Jun 2019 11:52:45 +0000 (UTC)
+In-Reply-To: <5250ca8e-81bf-6b93-1f00-8121605e9baf@linaro.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Certain cards in conjunction with certain switches need a little more
-time for link setup that results in ethtool link test failure after
-offline test. Patch adds a loop that waits for a link setup finish.
+On 18/06/19 11:33 PM, Daniel Lezcano wrote:
+> On 14/06/2019 16:25, Daniel Lezcano wrote:
+>> On 14/06/2019 12:39, Sekhar Nori wrote:
+>>> Hi Daniel,
+>>>
+>>> On 05/06/19 2:03 PM, Bartosz Golaszewski wrote:
+>>>> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+>>>>
+>>>> This is another version of the new davinci clocksource driver. After much
+>>>> discussion this contains many changes to simplify and improve the driver.
+>>>
+>>> Does this look good to you now? If yes, can you please merge and provide
+>>> an immutable branch to me so I can merge dependent mach-davinci patches?
+>>
+>> Yes, I think it is fine.
+>>
+>> http://git@git.linaro.org/people/daniel.lezcano/linux.git
+>> timers/drivers/davinci
+>>
+>> It is v5.2-rc4 + (2 x patches)
+>>
+>> It is merged in clockevents/next which is exported to linux-next and for
+>> kernel-ci.
+>>
+>> AFAIU, the patch was compiled and tested. If not, please let me know.
+>>
+>> Please, wait a couple of days I confirm the tests passed and you can
+>> consider the branch immutable.
+> 
+> lkp complained, please do not use the branch.
+> 
+> I'm waiting for Bartosz to fix the issue.
 
-Signed-off-by: Petr Oros <poros@redhat.com>
----
- .../net/ethernet/emulex/benet/be_ethtool.c    | 28 +++++++++++++++----
- 1 file changed, 22 insertions(+), 6 deletions(-)
+Alright, noted.
 
-diff --git a/drivers/net/ethernet/emulex/benet/be_ethtool.c b/drivers/net/ethernet/emulex/benet/be_ethtool.c
-index 8a6785173228f3..492f8769ac12c2 100644
---- a/drivers/net/ethernet/emulex/benet/be_ethtool.c
-+++ b/drivers/net/ethernet/emulex/benet/be_ethtool.c
-@@ -891,7 +891,7 @@ static void be_self_test(struct net_device *netdev, struct ethtool_test *test,
- 			 u64 *data)
- {
- 	struct be_adapter *adapter = netdev_priv(netdev);
--	int status;
-+	int status, cnt;
- 	u8 link_status = 0;
- 
- 	if (adapter->function_caps & BE_FUNCTION_CAPS_SUPER_NIC) {
-@@ -902,6 +902,9 @@ static void be_self_test(struct net_device *netdev, struct ethtool_test *test,
- 
- 	memset(data, 0, sizeof(u64) * ETHTOOL_TESTS_NUM);
- 
-+	/* check link status before offline tests */
-+	link_status = netif_carrier_ok(netdev);
-+
- 	if (test->flags & ETH_TEST_FL_OFFLINE) {
- 		if (be_loopback_test(adapter, BE_MAC_LOOPBACK, &data[0]) != 0)
- 			test->flags |= ETH_TEST_FL_FAILED;
-@@ -922,13 +925,26 @@ static void be_self_test(struct net_device *netdev, struct ethtool_test *test,
- 		test->flags |= ETH_TEST_FL_FAILED;
- 	}
- 
--	status = be_cmd_link_status_query(adapter, NULL, &link_status, 0);
--	if (status) {
--		test->flags |= ETH_TEST_FL_FAILED;
--		data[4] = -1;
--	} else if (!link_status) {
-+	/* link status was down prior to test */
-+	if (!link_status) {
- 		test->flags |= ETH_TEST_FL_FAILED;
- 		data[4] = 1;
-+		return;
-+	}
-+
-+	for (cnt = 10; cnt; cnt--) {
-+		status = be_cmd_link_status_query(adapter, NULL, &link_status,
-+						  0);
-+		if (status) {
-+			test->flags |= ETH_TEST_FL_FAILED;
-+			data[4] = -1;
-+			break;
-+		}
-+
-+		if (link_status)
-+			break;
-+
-+		msleep_interruptible(500);
- 	}
- }
- 
--- 
-2.21.0
-
+Thanks,
+Sekhar
