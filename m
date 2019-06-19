@@ -2,162 +2,139 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 939CC4C3AF
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 00:33:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3247C4C3A7
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 00:33:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730908AbfFSWdZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Jun 2019 18:33:25 -0400
-Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:59018 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1730847AbfFSWdU (ORCPT
+        id S1730709AbfFSWc6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Jun 2019 18:32:58 -0400
+Received: from mail-io1-f68.google.com ([209.85.166.68]:35970 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730182AbfFSWc6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Jun 2019 18:33:20 -0400
-Received: from pps.filterd (m0089730.ppops.net [127.0.0.1])
-        by m0089730.ppops.net (8.16.0.27/8.16.0.27) with SMTP id x5JMQYfq010356;
-        Wed, 19 Jun 2019 15:32:45 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : references : in-reply-to : content-type : content-id
- : content-transfer-encoding : mime-version; s=facebook;
- bh=5JRfY6IAs61MAa/z2JPZ2R7kQHhNH3FbQBo5vBJHFXo=;
- b=gFiu/ghPun3dca0kecrT2yE0UrGZW+7WF6RwmA7QAD0Lh4gTAzApYwC1VWDvg467Pql4
- FdvQ9H871rdSPKNkGL97zWmRUqTUoPGpCPgPo4E9/fIMRrjtjnPNdN+eZFz8vkQocf7j
- FDaUoEVEfK8ZApnL/zSvj2Jzf+0+TKXttbw= 
-Received: from maileast.thefacebook.com ([163.114.130.16])
-        by m0089730.ppops.net with ESMTP id 2t7s8xh25y-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-        Wed, 19 Jun 2019 15:32:45 -0700
-Received: from ash-exhub102.TheFacebook.com (2620:10d:c0a8:82::f) by
- ash-exhub102.TheFacebook.com (2620:10d:c0a8:82::f) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1713.5; Wed, 19 Jun 2019 15:32:43 -0700
-Received: from NAM03-CO1-obe.outbound.protection.outlook.com (100.104.31.183)
- by o365-in.thefacebook.com (100.104.35.172) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5
- via Frontend Transport; Wed, 19 Jun 2019 15:32:43 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
- s=selector1-fb-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=5JRfY6IAs61MAa/z2JPZ2R7kQHhNH3FbQBo5vBJHFXo=;
- b=MMSr3wjiJqzyOP+0XrZQ1q9sGmCSAqGYnzLfrvEVHUFWtseSPdjaOXCyU1h35s2r3I35o0fIfmJCW0TpghmzGay/0CoBcmh807eHrqebKy7pNX38gr4OlDSvPnUu2MGbB5ECtWI/dNTivlTqGQFFgcA1rD3Sdlyq4Ufb/TtEh0Y=
-Received: from MWHPR15MB1216.namprd15.prod.outlook.com (10.175.2.17) by
- MWHPR15MB1454.namprd15.prod.outlook.com (10.173.235.17) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1987.10; Wed, 19 Jun 2019 22:32:42 +0000
-Received: from MWHPR15MB1216.namprd15.prod.outlook.com
- ([fe80::d51f:8f19:e2b5:3ae8]) by MWHPR15MB1216.namprd15.prod.outlook.com
- ([fe80::d51f:8f19:e2b5:3ae8%6]) with mapi id 15.20.1987.014; Wed, 19 Jun 2019
- 22:32:42 +0000
-From:   Tao Ren <taoren@fb.com>
-To:     Brendan Higgins <brendanhiggins@google.com>
-CC:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Joel Stanley <joel@jms.id.au>,
-        Andrew Jeffery <andrew@aj.id.au>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
-        OpenBMC Maillist <openbmc@lists.ozlabs.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>,
-        "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>
-Subject: Re: [PATCH 1/2] i2c: aspeed: allow to customize base clock divisor
-Thread-Topic: [PATCH 1/2] i2c: aspeed: allow to customize base clock divisor
-Thread-Index: AQHVJuIcteG+E70PmUey9PLXreYJ5KajfUSAgAASwwA=
-Date:   Wed, 19 Jun 2019 22:32:42 +0000
-Message-ID: <18565fcf-3dc1-b671-f826-e4417e4ad284@fb.com>
-References: <20190619205009.4176588-1-taoren@fb.com>
- <CAFd5g45TMtXcuqONdkpN_K+c0O+wUw8wkGzcQfV+sO8p5Krc9w@mail.gmail.com>
-In-Reply-To: <CAFd5g45TMtXcuqONdkpN_K+c0O+wUw8wkGzcQfV+sO8p5Krc9w@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: BYAPR02CA0034.namprd02.prod.outlook.com
- (2603:10b6:a02:ee::47) To MWHPR15MB1216.namprd15.prod.outlook.com
- (2603:10b6:320:22::17)
-user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [2620:10d:c090:200::3:2141]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: ed9c44b7-e67a-482a-b909-08d6f5060ae2
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:MWHPR15MB1454;
-x-ms-traffictypediagnostic: MWHPR15MB1454:
-x-microsoft-antispam-prvs: <MWHPR15MB1454A9550E09D75CAD496527B2E50@MWHPR15MB1454.namprd15.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:10000;
-x-forefront-prvs: 0073BFEF03
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(396003)(346002)(39860400002)(136003)(366004)(189003)(199004)(256004)(58126008)(5660300002)(73956011)(25786009)(316002)(54906003)(476003)(305945005)(76176011)(6916009)(81166006)(186003)(7736002)(446003)(6486002)(8936002)(68736007)(11346002)(229853002)(36756003)(81156014)(64126003)(52116002)(4326008)(6436002)(478600001)(2906002)(99286004)(14454004)(6116002)(65826007)(53546011)(6506007)(6512007)(46003)(386003)(66446008)(486006)(65956001)(6246003)(7416002)(64756008)(65806001)(66946007)(66556008)(31696002)(71190400001)(53936002)(31686004)(66476007)(71200400001)(102836004)(2616005)(8676002)(86362001);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR15MB1454;H:MWHPR15MB1216.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: fb.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: Xw4pntFvQtrt9M+1t7gOdMqqrrsTemfi39bL3c7j55gcojkwn/Bxf8X9+B9Y3QLKPpIDcEY1Zo9WUjGRXEm7apthyVOXKkqTQMgd59Q8+kIEfNkFzWyBlLpzjrzogZCHoky/EgyWrwBwhbYDCDyg4RSIBSnhk6TKAPQMUoIQLtp2l41ggP8WZHokc5+n9Tic4/INiYO238rIC8LMvct4YqO8m8BSsDLLadbotRb6ra+/4HXzYuakl0g5j/pEyUt97Km5y9H9DaX0fNPVS25hhv8xeonWfKjZMXRe1Wu29QKzhoaD2Wokvq2/a8N+ZtFtaUx5+0qzZsP4n/7FxP7AdE7d1sQYzN4qdLrkS0VZatLjTPJBp1Nq5yhhhCxjS0SxBBx6iBYIxgo6zdyJlz7tjV+sR5Gjbacf6GJske1avhU=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <7A954D46C2698146AB155AC71B775D65@namprd15.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        Wed, 19 Jun 2019 18:32:58 -0400
+Received: by mail-io1-f68.google.com with SMTP id h6so506439ioh.3;
+        Wed, 19 Jun 2019 15:32:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:from:to:cc:date:message-id:user-agent:mime-version
+         :content-transfer-encoding;
+        bh=7Bg82A9f7f4RunQMoMmcdR9mp3vDHwjyz3/uf1/B6Co=;
+        b=BUWIZKTclx11jnrux4XAhfYbZb9dSGSj1E/6bQvoHLxuhBPkUPu+YWpQ485Vs0fgH9
+         07d2hF9Ei42SbqfTz984tQe6vqxnkQskw3rVsNYEfHbaKnaapGBySK1QxiHzOTSkV97Y
+         6nBcXGDDUa6a3/FQJ75AFUZ8Tfqbp6W19XMBPKiy7uCayarvngTU14fVWpSfa9vbcxgq
+         itBs3i+QdUrBieBHvKaJFmqha5z4vfKkgEDoLx/lQq+jrJ9bUWhR/UDWckGSlqSqZ46R
+         5SNU3TaZX9oNwUrIneafyL+AqhBCgSHTL5ePKBzU0IIimsQwTAPNrEU9Z+BjjRxXXB4d
+         p6nQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:from:to:cc:date:message-id:user-agent
+         :mime-version:content-transfer-encoding;
+        bh=7Bg82A9f7f4RunQMoMmcdR9mp3vDHwjyz3/uf1/B6Co=;
+        b=UtWEIBlx7k4gMxQ1hlhDzqLWN/e3Sf3fOYMbZavrRWhRLX4KGmipVt+4Nnq/vsmCWy
+         nzgo1Na601XlztFZQ+cUtD79dxp9MX8HV05Ad8RRYmJI63BsIUUqzLlXldFktnW+lVQi
+         1w3/8sx+7TJEitwqfzjzZAArnDFM9Nb6zPHaYf2FBWF51FtH4sy6FS8syWQ1eUCSNfyD
+         dSzH1dUalOetx/pOB/tgKDV+kd2YOUmPUVVgK1pQ1TtKJoAfvwriaO/xdwVeiTStrfDI
+         yIroWoviiwhTBVgRIoVoAlM5OzfFXuVCyKZ131+putwTtkZ3SPIq/ndC3pnVl6jdcmP3
+         Hveg==
+X-Gm-Message-State: APjAAAUwRPsBWeQyjz0ExJyQ0bYhd1zdgcj9cy74QxsjcgpcPhZKyzha
+        b9aa4QcOqkDTxgSGZlNpLh8=
+X-Google-Smtp-Source: APXvYqzc0qIqzB4wleX54UjkFOne7zbe/eiQNSOhbgTRX7xXVEA+CpQehXrV2IP+mVuZvNGNcBZyqg==
+X-Received: by 2002:a6b:7b09:: with SMTP id l9mr12963476iop.114.1560983577080;
+        Wed, 19 Jun 2019 15:32:57 -0700 (PDT)
+Received: from localhost.localdomain (50-126-100-225.drr01.csby.or.frontiernet.net. [50.126.100.225])
+        by smtp.gmail.com with ESMTPSA id e188sm21987403ioa.3.2019.06.19.15.32.55
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 19 Jun 2019 15:32:56 -0700 (PDT)
+Subject: [PATCH v1 0/6] mm / virtio: Provide support for paravirtual waste
+ page treatment
+From:   Alexander Duyck <alexander.duyck@gmail.com>
+To:     nitesh@redhat.com, kvm@vger.kernel.org, david@redhat.com,
+        mst@redhat.com, dave.hansen@intel.com,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        akpm@linux-foundation.org
+Cc:     yang.zhang.wz@gmail.com, pagupta@redhat.com, riel@surriel.com,
+        konrad.wilk@oracle.com, lcapitulino@redhat.com,
+        wei.w.wang@intel.com, aarcange@redhat.com, pbonzini@redhat.com,
+        dan.j.williams@intel.com, alexander.h.duyck@linux.intel.com
+Date:   Wed, 19 Jun 2019 15:32:54 -0700
+Message-ID: <20190619222922.1231.27432.stgit@localhost.localdomain>
+User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: ed9c44b7-e67a-482a-b909-08d6f5060ae2
-X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Jun 2019 22:32:42.5317
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: taoren@fb.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR15MB1454
-X-OriginatorOrg: fb.com
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-19_14:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1906190184
-X-FB-Internal: deliver
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gNi8xOS8xOSAyOjI1IFBNLCBCcmVuZGFuIEhpZ2dpbnMgd3JvdGU6DQo+IE9uIFdlZCwgSnVu
-IDE5LCAyMDE5IGF0IDI6MDAgUE0gVGFvIFJlbiA8dGFvcmVuQGZiLmNvbT4gd3JvdGU6DQo+Pg0K
-Pj4gU29tZSBpbnRlcm1pdHRlbnQgSTJDIHRyYW5zYWN0aW9uIGZhaWx1cmVzIGFyZSBvYnNlcnZl
-ZCBvbiBGYWNlYm9vayBDTU0gYW5kDQo+PiBNaW5pcGFjayAoYXN0MjUwMCkgQk1DIHBsYXRmb3Jt
-cywgYmVjYXVzZSBzbGF2ZSBkZXZpY2VzIChzdWNoIGFzIENQTEQsIEJJQw0KPj4gYW5kIGV0Yy4p
-IE5BQ0sgdGhlIGFkZHJlc3MgYnl0ZSBzb21ldGltZXMuIFRoZSBpc3N1ZSBjYW4gYmUgcmVzb2x2
-ZWQgYnkNCj4+IGluY3JlYXNpbmcgYmFzZSBjbG9jayBkaXZpc29yIHdoaWNoIGFmZmVjdHMgQVNQ
-RUVEIEkyQyBDb250cm9sbGVyJ3MgYmFzZQ0KPj4gY2xvY2sgYW5kIG90aGVyIEFDIHRpbWluZyBw
-YXJhbWV0ZXJzLg0KPj4NCj4+IFRoaXMgcGF0Y2ggYWxsb3dzIHRvIGN1c3RvbWl6ZSBBU1BFRUQg
-STJDIENvbnRyb2xsZXIncyBiYXNlIGNsb2NrIGRpdmlzb3INCj4+IGluIGRldmljZSB0cmVlLg0K
-PiANCj4gRmlyc3Qgb2ZmLCBhcmUgeW91IHN1cmUgeW91IGFjdHVhbGx5IG5lZWQgdGhpcz8NCj4g
-DQo+IFlvdSBzaG91bGQgYmUgYWJsZSB0byBhY2hpZXZlIGFuIGVmZmVjdGl2ZWx5IGVxdWl2YWxl
-bnQgcmVzdWx0IGJ5IGp1c3QNCj4gbG93ZXJpbmcgdGhlIGBidXMtZnJlcXVlbmN5YCBwcm9wZXJ0
-eSBzcGVjaWZpZWQgaW4gdGhlIERULiBUaGUNCj4gYGJ1cy1mcmVxdWVuY3lgIHByb3BlcnR5IHVs
-dGltYXRlbHkgZGV0ZXJtaW5lcyBhbGwgdGhlIHJlZ2lzdGVyDQo+IHZhbHVlcywgYW5kIHlvdSBz
-aG91bGQgYmUgYWJsZSB0byBzZXQgaXQgdG8gd2hhdGV2ZXIgeW91IHdhbnQgYnkNCj4gcmVmZXJp
-bmcgdG8gdGhlIEFzcGVlZCBkb2N1bWVudGF0aW9uLg0KPiANCj4gTmV2ZXJ0aGVsZXNzLCB0aGUg
-Y29kZSB0aGF0IGRldGVybWluZXMgdGhlIGNvcnJlY3QgZGl2aWRlcnMgZnJvbSB0aGUNCj4gZnJl
-cXVlbmN5IGlzIGJhc2VkIG9uIHRoZSB0YWJsZXMgaW4gdGhlIEFzcGVlZCBkb2N1bWVudGF0aW9u
-LiBJIGRvbid0DQo+IHRoaW5rIHRoZSBlcXVhdGlvbiBtYWtlcyBzZW5zZSB3aGVuIHRoZSBiYXNl
-X2Nsa19kaXZpc29yIGlzIGZpeGVkOyBJDQo+IG1lYW4gaXQgd2lsbCBwcm9iYWJseSBqdXN0IHNl
-dCB0aGUgb3RoZXIgZGl2aXNvciB0byBtYXggb3IgbWluDQo+IGRlcGVuZGluZyBvbiB0aGUgdmFs
-dWVzIGNob3Nlbi4gSSB0aGluayBpZiBzb21lb25lIHJlYWxseSB3YW50cyB0bw0KPiBwcm9ncmFt
-IHRoaXMgcGFyYW1ldGVyIG1hbnVhbGx5LCB0aGV5IHByb2JhYmx5IHdhbnQgdG8gc2V0IHRoZSBv
-dGhlcg0KPiBwYXJhbWV0ZXJzIG1hbnVhbGx5IHRvby4NClRoYW5rIHlvdSBmb3IgdGhlIHF1aWNr
-IHJlc3BvbnNlLCBCcmVuZGFuLg0KDQpBc3BlZWQgSTJDIGJ1cyBmcmVxdWVuY3kgaXMgZGVmaW5l
-ZCBieSAzIHBhcmFtZXRlcnMgKGJhc2VfY2xrX2Rpdmlzb3IsIGNsa19oaWdoX3dpZHRoLCBjbGtf
-bG93X3dpZHRoKSwgYW5kIEkgY2hvb3NlIGJhc2VfY2xrX2Rpdmlzb3IgYmVjYXVzZSBpdCBjb250
-cm9scyBhbGwgdGhlIEFzcGVlZCBJMkMgdGltaW5ncyAoc3VjaCBhcyBzZXR1cCB0aW1lIGFuZCBo
-b2xkIHRpbWUpLiBPbmNlIGJhc2VfY2xrX2Rpdmlzb3IgaXMgZGVjaWRlZCAoZWl0aGVyIGJ5IHRo
-ZSBjdXJyZW50IGxvZ2ljIGluIGkyYy1hc3BlZWQgZHJpdmVyIG9yIG1hbnVhbGx5IHNldCBpbiBk
-ZXZpY2UgdHJlZSksIGNsa19oaWdoX3dpZHRoIGFuZCBjbGtfbG93X3dpZHRoIHdpbGwgYmUgY2Fs
-Y3VsYXRlZCBieSBpMmMtYXNwZWVkIGRyaXZlciB0byBtZWV0IHRoZSBzcGVjaWZpZWQgSTJDIGJ1
-cyBzcGVlZC4NCg0KRm9yIGV4YW1wbGUsIGJ5IHNldHRpbmcgSTJDIGJ1cyBmcmVxdWVuY3kgdG8g
-MTAwS0h6IG9uIEFTVDI1MDAgcGxhdGZvcm0sIChiYXNlX2Nsb2NrX2Rpdmlzb3IsIGNsa19oaWdo
-X3dpZHRoLCBjbGtfbG93X3dpZHRoKSBpcyBzZXQgdG8gKDMsIDE1LCAxNCkgYnkgb3VyIGRyaXZl
-ci4gQnV0IHNvbWUgc2xhdmUgZGV2aWNlcyAob24gQ01NIGkyYy04IGFuZCBNaW5pcGFjayBpMmMt
-MCkgTkFDSyBieXRlIHRyYW5zYWN0aW9ucyB3aXRoIHRoZSBkZWZhdWx0IHRpbWluZyBzZXR0aW5n
-OiB0aGUgaXNzdWUgY2FuIGJlIHJlc29sdmVkIGJ5IHNldHRpbmcgYmFzZV9jbGtfZGl2aXNvciB0
-byA0LCBhbmQgKGNsa19oaWdoX3dpZHRoLCBjbGtfbG93X3dpZHRoKSB3aWxsIGJlIHNldCB0byAo
-NywgNykgYnkgb3VyIGkyYy1hc3BlZWQgZHJpdmVyIHRvIGFjaGlldmUgc2ltaWxhciBJMkMgYnVz
-IHNwZWVkLg0KDQpOb3Qgc3VyZSBpZiBteSBhbnN3ZXIgaGVscHMgdG8gYWRkcmVzcyB5b3VyIGNv
-bmNlcm5zLCBidXQga2luZGx5IGxldCBtZSBrbm93IGlmIHlvdSBoYXZlIGZ1cnRoZXIgcXVlc3Rp
-b25zL3N1Z2dlc3Rpb25zLg0KDQoNClRoYW5rcywNCg0KVGFvDQo=
+This series provides an asynchronous means of hinting to a hypervisor
+that a guest page is no longer in use and can have the data associated
+with it dropped. To do this I have implemented functionality that allows
+for what I am referring to as waste page treatment.
+
+I have based many of the terms and functionality off of waste water
+treatment, the idea for the similarity occurred to me after I had reached
+the point of referring to the hints as "bubbles", as the hints used the
+same approach as the balloon functionality but would disappear if they
+were touched, as a result I started to think of the virtio device as an
+aerator. The general idea with all of this is that the guest should be
+treating the unused pages so that when they end up heading "downstream"
+to either another guest, or back at the host they will not need to be
+written to swap.
+
+When the number of "dirty" pages in a given free_area exceeds our high
+water mark, which is currently 32, we will schedule the aeration task to
+start going through and scrubbing the zone. While the scrubbing is taking
+place a boundary will be defined that we use to seperate the "aerated"
+pages from the "dirty" ones. We use the ZONE_AERATION_ACTIVE bit to flag
+when these boundaries are in place.
+
+I am leaving a number of things hard-coded such as limiting the lowest
+order processed to PAGEBLOCK_ORDER, and have left it up to the guest to
+determine what batch size it wants to allocate to process the hints.
+
+My primary testing has just been to verify the memory is being freed after
+allocation by running memhog 32g in the guest and watching the total free
+memory via /proc/meminfo on the host. With this I have verified most of
+the memory is freed after each iteration. As far as performance I have
+been mainly focusing on the will-it-scale/page_fault1 test running with
+16 vcpus. With that I have seen a less than 1% difference between the
+base kernel without these patches, with the patches and virtio-balloon
+disabled, and with the patches and virtio-balloon enabled with hinting.
+
+Changes from the RFC:
+Moved aeration requested flag out of aerator and into zone->flags.
+Moved boundary out of free_area and into local variables for aeration.
+Moved aeration cycle out of interrupt and into workqueue.
+Left nr_free as total pages instead of splitting it between raw and aerated.
+Combined size and physical address values in virtio ring into one 64b value.
+Restructured the patch set to reduce patches from 11 to 6.
+
+---
+
+Alexander Duyck (6):
+      mm: Adjust shuffle code to allow for future coalescing
+      mm: Move set/get_pcppage_migratetype to mmzone.h
+      mm: Use zone and order instead of free area in free_list manipulators
+      mm: Introduce "aerated" pages
+      mm: Add logic for separating "aerated" pages from "raw" pages
+      virtio-balloon: Add support for aerating memory via hinting
+
+
+ drivers/virtio/Kconfig              |    1 
+ drivers/virtio/virtio_balloon.c     |  110 ++++++++++++++
+ include/linux/memory_aeration.h     |  118 +++++++++++++++
+ include/linux/mmzone.h              |  113 +++++++++------
+ include/linux/page-flags.h          |    8 +
+ include/uapi/linux/virtio_balloon.h |    1 
+ mm/Kconfig                          |    5 +
+ mm/Makefile                         |    1 
+ mm/aeration.c                       |  270 +++++++++++++++++++++++++++++++++++
+ mm/page_alloc.c                     |  203 ++++++++++++++++++--------
+ mm/shuffle.c                        |   24 ---
+ mm/shuffle.h                        |   35 +++++
+ 12 files changed, 753 insertions(+), 136 deletions(-)
+ create mode 100644 include/linux/memory_aeration.h
+ create mode 100644 mm/aeration.c
+
+--
