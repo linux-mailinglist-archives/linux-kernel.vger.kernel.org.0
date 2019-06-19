@@ -2,81 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D28884B2B3
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 09:11:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7EBE24B323
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 09:33:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731085AbfFSHLC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Jun 2019 03:11:02 -0400
-Received: from inva021.nxp.com ([92.121.34.21]:34442 "EHLO inva021.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725854AbfFSHLC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Jun 2019 03:11:02 -0400
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 9E26120017D;
-        Wed, 19 Jun 2019 09:10:59 +0200 (CEST)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 881702005B3;
-        Wed, 19 Jun 2019 09:10:53 +0200 (CEST)
-Received: from localhost.localdomain (mega.ap.freescale.net [10.192.208.232])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id C70FC402F6;
-        Wed, 19 Jun 2019 15:10:45 +0800 (SGT)
-From:   Anson.Huang@nxp.com
-To:     mturquette@baylibre.com, sboyd@kernel.org, shawnguo@kernel.org,
-        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
-        abel.vesa@nxp.com, ccaione@baylibre.com, leonard.crestez@nxp.com,
-        aisheng.dong@nxp.com, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc:     Linux-imx@nxp.com
-Subject: [PATCH 2/2] clk: imx8mq: Keep uart clocks on during system boot
-Date:   Wed, 19 Jun 2019 15:12:40 +0800
-Message-Id: <20190619071240.38503-2-Anson.Huang@nxp.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190619071240.38503-1-Anson.Huang@nxp.com>
-References: <20190619071240.38503-1-Anson.Huang@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1731199AbfFSHdV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Jun 2019 03:33:21 -0400
+Received: from mail.windriver.com ([147.11.1.11]:63418 "EHLO
+        mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725946AbfFSHdU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Jun 2019 03:33:20 -0400
+Received: from ALA-HCA.corp.ad.wrs.com ([147.11.189.40])
+        by mail.windriver.com (8.15.2/8.15.1) with ESMTPS id x5J7WxhF016777
+        (version=TLSv1 cipher=AES128-SHA bits=128 verify=FAIL);
+        Wed, 19 Jun 2019 00:32:59 -0700 (PDT)
+Received: from pek-lpggp2 (128.224.153.75) by ALA-HCA.corp.ad.wrs.com
+ (147.11.189.40) with Microsoft SMTP Server id 14.3.439.0; Wed, 19 Jun 2019
+ 00:32:58 -0700
+Received: by pek-lpggp2 (Postfix, from userid 20544)    id B7372720728; Wed, 19
+ Jun 2019 15:15:20 +0800 (CST)
+From:   Jiping Ma <jiping.ma2@windriver.com>
+To:     <jbaron@akamai.com>
+CC:     <linux-edac@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <mchehab@kernel.org>, <bp@alien8.de>, <jiping.ma2@windriver.com>
+Subject: Review request for edac: ie31200: Add Intel Corporation 3rd Gen Core processor
+Date:   Wed, 19 Jun 2019 15:15:17 +0800
+Message-ID: <1560928518-243100-1-git-send-email-jiping.ma2@windriver.com>
+X-Mailer: git-send-email 1.9.1
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Anson Huang <Anson.Huang@nxp.com>
 
-Call imx_register_uart_clocks() API to keep uart clocks enabled
-when earlyprintk or earlycon is active.
+Hi, Jason Baron
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
----
- drivers/clk/imx/clk-imx8mq.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+Could you help to check if we can support Intel Corporation 3rd Gen Core processor in driver ie31200?
+It is tested by our customer. Test result is accepted by the customer.
 
-diff --git a/drivers/clk/imx/clk-imx8mq.c b/drivers/clk/imx/clk-imx8mq.c
-index 5fbc2a7..d407a07 100644
---- a/drivers/clk/imx/clk-imx8mq.c
-+++ b/drivers/clk/imx/clk-imx8mq.c
-@@ -272,6 +272,14 @@ static const char * const imx8mq_clko2_sels[] = {"osc_25m", "sys2_pll_200m", "sy
- 
- static struct clk_onecell_data clk_data;
- 
-+static struct clk ** const uart_clks[] = {
-+	&clks[IMX8MQ_CLK_UART1_ROOT],
-+	&clks[IMX8MQ_CLK_UART2_ROOT],
-+	&clks[IMX8MQ_CLK_UART3_ROOT],
-+	&clks[IMX8MQ_CLK_UART4_ROOT],
-+	NULL
-+};
-+
- static int imx8mq_clocks_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
-@@ -555,6 +563,8 @@ static int imx8mq_clocks_probe(struct platform_device *pdev)
- 	err = of_clk_add_provider(np, of_clk_src_onecell_get, &clk_data);
- 	WARN_ON(err);
- 
-+	imx_register_uart_clocks(uart_clks);
-+
- 	return err;
- }
- 
--- 
-2.7.4
 
+Summary: EDAC, ie31200: Add Intel Corporation 3rd Gen Core processor
+
+
+commit 9a5001c8840928c3b51bc330a078524dff4d9be5 (HEAD -> master)
+Author: Jiping Ma <jiping.ma2@windriver.com>
+Date:   Mon Jun 17 13:36:20 2019 +0800
+
+EDAC, ie31200: Add Intel Corporation 3rd Gen Core processor
+    
+3rd Gen Core seems to work just like Skylake.
+  
+Signed-off-by: Jiping Ma <jiping.ma2@windriver.com>
+
+
+Thanks,
+Jiping
