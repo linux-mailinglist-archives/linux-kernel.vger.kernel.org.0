@@ -2,156 +2,190 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 459094B59C
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 11:53:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4AF264B5CC
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 12:02:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731431AbfFSJxh convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 19 Jun 2019 05:53:37 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:56006 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727068AbfFSJxh (ORCPT
+        id S1731373AbfFSKCN convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 19 Jun 2019 06:02:13 -0400
+Received: from mail.sensor-technik.de ([80.150.181.156]:40079 "EHLO
+        mail.sensor-technik.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726479AbfFSKCN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Jun 2019 05:53:37 -0400
-Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5J9lkKL023815
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2019 05:53:36 -0400
-Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2t7gbhfw13-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2019 05:53:36 -0400
-Received: from localhost
-        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <naveen.n.rao@linux.vnet.ibm.com>;
-        Wed, 19 Jun 2019 10:53:33 +0100
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 19 Jun 2019 10:53:30 +0100
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x5J9rTFH47251624
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 19 Jun 2019 09:53:29 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A40804C046;
-        Wed, 19 Jun 2019 09:53:29 +0000 (GMT)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 528D84C040;
-        Wed, 19 Jun 2019 09:53:29 +0000 (GMT)
-Received: from localhost (unknown [9.124.35.165])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Wed, 19 Jun 2019 09:53:29 +0000 (GMT)
-Date:   Wed, 19 Jun 2019 15:23:26 +0530
-From:   "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>
-Subject: Re: [PATCH 4/7] powerpc/ftrace: Additionally nop out the preceding
- mflr with -mprofile-kernel
-To:     Masami Hiramatsu <mhiramat@kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-References: <cover.1560868106.git.naveen.n.rao@linux.vnet.ibm.com>
-        <72492bc769cd6f40a536e689fc3195570d07fd5c.1560868106.git.naveen.n.rao@linux.vnet.ibm.com>
-        <877e9idum7.fsf@concordia.ellerman.id.au>
-        <1560927184.kqsg9x9bd1.astroid@bobo.none>
-In-Reply-To: <1560927184.kqsg9x9bd1.astroid@bobo.none>
-User-Agent: astroid/0.14.0 (https://github.com/astroidmail/astroid)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+        Wed, 19 Jun 2019 06:02:13 -0400
+X-Greylist: delayed 426 seconds by postgrey-1.27 at vger.kernel.org; Wed, 19 Jun 2019 06:02:11 EDT
+Received: from stwz1.stww2k.local (HELO stwz1.sensor-technik.de) ([172.25.209.3])
+  by mail.sensor-technik.de with ESMTP; 19 Jun 2019 11:55:05 +0200
+Received: from stwz1.stww2k.local (localhost [127.0.0.1])
+        by stwz1.sensor-technik.de (Postfix) with ESMTP id 0C143B5ABC;
+        Wed, 19 Jun 2019 11:55:05 +0200 (CEST)
+Received: from mail.sensor-technik.de (stwex1.stww2k.local [172.25.2.103])
+        by stwz1.sensor-technik.de (Postfix) with ESMTP id 70A19B5AAC;
+        Wed, 19 Jun 2019 11:54:49 +0200 (CEST)
+Received: from STWEX1.stww2k.local (172.25.2.106) by STWEX1.stww2k.local
+ (172.25.2.106) with Microsoft SMTP Server (TLS) id 15.0.1263.5; Wed, 19 Jun
+ 2019 11:54:48 +0200
+Received: from STWEX1.stww2k.local ([172.25.5.24]) by STWEX1.stww2k.local
+ ([172.25.5.24]) with mapi id 15.00.1263.000; Wed, 19 Jun 2019 11:54:48 +0200
+From:   Waibel Georg <Georg.Waibel@sensor-technik.de>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Support Opensource <support.opensource@diasemi.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        "Mark Brown" <broonie@kernel.org>,
+        Sangbeom Kim <sbkim73@samsung.com>,
+        "Krzysztof Kozlowski" <krzk@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-samsung-soc@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>
+Subject: [PATCH] gpio: Fix return value mismatch of function
+ gpiod_get_from_of_node()
+Thread-Topic: [PATCH] gpio: Fix return value mismatch of function
+  gpiod_get_from_of_node()
+Thread-Index: AQHVJoPK/trACdRS0kWwbOAIe3gb9A==
+Date:   Wed, 19 Jun 2019 09:54:48 +0000
+Message-ID: <1560938081892.33415@sensor-technik.de>
+Accept-Language: de-DE, en-US
+Content-Language: de-DE
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [172.30.230.15]
+x-c2processedorg: 71f8fb5e-29e9-40bb-a2d4-613e155b19df
+Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: 8BIT
-X-TM-AS-GCONF: 00
-x-cbid: 19061909-0008-0000-0000-000002F51480
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19061909-0009-0000-0000-000022622F79
-Message-Id: <1560935530.70niyxru6o.naveen@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-19_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1906190081
+MIME-Version: 1.0
+X-TBoneOriginalFrom: Waibel Georg <Georg.Waibel@sensor-technik.de>
+X-TBoneOriginalTo: Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski
+        <bgolaszewski@baylibre.com>, Support Opensource
+        <support.opensource@diasemi.com>, Liam Girdwood <lgirdwood@gmail.com>, "Mark
+ Brown" <broonie@kernel.org>, Sangbeom Kim <sbkim73@samsung.com>, "Krzysztof
+ Kozlowski" <krzk@kernel.org>, Bartlomiej Zolnierkiewicz
+        <b.zolnierkie@samsung.com>, "linux-gpio@vger.kernel.org"
+        <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+        <linux-kernel@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org"
+        <linux-samsung-soc@vger.kernel.org>
+X-TBoneDomainSigned: false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Nicholas Piggin wrote:
-> Michael Ellerman's on June 19, 2019 3:14 pm:
->> Hi Naveen,
->> 
->> Sorry I meant to reply to this earlier .. :/
+In case the requested gpio property is not found in the device tree, some
+callers of gpiod_get_from_of_node() expect a return value of NULL, others
+expect -ENOENT.
+In particular devm_fwnode_get_index_gpiod_from_child() expects -ENOENT.
+Currently it gets a NULL, which breaks the loop that tries all
+gpio_suffixes. The result is that a gpio property is not found, even
+though it is there.
 
-No problem. Thanks for the questions.
+This patch changes gpiod_get_from_of_node() to return -ENOENT instead
+of NULL when the requested gpio property is not found in the device
+tree. Additionally it modifies all calling functions to properly
+evaluate the return value.
 
->> 
->> "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com> writes:
->>> With -mprofile-kernel, gcc emits 'mflr r0', followed by 'bl _mcount' to
->>> enable function tracing and profiling. So far, with dynamic ftrace, we
->>> used to only patch out the branch to _mcount(). However, mflr is
->>> executed by the branch unit that can only execute one per cycle on
->>> POWER9 and shared with branches, so it would be nice to avoid it where
->>> possible.
->>>
->>> We cannot simply nop out the mflr either. When enabling function
->>> tracing, there can be a race if tracing is enabled when some thread was
->>> interrupted after executing a nop'ed out mflr. In this case, the thread
->>> would execute the now-patched-in branch to _mcount() without having
->>> executed the preceding mflr.
->>>
->>> To solve this, we now enable function tracing in 2 steps: patch in the
->>> mflr instruction, use synchronize_rcu_tasks() to ensure all existing
->>> threads make progress, and then patch in the branch to _mcount(). We
->>> override ftrace_replace_code() with a powerpc64 variant for this
->>> purpose.
->> 
->> According to the ISA we're not allowed to patch mflr at runtime. See the
->> section on "CMODX".
-> 
-> According to "quasi patch class" engineering note, we can patch
-> anything with a preferred nop. But that's written as an optional
-> facility, which we don't have a feature to test for.
-> 
+Another approach would be to leave the return value of
+gpiod_get_from_of_node() as is and fix the bug in
+devm_fwnode_get_index_gpiod_from_child(). Other callers would still need
+to be reworked. The effort would be the same as with the chosen solution.
 
-Hmm... I wonder what the implications are. We've been patching in a 
-'trap' for kprobes for a long time now, along with having to patch back 
-the original instruction (which can be anything), when the probe is 
-removed.
+Signed-off-by: Georg Waibel <georg.waibel@sensor-technik.de>
+---
+ drivers/gpio/gpiolib.c                 | 6 +-----
+ drivers/regulator/da9211-regulator.c   | 2 ++
+ drivers/regulator/s2mps11.c            | 4 +++-
+ drivers/regulator/s5m8767.c            | 4 +++-
+ drivers/regulator/tps65090-regulator.c | 7 ++++---
+ 5 files changed, 13 insertions(+), 10 deletions(-)
 
->> 
->> I'm also not convinced the ordering between the two patches is
->> guaranteed by the ISA, given that there's possibly no isync on the other
->> CPU.
-> 
-> Will they go through a context synchronizing event?
-> 
-> synchronize_rcu_tasks() should ensure a thread is scheduled away, but
-> I'm not actually sure it guarantees CSI if it's kernel->kernel. Could
-> do a smp_call_function to do the isync on each CPU to be sure.
-
-Good point. Per 
-Documentation/RCU/Design/Requirements/Requirements.html#Tasks RCU:
-"The solution, in the form of Tasks RCU, is to have implicit read-side 
-critical sections that are delimited by voluntary context switches, that 
-is, calls to schedule(), cond_resched(), and synchronize_rcu_tasks(). In 
-addition, transitions to and from userspace execution also delimit 
-tasks-RCU read-side critical sections."
-
-I suppose transitions to/from userspace, as well as calls to schedule() 
-result in context synchronizing instruction being executed. But, if some 
-tasks call cond_resched() and synchronize_rcu_tasks(), we probably won't 
-have a CSI executed.
-
-Also:
-"In CONFIG_PREEMPT=n kernels, trampolines cannot be preempted, so these 
-APIs map to call_rcu(), synchronize_rcu(), and rcu_barrier(), 
-respectively."
-
-In this scenario as well, I think we won't have a CSI executed in case 
-of cond_resched().
-
-Should we enhance patch_instruction() to handle that?
-
-
-- Naveen
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index e013d417a936..be1d1d2f8aaa 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -4244,8 +4244,7 @@ EXPORT_SYMBOL_GPL(gpiod_get_index);
+  *
+  * Returns:
+  * On successful request the GPIO pin is configured in accordance with
+- * provided @dflags. If the node does not have the requested GPIO
+- * property, NULL is returned.
++ * provided @dflags.
+  *
+  * In case of error an ERR_PTR() is returned.
+  */
+@@ -4267,9 +4266,6 @@ struct gpio_desc *gpiod_get_from_of_node(struct device_node *node,
+ 					index, &flags);
+ 
+ 	if (!desc || IS_ERR(desc)) {
+-		/* If it is not there, just return NULL */
+-		if (PTR_ERR(desc) == -ENOENT)
+-			return NULL;
+ 		return desc;
+ 	}
+ 
+diff --git a/drivers/regulator/da9211-regulator.c b/drivers/regulator/da9211-regulator.c
+index da37b4ccd834..0309823d2c72 100644
+--- a/drivers/regulator/da9211-regulator.c
++++ b/drivers/regulator/da9211-regulator.c
+@@ -289,6 +289,8 @@ static struct da9211_pdata *da9211_parse_regulators_dt(
+ 				  0,
+ 				  GPIOD_OUT_HIGH | GPIOD_FLAGS_BIT_NONEXCLUSIVE,
+ 				  "da9211-enable");
++		if (IS_ERR(pdata->gpiod_ren[n]))
++			pdata->gpiod_ren[n] = NULL;
+ 		n++;
+ 	}
+ 
+diff --git a/drivers/regulator/s2mps11.c b/drivers/regulator/s2mps11.c
+index 134c62db36c5..b518a81f75a3 100644
+--- a/drivers/regulator/s2mps11.c
++++ b/drivers/regulator/s2mps11.c
+@@ -821,7 +821,9 @@ static void s2mps14_pmic_dt_parse_ext_control_gpio(struct platform_device *pdev,
+ 				0,
+ 				GPIOD_OUT_HIGH | GPIOD_FLAGS_BIT_NONEXCLUSIVE,
+ 				"s2mps11-regulator");
+-		if (IS_ERR(gpio[reg])) {
++		if (PTR_ERR(gpio[reg]) == -ENOENT)
++			gpio[reg] = NULL;
++		else if (IS_ERR(gpio[reg])) {
+ 			dev_err(&pdev->dev, "Failed to get control GPIO for %d/%s\n",
+ 				reg, rdata[reg].name);
+ 			continue;
+diff --git a/drivers/regulator/s5m8767.c b/drivers/regulator/s5m8767.c
+index bb9d1a083299..6ca27e9d5ef7 100644
+--- a/drivers/regulator/s5m8767.c
++++ b/drivers/regulator/s5m8767.c
+@@ -574,7 +574,9 @@ static int s5m8767_pmic_dt_parse_pdata(struct platform_device *pdev,
+ 			0,
+ 			GPIOD_OUT_HIGH | GPIOD_FLAGS_BIT_NONEXCLUSIVE,
+ 			"s5m8767");
+-		if (IS_ERR(rdata->ext_control_gpiod))
++		if (PTR_ERR(rdata->ext_control_gpiod) == -ENOENT)
++			rdata->ext_control_gpiod = NULL;
++		else if (IS_ERR(rdata->ext_control_gpiod))
+ 			return PTR_ERR(rdata->ext_control_gpiod);
+ 
+ 		rdata->id = i;
+diff --git a/drivers/regulator/tps65090-regulator.c b/drivers/regulator/tps65090-regulator.c
+index ca39b3d55123..10ea4b5a0f55 100644
+--- a/drivers/regulator/tps65090-regulator.c
++++ b/drivers/regulator/tps65090-regulator.c
+@@ -371,11 +371,12 @@ static struct tps65090_platform_data *tps65090_parse_dt_reg_data(
+ 								    "dcdc-ext-control-gpios", 0,
+ 								    gflags,
+ 								    "tps65090");
+-			if (IS_ERR(rpdata->gpiod))
+-				return ERR_CAST(rpdata->gpiod);
+-			if (!rpdata->gpiod)
++			if (PTR_ERR(rpdata->gpiod) == -ENOENT) {
+ 				dev_err(&pdev->dev,
+ 					"could not find DCDC external control GPIO\n");
++				rpdata->gpiod = NULL;
++			} else if (IS_ERR(rpdata->gpiod))
++				return ERR_CAST(rpdata->gpiod);
+ 		}
+ 
+ 		if (of_property_read_u32(tps65090_matches[idx].of_node,
+-- 
+2.21.0
 
