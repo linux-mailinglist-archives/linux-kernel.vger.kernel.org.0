@@ -2,113 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D31864C354
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 23:52:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B30324C34B
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 23:52:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730765AbfFSVwI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Jun 2019 17:52:08 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:39166 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730701AbfFSVwG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Jun 2019 17:52:06 -0400
-Received: by mail-io1-f68.google.com with SMTP id r185so732758iod.6;
-        Wed, 19 Jun 2019 14:52:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=dd4ooG4oZ5quaRJjovQGgQXOJNXz7s0BukxLIFDFMFQ=;
-        b=jnorcqLBTsAoVg1s+p6/2A49XYfA798KbAXUrWBie5FVEg/X61D0CasZQ8wNm3g4OZ
-         MvkwBAjous1d+Iu7CNgDGkvltJML1wKLATw1rq7QkMWlXaIdroKbSM45P8xZD6gV6IkS
-         4FBwsMHnZbrv1QoJ1ZZBksYrf5knq3eH7dLcvb5m9XyaMlEd+Wjlj6Pf5tedLUh+ZoGo
-         7/8LkwE4Jh/aSMfC8ErRVD7hP7QILy5RRDoghv80ts70v0ZzjkQ4iwjPzqY2I8GWjG/S
-         wv0erVJa46cGeH+DWGnkRuakk2KdeuzMQfToN4uoFhiIwiHk/Yz4yYJbqUPJ1I2Sujd/
-         vrYQ==
-X-Gm-Message-State: APjAAAXZiUZHYIf9kHEz/Wvjfksb3oNCvcSDbHw/a62gy+cSnoYom1Wm
-        /CnNGROpkKzoFAy056wmrg==
-X-Google-Smtp-Source: APXvYqwE+rBJQkU4kUQX0ZcDA2CS6gXiPS9jFB3GaDr51ImQSjFmxMcfECk9Z2iW7YLikj0LRhpASQ==
-X-Received: by 2002:a5d:9957:: with SMTP id v23mr2607174ios.117.1560981124982;
-        Wed, 19 Jun 2019 14:52:04 -0700 (PDT)
-Received: from localhost.localdomain ([64.188.179.247])
-        by smtp.googlemail.com with ESMTPSA id e84sm37754698iof.39.2019.06.19.14.52.03
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 19 Jun 2019 14:52:04 -0700 (PDT)
-From:   Rob Herring <robh@kernel.org>
-To:     dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: [RFC PATCH 4/4] dt-bindings: display: Convert innolux,ee101ia-01 panel to DT schema
-Date:   Wed, 19 Jun 2019 15:51:56 -0600
-Message-Id: <20190619215156.27795-4-robh@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190619215156.27795-1-robh@kernel.org>
-References: <20190619215156.27795-1-robh@kernel.org>
+        id S1730669AbfFSVwC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Jun 2019 17:52:02 -0400
+Received: from mga14.intel.com ([192.55.52.115]:37127 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726246AbfFSVwB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Jun 2019 17:52:01 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Jun 2019 14:52:00 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.63,394,1557212400"; 
+   d="scan'208";a="160481702"
+Received: from schen9-desk.jf.intel.com (HELO [10.54.74.162]) ([10.54.74.162])
+  by fmsmga008.fm.intel.com with ESMTP; 19 Jun 2019 14:52:00 -0700
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ben Greear <greearb@candelatech.com>, stable@vger.kernel.org,
+        Andi Kleen <ak@linux.intel.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Jun Nakajima <jun.nakajima@intel.com>,
+        Jiri Kosina <jikos@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Asit Mallick <asit.k.mallick@intel.com>,
+        Arjan van de Ven <arjan@linux.intel.com>,
+        Jon Masters <jcm@redhat.com>,
+        Waiman Long <longman9394@gmail.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Mark Gross <mgross@linux.intel.com>,
+        LKML <linux-kernel@vger.kernel.org>, x86@kernel.org
+References: <20190618212457.9764-1-tim.c.chen@linux.intel.com>
+From:   Tim Chen <tim.c.chen@linux.intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=tim.c.chen@linux.intel.com; prefer-encrypt=mutual; keydata=
+ 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
+ l50q2K/r651xphs7CGEdKi1nU0YJVbQxJQ==
+Subject: Re: [PATCH v4] Documentation: Add section about CPU vulnerabilities
+ for Spectre
+Message-ID: <bf064dce-2ab6-ad72-d052-3199b2bef3ac@linux.intel.com>
+Date:   Wed, 19 Jun 2019 14:51:59 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
+In-Reply-To: <20190618212457.9764-1-tim.c.chen@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Convert the innolux,ee101ia-01 LVDS panel binding to DT schema.
+On 6/18/19 2:24 PM, Tim Chen wrote:
 
-Cc: Thierry Reding <thierry.reding@gmail.com>
-Cc: Sam Ravnborg <sam@ravnborg.org>
-Cc: Maxime Ripard <maxime.ripard@bootlin.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: dri-devel@lists.freedesktop.org
-Signed-off-by: Rob Herring <robh@kernel.org>
----
- .../display/panel/innolux,ee101ia-01d.txt     |  7 -------
- .../display/panel/innolux,ee101ia-01d.yaml    | 21 +++++++++++++++++++
- 2 files changed, 21 insertions(+), 7 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/display/panel/innolux,ee101ia-01d.txt
- create mode 100644 Documentation/devicetree/bindings/display/panel/innolux,ee101ia-01d.yaml
+> +
+> +_lab1:
+> +
+> +References on Spectre
+> +---------------------
 
-diff --git a/Documentation/devicetree/bindings/display/panel/innolux,ee101ia-01d.txt b/Documentation/devicetree/bindings/display/panel/innolux,ee101ia-01d.txt
-deleted file mode 100644
-index e5ca4ccd55ed..000000000000
---- a/Documentation/devicetree/bindings/display/panel/innolux,ee101ia-01d.txt
-+++ /dev/null
-@@ -1,7 +0,0 @@
--Innolux Corporation 10.1" EE101IA-01D WXGA (1280x800) LVDS panel
--
--Required properties:
--- compatible: should be "innolux,ee101ia-01d"
--
--This binding is compatible with the lvds-panel binding, which is specified
--in panel-lvds.txt in this directory.
-diff --git a/Documentation/devicetree/bindings/display/panel/innolux,ee101ia-01d.yaml b/Documentation/devicetree/bindings/display/panel/innolux,ee101ia-01d.yaml
-new file mode 100644
-index 000000000000..53d0e9c6169f
---- /dev/null
-+++ b/Documentation/devicetree/bindings/display/panel/innolux,ee101ia-01d.yaml
-@@ -0,0 +1,21 @@
-+# SPDX-License-Identifier: GPL-2.0
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/display/panel/innolux,ee101ia-01d.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Innolux Corporation 10.1" EE101IA-01D WXGA (1280x800) LVDS panel
-+
-+maintainers:
-+  - Thierry Reding <thierry.reding@gmail.com>
-+
-+allOf:
-+  - $ref: panel-lvds.yaml#
-+
-+properties:
-+  compatible:
-+    items:
-+      - const: innolux,ee101ia-01d
-+      - {} # panel-lvds, but not listed here to avoid false select
-+
-+...
--- 
-2.20.1
+Thomas,
+
+I accidentally left a stray "_lab1:" label.  Should be removed.
+
+Sending you an updated v5 version separately.
+
+Tim
 
