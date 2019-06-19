@@ -2,67 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D3F804BF55
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 19:09:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 147214BF57
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 19:09:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729142AbfFSRJU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Jun 2019 13:09:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54582 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726091AbfFSRJU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Jun 2019 13:09:20 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 12D092084E;
-        Wed, 19 Jun 2019 17:09:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560964159;
-        bh=80tp+Pfbm6Ns4CbM/jJ69e0di//UD8WVvRSO8hblqyM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=GUiKRDkeQDyT9YRzrvLwbzlNtdl981GFiz6MxIYp7SLnFO93q5foZULw8qzDq9gj4
-         VLRRnZfrc4sFSYfxNGEHaR97+JqJJXlhaANP6dLMrRVEXQ3ehDEmJEaclS6cSjd5ie
-         10Fsf2QDfDHktMYRRDYmjHTcefukDpsNNbZ5gW2Q=
-Date:   Wed, 19 Jun 2019 19:09:17 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Raul Rangel <rrangel@chromium.org>
-Cc:     stable@vger.kernel.org, linux-mmc@vger.kernel.org,
-        djkurtz@google.com, adrian.hunter@intel.com, zwisler@chromium.org,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-kernel@vger.kernel.org, Chris Boot <bootc@bootc.net>,
-        =?iso-8859-1?Q?Cl=E9ment_P=E9ron?= <peron.clem@gmail.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Subject: Re: [stable/4.14.y PATCH 0/3] mmc: Fix a potential resource leak
- when shutting down request queue.
-Message-ID: <20190619170917.GC10107@kroah.com>
-References: <20190513175521.84955-1-rrangel@chromium.org>
- <20190514091933.GA27269@kroah.com>
- <20190619164625.GA85539@google.com>
+        id S1730018AbfFSRJm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Jun 2019 13:09:42 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:39182 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726091AbfFSRJm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Jun 2019 13:09:42 -0400
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92 #3 (Red Hat Linux))
+        id 1hde5c-00072w-7A; Wed, 19 Jun 2019 17:09:40 +0000
+Date:   Wed, 19 Jun 2019 18:09:40 +0100
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Vicente Bergas <vicencb@gmail.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>
+Subject: Re: d_lookup: Unable to handle kernel paging request
+Message-ID: <20190619170940.GG17978@ZenIV.linux.org.uk>
+References: <23950bcb-81b0-4e07-8dc8-8740eb53d7fd@gmail.com>
+ <20190522135331.GM17978@ZenIV.linux.org.uk>
+ <bdc8b245-afca-4662-99e2-a082f25fc927@gmail.com>
+ <20190522162945.GN17978@ZenIV.linux.org.uk>
+ <10192e43-c21d-44e4-915d-bf77a50c22c4@gmail.com>
+ <20190618183548.GB17978@ZenIV.linux.org.uk>
+ <bf2b3aa6-bda1-43f1-9a01-e4ad3df81c0b@gmail.com>
+ <20190619162802.GF17978@ZenIV.linux.org.uk>
+ <bc774f6b-711e-4a20-ad85-c282f9761392@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190619164625.GA85539@google.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <bc774f6b-711e-4a20-ad85-c282f9761392@gmail.com>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 19, 2019 at 10:46:25AM -0600, Raul Rangel wrote:
-> On Tue, May 14, 2019 at 11:19:34AM +0200, Greg Kroah-Hartman wrote:
-> > On Mon, May 13, 2019 at 11:55:18AM -0600, Raul E Rangel wrote:
-> > > I think we should cherry-pick 41e3efd07d5a02c80f503e29d755aa1bbb4245de
-> > > https://lore.kernel.org/patchwork/patch/856512/ into 4.14. It fixes a
-> > > potential resource leak when shutting down the request queue.
-> > 
-> > Potential meaning "it does happen", or "it can happen if we do this", or
-> > just "maybe it might happen, we really do not know?"
-> It does happen if the AMD SDHCI patches are cherry-picked into 4.14.
-> https://lkml.org/lkml/2019/5/1/398
+On Wed, Jun 19, 2019 at 06:51:51PM +0200, Vicente Bergas wrote:
 
-Why are those patches somehow being required to be added to 4.14.y?  If
-they are not added, is all fine?
+> > What's your config, BTW?  SMP and DEBUG_SPINLOCK, specifically...
+> 
+> Hi Al,
+> here it is:
+> https://paste.debian.net/1088517
 
-thanks,
+Aha...  So LIST_BL_LOCKMASK is 1 there (same as on distro builds)...
 
-greg k-h
+Hell knows - how about
+static inline void hlist_bl_lock(struct hlist_bl_head *b)
+{
+	BUG_ON(((u32)READ_ONCE(*b)&~LIST_BL_LOCKMASK) == 0x01000000);
+        bit_spin_lock(0, (unsigned long *)b);
+}
+
+and
+
+static inline void hlist_bl_unlock(struct hlist_bl_head *b)
+{
+        __bit_spin_unlock(0, (unsigned long *)b);
+	BUG_ON(((u32)READ_ONCE(*b)&~LIST_BL_LOCKMASK) == 0x01000000);
+}
+
+to see if we can narrow down where that happens?
