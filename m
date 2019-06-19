@@ -2,122 +2,178 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B30324C34B
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 23:52:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 525474C359
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 23:53:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730669AbfFSVwC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Jun 2019 17:52:02 -0400
-Received: from mga14.intel.com ([192.55.52.115]:37127 "EHLO mga14.intel.com"
+        id S1730710AbfFSVxv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Jun 2019 17:53:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:32970 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726246AbfFSVwB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Jun 2019 17:52:01 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Jun 2019 14:52:00 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.63,394,1557212400"; 
-   d="scan'208";a="160481702"
-Received: from schen9-desk.jf.intel.com (HELO [10.54.74.162]) ([10.54.74.162])
-  by fmsmga008.fm.intel.com with ESMTP; 19 Jun 2019 14:52:00 -0700
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ben Greear <greearb@candelatech.com>, stable@vger.kernel.org,
-        Andi Kleen <ak@linux.intel.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Jun Nakajima <jun.nakajima@intel.com>,
-        Jiri Kosina <jikos@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        Asit Mallick <asit.k.mallick@intel.com>,
-        Arjan van de Ven <arjan@linux.intel.com>,
-        Jon Masters <jcm@redhat.com>,
-        Waiman Long <longman9394@gmail.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Mark Gross <mgross@linux.intel.com>,
-        LKML <linux-kernel@vger.kernel.org>, x86@kernel.org
-References: <20190618212457.9764-1-tim.c.chen@linux.intel.com>
-From:   Tim Chen <tim.c.chen@linux.intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=tim.c.chen@linux.intel.com; prefer-encrypt=mutual; keydata=
- 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
- l50q2K/r651xphs7CGEdKi1nU0YJVbQxJQ==
-Subject: Re: [PATCH v4] Documentation: Add section about CPU vulnerabilities
- for Spectre
-Message-ID: <bf064dce-2ab6-ad72-d052-3199b2bef3ac@linux.intel.com>
-Date:   Wed, 19 Jun 2019 14:51:59 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S1726246AbfFSVxv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Jun 2019 17:53:51 -0400
+Received: from localhost (unknown [69.71.4.100])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 49B282085A;
+        Wed, 19 Jun 2019 21:53:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1560981230;
+        bh=fqbjUKDf252x6dORKxx9iyw7JhKFDlRpbQAR3eEwAm0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=me45NDdLH6UxgXQgwNUnfnzAGM30ku4BsTVaOkuF0Y3KVkLEtREsXHNDftBgJR6MY
+         xWLeNtcFTDnLcbabHMD9TTAiRUP9tF6mZD9fsGnbviO9vsrJb0vzAbtjD38WcOCUF6
+         lBZ4ua2nS6fMEjmjE5VJdbEH+MBaI3kKK1Ugup3o=
+Date:   Wed, 19 Jun 2019 16:53:47 -0500
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Nicholas Johnson <nicholas.johnson-opensource@outlook.com.au>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "mika.westerberg@linux.intel.com" <mika.westerberg@linux.intel.com>,
+        "corbet@lwn.net" <corbet@lwn.net>
+Subject: Re: [PATCH v6 1/4] PCI: Consider alignment of hot-added bridges when
+ distributing available resources
+Message-ID: <20190619215347.GF143205@google.com>
+References: <20190522222928.2964-1-nicholas.johnson-opensource@outlook.com.au>
+ <PS2P216MB0642C7A485649D2D787A1C6F80000@PS2P216MB0642.KORP216.PROD.OUTLOOK.COM>
+ <20190615195636.GX13533@google.com>
+ <SL2P216MB0187A21C5F51B7F924A832CC80E50@SL2P216MB0187.KORP216.PROD.OUTLOOK.COM>
 MIME-Version: 1.0
-In-Reply-To: <20190618212457.9764-1-tim.c.chen@linux.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <SL2P216MB0187A21C5F51B7F924A832CC80E50@SL2P216MB0187.KORP216.PROD.OUTLOOK.COM>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 6/18/19 2:24 PM, Tim Chen wrote:
+On Wed, Jun 19, 2019 at 01:40:50PM +0000, Nicholas Johnson wrote:
+> At least I have found out that git send-email uses terrible 
+> encoding and adds the patch as an attachment
 
-> +
-> +_lab1:
-> +
-> +References on Spectre
-> +---------------------
+This must be configurable somehow because many people use git
+send-email to send plain-text patches.
 
-Thomas,
+> On Sat, Jun 15, 2019 at 02:56:36PM -0500, Bjorn Helgaas wrote:
+> > On Wed, May 22, 2019 at 02:30:44PM +0000, Nicholas Johnson wrote:
 
-I accidentally left a stray "_lab1:" label.  Should be removed.
+> > > +	 * The alignment of this bridge is yet to be considered, hence it must
+> > > +	 * be done now before extending its bridge window. A single bridge
+> > > +	 * might not be able to occupy the whole parent region if the alignment
+> > > +	 * differs - for example, an external GPU at the end of a Thunderbolt
+> > > +	 * daisy chain.
+> > 
+> > The example seems needlessly specific.  There isn't anything GPU- or
+> > Thunderbolt-specific about this, is there?
+> > 
+> > Bridge windows can be aligned to any multiple of 1MB.  But a device
+> > BAR must be aligned on its size, so any BAR larger than 1MB should be
+> > able to cause this, e.g.,
+> > 
+> >   [mem 0x100000-0x3fffff] (bridge A 3MB window)
+> >     [mem 0x200000-0x3fffff] (bridge B 2MB window)
+> >       [mem 0x200000-0x3fffff] (device 2MB BAR)
+> > 
+> > Bridge B *could* occupy the the entire 3MB parent region, but it
+> > doesn't need to.  But you say it "might not be *able* to", so maybe
+> > you're thinking of something different?
+>
+> Under some circumstances it may be possible to occupy the entire region, 
+> but not always. If the start address of the entire parent region is not 
+> aligned to the boundary required by the child then the start address of 
+> the child needs to be bumped up to the next boundary, leaving some 
+> unused space. In Mika's take on this, he suggested that I just remove 
+> this comment. I agreed. Does this solve the issue in your mind?
 
-Sending you an updated v5 version separately.
+"The alignment of this bridge ..." sentence might be useful.  But I
+don't think the "A single bridge ..." sentence makes sense.  Even if
+the parent region isn't sufficiently aligned for descendents of the
+child, the child's window *could* start at the parent's start address.
+Then some space routed to the child's secondary would be unused.
 
-Tim
+Maybe when you said the bridge "might not be able to occupy" you meant
+that not all the space would be usable by descendants of the child.  I
+certainly agree with that.  I read it as "the child's window might not
+be able to consume the whole parent window", which is not true.
 
+> > > -	 * are on this bus.  We will distribute the additional available
+> > > +	 * are on this bus. We will distribute the additional available
+> > 
+> > This whitespace change is pointless and distracting.
+>
+> Okay. I will read this as "remove it".
+
+Yes, please.  We always try to minimize the size of a patch, so it's
+worthwhile to read the patch before sending it.
+
+> > Moving this "single bridge" case up makes sense, and I think it could
+> > be done by a separate patch preceding this one.  Mika, I remember some
+> > discussion about this case, but I can't remember if there's some
+> > reason you didn't do this initially.
+> > 
+> > The current code is:
+> > 
+> >   for_each_pci_bridge(dev, bus)
+> >     # compute hotplug_bridges, normal_bridges
+> > 
+> >   for_each_pci_bridge(dev, bus)
+> >     # compute remaining_io, etc
+> > 
+> >   if (hotplug_bridges + normal_bridges == 1)
+> >     # handle single bridge case
+> > 
+> >   for_each_pci_bridge(dev, bus)
+> >     # use remaining_io, etc here
+> > 
+> > AFAICT the single bridge case has no dependency on the remaining_io
+> > computation.
+>
+> If you want another patch then please explicitly request it with how you 
+> want it to be done.
+
+Yes, please make it a separate patch.  The advantages are:
+
+  - each patch becomes smaller
+  - each patch is easier to review by itself
+  - if the series causes a problem, bisection gives a more specific
+    result
+  - if we need to revert a patch, we may be able to keep the other
+    patches
+
+> > > +	if (!hotplug_bridges)
+> > >  		return;
+> > 
+> > I like the addition of this early return when there are no hotplug
+> > bridges.  The following loop is a no-op if there are no hotplug
+> > bridges, so it doesn't *fix* anything, but it does make it more
+> > obvious that we don't even have to bother with the loop at all, and
+> > it makes the "Here hotplug_bridges is always != 0" comment
+> > unnecessary.
+>
+> It fixes the division by zero on the next line of code, but I love to 
+> shoot two birds with one stone. Moving the div64_ul calls out of the 
+> loop is the price for the simplification of the loop.
+> 
+> > I think this could be done in a separate patch before this one, too.
+> > Anything we can do to simplify these patches is a win because the code
+> > is so complicated.
+>
+> Again, please provide guidance on what exactly you wish to be separated, 
+> and whether the patch should be before or after the other preliminary 
+> patch to move the loop up by one.
+> 
+> My initial interpretation is that you want me to add the following in 
+> Mika's code before his equivalent loop as a two line patch:
+> 
+> if (!hotplug_bridges)
+> 	return;
+> 
+> Should I take out the following comment at the same time?
+> "Here hotplug_bridges is always != 0."
+
+Yes, please make this a separate patch that adds the
+"if (!hotplug_bridges)" and removes the comment.  It doesn't really
+matter whether this is before or after the other preliminary patch,
+since they are unrelated.
+
+Bjorn
