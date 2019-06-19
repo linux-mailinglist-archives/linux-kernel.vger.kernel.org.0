@@ -2,207 +2,148 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 677B74BA8C
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 15:52:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B0A3F4BC70
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 17:08:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730126AbfFSNwu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Jun 2019 09:52:50 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:33485 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726089AbfFSNwr (ORCPT
+        id S1730291AbfFSPHV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Jun 2019 11:07:21 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:18182 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729642AbfFSPHU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Jun 2019 09:52:47 -0400
-Received: by mail-lj1-f194.google.com with SMTP id h10so3389012ljg.0;
-        Wed, 19 Jun 2019 06:52:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=DFctamkDGs1zT54jgQyZrp5pqG/m8G/kk3RAHHlgQf0=;
-        b=AfBwy2Bct/54LvC5feVV9dI8qd9jT01l0vtWnH5vhKchdEEL7JkTD5zZnS+LayzDnp
-         8wa4O5UIa11k0jcN5pws0beXaF59Dm5+AD50t5+of8v4KR7rYfPR61sRKxP0b+IQcZiH
-         UpHOeSflykjih0JgWv7WFG3K511Yoe/DlVg/goLZvuKwEv1uOpk87zWUgJYXe3s4cNff
-         yyjaNEoeZGDXtfNXDIwKWmW5Lqi2G7GNjwk8DWSUwksrQcHA1H/LUsMa5hgKLgcP4Cu9
-         FMyqJMmHtAkdvGWyvXQHZNL4nqRVuxH0VPY1aSXjLFFqnyO6Z+r3gN/sxwyUFi2tI5KC
-         fuxQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=DFctamkDGs1zT54jgQyZrp5pqG/m8G/kk3RAHHlgQf0=;
-        b=BPes5f3WbIPTg0Ooohpuk7op4XDHNOnoBxLiWv1ysEhHAr8YqUMXkphSMsOJrga70d
-         BqGhdguTn56o1UYDnnzz7kKJeXvmCHTIPehnU7wthRk0eKMMrleR4VPb/683VP+MGoNa
-         6qbIfcCIZHCPglK7xjNZcS2rwFtKmDXX5TClcBa4k4JDW1z0FxjhJdCqET/DLnsBthY3
-         8cP3TFnAaxOmAM/vZFkWRPqVjeNbR5hRP7pxloXEP59UBylS5O3S+6NHfcQ17PjoMo3E
-         MlQqHmlnoTO5q0HDWWQuD5Uwsf8BIDn5iv0Q2PdjlDfLeQLQdf8WoQFSrFfG4y8+oaZ7
-         kFjw==
-X-Gm-Message-State: APjAAAUH2WtfGiLnY6esf02ZcygXXxoBNb6ua6evlY4HMPFv6Z7x7Tlj
-        FQ7vOWeTbzTMjX3wcPb5rpD0Z7Oo
-X-Google-Smtp-Source: APXvYqwaCmL4vUPhKCtG13nXluc/+jnN+v5YVrq/Lal0xZjYADIFu3+6KUxLKTIhOK6ksZtknbROcQ==
-X-Received: by 2002:a2e:8847:: with SMTP id z7mr4147836ljj.51.1560952363921;
-        Wed, 19 Jun 2019 06:52:43 -0700 (PDT)
-Received: from [192.168.2.145] (ppp91-79-162-197.pppoe.mtu-net.ru. [91.79.162.197])
-        by smtp.googlemail.com with ESMTPSA id l15sm3464173ljh.0.2019.06.19.06.52.42
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 19 Jun 2019 06:52:42 -0700 (PDT)
-Subject: Re: [PATCH v1] dmaengine: tegra-apb: Support per-burst residue
- granularity
-To:     Jon Hunter <jonathanh@nvidia.com>,
-        Ben Dooks <ben.dooks@codethink.co.uk>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>
-Cc:     dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20190613210849.10382-1-digetx@gmail.com>
- <f2290604-12f4-019b-47e7-4e4e29a433d4@codethink.co.uk>
- <7354d471-95e1-ffcd-db65-578e9aa425ac@gmail.com>
- <1db9bac2-957d-3c0a-948a-429bc59f1b72@nvidia.com>
- <c8bccb6e-27f8-d6c8-cfdb-10ab5ae98b26@gmail.com>
- <49d087fe-a634-4a53-1caa-58a0e52ef1ba@nvidia.com>
- <73d5cdb7-0462-944a-1f9a-3dc02f179385@gmail.com>
- <c7e4d99a-f02f-e7a2-a4c2-81496ee54d24@nvidia.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <1de7d185-54c3-be83-cb37-4f2fd009253f@gmail.com>
-Date:   Wed, 19 Jun 2019 16:52:42 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.1
-MIME-Version: 1.0
-In-Reply-To: <c7e4d99a-f02f-e7a2-a4c2-81496ee54d24@nvidia.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+        Wed, 19 Jun 2019 11:07:20 -0400
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5JF3EEF099408
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2019 11:07:19 -0400
+Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2t7q1k9cya-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2019 11:07:19 -0400
+Received: from localhost
+        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Wed, 19 Jun 2019 16:07:17 +0100
+Received: from b06avi18878370.portsmouth.uk.ibm.com (9.149.26.194)
+        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 19 Jun 2019 16:07:15 +0100
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06avi18878370.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x5JF7E0l34537948
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 19 Jun 2019 15:07:14 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 846BE52052;
+        Wed, 19 Jun 2019 15:07:14 +0000 (GMT)
+Received: from dhcp-9-31-103-88.watson.ibm.com (unknown [9.31.103.88])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id E0C7E52050;
+        Wed, 19 Jun 2019 15:07:13 +0000 (GMT)
+Subject: Re: [PATCH 2/3] IMA:Define a new template field buf
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Prakhar Srivastava <prsriva02@gmail.com>,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     roberto.sassu@huawei.com
+In-Reply-To: <20190617183507.14160-3-prsriva02@gmail.com>
+References: <20190617183507.14160-1-prsriva02@gmail.com>
+         <20190617183507.14160-3-prsriva02@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Date:   Wed, 19 Jun 2019 09:54:26 -0400
+Mime-Version: 1.0
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
 Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19061915-0028-0000-0000-0000037BB7E0
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19061915-0029-0000-0000-0000243BC627
+Message-Id: <1560952466.3975.40.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-19_09:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=3 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1906190122
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-19.06.2019 15:22, Jon Hunter пишет:
+On Mon, 2019-06-17 at 11:35 -0700, Prakhar Srivastava wrote:
+> A buffer(kexec boot command line arguments) measured into IMA
+> measuremnt list cannot be appraised, without already being
+> aware of the buffer contents. Since hashes are non-reversible,
+> raw buffer is needed for validation or regenerating hash for
+> appraisal/attestation.
 > 
-> On 19/06/2019 12:10, Dmitry Osipenko wrote:
->> 19.06.2019 13:55, Jon Hunter пишет:
->>>
->>> On 19/06/2019 11:27, Dmitry Osipenko wrote:
->>>> 19.06.2019 13:04, Jon Hunter пишет:
->>>>>
->>>>> On 19/06/2019 00:27, Dmitry Osipenko wrote:
->>>>>> 19.06.2019 1:22, Ben Dooks пишет:
->>>>>>> On 13/06/2019 22:08, Dmitry Osipenko wrote:
->>>>>>>> Tegra's APB DMA engine updates words counter after each transferred burst
->>>>>>>> of data, hence it can report transfer's residual with more fidelity which
->>>>>>>> may be required in cases like audio playback. In particular this fixes
->>>>>>>> audio stuttering during playback in a chromiuim web browser. The patch is
->>>>>>>> based on the original work that was made by Ben Dooks [1]. It was tested
->>>>>>>> on Tegra20 and Tegra30 devices.
->>>>>>>>
->>>>>>>> [1] https://lore.kernel.org/lkml/20190424162348.23692-1-ben.dooks@codethink.co.uk/
->>>>>>>>
->>>>>>>> Inspired-by: Ben Dooks <ben.dooks@codethink.co.uk>
->>>>>>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->>>>>>>> ---
->>>>>>>>   drivers/dma/tegra20-apb-dma.c | 35 ++++++++++++++++++++++++++++-------
->>>>>>>>   1 file changed, 28 insertions(+), 7 deletions(-)
->>>>>>>>
->>>>>>>> diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
->>>>>>>> index 79e9593815f1..c5af8f703548 100644
->>>>>>>> --- a/drivers/dma/tegra20-apb-dma.c
->>>>>>>> +++ b/drivers/dma/tegra20-apb-dma.c
->>>>>>>> @@ -797,12 +797,36 @@ static int tegra_dma_terminate_all(struct dma_chan *dc)
->>>>>>>>       return 0;
->>>>>>>>   }
->>>>>>>>   +static unsigned int tegra_dma_update_residual(struct tegra_dma_channel *tdc,
->>>>>>>> +                          struct tegra_dma_sg_req *sg_req,
->>>>>>>> +                          struct tegra_dma_desc *dma_desc,
->>>>>>>> +                          unsigned int residual)
->>>>>>>> +{
->>>>>>>> +    unsigned long status, wcount = 0;
->>>>>>>> +
->>>>>>>> +    if (!list_is_first(&sg_req->node, &tdc->pending_sg_req))
->>>>>>>> +        return residual;
->>>>>>>> +
->>>>>>>> +    if (tdc->tdma->chip_data->support_separate_wcount_reg)
->>>>>>>> +        wcount = tdc_read(tdc, TEGRA_APBDMA_CHAN_WORD_TRANSFER);
->>>>>>>> +
->>>>>>>> +    status = tdc_read(tdc, TEGRA_APBDMA_CHAN_STATUS);
->>>>>>>> +
->>>>>>>> +    if (!tdc->tdma->chip_data->support_separate_wcount_reg)
->>>>>>>> +        wcount = status;
->>>>>>>> +
->>>>>>>> +    if (status & TEGRA_APBDMA_STATUS_ISE_EOC)
->>>>>>>> +        return residual - sg_req->req_len;
->>>>>>>> +
->>>>>>>> +    return residual - get_current_xferred_count(tdc, sg_req, wcount);
->>>>>>>> +}
->>>>>>>
->>>>>>> I am unfortunately nowhere near my notes, so can't completely
->>>>>>> review this. I think the complexity of my patch series is due
->>>>>>> to an issue with the count being updated before the EOC IRQ
->>>>>>> is actually flagged (and most definetly before it gets to the
->>>>>>> CPU IRQ handler).
->>>>>>>
->>>>>>> The test system I was using, which i've not really got any
->>>>>>> access to at the moment would show these internal inconsistent
->>>>>>> states every few hours, however it was moving 48kHz 8ch 16bit
->>>>>>> TDM data.
->>>>>>>
->>>>>>> Thanks for looking into this, I am not sure if I am going to
->>>>>>> get any time to look into this within the next couple of
->>>>>>> months.
->>>>>>
->>>>>> I'll try to add some debug checks to try to catch the case where count is updated before EOC
->>>>>> is set. Thank you very much for the clarification of the problem. So far I haven't spotted
->>>>>> anything going wrong.
->>>>>>
->>>>>> Jon / Laxman, are you aware about the possibility to get such inconsistency of words count
->>>>>> vs EOC? Assuming the cyclic transfer mode.
->>>>>
->>>>> I can't say that I am. However, for the case of cyclic transfer, given
->>>>> that the next transfer is always programmed into the registers before
->>>>> the last one completes, I could see that by the time the interrupt is
->>>>> serviced that the DMA has moved on to the next transfer (which I assume
->>>>> would reset the count).
->>>>>
->>>>> Interestingly, our downstream kernel implemented a change to avoid the
->>>>> count appearing to move backwards. I am curious if this also works,
->>>>> which would be a lot simpler that what Ben has implemented and may
->>>>> mitigate that race condition that Ben is describing.
->>>>>
->>>>> Cheers
->>>>> Jon
->>>>>
->>>>> [0]
->>>>> https://nv-tegra.nvidia.com/gitweb/?p=linux-4.4.git;a=commit;h=c7bba40c6846fbf3eaad35c4472dcc7d8bbc02e5
->>>>>
->>>>
->>>> The downstream patch doesn't check for EOC and has no comments about it, so it's hard to
->>>> tell if it's intentional. Secondly, looks like the downstream patch is mucked up because it
->>>> doesn't check whether the dma_desc is *the active* transfer and not a pending!
->>>
->>> I agree that it should check to see if it is active. I assume that what
->>> this patch is doing is not updating the dma position if it appears to
->>> have gone backwards, implying we have moved on to the next buffer. Yes
->>> this is still probably not as accurate as Ben's implementation because
->>> most likely we have finished that transfer and this patch would report
->>> that it is not quite finished.
->>>
->>> If Ben's patch works for you then why not go with this?
->>
->> Because I'm doubtful that it is really the case and not something else. It will be very odd
->> if hardware updates words count and sets EOC asynchronously, I'd call it as a faulty design
->> and thus a bug that need to worked around in software if that's really happening.
+> Add support to store/read the buffer contents in HEX.
+> The kexec cmdline hash is stored in the "d-ng" field of the
+> template data,it can be verified using
+> sudo cat /sys/kernel/security/integrity/ima/ascii_runtime_measurements |
+>   grep  kexec-cmdline | cut -d' ' -f 6 | xxd -r -p | sha256sum
 > 
-> I don't see it that way. Probably as soon as the EOC happens, if there
-> is another transfer queued up, the next transfer will start and count
-> gets reset. So if you happen to asynchronously read the count at the
-> very end of the transfer, then it is possible you are doing so at the
-> same time that the EOC occurs but before the ISR has been triggered.
+> - Add two new fields to ima_event_data to hold the buf and
+> buf_len [Suggested by Roberto]
+> - Add a new temaplte field 'buf' to be used to store/read
+> the buffer data.[Suggested by Mimi]
+> - Updated process_buffer_meaurement to add the buffer to
+> ima_event_data. process_buffer_measurement added in
+> "Define a new IMA hook to measure the boot command line
+>  arguments"
+> - Add a new template policy name ima-buf to represent
+> 'd-ng|n-ng|buf'
+> 
+> Signed-off-by: Prakhar Srivastava <prsriva02@gmail.com>
+> Reviewed-by: Roberto Sassu <roberto.sassu@huawei.com>
+> Reviewed-by: James Morris <jamorris@linux.microsoft.com>
 
-In our case we can't read out EOC status and words count asynchronously because the
-interrupt status and words count are within the same hardware register on pre-T114 and on
-T114+ we're reading words count register and only then the status register. ISR has nothing
-to do with it, if you're taking about tegra_dma_isr.
+Thanks, looking much better.
 
-Ben claims that the words count may get updated in hardware before EOC bit is set in the
-status register.
+>  
+>  /* IMA template field data definition */
+> diff --git a/security/integrity/ima/ima_api.c b/security/integrity/ima/ima_api.c
+> index ea7d8cbf712f..83ca99d65e4b 100644
+> --- a/security/integrity/ima/ima_api.c
+> +++ b/security/integrity/ima/ima_api.c
+> @@ -140,7 +140,7 @@ void ima_add_violation(struct file *file, const unsigned char *filename,
+>  	struct ima_template_entry *entry;
+>  	struct inode *inode = file_inode(file);
+>  	struct ima_event_data event_data = {iint, file, filename, NULL, 0,
+> -					    cause};
+> +					    cause, NULL, 0};
+>  	int violation = 1;
+>  	int result;
+>  
+> @@ -296,7 +296,7 @@ void ima_store_measurement(struct integrity_iint_cache *iint,
+>  	struct inode *inode = file_inode(file);
+>  	struct ima_template_entry *entry;
+>  	struct ima_event_data event_data = {iint, file, filename, xattr_value,
+> -					    xattr_len, NULL};
+> +					    xattr_len, NULL, NULL, 0};
+>  	int violation = 0;
+>  
+>  	if (iint->measured_pcrs & (0x1 << pcr))
+> diff --git a/security/integrity/ima/ima_init.c b/security/integrity/ima/ima_init.c
+> index 993d0f1915ff..c8591406c0e2 100644
+> --- a/security/integrity/ima/ima_init.c
+> +++ b/security/integrity/ima/ima_init.c
+> @@ -50,7 +50,7 @@ static int __init ima_add_boot_aggregate(void)
+>  	struct ima_template_entry *entry;
+>  	struct integrity_iint_cache tmp_iint, *iint = &tmp_iint;
+>  	struct ima_event_data event_data = {iint, NULL, boot_aggregate_name,
+> -					    NULL, 0, NULL};
+> +					    NULL, 0, NULL, NULL, 0};
+>  	int result = -ENOMEM;
+>  	int violation = 0;
+>  	struct {
+> 
+
+These changes shouldn't be necessary.  Please rebase these patches on
+top of the latest next-queued-testing branch (git remote update).  "IMA: support for per
+policy rule template formats" is still changing. 
+
+Minor nit.  When re-posting the patches please update the patch titles
+so that there is a space between the subsystem name and the patch
+title (eg. "ima: define ...").
+
+Mimi
 
