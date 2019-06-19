@@ -2,181 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 86CF64B5DC
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 12:04:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AF9784B5E4
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 12:06:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731547AbfFSKE4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Jun 2019 06:04:56 -0400
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:15623 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726959AbfFSKE4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Jun 2019 06:04:56 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5d0a08c50000>; Wed, 19 Jun 2019 03:04:53 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Wed, 19 Jun 2019 03:04:54 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Wed, 19 Jun 2019 03:04:54 -0700
-Received: from [10.21.132.148] (172.20.13.39) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 19 Jun
- 2019 10:04:52 +0000
-Subject: Re: [PATCH v1] dmaengine: tegra-apb: Support per-burst residue
- granularity
-To:     Dmitry Osipenko <digetx@gmail.com>,
-        Ben Dooks <ben.dooks@codethink.co.uk>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>
-CC:     <dmaengine@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20190613210849.10382-1-digetx@gmail.com>
- <f2290604-12f4-019b-47e7-4e4e29a433d4@codethink.co.uk>
- <7354d471-95e1-ffcd-db65-578e9aa425ac@gmail.com>
-From:   Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <1db9bac2-957d-3c0a-948a-429bc59f1b72@nvidia.com>
-Date:   Wed, 19 Jun 2019 11:04:50 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        id S1731209AbfFSKGT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Jun 2019 06:06:19 -0400
+Received: from ozlabs.org ([203.11.71.1]:48295 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726959AbfFSKGT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Jun 2019 06:06:19 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45TLFM4FRCz9s7h;
+        Wed, 19 Jun 2019 20:06:15 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1560938776;
+        bh=NQWnQbn9ruPrlyTKLaenXzcl811ZqmMgk2/3HM89J+A=;
+        h=Date:From:To:Cc:Subject:From;
+        b=Z0zS/GZQTWn2wiVSG1xN799YKt1XgewhSXZ+Ie8LPs8Nn3i0RVAB/PjOS4WT5JlbB
+         Oz2laSae9HZqqQyfdZsE4EJZqN8kp6c6JRThrscww4H6fk+aC0DQEazaUIK0zqGIU7
+         KByWoBmJ8EjaZbfgPrQ9gHmyqSRrW35gIwlgUFBWQluAB/c76d5k9Hb9takIpYoF+U
+         SUmQlmh3mVIQMv0Wmy07bExOK6x89Qd+ew25F7Px5EU16qy6i9NL9Qs0/ymo1F+yKw
+         46U0VpvNw8lWmBQWuD3zHoDfLFegdSJiqcTk4WG57fLaATh5EtgvMVv0KWDfyzI4Sx
+         Sostm7cmXIykg==
+Date:   Wed, 19 Jun 2019 20:06:08 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>
+Subject: linux-next: build failure after merge of the akpm-current tree
+Message-ID: <20190619200608.69474286@canb.auug.org.au>
 MIME-Version: 1.0
-In-Reply-To: <7354d471-95e1-ffcd-db65-578e9aa425ac@gmail.com>
-X-Originating-IP: [172.20.13.39]
-X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1560938693; bh=9VZGTRZrxWWEY18NcGQuJmHyHgcvtS3tJvZN6EFsSDo=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=rw8ATL0hmoQbL6+zVMENoVLWDE+CTSMHrblhbUkeOn5st1w2Jg8xBENB+wNL58kpX
-         WTDcZnAsBLbQniPuPMUnGuUfYDQ6Rgz9Xpbsj4EW0svo1UaYk5e9KMIMrQStHhCdmC
-         HEXWtxYCFvmxCn8qOfDRWSa6FWl4PHPz6V8AdJF48hhhu0h0JzKhOlXbyHEJvkz68T
-         xf4z92+H/1XF3LoYF+omDGkb+dz/YEa9SH4qgy0RaGBdRLfQeNg7JVvficEM73XR+J
-         8Rl4ZG7Vgu5TfSsjg8YhOAe4t2AvV2077ueqZ1DtJl4+kkZHm4lgp99ZUuQIkZQtRa
-         k3OkMoPi+piag==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/cS_b5m3u4YGfN21kfl4VTik"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+--Sig_/cS_b5m3u4YGfN21kfl4VTik
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-On 19/06/2019 00:27, Dmitry Osipenko wrote:
-> 19.06.2019 1:22, Ben Dooks =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->> On 13/06/2019 22:08, Dmitry Osipenko wrote:
->>> Tegra's APB DMA engine updates words counter after each transferred bur=
-st
->>> of data, hence it can report transfer's residual with more fidelity whi=
-ch
->>> may be required in cases like audio playback. In particular this fixes
->>> audio stuttering during playback in a chromiuim web browser. The patch =
-is
->>> based on the original work that was made by Ben Dooks [1]. It was teste=
-d
->>> on Tegra20 and Tegra30 devices.
->>>
->>> [1] https://lore.kernel.org/lkml/20190424162348.23692-1-ben.dooks@codet=
-hink.co.uk/
->>>
->>> Inspired-by: Ben Dooks <ben.dooks@codethink.co.uk>
->>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->>> ---
->>> =C2=A0 drivers/dma/tegra20-apb-dma.c | 35 ++++++++++++++++++++++++++++-=
-------
->>> =C2=A0 1 file changed, 28 insertions(+), 7 deletions(-)
->>>
->>> diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dm=
-a.c
->>> index 79e9593815f1..c5af8f703548 100644
->>> --- a/drivers/dma/tegra20-apb-dma.c
->>> +++ b/drivers/dma/tegra20-apb-dma.c
->>> @@ -797,12 +797,36 @@ static int tegra_dma_terminate_all(struct dma_cha=
-n *dc)
->>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return 0;
->>> =C2=A0 }
->>> =C2=A0 +static unsigned int tegra_dma_update_residual(struct tegra_dma_=
-channel *tdc,
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0 struct tegra_dma_sg_req *sg_req,
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0 struct tegra_dma_desc *dma_desc,
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0 unsigned int residual)
->>> +{
->>> +=C2=A0=C2=A0=C2=A0 unsigned long status, wcount =3D 0;
->>> +
->>> +=C2=A0=C2=A0=C2=A0 if (!list_is_first(&sg_req->node, &tdc->pending_sg_=
-req))
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return residual;
->>> +
->>> +=C2=A0=C2=A0=C2=A0 if (tdc->tdma->chip_data->support_separate_wcount_r=
-eg)
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 wcount =3D tdc_read(tdc, TE=
-GRA_APBDMA_CHAN_WORD_TRANSFER);
->>> +
->>> +=C2=A0=C2=A0=C2=A0 status =3D tdc_read(tdc, TEGRA_APBDMA_CHAN_STATUS);
->>> +
->>> +=C2=A0=C2=A0=C2=A0 if (!tdc->tdma->chip_data->support_separate_wcount_=
-reg)
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 wcount =3D status;
->>> +
->>> +=C2=A0=C2=A0=C2=A0 if (status & TEGRA_APBDMA_STATUS_ISE_EOC)
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return residual - sg_req->r=
-eq_len;
->>> +
->>> +=C2=A0=C2=A0=C2=A0 return residual - get_current_xferred_count(tdc, sg=
-_req, wcount);
->>> +}
->>
->> I am unfortunately nowhere near my notes, so can't completely
->> review this. I think the complexity of my patch series is due
->> to an issue with the count being updated before the EOC IRQ
->> is actually flagged (and most definetly before it gets to the
->> CPU IRQ handler).
->>
->> The test system I was using, which i've not really got any
->> access to at the moment would show these internal inconsistent
->> states every few hours, however it was moving 48kHz 8ch 16bit
->> TDM data.
->>
->> Thanks for looking into this, I am not sure if I am going to
->> get any time to look into this within the next couple of
->> months.
->=20
-> I'll try to add some debug checks to try to catch the case where count is=
- updated before EOC
-> is set. Thank you very much for the clarification of the problem. So far =
-I haven't spotted
-> anything going wrong.
->=20
-> Jon / Laxman, are you aware about the possibility to get such inconsisten=
-cy of words count
-> vs EOC? Assuming the cyclic transfer mode.
+Hi all,
 
-I can't say that I am. However, for the case of cyclic transfer, given
-that the next transfer is always programmed into the registers before
-the last one completes, I could see that by the time the interrupt is
-serviced that the DMA has moved on to the next transfer (which I assume
-would reset the count).
+After merging the akpm-current tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-Interestingly, our downstream kernel implemented a change to avoid the
-count appearing to move backwards. I am curious if this also works,
-which would be a lot simpler that what Ben has implemented and may
-mitigate that race condition that Ben is describing.
+In file included from usr/include/linux/byteorder/big_endian.hdrtest.c:1:
+./usr/include/linux/byteorder/big_endian.h:6:2: error: #error "Unsupported =
+endianness, check your toolchain"
+ #error "Unsupported endianness, check your toolchain"
+  ^~~~~
 
-Cheers
-Jon
+Caused by commit
 
-[0]
-https://nv-tegra.nvidia.com/gitweb/?p=3Dlinux-4.4.git;a=3Dcommit;h=3Dc7bba4=
-0c6846fbf3eaad35c4472dcc7d8bbc02e5
+  1ac94caaee11 ("byteorder: sanity check toolchain vs kernel endianness")
+
+Presumably exposed by commit
+
+  b91976b7c0e3 ("kbuild: compile-test UAPI headers to ensure they are self-=
+contained")
+
+from the kbuild tree.
+
+I have reverted 1ac94caaee11 (and its following fixup) for today.
 
 --=20
-nvpublic
+Cheers,
+Stephen Rothwell
+
+--Sig_/cS_b5m3u4YGfN21kfl4VTik
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0KCRAACgkQAVBC80lX
+0GzYdwf6AmUgQCAIHGO6IoZEy11yHbgenWP6uaetHH3EWO+cWmiUV0WNwfrUYIGv
+c/QRT7c66Ul1kIGyRJaXo0Pn0IgNiwBF1ioQrK9oqELjObHBfHmEv5CX/frEOOlo
+Q3/iP0l7wZhPvoiRe/c/QSSOvmbKyxQKOWaqqxCKoTZgIrgsli5dpNUsybk5SPW+
+wSaz1ghy2Ej01rLqwoGY+vVxuSK3AECtCZJWQm0UpbO5/gzvtkuDAPflblEZ+0xX
+TU4t08sSoQP3pdby9A8NR7RVU0wiB7+nhB4ynukYoWA6k2gzyxmPzXTQlLPGd8fY
+VyvEY6+dMCQ8z0L3Z2xTeiRegxODmQ==
+=Gy5k
+-----END PGP SIGNATURE-----
+
+--Sig_/cS_b5m3u4YGfN21kfl4VTik--
