@@ -2,30 +2,30 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6FE5E4BD46
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 17:54:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B9CFE4BD4E
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 17:54:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729406AbfFSPyD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Jun 2019 11:54:03 -0400
-Received: from faui03.informatik.uni-erlangen.de ([131.188.30.103]:34740 "EHLO
+        id S1729736AbfFSPyH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Jun 2019 11:54:07 -0400
+Received: from faui03.informatik.uni-erlangen.de ([131.188.30.103]:34732 "EHLO
         faui03.informatik.uni-erlangen.de" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728671AbfFSPyC (ORCPT
+        by vger.kernel.org with ESMTP id S1727818AbfFSPyD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Jun 2019 11:54:02 -0400
+        Wed, 19 Jun 2019 11:54:03 -0400
 Received: from faui06c.informatik.uni-erlangen.de (faui06c.informatik.uni-erlangen.de [IPv6:2001:638:a000:4130:131:188:30:202])
-        by faui03.informatik.uni-erlangen.de (Postfix) with ESMTP id 0B4FD240A7B;
+        by faui03.informatik.uni-erlangen.de (Postfix) with ESMTP id 80D532412DB;
         Wed, 19 Jun 2019 17:46:57 +0200 (CEST)
 Received: by faui06c.informatik.uni-erlangen.de (Postfix, from userid 30063)
-        id EE86CB0084D; Wed, 19 Jun 2019 17:46:56 +0200 (CEST)
+        id 7094EB00B74; Wed, 19 Jun 2019 17:46:57 +0200 (CEST)
 From:   Lukas Schneider <lukas.s.schneider@fau.de>
 To:     kim.jamie.bradley@gmail.com, pakki001@umn.edu,
         colin.king@canonical.com, devel@driverdev.osuosl.org,
         linux-kernel@vger.kernel.org
 Cc:     Lukas Schneider <lukas.s.schneider@fau.de>,
-        Jannik Moritz <jannik.moritz@fau.de>
-Subject: [PATCH 2/4] rts5208: Fix usleep_range is preferred over udelay
-Date:   Wed, 19 Jun 2019 17:46:46 +0200
-Message-Id: <20190619154648.13840-2-lukas.s.schneider@fau.de>
+        Jannik Moritz <jannik.moritz@fau.de>, linux-kernel@i4.cs.fau.de
+Subject: [PATCH 3/4] rts5208: Fix usleep_range is preferred over udelay
+Date:   Wed, 19 Jun 2019 17:46:47 +0200
+Message-Id: <20190619154648.13840-3-lukas.s.schneider@fau.de>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190619154648.13840-1-lukas.s.schneider@fau.de>
 References: <20190619154648.13840-1-lukas.s.schneider@fau.de>
@@ -46,42 +46,24 @@ because we are not in an atomic context.
 
 Signed-off-by: Lukas Schneider <lukas.s.schneider@fau.de>
 Signed-off-by: Jannik Moritz <jannik.moritz@fau.de>
-Cc <linux-kernel@i4.cs.fau.de>
+Cc: <linux-kernel@i4.cs.fau.de>
 ---
- drivers/staging/rts5208/rtsx_card.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/staging/rts5208/rtsx_chip.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/staging/rts5208/rtsx_card.c b/drivers/staging/rts5208/rtsx_card.c
-index 294f381518fa..960e845133c3 100644
---- a/drivers/staging/rts5208/rtsx_card.c
-+++ b/drivers/staging/rts5208/rtsx_card.c
-@@ -679,7 +679,7 @@ int switch_ssc_clock(struct rtsx_chip *chip, int clk)
- 	if (retval < 0)
- 		return STATUS_ERROR;
+diff --git a/drivers/staging/rts5208/rtsx_chip.c b/drivers/staging/rts5208/rtsx_chip.c
+index 76c35f3c0208..8cddfe542d56 100644
+--- a/drivers/staging/rts5208/rtsx_chip.c
++++ b/drivers/staging/rts5208/rtsx_chip.c
+@@ -1803,7 +1803,7 @@ void rtsx_exit_ss(struct rtsx_chip *chip)
  
--	udelay(10);
-+	usleep_range(10, 20);
- 	retval = rtsx_write_register(chip, CLK_CTL, CLK_LOW_FREQ, 0);
- 	if (retval)
- 		return retval;
-@@ -797,7 +797,7 @@ int switch_normal_clock(struct rtsx_chip *chip, int clk)
- 		return retval;
- 
- 	if (sd_vpclk_phase_reset) {
--		udelay(200);
-+		usleep_range(200, 210);
- 		retval = rtsx_write_register(chip, SD_VPCLK0_CTL,
- 					     PHASE_NOT_RESET, PHASE_NOT_RESET);
- 		if (retval)
-@@ -806,7 +806,7 @@ int switch_normal_clock(struct rtsx_chip *chip, int clk)
- 					     PHASE_NOT_RESET, PHASE_NOT_RESET);
- 		if (retval)
- 			return retval;
--		udelay(200);
-+		usleep_range(200, 210);
+ 	if (chip->power_down_in_ss) {
+ 		rtsx_force_power_on(chip, SSC_PDCTL | OC_PDCTL);
+-		udelay(1000);
++		usleep_range(1000, 1010);
  	}
- 	retval = rtsx_write_register(chip, CLK_CTL, 0xFF, 0);
- 	if (retval)
+ 
+ 	if (RTSX_TST_DELINK(chip)) {
 -- 
 2.19.1
 
