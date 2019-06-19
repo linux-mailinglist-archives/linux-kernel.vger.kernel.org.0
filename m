@@ -2,81 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 076CE4B8EA
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 14:42:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EA4214B8EE
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 14:43:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731879AbfFSMmt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Jun 2019 08:42:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36674 "EHLO mail.kernel.org"
+        id S1731899AbfFSMnj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Jun 2019 08:43:39 -0400
+Received: from ns.iliad.fr ([212.27.33.1]:37930 "EHLO ns.iliad.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727244AbfFSMmt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Jun 2019 08:42:49 -0400
-Received: from PC-kkoz.proceq.com (unknown [213.160.61.66])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EE1EF214AF;
-        Wed, 19 Jun 2019 12:42:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560948168;
-        bh=1iswHEKvg2N6GFKVSrd6ivye0IWOxcy+C74XG2ERJsg=;
-        h=From:To:Cc:Subject:Date:From;
-        b=JgJwMZptZUvOqcBvcdXvtgsqNx17SlRbDIx/rSD1FVT3s2GoPQUJbd64Oeh6nzYpI
-         FDT04Ylqzmi8R+NW7w47hUXk9qwGbPDsW9ysemPJnrRMTNPHa80Yh3gYTQElBfRHs1
-         O2fghrXjC+1ogUvuIuub8nYG/ghaxbJmmcAnI3AQ=
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Sangbeom Kim <sbkim73@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org
-Cc:     Georg Waibel <georg.waibel@sensor-technik.de>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        stable@vger.kernel.org
-Subject: [PATCH] regulator: s2mps11: Fix ERR_PTR dereference on GPIO lookup failure
-Date:   Wed, 19 Jun 2019 14:42:39 +0200
-Message-Id: <1560948159-21926-1-git-send-email-krzk@kernel.org>
-X-Mailer: git-send-email 2.7.4
+        id S1727244AbfFSMni (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Jun 2019 08:43:38 -0400
+Received: from ns.iliad.fr (localhost [127.0.0.1])
+        by ns.iliad.fr (Postfix) with ESMTP id ECA7720564;
+        Wed, 19 Jun 2019 14:43:36 +0200 (CEST)
+Received: from [192.168.108.49] (freebox.vlq16.iliad.fr [213.36.7.13])
+        by ns.iliad.fr (Postfix) with ESMTP id D084F20186;
+        Wed, 19 Jun 2019 14:43:36 +0200 (CEST)
+Subject: Re: [PATCH] phy: qcom-qmp: Correct READY_STATUS poll break condition
+From:   Marc Gonzalez <marc.w.gonzalez@free.fr>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>
+Cc:     MSM <linux-arm-msm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Evan Green <evgreen@chromium.org>,
+        Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Niklas Cassel <niklas.cassel@linaro.org>,
+        Stanimir Varbanov <svarbanov@mm-sol.com>
+References: <20190604232443.3417-1-bjorn.andersson@linaro.org>
+ <619d2559-6d88-e795-76e0-3078236933ef@free.fr>
+ <20190612172501.GY4814@minitux>
+ <3570d880-2b76-88ae-8721-e75cf5acec4c@free.fr>
+Message-ID: <ed29cd18-81de-f90d-474b-30612418a67e@free.fr>
+Date:   Wed, 19 Jun 2019 14:43:36 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
+MIME-Version: 1.0
+In-Reply-To: <3570d880-2b76-88ae-8721-e75cf5acec4c@free.fr>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Virus-Scanned: ClamAV using ClamSMTP ; ns.iliad.fr ; Wed Jun 19 14:43:36 2019 +0200 (CEST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If devm_gpiod_get_from_of_node() call returns ERR_PTR, it is assigned
-into an array of GPIO descriptors and used later because such error is
-not treated as critical thus it is not propagated back to the probe
-function.
+On 13/06/2019 11:10, Marc Gonzalez wrote:
 
-All code later expects that such GPIO descriptor is either a NULL or
-proper value.  This later might lead to dereference of ERR_PTR.
+> Here are my observations for a 8998 board:
+> 
+> 1) If I apply only the readl_poll_timeout() fix (not the mask_pcs_ready fixup)
+> qcom_pcie_probe() fails with a timeout in phy_init.
+> => this is in line with your regression analysis.
+> 
+> 2) Your patch also fixes a long-standing bug in UFS init whereby sending
+> lots of information to the console during phy init would lead to an
+> incorrectly diagnosed time-out.
+> 
+> Good stuff!
+> 
+> Reviewed-by: Marc Gonzalez <marc.w.gonzalez@free.fr>
+> Tested-by: Marc Gonzalez <marc.w.gonzalez@free.fr>
 
-Only devices with S2MPS14 flavor are affected (other do not control
-regulators with GPIOs).
+Hello Kishon,
 
-Fixes: 1c984942f0a4 ("regulator: s2mps11: Pass descriptor instead of GPIO number")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Could you take this patch through your tree?
+It fixes a pair of nasty bugs.
 
----
+I do have a follow-up (trivial) patch on top of this one:
+https://lore.kernel.org/patchwork/patch/1088044/
 
-The exact error condition was not tested because I do not have board
-with S2MPS14.
----
- drivers/regulator/s2mps11.c | 1 +
- 1 file changed, 1 insertion(+)
+What are your thoughts on the usleep_range issue?
+https://lore.kernel.org/patchwork/patch/1088035/
 
-diff --git a/drivers/regulator/s2mps11.c b/drivers/regulator/s2mps11.c
-index 134c62db36c5..af9bf10b4c33 100644
---- a/drivers/regulator/s2mps11.c
-+++ b/drivers/regulator/s2mps11.c
-@@ -824,6 +824,7 @@ static void s2mps14_pmic_dt_parse_ext_control_gpio(struct platform_device *pdev,
- 		if (IS_ERR(gpio[reg])) {
- 			dev_err(&pdev->dev, "Failed to get control GPIO for %d/%s\n",
- 				reg, rdata[reg].name);
-+			gpio[reg] = NULL;
- 			continue;
- 		}
- 		if (gpio[reg])
--- 
-2.7.4
-
+Regards.
