@@ -2,129 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2D33B4B24D
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 08:44:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E07F14B250
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 08:46:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730727AbfFSGn5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Jun 2019 02:43:57 -0400
-Received: from ozlabs.org ([203.11.71.1]:39619 "EHLO ozlabs.org"
+        id S1730958AbfFSGpu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Jun 2019 02:45:50 -0400
+Received: from mga03.intel.com ([134.134.136.65]:50797 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725881AbfFSGn5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Jun 2019 02:43:57 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45TFlr62Qnz9s7h;
-        Wed, 19 Jun 2019 16:43:52 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1560926633;
-        bh=OroIS/BOV+/JRUDrnqf77oCtopeU+0jOa9qNRyj+JRI=;
-        h=Date:From:To:Cc:Subject:From;
-        b=sLcyIg8QVUItx9Wd+SQq4sxfARM4GgoHo3/xrFwdMuDXHFuBCYmMjudbSbuJFI4lJ
-         3hV9a6GLcOq+Ljt2YwMu31x8YReHOPjEXvxy6fRt3l70WyqBR2Cy/6XS60yRUOHml1
-         Yjx8Ymi51rtrdtkP9+Fihe55jBMCrpm9al9lvy9nDfgMauTm+BfGSw3KVt1ysILYwI
-         4Ak4rlVsBb6/Y1jG0aALPD6ghxzAI4rsIO5IfNKm0Keq8caK2hvHm/XG1fOvuBhvIz
-         +bi/oaP7LFz1o+zsY/5kgf8c3MpUiUphixRH3rF+CQAXXofKMXIugRpCoGn5J2FpgO
-         DwHug077Sv7FA==
-Date:   Wed, 19 Jun 2019 16:43:51 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Greg KH <greg@kroah.com>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Alan Stern <stern@rowland.harvard.edu>
-Subject: linux-next: build failure after merge of the usb tree
-Message-ID: <20190619164351.6c3f83be@canb.auug.org.au>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/ZTQyCq+/4dt3iCRDQZP+uWE"; protocol="application/pgp-signature"
+        id S1725892AbfFSGpu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Jun 2019 02:45:50 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Jun 2019 23:45:48 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.63,392,1557212400"; 
+   d="scan'208";a="243224071"
+Received: from ahunter-desktop.fi.intel.com ([10.237.72.198])
+  by orsmga001.jf.intel.com with ESMTP; 18 Jun 2019 23:45:47 -0700
+From:   Adrian Hunter <adrian.hunter@intel.com>
+To:     Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc:     Jiri Olsa <jolsa@redhat.com>, linux-kernel@vger.kernel.org
+Subject: [PATCH 0/2] perf thread-stack: Fix thread stack return from kernel for kernel-only case
+Date:   Wed, 19 Jun 2019 09:44:27 +0300
+Message-Id: <20190619064429.14940-1-adrian.hunter@intel.com>
+X-Mailer: git-send-email 2.17.1
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki, Business Identity Code: 0357606 - 4, Domiciled in Helsinki
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/ZTQyCq+/4dt3iCRDQZP+uWE
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi
 
-Hi all,
+Here is one non-urgent fix and a subsequent tidy-up.
 
-After merging the usb tree, today's linux-next build (x86_64 allmodconfig)
-failed like this:
 
-In file included from usr/include/linux/usbdevice_fs.hdrtest.c:1:
-./usr/include/linux/usbdevice_fs.h:88:2: error: unknown type name 'u8'
-  u8 num_ports;  /* Number of ports the device is connected */
-  ^~
-./usr/include/linux/usbdevice_fs.h:92:2: error: unknown type name 'u8'
-  u8 ports[7];  /* List of ports on the way from the root  */
-  ^~
+Adrian Hunter (2):
+      perf thread-stack: Fix thread stack return from kernel for kernel-only case
+      perf thread-stack: Eliminate code duplicating thread_stack__pop_ks()
 
-Caused by commit
+ tools/perf/util/thread-stack.c | 48 ++++++++++++++++++++++++++++++------------
+ 1 file changed, 35 insertions(+), 13 deletions(-)
 
-  6d101f24f1dd ("USB: add usbfs ioctl to retrieve the connection parameters=
-")
 
-Presumably exposed by commit
-
-  b91976b7c0e3 ("kbuild: compile-test UAPI headers to ensure they are self-=
-contained")
-
-from the kbuild tree.
-
-I have added this patch for now:
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Wed, 19 Jun 2019 16:36:16 +1000
-Subject: [PATCH] USB: fix types in uapi include
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- include/uapi/linux/usbdevice_fs.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/include/uapi/linux/usbdevice_fs.h b/include/uapi/linux/usbdevi=
-ce_fs.h
-index 4b267fe3776e..78efe870c2b7 100644
---- a/include/uapi/linux/usbdevice_fs.h
-+++ b/include/uapi/linux/usbdevice_fs.h
-@@ -85,11 +85,11 @@ struct usbdevfs_conninfo_ex {
- 				/* kernel, the device is connected to.     */
- 	__u32 devnum;           /* Device address on the bus.              */
- 	__u32 speed;		/* USB_SPEED_* constants from ch9.h        */
--	u8 num_ports;		/* Number of ports the device is connected */
-+	__u8 num_ports;		/* Number of ports the device is connected */
- 				/* to on the way to the root hub. It may   */
- 				/* be bigger than size of 'ports' array so */
- 				/* userspace can detect overflows.         */
--	u8 ports[7];		/* List of ports on the way from the root  */
-+	__u8 ports[7];		/* List of ports on the way from the root  */
- 				/* hub to the device. Current limit in     */
- 				/* USB specification is 7 tiers (root hub, */
- 				/* 5 intermediate hubs, device), which     */
---=20
-2.20.1
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/ZTQyCq+/4dt3iCRDQZP+uWE
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0J2acACgkQAVBC80lX
-0GyO/Qf/ftfJ6Y3zJCClMg63T2PFhDrRIVYvod82t0s1JAJv6h/Hpgi5ChWt8FS5
-wsTkfBKO5oRDfc7GHOtApKnafN7a6TgS1a7LxfGQ5TGtqXD/iNBETJnP+mpnEEnn
-DCUP+aEJe6c/NlCpXgJ1iBSeKnxLMwgiEO3hEe0ExS6LQj8tBWIJyOLxOg31NRYY
-ibBhYjdeGUBNn5KpJakXFHUXMZz7wW0leWlvArfENo6nqHhBaDnyKRNpozf0NZ+Y
-6IElpe4YnztuDJNz6Tj5ueXg/wkIhj859vPBzjAk8XEvP6TZvPdrA0YRFVuGu+C+
-dbfcN+lgvQFjzy2jcA1rGu5mpceqIA==
-=iNAj
------END PGP SIGNATURE-----
-
---Sig_/ZTQyCq+/4dt3iCRDQZP+uWE--
+Regards
+Adrian
