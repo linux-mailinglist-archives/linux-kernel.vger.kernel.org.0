@@ -2,104 +2,151 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C7914C0D0
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 20:33:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 701C14C0E8
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 20:37:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730242AbfFSSdN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Jun 2019 14:33:13 -0400
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:37167 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726109AbfFSSdN (ORCPT
+        id S1730506AbfFSShr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Jun 2019 14:37:47 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:33580 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730070AbfFSShr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Jun 2019 14:33:13 -0400
-Received: by mail-qt1-f194.google.com with SMTP id y57so209534qtk.4
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2019 11:33:12 -0700 (PDT)
+        Wed, 19 Jun 2019 14:37:47 -0400
+Received: by mail-pl1-f193.google.com with SMTP id c14so182808plo.0
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2019 11:37:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=digitalocean.com; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=qmdp2hLc7f7LXlGpZWzREus9GL3q2Z2GGo4gIgm/xrg=;
-        b=UTNQ4lDMM4HOUZwz/VfVoBWVf9YyGjTc27oNXdkMUoFx+YvLAYq/PahbGAidF4op0x
-         6ADkzk5HjWEqAlcrNdPOCZFkMjM2Gegh3w6x3/7qSMw+z+lY20Gn93gLzGc68/TIxYpH
-         8KVLZH1Lg0cImTyKxEP04zb5/hheamoBeD7jI=
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=2UHrTE7B5XpI1WvMqZiW3y+ZVgQqpXieqgBOuUL3YDY=;
+        b=nXaidQykLu0h3v+pNAwd13wc4DhE5worNOflID9Mf2valzfpNLEoz/00pn7rrU7Dmn
+         FxeUrAO5yA7lCOSKq1jd1jzQ4O1aY0TxEMX08ip6aEoG4HxpImTpVC6VSk+69Kpzm6Ys
+         gmqahyhRmADeRLd6d+ldLEDrNFb2uHKhQjwM8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=qmdp2hLc7f7LXlGpZWzREus9GL3q2Z2GGo4gIgm/xrg=;
-        b=WlNgYfpiOICc9MYn0DqqTYJ06r1tQYF8rpW31sI1pETEqjYr4yt9jEVI98c4WDo3BJ
-         NsAoxV/rTdgfyfNQmwXWPwthsX5pP724KS82zN0oYxGPJgb9XmSMaRKZXW/YT37YiW/m
-         QNCk3zhYmKnJh9xtKnoESSUxMFpAZ9t/WY+CedOxvbTeUFrUADs4J4o7FloTWG6SIC8z
-         drVtolxkDHbKSH8o/7+0QsR5xd/s1PygJ8XOr3yvC7kAT3Q3nYffmVc4jskIMwi6+B5q
-         1ECmvOaBBHcK1eJpBnoTz+YxkJg4y+7g3NwaMvfZY8TLT9gvwi6Kc9fAL/t0//+2/KUr
-         GBvg==
-X-Gm-Message-State: APjAAAV3F5fL33+/x/cWn0xTIGs2giHTuEndy9xBCgdlonTUMudn3bJ+
-        dWKprawpeIUjFbTYD1Rial4Z4w==
-X-Google-Smtp-Source: APXvYqxPjcl2hWZP3R+bxalVB3SIb1aKDnmCr+tkSn8M7rbe2IFhnZU1zIJliIIbYegdX1zWks4CSQ==
-X-Received: by 2002:ac8:25ac:: with SMTP id e41mr21132667qte.101.1560969192340;
-        Wed, 19 Jun 2019 11:33:12 -0700 (PDT)
-Received: from sinkpad (mtlxpqak-1176247880.sdsl.bell.ca. [70.28.30.72])
-        by smtp.gmail.com with ESMTPSA id d123sm11973097qkb.94.2019.06.19.11.33.10
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 19 Jun 2019 11:33:11 -0700 (PDT)
-Date:   Wed, 19 Jun 2019 14:33:02 -0400
-From:   Julien Desfossez <jdesfossez@digitalocean.com>
-To:     Aubrey Li <aubrey.intel@gmail.com>
-Cc:     Subhra Mazumdar <subhra.mazumdar@oracle.com>,
-        Aaron Lu <aaron.lu@linux.alibaba.com>,
-        Vineeth Remanan Pillai <vpillai@digitalocean.com>,
-        Nishanth Aravamudan <naravamudan@digitalocean.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Paul Turner <pjt@google.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        =?iso-8859-1?Q?Fr=E9d=E9ric?= Weisbecker <fweisbec@gmail.com>,
-        Kees Cook <keescook@chromium.org>,
-        Greg Kerr <kerrnel@google.com>, Phil Auld <pauld@redhat.com>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Subject: Re: [RFC PATCH v3 00/16] Core scheduling v3
-Message-ID: <20190619183302.GA6775@sinkpad>
-References: <cover.1559129225.git.vpillai@digitalocean.com>
- <CAERHkruDE-7R5K=2yRqCJRCpV87HkHzDYbQA2WQkruVYpG7t7Q@mail.gmail.com>
- <e8872bd9-1c6b-fb12-b535-3d37740a0306@linux.alibaba.com>
- <20190531210816.GA24027@sinkpad>
- <20190606152637.GA5703@sinkpad>
- <20190612163345.GB26997@sinkpad>
- <635c01b0-d8f3-561b-5396-10c75ed03712@oracle.com>
- <20190613032246.GA17752@sinkpad>
- <CAERHkrsMFjjBpPZS7jDhzbob4PSmiPj83OfqEeiKgaDAU3ajOA@mail.gmail.com>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=2UHrTE7B5XpI1WvMqZiW3y+ZVgQqpXieqgBOuUL3YDY=;
+        b=P30y76aUTVSLLw9RtfTGk7dtQJMMRvOXVaae75qvWRuaJpR1ApJRbkR8u4Zo9mgzrU
+         3oc9ga4Rjx1xKmpMYVslz1QPl3Jp9RTPUkX0cv3/8KnBNtlmGX/4LT0n0hiarE8JrMZK
+         CMJYf2ZkwAyGkacv3RhJxQu2/xj9Zri2b0zSqorkHllVAPpoc5Y3NPzQ01WFEITcOfm2
+         pMOHbcf0mIet55fflVI8ccY55ZU2zIXntrxAW/RZO2XhGMo9lg9TY2sl+nYx1Ot9rJWc
+         PSy7676yR6WqbdGh8NkmdHQF8LnrGa7avvxNJteAq1ZlUnluICLifoe/zPuNkcp+Obl3
+         zHuQ==
+X-Gm-Message-State: APjAAAW7BrMKgHRJSAJp2O1nxKGSg7mIjMK0fWi0pooBlubpAoMr8zbw
+        TmCkYG4BBEQg6KJPOXBmtuUx0gwfUBE=
+X-Google-Smtp-Source: APXvYqw3w3u7xuqL2IUmlLYdr5iRpyNBWMi+c4rhFrkhqFLsCOFAK3UzXw/uPna24Mybo1ZWf+lnpA==
+X-Received: by 2002:a17:902:7e0e:: with SMTP id b14mr96610234plm.257.1560969466479;
+        Wed, 19 Jun 2019 11:37:46 -0700 (PDT)
+Received: from tictac2.mtv.corp.google.com ([2620:15c:202:1:24fa:e766:52c9:e3b2])
+        by smtp.gmail.com with ESMTPSA id j16sm2681463pjz.31.2019.06.19.11.37.45
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Wed, 19 Jun 2019 11:37:46 -0700 (PDT)
+From:   Douglas Anderson <dianders@chromium.org>
+To:     heiko@sntech.de
+Cc:     linux-rockchip@lists.infradead.org, mka@chromium.org,
+        Douglas Anderson <dianders@chromium.org>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH] ARM: dts: rockchip: Configure BT_DEV_WAKE in on rk3288-veyron
+Date:   Wed, 19 Jun 2019 11:34:25 -0700
+Message-Id: <20190619183425.149470-1-dianders@chromium.org>
+X-Mailer: git-send-email 2.22.0.410.gd8fdbe21b5-goog
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAERHkrsMFjjBpPZS7jDhzbob4PSmiPj83OfqEeiKgaDAU3ajOA@mail.gmail.com>
-X-Mailer: Mutt 1.5.24 (2015-08-30)
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 17-Jun-2019 10:51:27 AM, Aubrey Li wrote:
-> The result looks still unfair, and particularly, the variance is too high,
+This is the other half of the hacky solution from commit f497ab6b4bb8
+("ARM: dts: rockchip: Configure BT_HOST_WAKE as wake-up signal on
+veyron").  Specifically the LPM driver that the Broadcom Bluetooth
+expects to have (but is missing in mainline) has two halves of the
+equation: BT_HOST_WAKE and BT_DEV_WAKE.  The BT_HOST_WAKE (which was
+handled in the previous commit) is the one that lets the Bluetooth
+wake the system up.  The BT_DEV_WAKE (this patch) tells the Bluetooth
+that it's OK to go into a low power mode.  That means we were burning
+a bit of extra power in S3 without this patch.  Measurements are a bit
+noisy, but it appears to be a few mA worth of difference.
 
-I just want to confirm that I am also seeing the same issue with a
-similar setup. I also tried with the priority boost fix we previously
-posted, the results are slightly better, but we are still seeing a very
-high variance.
+NOTE: Though these pins don't do much on systems with Marvell
+Bluetooth, downstream kernels set it on all veyron boards so we'll do
+the same.
 
-On average, the results I get for 10 30-seconds runs are still much
-better than nosmt (both sysbench pinned on the same sibling) for the
-memory benchmark, and pretty similar for the CPU benchmark, but the high
-variance between runs is indeed concerning.
+Signed-off-by: Douglas Anderson <dianders@chromium.org>
+---
 
-Still digging :-)
+ .../boot/dts/rk3288-veyron-chromebook.dtsi    |  2 ++
+ arch/arm/boot/dts/rk3288-veyron.dtsi          | 20 +++++++++++++++++++
+ 2 files changed, 22 insertions(+)
 
-Thanks,
+diff --git a/arch/arm/boot/dts/rk3288-veyron-chromebook.dtsi b/arch/arm/boot/dts/rk3288-veyron-chromebook.dtsi
+index 5727017f34b2..1cadb522fd0d 100644
+--- a/arch/arm/boot/dts/rk3288-veyron-chromebook.dtsi
++++ b/arch/arm/boot/dts/rk3288-veyron-chromebook.dtsi
+@@ -237,6 +237,7 @@
+ 
+ 		/* Wake only */
+ 		&suspend_l_wake
++		&bt_dev_wake_awake
+ 	>;
+ 	pinctrl-1 = <
+ 		/* Common for sleep and wake, but no owners */
+@@ -246,6 +247,7 @@
+ 
+ 		/* Sleep only */
+ 		&suspend_l_sleep
++		&bt_dev_wake_sleep
+ 	>;
+ 
+ 	backlight {
+diff --git a/arch/arm/boot/dts/rk3288-veyron.dtsi b/arch/arm/boot/dts/rk3288-veyron.dtsi
+index e2635ad574e7..53d2f2452868 100644
+--- a/arch/arm/boot/dts/rk3288-veyron.dtsi
++++ b/arch/arm/boot/dts/rk3288-veyron.dtsi
+@@ -485,12 +485,18 @@
+ 		&ddr0_retention
+ 		&ddrio_pwroff
+ 		&global_pwroff
++
++		/* Wake only */
++		&bt_dev_wake_awake
+ 	>;
+ 	pinctrl-1 = <
+ 		/* Common for sleep and wake, but no owners */
+ 		&ddr0_retention
+ 		&ddrio_pwroff
+ 		&global_pwroff
++
++		/* Sleep only */
++		&bt_dev_wake_sleep
+ 	>;
+ 
+ 	pcfg_pull_none_drv_8ma: pcfg-pull-none-drv-8ma {
+@@ -596,6 +602,20 @@
+ 		sdio0_clk: sdio0-clk {
+ 			rockchip,pins = <4 RK_PD1 1 &pcfg_pull_none_drv_8ma>;
+ 		};
++
++		/*
++		 * These pins are only present on very new veyron boards; on
++		 * older boards bt_dev_wake is simply always high.  Note that
++		 * gpio4_D2 is a NC on old veyron boards, so it doesn't hurt
++		 * to map this pin everywhere
++		 */
++		bt_dev_wake_sleep: bt-dev-wake-sleep {
++			rockchip,pins = <4 RK_PD2 RK_FUNC_GPIO &pcfg_output_low>;
++		};
++
++		bt_dev_wake_awake: bt-dev-wake-awake {
++			rockchip,pins = <4 RK_PD2 RK_FUNC_GPIO &pcfg_output_high>;
++		};
+ 	};
+ 
+ 	tpm {
+-- 
+2.22.0.410.gd8fdbe21b5-goog
 
-Julien
