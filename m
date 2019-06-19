@@ -2,122 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6FA084C155
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 21:14:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2952D4C15D
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 21:17:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730414AbfFSTOR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Jun 2019 15:14:17 -0400
-Received: from mail-ua1-f67.google.com ([209.85.222.67]:36188 "EHLO
-        mail-ua1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726380AbfFSTOR (ORCPT
+        id S1730384AbfFSTRt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Jun 2019 15:17:49 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:35211 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729988AbfFSTRs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Jun 2019 15:14:17 -0400
-Received: by mail-ua1-f67.google.com with SMTP id v20so595800uao.3
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2019 12:14:16 -0700 (PDT)
+        Wed, 19 Jun 2019 15:17:48 -0400
+Received: by mail-wm1-f68.google.com with SMTP id c6so664393wml.0
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2019 12:17:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=poorly.run; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Ib3Elwu0KclQyP3cycuxmXbQ4naSfm0BlMVLX1InLZw=;
-        b=QQ6gJxUTW/Vjrclz3KenY0TkBWCxnFk+KURlFWhpls7ntpL6pJ8MX2SdeFYx4Aklq/
-         DudSWR/uOS3VYS3IlVIGvEDRduFT3XEv9OhRdMAxyhFjtml2fkV2Bm56Ki4BPjlTnvc7
-         mLTwzTOaXr2svneSWQkzb82jUkoP65Y38rQWPtAOoe+1sUAAgBkLsPlkUJIt2f3aq8wv
-         xE+N8bn0d0K1xrUZ6D2A0xJ9LDspwtWJ/xUYjpBwRX1rzQ2ifxV9fzblurIKhBrnKW3t
-         CsKqx/mwrD5iLFKKt8QTv0uISIziU2OSUkDk6tu4AqBYedKvQ5tO25TOfFkEeEhkcsLz
-         e9Kw==
+        d=kragniz.eu; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Mjc4e9qXJ2nnNgq6HpuUlvVMyhFQupHDeveJmwGSTcc=;
+        b=bk5Reg+Tthnhuz/BFDqUvGGkLX/O+aNMKLbqPXFoEq614Ueu2vs0mVT94CjtYpBgF6
+         4IZ+j+POJGIjD5PFd5bcIhXOXI3wz0HGjzQpBMi1hYiaP7OAl6X3MN5khPHjzbIJ24xJ
+         DF0BQhQT55rH2gekkP1hPxve0qr/rKyHYv8zc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Ib3Elwu0KclQyP3cycuxmXbQ4naSfm0BlMVLX1InLZw=;
-        b=Dgfby3p8cHJX4tga4ubxwkAnRMNbVpUdA6afNYpfusSGQFrg4MQTLcN3tWaUdjbvRz
-         wppHVUOpixjIGJOTvEZpSI+uCN++bKRmPH8lfAHqs/P0lePqbRB7JWN8hT2Z8U98Gm9S
-         jpDt+IsWObzlaxWRCpI1lxozLouOB//vtC77P5iA5Mw46DL/wgmFLEjNdh/4T87qls3Q
-         TGgS1bwAE7qQumYo/mQyFxMxcaXz+SfzQzuAhnLgqCJwVITF7I3nYoDtdlwGxkYWloIf
-         Nxp7g5pMKXNdwIBzOVh+XxiNY7p+x4RNRGQOHc5uQzcBvXrv1pZe5cUNL6gjGQLZDwgt
-         ZKQg==
-X-Gm-Message-State: APjAAAXshnkf05raZflvK1auUojrukpYGy7KLFVt24DLx3tuRiWIqmwp
-        4mtPWUMNIGB4uQ/upJb2+v+E/2YHL8V0kIX7CcPUag==
-X-Google-Smtp-Source: APXvYqyxcxfNAKPtYBJIxPkPHt0N6GlX0+4BE9chztdrfnz3ArVj+bC8e0pV1rbSPnaIfA8/IDzzUNCrvkt+8J5W/rg=
-X-Received: by 2002:ab0:7384:: with SMTP id l4mr5662598uap.8.1560971656192;
- Wed, 19 Jun 2019 12:14:16 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Mjc4e9qXJ2nnNgq6HpuUlvVMyhFQupHDeveJmwGSTcc=;
+        b=jZqn47+lDA+FEGH9+l15cXF4nYWQ12e+dVqdNHiYbA0FqDVdAuzll5kMcRKiPJ0HtX
+         TqevNBXVl+uDzR9mbvgzUPWO0JXclnRK46rdudAk308N3H2q2LybbnR7np2kD+pO7FxM
+         rIXQM+swsbQ5nESdSUsAONEVp0UDvLowleUjQmMCWBwbHSAWXjlK64lwmEikyqlyTM3q
+         jivoH9cCc+Low2PnDCKzhw0f3uuRcmdm18JUaQM1dQ1rMBLr79Ocd7/LTpKTeaesC/zN
+         4TlLSSFL7GAw2WaypYP+h0+W0+N3IYKThzI/2HXS4NbQmMbpAYn3ltqT99FziHuSwM8c
+         pKmA==
+X-Gm-Message-State: APjAAAXdO4Fp0Mc8O4YXHAZsO9rAMcroH53m3sV3YT8UBJQO9xvtO05Z
+        2/b/T21QxG67IUPCbYZeUxNH/g==
+X-Google-Smtp-Source: APXvYqzjDBaaBwQLbZ12fbh5cDsg0VP4n9phLBdvM5LvhkrKdtb16ZvLJpYvr4tRLgPKdxd0vjrNKA==
+X-Received: by 2002:a05:600c:2056:: with SMTP id p22mr3284154wmg.155.1560971866975;
+        Wed, 19 Jun 2019 12:17:46 -0700 (PDT)
+Received: from gmail.com ([95.149.160.61])
+        by smtp.gmail.com with ESMTPSA id s63sm2392244wme.17.2019.06.19.12.17.46
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Wed, 19 Jun 2019 12:17:46 -0700 (PDT)
+Date:   Wed, 19 Jun 2019 20:16:05 +0100
+From:   Louis Taylor <louis@kragniz.eu>
+To:     Nick Desaulniers <ndesaulniers@google.com>
+Cc:     akpm@linux-foundation.org, clang-built-linux@googlegroups.com,
+        joe@perches.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] MAINTAINERS: add CLANG/LLVM BUILD SUPPORT info
+Message-ID: <20190619191605.GA5837@gmail.com>
+References: <20190619181844.57696-1-ndesaulniers@google.com>
 MIME-Version: 1.0
-References: <20190619161913.102998-1-natechancellor@gmail.com>
-In-Reply-To: <20190619161913.102998-1-natechancellor@gmail.com>
-From:   Sean Paul <sean@poorly.run>
-Date:   Wed, 19 Jun 2019 15:13:40 -0400
-Message-ID: <CAMavQKK-yyrSBR0rD8+aXqNhgojzkSVpe=AE3EvUFxMcfcmE6A@mail.gmail.com>
-Subject: Re: [PATCH] drm/msm/dsi: Add parentheses to quirks check in dsi_phy_hw_v3_0_lane_settings
-To:     Nathan Chancellor <natechancellor@gmail.com>
-Cc:     Rob Clark <robdclark@gmail.com>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        freedreno@lists.freedesktop.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        clang-built-linux@googlegroups.com,
-        kbuild test robot <lkp@intel.com>,
-        Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190619181844.57696-1-ndesaulniers@google.com>
+User-Agent: Mutt/1.12.0 (2019-05-25)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 19, 2019 at 12:19 PM Nathan Chancellor
-<natechancellor@gmail.com> wrote:
->
-> Clang warns:
->
-> drivers/gpu/drm/msm/dsi/phy/dsi_phy_10nm.c:80:6: warning: logical not is
-> only applied to the left hand side of this bitwise operator
-> [-Wlogical-not-parentheses]
->         if (!phy->cfg->quirks & V3_0_0_10NM_OLD_TIMINGS_QUIRK) {
->             ^                 ~
-> drivers/gpu/drm/msm/dsi/phy/dsi_phy_10nm.c:80:6: note: add parentheses
-> after the '!' to evaluate the bitwise operator first
->         if (!phy->cfg->quirks & V3_0_0_10NM_OLD_TIMINGS_QUIRK) {
->             ^
->              (                                               )
-> drivers/gpu/drm/msm/dsi/phy/dsi_phy_10nm.c:80:6: note: add parentheses
-> around left hand side expression to silence this warning
->         if (!phy->cfg->quirks & V3_0_0_10NM_OLD_TIMINGS_QUIRK) {
->             ^
->             (                )
-> 1 warning generated.
->
-> Add parentheses around the bitwise AND so it is evaluated first then
-> negated.
->
-> Fixes: 3dbbf8f09e83 ("drm/msm/dsi: Add old timings quirk for 10nm phy")
-> Link: https://github.com/ClangBuiltLinux/linux/547
-
-This link is broken, could you please fix it up?
-
-The rest is:
-Reviewed-by: Sean Paul <sean@poorly.run>
-
-
-
-> Reported-by: kbuild test robot <lkp@intel.com>
-> Reviewed-by: Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
-> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+On Wed, Jun 19, 2019 at 11:18:44AM -0700, 'Nick Desaulniers' via Clang Built Linux wrote:
+> Add keyword support so that our mailing list gets cc'ed for clang/llvm
+> patches. We're pretty active on our mailing list so far as code review.
+> There are numerous Googlers like myself that are paid to support
+> building the Linux kernel with Clang and LLVM.
+> 
+> Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
 > ---
->  drivers/gpu/drm/msm/dsi/phy/dsi_phy_10nm.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_10nm.c b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_10nm.c
-> index eb28937f4b34..47403d4f2d28 100644
-> --- a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_10nm.c
-> +++ b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_10nm.c
-> @@ -77,7 +77,7 @@ static void dsi_phy_hw_v3_0_lane_settings(struct msm_dsi_phy *phy)
->                               tx_dctrl[i]);
->         }
->
-> -       if (!phy->cfg->quirks & V3_0_0_10NM_OLD_TIMINGS_QUIRK) {
-> +       if (!(phy->cfg->quirks & V3_0_0_10NM_OLD_TIMINGS_QUIRK)) {
->                 /* Toggle BIT 0 to release freeze I/0 */
->                 dsi_phy_write(lane_base + REG_DSI_10nm_PHY_LN_TX_DCTRL(3), 0x05);
->                 dsi_phy_write(lane_base + REG_DSI_10nm_PHY_LN_TX_DCTRL(3), 0x04);
-> --
-> 2.22.0
->
+> Thanks for Joe Perches for help on the syntax for the case insensitive
+> syntax.
+> 
+>  MAINTAINERS | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index ef58d9a881ee..fa798cc48e34 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -3940,6 +3940,14 @@ M:	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+>  S:	Maintained
+>  F:	.clang-format
+>  
+> +CLANG/LLVM BUILD SUPPORT
+> +L: clang-built-linux@googlegroups.com
+
+I think this should have "(moderated for non-subscribers)" added.
+
+Cheers,
+Louis
