@@ -2,151 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 701C14C0E8
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 20:37:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 782984C0D3
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 20:35:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730506AbfFSShr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Jun 2019 14:37:47 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:33580 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730070AbfFSShr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Jun 2019 14:37:47 -0400
-Received: by mail-pl1-f193.google.com with SMTP id c14so182808plo.0
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2019 11:37:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=2UHrTE7B5XpI1WvMqZiW3y+ZVgQqpXieqgBOuUL3YDY=;
-        b=nXaidQykLu0h3v+pNAwd13wc4DhE5worNOflID9Mf2valzfpNLEoz/00pn7rrU7Dmn
-         FxeUrAO5yA7lCOSKq1jd1jzQ4O1aY0TxEMX08ip6aEoG4HxpImTpVC6VSk+69Kpzm6Ys
-         gmqahyhRmADeRLd6d+ldLEDrNFb2uHKhQjwM8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=2UHrTE7B5XpI1WvMqZiW3y+ZVgQqpXieqgBOuUL3YDY=;
-        b=P30y76aUTVSLLw9RtfTGk7dtQJMMRvOXVaae75qvWRuaJpR1ApJRbkR8u4Zo9mgzrU
-         3oc9ga4Rjx1xKmpMYVslz1QPl3Jp9RTPUkX0cv3/8KnBNtlmGX/4LT0n0hiarE8JrMZK
-         CMJYf2ZkwAyGkacv3RhJxQu2/xj9Zri2b0zSqorkHllVAPpoc5Y3NPzQ01WFEITcOfm2
-         pMOHbcf0mIet55fflVI8ccY55ZU2zIXntrxAW/RZO2XhGMo9lg9TY2sl+nYx1Ot9rJWc
-         PSy7676yR6WqbdGh8NkmdHQF8LnrGa7avvxNJteAq1ZlUnluICLifoe/zPuNkcp+Obl3
-         zHuQ==
-X-Gm-Message-State: APjAAAW7BrMKgHRJSAJp2O1nxKGSg7mIjMK0fWi0pooBlubpAoMr8zbw
-        TmCkYG4BBEQg6KJPOXBmtuUx0gwfUBE=
-X-Google-Smtp-Source: APXvYqw3w3u7xuqL2IUmlLYdr5iRpyNBWMi+c4rhFrkhqFLsCOFAK3UzXw/uPna24Mybo1ZWf+lnpA==
-X-Received: by 2002:a17:902:7e0e:: with SMTP id b14mr96610234plm.257.1560969466479;
-        Wed, 19 Jun 2019 11:37:46 -0700 (PDT)
-Received: from tictac2.mtv.corp.google.com ([2620:15c:202:1:24fa:e766:52c9:e3b2])
-        by smtp.gmail.com with ESMTPSA id j16sm2681463pjz.31.2019.06.19.11.37.45
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 19 Jun 2019 11:37:46 -0700 (PDT)
-From:   Douglas Anderson <dianders@chromium.org>
-To:     heiko@sntech.de
-Cc:     linux-rockchip@lists.infradead.org, mka@chromium.org,
-        Douglas Anderson <dianders@chromium.org>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH] ARM: dts: rockchip: Configure BT_DEV_WAKE in on rk3288-veyron
-Date:   Wed, 19 Jun 2019 11:34:25 -0700
-Message-Id: <20190619183425.149470-1-dianders@chromium.org>
-X-Mailer: git-send-email 2.22.0.410.gd8fdbe21b5-goog
+        id S1729932AbfFSSf0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Jun 2019 14:35:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59566 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726175AbfFSSf0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Jun 2019 14:35:26 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 00F55214AF;
+        Wed, 19 Jun 2019 18:35:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1560969325;
+        bh=ZSXk5yQY5JgmMnKoJZp5pJgU23ioYLFdLftxt75KSUg=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=02DXmPJFYgSNzzsFki+MxmAyHDdHNWPBCaKNAYd4HmV/t2wmOIklt9U7P+VZnV+Rz
+         bcdnh9SjtN/cdTKhJCLgKcpMi8Td9fVE85dyCBm75Kw9cbiFEO1ch+FKsLFoxb0vO+
+         TpaxZZffvoAfEd4dTfO5JMSWwT2iMvdrbggqfoI0=
+Date:   Wed, 19 Jun 2019 20:35:23 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Joel Fernandes <joelaf@google.com>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Tri Vo <trong@android.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Sandeep Patil <sspatil@android.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Hridya Valsaraju <hridya@google.com>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        "Cc: Android Kernel" <kernel-team@android.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Alexei Starovoitov <ast@fb.com>
+Subject: Re: Alternatives to /sys/kernel/debug/wakeup_sources
+Message-ID: <20190619183523.GA7018@kroah.com>
+References: <CANA+-vCThdRivg7nrMK5QoFu8SGUzEVSvSyp0H2CPyy9==Tqog@mail.gmail.com>
+ <CANA+-vARQ9Ao=W1oEArrAQ0sqh757orq=-=kytdVPhstm-3E9w@mail.gmail.com>
+ <20190618182502.GC203031@google.com>
+ <4587569.x9DSL43cXO@kreacher>
+ <CANA+-vCMK6u1n9gXf2+v5dFn_tGfr1PT8d7W4d2BCzw+B-HvYw@mail.gmail.com>
+ <CAJWu+oo7kwmEyMXQN0yfswV2=J-Fa9QybhAUx-SOGG_ipsBErQ@mail.gmail.com>
+ <CAJZ5v0gvzCx-7qS9qkxB=sGKjQJKMR7yCc21f=_vqrbZxMSWNg@mail.gmail.com>
+ <CAJWu+oqSgcBVhDY7CjWpNQrK=XiKAb5S-YSp=6-UM--UFmKvGQ@mail.gmail.com>
+ <20190619170750.GB10107@kroah.com>
+ <CAJWu+ookFTYGfSvJ3otpFQixG2kbkJGOqf7HHUeYNQAQv2Cskw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJWu+ookFTYGfSvJ3otpFQixG2kbkJGOqf7HHUeYNQAQv2Cskw@mail.gmail.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is the other half of the hacky solution from commit f497ab6b4bb8
-("ARM: dts: rockchip: Configure BT_HOST_WAKE as wake-up signal on
-veyron").  Specifically the LPM driver that the Broadcom Bluetooth
-expects to have (but is missing in mainline) has two halves of the
-equation: BT_HOST_WAKE and BT_DEV_WAKE.  The BT_HOST_WAKE (which was
-handled in the previous commit) is the one that lets the Bluetooth
-wake the system up.  The BT_DEV_WAKE (this patch) tells the Bluetooth
-that it's OK to go into a low power mode.  That means we were burning
-a bit of extra power in S3 without this patch.  Measurements are a bit
-noisy, but it appears to be a few mA worth of difference.
+On Wed, Jun 19, 2019 at 02:01:36PM -0400, Joel Fernandes wrote:
+> On Wed, Jun 19, 2019 at 1:07 PM Greg Kroah-Hartman
+> <gregkh@linuxfoundation.org> wrote:
+> >
+> > On Wed, Jun 19, 2019 at 12:53:12PM -0400, Joel Fernandes wrote:
+> > > > It is conceivable to have a "wakeup_sources" directory under
+> > > > /sys/power/ and sysfs nodes for all wakeup sources in there.
+> > >
+> > > One of the "issues" with this is, now if you have say 100 wake up
+> > > sources, with 10 entries each, then we're talking about a 1000 sysfs
+> > > files. Each one has to be opened, and read individually. This adds
+> > > overhead and it is more convenient to read from a single file. The
+> > > problem is this single file is not ABI. So the question I guess is,
+> > > how do we solve this in both an ABI friendly way while keeping the
+> > > overhead low.
+> >
+> > How much overhead?  Have you measured it, reading from virtual files is
+> > fast :)
+> 
+> I measured, and it is definitely not free. If you create and read a
+> 1000 files and just return a string back, it can take up to 11-13
+> milliseconds (did not lock CPU frequencies, was just looking for
+> average ball park). This is assuming that the counter reading is just
+> doing that, and nothing else is being done to return the sysfs data
+> which is probably not always true in practice.
+> 
+> Our display pipeline deadline is around 16ms at 60Hz. Conceivably, any
+> CPU scheduling competion reading sysfs can hurt the deadline. There's
+> also the question of power - we definitely have spent time in the past
+> optimizing other virtual files such as /proc/pid/smaps for this reason
+> where it spent lots of CPU time.
 
-NOTE: Though these pins don't do much on systems with Marvell
-Bluetooth, downstream kernels set it on all veyron boards so we'll do
-the same.
+smaps was "odd", but that was done after measurements were actually made
+to prove it was needed.  That hasn't happened yet :)
 
-Signed-off-by: Douglas Anderson <dianders@chromium.org>
----
+And is there a reason you have to do this every 16ms?
 
- .../boot/dts/rk3288-veyron-chromebook.dtsi    |  2 ++
- arch/arm/boot/dts/rk3288-veyron.dtsi          | 20 +++++++++++++++++++
- 2 files changed, 22 insertions(+)
+> > And how often does this happen?  Does it _need_ to happen?
+> 
+> These are good questions and we should find out. I am not saying that
+> sysfs will not work, I am just saying we need to consider all the
+> things. I will let Tri look into this since he is working on it, I
+> don't know off the top.
+> 
+> > Parsing files is also hard, and not for sysfs files, you can't have it
+> > both ways.
+> 
+> I don't think we are concerned with a parsing issue here, or are
+> discussing it in this thread.
+> 
+> > So try it this way, and if there really is a performance issue, we can
+> > then talk about it...
+> 
+> Sure that sounds good to me, again I am not saying we should do sysfs.
+> But we should consider all the issues and chose the right solution.
 
-diff --git a/arch/arm/boot/dts/rk3288-veyron-chromebook.dtsi b/arch/arm/boot/dts/rk3288-veyron-chromebook.dtsi
-index 5727017f34b2..1cadb522fd0d 100644
---- a/arch/arm/boot/dts/rk3288-veyron-chromebook.dtsi
-+++ b/arch/arm/boot/dts/rk3288-veyron-chromebook.dtsi
-@@ -237,6 +237,7 @@
- 
- 		/* Wake only */
- 		&suspend_l_wake
-+		&bt_dev_wake_awake
- 	>;
- 	pinctrl-1 = <
- 		/* Common for sleep and wake, but no owners */
-@@ -246,6 +247,7 @@
- 
- 		/* Sleep only */
- 		&suspend_l_sleep
-+		&bt_dev_wake_sleep
- 	>;
- 
- 	backlight {
-diff --git a/arch/arm/boot/dts/rk3288-veyron.dtsi b/arch/arm/boot/dts/rk3288-veyron.dtsi
-index e2635ad574e7..53d2f2452868 100644
---- a/arch/arm/boot/dts/rk3288-veyron.dtsi
-+++ b/arch/arm/boot/dts/rk3288-veyron.dtsi
-@@ -485,12 +485,18 @@
- 		&ddr0_retention
- 		&ddrio_pwroff
- 		&global_pwroff
-+
-+		/* Wake only */
-+		&bt_dev_wake_awake
- 	>;
- 	pinctrl-1 = <
- 		/* Common for sleep and wake, but no owners */
- 		&ddr0_retention
- 		&ddrio_pwroff
- 		&global_pwroff
-+
-+		/* Sleep only */
-+		&bt_dev_wake_sleep
- 	>;
- 
- 	pcfg_pull_none_drv_8ma: pcfg-pull-none-drv-8ma {
-@@ -596,6 +602,20 @@
- 		sdio0_clk: sdio0-clk {
- 			rockchip,pins = <4 RK_PD1 1 &pcfg_pull_none_drv_8ma>;
- 		};
-+
-+		/*
-+		 * These pins are only present on very new veyron boards; on
-+		 * older boards bt_dev_wake is simply always high.  Note that
-+		 * gpio4_D2 is a NC on old veyron boards, so it doesn't hurt
-+		 * to map this pin everywhere
-+		 */
-+		bt_dev_wake_sleep: bt-dev-wake-sleep {
-+			rockchip,pins = <4 RK_PD2 RK_FUNC_GPIO &pcfg_output_low>;
-+		};
-+
-+		bt_dev_wake_awake: bt-dev-wake-awake {
-+			rockchip,pins = <4 RK_PD2 RK_FUNC_GPIO &pcfg_output_high>;
-+		};
- 	};
- 
- 	tpm {
--- 
-2.22.0.410.gd8fdbe21b5-goog
+Figure out who needs this, how often it needs it, and how many files
+really are going to be involved before we try to optimize anything.
 
+thanks,
+
+greg k-h
