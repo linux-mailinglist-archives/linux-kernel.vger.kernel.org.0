@@ -2,115 +2,164 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4FD314C2C0
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 23:09:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 73D404C2DA
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 23:18:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730401AbfFSVJY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Jun 2019 17:09:24 -0400
-Received: from mga02.intel.com ([134.134.136.20]:60631 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726175AbfFSVJY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Jun 2019 17:09:24 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Jun 2019 14:09:23 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.63,394,1557212400"; 
-   d="scan'208";a="243428686"
-Received: from nmendi-mobl.amr.corp.intel.com ([10.251.150.122])
-  by orsmga001.jf.intel.com with ESMTP; 19 Jun 2019 14:09:22 -0700
-Message-ID: <0c939329d17c50c353acacf164583ba259a775c0.camel@linux.intel.com>
-Subject: Re: [alsa-devel] [PATCH v2 09/11] ASoC: Intel: hdac_hdmi: Set ops
- to NULL on remove
-From:   Ranjani Sridharan <ranjani.sridharan@linux.intel.com>
-To:     Amadeusz =?UTF-8?Q?S=C5=82awi=C5=84ski?= 
-        <amadeuszx.slawinski@linux.intel.com>
-Cc:     Cezary Rojewski <cezary.rojewski@intel.com>,
-        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        Takashi Iwai <tiwai@suse.com>,
-        Jie Yang <yang.jie@linux.intel.com>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>
-Date:   Wed, 19 Jun 2019 14:09:22 -0700
-In-Reply-To: <20190619103859.15bf51c5@xxx>
-References: <20190617113644.25621-1-amadeuszx.slawinski@linux.intel.com>
-         <20190617113644.25621-10-amadeuszx.slawinski@linux.intel.com>
-         <75be86354032f4886cbaf7d430de2aa89eaab573.camel@linux.intel.com>
-         <20190618130015.0fc388b4@xxx>
-         <bd8855a7ab7a9958113631b76706120fd4427631.camel@linux.intel.com>
-         <20190619103859.15bf51c5@xxx>
+        id S1730522AbfFSVSf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Jun 2019 17:18:35 -0400
+Received: from mail-io1-f65.google.com ([209.85.166.65]:40064 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726175AbfFSVSe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Jun 2019 17:18:34 -0400
+Received: by mail-io1-f65.google.com with SMTP id n5so159223ioc.7
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2019 14:18:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=XY7aJ7dmXPxqNPvIOXdraSG/mXJqcFutpgqcMN/Km28=;
+        b=VNslJ7mhNRCKEXVbWHWhBbcjyZQQnZuTLynWJkzRy6HJWCzrYxgAE2HhkW/VSd5Pz9
+         SHfFCPP+ICxn6nicRTh1QtGs0tabSVxS4XDWpZ26c2/+NvIS9qM5t7B+rePUZMndCsUY
+         d/Xt1q1xsTgqaK/ACYSjZ3NODpHgZdE4uqn5I=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=XY7aJ7dmXPxqNPvIOXdraSG/mXJqcFutpgqcMN/Km28=;
+        b=ISPcDOvZcEDHo4qF1Cb+kn4uTUpkp68GeB6+YviBijCzfzcOuAni3ofeX82gMkM2E8
+         uHwSLZJ2PYhE+ZYQgbuodI5x6O6c7JOSXyWHO+gKr8ZjeJaryTgQ80wXPHaScuUDjCFA
+         Pyegy2MQNcw3u2afLXBOIAW5xSwPoQZjzZ2TYJ9g3h5KlB+SyCNIusjq6et7jHcLUdae
+         +2g5qSziDlbghVEDghAOqU1eXzwwaZ1mFL79qifxb94bgwfR18rE1soe+21yDIB2w3It
+         m+4UgwxCwr3OGsfLswspIRr7pw0od4cj9UOQMrlOr/kCDForMI9MKXy0L90k/VFAVAZk
+         YIFg==
+X-Gm-Message-State: APjAAAUvEPBoEx6dqRJ0RkzQLzemzkjuj6KkhE+wgJ/JQw9jZxWcowto
+        u4GbuAUxHlF1G/b/12MoF8e0KgY3D5U=
+X-Google-Smtp-Source: APXvYqzC2UHinvDMoJ2D1InD9oRxX5Eh7zi818Mg/E8pXuABIyFjSfXvYxqZ9fgpA52HNcpRVy94mw==
+X-Received: by 2002:a5d:85c3:: with SMTP id e3mr37007257ios.265.1560979113182;
+        Wed, 19 Jun 2019 14:18:33 -0700 (PDT)
+Received: from mail-io1-f50.google.com (mail-io1-f50.google.com. [209.85.166.50])
+        by smtp.gmail.com with ESMTPSA id x13sm15366123ioj.18.2019.06.19.14.18.33
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Wed, 19 Jun 2019 14:18:33 -0700 (PDT)
+Received: by mail-io1-f50.google.com with SMTP id r185so553009iod.6
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2019 14:18:33 -0700 (PDT)
+X-Received: by 2002:a02:5b05:: with SMTP id g5mr93849116jab.114.1560978714620;
+ Wed, 19 Jun 2019 14:11:54 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190617235558.64571-1-dianders@chromium.org> <6219398.I55JWXAmVF@jernej-laptop>
+ <9bba43cb-7070-8b2a-cfc6-f601fd22a315@baylibre.com>
+In-Reply-To: <9bba43cb-7070-8b2a-cfc6-f601fd22a315@baylibre.com>
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Wed, 19 Jun 2019 14:11:41 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=V_xg3VfWDMfjJp158ELUQm5xJQCRn85H4mx_-YfjfWTg@mail.gmail.com>
+Message-ID: <CAD=FV=V_xg3VfWDMfjJp158ELUQm5xJQCRn85H4mx_-YfjfWTg@mail.gmail.com>
+Subject: Re: [PATCH] drm/bridge/synopsys: dw-hdmi: Handle audio for more clock rates
+To:     Neil Armstrong <narmstrong@baylibre.com>
+Cc:     =?UTF-8?Q?Jernej_=C5=A0krabec?= <jernej.skrabec@siol.net>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Sean Paul <seanpaul@chromium.org>,
+        =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        Dylan Reid <dgreid@chromium.org>,
+        Cheng-Yi Chiang <cychiang@chromium.org>,
+        David Airlie <airlied@linux.ie>,
+        Zheng Yang <zhengyang@rock-chips.com>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Daniel Vetter <daniel@ffwll.ch>
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2019-06-19 at 10:38 +0200, Amadeusz Sławiński wrote:
-> On Tue, 18 Jun 2019 08:58:22 -0700
-> Ranjani Sridharan <ranjani.sridharan@linux.intel.com> wrote:
-> 
-> > On Tue, 2019-06-18 at 13:00 +0200, Amadeusz Sławiński wrote:
-> > > On Mon, 17 Jun 2019 13:51:42 -0700
-> > > Ranjani Sridharan <ranjani.sridharan@linux.intel.com> wrote:
-> > >   
-> > > > On Mon, 2019-06-17 at 13:36 +0200, Amadeusz Sławiński wrote:  
-> > > > > When we unload Skylake driver we may end up calling
-> > > > > hdac_component_master_unbind(), it uses acomp->audio_ops,
-> > > > > which
-> > > > > we
-> > > > > set
-> > > > > in hdmi_codec_probe(), so we need to set it to NULL in
-> > > > > hdmi_codec_remove(),
-> > > > > otherwise we will dereference no longer existing pointer.    
-> > > > 
-> > > > Hi Amadeusz,
-> > > > 
-> > > > It looks like the audio_ops should be deleted
-> > > > snd_hdac_acomp_exit().
-> > > > Also, this doesnt seem to be the case with when the SOF driver
-> > > > is
-> > > > removed.
-> > > > Could you please give a bit more context on what error you see
-> > > > when this happens?  
-> > > 
-> > > Hi,
-> > > 
-> > > I get Oops. This is what happens with all other patches in this
-> > > series and only this one reverted:
-> > > 
-> > > root@APL:~# rmmod snd_soc_sst_bxt_rt298
-> > > root@APL:~# rmmod snd_soc_hdac_hdmi
-> > > root@APL:~# rmmod snd_soc_skl  
-> > 
-> > Thanks, Amadeusz. I think the order in which the drivers are
-> > removed
-> > is what's causing the oops in your case. With SOF, the order we
-> > remove is
-> > 
-> > 1. rmmod sof_pci_dev
-> > 2. rmmod snd_soc_sst_bxt_rt298
-> > 3. rmmod snd_soc_hdac_hdmi
-> > 
-> 
-> Well, there is nothing enforcing the order in which modules can be
-> unloaded (and I see no reason to force it), as you can see from
-> following excerpt, you can either start unloading from
-> snd_soc_sst_bxt_rt298 or snd_soc_skl, and yes if you start from
-> snd_soc_skl, there is no problem.
-> 
-I am good with this patch. I just wanted to understand why we werent
-seeing this error with SOF. Sure, there's nothing enforcing the order
-in which modules are unloaded  but there must be a logical order for
-testing purposes. 
+Hi,
 
-Pierre, can you please comment on it. I vaguely remember discussing
-this with you last year.
+On Wed, Jun 19, 2019 at 8:23 AM Neil Armstrong <narmstrong@baylibre.com> wr=
+ote:
+>
+> On 18/06/2019 19:23, Jernej =C5=A0krabec wrote:
+> > Hi!
+> >
+> > Dne torek, 18. junij 2019 ob 01:55:58 CEST je Douglas Anderson napisal(=
+a):
+> >> Let's add some better support for HDMI audio to dw_hdmi.
+> >> Specifically:
+> >>
+> >> 1. For 44.1 kHz audio the old code made the assumption that an N of
+> >> 6272 was right most of the time.  That wasn't true and the new table
+> >> should give better 44.1 kHz audio for many more rates.
+> >>
+> >> 2. The new table has values from the HDMI spec for 297 MHz and 594
+> >> MHz.
+> >>
+> >> 3. There is now code to try to come up with a more idea N/CTS for
+> >> clock rates that aren't in the table.  This code is a bit slow because
+> >> it iterates over every possible value of N and picks the best one, but
+> >> it should make a good fallback.
+> >>
+> >> 4. The new code allows for platforms that know they make a clock rate
+> >> slightly differently to pick different N/CTS values.  For instance on
+> >> rk3288 we can make 25,176,471 Hz instead of 25,174,825.1748... Hz
+> >> (25.2 MHz / 1.001).  A future patch to the rk3288 platform code could
+> >> enable support for this clock rate and specify the N/CTS that would be
+> >> ideal.
+> >>
+> >> NOTE: the oddest part of this patch comes about because computing the
+> >> ideal N/CTS means knowing the _exact_ clock rate, not a rounded
+> >> version of it.  The drm framework makes this harder by rounding rates
+> >> to kHz, but even if it didn't there might be cases where the ideal
+> >> rate could only be calculated if we knew the real (non-integral) rate.
+> >> This means that in cases where we know (or believe) that the true rate
+> >> is something other than the rate we are told by drm.
+> >>
+> >> Signed-off-by: Douglas Anderson <dianders@chromium.org>
+> >
+> > Which bus is used for audio transfer on your device? If it is I2S, whic=
+h is
+> > commonly used, then please be aware of this patch:
+> > https://lists.freedesktop.org/archives/dri-devel/2019-June/221539.html
+> >
+> > It avoids exact N/CTS calculation by enabling auto detection. It is wel=
+l
+> > tested on multiple SoCs from Allwinner, Amlogic and Rockchip.
+> >
+> > Best regards,
+> > Jernej
+> >
+> >
+> Hi Douglas,
+>
+> Thanks for your work !
+>
+> If you could rebase on top of https://lists.freedesktop.org/archives/dri-=
+devel/2019-June/221539.html
+> so we can make use of your extended N table with automatic CTS HW calcula=
+tion, it would be great !
 
-Thanks,
-Ranjani
+Thanks to you and Jernej for pointing me at this.  It seems likely
+that patch by itself would solve problems we found and I'll pick that
+into my tree.
 
+Probably my patch is no longer quite as useful atop yours, but I'll
+still post a v2 since (in theory) folks that aren't using I2S might
+find it useful.  I guess it's also possible (?) that picking an N
+where CTS would be able to be integral has some type of advantage,
+even with auto CTS?
+
+
+> Finally could you add the plat_data tmds table as a separate patch to sim=
+plify review ?
+
+Sure.  I'm probably not going to be able to post the patch to actually
+use it, so I guess we could just not bother applying the 2nd patch
+unless someone ever needs it.
+
+-Doug
