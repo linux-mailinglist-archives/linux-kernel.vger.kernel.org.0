@@ -2,93 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2174A4C08A
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 20:09:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7B1E24C08D
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 20:10:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729681AbfFSSJJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Jun 2019 14:09:09 -0400
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:37705 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726191AbfFSSJJ (ORCPT
+        id S1729554AbfFSSKw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Jun 2019 14:10:52 -0400
+Received: from smtprelay0174.hostedemail.com ([216.40.44.174]:56895 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726175AbfFSSKw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Jun 2019 14:09:09 -0400
-Received: by mail-ot1-f65.google.com with SMTP id s20so20265029otp.4;
-        Wed, 19 Jun 2019 11:09:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to;
-        bh=7YcByxGXUw5LMc+rlNuhB508AqJoOvFBfjRJvJRAQ7Y=;
-        b=oRJsiyoE84TBWpFKdwgGnUjy0ejDq4xWJTDXx5BajtyDJ4RHy5NAAc70RqB1VeiPjs
-         B5hCzHUF4bvK5EKQOZUB4xoXM7lyx4LLP2HbDONB016tQpKenc0W0dAhXzRFjGHiBcTk
-         vYWY8g6GV/Vch1CLLasHLAPxfNtZMM12CBwrCXcBY8WiPZZmYG87WkDbuLIGxr2/7oFC
-         SAlGNP/0PXElpQsyBZC01qwaex0pFV5Aom3Up91zPx4vrxeXZUKST9Vt0B1LWKWyxuu2
-         HdwI7trWUinGJD+3l8jCmx8vRTR8LX3xviBQH8MiKbPODTJsBkYTQbshui2KKC51j8AH
-         88jA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to;
-        bh=7YcByxGXUw5LMc+rlNuhB508AqJoOvFBfjRJvJRAQ7Y=;
-        b=MEflbk9GIuT09egKeFKZ4KMTxfze5mn6OdSuWl9iu3r959nILtgogGo1u1y0y7+gmK
-         V4WmF1VTbf9/WEeGuF5+xVnqBg4pdbggmfpT0cwJrUuMneYZkOBI14VH0kM/gp2OwM9v
-         lza6i3UPXIvXZWgwKKubowZxfhVMz5zS25M8hfTC8l3qTPS3j16xGJml240w+vfRc+XI
-         QjXV3iAt/ENWhTbmwJGxCwxiQ5T4EBfZNbHJRw13YCdafGdXoTA1EzQXTBJFUE6tQNRn
-         vTE5TRIqeNlz4qvi6dMOaobxngd6mFG2Q6qKmRFSeZuenEg9FcyRR5hIIytlYKc7Ynr5
-         7hOw==
-X-Gm-Message-State: APjAAAU86MC95IBKAzECRYr9jcxMqpshACvJS+HWL5n9S0/odaQWTVEw
-        QY0fPtFQg/6fZga1rdJqWkPm5OkVStlBTTDNTbk=
-X-Google-Smtp-Source: APXvYqx1IN2EoKUQWCI8vjuPw1ijUb3IvGgsjr+DRMccro7g4XMVK6WzWLdqpOvQHGmGBfeLCbCd3wJlQvNhTbLKtFc=
-X-Received: by 2002:a9d:7245:: with SMTP id a5mr32776501otk.232.1560967748321;
- Wed, 19 Jun 2019 11:09:08 -0700 (PDT)
+        Wed, 19 Jun 2019 14:10:52 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay03.hostedemail.com (Postfix) with ESMTP id 311F7837F27D;
+        Wed, 19 Jun 2019 18:10:50 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::::::::::::,RULES_HIT:41:355:379:599:800:960:967:973:982:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1540:1593:1594:1711:1730:1747:1777:1792:2198:2199:2393:2525:2553:2559:2563:2682:2685:2731:2828:2859:2933:2937:2939:2942:2945:2947:2951:2954:3022:3138:3139:3140:3141:3142:3352:3622:3865:3867:3868:3870:3871:3872:3873:3934:3936:3938:3941:3944:3947:3950:3953:3956:3959:4250:4321:5007:6119:6742:7903:8957:9010:9025:10004:10400:10848:11232:11658:11914:12043:12438:12555:12663:12679:12740:12760:12895:13019:13069:13073:13095:13311:13357:13439:14181:14659:14721:21080:21324:21365:21433:21451:21627:21740:30054:30060:30083:30090:30091,0,RBL:error,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:34,LUA_SUMMARY:none
+X-HE-Tag: way23_7b66ca55ffa0b
+X-Filterd-Recvd-Size: 2550
+Received: from XPS-9350 (cpe-23-242-196-136.socal.res.rr.com [23.242.196.136])
+        (Authenticated sender: joe@perches.com)
+        by omf04.hostedemail.com (Postfix) with ESMTPA;
+        Wed, 19 Jun 2019 18:10:47 +0000 (UTC)
+Message-ID: <6bb0ac7f70a12a4bb9cb6238b4e50e23674bde43.camel@perches.com>
+Subject: Re: [PATCH] net/ipv4: fib_trie: Avoid cryptic ternary expressions
+From:   Joe Perches <joe@perches.com>
+To:     Nick Desaulniers <ndesaulniers@google.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Matthias Kaehlcke <mka@chromium.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
+        Alexander Duyck <alexander.h.duyck@redhat.com>,
+        netdev@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        Nathan Huckleberry <nhuck@google.com>,
+        clang-built-linux <clang-built-linux@googlegroups.com>,
+        Nathan Chancellor <natechancellor@gmail.com>
+Date:   Wed, 19 Jun 2019 11:10:46 -0700
+In-Reply-To: <CAKwvOdkJCt7Du01e3LreLdpREPuZXWYnUad6WzqwO_o4i0yk7A@mail.gmail.com>
+References: <20190618211440.54179-1-mka@chromium.org>
+         <20190618230420.GA84107@archlinux-epyc>
+         <CAKwvOd=i2qsEO90cHn-Zvgd7vbhK5Z4RH89gJGy=Cjzbi9QRMA@mail.gmail.com>
+         <f22006fedb0204ad05858609bc9d3ed0abc6078e.camel@perches.com>
+         <CAKwvOdkJCt7Du01e3LreLdpREPuZXWYnUad6WzqwO_o4i0yk7A@mail.gmail.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.30.5-0ubuntu0.18.10.1 
 MIME-Version: 1.0
-References: <20190617183507.14160-1-prsriva02@gmail.com> <20190617183507.14160-3-prsriva02@gmail.com>
- <1560952466.3975.40.camel@linux.ibm.com>
-In-Reply-To: <1560952466.3975.40.camel@linux.ibm.com>
-From:   prakhar srivastava <prsriva02@gmail.com>
-Date:   Wed, 19 Jun 2019 11:08:56 -0700
-Message-ID: <CAEFn8qK9Tg99PA_=Ukm=CwSE6ajjUL2FxLs0ZiVdGLvG_baK_A@mail.gmail.com>
-Subject: Re: [PATCH 2/3] IMA:Define a new template field buf
-To:     Mimi Zohar <zohar@linux.ibm.com>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-<snip>
-> >       if (iint->measured_pcrs & (0x1 << pcr))
-> > diff --git a/security/integrity/ima/ima_init.c b/security/integrity/ima/ima_init.c
-> > index 993d0f1915ff..c8591406c0e2 100644
-> > --- a/security/integrity/ima/ima_init.c
-> > +++ b/security/integrity/ima/ima_init.c
-> > @@ -50,7 +50,7 @@ static int __init ima_add_boot_aggregate(void)
-> >       struct ima_template_entry *entry;
-> >       struct integrity_iint_cache tmp_iint, *iint = &tmp_iint;
-> >       struct ima_event_data event_data = {iint, NULL, boot_aggregate_name,
-> > -                                         NULL, 0, NULL};
-> > +                                         NULL, 0, NULL, NULL, 0};
-> >       int result = -ENOMEM;
-> >       int violation = 0;
-> >       struct {
-> >
->
-> These changes shouldn't be necessary.  Please rebase these patches on
-> top of the latest next-queued-testing branch (git remote update).  "IMA: support for per
-> policy rule template formats" is still changing.
->
-> Minor nit.  When re-posting the patches please update the patch titles
-> so that there is a space between the subsystem name and the patch
-> title (eg. "ima: define ...").
->
-I believe the above event_data changes are needed, to store/read the
-buffer length and buffer itself. The only exception will be if needed will be to
-remove ima-buf as a template instead used a template_fmt in the policy
-with KEXEC_CMDLINE from the "IMA: support for per
- policy rule template formats" is still changing.".
-In my view even ima-buf is needed as it simplifies the usage.
+On Wed, 2019-06-19 at 10:41 -0700, Nick Desaulniers wrote:
+> On Wed, Jun 19, 2019 at 2:36 AM Joe Perches <joe@perches.com> wrote:
+> > On Tue, 2019-06-18 at 16:23 -0700, Nick Desaulniers wrote:
+> > > As a side note, I'm going to try to see if MAINTAINERS and
+> > > scripts/get_maintainers.pl supports regexes on the commit messages in
+> > > order to cc our mailing list
+> > 
+> > Neither.  Why should either?
+> 
+> Looks like `K:` is exactly what I'm looking for.
 
-Please let me know if I misunderstood your comment.
-> Mimi
->
+Using K: for commit message content isn't the intended
+use, but if it works for you, fine by me.
+
+> Joe, how does:
+> https://github.com/ClangBuiltLinux/linux/commit/a0a64b8d65c4e7e033f49e48cc610d6e4002927e
+> look?
+
+You might consider using
+
+K:	\b(?i:clang|llvm)\b
+
+to get case insensitive matches.
+
+> Is there a maintainer for MAINTAINERS or do I just send the
+> patch to Linus?
+
+Generally MAINTAINER patches go via Andrew Morton or
+indirectly along with other changes via a pull request
+to Linus.
+
+
+
