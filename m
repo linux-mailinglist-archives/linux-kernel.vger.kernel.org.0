@@ -2,96 +2,207 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 380B24B038
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 04:45:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0CDAB4B049
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 04:58:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729930AbfFSCp1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 18 Jun 2019 22:45:27 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:35760 "EHLO
+        id S1730172AbfFSC6V (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 18 Jun 2019 22:58:21 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:43154 "EHLO
         userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726181AbfFSCp0 (ORCPT
+        with ESMTP id S1726330AbfFSC6V (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 18 Jun 2019 22:45:26 -0400
+        Tue, 18 Jun 2019 22:58:21 -0400
 Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5J2iICo061175;
-        Wed, 19 Jun 2019 02:45:13 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
- from : references : date : in-reply-to : message-id : mime-version :
- content-type; s=corp-2018-07-02;
- bh=VLQ+HJbgpmoE8VBgWRCt6rLQFlu2VXg32E2waD5MT30=;
- b=bho3lQ9P1UvLWrwwphxjVAciAdEAd9lo/bfkq982ti7mKMtMII6hks+x2Y4U8F1WQljN
- pFkkBHe1nWQag+EqBnmIVZDZrMnvrRI7vFFeZoUE3jTHrVXRZXX4KeQANWeCwFQL+JEJ
- bLNXV0UcxGP38VXgri+CmgltB7JY+nMltHaat08c6ryNEkB6YuULpnI34wIls4ayBwCg
- 0OogoKEQHq5MVQtd95KfY0SmYYZtKLPFg8g8GwJA1x/RCCcOSkkhkXSK2CK7HqRX7Wkb
- 7lGU93c4sppTJ7nm0Ewh8sYbve2guc9OQlt80DHdl60gB/vMQ4c/JRiHbuXK1qPOOshl zw== 
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5J2nJj5064244;
+        Wed, 19 Jun 2019 02:57:15 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=jowh4Q4xUHQyWNPimAhffMpXX6KZ+2w3g3sh8AxxwsY=;
+ b=Pmi20vm4sK9eiMf5uhJceBaQ4Y1ZODgWavxSLVk4GF4GC0ls8cALPJ9JZMccAIQzJmQY
+ sa6qSQELNDc86Ohi8ifXjwETuCdRl81AtVDE+doTgL53HDCeAVrvgLazXjqpAL0OX6h3
+ dDX6xU+tLNOCY7yMZX9oUZcUG7/bfDoVZxWKu5EG+tjHNrTRXgzjp1TJePfIDJcBmokJ
+ ikHePLDKgP5sj+tBMMeztwvvoOu578sH0RNALB6boHSPtTlRC5Wf3sRZ7ehvBdWNfD3c
+ TAOwTwWjUSmxXBZHVdYku53tF2EORDBQnezjpABr0IZ0dFAKNM+rc8R7AF2J4rTVDjn7 kg== 
 Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by userp2130.oracle.com with ESMTP id 2t78098pw5-1
+        by userp2130.oracle.com with ESMTP id 2t78098qmq-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 19 Jun 2019 02:45:12 +0000
+        Wed, 19 Jun 2019 02:57:15 +0000
 Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5J2heaa091822;
-        Wed, 19 Jun 2019 02:45:12 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by userp3030.oracle.com with ESMTP id 2t77ymtthw-1
+        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5J2raEA106635;
+        Wed, 19 Jun 2019 02:55:15 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userp3030.oracle.com with ESMTP id 2t77ymtvjh-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 19 Jun 2019 02:45:12 +0000
-Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x5J2jBuH000851;
-        Wed, 19 Jun 2019 02:45:11 GMT
-Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
+        Wed, 19 Jun 2019 02:55:14 +0000
+Received: from abhmp0002.oracle.com (abhmp0002.oracle.com [141.146.116.8])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x5J2tD25016091;
+        Wed, 19 Jun 2019 02:55:13 GMT
+Received: from [10.156.74.184] (/10.156.74.184)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 18 Jun 2019 19:45:11 -0700
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc:     Kashyap Desai <kashyap.desai@broadcom.com>,
-        Sumit Saxena <sumit.saxena@broadcom.com>,
-        Shivasharan S <shivasharan.srikanteshwara@broadcom.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        megaraidlinux.pdl@broadcom.com, linux-scsi@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] scsi: megaraid_sas: Use struct_size() helper
-From:   "Martin K. Petersen" <martin.petersen@oracle.com>
-Organization: Oracle Corporation
-References: <20190607184053.GA11513@embeddedor>
-Date:   Tue, 18 Jun 2019 22:45:08 -0400
-In-Reply-To: <20190607184053.GA11513@embeddedor> (Gustavo A. R. Silva's
-        message of "Fri, 7 Jun 2019 13:40:53 -0500")
-Message-ID: <yq1h88mwax7.fsf@oracle.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1.92 (gnu/linux)
+        with ESMTP ; Tue, 18 Jun 2019 19:55:13 -0700
+Subject: Re: [RFC PATCH 13/16] drivers/xen: gnttab, evtchn, xenbus API changes
+To:     Juergen Gross <jgross@suse.com>, linux-kernel@vger.kernel.org,
+        xen-devel@lists.xenproject.org
+Cc:     pbonzini@redhat.com, boris.ostrovsky@oracle.com,
+        konrad.wilk@oracle.com, sstabellini@kernel.org,
+        joao.m.martins@oracle.com
+References: <20190509172540.12398-1-ankur.a.arora@oracle.com>
+ <20190509172540.12398-14-ankur.a.arora@oracle.com>
+ <2c025112-aaeb-0918-ff01-10842d285314@suse.com>
+From:   Ankur Arora <ankur.a.arora@oracle.com>
+Message-ID: <dc57c816-bceb-d4bb-af83-579bae58529f@oracle.com>
+Date:   Tue, 18 Jun 2019 19:55:57 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <2c025112-aaeb-0918-ff01-10842d285314@suse.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9292 signatures=668687
 X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=653
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
  adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1906190020
+ engine=8.0.1-1810050000 definitions=main-1906190021
 X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9292 signatures=668687
 X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
  suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=698 adultscore=0
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1906190020
+ definitions=main-1906190021
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 6/17/19 3:07 AM, Juergen Gross wrote:
+> On 09.05.19 19:25, Ankur Arora wrote:
+>> Mechanical changes, now most of these calls take xenhost_t *
+>> as parameter.
+>>
+>> Co-developed-by: Joao Martins <joao.m.martins@oracle.com>
+>> Signed-off-by: Ankur Arora <ankur.a.arora@oracle.com>
+>> ---
+>>   drivers/xen/cpu_hotplug.c     | 14 ++++++-------
+>>   drivers/xen/gntalloc.c        | 13 ++++++++----
+>>   drivers/xen/gntdev.c          | 16 +++++++++++----
+>>   drivers/xen/manage.c          | 37 ++++++++++++++++++-----------------
+>>   drivers/xen/platform-pci.c    | 12 +++++++-----
+>>   drivers/xen/sys-hypervisor.c  | 12 ++++++++----
+>>   drivers/xen/xen-balloon.c     | 10 +++++++---
+>>   drivers/xen/xenfs/xenstored.c |  7 ++++---
+>>   8 files changed, 73 insertions(+), 48 deletions(-)
+>>
+>> diff --git a/drivers/xen/cpu_hotplug.c b/drivers/xen/cpu_hotplug.c
+>> index afeb94446d34..4a05bc028956 100644
+>> --- a/drivers/xen/cpu_hotplug.c
+>> +++ b/drivers/xen/cpu_hotplug.c
+>> @@ -31,13 +31,13 @@ static void disable_hotplug_cpu(int cpu)
+>>       unlock_device_hotplug();
+>>   }
+>> -static int vcpu_online(unsigned int cpu)
+>> +static int vcpu_online(xenhost_t *xh, unsigned int cpu)
+> 
+> Do we really need xenhost for cpu on/offlinig?
+I was in two minds about this. We only need it for the xenbus
+interfaces which could very well have been just xh_default.
 
-Gustavo,
+However, the xenhost is part of the xenbus_watch state, so
+I thought it is easier to percolate that down instead of
+adding xh_default all over the place.
 
-> One of the more common cases of allocation size calculations is finding
-> the size of a structure that has a zero-sized array at the end, along
-> with memory for some number of elements for that array. For example:
->
-> struct MR_PD_CFG_SEQ_NUM_SYNC {
-> 	...
->         struct MR_PD_CFG_SEQ seq[1];
-> } __packed;
->
-> Make use of the struct_size() helper instead of an open-coded version
-> in order to avoid any potential type mistakes.
+> 
+>> diff --git a/drivers/xen/manage.c b/drivers/xen/manage.c
+>> index 9a69d955dd5c..1655d0a039fd 100644
+>> --- a/drivers/xen/manage.c
+>> +++ b/drivers/xen/manage.c
+>> @@ -227,14 +227,14 @@ static void shutdown_handler(struct xenbus_watch 
+>> *watch,
+>>           return;
+>>    again:
+>> -    err = xenbus_transaction_start(xh_default, &xbt);
+>> +    err = xenbus_transaction_start(watch->xh, &xbt);
+>>       if (err)
+>>           return;
+>> -    str = (char *)xenbus_read(xh_default, xbt, "control", "shutdown", 
+>> NULL);
+>> +    str = (char *)xenbus_read(watch->xh, xbt, "control", "shutdown", 
+>> NULL);
+>>       /* Ignore read errors and empty reads. */
+>>       if (XENBUS_IS_ERR_READ(str)) {
+>> -        xenbus_transaction_end(xh_default, xbt, 1);
+>> +        xenbus_transaction_end(watch->xh, xbt, 1);
+>>           return;
+>>       }
+>> @@ -245,9 +245,9 @@ static void shutdown_handler(struct xenbus_watch 
+>> *watch,
+>>       /* Only acknowledge commands which we are prepared to handle. */
+>>       if (idx < ARRAY_SIZE(shutdown_handlers))
+>> -        xenbus_write(xh_default, xbt, "control", "shutdown", "");
+>> +        xenbus_write(watch->xh, xbt, "control", "shutdown", "");
+>> -    err = xenbus_transaction_end(xh_default, xbt, 0);
+>> +    err = xenbus_transaction_end(watch->xh, xbt, 0);
+>>       if (err == -EAGAIN) {
+>>           kfree(str);
+>>           goto again;
+>> @@ -272,10 +272,10 @@ static void sysrq_handler(struct xenbus_watch 
+>> *watch, const char *path,
+>>       int err;
+>>    again:
+>> -    err = xenbus_transaction_start(xh_default, &xbt);
+>> +    err = xenbus_transaction_start(watch->xh, &xbt);
+>>       if (err)
+>>           return;
+>> -    err = xenbus_scanf(xh_default, xbt, "control", "sysrq", "%c", 
+>> &sysrq_key);
+>> +    err = xenbus_scanf(watch->xh, xbt, "control", "sysrq", "%c", 
+>> &sysrq_key);
+>>       if (err < 0) {
+>>           /*
+>>            * The Xenstore watch fires directly after registering it and
+>> @@ -287,21 +287,21 @@ static void sysrq_handler(struct xenbus_watch 
+>> *watch, const char *path,
+>>           if (err != -ENOENT && err != -ERANGE)
+>>               pr_err("Error %d reading sysrq code in control/sysrq\n",
+>>                      err);
+>> -        xenbus_transaction_end(xh_default, xbt, 1);
+>> +        xenbus_transaction_end(watch->xh, xbt, 1);
+>>           return;
+>>       }
+>>       if (sysrq_key != '\0') {
+>> -        err = xenbus_printf(xh_default, xbt, "control", "sysrq", 
+>> "%c", '\0');
+>> +        err = xenbus_printf(watch->xh, xbt, "control", "sysrq", "%c", 
+>> '\0');
+>>           if (err) {
+>>               pr_err("%s: Error %d writing sysrq in control/sysrq\n",
+>>                      __func__, err);
+>> -            xenbus_transaction_end(xh_default, xbt, 1);
+>> +            xenbus_transaction_end(watch->xh, xbt, 1);
+>>               return;
+>>           }
+>>       }
+>> -    err = xenbus_transaction_end(xh_default, xbt, 0);
+>> +    err = xenbus_transaction_end(watch->xh, xbt, 0);
+>>       if (err == -EAGAIN)
+>>           goto again;
+>> @@ -324,14 +324,14 @@ static struct notifier_block xen_reboot_nb = {
+>>       .notifier_call = poweroff_nb,
+>>   };
+>> -static int setup_shutdown_watcher(void)
+>> +static int setup_shutdown_watcher(xenhost_t *xh)
+> 
+> I think shutdown is purely local, too.
+Yes, I introduced xenhost for the same reason as above.
 
-Applied to 5.3/scsi-queue, thanks!
+I agree that either of these cases (and similar others) have no use
+for the concept of xenhost. Do you think it makes sense for these
+to pass NULL instead and the underlying interface would just assume
+xh_default.
 
--- 
-Martin K. Petersen	Oracle Linux Engineering
+Ankur
+
+> 
+> 
+> Juergen
