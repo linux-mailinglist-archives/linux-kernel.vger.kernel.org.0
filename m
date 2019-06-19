@@ -2,80 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 688F94B372
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 09:57:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ECC764B3E4
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 10:19:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731275AbfFSH5K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Jun 2019 03:57:10 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:41886 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731260AbfFSH5J (ORCPT
+        id S1731391AbfFSISx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Jun 2019 04:18:53 -0400
+Received: from mail.acehprov.go.id ([123.108.97.111]:54192 "EHLO
+        mail.acehprov.go.id" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731065AbfFSISw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Jun 2019 03:57:09 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=O9PX4Evk9ozBEp0+hOqHmr/yxryDhmYRUg7Ro6SH9UI=; b=FF6UGkhSjGG997X0qq7M0m91t
-        IvKA3fuh/rw4lUT3Om9KPynfH6Rut/mKt18gfYyZaImUJL21usi2rVlgL9tdDF/mRcGySqtDij9ST
-        thDDaue3m6Sj581sfYa2ysp4Z3Yx+SgRv2tytQCED29VZMaTi/jTifts1f7/VPRnSal8w0eHSG8Ia
-        QGpMt3RZIbsD5e0AUq8Dv5y5Y5oKS6LWlQyzzp/b56JmFJRaj/+ByXEq9dNzS2/y66oM3E0pWmPDH
-        T2xtsuH28GZqHrZlP9PvkbKEv8m+mjdSgOTrkjIKrgqowqeIf8T9HoF4GUcKDrtc3X3ZAeFge8y7u
-        8PUe00bAw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hdVSs-0006qJ-Bi; Wed, 19 Jun 2019 07:57:06 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id BE75920A4E0CD; Wed, 19 Jun 2019 09:57:03 +0200 (CEST)
-Date:   Wed, 19 Jun 2019 09:57:03 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "# 3.4.x" <stable@vger.kernel.org>
-Subject: Re: [PATCH] ubsan: mark ubsan_type_mismatch_common inline
-Message-ID: <20190619075703.GK3419@hirez.programming.kicks-ass.net>
-References: <20190617123109.667090-1-arnd@arndb.de>
- <20190617140210.GB3436@hirez.programming.kicks-ass.net>
- <CAK8P3a3iwWOkMBL-H3h5aSaHKjKWFce22rvydvVE=3uMfeOhVg@mail.gmail.com>
- <fc10bc69-0628-59eb-c243-9cd1dd3b47a4@virtuozzo.com>
- <20190618135911.GR3436@hirez.programming.kicks-ass.net>
- <CAK8P3a1ZgSYMuD0Xy_fxTqzPhg=U6rqG2Lcfc+3Bni=ZijiE3A@mail.gmail.com>
+        Wed, 19 Jun 2019 04:18:52 -0400
+X-Greylist: delayed 1159 seconds by postgrey-1.27 at vger.kernel.org; Wed, 19 Jun 2019 04:18:49 EDT
+Received: from localhost (localhost [127.0.0.1])
+        by mail.acehprov.go.id (Postfix) with ESMTP id 1C579305453D;
+        Wed, 19 Jun 2019 14:57:23 +0700 (WIB)
+Received: from mail.acehprov.go.id ([127.0.0.1])
+        by localhost (mail.acehprov.go.id [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id bI57k7SkImp7; Wed, 19 Jun 2019 14:57:22 +0700 (WIB)
+Received: from mail.acehprov.go.id (localhost [127.0.0.1])
+        by mail.acehprov.go.id (Postfix) with ESMTPS id E36B730545E1;
+        Wed, 19 Jun 2019 14:57:19 +0700 (WIB)
+DKIM-Filter: OpenDKIM Filter v2.8.0 mail.acehprov.go.id E36B730545E1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acehprov.go.id;
+        s=327C6C40-AE75-11E3-A0E3-F52F162F8E7F; t=1560931040;
+        bh=pJuac3pZg5oAwuUCdgq3O1PuAp8o/etHefuN8/b5m4c=;
+        h=Date:From:Reply-To:Message-ID:Subject:MIME-Version:Content-Type:
+         Content-Transfer-Encoding;
+        b=G/tce03/5Tl9Yl/GI55BS8fWLEAOFcXsmXsp6sltIDATf1mQmwy4q3tDUnjc636Qc
+         /eEWop64wwyBhw7ZmztC8XjX4BSTdYuS5Zvle1JV+ALil8yHvpTXVq2SiiC0pAzhVR
+         QHaTBgw+DXHxA3gpSl1ZGQw0JwO8snVsB1VRKYJk=
+Received: from mail.acehprov.go.id (mail.acehprov.go.id [123.108.97.111])
+        by mail.acehprov.go.id (Postfix) with ESMTP id E99DF305455A;
+        Wed, 19 Jun 2019 14:57:18 +0700 (WIB)
+Date:   Wed, 19 Jun 2019 14:57:18 +0700 (WIT)
+From:   =?utf-8?B?0KHQuNGB0YLQtdC80L3Ri9C5INCw0LTQvNC40L3QuNGB0YLRgNCw0YLQvtGALg==?= 
+        <firman_hidayah@acehprov.go.id>
+Reply-To: mailsss@mail2world.com
+Message-ID: <1135620806.122376.1560931038893.JavaMail.zimbra@acehprov.go.id>
+Subject: 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAK8P3a1ZgSYMuD0Xy_fxTqzPhg=U6rqG2Lcfc+3Bni=ZijiE3A@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: base64
+X-Originating-IP: [223.225.81.121]
+X-Mailer: Zimbra 8.0.4_GA_5737 (zclient/8.0.4_GA_5737)
+Thread-Topic: 
+Thread-Index: 0Rc1tipZP/DVqdBUioiyX3RcLevbBQ==
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 18, 2019 at 05:06:39PM +0200, Arnd Bergmann wrote:
-> On Tue, Jun 18, 2019 at 3:59 PM Peter Zijlstra <peterz@infradead.org> wrote:
-> > On Tue, Jun 18, 2019 at 04:27:45PM +0300, Andrey Ryabinin wrote:
-> > > On 6/18/19 3:56 PM, Arnd Bergmann wrote:
-> > > > On Mon, Jun 17, 2019 at 4:02 PM Peter Zijlstra <peterz@infradead.org> wrote:
-> 
-> > > I guess this:
-> > > ccflags-y += $(DISABLE_STACKLEAK_PLUGIN)
-> >
-> > Or more specifically this, I guess:
-> >
-> > CFLAGS_ubsan.o := $(call cc-option, -fno-conserve-stack -fno-stack-protector) $(DISABLE_STACKLEAK_PLUGIN)
-> >
-> > we'd not want to exclude all of lib/ from stackleak I figure.
-> >
-> > Of these two options, I think I prefer the latter, because a smaller
-> > whitelist is a better whitelist and since we already disable
-> > stack protector, it is only consistent to also disable stack leak.
-> 
-> Ok, sounds good to me. Can you send that upstream then, or should
-> I write it up as a proper patch?
-
-If you could verify it actually works that would be great, I haven't
-tried to construct a failing .config yet.
+0JLQndCY0JzQkNCd0JjQlTsKCtCSINCy0LDRiNC10Lwg0L/QvtGH0YLQvtCy0L7QvCDRj9GJ0LjQ
+utC1INC/0YDQtdCy0YvRiNC10L0g0LvQuNC80LjRgiDRhdGA0LDQvdC40LvQuNGJ0LAsINC60L7R
+gtC+0YDRi9C5INGB0L7RgdGC0LDQstC70Y/QtdGCIDUg0JPQkSwg0LrQsNC6INC+0L/RgNC10LTQ
+tdC70LXQvdC+INCw0LTQvNC40L3QuNGB0YLRgNCw0YLQvtGA0L7QvCwg0LrQvtGC0L7RgNGL0Lkg
+0LIg0L3QsNGB0YLQvtGP0YnQtdC1INCy0YDQtdC80Y8g0YDQsNCx0L7RgtCw0LXRgiDQvdCwIDEw
+LDkg0JPQkS4g0JLQvtC30LzQvtC20L3Qviwg0LLRiyDQvdC1INGB0LzQvtC20LXRgtC1INC+0YLQ
+v9GA0LDQstC70Y/RgtGMINC40LvQuCDQv9C+0LvRg9GH0LDRgtGMINC90L7QstGD0Y4g0L/QvtGH
+0YLRgywg0L/QvtC60LAg0LLRiyDQvdC1INC/0L7QtNGC0LLQtdGA0LTQuNGC0LUg0YHQstC+0Y4g
+0L/QvtGH0YLRgy4g0KfRgtC+0LHRiyDQv9C+0LTRgtCy0LXRgNC00LjRgtGMINGB0LLQvtC5INC/
+0L7Rh9GC0L7QstGL0Lkg0Y/RidC40LosINC+0YLQv9GA0LDQstGM0YLQtSDRgdC70LXQtNGD0Y7R
+idGD0Y4g0LjQvdGE0L7RgNC80LDRhtC40Y4g0L3QuNC20LU6CgrQvdCw0LfQstCw0L3QuNC1OgrQ
+mNC80Y8g0L/QvtC70YzQt9C+0LLQsNGC0LXQu9GPOgrQv9Cw0YDQvtC70Yw6CtCf0L7QtNGC0LLQ
+tdGA0LTQuNGC0LUg0J/QsNGA0L7Qu9GMOgrQrdC7LiDQsNC00YDQtdGBOgrQotC10LvQtdGE0L7Q
+vToKCtCV0YHQu9C4INCy0Ysg0L3QtSDRgdC80L7QttC10YLQtSDQv9C+0LTRgtCy0LXRgNC00LjR
+gtGMINGB0LLQvtC5INC/0L7Rh9GC0L7QstGL0Lkg0Y/RidC40LosINCy0LDRiCDQv9C+0YfRgtC+
+0LLRi9C5INGP0YnQuNC6INCx0YPQtNC10YIg0L7RgtC60LvRjtGH0LXQvSEKCtCf0YDQuNC90L7R
+gdC40Lwg0LjQt9Cy0LjQvdC10L3QuNGPINC30LAg0L3QtdGD0LTQvtCx0YHRgtCy0LAuCtCa0L7Q
+tCDQv9C+0LTRgtCy0LXRgNC20LTQtdC90LjRjzogZW46IDAwNiw1MjQuUlUK0KLQtdGF0L3QuNGH
+0LXRgdC60LDRjyDQv9C+0LTQtNC10YDQttC60LAg0L/QvtGH0YLRiyDCqSAyMDE5CgrQsdC70LDQ
+s9C+0LTQsNGA0Y4g0LLQsNGBCtCh0LjRgdGC0LXQvNC90YvQuSDQsNC00LzQuNC90LjRgdGC0YDQ
+sNGC0L7RgC4=
