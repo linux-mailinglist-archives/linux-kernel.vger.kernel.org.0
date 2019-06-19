@@ -2,79 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9DF4E4BC5F
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 17:06:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5A9544BB2A
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 16:19:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730210AbfFSPGO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Jun 2019 11:06:14 -0400
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:46314 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730164AbfFSPGK (ORCPT
+        id S1729859AbfFSOT2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Jun 2019 10:19:28 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:41482 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726689AbfFSOT2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Jun 2019 11:06:10 -0400
-Received: by mail-lf1-f67.google.com with SMTP id z15so12371463lfh.13
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2019 08:06:09 -0700 (PDT)
+        Wed, 19 Jun 2019 10:19:28 -0400
+Received: by mail-pf1-f194.google.com with SMTP id m30so9841934pff.8
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2019 07:19:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lixom-net.20150623.gappssmtp.com; s=20150623;
+        d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=bi/NrYG+8sOnuxk9q70QkcnFR1MkzWvqPkJLzNB9EUY=;
-        b=bkynCYDZirwIrahFMCwUlYTHjTAyuCDr5SeJY6dLXr4s5kETTWeNYIkUC2JCIHgjXd
-         hTR18j+Vq+TjLDHN7RAjmoT95KMKsHGv/g8kEKouOuVTPWFCu2xAf4r+t5rcB6V60pV1
-         q8YKqP98KHr/LFnX5XuAHmo8AIWk2hjZ0vo2H9c8Ai9BGHZu9beLZ/GVBo+fHz0BLe+O
-         Jii8meli6T2ciJV+5hhEQywiCj6ngKyAP4ojML+sNjaeH/Sd63oTvcuprq+L/RcsHJ7p
-         70p07j37cX2UdHPgjgt9NhpdOZ1CD58Npafqa0WiNQJLstZDbDpo+GJRtm4W5R6hd2KS
-         o6/g==
+        bh=PEI8Fh7ieFXqGBrFSnKZWlQnMv0luEiXTnHXkZ6G908=;
+        b=Flnxb0rv5SjdEq2CKX8JHqbKsFM0KVjZtMPocQih0yh/tlHcXNp+gTJF1d3aatDuKG
+         Nc0s++FslvZhpEtaargu2qhErlHO8T6DlrJomDt3JuVsYnib4Z04ZvwRAmoKoTpnlV56
+         h2PhrigWUEQpjcUzByjv8A7f84QU/Iw9e44BFhVDUabu8HrtzZLlE15kBah3mIcWcCFE
+         0OJqCPAq1yVhQoRxI5LOCY+v/m9Nt/Y+5QUVkoOTnhCn7RpD54S4i6rcpUjMZ1Ex6IgW
+         pP0NL+qPzV2G9oMryq/+573XRpBVwpqLrrUzBVM4C0Y32h9GCbk4RcVQF3pgk1yWzQHA
+         xznQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=bi/NrYG+8sOnuxk9q70QkcnFR1MkzWvqPkJLzNB9EUY=;
-        b=dd7+vKBqy2Gd/Gm/3NwdhxleTl7brUAmHJcyCXwiTjy88F4Qk3g5Wd0a8HCXyxx3Pc
-         75VAgtky5Vhihx/OlZsupmCGzWMufH7KAH4i6zoZte9eVzScxpOc7lTSBwtGtsu0GGZ+
-         hCjMV/y98f5kpu9IGvNUyN/AtzZeig2UwcIeuUVfU1eRUrisMwRExwPamydsDCJceXVB
-         EL3VOYICJON3UsX/obfQCgeC3GZVrwixv+NT0W9vKc4S/3IIEh5aebqw7rhdExs5Rmny
-         EXMHhn7+dlBf6D7h/k+ZR+2bCg4/DJd0YEQh/7OBha2JQ70pjH4u/Pz/aKed+zC++RwJ
-         NOQQ==
-X-Gm-Message-State: APjAAAUYOrhRB1RtHlktACFoGeqMoD7+txWqW8i7pJvpvo0ollUyc9s2
-        mFlaSohsJb9tMwrYkwTy71FNEg==
-X-Google-Smtp-Source: APXvYqyiBsf9vdQVTu7mhmXMLSLNX4OELuXE3oFCKOSyKLuJ/4ZLE4f8StUo2YggWubm0wcbIy7+TQ==
-X-Received: by 2002:ac2:5981:: with SMTP id w1mr41997022lfn.48.1560956768945;
-        Wed, 19 Jun 2019 08:06:08 -0700 (PDT)
-Received: from localhost (h85-30-9-151.cust.a3fiber.se. [85.30.9.151])
-        by smtp.gmail.com with ESMTPSA id f16sm3047807lfc.81.2019.06.19.08.06.06
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 19 Jun 2019 08:06:06 -0700 (PDT)
-Date:   Wed, 19 Jun 2019 07:18:22 -0700
-From:   Olof Johansson <olof@lixom.net>
-To:     Neil Armstrong <narmstrong@baylibre.com>
-Cc:     arm@kernel.org, linux-kernel@vger.kernel.org, arnd@arndb.de,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 2/2] ARM: multi_v7_defconfig: enable Lima driver
-Message-ID: <20190619141822.vwcfyhatlsa5x4cn@localhost>
-References: <20190606085645.31642-1-narmstrong@baylibre.com>
- <20190606085645.31642-2-narmstrong@baylibre.com>
+        bh=PEI8Fh7ieFXqGBrFSnKZWlQnMv0luEiXTnHXkZ6G908=;
+        b=XA/m0pwep/Yss8mgkZY6ya+lMYsMN+W2G9zWHtqoy6qpdGnxrR2lGOdduCYNB0ZnxX
+         UTFlyHgZzlZ6e5q/F+cIMf7Wm78m+XjPyXRaHa6LJcefmGofMf0jp9wg29Y8tS50XWB2
+         FlJKjj9ymNkdbWvF510b+LgXAfnJywn7JjBFWkrssQw8dVRfZY03vlRLqmaE4F49U+ur
+         5uzVfCFhp3Ju/8r3er2+p3GJorEWRiYY154tZ/9zuS1olrRFunh4LiEkI+r8TvUqfAcU
+         W6CU+Ou5JYct0N3x8Q8OyXKE7T2plI8wcfdFamx91RaKS7mCaG1va02JI3zeAfY7W2pn
+         FmCA==
+X-Gm-Message-State: APjAAAU9zoDa3qt/oX030S4qRU/0zGPu/rMnEvifdu/2zw1FUS5zFXF3
+        qpw3bpHgW8XcpUcV19c2lRE4QQ==
+X-Google-Smtp-Source: APXvYqxA6X8rzB/43IY/tGvTMR/odXg3L4My5wUefd93mYzS9onGsZtlYTlKN5dvV08YCESlYhOA0g==
+X-Received: by 2002:a62:d0:: with SMTP id 199mr93025140pfa.253.1560953967461;
+        Wed, 19 Jun 2019 07:19:27 -0700 (PDT)
+Received: from localhost ([122.172.66.84])
+        by smtp.gmail.com with ESMTPSA id e63sm21555025pgc.62.2019.06.19.07.19.26
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 19 Jun 2019 07:19:26 -0700 (PDT)
+Date:   Wed, 19 Jun 2019 19:49:24 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     "Rafael J. Wysocki" <rafael@kernel.org>
+Cc:     Rafael Wysocki <rjw@rjwysocki.net>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 3/6] cpufreq: Remove the has_target() check from notifier
+ handler
+Message-ID: <20190619141924.eud6hctk75ihgw27@vireshk-i7>
+References: <cover.1560944014.git.viresh.kumar@linaro.org>
+ <4008d21f166accfb28180eb804cb8ebda6da4f4d.1560944014.git.viresh.kumar@linaro.org>
+ <CAJZ5v0iR8oBZ2mM2vdHzTBNcjsHa6QtJmN+Q17Q8ZD-ny3qy3w@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190606085645.31642-2-narmstrong@baylibre.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <CAJZ5v0iR8oBZ2mM2vdHzTBNcjsHa6QtJmN+Q17Q8ZD-ny3qy3w@mail.gmail.com>
+User-Agent: NeoMutt/20180716-391-311a52
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 06, 2019 at 10:56:45AM +0200, Neil Armstrong wrote:
-> A bunch of armv7 boards can now use the Lima driver, let's enable it
-> in defconfig, it will be useful to have it enabled for KernelCI
-> boot and runtime testing.
+On 19-06-19, 14:25, Rafael J. Wysocki wrote:
+> On Wed, Jun 19, 2019 at 1:35 PM Viresh Kumar <viresh.kumar@linaro.org> wrote:
+> >
+> > cpufreq_notify_transition() is only called for has_target() type driver
+> > and not for set_policy type, and the check is simply redundant. Remove
+> > it.
 > 
-> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
-> ---
->  arch/arm/configs/multi_v7_defconfig | 1 +
->  1 file changed, 1 insertion(+)
+> Ah, OK
+> 
+> So this patch removes a check introduced by the previous one. :-)
+> 
+> Please merge them together.
 
-Applied, thanks!
+It made sense to keep them separate because there are two different
+issues I am fixing here. But if that is what you want, I will merge
+them.
 
-
--Olof
+-- 
+viresh
