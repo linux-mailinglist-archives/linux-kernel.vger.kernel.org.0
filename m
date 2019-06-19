@@ -2,84 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 893BE4B0D6
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 06:26:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 12A434B0DF
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 06:33:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726414AbfFSE0L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Jun 2019 00:26:11 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:43584 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726089AbfFSE0K (ORCPT
+        id S1726134AbfFSEdr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Jun 2019 00:33:47 -0400
+Received: from mail-io1-f65.google.com ([209.85.166.65]:44388 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725800AbfFSEdr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Jun 2019 00:26:10 -0400
-Received: by mail-pg1-f194.google.com with SMTP id f25so8879486pgv.10;
-        Tue, 18 Jun 2019 21:26:10 -0700 (PDT)
+        Wed, 19 Jun 2019 00:33:47 -0400
+Received: by mail-io1-f65.google.com with SMTP id s7so35008500iob.11
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2019 21:33:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=8r8ZWpOUsPGwi3ewR/uZDqYnd+4gRdP70o2Ut3enZJg=;
+        b=UaWBShTrnYRsceDDBA363Lc64o0CaKQi+IpRCeWxVUAMHn+rsf9Y49HflQ4pogw8JV
+         p4KbowerxNYdpuDV/r8hx0nMpySOiQK1ZhlSeD9rnXyP+6ZWzznl3soHOCa29wRPCkYz
+         +enC0VXBGqv2+7HP99/L/ymzjlqHph50BdfuPSb82+OcqVTCwjYJdMdgNmE90DjYweoh
+         +2xREyWppruclvZC7UTEW8skfjqAtSSv13g/5WmosUzrdBdA06Er1sZ/3OqrCSgGbxC1
+         b4KUnHPhpK9sl4Rq+m5G5MpalDdSEr4b9MnIR7usJP0VX9edYDcD4l4EUjTMHkwPdKbj
+         14uw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=6dbGllrGPx+AB7xYDZWRsiMxcNPPa7QATCKKPSd01l4=;
-        b=Y8JnYnv1CCz/L30StP5B5PwTpvR3HDv+2l56eaf4pvk4TqTy/GZ6C1kWkgIWvWdnQr
-         v/gEPJH1rZfOtvHV6BPU0vVNwdAV1ou5Nov/ZivvXFdyyZcIqbAJkLOvLhmLcfJdeQTO
-         YklATA5Y6TTvXdbE8toF7POtQcFMRWHIuzhsgpDdZJgdtAc2zkcl9t5ucAOUfcPAcpAN
-         5Q98L8BQZN9xyo23vgL1ph140+fq1sCzd2CZjLZ1Qfe9j9zo3ZDjis84VsKcRMTRkCy2
-         ObOvvX56hI3Dqf/m3M3Ij5Z61ksoYgNliDNMSGPja5ZgoJhifW7TgOR6JB3S3LbALR2H
-         ConQ==
-X-Gm-Message-State: APjAAAVyHf8FrWI8ESV6Genymjb9NcJ6lCIea0u/CK8TczKvyv85cyaC
-        QhIWRRj1Q/lJC+t16nysYBg=
-X-Google-Smtp-Source: APXvYqyd4rQz/H5sxyX5SLLyMicpCAUuJkcJ58CJaqs0nHDBMIfdXzH4vlS8kCGaCLHCT+SvW/qbog==
-X-Received: by 2002:a63:c5:: with SMTP id 188mr5948894pga.108.1560918369803;
-        Tue, 18 Jun 2019 21:26:09 -0700 (PDT)
-Received: from localhost ([2601:647:4700:b8cd:7726:b947:9a25:6e35])
-        by smtp.gmail.com with ESMTPSA id i25sm16892548pfr.73.2019.06.18.21.26.09
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 18 Jun 2019 21:26:09 -0700 (PDT)
-From:   Moritz Fischer <mdf@kernel.org>
-To:     gregkh@linuxfoundation.org
-Cc:     linux-fpga@vger.kernel.org, linux-kernel@vger.kernel.org,
-        atull@kernel.org, Enrico Weigelt <info@metux.net>,
-        Moritz Fischer <mdf@kernel.org>
-Subject: [PATCH 1/1] drivers: fpga: Kconfig: pedantic cleanups
-Date:   Tue, 18 Jun 2019 21:24:39 -0700
-Message-Id: <20190619042439.4705-2-mdf@kernel.org>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190619042439.4705-1-mdf@kernel.org>
-References: <20190619042439.4705-1-mdf@kernel.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=8r8ZWpOUsPGwi3ewR/uZDqYnd+4gRdP70o2Ut3enZJg=;
+        b=ao2UvoO/8kn/N9PJXsJCLeQ6imY6WYsFMDsVb3SKE0OAYWt8dqk6YaVCWEb+30/7cw
+         z6f9quaNXJfL+V0vJp0K3ItC/+AVFnzmVxOkqN1PVL6DudLjCQWlf93WUulqMSIKaii9
+         iIPutphQCEGtg9o1rJq26jZic9cdCRGVGhwCHzuv3Cmx55yTpVG+7+jJbUdPRirH1ksE
+         PuuVGM9ynwozvkolUaWHw1lHhSLBKGqGm71sicX6x5NqslMQT3FogISYqnJPi1sifHEc
+         +iwPqOxJYVGWzC67vGMEmVshzhT87co8WMxx2eYJdLwXXTEG62hT3PLCOO5HfZbzYfU9
+         WwPg==
+X-Gm-Message-State: APjAAAVEFGG0Xkw1wm2x8Jpu81ACUBhmFbuGXZVqBoFe797JvDsFRfVl
+        JYMKFt6yfhF1kK3vvh3s5VxPaeejYXlJ9UF42IU=
+X-Google-Smtp-Source: APXvYqx6xw2EDD9sCd3KCvYIrcjzDch4J14Pw2Z3x8SzAI62kqWkXMh+hm66heZf/sm4Fj9RMl5vuOayteOlsoAfMZU=
+X-Received: by 2002:a6b:4107:: with SMTP id n7mr26327566ioa.12.1560918826241;
+ Tue, 18 Jun 2019 21:33:46 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20190612083252.15321-1-andrew.smirnov@gmail.com>
+ <20190612083252.15321-11-andrew.smirnov@gmail.com> <a1c125d2-1c7a-c190-8b7e-845a2ec1d2ea@ti.com>
+ <CAHQ1cqG7dPFarphmBWSSqYAuO=6Kev4eFsBM09zUDJFek3UaOg@mail.gmail.com>
+In-Reply-To: <CAHQ1cqG7dPFarphmBWSSqYAuO=6Kev4eFsBM09zUDJFek3UaOg@mail.gmail.com>
+From:   Andrey Smirnov <andrew.smirnov@gmail.com>
+Date:   Tue, 18 Jun 2019 21:33:34 -0700
+Message-ID: <CAHQ1cqEG=Y+PKTV8it-qXzhmGskY2Uy=72VA8rKZu_ho9+4LcA@mail.gmail.com>
+Subject: Re: [PATCH v5 10/15] drm/bridge: tc358767: Add support for
+ address-only I2C transfers
+To:     Tomi Valkeinen <tomi.valkeinen@ti.com>
+Cc:     dri-devel@lists.freedesktop.org,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Andrey Gusakov <andrey.gusakov@cogentembedded.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Cory Tusar <cory.tusar@zii.aero>,
+        Chris Healy <cphealy@gmail.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Enrico Weigelt <info@metux.net>
+On Wed, Jun 12, 2019 at 9:22 AM Andrey Smirnov <andrew.smirnov@gmail.com> wrote:
+>
+> On Wed, Jun 12, 2019 at 5:48 AM Tomi Valkeinen <tomi.valkeinen@ti.com> wrote:
+> >
+> > Hi,
+> >
+> > On 12/06/2019 11:32, Andrey Smirnov wrote:
+> > > Transfer size of zero means a request to do an address-only
+> > > transfer. Since the HW support this, we probably shouldn't be just
+> > > ignoring such requests. While at it allow DP_AUX_I2C_MOT flag to pass
+> > > through, since it is supported by the HW as well.
+> >
+> > I bisected the EDID read issue to this patch...
+> >
+>
+> I don't think I've had any problems on my end with this. I'll double
+> check. It might be the case that yours is the only setup where the
+> problem can be repro'd, though. We can drop this patch if you don't
+> have time/would rather not dig into this.
+>
 
-Formatting of Kconfig files doesn't look so pretty, so just
-take damp cloth and clean it up.
+Turns out I do have this problem. Just didn't pay enough attention to
+notice. Will fix in v6.
 
-Signed-off-by: Enrico Weigelt <info@metux.net>
-Signed-off-by: Moritz Fischer <mdf@kernel.org>
----
- drivers/fpga/Kconfig | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/fpga/Kconfig b/drivers/fpga/Kconfig
-index 8072c195d831..474f304ec109 100644
---- a/drivers/fpga/Kconfig
-+++ b/drivers/fpga/Kconfig
-@@ -26,9 +26,9 @@ config FPGA_MGR_SOCFPGA_A10
- 	  FPGA manager driver support for Altera Arria10 SoCFPGA.
- 
- config ALTERA_PR_IP_CORE
--        tristate "Altera Partial Reconfiguration IP Core"
--        help
--          Core driver support for Altera Partial Reconfiguration IP component
-+	tristate "Altera Partial Reconfiguration IP Core"
-+	help
-+	  Core driver support for Altera Partial Reconfiguration IP component
- 
- config ALTERA_PR_IP_CORE_PLAT
- 	tristate "Platform support of Altera Partial Reconfiguration IP Core"
--- 
-2.22.0
-
+Thanks,
+Andrey Smirnov
