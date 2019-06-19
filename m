@@ -2,184 +2,172 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EC4D74B893
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 14:32:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 66C3C4B89D
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 14:32:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732059AbfFSMcI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Jun 2019 08:32:08 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:41794 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1731358AbfFSMcH (ORCPT
+        id S1732071AbfFSMcX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Jun 2019 08:32:23 -0400
+Received: from pandora.armlinux.org.uk ([78.32.30.218]:34760 "EHLO
+        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731836AbfFSMcV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Jun 2019 08:32:07 -0400
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5JCMWgD006031
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2019 08:32:06 -0400
-Received: from e16.ny.us.ibm.com (e16.ny.us.ibm.com [129.33.205.206])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2t7m3hunh2-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2019 08:32:06 -0400
-Received: from localhost
-        by e16.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <akrowiak@linux.ibm.com>;
-        Wed, 19 Jun 2019 13:32:05 +0100
-Received: from b01cxnp23034.gho.pok.ibm.com (9.57.198.29)
-        by e16.ny.us.ibm.com (146.89.104.203) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 19 Jun 2019 13:32:03 +0100
-Received: from b01ledav001.gho.pok.ibm.com (b01ledav001.gho.pok.ibm.com [9.57.199.106])
-        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x5JCW01u37880254
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 19 Jun 2019 12:32:00 GMT
-Received: from b01ledav001.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 190DE28059;
-        Wed, 19 Jun 2019 12:32:00 +0000 (GMT)
-Received: from b01ledav001.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 32DA12805C;
-        Wed, 19 Jun 2019 12:31:59 +0000 (GMT)
-Received: from [9.85.194.193] (unknown [9.85.194.193])
-        by b01ledav001.gho.pok.ibm.com (Postfix) with ESMTP;
-        Wed, 19 Jun 2019 12:31:59 +0000 (GMT)
-Subject: Re: [PATCH v4 1/7] s390: vfio-ap: Refactor vfio_ap driver probe and
- remove callbacks
-To:     Cornelia Huck <cohuck@redhat.com>
-Cc:     linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, freude@linux.ibm.com, borntraeger@de.ibm.com,
-        frankja@linux.ibm.com, david@redhat.com, mjrosato@linux.ibm.com,
-        schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
-        pmorel@linux.ibm.com, pasic@linux.ibm.com,
-        alex.williamson@redhat.com, kwankhede@nvidia.com
-References: <1560454780-20359-1-git-send-email-akrowiak@linux.ibm.com>
- <1560454780-20359-2-git-send-email-akrowiak@linux.ibm.com>
- <20190618181456.0252227b.cohuck@redhat.com>
-From:   Tony Krowiak <akrowiak@linux.ibm.com>
-Date:   Wed, 19 Jun 2019 08:31:58 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Wed, 19 Jun 2019 08:32:21 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=LjvptBJSgppkW9dCrF/wZfRlhQzkUo1rCIsKsLaP/3w=; b=TSsG1yj2JyC3lmEhxKXm8tcSn
+        KPdOkm5XZq0I9cnfi2jDGluxP2QI9NqA9OLWxqbjl7dmbTTzsfDrVn1Wn5zmi5sSSVCkH9oCRU8S3
+        7syAvWaalVUQNimV37V/XjBHZw+6jm4Wxr2lVMcIok79yyu72xWjpNZnTtfYT3fSCKY5AIN1A+laS
+        9lbJw+ufs904nI97nhVjGhOC5Oq8c5Mleot7UvmOup/lbsrDSbdrVzOtJlAXcIBZdUdj8V0t0EMRd
+        gn9jCbI+fcQowBpLx6FVWT9PDVCFQcdwmmqkrgMDU/BOh6AbrSpn2+sl8rjq6XdwisVRCkkPGQTY8
+        TxvmTwhpA==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:59820)
+        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.90_1)
+        (envelope-from <linux@armlinux.org.uk>)
+        id 1hdZl4-0000Jz-KG; Wed, 19 Jun 2019 13:32:10 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.89)
+        (envelope-from <linux@shell.armlinux.org.uk>)
+        id 1hdZl0-0001TG-M3; Wed, 19 Jun 2019 13:32:06 +0100
+Date:   Wed, 19 Jun 2019 13:32:06 +0100
+From:   Russell King - ARM Linux admin <linux@armlinux.org.uk>
+To:     Parshuram Raju Thombare <pthombar@cadence.com>
+Cc:     "andrew@lunn.ch" <andrew@lunn.ch>,
+        "nicolas.ferre@microchip.com" <nicolas.ferre@microchip.com>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "f.fainelli@gmail.com" <f.fainelli@gmail.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "hkallweit1@gmail.com" <hkallweit1@gmail.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Rafal Ciepiela <rafalc@cadence.com>,
+        Anil Joy Varughese <aniljoy@cadence.com>,
+        Piotr Sroka <piotrs@cadence.com>
+Subject: Re: [PATCH v2 2/5] net: macb: add support for sgmii MAC-PHY interface
+Message-ID: <20190619123206.zvc7gzt4ewxby2y2@shell.armlinux.org.uk>
+References: <1560933600-27626-1-git-send-email-pthombar@cadence.com>
+ <1560933646-29852-1-git-send-email-pthombar@cadence.com>
+ <20190619093146.yajbeht7mizm4hmr@shell.armlinux.org.uk>
+ <CO2PR07MB24695C706292A16D71322DB5C1E50@CO2PR07MB2469.namprd07.prod.outlook.com>
 MIME-Version: 1.0
-In-Reply-To: <20190618181456.0252227b.cohuck@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 19061912-0072-0000-0000-0000043E66E3
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00011290; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000286; SDB=6.01220214; UDB=6.00641882; IPR=6.01001356;
- MB=3.00027374; MTD=3.00000008; XFM=3.00000015; UTC=2019-06-19 12:32:05
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19061912-0073-0000-0000-00004CAE71A3
-Message-Id: <b4a77364-3924-20d7-42cd-e011106e0301@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-19_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1906190103
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CO2PR07MB24695C706292A16D71322DB5C1E50@CO2PR07MB2469.namprd07.prod.outlook.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 6/18/19 12:14 PM, Cornelia Huck wrote:
-> On Thu, 13 Jun 2019 15:39:34 -0400
-> Tony Krowiak <akrowiak@linux.ibm.com> wrote:
+On Wed, Jun 19, 2019 at 11:23:01AM +0000, Parshuram Raju Thombare wrote:
+> >From: Russell King - ARM Linux admin <linux@armlinux.org.uk>
+> >
+> >On Wed, Jun 19, 2019 at 09:40:46AM +0100, Parshuram Thombare wrote:
+> >
+> >> This patch add support for SGMII interface) and
+> >
+> >> 2.5Gbps MAC in Cadence ethernet controller driver.
 > 
->> In order to limit the number of private mdev functions called from the
->> vfio_ap device driver as well as to provide a landing spot for dynamic
->> configuration code related to binding/unbinding AP queue devices to/from
->> the vfio_ap driver, the following changes are being introduced:
->>
->> * Move code from the vfio_ap driver's probe callback into a function
->>    defined in the mdev private operations file.
->>
->> * Move code from the vfio_ap driver's remove callback into a function
->>    defined in the mdev private operations file.
->>
->> Signed-off-by: Tony Krowiak <akrowiak@linux.ibm.com>
->> ---
->>   drivers/s390/crypto/vfio_ap_drv.c     | 27 ++++++++++-----------------
->>   drivers/s390/crypto/vfio_ap_ops.c     | 28 ++++++++++++++++++++++++++++
->>   drivers/s390/crypto/vfio_ap_private.h |  6 +++---
->>   3 files changed, 41 insertions(+), 20 deletions(-)
->>
->> diff --git a/drivers/s390/crypto/vfio_ap_drv.c b/drivers/s390/crypto/vfio_ap_drv.c
->> index 003662aa8060..3c60df70891b 100644
->> --- a/drivers/s390/crypto/vfio_ap_drv.c
->> +++ b/drivers/s390/crypto/vfio_ap_drv.c
->> @@ -49,15 +49,15 @@ MODULE_DEVICE_TABLE(vfio_ap, ap_queue_ids);
->>    */
->>   static int vfio_ap_queue_dev_probe(struct ap_device *apdev)
->>   {
->> -	struct vfio_ap_queue *q;
->> -
->> -	q = kzalloc(sizeof(*q), GFP_KERNEL);
->> -	if (!q)
->> -		return -ENOMEM;
->> -	dev_set_drvdata(&apdev->device, q);
->> -	q->apqn = to_ap_queue(&apdev->device)->qid;
->> -	q->saved_isc = VFIO_AP_ISC_INVALID;
->> +	int ret;
->> +	struct ap_queue *queue = to_ap_queue(&apdev->device);
->> +
->> +	ret = vfio_ap_mdev_probe_queue(queue);
->> +	if (ret)
->> +		return ret;
->> +
->>   	return 0;
->> +
+> >>  	switch (state->interface) {
+> >
+> >> +	case PHY_INTERFACE_MODE_SGMII:
+> >
+> >> +		if (bp->caps & MACB_CAPS_GIGABIT_MODE_AVAILABLE)
+> >
+> >> +			phylink_set(mask, 2500baseT_Full);
+> >
+> >
+> >
+> >This doesn't look correct to me.  SGMII as defined by Cisco only
+> >supports 1G, 100M and 10M speeds, not 2.5G.
 > 
-> Maybe you could even condense this into a simple
-> 
-> return vfio_ap_mdev_probe_queue(to_ap_queue(&apdev->device));
-> 
-> (Unless you plan to do more things with queue in a future patch, of
-> course.)
+> Cadence MAC support 2.5G SGMII by using higher clock frequency.
 
-Consider it done.
+Ok, so why not set 2.5GBASE-X too?  Does the MAC handle auto-detecting
+the SGMII/BASE-X speed itself or does it need to be programmed?  If it
+needs to be programmed, you need additional handling in the validate
+callback to deal with that.
 
+> >> +	case PHY_INTERFACE_MODE_2500BASEX:
+> >
+> >> +		if (bp->caps & MACB_CAPS_GIGABIT_MODE_AVAILABLE)
+> >
+> >> +			phylink_set(mask, 2500baseX_Full);
+> >
+> >> +	/* fallthrough */
+> >
+> >> +	case PHY_INTERFACE_MODE_1000BASEX:
+> >
+> >> +		if (bp->caps & MACB_CAPS_GIGABIT_MODE_AVAILABLE)
+> >
+> >> +			phylink_set(mask, 1000baseX_Full);
+> >
+> >> +		break;
+> >
+> >
+> >
+> >Please see how other drivers which use phylink deal with the validate()
+> >format, and please read the phylink documentation:
+> >
+> > * Note that the PHY may be able to transform from one connection
+> > * technology to another, so, eg, don't clear 1000BaseX just
+> > * because the MAC is unable to BaseX mode. This is more about
+> > * clearing unsupported speeds and duplex settings.
+> >
 > 
->>   }
->>   
->>   /**
-> 
-> (...)
-> 
->> diff --git a/drivers/s390/crypto/vfio_ap_private.h b/drivers/s390/crypto/vfio_ap_private.h
->> index f46dde56b464..5cc3c2ebf151 100644
->> --- a/drivers/s390/crypto/vfio_ap_private.h
->> +++ b/drivers/s390/crypto/vfio_ap_private.h
->> @@ -90,8 +90,6 @@ struct ap_matrix_mdev {
->>   
->>   extern int vfio_ap_mdev_register(void);
->>   extern void vfio_ap_mdev_unregister(void);
->> -int vfio_ap_mdev_reset_queue(unsigned int apid, unsigned int apqi,
->> -			     unsigned int retry);
-> 
-> If you don't need that function across files anymore, you probably want
-> to make it static.
+> There are some configs used in this driver which limits MAC speed.
+> Above checks just to make sure this use case does not break.
 
-Yes.
+That's not what I'm saying.
 
-> 
->>   
->>   struct vfio_ap_queue {
->>   	struct ap_matrix_mdev *matrix_mdev;
->> @@ -100,5 +98,7 @@ struct vfio_ap_queue {
->>   #define VFIO_AP_ISC_INVALID 0xff
->>   	unsigned char saved_isc;
->>   };
->> -struct ap_queue_status vfio_ap_irq_disable(struct vfio_ap_queue *q);
-> 
-> Same here.
+By way of example, you're offering 1000BASE-T just because the MAC
+connection supports it.  However, the MAC doesn't _actually_ support
+1000BASE-T, it supports a connection to a PHY that _happens_ to
+convert the MAC connection to 1000BASE-T.  It could equally well
+convert the MAC connection to 1000BASE-X.
 
-Yes again.
+So, only setting 1000BASE-X when you have a PHY connection using
+1000BASE-X is fundamentally incorrect.
 
-> 
->> +int vfio_ap_mdev_probe_queue(struct ap_queue *queue);
->> +void vfio_ap_mdev_remove_queue(struct ap_queue *queue);
->> +
->>   #endif /* _VFIO_AP_PRIVATE_H_ */
-> 
+For example, you could have a MAC <-> PHY link using standard 1.25Gbps
+SGMII, and the PHY offers 1000BASE-T _and_ 1000BASE-X connections on
+a first-link-up basis.  An example of a PHY that does this are the
+Marvell 1G PHYs (eg, 88E151x).
 
+This point is detailed in the PHYLINK documentation, which I quoted
+above.
+
+> >> @@ -506,18 +563,26 @@ static void gem_mac_config(struct phylink_config
+> >*pl_config, unsigned int mode,
+> >>  		switch (state->speed) {
+> >> +		case SPEED_2500:
+> >> +			gem_writel(bp, NCFGR, GEM_BIT(GBE) |
+> >> +				   gem_readl(bp, NCFGR));
+> >>  		}
+> >> -		macb_or_gem_writel(bp, NCFGR, reg);
+> >>
+> >>  		bp->speed = state->speed;
+> >>  		bp->duplex = state->duplex;
+> >
+> >
+> >
+> >This is not going to work for 802.3z nor SGMII properly when in-band
+> >negotiation is used.  We don't know ahead of time what the speed and
+> >duplex will be.  Please see existing drivers for examples showing
+> >how mac_config() should be implemented (there's good reason why its
+> >laid out as it is in those drivers.)
+> >
+> Ok, Here I will configure MAC only for FIXED and PHY mode.
+
+As you are not the only one who has made this error, I'm considering
+splitting mac_config() into mac_config_fixed() and mac_config_inband()
+so that it's clearer what is required.  Maybe even taking separate
+structures so that it's impossible to access members that should not
+be used.
+
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
+According to speedtest.net: 11.9Mbps down 500kbps up
