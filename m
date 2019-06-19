@@ -2,93 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D1C84B799
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 14:04:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 590C04B795
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 14:03:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731721AbfFSMDr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Jun 2019 08:03:47 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:34318 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726246AbfFSMDq (ORCPT
+        id S1731692AbfFSMDU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Jun 2019 08:03:20 -0400
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:46473 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726246AbfFSMDU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Jun 2019 08:03:46 -0400
-Received: by mail-pf1-f193.google.com with SMTP id c85so9641298pfc.1
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2019 05:03:46 -0700 (PDT)
+        Wed, 19 Jun 2019 08:03:20 -0400
+Received: by mail-qk1-f196.google.com with SMTP id x18so10662624qkn.13;
+        Wed, 19 Jun 2019 05:03:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lixom-net.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id;
-        bh=EEXv6OMy394IyZML1QdABv+r+xrD1aaFYD59SwDtNVA=;
-        b=qog6owLf5XB7xLEjwtYgYfnK0o1CMpg2T+qs5OhFpq5HnZKFyIy7dcVThpeTJzErn1
-         z5lHoXqWGPmuDJxO/P/rahhxC7Q1Xi0GLBGFviL3LjKhB9YdUYN2/e0/65v6CVzxmcmp
-         tyUQqISASiWBdfA4ZFYxbyGoT+iOOcvQI/tUWYsmxFzuEVE7+NU1D3ylQhi/jZAr32oy
-         OusXht59EyMw5rxV55pO60NRYlPfHc8ELI8cX+JtyHujEVkxOKKC+knATMktykYf5q+h
-         A4lCTm9VEeFHnCA58Tcay866XHpGBpi+vvtP4sS87j0iMlIWrfb/UbARjJNVuIhzkZEh
-         Mvuw==
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=UUNDJ4YT5sYe2FSF11R8Qj2KGP81ymPOsgrPA4bzlUM=;
+        b=tGUQUW65p6WjgVCM2/lZ12D8gBKslhHKRm5kkwDJN4DXSuK4hLzZAwUvjukLfRQeGE
+         yMWqA79F5yIo11HDizUNdV3vX4zxcPy/yz/7Y2c/BdCQAP0pAD/pT01zIbpTIrMVhG6a
+         pWWoBrCXg2Gr8HV/xcIUifnm4emFfzDrG9VADVfGzhrNybHtTeJwJf91XNHHTmD77O2G
+         34E19ceLrLkYYaUqMoc8M9w5F9/n+Dbf6kBnIHyr6Ezkj+wZDHR7SAci+GGI2rr+EC4y
+         CPOGu5tv2LpKzVGl3rdCp7uqtyHjgIEvp/YctuzPs5QUhGZ2MS6K4+VUueNs1SVHRK/a
+         H71g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=EEXv6OMy394IyZML1QdABv+r+xrD1aaFYD59SwDtNVA=;
-        b=J02mG7pZF4NmrZAk8H5W5YgW4n8Tqye9TLXzLLu6V9Xqx5fZkJQqNeusw9kUmz7P8r
-         Vk0sk/Ja4WuAvDZmlvUqpLo+G4kzq/wFnaDq5otImVxkYdGOzgKO1ZZAI9RGyDXUc7T8
-         jUxHV9xHq2FLvG4pyN0dooF1zO4T+3qj48pYlfgmbckhV/AnHLe+0XefkRcg6mBvbGCu
-         ZHfEDcflBnKkzHzRWNEWwTgCDzCcLOSSWWYl2+VKVRaHX2C6xqCsnluTeSDY8UoxGqC5
-         mf2Xxi6+h9diwT0qCI7KWPYFpz9/+XlIOTgh3t9It9viWE+/UJDtWWvQ8bioxktLJhEl
-         Ow/w==
-X-Gm-Message-State: APjAAAXMJy3zOH8ll3ObwhFqd9oEeePDo1w6sl+xCxKiUl/alk/n76Sv
-        M7Wk0tPZLY8fYKxd8mDAJvdV9g==
-X-Google-Smtp-Source: APXvYqw7WwjF3ykJC6GXoZtSZcFhTgNHbFa6QrbBD8x3/qCxw0+7QrdxcB9f7MaJ53e0OX9BZUnNWw==
-X-Received: by 2002:a65:500d:: with SMTP id f13mr7343091pgo.151.1560945826174;
-        Wed, 19 Jun 2019 05:03:46 -0700 (PDT)
-Received: from rip.lixom.net (99-152-116-91.lightspeed.sntcca.sbcglobal.net. [99.152.116.91])
-        by smtp.gmail.com with ESMTPSA id d19sm1531664pjs.22.2019.06.19.05.03.44
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 19 Jun 2019 05:03:45 -0700 (PDT)
-From:   Olof Johansson <olof@lixom.net>
-To:     Josh Poimboeuf <jpoimboe@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Cc:     linux-kernel@vger.kernel.org, Olof Johansson <olof@lixom.net>
-Subject: [PATCH] objtool: Be lenient about -Wundef
-Date:   Wed, 19 Jun 2019 05:03:37 -0700
-Message-Id: <20190619120337.78624-1-olof@lixom.net>
-X-Mailer: git-send-email 2.11.0
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=UUNDJ4YT5sYe2FSF11R8Qj2KGP81ymPOsgrPA4bzlUM=;
+        b=kwXkKndAa4S6Lq/k4ZpXe5Xm39uYpOCNy30d39fhuixXOVkkzF2PgbqSH5VMPnQ5HL
+         HLsMWHSO0l67DwFp482TJOYZE7M7C5yH77J7Ba0bMCmmgxFZla0TNqnrMLIy3nHeJmKH
+         5/ugnRReJ0EwCMeLqwydaUbaKLg71rFjbOLKdBnrU5YLN9u7ltqdxX6C+7u55qfx016b
+         zA0IMQ65AG8aMtHUPprkKC0CBCRde5XQ0F0dFoHTx8sal73wIi0K+vZVsnTsFShg1DEY
+         5OYT2hjuI4xBwyVCxWzmM+Nj5ZyrCK4QdytavSUp4g8bq/N9bfnZqlfdMTmFncpXnBn4
+         zJmw==
+X-Gm-Message-State: APjAAAWVE5w99SEORduMKVlj/B1WbifmhGbHVN4Oo6I8dDN4zkPagHY4
+        MKEC6+eGzRbPDs53LdH02iM=
+X-Google-Smtp-Source: APXvYqxBoaY0rL+zlXSIQpf+ih0yitbR1m/XjjH1n/Rjg85Fccc83qRq07beePWyBu5iXiE7CJBNRA==
+X-Received: by 2002:a37:696:: with SMTP id 144mr95924137qkg.250.1560945799007;
+        Wed, 19 Jun 2019 05:03:19 -0700 (PDT)
+Received: from continental ([186.212.50.252])
+        by smtp.gmail.com with ESMTPSA id s134sm10974868qke.51.2019.06.19.05.03.16
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Wed, 19 Jun 2019 05:03:18 -0700 (PDT)
+Date:   Wed, 19 Jun 2019 09:03:52 -0300
+From:   Marcos Paulo de Souza <marcos.souza.org@gmail.com>
+To:     "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc:     linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>
+Subject: Re: [PATCH 1/2] scsi: devinfo: BLIST_TRY_VPD_PAGES for SanDisk
+ Cruzer Blade
+Message-ID: <20190619120346.GC26980@continental>
+References: <20190618013146.21961-1-marcos.souza.org@gmail.com>
+ <20190618013146.21961-2-marcos.souza.org@gmail.com>
+ <yq1r27quuod.fsf@oracle.com>
+ <20190619094540.GA26980@continental>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190619094540.GA26980@continental>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Some libelf versions use undefined macros, which combined with newer GCC
-makes for errors from system headers. This isn't overly useful to fail
-compiling objtool for.
+On Wed, Jun 19, 2019 at 06:45:43AM -0300, Marcos Paulo de Souza wrote:
+> On Tue, Jun 18, 2019 at 11:21:22PM -0400, Martin K. Petersen wrote:
+> > 
+> > Marcos,
+> > 
+> > > Currently, all USB devices skip VPD pages, even when the device
+> > > supports them (SPC-3 and later), but some of them support VPD, like
+> > > Cruzer Blade.
+> > 
+> > What's your confidence level wrt. all Cruzer Blades handling this
+> > correctly? How many devices have you tested this change with?
+> 
+> I've tested three Cruzer Blades that I have at hand, and all  of them have VPD
+> support, and also checked with a friend of mine that also have one. I can't say
+> about "all others" but so far, 4/4 devices that I tested have VPD. (They were all
+> SPC-3 or SPC-4 compliant).
+> 
 
-Error as seen:
+My first idea was to add a vendor:product mapping at SCSI layer, but so far I
+haven't found one, so I added the model/vendor found by INQUIRY. Would it be
+better to check for prod:vendor (as values, instead of the description)?
 
-cc1: all warnings being treated as errors
-In file included from arch/x86/../../elf.h:10,
-                 from arch/x86/decode.c:14:
-/usr/include/libelf/gelf.h:25:5: error: "__LIBELF_INTERNAL__" is not defined, evaluates to 0 [-Werror=undef]
- #if __LIBELF_INTERNAL__
-     ^~~~~~~~~~~~~~~~~~~
+Thanks,
+Marcos
 
-For this reason, skip -Wundef on objtool.
 
-Signed-off-by: Olof Johansson <olof@lixom.net>
----
- tools/objtool/Makefile | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/tools/objtool/Makefile b/tools/objtool/Makefile
-index 88158239622bc..0c49206c5216b 100644
---- a/tools/objtool/Makefile
-+++ b/tools/objtool/Makefile
-@@ -35,6 +35,8 @@ INCLUDES := -I$(srctree)/tools/include \
- 	    -I$(srctree)/tools/arch/$(HOSTARCH)/include/uapi \
- 	    -I$(srctree)/tools/objtool/arch/$(ARCH)/include
- WARNINGS := $(EXTRA_WARNINGS) -Wno-switch-default -Wno-switch-enum -Wno-packed
-+# Some system libelf versions uses undefined "#if <var>", so skip the warning/error
-+WARNINGS += -Wno-undef
- CFLAGS   += -Werror $(WARNINGS) $(KBUILD_HOSTCFLAGS) -g $(INCLUDES) $(LIBELF_FLAGS)
- LDFLAGS  += $(LIBELF_LIBS) $(LIBSUBCMD) $(KBUILD_HOSTLDFLAGS)
- 
--- 
-2.11.0
-
+> > 
+> > -- 
+> > Martin K. Petersen	Oracle Linux Engineering
