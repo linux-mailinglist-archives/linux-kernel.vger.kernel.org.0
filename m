@@ -2,137 +2,201 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 96B314B63C
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 12:33:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 376384B645
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 12:36:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731564AbfFSKd0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Jun 2019 06:33:26 -0400
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:41114 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727129AbfFSKdZ (ORCPT
+        id S1731447AbfFSKg0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Jun 2019 06:36:26 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:46748 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726826AbfFSKgZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Jun 2019 06:33:25 -0400
-Received: by mail-qt1-f196.google.com with SMTP id d17so14229101qtj.8
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2019 03:33:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=A5r+fNs6piiH+aGROj+Wzs8FJ/AgXElJ3JaEl+QTwIo=;
-        b=p0Sz0EF57FLawqG1VabOdKC+Bzkx1UdG2TqBFuTGofHL6o9iG0MRLdNfctgnNozh2f
-         6F8Mh9THCLq2XpLwTG7HOAWojfnYHMZN+2/aDw5bnfkdIYYrFBfaz9aLdcjqWmSfu8ZE
-         VlQbGTn3du33tcn4jSQVpNBG+tHNQ5Bhoi156ScFhodZXXbrqwCrcAH3v1e3JUdcn9XX
-         U7CGA6FdOtRrPimU4yrSNENfugRzIwMbgpGbn/TNF/NZLkviGFU2QXWBNV5e/Sa9CIJ4
-         QuxvwO4lDynAaiy9HaOwaLl3ut7ueE36ejJI53EkALbw+xzhHFg20VPeoriGxgaYIp2Y
-         Xctw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=A5r+fNs6piiH+aGROj+Wzs8FJ/AgXElJ3JaEl+QTwIo=;
-        b=LA4e5HGMumnOxEVjh0TOONSgjylWNkFfVZu7exqyxs80/IXfIxgzCaXwg6wGAkzK48
-         WQlbAprpZvXaw61xY2uP6r7or/R6U59uzZD0sYRPzjYbvKSKI29acH9F/00Qqdlxq4Du
-         9RZlDnB7zBVFk5T+Zg8oxu9VShF9UJeHasuQGwTngwM4pJg2Z+yyxSlnPBqJwEz8bqw/
-         Z7PodjZie+nsGT7jAXZbAME4xXAUm8Ix8oguFMmX9j8joGgxOMgS4oWNNnnNA3tI746u
-         UES9d3kB0XuP1NVPZrnR8caa1HV4zPqdu/kz10WpMsrakjgekPbsE3JkNvjg8HQQ3mzX
-         r4FA==
-X-Gm-Message-State: APjAAAX5LA1jYpu9cGspZMmkMBaZhXgVIGo0A+lnmUSlqDN5NRaF+6Uu
-        XmVEqjY407eP+JBaRhKCUGlk2nDxDz6nkvW5x+ts8A==
-X-Google-Smtp-Source: APXvYqzsT65B1Q6a584qTVdugWKlIu1yIZmyVh6lrG95htoJMyCqQWISMHXkLYv5iX+GmxabuYhjkdpTL/3YmtcKZeU=
-X-Received: by 2002:a0c:b999:: with SMTP id v25mr20736885qvf.36.1560940404444;
- Wed, 19 Jun 2019 03:33:24 -0700 (PDT)
-MIME-Version: 1.0
-References: <CANA+-vCThdRivg7nrMK5QoFu8SGUzEVSvSyp0H2CPyy9==Tqog@mail.gmail.com>
- <CANA+-vARQ9Ao=W1oEArrAQ0sqh757orq=-=kytdVPhstm-3E9w@mail.gmail.com>
- <20190618182502.GC203031@google.com> <4587569.x9DSL43cXO@kreacher>
- <CANA+-vCMK6u1n9gXf2+v5dFn_tGfr1PT8d7W4d2BCzw+B-HvYw@mail.gmail.com>
- <CAJWu+oo7kwmEyMXQN0yfswV2=J-Fa9QybhAUx-SOGG_ipsBErQ@mail.gmail.com> <CAJZ5v0gvzCx-7qS9qkxB=sGKjQJKMR7yCc21f=_vqrbZxMSWNg@mail.gmail.com>
-In-Reply-To: <CAJZ5v0gvzCx-7qS9qkxB=sGKjQJKMR7yCc21f=_vqrbZxMSWNg@mail.gmail.com>
-From:   Joel Fernandes <joelaf@google.com>
-Date:   Wed, 19 Jun 2019 06:33:12 -0400
-Message-ID: <CAJWu+orvX7fVGPL1J4mg1s8R0q36O4kdxDuscL5Y+M8wkFJ0Tw@mail.gmail.com>
-Subject: Re: Alternatives to /sys/kernel/debug/wakeup_sources
-To:     "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     Tri Vo <trong@android.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Sandeep Patil <sspatil@android.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Hridya Valsaraju <hridya@google.com>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        "Cc: Android Kernel" <kernel-team@android.com>,
+        Wed, 19 Jun 2019 06:36:25 -0400
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5JAYt4W011755
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2019 06:36:25 -0400
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2t7h6df16d-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2019 06:36:24 -0400
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <fbarrat@linux.ibm.com>;
+        Wed, 19 Jun 2019 11:36:22 +0100
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 19 Jun 2019 11:36:18 +0100
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x5JAaGwx43974834
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 19 Jun 2019 10:36:17 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C834511C066;
+        Wed, 19 Jun 2019 10:36:16 +0000 (GMT)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 833E711C054;
+        Wed, 19 Jun 2019 10:36:16 +0000 (GMT)
+Received: from pic2.home (unknown [9.145.171.67])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed, 19 Jun 2019 10:36:16 +0000 (GMT)
+Subject: Re: [PATCH] ocxl: Allow contexts to be attached with a NULL mm
+To:     Andrew Donnellan <ajd@linux.ibm.com>,
+        "Alastair D'Silva" <alastair@au1.ibm.com>, alastair@d-silva.org
+Cc:     Arnd Bergmann <arnd@arndb.de>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        Nicholas Piggin <npiggin@gmail.com>
+References: <20190617044152.13707-1-alastair@au1.ibm.com>
+ <81f8951e-a095-3e13-4229-6475f6a8d4a5@linux.ibm.com>
+From:   Frederic Barrat <fbarrat@linux.ibm.com>
+Date:   Wed, 19 Jun 2019 12:36:16 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
+MIME-Version: 1.0
+In-Reply-To: <81f8951e-a095-3e13-4229-6475f6a8d4a5@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19061910-0012-0000-0000-0000032A768C
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19061910-0013-0000-0000-000021639726
+Message-Id: <682c9b63-7edd-eb4e-8d6f-2bfdd36453e4@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-19_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=888 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1906190088
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 19, 2019 at 4:35 AM Rafael J. Wysocki <rafael@kernel.org> wrote:
->
-> On Wed, Jun 19, 2019 at 1:52 AM Joel Fernandes <joelaf@google.com> wrote:
-> >
-> > On Tue, Jun 18, 2019 at 7:15 PM Tri Vo <trong@android.com> wrote:
-> > [snip]
-> > > > > > >
-> > > > > > > Android userspace reading wakeup_sources is not ideal because:
-> > > > > > > - Debugfs API is not stable, i.e. Android tools built on top of it are
-> > > > > > > not guaranteed to be backward/forward compatible.
-> > > > > > > - This file requires debugfs to be mounted, which itself is
-> > > > > > > undesirable for security reasons.
-> > > > > > >
-> > > > > > > To address these problems, we want to contribute a way to expose these
-> > > > > > > statistics that doesn't depend on debugfs.
-> > > > > > >
-> > > > > > > Some initial thoughts/questions: Should we expose the stats in sysfs?
-> > > > > > > Or maybe implement eBPF-based solution? What do you think?
-> > > > >
-> > > > > We are going through Android's out-of-tree kernel dependencies along with
-> > > > > userspace APIs that are not necessarily considered "stable and forever
-> > > > > supported" upstream. The debugfs dependencies showed up on our radar as a
-> > > > > result and so we are wondering if we should worry about changes in debugfs
-> > > > > interface and hence the question(s) below.
-> > > > >
-> > > > > So, can we rely on /d/wakeup_sources to be considered a userspace API and
-> > > > > hence maintained stable as we do for other /proc and /sys entries?
-> > > > >
-> > > > > If yes, then we will go ahead and add tests for this in LTP or
-> > > > > somewhere else suitable.
-> > > >
-> > > > No, debugfs is not ABI.
-> > > >
-> > > > > If no, then we would love to hear suggestions for any changes that need to be
-> > > > > made or we simply just move the debugfs entry into somewhere like
-> > > > > /sys/power/ ?
-> > > >
-> > > > No, moving that entire file from debugfs into sysfs is not an option either.
-> > > >
-> > > > The statistics for the wakeup sources associated with devices are already there
-> > > > under /sys/devices/.../power/ , but I guess you want all wakeup sources?
-> > > >
-> > > > That would require adding a kobject to struct wakeup_source and exposing
-> > > > all of the statistics as separate attributes under it.  In which case it would be
-> > > > good to replace the existing wakeup statistics under /sys/devices/.../power/
-> > > > with symbolic links to the attributes under the wakeup_source kobject.
-> > >
-> > > Thanks for your input, Rafael! Your suggestion makes sense. I'll work
-> > > on a patch for this.
-> >
-> > Does that entail making each wake up source, a new sysfs node under a
-> > particular device, and then adding stats under that new node?
->
-> Not under a device, because there are wakeup source objects without
-> associated devices.
->
-> It is conceivable to have a "wakeup_sources" directory under
-> /sys/power/ and sysfs nodes for all wakeup sources in there.
->
-> Then, instead of exposing wakeup statistics directly under
-> /sys/devices/.../power/, there can be symbolic links from there to the
-> new wakeup source nodes under "wakeup_sources" (so as to avoid
-> exposing the same data in two different places in sysfs, which may be
-> confusing).
 
-Makes sense to me, thanks!
 
- - Joel
+Le 18/06/2019 à 03:50, Andrew Donnellan a écrit :
+> On 17/6/19 2:41 pm, Alastair D'Silva wrote:
+>> From: Alastair D'Silva <alastair@d-silva.org>
+>>
+>> If an OpenCAPI context is to be used directly by a kernel driver, there
+>> may not be a suitable mm to use.
+>>
+>> The patch makes the mm parameter to ocxl_context_attach optional.
+>>
+>> Signed-off-by: Alastair D'Silva <alastair@d-silva.org>
+> 
+> The one issue I can see here is that using mm == NULL bypasses our 
+> method of enabling/disabling global TLBIs in mm_context_add_copro().
+> 
+> Discussing this privately with Alastair and Fred - this should be fine, 
+> but perhaps we should document that.
+
+
+So indeed we should be fine. I confirmed with Nick that kernel space 
+invalidations are already global today.
+Nick mentioned that we should still be fine tomorrow, but in the distant 
+future, we could imagine local usage of some part of the kernel space. 
+It will require some work, but it would be best to add a comment in one 
+of the kernel invalidation function (for example 
+radix__flush_tlb_kernel_range()) that if a kernel invalidation ever 
+becomes local, then clients of the nest MMU may need some work.
+
+A few more comments below.
+
+
+>> ---
+>>   drivers/misc/ocxl/context.c |  9 ++++++---
+>>   drivers/misc/ocxl/link.c    | 12 ++++++++----
+>>   2 files changed, 14 insertions(+), 7 deletions(-)
+>>
+>> diff --git a/drivers/misc/ocxl/context.c b/drivers/misc/ocxl/context.c
+>> index bab9c9364184..994563a078eb 100644
+>> --- a/drivers/misc/ocxl/context.c
+>> +++ b/drivers/misc/ocxl/context.c
+>> @@ -69,6 +69,7 @@ static void xsl_fault_error(void *data, u64 addr, 
+>> u64 dsisr)
+>>   int ocxl_context_attach(struct ocxl_context *ctx, u64 amr, struct 
+>> mm_struct *mm)
+>>   {
+>>       int rc;
+>> +    unsigned long pidr = 0;
+>>       // Locks both status & tidr
+>>       mutex_lock(&ctx->status_mutex);
+>> @@ -77,9 +78,11 @@ int ocxl_context_attach(struct ocxl_context *ctx, 
+>> u64 amr, struct mm_struct *mm)
+>>           goto out;
+>>       }
+>> -    rc = ocxl_link_add_pe(ctx->afu->fn->link, ctx->pasid,
+>> -            mm->context.id, ctx->tidr, amr, mm,
+>> -            xsl_fault_error, ctx);
+>> +    if (mm)
+>> +        pidr = mm->context.id;
+>> +
+>> +    rc = ocxl_link_add_pe(ctx->afu->fn->link, ctx->pasid, pidr, 
+>> ctx->tidr,
+>> +                  amr, mm, xsl_fault_error, ctx);
+>>       if (rc)
+>>           goto out;
+>> diff --git a/drivers/misc/ocxl/link.c b/drivers/misc/ocxl/link.c
+>> index cce5b0d64505..43542f124807 100644
+>> --- a/drivers/misc/ocxl/link.c
+>> +++ b/drivers/misc/ocxl/link.c
+>> @@ -523,7 +523,8 @@ int ocxl_link_add_pe(void *link_handle, int pasid, 
+>> u32 pidr, u32 tidr,
+>>       pe->amr = cpu_to_be64(amr);
+>>       pe->software_state = cpu_to_be32(SPA_PE_VALID);
+>> -    mm_context_add_copro(mm);
+>> +    if (mm)
+>> +        mm_context_add_copro(mm);
+
+
+Same as above, we should add a comment here in the driver code that a 
+kernel context is ok because invalidations are global.
+
+
+We also need a new check in xsl_fault_handler(). A valid kernel address 
+shouldn't fault, but it's still possible for the FPGA to try accessing a 
+bogus kernel address. In which case, xsl_fault_handler() would be 
+entered, with a valid fault context. We'll find pe_data in the tree 
+based on the valid pe_handle, but pe_data->mm will be NULL. In that, we 
+can return early, acknowledging the interrupt with ADDRESS_ERROR value 
+(like we do if pe_data is not found in the tree).
+
+   Fred
+
+
+>>       /*
+>>        * Barrier is to make sure PE is visible in the SPA before it
+>>        * is used by the device. It also helps with the global TLBI
+>> @@ -546,7 +547,8 @@ int ocxl_link_add_pe(void *link_handle, int pasid, 
+>> u32 pidr, u32 tidr,
+>>        * have a reference on mm_users. Incrementing mm_count solves
+>>        * the problem.
+>>        */
+>> -    mmgrab(mm);
+>> +    if (mm)
+>> +        mmgrab(mm);
+>>       trace_ocxl_context_add(current->pid, spa->spa_mem, pasid, pidr, 
+>> tidr);
+>>   unlock:
+>>       mutex_unlock(&spa->spa_lock);
+>> @@ -652,8 +654,10 @@ int ocxl_link_remove_pe(void *link_handle, int 
+>> pasid)
+>>       if (!pe_data) {
+>>           WARN(1, "Couldn't find pe data when removing PE\n");
+>>       } else {
+>> -        mm_context_remove_copro(pe_data->mm);
+>> -        mmdrop(pe_data->mm);
+>> +        if (pe_data->mm) {
+>> +            mm_context_remove_copro(pe_data->mm);
+>> +            mmdrop(pe_data->mm);
+>> +        }
+>>           kfree_rcu(pe_data, rcu);
+>>       }
+>>   unlock:
+>>
+> 
+
