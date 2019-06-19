@@ -2,100 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F7B24C28C
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 22:51:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E348B4C288
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 22:46:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730267AbfFSUvG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Jun 2019 16:51:06 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:44169 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726230AbfFSUvG (ORCPT
+        id S1730329AbfFSUqs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Jun 2019 16:46:48 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:37146 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726246AbfFSUqr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Jun 2019 16:51:06 -0400
-Received: by mail-lj1-f195.google.com with SMTP id k18so514012ljc.11
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2019 13:51:05 -0700 (PDT)
+        Wed, 19 Jun 2019 16:46:47 -0400
+Received: by mail-pl1-f196.google.com with SMTP id bh12so340892plb.4
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2019 13:46:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
+        d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=kr00XCalu9BxXvOgaKUwp/Tuo/EGDGjVmPbF4AysT5A=;
-        b=Q1FREvAhfqHLPs7hiXDan54VkBHE5Oj2EVjFMwHkWWC7wX7DAacLPKkQYU+IIcSvWH
-         x1sSpDVOPkn0QmS6iGkFCAWW0CpcasVSCZOovaaN/vpoiMsyshW78DIDZMUx6Yu0bxeI
-         xqUOuX56dOc/mPuWrrgkbOgpt+3frD4UIqPjc=
+        bh=i1hoWgXM/3sJXE0yzoEO9MJswGh6V3NEiQS35pfe8xs=;
+        b=DE7SwvGJQoDgdPZwnJjXq3/xBzZ49J16GbQvaq3+CHo3OOGAmoQxMsckz7arQjwRdZ
+         wiy5it8XOYRDMaIHk6idFtABMqjrytaCLe209QHxK1RVnszyZi7t5OF9mAniHjiaVosK
+         MQrSwl2pxkdIep5s5ZEzTstBCVBdsK8/Y6T6UPnLLp8r6AIcap5hUwQYcAURuSovAHf9
+         avuU8OxdSGnoCZ86gtmaud6e2GjZm1ouMLwslCxcxcWnHPf/GOwg0wZe0mA48TcXdLPY
+         X87SVTjIufSVYzM27oh0Hoxt3nHUpGoOCcl+AnYyiA+h3/5X7FMPGwrQGE2Pt92c7f3m
+         fTcA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=kr00XCalu9BxXvOgaKUwp/Tuo/EGDGjVmPbF4AysT5A=;
-        b=OpSRyjcV2ONF9Ul8OCcO9VCOnZAueC7iP7HCuDCfWWDm6d8tWie7S8VVqNk+doWNVN
-         uloxQgERzY89mmwEzVrUoJHfPKMHnYtiUXCTV5CQOwrxlXOO73EbE0FOnqruxK7HPL/V
-         KxKCkZShqNwCTDzHfQiN7DBOLIp6h34iMxpOhDQBflWFLmqH/qRVi1781Bv7xJx/v7m2
-         vL/y7DcjWfpoCTvuPzm/0MevJ9Sxxy4t1WaT88cDF63+LibwPKE2IC/G95Pc4qdkor+S
-         phQ8BiOtZw2pnV1iNUJHMjyaLOh2gABccKlUlH9FybsRgqeL3P+X5pD4Eho6aPZmq/q/
-         F46g==
-X-Gm-Message-State: APjAAAXJmUuqDRr30s38NwnAAmKTOxFOjKGgAzUK5OlTxBd4tMvGrLAt
-        F97A35QhXRyAOJsb9UKPe8WfghiIq0Y=
-X-Google-Smtp-Source: APXvYqwk63cHx07QnyMkNzyTDjIwM3NndKaom3Dvk8WxgUIty/tgmzIGVNjQmpvc4/0OpqrJlMHm4g==
-X-Received: by 2002:a2e:7c15:: with SMTP id x21mr4186216ljc.55.1560976990379;
-        Wed, 19 Jun 2019 13:43:10 -0700 (PDT)
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com. [209.85.208.175])
-        by smtp.gmail.com with ESMTPSA id a17sm3169259lfk.0.2019.06.19.13.43.09
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Wed, 19 Jun 2019 13:43:09 -0700 (PDT)
-Received: by mail-lj1-f175.google.com with SMTP id 16so504449ljv.10
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2019 13:43:09 -0700 (PDT)
-X-Received: by 2002:a2e:b003:: with SMTP id y3mr34133328ljk.72.1560976989040;
- Wed, 19 Jun 2019 13:43:09 -0700 (PDT)
+        bh=i1hoWgXM/3sJXE0yzoEO9MJswGh6V3NEiQS35pfe8xs=;
+        b=CPGbW74vs8tBEj0lnFpLJNB8sWuM3WSoBM6tgq4tu8oOgJBCX3cGa1oF9YtS8WoQfR
+         62Py8KifbZhFcnRqptwcEN6n+pjHno911WyUeL7UfHU29qezNl5zRkVND9x6H+i84LlR
+         gdpVVwUiKVCPpkHKiUePvgdC3DpYHVGo8VOX55C3seT47JAa6/AgJHN6S2Aw6jpo7Jpl
+         H6Q77wos+8ruC1SwgabLd0nU91gUsWjbuJPhiP8rrs8TIegmkHvqit5nNSMvCH89Ff7Z
+         ffnWc+t6C1joLp6PtnnUyvGn4Ui8V+JcXheHzwtVsXZsGkLq8nIqzeLMid/1r8VOXOV8
+         VAeA==
+X-Gm-Message-State: APjAAAX7/Hn+UTQWqjyToz03MzZ+NN9oGK8RIAPqH4iAuZHPgjgYqBiU
+        lsSkjZsZiWXEC+XWoIcXpZswsuG6pzYCq9lRoJ76Pw==
+X-Google-Smtp-Source: APXvYqyHoOeUqsmfRiTdpCJaQhtM0n+ZHM7LvnKSRbOhC6JZDM1tV2GWvItN2O+RfkS2vCrqHX0e9cQ54R0YoJpWBnM=
+X-Received: by 2002:a17:902:9f93:: with SMTP id g19mr105536923plq.223.1560977206524;
+ Wed, 19 Jun 2019 13:46:46 -0700 (PDT)
 MIME-Version: 1.0
-References: <CAHk-=whEQPvLpDbx+WR4Q4jf2FxXjf_zTX3uLy_6ZzHtgTV4LA@mail.gmail.com>
- <156094799629.21217.4574572565333265288@skylake-alporthouse-com>
- <CAHk-=wjhJNKVfHgwd0QX_bq769sxfP4jvfy0dd-WtFMfdivMwg@mail.gmail.com> <156097197830.664.13418742301997062555@skylake-alporthouse-com>
-In-Reply-To: <156097197830.664.13418742301997062555@skylake-alporthouse-com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Wed, 19 Jun 2019 13:42:53 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wjoeZ9_aiu+642ur=iGhGjfBQhRPURxX9Py+-B6coctXw@mail.gmail.com>
-Message-ID: <CAHk-=wjoeZ9_aiu+642ur=iGhGjfBQhRPURxX9Py+-B6coctXw@mail.gmail.com>
-Subject: Re: NMI hardlock stacktrace deadlock [was Re: Linux 5.2-rc5]
-To:     Chris Wilson <chris@chris-wilson.co.uk>
-Cc:     Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>
+References: <20190619084921.7e1310e0@bootlin.com> <20190619181715.253903-1-nhuck@google.com>
+In-Reply-To: <20190619181715.253903-1-nhuck@google.com>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Wed, 19 Jun 2019 13:46:35 -0700
+Message-ID: <CAKwvOdk7xOF8=xv5A7TQUWY29dH4agDWgMJVeO9emTMbH8CNQA@mail.gmail.com>
+Subject: Re: [PATCH v2] net: mvpp2: debugfs: Add pmap to fs dump
+To:     Nathan Huckleberry <nhuck@google.com>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        maxime.chevallier@bootlin.com, netdev@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        clang-built-linux <clang-built-linux@googlegroups.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 19, 2019 at 12:19 PM Chris Wilson <chris@chris-wilson.co.uk> wrote:
+On Wed, Jun 19, 2019 at 11:17 AM 'Nathan Huckleberry' via Clang Built
+Linux <clang-built-linux@googlegroups.com> wrote:
 >
-> > Do you have the oops itself at all?
+> There was an unused variable 'mvpp2_dbgfs_prs_pmap_fops'
+> Added a usage consistent with other fops to dump pmap
+> to userspace.
+
+> Changes from v1 -> v2
+> * Fix typo
+> * Change commit prefix to debugfs
+
+Compile-
+Tested-by: Nick Desaulniers <ndesaulniers@google.com>
+Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
+
+Requires `make ... W=1` before the patch to observe the warning.
+
+>  drivers/net/ethernet/marvell/mvpp2/mvpp2_debugfs.c | 3 +++
+>  1 file changed, 3 insertions(+)
 >
-> An example at
-> https://intel-gfx-ci.01.org/tree/drm-tip/CI_DRM_6310/fi-kbl-x1275/dmesg0.log
-> https://intel-gfx-ci.01.org/tree/drm-tip/CI_DRM_6310/fi-kbl-x1275/boot0.log
+> diff --git a/drivers/net/ethernet/marvell/mvpp2/mvpp2_debugfs.c b/drivers/net/ethernet/marvell/mvpp2/mvpp2_debugfs.c
+> index 0ee39ea47b6b..274fb07362cb 100644
+> --- a/drivers/net/ethernet/marvell/mvpp2/mvpp2_debugfs.c
+> +++ b/drivers/net/ethernet/marvell/mvpp2/mvpp2_debugfs.c
+> @@ -566,6 +566,9 @@ static int mvpp2_dbgfs_prs_entry_init(struct dentry *parent,
+>         debugfs_create_file("hits", 0444, prs_entry_dir, entry,
+>                             &mvpp2_dbgfs_prs_hits_fops);
 >
-> The bug causing the oops is clearly a driver problem. The rc5 fallout
-> just seems to be because of some shrinker changes affecting some object
-> reaping that were unfortunately still active. What perturbed the CI
-> team was the machine failed to panic & reboot.
+> +       debugfs_create_file("pmap", 0444, prs_entry_dir, entry,
+> +                            &mvpp2_dbgfs_prs_pmap_fops);
+> +
 
-Hmm. It's hard to guess at the cause of that. The oopses themselves
-don't look like they are happening in any particularly bad context, so
-all the normal reboot-on-oops etc stuff _should_ work.
-
-So it would help a lot if you could bisect the bad problem at least a
-bit, if it is at all reproducible. Because with no other clues, it's
-hard to even guess at what might be up.
-
-The fact that you say "NMI watchdog firing as we dumped the ftrace"
-means that maybe it might be some ftrace / stacktrace issue where the
-dumping itself leads to some endless loop, but who knows.
-
-For example, one thing that has happened during this development cycle
-is the stacktrace common infrastructure changes (arch_stack_walk() and
-friends). I'm, not seeing why that would cause your issues, but I'm
-adding a few random people for ftrace / stacktrace changes.
-
-                     Linus
+Thanks,
+~Nick Desaulniers
