@@ -2,46 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 539A64B86D
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 14:31:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 242334B84E
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 14:30:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731826AbfFSMad (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Jun 2019 08:30:33 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:36358 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731787AbfFSMab (ORCPT
+        id S1731843AbfFSMae (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Jun 2019 08:30:34 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:40643 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731796AbfFSMac (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Jun 2019 08:30:31 -0400
-Received: by mail-wr1-f66.google.com with SMTP id n4so3221742wrs.3
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2019 05:30:29 -0700 (PDT)
+        Wed, 19 Jun 2019 08:30:32 -0400
+Received: by mail-wr1-f65.google.com with SMTP id p11so3190625wre.7
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2019 05:30:31 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=syOsz+pCnNIc/qrQgZM4/GIrteB9uldeCUT6WZA8hVM=;
-        b=b5lpZC9Xdhpftq9INpELDdYeJClYMW5tZ0M8h5BdJUIgzjlgMRNDVLDKk0i9FYQibf
-         zizxdYEJUWqBaI+59dpxwml10BEEq+Dt+Z1TySKlLK9oA6d1YNejnux3frw/uDH1BiPR
-         aHcRvQgeh0tYyuYmJT73m4WBZD/tizuEPHtPdZpl+OcmN54TADP3KTTi/JGCxvIdRiho
-         faUNBYMJZjKQDBQhPIciHFeKD4sUInas8ezljvYPgJHIJXbuF7mMTrWFLRpaCK378mCd
-         F+PImVj0apJy+J8z8bvi8zqnZRqbsn2xVYFya9cEA5pHfsLkF5N7OGdczk8dft+IWjDp
-         VrOg==
-X-Gm-Message-State: APjAAAXHShRXsSKZEeHMA35jrVGEtvJlwHQxGQyoZhEiuwQ/hx+WuoSZ
-        iEMfgSVvJZknpVW3LNoaIF26XQ==
-X-Google-Smtp-Source: APXvYqyjzkTgS7F88coETlRjgqd7E9iaHcb9QaeY+SJUGxkfZmk3cECPjwg/IA9yNUyKVxPD4Cdb2g==
-X-Received: by 2002:a5d:56c1:: with SMTP id m1mr3035374wrw.26.1560947429205;
-        Wed, 19 Jun 2019 05:30:29 -0700 (PDT)
+        bh=Vz+znNR3F5kjJHoZn9Crk81ccCGx1/tiF7Xfm+PRQVc=;
+        b=YUCyJcwJLjyLBoTlhJmXoewkQUwDifCfIzkLZGhGNSWa2FV8cIJgpFSmWo5m9DEbix
+         q8u74/XwmE9OxyH86Bc1/qU9EcE6CVwEcqtqoVFkOuKU4X7sOcELktQXvaFXQXpfEloD
+         mBuWlu/nYtQEmG2N0dEW3kiTFz2tDPRMNGz1DBjtBND/YJjm+mrerf7K/ZfOMcOVabhJ
+         GtO+dTCUtT0VBvv3Oe2iQ1xLcy7bhx2SPolAHTCdFTxtje8Rz8MsnYe2GU6GpJXCZDor
+         2BWL1UkeGRVXzNTEzt2I4KiM334GNt9NFjRaAwjGXYU3NaidgPQFvulFxdznSUz/BsEr
+         8svw==
+X-Gm-Message-State: APjAAAUd+9fxPRQYT3VIcewcG7Rw9bKNmQUCaxR2H+tBGXMeLJmyzFHL
+        nTLNQLuD5DBMFs1ee4IOGnY9oQ==
+X-Google-Smtp-Source: APXvYqwz5ogA7h2G+mp6k4mHrwtXmsKu8SbTaB/WQVZOvIU+slS295oTNMYD8Kyv4OO88vNv8l44ig==
+X-Received: by 2002:a5d:6549:: with SMTP id z9mr22487471wrv.63.1560947430518;
+        Wed, 19 Jun 2019 05:30:30 -0700 (PDT)
 Received: from miu.piliscsaba.redhat.com (catv-212-96-48-140.catv.broadband.hu. [212.96.48.140])
-        by smtp.gmail.com with ESMTPSA id 11sm1837513wmd.23.2019.06.19.05.30.27
+        by smtp.gmail.com with ESMTPSA id 11sm1837513wmd.23.2019.06.19.05.30.29
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 19 Jun 2019 05:30:28 -0700 (PDT)
+        Wed, 19 Jun 2019 05:30:29 -0700 (PDT)
 From:   Miklos Szeredi <mszeredi@redhat.com>
 To:     David Howells <dhowells@redhat.com>
 Cc:     Al Viro <viro@zeniv.linux.org.uk>, Ian Kent <raven@themaw.net>,
         linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 03/13] vfs: don't parse forbidden flags
-Date:   Wed, 19 Jun 2019 14:30:09 +0200
-Message-Id: <20190619123019.30032-3-mszeredi@redhat.com>
+Subject: [PATCH 04/13] vfs: don't parse "posixacl" option
+Date:   Wed, 19 Jun 2019 14:30:10 +0200
+Message-Id: <20190619123019.30032-4-mszeredi@redhat.com>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190619123019.30032-1-mszeredi@redhat.com>
 References: <20190619123019.30032-1-mszeredi@redhat.com>
@@ -52,64 +52,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Impossible to keep this blacklist properly synced with what mount(8) parses
-and what it doesn't.  E.g. it has various forms of "*atime" options, but
-not "atime"...
+Unlike the others, this is _not_ a standard option accepted by mount(8).
 
-Other than being impossible to maintain, it also makes little sense.  So
-just get rid of it.
+In fact SB_POSIXACL is an internal flag, and accepting MS_POSIXACL on the
+mount(2) interface is possibly a bug.
+
+The only filesystem that apparently wants to handle the "posixacl" option
+is 9p, but it has special handling of that option besides setting
+SB_POSIXACL.
 
 Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
 ---
- fs/fs_context.c | 28 ----------------------------
- 1 file changed, 28 deletions(-)
+ fs/fs_context.c | 1 -
+ 1 file changed, 1 deletion(-)
 
 diff --git a/fs/fs_context.c b/fs/fs_context.c
-index a9f314390b99..cbf89117a507 100644
+index cbf89117a507..49636e541293 100644
 --- a/fs/fs_context.c
 +++ b/fs/fs_context.c
-@@ -55,29 +55,6 @@ static const struct constant_table common_clear_sb_flag[] = {
- 	{ "silent",	SB_SILENT },
+@@ -42,7 +42,6 @@ static const struct constant_table common_set_sb_flag[] = {
+ 	{ "dirsync",	SB_DIRSYNC },
+ 	{ "lazytime",	SB_LAZYTIME },
+ 	{ "mand",	SB_MANDLOCK },
+-	{ "posixacl",	SB_POSIXACL },
+ 	{ "ro",		SB_RDONLY },
+ 	{ "sync",	SB_SYNCHRONOUS },
  };
- 
--static const char *const forbidden_sb_flag[] = {
--	"bind",
--	"dev",
--	"exec",
--	"move",
--	"noatime",
--	"nodev",
--	"nodiratime",
--	"noexec",
--	"norelatime",
--	"nostrictatime",
--	"nosuid",
--	"private",
--	"rec",
--	"relatime",
--	"remount",
--	"shared",
--	"slave",
--	"strictatime",
--	"suid",
--	"unbindable",
--};
--
- /*
-  * Check for a common mount option that manipulates s_flags.
-  */
-@@ -85,11 +62,6 @@ int vfs_parse_sb_flag(struct fs_context *fc, struct fs_parameter *param)
- {
- 	const char *key = param->key;
- 	unsigned int set, clear;
--	unsigned int i;
--
--	for (i = 0; i < ARRAY_SIZE(forbidden_sb_flag); i++)
--		if (strcmp(key, forbidden_sb_flag[i]) == 0)
--			return -EINVAL;
- 
- 	set = lookup_constant(common_set_sb_flag, key, 0);
- 	clear = lookup_constant(common_clear_sb_flag, key, 0);
 -- 
 2.21.0
 
