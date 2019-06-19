@@ -2,162 +2,200 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A8B94B0A9
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 06:20:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 61BB24B0D9
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 06:28:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726075AbfFSET6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Jun 2019 00:19:58 -0400
-Received: from ozlabs.org ([203.11.71.1]:55701 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725892AbfFSET5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Jun 2019 00:19:57 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45TBYf35Zlz9s5c;
-        Wed, 19 Jun 2019 14:19:49 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1560917994;
-        bh=g6BHo34pUX0+bJ8ZlovsR9z8dAhrs6fACHHPO6QK9y4=;
-        h=Date:From:To:Cc:Subject:From;
-        b=io9j1o88CHlJEueVOt9s6av7KEt0qMoYDINMNNniZKW9as5JvkLSSlGcDXAets7eG
-         wLmBk4jbLuiUTetuKZb34isHF8j4G+28qqKAwwKUTzAiNWjp6CylzMQ7JbgpuNNGPF
-         hYdwgw5ZVXty0qPSwU0sAGNvVCemunwRblhVpq+LB2BYbajkaTph+kuVkTYiFldLJY
-         vuLVEM8Th+5w5XPUM3NRJLExKDoniWylW+X0rkWXfGX1rGXbpJ5dIlMVTn7dVQ9guM
-         J5ERJeZcXNJSrKe9kbiRplFPKz6Hd2XLTc388rzcmw6qUXukmpRHEsHYUi1NwEtroU
-         ZqhkDrqW0AXHQ==
-Date:   Wed, 19 Jun 2019 14:19:49 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Dave Airlie <airlied@linux.ie>,
-        DRI <dri-devel@lists.freedesktop.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Jani Nikula <jani.nikula@intel.com>,
-        Chris Wilson <chris@chris-wilson.co.uk>
-Subject: linux-next: manual merge of the drm tree with the kbuild tree
-Message-ID: <20190619141949.38e661e6@canb.auug.org.au>
+        id S1726210AbfFSE2M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Jun 2019 00:28:12 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:46484 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725800AbfFSE2L (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Jun 2019 00:28:11 -0400
+Received: by mail-pf1-f195.google.com with SMTP id 81so8926955pfy.13;
+        Tue, 18 Jun 2019 21:28:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:subject:to:cc:references:in-reply-to:mime-version
+         :user-agent:message-id:content-transfer-encoding;
+        bh=DGRb75yIjtPnzydCGSmKGs8fdmo+cuZrHDcr1XkPuQM=;
+        b=q9XM9tOobAlpop+hLOk+0kNdRTkTayvyMR9QQzblOS+NwyEr82jcMdUh72VpnoJSw2
+         X5E2bfbR2ppPXcbNEHgwwsH9BtwqTN5/4Hd/y+e+HMdaBIOLdkA4rApPVFogpsj7KxQq
+         ghm+j1vEdjn/nskYmniuPfFv6DwBU0zMBZC9nPNKNY7vg3Gk5UciFW6aeAV4kk8ILFjV
+         EjfKAnvrExeiy9OO/Nx3HZxDedk48F2mCdKXYG/lKYpbjNObnc2Hkc4C/ywWVBMEDY20
+         8go3l8PZBT7AKo438sROdhGvYBKBXOq9pLp9H+JHpNICEv0J8LpMcTFdVRSp/SPW21+z
+         cWQQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:subject:to:cc:references:in-reply-to
+         :mime-version:user-agent:message-id:content-transfer-encoding;
+        bh=DGRb75yIjtPnzydCGSmKGs8fdmo+cuZrHDcr1XkPuQM=;
+        b=ga85AmDm3bJTygnCOUIYTlgv+Ojw6gikrngaDGslKMI7VkRp9XDAcBrNWxANrTZuE9
+         upz6GM/SJwdfGf0+0x7JDWcl+CvOUVh8mpX5vd14yloiUWMLfnE10t7B2QLzylhyG1QC
+         U793SJ6A59g/Zy3Z1/KYl5ixq18NW2igk6AT6RuZjbfpnjyvlrH5KZnVxP3A8titVg+C
+         ye6NYiv4npDTDDnl+iqqMSYvhAyp0KxFjrWeI3sCdxkCUuaLGSTPcxg4TgWy/7NRjDZ+
+         /ZU9M9yu9L9KJl+Fdy3mAPJH/HRq5je21V7y8580fjFyeuffkxky31R5wly1PJWGqF8P
+         pgNQ==
+X-Gm-Message-State: APjAAAXtDxgzF8FTn/wvOx3QlKWs/Q0ezUAivgTUhRMLKKSSAo0WvuOq
+        XA70whn438B21IdqRPTrvpg=
+X-Google-Smtp-Source: APXvYqyPQRgQfyEQQsCe5fedY34G1dLdn4PVJf15gt4z1w2xvO+JpWBC0RAdTsK+BDq6JqldiDwhrQ==
+X-Received: by 2002:a63:18c:: with SMTP id 134mr1359993pgb.432.1560918490535;
+        Tue, 18 Jun 2019 21:28:10 -0700 (PDT)
+Received: from localhost (193-116-92-108.tpgi.com.au. [193.116.92.108])
+        by smtp.gmail.com with ESMTPSA id r15sm21539691pfc.162.2019.06.18.21.28.09
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Tue, 18 Jun 2019 21:28:09 -0700 (PDT)
+Date:   Wed, 19 Jun 2019 14:23:03 +1000
+From:   Nicholas Piggin <npiggin@gmail.com>
+Subject: Re: [PATCH v2 1/1] cpuidle-powernv : forced wakeup for stop states
+To:     Abhishek Goel <huntbag@linux.vnet.ibm.com>,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org
+Cc:     daniel.lezcano@linaro.org, dja@axtens.net, ego@linux.vnet.ibm.com,
+        mpe@ellerman.id.au, rjw@rjwysocki.net
+References: <20190617095648.18847-1-huntbag@linux.vnet.ibm.com>
+        <20190617095648.18847-2-huntbag@linux.vnet.ibm.com>
+In-Reply-To: <20190617095648.18847-2-huntbag@linux.vnet.ibm.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/OFXYsSUCIef=lutNjM1jqkt"; protocol="application/pgp-signature"
+User-Agent: astroid/0.14.0 (https://github.com/astroidmail/astroid)
+Message-Id: <1560917320.mk5nn6r8jw.astroid@bobo.none>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/OFXYsSUCIef=lutNjM1jqkt
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Abhishek Goel's on June 17, 2019 7:56 pm:
+> Currently, the cpuidle governors determine what idle state a idling CPU
+> should enter into based on heuristics that depend on the idle history on
+> that CPU. Given that no predictive heuristic is perfect, there are cases
+> where the governor predicts a shallow idle state, hoping that the CPU wil=
+l
+> be busy soon. However, if no new workload is scheduled on that CPU in the
+> near future, the CPU may end up in the shallow state.
+>=20
+> This is problematic, when the predicted state in the aforementioned
+> scenario is a shallow stop state on a tickless system. As we might get
+> stuck into shallow states for hours, in absence of ticks or interrupts.
+>=20
+> To address this, We forcefully wakeup the cpu by setting the
+> decrementer. The decrementer is set to a value that corresponds with the
+> residency of the next available state. Thus firing up a timer that will
+> forcefully wakeup the cpu. Few such iterations will essentially train the
+> governor to select a deeper state for that cpu, as the timer here
+> corresponds to the next available cpuidle state residency. Thus, cpu will
+> eventually end up in the deepest possible state.
+>=20
+> Signed-off-by: Abhishek Goel <huntbag@linux.vnet.ibm.com>
+> ---
+>=20
+> Auto-promotion
+>  v1 : started as auto promotion logic for cpuidle states in generic
+> driver
+>  v2 : Removed timeout_needed and rebased the code to upstream kernel
+> Forced-wakeup
+>  v1 : New patch with name of forced wakeup started
+>  v2 : Extending the forced wakeup logic for all states. Setting the
+> decrementer instead of queuing up a hrtimer to implement the logic.
+>=20
+>  drivers/cpuidle/cpuidle-powernv.c | 38 +++++++++++++++++++++++++++++++
+>  1 file changed, 38 insertions(+)
+>=20
+> diff --git a/drivers/cpuidle/cpuidle-powernv.c b/drivers/cpuidle/cpuidle-=
+powernv.c
+> index 84b1ebe212b3..bc9ca18ae7e3 100644
+> --- a/drivers/cpuidle/cpuidle-powernv.c
+> +++ b/drivers/cpuidle/cpuidle-powernv.c
+> @@ -46,6 +46,26 @@ static struct stop_psscr_table stop_psscr_table[CPUIDL=
+E_STATE_MAX] __read_mostly
+>  static u64 default_snooze_timeout __read_mostly;
+>  static bool snooze_timeout_en __read_mostly;
+> =20
+> +static u64 forced_wakeup_timeout(struct cpuidle_device *dev,
+> +				 struct cpuidle_driver *drv,
+> +				 int index)
+> +{
+> +	int i;
+> +
+> +	for (i =3D index + 1; i < drv->state_count; i++) {
+> +		struct cpuidle_state *s =3D &drv->states[i];
+> +		struct cpuidle_state_usage *su =3D &dev->states_usage[i];
+> +
+> +		if (s->disabled || su->disable)
+> +			continue;
+> +
+> +		return (s->target_residency + 2 * s->exit_latency) *
+> +			tb_ticks_per_usec;
+> +	}
+> +
+> +	return 0;
+> +}
 
-Hi all,
+It would be nice to not have this kind of loop iteration in the
+idle fast path. Can we add a flag or something to the idle state?
 
-Today's linux-next merge of the drm tree got a conflict in:
+> +
+>  static u64 get_snooze_timeout(struct cpuidle_device *dev,
+>  			      struct cpuidle_driver *drv,
+>  			      int index)
+> @@ -144,8 +164,26 @@ static int stop_loop(struct cpuidle_device *dev,
+>  		     struct cpuidle_driver *drv,
+>  		     int index)
+>  {
+> +	u64 dec_expiry_tb, dec, timeout_tb, forced_wakeup;
+> +
+> +	dec =3D mfspr(SPRN_DEC);
+> +	timeout_tb =3D forced_wakeup_timeout(dev, drv, index);
+> +	forced_wakeup =3D 0;
+> +
+> +	if (timeout_tb && timeout_tb < dec) {
+> +		forced_wakeup =3D 1;
+> +		dec_expiry_tb =3D mftb() + dec;
+> +	}
 
-  drivers/gpu/drm/i915/Makefile.header-test
+The compiler probably can't optimise away the SPR manipulations so try
+to avoid them if possible.
 
-between commit:
+> +
+> +	if (forced_wakeup)
+> +		mtspr(SPRN_DEC, timeout_tb);
 
-  e846f0dc57f4 ("kbuild: add support for ensuring headers are self-containe=
-d")
+This should just be put in the above 'if'.
 
-from the kbuild tree and commits:
+> +
+>  	power9_idle_type(stop_psscr_table[index].val,
+>  			 stop_psscr_table[index].mask);
+> +
+> +	if (forced_wakeup)
+> +		mtspr(SPRN_DEC, dec_expiry_tb - mftb());
 
-  112ed2d31a46 ("drm/i915: Move GraphicsTechnology files under gt/")
-  d91e657876a9 ("drm/i915: Introduce struct intel_wakeref")
-  aab30b85c97a ("drm/i915: ensure more headers remain self-contained")
-  b375d0ef2589 ("drm/i915: extract intel_vdsc.h from intel_drv.h and i915_d=
-rv.h")
+This will sometimes go negative and result in another timer interrupt.
 
-from the drm tree.
+It also breaks irq work (which can be set here by machine check I
+believe.
 
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+May need to implement some timer code to do this for you.
 
---=20
-Cheers,
-Stephen Rothwell
+static void reset_dec_after_idle(void)
+{
+	u64 now;
+        u64 *next_tb;
 
-diff --cc drivers/gpu/drm/i915/Makefile.header-test
-index 639b596a06a9,3a9663002d4a..000000000000
---- a/drivers/gpu/drm/i915/Makefile.header-test
-+++ b/drivers/gpu/drm/i915/Makefile.header-test
-@@@ -2,18 -2,28 +2,28 @@@
-  # Copyright =C2=A9 2019 Intel Corporation
- =20
-  # Test the headers are compilable as standalone units
- -header_test :=3D \
- +header-test-$(CONFIG_DRM_I915_WERROR) :=3D \
-  	i915_active_types.h \
-+ 	i915_debugfs.h \
-+ 	i915_drv.h \
-  	i915_gem_context_types.h \
-+ 	i915_gem_pm.h \
-+ 	i915_irq.h \
-+ 	i915_params.h \
-  	i915_priolist_types.h \
-+ 	i915_reg.h \
-  	i915_scheduler_types.h \
-  	i915_timeline_types.h \
-+ 	i915_utils.h \
-+ 	intel_acpi.h \
-+ 	intel_atomic.h \
-  	intel_atomic_plane.h \
-  	intel_audio.h \
-+ 	intel_bios.h \
-  	intel_cdclk.h \
-  	intel_color.h \
-+ 	intel_combo_phy.h \
-  	intel_connector.h \
-- 	intel_context_types.h \
-  	intel_crt.h \
-  	intel_csr.h \
-  	intel_ddi.h \
-@@@ -31,7 -54,22 +54,12 @@@
-  	intel_pipe_crc.h \
-  	intel_pm.h \
-  	intel_psr.h \
-+ 	intel_quirks.h \
-+ 	intel_runtime_pm.h \
-  	intel_sdvo.h \
-+ 	intel_sideband.h \
-  	intel_sprite.h \
-  	intel_tv.h \
-- 	intel_workarounds_types.h
-+ 	intel_uncore.h \
-+ 	intel_vdsc.h \
-+ 	intel_wakeref.h
- -
- -quiet_cmd_header_test =3D HDRTEST $@
- -      cmd_header_test =3D echo "\#include \"$(<F)\"" > $@
- -
- -header_test_%.c: %.h
- -	$(call cmd,header_test)
- -
- -i915-$(CONFIG_DRM_I915_WERROR) +=3D $(foreach h,$(header_test),$(patsubst=
- %.h,header_test_%.o,$(h)))
- -
- -clean-files +=3D $(foreach h,$(header_test),$(patsubst %.h,header_test_%.=
-c,$(h)))
+	if (test_irq_work_pending())
+		return;
+	now =3D mftb;
+	next_tb =3D this_cpu_ptr(&decrementers_next_tb);
 
---Sig_/OFXYsSUCIef=lutNjM1jqkt
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+	if (now >=3D *next_tb)
+		return;
+	set_dec(*next_tb - now);
+	if (test_irq_work_pending())
+		set_dec(1);
+}
 
------BEGIN PGP SIGNATURE-----
+Something vaguely like that. See timer_interrupt().
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0Jt+UACgkQAVBC80lX
-0Gx+uQf+L8n3u5sfawCr66p/2odPMstJFLPc8WDFbPTrUzA0EkMogFFF9N4qSX99
-jK/JEsqhY3gFNOqLYFJfFmQlzOe4ImpsoGX+dFk0y3LZXXw6yMOCinXrxZ/mYlwH
-y2EOsPV2679Fnw9DyZWkGoRykM07d7hTkdKBmYQbA32zFudw0NUBpiBg2NGZtNWa
-NU8Eo331pfp6ppyHCLHObpbQgOB1m02zGDSh2DsO6FVzIrTK85hcAlOFBykIwUlZ
-BrwzqrywRzDNuMctR0NzFnAFcOurqu4bPn80QZIhMIXxHHhUNtx+CK58Cz3HQuQ+
-oPqA1jo/aZKODh7fRm71VKXbfeNPcg==
-=d5sv
------END PGP SIGNATURE-----
-
---Sig_/OFXYsSUCIef=lutNjM1jqkt--
+Thanks,
+Nick
+=
