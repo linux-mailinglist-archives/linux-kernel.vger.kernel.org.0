@@ -2,97 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 590C04B795
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 14:03:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D7034B7AE
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 14:11:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731692AbfFSMDU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Jun 2019 08:03:20 -0400
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:46473 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726246AbfFSMDU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Jun 2019 08:03:20 -0400
-Received: by mail-qk1-f196.google.com with SMTP id x18so10662624qkn.13;
-        Wed, 19 Jun 2019 05:03:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=UUNDJ4YT5sYe2FSF11R8Qj2KGP81ymPOsgrPA4bzlUM=;
-        b=tGUQUW65p6WjgVCM2/lZ12D8gBKslhHKRm5kkwDJN4DXSuK4hLzZAwUvjukLfRQeGE
-         yMWqA79F5yIo11HDizUNdV3vX4zxcPy/yz/7Y2c/BdCQAP0pAD/pT01zIbpTIrMVhG6a
-         pWWoBrCXg2Gr8HV/xcIUifnm4emFfzDrG9VADVfGzhrNybHtTeJwJf91XNHHTmD77O2G
-         34E19ceLrLkYYaUqMoc8M9w5F9/n+Dbf6kBnIHyr6Ezkj+wZDHR7SAci+GGI2rr+EC4y
-         CPOGu5tv2LpKzVGl3rdCp7uqtyHjgIEvp/YctuzPs5QUhGZ2MS6K4+VUueNs1SVHRK/a
-         H71g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=UUNDJ4YT5sYe2FSF11R8Qj2KGP81ymPOsgrPA4bzlUM=;
-        b=kwXkKndAa4S6Lq/k4ZpXe5Xm39uYpOCNy30d39fhuixXOVkkzF2PgbqSH5VMPnQ5HL
-         HLsMWHSO0l67DwFp482TJOYZE7M7C5yH77J7Ba0bMCmmgxFZla0TNqnrMLIy3nHeJmKH
-         5/ugnRReJ0EwCMeLqwydaUbaKLg71rFjbOLKdBnrU5YLN9u7ltqdxX6C+7u55qfx016b
-         zA0IMQ65AG8aMtHUPprkKC0CBCRde5XQ0F0dFoHTx8sal73wIi0K+vZVsnTsFShg1DEY
-         5OYT2hjuI4xBwyVCxWzmM+Nj5ZyrCK4QdytavSUp4g8bq/N9bfnZqlfdMTmFncpXnBn4
-         zJmw==
-X-Gm-Message-State: APjAAAWVE5w99SEORduMKVlj/B1WbifmhGbHVN4Oo6I8dDN4zkPagHY4
-        MKEC6+eGzRbPDs53LdH02iM=
-X-Google-Smtp-Source: APXvYqxBoaY0rL+zlXSIQpf+ih0yitbR1m/XjjH1n/Rjg85Fccc83qRq07beePWyBu5iXiE7CJBNRA==
-X-Received: by 2002:a37:696:: with SMTP id 144mr95924137qkg.250.1560945799007;
-        Wed, 19 Jun 2019 05:03:19 -0700 (PDT)
-Received: from continental ([186.212.50.252])
-        by smtp.gmail.com with ESMTPSA id s134sm10974868qke.51.2019.06.19.05.03.16
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 19 Jun 2019 05:03:18 -0700 (PDT)
-Date:   Wed, 19 Jun 2019 09:03:52 -0300
-From:   Marcos Paulo de Souza <marcos.souza.org@gmail.com>
-To:     "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc:     linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>
-Subject: Re: [PATCH 1/2] scsi: devinfo: BLIST_TRY_VPD_PAGES for SanDisk
- Cruzer Blade
-Message-ID: <20190619120346.GC26980@continental>
-References: <20190618013146.21961-1-marcos.souza.org@gmail.com>
- <20190618013146.21961-2-marcos.souza.org@gmail.com>
- <yq1r27quuod.fsf@oracle.com>
- <20190619094540.GA26980@continental>
+        id S1731570AbfFSMLE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Jun 2019 08:11:04 -0400
+Received: from foss.arm.com ([217.140.110.172]:36270 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727068AbfFSMLE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Jun 2019 08:11:04 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 103F7360;
+        Wed, 19 Jun 2019 05:11:03 -0700 (PDT)
+Received: from e107155-lin (e107155-lin.cambridge.arm.com [10.1.196.42])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CD1263F738;
+        Wed, 19 Jun 2019 05:10:59 -0700 (PDT)
+Date:   Wed, 19 Jun 2019 13:10:57 +0100
+From:   Sudeep Holla <sudeep.holla@arm.com>
+To:     Atish Patra <atish.patra@wdc.com>,
+        Russell King <linux@armlinux.org.uk>
+Cc:     linux-kernel@vger.kernel.org, Albert Ou <aou@eecs.berkeley.edu>,
+        Anup Patel <anup@brainfault.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        devicetree@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-riscv@lists.infradead.org,
+        Mark Rutland <mark.rutland@arm.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Otto Sabart <ottosabart@seberm.com>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Richard Fontana <rfontana@redhat.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Will Deacon <will.deacon@arm.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Sudeep Holla <sudeep.holla@arm.com>
+Subject: Re: [PATCH v7 4/7] arm: Use common cpu_topology structure and
+ functions.
+Message-ID: <20190619121057.GE1360@e107155-lin>
+References: <20190617185920.29581-1-atish.patra@wdc.com>
+ <20190617185920.29581-5-atish.patra@wdc.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190619094540.GA26980@continental>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+In-Reply-To: <20190617185920.29581-5-atish.patra@wdc.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 19, 2019 at 06:45:43AM -0300, Marcos Paulo de Souza wrote:
-> On Tue, Jun 18, 2019 at 11:21:22PM -0400, Martin K. Petersen wrote:
-> > 
-> > Marcos,
-> > 
-> > > Currently, all USB devices skip VPD pages, even when the device
-> > > supports them (SPC-3 and later), but some of them support VPD, like
-> > > Cruzer Blade.
-> > 
-> > What's your confidence level wrt. all Cruzer Blades handling this
-> > correctly? How many devices have you tested this change with?
+Hi Russell,
+
+On Mon, Jun 17, 2019 at 11:59:17AM -0700, Atish Patra wrote:
+> Currently, ARM32 and ARM64 uses different data structures to represent
+> their cpu topologies. Since, we are moving the ARM64 topology to common
+> code to be used by other architectures, we can reuse that for ARM32 as
+> well.
 > 
-> I've tested three Cruzer Blades that I have at hand, and all  of them have VPD
-> support, and also checked with a friend of mine that also have one. I can't say
-> about "all others" but so far, 4/4 devices that I tested have VPD. (They were all
-> SPC-3 or SPC-4 compliant).
+> Take this opprtunity to remove the redundant functions from ARM32 and
+> reuse the common code instead.
 > 
+> To: Russell King <linux@armlinux.org.uk>
+> Signed-off-by: Atish Patra <atish.patra@wdc.com>
+> Tested-by: Sudeep Holla <sudeep.holla@arm.com> (on TC2)
+> Reviewed-by : Sudeep Holla <sudeep.holla@arm.com>
+> 
+> ---
+> Hi Russell,
+> Can we get a ACK for this patch ? We are hoping that the entire
+> series can be merged at one go.
 
-My first idea was to add a vendor:product mapping at SCSI layer, but so far I
-haven't found one, so I added the model/vendor found by INQUIRY. Would it be
-better to check for prod:vendor (as values, instead of the description)?
+It would be nice to get this in for v5.3 as it's almost there.
+Are you fine with these changes ?
 
-Thanks,
-Marcos
-
-
-> > 
-> > -- 
-> > Martin K. Petersen	Oracle Linux Engineering
+--
+Regards,
+Sudeep
