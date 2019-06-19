@@ -2,88 +2,150 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7853B4BC64
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 17:06:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3CAD54BB74
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 16:27:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730240AbfFSPGZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Jun 2019 11:06:25 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:42077 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729179AbfFSPGY (ORCPT
+        id S1729423AbfFSO1x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Jun 2019 10:27:53 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:50970 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725893AbfFSO1x (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Jun 2019 11:06:24 -0400
-Received: by mail-lj1-f194.google.com with SMTP id t28so1350994lje.9
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2019 08:06:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lixom-net.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=nDfkV8NBGFiURwassxD7ytfC0t1CNDepFq+TNmyLZT8=;
-        b=oqMO/sHA/5NxzzT0yRXmVS1fov/gCBmlfxV3B0SZ3ubCH3qvBQq6dq2bhZA/OUg3Xv
-         1mwhfi7d8DblOgSZg2KH27JNOEFCkUGTmTIjqBQa5tkKbJRLWZLzYFT16hcJh+j/Syp+
-         29LEvGQIXavrXVXrXbaS/KFO2Wit0+kCy7JgfWxWX69KL6iZth0DCR3slFQqOx6/HW4V
-         LdXg/GimvZP4Ccsge79zv2H1Ozk8Mif58qENy+l8WgHm4+SvduSJkkwCYioICI7g0ggr
-         6dyQdufK1G3ho2rZBJi6gxJqSqooFfquIN1xmQ/iAGtGW0gnqs1RAE2rGfofviAc1my7
-         wvMg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=nDfkV8NBGFiURwassxD7ytfC0t1CNDepFq+TNmyLZT8=;
-        b=cpqijaWhrp7tz/TsSQ5AYSI6jS5vlkK4z3gYGLRpv1SVhUgVWNkjDJezXG7tmnLpXW
-         Q7ruySISHQRRNnLPpPAkWvLJJ00TFOECoxmGuRh9c2IOsdNIReeI5DNcVhUOp6DJ/kvP
-         18EgzrGH2Ozm+VU02+zPt/EKanXsZOYg/xv8kSQuMGoXqvTKEPghwUwHC96lk2bozhHv
-         97SIblh0YmQdsZeke5NqRdGuoEyCdnb2VqNxH7zA1hy5xvron7wUwcDUu9fHaA9ACBsb
-         vwnELv2Vz4HGeAmxHATt5QAhBHY4MJQjEpM+SUdBS0uz9prJEDz1WUKV/w2m5MAlLqpD
-         kGYA==
-X-Gm-Message-State: APjAAAVHDmWICMcTelGZSqHedbZWVIw5I6Jpk6m3PxFqaey7ByH4rJsR
-        jfFryWCW74G8S2cHDTmMYBRWFLYB++PRrg==
-X-Google-Smtp-Source: APXvYqwiPMgPFpFbn6wMYwgtQdGcIZYTj3+AlxXKYiQQRRTPfzxTxIpULnMpbXQpRHYQpiV76HJLNw==
-X-Received: by 2002:a2e:5b0f:: with SMTP id p15mr48417670ljb.82.1560956783120;
-        Wed, 19 Jun 2019 08:06:23 -0700 (PDT)
-Received: from localhost (h85-30-9-151.cust.a3fiber.se. [85.30.9.151])
-        by smtp.gmail.com with ESMTPSA id p2sm1747407lfc.89.2019.06.19.08.06.21
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 19 Jun 2019 08:06:22 -0700 (PDT)
-Date:   Wed, 19 Jun 2019 07:27:22 -0700
-From:   Olof Johansson <olof@lixom.net>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     arm@kernel.org, Nathan Chancellor <natechancellor@gmail.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Paul Walmsley <paul@pwsan.com>, linux-omap@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ARM: omap2: remove incorrect __init annotation
-Message-ID: <20190619142722.hsujtf3svd7p2pt4@localhost>
-References: <20190619130529.1502322-1-arnd@arndb.de>
+        Wed, 19 Jun 2019 10:27:53 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5JEJnSt019625;
+        Wed, 19 Jun 2019 14:26:58 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=yttiPRpSZZrH5iMOgXU87rDYVYrhNSlNRuXPD3dcjrE=;
+ b=ee01PXdUFHKCRVZQBbEAuCNZzx/GyLgDcSp/TKtQkXY2DMJxqiwBR1/8P0+sL4K7a7B5
+ XBiVILXz095aw8/e6KKqFdA92dOWJ9NRuqgr3rzp/z5XdzYzghRlSDmatpVrzRNszK9L
+ IA7sytloqzLGbCju3v6Y+DAtd1dkwMsoJy+qeIbqYkrDQau5vE+Tq1tbXa/ZUbqGM6T2
+ vRv1dnJOcHl5uvsyOSEbxBMlJSVlD+OWu8UlPgmk5QI2J8Fq5K95dgsj/UPmz39xrdUU
+ uM1ORIHpFA675tloJYNLnO0fWJkls2vhwdz7OkpFgWmyaSZBm9OfHBVa/rC2fGJjLrA+ PQ== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by userp2130.oracle.com with ESMTP id 2t7809btkm-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 19 Jun 2019 14:26:58 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5JEQTAe194064;
+        Wed, 19 Jun 2019 14:26:57 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserp3020.oracle.com with ESMTP id 2t77ynvp68-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 19 Jun 2019 14:26:57 +0000
+Received: from abhmp0004.oracle.com (abhmp0004.oracle.com [141.146.116.10])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x5JEQm9v015046;
+        Wed, 19 Jun 2019 14:26:48 GMT
+Received: from char.us.oracle.com (/10.152.32.25)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 19 Jun 2019 07:26:47 -0700
+Received: by char.us.oracle.com (Postfix, from userid 1000)
+        id 434C96A0136; Wed, 19 Jun 2019 10:28:12 -0400 (EDT)
+Date:   Wed, 19 Jun 2019 10:28:12 -0400
+From:   Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+To:     Stefano Stabellini <sstabellini@kernel.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>, Christoph Hellwig <hch@lst.de>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Jesper Dangaard Brouer <brouer@redhat.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Juergen Gross <jgross@suse.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Joerg Roedel <jroedel@suse.de>, xen-devel@lists.xenproject.org,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] swiotlb: fix phys_addr_t overflow warning
+Message-ID: <20190619142812.GM10432@char.us.oracle.com>
+References: <20190617132946.2817440-1-arnd@arndb.de>
+ <alpine.DEB.2.21.1906170913080.2072@sstabellini-ThinkPad-T480s>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190619130529.1502322-1-arnd@arndb.de>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <alpine.DEB.2.21.1906170913080.2072@sstabellini-ThinkPad-T480s>
+User-Agent: Mutt/1.9.1 (2017-09-22)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9292 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1906190118
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9292 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1906190118
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 19, 2019 at 03:04:54PM +0200, Arnd Bergmann wrote:
-> omap3xxx_prm_enable_io_wakeup() is marked __init, but its caller is not, so
-> we get a warning with clang-8:
+On Mon, Jun 17, 2019 at 09:13:16AM -0700, Stefano Stabellini wrote:
+> On Mon, 17 Jun 2019, Arnd Bergmann wrote:
+> > On architectures that have a larger dma_addr_t than phys_addr_t,
+> > the swiotlb_tbl_map_single() function truncates its return code
+> > in the failure path, making it impossible to identify the error
+> > later, as we compare to the original value:
+> > 
+> > kernel/dma/swiotlb.c:551:9: error: implicit conversion from 'dma_addr_t' (aka 'unsigned long long') to 'phys_addr_t' (aka 'unsigned int') changes value from 18446744073709551615 to 4294967295 [-Werror,-Wconstant-conversion]
+> >         return DMA_MAPPING_ERROR;
+> > 
+> > Use an explicit typecast here to convert it to the narrower type,
+> > and use the same expression in the error handling later.
+> > 
+> > Fixes: b907e20508d0 ("swiotlb: remove SWIOTLB_MAP_ERROR")
+> > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 > 
-> WARNING: vmlinux.o(.text+0x343c8): Section mismatch in reference from the function omap3xxx_prm_late_init() to the function .init.text:omap3xxx_prm_enable_io_wakeup()
-> The function omap3xxx_prm_late_init() references
-> the function __init omap3xxx_prm_enable_io_wakeup().
-> This is often because omap3xxx_prm_late_init lacks a __init
-> annotation or the annotation of omap3xxx_prm_enable_io_wakeup is wrong.
+> Acked-by: Stefano Stabellini <sstabellini@kernel.org>
+
+queued.
 > 
-> When building with gcc, omap3xxx_prm_enable_io_wakeup() is always
-> inlined, so we never noticed in the past.
 > 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> Reviewed-by: Nathan Chancellor <natechancellor@gmail.com>
-> Acked-by: Tony Lindgren <tony@atomide.com>
-
-Applied to fixes. Thanks!
-
-
--Olof
+> > ---
+> > I still think that reverting the original commit would have
+> > provided clearer semantics for this corner case, but at least
+> > this patch restores the correct behavior.
+> > ---
+> >  drivers/xen/swiotlb-xen.c | 2 +-
+> >  kernel/dma/swiotlb.c      | 4 ++--
+> >  2 files changed, 3 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/drivers/xen/swiotlb-xen.c b/drivers/xen/swiotlb-xen.c
+> > index d53f3493a6b9..cfbe46785a3b 100644
+> > --- a/drivers/xen/swiotlb-xen.c
+> > +++ b/drivers/xen/swiotlb-xen.c
+> > @@ -402,7 +402,7 @@ static dma_addr_t xen_swiotlb_map_page(struct device *dev, struct page *page,
+> >  
+> >  	map = swiotlb_tbl_map_single(dev, start_dma_addr, phys, size, dir,
+> >  				     attrs);
+> > -	if (map == DMA_MAPPING_ERROR)
+> > +	if (map == (phys_addr_t)DMA_MAPPING_ERROR)
+> >  		return DMA_MAPPING_ERROR;
+> >  
+> >  	dev_addr = xen_phys_to_bus(map);
+> > diff --git a/kernel/dma/swiotlb.c b/kernel/dma/swiotlb.c
+> > index e906ef2e6315..a3be651973ad 100644
+> > --- a/kernel/dma/swiotlb.c
+> > +++ b/kernel/dma/swiotlb.c
+> > @@ -548,7 +548,7 @@ phys_addr_t swiotlb_tbl_map_single(struct device *hwdev,
+> >  	if (!(attrs & DMA_ATTR_NO_WARN) && printk_ratelimit())
+> >  		dev_warn(hwdev, "swiotlb buffer is full (sz: %zd bytes), total %lu (slots), used %lu (slots)\n",
+> >  			 size, io_tlb_nslabs, tmp_io_tlb_used);
+> > -	return DMA_MAPPING_ERROR;
+> > +	return (phys_addr_t)DMA_MAPPING_ERROR;
+> >  found:
+> >  	io_tlb_used += nslots;
+> >  	spin_unlock_irqrestore(&io_tlb_lock, flags);
+> > @@ -666,7 +666,7 @@ bool swiotlb_map(struct device *dev, phys_addr_t *phys, dma_addr_t *dma_addr,
+> >  	/* Oh well, have to allocate and map a bounce buffer. */
+> >  	*phys = swiotlb_tbl_map_single(dev, __phys_to_dma(dev, io_tlb_start),
+> >  			*phys, size, dir, attrs);
+> > -	if (*phys == DMA_MAPPING_ERROR)
+> > +	if (*phys == (phys_addr_t)DMA_MAPPING_ERROR)
+> >  		return false;
+> >  
+> >  	/* Ensure that the address returned is DMA'ble */
+> > -- 
+> > 2.20.0
+> > 
