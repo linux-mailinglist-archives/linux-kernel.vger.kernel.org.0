@@ -2,61 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BE8F74B23D
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 08:41:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2D33B4B24D
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 08:44:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731092AbfFSGkj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Jun 2019 02:40:39 -0400
-Received: from helcar.hmeau.com ([216.24.177.18]:39020 "EHLO deadmen.hmeau.com"
+        id S1730727AbfFSGn5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Jun 2019 02:43:57 -0400
+Received: from ozlabs.org ([203.11.71.1]:39619 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725881AbfFSGkj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Jun 2019 02:40:39 -0400
-Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
-        by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
-        id 1hdUGl-0003qn-Ho; Wed, 19 Jun 2019 14:40:31 +0800
-Received: from herbert by gondobar with local (Exim 4.89)
-        (envelope-from <herbert@gondor.apana.org.au>)
-        id 1hdUGh-0005pC-Mx; Wed, 19 Jun 2019 14:40:27 +0800
-Date:   Wed, 19 Jun 2019 14:40:27 +0800
-From:   Herbert Xu <herbert@gondor.apana.org.au>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Steffen Klassert <steffen.klassert@secunet.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Florian Westphal <fw@strlen.de>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] [v2] ipsec: select crypto ciphers for xfrm_algo
-Message-ID: <20190619064027.qlvdfmohlp3zmtx6@gondor.apana.org.au>
-References: <20190618112227.3322313-1-arnd@arndb.de>
+        id S1725881AbfFSGn5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Jun 2019 02:43:57 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45TFlr62Qnz9s7h;
+        Wed, 19 Jun 2019 16:43:52 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1560926633;
+        bh=OroIS/BOV+/JRUDrnqf77oCtopeU+0jOa9qNRyj+JRI=;
+        h=Date:From:To:Cc:Subject:From;
+        b=sLcyIg8QVUItx9Wd+SQq4sxfARM4GgoHo3/xrFwdMuDXHFuBCYmMjudbSbuJFI4lJ
+         3hV9a6GLcOq+Ljt2YwMu31x8YReHOPjEXvxy6fRt3l70WyqBR2Cy/6XS60yRUOHml1
+         Yjx8Ymi51rtrdtkP9+Fihe55jBMCrpm9al9lvy9nDfgMauTm+BfGSw3KVt1ysILYwI
+         4Ak4rlVsBb6/Y1jG0aALPD6ghxzAI4rsIO5IfNKm0Keq8caK2hvHm/XG1fOvuBhvIz
+         +bi/oaP7LFz1o+zsY/5kgf8c3MpUiUphixRH3rF+CQAXXofKMXIugRpCoGn5J2FpgO
+         DwHug077Sv7FA==
+Date:   Wed, 19 Jun 2019 16:43:51 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Greg KH <greg@kroah.com>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Alan Stern <stern@rowland.harvard.edu>
+Subject: linux-next: build failure after merge of the usb tree
+Message-ID: <20190619164351.6c3f83be@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190618112227.3322313-1-arnd@arndb.de>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/ZTQyCq+/4dt3iCRDQZP+uWE"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 18, 2019 at 01:22:13PM +0200, Arnd Bergmann wrote:
-> kernelci.org reports failed builds on arc because of what looks
-> like an old missed 'select' statement:
-> 
-> net/xfrm/xfrm_algo.o: In function `xfrm_probe_algs':
-> xfrm_algo.c:(.text+0x1e8): undefined reference to `crypto_has_ahash'
-> 
-> I don't see this in randconfig builds on other architectures, but
-> it's fairly clear we want to select the hash code for it, like we
-> do for all its other users. As Herbert points out, CRYPTO_BLKCIPHER
-> is also required even though it has not popped up in build tests.
-> 
-> Fixes: 17bc19702221 ("ipsec: Use skcipher and ahash when probing algorithms")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->  net/xfrm/Kconfig | 2 ++
->  1 file changed, 2 insertions(+)
+--Sig_/ZTQyCq+/4dt3iCRDQZP+uWE
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Acked-by: Herbert Xu <herbert@gondor.apana.org.au>
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+Hi all,
+
+After merging the usb tree, today's linux-next build (x86_64 allmodconfig)
+failed like this:
+
+In file included from usr/include/linux/usbdevice_fs.hdrtest.c:1:
+./usr/include/linux/usbdevice_fs.h:88:2: error: unknown type name 'u8'
+  u8 num_ports;  /* Number of ports the device is connected */
+  ^~
+./usr/include/linux/usbdevice_fs.h:92:2: error: unknown type name 'u8'
+  u8 ports[7];  /* List of ports on the way from the root  */
+  ^~
+
+Caused by commit
+
+  6d101f24f1dd ("USB: add usbfs ioctl to retrieve the connection parameters=
+")
+
+Presumably exposed by commit
+
+  b91976b7c0e3 ("kbuild: compile-test UAPI headers to ensure they are self-=
+contained")
+
+from the kbuild tree.
+
+I have added this patch for now:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Wed, 19 Jun 2019 16:36:16 +1000
+Subject: [PATCH] USB: fix types in uapi include
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ include/uapi/linux/usbdevice_fs.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/include/uapi/linux/usbdevice_fs.h b/include/uapi/linux/usbdevi=
+ce_fs.h
+index 4b267fe3776e..78efe870c2b7 100644
+--- a/include/uapi/linux/usbdevice_fs.h
++++ b/include/uapi/linux/usbdevice_fs.h
+@@ -85,11 +85,11 @@ struct usbdevfs_conninfo_ex {
+ 				/* kernel, the device is connected to.     */
+ 	__u32 devnum;           /* Device address on the bus.              */
+ 	__u32 speed;		/* USB_SPEED_* constants from ch9.h        */
+-	u8 num_ports;		/* Number of ports the device is connected */
++	__u8 num_ports;		/* Number of ports the device is connected */
+ 				/* to on the way to the root hub. It may   */
+ 				/* be bigger than size of 'ports' array so */
+ 				/* userspace can detect overflows.         */
+-	u8 ports[7];		/* List of ports on the way from the root  */
++	__u8 ports[7];		/* List of ports on the way from the root  */
+ 				/* hub to the device. Current limit in     */
+ 				/* USB specification is 7 tiers (root hub, */
+ 				/* 5 intermediate hubs, device), which     */
+--=20
+2.20.1
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/ZTQyCq+/4dt3iCRDQZP+uWE
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0J2acACgkQAVBC80lX
+0GyO/Qf/ftfJ6Y3zJCClMg63T2PFhDrRIVYvod82t0s1JAJv6h/Hpgi5ChWt8FS5
+wsTkfBKO5oRDfc7GHOtApKnafN7a6TgS1a7LxfGQ5TGtqXD/iNBETJnP+mpnEEnn
+DCUP+aEJe6c/NlCpXgJ1iBSeKnxLMwgiEO3hEe0ExS6LQj8tBWIJyOLxOg31NRYY
+ibBhYjdeGUBNn5KpJakXFHUXMZz7wW0leWlvArfENo6nqHhBaDnyKRNpozf0NZ+Y
+6IElpe4YnztuDJNz6Tj5ueXg/wkIhj859vPBzjAk8XEvP6TZvPdrA0YRFVuGu+C+
+dbfcN+lgvQFjzy2jcA1rGu5mpceqIA==
+=iNAj
+-----END PGP SIGNATURE-----
+
+--Sig_/ZTQyCq+/4dt3iCRDQZP+uWE--
