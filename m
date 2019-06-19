@@ -2,78 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C8F664B8CA
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 14:39:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F3DE74B8D5
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 14:39:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731885AbfFSMjM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Jun 2019 08:39:12 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:46981 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727314AbfFSMjL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Jun 2019 08:39:11 -0400
-Received: by mail-lf1-f68.google.com with SMTP id z15so11963238lfh.13;
-        Wed, 19 Jun 2019 05:39:09 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=k1hQu5XF69cIYxxFB0cBywmRgl9yaZZCT4nTwvJSezk=;
-        b=ZkK+ICs+K3cGqcGKhT0r8c3lt2CQNDHzvWvy6vyp9E0QOZR7NXRT8q3bo9/EzOHJRN
-         v4qIjmEtrlctiHdMQDwjrVSu1lohreVTRzunpzYiIu6+nZ2xnyFi8N0nO3LLB9c40vSM
-         wpp0vvgRmBX9xsnxLr3gA5qCX7PAHtY3l5oLWEHmdcFgG4uCuaTYS3ah5DJih1TLOPLt
-         AustNqgDGuBicQluyi2Qxoyo+NCNgs0cbhPe64UV/WWMk4FbJBTt78HQlRIta38xq+uJ
-         KPl5TRDn81RYu0k8O6tsmdhouxrqUhTGnnH9myRPYNZugb6q9yR0dC22zGYS6FCaQrao
-         VDcw==
-X-Gm-Message-State: APjAAAV8ZTAhPfbs1/kGjbDFUHLVHHq+aLoBbhPpVAv5WphS+rOnrtfN
-        Zo9+HXQNEyRQhMrE7NSoNNY=
-X-Google-Smtp-Source: APXvYqy8ehN7nubUh2RfrodRbelb0zkjhgIBNB4apnSPdFi9hffzisYfFg8LfwrrGQrJ+IuOQhW90g==
-X-Received: by 2002:a19:ed07:: with SMTP id y7mr65146320lfy.56.1560947949245;
-        Wed, 19 Jun 2019 05:39:09 -0700 (PDT)
-Received: from xi.terra (c-74bee655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.190.116])
-        by smtp.gmail.com with ESMTPSA id b62sm3036301ljb.71.2019.06.19.05.39.08
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 19 Jun 2019 05:39:08 -0700 (PDT)
-Received: from johan by xi.terra with local (Exim 4.92)
-        (envelope-from <johan@kernel.org>)
-        id 1hdZrl-0001Yw-No; Wed, 19 Jun 2019 14:39:05 +0200
-Date:   Wed, 19 Jun 2019 14:39:05 +0200
-From:   Johan Hovold <johan@kernel.org>
-To:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Cc:     Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab@infradead.org>,
-        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Oliver Neukum <oneukum@suse.com>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Johan Hovold <johan@kernel.org>,
-        Valentina Manea <valentina.manea.m@gmail.com>,
-        Shuah Khan <shuah@kernel.org>, Felipe Balbi <balbi@kernel.org>,
-        linux-usb@vger.kernel.org
-Subject: Re: [PATCH v1 14/22] docs: usb: rename files to .rst and add them to
- drivers-api
-Message-ID: <20190619123905.GF25248@localhost>
-References: <cover.1560891322.git.mchehab+samsung@kernel.org>
- <c05aecb424e4f835e3f7872ecb5818e1d2f3267c.1560891322.git.mchehab+samsung@kernel.org>
+        id S1731909AbfFSMjp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Jun 2019 08:39:45 -0400
+Received: from foss.arm.com ([217.140.110.172]:37752 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727314AbfFSMjp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Jun 2019 08:39:45 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 945BC360;
+        Wed, 19 Jun 2019 05:39:44 -0700 (PDT)
+Received: from fuggles.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 092A33F738;
+        Wed, 19 Jun 2019 05:39:41 -0700 (PDT)
+Date:   Wed, 19 Jun 2019 13:39:39 +0100
+From:   Will Deacon <will.deacon@arm.com>
+To:     Guo Ren <guoren@kernel.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org,
+        Julien Grall <julien.grall@arm.com>,
+        linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu,
+        aou@eecs.berkeley.edu, gary@garyguo.net, Atish.Patra@wdc.com,
+        hch@infradead.org, paul.walmsley@sifive.com, rppt@linux.ibm.com,
+        linux-riscv@lists.infradead.org, Anup Patel <anup.Patel@wdc.com>,
+        Palmer Dabbelt <palmer@sifive.com>, suzuki.poulose@arm.com,
+        Marc Zyngier <marc.zyngier@arm.com>, catalin.marinas@arm.com,
+        julien.thierry@arm.com, christoffer.dall@arm.com,
+        james.morse@arm.com
+Subject: Re: [PATCH RFC 11/14] arm64: Move the ASID allocator code in a
+ separate file
+Message-ID: <20190619123939.GF7767@fuggles.cambridge.arm.com>
+References: <20190321163623.20219-1-julien.grall@arm.com>
+ <20190321163623.20219-12-julien.grall@arm.com>
+ <0dfe120b-066a-2ac8-13bc-3f5a29e2caa3@arm.com>
+ <CAJF2gTTXHHgDboaexdHA284y6kNZVSjLis5-Q2rDnXCxr4RSmA@mail.gmail.com>
+ <c871a5ae-914f-a8bb-9474-1dcfec5d45bf@arm.com>
+ <20190619091219.GB7767@fuggles.cambridge.arm.com>
+ <CAJF2gTTmFq3yYa9UrdZRAFwJgC=KmKTe2_NFy_UZBUQovqQJPg@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <c05aecb424e4f835e3f7872ecb5818e1d2f3267c.1560891322.git.mchehab+samsung@kernel.org>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <CAJF2gTTmFq3yYa9UrdZRAFwJgC=KmKTe2_NFy_UZBUQovqQJPg@mail.gmail.com>
+User-Agent: Mutt/1.11.1+86 (6f28e57d73f2) ()
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 18, 2019 at 06:05:38PM -0300, Mauro Carvalho Chehab wrote:
-> While there are a mix of things here, most of the stuff
-> were written from Kernel developer's PoV. So, add them to
-> the driver-api book.
-> 
-> A follow up for this patch would be to move documents from
-> there that are specific to sysadmins, adding them to the
-> admin-guide.
-> 
-> Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+On Wed, Jun 19, 2019 at 08:18:04PM +0800, Guo Ren wrote:
+> On Wed, Jun 19, 2019 at 5:12 PM Will Deacon <will.deacon@arm.com> wrote:
+> > This is one place where I'd actually prefer not to go down the route of
+> > making the code generic. Context-switching and low-level TLB management
+> > is deeply architecture-specific and I worry that by trying to make this
+> > code common, we run the real risk of introducing subtle bugs on some
+> > architecture every time it is changed.
+> "Add generic asid code" and "move arm's into generic" are two things.
+> We could do
+> first and let architecture's maintainer to choose.
 
-Acked-by: Johan Hovold <johan@kernel.org>
+If I understand the proposal being discussed, it involves basing that
+generic ASID allocation code around the arm64 implementation which I don't
+necessarily think is a good starting point.
+
+> > Furthermore, the algorithm we use
+> > on arm64 is designed to scale to large systems using DVM and may well be
+> > too complex and/or sub-optimal for architectures with different system
+> > topologies or TLB invalidation mechanisms.
+> It's just a asid algorithm not very complex and there is a callback
+> for architecture to define their
+> own local hart tlb flush. Seems it has nothing with DVM or tlb
+> broadcast mechanism.
+
+I'm pleased that you think the algorithm is not very complex, but I'm also
+worried that you might not have fully understood some of its finer details.
+
+The reason I mention DVM and TLB broadcasting is because, depending on
+the mechanisms in your architecture relating to those, it may be strictly
+required that all concurrently running threads of a process have the same
+ASID at any given point in time, or it may be that you really don't care.
+
+If you don't care, then the arm64 allocator is over-engineered and likely
+inefficient for your system. If you do care, then it's worth considering
+whether a lock is sufficient around the allocator if you don't expect high
+core counts. Another possibility is that you end up using only one ASID and
+invalidating the local TLB on every context switch. Yet another design
+would be to manage per-cpu ASID pools.
+
+So rather than blindly copying the arm64 code, I suggest sitting down and
+designing something that fits to your architecture instead. You may end up
+with something that is both simpler and more efficient.
+
+Will
