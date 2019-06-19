@@ -2,164 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 73D404C2DA
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 23:18:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8F2C84C2CE
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 23:12:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730522AbfFSVSf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Jun 2019 17:18:35 -0400
-Received: from mail-io1-f65.google.com ([209.85.166.65]:40064 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726175AbfFSVSe (ORCPT
+        id S1730576AbfFSVMp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Jun 2019 17:12:45 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:40174 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726175AbfFSVMo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Jun 2019 17:18:34 -0400
-Received: by mail-io1-f65.google.com with SMTP id n5so159223ioc.7
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2019 14:18:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=XY7aJ7dmXPxqNPvIOXdraSG/mXJqcFutpgqcMN/Km28=;
-        b=VNslJ7mhNRCKEXVbWHWhBbcjyZQQnZuTLynWJkzRy6HJWCzrYxgAE2HhkW/VSd5Pz9
-         SHfFCPP+ICxn6nicRTh1QtGs0tabSVxS4XDWpZ26c2/+NvIS9qM5t7B+rePUZMndCsUY
-         d/Xt1q1xsTgqaK/ACYSjZ3NODpHgZdE4uqn5I=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=XY7aJ7dmXPxqNPvIOXdraSG/mXJqcFutpgqcMN/Km28=;
-        b=ISPcDOvZcEDHo4qF1Cb+kn4uTUpkp68GeB6+YviBijCzfzcOuAni3ofeX82gMkM2E8
-         uHwSLZJ2PYhE+ZYQgbuodI5x6O6c7JOSXyWHO+gKr8ZjeJaryTgQ80wXPHaScuUDjCFA
-         Pyegy2MQNcw3u2afLXBOIAW5xSwPoQZjzZ2TYJ9g3h5KlB+SyCNIusjq6et7jHcLUdae
-         +2g5qSziDlbghVEDghAOqU1eXzwwaZ1mFL79qifxb94bgwfR18rE1soe+21yDIB2w3It
-         m+4UgwxCwr3OGsfLswspIRr7pw0od4cj9UOQMrlOr/kCDForMI9MKXy0L90k/VFAVAZk
-         YIFg==
-X-Gm-Message-State: APjAAAUvEPBoEx6dqRJ0RkzQLzemzkjuj6KkhE+wgJ/JQw9jZxWcowto
-        u4GbuAUxHlF1G/b/12MoF8e0KgY3D5U=
-X-Google-Smtp-Source: APXvYqzC2UHinvDMoJ2D1InD9oRxX5Eh7zi818Mg/E8pXuABIyFjSfXvYxqZ9fgpA52HNcpRVy94mw==
-X-Received: by 2002:a5d:85c3:: with SMTP id e3mr37007257ios.265.1560979113182;
-        Wed, 19 Jun 2019 14:18:33 -0700 (PDT)
-Received: from mail-io1-f50.google.com (mail-io1-f50.google.com. [209.85.166.50])
-        by smtp.gmail.com with ESMTPSA id x13sm15366123ioj.18.2019.06.19.14.18.33
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Wed, 19 Jun 2019 14:18:33 -0700 (PDT)
-Received: by mail-io1-f50.google.com with SMTP id r185so553009iod.6
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2019 14:18:33 -0700 (PDT)
-X-Received: by 2002:a02:5b05:: with SMTP id g5mr93849116jab.114.1560978714620;
- Wed, 19 Jun 2019 14:11:54 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190617235558.64571-1-dianders@chromium.org> <6219398.I55JWXAmVF@jernej-laptop>
- <9bba43cb-7070-8b2a-cfc6-f601fd22a315@baylibre.com>
-In-Reply-To: <9bba43cb-7070-8b2a-cfc6-f601fd22a315@baylibre.com>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Wed, 19 Jun 2019 14:11:41 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=V_xg3VfWDMfjJp158ELUQm5xJQCRn85H4mx_-YfjfWTg@mail.gmail.com>
-Message-ID: <CAD=FV=V_xg3VfWDMfjJp158ELUQm5xJQCRn85H4mx_-YfjfWTg@mail.gmail.com>
-Subject: Re: [PATCH] drm/bridge/synopsys: dw-hdmi: Handle audio for more clock rates
-To:     Neil Armstrong <narmstrong@baylibre.com>
-Cc:     =?UTF-8?Q?Jernej_=C5=A0krabec?= <jernej.skrabec@siol.net>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Sean Paul <seanpaul@chromium.org>,
-        =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-        Dylan Reid <dgreid@chromium.org>,
-        Cheng-Yi Chiang <cychiang@chromium.org>,
-        David Airlie <airlied@linux.ie>,
-        Zheng Yang <zhengyang@rock-chips.com>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Daniel Vetter <daniel@ffwll.ch>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Wed, 19 Jun 2019 17:12:44 -0400
+Received: from localhost (unknown [144.121.20.163])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id A5BF7145E7462;
+        Wed, 19 Jun 2019 14:12:43 -0700 (PDT)
+Date:   Wed, 19 Jun 2019 17:12:41 -0400 (EDT)
+Message-Id: <20190619.171241.1736506463260822121.davem@davemloft.net>
+To:     puranjay12@gmail.com
+Cc:     skhan@linuxfoundation.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, bjorn@helgaas.com,
+        linux-kernel-mentees@lists.linuxfoundation.org
+Subject: Re: [PATCH] net: fddi: skfp: Include generic PCI definitions from
+ pci_regs.h
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <20190619174556.21194-1-puranjay12@gmail.com>
+References: <20190619174556.21194-1-puranjay12@gmail.com>
+X-Mailer: Mew version 6.8 on Emacs 26.1
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Wed, 19 Jun 2019 14:12:44 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+From: Puranjay Mohan <puranjay12@gmail.com>
+Date: Wed, 19 Jun 2019 23:15:56 +0530
 
-On Wed, Jun 19, 2019 at 8:23 AM Neil Armstrong <narmstrong@baylibre.com> wr=
-ote:
->
-> On 18/06/2019 19:23, Jernej =C5=A0krabec wrote:
-> > Hi!
-> >
-> > Dne torek, 18. junij 2019 ob 01:55:58 CEST je Douglas Anderson napisal(=
-a):
-> >> Let's add some better support for HDMI audio to dw_hdmi.
-> >> Specifically:
-> >>
-> >> 1. For 44.1 kHz audio the old code made the assumption that an N of
-> >> 6272 was right most of the time.  That wasn't true and the new table
-> >> should give better 44.1 kHz audio for many more rates.
-> >>
-> >> 2. The new table has values from the HDMI spec for 297 MHz and 594
-> >> MHz.
-> >>
-> >> 3. There is now code to try to come up with a more idea N/CTS for
-> >> clock rates that aren't in the table.  This code is a bit slow because
-> >> it iterates over every possible value of N and picks the best one, but
-> >> it should make a good fallback.
-> >>
-> >> 4. The new code allows for platforms that know they make a clock rate
-> >> slightly differently to pick different N/CTS values.  For instance on
-> >> rk3288 we can make 25,176,471 Hz instead of 25,174,825.1748... Hz
-> >> (25.2 MHz / 1.001).  A future patch to the rk3288 platform code could
-> >> enable support for this clock rate and specify the N/CTS that would be
-> >> ideal.
-> >>
-> >> NOTE: the oddest part of this patch comes about because computing the
-> >> ideal N/CTS means knowing the _exact_ clock rate, not a rounded
-> >> version of it.  The drm framework makes this harder by rounding rates
-> >> to kHz, but even if it didn't there might be cases where the ideal
-> >> rate could only be calculated if we knew the real (non-integral) rate.
-> >> This means that in cases where we know (or believe) that the true rate
-> >> is something other than the rate we are told by drm.
-> >>
-> >> Signed-off-by: Douglas Anderson <dianders@chromium.org>
-> >
-> > Which bus is used for audio transfer on your device? If it is I2S, whic=
-h is
-> > commonly used, then please be aware of this patch:
-> > https://lists.freedesktop.org/archives/dri-devel/2019-June/221539.html
-> >
-> > It avoids exact N/CTS calculation by enabling auto detection. It is wel=
-l
-> > tested on multiple SoCs from Allwinner, Amlogic and Rockchip.
-> >
-> > Best regards,
-> > Jernej
-> >
-> >
-> Hi Douglas,
->
-> Thanks for your work !
->
-> If you could rebase on top of https://lists.freedesktop.org/archives/dri-=
-devel/2019-June/221539.html
-> so we can make use of your extended N table with automatic CTS HW calcula=
-tion, it would be great !
+> Include the generic PCI definitions from include/uapi/linux/pci_regs.h
+> change PCI_REV_ID to PCI_REVISION_ID to make it compatible with the
+> generic define.
+> This driver uses only one generic PCI define.
+> 
+> Signed-off-by: Puranjay Mohan <puranjay12@gmail.com>
+> ---
+>  drivers/net/fddi/skfp/drvfbi.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/net/fddi/skfp/drvfbi.c b/drivers/net/fddi/skfp/drvfbi.c
+> index bdd5700e71fa..38f6d943385d 100644
+> --- a/drivers/net/fddi/skfp/drvfbi.c
+> +++ b/drivers/net/fddi/skfp/drvfbi.c
+> @@ -20,6 +20,7 @@
+>  #include "h/supern_2.h"
+>  #include "h/skfbiinc.h"
+>  #include <linux/bitrev.h>
+> +#include <uapi/linux/pci_regs.h>
 
-Thanks to you and Jernej for pointing me at this.  It seems likely
-that patch by itself would solve problems we found and I'll pick that
-into my tree.
+You never need to use "uapi/" in header includes from the kernel source,
+please just use "linux/pci_regs.h"
 
-Probably my patch is no longer quite as useful atop yours, but I'll
-still post a v2 since (in theory) folks that aren't using I2S might
-find it useful.  I guess it's also possible (?) that picking an N
-where CTS would be able to be integral has some type of advantage,
-even with auto CTS?
-
-
-> Finally could you add the plat_data tmds table as a separate patch to sim=
-plify review ?
-
-Sure.  I'm probably not going to be able to post the patch to actually
-use it, so I guess we could just not bother applying the 2nd patch
-unless someone ever needs it.
-
--Doug
+Thank you.
