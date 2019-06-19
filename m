@@ -2,55 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 72C054C122
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 21:00:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0DDFF4C130
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 21:06:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730437AbfFSTAK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Jun 2019 15:00:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46110 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726482AbfFSTAI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Jun 2019 15:00:08 -0400
-Subject: Re: [GIT PULL] apparmor bug fixes for v5.3-rc6
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560970807;
-        bh=Mva4RFv1M0/5OCyHMcVJ2gu2vox17gPlwwMFPCzMWws=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=QUccs7EgTevSBjKGRnVbe4FoVMhsgKUq2XUMREW1ehEGzpCdBtR7SQ8JLXGx8oLVJ
-         YkEKycGwwTbpp/lEheY/ML005sNhNDaLwaJhtrrP/JBrf1hy0iwXexno/3lu0xh7oC
-         L2hrUOrymArBb+RwpR8SJRM9UBkan0+5Pqd2WRPw=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <cfc8f629-4ffa-e64e-f23f-2f4cffca4f18@canonical.com>
-References: <cfc8f629-4ffa-e64e-f23f-2f4cffca4f18@canonical.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <cfc8f629-4ffa-e64e-f23f-2f4cffca4f18@canonical.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/jj/linux-apparmor
- tags/apparmor-pr-2019-06-18
-X-PR-Tracked-Commit-Id: 156e42996bd84eccb6acf319f19ce0cb140d00e3
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: c3c0d546d73ad53c85789154872b8c92d1f96ba1
-Message-Id: <156097080700.11094.10794040979648534918.pr-tracker-bot@kernel.org>
-Date:   Wed, 19 Jun 2019 19:00:07 +0000
-To:     John Johansen <john.johansen@canonical.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        LKLM <linux-kernel@vger.kernel.org>,
-        "open list:SECURITY SUBSYSTEM" 
-        <linux-security-module@vger.kernel.org>
+        id S1730254AbfFSTGB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Jun 2019 15:06:01 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:35443 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726496AbfFSTGA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Jun 2019 15:06:00 -0400
+Received: by mail-pl1-f194.google.com with SMTP id p1so212504plo.2
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2019 12:06:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=4ML5TdHcdMxiU+u3GNvYmF9q/Wcykd3GF57yT+ShoBQ=;
+        b=dLv5a3dYj6WUcr+5mCS9ysYf8eM+p2D25Chyxm8F+HWGU4A3+WHYA/u+8VZMCXYvQ+
+         KRzJOCTCT5mPCHaHtGcGvWNjYuhjGTDveFPeRvJDIM142RwT1VqFxVx8PcSx//XskaBl
+         KBA0lRgFjgVEuN0Dv9KiA7Ar8QwwyHZlg86OyIS2RtjWMmXCu2eI4HaOf+uJw9i5S/9p
+         0OClM6XPehas4V1957qQnLx21VVaoHf9LIlcyzdR/GxiMQcS1dMjC03d8F/Erxv0T/ua
+         JP1wt0FG1rAZgF7oQEZpE3MRN4nrrFrpzAuve4D6Dzpdh4fGVEOFt2zfLBjSSxnuL80j
+         P09Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=4ML5TdHcdMxiU+u3GNvYmF9q/Wcykd3GF57yT+ShoBQ=;
+        b=nroVFlu+IEo44QJWlMHT/IXbzxQQlIbteYaJmxIie1TwHhw2FC2s8UlxLakE4prdTH
+         x6Vaf5rSZhM4GDnMBtG2b53YfbL81pri5fAMs9EKGS865klm9VmmmFTMFCG761PC7kj2
+         Jqf6EQewDyfQ3YVzZERtM0OwRu7uh8rF9MZoJfKOifpfPXQpkugidU6uPmQnOBW34/7A
+         5OM1AZ+FWdhF94pONIoOVABzH63iFKQVwMm6Ga5h2PV0NmjU1T2Ts0pKs9zmXWtbA1sp
+         NVJDSPVlpjJ+2c7b8Kp93msJWzcGEC+8H09biqhbitJuvMLvQeWWo8MHZEDQZbMHj1ql
+         7MMg==
+X-Gm-Message-State: APjAAAV2x/aDBcfBrXA4gRAWnAqBuIAmliwnq9JrDKTylRi6h3/SqZHU
+        /AWCS60eaYFSYABymZWFbMV1X2dMYj4=
+X-Google-Smtp-Source: APXvYqy4laGmYqXEM7cobrf93IQ6FOB66hNbrPcNqoVeHM42cBVcdC31Axc3brsx51ScTDIik709Eg==
+X-Received: by 2002:a17:902:9f93:: with SMTP id g19mr105115045plq.223.1560971160044;
+        Wed, 19 Jun 2019 12:06:00 -0700 (PDT)
+Received: from minitux (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id p27sm32831691pfq.136.2019.06.19.12.05.58
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Wed, 19 Jun 2019 12:05:59 -0700 (PDT)
+Date:   Wed, 19 Jun 2019 12:05:57 -0700
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+Cc:     lgirdwood@gmail.com, broonie@kernel.org,
+        jorge.ramirez-ortiz@linaro.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] regulator: qcom_spmi: Fix math of
+ spmi_regulator_set_voltage_time_sel
+Message-ID: <20190619190557.GL4814@minitux>
+References: <20190619185636.10831-1-jeffrey.l.hugo@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190619185636.10831-1-jeffrey.l.hugo@gmail.com>
+User-Agent: Mutt/1.12.0 (2019-05-25)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Tue, 18 Jun 2019 18:44:31 -0700:
+On Wed 19 Jun 11:56 PDT 2019, Jeffrey Hugo wrote:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/jj/linux-apparmor tags/apparmor-pr-2019-06-18
+> spmi_regulator_set_voltage_time_sel() calculates the amount of delay
+> needed as the result of setting a new voltage.  Essentially this is the
+> absolute difference of the old and new voltages, divided by the slew rate.
+> 
+> The implementation of spmi_regulator_set_voltage_time_sel() is wrong.
+> 
+> It attempts to calculate the difference in voltages by using the
+> difference in selectors and multiplying by the voltage step between
+> selectors.  This ignores the possibility that the old and new selectors
+> might be from different ranges, which have different step values.  Also,
+> the difference between the selectors may encapsulate N ranges inbetween,
+> so a summation of each selector change from old to new would be needed.
+> 
+> Lets avoid all of that complexity, and just get the actual voltage
+> represented by both the old and new selector, and use those to directly
+> compute the voltage delta.  This is more straight forward, and has the
+> side benifit of avoiding issues with regulator implementations that don't
+> have hardware register support to get the current configured range.
+> 
+> Fixes: e92a4047419c ("regulator: Add QCOM SPMI regulator driver")
+> Reported-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> Reported-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
+> Signed-off-by: Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/c3c0d546d73ad53c85789154872b8c92d1f96ba1
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 
-Thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+> ---
+>  drivers/regulator/qcom_spmi-regulator.c | 8 ++------
+>  1 file changed, 2 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/regulator/qcom_spmi-regulator.c b/drivers/regulator/qcom_spmi-regulator.c
+> index 13f83be50076..877df33e0246 100644
+> --- a/drivers/regulator/qcom_spmi-regulator.c
+> +++ b/drivers/regulator/qcom_spmi-regulator.c
+> @@ -813,14 +813,10 @@ static int spmi_regulator_set_voltage_time_sel(struct regulator_dev *rdev,
+>  		unsigned int old_selector, unsigned int new_selector)
+>  {
+>  	struct spmi_regulator *vreg = rdev_get_drvdata(rdev);
+> -	const struct spmi_voltage_range *range;
+>  	int diff_uV;
+>  
+> -	range = spmi_regulator_find_range(vreg);
+> -	if (!range)
+> -		return -EINVAL;
+> -
+> -	diff_uV = abs(new_selector - old_selector) * range->step_uV;
+> +	diff_uV = abs(spmi_regulator_common_list_voltage(rdev, new_selector) -
+> +		      spmi_regulator_common_list_voltage(rdev, old_selector));
+>  
+>  	return DIV_ROUND_UP(diff_uV, vreg->slew_rate);
+>  }
+> -- 
+> 2.17.1
+> 
