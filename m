@@ -2,60 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1F1FF4BF77
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 19:18:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C36854BF81
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 19:22:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730152AbfFSRSw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Jun 2019 13:18:52 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:37228 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726009AbfFSRSv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Jun 2019 13:18:51 -0400
-Received: from zn.tnic (p200300EC2F109900C181231BF4D53555.dip0.t-ipconnect.de [IPv6:2003:ec:2f10:9900:c181:231b:f4d5:3555])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 7E1011EC066F;
-        Wed, 19 Jun 2019 19:18:50 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1560964730;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=ggRRYdkKkfmhyv/np4PPi7tGevSYxcJxDaYDKMXdSS8=;
-        b=kId/SFK1o044GN+jJV5DAStCXJbkkDNejLXI+8jEEjWd3LEezORSxtAJRc8KLQWbkibzSl
-        WqzOPVMHLWX8/nqGNjkyqpwg4neQGrWTZmQA+IbN4wVrtZRZ9GEyoZdJV5xb/Cg1/ZnveJ
-        mUdhMNrrchjvBHDU5qZFM7ocPJ9Cjlg=
-Date:   Wed, 19 Jun 2019 19:18:42 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     Qian Cai <cai@lca.pw>, tglx@linutronix.de, mingo@redhat.com,
-        hpa@zytor.com, x86@kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] x86/cacheinfo: fix a -Wtype-limits warning
-Message-ID: <20190619171842.GG9574@zn.tnic>
-References: <1559763654-5155-1-git-send-email-cai@lca.pw>
- <20190605200703.GD26328@linux.intel.com>
- <20190619170127.GF9574@zn.tnic>
- <20190619171249.GG1203@linux.intel.com>
+        id S1730109AbfFSRWX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Jun 2019 13:22:23 -0400
+Received: from mail-io1-f65.google.com ([209.85.166.65]:34261 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729681AbfFSRWW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Jun 2019 13:22:22 -0400
+Received: by mail-io1-f65.google.com with SMTP id k8so392080iot.1
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2019 10:22:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=y4I5Ty62o91Pugxcg1FTgTnvgf8oL/T0SugxfMdF360=;
+        b=gb4iGaYnPJYNqGfAxkP3X1NyZrCyL5DKEUxf/+boDKefd2UjG+qdworr0YK1ObtumN
+         6uLmt1ytGOjQmAyYXv5eWn2+e/wwvBH4V0YZ02cusIrDbo9JldyQ2tukswmk+W03TQCZ
+         3fJ2x8pKx2vhpksYet+kdD7iF28u6Vzn2HBLk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=y4I5Ty62o91Pugxcg1FTgTnvgf8oL/T0SugxfMdF360=;
+        b=nqRn8/7/LPtSqWgbWNWukukn+JnqaWc+vAcjUGaOsXyfpomFvIgVyF5GmyagUlm5aS
+         8tc9f0vhqJkTbFtcwdiTG2/sAwTExodsxyYZVYrfeHGgIAnT7SCM2BEK1GweGwf1PCNW
+         1I0d21IfW6LLr7tnf3dxluOD2ugKwvtZXTopzKc1c7JfGogLpyDymNkEoQs9lQGLajHO
+         CznQrhU8I0NYs36s7T/nWfD1DHDPE5HZqI2UMrH7b5U0qh2gAMuayaHcfNLtEw/5vUhp
+         ABp2YrwxR9/hv4Mgdm+dvZDy2D/4zQ09Tq3QFTXU9E1JQvRvQD1rGT+YMi/CPES1ISJf
+         uSKw==
+X-Gm-Message-State: APjAAAW1MxVvGOxmMoFv4rqCXfzX0NMJzkdxFxoa83XmTkUMx+fGVFYo
+        1W9raBOX4IokuPEfOwm8VNP998EQhU4=
+X-Google-Smtp-Source: APXvYqweh9cE0ZdyorzDcYNOiMgH/757F101nec4Tfciidd/HUUM94okf25BnwroKGtoHIwyBfvbEQ==
+X-Received: by 2002:a02:ce37:: with SMTP id v23mr11907871jar.2.1560964940961;
+        Wed, 19 Jun 2019 10:22:20 -0700 (PDT)
+Received: from localhost ([2620:15c:183:200:855f:8919:84a7:4794])
+        by smtp.gmail.com with ESMTPSA id z26sm16377581ioi.85.2019.06.19.10.22.19
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 19 Jun 2019 10:22:20 -0700 (PDT)
+From:   Ross Zwisler <zwisler@chromium.org>
+X-Google-Original-From: Ross Zwisler <zwisler@google.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Ross Zwisler <zwisler@google.com>, "Theodore Ts'o" <tytso@mit.edu>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Jan Kara <jack@suse.com>, linux-ext4@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        Fletcher Woodruff <fletcherw@google.com>,
+        Justin TerAvest <teravest@google.com>
+Subject: [PATCH 0/3] Add dirty range scoping to jbd2
+Date:   Wed, 19 Jun 2019 11:21:53 -0600
+Message-Id: <20190619172156.105508-1-zwisler@google.com>
+X-Mailer: git-send-email 2.22.0.410.gd8fdbe21b5-goog
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190619171249.GG1203@linux.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 19, 2019 at 10:12:49AM -0700, Sean Christopherson wrote:
-> Ha, no.  My comment was that it'd be worth explaining that the original
-> 'c->x86_model >= 0' check was completely bogus, even if the intent was
-> something like 'c->x86_model != 0'.
+This patch series fixes the issue I described here:
 
-Nah, the intent was, I believe, to convert a model range into a
-conditional. If ->x86_model is not set we have bigger problems.
+https://www.spinics.net/lists/linux-block/msg38274.html
+
+Essentially the issue is that journal_finish_inode_data_buffers() operates
+on the entire address space of each of the inodes associated with a given
+journal entry.  This means that if we have an inode where we are constantly
+appending dirty pages we can end up waiting for an indefinite amount of
+time in journal_finish_inode_data_buffers().
+
+This series improves this situation in ext4 by scoping each of the inode
+dirty ranges associated with a given transaction.  Other users of jbd2
+which don't (yet?) take advantage of this scoping (ocfs2) will continue to
+have the old behavior.
+
+Ross Zwisler (3):
+  mm: add filemap_fdatawait_range_keep_errors()
+  jbd2: introduce jbd2_inode dirty range scoping
+  ext4: use jbd2_inode dirty range scoping
+
+ fs/ext4/ext4_jbd2.h   | 12 +++++------
+ fs/ext4/inode.c       | 13 +++++++++---
+ fs/ext4/move_extent.c |  3 ++-
+ fs/jbd2/commit.c      | 26 +++++++++++++++++------
+ fs/jbd2/journal.c     |  2 ++
+ fs/jbd2/transaction.c | 49 ++++++++++++++++++++++++-------------------
+ include/linux/fs.h    |  2 ++
+ include/linux/jbd2.h  | 22 +++++++++++++++++++
+ mm/filemap.c          | 22 +++++++++++++++++++
+ 9 files changed, 114 insertions(+), 37 deletions(-)
 
 -- 
-Regards/Gruss,
-    Boris.
+2.22.0.410.gd8fdbe21b5-goog
 
-Good mailing practices for 400: avoid top-posting and trim the reply.
