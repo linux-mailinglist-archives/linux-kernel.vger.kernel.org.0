@@ -2,109 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CCAF64B791
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 14:02:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 563CF4B797
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 14:03:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731673AbfFSMCF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Jun 2019 08:02:05 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:44618 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726246AbfFSMCE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Jun 2019 08:02:04 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=ri7qjhjVCgbjO6ig3doTj7RVbO2jjytVB0LcoWHrHhU=; b=FcgOzzaUp3Q5CfIuOaKoL+MDK
-        KYCzrxCmEMdfjNQSrLlvvwFbZrSjOWK3jSgSFnTe+ewKfop5MWztgIuCls6ghDvHF0Qem3tYDpX/7
-        AIZGONFJINJi/oYjy23u7u/yTrkGtoMRLk/IR9AJG5/yFV4c4SeCcZroBm8mbs5ENlLckoz1WK96K
-        Nm+9k30Tfq9+JtM7kkfqZWWi7T9DZYxNwGc38WqEK44vn8z7W4l9EWSzv4y1Ic2LfM7KHDlimJkIA
-        LiCGZk5VfImotto+QulyqEy3vwqM0SKLUITsKvVrLvUW2EDp1GxWLni53nccRpPNu2GGFUWTLzJaF
-        eS+nqrQbA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hdZHR-0008GE-3H; Wed, 19 Jun 2019 12:01:33 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 7A0272020FD6B; Wed, 19 Jun 2019 14:01:31 +0200 (CEST)
-Date:   Wed, 19 Jun 2019 14:01:31 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Miroslav Benes <mbenes@suse.cz>
-Cc:     Jessica Yu <jeyu@kernel.org>, linux-kernel@vger.kernel.org,
-        jpoimboe@redhat.com, jikos@kernel.org, pmladek@suse.com,
-        rostedt@goodmis.org, ast@kernel.org, daniel@iogearbox.net,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Subject: Re: [RFC][PATCH] module: Propagate MODULE_STATE_COMING notifier
- errors
-Message-ID: <20190619120131.GS3463@hirez.programming.kicks-ass.net>
-References: <20190617090335.GX3436@hirez.programming.kicks-ass.net>
- <alpine.LSU.2.21.1906191251380.23337@pobox.suse.cz>
- <20190619112350.GN3419@hirez.programming.kicks-ass.net>
- <20190619113324.GO3463@hirez.programming.kicks-ass.net>
- <20190619113508.GP3463@hirez.programming.kicks-ass.net>
+        id S1731710AbfFSMDe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Jun 2019 08:03:34 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:56270 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727134AbfFSMDe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Jun 2019 08:03:34 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id AC15730018D7;
+        Wed, 19 Jun 2019 12:03:28 +0000 (UTC)
+Received: from cera.brq.redhat.com (unknown [10.43.2.69])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 3139B5C207;
+        Wed, 19 Jun 2019 12:03:26 +0000 (UTC)
+Date:   Wed, 19 Jun 2019 14:03:25 +0200
+From:   Ivan Vecera <ivecera@redhat.com>
+To:     Petr Oros <poros@redhat.com>
+Cc:     netdev@vger.kernel.org, sathya.perla@broadcom.com,
+        ajit.khaparde@broadcom.com, sriharsha.basavapatna@broadcom.com,
+        somnath.kotur@broadcom.com, davem@davemloft.net,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net] be2net: fix link failure after ethtool offline test
+Message-ID: <20190619140325.64dafd23@cera.brq.redhat.com>
+In-Reply-To: <20190619115231.6020-1-poros@redhat.com>
+References: <20190619115231.6020-1-poros@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190619113508.GP3463@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.46]); Wed, 19 Jun 2019 12:03:33 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 19, 2019 at 01:35:08PM +0200, Peter Zijlstra wrote:
-> On Wed, Jun 19, 2019 at 01:33:24PM +0200, Peter Zijlstra wrote:
-> > How's something like so:
-> > 
-> > diff --git a/kernel/module.c b/kernel/module.c
-> > index 80c7c09584cf..eba6560c89da 100644
-> > --- a/kernel/module.c
-> > +++ b/kernel/module.c
-> > @@ -3631,16 +3631,28 @@ static int complete_formation(struct module *mod, struct load_info *info)
-> >  
-> >  static int prepare_coming_module(struct module *mod)
-> >  {
-> > -	int err;
-> > +	struct blocking_notifier_head *nh = &module_notify_list;
-> > +	int err, nr;
-> >  
-> >  	ftrace_module_enable(mod);
-> >  	err = klp_module_coming(mod);
-> >  	if (err)
-> >  		return err;
-> >  
-> > -	blocking_notifier_call_chain(&module_notify_list,
-> > -				     MODULE_STATE_COMING, mod);
-> > -	return 0;
-> > +	if (!rcu_access_pointer(nh->head))
-> > +		return 0;
-> > +
-> > +	down_read(&nh->rwsem);
-> > +	ret = notifier_call_chain(&nh->head, MODULE_STATE_COMING, mod, -1, &nr);
-> > +	if (ret & NOTIFIER_STOP_MASK)
+On Wed, 19 Jun 2019 13:52:31 +0200
+Petr Oros <poros@redhat.com> wrote:
+
+> Certain cards in conjunction with certain switches need a little more
+> time for link setup that results in ethtool link test failure after
+> offline test. Patch adds a loop that waits for a link setup finish.
 > 
-> It compiles _lots_ better with s/ret/err/ on.
+> Signed-off-by: Petr Oros <poros@redhat.com>
+
+Missing Fixes header for net stuff... Otherwise LGTM.
+
+Ivan
+
+> ---
+>  .../net/ethernet/emulex/benet/be_ethtool.c    | 28
+> +++++++++++++++---- 1 file changed, 22 insertions(+), 6 deletions(-)
 > 
-> > +		notifier_call_chain(&nh->head, MODULE_STATE_GOING, mod, nr, NULL);
-> > +	up_read(&nh->rwsem);
-> > +
-> > +	err = notifier_to_err(err);
-> > +	if (err)
-> > +		klp_module_going(mod);
-> > +
-> > +	return err;
-> >  }
-> >  
-> >  static int unknown_module_param_cb(char *param, char *val, const char *modname,
+> diff --git a/drivers/net/ethernet/emulex/benet/be_ethtool.c
+> b/drivers/net/ethernet/emulex/benet/be_ethtool.c index
+> 8a6785173228f3..492f8769ac12c2 100644 ---
+> a/drivers/net/ethernet/emulex/benet/be_ethtool.c +++
+> b/drivers/net/ethernet/emulex/benet/be_ethtool.c @@ -891,7 +891,7 @@
+> static void be_self_test(struct net_device *netdev, struct
+> ethtool_test *test, u64 *data) {
+>  	struct be_adapter *adapter = netdev_priv(netdev);
+> -	int status;
+> +	int status, cnt;
+>  	u8 link_status = 0;
+>  
+>  	if (adapter->function_caps & BE_FUNCTION_CAPS_SUPER_NIC) {
+> @@ -902,6 +902,9 @@ static void be_self_test(struct net_device
+> *netdev, struct ethtool_test *test, 
+>  	memset(data, 0, sizeof(u64) * ETHTOOL_TESTS_NUM);
+>  
+> +	/* check link status before offline tests */
+> +	link_status = netif_carrier_ok(netdev);
+> +
+>  	if (test->flags & ETH_TEST_FL_OFFLINE) {
+>  		if (be_loopback_test(adapter, BE_MAC_LOOPBACK,
+> &data[0]) != 0) test->flags |= ETH_TEST_FL_FAILED;
+> @@ -922,13 +925,26 @@ static void be_self_test(struct net_device
+> *netdev, struct ethtool_test *test, test->flags |= ETH_TEST_FL_FAILED;
+>  	}
+>  
+> -	status = be_cmd_link_status_query(adapter, NULL,
+> &link_status, 0);
+> -	if (status) {
+> -		test->flags |= ETH_TEST_FL_FAILED;
+> -		data[4] = -1;
+> -	} else if (!link_status) {
+> +	/* link status was down prior to test */
+> +	if (!link_status) {
+>  		test->flags |= ETH_TEST_FL_FAILED;
+>  		data[4] = 1;
+> +		return;
+> +	}
+> +
+> +	for (cnt = 10; cnt; cnt--) {
+> +		status = be_cmd_link_status_query(adapter, NULL,
+> &link_status,
+> +						  0);
+> +		if (status) {
+> +			test->flags |= ETH_TEST_FL_FAILED;
+> +			data[4] = -1;
+> +			break;
+> +		}
+> +
+> +		if (link_status)
+> +			break;
+> +
+> +		msleep_interruptible(500);
+>  	}
+>  }
+>  
 
-Rafael, how is kernel/power/user.c snapshot_open() not broken (any any
-other __pm_notifier_call_chain() user)?
-
-afaict the __pm_notifier_call_chain() thing is broken in two ways:
-
- - there can be a change to the notifier list between the PREPARE and
-   POST iteration
-
- - the error value isn't put through notifier_to_errno().
