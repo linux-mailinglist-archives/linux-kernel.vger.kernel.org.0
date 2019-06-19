@@ -2,116 +2,146 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0F66D4B577
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 11:51:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A7744B59E
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 11:53:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731296AbfFSJvi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Jun 2019 05:51:38 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:46097 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726826AbfFSJvh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Jun 2019 05:51:37 -0400
-Received: by mail-qt1-f193.google.com with SMTP id h21so19027996qtn.13;
-        Wed, 19 Jun 2019 02:51:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=3eEZ2qQ0T+vNBvySVU2f2K2n0PUB27s0eFB2a2GHHpw=;
-        b=Ky3SesKJdQbqCg6lv2g/uWL5yTM5H21azkmaCE5DUZGzH7yfJ4LSMV8Zb26vGJbmqZ
-         cDFJROUQLq4vKzYRjGbAuo381vwuIFZb4Wa9kgbHVSd2T4tfdZJl1SAcJk8Dz09rJBDS
-         HR7nrt7HpYtm8rwO6wo9TvW3zgOnPa/CGc4hX6/AOgOXoCp49teZ9JiHZ560D2TyemSr
-         DVR7LfcNpU7Y5Wb+gYtDZXthnNz4hUhVMF3KNA0j8DkOhC3Bf09mMhXi8AmiuXlGTi47
-         HKVuKHudef9vuuqYNjjtxyX9cnlHkTfgJ2cb/skXM5JmyvFg/VlLbBi2A8fuF1YE3FpG
-         zdGw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=3eEZ2qQ0T+vNBvySVU2f2K2n0PUB27s0eFB2a2GHHpw=;
-        b=WJGrwPOOJ0T5I1TPqbV0c7mmrEY6RCzJLMexRh6g/FT4rrwnFPODnYANaeQoVBN/uM
-         kg3ybL6EdE9RAt1/X17Lw/gc0p2ztUgyPKpaM+WxKInba+xVnNCMWszSW07zMpdIQ1tJ
-         NPByIRb2E9F4zVn491owU4HGL4PnlHrjnrYRtQ2ORnrMG78tpSANjRnGqJeYG7T2eU0N
-         d22h4DgpkmN5cNwj6UTDfzEGAoSD5xmOCpZp4+GiEes4XMMQZT4vN34ypQIeSRMTBa3C
-         B8SgeDFnpkKTBGMP7Nfy856hN+2xlwTWdjftegKjk26DPLgxbcYtc3KIywzrxeEXC7Ey
-         pHBQ==
-X-Gm-Message-State: APjAAAUdzbQToIutpF7BGeEpwFI2aprx6PqUM9uGZLUbOs1zKzMAFNqr
-        fVb9FYthUQXX++rwA4p4Orbcb//ZJi4=
-X-Google-Smtp-Source: APXvYqxY9AqHFrq4Px1xuxAzlm+uOWclwFVuRwuqndIRWiVaBEWV0tK9BgMpqoe3H3v/8lcSK1F9ZA==
-X-Received: by 2002:ac8:3971:: with SMTP id t46mr85568562qtb.164.1560937896697;
-        Wed, 19 Jun 2019 02:51:36 -0700 (PDT)
-Received: from continental ([186.212.50.252])
-        by smtp.gmail.com with ESMTPSA id c18sm10048430qkk.73.2019.06.19.02.51.33
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 19 Jun 2019 02:51:35 -0700 (PDT)
-Date:   Wed, 19 Jun 2019 06:52:09 -0300
-From:   Marcos Paulo de Souza <marcos.souza.org@gmail.com>
-To:     Hannes Reinecke <hare@suse.com>
-Cc:     "Martin K. Petersen" <martin.petersen@oracle.com>,
-        linux-kernel@vger.kernel.org,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        linux-scsi@vger.kernel.org
-Subject: Re: [PATCH] scsi: scsi_sysfs.c: Hide wwid sdev attr if VPD is not
- supported
-Message-ID: <20190619095208.GB26980@continental>
-References: <20190612020828.8140-1-marcos.souza.org@gmail.com>
- <yq1muieuu17.fsf@oracle.com>
- <850765d7-da85-3fc1-7bf4-f0edcb63f8d8@suse.com>
+        id S1731569AbfFSJxl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Jun 2019 05:53:41 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:46688 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727068AbfFSJxj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Jun 2019 05:53:39 -0400
+Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 54310F0CF54E2EF2F43D;
+        Wed, 19 Jun 2019 17:53:37 +0800 (CST)
+Received: from [127.0.0.1] (10.202.227.238) by DGGEMS404-HUB.china.huawei.com
+ (10.3.19.204) with Microsoft SMTP Server id 14.3.439.0; Wed, 19 Jun 2019
+ 17:53:28 +0800
+Subject: PCI host bridge hotplug test question (was Re: [PATCH v2] bus:
+ hisi_lpc: Don't use devm_kzalloc() to allocate logical PIO range)
+To:     Bjorn Helgaas <bhelgaas@google.com>
+References: <1560507893-42553-1-git-send-email-john.garry@huawei.com>
+ <CAErSpo6jRVDaVvH+9XvzUoEUbHi9_6u+5PcVGVDAmre6Qd0WeQ@mail.gmail.com>
+ <CAErSpo6qaMc1O7vgcuCwdDbe4QBcOw83wd7PbuUVS+7GDPgK9Q@mail.gmail.com>
+ <82840955-6365-0b95-6d69-8a2f7c7880af@huawei.com>
+ <CAErSpo5cqJCZjt6QqMNZ6_n=G-_WxFeERnsESOMxsdr1P-6JLg@mail.gmail.com>
+ <9e8b6971-3189-9d4b-de9a-ff09f859f4f6@huawei.com>
+ <CAErSpo4DemDWtnP2Gtram9tfQ0CaN9Na9_Gxk6Qk+nG5+JLuzA@mail.gmail.com>
+ <539835d3-770c-285c-0c49-ae15ceaa3079@huawei.com>
+ <CAErSpo576mVAFkF69bxaTpyxELXEG+z_m7CmUE3WGqfCmy57uQ@mail.gmail.com>
+CC:     <xuwei5@huawei.com>, <linuxarm@huawei.com>, <arm@kernel.org>,
+        "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
+        Joe Perches <joe@perches.com>,
+        Linux PCI <linux-pci@vger.kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>
+From:   John Garry <john.garry@huawei.com>
+Message-ID: <4b24fd36-e716-7c5e-31cc-13da727802e7@huawei.com>
+Date:   Wed, 19 Jun 2019 10:53:23 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <850765d7-da85-3fc1-7bf4-f0edcb63f8d8@suse.com>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+In-Reply-To: <CAErSpo576mVAFkF69bxaTpyxELXEG+z_m7CmUE3WGqfCmy57uQ@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.202.227.238]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 19, 2019 at 08:34:56AM +0200, Hannes Reinecke wrote:
-> On 6/19/19 5:35 AM, Martin K. Petersen wrote:
-> > 
-> > Marcos,
-> > 
-> >> WWID composed from VPD data from device, specifically page 0x83. So,
-> >> when a device does not have VPD support, for example USB storage
-> >> devices where VPD is specifically disabled, a read into <blk
-> >> device>/device/wwid file will always return ENXIO. To avoid this,
-> >> change the scsi_sdev_attr_is_visible function to hide wwid sysfs file
-> >> when the devices does not support VPD.
-> > 
-> > Not a big fan of attribute files that come and go.
-> > 
-> > Why not just return an empty string? Hannes?
-> > 
-> Actually, the intention of the 'wwid' attribute was to have a common
-> place where one could look up the global id.
-> As such it actually serves a dual purpose, namely indicating that there
-> _is_ a global ID _and_ that this kernel (version) has support for 'wwid'
-> attribute. This is to resolve one big issue we have to udev nowadays,
-> which is figuring out if a specific sysfs attribute is actually
-> supported on this particular kernel.
-> Dynamic attributes are 'nicer' on a conceptual level, but make the above
-> test nearly impossible, as we now have _two_ possibilities why a
-> specific attribute is not present.
-> So making 'wwid' conditional would actually defeat its very purpose, and
-> we should leave it blank if not supported.
+On 18/06/2019 18:50, Bjorn Helgaas wrote:
+> [+cc Rafael, Mika, Jiang, linux-pci for ACPI host bridge hotplug test question]
+>
 
-My intention was to apply the same approach used for VPD pages, which currently
-also hides the attributes if not supported by the device. So, if vpd pages are
-hidden, there is no usage for wwid. But I also like the idea of the vpd pages
-being blank if not supported by the device.
+Resend with bouncing addresses removed/fixed
 
-> 
-> Cheers,
-> 
-> Hannes
-> -- 
-> Dr. Hannes Reinecke		               zSeries & Storage
-> hare@suse.com			               +49 911 74053 688
-> SUSE LINUX GmbH, Maxfeldstr. 5, 90409 Nürnberg
-> GF: F. Imendörffer, J. Smithard, D. Upmanyu, G. Norton
-> HRB 21284 (AG Nürnberg)
+> On Tue, Jun 18, 2019 at 3:44 AM John Garry <john.garry@huawei.com> wrote:
+>
+>>>>> Could you just move the logic_pio_register_range() call farther down
+>>>>> in hisi_lpc_probe()?  IIUC, once logic_pio_register_range() returns,
+>>>>> an inb() with the right port number will try to access that port, so
+>>>>> we should be prepared for that, i.e., maybe this in the wrong order to
+>>>>> begin with?
+>>>>
+>>>> No, unfortunately we can't. The reason is that we need the logical PIO
+>>>> base for that range before we enumerate the children of that host. We
+>>>> need that base address for "translating" the child bus addresses to
+>>>> logical PIO addresses.
+>
+>>> Ah, yeah, that makes sense.  I think.  We do assume that we know all
+>>> the MMIO and I/O port translations before enumerating devices.  It's
+>>> *conceivable* that could be changed someday since we don't actually
+>>> need the translations until a driver claims the device,
+>>
+>> We actually need them before a driver claims the device.
+>>
+>> The reason is that when we create that child platform device we set the
+>> device's IORESOURCE_IO resources according to the translated logic PIO
+>> addresses, and not the host bus address. This is what makes the host
+>> transparent to the child device driver.
+>
+> I think you need it to set pdev->resource[], which is currently done
+> long before the driver claims the device (though one could imagine
+> delaying it even as far as pci_enable_device()-time).  I don't think
+> the translation is actually *used* until the driver claims the device
+> because only the driver knows how to do any inb/outb to the device.
+>
+> But of course, that's all speculative and doesn't change what you need
+> to do now.  The current code assumes we know the translations during
+> enumeration, so you need to do the logic_pio registration before
+> enumerating.
+>
+>>> and it would
+>>> gain some flexibility if we didn't have to program the host bridge
+>>> windows until we know how much space is required.  But I don't see
+>>> that happening anytime soon.
+>
+>> My problem is that I need to ensure that the new logical PIO unregister
+>> function works ok for hot-pluggable host bridges. I need to get some way
+>> to test this. Advice?
+>
+
+Hi Bjorn,
+
+> Good question.  The ACPI host bridge driver (drivers/acpi/pci_root.c)
+> should support hotplug, but I'm not sure if there's a manual way to
+> trigger it via sysfs or something similar.  If there is, and you have
+> a machine with more than one host bridge, you might be able to remove
+> one that leads to non-essential devices.
+>
+
+For one of our earlier boards I don't think that it had any essential 
+devices on the host bridge. But I need to find out about possibility of 
+removal. Hmmm.
+
+> Bjorn
+>
+
+Further to the topic of supporting hotplug and unregistering IO port 
+regions, we don't even release IO port regions in the error path of PCI 
+host enumeration. We have pci_register_io_range(), but no unregister 
+equivalent.
+
+Looking at the history here, pci_register_io_range() was originally in 
+OF code. And in the OF code, calling pci_register_io_range() is a 
+side-effect of parsing the device tree. As such, I can see why there was 
+no unregister function.
+
+It would be worth noting this discussion, where the same was mentioned:
+https://lore.kernel.org/linux-pci/20180403140410.GE27789@ulmo/
+
+The tegra PCI host probe can defer, but, since there is no tidy-up of 
+pci_register_io_range() when deferring, we need to ensure that the port 
+IO management code can handle re-attempts to register the same range.
+
+It looks like this can be cleaned up also.
+
+Thanks,
+John
+
+> .
+>
+
+
