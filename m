@@ -2,75 +2,253 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 047744C0E5
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 20:37:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 501BA4C0F0
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 20:39:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730475AbfFSShY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Jun 2019 14:37:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33074 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726449AbfFSShY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Jun 2019 14:37:24 -0400
-Received: from mail-ua1-f48.google.com (mail-ua1-f48.google.com [209.85.222.48])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 436512166E
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2019 18:37:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560969443;
-        bh=95Ds7C2wKCMMw0fd/HdFqLE/x2khbNigM8ixnjFhKJ4=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=wO4aGZI4+hS2AaLZ1361JwG+pUMS/03SPBq7ttY1RY0Ns8gtFYkfOfcV5QZicC9oR
-         tuwVqKRDu9Fvpz2oeRqFQnTYFI3pjY72IY0eAD3gaQccyGHIom5l7/xzFQtci7bMRU
-         C8vGgwAp1kEzJ9g4RhBWGL17KlBD9+HfVSDd1LOc=
-Received: by mail-ua1-f48.google.com with SMTP id o2so429198uae.10
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2019 11:37:23 -0700 (PDT)
-X-Gm-Message-State: APjAAAX6Y7Ylw2/o/TNCjhtGvRB7kgFW5a5U/IXBPvZhT8IdxwjEkjSQ
-        +rABpbToTevHhcccKgGJsqClDzVPtWf9tP4VqTs=
-X-Google-Smtp-Source: APXvYqz4qoLmngiblq9f8JGM3uWaEAeA7oqqArdc0nb6oPoYl1Njc6DMqGw5VDUHJPM1zF9JjvGjCvBVTi3QrbYy7dk=
-X-Received: by 2002:a67:f482:: with SMTP id o2mr3877942vsn.129.1560969442452;
- Wed, 19 Jun 2019 11:37:22 -0700 (PDT)
+        id S1729937AbfFSSjN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Jun 2019 14:39:13 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:46991 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726175AbfFSSjN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Jun 2019 14:39:13 -0400
+Received: by mail-io1-f66.google.com with SMTP id i10so718357iol.13
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2019 11:39:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=upe+kPLR7/GeOqeBD5ktrgjPKSUUFPLYfd4Aq1vyU9c=;
+        b=R7YTlEiTJ6NjLuKauQara9BSR2VXFSZ9ykEVmaqb4o0RaxVyI+IXcs7ivnnQCBGn2/
+         t4GHFapVL0erq/PKWThOVdPPI7JT1xS1vhTRID/odRFR3qRE3Y0bqjjb9Zst2smtL+pn
+         Q7GPhA4zEDlseZS3N6TGzSLN26Bj5Zw/vq8BmDE6bh2yHEfZEDwZ0WYbEzSzYpCBn4BS
+         VCG1Uz+MIOib0WSUhSCorBWP2mjjx2BTlaCf+q93Xbz/dWG6QKonDDKj9OE7nGWsi3fd
+         A7VyHHaf3/uWN+jHH3ih5/i4y4ewZJVFcFjLBeqv+FDFjKYAt+8YQ3F1w4u8zGrpB9zk
+         /MMQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=upe+kPLR7/GeOqeBD5ktrgjPKSUUFPLYfd4Aq1vyU9c=;
+        b=c66waBtMLqGQtwUpqKvduSu+VkQesarT4/WYNsRawwFqz9SWmnSwyV67+xbDiEWtIb
+         JlGbVtaWII3c+Dx1nGZ1M08cDAbOOLDAk7WPZ+pK9L243Y4jvoAOOgcBt2TAOUreCtDR
+         tTieS2Nm0qZ6cA9R7KGF6XebJnA3650pEbHfXT8WDi5zMqMXiQkluj0h3bcUwdv4LSlv
+         ZzAe/aDwA2L5Np1YsAuiaLqDq98Bz0WB+cGvOnyyWlVzuU8LZynoaS8Ey/YxUYNeTlm4
+         ByXR2bMYPK5M4GHA9on9sr87Vrx6aLmJ7JGeJhVRKb5+PEXXrLfHOR9UkbvVKCtO3paT
+         qJYQ==
+X-Gm-Message-State: APjAAAWXpFTtXl3zvE4aT4vwLdx0lOU4qpHQrx6ng8LzIPPOuM9B1VD2
+        0qdEGSogBb1pCv7E1IF/L6kMeevR
+X-Google-Smtp-Source: APXvYqxNceTma3Jg+FVVJiVsrEHC1qmWzZW1+1U3uElHQaPqpEUPKITw1GfT09u4FA8Opx/1JPi1LA==
+X-Received: by 2002:a02:1a86:: with SMTP id 128mr99230610jai.95.1560969551259;
+        Wed, 19 Jun 2019 11:39:11 -0700 (PDT)
+Received: from svens-asus.arcx.com ([184.94.50.30])
+        by smtp.gmail.com with ESMTPSA id l5sm16606999ioq.83.2019.06.19.11.39.10
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Wed, 19 Jun 2019 11:39:10 -0700 (PDT)
+From:   Sven Van Asbroeck <thesven73@gmail.com>
+X-Google-Original-From: Sven Van Asbroeck <TheSven73@gmail.com>
+To:     Lucas Stach <l.stach@pengutronix.de>
+Cc:     Russell King <linux+etnaviv@armlinux.org.uk>,
+        Christian Gmeiner <christian.gmeiner@gmail.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>, etnaviv@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        Alexey Brodkin <Alexey.Brodkin@synopsys.com>,
+        =?UTF-8?q?Ga=C3=ABl=20PORTAY?= <gael.portay@collabora.com>
+Subject: [PATCH] drm/etnaviv: optionally set gpu linear window to cma area
+Date:   Wed, 19 Jun 2019 14:38:56 -0400
+Message-Id: <20190619183856.467-1-TheSven73@gmail.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-References: <502d5b36-e0d0-ffcc-5dd4-35db9d033561@computerix.info> <20190609184013.GA11237@probook>
-In-Reply-To: <20190609184013.GA11237@probook>
-From:   Ross Zwisler <zwisler@kernel.org>
-Date:   Wed, 19 Jun 2019 12:37:11 -0600
-X-Gmail-Original-Message-ID: <CAOxpaSXKXRcZi0KnQz_6SxajZ6Nv61Bjm5xmG0Ydw3Madv0-tQ@mail.gmail.com>
-Message-ID: <CAOxpaSXKXRcZi0KnQz_6SxajZ6Nv61Bjm5xmG0Ydw3Madv0-tQ@mail.gmail.com>
-Subject: Re: [PATCH] x86/build: Move _etext to actual end of .text
-To:     Johannes Hirte <johannes.hirte@datenkhaos.de>
-Cc:     Klaus Kusche <klaus.kusche@computerix.info>, keescook@chromium.org,
-        bp@suse.de, samitolvanen@google.com,
-        LKML <linux-kernel@vger.kernel.org>,
-        Guenter Roeck <groeck@google.com>,
-        Ross Zwisler <zwisler@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jun 9, 2019 at 1:00 PM Johannes Hirte
-<johannes.hirte@datenkhaos.de> wrote:
-> On 2019 Jun 09, Klaus Kusche wrote:
-> > Hello,
-> >
-> > Same problem for linux 5.1.7:
-> > Kernel building fails with the same relocation error.
-> >
-> > 5.1.5 does not have the problem, builds fine for me.
-> >
-> > Is there anything I can do to investigate the problem?
-> >
->
-> Please try linux 5.1.8. The problematic patch was reverted there.
+On Vivante GPUs with an iommu-v1, the gpu linear window's
+position must be determined at probe time, and cannot change
+during the driver's lifetime.
 
-I'm having this same issue with v5.2-rc5 using an older version of gcc
-(4.9.2).  If I use a more recent version of gcc (7.3.0) it works fine.
+The existing code attempts to guess a suitable window position
+using the dma mask, but this does not always work [1].
 
-Reverting this patch allows gcc v4.9.2 to build kernel v5.2-rc5 successfully.
+According to a recent thread [2], Lucas Stach mentions that
+on MC2.0 GPUs, one may simply point the window to the start
+of the global cma area.
 
-You said in this chain that you were reverting this patch in stable
-kernels.  Are you going to revert it in tip-of-tree as well?
+This patch provides an optional method to set the window
+to the cma area, by adding a phandle to the etnaviv driver's
+devicetree node, pointing to the global cma area.
 
-- Ross
+Note that on iommu-v2 GPUs, this setting has no effect:
+they do not depend on a fixed window position.
+
+<Example>
+
+/ {
+	reserved-memory {
+		#address-cells = <1>;
+		#size-cells = <1>;
+		ranges;
+
+		cma_area: linux,cma {
+			compatible = "shared-dma-pool";
+			reusable;
+			size = <0x10000000>;
+			linux,cma-default;
+		};
+	};
+};
+
+/* Tell the Vivante GPUS where the CMA area is */
+
+&gpu_3d {
+	default-cma-region = <&cma_area>;
+};
+
+&gpu_2d {
+	default-cma-region = <&cma_area>;
+};
+
+</Example>
+
+[1] iMX6Q 2G ram, 256M cma, v5.2-rc4 kernel:
+    cma area @ 0x30000000 (auto-assigned by kernel)
+    dma mask is 0xffffffff
+    driver sets gpu window to 0x80000000
+    result: gpu iommu-v1 cannot access cma area
+
+[2] https://lkml.org/lkml/2017/11/15/599
+
+To: Lucas Stach <l.stach@pengutronix.de>
+Cc: Russell King <linux+etnaviv@armlinux.org.uk>
+Cc: Christian Gmeiner <christian.gmeiner@gmail.com>
+Cc: David Airlie <airlied@linux.ie>
+Cc: Daniel Vetter <daniel@ffwll.ch>
+Cc: etnaviv@lists.freedesktop.org
+Cc: dri-devel@lists.freedesktop.org
+Cc: linux-kernel@vger.kernel.org
+Cc: Alexey Brodkin <Alexey.Brodkin@synopsys.com>
+Cc: Gaël PORTAY <gael.portay@collabora.com>
+Signed-off-by: Sven Van Asbroeck <TheSven73@gmail.com>
+---
+
+devicetree documentation patch to follow, depending on how this patch
+is received.
+
+ drivers/gpu/drm/etnaviv/etnaviv_gpu.c | 48 +++++++++++++++++++++------
+ drivers/gpu/drm/etnaviv/etnaviv_gpu.h |  2 ++
+ 2 files changed, 39 insertions(+), 11 deletions(-)
+
+diff --git a/drivers/gpu/drm/etnaviv/etnaviv_gpu.c b/drivers/gpu/drm/etnaviv/etnaviv_gpu.c
+index 72d01e873160..7ed8705744d0 100644
+--- a/drivers/gpu/drm/etnaviv/etnaviv_gpu.c
++++ b/drivers/gpu/drm/etnaviv/etnaviv_gpu.c
+@@ -8,6 +8,7 @@
+ #include <linux/dma-fence.h>
+ #include <linux/moduleparam.h>
+ #include <linux/of_device.h>
++#include <linux/of_reserved_mem.h>
+ #include <linux/regulator/consumer.h>
+ #include <linux/thermal.h>
+ 
+@@ -687,6 +688,12 @@ static void etnaviv_gpu_hw_init(struct etnaviv_gpu *gpu)
+ 			     prefetch);
+ }
+ 
++static bool gpu_is_3d_mc10(const struct etnaviv_chip_identity *id)
++{
++	return (id->features & chipFeatures_PIPE_3D) &&
++		!(id->minor_features0 & chipMinorFeatures0_MC20);
++}
++
+ int etnaviv_gpu_init(struct etnaviv_gpu *gpu)
+ {
+ 	int ret, i;
+@@ -713,23 +720,33 @@ int etnaviv_gpu_init(struct etnaviv_gpu *gpu)
+ 		goto fail;
+ 	}
+ 
+-	/*
+-	 * Set the GPU linear window to be at the end of the DMA window, where
+-	 * the CMA area is likely to reside. This ensures that we are able to
+-	 * map the command buffers while having the linear window overlap as
+-	 * much RAM as possible, so we can optimize mappings for other buffers.
+-	 *
+-	 * For 3D cores only do this if MC2.0 is present, as with MC1.0 it leads
+-	 * to different views of the memory on the individual engines.
+-	 */
+-	if (!(gpu->identity.features & chipFeatures_PIPE_3D) ||
+-	    (gpu->identity.minor_features0 & chipMinorFeatures0_MC20)) {
++	if (!gpu_is_3d_mc10(&gpu->identity) && gpu->cma_base) {
++		/*
++		 * If we know the location of the CMA area, point the
++		 * GPU linear window to it. This ensures that we are able to
++		 * map the command buffers while having the linear window
++		 * overlap as much RAM as possible, so we can optimize mappings
++		 * for other buffers.
++		 */
++		gpu->memory_base = (u32)gpu->cma_base;
++	} else if (!gpu_is_3d_mc10(&gpu->identity)) {
++		/*
++		 * Set the GPU linear window to be at the end of the DMA window,
++		 * where the CMA area is likely to reside. In most cases, this
++		 * ensures that we are able to map the command buffers while
++		 * having the linear window overlap as much RAM as possible, so
++		 * we can optimize mappings for other buffers.
++		 */
+ 		u32 dma_mask = (u32)dma_get_required_mask(gpu->dev);
+ 		if (dma_mask < PHYS_OFFSET + SZ_2G)
+ 			gpu->memory_base = PHYS_OFFSET;
+ 		else
+ 			gpu->memory_base = dma_mask - SZ_2G + 1;
+ 	} else if (PHYS_OFFSET >= SZ_2G) {
++		/*
++		 * For MC1.0 3D cores, moving the linear window leads to
++		 * different views of the memory on the individual engines.
++		 */
+ 		dev_info(gpu->dev, "Need to move linear window on MC1.0, disabling TS\n");
+ 		gpu->memory_base = PHYS_OFFSET;
+ 		gpu->identity.features &= ~chipFeatures_FAST_CLEAR;
+@@ -1709,7 +1726,9 @@ MODULE_DEVICE_TABLE(of, etnaviv_gpu_match);
+ 
+ static int etnaviv_gpu_platform_probe(struct platform_device *pdev)
+ {
++	struct reserved_mem *rmem = NULL;
+ 	struct device *dev = &pdev->dev;
++	struct device_node *node;
+ 	struct etnaviv_gpu *gpu;
+ 	struct resource *res;
+ 	int err;
+@@ -1718,6 +1737,13 @@ static int etnaviv_gpu_platform_probe(struct platform_device *pdev)
+ 	if (!gpu)
+ 		return -ENOMEM;
+ 
++	node = of_parse_phandle(dev->of_node, "default-cma-region", 0);
++	if (node)
++		rmem = of_reserved_mem_lookup(node);
++	of_node_put(node);
++	if (rmem)
++		gpu->cma_base = rmem->base;
++
+ 	gpu->dev = &pdev->dev;
+ 	mutex_init(&gpu->lock);
+ 	mutex_init(&gpu->fence_lock);
+diff --git a/drivers/gpu/drm/etnaviv/etnaviv_gpu.h b/drivers/gpu/drm/etnaviv/etnaviv_gpu.h
+index 9bcf151f706b..3e968b395a72 100644
+--- a/drivers/gpu/drm/etnaviv/etnaviv_gpu.h
++++ b/drivers/gpu/drm/etnaviv/etnaviv_gpu.h
+@@ -106,6 +106,8 @@ struct etnaviv_gpu {
+ 
+ 	/* bus base address of memory  */
+ 	u32 memory_base;
++	/* base of the cma area */
++	phys_addr_t cma_base;
+ 
+ 	/* event management: */
+ 	DECLARE_BITMAP(event_bitmap, ETNA_NR_EVENTS);
+-- 
+2.17.1
+
