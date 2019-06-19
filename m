@@ -2,77 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 22C344B198
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 07:44:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B03AE4B187
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 07:42:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731016AbfFSFn4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Jun 2019 01:43:56 -0400
-Received: from relay9-d.mail.gandi.net ([217.70.183.199]:35507 "EHLO
-        relay9-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725866AbfFSFnz (ORCPT
+        id S1730900AbfFSFma (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Jun 2019 01:42:30 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:37406 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725899AbfFSFm2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Jun 2019 01:43:55 -0400
-X-Originating-IP: 79.86.19.127
-Received: from alex.numericable.fr (127.19.86.79.rev.sfr.net [79.86.19.127])
-        (Authenticated sender: alex@ghiti.fr)
-        by relay9-d.mail.gandi.net (Postfix) with ESMTPSA id AC264FF80F;
-        Wed, 19 Jun 2019 05:43:39 +0000 (UTC)
-From:   Alexandre Ghiti <alex@ghiti.fr>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     "James E . J . Bottomley" <James.Bottomley@HansenPartnership.com>,
-        Helge Deller <deller@gmx.de>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        linux-parisc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
-        sparclinux@vger.kernel.org, linux-mm@kvack.org,
-        Alexandre Ghiti <alex@ghiti.fr>
-Subject: [PATCH RESEND 1/8] s390: Start fallback of top-down mmap at mm->mmap_base
-Date:   Wed, 19 Jun 2019 01:42:17 -0400
-Message-Id: <20190619054224.5983-2-alex@ghiti.fr>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190619054224.5983-1-alex@ghiti.fr>
-References: <20190619054224.5983-1-alex@ghiti.fr>
+        Wed, 19 Jun 2019 01:42:28 -0400
+Received: by mail-wm1-f66.google.com with SMTP id f17so301911wme.2
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Jun 2019 22:42:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=/cpf3zq+TFw4UEIBZS68FxYFecgYH1xkj5zf5lev0W8=;
+        b=cCHl/gxL/zXc4WXMsveXwVsU3cxUW+ACFRX97VZSnWNLVolF18pOwLb4cZ5wfy5RnJ
+         3REAqJcFK/oGI2QJKcdjOZzJo77brsZ933bk0GZFC6Yb2FeFRu/ZUcdxus4jSMt5QMmv
+         cb5mKHlWsJqPkUdz1B5NnEwJWJoHUrL5L43sT51FshRXu6kSGA18KFYUDbdIq3gciajm
+         RcT5NEUePlSW1DD27FCL//Db+0LRRjSYEJXPvbTgus3ZYx7ERKnhVKaedqbEpQlbN+J+
+         As7P0XNVfOhDqFB3DaVhv4y3AmIyWNhEna4XviYfA0OCDgHVzB72f+z0351/UGM/LxtR
+         RG9g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=/cpf3zq+TFw4UEIBZS68FxYFecgYH1xkj5zf5lev0W8=;
+        b=kUBClavojJmNzytvv45utfp24Fc76wwR3Mb6gUnc9L9cOEuv6eOTX9//IKJeGC3TME
+         Zzta+TS3R7Y8CeAvlnR+NMM21hblsW41XZAXi4JkpoU0CZ1XR29CarjZA98ZJdRUTB5e
+         fijkd2rBQKd/+OiGw+RTirTdZ5Rt7K0rLYDpx4zkc1fQXCrMQOFTSR7GwPk1vDGfUbRm
+         lcd9dEWsok/murltLRzGSJEOw06NZVd3d0QH1UVt8iJ51XjYPqBfRY7muow+++yNlMtl
+         oHFDyM5ZNOoYKTNEZQqZ8kZYJxXtcihjm/+NuEhMbVdSrydKdqhWfSv9lO5iqrFNnA+S
+         UOgA==
+X-Gm-Message-State: APjAAAWUNbzI3CLyPP4Bdg5/WDJuX8253gkoZTZGabSk7t5Xnq9OO7cE
+        FoBx7Vt3rsVxRx1sWu+HLL0sYw==
+X-Google-Smtp-Source: APXvYqz1GbEe2qolDZxYNYoUdvQZ5fsE8k6qQo1nlTIumvRmIvonzAOQdnQDSY6CuatAS38KNkwUlw==
+X-Received: by 2002:a1c:6c0a:: with SMTP id h10mr6205898wmc.40.1560922945130;
+        Tue, 18 Jun 2019 22:42:25 -0700 (PDT)
+Received: from dell ([2.27.35.243])
+        by smtp.gmail.com with ESMTPSA id u18sm293652wmd.19.2019.06.18.22.42.24
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 18 Jun 2019 22:42:24 -0700 (PDT)
+Date:   Wed, 19 Jun 2019 06:42:22 +0100
+From:   Lee Jones <lee.jones@linaro.org>
+To:     "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc:     agross@kernel.org, david.brown@linaro.org, alim.akhtar@samsung.com,
+        avri.altman@wdc.com, pedrom.sousa@synopsys.com, jejb@linux.ibm.com,
+        linux-arm-msm@vger.kernel.org, linux-scsi@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        ard.biesheuvel@linaro.org, jlhugo@gmail.com,
+        bjorn.andersson@linaro.org
+Subject: Re: [PATCH 1/1] scsi: ufs-qcom: Add support for platforms booting
+ ACPI
+Message-ID: <20190619054222.GE18371@dell>
+References: <20190617115454.3226-1-lee.jones@linaro.org>
+ <yq1zhmeuvst.fsf@oracle.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <yq1zhmeuvst.fsf@oracle.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In case of mmap failure in top-down mode, there is no need to go through
-the whole address space again for the bottom-up fallback: the goal of this
-fallback is to find, as a last resort, space between the top-down mmap base
-and the stack, which is the only place not covered by the top-down mmap.
+Ard, Martin,
 
-Signed-off-by: Alexandre Ghiti <alex@ghiti.fr>
----
- arch/s390/mm/mmap.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Tue, 18 Jun 2019, Martin K. Petersen wrote:
+> > New Qualcomm AArch64 based laptops are now available which use UFS
+> > as their primary data storage medium.  These devices are supplied
+> > with ACPI support out of the box.  This patch ensures the Qualcomm
+> > UFS driver will be bound when the "QCOM24A5" H/W device is
+> > advertised as present.
+> 
+> Applied to 5.3/scsi-queue. Thanks!
 
-diff --git a/arch/s390/mm/mmap.c b/arch/s390/mm/mmap.c
-index cbc718ba6d78..4a222969843b 100644
---- a/arch/s390/mm/mmap.c
-+++ b/arch/s390/mm/mmap.c
-@@ -166,7 +166,7 @@ arch_get_unmapped_area_topdown(struct file *filp, const unsigned long addr0,
- 	if (addr & ~PAGE_MASK) {
- 		VM_BUG_ON(addr != -ENOMEM);
- 		info.flags = 0;
--		info.low_limit = TASK_UNMAPPED_BASE;
-+		info.low_limit = mm->mmap_base;
- 		info.high_limit = TASK_SIZE;
- 		addr = vm_unmapped_area(&info);
- 		if (addr & ~PAGE_MASK)
+Ideal.  Thanks for your help.
+
 -- 
-2.20.1
-
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
