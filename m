@@ -2,65 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6C61B4B89A
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 14:32:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7C1C54B89F
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 14:32:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732061AbfFSMcR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Jun 2019 08:32:17 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:60531 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731755AbfFSMcQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Jun 2019 08:32:16 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 9B7458046F; Wed, 19 Jun 2019 14:32:03 +0200 (CEST)
-Date:   Wed, 19 Jun 2019 14:32:10 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     pavel@ucw.cz
-Cc:     linux-kernel@vger.kernel.org,
-        Randall Huang <huangrandall@google.com>,
-        Chao Yu <yuchao0@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: Re: [PATCH 4.19 33/75] f2fs: fix to avoid accessing xattr across the
- boundary
-Message-ID: <20190619123210.GA14477@xo-6d-61-c0.localdomain>
-References: <20190617210752.799453599@linuxfoundation.org>
- <20190617210754.076823433@linuxfoundation.org>
+        id S1732074AbfFSMcc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Jun 2019 08:32:32 -0400
+Received: from ozlabs.org ([203.11.71.1]:37007 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731738AbfFSMcb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Jun 2019 08:32:31 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45TPV12z93z9sNC;
+        Wed, 19 Jun 2019 22:32:24 +1000 (AEST)
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     Christoph Hellwig <hch@lst.de>, benh@kernel.crashing.org,
+        paulus@samba.org
+Cc:     Larry.Finger@lwfinger.net, linuxppc-dev@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org, aaro.koskinen@iki.fi
+Subject: Re: [PATCH] powerpc: enable a 30-bit ZONE_DMA for 32-bit pmac
+In-Reply-To: <20190619105039.GA10118@lst.de>
+References: <20190613082446.18685-1-hch@lst.de> <20190619105039.GA10118@lst.de>
+Date:   Wed, 19 Jun 2019 22:32:24 +1000
+Message-ID: <87tvcldacn.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190617210754.076823433@linuxfoundation.org>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi!
+Christoph Hellwig <hch@lst.de> writes:
+> Any chance this could get picked up to fix the regression?
 
-> When we traverse xattr entries via __find_xattr(),
-> if the raw filesystem content is faked or any hardware failure occurs,
-> out-of-bound error can be detected by KASAN.
-> Fix the issue by introducing boundary check.
+Was hoping Ben would Ack it. He's still powermac maintainer :)
 
-Ok, so this prevents fs corruption from causing problems,
+I guess he OK'ed it in the other thread, will add it to my queue.
 
-> @@ -340,7 +347,11 @@ static int lookup_all_xattrs(struct inode *inode, struct page *ipage,
->  	else
->  		cur_addr = txattr_addr;
->  
-> -	*xe = __find_xattr(cur_addr, index, len, name);
-> +	*xe = __find_xattr(cur_addr, last_txattr_addr, index, len, name);
-> +	if (!*xe) {
-> +		err = -EFAULT;
-> +		goto out;
-> +	}
+cheers
 
-Is -EFAULT suitable here? We do not have userspace passing pointers to us, we
-have fs corruption. -EUNCLEAN?
-
-Should it do some kind of printk to let the user know fs is corrupted, and mark
-it as needing fsck?
-
-Thanks,
-									Pavel
+> On Thu, Jun 13, 2019 at 10:24:46AM +0200, Christoph Hellwig wrote:
+>> With the strict dma mask checking introduced with the switch to
+>> the generic DMA direct code common wifi chips on 32-bit powerbooks
+>> stopped working.  Add a 30-bit ZONE_DMA to the 32-bit pmac builds
+>> to allow them to reliably allocate dma coherent memory.
+>> 
+>> Fixes: 65a21b71f948 ("powerpc/dma: remove dma_nommu_dma_supported")
+>> Reported-by: Aaro Koskinen <aaro.koskinen@iki.fi>
+>> Signed-off-by: Christoph Hellwig <hch@lst.de>
+>> ---
+>>  arch/powerpc/include/asm/page.h         | 7 +++++++
+>>  arch/powerpc/mm/mem.c                   | 3 ++-
+>>  arch/powerpc/platforms/powermac/Kconfig | 1 +
+>>  3 files changed, 10 insertions(+), 1 deletion(-)
+>> 
+>> diff --git a/arch/powerpc/include/asm/page.h b/arch/powerpc/include/asm/page.h
+>> index b8286a2013b4..0d52f57fca04 100644
+>> --- a/arch/powerpc/include/asm/page.h
+>> +++ b/arch/powerpc/include/asm/page.h
+>> @@ -319,6 +319,13 @@ struct vm_area_struct;
+>>  #endif /* __ASSEMBLY__ */
+>>  #include <asm/slice.h>
+>>  
+>> +/*
+>> + * Allow 30-bit DMA for very limited Broadcom wifi chips on many powerbooks.
+>> + */
+>> +#ifdef CONFIG_PPC32
+>> +#define ARCH_ZONE_DMA_BITS 30
+>> +#else
+>>  #define ARCH_ZONE_DMA_BITS 31
+>> +#endif
+>>  
+>>  #endif /* _ASM_POWERPC_PAGE_H */
+>> diff --git a/arch/powerpc/mm/mem.c b/arch/powerpc/mm/mem.c
+>> index cba29131bccc..2540d3b2588c 100644
+>> --- a/arch/powerpc/mm/mem.c
+>> +++ b/arch/powerpc/mm/mem.c
+>> @@ -248,7 +248,8 @@ void __init paging_init(void)
+>>  	       (long int)((top_of_ram - total_ram) >> 20));
+>>  
+>>  #ifdef CONFIG_ZONE_DMA
+>> -	max_zone_pfns[ZONE_DMA]	= min(max_low_pfn, 0x7fffffffUL >> PAGE_SHIFT);
+>> +	max_zone_pfns[ZONE_DMA]	= min(max_low_pfn,
+>> +			((1UL << ARCH_ZONE_DMA_BITS) - 1) >> PAGE_SHIFT);
+>>  #endif
+>>  	max_zone_pfns[ZONE_NORMAL] = max_low_pfn;
+>>  #ifdef CONFIG_HIGHMEM
+>> diff --git a/arch/powerpc/platforms/powermac/Kconfig b/arch/powerpc/platforms/powermac/Kconfig
+>> index f834a19ed772..c02d8c503b29 100644
+>> --- a/arch/powerpc/platforms/powermac/Kconfig
+>> +++ b/arch/powerpc/platforms/powermac/Kconfig
+>> @@ -7,6 +7,7 @@ config PPC_PMAC
+>>  	select PPC_INDIRECT_PCI if PPC32
+>>  	select PPC_MPC106 if PPC32
+>>  	select PPC_NATIVE
+>> +	select ZONE_DMA if PPC32
+>>  	default y
+>>  
+>>  config PPC_PMAC64
+>> -- 
+>> 2.20.1
+> ---end quoted text---
