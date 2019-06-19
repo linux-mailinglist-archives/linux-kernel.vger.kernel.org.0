@@ -2,170 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2130E4B5C3
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 12:01:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D3A7C4B5CD
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Jun 2019 12:02:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731549AbfFSKBR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Jun 2019 06:01:17 -0400
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:60463 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726479AbfFSKBQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Jun 2019 06:01:16 -0400
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20190619100114euoutp0188716ebfb6980cd325e4d41fe4352ae5~pkUXMEd3m0287502875euoutp01c
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2019 10:01:14 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20190619100114euoutp0188716ebfb6980cd325e4d41fe4352ae5~pkUXMEd3m0287502875euoutp01c
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1560938474;
-        bh=+5Aoi9KusrDIevbz701jCID7pa2iYGWJAx0tkxsUsaU=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=Cqxp1Ob7vCTqgYhcChErG/Ouc9Qh2EaLV8Ac0THGlOa7Xj/9q3X+RJu1UxW5mz5yp
-         nq09w7x14cBoXGW5TWtaWMCYMau7zy9+GaOppvHjW59fy9KmTWMgKE08e59AyBltjd
-         c+jZ/Ti0nNtUzKLI1wb18QX+DqUi6Gm33krWQesQ=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20190619100113eucas1p1685d5fcb85feeb41af812d7b1e65c533~pkUWILYHC0885208852eucas1p17;
-        Wed, 19 Jun 2019 10:01:13 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges2new.samsung.com (EUCPMTA) with SMTP id 4E.44.04377.9E70A0D5; Wed, 19
-        Jun 2019 11:01:13 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20190619100112eucas1p25eb0476f1b1dc1bb80c3662c3528c254~pkUVTw3YT0942809428eucas1p2d;
-        Wed, 19 Jun 2019 10:01:12 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20190619100112eusmtrp1124545bd7f52fa019bebe98b7452f910~pkUVFfwp73261132611eusmtrp15;
-        Wed, 19 Jun 2019 10:01:12 +0000 (GMT)
-X-AuditID: cbfec7f4-12dff70000001119-d7-5d0a07e9a40f
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id 9F.85.04146.8E70A0D5; Wed, 19
-        Jun 2019 11:01:12 +0100 (BST)
-Received: from [106.120.50.25] (unknown [106.120.50.25]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20190619100111eusmtip242ed98c0f3f696e11dec29ab5b2bf902~pkUUHPMIF2666626666eusmtip2_;
-        Wed, 19 Jun 2019 10:01:11 +0000 (GMT)
-Subject: Re: [RFT 01/10] dt-bindings: gpu: mali: Add Samsung compatibles for
- Midgard and Utgard
-To:     Krzysztof Kozlowski <krzk@kernel.org>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Kukjin Kim <kgene@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Olof Johansson <olof@lixom.net>,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org
-Cc:     Joseph Kogut <joseph.kogut@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Inki Dae <inki.dae@samsung.com>
-From:   Marek Szyprowski <m.szyprowski@samsung.com>
-Message-ID: <9d16d4f7-8353-e0f0-a005-1b04457d70f0@samsung.com>
-Date:   Wed, 19 Jun 2019 12:01:10 +0200
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
-        Thunderbird/60.7.1
-MIME-Version: 1.0
-In-Reply-To: <20190618190534.4951-2-krzk@kernel.org>
-Content-Transfer-Encoding: 7bit
+        id S1731527AbfFSKCS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Jun 2019 06:02:18 -0400
+Received: from mail-eopbgr40122.outbound.protection.outlook.com ([40.107.4.122]:51326
+        "EHLO EUR03-DB5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726479AbfFSKCR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Jun 2019 06:02:17 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prevas.se;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=0R3/DfLeWtBK0rONwx/vvXic/zkqzi9q3WzjJjlOcDs=;
+ b=ZGvkIJ+cVRc1MuoI75Qi1fKG3QEb3Baw4c0ddAivhav1zjUe+1A7GsRX0/68XdYcEO7dzVTGfKZQavon5ls8d5uNAA1gg3zd6ENWwAmCkcRoBra3/wF0rBpKNXhJnBkkW4k4iXdqVQY1HU526W/EhZh1bSOzhrtEFpX+dQKQrfY=
+Received: from AM0PR10MB3027.EURPRD10.PROD.OUTLOOK.COM (10.255.30.92) by
+ AM0PR10MB2450.EURPRD10.PROD.OUTLOOK.COM (20.177.110.225) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1987.11; Wed, 19 Jun 2019 10:02:13 +0000
+Received: from AM0PR10MB3027.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::4c4f:7a8e:cfcc:5d5a]) by AM0PR10MB3027.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::4c4f:7a8e:cfcc:5d5a%6]) with mapi id 15.20.1987.014; Wed, 19 Jun 2019
+ 10:02:13 +0000
+From:   Rasmus Villemoes <rasmus.villemoes@prevas.dk>
+To:     Andrew Lunn <andrew@lunn.ch>,
+        Vivien Didelot <vivien.didelot@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+CC:     Rasmus Villemoes <Rasmus.Villemoes@prevas.se>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: [PATCH net] net: dsa: mv88e6xxx: fix shift of FID bits in
+ mv88e6185_g1_vtu_loadpurge()
+Thread-Topic: [PATCH net] net: dsa: mv88e6xxx: fix shift of FID bits in
+ mv88e6185_g1_vtu_loadpurge()
+Thread-Index: AQHVJoYRfeUHVxjOPU6bwM7pmbWvXQ==
+Date:   Wed, 19 Jun 2019 10:02:13 +0000
+Message-ID: <20190619100203.11749-1-rasmus.villemoes@prevas.dk>
+Accept-Language: en-US
 Content-Language: en-US
-X-Brightmail-Tracker: H4sIAAAAAAAAA01SWUwTURT1zU6lOBaVG9xLNGoUxfUZl7gmY9RojB9GJDrKBIxs6YDrhwuu
-        pW74AVaQiqKmqSAVATFFi0BFkyJCBDQKCkhcCEIrLlSRMqj8nXPuue+cmzyO1FxlArmdMfGS
-        LkaM0jIqKr/8h3PaB1YVNiPRHoBPOysI/Cu5nMW5qTk0br9uQLjW3UrjnvzzJM4oddK45ms7
-        g5MbzlHYcMJD47NNn0hcWXmbxdamFzTuMLyhcXVRGoNTK4sJnFVbReCqJyvxk1oXg4/ZSln8
-        6PMJGv9+kUthc5EH4Q8dj6klIFguW5DQ/TMZCe11x1jB1mWihHvG16xgNZ9ihIKuRlpoSHIQ
-        wp1rB4Wax0do4UyeGQku65j1vptVC8OlqJ27Jd30xdtUkfU2OxX33m9v+c8k4hDK9NUjHw74
-        2WA4+x7pkYrT8DcRvGp5TSvEjSC3uZhUiAvB97yjzN+VmsIkShncQJDjcfaTNgSZZXba6/Ln
-        RXB12ljvYBhfT0OBNbHPRfJXETy9cLjvLYYPAX2bvg+r+cXw5WEFoUccR/ETwH0qzisP57dA
-        amErpViGQsXF5j7s01ujx9lJeDHJj4WCtjRSwQHwsjmD8GYB38jB+eff+nuvgJS6DFbB/vDR
-        kdePR/X2MVDKQiKCt85brEIMCKqPpCLFtQAeOapobzuSnww5RdMVeSnUd5gZrwy8H9S1DVVK
-        +EFyfgqpyGo4eVyjuCeC0ZH9L9b+7Dl5DmmNA04zDjjHOOAc4/9cE6LMKEBKkKMjJHlmjLQn
-        WBaj5YSYiOAdsdFW1Pt1n/52uAtRkWd7CeI5pPVV8y4uTEOLu+V90SUIOFI7TD040SdMow4X
-        9+2XdLFbdQlRklyCRnKUNkB9YFBjqIaPEOOlXZIUJ+n+TgnOJ/AQmjvi22hPaJch1HJ3FYR0
-        7yFbUsYvlS7pMyoMl8zy+Enpsya0N4R3L1MV7xoXu/bCZHHWukrLopsH7Ku3nJmXeSX9flm8
-        /+E12ZM2NQzpKU3PCeo8Onx+1wbLjaypJtW86rQVp3W27JGDjrsfBJqso5cHLTDdamqZc3l9
-        3Meywe/Sv7du1FJypBgyhdTJ4h+XsRu4tgMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Sa0hTYRjHe89lO1MXp9PEF0mtRQRdVmdqvqYuPxgcqCioKErTpQcnuR3b
-        mXb70DDE3Kx0H8KGaBeNGEFNy1JYpZW3SJuZpl2s7KKoWXkBL2lbK/Db732e/+/heeGhcOYu
-        GUxlGEy80aDNVEr8iGdzTe/XD0j9kjbaukLRubYWDP22NUqRs+QWiUavFwLUPf6NRPM1xTgq
-        f9JGos6JUQmy9RURqDB/lkQX+odw1N5+W4qq+rtI9LPwPYle1pVKUEn7AwxVdrsx5G7dilq7
-        xyQoz/VEih4P55NorstJIEfdLECDP5uJeMjdLLsJuJlpG+BGX+dJOdfkZYKrtb+TclWOAgl3
-        b/IDyfVZmzCuuuI019mcS3Ln7zgAN1YVuivggCrWKGSb+OU6QTTFKQ+ySK1io5FKHRGtYsOj
-        kjarI5UbNLFpfGZGDm/coElR6Xpc9UTW18XHG6etmBlcDbAAGQXpCNh530pYgB/F0JUAzj19
-        CHyNZbDlopn08VI422WR+EJDAHa4S/+GltJaOPbLJfU2FHQPCXsrhnDvA6evAdhjLZf6FKdH
-        cbpwryKhWWgZ8c6SUXJaA388asEsgKIIehUcL8jylgPpRPiw/g3hiyyBLZc+/2WZZ9f5tl+Y
-        l3F6Eyyr/oj7OAzeGyn9x0Gw93M5VgQY+wLdvkCxL1DsC5TLgHAABZ8t6tP1IqsStXox25Cu
-        ShX0VcBzMjWNU9X3QYdzdwOgKaAMkOsmqCSG1OaIJ/QNAFK4UiH3PyNLYuRp2hMneaOQbMzO
-        5MUGEOn5WzEeHJgqeA7QYEpmI9koFM1GhUeFb0LKIPlZuj6RodO1Jv4Iz2fxxv8eRsmCzSDh
-        hrWOKDJMr9MNpsYrruwwzwSl0+I2NDUY96X/mIrCE2pt/st3L4p8e8vY/DVgS5h72LFz+9qI
-        8AGBeZV79G2ikMgcnq0dOci8WM24zcK+45oVCUWHavwqhOcxIEuREzKgDklNiWj6fqo4c2+f
-        Rv2GjLE+/zQyvPI6t2e/o1xJiDotuwY3ito/yg4JmkgDAAA=
-X-CMS-MailID: 20190619100112eucas1p25eb0476f1b1dc1bb80c3662c3528c254
-X-Msg-Generator: CA
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: HE1PR0102CA0064.eurprd01.prod.exchangelabs.com
+ (2603:10a6:7:7d::41) To AM0PR10MB3027.EURPRD10.PROD.OUTLOOK.COM
+ (2603:10a6:208:160::28)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Rasmus.Villemoes@prevas.se; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-mailer: git-send-email 2.20.1
+x-originating-ip: [81.216.59.226]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: ded65fa4-4417-4312-1b7c-08d6f49d3354
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:AM0PR10MB2450;
+x-ms-traffictypediagnostic: AM0PR10MB2450:
+x-microsoft-antispam-prvs: <AM0PR10MB2450E7189F5D4399357A1D368AE50@AM0PR10MB2450.EURPRD10.PROD.OUTLOOK.COM>
+x-ms-oob-tlc-oobclassifiers: OLM:5516;
+x-forefront-prvs: 0073BFEF03
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(366004)(396003)(39850400004)(376002)(136003)(199004)(189003)(3846002)(6116002)(5660300002)(25786009)(6436002)(6486002)(8936002)(8976002)(71190400001)(4326008)(71200400001)(53936002)(14444005)(256004)(2906002)(4744005)(6512007)(36756003)(1076003)(99286004)(66556008)(64756008)(66446008)(73956011)(66946007)(305945005)(66066001)(52116002)(74482002)(7736002)(66476007)(81166006)(81156014)(26005)(186003)(14454004)(2616005)(476003)(486006)(102836004)(8676002)(50226002)(6506007)(68736007)(316002)(386003)(44832011)(110136005)(54906003)(42882007)(72206003)(478600001);DIR:OUT;SFP:1102;SCL:1;SRVR:AM0PR10MB2450;H:AM0PR10MB3027.EURPRD10.PROD.OUTLOOK.COM;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: prevas.se does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: r02zuaGvRfOM6onJfAVE7iK6odJjkWbLUmcELT+lRcE57X35edCkQK2KCqiWtqNcfnaoWpvwa5NRqq+oKHmJBJI8epj/5UyOsa2IT9HcOwEft8WtoEHwCxxmp63X//zymfr0D4HfMycgWOx/LZ2rDOSTrido/ZpnVcMqCWPO9yH4dO9HR4yc0Ydyk2Gki/wvOpq7Nwi4sMU1hNMKld5b/jgATiQsGYg9mren5Yt8JeaMzvhAEmn5Sd7ImxDZKnj7JILUIFZrPQn8jk5I35q7RIWz65KeiV3a452DVt7HSv2MqUhn9im8kWWsctLHW9hKcnSHYivBxvg3a0oMxcRBUA4zeH9tdkjyqp1gQQJvCb8i+Hzbp8jXnffVtks10c4rlJNJ7AzaUD0URgABEB0KJC8pVObQSmdBZVg8dyGCqSg=
 Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20190618190551epcas2p38f3c93da2a05117c7741468bb5a7784c
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20190618190551epcas2p38f3c93da2a05117c7741468bb5a7784c
-References: <20190618190534.4951-1-krzk@kernel.org>
-        <CGME20190618190551epcas2p38f3c93da2a05117c7741468bb5a7784c@epcas2p3.samsung.com>
-        <20190618190534.4951-2-krzk@kernel.org>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: prevas.dk
+X-MS-Exchange-CrossTenant-Network-Message-Id: ded65fa4-4417-4312-1b7c-08d6f49d3354
+X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Jun 2019 10:02:13.2663
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: d350cf71-778d-4780-88f5-071a4cb1ed61
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: Rasmus.Villemoes@prevas.dk
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR10MB2450
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Krzysztof,
-
-On 2019-06-18 21:05, Krzysztof Kozlowski wrote:
-> Add vendor compatibles for specific implementation of Mali Utgard
-> (Exynos3250, Exynos4-family) and Midgard (Exynos5433, Exynos7).
->
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> ---
->   Documentation/devicetree/bindings/gpu/arm,mali-midgard.txt | 1 +
->   Documentation/devicetree/bindings/gpu/arm,mali-utgard.txt  | 1 +
->   2 files changed, 2 insertions(+)
->
-> diff --git a/Documentation/devicetree/bindings/gpu/arm,mali-midgard.txt b/Documentation/devicetree/bindings/gpu/arm,mali-midgard.txt
-> index e5ad3b2afe17..9b298edec5b2 100644
-> --- a/Documentation/devicetree/bindings/gpu/arm,mali-midgard.txt
-> +++ b/Documentation/devicetree/bindings/gpu/arm,mali-midgard.txt
-> @@ -17,6 +17,7 @@ Required properties:
->     * which must be preceded by one of the following vendor specifics:
->       + "allwinner,sun50i-h6-mali"
->       + "amlogic,meson-gxm-mali"
-> +    + "samsung,exynos5433-mali"
->       + "rockchip,rk3288-mali"
->       + "rockchip,rk3399-mali"
->   
-> diff --git a/Documentation/devicetree/bindings/gpu/arm,mali-utgard.txt b/Documentation/devicetree/bindings/gpu/arm,mali-utgard.txt
-> index ae63f09fda7d..519018cb860b 100644
-> --- a/Documentation/devicetree/bindings/gpu/arm,mali-utgard.txt
-> +++ b/Documentation/devicetree/bindings/gpu/arm,mali-utgard.txt
-> @@ -17,6 +17,7 @@ Required properties:
->         + amlogic,meson8b-mali
->         + amlogic,meson-gxbb-mali
->         + amlogic,meson-gxl-mali
-> +      + samsung,exynos3250-mali
-I would prefer 'samsung,exynos4-mali', because historically Exynos4 was 
-the first SoC with Mali400 and such prefix is already used for many hw 
-blocks.
->         + rockchip,rk3036-mali
->         + rockchip,rk3066-mali
->         + rockchip,rk3188-mali
-
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
-
+VGhlIGNvbW1lbnQgaXMgY29ycmVjdCwgYnV0IHRoZSBjb2RlIGVuZHMgdXAgbW92aW5nIHRoZSBi
+aXRzIGZvdXINCnBsYWNlcyB0b28gZmFyLCBpbnRvIHRoZSBWVFVPcCBmaWVsZC4NCg0KRml4ZXM6
+IDExZWE4MDlmMWE3NCAobmV0OiBkc2E6IG12ODhlNnh4eDogc3VwcG9ydCAyNTYgZGF0YWJhc2Vz
+KQ0KU2lnbmVkLW9mZi1ieTogUmFzbXVzIFZpbGxlbW9lcyA8cmFzbXVzLnZpbGxlbW9lc0BwcmV2
+YXMuZGs+DQotLS0NCiBkcml2ZXJzL25ldC9kc2EvbXY4OGU2eHh4L2dsb2JhbDFfdnR1LmMgfCAy
+ICstDQogMSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCspLCAxIGRlbGV0aW9uKC0pDQoNCmRp
+ZmYgLS1naXQgYS9kcml2ZXJzL25ldC9kc2EvbXY4OGU2eHh4L2dsb2JhbDFfdnR1LmMgYi9kcml2
+ZXJzL25ldC9kc2EvbXY4OGU2eHh4L2dsb2JhbDFfdnR1LmMNCmluZGV4IDRmN2I1MjJlNWU1OS4u
+NzY0Mzc4ZGNiYzBjIDEwMDY0NA0KLS0tIGEvZHJpdmVycy9uZXQvZHNhL212ODhlNnh4eC9nbG9i
+YWwxX3Z0dS5jDQorKysgYi9kcml2ZXJzL25ldC9kc2EvbXY4OGU2eHh4L2dsb2JhbDFfdnR1LmMN
+CkBAIC00NzMsNyArNDczLDcgQEAgaW50IG12ODhlNjE4NV9nMV92dHVfbG9hZHB1cmdlKHN0cnVj
+dCBtdjg4ZTZ4eHhfY2hpcCAqY2hpcCwNCiAJCSAqIFZUVSBEQk51bVs3OjRdIGFyZSBsb2NhdGVk
+IGluIFZUVSBPcGVyYXRpb24gMTE6OA0KIAkJICovDQogCQlvcCB8PSBlbnRyeS0+ZmlkICYgMHgw
+MDBmOw0KLQkJb3AgfD0gKGVudHJ5LT5maWQgJiAweDAwZjApIDw8IDg7DQorCQlvcCB8PSAoZW50
+cnktPmZpZCAmIDB4MDBmMCkgPDwgNDsNCiAJfQ0KIA0KIAlyZXR1cm4gbXY4OGU2eHh4X2cxX3Z0
+dV9vcChjaGlwLCBvcCk7DQotLSANCjIuMjAuMQ0KDQo=
