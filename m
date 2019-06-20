@@ -2,216 +2,193 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1605C4DBFC
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 22:54:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 75AD84DC1D
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 22:54:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727195AbfFTUy3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 16:54:29 -0400
-Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:61600 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726943AbfFTUyM (ORCPT
+        id S1727284AbfFTUyy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 16:54:54 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:15468 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726045AbfFTUys (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 16:54:12 -0400
-Received: from pps.filterd (m0109333.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5KKjEKX003592
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2019 13:54:12 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : in-reply-to : references : mime-version :
- content-type; s=facebook; bh=G4U2JA+ITVRUPcGtQR0tfoOVR3mjydybAs8QYLDNQp4=;
- b=qYjAYh45EGSY4OgxqpFwWGg173IslKGH4D3OsTeKJXtWmuZlesb9RpVT52HsRwDBYrEL
- Fx12DrVOZvp8XDbzVrxGphAcObmSiRfknktbFbxwYqpBr4L6lEdV8lEXmbJJUhctBMiA
- LBduJdWjlB5W8F4f8yH2HvX+yPNEFv2uj9Q= 
-Received: from mail.thefacebook.com (mailout.thefacebook.com [199.201.64.23])
-        by mx0a-00082601.pphosted.com with ESMTP id 2t8eru0naj-4
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2019 13:54:11 -0700
-Received: from mx-out.facebook.com (2620:10d:c081:10::13) by
- mail.thefacebook.com (2620:10d:c081:35::125) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA) id 15.1.1713.5;
- Thu, 20 Jun 2019 13:54:09 -0700
-Received: by devbig006.ftw2.facebook.com (Postfix, from userid 4523)
-        id 1608262E2A35; Thu, 20 Jun 2019 13:54:09 -0700 (PDT)
-Smtp-Origin-Hostprefix: devbig
-From:   Song Liu <songliubraving@fb.com>
-Smtp-Origin-Hostname: devbig006.ftw2.facebook.com
-To:     <linux-mm@kvack.org>, <linux-fsdevel@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-CC:     <matthew.wilcox@oracle.com>, <kirill.shutemov@linux.intel.com>,
-        <kernel-team@fb.com>, <william.kucharski@oracle.com>,
-        <akpm@linux-foundation.org>, Song Liu <songliubraving@fb.com>
-Smtp-Origin-Cluster: ftw2c04
-Subject: [PATCH v5 6/6] mm,thp: avoid writes to file with THP in pagecache
-Date:   Thu, 20 Jun 2019 13:53:48 -0700
-Message-ID: <20190620205348.3980213-7-songliubraving@fb.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190620205348.3980213-1-songliubraving@fb.com>
-References: <20190620205348.3980213-1-songliubraving@fb.com>
-X-FB-Internal: Safe
+        Thu, 20 Jun 2019 16:54:48 -0400
+Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5KKqi34049853;
+        Thu, 20 Jun 2019 16:53:52 -0400
+Received: from ppma03dal.us.ibm.com (b.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.11])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2t8fwbuvtn-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 20 Jun 2019 16:53:52 -0400
+Received: from pps.filterd (ppma03dal.us.ibm.com [127.0.0.1])
+        by ppma03dal.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x5KKoRjB012616;
+        Thu, 20 Jun 2019 20:53:51 GMT
+Received: from b01cxnp22034.gho.pok.ibm.com (b01cxnp22034.gho.pok.ibm.com [9.57.198.24])
+        by ppma03dal.us.ibm.com with ESMTP id 2t4ra6c0bv-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 20 Jun 2019 20:53:51 +0000
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp22034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x5KKroaS25035082
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 20 Jun 2019 20:53:50 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A024FB205F;
+        Thu, 20 Jun 2019 20:53:50 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 735C4B2064;
+        Thu, 20 Jun 2019 20:53:50 +0000 (GMT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.26])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Thu, 20 Jun 2019 20:53:50 +0000 (GMT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id 6A6D716C5DE8; Thu, 20 Jun 2019 13:53:52 -0700 (PDT)
+Date:   Thu, 20 Jun 2019 13:53:52 -0700
+From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
+To:     Scott Wood <swood@redhat.com>
+Cc:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Clark Williams <williams@redhat.com>,
+        linux-rt-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RT 1/4] rcu: Acquire RCU lock when disabling BHs
+Message-ID: <20190620205352.GV26519@linux.ibm.com>
+Reply-To: paulmck@linux.ibm.com
+References: <20190619011908.25026-1-swood@redhat.com>
+ <20190619011908.25026-2-swood@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190619011908.25026-2-swood@redhat.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-20_14:,,
  signatures=0
-X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 priorityscore=1501
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
  malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
  clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=615 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1906200149
-X-FB-Internal: deliver
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1906200150
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In previous patch, an application could put part of its text section in
-THP via madvise(). These THPs will be protected from writes when the
-application is still running (TXTBSY). However, after the application
-exits, the file is available for writes.
+On Tue, Jun 18, 2019 at 08:19:05PM -0500, Scott Wood wrote:
+> A plain local_bh_disable() is documented as creating an RCU critical
+> section, and (at least) rcutorture expects this to be the case.  However,
+> in_softirq() doesn't block a grace period on PREEMPT_RT, since RCU checks
+> preempt_count() directly.  Even if RCU were changed to check
+> in_softirq(), that wouldn't allow blocked BH disablers to be boosted.
+> 
+> Fix this by calling rcu_read_lock() from local_bh_disable(), and update
+> rcu_read_lock_bh_held() accordingly.
+> 
+> Signed-off-by: Scott Wood <swood@redhat.com>
+> ---
+>  include/linux/rcupdate.h |  4 ++++
+>  kernel/rcu/update.c      |  4 ++++
+>  kernel/softirq.c         | 12 +++++++++---
+>  3 files changed, 17 insertions(+), 3 deletions(-)
+> 
+> diff --git a/include/linux/rcupdate.h b/include/linux/rcupdate.h
+> index fb267bc04fdf..aca4e5e25ace 100644
+> --- a/include/linux/rcupdate.h
+> +++ b/include/linux/rcupdate.h
+> @@ -637,10 +637,12 @@ static inline void rcu_read_unlock(void)
+>  static inline void rcu_read_lock_bh(void)
+>  {
+>  	local_bh_disable();
+> +#ifndef CONFIG_PREEMPT_RT_FULL
 
-This patch avoids writes to file THP by dropping page cache for the file
-when the file is open for write. A new counter nr_thps is added to struct
-address_space. In do_last(), if the file is open for write and nr_thps
-is non-zero, we drop page cache for the whole file.
+How about this instead?
 
-Signed-off-by: Song Liu <songliubraving@fb.com>
----
- fs/inode.c         |  3 +++
- fs/namei.c         | 22 +++++++++++++++++++++-
- include/linux/fs.h | 31 +++++++++++++++++++++++++++++++
- mm/filemap.c       |  1 +
- mm/khugepaged.c    |  4 +++-
- 5 files changed, 59 insertions(+), 2 deletions(-)
+	if (IS_ENABLED(CONFIG_PREEMPT_RT_FULL))
+		return;
 
-diff --git a/fs/inode.c b/fs/inode.c
-index df6542ec3b88..518113a4e219 100644
---- a/fs/inode.c
-+++ b/fs/inode.c
-@@ -181,6 +181,9 @@ int inode_init_always(struct super_block *sb, struct inode *inode)
- 	mapping->flags = 0;
- 	mapping->wb_err = 0;
- 	atomic_set(&mapping->i_mmap_writable, 0);
-+#ifdef CONFIG_READ_ONLY_THP_FOR_FS
-+	atomic_set(&mapping->nr_thps, 0);
-+#endif
- 	mapping_set_gfp_mask(mapping, GFP_HIGHUSER_MOVABLE);
- 	mapping->private_data = NULL;
- 	mapping->writeback_index = 0;
-diff --git a/fs/namei.c b/fs/namei.c
-index 20831c2fbb34..de64f24b58e9 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -3249,6 +3249,22 @@ static int lookup_open(struct nameidata *nd, struct path *path,
- 	return error;
- }
- 
-+/*
-+ * The file is open for write, so it is not mmapped with VM_DENYWRITE. If
-+ * it still has THP in page cache, drop the whole file from pagecache
-+ * before processing writes. This helps us avoid handling write back of
-+ * THP for now.
-+ */
-+static inline void release_file_thp(struct file *file)
-+{
-+#ifdef CONFIG_READ_ONLY_THP_FOR_FS
-+	struct inode *inode = file_inode(file);
-+
-+	if (inode_is_open_for_write(inode) && filemap_nr_thps(inode->i_mapping))
-+		truncate_pagecache(inode, 0);
-+#endif
-+}
-+
- /*
-  * Handle the last step of open()
-  */
-@@ -3418,7 +3434,11 @@ static int do_last(struct nameidata *nd,
- 		goto out;
- opened:
- 	error = ima_file_check(file, op->acc_mode);
--	if (!error && will_truncate)
-+	if (error)
-+		goto out;
-+
-+	release_file_thp(file);
-+	if (will_truncate)
- 		error = handle_truncate(file);
- out:
- 	if (unlikely(error > 0)) {
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index f7fdfe93e25d..3edf4ee42eee 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -444,6 +444,10 @@ struct address_space {
- 	struct xarray		i_pages;
- 	gfp_t			gfp_mask;
- 	atomic_t		i_mmap_writable;
-+#ifdef CONFIG_READ_ONLY_THP_FOR_FS
-+	/* number of thp, only for non-shmem files */
-+	atomic_t		nr_thps;
-+#endif
- 	struct rb_root_cached	i_mmap;
- 	struct rw_semaphore	i_mmap_rwsem;
- 	unsigned long		nrpages;
-@@ -2790,6 +2794,33 @@ static inline errseq_t filemap_sample_wb_err(struct address_space *mapping)
- 	return errseq_sample(&mapping->wb_err);
- }
- 
-+static inline int filemap_nr_thps(struct address_space *mapping)
-+{
-+#ifdef CONFIG_READ_ONLY_THP_FOR_FS
-+	return atomic_read(&mapping->nr_thps);
-+#else
-+	return 0;
-+#endif
-+}
-+
-+static inline void filemap_nr_thps_inc(struct address_space *mapping)
-+{
-+#ifdef CONFIG_READ_ONLY_THP_FOR_FS
-+	atomic_inc(&mapping->nr_thps);
-+#else
-+	WARN_ON_ONCE(1);
-+#endif
-+}
-+
-+static inline void filemap_nr_thps_dec(struct address_space *mapping)
-+{
-+#ifdef CONFIG_READ_ONLY_THP_FOR_FS
-+	atomic_dec(&mapping->nr_thps);
-+#else
-+	WARN_ON_ONCE(1);
-+#endif
-+}
-+
- extern int vfs_fsync_range(struct file *file, loff_t start, loff_t end,
- 			   int datasync);
- extern int vfs_fsync(struct file *file, int datasync);
-diff --git a/mm/filemap.c b/mm/filemap.c
-index e79ceccdc6df..a8e86c136381 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -205,6 +205,7 @@ static void unaccount_page_cache_page(struct address_space *mapping,
- 			__dec_node_page_state(page, NR_SHMEM_THPS);
- 	} else if (PageTransHuge(page)) {
- 		__dec_node_page_state(page, NR_FILE_THPS);
-+		filemap_nr_thps_dec(mapping);
- 	}
- 
- 	/*
-diff --git a/mm/khugepaged.c b/mm/khugepaged.c
-index fbcff5a1d65a..17ebe9da56ce 100644
---- a/mm/khugepaged.c
-+++ b/mm/khugepaged.c
-@@ -1500,8 +1500,10 @@ static void collapse_file(struct vm_area_struct *vma,
- 
- 	if (is_shmem)
- 		__inc_node_page_state(new_page, NR_SHMEM_THPS);
--	else
-+	else {
- 		__inc_node_page_state(new_page, NR_FILE_THPS);
-+		filemap_nr_thps_inc(mapping);
-+	}
- 
- 	if (nr_none) {
- 		struct zone *zone = page_zone(new_page);
--- 
-2.17.1
+And similarly below.
 
+>  	__acquire(RCU_BH);
+>  	rcu_lock_acquire(&rcu_bh_lock_map);
+>  	RCU_LOCKDEP_WARN(!rcu_is_watching(),
+>  			 "rcu_read_lock_bh() used illegally while idle");
+> +#endif
+>  }
+>  
+>  /*
+> @@ -650,10 +652,12 @@ static inline void rcu_read_lock_bh(void)
+>   */
+>  static inline void rcu_read_unlock_bh(void)
+>  {
+> +#ifndef CONFIG_PREEMPT_RT_FULL
+>  	RCU_LOCKDEP_WARN(!rcu_is_watching(),
+>  			 "rcu_read_unlock_bh() used illegally while idle");
+>  	rcu_lock_release(&rcu_bh_lock_map);
+>  	__release(RCU_BH);
+> +#endif
+>  	local_bh_enable();
+>  }
+>  
+> diff --git a/kernel/rcu/update.c b/kernel/rcu/update.c
+> index 3700b730ea55..eb653a329e0b 100644
+> --- a/kernel/rcu/update.c
+> +++ b/kernel/rcu/update.c
+> @@ -307,7 +307,11 @@ int rcu_read_lock_bh_held(void)
+>  		return 0;
+>  	if (!rcu_lockdep_current_cpu_online())
+>  		return 0;
+> +#ifdef CONFIG_PREEMPT_RT_FULL
+> +	return lock_is_held(&rcu_lock_map) || irqs_disabled();
+> +#else
+>  	return in_softirq() || irqs_disabled();
+> +#endif
+>  }
+>  EXPORT_SYMBOL_GPL(rcu_read_lock_bh_held);
+>  
+> diff --git a/kernel/softirq.c b/kernel/softirq.c
+> index 473369122ddd..eb46dd3ff92d 100644
+> --- a/kernel/softirq.c
+> +++ b/kernel/softirq.c
+> @@ -121,8 +121,10 @@ void __local_bh_disable_ip(unsigned long ip, unsigned int cnt)
+>  	long soft_cnt;
+>  
+>  	WARN_ON_ONCE(in_irq());
+> -	if (!in_atomic())
+> +	if (!in_atomic()) {
+>  		local_lock(bh_lock);
+> +		rcu_read_lock();
+> +	}
+>  	soft_cnt = this_cpu_inc_return(softirq_counter);
+>  	WARN_ON_ONCE(soft_cnt == 0);
+>  
+> @@ -155,8 +157,10 @@ void _local_bh_enable(void)
+>  	local_irq_restore(flags);
+>  #endif
+>  
+> -	if (!in_atomic())
+> +	if (!in_atomic()) {
+> +		rcu_read_unlock();
+>  		local_unlock(bh_lock);
+> +	}
+>  }
+>  
+>  void _local_bh_enable_rt(void)
+> @@ -189,8 +193,10 @@ void __local_bh_enable_ip(unsigned long ip, unsigned int cnt)
+>  	WARN_ON_ONCE(count < 0);
+>  	local_irq_enable();
+>  
+> -	if (!in_atomic())
+> +	if (!in_atomic()) {
+> +		rcu_read_unlock();
+>  		local_unlock(bh_lock);
+> +	}
+>  
+>  	preempt_check_resched();
+>  }
+
+And I have to ask...
+
+What did you do to test this change to kernel/softirq.c?  My past attempts
+to do this sort of thing have always run afoul of open-coded BH transitions.
+
+							Thanx, Paul
