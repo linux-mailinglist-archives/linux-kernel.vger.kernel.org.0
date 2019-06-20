@@ -2,94 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 17A564CB35
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 11:42:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 983414CB34
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 11:42:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730954AbfFTJmw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 05:42:52 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:49447 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726294AbfFTJmt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 05:42:49 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45Txgp5M9zz9s3l;
-        Thu, 20 Jun 2019 19:42:46 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1561023766;
-        bh=BnWu035yer0Ose+3iL8DXlaSET5VRns6Pd3E+LOltjc=;
-        h=Date:From:To:Cc:Subject:From;
-        b=KjdMkESukwjUSnxFl6p2jcFLOM6qGW7HnGqsvxlbXqyBAWf161K1/S6UIuwoV2xg7
-         Xr5Cwy3yvBxXuFkr5ucHmTwpxBzdDEYiSqvT23st5CJIfBxjKUzDliu5vQuSAc+a6R
-         GmC+TCetO3vwFE1ezEfcaalPnutbzdjRiepWJ4o3c82s2uR10OMq9q7Tbj1dcu9Vrp
-         xkyUL2aWm/fsdBfawjJrAhnUPpuBZImGDixNclx8mccBjqkFjnloA80U0nSAx4PECb
-         IkVPWX5XjpYNx2T26O3VkP4cE+e+jnTX5IHsH4XaLC5FkxCXZhoSGsr7LYddO90yHd
-         jfkr0Q3Tqx7pw==
-Date:   Thu, 20 Jun 2019 19:42:44 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        David Hildenbrand <david@redhat.com>
-Subject: linux-next: build failure after merge of the akpm-current tree
-Message-ID: <20190620194244.474a83e8@canb.auug.org.au>
+        id S1731412AbfFTJmu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 05:42:50 -0400
+Received: from relay12.mail.gandi.net ([217.70.178.232]:57697 "EHLO
+        relay12.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725965AbfFTJms (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Jun 2019 05:42:48 -0400
+Received: from mc-bl-xps13.lan (aaubervilliers-681-1-81-150.w90-88.abo.wanadoo.fr [90.88.23.150])
+        (Authenticated sender: maxime.chevallier@bootlin.com)
+        by relay12.mail.gandi.net (Postfix) with ESMTPSA id 4EAF3200018;
+        Thu, 20 Jun 2019 09:42:44 +0000 (UTC)
+From:   Maxime Chevallier <maxime.chevallier@bootlin.com>
+To:     davem@davemloft.net
+Cc:     Maxime Chevallier <maxime.chevallier@bootlin.com>,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Antoine Tenart <antoine.tenart@bootlin.com>,
+        thomas.petazzoni@bootlin.com, gregory.clement@bootlin.com,
+        nadavh@marvell.com, stefanc@marvell.com, mw@semihalf.com,
+        Alan Winkowski <walan@marvell.com>
+Subject: [PATCH net v2] net: mvpp2: prs: Don't override the sign bit in SRAM parser shift
+Date:   Thu, 20 Jun 2019 11:42:45 +0200
+Message-Id: <20190620094245.10501-1-maxime.chevallier@bootlin.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/GmjbN.zEeNy_F7a4Pi8p9zb"; protocol="application/pgp-signature"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/GmjbN.zEeNy_F7a4Pi8p9zb
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+The Header Parser allows identifying various fields in the packet
+headers, used for various kind of filtering and classification
+steps.
 
-Hi all,
+This is a re-entrant process, where the offset in the packet header
+depends on the previous lookup results. This offset is represented in
+the SRAM results of the TCAM, as a shift to be operated.
 
-After merging the akpm-current tree, today's linux-next build (powerpc
-ppc64_defconfig) failed like this:
+This shift can be negative in some cases, such as in IPv6 parsing.
 
-drivers/base/memory.c: In function 'find_memory_block':
-drivers/base/memory.c:621:43: error: 'hint' undeclared (first use in this f=
-unction); did you mean 'uint'?
-  return find_memory_block_by_id(block_id, hint);
-                                           ^~~~
-                                           uint
-drivers/base/memory.c:621:43: note: each undeclared identifier is reported =
-only once for each function it appears in
-drivers/base/memory.c:622:1: warning: control reaches end of non-void funct=
-ion [-Wreturn-type]
- }
- ^
+This commit prevents overriding the sign bit when setting the shift
+value, which could cause instabilities when parsing IPv6 flows.
 
-Caused by commit
+Fixes: 3f518509dedc ("ethernet: Add new driver for Marvell Armada 375 network unit")
+Suggested-by: Alan Winkowski <walan@marvell.com>
+Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
+---
+V2 : Fix a typo in the commit log, reported by Sergei.
 
-  29be27f12cc8 ("drivers/base/memory.c: Get rid of find_memory_block_hinted=
-()")
+ drivers/net/ethernet/marvell/mvpp2/mvpp2_prs.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-I have reverted that commit for today.
+diff --git a/drivers/net/ethernet/marvell/mvpp2/mvpp2_prs.c b/drivers/net/ethernet/marvell/mvpp2/mvpp2_prs.c
+index ae2240074d8e..5692c6087bbb 100644
+--- a/drivers/net/ethernet/marvell/mvpp2/mvpp2_prs.c
++++ b/drivers/net/ethernet/marvell/mvpp2/mvpp2_prs.c
+@@ -312,7 +312,8 @@ static void mvpp2_prs_sram_shift_set(struct mvpp2_prs_entry *pe, int shift,
+ 	}
+ 
+ 	/* Set value */
+-	pe->sram[MVPP2_BIT_TO_WORD(MVPP2_PRS_SRAM_SHIFT_OFFS)] = shift & MVPP2_PRS_SRAM_SHIFT_MASK;
++	pe->sram[MVPP2_BIT_TO_WORD(MVPP2_PRS_SRAM_SHIFT_OFFS)] |=
++		shift & MVPP2_PRS_SRAM_SHIFT_MASK;
+ 
+ 	/* Reset and set operation */
+ 	mvpp2_prs_sram_bits_clear(pe, MVPP2_PRS_SRAM_OP_SEL_SHIFT_OFFS,
+-- 
+2.20.1
 
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/GmjbN.zEeNy_F7a4Pi8p9zb
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0LVRQACgkQAVBC80lX
-0GxWxAf+P8Opt9Xr27NriFBGKoLNBakqhKlgZrTWQ30uTIUgr0KqcrgmYij642pi
-yVHz61M9epU5ZQfv7gtAgD8ikUbRmjUeiThqXvlvZtEbJFeOtcnhgEf1exq5Fc0b
-G5x6PL4H0EaHCjDm3zS3HNyGycYfcqgHciyCPpgLdA4Om5Y3U7kc7DsPt7s+/c5+
-agUXoocujuj7ZmH7QK64BezQeGUPOluyq/TPf2TT6kvI1+nw4T/Sic5XtDFKTFwT
-cFfdFlRBVPWGDGPpr5H4LS2RpP+Aj7XK2b/HvDXq+xMSDZnV6WrgUnXaBT2iTr5m
-4Y2JCeN/2WBAAMPWWXvGPWztHu/gPw==
-=1t42
------END PGP SIGNATURE-----
-
---Sig_/GmjbN.zEeNy_F7a4Pi8p9zb--
