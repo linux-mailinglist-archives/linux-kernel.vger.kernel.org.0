@@ -2,39 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B7E6E4D727
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 20:17:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 188B54D6D2
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 20:12:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729848AbfFTSQu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 14:16:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46038 "EHLO mail.kernel.org"
+        id S1729066AbfFTSMi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 14:12:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40488 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726426AbfFTSQt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 14:16:49 -0400
+        id S1728743AbfFTSMh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Jun 2019 14:12:37 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9678A2082C;
-        Thu, 20 Jun 2019 18:16:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C3B212089C;
+        Thu, 20 Jun 2019 18:12:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561054609;
-        bh=1WumT4QNTrBGXyIr87jAvTLP3RZS4pMvvwTqIzB615I=;
+        s=default; t=1561054356;
+        bh=Goa0ah6FbkFoqUl94JpmHMgSVOBKRZRD7HrHL8U8tn8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XpF8X8N9bZG6QESixh11rpSk2k3E4OT/LQnGTJb+JwGRlcqLV6i6ur1MwJVy3R9Oz
-         CE/meGXGVP6nWg9Wvtd1e4BquDUqR3uiPVGK14lLA+CLXl1x/sjXzoxqgUtgjoRupZ
-         r15gRuPmx01PpKpKZDv6Wd78Ad1LY/LJvgQKpEQA=
+        b=qIKNeXt8E+k5hQEb2h2e7nvWiUN49yANjQkG4z9uBNXn4gAS7ZUZfNWBGdLNOyZXI
+         V/IUIOKe89fW5vvD1U+8num6TPeAFGKf1wtEB1ZhJkMzliFHbabyXdbLEDYngVMBGT
+         KuZ8+AprbA/vmjjfUIxINJwHlAbs92D8hdvbQuTk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Varun Prakash <varun@chelsio.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 88/98] scsi: libcxgbi: add a check for NULL pointer in cxgbi_check_route()
-Date:   Thu, 20 Jun 2019 19:57:55 +0200
-Message-Id: <20190620174353.779238128@linuxfoundation.org>
+        stable@vger.kernel.org, Jan Kara <jack@suse.cz>,
+        Alexander Lochmann <alexander.lochmann@tu-dortmund.de>,
+        Horst Schirmeier <horst.schirmeier@tu-dortmund.de>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Zubin Mithra <zsm@chromium.org>
+Subject: [PATCH 4.19 61/61] Abort file_remove_privs() for non-reg. files
+Date:   Thu, 20 Jun 2019 19:57:56 +0200
+Message-Id: <20190620174347.698276201@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190620174349.443386789@linuxfoundation.org>
-References: <20190620174349.443386789@linuxfoundation.org>
+In-Reply-To: <20190620174336.357373754@linuxfoundation.org>
+References: <20190620174336.357373754@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,34 +46,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit cc555759117e8349088e0c5d19f2f2a500bafdbd ]
+From: Alexander Lochmann <alexander.lochmann@tu-dortmund.de>
 
-ip_dev_find() can return NULL so add a check for NULL pointer.
+commit f69e749a49353d96af1a293f56b5b56de59c668a upstream.
 
-Signed-off-by: Varun Prakash <varun@chelsio.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+file_remove_privs() might be called for non-regular files, e.g.
+blkdev inode. There is no reason to do its job on things
+like blkdev inodes, pipes, or cdevs. Hence, abort if
+file does not refer to a regular inode.
+
+AV: more to the point, for devices there might be any number of
+inodes refering to given device.  Which one to strip the permissions
+from, even if that made any sense in the first place?  All of them
+will be observed with contents modified, after all.
+
+Found by LockDoc (Alexander Lochmann, Horst Schirmeier and Olaf
+Spinczyk)
+
+Reviewed-by: Jan Kara <jack@suse.cz>
+Signed-off-by: Alexander Lochmann <alexander.lochmann@tu-dortmund.de>
+Signed-off-by: Horst Schirmeier <horst.schirmeier@tu-dortmund.de>
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Zubin Mithra <zsm@chromium.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/scsi/cxgbi/libcxgbi.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ fs/inode.c |    9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/scsi/cxgbi/libcxgbi.c b/drivers/scsi/cxgbi/libcxgbi.c
-index 006372b3fba2..a50734f3c486 100644
---- a/drivers/scsi/cxgbi/libcxgbi.c
-+++ b/drivers/scsi/cxgbi/libcxgbi.c
-@@ -641,6 +641,10 @@ cxgbi_check_route(struct sockaddr *dst_addr, int ifindex)
+--- a/fs/inode.c
++++ b/fs/inode.c
+@@ -1817,8 +1817,13 @@ int file_remove_privs(struct file *file)
+ 	int kill;
+ 	int error = 0;
  
- 	if (ndev->flags & IFF_LOOPBACK) {
- 		ndev = ip_dev_find(&init_net, daddr->sin_addr.s_addr);
-+		if (!ndev) {
-+			err = -ENETUNREACH;
-+			goto rel_neigh;
-+		}
- 		mtu = ndev->mtu;
- 		pr_info("rt dev %s, loopback -> %s, mtu %u.\n",
- 			n->dev->name, ndev->name, mtu);
--- 
-2.20.1
-
+-	/* Fast path for nothing security related */
+-	if (IS_NOSEC(inode))
++	/*
++	 * Fast path for nothing security related.
++	 * As well for non-regular files, e.g. blkdev inodes.
++	 * For example, blkdev_write_iter() might get here
++	 * trying to remove privs which it is not allowed to.
++	 */
++	if (IS_NOSEC(inode) || !S_ISREG(inode->i_mode))
+ 		return 0;
+ 
+ 	kill = dentry_needs_remove_privs(dentry);
 
 
