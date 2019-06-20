@@ -2,180 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 458F04CC11
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 12:39:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CE9DE4CC02
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 12:35:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731188AbfFTKjI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 06:39:08 -0400
-Received: from mga17.intel.com ([192.55.52.151]:30720 "EHLO mga17.intel.com"
+        id S1731363AbfFTKfo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 06:35:44 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:32828 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726222AbfFTKjI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 06:39:08 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Jun 2019 03:39:07 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.63,396,1557212400"; 
-   d="scan'208";a="311620367"
-Received: from lxy-dell.sh.intel.com ([10.239.159.145])
-  by orsmga004.jf.intel.com with ESMTP; 20 Jun 2019 03:39:04 -0700
-Message-ID: <346e8fedb722556470314eb685b8e0ab2cf2deb1.camel@linux.intel.com>
-Subject: Re: [PATCH v5 2/3] KVM: vmx: Emulate MSR IA32_UMWAIT_CONTROL
-From:   Xiaoyao Li <xiaoyao.li@linux.intel.com>
-To:     Tao Xu <tao3.xu@intel.com>, pbonzini@redhat.com,
-        rkrcmar@redhat.com, corbet@lwn.net, tglx@linutronix.de,
-        mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
-        sean.j.christopherson@intel.com
-Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        fenghua.yu@intel.com, jingqi.liu@intel.com
-Date:   Thu, 20 Jun 2019 18:34:06 +0800
-In-Reply-To: <20190620084620.17974-3-tao3.xu@intel.com>
-References: <20190620084620.17974-1-tao3.xu@intel.com>
-         <20190620084620.17974-3-tao3.xu@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 (3.28.5-2.el7) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1726211AbfFTKfn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Jun 2019 06:35:43 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id E1A41C1EB202;
+        Thu, 20 Jun 2019 10:35:34 +0000 (UTC)
+Received: from t460s.redhat.com (ovpn-117-88.ams2.redhat.com [10.36.117.88])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 6A49D608A7;
+        Thu, 20 Jun 2019 10:35:21 +0000 (UTC)
+From:   David Hildenbrand <david@redhat.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Dan Williams <dan.j.williams@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linuxppc-dev@lists.ozlabs.org, linux-acpi@vger.kernel.org,
+        linux-mm@kvack.org, David Hildenbrand <david@redhat.com>,
+        Andrew Banman <andrew.banman@hpe.com>,
+        Anshuman Khandual <anshuman.khandual@arm.com>,
+        Arun KS <arunks@codeaurora.org>, Baoquan He <bhe@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Juergen Gross <jgross@suse.com>,
+        Keith Busch <keith.busch@intel.com>,
+        Len Brown <lenb@kernel.org>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Michael Neuling <mikey@neuling.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        "mike.travis@hpe.com" <mike.travis@hpe.com>,
+        Oscar Salvador <osalvador@suse.com>,
+        Oscar Salvador <osalvador@suse.de>,
+        Paul Mackerras <paulus@samba.org>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        Pavel Tatashin <pasha.tatashin@soleen.com>,
+        Pavel Tatashin <pavel.tatashin@microsoft.com>,
+        Qian Cai <cai@lca.pw>, "Rafael J. Wysocki" <rafael@kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Rashmica Gupta <rashmica.g@gmail.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Wei Yang <richard.weiyang@gmail.com>
+Subject: [PATCH v2 0/6] mm: Further memory block device cleanups
+Date:   Thu, 20 Jun 2019 12:35:14 +0200
+Message-Id: <20190620103520.23481-1-david@redhat.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Thu, 20 Jun 2019 10:35:43 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2019-06-20 at 16:46 +0800, Tao Xu wrote:
-> UMWAIT and TPAUSE instructions use IA32_UMWAIT_CONTROL at MSR index E1H
-> to determines the maximum time in TSC-quanta that the processor can reside
-> in either C0.1 or C0.2.
-> 
-> This patch emulates MSR IA32_UMWAIT_CONTROL in guest and differentiate
-> IA32_UMWAIT_CONTROL between host and guest. The variable
-> mwait_control_cached in arch/x86/power/umwait.c caches the MSR value, so
-> this patch uses it to avoid frequently rdmsr of IA32_UMWAIT_CONTROL.
-> 
-> Co-developed-by: Jingqi Liu <jingqi.liu@intel.com>
-> Signed-off-by: Jingqi Liu <jingqi.liu@intel.com>
-> Signed-off-by: Tao Xu <tao3.xu@intel.com>
-> ---
-> 
-> Changes in v5:
-> 	remove vmx_waitpkg_supported() to fix guest can rdmsr or wrmsr
-> 	when the feature is off (Xiaoyao)
-> 	remove the atomic_switch_ia32_umwait_control() and move the
-> 	codes into vmx_set_msr()
-> 	rebase the patch because the kernel dependcy patch updated to
-> 	v5: https://lkml.org/lkml/2019/6/19/972
-> ---
->  arch/x86/kernel/cpu/umwait.c |  3 ++-
->  arch/x86/kvm/vmx/vmx.c       | 24 ++++++++++++++++++++++++
->  arch/x86/kvm/vmx/vmx.h       |  3 +++
->  arch/x86/kvm/x86.c           |  1 +
->  4 files changed, 30 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/x86/kernel/cpu/umwait.c b/arch/x86/kernel/cpu/umwait.c
-> index 4b2aff7b2d4d..db5c193ef136 100644
-> --- a/arch/x86/kernel/cpu/umwait.c
-> +++ b/arch/x86/kernel/cpu/umwait.c
-> @@ -15,7 +15,8 @@
->   * MSR value. By default, umwait max time is 100000 in TSC-quanta and C0.2
->   * is enabled
->   */
-> -static u32 umwait_control_cached = UMWAIT_CTRL_VAL(100000,
-> UMWAIT_C02_ENABLED);
-> +u32 umwait_control_cached = UMWAIT_CTRL_VAL(100000, UMWAIT_C02_ENABLED);
-> +EXPORT_SYMBOL_GPL(umwait_control_cached);
->  
->  /*
->   * Serialize access to umwait_control_cached and IA32_UMWAIT_CONTROL MSR
-> diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-> index b35bfac30a34..0fb55c8426e2 100644
-> --- a/arch/x86/kvm/vmx/vmx.c
-> +++ b/arch/x86/kvm/vmx/vmx.c
-> @@ -1679,6 +1679,12 @@ static int vmx_get_msr(struct kvm_vcpu *vcpu, struct
-> msr_data *msr_info)
->  #endif
->  	case MSR_EFER:
->  		return kvm_get_msr_common(vcpu, msr_info);
-> +	case MSR_IA32_UMWAIT_CONTROL:
-> +		if (!guest_cpuid_has(vcpu, X86_FEATURE_WAITPKG))
+@Andrew: Only patch 1 and 6 changed. The patches are based on the
+same state as the previous patches (replace the old ones if possible).
 
-Need to check (!msr_info->host_initiated &&
-	       !guest_cpuid_has(vcpu, X86_FEATURE_WAITPKG))
+Some further cleanups around memory block devices. Especially, clean up
+and simplify walk_memory_range(). Including some other minor cleanups.
 
-otherwise, userspace, like qemu, cannot access this msr.
-Also, same for vmx_set_msr.
+Compiled + tested on x86 with DIMMs under QEMU.
 
-> +			return 1;
-> +
-> +		msr_info->data = vmx->msr_ia32_umwait_control;
-> +		break;
->  	case MSR_IA32_SPEC_CTRL:
->  		if (!msr_info->host_initiated &&
->  		    !guest_cpuid_has(vcpu, X86_FEATURE_SPEC_CTRL))
-> @@ -1841,6 +1847,22 @@ static int vmx_set_msr(struct kvm_vcpu *vcpu, struct
-> msr_data *msr_info)
->  			return 1;
->  		vmcs_write64(GUEST_BNDCFGS, data);
->  		break;
-> +	case MSR_IA32_UMWAIT_CONTROL:
-> +		if (!guest_cpuid_has(vcpu, X86_FEATURE_WAITPKG))
-> +			return 1;
-> +
-> +		/* The reserved bit IA32_UMWAIT_CONTROL[1] should be zero */
-> +		if (data & BIT_ULL(1))
-> +			return 1;
-> +
-> +		vmx->msr_ia32_umwait_control = data;
-> +		if (vmx->msr_ia32_umwait_control != umwait_control_cached)
-> +			add_atomic_switch_msr(vmx, MSR_IA32_UMWAIT_CONTROL,
-> +				vmx->msr_ia32_umwait_control,
-> +				umwait_control_cached, false);
-> +		else
-> +			clear_atomic_switch_msr(vmx, MSR_IA32_UMWAIT_CONTROL);
-> +		break;
->  	case MSR_IA32_SPEC_CTRL:
->  		if (!msr_info->host_initiated &&
->  		    !guest_cpuid_has(vcpu, X86_FEATURE_SPEC_CTRL))
-> @@ -4126,6 +4148,8 @@ static void vmx_vcpu_reset(struct kvm_vcpu *vcpu, bool
-> init_event)
->  	vmx->rmode.vm86_active = 0;
->  	vmx->spec_ctrl = 0;
->  
-> +	vmx->msr_ia32_umwait_control = 0;
-> +
->  	vcpu->arch.microcode_version = 0x100000000ULL;
->  	vmx->vcpu.arch.regs[VCPU_REGS_RDX] = get_rdx_init_val();
->  	kvm_set_cr8(vcpu, 0);
-> diff --git a/arch/x86/kvm/vmx/vmx.h b/arch/x86/kvm/vmx/vmx.h
-> index 61128b48c503..8485bec7c38a 100644
-> --- a/arch/x86/kvm/vmx/vmx.h
-> +++ b/arch/x86/kvm/vmx/vmx.h
-> @@ -14,6 +14,8 @@
->  extern const u32 vmx_msr_index[];
->  extern u64 host_efer;
->  
-> +extern u32 umwait_control_cached;
-> +
->  #define MSR_TYPE_R	1
->  #define MSR_TYPE_W	2
->  #define MSR_TYPE_RW	3
-> @@ -194,6 +196,7 @@ struct vcpu_vmx {
->  #endif
->  
->  	u64		      spec_ctrl;
-> +	u64		      msr_ia32_umwait_control;
->  
->  	u32 vm_entry_controls_shadow;
->  	u32 vm_exit_controls_shadow;
-> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> index 83aefd759846..4480de459bf4 100644
-> --- a/arch/x86/kvm/x86.c
-> +++ b/arch/x86/kvm/x86.c
-> @@ -1138,6 +1138,7 @@ static u32 msrs_to_save[] = {
->  	MSR_IA32_RTIT_ADDR1_A, MSR_IA32_RTIT_ADDR1_B,
->  	MSR_IA32_RTIT_ADDR2_A, MSR_IA32_RTIT_ADDR2_B,
->  	MSR_IA32_RTIT_ADDR3_A, MSR_IA32_RTIT_ADDR3_B,
-> +	MSR_IA32_UMWAIT_CONTROL,
->  };
->  
->  static unsigned num_msrs_to_save;
+v1 -> v2:
+- "mm: Section numbers use the type "unsigned long""
+-- "unsigned long i" -> "unsigned long nr", in one case -> "int i"
+- "drivers/base/memory.c: Get rid of find_memory_block_hinted("
+-- Fix compilation error
+-- Get rid of the "hint" parameter completely
+
+David Hildenbrand (6):
+  mm: Section numbers use the type "unsigned long"
+  drivers/base/memory: Use "unsigned long" for block ids
+  mm: Make register_mem_sect_under_node() static
+  mm/memory_hotplug: Rename walk_memory_range() and pass start+size
+    instead of pfns
+  mm/memory_hotplug: Move and simplify walk_memory_blocks()
+  drivers/base/memory.c: Get rid of find_memory_block_hinted()
+
+ arch/powerpc/platforms/powernv/memtrace.c |  22 ++---
+ drivers/acpi/acpi_memhotplug.c            |  19 +---
+ drivers/base/memory.c                     | 115 ++++++++++++++--------
+ drivers/base/node.c                       |   8 +-
+ include/linux/memory.h                    |   5 +-
+ include/linux/memory_hotplug.h            |   2 -
+ include/linux/mmzone.h                    |   4 +-
+ include/linux/node.h                      |   7 --
+ mm/memory_hotplug.c                       |  57 +----------
+ mm/sparse.c                               |  12 +--
+ 10 files changed, 105 insertions(+), 146 deletions(-)
+
+-- 
+2.21.0
 
