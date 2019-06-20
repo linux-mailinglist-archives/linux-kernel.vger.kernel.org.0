@@ -2,106 +2,133 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 43E1E4C5A4
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 04:55:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D28414C5A6
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 05:06:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731210AbfFTCzD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Jun 2019 22:55:03 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:44801 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726370AbfFTCzD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Jun 2019 22:55:03 -0400
-Received: by mail-ed1-f68.google.com with SMTP id k8so2259101edr.11
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2019 19:55:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=OZ+ejxndkdfy6SmQH0Sb4mkugBsvHzjhSLcNChrvWio=;
-        b=nJBn19UPynmT3Ibyor9XDF2WMVfWpTauLfl98pZIsfjouBRoiw9pMuKnW9NeN//I9D
-         SfSaxQVpHRX0Kmnf/Z5QFl4Rk1qIJ3mxWyo088XCIDQnmhoBZu6czXrDsLnWVSiCT1IX
-         ooigmZ+JzHGbsJCqePRHhWSEbKUXii/v88oKZAqyOyFCatttqhOkMAMinBoyxk0km5Xb
-         CfqlC7gpsHj/coBMOtjtRb9Iyz7dPT5sa2rb0FY9EnCmWHWStZ1SbXN3tR0lV05TjlY1
-         HfkqvRTyIREla9LCGaU0siybl63bMNuLha/fzqenKQf6JfqFeWlxDPYeyx18yTWttQxO
-         wsxw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=OZ+ejxndkdfy6SmQH0Sb4mkugBsvHzjhSLcNChrvWio=;
-        b=neAK8Jed/AWgC8v5lW66XvLByxhQgwvcjMGTOjix3fRgeMAvVcUvu6ct6N5YDd+hbA
-         Sx+62Yj7bkONSrTpVdufCHoBO0uCV2FNZRdT9NQjvdKqhN5NIaL6P0QCsxjhYnRlVAPo
-         48TKGHaLo3JR9dI87CPSN8xMRrIkrlCXNMUVf4fLc90+FgQa+BqCXLr2iDenrpUz5NsQ
-         bfgim+A1nabx48JQ4B+nNYTvkVQHmBl8WcgAkFEFrViNMl/fGTYBntQL6ZzOJ7xWubJB
-         sJ69XZHxPEa6n3/5VDFpSopoY7GWzf7KgiA5UJrSTLEZcrFyT7cNu8Bfb5meZaRwyIC9
-         NnQg==
-X-Gm-Message-State: APjAAAVE8+92IoNS/vq4bOjycrvyCYsDWsP9i6WQ6V8yiCg517sH6/Nk
-        3JXJKqFZWw/pw1R1a/Ecvmc=
-X-Google-Smtp-Source: APXvYqwPRevbrgfSt4uDPXCliMqeMhgRwXbGEHZx81KfOtD6/K0ijJQWfwx9EbJnA7PP7TcFHRmjmw==
-X-Received: by 2002:a17:906:e204:: with SMTP id gf4mr66672835ejb.302.1560999301295;
-        Wed, 19 Jun 2019 19:55:01 -0700 (PDT)
-Received: from archlinux-epyc ([2a01:4f9:2b:2b15::2])
-        by smtp.gmail.com with ESMTPSA id n7sm3557068ejl.58.2019.06.19.19.55.00
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 19 Jun 2019 19:55:00 -0700 (PDT)
-Date:   Wed, 19 Jun 2019 19:54:59 -0700
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Nick Desaulniers <ndesaulniers@google.com>
-Cc:     akpm@linux-foundation.org, clang-built-linux@googlegroups.com,
-        joe@perches.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] MAINTAINERS: add CLANG/LLVM BUILD SUPPORT info
-Message-ID: <20190620025459.GB5669@archlinux-epyc>
-References: <d4b42858366e50f92b133ceb6399e9f16a7cef88.camel@perches.com>
- <20190620001907.255803-1-ndesaulniers@google.com>
+        id S1731028AbfFTDF2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Jun 2019 23:05:28 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:43439 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726370AbfFTDF2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Jun 2019 23:05:28 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45TmsJ0ZLQz9s4Y;
+        Thu, 20 Jun 2019 13:05:24 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1560999924;
+        bh=QaFCNX3OUowNfBv/P8OXlaNhXbceCmWNBURqyz3+3vk=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=SblfIPUmgcDiTRpZ6z6MK4oxViUQ6bAsWSKakSVmbZbNdP8mn5dJb/ntKwr3kKx8S
+         Y4nIxOoh6aML54HxAGaLwLXwDsKYbfi+9A3/iLW5OsswJJsW/6J5MVS6NaXL/eVorz
+         2NbC2sOy2Y4Y12rr4zQaPiVXXbZn3a1GGgbyOiPP4i4ATbnXn3998+ULTiJpg6SbBb
+         OiVnbOo3nfztkND4YeNWxnUMcy3qlNeZ5nXF+7F91JCJn3n8kWbFaoksgyyxWktTki
+         UbL/iz7Lc5y4fR/Qhpl3gNGSjQSXVRz0h2+/pQ8JPKUAqVKcPiNE37WqyQKI8+jg/V
+         CXdur/htfM+8g==
+Date:   Thu, 20 Jun 2019 13:05:23 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@mellanox.com>
+Cc:     Leon Romanovsky <leon@kernel.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Parav Pandit <parav@mellanox.com>,
+        Saeed Mahameed <saeedm@mellanox.com>,
+        Maor Gottlieb <maorg@mellanox.com>
+Subject: Re: linux-next: manual merge of the mlx5-next tree with Linus' tree
+Message-ID: <20190620130523.176d4ca5@canb.auug.org.au>
+In-Reply-To: <20190617121959.55976690@canb.auug.org.au>
+References: <20190617121959.55976690@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190620001907.255803-1-ndesaulniers@google.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/euKSa5GIot+P+XpVrVMRuyU"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 19, 2019 at 05:19:07PM -0700, 'Nick Desaulniers' via Clang Built Linux wrote:
-> Add keyword support so that our mailing list gets cc'ed for clang/llvm
-> patches. We're pretty active on our mailing list so far as code review.
-> There are numerous Googlers like myself that are paid to support
-> building the Linux kernel with Clang and LLVM.
-> 
-> Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
+--Sig_/euKSa5GIot+P+XpVrVMRuyU
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-FWIW, if it is not too late:
+Hi all,
 
-Reviewed-by: Nathan Chancellor <natechancellor@gmail.com>
+On Mon, 17 Jun 2019 12:19:59 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> Hi Leon,
+>=20
+> Today's linux-next merge of the mlx5-next tree got a conflict in:
+>=20
+>   include/linux/mlx5/eswitch.h
+>=20
+> between commit:
+>=20
+>   02f3afd97556 ("net/mlx5: E-Switch, Correct type to u16 for vport_num an=
+d int for vport_index")
+>=20
+> from Linus' tree and commit:
+>=20
+>   82b11f071936 ("net/mlx5: Expose eswitch encap mode")
+>=20
+> from the mlx5-next tree.
+>=20
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+>=20
+> --=20
+> Cheers,
+> Stephen Rothwell
+>=20
+> diff --cc include/linux/mlx5/eswitch.h
+> index e9a55c0d50fd,174eec0871d9..000000000000
+> --- a/include/linux/mlx5/eswitch.h
+> +++ b/include/linux/mlx5/eswitch.h
+> @@@ -61,5 -62,16 +62,16 @@@ void *mlx5_eswitch_uplink_get_proto_dev
+>   u8 mlx5_eswitch_mode(struct mlx5_eswitch *esw);
+>   struct mlx5_flow_handle *
+>   mlx5_eswitch_add_send_to_vport_rule(struct mlx5_eswitch *esw,
+>  -				    int vport, u32 sqn);
+>  +				    u16 vport_num, u32 sqn);
+> +=20
+> + #ifdef CONFIG_MLX5_ESWITCH
+> + enum devlink_eswitch_encap_mode
+> + mlx5_eswitch_get_encap_mode(const struct mlx5_core_dev *dev);
+> + #else  /* CONFIG_MLX5_ESWITCH */
+> + static inline enum devlink_eswitch_encap_mode
+> + mlx5_eswitch_get_encap_mode(const struct mlx5_core_dev *dev)
+> + {
+> + 	return DEVLINK_ESWITCH_ENCAP_MODE_NONE;
+> + }
+> + #endif /* CONFIG_MLX5_ESWITCH */
+>   #endif
 
-> ---
-> Changes V1 -> V2:
-> - tabs vs spaces as per Joe Perches
-> 
->  MAINTAINERS | 8 ++++++++
->  1 file changed, 8 insertions(+)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index ef58d9a881ee..f92432452f46 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -3940,6 +3940,14 @@ M:	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
->  S:	Maintained
->  F:	.clang-format
->  
-> +CLANG/LLVM BUILD SUPPORT
-> +L:	clang-built-linux@googlegroups.com
-> +W:	https://clangbuiltlinux.github.io/
-> +B:	https://github.com/ClangBuiltLinux/linux/issues
-> +C:	irc://chat.freenode.net/clangbuiltlinux
-> +S:	Supported
-> +K:	\b(?i:clang|llvm)\b
-> +
->  CLEANCACHE API
->  M:	Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
->  L:	linux-kernel@vger.kernel.org
-> -- 
-> 2.22.0.410.gd8fdbe21b5-goog
-> 
+This is now a conflict between Linus' tree and the rdma tree.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/euKSa5GIot+P+XpVrVMRuyU
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0K9/MACgkQAVBC80lX
+0GzcpwgAkRzLJxsJ9PEtIuB/1ndwzOu8ff49Df/KyvUOkvAXs0zTtEEpVDgUoYyd
+raRa3uBPZzHOY5WxiJ6wQ7FLSf048agh4x2wT30WXp1NuHqdowW03J/+7onhc2YK
+RDkXXXZqWLIcyKieIegVjaEXdTrJayYs62pJZlUh8bRrLHyMR1HDACjArOhdPrlT
+zmU2HX1325OKVeXDkK/LS1aXdhTF3qxf/4At4LICkDBtuHfZvu8BCazmEwUP/w5b
+rDtzYkmplSWkcNrj1O27NSRjtvl/7Gly96hrpS1nnjdMs3Ic1LAxGmR0bfPWkQpQ
+HPZwCSfYHcPD+HBl5dYWwkrnlXb+zQ==
+=gqPH
+-----END PGP SIGNATURE-----
+
+--Sig_/euKSa5GIot+P+XpVrVMRuyU--
