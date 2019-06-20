@@ -2,106 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D1F104D28D
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 17:56:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 689434D295
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 17:57:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731979AbfFTPz7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 11:55:59 -0400
-Received: from iolanthe.rowland.org ([192.131.102.54]:44988 "HELO
-        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with SMTP id S1726551AbfFTPz7 (ORCPT
+        id S1727014AbfFTP5X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 11:57:23 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:33360 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726562AbfFTP5X (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 11:55:59 -0400
-Received: (qmail 4721 invoked by uid 2102); 20 Jun 2019 11:55:58 -0400
-Received: from localhost (sendmail-bs@127.0.0.1)
-  by localhost with SMTP; 20 Jun 2019 11:55:58 -0400
-Date:   Thu, 20 Jun 2019 11:55:58 -0400 (EDT)
-From:   Alan Stern <stern@rowland.harvard.edu>
-X-X-Sender: stern@iolanthe.rowland.org
-To:     LKMM Maintainers -- Akira Yokosawa <akiyks@gmail.com>,
-        Andrea Parri <andrea.parri@amarulasolutions.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Daniel Lustig <dlustig@nvidia.com>,
-        David Howells <dhowells@redhat.com>,
-        Jade Alglave <j.alglave@ucl.ac.uk>,
-        Luc Maranget <luc.maranget@inria.fr>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Will Deacon <will.deacon@arm.com>
-cc:     Herbert Xu <herbert@gondor.apana.org.au>,
-        Kernel development list <linux-kernel@vger.kernel.org>
-Subject: [PATCH 3/3] tools: memory-model: Improve data-race detection
-Message-ID: <Pine.LNX.4.44L0.1906201153470.1512-100000@iolanthe.rowland.org>
+        Thu, 20 Jun 2019 11:57:23 -0400
+Received: by mail-lj1-f195.google.com with SMTP id h10so3232192ljg.0
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2019 08:57:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=joelfernandes.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=jWGyLei7iIX0YquCcpJVdvUVmyD9HHcydfLdWLV6VdQ=;
+        b=bFe5M5Viz6mhTHKLXiMPTsQHKWSneXU/P32CqJMYYaptrO+yxI3A5ZHrwgrV2u0KS5
+         rMgI+Roe2+x3nxcZJ1pksI2BGPwWFMRIupONO1kQiB3020Q2Rgino0w1y37GLCitolpZ
+         audrqCWFZ8YkyqtOjHihYhu0nEmriemTSSrqQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=jWGyLei7iIX0YquCcpJVdvUVmyD9HHcydfLdWLV6VdQ=;
+        b=Ypt8zydfKNu08edY6eBbeqOImPsqTqFtLiMaGWZ38aFNelZfDgS9IlEWVYYoi3263m
+         RKbM3uO7Q/2oMAvc7/77aO2aUYHfrWKANcJ8SY/GIaAi9U1YAeuAmfmPzEf28U1/FzSu
+         /GJy3PTu2FNsy3pmNpqJ7dnBsqojMgJuDimuFBmPSejln5z0Jb6vx79/YW2v89TgiW/P
+         hlRmBd045vp3rn9XLDGtWTbdNm8BotdbkN/bffTNCa3UTR8R7fhc1DcsKBQXluzVfhTK
+         YzSrOVHwg8TBX2rHR2NzEjj6cjZ8iZomoXI+Rv0qO8oRiAQC/NDyGP1/9YsztBUrgXnx
+         Ye0A==
+X-Gm-Message-State: APjAAAUPbWUjNf8POhNa1c8DvfvbUKP0KVIW4XhBjZ/ErAc1FeBGuk19
+        kzdoryYp7VoM7vzcP2AhuXqBm8GXnuW1NXBdIpFduA==
+X-Google-Smtp-Source: APXvYqwrlNR3lH/4m9IeD5Bkl0pzlV3Ska/rPfDDBMmGCP6oxktUzG4DNWPlJ52+fxSnzyurONehOvGDKpiTNUq3KkQ=
+X-Received: by 2002:a2e:3602:: with SMTP id d2mr7778406lja.112.1561046240877;
+ Thu, 20 Jun 2019 08:57:20 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+References: <20190603053655.127730-1-minchan@kernel.org> <20190603053655.127730-2-minchan@kernel.org>
+ <20190604203841.GC228607@google.com> <20190610100904.GC55602@google.com>
+ <20190612172104.GA125771@google.com> <20190613044824.GF55602@google.com>
+ <20190619171340.GA83620@google.com> <20190620050132.GC105727@google.com>
+In-Reply-To: <20190620050132.GC105727@google.com>
+From:   Joel Fernandes <joel@joelfernandes.org>
+Date:   Thu, 20 Jun 2019 11:57:09 -0400
+Message-ID: <CAEXW_YSY2GgW_Fp6VN2Qrf0Gr8c71DUgoTzZoq-V2=jFgDEDvQ@mail.gmail.com>
+Subject: Re: [PATCH v1 1/4] mm: introduce MADV_COLD
+To:     Minchan Kim <minchan@kernel.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        linux-mm <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Tim Murray <timmurray@google.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Daniel Colascione <dancol@google.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Sonny Rao <sonnyrao@google.com>,
+        Brian Geffon <bgeffon@google.com>,
+        Jann Horn <jannh@google.com>, Oleg Nesterov <oleg@redhat.com>,
+        Christian Brauner <christian@brauner.io>, oleksandr@redhat.com,
+        hdanton@sina.com, Vladimir Davydov <vdavydov.dev@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Herbert Xu recently reported a problem concerning RCU and compiler
-barriers.  In the course of discussing the problem, he put forth a
-litmus test which illustrated a serious defect in the Linux Kernel
-Memory Model's data-race-detection code.
+On Thu, Jun 20, 2019 at 1:01 AM Minchan Kim <minchan@kernel.org> wrote:
+[snip]
+> > > >
+> > > > I think to fix this, what you should do is clear the PG_Idle flag if the
+> > > > young/accessed PTE bits are set. If PG_Idle is already cleared, then you
+> > > > don't need to do anything.
+> > >
+> > > I'm not sure. What does it make MADV_COLD special?
+> > > How about MADV_FREE|MADV_DONTNEED?
+> > > Why don't they clear PG_Idle if pte was young at tearing down pte?
+> >
+> > Good point, so it sounds like those (MADV_FREE|MADV_DONTNEED) also need to be fixed then?
+>
+> Not sure. If you want it, maybe you need to fix every pte clearing and pte_mkold
+> part, which is more general to cover every sites like munmap, get_user_pages and
+> so on. Anyway, I don't think it's related to this patchset.
 
-The defect was that the LKMM assumed visibility and executes-before
-ordering of plain accesses had to be mediated by marked accesses.  In
-Herbert's litmus test this wasn't so, and the LKMM claimed the litmus
-test was allowed and contained a data race although neither is true.
+Ok, I can look into this issue on my own when I get time. I'll add it
+to my list. No problems with your patch otherwise from my side.
 
-In fact, plain accesses can be ordered by fences even in the absence
-of marked accesses.  In most cases this doesn't matter, because most
-fences only order accesses within a single thread.  But the rcu-fence
-relation is different; it can order (and induce visibility between)
-accesses in different threads -- events which otherwise might be
-concurrent.  This makes it relevant to data-race detection.
-
-This patch makes two changes to the memory model to incorporate the
-new insight:
-
-	If a store is separated by a fence from another access,
-	the store is necessarily visible to the other access (as
-	reflected in the ww-vis and wr-vis relations).  Similarly,
-	if a load is separated by a fence from another access then
-	the load necessarily executes before the other access (as
-	reflected in the rw-xbstar relation).
-
-	If a store is separated by a strong fence from a marked access
-	then it is necessarily visible to any access that executes
-	after the marked access (as reflected in the ww-vis and wr-vis
-	relations).
-
-With these changes, the LKMM gives the desired result for Herbert's
-litmus test and other related ones.
-
-Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
-Reported-by: Herbert Xu <herbert@gondor.apana.org.au>
-
----
-
-
- tools/memory-model/linux-kernel.cat |    8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
-
-Index: usb-devel/tools/memory-model/linux-kernel.cat
-===================================================================
---- usb-devel.orig/tools/memory-model/linux-kernel.cat
-+++ usb-devel/tools/memory-model/linux-kernel.cat
-@@ -181,9 +181,11 @@ let r-post-bounded = (nonrw-fence | ([~N
- 	[Marked]
- 
- (* Visibility and executes-before for plain accesses *)
--let ww-vis = w-post-bounded ; vis ; w-pre-bounded
--let wr-vis = w-post-bounded ; vis ; r-pre-bounded
--let rw-xbstar = r-post-bounded ; xbstar ; w-pre-bounded
-+let ww-vis = fence | (strong-fence ; xbstar ; w-pre-bounded) |
-+	(w-post-bounded ; vis ; w-pre-bounded)
-+let wr-vis = fence | (strong-fence ; xbstar ; r-pre-bounded) |
-+	(w-post-bounded ; vis ; r-pre-bounded)
-+let rw-xbstar = fence | (r-post-bounded ; xbstar ; w-pre-bounded)
- 
- (* Potential races *)
- let pre-race = ext & ((Plain * M) | ((M \ IW) * Plain))
-
-
+ -Joel
