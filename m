@@ -2,133 +2,491 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B51F64C5CF
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 05:35:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 246304C5DB
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 05:37:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731377AbfFTDff (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Jun 2019 23:35:35 -0400
-Received: from mail-eopbgr30072.outbound.protection.outlook.com ([40.107.3.72]:45476
-        "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
+        id S1731446AbfFTDhi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Jun 2019 23:37:38 -0400
+Received: from szxga08-in.huawei.com ([45.249.212.255]:34962 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726370AbfFTDfe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Jun 2019 23:35:34 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=2YzZru4QvpoigO6TF25kJ90AoSBgPwTnuDzbjfcpnng=;
- b=WwJl7Gk5A5dR0d1lKv0ch8e8XlIC98bhXGCD7TAKMwO2tLbRyQ5+USr97EA9QzFaB9vmx3g6qrnecQWpmrTUrYRksyjgYZIOmpl9gjfkLbfBCAEUdb1hVphkBJBJioxiijBC64JFlCXTxQlPDhfizk80WCFzGLDVNWHfVw2l11A=
-Received: from DB7PR04MB5195.eurprd04.prod.outlook.com (20.176.236.27) by
- DB7PR04MB5483.eurprd04.prod.outlook.com (20.178.105.144) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1987.11; Thu, 20 Jun 2019 03:35:28 +0000
-Received: from DB7PR04MB5195.eurprd04.prod.outlook.com
- ([fe80::d99:5c8e:94a9:5ca0]) by DB7PR04MB5195.eurprd04.prod.outlook.com
- ([fe80::d99:5c8e:94a9:5ca0%6]) with mapi id 15.20.1987.014; Thu, 20 Jun 2019
- 03:35:28 +0000
-From:   Wen He <wen.he_1@nxp.com>
-To:     Rob Herring <robh@kernel.org>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        Leo Li <leoyang.li@nxp.com>
-Subject: RE: [EXT] Re: [v1 1/4] dt-bindings: display: Add DT bindings for
- LS1028A HDP-TX PHY.
-Thread-Topic: [EXT] Re: [v1 1/4] dt-bindings: display: Add DT bindings for
- LS1028A HDP-TX PHY.
-Thread-Index: AQHVBYm/GjgqdY4+pUuRDaU4fFYL0aaaPGKAgAUSaRCAA/a2AIAA0Sdg
-Date:   Thu, 20 Jun 2019 03:35:28 +0000
-Message-ID: <DB7PR04MB51951DC431B5810DCDD9C776E2E40@DB7PR04MB5195.eurprd04.prod.outlook.com>
-References: <20190508103703.40885-1-wen.he_1@nxp.com>
- <20190613200813.GA895@bogus>
- <DB7PR04MB5195E49670279C9A28C28A5EE2EB0@DB7PR04MB5195.eurprd04.prod.outlook.com>
- <CAL_JsqJnBw+OqEX46CC1E2=9CDmeT8hQtvMpufsnU8z3+1RoBQ@mail.gmail.com>
-In-Reply-To: <CAL_JsqJnBw+OqEX46CC1E2=9CDmeT8hQtvMpufsnU8z3+1RoBQ@mail.gmail.com>
-Accept-Language: en-US, zh-CN
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=wen.he_1@nxp.com; 
-x-originating-ip: [119.31.174.73]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 7713c125-1f13-4e67-1d3d-08d6f5305721
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:DB7PR04MB5483;
-x-ms-traffictypediagnostic: DB7PR04MB5483:
-x-microsoft-antispam-prvs: <DB7PR04MB548308902D6F3DB35DB7AE06E2E40@DB7PR04MB5483.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:4502;
-x-forefront-prvs: 0074BBE012
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(376002)(346002)(396003)(366004)(136003)(13464003)(189003)(199004)(71190400001)(7736002)(6116002)(102836004)(3846002)(52536014)(478600001)(256004)(25786009)(5660300002)(74316002)(6916009)(71200400001)(229853002)(305945005)(66476007)(66446008)(186003)(68736007)(64756008)(476003)(446003)(2906002)(11346002)(53936002)(76116006)(66556008)(486006)(8936002)(26005)(4326008)(86362001)(81156014)(14454004)(33656002)(81166006)(73956011)(6246003)(316002)(6506007)(53546011)(66066001)(55016002)(8676002)(6436002)(66946007)(7696005)(54906003)(9686003)(99286004)(76176011);DIR:OUT;SFP:1101;SCL:1;SRVR:DB7PR04MB5483;H:DB7PR04MB5195.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: ZdDzq0uGer4m1ubnQiSWO58/OOIcz+o6WDbkD4bYsFek1EZxa/F4Q55pUwNGjpKGuMG9J28M4hkeKy9thwFoNIY2fdOEBFFXzL8glBQYu0tX5XH3uflzLer0oC+NbV5rhokmsadXoY2d/BWQFeESvhUEuESiY/Ev0aU8CFfGJW3GdyE/WDx2jtALz/k7HsfNZ4duug3n/IWTrPJGTeFuMYIlqDpJ4oKn5xCHTajZKXIT7uWHtSobavqtYKjelEK1Ik/pealDnGP6ie8UxeXMYjIeKTj5WZSNpNsNuZi8aNtx4xHxy50y2G5ZFqex9pow7uJqWoK/KlYwkFDCIs+Xy13fglBwnrpuG7kOGTvaIag+GVFaCIvIqCWILv3bzJTUO5orhvknZD99Flfl068FsHYWzM92B3jM9KgrU4eEEVM=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        id S1726346AbfFTDhh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Jun 2019 23:37:37 -0400
+Received: from DGGEMM405-HUB.china.huawei.com (unknown [172.30.72.55])
+        by Forcepoint Email with ESMTP id 79E42C6F506DCBE3CE4B;
+        Thu, 20 Jun 2019 11:37:35 +0800 (CST)
+Received: from dggeme763-chm.china.huawei.com (10.3.19.109) by
+ DGGEMM405-HUB.china.huawei.com (10.3.20.213) with Microsoft SMTP Server (TLS)
+ id 14.3.439.0; Thu, 20 Jun 2019 11:37:34 +0800
+Received: from szvp000201624.huawei.com (10.120.216.130) by
+ dggeme763-chm.china.huawei.com (10.3.19.109) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.1591.10; Thu, 20 Jun 2019 11:37:25 +0800
+From:   Chao Yu <yuchao0@huawei.com>
+To:     <jaegeuk@kernel.org>
+CC:     <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>, <chao@kernel.org>, <pavel@ucw.cz>,
+        Chao Yu <yuchao0@huawei.com>
+Subject: [PATCH 1/2] f2fs: use generic EFSBADCRC/EFSCORRUPTED
+Date:   Thu, 20 Jun 2019 11:36:14 +0800
+Message-ID: <20190620033615.32284-1-yuchao0@huawei.com>
+X-Mailer: git-send-email 2.18.0.rc1
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7713c125-1f13-4e67-1d3d-08d6f5305721
-X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Jun 2019 03:35:28.6910
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: wen.he_1@nxp.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB7PR04MB5483
+Content-Type: text/plain
+X-Originating-IP: [10.120.216.130]
+X-ClientProxiedBy: dggeme706-chm.china.huawei.com (10.1.199.102) To
+ dggeme763-chm.china.huawei.com (10.3.19.109)
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogUm9iIEhlcnJpbmcgPHJv
-YmhAa2VybmVsLm9yZz4NCj4gU2VudDogMjAxOeW5tDbmnIgxOeaXpSAyMjowNw0KPiBUbzogV2Vu
-IEhlIDx3ZW4uaGVfMUBueHAuY29tPg0KPiBDYzogbGludXgta2VybmVsQHZnZXIua2VybmVsLm9y
-ZzsgbGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnOw0KPiBkZXZpY2V0cmVlQHZn
-ZXIua2VybmVsLm9yZzsgc2hhd25ndW9Aa2VybmVsLm9yZzsgTGVvIExpDQo+IDxsZW95YW5nLmxp
-QG54cC5jb20+DQo+IFN1YmplY3Q6IFJlOiBbRVhUXSBSZTogW3YxIDEvNF0gZHQtYmluZGluZ3M6
-IGRpc3BsYXk6IEFkZCBEVCBiaW5kaW5ncyBmb3INCj4gTFMxMDI4QSBIRFAtVFggUEhZLg0KPiAN
-Cj4gQ2F1dGlvbjogRVhUIEVtYWlsDQo+IA0KPiBPbiBTdW4sIEp1biAxNiwgMjAxOSBhdCA3OjQ1
-IFBNIFdlbiBIZSA8d2VuLmhlXzFAbnhwLmNvbT4gd3JvdGU6DQo+ID4NCj4gPg0KPiA+DQo+ID4g
-PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiA+ID4gRnJvbTogUm9iIEhlcnJpbmcgPHJv
-YmhAa2VybmVsLm9yZz4NCj4gPiA+IFNlbnQ6IDIwMTnlubQ25pyIMTTml6UgNDowOA0KPiA+ID4g
-VG86IFdlbiBIZSA8d2VuLmhlXzFAbnhwLmNvbT4NCj4gPiA+IENjOiBsaW51eC1rZXJuZWxAdmdl
-ci5rZXJuZWwub3JnOw0KPiA+ID4gbGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3Jn
-Ow0KPiA+ID4gZGV2aWNldHJlZUB2Z2VyLmtlcm5lbC5vcmc7IHNoYXduZ3VvQGtlcm5lbC5vcmc7
-IExlbyBMaQ0KPiA+ID4gPGxlb3lhbmcubGlAbnhwLmNvbT4NCj4gPiA+IFN1YmplY3Q6IFtFWFRd
-IFJlOiBbdjEgMS80XSBkdC1iaW5kaW5nczogZGlzcGxheTogQWRkIERUIGJpbmRpbmdzDQo+ID4g
-PiBmb3IgTFMxMDI4QSBIRFAtVFggUEhZLg0KPiA+ID4NCj4gPiA+IENhdXRpb246IEVYVCBFbWFp
-bA0KPiA+ID4NCj4gPiA+IE9uIFdlZCwgTWF5IDA4LCAyMDE5IGF0IDEwOjM1OjI1QU0gKzAwMDAs
-IFdlbiBIZSB3cm90ZToNCj4gPiA+ID4gQWRkIERUIGJpbmRpbmdzIGRvY3VtZW50bWF0aW9uIGZv
-ciB0aGUgSERQLVRYIFBIWSBjb250cm9sbGVyLiBUaGUNCj4gPiA+ID4gZGVzY3JpYmVzIHdoaWNo
-IGNvdWxkIGJlIGZvdW5kIG9uIE5YUCBMYXllcnNjYXBlIGxzMTAyOGEgcGxhdGZvcm0uDQo+ID4g
-Pg0KPiA+ID4gRHJvcCB0aGUgaGFyZCBzdG9wICguKSBmcm9tIHRoZSBzdWJqZWN0Lg0KPiA+ID4N
-Cj4gPiA+ID4NCj4gPiA+ID4gU2lnbmVkLW9mZi1ieTogV2VuIEhlIDx3ZW4uaGVfMUBueHAuY29t
-Pg0KPiA+ID4gPiAtLS0NCj4gPiA+ID4gIC4uLi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Rpc3BsYXkv
-ZnNsLGhkcC50eHQgICB8IDU2DQo+ICsrKysrKysrKysrKysrKysrKysNCj4gPiA+ID4gIDEgZmls
-ZSBjaGFuZ2VkLCA1NiBpbnNlcnRpb25zKCspDQo+ID4gPiA+ICBjcmVhdGUgbW9kZSAxMDA2NDQN
-Cj4gPiA+ID4gRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Rpc3BsYXkvZnNsLGhk
-cC50eHQNCj4gPiA+ID4NCj4gPiA+ID4gZGlmZiAtLWdpdCBhL0RvY3VtZW50YXRpb24vZGV2aWNl
-dHJlZS9iaW5kaW5ncy9kaXNwbGF5L2ZzbCxoZHAudHh0DQo+ID4gPiA+IGIvRG9jdW1lbnRhdGlv
-bi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Rpc3BsYXkvZnNsLGhkcC50eHQNCj4gPiA+ID4gbmV3IGZp
-bGUgbW9kZSAxMDA2NDQNCj4gPiA+ID4gaW5kZXggMDAwMDAwMDAwMDAwLi4zNmI1Njg3YTEyNjEN
-Cj4gPiA+ID4gLS0tIC9kZXYvbnVsbA0KPiA+ID4gPiArKysgYi9Eb2N1bWVudGF0aW9uL2Rldmlj
-ZXRyZWUvYmluZGluZ3MvZGlzcGxheS9mc2wsaGRwLnR4dA0KPiA+ID4gPiBAQCAtMCwwICsxLDU2
-IEBADQo+ID4gPiA+ICtOWFAgTGF5ZXJzY3BhZSBsczEwMjhhIEhEUC1UWCBQSFkgQ29udHJvbGxl
-cg0KPiA+ID4gPiArPT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT0N
-Cj4gPiA+ID4gKw0KPiA+ID4gPiArVGhlIGZvbGxvd2luZyBiaW5kaW5ncyBkZXNjcmliZSB0aGUg
-Q2FkZW5jZSBIRFAgVFggUEhZIG9uIGxzMTAyOGENCj4gPiA+ID4gK3RoYXQgb2ZmZXIgbXVsdGkt
-cHJvdG9jb2wgc3VwcG9ydCBvZiBzdGFuZGFycyBzdWNoIGFzIGVEUCBhbmQNCj4gPiA+ID4gK0Rp
-c3BsYXlwb3J0LCBzdXBwb3J0cyBmb3IgMjUtNjAwTUh6IHBpeGVsIGNsb2NrIGFuZCB1cCB0byA0
-azJrIGF0DQo+ID4gPiA+ICs2ME1Ieg0KPiA+ID4gcmVzb2x1dGlvbi4NCj4gPiA+ID4gK1RoZSBI
-RFAgdHJhbnNtaXR0ZXIgaXMgYSBDYWRlbmNlIEhEUCBUWCBjb250cm9sbGVyIElQIHdpdGggYQ0K
-PiA+ID4gPiArY29tcGFuaW9uIFBIWSBJUC4NCj4gPiA+DQo+ID4gPiBJJ20gY29uZnVzZWQuIFRo
-aXMgYmluZGluZyBjb3ZlcnMgYm90aCBibG9ja3Mgb3IgaXMganVzdCBvbmUgb2YgdGhlbT8NCj4g
-PiA+DQo+ID4NCj4gPiBIaSBSb2IsDQo+ID4NCj4gPiBUaGlzIGJpbmRpbmcgY292ZXJzIGJvdGgg
-YmxvY2tzKEhEUCBUWCBQSFkgYW5kIEhEUCBUWCBDb250cm9sbGVyKSwNCj4gPiBCZWNhdXNlIHRo
-ZXkgYXJlIGJlbG9uZyB0byB0aGUgb25lIElQLg0KPiANCj4gSW4gdGhhdCBjYXNlLCB5b3Ugc2hv
-dWxkIGFsc28gaGF2ZSBhbiBvdXRwdXQgcG9ydCB0byBhIERQIGNvbm5lY3RvciBub2RlIChvcg0K
-PiBEUCBwYW5lbCkuDQoNCkhpIFJvYiwNCg0KSSByZW1lbWJlciB0aGVyZSBhcmUgaW5jbHVkZWQg
-dGhlIERQIGNvbm5lY3RvciBub2RlIGRlc2NyaXB0aW9uIGFzIHNlZSBiZWxvdy4NCg0KLS0tDQpS
-ZXF1aXJlZCBzdWItbm9kZXM6DQotIHBvcnQNCg0KSXQgdGhlcmUgc2hvdWxkIGJlIHJpZ2h0Pw0K
-DQpCZXN0IFJlZ2FyZHMsDQpXZW4NCg0KPiANCj4gUm9iDQo=
+f2fs uses EFAULT as error number to indicate filesystem is corrupted
+all the time, but generic filesystems use EUCLEAN for such condition,
+we need to change to follow others.
+
+This patch adds two new macros as below to wrap more generic error
+code macros, and spread them in code.
+
+EFSBADCRC	EBADMSG		/* Bad CRC detected */
+EFSCORRUPTED	EUCLEAN		/* Filesystem is corrupted */
+
+Reported-by: Pavel Machek <pavel@ucw.cz>
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+ fs/f2fs/checkpoint.c | 12 +++++++++---
+ fs/f2fs/data.c       | 18 +++++++++---------
+ fs/f2fs/dir.c        |  2 +-
+ fs/f2fs/f2fs.h       |  3 +++
+ fs/f2fs/file.c       |  2 +-
+ fs/f2fs/gc.c         |  6 +++---
+ fs/f2fs/inline.c     |  4 ++--
+ fs/f2fs/inode.c      |  4 ++--
+ fs/f2fs/node.c       |  6 +++---
+ fs/f2fs/recovery.c   |  6 +++---
+ fs/f2fs/segment.c    | 10 +++++-----
+ fs/f2fs/segment.h    |  4 ++--
+ fs/f2fs/super.c      |  2 +-
+ fs/f2fs/xattr.c      |  4 ++--
+ 14 files changed, 46 insertions(+), 37 deletions(-)
+
+diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+index 62c359c91668..a0eef95b9e0e 100644
+--- a/fs/f2fs/checkpoint.c
++++ b/fs/f2fs/checkpoint.c
+@@ -890,6 +890,7 @@ int f2fs_get_valid_checkpoint(struct f2fs_sb_info *sbi)
+ 	unsigned int cp_blks = 1 + __cp_payload(sbi);
+ 	block_t cp_blk_no;
+ 	int i;
++	int err;
+ 
+ 	sbi->ckpt = f2fs_kzalloc(sbi, array_size(blk_size, cp_blks),
+ 				 GFP_KERNEL);
+@@ -917,6 +918,7 @@ int f2fs_get_valid_checkpoint(struct f2fs_sb_info *sbi)
+ 	} else if (cp2) {
+ 		cur_page = cp2;
+ 	} else {
++		err = -EFSCORRUPTED;
+ 		goto fail_no_cp;
+ 	}
+ 
+@@ -929,8 +931,10 @@ int f2fs_get_valid_checkpoint(struct f2fs_sb_info *sbi)
+ 		sbi->cur_cp_pack = 2;
+ 
+ 	/* Sanity checking of checkpoint */
+-	if (f2fs_sanity_check_ckpt(sbi))
++	if (f2fs_sanity_check_ckpt(sbi)) {
++		err = -EFSCORRUPTED;
+ 		goto free_fail_no_cp;
++	}
+ 
+ 	if (cp_blks <= 1)
+ 		goto done;
+@@ -944,8 +948,10 @@ int f2fs_get_valid_checkpoint(struct f2fs_sb_info *sbi)
+ 		unsigned char *ckpt = (unsigned char *)sbi->ckpt;
+ 
+ 		cur_page = f2fs_get_meta_page(sbi, cp_blk_no + i);
+-		if (IS_ERR(cur_page))
++		if (IS_ERR(cur_page)) {
++			err = PTR_ERR(cur_page);
+ 			goto free_fail_no_cp;
++		}
+ 		sit_bitmap_ptr = page_address(cur_page);
+ 		memcpy(ckpt + i * blk_size, sit_bitmap_ptr, blk_size);
+ 		f2fs_put_page(cur_page, 1);
+@@ -960,7 +966,7 @@ int f2fs_get_valid_checkpoint(struct f2fs_sb_info *sbi)
+ 	f2fs_put_page(cp2, 1);
+ fail_no_cp:
+ 	kvfree(sbi->ckpt);
+-	return -EINVAL;
++	return err;
+ }
+ 
+ static void __add_dirty_inode(struct inode *inode, enum inode_type type)
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index f4e1672bd96e..1e2d924e2ea7 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -455,7 +455,7 @@ int f2fs_submit_page_bio(struct f2fs_io_info *fio)
+ 	if (!f2fs_is_valid_blkaddr(fio->sbi, fio->new_blkaddr,
+ 			fio->is_por ? META_POR : (__is_meta_io(fio) ?
+ 			META_GENERIC : DATA_GENERIC_ENHANCE)))
+-		return -EFAULT;
++		return -EFSCORRUPTED;
+ 
+ 	trace_f2fs_submit_page_bio(page, fio);
+ 	f2fs_trace_ios(fio, 0);
+@@ -489,7 +489,7 @@ int f2fs_merge_page_bio(struct f2fs_io_info *fio)
+ 
+ 	if (!f2fs_is_valid_blkaddr(fio->sbi, fio->new_blkaddr,
+ 			__is_meta_io(fio) ? META_GENERIC : DATA_GENERIC))
+-		return -EFAULT;
++		return -EFSCORRUPTED;
+ 
+ 	trace_f2fs_submit_page_bio(page, fio);
+ 	f2fs_trace_ios(fio, 0);
+@@ -789,7 +789,7 @@ struct page *f2fs_get_read_data_page(struct inode *inode, pgoff_t index,
+ 		dn.data_blkaddr = ei.blk + index - ei.fofs;
+ 		if (!f2fs_is_valid_blkaddr(F2FS_I_SB(inode), dn.data_blkaddr,
+ 						DATA_GENERIC_ENHANCE_READ)) {
+-			err = -EFAULT;
++			err = -EFSCORRUPTED;
+ 			goto put_err;
+ 		}
+ 		goto got_it;
+@@ -809,7 +809,7 @@ struct page *f2fs_get_read_data_page(struct inode *inode, pgoff_t index,
+ 			!f2fs_is_valid_blkaddr(F2FS_I_SB(inode),
+ 						dn.data_blkaddr,
+ 						DATA_GENERIC_ENHANCE)) {
+-		err = -EFAULT;
++		err = -EFSCORRUPTED;
+ 		goto put_err;
+ 	}
+ got_it:
+@@ -1155,7 +1155,7 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map,
+ 
+ 	if (__is_valid_data_blkaddr(blkaddr) &&
+ 		!f2fs_is_valid_blkaddr(sbi, blkaddr, DATA_GENERIC_ENHANCE)) {
+-		err = -EFAULT;
++		err = -EFSCORRUPTED;
+ 		goto sync_out;
+ 	}
+ 
+@@ -1625,7 +1625,7 @@ static int f2fs_read_single_page(struct inode *inode, struct page *page,
+ 
+ 		if (!f2fs_is_valid_blkaddr(F2FS_I_SB(inode), block_nr,
+ 						DATA_GENERIC_ENHANCE_READ)) {
+-			ret = -EFAULT;
++			ret = -EFSCORRUPTED;
+ 			goto out;
+ 		}
+ 	} else {
+@@ -1906,7 +1906,7 @@ int f2fs_do_write_data_page(struct f2fs_io_info *fio)
+ 
+ 		if (!f2fs_is_valid_blkaddr(fio->sbi, fio->old_blkaddr,
+ 						DATA_GENERIC_ENHANCE))
+-			return -EFAULT;
++			return -EFSCORRUPTED;
+ 
+ 		ipu_force = true;
+ 		fio->need_lock = LOCK_DONE;
+@@ -1933,7 +1933,7 @@ int f2fs_do_write_data_page(struct f2fs_io_info *fio)
+ 	if (__is_valid_data_blkaddr(fio->old_blkaddr) &&
+ 		!f2fs_is_valid_blkaddr(fio->sbi, fio->old_blkaddr,
+ 						DATA_GENERIC_ENHANCE)) {
+-		err = -EFAULT;
++		err = -EFSCORRUPTED;
+ 		goto out_writepage;
+ 	}
+ 	/*
+@@ -2606,7 +2606,7 @@ static int f2fs_write_begin(struct file *file, struct address_space *mapping,
+ 	} else {
+ 		if (!f2fs_is_valid_blkaddr(sbi, blkaddr,
+ 				DATA_GENERIC_ENHANCE_READ)) {
+-			err = -EFAULT;
++			err = -EFSCORRUPTED;
+ 			goto fail;
+ 		}
+ 		err = f2fs_submit_page_read(inode, page, blkaddr);
+diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
+index 0e78edbb8e16..85a1528f319f 100644
+--- a/fs/f2fs/dir.c
++++ b/fs/f2fs/dir.c
+@@ -818,7 +818,7 @@ int f2fs_fill_dentries(struct dir_context *ctx, struct f2fs_dentry_ptr *d,
+ 			f2fs_warn(sbi, "%s: corrupted namelen=%d, run fsck to fix.",
+ 				  __func__, le16_to_cpu(de->name_len));
+ 			set_sbi_flag(sbi, SBI_NEED_FSCK);
+-			err = -EINVAL;
++			err = -EFSCORRUPTED;
+ 			goto out;
+ 		}
+ 
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 9afe15675dbb..d6c2aaae6cb2 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -3709,4 +3709,7 @@ static inline bool is_journalled_quota(struct f2fs_sb_info *sbi)
+ 	return false;
+ }
+ 
++#define EFSBADCRC	EBADMSG		/* Bad CRC detected */
++#define EFSCORRUPTED	EUCLEAN		/* Filesystem is corrupted */
++
+ #endif /* _LINUX_F2FS_H */
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index 1180eca87933..ef64eba42a42 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -1023,7 +1023,7 @@ static int __read_out_blkaddrs(struct inode *inode, block_t *blkaddr,
+ 			!f2fs_is_valid_blkaddr(sbi, *blkaddr,
+ 					DATA_GENERIC_ENHANCE)) {
+ 			f2fs_put_dnode(&dn);
+-			return -EFAULT;
++			return -EFSCORRUPTED;
+ 		}
+ 
+ 		if (!f2fs_is_checkpointed_data(sbi, *blkaddr)) {
+diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+index 5b1076505ade..44b770143b51 100644
+--- a/fs/f2fs/gc.c
++++ b/fs/f2fs/gc.c
+@@ -660,7 +660,7 @@ static int ra_data_block(struct inode *inode, pgoff_t index)
+ 		dn.data_blkaddr = ei.blk + index - ei.fofs;
+ 		if (unlikely(!f2fs_is_valid_blkaddr(sbi, dn.data_blkaddr,
+ 						DATA_GENERIC_ENHANCE_READ))) {
+-			err = -EFAULT;
++			err = -EFSCORRUPTED;
+ 			goto put_page;
+ 		}
+ 		goto got_it;
+@@ -678,7 +678,7 @@ static int ra_data_block(struct inode *inode, pgoff_t index)
+ 	}
+ 	if (unlikely(!f2fs_is_valid_blkaddr(sbi, dn.data_blkaddr,
+ 						DATA_GENERIC_ENHANCE))) {
+-		err = -EFAULT;
++		err = -EFSCORRUPTED;
+ 		goto put_page;
+ 	}
+ got_it:
+@@ -1452,7 +1452,7 @@ int f2fs_resize_fs(struct f2fs_sb_info *sbi, __u64 block_count)
+ 
+ 	if (is_sbi_flag_set(sbi, SBI_NEED_FSCK)) {
+ 		f2fs_err(sbi, "Should run fsck to repair first.");
+-		return -EINVAL;
++		return -EFSCORRUPTED;
+ 	}
+ 
+ 	if (test_opt(sbi, DISABLE_CHECKPOINT)) {
+diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
+index 0d2764c9912d..3613efca8c00 100644
+--- a/fs/f2fs/inline.c
++++ b/fs/f2fs/inline.c
+@@ -142,7 +142,7 @@ int f2fs_convert_inline_page(struct dnode_of_data *dn, struct page *page)
+ 		set_sbi_flag(fio.sbi, SBI_NEED_FSCK);
+ 		f2fs_warn(fio.sbi, "%s: corrupted inline inode ino=%lx, i_addr[0]:0x%x, run fsck to fix.",
+ 			  __func__, dn->inode->i_ino, dn->data_blkaddr);
+-		return -EINVAL;
++		return -EFSCORRUPTED;
+ 	}
+ 
+ 	f2fs_bug_on(F2FS_P_SB(page), PageWriteback(page));
+@@ -383,7 +383,7 @@ static int f2fs_move_inline_dirents(struct inode *dir, struct page *ipage,
+ 		set_sbi_flag(F2FS_P_SB(page), SBI_NEED_FSCK);
+ 		f2fs_warn(F2FS_P_SB(page), "%s: corrupted inline inode ino=%lx, i_addr[0]:0x%x, run fsck to fix.",
+ 			  __func__, dir->i_ino, dn.data_blkaddr);
+-		err = -EINVAL;
++		err = -EFSCORRUPTED;
+ 		goto out;
+ 	}
+ 
+diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+index 9ea3aedb8213..a33d7a849b2d 100644
+--- a/fs/f2fs/inode.c
++++ b/fs/f2fs/inode.c
+@@ -74,7 +74,7 @@ static int __written_first_block(struct f2fs_sb_info *sbi,
+ 	if (!__is_valid_data_blkaddr(addr))
+ 		return 1;
+ 	if (!f2fs_is_valid_blkaddr(sbi, addr, DATA_GENERIC_ENHANCE))
+-		return -EFAULT;
++		return -EFSCORRUPTED;
+ 	return 0;
+ }
+ 
+@@ -358,7 +358,7 @@ static int do_read_inode(struct inode *inode)
+ 
+ 	if (!sanity_check_inode(inode, node_page)) {
+ 		f2fs_put_page(node_page, 1);
+-		return -EINVAL;
++		return -EFSCORRUPTED;
+ 	}
+ 
+ 	/* check data exist */
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index 4d9b4c58d8a9..a18b2a895771 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -36,7 +36,7 @@ int f2fs_check_nid_range(struct f2fs_sb_info *sbi, nid_t nid)
+ 		set_sbi_flag(sbi, SBI_NEED_FSCK);
+ 		f2fs_warn(sbi, "%s: out-of-range nid=%x, run fsck to fix.",
+ 			  __func__, nid);
+-		return -EINVAL;
++		return -EFSCORRUPTED;
+ 	}
+ 	return 0;
+ }
+@@ -1288,7 +1288,7 @@ static int read_node_page(struct page *page, int op_flags)
+ 	if (PageUptodate(page)) {
+ 		if (!f2fs_inode_chksum_verify(sbi, page)) {
+ 			ClearPageUptodate(page);
+-			return -EBADMSG;
++			return -EFSBADCRC;
+ 		}
+ 		return LOCKED_PAGE;
+ 	}
+@@ -1372,7 +1372,7 @@ static struct page *__get_node_page(struct f2fs_sb_info *sbi, pgoff_t nid,
+ 	}
+ 
+ 	if (!f2fs_inode_chksum_verify(sbi, page)) {
+-		err = -EBADMSG;
++		err = -EFSBADCRC;
+ 		goto out_err;
+ 	}
+ page_hit:
+diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
+index 72c2c4ba795f..783773e4560d 100644
+--- a/fs/f2fs/recovery.c
++++ b/fs/f2fs/recovery.c
+@@ -553,7 +553,7 @@ static int do_recover_data(struct f2fs_sb_info *sbi, struct inode *inode,
+ 		f2fs_warn(sbi, "Inconsistent ofs_of_node, ino:%lu, ofs:%u, %u",
+ 			  inode->i_ino, ofs_of_node(dn.node_page),
+ 			  ofs_of_node(page));
+-		err = -EFAULT;
++		err = -EFSCORRUPTED;
+ 		goto err;
+ 	}
+ 
+@@ -565,13 +565,13 @@ static int do_recover_data(struct f2fs_sb_info *sbi, struct inode *inode,
+ 
+ 		if (__is_valid_data_blkaddr(src) &&
+ 			!f2fs_is_valid_blkaddr(sbi, src, META_POR)) {
+-			err = -EFAULT;
++			err = -EFSCORRUPTED;
+ 			goto err;
+ 		}
+ 
+ 		if (__is_valid_data_blkaddr(dest) &&
+ 			!f2fs_is_valid_blkaddr(sbi, dest, META_POR)) {
+-			err = -EFAULT;
++			err = -EFSCORRUPTED;
+ 			goto err;
+ 		}
+ 
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index ee96e6fb1a50..478284db3065 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -2819,7 +2819,7 @@ int f2fs_trim_fs(struct f2fs_sb_info *sbi, struct fstrim_range *range)
+ 
+ 	if (is_sbi_flag_set(sbi, SBI_NEED_FSCK)) {
+ 		f2fs_warn(sbi, "Found FS corruption, run fsck to fix.");
+-		return -EIO;
++		return -EFSCORRUPTED;
+ 	}
+ 
+ 	/* start/end segment number in main_area */
+@@ -3244,7 +3244,7 @@ int f2fs_inplace_write_data(struct f2fs_io_info *fio)
+ 		set_sbi_flag(sbi, SBI_NEED_FSCK);
+ 		f2fs_warn(sbi, "%s: incorrect segment(%u) type, run fsck to fix.",
+ 			  __func__, segno);
+-		return -EFAULT;
++		return -EFSCORRUPTED;
+ 	}
+ 
+ 	stat_inc_inplace_blocks(fio->sbi);
+@@ -4153,7 +4153,7 @@ static int build_sit_entries(struct f2fs_sb_info *sbi)
+ 			f2fs_err(sbi, "Wrong journal entry on segno %u",
+ 				 start);
+ 			set_sbi_flag(sbi, SBI_NEED_FSCK);
+-			err = -EINVAL;
++			err = -EFSCORRUPTED;
+ 			break;
+ 		}
+ 
+@@ -4193,7 +4193,7 @@ static int build_sit_entries(struct f2fs_sb_info *sbi)
+ 		f2fs_err(sbi, "SIT is corrupted node# %u vs %u",
+ 			 total_node_blocks, valid_node_count(sbi));
+ 		set_sbi_flag(sbi, SBI_NEED_FSCK);
+-		err = -EINVAL;
++		err = -EFSCORRUPTED;
+ 	}
+ 
+ 	return err;
+@@ -4311,7 +4311,7 @@ static int sanity_check_curseg(struct f2fs_sb_info *sbi)
+ 				 "Current segment's next free block offset is inconsistent with bitmap, logtype:%u, segno:%u, type:%u, next_blkoff:%u, blkofs:%u",
+ 				 i, curseg->segno, curseg->alloc_type,
+ 				 curseg->next_blkoff, blkofs);
+-			return -EINVAL;
++			return -EFSCORRUPTED;
+ 		}
+ 	}
+ 	return 0;
+diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
+index 166ac0f07a4e..2263c3fa6630 100644
+--- a/fs/f2fs/segment.h
++++ b/fs/f2fs/segment.h
+@@ -696,7 +696,7 @@ static inline int check_block_count(struct f2fs_sb_info *sbi,
+ 		f2fs_err(sbi, "Mismatch valid blocks %d vs. %d",
+ 			 GET_SIT_VBLOCKS(raw_sit), valid_blocks);
+ 		set_sbi_flag(sbi, SBI_NEED_FSCK);
+-		return -EINVAL;
++		return -EFSCORRUPTED;
+ 	}
+ 
+ 	/* check segment usage, and check boundary of a given segment number */
+@@ -705,7 +705,7 @@ static inline int check_block_count(struct f2fs_sb_info *sbi,
+ 		f2fs_err(sbi, "Wrong valid blocks %d or segno %u",
+ 			 GET_SIT_VBLOCKS(raw_sit), segno);
+ 		set_sbi_flag(sbi, SBI_NEED_FSCK);
+-		return -EINVAL;
++		return -EFSCORRUPTED;
+ 	}
+ 	return 0;
+ }
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 25eca9f14554..7f2829b1192e 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -2861,7 +2861,7 @@ static int read_raw_super_block(struct f2fs_sb_info *sbi,
+ 		if (sanity_check_raw_super(sbi, bh)) {
+ 			f2fs_err(sbi, "Can't find valid F2FS filesystem in %dth superblock",
+ 				 block + 1);
+-			err = -EINVAL;
++			err = -EFSCORRUPTED;
+ 			brelse(bh);
+ 			continue;
+ 		}
+diff --git a/fs/f2fs/xattr.c b/fs/f2fs/xattr.c
+index e791741d193b..963242018663 100644
+--- a/fs/f2fs/xattr.c
++++ b/fs/f2fs/xattr.c
+@@ -346,7 +346,7 @@ static int lookup_all_xattrs(struct inode *inode, struct page *ipage,
+ 
+ 	*xe = __find_xattr(cur_addr, last_txattr_addr, index, len, name);
+ 	if (!*xe) {
+-		err = -EFAULT;
++		err = -EFSCORRUPTED;
+ 		goto out;
+ 	}
+ check:
+@@ -622,7 +622,7 @@ static int __f2fs_setxattr(struct inode *inode, int index,
+ 	/* find entry with wanted name. */
+ 	here = __find_xattr(base_addr, last_base_addr, index, len, name);
+ 	if (!here) {
+-		error = -EFAULT;
++		error = -EFSCORRUPTED;
+ 		goto exit;
+ 	}
+ 
+-- 
+2.18.0.rc1
+
