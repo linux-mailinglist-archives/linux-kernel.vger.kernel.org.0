@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 182854D63D
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 20:06:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B56D44D92A
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 20:32:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728090AbfFTSFs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 14:05:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59364 "EHLO mail.kernel.org"
+        id S1726289AbfFTR6t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 13:58:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45544 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726200AbfFTSFo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 14:05:44 -0400
+        id S1726127AbfFTR6q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Jun 2019 13:58:46 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D878F2089C;
-        Thu, 20 Jun 2019 18:05:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AFED62089C;
+        Thu, 20 Jun 2019 17:58:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561053943;
-        bh=GEx5pq0zga8EQ/2xGAHSBQA9HsHPaefSc6zn/tC0Bn8=;
+        s=default; t=1561053525;
+        bh=oKXaoL1Mu3y3usuaJWfvzzcoOd7MzSIw2E9UyGTNbvc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GYtOxwEqDB7gp/rWgjkPQr2uFt1uuWxHk2amXQXDvdLYs4IpAGHj8Yj1QxJ+3D+yU
-         v96P67zjWc8gJSwMlcHnhVd4t0BfBVWon2Y/tT8BI9DyUTU70FO/WOLje6ZrFQ++3Y
-         lnJ3BkAEqHrGQtPHb39UCTAOyNjeNIpjqykabdLw=
+        b=p/WVlent9QLoFaAFhAbMsIdjy0U7PGOVo3nxYC7zotJNrvqWO+IXno5Ek/19E98w8
+         Ep4vB6Nk30jh2/wv03/2ucjeaqw7gTlxQ/V+D5H+oghqQ9Zma8HGoD3rTMoVtxSfG5
+         Vcywc7SqZRP2GvRof21wewVf5NDSDlJOtJOr/EQ4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tyrel Datwyler <tyreld@linux.vnet.ibm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
+        stable@vger.kernel.org, "J. Bruce Fields" <bfields@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 042/117] PCI: rpadlpar: Fix leaked device_node references in add/remove paths
+Subject: [PATCH 4.4 19/84] nfsd: allow fh_want_write to be called twice
 Date:   Thu, 20 Jun 2019 19:56:16 +0200
-Message-Id: <20190620174354.508606171@linuxfoundation.org>
+Message-Id: <20190620174340.410803103@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190620174351.964339809@linuxfoundation.org>
-References: <20190620174351.964339809@linuxfoundation.org>
+In-Reply-To: <20190620174337.538228162@linuxfoundation.org>
+References: <20190620174337.538228162@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,61 +43,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit fb26228bfc4ce3951544848555c0278e2832e618 ]
+[ Upstream commit 0b8f62625dc309651d0efcb6a6247c933acd8b45 ]
 
-The find_dlpar_node() helper returns a device node with its reference
-incremented.  Both the add and remove paths use this helper for find the
-appropriate node, but fail to release the reference when done.
+A fuzzer recently triggered lockdep warnings about potential sb_writers
+deadlocks caused by fh_want_write().
 
-Annotate the find_dlpar_node() helper with a comment about the incremented
-reference count and call of_node_put() on the obtained device_node in the
-add and remove paths.  Also, fixup a reference leak in the find_vio_slot()
-helper where we fail to call of_node_put() on the vdevice node after we
-iterate over its children.
+Looks like we aren't careful to pair each fh_want_write() with an
+fh_drop_write().
 
-Signed-off-by: Tyrel Datwyler <tyreld@linux.vnet.ibm.com>
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+It's not normally a problem since fh_put() will call fh_drop_write() for
+us.  And was OK for NFSv3 where we'd do one operation that might call
+fh_want_write(), and then put the filehandle.
+
+But an NFSv4 protocol fuzzer can do weird things like call unlink twice
+in a compound, and then we get into trouble.
+
+I'm a little worried about this approach of just leaving everything to
+fh_put().  But I think there are probably a lot of
+fh_want_write()/fh_drop_write() imbalances so for now I think we need it
+to be more forgiving.
+
+Signed-off-by: J. Bruce Fields <bfields@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pci/hotplug/rpadlpar_core.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ fs/nfsd/vfs.h | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/pci/hotplug/rpadlpar_core.c b/drivers/pci/hotplug/rpadlpar_core.c
-index c614ff7c3bc3..d3562df64456 100644
---- a/drivers/pci/hotplug/rpadlpar_core.c
-+++ b/drivers/pci/hotplug/rpadlpar_core.c
-@@ -55,6 +55,7 @@ static struct device_node *find_vio_slot_node(char *drc_name)
- 		if ((rc == 0) && (!strcmp(drc_name, name)))
- 			break;
- 	}
-+	of_node_put(parent);
+diff --git a/fs/nfsd/vfs.h b/fs/nfsd/vfs.h
+index fcfc48cbe136..128d6e216fd7 100644
+--- a/fs/nfsd/vfs.h
++++ b/fs/nfsd/vfs.h
+@@ -109,8 +109,11 @@ void		nfsd_put_raparams(struct file *file, struct raparms *ra);
  
- 	return dn;
- }
-@@ -78,6 +79,7 @@ static struct device_node *find_php_slot_pci_node(char *drc_name,
- 	return np;
- }
- 
-+/* Returns a device_node with its reference count incremented */
- static struct device_node *find_dlpar_node(char *drc_name, int *node_type)
+ static inline int fh_want_write(struct svc_fh *fh)
  {
- 	struct device_node *dn;
-@@ -313,6 +315,7 @@ int dlpar_add_slot(char *drc_name)
- 			rc = dlpar_add_phb(drc_name, dn);
- 			break;
- 	}
-+	of_node_put(dn);
+-	int ret = mnt_want_write(fh->fh_export->ex_path.mnt);
++	int ret;
  
- 	printk(KERN_INFO "%s: slot %s added\n", DLPAR_MODULE_NAME, drc_name);
- exit:
-@@ -446,6 +449,7 @@ int dlpar_remove_slot(char *drc_name)
- 			rc = dlpar_remove_pci_slot(drc_name, dn);
- 			break;
- 	}
-+	of_node_put(dn);
- 	vm_unmap_aliases();
- 
- 	printk(KERN_INFO "%s: slot %s removed\n", DLPAR_MODULE_NAME, drc_name);
++	if (fh->fh_want_write)
++		return 0;
++	ret = mnt_want_write(fh->fh_export->ex_path.mnt);
+ 	if (!ret)
+ 		fh->fh_want_write = true;
+ 	return ret;
 -- 
 2.20.1
 
