@@ -2,58 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 49B594C5A7
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 05:06:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8F9794C5AA
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 05:06:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731291AbfFTDGV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Jun 2019 23:06:21 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:35512 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726419AbfFTDGV (ORCPT
+        id S1731344AbfFTDGZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Jun 2019 23:06:25 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:36737 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726370AbfFTDGY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Jun 2019 23:06:21 -0400
-Received: by mail-pl1-f195.google.com with SMTP id p1so766806plo.2
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2019 20:06:21 -0700 (PDT)
+        Wed, 19 Jun 2019 23:06:24 -0400
+Received: by mail-pf1-f194.google.com with SMTP id r7so799783pfl.3
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2019 20:06:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=3k+ZqG6fxcx9wjJdYzN51AwwDrKWOBygZ2ckfqKNWZk=;
-        b=HrJpaYTfh5iJbgSLgstdGwcJAa1gk2U+dDIGKCefttcxJR2S9+gmgMD9cBuHOZBrbn
-         jQAwb4Wot4lmy9hxiJmrtHn1hThMmUIg3+CT9yKxqC55sISKDNdvoJpdH2Nk/+hjuei0
-         mO3S8ukJFHAYeHrMHHfeaIe0X5o+j09Hl6Lwy7p4WoAVhMnBYQIEnGTJ/Q8Osw6QYOht
-         w6wIaJ+Aj/UTaDVtoxQ1m4bSQzIoihV/m31J6jWfdIt/ht7l5HPbJQXbZoAP/O6R6U1y
-         uJuNgGwKZ+VRFqdRy3RUra1ywpgiK96uKYtZJoVTdp0iGj2zmx02t7H+aUmLKymZ6VUt
-         eVZA==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=FbHOn34+83W+J2f3XHDBG84b3Et0zmkMSETpfTN9TuM=;
+        b=UT17hYIwO07T+JXmCNzUy25KZuNg7TFnGECmDQriV9z5Zc5iK/562PnnVfxwrM6+/z
+         NN9S6GFPYLifZ84Wh7XCcbJGNkV5Y7UWS40WSuZzMCL7Z0Qt34GwRoKObd+F35Ng7MKB
+         D1UOxmySiMuh5cLXRmvJ0EuTneYj6dlX84Fg5tPOac5vsS/WUkniFmlUUTY2F8CnwDM1
+         NrPVz78uVqELIPnN25wEg7YF4YXExqJvtPk8NbE+K8yrNvtiY47q8cUYa8GpX0KWbK4i
+         ded7OAYwOaUzU6wiTK/rOLNSus+CjQO6rUy5BKlxEdZn8ZA3EkBVeMThnnUkTQDmTfrb
+         OLrg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=3k+ZqG6fxcx9wjJdYzN51AwwDrKWOBygZ2ckfqKNWZk=;
-        b=hFOevfaJUXwKU0eywNg4r75mIenFZ7U/26CA2PMWoVjHZg6Mn/owiI1TCtBRWRTnMO
-         HAB3GXpD4xT74AWk+tLKdww7CaF+ZSog3TFEALdDKkr9zlnvGcYCMrD2teu7R4wAn4rf
-         P9bysLyoaIECoYIyjdRw1lz8OvPo8OOElreKmWiuxGaYw4Qi7SjtYceziMCJVhrPC0YO
-         jvBWIbnOXEd/dMR9aElp10ap2A2jQPB7V+gfMjh472rpZ8WVFBCLv9hZ4oZbL9ZPWeDw
-         KPvf1j5x5ZGIsK0ZK2NY3/ZsOe2yLoUpNb6nipDXL2L23WapvUkxzaqLo/BU9WVr6jVN
-         eCsw==
-X-Gm-Message-State: APjAAAUJv9ZemvEXbHI9eQ5wrFio8rclglWSur+LRDo8Ppp0y+505wCt
-        lK2kaStoFMaATVRnuwFV+MhjHg==
-X-Google-Smtp-Source: APXvYqxA1ihvMaKN2NzXGUveqK4utf/bDtTmrRm5hK+cBzH/KHvsbQsG//5VuL8TwVOv8uDmfmCP9A==
-X-Received: by 2002:a17:902:1003:: with SMTP id b3mr124316996pla.172.1560999980612;
-        Wed, 19 Jun 2019 20:06:20 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=FbHOn34+83W+J2f3XHDBG84b3Et0zmkMSETpfTN9TuM=;
+        b=H+PF5z611+9SnTKEtZ6worAbTiz3MKJkZLkxC4m0KVD3h+L29N3QRW6WHgKUBhztqE
+         sXyK30EZufDq6awAlvyYf+fmRfoDrh7DPMAGaLy2JuwrAX1Kqkoo66sf3EKK7a0XCxnb
+         5bkzocw+NYhL0dDfN9UuK7DCcleUY7fDN0f5UyUvXBX6aNmEPJlJbe1tPqx1X1QqiKWp
+         XQBqN7Bw5c1JYEG+egXuABp4rGt7gQ7KYs/UxsD3xftVx9/iZc7yU+blpGoskkPT3G/Q
+         CNgxh2mFQnDXrOccRWs6GyTvKl7O2VhD+8AN3yBzvX56TDswBRyWeWLTjQSqj7TvrmoA
+         uytw==
+X-Gm-Message-State: APjAAAXz1ihWP5NOeRdfUsBVxwDKD3uDgGa7N5ELYLouy5U71h4iM3lH
+        N7ioaAgXyvyIDEqMvYhxJWxpRg==
+X-Google-Smtp-Source: APXvYqwJTRDFmZNAIEaGMNDIRyAWQI1nd69Xf4gQfwcFrHb5UyE97h39NTtwabsG2oSB4Bjr2oCrzw==
+X-Received: by 2002:a62:28b:: with SMTP id 133mr5409487pfc.251.1560999983761;
+        Wed, 19 Jun 2019 20:06:23 -0700 (PDT)
 Received: from localhost ([122.172.66.84])
-        by smtp.gmail.com with ESMTPSA id e184sm25563402pfa.169.2019.06.19.20.06.18
+        by smtp.gmail.com with ESMTPSA id g2sm18949048pgi.92.2019.06.19.20.06.22
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 19 Jun 2019 20:06:18 -0700 (PDT)
+        Wed, 19 Jun 2019 20:06:23 -0700 (PDT)
 From:   Viresh Kumar <viresh.kumar@linaro.org>
 To:     Rafael Wysocki <rjw@rjwysocki.net>
 Cc:     Viresh Kumar <viresh.kumar@linaro.org>, linux-pm@vger.kernel.org,
         Vincent Guittot <vincent.guittot@linaro.org>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH V2 0/5] cpufreq: cleanups
-Date:   Thu, 20 Jun 2019 08:35:45 +0530
-Message-Id: <cover.1560999838.git.viresh.kumar@linaro.org>
+Subject: [PATCH V2 1/5] cpufreq: Remove the redundant !setpolicy check
+Date:   Thu, 20 Jun 2019 08:35:46 +0530
+Message-Id: <b9bac95bcc36f5f70e910e4801be5d4f8fd32d0c.1560999838.git.viresh.kumar@linaro.org>
 X-Mailer: git-send-email 2.21.0.rc0.269.g1a574e7a288b
+In-Reply-To: <cover.1560999838.git.viresh.kumar@linaro.org>
+References: <cover.1560999838.git.viresh.kumar@linaro.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -61,32 +63,27 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rafael,
+cpufreq_start_governor() is only called for !setpolicy case, checking it
+again is not required.
 
-I accumulated these while reworking the freq-constraint series and it
-would be nice if these can get in before I send the next version of
-freq-constraint stuff.
+Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+---
+ drivers/cpufreq/cpufreq.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-These are mostly cleanups and code consolidation for better management
-of code. Compile and boot tested only.
-
-Thanks.
-
-V1->V2:
-- Merged patch 2/6 and 3/6 (now called 2/5).
-- Updated commit log of 3/5 as it wasn't clear enough earlier.
-
-Viresh Kumar (5):
-  cpufreq: Remove the redundant !setpolicy check
-  cpufreq: Replace few CPUFREQ_CONST_LOOPS checks with has_target()
-  cpufreq: Use has_target() instead of !setpolicy
-  cpufreq: Reuse cpufreq_update_current_freq() in __cpufreq_get()
-  cpufreq: Avoid calling cpufreq_verify_current_freq() from
-    handle_update()
-
- drivers/cpufreq/cpufreq.c | 115 +++++++++++++++++---------------------
- 1 file changed, 52 insertions(+), 63 deletions(-)
-
+diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
+index 85ff958e01f1..54befd775bd6 100644
+--- a/drivers/cpufreq/cpufreq.c
++++ b/drivers/cpufreq/cpufreq.c
+@@ -2153,7 +2153,7 @@ static int cpufreq_start_governor(struct cpufreq_policy *policy)
+ 
+ 	pr_debug("%s: for CPU %u\n", __func__, policy->cpu);
+ 
+-	if (cpufreq_driver->get && !cpufreq_driver->setpolicy)
++	if (cpufreq_driver->get)
+ 		cpufreq_update_current_freq(policy);
+ 
+ 	if (policy->governor->start) {
 -- 
 2.21.0.rc0.269.g1a574e7a288b
 
