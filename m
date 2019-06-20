@@ -2,113 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1925D4DDC8
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 01:35:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 92BEF4DDCC
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 01:40:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725985AbfFTXeK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 19:34:10 -0400
-Received: from ozlabs.org ([203.11.71.1]:47525 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725886AbfFTXeK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 19:34:10 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45VJ722nLwz9s5c;
-        Fri, 21 Jun 2019 09:34:06 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1561073647;
-        bh=ndWhno4F9OKQyrb9LiFmh3NXDp1/Q19RsftBd8rGACs=;
-        h=Date:From:To:Cc:Subject:From;
-        b=mOfcCydr2hTTQBsb8wFDNpBbohjJIVEgEt5Jff93A/+V6U4XM8JNrNxJwygGq8/9O
-         +LB0m40EwsZ/bQqyYZyM2vJcJQBCSNVR85QJOmHsX9ar75M12/6pT5vPtppo5fDDnj
-         thhJJjOHYZlhM0Gpgj0vjYsSujzmdjmmnyB5Qg7j42lxK+RJsV2UINp8xqXQrs0Ny9
-         tJrVTHpxOJ+PA3jiXDAj63/2tjGVLcs/0pA6c1x0NgMw500Od+3w0IGiPGGiFkbyIb
-         Xr3YGr/bJ+/bY4iHFpW94mke2NjqFQlBYB4Z0WNuAGcCpEWbnUD4jODwPehbQvXt2V
-         bMHxq/dPlt5Bw==
-Date:   Fri, 21 Jun 2019 09:33:47 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Krzysztof Kozlowski <krzk@kernel.org>,
-        Russell King <rmk@armlinux.org.uk>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: linux-next: manual merge of the samsung-krzk tree with the arm tree
-Message-ID: <20190621093347.36987c97@canb.auug.org.au>
+        id S1726063AbfFTXkw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 19:40:52 -0400
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:42753 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725905AbfFTXkw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Jun 2019 19:40:52 -0400
+Received: by mail-oi1-f193.google.com with SMTP id s184so3405759oie.9
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2019 16:40:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=scNy0Tfe+BdKZYj5qpcGlHdmruocVLL136U7yeONjQY=;
+        b=0cnLFHw3wyYOy7GJtgs9QmCRnq9eswmVPzeiBI0nzxLIy08w2sne8Vna1Y1grmzkuK
+         orXF6GaJfScNIrL+CmEEjfEWeebyFY2BN5C/NjI21notoMZHMFZD8O85FX4FqZJ8Z8r9
+         c9WxGq/LLz3LwW3HtljqhWfi0h5SxokaderedRePsLiY444AX/karrDFsSoksoWcCCgZ
+         +7KfzBlJb6BYSae/aXYMhV6RyOh/BJhvk9JSH7sv18Mz9knbjhajd4FDNRnGNZuLTc2X
+         k/ws4WPi1RFgTyfCmAwHTUeSPhtAYFKNfpXRN3OehGFyz6DqnUc2COeygcoP24s922vi
+         ch3g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=scNy0Tfe+BdKZYj5qpcGlHdmruocVLL136U7yeONjQY=;
+        b=UkB+u7fBX5STD1X+vS+S8WJ/r9svDhwjet0etiGWynzKasMfGMCsjch2NAV1//Ki7y
+         IxqU4l1CcqgYTjLYjLuisS8h3FGR2xZ7TkBbv0UgjlDxsiTxteVtH7NHkTa4NOZLq3Tm
+         m8vqLGiKlk5ptkIIzZx8ryVGjXtIyB4Ui6OgkhJV2r6vyCZ+UuHzSwD4v50mV1Duz+yJ
+         h20HPq39zrPMR+RhRRGTd4O5+1LZ/sx4LWC2Ey/7JK8RuY1ENtNfsJwXZvCDYUW0iGca
+         X1m+lFag5hIUnvy3WUSpreH4T3ac7uN0ik9shtGqnSOS18LmeCkWcUhxyS+ocRZdpeRQ
+         IrZQ==
+X-Gm-Message-State: APjAAAU7fdYDxEMDk/wgteFCjyeYxf2H1MGj2/bimNLfqgfcVSK/Lcst
+        IkX9BppRHGEfUw5aCNsI6lJUIaXNqIehOoTyUKncAw==
+X-Google-Smtp-Source: APXvYqy+dAobdNgdfPhzhP0DQIKrQv88wgGeAk/7F+FLUOR+10JaG31ibuPbYrW/Rv/5imGwwlnZKa4QroXz2NVXZYc=
+X-Received: by 2002:aca:ec82:: with SMTP id k124mr901169oih.73.1561074051695;
+ Thu, 20 Jun 2019 16:40:51 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/drJXAftZso.P65jPS5fJLqV"; protocol="application/pgp-signature"
+References: <20190620161240.22738-1-logang@deltatee.com> <CAPcyv4ijztOK1FUjLuFing7ps4LOHt=6z=eO=98HHWauHA+yog@mail.gmail.com>
+ <91eba9a0-27b4-08b4-7c12-86e24e1bfe85@deltatee.com>
+In-Reply-To: <91eba9a0-27b4-08b4-7c12-86e24e1bfe85@deltatee.com>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Thu, 20 Jun 2019 16:40:40 -0700
+Message-ID: <CAPcyv4gPOXaL3qks6RMufu==O9RV2m_-7bBmJqKOFYTf4v_jXQ@mail.gmail.com>
+Subject: Re: [RFC PATCH 00/28] Removing struct page from P2PDMA
+To:     Logan Gunthorpe <logang@deltatee.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-block@vger.kernel.org, linux-nvme@lists.infradead.org,
+        linux-pci@vger.kernel.org, linux-rdma <linux-rdma@vger.kernel.org>,
+        Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        Keith Busch <kbusch@kernel.org>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Stephen Bates <sbates@raithlin.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/drJXAftZso.P65jPS5fJLqV
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Thu, Jun 20, 2019 at 12:35 PM Logan Gunthorpe <logang@deltatee.com> wrote:
+>
+>
+>
+> On 2019-06-20 12:45 p.m., Dan Williams wrote:
+> > On Thu, Jun 20, 2019 at 9:13 AM Logan Gunthorpe <logang@deltatee.com> wrote:
+> >>
+> >> For eons there has been a debate over whether or not to use
+> >> struct pages for peer-to-peer DMA transactions. Pro-pagers have
+> >> argued that struct pages are necessary for interacting with
+> >> existing code like scatterlists or the bio_vecs. Anti-pagers
+> >> assert that the tracking of the memory is unecessary and
+> >> allocating the pages is a waste of memory. Both viewpoints are
+> >> valid, however developers working on GPUs and RDMA tend to be
+> >> able to do away with struct pages relatively easily
+> >
+> > Presumably because they have historically never tried to be
+> > inter-operable with the block layer or drivers outside graphics and
+> > RDMA.
+>
+> Yes, but really there are three main sets of users for P2P right now:
+> graphics, RDMA and NVMe. And every time a patch set comes from GPU/RDMA
+> people they don't bother with struct page. I seem to be the only one
+> trying to push P2P with NVMe and it seems to be a losing battle.
+>
+> > Please spell out the value, it is not immediately obvious to me
+> > outside of some memory capacity savings.
+>
+> There are a few things:
+>
+> * Have consistency with P2P efforts as most other efforts have been
+> avoiding struct page. Nobody else seems to want
+> pci_p2pdma_add_resource() or any devm_memremap_pages() call.
+>
+> * Avoid all arch-specific dependencies for P2P. With struct page the IO
+> memory must fit in the linear mapping. This requires some work with
+> RISC-V and I remember some complaints from the powerpc people regarding
+> this. Certainly not all arches will be able to fit the IO region into
+> the linear mapping space.
+>
+> * Remove a bunch of PCI P2PDMA special case mapping stuff from the block
+> layer and RDMA interface (which I've been hearing complaints over).
 
-Hi all,
-
-Today's linux-next merge of the samsung-krzk tree got a conflict in:
-
-  arch/arm/configs/exynos_defconfig
-
-between commit:
-
-  5f41f9198f29 ("ARM: 8864/1: Add workaround for I-Cache line size mismatch=
- between CPU cores")
-
-from the arm tree and commit:
-
-  9f532d26c75c ("ARM: exynos_defconfig: Trim and reorganize with savedefcon=
-fig")
-
-from the samsung-krzk tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc arch/arm/configs/exynos_defconfig
-index 9b959afaaa12,f140532ddca7..000000000000
---- a/arch/arm/configs/exynos_defconfig
-+++ b/arch/arm/configs/exynos_defconfig
-@@@ -4,12 -5,7 +5,8 @@@ CONFIG_PREEMPT=3D
-  CONFIG_CGROUPS=3Dy
-  CONFIG_BLK_DEV_INITRD=3Dy
-  CONFIG_PERF_EVENTS=3Dy
-- CONFIG_MODULES=3Dy
-- CONFIG_MODULE_UNLOAD=3Dy
-- CONFIG_PARTITION_ADVANCED=3Dy
-  CONFIG_ARCH_EXYNOS=3Dy
-- CONFIG_ARCH_EXYNOS3=3Dy
- +CONFIG_CPU_ICACHE_MISMATCH_WORKAROUND=3Dy
-  CONFIG_SMP=3Dy
-  CONFIG_BIG_LITTLE=3Dy
-  CONFIG_NR_CPUS=3D8
-
---Sig_/drJXAftZso.P65jPS5fJLqV
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0MF9sACgkQAVBC80lX
-0Gy2pgf+ML0TjxE2m+kPtNCsnUOq/A/U9Cu7T5JMbxQ5dq2EvpthF3e/pM1/hnQj
-6C86Jx9HE6Y4miYXkuarQzJKwo9fuwThzaNnkbJOv3a/O75a8zeaxCTxxEe1pNor
-Xi4LC1WTmgdyDuFXDnwezxsoQFu1yXf2y28NZ6UJBy3Ady2c6kssZxvq523zGI0z
-xCTLtge3YnZB60u/X4Wui17+OFQBDUhkjpoHjZAC4GfcMmFGWg1mxtGNJrI1D4hn
-HNm78ClTNQewUob8C80dmQHB0xLLJdrKeLXWf7K1ONByR79TKeOkQI+m8Pmx3oh0
-BI7nFLMhEYdamL/yFXJEctd2VoFFVg==
-=xLVW
------END PGP SIGNATURE-----
-
---Sig_/drJXAftZso.P65jPS5fJLqV--
+This seems to be the most salient point. I was missing the fact that
+this replaces custom hacks and "special" pages with an explicit "just
+pass this pre-mapped address down the stack". It's functionality that
+might plausibly be used outside of p2p, as long as the driver can
+assert that it never needs to touch the data with the cpu before
+handing it off to a dma-engine.
