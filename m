@@ -2,123 +2,180 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B60B14CBEC
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 12:32:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 458F04CC11
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 12:39:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726807AbfFTKcY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 06:32:24 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:35934 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726081AbfFTKcX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 06:32:23 -0400
-Received: by mail-pg1-f194.google.com with SMTP id f21so1369771pgi.3;
-        Thu, 20 Jun 2019 03:32:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Vh/TaWAXivsCSm93ZkOvEDBkx2UKyyCx6lOeAnqGOlE=;
-        b=ttF/SnGYG3MOm+YgtgBbYEgYcC3Gryeob5F0AgH9pKO3BZ4CD/56pVCkDIFxyQBGnJ
-         vNodJ0g4aVQaCP6EaAGUeJY4lkffwXbWCXY68CjsUqSHCBAiAuab7MFHcHqwsatieGZ/
-         nYHo33JOSHtedVBSCYVCfNsAMCaDihPzCFYwRPUZDvjFhv1MN0GcPnaiTSpTH1xgHIYn
-         tqu9zrsbTkMcFADzh3sHS5xHtVOW2Jfsd6SQL+SxKAix+d8k8hOq9KsmgMZEIPp/xKXy
-         oe32UVSZTA6hZKSfi0QIXidVgJrfAoU4o67stK283mjbTtEtY6VrboiGudu85+RMdB8r
-         ClnA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Vh/TaWAXivsCSm93ZkOvEDBkx2UKyyCx6lOeAnqGOlE=;
-        b=bcuF+2HcJ7S5abOniVmBUod+hu7RIQIS3jqbvtTgdGnwMoHL0j3Y2Q108X+5O2rkCK
-         579RNsBCQtO/2mH7cu/2xWrL6Rds0vnxErk8K+E2yqjGhLjSU69MMo6Efd3Ub4t0IGaY
-         SAp5V05FZDcek80iDIIH45KK1psjEIPLCMS+LC9gLhk78ZQkyaCWtUm0MJFM0RemAuWU
-         cpAUwe/wtN0YUU/v6mlB0YyWCvmeEEz/HkW1wtPGAlMAk1cy1upnbaSQ+Tmm2ZX8Ckg6
-         7uBr6cmZucDldIO9C7ldSEsd1Yri0AfPxoAdDmb/iQcTf7Kf3wYsz0haaF0ZxRJKHlLg
-         6q9g==
-X-Gm-Message-State: APjAAAVeyh615FWO4St6H54jfv3hAC+Bs9r/jRE1ZIvE7jQgrOWeXig3
-        f75+SnPQbOQ1613/ufvRwhM=
-X-Google-Smtp-Source: APXvYqzG+Ny73nTkuvycxB2Qtw2No/JfB1pM/xIlj0jTTPw8WMCkRlsju9l456JNXOtmVU5qfE89Vw==
-X-Received: by 2002:a63:d008:: with SMTP id z8mr12308782pgf.335.1561026742731;
-        Thu, 20 Jun 2019 03:32:22 -0700 (PDT)
-Received: from google.com ([2401:fa00:d:0:98f1:8b3d:1f37:3e8])
-        by smtp.gmail.com with ESMTPSA id 12sm21098259pfi.60.2019.06.20.03.32.17
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 20 Jun 2019 03:32:21 -0700 (PDT)
-Date:   Thu, 20 Jun 2019 19:32:15 +0900
-From:   Minchan Kim <minchan@kernel.org>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        linux-mm <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>, linux-api@vger.kernel.org,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Tim Murray <timmurray@google.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Daniel Colascione <dancol@google.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Sonny Rao <sonnyrao@google.com>,
-        Brian Geffon <bgeffon@google.com>, jannh@google.com,
-        oleg@redhat.com, christian@brauner.io, oleksandr@redhat.com,
-        hdanton@sina.com, lizeb@google.com
-Subject: Re: [PATCH v2 4/5] mm: introduce MADV_PAGEOUT
-Message-ID: <20190620103215.GF105727@google.com>
-References: <20190610111252.239156-1-minchan@kernel.org>
- <20190610111252.239156-5-minchan@kernel.org>
- <20190619132450.GQ2968@dhcp22.suse.cz>
- <20190620041620.GB105727@google.com>
- <20190620070444.GB12083@dhcp22.suse.cz>
- <20190620084040.GD105727@google.com>
- <20190620092209.GD12083@dhcp22.suse.cz>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190620092209.GD12083@dhcp22.suse.cz>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S1731188AbfFTKjI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 06:39:08 -0400
+Received: from mga17.intel.com ([192.55.52.151]:30720 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726222AbfFTKjI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Jun 2019 06:39:08 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Jun 2019 03:39:07 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.63,396,1557212400"; 
+   d="scan'208";a="311620367"
+Received: from lxy-dell.sh.intel.com ([10.239.159.145])
+  by orsmga004.jf.intel.com with ESMTP; 20 Jun 2019 03:39:04 -0700
+Message-ID: <346e8fedb722556470314eb685b8e0ab2cf2deb1.camel@linux.intel.com>
+Subject: Re: [PATCH v5 2/3] KVM: vmx: Emulate MSR IA32_UMWAIT_CONTROL
+From:   Xiaoyao Li <xiaoyao.li@linux.intel.com>
+To:     Tao Xu <tao3.xu@intel.com>, pbonzini@redhat.com,
+        rkrcmar@redhat.com, corbet@lwn.net, tglx@linutronix.de,
+        mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
+        sean.j.christopherson@intel.com
+Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        fenghua.yu@intel.com, jingqi.liu@intel.com
+Date:   Thu, 20 Jun 2019 18:34:06 +0800
+In-Reply-To: <20190620084620.17974-3-tao3.xu@intel.com>
+References: <20190620084620.17974-1-tao3.xu@intel.com>
+         <20190620084620.17974-3-tao3.xu@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5 (3.28.5-2.el7) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 20, 2019 at 11:22:09AM +0200, Michal Hocko wrote:
-> On Thu 20-06-19 17:40:40, Minchan Kim wrote:
-> > > > > Pushing out a shared page cache
-> > > > > is possible even now but this interface gives a much easier tool to
-> > > > > evict shared state and perform all sorts of timing attacks. Unless I am
-> > > > > missing something we should be doing something similar to mincore and
-> > > > > ignore shared pages without a writeable access or at least document why
-> > > > > we do not care.
-> > > > 
-> > > > I'm not sure IIUC side channel attach. As you mentioned, without this syscall,
-> > > > 1. they already can do that simply by memory hogging
-> > > 
-> > > This is way much more harder for practical attacks because the reclaim
-> > > logic is not fully under the attackers control. Having a direct tool to
-> > > reclaim memory directly then just opens doors to measure the other
-> > > consumers of that memory and all sorts of side channel.
-> > 
-> > Not sure it's much more harder. It's really easy on my experience.
-> > Just creating new memory hogger and consume memory step by step until
-> > you newly allocated pages will be reclaimed.
+On Thu, 2019-06-20 at 16:46 +0800, Tao Xu wrote:
+> UMWAIT and TPAUSE instructions use IA32_UMWAIT_CONTROL at MSR index E1H
+> to determines the maximum time in TSC-quanta that the processor can reside
+> in either C0.1 or C0.2.
 > 
-> You can contain an untrusted application into a memcg and it will only
-> reclaim its own working set.
+> This patch emulates MSR IA32_UMWAIT_CONTROL in guest and differentiate
+> IA32_UMWAIT_CONTROL between host and guest. The variable
+> mwait_control_cached in arch/x86/power/umwait.c caches the MSR value, so
+> this patch uses it to avoid frequently rdmsr of IA32_UMWAIT_CONTROL.
 > 
-> > > > 2. If we need fix MADV_PAGEOUT, that means we need to fix MADV_DONTNEED, too?
-> > > 
-> > > nope because MADV_DONTNEED doesn't unmap from other processes.
-> > 
-> > Hmm, I don't understand. MADV_PAGEOUT doesn't unmap from other
-> > processes, either.
+> Co-developed-by: Jingqi Liu <jingqi.liu@intel.com>
+> Signed-off-by: Jingqi Liu <jingqi.liu@intel.com>
+> Signed-off-by: Tao Xu <tao3.xu@intel.com>
+> ---
 > 
-> Either I am confused or missing something. shrink_page_list does
-> try_to_unmap and that unmaps from all processes, right?
+> Changes in v5:
+> 	remove vmx_waitpkg_supported() to fix guest can rdmsr or wrmsr
+> 	when the feature is off (Xiaoyao)
+> 	remove the atomic_switch_ia32_umwait_control() and move the
+> 	codes into vmx_set_msr()
+> 	rebase the patch because the kernel dependcy patch updated to
+> 	v5: https://lkml.org/lkml/2019/6/19/972
+> ---
+>  arch/x86/kernel/cpu/umwait.c |  3 ++-
+>  arch/x86/kvm/vmx/vmx.c       | 24 ++++++++++++++++++++++++
+>  arch/x86/kvm/vmx/vmx.h       |  3 +++
+>  arch/x86/kvm/x86.c           |  1 +
+>  4 files changed, 30 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/x86/kernel/cpu/umwait.c b/arch/x86/kernel/cpu/umwait.c
+> index 4b2aff7b2d4d..db5c193ef136 100644
+> --- a/arch/x86/kernel/cpu/umwait.c
+> +++ b/arch/x86/kernel/cpu/umwait.c
+> @@ -15,7 +15,8 @@
+>   * MSR value. By default, umwait max time is 100000 in TSC-quanta and C0.2
+>   * is enabled
+>   */
+> -static u32 umwait_control_cached = UMWAIT_CTRL_VAL(100000,
+> UMWAIT_C02_ENABLED);
+> +u32 umwait_control_cached = UMWAIT_CTRL_VAL(100000, UMWAIT_C02_ENABLED);
+> +EXPORT_SYMBOL_GPL(umwait_control_cached);
+>  
+>  /*
+>   * Serialize access to umwait_control_cached and IA32_UMWAIT_CONTROL MSR
+> diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+> index b35bfac30a34..0fb55c8426e2 100644
+> --- a/arch/x86/kvm/vmx/vmx.c
+> +++ b/arch/x86/kvm/vmx/vmx.c
+> @@ -1679,6 +1679,12 @@ static int vmx_get_msr(struct kvm_vcpu *vcpu, struct
+> msr_data *msr_info)
+>  #endif
+>  	case MSR_EFER:
+>  		return kvm_get_msr_common(vcpu, msr_info);
+> +	case MSR_IA32_UMWAIT_CONTROL:
+> +		if (!guest_cpuid_has(vcpu, X86_FEATURE_WAITPKG))
 
-You don't miss it. It seems now I undetstand what you pointed out.
-What you meant is attacker can see what page was faulting-in from other processes
-via measuring access delay from his address space and MADV_PAGEOUT makes it more
-easiler. Thus, it's an issue regardless of recent mincore fix. Right?
-Then, okay, I will add can_do_mincore similar check for the MADV_PAGEOUT syscall
-if others have different ideas.
+Need to check (!msr_info->host_initiated &&
+	       !guest_cpuid_has(vcpu, X86_FEATURE_WAITPKG))
 
-Thanks.
+otherwise, userspace, like qemu, cannot access this msr.
+Also, same for vmx_set_msr.
+
+> +			return 1;
+> +
+> +		msr_info->data = vmx->msr_ia32_umwait_control;
+> +		break;
+>  	case MSR_IA32_SPEC_CTRL:
+>  		if (!msr_info->host_initiated &&
+>  		    !guest_cpuid_has(vcpu, X86_FEATURE_SPEC_CTRL))
+> @@ -1841,6 +1847,22 @@ static int vmx_set_msr(struct kvm_vcpu *vcpu, struct
+> msr_data *msr_info)
+>  			return 1;
+>  		vmcs_write64(GUEST_BNDCFGS, data);
+>  		break;
+> +	case MSR_IA32_UMWAIT_CONTROL:
+> +		if (!guest_cpuid_has(vcpu, X86_FEATURE_WAITPKG))
+> +			return 1;
+> +
+> +		/* The reserved bit IA32_UMWAIT_CONTROL[1] should be zero */
+> +		if (data & BIT_ULL(1))
+> +			return 1;
+> +
+> +		vmx->msr_ia32_umwait_control = data;
+> +		if (vmx->msr_ia32_umwait_control != umwait_control_cached)
+> +			add_atomic_switch_msr(vmx, MSR_IA32_UMWAIT_CONTROL,
+> +				vmx->msr_ia32_umwait_control,
+> +				umwait_control_cached, false);
+> +		else
+> +			clear_atomic_switch_msr(vmx, MSR_IA32_UMWAIT_CONTROL);
+> +		break;
+>  	case MSR_IA32_SPEC_CTRL:
+>  		if (!msr_info->host_initiated &&
+>  		    !guest_cpuid_has(vcpu, X86_FEATURE_SPEC_CTRL))
+> @@ -4126,6 +4148,8 @@ static void vmx_vcpu_reset(struct kvm_vcpu *vcpu, bool
+> init_event)
+>  	vmx->rmode.vm86_active = 0;
+>  	vmx->spec_ctrl = 0;
+>  
+> +	vmx->msr_ia32_umwait_control = 0;
+> +
+>  	vcpu->arch.microcode_version = 0x100000000ULL;
+>  	vmx->vcpu.arch.regs[VCPU_REGS_RDX] = get_rdx_init_val();
+>  	kvm_set_cr8(vcpu, 0);
+> diff --git a/arch/x86/kvm/vmx/vmx.h b/arch/x86/kvm/vmx/vmx.h
+> index 61128b48c503..8485bec7c38a 100644
+> --- a/arch/x86/kvm/vmx/vmx.h
+> +++ b/arch/x86/kvm/vmx/vmx.h
+> @@ -14,6 +14,8 @@
+>  extern const u32 vmx_msr_index[];
+>  extern u64 host_efer;
+>  
+> +extern u32 umwait_control_cached;
+> +
+>  #define MSR_TYPE_R	1
+>  #define MSR_TYPE_W	2
+>  #define MSR_TYPE_RW	3
+> @@ -194,6 +196,7 @@ struct vcpu_vmx {
+>  #endif
+>  
+>  	u64		      spec_ctrl;
+> +	u64		      msr_ia32_umwait_control;
+>  
+>  	u32 vm_entry_controls_shadow;
+>  	u32 vm_exit_controls_shadow;
+> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+> index 83aefd759846..4480de459bf4 100644
+> --- a/arch/x86/kvm/x86.c
+> +++ b/arch/x86/kvm/x86.c
+> @@ -1138,6 +1138,7 @@ static u32 msrs_to_save[] = {
+>  	MSR_IA32_RTIT_ADDR1_A, MSR_IA32_RTIT_ADDR1_B,
+>  	MSR_IA32_RTIT_ADDR2_A, MSR_IA32_RTIT_ADDR2_B,
+>  	MSR_IA32_RTIT_ADDR3_A, MSR_IA32_RTIT_ADDR3_B,
+> +	MSR_IA32_UMWAIT_CONTROL,
+>  };
+>  
+>  static unsigned num_msrs_to_save;
+
