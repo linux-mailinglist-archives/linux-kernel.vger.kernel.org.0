@@ -2,41 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B4604D814
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 20:24:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9EB2A4D6DB
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 20:13:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728732AbfFTSXb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 14:23:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36712 "EHLO mail.kernel.org"
+        id S1729141AbfFTSM5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 14:12:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40782 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728012AbfFTSJR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 14:09:17 -0400
+        id S1729119AbfFTSMx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Jun 2019 14:12:53 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F135421530;
-        Thu, 20 Jun 2019 18:09:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CEBE62089C;
+        Thu, 20 Jun 2019 18:12:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561054156;
-        bh=Q6CrEpxPxmKmaeCV5mUXAGmZF14pXmptx7Sf0ATDSHc=;
+        s=default; t=1561054372;
+        bh=qMOvORCJqBzHPhQf/Pms5ZFD0XO5xI/oSfBqLX5JXnw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wxSlgqjMobgk8SttE1vJ1JrSwPhw+FmckT/24dc7pVZSq1fjOPXtzBiaZuMT/ubJq
-         +yD68tqaw8nL4oio7AGPCFnuOCn57kjDqT2IHrbULMC6K+i/wMEBq2G3Nw1Yf0SPzn
-         6kluJ63nDK4zn8Pc0wcryOYNcDfMuMRlvqmp600w=
+        b=UcZr5qEyQeA2jUASZKtFFplFqYlUsIA2nxOHB4hT7hcr1ColKU/xu8lQDKVbS7kZt
+         FJYYIscG9QZynqG9XcA6KLfFBmtvMq839XTQr38WuhRzwjAHwwAbNob0wORy6dltNo
+         8Ef1rMB7JyexaF8hQv8+T8WJ8xQyiwyOY6OgRZ2A=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jian Luo <luojian5@huawei.com>,
-        Jason Yan <yanaijie@huawei.com>,
-        John Garry <john.garry@huawei.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        stable@vger.kernel.org, Paul Mackerras <paulus@ozlabs.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 38/45] scsi: libsas: delete sas port if expander discover failed
-Date:   Thu, 20 Jun 2019 19:57:40 +0200
-Message-Id: <20190620174340.143534005@linuxfoundation.org>
+Subject: [PATCH 4.19 46/61] KVM: PPC: Book3S: Use new mutex to synchronize access to rtas token list
+Date:   Thu, 20 Jun 2019 19:57:41 +0200
+Message-Id: <20190620174345.283079829@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190620174328.608036501@linuxfoundation.org>
-References: <20190620174328.608036501@linuxfoundation.org>
+In-Reply-To: <20190620174336.357373754@linuxfoundation.org>
+References: <20190620174336.357373754@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,87 +43,122 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 3b0541791453fbe7f42867e310e0c9eb6295364d ]
+[ Upstream commit 1659e27d2bc1ef47b6d031abe01b467f18cb72d9 ]
 
-The sas_port(phy->port) allocated in sas_ex_discover_expander() will not be
-deleted when the expander failed to discover. This will cause resource leak
-and a further issue of kernel BUG like below:
+Currently the Book 3S KVM code uses kvm->lock to synchronize access
+to the kvm->arch.rtas_tokens list.  Because this list is scanned
+inside kvmppc_rtas_hcall(), which is called with the vcpu mutex held,
+taking kvm->lock cause a lock inversion problem, which could lead to
+a deadlock.
 
-[159785.843156]  port-2:17:29: trying to add phy phy-2:17:29 fails: it's
-already part of another port
-[159785.852144] ------------[ cut here  ]------------
-[159785.856833] kernel BUG at drivers/scsi/scsi_transport_sas.c:1086!
-[159785.863000] Internal error: Oops - BUG: 0 [#1] SMP
-[159785.867866] CPU: 39 PID: 16993 Comm: kworker/u96:2 Tainted: G
-W  OE     4.19.25-vhulk1901.1.0.h111.aarch64 #1
-[159785.878458] Hardware name: Huawei Technologies Co., Ltd.
-Hi1620EVBCS/Hi1620EVBCS, BIOS Hi1620 CS B070 1P TA 03/21/2019
-[159785.889231] Workqueue: 0000:74:02.0_disco_q sas_discover_domain
-[159785.895224] pstate: 40c00009 (nZcv daif +PAN +UAO)
-[159785.900094] pc : sas_port_add_phy+0x188/0x1b8
-[159785.904524] lr : sas_port_add_phy+0x188/0x1b8
-[159785.908952] sp : ffff0001120e3b80
-[159785.912341] x29: ffff0001120e3b80 x28: 0000000000000000
-[159785.917727] x27: ffff802ade8f5400 x26: ffff0000681b7560
-[159785.923111] x25: ffff802adf11a800 x24: ffff0000680e8000
-[159785.928496] x23: ffff802ade8f5728 x22: ffff802ade8f5708
-[159785.933880] x21: ffff802adea2db40 x20: ffff802ade8f5400
-[159785.939264] x19: ffff802adea2d800 x18: 0000000000000010
-[159785.944649] x17: 00000000821bf734 x16: ffff00006714faa0
-[159785.950033] x15: ffff0000e8ab4ecf x14: 7261702079646165
-[159785.955417] x13: 726c612073277469 x12: ffff00006887b830
-[159785.960802] x11: ffff00006773eaa0 x10: 7968702079687020
-[159785.966186] x9 : 0000000000002453 x8 : 726f702072656874
-[159785.971570] x7 : 6f6e6120666f2074 x6 : ffff802bcfb21290
-[159785.976955] x5 : ffff802bcfb21290 x4 : 0000000000000000
-[159785.982339] x3 : ffff802bcfb298c8 x2 : 337752b234c2ab00
-[159785.987723] x1 : 337752b234c2ab00 x0 : 0000000000000000
-[159785.993108] Process kworker/u96:2 (pid: 16993, stack limit =
-0x0000000072dae094)
-[159786.000576] Call trace:
-[159786.003097]  sas_port_add_phy+0x188/0x1b8
-[159786.007179]  sas_ex_get_linkrate.isra.5+0x134/0x140
-[159786.012130]  sas_ex_discover_expander+0x128/0x408
-[159786.016906]  sas_ex_discover_dev+0x218/0x4c8
-[159786.021249]  sas_ex_discover_devices+0x9c/0x1a8
-[159786.025852]  sas_discover_root_expander+0x134/0x160
-[159786.030802]  sas_discover_domain+0x1b8/0x1e8
-[159786.035148]  process_one_work+0x1b4/0x3f8
-[159786.039230]  worker_thread+0x54/0x470
-[159786.042967]  kthread+0x134/0x138
-[159786.046269]  ret_from_fork+0x10/0x18
-[159786.049918] Code: 91322300 f0004402 91178042 97fe4c9b (d4210000)
-[159786.056083] Modules linked in: hns3_enet_ut(OE) hclge(OE) hnae3(OE)
-hisi_sas_test_hw(OE) hisi_sas_test_main(OE) serdes(OE)
-[159786.067202] ---[ end trace 03622b9e2d99e196  ]---
-[159786.071893] Kernel panic - not syncing: Fatal exception
-[159786.077190] SMP: stopping secondary CPUs
-[159786.081192] Kernel Offset: disabled
-[159786.084753] CPU features: 0x2,a2a00a38
+To fix this, we add a new mutex, kvm->arch.rtas_token_lock, which nests
+inside the vcpu mutexes, and use that instead of kvm->lock when
+accessing the rtas token list.
 
-Fixes: 2908d778ab3e ("[SCSI] aic94xx: new driver")
-Reported-by: Jian Luo <luojian5@huawei.com>
-Signed-off-by: Jason Yan <yanaijie@huawei.com>
-CC: John Garry <john.garry@huawei.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+This removes the lockdep_assert_held() in kvmppc_rtas_tokens_free().
+At this point we don't hold the new mutex, but that is OK because
+kvmppc_rtas_tokens_free() is only called when the whole VM is being
+destroyed, and at that point nothing can be looking up a token in
+the list.
+
+Signed-off-by: Paul Mackerras <paulus@ozlabs.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/libsas/sas_expander.c | 2 ++
- 1 file changed, 2 insertions(+)
+ arch/powerpc/include/asm/kvm_host.h |  1 +
+ arch/powerpc/kvm/book3s.c           |  1 +
+ arch/powerpc/kvm/book3s_rtas.c      | 14 ++++++--------
+ 3 files changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/scsi/libsas/sas_expander.c b/drivers/scsi/libsas/sas_expander.c
-index ffea620a147d..259ee0d3c3e6 100644
---- a/drivers/scsi/libsas/sas_expander.c
-+++ b/drivers/scsi/libsas/sas_expander.c
-@@ -989,6 +989,8 @@ static struct domain_device *sas_ex_discover_expander(
- 		list_del(&child->dev_list_node);
- 		spin_unlock_irq(&parent->port->dev_list_lock);
- 		sas_put_device(child);
-+		sas_port_delete(phy->port);
-+		phy->port = NULL;
- 		return NULL;
+diff --git a/arch/powerpc/include/asm/kvm_host.h b/arch/powerpc/include/asm/kvm_host.h
+index bccc5051249e..2b6049e83970 100644
+--- a/arch/powerpc/include/asm/kvm_host.h
++++ b/arch/powerpc/include/asm/kvm_host.h
+@@ -299,6 +299,7 @@ struct kvm_arch {
+ #ifdef CONFIG_PPC_BOOK3S_64
+ 	struct list_head spapr_tce_tables;
+ 	struct list_head rtas_tokens;
++	struct mutex rtas_token_lock;
+ 	DECLARE_BITMAP(enabled_hcalls, MAX_HCALL_OPCODE/4 + 1);
+ #endif
+ #ifdef CONFIG_KVM_MPIC
+diff --git a/arch/powerpc/kvm/book3s.c b/arch/powerpc/kvm/book3s.c
+index 87348e498c89..281f074581a3 100644
+--- a/arch/powerpc/kvm/book3s.c
++++ b/arch/powerpc/kvm/book3s.c
+@@ -840,6 +840,7 @@ int kvmppc_core_init_vm(struct kvm *kvm)
+ #ifdef CONFIG_PPC64
+ 	INIT_LIST_HEAD_RCU(&kvm->arch.spapr_tce_tables);
+ 	INIT_LIST_HEAD(&kvm->arch.rtas_tokens);
++	mutex_init(&kvm->arch.rtas_token_lock);
+ #endif
+ 
+ 	return kvm->arch.kvm_ops->init_vm(kvm);
+diff --git a/arch/powerpc/kvm/book3s_rtas.c b/arch/powerpc/kvm/book3s_rtas.c
+index 2d3b2b1cc272..8f2355138f80 100644
+--- a/arch/powerpc/kvm/book3s_rtas.c
++++ b/arch/powerpc/kvm/book3s_rtas.c
+@@ -146,7 +146,7 @@ static int rtas_token_undefine(struct kvm *kvm, char *name)
+ {
+ 	struct rtas_token_definition *d, *tmp;
+ 
+-	lockdep_assert_held(&kvm->lock);
++	lockdep_assert_held(&kvm->arch.rtas_token_lock);
+ 
+ 	list_for_each_entry_safe(d, tmp, &kvm->arch.rtas_tokens, list) {
+ 		if (rtas_name_matches(d->handler->name, name)) {
+@@ -167,7 +167,7 @@ static int rtas_token_define(struct kvm *kvm, char *name, u64 token)
+ 	bool found;
+ 	int i;
+ 
+-	lockdep_assert_held(&kvm->lock);
++	lockdep_assert_held(&kvm->arch.rtas_token_lock);
+ 
+ 	list_for_each_entry(d, &kvm->arch.rtas_tokens, list) {
+ 		if (d->token == token)
+@@ -206,14 +206,14 @@ int kvm_vm_ioctl_rtas_define_token(struct kvm *kvm, void __user *argp)
+ 	if (copy_from_user(&args, argp, sizeof(args)))
+ 		return -EFAULT;
+ 
+-	mutex_lock(&kvm->lock);
++	mutex_lock(&kvm->arch.rtas_token_lock);
+ 
+ 	if (args.token)
+ 		rc = rtas_token_define(kvm, args.name, args.token);
+ 	else
+ 		rc = rtas_token_undefine(kvm, args.name);
+ 
+-	mutex_unlock(&kvm->lock);
++	mutex_unlock(&kvm->arch.rtas_token_lock);
+ 
+ 	return rc;
+ }
+@@ -245,7 +245,7 @@ int kvmppc_rtas_hcall(struct kvm_vcpu *vcpu)
+ 	orig_rets = args.rets;
+ 	args.rets = &args.args[be32_to_cpu(args.nargs)];
+ 
+-	mutex_lock(&vcpu->kvm->lock);
++	mutex_lock(&vcpu->kvm->arch.rtas_token_lock);
+ 
+ 	rc = -ENOENT;
+ 	list_for_each_entry(d, &vcpu->kvm->arch.rtas_tokens, list) {
+@@ -256,7 +256,7 @@ int kvmppc_rtas_hcall(struct kvm_vcpu *vcpu)
+ 		}
  	}
- 	list_add_tail(&child->siblings, &parent->ex_dev.children);
+ 
+-	mutex_unlock(&vcpu->kvm->lock);
++	mutex_unlock(&vcpu->kvm->arch.rtas_token_lock);
+ 
+ 	if (rc == 0) {
+ 		args.rets = orig_rets;
+@@ -282,8 +282,6 @@ void kvmppc_rtas_tokens_free(struct kvm *kvm)
+ {
+ 	struct rtas_token_definition *d, *tmp;
+ 
+-	lockdep_assert_held(&kvm->lock);
+-
+ 	list_for_each_entry_safe(d, tmp, &kvm->arch.rtas_tokens, list) {
+ 		list_del(&d->list);
+ 		kfree(d);
 -- 
 2.20.1
 
