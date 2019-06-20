@@ -2,147 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A32064D748
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 20:18:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AAEBE4D57E
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 19:58:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729924AbfFTSRW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 14:17:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46638 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729474AbfFTSRV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 14:17:21 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4F306205F4;
-        Thu, 20 Jun 2019 18:17:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561054639;
-        bh=CwuNLpEDyUvrUMko3mgZ9Lba9moKYdrcfGPPQ9IkNkE=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KMNYbXIvQh+hwlXpwZ+BSiJaDJ0H4et4chUVMF0nO7ZRgoFWBrhmupTbrmqRW+K7L
-         g4ftlZaD0iLszBDI38Ai4p3RjXzVN8kaCYtBwHVchrtLE50Ndjlu67gFCV+aOOshmN
-         daPoDO6//kKz/Wb1wLBuPsq7zqQ5AYJuYo0I+pjA=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andrea Arcangeli <aarcange@redhat.com>,
-        Michal Hocko <mhocko@suse.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Oleg Nesterov <oleg@redhat.com>, Jann Horn <jannh@google.com>,
-        Hugh Dickins <hughd@google.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Peter Xu <peterx@redhat.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 5.1 98/98] coredump: fix race condition between collapse_huge_page() and core dumping
-Date:   Thu, 20 Jun 2019 19:58:05 +0200
-Message-Id: <20190620174354.374371652@linuxfoundation.org>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190620174349.443386789@linuxfoundation.org>
-References: <20190620174349.443386789@linuxfoundation.org>
-User-Agent: quilt/0.66
+        id S1726786AbfFTR6L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 13:58:11 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:42391 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726523AbfFTR6K (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Jun 2019 13:58:10 -0400
+Received: by mail-pf1-f195.google.com with SMTP id q10so2082107pff.9
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2019 10:58:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=S2gqNASMdYK2WX/SCojHs3iwdhiVO/ELWHI9nIiuc08=;
+        b=AmbiewkcaBZfbv3X6k0K9MkP95lI+TEtZi+vGAdEh+o40lZrmh5S6BZVYsUH2ICrSF
+         tpGdVMyZeNnqbpPHBk9WWVFcJMCTUsCjZ2KI4VFEydIFPBh8yvw0ay8avXt28l/r3kNI
+         4EFjqRRfNz4dNjG3sFQGvIQS4qDDYucB0v3jo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=S2gqNASMdYK2WX/SCojHs3iwdhiVO/ELWHI9nIiuc08=;
+        b=L+mEH/3OaZ+21IiTXzYldQJPFnwfz279J3pYk4UyPkGFs7ARc1Cwz7iPy4ZV1Gwvi/
+         UCyhaU9zzFmjv0qGVfoc6+VgRe/n/0Oha1skfUn7uOLNGD1vpmnz5YJiAPsGcm/LBkeY
+         xtnIcL7PmNtTxmsiZmyLjApPrCnDpeYzRZGh5WCGmvjPnbjqZ3Ic2ZQ/hVgcl3P6JhjZ
+         j7upNY49LManolpPq/l3Kaom8TlZpkyLY42mjiPrSXis2PKPXmL6bXSLDIt7RgTrTuz2
+         jpiNgg41c6Ch/vjTbx7t//0E0aNco8jcScCklOpEB0I9EgP1I/fWlqdgUtGWEnmuxN1j
+         7usA==
+X-Gm-Message-State: APjAAAXAT3i7RukmFAVV7o6kpSB9QZf1QkiuRKpTYDNUfCi1QOu++RN9
+        ahI0L2UO9LsY3hy5c7KB6wRKVL8YgVM=
+X-Google-Smtp-Source: APXvYqz+/nctrhTKu2rrQH0p8RYodLUvmv9QWgIYE5zMalFX2xFyZLCGds0IQDjcEJPnz2dR7N7FHA==
+X-Received: by 2002:a63:5247:: with SMTP id s7mr13372297pgl.29.1561053490021;
+        Thu, 20 Jun 2019 10:58:10 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id t8sm144231pfq.31.2019.06.20.10.58.08
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 20 Jun 2019 10:58:09 -0700 (PDT)
+Date:   Thu, 20 Jun 2019 10:58:08 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Ross Zwisler <zwisler@kernel.org>, Ingo Molnar <mingo@kernel.org>
+Cc:     Johannes Hirte <johannes.hirte@datenkhaos.de>,
+        Klaus Kusche <klaus.kusche@computerix.info>, bp@suse.de,
+        x86@kernel.org, samitolvanen@google.com,
+        LKML <linux-kernel@vger.kernel.org>,
+        Guenter Roeck <groeck@google.com>,
+        Ross Zwisler <zwisler@google.com>
+Subject: Re: [PATCH] x86/build: Move _etext to actual end of .text
+Message-ID: <201906201042.3BF5CD6@keescook>
+References: <502d5b36-e0d0-ffcc-5dd4-35db9d033561@computerix.info>
+ <20190609184013.GA11237@probook>
+ <CAOxpaSXKXRcZi0KnQz_6SxajZ6Nv61Bjm5xmG0Ydw3Madv0-tQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAOxpaSXKXRcZi0KnQz_6SxajZ6Nv61Bjm5xmG0Ydw3Madv0-tQ@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andrea Arcangeli <aarcange@redhat.com>
+On Wed, Jun 19, 2019 at 12:37:11PM -0600, Ross Zwisler wrote:
+> On Sun, Jun 9, 2019 at 1:00 PM Johannes Hirte
+> <johannes.hirte@datenkhaos.de> wrote:
+> > On 2019 Jun 09, Klaus Kusche wrote:
+> > > Hello,
+> > >
+> > > Same problem for linux 5.1.7:
+> > > Kernel building fails with the same relocation error.
+> > >
+> > > 5.1.5 does not have the problem, builds fine for me.
+> > >
+> > > Is there anything I can do to investigate the problem?
+> > >
+> >
+> > Please try linux 5.1.8. The problematic patch was reverted there.
+> 
+> I'm having this same issue with v5.2-rc5 using an older version of gcc
+> (4.9.2).  If I use a more recent version of gcc (7.3.0) it works fine.
+> 
+> Reverting this patch allows gcc v4.9.2 to build kernel v5.2-rc5 successfully.
+> 
+> You said in this chain that you were reverting this patch in stable
+> kernels.  Are you going to revert it in tip-of-tree as well?
 
-commit 59ea6d06cfa9247b586a695c21f94afa7183af74 upstream.
+My original rationale was that we shouldn't break old toolchains on
+old kernels (i.e. if a stable kernel built before it should continue to
+bulid). For the latest kernel it was fixing a future problem and
+regularizing the linker script (other architectures already do it in
+this style), however, it seems to not only be an old gcc issue, but also
+a Gold linker issue. Building with LD=ld.gold blows up on a modern gcc
+too:
 
-When fixing the race conditions between the coredump and the mmap_sem
-holders outside the context of the process, we focused on
-mmget_not_zero()/get_task_mm() callers in 04f5866e41fb70 ("coredump: fix
-race condition between mmget_not_zero()/get_task_mm() and core
-dumping"), but those aren't the only cases where the mmap_sem can be
-taken outside of the context of the process as Michal Hocko noticed
-while backporting that commit to older -stable kernels.
+$ gcc --version
+gcc (Ubuntu 7.4.0-1ubuntu1~18.04.1) 7.4.0
+...
+$ ld.gold --version
+GNU gold (GNU Binutils for Ubuntu 2.30) 1.15
+...
+$ make LD=ld.gold ...
+...
+Invalid absolute R_X86_64_32S relocation: _etext
 
-If mmgrab() is called in the context of the process, but then the
-mm_count reference is transferred outside the context of the process,
-that can also be a problem if the mmap_sem has to be taken for writing
-through that mm_count reference.
+Ingo, seems like this should be reverted. What do you think?
 
-khugepaged registration calls mmgrab() in the context of the process,
-but the mmap_sem for writing is taken later in the context of the
-khugepaged kernel thread.
-
-collapse_huge_page() after taking the mmap_sem for writing doesn't
-modify any vma, so it's not obvious that it could cause a problem to the
-coredump, but it happens to modify the pmd in a way that breaks an
-invariant that pmd_trans_huge_lock() relies upon.  collapse_huge_page()
-needs the mmap_sem for writing just to block concurrent page faults that
-call pmd_trans_huge_lock().
-
-Specifically the invariant that "!pmd_trans_huge()" cannot become a
-"pmd_trans_huge()" doesn't hold while collapse_huge_page() runs.
-
-The coredump will call __get_user_pages() without mmap_sem for reading,
-which eventually can invoke a lockless page fault which will need a
-functional pmd_trans_huge_lock().
-
-So collapse_huge_page() needs to use mmget_still_valid() to check it's
-not running concurrently with the coredump...  as long as the coredump
-can invoke page faults without holding the mmap_sem for reading.
-
-This has "Fixes: khugepaged" to facilitate backporting, but in my view
-it's more a bug in the coredump code that will eventually have to be
-rewritten to stop invoking page faults without the mmap_sem for reading.
-So the long term plan is still to drop all mmget_still_valid().
-
-Link: http://lkml.kernel.org/r/20190607161558.32104-1-aarcange@redhat.com
-Fixes: ba76149f47d8 ("thp: khugepaged")
-Signed-off-by: Andrea Arcangeli <aarcange@redhat.com>
-Reported-by: Michal Hocko <mhocko@suse.com>
-Acked-by: Michal Hocko <mhocko@suse.com>
-Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Cc: Oleg Nesterov <oleg@redhat.com>
-Cc: Jann Horn <jannh@google.com>
-Cc: Hugh Dickins <hughd@google.com>
-Cc: Mike Rapoport <rppt@linux.vnet.ibm.com>
-Cc: Mike Kravetz <mike.kravetz@oracle.com>
-Cc: Peter Xu <peterx@redhat.com>
-Cc: Jason Gunthorpe <jgg@mellanox.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- include/linux/sched/mm.h |    4 ++++
- mm/khugepaged.c          |    3 +++
- 2 files changed, 7 insertions(+)
-
---- a/include/linux/sched/mm.h
-+++ b/include/linux/sched/mm.h
-@@ -54,6 +54,10 @@ static inline void mmdrop(struct mm_stru
-  * followed by taking the mmap_sem for writing before modifying the
-  * vmas or anything the coredump pretends not to change from under it.
-  *
-+ * It also has to be called when mmgrab() is used in the context of
-+ * the process, but then the mm_count refcount is transferred outside
-+ * the context of the process to run down_write() on that pinned mm.
-+ *
-  * NOTE: find_extend_vma() called from GUP context is the only place
-  * that can modify the "mm" (notably the vm_start/end) under mmap_sem
-  * for reading and outside the context of the process, so it is also
---- a/mm/khugepaged.c
-+++ b/mm/khugepaged.c
-@@ -1004,6 +1004,9 @@ static void collapse_huge_page(struct mm
- 	 * handled by the anon_vma lock + PG_lock.
- 	 */
- 	down_write(&mm->mmap_sem);
-+	result = SCAN_ANY_PROCESS;
-+	if (!mmget_still_valid(mm))
-+		goto out;
- 	result = hugepage_vma_revalidate(mm, address, &vma);
- 	if (result)
- 		goto out;
-
-
+-- 
+Kees Cook
