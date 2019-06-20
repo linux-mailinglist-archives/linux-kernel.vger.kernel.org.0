@@ -2,75 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F1AB04D1FE
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 17:21:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B6C554D201
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 17:21:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732062AbfFTPVU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 11:21:20 -0400
-Received: from mail-yb1-f173.google.com ([209.85.219.173]:36776 "EHLO
-        mail-yb1-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726661AbfFTPVU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 11:21:20 -0400
-Received: by mail-yb1-f173.google.com with SMTP id w6so1387849ybo.3
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2019 08:21:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=WWcTTKF/82/ExwUFM1sAVWc5mPz5k5o+tscsjovzbdY=;
-        b=sIyWfeXi6KwmuxnVzP1J8xyTlUH5LBx2rOkbUmIHEEbH4qtiKxfEot6fOUNodIzm22
-         BOJW1KLRlcqTIDUm8mvA/hgZCQETxs35ZW/FmAUe6Zz32N7cSqPifP+EbGHCidGq3khp
-         Eof5Mn2YrAR2RN89YJGr1V3fs4rAfIqkKhf4LvfOAOrYz+abZYmErCDqSUVwQkTUMKRq
-         Vx4ZzS+Hgyd1dAsgOYqaHRnJYgP/FhxvvhspEM7MWOkB6uUALFE/ST9Kwm4Agq9rbdul
-         Lbs78S9dLslqZ+yiWdtzwaU9D+5G10ulweUt/JDewc/ksWRSjfGvLCDAoDnMHSTGA8bi
-         YjrQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=WWcTTKF/82/ExwUFM1sAVWc5mPz5k5o+tscsjovzbdY=;
-        b=ZlqwQCA7dA+Yk1DOS+FwV/FuUOQP+d21/cTfXRxr+j/gIilIjcuyDbImTvdgEoufpk
-         huXiHdGKOYwHn6ZWxUdHxaLRrn+CFm5AB5k2ww2HrKDK1ZJFio3Ye/oCVMVI3G9GGsag
-         dP//rhRn3DYcV/9u9CAAOMN5KnsI+nDW1XFMRAycalVJx3Uc7LUM1G0os0ocg98dF7VG
-         sA9tQSHEcjzNo5VOcEQmUaKZFD0vrngm1AxhClwycvmKXmwnudHHzxiFPP4yYj2Uzy1E
-         +CVaDeT2KuK3pWtF+4yI9EICMWuw9Tf+KFyAaA0L4cn3CL+5Tl2cm+wrXVu22dJ6sGao
-         oafg==
-X-Gm-Message-State: APjAAAX2N2v/ittBaJ2KFGq1G5dJ/tERDPGUlAZ9L2jWksVm0/VSW27u
-        XksYtlM2XW56IPDdUIsYmbNhyPqqQ3eYbLOLV3Btlg==
-X-Google-Smtp-Source: APXvYqw+46mmXl47rsAlKbBelFwFwq7OOcf4h9cRWpPp+rUk2J7SVChb5VwvnPH8XQ2VsyehJ0FK86XudESDLPdUqXs=
-X-Received: by 2002:a25:bf83:: with SMTP id l3mr67617590ybk.446.1561044078765;
- Thu, 20 Jun 2019 08:21:18 -0700 (PDT)
+        id S1732145AbfFTPVt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 11:21:49 -0400
+Received: from shell.v3.sk ([90.176.6.54]:51739 "EHLO shell.v3.sk"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726661AbfFTPVr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Jun 2019 11:21:47 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by zimbra.v3.sk (Postfix) with ESMTP id 5137DCC536;
+        Thu, 20 Jun 2019 17:21:44 +0200 (CEST)
+Received: from shell.v3.sk ([127.0.0.1])
+        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id mOScGofMifvh; Thu, 20 Jun 2019 17:21:39 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by zimbra.v3.sk (Postfix) with ESMTP id 53F66CC53C;
+        Thu, 20 Jun 2019 17:21:39 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at zimbra.v3.sk
+Received: from shell.v3.sk ([127.0.0.1])
+        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id 2Yg7H9k7TFsZ; Thu, 20 Jun 2019 17:21:38 +0200 (CEST)
+Received: from belphegor.brq.redhat.com (nat-pool-brq-t.redhat.com [213.175.37.10])
+        by zimbra.v3.sk (Postfix) with ESMTPSA id 3B852CC536;
+        Thu, 20 Jun 2019 17:21:38 +0200 (CEST)
+From:   Lubomir Rintel <lkundrak@v3.sk>
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>
+Cc:     linux-kernel@vger.kernel.org, Lubomir Rintel <lkundrak@v3.sk>,
+        Pavel Machek <pavel@ucw.cz>
+Subject: [PATCH] irqchip/mmp: do not use of_address_to_resource() to get mux regs
+Date:   Thu, 20 Jun 2019 17:21:22 +0200
+Message-Id: <20190620152122.1407853-1-lkundrak@v3.sk>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-References: <1561042360-20480-1-git-send-email-cai@lca.pw>
-In-Reply-To: <1561042360-20480-1-git-send-email-cai@lca.pw>
-From:   Eric Dumazet <edumazet@google.com>
-Date:   Thu, 20 Jun 2019 11:21:07 -0400
-Message-ID: <CANn89iLBy+u3KTjjfvyc8-r4eUdL2b6VX=fNgqFg8f7t84EUNw@mail.gmail.com>
-Subject: Re: [PATCH -next] inet: fix compilation warnings in fqdir_pre_exit()
-To:     Qian Cai <cai@lca.pw>
-Cc:     David Miller <davem@davemloft.net>,
-        netdev <netdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 20, 2019 at 10:52 AM Qian Cai <cai@lca.pw> wrote:
->
-> The linux-next commit "inet: fix various use-after-free in defrags
-> units" [1] introduced compilation warnings,
->
-> ./include/net/inet_frag.h:117:1: warning: 'inline' is not at beginning
-> of declaration [-Wold-style-declaration]
->  static void inline fqdir_pre_exit(struct fqdir *fqdir)
->  ^~~~~~
+The "regs" property of the "mrvl,mmp2-mux-intc" devices are silly. They
+are offsets from intc's base, not addresses on the parent bus. At this
+point it probably can't be fixed.
 
-Interesting warning, this is kind of new compiler major feature I guess :/
+On an OLPC XO-1.75 machine, the muxes are children of the intc, not the
+axi bus, and thus of_address_to_resource() won't work. We should treat
+the values as mere integers as opposed to bus addresses.
 
-BTW :
+Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
+Acked-by: Pavel Machek <pavel@ucw.cz>
 
-$ git grep -n "static void inline"  | wc -l
-9
+---
+Changes since v4 of "MMP platform fixes" set
+- Add a comment, as suggested by Pavel
+---
+ drivers/irqchip/irq-mmp.c | 20 +++++++++++---------
+ 1 file changed, 11 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/irqchip/irq-mmp.c b/drivers/irqchip/irq-mmp.c
+index 8eed478f3b7e..e3d3baa0470f 100644
+--- a/drivers/irqchip/irq-mmp.c
++++ b/drivers/irqchip/irq-mmp.c
+@@ -427,9 +427,9 @@ IRQCHIP_DECLARE(mmp2_intc, "mrvl,mmp2-intc", mmp2_of_=
+init);
+ static int __init mmp2_mux_of_init(struct device_node *node,
+ 				   struct device_node *parent)
+ {
+-	struct resource res;
+ 	int i, ret, irq, j =3D 0;
+ 	u32 nr_irqs, mfp_irq;
++	u32 reg[4];
+=20
+ 	if (!parent)
+ 		return -ENODEV;
+@@ -441,18 +441,20 @@ static int __init mmp2_mux_of_init(struct device_no=
+de *node,
+ 		pr_err("Not found mrvl,intc-nr-irqs property\n");
+ 		return -EINVAL;
+ 	}
+-	ret =3D of_address_to_resource(node, 0, &res);
++
++	/*
++	 * For historical reasonsm, the "regs" property of the
++	 * mrvl,mmp2-mux-intc is not a regular * "regs" property containing
++	 * addresses on the parent bus, but offsets from the intc's base.
++	 * That is why we can't use of_address_to_resource() here.
++	 */
++	ret =3D of_property_read_u32_array(node, "reg", reg, ARRAY_SIZE(reg));
+ 	if (ret < 0) {
+ 		pr_err("Not found reg property\n");
+ 		return -EINVAL;
+ 	}
+-	icu_data[i].reg_status =3D mmp_icu_base + res.start;
+-	ret =3D of_address_to_resource(node, 1, &res);
+-	if (ret < 0) {
+-		pr_err("Not found reg property\n");
+-		return -EINVAL;
+-	}
+-	icu_data[i].reg_mask =3D mmp_icu_base + res.start;
++	icu_data[i].reg_status =3D mmp_icu_base + reg[0];
++	icu_data[i].reg_mask =3D mmp_icu_base + reg[2];
+ 	icu_data[i].cascade_irq =3D irq_of_parse_and_map(node, 0);
+ 	if (!icu_data[i].cascade_irq)
+ 		return -EINVAL;
+--=20
+2.21.0
+
