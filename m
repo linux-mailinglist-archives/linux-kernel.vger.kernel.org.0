@@ -2,50 +2,50 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F6AF4DC6B
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 23:25:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 708404DC6D
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 23:25:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726174AbfFTVZD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 17:25:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41212 "EHLO mail.kernel.org"
+        id S1726334AbfFTVZK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 17:25:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41294 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725815AbfFTVZD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 17:25:03 -0400
-Subject: Re: [GIT PULL] fuse fixes for 5.2-rc6
+        id S1726225AbfFTVZG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Jun 2019 17:25:06 -0400
+Subject: Re: [GIT PULL] KVM changes for 5.2-rc6
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561065902;
-        bh=3qNiJv1XkfvgKQu2c+bLkWSvpfxMew2fMtYIzT2Pht8=;
+        s=default; t=1561065905;
+        bh=9EoO62JLk1jVQvtIT4L9YOC63Emf0v9KKVGZozkBpeU=;
         h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=XEuHamX+RNtLTRCCqC4+PKe2vGITIhAkO669U5otf5HiX22Of2di3q33qgu7c1aB4
-         1yKHV+qodNXTOD3AIrL9kT5QvvcaIkFUN5fWA274ToyMUUJurZiWzn2ATRjraceqgf
-         q0BsQE+ioFSxAvOdmh8a+lJa9X8RRc1Y4bzo5fwY=
+        b=bMvUIZoMRPY9RQHn0a0FnE5RQ3lTM5nwODadh6klXBkQmGJvOYFeuok9dFBOo8AS/
+         h3rQV11UyY7NP5r/881qX5VkrdVLi5xLruWHtbkA2crixxldsp+xPS6zaV5X0NLuKl
+         hzLyBJB5s1r0SIBXXvzmLEPVyB4Dzb8c3509DjDI=
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20190620200737.GA10138@miu.piliscsaba.redhat.com>
-References: <20190620200737.GA10138@miu.piliscsaba.redhat.com>
-X-PR-Tracked-List-Id: <linux-fsdevel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20190620200737.GA10138@miu.piliscsaba.redhat.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/fuse.git
- tags/fuse-fixes-5.2-rc6
-X-PR-Tracked-Commit-Id: 766741fcaa1fe5da2cb1e33ae458a5630ff7f667
+In-Reply-To: <1561048719-38059-1-git-send-email-pbonzini@redhat.com>
+References: <1561048719-38059-1-git-send-email-pbonzini@redhat.com>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <1561048719-38059-1-git-send-email-pbonzini@redhat.com>
+X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/virt/kvm/kvm.git
+ tags/for-linus
+X-PR-Tracked-Commit-Id: b21e31b253048b7f9768ca7cc270e67765fd6ba2
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: b910f6a7ccab60b4d930b438a97a265bb2b33135
-Message-Id: <156106590234.13749.17603790465815960149.pr-tracker-bot@kernel.org>
-Date:   Thu, 20 Jun 2019 21:25:02 +0000
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+X-PR-Merge-Commit-Id: b3e978337b25b042aa653652a029e3d798814c12
+Message-Id: <156106590588.13749.10359742865855568161.pr-tracker-bot@kernel.org>
+Date:   Thu, 20 Jun 2019 21:25:05 +0000
+To:     Paolo Bonzini <pbonzini@redhat.com>
+Cc:     torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
+        rkrcmar@redhat.com, kvm@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Thu, 20 Jun 2019 22:07:37 +0200:
+The pull request you sent on Thu, 20 Jun 2019 18:38:39 +0200:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/fuse.git tags/fuse-fixes-5.2-rc6
+> https://git.kernel.org/pub/scm/virt/kvm/kvm.git tags/for-linus
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/b910f6a7ccab60b4d930b438a97a265bb2b33135
+https://git.kernel.org/torvalds/c/b3e978337b25b042aa653652a029e3d798814c12
 
 Thank you!
 
