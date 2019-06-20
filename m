@@ -2,262 +2,241 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EB6B44D013
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 16:11:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BEB3F4D018
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 16:12:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732147AbfFTOLF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 10:11:05 -0400
-Received: from mail-lf1-f44.google.com ([209.85.167.44]:43774 "EHLO
-        mail-lf1-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732087AbfFTOK7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 10:10:59 -0400
-Received: by mail-lf1-f44.google.com with SMTP id j29so2532177lfk.10
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2019 07:10:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=3IBX0vCKuuub4QoFCKXI+uf4RfZ3iyxgXq2Nc0Ia41E=;
-        b=OCjzf4bRSHaMPoizPU0siee37M9IT4T2G/6OQGUAlJrKi/W2dhRAtM5pCZJdNJDWU7
-         xGSN1QZBuZkw2nQCi7dBi63YZZUF2B/ywShVqz4AvKxTBWKTzNG2vs8YeKqZaMLmBYI/
-         hzIBfxB8YH17M9ajHXTWHps67xk+UYDTynSGzuCGjqPNPHfN9jZ+ddzE1/kP0gelHDB7
-         5N/JBZqlzuhM2jK0Ni9/6csrxwlhgmiASPw5BEpc1uvcU1YIHWALqhUSadSvj9zCC8OI
-         6K3KAL+L9o10N/87jmGm/5kWI+CTTzSbIPgwrgIFwxZJ96q1ZJUpbxfjxLiq/+iQh08Q
-         h+oQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=3IBX0vCKuuub4QoFCKXI+uf4RfZ3iyxgXq2Nc0Ia41E=;
-        b=fnZT7+/tuq7+P/QvSLiyHg3RUNyNZRNxPFz5X5+AMo+5ARfuc3Uc6u71v7Ipxo7PkV
-         xphmi2WAK6N7abKKtwRRxuzzQHXsEZnh5KlZ27AvHWpeI/Q+s46YqvVgWGrtqeAZ4+gU
-         JDBDqvhusIPR4KcrmYnAnlAzyRUS/qpFRvV968fqBYL2luHQQItM0D8SRTyhIoMh7y7H
-         X7/0mukEP/7eFClAlALNq3WKNWQqKGHy5+IFw/mo6jZ7laPJNKyxyY3IMSD1jZlL7BOj
-         aAEYJzGscFEYHtoiKN21GgZTOUkYLlvBubyV6kC4Z77qttj9tYa0G5AKx68slhxgubUW
-         x9ZQ==
-X-Gm-Message-State: APjAAAWj8TSFIoNqsdC9grjSBaY30cmMo5E+r7ZnhIE1yEx3qAMeLEY4
-        lD1ZvDVsbYZSzQhaVgZpY1cbhbsF
-X-Google-Smtp-Source: APXvYqzMuj4/mi/QTB7dgBDr4IUuD2Q5y9E+Av7Y99Aq8KwZaX+BMUoe5funeOBWp4EZ9d/q9245uA==
-X-Received: by 2002:ac2:518d:: with SMTP id u13mr844946lfi.40.1561039856555;
-        Thu, 20 Jun 2019 07:10:56 -0700 (PDT)
-Received: from localhost.localdomain (v902-804.aalto.fi. [130.233.11.55])
-        by smtp.gmail.com with ESMTPSA id 27sm3524684ljw.97.2019.06.20.07.10.55
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 20 Jun 2019 07:10:55 -0700 (PDT)
-From:   Ferdinand Blomqvist <ferdinand.blomqvist@gmail.com>
+        id S1732093AbfFTOM1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 10:12:27 -0400
+Received: from frisell.zx2c4.com ([192.95.5.64]:46513 "EHLO frisell.zx2c4.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726802AbfFTOM1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Jun 2019 10:12:27 -0400
+Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTP id 67cf0242;
+        Thu, 20 Jun 2019 13:39:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=zx2c4.com; h=from:to:cc
+        :subject:date:message-id:in-reply-to:references:mime-version
+        :content-transfer-encoding; s=mail; bh=AQ6Tdsbdfrjdj08fQbWcxJCHd
+        WM=; b=ekC0cJXDi8IgYRbkyJDDDOnkdmxA5JwHCSHDBrlwxPu8vBZJZZNljPopb
+        fYXeGmnEF4IZt4ujrPEGkLSElCKGeIRRBQDA9OUz26nbSYCQl032/y60vWDvJcv/
+        BBbrGhQIfKkVXzdufY8EuBrieHgZE8jFFCdyTmHBDPv2HaqgPVnRiyAYOISI6aAz
+        DGvTP0Ys51zkO8S/Yrr1KN2O0ZR2RZQ44Sz2VnOoAP1e84oL0iPiZxg2X3ED6L+w
+        yKH2LXyv8PJNTtZFWD2m+N0qkPDQVMQA/gKks0BkPEWIU5kvwemJ/Tbz/Q21GzXj
+        XvFJ7ajSc3lcbz0y9NM4MPIpnszEQ==
+Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 2c15e23e (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256:NO);
+        Thu, 20 Jun 2019 13:39:09 +0000 (UTC)
+From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
 To:     linux-kernel@vger.kernel.org
-Cc:     Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH v2 7/7] rslib: Fix remaining decoder flaws
-Date:   Thu, 20 Jun 2019 17:10:39 +0300
-Message-Id: <20190620141039.9874-8-ferdinand.blomqvist@gmail.com>
-X-Mailer: git-send-email 2.17.2
-In-Reply-To: <20190620141039.9874-1-ferdinand.blomqvist@gmail.com>
-References: <20190620141039.9874-1-ferdinand.blomqvist@gmail.com>
+Cc:     "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: [PATCH 1/3] timekeeping: add missing non-_ns functions for fast accessors
+Date:   Thu, 20 Jun 2019 16:11:57 +0200
+Message-Id: <20190620141159.15965-1-Jason@zx2c4.com>
+In-Reply-To: <CAHmME9pyf1AmjWOFFdJFXV9-OBv-ChpKZ130733+x=BtjF62mA@mail.gmail.com>
+References: <CAHmME9pyf1AmjWOFFdJFXV9-OBv-ChpKZ130733+x=BtjF62mA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The decoder is flawed in the following ways:
+Previously there was no analogue to get proper ktime_t versions of the
+fast variety of ktime invocations. This commit makes the interface
+uniform with the other accessors.
 
-- The decoder sometimes fails silently, i.e. it announces success but
-  returns a word that is not a codeword.
-
-- The return value of the decoder is incoherent with respect to how
-  fixed erasures are counted. If the word to be decoded is a codeword,
-  then the decoder always returns zero even if some erasures are given.
-  On the other hand, if the word to be decoded contains errors, then the
-  number of erasures is always included in the count of corrected
-  symbols. So the decoder handles erasures without symbol corruption
-  inconsistently. This inconsistency probably doesn't affect anyone
-  using the decoder, but it is inconsistent with the documentation.
-
-- The error positions returned in eras_pos include all erasures, but the
-  corrections are only set in the correction buffer if there actually is
-  a symbol error. So if there are erasures without symbol corruption,
-  then the correction buffer will contain errors (unless initialized to
-  zero before calling the decoder) or some values will be unset (if the
-  correction buffer is uninitialized).
-
-- When correcting data in-place the decoder does not correct errors in
-  the parity. On the other hand, when returning the errors in correction
-  buffers, errors in the parity are included.
-
-The respective fixed are:
-
-- The syndrome of a codeword is always zero, and the syndrome is linear,
-  .i.e, S(x+e) = S(x) + S(e). So compute the syndrome for the error and
-  check whether it equals the syndrome of the received word. If it does,
-  then we have decoded to a valid codeword, otherwise we know that we
-  have an uncorrectable error. Fortunately, some unrecoverable error
-  conditions can be detected earlier in the decoding, which saves some
-  processing power.
-
-- Simply count and return the number of symbols actually corrected.
-
-- Make sure to only return positions where symbols were corrected.
-
-- Also fix errors in parity when correcting in-place. Another option
-  would be to completely disregard errors in the parity, but then the
-  interface makes it impossible to write tests that test for silent
-  failures.
-
-Other changes:
-
-- Only fill the correction buffer and error position buffer if both of
-  them are provided. Otherwise correct in place. Previously the error
-  position buffer was always populated with the positions of the
-  corrected errors, irrespective of whether a correction buffer was
-  supplied or not. The rationale for this change is that there seems to
-  be two use cases for the decoder; correct in-place or use the
-  correction buffers. The caller does not need the positions of the
-  corrected errors when in-place correction is used. If in-place
-  correction is not used, then both the correction buffer and error
-  position buffer need to be populated.
-
-Signed-off-by: Ferdinand Blomqvist <ferdinand.blomqvist@gmail.com>
+Signed-off-by: Jason A. Donenfeld <Jason@zx2c4.com>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Thomas Gleixner <tglx@linutronix.de>
 ---
- lib/reed_solomon/decode_rs.c | 88 ++++++++++++++++++++++++++++--------
- 1 file changed, 68 insertions(+), 20 deletions(-)
+ Documentation/core-api/timekeeping.rst |  7 +++-
+ include/linux/timekeeping.h            | 28 ++++++++++++--
+ kernel/time/timekeeping.c              | 52 +++++++++++++-------------
+ 3 files changed, 55 insertions(+), 32 deletions(-)
 
-diff --git a/lib/reed_solomon/decode_rs.c b/lib/reed_solomon/decode_rs.c
-index b7264a712d46..805de84ae83d 100644
---- a/lib/reed_solomon/decode_rs.c
-+++ b/lib/reed_solomon/decode_rs.c
-@@ -22,6 +22,7 @@
- 	uint16_t *index_of = rs->index_of;
- 	uint16_t u, q, tmp, num1, num2, den, discr_r, syn_error;
- 	int count = 0;
-+	int num_corrected;
- 	uint16_t msk = (uint16_t) rs->nn;
+diff --git a/Documentation/core-api/timekeeping.rst b/Documentation/core-api/timekeeping.rst
+index 93cbeb9daec0..ad32085174f8 100644
+--- a/Documentation/core-api/timekeeping.rst
++++ b/Documentation/core-api/timekeeping.rst
+@@ -94,7 +94,7 @@ different format depending on what is required by the user:
+ 	down the seconds to the full seconds of the last timer tick
+ 	using the respective reference.
  
- 	/*
-@@ -184,6 +185,15 @@
- 		if (lambda[i] != nn)
- 			deg_lambda = i;
- 	}
-+
-+	if (deg_lambda == 0) {
-+		/*
-+		 * deg(lambda) is zero even though the syndrome is non-zero
-+		 * => uncorrectable error detected
-+		 */
-+		return -EBADMSG;
-+	}
-+
- 	/* Find roots of error+erasure locator polynomial by Chien search */
- 	memcpy(&reg[1], &lambda[1], nroots * sizeof(reg[0]));
- 	count = 0;		/* Number of roots of lambda(x) */
-@@ -197,6 +207,12 @@
- 		}
- 		if (q != 0)
- 			continue;	/* Not a root */
-+
-+		if (k < pad) {
-+			/* Impossible error location. Uncorrectable error. */
-+			return -EBADMSG;
-+		}
-+
- 		/* store root (index-form) and error location number */
- 		root[count] = i;
- 		loc[count] = k;
-@@ -231,7 +247,9 @@
- 	/*
- 	 * Compute error values in poly-form. num1 = omega(inv(X(l))), num2 =
- 	 * inv(X(l))**(fcr-1) and den = lambda_pr(inv(X(l))) all in poly-form
-+	 * Note: we reuse the buffer for b to store the correction pattern
- 	 */
-+	num_corrected = 0;
- 	for (j = count - 1; j >= 0; j--) {
- 		num1 = 0;
- 		for (i = deg_omega; i >= 0; i--) {
-@@ -239,6 +257,13 @@
- 				num1 ^= alpha_to[rs_modnn(rs, omega[i] +
- 							i * root[j])];
- 		}
-+
-+		if (num1 == 0) {
-+			/* Nothing to correct at this position */
-+			b[j] = 0;
-+			continue;
-+		}
-+
- 		num2 = alpha_to[rs_modnn(rs, root[j] * (fcr - 1) + nn)];
- 		den = 0;
+-Coarse and fast_ns access
++Coarse and fast access
+ -------------------------
  
-@@ -250,29 +275,52 @@
- 						       i * root[j])];
- 			}
- 		}
--		/* Apply error to data */
--		if (num1 != 0 && loc[j] >= pad) {
--			uint16_t cor = alpha_to[rs_modnn(rs,index_of[num1] +
--						       index_of[num2] +
--						       nn - index_of[den])];
--			/* Store the error correction pattern, if a
--			 * correction buffer is available */
--			if (corr) {
--				corr[j] = cor;
--			} else {
--				/* If a data buffer is given and the
--				 * error is inside the message,
--				 * correct it */
--				if (data && (loc[j] < (nn - nroots)))
--					data[loc[j] - pad] ^= cor;
--			}
-+
-+		b[j] = alpha_to[rs_modnn(rs, index_of[num1] +
-+					       index_of[num2] +
-+					       nn - index_of[den])];
-+		num_corrected++;
-+	}
-+
-+	/*
-+	 * We compute the syndrome of the 'error' and check that it matches
-+	 * the syndrome of the received word
-+	 */
-+	for (i = 0; i < nroots; i++) {
-+		tmp = 0;
-+		for (j = 0; j < count; j++) {
-+			if (b[j] == 0)
-+				continue;
-+
-+			k = (fcr + i) * prim * (nn-loc[j]-1);
-+			tmp ^= alpha_to[rs_modnn(rs, index_of[b[j]] + k)];
- 		}
-+
-+		if (tmp != alpha_to[s[i]])
-+			return -EBADMSG;
- 	}
+ Some additional variants exist for more specialized cases:
+@@ -125,6 +125,11 @@ Some additional variants exist for more specialized cases:
+ 	up to several microseconds on older hardware with an external
+ 	clocksource.
  
--	if (eras_pos != NULL) {
--		for (i = 0; i < count; i++)
--			eras_pos[i] = loc[i] - pad;
-+	/*
-+	 * Store the error correction pattern, if a
-+	 * correction buffer is available
-+	 */
-+	if (corr && eras_pos) {
-+		j = 0;
-+		for (i = 0; i < count; i++) {
-+			if (b[i]) {
-+				corr[j] = b[i];
-+				eras_pos[j++] = loc[i] - pad;
-+			}
-+		}
-+	} else if (data && par) {
-+		/* Apply error to data and parity */
-+		for (i = 0; i < count; i++) {
-+			if (loc[i] < (nn - nroots))
-+				data[loc[i] - pad] ^= b[i];
-+			else
-+				par[loc[i] - pad - len] ^= b[i];
-+		}
- 	}
--	return count;
- 
-+	return  num_corrected;
++.. c:function:: ktime_t ktime_get_mono_fast_ns( void )
++		ktime_t ktime_get_raw_fast_ns( void )
++		ktime_t ktime_get_boottime_fast_ns( void )
++		ktime_t ktime_get_real_fast_ns( void )
++
+ .. c:function:: u64 ktime_get_mono_fast_ns( void )
+ 		u64 ktime_get_raw_fast_ns( void )
+ 		u64 ktime_get_boot_fast_ns( void )
+diff --git a/include/linux/timekeeping.h b/include/linux/timekeeping.h
+index a8ab0f143ac4..c5d360779fab 100644
+--- a/include/linux/timekeeping.h
++++ b/include/linux/timekeeping.h
+@@ -146,10 +146,30 @@ static inline u64 ktime_get_raw_ns(void)
+ 	return ktime_to_ns(ktime_get_raw());
  }
+ 
+-extern u64 ktime_get_mono_fast_ns(void);
+-extern u64 ktime_get_raw_fast_ns(void);
+-extern u64 ktime_get_boot_fast_ns(void);
+-extern u64 ktime_get_real_fast_ns(void);
++extern ktime_t ktime_get_mono_fast(void);
++extern ktime_t ktime_get_raw_fast(void);
++extern ktime_t ktime_get_boottime_fast(void);
++extern ktime_t ktime_get_real_fast(void);
++
++static inline u64 ktime_get_mono_fast_ns(void)
++{
++	return ktime_to_ns(ktime_get_mono_fast());
++}
++
++static inline u64 ktime_get_raw_fast_ns(void)
++{
++	return ktime_to_ns(ktime_get_raw_fast());
++}
++
++static inline u64 ktime_get_boot_fast_ns(void)
++{
++	return ktime_to_ns(ktime_get_boottime_fast());
++}
++
++static inline u64 ktime_get_real_fast_ns(void)
++{
++	return ktime_to_ns(ktime_get_real_fast());
++}
+ 
+ /*
+  * timespec64/time64_t interfaces utilizing the ktime based ones
+diff --git a/kernel/time/timekeeping.c b/kernel/time/timekeeping.c
+index 44b726bab4bd..4c97c9c8c217 100644
+--- a/kernel/time/timekeeping.c
++++ b/kernel/time/timekeeping.c
+@@ -443,41 +443,40 @@ static void update_fast_timekeeper(const struct tk_read_base *tkr,
+  * of the following timestamps. Callers need to be aware of that and
+  * deal with it.
+  */
+-static __always_inline u64 __ktime_get_fast_ns(struct tk_fast *tkf)
++static __always_inline ktime_t __ktime_get_fast(struct tk_fast *tkf)
+ {
+ 	struct tk_read_base *tkr;
+ 	unsigned int seq;
+-	u64 now;
++	ktime_t now;
+ 
+ 	do {
+ 		seq = raw_read_seqcount_latch(&tkf->seq);
+ 		tkr = tkf->base + (seq & 0x01);
+-		now = ktime_to_ns(tkr->base);
+-
+-		now += timekeeping_delta_to_ns(tkr,
++		now = ktime_add_ns(tkr->base,
++			timekeeping_delta_to_ns(tkr,
+ 				clocksource_delta(
+ 					tk_clock_read(tkr),
+ 					tkr->cycle_last,
+-					tkr->mask));
++					tkr->mask)));
+ 	} while (read_seqcount_retry(&tkf->seq, seq));
+ 
+ 	return now;
+ }
+ 
+-u64 ktime_get_mono_fast_ns(void)
++ktime_t ktime_get_mono_fast(void)
+ {
+-	return __ktime_get_fast_ns(&tk_fast_mono);
++	return __ktime_get_fast(&tk_fast_mono);
+ }
+-EXPORT_SYMBOL_GPL(ktime_get_mono_fast_ns);
++EXPORT_SYMBOL_GPL(ktime_get_mono_fast);
+ 
+-u64 ktime_get_raw_fast_ns(void)
++ktime_t ktime_get_raw_fast(void)
+ {
+-	return __ktime_get_fast_ns(&tk_fast_raw);
++	return __ktime_get_fast(&tk_fast_raw);
+ }
+-EXPORT_SYMBOL_GPL(ktime_get_raw_fast_ns);
++EXPORT_SYMBOL_GPL(ktime_get_raw_fast);
+ 
+ /**
+- * ktime_get_boot_fast_ns - NMI safe and fast access to boot clock.
++ * ktime_get_boottime_fast - NMI safe and fast access to boot clock.
+  *
+  * To keep it NMI safe since we're accessing from tracing, we're not using a
+  * separate timekeeper with updates to monotonic clock and boot offset
+@@ -497,47 +496,46 @@ EXPORT_SYMBOL_GPL(ktime_get_raw_fast_ns);
+  * partially updated.  Since the tk->offs_boot update is a rare event, this
+  * should be a rare occurrence which postprocessing should be able to handle.
+  */
+-u64 notrace ktime_get_boot_fast_ns(void)
++ktime_t notrace ktime_get_boottime_fast(void)
+ {
+ 	struct timekeeper *tk = &tk_core.timekeeper;
+ 
+-	return (ktime_get_mono_fast_ns() + ktime_to_ns(tk->offs_boot));
++	return ktime_add(ktime_get_mono_fast(), tk->offs_boot);
+ }
+-EXPORT_SYMBOL_GPL(ktime_get_boot_fast_ns);
++EXPORT_SYMBOL_GPL(ktime_get_boottime_fast);
+ 
+ 
+ /*
+- * See comment for __ktime_get_fast_ns() vs. timestamp ordering
++ * See comment for __ktime_get_fast() vs. timestamp ordering
+  */
+-static __always_inline u64 __ktime_get_real_fast_ns(struct tk_fast *tkf)
++static __always_inline ktime_t __ktime_get_real_fast(struct tk_fast *tkf)
+ {
+ 	struct tk_read_base *tkr;
+ 	unsigned int seq;
+-	u64 now;
++	ktime_t now;
+ 
+ 	do {
+ 		seq = raw_read_seqcount_latch(&tkf->seq);
+ 		tkr = tkf->base + (seq & 0x01);
+-		now = ktime_to_ns(tkr->base_real);
+-
+-		now += timekeeping_delta_to_ns(tkr,
++		now = ktime_add_ns(tkr->base_real,
++			timekeeping_delta_to_ns(tkr,
+ 				clocksource_delta(
+ 					tk_clock_read(tkr),
+ 					tkr->cycle_last,
+-					tkr->mask));
++					tkr->mask)));
+ 	} while (read_seqcount_retry(&tkf->seq, seq));
+ 
+ 	return now;
+ }
+ 
+ /**
+- * ktime_get_real_fast_ns: - NMI safe and fast access to clock realtime.
++ * ktime_get_real_fast: - NMI safe and fast access to clock realtime.
+  */
+-u64 ktime_get_real_fast_ns(void)
++ktime_t ktime_get_real_fast(void)
+ {
+-	return __ktime_get_real_fast_ns(&tk_fast_mono);
++	return __ktime_get_real_fast(&tk_fast_mono);
+ }
+-EXPORT_SYMBOL_GPL(ktime_get_real_fast_ns);
++EXPORT_SYMBOL_GPL(ktime_get_real_fast);
+ 
+ /**
+  * halt_fast_timekeeper - Prevent fast timekeeper from accessing clocksource.
 -- 
-2.17.2
+2.21.0
 
