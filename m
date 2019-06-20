@@ -2,139 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CE28A4C78F
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 08:39:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3C26B4C799
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 08:45:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726244AbfFTGjD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 02:39:03 -0400
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:47034 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725872AbfFTGjC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 02:39:02 -0400
-Received: by mail-ot1-f66.google.com with SMTP id z23so1617732ote.13;
-        Wed, 19 Jun 2019 23:39:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=sp3vep+gecWojxrD/V4sJjEZ27G+QN44xZ3oaMA/Ab0=;
-        b=McnCESmTtUQidbJqVN+hlYStLub6uVMispeub6VN4PS4aQOWB07bhjrnzsFg9A+6Cj
-         O+wq4kGPWxH9FJVRcHF9VN7cPYjb/oq4DHJruxjO8Vr5kVYRU9+043OQo/b4qne42uqh
-         xh/KmLE+qjMKbLfp6vD4lbww1gin6SIo1VrgyxnhslR92bVhq3cBbSmzpg7iUaxBMINW
-         wXC+HlvxqCsLg4QVUQ71NBWBjFnikrbyHNlkDPHry/61gsgoNUA89ctmVOmfqHsF4jpO
-         wpo0Tl6SEpULkB9e2GlzMTiPSX9DUUUpmN6GtwV3LQiVRHkj+IcVZvQ4Sy8m5Xtuu8i9
-         PbJw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=sp3vep+gecWojxrD/V4sJjEZ27G+QN44xZ3oaMA/Ab0=;
-        b=rXfQuL6nQzc/IyJWr+QdJgLdLrug+fxGrnxnxcPQ0HvxEeSO5tCFun+rrff9jv8ADI
-         5z2+EwT+jmXdd1uu5OJe5CgBe5kbsRk2lg7tnk5AZO+0TMYn5cQoNb6oof0rjM83r4CU
-         IPseRLRhfUjKpWUEIz3gypPX0h33UlXQVx8ajBUViBn+WRfZRUEPN0pFO40kKLdnMk0S
-         erYgWpvNn1P2BZGf4/t5eXnSMSYzC2JQjXzx6nxBwqiLYIcVNgiJnQwMMWdvloq8ekgq
-         Fr7kdOsHXNeuFWuQ59utCQ9Jt/fW70PyI9rOy/wNShjco9zBg4GN+ukR9ltBs0Ri/cUY
-         t5hA==
-X-Gm-Message-State: APjAAAVOmtoH1Uzb23pSo7mdvf2mJH0jsWxb+p6Sigw2fQgD4oPYno4W
-        J7XPLXnjmYI3GNhTOAHtsaSWqQHCQxFk/shYwfM=
-X-Google-Smtp-Source: APXvYqxo9G2P53t/pGrnKhAN3uBijKmUC0uAx7nWK4vX6b3m+C0zos3yAdPBRGpSuICJBBhyxMAUxICKjoSGfb0nXj4=
-X-Received: by 2002:a9d:62c4:: with SMTP id z4mr2248300otk.56.1561012742013;
- Wed, 19 Jun 2019 23:39:02 -0700 (PDT)
+        id S1726290AbfFTGpY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 02:45:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36314 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725937AbfFTGpY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Jun 2019 02:45:24 -0400
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9747E214AF
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2019 06:45:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1561013122;
+        bh=7B1t2Lh59wMHQUIE+uN8j8QjZZ9WGWxpnaWzK5i3AMg=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=ks+KzuBlz1+TXaILSP1LoVZbCmC7KmpfWi6RSi5ErY55ZuFOvOazwEiFhwYVzueFK
+         Hg2KLZIrHkxsr8oE/X7jj2iJHgcSoU2KJ6cXG5atVyovMVjHbBPqPNajlgxQY8cnXw
+         6/tseCRo8wlpCly3fXITnPqGlEDlnRZaiABZ5Gmg=
+Received: by mail-lf1-f42.google.com with SMTP id y17so1595067lfe.0
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2019 23:45:22 -0700 (PDT)
+X-Gm-Message-State: APjAAAV5A7HDA/yAdjLBDw0kyA5Vu5yWpqWgVvRAEQkU8E1rp4zkg/ca
+        dOCfwU6PSVPjgcQke6vEmmju3N8MTJI11rWq3i8=
+X-Google-Smtp-Source: APXvYqzXMlEY/WRYRayoBb9QKi4Js4cCJqzNnoDhraKHkdb99GqSISyR2bUT9/dCId6OIt4j0w0nHyGdi/cre7W70aY=
+X-Received: by 2002:a19:4f50:: with SMTP id a16mr3006815lfk.24.1561013120878;
+ Wed, 19 Jun 2019 23:45:20 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190620050301.1149-1-tao3.xu@intel.com>
-In-Reply-To: <20190620050301.1149-1-tao3.xu@intel.com>
-From:   Wanpeng Li <kernellwp@gmail.com>
-Date:   Thu, 20 Jun 2019 14:40:15 +0800
-Message-ID: <CANRm+Cwg7ogTN1w=xNyn+8CfxwofdxRykULFe217pXidzEhh6Q@mail.gmail.com>
-Subject: Re: [PATCH] KVM: vmx: Fix the broken usage of vmx_xsaves_supported
-To:     Tao Xu <tao3.xu@intel.com>
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        Radim Krcmar <rkrcmar@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, kvm <kvm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, xiaoyao.li@linux.intel.com
+References: <20190618185502.3839-1-krzk@kernel.org> <20190618185502.3839-2-krzk@kernel.org>
+ <CAKGbVbvMVRiWXf8E8hpym_F7ovoXeeTc92-hh6hA6802487jOg@mail.gmail.com>
+In-Reply-To: <CAKGbVbvMVRiWXf8E8hpym_F7ovoXeeTc92-hh6hA6802487jOg@mail.gmail.com>
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+Date:   Thu, 20 Jun 2019 08:45:09 +0200
+X-Gmail-Original-Message-ID: <CAJKOXPfnhHcTYiyj1yLD6QR6CzkGMZMY7cihUrc8yWNr4ZLzuw@mail.gmail.com>
+Message-ID: <CAJKOXPfnhHcTYiyj1yLD6QR6CzkGMZMY7cihUrc8yWNr4ZLzuw@mail.gmail.com>
+Subject: Re: [PATCH 2/3] drm/lima: Reduce the amount of logs on deferred probe
+To:     Qiang Yu <yuq825@gmail.com>
+Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
+        Rob Herring <robh@kernel.org>,
+        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        lima@lists.freedesktop.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-On Thu, 20 Jun 2019 at 13:06, Tao Xu <tao3.xu@intel.com> wrote:
+On Thu, 20 Jun 2019 at 02:55, Qiang Yu <yuq825@gmail.com> wrote:
 >
-> The helper vmx_xsaves_supported() returns the bit value of
-> SECONDARY_EXEC_XSAVES in vmcs_config.cpu_based_2nd_exec_ctrl, which
-> remains unchanged true if vmcs supports 1-setting of this bit after
-> setup_vmcs_config(). It should check the guest's cpuid not this
-> unchanged value when get/set msr.
->
-> Besides, vmx_compute_secondary_exec_control() adjusts
-> SECONDARY_EXEC_XSAVES bit based on guest cpuid's X86_FEATURE_XSAVE
-> and X86_FEATURE_XSAVES, it should use updated value to decide whether
-> set XSS_EXIT_BITMAP.
->
-> Co-developed-by: Xiaoyao Li <xiaoyao.li@linux.intel.com>
-> Signed-off-by: Xiaoyao Li <xiaoyao.li@linux.intel.com>
-> Signed-off-by: Tao Xu <tao3.xu@intel.com>
-> ---
->  arch/x86/kvm/vmx/vmx.c | 8 +++++---
->  1 file changed, 5 insertions(+), 3 deletions(-)
->
-> diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-> index b93e36ddee5e..935cf72439a9 100644
-> --- a/arch/x86/kvm/vmx/vmx.c
-> +++ b/arch/x86/kvm/vmx/vmx.c
-> @@ -1721,7 +1721,8 @@ static int vmx_get_msr(struct kvm_vcpu *vcpu, struc=
-t msr_data *msr_info)
->                 return vmx_get_vmx_msr(&vmx->nested.msrs, msr_info->index=
-,
->                                        &msr_info->data);
->         case MSR_IA32_XSS:
-> -               if (!vmx_xsaves_supported())
-> +               if (!guest_cpuid_has(vcpu, X86_FEATURE_XSAVE) ||
-> +                       !guest_cpuid_has(vcpu, X86_FEATURE_XSAVES))
->                         return 1;
->                 msr_info->data =3D vcpu->arch.ia32_xss;
->                 break;
-> @@ -1935,7 +1936,8 @@ static int vmx_set_msr(struct kvm_vcpu *vcpu, struc=
-t msr_data *msr_info)
->                         return 1;
->                 return vmx_set_vmx_msr(vcpu, msr_index, data);
->         case MSR_IA32_XSS:
-> -               if (!vmx_xsaves_supported())
-> +               if (!guest_cpuid_has(vcpu, X86_FEATURE_XSAVE) ||
-> +                       !guest_cpuid_has(vcpu, X86_FEATURE_XSAVES))
->                         return 1;
+> It looks like lima_clk_init will have the same problem if devm_clk_get
+> returns -EPROBE_DEFER.
 
-Not complete true.
+Indeed, although I did not experience it but it is valid point. I'll send v2.
 
->                 /*
->                  * The only supported bit as of Skylake is bit 8, but
-> @@ -4094,7 +4096,7 @@ static void vmx_vcpu_setup(struct vcpu_vmx *vmx)
->
->         set_cr4_guest_host_mask(vmx);
->
-> -       if (vmx_xsaves_supported())
-> +       if (vmx->secondary_exec_control & SECONDARY_EXEC_XSAVES)
->                 vmcs_write64(XSS_EXIT_BITMAP, VMX_XSS_EXIT_BITMAP);
-
-This is not true.
-
-SDM 24.6.20:
-On processors that support the 1-setting of the =E2=80=9Cenable
-XSAVES/XRSTORS=E2=80=9D VM-execution control, the VM-execution control fiel=
-ds
-include a 64-bit XSS-exiting bitmap.
-
-It depends on whether or not processors support the 1-setting instead
-of =E2=80=9Cenable XSAVES/XRSTORS=E2=80=9D is 1 in VM-exection control fiel=
-d. Anyway,
-I will send a patch to fix the msr read/write for commit
-203000993de5(kvm: vmx: add MSR logic for XSAVES), thanks for the
-report.
-
-Regards,
-Wanpeng Li
+Best regards,
+Krzysztof
