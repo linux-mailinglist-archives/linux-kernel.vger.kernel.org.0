@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7E37B4D778
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 20:19:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E49584D668
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 20:08:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729583AbfFTSPW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 14:15:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44036 "EHLO mail.kernel.org"
+        id S1728346AbfFTSHh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 14:07:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34060 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729567AbfFTSPU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 14:15:20 -0400
+        id S1727510AbfFTSH3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Jun 2019 14:07:29 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7E5412082C;
-        Thu, 20 Jun 2019 18:15:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 123282089C;
+        Thu, 20 Jun 2019 18:07:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561054519;
-        bh=kf5RJKWA5oYAEDvJIm7IBbDOlA6XZbgSYxy+jrbqXkI=;
+        s=default; t=1561054048;
+        bh=QocFJupi1vs2JOqtTDl/B33qdRziMRZkc18K2iwI/IU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ev/5+A6tdlUcLttKx4oMPtm5KcoWocf12B9FXrR0NYVTRnlpKYNE6hPSywq4fDLHc
-         8r7F2Uura2O0VCJNloJkN0Rkngfb456ifRdFGBmtJbXBSSTHpiBblRzP2qQbvwzQMo
-         CWTdsP+XeqfX+n6JlkI11M2hYALR/8ATBIqx7VRA=
+        b=THKaq4ja7RPGnNwqkOWI71xovDCeiWLQRMwkRJdki/mgKFKy4fbdofuJp7f8dOOn0
+         LWT+/p3fvul65u35fLJyRqeXezPt06SUw+LkO1ABJY4gIWtTXFRqBvrVyTtd9J2hdd
+         Jj1ZhvhIpN9AfFJ5I0lzW2Q1Mgang+JLdl23DG6E=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Ioana Radulescu <ruxandra.radulescu@nxp.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Paul Mackerras <paulus@ozlabs.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 57/98] dpaa2-eth: Use PTR_ERR_OR_ZERO where appropriate
+Subject: [PATCH 4.9 110/117] KVM: PPC: Book3S: Use new mutex to synchronize access to rtas token list
 Date:   Thu, 20 Jun 2019 19:57:24 +0200
-Message-Id: <20190620174351.929436971@linuxfoundation.org>
+Message-Id: <20190620174358.167374282@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190620174349.443386789@linuxfoundation.org>
-References: <20190620174349.443386789@linuxfoundation.org>
+In-Reply-To: <20190620174351.964339809@linuxfoundation.org>
+References: <20190620174351.964339809@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,40 +43,122 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit bd8460fa4de46e9d6177af4fe33bf0763a7af4b7 ]
+[ Upstream commit 1659e27d2bc1ef47b6d031abe01b467f18cb72d9 ]
 
-Use PTR_ERR_OR_ZERO instead of PTR_ERR in cases where
-zero is a valid input. Reported by smatch.
+Currently the Book 3S KVM code uses kvm->lock to synchronize access
+to the kvm->arch.rtas_tokens list.  Because this list is scanned
+inside kvmppc_rtas_hcall(), which is called with the vcpu mutex held,
+taking kvm->lock cause a lock inversion problem, which could lead to
+a deadlock.
 
-Signed-off-by: Ioana Radulescu <ruxandra.radulescu@nxp.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+To fix this, we add a new mutex, kvm->arch.rtas_token_lock, which nests
+inside the vcpu mutexes, and use that instead of kvm->lock when
+accessing the rtas token list.
+
+This removes the lockdep_assert_held() in kvmppc_rtas_tokens_free().
+At this point we don't hold the new mutex, but that is OK because
+kvmppc_rtas_tokens_free() is only called when the whole VM is being
+destroyed, and at that point nothing can be looking up a token in
+the list.
+
+Signed-off-by: Paul Mackerras <paulus@ozlabs.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/freescale/dpaa2/dpaa2-eth.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/powerpc/include/asm/kvm_host.h |  1 +
+ arch/powerpc/kvm/book3s.c           |  1 +
+ arch/powerpc/kvm/book3s_rtas.c      | 14 ++++++--------
+ 3 files changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/net/ethernet/freescale/dpaa2/dpaa2-eth.c b/drivers/net/ethernet/freescale/dpaa2/dpaa2-eth.c
-index 57cbaa38d247..df371c81a706 100644
---- a/drivers/net/ethernet/freescale/dpaa2/dpaa2-eth.c
-+++ b/drivers/net/ethernet/freescale/dpaa2/dpaa2-eth.c
-@@ -1966,7 +1966,7 @@ alloc_channel(struct dpaa2_eth_priv *priv)
+diff --git a/arch/powerpc/include/asm/kvm_host.h b/arch/powerpc/include/asm/kvm_host.h
+index 5e12e19940e2..defa553fe823 100644
+--- a/arch/powerpc/include/asm/kvm_host.h
++++ b/arch/powerpc/include/asm/kvm_host.h
+@@ -271,6 +271,7 @@ struct kvm_arch {
+ #ifdef CONFIG_PPC_BOOK3S_64
+ 	struct list_head spapr_tce_tables;
+ 	struct list_head rtas_tokens;
++	struct mutex rtas_token_lock;
+ 	DECLARE_BITMAP(enabled_hcalls, MAX_HCALL_OPCODE/4 + 1);
+ #endif
+ #ifdef CONFIG_KVM_MPIC
+diff --git a/arch/powerpc/kvm/book3s.c b/arch/powerpc/kvm/book3s.c
+index b6952dd23152..73c3c127d858 100644
+--- a/arch/powerpc/kvm/book3s.c
++++ b/arch/powerpc/kvm/book3s.c
+@@ -811,6 +811,7 @@ int kvmppc_core_init_vm(struct kvm *kvm)
+ #ifdef CONFIG_PPC64
+ 	INIT_LIST_HEAD_RCU(&kvm->arch.spapr_tce_tables);
+ 	INIT_LIST_HEAD(&kvm->arch.rtas_tokens);
++	mutex_init(&kvm->arch.rtas_token_lock);
+ #endif
  
- 	channel->dpcon = setup_dpcon(priv);
- 	if (IS_ERR_OR_NULL(channel->dpcon)) {
--		err = PTR_ERR(channel->dpcon);
-+		err = PTR_ERR_OR_ZERO(channel->dpcon);
- 		goto err_setup;
+ 	return kvm->arch.kvm_ops->init_vm(kvm);
+diff --git a/arch/powerpc/kvm/book3s_rtas.c b/arch/powerpc/kvm/book3s_rtas.c
+index ef27fbd5d9c5..b1b2273d1f6d 100644
+--- a/arch/powerpc/kvm/book3s_rtas.c
++++ b/arch/powerpc/kvm/book3s_rtas.c
+@@ -133,7 +133,7 @@ static int rtas_token_undefine(struct kvm *kvm, char *name)
+ {
+ 	struct rtas_token_definition *d, *tmp;
+ 
+-	lockdep_assert_held(&kvm->lock);
++	lockdep_assert_held(&kvm->arch.rtas_token_lock);
+ 
+ 	list_for_each_entry_safe(d, tmp, &kvm->arch.rtas_tokens, list) {
+ 		if (rtas_name_matches(d->handler->name, name)) {
+@@ -154,7 +154,7 @@ static int rtas_token_define(struct kvm *kvm, char *name, u64 token)
+ 	bool found;
+ 	int i;
+ 
+-	lockdep_assert_held(&kvm->lock);
++	lockdep_assert_held(&kvm->arch.rtas_token_lock);
+ 
+ 	list_for_each_entry(d, &kvm->arch.rtas_tokens, list) {
+ 		if (d->token == token)
+@@ -193,14 +193,14 @@ int kvm_vm_ioctl_rtas_define_token(struct kvm *kvm, void __user *argp)
+ 	if (copy_from_user(&args, argp, sizeof(args)))
+ 		return -EFAULT;
+ 
+-	mutex_lock(&kvm->lock);
++	mutex_lock(&kvm->arch.rtas_token_lock);
+ 
+ 	if (args.token)
+ 		rc = rtas_token_define(kvm, args.name, args.token);
+ 	else
+ 		rc = rtas_token_undefine(kvm, args.name);
+ 
+-	mutex_unlock(&kvm->lock);
++	mutex_unlock(&kvm->arch.rtas_token_lock);
+ 
+ 	return rc;
+ }
+@@ -232,7 +232,7 @@ int kvmppc_rtas_hcall(struct kvm_vcpu *vcpu)
+ 	orig_rets = args.rets;
+ 	args.rets = &args.args[be32_to_cpu(args.nargs)];
+ 
+-	mutex_lock(&vcpu->kvm->lock);
++	mutex_lock(&vcpu->kvm->arch.rtas_token_lock);
+ 
+ 	rc = -ENOENT;
+ 	list_for_each_entry(d, &vcpu->kvm->arch.rtas_tokens, list) {
+@@ -243,7 +243,7 @@ int kvmppc_rtas_hcall(struct kvm_vcpu *vcpu)
+ 		}
  	}
  
-@@ -2022,7 +2022,7 @@ static int setup_dpio(struct dpaa2_eth_priv *priv)
- 		/* Try to allocate a channel */
- 		channel = alloc_channel(priv);
- 		if (IS_ERR_OR_NULL(channel)) {
--			err = PTR_ERR(channel);
-+			err = PTR_ERR_OR_ZERO(channel);
- 			if (err != -EPROBE_DEFER)
- 				dev_info(dev,
- 					 "No affine channel for cpu %d and above\n", i);
+-	mutex_unlock(&vcpu->kvm->lock);
++	mutex_unlock(&vcpu->kvm->arch.rtas_token_lock);
+ 
+ 	if (rc == 0) {
+ 		args.rets = orig_rets;
+@@ -269,8 +269,6 @@ void kvmppc_rtas_tokens_free(struct kvm *kvm)
+ {
+ 	struct rtas_token_definition *d, *tmp;
+ 
+-	lockdep_assert_held(&kvm->lock);
+-
+ 	list_for_each_entry_safe(d, tmp, &kvm->arch.rtas_tokens, list) {
+ 		list_del(&d->list);
+ 		kfree(d);
 -- 
 2.20.1
 
