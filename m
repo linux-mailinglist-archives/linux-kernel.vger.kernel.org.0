@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F39C94D5B2
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 20:00:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CFF4A4D703
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 20:15:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726883AbfFTSAM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 14:00:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48664 "EHLO mail.kernel.org"
+        id S1728730AbfFTSPC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 14:15:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43520 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726863AbfFTSAL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 14:00:11 -0400
+        id S1726276AbfFTSPA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Jun 2019 14:15:00 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D83412084A;
-        Thu, 20 Jun 2019 18:00:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 916AE2082C;
+        Thu, 20 Jun 2019 18:14:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561053610;
-        bh=K0D5RiaBxXVakvVfZoWJm431MDLU2u7E5g65ouIOmp0=;
+        s=default; t=1561054499;
+        bh=nUY6ILTxX+DakTlISDVeWnorLgfPe9zH17lpV8hhCvs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=x3X3HX99njEFxWmjx4qIkY2t1hBEQIowyksj7msAoukPoD9mtQHMoonRhTSJ+nZiU
-         iD0gkPA/2ii5uc9e2d6muPDihnxHRR6Pj2zAIEXhq42JkP383muZ7RSVRng0SMCK+F
-         lbdm14SYXm0zV2uqMI6Wb5rkj+PKDykAMaGasNlQ=
+        b=l1jZs8HxyMb1n1ODBDsvx19cZW9GkiGiRPa4Qeb1E0boSjtNZUu26uCg6RgPsO5pM
+         47Bh90FldCYYxXnfX5hmF5rF3I7jUerJgB2V8Z/CNJIFv5oarmX6vZPslr4QNJw89b
+         DzGWKPn2/JRQDzrClBv3tYFde+ByrvwrX/nwTko4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Young Xiao <YangX92@hotmail.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 50/84] Drivers: misc: fix out-of-bounds access in function param_set_kgdbts_var
+        stable@vger.kernel.org, Yuri Chipchev <yuric@marvell.com>,
+        Maxime Chevallier <maxime.chevallier@bootlin.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 5.1 20/98] net: mvpp2: prs: Use the correct helpers when removing all VID filters
 Date:   Thu, 20 Jun 2019 19:56:47 +0200
-Message-Id: <20190620174346.397075611@linuxfoundation.org>
+Message-Id: <20190620174350.152141876@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190620174337.538228162@linuxfoundation.org>
-References: <20190620174337.538228162@linuxfoundation.org>
+In-Reply-To: <20190620174349.443386789@linuxfoundation.org>
+References: <20190620174349.443386789@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,45 +44,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit b281218ad4311a0342a40cb02fb17a363df08b48 ]
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
 
-There is an out-of-bounds access to "config[len - 1]" array when the
-variable "len" is zero.
+[ Upstream commit 6b7a3430c163455cf8a514d636bda52b04654972 ]
 
-See commit dada6a43b040 ("kgdboc: fix KASAN global-out-of-bounds bug
-in param_set_kgdboc_var()") for details.
+When removing all VID filters, the mvpp2_prs_vid_entry_remove would be
+called with the TCAM id incorrectly used as a VID, causing the wrong
+TCAM entries to be invalidated.
 
-Signed-off-by: Young Xiao <YangX92@hotmail.com>
+Fix this by directly invalidating entries in the VID range.
+
+Fixes: 56beda3db602 ("net: mvpp2: Add hardware offloading for VLAN filtering")
+Suggested-by: Yuri Chipchev <yuric@marvell.com>
+Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/misc/kgdbts.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/marvell/mvpp2/mvpp2_prs.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/misc/kgdbts.c b/drivers/misc/kgdbts.c
-index 99635dd9dbac..bb3a76ad80da 100644
---- a/drivers/misc/kgdbts.c
-+++ b/drivers/misc/kgdbts.c
-@@ -1132,7 +1132,7 @@ static void kgdbts_put_char(u8 chr)
+--- a/drivers/net/ethernet/marvell/mvpp2/mvpp2_prs.c
++++ b/drivers/net/ethernet/marvell/mvpp2/mvpp2_prs.c
+@@ -2025,8 +2025,10 @@ void mvpp2_prs_vid_remove_all(struct mvp
  
- static int param_set_kgdbts_var(const char *kmessage, struct kernel_param *kp)
- {
--	int len = strlen(kmessage);
-+	size_t len = strlen(kmessage);
+ 	for (tid = MVPP2_PRS_VID_PORT_FIRST(port->id);
+ 	     tid <= MVPP2_PRS_VID_PORT_LAST(port->id); tid++) {
+-		if (priv->prs_shadow[tid].valid)
+-			mvpp2_prs_vid_entry_remove(port, tid);
++		if (priv->prs_shadow[tid].valid) {
++			mvpp2_prs_hw_inv(priv, tid);
++			priv->prs_shadow[tid].valid = false;
++		}
+ 	}
+ }
  
- 	if (len >= MAX_CONFIG_LEN) {
- 		printk(KERN_ERR "kgdbts: config string too long\n");
-@@ -1152,7 +1152,7 @@ static int param_set_kgdbts_var(const char *kmessage, struct kernel_param *kp)
- 
- 	strcpy(config, kmessage);
- 	/* Chop out \n char as a result of echo */
--	if (config[len - 1] == '\n')
-+	if (len && config[len - 1] == '\n')
- 		config[len - 1] = '\0';
- 
- 	/* Go and configure with the new params. */
--- 
-2.20.1
-
 
 
