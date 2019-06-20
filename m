@@ -2,98 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D24D44CF8E
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 15:50:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CBB504CF95
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 15:51:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732031AbfFTNus (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 09:50:48 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:41597 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731648AbfFTNus (ORCPT
+        id S1732098AbfFTNu7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 09:50:59 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:57928 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726654AbfFTNu6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 09:50:48 -0400
-Received: by mail-lj1-f194.google.com with SMTP id s21so2770388lji.8
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2019 06:50:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=87/mmep8o4xjpng42pfKe0HvnZpFCEv5wyHUTYM4F04=;
-        b=VkyHNmJKqo0qrBEXD8HTGqBxcqBDEgbYFFaxDPeiq1NCPLpeT3i4FhyPn+6E294uNa
-         wLgstEm7V4BT2uRAGVrLmnFT8gWWzHOh/HxjX8bFdxwbEvp57J5LzK8jZ+j7Qm/gX5it
-         furkKmT7oIWSMPN/GhA1TwUb9f2MdzK1hFlYr9NYmb7rFeFfpzL+ug4fOn5ZgYoadReA
-         /dCD0iGDBzSl88mK7r8/u9D5m8O6brFsHMy18Rc7LvoCR2iaxOZvHL0rQP3miNDbjzkH
-         PwgiF6NtOaaVZXeeFmPSqiA+n0fDrM6OocjmaZeo3GNl5IONVZgY6Vl7Vq5QSw6m9MPy
-         L7uA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=87/mmep8o4xjpng42pfKe0HvnZpFCEv5wyHUTYM4F04=;
-        b=QYWBr1fNUW+k8G6DJmZtVPa9KSBAEh0moxF0Pbl6yRA9GtwBm3w4EmTrdH0pTP3wS7
-         vVxfdWTSZB97F/yh36li1Pca1TKWYLx+gtrGc0gD6553pftzObjU1HHPhyXh5ZFqnxDd
-         kmAl/v/7qHyt9qX1yUIAbuL3vemqomCIAj6ri3koechehVh9tcjJIsGwsm7mcjL9VLcB
-         ZYyUaLAfPtY8wtICrBvKpa/vR9acr4B39BMd3UraFDwqpu7uJfsxCc/8q8DEPM7xWpAZ
-         h+9QVnUHWIQTr9VHXpmPxdIEFCIic7qHBhB/Kq1cg/rIsaXeNXx+BvnoL3x3Vq3TFNAe
-         7hUQ==
-X-Gm-Message-State: APjAAAUJYXbCcUwLOiihohqsSYUYLQdwkc4ZGtcNCieHpHwmDeKRH9Qt
-        /WV4kq/GJRHf0gkKFGIdwH6rnD9Ov0A=
-X-Google-Smtp-Source: APXvYqxwnFna5l+CRnQ7eSfwSQ0TT6LbGX6hIoEfl7KwqgiayhTFixuAgZgGdrIsH5TwcHjccMaC/Q==
-X-Received: by 2002:a2e:81c4:: with SMTP id s4mr58341729ljg.182.1561038646384;
-        Thu, 20 Jun 2019 06:50:46 -0700 (PDT)
-Received: from centauri (m83-185-80-163.cust.tele2.se. [83.185.80.163])
-        by smtp.gmail.com with ESMTPSA id e26sm3537359ljl.33.2019.06.20.06.50.44
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 20 Jun 2019 06:50:45 -0700 (PDT)
-Date:   Thu, 20 Jun 2019 15:50:43 +0200
-From:   Niklas Cassel <niklas.cassel@linaro.org>
-To:     Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
-Cc:     agross@kernel.org, david.brown@linaro.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, bjorn.andersson@linaro.org,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, jeffrey.l.hugo@gmail.com
-Subject: Re: [PATCH] arm64: dts: qcom: qcs404-evb: fix vdd_apc supply
-Message-ID: <20190620135043.GA16411@centauri>
-References: <20190619181653.29407-1-jorge.ramirez-ortiz@linaro.org>
+        Thu, 20 Jun 2019 09:50:58 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <colin.king@canonical.com>)
+        id 1hdxSn-0005dA-1a; Thu, 20 Jun 2019 13:50:53 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+        Leon Romanovsky <leon@kernel.org>,
+        Parav Pandit <parav@mellanox.com>, linux-rdma@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] RDMA: check for null return from call to ib_get_client_data
+Date:   Thu, 20 Jun 2019 14:50:52 +0100
+Message-Id: <20190620135052.27367-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190619181653.29407-1-jorge.ramirez-ortiz@linaro.org>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 19, 2019 at 08:16:53PM +0200, Jorge Ramirez-Ortiz wrote:
-> The invalid definition in the supply causes the Qualcomm's EVB-1000
-> and EVB-4000 not to boot.
-> 
-> Fix the boot issue by correctly defining the supply: vdd_s3 (namely
-> "vdd_apc") is actually connected to vph_pwr.
-> 
-> Reported-by: Niklas Cassel <niklas.cassel@linaro.org>
-> Tested-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
-> Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
-> ---
->  arch/arm64/boot/dts/qcom/qcs404-evb.dtsi | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/qcs404-evb.dtsi b/arch/arm64/boot/dts/qcom/qcs404-evb.dtsi
-> index b6092a742675..11c0a7137823 100644
-> --- a/arch/arm64/boot/dts/qcom/qcs404-evb.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/qcs404-evb.dtsi
-> @@ -65,7 +65,7 @@
->  };
->  
->  &pms405_spmi_regulators {
-> -	vdd_s3-supply = <&pms405_s3>;
-> +	vdd_s3-supply = <&vph_pwr>;
->  
->  	pms405_s3: s3 {
->  		regulator-always-on;
-> -- 
-> 2.21.0
-> 
+From: Colin Ian King <colin.king@canonical.com>
 
-Tested-by: Niklas Cassel <niklas.cassel@linaro.org>
+The return from ib_get_client_data can potentially be null, so add a null
+check on umad_dev and return -ENODEV in this unlikely case to avoid any
+null pointer deferences.
+
+Addresses-Coverity: ("Dereference null return")
+Fixes: 8f71bb0030b8 ("RDMA: Report available cdevs through RDMA_NLDEV_CMD_GET_CHARDEV")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/infiniband/core/user_mad.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/drivers/infiniband/core/user_mad.c b/drivers/infiniband/core/user_mad.c
+index 547090b41cfb..d78a35913824 100644
+--- a/drivers/infiniband/core/user_mad.c
++++ b/drivers/infiniband/core/user_mad.c
+@@ -1153,6 +1153,9 @@ static int ib_issm_get_nl_info(struct ib_device *ibdev, void *client_data,
+ 	struct ib_umad_device *umad_dev =
+ 		ib_get_client_data(ibdev, &umad_client);
+ 
++	if (!umad_dev)
++		return -ENODEV;
++
+ 	if (!rdma_is_port_valid(ibdev, res->port))
+ 		return -EINVAL;
+ 
+-- 
+2.20.1
+
