@@ -2,52 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DD6DD4D02C
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 16:16:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2CF5D4D034
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 16:19:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732108AbfFTOQx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 10:16:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34148 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726686AbfFTOQx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 10:16:53 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1D7FE20679;
-        Thu, 20 Jun 2019 14:16:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561040212;
-        bh=9iRebO6DLKsf5fGTm7JWX4wTJr9M2g78lVVOWiI329U=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=AQ386KG/y054gecT++bUjaurqIH56NLWa099TjUwJEjpUaMR3NnklNkw5IMY91nvl
-         A4T5XvHW8nMYJyYDdXM4XASK/i/EyvBfTEpJL7WaHAcrUkt93Ey/qGxp0yy+QrtgYz
-         uO66rXsb1iNid4qAoefbvCvX+fgVNlFzyk3aD3DI=
-Date:   Thu, 20 Jun 2019 16:16:50 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Yang Shi <yang.shi@linux.alibaba.com>
-Cc:     akpm@linux-foundation.org, aneesh.kumar@linux.ibm.com,
-        jstancek@redhat.com, mgorman@suse.de, minchan@kernel.org,
-        namit@vmware.com, npiggin@gmail.com, peterz@infradead.org,
-        will.deacon@arm.com, stable@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RESEND 5.1-stable PATCH] mm: mmu_gather: remove
- __tlb_reset_range() for force flush
-Message-ID: <20190620141650.GB9832@kroah.com>
-References: <1560805037-35324-1-git-send-email-yang.shi@linux.alibaba.com>
+        id S1732009AbfFTOTg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 10:19:36 -0400
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:46857 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726391AbfFTOTg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Jun 2019 10:19:36 -0400
+Received: by mail-qt1-f195.google.com with SMTP id h21so3287393qtn.13;
+        Thu, 20 Jun 2019 07:19:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:message-id:from:to:cc:subject:in-reply-to:references
+         :mime-version:content-disposition:content-transfer-encoding;
+        bh=v880IeJxTwzos0c8VI5a5byiKXKUlY/YMhkF+OvbysA=;
+        b=hVSA8KGYTZplvKzqPP+XgtkgrVR7HQpPlLjeB+umbbAyo8DjE2FhxKndBREd/7O54b
+         t3n5+YoMGB4u9GAFEpZqqI8ow+QqTSUgTb5ZoECE8fYBfL6L2QBBhZ8k4epu2d2Vy6p/
+         FvoAPi0HcQbuyL5DtasNh+fPX11CcMp0WEqYnf2clTz3kt3x99G/+kYbXpuwAEDBEGTB
+         1WW1W2quYVCevyglxMRrXVkE1GEgGkJH2SRKkObQJdAEHbYrj5PQ21HoohrmI3JiBagz
+         +CqHWjDN4tCNSnW0OtOKqlp1tHaANDgxzESkGdahjXQuvzhtTcpslA2Ir+R9IIvOLHOb
+         EkRw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:message-id:from:to:cc:subject:in-reply-to
+         :references:mime-version:content-disposition
+         :content-transfer-encoding;
+        bh=v880IeJxTwzos0c8VI5a5byiKXKUlY/YMhkF+OvbysA=;
+        b=TBsyZ5uGO74F5IO/M6UlyVfrpPgxYQdQ+n2HxdmEAK8yp2DlZKLZnfsVeD/jKU4/0w
+         AlzlUKAl5P6INIaqL/zEpjzKLwGkw1czBFqKeBj4SefrGrSTPjbp9VD2hL9kU5RDBe+f
+         BxjypWfdPPbLF7wqFM+OBKJjCfoMdyU5enfGX7JpkhkVkM5JGwwnKHl2nVgMYCOUm/t2
+         VFgotvCtvCYu0V9CiPCrKuD6pyLlY1eY5WbjcftOa5N7hXHCzHqm/igMfxDDuVdeSOMJ
+         5S3SJCFBuddeKsUTOcfiwchlL/RSE50gj4b4egKGLnIZxIkr7Ed1a80HO5gkv7TvGJvU
+         bdzA==
+X-Gm-Message-State: APjAAAUJ1ji2vj5RzGYsTvIp7uPq1Q5usypdAvAZLgxm2Hbw4cufxOXi
+        6bzAJ0U0uJq44yHl7S5ytOc=
+X-Google-Smtp-Source: APXvYqySeXvZcQyPux6KxGiv2O78t2/DWrF6bTnSPbaO6yWc4VKOzej/mdsj4N8YAQ4wG/HgW8LjrQ==
+X-Received: by 2002:ac8:2848:: with SMTP id 8mr105556319qtr.216.1561040375360;
+        Thu, 20 Jun 2019 07:19:35 -0700 (PDT)
+Received: from localhost (modemcable249.105-163-184.mc.videotron.ca. [184.163.105.249])
+        by smtp.gmail.com with ESMTPSA id i48sm12862728qte.93.2019.06.20.07.19.34
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Thu, 20 Jun 2019 07:19:34 -0700 (PDT)
+Date:   Thu, 20 Jun 2019 10:19:33 -0400
+Message-ID: <20190620101933.GB16083@t480s.localdomain>
+From:   Vivien Didelot <vivien.didelot@gmail.com>
+To:     Rasmus Villemoes <rasmus.villemoes@prevas.dk>
+Cc:     Andrew Lunn <andrew@lunn.ch>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Rasmus Villemoes <Rasmus.Villemoes@prevas.se>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH net-next] net: dsa: mv88e6xxx: introduce helpers for
+ handling chip->reg_lock
+In-Reply-To: <20190620135034.24986-1-rasmus.villemoes@prevas.dk>
+References: <20190620135034.24986-1-rasmus.villemoes@prevas.dk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <1560805037-35324-1-git-send-email-yang.shi@linux.alibaba.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 18, 2019 at 04:57:17AM +0800, Yang Shi wrote:
-> commit 7a30df49f63ad92318ddf1f7498d1129a77dd4bd upstream
+On Thu, 20 Jun 2019 13:50:42 +0000, Rasmus Villemoes <rasmus.villemoes@prevas.dk> wrote:
+> This is a no-op that simply moves all locking and unlocking of
+> ->reg_lock into trivial helpers. I did that to be able to easily add
+> some ad hoc instrumentation to those helpers to get some information
+> on contention and hold times of the mutex. Perhaps others want to do
+> something similar at some point, so this frees them from doing the
+> 'sed -i' yoga, and have a much smaller 'git diff' while fiddling.
+> 
+> Signed-off-by: Rasmus Villemoes <rasmus.villemoes@prevas.dk>
 
-THanks for the backport, now queued up.
-
-greg k-h
+Reviewed-by: Vivien Didelot <vivien.didelot@gmail.com>
