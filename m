@@ -2,111 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2B1CD4D289
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 17:55:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0813D4D291
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 17:56:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726786AbfFTPzd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 11:55:33 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:45834 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726551AbfFTPzc (ORCPT
+        id S1732086AbfFTP4g (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 11:56:36 -0400
+Received: from conssluserg-06.nifty.com ([210.131.2.91]:17720 "EHLO
+        conssluserg-06.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726562AbfFTP4e (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 11:55:32 -0400
-Received: by mail-ed1-f68.google.com with SMTP id a14so5361084edv.12
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2019 08:55:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=QjDX78oa2BASe824yEdzyyp19vd/Tsv5hqMbtNpObe4=;
-        b=f7LwkGDE3agnu24mUX5JVPd6RwdOwcxLMc6CrExAaC56PNgJumDvFtKLuZCqkggLhU
-         t8E89s0UTz8grNKBlWz2HfeSe8d8w4aTcEBQto0AB23DrdPJ7rz0BAP07hj/dlB+8iyQ
-         hrQ51Oa895B0yypME4heZ7eRVDYSNCq9gY9sLNqsu4kW14z1h838WhPzq/r3fFE//ulF
-         VKj6fzb252U/GEsVnFEzyba/2O7FrXxggXRcOnJvofuDqt1U1xf6DuMd/hukWjbJBiy1
-         0JfH7/hSL14G5lubzX1OcG5oQEJ0SxpumifnSBrYazZswBVPV4odVkZy+Zb0VYBJuLgR
-         rZsQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=QjDX78oa2BASe824yEdzyyp19vd/Tsv5hqMbtNpObe4=;
-        b=PCFmsyKAoY1kuBlzj7wmRi4woaCGE0NKAMsvt2ga8MRyN7EEfy6LyG0IvZ1+R/e/px
-         9985vllR/Y9BLQOcM/FwSqyeXFy3NoxArR+Qw9/jSXQeUZRCYELyMENNPhqtBtA5jcFd
-         B0F892X8vMKGo6V0SynMQ6ZCkOLKhW751c4j9VBXlRIw53ZX5eIY3CNk8/M7P3I2C0cn
-         9wAPy594fQ5pO7gR0A7hTUzzz/5XCUJjdakkLca9t3byGKC1mG3aan9WJg648uU+zeK3
-         WpciPuhruIFxKZxSxyCvBYv68gLt6M3YrrxHgtwRq/VvtNS8pSnEVjNbL9Y5YTpEQKYy
-         rBrA==
-X-Gm-Message-State: APjAAAVbShFqOkbY79ilPlmgjLVRi3TqbU+i74ZzaHZB9nIiOR/OWxaF
-        +r1wz3tDyfow/UVZ9RXP+jk=
-X-Google-Smtp-Source: APXvYqwKOulu/OmTBdIVTL5icCcMvO934j9hkpRe+73gTBgRLZXhe2K020ZrGLd3DjkvWhXw6oIsqw==
-X-Received: by 2002:a50:86b7:: with SMTP id r52mr113818579eda.100.1561046130902;
-        Thu, 20 Jun 2019 08:55:30 -0700 (PDT)
-Received: from localhost.localdomain ([2a01:4f9:2b:2b15::2])
-        by smtp.gmail.com with ESMTPSA id w6sm3874084ejf.0.2019.06.20.08.55.29
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 20 Jun 2019 08:55:30 -0700 (PDT)
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        Vignesh Raghavendra <vigneshr@ti.com>
-Cc:     linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
-        clang-built-linux@googlegroups.com,
-        Nathan Chancellor <natechancellor@gmail.com>
-Subject: [PATCH] mtd: mtd-abi: Don't use C++ comments
-Date:   Thu, 20 Jun 2019 08:55:05 -0700
-Message-Id: <20190620155505.27036-1-natechancellor@gmail.com>
-X-Mailer: git-send-email 2.22.0
+        Thu, 20 Jun 2019 11:56:34 -0400
+Received: from mail-ua1-f43.google.com (mail-ua1-f43.google.com [209.85.222.43]) (authenticated)
+        by conssluserg-06.nifty.com with ESMTP id x5KFu6Bj010469;
+        Fri, 21 Jun 2019 00:56:07 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-06.nifty.com x5KFu6Bj010469
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1561046167;
+        bh=/SBC/ErF1nFpyiXBhAuy1Wqj2LZ/8UBCgJRAboZq6yo=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=WvbjEEN92L6uK8imEB3/Clr22Cbq85rfco9bP3QdhNn8AubOy9F6QVl4akFnyur9Q
+         reFZ+2//wELmrE644LhkUg4SnV4kZW94Fu/qHTtzZtZI8nZvQsWlXAzITvqfyxtroX
+         acSWofBt40MoJG98hvQoJI+xhqD9wBgIEJRvQJNhxBQBufBbdMuVakY+v1JAzOPK83
+         AxNnR1TEfIMqGJkdBGgdyaPRE27P/uIdCQLCvM9O9cnuSoFHh3zAAIb/7JYeG4hKDN
+         /uz5kUG1o9NBkyrMLW+m+jl02SmnLgLQqP0PMGtG+cj7/Hh9Ux4Rdwx9H6OTQIeC8r
+         NM/Z3FN+CxY0g==
+X-Nifty-SrcIP: [209.85.222.43]
+Received: by mail-ua1-f43.google.com with SMTP id j2so1843103uaq.5;
+        Thu, 20 Jun 2019 08:56:07 -0700 (PDT)
+X-Gm-Message-State: APjAAAVwrLe7xEYIeUkTe2pEwBh0Op6g9RwlUnQIU3XsYMFofO/9AqZx
+        HS/Ehpgc124bv9Hmle+ZEKKjWRknsJZuXO4rxL8=
+X-Google-Smtp-Source: APXvYqw9io0OhojFdnLCIqaFQ/XxRfL6y/h1TwOKeVujgIuINeOVwXWREdRUnplje5m3wVqCTA0lZ3ynTfgzt/cn1uU=
+X-Received: by 2002:ab0:2b0a:: with SMTP id e10mr39878064uar.109.1561046166280;
+ Thu, 20 Jun 2019 08:56:06 -0700 (PDT)
 MIME-Version: 1.0
-X-Patchwork-Bot: notify
-Content-Transfer-Encoding: 8bit
+References: <20190616174805.3069-1-yamada.masahiro@socionext.com>
+In-Reply-To: <20190616174805.3069-1-yamada.masahiro@socionext.com>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Fri, 21 Jun 2019 00:55:30 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAQ9qmDu3NxM+unF4=EBy1Dt3gvYRGM3hLUAF3wGBqy8cA@mail.gmail.com>
+Message-ID: <CAK7LNAQ9qmDu3NxM+unF4=EBy1Dt3gvYRGM3hLUAF3wGBqy8cA@mail.gmail.com>
+Subject: Re: [PATCH 1/2] lib/raid6: remove duplicated CFLAGS_REMOVE_altivec8.o
+To:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
+Cc:     Michael Ellerman <mpe@ellerman.id.au>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Russell King <rmk+kernel@armlinux.org.uk>,
+        Stefan Agner <stefan@agner.ch>, Joel Stanley <joel@jms.id.au>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Nathan Chancellor <natechancellor@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When compiled standalone after commit b91976b7c0e3 ("kbuild:
-compile-test UAPI headers to ensure they are self-contained"),
-a warning about the C++ comments appears:
+On Mon, Jun 17, 2019 at 2:50 AM Masahiro Yamada
+<yamada.masahiro@socionext.com> wrote:
+>
+> No intended change in behavior.
+>
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> ---
 
-  In file included from usr/include/mtd/mtd-user.hdrtest.c:1:
-  In file included from ./usr/include/mtd/mtd-user.h:25:
-  ./usr/include/mtd/mtd-abi.h:116:28: warning: // comments are not
-  allowed in this language [-Wcomment]
-  #define MTD_NANDECC_OFF         0       // Switch off ECC (Not recommended)
-                                          ^
-  1 warning generated.
+Applied to linux-kbuild.
 
-Replace them with standard C comments so this warning no longer occurs.
 
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
----
- include/uapi/mtd/mtd-abi.h | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+>  lib/raid6/Makefile | 1 -
+>  1 file changed, 1 deletion(-)
+>
+> diff --git a/lib/raid6/Makefile b/lib/raid6/Makefile
+> index e723eacf7868..74004037033f 100644
+> --- a/lib/raid6/Makefile
+> +++ b/lib/raid6/Makefile
+> @@ -26,7 +26,6 @@ CFLAGS_REMOVE_altivec1.o  += -msoft-float
+>  CFLAGS_REMOVE_altivec2.o  += -msoft-float
+>  CFLAGS_REMOVE_altivec4.o  += -msoft-float
+>  CFLAGS_REMOVE_altivec8.o  += -msoft-float
+> -CFLAGS_REMOVE_altivec8.o  += -msoft-float
+>  CFLAGS_REMOVE_vpermxor1.o += -msoft-float
+>  CFLAGS_REMOVE_vpermxor2.o += -msoft-float
+>  CFLAGS_REMOVE_vpermxor4.o += -msoft-float
+> --
+> 2.17.1
+>
 
-diff --git a/include/uapi/mtd/mtd-abi.h b/include/uapi/mtd/mtd-abi.h
-index aff5b5e59845..3fe9237f723a 100644
---- a/include/uapi/mtd/mtd-abi.h
-+++ b/include/uapi/mtd/mtd-abi.h
-@@ -113,11 +113,11 @@ struct mtd_write_req {
- #define MTD_CAP_NVRAM		(MTD_WRITEABLE | MTD_BIT_WRITEABLE | MTD_NO_ERASE)
- 
- /* Obsolete ECC byte placement modes (used with obsolete MEMGETOOBSEL) */
--#define MTD_NANDECC_OFF		0	// Switch off ECC (Not recommended)
--#define MTD_NANDECC_PLACE	1	// Use the given placement in the structure (YAFFS1 legacy mode)
--#define MTD_NANDECC_AUTOPLACE	2	// Use the default placement scheme
--#define MTD_NANDECC_PLACEONLY	3	// Use the given placement in the structure (Do not store ecc result on read)
--#define MTD_NANDECC_AUTOPL_USR 	4	// Use the given autoplacement scheme rather than using the default
-+#define MTD_NANDECC_OFF		0	/* Switch off ECC (Not recommended) */
-+#define MTD_NANDECC_PLACE	1	/* Use the given placement in the structure (YAFFS1 legacy mode) */
-+#define MTD_NANDECC_AUTOPLACE	2	/* Use the default placement scheme */
-+#define MTD_NANDECC_PLACEONLY	3	/* Use the given placement in the structure (Do not store ecc result on read) */
-+#define MTD_NANDECC_AUTOPL_USR	4	/* Use the given autoplacement scheme rather than using the default */
- 
- /* OTP mode selection */
- #define MTD_OTP_OFF		0
+
 -- 
-2.22.0
-
+Best Regards
+Masahiro Yamada
