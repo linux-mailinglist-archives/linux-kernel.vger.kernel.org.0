@@ -2,38 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 98E3E4D83D
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 20:25:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CA3E44D828
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 20:24:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727811AbfFTSHC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 14:07:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33162 "EHLO mail.kernel.org"
+        id S1728295AbfFTSIb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 14:08:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35616 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728245AbfFTSG6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 14:06:58 -0400
+        id S1728269AbfFTSIT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Jun 2019 14:08:19 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8614B204FD;
-        Thu, 20 Jun 2019 18:06:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A2AB32070B;
+        Thu, 20 Jun 2019 18:08:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561054018;
-        bh=hJIVkZmUXKRDiFky2sa8B26jbrjDMH3oCqC5/EdVNPE=;
+        s=default; t=1561054098;
+        bh=nApWgEjIB6EhKwOaE9xlu+M0VnqA5S/kjouxOuF2hRI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PUiTR9gDH2pY4ncZQnxG5Jdug/Cb/6gmwZJyT30aFSWfo/etk2IOyhCAjZGeTka1X
-         3rtRAJw8ntMLxyHg5KbmksxyDrgeEcduJMXlujWtkMdZgwg74IWtzZ77ZgF8f483uQ
-         We3Ay+sW7KpmihhKeWsxnlJHVetQL9NyayQaA4Jo=
+        b=J1kyv3yy2ieuaWWv82+rsyFIjVRmOctlLSlDY+1IvPGz4ttlZfONY8mI5+QudkKeV
+         ZOHg/1l+HksV57cFZCrq4qeRMMyTW9PsWDcqp9wsON2jJb1IT8kPu31LGs/IZX+rqL
+         w4isU3gcVD2yIkdg44wsfKxXMpvQUGkY/fBLAApo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sahitya Tummala <stummala@codeaurora.org>,
-        Christoph Hellwig <hch@lst.de>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 106/117] configfs: Fix use-after-free when accessing sd->s_dentry
+        stable@vger.kernel.org, Frank van der Linden <fllinden@amazon.com>,
+        Borislav Petkov <bp@suse.de>,
+        Andy Lutomirski <luto@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>, bp@alien8.de,
+        jiaxun.yang@flygoat.com, Ingo Molnar <mingo@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 18/45] x86/CPU/AMD: Dont force the CPB cap when running under a hypervisor
 Date:   Thu, 20 Jun 2019 19:57:20 +0200
-Message-Id: <20190620174358.025050293@linuxfoundation.org>
+Message-Id: <20190620174336.238146109@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190620174351.964339809@linuxfoundation.org>
-References: <20190620174351.964339809@linuxfoundation.org>
+In-Reply-To: <20190620174328.608036501@linuxfoundation.org>
+References: <20190620174328.608036501@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,56 +49,66 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit f6122ed2a4f9c9c1c073ddf6308d1b2ac10e0781 ]
+[ Upstream commit 2ac44ab608705948564791ce1d15d43ba81a1e38 ]
 
-In the vfs_statx() context, during path lookup, the dentry gets
-added to sd->s_dentry via configfs_attach_attr(). In the end,
-vfs_statx() kills the dentry by calling path_put(), which invokes
-configfs_d_iput(). Ideally, this dentry must be removed from
-sd->s_dentry but it doesn't if the sd->s_count >= 3. As a result,
-sd->s_dentry is holding reference to a stale dentry pointer whose
-memory is already freed up. This results in use-after-free issue,
-when this stale sd->s_dentry is accessed later in
-configfs_readdir() path.
+For F17h AMD CPUs, the CPB capability ('Core Performance Boost') is forcibly set,
+because some versions of that chip incorrectly report that they do not have it.
 
-This issue can be easily reproduced, by running the LTP test case -
-sh fs_racer_file_list.sh /config
-(https://github.com/linux-test-project/ltp/blob/master/testcases/kernel/fs/racer/fs_racer_file_list.sh)
+However, a hypervisor may filter out the CPB capability, for good
+reasons. For example, KVM currently does not emulate setting the CPB
+bit in MSR_K7_HWCR, and unchecked MSR access errors will be thrown
+when trying to set it as a guest:
 
-Fixes: 76ae281f6307 ('configfs: fix race between dentry put and lookup')
-Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
-Signed-off-by: Christoph Hellwig <hch@lst.de>
+	unchecked MSR access error: WRMSR to 0xc0010015 (tried to write 0x0000000001000011) at rIP: 0xffffffff890638f4 (native_write_msr+0x4/0x20)
+
+	Call Trace:
+	boost_set_msr+0x50/0x80 [acpi_cpufreq]
+	cpuhp_invoke_callback+0x86/0x560
+	sort_range+0x20/0x20
+	cpuhp_thread_fun+0xb0/0x110
+	smpboot_thread_fn+0xef/0x160
+	kthread+0x113/0x130
+	kthread_create_worker_on_cpu+0x70/0x70
+	ret_from_fork+0x35/0x40
+
+To avoid this issue, don't forcibly set the CPB capability for a CPU
+when running under a hypervisor.
+
+Signed-off-by: Frank van der Linden <fllinden@amazon.com>
+Acked-by: Borislav Petkov <bp@suse.de>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: bp@alien8.de
+Cc: jiaxun.yang@flygoat.com
+Fixes: 0237199186e7 ("x86/CPU/AMD: Set the CPB bit unconditionally on F17h")
+Link: http://lkml.kernel.org/r/20190522221745.GA15789@dev-dsk-fllinden-2c-c1893d73.us-west-2.amazon.com
+[ Minor edits to the changelog. ]
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/configfs/dir.c | 14 ++++++--------
- 1 file changed, 6 insertions(+), 8 deletions(-)
+ arch/x86/kernel/cpu/amd.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/fs/configfs/dir.c b/fs/configfs/dir.c
-index d7955dc56737..a1985a9ad2d6 100644
---- a/fs/configfs/dir.c
-+++ b/fs/configfs/dir.c
-@@ -58,15 +58,13 @@ static void configfs_d_iput(struct dentry * dentry,
- 	if (sd) {
- 		/* Coordinate with configfs_readdir */
- 		spin_lock(&configfs_dirent_lock);
--		/* Coordinate with configfs_attach_attr where will increase
--		 * sd->s_count and update sd->s_dentry to new allocated one.
--		 * Only set sd->dentry to null when this dentry is the only
--		 * sd owner.
--		 * If not do so, configfs_d_iput may run just after
--		 * configfs_attach_attr and set sd->s_dentry to null
--		 * even it's still in use.
-+		/*
-+		 * Set sd->s_dentry to null only when this dentry is the one
-+		 * that is going to be killed.  Otherwise configfs_d_iput may
-+		 * run just after configfs_attach_attr and set sd->s_dentry to
-+		 * NULL even it's still in use.
- 		 */
--		if (atomic_read(&sd->s_count) <= 2)
-+		if (sd->s_dentry == dentry)
- 			sd->s_dentry = NULL;
+diff --git a/arch/x86/kernel/cpu/amd.c b/arch/x86/kernel/cpu/amd.c
+index ecf82859f1c0..bbebcd7a781e 100644
+--- a/arch/x86/kernel/cpu/amd.c
++++ b/arch/x86/kernel/cpu/amd.c
+@@ -792,8 +792,11 @@ static void init_amd_zn(struct cpuinfo_x86 *c)
+ {
+ 	set_cpu_cap(c, X86_FEATURE_ZEN);
  
- 		spin_unlock(&configfs_dirent_lock);
+-	/* Fix erratum 1076: CPB feature bit not being set in CPUID. */
+-	if (!cpu_has(c, X86_FEATURE_CPB))
++	/*
++	 * Fix erratum 1076: CPB feature bit not being set in CPUID.
++	 * Always set it, except when running under a hypervisor.
++	 */
++	if (!cpu_has(c, X86_FEATURE_HYPERVISOR) && !cpu_has(c, X86_FEATURE_CPB))
+ 		set_cpu_cap(c, X86_FEATURE_CPB);
+ }
+ 
 -- 
 2.20.1
 
