@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F020D4D684
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 20:09:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F61D4D852
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 20:26:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726155AbfFTSJA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 14:09:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36372 "EHLO mail.kernel.org"
+        id S1726224AbfFTSZT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 14:25:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34256 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728140AbfFTSI5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 14:08:57 -0400
+        id S1727941AbfFTSHf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Jun 2019 14:07:35 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 630D42082C;
-        Thu, 20 Jun 2019 18:08:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DC0242084E;
+        Thu, 20 Jun 2019 18:07:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561054135;
-        bh=5Peh1FXWgaywm27NNKNfLWOEMmjEgJYwGEcdcWmZyW8=;
+        s=default; t=1561054054;
+        bh=k4EW+WfHa8F3R2B6B+jMbz8EqOEEgCGFBF/wI7+kg1c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lLEEUImuiH+z8+ijl/titfy+c5MF6bu3q09rvJK3y5mAeXsUK97aqkdAP1IkVHq/e
-         W2j1M8CjqQ9BB5C6FlJc6EKmIDtaQ0RaujTfCzWXqAGxSB0OCQcp1znH6oB8S0QkkY
-         iQ4cv2vbBy5HB75IUhie3qn6Fk1whdS3t08f/DCU=
+        b=RNDWd3Y3LbZdGvxoGSFUtHLqiqTvSm8MqjK5h+lLZeh2wPOebh5XKs/+LLkFugKKK
+         iL7Raz5L50UC/j2OvPuSFM3La83PnB/NQbIyvTdyyq2aSlq1SReziXfhI9NUSLPI7A
+         Qwb2cdPUOH1rdFymFcHV+9+nXfBWWSLR2aYW9n8c=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kees Cook <keescook@chromium.org>,
+        stable@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
         "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 23/45] net: tulip: de4x5: Drop redundant MODULE_DEVICE_TABLE()
-Date:   Thu, 20 Jun 2019 19:57:25 +0200
-Message-Id: <20190620174337.862895623@linuxfoundation.org>
+Subject: [PATCH 4.9 112/117] net: sh_eth: fix mdio access in sh_eth_close() for R-Car Gen2 and RZ/A1 SoCs
+Date:   Thu, 20 Jun 2019 19:57:26 +0200
+Message-Id: <20190620174358.238643720@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190620174328.608036501@linuxfoundation.org>
-References: <20190620174328.608036501@linuxfoundation.org>
+In-Reply-To: <20190620174351.964339809@linuxfoundation.org>
+References: <20190620174351.964339809@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,52 +45,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 3e66b7cc50ef921121babc91487e1fb98af1ba6e ]
+[ Upstream commit 315ca92dd863fecbffc0bb52ae0ac11e0398726a ]
 
-Building with Clang reports the redundant use of MODULE_DEVICE_TABLE():
+The sh_eth_close() resets the MAC and then calls phy_stop()
+so that mdio read access result is incorrect without any error
+according to kernel trace like below:
 
-drivers/net/ethernet/dec/tulip/de4x5.c:2110:1: error: redefinition of '__mod_eisa__de4x5_eisa_ids_device_table'
-MODULE_DEVICE_TABLE(eisa, de4x5_eisa_ids);
-^
-./include/linux/module.h:229:21: note: expanded from macro 'MODULE_DEVICE_TABLE'
-extern typeof(name) __mod_##type##__##name##_device_table               \
-                    ^
-<scratch space>:90:1: note: expanded from here
-__mod_eisa__de4x5_eisa_ids_device_table
-^
-drivers/net/ethernet/dec/tulip/de4x5.c:2100:1: note: previous definition is here
-MODULE_DEVICE_TABLE(eisa, de4x5_eisa_ids);
-^
-./include/linux/module.h:229:21: note: expanded from macro 'MODULE_DEVICE_TABLE'
-extern typeof(name) __mod_##type##__##name##_device_table               \
-                    ^
-<scratch space>:85:1: note: expanded from here
-__mod_eisa__de4x5_eisa_ids_device_table
-^
+ifconfig-216   [003] .n..   109.133124: mdio_access: ee700000.ethernet-ffffffff read  phy:0x01 reg:0x00 val:0xffff
 
-This drops the one further from the table definition to match the common
-use of MODULE_DEVICE_TABLE().
+According to the hardware manual, the RMII mode should be set to 1
+before operation the Ethernet MAC. However, the previous code was not
+set to 1 after the driver issued the soft_reset in sh_eth_dev_exit()
+so that the mdio read access result seemed incorrect. To fix the issue,
+this patch adds a condition and set the RMII mode register in
+sh_eth_dev_exit() for R-Car Gen2 and RZ/A1 SoCs.
 
-Fixes: 07563c711fbc ("EISA bus MODALIAS attributes support")
-Signed-off-by: Kees Cook <keescook@chromium.org>
+Note that when I have tried to move the sh_eth_dev_exit() calling
+after phy_stop() on sh_eth_close(), but it gets worse (kernel panic
+happened and it seems that a register is accessed while the clock is
+off).
+
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/dec/tulip/de4x5.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/net/ethernet/renesas/sh_eth.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/net/ethernet/dec/tulip/de4x5.c b/drivers/net/ethernet/dec/tulip/de4x5.c
-index 0affee9c8aa2..0b1e7a96ff49 100644
---- a/drivers/net/ethernet/dec/tulip/de4x5.c
-+++ b/drivers/net/ethernet/dec/tulip/de4x5.c
-@@ -2108,7 +2108,6 @@ static struct eisa_driver de4x5_eisa_driver = {
- 		.remove  = de4x5_eisa_remove,
-         }
- };
--MODULE_DEVICE_TABLE(eisa, de4x5_eisa_ids);
- #endif
+diff --git a/drivers/net/ethernet/renesas/sh_eth.c b/drivers/net/ethernet/renesas/sh_eth.c
+index c59e8fe37069..49300194d3f9 100644
+--- a/drivers/net/ethernet/renesas/sh_eth.c
++++ b/drivers/net/ethernet/renesas/sh_eth.c
+@@ -1388,6 +1388,10 @@ static void sh_eth_dev_exit(struct net_device *ndev)
+ 	sh_eth_get_stats(ndev);
+ 	sh_eth_reset(ndev);
  
- #ifdef CONFIG_PCI
++	/* Set the RMII mode again if required */
++	if (mdp->cd->rmiimode)
++		sh_eth_write(ndev, 0x1, RMIIMODE);
++
+ 	/* Set MAC address again */
+ 	update_mac_address(ndev);
+ }
 -- 
 2.20.1
 
