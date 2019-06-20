@@ -2,90 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0813D4D291
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 17:56:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 319524D28A
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 17:55:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732086AbfFTP4g (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 11:56:36 -0400
-Received: from conssluserg-06.nifty.com ([210.131.2.91]:17720 "EHLO
-        conssluserg-06.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726562AbfFTP4e (ORCPT
+        id S1726943AbfFTPzh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 11:55:37 -0400
+Received: from iolanthe.rowland.org ([192.131.102.54]:44850 "HELO
+        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with SMTP id S1726551AbfFTPzh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 11:56:34 -0400
-Received: from mail-ua1-f43.google.com (mail-ua1-f43.google.com [209.85.222.43]) (authenticated)
-        by conssluserg-06.nifty.com with ESMTP id x5KFu6Bj010469;
-        Fri, 21 Jun 2019 00:56:07 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-06.nifty.com x5KFu6Bj010469
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1561046167;
-        bh=/SBC/ErF1nFpyiXBhAuy1Wqj2LZ/8UBCgJRAboZq6yo=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=WvbjEEN92L6uK8imEB3/Clr22Cbq85rfco9bP3QdhNn8AubOy9F6QVl4akFnyur9Q
-         reFZ+2//wELmrE644LhkUg4SnV4kZW94Fu/qHTtzZtZI8nZvQsWlXAzITvqfyxtroX
-         acSWofBt40MoJG98hvQoJI+xhqD9wBgIEJRvQJNhxBQBufBbdMuVakY+v1JAzOPK83
-         AxNnR1TEfIMqGJkdBGgdyaPRE27P/uIdCQLCvM9O9cnuSoFHh3zAAIb/7JYeG4hKDN
-         /uz5kUG1o9NBkyrMLW+m+jl02SmnLgLQqP0PMGtG+cj7/Hh9Ux4Rdwx9H6OTQIeC8r
-         NM/Z3FN+CxY0g==
-X-Nifty-SrcIP: [209.85.222.43]
-Received: by mail-ua1-f43.google.com with SMTP id j2so1843103uaq.5;
-        Thu, 20 Jun 2019 08:56:07 -0700 (PDT)
-X-Gm-Message-State: APjAAAVwrLe7xEYIeUkTe2pEwBh0Op6g9RwlUnQIU3XsYMFofO/9AqZx
-        HS/Ehpgc124bv9Hmle+ZEKKjWRknsJZuXO4rxL8=
-X-Google-Smtp-Source: APXvYqw9io0OhojFdnLCIqaFQ/XxRfL6y/h1TwOKeVujgIuINeOVwXWREdRUnplje5m3wVqCTA0lZ3ynTfgzt/cn1uU=
-X-Received: by 2002:ab0:2b0a:: with SMTP id e10mr39878064uar.109.1561046166280;
- Thu, 20 Jun 2019 08:56:06 -0700 (PDT)
+        Thu, 20 Jun 2019 11:55:37 -0400
+Received: (qmail 4690 invoked by uid 2102); 20 Jun 2019 11:55:36 -0400
+Received: from localhost (sendmail-bs@127.0.0.1)
+  by localhost with SMTP; 20 Jun 2019 11:55:36 -0400
+Date:   Thu, 20 Jun 2019 11:55:36 -0400 (EDT)
+From:   Alan Stern <stern@rowland.harvard.edu>
+X-X-Sender: stern@iolanthe.rowland.org
+To:     LKMM Maintainers -- Akira Yokosawa <akiyks@gmail.com>,
+        Andrea Parri <andrea.parri@amarulasolutions.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Daniel Lustig <dlustig@nvidia.com>,
+        David Howells <dhowells@redhat.com>,
+        Jade Alglave <j.alglave@ucl.ac.uk>,
+        Luc Maranget <luc.maranget@inria.fr>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Will Deacon <will.deacon@arm.com>
+cc:     Kernel development list <linux-kernel@vger.kernel.org>
+Subject: [PATCH 1/3] tools: memory-model: Expand definition of barrier
+Message-ID: <Pine.LNX.4.44L0.1906201151210.1512-100000@iolanthe.rowland.org>
 MIME-Version: 1.0
-References: <20190616174805.3069-1-yamada.masahiro@socionext.com>
-In-Reply-To: <20190616174805.3069-1-yamada.masahiro@socionext.com>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Fri, 21 Jun 2019 00:55:30 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAQ9qmDu3NxM+unF4=EBy1Dt3gvYRGM3hLUAF3wGBqy8cA@mail.gmail.com>
-Message-ID: <CAK7LNAQ9qmDu3NxM+unF4=EBy1Dt3gvYRGM3hLUAF3wGBqy8cA@mail.gmail.com>
-Subject: Re: [PATCH 1/2] lib/raid6: remove duplicated CFLAGS_REMOVE_altivec8.o
-To:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
-Cc:     Michael Ellerman <mpe@ellerman.id.au>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Russell King <rmk+kernel@armlinux.org.uk>,
-        Stefan Agner <stefan@agner.ch>, Joel Stanley <joel@jms.id.au>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Nathan Chancellor <natechancellor@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 17, 2019 at 2:50 AM Masahiro Yamada
-<yamada.masahiro@socionext.com> wrote:
->
-> No intended change in behavior.
->
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> ---
+Commit 66be4e66a7f4 ("rcu: locking and unlocking need to always be at
+least barriers") added compiler barriers back into rcu_read_lock() and
+rcu_read_unlock().  Furthermore, srcu_read_lock() and
+srcu_read_unlock() have always contained compiler barriers.
 
-Applied to linux-kbuild.
+The Linux Kernel Memory Model ought to know about these barriers.
+This patch adds them into the memory model.
 
+Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
 
->  lib/raid6/Makefile | 1 -
->  1 file changed, 1 deletion(-)
->
-> diff --git a/lib/raid6/Makefile b/lib/raid6/Makefile
-> index e723eacf7868..74004037033f 100644
-> --- a/lib/raid6/Makefile
-> +++ b/lib/raid6/Makefile
-> @@ -26,7 +26,6 @@ CFLAGS_REMOVE_altivec1.o  += -msoft-float
->  CFLAGS_REMOVE_altivec2.o  += -msoft-float
->  CFLAGS_REMOVE_altivec4.o  += -msoft-float
->  CFLAGS_REMOVE_altivec8.o  += -msoft-float
-> -CFLAGS_REMOVE_altivec8.o  += -msoft-float
->  CFLAGS_REMOVE_vpermxor1.o += -msoft-float
->  CFLAGS_REMOVE_vpermxor2.o += -msoft-float
->  CFLAGS_REMOVE_vpermxor4.o += -msoft-float
-> --
-> 2.17.1
->
+---
 
 
--- 
-Best Regards
-Masahiro Yamada
+ tools/memory-model/linux-kernel.cat |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+Index: usb-devel/tools/memory-model/linux-kernel.cat
+===================================================================
+--- usb-devel.orig/tools/memory-model/linux-kernel.cat
++++ usb-devel/tools/memory-model/linux-kernel.cat
+@@ -47,7 +47,8 @@ let strong-fence = mb | gp
+ let nonrw-fence = strong-fence | po-rel | acq-po
+ let fence = nonrw-fence | wmb | rmb
+ let barrier = fencerel(Barrier | Rmb | Wmb | Mb | Sync-rcu | Sync-srcu |
+-		Before-atomic | After-atomic | Acquire | Release) |
++		Before-atomic | After-atomic | Acquire | Release |
++		Rcu-lock | Rcu-unlock | Srcu-lock | Srcu-unlock) |
+ 	(po ; [Release]) | ([Acquire] ; po)
+ 
+ (**********************************)
+
