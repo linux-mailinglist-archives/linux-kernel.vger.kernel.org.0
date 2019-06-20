@@ -2,87 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2DC194C8C1
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 09:57:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1427A4C8C7
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 09:58:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726309AbfFTH55 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 03:57:57 -0400
-Received: from relay7-d.mail.gandi.net ([217.70.183.200]:33601 "EHLO
-        relay7-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725877AbfFTH54 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 03:57:56 -0400
-X-Originating-IP: 90.88.23.150
-Received: from localhost (aaubervilliers-681-1-81-150.w90-88.abo.wanadoo.fr [90.88.23.150])
-        (Authenticated sender: maxime.ripard@bootlin.com)
-        by relay7-d.mail.gandi.net (Postfix) with ESMTPSA id 45FB72000A;
-        Thu, 20 Jun 2019 07:57:50 +0000 (UTC)
-Date:   Thu, 20 Jun 2019 09:57:49 +0200
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Rob Herring <robh@kernel.org>
-Cc:     dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [RFC PATCH 1/4] dt-bindings: display: Convert common panel
- bindings to DT schema
-Message-ID: <20190620075749.o6i76exxhe2xbpfo@flea>
-References: <20190619215156.27795-1-robh@kernel.org>
+        id S1730643AbfFTH6r (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 03:58:47 -0400
+Received: from helcar.hmeau.com ([216.24.177.18]:43552 "EHLO deadmen.hmeau.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725965AbfFTH6q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Jun 2019 03:58:46 -0400
+Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
+        by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
+        id 1hdrxx-00024O-0a; Thu, 20 Jun 2019 15:58:41 +0800
+Received: from herbert by gondobar with local (Exim 4.89)
+        (envelope-from <herbert@gondor.apana.org.au>)
+        id 1hdrxu-00063K-2u; Thu, 20 Jun 2019 15:58:38 +0800
+Date:   Thu, 20 Jun 2019 15:58:38 +0800
+From:   Herbert Xu <herbert@gondor.apana.org.au>
+To:     yamada.masahiro@socionext.com
+Cc:     stfrench@microsoft.com, linux-cifs@vger.kernel.org,
+        masahiroy@kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: cifs: Fix tracing build error with O=
+Message-ID: <20190620075838.sthw4kjpp2gt6t6j@gondor.apana.org.au>
+References: <20190620064023.cwvcj5g4rgnmkmmn@gondor.apana.org.au>
+ <9c994536a297449d843947ba9be05998@SOC-EX01V.e01.socionext.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="4oxwmcz4cekh22my"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190619215156.27795-1-robh@kernel.org>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <9c994536a297449d843947ba9be05998@SOC-EX01V.e01.socionext.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
---4oxwmcz4cekh22my
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Wed, Jun 19, 2019 at 03:51:53PM -0600, Rob Herring wrote:
-> Convert the common panel bindings to DT schema consolidating scattered
-> definitions to a single schema file.
+On Thu, Jun 20, 2019 at 06:54:42AM +0000, yamada.masahiro@socionext.com wrote:
 >
-> The 'simple-panel' binding just a collection of properties and not a
-> complete binding itself. All of the 'simple-panel' properties are
-> covered by the panel-common.txt binding with the exception of the
-> 'no-hpd' property, so add that to the schema.
->
-> As there are lots of references to simple-panel.txt, just keep the file
-> with a reference to panel-common.yaml for now until all the bindings are
-> converted.
->
-> Cc: Thierry Reding <thierry.reding@gmail.com>
-> Cc: Sam Ravnborg <sam@ravnborg.org>
-> Cc: Maxime Ripard <maxime.ripard@bootlin.com>
-> Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> Cc: dri-devel@lists.freedesktop.org
-> Signed-off-by: Rob Herring <robh@kernel.org>
+> I cannot reproduce the build error on the latest Linus tree.
+> 
+> 
+> $ make O=build allmodconfig fs/cifs/
+> 
+> perfectly works for me.
 
-Reviewed-by: Maxime Ripard <maxime.ripard@bootlin.com>
+I was trying to build just the fs/cifs directory with
 
-Maxime
+	make O=build M=fs/cifs
 
---
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+But I see now that this can't possibly work as M= only supports
+absolute paths.  As M= is supposed to replace SUBDIRS=, what are
+we supposed to do to build just a directory?
 
---4oxwmcz4cekh22my
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXQs8fQAKCRDj7w1vZxhR
-xWqfAQC4mg5/Loj8+ISTLoz6dZc1DK9gRuM+Zd0n3nqR5qy78gEA6zQubCUl5ZuG
-Q2QwmDebJXYojsaueg4Yq1I2Jd28oQE=
-=8Jp7
------END PGP SIGNATURE-----
-
---4oxwmcz4cekh22my--
+Thanks,
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
