@@ -2,142 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7F7334DA8A
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 21:48:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 73DD34DAB7
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 21:52:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726762AbfFTTsG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 15:48:06 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:41124 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726571AbfFTTsG (ORCPT
+        id S1726837AbfFTTwn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 15:52:43 -0400
+Received: from mail-lj1-f169.google.com ([209.85.208.169]:46053 "EHLO
+        mail-lj1-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726178AbfFTTwm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 15:48:06 -0400
-Received: by mail-lj1-f196.google.com with SMTP id s21so3819543lji.8
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2019 12:48:05 -0700 (PDT)
+        Thu, 20 Jun 2019 15:52:42 -0400
+Received: by mail-lj1-f169.google.com with SMTP id m23so3790285lje.12;
+        Thu, 20 Jun 2019 12:52:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:organization:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=DiLGYKI//ln9TQDjClJ3qLkZ4+6ogsSbHs45QXIwYsg=;
-        b=jNNUOCYmU/JK5+UWg28Aqbf8xYiFLRnSldyJKKOqmDY0/vwfwE0cxokADlvibQ7WG9
-         rKkDfuom+wSxmcPQ+tJKT2gBiSZ9xXNQM2/4mrOgSiE06jLE14C22X5ZRyIqg9MUiKQg
-         UJb2kmWO2BWr+EoPSphPXDggbCNB9IhYM0IHV7UFpNZNWbdLw+HXPPXU0eNMASytrLfk
-         nb78wyy65As2v8t6QrnFye0EOJEX2L6QyEbxBrSo5VQP54x0Yd40C4WTNeTDXYntDPr6
-         QkuuLiU/eLvCA5QTImNc8I2QqSKs/hSxL3sMvyBUEblA2hC6pI012RMnPjdLz/bQ1KbK
-         WdfA==
+        bh=2jPVewSar8T2QzL1z/r0OOHuzJ0trwFnLC9MCWGa1vs=;
+        b=HCkiA6z+oejJbFwTn2zO7KTdCxxeqCN5WgMmyXSH52t5e53vTKZQzVJZM448wcgQ+g
+         +3t0YFX4jXb0QEgo73S/gJhrZNCfUxUZQmuAm1mzeboWsnFgZmDpMBGRkA6/iMt3n/5Y
+         pQoC7A+gL1mtbhFcnVmlhEf6UOzawOHgSPc0CjBqdOMu0kgdCL9y+dd42z06LyLqguzY
+         ljeJZgqEJKGgjneTkd+VV5M0bvHMU6IYn0lvuZqcHhJkZmQd45Q45fX5qWiUigvEJRiq
+         YFaYukJULB5eG0Sq2bx/fjB/bWmS4zz2u9Ss0O81JICL8S0kwCdM9X9l10NoV9FJkQIA
+         P3GQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:organization
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=DiLGYKI//ln9TQDjClJ3qLkZ4+6ogsSbHs45QXIwYsg=;
-        b=JPrKvs35CD+eueH25Ic64fFYF6Z8ac9Wr/qwm41pccPM/kKYXKvwgQSt9g+rPJvOqA
-         4aGCwdSLhIpDG275L2byeVKC+GW0Mxy3sUuEbPblJzZJOtk6uFJrPqsXbqD4OTRVdjsQ
-         cDT1TN5RHSTmwygA8u8xMAnPyWK1kG48hGozXniWlwZVi1dSt+WFPw3ou8POUpVjppeI
-         Tle1BR3XHefCMu5Gb89mTARBBJm7w/g6m8YO72r04VlLk1H3/E0YvRDB9XYfVjjvpAsg
-         HTa3k2TzOZDWPrW0jPqjcFaxuBAYGMCPNzj+J6mmtM4cKUA8EHavMhrZymrebBqgNtrT
-         UCaQ==
-X-Gm-Message-State: APjAAAVdCOZPsN7CCMPGe+jAqAn/XhcC9MwhzVtxvy1ElYtWvlOz8w5+
-        213U6fRIRX8VKChyfAKKSt4hqClgIgc=
-X-Google-Smtp-Source: APXvYqyFd6TRCOumDBpWc4p1kzxveKVV0+WF6v+02t8D9nWCK7W5yGioY0Fkzuf6ZjwlPM2PnfVURg==
-X-Received: by 2002:a2e:9106:: with SMTP id m6mr56628892ljg.164.1561060084407;
-        Thu, 20 Jun 2019 12:48:04 -0700 (PDT)
-Received: from wasted.cogentembedded.com ([31.173.80.47])
-        by smtp.gmail.com with ESMTPSA id g4sm83832lfb.31.2019.06.20.12.48.02
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 20 Jun 2019 12:48:03 -0700 (PDT)
-Subject: Re: [PATCH v7 4/5] dt-bindings: mtd: Add bindings for TI's AM654
- HyperBus memory controller
-To:     Vignesh Raghavendra <vigneshr@ti.com>,
-        Boris Brezillon <bbrezillon@kernel.org>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        Rob Herring <robh+dt@kernel.org>
-Cc:     linux-mtd@lists.infradead.org,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        devicetree@vger.kernel.org, Mason Yang <masonccyang@mxic.com.tw>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20190620172250.9102-1-vigneshr@ti.com>
- <20190620172250.9102-5-vigneshr@ti.com>
-From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Organization: Cogent Embedded
-Message-ID: <d4ddd75d-92ab-4bca-5e2f-853ade714ba2@cogentembedded.com>
-Date:   Thu, 20 Jun 2019 22:48:01 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=2jPVewSar8T2QzL1z/r0OOHuzJ0trwFnLC9MCWGa1vs=;
+        b=ZcaBOEe8eFF75d+Dim1lZhtHdolrIv3VApMWQKtl9qEo85Zy4oN6FYt5la8886z0td
+         sH3ldqW84SynbyFg3uXixhC3lEONRh8K1d7Q3bCw4hOj0IEQ3DehYMJ8dowOUSiU37hE
+         dvHbE55FODHP7dRDUsamKMN3g24sULG7sDQucuUFDueLUs3qrqYAcd1gczEqfqEmCDHy
+         emNJULkBIjcEmMl2xdBjCfGkQTf6h9Luqq76DIclQW0dEA8Ca3gT6x4ELVClCNQl6RJr
+         bwQLnOuISf20LpPz88YQRtupI49BPnHdl7Zul2bP6WAByJfbe51WZ4M9kwEEN6J3Sj+D
+         LV7g==
+X-Gm-Message-State: APjAAAUntR1XC40spAAg59ZHTYyD9p/wGQAKRtPR3LCyUOWQ+r6maayw
+        I4G9i/E3YBO5EAO1Sp5nQeu7Pifl3ps=
+X-Google-Smtp-Source: APXvYqyOBDJ1mfktM5ZIXg7fMuMaD/cpePzLvjnjPImatSmFSyNnQv1PPL98nzJlUTj8C5XmvMQvxg==
+X-Received: by 2002:a2e:5d46:: with SMTP id r67mr40555145ljb.187.1561060360511;
+        Thu, 20 Jun 2019 12:52:40 -0700 (PDT)
+Received: from localhost.localdomain (89-64-59-58.dynamic.chello.pl. [89.64.59.58])
+        by smtp.gmail.com with ESMTPSA id t17sm74645ljj.55.2019.06.20.12.52.39
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Thu, 20 Jun 2019 12:52:39 -0700 (PDT)
+From:   Tomasz Duszynski <tduszyns@gmail.com>
+To:     linux-iio@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        jic23@kernel.org, robh+dt@kernel.org,
+        Tomasz Duszynski <tduszyns@gmail.com>
+Subject: [PATCH 0/2] iio: chemical: sps30: convert bindings to yaml
+Date:   Thu, 20 Jun 2019 21:50:09 +0200
+Message-Id: <20190620195011.30942-1-tduszyns@gmail.com>
+X-Mailer: git-send-email 2.22.0
 MIME-Version: 1.0
-In-Reply-To: <20190620172250.9102-5-vigneshr@ti.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/20/2019 08:22 PM, Vignesh Raghavendra wrote:
+Convert sensirion sps30 particulate matter sensor bindings to yaml
+format and while at it add myself as a driver maintainer.
 
-> Add binding documentation for TI's HyperBus memory controller present on
-> AM654 SoC.
-> 
-> Signed-off-by: Vignesh Raghavendra <vigneshr@ti.com>
-> ---
-> 
-> v7: Fix example to move HyperBus node out of syscon
-> v6: Use generic names for bindings
-> 
->  .../devicetree/bindings/mtd/ti,am654-hbmc.txt | 52 +++++++++++++++++++
->  MAINTAINERS                                   |  1 +
->  2 files changed, 53 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/mtd/ti,am654-hbmc.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/mtd/ti,am654-hbmc.txt b/Documentation/devicetree/bindings/mtd/ti,am654-hbmc.txt
-> new file mode 100644
-> index 000000000000..d424a0b88ab6
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/mtd/ti,am654-hbmc.txt
-[...]
-> +Example:
-> +
-> +	system-controller@47000000 {
-> +		compatible = "syscon", "simple-mfd";
-> +		reg = <0x0 0x47000000 0x0 0x100>;
-> +		#address-cells = <2>;
-> +		#size-cells = <2>;
-> +		ranges;
-> +
-> +		hbmc_mux: multiplexer {
-> +			compatible = "mmio-mux";
-> +			#mux-control-cells = <1>;
-> +			mux-reg-masks = <0x4 0x2>; /* 0: reg 0x4, bit 1 */
-> +		};
-> +
+Tomasz Duszynski (2):
+  dt-bindings: iio: chemical: sps30: convert bindings to yaml
+  MAINTAINERS: add entry for sensirion sps30 driver
 
-   Empty line not needed here.
+ .../bindings/iio/chemical/sensirion,sps30.txt | 12 ------
+ .../iio/chemical/sensirion,sps30.yaml         | 39 +++++++++++++++++++
+ MAINTAINERS                                   |  6 +++
+ 3 files changed, 45 insertions(+), 12 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/iio/chemical/sensirion,sps30.txt
+ create mode 100644 Documentation/devicetree/bindings/iio/chemical/sensirion,sps30.yaml
 
-> +	};
-> +
-> +	hbmc: hyperbus@47034000 {
-> +		compatible = "ti,am654-hbmc";
-> +		reg = <0x0 0x47034000 0x0 0x100>,
-> +			<0x5 0x00000000 0x1 0x0000000>;
-> +		power-domains = <&k3_pds 55>;
-> +		#address-cells = <2>;
-> +		#size-cells = <1>;
-> +		ranges = <0x0 0x0 0x5 0x00000000 0x4000000>, /* CS0 - 64MB */
-> +			 <0x1 0x0 0x5 0x04000000 0x4000000>; /* CS1 - 64MB */
-> +		mux-controls = <&hbmc_mux 0>;
-> +
-> +			/* Slave flash node */
+--
+2.22.0
 
-   Overindented.
-
-> +		flash@0,0 {
-> +			compatible = "cypress,hyperflash", "cfi-flash";
-> +			reg = <0x0 0x0 0x4000000>;
-> +		};
-> +	};
-[...]
-
-MBR, Sergei
