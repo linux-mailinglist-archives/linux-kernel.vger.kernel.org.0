@@ -2,116 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 534004C8C9
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 09:58:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B32BF4C8DE
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 10:02:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730551AbfFTH6q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 03:58:46 -0400
-Received: from mail-eopbgr60050.outbound.protection.outlook.com ([40.107.6.50]:13819
-        "EHLO EUR04-DB3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725875AbfFTH6q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 03:58:46 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=28/DfQmj69Z6uqjM6zHK8PM5DIkd4lBE8I4EpHt1g7Y=;
- b=qY9hFEccYnieVwSuj19aSo1eYZW9MDQXVKr6jr7Eosv7SfGMkrFx5SpZg3LexXMjXX02ebSz8G9SRuL4RCMg0xpP0Ynd3tBwZH/CcMEFa3KuR+4g9I5Lxi8mKNMNTUiyGk3g9WW1Vvp2EeRuS43omPt9PBimu8W7kphczayKG2w=
-Received: from VI1PR04MB5967.eurprd04.prod.outlook.com (20.178.123.141) by
- VI1PR04MB4767.eurprd04.prod.outlook.com (20.177.48.212) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1987.11; Thu, 20 Jun 2019 07:58:41 +0000
-Received: from VI1PR04MB5967.eurprd04.prod.outlook.com
- ([fe80::3dd4:5031:dc06:1fd7]) by VI1PR04MB5967.eurprd04.prod.outlook.com
- ([fe80::3dd4:5031:dc06:1fd7%7]) with mapi id 15.20.1987.014; Thu, 20 Jun 2019
- 07:58:41 +0000
-From:   Robert Chiras <robert.chiras@nxp.com>
-To:     "festevam@gmail.com" <festevam@gmail.com>
-CC:     dl-linux-imx <linux-imx@nxp.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "sam@ravnborg.org" <sam@ravnborg.org>,
-        "daniel@ffwll.ch" <daniel@ffwll.ch>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "airlied@linux.ie" <airlied@linux.ie>
-Subject: Re: [EXT] Re: [PATCH v2 1/2] dt-bindings: display: panel: Add support
- for Raydium RM67191 panel
-Thread-Topic: [EXT] Re: [PATCH v2 1/2] dt-bindings: display: panel: Add
- support for Raydium RM67191 panel
-Thread-Index: AQHVJdoKMCAlDTVrbEyiFObM0c8qr6ai+BqAgAE4IQA=
-Date:   Thu, 20 Jun 2019 07:58:41 +0000
-Message-ID: <1561017518.9328.57.camel@nxp.com>
-References: <1560864646-1468-1-git-send-email-robert.chiras@nxp.com>
-         <1560864646-1468-2-git-send-email-robert.chiras@nxp.com>
-         <CAOMZO5DwwL5+V4Eifskk=pKzpceRmk5bvdXNeCzZfU3jVwEhEA@mail.gmail.com>
-In-Reply-To: <CAOMZO5DwwL5+V4Eifskk=pKzpceRmk5bvdXNeCzZfU3jVwEhEA@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-mailer: Evolution 3.18.5.2-0ubuntu3.2 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=robert.chiras@nxp.com; 
-x-originating-ip: [89.37.124.34]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 241a3369-c98d-4433-77f5-08d6f5551c5c
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:VI1PR04MB4767;
-x-ms-traffictypediagnostic: VI1PR04MB4767:
-x-microsoft-antispam-prvs: <VI1PR04MB47676A062F238E5782C298F7E3E40@VI1PR04MB4767.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:7691;
-x-forefront-prvs: 0074BBE012
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(376002)(39860400002)(366004)(136003)(396003)(199004)(189003)(7736002)(50226002)(7416002)(6486002)(11346002)(6506007)(53546011)(103116003)(2351001)(316002)(5660300002)(1411001)(54906003)(186003)(3846002)(8936002)(478600001)(76176011)(5640700003)(66066001)(66556008)(26005)(1361003)(68736007)(6116002)(66476007)(64756008)(256004)(102836004)(73956011)(25786009)(2906002)(14454004)(6436002)(81156014)(2616005)(76116006)(66446008)(486006)(476003)(4326008)(446003)(44832011)(1730700003)(6246003)(6916009)(81166006)(8676002)(6512007)(86362001)(99286004)(305945005)(71200400001)(36756003)(2501003)(53936002)(66946007)(71190400001)(229853002)(99106002);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB4767;H:VI1PR04MB5967.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: A0+B+FK2ss+zontLuzdgxFulyiAUIDposlhM7kJ1WBL0elExcR06IAzVBDShGjt/l6ZT8Xw9MYABvpGQKHjIbWqylu0uMdnbg1ktDxzgpLHda+Ftj13vUGzmXD5ueyFfsETO7lWFKNBrH9NpfjrlzQjN9K2AwJuXXhHbOqsb7YHzVFtfo2GCMJiO4tyvWLz+DxfjmXT5SnzsoMe4A5Efb9rVyH8RsOPDR4+rXofHi14sKFQQ2YvN31Y1hjwXSxF6eEo9ifgMQdIlppH5/p/0w/fD7ehD0Pe3dowSEhSCdbbgKU1CrmvpQo8oMjSe7Ndr4YItltyUIkpLgTA9Ed4SIlJQRNci40Cgv0eVv6nmZaTdeuxFimwR2eWp3PnXRvtVSIr4PrQpSOkMhMtlIRozdisiH4hl5BLnDu2xlAnDu+g=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <358518C615FDE548B9E2869FAA7DB547@eurprd04.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        id S1730578AbfFTICr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 04:02:47 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:46408 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726081AbfFTICq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Jun 2019 04:02:46 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5K7wuLm117665;
+        Thu, 20 Jun 2019 08:02:14 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=WD8qZqlJCku4ZNEH7HaiSAiWDKr9ZzUT+2oWjBB2W4k=;
+ b=0XcfnrP+z2wgAHv2NFRpvjaQ6H5bpnp6JeewO8yLJ3E4wj0eMaSE7ZPAv1q9Jy8j0jAI
+ zheZdy8T9FFrduox+ws+ZZzLD8JzEfmfmrTB5oSMAzcyiPI/cJfbkBVBGGJZ0ZbhdWzn
+ D/T9qhnXzGG3Xiiz2i4cXxoyPRrecRv9cVMJZfM1vQM5HyATe/lf3GddCkZd+8V/fodU
+ noHZHV0COL5AunNi4sGlc6RjWqN9qkrcnZ9sI4ynL7jZztOOzG2OVCGeIVDnq6s6i0PP
+ VTMmm/6lUnTOGr0GLdEZzMkF33mEljpjoExpa6SgOTmsTSOFCVB21foNUhsaYOTN9ELR /w== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by aserp2120.oracle.com with ESMTP id 2t7809fht5-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 20 Jun 2019 08:02:14 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5K81Bd3038345;
+        Thu, 20 Jun 2019 08:02:14 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userp3020.oracle.com with ESMTP id 2t77yngb6u-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 20 Jun 2019 08:02:13 +0000
+Received: from abhmp0008.oracle.com (abhmp0008.oracle.com [141.146.116.14])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x5K827wo011415;
+        Thu, 20 Jun 2019 08:02:08 GMT
+Received: from kadam (/41.57.98.10)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 20 Jun 2019 01:00:09 -0700
+Date:   Thu, 20 Jun 2019 10:59:59 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Colin King <colin.king@canonical.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][V2] x86/apic: fix integer overflow on 10 bit left shift
+ of cpu_khz
+Message-ID: <20190620075959.GQ28859@kadam>
+References: <20190619181446.13635-1-colin.king@canonical.com>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 241a3369-c98d-4433-77f5-08d6f5551c5c
-X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Jun 2019 07:58:41.3832
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: robert.chiras@nxp.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB4767
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190619181446.13635-1-colin.king@canonical.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9293 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=849
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1906200061
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9293 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=900 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1906200062
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gTWksIDIwMTktMDYtMTkgYXQgMTA6MjEgLTAzMDAsIEZhYmlvIEVzdGV2YW0gd3JvdGU6DQo+
-IENhdXRpb246IEVYVCBFbWFpbA0KPiANCj4gSGkgUm9iZXJ0LA0KPiANCj4gT24gVHVlLCBKdW4g
-MTgsIDIwMTkgYXQgMTA6MzMgQU0gUm9iZXJ0IENoaXJhcyA8cm9iZXJ0LmNoaXJhc0BueHAuY29t
-DQo+ID4gd3JvdGU6DQo+IA0KPiA+IA0KPiA+ICtPcHRpb25hbCBwcm9wZXJ0aWVzOg0KPiA+ICst
-IHJlc2V0LWdwaW9zOsKgwqDCoMKgwqDCoMKgwqDCoGEgR1BJTyBzcGVjIGZvciB0aGUgUlNUX0Ig
-R1BJTyBwaW4NCj4gPiArLSBwaW5jdHJsLTDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBwaGFuZGxl
-IHRvIHRoZSBwaW4gc2V0dGluZ3MgZm9yIHRoZSByZXNldA0KPiA+IHBpbg0KPiA+ICstIHdpZHRo
-LW1tOsKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoHBoeXNpY2FsIHBhbmVsIHdpZHRoIFttbV0NCj4g
-PiArLSBoZWlnaHQtbW06wqDCoMKgwqDCoMKgwqDCoMKgwqDCoHBoeXNpY2FsIHBhbmVsIGhlaWdo
-dCBbbW1dDQo+ID4gKy0gZGlzcGxheS10aW1pbmdzOsKgwqDCoMKgwqB0aW1pbmdzIGZvciB0aGUg
-Y29ubmVjdGVkIHBhbmVsIGFjY29yZGluZw0KPiA+IHRvIFsxXQ0KPiBTdGlsbCBub3QgY29udmlu
-Y2VkIHdlIG5lZWQgdGhlICdkaXNwbGF5LXRpbWluZ3MnIHByb3BlcnR5LCBldmVuIGFzDQo+IGFu
-DQo+IG9wdGlvbmFsIHByb3BlcnR5LiBNeSB1bmRlcnN0YW5kaW5nIGlzIHRoYXQgcGFzc2luZyBk
-aXNwbGF5IHRpbWluZ3MNCj4gaW4NCj4gdGhlIGRldmljZXRyZWUgaXMgbm90IGVuY291cmFnZWQu
-DQo+IA0KPiBMYXN0IHRpbWUgeW91IHNhaWQgeW91IG5lZWQgdG8gcGFzcyAnJ2Rpc3BsYXktdGlt
-aW5ncycgdG8gd29ya2Fyb3VuZA0KPiB0aGUgcHJvYmxlbSBvZiBjb25uZWN0aW5nIHRoaXMgcGFu
-ZWwgdG8gbXg4bSBEQ1NTIG9yIGVMQ0RJRi4NCj4gDQo+IFRoZSBwYW5lbCB0aW1pbmdzIGNvbWUg
-ZnJvbSB0aGUgTENEIG1hbnVmYWN0dXJlciBhbmQgaXQgaXMgYWdub3N0aWMNCj4gdG8NCj4gd2hh
-dCBkaXNwbGF5IGNvbnRyb2xsZXIgaW50ZXJmYWNlIGl0IGlzIGNvbm5lY3RlZCB0by4NCj4gDQo+
-IFNvIEkgc3VnZ2VzdCBtYWtpbmcgc3VyZSB0aGUgdGltaW5ncyBwYXNzZWQgaW4gdGhlIGRyaXZl
-ciBhcmUgY29ycmVjdA0KPiBhcyBwZXIgdGhlIHZlbmRvciBkYXRhc2hlZXQuIElmIHRoZXkgYXJl
-IGNvcnJlY3QgYW5kIG9uZSBzcGVjaWZpYw0KPiBpbnRlcmZhY2UgaXMgbm90IGFibGUgdG8gZHJp
-dmUgaXQsIHRoZW4gcHJvYmFibHkgaXQgaXMgYSBidWcgaW4gdGhpcw0KPiBzcGVjaWZpYyBkaXNw
-bGF5IGNvbnRyb2xsZXIgaW50ZXJmYWNlIG9yIGluIHRoZSBTb0MgY2xvY2sgZHJpdmVyLg0KDQpJ
-IHVuZGVyc3RhbmQuIEkgd2lsbCByZW1vdmUgdGhlIGRpc3BsYXktdGltaW5ncyBmcm9tIGR0IGFu
-ZCBhbHNvIGZyb20NCmRyaXZlci4gQ3VycmVudGx5LCB0aGlzIHBhbmVsIHdvcmtzIGluIHRoaXMg
-Zm9ybSB3aXRoIGJvdGggTENESUYgYW5kDQpEQ1NTIG9uIG91ciA4TSBTb0Mgc28sIGFzIHlvdSBz
-YWlkLCBwcm9iYWJseSB0aGUgaXNzdWUgd2Ugd2VyZSBzZWVpbmcNCmluIG91ciB0cmVlIHdhcyBj
-b21pbmcgZnJvbSBlbHNld2hlcmUu
+On Wed, Jun 19, 2019 at 07:14:46PM +0100, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> The left shift of unsigned int cpu_khz will overflow for large values
+> of cpu_khz, so cast it to a long long before shifting it to avoid
+> overvlow.  For example, this can happen when cpu_khz is 4194305 (just
+> less than 4.2 GHz).  Also wrap line to avoid checkpatch wide line
+> warning.
+> 
+> Addresses-Coverity: ("Unintentional integer overflow")
+> Fixes: 8c3ba8d04924 ("x86, apic: ack all pending irqs when crashed/on kexec")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  arch/x86/kernel/apic/apic.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/x86/kernel/apic/apic.c b/arch/x86/kernel/apic/apic.c
+> index 8956072f677d..31426126e5e0 100644
+> --- a/arch/x86/kernel/apic/apic.c
+> +++ b/arch/x86/kernel/apic/apic.c
+> @@ -1464,7 +1464,8 @@ static void apic_pending_intr_clear(void)
+>  		if (queued) {
+>  			if (boot_cpu_has(X86_FEATURE_TSC) && cpu_khz) {
+>  				ntsc = rdtsc();
+> -				max_loops = (cpu_khz << 10) - (ntsc - tsc);
+> +				max_loops = ((long long)cpu_khz << 10) -
+> +					    (ntsc - tsc);
+>  			} else {
+>  				max_loops--;
+>  			}
+> -- 
+> 
+> V2: replace right with left in commit subject and message. Doh.
+> 
+
+Uh, why are you putting the v2 explanation here instead of between the
+--- cut off and the diffstat/
+
+
+regards,
+dan carpenter
+
