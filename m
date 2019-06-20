@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DFB8D4D6AD
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 20:10:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 238C34D721
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 20:16:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728850AbfFTSKu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 14:10:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38426 "EHLO mail.kernel.org"
+        id S1729793AbfFTSQd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 14:16:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45674 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726333AbfFTSKq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 14:10:46 -0400
+        id S1729776AbfFTSQ3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Jun 2019 14:16:29 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9C25321537;
-        Thu, 20 Jun 2019 18:10:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C6ED4205F4;
+        Thu, 20 Jun 2019 18:16:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561054246;
-        bh=zgbUZHD2UZoYFx3E8SfXLifV6MSgtlLNZd2Kb/AYhUg=;
+        s=default; t=1561054588;
+        bh=J1YeY68HcNxy4hxTZGUbI6MEMOoqItqMFANsYPUiprg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iolHElDxNhkKy5B/aPERTXogiP5Xz+esA2D8w7Fw6XIn7qOZ+e/Fhy969FFAgHENF
-         kmpJR1LjWLNe3vafOwT9cy1bM+L0Jh34/V0hs/cv5gGZHAWFUn0cfeX2yF2hTfPAWY
-         5WlJT8gvZYiLFaTqElnCjeIxYHWuC8apYnMJ8nEQ=
+        b=KJ6yRzJ9zHG5xKiuRCLt0s2uTUq68kHEfOb1nZh1DsBogWeLgQTVST1i0opr5b3YE
+         hA89xK3gacHwGLpxLcYDb2POw6YP9WywNlBfiLGsyVagtJuKvR7fR2E8/tVgMrskuZ
+         fqtZEopVK9aQ2JINi06RchUEcl3eWj+gzTxsCt5A=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>,
-        Mathias Nyman <mathias.nyman@linux.intel.com>,
+        stable@vger.kernel.org, Biao Huang <biao.huang@mediatek.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 24/61] usb: xhci: Fix a potential null pointer dereference in xhci_debugfs_create_endpoint()
+Subject: [PATCH 5.1 52/98] net: stmmac: update rx tail pointer register to fix rx dma hang issue.
 Date:   Thu, 20 Jun 2019 19:57:19 +0200
-Message-Id: <20190620174341.492732267@linuxfoundation.org>
+Message-Id: <20190620174351.650458591@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190620174336.357373754@linuxfoundation.org>
-References: <20190620174336.357373754@linuxfoundation.org>
+In-Reply-To: <20190620174349.443386789@linuxfoundation.org>
+References: <20190620174349.443386789@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,42 +44,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 5bce256f0b528624a34fe907db385133bb7be33e ]
+[ Upstream commit 4523a5611526709ec9b4e2574f1bb7818212651e ]
 
-In xhci_debugfs_create_slot(), kzalloc() can fail and
-dev->debugfs_private will be NULL.
-In xhci_debugfs_create_endpoint(), dev->debugfs_private is used without
-any null-pointer check, and can cause a null pointer dereference.
+Currently we will not update the receive descriptor tail pointer in
+stmmac_rx_refill. Rx dma will think no available descriptors and stop
+once received packets exceed DMA_RX_SIZE, so that the rx only test will fail.
 
-To fix this bug, a null-pointer check is added in
-xhci_debugfs_create_endpoint().
+Update the receive tail pointer in stmmac_rx_refill to add more descriptors
+to the rx channel, so packets can be received continually
 
-This bug is found by a runtime fuzzing tool named FIZZER written by us.
-
-[subjet line change change, add potential -Mathais]
-Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
-Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Fixes: 54139cf3bb33 ("net: stmmac: adding multiple buffers for rx")
+Signed-off-by: Biao Huang <biao.huang@mediatek.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/usb/host/xhci-debugfs.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/net/ethernet/stmicro/stmmac/stmmac_main.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/usb/host/xhci-debugfs.c b/drivers/usb/host/xhci-debugfs.c
-index cadc01336bf8..7ba6afc7ef23 100644
---- a/drivers/usb/host/xhci-debugfs.c
-+++ b/drivers/usb/host/xhci-debugfs.c
-@@ -440,6 +440,9 @@ void xhci_debugfs_create_endpoint(struct xhci_hcd *xhci,
- 	struct xhci_ep_priv	*epriv;
- 	struct xhci_slot_priv	*spriv = dev->debugfs_private;
+diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+index 3c409862c52e..8cebc44108b2 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+@@ -3338,6 +3338,7 @@ static inline void stmmac_rx_refill(struct stmmac_priv *priv, u32 queue)
+ 		entry = STMMAC_GET_ENTRY(entry, DMA_RX_SIZE);
+ 	}
+ 	rx_q->dirty_rx = entry;
++	stmmac_set_rx_tail_ptr(priv, priv->ioaddr, rx_q->rx_tail_addr, queue);
+ }
  
-+	if (!spriv)
-+		return;
-+
- 	if (spriv->eps[ep_index])
- 		return;
- 
+ /**
 -- 
 2.20.1
 
