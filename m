@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 577A64D6E9
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 20:13:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6F5354D5BD
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 20:01:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729338AbfFTSNt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 14:13:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41818 "EHLO mail.kernel.org"
+        id S1726986AbfFTSAe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 14:00:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49364 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729016AbfFTSNr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 14:13:47 -0400
+        id S1726967AbfFTSAa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Jun 2019 14:00:30 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C1D7621537;
-        Thu, 20 Jun 2019 18:13:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 814DF214AF;
+        Thu, 20 Jun 2019 18:00:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561054426;
-        bh=OBMJoiPQaTvsnD2GfHaSCrxzr14ZOG3EferDDf6RBQE=;
+        s=default; t=1561053630;
+        bh=RjWjbrUsKAnG9glT+LX1xw7oZU0QdimWMnifTTPmnqY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=w73ZQo8LJHFhnKWWhEf1/4iKU6X/4FQVOqXgvti1W4J1CrO/TIspA6cMv2d8mprkD
-         JYAwbzmzgqvNgETlTkAlkfXFhk+Cb4XH3Y+BNC7BPBI5io/jgadgN2JjtgQbHTpcvN
-         NMX/+KD93wcrl7N4MlEnGYDuM4cpaORFXvPwcsZc=
+        b=lJKRH0Y/qoeLYIyPR5mxYAcOkewVac1XxukzBc9RBFjk2Q7nz9rA0/uZ0jrmRY/u+
+         SaCGNTo5rHvn/17Qm0zR4YnrWg+dJyYV4xTWeWZqg1j1KORxig5FhJFY/vo1oUf1gf
+         qFFEouN/1GMnS1y8wD3XZ2rLYgeqRSZzCpVVv2Y8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chris Mi <chrism@mellanox.com>,
-        Roi Dayan <roid@mellanox.com>,
-        Vlad Buslov <vladbu@mellanox.com>,
-        Saeed Mahameed <saeedm@mellanox.com>
-Subject: [PATCH 5.1 25/98] net/mlx5e: Add ndo_set_feature for uplink representor
-Date:   Thu, 20 Jun 2019 19:56:52 +0200
-Message-Id: <20190620174350.308579831@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Murray McAllister <murray.mcallister@gmail.com>,
+        Thomas Hellstrom <thellstrom@vmware.com>
+Subject: [PATCH 4.4 56/84] drm/vmwgfx: integer underflow in vmw_cmd_dx_set_shader() leading to an invalid read
+Date:   Thu, 20 Jun 2019 19:56:53 +0200
+Message-Id: <20190620174347.499299948@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190620174349.443386789@linuxfoundation.org>
-References: <20190620174349.443386789@linuxfoundation.org>
+In-Reply-To: <20190620174337.538228162@linuxfoundation.org>
+References: <20190620174337.538228162@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,82 +44,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chris Mi <chrism@mellanox.com>
+From: Murray McAllister <murray.mcallister@gmail.com>
 
-After we have a dedicated uplink representor, the new netdev ops
-doesn't support ndo_set_feature. Because of that, we can't change
-some features, eg. rxvlan. Now add it back.
+commit 5ed7f4b5eca11c3c69e7c8b53e4321812bc1ee1e upstream.
 
-In this patch, I also do a cleanup for the features flag handling,
-eg. remove duplicate NETIF_F_HW_TC flag setting.
+If SVGA_3D_CMD_DX_SET_SHADER is called with a shader ID
+of SVGA3D_INVALID_ID, and a shader type of
+SVGA3D_SHADERTYPE_INVALID, the calculated binding.shader_slot
+will be 4294967295, leading to an out-of-bounds read in vmw_binding_loc()
+when the offset is calculated.
 
-Fixes: aec002f6f82c ("net/mlx5e: Uninstantiate esw manager vport netdev on switchdev mode")
-Signed-off-by: Chris Mi <chrism@mellanox.com>
-Reviewed-by: Roi Dayan <roid@mellanox.com>
-Reviewed-by: Vlad Buslov <vladbu@mellanox.com>
-Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
+Cc: <stable@vger.kernel.org>
+Fixes: d80efd5cb3de ("drm/vmwgfx: Initial DX support")
+Signed-off-by: Murray McAllister <murray.mcallister@gmail.com>
+Reviewed-by: Thomas Hellstrom <thellstrom@vmware.com>
+Signed-off-by: Thomas Hellstrom <thellstrom@vmware.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/net/ethernet/mellanox/mlx5/core/en.h      |    1 +
- drivers/net/ethernet/mellanox/mlx5/core/en_main.c |    3 +--
- drivers/net/ethernet/mellanox/mlx5/core/en_rep.c  |   10 ++++++----
- 3 files changed, 8 insertions(+), 6 deletions(-)
 
---- a/drivers/net/ethernet/mellanox/mlx5/core/en.h
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/en.h
-@@ -1059,6 +1059,7 @@ void mlx5e_del_vxlan_port(struct net_dev
- netdev_features_t mlx5e_features_check(struct sk_buff *skb,
- 				       struct net_device *netdev,
- 				       netdev_features_t features);
-+int mlx5e_set_features(struct net_device *netdev, netdev_features_t features);
- #ifdef CONFIG_MLX5_ESWITCH
- int mlx5e_set_vf_mac(struct net_device *dev, int vf, u8 *mac);
- int mlx5e_set_vf_rate(struct net_device *dev, int vf, int min_tx_rate, int max_tx_rate);
---- a/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
-@@ -3698,8 +3698,7 @@ static int mlx5e_handle_feature(struct n
- 	return 0;
- }
+
+---
+ drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+--- a/drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c
++++ b/drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c
+@@ -2442,7 +2442,8 @@ static int vmw_cmd_dx_set_shader(struct
  
--static int mlx5e_set_features(struct net_device *netdev,
--			      netdev_features_t features)
-+int mlx5e_set_features(struct net_device *netdev, netdev_features_t features)
- {
- 	netdev_features_t oper_features = netdev->features;
- 	int err = 0;
---- a/drivers/net/ethernet/mellanox/mlx5/core/en_rep.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/en_rep.c
-@@ -1350,6 +1350,7 @@ static const struct net_device_ops mlx5e
- 	.ndo_get_vf_stats        = mlx5e_get_vf_stats,
- 	.ndo_set_vf_vlan         = mlx5e_uplink_rep_set_vf_vlan,
- 	.ndo_get_port_parent_id	 = mlx5e_rep_get_port_parent_id,
-+	.ndo_set_features        = mlx5e_set_features,
- };
+ 	cmd = container_of(header, typeof(*cmd), header);
  
- bool mlx5e_eswitch_rep(struct net_device *netdev)
-@@ -1423,10 +1424,9 @@ static void mlx5e_build_rep_netdev(struc
- 
- 	netdev->watchdog_timeo    = 15 * HZ;
- 
-+	netdev->features       |= NETIF_F_NETNS_LOCAL;
- 
--	netdev->features	 |= NETIF_F_HW_TC | NETIF_F_NETNS_LOCAL;
--	netdev->hw_features      |= NETIF_F_HW_TC;
--
-+	netdev->hw_features    |= NETIF_F_HW_TC;
- 	netdev->hw_features    |= NETIF_F_SG;
- 	netdev->hw_features    |= NETIF_F_IP_CSUM;
- 	netdev->hw_features    |= NETIF_F_IPV6_CSUM;
-@@ -1435,7 +1435,9 @@ static void mlx5e_build_rep_netdev(struc
- 	netdev->hw_features    |= NETIF_F_TSO6;
- 	netdev->hw_features    |= NETIF_F_RXCSUM;
- 
--	if (rep->vport != MLX5_VPORT_UPLINK)
-+	if (rep->vport == MLX5_VPORT_UPLINK)
-+		netdev->hw_features |= NETIF_F_HW_VLAN_CTAG_RX;
-+	else
- 		netdev->features |= NETIF_F_VLAN_CHALLENGED;
- 
- 	netdev->features |= netdev->hw_features;
+-	if (cmd->body.type >= SVGA3D_SHADERTYPE_DX10_MAX) {
++	if (cmd->body.type >= SVGA3D_SHADERTYPE_DX10_MAX ||
++	    cmd->body.type < SVGA3D_SHADERTYPE_MIN) {
+ 		DRM_ERROR("Illegal shader type %u.\n",
+ 			  (unsigned) cmd->body.type);
+ 		return -EINVAL;
 
 
