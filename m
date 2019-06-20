@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3D86D4D739
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 20:18:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5568B4D6AE
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 20:10:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729115AbfFTSQi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 14:16:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45732 "EHLO mail.kernel.org"
+        id S1728863AbfFTSKu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 14:10:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38486 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728814AbfFTSQc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 14:16:32 -0400
+        id S1728339AbfFTSKu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Jun 2019 14:10:50 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 00534215EA;
-        Thu, 20 Jun 2019 18:16:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C3F782070B;
+        Thu, 20 Jun 2019 18:10:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561054591;
-        bh=I8yePqN8pwCzyU8vApw9YiizwGXr64LMAq5Y4tEhAOI=;
+        s=default; t=1561054249;
+        bh=zRm12ojQwWJ4Lpr1mt5mcAKZFABXiB/fuUgpIGgVEGM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Snz0up14ImcdwgM6TdurfT/Aib00TW6DzcMATxBYlOLvlvOP8kDanQ8byQwvBa16a
-         tgvluwfl50z2vjLkKlo/Prs0+aYnaa97JZBaiJBvbTFDKXa90EDmM75d/jRtBZtpPV
-         eZz7EaUXslW3jNfbA1de3sWuPJg25wCSeQoVHJLM=
+        b=Cr1jdsHtkQgj0Y5FGO5i16RY53jBRvNclbaQl3fXR5aILqcVGc+fFzKuv0DJDeYJe
+         3mc7dlj/CTxr4SBPJAt5bmG8GatTfuWsQIZQ+7Aofp/SAQm0w0gNh24a0i8olbE9m/
+         +P4VkoyX1o5GgvH3byv9kPFpPYXigUjheN/zhTAU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Biao Huang <biao.huang@mediatek.com>,
-        Alexandre TORGUE <alexandre.torgue@st.com>,
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
         "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 53/98] net: stmmac: fix csr_clk cant be zero issue
+Subject: [PATCH 4.19 25/61] mISDN: make sure device name is NUL terminated
 Date:   Thu, 20 Jun 2019 19:57:20 +0200
-Message-Id: <20190620174351.703795898@linuxfoundation.org>
+Message-Id: <20190620174341.673218654@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190620174349.443386789@linuxfoundation.org>
-References: <20190620174349.443386789@linuxfoundation.org>
+In-Reply-To: <20190620174336.357373754@linuxfoundation.org>
+References: <20190620174336.357373754@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,57 +44,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 5e7f7fc538d894b2d9aa41876b8dcf35f5fe11e6 ]
+[ Upstream commit ccfb62f27beb295103e9392462b20a6ed807d0ea ]
 
-The specific clk_csr value can be zero, and
-stmmac_clk is necessary for MDC clock which can be set dynamically.
-So, change the condition from plat->clk_csr to plat->stmmac_clk to
-fix clk_csr can't be zero issue.
+The user can change the device_name with the IMSETDEVNAME ioctl, but we
+need to ensure that the user's name is NUL terminated.  Otherwise it
+could result in a buffer overflow when we copy the name back to the user
+with IMGETDEVINFO ioctl.
 
-Fixes: cd7201f477b9 ("stmmac: MDC clock dynamically based on the csr clock input")
-Signed-off-by: Biao Huang <biao.huang@mediatek.com>
-Acked-by: Alexandre TORGUE <alexandre.torgue@st.com>
+I also changed two strcpy() calls which handle the name to strscpy().
+Hopefully, there aren't any other ways to create a too long name, but
+it's nice to do this as a kernel hardening measure.
+
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/stmicro/stmmac/stmmac_main.c     | 6 +++---
- drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c | 5 ++++-
- 2 files changed, 7 insertions(+), 4 deletions(-)
+ drivers/isdn/mISDN/socket.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-index 8cebc44108b2..635d88d82610 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-@@ -4380,10 +4380,10 @@ int stmmac_dvr_probe(struct device *device,
- 	 * set the MDC clock dynamically according to the csr actual
- 	 * clock input.
- 	 */
--	if (!priv->plat->clk_csr)
--		stmmac_clk_csr_set(priv);
--	else
-+	if (priv->plat->clk_csr >= 0)
- 		priv->clk_csr = priv->plat->clk_csr;
-+	else
-+		stmmac_clk_csr_set(priv);
- 
- 	stmmac_check_pcs_mode(priv);
- 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
-index 3031f2bf15d6..f45bfbef97d0 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
-@@ -408,7 +408,10 @@ stmmac_probe_config_dt(struct platform_device *pdev, const char **mac)
- 	/* Default to phy auto-detection */
- 	plat->phy_addr = -1;
- 
--	/* Get clk_csr from device tree */
-+	/* Default to get clk_csr from stmmac_clk_crs_set(),
-+	 * or get clk_csr from device tree.
-+	 */
-+	plat->clk_csr = -1;
- 	of_property_read_u32(np, "clk_csr", &plat->clk_csr);
- 
- 	/* "snps,phy-addr" is not a standard property. Mark it as deprecated
+diff --git a/drivers/isdn/mISDN/socket.c b/drivers/isdn/mISDN/socket.c
+index b2abc44fa5cb..a73337b74f41 100644
+--- a/drivers/isdn/mISDN/socket.c
++++ b/drivers/isdn/mISDN/socket.c
+@@ -394,7 +394,7 @@ data_sock_ioctl(struct socket *sock, unsigned int cmd, unsigned long arg)
+ 			memcpy(di.channelmap, dev->channelmap,
+ 			       sizeof(di.channelmap));
+ 			di.nrbchan = dev->nrbchan;
+-			strcpy(di.name, dev_name(&dev->dev));
++			strscpy(di.name, dev_name(&dev->dev), sizeof(di.name));
+ 			if (copy_to_user((void __user *)arg, &di, sizeof(di)))
+ 				err = -EFAULT;
+ 		} else
+@@ -677,7 +677,7 @@ base_sock_ioctl(struct socket *sock, unsigned int cmd, unsigned long arg)
+ 			memcpy(di.channelmap, dev->channelmap,
+ 			       sizeof(di.channelmap));
+ 			di.nrbchan = dev->nrbchan;
+-			strcpy(di.name, dev_name(&dev->dev));
++			strscpy(di.name, dev_name(&dev->dev), sizeof(di.name));
+ 			if (copy_to_user((void __user *)arg, &di, sizeof(di)))
+ 				err = -EFAULT;
+ 		} else
+@@ -691,6 +691,7 @@ base_sock_ioctl(struct socket *sock, unsigned int cmd, unsigned long arg)
+ 			err = -EFAULT;
+ 			break;
+ 		}
++		dn.name[sizeof(dn.name) - 1] = '\0';
+ 		dev = get_mdevice(dn.id);
+ 		if (dev)
+ 			err = device_rename(&dev->dev, dn.name);
 -- 
 2.20.1
 
