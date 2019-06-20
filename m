@@ -2,14 +2,14 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CEA1B4D50A
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 19:25:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 71E3B4D515
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 19:25:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732257AbfFTRZU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 13:25:20 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:52574 "EHLO
+        id S1732555AbfFTRZf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 13:25:35 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:52562 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732155AbfFTRXT (ORCPT
+        with ESMTP id S1726530AbfFTRXT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 20 Jun 2019 13:23:19 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
@@ -18,26 +18,26 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From:
         Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=FociWLakoZ+8To2zv3/tt7eXrQHxKyGo8THcaHAtO7Q=; b=S8ZNtNr52BE4rZAEFXY58sn9rw
-        TNCKgArSvKnw1rvmONqPycw3LSgNbDU+YWO2mcvDBrD7Jp01rnFzx9IIrP0J5dzX9gw6TwqzMJxeu
-        Q35+1iiZ6PB5zG0gIgn0HMHcRYrXlvy345A7o6rpZHfsfu0BeVRLTa3/Is/rPQmZ4TrIFLXBviMGn
-        iyTLq+c/kWrRcdCQh8v0VIH235kdU93tUkcrjmWoEeCLIwcMerV3NSmWG1bDokT3CyHpAxGJYfPPp
-        JAtTvaaM3hM74HyoJMqnTFLgtteU0/JdskA6g0h+Jqw1BlSPwfSI+oXMnagEmzQY1PigqVzdcxSGS
-        1gbWNtTg==;
+        bh=+TcnVW4oc5Non+1YyDCeuAoLNOkHuIVoRYv61A8PqOA=; b=fys93Vkq4CBY5OFP8T6LD4eE21
+        k3+beOPwAxKRwDu+cn/+/TQ+BwKhhkQpBIV9p9rPgN+TV0uyyHn+YOdnp8FPtdlZnfCHJYYZkEBsZ
+        y7iKSiGllpq1Dgw8t7LdW13j5BTw4lJ3iwA02A/pfKHpTUSpG+FUtUkrrRcmAdb8PddqwaXT4pNPv
+        n3bDrT2Nh8f/MHXkxcGxPY9ob2HPD7y8XODfpnSnJsGMiwknAkKqD0YvSv52qu4Shsu3phqfiGBiD
+        +2LnMsf79NWcbZ5dCorAsMCbbBOJ/B7IVVmY79lz8BXvvHBitcMpuvq/l9VURaOIHzwIFPC0OQmrL
+        4cXQIWJA==;
 Received: from [177.97.20.138] (helo=bombadil.infradead.org)
         by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1he0mM-0008Ru-AK; Thu, 20 Jun 2019 17:23:18 +0000
+        id 1he0mM-0008S0-A8; Thu, 20 Jun 2019 17:23:18 +0000
 Received: from mchehab by bombadil.infradead.org with local (Exim 4.92)
         (envelope-from <mchehab@bombadil.infradead.org>)
-        id 1he0mJ-0000D0-MH; Thu, 20 Jun 2019 14:23:15 -0300
+        id 1he0mJ-0000D4-N4; Thu, 20 Jun 2019 14:23:15 -0300
 From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>
 Cc:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Mauro Carvalho Chehab <mchehab@infradead.org>,
         linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>
-Subject: [PATCH v2 06/22] scripts/get_abi.pl: split label naming from xref logic
-Date:   Thu, 20 Jun 2019 14:22:58 -0300
-Message-Id: <a94701a22320efb500c016620996380cc2d4ae48.1561050806.git.mchehab+samsung@kernel.org>
+Subject: [PATCH v2 07/22] scripts/get_abi.pl: add support for searching for ABI symbols
+Date:   Thu, 20 Jun 2019 14:22:59 -0300
+Message-Id: <72051952d8eac5a5aff20998909aeb52aeb4d773.1561050806.git.mchehab+samsung@kernel.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <cover.1561050806.git.mchehab+samsung@kernel.org>
 References: <cover.1561050806.git.mchehab+samsung@kernel.org>
@@ -48,181 +48,210 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Instead of using a ReST compilant label while parsing,
-move the label to ReST output. That makes the parsing logic
-more generic, allowing it to provide other types of output.
-
-As a side effect, now all files used to generate the output
-will be output. We can later add command line arguments to
-filter.
+Change its syntax to allow switching between ReST output mode
+and a new search mode, with allows to seek for ABI symbols
+using regex.
 
 Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 ---
- scripts/get_abi.pl | 94 ++++++++++++++++++++++++++--------------------
- 1 file changed, 53 insertions(+), 41 deletions(-)
+ scripts/get_abi.pl | 112 +++++++++++++++++++++++++++++++++++++++++----
+ 1 file changed, 103 insertions(+), 9 deletions(-)
 
 diff --git a/scripts/get_abi.pl b/scripts/get_abi.pl
-index 0ede9593c639..f84d321a72bb 100755
+index f84d321a72bb..ecf6b91df7c4 100755
 --- a/scripts/get_abi.pl
 +++ b/scripts/get_abi.pl
-@@ -49,17 +49,23 @@ sub parse_abi {
- 	my $name = $file;
- 	$name =~ s,.*/,,;
+@@ -9,9 +9,11 @@ use Fcntl ':mode';
+ my $help;
+ my $man;
+ my $debug;
++my $prefix="Documentation/ABI";
  
-+	my $nametag = "File $name";
-+	$data{$nametag}->{what} = "File $name";
-+	$data{$nametag}->{type} = "File";
-+	$data{$nametag}->{file} = $name;
-+	$data{$nametag}->{is_file} = 1;
+ GetOptions(
+ 	"debug|d+" => \$debug,
++	"dir=s" => \$prefix,
+ 	'help|?' => \$help,
+ 	man => \$man
+ ) or pod2usage(2);
+@@ -19,9 +21,12 @@ GetOptions(
+ pod2usage(1) if $help;
+ pod2usage(-exitstatus => 0, -verbose => 2) if $man;
+ 
+-pod2usage(2) if (scalar @ARGV != 1);
++pod2usage(2) if (scalar @ARGV < 1 || @ARGV > 2);
+ 
+-my ($prefix) = @ARGV;
++my ($cmd, $arg) = @ARGV;
 +
++pod2usage(2) if ($cmd ne "search" && $cmd ne "rest");
++pod2usage(2) if ($cmd eq "search" && !$arg);
+ 
+ require Data::Dumper if ($debug);
+ 
+@@ -53,6 +58,7 @@ sub parse_abi {
+ 	$data{$nametag}->{what} = "File $name";
+ 	$data{$nametag}->{type} = "File";
+ 	$data{$nametag}->{file} = $name;
++	$data{$nametag}->{filepath} = $file;
+ 	$data{$nametag}->{is_file} = 1;
+ 
  	my $type = $file;
- 	$type =~ s,.*/(.*)/.*,$1,;
- 
- 	my $what;
- 	my $new_what;
- 	my $tag;
--	my $label;
- 	my $ln;
--	my $has_file;
- 	my $xrefs;
- 	my $space;
-+	my @labels;
-+	my $label;
- 
- 	print STDERR "Opening $file\n" if ($debug > 1);
- 	open IN, $file;
-@@ -88,28 +94,13 @@ sub parse_abi {
- 					parse_error($file, $ln, "What '$what' doesn't have a description", "") if ($what && !$data{$what}->{description});
- 
- 					$what = $content;
-+					$label = $content;
- 					$new_what = 1;
- 				}
-+				push @labels, [($content, $label)];
- 				$tag = $new_tag;
- 
--				if ($has_file) {
--					$label = "abi_" . $content . " ";
--					$label =~ tr/A-Z/a-z/;
--
--					# Convert special chars to "_"
--					$label =~s/[\x00-\x2f]+/_/g;
--					$label =~s/[\x3a-\x40]+/_/g;
--					$label =~s/[\x7b-\xff]+/_/g;
--					$label =~ s,_+,_,g;
--					$label =~ s,_$,,;
--
--					$data{$what}->{label} .= $label;
--
--					# Escape special chars from content
--					$content =~s/([\x00-\x1f\x21-\x2f\x3a-\x40\x7b-\xff])/\\$1/g;
--
--					$xrefs .= "- :ref:`$content <$label>`\n\n";
--				}
-+				push @{$data{$nametag}->{xrefs}}, [($content, $label)] if ($data{$nametag}->{what});
- 				next;
- 			}
- 
-@@ -117,6 +108,9 @@ sub parse_abi {
- 				$tag = $new_tag;
- 
- 				if ($new_what) {
-+					@{$data{$what}->{label}} = @labels if ($data{$nametag}->{what});
-+					@labels = ();
-+					$label = "";
- 					$new_what = 0;
+@@ -115,6 +121,7 @@ sub parse_abi {
  
  					$data{$what}->{type} = $type;
-@@ -145,15 +139,8 @@ sub parse_abi {
- 		}
+ 					$data{$what}->{file} = $name;
++					$data{$what}->{filepath} = $file;
+ 					print STDERR "\twhat: $what\n" if ($debug > 1);
+ 				}
  
- 		# Store any contents before tags at the database
--		if (!$tag) {
--			next if (/^\n/);
--
--			my $my_what = "File $name";
--			$data{$my_what}->{what} = "File $name";
--			$data{$my_what}->{type} = "File";
--			$data{$my_what}->{file} = $name;
--			$data{$my_what}->{description} .= $_;
--			$has_file = 1;
-+		if (!$tag && $data{$nametag}->{what}) {
-+			$data{$nametag}->{description} .= $_;
- 			next;
- 		}
- 
-@@ -192,12 +179,8 @@ sub parse_abi {
- 		# Everything else is error
- 		parse_error($file, $ln, "Unexpected line:", $_);
- 	}
-+	$data{$nametag}->{description} =~ s/^\n+//;
+@@ -183,7 +190,9 @@ sub parse_abi {
  	close IN;
--
--	if ($has_file) {
--		my $my_what = "File $name";
--		$data{$my_what}->{xrefs} = $xrefs;
--	}
  }
  
- # Outputs the output on ReST format
-@@ -212,11 +195,22 @@ sub output_rest {
- 		my $bar = $w;
- 		$bar =~ s/./-/g;
- 
--		if ($data{$what}->{label}) {
--			my @labels = split(/\s/, $data{$what}->{label});
--			foreach my $label (@labels) {
--				printf ".. _%s:\n\n", $label;
--			}
-+		foreach my $p (@{$data{$what}->{label}}) {
-+			my ($content, $label) = @{$p};
-+			$label = "abi_" . $label . " ";
-+			$label =~ tr/A-Z/a-z/;
-+
-+			# Convert special chars to "_"
-+			$label =~s/([\x00-\x2f\x3a-\x40\x5b-\x60\x7b-\xff])/_/g;
-+			$label =~ s,_+,_,g;
-+			$label =~ s,_$,,;
-+
-+			$data{$what}->{label} .= $label;
-+
-+			printf ".. _%s:\n\n", $label;
-+
-+			# only one label is enough
-+			last;
- 		}
- 
- 		print "$w\n$bar\n\n";
-@@ -243,10 +237,28 @@ sub output_rest {
- 				print "$desc\n\n";
- 			}
- 		} else {
--			print "DESCRIPTION MISSING for $what\n\n";
-+			print "DESCRIPTION MISSING for $what\n\n" if (!$data{$what}->{is_file});
- 		}
- 
--		printf "Has the following ABI:\n\n%s", $data{$what}->{xrefs} if ($data{$what}->{xrefs});
-+		if ($data{$what}->{xrefs}) {
-+			printf "Has the following ABI:\n\n";
-+
-+			foreach my $p(@{$data{$what}->{xrefs}}) {
-+				my ($content, $label) = @{$p};
-+				$label = "abi_" . $label . " ";
-+				$label =~ tr/A-Z/a-z/;
-+
-+				# Convert special chars to "_"
-+				$label =~s/([\x00-\x2f\x3a-\x40\x5b-\x60\x7b-\xff])/_/g;
-+				$label =~ s,_+,_,g;
-+				$label =~ s,_$,,;
-+
-+				# Escape special chars from content
-+				$content =~s/([\x00-\x1f\x21-\x2f\x3a-\x40\x7b-\xff])/\\$1/g;
-+
-+				print "- :ref:`$content <$label>`\n\n";
-+			}
-+		}
+-# Outputs the output on ReST format
++#
++# Outputs the book on ReST format
++#
+ sub output_rest {
+ 	foreach my $what (sort keys %data) {
+ 		my $type = $data{$what}->{type};
+@@ -262,6 +271,45 @@ sub output_rest {
  	}
  }
+ 
++#
++# Searches for ABI symbols
++#
++sub search_symbols {
++	foreach my $what (sort keys %data) {
++		next if (!($what =~ m/($arg)/));
++
++		my $type = $data{$what}->{type};
++		next if ($type eq "File");
++
++		my $file = $data{$what}->{filepath};
++
++		my $bar = $what;
++		$bar =~ s/./-/g;
++
++		print "\n$what\n$bar\n\n";
++
++		my $kernelversion = $data{$what}->{kernelversion};
++		my $contact = $data{$what}->{contact};
++		my $users = $data{$what}->{users};
++		my $date = $data{$what}->{date};
++		my $desc = $data{$what}->{description};
++		$kernelversion =~ s/^\s+//;
++		$contact =~ s/^\s+//;
++		$users =~ s/^\s+//;
++		$users =~ s/\n//g;
++		$date =~ s/^\s+//;
++		$desc =~ s/^\s+//;
++
++		printf "Kernel version:\t\t%s\n", $kernelversion if ($kernelversion);
++		printf "Date:\t\t\t%s\n", $date if ($date);
++		printf "Contact:\t\t%s\n", $contact if ($contact);
++		printf "Users:\t\t\t%s\n", $users if ($users);
++		print "Defined on file:\t$file\n\n";
++		print "Description:\n\n$desc";
++	}
++}
++
++
+ #
+ # Parses all ABI files located at $prefix dir
+ #
+@@ -270,9 +318,13 @@ find({wanted =>\&parse_abi, no_chdir => 1}, $prefix);
+ print STDERR Data::Dumper->Dump([\%data], [qw(*data)]) if ($debug);
+ 
+ #
+-# Outputs an ReST file with the ABI contents
++# Handles the command
+ #
+-output_rest
++if ($cmd eq "rest") {
++	output_rest;
++} else {
++	search_symbols;
++}
+ 
+ 
+ __END__
+@@ -283,12 +335,27 @@ abi_book.pl - parse the Linux ABI files and produce a ReST book.
+ 
+ =head1 SYNOPSIS
+ 
+-B<abi_book.pl> [--debug] <ABI_DIR>]
++B<abi_book.pl> [--debug] <COMAND> [<ARGUMENT>]
++
++Where <COMMAND> can be:
++
++=over 8
++
++B<search> [SEARCH_REGEX] - search for [SEARCH_REGEX] inside ABI
++
++B<rest>   - output the ABI in ReST markup language
++
++=back
+ 
+ =head1 OPTIONS
+ 
+ =over 8
+ 
++=item B<--dir>
++
++Changes the location of the ABI search. By default, it uses
++the Documentation/ABI directory.
++
+ =item B<--debug>
+ 
+ Put the script in verbose mode, useful for debugging. Can be called multiple
+@@ -306,8 +373,35 @@ Prints the manual page and exits.
+ 
+ =head1 DESCRIPTION
+ 
+-Parse the Linux ABI files from ABI DIR (usually located at Documentation/ABI)
+-and produce a ReST book containing the Linux ABI.
++Parse the Linux ABI files from ABI DIR (usually located at Documentation/ABI),
++allowing to search for ABI symbols or to produce a ReST book containing
++the Linux ABI documentation.
++
++=head1 EXAMPLES
++
++Search for all stable symbols with the word "usb":
++
++=over 8
++
++$ scripts/get_abi.pl search usb --dir Documentation/ABI/stable
++
++=back
++
++Search for all symbols that match the regex expression "usb.*cap":
++
++=over 8
++
++$ scripts/get_abi.pl search usb.*cap
++
++=back
++
++Output all obsoleted symbols in ReST format
++
++=over 8
++
++$ scripts/get_abi.pl rest --dir Documentation/ABI/obsolete
++
++=back
+ 
+ =head1 BUGS
+ 
+@@ -315,7 +409,7 @@ Report bugs to Mauro Carvalho Chehab <mchehab@s-opensource.com>
+ 
+ =head1 COPYRIGHT
+ 
+-Copyright (c) 2016 by Mauro Carvalho Chehab <mchehab@s-opensource.com>.
++Copyright (c) 2016-2017 by Mauro Carvalho Chehab <mchehab@s-opensource.com>.
+ 
+ License GPLv2: GNU GPL version 2 <http://gnu.org/licenses/gpl.html>.
  
 -- 
 2.21.0
