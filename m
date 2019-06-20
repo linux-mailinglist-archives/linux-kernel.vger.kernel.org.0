@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 52B424D791
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 20:20:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9075C4D8F6
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 20:30:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729400AbfFTSOK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 14:14:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42288 "EHLO mail.kernel.org"
+        id S1727108AbfFTSA5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 14:00:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50002 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729388AbfFTSOH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 14:14:07 -0400
+        id S1726447AbfFTSAy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Jun 2019 14:00:54 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F1869205F4;
-        Thu, 20 Jun 2019 18:14:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AACC8208CA;
+        Thu, 20 Jun 2019 18:00:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561054446;
-        bh=HR46DA35P2yTmAUGuLwkvz1jNc+evZUAEPr7QK90Yew=;
+        s=default; t=1561053653;
+        bh=/SYrF4igYH9DXu7t6onqiM2r0S/NibwYcqITNb3Z4Us=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RQSq++lQMHXE8k3+upjfNpUZss4NKITeORUMTpecn9VF9ondkaqdV3VALSkILroa5
-         gVV4RbivjIaZ0irvJPw1jb9X6Ju06j6exIVEcUJL+nzo1ugYBim2DKQpaQQCRnVJtD
-         KWHkd1dy24+QIpdkQR+iHHVhkcR5H3JJiVXg9fBo=
+        b=hnkxnmNHjIo3PDciIMDw9auYH/M7c1wUGSiprTm1D+6571WjJLH+p/+ztSg2HSX3P
+         bwQiUBtS2i2JhuiTwK5mj1EkNPDzMbTVVXLDw/VsRBNGA8xEa+Nfw9aHgOcaeH5eCU
+         KBwWhlpB01kpSlzbhapjHHcNWxcvsw4mNBR9TTFc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Steve Moskovchenko <stevemo@skydio.com>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 32/98] iio: imu: mpu6050: Fix FIFO layout for ICM20602
-Date:   Thu, 20 Jun 2019 19:56:59 +0200
-Message-Id: <20190620174350.565386198@linuxfoundation.org>
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        syzbot <syzkaller@googlegroups.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.4 63/84] ax25: fix inconsistent lock state in ax25_destroy_timer
+Date:   Thu, 20 Jun 2019 19:57:00 +0200
+Message-Id: <20190620174348.011537877@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190620174349.443386789@linuxfoundation.org>
-References: <20190620174349.443386789@linuxfoundation.org>
+In-Reply-To: <20190620174337.538228162@linuxfoundation.org>
+References: <20190620174337.538228162@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,180 +44,117 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 1615fe41a1959a2ee2814ba62736b2bb54e9802a ]
+From: Eric Dumazet <edumazet@google.com>
 
-The MPU6050 driver has recently gained support for the
-ICM20602 IMU, which is very similar to MPU6xxx. However,
-the ICM20602's FIFO data specifically includes temperature
-readings, which were not present on MPU6xxx parts. As a
-result, the driver will under-read the ICM20602's FIFO
-register, causing the same (partial) sample to be returned
-for all reads, until the FIFO overflows.
+[ Upstream commit d4d5d8e83c9616aeef28a2869cea49cc3fb35526 ]
 
-Fix this by adding a table of scan elements specifically
-for the ICM20602, which takes the extra temperature data
-into consideration.
+Before thread in process context uses bh_lock_sock()
+we must disable bh.
 
-While we're at it, fix the temperature offset and scaling
-on ICM20602, since it uses different scale/offset constants
-than the rest of the MPU6xxx devices.
+sysbot reported :
 
-Signed-off-by: Steve Moskovchenko <stevemo@skydio.com>
-Fixes: 22904bdff978 ("iio: imu: mpu6050: Add support for the ICM 20602 IMU")
-Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+WARNING: inconsistent lock state
+5.2.0-rc3+ #32 Not tainted
+
+inconsistent {SOFTIRQ-ON-W} -> {IN-SOFTIRQ-W} usage.
+blkid/26581 [HC0[0]:SC1[1]:HE1:SE0] takes:
+00000000e0da85ee (slock-AF_AX25){+.?.}, at: spin_lock include/linux/spinlock.h:338 [inline]
+00000000e0da85ee (slock-AF_AX25){+.?.}, at: ax25_destroy_timer+0x53/0xc0 net/ax25/af_ax25.c:275
+{SOFTIRQ-ON-W} state was registered at:
+  lock_acquire+0x16f/0x3f0 kernel/locking/lockdep.c:4303
+  __raw_spin_lock include/linux/spinlock_api_smp.h:142 [inline]
+  _raw_spin_lock+0x2f/0x40 kernel/locking/spinlock.c:151
+  spin_lock include/linux/spinlock.h:338 [inline]
+  ax25_rt_autobind+0x3ca/0x720 net/ax25/ax25_route.c:429
+  ax25_connect.cold+0x30/0xa4 net/ax25/af_ax25.c:1221
+  __sys_connect+0x264/0x330 net/socket.c:1834
+  __do_sys_connect net/socket.c:1845 [inline]
+  __se_sys_connect net/socket.c:1842 [inline]
+  __x64_sys_connect+0x73/0xb0 net/socket.c:1842
+  do_syscall_64+0xfd/0x680 arch/x86/entry/common.c:301
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+irq event stamp: 2272
+hardirqs last  enabled at (2272): [<ffffffff810065f3>] trace_hardirqs_on_thunk+0x1a/0x1c
+hardirqs last disabled at (2271): [<ffffffff8100660f>] trace_hardirqs_off_thunk+0x1a/0x1c
+softirqs last  enabled at (1522): [<ffffffff87400654>] __do_softirq+0x654/0x94c kernel/softirq.c:320
+softirqs last disabled at (2267): [<ffffffff81449010>] invoke_softirq kernel/softirq.c:374 [inline]
+softirqs last disabled at (2267): [<ffffffff81449010>] irq_exit+0x180/0x1d0 kernel/softirq.c:414
+
+other info that might help us debug this:
+ Possible unsafe locking scenario:
+
+       CPU0
+       ----
+  lock(slock-AF_AX25);
+  <Interrupt>
+    lock(slock-AF_AX25);
+
+ *** DEADLOCK ***
+
+1 lock held by blkid/26581:
+ #0: 0000000010fd154d ((&ax25->dtimer)){+.-.}, at: lockdep_copy_map include/linux/lockdep.h:175 [inline]
+ #0: 0000000010fd154d ((&ax25->dtimer)){+.-.}, at: call_timer_fn+0xe0/0x720 kernel/time/timer.c:1312
+
+stack backtrace:
+CPU: 1 PID: 26581 Comm: blkid Not tainted 5.2.0-rc3+ #32
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ <IRQ>
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0x172/0x1f0 lib/dump_stack.c:113
+ print_usage_bug.cold+0x393/0x4a2 kernel/locking/lockdep.c:2935
+ valid_state kernel/locking/lockdep.c:2948 [inline]
+ mark_lock_irq kernel/locking/lockdep.c:3138 [inline]
+ mark_lock+0xd46/0x1370 kernel/locking/lockdep.c:3513
+ mark_irqflags kernel/locking/lockdep.c:3391 [inline]
+ __lock_acquire+0x159f/0x5490 kernel/locking/lockdep.c:3745
+ lock_acquire+0x16f/0x3f0 kernel/locking/lockdep.c:4303
+ __raw_spin_lock include/linux/spinlock_api_smp.h:142 [inline]
+ _raw_spin_lock+0x2f/0x40 kernel/locking/spinlock.c:151
+ spin_lock include/linux/spinlock.h:338 [inline]
+ ax25_destroy_timer+0x53/0xc0 net/ax25/af_ax25.c:275
+ call_timer_fn+0x193/0x720 kernel/time/timer.c:1322
+ expire_timers kernel/time/timer.c:1366 [inline]
+ __run_timers kernel/time/timer.c:1685 [inline]
+ __run_timers kernel/time/timer.c:1653 [inline]
+ run_timer_softirq+0x66f/0x1740 kernel/time/timer.c:1698
+ __do_softirq+0x25c/0x94c kernel/softirq.c:293
+ invoke_softirq kernel/softirq.c:374 [inline]
+ irq_exit+0x180/0x1d0 kernel/softirq.c:414
+ exiting_irq arch/x86/include/asm/apic.h:536 [inline]
+ smp_apic_timer_interrupt+0x13b/0x550 arch/x86/kernel/apic/apic.c:1068
+ apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:806
+ </IRQ>
+RIP: 0033:0x7f858d5c3232
+Code: 8b 61 08 48 8b 84 24 d8 00 00 00 4c 89 44 24 28 48 8b ac 24 d0 00 00 00 4c 8b b4 24 e8 00 00 00 48 89 7c 24 68 48 89 4c 24 78 <48> 89 44 24 58 8b 84 24 e0 00 00 00 89 84 24 84 00 00 00 8b 84 24
+RSP: 002b:00007ffcaf0cf5c0 EFLAGS: 00000206 ORIG_RAX: ffffffffffffff13
+RAX: 00007f858d7d27a8 RBX: 00007f858d7d8820 RCX: 00007f858d3940d8
+RDX: 00007ffcaf0cf798 RSI: 00000000f5e616f3 RDI: 00007f858d394fee
+RBP: 0000000000000000 R08: 00007ffcaf0cf780 R09: 00007f858d7db480
+R10: 0000000000000000 R11: 0000000009691a75 R12: 0000000000000005
+R13: 00000000f5e616f3 R14: 0000000000000000 R15: 00007ffcaf0cf798
+
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/iio/imu/inv_mpu6050/inv_mpu_core.c | 46 ++++++++++++++++++++--
- drivers/iio/imu/inv_mpu6050/inv_mpu_iio.h  | 20 +++++++++-
- drivers/iio/imu/inv_mpu6050/inv_mpu_ring.c |  3 ++
- 3 files changed, 64 insertions(+), 5 deletions(-)
+ net/ax25/ax25_route.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/iio/imu/inv_mpu6050/inv_mpu_core.c b/drivers/iio/imu/inv_mpu6050/inv_mpu_core.c
-index 650de0fefb7b..385f14a4d5a7 100644
---- a/drivers/iio/imu/inv_mpu6050/inv_mpu_core.c
-+++ b/drivers/iio/imu/inv_mpu6050/inv_mpu_core.c
-@@ -471,7 +471,10 @@ inv_mpu6050_read_raw(struct iio_dev *indio_dev,
- 			return IIO_VAL_INT_PLUS_MICRO;
- 		case IIO_TEMP:
- 			*val = 0;
--			*val2 = INV_MPU6050_TEMP_SCALE;
-+			if (st->chip_type == INV_ICM20602)
-+				*val2 = INV_ICM20602_TEMP_SCALE;
-+			else
-+				*val2 = INV_MPU6050_TEMP_SCALE;
+--- a/net/ax25/ax25_route.c
++++ b/net/ax25/ax25_route.c
+@@ -443,9 +443,11 @@ int ax25_rt_autobind(ax25_cb *ax25, ax25
+ 	}
  
- 			return IIO_VAL_INT_PLUS_MICRO;
- 		default:
-@@ -480,7 +483,10 @@ inv_mpu6050_read_raw(struct iio_dev *indio_dev,
- 	case IIO_CHAN_INFO_OFFSET:
- 		switch (chan->type) {
- 		case IIO_TEMP:
--			*val = INV_MPU6050_TEMP_OFFSET;
-+			if (st->chip_type == INV_ICM20602)
-+				*val = INV_ICM20602_TEMP_OFFSET;
-+			else
-+				*val = INV_MPU6050_TEMP_OFFSET;
+ 	if (ax25->sk != NULL) {
++		local_bh_disable();
+ 		bh_lock_sock(ax25->sk);
+ 		sock_reset_flag(ax25->sk, SOCK_ZAPPED);
+ 		bh_unlock_sock(ax25->sk);
++		local_bh_enable();
+ 	}
  
- 			return IIO_VAL_INT;
- 		default:
-@@ -845,6 +851,32 @@ static const struct iio_chan_spec inv_mpu_channels[] = {
- 	INV_MPU6050_CHAN(IIO_ACCEL, IIO_MOD_Z, INV_MPU6050_SCAN_ACCL_Z),
- };
- 
-+static const struct iio_chan_spec inv_icm20602_channels[] = {
-+	IIO_CHAN_SOFT_TIMESTAMP(INV_ICM20602_SCAN_TIMESTAMP),
-+	{
-+		.type = IIO_TEMP,
-+		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW)
-+				| BIT(IIO_CHAN_INFO_OFFSET)
-+				| BIT(IIO_CHAN_INFO_SCALE),
-+		.scan_index = INV_ICM20602_SCAN_TEMP,
-+		.scan_type = {
-+				.sign = 's',
-+				.realbits = 16,
-+				.storagebits = 16,
-+				.shift = 0,
-+				.endianness = IIO_BE,
-+			     },
-+	},
-+
-+	INV_MPU6050_CHAN(IIO_ANGL_VEL, IIO_MOD_X, INV_ICM20602_SCAN_GYRO_X),
-+	INV_MPU6050_CHAN(IIO_ANGL_VEL, IIO_MOD_Y, INV_ICM20602_SCAN_GYRO_Y),
-+	INV_MPU6050_CHAN(IIO_ANGL_VEL, IIO_MOD_Z, INV_ICM20602_SCAN_GYRO_Z),
-+
-+	INV_MPU6050_CHAN(IIO_ACCEL, IIO_MOD_Y, INV_ICM20602_SCAN_ACCL_Y),
-+	INV_MPU6050_CHAN(IIO_ACCEL, IIO_MOD_X, INV_ICM20602_SCAN_ACCL_X),
-+	INV_MPU6050_CHAN(IIO_ACCEL, IIO_MOD_Z, INV_ICM20602_SCAN_ACCL_Z),
-+};
-+
- /*
-  * The user can choose any frequency between INV_MPU6050_MIN_FIFO_RATE and
-  * INV_MPU6050_MAX_FIFO_RATE, but only these frequencies are matched by the
-@@ -1100,8 +1132,14 @@ int inv_mpu_core_probe(struct regmap *regmap, int irq, const char *name,
- 		indio_dev->name = name;
- 	else
- 		indio_dev->name = dev_name(dev);
--	indio_dev->channels = inv_mpu_channels;
--	indio_dev->num_channels = ARRAY_SIZE(inv_mpu_channels);
-+
-+	if (chip_type == INV_ICM20602) {
-+		indio_dev->channels = inv_icm20602_channels;
-+		indio_dev->num_channels = ARRAY_SIZE(inv_icm20602_channels);
-+	} else {
-+		indio_dev->channels = inv_mpu_channels;
-+		indio_dev->num_channels = ARRAY_SIZE(inv_mpu_channels);
-+	}
- 
- 	indio_dev->info = &mpu_info;
- 	indio_dev->modes = INDIO_BUFFER_TRIGGERED;
-diff --git a/drivers/iio/imu/inv_mpu6050/inv_mpu_iio.h b/drivers/iio/imu/inv_mpu6050/inv_mpu_iio.h
-index 325afd9f5f61..3d5fe4474378 100644
---- a/drivers/iio/imu/inv_mpu6050/inv_mpu_iio.h
-+++ b/drivers/iio/imu/inv_mpu6050/inv_mpu_iio.h
-@@ -208,6 +208,9 @@ struct inv_mpu6050_state {
- #define INV_MPU6050_BYTES_PER_3AXIS_SENSOR   6
- #define INV_MPU6050_FIFO_COUNT_BYTE          2
- 
-+/* ICM20602 FIFO samples include temperature readings */
-+#define INV_ICM20602_BYTES_PER_TEMP_SENSOR   2
-+
- /* mpu6500 registers */
- #define INV_MPU6500_REG_ACCEL_CONFIG_2      0x1D
- #define INV_MPU6500_REG_ACCEL_OFFSET        0x77
-@@ -229,6 +232,9 @@ struct inv_mpu6050_state {
- #define INV_MPU6050_GYRO_CONFIG_FSR_SHIFT    3
- #define INV_MPU6050_ACCL_CONFIG_FSR_SHIFT    3
- 
-+#define INV_ICM20602_TEMP_OFFSET	     8170
-+#define INV_ICM20602_TEMP_SCALE		     3060
-+
- /* 6 + 6 round up and plus 8 */
- #define INV_MPU6050_OUTPUT_DATA_SIZE         24
- 
-@@ -270,7 +276,7 @@ struct inv_mpu6050_state {
- #define INV_ICM20608_WHOAMI_VALUE		0xAF
- #define INV_ICM20602_WHOAMI_VALUE		0x12
- 
--/* scan element definition */
-+/* scan element definition for generic MPU6xxx devices */
- enum inv_mpu6050_scan {
- 	INV_MPU6050_SCAN_ACCL_X,
- 	INV_MPU6050_SCAN_ACCL_Y,
-@@ -281,6 +287,18 @@ enum inv_mpu6050_scan {
- 	INV_MPU6050_SCAN_TIMESTAMP,
- };
- 
-+/* scan element definition for ICM20602, which includes temperature */
-+enum inv_icm20602_scan {
-+	INV_ICM20602_SCAN_ACCL_X,
-+	INV_ICM20602_SCAN_ACCL_Y,
-+	INV_ICM20602_SCAN_ACCL_Z,
-+	INV_ICM20602_SCAN_TEMP,
-+	INV_ICM20602_SCAN_GYRO_X,
-+	INV_ICM20602_SCAN_GYRO_Y,
-+	INV_ICM20602_SCAN_GYRO_Z,
-+	INV_ICM20602_SCAN_TIMESTAMP,
-+};
-+
- enum inv_mpu6050_filter_e {
- 	INV_MPU6050_FILTER_256HZ_NOLPF2 = 0,
- 	INV_MPU6050_FILTER_188HZ,
-diff --git a/drivers/iio/imu/inv_mpu6050/inv_mpu_ring.c b/drivers/iio/imu/inv_mpu6050/inv_mpu_ring.c
-index 548e042f7b5b..57bd11bde56b 100644
---- a/drivers/iio/imu/inv_mpu6050/inv_mpu_ring.c
-+++ b/drivers/iio/imu/inv_mpu6050/inv_mpu_ring.c
-@@ -207,6 +207,9 @@ irqreturn_t inv_mpu6050_read_fifo(int irq, void *p)
- 	if (st->chip_config.gyro_fifo_enable)
- 		bytes_per_datum += INV_MPU6050_BYTES_PER_3AXIS_SENSOR;
- 
-+	if (st->chip_type == INV_ICM20602)
-+		bytes_per_datum += INV_ICM20602_BYTES_PER_TEMP_SENSOR;
-+
- 	/*
- 	 * read fifo_count register to know how many bytes are inside the FIFO
- 	 * right now
--- 
-2.20.1
-
+ put:
 
 
