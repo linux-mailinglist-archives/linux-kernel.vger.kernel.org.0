@@ -2,177 +2,181 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 971BC4DD41
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 00:11:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 338674DD38
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 00:10:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726448AbfFTWLL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 18:11:11 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:38802 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725906AbfFTWLL (ORCPT
+        id S1726286AbfFTWKK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 18:10:10 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:44164 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726180AbfFTWKJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 18:11:11 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5KM3qBJ117650;
-        Thu, 20 Jun 2019 22:09:48 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=34yrDpyIlCnapuEelQkMxzELpTn9E3Oq0EEgTNp3pMo=;
- b=wEo3wGjoiDRLmfFiBOSYftkqF9BxyNKUscmBHul8oqMnrOQ2CuuZil1ROkycJEV6VL7i
- K/EZENHDp/fbYpjQeBCVWiy/W0Tz7wb4eQqeU8hP8XSZ126W7yTiTbuSaF2YghMDkyDz
- 1JjI5jgZUM6pLkd8QOel+rUwWuFInCdHZHVl+HAdZhL5eL30xXYf07aNzmm5sQfUY3Xi
- u8qnsSTO1Nnw83kcS80Cgv88V0Im23B5q/abGAirRb0yn4qxQanHw+7gT0cIk1IKOss/
- NQ08jOFoC7P0Gxtp1eUAT6k37gmOMLQ6i9bzdXCoNF+Y2BY5IL9mn4FAiou7/jCFeHkN BA== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by userp2120.oracle.com with ESMTP id 2t7809kfc9-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 20 Jun 2019 22:09:48 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5KM9DaG104726;
-        Thu, 20 Jun 2019 22:09:47 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-        by userp3020.oracle.com with ESMTP id 2t77ynv76j-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 20 Jun 2019 22:09:47 +0000
-Received: from userp3020.oracle.com (userp3020.oracle.com [127.0.0.1])
-        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x5KM9lfD106008;
-        Thu, 20 Jun 2019 22:09:47 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userp3020.oracle.com with ESMTP id 2t77ynv76b-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 20 Jun 2019 22:09:47 +0000
-Received: from abhmp0015.oracle.com (abhmp0015.oracle.com [141.146.116.21])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x5KM9hLr020247;
-        Thu, 20 Jun 2019 22:09:43 GMT
-Received: from localhost (/10.145.179.81)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 20 Jun 2019 15:09:43 -0700
-Date:   Thu, 20 Jun 2019 15:09:40 -0700
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     Jan Kara <jack@suse.cz>
-Cc:     matthew.garrett@nebula.com, yuchao0@huawei.com, tytso@mit.edu,
-        ard.biesheuvel@linaro.org, josef@toxicpanda.com, clm@fb.com,
-        adilger.kernel@dilger.ca, viro@zeniv.linux.org.uk, jack@suse.com,
-        dsterba@suse.com, jaegeuk@kernel.org, jk@ozlabs.org,
-        reiserfs-devel@vger.kernel.org, linux-efi@vger.kernel.org,
-        devel@lists.orangefs.org, linux-kernel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org,
-        linux-mm@kvack.org, linux-nilfs@vger.kernel.org,
-        linux-mtd@lists.infradead.org, ocfs2-devel@oss.oracle.com,
-        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-btrfs@vger.kernel.org
-Subject: Re: [PATCH 2/6] vfs: flush and wait for io when setting the
- immutable flag via SETFLAGS
-Message-ID: <20190620220940.GC5375@magnolia>
-References: <156022836912.3227213.13598042497272336695.stgit@magnolia>
- <156022838496.3227213.3771632042609589318.stgit@magnolia>
- <20190620140028.GH30243@quack2.suse.cz>
+        Thu, 20 Jun 2019 18:10:09 -0400
+Received: by mail-wr1-f65.google.com with SMTP id r16so4530864wrl.11
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2019 15:10:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=brauner.io; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=osQ4T6cHI9dS6FXTVEWB3XzgaXkhdOGQwr24b6JLCQo=;
+        b=JrwSrOMqW6pdRX/MfVgjguikzmfB2AM5MTvWAoZcvSUV87L4iAhtFu+vVuAqerIFG4
+         YD9OJqiT5a56xrSyv71I38B7Pt5v8iOQBMdMXLsI79lqkTCWEo02Nt3jtnKh6SFsB8EG
+         KuskCykxLQkQ992OrO59yi9LtmL0VofckfHvmHr884smqufwyRlaXXm9j8pdtXC9r28x
+         h0uOIb32beFoOYUiZXETw8u7Ae6wChqgCX+7DmXEqpT8lijAMIvdTF2di9x9b9HBBMZP
+         PYkSFbcucR2Ilsh9OAOcuzv4cVW/xib12ot2hwFaQJYq1bpQZJaCoifkFff68L1p/Xsc
+         hQGA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=osQ4T6cHI9dS6FXTVEWB3XzgaXkhdOGQwr24b6JLCQo=;
+        b=O3ThBmfsOvwnrYSC/Rox6PWvHBv9hnIQRRgbt/OxVw9l4gIFquVgM8vYoF0gC+xlhc
+         tT1dztFr6mJkI00KnE+P0Wj0O8LnWyb97nuTIilAohKnEfQU8+FH3u3subfHkPQ0+9J9
+         WgJq7FXpxzT3matrESYWSMc7KEwAED3yqsUNaXhJbTmFuqUH+jNwF8IwzbnldkIkt40z
+         v4Aepf2Ddj48OMA6gaiSCU2fUf4V1/N6NvVlDygHZV0G84TKMJIwYdPvOkHQi+83zvuV
+         +so5MbKunjie9c/uYF19zs2ORhbaqmYkcYEy9/gTGN/OPm54VORS4gDJY97gByQwJ0VD
+         gDDw==
+X-Gm-Message-State: APjAAAVO8M5BtJTy9UXQLCtvqzyWI3p2YB/pgKH8FZJy0uGp+Kpc9SB4
+        fjubdsNfWlMhX5ZAyYTM71H6sg==
+X-Google-Smtp-Source: APXvYqy/anSRn/zCi4pr0B+FnsissvYptswWTiSJCYV1O2ADeDbazP83NMugvS4Ri9Oq77DuK6ekSg==
+X-Received: by 2002:adf:ec8e:: with SMTP id z14mr8010601wrn.125.1561068606919;
+        Thu, 20 Jun 2019 15:10:06 -0700 (PDT)
+Received: from brauner.io ([212.91.227.56])
+        by smtp.gmail.com with ESMTPSA id x129sm525212wmg.44.2019.06.20.15.10.05
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Thu, 20 Jun 2019 15:10:06 -0700 (PDT)
+Date:   Fri, 21 Jun 2019 00:10:04 +0200
+From:   Christian Brauner <christian@brauner.io>
+To:     Guenter Roeck <linux@roeck-us.net>
+Cc:     viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org,
+        torvalds@linux-foundation.org, jannh@google.com,
+        keescook@chromium.org, fweimer@redhat.com, oleg@redhat.com,
+        arnd@arndb.de, dhowells@redhat.com,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Adrian Reber <adrian@lisas.de>, linux-api@vger.kernel.org,
+        linux-arch@vger.kernel.org, x86@kernel.org
+Subject: Re: [PATCH v3 2/2] arch: wire-up clone3() syscall
+Message-ID: <20190620221003.ciuov5fzqxrcaykp@brauner.io>
+References: <20190604160944.4058-1-christian@brauner.io>
+ <20190604160944.4058-2-christian@brauner.io>
+ <20190620184451.GA28543@roeck-us.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20190620140028.GH30243@quack2.suse.cz>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9294 signatures=668687
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=772 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1906200158
+In-Reply-To: <20190620184451.GA28543@roeck-us.net>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 20, 2019 at 04:00:28PM +0200, Jan Kara wrote:
-> On Mon 10-06-19 21:46:25, Darrick J. Wong wrote:
-> > From: Darrick J. Wong <darrick.wong@oracle.com>
+On Thu, Jun 20, 2019 at 11:44:51AM -0700, Guenter Roeck wrote:
+> On Tue, Jun 04, 2019 at 06:09:44PM +0200, Christian Brauner wrote:
+> > Wire up the clone3() call on all arches that don't require hand-rolled
+> > assembly.
 > > 
-> > When we're using FS_IOC_SETFLAGS to set the immutable flag on a file, we
-> > need to ensure that userspace can't continue to write the file after the
-> > file becomes immutable.  To make that happen, we have to flush all the
-> > dirty pagecache pages to disk to ensure that we can fail a page fault on
-> > a mmap'd region, wait for pending directio to complete, and hope the
-> > caller locked out any new writes by holding the inode lock.
+> > Some of the arches look like they need special assembly massaging and it is
+> > probably smarter if the appropriate arch maintainers would do the actual
+> > wiring. Arches that are wired-up are:
+> > - x86{_32,64}
+> > - arm{64}
+> > - xtensa
 > > 
-> > Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
 > 
-> ...
+> This patch results in build failures on various architecetures.
 > 
-> > diff --git a/fs/ext4/ioctl.c b/fs/ext4/ioctl.c
-> > index 6aa1df1918f7..a05341b94d98 100644
-> > --- a/fs/ext4/ioctl.c
-> > +++ b/fs/ext4/ioctl.c
-> > @@ -290,6 +290,9 @@ static int ext4_ioctl_setflags(struct inode *inode,
-> >  	jflag = flags & EXT4_JOURNAL_DATA_FL;
-> >  
-> >  	err = vfs_ioc_setflags_check(inode, oldflags, flags);
-> > +	if (err)
-> > +		goto flags_out;
-> > +	err = vfs_ioc_setflags_flush_data(inode, flags);
-> >  	if (err)
-> >  		goto flags_out;
-> >  
+> h8300-linux-ld: arch/h8300/kernel/syscalls.o:(.data+0x6d0): undefined reference to `sys_clone3'
 > 
-> ...
+> nios2-linux-ld: arch/nios2/kernel/syscall_table.o:(.data+0x6d0): undefined reference to `sys_clone3'
 > 
-> > diff --git a/include/linux/fs.h b/include/linux/fs.h
-> > index 8dad3c80b611..9c899c63957e 100644
-> > --- a/include/linux/fs.h
-> > +++ b/include/linux/fs.h
-> > @@ -3548,7 +3548,41 @@ static inline struct sock *io_uring_get_socket(struct file *file)
-> >  
-> >  int vfs_ioc_setflags_check(struct inode *inode, int oldflags, int flags);
-> >  
-> > +/*
-> > + * Do we need to flush the file data before changing attributes?  When we're
-> > + * setting the immutable flag we must stop all directio writes and flush the
-> > + * dirty pages so that we can fail the page fault on the next write attempt.
-> > + */
-> > +static inline bool vfs_ioc_setflags_need_flush(struct inode *inode, int flags)
-> > +{
-> > +	if (S_ISREG(inode->i_mode) && !IS_IMMUTABLE(inode) &&
-> > +	    (flags & FS_IMMUTABLE_FL))
-> > +		return true;
-> > +
-> > +	return false;
-> > +}
-> > +
-> > +/*
-> > + * Flush file data before changing attributes.  Caller must hold any locks
-> > + * required to prevent further writes to this file until we're done setting
-> > + * flags.
-> > + */
-> > +static inline int inode_flush_data(struct inode *inode)
-> > +{
-> > +	inode_dio_wait(inode);
-> > +	return filemap_write_and_wait(inode->i_mapping);
-> > +}
-> > +
-> > +/* Flush file data before changing attributes, if necessary. */
-> > +static inline int vfs_ioc_setflags_flush_data(struct inode *inode, int flags)
-> > +{
-> > +	if (vfs_ioc_setflags_need_flush(inode, flags))
-> > +		return inode_flush_data(inode);
-> > +	return 0;
-> > +}
-> > +
-> 
-> But this is racy at least for page faults, isn't it? What protects you
-> against write faults just after filemap_write_and_wait() has finished?
-> So either you need to set FS_IMMUTABLE_FL before flushing data or you need
-> to get more protection from the fs than just i_rwsem. In the case of ext4
-> that would be i_mmap_rwsem but other filesystems don't have equivalent
-> protection...
+> There may be others; -next is in too bad shape right now to get a complete
+> picture. Wondering, though: What is special with this syscall ? Normally
+> one would only get a warning that a syscall is not wired up.
 
-Yes, I see that now.  I think it'll work to set S_IMMUTABLE before
-trying the flush, so long as I am careful to put the call sites right
-before we update the inode flags.
+clone3() was placed under __ARCH_WANT_SYS_CLONE. Most architectures
+simply define __ARCH_WANT_SYS_CLONE and are done with it.
+Some however, such as nios2 and h8300 don't define it but instead
+provide a sys_clone stub of their own because of architectural
+requirements (or tweaks) and they are mostly written in assembly. (That
+should be left to arch maintainers for sys_clone3.)
 
---D
+The build failures were on my radar already. I hadn't yet replied
+since I haven't pushed the fixup below.
+The solution is to define __ARCH_WANT_SYS_CLONE3 and add a
+cond_syscall(clone3) so we catch all architectures that do not yet
+provide clone3 with a ENOSYS until maintainers have added it.
 
-> 
-> 								Honza
-> -- 
-> Jan Kara <jack@suse.com>
-> SUSE Labs, CR
+diff --git a/arch/arm/include/asm/unistd.h b/arch/arm/include/asm/unistd.h
+index 7a39e77984ef..aa35aa5d68dc 100644
+--- a/arch/arm/include/asm/unistd.h
++++ b/arch/arm/include/asm/unistd.h
+@@ -40,6 +40,7 @@
+ #define __ARCH_WANT_SYS_FORK
+ #define __ARCH_WANT_SYS_VFORK
+ #define __ARCH_WANT_SYS_CLONE
++#define __ARCH_WANT_SYS_CLONE3
+ 
+ /*
+  * Unimplemented (or alternatively implemented) syscalls
+diff --git a/arch/arm64/include/asm/unistd.h b/arch/arm64/include/asm/unistd.h
+index 24480c2d95da..e4e0523102e2 100644
+--- a/arch/arm64/include/asm/unistd.h
++++ b/arch/arm64/include/asm/unistd.h
+@@ -48,6 +48,7 @@
+ #endif
+ 
+ #define __ARCH_WANT_SYS_CLONE
++#define __ARCH_WANT_SYS_CLONE3
+ 
+ #ifndef __COMPAT_SYSCALL_NR
+ #include <uapi/asm/unistd.h>
+diff --git a/arch/x86/include/asm/unistd.h b/arch/x86/include/asm/unistd.h
+index 146859efd83c..097589753fec 100644
+--- a/arch/x86/include/asm/unistd.h
++++ b/arch/x86/include/asm/unistd.h
+@@ -54,5 +54,6 @@
+ # define __ARCH_WANT_SYS_FORK
+ # define __ARCH_WANT_SYS_VFORK
+ # define __ARCH_WANT_SYS_CLONE
++# define __ARCH_WANT_SYS_CLONE3
+ 
+ #endif /* _ASM_X86_UNISTD_H */
+diff --git a/arch/xtensa/include/asm/unistd.h b/arch/xtensa/include/asm/unistd.h
+index 30af4dc3ce7b..b52236245e51 100644
+--- a/arch/xtensa/include/asm/unistd.h
++++ b/arch/xtensa/include/asm/unistd.h
+@@ -3,6 +3,7 @@
+ #define _XTENSA_UNISTD_H
+ 
+ #define __ARCH_WANT_SYS_CLONE
++#define __ARCH_WANT_SYS_CLONE3
+ #include <uapi/asm/unistd.h>
+ 
+ #define __ARCH_WANT_NEW_STAT
+diff --git a/kernel/fork.c b/kernel/fork.c
+index 08ff131f26b4..98abea995629 100644
+--- a/kernel/fork.c
++++ b/kernel/fork.c
+@@ -2490,7 +2490,9 @@ SYSCALL_DEFINE5(clone, unsigned long, clone_flags, unsigned long, newsp,
+ 
+ 	return _do_fork(&args);
+ }
++#endif
+ 
++#ifdef __ARCH_WANT_SYS_CLONE3
+ noinline static int copy_clone_args_from_user(struct kernel_clone_args *kargs,
+ 					      struct clone_args __user *uargs,
+ 					      size_t size)
+diff --git a/kernel/sys_ni.c b/kernel/sys_ni.c
+index 4d9ae5ea6caf..34b76895b81e 100644
+--- a/kernel/sys_ni.c
++++ b/kernel/sys_ni.c
+@@ -137,6 +137,8 @@ COND_SYSCALL(capset);
+ /* kernel/exit.c */
+ 
+ /* kernel/fork.c */
++/* __ARCH_WANT_SYS_CLONE3 */
++COND_SYSCALL(clone3);
+ 
+ /* kernel/futex.c */
+ COND_SYSCALL(futex);
