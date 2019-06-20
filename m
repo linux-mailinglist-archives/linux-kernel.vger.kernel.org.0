@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2182A4C576
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 04:38:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 576FD4C572
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 04:38:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731457AbfFTCif (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Jun 2019 22:38:35 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:23282 "EHLO
+        id S1731300AbfFTCi3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Jun 2019 22:38:29 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:55694 "EHLO
         mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726647AbfFTCib (ORCPT
+        with ESMTP id S1726519AbfFTCi2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Jun 2019 22:38:31 -0400
-X-UUID: efcc64dd7e834a389f3965ab3229804f-20190620
-X-UUID: efcc64dd7e834a389f3965ab3229804f-20190620
-Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw01.mediatek.com
+        Wed, 19 Jun 2019 22:38:28 -0400
+X-UUID: 2e9552a46603490ca53c595f1df235cb-20190620
+X-UUID: 2e9552a46603490ca53c595f1df235cb-20190620
+Received: from mtkcas08.mediatek.inc [(172.21.101.126)] by mailgw01.mediatek.com
         (envelope-from <weiyi.lu@mediatek.com>)
         (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 354100473; Thu, 20 Jun 2019 10:38:19 +0800
+        with ESMTP id 1354593118; Thu, 20 Jun 2019 10:38:20 +0800
 Received: from mtkcas09.mediatek.inc (172.21.101.178) by
- mtkmbs07n1.mediatek.inc (172.21.101.16) with Microsoft SMTP Server (TLS) id
+ mtkmbs01n1.mediatek.inc (172.21.101.68) with Microsoft SMTP Server (TLS) id
  15.0.1395.4; Thu, 20 Jun 2019 10:38:18 +0800
 Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas09.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
@@ -35,10 +35,12 @@ CC:     James Liao <jamesjj.liao@mediatek.com>,
         <linux-mediatek@lists.infradead.org>,
         <srv_heupstream@mediatek.com>, Weiyi Lu <weiyi.lu@mediatek.com>,
         Yong Wu <yong.wu@mediatek.com>
-Subject: [PATCH v6 00/14] Mediatek MT8183 scpsys support  
-Date:   Thu, 20 Jun 2019 10:37:52 +0800
-Message-ID: <1560998286-9189-1-git-send-email-weiyi.lu@mediatek.com>
+Subject: [PATCH v6 01/14] dt-bindings: mediatek: Add property to mt8183 smi-common
+Date:   Thu, 20 Jun 2019 10:37:53 +0800
+Message-ID: <1560998286-9189-2-git-send-email-weiyi.lu@mediatek.com>
 X-Mailer: git-send-email 1.8.1.1.dirty
+In-Reply-To: <1560998286-9189-1-git-send-email-weiyi.lu@mediatek.com>
+References: <1560998286-9189-1-git-send-email-weiyi.lu@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-MTK:  N
@@ -47,53 +49,26 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This series is based on v5.2-rc1 with MT8183 dts v11 patch[1] and
-MT8183 SMI dt-binding v7 patch[2].
+For scpsys driver using regmap based syscon driver API.
 
-[1] https://patchwork.kernel.org/patch/10962375/
-[2] https://patchwork.kernel.org/patch/10984743/
+Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
+---
+ .../devicetree/bindings/memory-controllers/mediatek,smi-common.txt      | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-changes since v5:
-- fix documentation in [PATCH 04/14]
-- remove useless variable checking and reuse API of clock control in [PATCH 06/14]
-- coding style fix of bus protection control in [PATCH 08/14]
-- fix naming of new added data in [PATCH 09/14]
-- small refactor of multiple step bus protection control in [PATCH 10/14]
+diff --git a/Documentation/devicetree/bindings/memory-controllers/mediatek,smi-common.txt b/Documentation/devicetree/bindings/memory-controllers/mediatek,smi-common.txt
+index b478ade..01744ec 100644
+--- a/Documentation/devicetree/bindings/memory-controllers/mediatek,smi-common.txt
++++ b/Documentation/devicetree/bindings/memory-controllers/mediatek,smi-common.txt
+@@ -20,7 +20,7 @@ Required properties:
+ 	"mediatek,mt2712-smi-common"
+ 	"mediatek,mt7623-smi-common", "mediatek,mt2701-smi-common"
+ 	"mediatek,mt8173-smi-common"
+-	"mediatek,mt8183-smi-common"
++	"mediatek,mt8183-smi-common", "syscon"
+ - reg : the register and size of the SMI block.
+ - power-domains : a phandle to the power domain of this local arbiter.
+ - clocks : Must contain an entry for each entry in clock-names.
+-- 
+1.8.1.1.dirty
 
-changes since v4:
-- add property to mt8183 smi-common
-- seperate refactor patches and new add function
-- add power controller device node
-
---
-
-Weiyi Lu (14):
-  dt-bindings: mediatek: Add property to mt8183 smi-common
-  dt-bindings: soc: Add MT8183 power dt-bindings
-  soc: mediatek: Switch to SPDX license identifier
-  soc: mediatek: Refactor polling timeout and documentation
-  soc: mediatek: Refactor regulator control
-  soc: mediatek: Refactor clock control
-  soc: mediatek: Refactor sram control
-  soc: mediatek: Refactor bus protection control
-  soc: mediatek: Add basic_clk_id to scp_power_data
-  soc: mediatek: Add multiple step bus protection control
-  soc: mediatek: Add subsys clock control for bus protection
-  soc: mediatek: Add extra sram control
-  soc: mediatek: Add MT8183 scpsys support
-  arm64: dts: Add power controller device node of MT8183
-
- .../memory-controllers/mediatek,smi-common.txt     |   2 +-
- .../devicetree/bindings/soc/mediatek/scpsys.txt    |  14 +
- arch/arm64/boot/dts/mediatek/mt8183.dtsi           |  62 +++
- drivers/soc/mediatek/Makefile                      |   2 +-
- drivers/soc/mediatek/mtk-scpsys-ext.c              |  99 ++++
- drivers/soc/mediatek/mtk-scpsys.c                  | 591 ++++++++++++++++++---
- include/dt-bindings/power/mt8183-power.h           |  26 +
- include/linux/soc/mediatek/scpsys-ext.h            |  39 ++
- 8 files changed, 745 insertions(+), 90 deletions(-)
- create mode 100644 drivers/soc/mediatek/mtk-scpsys-ext.c
- create mode 100644 include/dt-bindings/power/mt8183-power.h
- create mode 100644 include/linux/soc/mediatek/scpsys-ext.h
-
---
