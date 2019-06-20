@@ -2,88 +2,156 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ED9984D0F4
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 16:53:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1B7A04D0FC
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 16:54:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732041AbfFTOw5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 10:52:57 -0400
-Received: from mx2.suse.de ([195.135.220.15]:60284 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726675AbfFTOw5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 10:52:57 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 327B0AE32;
-        Thu, 20 Jun 2019 14:52:55 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id AF6F01E434F; Thu, 20 Jun 2019 16:52:54 +0200 (CEST)
-Date:   Thu, 20 Jun 2019 16:52:54 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Dave Chinner <david@fromorbit.com>,
-        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Jeff Layton <jlayton@kernel.org>, linux-xfs@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        John Hubbard <jhubbard@nvidia.com>,
-        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-ext4@vger.kernel.org,
-        linux-mm@kvack.org, Jason Gunthorpe <jgg@ziepe.ca>,
-        linux-rdma@vger.kernel.org
-Subject: Re: [PATCH RFC 00/10] RDMA/FS DAX truncate proposal
-Message-ID: <20190620145254.GJ30243@quack2.suse.cz>
-References: <20190606014544.8339-1-ira.weiny@intel.com>
- <20190606104203.GF7433@quack2.suse.cz>
- <20190606220329.GA11698@iweiny-DESK2.sc.intel.com>
- <20190607110426.GB12765@quack2.suse.cz>
- <20190607182534.GC14559@iweiny-DESK2.sc.intel.com>
- <20190608001036.GF14308@dread.disaster.area>
- <20190612123751.GD32656@bombadil.infradead.org>
- <20190613002555.GH14363@dread.disaster.area>
- <20190613152755.GI32656@bombadil.infradead.org>
+        id S1731648AbfFTOy3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 10:54:29 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:54642 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726686AbfFTOy3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Jun 2019 10:54:29 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 65BBF609CD; Thu, 20 Jun 2019 14:54:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1561042468;
+        bh=pMqbryRRbIU4AIh4v96MaC9JtLkGuFViwuA1Q/TdhH8=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=ZAl+pOXYBGO7whhGuWHJc4btecmjFZ/53wZvCO5XkGpRYwPCSFzuqq6VHJsbV3HGx
+         az/aX0jZPsp/ZqgoFQK9p3M8GbsOrdDm1SxaHPrqpQAMq17AVi3LC1dB0a4LRAqPNu
+         EKJntTC+hf8yK7OqihIDPW6iIzdp0Z3CPXOVoXLc=
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        pdx-caf-mail.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_INVALID,DKIM_SIGNED,SPF_NONE autolearn=no autolearn_force=no
+        version=3.4.0
+Received: from [10.79.136.27] (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: saiprakash.ranjan@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 94B6A608BA;
+        Thu, 20 Jun 2019 14:54:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1561042467;
+        bh=pMqbryRRbIU4AIh4v96MaC9JtLkGuFViwuA1Q/TdhH8=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=AR65EvCstzMeE5tDxoWxP15ede45s1/eKvpOiavIWK/aCqSi5jeazJ8BS3UAHLxUd
+         PPIwOW0Y+rAPUB7FM8z3/hA5yXnXIqyxuAnBFStp+YBoypeD/rRsnbiJTx9pxlQZ0R
+         +YvfJAEgKc1Lthg0wn0GRgqy2j6Y6ZNCpbuzzpNY=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 94B6A608BA
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=saiprakash.ranjan@codeaurora.org
+Subject: Re: [PATCH 1/2] coresight: Set affinity to invalid for missing CPU
+ phandle
+To:     Suzuki K Poulose <suzuki.poulose@arm.com>,
+        mathieu.poirier@linaro.org, leo.yan@linaro.org,
+        alexander.shishkin@linux.intel.com, andy.gross@linaro.org,
+        david.brown@linaro.org, mark.rutland@arm.com
+Cc:     rnayak@codeaurora.org, vivek.gautam@codeaurora.org,
+        sibis@codeaurora.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
+References: <cover.1561037262.git.saiprakash.ranjan@codeaurora.org>
+ <49d6554536047b9f5526c4ea33990b7c904673d3.1561037262.git.saiprakash.ranjan@codeaurora.org>
+ <f7a3592b-7ed7-b011-9ae1-dc2ca0e49ae4@arm.com>
+From:   Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
+Message-ID: <fc72dab8-d287-38d4-1abd-faca02c09118@codeaurora.org>
+Date:   Thu, 20 Jun 2019 20:24:21 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190613152755.GI32656@bombadil.infradead.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <f7a3592b-7ed7-b011-9ae1-dc2ca0e49ae4@arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 13-06-19 08:27:55, Matthew Wilcox wrote:
-> On Thu, Jun 13, 2019 at 10:25:55AM +1000, Dave Chinner wrote:
-> > e.g. Process A has an exclusive layout lease on file F. It does an
-> > IO to file F. The filesystem IO path checks that Process A owns the
-> > lease on the file and so skips straight through layout breaking
-> > because it owns the lease and is allowed to modify the layout. It
-> > then takes the inode metadata locks to allocate new space and write
-> > new data.
-> > 
-> > Process B now tries to write to file F. The FS checks whether
-> > Process B owns a layout lease on file F. It doesn't, so then it
-> > tries to break the layout lease so the IO can proceed. The layout
-> > breaking code sees that process A has an exclusive layout lease
-> > granted, and so returns -ETXTBSY to process B - it is not allowed to
-> > break the lease and so the IO fails with -ETXTBSY.
+Hi Suzuki,
+
+Thanks for the review.
+
+On 6/20/2019 7:25 PM, Suzuki K Poulose wrote:
 > 
-> This description doesn't match the behaviour that RDMA wants either.
-> Even if Process A has a lease on the file, an IO from Process A which
-> results in blocks being freed from the file is going to result in the
-> RDMA device being able to write to blocks which are now freed (and
-> potentially reallocated to another file).
+> Sai,
+> 
+> Thanks for the patch. Please could you change the subject to :
+> 
+> "coresight: Do not default to CPU0 for missing CPU phandle"
+> 
 
-I think you're partially wrong here. You are correct that the lease won't
-stop process A from doing truncate on the file. *But* there are still page
-pins in existence so truncate will block on waiting for these pins to go
-away (after all this is a protection that guards all short-term page pin
-users). So there is no problem with blocks being freed under the RDMA app.
-Yes, the app will effectively deadlock and sysadmin has to kill it. IMO an
-acceptable answer for doing something stupid and unsupportable...
+Sure.
 
-								Honza
+> On 20/06/2019 14:45, Sai Prakash Ranjan wrote:
+>> Affinity defaults to CPU0 in case of missing CPU phandle
+>> and this leads to crashes in some cases because of such
+>> wrong assumption. Fix this by returning -ENODEV in
+> 
+> Thats not the right justification. Causing crashes is due to
+> bad DT/firmware. I would be happy with something like :
+> 
+> "Coresight platform support assumes that a missing \"cpu\" phandle
+> defaults to CPU0. This could be problematic and unnecessarily binds
+> components to CPU0, where they may not be. Let us make the DT binding
+> rules a bit stricter by not defaulting to CPU0 for missing "cpu"
+> affinity information."
+> 
+> Also, you must
+> 
+> 1) update the devicetree/bindings document to reflect the same.
+> 2) update the drivers to take appropriate action on the missing CPU
+>     where they are expected (e.g, CPU-debug, etm*), to prevent
+>     breaking a bisect.
+> 
+> 
+
+Sure will do it and repost.
+
+>> coresight platform for such cases and then handle it
+>> in the coresight drivers.
+>>
+>> Signed-off-by: Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
+>> ---
+>>   drivers/hwtracing/coresight/coresight-platform.c | 10 ++++++----
+>>   1 file changed, 6 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/drivers/hwtracing/coresight/coresight-platform.c 
+>> b/drivers/hwtracing/coresight/coresight-platform.c
+>> index 3c5ceda8db24..b1ea60c210e1 100644
+>> --- a/drivers/hwtracing/coresight/coresight-platform.c
+>> +++ b/drivers/hwtracing/coresight/coresight-platform.c
+>> @@ -160,15 +160,17 @@ static int of_coresight_get_cpu(struct device *dev)
+>>       if (!dev->of_node)
+>>           return 0;
+>> +
+>>       dn = of_parse_phandle(dev->of_node, "cpu", 0);
+>> -    /* Affinity defaults to CPU0 */
+>> +
+>> +    /* Affinity defaults to invalid if no cpu nodes are found*/
+> 
+> The code is self explanatory here. You could drop the comment.
+> 
+
+Sure.
+
+>>       if (!dn)
+>> -        return 0;
+>> +        return -ENODEV;
+>> +
+>>       cpu = of_cpu_node_to_id(dn);
+>>       of_node_put(dn);
+>> -    /* Affinity to CPU0 if no cpu nodes are found */
+>> -    return (cpu < 0) ? 0 : cpu;
+>> +    return cpu;
+>>   }
+> 
+> Suzuki
+
+-Sai
+
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
