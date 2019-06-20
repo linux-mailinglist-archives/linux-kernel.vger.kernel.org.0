@@ -2,89 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4EA0F4DB48
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 22:32:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 691A54DB7A
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 22:40:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726970AbfFTUcq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 16:32:46 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:50648 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726018AbfFTUcp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 16:32:45 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5KKO7b8045039;
-        Thu, 20 Jun 2019 20:32:42 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
- from : references : date : in-reply-to : message-id : mime-version :
- content-type; s=corp-2018-07-02;
- bh=4OeBcn9e/hhlLrtRhAZE+XYp/xCDVF5HETiYD7GCSAs=;
- b=Ii2RKoyRtMzRinltQK6lHLX/GC8xNTWfy4WqWZ/VoP77kAOCASzKnOqdIR0bx4vE96In
- Gg8V47smVYAZxV+QTE30ijVB9U8H4lRTUVdx7KGixfgkS6bX5tdni6svXzPsF5IPOav9
- /TFNcY24kClP8W8Q+KIc/ZxU+E8kKACkTf+5pVVibR0o8xQu/xYuuPGKjZeoR2tlhPgr
- DCvlvMPuOrqf2rovSjW07D/ZYbnYIaKvBJqtwAkHj4lDoo9Br/d4RdjfGiFt5kUA2C+6
- o5mfzZSvd9pquagjzzefelJQ26+jZcOWCK/5C7zxTiCzCFTs0zKUBIbdGdn2+atYekOU 9Q== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by userp2120.oracle.com with ESMTP id 2t7809k57p-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 20 Jun 2019 20:32:42 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5KKVHpt127956;
-        Thu, 20 Jun 2019 20:32:41 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserp3030.oracle.com with ESMTP id 2t7rdxc79m-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 20 Jun 2019 20:32:41 +0000
-Received: from abhmp0022.oracle.com (abhmp0022.oracle.com [141.146.116.28])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x5KKWe6U028624;
-        Thu, 20 Jun 2019 20:32:40 GMT
-Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 20 Jun 2019 13:32:40 -0700
-To:     Marcos Paulo de Souza <marcos.souza.org@gmail.com>
-Cc:     "Martin K. Petersen" <martin.petersen@oracle.com>,
-        linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>
-Subject: Re: [PATCH 1/2] scsi: devinfo: BLIST_TRY_VPD_PAGES for SanDisk Cruzer Blade
-From:   "Martin K. Petersen" <martin.petersen@oracle.com>
-Organization: Oracle Corporation
-References: <20190618013146.21961-1-marcos.souza.org@gmail.com>
-        <20190618013146.21961-2-marcos.souza.org@gmail.com>
-        <yq1r27quuod.fsf@oracle.com> <20190619094540.GA26980@continental>
-        <20190619120346.GC26980@continental>
-Date:   Thu, 20 Jun 2019 16:32:38 -0400
-In-Reply-To: <20190619120346.GC26980@continental> (Marcos Paulo de Souza's
-        message of "Wed, 19 Jun 2019 09:03:52 -0300")
-Message-ID: <yq14l4kro9l.fsf@oracle.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1.92 (gnu/linux)
+        id S1726075AbfFTUk5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 16:40:57 -0400
+Received: from mga04.intel.com ([192.55.52.120]:28566 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725815AbfFTUk5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Jun 2019 16:40:57 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Jun 2019 13:40:56 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.63,398,1557212400"; 
+   d="scan'208";a="311788158"
+Received: from skuppusw-desk.jf.intel.com ([10.54.74.33])
+  by orsmga004.jf.intel.com with ESMTP; 20 Jun 2019 13:40:56 -0700
+From:   sathyanarayanan.kuppuswamy@linux.intel.com
+To:     bhelgaas@google.com
+Cc:     linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ashok.raj@intel.com, keith.busch@intel.com,
+        sathyanarayanan.kuppuswamy@linux.intel.com
+Subject: [PATCH v3 0/7] Fix PF/VF dependency issue
+Date:   Thu, 20 Jun 2019 13:38:41 -0700
+Message-Id: <cover.1561061640.git.sathyanarayanan.kuppuswamy@linux.intel.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9294 signatures=668687
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1906200146
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9294 signatures=668687
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1906200146
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
 
-Marcos,
+Current implementation of ATS, PASID, PRI does not handle VF dependencies
+correctly. Following patches addresses this issue.
 
-> My first idea was to add a vendor:product mapping at SCSI layer, but
-> so far I haven't found one, so I added the model/vendor found by
-> INQUIRY. Would it be better to check for prod:vendor (as values,
-> instead of the description)?
+Changes since v1:
+ * Added more details about the patches in commit log.
+ * Removed bulk spec check patch.
+ * Addressed comments from Bjorn Helgaas.
 
-Your patch is functionally fine. I'm just trying to establish how risky
-it is for me to pick it up.
+Changes since v2:
+ * Added locking mechanism to synchronize accessing PF registers in VF.
+ * Removed spec compliance checks in patches.
+ * Addressed comments from Bjorn Helgaas. 
+
+Kuppuswamy Sathyanarayanan (7):
+  PCI/ATS: Fix pci_prg_resp_pasid_required() dependency issues
+  PCI/ATS: Initialize PRI in pci_ats_init()
+  PCI/ATS: Initialize PASID in pci_ats_init()
+  PCI/ATS: Add PRI support for PCIe VF devices
+  PCI/ATS: Add PASID support for PCIe VF devices
+  PCI/ATS: Disable PF/VF ATS service independently
+  PCI: Skip Enhanced Allocation (EA) initialization for VF device
+
+ drivers/pci/ats.c       | 385 ++++++++++++++++++++++++++++++----------
+ drivers/pci/pci.c       |   7 +
+ include/linux/pci-ats.h |  12 +-
+ include/linux/pci.h     |   7 +-
+ 4 files changed, 312 insertions(+), 99 deletions(-)
 
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+2.21.0
+
