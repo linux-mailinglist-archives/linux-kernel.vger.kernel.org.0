@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 185F74D70E
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 20:15:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 582814D693
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 20:09:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729630AbfFTSPg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 14:15:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44396 "EHLO mail.kernel.org"
+        id S1728713AbfFTSJv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 14:09:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37302 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729624AbfFTSPe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 14:15:34 -0400
+        id S1728692AbfFTSJr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Jun 2019 14:09:47 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 05A0F2082C;
-        Thu, 20 Jun 2019 18:15:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 19DDB2168B;
+        Thu, 20 Jun 2019 18:09:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561054533;
-        bh=fQMt85ABpQUQv5H4MnPX6OzQAlr02ROktdlDIMzOd6o=;
+        s=default; t=1561054186;
+        bh=hJIVkZmUXKRDiFky2sa8B26jbrjDMH3oCqC5/EdVNPE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bmGTNmgciTG330BCL8w2VhH4o4whjTDGNuGto0wJCEv+LP6P8oqNWuJ99stUeGb1H
-         xNIsnvlmVXvxU4yPHsq9rryGgr5/Z1HWFVUp6vT43IPUEUHscJQyV6l+jUNj543JHE
-         U8ktk+KSIpCvwB4GxJcRXjGGRSJhOEp02Fz3U6Yc=
+        b=pDyWh2dzm2OgYCwwSi+fBCFsi9JH+fWjbzfkoN+u83/3OVcHQuRBUkH2SInag900u
+         2ZBJX0TCRYYCSE1o/0jiOFnwCj3Dn4L3Uq2Fx5m+P7Z4AX57GETh1TNfO79jRSkWIh
+         xAv51W7xGp4L8N7qYgr1Ehmcq0Qy9M5Lvz574gmo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Igor Russkikh <igor.russkikh@aquantia.com>,
-        Dmitry Bogdanov <dmitry.bogdanov@aquantia.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 62/98] net: aquantia: fix LRO with FCS error
+        stable@vger.kernel.org, Sahitya Tummala <stummala@codeaurora.org>,
+        Christoph Hellwig <hch@lst.de>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 27/45] configfs: Fix use-after-free when accessing sd->s_dentry
 Date:   Thu, 20 Jun 2019 19:57:29 +0200
-Message-Id: <20190620174352.205003505@linuxfoundation.org>
+Message-Id: <20190620174338.663341683@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190620174349.443386789@linuxfoundation.org>
-References: <20190620174349.443386789@linuxfoundation.org>
+In-Reply-To: <20190620174328.608036501@linuxfoundation.org>
+References: <20190620174328.608036501@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,102 +43,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit eaeb3b7494ba9159323814a8ce8af06a9277d99b ]
+[ Upstream commit f6122ed2a4f9c9c1c073ddf6308d1b2ac10e0781 ]
 
-Driver stops producing skbs on ring if a packet with FCS error
-was coalesced into LRO session. Ring gets hang forever.
+In the vfs_statx() context, during path lookup, the dentry gets
+added to sd->s_dentry via configfs_attach_attr(). In the end,
+vfs_statx() kills the dentry by calling path_put(), which invokes
+configfs_d_iput(). Ideally, this dentry must be removed from
+sd->s_dentry but it doesn't if the sd->s_count >= 3. As a result,
+sd->s_dentry is holding reference to a stale dentry pointer whose
+memory is already freed up. This results in use-after-free issue,
+when this stale sd->s_dentry is accessed later in
+configfs_readdir() path.
 
-Thats a logical error in driver processing descriptors:
-When rx_stat indicates MAC Error, next pointer and eop flags
-are not filled. This confuses driver so it waits for descriptor 0
-to be filled by HW.
+This issue can be easily reproduced, by running the LTP test case -
+sh fs_racer_file_list.sh /config
+(https://github.com/linux-test-project/ltp/blob/master/testcases/kernel/fs/racer/fs_racer_file_list.sh)
 
-Solution is fill next pointer and eop flag even for packets with FCS error.
-
-Fixes: bab6de8fd180b ("net: ethernet: aquantia: Atlantic A0 and B0 specific functions.")
-Signed-off-by: Igor Russkikh <igor.russkikh@aquantia.com>
-Signed-off-by: Dmitry Bogdanov <dmitry.bogdanov@aquantia.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: 76ae281f6307 ('configfs: fix race between dentry put and lookup')
+Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
+Signed-off-by: Christoph Hellwig <hch@lst.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- .../aquantia/atlantic/hw_atl/hw_atl_b0.c      | 61 ++++++++++---------
- 1 file changed, 32 insertions(+), 29 deletions(-)
+ fs/configfs/dir.c | 14 ++++++--------
+ 1 file changed, 6 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_b0.c b/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_b0.c
-index b31dba1b1a55..ec302fdfec63 100644
---- a/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_b0.c
-+++ b/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_b0.c
-@@ -702,38 +702,41 @@ static int hw_atl_b0_hw_ring_rx_receive(struct aq_hw_s *self,
- 		if ((rx_stat & BIT(0)) || rxd_wb->type & 0x1000U) {
- 			/* MAC error or DMA error */
- 			buff->is_error = 1U;
--		} else {
--			if (self->aq_nic_cfg->is_rss) {
--				/* last 4 byte */
--				u16 rss_type = rxd_wb->type & 0xFU;
--
--				if (rss_type && rss_type < 0x8U) {
--					buff->is_hash_l4 = (rss_type == 0x4 ||
--					rss_type == 0x5);
--					buff->rss_hash = rxd_wb->rss_hash;
--				}
-+		}
-+		if (self->aq_nic_cfg->is_rss) {
-+			/* last 4 byte */
-+			u16 rss_type = rxd_wb->type & 0xFU;
-+
-+			if (rss_type && rss_type < 0x8U) {
-+				buff->is_hash_l4 = (rss_type == 0x4 ||
-+				rss_type == 0x5);
-+				buff->rss_hash = rxd_wb->rss_hash;
- 			}
-+		}
+diff --git a/fs/configfs/dir.c b/fs/configfs/dir.c
+index d7955dc56737..a1985a9ad2d6 100644
+--- a/fs/configfs/dir.c
++++ b/fs/configfs/dir.c
+@@ -58,15 +58,13 @@ static void configfs_d_iput(struct dentry * dentry,
+ 	if (sd) {
+ 		/* Coordinate with configfs_readdir */
+ 		spin_lock(&configfs_dirent_lock);
+-		/* Coordinate with configfs_attach_attr where will increase
+-		 * sd->s_count and update sd->s_dentry to new allocated one.
+-		 * Only set sd->dentry to null when this dentry is the only
+-		 * sd owner.
+-		 * If not do so, configfs_d_iput may run just after
+-		 * configfs_attach_attr and set sd->s_dentry to null
+-		 * even it's still in use.
++		/*
++		 * Set sd->s_dentry to null only when this dentry is the one
++		 * that is going to be killed.  Otherwise configfs_d_iput may
++		 * run just after configfs_attach_attr and set sd->s_dentry to
++		 * NULL even it's still in use.
+ 		 */
+-		if (atomic_read(&sd->s_count) <= 2)
++		if (sd->s_dentry == dentry)
+ 			sd->s_dentry = NULL;
  
--			if (HW_ATL_B0_RXD_WB_STAT2_EOP & rxd_wb->status) {
--				buff->len = rxd_wb->pkt_len %
--					AQ_CFG_RX_FRAME_MAX;
--				buff->len = buff->len ?
--					buff->len : AQ_CFG_RX_FRAME_MAX;
--				buff->next = 0U;
--				buff->is_eop = 1U;
-+		if (HW_ATL_B0_RXD_WB_STAT2_EOP & rxd_wb->status) {
-+			buff->len = rxd_wb->pkt_len %
-+				AQ_CFG_RX_FRAME_MAX;
-+			buff->len = buff->len ?
-+				buff->len : AQ_CFG_RX_FRAME_MAX;
-+			buff->next = 0U;
-+			buff->is_eop = 1U;
-+		} else {
-+			buff->len =
-+				rxd_wb->pkt_len > AQ_CFG_RX_FRAME_MAX ?
-+				AQ_CFG_RX_FRAME_MAX : rxd_wb->pkt_len;
-+
-+			if (HW_ATL_B0_RXD_WB_STAT2_RSCCNT &
-+				rxd_wb->status) {
-+				/* LRO */
-+				buff->next = rxd_wb->next_desc_ptr;
-+				++ring->stats.rx.lro_packets;
- 			} else {
--				if (HW_ATL_B0_RXD_WB_STAT2_RSCCNT &
--					rxd_wb->status) {
--					/* LRO */
--					buff->next = rxd_wb->next_desc_ptr;
--					++ring->stats.rx.lro_packets;
--				} else {
--					/* jumbo */
--					buff->next =
--						aq_ring_next_dx(ring,
--								ring->hw_head);
--					++ring->stats.rx.jumbo_packets;
--				}
-+				/* jumbo */
-+				buff->next =
-+					aq_ring_next_dx(ring,
-+							ring->hw_head);
-+				++ring->stats.rx.jumbo_packets;
- 			}
- 		}
- 	}
+ 		spin_unlock(&configfs_dirent_lock);
 -- 
 2.20.1
 
