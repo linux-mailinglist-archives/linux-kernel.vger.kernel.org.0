@@ -2,100 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 21D854D900
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 20:31:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A904C4D932
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 20:32:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727282AbfFTSaz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 14:30:55 -0400
-Received: from relay4-d.mail.gandi.net ([217.70.183.196]:56473 "EHLO
-        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726579AbfFTSat (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 14:30:49 -0400
-X-Originating-IP: 90.65.161.137
-Received: from localhost (lfbn-1-1545-137.w90-65.abo.wanadoo.fr [90.65.161.137])
-        (Authenticated sender: alexandre.belloni@bootlin.com)
-        by relay4-d.mail.gandi.net (Postfix) with ESMTPSA id E774CE0006;
-        Thu, 20 Jun 2019 18:30:45 +0000 (UTC)
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>
-Subject: [PATCH 2/2] pinctrl: ocelot: fix pinmuxing for pins after 31
-Date:   Thu, 20 Jun 2019 20:30:37 +0200
-Message-Id: <20190620183037.29652-2-alexandre.belloni@bootlin.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190620183037.29652-1-alexandre.belloni@bootlin.com>
-References: <20190620183037.29652-1-alexandre.belloni@bootlin.com>
+        id S1726932AbfFTScX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 14:32:23 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:49842 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727149AbfFTScO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Jun 2019 14:32:14 -0400
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 06634356EA;
+        Thu, 20 Jun 2019 18:31:58 +0000 (UTC)
+Received: from t460s.redhat.com (ovpn-116-71.ams2.redhat.com [10.36.116.71])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id ACE2819722;
+        Thu, 20 Jun 2019 18:31:40 +0000 (UTC)
+From:   David Hildenbrand <david@redhat.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Dan Williams <dan.j.williams@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linuxppc-dev@lists.ozlabs.org, linux-acpi@vger.kernel.org,
+        linux-mm@kvack.org, David Hildenbrand <david@redhat.com>,
+        Andrew Banman <andrew.banman@hpe.com>,
+        Anshuman Khandual <anshuman.khandual@arm.com>,
+        Arun KS <arunks@codeaurora.org>, Baoquan He <bhe@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Juergen Gross <jgross@suse.com>,
+        Keith Busch <keith.busch@intel.com>,
+        Len Brown <lenb@kernel.org>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Michael Neuling <mikey@neuling.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        "mike.travis@hpe.com" <mike.travis@hpe.com>,
+        Oscar Salvador <osalvador@suse.com>,
+        Oscar Salvador <osalvador@suse.de>,
+        Paul Mackerras <paulus@samba.org>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        Pavel Tatashin <pasha.tatashin@soleen.com>,
+        Pavel Tatashin <pavel.tatashin@microsoft.com>,
+        Qian Cai <cai@lca.pw>, "Rafael J. Wysocki" <rafael@kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Rashmica Gupta <rashmica.g@gmail.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Wei Yang <richard.weiyang@gmail.com>
+Subject: [PATCH v3 0/6] mm: Further memory block device cleanups
+Date:   Thu, 20 Jun 2019 20:31:33 +0200
+Message-Id: <20190620183139.4352-1-david@redhat.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Thu, 20 Jun 2019 18:32:13 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The actual layout for OCELOT_GPIO_ALT[01] when there are more than 32 pins
-is interleaved, i.e. OCELOT_GPIO_ALT0[0], OCELOT_GPIO_ALT1[0],
-OCELOT_GPIO_ALT0[1], OCELOT_GPIO_ALT1[1]. Introduce a new REG_ALT macro to
-facilitate the register offset calculation and use it where necessary.
+@Andrew: Only patch 1, 4 and 6 changed compared to v1.
 
-Fixes: da801ab56ad8 pinctrl: ocelot: add MSCC Jaguar2 support
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
----
- drivers/pinctrl/pinctrl-ocelot.c | 16 +++++++++-------
- 1 file changed, 9 insertions(+), 7 deletions(-)
+Some further cleanups around memory block devices. Especially, clean up
+and simplify walk_memory_range(). Including some other minor cleanups.
 
-diff --git a/drivers/pinctrl/pinctrl-ocelot.c b/drivers/pinctrl/pinctrl-ocelot.c
-index d2478db975bd..fb76fb2e9ea5 100644
---- a/drivers/pinctrl/pinctrl-ocelot.c
-+++ b/drivers/pinctrl/pinctrl-ocelot.c
-@@ -396,7 +396,7 @@ static int ocelot_pin_function_idx(struct ocelot_pinctrl *info,
- 	return -1;
- }
- 
--#define REG(r, info, p) ((r) * (info)->stride + (4 * ((p) / 32)))
-+#define REG_ALT(msb, info, p) (OCELOT_GPIO_ALT0 * (info)->stride + 4 * ((msb) + ((info)->stride * ((p) / 32))))
- 
- static int ocelot_pinmux_set_mux(struct pinctrl_dev *pctldev,
- 				 unsigned int selector, unsigned int group)
-@@ -412,19 +412,21 @@ static int ocelot_pinmux_set_mux(struct pinctrl_dev *pctldev,
- 
- 	/*
- 	 * f is encoded on two bits.
--	 * bit 0 of f goes in BIT(pin) of ALT0, bit 1 of f goes in BIT(pin) of
--	 * ALT1
-+	 * bit 0 of f goes in BIT(pin) of ALT[0], bit 1 of f goes in BIT(pin) of
-+	 * ALT[1]
- 	 * This is racy because both registers can't be updated at the same time
- 	 * but it doesn't matter much for now.
- 	 */
--	regmap_update_bits(info->map, REG(OCELOT_GPIO_ALT0, info, pin->pin),
-+	regmap_update_bits(info->map, REG_ALT(0, info, pin->pin),
- 			   BIT(p), f << p);
--	regmap_update_bits(info->map, REG(OCELOT_GPIO_ALT1, info, pin->pin),
-+	regmap_update_bits(info->map, REG_ALT(1, info, pin->pin),
- 			   BIT(p), f << (p - 1));
- 
- 	return 0;
- }
- 
-+#define REG(r, info, p) ((r) * (info)->stride + (4 * ((p) / 32)))
-+
- static int ocelot_gpio_set_direction(struct pinctrl_dev *pctldev,
- 				     struct pinctrl_gpio_range *range,
- 				     unsigned int pin, bool input)
-@@ -445,9 +447,9 @@ static int ocelot_gpio_request_enable(struct pinctrl_dev *pctldev,
- 	struct ocelot_pinctrl *info = pinctrl_dev_get_drvdata(pctldev);
- 	unsigned int p = offset % 32;
- 
--	regmap_update_bits(info->map, REG(OCELOT_GPIO_ALT0, info, offset),
-+	regmap_update_bits(info->map, REG_ALT(0, info, offset),
- 			   BIT(p), 0);
--	regmap_update_bits(info->map, REG(OCELOT_GPIO_ALT1, info, offset),
-+	regmap_update_bits(info->map, REG_ALT(1, info, offset),
- 			   BIT(p), 0);
- 
- 	return 0;
+Compiled + tested on x86 with DIMMs under QEMU. Compile-tested on ppc64.
+
+v2 -> v3:
+- "mm/memory_hotplug: Rename walk_memory_range() and pass start+size .."
+-- Avoid warning on ppc.
+- "drivers/base/memory.c: Get rid of find_memory_block_hinted()"
+-- Fixup a comment regarding hinted devices.
+
+v1 -> v2:
+- "mm: Section numbers use the type "unsigned long""
+-- "unsigned long i" -> "unsigned long nr", in one case -> "int i"
+- "drivers/base/memory.c: Get rid of find_memory_block_hinted("
+-- Fix compilation error
+-- Get rid of the "hint" parameter completely
+
+David Hildenbrand (6):
+  mm: Section numbers use the type "unsigned long"
+  drivers/base/memory: Use "unsigned long" for block ids
+  mm: Make register_mem_sect_under_node() static
+  mm/memory_hotplug: Rename walk_memory_range() and pass start+size
+    instead of pfns
+  mm/memory_hotplug: Move and simplify walk_memory_blocks()
+  drivers/base/memory.c: Get rid of find_memory_block_hinted()
+
+ arch/powerpc/platforms/powernv/memtrace.c |  23 ++---
+ drivers/acpi/acpi_memhotplug.c            |  19 +---
+ drivers/base/memory.c                     | 120 +++++++++++++---------
+ drivers/base/node.c                       |   8 +-
+ include/linux/memory.h                    |   5 +-
+ include/linux/memory_hotplug.h            |   2 -
+ include/linux/mmzone.h                    |   4 +-
+ include/linux/node.h                      |   7 --
+ mm/memory_hotplug.c                       |  57 +---------
+ mm/sparse.c                               |  12 +--
+ 10 files changed, 106 insertions(+), 151 deletions(-)
+
 -- 
 2.21.0
 
