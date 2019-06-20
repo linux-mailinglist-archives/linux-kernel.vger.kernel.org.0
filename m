@@ -2,83 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 79AF34C708
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 08:02:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3809F4C713
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 08:04:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726370AbfFTGCm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 02:02:42 -0400
-Received: from helcar.hmeau.com ([216.24.177.18]:38376 "EHLO deadmen.hmeau.com"
+        id S1726282AbfFTGE3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 02:04:29 -0400
+Received: from verein.lst.de ([213.95.11.211]:57839 "EHLO newverein.lst.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725871AbfFTGCm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 02:02:42 -0400
-Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
-        by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
-        id 1hdq9X-0008UB-3U; Thu, 20 Jun 2019 14:02:31 +0800
-Received: from herbert by gondobar with local (Exim 4.89)
-        (envelope-from <herbert@gondor.apana.org.au>)
-        id 1hdq9N-0006tl-Hn; Thu, 20 Jun 2019 14:02:21 +0800
-Date:   Thu, 20 Jun 2019 14:02:21 +0800
-From:   Herbert Xu <herbert@gondor.apana.org.au>
-To:     Christophe Leroy <christophe.leroy@c-s.fr>
-Cc:     "David S. Miller" <davem@davemloft.net>, horia.geanta@nxp.com,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, Imre Deak <imre.deak@intel.com>
-Subject: Re: [PATCH v4 1/4] lib/scatterlist: Fix mapping iterator when
- sg->offset is greater than PAGE_SIZE
-Message-ID: <20190620060221.q4pbsqzsza3pxs42@gondor.apana.org.au>
-References: <cover.1560805614.git.christophe.leroy@c-s.fr>
- <f28c6b0e2f9510f42ca934f19c4315084e668c21.1560805614.git.christophe.leroy@c-s.fr>
+        id S1725871AbfFTGE2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Jun 2019 02:04:28 -0400
+Received: by newverein.lst.de (Postfix, from userid 2407)
+        id E2B3368BFE; Thu, 20 Jun 2019 08:03:55 +0200 (CEST)
+Date:   Thu, 20 Jun 2019 08:03:54 +0200
+From:   Christoph Hellwig <hch@lst.de>
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Alexey Kardashevskiy <aik@ozlabs.ru>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/4] powerpc/powernv: remove dead NPU DMA code
+Message-ID: <20190620060354.GA20279@lst.de>
+References: <20190523074924.19659-1-hch@lst.de> <20190523074924.19659-4-hch@lst.de> <db502ec4-2e8f-fbc3-9db2-3fe98464a62c@ozlabs.ru> <20190619072837.GA6858@lst.de> <b0ce7d72-5de7-63d3-cb4e-ea78342cb3fa@ozlabs.ru>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <f28c6b0e2f9510f42ca934f19c4315084e668c21.1560805614.git.christophe.leroy@c-s.fr>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <b0ce7d72-5de7-63d3-cb4e-ea78342cb3fa@ozlabs.ru>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 17, 2019 at 09:15:02PM +0000, Christophe Leroy wrote:
-> All mapping iterator logic is based on the assumption that sg->offset
-> is always lower than PAGE_SIZE.
+Hi Linus,
+
+this goes back to the discussion at last years kernel summit, where
+we had the discussion on removing code never used by any in-kernel
+user an no prospects of one.  The IBM folks are unfortunately still
+dragging their feet on the powerpc side.  Can we revise this discussion?
+
+The use case here is a IBM specific bus for which they only have an
+out of tree driver that their partner doesn't want to submit for mainline,
+but keep insisting on keeping the code around (which is also built
+uncondіtionally for the platform).
+
+I hope we had settled that argument back then, but it seems like Big
+Blue insists they are special.
+
+On Thu, Jun 20, 2019 at 11:45:42AM +1000, Alexey Kardashevskiy wrote:
 > 
-> But there are situations where sg->offset is such that the SG item
-> is on the second page. In that case sg_copy_to_buffer() fails
-> properly copying the data into the buffer. One of the reason is
-> that the data will be outside the kmapped area used to access that
-> data.
 > 
-> This patch fixes the issue by adjusting the mapping iterator
-> offset and pgoffset fields such that offset is always lower than
-> PAGE_SIZE.
+> On 19/06/2019 17:28, Christoph Hellwig wrote:
+> > On Wed, Jun 19, 2019 at 10:34:54AM +1000, Alexey Kardashevskiy wrote:
+> >>
+> >>
+> >> On 23/05/2019 17:49, Christoph Hellwig wrote:
+> >>> None of these routines were ever used since they were added to the
+> >>> kernel.
+> >>
+> >>
+> >> It is still being used exactly in the way as it was explained before in
+> >> previous respins. Thanks.
+> > 
+> > Please point to the in-kernel user, because that is the only relevant
+> > one.  This is not just my opinion but we had a clear discussion on that
+> > at least years kernel summit.
 > 
-> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
-> Fixes: 4225fc8555a9 ("lib/scatterlist: use page iterator in the mapping iterator")
-> Cc: stable@vger.kernel.org
-> ---
->  lib/scatterlist.c | 9 +++++++--
->  1 file changed, 7 insertions(+), 2 deletions(-)
-
-Good catch.
-
-> @@ -686,7 +686,12 @@ static bool sg_miter_get_next_page(struct sg_mapping_iter *miter)
->  		sg = miter->piter.sg;
->  		pgoffset = miter->piter.sg_pgoffset;
->  
-> -		miter->__offset = pgoffset ? 0 : sg->offset;
-> +		offset = pgoffset ? 0 : sg->offset;
-> +		while (offset >= PAGE_SIZE) {
-> +			miter->piter.sg_pgoffset = ++pgoffset;
-> +			offset -= PAGE_SIZE;
-> +		}
-
-How about
-
-	miter->piter.sg_pgoffset += offset >> PAGE_SHIFT;
-	offset &= PAGE_SIZE - 1;
-
-Thanks,
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+> 
+> There is no in-kernel user which still does not mean that the code is
+> dead. If it is irrelevant - put this to the commit log instead of saying
+> it is dead; also if there was a clear outcome from that discussion, then
+> please point me to that, I do not get to attend these discussions. Thanks,
+> 
+> 
+> -- 
+> Alexey
+---end quoted text---
