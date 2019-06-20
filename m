@@ -2,193 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 75AD84DC1D
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 22:54:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 71FF24DBF6
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 22:54:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727284AbfFTUyy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 16:54:54 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:15468 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726045AbfFTUys (ORCPT
+        id S1727070AbfFTUyO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 16:54:14 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:34644 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726875AbfFTUyJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 16:54:48 -0400
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5KKqi34049853;
-        Thu, 20 Jun 2019 16:53:52 -0400
-Received: from ppma03dal.us.ibm.com (b.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.11])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2t8fwbuvtn-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 20 Jun 2019 16:53:52 -0400
-Received: from pps.filterd (ppma03dal.us.ibm.com [127.0.0.1])
-        by ppma03dal.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x5KKoRjB012616;
-        Thu, 20 Jun 2019 20:53:51 GMT
-Received: from b01cxnp22034.gho.pok.ibm.com (b01cxnp22034.gho.pok.ibm.com [9.57.198.24])
-        by ppma03dal.us.ibm.com with ESMTP id 2t4ra6c0bv-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 20 Jun 2019 20:53:51 +0000
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x5KKroaS25035082
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 20 Jun 2019 20:53:50 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A024FB205F;
-        Thu, 20 Jun 2019 20:53:50 +0000 (GMT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 735C4B2064;
-        Thu, 20 Jun 2019 20:53:50 +0000 (GMT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.26])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Thu, 20 Jun 2019 20:53:50 +0000 (GMT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 6A6D716C5DE8; Thu, 20 Jun 2019 13:53:52 -0700 (PDT)
-Date:   Thu, 20 Jun 2019 13:53:52 -0700
-From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
-To:     Scott Wood <swood@redhat.com>
-Cc:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Clark Williams <williams@redhat.com>,
-        linux-rt-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RT 1/4] rcu: Acquire RCU lock when disabling BHs
-Message-ID: <20190620205352.GV26519@linux.ibm.com>
-Reply-To: paulmck@linux.ibm.com
-References: <20190619011908.25026-1-swood@redhat.com>
- <20190619011908.25026-2-swood@redhat.com>
+        Thu, 20 Jun 2019 16:54:09 -0400
+Received: by mail-pl1-f193.google.com with SMTP id i2so1878440plt.1
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2019 13:54:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=FzM+nSzZADFLmLVhAQE5b18OebXV89v5MtutF00qYdI=;
+        b=XeeY3ZRxKogcT3JJRz5OzSakGkmmClO1FZDE11x0BQ6G8i4mDSowUiYbaAcFe63yIZ
+         Znu6lfUBiKHlHayosEjj06HKKe99m6CFoRtWbkvYNKciwBxh/7EKIZ+K3m0jV69C4AL+
+         ShFJ67Rpun7qnsh8gpiLwamceO3jyKINwA9cM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=FzM+nSzZADFLmLVhAQE5b18OebXV89v5MtutF00qYdI=;
+        b=AGFx2bHFkaJmzQyAk3noqZmMGl8BPQns64JNjsf1hSbaf7Wpo4oAMjEWHeJF78gRVN
+         MS9deVjotMeahQWTlJm0CF9vXMg6fdhxjVqeGAEP9W7+ICU7Sphqyxqudj7SFcgKgw8O
+         ftan6YJ86LgBjrdjBa7exH9gBkFMOvU3QFlKpdC1CL5SYy9V/B7nBgPcTfAMRaG15/Ux
+         ybj69kCzjpmeVwqw5AVs0kiToHzdAMw7iofnA8kNnE9ODZF5tY6THtJeEBEu7tPFWJSp
+         xOYLJFk9qPKbY/bvOMk7tTJEejWu/r7rGhVDJViSFJVgTer7H54DLV9Q0Jg9sfJ4lC8A
+         axKQ==
+X-Gm-Message-State: APjAAAU9PRJfwutkTIRHO7orTXt5Gpv/7B44RZLqtcQC4hV9/9i+Taef
+        pMyBIngeqTC8f45m8iU95KTmFQ==
+X-Google-Smtp-Source: APXvYqzEeogb+6WVejeoyQ8UjjuWf4LBvek9BRvj/NG+tj2RayXz/hNSGKMpD2NAXrxY6wZFnH85Hw==
+X-Received: by 2002:a17:902:b18f:: with SMTP id s15mr130515351plr.44.1561064049388;
+        Thu, 20 Jun 2019 13:54:09 -0700 (PDT)
+Received: from localhost ([2620:15c:202:1:75a:3f6e:21d:9374])
+        by smtp.gmail.com with ESMTPSA id a16sm385309pfd.68.2019.06.20.13.54.08
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 20 Jun 2019 13:54:08 -0700 (PDT)
+Date:   Thu, 20 Jun 2019 13:54:06 -0700
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     Nick Desaulniers <ndesaulniers@google.com>
+Cc:     Tom Roeder <tmroeder@google.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Raul E Rangel <rrangel@chromium.org>,
+        Tom Hughes <tomhughes@chromium.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        Ryan Case <ryandcase@chromium.org>,
+        Yu Liu <yudiliu@google.com>,
+        Doug Anderson <dianders@google.com>
+Subject: Re: [PATCH] gen_compile_command: Add support for separate
+ KBUILD_OUTPUT directory
+Message-ID: <20190620205406.GY137143@google.com>
+References: <20190620184523.155756-1-mka@chromium.org>
+ <CAKwvOdn-o9UszRW+MQ9Z0Ds9B2wSVBWUsPBPSF0S2DYxVFYpqA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20190619011908.25026-2-swood@redhat.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-20_14:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1906200150
+In-Reply-To: <CAKwvOdn-o9UszRW+MQ9Z0Ds9B2wSVBWUsPBPSF0S2DYxVFYpqA@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 18, 2019 at 08:19:05PM -0500, Scott Wood wrote:
-> A plain local_bh_disable() is documented as creating an RCU critical
-> section, and (at least) rcutorture expects this to be the case.  However,
-> in_softirq() doesn't block a grace period on PREEMPT_RT, since RCU checks
-> preempt_count() directly.  Even if RCU were changed to check
-> in_softirq(), that wouldn't allow blocked BH disablers to be boosted.
+On Thu, Jun 20, 2019 at 12:53:22PM -0700, Nick Desaulniers wrote:
+> On Thu, Jun 20, 2019 at 11:45 AM Matthias Kaehlcke <mka@chromium.org> wrote:
+> >
+> > gen_compile_command.py currently assumes that the .cmd files and the
+> > source code live in the same directory, which is not the case when
+> > a separate KBUILD_OUTPUT directory is used.
 > 
-> Fix this by calling rcu_read_lock() from local_bh_disable(), and update
-> rcu_read_lock_bh_held() accordingly.
-> 
-> Signed-off-by: Scott Wood <swood@redhat.com>
-> ---
->  include/linux/rcupdate.h |  4 ++++
->  kernel/rcu/update.c      |  4 ++++
->  kernel/softirq.c         | 12 +++++++++---
->  3 files changed, 17 insertions(+), 3 deletions(-)
-> 
-> diff --git a/include/linux/rcupdate.h b/include/linux/rcupdate.h
-> index fb267bc04fdf..aca4e5e25ace 100644
-> --- a/include/linux/rcupdate.h
-> +++ b/include/linux/rcupdate.h
-> @@ -637,10 +637,12 @@ static inline void rcu_read_unlock(void)
->  static inline void rcu_read_lock_bh(void)
->  {
->  	local_bh_disable();
-> +#ifndef CONFIG_PREEMPT_RT_FULL
+> Great point; android builds the kernel outside of the source dir
+> (`make O=/non-source/path ...`). Thanks for the patch! BTW if CrOS is
+> doing cool stuff with compile_commands.json; I'd like to know!
+> Particularly; I'm curious if it's possible to generate Ninja build
+> files from compile_commands.json; I do miss Doug's Kbuild caching
+> patches' speedup.
+> Acked-by: Nick Desaulniers <ndesaulniers@google.com>
 
-How about this instead?
-
-	if (IS_ENABLED(CONFIG_PREEMPT_RT_FULL))
-		return;
-
-And similarly below.
-
->  	__acquire(RCU_BH);
->  	rcu_lock_acquire(&rcu_bh_lock_map);
->  	RCU_LOCKDEP_WARN(!rcu_is_watching(),
->  			 "rcu_read_lock_bh() used illegally while idle");
-> +#endif
->  }
->  
->  /*
-> @@ -650,10 +652,12 @@ static inline void rcu_read_lock_bh(void)
->   */
->  static inline void rcu_read_unlock_bh(void)
->  {
-> +#ifndef CONFIG_PREEMPT_RT_FULL
->  	RCU_LOCKDEP_WARN(!rcu_is_watching(),
->  			 "rcu_read_unlock_bh() used illegally while idle");
->  	rcu_lock_release(&rcu_bh_lock_map);
->  	__release(RCU_BH);
-> +#endif
->  	local_bh_enable();
->  }
->  
-> diff --git a/kernel/rcu/update.c b/kernel/rcu/update.c
-> index 3700b730ea55..eb653a329e0b 100644
-> --- a/kernel/rcu/update.c
-> +++ b/kernel/rcu/update.c
-> @@ -307,7 +307,11 @@ int rcu_read_lock_bh_held(void)
->  		return 0;
->  	if (!rcu_lockdep_current_cpu_online())
->  		return 0;
-> +#ifdef CONFIG_PREEMPT_RT_FULL
-> +	return lock_is_held(&rcu_lock_map) || irqs_disabled();
-> +#else
->  	return in_softirq() || irqs_disabled();
-> +#endif
->  }
->  EXPORT_SYMBOL_GPL(rcu_read_lock_bh_held);
->  
-> diff --git a/kernel/softirq.c b/kernel/softirq.c
-> index 473369122ddd..eb46dd3ff92d 100644
-> --- a/kernel/softirq.c
-> +++ b/kernel/softirq.c
-> @@ -121,8 +121,10 @@ void __local_bh_disable_ip(unsigned long ip, unsigned int cnt)
->  	long soft_cnt;
->  
->  	WARN_ON_ONCE(in_irq());
-> -	if (!in_atomic())
-> +	if (!in_atomic()) {
->  		local_lock(bh_lock);
-> +		rcu_read_lock();
-> +	}
->  	soft_cnt = this_cpu_inc_return(softirq_counter);
->  	WARN_ON_ONCE(soft_cnt == 0);
->  
-> @@ -155,8 +157,10 @@ void _local_bh_enable(void)
->  	local_irq_restore(flags);
->  #endif
->  
-> -	if (!in_atomic())
-> +	if (!in_atomic()) {
-> +		rcu_read_unlock();
->  		local_unlock(bh_lock);
-> +	}
->  }
->  
->  void _local_bh_enable_rt(void)
-> @@ -189,8 +193,10 @@ void __local_bh_enable_ip(unsigned long ip, unsigned int cnt)
->  	WARN_ON_ONCE(count < 0);
->  	local_irq_enable();
->  
-> -	if (!in_atomic())
-> +	if (!in_atomic()) {
-> +		rcu_read_unlock();
->  		local_unlock(bh_lock);
-> +	}
->  
->  	preempt_check_resched();
->  }
-
-And I have to ask...
-
-What did you do to test this change to kernel/softirq.c?  My past attempts
-to do this sort of thing have always run afoul of open-coded BH transitions.
-
-							Thanx, Paul
+At this point Chrome OS doesn't do anything with compile_commands.json
+for the kernel. I was just toying around a bit after a presentation
+from Tom Hughes about IDE integration and encountered this limitation.
