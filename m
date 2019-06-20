@@ -2,38 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 878354D79E
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 20:20:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B46394D5CA
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 20:01:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729279AbfFTSNd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 14:13:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41410 "EHLO mail.kernel.org"
+        id S1727149AbfFTSBF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 14:01:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50246 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728883AbfFTSN3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 14:13:29 -0400
+        id S1726485AbfFTSBC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Jun 2019 14:01:02 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 01DC52082C;
-        Thu, 20 Jun 2019 18:13:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A9A0D2083B;
+        Thu, 20 Jun 2019 18:01:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561054408;
-        bh=SjfTpmvzvuQZ9JZgKZvtzkAgoLB4u3yXSE2feqq0kUo=;
+        s=default; t=1561053662;
+        bh=n0eUZ/U4rMjPxOlzziQdo233Akn4AXtfI8W4B17cSXE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AcN+zS6qFgs8AYE7bJpEqNeR3bGpK2rBj3knf5DAXevsmBAJv8yIsvhFNt7C+xwak
-         fKyRTToImnQd1uzti2a4wAMNeHg/zw3FiNfNaVVB+7BOqMp3fCxNZSisG4gDQgVqKo
-         cbnMoD3vneS3gHn8YL1Le81bKiiFsj9ZOBFNYNzA=
+        b=N8tLdrd975b3YkVyzKQakKxlgf4Me2MlCJEssc4jeyk+ACv0AOKr4JWg+ESo0UW8K
+         iHTx7F7JEllGqR67+jeaDKhd7YHHMxe6NBIaM68sGPibqiSqqP9uaxWaUkrlaR0XHQ
+         aM+RV9BKBdGMMR3KdaHNYifWVK5XOsY5Fr+nUUu0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.1 08/98] net: dsa: rtl8366: Fix up VLAN filtering
-Date:   Thu, 20 Jun 2019 19:56:35 +0200
-Message-Id: <20190620174349.751989092@linuxfoundation.org>
+        stable@vger.kernel.org, Vasily Khoruzhick <anarsoul@gmail.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Jeremy Cline <jeremy@jcline.org>,
+        Marcel Holtmann <marcel@holtmann.org>,
+        Johan Hedberg <johan.hedberg@intel.com>
+Subject: [PATCH 4.4 39/84] Revert "Bluetooth: Align minimum encryption key size for LE and BR/EDR connections"
+Date:   Thu, 20 Jun 2019 19:56:36 +0200
+Message-Id: <20190620174344.217870954@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190620174349.443386789@linuxfoundation.org>
-References: <20190620174349.443386789@linuxfoundation.org>
+In-Reply-To: <20190620174337.538228162@linuxfoundation.org>
+References: <20190620174337.538228162@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,60 +46,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Linus Walleij <linus.walleij@linaro.org>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-[ Upstream commit 760c80b70bed2cd01630e8595d1bbde910339f31 ]
+This reverts commit d016dc1bd29a2cfb0707fc6fb290ccd21f3b139c which is
+commit d5bb334a8e171b262e48f378bd2096c0ea458265 upstream.
 
-We get this regression when using RTL8366RB as part of a bridge
-with OpenWrt:
+Lots of people have reported issues with this patch, and as there does
+not seem to be a fix going into Linus's kernel tree any time soon,
+revert the commit in the stable trees so as to get people's machines
+working properly again.
 
-WARNING: CPU: 0 PID: 1347 at net/switchdev/switchdev.c:291
-	 switchdev_port_attr_set_now+0x80/0xa4
-lan0: Commit of attribute (id=7) failed.
-(...)
-realtek-smi switch lan0: failed to initialize vlan filtering on this port
-
-This is because it is trying to disable VLAN filtering
-on VLAN0, as we have forgot to add 1 to the port number
-to get the right VLAN in rtl8366_vlan_filtering(): when
-we initialize the VLAN we associate VLAN1 with port 0,
-VLAN2 with port 1 etc, so we need to add 1 to the port
-offset.
-
-Fixes: d8652956cf37 ("net: dsa: realtek-smi: Add Realtek SMI driver")
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Reported-by: Vasily Khoruzhick <anarsoul@gmail.com>
+Reported-by: Hans de Goede <hdegoede@redhat.com>
+Cc: Jeremy Cline <jeremy@jcline.org>
+Cc: Marcel Holtmann <marcel@holtmann.org>
+Cc: Johan Hedberg <johan.hedberg@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/dsa/rtl8366.c |    7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ include/net/bluetooth/hci_core.h |    3 ---
+ net/bluetooth/hci_conn.c         |    8 --------
+ 2 files changed, 11 deletions(-)
 
---- a/drivers/net/dsa/rtl8366.c
-+++ b/drivers/net/dsa/rtl8366.c
-@@ -307,7 +307,8 @@ int rtl8366_vlan_filtering(struct dsa_sw
- 	struct rtl8366_vlan_4k vlan4k;
- 	int ret;
+--- a/include/net/bluetooth/hci_core.h
++++ b/include/net/bluetooth/hci_core.h
+@@ -174,9 +174,6 @@ struct adv_info {
  
--	if (!smi->ops->is_vlan_valid(smi, port))
-+	/* Use VLAN nr port + 1 since VLAN0 is not valid */
-+	if (!smi->ops->is_vlan_valid(smi, port + 1))
- 		return -EINVAL;
+ #define HCI_MAX_SHORT_NAME_LENGTH	10
  
- 	dev_info(smi->dev, "%s filtering on port %d\n",
-@@ -318,12 +319,12 @@ int rtl8366_vlan_filtering(struct dsa_sw
- 	 * The hardware support filter ID (FID) 0..7, I have no clue how to
- 	 * support this in the driver when the callback only says on/off.
- 	 */
--	ret = smi->ops->get_vlan_4k(smi, port, &vlan4k);
-+	ret = smi->ops->get_vlan_4k(smi, port + 1, &vlan4k);
- 	if (ret)
- 		return ret;
+-/* Min encryption key size to match with SMP */
+-#define HCI_MIN_ENC_KEY_SIZE		7
+-
+ /* Default LE RPA expiry time, 15 minutes */
+ #define HCI_DEFAULT_RPA_TIMEOUT		(15 * 60)
  
- 	/* Just set the filter to FID 1 for now then */
--	ret = rtl8366_set_vlan(smi, port,
-+	ret = rtl8366_set_vlan(smi, port + 1,
- 			       vlan4k.member,
- 			       vlan4k.untag,
- 			       1);
+--- a/net/bluetooth/hci_conn.c
++++ b/net/bluetooth/hci_conn.c
+@@ -1177,14 +1177,6 @@ int hci_conn_check_link_mode(struct hci_
+ 	    !test_bit(HCI_CONN_ENCRYPT, &conn->flags))
+ 		return 0;
+ 
+-	/* The minimum encryption key size needs to be enforced by the
+-	 * host stack before establishing any L2CAP connections. The
+-	 * specification in theory allows a minimum of 1, but to align
+-	 * BR/EDR and LE transports, a minimum of 7 is chosen.
+-	 */
+-	if (conn->enc_key_size < HCI_MIN_ENC_KEY_SIZE)
+-		return 0;
+-
+ 	return 1;
+ }
+ 
 
 
