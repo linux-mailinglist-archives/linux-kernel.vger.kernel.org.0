@@ -2,39 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D0DF4D816
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 20:24:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2363D4D6FF
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 20:14:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727358AbfFTSXx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 14:23:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36250 "EHLO mail.kernel.org"
+        id S1729507AbfFTSOw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 14:14:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43250 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728521AbfFTSIv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 14:08:51 -0400
+        id S1726812AbfFTSOt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Jun 2019 14:14:49 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 71C4E2082C;
-        Thu, 20 Jun 2019 18:08:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 05C41205F4;
+        Thu, 20 Jun 2019 18:14:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561054129;
-        bh=GdAVIKAYlmrnV5ik0UioPxBb+s+7a4Cqaxt58ExCFrg=;
+        s=default; t=1561054488;
+        bh=x3DQAm9fBik+KczsyNcMttT72qr4M0hPWQmDCAH5ZlI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LUMOkmgwL1lRF5H5mPdtJ5xUK+bImZeDQsmPyDqzhJiSlwjaq8qAzHFqLolD+FBnu
-         gcxmcba8AefXfUOZxnEqo3aSPQinT28ToiOxY3hcGndjS7fxjNYpPsGRiP5WNo60Jw
-         fNDFi7tomWyNr0s2S/+MsxCuix/tcKHU+CmiLzLg=
+        b=LEp5pMXt+Sd+dv1SzH3CVZXBvWaNybHbyvkaznGYRQvqc6V4UFlhRaPekG8ir+0XS
+         ySNlPyCtIrL4xqZUqlLmShs7s/c6jZ+AyNU+LB1aV/wLauenN/EWt3UttdmfbHpo5A
+         rXUAORulpXB3T9FlqOTqHJWLWZGZMXE7412adTbI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 09/45] sunhv: Fix device naming inconsistency between sunhv_console and sunhv_reg
+        stable@vger.kernel.org, Pavaman Subramaniyam <pavsubra@in.ibm.com>,
+        Anju T Sudhakar <anju@linux.vnet.ibm.com>,
+        Madhavan Srinivasan <maddy@linux.vnet.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.1 44/98] powerpc/powernv: Return for invalid IMC domain
 Date:   Thu, 20 Jun 2019 19:57:11 +0200
-Message-Id: <20190620174333.195180327@linuxfoundation.org>
+Message-Id: <20190620174351.143824080@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190620174328.608036501@linuxfoundation.org>
-References: <20190620174328.608036501@linuxfoundation.org>
+In-Reply-To: <20190620174349.443386789@linuxfoundation.org>
+References: <20190620174349.443386789@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,61 +46,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+[ Upstream commit b59bd3527fe3c1939340df558d7f9d568fc9f882 ]
 
-[ Upstream commit 07a6d63eb1b54b5fb38092780fe618dfe1d96e23 ]
+Currently init_imc_pmu() can fail either because we try to register an
+IMC unit with an invalid domain (i.e an IMC node not supported by the
+kernel) or something went wrong while registering a valid IMC unit. In
+both the cases kernel provides a 'Register failed' error message.
 
-In d5a2aa24, the name in struct console sunhv_console was changed from "ttyS"
-to "ttyHV" while the name in struct uart_ops sunhv_pops remained unchanged.
+For example when trace-imc node is not supported by the kernel, but
+skiboot advertises a trace-imc node we print:
 
-This results in the hypervisor console device to be listed as "ttyHV0" under
-/proc/consoles while the device node is still named "ttyS0":
+  IMC Unknown Device type
+  IMC PMU (null) Register failed
 
-root@osaka:~# cat /proc/consoles
-ttyHV0               -W- (EC p  )    4:64
-tty0                 -WU (E     )    4:1
-root@osaka:~# readlink /sys/dev/char/4:64
-../../devices/root/f02836f0/f0285690/tty/ttyS0
-root@osaka:~#
+To avoid confusion just print the unknown device type message, before
+attempting PMU registration, so the second message isn't printed.
 
-This means that any userland code which tries to determine the name of the
-device file of the hypervisor console device can not rely on the information
-provided by /proc/consoles. In particular, booting current versions of debian-
-installer inside a SPARC LDOM will fail with the installer unable to determine
-the console device.
-
-After renaming the device in struct uart_ops sunhv_pops to "ttyHV" as well,
-the inconsistency is fixed and it is possible again to determine the name
-of the device file of the hypervisor console device by reading the contents
-of /proc/console:
-
-root@osaka:~# cat /proc/consoles
-ttyHV0               -W- (EC p  )    4:64
-tty0                 -WU (E     )    4:1
-root@osaka:~# readlink /sys/dev/char/4:64
-../../devices/root/f02836f0/f0285690/tty/ttyHV0
-root@osaka:~#
-
-With this change, debian-installer works correctly when installing inside
-a SPARC LDOM.
-
-Signed-off-by: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Fixes: 8f95faaac56c ("powerpc/powernv: Detect and create IMC device")
+Reported-by: Pavaman Subramaniyam <pavsubra@in.ibm.com>
+Signed-off-by: Anju T Sudhakar <anju@linux.vnet.ibm.com>
+Reviewed-by: Madhavan Srinivasan <maddy@linux.vnet.ibm.com>
+[mpe: Reword change log a bit]
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/tty/serial/sunhv.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/powerpc/platforms/powernv/opal-imc.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/drivers/tty/serial/sunhv.c
-+++ b/drivers/tty/serial/sunhv.c
-@@ -396,7 +396,7 @@ static const struct uart_ops sunhv_pops
- static struct uart_driver sunhv_reg = {
- 	.owner			= THIS_MODULE,
- 	.driver_name		= "sunhv",
--	.dev_name		= "ttyS",
-+	.dev_name		= "ttyHV",
- 	.major			= TTY_MAJOR,
- };
+diff --git a/arch/powerpc/platforms/powernv/opal-imc.c b/arch/powerpc/platforms/powernv/opal-imc.c
+index 3d27f02695e4..828f6656f8f7 100644
+--- a/arch/powerpc/platforms/powernv/opal-imc.c
++++ b/arch/powerpc/platforms/powernv/opal-imc.c
+@@ -161,6 +161,10 @@ static int imc_pmu_create(struct device_node *parent, int pmu_index, int domain)
+ 	struct imc_pmu *pmu_ptr;
+ 	u32 offset;
  
++	/* Return for unknown domain */
++	if (domain < 0)
++		return -EINVAL;
++
+ 	/* memory for pmu */
+ 	pmu_ptr = kzalloc(sizeof(*pmu_ptr), GFP_KERNEL);
+ 	if (!pmu_ptr)
+-- 
+2.20.1
+
 
 
