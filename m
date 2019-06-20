@@ -2,141 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D97864CE81
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 15:18:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D5B8F4CE64
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 15:14:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732082AbfFTNSp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 09:18:45 -0400
-Received: from mga02.intel.com ([134.134.136.20]:33490 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731975AbfFTNSo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 09:18:44 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Jun 2019 06:18:44 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.63,396,1557212400"; 
-   d="scan'208";a="243621598"
-Received: from lxy-dell.sh.intel.com ([10.239.159.145])
-  by orsmga001.jf.intel.com with ESMTP; 20 Jun 2019 06:18:41 -0700
-Message-ID: <1e95bac4daa3dcc1d8896a23e430e78f06a9d19d.camel@linux.intel.com>
-Subject: Re: [PATCH v5 1/3] KVM: x86: add support for user wait instructions
-From:   Xiaoyao Li <xiaoyao.li@linux.intel.com>
-To:     Tao Xu <tao3.xu@intel.com>, pbonzini@redhat.com,
-        rkrcmar@redhat.com, corbet@lwn.net, tglx@linutronix.de,
-        mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
-        sean.j.christopherson@intel.com
-Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        fenghua.yu@intel.com, jingqi.liu@intel.com
-Date:   Thu, 20 Jun 2019 21:13:43 +0800
-In-Reply-To: <20190620084620.17974-2-tao3.xu@intel.com>
-References: <20190620084620.17974-1-tao3.xu@intel.com>
-         <20190620084620.17974-2-tao3.xu@intel.com>
+        id S1731965AbfFTNOd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 09:14:33 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:36976 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726952AbfFTNOc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Jun 2019 09:14:32 -0400
+Received: by mail-lj1-f195.google.com with SMTP id 131so2673408ljf.4
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2019 06:14:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=qspgoBFCIto313vrlu1/vYF7ItkjbZkTOvgEc+TXu7k=;
+        b=GYN49hoMnjjkcvRT46FngilNLFwBgB/jCAw3+MZgMgMr0Qu8xlw4qKIybRc5AgfUiu
+         QZIAeiJbwwz9GGyL8+8S8f7s3o2CybaYrNQNujqLhohuEXURu0ZKJ334jLnvfiFjPHT7
+         r3kfJsc3t9RjeBbNb49SYu3JPi1itkZHQqVgIEodNZduQppz34FHW0/BOUVbALWJOXSR
+         WBrzK4ZMb8mbKmRQjiQtWh4aXW4fiVKUt5xVJOuH60sdnGznOGvMgORJT8cMHph43fcF
+         7UHbP7m8mrix1ssQCQxdtLvekdUv1Pr2+/xV21sLOff4sLmqRFJVMpdLl5ur2m4XYFQY
+         xwlw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=qspgoBFCIto313vrlu1/vYF7ItkjbZkTOvgEc+TXu7k=;
+        b=q0i504lOHNQ3P9SXyMiaCy2fQqcjweUh6y3HYqIA0s6Y3XZT6L4GMHNDoI9VVOvrs/
+         H40iatgz62FpzE/L9MOmM5h9IT2lp3ZQNsLgmWW8896YhsTu6Dm3zkklr/wpO0kKRSy3
+         4JVTSgofhrhH6trz30BbuDEht3KSlPcJVpHo6zBds7sl29TSueoYCNRaHG5Vngn2sifi
+         jpggJyUupbrkp6X83bgzFSszz+BCICFzJ8De+0zeMMCVbEDgUINFdmHwHkD/wnOG5vd/
+         Wc6cRb8tqfadciVSC77R5thacXwW0yvyn6qCy18dQfJXD6WOSxkTM2pfU5ejfgCBg2wU
+         LVLw==
+X-Gm-Message-State: APjAAAXKOlZLKd85+1NtX1BBI/J8DguDR+XC5YfHJRyMyklT1vutisOt
+        X9payVltLMIgrGG8OOTL2f9iLQm3ZFDJsmiiZ8i9JZ0a1rc=
+X-Google-Smtp-Source: APXvYqyrZXzjSaPpnnMLclfqXxrpzULgbBI9HIevVVGD2/JNz3SaC9PZi0HhSSMRT+IJ52GDF2CmCZZsGwLYBpL9bl0=
+X-Received: by 2002:a2e:8741:: with SMTP id q1mr41532726ljj.144.1561036470965;
+ Thu, 20 Jun 2019 06:14:30 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190619163843.26918-1-andriy.shevchenko@linux.intel.com>
+In-Reply-To: <20190619163843.26918-1-andriy.shevchenko@linux.intel.com>
+From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date:   Thu, 20 Jun 2019 15:14:20 +0200
+Message-ID: <CANiq72ko_4cdZOtXxAr3TcorE7Aio3erbNYnUk-JP1aKBpOvuQ@mail.gmail.com>
+Subject: Re: [PATCH v1 1/2] kernel.h: Update comment about simple_strto<foo>() functions
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Mans Rullgard <mans@mansr.com>
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 (3.28.5-2.el7) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2019-06-20 at 16:46 +0800, Tao Xu wrote:
-> UMONITOR, UMWAIT and TPAUSE are a set of user wait instructions.
-> This patch adds support for user wait instructions in KVM. Availability
-> of the user wait instructions is indicated by the presence of the CPUID
-> feature flag WAITPKG CPUID.0x07.0x0:ECX[5]. User wait instructions may
-> be executed at any privilege level, and use IA32_UMWAIT_CONTROL MSR to
-> set the maximum time.
-> 
-> The behavior of user wait instructions in VMX non-root operation is
-> determined first by the setting of the "enable user wait and pause"
-> secondary processor-based VM-execution control bit 26.
-> 	If the VM-execution control is 0, UMONITOR/UMWAIT/TPAUSE cause
-> an invalid-opcode exception (#UD).
-> 	If the VM-execution control is 1, treatment is based on the
-> setting of the “RDTSC exiting” VM-execution control. Because KVM never
-> enables RDTSC exiting, if the instruction causes a delay, the amount of
-> time delayed is called here the physical delay. The physical delay is
-> first computed by determining the virtual delay. If
-> IA32_UMWAIT_CONTROL[31:2] is zero, the virtual delay is the value in
-> EDX:EAX minus the value that RDTSC would return; if
-> IA32_UMWAIT_CONTROL[31:2] is not zero, the virtual delay is the minimum
-> of that difference and AND(IA32_UMWAIT_CONTROL,FFFFFFFCH).
-> 
-> Because umwait and tpause can put a (psysical) CPU into a power saving
-> state, by default we dont't expose it to kvm and enable it only when
-> guest CPUID has it.
-> 
-> Detailed information about user wait instructions can be found in the
-> latest Intel 64 and IA-32 Architectures Software Developer's Manual.
-> 
-> Co-developed-by: Jingqi Liu <jingqi.liu@intel.com>
-> Signed-off-by: Jingqi Liu <jingqi.liu@intel.com>
-> Signed-off-by: Tao Xu <tao3.xu@intel.com>
+On Wed, Jun 19, 2019 at 6:38 PM Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
+>
+> There were discussions in the past about use cases for
+> simple_strto<foo>() functions and in some rare cases they have a benefit
+> on kstrto<foo>() ones.
+>
+> Update a comment to reduce confusing about special use cases.
 
-Reviewed-by: Xiaoyao Li <xiaoyao.li@linux.intel.com>
+I don't recall the discussions anymore... :-) But are we sure
+simple_strtoul() etc. are not obsolete anymore and want to use them
+again?
 
-> ---
-> 
-> Changes in v5:
-> 	remove vmx_waitpkg_supported() and use
-> 	guest_cpuid_has(vcpu, X86_FEATURE_WAITPKG) directly (Xiaoyao)
-> ---
->  arch/x86/include/asm/vmx.h | 1 +
->  arch/x86/kvm/cpuid.c       | 2 +-
->  arch/x86/kvm/vmx/vmx.c     | 4 ++++
->  3 files changed, 6 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/x86/include/asm/vmx.h b/arch/x86/include/asm/vmx.h
-> index a39136b0d509..8f00882664d3 100644
-> --- a/arch/x86/include/asm/vmx.h
-> +++ b/arch/x86/include/asm/vmx.h
-> @@ -69,6 +69,7 @@
->  #define SECONDARY_EXEC_PT_USE_GPA		0x01000000
->  #define SECONDARY_EXEC_MODE_BASED_EPT_EXEC	0x00400000
->  #define SECONDARY_EXEC_TSC_SCALING              0x02000000
-> +#define SECONDARY_EXEC_ENABLE_USR_WAIT_PAUSE	0x04000000
->  
->  #define PIN_BASED_EXT_INTR_MASK                 0x00000001
->  #define PIN_BASED_NMI_EXITING                   0x00000008
-> diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
-> index e18a9f9f65b5..48bd851a6ae5 100644
-> --- a/arch/x86/kvm/cpuid.c
-> +++ b/arch/x86/kvm/cpuid.c
-> @@ -405,7 +405,7 @@ static inline int __do_cpuid_ent(struct kvm_cpuid_entry2
-> *entry, u32 function,
->  		F(AVX512VBMI) | F(LA57) | F(PKU) | 0 /*OSPKE*/ |
->  		F(AVX512_VPOPCNTDQ) | F(UMIP) | F(AVX512_VBMI2) | F(GFNI) |
->  		F(VAES) | F(VPCLMULQDQ) | F(AVX512_VNNI) | F(AVX512_BITALG) |
-> -		F(CLDEMOTE) | F(MOVDIRI) | F(MOVDIR64B);
-> +		F(CLDEMOTE) | F(MOVDIRI) | F(MOVDIR64B) | 0 /*WAITPKG*/;
->  
->  	/* cpuid 7.0.edx*/
->  	const u32 kvm_cpuid_7_0_edx_x86_features =
-> diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-> index b93e36ddee5e..b35bfac30a34 100644
-> --- a/arch/x86/kvm/vmx/vmx.c
-> +++ b/arch/x86/kvm/vmx/vmx.c
-> @@ -2250,6 +2250,7 @@ static __init int setup_vmcs_config(struct vmcs_config
-> *vmcs_conf,
->  			SECONDARY_EXEC_RDRAND_EXITING |
->  			SECONDARY_EXEC_ENABLE_PML |
->  			SECONDARY_EXEC_TSC_SCALING |
-> +			SECONDARY_EXEC_ENABLE_USR_WAIT_PAUSE |
->  			SECONDARY_EXEC_PT_USE_GPA |
->  			SECONDARY_EXEC_PT_CONCEAL_VMX |
->  			SECONDARY_EXEC_ENABLE_VMFUNC |
-> @@ -3987,6 +3988,9 @@ static void vmx_compute_secondary_exec_control(struct
-> vcpu_vmx *vmx)
->  		}
->  	}
->  
-> +	if (!guest_cpuid_has(vcpu, X86_FEATURE_WAITPKG))
-> +		exec_control &= ~SECONDARY_EXEC_ENABLE_USR_WAIT_PAUSE;
-> +
->  	vmx->secondary_exec_control = exec_control;
->  }
->  
-
+Cheers,
+Miguel
