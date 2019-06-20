@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6991C4D7FB
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 20:24:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DA4884D6CD
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 20:12:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728960AbfFTSVj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 14:21:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39970 "EHLO mail.kernel.org"
+        id S1729004AbfFTSMR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 14:12:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40028 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726597AbfFTSML (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 14:12:11 -0400
+        id S1728689AbfFTSMN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Jun 2019 14:12:13 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3128B2082C;
-        Thu, 20 Jun 2019 18:12:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D37A52070B;
+        Thu, 20 Jun 2019 18:12:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561054330;
-        bh=7JGQuOrvcmw+F3qIhdXalM05EVaBfo4bHhekHH3nPUs=;
+        s=default; t=1561054333;
+        bh=aFBehdYRciLSJKafsb5y0VEz0EYr9uZ8mMN3bksJzoI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KdoSbGlzKCFXBMBnM/3OaKNXgq1HvUzz6loz6MSw9YmXBbMdJiBkMN30gNsO7mY2z
-         g2UxrHoJm3NSlv/TS+YlekcCAdXh/icD2W/hF1OM6hqWitt4csQH2dwT63tB5T5aha
-         UHHi3vsLBWYshKA7CrMxMqOlPzcxKlp9ScxKDrzA=
+        b=Dj6VKHDbIByJNTqkmC6eGrp8kkZuOw9Rtc9DeS4qlVRPTsQ6Ixc5CaNK+9+vo8Z4u
+         v9JSKElc8/XoS0OLEA3OM7xzDIy4vdQ6rLZL/FQpX32LIf2cZaMs0ZY6243ZMOJCto
+         EoLRX+iSmY3e3bhgdTO4ZNRWTSOwrezgnpMaWYkE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Max Uvarov <muvarov@gmail.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Varun Prakash <varun@chelsio.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 53/61] net: phy: dp83867: Set up RGMII TX delay
-Date:   Thu, 20 Jun 2019 19:57:48 +0200
-Message-Id: <20190620174346.433171819@linuxfoundation.org>
+Subject: [PATCH 4.19 54/61] scsi: libcxgbi: add a check for NULL pointer in cxgbi_check_route()
+Date:   Thu, 20 Jun 2019 19:57:49 +0200
+Message-Id: <20190620174346.629683659@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190620174336.357373754@linuxfoundation.org>
 References: <20190620174336.357373754@linuxfoundation.org>
@@ -45,37 +44,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 2b892649254fec01678c64f16427622b41fa27f4 ]
+[ Upstream commit cc555759117e8349088e0c5d19f2f2a500bafdbd ]
 
-PHY_INTERFACE_MODE_RGMII_RXID is less then TXID
-so code to set tx delay is never called.
+ip_dev_find() can return NULL so add a check for NULL pointer.
 
-Fixes: 2a10154abcb75 ("net: phy: dp83867: Add TI dp83867 phy")
-Signed-off-by: Max Uvarov <muvarov@gmail.com>
-Cc: Florian Fainelli <f.fainelli@gmail.com>
-Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Varun Prakash <varun@chelsio.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/phy/dp83867.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/scsi/cxgbi/libcxgbi.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/net/phy/dp83867.c b/drivers/net/phy/dp83867.c
-index b3935778b19f..e4bf9e7d7583 100644
---- a/drivers/net/phy/dp83867.c
-+++ b/drivers/net/phy/dp83867.c
-@@ -260,10 +260,8 @@ static int dp83867_config_init(struct phy_device *phydev)
- 		ret = phy_write(phydev, MII_DP83867_PHYCTRL, val);
- 		if (ret)
- 			return ret;
--	}
+diff --git a/drivers/scsi/cxgbi/libcxgbi.c b/drivers/scsi/cxgbi/libcxgbi.c
+index f2c561ca731a..cd2c247d6d0c 100644
+--- a/drivers/scsi/cxgbi/libcxgbi.c
++++ b/drivers/scsi/cxgbi/libcxgbi.c
+@@ -641,6 +641,10 @@ cxgbi_check_route(struct sockaddr *dst_addr, int ifindex)
  
--	if ((phydev->interface >= PHY_INTERFACE_MODE_RGMII_ID) &&
--	    (phydev->interface <= PHY_INTERFACE_MODE_RGMII_RXID)) {
-+		/* Set up RGMII delays */
- 		val = phy_read_mmd(phydev, DP83867_DEVADDR, DP83867_RGMIICTL);
- 
- 		if (phydev->interface == PHY_INTERFACE_MODE_RGMII_ID)
+ 	if (ndev->flags & IFF_LOOPBACK) {
+ 		ndev = ip_dev_find(&init_net, daddr->sin_addr.s_addr);
++		if (!ndev) {
++			err = -ENETUNREACH;
++			goto rel_neigh;
++		}
+ 		mtu = ndev->mtu;
+ 		pr_info("rt dev %s, loopback -> %s, mtu %u.\n",
+ 			n->dev->name, ndev->name, mtu);
 -- 
 2.20.1
 
