@@ -2,58 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C53944C9D8
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 10:51:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D19A04C9F3
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 10:54:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731433AbfFTIvI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 04:51:08 -0400
-Received: from mga17.intel.com ([192.55.52.151]:26294 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726122AbfFTIvI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 04:51:08 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Jun 2019 01:51:07 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.63,396,1557212400"; 
-   d="scan'208";a="243567007"
-Received: from pipin.fi.intel.com (HELO pipin) ([10.237.72.175])
-  by orsmga001.jf.intel.com with ESMTP; 20 Jun 2019 01:51:04 -0700
-From:   Felipe Balbi <felipe.balbi@linux.intel.com>
-To:     Chunfeng Yun <chunfeng.yun@mediatek.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH] usb: dwc3: remove unused @lock member of dwc3_ep struct
-In-Reply-To: <1561019039.19385.0.camel@mhfsdcap03>
-References: <342af01a252a9ef9457a6a6ec653a40698058fbc.1561018149.git.chunfeng.yun@mediatek.com> <87pnn8brej.fsf@linux.intel.com> <1561019039.19385.0.camel@mhfsdcap03>
-Date:   Thu, 20 Jun 2019 11:51:04 +0300
-Message-ID: <87muicbpxj.fsf@linux.intel.com>
+        id S1731680AbfFTIyq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 04:54:46 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:56114 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726084AbfFTIyh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Jun 2019 04:54:37 -0400
+Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 5F8C5D6DFD9356DF54EB;
+        Thu, 20 Jun 2019 16:54:28 +0800 (CST)
+Received: from localhost.localdomain (10.67.212.132) by
+ DGGEMS407-HUB.china.huawei.com (10.3.19.207) with Microsoft SMTP Server id
+ 14.3.439.0; Thu, 20 Jun 2019 16:54:21 +0800
+From:   Huazhong Tan <tanhuazhong@huawei.com>
+To:     <davem@davemloft.net>
+CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <salil.mehta@huawei.com>, <yisen.zhuang@huawei.com>,
+        <linuxarm@huawei.com>, Huazhong Tan <tanhuazhong@huawei.com>
+Subject: [PATCH net-next 00/11] net: hns3: some code optimizations & bugfixes
+Date:   Thu, 20 Jun 2019 16:52:34 +0800
+Message-ID: <1561020765-14481-1-git-send-email-tanhuazhong@huawei.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
 Content-Type: text/plain
+X-Originating-IP: [10.67.212.132]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+This patch-set includes code optimizations and bugfixes for
+the HNS3 ethernet controller driver.
 
-Chunfeng Yun <chunfeng.yun@mediatek.com> writes:
+[patch 1/11] fixes a selftest issue when doing autoneg.
 
-> Hi,
-> On Thu, 2019-06-20 at 11:19 +0300, Felipe Balbi wrote:
->> Hi,
->> 
->> Chunfeng Yun <chunfeng.yun@mediatek.com> writes:
->> 
->> > The member @lock of dwc2_ep struct is only initialized,
->> > and not used elsewhere, so remove it.
-> Sorry, I need send v2 to fix typo of dwc2_ep
+[patch 2/11 - 3-11] adds two code optimizations about VLAN issue.
 
-I fixed when applying ;-)
+[patch 4/11] restores the MAC autoneg state after reset.
+
+[patch 5/11 - 8/11] adds some code optimizations and bugfixes about
+HW errors handling.
+
+[patch 9/11 - 11/11] fixes some issues related to driver loading and
+unloading.
+
+Huazhong Tan (2):
+  net: hns3: fix race conditions between reset and module loading &
+    unloading
+  net: hns3: fixes wrong place enabling ROCE HW error when loading
+
+Jian Shen (4):
+  net: hns3: fix selftest fail issue for fibre port with autoneg on
+  net: hns3: remove VF VLAN filter entry inexistent warning print
+  net: hns3: sync VLAN filter entries when kill VLAN ID failed
+  net: hns3: restore the MAC autoneg state after reset
+
+Weihang Li (5):
+  net: hns3: code optimizaition of hclge_handle_hw_ras_error()
+  net: hns3: modify handling of out of memory in hclge_err.c
+  net: hns3: remove override_pci_need_reset
+  net: hns3: add check to number of buffer descriptors
+  net: hns3: add exception handling when enable NIC HW error interrupts
+
+ drivers/net/ethernet/hisilicon/hns3/hnae3.h        |   4 +-
+ drivers/net/ethernet/hisilicon/hns3/hns3_enet.c    |   2 +-
+ drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c |  10 ++
+ .../net/ethernet/hisilicon/hns3/hns3pf/hclge_err.c | 117 +++++++++------
+ .../net/ethernet/hisilicon/hns3/hns3pf/hclge_err.h |   5 +
+ .../ethernet/hisilicon/hns3/hns3pf/hclge_main.c    | 166 +++++++++++++++++----
+ .../ethernet/hisilicon/hns3/hns3pf/hclge_main.h    |   2 +
+ .../ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c  |  50 ++++++-
+ .../ethernet/hisilicon/hns3/hns3vf/hclgevf_main.h  |   3 +
+ 9 files changed, 279 insertions(+), 80 deletions(-)
 
 -- 
-balbi
+2.7.4
+
