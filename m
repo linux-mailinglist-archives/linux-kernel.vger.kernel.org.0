@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 301B84D7BD
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 20:24:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F5DF4D809
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 20:24:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728690AbfFTSJq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 14:09:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37222 "EHLO mail.kernel.org"
+        id S1728894AbfFTSWM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 14:22:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38978 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726669AbfFTSJo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 14:09:44 -0400
+        id S1728509AbfFTSLP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Jun 2019 14:11:15 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 718E62082C;
-        Thu, 20 Jun 2019 18:09:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 83B52215EA;
+        Thu, 20 Jun 2019 18:11:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561054183;
-        bh=zcu4yxtJsx+AVeYMzqd5C3jKuyG8OpnTkaxcUbuioDM=;
+        s=default; t=1561054275;
+        bh=qbPcjr/LBfpOJDxo37Q16bYknL/wsFWe6s4ii73uDLc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XjWFTf2NskXJl0uGTGkpZZ8TeOJXVtdHrH55ifpPU661EUh4yf8rusL1IgMtn06FA
-         Sl1GtTo6TwadittPtL1JV+VloyPc5kVLItIsT4pTZQVtbk787oWL/tWirkp5VrcpJr
-         nI7EBjC6vithSk7i2psUYQmWqf7GjBk2jKA/DlEc=
+        b=NsoLGyiQnbkls7TNRx1PNVqPU2V99GeqCBuDwiTFVCSc9R/pUZ335N4EhOrpguOsL
+         okAFCRCppwl8Rkssds7Tbge3PYkjaUdcK2mO4G6dH15e81UTolj4LpCSNICuXbaIat
+         tDRz7sC61zrUQlhaIMdEdX+ThPA/LIaEwSvwXVOA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Bard Liao <yung-chuan.liao@linux.intel.com>,
-        Takashi Iwai <tiwai@suse.de>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 26/45] ALSA: hda - Force polling mode on CNL for fixing codec communication
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 33/61] ACPI/PCI: PM: Add missing wakeup.flags.valid checks
 Date:   Thu, 20 Jun 2019 19:57:28 +0200
-Message-Id: <20190620174338.603309659@linuxfoundation.org>
+Message-Id: <20190620174343.156517840@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190620174328.608036501@linuxfoundation.org>
-References: <20190620174328.608036501@linuxfoundation.org>
+In-Reply-To: <20190620174336.357373754@linuxfoundation.org>
+References: <20190620174336.357373754@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,42 +45,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit fa763f1b2858752e6150ffff46886a1b7faffc82 ]
+[ Upstream commit 9a51c6b1f9e0239a9435db036b212498a2a3b75c ]
 
-We observed the same issue as reported by commit a8d7bde23e7130686b7662
-("ALSA: hda - Force polling mode on CFL for fixing codec communication")
-We don't have a better solution. So apply the same workaround to CNL.
+Both acpi_pci_need_resume() and acpi_dev_needs_resume() check if the
+current ACPI wakeup configuration of the device matches what is
+expected as far as system wakeup from sleep states is concerned, as
+reflected by the device_may_wakeup() return value for the device.
 
-Signed-off-by: Bard Liao <yung-chuan.liao@linux.intel.com>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+However, they only should do that if wakeup.flags.valid is set for
+the device's ACPI companion, because otherwise the wakeup.prepare_count
+value for it is meaningless.
+
+Add the missing wakeup.flags.valid checks to these functions.
+
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/pci/hda/hda_intel.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/acpi/device_pm.c | 4 ++--
+ drivers/pci/pci-acpi.c   | 3 ++-
+ 2 files changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/sound/pci/hda/hda_intel.c b/sound/pci/hda/hda_intel.c
-index 65fb1e7edb9c..d349f69ef03c 100644
---- a/sound/pci/hda/hda_intel.c
-+++ b/sound/pci/hda/hda_intel.c
-@@ -376,6 +376,7 @@ enum {
+diff --git a/drivers/acpi/device_pm.c b/drivers/acpi/device_pm.c
+index a7c2673ffd36..1806260938e8 100644
+--- a/drivers/acpi/device_pm.c
++++ b/drivers/acpi/device_pm.c
+@@ -948,8 +948,8 @@ static bool acpi_dev_needs_resume(struct device *dev, struct acpi_device *adev)
+ 	u32 sys_target = acpi_target_system_state();
+ 	int ret, state;
  
- #define IS_BXT(pci) ((pci)->vendor == 0x8086 && (pci)->device == 0x5a98)
- #define IS_CFL(pci) ((pci)->vendor == 0x8086 && (pci)->device == 0xa348)
-+#define IS_CNL(pci) ((pci)->vendor == 0x8086 && (pci)->device == 0x9dc8)
+-	if (!pm_runtime_suspended(dev) || !adev ||
+-	    device_may_wakeup(dev) != !!adev->wakeup.prepare_count)
++	if (!pm_runtime_suspended(dev) || !adev || (adev->wakeup.flags.valid &&
++	    device_may_wakeup(dev) != !!adev->wakeup.prepare_count))
+ 		return true;
  
- static char *driver_short_names[] = {
- 	[AZX_DRIVER_ICH] = "HDA Intel",
-@@ -1751,8 +1752,8 @@ static int azx_create(struct snd_card *card, struct pci_dev *pci,
- 	else
- 		chip->bdl_pos_adj = bdl_pos_adj[dev];
+ 	if (sys_target == ACPI_STATE_S0)
+diff --git a/drivers/pci/pci-acpi.c b/drivers/pci/pci-acpi.c
+index f8436d1c4d45..f7218c1673ce 100644
+--- a/drivers/pci/pci-acpi.c
++++ b/drivers/pci/pci-acpi.c
+@@ -625,7 +625,8 @@ static bool acpi_pci_need_resume(struct pci_dev *dev)
+ 	if (!adev || !acpi_device_power_manageable(adev))
+ 		return false;
  
--	/* Workaround for a communication error on CFL (bko#199007) */
--	if (IS_CFL(pci))
-+	/* Workaround for a communication error on CFL (bko#199007) and CNL */
-+	if (IS_CFL(pci) || IS_CNL(pci))
- 		chip->polling_mode = 1;
+-	if (device_may_wakeup(&dev->dev) != !!adev->wakeup.prepare_count)
++	if (adev->wakeup.flags.valid &&
++	    device_may_wakeup(&dev->dev) != !!adev->wakeup.prepare_count)
+ 		return true;
  
- 	err = azx_bus_init(chip, model[dev], &pci_hda_io_ops);
+ 	if (acpi_target_system_state() == ACPI_STATE_S0)
 -- 
 2.20.1
 
