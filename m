@@ -2,96 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 93EE74C887
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 09:36:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 633404C88B
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 09:43:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731088AbfFTHgr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 03:36:47 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:36113 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726211AbfFTHgr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 03:36:47 -0400
-Received: by mail-ed1-f66.google.com with SMTP id k21so3285546edq.3
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2019 00:36:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=rDdWAqffTT+oSdiXbKqtbjpzXQIFQC5WZi7REe1Jpzc=;
-        b=KcNSSGxz6j/9c3/UU7EzkVXLQw9IHfAGIei+vpcXLRgZ44F848Gjw8vTiozTuhmJzb
-         B4/Ly0hMdiaMtR8CIKDoo0KChBXSSTJeSztn+0hZpWeBm9OYKd9GQLVYaaRWlo4NpcdN
-         q6IBUhcDB12PNLoSQKL2/6EKWxiiKJ1rybUVqmN7pkl3UPjghMnmOMBVURJ/VzNDMvlc
-         o0C252Hrku5hqxWQtP3wnXREg4907cByetiXowftDk8nDt4FHe2NiinFND33XyOHrK9z
-         kDI72Bj0mYTTmvm7cS4eL+ZDiln7UOpr+aD8WK8inz70jGgqsloeBZsvdaF36+MXuX8J
-         V8IQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=rDdWAqffTT+oSdiXbKqtbjpzXQIFQC5WZi7REe1Jpzc=;
-        b=RrDXbTpygy/Nt21abNFiJt399SzXts10SqJAF/iH8NUJhiVCbohxvPU2HojDFtjHWQ
-         od3qRG+jV3EMQ0VmnFr+lXaLjzuklh676f4wGNTqdrCSmasqCdiUqHtVsLoOb4b70Y8P
-         LyCw5GebG+tfbmyRNA6DNZkHnoEZ1FFBz5dBBlAl1uEzrqP1dhgmGGz0/RC82DscePEC
-         CbbAlSXM4FvyknAc6+t4ULW4IlS9z3q5pyTpuoKYDRZw/YG3DY/QHHk4b0p8G21sfSI0
-         53fx40dVG8+LWwCVQzU/2O7hUbIlykRLFofPMp3ggJg6nSaFYsFrZWrd2IisoGfm1rWN
-         c7Pw==
-X-Gm-Message-State: APjAAAWFzJR1UcvhexjAUU2ZyDyHEeJPxHvWqTZOo+XVuOCJuP3En93W
-        ZO6z9VvJWpZItX2wI7LQ9pRVK6NX5t1/KJ4X
-X-Google-Smtp-Source: APXvYqxG5E8urhDC9+2T2Bc7xL0pcd3QezOCfgkQo8wMsGgaoB49aehLx/TSw6mOwnP6Ca4xscr16Q==
-X-Received: by 2002:aa7:d30d:: with SMTP id p13mr55603903edq.292.1561016205308;
-        Thu, 20 Jun 2019 00:36:45 -0700 (PDT)
-Received: from [192.168.0.115] (xd520f259.cust.hiper.dk. [213.32.242.89])
-        by smtp.gmail.com with ESMTPSA id e19sm3730317eja.91.2019.06.20.00.36.44
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 20 Jun 2019 00:36:44 -0700 (PDT)
-Subject: Re: [PATCH] [RESEND] floppy: fix harmless clang build warning
-To:     Arnd Bergmann <arnd@arndb.de>, Jiri Kosina <jikos@kernel.org>
-Cc:     Robert Elliott <elliott@hpe.com>, Keith Busch <kbusch@kernel.org>,
-        Hannes Reinecke <hare@suse.de>, Omar Sandoval <osandov@fb.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Andy Whitcroft <apw@canonical.com>,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20190619131959.2055400-1-arnd@arndb.de>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <649b433f-9a6b-a8a8-65ea-aa15a6296246@kernel.dk>
-Date:   Thu, 20 Jun 2019 01:36:43 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
-MIME-Version: 1.0
-In-Reply-To: <20190619131959.2055400-1-arnd@arndb.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1726262AbfFTHnX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 03:43:23 -0400
+Received: from mx2.suse.de ([195.135.220.15]:50482 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725872AbfFTHnX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Jun 2019 03:43:23 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id E33D0AF2D;
+        Thu, 20 Jun 2019 07:43:21 +0000 (UTC)
+Date:   Thu, 20 Jun 2019 09:43:21 +0200
+Message-ID: <s5hzhmcem7a.wl-tiwai@suse.de>
+From:   Takashi Iwai <tiwai@suse.de>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RFC 0/3] Automatically choose a bigger font for high resolution screens
+In-Reply-To: <20190620062821.GA20578@kroah.com>
+References: <20190618203425.10723-1-tiwai@suse.de>
+        <20190620062821.GA20578@kroah.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/25.3
+ (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+MIME-Version: 1.0 (generated by SEMI 1.14.6 - "Maruoka")
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 6/19/19 7:19 AM, Arnd Bergmann wrote:
-> clang warns about unusual code in floppy.c that looks like it
-> was intended to be a bit mask operation, checking for a specific
-> bit in the UDP->cmos variable (FLOPPY1_TYPE expands to '4' on
-> ARM):
+On Thu, 20 Jun 2019 08:28:21 +0200,
+Greg Kroah-Hartman wrote:
 > 
-> drivers/block/floppy.c:3902:17: error: use of logical '&&' with constant operand [-Werror,-Wconstant-logical-operand]
->          if (!UDP->cmos && FLOPPY1_TYPE)
->                         ^  ~~~~~~~~~~~~
-> drivers/block/floppy.c:3902:17: note: use '&' for a bitwise operation
->          if (!UDP->cmos && FLOPPY1_TYPE)
+> On Tue, Jun 18, 2019 at 10:34:22PM +0200, Takashi Iwai wrote:
+> > Hi,
+> > 
+> > this is an RFC patch for automatically selecting a bigger font for
+> > high resolution monitors if available.  Although we recently got a
+> > 16x32 sized font support in the kernel, using it still requires some
+> > extra kernel option.  This patch reduces this and the kernel will pick
+> > up a bigger font.
+> > 
+> > The logic is simply checking the text screen size.  If it's over a
+> > threshold, the penalty is given to the function that chooses the
+> > default font.
+> > 
+> > The threshold was chosen so that the normal display up to Full HD
+> > won't be affected.
+> > 
+> > There are two preliminary patches and they are merely cleanups.  They
+> > can be applied no matter whether to take the last patch or not.
 > 
-> The check here is redundant anyway, if FLOPPY1_TYPE is zero, then
-> assigning it to a zero UDP->cmos field does not change anything,
-> so removing the extra check here has no effect other than shutting
-> up the warning.
-> 
-> On x86, this will no longer read a hardware register, as the
-> FLOPPY1_TYPE macro is not expanded if UDP->cmos is already
-> zero, but the result is the same.
+> I applied the first two patches, as they seem sane.
 
-Applied, thanks.
+Thanks!
 
--- 
-Jens Axboe
+> I like the idea of the last one, and have no objections to it.  I can
+> apply it too if you want and we can see what happens :)
 
+OK, then let's go ahead.  We can see what people react if they can
+read a kernel crash message without glasses :)
+
+
+Takashi
