@@ -2,39 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AB0854D5AF
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 20:00:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9D91F4D915
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 20:32:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726827AbfFTSAF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 14:00:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48394 "EHLO mail.kernel.org"
+        id S1726168AbfFTSAJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 14:00:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48498 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726798AbfFTSAD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 14:00:03 -0400
+        id S1726819AbfFTSAG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Jun 2019 14:00:06 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 091122084A;
-        Thu, 20 Jun 2019 18:00:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A78AC21530;
+        Thu, 20 Jun 2019 18:00:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561053602;
-        bh=xU+BtTdGagfZ3V0Qjo0BVdC7AiKUCZEwsrR52cvNAuA=;
+        s=default; t=1561053605;
+        bh=ouzMQJKSpXwjZpt1pdoZv050tBWH9isF/yYIty+FVM8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=k1uj/RkiPqYlfClDaY+F6wqI8ierbJlI/lBEHM/Y+3eEgrBqKgsar1c1xEistEXOI
-         r29kt5aoraM+UMlELctRi1OvuXUrnOcJswtU0qd3IX65163xeZcGhzgYW0j17KUcxN
-         S/9jaxDCJtEXxzGL1X/927Mxps+fq3RopI9HcKBM=
+        b=K0WGYcSjl8wBURymEsA6vpc6YqtU574ZmVl+/rjaEEtT6EAB/uXmnFl2J3xIzL4kV
+         8J7+x5qCu2KgbowkwACrhIFjQQl7cdohBOB1cZA5Jl2zRYEOpdhDHG7wT7vb3bhETK
+         Az6IpWdkcc59vyel0F0q/0KUDie6JTGeNvGWlHdg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Coly Li <colyli@suse.de>,
-        Rolf Fokkens <rolf@rolffokkens.nl>,
-        Pierre JUHEN <pierre.juhen@orange.fr>,
-        Shenghui Wang <shhuiw@foxmail.com>,
-        Kent Overstreet <kent.overstreet@gmail.com>,
-        Nix <nix@esperi.org.uk>, Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 4.4 47/84] bcache: fix stack corruption by PRECEDING_KEY()
-Date:   Thu, 20 Jun 2019 19:56:44 +0200
-Message-Id: <20190620174345.663462301@linuxfoundation.org>
+        stable@vger.kernel.org, Tejun Heo <tj@kernel.org>
+Subject: [PATCH 4.4 48/84] cgroup: Use css_tryget() instead of css_tryget_online() in task_get_css()
+Date:   Thu, 20 Jun 2019 19:56:45 +0200
+Message-Id: <20190620174345.920912606@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190620174337.538228162@linuxfoundation.org>
 References: <20190620174337.538228162@linuxfoundation.org>
@@ -47,127 +42,88 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Coly Li <colyli@suse.de>
+From: Tejun Heo <tj@kernel.org>
 
-commit 31b90956b124240aa8c63250243ae1a53585c5e2 upstream.
+commit 18fa84a2db0e15b02baa5d94bdb5bd509175d2f6 upstream.
 
-Recently people report bcache code compiled with gcc9 is broken, one of
-the buggy behavior I observe is that two adjacent 4KB I/Os should merge
-into one but they don't. Finally it turns out to be a stack corruption
-caused by macro PRECEDING_KEY().
+A PF_EXITING task can stay associated with an offline css.  If such
+task calls task_get_css(), it can get stuck indefinitely.  This can be
+triggered by BSD process accounting which writes to a file with
+PF_EXITING set when racing against memcg disable as in the backtrace
+at the end.
 
-See how PRECEDING_KEY() is defined in bset.h,
-437 #define PRECEDING_KEY(_k)                                       \
-438 ({                                                              \
-439         struct bkey *_ret = NULL;                               \
-440                                                                 \
-441         if (KEY_INODE(_k) || KEY_OFFSET(_k)) {                  \
-442                 _ret = &KEY(KEY_INODE(_k), KEY_OFFSET(_k), 0);  \
-443                                                                 \
-444                 if (!_ret->low)                                 \
-445                         _ret->high--;                           \
-446                 _ret->low--;                                    \
-447         }                                                       \
-448                                                                 \
-449         _ret;                                                   \
-450 })
+After this change, task_get_css() may return a css which was already
+offline when the function was called.  None of the existing users are
+affected by this change.
 
-At line 442, _ret points to address of a on-stack variable combined by
-KEY(), the life range of this on-stack variable is in line 442-446,
-once _ret is returned to bch_btree_insert_key(), the returned address
-points to an invalid stack address and this address is overwritten in
-the following called bch_btree_iter_init(). Then argument 'search' of
-bch_btree_iter_init() points to some address inside stackframe of
-bch_btree_iter_init(), exact address depends on how the compiler
-allocates stack space. Now the stack is corrupted.
+  INFO: rcu_sched self-detected stall on CPU
+  INFO: rcu_sched detected stalls on CPUs/tasks:
+  ...
+  NMI backtrace for cpu 0
+  ...
+  Call Trace:
+   <IRQ>
+   dump_stack+0x46/0x68
+   nmi_cpu_backtrace.cold.2+0x13/0x57
+   nmi_trigger_cpumask_backtrace+0xba/0xca
+   rcu_dump_cpu_stacks+0x9e/0xce
+   rcu_check_callbacks.cold.74+0x2af/0x433
+   update_process_times+0x28/0x60
+   tick_sched_timer+0x34/0x70
+   __hrtimer_run_queues+0xee/0x250
+   hrtimer_interrupt+0xf4/0x210
+   smp_apic_timer_interrupt+0x56/0x110
+   apic_timer_interrupt+0xf/0x20
+   </IRQ>
+  RIP: 0010:balance_dirty_pages_ratelimited+0x28f/0x3d0
+  ...
+   btrfs_file_write_iter+0x31b/0x563
+   __vfs_write+0xfa/0x140
+   __kernel_write+0x4f/0x100
+   do_acct_process+0x495/0x580
+   acct_process+0xb9/0xdb
+   do_exit+0x748/0xa00
+   do_group_exit+0x3a/0xa0
+   get_signal+0x254/0x560
+   do_signal+0x23/0x5c0
+   exit_to_usermode_loop+0x5d/0xa0
+   prepare_exit_to_usermode+0x53/0x80
+   retint_user+0x8/0x8
 
-Fixes: 0eacac22034c ("bcache: PRECEDING_KEY()")
-Signed-off-by: Coly Li <colyli@suse.de>
-Reviewed-by: Rolf Fokkens <rolf@rolffokkens.nl>
-Reviewed-by: Pierre JUHEN <pierre.juhen@orange.fr>
-Tested-by: Shenghui Wang <shhuiw@foxmail.com>
-Tested-by: Pierre JUHEN <pierre.juhen@orange.fr>
-Cc: Kent Overstreet <kent.overstreet@gmail.com>
-Cc: Nix <nix@esperi.org.uk>
-Cc: stable@vger.kernel.org
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Tejun Heo <tj@kernel.org>
+Cc: stable@vger.kernel.org # v4.2+
+Fixes: ec438699a9ae ("cgroup, block: implement task_get_css() and use it in bio_associate_current()")
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/md/bcache/bset.c |   16 +++++++++++++---
- drivers/md/bcache/bset.h |   34 ++++++++++++++++++++--------------
- 2 files changed, 33 insertions(+), 17 deletions(-)
+ include/linux/cgroup.h |   10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
---- a/drivers/md/bcache/bset.c
-+++ b/drivers/md/bcache/bset.c
-@@ -823,12 +823,22 @@ unsigned bch_btree_insert_key(struct btr
- 	struct bset *i = bset_tree_last(b)->data;
- 	struct bkey *m, *prev = NULL;
- 	struct btree_iter iter;
-+	struct bkey preceding_key_on_stack = ZERO_KEY;
-+	struct bkey *preceding_key_p = &preceding_key_on_stack;
- 
- 	BUG_ON(b->ops->is_extents && !KEY_SIZE(k));
- 
--	m = bch_btree_iter_init(b, &iter, b->ops->is_extents
--				? PRECEDING_KEY(&START_KEY(k))
--				: PRECEDING_KEY(k));
-+	/*
-+	 * If k has preceding key, preceding_key_p will be set to address
-+	 *  of k's preceding key; otherwise preceding_key_p will be set
-+	 * to NULL inside preceding_key().
-+	 */
-+	if (b->ops->is_extents)
-+		preceding_key(&START_KEY(k), &preceding_key_p);
-+	else
-+		preceding_key(k, &preceding_key_p);
-+
-+	m = bch_btree_iter_init(b, &iter, preceding_key_p);
- 
- 	if (b->ops->insert_fixup(b, k, &iter, replace_key))
- 		return status;
---- a/drivers/md/bcache/bset.h
-+++ b/drivers/md/bcache/bset.h
-@@ -417,20 +417,26 @@ static inline bool bch_cut_back(const st
- 	return __bch_cut_back(where, k);
- }
- 
--#define PRECEDING_KEY(_k)					\
--({								\
--	struct bkey *_ret = NULL;				\
--								\
--	if (KEY_INODE(_k) || KEY_OFFSET(_k)) {			\
--		_ret = &KEY(KEY_INODE(_k), KEY_OFFSET(_k), 0);	\
--								\
--		if (!_ret->low)					\
--			_ret->high--;				\
--		_ret->low--;					\
--	}							\
--								\
--	_ret;							\
--})
-+/*
-+ * Pointer '*preceding_key_p' points to a memory object to store preceding
-+ * key of k. If the preceding key does not exist, set '*preceding_key_p' to
-+ * NULL. So the caller of preceding_key() needs to take care of memory
-+ * which '*preceding_key_p' pointed to before calling preceding_key().
-+ * Currently the only caller of preceding_key() is bch_btree_insert_key(),
-+ * and it points to an on-stack variable, so the memory release is handled
-+ * by stackframe itself.
-+ */
-+static inline void preceding_key(struct bkey *k, struct bkey **preceding_key_p)
-+{
-+	if (KEY_INODE(k) || KEY_OFFSET(k)) {
-+		(**preceding_key_p) = KEY(KEY_INODE(k), KEY_OFFSET(k), 0);
-+		if (!(*preceding_key_p)->low)
-+			(*preceding_key_p)->high--;
-+		(*preceding_key_p)->low--;
-+	} else {
-+		(*preceding_key_p) = NULL;
-+	}
-+}
- 
- static inline bool bch_ptr_invalid(struct btree_keys *b, const struct bkey *k)
- {
+--- a/include/linux/cgroup.h
++++ b/include/linux/cgroup.h
+@@ -453,7 +453,7 @@ static inline struct cgroup_subsys_state
+  *
+  * Find the css for the (@task, @subsys_id) combination, increment a
+  * reference on and return it.  This function is guaranteed to return a
+- * valid css.
++ * valid css.  The returned css may already have been offlined.
+  */
+ static inline struct cgroup_subsys_state *
+ task_get_css(struct task_struct *task, int subsys_id)
+@@ -463,7 +463,13 @@ task_get_css(struct task_struct *task, i
+ 	rcu_read_lock();
+ 	while (true) {
+ 		css = task_css(task, subsys_id);
+-		if (likely(css_tryget_online(css)))
++		/*
++		 * Can't use css_tryget_online() here.  A task which has
++		 * PF_EXITING set may stay associated with an offline css.
++		 * If such task calls this function, css_tryget_online()
++		 * will keep failing.
++		 */
++		if (likely(css_tryget(css)))
+ 			break;
+ 		cpu_relax();
+ 	}
 
 
