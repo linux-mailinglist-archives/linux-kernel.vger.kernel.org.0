@@ -2,163 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A31524C8AA
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 09:51:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1C52B4C8A0
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 09:47:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726485AbfFTHvz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 03:51:55 -0400
-Received: from ozlabs.org ([203.11.71.1]:41009 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725953AbfFTHvy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 03:51:54 -0400
-Received: by ozlabs.org (Postfix, from userid 1007)
-        id 45TvCn4f3jz9sBr; Thu, 20 Jun 2019 17:51:49 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-        d=gibson.dropbear.id.au; s=201602; t=1561017109;
-        bh=KY2I3dC1Px56+CQotFXwYFAvhLT69NhbHKJ1Ta4T1+Q=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Sha4u42YfDlRkYyVdHB+7UMxiKsSZOusC0WbZTwuwnE6jAKyBBTpF4VPpHzYTPEtf
-         fR8fgbrFr8gql9u7+f6oGqb9NBj9GsSH1lDcxIXx6YDqa+5B8Xx20rm1cPOapz0uy2
-         5TyrJ6kflvOgpok2aWwB5UoydscA5nQ2tjyRqRoM=
-Date:   Thu, 20 Jun 2019 17:45:17 +1000
-From:   David Gibson <david@gibson.dropbear.id.au>
-To:     Rob Herring <robh+dt@kernel.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-spdx@vger.kernel.org,
-        Devicetree Compiler <devicetree-compiler@vger.kernel.org>,
-        DTML <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Frank Rowand <frowand.list@gmail.com>
-Subject: Re: SPDX conversion under scripts/dtc/ of Linux Kernel
-Message-ID: <20190620074517.GA2066@umbus.BigPond>
-References: <CAK7LNARHHXv5Tu4BHN1avKOExS6HmPfd2c0ELZiQaxtmETOsDw@mail.gmail.com>
- <20190619125948.GA27090@kroah.com>
- <CAL_JsqJQ0bkMMpgA_JpGf-mo8ue28XpGf7oMFJ8bScGAmc+_1g@mail.gmail.com>
+        id S1730482AbfFTHqv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 03:46:51 -0400
+Received: from pandora.armlinux.org.uk ([78.32.30.218]:48688 "EHLO
+        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725977AbfFTHqu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Jun 2019 03:46:50 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=W24eAUA7DcyA1a5RfqnZ2ZD5kvrAnVHlR34KvhddraM=; b=FSisBsYVYyaTgcBTUo0febIUX
+        DDFenl4N3DxDz9HDvkuBZMqWEWt9zs0UkfZmsD2jG6fmyx2xQpWABxUa9pjrcsbg4Iq69M57mzOUj
+        sWPOB7nt4lQmrwKlJIFSZwbVT/LR27Rat8De9JlTlxlDceBpFIa1A8mBxEhjB5w/xlfA8aoN2H/xf
+        NM2SUSB6Rtl5EB12kUU86hEUVKu3MrWHFEX7oWiS11zpIVz2huPnzaErMF3mqmwh+vJRymZD1FbQX
+        zxRJA8+7DCOxjjrEv479Xgmu2JwAs/4fkJB+atb/1i7aA3/R1CL2qeQjI0+Cwma8BqT30oOKJumVD
+        wJ/OQBvtQ==;
+Received: from shell.armlinux.org.uk ([2002:4e20:1eda:1:5054:ff:fe00:4ec]:58928)
+        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.90_1)
+        (envelope-from <linux@armlinux.org.uk>)
+        id 1hdrmL-0005hs-Fj; Thu, 20 Jun 2019 08:46:41 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.89)
+        (envelope-from <linux@shell.armlinux.org.uk>)
+        id 1hdrmH-0002Cl-Bf; Thu, 20 Jun 2019 08:46:37 +0100
+Date:   Thu, 20 Jun 2019 08:46:37 +0100
+From:   Russell King - ARM Linux admin <linux@armlinux.org.uk>
+To:     Parshuram Raju Thombare <pthombar@cadence.com>
+Cc:     "andrew@lunn.ch" <andrew@lunn.ch>,
+        "nicolas.ferre@microchip.com" <nicolas.ferre@microchip.com>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "f.fainelli@gmail.com" <f.fainelli@gmail.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "hkallweit1@gmail.com" <hkallweit1@gmail.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Rafal Ciepiela <rafalc@cadence.com>,
+        Anil Joy Varughese <aniljoy@cadence.com>,
+        Piotr Sroka <piotrs@cadence.com>
+Subject: Re: [PATCH v2 2/5] net: macb: add support for sgmii MAC-PHY interface
+Message-ID: <20190620074637.3nxe33czqdm34lgp@shell.armlinux.org.uk>
+References: <1560933600-27626-1-git-send-email-pthombar@cadence.com>
+ <1560933646-29852-1-git-send-email-pthombar@cadence.com>
+ <20190619093146.yajbeht7mizm4hmr@shell.armlinux.org.uk>
+ <CO2PR07MB24695C706292A16D71322DB5C1E50@CO2PR07MB2469.namprd07.prod.outlook.com>
+ <20190619123206.zvc7gzt4ewxby2y2@shell.armlinux.org.uk>
+ <CO2PR07MB24693905766BD027DB972761C1E40@CO2PR07MB2469.namprd07.prod.outlook.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="fdj2RfSjLxBAspz7"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAL_JsqJQ0bkMMpgA_JpGf-mo8ue28XpGf7oMFJ8bScGAmc+_1g@mail.gmail.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+In-Reply-To: <CO2PR07MB24693905766BD027DB972761C1E40@CO2PR07MB2469.namprd07.prod.outlook.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Jun 20, 2019 at 05:56:32AM +0000, Parshuram Raju Thombare wrote:
+> For in band mode, I see two places to config MAC speed
+> and duplex mode, 1. mac_link_state 2. mac_link_up. In mac_link_up, though state
+> read from mac_link_state is passed, it is only used for printing log and updating
+> pl->cur_interface, so if configuring MAC speed/duplex mode in mac_link_up is correct, 
+> these parameters will need to read again from HW.
 
---fdj2RfSjLxBAspz7
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+That is incorrect.  Again, please read the phylink documentation.
+There is even an article on how to convert drivers.
 
-On Wed, Jun 19, 2019 at 09:39:13AM -0600, Rob Herring wrote:
-> On Wed, Jun 19, 2019 at 6:59 AM Greg Kroah-Hartman
-> <gregkh@linuxfoundation.org> wrote:
-> >
-> > On Wed, Jun 19, 2019 at 07:23:19PM +0900, Masahiro Yamada wrote:
-> > > Hi.
-> > >
-> > > In this development cycle of Linux kernel,
-> > > lots of files were converted to use SPDX
-> > > instead of the license boilerplate.
-> > >
-> > > However.
-> > >
-> > > Some files were imported from a different project,
-> > > and are periodically synchronized with the upstream.
-> > > Have we discussed what to do about this case?
-> > >
-> > >
-> > > For example, scripts/dtc/ is the case.
-> > >
-> > > The files in scripts/dtc/ are synced with the upstream
-> > > device tree compiler.
-> > >
-> > > Rob Herring periodically runs scripts/dtc/update-dtc-source.sh
-> > > to import outcome from the upstream.
-> > >
-> > >
-> > > The upstream DTC has not adopted SPDX yet.
-> > >
-> > > Some files in Linux (e.g. scripts/dtc/dtc.c)
-> > > have been converted to SPDX.
-> > >
-> > > So, they are out of sync now.
-> > >
-> > > The license boilerplate will come back
-> > > when Rob runs scripts/dtc/update-dtc-source.sh
-> > > next time.
->=20
-> Already has. It just happened and is in next. The policy is everything
-> is upstream first and any changes to dtc in the kernel are rejected.
->=20
-> > >
-> > > What shall we do?
-> > >
-> > > [1] Convert upstream DTC to SPDX
-> > >
-> > > This will be a happy solution if it is acceptable in DTC.
-> > > Since we cannot push the decision of the kernel to a different
-> > > project, this is totally up to David Gibson.
-> >
-> > That's fine with me :)
->=20
-> I'll do the work if David is okay with it.
-
-I have no objection.
-
-
-> > > [2] Change scripts/dtc/update-dtc-source.sh to
-> > >     take care of the license block somehow
-> >
-> > That would also be good.
-> >
-> > > [3] Go back to license boilerplate, and keep the files
-> > >     synced with the upstream
-> > >     (and scripts/dtc/ should be excluded from the
-> > >      SPDX conversion tool.)
-> >
-> > nothing is being excluded from the SPDX conversions, sorry.  The goal is
-> > to do this for every file in the kernel tree.  Otherwise it's pointless.
-> >
-> > > Or, what else?
-> >
-> > Rob remembers to keep those first lines of the files intact when doing
-> > the next sync?
->=20
-> Patches to the import script are welcome. The only thing I have to
-> remember running the script is to add any new files. Otherwise, it's
-> scripted so I don't have to remember anything.
->=20
-> Rob
->=20
-
---=20
-David Gibson			| I'll have my music baroque, and my code
-david AT gibson.dropbear.id.au	| minimalist, thank you.  NOT _the_ _other_
-				| _way_ _around_!
-http://www.ozlabs.org/~dgibson
-
---fdj2RfSjLxBAspz7
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEdfRlhq5hpmzETofcbDjKyiDZs5IFAl0LOYoACgkQbDjKyiDZ
-s5JO2Q//Qnvu8CIqR9v1DPhq1I1K6wFUT3RxjlX+pE03rujjRcwTv7K7d19AWqdL
-3lwaWAc8faWWg8/ceC8hBN/yXzNwtN1nnPyeeULgVUPWoPPPg4LzWjDFfuy+6M51
-CdS8lSkiCYNR52jEkirsDW6pd6NIwbaAsSgtYxd7EB39HGWwPk6xq726aPKqD6Vo
-ae70uJsDOH3tSbeXwFIx8//wvI1VtylMxROJU6MoKcs7c538jddrJSRQHjI1V0PY
-2Git/vQSI92xIkVc4ZrDCPhZ3TGUUuK+caYaxssLdK2lxd/lrQjL3fUCIoSykzOr
-u5vaBrxoYoP4GbZX9VxCZrwocXgAYn7Qf2ihw3Xs2/StrhdNsLVkrsuzP4A9pDbZ
-73Fr7FIw6UFarugBtKahlDV0yI3mQG42Awk6Is5SxLwFheyhrGMzkk8P33pV4ffb
-RYZ++8GwzVFl3ko0vf7tZIhNnLZLY4/MT+efPfmu+0+YF67oZ/TsdtHu1rHz+cJz
-tDj4hEzPXBRaj3jB3pEw3Xvs9EZvd6a3WeBEBoV8WtJWioS9cqHTvYtq5YQfOqzc
-qg82KlJpZg74ukamcHEmwfooC9AjfKFek/7ecqlBI5fBviEMM6fI7MfyTHAErVya
-ctngxdwSqxU/9DSCo5oRoSS7vgJkaaLo5rgNkd8M2DbmU9EM1ok=
-=vqV0
------END PGP SIGNATURE-----
-
---fdj2RfSjLxBAspz7--
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
+According to speedtest.net: 11.9Mbps down 500kbps up
