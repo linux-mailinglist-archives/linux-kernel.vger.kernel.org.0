@@ -2,103 +2,141 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D32B94CE62
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 15:14:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D97864CE81
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 15:18:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731936AbfFTNOF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 09:14:05 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:19924 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726952AbfFTNOE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 09:14:04 -0400
-Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5KD6pbC021627;
-        Thu, 20 Jun 2019 15:13:52 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
- : date : message-id : mime-version : content-type; s=STMicroelectronics;
- bh=AqEt1HjWRKgGGIYLNysj/iOUGva1/k0fnnA1DQfj/Nc=;
- b=1i2iITqjSzxjPDA0v34j1gyK2boQJeVzaXxp+3wBomDQ3gQiYTCFRnctwfbFI4hR7YO3
- ZabYwttKVrPzJ0COcQfryFixiLRLA7qvHsMT1LROqmgrPg1+QYAc9uEEkIIzSvvIxrXe
- VWA88QCqoUODGiKSlccTHZp8WEyR+Wh8vce4WBxoKn6ANShoXgSFeGGv3MbGlVA1JJ3j
- JuK1mx5iBqhoBEtg8ng2Pf6Z7/2JkcOka3Ncrc9E614228EYHyTJSKjy+ADBxfQK0lu0
- g3r9CUxF74F+pRGz7NyLXjzUI+PLXlAD4TeCNwnV2aVZJInur0W44tAM21BxACrkAEC1 Sw== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2t7813hq5j-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Thu, 20 Jun 2019 15:13:52 +0200
-Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 2F58B38;
-        Thu, 20 Jun 2019 13:13:51 +0000 (GMT)
-Received: from Webmail-eu.st.com (sfhdag6node3.st.com [10.75.127.18])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 16B4E27F7;
-        Thu, 20 Jun 2019 13:13:51 +0000 (GMT)
-Received: from localhost (10.75.127.45) by SFHDAG6NODE3.st.com (10.75.127.18)
- with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 20 Jun 2019 15:13:50
- +0200
-From:   <patrice.chotard@st.com>
-To:     Mark Brown <broonie@kernel.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        <linux-spi@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-CC:     <patrice.chotard@st.com>, <christophe.kerello@st.com>
-Subject: [PATCH 1/1] spi: spi-stm32-qspi: Remove CR_FTHRES_MASK usage
-Date:   Thu, 20 Jun 2019 15:13:23 +0200
-Message-ID: <20190620131323.5955-1-patrice.chotard@st.com>
-X-Mailer: git-send-email 2.17.1
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.75.127.45]
-X-ClientProxiedBy: SFHDAG7NODE1.st.com (10.75.127.19) To SFHDAG6NODE3.st.com
- (10.75.127.18)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-20_09:,,
- signatures=0
+        id S1732082AbfFTNSp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 09:18:45 -0400
+Received: from mga02.intel.com ([134.134.136.20]:33490 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731975AbfFTNSo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Jun 2019 09:18:44 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Jun 2019 06:18:44 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.63,396,1557212400"; 
+   d="scan'208";a="243621598"
+Received: from lxy-dell.sh.intel.com ([10.239.159.145])
+  by orsmga001.jf.intel.com with ESMTP; 20 Jun 2019 06:18:41 -0700
+Message-ID: <1e95bac4daa3dcc1d8896a23e430e78f06a9d19d.camel@linux.intel.com>
+Subject: Re: [PATCH v5 1/3] KVM: x86: add support for user wait instructions
+From:   Xiaoyao Li <xiaoyao.li@linux.intel.com>
+To:     Tao Xu <tao3.xu@intel.com>, pbonzini@redhat.com,
+        rkrcmar@redhat.com, corbet@lwn.net, tglx@linutronix.de,
+        mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
+        sean.j.christopherson@intel.com
+Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        fenghua.yu@intel.com, jingqi.liu@intel.com
+Date:   Thu, 20 Jun 2019 21:13:43 +0800
+In-Reply-To: <20190620084620.17974-2-tao3.xu@intel.com>
+References: <20190620084620.17974-1-tao3.xu@intel.com>
+         <20190620084620.17974-2-tao3.xu@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5 (3.28.5-2.el7) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Patrice Chotard <patrice.chotard@st.com>
+On Thu, 2019-06-20 at 16:46 +0800, Tao Xu wrote:
+> UMONITOR, UMWAIT and TPAUSE are a set of user wait instructions.
+> This patch adds support for user wait instructions in KVM. Availability
+> of the user wait instructions is indicated by the presence of the CPUID
+> feature flag WAITPKG CPUID.0x07.0x0:ECX[5]. User wait instructions may
+> be executed at any privilege level, and use IA32_UMWAIT_CONTROL MSR to
+> set the maximum time.
+> 
+> The behavior of user wait instructions in VMX non-root operation is
+> determined first by the setting of the "enable user wait and pause"
+> secondary processor-based VM-execution control bit 26.
+> 	If the VM-execution control is 0, UMONITOR/UMWAIT/TPAUSE cause
+> an invalid-opcode exception (#UD).
+> 	If the VM-execution control is 1, treatment is based on the
+> setting of the “RDTSC exiting” VM-execution control. Because KVM never
+> enables RDTSC exiting, if the instruction causes a delay, the amount of
+> time delayed is called here the physical delay. The physical delay is
+> first computed by determining the virtual delay. If
+> IA32_UMWAIT_CONTROL[31:2] is zero, the virtual delay is the value in
+> EDX:EAX minus the value that RDTSC would return; if
+> IA32_UMWAIT_CONTROL[31:2] is not zero, the virtual delay is the minimum
+> of that difference and AND(IA32_UMWAIT_CONTROL,FFFFFFFCH).
+> 
+> Because umwait and tpause can put a (psysical) CPU into a power saving
+> state, by default we dont't expose it to kvm and enable it only when
+> guest CPUID has it.
+> 
+> Detailed information about user wait instructions can be found in the
+> latest Intel 64 and IA-32 Architectures Software Developer's Manual.
+> 
+> Co-developed-by: Jingqi Liu <jingqi.liu@intel.com>
+> Signed-off-by: Jingqi Liu <jingqi.liu@intel.com>
+> Signed-off-by: Tao Xu <tao3.xu@intel.com>
 
-On STM32 F4/F7/H7 SoCs, FTHRES is a 5 bits field in QSPI_CR register,
-but for STM32MP1 SoCs, FTHRES is a 4 bits field long. CR_FTHRES_MASK
-definition is not correct.
+Reviewed-by: Xiaoyao Li <xiaoyao.li@linux.intel.com>
 
-As for all these SoCs, FTHRES field is set to 3, FIELD_PREP() macro
-is used with a constant as second parameter which make its usage useless.
-
-CR_FTHRES_MASK and FIELD_PREP() can be removed.
-
-Signed-off-by: Patrice Chotard <patrice.chotard@st.com>
----
- drivers/spi/spi-stm32-qspi.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/spi/spi-stm32-qspi.c b/drivers/spi/spi-stm32-qspi.c
-index 42f8e3c6aa1f..5dbb6a8e893c 100644
---- a/drivers/spi/spi-stm32-qspi.c
-+++ b/drivers/spi/spi-stm32-qspi.c
-@@ -29,7 +29,7 @@
- #define CR_SSHIFT		BIT(4)
- #define CR_DFM			BIT(6)
- #define CR_FSEL			BIT(7)
--#define CR_FTHRES_MASK		GENMASK(12, 8)
-+#define CR_FTHRES_SHIFT		8
- #define CR_TEIE			BIT(16)
- #define CR_TCIE			BIT(17)
- #define CR_FTIE			BIT(18)
-@@ -463,7 +463,7 @@ static int stm32_qspi_setup(struct spi_device *spi)
- 	flash->presc = presc;
- 
- 	mutex_lock(&qspi->lock);
--	qspi->cr_reg = FIELD_PREP(CR_FTHRES_MASK, 3) | CR_SSHIFT | CR_EN;
-+	qspi->cr_reg = 3 << CR_FTHRES_SHIFT | CR_SSHIFT | CR_EN;
- 	writel_relaxed(qspi->cr_reg, qspi->io_base + QSPI_CR);
- 
- 	/* set dcr fsize to max address */
--- 
-2.17.1
+> ---
+> 
+> Changes in v5:
+> 	remove vmx_waitpkg_supported() and use
+> 	guest_cpuid_has(vcpu, X86_FEATURE_WAITPKG) directly (Xiaoyao)
+> ---
+>  arch/x86/include/asm/vmx.h | 1 +
+>  arch/x86/kvm/cpuid.c       | 2 +-
+>  arch/x86/kvm/vmx/vmx.c     | 4 ++++
+>  3 files changed, 6 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/x86/include/asm/vmx.h b/arch/x86/include/asm/vmx.h
+> index a39136b0d509..8f00882664d3 100644
+> --- a/arch/x86/include/asm/vmx.h
+> +++ b/arch/x86/include/asm/vmx.h
+> @@ -69,6 +69,7 @@
+>  #define SECONDARY_EXEC_PT_USE_GPA		0x01000000
+>  #define SECONDARY_EXEC_MODE_BASED_EPT_EXEC	0x00400000
+>  #define SECONDARY_EXEC_TSC_SCALING              0x02000000
+> +#define SECONDARY_EXEC_ENABLE_USR_WAIT_PAUSE	0x04000000
+>  
+>  #define PIN_BASED_EXT_INTR_MASK                 0x00000001
+>  #define PIN_BASED_NMI_EXITING                   0x00000008
+> diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
+> index e18a9f9f65b5..48bd851a6ae5 100644
+> --- a/arch/x86/kvm/cpuid.c
+> +++ b/arch/x86/kvm/cpuid.c
+> @@ -405,7 +405,7 @@ static inline int __do_cpuid_ent(struct kvm_cpuid_entry2
+> *entry, u32 function,
+>  		F(AVX512VBMI) | F(LA57) | F(PKU) | 0 /*OSPKE*/ |
+>  		F(AVX512_VPOPCNTDQ) | F(UMIP) | F(AVX512_VBMI2) | F(GFNI) |
+>  		F(VAES) | F(VPCLMULQDQ) | F(AVX512_VNNI) | F(AVX512_BITALG) |
+> -		F(CLDEMOTE) | F(MOVDIRI) | F(MOVDIR64B);
+> +		F(CLDEMOTE) | F(MOVDIRI) | F(MOVDIR64B) | 0 /*WAITPKG*/;
+>  
+>  	/* cpuid 7.0.edx*/
+>  	const u32 kvm_cpuid_7_0_edx_x86_features =
+> diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+> index b93e36ddee5e..b35bfac30a34 100644
+> --- a/arch/x86/kvm/vmx/vmx.c
+> +++ b/arch/x86/kvm/vmx/vmx.c
+> @@ -2250,6 +2250,7 @@ static __init int setup_vmcs_config(struct vmcs_config
+> *vmcs_conf,
+>  			SECONDARY_EXEC_RDRAND_EXITING |
+>  			SECONDARY_EXEC_ENABLE_PML |
+>  			SECONDARY_EXEC_TSC_SCALING |
+> +			SECONDARY_EXEC_ENABLE_USR_WAIT_PAUSE |
+>  			SECONDARY_EXEC_PT_USE_GPA |
+>  			SECONDARY_EXEC_PT_CONCEAL_VMX |
+>  			SECONDARY_EXEC_ENABLE_VMFUNC |
+> @@ -3987,6 +3988,9 @@ static void vmx_compute_secondary_exec_control(struct
+> vcpu_vmx *vmx)
+>  		}
+>  	}
+>  
+> +	if (!guest_cpuid_has(vcpu, X86_FEATURE_WAITPKG))
+> +		exec_control &= ~SECONDARY_EXEC_ENABLE_USR_WAIT_PAUSE;
+> +
+>  	vmx->secondary_exec_control = exec_control;
+>  }
+>  
 
