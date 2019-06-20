@@ -2,42 +2,138 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 06CEB4C746
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 08:11:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E7F864E05B
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 08:11:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726617AbfFTGLJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 02:11:09 -0400
-Received: from verein.lst.de ([213.95.11.211]:57902 "EHLO newverein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725889AbfFTGLJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 02:11:09 -0400
-Received: by newverein.lst.de (Postfix, from userid 2407)
-        id 948A668B05; Thu, 20 Jun 2019 08:10:38 +0200 (CEST)
-Date:   Thu, 20 Jun 2019 08:10:38 +0200
-From:   Christoph Hellwig <hch@lst.de>
-To:     Daniel Drake <drake@endlessm.com>
-Cc:     axboe@kernel.dk, kbusch@kernel.org, hch@lst.de, sagi@grimberg.me,
-        linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org,
-        bhelgaas@google.com, linux-ide@vger.kernel.org, linux@endlessm.com,
-        linux-kernel@vger.kernel.org, hare@suse.de,
-        alex.williamson@redhat.com, dan.j.williams@intel.com
-Subject: Re: [PATCH v2 2/5] nvme: rename "pci" operations to "mmio"
-Message-ID: <20190620061038.GA20564@lst.de>
-References: <20190620051333.2235-1-drake@endlessm.com> <20190620051333.2235-3-drake@endlessm.com>
+        id S1726259AbfFUGLR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Jun 2019 02:11:17 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:53418 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726037AbfFUGLQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Jun 2019 02:11:16 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5L63hwT133989;
+        Fri, 21 Jun 2019 06:10:54 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=mime-version :
+ message-id : date : from : to : cc : subject : content-type :
+ content-transfer-encoding; s=corp-2018-07-02;
+ bh=XQC2vWYEYxVCAdoqaVl6sGe93jBERWNKKPMelCZgp70=;
+ b=yml/HzIfevjcHdXvGkL+F1EBoLnXH+xKybo8yYqgNvrF4fPeXVBFo8srb9b4vrkrp3hA
+ v+4U1TIyat3oDkzYZC2rTKtlxHsx0S/Qeu8+ovo8wNwoK0YPchErb5ElP1VE75Bg5WHa
+ /ANN7n6LXJkbWbbTenZcvSGUZvIUAGpggjfA9POK7CR22phZebRloPwzX/FiYLaJ623k
+ T3cNUNY/E2GRjoYgy+Ex8Ix5qLLXlKYNQDAOCyb3sRxoOQreozGXfckMjqKirjuMPQyd
+ 6d5WMh06ygydHWQnfddmz2cy0PExXRo+66qwlF4RTd66QE83DyspKQqfUbZcuBMzKRkh 2A== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by aserp2120.oracle.com with ESMTP id 2t7809mkcc-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 21 Jun 2019 06:10:53 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5L69pPM175378;
+        Fri, 21 Jun 2019 06:10:53 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userp3030.oracle.com with ESMTP id 2t77yp0x75-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 21 Jun 2019 06:10:53 +0000
+Received: from abhmp0018.oracle.com (abhmp0018.oracle.com [141.146.116.24])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x5L6Ands010731;
+        Fri, 21 Jun 2019 06:10:49 GMT
+Received: from z2.cn.oracle.com (/10.182.69.87) by default (Oracle Beehive
+ Gateway v4.0) with ESMTP ; Thu, 20 Jun 2019 23:10:28 -0700
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190620051333.2235-3-drake@endlessm.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Message-ID: <1561011237-12312-1-git-send-email-zhenzhong.duan@oracle.com>
+Date:   Wed, 19 Jun 2019 23:13:57 -0700 (PDT)
+From:   Zhenzhong Duan <zhenzhong.duan@oracle.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     tglx@linutronix.de, mingo@kernel.org, bp@alien8.de, x86@kernel.org,
+        hpa@zytor.com, jgross@suse.com, ndesaulniers@google.com,
+        gregkh@linuxfoundation.org, srinivas.eeda@oracle.com,
+        Zhenzhong Duan <zhenzhong.duan@oracle.com>
+Subject: [PATCH] x86/speculation/mds: Flush store buffer after wake up from
+ sleep
+X-Mailer: git-send-email 1.8.3.1
+Content-Type: text/plain; charset=ascii
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9294 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=817
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1906210052
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9294 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=1 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=860 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1906210052
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Please give up on this route.  We will not accept messing the NVMe
-driver for Intels fucked up chipsets that are so bad that even they
-are not allowed to talk about it anymore.
+Intel document says: "When a thread wakes from a sleep state, the store
+buffer is repartitioned again. This causes the store buffer to transfer
+store buffer entries from the thread that was already active to the one
+which just woke up."
 
-The Linux NVMe driver will deal with NVMe as specified plus whatever
-minor tweaks we'll need for small bugs.  Hiding it behind an AHCI
-device is completely out of scope and will not be accepted.
+To avoid data leak from sibling thread to the woken thread, flush store
+buffer right after wake up.
+
+Move mds_idle_clear_cpu_buffers() after trace_hardirqs_on() to ensure
+all store buffer entries are flushed before sleep.
+
+Signed-off-by: Zhenzhong Duan <zhenzhong.duan@oracle.com>
+---
+ arch/x86/include/asm/irqflags.h | 2 ++
+ arch/x86/include/asm/mwait.h    | 6 ++++--
+ 2 files changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/arch/x86/include/asm/irqflags.h b/arch/x86/include/asm/irqflags.h
+index 8a0e56e..641c4d8 100644
+--- a/arch/x86/include/asm/irqflags.h
++++ b/arch/x86/include/asm/irqflags.h
+@@ -58,12 +58,14 @@ static inline __cpuidle void native_safe_halt(void)
+ {
+ 	mds_idle_clear_cpu_buffers();
+ 	asm volatile("sti; hlt": : :"memory");
++	mds_idle_clear_cpu_buffers();
+ }
+ 
+ static inline __cpuidle void native_halt(void)
+ {
+ 	mds_idle_clear_cpu_buffers();
+ 	asm volatile("hlt": : :"memory");
++	mds_idle_clear_cpu_buffers();
+ }
+ 
+ #endif
+diff --git a/arch/x86/include/asm/mwait.h b/arch/x86/include/asm/mwait.h
+index eb0f80c..1d145d9 100644
+--- a/arch/x86/include/asm/mwait.h
++++ b/arch/x86/include/asm/mwait.h
+@@ -46,6 +46,7 @@ static inline void __mwait(unsigned long eax, unsigned long ecx)
+ 	/* "mwait %eax, %ecx;" */
+ 	asm volatile(".byte 0x0f, 0x01, 0xc9;"
+ 		     :: "a" (eax), "c" (ecx));
++	mds_idle_clear_cpu_buffers();
+ }
+ 
+ /*
+@@ -86,12 +87,13 @@ static inline void __mwaitx(unsigned long eax, unsigned long ebx,
+ 
+ static inline void __sti_mwait(unsigned long eax, unsigned long ecx)
+ {
+-	mds_idle_clear_cpu_buffers();
+-
+ 	trace_hardirqs_on();
++
++	mds_idle_clear_cpu_buffers();
+ 	/* "mwait %eax, %ecx;" */
+ 	asm volatile("sti; .byte 0x0f, 0x01, 0xc9;"
+ 		     :: "a" (eax), "c" (ecx));
++	mds_idle_clear_cpu_buffers();
+ }
+ 
+ /*
+-- 
+1.8.3.1
+
