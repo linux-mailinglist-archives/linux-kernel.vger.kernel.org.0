@@ -2,55 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F2C34C914
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 10:12:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0715D4C90C
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 10:11:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730908AbfFTILg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 04:11:36 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:36797 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725977AbfFTILe (ORCPT
+        id S1731099AbfFTILh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 04:11:37 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:37527 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730487AbfFTILe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 20 Jun 2019 04:11:34 -0400
-Received: by mail-wm1-f67.google.com with SMTP id u8so2144032wmm.1
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2019 01:11:32 -0700 (PDT)
+Received: by mail-wm1-f65.google.com with SMTP id f17so2137803wme.2
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2019 01:11:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=QQRh2gTu0XxP02eaevWI4QLBFrAyLvn8wbFwlTAm3vE=;
-        b=YbDDbAegnE0dp4YumxpEKd5tEw4La1v3jt4kihJK5jyw2BUQQR1uZFOE2Ik6jnJj36
-         z8MiqykH+K7ixsqv71H2SpZ2kIdYvhPPNu4TMwigVUjFZhOQUC7dpx6vVoshTPiYOmNO
-         ftClQRkLAgfaq/fv3imw1NNxA6VFMohIC4QSRuxiQu898a6DmHEf4CSVx6pyiixqrYBN
-         1OInEzdDKeK18AvYt8iG8qrHFhW24Q7MjjSJI8qT7zjFUvMUZO+pTv9/uBdWejqdfXY7
-         GjpcnjXK/PxKVn3+jRWovjUVVZx6CtpbwVRoEAJHq4RSlc2yvBCCA7TDYO+3wgYGkyRH
-         vkQA==
+        bh=yk3s13nDy3wSE2QTnTVmJsFL5rtqbtjjYEZwrzIJL/A=;
+        b=PMuk7/TM00B26wtlQCEp4fvfPYDH1EjBHokXQOuvImdF3IPX3gmBnSatBUGaYk21yh
+         MYvbbxy5pB8fQTv6AwsWdLEdEl+SsYH9oPDLOF9qXnUkDTdUDRD7XIPZbn+NGTbM9IsL
+         p6tf41Y0IWR1srVcVC6pypiBqf7xbDFBArqvO99E1VHg6mMahVqkKolpbpqXKDjluEe1
+         gyszNh6ogGL7flbzMxpoghetcTsCUzVjw97bNLHo79bjHJTqr9YZa0BdwrjGWRkc7yhh
+         +LfgXIyuGfgygHLQaw1sGDyDLckz5SCUNn9ssmzhfe7h3dbsB/Ezp8l+MIWVyGzevXhN
+         LI4Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=QQRh2gTu0XxP02eaevWI4QLBFrAyLvn8wbFwlTAm3vE=;
-        b=Ltf2SpliIZAeSsw44AXZp7Yvy5osVXYKAox01gQk0CDWxXKQW2seu+4lWiJxF67tcH
-         QO0TdlvJioYRP5MBskNPBVHpEuZ5i4hYD1MWOdBIsGnjmliQQOowxh5c3kFkKdyHGcMc
-         BsLeSNa6hclz+qNwtYBBJuZhun6rCg3alILvZvsnS+KsBQ/ksAujs+/1N/4m8rAFY7TE
-         NP1n7QXhVEa0Ay693BPAcvZlFfeN8jlCLvi28e+3QJ7duJ8BGHb84KF9i+NvBHEVqEhf
-         As+9Vjtlgk+F3jQyPctPDda4ZmKKCgHE98jEjV0ZbvYD4bkrZRJEo38V+L3Ml0YlOfk8
-         ZcFg==
-X-Gm-Message-State: APjAAAV+qRMlYuj81SJAkJi6g/wdqaLCNXDhI45vr0F2Hr+uOjl0QDA7
-        GW+yhMoPeNqC0wed4k0esmIetg==
-X-Google-Smtp-Source: APXvYqzH+ZLNyvCpXFzWSXrFY3Wsh1CBUpeeYMjj0LkK0ktxpjDOzok10BkKCYtxgWuqjr52/qmPlw==
-X-Received: by 2002:a1c:7a15:: with SMTP id v21mr1672163wmc.82.1561018292082;
+        bh=yk3s13nDy3wSE2QTnTVmJsFL5rtqbtjjYEZwrzIJL/A=;
+        b=DHThZBtAwQPE4wODmCsVFRlRa+Bwc6xRJIRsqQmiLpDu5iXk6MOAzpEsOrQq8wRIXP
+         Jt0Joj35pSnJr0Rx6q8GuxUM37PKxNl2V/C5u0wqtH3xeGHNpQGMg3VY1qSnh/L99fVd
+         8RFvd12fgl9nPxgtURqToumrrpGaSHUnWA3N8ob77Q7TdXJvU+nr5YGKBnaPMsv9+IDO
+         aOnvw2QMuiAICUYVaPPED0XZHXGoj0UQ4M4uOqT3TdUApQoC1/Z8QKq2095gT6ipNgLA
+         xpioXsCHHxDC4hnJeBo2Wa8sUslvYL1FD7TnCbUJSlNgMeXSqMVvuyG+jYb+BolQv76o
+         t8PQ==
+X-Gm-Message-State: APjAAAVOpTEqIVOkyshFbRcoQOuLMi5w2Od/8bd3cdeMxhHgz38VyxZx
+        C5j5LUR2L3REaohum9Ejna2u3A==
+X-Google-Smtp-Source: APXvYqzFPyDmaPJveN3ecvw3TwBmOa+cYJ1fMko5IK4yMl9dLNTOEMofLfwsA/PRV30Md/iuCWG/QA==
+X-Received: by 2002:a1c:f319:: with SMTP id q25mr1613578wmq.129.1561018292890;
         Thu, 20 Jun 2019 01:11:32 -0700 (PDT)
 Received: from srini-hackbox.lan (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
-        by smtp.gmail.com with ESMTPSA id q12sm17559174wrp.50.2019.06.20.01.11.31
+        by smtp.gmail.com with ESMTPSA id q12sm17559174wrp.50.2019.06.20.01.11.32
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 20 Jun 2019 01:11:31 -0700 (PDT)
+        Thu, 20 Jun 2019 01:11:32 -0700 (PDT)
 From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 To:     gregkh@linuxfoundation.org
 Cc:     linux-kernel@vger.kernel.org
-Subject: [PATCH 1/3] slimbus: fix kerneldoc comments
-Date:   Thu, 20 Jun 2019 09:11:27 +0100
-Message-Id: <20190620081129.4721-2-srinivas.kandagatla@linaro.org>
+Subject: [PATCH 2/3] slimbus: remove redundant dev_err message
+Date:   Thu, 20 Jun 2019 09:11:28 +0100
+Message-Id: <20190620081129.4721-3-srinivas.kandagatla@linaro.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190620081129.4721-1-srinivas.kandagatla@linaro.org>
 References: <20190620081129.4721-1-srinivas.kandagatla@linaro.org>
@@ -61,77 +61,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jonathan Corbet <corbet@lwn.net>
+From: Ding Xiang <dingxiang@cmss.chinamobile.com>
 
-The kerneldoc comments in drivers/slimbus/stream.c were not properly
-formatted, leading to a distinctly unsatisfying "no structured comments
-found" warning in the docs build.  Sprinkle some asterisks around so that
-the comments will be properly recognized.
+devm_ioremap_resource already contains error message, so remove
+the redundant dev_err message
 
-Signed-off-by: Jonathan Corbet <corbet@lwn.net>
+Signed-off-by: Ding Xiang <dingxiang@cmss.chinamobile.com>
 Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 ---
- drivers/slimbus/stream.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ drivers/slimbus/qcom-ctrl.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/slimbus/stream.c b/drivers/slimbus/stream.c
-index 2fa05324ed07..75f87b3d8b95 100644
---- a/drivers/slimbus/stream.c
-+++ b/drivers/slimbus/stream.c
-@@ -84,7 +84,7 @@ static const int slim_presence_rate_table[] = {
- 	512000,
- };
+diff --git a/drivers/slimbus/qcom-ctrl.c b/drivers/slimbus/qcom-ctrl.c
+index ad3e2e23f56e..a444badd8df5 100644
+--- a/drivers/slimbus/qcom-ctrl.c
++++ b/drivers/slimbus/qcom-ctrl.c
+@@ -528,10 +528,8 @@ static int qcom_slim_probe(struct platform_device *pdev)
  
--/*
-+/**
-  * slim_stream_allocate() - Allocate a new SLIMbus Stream
-  * @dev:Slim device to be associated with
-  * @name: name of the stream
-@@ -189,7 +189,7 @@ static int slim_get_prate_code(int rate)
- 	return -EINVAL;
- }
+ 	slim_mem = platform_get_resource_byname(pdev, IORESOURCE_MEM, "ctrl");
+ 	ctrl->base = devm_ioremap_resource(ctrl->dev, slim_mem);
+-	if (IS_ERR(ctrl->base)) {
+-		dev_err(&pdev->dev, "IOremap failed\n");
++	if (IS_ERR(ctrl->base))
+ 		return PTR_ERR(ctrl->base);
+-	}
  
--/*
-+/**
-  * slim_stream_prepare() - Prepare a SLIMbus Stream
-  *
-  * @rt: instance of slim stream runtime to configure
-@@ -336,7 +336,7 @@ static int slim_activate_channel(struct slim_stream_runtime *stream,
- 	return slim_do_transfer(sdev->ctrl, &txn);
- }
- 
--/*
-+/**
-  * slim_stream_enable() - Enable a prepared SLIMbus Stream
-  *
-  * @stream: instance of slim stream runtime to enable
-@@ -389,7 +389,7 @@ int slim_stream_enable(struct slim_stream_runtime *stream)
- }
- EXPORT_SYMBOL_GPL(slim_stream_enable);
- 
--/*
-+/**
-  * slim_stream_disable() - Disable a SLIMbus Stream
-  *
-  * @stream: instance of slim stream runtime to disable
-@@ -423,7 +423,7 @@ int slim_stream_disable(struct slim_stream_runtime *stream)
- }
- EXPORT_SYMBOL_GPL(slim_stream_disable);
- 
--/*
-+/**
-  * slim_stream_unprepare() - Un-prepare a SLIMbus Stream
-  *
-  * @stream: instance of slim stream runtime to unprepare
-@@ -449,7 +449,7 @@ int slim_stream_unprepare(struct slim_stream_runtime *stream)
- }
- EXPORT_SYMBOL_GPL(slim_stream_unprepare);
- 
--/*
-+/**
-  * slim_stream_free() - Free a SLIMbus Stream
-  *
-  * @stream: instance of slim stream runtime to free
+ 	sctrl->set_laddr = qcom_set_laddr;
+ 	sctrl->xfer_msg = qcom_xfer_msg;
 -- 
 2.21.0
 
