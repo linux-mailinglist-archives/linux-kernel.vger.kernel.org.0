@@ -2,86 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B7A6C4D556
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 19:36:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 40AD94D55E
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 19:39:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726881AbfFTRf7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 13:35:59 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:33129 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726530AbfFTRf7 (ORCPT
+        id S1726786AbfFTRjM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 13:39:12 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:35016 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726551AbfFTRjM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 13:35:59 -0400
-Received: by mail-pf1-f193.google.com with SMTP id x15so2077298pfq.0
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2019 10:35:58 -0700 (PDT)
+        Thu, 20 Jun 2019 13:39:12 -0400
+Received: by mail-pf1-f196.google.com with SMTP id d126so2074521pfd.2
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2019 10:39:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
+        d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=Y//CKAUCmu4Z+CNgNicaVzKkv82IaCbCxrJa7F0wZn4=;
-        b=NUMqYmFwkS8LkBdwNC20JWMzkawUchAYdEs+GIDQku+8JYDBs4GvrjFoeC5g9ptLB5
-         6iDEHv//HyfEmC5eWmq/MRx0SWCEZ5mvOkbHQvhTphicSrniBya/z8l+GY/YvzCKxgYy
-         4uSTgSW5ItQ0Slt9KpB8W7gwtPv0WmGfiEtOU=
+         :content-disposition:in-reply-to:user-agent;
+        bh=cc1ritaWfB8okWYpyfEgKKo47agXWGIBS6N2MHN/GYs=;
+        b=vuQhYp+6eDLIk8XExGRgk2rgXE+mzKmk4DsxpWyKKBSH1UjUeoVNhTmSPG5D4MFvQO
+         S/5PAdojDjzCO/n2vYXv52252MTac8DzMp3ykB5wALlce+oZPlQrJwYK0Z2PF+JrgRlm
+         8HkTr545vZgVZQxEDQTkH2Ny4G4D/tHWgb2UASI/vriwo3IdhSRwT7GN/vqadmCK7N6g
+         2EaqnxIA/oSIA5GpZNzLEYvnYWUh18CloBaCEmhWF36pkDgVptx5eKqA8NaZiN/a7CNS
+         K1Rp5udGauWwef5sJuFVAkrgF8PCbAXy+0bhNANQFFW5aehjOMqrM97PXNUYqLSgh2pm
+         dJxQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=Y//CKAUCmu4Z+CNgNicaVzKkv82IaCbCxrJa7F0wZn4=;
-        b=Depxvq95u3/O5BV6VZKuMIz1pBiIq5osRsZrWi0jkWqEnyWlClwWlM1+4YVgmpGNsD
-         zxKmbn2QtQSl5H33BJMvww063ZJwSrDIUh2URBrU5SzkSO1shUKjOp+i0WqYQJrQTesD
-         c1O6hZLEWkuc/K0EEmS+VV2c8RHEwkcjcS+5+XA/NeYh28tbES1hsu02uqD16QKhe0Li
-         YWJuQJXjS1cTn3Rt0Bwro+Y9Jye/MmzEUwcnMs2CtOPbiLF03ywzIWfKZ4BfueVxRTls
-         OFmyb+VF1iFTDborlVEFWwaKrpHvL/ZaNwAuzghmtPivlNY/cg3baA6ZxRtvuXTPay/M
-         Ghpw==
-X-Gm-Message-State: APjAAAX3pqSp/ckpfRde1z7boj7uLoOYHiTJKcpkQRwzUVA7/+1M3h2j
-        /mBi/VP1KPOyzSAR64jAnsepxT6yEEo=
-X-Google-Smtp-Source: APXvYqxiL8EXgij8EVUiiz93r2xVAl4pTaySQemAPFQP6yna6EQozFcR2qsIBQ9qPplMpsgaKHVBCg==
-X-Received: by 2002:aa7:8083:: with SMTP id v3mr54261815pff.69.1561052158492;
-        Thu, 20 Jun 2019 10:35:58 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id 128sm89983pfd.66.2019.06.20.10.35.57
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=cc1ritaWfB8okWYpyfEgKKo47agXWGIBS6N2MHN/GYs=;
+        b=qHmfb+OQMku0BokHyDYaIyfzbgi1kfkhAkhY694bXLM7YrBTAFZBVsfeUMMgtUZlxK
+         5CKOASfKtCz2/5J1DWYa6prvN/wLkoAFxm3Q44ETMOt++kCFCX//EsBfC1VxHoHqAbdV
+         VvOnn3inC0j3jOl0hi9Mh2IOpb7CD2D3GG9rNHx2EJtnYn4iouaShyKSrOzILcqnnmMX
+         866ANRg7cQIoyDzfkT/UhJczv37zyqiPXO9tcJVtU1vSFvwzmkahaaX7bI3kiikOy1kB
+         DKRMCTT0zg2tk76MMd3MCOFTGal22TY9dM6isdMswtwEe5VSPptXilm2iRB4Xa/Sn2yT
+         hAWg==
+X-Gm-Message-State: APjAAAWAE7/sJdacQnx2luk/TVkUaKo2sq5dubQh/NKJTN/G0a+fCEbI
+        nSCi2zK8ruUlX0IXbvJ1uafnVw==
+X-Google-Smtp-Source: APXvYqwExTPnMaUlhkHdlTdYWDKivjZXCj1uKm+C1IqlKfA29kclGbLVua9EqCTBKhqKLwndm8l9oA==
+X-Received: by 2002:a63:c301:: with SMTP id c1mr13911552pgd.41.1561052351600;
+        Thu, 20 Jun 2019 10:39:11 -0700 (PDT)
+Received: from xps15 (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
+        by smtp.gmail.com with ESMTPSA id p6sm221710pgs.77.2019.06.20.10.39.10
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 20 Jun 2019 10:35:57 -0700 (PDT)
-Date:   Thu, 20 Jun 2019 10:35:56 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Alexander Potapenko <glider@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>, kasan-dev@googlegroups.com,
-        Alexander Popov <alex.popov@linux.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] structleak: disable BYREF_ALL in combination with
- KASAN_STACK
-Message-ID: <201906201034.9E44D8A2A8@keescook>
-References: <20190618094731.3677294-1-arnd@arndb.de>
+        Thu, 20 Jun 2019 10:39:10 -0700 (PDT)
+Date:   Thu, 20 Jun 2019 11:39:08 -0600
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+To:     Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
+Cc:     Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Leo Yan <leo.yan@linaro.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Sibi Sankar <sibis@codeaurora.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH 1/2] coresight: Set affinity to invalid for missing CPU
+ phandle
+Message-ID: <20190620173908.GA5581@xps15>
+References: <cover.1561037262.git.saiprakash.ranjan@codeaurora.org>
+ <49d6554536047b9f5526c4ea33990b7c904673d3.1561037262.git.saiprakash.ranjan@codeaurora.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190618094731.3677294-1-arnd@arndb.de>
+In-Reply-To: <49d6554536047b9f5526c4ea33990b7c904673d3.1561037262.git.saiprakash.ranjan@codeaurora.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 18, 2019 at 11:47:13AM +0200, Arnd Bergmann wrote:
-> The combination of KASAN_STACK and GCC_PLUGIN_STRUCTLEAK_BYREF_ALL
-> leads to much larger kernel stack usage, as seen from the warnings
-> about functions that now exceed the 2048 byte limit:
+Hi Sai,
 
-Is the preference that this go into v5.2 (there's not much time left),
-or should this be v5.3? (You didn't mark it as Cc: stable?)
+On Thu, Jun 20, 2019 at 07:15:46PM +0530, Sai Prakash Ranjan wrote:
+> Affinity defaults to CPU0 in case of missing CPU phandle
+> and this leads to crashes in some cases because of such
+> wrong assumption. Fix this by returning -ENODEV in
+> coresight platform for such cases and then handle it
+> in the coresight drivers.
+> 
+> Signed-off-by: Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
+> ---
+>  drivers/hwtracing/coresight/coresight-platform.c | 10 ++++++----
+>  1 file changed, 6 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/hwtracing/coresight/coresight-platform.c b/drivers/hwtracing/coresight/coresight-platform.c
+> index 3c5ceda8db24..b1ea60c210e1 100644
+> --- a/drivers/hwtracing/coresight/coresight-platform.c
+> +++ b/drivers/hwtracing/coresight/coresight-platform.c
+> @@ -160,15 +160,17 @@ static int of_coresight_get_cpu(struct device *dev)
+>  
+>  	if (!dev->of_node)
+>  		return 0;
 
-> one. I picked the dependency in GCC_PLUGIN_STRUCTLEAK_BYREF_ALL, as
-> this option is designed to make uninitialized stack usage less harmful
-> when enabled on its own, but it also prevents KASAN from detecting those
-> cases in which it was in fact needed.
+An error should be returned if the above condition is true.  
 
-Right -- there's not much sense in both being enabled. I'd agree with
-this rationale.
+> +
 
--- 
-Kees Cook
+Spurious newline
+
+>  	dn = of_parse_phandle(dev->of_node, "cpu", 0);
+> -	/* Affinity defaults to CPU0 */
+> +
+> +	/* Affinity defaults to invalid if no cpu nodes are found*/
+>  	if (!dn)
+> -		return 0;
+> +		return -ENODEV;
+> +
+>  	cpu = of_cpu_node_to_id(dn);
+>  	of_node_put(dn);
+>  
+> -	/* Affinity to CPU0 if no cpu nodes are found */
+> -	return (cpu < 0) ? 0 : cpu;
+> +	return cpu;
+>  }
+>  
+>  /*
+> -- 
+> QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+> of Code Aurora Forum, hosted by The Linux Foundation
+> 
