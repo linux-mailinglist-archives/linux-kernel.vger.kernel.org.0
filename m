@@ -2,122 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B89354C906
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 10:10:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 653D74C90B
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 10:11:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726429AbfFTIKH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 04:10:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37546 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725877AbfFTIKH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 04:10:07 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1BB172084A;
-        Thu, 20 Jun 2019 08:10:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561018205;
-        bh=vqNCz79Tokyx4AP8RsZ5iaOcEK9utXl0gWsvvk2Inxg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=N2r43J1W+zJltuSjk7EDmgOiOjbFBa1NtY4yEZv6oEUOQNZEGLBxFWpPZ3aQum5vP
-         UPFHIK//UOVil45957P3LA9qwLZZLn3uYvviLY/wqr1hm0PPsj1eol29BUamfYz44v
-         pPD+6flFNWFA4cfFP+6vqUT+ZQkX3LGVqSEqxHsM=
-Date:   Thu, 20 Jun 2019 10:10:03 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Takashi Iwai <tiwai@suse.de>
-Cc:     Luis Chamberlain <mcgrof@kernel.org>,
-        Shuah Khan <shuah@kernel.org>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v2.5 2/3] firmware: Add support for loading compressed
- files
-Message-ID: <20190620081003.GA21685@kroah.com>
-References: <20190611122626.28059-1-tiwai@suse.de>
- <20190611122626.28059-3-tiwai@suse.de>
- <20190619232646.GE19023@42.do-not-panic.com>
- <s5h1rzog13w.wl-tiwai@suse.de>
+        id S1730586AbfFTILd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 04:11:33 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:34392 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725875AbfFTILd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Jun 2019 04:11:33 -0400
+Received: by mail-wm1-f68.google.com with SMTP id w9so6337570wmd.1
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2019 01:11:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=W5roHDre638itG12NQdDXFHOocb2KrIJHgQ4zNYdyII=;
+        b=UNZlkafnRBqWVg1+7FkIiOlXDjyuaktQv+Rkmv1aqjdSi2hxmSlQ1kSnGYK2Yu3fqg
+         8fRx9HHy3mqkOiYxQ7mJDr4PoKVKvog5hHARQzTPa0JJe6u7ZKIJKk0dvR41CqwBuV2j
+         sVulIaIbV8fB4PQFGP303Oq0kYbkqYHiRSPWgjUooGyGEW5uN0IrqePdLe3fxb1njtw7
+         bY9QRex0uSKB3uoTzFRZCWI9VdV7727iOKVZa3+N55WnUvT54k6ABvdxqjgfkIq9UE/J
+         QK22XVMbas6V3k2YXJOSrUtO/UmP4ZS/SW/O8CanKsOA2780dTz981U468Bg2KrnZk/y
+         4ukw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=W5roHDre638itG12NQdDXFHOocb2KrIJHgQ4zNYdyII=;
+        b=QY/fq5apKH33IioOvARlgrtu70zZFL06ed8z2eD8rPE35jUCmSra7GQvxyjChpyGyp
+         f/TCfr7o6B8m0rIgFnv6aXvR3ivUl12M0zk0GizYdOXiX7NTRuCWVLj9s2xyhytu/PBM
+         5zJxvhiNC+vP6YdjeFu9QAPPTFlgy7Iiv2ba+Y/p9W6QNHMm552sfL12RBIGeEAti7pk
+         /p8fgtNUcfjOMBWbwnMJ3B/UilGwOrFH5e99yefNNlt5oGdURaMtZhvfbBCKymfyWjCf
+         Cqtab61+bSxUu3KcH2kUJe+6AYf+AVtqu55FnPXsaih/7KNxRqLsZY/KdCYVS+cgCSez
+         Ttsw==
+X-Gm-Message-State: APjAAAWvYe14W/jCsY+UD7F61MBoZzGUKHA1bLGU1svmL7t3IT12vqy7
+        Ijs/1M4Zwq3iNFZ8f/roFJxBHfdGzvQ=
+X-Google-Smtp-Source: APXvYqzmIpIFIkYvfhAFydkfxKUjuf5zeSq/M5xtIZ4z66gPVB6U9ReHUGItAZclQkMDM7e1ZvvZ9w==
+X-Received: by 2002:a7b:c3d5:: with SMTP id t21mr1532437wmj.87.1561018291286;
+        Thu, 20 Jun 2019 01:11:31 -0700 (PDT)
+Received: from srini-hackbox.lan (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
+        by smtp.gmail.com with ESMTPSA id q12sm17559174wrp.50.2019.06.20.01.11.30
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Thu, 20 Jun 2019 01:11:30 -0700 (PDT)
+From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+To:     gregkh@linuxfoundation.org
+Cc:     linux-kernel@vger.kernel.org
+Subject: [PATCH 0/3] drivers: slimbus: patches for 5.3
+Date:   Thu, 20 Jun 2019 09:11:26 +0100
+Message-Id: <20190620081129.4721-1-srinivas.kandagatla@linaro.org>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <s5h1rzog13w.wl-tiwai@suse.de>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 20, 2019 at 09:36:03AM +0200, Takashi Iwai wrote:
-> On Thu, 20 Jun 2019 01:26:47 +0200,
-> Luis Chamberlain wrote:
-> > 
-> > Sorry for the late review... Ah!
-> 
-> No problem, thanks for review.
-> 
-> > On Tue, Jun 11, 2019 at 02:26:25PM +0200, Takashi Iwai wrote:
-> > > @@ -354,7 +454,12 @@ module_param_string(path, fw_path_para, sizeof(fw_path_para), 0644);
-> > >  MODULE_PARM_DESC(path, "customized firmware image search path with a higher priority than default path");
-> > >  
-> > >  static int
-> > > -fw_get_filesystem_firmware(struct device *device, struct fw_priv *fw_priv)
-> > > +fw_get_filesystem_firmware(struct device *device, struct fw_priv *fw_priv,
-> > > +			   const char *suffix,
-> > > +			   int (*decompress)(struct device *dev,
-> > > +					     struct fw_priv *fw_priv,
-> > > +					     size_t in_size,
-> > > +					     const void *in_buffer))
-> > 
-> > I *think* this could be cleaner, I'll elaborate below.
-> > 
-> > > @@ -645,7 +768,13 @@ _request_firmware(const struct firmware **firmware_p, const char *name,
-> > >  	if (ret <= 0) /* error or already assigned */
-> > >  		goto out;
-> > >  
-> > > -	ret = fw_get_filesystem_firmware(device, fw->priv);
-> > > +	ret = fw_get_filesystem_firmware(device, fw->priv, "", NULL);
-> > > +#ifdef CONFIG_FW_LOADER_COMPRESS
-> > > +	if (ret == -ENOENT)
-> > > +		ret = fw_get_filesystem_firmware(device, fw->priv, ".xz",
-> > > +						 fw_decompress_xz);
-> > > +#endif
-> > 
-> > Hrm, and let more #ifdef'ery.
-> > 
-> > And so if someone wants to add bzip, we'd add yet-another if else on the
-> > return value of this call... and yet more #ifdefs.
-> > 
-> > We already have a list of paths supported. It seems what we need instead
-> > is a list of supported suffixes, and a respective structure which then
-> > has its set of callbacks for posthandling.
-> > 
-> > This way, this could all be handled inside fw_get_filesystem_firmware()
-> > neatly, and we can just strive towards avoiding #ifdef'ery.
-> 
-> Yes, I had similar idea.  Actually my plan for multiple compression
-> formats was:
-> 
-> - Move the decompression part into another file, e.g. decompress_xz.c
->   and change in Makefile:
->   firmware_class-$(CONFIG_FW_LOADER_COMPRESS_XZ) += decompress_xz.o
->   
-> - Create a table of the extension and the decompression,
-> 
->   static struct fw_decompression_table fw_decompressions[] = {
-> 	{ "", NULL },
-> #ifdef CONFIG_FW_LOADER_COMPRESS_XZ
-> 	{ ".xz", fw_decompress_xz },
-> #endif
-> #ifdef CONFIG_FW_LOADER_COMPRESS_BZIP2
-> 	{ ".bz2", fw_decompress_bzip2 },
-> #endif
-> 	.....
->   };
+Hi Greg, 
+Here are some slimbus patches that are good to go in 5.3
 
-But why?  Why not just stick with one for now, we don't need a zillion
-different formats to start with.  Let's just stick with .xz and that's
-it.  There is no need to do anything else for the foreseeable future.
+One of them is doc fix and other one is redundant message
+and the last one is fix for module autoloading which have dt entry.
 
-thanks,
+Thanks,
+srini
 
-greg k-h
+Ding Xiang (1):
+  slimbus: remove redundant dev_err message
+
+Jonathan Corbet (1):
+  slimbus: fix kerneldoc comments
+
+Srinivas Kandagatla (1):
+  slimbus: core: generate uevent for non-dt only
+
+ drivers/slimbus/core.c      |  5 -----
+ drivers/slimbus/qcom-ctrl.c |  4 +---
+ drivers/slimbus/stream.c    | 12 ++++++------
+ 3 files changed, 7 insertions(+), 14 deletions(-)
+
+-- 
+2.21.0
+
