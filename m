@@ -2,41 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 190F04D8AE
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 20:28:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 182854D63D
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 20:06:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727701AbfFTS2Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 14:28:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55670 "EHLO mail.kernel.org"
+        id S1728090AbfFTSFs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 14:05:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59364 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727365AbfFTSDy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 14:03:54 -0400
+        id S1726200AbfFTSFo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Jun 2019 14:05:44 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 060222089C;
-        Thu, 20 Jun 2019 18:03:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D878F2089C;
+        Thu, 20 Jun 2019 18:05:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561053833;
-        bh=+jRxuSXqPh6iPUXu/kw9ugzs9f/QZb/GAeAV4h+1Ax0=;
+        s=default; t=1561053943;
+        bh=GEx5pq0zga8EQ/2xGAHSBQA9HsHPaefSc6zn/tC0Bn8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tw8xXXse+1lZmmYElLwjk24UFSPFAqbh/IrV8DZieCy/SZe6a10R+xjW6YWAzUwlw
-         6FjQwez0Gv+d9OE/CLnfkWITRJyJYyZZfBBi7T+0NcBwxB2Td1ejQhVwFuOQBLABbA
-         Ji17u6as8I6MgxHV9xpDT3s06CvXl5GOHO/SGKGI=
+        b=GYtOxwEqDB7gp/rWgjkPQr2uFt1uuWxHk2amXQXDvdLYs4IpAGHj8Yj1QxJ+3D+yU
+         v96P67zjWc8gJSwMlcHnhVd4t0BfBVWon2Y/tT8BI9DyUTU70FO/WOLje6ZrFQ++3Y
+         lnJ3BkAEqHrGQtPHb39UCTAOyNjeNIpjqykabdLw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andrey Smirnov <andrew.smirnov@gmail.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        "Angus Ainslie (Purism)" <angus@akkea.ca>,
-        Chris Healy <cphealy@gmail.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        Adam Ford <aford173@gmail.com>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 041/117] ARM: dts: imx6qdl: Specify IMX6QDL_CLK_IPG as "ipg" clock to SDMA
-Date:   Thu, 20 Jun 2019 19:56:15 +0200
-Message-Id: <20190620174354.452331200@linuxfoundation.org>
+        stable@vger.kernel.org, Tyrel Datwyler <tyreld@linux.vnet.ibm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 042/117] PCI: rpadlpar: Fix leaked device_node references in add/remove paths
+Date:   Thu, 20 Jun 2019 19:56:16 +0200
+Message-Id: <20190620174354.508606171@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190620174351.964339809@linuxfoundation.org>
 References: <20190620174351.964339809@linuxfoundation.org>
@@ -49,46 +44,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit b14c872eebc501b9640b04f4a152df51d6eaf2fc ]
+[ Upstream commit fb26228bfc4ce3951544848555c0278e2832e618 ]
 
-Since 25aaa75df1e6 SDMA driver uses clock rates of "ipg" and "ahb"
-clock to determine if it needs to configure the IP block as operating
-at 1:1 or 1:2 clock ratio (ACR bit in SDMAARM_CONFIG). Specifying both
-clocks as IMX6QDL_CLK_SDMA results in driver incorrectly thinking that
-ratio is 1:1 which results in broken SDMA funtionality(this at least
-breaks RAVE SP serdev driver on RDU2). Fix the code to specify
-IMX6QDL_CLK_IPG as "ipg" clock for SDMA, to avoid detecting incorrect
-clock ratio.
+The find_dlpar_node() helper returns a device node with its reference
+incremented.  Both the add and remove paths use this helper for find the
+appropriate node, but fail to release the reference when done.
 
-Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
-Reviewed-by: Lucas Stach <l.stach@pengutronix.de>
-Cc: Angus Ainslie (Purism) <angus@akkea.ca>
-Cc: Chris Healy <cphealy@gmail.com>
-Cc: Lucas Stach <l.stach@pengutronix.de>
-Cc: Fabio Estevam <fabio.estevam@nxp.com>
-Cc: Shawn Guo <shawnguo@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org
-Tested-by: Adam Ford <aford173@gmail.com>
-Signed-off-by: Shawn Guo <shawnguo@kernel.org>
+Annotate the find_dlpar_node() helper with a comment about the incremented
+reference count and call of_node_put() on the obtained device_node in the
+add and remove paths.  Also, fixup a reference leak in the find_vio_slot()
+helper where we fail to call of_node_put() on the vdevice node after we
+iterate over its children.
+
+Signed-off-by: Tyrel Datwyler <tyreld@linux.vnet.ibm.com>
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/boot/dts/imx6qdl.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/pci/hotplug/rpadlpar_core.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/arch/arm/boot/dts/imx6qdl.dtsi b/arch/arm/boot/dts/imx6qdl.dtsi
-index b13b0b2db881..8ccafdfbe87c 100644
---- a/arch/arm/boot/dts/imx6qdl.dtsi
-+++ b/arch/arm/boot/dts/imx6qdl.dtsi
-@@ -875,7 +875,7 @@
- 				compatible = "fsl,imx6q-sdma", "fsl,imx35-sdma";
- 				reg = <0x020ec000 0x4000>;
- 				interrupts = <0 2 IRQ_TYPE_LEVEL_HIGH>;
--				clocks = <&clks IMX6QDL_CLK_SDMA>,
-+				clocks = <&clks IMX6QDL_CLK_IPG>,
- 					 <&clks IMX6QDL_CLK_SDMA>;
- 				clock-names = "ipg", "ahb";
- 				#dma-cells = <3>;
+diff --git a/drivers/pci/hotplug/rpadlpar_core.c b/drivers/pci/hotplug/rpadlpar_core.c
+index c614ff7c3bc3..d3562df64456 100644
+--- a/drivers/pci/hotplug/rpadlpar_core.c
++++ b/drivers/pci/hotplug/rpadlpar_core.c
+@@ -55,6 +55,7 @@ static struct device_node *find_vio_slot_node(char *drc_name)
+ 		if ((rc == 0) && (!strcmp(drc_name, name)))
+ 			break;
+ 	}
++	of_node_put(parent);
+ 
+ 	return dn;
+ }
+@@ -78,6 +79,7 @@ static struct device_node *find_php_slot_pci_node(char *drc_name,
+ 	return np;
+ }
+ 
++/* Returns a device_node with its reference count incremented */
+ static struct device_node *find_dlpar_node(char *drc_name, int *node_type)
+ {
+ 	struct device_node *dn;
+@@ -313,6 +315,7 @@ int dlpar_add_slot(char *drc_name)
+ 			rc = dlpar_add_phb(drc_name, dn);
+ 			break;
+ 	}
++	of_node_put(dn);
+ 
+ 	printk(KERN_INFO "%s: slot %s added\n", DLPAR_MODULE_NAME, drc_name);
+ exit:
+@@ -446,6 +449,7 @@ int dlpar_remove_slot(char *drc_name)
+ 			rc = dlpar_remove_pci_slot(drc_name, dn);
+ 			break;
+ 	}
++	of_node_put(dn);
+ 	vm_unmap_aliases();
+ 
+ 	printk(KERN_INFO "%s: slot %s removed\n", DLPAR_MODULE_NAME, drc_name);
 -- 
 2.20.1
 
