@@ -2,460 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 63BA44C6B0
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 07:14:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0247C4C69F
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 07:13:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731674AbfFTFOK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 01:14:10 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:36505 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731608AbfFTFOF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 01:14:05 -0400
-Received: by mail-pg1-f193.google.com with SMTP id f21so931296pgi.3
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2019 22:14:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=endlessm-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=GFXjPqL+0qPxXxdkcH5Jd69QZnXH/kaa1XrP1OoUn4s=;
-        b=rXM0WrQAf8wh/Ut1GWen389pEnYBeLaC52f71oEA9quzRjszuO9eFL/MmhXmozPd/o
-         emHWHnVAZbZhDBI+ISn/1Ddq+yg8+5OwyHjDKTGp++qnUibF7sMTia7yx4g9x/uKjY/P
-         DatirOxqwKTEyQU5QScsDU+fsn+YchiQ1usqDAR/GZJUoOSOPatbIZUrjvltaCSeC9Ml
-         IzL+wAtg3Onpps92Ke7/0zGQt5EN1JBG2f1ZmxuhUGFcEBaCMWfFoorckbcybhf+EsA9
-         k2q6SAwEI/1tZW7Ys5+cf4SIzi9dS9SUKu7XL1vvHw4EpdCHtoMxxpteEA9VQHiiQE6v
-         neKw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=GFXjPqL+0qPxXxdkcH5Jd69QZnXH/kaa1XrP1OoUn4s=;
-        b=hFhI5aO3eKbJiBsMZ9aWKL1Fp1yR+sqfC6SBEJ3Py69ov3UvzWUgWNkislNjdBxcTS
-         PvO0iqXezvh/tIhj1qCGWzRczGVjvcUQcJRZcvNL48hHfjHlDqPc2JGaFwnqGivR2JaH
-         KA7ItR+zMv8C7dTbVlZzz6i/6MiV0ldflaElFjN8VjDLCoccO9a5aqv2jivYBHA9OlOo
-         rzmE4/KJbQBfrKrpYjdHIjcBX7d8UUgAPRWxQxrd6JXTOsHSKuWr6M419zHg/XYq14j9
-         KGYStBmzkf4HG/qJABhru0uC3URTpOk1iF7XGNozpxNSbxDm2CqiOK192zHRwkqTidOA
-         7zWQ==
-X-Gm-Message-State: APjAAAX26HI25IxR+JDURVQYourXzLZGH/LGLpuS42QyjRx1I25Y2HUm
-        qDnqCWzLiKuuQt0V06LFcqVd9w==
-X-Google-Smtp-Source: APXvYqxOcduo55fY2IQsg5k/jHG2k0li9ZK34FP2ZsoBw2FQYYQT38rQOgduKyU+Yltan1fUiTi4mA==
-X-Received: by 2002:a63:f953:: with SMTP id q19mr11116518pgk.367.1561007644106;
-        Wed, 19 Jun 2019 22:14:04 -0700 (PDT)
-Received: from limbo.local (123-204-46-122.static.seed.net.tw. [123.204.46.122])
-        by smtp.gmail.com with ESMTPSA id j2sm26383423pfn.135.2019.06.19.22.14.01
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 19 Jun 2019 22:14:03 -0700 (PDT)
-From:   Daniel Drake <drake@endlessm.com>
-To:     axboe@kernel.dk, kbusch@kernel.org, hch@lst.de, sagi@grimberg.me
-Cc:     linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org,
-        bhelgaas@google.com, linux-ide@vger.kernel.org, linux@endlessm.com,
-        linux-kernel@vger.kernel.org, hare@suse.de,
-        alex.williamson@redhat.com, dan.j.williams@intel.com
-Subject: [PATCH v2 5/5] nvme: Intel AHCI remap support
-Date:   Thu, 20 Jun 2019 13:13:33 +0800
-Message-Id: <20190620051333.2235-6-drake@endlessm.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190620051333.2235-1-drake@endlessm.com>
-References: <20190620051333.2235-1-drake@endlessm.com>
+        id S1731393AbfFTFNn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 01:13:43 -0400
+Received: from mga09.intel.com ([134.134.136.24]:48862 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725857AbfFTFNn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Jun 2019 01:13:43 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Jun 2019 22:13:42 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.63,395,1557212400"; 
+   d="scan'208";a="154011514"
+Received: from pgsmsx105.gar.corp.intel.com ([10.221.44.96])
+  by orsmga008.jf.intel.com with ESMTP; 19 Jun 2019 22:13:39 -0700
+Received: from pgsmsx114.gar.corp.intel.com ([169.254.4.160]) by
+ PGSMSX105.gar.corp.intel.com ([169.254.4.28]) with mapi id 14.03.0439.000;
+ Thu, 20 Jun 2019 13:13:38 +0800
+From:   "Ong, Boon Leong" <boon.leong.ong@intel.com>
+To:     Jose Abreu <Jose.Abreu@synopsys.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        biao huang <biao.huang@mediatek.com>,
+        Andrew Lunn <andrew@lunn.ch>
+CC:     "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Giuseppe Cavallaro" <peppe.cavallaro@st.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        "Kweh, Hock Leong" <hock.leong.kweh@intel.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        "Voon, Weifeng" <weifeng.voon@intel.com>
+Subject: RE: [PATCH net-next v6 2/5] net: stmmac: introducing support for
+ DWC xPCS logics
+Thread-Topic: [PATCH net-next v6 2/5] net: stmmac: introducing support for
+ DWC xPCS logics
+Thread-Index: AQHVGsR8mZhQFRvu0EOiETyHTmqFxaaLcWMAgAET3gCAATg0IIAWWfBQ
+Date:   Thu, 20 Jun 2019 05:13:38 +0000
+Message-ID: <AF233D1473C1364ABD51D28909A1B1B75C17F73B@pgsmsx114.gar.corp.intel.com>
+References: <1559674736-2190-1-git-send-email-weifeng.voon@intel.com>
+ <1559674736-2190-3-git-send-email-weifeng.voon@intel.com>
+ <05cf54dc-7c40-471e-f08a-7fdf5fe4ef54@gmail.com>
+ <78EB27739596EE489E55E81C33FEC33A0B93EF69@DE02WEMBXB.internal.synopsys.com>
+ <AF233D1473C1364ABD51D28909A1B1B75C12D381@pgsmsx114.gar.corp.intel.com>
+In-Reply-To: <AF233D1473C1364ABD51D28909A1B1B75C12D381@pgsmsx114.gar.corp.intel.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ctpclassification: CTP_NT
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiMmQ4ZWFhNWMtOTIxZS00YmRmLWJhNDUtZTkxZDZkMTQ2ZDBmIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiNzY2c2YxY0p5Z2RUcVwvM3RWOTFabHVBaHBvR3ZKZm1aUUV3dGNoWWsrdWtYSG1hRW5YcEpGc0lVWVVKUWxsclwvIn0=
+dlp-product: dlpe-windows
+dlp-version: 11.2.0.6
+dlp-reaction: no-action
+x-originating-ip: [172.30.20.206]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Provide a platform driver for the nvme resources that may be remapped
-behind an ahci bar on common Intel platforms. The implementation relies
-on the standard nvme driver, but reimplements the nvme_dev_ops accordingly.
-
-As the original NVMe PCI device is inaccessible, this driver is somewhat
-limited: we always assume the device is present & online, can't
-detect PCI errors, can't reset, power management is limited, etc.
-
-A single shared legacy interrupt is used, although there is some
-hope that MSI-X support could be added later.
-
-Based on previous code by Dan Williams.
-
-Signed-off-by: Daniel Drake <drake@endlessm.com>
----
- drivers/ata/Kconfig                  |   1 +
- drivers/nvme/host/Kconfig            |   3 +
- drivers/nvme/host/Makefile           |   3 +
- drivers/nvme/host/intel-ahci-remap.c | 185 +++++++++++++++++++++++++++
- drivers/nvme/host/pci.c              |  21 +--
- drivers/nvme/host/pci.h              |   9 ++
- 6 files changed, 214 insertions(+), 8 deletions(-)
- create mode 100644 drivers/nvme/host/intel-ahci-remap.c
-
-diff --git a/drivers/ata/Kconfig b/drivers/ata/Kconfig
-index 6e82d66d7516..fb64e690d325 100644
---- a/drivers/ata/Kconfig
-+++ b/drivers/ata/Kconfig
-@@ -113,6 +113,7 @@ config SATA_AHCI_INTEL_NVME_REMAP
- 	bool "AHCI: Intel Remapped NVMe device support"
- 	depends on SATA_AHCI
- 	depends on BLK_DEV_NVME
-+	select NVME_INTEL_AHCI_REMAP
- 	help
- 	  Support access to remapped NVMe devices that appear in AHCI PCI
- 	  memory space.
-diff --git a/drivers/nvme/host/Kconfig b/drivers/nvme/host/Kconfig
-index ec43ac9199e2..a8aefb18eb15 100644
---- a/drivers/nvme/host/Kconfig
-+++ b/drivers/nvme/host/Kconfig
-@@ -26,6 +26,9 @@ config NVME_MULTIPATH
- config NVME_FABRICS
- 	tristate
- 
-+config NVME_INTEL_AHCI_REMAP
-+	tristate
-+
- config NVME_RDMA
- 	tristate "NVM Express over Fabrics RDMA host driver"
- 	depends on INFINIBAND && INFINIBAND_ADDR_TRANS && BLOCK
-diff --git a/drivers/nvme/host/Makefile b/drivers/nvme/host/Makefile
-index 8a4b671c5f0c..2010169880b7 100644
---- a/drivers/nvme/host/Makefile
-+++ b/drivers/nvme/host/Makefile
-@@ -8,6 +8,7 @@ obj-$(CONFIG_NVME_FABRICS)		+= nvme-fabrics.o
- obj-$(CONFIG_NVME_RDMA)			+= nvme-rdma.o
- obj-$(CONFIG_NVME_FC)			+= nvme-fc.o
- obj-$(CONFIG_NVME_TCP)			+= nvme-tcp.o
-+obj-$(CONFIG_NVME_INTEL_AHCI_REMAP)	+= nvme-intel-ahci-remap.o
- 
- nvme-core-y				:= core.o
- nvme-core-$(CONFIG_TRACING)		+= trace.o
-@@ -24,3 +25,5 @@ nvme-rdma-y				+= rdma.o
- nvme-fc-y				+= fc.o
- 
- nvme-tcp-y				+= tcp.o
-+
-+nvme-intel-ahci-remap-y			+= intel-ahci-remap.o
-diff --git a/drivers/nvme/host/intel-ahci-remap.c b/drivers/nvme/host/intel-ahci-remap.c
-new file mode 100644
-index 000000000000..7194d9dd0016
---- /dev/null
-+++ b/drivers/nvme/host/intel-ahci-remap.c
-@@ -0,0 +1,185 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Intel AHCI remapped NVMe platform driver
-+ *
-+ * Copyright (c) 2011-2016, Intel Corporation.
-+ * Copyright (c) 2019, Endless Mobile, Inc.
-+ *
-+ * Support platform devices created by the ahci driver, corresponding to
-+ * NVMe devices that have been remapped into the ahci device memory space.
-+ *
-+ * This scheme is rather peculiar, as NVMe is inherently based on PCIe,
-+ * however we only have access to the NVMe device MMIO space and an
-+ * interrupt. Without access to the pci_device, many features are
-+ * unavailable; this driver only intends to offer basic functionality.
-+ */
-+
-+#include <linux/platform_device.h>
-+#include <linux/interrupt.h>
-+#include <linux/module.h>
-+#include <linux/pm.h>
-+#include "pci.h"
-+
-+struct ahci_remap_data {
-+	atomic_t enabled;
-+};
-+
-+static struct ahci_remap_data *to_ahci_remap_data(struct nvme_dev *dev)
-+{
-+	return dev->dev->platform_data;
-+}
-+
-+static int ahci_remap_enable(struct nvme_dev *dev)
-+{
-+	int rc;
-+	struct resource *res;
-+	struct device *ddev = dev->dev;
-+	struct device *parent = ddev->parent;
-+	struct ahci_remap_data *adata = to_ahci_remap_data(dev);
-+	struct platform_device *pdev = to_platform_device(ddev);
-+
-+	res = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
-+	if (!res)
-+		return -ENXIO;
-+
-+	/* parent ahci device determines the dma mask */
-+	if (dma_supported(parent, DMA_BIT_MASK(64)))
-+		rc = dma_coerce_mask_and_coherent(ddev, DMA_BIT_MASK(64));
-+	else if (dma_supported(parent, DMA_BIT_MASK(32)))
-+		rc = dma_coerce_mask_and_coherent(ddev, DMA_BIT_MASK(32));
-+	else
-+		rc = -ENXIO;
-+	if (rc)
-+		return rc;
-+
-+	rc = nvme_enable(dev);
-+	if (rc)
-+		return rc;
-+
-+	atomic_inc(&adata->enabled);
-+
-+	return 0;
-+}
-+
-+static int ahci_remap_is_enabled(struct nvme_dev *dev)
-+{
-+	struct ahci_remap_data *adata = to_ahci_remap_data(dev);
-+
-+	return atomic_read(&adata->enabled) > 0;
-+}
-+
-+static void ahci_remap_disable(struct nvme_dev *dev)
-+{
-+	struct ahci_remap_data *adata = to_ahci_remap_data(dev);
-+
-+	if (ahci_remap_is_enabled(dev))
-+		atomic_dec(&adata->enabled);
-+}
-+
-+static int ahci_remap_is_offline(struct nvme_dev *dev)
-+{
-+	return 0;
-+}
-+
-+static int ahci_remap_setup_irqs(struct nvme_dev *dev, int nr_io_queues)
-+{
-+	struct platform_device *pdev = to_platform_device(dev->dev);
-+	struct nvme_queue *adminq = &dev->queues[0];
-+	struct resource *res;
-+
-+	res = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
-+	if (!res)
-+		return -ENXIO;
-+
-+	/* Deregister the admin queue's interrupt */
-+	free_irq(res->start, adminq);
-+
-+	return min_t(int, resource_size(res), nr_io_queues);
-+}
-+
-+static int ahci_remap_q_irq(struct nvme_queue *nvmeq)
-+{
-+	struct resource *res;
-+	struct nvme_dev *dev = nvmeq->dev;
-+	struct platform_device *pdev = to_platform_device(dev->dev);
-+
-+	res = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
-+	if (!res)
-+		return -ENXIO;
-+
-+	if (resource_size(res) > nvmeq->qid)
-+		return res->start + nvmeq->qid;
-+
-+	return res->start;
-+}
-+
-+static const struct nvme_dev_ops ahci_remap_dev_ops = {
-+	.enable			= ahci_remap_enable,
-+	.disable		= ahci_remap_disable,
-+	.setup_irqs		= ahci_remap_setup_irqs,
-+	.q_irq			= ahci_remap_q_irq,
-+	.is_enabled		= ahci_remap_is_enabled,
-+	.is_offline		= ahci_remap_is_offline,
-+};
-+
-+static void ahci_remap_shutdown(struct platform_device *pdev)
-+{
-+	struct nvme_dev *dev = platform_get_drvdata(pdev);
-+
-+	nvme_dev_disable(dev, true);
-+}
-+
-+static int ahci_remap_remove(struct platform_device *pdev)
-+{
-+	nvme_remove(&pdev->dev);
-+	pdev->dev.platform_data = NULL;
-+
-+	return 0;
-+}
-+
-+static struct platform_device_id ahci_remap_id_table[] = {
-+	{ .name = "intel_ahci_nvme", },
-+	{},
-+};
-+MODULE_DEVICE_TABLE(platform, ahci_remap_id_table);
-+
-+static int ahci_remap_probe(struct platform_device *pdev)
-+{
-+	struct device *ddev = &pdev->dev;
-+	struct ahci_remap_data *adata;
-+	struct resource *res;
-+
-+	adata = devm_kzalloc(ddev, sizeof(*adata), GFP_KERNEL);
-+	if (!adata)
-+		return -ENOMEM;
-+
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	if (!res)
-+		return -ENXIO;
-+
-+	if (!devm_request_mem_region(ddev, res->start, resource_size(res),
-+				dev_name(ddev)))
-+		return -EBUSY;
-+
-+	ddev->platform_data = adata;
-+
-+	return nvme_probe(ddev, res, &ahci_remap_dev_ops, 0);
-+}
-+
-+static SIMPLE_DEV_PM_OPS(ahci_remap_dev_pm_ops, nvme_suspend, nvme_resume);
-+
-+static struct platform_driver ahci_remap_driver = {
-+	.driver		= {
-+		.name	= "intel_ahci_nvme",
-+		.pm     = &ahci_remap_dev_pm_ops,
-+	},
-+	.id_table	= ahci_remap_id_table,
-+	.probe		= ahci_remap_probe,
-+	.remove		= ahci_remap_remove,
-+	.shutdown	= ahci_remap_shutdown,
-+};
-+
-+module_platform_driver(ahci_remap_driver);
-+MODULE_LICENSE("GPL v2");
-+MODULE_AUTHOR("Intel Corporation");
-+MODULE_AUTHOR("Daniel Drake <drake@endlessm.com>");
-diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
-index bed6c91b6b7c..50e76eb9f859 100644
---- a/drivers/nvme/host/pci.c
-+++ b/drivers/nvme/host/pci.c
-@@ -84,7 +84,6 @@ static int poll_queues = 0;
- module_param_cb(poll_queues, &queue_count_ops, &poll_queues, 0644);
- MODULE_PARM_DESC(poll_queues, "Number of queues to use for polled IO.");
- 
--static void nvme_dev_disable(struct nvme_dev *dev, bool shutdown);
- static bool __nvme_disable_io_queues(struct nvme_dev *dev, u8 opcode);
- 
- static int io_queue_depth_set(const char *val, const struct kernel_param *kp)
-@@ -2262,7 +2261,7 @@ static int nvme_dev_add(struct nvme_dev *dev)
- 	return 0;
- }
- 
--static int nvme_enable(struct nvme_dev *dev)
-+int nvme_enable(struct nvme_dev *dev)
- {
- 	dev->ctrl.cap = lo_hi_readq(dev->bar + NVME_REG_CAP);
- 
-@@ -2273,6 +2272,7 @@ static int nvme_enable(struct nvme_dev *dev)
- 
- 	return 0;
- }
-+EXPORT_SYMBOL_GPL(nvme_enable);
- 
- static int nvme_pci_enable(struct nvme_dev *dev)
- {
-@@ -2356,7 +2356,7 @@ static bool nvme_pci_is_present(struct nvme_dev *dev)
- 	return pci_device_is_present(to_pci_dev(dev->dev));
- }
- 
--static void nvme_dev_disable(struct nvme_dev *dev, bool shutdown)
-+void nvme_dev_disable(struct nvme_dev *dev, bool shutdown)
- {
- 	bool dead = true, freeze = false;
- 
-@@ -2405,6 +2405,7 @@ static void nvme_dev_disable(struct nvme_dev *dev, bool shutdown)
- 	}
- 	mutex_unlock(&dev->shutdown_lock);
- }
-+EXPORT_SYMBOL_GPL(nvme_dev_disable);
- 
- static int nvme_setup_prp_pools(struct nvme_dev *dev)
- {
-@@ -2683,8 +2684,8 @@ static void nvme_async_probe(void *data, async_cookie_t cookie)
- 	nvme_put_ctrl(&dev->ctrl);
- }
- 
--static int nvme_probe(struct device *ddev, struct resource *res,
--		      const struct nvme_dev_ops *ops, unsigned long quirks)
-+int nvme_probe(struct device *ddev, struct resource *res,
-+	       const struct nvme_dev_ops *ops, unsigned long quirks)
- {
- 	int node, result = -ENOMEM;
- 	struct nvme_dev *dev;
-@@ -2771,6 +2772,7 @@ static int nvme_probe(struct device *ddev, struct resource *res,
- 	kfree(dev);
- 	return result;
- }
-+EXPORT_SYMBOL_GPL(nvme_probe);
- 
- static void nvme_pci_release_regions(void *data)
- {
-@@ -2822,7 +2824,7 @@ static void nvme_pci_shutdown(struct pci_dev *pdev)
-  * state. This function must not have any dependencies on the device state in
-  * order to proceed.
-  */
--static void nvme_remove(struct device *ddev)
-+void nvme_remove(struct device *ddev)
- {
- 	struct nvme_dev *dev = dev_get_drvdata(ddev);
- 
-@@ -2847,6 +2849,7 @@ static void nvme_remove(struct device *ddev)
- 	nvme_release_prp_pools(dev);
- 	nvme_put_ctrl(&dev->ctrl);
- }
-+EXPORT_SYMBOL_GPL(nvme_remove);
- 
- static void nvme_pci_remove(struct pci_dev *pdev)
- {
-@@ -2854,21 +2857,23 @@ static void nvme_pci_remove(struct pci_dev *pdev)
- }
- 
- #ifdef CONFIG_PM_SLEEP
--static int nvme_suspend(struct device *dev)
-+int nvme_suspend(struct device *dev)
- {
- 	struct nvme_dev *ndev = dev_get_drvdata(dev);
- 
- 	nvme_dev_disable(ndev, true);
- 	return 0;
- }
-+EXPORT_SYMBOL_GPL(nvme_suspend);
- 
--static int nvme_resume(struct device *dev)
-+int nvme_resume(struct device *dev)
- {
- 	struct nvme_dev *ndev = dev_get_drvdata(dev);
- 
- 	nvme_reset_ctrl(&ndev->ctrl);
- 	return 0;
- }
-+EXPORT_SYMBOL_GPL(nvme_resume);
- #endif
- 
- static SIMPLE_DEV_PM_OPS(nvme_dev_pm_ops, nvme_suspend, nvme_resume);
-diff --git a/drivers/nvme/host/pci.h b/drivers/nvme/host/pci.h
-index 7e4d73a22876..ffe017cc1c9b 100644
---- a/drivers/nvme/host/pci.h
-+++ b/drivers/nvme/host/pci.h
-@@ -8,6 +8,7 @@
- #define __NVME_PCI_H__
- #include <linux/blk-mq.h>
- #include <linux/device.h>
-+#include "nvme.h"
- 
- struct nvme_queue;
- struct nvme_dev;
-@@ -133,4 +134,12 @@ struct nvme_queue {
- 	struct completion delete_done;
- };
- 
-+int nvme_probe(struct device *ddev, struct resource *res,
-+		const struct nvme_dev_ops *ops, unsigned long quirks);
-+void nvme_remove(struct device *ddev);
-+int nvme_enable(struct nvme_dev *dev);
-+void nvme_dev_disable(struct nvme_dev *dev, bool shutdown);
-+int nvme_suspend(struct device *dev);
-+int nvme_resume(struct device *dev);
-+
- #endif /* __NVME_PCI_H__ */
--- 
-2.20.1
-
+Pj5Gcm9tOiBKb3NlIEFicmV1IFttYWlsdG86Sm9zZS5BYnJldUBzeW5vcHN5cy5jb21dDQo+PkZy
+b206IEZsb3JpYW4gRmFpbmVsbGkgPGYuZmFpbmVsbGlAZ21haWwuY29tPg0KPj4NCj4+PiArUnVz
+c2VsbCwNCj4+Pg0KPj4+IE9uIDYvNC8yMDE5IDExOjU4IEFNLCBWb29uIFdlaWZlbmcgd3JvdGU6
+DQo+Pj4gPiBGcm9tOiBPbmcgQm9vbiBMZW9uZyA8Ym9vbi5sZW9uZy5vbmdAaW50ZWwuY29tPg0K
+Pj4+ID4NCj4+PiA+IHhQQ1MgaXMgRFdDIEV0aGVybmV0IFBoeXNpY2FsIENvZGluZyBTdWJsYXll
+ciB0aGF0IG1heSBiZSBpbnRlZ3JhdGVkDQo+Pj4gPiBpbnRvIGEgR2JFIGNvbnRyb2xsZXIgdGhh
+dCB1c2VzIERXQyBFUW9TIE1BQyBjb250cm9sbGVyLiBBbiBleGFtcGxlIG9mDQo+Pj4gPiBIVyBj
+b25maWd1cmF0aW9uIGlzIHNob3duIGJlbG93Oi0NCj4+PiA+DQo+Pj4gPiAgIDwtLS0tLS0tLS0t
+LS0tLS0tLUdCRSBDb250cm9sbGVyLS0tLS0tLS0tLT58PC0tRXh0ZXJuYWwgUEhZIGNoaXAtLT4N
+Cj4+PiA+DQo+Pj4gPiAgICstLS0tLS0tLS0tKyAgICAgICAgICstLS0tKyAgICArLS0tKyAgICAg
+ICAgICAgICAgICstLS0tLS0tLS0tLS0tLSsNCj4+PiA+ICAgfCAgIEVRb1MgICB8IDwtR01JSS0+
+fCBEVyB8PC0tPnxQSFl8IDwtLSBTR01JSSAtLT4gfCBFeHRlcm5hbCBHYkUgfA0KPj4+ID4gICB8
+ICAgTUFDICAgIHwgICAgICAgICB8eFBDU3wgICAgfElGIHwgICAgICAgICAgICAgICB8IFBIWSBD
+aGlwICAgICB8DQo+Pj4gPiAgICstLS0tLS0tLS0tKyAgICAgICAgICstLS0tKyAgICArLS0tKyAg
+ICAgICAgICAgICAgICstLS0tLS0tLS0tLS0tLSsNCj4+PiA+ICAgICAgICAgIF4gICAgICAgICAg
+ICAgICBeICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIF4NCj4+PiA+ICAgICAgICAg
+IHwgICAgICAgICAgICAgICB8ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHwNCj4+
+PiA+ICAgICAgICAgICstLS0tLS0tLS0tLS0tLS0tLS0tLS1NRElPLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLSsNCj4+PiA+DQo+Pj4gPiB4UENTIGlzIGEgQ2xhdXNlLTQ1IE1ESU8gTWFuYWdlYWJs
+ZSBEZXZpY2UgKE1NRCkgYW5kIHdlIG5lZWQgYSB3YXkNCj4+dG8NCj4+PiA+IGRpZmZlcmVudGlh
+dGUgaXQgZnJvbSBleHRlcm5hbCBQSFkgY2hpcCB0aGF0IGlzIGRpc2NvdmVyZWQgb3ZlciBNRElP
+Lg0KPj4+ID4gVGhlcmVmb3JlLCB4cGNzX3BoeV9hZGRyIGlzIGludHJvZHVjZWQgaW4gc3RtbWFj
+IHBsYXRmb3JtIGRhdGENCj4+PiA+IChwbGF0X3N0bW1hY2VuZXRfZGF0YSkgZm9yIGRpZmZlcmVu
+dGlhdGluZyB4UENTIGZyb20gJ3BoeV9hZGRyJyB0aGF0DQo+Pj4gPiBiZWxvbmdzIHRvIGV4dGVy
+bmFsIFBIWS4NCj4+Pg0KPj4+IEFzc3VtaW5nIHRoaXMgRFcgeFBDUyBjYW4gYmUgZm91bmQgd2l0
+aCBkZXNpZ25zIG90aGVyIHRoYW4gU1RNTUFDDQo+PndvdWxkDQo+Pj4gbm90IGl0IG1ha2Ugc2Vu
+c2UgdG8gbW9kZWwgdGhpcyBhcyBzb21lIGtpbmQgb2YgUEhZL01ESU8gYnJpZGdlPyBBDQo+Pj4g
+bGl0dGxlIGJpdCBsaWtlIHdoYXQgZHJpdmVycy9uZXQvcGh5L3hpbGlueF9nbWlpMnJnbWlpLmMg
+dHJpZXMgdG8gZG8/DQo+Pg0KPj5ZZXMsIERXIFhQQ1MgaXMgYSBzZXBhcmF0ZSBJUCB0aGF0IGNh
+biBiZSBzb2xkIHdpdGhvdXQgdGhlIE1BQy4NCj4NCj5IaSBGbG9yaWFuLCB0aGFua3MgZm9yIHBv
+aW50aW5nIG91dCB0aGUgUEhZIGRyaXZlciBmb3IgR01JSSB0byBSR01JSSBjb252ZXJ0ZXINCj5p
+bXBsZW1lbnRhdGlvbi4gSXQgc2VlbXMgbGlrZSBjb21tdW5pdHkgd291bGQgbGlrZSBkd3hwY3Mg
+dG8gdGFrZSB0aGUNCj5jb252ZXJ0ZXIgcGh5IGRyaXZlciBkaXJlY3Rpb24uDQo+DQo+V2Ugd291
+bGQgbGlrZSB0byBjaGVjayB3aXRoIGNvbW11bml0eSB3aGF0IGlzIHRoZSBNQUMgY29udHJvbGxl
+ciB0aGF0IGlzDQo+dXNpbmcgYWJvdmUgUEhZIGRyaXZlciBzbyB0aGF0IHdlIGNhbiBkaWcgZGVl
+cGVyIGludG8gdGhlIFBIWSAmIE1BQyBkcml2ZXINCj5hcmNoaXRlY3R1cmUuIFdlIHdvdWxkIGxp
+a2UgdG8gbWFwIHRoZSBleGlzdGluZyB1c2FnZSBvZiBkd3hwY3MuYyBpbiAzLzUgb2YNCj50aGlz
+IHNlcmllcyBpcyBhcmNoaXRlY3R1cmFsbHkgcmVhZHkgZm9yIFBIWSBkcml2ZXIgZnJhbWV3b3Jr
+IG9yIG5ldyBBUElzDQo+d291bGQgbmVlZCB0byBiZSBkZWZpbmVkLg0KDQpKdXN0IHRvIGN5Y2xl
+LWJhY2sgdG8gdGhpcyB0cmFjaywgd2UgYXJlIHdvcmtpbmcgdG93YXJkcyBnZXR0aW5nIHRoZSBB
+Q1BJIGRldmljZQ0KSUQgZm9yIHRoaXMgSVAuIE1lYW53aGlsZSwgc2luY2UgdGhlIEM0NSBNRElP
+IHBhdHljaCBpcyBhbHNvIG5lZWRlZCBieSANCkJpYW8sIHdlIHBsYW4gdG8gbGluZSB1cCB0aGUg
+YmVsb3cgcGF0Y2ggZm9yIG1lcmdlLg0KDQpbUEFUQ0ggbmV0LW5leHQgdjYgMS81XSBuZXQ6IHN0
+bW1hYzogZW5hYmxlIGNsYXVzZSA0NSBtZGlvIHN1cHBvcnQNCg0KSXMgdGhlcmUgYW55IGNvbmNl
+cm4gd2l0aCB0aGlzIGFwcHJvYWNoPyANCg==
