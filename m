@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C280B4D68D
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 20:09:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0DCE04D6C9
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 20:12:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728458AbfFTSJ2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 14:09:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36868 "EHLO mail.kernel.org"
+        id S1728981AbfFTSMF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 14:12:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39772 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727024AbfFTSJ0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 14:09:26 -0400
+        id S1728959AbfFTSL7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Jun 2019 14:11:59 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6418521530;
-        Thu, 20 Jun 2019 18:09:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8BF682084E;
+        Thu, 20 Jun 2019 18:11:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561054164;
-        bh=qtChJM3wYi/nDsqYmpo+7UfEXTZggKGl/B6JxWKoYI8=;
+        s=default; t=1561054319;
+        bh=9TlGhu5PE6MnakiwtG3u2ciQ4gIz2gyIJSShFYv6hJ0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Hk+YRO9fOwt6dmniPmhtTSJNsF8Y5swZy5YtZskpzVIsH+M0vsYCJawiWLQOk4zk2
-         IiuJCsTqNENZZwRJsYVyoMStmzhE5hSr2Gn/xh4ZF1tPpJimkMLYnZ+ZDSUT2tGWk7
-         WpffWapydmHDzu8znnQuX6xaY6EjUp5uy3mFxVic=
+        b=W06JYHvhU2FT7hi2ViO5M9rZJs/zA9aG4bq6M9vQfAQAhixHk9pTg6lOhVFHVHufh
+         jMJ/qQVoO7QOlzfsv/L5wLRwmUchPmBX0Y+2jEzdhXrD8zMAg5YJuUkkPio/gno3Yi
+         P/2ZB/419ppHcksBUCxjhWtUTyUOOVPlEJT+NURg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jason Gerecke <jason.gerecke@wacom.com>,
-        Aaron Armstrong Skomra <aaron.skomra@wacom.com>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Subject: [PATCH 4.14 41/45] HID: wacom: Dont report anything prior to the tool entering range
-Date:   Thu, 20 Jun 2019 19:57:43 +0200
-Message-Id: <20190620174340.808229807@linuxfoundation.org>
+        stable@vger.kernel.org, Sami Tolvanen <samitolvanen@google.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 49/61] arm64: use the correct function type in SYSCALL_DEFINE0
+Date:   Thu, 20 Jun 2019 19:57:44 +0200
+Message-Id: <20190620174345.789949072@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190620174328.608036501@linuxfoundation.org>
-References: <20190620174328.608036501@linuxfoundation.org>
+In-Reply-To: <20190620174336.357373754@linuxfoundation.org>
+References: <20190620174336.357373754@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,60 +44,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jason Gerecke <jason.gerecke@wacom.com>
+[ Upstream commit 0e358bd7b7ebd27e491dabed938eae254c17fe3b ]
 
-commit e92a7be7fe5b2510fa60965eaf25f9e3dc08b8cc upstream.
+Although a syscall defined using SYSCALL_DEFINE0 doesn't accept
+parameters, use the correct function type to avoid indirect call
+type mismatches with Control-Flow Integrity checking.
 
-If the tool spends some time in prox before entering range, a series of
-events (e.g. ABS_DISTANCE, MSC_SERIAL) can be sent before we or userspace
-have any clue about the pen whose data is being reported. We need to hold
-off on reporting anything until the pen has entered range. Since we still
-want to report events that occur "in prox" after the pen has *left* range
-we use 'wacom-tool[0]' as the indicator that the pen did at one point
-enter range and provide us/userspace with tool type and serial number
-information.
-
-Fixes: a48324de6d4d ("HID: wacom: Bluetooth IRQ for Intuos Pro should handle prox/range")
-Cc: <stable@vger.kernel.org> # 4.11+
-Signed-off-by: Jason Gerecke <jason.gerecke@wacom.com>
-Reviewed-by: Aaron Armstrong Skomra <aaron.skomra@wacom.com>
-Signed-off-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Sami Tolvanen <samitolvanen@google.com>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/hid/wacom_wac.c |   20 +++++++++++---------
- 1 file changed, 11 insertions(+), 9 deletions(-)
+ arch/arm64/include/asm/syscall_wrapper.h | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
---- a/drivers/hid/wacom_wac.c
-+++ b/drivers/hid/wacom_wac.c
-@@ -1271,17 +1271,19 @@ static void wacom_intuos_pro2_bt_pen(str
- 			input_report_abs(pen_input, ABS_Z, rotation);
- 			input_report_abs(pen_input, ABS_WHEEL, get_unaligned_le16(&frame[11]));
- 		}
--		input_report_abs(pen_input, ABS_PRESSURE, get_unaligned_le16(&frame[5]));
--		input_report_abs(pen_input, ABS_DISTANCE, range ? frame[13] : wacom->features.distance_max);
-+		if (wacom->tool[0]) {
-+			input_report_abs(pen_input, ABS_PRESSURE, get_unaligned_le16(&frame[5]));
-+			input_report_abs(pen_input, ABS_DISTANCE, range ? frame[13] : wacom->features.distance_max);
+diff --git a/arch/arm64/include/asm/syscall_wrapper.h b/arch/arm64/include/asm/syscall_wrapper.h
+index a4477e515b79..507d0ee6bc69 100644
+--- a/arch/arm64/include/asm/syscall_wrapper.h
++++ b/arch/arm64/include/asm/syscall_wrapper.h
+@@ -30,10 +30,10 @@
+ 	}										\
+ 	static inline long __do_compat_sys##name(__MAP(x,__SC_DECL,__VA_ARGS__))
  
--		input_report_key(pen_input, BTN_TOUCH, frame[0] & 0x01);
--		input_report_key(pen_input, BTN_STYLUS, frame[0] & 0x02);
--		input_report_key(pen_input, BTN_STYLUS2, frame[0] & 0x04);
-+			input_report_key(pen_input, BTN_TOUCH, frame[0] & 0x01);
-+			input_report_key(pen_input, BTN_STYLUS, frame[0] & 0x02);
-+			input_report_key(pen_input, BTN_STYLUS2, frame[0] & 0x04);
+-#define COMPAT_SYSCALL_DEFINE0(sname)					\
+-	asmlinkage long __arm64_compat_sys_##sname(void);		\
+-	ALLOW_ERROR_INJECTION(__arm64_compat_sys_##sname, ERRNO);	\
+-	asmlinkage long __arm64_compat_sys_##sname(void)
++#define COMPAT_SYSCALL_DEFINE0(sname)							\
++	asmlinkage long __arm64_compat_sys_##sname(const struct pt_regs *__unused);	\
++	ALLOW_ERROR_INJECTION(__arm64_compat_sys_##sname, ERRNO);			\
++	asmlinkage long __arm64_compat_sys_##sname(const struct pt_regs *__unused)
  
--		input_report_key(pen_input, wacom->tool[0], prox);
--		input_event(pen_input, EV_MSC, MSC_SERIAL, wacom->serial[0]);
--		input_report_abs(pen_input, ABS_MISC,
--				 wacom_intuos_id_mangle(wacom->id[0])); /* report tool id */
-+			input_report_key(pen_input, wacom->tool[0], prox);
-+			input_event(pen_input, EV_MSC, MSC_SERIAL, wacom->serial[0]);
-+			input_report_abs(pen_input, ABS_MISC,
-+					 wacom_intuos_id_mangle(wacom->id[0])); /* report tool id */
-+		}
+ #define COND_SYSCALL_COMPAT(name) \
+ 	cond_syscall(__arm64_compat_sys_##name);
+@@ -62,11 +62,11 @@
+ 	static inline long __do_sys##name(__MAP(x,__SC_DECL,__VA_ARGS__))
  
- 		wacom->shared->stylus_in_proximity = prox;
+ #ifndef SYSCALL_DEFINE0
+-#define SYSCALL_DEFINE0(sname)					\
+-	SYSCALL_METADATA(_##sname, 0);				\
+-	asmlinkage long __arm64_sys_##sname(void);		\
+-	ALLOW_ERROR_INJECTION(__arm64_sys_##sname, ERRNO);	\
+-	asmlinkage long __arm64_sys_##sname(void)
++#define SYSCALL_DEFINE0(sname)							\
++	SYSCALL_METADATA(_##sname, 0);						\
++	asmlinkage long __arm64_sys_##sname(const struct pt_regs *__unused);	\
++	ALLOW_ERROR_INJECTION(__arm64_sys_##sname, ERRNO);			\
++	asmlinkage long __arm64_sys_##sname(const struct pt_regs *__unused)
+ #endif
  
+ #ifndef COND_SYSCALL
+-- 
+2.20.1
+
 
 
