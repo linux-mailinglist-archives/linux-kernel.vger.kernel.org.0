@@ -2,196 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DEC6E4D501
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 19:25:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D33F14D4CE
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 19:23:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732374AbfFTRYQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 13:24:16 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:52576 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732159AbfFTRXT (ORCPT
+        id S1732322AbfFTRXx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 13:23:53 -0400
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:42768 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732296AbfFTRXu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 13:23:19 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Sender:Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
-        Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=YlkVRaJYoloPTJHSMGpuuWEZdOaSNGKkqHxmAd4fl1s=; b=JqJ22RS8x5aZfiVIMPJPFgIKSU
-        7YBDFpuBz9BXmuTMmXXEhbf7AVT/UZebH67y/OfS9w2jIXmfI7GeC6ydTo7avEJKX/1VXCG4uasp/
-        F+RQWsjayIUZnGvdj9Cuj9io4wZtZwmWVpAKwBwpcJBQLJ6upZ1K8Si857ZVplovrLWF9VqC+QpbZ
-        4gkDBkKBgOud8npAhzsxp7eYATkT51iAIu2RuFR+pKL0UdWy0GDgU4ZNueh3z3gGv9F3Bna6YpMr+
-        bBbWd1BIguLNt+3z332fKuxAy8Yekpcjv1YXTP05UPSkdv4VDvUUnCXybDTh9ZtP083Jabaxsoka7
-        pcY0UDlQ==;
-Received: from [177.97.20.138] (helo=bombadil.infradead.org)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1he0mM-0008Rv-9h; Thu, 20 Jun 2019 17:23:18 +0000
-Received: from mchehab by bombadil.infradead.org with local (Exim 4.92)
-        (envelope-from <mchehab@bombadil.infradead.org>)
-        id 1he0mK-0000E7-32; Thu, 20 Jun 2019 14:23:16 -0300
-From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>
-Cc:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Mauro Carvalho Chehab <mchehab@infradead.org>,
-        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>
-Subject: [PATCH v2 22/22] scripts/get_abi.pl: change script to allow parsing in ReST mode
-Date:   Thu, 20 Jun 2019 14:23:14 -0300
-Message-Id: <c4d540b2df8f17bbcd9284c25910a23b081c9cf9.1561050806.git.mchehab+samsung@kernel.org>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <cover.1561050806.git.mchehab+samsung@kernel.org>
-References: <cover.1561050806.git.mchehab+samsung@kernel.org>
+        Thu, 20 Jun 2019 13:23:50 -0400
+Received: by mail-qt1-f193.google.com with SMTP id s15so3952154qtk.9
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2019 10:23:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=SfbKUCdSGF4+jFDRzcaQ+Fna6TrcXDnyta04yl7lq1Y=;
+        b=fDa+hMU4rcsLRRCH2gWRtgjYh9RFedwMwqv0Trz+YbWuMGaoX85v7I71KOkTii51uB
+         oO9IljJOAF7bcm1YYxdaerj3SB1eX+ROcV7aGqi3ZBwoKVBEGC2K9Gm0a4yLiiEn/uAk
+         fBk5sWnkPe6Qfa4DgWWmQRbh4XlFAlCgTAsATQPIvgIfBdORGI7YHDMsJoSK7wBXLdyk
+         G7L29YhKyUqgAQjd6fwdckTK5NEQcVswgxlSYd5TMwXXMxxdYk5swQozsEqhRL82kEHN
+         PYoc9M2dsT9k3d119XICrYvVvAjQcFqPNiWbp3QBf8xLIqoPCbUOF1ztjjMN/UPlCr8M
+         O9Xw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=SfbKUCdSGF4+jFDRzcaQ+Fna6TrcXDnyta04yl7lq1Y=;
+        b=tcjL7OSdwmAMuHCYSp2Nu0t/j9i385uTJjI1l1MqWvVAdNIhjYofqP0A4Sww6WaxSV
+         4WgA1hGZsIkItKXmwG6HTUB6SgwvWxei1gu/TExAJy7UjFPDQC9kop8Rr+nubX2eq36c
+         /AKzKBU5L8/NEpxFPWQgPtitbJsstXJAa+LsU2ymlTqc2RzEeKlIv+50631lJ/eAaCQZ
+         cbfalPVobu3hw/9dGAaxdLcpDqtkyNC+/YsigK21KD493lgw7La8kYySw1W8S+gLV0h9
+         e/g13l82uvTMuHENfwkGuOk66t2vlpdFzMG+347ZJa8eUraYGt6Zhqy8V/6rTPlm9DPN
+         XzqA==
+X-Gm-Message-State: APjAAAWv9iM8/B3LpQ7RuRx5qpftH1AciUKei5HOtR3Ag//D2D27wxuo
+        UpSYqGZTGa5I8PKFSVbhiVgKDuDDEJZxPQ==
+X-Google-Smtp-Source: APXvYqw404QwKeABmWhU9qLItoqgwLK+kwwRuUpz/G8u1JQs97zHuMB8xnbcA0CiswhJAlAz0nkrug==
+X-Received: by 2002:ac8:2409:: with SMTP id c9mr53861547qtc.145.1561051428982;
+        Thu, 20 Jun 2019 10:23:48 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-156-34-55-100.dhcp-dynamic.fibreop.ns.bellaliant.net. [156.34.55.100])
+        by smtp.gmail.com with ESMTPSA id c5sm109198qtj.27.2019.06.20.10.23.48
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 20 Jun 2019 10:23:48 -0700 (PDT)
+Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1he0mq-0005eq-0K; Thu, 20 Jun 2019 14:23:48 -0300
+Date:   Thu, 20 Jun 2019 14:23:47 -0300
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     Logan Gunthorpe <logang@deltatee.com>
+Cc:     linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org,
+        linux-rdma@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
+        Christoph Hellwig <hch@lst.de>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        Keith Busch <kbusch@kernel.org>,
+        Stephen Bates <sbates@raithlin.com>
+Subject: Re: [RFC PATCH 04/28] block: Never bounce dma-direct bios
+Message-ID: <20190620172347.GE19891@ziepe.ca>
+References: <20190620161240.22738-1-logang@deltatee.com>
+ <20190620161240.22738-5-logang@deltatee.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190620161240.22738-5-logang@deltatee.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Right now, several ABI files won't parse as ReST, as they
-contain severe violations to the spec, with makes the script
-to crash.
+On Thu, Jun 20, 2019 at 10:12:16AM -0600, Logan Gunthorpe wrote:
+> It is expected the creator of the dma-direct bio will ensure the
+> target device can access the DMA address it's creating bios for.
+> It's also not possible to bounce a dma-direct bio seeing the block
+> layer doesn't have any way to access the underlying data behind
+> the DMA address.
+> 
+> Thus, never bounce dma-direct bios.
 
-So, the code has a sanity logic with escapes bad code and
-cleans tags that can cause Sphinx to crash.
+I wonder how feasible it would be to implement a 'dma vec' copy
+from/to? 
 
-Add support for disabling this mode.
+That is about the only operation you could safely do on P2P BAR
+memory. 
 
-Right now, as enabling rst-mode causes crash, it is disabled
-by default.
+I wonder if a copy implementation could somehow query the iommu layer
+to get a kmap of the memory pointed at by the dma address so we don't
+need to carry struct page around?
 
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
----
- scripts/get_abi.pl | 74 ++++++++++++++++++++++++++++++----------------
- 1 file changed, 48 insertions(+), 26 deletions(-)
-
-diff --git a/scripts/get_abi.pl b/scripts/get_abi.pl
-index 7bc619b6890c..e2cd2234af34 100755
---- a/scripts/get_abi.pl
-+++ b/scripts/get_abi.pl
-@@ -12,8 +12,14 @@ my $man;
- my $debug;
- my $prefix="Documentation/ABI";
- 
-+#
-+# If true, assumes that the description is formatted with ReST
-+#
-+my $description_is_rst = 0;
-+
- GetOptions(
- 	"debug|d+" => \$debug,
-+	"rst-source!" => \$description_is_rst,
- 	"dir=s" => \$prefix,
- 	'help|?' => \$help,
- 	man => \$man
-@@ -145,14 +151,15 @@ sub parse_abi {
- 					next;
- 				}
- 				if ($tag eq "description") {
--					next if ($content =~ m/^\s*$/);
--					if ($content =~ m/^(\s*)(.*)/) {
--						my $new_content = $2;
--						$space = $new_tag . $sep . $1;
--						while ($space =~ s/\t+/' ' x (length($&) * 8 - length($`) % 8)/e) {}
--						$space =~ s/./ /g;
--						$data{$what}->{$tag} .= "$new_content\n";
-+					# Preserve initial spaces for the first line
-+					$content = ' ' x length($new_tag) . $sep . $content;
-+					$content =~ s,^(\s*):,$1 ,;
-+					if ($content =~ m/^(\s*)(.*)$/) {
-+						$space = $1;
-+						$content = $2;
- 					}
-+					while ($space =~ s/\t+/' ' x (length($&) * 8 - length($`) % 8)/e) {}
-+					$data{$what}->{$tag} .= $content;
- 				} else {
- 					$data{$what}->{$tag} = $content;
- 				}
-@@ -168,11 +175,15 @@ sub parse_abi {
- 
- 		if ($tag eq "description") {
- 			if (!$data{$what}->{description}) {
--				next if (m/^\s*\n/);
-+				s/^($space)//;
- 				if (m/^(\s*)(.*)/) {
--					$space = $1;
--					while ($space =~ s/\t+/' ' x (length($&) * 8 - length($`) % 8)/e) {}
--					$data{$what}->{$tag} .= "$2\n";
-+					my $sp = $1;
-+					while ($sp =~ s/\t+/' ' x (length($&) * 8 - length($`) % 8)/e) {}
-+					my $content = "$sp$2";
-+
-+					$content =~ s/^($space)//;
-+
-+					$data{$what}->{$tag} .= "$content";
- 				}
- 			} else {
- 				my $content = $_;
-@@ -282,23 +293,27 @@ sub output_rest {
- 		print "Defined on file :ref:`$file <$fileref>`\n\n" if ($type ne "File");
- 
- 		my $desc = $data{$what}->{description};
--		$desc =~ s/^\s+//;
--
--		# Remove title markups from the description, as they won't work
--		$desc =~ s/\n[\-\*\=\^\~]+\n/\n/g;
- 
- 		if (!($desc =~ /^\s*$/)) {
--			if ($desc =~ m/\:\n/ || $desc =~ m/\n[\t ]+/  || $desc =~ m/[\x00-\x08\x0b-\x1f\x7b-\xff]/) {
--				# put everything inside a code block
--				$desc =~ s/\n/\n /g;
--
--				print "::\n\n";
--				print " $desc\n\n";
--			} else {
--				# Escape any special chars from description
--				$desc =~s/([\x00-\x08\x0b-\x1f\x21-\x2a\x2d\x2f\x3c-\x40\x5c\x5e-\x60\x7b-\xff])/\\$1/g;
--
-+			if ($description_is_rst) {
- 				print "$desc\n\n";
-+			} else {
-+				$desc =~ s/^\s+//;
-+
-+				# Remove title markups from the description, as they won't work
-+				$desc =~ s/\n[\-\*\=\^\~]+\n/\n\n/g;
-+
-+				if ($desc =~ m/\:\n/ || $desc =~ m/\n[\t ]+/  || $desc =~ m/[\x00-\x08\x0b-\x1f\x7b-\xff]/) {
-+					# put everything inside a code block
-+					$desc =~ s/\n/\n /g;
-+
-+					print "::\n\n";
-+					print " $desc\n\n";
-+				} else {
-+					# Escape any special chars from description
-+					$desc =~s/([\x00-\x08\x0b-\x1f\x21-\x2a\x2d\x2f\x3c-\x40\x5c\x5e-\x60\x7b-\xff])/\\$1/g;
-+					print "$desc\n\n";
-+				}
- 			}
- 		} else {
- 			print "DESCRIPTION MISSING for $what\n\n" if (!$data{$what}->{is_file});
-@@ -390,7 +405,7 @@ abi_book.pl - parse the Linux ABI files and produce a ReST book.
- 
- =head1 SYNOPSIS
- 
--B<abi_book.pl> [--debug] [--man] [--help] [--dir=<dir>] <COMAND> [<ARGUMENT>]
-+B<abi_book.pl> [--debug] [--man] [--help] --[(no-)rst-source] [--dir=<dir>] <COMAND> [<ARGUMENT>]
- 
- Where <COMMAND> can be:
- 
-@@ -413,6 +428,13 @@ B<validate>              - validate the ABI contents
- Changes the location of the ABI search. By default, it uses
- the Documentation/ABI directory.
- 
-+=item B<--rst-source> and B<--no-rst-source>
-+
-+The input file may be using ReST syntax or not. Those two options allow
-+selecting between a rst-compliant source ABI (--rst-source), or a
-+plain text that may be violating ReST spec, so it requres some escaping
-+logic (--no-rst-source).
-+
- =item B<--debug>
- 
- Put the script in verbose mode, useful for debugging. Can be called multiple
--- 
-2.21.0
-
+Jason
