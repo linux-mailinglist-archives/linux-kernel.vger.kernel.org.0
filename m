@@ -2,440 +2,254 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 228854C856
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 09:23:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D20DD4C861
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 09:26:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726340AbfFTHXb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 03:23:31 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:56882 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725875AbfFTHXb (ORCPT
+        id S1726353AbfFTH0U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 03:26:20 -0400
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:40298 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725875AbfFTH0U (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 03:23:31 -0400
-Received: from [192.168.0.20] (cpc89242-aztw30-2-0-cust488.18-1.cable.virginm.net [86.31.129.233])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id BC43652A;
-        Thu, 20 Jun 2019 09:23:27 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1561015408;
-        bh=VOoCwS8/tCN9P2CKJYt897YGXh2zL4FNArC5EdXXWRo=;
-        h=Reply-To:Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=jCBF1b/c8FZ158Q3zjR/fwGtA848AJo03QiPtxhk3DrA0b6KeWDpNPiVx/mhdB850
-         u4MYY382MqXqB15+PV61W6iiLW+HYUgJJkAmpgQzAEa1NtG4Ud0AsuU6TtvrzyyhGI
-         q3RaZuNIIgva8qIxSdwfPIzsSuvMEsUwlrLGlv10=
-Reply-To: kieran.bingham@ideasonboard.com
-Subject: Re: [PATCH] replace timeconst bc script with an sh script
-To:     Ethan Sommer <e5ten.arch@gmail.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Borislav Petkov <bp@suse.de>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Kees Cook <keescook@chromium.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Corey Minyard <cminyard@mvista.com>,
-        John Stultz <john.stultz@linaro.org>
-References: <20190620062246.2665-1-e5ten.arch@gmail.com>
-From:   Kieran Bingham <kieran.bingham@ideasonboard.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=kieran.bingham@ideasonboard.com; keydata=
- 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
- sbsRB8KNNvVXBOVNwko86rQqF9drZuw=
-Organization: Ideas on Board
-Message-ID: <8a9ffb4b-791d-35d1-bb2a-7b6ad812bff1@ideasonboard.com>
-Date:   Thu, 20 Jun 2019 08:23:25 +0100
+        Thu, 20 Jun 2019 03:26:20 -0400
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x5K7Q5UZ058632;
+        Thu, 20 Jun 2019 02:26:05 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1561015565;
+        bh=O1KA6RnUQCO9na586AB8bg1jwRIW0mQLDXklOVjlYJM=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=A+7Y2pjvJbJ8BDw4mQmrU/GqFGVIKQ08NRas/4nN10CVTFFYiXYGB3tbOP3cKeg+t
+         MjYbLypYwsEACkM23GF6P3C1qgF5/ZpzFpK3hy1DLB88Z+AE5p4K9ZDI2SICRhyKf+
+         q1Dt8LdkyQK0x/WxPukzI8IJ6qi9FpmNiq8szoBw=
+Received: from DLEE104.ent.ti.com (dlee104.ent.ti.com [157.170.170.34])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x5K7Q5im118694
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 20 Jun 2019 02:26:05 -0500
+Received: from DLEE106.ent.ti.com (157.170.170.36) by DLEE104.ent.ti.com
+ (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Thu, 20
+ Jun 2019 02:26:04 -0500
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE106.ent.ti.com
+ (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Thu, 20 Jun 2019 02:26:04 -0500
+Received: from [172.24.190.233] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id x5K7PwPx018634;
+        Thu, 20 Jun 2019 02:25:59 -0500
+Subject: Re: [PATCH V10 13/15] phy: tegra: Add PCIe PIPE2UPHY support
+To:     Vidya Sagar <vidyas@nvidia.com>, <lorenzo.pieralisi@arm.com>,
+        <bhelgaas@google.com>, <robh+dt@kernel.org>,
+        <mark.rutland@arm.com>, <thierry.reding@gmail.com>,
+        <jonathanh@nvidia.com>, <catalin.marinas@arm.com>,
+        <will.deacon@arm.com>, <jingoohan1@gmail.com>,
+        <gustavo.pimentel@synopsys.com>
+CC:     <digetx@gmail.com>, <mperttunen@nvidia.com>,
+        <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <kthota@nvidia.com>,
+        <mmaddireddy@nvidia.com>, <sagar.tv@gmail.com>
+References: <20190612095339.20118-1-vidyas@nvidia.com>
+ <20190612095339.20118-14-vidyas@nvidia.com>
+From:   Kishon Vijay Abraham I <kishon@ti.com>
+Message-ID: <9e699085-ef5e-f7be-e27c-23907ba92c82@ti.com>
+Date:   Thu, 20 Jun 2019 12:54:33 +0530
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.7.0
 MIME-Version: 1.0
-In-Reply-To: <20190620062246.2665-1-e5ten.arch@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190612095339.20118-14-vidyas@nvidia.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Ethan,
-
-Thank you for the patch,
-
-On 20/06/2019 07:22, Ethan Sommer wrote:
-> removes the bc build dependency introduced when timeconst.pl was
-> replaced by timeconst.bc
-
-Does this introduction of bc cause you problems when building?
-
-Documentation/process/changes.rst states that "You will need bc to build
-kernels 3.10 and higher"
-
-Is bc used elsewhere in the kernel?
-
-If this is the only use of BC and it is no longer a dependency - the
-process document should be updated.
 
 
-Though I see uses at:
-   tools/testing/selftests/net/forwarding/lib.sh
+On 12/06/19 3:23 PM, Vidya Sagar wrote:
+> Synopsys DesignWare core based PCIe controllers in Tegra 194 SoC interface
+> with Universal PHY (UPHY) module through a PIPE2UPHY (P2U) module.
+> For each PCIe lane of a controller, there is a P2U unit instantiated at
+> hardware level. This driver provides support for the programming required
+> for each P2U that is going to be used for a PCIe controller.
 
+One minor comment below. With that fixed
 
-There is a small issue with quotes highlighted below, and the only other
-(really minor) comment is performance.
-
-time (echo 1000 | bc -q ./kernel/time/timeconst.bc)
-  real	0m0.006s
-  user	0m0.006s
-  sys	0m0.000s
-
-vs
-time /tmp/timeconst.sh 1000
-  real	0m0.176s
-  user	0m0.141s
-  sys	0m0.050s
-
-
-So that's 176 milliseconds vs 6. (on an i7 gen8 laptop) which probably
-isn't going to affect things too much on the scale of building a kernel.
-But I measured it so I thought it was worth posting the results.
-
-
---
-Regards
-
-Kieran
-
-
-> Signed-off-by: Ethan Sommer <e5ten.arch@gmail.com>
+Acked-by: Kishon Vijay Abraham I <kishon@ti.com>
+> 
+> Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
 > ---
->  Kbuild                   |   4 +-
->  kernel/time/timeconst.bc | 117 --------------------------------------
->  kernel/time/timeconst.sh | 118 +++++++++++++++++++++++++++++++++++++++
->  3 files changed, 120 insertions(+), 119 deletions(-)
->  delete mode 100644 kernel/time/timeconst.bc
->  create mode 100755 kernel/time/timeconst.sh
+> Changes since [v9]:
+> * Used _relaxed() versions of readl() & writel()
 > 
-> diff --git a/Kbuild b/Kbuild
-> index 8637fd14135f..2b5f2957cf04 100644
-> --- a/Kbuild
-> +++ b/Kbuild
-> @@ -20,9 +20,9 @@ timeconst-file := include/generated/timeconst.h
+> Changes since [v8]:
+> * Made it dependent on ARCH_TEGRA_194_SOC directly instead of ARCH_TEGRA
+> 
+> Changes since [v7]:
+> * Changed P2U driver file name from pcie-p2u-tegra194.c to phy-tegra194-p2u.c
+> 
+> Changes since [v6]:
+> * None
+> 
+> Changes since [v5]:
+> * Addressed review comments from Thierry
+> 
+> Changes since [v4]:
+> * None
+> 
+> Changes since [v3]:
+> * Rebased on top of linux-next top of the tree
+> 
+> Changes since [v2]:
+> * Replaced spaces with tabs in Kconfig file
+> * Sorted header file inclusion alphabetically
+> 
+> Changes since [v1]:
+> * Added COMPILE_TEST in Kconfig
+> * Removed empty phy_ops implementations
+> * Modified code according to DT documentation file modifications
+> 
+>  drivers/phy/tegra/Kconfig            |   7 ++
+>  drivers/phy/tegra/Makefile           |   1 +
+>  drivers/phy/tegra/phy-tegra194-p2u.c | 120 +++++++++++++++++++++++++++
+>  3 files changed, 128 insertions(+)
+>  create mode 100644 drivers/phy/tegra/phy-tegra194-p2u.c
+> 
+> diff --git a/drivers/phy/tegra/Kconfig b/drivers/phy/tegra/Kconfig
+> index e516967d695b..f9817c3ae85f 100644
+> --- a/drivers/phy/tegra/Kconfig
+> +++ b/drivers/phy/tegra/Kconfig
+> @@ -7,3 +7,10 @@ config PHY_TEGRA_XUSB
 >  
->  targets += $(timeconst-file)
->  
-> -filechk_gentimeconst = echo $(CONFIG_HZ) | bc -q $<
-> +filechk_gentimeconst = $(CONFIG_SHELL) $< $(CONFIG_HZ)
->  
-> -$(timeconst-file): kernel/time/timeconst.bc FORCE
-> +$(timeconst-file): kernel/time/timeconst.sh FORCE
->  	$(call filechk,gentimeconst)
->  
->  #####
-> diff --git a/kernel/time/timeconst.bc b/kernel/time/timeconst.bc
-> deleted file mode 100644
-> index 7ed0e0fb5831..000000000000
-> --- a/kernel/time/timeconst.bc
-> +++ /dev/null
-> @@ -1,117 +0,0 @@
-> -/* SPDX-License-Identifier: GPL-2.0 */
-> -
-> -scale=0
-> -
-> -define gcd(a,b) {
-> -	auto t;
-> -	while (b) {
-> -		t = b;
-> -		b = a % b;
-> -		a = t;
-> -	}
-> -	return a;
-> -}
-> -
-> -/* Division by reciprocal multiplication. */
-> -define fmul(b,n,d) {
-> -       return (2^b*n+d-1)/d;
-> -}
-> -
-> -/* Adjustment factor when a ceiling value is used.  Use as:
-> -   (imul * n) + (fmulxx * n + fadjxx) >> xx) */
-> -define fadj(b,n,d) {
-> -	auto v;
-> -	d = d/gcd(n,d);
-> -	v = 2^b*(d-1)/d;
-> -	return v;
-> -}
-> -
-> -/* Compute the appropriate mul/adj values as well as a shift count,
-> -   which brings the mul value into the range 2^b-1 <= x < 2^b.  Such
-> -   a shift value will be correct in the signed integer range and off
-> -   by at most one in the upper half of the unsigned range. */
-> -define fmuls(b,n,d) {
-> -	auto s, m;
-> -	for (s = 0; 1; s++) {
-> -		m = fmul(s,n,d);
-> -		if (m >= 2^(b-1))
-> -			return s;
-> -	}
-> -	return 0;
-> -}
-> -
-> -define timeconst(hz) {
-> -	print "/* Automatically generated by kernel/time/timeconst.bc */\n"
-> -	print "/* Time conversion constants for HZ == ", hz, " */\n"
-> -	print "\n"
-> -
-> -	print "#ifndef KERNEL_TIMECONST_H\n"
-> -	print "#define KERNEL_TIMECONST_H\n\n"
-> -
-> -	print "#include <linux/param.h>\n"
-> -	print "#include <linux/types.h>\n\n"
-> -
-> -	print "#if HZ != ", hz, "\n"
-> -	print "#error \qinclude/generated/timeconst.h has the wrong HZ value!\q\n"
-> -	print "#endif\n\n"
-> -
-> -	if (hz < 2) {
-> -		print "#error Totally bogus HZ value!\n"
-> -	} else {
-> -		s=fmuls(32,1000,hz)
-> -		obase=16
-> -		print "#define HZ_TO_MSEC_MUL32\tU64_C(0x", fmul(s,1000,hz), ")\n"
-> -		print "#define HZ_TO_MSEC_ADJ32\tU64_C(0x", fadj(s,1000,hz), ")\n"
-> -		obase=10
-> -		print "#define HZ_TO_MSEC_SHR32\t", s, "\n"
-> -
-> -		s=fmuls(32,hz,1000)
-> -		obase=16
-> -		print "#define MSEC_TO_HZ_MUL32\tU64_C(0x", fmul(s,hz,1000), ")\n"
-> -		print "#define MSEC_TO_HZ_ADJ32\tU64_C(0x", fadj(s,hz,1000), ")\n"
-> -		obase=10
-> -		print "#define MSEC_TO_HZ_SHR32\t", s, "\n"
-> -
-> -		obase=10
-> -		cd=gcd(hz,1000)
-> -		print "#define HZ_TO_MSEC_NUM\t\t", 1000/cd, "\n"
-> -		print "#define HZ_TO_MSEC_DEN\t\t", hz/cd, "\n"
-> -		print "#define MSEC_TO_HZ_NUM\t\t", hz/cd, "\n"
-> -		print "#define MSEC_TO_HZ_DEN\t\t", 1000/cd, "\n"
-> -		print "\n"
-> -
-> -		s=fmuls(32,1000000,hz)
-> -		obase=16
-> -		print "#define HZ_TO_USEC_MUL32\tU64_C(0x", fmul(s,1000000,hz), ")\n"
-> -		print "#define HZ_TO_USEC_ADJ32\tU64_C(0x", fadj(s,1000000,hz), ")\n"
-> -		obase=10
-> -		print "#define HZ_TO_USEC_SHR32\t", s, "\n"
-> -
-> -		s=fmuls(32,hz,1000000)
-> -		obase=16
-> -		print "#define USEC_TO_HZ_MUL32\tU64_C(0x", fmul(s,hz,1000000), ")\n"
-> -		print "#define USEC_TO_HZ_ADJ32\tU64_C(0x", fadj(s,hz,1000000), ")\n"
-> -		obase=10
-> -		print "#define USEC_TO_HZ_SHR32\t", s, "\n"
-> -
-> -		obase=10
-> -		cd=gcd(hz,1000000)
-> -		print "#define HZ_TO_USEC_NUM\t\t", 1000000/cd, "\n"
-> -		print "#define HZ_TO_USEC_DEN\t\t", hz/cd, "\n"
-> -		print "#define USEC_TO_HZ_NUM\t\t", hz/cd, "\n"
-> -		print "#define USEC_TO_HZ_DEN\t\t", 1000000/cd, "\n"
-> -
-> -		cd=gcd(hz,1000000000)
-> -		print "#define HZ_TO_NSEC_NUM\t\t", 1000000000/cd, "\n"
-> -		print "#define HZ_TO_NSEC_DEN\t\t", hz/cd, "\n"
-> -		print "#define NSEC_TO_HZ_NUM\t\t", hz/cd, "\n"
-> -		print "#define NSEC_TO_HZ_DEN\t\t", 1000000000/cd, "\n"
-> -		print "\n"
-> -
-> -		print "#endif /* KERNEL_TIMECONST_H */\n"
-> -	}
-> -	halt
-> -}
-> -
-> -hz = read();
-> -timeconst(hz)
-> diff --git a/kernel/time/timeconst.sh b/kernel/time/timeconst.sh
-> new file mode 100755
-> index 000000000000..df821988acbf
+>  	  To compile this driver as a module, choose M here: the module will
+>  	  be called phy-tegra-xusb.
+> +
+> +config PHY_TEGRA194_P2U
+> +	tristate "NVIDIA Tegra194 PIPE2UPHY PHY driver"
+> +	depends on ARCH_TEGRA_194_SOC || COMPILE_TEST
+> +	select GENERIC_PHY
+> +	help
+> +	  Enable this to support the P2U (PIPE to UPHY) that is part of Tegra 19x SOCs.
+> diff --git a/drivers/phy/tegra/Makefile b/drivers/phy/tegra/Makefile
+> index 64ccaeacb631..320dd389f34d 100644
+> --- a/drivers/phy/tegra/Makefile
+> +++ b/drivers/phy/tegra/Makefile
+> @@ -6,3 +6,4 @@ phy-tegra-xusb-$(CONFIG_ARCH_TEGRA_124_SOC) += xusb-tegra124.o
+>  phy-tegra-xusb-$(CONFIG_ARCH_TEGRA_132_SOC) += xusb-tegra124.o
+>  phy-tegra-xusb-$(CONFIG_ARCH_TEGRA_210_SOC) += xusb-tegra210.o
+>  phy-tegra-xusb-$(CONFIG_ARCH_TEGRA_186_SOC) += xusb-tegra186.o
+> +obj-$(CONFIG_PHY_TEGRA194_P2U) += phy-tegra194-p2u.o
+> diff --git a/drivers/phy/tegra/phy-tegra194-p2u.c b/drivers/phy/tegra/phy-tegra194-p2u.c
+> new file mode 100644
+> index 000000000000..df009abd2482
 > --- /dev/null
-> +++ b/kernel/time/timeconst.sh
-> @@ -0,0 +1,118 @@
-> +#!/bin/sh
-> +# SPDX-License-Identifier: GPL-2.0
+> +++ b/drivers/phy/tegra/phy-tegra194-p2u.c
+> @@ -0,0 +1,120 @@
+> +// SPDX-License-Identifier: GPL-2.0+
+> +/*
+> + * P2U (PIPE to UPHY) driver for Tegra T194 SoC
+> + *
+> + * Copyright (C) 2019 NVIDIA Corporation.
+> + *
+> + * Author: Vidya Sagar <vidyas@nvidia.com>
+> + */
 > +
-> +if [ -z "$1" ]; then
-> +	printf '%s <HZ>\n' "$0"
-> +	exit 1
-> +else
-> +	hz="$1"
-> +fi
+> +#include <linux/err.h>
+> +#include <linux/io.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/of_platform.h>
+> +#include <linux/phy/phy.h>
 > +
-> +# 2 to the power of n
-> +pot() {
-> +	local i=1
-> +    local j=1
-> +	while [ "${j}" -le "$1" ]; do
-> +		i="$((i * 2))"
-> +        j="$((j + 1))"
-> +	done
-> +	printf '%s\n' "${i}"
+> +#define P2U_PERIODIC_EQ_CTRL_GEN3	0xc0
+> +#define P2U_PERIODIC_EQ_CTRL_GEN3_PERIODIC_EQ_EN		BIT(0)
+> +#define P2U_PERIODIC_EQ_CTRL_GEN3_INIT_PRESET_EQ_TRAIN_EN	BIT(1)
+> +#define P2U_PERIODIC_EQ_CTRL_GEN4	0xc4
+> +#define P2U_PERIODIC_EQ_CTRL_GEN4_INIT_PRESET_EQ_TRAIN_EN	BIT(1)
+> +
+> +#define P2U_RX_DEBOUNCE_TIME				0xa4
+> +#define P2U_RX_DEBOUNCE_TIME_DEBOUNCE_TIMER_MASK	0xffff
+> +#define P2U_RX_DEBOUNCE_TIME_DEBOUNCE_TIMER_VAL		160
+> +
+> +struct tegra_p2u {
+> +	void __iomem *base;
+> +};
+> +
+> +static inline void p2u_writel(struct tegra_p2u *phy, const u32 value,
+> +			      const u32 reg)
+> +{
+> +	writel_relaxed(value, phy->base + reg);
 > +}
 > +
-> +# Greatest common denominator
-> +gcd() {
-> +	local i="$1"
-> +	local j="$2"
-> +	local k
-> +	while [ "${j}" -ne 0 ]; do
-> +		k="${j}"
-> +		j="$((i % j))"
-> +		i="${k}"
-> +	done
-> +	printf '%s\n' "${i}"
+> +static inline u32 p2u_readl(struct tegra_p2u *phy, const u32 reg)
+> +{
+> +	return readl_relaxed(phy->base + reg);
 > +}
 > +
-> +# Division by reciprocal multiplication.
-> +fmul() {
-> +	printf '%s\n' "$((($(pot "$1") * $2 + $3 - 1) / $3))"
+> +static int tegra_p2u_power_on(struct phy *x)
+> +{
+> +	struct tegra_p2u *phy = phy_get_drvdata(x);
+> +	u32 val;
+> +
+> +	val = p2u_readl(phy, P2U_PERIODIC_EQ_CTRL_GEN3);
+> +	val &= ~P2U_PERIODIC_EQ_CTRL_GEN3_PERIODIC_EQ_EN;
+> +	val |= P2U_PERIODIC_EQ_CTRL_GEN3_INIT_PRESET_EQ_TRAIN_EN;
+> +	p2u_writel(phy, val, P2U_PERIODIC_EQ_CTRL_GEN3);
+> +
+> +	val = p2u_readl(phy, P2U_PERIODIC_EQ_CTRL_GEN4);
+> +	val |= P2U_PERIODIC_EQ_CTRL_GEN4_INIT_PRESET_EQ_TRAIN_EN;
+> +	p2u_writel(phy, val, P2U_PERIODIC_EQ_CTRL_GEN4);
+> +
+> +	val = p2u_readl(phy, P2U_RX_DEBOUNCE_TIME);
+> +	val &= ~P2U_RX_DEBOUNCE_TIME_DEBOUNCE_TIMER_MASK;
+> +	val |= P2U_RX_DEBOUNCE_TIME_DEBOUNCE_TIMER_VAL;
+> +	p2u_writel(phy, val, P2U_RX_DEBOUNCE_TIME);
+> +
+> +	return 0;
 > +}
 > +
-> +# Adjustment factor when a ceiling value is used.
-> +fadj() {
-> +	local i="$(gcd "$2" "$3")"
-> +	printf '%s\n' "$(($(pot "$1") * ($3 / i - 1) / ($3 / i)))"
-> +}
+> +static const struct phy_ops ops = {
+> +	.power_on = tegra_p2u_power_on,
+> +	.owner = THIS_MODULE,
+> +};
 > +
-> +# Compute the appropriate mul/adj values as well as a shift count,
-> +# which brings the mul value into the range 2^b-1 <= x < 2^b.  Such
-> +# a shift value will be correct in the signed integer range and off
-> +# by at most one in the upper half of the unsigned range.
-> +fmuls() {
-> +	local i=0
-> +    local j
-> +	while true; do
-> +        j="$(fmul "${i}" "$2" "$3")"
-> +		if [ "${j}" -ge "$(pot "$(($1 - 1))")" ]; then
-> +			printf '%s\n' "${i}" && return
-> +		fi
-> +		i="$((i + 1))"
-> +	done
-> +}
+> +static int tegra_p2u_probe(struct platform_device *pdev)
+> +{
+> +	struct phy_provider *phy_provider;
+> +	struct device *dev = &pdev->dev;
+> +	struct phy *generic_phy;
+> +	struct tegra_p2u *phy;
+> +	struct resource *res;
 > +
-> +printf '/* Automatically generated by %s */\n' "$0"
-> +printf '/* Time conversion constants for HZ == %s */\n\n' "$1"
+> +	phy = devm_kzalloc(dev, sizeof(*phy), GFP_KERNEL);
+> +	if (!phy)
+> +		return -ENOMEM;
 > +
-> +printf '#ifndef KERNEL_TIMECONST_H\n'
-> +printf '#define KERNEL_TIMECONST_H\n\n'
+> +	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "ctl");
+> +	phy->base = devm_ioremap_resource(dev, res);
+> +	if (IS_ERR(phy->base))
+> +		return PTR_ERR_OR_ZERO(phy->base);
 > +
-> +printf '#include <linux/param.h>\n'
-> +printf '#include <linux/types.h>\n\n'
+> +	platform_set_drvdata(pdev, phy);
 > +
-> +printf '#if HZ != %s\n' "$1"
-> +printf '#error \qinclude/generated/timeconst.h has the wrong HZ value!\q\n'
+> +	generic_phy = devm_phy_create(dev, NULL, &ops);
+> +	if (IS_ERR(generic_phy))
+> +		return PTR_ERR_OR_ZERO(generic_phy);
+> +
+> +	phy_set_drvdata(generic_phy, phy);
+> +
+> +	phy_provider = devm_of_phy_provider_register(dev, of_phy_simple_xlate);
+> +	if (IS_ERR(phy_provider))
+> +		return PTR_ERR_OR_ZERO(phy_provider);
+> +
+> +	return 0;
 
-This generates an incorrect output:
+Just make this..
+phy_provider = devm_of_phy_provider_register(dev, of_phy_simple_xlate);
+return PTR_ERR_OR_ZERO(phy_provider);
 
-diff /tmp/bc.timed /tmp/sh.timed
-1c1
-< /* Automatically generated by kernel/time/timeconst.bc */
----
-> /* Automatically generated by /tmp/timeconst.sh */
-11c11
-< #error "include/generated/timeconst.h has the wrong HZ value!"
----
-> #error \qinclude/generated/timeconst.h has the wrong HZ value!\q
-    here  ^                                             and here ^
-
-
-
-> +printf '#endif\n\n'
-> +
-> +if [ "$1" -lt 2 ]; then
-> +	printf '#error Totally bogus HZ value!\n'
-> +	exit 1
-> +fi
-> +
-> +s="$(fmuls 32 1000 "$1")"
-> +printf '#define HZ_TO_MSEC_MUL32\tU64_C(0x%X)\n' "$(fmul "${s}" 1000 "$1")"
-> +printf '#define HZ_TO_MSEC_ADJ32\tU64_C(0x%X)\n' "$(fadj "${s}" 1000 "$1")"
-> +printf '#define HZ_TO_MSEC_SHR32\t%s\n' "${s}"
-> +
-> +s="$(fmuls 32 "$1" 1000)"
-> +printf '#define MSEC_TO_HZ_MUL32\tU64_C(0x%X)\n' "$(fmul "${s}" "$1" 1000)"
-> +printf '#define MSEC_TO_HZ_ADJ32\tU64_C(0x%X)\n' "$(fadj "${s}" "$1" 1000)"
-> +printf '#define MSEC_TO_HZ_SHR32\t%s\n' "${s}"
-> +
-> +cd="$(gcd "$1" 1000)"
-> +printf '#define HZ_TO_MSEC_NUM\t\t%s\n' "$((1000 / cd))"
-> +printf '#define HZ_TO_MSEC_DEN\t\t%s\n' "$((hz / cd))"
-> +printf '#define MSEC_TO_HZ_NUM\t\t%s\n' "$((hz / cd))"
-> +printf '#define MSEC_TO_HZ_DEN\t\t%s\n\n' "$((1000 / cd))"
-> +
-> +s="$(fmuls 32 1000000 "$1")"
-> +printf '#define HZ_TO_USEC_MUL32\tU64_C(0x%X)\n' "$(fmul "${s}" 1000000 "$1")"
-> +printf '#define HZ_TO_USEC_ADJ32\tU64_C(0x%X)\n' "$(fadj "${s}" 1000000 "$1")"
-> +printf '#define HZ_TO_USEC_SHR32\t%s\n' "${s}"
-> +
-> +s="$(fmuls 32 "$1" 1000000)"
-> +printf '#define USEC_TO_HZ_MUL32\tU64_C(0x%X)\n' "$(fmul "${s}" "$1" 1000000)"
-> +printf '#define USEC_TO_HZ_ADJ32\tU64_C(0x%X)\n' "$(fadj "${s}" "$1" 1000000)"
-> +printf '#define USEC_TO_HZ_SHR32\t%s\n' "${s}"
-> +
-> +cd="$(gcd "$1" 1000000)"
-> +printf '#define HZ_TO_USEC_NUM\t\t%s\n' "$((1000000 / cd))"
-> +printf '#define HZ_TO_USEC_DEN\t\t%s\n' "$((hz / cd))"
-> +printf '#define USEC_TO_HZ_NUM\t\t%s\n' "$((hz / cd))"
-> +printf '#define USEC_TO_HZ_DEN\t\t%s\n' "$((1000000 / cd))"
-> +
-> +cd="$(gcd "$1" 1000000000)"
-> +printf '#define HZ_TO_NSEC_NUM\t\t%s\n' "$((1000000000 / cd))"
-> +printf '#define HZ_TO_NSEC_DEN\t\t%s\n' "$((hz / cd))"
-> +printf '#define NSEC_TO_HZ_NUM\t\t%s\n' "$((hz / cd))"
-> +printf '#define NSEC_TO_HZ_DEN\t\t%s\n' "$((1000000000 / cd))"
-> +
-> +printf '\n#endif /* KERNEL_TIMECONST_H */\n'
-> 
-
--- 
-Regards
---
-Kieran
+Thanks
+Kishon
