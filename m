@@ -2,41 +2,45 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A03434D9A0
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 20:43:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 142FC4D5A0
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 20:00:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726424AbfFTSnh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 14:43:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39872 "EHLO mail.kernel.org"
+        id S1726603AbfFTR7a (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 13:59:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46846 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725869AbfFTSnh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 14:43:37 -0400
+        id S1726551AbfFTR7X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Jun 2019 13:59:23 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D664720656;
-        Thu, 20 Jun 2019 18:43:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C3B18208CA;
+        Thu, 20 Jun 2019 17:59:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561056216;
-        bh=qssMf724l63GhfHaaNI1XFYyjk/ni2GigTWG47mPq+k=;
+        s=default; t=1561053563;
+        bh=cNoU5BzQdtk8Je647zJAruO771mRStzC5eepQrzB0Ic=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=eHJUJEpwQpJgwjwTXV86R/ejECgnna4zyIVw+/u2pkpi+auEYU1B5ZtOyYh7NGTVs
-         1FAaosz+V23bG4urwC89rZHwUQsIWYEjV0OrQ0tBNk7o4I59XcGyzvLp26ZQHyNH50
-         QCyUvS9YRDBEFu7EbFPVa9ItFy5BKcXPxQ9rCFyk=
+        b=HbNvJTD0Ui2rwxndWJNeS4af3FLninW1QKZbc0gmuC2EZ0yTaJgyhp6U7rJ6JvudO
+         DUBc/F3k0vi4HYA0FwNi+e/wMds63btFSwtjlwIi61sqo82ynZ/Fn7t5QX3qJc8lxM
+         4tBxrR5oje+03F0EkgeYMkNK1Ch9uVH9Upt9MR1k=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "Kuo, Hsuan-Chi" <hckuo2@illinois.edu>,
-        Vladimir Zapolskiy <vz@mleia.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        stable@vger.kernel.org, Yue Hu <huyue2@yulong.com>,
+        Anshuman Khandual <anshuman.khandual@arm.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Laura Abbott <labbott@redhat.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 027/117] watchdog: fix compile time error of pretimeout governors
-Date:   Thu, 20 Jun 2019 19:56:01 +0200
-Message-Id: <20190620174353.612777514@linuxfoundation.org>
+Subject: [PATCH 4.4 05/84] mm/cma.c: fix crash on CMA allocation if bitmap allocation fails
+Date:   Thu, 20 Jun 2019 19:56:02 +0200
+Message-Id: <20190620174338.531321990@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190620174351.964339809@linuxfoundation.org>
-References: <20190620174351.964339809@linuxfoundation.org>
+In-Reply-To: <20190620174337.538228162@linuxfoundation.org>
+References: <20190620174337.538228162@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,48 +50,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit a223770bfa7b6647f3a70983257bd89f9cafce46 ]
+[ Upstream commit 1df3a339074e31db95c4790ea9236874b13ccd87 ]
 
-CONFIG_WATCHDOG_PRETIMEOUT_GOV build symbol adds watchdog_pretimeout.o
-object to watchdog.o, the latter is compiled only if CONFIG_WATCHDOG_CORE
-is selected, so it rightfully makes sense to add it as a dependency.
+f022d8cb7ec7 ("mm: cma: Don't crash on allocation if CMA area can't be
+activated") fixes the crash issue when activation fails via setting
+cma->count as 0, same logic exists if bitmap allocation fails.
 
-The change fixes the next compilation errors, if CONFIG_WATCHDOG_CORE=n
-and CONFIG_WATCHDOG_PRETIMEOUT_GOV=y are selected:
-
-  drivers/watchdog/pretimeout_noop.o: In function `watchdog_gov_noop_register':
-  drivers/watchdog/pretimeout_noop.c:35: undefined reference to `watchdog_register_governor'
-  drivers/watchdog/pretimeout_noop.o: In function `watchdog_gov_noop_unregister':
-  drivers/watchdog/pretimeout_noop.c:40: undefined reference to `watchdog_unregister_governor'
-
-  drivers/watchdog/pretimeout_panic.o: In function `watchdog_gov_panic_register':
-  drivers/watchdog/pretimeout_panic.c:35: undefined reference to `watchdog_register_governor'
-  drivers/watchdog/pretimeout_panic.o: In function `watchdog_gov_panic_unregister':
-  drivers/watchdog/pretimeout_panic.c:40: undefined reference to `watchdog_unregister_governor'
-
-Reported-by: Kuo, Hsuan-Chi <hckuo2@illinois.edu>
-Fixes: ff84136cb6a4 ("watchdog: add watchdog pretimeout governor framework")
-Signed-off-by: Vladimir Zapolskiy <vz@mleia.com>
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-Signed-off-by: Wim Van Sebroeck <wim@linux-watchdog.org>
+Link: http://lkml.kernel.org/r/20190325081309.6004-1-zbestahu@gmail.com
+Signed-off-by: Yue Hu <huyue2@yulong.com>
+Reviewed-by: Anshuman Khandual <anshuman.khandual@arm.com>
+Cc: Joonsoo Kim <iamjoonsoo.kim@lge.com>
+Cc: Laura Abbott <labbott@redhat.com>
+Cc: Mike Rapoport <rppt@linux.vnet.ibm.com>
+Cc: Randy Dunlap <rdunlap@infradead.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/watchdog/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+ mm/cma.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/watchdog/Kconfig b/drivers/watchdog/Kconfig
-index 15c01830799a..d65c220d8175 100644
---- a/drivers/watchdog/Kconfig
-+++ b/drivers/watchdog/Kconfig
-@@ -1850,6 +1850,7 @@ comment "Watchdog Pretimeout Governors"
+diff --git a/mm/cma.c b/mm/cma.c
+index f0d91aca5a4c..5ae4452656cd 100644
+--- a/mm/cma.c
++++ b/mm/cma.c
+@@ -100,8 +100,10 @@ static int __init cma_activate_area(struct cma *cma)
  
- config WATCHDOG_PRETIMEOUT_GOV
- 	bool "Enable watchdog pretimeout governors"
-+	depends on WATCHDOG_CORE
- 	help
- 	  The option allows to select watchdog pretimeout governors.
+ 	cma->bitmap = kzalloc(bitmap_size, GFP_KERNEL);
  
+-	if (!cma->bitmap)
++	if (!cma->bitmap) {
++		cma->count = 0;
+ 		return -ENOMEM;
++	}
+ 
+ 	WARN_ON_ONCE(!pfn_valid(pfn));
+ 	zone = page_zone(pfn_to_page(pfn));
 -- 
 2.20.1
 
