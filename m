@@ -2,135 +2,141 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A735D4D80C
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 20:24:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9C6CE4D82C
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 20:24:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728981AbfFTSWq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 14:22:46 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:55181 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726494AbfFTSWp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 14:22:45 -0400
-Received: by mail-wm1-f67.google.com with SMTP id g135so3983455wme.4
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2019 11:22:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=6W69Du1bctBdAeWrQSZ50pOOXCwaxniMxHy/YbHqEqI=;
-        b=JICpQbU5muSaMtq1JB5VHNGLUk8jq3GGBHMiNUcw23ZBGD91CH2nTZBoRUjsuDGAVT
-         HJIZBXEoJE+TVP+YgbXTHwtMgd2rAmWJxaNZ8RcAgDR9Z1sMjuss+1HsQtsInCd0+03t
-         In0ETrRALkN8OAWS22SMSF+hsKL4ynnzIiMIzZlzKtlmThca1O3VmBMcNird/HI8Yt+u
-         Jf1KYASutl7mZG4sEy8uTBX4FTwS27OgA/SP95K3IQhbIiopmXI2bm+0x0oYHaxSUyiF
-         mT/G68xQfAwPH+DK4LFFzXcsR9mbHRIm+o5AMVNheK8HwJgeIPlOerpn9B8GTjWuqA1P
-         FuYA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=6W69Du1bctBdAeWrQSZ50pOOXCwaxniMxHy/YbHqEqI=;
-        b=YVtcJyBhEbtxTJ6avBBay1XXQzkvI7DuFlfxPkiv4fp3/lxX9Md4WF3tD/ICHmB4ft
-         TAPw36pO1WSd9ShgOwQ9Is04L8UmqSgrCt5KbHfZlLicx+ucf4FyOSiAsZIoPBemGwx6
-         GxaGShrTqUB2yryzjIvoe8ipTNsI7Nqr1dVU6twYeTaHchW7m2F2QpHjWGIt8Y0O+jTF
-         kf2rpN8QtU/M7YceI6cao8QsShpNu5OhDxQjcD5AVR7BzyHR7nkbHrZQ/YoQehg63Vup
-         FeqeNNbkW+mtqOfPqo1RcbyTWlS8aMzhoCzP6Zn/kpOZ1h+3YbRsajdnOb8RjG0uvuCW
-         Qe3A==
-X-Gm-Message-State: APjAAAWOGHhPH9ta5LqWchKSaJVn9936p9VLB48MKJ/tzVFIxdAROH++
-        vx2ne0I+7Hb3FOZr1QZqc5wO8zerJqAPyhDn/73F
-X-Google-Smtp-Source: APXvYqztEC3ToiRcw+BN0gYrgLc79Cen4f6cFKKe1+9L7Veg67QIX9zR7+/BxyQbhLEPicpGGpytgYQSxRHRZ1v9Nk0=
-X-Received: by 2002:a1c:1a88:: with SMTP id a130mr556373wma.149.1561054963668;
- Thu, 20 Jun 2019 11:22:43 -0700 (PDT)
+        id S1728672AbfFTSYo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 14:24:44 -0400
+Received: from ale.deltatee.com ([207.54.116.67]:33686 "EHLO ale.deltatee.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726633AbfFTSYi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Jun 2019 14:24:38 -0400
+Received: from s01061831bf6ec98c.cg.shawcable.net ([68.147.80.180] helo=[192.168.6.132])
+        by ale.deltatee.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.89)
+        (envelope-from <logang@deltatee.com>)
+        id 1he1jU-0005yI-Se; Thu, 20 Jun 2019 12:24:26 -0600
+To:     Jason Gunthorpe <jgg@ziepe.ca>
+Cc:     linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org,
+        linux-rdma@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
+        Christoph Hellwig <hch@lst.de>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        Keith Busch <kbusch@kernel.org>,
+        Stephen Bates <sbates@raithlin.com>
+References: <20190620161240.22738-1-logang@deltatee.com>
+ <20190620161240.22738-21-logang@deltatee.com>
+ <20190620164909.GC19891@ziepe.ca>
+ <f9186b2b-7737-965f-2dca-25e40e566e64@deltatee.com>
+ <20190620171105.GD19891@ziepe.ca>
+From:   Logan Gunthorpe <logang@deltatee.com>
+Message-ID: <a3a8ad66-459c-d590-5ce7-ce593cd8f34a@deltatee.com>
+Date:   Thu, 20 Jun 2019 12:24:20 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.1
 MIME-Version: 1.0
-References: <cover.1561050806.git.mchehab+samsung@kernel.org> <3b8d7c64f887ddea01df3c4eeabc745c8ec45406.1561050806.git.mchehab+samsung@kernel.org>
-In-Reply-To: <3b8d7c64f887ddea01df3c4eeabc745c8ec45406.1561050806.git.mchehab+samsung@kernel.org>
-From:   Bjorn Helgaas <bhelgaas@google.com>
-Date:   Thu, 20 Jun 2019 13:22:31 -0500
-Message-ID: <CAErSpo5+MH4t0OVZkuLykZhiQg-3itaozeXO6v=nnc6e1UvCSw@mail.gmail.com>
-Subject: Re: [PATCH v2 01/22] ABI: sysfs-bus-pci-devices-aer_stats uses an
- invalid tag
-To:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Cc:     Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab@infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Rajat Jain <rajatja@google.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190620171105.GD19891@ziepe.ca>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 68.147.80.180
+X-SA-Exim-Rcpt-To: sbates@raithlin.com, kbusch@kernel.org, sagi@grimberg.me, dan.j.williams@intel.com, bhelgaas@google.com, hch@lst.de, axboe@kernel.dk, linux-rdma@vger.kernel.org, linux-pci@vger.kernel.org, linux-nvme@lists.infradead.org, linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, jgg@ziepe.ca
+X-SA-Exim-Mail-From: logang@deltatee.com
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on ale.deltatee.com
+X-Spam-Level: 
+X-Spam-Status: No, score=-8.9 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        GREYLIST_ISWHITE autolearn=ham autolearn_force=no version=3.4.2
+Subject: Re: [RFC PATCH 20/28] IB/core: Introduce API for initializing a RW
+ ctx from a DMA address
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 20, 2019 at 12:23 PM Mauro Carvalho Chehab
-<mchehab+samsung@kernel.org> wrote:
->
-> According with Documentation/ABI/, the right tag to describe
-> an ABI symbol is "What:", and not "Where:".
->
-> Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 
-Acked-by: Bjorn Helgaas <bhelgaas@google.com>
 
-I assume somebody else will merge this series as a whole.
+On 2019-06-20 11:11 a.m., Jason Gunthorpe wrote:
+> On Thu, Jun 20, 2019 at 10:59:44AM -0600, Logan Gunthorpe wrote:
+>>
+>>
+>> On 2019-06-20 10:49 a.m., Jason Gunthorpe wrote:
+>>> On Thu, Jun 20, 2019 at 10:12:32AM -0600, Logan Gunthorpe wrote:
+>>>> Introduce rdma_rw_ctx_dma_init() and rdma_rw_ctx_dma_destroy() which
+>>>> peform the same operation as rdma_rw_ctx_init() and
+>>>> rdma_rw_ctx_destroy() respectively except they operate on a DMA
+>>>> address and length instead of an SGL.
+>>>>
+>>>> This will be used for struct page-less P2PDMA, but there's also
+>>>> been opinions expressed to migrate away from SGLs and struct
+>>>> pages in the RDMA APIs and this will likely fit with that
+>>>> effort.
+>>>>
+>>>> Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
+>>>>  drivers/infiniband/core/rw.c | 74 ++++++++++++++++++++++++++++++------
+>>>>  include/rdma/rw.h            |  6 +++
+>>>>  2 files changed, 69 insertions(+), 11 deletions(-)
+>>>>
+>>>> diff --git a/drivers/infiniband/core/rw.c b/drivers/infiniband/core/rw.c
+>>>> index 32ca8429eaae..cefa6b930bc8 100644
+>>>> +++ b/drivers/infiniband/core/rw.c
+>>>> @@ -319,6 +319,39 @@ int rdma_rw_ctx_init(struct rdma_rw_ctx *ctx, struct ib_qp *qp, u8 port_num,
+>>>>  }
+>>>>  EXPORT_SYMBOL(rdma_rw_ctx_init);
+>>>>  
+>>>> +/**
+>>>> + * rdma_rw_ctx_dma_init - initialize a RDMA READ/WRITE context from a
+>>>> + *	DMA address instead of SGL
+>>>> + * @ctx:	context to initialize
+>>>> + * @qp:		queue pair to operate on
+>>>> + * @port_num:	port num to which the connection is bound
+>>>> + * @addr:	DMA address to READ/WRITE from/to
+>>>> + * @len:	length of memory to operate on
+>>>> + * @remote_addr:remote address to read/write (relative to @rkey)
+>>>> + * @rkey:	remote key to operate on
+>>>> + * @dir:	%DMA_TO_DEVICE for RDMA WRITE, %DMA_FROM_DEVICE for RDMA READ
+>>>> + *
+>>>> + * Returns the number of WQEs that will be needed on the workqueue if
+>>>> + * successful, or a negative error code.
+>>>> + */
+>>>> +int rdma_rw_ctx_dma_init(struct rdma_rw_ctx *ctx, struct ib_qp *qp,
+>>>> +		u8 port_num, dma_addr_t addr, u32 len, u64 remote_addr,
+>>>> +		u32 rkey, enum dma_data_direction dir)
+>>>
+>>> Why not keep the same basic signature here but replace the scatterlist
+>>> with the dma vec ?
+>>
+>> Could do. At the moment, I had no need for dma_vec in this interface.
+> 
+> I think that is because you only did nvme not srp/iser :)
 
-> ---
->  .../ABI/testing/sysfs-bus-pci-devices-aer_stats      | 12 ++++++------
->  1 file changed, 6 insertions(+), 6 deletions(-)
->
-> diff --git a/Documentation/ABI/testing/sysfs-bus-pci-devices-aer_stats b/Documentation/ABI/testing/sysfs-bus-pci-devices-aer_stats
-> index 4b0318c99507..ff229d71961c 100644
-> --- a/Documentation/ABI/testing/sysfs-bus-pci-devices-aer_stats
-> +++ b/Documentation/ABI/testing/sysfs-bus-pci-devices-aer_stats
-> @@ -9,7 +9,7 @@ errors may be "seen" / reported by the link partner and not the
->  problematic endpoint itself (which may report all counters as 0 as it never
->  saw any problems).
->
-> -Where:         /sys/bus/pci/devices/<dev>/aer_dev_correctable
-> +What:          /sys/bus/pci/devices/<dev>/aer_dev_correctable
->  Date:          July 2018
->  Kernel Version: 4.19.0
->  Contact:       linux-pci@vger.kernel.org, rajatja@google.com
-> @@ -31,7 +31,7 @@ Header Log Overflow 0
->  TOTAL_ERR_COR 2
->  -------------------------------------------------------------------------
->
-> -Where:         /sys/bus/pci/devices/<dev>/aer_dev_fatal
-> +What:          /sys/bus/pci/devices/<dev>/aer_dev_fatal
->  Date:          July 2018
->  Kernel Version: 4.19.0
->  Contact:       linux-pci@vger.kernel.org, rajatja@google.com
-> @@ -62,7 +62,7 @@ TLP Prefix Blocked Error 0
->  TOTAL_ERR_FATAL 0
->  -------------------------------------------------------------------------
->
-> -Where:         /sys/bus/pci/devices/<dev>/aer_dev_nonfatal
-> +What:          /sys/bus/pci/devices/<dev>/aer_dev_nonfatal
->  Date:          July 2018
->  Kernel Version: 4.19.0
->  Contact:       linux-pci@vger.kernel.org, rajatja@google.com
-> @@ -103,19 +103,19 @@ collectors) that are AER capable. These indicate the number of error messages as
->  device, so these counters include them and are thus cumulative of all the error
->  messages on the PCI hierarchy originating at that root port.
->
-> -Where:         /sys/bus/pci/devices/<dev>/aer_stats/aer_rootport_total_err_cor
-> +What:          /sys/bus/pci/devices/<dev>/aer_stats/aer_rootport_total_err_cor
->  Date:          July 2018
->  Kernel Version: 4.19.0
->  Contact:       linux-pci@vger.kernel.org, rajatja@google.com
->  Description:   Total number of ERR_COR messages reported to rootport.
->
-> -Where:     /sys/bus/pci/devices/<dev>/aer_stats/aer_rootport_total_err_fatal
-> +What:      /sys/bus/pci/devices/<dev>/aer_stats/aer_rootport_total_err_fatal
->  Date:          July 2018
->  Kernel Version: 4.19.0
->  Contact:       linux-pci@vger.kernel.org, rajatja@google.com
->  Description:   Total number of ERR_FATAL messages reported to rootport.
->
-> -Where:     /sys/bus/pci/devices/<dev>/aer_stats/aer_rootport_total_err_nonfatal
-> +What:      /sys/bus/pci/devices/<dev>/aer_stats/aer_rootport_total_err_nonfatal
->  Date:          July 2018
->  Kernel Version: 4.19.0
->  Contact:       linux-pci@vger.kernel.org, rajatja@google.com
-> --
-> 2.21.0
->
+I'm not sure that's true at least for the P2P case. With P2P we are able
+to  allocate one continuous region of memory for each transaction. It
+would be quite weird to allocate multiple regions for a single transaction.
+
+>>>> +{
+>>>> +	struct scatterlist sg;
+>>>> +
+>>>> +	sg_dma_address(&sg) = addr;
+>>>> +	sg_dma_len(&sg) = len;
+>>>
+>>> This needs to fail if the driver is one of the few that require
+>>> struct page to work..
+>>
+>> Yes, right. Currently P2PDMA checks for the use of dma_virt_ops. And
+>> that probably should also be done here. But is that sufficient? You're
+>> probably right that it'll take an audit of the RDMA tree to sort that out.
+> 
+> For this purpose I'd be fine if you added a flag to the struct
+> ib_device_ops that is set on drivers that we know are OK.. We can make
+> that list bigger over time.
+
+Ok, that would mirror what we did for the block layer. I'll look at
+doing something like that in the near future.
+
+Thanks,
+
+Logan
