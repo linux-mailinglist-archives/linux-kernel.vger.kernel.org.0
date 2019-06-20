@@ -2,37 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6DB2E4D5BF
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 20:01:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EE8424D65D
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 20:08:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726299AbfFTSAj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 14:00:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49508 "EHLO mail.kernel.org"
+        id S1728293AbfFTSHM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 14:07:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33500 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727010AbfFTSAg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 14:00:36 -0400
+        id S1728282AbfFTSHK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Jun 2019 14:07:10 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3F844214AF;
-        Thu, 20 Jun 2019 18:00:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 16E422089C;
+        Thu, 20 Jun 2019 18:07:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561053635;
-        bh=9PkkKS4eK3cHYIwtOop9pQXBjR3OgNjWLKjzMomaHd4=;
+        s=default; t=1561054029;
+        bh=5FKgHiwaps52oURHQqc1RE4Wu7mEfpAXnwncpeXbwZI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pHl7kDBAS3dlBxVP3Dk1/Zwhe0lL7SyoM/ITUyMvT83FL4npVZC3r6ZVbrPXn1/8Q
-         iYZ43quFHwoLXtOD/kSaD9I4bXtEYrusVgjysJ00JNpsSJDFrXSOA9KbRv90vi6VrS
-         w9HfwMU/zqlBfELtEaJ9x3JAXmMsaFO0pJ2Iz0vs=
+        b=yh28DIMXqGJjXKrZfzv6zqRHQQowxubDxzctkiR0Q3qO5jyOpYFMdhH/4e1v6a4Co
+         mZJcg6RSOIg1euLhTuqy4yp/cs7F33cMdqWoX5UWgRhC21Z6PPD1X+eIOhbQQhRWcC
+         qAKziAN7CBFsGYvoQgjLCNapyfueSRGuiu6Pl+Ks=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Marco Zatta <marco@zatta.me>
-Subject: [PATCH 4.4 58/84] USB: Fix chipmunk-like voice when using Logitech C270 for recording audio.
+        stable@vger.kernel.org,
+        Murray McAllister <murray.mcallister@gmail.com>,
+        Thomas Hellstrom <thellstrom@vmware.com>
+Subject: [PATCH 4.9 081/117] drm/vmwgfx: integer underflow in vmw_cmd_dx_set_shader() leading to an invalid read
 Date:   Thu, 20 Jun 2019 19:56:55 +0200
-Message-Id: <20190620174347.649836673@linuxfoundation.org>
+Message-Id: <20190620174357.187907749@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190620174337.538228162@linuxfoundation.org>
-References: <20190620174337.538228162@linuxfoundation.org>
+In-Reply-To: <20190620174351.964339809@linuxfoundation.org>
+References: <20190620174351.964339809@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,37 +44,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Marco Zatta <marco@zatta.me>
+From: Murray McAllister <murray.mcallister@gmail.com>
 
-commit bd21f0222adab64974b7d1b4b8c7ce6b23e9ea4d upstream.
+commit 5ed7f4b5eca11c3c69e7c8b53e4321812bc1ee1e upstream.
 
-This patch fixes the chipmunk-like voice that manifets randomly when
-using the integrated mic of the Logitech Webcam HD C270.
+If SVGA_3D_CMD_DX_SET_SHADER is called with a shader ID
+of SVGA3D_INVALID_ID, and a shader type of
+SVGA3D_SHADERTYPE_INVALID, the calculated binding.shader_slot
+will be 4294967295, leading to an out-of-bounds read in vmw_binding_loc()
+when the offset is calculated.
 
-The issue was solved initially for this device by commit 2394d67e446b
-("USB: add RESET_RESUME for webcams shown to be quirky") but it was then
-reintroduced by e387ef5c47dd ("usb: Add USB_QUIRK_RESET_RESUME for all
-Logitech UVC webcams"). This patch is to have the fix back.
-
-Signed-off-by: Marco Zatta <marco@zatta.me>
-Cc: stable <stable@vger.kernel.org>
+Cc: <stable@vger.kernel.org>
+Fixes: d80efd5cb3de ("drm/vmwgfx: Initial DX support")
+Signed-off-by: Murray McAllister <murray.mcallister@gmail.com>
+Reviewed-by: Thomas Hellstrom <thellstrom@vmware.com>
+Signed-off-by: Thomas Hellstrom <thellstrom@vmware.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
----
- drivers/usb/core/quirks.c |    3 +++
- 1 file changed, 3 insertions(+)
 
---- a/drivers/usb/core/quirks.c
-+++ b/drivers/usb/core/quirks.c
-@@ -70,6 +70,9 @@ static const struct usb_device_id usb_qu
- 	/* Cherry Stream G230 2.0 (G85-231) and 3.0 (G85-232) */
- 	{ USB_DEVICE(0x046a, 0x0023), .driver_info = USB_QUIRK_RESET_RESUME },
+---
+ drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+--- a/drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c
++++ b/drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c
+@@ -2493,7 +2493,8 @@ static int vmw_cmd_dx_set_shader(struct
  
-+	/* Logitech HD Webcam C270 */
-+	{ USB_DEVICE(0x046d, 0x0825), .driver_info = USB_QUIRK_RESET_RESUME },
-+
- 	/* Logitech HD Pro Webcams C920, C920-C, C925e and C930e */
- 	{ USB_DEVICE(0x046d, 0x082d), .driver_info = USB_QUIRK_DELAY_INIT },
- 	{ USB_DEVICE(0x046d, 0x0841), .driver_info = USB_QUIRK_DELAY_INIT },
+ 	cmd = container_of(header, typeof(*cmd), header);
+ 
+-	if (cmd->body.type >= SVGA3D_SHADERTYPE_DX10_MAX) {
++	if (cmd->body.type >= SVGA3D_SHADERTYPE_DX10_MAX ||
++	    cmd->body.type < SVGA3D_SHADERTYPE_MIN) {
+ 		DRM_ERROR("Illegal shader type %u.\n",
+ 			  (unsigned) cmd->body.type);
+ 		return -EINVAL;
 
 
