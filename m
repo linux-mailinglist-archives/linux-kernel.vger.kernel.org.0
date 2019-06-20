@@ -2,67 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 911034CC45
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 12:51:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 735D44CC67
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 12:55:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731332AbfFTKv5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 06:51:57 -0400
-Received: from verein.lst.de ([213.95.11.211]:59434 "EHLO newverein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726211AbfFTKv4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 06:51:56 -0400
-Received: by newverein.lst.de (Postfix, from userid 2407)
-        id 558CF68B20; Thu, 20 Jun 2019 12:51:24 +0200 (CEST)
-Date:   Thu, 20 Jun 2019 12:51:24 +0200
-From:   Christoph Hellwig <hch@lst.de>
-To:     Jason Gunthorpe <jgg@ziepe.ca>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        Potnuri Bharat Teja <bharat@chelsio.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        Ian Abbott <abbotti@mev.co.uk>,
-        H Hartley Sweeten <hsweeten@visionengravers.com>,
-        devel@driverdev.osuosl.org, linux-s390@vger.kernel.org,
-        Intel Linux Wireless <linuxwifi@intel.com>,
-        linux-rdma@vger.kernel.org, netdev@vger.kernel.org,
-        intel-gfx@lists.freedesktop.org, linux-wireless@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-mm@kvack.org, iommu@lists.linux-foundation.org,
-        "moderated list:ARM PORT" <linux-arm-kernel@lists.infradead.org>,
-        linux-media@vger.kernel.org
-Subject: Re: use exact allocation for dma coherent memory
-Message-ID: <20190620105124.GA25233@lst.de>
-References: <20190614134726.3827-1-hch@lst.de> <20190617082148.GF28859@kadam> <20190617083342.GA7883@lst.de> <20190619162903.GF9360@ziepe.ca>
+        id S1726729AbfFTKzS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 06:55:18 -0400
+Received: from mx2.suse.de ([195.135.220.15]:37298 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726211AbfFTKzS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Jun 2019 06:55:18 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 03F8AAD12;
+        Thu, 20 Jun 2019 10:55:16 +0000 (UTC)
+Date:   Thu, 20 Jun 2019 12:55:15 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Minchan Kim <minchan@kernel.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        linux-mm <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>, linux-api@vger.kernel.org,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Tim Murray <timmurray@google.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Daniel Colascione <dancol@google.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Sonny Rao <sonnyrao@google.com>,
+        Brian Geffon <bgeffon@google.com>, jannh@google.com,
+        oleg@redhat.com, christian@brauner.io, oleksandr@redhat.com,
+        hdanton@sina.com, lizeb@google.com
+Subject: Re: [PATCH v2 4/5] mm: introduce MADV_PAGEOUT
+Message-ID: <20190620105515.GE12083@dhcp22.suse.cz>
+References: <20190610111252.239156-1-minchan@kernel.org>
+ <20190610111252.239156-5-minchan@kernel.org>
+ <20190619132450.GQ2968@dhcp22.suse.cz>
+ <20190620041620.GB105727@google.com>
+ <20190620070444.GB12083@dhcp22.suse.cz>
+ <20190620084040.GD105727@google.com>
+ <20190620092209.GD12083@dhcp22.suse.cz>
+ <20190620103215.GF105727@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190619162903.GF9360@ziepe.ca>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <20190620103215.GF105727@google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 19, 2019 at 01:29:03PM -0300, Jason Gunthorpe wrote:
-> > Yes.  This will blow up badly on many platforms, as sq->queue
-> > might be vmapped, ioremapped, come from a pool without page backing.
-> 
-> Gah, this addr gets fed into io_remap_pfn_range/remap_pfn_range too..
-> 
-> Potnuri, you should fix this.. 
-> 
-> You probably need to use dma_mmap_from_dev_coherent() in the mmap ?
+On Thu 20-06-19 19:32:15, Minchan Kim wrote:
+[...]
+> Then, okay, I will add can_do_mincore similar check for the MADV_PAGEOUT syscall
+> if others have different ideas.
 
-The function to use is dma_mmap_coherent, dma_mmap_from_dev_coherent is
-just an internal helper.
-
-That beiŋ said the drivers/infiniband code has a lot of
-*remap_pfn_range, and a lot of them look like they might be for
-DMA memory.
+Great that we are on the same page. We can simply skip over those pages.
+-- 
+Michal Hocko
+SUSE Labs
