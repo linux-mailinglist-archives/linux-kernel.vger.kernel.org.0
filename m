@@ -2,78 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7584E4D022
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 16:15:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 704724D009
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 16:10:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731834AbfFTOPv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 10:15:51 -0400
-Received: from mga07.intel.com ([134.134.136.100]:30414 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726686AbfFTOPu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 10:15:50 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Jun 2019 07:15:50 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.63,397,1557212400"; 
-   d="scan'208";a="168523082"
-Received: from romley-ivt3.sc.intel.com ([172.25.110.60])
-  by FMSMGA003.fm.intel.com with ESMTP; 20 Jun 2019 07:15:49 -0700
-Date:   Thu, 20 Jun 2019 07:06:15 -0700
-From:   Fenghua Yu <fenghua.yu@intel.com>
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, H Peter Anvin <hpa@zytor.com>,
-        Christopherson Sean J <sean.j.christopherson@intel.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Radim Krcmar <rkrcmar@redhat.com>,
-        Ravi V Shankar <ravi.v.shankar@intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>, x86 <x86@kernel.org>
-Subject: Re: [PATCH v2 2/2] x86/cpufeatures: Enumerate new AVX512 BFLOAT16
- instructions
-Message-ID: <20190620140614.GA238683@romley-ivt3.sc.intel.com>
-References: <1560794416-217638-1-git-send-email-fenghua.yu@intel.com>
- <1560794416-217638-3-git-send-email-fenghua.yu@intel.com>
- <20190619173140.GH9574@zn.tnic>
- <20190619213404.GB234387@romley-ivt3.sc.intel.com>
- <20190620103720.GB28032@zn.tnic>
+        id S1731767AbfFTOKE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 10:10:04 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:33809 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726562AbfFTOKE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Jun 2019 10:10:04 -0400
+Received: by mail-pf1-f196.google.com with SMTP id c85so1763472pfc.1;
+        Thu, 20 Jun 2019 07:10:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=lCea24nGIZCu7ydKVsC+l/7geTYb5i00s0rd6yWS+Lo=;
+        b=IWe8EDOoK2wLDjqbj0Q5/jydeaDsHVyB9wekftRSAfWJT9rXjLQbWXWfgQVqkmTAON
+         Pkh5w12/Qbk8ywybCXAes9aRTnj0/CVDTJlOHgtFSaObrK8Tg+iWLnl+xP6E6P70ZyU0
+         NUvXvIJkgxm1DNoPCrYGWXkyzEzgeNWmuUpLXvwJBOPSNAtsKdp4Cyv4ujTrWU+ns7ag
+         +FvvsUK/Fx3fOzQQ0TGFCKqtZm8XxmiYQ1AFK5ZhnyOMtdBaTECVvndIgna8S0cKxUZh
+         DOnco2bN23vOj+4CqKWqGno7Ka9gU24ZMgOxJKyap/SHvXiRoR2ydSewJmFHRYEe2kTW
+         4nyA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=lCea24nGIZCu7ydKVsC+l/7geTYb5i00s0rd6yWS+Lo=;
+        b=ZiA+kS+eCTd8SUnE4iZsghJtRWF0TqE82pNwMO6tzTFz41C+yErzJ4veFRJNuWgvJr
+         P7kjpGL5gImh/ktfKG3zo+GD28PAHh7Ej1UnWDN7MIehOAtriUheIf6huqyD+osB581j
+         kN4ECfL1wTJpl1LdEejnmZqiLnJtBojwOUE2rf8mL855xi6zCTmbIU8f7GKaGkahd0Mg
+         9o0MFX/qTR8YmXUM9IfzmfwhdlQ+Ri3dlza9o4JYB4uNHn4uWDV6JV4SwzMg2ynzVn0m
+         TkwVrLipXfQphAjZyNdnWGCXxl9alyoQCsCQyPD5uo32kAfNPC007T089sdpu2uxO154
+         mcrA==
+X-Gm-Message-State: APjAAAXUpspHkdJs/O6UCiFxGMYm8vC3IU3KFdgw6jak5mtnW+CVJZeu
+        XfTBGveGrB6G5lhnyaw3TmCQqdy6mJE=
+X-Google-Smtp-Source: APXvYqxNob875mJkUZ2u3rUWNFdkn3jBRyn2WGNqnLD+JtO5vQY5bk0YhhB3Uo3P1Dr8kFVmA+R10Q==
+X-Received: by 2002:a17:90a:8a15:: with SMTP id w21mr3334565pjn.134.1561039803189;
+        Thu, 20 Jun 2019 07:10:03 -0700 (PDT)
+Received: from localhost ([2620:10d:c091:200::2:a5e4])
+        by smtp.gmail.com with ESMTPSA id d132sm23393702pfd.61.2019.06.20.07.10.02
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 20 Jun 2019 07:10:02 -0700 (PDT)
+Date:   Thu, 20 Jun 2019 07:10:00 -0700
+From:   Tejun Heo <tj@kernel.org>
+To:     Alan Stern <stern@rowland.harvard.edu>
+Cc:     Oliver Neukum <oneukum@suse.com>,
+        USB list <linux-usb@vger.kernel.org>,
+        Kernel development list <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC] deadlock with flush_work() in UAS
+Message-ID: <20190620140937.GJ657710@devbig004.ftw2.facebook.com>
+References: <1560871774.3184.16.camel@suse.com>
+ <Pine.LNX.4.44L0.1906181156370.1659-100000@iolanthe.rowland.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190620103720.GB28032@zn.tnic>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <Pine.LNX.4.44L0.1906181156370.1659-100000@iolanthe.rowland.org>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 20, 2019 at 12:37:20PM +0200, Borislav Petkov wrote:
-> On Wed, Jun 19, 2019 at 02:34:04PM -0700, Fenghua Yu wrote:
-> You need to test the sub-leaf index validity here before accessing
-> subleaf 1:
+Hello,
+
+On Tue, Jun 18, 2019 at 11:59:39AM -0400, Alan Stern wrote:
+> > > Even if you disagree, perhaps we should have a global workqueue with a
+> > > permanently set noio flag.  It could be shared among multiple drivers
+> > > such as uas and the hub driver for purposes like this.  (In fact, the 
+> > > hub driver already has its own dedicated workqueue.)
+> > 
+> > That is a good idea. But does UAS need WQ_MEM_RECLAIM?
 > 
-> diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-> index 4910cb421b82..dad20bc891d5 100644
-> --- a/arch/x86/kernel/cpu/common.c
-> +++ b/arch/x86/kernel/cpu/common.c
-> @@ -848,8 +848,11 @@ void get_cpu_cap(struct cpuinfo_x86 *c)
->  		c->x86_capability[CPUID_7_ECX] = ecx;
->  		c->x86_capability[CPUID_7_EDX] = edx;
->  
-> -		cpuid_count(0x00000007, 1, &eax, &ebx, &ecx, &edx);
-> -		c->x86_capability[CPUID_7_1_EAX] = eax;
-> +		/* Check valid sub-leaf index before accessing it */
-> +		if (eax >= 1) {
-> +			cpuid_count(0x00000007, 1, &eax, &ebx, &ecx, &edx);
-> +			c->x86_capability[CPUID_7_1_EAX] = eax;
-> +		}
+> These are good questions, and I don't have the answers.  Perhaps Tejun 
+> or someone else on LKML can help.
 
-You are right.
+Any device which may host a filesystem or swap needs to use
+WQ_MEM_RECLAIM workqueues on anything which may be used during normal
+IOs including e.g. error handling which may be invoked.  One
+WQ_MEM_RECLAIM workqueue guarantees one level of concurrency for all
+its tasks regardless of memory situation, so as long as there's no
+interdependence between work items, the workqueue can be shared.
 
-I tested the three patches in tip tree and they work as expected.
+Thanks.
 
-Thank you very much!
-
--Fenghua
+-- 
+tejun
