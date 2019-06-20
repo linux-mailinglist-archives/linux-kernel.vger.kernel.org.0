@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9930F4D8CC
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 20:30:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 71DE34D5D0
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 20:01:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727414AbfFTSCS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 14:02:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52576 "EHLO mail.kernel.org"
+        id S1727218AbfFTSBU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 14:01:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50718 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727406AbfFTSCO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 14:02:14 -0400
+        id S1727198AbfFTSBR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Jun 2019 14:01:17 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BAD7A2083B;
-        Thu, 20 Jun 2019 18:02:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E6A7E2084A;
+        Thu, 20 Jun 2019 18:01:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561053733;
-        bh=SqoleiGOWHSbLNyzRiUl/WkMDsDmCEUZ71PZV5wMf/8=;
+        s=default; t=1561053676;
+        bh=U+Fw+56pmtSjJpXkynyZcARIJ3ukFQN6yVeJ/gkDaHU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=eXrnT8IFRSkcdfv9X1Apcyo6206vMS+nsFLOAf4TyyEzmBrCQhHHL2TnieoU8De8Y
-         B7AyYV2bJBTOAAFyM7j2sby2foKz3Dm3ltsi8Voeix+PlKAISWi7BpDNUtw1d8r4/2
-         08fI8PgDEzJX9+8zMWnqu4iUw8vXrnvvZVCRakPU=
+        b=s4k4z47FnnDT3HxbfyJYFvC0hIMWhu9Jyal7DG2TUxz5M8/BSpgVhYAs4HYPV234O
+         8vurF3m2xEM+HfIUiUfmQA10JLzPjgOlB+YZAkiX0J2V5WkPZ+jzPsEZ8s99CZl/8Y
+         b1hAV9Jhm4uao3O3Dq/WOCtYUB4DkEQpgNZOi66c=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tianhao <tizhao@redhat.com>,
-        Ivan Vecera <ivecera@redhat.com>,
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        Willem de Bruijn <willemb@google.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.4 64/84] be2net: Fix number of Rx queues used for flow hashing
-Date:   Thu, 20 Jun 2019 19:57:01 +0200
-Message-Id: <20190620174348.069285479@linuxfoundation.org>
+Subject: [PATCH 4.4 65/84] ipv6: flowlabel: fl6_sock_lookup() must use atomic_inc_not_zero
+Date:   Thu, 20 Jun 2019 19:57:02 +0200
+Message-Id: <20190620174348.118555462@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190620174337.538228162@linuxfoundation.org>
 References: <20190620174337.538228162@linuxfoundation.org>
@@ -44,74 +44,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ivan Vecera <ivecera@redhat.com>
+From: Eric Dumazet <edumazet@google.com>
 
-[ Upstream commit 718f4a2537089ea41903bf357071306163bc7c04 ]
+[ Upstream commit 65a3c497c0e965a552008db8bc2653f62bc925a1 ]
 
-Number of Rx queues used for flow hashing returned by the driver is
-incorrect and this bug prevents user to use the last Rx queue in
-indirection table.
+Before taking a refcount, make sure the object is not already
+scheduled for deletion.
 
-Let's say we have a NIC with 6 combined queues:
+Same fix is needed in ipv6_flowlabel_opt()
 
-[root@sm-03 ~]# ethtool -l enp4s0f0
-Channel parameters for enp4s0f0:
-Pre-set maximums:
-RX:             5
-TX:             5
-Other:          0
-Combined:       6
-Current hardware settings:
-RX:             0
-TX:             0
-Other:          0
-Combined:       6
-
-Default indirection table maps all (6) queues equally but the driver
-reports only 5 rings available.
-
-[root@sm-03 ~]# ethtool -x enp4s0f0
-RX flow hash indirection table for enp4s0f0 with 5 RX ring(s):
-    0:      0     1     2     3     4     5     0     1
-    8:      2     3     4     5     0     1     2     3
-   16:      4     5     0     1     2     3     4     5
-   24:      0     1     2     3     4     5     0     1
-...
-
-Now change indirection table somehow:
-
-[root@sm-03 ~]# ethtool -X enp4s0f0 weight 1 1
-[root@sm-03 ~]# ethtool -x enp4s0f0
-RX flow hash indirection table for enp4s0f0 with 6 RX ring(s):
-    0:      0     0     0     0     0     0     0     0
-...
-   64:      1     1     1     1     1     1     1     1
-...
-
-Now it is not possible to change mapping back to equal (default) state:
-
-[root@sm-03 ~]# ethtool -X enp4s0f0 equal 6
-Cannot set RX flow hash configuration: Invalid argument
-
-Fixes: 594ad54a2c3b ("be2net: Add support for setting and getting rx flow hash options")
-Reported-by: Tianhao <tizhao@redhat.com>
-Signed-off-by: Ivan Vecera <ivecera@redhat.com>
+Fixes: 18367681a10b ("ipv6 flowlabel: Convert np->ipv6_fl_list to RCU.")
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Cc: Willem de Bruijn <willemb@google.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/emulex/benet/be_ethtool.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/ipv6/ip6_flowlabel.c |    7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
---- a/drivers/net/ethernet/emulex/benet/be_ethtool.c
-+++ b/drivers/net/ethernet/emulex/benet/be_ethtool.c
-@@ -1050,7 +1050,7 @@ static int be_get_rxnfc(struct net_devic
- 		cmd->data = be_get_rss_hash_opts(adapter, cmd->flow_type);
- 		break;
- 	case ETHTOOL_GRXRINGS:
--		cmd->data = adapter->num_rx_qs - 1;
-+		cmd->data = adapter->num_rx_qs;
- 		break;
- 	default:
- 		return -EINVAL;
+--- a/net/ipv6/ip6_flowlabel.c
++++ b/net/ipv6/ip6_flowlabel.c
+@@ -254,9 +254,9 @@ struct ip6_flowlabel *fl6_sock_lookup(st
+ 	rcu_read_lock_bh();
+ 	for_each_sk_fl_rcu(np, sfl) {
+ 		struct ip6_flowlabel *fl = sfl->fl;
+-		if (fl->label == label) {
++
++		if (fl->label == label && atomic_inc_not_zero(&fl->users)) {
+ 			fl->lastuse = jiffies;
+-			atomic_inc(&fl->users);
+ 			rcu_read_unlock_bh();
+ 			return fl;
+ 		}
+@@ -622,7 +622,8 @@ int ipv6_flowlabel_opt(struct sock *sk,
+ 						goto done;
+ 					}
+ 					fl1 = sfl->fl;
+-					atomic_inc(&fl1->users);
++					if (!atomic_inc_not_zero(&fl1->users))
++						fl1 = NULL;
+ 					break;
+ 				}
+ 			}
 
 
