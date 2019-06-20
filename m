@@ -2,44 +2,50 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 313E24D4C2
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 19:23:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C9124D4D6
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 19:24:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732208AbfFTRXY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 13:23:24 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:52524 "EHLO
+        id S1732338AbfFTRYC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 13:24:02 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:52624 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726686AbfFTRXS (ORCPT
+        with ESMTP id S1732184AbfFTRXU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 13:23:18 -0400
+        Thu, 20 Jun 2019 13:23:20 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Sender:Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
         Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From:
         Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=C0W3exYft1KrUqFyOJUCPkgo7W6ZH/A+goYD/OL6mwQ=; b=MHaJ1AAp1KTaghNr6IhcV1l7jW
-        XJzUHpIStnpHouqWDla9WQd7GjexetPRqCWlOxLQYce5t2OlojC8B/4TTARwb7E9CHfrFQ2i1Wc5F
-        ZahE+rgwD7d2VwangNt/YzEVoDLay/EgFC+AIObP6e/IXtwSpFStTzYjYYdiVtfXuFeQtATxsQt6t
-        JSkKDmmI59J89xM1b+bkzWTt9QygIOVMARoa6X2lNqCd5PZcSIDe3PRNtgzCRukhPbv+U13SlrOdf
-        k9ws3MxA5EeLIeGojhD0GI27YbJL+aB5dJ6PUJgI10zbb3Aj8T42w0FP6M9tjJSIg9FCeC4a7e/Ur
-        RuHDtZsw==;
+        bh=x8eDpGA9tkzRBlOBNNKR3eS8jBR9t93239y1JkYnhbQ=; b=dM0eMVHAvo+MfAP+q+ABDOi1Mr
+        /qn+ff/c1TbnRBIPZgWRM2RSlCEbzpN5bkjVIKn0pj7IohLc1VBBMcWCojwDoifvgvv7uJQrdjhVP
+        keC50G7uNhFv8t7HCtsixwb2spo1FWnVzOfpEQrW18c96X6KGmAZHtpOMg0SAt+pQNc3C1IePgqYW
+        oj66ECLudlB8TShpufSGUc86yaQQqMS1wKDudrLW3viHaK6E4PEdKKJI6vM7BCkcASGv3hczx5y/Z
+        nfTHHPqVN+N70yLV+iVkareWDDQ+jCK+dj/2KE9lkC57+/qeqZaJ1Nx89M32sp8LCxvT6qEex5z84
+        dC+BLqvw==;
 Received: from [177.97.20.138] (helo=bombadil.infradead.org)
         by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1he0mL-0008Rm-QN; Thu, 20 Jun 2019 17:23:17 +0000
+        id 1he0mM-0008S5-D1; Thu, 20 Jun 2019 17:23:18 +0000
 Received: from mchehab by bombadil.infradead.org with local (Exim 4.92)
         (envelope-from <mchehab@bombadil.infradead.org>)
-        id 1he0mJ-0000Cf-HE; Thu, 20 Jun 2019 14:23:15 -0300
+        id 1he0mJ-0000Cl-Iq; Thu, 20 Jun 2019 14:23:15 -0300
 From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>
 Cc:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Mauro Carvalho Chehab <mchehab@infradead.org>,
         linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Rajat Jain <rajatja@google.com>
-Subject: [PATCH v2 01/22] ABI: sysfs-bus-pci-devices-aer_stats uses an invalid tag
-Date:   Thu, 20 Jun 2019 14:22:53 -0300
-Message-Id: <3b8d7c64f887ddea01df3c4eeabc745c8ec45406.1561050806.git.mchehab+samsung@kernel.org>
+        Kees Cook <keescook@chromium.org>,
+        Anton Vorontsov <anton@enomsg.org>,
+        Colin Cross <ccross@android.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Andrew Donnellan <ajd@linux.ibm.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Rajat Jain <rajatja@google.com>,
+        Bjorn Helgaas <bhelgaas@google.com>
+Subject: [PATCH v2 02/22] ABI: Fix KernelVersion tags
+Date:   Thu, 20 Jun 2019 14:22:54 -0300
+Message-Id: <08110b8914ae2ac61e5b284f7488475a3c761f4b.1561050806.git.mchehab+samsung@kernel.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <cover.1561050806.git.mchehab+samsung@kernel.org>
 References: <cover.1561050806.git.mchehab+samsung@kernel.org>
@@ -50,68 +56,313 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-According with Documentation/ABI/, the right tag to describe
-an ABI symbol is "What:", and not "Where:".
+It is "KernelVersion:" and not "Kernel Version:".
 
 Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 ---
- .../ABI/testing/sysfs-bus-pci-devices-aer_stats      | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ Documentation/ABI/testing/pstore              |  2 +-
+ .../sysfs-bus-event_source-devices-format     |  2 +-
+ .../ABI/testing/sysfs-bus-i2c-devices-hm6352  |  6 ++---
+ .../testing/sysfs-bus-pci-devices-aer_stats   | 12 +++++-----
+ .../ABI/testing/sysfs-bus-pci-devices-cciss   | 22 +++++++++----------
+ .../testing/sysfs-bus-usb-devices-usbsevseg   | 10 ++++-----
+ .../ABI/testing/sysfs-driver-altera-cvp       |  2 +-
+ Documentation/ABI/testing/sysfs-driver-ppi    |  2 +-
+ Documentation/ABI/testing/sysfs-driver-st     |  2 +-
+ Documentation/ABI/testing/sysfs-driver-wacom  |  2 +-
+ 10 files changed, 31 insertions(+), 31 deletions(-)
 
+diff --git a/Documentation/ABI/testing/pstore b/Documentation/ABI/testing/pstore
+index 8d6e48f4e8ef..d45209abdb1b 100644
+--- a/Documentation/ABI/testing/pstore
++++ b/Documentation/ABI/testing/pstore
+@@ -1,6 +1,6 @@
+ What:		/sys/fs/pstore/... (or /dev/pstore/...)
+ Date:		March 2011
+-Kernel Version: 2.6.39
++KernelVersion: 2.6.39
+ Contact:	tony.luck@intel.com
+ Description:	Generic interface to platform dependent persistent storage.
+ 
+diff --git a/Documentation/ABI/testing/sysfs-bus-event_source-devices-format b/Documentation/ABI/testing/sysfs-bus-event_source-devices-format
+index b6f8748e0200..5bb793ec926c 100644
+--- a/Documentation/ABI/testing/sysfs-bus-event_source-devices-format
++++ b/Documentation/ABI/testing/sysfs-bus-event_source-devices-format
+@@ -1,6 +1,6 @@
+ What:		/sys/bus/event_source/devices/<dev>/format
+ Date:		January 2012
+-Kernel Version: 3.3
++KernelVersion: 3.3
+ Contact:	Jiri Olsa <jolsa@redhat.com>
+ Description:
+ 		Attribute group to describe the magic bits that go into
+diff --git a/Documentation/ABI/testing/sysfs-bus-i2c-devices-hm6352 b/Documentation/ABI/testing/sysfs-bus-i2c-devices-hm6352
+index 29bd447e50a0..4a251b7f11e4 100644
+--- a/Documentation/ABI/testing/sysfs-bus-i2c-devices-hm6352
++++ b/Documentation/ABI/testing/sysfs-bus-i2c-devices-hm6352
+@@ -1,20 +1,20 @@
+ What:		/sys/bus/i2c/devices/.../heading0_input
+ Date:		April 2010
+-Kernel Version: 2.6.36?
++KernelVersion: 2.6.36?
+ Contact:	alan.cox@intel.com
+ Description:	Reports the current heading from the compass as a floating
+ 		point value in degrees.
+ 
+ What:		/sys/bus/i2c/devices/.../power_state
+ Date:		April 2010
+-Kernel Version: 2.6.36?
++KernelVersion: 2.6.36?
+ Contact:	alan.cox@intel.com
+ Description:	Sets the power state of the device. 0 sets the device into
+ 		sleep mode, 1 wakes it up.
+ 
+ What:		/sys/bus/i2c/devices/.../calibration
+ Date:		April 2010
+-Kernel Version: 2.6.36?
++KernelVersion: 2.6.36?
+ Contact:	alan.cox@intel.com
+ Description:	Sets the calibration on or off (1 = on, 0 = off). See the
+ 		chip data sheet.
 diff --git a/Documentation/ABI/testing/sysfs-bus-pci-devices-aer_stats b/Documentation/ABI/testing/sysfs-bus-pci-devices-aer_stats
-index 4b0318c99507..ff229d71961c 100644
+index ff229d71961c..3c9a8c4a25eb 100644
 --- a/Documentation/ABI/testing/sysfs-bus-pci-devices-aer_stats
 +++ b/Documentation/ABI/testing/sysfs-bus-pci-devices-aer_stats
-@@ -9,7 +9,7 @@ errors may be "seen" / reported by the link partner and not the
- problematic endpoint itself (which may report all counters as 0 as it never
- saw any problems).
+@@ -11,7 +11,7 @@ saw any problems).
  
--Where:		/sys/bus/pci/devices/<dev>/aer_dev_correctable
-+What:		/sys/bus/pci/devices/<dev>/aer_dev_correctable
+ What:		/sys/bus/pci/devices/<dev>/aer_dev_correctable
  Date:		July 2018
- Kernel Version: 4.19.0
+-Kernel Version: 4.19.0
++KernelVersion: 4.19.0
  Contact:	linux-pci@vger.kernel.org, rajatja@google.com
-@@ -31,7 +31,7 @@ Header Log Overflow 0
- TOTAL_ERR_COR 2
- -------------------------------------------------------------------------
+ Description:	List of correctable errors seen and reported by this
+ 		PCI device using ERR_COR. Note that since multiple errors may
+@@ -33,7 +33,7 @@ TOTAL_ERR_COR 2
  
--Where:		/sys/bus/pci/devices/<dev>/aer_dev_fatal
-+What:		/sys/bus/pci/devices/<dev>/aer_dev_fatal
+ What:		/sys/bus/pci/devices/<dev>/aer_dev_fatal
  Date:		July 2018
- Kernel Version: 4.19.0
+-Kernel Version: 4.19.0
++KernelVersion: 4.19.0
  Contact:	linux-pci@vger.kernel.org, rajatja@google.com
-@@ -62,7 +62,7 @@ TLP Prefix Blocked Error 0
- TOTAL_ERR_FATAL 0
- -------------------------------------------------------------------------
+ Description:	List of uncorrectable fatal errors seen and reported by this
+ 		PCI device using ERR_FATAL. Note that since multiple errors may
+@@ -64,7 +64,7 @@ TOTAL_ERR_FATAL 0
  
--Where:		/sys/bus/pci/devices/<dev>/aer_dev_nonfatal
-+What:		/sys/bus/pci/devices/<dev>/aer_dev_nonfatal
+ What:		/sys/bus/pci/devices/<dev>/aer_dev_nonfatal
  Date:		July 2018
- Kernel Version: 4.19.0
+-Kernel Version: 4.19.0
++KernelVersion: 4.19.0
  Contact:	linux-pci@vger.kernel.org, rajatja@google.com
-@@ -103,19 +103,19 @@ collectors) that are AER capable. These indicate the number of error messages as
- device, so these counters include them and are thus cumulative of all the error
- messages on the PCI hierarchy originating at that root port.
+ Description:	List of uncorrectable nonfatal errors seen and reported by this
+ 		PCI device using ERR_NONFATAL. Note that since multiple errors
+@@ -105,18 +105,18 @@ messages on the PCI hierarchy originating at that root port.
  
--Where:		/sys/bus/pci/devices/<dev>/aer_stats/aer_rootport_total_err_cor
-+What:		/sys/bus/pci/devices/<dev>/aer_stats/aer_rootport_total_err_cor
+ What:		/sys/bus/pci/devices/<dev>/aer_stats/aer_rootport_total_err_cor
  Date:		July 2018
- Kernel Version: 4.19.0
+-Kernel Version: 4.19.0
++KernelVersion: 4.19.0
  Contact:	linux-pci@vger.kernel.org, rajatja@google.com
  Description:	Total number of ERR_COR messages reported to rootport.
  
--Where:	    /sys/bus/pci/devices/<dev>/aer_stats/aer_rootport_total_err_fatal
-+What:	    /sys/bus/pci/devices/<dev>/aer_stats/aer_rootport_total_err_fatal
+ What:	    /sys/bus/pci/devices/<dev>/aer_stats/aer_rootport_total_err_fatal
  Date:		July 2018
- Kernel Version: 4.19.0
+-Kernel Version: 4.19.0
++KernelVersion: 4.19.0
  Contact:	linux-pci@vger.kernel.org, rajatja@google.com
  Description:	Total number of ERR_FATAL messages reported to rootport.
  
--Where:	    /sys/bus/pci/devices/<dev>/aer_stats/aer_rootport_total_err_nonfatal
-+What:	    /sys/bus/pci/devices/<dev>/aer_stats/aer_rootport_total_err_nonfatal
+ What:	    /sys/bus/pci/devices/<dev>/aer_stats/aer_rootport_total_err_nonfatal
  Date:		July 2018
- Kernel Version: 4.19.0
+-Kernel Version: 4.19.0
++KernelVersion: 4.19.0
  Contact:	linux-pci@vger.kernel.org, rajatja@google.com
+ Description:	Total number of ERR_NONFATAL messages reported to rootport.
+diff --git a/Documentation/ABI/testing/sysfs-bus-pci-devices-cciss b/Documentation/ABI/testing/sysfs-bus-pci-devices-cciss
+index eb449169c30b..92a94e1068c2 100644
+--- a/Documentation/ABI/testing/sysfs-bus-pci-devices-cciss
++++ b/Documentation/ABI/testing/sysfs-bus-pci-devices-cciss
+@@ -1,68 +1,68 @@
+ What:		/sys/bus/pci/devices/<dev>/ccissX/cXdY/model
+ Date:		March 2009
+-Kernel Version: 2.6.30
++KernelVersion: 2.6.30
+ Contact:	iss_storagedev@hp.com
+ Description:	Displays the SCSI INQUIRY page 0 model for logical drive
+ 		Y of controller X.
+ 
+ What:		/sys/bus/pci/devices/<dev>/ccissX/cXdY/rev
+ Date:		March 2009
+-Kernel Version: 2.6.30
++KernelVersion: 2.6.30
+ Contact:	iss_storagedev@hp.com
+ Description:	Displays the SCSI INQUIRY page 0 revision for logical
+ 		drive Y of controller X.
+ 
+ What:		/sys/bus/pci/devices/<dev>/ccissX/cXdY/unique_id
+ Date:		March 2009
+-Kernel Version: 2.6.30
++KernelVersion: 2.6.30
+ Contact:	iss_storagedev@hp.com
+ Description:	Displays the SCSI INQUIRY page 83 serial number for logical
+ 		drive Y of controller X.
+ 
+ What:		/sys/bus/pci/devices/<dev>/ccissX/cXdY/vendor
+ Date:		March 2009
+-Kernel Version: 2.6.30
++KernelVersion: 2.6.30
+ Contact:	iss_storagedev@hp.com
+ Description:	Displays the SCSI INQUIRY page 0 vendor for logical drive
+ 		Y of controller X.
+ 
+ What:		/sys/bus/pci/devices/<dev>/ccissX/cXdY/block:cciss!cXdY
+ Date:		March 2009
+-Kernel Version: 2.6.30
++KernelVersion: 2.6.30
+ Contact:	iss_storagedev@hp.com
+ Description:	A symbolic link to /sys/block/cciss!cXdY
+ 
+ What:		/sys/bus/pci/devices/<dev>/ccissX/rescan
+ Date:		August 2009
+-Kernel Version:	2.6.31
++KernelVersion:	2.6.31
+ Contact:	iss_storagedev@hp.com
+ Description:	Kicks of a rescan of the controller to discover logical
+ 		drive topology changes.
+ 
+ What:		/sys/bus/pci/devices/<dev>/ccissX/cXdY/lunid
+ Date:		August 2009
+-Kernel Version: 2.6.31
++KernelVersion: 2.6.31
+ Contact:	iss_storagedev@hp.com
+ Description:	Displays the 8-byte LUN ID used to address logical
+ 		drive Y of controller X.
+ 
+ What:		/sys/bus/pci/devices/<dev>/ccissX/cXdY/raid_level
+ Date:		August 2009
+-Kernel Version: 2.6.31
++KernelVersion: 2.6.31
+ Contact:	iss_storagedev@hp.com
+ Description:	Displays the RAID level of logical drive Y of
+ 		controller X.
+ 
+ What:		/sys/bus/pci/devices/<dev>/ccissX/cXdY/usage_count
+ Date:		August 2009
+-Kernel Version: 2.6.31
++KernelVersion: 2.6.31
+ Contact:	iss_storagedev@hp.com
+ Description:	Displays the usage count (number of opens) of logical drive Y
+ 		of controller X.
+ 
+ What:		/sys/bus/pci/devices/<dev>/ccissX/resettable
+ Date:		February 2011
+-Kernel Version:	2.6.38
++KernelVersion:	2.6.38
+ Contact:	iss_storagedev@hp.com
+ Description:	Value of 1 indicates the controller can honor the reset_devices
+ 		kernel parameter.  Value of 0 indicates reset_devices cannot be
+@@ -73,7 +73,7 @@ Description:	Value of 1 indicates the controller can honor the reset_devices
+ 
+ What:		/sys/bus/pci/devices/<dev>/ccissX/transport_mode
+ Date:		July 2011
+-Kernel Version:	3.0
++KernelVersion:	3.0
+ Contact:	iss_storagedev@hp.com
+ Description:	Value of "simple" indicates that the controller has been placed
+ 		in "simple mode". Value of "performant" indicates that the
+diff --git a/Documentation/ABI/testing/sysfs-bus-usb-devices-usbsevseg b/Documentation/ABI/testing/sysfs-bus-usb-devices-usbsevseg
+index f6199b314196..9ade80f81f96 100644
+--- a/Documentation/ABI/testing/sysfs-bus-usb-devices-usbsevseg
++++ b/Documentation/ABI/testing/sysfs-bus-usb-devices-usbsevseg
+@@ -1,6 +1,6 @@
+ What:		/sys/bus/usb/.../powered
+ Date:		August 2008
+-Kernel Version:	2.6.26
++KernelVersion:	2.6.26
+ Contact:	Harrison Metzger <harrisonmetz@gmail.com>
+ Description:	Controls whether the device's display will powered.
+ 		A value of 0 is off and a non-zero value is on.
+@@ -8,7 +8,7 @@ Description:	Controls whether the device's display will powered.
+ What:		/sys/bus/usb/.../mode_msb
+ What:		/sys/bus/usb/.../mode_lsb
+ Date:		August 2008
+-Kernel Version:	2.6.26
++KernelVersion:	2.6.26
+ Contact:	Harrison Metzger <harrisonmetz@gmail.com>
+ Description:	Controls the devices display mode.
+ 		For a 6 character display the values are
+@@ -18,7 +18,7 @@ Description:	Controls the devices display mode.
+ 
+ What:		/sys/bus/usb/.../textmode
+ Date:		August 2008
+-Kernel Version:	2.6.26
++KernelVersion:	2.6.26
+ Contact:	Harrison Metzger <harrisonmetz@gmail.com>
+ Description:	Controls the way the device interprets its text buffer.
+ 		raw:	each character controls its segment manually
+@@ -27,13 +27,13 @@ Description:	Controls the way the device interprets its text buffer.
+ 
+ What:		/sys/bus/usb/.../text
+ Date:		August 2008
+-Kernel Version:	2.6.26
++KernelVersion:	2.6.26
+ Contact:	Harrison Metzger <harrisonmetz@gmail.com>
+ Description:	The text (or data) for the device to display
+ 
+ What:		/sys/bus/usb/.../decimals
+ Date:		August 2008
+-Kernel Version:	2.6.26
++KernelVersion:	2.6.26
+ Contact:	Harrison Metzger <harrisonmetz@gmail.com>
+ Description:	Controls the decimal places on the device.
+ 		To set the nth decimal place, give this field
+diff --git a/Documentation/ABI/testing/sysfs-driver-altera-cvp b/Documentation/ABI/testing/sysfs-driver-altera-cvp
+index 8cde64a71edb..fbd8078fd7ad 100644
+--- a/Documentation/ABI/testing/sysfs-driver-altera-cvp
++++ b/Documentation/ABI/testing/sysfs-driver-altera-cvp
+@@ -1,6 +1,6 @@
+ What:		/sys/bus/pci/drivers/altera-cvp/chkcfg
+ Date:		May 2017
+-Kernel Version:	4.13
++KernelVersion:	4.13
+ Contact:	Anatolij Gustschin <agust@denx.de>
+ Description:
+ 		Contains either 1 or 0 and controls if configuration
+diff --git a/Documentation/ABI/testing/sysfs-driver-ppi b/Documentation/ABI/testing/sysfs-driver-ppi
+index 9921ef285899..1a56fc507689 100644
+--- a/Documentation/ABI/testing/sysfs-driver-ppi
++++ b/Documentation/ABI/testing/sysfs-driver-ppi
+@@ -1,6 +1,6 @@
+ What:		/sys/class/tpm/tpmX/ppi/
+ Date:		August 2012
+-Kernel Version:	3.6
++KernelVersion:	3.6
+ Contact:	xiaoyan.zhang@intel.com
+ Description:
+ 		This folder includes the attributes related with PPI (Physical
+diff --git a/Documentation/ABI/testing/sysfs-driver-st b/Documentation/ABI/testing/sysfs-driver-st
+index ba5d77008a85..88cab66fd77f 100644
+--- a/Documentation/ABI/testing/sysfs-driver-st
++++ b/Documentation/ABI/testing/sysfs-driver-st
+@@ -1,6 +1,6 @@
+ What:		/sys/bus/scsi/drivers/st/debug_flag
+ Date:		October 2015
+-Kernel Version:	?.?
++KernelVersion:	?.?
+ Contact:	shane.seymour@hpe.com
+ Description:
+ 		This file allows you to turn debug output from the st driver
+diff --git a/Documentation/ABI/testing/sysfs-driver-wacom b/Documentation/ABI/testing/sysfs-driver-wacom
+index 2aa5503ee200..afc48fc163b5 100644
+--- a/Documentation/ABI/testing/sysfs-driver-wacom
++++ b/Documentation/ABI/testing/sysfs-driver-wacom
+@@ -1,6 +1,6 @@
+ What:		/sys/bus/hid/devices/<bus>:<vid>:<pid>.<n>/speed
+ Date:		April 2010
+-Kernel Version:	2.6.35
++KernelVersion:	2.6.35
+ Contact:	linux-bluetooth@vger.kernel.org
+ Description:
+ 		The /sys/bus/hid/devices/<bus>:<vid>:<pid>.<n>/speed file
 -- 
 2.21.0
 
