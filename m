@@ -2,252 +2,163 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C0B704C889
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 09:40:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A31524C8AA
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 09:51:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726274AbfFTHkt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 03:40:49 -0400
-Received: from mail1.bemta26.messagelabs.com ([85.158.142.6]:44082 "EHLO
-        mail1.bemta26.messagelabs.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725872AbfFTHks (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 03:40:48 -0400
-Received: from [85.158.142.104] (using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256 bits))
-        by server-6.bemta.az-a.eu-central-1.aws.symcld.net id 0A/D2-08182-D783B0D5; Thu, 20 Jun 2019 07:40:45 +0000
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrAIsWRWlGSWpSXmKPExsVy8IPnUd0aC+5
-  Yg7kfTS2mPnzCZvFz0jQWi/tfjzJafLvSwWRxedccNgdWj52z7rJ7bFrVyeZx59oeNo9ntxex
-  eHzeJBfAGsWamZeUX5HAmnFo1h3WggnWFZ/PVzcwTjDqYuTkEBJYzyixckExhF0h0Tl1LiuIz
-  SZgKDHvzXtGEJtFQFXi2aOzbCC2sECoxIzzG4DiXBwiApMZJea9mguWYBaIlTg/bykLiM0r4C
-  Cxsfk6O4QtKHFy5hMWiBoJiYMvXjB3MXIALdOSWH4sEiQsIWAvMf39VbCwhIC+ROOxWIiwocT
-  3Wd9YIGxziXerVrNNYOSfhWToLCRDFzAyrWK0TCrKTM8oyU3MzNE1NDDQNTQ01jXWNTI00Uus
-  0k3USy3VTU7NKylKBMrqJZYX6xVX5ibnpOjlpZZsYgQGdkoh87UdjI+OvNY7xCjJwaQkyntAn
-  ztWiC8pP6UyI7E4I76oNCe1+BCjDAeHkgSvqTlQTrAoNT21Ii0zBxhlMGkJDh4lEd47ZkBp3u
-  KCxNzizHSI1ClGXY6125csYhZiycvPS5US590AUiQAUpRRmgc3AhbxlxhlpYR5GRkYGIR4ClK
-  LcjNLUOVfMYpzMCoJ8/KAXMKTmVcCt+kV0BFMQEcsmM0FckRJIkJKqoHJQJ033tBuh+Xdf1cS
-  u8Pm8MkrN02ct/je+d5p/IYTTmrZBZ7TeKX1I/xy/paAv3lrl7i+aV/gOmFnam3IHyffGX9T/
-  /lkz/9Up7Pm2sK/53YWZ/GeviT6QOpXcrKpzeQbDAfOi7Tc1Te4832mYOakAM9brfGeRxOVEy
-  6+5T+uu0mD/9iLp3F9AvYN8g7/nr2e4bWg7Fxs/6kPqoJsZ0z7lu5OX7/32dH3244u9BMtr+H
-  evaV9T4fgWcHE1X9NYjz01H9PnHT+ywGDyBX8p3icGyY/W27Pnci+vtYs+7Dd78zPd+8s6sqV
-  vzMtUl9krbTejNClzVd07WaqPfLs+PC4Km1pseKFbW/ybKdzxPX6KbEUZyQaajEXFScCAPDJT
-  xRzAwAA
-X-Env-Sender: stwiss.opensource@diasemi.com
-X-Msg-Ref: server-16.tower-229.messagelabs.com!1561016444!213810!1
-X-Originating-IP: [193.240.73.197]
-X-SYMC-ESS-Client-Auth: outbound-route-from=pass
-X-StarScan-Received: 
-X-StarScan-Version: 9.43.9; banners=-,-,-
-X-VirusChecked: Checked
-Received: (qmail 16502 invoked from network); 20 Jun 2019 07:40:44 -0000
-Received: from unknown (HELO sw-ex-cashub01.diasemi.com) (193.240.73.197)
-  by server-16.tower-229.messagelabs.com with AES128-SHA256 encrypted SMTP; 20 Jun 2019 07:40:44 -0000
-Received: from swsrvapps-01.diasemi.com (10.20.28.141) by
- SW-EX-CASHUB01.diasemi.com (10.20.16.140) with Microsoft SMTP Server id
- 14.3.408.0; Thu, 20 Jun 2019 08:40:43 +0100
-Received: by swsrvapps-01.diasemi.com (Postfix, from userid 22547)      id
- E1E803FB4A; Thu, 20 Jun 2019 08:40:42 +0100 (BST)
-From:   Steve Twiss <stwiss.opensource@diasemi.com>
-Date:   Thu, 20 Jun 2019 08:45:00 +0100
-Subject: [PATCH V4] regulator: da9061/62: Adjust LDO voltage selection minimum
- value
-To:     Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        "Lee Jones" <lee.jones@linaro.org>,
-        Felix Riemann <Felix.Riemann@sma.de>
-CC:     Support Opensource <support.opensource@diasemi.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Message-ID: <20190620074042.E1E803FB4A@swsrvapps-01.diasemi.com>
+        id S1726485AbfFTHvz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 03:51:55 -0400
+Received: from ozlabs.org ([203.11.71.1]:41009 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725953AbfFTHvy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Jun 2019 03:51:54 -0400
+Received: by ozlabs.org (Postfix, from userid 1007)
+        id 45TvCn4f3jz9sBr; Thu, 20 Jun 2019 17:51:49 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+        d=gibson.dropbear.id.au; s=201602; t=1561017109;
+        bh=KY2I3dC1Px56+CQotFXwYFAvhLT69NhbHKJ1Ta4T1+Q=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Sha4u42YfDlRkYyVdHB+7UMxiKsSZOusC0WbZTwuwnE6jAKyBBTpF4VPpHzYTPEtf
+         fR8fgbrFr8gql9u7+f6oGqb9NBj9GsSH1lDcxIXx6YDqa+5B8Xx20rm1cPOapz0uy2
+         5TyrJ6kflvOgpok2aWwB5UoydscA5nQ2tjyRqRoM=
+Date:   Thu, 20 Jun 2019 17:45:17 +1000
+From:   David Gibson <david@gibson.dropbear.id.au>
+To:     Rob Herring <robh+dt@kernel.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-spdx@vger.kernel.org,
+        Devicetree Compiler <devicetree-compiler@vger.kernel.org>,
+        DTML <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Frank Rowand <frowand.list@gmail.com>
+Subject: Re: SPDX conversion under scripts/dtc/ of Linux Kernel
+Message-ID: <20190620074517.GA2066@umbus.BigPond>
+References: <CAK7LNARHHXv5Tu4BHN1avKOExS6HmPfd2c0ELZiQaxtmETOsDw@mail.gmail.com>
+ <20190619125948.GA27090@kroah.com>
+ <CAL_JsqJQ0bkMMpgA_JpGf-mo8ue28XpGf7oMFJ8bScGAmc+_1g@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-KSE-AttachmentFiltering-Interceptor-Info: protection disabled
-X-KSE-ServerInfo: sw-ex-cashub01.diasemi.com, 9
-X-KSE-Antivirus-Interceptor-Info: scan successful
-X-KSE-Antivirus-Info: Clean, bases: 20/06/2019 02:38:00
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="fdj2RfSjLxBAspz7"
+Content-Disposition: inline
+In-Reply-To: <CAL_JsqJQ0bkMMpgA_JpGf-mo8ue28XpGf7oMFJ8bScGAmc+_1g@mail.gmail.com>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Felix Riemann <felix.riemann@sma.de>
 
-According to the DA9061 and DA9062 datasheets the LDO voltage selection
-registers have a lower value of 0x02. This applies to voltage registers
-VLDO1_A, VLDO2_A, VLDO3_A and VLDO4_A. This linear offset of 0x02 was
-previously not observed by the driver, causing the LDO output voltage to
-be systematically lower by two steps (= 0.1V).
+--fdj2RfSjLxBAspz7
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-This patch fixes the minimum linear selector offset by setting it to a
-value of 2 and increases the n_voltages by the same amount allowing
-voltages in the range 0x02 -> 0.9V to 0x38 -> 3.6V to be correctly
-selected. Also fixes an incorrect calculaton for the n_voltages value in
-the regulator LDO2.
+On Wed, Jun 19, 2019 at 09:39:13AM -0600, Rob Herring wrote:
+> On Wed, Jun 19, 2019 at 6:59 AM Greg Kroah-Hartman
+> <gregkh@linuxfoundation.org> wrote:
+> >
+> > On Wed, Jun 19, 2019 at 07:23:19PM +0900, Masahiro Yamada wrote:
+> > > Hi.
+> > >
+> > > In this development cycle of Linux kernel,
+> > > lots of files were converted to use SPDX
+> > > instead of the license boilerplate.
+> > >
+> > > However.
+> > >
+> > > Some files were imported from a different project,
+> > > and are periodically synchronized with the upstream.
+> > > Have we discussed what to do about this case?
+> > >
+> > >
+> > > For example, scripts/dtc/ is the case.
+> > >
+> > > The files in scripts/dtc/ are synced with the upstream
+> > > device tree compiler.
+> > >
+> > > Rob Herring periodically runs scripts/dtc/update-dtc-source.sh
+> > > to import outcome from the upstream.
+> > >
+> > >
+> > > The upstream DTC has not adopted SPDX yet.
+> > >
+> > > Some files in Linux (e.g. scripts/dtc/dtc.c)
+> > > have been converted to SPDX.
+> > >
+> > > So, they are out of sync now.
+> > >
+> > > The license boilerplate will come back
+> > > when Rob runs scripts/dtc/update-dtc-source.sh
+> > > next time.
+>=20
+> Already has. It just happened and is in next. The policy is everything
+> is upstream first and any changes to dtc in the kernel are rejected.
+>=20
+> > >
+> > > What shall we do?
+> > >
+> > > [1] Convert upstream DTC to SPDX
+> > >
+> > > This will be a happy solution if it is acceptable in DTC.
+> > > Since we cannot push the decision of the kernel to a different
+> > > project, this is totally up to David Gibson.
+> >
+> > That's fine with me :)
+>=20
+> I'll do the work if David is okay with it.
 
-These fixes effect all LDO regulators for DA9061 and DA9062.
+I have no objection.
 
-Acked-by: Steve Twiss <stwiss.opensource@diasemi.com>
-Tested-by: Steve Twiss <stwiss.opensource@diasemi.com>
-Signed-off-by: Felix Riemann <felix.riemann@sma.de>
-Signed-off-by: Steve Twiss <stwiss.opensource@diasemi.com>
----
 
-Patch history
+> > > [2] Change scripts/dtc/update-dtc-source.sh to
+> > >     take care of the license block somehow
+> >
+> > That would also be good.
+> >
+> > > [3] Go back to license boilerplate, and keep the files
+> > >     synced with the upstream
+> > >     (and scripts/dtc/ should be excluded from the
+> > >      SPDX conversion tool.)
+> >
+> > nothing is being excluded from the SPDX conversions, sorry.  The goal is
+> > to do this for every file in the kernel tree.  Otherwise it's pointless.
+> >
+> > > Or, what else?
+> >
+> > Rob remembers to keep those first lines of the files intact when doing
+> > the next sync?
+>=20
+> Patches to the import script are welcome. The only thing I have to
+> remember running the script is to add any new files. Otherwise, it's
+> scripted so I don't have to remember anything.
+>=20
+> Rob
+>=20
 
-v2 - Fix whitespace problems, slight refactor and correct n_voltages calc
-v3 - Addition of missing signed-off-by tag from sender
-v4 - Correct order for Signed-off-by tags in commit message
+--=20
+David Gibson			| I'll have my music baroque, and my code
+david AT gibson.dropbear.id.au	| minimalist, thank you.  NOT _the_ _other_
+				| _way_ _around_!
+http://www.ozlabs.org/~dgibson
 
-Regards,
-Steve
+--fdj2RfSjLxBAspz7
+Content-Type: application/pgp-signature; name="signature.asc"
 
- drivers/regulator/da9062-regulator.c | 40 +++++++++++++++++++++---------------
- include/linux/mfd/da9062/registers.h |  3 +++
- 2 files changed, 27 insertions(+), 16 deletions(-)
+-----BEGIN PGP SIGNATURE-----
 
-diff --git a/drivers/regulator/da9062-regulator.c b/drivers/regulator/da9062-regulator.c
-index a02e048..1cadaae 100644
---- a/drivers/regulator/da9062-regulator.c
-+++ b/drivers/regulator/da9062-regulator.c
-@@ -493,12 +493,13 @@ static int da9062_ldo_set_suspend_mode(struct regulator_dev *rdev,
- 		.desc.ops = &da9062_ldo_ops,
- 		.desc.min_uV = (900) * 1000,
- 		.desc.uV_step = (50) * 1000,
--		.desc.n_voltages = ((3600) - (900))/(50) + 1,
-+		.desc.n_voltages = ((3600) - (900))/(50) + 1
-+				+ DA9062AA_VLDO_A_MIN_SEL,
- 		.desc.enable_reg = DA9062AA_LDO1_CONT,
- 		.desc.enable_mask = DA9062AA_LDO1_EN_MASK,
- 		.desc.vsel_reg = DA9062AA_VLDO1_A,
- 		.desc.vsel_mask = DA9062AA_VLDO1_A_MASK,
--		.desc.linear_min_sel = 0,
-+		.desc.linear_min_sel = DA9062AA_VLDO_A_MIN_SEL,
- 		.sleep = REG_FIELD(DA9062AA_VLDO1_A,
- 			__builtin_ffs((int)DA9062AA_LDO1_SL_A_MASK) - 1,
- 			sizeof(unsigned int) * 8 -
-@@ -525,12 +526,13 @@ static int da9062_ldo_set_suspend_mode(struct regulator_dev *rdev,
- 		.desc.ops = &da9062_ldo_ops,
- 		.desc.min_uV = (900) * 1000,
- 		.desc.uV_step = (50) * 1000,
--		.desc.n_voltages = ((3600) - (600))/(50) + 1,
-+		.desc.n_voltages = ((3600) - (900))/(50) + 1
-+				+ DA9062AA_VLDO_A_MIN_SEL,
- 		.desc.enable_reg = DA9062AA_LDO2_CONT,
- 		.desc.enable_mask = DA9062AA_LDO2_EN_MASK,
- 		.desc.vsel_reg = DA9062AA_VLDO2_A,
- 		.desc.vsel_mask = DA9062AA_VLDO2_A_MASK,
--		.desc.linear_min_sel = 0,
-+		.desc.linear_min_sel = DA9062AA_VLDO_A_MIN_SEL,
- 		.sleep = REG_FIELD(DA9062AA_VLDO2_A,
- 			__builtin_ffs((int)DA9062AA_LDO2_SL_A_MASK) - 1,
- 			sizeof(unsigned int) * 8 -
-@@ -557,12 +559,13 @@ static int da9062_ldo_set_suspend_mode(struct regulator_dev *rdev,
- 		.desc.ops = &da9062_ldo_ops,
- 		.desc.min_uV = (900) * 1000,
- 		.desc.uV_step = (50) * 1000,
--		.desc.n_voltages = ((3600) - (900))/(50) + 1,
-+		.desc.n_voltages = ((3600) - (900))/(50) + 1
-+				+ DA9062AA_VLDO_A_MIN_SEL,
- 		.desc.enable_reg = DA9062AA_LDO3_CONT,
- 		.desc.enable_mask = DA9062AA_LDO3_EN_MASK,
- 		.desc.vsel_reg = DA9062AA_VLDO3_A,
- 		.desc.vsel_mask = DA9062AA_VLDO3_A_MASK,
--		.desc.linear_min_sel = 0,
-+		.desc.linear_min_sel = DA9062AA_VLDO_A_MIN_SEL,
- 		.sleep = REG_FIELD(DA9062AA_VLDO3_A,
- 			__builtin_ffs((int)DA9062AA_LDO3_SL_A_MASK) - 1,
- 			sizeof(unsigned int) * 8 -
-@@ -589,12 +592,13 @@ static int da9062_ldo_set_suspend_mode(struct regulator_dev *rdev,
- 		.desc.ops = &da9062_ldo_ops,
- 		.desc.min_uV = (900) * 1000,
- 		.desc.uV_step = (50) * 1000,
--		.desc.n_voltages = ((3600) - (900))/(50) + 1,
-+		.desc.n_voltages = ((3600) - (900))/(50) + 1
-+				+ DA9062AA_VLDO_A_MIN_SEL,
- 		.desc.enable_reg = DA9062AA_LDO4_CONT,
- 		.desc.enable_mask = DA9062AA_LDO4_EN_MASK,
- 		.desc.vsel_reg = DA9062AA_VLDO4_A,
- 		.desc.vsel_mask = DA9062AA_VLDO4_A_MASK,
--		.desc.linear_min_sel = 0,
-+		.desc.linear_min_sel = DA9062AA_VLDO_A_MIN_SEL,
- 		.sleep = REG_FIELD(DA9062AA_VLDO4_A,
- 			__builtin_ffs((int)DA9062AA_LDO4_SL_A_MASK) - 1,
- 			sizeof(unsigned int) * 8 -
-@@ -769,12 +773,13 @@ static int da9062_ldo_set_suspend_mode(struct regulator_dev *rdev,
- 		.desc.ops = &da9062_ldo_ops,
- 		.desc.min_uV = (900) * 1000,
- 		.desc.uV_step = (50) * 1000,
--		.desc.n_voltages = ((3600) - (900))/(50) + 1,
-+		.desc.n_voltages = ((3600) - (900))/(50) + 1
-+				+ DA9062AA_VLDO_A_MIN_SEL,
- 		.desc.enable_reg = DA9062AA_LDO1_CONT,
- 		.desc.enable_mask = DA9062AA_LDO1_EN_MASK,
- 		.desc.vsel_reg = DA9062AA_VLDO1_A,
- 		.desc.vsel_mask = DA9062AA_VLDO1_A_MASK,
--		.desc.linear_min_sel = 0,
-+		.desc.linear_min_sel = DA9062AA_VLDO_A_MIN_SEL,
- 		.sleep = REG_FIELD(DA9062AA_VLDO1_A,
- 			__builtin_ffs((int)DA9062AA_LDO1_SL_A_MASK) - 1,
- 			sizeof(unsigned int) * 8 -
-@@ -801,12 +806,13 @@ static int da9062_ldo_set_suspend_mode(struct regulator_dev *rdev,
- 		.desc.ops = &da9062_ldo_ops,
- 		.desc.min_uV = (900) * 1000,
- 		.desc.uV_step = (50) * 1000,
--		.desc.n_voltages = ((3600) - (600))/(50) + 1,
-+		.desc.n_voltages = ((3600) - (900))/(50) + 1
-+				+ DA9062AA_VLDO_A_MIN_SEL,
- 		.desc.enable_reg = DA9062AA_LDO2_CONT,
- 		.desc.enable_mask = DA9062AA_LDO2_EN_MASK,
- 		.desc.vsel_reg = DA9062AA_VLDO2_A,
- 		.desc.vsel_mask = DA9062AA_VLDO2_A_MASK,
--		.desc.linear_min_sel = 0,
-+		.desc.linear_min_sel = DA9062AA_VLDO_A_MIN_SEL,
- 		.sleep = REG_FIELD(DA9062AA_VLDO2_A,
- 			__builtin_ffs((int)DA9062AA_LDO2_SL_A_MASK) - 1,
- 			sizeof(unsigned int) * 8 -
-@@ -833,12 +839,13 @@ static int da9062_ldo_set_suspend_mode(struct regulator_dev *rdev,
- 		.desc.ops = &da9062_ldo_ops,
- 		.desc.min_uV = (900) * 1000,
- 		.desc.uV_step = (50) * 1000,
--		.desc.n_voltages = ((3600) - (900))/(50) + 1,
-+		.desc.n_voltages = ((3600) - (900))/(50) + 1
-+				+ DA9062AA_VLDO_A_MIN_SEL,
- 		.desc.enable_reg = DA9062AA_LDO3_CONT,
- 		.desc.enable_mask = DA9062AA_LDO3_EN_MASK,
- 		.desc.vsel_reg = DA9062AA_VLDO3_A,
- 		.desc.vsel_mask = DA9062AA_VLDO3_A_MASK,
--		.desc.linear_min_sel = 0,
-+		.desc.linear_min_sel = DA9062AA_VLDO_A_MIN_SEL,
- 		.sleep = REG_FIELD(DA9062AA_VLDO3_A,
- 			__builtin_ffs((int)DA9062AA_LDO3_SL_A_MASK) - 1,
- 			sizeof(unsigned int) * 8 -
-@@ -865,12 +872,13 @@ static int da9062_ldo_set_suspend_mode(struct regulator_dev *rdev,
- 		.desc.ops = &da9062_ldo_ops,
- 		.desc.min_uV = (900) * 1000,
- 		.desc.uV_step = (50) * 1000,
--		.desc.n_voltages = ((3600) - (900))/(50) + 1,
-+		.desc.n_voltages = ((3600) - (900))/(50) + 1
-+				+ DA9062AA_VLDO_A_MIN_SEL,
- 		.desc.enable_reg = DA9062AA_LDO4_CONT,
- 		.desc.enable_mask = DA9062AA_LDO4_EN_MASK,
- 		.desc.vsel_reg = DA9062AA_VLDO4_A,
- 		.desc.vsel_mask = DA9062AA_VLDO4_A_MASK,
--		.desc.linear_min_sel = 0,
-+		.desc.linear_min_sel = DA9062AA_VLDO_A_MIN_SEL,
- 		.sleep = REG_FIELD(DA9062AA_VLDO4_A,
- 			__builtin_ffs((int)DA9062AA_LDO4_SL_A_MASK) - 1,
- 			sizeof(unsigned int) * 8 -
-diff --git a/include/linux/mfd/da9062/registers.h b/include/linux/mfd/da9062/registers.h
-index fe04b70..090213a 100644
---- a/include/linux/mfd/da9062/registers.h
-+++ b/include/linux/mfd/da9062/registers.h
-@@ -797,6 +797,9 @@
- #define DA9062AA_BUCK3_SL_A_SHIFT	7
- #define DA9062AA_BUCK3_SL_A_MASK	BIT(7)
- 
-+/* DA9062AA_VLDO[1-4]_A common */
-+#define DA9062AA_VLDO_A_MIN_SEL	2
-+
- /* DA9062AA_VLDO1_A = 0x0A9 */
- #define DA9062AA_VLDO1_A_SHIFT		0
- #define DA9062AA_VLDO1_A_MASK		0x3f
--- 
-1.9.3
+iQIzBAEBCAAdFiEEdfRlhq5hpmzETofcbDjKyiDZs5IFAl0LOYoACgkQbDjKyiDZ
+s5JO2Q//Qnvu8CIqR9v1DPhq1I1K6wFUT3RxjlX+pE03rujjRcwTv7K7d19AWqdL
+3lwaWAc8faWWg8/ceC8hBN/yXzNwtN1nnPyeeULgVUPWoPPPg4LzWjDFfuy+6M51
+CdS8lSkiCYNR52jEkirsDW6pd6NIwbaAsSgtYxd7EB39HGWwPk6xq726aPKqD6Vo
+ae70uJsDOH3tSbeXwFIx8//wvI1VtylMxROJU6MoKcs7c538jddrJSRQHjI1V0PY
+2Git/vQSI92xIkVc4ZrDCPhZ3TGUUuK+caYaxssLdK2lxd/lrQjL3fUCIoSykzOr
+u5vaBrxoYoP4GbZX9VxCZrwocXgAYn7Qf2ihw3Xs2/StrhdNsLVkrsuzP4A9pDbZ
+73Fr7FIw6UFarugBtKahlDV0yI3mQG42Awk6Is5SxLwFheyhrGMzkk8P33pV4ffb
+RYZ++8GwzVFl3ko0vf7tZIhNnLZLY4/MT+efPfmu+0+YF67oZ/TsdtHu1rHz+cJz
+tDj4hEzPXBRaj3jB3pEw3Xvs9EZvd6a3WeBEBoV8WtJWioS9cqHTvYtq5YQfOqzc
+qg82KlJpZg74ukamcHEmwfooC9AjfKFek/7ecqlBI5fBviEMM6fI7MfyTHAErVya
+ctngxdwSqxU/9DSCo5oRoSS7vgJkaaLo5rgNkd8M2DbmU9EM1ok=
+=vqV0
+-----END PGP SIGNATURE-----
 
+--fdj2RfSjLxBAspz7--
