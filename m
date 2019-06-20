@@ -2,101 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 898A24C9B1
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 10:47:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8815D4C9DE
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 10:51:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730401AbfFTIrx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 04:47:53 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:40899 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725875AbfFTIrx (ORCPT
+        id S1731459AbfFTIvS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 04:51:18 -0400
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:49342 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726071AbfFTIvR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 04:47:53 -0400
-Received: by mail-wm1-f65.google.com with SMTP id v19so2237606wmj.5
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2019 01:47:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=N2rZ1vs5Z2JW66fClysbgEwISMUXpRxeDXqb9LFQrbQ=;
-        b=EMN0ZZAxDf0DZUy03S2fHKwnt9FDKNzOTUhPQWTWmNSqUGTloeKfgG4UjBNnSISm1U
-         +HMWNNSL7p5KnlXUxkBAki3Kmv8OGAckmjGZOnSMGXv/sPSajBBN0bCyFHFjT1Var//D
-         2IRy4vR5zuNOGmRD9zW12jO6GMkyHLgzC3SVkGL3b6WWPq8EeIQgs+z1yFuAPp+TDrXE
-         3RssX3wSApd3AyNPZsGq5mSwWl1V60O8E8jPm5Sdz81rWpNxV0oLwGAbvIZeIiEtecMw
-         Urv7iXmGsM6ZDizCnSMFDLwbzqKOPVwJtWlUNUYjs6UWWV6pLE0w76H0gsK7rARDEcOv
-         RuWA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=N2rZ1vs5Z2JW66fClysbgEwISMUXpRxeDXqb9LFQrbQ=;
-        b=NqH7KicLxvV1sPNGeH2shobSqGpMotebolgixzA2zRRb0yXJ1wTH1ls+732gAGNHhN
-         OgvBqEkNHpsFWrxK7rF9ECP8pa1qIp8McLjYASuRWGzYUpEHt8DYH2aaFQ9WFB69gWB3
-         ET9UnOm6tL+3nIRwDDt6qFCk/tdkm4ivagUTucnwhyMWluHniBj/lXMmwOXhkK+vhLXt
-         pSlxM7gMrtVAD9LTl6UB7mQOXFr9EmXFTJv8ZZ+fnzTpcGX8coJxHJH/SxU3BIAtdqK4
-         da4M9qGGX7z79UB7bIzgOGYbw9VKi0dRlSbi8BFoCFCpwGqc5ZKQysGVPCfueR3sZR26
-         psdg==
-X-Gm-Message-State: APjAAAVSILAN9eGJhfxkncRwkoptl60M3xNGNo5eBYlINWmwgtun2Stt
-        FZsZwYKLUiVYMPsC7DDD0llsfJN2G1Y=
-X-Google-Smtp-Source: APXvYqy/elDMLeinwU8ML/8ifxSsuhVIyGkEymjAadwLhlxmAld0SUOQ+25yzqJnknmIeRbmMIrl6A==
-X-Received: by 2002:a1c:e90f:: with SMTP id q15mr1921742wmc.89.1561020470956;
-        Thu, 20 Jun 2019 01:47:50 -0700 (PDT)
-Received: from [192.168.86.34] (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
-        by smtp.googlemail.com with ESMTPSA id r4sm44492370wra.96.2019.06.20.01.47.50
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 20 Jun 2019 01:47:50 -0700 (PDT)
-Subject: Re: [PATCH 1/3] slimbus: fix kerneldoc comments
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org
-References: <20190620081129.4721-1-srinivas.kandagatla@linaro.org>
- <20190620081129.4721-2-srinivas.kandagatla@linaro.org>
- <20190620084623.GA20943@kroah.com>
-From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Message-ID: <c6c172db-3eec-8f4e-ac32-0b7cb487c5e3@linaro.org>
-Date:   Thu, 20 Jun 2019 09:47:49 +0100
+        Thu, 20 Jun 2019 04:51:17 -0400
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x5K8oPWT013042;
+        Thu, 20 Jun 2019 03:50:25 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1561020625;
+        bh=ZvdTayQSZVxrbxnmLhuudH8+x8XODmTbZSOFAYzkOH0=;
+        h=Subject:From:To:CC:References:Date:In-Reply-To;
+        b=yQcQxeYXgas589nX61LGHgsETt9+I5jlLjqKaFQO/0cV80Umo8zpuMb9/74EeQj+W
+         pvcqdtOdUQsiPDP7w3uwKlyIXJzO7jrnZSRr+749ZIwZW5UpiNi2dr+dy5UG6528JU
+         YkxAWMVgKoblEXhXllSZe43sV0TPyezzuTVh1UXc=
+Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x5K8oPQN092929
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 20 Jun 2019 03:50:25 -0500
+Received: from DFLE104.ent.ti.com (10.64.6.25) by DFLE109.ent.ti.com
+ (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Thu, 20
+ Jun 2019 03:50:25 -0500
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE104.ent.ti.com
+ (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Thu, 20 Jun 2019 03:50:25 -0500
+Received: from [172.24.190.233] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id x5K8oIqb044496;
+        Thu, 20 Jun 2019 03:50:19 -0500
+Subject: Re: [PATCH v11 2/2] phy: Add driver for mixel mipi dphy found on
+ NXP's i.MX8 SoCs
+From:   Kishon Vijay Abraham I <kishon@ti.com>
+To:     Fabio Estevam <festevam@gmail.com>,
+        =?UTF-8?Q?Guido_G=c3=bcnther?= <agx@sigxcpu.org>
+CC:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Thierry Reding <treding@nvidia.com>,
+        =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Johan Hovold <johan@kernel.org>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Abel Vesa <abel.vesa@nxp.com>, Li Jun <jun.li@nxp.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        DRI mailing list <dri-devel@lists.freedesktop.org>,
+        Robert Chiras <robert.chiras@nxp.com>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>
+References: <cover.1557657814.git.agx@sigxcpu.org>
+ <2000bc4564175abd7966207a5e9fbb9bb7d82059.1557657814.git.agx@sigxcpu.org>
+ <CAOMZO5BaFYJxh1v46n2mdPyc+-jg6LgvoGR1rTE+yHZg_0Z8PA@mail.gmail.com>
+ <69fcb327-8b51-df9e-12d9-d75751974bce@ti.com>
+Message-ID: <9a872f5b-1544-32a0-bd93-1d6333468114@ti.com>
+Date:   Thu, 20 Jun 2019 14:18:53 +0530
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-In-Reply-To: <20190620084623.GA20943@kroah.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <69fcb327-8b51-df9e-12d9-d75751974bce@ti.com>
+Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi,
 
-
-On 20/06/2019 09:46, Greg KH wrote:
-> On Thu, Jun 20, 2019 at 09:11:27AM +0100, Srinivas Kandagatla wrote:
->> From: Jonathan Corbet <corbet@lwn.net>
+On 24/05/19 9:31 PM, Kishon Vijay Abraham I wrote:
+> Hi,
+> 
+> On 24/05/19 5:53 PM, Fabio Estevam wrote:
+>> Hi Kishon,
 >>
->> The kerneldoc comments in drivers/slimbus/stream.c were not properly
->> formatted, leading to a distinctly unsatisfying "no structured comments
->> found" warning in the docs build.  Sprinkle some asterisks around so that
->> the comments will be properly recognized.
+>> On Sun, May 12, 2019 at 7:49 AM Guido Günther <agx@sigxcpu.org> wrote:
+>>>
+>>> This adds support for the Mixel DPHY as found on i.MX8 CPUs but since
+>>> this is an IP core it will likely be found on others in the future. So
+>>> instead of adding this to the nwl host driver make it a generic PHY
+>>> driver.
+>>>
+>>> The driver supports the i.MX8MQ. Support for i.MX8QM and i.MX8QXP can be
+>>> added once the necessary system controller bits are in via
+>>> mixel_dphy_devdata.
+>>>
+>>> Signed-off-by: Guido Günther <agx@sigxcpu.org>
+>>> Co-developed-by: Robert Chiras <robert.chiras@nxp.com>
+>>> Signed-off-by: Robert Chiras <robert.chiras@nxp.com>
+>>> Reviewed-by: Fabio Estevam <festevam@gmail.com>
+>>> Reviewed-by: Sam Ravnborg <sam@ravnborg.org>
 >>
->> Signed-off-by: Jonathan Corbet <corbet@lwn.net>
->> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
->> ---
->>   drivers/slimbus/stream.c | 12 ++++++------
->>   1 file changed, 6 insertions(+), 6 deletions(-)
+>> Would you have any comments on this series, please?
 > 
-> Turns out this was already in my tree :)
->
-Ah, I should have rebased it on top of char-misc!
+> I don't have any comments. I'll queue this once I start queuing patches for the
+> next merge window.
 
+Can you fix the following checkpatch warning and repost?
+WARNING: quoted string split across lines
+#420: FILE: drivers/phy/freescale/phy-fsl-imx8-mipi-dphy.c:280:
++	dev_dbg(&phy->dev, "hs_prepare: %u, clk_prepare: %u, "
++		"hs_zero: %u, clk_zero: %u, "
 
-> Also, when sending out patches, be sure to cc: the authors, no need to
-> suppress that in git send-email.
-> 
-Sure, I will keep that in mind!
+WARNING: quoted string split across lines
+#421: FILE: drivers/phy/freescale/phy-fsl-imx8-mipi-dphy.c:281:
++		"hs_zero: %u, clk_zero: %u, "
++		"hs_trail: %u, clk_trail: %u, "
 
-thanks,
-srini
-> thanks,
-> 
-> greg k-h
-> 
+WARNING: quoted string split across lines
+#422: FILE: drivers/phy/freescale/phy-fsl-imx8-mipi-dphy.c:282:
++		"hs_trail: %u, clk_trail: %u, "
++		"rxhs_settle: %u\n",
+
+Thanks
+Kishon
