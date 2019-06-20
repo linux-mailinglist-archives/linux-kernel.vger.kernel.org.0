@@ -2,105 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 702E54CB7C
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 12:02:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 967544CB7F
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 12:03:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731484AbfFTKCm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 06:02:42 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:18644 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726268AbfFTKCm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 06:02:42 -0400
-Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 201F6524BC4FF94BC2CB;
-        Thu, 20 Jun 2019 18:02:39 +0800 (CST)
-Received: from [127.0.0.1] (10.133.213.239) by DGGEMS413-HUB.china.huawei.com
- (10.3.19.213) with Microsoft SMTP Server id 14.3.439.0; Thu, 20 Jun 2019
- 18:02:35 +0800
-Subject: Re: [PATCH] flow_dissector: Fix vlan header offset in
- __skb_flow_dissect
-To:     Stanislav Fomichev <sdf@fomichev.me>
-References: <20190619160132.38416-1-yuehaibing@huawei.com>
- <20190619183938.GA19111@mini-arch>
-CC:     <davem@davemloft.net>, <sdf@google.com>, <jianbol@mellanox.com>,
-        <jiri@mellanox.com>, <mirq-linux@rere.qmqm.pl>,
-        <willemb@google.com>, <linux-kernel@vger.kernel.org>,
-        <netdev@vger.kernel.org>
-From:   Yuehaibing <yuehaibing@huawei.com>
-Message-ID: <00a5d09f-a23e-661f-60c0-75fba6227451@huawei.com>
-Date:   Thu, 20 Jun 2019 18:02:34 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.2.0
+        id S1731512AbfFTKDM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 06:03:12 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:64167 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726268AbfFTKDL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Jun 2019 06:03:11 -0400
+Received: from fsav405.sakura.ne.jp (fsav405.sakura.ne.jp [133.242.250.104])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x5KA33mw058292;
+        Thu, 20 Jun 2019 19:03:03 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav405.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav405.sakura.ne.jp);
+ Thu, 20 Jun 2019 19:03:03 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav405.sakura.ne.jp)
+Received: from [192.168.1.8] (softbank126012062002.bbtec.net [126.12.62.2])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x5KA2w9u058271
+        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
+        Thu, 20 Jun 2019 19:03:03 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Subject: Re: [PATCH] hung_task: recover hung task warnings in next check
+ interval
+To:     Yafang Shao <laoar.shao@gmail.com>, akpm@linux-foundation.org,
+        dvyukov@google.com
+Cc:     linux-kernel@vger.kernel.org
+References: <1561010100-14080-1-git-send-email-laoar.shao@gmail.com>
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Message-ID: <e5c695c9-2006-f2cb-e3e2-7ea8ee465817@i-love.sakura.ne.jp>
+Date:   Thu, 20 Jun 2019 19:02:57 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.1
 MIME-Version: 1.0
-In-Reply-To: <20190619183938.GA19111@mini-arch>
-Content-Type: text/plain; charset="windows-1252"
+In-Reply-To: <1561010100-14080-1-git-send-email-laoar.shao@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.133.213.239]
-X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019/6/20 2:39, Stanislav Fomichev wrote:
-> On 06/20, YueHaibing wrote:
->> We build vlan on top of bonding interface, which vlan offload
->> is off, bond mode is 802.3ad (LACP) and xmit_hash_policy is
->> BOND_XMIT_POLICY_ENCAP34.
->>
->> __skb_flow_dissect() fails to get information from protocol headers
->> encapsulated within vlan, because 'nhoff' is points to IP header,
->> so bond hashing is based on layer 2 info, which fails to distribute
->> packets across slaves.
->>
->> Fixes: d5709f7ab776 ("flow_dissector: For stripped vlan, get vlan info from skb->vlan_tci")
->> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
->> ---
->>  net/core/flow_dissector.c | 3 +++
->>  1 file changed, 3 insertions(+)
->>
->> diff --git a/net/core/flow_dissector.c b/net/core/flow_dissector.c
->> index 415b95f..2a52abb 100644
->> --- a/net/core/flow_dissector.c
->> +++ b/net/core/flow_dissector.c
->> @@ -785,6 +785,9 @@ bool __skb_flow_dissect(const struct sk_buff *skb,
->>  		    skb && skb_vlan_tag_present(skb)) {
->>  			proto = skb->protocol;
->>  		} else {
->> +			if (dissector_vlan == FLOW_DISSECTOR_KEY_MAX)
->> +				nhoff -=  sizeof(*vlan);
->> +
-> Should we instead fix the place where the skb is allocated to properly
-> pull vlan (skb_vlan_untag)? I'm not sure this particular place is
-> supposed to work with an skb. Having an skb with nhoff pointing to
-> IP header but missing skb_vlan_tag_present() when with
-> proto==ETH_P_8021xx seems weird.
+On 2019/06/20 14:55, Yafang Shao wrote:
+> When sys_hung_task_warnings reaches 0, the hang task messages will not
+> be reported any more.
 
-The skb is a forwarded vxlan packet, it send through vlan interface like this:
-
-   vlan_dev_hard_start_xmit
-    --> __vlan_hwaccel_put_tag //vlan_tci and VLAN_TAG_PRESENT is set
-    --> dev_queue_xmit
-        --> validate_xmit_skb
-          --> validate_xmit_vlan // vlan_hw_offload_capable is false
-             --> __vlan_hwaccel_push_inside //here skb_push vlan_hlen, then clear skb->tci
-
-    --> bond_start_xmit
-       --> bond_xmit_hash
-         --> __skb_flow_dissect // nhoff point to IP header
-            -->  case htons(ETH_P_8021Q)
-            // skb_vlan_tag_present is false, so
-              vlan = __skb_header_pointer(skb, nhoff, sizeof(_vlan), //vlan point to ip header wrongly
+It is a common mistake that sys_hung_task_warnings is already 0 when
+a real problem which should be reported occurred.
 
 > 
->>  			vlan = __skb_header_pointer(skb, nhoff, sizeof(_vlan),
->>  						    data, hlen, &_vlan);
->>  			if (!vlan) {
->> -- 
->> 2.7.0
->>
->>
-> 
-> .
-> 
+> If the user want to get more hung task messages, he must reset
+> kernel.hung_task_warnings to a postive integer or -1 with sysctl.
 
+People are setting sys_hung_task_warnings to -1 in order to make sure
+that the messages are printed.
+
+> This is not a good way for the user.
+
+But I don't think we should reset automatically.
+
+> We'd better reset hung task warnings in the kernel, and then the user
+> don't need to pay attention to this value.
+
+I suggest changing the default value of sys_hung_task_warnings to -1.
+
+> 
+> With this patch, hung task warnings will be reset with
+> sys_hung_task_warnings setting in evenry check interval.
+
+Since it is uncommon that the messages are printed for more than 10
+times for one check_hung_uninterruptible_tasks() call, this patch is
+effectively changing to always print the messages (in other words,
+setting -1).
