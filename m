@@ -2,120 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D21E4D026
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 16:16:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DE2D64D02F
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 16:17:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732034AbfFTOQJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 10:16:09 -0400
-Received: from outils.crapouillou.net ([89.234.176.41]:46274 "EHLO
-        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726686AbfFTOQJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 10:16:09 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
-        s=mail; t=1561040165; h=from:from:sender:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-         content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=61YqVHCdsBReXxm/3QTsbGF8fRfNDuePQ2kaErTMnAs=;
-        b=fYzlzc0aSLNqJ4oz7Y5SJxxDVNalZjIKYNa1B6M7JF5mbOthBfCzouM68lL+Ivzzx3sfxk
-        RLKq2Mqf15Xe+loGSqQmQ1aIFirnXaGY2YNuIyIr5T+8ehvWwXRzWh36uARG+zImqflEtw
-        +RnVcMiADHF6PqCywgI6huLIZX+Q270=
-Date:   Thu, 20 Jun 2019 16:15:59 +0200
-From:   Paul Cercueil <paul@crapouillou.net>
-Subject: Re: [PATCH v5 2/2] DRM: Add KMS driver for the Ingenic JZ47xx SoCs
-To:     Sam Ravnborg <sam@ravnborg.org>
-Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sean Paul <sean@poorly.run>, od@zcrc.me,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Artur Rojek <contact@artur-rojek.eu>
-Message-Id: <1561040159.1978.0@crapouillou.net>
-In-Reply-To: <20190619122622.GB29084@ravnborg.org>
-References: <20190603152331.23160-1-paul@crapouillou.net>
-        <20190603152331.23160-2-paul@crapouillou.net>
-        <20190619122622.GB29084@ravnborg.org>
+        id S1732131AbfFTOQ5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 10:16:57 -0400
+Received: from ozlabs.org ([203.11.71.1]:58517 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731773AbfFTOQz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Jun 2019 10:16:55 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45V3m33SGhz9s5c;
+        Fri, 21 Jun 2019 00:16:51 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1561040212;
+        bh=vdja2ap0jXe0YFwNWLNtjkfL4tYpQ+TI45RHxPMuGDc=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=QMlKdFnJPWwbxgZeuxJtNM70ggOfFCt3hxwZ4u2jtIrWpIwb0kEPPrZbDLl7X/jBH
+         UTMxcH18qH7moX9fxTJvNl9ktpZUYGMKE+owxy7xaPtCx+87feLBCTmjPURWavirib
+         aX3C+26puhlHrakpxkDhVx92ZYgX3SaHlCT3nuKOjEDCZQqoiZrtJrSfJykiF0II5m
+         BScYSmTd3FIM00yCv5gIRKOba5HZTyM6CabpgbVE3ivo8oGbpHKcIjMIZ052dNc8lY
+         frM1Ps1MilvF8uyIBmttgFs/PImBZGOCJEVFiUalLLt1Bqi/Jyv5CBQMMn5IILXNuA
+         sBs1GB5yYGzFw==
+Date:   Fri, 21 Jun 2019 00:16:49 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Pablo Neira Ayuso <pablo@netfilter.org>
+Cc:     NetFilter <netfilter-devel@vger.kernel.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Fernando Fernandez Mancera <ffmancera@riseup.net>
+Subject: Re: linux-next: build failure after merge of the netfilter-next
+ tree
+Message-ID: <20190621001649.4954df45@canb.auug.org.au>
+In-Reply-To: <20190620135703.aiv62n6fhzf6wjwv@salvia>
+References: <20190620234743.42e9d3e8@canb.auug.org.au>
+        <20190620135703.aiv62n6fhzf6wjwv@salvia>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1; format=flowed
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/SZk4yP0hckaUr/ULND1Dk+/"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+--Sig_/SZk4yP0hckaUr/ULND1Dk+/
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
+Hi Pablo,
 
-Le mer. 19 juin 2019 =E0 14:26, Sam Ravnborg <sam@ravnborg.org> a =E9crit=20
-:
-> Hi Paul.
->=20
-> On Mon, Jun 03, 2019 at 05:23:31PM +0200, Paul Cercueil wrote:
->>  Add a KMS driver for the Ingenic JZ47xx family of SoCs.
->>  This driver is meant to replace the aging jz4740-fb driver.
->>=20
->>  This driver does not make use of the simple pipe helper, for the=20
->> reason
->>  that it will soon be updated to support more advanced features like
->>  multiple planes, IPU integration for colorspace conversion and=20
->> up/down
->>  scaling, support for DSI displays, and TV-out and HDMI outputs.
->>=20
->>  Signed-off-by: Paul Cercueil <paul@crapouillou.net>
->>  Tested-by: Artur Rojek <contact@artur-rojek.eu>
->>  ---
->>=20
->>  Notes:
->>      v2: - Remove custom handling of panel. The panel is now=20
->> discovered using
->>      	  the standard API.
->>      	- Lots of small tweaks suggested by upstream
->>=20
->>      v3: - Use devm_drm_dev_init()
->>      	- Update compatible strings to -lcd instead of -drm
->>      	- Add destroy() callbacks to plane and crtc
->>      	- The ingenic,lcd-mode is now read from the bridge's DT node
->>=20
->>      v4: Remove ingenic,lcd-mode property completely. The various=20
->> modes are now
->>      	deduced from the connector type, the pixel format or the bus=20
->> flags.
->>=20
->>      v5: - Fix framebuffer size incorrectly calculated for 24bpp=20
->> framebuffers
->>      	- Use 32bpp framebuffer instead of 16bpp, as it'll work with=20
->> both
->>      	  16-bit and 24-bit panel
->>      	- Get rid of drm_format_plane_cpp() which has been dropped=20
->> upstream
->>      	- Avoid using drm_format_info->depth, which is deprecated.
-> In the drm world we include the revision notes in the changelog.
-> So I did this when I applied it to drm-misc-next.
->=20
-> Fixed a few trivial checkpatch warnings about indent too.
-> There was a few too-long-lines warnings that I ignored. Fixing them
-> would have hurt readability.
+On Thu, 20 Jun 2019 15:57:03 +0200 Pablo Neira Ayuso <pablo@netfilter.org> =
+wrote:
+>
+> https://git.kernel.org/pub/scm/linux/kernel/git/pablo/nf-next.git/commit/=
+?id=3D8527fa6cc68a489f735823e61b31ec6cb266274a
+
+Good timing :-)
 
 Thanks.
 
-> I assume you will maintain this driver onwards from now.
-> Please request drm-misc commit rights (see
-> https://www.freedesktop.org/wiki/AccountRequests/)
-> You will need a legacy SSH account.
+--=20
+Cheers,
+Stephen Rothwell
 
-I requested an account here:
-https://gitlab.freedesktop.org/freedesktop/freedesktop/issues/162
+--Sig_/SZk4yP0hckaUr/ULND1Dk+/
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-> And you should familiarize yourself with the maintainer-tools:
-> https://drm.pages.freedesktop.org/maintainer-tools/index.html
->=20
-> For my use I use "dim update-branches; dim apply; dim push
-> So only a small subset i needed for simple use.
->=20
-> 	Sam
+-----BEGIN PGP SIGNATURE-----
 
-=
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0LlVEACgkQAVBC80lX
+0GxrvAgAlz07KK18OGLbKh42QR1OTkWWQ7FThdF98Wn6qyXTzzQakCXjxoyXxKNM
+9kl6fIkixj+WDn/UdVL8aq12x91e4RCwAiKzAbyG2SsCB9zPm65apUsWCnCFliCq
+lRTwE5AGD5WLyDGxI/GD3VRv/qAZQrkq93rkeK12sh64HLXwqAtKzkpkd1tZnqxM
+7Sv7ipWd7KxhsEE+z0xE7ocU19OXEaRSnZrx2GZCDt2QAyvcvyFOATlcXJyhnA18
+vaXGzgks/zlO4YzeytYSYlnBih5bsaYVZGax4wbJlpuoZZ5CsR97MDaC4Mjj9d28
+iQxZORJr+3JjRZ/PglH6IHGi0/oICQ==
+=czsd
+-----END PGP SIGNATURE-----
 
+--Sig_/SZk4yP0hckaUr/ULND1Dk+/--
