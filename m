@@ -2,96 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D72724D124
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 17:00:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EB2534D141
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 17:02:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732174AbfFTPAr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 11:00:47 -0400
-Received: from mga03.intel.com ([134.134.136.65]:2903 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732148AbfFTPAo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 11:00:44 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Jun 2019 08:00:42 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.63,397,1557212400"; 
-   d="scan'208";a="162387155"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.68.145])
-  by fmsmga007.fm.intel.com with ESMTP; 20 Jun 2019 08:00:40 -0700
-Received: from andy by smile with local (Exim 4.92)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1hdyYJ-0001PS-8N; Thu, 20 Jun 2019 18:00:39 +0300
-Date:   Thu, 20 Jun 2019 18:00:39 +0300
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Charles Keepax <ckeepax@opensource.cirrus.com>
-Cc:     wsa@the-dreams.de, mika.westerberg@linux.intel.com,
-        jarkko.nikula@linux.intel.com, linux-i2c@vger.kernel.org,
-        linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        benjamin.tissoires@redhat.com, jbroadus@gmail.com,
-        patches@opensource.cirrus.com
-Subject: Re: [PATCH v5 0/7] I2C IRQ Probe Improvements
-Message-ID: <20190620150039.GF9224@smile.fi.intel.com>
-References: <20190620133420.4632-1-ckeepax@opensource.cirrus.com>
+        id S1732038AbfFTPCT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 11:02:19 -0400
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:36041 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726654AbfFTPCT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Jun 2019 11:02:19 -0400
+Received: by mail-qt1-f196.google.com with SMTP id p15so3512346qtl.3
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2019 08:02:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=LAmn0cqH4e72se7Q8G77z4kg+TBm3Zco/JpAJhHU5p0=;
+        b=HjU6/VsM0KB/eiFddTY4G73EtF0wkPxc45dCBFALXB1aDrp7J/EZ28r/aC0D6MJ4v1
+         5GbvVt4Fr4ufnUQUKluhoRRc5FT9fByNdINpkPRIjxWEEw8CPQbQd2cLSot/pwWjwHwd
+         TDWwFzB4kLvy3XURKj9vXCAINfI3uBzFBn80p7LrCaitVz5PVpXrqlG5mCDg9vb4eaMg
+         cRMD5aRRxXhfgdnAQqr5JY52mP+kRTo1jxJDTcWQi/TYRRRG61Y7xwOEFFB4zI0TKL/D
+         noQEfYhRw/A2W/doc5ESujoy+wIklIBl+vv+hPExyIYvWT9EDwMSIHb8Ubc/2R6hg6KN
+         F65Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=LAmn0cqH4e72se7Q8G77z4kg+TBm3Zco/JpAJhHU5p0=;
+        b=g5EMyW6VOuLKaT9rB3kvc4TMT43m78lo99KXWcx+D/3BSZH0V1vkYUxDP7fL46IeF9
+         bBQzXF0HtEdAjjOKGyT5qox6Ip+pEsQLGnmI3MBBOhpPFlXdyUu3Qx7qbkQR9UVj4Bkz
+         YfLlUA7gmCSBxmhJJlXRcKUVpcNa8ezxgfKEfQZeNBMtKqVn2BjAOrjBNIYqTaHBP1dj
+         JZmj1scuC4dqKKyi2yrVXnYRw8oyeoUQ7kdSQkKseyDF0Gs8OLKdNFtnwemDXLH998Ne
+         jVHCj+3Zexu/+7tAI+MTKGJput0oaF79f0yWsnYOxq0Y9H3u1kHpZIBq2+EFQNPA38h/
+         Zkqw==
+X-Gm-Message-State: APjAAAUdqm3ZVagL5+osfyzB/5nZ6CczYIz6xoLpnbQIMHjXBhwecXIW
+        S3zfOQMJlIT3JAUM5Ed6DptVPQ==
+X-Google-Smtp-Source: APXvYqxm++fo1z3dN/3lnL7+x6ZfDiibahHp1txVIF2lDJNMIEgYUqEk6cEvG67c//h2loN0iLxAmw==
+X-Received: by 2002:a0c:88a6:: with SMTP id 35mr9514994qvn.84.1561042938687;
+        Thu, 20 Jun 2019 08:02:18 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-156-34-55-100.dhcp-dynamic.fibreop.ns.bellaliant.net. [156.34.55.100])
+        by smtp.gmail.com with ESMTPSA id m4sm10510647qka.70.2019.06.20.08.02.17
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 20 Jun 2019 08:02:17 -0700 (PDT)
+Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1hdyZt-0006OH-D4; Thu, 20 Jun 2019 12:02:17 -0300
+Date:   Thu, 20 Jun 2019 12:02:17 -0300
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     Colin King <colin.king@canonical.com>
+Cc:     Doug Ledford <dledford@redhat.com>,
+        Leon Romanovsky <leon@kernel.org>,
+        Parav Pandit <parav@mellanox.com>, linux-rdma@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] RDMA: check for null return from call to
+ ib_get_client_data
+Message-ID: <20190620150217.GA19891@ziepe.ca>
+References: <20190620135052.27367-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190620133420.4632-1-ckeepax@opensource.cirrus.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190620135052.27367-1-colin.king@canonical.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 20, 2019 at 02:34:13PM +0100, Charles Keepax wrote:
-> This series attempts to align as much IRQ handling into the
-> probe path as possible. Note that I don't have a great setup
-> for testing these patches so they are mostly just build tested
-> and need careful review and testing before any of them are
-> merged.
+On Thu, Jun 20, 2019 at 02:50:52PM +0100, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
 > 
-> The series brings the ACPI path inline with the way the device
-> tree path handles the IRQ entirely at probe time. However,
-> it still leaves any IRQ specified through the board_info as
-> being handled at device time. In that case we need to cache
-> something from the board_info until probe time, which leaves
-> any alternative solution with something basically the same as
-> the current handling although perhaps caching more stuff.
+> The return from ib_get_client_data can potentially be null, so add a null
+> check on umad_dev and return -ENODEV in this unlikely case to avoid any
+> null pointer deferences.
 
-Thank you for an update.
-I asked few last minute questions on per patch basis.
+It would be a kernel bug if NULL is seen here.
 
-> 
-> Thanks,
-> Charles
-> 
-> See previous discussions:
->  - https://lkml.org/lkml/2019/2/15/989
->  - https://www.spinics.net/lists/linux-i2c/msg39541.html
-> 
-> Charles Keepax (7):
->   i2c: core: Allow whole core to use i2c_dev_irq_from_resources
->   i2c: acpi: Use available IRQ helper functions
->   i2c: acpi: Factor out getting the IRQ from ACPI
->   i2c: core: Make i2c_acpi_get_irq available to the rest of the I2C core
->   i2c: core: Move ACPI IRQ handling to probe time
->   i2c: core: Move ACPI gpio IRQ handling into i2c_acpi_get_irq
->   i2c: core: Tidy up handling of init_irq
-> 
->  drivers/i2c/i2c-core-acpi.c | 57 +++++++++++++++++++++++++++++++--------------
->  drivers/i2c/i2c-core-base.c | 11 +++++----
->  drivers/i2c/i2c-core.h      | 11 +++++++++
->  3 files changed, 57 insertions(+), 22 deletions(-)
-> 
-> -- 
-> 2.11.0
-> 
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+Jason
