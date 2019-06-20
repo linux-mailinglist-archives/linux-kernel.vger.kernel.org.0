@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 19D434D88D
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 20:27:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 17F614D6F1
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 20:14:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728197AbfFTS1X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 14:27:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58098 "EHLO mail.kernel.org"
+        id S1729412AbfFTSOM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 14:14:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42376 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727350AbfFTSFD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 14:05:03 -0400
+        id S1728989AbfFTSOK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Jun 2019 14:14:10 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A426B21670;
-        Thu, 20 Jun 2019 18:05:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9BE632084E;
+        Thu, 20 Jun 2019 18:14:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561053903;
-        bh=5jrAkegvWKyZI+KhoA+/JKnMoJguzm564z0l+fgdMoA=;
+        s=default; t=1561054449;
+        bh=hphFwK1hIXpMMA+3jCTMhQvVE8F9g39oGFKILzNNueY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XxRy2Q64A+Mwobr+62FLVk/TsswOvDLHsNdPQvxaC7uFMpRY+I1uHhPUsaGARCc90
-         t4QCrb60j1w7mYp4z7uUrP4iZLjIClAE42ijFxtf6TGU/5esnsLZ5Kn6kFqdWuxIdf
-         a+2Z7jF1ut3NHEEKex1OJmi5z98pu6h0fxmhkrFY=
+        b=nHTEGzEUppL3XWdCg6xquvr3Z4+G5bHDuK0V0IPf6TQKfXlVebfi+GpvZUSInoJzN
+         QL0B31C46ahhk6Pk2qMk1f4VPBWv0LhZIbn0TWhqFNVTw7J3RpfPzeVByfNJNLHPvp
+         LDaFXvIpUBqoMbTE0EOGgy9k6yAxaSzW2UmHZ1oA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Shengjiu Wang <shengjiu.wang@nxp.com>,
-        Mark Brown <broonie@kernel.org>
-Subject: [PATCH 4.9 067/117] ASoC: cs42xx8: Add regcache mask dirty
-Date:   Thu, 20 Jun 2019 19:56:41 +0200
-Message-Id: <20190620174356.786080120@linuxfoundation.org>
+        stable@vger.kernel.org, Stephen Barber <smbarber@chromium.org>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 5.1 15/98] vsock/virtio: set SOCK_DONE on peer shutdown
+Date:   Thu, 20 Jun 2019 19:56:42 +0200
+Message-Id: <20190620174349.990590950@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190620174351.964339809@linuxfoundation.org>
-References: <20190620174351.964339809@linuxfoundation.org>
+In-Reply-To: <20190620174349.443386789@linuxfoundation.org>
+References: <20190620174349.443386789@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,34 +43,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: S.j. Wang <shengjiu.wang@nxp.com>
+From: Stephen Barber <smbarber@chromium.org>
 
-commit ad6eecbfc01c987e0253371f274c3872042e4350 upstream.
+[ Upstream commit 42f5cda5eaf4396a939ae9bb43bb8d1d09c1b15c ]
 
-Add regcache_mark_dirty before regcache_sync for power
-of codec may be lost at suspend, then all the register
-need to be reconfigured.
+Set the SOCK_DONE flag to match the TCP_CLOSING state when a peer has
+shut down and there is nothing left to read.
 
-Fixes: 0c516b4ff85c ("ASoC: cs42xx8: Add codec driver
-support for CS42448/CS42888")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+This fixes the following bug:
+1) Peer sends SHUTDOWN(RDWR).
+2) Socket enters TCP_CLOSING but SOCK_DONE is not set.
+3) read() returns -ENOTCONN until close() is called, then returns 0.
+
+Signed-off-by: Stephen Barber <smbarber@chromium.org>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- sound/soc/codecs/cs42xx8.c |    1 +
- 1 file changed, 1 insertion(+)
+ net/vmw_vsock/virtio_transport_common.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/sound/soc/codecs/cs42xx8.c
-+++ b/sound/soc/codecs/cs42xx8.c
-@@ -569,6 +569,7 @@ static int cs42xx8_runtime_resume(struct
- 	msleep(5);
- 
- 	regcache_cache_only(cs42xx8->regmap, false);
-+	regcache_mark_dirty(cs42xx8->regmap);
- 
- 	ret = regcache_sync(cs42xx8->regmap);
- 	if (ret) {
+--- a/net/vmw_vsock/virtio_transport_common.c
++++ b/net/vmw_vsock/virtio_transport_common.c
+@@ -871,8 +871,10 @@ virtio_transport_recv_connected(struct s
+ 		if (le32_to_cpu(pkt->hdr.flags) & VIRTIO_VSOCK_SHUTDOWN_SEND)
+ 			vsk->peer_shutdown |= SEND_SHUTDOWN;
+ 		if (vsk->peer_shutdown == SHUTDOWN_MASK &&
+-		    vsock_stream_has_data(vsk) <= 0)
++		    vsock_stream_has_data(vsk) <= 0) {
++			sock_set_flag(sk, SOCK_DONE);
+ 			sk->sk_state = TCP_CLOSING;
++		}
+ 		if (le32_to_cpu(pkt->hdr.flags))
+ 			sk->sk_state_change(sk);
+ 		break;
 
 
