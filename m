@@ -2,37 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4CDE64D8B9
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 20:28:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 661B64D8B3
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 20:28:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727664AbfFTS2p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 14:28:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54840 "EHLO mail.kernel.org"
+        id S1726726AbfFTSDh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 14:03:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54936 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727658AbfFTSDa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 14:03:30 -0400
+        id S1727260AbfFTSDe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Jun 2019 14:03:34 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DFC2E21655;
-        Thu, 20 Jun 2019 18:03:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 011DF21655;
+        Thu, 20 Jun 2019 18:03:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561053810;
-        bh=cNcSTqBV/JlD6xYl/mVHboysfBPtx7HlQQDZkb+39DM=;
+        s=default; t=1561053813;
+        bh=QFpOEXXW0FjTm7dhG4KwD1l7Bk6rjye07FM0QSmow6Y=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=j4we1WFtGeopDl7DGUcMZv+B7TdX8xcuCQl9qsCtKwlUoIUzuN1Alpl4+EFJCu6YC
-         gDenwmootPl2F53e8PqId5y3Vgh0hDg8XqSs5q9bGczI5XIR48nCx12aHWC4oEnU0p
-         3jNf3p9+jwyBKnbwlaTahOxF7dnQ6z8Q2N82ThkQ=
+        b=fXm/VXwXp9MTVbWYnTvNGfoe4e8jG3U/NjLyCM+L2gfpKifLll3FMM/eVF1mRjrln
+         C2kHILqHOSYLU9JGYouH2Bh+bXcYGWw/AXW/APm+iAlnho0732zggRQo5h/hUgmZmN
+         N8Ihm+MiaqL1sKLAbeHZ7VPFGIt7d4Su/+u4iaxU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Enrico Granata <egranata@chromium.org>,
-        Jett Rink <jettrink@chromium.org>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        stable@vger.kernel.org,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 034/117] platform/chrome: cros_ec_proto: check for NULL transfer function
-Date:   Thu, 20 Jun 2019 19:56:08 +0200
-Message-Id: <20190620174354.036072636@linuxfoundation.org>
+Subject: [PATCH 4.9 035/117] soc: mediatek: pwrap: Zero initialize rdata in pwrap_init_cipher
+Date:   Thu, 20 Jun 2019 19:56:09 +0200
+Message-Id: <20190620174354.094825607@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190620174351.964339809@linuxfoundation.org>
 References: <20190620174351.964339809@linuxfoundation.org>
@@ -45,49 +47,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 94d4e7af14a1170e34cf082d92e4c02de9e9fb88 ]
+[ Upstream commit 89e28da82836530f1ac7a3a32fecc31f22d79b3e ]
 
-As new transfer mechanisms are added to the EC codebase, they may
-not support v2 of the EC protocol.
+When building with -Wsometimes-uninitialized, Clang warns:
 
-If the v3 initial handshake transfer fails, the kernel will try
-and call cmd_xfer as a fallback. If v2 is not supported, cmd_xfer
-will be NULL, and the code will end up causing a kernel panic.
+drivers/soc/mediatek/mtk-pmic-wrap.c:1358:6: error: variable 'rdata' is
+used uninitialized whenever '||' condition is true
+[-Werror,-Wsometimes-uninitialized]
 
-Add a check for NULL before calling the transfer function, along
-with a helpful comment explaining how one might end up in this
-situation.
+If pwrap_write returns non-zero, pwrap_read will not be called to
+initialize rdata, meaning that we will use some random uninitialized
+stack value in our print statement. Zero initialize rdata in case this
+happens.
 
-Signed-off-by: Enrico Granata <egranata@chromium.org>
-Reviewed-by: Jett Rink <jettrink@chromium.org>
-Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Link: https://github.com/ClangBuiltLinux/linux/issues/401
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
+Reviewed-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Matthias Brugger <matthias.bgg@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/platform/chrome/cros_ec_proto.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ drivers/soc/mediatek/mtk-pmic-wrap.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/platform/chrome/cros_ec_proto.c b/drivers/platform/chrome/cros_ec_proto.c
-index cfa3e850c49f..d225a835a64c 100644
---- a/drivers/platform/chrome/cros_ec_proto.c
-+++ b/drivers/platform/chrome/cros_ec_proto.c
-@@ -67,6 +67,17 @@ static int send_command(struct cros_ec_device *ec_dev,
- 	else
- 		xfer_fxn = ec_dev->cmd_xfer;
+diff --git a/drivers/soc/mediatek/mtk-pmic-wrap.c b/drivers/soc/mediatek/mtk-pmic-wrap.c
+index e929f5142862..36226976773f 100644
+--- a/drivers/soc/mediatek/mtk-pmic-wrap.c
++++ b/drivers/soc/mediatek/mtk-pmic-wrap.c
+@@ -778,7 +778,7 @@ static bool pwrap_is_pmic_cipher_ready(struct pmic_wrapper *wrp)
+ static int pwrap_init_cipher(struct pmic_wrapper *wrp)
+ {
+ 	int ret;
+-	u32 rdata;
++	u32 rdata = 0;
  
-+	if (!xfer_fxn) {
-+		/*
-+		 * This error can happen if a communication error happened and
-+		 * the EC is trying to use protocol v2, on an underlying
-+		 * communication mechanism that does not support v2.
-+		 */
-+		dev_err_once(ec_dev->dev,
-+			     "missing EC transfer API, cannot send command\n");
-+		return -EIO;
-+	}
-+
- 	ret = (*xfer_fxn)(ec_dev, msg);
- 	if (msg->result == EC_RES_IN_PROGRESS) {
- 		int i;
+ 	pwrap_writel(wrp, 0x1, PWRAP_CIPHER_SWRST);
+ 	pwrap_writel(wrp, 0x0, PWRAP_CIPHER_SWRST);
 -- 
 2.20.1
 
