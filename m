@@ -2,79 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 615464DCC9
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 23:38:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 12D194DCE5
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 23:40:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726669AbfFTViw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 17:38:52 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:57088 "EHLO mx1.redhat.com"
+        id S1726417AbfFTVk2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 17:40:28 -0400
+Received: from mga18.intel.com ([134.134.136.126]:34693 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726034AbfFTViv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 17:38:51 -0400
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id BFEC530872C3;
-        Thu, 20 Jun 2019 21:38:50 +0000 (UTC)
-Received: from ovpn-117-83.phx2.redhat.com (ovpn-117-83.phx2.redhat.com [10.3.117.83])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id A155D60FFE;
-        Thu, 20 Jun 2019 21:38:47 +0000 (UTC)
-Message-ID: <8bcc818b1b08850e109d1cde529ab98c4ed788df.camel@redhat.com>
-Subject: Re: [PATCH RT 1/4] rcu: Acquire RCU lock when disabling BHs
-From:   Scott Wood <swood@redhat.com>
-To:     paulmck@linux.ibm.com
-Cc:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Clark Williams <williams@redhat.com>,
-        linux-rt-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Thu, 20 Jun 2019 16:38:47 -0500
-In-Reply-To: <20190620212035.GY26519@linux.ibm.com>
-References: <20190619011908.25026-1-swood@redhat.com>
-         <20190619011908.25026-2-swood@redhat.com>
-         <20190620205352.GV26519@linux.ibm.com>
-         <1b6dfc95bba69aa53e4e84eebf6af60f0b9ed95c.camel@redhat.com>
-         <20190620212035.GY26519@linux.ibm.com>
-Organization: Red Hat
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.5 (3.30.5-1.fc29) 
+        id S1726034AbfFTVk2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Jun 2019 17:40:28 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Jun 2019 14:40:26 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.63,398,1557212400"; 
+   d="scan'208";a="168639077"
+Received: from mudigirx-mobl1.gar.corp.intel.com (HELO localhost) ([10.252.61.12])
+  by FMSMGA003.fm.intel.com with ESMTP; 20 Jun 2019 14:40:24 -0700
+Date:   Fri, 21 Jun 2019 00:40:22 +0300
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Daniel =?iso-8859-1?Q?D=EDaz?= <daniel.diaz@linaro.org>
+Cc:     shuah@kernel.org, linux-kselftest@vger.kernel.org,
+        Petr Vorel <petr.vorel@gmail.com>,
+        Joey Pabalinas <joeypabalinas@gmail.com>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] selftests/tpm2: Install run-time Python modules
+Message-ID: <20190620214022.GA20474@linux.intel.com>
+References: <20190620131822.28944-1-daniel.diaz@linaro.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Thu, 20 Jun 2019 21:38:51 +0000 (UTC)
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190620131822.28944-1-daniel.diaz@linaro.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2019-06-20 at 14:20 -0700, Paul E. McKenney wrote:
-> On Thu, Jun 20, 2019 at 04:06:02PM -0500, Scott Wood wrote:
-> > On Thu, 2019-06-20 at 13:53 -0700, Paul E. McKenney wrote:
-> > > And I have to ask...
-> > > 
-> > > What did you do to test this change to kernel/softirq.c?  My past
-> > > attempts
-> > > to do this sort of thing have always run afoul of open-coded BH
-> > > transitions.
-> > 
-> > Mostly rcutorture and loads such as kernel builds, on a debug
-> > kernel.  By
-> > "open-coded BH transition" do you mean directly manipulating the preempt
-> > count?  That would already be broken on RT.
+On Thu, Jun 20, 2019 at 08:18:19AM -0500, Daniel Díaz wrote:
+> When ordinarily running the tests, upon `make install', the
+> following error is encountered:
+>   ImportError: No module named tpm2_tests
+> because the Python files are not installed at the moment.
 > 
-> OK, then maybe you guys have already done the needed cleanup work.  Cool!
+> Fix this by adding both Python modules as accompanying
+> TEST_FILES in the Makefile.
+> 
+> Signed-off-by: Daniel Díaz <daniel.diaz@linaro.org>
 
-Do you remember what code was doing such things?  Grepping for the obvious
-things doesn't turn up anything outside the softirq code, even in the
-earlier non-RT kernels I checked.
+Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 
-> But don't the additions of rcu_read_lock() and rcu_read_unlock() want
-> to be protected by "!IS_ENABLED(CONFIG_PREEMPT_RT_FULL)" or similar?
+Question the kselftests maintainers: can I take this to [1] and
+include to my 5.3 PR?
 
-This is already a separate PREEMPT_RT_FULL-specific implementation.
+[1] git://git.infradead.org/users/jjs/linux-tpmdd.git
 
--Scott
-
-
+/Jarkko
