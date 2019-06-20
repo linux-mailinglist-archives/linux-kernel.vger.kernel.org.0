@@ -2,137 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 04C474C74F
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 08:15:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D1BDE4C757
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 08:17:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730014AbfFTGPz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 02:15:55 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:37572 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725871AbfFTGPx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 02:15:53 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id B714F3082AED;
-        Thu, 20 Jun 2019 06:15:52 +0000 (UTC)
-Received: from sirius.home.kraxel.org (ovpn-116-212.ams2.redhat.com [10.36.116.212])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 9BBB25C21E;
-        Thu, 20 Jun 2019 06:15:48 +0000 (UTC)
-Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
-        id E124917511; Thu, 20 Jun 2019 08:15:47 +0200 (CEST)
-From:   Gerd Hoffmann <kraxel@redhat.com>
-To:     dri-devel@lists.freedesktop.org
-Cc:     Gerd Hoffmann <kraxel@redhat.com>,
-        Dave Airlie <airlied@redhat.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>, Rob Herring <robh@kernel.org>,
-        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
-        Eric Anholt <eric@anholt.net>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sean Paul <sean@poorly.run>,
-        virtualization@lists.linux-foundation.org (open list:DRM DRIVER FOR
-        QEMU'S CIRRUS DEVICE), linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH 3/3] drm: drop DEFINE_DRM_GEM_SHMEM_FOPS
-Date:   Thu, 20 Jun 2019 08:15:47 +0200
-Message-Id: <20190620061547.8664-4-kraxel@redhat.com>
-In-Reply-To: <20190620061547.8664-1-kraxel@redhat.com>
-References: <20190620061547.8664-1-kraxel@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Thu, 20 Jun 2019 06:15:52 +0000 (UTC)
+        id S1730485AbfFTGRT convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 20 Jun 2019 02:17:19 -0400
+Received: from rtits2.realtek.com ([211.75.126.72]:55612 "EHLO
+        rtits2.realtek.com.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725872AbfFTGRS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Jun 2019 02:17:18 -0400
+Authenticated-By: 
+X-SpamFilter-By: BOX Solutions SpamTrap 5.62 with qID x5K6HCMf015697, This message is accepted by code: ctloc85258
+Received: from mail.realtek.com (rtitcasv01.realtek.com.tw[172.21.6.18])
+        by rtits2.realtek.com.tw (8.15.2/2.57/5.78) with ESMTPS id x5K6HCMf015697
+        (version=TLSv1 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Thu, 20 Jun 2019 14:17:12 +0800
+Received: from RTITMBSVM03.realtek.com.tw ([fe80::e1fe:b2c1:57ec:f8e1]) by
+ RTITCASV01.realtek.com.tw ([::1]) with mapi id 14.03.0439.000; Thu, 20 Jun
+ 2019 14:17:11 +0800
+From:   Hayes Wang <hayeswang@realtek.com>
+To:     "netdev@vger.kernel.org" <netdev@vger.kernel.org>
+CC:     "palmer@sifive.com" <palmer@sifive.com>,
+        "axboe@kernel.dk" <axboe@kernel.dk>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        nic_swsd <nic_swsd@realtek.com>
+Subject: skb_to_sgvec() casuses sg_pcopy_to_buffer() wrong
+Thread-Topic: skb_to_sgvec() casuses sg_pcopy_to_buffer() wrong
+Thread-Index: AdUnKF3JjX6iqdk4SWCfeWKY5qIZzA==
+Date:   Thu, 20 Jun 2019 06:17:10 +0000
+Message-ID: <0835B3720019904CB8F7AA43166CEEB2F189FDF5@RTITMBSVM03.realtek.com.tw>
+Accept-Language: zh-TW, en-US
+Content-Language: zh-TW
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [172.21.177.214]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DEFINE_DRM_GEM_SHMEM_FOPS is identical to DEFINE_DRM_GEM_FOPS now,
-drop it.
+Use skb_to_sgvec() to set scatter list, and sometime we would get a
+sg->offset which is more than PAGE_SIZE. Call sg_pcopy_to_buffer()
+with this scatter list would get wrong data.
 
-Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
----
- include/drm/drm_gem_shmem_helper.h      | 26 -------------------------
- drivers/gpu/drm/cirrus/cirrus.c         |  2 +-
- drivers/gpu/drm/panfrost/panfrost_drv.c |  2 +-
- drivers/gpu/drm/v3d/v3d_drv.c           |  2 +-
- 4 files changed, 3 insertions(+), 29 deletions(-)
+In sg_miter_get_next_page(), you would get wrong miter->__remaining,
+when the sg->offset is more than PAGE_SIZE.
 
-diff --git a/include/drm/drm_gem_shmem_helper.h b/include/drm/drm_gem_shmem_helper.h
-index 0f7b77cdc26b..813240dcfe17 100644
---- a/include/drm/drm_gem_shmem_helper.h
-+++ b/include/drm/drm_gem_shmem_helper.h
-@@ -85,32 +85,6 @@ struct drm_gem_shmem_object {
- #define to_drm_gem_shmem_obj(obj) \
- 	container_of(obj, struct drm_gem_shmem_object, base)
- 
--/**
-- * DEFINE_DRM_GEM_SHMEM_FOPS() - Macro to generate file operations for shmem drivers
-- * @name: name for the generated structure
-- *
-- * This macro autogenerates a suitable &struct file_operations for shmem based
-- * drivers, which can be assigned to &drm_driver.fops. Note that this structure
-- * cannot be shared between drivers, because it contains a reference to the
-- * current module using THIS_MODULE.
-- *
-- * Note that the declaration is already marked as static - if you need a
-- * non-static version of this you're probably doing it wrong and will break the
-- * THIS_MODULE reference by accident.
-- */
--#define DEFINE_DRM_GEM_SHMEM_FOPS(name) \
--	static const struct file_operations name = {\
--		.owner		= THIS_MODULE,\
--		.open		= drm_open,\
--		.release	= drm_release,\
--		.unlocked_ioctl	= drm_ioctl,\
--		.compat_ioctl	= drm_compat_ioctl,\
--		.poll		= drm_poll,\
--		.read		= drm_read,\
--		.llseek		= noop_llseek,\
--		.mmap		= drm_gem_mmap, \
--	}
--
- struct drm_gem_shmem_object *drm_gem_shmem_create(struct drm_device *dev, size_t size);
- void drm_gem_shmem_free_object(struct drm_gem_object *obj);
- 
-diff --git a/drivers/gpu/drm/cirrus/cirrus.c b/drivers/gpu/drm/cirrus/cirrus.c
-index be4ea370ba31..600a3fa7783f 100644
---- a/drivers/gpu/drm/cirrus/cirrus.c
-+++ b/drivers/gpu/drm/cirrus/cirrus.c
-@@ -510,7 +510,7 @@ static void cirrus_mode_config_init(struct cirrus_device *cirrus)
- 
- /* ------------------------------------------------------------------ */
- 
--DEFINE_DRM_GEM_SHMEM_FOPS(cirrus_fops);
-+DEFINE_DRM_GEM_FOPS(cirrus_fops);
- 
- static struct drm_driver cirrus_driver = {
- 	.driver_features = DRIVER_MODESET | DRIVER_GEM | DRIVER_ATOMIC | DRIVER_PRIME,
-diff --git a/drivers/gpu/drm/panfrost/panfrost_drv.c b/drivers/gpu/drm/panfrost/panfrost_drv.c
-index d11e2281dde6..0b32e5028c33 100644
---- a/drivers/gpu/drm/panfrost/panfrost_drv.c
-+++ b/drivers/gpu/drm/panfrost/panfrost_drv.c
-@@ -339,7 +339,7 @@ static const struct drm_ioctl_desc panfrost_drm_driver_ioctls[] = {
- 	PANFROST_IOCTL(GET_BO_OFFSET,	get_bo_offset,	DRM_RENDER_ALLOW),
- };
- 
--DEFINE_DRM_GEM_SHMEM_FOPS(panfrost_drm_driver_fops);
-+DEFINE_DRM_GEM_FOPS(panfrost_drm_driver_fops);
- 
- static struct drm_driver panfrost_drm_driver = {
- 	.driver_features	= DRIVER_RENDER | DRIVER_GEM | DRIVER_PRIME |
-diff --git a/drivers/gpu/drm/v3d/v3d_drv.c b/drivers/gpu/drm/v3d/v3d_drv.c
-index fea597f4db8a..2ca9ffa1c4c1 100644
---- a/drivers/gpu/drm/v3d/v3d_drv.c
-+++ b/drivers/gpu/drm/v3d/v3d_drv.c
-@@ -166,7 +166,7 @@ v3d_postclose(struct drm_device *dev, struct drm_file *file)
- 	kfree(v3d_priv);
- }
- 
--DEFINE_DRM_GEM_SHMEM_FOPS(v3d_drm_fops);
-+DEFINE_DRM_GEM_FOPS(v3d_drm_fops);
- 
- /* DRM_AUTH is required on SUBMIT_CL for now, while we don't have GMP
-  * protection between clients.  Note that render nodes would be be
--- 
-2.18.1
+static bool sg_miter_get_next_page(struct sg_mapping_iter *miter)
+{
+	if (!miter->__remaining) {
+		struct scatterlist *sg;
+		unsigned long pgoffset;
+
+		if (!__sg_page_iter_next(&miter->piter))
+			return false;
+
+		sg = miter->piter.sg;
+		pgoffset = miter->piter.sg_pgoffset;
+
+		miter->__offset = pgoffset ? 0 : sg->offset;
+		miter->__remaining = sg->offset + sg->length -
+				(pgoffset << PAGE_SHIFT) - miter->__offset;
+		miter->__remaining = min_t(unsigned long, miter->__remaining,
+					   PAGE_SIZE - miter->__offset);
+	}
+
+	return true;
+}
+
+Best Regards,
+Hayes
 
