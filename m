@@ -2,38 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2A5224D8BB
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 20:28:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 39DB14D5A7
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 20:00:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727650AbfFTSD3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 14:03:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54694 "EHLO mail.kernel.org"
+        id S1726696AbfFTR7q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 13:59:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47504 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727626AbfFTSDZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 14:03:25 -0400
+        id S1726673AbfFTR7l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Jun 2019 13:59:41 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1A574204FD;
-        Thu, 20 Jun 2019 18:03:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1CD2B2083B;
+        Thu, 20 Jun 2019 17:59:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561053804;
-        bh=1H2OOZ5xJRq9mj4X0Y/7+7y3oHkhm0n8Pn1EyciXXso=;
+        s=default; t=1561053580;
+        bh=dbapNoTXx8QGVGPfMYQkU6PrijipkxRNTYwkr3ttbAc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bm8xLgsDBWlH9XiZUlIjy/oteyA6Bv2lMwvsuYHtJaAi2+HIJyjlwLaeUYkszYEZf
-         7CFrUoJvUAjDz8hqCIbx+qEKJCXXiUvXFpdKt7psqLMBed07p498fw7hE8A/HZDdYc
-         xilu//9mxtMWzp/YHppgmsH0Bj50x1bvRlCpF1Jw=
+        b=0UIRTDrzFmRbuO6U1vyBTlBR2vUpNnF6B6+JfDmxlB7OTToe6kOr4DQzJd+5QfH79
+         AERjQy51csCshRfY99bqhxV7sbJxuLN1p7onrn1vWGW+L6i/KqjyB2E6nORbiUxpRu
+         4PyDVX8/yAMD7eHVCm4ub3IOYlTy3sBW0fdrhJA8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "J. Bruce Fields" <bfields@redhat.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 032/117] nfsd: allow fh_want_write to be called twice
-Date:   Thu, 20 Jun 2019 19:56:06 +0200
-Message-Id: <20190620174353.921173617@linuxfoundation.org>
+        stable@vger.kernel.org, Stephane Eranian <eranian@google.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>, jolsa@redhat.com,
+        kan.liang@intel.com, vincent.weaver@maine.edu,
+        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.4 10/84] perf/x86/intel: Allow PEBS multi-entry in watermark mode
+Date:   Thu, 20 Jun 2019 19:56:07 +0200
+Message-Id: <20190620174339.136089234@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190620174351.964339809@linuxfoundation.org>
-References: <20190620174351.964339809@linuxfoundation.org>
+In-Reply-To: <20190620174337.538228162@linuxfoundation.org>
+References: <20190620174337.538228162@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,49 +47,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 0b8f62625dc309651d0efcb6a6247c933acd8b45 ]
+[ Upstream commit c7a286577d7592720c2f179aadfb325a1ff48c95 ]
 
-A fuzzer recently triggered lockdep warnings about potential sb_writers
-deadlocks caused by fh_want_write().
+This patch fixes a restriction/bug introduced by:
 
-Looks like we aren't careful to pair each fh_want_write() with an
-fh_drop_write().
+   583feb08e7f7 ("perf/x86/intel: Fix handling of wakeup_events for multi-entry PEBS")
 
-It's not normally a problem since fh_put() will call fh_drop_write() for
-us.  And was OK for NFSv3 where we'd do one operation that might call
-fh_want_write(), and then put the filehandle.
+The original patch prevented using multi-entry PEBS when wakeup_events != 0.
+However given that wakeup_events is part of a union with wakeup_watermark, it
+means that in watermark mode, PEBS multi-entry is also disabled which is not the
+intent. This patch fixes this by checking is watermark mode is enabled.
 
-But an NFSv4 protocol fuzzer can do weird things like call unlink twice
-in a compound, and then we get into trouble.
-
-I'm a little worried about this approach of just leaving everything to
-fh_put().  But I think there are probably a lot of
-fh_want_write()/fh_drop_write() imbalances so for now I think we need it
-to be more forgiving.
-
-Signed-off-by: J. Bruce Fields <bfields@redhat.com>
+Signed-off-by: Stephane Eranian <eranian@google.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: jolsa@redhat.com
+Cc: kan.liang@intel.com
+Cc: vincent.weaver@maine.edu
+Fixes: 583feb08e7f7 ("perf/x86/intel: Fix handling of wakeup_events for multi-entry PEBS")
+Link: http://lkml.kernel.org/r/20190514003400.224340-1-eranian@google.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/nfsd/vfs.h | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ arch/x86/kernel/cpu/perf_event_intel.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/nfsd/vfs.h b/fs/nfsd/vfs.h
-index 0bf9e7bf5800..9140b9cf3870 100644
---- a/fs/nfsd/vfs.h
-+++ b/fs/nfsd/vfs.h
-@@ -116,8 +116,11 @@ void		nfsd_put_raparams(struct file *file, struct raparms *ra);
+diff --git a/arch/x86/kernel/cpu/perf_event_intel.c b/arch/x86/kernel/cpu/perf_event_intel.c
+index 325ed90511cf..3572434a73cb 100644
+--- a/arch/x86/kernel/cpu/perf_event_intel.c
++++ b/arch/x86/kernel/cpu/perf_event_intel.c
+@@ -2513,7 +2513,7 @@ static int intel_pmu_hw_config(struct perf_event *event)
+ 		return ret;
  
- static inline int fh_want_write(struct svc_fh *fh)
- {
--	int ret = mnt_want_write(fh->fh_export->ex_path.mnt);
-+	int ret;
- 
-+	if (fh->fh_want_write)
-+		return 0;
-+	ret = mnt_want_write(fh->fh_export->ex_path.mnt);
- 	if (!ret)
- 		fh->fh_want_write = true;
- 	return ret;
+ 	if (event->attr.precise_ip) {
+-		if (!(event->attr.freq || event->attr.wakeup_events)) {
++		if (!(event->attr.freq || (event->attr.wakeup_events && !event->attr.watermark))) {
+ 			event->hw.flags |= PERF_X86_EVENT_AUTO_RELOAD;
+ 			if (!(event->attr.sample_type &
+ 			      ~intel_pmu_free_running_flags(event)))
 -- 
 2.20.1
 
