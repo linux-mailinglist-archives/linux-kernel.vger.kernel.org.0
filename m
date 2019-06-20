@@ -2,42 +2,47 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7763E4D667
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 20:08:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C04A94D6B2
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 20:12:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728323AbfFTSHa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 14:07:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33954 "EHLO mail.kernel.org"
+        id S1728488AbfFTSLA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 14:11:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38652 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728316AbfFTSH0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 14:07:26 -0400
+        id S1728870AbfFTSK6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Jun 2019 14:10:58 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 66C2B2063F;
-        Thu, 20 Jun 2019 18:07:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C73D521537;
+        Thu, 20 Jun 2019 18:10:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561054045;
-        bh=xwCTgva9OI67grSH5Oh2hITs1mJLqZptYrYyn964VaQ=;
+        s=default; t=1561054257;
+        bh=HwWEg1V8losBJnhzjsLe+Bz2pPRLx7nitKHwcUkeCbw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ayn8lnR/Vc40CzChrnyq0NphVvX0gx3VF8+XboKMGXBguVFGJELTr2mkEQDDSvS9g
-         ReaSJQfjBiDfaQYoPSWH++N9ErJMZ+HwMMr2r3LHO3lycCzR1XF391aU3FRVgNDq7k
-         K4WS4OH4JNMap/DOb938jnuylXSLlCRW+EQFtKbs=
+        b=ZySbnw+pgjwKefn94/+9ifT3ceY+ZahgOe+uPKkeZjCs5o8iMe0YVVI/vshQwh1i1
+         TJ/mVYHwR3vHWwVadB0zMViIJjYq5ykSj+yJyiXcJn+wqT761vC3Vh03Yn/o1Es3TK
+         AwPs5e7Kql8i0C7P02zEBSAXlX48RkoQX/aVGckI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, kbuild test robot <lkp@intel.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Tony Luck <tony.luck@intel.com>,
-        Fenghua Yu <fenghua.yu@intel.com>, linux-ia64@vger.kernel.org,
+        stable@vger.kernel.org, Yabin Cui <yabinc@google.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Jiri Olsa <jolsa@redhat.com>,
         Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 109/117] ia64: fix build errors by exporting paddr_to_nid()
+        Stephane Eranian <eranian@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Vince Weaver <vincent.weaver@maine.edu>, acme@kernel.org,
+        mark.rutland@arm.com, namhyung@kernel.org,
+        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 28/61] perf/ring_buffer: Add ordering to rb->nest increment
 Date:   Thu, 20 Jun 2019 19:57:23 +0200
-Message-Id: <20190620174358.131774440@linuxfoundation.org>
+Message-Id: <20190620174342.214763059@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190620174351.964339809@linuxfoundation.org>
-References: <20190620174351.964339809@linuxfoundation.org>
+In-Reply-To: <20190620174336.357373754@linuxfoundation.org>
+References: <20190620174336.357373754@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,56 +52,58 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 9a626c4a6326da4433a0d4d4a8a7d1571caf1ed3 ]
+[ Upstream commit 3f9fbe9bd86c534eba2faf5d840fd44c6049f50e ]
 
-Fix build errors on ia64 when DISCONTIGMEM=y and NUMA=y by
-exporting paddr_to_nid().
+Similar to how decrementing rb->next too early can cause data_head to
+(temporarily) be observed to go backward, so too can this happen when
+we increment too late.
 
-Fixes these build errors:
+This barrier() ensures the rb->head load happens after the increment,
+both the one in the 'goto again' path, as the one from
+perf_output_get_handle() -- albeit very unlikely to matter for the
+latter.
 
-ERROR: "paddr_to_nid" [sound/core/snd-pcm.ko] undefined!
-ERROR: "paddr_to_nid" [net/sunrpc/sunrpc.ko] undefined!
-ERROR: "paddr_to_nid" [fs/cifs/cifs.ko] undefined!
-ERROR: "paddr_to_nid" [drivers/video/fbdev/core/fb.ko] undefined!
-ERROR: "paddr_to_nid" [drivers/usb/mon/usbmon.ko] undefined!
-ERROR: "paddr_to_nid" [drivers/usb/core/usbcore.ko] undefined!
-ERROR: "paddr_to_nid" [drivers/md/raid1.ko] undefined!
-ERROR: "paddr_to_nid" [drivers/md/dm-mod.ko] undefined!
-ERROR: "paddr_to_nid" [drivers/md/dm-crypt.ko] undefined!
-ERROR: "paddr_to_nid" [drivers/md/dm-bufio.ko] undefined!
-ERROR: "paddr_to_nid" [drivers/ide/ide-core.ko] undefined!
-ERROR: "paddr_to_nid" [drivers/ide/ide-cd_mod.ko] undefined!
-ERROR: "paddr_to_nid" [drivers/gpu/drm/drm.ko] undefined!
-ERROR: "paddr_to_nid" [drivers/char/agp/agpgart.ko] undefined!
-ERROR: "paddr_to_nid" [drivers/block/nbd.ko] undefined!
-ERROR: "paddr_to_nid" [drivers/block/loop.ko] undefined!
-ERROR: "paddr_to_nid" [drivers/block/brd.ko] undefined!
-ERROR: "paddr_to_nid" [crypto/ccm.ko] undefined!
-
-Reported-by: kbuild test robot <lkp@intel.com>
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Cc: Tony Luck <tony.luck@intel.com>
-Cc: Fenghua Yu <fenghua.yu@intel.com>
-Cc: linux-ia64@vger.kernel.org
-Signed-off-by: Tony Luck <tony.luck@intel.com>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Suggested-by: Yabin Cui <yabinc@google.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Stephane Eranian <eranian@google.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Vince Weaver <vincent.weaver@maine.edu>
+Cc: acme@kernel.org
+Cc: mark.rutland@arm.com
+Cc: namhyung@kernel.org
+Fixes: ef60777c9abd ("perf: Optimize the perf_output() path by removing IRQ-disables")
+Link: http://lkml.kernel.org/r/20190517115418.309516009@infradead.org
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/ia64/mm/numa.c | 1 +
- 1 file changed, 1 insertion(+)
+ kernel/events/ring_buffer.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/arch/ia64/mm/numa.c b/arch/ia64/mm/numa.c
-index aa19b7ac8222..476c7b4be378 100644
---- a/arch/ia64/mm/numa.c
-+++ b/arch/ia64/mm/numa.c
-@@ -49,6 +49,7 @@ paddr_to_nid(unsigned long paddr)
+diff --git a/kernel/events/ring_buffer.c b/kernel/events/ring_buffer.c
+index 31edf1f39cca..d32b9375ec0e 100644
+--- a/kernel/events/ring_buffer.c
++++ b/kernel/events/ring_buffer.c
+@@ -49,6 +49,15 @@ static void perf_output_put_handle(struct perf_output_handle *handle)
+ 	unsigned long head;
  
- 	return (i < num_node_memblks) ? node_memblk[i].nid : (num_node_memblks ? -1 : 0);
- }
-+EXPORT_SYMBOL(paddr_to_nid);
+ again:
++	/*
++	 * In order to avoid publishing a head value that goes backwards,
++	 * we must ensure the load of @rb->head happens after we've
++	 * incremented @rb->nest.
++	 *
++	 * Otherwise we can observe a @rb->head value before one published
++	 * by an IRQ/NMI happening between the load and the increment.
++	 */
++	barrier();
+ 	head = local_read(&rb->head);
  
- #if defined(CONFIG_SPARSEMEM) && defined(CONFIG_NUMA)
- /*
+ 	/*
 -- 
 2.20.1
 
