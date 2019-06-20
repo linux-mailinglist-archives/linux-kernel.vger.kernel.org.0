@@ -2,146 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 674324C548
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 04:20:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 652794C566
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 04:25:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731277AbfFTCUH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Jun 2019 22:20:07 -0400
-Received: from mail-io1-f69.google.com ([209.85.166.69]:41580 "EHLO
-        mail-io1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726545AbfFTCUG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Jun 2019 22:20:06 -0400
-Received: by mail-io1-f69.google.com with SMTP id x17so2257755iog.8
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2019 19:20:06 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=Iu/xrxl9AYtNlQ8bWEvL7In5eO8Bm3o3UBlzw7LpR/M=;
-        b=LORKy9zW8UckJX56G9DoH+AAQJQkh7FvsC76Kw0EHwl8XAnHEpt3y4It+owJyO3n9h
-         P7/yKy80RACXAdWhockLOitw+kG/pn+LUys6RuMlOB/5L0FVU1NCkxPMxKjwk1vmYiei
-         PQluDrkWqTIynT/4LJcFqpjakd2X2THZ/kVEr07vH4GXcjepnEhOUfFXuszmZKpJ7oTF
-         aMNqEc7pzC9iixiGkE45SQp4fAiC0zRdU40VwSN86whXIAXag56mObMTfKsqMz8t8x0h
-         xmb9msL+n6XI62tbXXmQap8sILNPyq/mDOK84xDmXw5D9SsdBv4hkpvyr4TCRcDllg5X
-         /mUw==
-X-Gm-Message-State: APjAAAU3HqqD8IBL7nJrq1AZ+xubkaSSu1FOQCiU6loOX1lccEr+QouE
-        8lvvSTb1zmcUDJ+hHWt2678a+7l4jkxnMHv95S0SyYcqjveh
-X-Google-Smtp-Source: APXvYqz2n//t+tr5NDxBvenma2q2JRIDk3hW0Mt3KSesG2RKEmakpCn7oKjUbjOoPYEOB4m8eG5DFCgOJBJolyCrwoaKO691U600
+        id S1731500AbfFTCZA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Jun 2019 22:25:00 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:60856 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726370AbfFTCY7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Jun 2019 22:24:59 -0400
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 7B2A685538;
+        Thu, 20 Jun 2019 02:24:59 +0000 (UTC)
+Received: from xz-x1.redhat.com (ovpn-12-78.pek2.redhat.com [10.72.12.78])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id C410C1001DC3;
+        Thu, 20 Jun 2019 02:24:46 +0000 (UTC)
+From:   Peter Xu <peterx@redhat.com>
+To:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Cc:     David Hildenbrand <david@redhat.com>,
+        Hugh Dickins <hughd@google.com>,
+        Maya Gokhale <gokhale2@llnl.gov>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Pavel Emelyanov <xemul@virtuozzo.com>,
+        Johannes Weiner <hannes@cmpxchg.org>, peterx@redhat.com,
+        Martin Cracauer <cracauer@cons.org>,
+        Denis Plotnikov <dplotnikov@virtuozzo.com>,
+        Shaohua Li <shli@fb.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Marty McFadden <mcfadden8@llnl.gov>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Mel Gorman <mgorman@suse.de>,
+        "Kirill A . Shutemov" <kirill@shutemov.name>,
+        "Dr . David Alan Gilbert" <dgilbert@redhat.com>
+Subject: [PATCH v5 22/25] userfaultfd: wp: UFFDIO_REGISTER_MODE_WP documentation update
+Date:   Thu, 20 Jun 2019 10:20:05 +0800
+Message-Id: <20190620022008.19172-23-peterx@redhat.com>
+In-Reply-To: <20190620022008.19172-1-peterx@redhat.com>
+References: <20190620022008.19172-1-peterx@redhat.com>
 MIME-Version: 1.0
-X-Received: by 2002:a5d:9b1a:: with SMTP id y26mr12461285ion.238.1560997205638;
- Wed, 19 Jun 2019 19:20:05 -0700 (PDT)
-Date:   Wed, 19 Jun 2019 19:20:05 -0700
-In-Reply-To: <00000000000001de810588363aaf@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000f00cf1058bb7fb56@google.com>
-Subject: Re: KASAN: slab-out-of-bounds Read in p54u_load_firmware_cb
-From:   syzbot <syzbot+6d237e74cdc13f036473@syzkaller.appspotmail.com>
-To:     andreyknvl@google.com, chunkeey@googlemail.com,
-        davem@davemloft.net, kvalo@codeaurora.org,
-        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Thu, 20 Jun 2019 02:24:59 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-syzbot has found a reproducer for the following crash on:
+From: Martin Cracauer <cracauer@cons.org>
 
-HEAD commit:    9939f56e usb-fuzzer: main usb gadget fuzzer driver
-git tree:       https://github.com/google/kasan.git usb-fuzzer
-console output: https://syzkaller.appspot.com/x/log.txt?x=135e29faa00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=df134eda130bb43a
-dashboard link: https://syzkaller.appspot.com/bug?extid=6d237e74cdc13f036473
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=175d946ea00000
+Adds documentation about the write protection support.
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+6d237e74cdc13f036473@syzkaller.appspotmail.com
+Signed-off-by: Martin Cracauer <cracauer@cons.org>
+Signed-off-by: Andrea Arcangeli <aarcange@redhat.com>
+[peterx: rewrite in rst format; fixups here and there]
+Reviewed-by: Jerome Glisse <jglisse@redhat.com>
+Reviewed-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
+Signed-off-by: Peter Xu <peterx@redhat.com>
+---
+ Documentation/admin-guide/mm/userfaultfd.rst | 51 ++++++++++++++++++++
+ 1 file changed, 51 insertions(+)
 
-usb 3-1: Direct firmware load for isl3887usb failed with error -2
-usb 3-1: Firmware not found.
-==================================================================
-BUG: KASAN: slab-out-of-bounds in p54u_load_firmware_cb.cold+0x97/0x13d  
-drivers/net/wireless/intersil/p54/p54usb.c:936
-Read of size 8 at addr ffff8881c9cf7588 by task kworker/1:5/2759
-
-CPU: 1 PID: 2759 Comm: kworker/1:5 Not tainted 5.2.0-rc5+ #11
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Workqueue: events request_firmware_work_func
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0xca/0x13e lib/dump_stack.c:113
-  print_address_description+0x67/0x231 mm/kasan/report.c:188
-  __kasan_report.cold+0x1a/0x32 mm/kasan/report.c:317
-  kasan_report+0xe/0x20 mm/kasan/common.c:614
-  p54u_load_firmware_cb.cold+0x97/0x13d  
-drivers/net/wireless/intersil/p54/p54usb.c:936
-  request_firmware_work_func+0x126/0x242  
-drivers/base/firmware_loader/main.c:785
-  process_one_work+0x905/0x1570 kernel/workqueue.c:2269
-  worker_thread+0x96/0xe20 kernel/workqueue.c:2415
-  kthread+0x30b/0x410 kernel/kthread.c:255
-  ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
-
-Allocated by task 1612:
-  save_stack+0x1b/0x80 mm/kasan/common.c:71
-  set_track mm/kasan/common.c:79 [inline]
-  __kasan_kmalloc mm/kasan/common.c:489 [inline]
-  __kasan_kmalloc.constprop.0+0xbf/0xd0 mm/kasan/common.c:462
-  kmalloc include/linux/slab.h:547 [inline]
-  syslog_print kernel/printk/printk.c:1346 [inline]
-  do_syslog kernel/printk/printk.c:1519 [inline]
-  do_syslog+0x4f4/0x12e0 kernel/printk/printk.c:1493
-  kmsg_read+0x8a/0xb0 fs/proc/kmsg.c:40
-  proc_reg_read+0x1c1/0x280 fs/proc/inode.c:221
-  __vfs_read+0x76/0x100 fs/read_write.c:425
-  vfs_read+0x18e/0x3d0 fs/read_write.c:461
-  ksys_read+0x127/0x250 fs/read_write.c:587
-  do_syscall_64+0xb7/0x560 arch/x86/entry/common.c:301
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-Freed by task 1612:
-  save_stack+0x1b/0x80 mm/kasan/common.c:71
-  set_track mm/kasan/common.c:79 [inline]
-  __kasan_slab_free+0x130/0x180 mm/kasan/common.c:451
-  slab_free_hook mm/slub.c:1421 [inline]
-  slab_free_freelist_hook mm/slub.c:1448 [inline]
-  slab_free mm/slub.c:2994 [inline]
-  kfree+0xd7/0x280 mm/slub.c:3949
-  syslog_print kernel/printk/printk.c:1405 [inline]
-  do_syslog kernel/printk/printk.c:1519 [inline]
-  do_syslog+0xff3/0x12e0 kernel/printk/printk.c:1493
-  kmsg_read+0x8a/0xb0 fs/proc/kmsg.c:40
-  proc_reg_read+0x1c1/0x280 fs/proc/inode.c:221
-  __vfs_read+0x76/0x100 fs/read_write.c:425
-  vfs_read+0x18e/0x3d0 fs/read_write.c:461
-  ksys_read+0x127/0x250 fs/read_write.c:587
-  do_syscall_64+0xb7/0x560 arch/x86/entry/common.c:301
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-The buggy address belongs to the object at ffff8881c9cf7180
-  which belongs to the cache kmalloc-1k of size 1024
-The buggy address is located 8 bytes to the right of
-  1024-byte region [ffff8881c9cf7180, ffff8881c9cf7580)
-The buggy address belongs to the page:
-page:ffffea0007273d00 refcount:1 mapcount:0 mapping:ffff8881dac02a00  
-index:0x0 compound_mapcount: 0
-flags: 0x200000000010200(slab|head)
-raw: 0200000000010200 dead000000000100 dead000000000200 ffff8881dac02a00
-raw: 0000000000000000 00000000000e000e 00000001ffffffff 0000000000000000
-page dumped because: kasan: bad access detected
-
-Memory state around the buggy address:
-  ffff8881c9cf7480: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-  ffff8881c9cf7500: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-> ffff8881c9cf7580: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-                       ^
-  ffff8881c9cf7600: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-  ffff8881c9cf7680: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-==================================================================
+diff --git a/Documentation/admin-guide/mm/userfaultfd.rst b/Documentation/admin-guide/mm/userfaultfd.rst
+index 5048cf661a8a..c30176e67900 100644
+--- a/Documentation/admin-guide/mm/userfaultfd.rst
++++ b/Documentation/admin-guide/mm/userfaultfd.rst
+@@ -108,6 +108,57 @@ UFFDIO_COPY. They're atomic as in guaranteeing that nothing can see an
+ half copied page since it'll keep userfaulting until the copy has
+ finished.
+ 
++Notes:
++
++- If you requested UFFDIO_REGISTER_MODE_MISSING when registering then
++  you must provide some kind of page in your thread after reading from
++  the uffd.  You must provide either UFFDIO_COPY or UFFDIO_ZEROPAGE.
++  The normal behavior of the OS automatically providing a zero page on
++  an annonymous mmaping is not in place.
++
++- None of the page-delivering ioctls default to the range that you
++  registered with.  You must fill in all fields for the appropriate
++  ioctl struct including the range.
++
++- You get the address of the access that triggered the missing page
++  event out of a struct uffd_msg that you read in the thread from the
++  uffd.  You can supply as many pages as you want with UFFDIO_COPY or
++  UFFDIO_ZEROPAGE.  Keep in mind that unless you used DONTWAKE then
++  the first of any of those IOCTLs wakes up the faulting thread.
++
++- Be sure to test for all errors including (pollfd[0].revents &
++  POLLERR).  This can happen, e.g. when ranges supplied were
++  incorrect.
++
++Write Protect Notifications
++---------------------------
++
++This is equivalent to (but faster than) using mprotect and a SIGSEGV
++signal handler.
++
++Firstly you need to register a range with UFFDIO_REGISTER_MODE_WP.
++Instead of using mprotect(2) you use ioctl(uffd, UFFDIO_WRITEPROTECT,
++struct *uffdio_writeprotect) while mode = UFFDIO_WRITEPROTECT_MODE_WP
++in the struct passed in.  The range does not default to and does not
++have to be identical to the range you registered with.  You can write
++protect as many ranges as you like (inside the registered range).
++Then, in the thread reading from uffd the struct will have
++msg.arg.pagefault.flags & UFFD_PAGEFAULT_FLAG_WP set. Now you send
++ioctl(uffd, UFFDIO_WRITEPROTECT, struct *uffdio_writeprotect) again
++while pagefault.mode does not have UFFDIO_WRITEPROTECT_MODE_WP set.
++This wakes up the thread which will continue to run with writes. This
++allows you to do the bookkeeping about the write in the uffd reading
++thread before the ioctl.
++
++If you registered with both UFFDIO_REGISTER_MODE_MISSING and
++UFFDIO_REGISTER_MODE_WP then you need to think about the sequence in
++which you supply a page and undo write protect.  Note that there is a
++difference between writes into a WP area and into a !WP area.  The
++former will have UFFD_PAGEFAULT_FLAG_WP set, the latter
++UFFD_PAGEFAULT_FLAG_WRITE.  The latter did not fail on protection but
++you still need to supply a page when UFFDIO_REGISTER_MODE_MISSING was
++used.
++
+ QEMU/KVM
+ ========
+ 
+-- 
+2.21.0
 
