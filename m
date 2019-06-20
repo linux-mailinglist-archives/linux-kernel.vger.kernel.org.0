@@ -2,80 +2,181 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9EEFD4C91A
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 10:12:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D67004C923
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 10:14:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731314AbfFTIMo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 04:12:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38828 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725889AbfFTIMn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 04:12:43 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 41C992084B;
-        Thu, 20 Jun 2019 08:12:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561018362;
-        bh=684dG/Qb4pd0Qep2VF5lKmVvY49DtL5QS1MEmJHfn+o=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Zl7+0jzHJdyogSAnJRJllBM5NEq6L1SctwnZFHaOSff6w8JYoyn93btn+AIGldECL
-         0iHyYGK74xJn1am6iLM9fZezE/T74z70J1oVqvLC3dILX9UnxGQdRtAP7C4z5lbdcF
-         NTRqeAU2ksziT8IhUOgd704RM7XJUWmlAwu+vPjs=
-Date:   Thu, 20 Jun 2019 10:12:40 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Takashi Iwai <tiwai@suse.de>
-Cc:     linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC 0/3] Automatically choose a bigger font for high
- resolution screens
-Message-ID: <20190620081240.GA17630@kroah.com>
-References: <20190618203425.10723-1-tiwai@suse.de>
- <20190620062821.GA20578@kroah.com>
- <s5hzhmcem7a.wl-tiwai@suse.de>
+        id S1730317AbfFTIOC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 04:14:02 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:44858 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725875AbfFTIOC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Jun 2019 04:14:02 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id DAC1C606FC; Thu, 20 Jun 2019 08:14:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1561018440;
+        bh=tuUQSriThZFHcONYU0jv68aqcUoiWpP64QDN/GaLos4=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=hR5MM7jbhDrOkso/7PeLJVzShlT3EKV6Qv0ULTC7JdR3h+kbV0vwiPmRiP5TTKAs4
+         4NC+Jj7v2Eo+yPw022Iur50hjt/U6gIlMmgLrHBsV85EL8RqyjHDOG0gcVfgRe96V7
+         B/05cBMYfUlG0+Tx549fIKRHEpm6xT728XTmwmmo=
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        pdx-caf-mail.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_INVALID,DKIM_SIGNED autolearn=no autolearn_force=no version=3.4.0
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by smtp.codeaurora.org (Postfix) with ESMTP id 54889602F4;
+        Thu, 20 Jun 2019 08:13:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1561018440;
+        bh=tuUQSriThZFHcONYU0jv68aqcUoiWpP64QDN/GaLos4=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=hR5MM7jbhDrOkso/7PeLJVzShlT3EKV6Qv0ULTC7JdR3h+kbV0vwiPmRiP5TTKAs4
+         4NC+Jj7v2Eo+yPw022Iur50hjt/U6gIlMmgLrHBsV85EL8RqyjHDOG0gcVfgRe96V7
+         B/05cBMYfUlG0+Tx549fIKRHEpm6xT728XTmwmmo=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <s5hzhmcem7a.wl-tiwai@suse.de>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Thu, 20 Jun 2019 13:43:45 +0530
+From:   amasule@codeaurora.org
+To:     Stanimir Varbanov <stanimir.varbanov@linaro.org>
+Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, vgarodia@codeaurora.org
+Subject: Re: [PATCH 2/5] media: venus: Initialize codec data
+In-Reply-To: <43e8022f-d231-8c36-0db8-9710a1adaabc@linaro.org>
+References: <1560233130-27264-1-git-send-email-amasule@codeaurora.org>
+ <1560233130-27264-3-git-send-email-amasule@codeaurora.org>
+ <43e8022f-d231-8c36-0db8-9710a1adaabc@linaro.org>
+Message-ID: <e75c267a5fcb1a117ea4548336fad3a4@codeaurora.org>
+X-Sender: amasule@codeaurora.org
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 20, 2019 at 09:43:21AM +0200, Takashi Iwai wrote:
-> On Thu, 20 Jun 2019 08:28:21 +0200,
-> Greg Kroah-Hartman wrote:
-> > 
-> > On Tue, Jun 18, 2019 at 10:34:22PM +0200, Takashi Iwai wrote:
-> > > Hi,
-> > > 
-> > > this is an RFC patch for automatically selecting a bigger font for
-> > > high resolution monitors if available.  Although we recently got a
-> > > 16x32 sized font support in the kernel, using it still requires some
-> > > extra kernel option.  This patch reduces this and the kernel will pick
-> > > up a bigger font.
-> > > 
-> > > The logic is simply checking the text screen size.  If it's over a
-> > > threshold, the penalty is given to the function that chooses the
-> > > default font.
-> > > 
-> > > The threshold was chosen so that the normal display up to Full HD
-> > > won't be affected.
-> > > 
-> > > There are two preliminary patches and they are merely cleanups.  They
-> > > can be applied no matter whether to take the last patch or not.
-> > 
-> > I applied the first two patches, as they seem sane.
-> 
-> Thanks!
-> 
-> > I like the idea of the last one, and have no objections to it.  I can
-> > apply it too if you want and we can see what happens :)
-> 
-> OK, then let's go ahead.  We can see what people react if they can
-> read a kernel crash message without glasses :)
+Hi Stan,
 
-Now applied, thanks.
-
-greg k-h
+On 2019-06-17 14:07, Stanimir Varbanov wrote:
+> Hi Aniket,
+> 
+> On 6/11/19 9:05 AM, Aniket Masule wrote:
+>> Initialize the codec data with core resources.
+> 
+> Please squash this patch in 1/5 patch.
+Yes Stan.
+> 
+>> 
+>> Signed-off-by: Aniket Masule <amasule@codeaurora.org>
+>> ---
+>>  drivers/media/platform/qcom/venus/helpers.c | 30 
+>> +++++++++++++++++++++++++++++
+>>  drivers/media/platform/qcom/venus/helpers.h |  1 +
+>>  drivers/media/platform/qcom/venus/vdec.c    |  4 ++++
+>>  drivers/media/platform/qcom/venus/venc.c    |  4 ++++
+>>  4 files changed, 39 insertions(+)
+>> 
+>> diff --git a/drivers/media/platform/qcom/venus/helpers.c 
+>> b/drivers/media/platform/qcom/venus/helpers.c
+>> index 5cad601..f7f724b 100644
+>> --- a/drivers/media/platform/qcom/venus/helpers.c
+>> +++ b/drivers/media/platform/qcom/venus/helpers.c
+>> @@ -715,6 +715,36 @@ int venus_helper_set_core_usage(struct venus_inst 
+>> *inst, u32 usage)
+>>  }
+>>  EXPORT_SYMBOL_GPL(venus_helper_set_core_usage);
+>> 
+>> +int venus_helper_init_codec_data(struct venus_inst *inst)
+>> +{
+>> +	const struct codec_data *codec_data;
+>> +	unsigned int i, codec_data_size;
+>> +	u32 pixfmt;
+>> +	int ret = 0;
+>> +
+>> +	if (!IS_V4(inst->core))
+>> +		return 0;
+>> +
+>> +	codec_data = inst->core->res->codec_data;
+>> +	codec_data_size = inst->core->res->codec_data_size;
+>> +	pixfmt = inst->session_type == VIDC_SESSION_TYPE_DEC ?
+>> +			inst->fmt_out->pixfmt : inst->fmt_cap->pixfmt;
+>> +
+>> +	for (i = 0; i < codec_data_size; i++) {
+>> +		if (codec_data[i].pixfmt == pixfmt &&
+>> +		    codec_data[i].session_type == inst->session_type) {
+>> +			inst->clk_data.codec_data = &codec_data[i];
+>> +			break;
+>> +		}
+>> +	}
+>> +
+>> +	if (!inst->clk_data.codec_data)
+>> +		ret = -EINVAL;
+> 
+> just return -EINVAL
+> 
+>> +
+>> +	return ret;
+> 
+> return 0 is enough, and that will avoid ret variable.
+Sure Stan.
+> 
+>> +}
+>> +EXPORT_SYMBOL_GPL(venus_helper_init_codec_data);
+>> +
+>>  int venus_helper_set_num_bufs(struct venus_inst *inst, unsigned int 
+>> input_bufs,
+>>  			      unsigned int output_bufs,
+>>  			      unsigned int output2_bufs)
+>> diff --git a/drivers/media/platform/qcom/venus/helpers.h 
+>> b/drivers/media/platform/qcom/venus/helpers.h
+>> index 2475f284..f9360a8 100644
+>> --- a/drivers/media/platform/qcom/venus/helpers.h
+>> +++ b/drivers/media/platform/qcom/venus/helpers.h
+>> @@ -41,6 +41,7 @@ int venus_helper_set_output_resolution(struct 
+>> venus_inst *inst,
+>>  				       unsigned int width, unsigned int height,
+>>  				       u32 buftype);
+>>  int venus_helper_set_work_mode(struct venus_inst *inst, u32 mode);
+>> +int venus_helper_init_codec_data(struct venus_inst *inst);
+>>  int venus_helper_set_core_usage(struct venus_inst *inst, u32 usage);
+>>  int venus_helper_set_num_bufs(struct venus_inst *inst, unsigned int 
+>> input_bufs,
+>>  			      unsigned int output_bufs,
+>> diff --git a/drivers/media/platform/qcom/venus/vdec.c 
+>> b/drivers/media/platform/qcom/venus/vdec.c
+>> index 282de21..51795fd 100644
+>> --- a/drivers/media/platform/qcom/venus/vdec.c
+>> +++ b/drivers/media/platform/qcom/venus/vdec.c
+>> @@ -660,6 +660,10 @@ static int vdec_init_session(struct venus_inst 
+>> *inst)
+>>  	if (ret)
+>>  		goto deinit;
+>> 
+>> +	ret = venus_helper_init_codec_data(inst);
+>> +	if (ret)
+>> +		goto deinit;
+>> +
+>>  	return 0;
+>>  deinit:
+>>  	hfi_session_deinit(inst);
+>> diff --git a/drivers/media/platform/qcom/venus/venc.c 
+>> b/drivers/media/platform/qcom/venus/venc.c
+>> index 32cff29..792cdce 100644
+>> --- a/drivers/media/platform/qcom/venus/venc.c
+>> +++ b/drivers/media/platform/qcom/venus/venc.c
+>> @@ -847,6 +847,10 @@ static int venc_init_session(struct venus_inst 
+>> *inst)
+>>  	if (ret)
+>>  		goto deinit;
+>> 
+>> +	ret = venus_helper_init_codec_data(inst);
+>> +	if (ret)
+>> +		goto deinit;
+>> +
+>>  	ret = venc_set_properties(inst);
+>>  	if (ret)
+>>  		goto deinit;
+>> 
