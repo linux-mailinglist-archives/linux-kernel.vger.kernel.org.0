@@ -2,43 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A33BF4D6D1
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 20:12:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EF34A4D716
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 20:16:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729024AbfFTSM2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 14:12:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40236 "EHLO mail.kernel.org"
+        id S1729475AbfFTSP5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 14:15:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44914 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728689AbfFTSMZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 14:12:25 -0400
+        id S1729687AbfFTSPy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Jun 2019 14:15:54 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 52F29205F4;
-        Thu, 20 Jun 2019 18:12:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 801B32166E;
+        Thu, 20 Jun 2019 18:15:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561054344;
-        bh=2eKVb5teN8C20NHCPPLCr0sFRQfN5NphxJX0SrK7h5I=;
+        s=default; t=1561054554;
+        bh=EFiKdPtI86pvDNJdhQceHHjfLf9fToe07ZNhuIIYQmI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=M0QRz5aKyoUm8bY5DwqUHSA/rQRz4UDI6P5ODDKO8sSSsu4/5lWdoYFku7kqcQKfH
-         QP07N/EqWXpBnLcNcIkUXQ1HqUzodUUCSdRPxnJ5znHMEsLEhNMpvWszEnyZ3c8tn5
-         vzQJ81gMMZlU+x7q7pR/4ZY28XwPRY/BT28IWRO0=
+        b=YLyKIJpMbJUsiapjzUZzMSem0wmgg6Pc/VjxhrrDoT3/iMpSftWAmbLu3nZ14fq5Q
+         50btMH12eSqWg0hReDzC03HVBbs7F+Mj2vhzmjLFEMYOna0NvGmbZ5wCj+p/DLuLfI
+         3/fuFIFr39MtUfcGaDEV75PvurcfpjOPj6/6GGJk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Shawn Landden <shawn@git.icu>,
-        Adrian Hunter <adrian.hunter@intel.com>,
+        stable@vger.kernel.org, Namhyung Kim <namhyung@kernel.org>,
+        Hari Bathini <hbathini@linux.vnet.ibm.com>,
         Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Wang Nan <wangnan0@huawei.com>,
+        Krister Johansen <kjlx@templeofstupid.com>,
         Arnaldo Carvalho de Melo <acme@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 40/61] perf data: Fix strncat may truncate build failure with recent gcc
+Subject: [PATCH 5.1 68/98] perf namespace: Protect reading threads namespace
 Date:   Thu, 20 Jun 2019 19:57:35 +0200
-Message-Id: <20190620174344.287341788@linuxfoundation.org>
+Message-Id: <20190620174352.564754038@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190620174336.357373754@linuxfoundation.org>
-References: <20190620174336.357373754@linuxfoundation.org>
+In-Reply-To: <20190620174349.443386789@linuxfoundation.org>
+References: <20190620174349.443386789@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -48,48 +47,58 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 97acec7df172cd1e450f81f5e293c0aa145a2797 ]
+[ Upstream commit 6584140ba9e6762dd7ec73795243289b914f31f9 ]
 
-This strncat() is safe because the buffer was allocated with zalloc(),
-however gcc doesn't know that. Since the string always has 4 non-null
-bytes, just use memcpy() here.
+It seems that the current code lacks holding the namespace lock in
+thread__namespaces().  Otherwise it can see inconsistent results.
 
-    CC       /home/shawn/linux/tools/perf/util/data-convert-bt.o
-  In file included from /usr/include/string.h:494,
-                   from /home/shawn/linux/tools/lib/traceevent/event-parse.h:27,
-                   from util/data-convert-bt.c:22:
-  In function ‘strncat’,
-      inlined from ‘string_set_value’ at util/data-convert-bt.c:274:4:
-  /usr/include/powerpc64le-linux-gnu/bits/string_fortified.h:136:10: error: ‘__builtin_strncat’ output may be truncated copying 4 bytes from a string of length 4 [-Werror=stringop-truncation]
-    136 |   return __builtin___strncat_chk (__dest, __src, __len, __bos (__dest));
-        |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Signed-off-by: Shawn Landden <shawn@git.icu>
-Cc: Adrian Hunter <adrian.hunter@intel.com>
+Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+Cc: Hari Bathini <hbathini@linux.vnet.ibm.com>
 Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Wang Nan <wangnan0@huawei.com>
-LPU-Reference: 20190518183238.10954-1-shawn@git.icu
-Link: https://lkml.kernel.org/n/tip-289f1jice17ta7tr3tstm9jm@git.kernel.org
+Cc: Krister Johansen <kjlx@templeofstupid.com>
+Link: http://lkml.kernel.org/r/20190522053250.207156-2-namhyung@kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/perf/util/data-convert-bt.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tools/perf/util/thread.c | 15 +++++++++++++--
+ 1 file changed, 13 insertions(+), 2 deletions(-)
 
-diff --git a/tools/perf/util/data-convert-bt.c b/tools/perf/util/data-convert-bt.c
-index abd38abf1d91..24f2a87cf91d 100644
---- a/tools/perf/util/data-convert-bt.c
-+++ b/tools/perf/util/data-convert-bt.c
-@@ -271,7 +271,7 @@ static int string_set_value(struct bt_ctf_field *field, const char *string)
- 				if (i > 0)
- 					strncpy(buffer, string, i);
- 			}
--			strncat(buffer + p, numstr, 4);
-+			memcpy(buffer + p, numstr, 4);
- 			p += 3;
- 		}
+diff --git a/tools/perf/util/thread.c b/tools/perf/util/thread.c
+index 50678d318185..b800752745af 100644
+--- a/tools/perf/util/thread.c
++++ b/tools/perf/util/thread.c
+@@ -132,7 +132,7 @@ void thread__put(struct thread *thread)
  	}
+ }
+ 
+-struct namespaces *thread__namespaces(const struct thread *thread)
++static struct namespaces *__thread__namespaces(const struct thread *thread)
+ {
+ 	if (list_empty(&thread->namespaces_list))
+ 		return NULL;
+@@ -140,10 +140,21 @@ struct namespaces *thread__namespaces(const struct thread *thread)
+ 	return list_first_entry(&thread->namespaces_list, struct namespaces, list);
+ }
+ 
++struct namespaces *thread__namespaces(const struct thread *thread)
++{
++	struct namespaces *ns;
++
++	down_read((struct rw_semaphore *)&thread->namespaces_lock);
++	ns = __thread__namespaces(thread);
++	up_read((struct rw_semaphore *)&thread->namespaces_lock);
++
++	return ns;
++}
++
+ static int __thread__set_namespaces(struct thread *thread, u64 timestamp,
+ 				    struct namespaces_event *event)
+ {
+-	struct namespaces *new, *curr = thread__namespaces(thread);
++	struct namespaces *new, *curr = __thread__namespaces(thread);
+ 
+ 	new = namespaces__new(event);
+ 	if (!new)
 -- 
 2.20.1
 
