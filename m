@@ -2,89 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 26E814C788
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 08:34:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 214F34C793
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 08:39:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726567AbfFTGeM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 02:34:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34302 "EHLO mail.kernel.org"
+        id S1730549AbfFTGjz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 02:39:55 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:47677 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725875AbfFTGeL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 02:34:11 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1726290AbfFTGjy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Jun 2019 02:39:54 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 515C62070B;
-        Thu, 20 Jun 2019 06:34:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561012450;
-        bh=Ho986ZwEwN6lSqW02CRO5TRKTGH2igmUfY7a/ULtRRU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=lFM3+3jhB60zvG/6yB5IE5B3Rx+VKwvPqzhLzTvAMHSgLqGN5c7UT/x7JJ1TuJGVF
-         lVevF4s7TKlP8/Hj+yX54QMnBdPlf/MMKzNcCIdDbj9TeGMDC6DOu+5ILxmtYZrzRg
-         godWZUUe0caVwlu6le/5vxZ5bW96eLKozu4FLnhk=
-Date:   Thu, 20 Jun 2019 08:34:08 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Ira Weiny <ira.weiny@intel.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Keith Busch <keith.busch@intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Vishal Verma <vishal.l.verma@intel.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 6/6] driver-core, libnvdimm: Let device subsystems add
- local lockdep coverage
-Message-ID: <20190620063408.GA4768@kroah.com>
-References: <156029554317.419799.1324389595953183385.stgit@dwillia2-desk3.amr.corp.intel.com>
- <156029557585.419799.11741877483838451695.stgit@dwillia2-desk3.amr.corp.intel.com>
- <CAPcyv4h8QZBAC4kY3=mJVq0J8-W3aTLoT6h2b0WXFtymzToH-Q@mail.gmail.com>
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45Tsck3gDBz9s5c;
+        Thu, 20 Jun 2019 16:39:50 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1561012790;
+        bh=2GFOGkgGbiLZECffsT8YZZyzO0l3qx/sbv+hYZz1p38=;
+        h=Date:From:To:Cc:Subject:From;
+        b=bhc+KLrN3RyDfztjatZqYzycUVaARoAZ1XMhGpyj494NCVu7AsWcP9aQBVxcbCOYe
+         wg53YVxgeckXsaj/GvV/8GW7A/5Af652RfO7azdYvomIxJSYth0kH75+h2qWN1j4Ij
+         3OAf9WQZEkH32lL18Jht5jtqmmvIXMnpDz4SUT+o3/1G09gfn2KinMVY/Z4RV4d5c1
+         73/OePN9eWOgwMcLN/d1dFaYJZxa3MF65uP1zltdFgroL5+Cnxm/tCercqo4cTbEuC
+         QyA+KHcrst3AWgyY/qmkRLU+WuM8ZPi2BMBWdM5zpb6Hf/xU5GXdm1GYOHpmdgLJvM
+         F5xKLjLq5qDeA==
+Date:   Thu, 20 Jun 2019 16:39:48 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Dan Williams <dan.j.williams@intel.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
+        Pankaj Gupta <pagupta@redhat.com>
+Subject: linux-next: manual merge of the nvdimm tree with the vhost tree
+Message-ID: <20190620163948.0cfdc7c8@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAPcyv4h8QZBAC4kY3=mJVq0J8-W3aTLoT6h2b0WXFtymzToH-Q@mail.gmail.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/nExES/9MyiZFREjqxRg_dJg"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 19, 2019 at 03:21:58PM -0700, Dan Williams wrote:
-> On Tue, Jun 11, 2019 at 4:40 PM Dan Williams <dan.j.williams@intel.com> wrote:
-> >
-> > For good reason, the standard device_lock() is marked
-> > lockdep_set_novalidate_class() because there is simply no sane way to
-> > describe the myriad ways the device_lock() ordered with other locks.
-> > However, that leaves subsystems that know their own local device_lock()
-> > ordering rules to find lock ordering mistakes manually. Instead,
-> > introduce an optional / additional lockdep-enabled lock that a subsystem
-> > can acquire in all the same paths that the device_lock() is acquired.
-> >
-> > A conversion of the NFIT driver and NVDIMM subsystem to a
-> > lockdep-validate device_lock() scheme is included. The
-> > debug_nvdimm_lock() implementation implements the correct lock-class and
-> > stacking order for the libnvdimm device topology hierarchy.
-> 
-> Greg, Peter,
-> 
-> Any thoughts on carrying this debug hack upstream? The idea being that
-> it's impossible to enable lockdep for the device_lock() globally, but
-> a constrained usage of the proposed lockdep_mutex has proven enough to
-> flush out device_lock deadlocks from libnvdimm.
-> 
-> It appears one aspect that is missing from this patch proposal is a
-> mechanism / convention to make sure that lockdep_mutex has constrained
-> usage for a given kernel build, otherwise it's obviously just as
-> problematic as device_lock(). Other concerns?
+--Sig_/nExES/9MyiZFREjqxRg_dJg
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Yeah, it feels a bit hacky but it's really up to a subsystem to mess up
-using it as much as anything else, so user beware :)
+Hi Dan,
 
-I don't object to it if it makes things easier for you to debug.
+Today's linux-next merge of the nvdimm tree got a conflict in:
 
-thanks,
+  include/uapi/linux/virtio_ids.h
 
-greg k-h
+between commit:
+
+  edcd69ab9a32 ("iommu: Add virtio-iommu driver")
+
+from the vhost tree and commit:
+
+  5990fce9c50e ("virtio-pmem: Add virtio pmem driver")
+
+from the nvdimm tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc include/uapi/linux/virtio_ids.h
+index cfe47c5d9a56,32b2f94d1f58..000000000000
+--- a/include/uapi/linux/virtio_ids.h
++++ b/include/uapi/linux/virtio_ids.h
+@@@ -43,6 -43,6 +43,7 @@@
+  #define VIRTIO_ID_INPUT        18 /* virtio input */
+  #define VIRTIO_ID_VSOCK        19 /* virtio vsock transport */
+  #define VIRTIO_ID_CRYPTO       20 /* virtio crypto */
+ +#define VIRTIO_ID_IOMMU        23 /* virtio IOMMU */
++ #define VIRTIO_ID_PMEM         27 /* virtio pmem */
+ =20
+  #endif /* _LINUX_VIRTIO_IDS_H */
+
+--Sig_/nExES/9MyiZFREjqxRg_dJg
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0LKjQACgkQAVBC80lX
+0Gzv3AgAkbqCtQ1tex3/mg4AWhSVb60nLI6AMLsfCvvhwCluPyyNPamZB7vgrZkg
+b7J32SkWdZ2//ol0mzHBB/UhPe+6dYQX31b6u7Oupy6BR+/7FIbpyZ3EJra6n/mo
+4ttNkaXZzcGdz8zu7qs7HxeW2dzbDUcxAh+X3X9kcgW17terEl7LQ2DXL0jqNsBv
+dA3wWRkcpU/TWtlLYryuBUFX0BNaYp0CrbXzTaa0VxQK9ik68DctRdChbFgesBKw
+RjXO4S9CFMSICcMxZoxuM0CZMn3WPOoQkdfiMMadO4nVsXHI0X7sBi7F/OMe5qhf
+38iqBEQKe0rG78vkyXPTdk6M3LyFSw==
+=hcK+
+-----END PGP SIGNATURE-----
+
+--Sig_/nExES/9MyiZFREjqxRg_dJg--
