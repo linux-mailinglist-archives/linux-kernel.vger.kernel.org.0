@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D22904D690
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 20:09:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 62B094D74C
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 20:18:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728472AbfFTSJm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 14:09:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37132 "EHLO mail.kernel.org"
+        id S1729942AbfFTSRb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 14:17:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46786 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728672AbfFTSJj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 14:09:39 -0400
+        id S1729916AbfFTSR2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Jun 2019 14:17:28 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3953C21530;
-        Thu, 20 Jun 2019 18:09:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1C9422089C;
+        Thu, 20 Jun 2019 18:17:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561054178;
-        bh=Goa0ah6FbkFoqUl94JpmHMgSVOBKRZRD7HrHL8U8tn8=;
+        s=default; t=1561054647;
+        bh=TBAws2c/GmHnYBrpWrysQHwua9SqWMmW78aPAlCjFQg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bYs7P/guBu4CmaPJ82gJCx7qb52RpCNh/gUGS3dPJHqycO3n/Eq3oSuh7uz9yf9Py
-         7Io5GpbpMo3tR3NAU0Hhoo5w32kIvEJ2B1VSAaqmtkyJoTUMYG/nnxmuhFs8GW366S
-         1eAk75Xhop3+T/fJ8ttEfUh928TIMVsFp4hQpjh0=
+        b=SvhL19gtAJ3E6HrG7Osj49Z8DNX9OfqSgUy+gsfAuL7W+R3fh6gvRTz/r8dgUQ0tO
+         0G0ILxX5vqtWajygez60gxPttK/mkCUIauAWNWoX0Tb7ea4FhJ7/mrnIoZL/wQRC2e
+         5PYD0WLcceKCY+lg6V+ekGJd6EPDh1ZVcPstN0+Y=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jan Kara <jack@suse.cz>,
-        Alexander Lochmann <alexander.lochmann@tu-dortmund.de>,
-        Horst Schirmeier <horst.schirmeier@tu-dortmund.de>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Zubin Mithra <zsm@chromium.org>
-Subject: [PATCH 4.14 45/45] Abort file_remove_privs() for non-reg. files
-Date:   Thu, 20 Jun 2019 19:57:47 +0200
-Message-Id: <20190620174341.933502431@linuxfoundation.org>
+        stable@vger.kernel.org, Sami Tolvanen <samitolvanen@google.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.1 81/98] arm64: use the correct function type for __arm64_sys_ni_syscall
+Date:   Thu, 20 Jun 2019 19:57:48 +0200
+Message-Id: <20190620174353.375988101@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190620174328.608036501@linuxfoundation.org>
-References: <20190620174328.608036501@linuxfoundation.org>
+In-Reply-To: <20190620174349.443386789@linuxfoundation.org>
+References: <20190620174349.443386789@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,51 +44,83 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alexander Lochmann <alexander.lochmann@tu-dortmund.de>
+[ Upstream commit 1e29ab3186e33c77dbb2d7566172a205b59fa390 ]
 
-commit f69e749a49353d96af1a293f56b5b56de59c668a upstream.
+Calling sys_ni_syscall through a syscall_fn_t pointer trips indirect
+call Control-Flow Integrity checking due to a function type
+mismatch. Use SYSCALL_DEFINE0 for __arm64_sys_ni_syscall instead and
+remove the now unnecessary casts.
 
-file_remove_privs() might be called for non-regular files, e.g.
-blkdev inode. There is no reason to do its job on things
-like blkdev inodes, pipes, or cdevs. Hence, abort if
-file does not refer to a regular inode.
-
-AV: more to the point, for devices there might be any number of
-inodes refering to given device.  Which one to strip the permissions
-from, even if that made any sense in the first place?  All of them
-will be observed with contents modified, after all.
-
-Found by LockDoc (Alexander Lochmann, Horst Schirmeier and Olaf
-Spinczyk)
-
-Reviewed-by: Jan Kara <jack@suse.cz>
-Signed-off-by: Alexander Lochmann <alexander.lochmann@tu-dortmund.de>
-Signed-off-by: Horst Schirmeier <horst.schirmeier@tu-dortmund.de>
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Zubin Mithra <zsm@chromium.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Sami Tolvanen <samitolvanen@google.com>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/inode.c |    9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ arch/arm64/kernel/sys.c   | 14 +++++++++-----
+ arch/arm64/kernel/sys32.c |  7 ++-----
+ 2 files changed, 11 insertions(+), 10 deletions(-)
 
---- a/fs/inode.c
-+++ b/fs/inode.c
-@@ -1817,8 +1817,13 @@ int file_remove_privs(struct file *file)
- 	int kill;
- 	int error = 0;
+diff --git a/arch/arm64/kernel/sys.c b/arch/arm64/kernel/sys.c
+index 162a95ed0881..fe20c461582a 100644
+--- a/arch/arm64/kernel/sys.c
++++ b/arch/arm64/kernel/sys.c
+@@ -47,22 +47,26 @@ SYSCALL_DEFINE1(arm64_personality, unsigned int, personality)
+ 	return ksys_personality(personality);
+ }
  
--	/* Fast path for nothing security related */
--	if (IS_NOSEC(inode))
-+	/*
-+	 * Fast path for nothing security related.
-+	 * As well for non-regular files, e.g. blkdev inodes.
-+	 * For example, blkdev_write_iter() might get here
-+	 * trying to remove privs which it is not allowed to.
-+	 */
-+	if (IS_NOSEC(inode) || !S_ISREG(inode->i_mode))
- 		return 0;
++asmlinkage long sys_ni_syscall(void);
++
++asmlinkage long __arm64_sys_ni_syscall(const struct pt_regs *__unused)
++{
++	return sys_ni_syscall();
++}
++
+ /*
+  * Wrappers to pass the pt_regs argument.
+  */
+ #define __arm64_sys_personality		__arm64_sys_arm64_personality
  
- 	kill = dentry_needs_remove_privs(dentry);
+-asmlinkage long sys_ni_syscall(const struct pt_regs *);
+-#define __arm64_sys_ni_syscall	sys_ni_syscall
+-
+ #undef __SYSCALL
+ #define __SYSCALL(nr, sym)	asmlinkage long __arm64_##sym(const struct pt_regs *);
+ #include <asm/unistd.h>
+ 
+ #undef __SYSCALL
+-#define __SYSCALL(nr, sym)	[nr] = (syscall_fn_t)__arm64_##sym,
++#define __SYSCALL(nr, sym)	[nr] = __arm64_##sym,
+ 
+ const syscall_fn_t sys_call_table[__NR_syscalls] = {
+-	[0 ... __NR_syscalls - 1] = (syscall_fn_t)sys_ni_syscall,
++	[0 ... __NR_syscalls - 1] = __arm64_sys_ni_syscall,
+ #include <asm/unistd.h>
+ };
+diff --git a/arch/arm64/kernel/sys32.c b/arch/arm64/kernel/sys32.c
+index 0f8bcb7de700..3c80a40c1c9d 100644
+--- a/arch/arm64/kernel/sys32.c
++++ b/arch/arm64/kernel/sys32.c
+@@ -133,17 +133,14 @@ COMPAT_SYSCALL_DEFINE6(aarch32_fallocate, int, fd, int, mode,
+ 	return ksys_fallocate(fd, mode, arg_u64(offset), arg_u64(len));
+ }
+ 
+-asmlinkage long sys_ni_syscall(const struct pt_regs *);
+-#define __arm64_sys_ni_syscall	sys_ni_syscall
+-
+ #undef __SYSCALL
+ #define __SYSCALL(nr, sym)	asmlinkage long __arm64_##sym(const struct pt_regs *);
+ #include <asm/unistd32.h>
+ 
+ #undef __SYSCALL
+-#define __SYSCALL(nr, sym)	[nr] = (syscall_fn_t)__arm64_##sym,
++#define __SYSCALL(nr, sym)	[nr] = __arm64_##sym,
+ 
+ const syscall_fn_t compat_sys_call_table[__NR_compat_syscalls] = {
+-	[0 ... __NR_compat_syscalls - 1] = (syscall_fn_t)sys_ni_syscall,
++	[0 ... __NR_compat_syscalls - 1] = __arm64_sys_ni_syscall,
+ #include <asm/unistd32.h>
+ };
+-- 
+2.20.1
+
 
 
