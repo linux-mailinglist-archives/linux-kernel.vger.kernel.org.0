@@ -2,68 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 208CC4C8F3
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 10:06:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 448D54C903
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 10:08:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730881AbfFTIGG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 04:06:06 -0400
-Received: from helcar.hmeau.com ([216.24.177.18]:43574 "EHLO deadmen.hmeau.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725877AbfFTIGF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 04:06:05 -0400
-Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
-        by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
-        id 1hds56-0002CU-Ak; Thu, 20 Jun 2019 16:06:04 +0800
-Received: from herbert by gondobar with local (Exim 4.89)
-        (envelope-from <herbert@gondor.apana.org.au>)
-        id 1hds54-0007OE-Da; Thu, 20 Jun 2019 16:06:02 +0800
-Date:   Thu, 20 Jun 2019 16:06:02 +0800
-From:   Herbert Xu <herbert@gondor.apana.org.au>
-To:     Horia =?utf-8?Q?Geant=C4=83?= <horia.geanta@nxp.com>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        Aymen Sghaier <aymen.sghaier@nxp.com>,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        NXP Linux Team <linux-imx@nxp.com>
-Subject: Re: [PATCH 0/2] crypto: caam - update IV using HW support
-Message-ID: <20190620080602.kavsw7ns4sanqhuz@gondor.apana.org.au>
-References: <20190610133059.1059-1-horia.geanta@nxp.com>
+        id S1730810AbfFTIIV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 04:08:21 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:51218 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725925AbfFTIIU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Jun 2019 04:08:20 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5K7x1sJ118003;
+        Thu, 20 Jun 2019 08:08:13 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=zBKsoyvZW42pljgNs2qIOF6TztDTbsqax0iQzIQWQUA=;
+ b=IO39YWtx315X9D1XDONT/hV6oOqgLDC5cWdY86W8w1eUA7akaDTdh5p0Zf9jdfT/pU5v
+ rxuiSi8mxZmwbNpX8tnI91it0uvaWnf/a4mT9bN9rXqqxB5Yj0lcR6i2CPz0RXeG4gAi
+ r0AFK1OTi6xZxaA8jqZEsxXQF80saqJQ2l5/YPdACkbvgaQzIySQnQMa7Tv84wlZ+qww
+ dIwhmQVH9iY814Akxzjz6foqmHmjWihwnka9gJjQkUY2MOkF78pjT/ktLTjj9UF4ocBY
+ josGw8OekFwBNtcDtcFR9tRyeLmmakr3yc0uiHKNy//GLu+O/6Uy28WwnReimJzIaHkM ew== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by aserp2120.oracle.com with ESMTP id 2t7809fjnr-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 20 Jun 2019 08:08:13 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5K85CTN058654;
+        Thu, 20 Jun 2019 08:06:12 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userp3020.oracle.com with ESMTP id 2t77yngf24-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 20 Jun 2019 08:06:12 +0000
+Received: from abhmp0022.oracle.com (abhmp0022.oracle.com [141.146.116.28])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x5K86A2H018024;
+        Thu, 20 Jun 2019 08:06:11 GMT
+Received: from kadam (/41.57.98.10)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 20 Jun 2019 01:06:10 -0700
+Date:   Thu, 20 Jun 2019 11:06:02 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Hariprasad Kelam <hariprasad.kelam@gmail.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Nishka Dasgupta <nishkadg.linux@gmail.com>,
+        Himadri Pandya <himadri18.07@gmail.com>,
+        Hardik Singh Rathore <hardiksingh.k@gmail.com>,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] staging: rtl8723bs: hal: hal_btcoex: Remove variables
+ pHalData and pU1Tmp
+Message-ID: <20190620080602.GR28859@kadam>
+References: <20190620022726.GA19556@hari-Inspiron-1545>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190610133059.1059-1-horia.geanta@nxp.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20190620022726.GA19556@hari-Inspiron-1545>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9293 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=938
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1906200062
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9293 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=987 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1906200062
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 10, 2019 at 04:30:57PM +0300, Horia Geantă wrote:
-> This patch set updates the drivers to rely on HW for providing
-> the output IV in case of skcipher algorithms.
-> 
-> It's both an improvement, as previously mentioned here:
-> https://lore.kernel.org/linux-crypto/VI1PR0401MB2591C51C446CFA129B50022298D20@VI1PR0401MB2591.eurprd04.prod.outlook.com
-> and a fix for the currently broken ctr(aes) IV update.
-> 
-> Horia Geantă (2):
->   crypto: caam - use len instead of nents for bulding HW S/G table
->   crypto: caam - update IV using HW support
-> 
->  drivers/crypto/caam/caamalg.c      | 119 ++++++++++++----------
->  drivers/crypto/caam/caamalg_desc.c |  31 ++++--
->  drivers/crypto/caam/caamalg_desc.h |   4 +-
->  drivers/crypto/caam/caamalg_qi.c   | 122 ++++++++++-------------
->  drivers/crypto/caam/caamalg_qi2.c  | 152 ++++++++++++++---------------
->  drivers/crypto/caam/caamhash.c     |  15 ++-
->  drivers/crypto/caam/caampkc.c      |   4 +-
->  drivers/crypto/caam/sg_sw_qm.h     |  18 ++--
->  drivers/crypto/caam/sg_sw_qm2.h    |  18 ++--
->  drivers/crypto/caam/sg_sw_sec4.h   |  18 ++--
->  10 files changed, 262 insertions(+), 239 deletions(-)
+Looks good.
 
-All applied.  Thanks.
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+Reviewed-by: Dan Carpenter <dan.carpenter@oracle.com>
+
+regards,
+dan carpenter
+
