@@ -2,40 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 29BF94D837
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 20:24:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1AF7A4D5D8
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 20:01:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728221AbfFTSIE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 14:08:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35040 "EHLO mail.kernel.org"
+        id S1726676AbfFTSBd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 14:01:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51122 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728414AbfFTSIA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 14:08:00 -0400
+        id S1726114AbfFTSB3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Jun 2019 14:01:29 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0BE9B21670;
-        Thu, 20 Jun 2019 18:07:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9C4EB2084A;
+        Thu, 20 Jun 2019 18:01:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561054080;
-        bh=upEVnw1kzCasYRFExIc5e5hpkGiwl0rOpPec6g/Pr/Y=;
+        s=default; t=1561053688;
+        bh=xwCTgva9OI67grSH5Oh2hITs1mJLqZptYrYyn964VaQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=L6xW5WjiPPVxq8wHi3L/Jdi50zOZi1t69WhWvrQPAqcKZ1ZZ3NuPp+AsSFeLKOmft
-         ZEwxbCK9CzUyafeRJ9wgOSVcBcTK8dOo3duoLZponzbBy+enmWQ88gmAfgGEf+wJ10
-         SfNukt2dPSXNfyEWbYVToLiJAq6S4pme3M0+ADzs=
+        b=1T+WtLA6tlFac974CprhGQYSyXk4w4kpC0oMYzOshw202keF602LHb+uvkn5X5nP8
+         yMe/dOWPtSQ1iKXXAce6yVW9pmhuYIsNDO7S7QcJ4jrnaM1EpU8bMsIoDGJX6A8IFD
+         pzb2Rd+EIgEqwndWaENpadeXn0ykbjzyp2cXD9sU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Jagdish Motwani <jagdish.motwani@sophos.com>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
+        stable@vger.kernel.org, kbuild test robot <lkp@intel.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Tony Luck <tony.luck@intel.com>,
+        Fenghua Yu <fenghua.yu@intel.com>, linux-ia64@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 12/45] netfilter: nf_queue: fix reinject verdict handling
+Subject: [PATCH 4.4 77/84] ia64: fix build errors by exporting paddr_to_nid()
 Date:   Thu, 20 Jun 2019 19:57:14 +0200
-Message-Id: <20190620174333.723645570@linuxfoundation.org>
+Message-Id: <20190620174348.926262865@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190620174328.608036501@linuxfoundation.org>
-References: <20190620174328.608036501@linuxfoundation.org>
+In-Reply-To: <20190620174337.538228162@linuxfoundation.org>
+References: <20190620174337.538228162@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,35 +47,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 946c0d8e6ed43dae6527e878d0077c1e11015db0 ]
+[ Upstream commit 9a626c4a6326da4433a0d4d4a8a7d1571caf1ed3 ]
 
-This patch fixes netfilter hook traversal when there are more than 1 hooks
-returning NF_QUEUE verdict. When the first queue reinjects the packet,
-'nf_reinject' starts traversing hooks with a proper hook_index. However,
-if it again receives a NF_QUEUE verdict (by some other netfilter hook), it
-queues the packet with a wrong hook_index. So, when the second queue
-reinjects the packet, it re-executes hooks in between.
+Fix build errors on ia64 when DISCONTIGMEM=y and NUMA=y by
+exporting paddr_to_nid().
 
-Fixes: 960632ece694 ("netfilter: convert hook list to an array")
-Signed-off-by: Jagdish Motwani <jagdish.motwani@sophos.com>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Fixes these build errors:
+
+ERROR: "paddr_to_nid" [sound/core/snd-pcm.ko] undefined!
+ERROR: "paddr_to_nid" [net/sunrpc/sunrpc.ko] undefined!
+ERROR: "paddr_to_nid" [fs/cifs/cifs.ko] undefined!
+ERROR: "paddr_to_nid" [drivers/video/fbdev/core/fb.ko] undefined!
+ERROR: "paddr_to_nid" [drivers/usb/mon/usbmon.ko] undefined!
+ERROR: "paddr_to_nid" [drivers/usb/core/usbcore.ko] undefined!
+ERROR: "paddr_to_nid" [drivers/md/raid1.ko] undefined!
+ERROR: "paddr_to_nid" [drivers/md/dm-mod.ko] undefined!
+ERROR: "paddr_to_nid" [drivers/md/dm-crypt.ko] undefined!
+ERROR: "paddr_to_nid" [drivers/md/dm-bufio.ko] undefined!
+ERROR: "paddr_to_nid" [drivers/ide/ide-core.ko] undefined!
+ERROR: "paddr_to_nid" [drivers/ide/ide-cd_mod.ko] undefined!
+ERROR: "paddr_to_nid" [drivers/gpu/drm/drm.ko] undefined!
+ERROR: "paddr_to_nid" [drivers/char/agp/agpgart.ko] undefined!
+ERROR: "paddr_to_nid" [drivers/block/nbd.ko] undefined!
+ERROR: "paddr_to_nid" [drivers/block/loop.ko] undefined!
+ERROR: "paddr_to_nid" [drivers/block/brd.ko] undefined!
+ERROR: "paddr_to_nid" [crypto/ccm.ko] undefined!
+
+Reported-by: kbuild test robot <lkp@intel.com>
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: Tony Luck <tony.luck@intel.com>
+Cc: Fenghua Yu <fenghua.yu@intel.com>
+Cc: linux-ia64@vger.kernel.org
+Signed-off-by: Tony Luck <tony.luck@intel.com>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/netfilter/nf_queue.c | 1 +
+ arch/ia64/mm/numa.c | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/net/netfilter/nf_queue.c b/net/netfilter/nf_queue.c
-index f7e21953b1de..8260b1e73bbd 100644
---- a/net/netfilter/nf_queue.c
-+++ b/net/netfilter/nf_queue.c
-@@ -193,6 +193,7 @@ static unsigned int nf_iterate(struct sk_buff *skb,
- repeat:
- 		verdict = nf_hook_entry_hookfn(hook, skb, state);
- 		if (verdict != NF_ACCEPT) {
-+			*index = i;
- 			if (verdict != NF_REPEAT)
- 				return verdict;
- 			goto repeat;
+diff --git a/arch/ia64/mm/numa.c b/arch/ia64/mm/numa.c
+index aa19b7ac8222..476c7b4be378 100644
+--- a/arch/ia64/mm/numa.c
++++ b/arch/ia64/mm/numa.c
+@@ -49,6 +49,7 @@ paddr_to_nid(unsigned long paddr)
+ 
+ 	return (i < num_node_memblks) ? node_memblk[i].nid : (num_node_memblks ? -1 : 0);
+ }
++EXPORT_SYMBOL(paddr_to_nid);
+ 
+ #if defined(CONFIG_SPARSEMEM) && defined(CONFIG_NUMA)
+ /*
 -- 
 2.20.1
 
