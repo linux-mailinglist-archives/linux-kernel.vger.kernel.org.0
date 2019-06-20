@@ -2,48 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 18BDA4DC30
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 23:10:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 07C054DC3E
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 23:10:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726730AbfFTVKM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 17:10:12 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:44900 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725958AbfFTVKL (ORCPT
+        id S1726986AbfFTVKm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 17:10:42 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:43954 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726716AbfFTVKM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 17:10:11 -0400
-Received: by mail-pf1-f193.google.com with SMTP id t16so2342157pfe.11;
-        Thu, 20 Jun 2019 14:10:10 -0700 (PDT)
+        Thu, 20 Jun 2019 17:10:12 -0400
+Received: by mail-pg1-f194.google.com with SMTP id f25so2202842pgv.10;
+        Thu, 20 Jun 2019 14:10:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=n2SpWI1yibR3pZui+zsA5SWkFvXjKqrr9tlPiUDopnI=;
-        b=QjHUnmYdROWMRYkxYVPmuYVPNDV1DbWvIZdcfWSL55ySQ0MctwPQ9kYZxtuXgqp1WN
-         EiEtZTikp/OrBL78jp7ZsaUlGVGvvU2GhjHeSxPORWHhACye+nvo/3LszmRKEV9cA7Q5
-         egtZ2bn2jLsOfpLFDWD43lWgiS4k0/U3ZcdpvfDAfhGWrr8/Q8G1uS/Lxe3zz5Xyk77b
-         0rEmNWPpy1awuYwCEZ9j1MBHCK53Gcsqld1OOY6ErSXX5okAvXyKv/zAwFmK3J1iTJX0
-         9xovg3LrnJ7ssWLnc1wdc5IdyFN3adPCq7qNSLjRYp4bDD6aT2HOWUVZ5fMChUYmNXvM
-         WVSg==
+        bh=G1Ij2gv2TDQKvgmKxxszCgpp7AI+3jM9fqq69fwOpA4=;
+        b=S0b2a7aE0WAuieFytAiXyQlQYVr7CGECSzLS6wJFSzGtJ+1HgTIIaRECxzTfKTjNkb
+         cErfqueoa45U43t+jz8QO0Zwp/ZwWHSElXz3DG5jBope2nWbrkpDBhA9V5YnPEj/MbyN
+         B67GD9QJ35CfNL5Exh83tpWY1m75RLYEzuyFH3wTESQ1cFH2WuascjO24sU7gvKKUC5X
+         0sm+/gYt6xFT3mUBqYxXFtiqMEuW6YfUZaLiLbHkf5Awrc2EcrPeowK9YqkPooHME/mE
+         oVNqgxxj3NpqdCZ89eLk5V608mQw2kea8NJ9K65x4x3D6Gebm6f9uhgvtou/id7uGQqH
+         2aYg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=n2SpWI1yibR3pZui+zsA5SWkFvXjKqrr9tlPiUDopnI=;
-        b=RCEPSJnt5KolhyWgB/zVisQoopjWtcIu7WLs58uIKeFGEbFUoLN/BjrJlVRl5va/Wi
-         jGbZd58bTIEs1cXYqfchdrOo32HMcfspVTx3YAwJw6zQe5V8Jc1HuQpZjLFXkmPLzGYw
-         QrRtPFO3v3pxbeexW3q+UGdqA6nldlpAgen4cf/sJ9TEFYmdDRXK37kRfi4JyDihij+w
-         OBn3vknX8HUg+Aqbis8FSN5F4b5w3BwB2hFLGR3h7Wc+hACPK+2RidCnrVGC1B2jVCa7
-         j8dN1tTH2N7HL9ey79fQ0xyWolTp8c7FNngDgxx2V0+3nWPAN+P7+ktuA/KUcgM2/zt1
-         927g==
-X-Gm-Message-State: APjAAAWO0zgXTCqAOvgQd+G6cweMGB+WBsd7ZWkd7lQtqnT+R2rEz9fq
-        cbJlbFIp1G3KpRzyez8lWz0JGrBp9WY=
-X-Google-Smtp-Source: APXvYqyqTjMPZxbB9dUfZRknPAWnuMOyFhDiYUlVPyNhviWwjbGwPMxDXClY5RvgmUGxxVByRgYZCA==
-X-Received: by 2002:a17:90a:4803:: with SMTP id a3mr1775554pjh.58.1561065009830;
-        Thu, 20 Jun 2019 14:10:09 -0700 (PDT)
+        bh=G1Ij2gv2TDQKvgmKxxszCgpp7AI+3jM9fqq69fwOpA4=;
+        b=QeWulPQmbgmfywwsgPA9AYqLrmzKW9i8f08hEeS0pbKdFAglAnNODCLdueyH+eDcFu
+         clU6pzPBgcmRRjDM/wTHclcJuMD1g8WSuOLxZ+docL/WGwl7zRBD7Z9NyequoTQ2ZoLY
+         K8PlV3bcOWi1gMppjP6lm9K8XQgVC00v+eu9/4pg1sEAbj8koXahsdNPGAuubSET7o5T
+         JFkfVyaNTotfV3SY+oeS3dIaQDyKYcfG8vSw+kN4vHOEgXYkKTdXjA3nb/2or7I85J3Q
+         gAVo9JNoqwpwRaqcPJubjPTclIeRkLJpBdhYPrvQrMYhN/VYyPkj36frQcTzyOcE5kR1
+         msyw==
+X-Gm-Message-State: APjAAAXl1cM84Mxijtmx9OOud9U4WdqPig1cgedz9PEMzBV/Dp94dfWP
+        yZQ8VirK9aRPaObprO8/r0glDgx06rc=
+X-Google-Smtp-Source: APXvYqzhfbSmcHI0Ef9C7wLbXuSiZnL4lXcN/K/RVjRqcfrVNFxMmQJbBdZzfxS1WWdDw4WarFSUVw==
+X-Received: by 2002:a17:90a:a505:: with SMTP id a5mr1715567pjq.27.1561065011551;
+        Thu, 20 Jun 2019 14:10:11 -0700 (PDT)
 Received: from stbsrv-and-3.and.broadcom.com ([192.19.231.250])
-        by smtp.gmail.com with ESMTPSA id p1sm386805pff.74.2019.06.20.14.10.08
+        by smtp.gmail.com with ESMTPSA id p1sm386805pff.74.2019.06.20.14.10.09
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 20 Jun 2019 14:10:09 -0700 (PDT)
+        Thu, 20 Jun 2019 14:10:11 -0700 (PDT)
 From:   Al Cooper <alcooperx@gmail.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     Al Cooper <alcooperx@gmail.com>, devicetree@vger.kernel.org,
@@ -52,9 +52,9 @@ Cc:     Al Cooper <alcooperx@gmail.com>, devicetree@vger.kernel.org,
         linux-usb@vger.kernel.org, Luis Chamberlain <mcgrof@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Rob Herring <robh+dt@kernel.org>
-Subject: [PATCH 1/6] usb: bdc: driver runs out of buffer descriptors on large ADB transfers
-Date:   Thu, 20 Jun 2019 17:09:46 -0400
-Message-Id: <1561064991-16874-2-git-send-email-alcooperx@gmail.com>
+Subject: [PATCH 2/6] usb: bdc: Cleanup clock support
+Date:   Thu, 20 Jun 2019 17:09:47 -0400
+Message-Id: <1561064991-16874-3-git-send-email-alcooperx@gmail.com>
 X-Mailer: git-send-email 1.9.0.138.g2de3478
 In-Reply-To: <1561064991-16874-1-git-send-email-alcooperx@gmail.com>
 References: <1561064991-16874-1-git-send-email-alcooperx@gmail.com>
@@ -63,32 +63,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Version v1.0.40 of the Android host ADB software increased maximum
-transfer sizes from 256K to 1M. Since the STB ADB gadget driver
-requests only 16K at a time, the BDC driver ran out of buffer
-descriptors (BDs) if the queuing happens faster than the incoming
-16K transfers. This issue is fixed by doubling the number of BDs
-that can be queued so that the entire 1M request can be queued
-without running out of buffers.
+- Fix driver to defer on clk_get defer
 
 Signed-off-by: Al Cooper <alcooperx@gmail.com>
 ---
- drivers/usb/gadget/udc/bdc/bdc.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/usb/gadget/udc/bdc/bdc_core.c | 15 +++++++++------
+ 1 file changed, 9 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/usb/gadget/udc/bdc/bdc.h b/drivers/usb/gadget/udc/bdc/bdc.h
-index 6e1e881dc51e..ac75e25c3b6a 100644
---- a/drivers/usb/gadget/udc/bdc/bdc.h
-+++ b/drivers/usb/gadget/udc/bdc/bdc.h
-@@ -44,7 +44,7 @@
- #define NUM_SR_ENTRIES	64
+diff --git a/drivers/usb/gadget/udc/bdc/bdc_core.c b/drivers/usb/gadget/udc/bdc/bdc_core.c
+index ccbd1d34eb2a..11a43de6c1c6 100644
+--- a/drivers/usb/gadget/udc/bdc/bdc_core.c
++++ b/drivers/usb/gadget/udc/bdc/bdc_core.c
+@@ -490,8 +490,14 @@ static int bdc_probe(struct platform_device *pdev)
  
- /* Num of bds per table */
--#define NUM_BDS_PER_TABLE	32
-+#define NUM_BDS_PER_TABLE	64
+ 	dev_dbg(dev, "%s()\n", __func__);
  
- /* Num of tables in bd list for control,bulk and Int ep */
- #define NUM_TABLES	2
++	bdc = devm_kzalloc(dev, sizeof(*bdc), GFP_KERNEL);
++	if (!bdc)
++		return -ENOMEM;
++
+ 	clk = devm_clk_get(dev, "sw_usbd");
+ 	if (IS_ERR(clk)) {
++		if (PTR_ERR(clk) == -EPROBE_DEFER)
++			return -EPROBE_DEFER;
+ 		dev_info(dev, "Clock not found in Device Tree\n");
+ 		clk = NULL;
+ 	}
+@@ -501,11 +507,6 @@ static int bdc_probe(struct platform_device *pdev)
+ 		dev_err(dev, "could not enable clock\n");
+ 		return ret;
+ 	}
+-
+-	bdc = devm_kzalloc(dev, sizeof(*bdc), GFP_KERNEL);
+-	if (!bdc)
+-		return -ENOMEM;
+-
+ 	bdc->clk = clk;
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+@@ -551,7 +552,7 @@ static int bdc_probe(struct platform_device *pdev)
+ 	ret = bdc_phy_init(bdc);
+ 	if (ret) {
+ 		dev_err(bdc->dev, "BDC phy init failure:%d\n", ret);
+-		return ret;
++		goto clk_cleanup;
+ 	}
+ 
+ 	temp = bdc_readl(bdc->regs, BDC_BDCCAP1);
+@@ -583,6 +584,8 @@ static int bdc_probe(struct platform_device *pdev)
+ 	bdc_hw_exit(bdc);
+ phycleanup:
+ 	bdc_phy_exit(bdc);
++clk_cleanup:
++	clk_disable_unprepare(bdc->clk);
+ 	return ret;
+ }
+ 
 -- 
 1.9.0.138.g2de3478
 
