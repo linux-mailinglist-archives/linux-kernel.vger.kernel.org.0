@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D2EAB4D649
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 20:06:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D33EB4D78B
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 20:20:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728129AbfFTSGP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 14:06:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60202 "EHLO mail.kernel.org"
+        id S1729469AbfFTSOh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 14:14:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42850 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728116AbfFTSGL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 14:06:11 -0400
+        id S1729453AbfFTSOa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Jun 2019 14:14:30 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 00221204FD;
-        Thu, 20 Jun 2019 18:06:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 504DF205F4;
+        Thu, 20 Jun 2019 18:14:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561053970;
-        bh=pdUeXeMP80SzpEbwNWNh1OV404r2EqyHxdPWYcXm/G4=;
+        s=default; t=1561054469;
+        bh=UA8CJVHl22WRCysNGAs/ioVTOP1RLKtNLe+cIK4dq6o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JDw/aYYwnNFHdxvnP6xlQE+ZefWU6PfJaMmhyRclBRKRj0sjXojtOY/1gIFDKQlmO
-         ckZ/AJySqJe4jstTZdyYRqApq3hqUlXuKUPFpiXkUMcLpWEH0Y5IqTymmKw0nYd0k1
-         EZDlL/2Vxig6NxEYCk1xxr8aVozqoZL87TzbvUs0=
+        b=n0deR8UAGxL2dZ+J70UEjCbiZWmLU3ZDlTqbStj0/REGJKRvmR02NjTzRCKWNB8Y3
+         yKdVzxZcLW5GH6dNbcz4j9s6s+4xi9ZEM6HjrjMru45YX0c1vI+cYRNZ6CtrbfqkxQ
+         MoWwtA7ZqAJNv853Xx7zUHYqNZCZr28U1fIPqw3s=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tianhao <tizhao@redhat.com>,
-        Ivan Vecera <ivecera@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 091/117] be2net: Fix number of Rx queues used for flow hashing
-Date:   Thu, 20 Jun 2019 19:57:05 +0200
-Message-Id: <20190620174357.486695783@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Jagdish Motwani <jagdish.motwani@sophos.com>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.1 39/98] netfilter: nf_queue: fix reinject verdict handling
+Date:   Thu, 20 Jun 2019 19:57:06 +0200
+Message-Id: <20190620174350.871488415@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190620174351.964339809@linuxfoundation.org>
-References: <20190620174351.964339809@linuxfoundation.org>
+In-Reply-To: <20190620174349.443386789@linuxfoundation.org>
+References: <20190620174349.443386789@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,74 +45,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ivan Vecera <ivecera@redhat.com>
+[ Upstream commit 946c0d8e6ed43dae6527e878d0077c1e11015db0 ]
 
-[ Upstream commit 718f4a2537089ea41903bf357071306163bc7c04 ]
+This patch fixes netfilter hook traversal when there are more than 1 hooks
+returning NF_QUEUE verdict. When the first queue reinjects the packet,
+'nf_reinject' starts traversing hooks with a proper hook_index. However,
+if it again receives a NF_QUEUE verdict (by some other netfilter hook), it
+queues the packet with a wrong hook_index. So, when the second queue
+reinjects the packet, it re-executes hooks in between.
 
-Number of Rx queues used for flow hashing returned by the driver is
-incorrect and this bug prevents user to use the last Rx queue in
-indirection table.
-
-Let's say we have a NIC with 6 combined queues:
-
-[root@sm-03 ~]# ethtool -l enp4s0f0
-Channel parameters for enp4s0f0:
-Pre-set maximums:
-RX:             5
-TX:             5
-Other:          0
-Combined:       6
-Current hardware settings:
-RX:             0
-TX:             0
-Other:          0
-Combined:       6
-
-Default indirection table maps all (6) queues equally but the driver
-reports only 5 rings available.
-
-[root@sm-03 ~]# ethtool -x enp4s0f0
-RX flow hash indirection table for enp4s0f0 with 5 RX ring(s):
-    0:      0     1     2     3     4     5     0     1
-    8:      2     3     4     5     0     1     2     3
-   16:      4     5     0     1     2     3     4     5
-   24:      0     1     2     3     4     5     0     1
-...
-
-Now change indirection table somehow:
-
-[root@sm-03 ~]# ethtool -X enp4s0f0 weight 1 1
-[root@sm-03 ~]# ethtool -x enp4s0f0
-RX flow hash indirection table for enp4s0f0 with 6 RX ring(s):
-    0:      0     0     0     0     0     0     0     0
-...
-   64:      1     1     1     1     1     1     1     1
-...
-
-Now it is not possible to change mapping back to equal (default) state:
-
-[root@sm-03 ~]# ethtool -X enp4s0f0 equal 6
-Cannot set RX flow hash configuration: Invalid argument
-
-Fixes: 594ad54a2c3b ("be2net: Add support for setting and getting rx flow hash options")
-Reported-by: Tianhao <tizhao@redhat.com>
-Signed-off-by: Ivan Vecera <ivecera@redhat.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Fixes: 960632ece694 ("netfilter: convert hook list to an array")
+Signed-off-by: Jagdish Motwani <jagdish.motwani@sophos.com>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/emulex/benet/be_ethtool.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/netfilter/nf_queue.c | 1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/net/ethernet/emulex/benet/be_ethtool.c
-+++ b/drivers/net/ethernet/emulex/benet/be_ethtool.c
-@@ -1108,7 +1108,7 @@ static int be_get_rxnfc(struct net_devic
- 		cmd->data = be_get_rss_hash_opts(adapter, cmd->flow_type);
- 		break;
- 	case ETHTOOL_GRXRINGS:
--		cmd->data = adapter->num_rx_qs - 1;
-+		cmd->data = adapter->num_rx_qs;
- 		break;
- 	default:
- 		return -EINVAL;
+diff --git a/net/netfilter/nf_queue.c b/net/netfilter/nf_queue.c
+index a36a77bae1d6..5b86574e7b89 100644
+--- a/net/netfilter/nf_queue.c
++++ b/net/netfilter/nf_queue.c
+@@ -254,6 +254,7 @@ static unsigned int nf_iterate(struct sk_buff *skb,
+ repeat:
+ 		verdict = nf_hook_entry_hookfn(hook, skb, state);
+ 		if (verdict != NF_ACCEPT) {
++			*index = i;
+ 			if (verdict != NF_REPEAT)
+ 				return verdict;
+ 			goto repeat;
+-- 
+2.20.1
+
 
 
