@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E954A4D70C
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 20:15:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5CD9D4D77C
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 20:19:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729604AbfFTSP1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 14:15:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44184 "EHLO mail.kernel.org"
+        id S1729612AbfFTSPb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 14:15:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44270 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729594AbfFTSPZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 14:15:25 -0400
+        id S1729395AbfFTSP2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Jun 2019 14:15:28 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DFE902082C;
-        Thu, 20 Jun 2019 18:15:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4321C2084E;
+        Thu, 20 Jun 2019 18:15:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561054524;
-        bh=MVJXWWRUgvZ1zUCh0VY4byhSg34+07e77MeVGbVwFVo=;
+        s=default; t=1561054527;
+        bh=BP8IddWGjCAgLv+nYP0K19A5yvQ9scesSZhse41AXdU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XGUKNsrVhRorGaXn4mbncwnxLYVSX90oy/NiFnP0SuStkeM6X761RfLlxSRuTb2Kw
-         wMfUeTw81Vv2XoTwgrbSeh74dzYLl0e3VBFPDyfgi6eYNe75swHNVPlJJw3Zg9kR5m
-         fRhbpm41+Cp6otGlcNVLLRBEp/nkrgVvhwDx8GLY=
+        b=H0RJlQLqWhyH9+4TkYaqLwx0troKbrsq+F7xxAKzXSAtpugFfstde0TYzjRENBZbq
+         Mw8tEqKR0V72i8O8phvlMz5EaM6htS4URl+Uo5P7uWCeohWBugBBgd/q47Ob/rODFZ
+         8Mw43CWc1tg8NNW24TaHg0CbmkMoogzrhjDyx6iY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        stable@vger.kernel.org, David Jander <david@protonic.nl>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 59/98] ACPI/PCI: PM: Add missing wakeup.flags.valid checks
-Date:   Thu, 20 Jun 2019 19:57:26 +0200
-Message-Id: <20190620174352.041727866@linuxfoundation.org>
+Subject: [PATCH 5.1 60/98] drm/etnaviv: lock MMU while dumping core
+Date:   Thu, 20 Jun 2019 19:57:27 +0200
+Message-Id: <20190620174352.099265172@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190620174349.443386789@linuxfoundation.org>
 References: <20190620174349.443386789@linuxfoundation.org>
@@ -45,56 +45,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 9a51c6b1f9e0239a9435db036b212498a2a3b75c ]
+[ Upstream commit 1396500d673bd027683a0609ff84dca7eb6ea2e7 ]
 
-Both acpi_pci_need_resume() and acpi_dev_needs_resume() check if the
-current ACPI wakeup configuration of the device matches what is
-expected as far as system wakeup from sleep states is concerned, as
-reflected by the device_may_wakeup() return value for the device.
+The devcoredump needs to operate on a stable state of the MMU while
+it is writing the MMU state to the coredump. The missing lock
+allowed both the userspace submit, as well as the GPU job finish
+paths to mutate the MMU state while a coredump is under way.
 
-However, they only should do that if wakeup.flags.valid is set for
-the device's ACPI companion, because otherwise the wakeup.prepare_count
-value for it is meaningless.
-
-Add the missing wakeup.flags.valid checks to these functions.
-
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Fixes: a8c21a5451d8 (drm/etnaviv: add initial etnaviv DRM driver)
+Reported-by: David Jander <david@protonic.nl>
+Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
+Tested-by: David Jander <david@protonic.nl>
+Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/acpi/device_pm.c | 4 ++--
- drivers/pci/pci-acpi.c   | 3 ++-
- 2 files changed, 4 insertions(+), 3 deletions(-)
+ drivers/gpu/drm/etnaviv/etnaviv_dump.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/acpi/device_pm.c b/drivers/acpi/device_pm.c
-index 824ae985ad93..ccb59768b1f3 100644
---- a/drivers/acpi/device_pm.c
-+++ b/drivers/acpi/device_pm.c
-@@ -949,8 +949,8 @@ static bool acpi_dev_needs_resume(struct device *dev, struct acpi_device *adev)
- 	u32 sys_target = acpi_target_system_state();
- 	int ret, state;
+diff --git a/drivers/gpu/drm/etnaviv/etnaviv_dump.c b/drivers/gpu/drm/etnaviv/etnaviv_dump.c
+index 33854c94cb85..515515ef24f9 100644
+--- a/drivers/gpu/drm/etnaviv/etnaviv_dump.c
++++ b/drivers/gpu/drm/etnaviv/etnaviv_dump.c
+@@ -125,6 +125,8 @@ void etnaviv_core_dump(struct etnaviv_gpu *gpu)
+ 		return;
+ 	etnaviv_dump_core = false;
  
--	if (!pm_runtime_suspended(dev) || !adev ||
--	    device_may_wakeup(dev) != !!adev->wakeup.prepare_count)
-+	if (!pm_runtime_suspended(dev) || !adev || (adev->wakeup.flags.valid &&
-+	    device_may_wakeup(dev) != !!adev->wakeup.prepare_count))
- 		return true;
++	mutex_lock(&gpu->mmu->lock);
++
+ 	mmu_size = etnaviv_iommu_dump_size(gpu->mmu);
  
- 	if (sys_target == ACPI_STATE_S0)
-diff --git a/drivers/pci/pci-acpi.c b/drivers/pci/pci-acpi.c
-index e1949f7efd9c..bf32fde328c2 100644
---- a/drivers/pci/pci-acpi.c
-+++ b/drivers/pci/pci-acpi.c
-@@ -666,7 +666,8 @@ static bool acpi_pci_need_resume(struct pci_dev *dev)
- 	if (!adev || !acpi_device_power_manageable(adev))
- 		return false;
+ 	/* We always dump registers, mmu, ring and end marker */
+@@ -167,6 +169,7 @@ void etnaviv_core_dump(struct etnaviv_gpu *gpu)
+ 	iter.start = __vmalloc(file_size, GFP_KERNEL | __GFP_NOWARN | __GFP_NORETRY,
+ 			       PAGE_KERNEL);
+ 	if (!iter.start) {
++		mutex_unlock(&gpu->mmu->lock);
+ 		dev_warn(gpu->dev, "failed to allocate devcoredump file\n");
+ 		return;
+ 	}
+@@ -234,6 +237,8 @@ void etnaviv_core_dump(struct etnaviv_gpu *gpu)
+ 					 obj->base.size);
+ 	}
  
--	if (device_may_wakeup(&dev->dev) != !!adev->wakeup.prepare_count)
-+	if (adev->wakeup.flags.valid &&
-+	    device_may_wakeup(&dev->dev) != !!adev->wakeup.prepare_count)
- 		return true;
++	mutex_unlock(&gpu->mmu->lock);
++
+ 	etnaviv_core_dump_header(&iter, ETDUMP_BUF_END, iter.data);
  
- 	if (acpi_target_system_state() == ACPI_STATE_S0)
+ 	dev_coredumpv(gpu->dev, iter.start, iter.data - iter.start, GFP_KERNEL);
 -- 
 2.20.1
 
