@@ -2,24 +2,21 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9521A4C70C
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 08:03:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A4F84C68C
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 07:10:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726482AbfFTGDF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 02:03:05 -0400
-Received: from mslow2.mail.gandi.net ([217.70.178.242]:46776 "EHLO
-        mslow2.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725871AbfFTGDF (ORCPT
+        id S1731068AbfFTFKE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 01:10:04 -0400
+Received: from relay7-d.mail.gandi.net ([217.70.183.200]:49715 "EHLO
+        relay7-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725857AbfFTFKD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 02:03:05 -0400
-Received: from relay1-d.mail.gandi.net (unknown [217.70.183.193])
-        by mslow2.mail.gandi.net (Postfix) with ESMTP id AADE43A47E6;
-        Thu, 20 Jun 2019 05:08:50 +0000 (UTC)
+        Thu, 20 Jun 2019 01:10:03 -0400
 X-Originating-IP: 79.86.19.127
 Received: from alex.numericable.fr (127.19.86.79.rev.sfr.net [79.86.19.127])
         (Authenticated sender: alex@ghiti.fr)
-        by relay1-d.mail.gandi.net (Postfix) with ESMTPSA id 08AE424000A;
-        Thu, 20 Jun 2019 05:08:33 +0000 (UTC)
+        by relay7-d.mail.gandi.net (Postfix) with ESMTPSA id E5FC520003;
+        Thu, 20 Jun 2019 05:09:43 +0000 (UTC)
 From:   Alexandre Ghiti <alex@ghiti.fr>
 To:     Andrew Morton <akpm@linux-foundation.org>
 Cc:     "James E . J . Bottomley" <James.Bottomley@HansenPartnership.com>,
@@ -40,9 +37,9 @@ Cc:     "James E . J . Bottomley" <James.Bottomley@HansenPartnership.com>,
         linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
         sparclinux@vger.kernel.org, linux-mm@kvack.org,
         Alexandre Ghiti <alex@ghiti.fr>
-Subject: [PATCH RESEND 4/8] x86, hugetlbpage: Start fallback of top-down mmap at mm->mmap_base
-Date:   Thu, 20 Jun 2019 01:03:24 -0400
-Message-Id: <20190620050328.8942-5-alex@ghiti.fr>
+Subject: [PATCH RESEND 5/8] mm: Start fallback top-down mmap at mm->mmap_base
+Date:   Thu, 20 Jun 2019 01:03:25 -0400
+Message-Id: <20190620050328.8942-6-alex@ghiti.fr>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190620050328.8942-1-alex@ghiti.fr>
 References: <20190620050328.8942-1-alex@ghiti.fr>
@@ -60,34 +57,20 @@ and the stack, which is the only place not covered by the top-down mmap.
 
 Signed-off-by: Alexandre Ghiti <alex@ghiti.fr>
 ---
- arch/x86/mm/hugetlbpage.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ mm/mmap.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/x86/mm/hugetlbpage.c b/arch/x86/mm/hugetlbpage.c
-index fab095362c50..4b90339aef50 100644
---- a/arch/x86/mm/hugetlbpage.c
-+++ b/arch/x86/mm/hugetlbpage.c
-@@ -106,11 +106,12 @@ static unsigned long hugetlb_get_unmapped_area_topdown(struct file *file,
- {
- 	struct hstate *h = hstate_file(file);
- 	struct vm_unmapped_area_info info;
-+	unsigned long mmap_base = get_mmap_base(0);
- 
- 	info.flags = VM_UNMAPPED_AREA_TOPDOWN;
- 	info.length = len;
- 	info.low_limit = PAGE_SIZE;
--	info.high_limit = get_mmap_base(0);
-+	info.high_limit = mmap_base;
- 
- 	/*
- 	 * If hint address is above DEFAULT_MAP_WINDOW, look for unmapped area
-@@ -132,7 +133,7 @@ static unsigned long hugetlb_get_unmapped_area_topdown(struct file *file,
- 	if (addr & ~PAGE_MASK) {
+diff --git a/mm/mmap.c b/mm/mmap.c
+index dedae10cb6e2..e563145c1ff4 100644
+--- a/mm/mmap.c
++++ b/mm/mmap.c
+@@ -2185,7 +2185,7 @@ arch_get_unmapped_area_topdown(struct file *filp, unsigned long addr,
+ 	if (offset_in_page(addr)) {
  		VM_BUG_ON(addr != -ENOMEM);
  		info.flags = 0;
 -		info.low_limit = TASK_UNMAPPED_BASE;
-+		info.low_limit = mmap_base;
- 		info.high_limit = TASK_SIZE_LOW;
++		info.low_limit = arch_get_mmap_base(addr, mm->mmap_base);
+ 		info.high_limit = mmap_end;
  		addr = vm_unmapped_area(&info);
  	}
 -- 
