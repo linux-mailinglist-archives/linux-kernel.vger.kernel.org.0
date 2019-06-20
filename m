@@ -2,47 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D26C44D67A
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 20:08:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8175C4D709
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 20:15:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728504AbfFTSIh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 14:08:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35842 "EHLO mail.kernel.org"
+        id S1729344AbfFTSPP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 14:15:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43926 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728475AbfFTSI1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 14:08:27 -0400
+        id S1726859AbfFTSPN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Jun 2019 14:15:13 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5538A21530;
-        Thu, 20 Jun 2019 18:08:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DA4872089C;
+        Thu, 20 Jun 2019 18:15:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561054106;
-        bh=AOopMpyt+2oZqr3lLZIV/QnUU1rTLquw7MUNmK3R80Q=;
+        s=default; t=1561054513;
+        bh=1vfw/5YDOBpYEgT8fnTZuuzqDh13TDwAsSxwqD/sPoI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zOxsZbfA0rwuIw1zE5vcVRLU1v8tyHTxJpgX2NHSNOILHVGQktAc3P9Amqa94kp9r
-         aDb5vd04cARJtGvjhddb697PG8eA8ziSMZT1l+nn5CQWnmNWg7/BOOG4lRQBC2C9c1
-         /X9ziLd3sO/6jAFw/9banjFxsCwhdllejsIjOkqI=
+        b=MN1RxeVfeUsjdCP3Pjr5ha7jyWFkh68vxpbN3NH99odZ1r5Pwyifug4gykqM6Ht0T
+         RCr7DaOxoIBNv7EZG1RknkGkPieXa8U5agxdqs4LWKuOquM0B7OP5H864xK5GFtUFj
+         ah/+AX7slVo5qEa1L1A4BFk/+uB+orhLbp5i0pp4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yabin Cui <yabinc@google.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Stephane Eranian <eranian@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Vince Weaver <vincent.weaver@maine.edu>, acme@kernel.org,
-        mark.rutland@arm.com, namhyung@kernel.org,
-        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 20/45] perf/ring_buffer: Add ordering to rb->nest increment
+        stable@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.1 55/98] io_uring: Fix __io_uring_register() false success
 Date:   Thu, 20 Jun 2019 19:57:22 +0200
-Message-Id: <20190620174336.626599680@linuxfoundation.org>
+Message-Id: <20190620174351.820212114@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190620174328.608036501@linuxfoundation.org>
-References: <20190620174328.608036501@linuxfoundation.org>
+In-Reply-To: <20190620174349.443386789@linuxfoundation.org>
+References: <20190620174349.443386789@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -52,58 +43,31 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 3f9fbe9bd86c534eba2faf5d840fd44c6049f50e ]
+[ Upstream commit a278682dad37fd2f8d2f30d8e84e376a856ab472 ]
 
-Similar to how decrementing rb->next too early can cause data_head to
-(temporarily) be observed to go backward, so too can this happen when
-we increment too late.
+If io_copy_iov() fails, it will break the loop and report success,
+albeit partially completed operation.
 
-This barrier() ensures the rb->head load happens after the increment,
-both the one in the 'goto again' path, as the one from
-perf_output_get_handle() -- albeit very unlikely to matter for the
-latter.
-
-Suggested-by: Yabin Cui <yabinc@google.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Stephane Eranian <eranian@google.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Vince Weaver <vincent.weaver@maine.edu>
-Cc: acme@kernel.org
-Cc: mark.rutland@arm.com
-Cc: namhyung@kernel.org
-Fixes: ef60777c9abd ("perf: Optimize the perf_output() path by removing IRQ-disables")
-Link: http://lkml.kernel.org/r/20190517115418.309516009@infradead.org
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/events/ring_buffer.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ fs/io_uring.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/kernel/events/ring_buffer.c b/kernel/events/ring_buffer.c
-index fde853270c09..aef2af80a927 100644
---- a/kernel/events/ring_buffer.c
-+++ b/kernel/events/ring_buffer.c
-@@ -49,6 +49,15 @@ static void perf_output_put_handle(struct perf_output_handle *handle)
- 	unsigned long head;
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 4e32a033394c..e82adbf8adc1 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -2506,7 +2506,7 @@ static int io_sqe_buffer_register(struct io_ring_ctx *ctx, void __user *arg,
  
- again:
-+	/*
-+	 * In order to avoid publishing a head value that goes backwards,
-+	 * we must ensure the load of @rb->head happens after we've
-+	 * incremented @rb->nest.
-+	 *
-+	 * Otherwise we can observe a @rb->head value before one published
-+	 * by an IRQ/NMI happening between the load and the increment.
-+	 */
-+	barrier();
- 	head = local_read(&rb->head);
+ 		ret = io_copy_iov(ctx, &iov, arg, i);
+ 		if (ret)
+-			break;
++			goto err;
  
- 	/*
+ 		/*
+ 		 * Don't impose further limits on the size and buffer
 -- 
 2.20.1
 
