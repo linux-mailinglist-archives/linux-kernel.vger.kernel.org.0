@@ -2,146 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 318C14DB10
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 22:18:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 703004DB31
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 22:25:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727058AbfFTUS0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 16:18:26 -0400
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:42111 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725907AbfFTUS0 (ORCPT
+        id S1727236AbfFTUZs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 16:25:48 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:42640 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727080AbfFTUZs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 16:18:26 -0400
-Received: by mail-ot1-f65.google.com with SMTP id l15so4002390otn.9
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2019 13:18:26 -0700 (PDT)
+        Thu, 20 Jun 2019 16:25:48 -0400
+Received: by mail-pf1-f194.google.com with SMTP id q10so2289630pff.9
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2019 13:25:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=/1ACPvah6cwlc4NoiRokzPOQoMSdzU57I7vjUDE0u7s=;
-        b=0EpvstXhVkgDZVnlntes/LFoX5DbZzZfI4fZKY04r9MHAG+jDljwalCR+pzVQcd5N+
-         jCgyhrr3z4Vih61nMLUyzbi6vguWMjoCs1yxx/m+W0PmEJEir3NhOjhOIncQC8xeJlnA
-         ScqRQG53Crt+W9L4aXkuF/pOTp6b6HcbioEWgVQ0Wdd8ra6AaL+LteJRGmJeMFvabjaQ
-         FrxPttS8gc75CExD+3TgsHNERiQopSJetDSK5cOZIibVeewsYrEdl3fG1sHBqc0jfOZ8
-         KAFi8QIcJEtIjVvj0Knw5iTcv8ArOmARLOERSJ98/s/7kGp4XUBuQ9hyjg2QbAGOBYHJ
-         8+Vw==
+        bh=ycDhdoPGK0tl2WgTFRv4StbyxU966OO2E0jZjJjKefo=;
+        b=LnfTfmTpOc2aDOFcvxvxCyRx2oTQo3uolnpHY/CpqTZYP4dvR5XNkE6ksddEmruRbQ
+         va8N/dMCLiQxEanR2iZyGXYun4/nKM79XDE1/GJgx5bD7Yc64a4eYaH4AzocNkAvznko
+         FEcTm5xUZhg2kW37BqX9OPTzUGNPvIjtIOmNs5ioOPG3tmIXFh4ClycYiDGF7qmYdY/v
+         j3ZqM6OvsYcZZy49XAzng667IFn64Pm0wRHobE2XNni7k2Gjg59eMyDKOIYfoZgAldMZ
+         8iarFmlMFEfcdrPtKnIzLlms1w9bOg65MD3DxOKTAeIZXi7tgKe8FJil4QaUY0Y44+AE
+         E4uw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=/1ACPvah6cwlc4NoiRokzPOQoMSdzU57I7vjUDE0u7s=;
-        b=NZvzNUL3SMMan3N+F6GzZgZ3XMhnBB6KDfSan6qo+lzfSanO/TxJTf8NMKgf+f5r2P
-         b8E6jj7LwYsRzja0WxC7A04kX7T97BnhHh9PdvOQiioAJaoukKLLaF8kVOx56eM84svS
-         19XSXEE9XRE6EzppQiMq/I9O1Y7B8KhD9kjaC7kyqygq2HcVxJae7W3i0tuzXxU+GPhw
-         A/h6gQ0Pokaa9lDVgLcl+uIDBxpa5iDdULxex1D86sWl/Rny6KB6y01T9gE2wJFevolY
-         bxXcA28o+kH2H4/31zFXQVHlqNaPFjBX6bMOI0IxQis/xc2O+4PYr76Gm3XXil45624H
-         rATQ==
-X-Gm-Message-State: APjAAAUuomWyDo1fHSyGbNmACVPn7eFkBNgkRZafDaPNxJz+d2zE2xfh
-        lq/6UY6Sj3wX094tPefHKV26TFtalRC0HfWXDmF40Q==
-X-Google-Smtp-Source: APXvYqyamVcYjA+tR+olDR6UwLLdjY5DvyoCREZvBR4JUnDzN9QbxbjICVUWXIInA4FtacuQ6q6CVYes9j/gU6KU7Aw=
-X-Received: by 2002:a9d:470d:: with SMTP id a13mr40714284otf.126.1561061905657;
- Thu, 20 Jun 2019 13:18:25 -0700 (PDT)
+        bh=ycDhdoPGK0tl2WgTFRv4StbyxU966OO2E0jZjJjKefo=;
+        b=uWbgnb5qLNeEZCLuOFhouPXM4EDDoOdrCZBqNdsucQJPPY068pzfKW+IyQhviNIiYk
+         r4JcE00FQOvazFL/wThzeNQjNQILcqfOm8cexIcrjvxYI9Pn7qkF98sIs5co8o87Qt3b
+         RiJ3yl9ljxYvTEa/Uxys8WP+/Jtu1N3o5MXQiYu+Z9OiZuYOch0GimgzXWU/ST+Q3UZP
+         GnppKONz45ZMr7l/y8GukpFDZ/M0SStxoCqU6XOWAKpDH7Tgqkv8iAipoRMszy4mBidh
+         KrPHhMLif2aKnFzW4bOVeipAEGXzvSnV2M9lID+0tXO0ISqSWR/CAfUmkFGcSvjiBHGB
+         VtGw==
+X-Gm-Message-State: APjAAAU7/dRP6tfNxDT3aHo4E7g3XgyPwsE8SfSs5xmPW1F+GKq4I0Sw
+        2HLdlJ9j3fr0Jclcz7mdHvZBIr+EcUHdssVquJPpkg==
+X-Google-Smtp-Source: APXvYqwfuCPR2jr4PyIupl/TQ75vO5GLNJXNZviHm1k/btpNEIQ6pIVqvW1+Bg9SD6e/P3wobLs9tr7obdcIVV4yucI=
+X-Received: by 2002:a63:52:: with SMTP id 79mr14320167pga.381.1561062347264;
+ Thu, 20 Jun 2019 13:25:47 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190620161240.22738-1-logang@deltatee.com> <CAPcyv4ijztOK1FUjLuFing7ps4LOHt=6z=eO=98HHWauHA+yog@mail.gmail.com>
- <20190620193353.GF19891@ziepe.ca>
-In-Reply-To: <20190620193353.GF19891@ziepe.ca>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Thu, 20 Jun 2019 13:18:13 -0700
-Message-ID: <CAPcyv4jyNRBvtWhr9+aHbzWP6=D4qAME+=hWMtOYJ17BVHdy2w@mail.gmail.com>
-Subject: Re: [RFC PATCH 00/28] Removing struct page from P2PDMA
-To:     Jason Gunthorpe <jgg@ziepe.ca>
-Cc:     Logan Gunthorpe <logang@deltatee.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-block@vger.kernel.org, linux-nvme@lists.infradead.org,
-        linux-pci@vger.kernel.org, linux-rdma <linux-rdma@vger.kernel.org>,
-        Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        Keith Busch <kbusch@kernel.org>,
-        Stephen Bates <sbates@raithlin.com>
+References: <20190620184523.155756-1-mka@chromium.org> <CAKwvOdn-o9UszRW+MQ9Z0Ds9B2wSVBWUsPBPSF0S2DYxVFYpqA@mail.gmail.com>
+ <CAD=FV=WcH=dVeVWznO7Ti5A8HBDRM=rPvvH=-XJ2o1PKXvHAQw@mail.gmail.com>
+In-Reply-To: <CAD=FV=WcH=dVeVWznO7Ti5A8HBDRM=rPvvH=-XJ2o1PKXvHAQw@mail.gmail.com>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Thu, 20 Jun 2019 13:25:36 -0700
+Message-ID: <CAKwvOd=twuZAAyKsBRSeJEFuQZGdyTw+=JAwmJugUhV+bppdtg@mail.gmail.com>
+Subject: Re: [PATCH] gen_compile_command: Add support for separate
+ KBUILD_OUTPUT directory
+To:     Doug Anderson <dianders@google.com>
+Cc:     Matthias Kaehlcke <mka@chromium.org>,
+        Tom Roeder <tmroeder@google.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Raul E Rangel <rrangel@chromium.org>,
+        Tom Hughes <tomhughes@chromium.org>,
+        Ryan Case <ryandcase@chromium.org>,
+        Yu Liu <yudiliu@google.com>,
+        Nathan Chancellor <natechancellor@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 20, 2019 at 12:34 PM Jason Gunthorpe <jgg@ziepe.ca> wrote:
->
-> On Thu, Jun 20, 2019 at 11:45:38AM -0700, Dan Williams wrote:
->
-> > > Previously, there have been multiple attempts[1][2] to replace
-> > > struct page usage with pfn_t but this has been unpopular seeing
-> > > it creates dangerous edge cases where unsuspecting code might
-> > > run accross pfn_t's they are not ready for.
+On Thu, Jun 20, 2019 at 1:13 PM Doug Anderson <dianders@google.com> wrote:
+> On Thu, Jun 20, 2019 at 12:53 PM Nick Desaulniers
+> <ndesaulniers@google.com> wrote:
 > >
-> > That's not the conclusion I arrived at because pfn_t is specifically
-> > an opaque type precisely to force "unsuspecting" code to throw
-> > compiler assertions. Instead pfn_t was dealt its death blow here:
-> >
-> > https://lore.kernel.org/lkml/CA+55aFzON9617c2_Amep0ngLq91kfrPiSccdZakxir82iekUiA@mail.gmail.com/
-> >
-> > ...and I think that feedback also reads on this proposal.
+> > I do miss Doug's Kbuild caching patches' speedup.
 >
-> I read through Linus's remarks and it he seems completely right that
-> anything that touches a filesystem needs a struct page, because FS's
-> rely heavily on that.
->
-> It is much less clear to me why a GPU BAR or a NVME CMB that never
-> touches a filesystem needs a struct page.. The best reason I've seen
-> is that it must have struct page because the block layer heavily
-> depends on struct page.
->
-> Since that thread was so DAX/pmem centric (and Linus did say he liked
-> the __pfn_t), maybe it is worth checking again, but not for DAX/pmem
-> users?
->
-> This P2P is quite distinct from DAX as the struct page* would point to
-> non-cacheable weird memory that few struct page users would even be
-> able to work with, while I understand DAX use cases focused on CPU
-> cache coherent memory, and filesystem involvement.
+> You actually get quite a bit of this by grabbing a new version of
+> ccache (assuming you use ccache).  :-P  You still have to pay the
+> penalty (twice) for all the options that are tested that the compiler
+> _doesn't_ support, but at least you get the cache for the commands
+> that the compiler does support.
 
-What I'm poking at is whether this block layer capability can pick up
-users outside of RDMA, more on this below...
+Hello darkness my old friend:
+https://nickdesaulniers.github.io/blog/2018/06/02/speeding-up-linux-kernel-builds-with-ccache/
+Man, that post has not aged well.  Here's what we do now:
+https://github.com/ClangBuiltLinux/continuous-integration/blob/45ab5842a69cb0c72d27d34e73b0599ec2a0e2ed/driver.sh#L227-L245
 
+> Specifically, make sure you have a ccache with:
 >
-> > My primary concern with this is that ascribes a level of generality
-> > that just isn't there for peer-to-peer dma operations. "Peer"
-> > addresses are not "DMA" addresses, and the rules about what can and
-> > can't do peer-DMA are not generically known to the block layer.
->
-> ?? The P2P infrastructure produces a DMA bus address for the
-> initiating device that is is absolutely a DMA address. There is some
-> intermediate CPU centric representation, but after mapping it is the
-> same as any other DMA bus address.
+>     * https://github.com/ccache/ccache/pull/365
+>     * https://github.com/ccache/ccache/pull/370
 
-Right, this goes back to the confusion caused by the hardware / bus /
-address that a dma-engine would consume directly, and Linux "DMA"
-address as a device-specific translation of host memory.
+Oh! Interesting finds and thanks for the pointers.  Did these make it
+into a release version of ccache, yet? If so, do you know which
+version?
 
-Is the block layer representation of this address going to go through
-a peer / "bus" address translation when it reaches the RDMA driver? In
-other words if we tried to use this facility with other drivers how
-would the driver know it was passed a traditional Linux DMA address,
-vs a peer bus address that the device may not be able to handle?
+> I still have it in my thoughts to avoid the penalty for options that
+> the compiler doesn't support but haven't had time to work on it
+> recently.
 
-> The map function can tell if the device pair combination can do p2p or
-> not.
-
-Ok, if this map step is still there then reduce a significant portion
-of my concern and it becomes a quibble about the naming and how a
-non-RDMA device driver might figure out if it was handled an address
-it can't handle.
-
->
-> > Again, what are the benefits of plumbing this RDMA special case?
->
-> It is not just RDMA, this is interesting for GPU and vfio use cases
-> too. RDMA is just the most complete in-tree user we have today.
->
-> ie GPU people wouuld really like to do read() and have P2P
-> transparently happen to on-GPU pages. With GPUs having huge amounts of
-> memory loading file data into them is really a performance critical
-> thing.
-
-A direct-i/o read(2) into a page-less GPU mapping? Through a regular
-file or a device special file?
+It had better not be autoconf! (Hopefully yet-to-be-written GNU C
+extensions can support feature detection via C preprocessor)
+-- 
+Thanks,
+~Nick Desaulniers
