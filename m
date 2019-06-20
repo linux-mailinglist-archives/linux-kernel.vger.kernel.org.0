@@ -2,41 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D3B0F4D673
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 20:08:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5DFA24D5DD
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 20:01:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728467AbfFTSIQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 14:08:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35426 "EHLO mail.kernel.org"
+        id S1727318AbfFTSBq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 14:01:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51548 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728035AbfFTSIN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 14:08:13 -0400
+        id S1727314AbfFTSBn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Jun 2019 14:01:43 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DD9442089C;
-        Thu, 20 Jun 2019 18:08:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 39B7620B1F;
+        Thu, 20 Jun 2019 18:01:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561054092;
-        bh=PefBhdJw/AXsteVlRQNVPD3U1PT1dQIGDflaeNMa3Q4=;
+        s=default; t=1561053702;
+        bh=5ku35xL2IOm1lfhHw1d7/RAla0NL9v23eKstzeDFCP8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LdoQWpsFKMCxZxYHUrxGRbvv0rTbfYqowx1XaDwj9gz/tRhRo21olekV9orX1sSqR
-         cgo5rBn9dmijVuSF2PY6Ko5zfbPZ4ZhRWEh+Asgb6XqdXyEzvIwitgafReI3bH6TNH
-         wI9JpGcm1+eqKsJsJSjSWRvkZzSwRQgltCksbFb8=
+        b=bwe0L3h35ajm0tnsBU3DfR+sGoAC2Z6ZoPA9bMmSzTzJlg8bCWIAxlAxT8vH9jBOS
+         4JSsMDId9X/RVpX2+wIN05QthUCFrkFeV60A60HA9PfB8rs4uxTiI6sZ+WARySXfhy
+         ZPySVrp4DGMfvhP9cXh6XC7jUvqal3HuplCvD4pw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Pavaman Subramaniyam <pavsubra@in.ibm.com>,
-        Anju T Sudhakar <anju@linux.vnet.ibm.com>,
-        Madhavan Srinivasan <maddy@linux.vnet.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
+        stable@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>,
+        Christian Lamparter <chunkeey@gmail.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 16/45] powerpc/powernv: Return for invalid IMC domain
-Date:   Thu, 20 Jun 2019 19:57:18 +0200
-Message-Id: <20190620174334.752489542@linuxfoundation.org>
+Subject: [PATCH 4.4 82/84] Revert "crypto: crypto4xx - properly set IV after de- and encrypt"
+Date:   Thu, 20 Jun 2019 19:57:19 +0200
+Message-Id: <20190620174349.254260381@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190620174328.608036501@linuxfoundation.org>
-References: <20190620174328.608036501@linuxfoundation.org>
+In-Reply-To: <20190620174337.538228162@linuxfoundation.org>
+References: <20190620174337.538228162@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,50 +45,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit b59bd3527fe3c1939340df558d7f9d568fc9f882 ]
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Currently init_imc_pmu() can fail either because we try to register an
-IMC unit with an invalid domain (i.e an IMC node not supported by the
-kernel) or something went wrong while registering a valid IMC unit. In
-both the cases kernel provides a 'Register failed' error message.
+This reverts commit e9a60ab1609a7d975922adad1bf9c46ac6954584 which is
+commit fc340115ffb8235c1bbd200c28855e6373d0dd1a upstream.
 
-For example when trace-imc node is not supported by the kernel, but
-skiboot advertises a trace-imc node we print:
+Hauke writes that this breaks the build and should be reverted.
 
-  IMC Unknown Device type
-  IMC PMU (null) Register failed
-
-To avoid confusion just print the unknown device type message, before
-attempting PMU registration, so the second message isn't printed.
-
-Fixes: 8f95faaac56c ("powerpc/powernv: Detect and create IMC device")
-Reported-by: Pavaman Subramaniyam <pavsubra@in.ibm.com>
-Signed-off-by: Anju T Sudhakar <anju@linux.vnet.ibm.com>
-Reviewed-by: Madhavan Srinivasan <maddy@linux.vnet.ibm.com>
-[mpe: Reword change log a bit]
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Reported-by: Hauke Mehrtens <hauke@hauke-m.de>
+Cc: Christian Lamparter <chunkeey@gmail.com>
+Cc: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/powerpc/platforms/powernv/opal-imc.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/crypto/amcc/crypto4xx_alg.c  |    3 +--
+ drivers/crypto/amcc/crypto4xx_core.c |    9 ---------
+ 2 files changed, 1 insertion(+), 11 deletions(-)
 
-diff --git a/arch/powerpc/platforms/powernv/opal-imc.c b/arch/powerpc/platforms/powernv/opal-imc.c
-index 6914b289c86b..7b93191dc2e3 100644
---- a/arch/powerpc/platforms/powernv/opal-imc.c
-+++ b/arch/powerpc/platforms/powernv/opal-imc.c
-@@ -87,6 +87,10 @@ static int imc_pmu_create(struct device_node *parent, int pmu_index, int domain)
- 	struct imc_pmu *pmu_ptr;
- 	u32 offset;
+--- a/drivers/crypto/amcc/crypto4xx_alg.c
++++ b/drivers/crypto/amcc/crypto4xx_alg.c
+@@ -138,8 +138,7 @@ static int crypto4xx_setkey_aes(struct c
+ 	sa = (struct dynamic_sa_ctl *) ctx->sa_in;
+ 	ctx->hash_final = 0;
  
-+	/* Return for unknown domain */
-+	if (domain < 0)
-+		return -EINVAL;
-+
- 	/* memory for pmu */
- 	pmu_ptr = kzalloc(sizeof(struct imc_pmu), GFP_KERNEL);
- 	if (!pmu_ptr)
--- 
-2.20.1
-
+-	set_dynamic_sa_command_0(sa, SA_NOT_SAVE_HASH, (cm == CRYPTO_MODE_CBC ?
+-				 SA_SAVE_IV : SA_NOT_SAVE_IV),
++	set_dynamic_sa_command_0(sa, SA_NOT_SAVE_HASH, SA_NOT_SAVE_IV,
+ 				 SA_LOAD_HASH_FROM_SA, SA_LOAD_IV_FROM_STATE,
+ 				 SA_NO_HEADER_PROC, SA_HASH_ALG_NULL,
+ 				 SA_CIPHER_ALG_AES, SA_PAD_TYPE_ZERO,
+--- a/drivers/crypto/amcc/crypto4xx_core.c
++++ b/drivers/crypto/amcc/crypto4xx_core.c
+@@ -645,15 +645,6 @@ static u32 crypto4xx_ablkcipher_done(str
+ 		addr = dma_map_page(dev->core_dev->device, sg_page(dst),
+ 				    dst->offset, dst->length, DMA_FROM_DEVICE);
+ 	}
+-
+-	if (pd_uinfo->sa_va->sa_command_0.bf.save_iv == SA_SAVE_IV) {
+-		struct crypto_skcipher *skcipher = crypto_skcipher_reqtfm(req);
+-
+-		crypto4xx_memcpy_from_le32((u32 *)req->iv,
+-			pd_uinfo->sr_va->save_iv,
+-			crypto_skcipher_ivsize(skcipher));
+-	}
+-
+ 	crypto4xx_ret_sg_desc(dev, pd_uinfo);
+ 	if (ablk_req->base.complete != NULL)
+ 		ablk_req->base.complete(&ablk_req->base, 0);
 
 
