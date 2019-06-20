@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 22E004D6A2
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 20:10:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8966A4D646
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 20:06:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728602AbfFTSK0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 14:10:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37916 "EHLO mail.kernel.org"
+        id S1728109AbfFTSGI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 14:06:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59934 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728799AbfFTSKU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 14:10:20 -0400
+        id S1727877AbfFTSGC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Jun 2019 14:06:02 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D9FAC2082C;
-        Thu, 20 Jun 2019 18:10:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2643B204FD;
+        Thu, 20 Jun 2019 18:06:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561054220;
-        bh=SjfTpmvzvuQZ9JZgKZvtzkAgoLB4u3yXSE2feqq0kUo=;
+        s=default; t=1561053961;
+        bh=prdMiaT7N9TrVI/A20MwePkGZCg2cYEobayyrSDpkg8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=skm4ODibmPXABGUdekoFOZ7G2orcr9/iECBeveWCggQ35tLQOexXQ1L7dlc2T5EqG
-         sT1hRJSPfQBgjxts54dsWE/J7kimDCnrSDVz7jc6NcPa00sNgq8QnPJLCXG7KMNKex
-         GNhfFYUUJWEn2JukpZRp4qBzfiMENtniYsLSwXnQ=
+        b=BTFT8gsf/6sqNHluiSE64xmEykjoRKD220s1GXWYIHZicLcUltXVwchGcCPTumSjZ
+         eg274vG2fRflos5dHI/ldN1bG/sjvT92p3cUMUfRZWyE9qBYeWcXXkGGpWqcKT2E0O
+         fZFys1+CRgfouHVcctjh9hH4ZQiaDEz5OEV0gqxQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 07/61] net: dsa: rtl8366: Fix up VLAN filtering
+        stable@vger.kernel.org, Daniele Palmas <dnlplm@gmail.com>,
+        Johan Hovold <johan@kernel.org>
+Subject: [PATCH 4.9 088/117] USB: serial: option: add Telit 0x1260 and 0x1261 compositions
 Date:   Thu, 20 Jun 2019 19:57:02 +0200
-Message-Id: <20190620174338.691124752@linuxfoundation.org>
+Message-Id: <20190620174357.395190916@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190620174336.357373754@linuxfoundation.org>
-References: <20190620174336.357373754@linuxfoundation.org>
+In-Reply-To: <20190620174351.964339809@linuxfoundation.org>
+References: <20190620174351.964339809@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,60 +43,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Linus Walleij <linus.walleij@linaro.org>
+From: Daniele Palmas <dnlplm@gmail.com>
 
-[ Upstream commit 760c80b70bed2cd01630e8595d1bbde910339f31 ]
+commit f3dfd4072c3ee6e287f501a18b5718b185d6a940 upstream.
 
-We get this regression when using RTL8366RB as part of a bridge
-with OpenWrt:
+Added support for Telit LE910Cx 0x1260 and 0x1261 compositions.
 
-WARNING: CPU: 0 PID: 1347 at net/switchdev/switchdev.c:291
-	 switchdev_port_attr_set_now+0x80/0xa4
-lan0: Commit of attribute (id=7) failed.
-(...)
-realtek-smi switch lan0: failed to initialize vlan filtering on this port
-
-This is because it is trying to disable VLAN filtering
-on VLAN0, as we have forgot to add 1 to the port number
-to get the right VLAN in rtl8366_vlan_filtering(): when
-we initialize the VLAN we associate VLAN1 with port 0,
-VLAN2 with port 1 etc, so we need to add 1 to the port
-offset.
-
-Fixes: d8652956cf37 ("net: dsa: realtek-smi: Add Realtek SMI driver")
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Daniele Palmas <dnlplm@gmail.com>
+Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Johan Hovold <johan@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/net/dsa/rtl8366.c |    7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
 
---- a/drivers/net/dsa/rtl8366.c
-+++ b/drivers/net/dsa/rtl8366.c
-@@ -307,7 +307,8 @@ int rtl8366_vlan_filtering(struct dsa_sw
- 	struct rtl8366_vlan_4k vlan4k;
- 	int ret;
- 
--	if (!smi->ops->is_vlan_valid(smi, port))
-+	/* Use VLAN nr port + 1 since VLAN0 is not valid */
-+	if (!smi->ops->is_vlan_valid(smi, port + 1))
- 		return -EINVAL;
- 
- 	dev_info(smi->dev, "%s filtering on port %d\n",
-@@ -318,12 +319,12 @@ int rtl8366_vlan_filtering(struct dsa_sw
- 	 * The hardware support filter ID (FID) 0..7, I have no clue how to
- 	 * support this in the driver when the callback only says on/off.
- 	 */
--	ret = smi->ops->get_vlan_4k(smi, port, &vlan4k);
-+	ret = smi->ops->get_vlan_4k(smi, port + 1, &vlan4k);
- 	if (ret)
- 		return ret;
- 
- 	/* Just set the filter to FID 1 for now then */
--	ret = rtl8366_set_vlan(smi, port,
-+	ret = rtl8366_set_vlan(smi, port + 1,
- 			       vlan4k.member,
- 			       vlan4k.untag,
- 			       1);
+---
+ drivers/usb/serial/option.c |    4 ++++
+ 1 file changed, 4 insertions(+)
+
+--- a/drivers/usb/serial/option.c
++++ b/drivers/usb/serial/option.c
+@@ -1166,6 +1166,10 @@ static const struct usb_device_id option
+ 	{ USB_DEVICE_INTERFACE_CLASS(TELIT_VENDOR_ID, TELIT_PRODUCT_LE920A4_1213, 0xff) },
+ 	{ USB_DEVICE(TELIT_VENDOR_ID, TELIT_PRODUCT_LE920A4_1214),
+ 	  .driver_info = NCTRL(0) | RSVD(1) | RSVD(2) | RSVD(3) },
++	{ USB_DEVICE(TELIT_VENDOR_ID, 0x1260),
++	  .driver_info = NCTRL(0) | RSVD(1) | RSVD(2) },
++	{ USB_DEVICE(TELIT_VENDOR_ID, 0x1261),
++	  .driver_info = NCTRL(0) | RSVD(1) | RSVD(2) },
+ 	{ USB_DEVICE(TELIT_VENDOR_ID, 0x1900),				/* Telit LN940 (QMI) */
+ 	  .driver_info = NCTRL(0) | RSVD(1) },
+ 	{ USB_DEVICE_INTERFACE_CLASS(TELIT_VENDOR_ID, 0x1901, 0xff),	/* Telit LN940 (MBIM) */
 
 
