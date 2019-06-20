@@ -2,137 +2,133 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9D05D4DD3F
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 00:11:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B10E74DD55
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 00:14:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726333AbfFTWLF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 18:11:05 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:34930 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725906AbfFTWLE (ORCPT
+        id S1726553AbfFTWOX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 18:14:23 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:35672 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725906AbfFTWOX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 18:11:04 -0400
-Received: by mail-wr1-f65.google.com with SMTP id m3so4593580wrv.2
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2019 15:11:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
-        h=message-id:date:mime-version:content-transfer-encoding:in-reply-to
-         :references:subject:to:from:cc;
-        bh=mbYFTh6bazxqWo9R2yJjJ1/62LryVwqMQHAl8inkfY8=;
-        b=fx8SHCFYj8+ekg/5IL+B4cIMRixAzUC2mMLglXUFG8a0a4DrqVNCDYr4DQ0ztR+15g
-         0IX2NUPnNWhxcS0iqJ4+VupcDWFGo7zHbmByixSI1nacq0LI5hKCZ//vZ/KPwnyHSCpO
-         4As59nXUwzDuUQvslAPEe+5LkaKL/a6zjFBGwIDlbZlz+OcyPAQCBdyAyahFwljWQ5Xo
-         j5QOlOX42Jd5boBQA7P1Ervd7WIsetrKt3CUc0rzBMKdDjm+nFJxGOMqOx/LMuxLkP7M
-         zIixdThhX7X9CicKNcK+rQX7D9DdyPIGSWDjb3DkfUEoNUWAyFBirRkS++yTCUZ2IjL5
-         dwSw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:date:mime-version
-         :content-transfer-encoding:in-reply-to:references:subject:to:from:cc;
-        bh=mbYFTh6bazxqWo9R2yJjJ1/62LryVwqMQHAl8inkfY8=;
-        b=sZgY1zknueqFZG+T+PkvWoqwsy6Me67Ju+2YLYdWyjKJlGj0EWOq+6/xlKdzuwIK6c
-         jbLWSfZK/q5WPEAzlrxcCDNJFP1j0Bwni7fIZOwxp1bqmV64W2BzVaTS61UD9EmIKVaw
-         NlUTSfWQaAXULQnmKeRvT7FPftYu9tL6a0jmfl+A77POoZXK5QE2QdkY8dt06MQfhaFz
-         85bkPqAY5YrdwEaCFWUOhXgZkPXwwgsLH79n2hz0wqaJGIDxf25HBTflPbSstzcNNG2a
-         BmlNCcGkny69lombOpZF2CVdOLwLXb4XCqlbtj2a7iPTR7B2Kp5rSMj9Ox8gjRJ/W4oo
-         DcoA==
-X-Gm-Message-State: APjAAAXb8eqs3Xmq6L9bEWpN2+7ql8Mxij8Ec35EK9ol67shWSXOZTWM
-        yNc5x3yWza21lxWYgHq2r07syw==
-X-Google-Smtp-Source: APXvYqwco75N024LNpbRiHjtMlzSwUitTMmkymBba2UxnLOWOikFVoDkvcDMvidvTsjDzTpVCn9ItA==
-X-Received: by 2002:adf:dd51:: with SMTP id u17mr76614756wrm.218.1561068662643;
-        Thu, 20 Jun 2019 15:11:02 -0700 (PDT)
-Received: from [148.251.42.114] ([2a01:4f8:201:9271::2])
-        by smtp.gmail.com with ESMTPSA id o20sm1824598wrh.8.2019.06.20.15.11.01
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 20 Jun 2019 15:11:02 -0700 (PDT)
-Message-ID: <5d0c0476.1c69fb81.cef30.b578@mx.google.com>
-Date:   Thu, 20 Jun 2019 15:11:02 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
+        Thu, 20 Jun 2019 18:14:23 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5KM3nsv109072;
+        Thu, 20 Jun 2019 22:13:13 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to :
+ subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=OsSBTvuyKOZHpYxr7BMRKlrDJF74SMWishCpQlewDkg=;
+ b=HRHy43z65mymGGo6sWVVPuVFpItbR12cz3YFYbaCqJGOBgvqYtfpb/PeLVjuuEVqrQv2
+ GpZIrIgzJZC0+U+yXwJ1Vqs3qY3UMIfqSIwL3pZPIfdyZff3jwYOEkEcKtjd/YwH/Sq6
+ aV/5TlsmcdKu7KhrpVNfWRmjrbQlir4Di4CKy0hExq7FpxJJYc99Sw4feLIcaNKWlvrK
+ 5xy4bURhqhJGb38LoU38YZ1npKwLTXMnl7fXFWWSALJ4esecgPStCOfTzz7/fuGUuQ5/
+ 3Ls5Aj1t1c7iY5R0EC3GWYb2yjGGpkr0/0/gtaJLRnwOzAdzATduot/C0pAUHfoTLX0u QQ== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by userp2130.oracle.com with ESMTP id 2t7809kgm8-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 20 Jun 2019 22:13:13 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5KMCXI6043214;
+        Thu, 20 Jun 2019 22:13:12 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+        by aserp3020.oracle.com with ESMTP id 2t77ypm9eb-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 20 Jun 2019 22:13:12 +0000
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [127.0.0.1])
+        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x5KMDCTk044443;
+        Thu, 20 Jun 2019 22:13:12 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserp3020.oracle.com with ESMTP id 2t77ypm9e2-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 20 Jun 2019 22:13:12 +0000
+Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x5KMD85F022773;
+        Thu, 20 Jun 2019 22:13:09 GMT
+Received: from localhost (/10.145.179.81)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 20 Jun 2019 15:13:08 -0700
+Date:   Thu, 20 Jun 2019 15:13:06 -0700
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     "Theodore Ts'o" <tytso@mit.edu>, matthew.garrett@nebula.com,
+        yuchao0@huawei.com, ard.biesheuvel@linaro.org,
+        josef@toxicpanda.com, clm@fb.com, adilger.kernel@dilger.ca,
+        viro@zeniv.linux.org.uk, jack@suse.com, dsterba@suse.com,
+        jaegeuk@kernel.org, jk@ozlabs.org, reiserfs-devel@vger.kernel.org,
+        linux-efi@vger.kernel.org, devel@lists.orangefs.org,
+        linux-kernel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org,
+        linux-mm@kvack.org, linux-nilfs@vger.kernel.org,
+        linux-mtd@lists.infradead.org, ocfs2-devel@oss.oracle.com,
+        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-btrfs@vger.kernel.org
+Subject: Re: [PATCH 1/6] mm/fs: don't allow writes to immutable files
+Message-ID: <20190620221306.GD5375@magnolia>
+References: <156022836912.3227213.13598042497272336695.stgit@magnolia>
+ <156022837711.3227213.11787906519006016743.stgit@magnolia>
+ <20190620215212.GG4650@mit.edu>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Report-Type: boot
-X-Kernelci-Kernel: v4.4.182-85-g847c345985fd
-X-Kernelci-Branch: linux-4.4.y
-X-Kernelci-Tree: stable-rc
-In-Reply-To: <20190620174337.538228162@linuxfoundation.org>
-References: <20190620174337.538228162@linuxfoundation.org>
-Subject: Re: [PATCH 4.4 00/84] 4.4.183-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-From:   "kernelci.org bot" <bot@kernelci.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190620215212.GG4650@mit.edu>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9294 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=570 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1906200158
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-stable-rc/linux-4.4.y boot: 90 boots: 2 failed, 86 passed with 1 offline, 1=
- conflict (v4.4.182-85-g847c345985fd)
+On Thu, Jun 20, 2019 at 05:52:12PM -0400, Theodore Ts'o wrote:
+> On Mon, Jun 10, 2019 at 09:46:17PM -0700, Darrick J. Wong wrote:
+> > From: Darrick J. Wong <darrick.wong@oracle.com>
+> > 
+> > The chattr manpage has this to say about immutable files:
+> > 
+> > "A file with the 'i' attribute cannot be modified: it cannot be deleted
+> > or renamed, no link can be created to this file, most of the file's
+> > metadata can not be modified, and the file can not be opened in write
+> > mode."
+> > 
+> > Once the flag is set, it is enforced for quite a few file operations,
+> > such as fallocate, fpunch, fzero, rm, touch, open, etc.  However, we
+> > don't check for immutability when doing a write(), a PROT_WRITE mmap(),
+> > a truncate(), or a write to a previously established mmap.
+> > 
+> > If a program has an open write fd to a file that the administrator
+> > subsequently marks immutable, the program still can change the file
+> > contents.  Weird!
+> > 
+> > The ability to write to an immutable file does not follow the manpage
+> > promise that immutable files cannot be modified.  Worse yet it's
+> > inconsistent with the behavior of other syscalls which don't allow
+> > modifications of immutable files.
+> > 
+> > Therefore, add the necessary checks to make the write, mmap, and
+> > truncate behavior consistent with what the manpage says and consistent
+> > with other syscalls on filesystems which support IMMUTABLE.
+> > 
+> > Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
+> 
+> I note that this patch doesn't allow writes to swap files.  So Amir's
+> generic/554 test will still fail for those file systems that don't use
+> copy_file_range.
 
-Full Boot Summary: https://kernelci.org/boot/all/job/stable-rc/branch/linux=
--4.4.y/kernel/v4.4.182-85-g847c345985fd/
-Full Build Summary: https://kernelci.org/build/stable-rc/branch/linux-4.4.y=
-/kernel/v4.4.182-85-g847c345985fd/
+I didn't add any IS_SWAPFILE checks here, so I'm not sure to what you're
+referring?
 
-Tree: stable-rc
-Branch: linux-4.4.y
-Git Describe: v4.4.182-85-g847c345985fd
-Git Commit: 847c345985fd296caa81af3820e8185f0d716159
-Git URL: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stabl=
-e-rc.git
-Tested: 44 unique boards, 20 SoC families, 14 builds out of 190
+> I'm indifferent as to whether you add a new patch, or include that
+> change in this patch, but perhaps we should fix this while we're
+> making changes in these code paths?
 
-Boot Regressions Detected:
+The swapfile patches should be in a separate patch, which I was planning
+to work on but hadn't really gotten around to it.
 
-arm:
+--D
 
-    multi_v7_defconfig:
-        gcc-8:
-          omap3-beagle-xm:
-              lab-baylibre: new failure (last pass: v4.4.182)
 
-x86_64:
-
-    x86_64_defconfig:
-        gcc-8:
-          qemu:
-              lab-baylibre: new failure (last pass: v4.4.182)
-
-Boot Failures Detected:
-
-arm:
-    multi_v7_defconfig:
-        gcc-8:
-            omap3-beagle-xm: 1 failed lab
-
-arm64:
-    defconfig:
-        gcc-8:
-            qcom-qdf2400: 1 failed lab
-
-Offline Platforms:
-
-arm64:
-
-    defconfig:
-        gcc-8
-            apq8016-sbc: 1 offline lab
-
-Conflicting Boot Failure Detected: (These likely are not failures as other =
-labs are reporting PASS. Needs review.)
-
-x86_64:
-    x86_64_defconfig:
-        qemu:
-            lab-drue: PASS (gcc-8)
-            lab-baylibre: FAIL (gcc-8)
-            lab-collabora: PASS (gcc-8)
-            lab-linaro-lkft: PASS (gcc-8)
-            lab-mhart: PASS (gcc-8)
-
----
-For more info write to <info@kernelci.org>
+> 				- Ted
