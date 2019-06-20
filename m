@@ -2,153 +2,155 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 305CC4CC7F
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 13:02:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7C2364CC8B
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 13:03:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731606AbfFTLC4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 07:02:56 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:51372 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731553AbfFTLCx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 07:02:53 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 3E84BC18B2D2;
-        Thu, 20 Jun 2019 11:02:53 +0000 (UTC)
-Received: from vitty.brq.redhat.com (unknown [10.43.2.155])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id C8DAE5D9D2;
-        Thu, 20 Jun 2019 11:02:51 +0000 (UTC)
-From:   Vitaly Kuznetsov <vkuznets@redhat.com>
-To:     kvm@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Jim Mattson <jmattson@google.com>
-Subject: [PATCH RFC 5/5] x86: KVM: svm: remove hardcoded instruction length from intercepts
-Date:   Thu, 20 Jun 2019 13:02:40 +0200
-Message-Id: <20190620110240.25799-6-vkuznets@redhat.com>
-In-Reply-To: <20190620110240.25799-1-vkuznets@redhat.com>
-References: <20190620110240.25799-1-vkuznets@redhat.com>
+        id S1731693AbfFTLDU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 07:03:20 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:52337 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731638AbfFTLDS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Jun 2019 07:03:18 -0400
+Received: by mail-wm1-f68.google.com with SMTP id s3so2624443wms.2;
+        Thu, 20 Jun 2019 04:03:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=VSz5A8epBUVmpw04i+7PmcLUxz8iUrkIJ6W9aJ7sNBE=;
+        b=MFwhnOXLZ9GpiBBqLEqgfUgzF9H/T5lernAK18SVhj8NxXDQFPuD9JGtL0gZ6gbMKf
+         SLubkvRBu88LJI4iW9/byraIUBJrQrskeK0CjVhVfsI/Fb1lcyytEQVgcGSKTB9vnQs0
+         YaGGYz2vRetRoUvgZpuwBFdmITslKVXqNr9vPQDyvnFp0q0xHvwYp3esf/bNp9dgR1+v
+         JkXPZPGh2uZW5LaHvTgFrS5HMBta5HsSD4RfNKF1QSdISKM9larovbZSm3opX5ZpAn1n
+         GJTTeB7GvFKBULMmrQWAMue/EV3yOOLgC21WQXUbGFjJLmLuUyOR1kG4dVw7vpsQcaC2
+         8hUw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=VSz5A8epBUVmpw04i+7PmcLUxz8iUrkIJ6W9aJ7sNBE=;
+        b=QH3jRKiyeMueHlCwDYSb0HkOIwFay/1earfrGn9FyIctYMjgv1jGBQGYqpw4f+08Vt
+         70KW0nxi2+YA5hIl/UUBwIpj37uAVyx/ZdmsTTP7Ur1gxlEUVxFXQ3ZQuvq5OpMV2dgo
+         Z/M0UtOxKyayvOGJDlfrO90/G0E0Fs4sp7weiKe5Wl9UZejpYRSVOGByb/pkDWl7xM9N
+         rFXmkvpebePO8uUBTpIkuj2GwREMQaJ1Y7QuRYxIj9suPUcI615KCvdGIDY5YRMX6sXg
+         0OPg6I2RZ+SwBISLYWXFwXOJtRjWHcit6Qf1N5mVMX1YhuBjWnzfybVJgEtOwefxDVtt
+         IruQ==
+X-Gm-Message-State: APjAAAXT4Z+aJ9lqQIgG4+brr4bNQuYDcPl7AViDuXW9IzKRXixDJ8qF
+        B2q3MvVAV7rvtyN+xKtjnas=
+X-Google-Smtp-Source: APXvYqxNm1K3WSG5KtignpG+L+f5Z30baasXSgC4QDQcxHwU0lotsXxcZhOn1TedVwCsHtN2jLY3KA==
+X-Received: by 2002:a1c:8049:: with SMTP id b70mr2364726wmd.33.1561028596768;
+        Thu, 20 Jun 2019 04:03:16 -0700 (PDT)
+Received: from localhost (p2E5BEF36.dip0.t-ipconnect.de. [46.91.239.54])
+        by smtp.gmail.com with ESMTPSA id s10sm5934353wmf.8.2019.06.20.04.03.15
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Thu, 20 Jun 2019 04:03:15 -0700 (PDT)
+Date:   Thu, 20 Jun 2019 13:03:14 +0200
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Vidya Sagar <vidyas@nvidia.com>
+Cc:     lorenzo.pieralisi@arm.com, bhelgaas@google.com, robh+dt@kernel.org,
+        mark.rutland@arm.com, jonathanh@nvidia.com, kishon@ti.com,
+        catalin.marinas@arm.com, will.deacon@arm.com, jingoohan1@gmail.com,
+        gustavo.pimentel@synopsys.com, digetx@gmail.com,
+        mperttunen@nvidia.com, linux-pci@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        kthota@nvidia.com, mmaddireddy@nvidia.com, sagar.tv@gmail.com
+Subject: Re: [PATCH V10 15/15] arm64: Add Tegra194 PCIe driver to defconfig
+Message-ID: <20190620110314.GC15892@ulmo>
+References: <20190612095339.20118-1-vidyas@nvidia.com>
+ <20190612095339.20118-16-vidyas@nvidia.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Thu, 20 Jun 2019 11:02:53 +0000 (UTC)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="LwW0XdcUbUexiWVK"
+Content-Disposition: inline
+In-Reply-To: <20190612095339.20118-16-vidyas@nvidia.com>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Various intercepts hard-code the respective instruction lengths to optimize
-skip_emulated_instruction(): when next_rip is pre-set we skip
-kvm_emulate_instruction(vcpu, EMULTYPE_SKIP). The optimization is, however,
-incorrect: different (redundant) prefixes could be used to enlarge the
-instruction. We can't really avoid decoding.
 
-svm->next_rip is not used when CPU supports 'nrips' (X86_FEATURE_NRIPS)
-feature: next RIP is provided in VMCB. The feature is not really new
-(Opteron G3s had it already) and the change should have zero affect.
+--LwW0XdcUbUexiWVK
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Remove manual svm->next_rip setting with hard-coded instruction lengths. The
-only case where we now use svm->next_rip is EXIT_IOIO: the instruction
-length is provided to us by hardware.
+On Wed, Jun 12, 2019 at 03:23:39PM +0530, Vidya Sagar wrote:
+> Add PCIe host controller driver for DesignWare core based
+> PCIe controller IP present in Tegra194.
+>=20
+> Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
+> ---
+> Changes since [v9]:
+> * None
+>=20
+> Changes since [v8]:
+> * None
+>=20
+> Changes since [v7]:
+> * None
+>=20
+> Changes since [v6]:
+> * None
+>=20
+> Changes since [v5]:
+> * None
+>=20
+> Changes since [v4]:
+> * None
+>=20
+> Changes since [v3]:
+> * None
+>=20
+> Changes since [v2]:
+> * None
+>=20
+> Changes since [v1]:
+> * Changed CONFIG_PCIE_TEGRA194 from 'y' to 'm'
+>=20
+>  arch/arm64/configs/defconfig | 1 +
+>  1 file changed, 1 insertion(+)
 
-Reported-by: Jim Mattson <jmattson@google.com>
-Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
----
- arch/x86/kvm/svm.c | 11 -----------
- 1 file changed, 11 deletions(-)
+Applied to for-5.3/arm64/defconfig, thanks.
 
-diff --git a/arch/x86/kvm/svm.c b/arch/x86/kvm/svm.c
-index 39e61029f401..4c29859fecde 100644
---- a/arch/x86/kvm/svm.c
-+++ b/arch/x86/kvm/svm.c
-@@ -2890,13 +2890,11 @@ static int nop_on_interception(struct vcpu_svm *svm)
- 
- static int halt_interception(struct vcpu_svm *svm)
- {
--	svm->next_rip = kvm_rip_read(&svm->vcpu) + 1;
- 	return kvm_emulate_halt(&svm->vcpu);
- }
- 
- static int vmmcall_interception(struct vcpu_svm *svm)
- {
--	svm->next_rip = kvm_rip_read(&svm->vcpu) + 3;
- 	return kvm_emulate_hypercall(&svm->vcpu);
- }
- 
-@@ -3684,7 +3682,6 @@ static int vmload_interception(struct vcpu_svm *svm)
- 
- 	nested_vmcb = map.hva;
- 
--	svm->next_rip = kvm_rip_read(&svm->vcpu) + 3;
- 	ret = kvm_skip_emulated_instruction(&svm->vcpu);
- 
- 	nested_svm_vmloadsave(nested_vmcb, svm->vmcb);
-@@ -3711,7 +3708,6 @@ static int vmsave_interception(struct vcpu_svm *svm)
- 
- 	nested_vmcb = map.hva;
- 
--	svm->next_rip = kvm_rip_read(&svm->vcpu) + 3;
- 	ret = kvm_skip_emulated_instruction(&svm->vcpu);
- 
- 	nested_svm_vmloadsave(svm->vmcb, nested_vmcb);
-@@ -3762,7 +3758,6 @@ static int stgi_interception(struct vcpu_svm *svm)
- 	if (vgif_enabled(svm))
- 		clr_intercept(svm, INTERCEPT_STGI);
- 
--	svm->next_rip = kvm_rip_read(&svm->vcpu) + 3;
- 	ret = kvm_skip_emulated_instruction(&svm->vcpu);
- 	kvm_make_request(KVM_REQ_EVENT, &svm->vcpu);
- 
-@@ -3778,7 +3773,6 @@ static int clgi_interception(struct vcpu_svm *svm)
- 	if (nested_svm_check_permissions(svm))
- 		return 1;
- 
--	svm->next_rip = kvm_rip_read(&svm->vcpu) + 3;
- 	ret = kvm_skip_emulated_instruction(&svm->vcpu);
- 
- 	disable_gif(svm);
-@@ -3803,7 +3797,6 @@ static int invlpga_interception(struct vcpu_svm *svm)
- 	/* Let's treat INVLPGA the same as INVLPG (can be optimized!) */
- 	kvm_mmu_invlpg(vcpu, kvm_rax_read(&svm->vcpu));
- 
--	svm->next_rip = kvm_rip_read(&svm->vcpu) + 3;
- 	return kvm_skip_emulated_instruction(&svm->vcpu);
- }
- 
-@@ -3826,7 +3819,6 @@ static int xsetbv_interception(struct vcpu_svm *svm)
- 	u32 index = kvm_rcx_read(&svm->vcpu);
- 
- 	if (kvm_set_xcr(&svm->vcpu, index, new_bv) == 0) {
--		svm->next_rip = kvm_rip_read(&svm->vcpu) + 3;
- 		return kvm_skip_emulated_instruction(&svm->vcpu);
- 	}
- 
-@@ -3903,7 +3895,6 @@ static int task_switch_interception(struct vcpu_svm *svm)
- 
- static int cpuid_interception(struct vcpu_svm *svm)
- {
--	svm->next_rip = kvm_rip_read(&svm->vcpu) + 2;
- 	return kvm_emulate_cpuid(&svm->vcpu);
- }
- 
-@@ -4233,7 +4224,6 @@ static int rdmsr_interception(struct vcpu_svm *svm)
- 
- 		kvm_rax_write(&svm->vcpu, msr_info.data & 0xffffffff);
- 		kvm_rdx_write(&svm->vcpu, msr_info.data >> 32);
--		svm->next_rip = kvm_rip_read(&svm->vcpu) + 2;
- 		return kvm_skip_emulated_instruction(&svm->vcpu);
- 	}
- }
-@@ -4439,7 +4429,6 @@ static int wrmsr_interception(struct vcpu_svm *svm)
- 		return 1;
- 	} else {
- 		trace_kvm_msr_write(ecx, data);
--		svm->next_rip = kvm_rip_read(&svm->vcpu) + 2;
- 		return kvm_skip_emulated_instruction(&svm->vcpu);
- 	}
- }
--- 
-2.20.1
+Thierry
 
+> diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+> index bb0705e1f52e..6462a4dbac87 100644
+> --- a/arch/arm64/configs/defconfig
+> +++ b/arch/arm64/configs/defconfig
+> @@ -192,6 +192,7 @@ CONFIG_PCIE_QCOM=3Dy
+>  CONFIG_PCIE_ARMADA_8K=3Dy
+>  CONFIG_PCIE_KIRIN=3Dy
+>  CONFIG_PCIE_HISI_STB=3Dy
+> +CONFIG_PCIE_TEGRA194=3Dm
+>  CONFIG_UEVENT_HELPER_PATH=3D"/sbin/hotplug"
+>  CONFIG_DEVTMPFS=3Dy
+>  CONFIG_DEVTMPFS_MOUNT=3Dy
+> --=20
+> 2.17.1
+>=20
+
+--LwW0XdcUbUexiWVK
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl0LZ/IACgkQ3SOs138+
+s6HnVQ//V0AiVK2T4Zt26dMdZRhdje5rcfQvqSvS26yAWlB19a4K+KnSpeO7nTt8
+i6xPCg/PJR7n4dZixeneI2T9CbseVldNr3S1pYDhZkauq6BjAdC83QHLsp9Qi7tX
+DEFCr7Q7S5Kydzm2qWiHqEH0RkU4uS3aHLYqmQgjwegLS70jCaQZ6YKbgOcPbukl
+O8+1Dh62jUJWf4aQrk2td+MtfjSkY3/w+J/ath9tZ2mUgyU3DnLXcX8bl2p2iL3e
+v/fxv6TunUNh4qfxNoPxe+RKYV58eYgYdTx4/iYWWBvmuqGGfDsPibgO/PB2aueu
+7GZu7HlOyAww4ZZyJZq+V59eusRVVdfOmBYNH0V7s4cZ5uylcXjo0OyVxcPaLagc
++4QAQvFvffG8dJ/EtbECoLMp2Yztw1Uq1SVLnt8MBod7DbAYL022NVBIjMB86lLj
+JiWpkweF8hOdUS1adn+j5gsgRVBMR62wBKtkQ8qYx8f4pX0Vl1VEIY2ZnEq44Q7E
+e1uqUuVaLcwszTaFO+CEsPDrdvWqUKyu8F01G+Qx+xC8rgh/g6b8AqDNK/y/x1q9
+z+3DzwdYbUtxw9G2iL4jk76dNnJnGDAKKiDeEmxeO1qYsxEIHdBgySs/eNHvdoRh
+Z1TuJN879ifWwPHgEOB95zZ8Ed5CByYQXa+JT+eDqZuumu8eU2w=
+=BWCx
+-----END PGP SIGNATURE-----
+
+--LwW0XdcUbUexiWVK--
