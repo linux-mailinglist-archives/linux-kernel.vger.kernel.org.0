@@ -2,98 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B1BAC4CF65
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 15:47:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 705494CF76
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 15:48:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732079AbfFTNry (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 09:47:54 -0400
-Received: from vps.xff.cz ([195.181.215.36]:36104 "EHLO vps.xff.cz"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726620AbfFTNrx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1732040AbfFTNrx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
         Thu, 20 Jun 2019 09:47:53 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=megous.com; s=mail;
-        t=1561038471; bh=m7Sy/4DzZNajn4t/pyAlTRZlWZO1B2wUdtC3i/m0PqY=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=e2jHhF8llhegj+YumzfHweNU4AcFBuYyNw3C2NpBPQlL75yxe4x21HWZsnVT/VE5F
-         SsJ5b92WqsVrB/XW43pLVv/+I99QHesL6vv+3DbT6kssivKlPj8pZ0vFT0qDaCHtYZ
-         OEQUEKts2joi/pC0HrSob7vsKCEQ3Ktv7FzkesLc=
-From:   megous@megous.com
-To:     linux-sunxi@googlegroups.com,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
-        =?UTF-8?q?Jernej=20=C5=A0krabec?= <jernej.skrabec@gmail.com>
-Cc:     Icenowy Zheng <icenowy@aosc.io>, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Jose Abreu <joabreu@synopsys.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
-        Ondrej Jirman <megous@megous.com>
-Subject: [PATCH v7 1/6] net: stmmac: sun8i: add support for Allwinner H6 EMAC
-Date:   Thu, 20 Jun 2019 15:47:43 +0200
-Message-Id: <20190620134748.17866-2-megous@megous.com>
-In-Reply-To: <20190620134748.17866-1-megous@megous.com>
-References: <20190620134748.17866-1-megous@megous.com>
+Received: from bilbo.ozlabs.org ([203.11.71.1]:51379 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726391AbfFTNrx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Jun 2019 09:47:53 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45V36W3DrBz9s00;
+        Thu, 20 Jun 2019 23:47:47 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1561038469;
+        bh=/k/qQswXAZi75pd1SKBRQnISr4mCyddX13qbGQESFGo=;
+        h=Date:From:To:Cc:Subject:From;
+        b=BPlE0xQLO9TbS8sg66zn4hp+e5XgV8vRZYX26T7jxpYehBvBSvgFWn4yT9OcuU3xd
+         TV8s+QdwI5I07dZZfjGLEK8ONsLlAq1t5wr5ysJDleNbjbAHE0fJSXBxMpXiU8R6us
+         FF1P6QrPjAXtcTfxw59lcON8XQQdp6t/yXyTB2h7fY4yTHh12GdNFJ1eiZ4M2NdVDN
+         4ZPGP5tcyLXHfut+J6erYkhVJWyr8A4bmtu/cZPA3RcB3NglKPrX3rRojShWOE6NH3
+         OMAxwxDd12GlR5IWM4LuBrCNpaRvveGHElHebrmEk+dNaoRWv7O3X1Qf6UupaIn5Fx
+         XgoWAu9eYXvpQ==
+Date:   Thu, 20 Jun 2019 23:47:43 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Pablo Neira Ayuso <pablo@netfilter.org>,
+        NetFilter <netfilter-devel@vger.kernel.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Fernando Fernandez Mancera <ffmancera@riseup.net>
+Subject: linux-next: build failure after merge of the netfilter-next tree
+Message-ID: <20190620234743.42e9d3e8@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/Pgq8rDpprbxoIRCNvHFBehR"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Icenowy Zheng <icenowy@aosc.io>
+--Sig_/Pgq8rDpprbxoIRCNvHFBehR
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-The EMAC on Allwinner H6 is just like the one on A64. The "internal PHY" on
-H6 is on a co-packaged AC200 chip, and it's not really internal (it's
-connected via RMII at PA GPIO bank).
+Hi all,
 
-Add support for the Allwinner H6 EMAC in the dwmac-sun8i driver.
+After merging the netfilter-next tree, today's linux-next build
+(arm imx_v4_v5_defconfig and several others) failed like this:
 
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-Signed-off-by: Ondrej Jirman <megous@megous.com>
----
- .../net/ethernet/stmicro/stmmac/dwmac-sun8i.c    | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+In file included from net/netfilter/core.c:19:0:
+include/linux/netfilter_ipv6.h: In function 'nf_ipv6_cookie_init_sequence':
+include/linux/netfilter_ipv6.h:174:2: error: implicit declaration of functi=
+on '__cookie_v6_init_sequence' [-Werror=3Dimplicit-function-declaration]
+include/linux/netfilter_ipv6.h: In function 'nf_cookie_v6_check':
+include/linux/netfilter_ipv6.h:189:2: error: implicit declaration of functi=
+on '__cookie_v6_check' [-Werror=3Dimplicit-function-declaration]
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c
-index b15c6d5dbd38..c3e94104474f 100644
---- a/drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c
-@@ -138,6 +138,20 @@ static const struct emac_variant emac_variant_a64 = {
- 	.tx_delay_max = 7,
- };
- 
-+static const struct emac_variant emac_variant_h6 = {
-+	.default_syscon_value = 0x50000,
-+	.syscon_field = &sun8i_syscon_reg_field,
-+	/* The "Internal PHY" of H6 is not on the die. It's on the
-+	 * co-packaged AC200 chip instead.
-+	 */
-+	.soc_has_internal_phy = false,
-+	.support_mii = true,
-+	.support_rmii = true,
-+	.support_rgmii = true,
-+	.rx_delay_max = 31,
-+	.tx_delay_max = 7,
-+};
-+
- #define EMAC_BASIC_CTL0 0x00
- #define EMAC_BASIC_CTL1 0x04
- #define EMAC_INT_STA    0x08
-@@ -1216,6 +1230,8 @@ static const struct of_device_id sun8i_dwmac_match[] = {
- 		.data = &emac_variant_r40 },
- 	{ .compatible = "allwinner,sun50i-a64-emac",
- 		.data = &emac_variant_a64 },
-+	{ .compatible = "allwinner,sun50i-h6-emac",
-+		.data = &emac_variant_h6 },
- 	{ }
- };
- MODULE_DEVICE_TABLE(of, sun8i_dwmac_match);
--- 
-2.22.0
+Caused by commit
 
+  3006a5224f15 ("netfilter: synproxy: remove module dependency on IPv6 SYNP=
+ROXY")
+
+This has been happening for a few days, sorry.
+
+# CONFIG_IPV6 is not set
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/Pgq8rDpprbxoIRCNvHFBehR
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0Ljn8ACgkQAVBC80lX
+0Gz3hQf+JL8ZUPKg+z4tA8K/9e0a7HFDulhxQZl9wRn1ATnFGby1MzNWqotmbOgP
+IBEBYO3njQayBsqg2Uy87zlcHpAZnpr8OJTI1ZcW/SWgDJb3JzBiYHkNZ/IVRHz0
+tqxC42xc4udKOrooP2Nczi/fBEnXGf1pWgUL+zeMmOSQNP7U7M2zXDdCjKYyNMAH
+E0N8Uh+0nG10MfCZyvHyTvbj0+mEeilRmblo5bjdnz55qD+iM7rzBrZESn3jeMG+
+4qoRg1uKkXDh3pTu2XPADpv4ex+WYE8i4xm7ZNoYBszwYMWACmO6z+vFvQG8KvMS
+L7YQQiWK8fOmPMfAmi1h2DIqO4kvQA==
+=RMsC
+-----END PGP SIGNATURE-----
+
+--Sig_/Pgq8rDpprbxoIRCNvHFBehR--
