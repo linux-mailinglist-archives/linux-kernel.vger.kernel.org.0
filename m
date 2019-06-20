@@ -2,157 +2,143 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BA9804D519
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 19:25:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CF1B34D52D
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 19:28:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732569AbfFTRZq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 13:25:46 -0400
-Received: from mail-io1-f67.google.com ([209.85.166.67]:44558 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732140AbfFTRZn (ORCPT
+        id S1732077AbfFTR2H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 13:28:07 -0400
+Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:60362 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726620AbfFTR2G (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 13:25:43 -0400
-Received: by mail-io1-f67.google.com with SMTP id s7so827439iob.11
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2019 10:25:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Uk7ZIBjV+VR8aLMJpfzpl5Ntma1pb1M7AjThVeR3/Lw=;
-        b=lWHV/5eR2B3caBjxG4cP62L0BKX5+DFDOH9t5g8sI8uHgZiTX0lOT4X20fvXwSA5qJ
-         A0pTf8M+e704lkfjlV26jPd6UAbvzhWdnGUrRTxvTt7qE6SNvM81e9y/2s2bRBYmnLmv
-         /MFyEQsgp7eEwb/7xoLdGWppVk3xmWQpsCjdo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Uk7ZIBjV+VR8aLMJpfzpl5Ntma1pb1M7AjThVeR3/Lw=;
-        b=ukDIMDqMK7o1CuGzvkErntFveOytBShDDsV9whtcjhRIUJWL4xGyseQFNOZaoJe+kC
-         p4oyDvVwXqNxQ9brLsGow+5t2STZAVGCh2tymDQ24ar1550zHG34TmIb95jA9nTeKTYA
-         aEOeEva/sR3Hqy6yJaAyjnmARYuigkX5xfmfvWHMvF/JU5RTGFvr1p5Be877yI+27puL
-         FP+MzOVLviiTjYJb6xVcxSlVnAhkTmeBs6JxtiQaArcukdFvdNNVM6eghCT3UfcHEl5F
-         sbmW3WdyJqapUVx8LLwbuq5j2YApdZIDSn0qb+kxbkmLOtLNg2P95WVpXNmM1LqpJPnn
-         XPFA==
-X-Gm-Message-State: APjAAAUVk8f8QZf6t8Yy5szKKkjGjrwOBhl1vfzPc5JlLKEXggBzJz70
-        dNGiCK4V1tocFHNoCzycfVLWFG0UvTU=
-X-Google-Smtp-Source: APXvYqzK1zAFa59VY6wl49lE/oDTCnNQFP2f+DvVlRcF6tBKYKCfokp+zM2FEYQk9TK24euQ0vMJww==
-X-Received: by 2002:a5d:948a:: with SMTP id v10mr1807559ioj.103.1561051542492;
-        Thu, 20 Jun 2019 10:25:42 -0700 (PDT)
-Received: from mail-io1-f46.google.com (mail-io1-f46.google.com. [209.85.166.46])
-        by smtp.gmail.com with ESMTPSA id b8sm562278ioj.16.2019.06.20.10.25.41
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Thu, 20 Jun 2019 10:25:41 -0700 (PDT)
-Received: by mail-io1-f46.google.com with SMTP id m24so176483ioo.2
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2019 10:25:41 -0700 (PDT)
-X-Received: by 2002:a5d:96d8:: with SMTP id r24mr31877702iol.269.1561051541200;
- Thu, 20 Jun 2019 10:25:41 -0700 (PDT)
+        Thu, 20 Jun 2019 13:28:06 -0400
+Received: from pps.filterd (m0109333.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5KHKJZD021478
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2019 10:28:05 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-type; s=facebook;
+ bh=/n1Ua2HjBrE3gKy7VoP7FqeX76ghf8PfBftOVKtaDWc=;
+ b=glTMlIzPXLRlKooWq7LCc2dpG0iviBHZpAT2WgsXy8Edi3b9YnUoQHgtcop9HVoUuRo0
+ MK5kzYWBpltVMux/yZCpNJtzWVAq+ZGlYgR1YSKDgy51MI9ztzL6aG3ZnbJvsL+QZi7g
+ +9JYUqP/FLhL6yPT5Wo+CMJCXU+0H4iNhKc= 
+Received: from mail.thefacebook.com (mailout.thefacebook.com [199.201.64.23])
+        by mx0a-00082601.pphosted.com with ESMTP id 2t7wrj36rx-5
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2019 10:28:05 -0700
+Received: from mx-out.facebook.com (2620:10d:c081:10::13) by
+ mail.thefacebook.com (2620:10d:c081:35::128) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA) id 15.1.1713.5;
+ Thu, 20 Jun 2019 10:28:04 -0700
+Received: by devbig006.ftw2.facebook.com (Postfix, from userid 4523)
+        id 3D4F862E2004; Thu, 20 Jun 2019 10:28:01 -0700 (PDT)
+Smtp-Origin-Hostprefix: devbig
+From:   Song Liu <songliubraving@fb.com>
+Smtp-Origin-Hostname: devbig006.ftw2.facebook.com
+To:     <linux-mm@kvack.org>, <linux-fsdevel@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     <matthew.wilcox@oracle.com>, <kirill.shutemov@linux.intel.com>,
+        <kernel-team@fb.com>, <william.kucharski@oracle.com>,
+        <akpm@linux-foundation.org>, Song Liu <songliubraving@fb.com>
+Smtp-Origin-Cluster: ftw2c04
+Subject: [PATCH v4 0/6] [PATCH v3 0/6] Enable THP for text section of non-shmem files
+Date:   Thu, 20 Jun 2019 10:27:46 -0700
+Message-ID: <20190620172752.3300742-1-songliubraving@fb.com>
+X-Mailer: git-send-email 2.17.1
+X-FB-Internal: Safe
 MIME-Version: 1.0
-References: <20190618213406.7667-1-ezequiel@collabora.com> <20190618213406.7667-3-ezequiel@collabora.com>
-In-Reply-To: <20190618213406.7667-3-ezequiel@collabora.com>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Thu, 20 Jun 2019 10:25:25 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=XoKNA4aW2LT7g8K2t+ABwgt=QJGAyiet1-Gyz3CgWmvg@mail.gmail.com>
-Message-ID: <CAD=FV=XoKNA4aW2LT7g8K2t+ABwgt=QJGAyiet1-Gyz3CgWmvg@mail.gmail.com>
-Subject: Re: [PATCH 2/3] drm/rockchip: Add optional support for CRTC gamma LUT
-To:     Ezequiel Garcia <ezequiel@collabora.com>
-Cc:     dri-devel <dri-devel@lists.freedesktop.org>,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-        =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
-        Sandy Huang <hjc@rock-chips.com>, kernel@collabora.com,
-        Sean Paul <seanpaul@chromium.org>,
-        Boris Brezillon <boris.brezillon@collabora.com>,
-        Jacopo Mondi <jacopo@jmondi.org>,
-        Ilia Mirkin <imirkin@alum.mit.edu>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-20_12:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1906200124
+X-FB-Internal: deliver
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Changes v3 => v4:
 
-On Tue, Jun 18, 2019 at 2:43 PM Ezequiel Garcia <ezequiel@collabora.com> wrote:
->
-> +static void vop_crtc_gamma_set(struct vop *vop, struct drm_crtc *crtc,
-> +                              struct drm_crtc_state *old_state)
-> +{
-> +       int idle, ret, i;
-> +
-> +       spin_lock(&vop->reg_lock);
-> +       VOP_REG_SET(vop, common, dsp_lut_en, 0);
-> +       vop_cfg_done(vop);
-> +       spin_unlock(&vop->reg_lock);
-> +
-> +       ret = readx_poll_timeout(vop_dsp_lut_is_enable, vop,
-> +                          idle, !idle, 5, 30 * 1000);
-> +       if (ret)
+1. Put the logic to drop THP from pagecache in a separate function (Rik).
+2. Move the function to drop THP from pagecache to exit_mmap().
+3. Revise confusing commit log 6/6.
 
-Worth an error message?
+Changes v2 => v3:
+1. Removed the limitation (cannot write to file with THP) by truncating
+   whole file during sys_open (see 6/6);
+2. Fixed a VM_BUG_ON_PAGE() in filemap_fault() (see 2/6);
+3. Split function rename to a separate patch (Rik);
+4. Updated condition in hugepage_vma_check() (Rik).
 
+Changes v1 => v2:
+1. Fixed a missing mem_cgroup_commit_charge() for non-shmem case.
 
-> @@ -1205,6 +1294,7 @@ static void vop_crtc_atomic_flush(struct drm_crtc *crtc,
->
->  static const struct drm_crtc_helper_funcs vop_crtc_helper_funcs = {
->         .mode_fixup = vop_crtc_mode_fixup,
-> +       .atomic_check = vop_crtc_atomic_check,
+This set follows up discussion at LSF/MM 2019. The motivation is to put
+text section of an application in THP, and thus reduces iTLB miss rate and
+improves performance. Both Facebook and Oracle showed strong interests to
+this feature.
 
-At first I was worried that there was a bug here since in the context
-of dw_hdmi (an encoder) adding ".atomic_check" caused ".mode_fixup" to
-stop getting called as per mode_fixup() in
-"drivers/gpu/drm/drm_atomic_helper.c".
+To make reviews easier, this set aims a mininal valid product. Current
+version of the work does not have any changes to file system specific
+code. This comes with some limitations (discussed later).
 
-...but it seems like it's OK for CRTCs, so I think we're fine.
+This set enables an application to "hugify" its text section by simply
+running something like:
 
+          madvise(0x600000, 0x80000, MADV_HUGEPAGE);
 
-> @@ -1323,6 +1413,7 @@ static const struct drm_crtc_funcs vop_crtc_funcs = {
->         .disable_vblank = vop_crtc_disable_vblank,
->         .set_crc_source = vop_crtc_set_crc_source,
->         .verify_crc_source = vop_crtc_verify_crc_source,
-> +       .gamma_set = drm_atomic_helper_legacy_gamma_set,
+Before this call, the /proc/<pid>/maps looks like:
 
-Are there any issues in adding this ".gamma_set" property even though
-we may or may not actually have the ability to set the gamma
-(depending on whether or not the LUT register range was provided in
-the device tree)?  I am a DRM noob but
-drm_atomic_helper_legacy_gamma_set() is not a trivial little function
-and now we'll be running it in some cases where we don't actually have
-gamma.
+    00400000-074d0000 r-xp 00000000 00:27 2006927     app
 
-I also notice that there's at least one bit of code that seems to
-check if ".gamma_set" is NULL.  ...and if it is, it'll return -ENOSYS
-right away.  Do we still properly return -ENOSYS on devices that don't
-have the register range?
+After this call, part of the text section is split out and mapped to
+THP:
 
-It seems like the absolute safest would be to have two copies of this
-struct: one used for VOPs that have the range and one for VOPs that
-don't.
+    00400000-00425000 r-xp 00000000 00:27 2006927     app
+    00600000-00e00000 r-xp 00200000 00:27 2006927     app   <<< on THP
+    00e00000-074d0000 r-xp 00a00000 00:27 2006927     app
 
-...but possibly I'm just paranoid and as I've said I'm a clueless
-noob.  If someone says it's fine to always provide the .gamma_set
-property that's fine too.
+Limitations:
 
+1. This only works for text section (vma with VM_DENYWRITE).
+2. Original limitation #2 is removed in v3.
 
->  static void vop_fb_unref_worker(struct drm_flip_work *work, void *val)
-> @@ -1480,6 +1571,10 @@ static int vop_create_crtc(struct vop *vop)
->                 goto err_cleanup_planes;
->
->         drm_crtc_helper_add(crtc, &vop_crtc_helper_funcs);
-> +       if (vop_data->lut_size) {
-> +               drm_mode_crtc_set_gamma_size(crtc, vop_data->lut_size);
-> +               drm_crtc_enable_color_mgmt(crtc, 0, false, vop_data->lut_size);
+We gated this feature with an experimental config, READ_ONLY_THP_FOR_FS.
+Once we get better support on the write path, we can remove the config and
+enable it by default.
 
-Should we only do the above calls if we successfully mapped the resources?
+Tested cases:
+1. Tested with btrfs and ext4.
+2. Tested with real work application (memcache like caching service).
+3. Tested with "THP aware uprobe":
+   https://patchwork.kernel.org/project/linux-mm/list/?series=131339
 
+Please share your comments and suggestions on this.
 
-> @@ -1776,6 +1871,17 @@ static int vop_bind(struct device *dev, struct device *master, void *data)
->         if (IS_ERR(vop->regs))
->                 return PTR_ERR(vop->regs);
->
-> +       res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "lut");
+Thanks!
 
-As per comments in the bindings, shouldn't use the name "lut" but
-should just pick resource #1.
+Song Liu (6):
+  filemap: check compound_head(page)->mapping in filemap_fault()
+  filemap: update offset check in filemap_fault()
+  mm,thp: stats for file backed THP
+  khugepaged: rename collapse_shmem() and khugepaged_scan_shmem()
+  mm,thp: add read-only THP support for (non-shmem) FS
+  mm,thp: avoid writes to file with THP in pagecache
+
+ fs/inode.c             |   3 ++
+ fs/proc/meminfo.c      |   4 ++
+ include/linux/fs.h     |  31 ++++++++++++
+ include/linux/mmzone.h |   2 +
+ mm/Kconfig             |  11 +++++
+ mm/filemap.c           |   9 ++--
+ mm/khugepaged.c        | 104 +++++++++++++++++++++++++++++++++--------
+ mm/mmap.c              |  14 ++++++
+ mm/rmap.c              |  12 +++--
+ mm/vmstat.c            |   2 +
+ 10 files changed, 164 insertions(+), 28 deletions(-)
+
+--
+2.17.1
