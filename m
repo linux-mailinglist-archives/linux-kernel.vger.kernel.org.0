@@ -2,53 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BE2404D4D0
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 19:24:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6875E4D4C1
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 19:23:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732291AbfFTRXs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 13:23:48 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:52648 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732193AbfFTRXV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        id S1732194AbfFTRXV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
         Thu, 20 Jun 2019 13:23:21 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:52518 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726637AbfFTRXS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Jun 2019 13:23:18 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Sender:Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
         Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From:
         Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=/v1AAw7om1V/odGoZszjgQFtzJKsLoAGR/3cdXZzrpw=; b=HTK0A60nh3uCXftkkQ+3qJQpIO
-        7TAun3752TF1n0nvSSaz7jRxWp+fHj7j0Tnwln7Cp28wnW5g1/Go7x8Pe8inJnkCsIBA1sXEC377P
-        m7utXPDz+AL+03T6yigIXfa+YeF4a+ZfMVeSDROV8CrEuk7szF0YwKn2U6Ca9zmwSWov4x52z9dVk
-        N2yqEfEggDl+uu8boKrwom5BGG/MCtNlNFzMoBVNNGifT0yj85MHeWBRCu3DC9asAjieGZ+a3Kep6
-        Ww3qFyMOxyQfwGqW/hRrN8BC7Mz0MM/hPDHClACZEwdS6u5Uo/kzG2iXcWuVeac8nUlGVdYRnj2pe
-        B9SgRGzw==;
+        bh=kU4lZoZk1BRhrx8HkLHCBdk7MNLvQ8R2y7TKkaZGQ4g=; b=ujY5TkevS1etk0JCSCpeRyDZKP
+        N3DknK1I4iP59orW1Cw2sgpGF2IovGn+GOHkjQSpGbsCRgWpU8WHmWtdIn9YIJC42JnXfVEQnbnd2
+        Sk+2WIrn3Bz+RotazySfMNUuD8KKMpBtUfov7g5a0XKoDkhq+wo49Qwkwgxzk65L1UjkLXosfm/IQ
+        HfITDegy0YI1TkkOfHlcTtLR1oaMxnrdbIRwwA+DrkkH0iO/OYxS69R7lbIqjxZKtVwEX+eX0tIWZ
+        K14bBWHJmBIcewjmFiGLqi3j8Gtw5Tf7RWtUp44iAyvKO0Hjt68oE5t6FGBDMtmYnT6O/0DEjPh3B
+        MSSM1MUQ==;
 Received: from [177.97.20.138] (helo=bombadil.infradead.org)
         by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1he0mM-0008S6-Ii; Thu, 20 Jun 2019 17:23:18 +0000
+        id 1he0mL-0008Rn-T0; Thu, 20 Jun 2019 17:23:17 +0000
 Received: from mchehab by bombadil.infradead.org with local (Exim 4.92)
         (envelope-from <mchehab@bombadil.infradead.org>)
-        id 1he0mJ-0000Dh-UK; Thu, 20 Jun 2019 14:23:15 -0300
+        id 1he0mJ-0000Dl-V9; Thu, 20 Jun 2019 14:23:15 -0300
 From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>
 Cc:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Mauro Carvalho Chehab <mchehab@infradead.org>,
-        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Kees Cook <keescook@chromium.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Petr Mladek <pmladek@suse.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Joe Lawrence <joe.lawrence@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Sri Krishna chowdary <schowdary@nvidia.com>,
-        "Uladzislau Rezki (Sony)" <urezki@gmail.com>,
-        Changbin Du <changbin.du@intel.com>
-Subject: [PATCH v2 16/22] docs: Kconfig/Makefile: add a check for broken ABI files
-Date:   Thu, 20 Jun 2019 14:23:08 -0300
-Message-Id: <9ad24385565c0395e06ccb0e058184744f6e4c3b.1561050806.git.mchehab+samsung@kernel.org>
+        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>
+Subject: [PATCH v2 17/22] docs: kernel_abi.py: Update copyrights
+Date:   Thu, 20 Jun 2019 14:23:09 -0300
+Message-Id: <6315c1089fc88a123a786e633b574aa0887ef20e.1561050806.git.mchehab+samsung@kernel.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <cover.1561050806.git.mchehab+samsung@kernel.org>
 References: <cover.1561050806.git.mchehab+samsung@kernel.org>
@@ -59,112 +48,28 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The files under Documentation/ABI should follow the syntax
-as defined at Documentation/ABI/README.
-
-Allow checking if they're following the syntax by running
-the ABI parser script on COMPILE_TEST.
-
-With that, when there's a problem with a file under
-Documentation/ABI, it would produce a warning like:
-
-	Warning: file ./Documentation/ABI/testing/sysfs-bus-pci-devices-aer_stats#14:
-		What '/sys/bus/pci/devices/<dev>/aer_stats/aer_rootport_total_err_cor' doesn't have a description
-	Warning: file ./Documentation/ABI/testing/sysfs-bus-pci-devices-aer_stats#21:
-		What '/sys/bus/pci/devices/<dev>/aer_stats/aer_rootport_total_err_fatal' doesn't have a description
+As Markus doesn't want to maintain ths file, update it to
+put me as its maintainer.
 
 Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 ---
- Documentation/Kconfig  | 11 +++++++++++
- Documentation/Makefile |  5 +++++
- lib/Kconfig.debug      |  2 ++
- scripts/get_abi.pl     | 14 +++++++++++---
- 4 files changed, 29 insertions(+), 3 deletions(-)
- create mode 100644 Documentation/Kconfig
+ Documentation/sphinx/kernel_abi.py | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/Kconfig b/Documentation/Kconfig
-new file mode 100644
-index 000000000000..a8b0701c1422
---- /dev/null
-+++ b/Documentation/Kconfig
-@@ -0,0 +1,11 @@
-+config WARN_ABI_ERRORS
-+	bool "Warn if there are errors at ABI files"
-+	depends on COMPILE_TEST
-+	help
-+	   The files under Documentation/ABI should follow what's
-+	   described at Documentation/ABI/README. Yet, as they're manually
-+	   written, it would be possible that some of those files would
-+	   have errors that would break them for being parsed by
-+	   scripts/get_abi.pl. Add a check to verify them.
-+
-+	   If unsure, select 'N'.
-diff --git a/Documentation/Makefile b/Documentation/Makefile
-index e889e7cb8511..c6480ed22884 100644
---- a/Documentation/Makefile
-+++ b/Documentation/Makefile
-@@ -4,6 +4,11 @@
+diff --git a/Documentation/sphinx/kernel_abi.py b/Documentation/sphinx/kernel_abi.py
+index 2d5d582207f7..ef91b1e1ff4b 100644
+--- a/Documentation/sphinx/kernel_abi.py
++++ b/Documentation/sphinx/kernel_abi.py
+@@ -7,7 +7,8 @@ u"""
+     Implementation of the ``kernel-abi`` reST-directive.
  
- subdir-y := devicetree/bindings/
+     :copyright:  Copyright (C) 2016  Markus Heiser
+-    :copyright:  Copyright (C) 2016  Mauro Carvalho Chehab
++    :copyright:  Copyright (C) 2016-2019  Mauro Carvalho Chehab
++    :maintained-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+     :license:    GPL Version 2, June 1991 see Linux/COPYING for details.
  
-+# Check for broken ABI files
-+ifeq ($(CONFIG_WARN_ABI_ERRORS),y)
-+$(shell $(srctree)/scripts/get_abi.pl validate --dir $(srctree)/Documentation/ABI)
-+endif
-+
- # You can set these variables from the command line.
- SPHINXBUILD   = sphinx-build
- SPHINXOPTS    =
-diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-index cbdfae379896..b1b7e141ca99 100644
---- a/lib/Kconfig.debug
-+++ b/lib/Kconfig.debug
-@@ -2110,4 +2110,6 @@ config IO_STRICT_DEVMEM
- 
- source "arch/$(SRCARCH)/Kconfig.debug"
- 
-+source "Documentation/Kconfig"
-+
- endmenu # Kernel hacking
-diff --git a/scripts/get_abi.pl b/scripts/get_abi.pl
-index 774e9b809ead..25248c012eb3 100755
---- a/scripts/get_abi.pl
-+++ b/scripts/get_abi.pl
-@@ -38,7 +38,15 @@ my %data;
- sub parse_error($$$$) {
- 	my ($file, $ln, $msg, $data) = @_;
- 
--	print STDERR "file $file#$ln: $msg at\n\t$data";
-+	$data =~ s/\s+$/\n/;
-+
-+	print STDERR "Warning: file $file#$ln:\n\t$msg";
-+
-+	if ($data ne "") {
-+		print STDERR ". Line\n\t\t$data";
-+	} else {
-+	    print STDERR "\n";
-+	}
- }
- 
- #
-@@ -94,7 +102,7 @@ sub parse_abi {
- 
- 			# Invalid, but it is a common mistake
- 			if ($new_tag eq "where") {
--				parse_error($file, $ln, "tag 'Where' is invalid. Should be 'What:' instead", $_);
-+				parse_error($file, $ln, "tag 'Where' is invalid. Should be 'What:' instead", "");
- 				$new_tag = "what";
- 			}
- 
-@@ -190,7 +198,7 @@ sub parse_abi {
- 		}
- 
- 		# Everything else is error
--		parse_error($file, $ln, "Unexpected line:", $_);
-+		parse_error($file, $ln, "Unexpected content", $_);
- 	}
- 	$data{$nametag}->{description} =~ s/^\n+//;
- 	close IN;
+     The ``kernel-abi`` (:py:class:`KernelCmd`) directive calls the
 -- 
 2.21.0
 
