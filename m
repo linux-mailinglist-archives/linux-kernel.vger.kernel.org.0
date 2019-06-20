@@ -2,39 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 92E424D803
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 20:24:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7646B4D650
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 20:08:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729141AbfFTSVz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 14:21:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39484 "EHLO mail.kernel.org"
+        id S1728192AbfFTSGg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 14:06:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60766 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728607AbfFTSLm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 14:11:42 -0400
+        id S1727936AbfFTSGe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Jun 2019 14:06:34 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1DFE02089C;
-        Thu, 20 Jun 2019 18:11:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3F894204FD;
+        Thu, 20 Jun 2019 18:06:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561054301;
-        bh=nUY6ILTxX+DakTlISDVeWnorLgfPe9zH17lpV8hhCvs=;
+        s=default; t=1561053993;
+        bh=Iz+s5FrWakQFdWSwoRfCM8MiMavQPXKCX7ztijiLTUI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SkEckStZBLv2r4ZjmjxHWhPJI6Z8Hdo37/DhsjzK5JqvyJxUiOEXdK4CZNMqRLcJQ
-         qiOULDK1Pdg6+IWnC3w4L9vkI7wIC6PyraX66RWhca8mXtKchKRJy77r5g+bqq2NpG
-         /14FJf2pcTWK4x53mZw/REcKmYph0OR5i0qTTcNM=
+        b=m8oux/viArC9rlR78k1twhS30rillhIOBU8oQKOy+RwZUGF3tplWPPkQcyqL8uuEx
+         Pve4/DNCEsXNTgluW4b0lQ6Nl3BnyV9XNE5CYQEjuSlinTxtqHtzGFxq3L4aW8JrNG
+         M60qlidI5DJHgejvZdRRhsGELBj/vWR0i1IRKFtU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yuri Chipchev <yuric@marvell.com>,
-        Maxime Chevallier <maxime.chevallier@bootlin.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 16/61] net: mvpp2: prs: Use the correct helpers when removing all VID filters
-Date:   Thu, 20 Jun 2019 19:57:11 +0200
-Message-Id: <20190620174339.937895518@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Jeffrin Jose T <jeffrin@rajagiritech.edu.in>,
+        Florian Westphal <fw@strlen.de>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 098/117] selftests: netfilter: missing error check when setting up veth interface
+Date:   Thu, 20 Jun 2019 19:57:12 +0200
+Message-Id: <20190620174357.733319559@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190620174336.357373754@linuxfoundation.org>
-References: <20190620174336.357373754@linuxfoundation.org>
+In-Reply-To: <20190620174351.964339809@linuxfoundation.org>
+References: <20190620174351.964339809@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,39 +46,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+[ Upstream commit 82ce6eb1dd13fd12e449b2ee2c2ec051e6f52c43 ]
 
-[ Upstream commit 6b7a3430c163455cf8a514d636bda52b04654972 ]
+A test for the basic NAT functionality uses ip command which needs veth
+device. There is a condition where the kernel support for veth is not
+compiled into the kernel and the test script breaks. This patch contains
+code for reasonable error display and correct code exit.
 
-When removing all VID filters, the mvpp2_prs_vid_entry_remove would be
-called with the TCAM id incorrectly used as a VID, causing the wrong
-TCAM entries to be invalidated.
-
-Fix this by directly invalidating entries in the VID range.
-
-Fixes: 56beda3db602 ("net: mvpp2: Add hardware offloading for VLAN filtering")
-Suggested-by: Yuri Chipchev <yuric@marvell.com>
-Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Jeffrin Jose T <jeffrin@rajagiritech.edu.in>
+Acked-by: Florian Westphal <fw@strlen.de>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/marvell/mvpp2/mvpp2_prs.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ tools/testing/selftests/netfilter/nft_nat.sh | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
---- a/drivers/net/ethernet/marvell/mvpp2/mvpp2_prs.c
-+++ b/drivers/net/ethernet/marvell/mvpp2/mvpp2_prs.c
-@@ -2025,8 +2025,10 @@ void mvpp2_prs_vid_remove_all(struct mvp
+diff --git a/tools/testing/selftests/netfilter/nft_nat.sh b/tools/testing/selftests/netfilter/nft_nat.sh
+index 8ec76681605c..f25f72a75cf3 100755
+--- a/tools/testing/selftests/netfilter/nft_nat.sh
++++ b/tools/testing/selftests/netfilter/nft_nat.sh
+@@ -23,7 +23,11 @@ ip netns add ns0
+ ip netns add ns1
+ ip netns add ns2
  
- 	for (tid = MVPP2_PRS_VID_PORT_FIRST(port->id);
- 	     tid <= MVPP2_PRS_VID_PORT_LAST(port->id); tid++) {
--		if (priv->prs_shadow[tid].valid)
--			mvpp2_prs_vid_entry_remove(port, tid);
-+		if (priv->prs_shadow[tid].valid) {
-+			mvpp2_prs_hw_inv(priv, tid);
-+			priv->prs_shadow[tid].valid = false;
-+		}
- 	}
- }
+-ip link add veth0 netns ns0 type veth peer name eth0 netns ns1
++ip link add veth0 netns ns0 type veth peer name eth0 netns ns1 > /dev/null 2>&1
++if [ $? -ne 0 ];then
++    echo "SKIP: No virtual ethernet pair device support in kernel"
++    exit $ksft_skip
++fi
+ ip link add veth1 netns ns0 type veth peer name eth0 netns ns2
  
+ ip -net ns0 link set lo up
+-- 
+2.20.1
+
 
 
