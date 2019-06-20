@@ -2,78 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A33D94C8EA
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 10:05:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 14CE74C8F0
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 10:05:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730758AbfFTIFW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 04:05:22 -0400
-Received: from relay9-d.mail.gandi.net ([217.70.183.199]:49329 "EHLO
-        relay9-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725877AbfFTIFV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 04:05:21 -0400
-X-Originating-IP: 90.88.23.150
-Received: from localhost (aaubervilliers-681-1-81-150.w90-88.abo.wanadoo.fr [90.88.23.150])
-        (Authenticated sender: maxime.ripard@bootlin.com)
-        by relay9-d.mail.gandi.net (Postfix) with ESMTPSA id 83676FF807;
-        Thu, 20 Jun 2019 08:05:19 +0000 (UTC)
-Date:   Thu, 20 Jun 2019 10:05:19 +0200
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Rob Herring <robh@kernel.org>
-Cc:     dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [RFC PATCH 4/4] dt-bindings: display: Convert innolux,ee101ia-01
- panel to DT schema
-Message-ID: <20190620080519.amnjyx2s22d7sswq@flea>
-References: <20190619215156.27795-1-robh@kernel.org>
- <20190619215156.27795-4-robh@kernel.org>
+        id S1730819AbfFTIF4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 04:05:56 -0400
+Received: from helcar.hmeau.com ([216.24.177.18]:43568 "EHLO deadmen.hmeau.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725877AbfFTIFz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Jun 2019 04:05:55 -0400
+Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
+        by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
+        id 1hds4o-0002CJ-VD; Thu, 20 Jun 2019 16:05:46 +0800
+Received: from herbert by gondobar with local (Exim 4.89)
+        (envelope-from <herbert@gondor.apana.org.au>)
+        id 1hds4k-0007C0-6f; Thu, 20 Jun 2019 16:05:42 +0800
+Date:   Thu, 20 Jun 2019 16:05:42 +0800
+From:   Herbert Xu <herbert@gondor.apana.org.au>
+To:     Florian Fainelli <f.fainelli@gmail.com>
+Cc:     linux-kernel@vger.kernel.org,
+        bcm-kernel-feedback-list@broadcom.com, stefan.wahren@i2se.com,
+        wahrenst@gmx.net, linux-crypto@vger.kernel.org, mpm@selenic.com
+Subject: Re: [PATCH 0/2] hwrng: Support for 7211 in iproc-rng200
+Message-ID: <20190620080542.b5hrd2c5lxl7pejp@gondor.apana.org.au>
+References: <20190510173112.2196-1-f.fainelli@gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="7dh3dlztmkm4jtas"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190619215156.27795-4-robh@kernel.org>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20190510173112.2196-1-f.fainelli@gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, May 10, 2019 at 10:31:09AM -0700, Florian Fainelli wrote:
+> Hi Herbert,
+> 
+> This patch series adds support for BCM7211 to the iproc-rng200 driver,
+> nothing special besides matching the compatibile string and updating the
+> binding document.
+> 
+> Florian Fainelli (2):
+>   dt-bindings: rng: Document BCM7211 RNG compatible string
+>   hwrng: iproc-rng200: Add support for 7211
+> 
+>  Documentation/devicetree/bindings/rng/brcm,iproc-rng200.txt | 1 +
+>  drivers/char/hw_random/iproc-rng200.c                       | 1 +
+>  2 files changed, 2 insertions(+)
 
---7dh3dlztmkm4jtas
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Wed, Jun 19, 2019 at 03:51:56PM -0600, Rob Herring wrote:
-> Convert the innolux,ee101ia-01 LVDS panel binding to DT schema.
->
-> Cc: Thierry Reding <thierry.reding@gmail.com>
-> Cc: Sam Ravnborg <sam@ravnborg.org>
-> Cc: Maxime Ripard <maxime.ripard@bootlin.com>
-> Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> Cc: dri-devel@lists.freedesktop.org
-> Signed-off-by: Rob Herring <robh@kernel.org>
-
-Reviewed-by: Maxime Ripard <maxime.ripard@bootlin.com>
-
-Maxime
-
---
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---7dh3dlztmkm4jtas
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXQs+PwAKCRDj7w1vZxhR
-xZzSAP0VMrPO/BLLAHovVlJITbpmiSRWBH0BIz6hiuUtFcG1LwD+Im5AkiEeau1A
-Se+DzhhbGMNFqc298NHpVI+1/01FJQg=
-=emVV
------END PGP SIGNATURE-----
-
---7dh3dlztmkm4jtas--
+All applied.  Thanks.
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
