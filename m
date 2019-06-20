@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 777F04D7DA
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 20:24:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7D0DF4D816
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 20:24:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728946AbfFTSLo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 14:11:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39430 "EHLO mail.kernel.org"
+        id S1727358AbfFTSXx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 14:23:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36250 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728806AbfFTSLj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 14:11:39 -0400
+        id S1728521AbfFTSIv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Jun 2019 14:08:51 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0E22F2070B;
-        Thu, 20 Jun 2019 18:11:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 71C4E2082C;
+        Thu, 20 Jun 2019 18:08:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561054298;
-        bh=980y4+/bM4nqKR5zFJc08I4f1d9BaMa28HhT7rOx/s4=;
+        s=default; t=1561054129;
+        bh=GdAVIKAYlmrnV5ik0UioPxBb+s+7a4Cqaxt58ExCFrg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=c4aWRpHdj1pRxSNp3rjMvuDMhDrtF+im5NzIMJn0jYUoIHn8qmQabaNZtEB8xJ2Bs
-         kprL0qRZZFhJ2e0CQgZROOWRUfMFlXnv0Qll3sgrhqkynCLtbibxQq9T+LOEV1dwMp
-         se4KrSDzNr+Gkao/L3J9+d08JW0qfM5zSv5D0V5Y=
+        b=LUMOkmgwL1lRF5H5mPdtJ5xUK+bImZeDQsmPyDqzhJiSlwjaq8qAzHFqLolD+FBnu
+         gcxmcba8AefXfUOZxnEqo3aSPQinT28ToiOxY3hcGndjS7fxjNYpPsGRiP5WNo60Jw
+         fNDFi7tomWyNr0s2S/+MsxCuix/tcKHU+CmiLzLg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yuri Chipchev <yuric@marvell.com>,
-        Maxime Chevallier <maxime.chevallier@bootlin.com>,
+        stable@vger.kernel.org,
+        John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 15/61] net: mvpp2: prs: Fix parser range for VID filtering
-Date:   Thu, 20 Jun 2019 19:57:10 +0200
-Message-Id: <20190620174339.749869176@linuxfoundation.org>
+Subject: [PATCH 4.14 09/45] sunhv: Fix device naming inconsistency between sunhv_console and sunhv_reg
+Date:   Thu, 20 Jun 2019 19:57:11 +0200
+Message-Id: <20190620174333.195180327@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190620174336.357373754@linuxfoundation.org>
-References: <20190620174336.357373754@linuxfoundation.org>
+In-Reply-To: <20190620174328.608036501@linuxfoundation.org>
+References: <20190620174328.608036501@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,77 +44,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
 
-[ Upstream commit 46b0090a6636cf34c0e856f15dd03e15ba4cdda6 ]
+[ Upstream commit 07a6d63eb1b54b5fb38092780fe618dfe1d96e23 ]
 
-VID filtering is implemented in the Header Parser, with one range of 11
-vids being assigned for each no-loopback port.
+In d5a2aa24, the name in struct console sunhv_console was changed from "ttyS"
+to "ttyHV" while the name in struct uart_ops sunhv_pops remained unchanged.
 
-Make sure we use the per-port range when looking for existing entries in
-the Parser.
+This results in the hypervisor console device to be listed as "ttyHV0" under
+/proc/consoles while the device node is still named "ttyS0":
 
-Since we used a global range instead of a per-port one, this causes VIDs
-to be removed from the whitelist from all ports of the same PPv2
-instance.
+root@osaka:~# cat /proc/consoles
+ttyHV0               -W- (EC p  )    4:64
+tty0                 -WU (E     )    4:1
+root@osaka:~# readlink /sys/dev/char/4:64
+../../devices/root/f02836f0/f0285690/tty/ttyS0
+root@osaka:~#
 
-Fixes: 56beda3db602 ("net: mvpp2: Add hardware offloading for VLAN filtering")
-Suggested-by: Yuri Chipchev <yuric@marvell.com>
-Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
+This means that any userland code which tries to determine the name of the
+device file of the hypervisor console device can not rely on the information
+provided by /proc/consoles. In particular, booting current versions of debian-
+installer inside a SPARC LDOM will fail with the installer unable to determine
+the console device.
+
+After renaming the device in struct uart_ops sunhv_pops to "ttyHV" as well,
+the inconsistency is fixed and it is possible again to determine the name
+of the device file of the hypervisor console device by reading the contents
+of /proc/console:
+
+root@osaka:~# cat /proc/consoles
+ttyHV0               -W- (EC p  )    4:64
+tty0                 -WU (E     )    4:1
+root@osaka:~# readlink /sys/dev/char/4:64
+../../devices/root/f02836f0/f0285690/tty/ttyHV0
+root@osaka:~#
+
+With this change, debian-installer works correctly when installing inside
+a SPARC LDOM.
+
+Signed-off-by: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/marvell/mvpp2/mvpp2_prs.c |   17 ++++++++---------
- 1 file changed, 8 insertions(+), 9 deletions(-)
+ drivers/tty/serial/sunhv.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/net/ethernet/marvell/mvpp2/mvpp2_prs.c
-+++ b/drivers/net/ethernet/marvell/mvpp2/mvpp2_prs.c
-@@ -1905,8 +1905,7 @@ static int mvpp2_prs_ip6_init(struct mvp
- }
+--- a/drivers/tty/serial/sunhv.c
++++ b/drivers/tty/serial/sunhv.c
+@@ -396,7 +396,7 @@ static const struct uart_ops sunhv_pops
+ static struct uart_driver sunhv_reg = {
+ 	.owner			= THIS_MODULE,
+ 	.driver_name		= "sunhv",
+-	.dev_name		= "ttyS",
++	.dev_name		= "ttyHV",
+ 	.major			= TTY_MAJOR,
+ };
  
- /* Find tcam entry with matched pair <vid,port> */
--static int mvpp2_prs_vid_range_find(struct mvpp2 *priv, int pmap, u16 vid,
--				    u16 mask)
-+static int mvpp2_prs_vid_range_find(struct mvpp2_port *port, u16 vid, u16 mask)
- {
- 	unsigned char byte[2], enable[2];
- 	struct mvpp2_prs_entry pe;
-@@ -1914,13 +1913,13 @@ static int mvpp2_prs_vid_range_find(stru
- 	int tid;
- 
- 	/* Go through the all entries with MVPP2_PRS_LU_VID */
--	for (tid = MVPP2_PE_VID_FILT_RANGE_START;
--	     tid <= MVPP2_PE_VID_FILT_RANGE_END; tid++) {
--		if (!priv->prs_shadow[tid].valid ||
--		    priv->prs_shadow[tid].lu != MVPP2_PRS_LU_VID)
-+	for (tid = MVPP2_PRS_VID_PORT_FIRST(port->id);
-+	     tid <= MVPP2_PRS_VID_PORT_LAST(port->id); tid++) {
-+		if (!port->priv->prs_shadow[tid].valid ||
-+		    port->priv->prs_shadow[tid].lu != MVPP2_PRS_LU_VID)
- 			continue;
- 
--		mvpp2_prs_init_from_hw(priv, &pe, tid);
-+		mvpp2_prs_init_from_hw(port->priv, &pe, tid);
- 
- 		mvpp2_prs_tcam_data_byte_get(&pe, 2, &byte[0], &enable[0]);
- 		mvpp2_prs_tcam_data_byte_get(&pe, 3, &byte[1], &enable[1]);
-@@ -1950,7 +1949,7 @@ int mvpp2_prs_vid_entry_add(struct mvpp2
- 	memset(&pe, 0, sizeof(pe));
- 
- 	/* Scan TCAM and see if entry with this <vid,port> already exist */
--	tid = mvpp2_prs_vid_range_find(priv, (1 << port->id), vid, mask);
-+	tid = mvpp2_prs_vid_range_find(port, vid, mask);
- 
- 	reg_val = mvpp2_read(priv, MVPP2_MH_REG(port->id));
- 	if (reg_val & MVPP2_DSA_EXTENDED)
-@@ -2008,7 +2007,7 @@ void mvpp2_prs_vid_entry_remove(struct m
- 	int tid;
- 
- 	/* Scan TCAM and see if entry with this <vid,port> already exist */
--	tid = mvpp2_prs_vid_range_find(priv, (1 << port->id), vid, 0xfff);
-+	tid = mvpp2_prs_vid_range_find(port, vid, 0xfff);
- 
- 	/* No such entry */
- 	if (tid < 0)
 
 
