@@ -2,87 +2,167 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 019164DC34
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 23:10:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C12904DC42
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 23:10:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726891AbfFTVKY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 17:10:24 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:40188 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726807AbfFTVKT (ORCPT
+        id S1727014AbfFTVKx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 17:10:53 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:8142 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726256AbfFTVKw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 17:10:19 -0400
-Received: by mail-pl1-f195.google.com with SMTP id a93so1889373pla.7;
-        Thu, 20 Jun 2019 14:10:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=nBLqKjSVrBp381m0eswowtTt2XvGMCRYc4oh6uPOArU=;
-        b=odDqhRBWBoc3kunhmHJB492EcjJwrhFnyXSUVW3/CoWDvFNgUyRMRIvvo6XsI+hRpC
-         F8PK8A4AnBpq6wLd0H7Pjr9ZGlp6xHPWKnQFGO00cnPVFoJ/lyFb9pdg4jra3fGKxQEU
-         2X3q20gRCZDdgRqN07nqK1bFVIAlAbplibG1x+sLxagcy10U6sMBk4oNYWqHoncvtpPg
-         oERoRdPPpL2cBcuymbSzsj1Fty4chUNuNV230KR63W3ofdO/Ydca1wDvHnklAChhmpXf
-         iqogw3hGzMxaVxmddB9nF6KsM+TmyR35hKtNUGKFttAKPS9ESWc5O3JpHXLRf+TeEwRF
-         r3dw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=nBLqKjSVrBp381m0eswowtTt2XvGMCRYc4oh6uPOArU=;
-        b=pHz08Le6tZRfLPIGDLxMfm8EQngjEYmkFZoBHlLKz6uowVMlBbEE6D8swpjFd+7jtO
-         gzDvvpM7UgnGeKO9iE87rN+i7eFmpdjn55NOG+67LOs356wWtloJ9a/pfga89yP044ae
-         DfXF1Kl/379ognT72/BcrKgCX0+cAR+V/NCjeXbkfr460W1cHjT1+jcd2d7a+QRI9B+7
-         rNFbgCiNx3LPyontYnwJP3LiOtAQm89LVd2gIZetH5AcvMI4LiLgDMqleus33ymU49cl
-         FQMSnSY2zkW9zywC5vNGSNQD9100cXCY7BK3qHij0cR7GQ/yMPAvOnhVfYQkE/WM53Pi
-         8Z+w==
-X-Gm-Message-State: APjAAAU7grOSWOUf6m3DaQIqH0zzwBgGKVAfsj7yf3wFABXAt9CKoogM
-        x1JRQKhCA/CLVMc6CM2lOpWQ4fV8xOA=
-X-Google-Smtp-Source: APXvYqwQeDcUXcq5wDH39La0AxAdtmC0QX43bHAhnAlNJBq86E2hHf1IRQ7lkIFgYUWZ30soK4xk5A==
-X-Received: by 2002:a17:902:2862:: with SMTP id e89mr127805856plb.258.1561065018506;
-        Thu, 20 Jun 2019 14:10:18 -0700 (PDT)
-Received: from stbsrv-and-3.and.broadcom.com ([192.19.231.250])
-        by smtp.gmail.com with ESMTPSA id p1sm386805pff.74.2019.06.20.14.10.16
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 20 Jun 2019 14:10:18 -0700 (PDT)
-From:   Al Cooper <alcooperx@gmail.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Al Cooper <alcooperx@gmail.com>, devicetree@vger.kernel.org,
-        Felipe Balbi <balbi@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org, Luis Chamberlain <mcgrof@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>
-Subject: [PATCH 6/6] usb: bdc: Update compatible match strings
-Date:   Thu, 20 Jun 2019 17:09:51 -0400
-Message-Id: <1561064991-16874-7-git-send-email-alcooperx@gmail.com>
-X-Mailer: git-send-email 1.9.0.138.g2de3478
-In-Reply-To: <1561064991-16874-1-git-send-email-alcooperx@gmail.com>
-References: <1561064991-16874-1-git-send-email-alcooperx@gmail.com>
+        Thu, 20 Jun 2019 17:10:52 -0400
+Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5KL8FFR088897;
+        Thu, 20 Jun 2019 17:10:05 -0400
+Received: from ppma01wdc.us.ibm.com (fd.55.37a9.ip4.static.sl-reverse.com [169.55.85.253])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2t8hsyg2a1-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 20 Jun 2019 17:10:04 -0400
+Received: from pps.filterd (ppma01wdc.us.ibm.com [127.0.0.1])
+        by ppma01wdc.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x5KL5Utw001317;
+        Thu, 20 Jun 2019 21:10:04 GMT
+Received: from b01cxnp22034.gho.pok.ibm.com (b01cxnp22034.gho.pok.ibm.com [9.57.198.24])
+        by ppma01wdc.us.ibm.com with ESMTP id 2t8hrp00gy-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 20 Jun 2019 21:10:04 +0000
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp22034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x5KLA3n130474734
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 20 Jun 2019 21:10:04 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id DF168B2064;
+        Thu, 20 Jun 2019 21:10:03 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B181BB205F;
+        Thu, 20 Jun 2019 21:10:03 +0000 (GMT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.26])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Thu, 20 Jun 2019 21:10:03 +0000 (GMT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id AA5FD16C6B85; Thu, 20 Jun 2019 14:10:05 -0700 (PDT)
+Date:   Thu, 20 Jun 2019 14:10:05 -0700
+From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
+To:     Scott Wood <swood@redhat.com>
+Cc:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Clark Williams <williams@redhat.com>,
+        linux-rt-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH RT 3/4] rcu: unlock special: Treat irq and preempt
+ disabled the same
+Message-ID: <20190620211005.GW26519@linux.ibm.com>
+Reply-To: paulmck@linux.ibm.com
+References: <20190619011908.25026-1-swood@redhat.com>
+ <20190619011908.25026-4-swood@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190619011908.25026-4-swood@redhat.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-20_14:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1906200152
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove "brcm,bdc-v0.16" because it was never used on any system.
-Add "brcm,bdc-udc-v3.1" which exists for any STB system with BDC.
+On Tue, Jun 18, 2019 at 08:19:07PM -0500, Scott Wood wrote:
+> [Note: Just before posting this I noticed that the invoke_rcu_core stuff
+>  is part of the latest RCU pull request, and it has a patch that
+>  addresses this in a more complicated way that appears to deal with the
+>  bare irq-disabled sequence as well.
 
-Signed-off-by: Al Cooper <alcooperx@gmail.com>
----
- drivers/usb/gadget/udc/bdc/bdc_core.c | 1 +
- 1 file changed, 1 insertion(+)
+Far easier to deal with it than to debug the lack of it.  ;-)
 
-diff --git a/drivers/usb/gadget/udc/bdc/bdc_core.c b/drivers/usb/gadget/udc/bdc/bdc_core.c
-index 15e28790142d..e2b2628925e6 100644
---- a/drivers/usb/gadget/udc/bdc/bdc_core.c
-+++ b/drivers/usb/gadget/udc/bdc/bdc_core.c
-@@ -644,6 +644,7 @@ static SIMPLE_DEV_PM_OPS(bdc_pm_ops, bdc_suspend,
- 		bdc_resume);
- 
- static const struct of_device_id bdc_of_match[] = {
-+	{ .compatible = "brcm,bdc-udc-v3.1" },
- 	{ .compatible = "brcm,bdc-v0.16" },
- 	{ .compatible = "brcm,bdc" },
- 	{ /* sentinel */ }
--- 
-1.9.0.138.g2de3478
+>  Assuming we need/want to support such sequences, is the
+>  invoke_rcu_core() call actually going to result in scheduling any
+>  sooner?  resched_curr() just does the same setting of need_resched
+>  when it's the same cpu.
+> ]
 
+Yes, invoke_rcu_core() can in some cases invoke the scheduler sooner.
+Setting the CPU-local bits might not have effect until the next interrupt.
+
+So if -rt wants the simpler and slower approach, the change needs to
+use IS_ENABLED(CONFIG_PREEMPT_RT_FULL) or similar.  Not that this is
+an issue until CONFIG_PREEMPT_RT_FULL hits mainline.
+
+							Thanx, Paul
+
+> Since special should never be getting set inside an irqs-disabled
+> critical section, this is safe as long as there are no sequences of
+> rcu_read_lock()/local_irq_disable()/rcu_read_unlock()/local_irq_enable()
+> (without preempt_disable() wrapped around the IRQ disabling, as spinlocks
+> do).  If there are such sequences, then the grace period may be delayed
+> until the next time need_resched is checked.
+> 
+> This is needed because otherwise, in a sequence such as:
+> 1. rcu_read_lock()
+> 2. *preempt*, set rcu_read_unlock_special.b.blocked
+> 3. preempt_disable()
+> 4. rcu_read_unlock()
+> 5. preempt_enable()
+> 
+> ...rcu_read_unlock_special.b.blocked will not be cleared during
+> step 4, because of the disabled preemption.  If an interrupt is then
+> taken between steps 4 and 5, and that interrupt enters scheduler code
+> that takes pi/rq locks, and an rcu read lock inside that, then when
+> dropping that rcu read lock we will end up in rcu_read_unlock_special()
+> again -- but this time, since irqs are disabled, it will call
+> invoke_rcu_core() in the RT tree (regardless of PREEMPT_RT_FULL), which
+> calls wake_up_process().  This can cause a pi/rq lock deadlock.  An
+> example of interrupt code that does this is scheduler_tick().
+> 
+> The above sequence can be found in (at least) __lock_task_sighand() (for
+> !PREEMPT_RT_FULL) and d_alloc_parallel().
+> 
+> It's potentially an issue on non-RT as well.  While
+> raise_softirq_irqoff() doesn't call wake_up_process() when in_interrupt()
+> is true, if code between steps 4 and 5 directly calls into scheduler
+> code, and that code uses RCU with pi/rq lock held, wake_up_process() can
+> still be called.
+> 
+> On RT, migrate_enable() is such a codepath, so an in_interrupt() check
+> alone would not work on RT.  Instead, keep track of whether we've already
+> had an rcu_read_unlock_special() with preemption disabled but haven't yet
+> scheduled, and rely on the preempt_enable() yet to come instead of
+> calling invoke_rcu_core().
+> 
+> Signed-off-by: Scott Wood <swood@redhat.com>
+> ---
+>  kernel/rcu/tree_plugin.h | 10 ++--------
+>  1 file changed, 2 insertions(+), 8 deletions(-)
+> 
+> diff --git a/kernel/rcu/tree_plugin.h b/kernel/rcu/tree_plugin.h
+> index 5d63914b3687..d7ddbcc7231c 100644
+> --- a/kernel/rcu/tree_plugin.h
+> +++ b/kernel/rcu/tree_plugin.h
+> @@ -630,14 +630,8 @@ static void rcu_read_unlock_special(struct task_struct *t)
+>  	if (preempt_bh_were_disabled || irqs_were_disabled) {
+>  		WRITE_ONCE(t->rcu_read_unlock_special.b.exp_hint, false);
+>  		/* Need to defer quiescent state until everything is enabled. */
+> -		if (irqs_were_disabled) {
+> -			/* Enabling irqs does not reschedule, so... */
+> -			invoke_rcu_core();
+> -		} else {
+> -			/* Enabling BH or preempt does reschedule, so... */
+> -			set_tsk_need_resched(current);
+> -			set_preempt_need_resched();
+> -		}
+> +		set_tsk_need_resched(current);
+> +		set_preempt_need_resched();
+>  		local_irq_restore(flags);
+>  		return;
+>  	}
+> -- 
+> 1.8.3.1
+> 
