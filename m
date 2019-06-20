@@ -2,111 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 139994DD03
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 23:47:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 18DBB4DD07
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 23:51:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726313AbfFTVrZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 17:47:25 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:58474 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726015AbfFTVrY (ORCPT
+        id S1726254AbfFTVvG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 17:51:06 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:44318 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726066AbfFTVvF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 17:47:24 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5KLhxKU004623;
-        Thu, 20 Jun 2019 21:47:10 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
- from : references : date : in-reply-to : message-id : mime-version :
- content-type; s=corp-2018-07-02;
- bh=IE9TD5eL6LGXQo7rYRggqfOlzYr+mtZp6vIZPxJmskQ=;
- b=r4Rng49KNSI5jwEHefRWVXBmfVm0jfIeKEEyjyQVPWzEnonAis1AW0utcWPY7cIoHBF/
- bjcUfaUWrfysip/Gq7fgFdahhk6byhd0Pp69iXmzLF/sY6oF++yZ8O+7pNJvc3fMSdsw
- cKVTGp+PJ8EZFEKT/f66KD7Vp1RAcOC6wuysLCYWtRBTD8LjIZi15WU5jbAYLvR+ricq
- LO6LO1D+ezphhcKML99Bp8IBBGTMyILRmSxbW8Z+J1AG6BroF+1jH1qOo14g9sHSiJGi
- cgXOblKKRjO1FIuWn+X+f/lExzATHCUwA/DaDz3+hARLWv/KJMgKb2OegZ+Xwj757Pe5 Rg== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by aserp2120.oracle.com with ESMTP id 2t7809kcc6-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 20 Jun 2019 21:47:10 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5KLjnj3178049;
-        Thu, 20 Jun 2019 21:47:09 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userp3030.oracle.com with ESMTP id 2t77ynuub3-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 20 Jun 2019 21:47:09 +0000
-Received: from abhmp0017.oracle.com (abhmp0017.oracle.com [141.146.116.23])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x5KLl50A011658;
-        Thu, 20 Jun 2019 21:47:06 GMT
-Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 20 Jun 2019 14:47:05 -0700
-To:     Marc Gonzalez <marc.w.gonzalez@free.fr>
-Cc:     Douglas Gilbert <dgilbert@interlog.com>,
-        Finn Thain <fthain@telegraphics.com.au>,
-        Bart Van Assche <bvanassche@acm.org>,
-        James Bottomley <jejb@linux.ibm.com>,
-        Martin Petersen <martin.petersen@oracle.com>,
-        SCSI <linux-scsi@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH v1] scsi: Don't select SCSI_PROC_FS by default
-From:   "Martin K. Petersen" <martin.petersen@oracle.com>
-Organization: Oracle Corporation
-References: <2de15293-b9be-4d41-bc67-a69417f27f7a@free.fr>
-        <621306ee-7ab6-9cd2-e934-94b3d6d731fc@acm.org>
-        <fb2d2e74-6725-4bf2-cf6c-63c0a2a10f4f@interlog.com>
-        <alpine.LNX.2.21.1906181107240.287@nippy.intranet>
-        <017cf3cf-ecd8-19c2-3bbd-7e7c28042c3c@free.fr>
-        <f8339103-5b45-b72d-9f87-fd4dd7b3081e@interlog.com>
-        <f1f98ab0-399a-6c12-073d-ee8ad47d5588@free.fr>
-        <48912bc0-8c79-408d-7ed2-c127b99b8bcc@interlog.com>
-        <e04e14b7-e1ee-c0c1-9e6d-2628d2c873a9@free.fr>
-Date:   Thu, 20 Jun 2019 17:47:01 -0400
-In-Reply-To: <e04e14b7-e1ee-c0c1-9e6d-2628d2c873a9@free.fr> (Marc Gonzalez's
-        message of "Thu, 20 Jun 2019 11:01:39 +0200")
-Message-ID: <yq1muicq696.fsf@oracle.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1.92 (gnu/linux)
+        Thu, 20 Jun 2019 17:51:05 -0400
+Received: by mail-wr1-f65.google.com with SMTP id r16so4491391wrl.11
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2019 14:51:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
+        h=message-id:date:mime-version:content-transfer-encoding:in-reply-to
+         :references:subject:to:from:cc;
+        bh=hRfNWLmAN1kN9+qUVVhKW3SVXeFOGVUJPL68CIg8o+E=;
+        b=u27duObejx4JNLGQLCsLfLy4LVeKNKcJZD0IyVD4T9c0XndFERVY/RqvBo2pYtGs23
+         1haMSzqNGqI2a6+thGSYGd8EDrSwUU7nBkcp4GQCuaxZag4Ji9/ETB8VwhV7IUcWcRlF
+         Z4mFq0DwaEnqULtnp1+CwUBFKmVLy2rFdW6tOnGmyU9Gm+XzIP+WhCHAMVO5sRwDO5pl
+         DY4+t7ElJLE0Q4qeVMFqQ2Axrv0fk7dyYq5fYtvdN8BmLfPEB5BvREh7KYUUlAfaF6fW
+         tshEhYdmlfU/RvcjsItOB99sUbDNoHg0uRcBgDoi47FPLiJZZPKMSGaC/qBKRVD2QJz5
+         Ybpw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:date:mime-version
+         :content-transfer-encoding:in-reply-to:references:subject:to:from:cc;
+        bh=hRfNWLmAN1kN9+qUVVhKW3SVXeFOGVUJPL68CIg8o+E=;
+        b=goQJEsy43GQt57JW7c1CuQ5rRV49Sa1b2vPv4ndRqOaWwKaJVgK/WOhRb2N3mpagDR
+         rh7z4SjUKFKpU6JVpOALOsI8iqiVZJiJPJ3XvqWgAVztmbDn1C2PmUSqH0i39/DZpuiy
+         TGK4RH3mM9yM9fNiSHKO2PXKtybLK67T2+vgyz4Rr9FpblV1HKI58Pf5HoYWoKEhtHV1
+         JpZvwKlYz735bm8w2P9/Y2w8FpjrUOkS8VELLGJubRC0DgHovmOtdNumqO+eQNhKLE+l
+         jFO9joA4yLJkTX1UsQybsAVpnMK7b2gpihFyw3pcxiECN87/8HTC4Hq2soMmbD1miZKW
+         qf2Q==
+X-Gm-Message-State: APjAAAVTRl/fto3FZtyoHiOqYHzdJofTyqJeynUsoo7HgMCHSF/qUMUy
+        Z0J13KOyTVEQd5USSlH3cUj+/g==
+X-Google-Smtp-Source: APXvYqwF8kwk69GoEVRPbky5+oL7qWCG1rkDbKx10SP7jMbBOiViweq9xq4+PuSQZ1JYcRqDUKIf6A==
+X-Received: by 2002:adf:e8c8:: with SMTP id k8mr65161424wrn.285.1561067463063;
+        Thu, 20 Jun 2019 14:51:03 -0700 (PDT)
+Received: from [148.251.42.114] ([2a01:4f8:201:9271::2])
+        by smtp.gmail.com with ESMTPSA id p26sm1698396wrp.58.2019.06.20.14.51.01
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 20 Jun 2019 14:51:02 -0700 (PDT)
+Message-ID: <5d0bffc6.1c69fb81.b2a7c.a927@mx.google.com>
+Date:   Thu, 20 Jun 2019 14:51:02 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9294 signatures=668687
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=638
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1906200155
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9294 signatures=668687
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=691 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1906200155
+Content-Transfer-Encoding: quoted-printable
+X-Kernelci-Report-Type: boot
+X-Kernelci-Kernel: v4.14.128-46-g593d1fadd024
+X-Kernelci-Branch: linux-4.14.y
+X-Kernelci-Tree: stable-rc
+In-Reply-To: <20190620174328.608036501@linuxfoundation.org>
+References: <20190620174328.608036501@linuxfoundation.org>
+Subject: Re: [PATCH 4.14 00/45] 4.14.129-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+From:   "kernelci.org bot" <bot@kernelci.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+stable-rc/linux-4.14.y boot: 118 boots: 1 failed, 112 passed with 4 offline=
+, 1 untried/unknown (v4.14.128-46-g593d1fadd024)
 
-Marc,
+Full Boot Summary: https://kernelci.org/boot/all/job/stable-rc/branch/linux=
+-4.14.y/kernel/v4.14.128-46-g593d1fadd024/
+Full Build Summary: https://kernelci.org/build/stable-rc/branch/linux-4.14.=
+y/kernel/v4.14.128-46-g593d1fadd024/
 
-> (I work on smaller systems where we do use /proc occasionally, but we
-> don't enable CHR_DEV_SG or SCSI_PROC_FS.)
+Tree: stable-rc
+Branch: linux-4.14.y
+Git Describe: v4.14.128-46-g593d1fadd024
+Git Commit: 593d1fadd0247d5932dd5e626b90fe30984c2ae5
+Git URL: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stabl=
+e-rc.git
+Tested: 65 unique boards, 23 SoC families, 14 builds out of 201
 
-Many sg apps depend on SCSI_PROC_FS. That doesn't imply that only sg
-apps depend on it.
+Boot Regressions Detected:
 
-As an example, with SCSI_PROC_FS enabled we don't need your SanDisk
-Cruzer Blade patch at all since you can tweak the blacklist flags from
-user space.
+arm64:
 
-Also, the "legacy" moniker was wishful thinking. Applied to the Kconfig
-option at a time where sysfs was new and shiny and considered the
-solution to all the kernel's problems. But that wholesale transition of
-all interfaces from /proc simply never took place. What happened was
-that *new* functionality largely went to sysfs.
+    defconfig:
+        gcc-8:
+          meson-gxl-s905x-nexbox-a95x:
+              lab-baylibre-seattle: new failure (last pass: v4.14.128)
 
-Note that I don't have a problem adding missing knobs to sysfs where it
-makes sense. But it will obviously take a while for userland apps to
-adopt it.
+Boot Failure Detected:
 
--- 
-Martin K. Petersen	Oracle Linux Engineering
+arm64:
+    defconfig:
+        gcc-8:
+            meson-gxl-s905x-nexbox-a95x: 1 failed lab
+
+Offline Platforms:
+
+arm:
+
+    exynos_defconfig:
+        gcc-8
+            exynos5800-peach-pi: 1 offline lab
+
+    davinci_all_defconfig:
+        gcc-8
+            da850-evm: 1 offline lab
+            dm365evm,legacy: 1 offline lab
+
+arm64:
+
+    defconfig:
+        gcc-8
+            apq8016-sbc: 1 offline lab
+
+---
+For more info write to <info@kernelci.org>
