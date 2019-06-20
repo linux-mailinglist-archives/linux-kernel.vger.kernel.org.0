@@ -2,38 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 290064CA77
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 11:16:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C549C4CA63
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 11:13:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731360AbfFTJQV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 05:16:21 -0400
-Received: from [116.255.239.21] ([116.255.239.21]:4865 "HELO a.mpt7.top"
-        rhost-flags-FAIL-FAIL-OK-OK) by vger.kernel.org with SMTP
-        id S1725953AbfFTJQV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 05:16:21 -0400
-X-Greylist: delayed 302 seconds by postgrey-1.27 at vger.kernel.org; Thu, 20 Jun 2019 05:16:20 EDT
-Received: from 221.0.37.109 (HELO X6X8-20170725NJ); Thu, 20 Jun 2019 17:11:15 +0800
-Date:   Thu, 20 Jun 2019 17:11:15 +0800
-From:   "Jaya" <ty5@a.mpt7.top>
-Reply-To: 260193680@qq.com
-To:     "linux-kernel" <linux-kernel@vger.kernel.org>
-Subject: Chinese OEM Bearing supplier
-Message-ID: <201906201711158143566@a.mpt7.top>
-X-Mailer: Foxmail 6, 10, 201, 20 [cn]
+        id S1726168AbfFTJNJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 05:13:09 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:32273 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725889AbfFTJNJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Jun 2019 05:13:09 -0400
+X-UUID: f04cb5f347ec4fff93e6234c72477d7a-20190620
+X-UUID: f04cb5f347ec4fff93e6234c72477d7a-20190620
+Received: from mtkmrs01.mediatek.inc [(172.21.131.159)] by mailgw01.mediatek.com
+        (envelope-from <lecopzer.chen@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 1172524557; Thu, 20 Jun 2019 17:12:52 +0800
+Received: from mtkcas07.mediatek.inc (172.21.101.84) by
+ mtkmbs05n1.mediatek.inc (172.21.101.15) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Thu, 20 Jun 2019 17:12:50 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas07.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Thu, 20 Jun 2019 17:12:51 +0800
+From:   Lecopzer Chen <lecopzer.chen@mediatek.com>
+To:     <linux-kernel@vger.kernel.org>
+CC:     <linux-arm-kernel@lists.infradead.org>,
+        Lecopzer Chen <lecopzer.chen@mediatek.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Julien Thierry <julien.thierry@arm.com>,
+        YJ Chiang <yj.chiang@mediatek.com>
+Subject: [PATCH] genirq: Remove warning on preemptible in prepare_percpu_nmi()
+Date:   Thu, 20 Jun 2019 17:12:33 +0800
+Message-ID: <20190620091233.22731-1-lecopzer.chen@mediatek.com>
+X-Mailer: git-send-email 2.18.0
 MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="GB2312"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-RGVhciBTaXIsDQpIb3cgYXJlIHlvdT8NCldlIGFyZSBhIHByb2Zlc3Npb25hbCBmYWN0b3J5IG9m
-IHJvbGxlciBiZWFyaW5ncyBpbiBzaGFuZG9uZyBwcm92aW5jZSAuIFdlIGhhdmUgZW5vdWdoIHN0
-b2NrICYgY29tcGV0aXRpdmUgcHJpY2UgZm9yIGEgcmFuZ2Ugb2YgYmVhcmluZyBhcyBiZWxvdzoN
-CkRlZXAgZ3Jvb3ZlIGJhbGwgYmVhcmluZw0KQ3lsaW5kcmljYWwgcm9sbGVyIGJlYXJpbmcNClNw
-aGVyaWNhbCByb2xsZXIgYmVhcmluZywNCkFuZ3VsYXIgY29udGFjdCBiYWxsIGJlYXJpbmcNClRh
-cGVyZWQgcm9sbGVyIGJlYXJpbmcgDQpQaWxsb3cgYmxvY2sgYmVhcmluZw0KDQpJZiB5b3UgaGF2
-ZSB0aGUgcmVxdWVzdCBvZiBhYm92ZSBiZWFyaW5ncywgcGxlYXNlIGRvIG5vdCBoZXNpdGF0ZSB0
-byBjb250YWN0IHVzIGZvciBxdW90YXRpb24uDQpUaGFucyBhbmQgYmVzdCByZWdhcmRzLg==
+prepare_percpu_nmi() acquires lock first by irq_get_desc_lock(),
+no matter whether preempt enabled or not, acquiring lock forces preempt off.
+
+This simplifies the usage of prepare_percpu_nmi() and we don't need to
+acquire extra lock or explicitly call preempt_[disable,enable]().
+
+Signed-off-by: Lecopzer Chen <lecopzer.chen@mediatek.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: Marc Zyngier <marc.zyngier@arm.com>
+Cc: Julien Thierry <julien.thierry@arm.com>
+Cc: YJ Chiang <yj.chiang@mediatek.com>
+Cc: Lecopzer Chen <lecopzer.chen@mediatek.com>
+---
+ kernel/irq/manage.c | 10 ----------
+ 1 file changed, 10 deletions(-)
+
+diff --git a/kernel/irq/manage.c b/kernel/irq/manage.c
+index 78f3ddeb7fe4..aa03640cd7fb 100644
+--- a/kernel/irq/manage.c
++++ b/kernel/irq/manage.c
+@@ -2509,9 +2509,6 @@ int request_percpu_nmi(unsigned int irq, irq_handler_t handler,
+  *	This call prepares an interrupt line to deliver NMI on the current CPU,
+  *	before that interrupt line gets enabled with enable_percpu_nmi().
+  *
+- *	As a CPU local operation, this should be called from non-preemptible
+- *	context.
+- *
+  *	If the interrupt line cannot be used to deliver NMIs, function
+  *	will fail returning a negative value.
+  */
+@@ -2521,8 +2518,6 @@ int prepare_percpu_nmi(unsigned int irq)
+ 	struct irq_desc *desc;
+ 	int ret = 0;
+ 
+-	WARN_ON(preemptible());
+-
+ 	desc = irq_get_desc_lock(irq, &flags,
+ 				 IRQ_GET_DESC_CHECK_PERCPU);
+ 	if (!desc)
+@@ -2554,17 +2549,12 @@ int prepare_percpu_nmi(unsigned int irq)
+  *	This call undoes the setup done by prepare_percpu_nmi().
+  *
+  *	IRQ line should not be enabled for the current CPU.
+- *
+- *	As a CPU local operation, this should be called from non-preemptible
+- *	context.
+  */
+ void teardown_percpu_nmi(unsigned int irq)
+ {
+ 	unsigned long flags;
+ 	struct irq_desc *desc;
+ 
+-	WARN_ON(preemptible());
+-
+ 	desc = irq_get_desc_lock(irq, &flags,
+ 				 IRQ_GET_DESC_CHECK_PERCPU);
+ 	if (!desc)
+-- 
+2.18.0
+
