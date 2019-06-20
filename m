@@ -2,145 +2,194 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DFF6D4DA61
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 21:38:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2C4594DA77
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 21:43:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726846AbfFTTir (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 15:38:47 -0400
-Received: from mx0a-002e3701.pphosted.com ([148.163.147.86]:22968 "EHLO
-        mx0a-002e3701.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726822AbfFTTip (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 15:38:45 -0400
-Received: from pps.filterd (m0134422.ppops.net [127.0.0.1])
-        by mx0b-002e3701.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5KJaalc015227;
-        Thu, 20 Jun 2019 19:38:13 GMT
-Received: from g4t3427.houston.hpe.com (g4t3427.houston.hpe.com [15.241.140.73])
-        by mx0b-002e3701.pphosted.com with ESMTP id 2t8g9gg2cd-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 20 Jun 2019 19:38:13 +0000
-Received: from stormcage.eag.rdlabs.hpecorp.net (stormcage.eag.rdlabs.hpecorp.net [128.162.236.70])
-        by g4t3427.houston.hpe.com (Postfix) with ESMTP id 3480F7D;
-        Thu, 20 Jun 2019 19:38:12 +0000 (UTC)
-Received: by stormcage.eag.rdlabs.hpecorp.net (Postfix, from userid 48777)
-        id DCF91201E9541; Thu, 20 Jun 2019 14:38:11 -0500 (CDT)
-From:   Kyle Meyer <meyerk@hpe.com>
-Cc:     Kyle Meyer <kyle.meyer@hpe.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v1] Increase MAX_NR_CPUS and MAX_CACHES
-Date:   Thu, 20 Jun 2019 14:36:30 -0500
-Message-Id: <20190620193630.154025-1-meyerk@stormcage.eag.rdlabs.hpecorp.net>
-X-Mailer: git-send-email 2.12.3
-X-HPE-SCL: -1
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-20_13:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1906200139
-To:     unlisted-recipients:; (no To-header on input)
+        id S1726864AbfFTTmt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 15:42:49 -0400
+Received: from honk.sigxcpu.org ([24.134.29.49]:44536 "EHLO honk.sigxcpu.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726254AbfFTTmo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Jun 2019 15:42:44 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by honk.sigxcpu.org (Postfix) with ESMTP id 42734FB03;
+        Thu, 20 Jun 2019 21:42:42 +0200 (CEST)
+X-Virus-Scanned: Debian amavisd-new at honk.sigxcpu.org
+Received: from honk.sigxcpu.org ([127.0.0.1])
+        by localhost (honk.sigxcpu.org [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id GYBZvfl4xjlP; Thu, 20 Jun 2019 21:42:38 +0200 (CEST)
+Received: by bogon.sigxcpu.org (Postfix, from userid 1000)
+        id 24BA247322; Thu, 20 Jun 2019 21:42:38 +0200 (CEST)
+From:   =?UTF-8?q?Guido=20G=C3=BCnther?= <agx@sigxcpu.org>
+To:     Kishon Vijay Abraham I <kishon@ti.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Thierry Reding <treding@nvidia.com>,
+        =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Johan Hovold <johan@kernel.org>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Abel Vesa <abel.vesa@nxp.com>, Li Jun <jun.li@nxp.com>,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        dri-devel@lists.freedesktop.org,
+        Robert Chiras <robert.chiras@nxp.com>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>
+Subject: [PATCH v12 0/2] Mixel MIPI DPHY support for NXPs i.MX8 SOCs
+Date:   Thu, 20 Jun 2019 21:42:35 +0200
+Message-Id: <cover.1561059476.git.agx@sigxcpu.org>
+X-Mailer: git-send-email 2.20.1
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kyle Meyer <kyle.meyer@hpe.com>
+This adds initial support for the Mixel IP based mipi dphy as found on i.MX8
+processors.  It has support for the i.MX8MQ, support for other variants can be
+added - once the platform specific parts are in - via the provided devdata.
+The driver is somewhat based on what's found in NXPs BSP.
 
-Attempting to profile 1024 or more CPUs with perf causes two errors:
+Public documentation on the DPHY's registers is currently thin in the i.MX8
+reference manuals (even on the i.MX8QXP form 11/18) so most of the values were
+taken from existing drivers. Newer NXP drivers have a bit more details so where
+possible the timings are calculated and validated.
 
-perf record -a
-[ perf record: Woken up X times to write data ]
-way too many cpu caches..
-[ perf record: Captured and wrote X MB perf.data (X samples) ]
+This was tested with the an initial version of a NWL MIPI DSI host
+controller driver
 
-perf report -C 1024
-Error: failed to set  cpu bitmap
-Requested CPU 1024 too large. Consider raising MAX_NR_CPUS
+    https://lists.freedesktop.org/archives/dri-devel/2019-March/209685.html
 
-Increasing MAX_NR_CPUS from 1024 to 2048 and redefining MAX_CACHES as
-MAX_NR_CPUS * 4 returns normal functionality to perf:
+and a forward ported DCSS driver on linux-next 20190617.
 
-perf record -a
-[ perf record: Woken up X times to write data ]
-[ perf record: Captured and wrote X MB perf.data (X samples) ]
+Robert Chiras (the author of the corresponding driver in NXPs vendor
+tree) got this driver to work in his tree as well using mxsfb:
 
-perf report -C 1024
-...
+    https://www.spinics.net/lists/arm-kernel/msg711950.html
 
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: Kyle Meyer <kyle.meyer@hpe.com>
----
- samples/bpf/map_perf_test_kern.c | 2 +-
- samples/bpf/map_perf_test_user.c | 2 +-
- tools/perf/perf.h                | 2 +-
- tools/perf/util/header.c         | 2 +-
- 4 files changed, 4 insertions(+), 4 deletions(-)
+Changes form v11
+* as per review comments from Kishon Vijay Abraham I
+  * Use a single line debug message to not trip up check patch
 
-diff --git a/samples/bpf/map_perf_test_kern.c b/samples/bpf/map_perf_test_kern.c
-index 2b2ffb97018b..342738a1e386 100644
---- a/samples/bpf/map_perf_test_kern.c
-+++ b/samples/bpf/map_perf_test_kern.c
-@@ -11,7 +11,7 @@
- #include "bpf_helpers.h"
- 
- #define MAX_ENTRIES 1000
--#define MAX_NR_CPUS 1024
-+#define MAX_NR_CPUS 2048
- 
- struct bpf_map_def SEC("maps") hash_map = {
- 	.type = BPF_MAP_TYPE_HASH,
-diff --git a/samples/bpf/map_perf_test_user.c b/samples/bpf/map_perf_test_user.c
-index fe5564bff39b..da3c101ca776 100644
---- a/samples/bpf/map_perf_test_user.c
-+++ b/samples/bpf/map_perf_test_user.c
-@@ -22,7 +22,7 @@
- #include "bpf_load.h"
- 
- #define TEST_BIT(t) (1U << (t))
--#define MAX_NR_CPUS 1024
-+#define MAX_NR_CPUS 2048
- 
- static __u64 time_get_ns(void)
- {
-diff --git a/tools/perf/perf.h b/tools/perf/perf.h
-index 711e009381ec..74d0124d38f3 100644
---- a/tools/perf/perf.h
-+++ b/tools/perf/perf.h
-@@ -26,7 +26,7 @@ static inline unsigned long long rdclock(void)
- }
- 
- #ifndef MAX_NR_CPUS
--#define MAX_NR_CPUS			1024
-+#define MAX_NR_CPUS			2048
- #endif
- 
- extern const char *input_name;
-diff --git a/tools/perf/util/header.c b/tools/perf/util/header.c
-index 06ddb6618ef3..abc9c2145efe 100644
---- a/tools/perf/util/header.c
-+++ b/tools/perf/util/header.c
-@@ -1121,7 +1121,7 @@ static int build_caches(struct cpu_cache_level caches[], u32 size, u32 *cntp)
- 	return 0;
- }
- 
--#define MAX_CACHES 2000
-+#define MAX_CACHES (MAX_NR_CPUS * 4)
- 
- static int write_cache(struct feat_fd *ff,
- 		       struct perf_evlist *evlist __maybe_unused)
+Changes from v10
+* Collect Reviewed-by: from Fabio Estevam
+* Collect Reviewed-by: from Sam Ravnborg
+* As per review comments from Sam Ravnborg
+  * Terminate all dev_{dbg,err} with '\n'
+  * Add more whitespace to CM/CN/CO macros
+  * Drop another non-ascii symbol in a debug message
+
+Changes from v9
+* As per review comments from Fabio Estevam
+  * Sort includes alphabetically
+  * Remove excessive new lines between functions
+  * Drop error message on devm_ioremap_resource, handled by
+    the core already.
+  * Don't default to it on i.MX8
+* As per review comments from Sam Ravnborg
+  * Use clearer variablenames:
+       struct regmap *regs -> regmap
+       void __iomem *regs -> base
+  * Use u32 for all parameters of get_best_ratio()
+  * Don't use non-ascii symbols in debug message
+  * Change MODULE_LICENSE to GPL
+* As per review comment from Andreas Färber
+  * Change co-authored-by: to co-developed-by:
+* Collect Signed-off-by from Robert Chiras
+
+Changes from v8
+* Collect Reviewed-by from Rob Herring
+* Fix {hs,clk}_prepare vs {hs,clk}_zero debug print out
+
+Changes from v7
+* As per review comments from Rob Herring
+  * Use fsl, as vendor prefix
+  * Drop changes to vendor-prefixes.txt due to that
+  * Shorten mixel_dphy to dphy in the example
+* Fix an indentation error noticed by checkpatch that got introduced in v6
+* Use lowercase letters in hex addresses in DT bindings example
+
+Changes from v6
+* Depend on HAS_IOMEM (fixes a build problem on UM spotted by kbuild)
+
+Changes from v5
+* Fix build problems on mips (spotted by the kbuild test robot) by using u32
+  consistently and long long for lp_t.
+
+Changes from v4
+* Build by default on ARCH_MXC && ARM64
+
+Changes form v3
+* Check correct variable after devm_ioremap_resource
+* Add Robert Chiras as Co-authored-by since he's the author
+  of the driver in NXPs BSP.
+
+Changes from v2
+* As per review comments from Fabio Estevam
+  * KConfig: select REGMAP_MMIO
+  * Drop phy_read
+  * Don't make phy_write inline
+  * Remove duplicate debugging output
+  * Comment style and typo fixes
+  * Add #defines's for PLL lock timing values
+  * Return correct error value when PLL fails to lock
+  * Check error when enabling clock
+  * Use devm_ioremap_resource
+* As per review comments from Robert Chiras
+  * Deassert PD_DPHY after PLL lock (as per mixel ref manual)
+  * Assert PD_{DPHY,PLL} before power on (as per mixel ref manual)manual
+* Add exit phy_op to reset CN/CM/CO
+
+Changes from v1
+* As per review comments from Fabio Estevam
+  * Kconfig: tristate mixel dphy support.
+  * Drop unused 'ret' in mixel_dphy_ref_power_off.
+  * Match values of DPHY_RXL{PRP,DRP} to those of
+    https://source.codeaurora.org/external/imx/linux-imx/log/?h=imx_4.14.78_1.0.0_ga
+    The previous values were based on 4.9.
+  * Use resource size on devm_ioremap, we have that in dt already.
+  * Use regmap so it's simple to dump the registers.
+  * Use regmap_read_poll_timeout instead of open coded loop.
+  * Add undocumented rxhs_settle register
+* As per review comments from Sam Ravnborg
+  * Move driver to d/phy/freescale/
+  * Move SPDX-License-Identifier to top of file.
+  * Drop '/* #define DEBUG 1 */'.
+  * Use GPL-2.0+ since the vendor driver uses that as well.
+  * Drop the mutex, register access is now protected by regmap.
+  * Fix various style / indentation issues.
+* Check for register read, write and ioremap errors
+* Improve phy timing calculations
+  * Use LP clock rate where sensible, check for errors
+  * Use ad hoc forumulas for timings involving hs clock
+* Switch from dphy_ops to devdata. Other i.MX8 variants
+  differ in register layout too
+* Add Mixel Inc to vendor-prefixes.txt
+
+To: Kishon Vijay Abraham I <kishon@ti.com>,Rob Herring <robh+dt@kernel.org>,Mark Rutland <mark.rutland@arm.com>,Shawn Guo <shawnguo@kernel.org>,Sascha Hauer <s.hauer@pengutronix.de>,Pengutronix Kernel Team <kernel@pengutronix.de>,Fabio Estevam <festevam@gmail.com>,NXP Linux Team <linux-imx@nxp.com>,Thierry Reding <treding@nvidia.com>,"Andreas Färber" <afaerber@suse.de>,Martin Blumenstingl <martin.blumenstingl@googlemail.com>,Heiko Stuebner <heiko@sntech.de>,Johan Hovold <johan@kernel.org>,Lucas Stach <l.stach@pengutronix.de>,Abel Vesa <abel.vesa@nxp.com>,Li Jun <jun.li@nxp.com>,linux-kernel@vger.kernel.org,devicetree@vger.kernel.org,linux-arm-kernel@lists.infradead.org,dri-devel@lists.freedesktop.org,Robert Chiras <robert.chiras@nxp.com>,Sam Ravnborg <sam@ravnborg.org>,Maxime Ripard <maxime.ripard@bootlin.com>
+
+
+Guido Günther (2):
+  dt-bindings: phy: Add documentation for mixel dphy
+  phy: Add driver for mixel mipi dphy found on NXP's i.MX8 SoCs
+
+ .../bindings/phy/mixel,mipi-dsi-phy.txt       |  29 +
+ drivers/phy/freescale/Kconfig                 |  10 +
+ drivers/phy/freescale/Makefile                |   1 +
+ .../phy/freescale/phy-fsl-imx8-mipi-dphy.c    | 497 ++++++++++++++++++
+ 4 files changed, 537 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/phy/mixel,mipi-dsi-phy.txt
+ create mode 100644 drivers/phy/freescale/phy-fsl-imx8-mipi-dphy.c
+
 -- 
-2.12.3
+2.20.1
 
