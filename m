@@ -2,81 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3809F4C713
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 08:04:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A5E0B4C71F
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 08:07:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726282AbfFTGE3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 02:04:29 -0400
-Received: from verein.lst.de ([213.95.11.211]:57839 "EHLO newverein.lst.de"
+        id S1730449AbfFTGHk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 02:07:40 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:55126 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725871AbfFTGE2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 02:04:28 -0400
-Received: by newverein.lst.de (Postfix, from userid 2407)
-        id E2B3368BFE; Thu, 20 Jun 2019 08:03:55 +0200 (CEST)
-Date:   Thu, 20 Jun 2019 08:03:54 +0200
-From:   Christoph Hellwig <hch@lst.de>
-To:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Alexey Kardashevskiy <aik@ozlabs.ru>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/4] powerpc/powernv: remove dead NPU DMA code
-Message-ID: <20190620060354.GA20279@lst.de>
-References: <20190523074924.19659-1-hch@lst.de> <20190523074924.19659-4-hch@lst.de> <db502ec4-2e8f-fbc3-9db2-3fe98464a62c@ozlabs.ru> <20190619072837.GA6858@lst.de> <b0ce7d72-5de7-63d3-cb4e-ea78342cb3fa@ozlabs.ru>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <b0ce7d72-5de7-63d3-cb4e-ea78342cb3fa@ozlabs.ru>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+        id S1726583AbfFTGHh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Jun 2019 02:07:37 -0400
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 06BA4300194A;
+        Thu, 20 Jun 2019 06:07:30 +0000 (UTC)
+Received: from sirius.home.kraxel.org (ovpn-116-212.ams2.redhat.com [10.36.116.212])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 856FF6012D;
+        Thu, 20 Jun 2019 06:07:27 +0000 (UTC)
+Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
+        id 46CAB1750C; Thu, 20 Jun 2019 08:07:26 +0200 (CEST)
+From:   Gerd Hoffmann <kraxel@redhat.com>
+To:     dri-devel@lists.freedesktop.org
+Cc:     Gerd Hoffmann <kraxel@redhat.com>, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        virtualization@lists.linux-foundation.org (open list:VIRTIO GPU DRIVER),
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v4 01/12] drm/virtio: pass gem reservation object to ttm init
+Date:   Thu, 20 Jun 2019 08:07:15 +0200
+Message-Id: <20190620060726.926-2-kraxel@redhat.com>
+In-Reply-To: <20190620060726.926-1-kraxel@redhat.com>
+References: <20190620060726.926-1-kraxel@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Thu, 20 Jun 2019 06:07:37 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+With this gem and ttm will use the same reservation object,
+so mixing and matching ttm / gem reservation helpers should
+work fine.
 
-this goes back to the discussion at last years kernel summit, where
-we had the discussion on removing code never used by any in-kernel
-user an no prospects of one.  The IBM folks are unfortunately still
-dragging their feet on the powerpc side.  Can we revise this discussion?
+Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+---
+ drivers/gpu/drm/virtio/virtgpu_object.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-The use case here is a IBM specific bus for which they only have an
-out of tree driver that their partner doesn't want to submit for mainline,
-but keep insisting on keeping the code around (which is also built
-uncondіtionally for the platform).
+diff --git a/drivers/gpu/drm/virtio/virtgpu_object.c b/drivers/gpu/drm/virtio/virtgpu_object.c
+index b2da31310d24..242766d644a7 100644
+--- a/drivers/gpu/drm/virtio/virtgpu_object.c
++++ b/drivers/gpu/drm/virtio/virtgpu_object.c
+@@ -132,7 +132,8 @@ int virtio_gpu_object_create(struct virtio_gpu_device *vgdev,
+ 	virtio_gpu_init_ttm_placement(bo);
+ 	ret = ttm_bo_init(&vgdev->mman.bdev, &bo->tbo, params->size,
+ 			  ttm_bo_type_device, &bo->placement, 0,
+-			  true, acc_size, NULL, NULL,
++			  true, acc_size, NULL,
++			  bo->gem_base.resv,
+ 			  &virtio_gpu_ttm_bo_destroy);
+ 	/* ttm_bo_init failure will call the destroy */
+ 	if (ret != 0)
+-- 
+2.18.1
 
-I hope we had settled that argument back then, but it seems like Big
-Blue insists they are special.
-
-On Thu, Jun 20, 2019 at 11:45:42AM +1000, Alexey Kardashevskiy wrote:
-> 
-> 
-> On 19/06/2019 17:28, Christoph Hellwig wrote:
-> > On Wed, Jun 19, 2019 at 10:34:54AM +1000, Alexey Kardashevskiy wrote:
-> >>
-> >>
-> >> On 23/05/2019 17:49, Christoph Hellwig wrote:
-> >>> None of these routines were ever used since they were added to the
-> >>> kernel.
-> >>
-> >>
-> >> It is still being used exactly in the way as it was explained before in
-> >> previous respins. Thanks.
-> > 
-> > Please point to the in-kernel user, because that is the only relevant
-> > one.  This is not just my opinion but we had a clear discussion on that
-> > at least years kernel summit.
-> 
-> 
-> There is no in-kernel user which still does not mean that the code is
-> dead. If it is irrelevant - put this to the commit log instead of saying
-> it is dead; also if there was a clear outcome from that discussion, then
-> please point me to that, I do not get to attend these discussions. Thanks,
-> 
-> 
-> -- 
-> Alexey
----end quoted text---
