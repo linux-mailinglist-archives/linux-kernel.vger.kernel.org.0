@@ -2,235 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 849714DB7F
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 22:41:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A9AE04DB5C
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 22:38:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726194AbfFTUlC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 16:41:02 -0400
-Received: from mga04.intel.com ([192.55.52.120]:28566 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726099AbfFTUk6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 16:40:58 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Jun 2019 13:40:57 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.63,398,1557212400"; 
-   d="scan'208";a="311788164"
-Received: from skuppusw-desk.jf.intel.com ([10.54.74.33])
-  by orsmga004.jf.intel.com with ESMTP; 20 Jun 2019 13:40:56 -0700
-From:   sathyanarayanan.kuppuswamy@linux.intel.com
-To:     bhelgaas@google.com
-Cc:     linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ashok.raj@intel.com, keith.busch@intel.com,
-        sathyanarayanan.kuppuswamy@linux.intel.com
-Subject: [PATCH v3 3/7] PCI/ATS: Initialize PASID in pci_ats_init()
-Date:   Thu, 20 Jun 2019 13:38:44 -0700
-Message-Id: <164c2d7c66172acaa8b53f4376e1c2abc9a0ca29.1561061640.git.sathyanarayanan.kuppuswamy@linux.intel.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <cover.1561061640.git.sathyanarayanan.kuppuswamy@linux.intel.com>
-References: <cover.1561061640.git.sathyanarayanan.kuppuswamy@linux.intel.com>
+        id S1726121AbfFTUiu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 16:38:50 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:45363 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725815AbfFTUiu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Jun 2019 16:38:50 -0400
+Received: by mail-ed1-f66.google.com with SMTP id a14so6495523edv.12
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2019 13:38:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=3NNpxQC9inEMdQiCtKdevzqLpK6p/o11oFFffa2tXtA=;
+        b=drTB1igfYgyVGqDFahZ5NCLWxeC+zgZym5tNhHU9P8EVSYWsif8ATO7pGEP+d9b4jh
+         JAOnze86pJuhlaTw0qlD/nW6rmrmbt2IBo7iigDcsRG6wUQWA25EcHINzbbeiMWc6kbv
+         TIuJ7KJQbLsp195+3AwE47Er77voagXXJT1rsAjFejlw31omdfGinBG6DPOUaGItFu+D
+         ys8HdSTj7s+FDlec/VPr03RWlEH28OKXZuN5/b58TkSNoU+KY/KedGOeatIk/zPPPXh0
+         /tB97o72J1eTHRzAcS1bmSx1VBukLqxVclGb2OyRv47B3yeHVfSUQUjUoYCoslao1nwy
+         iMOw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=3NNpxQC9inEMdQiCtKdevzqLpK6p/o11oFFffa2tXtA=;
+        b=Xv+x6F6WxapgwKqTgv1wIW7DFHARCHFFpIvvaVqA2BVdK+sTFKN8gD5UlFRlIV+FW3
+         EfQaulFSHDCzha7UQPRLuEGVYaGFbPwvI6PwMyKF3F1Vs3MU0VHpKMUzAqaNNddBGzEc
+         +v7qkmSaIMeSjwUzfEiF0uBAm768g9TIcA+5u4gusN9vGL0NZSL/1Pei1uy9BiFpJkeW
+         2mWPgOICH68O5hZlng9BdQscc0eWx3FyhcZ+KfG3XeXPWYnVtCd8xwjlrtbQf+y9TCNC
+         8yufn50sRgwf8REAvt7Dj3wc73L2bYtvzfTX33vazkv985ziuk9Xnny96DW+gfkM+ZRN
+         5qyA==
+X-Gm-Message-State: APjAAAUud7mQsjIOfKgXv2/RFTxtg3UV+5Nc6NCU6JVW9ABPhOj5tfCB
+        +ZyW2yJcbewCvn7IERSRZr9PmleRPeMOdQ==
+X-Google-Smtp-Source: APXvYqyFv7TcKmDYh6aGGxLZIuOvRIKKOd88Mr+MJzIGjGqg4v29rEZylk+bGGm4BsLzINtBP1v0qQ==
+X-Received: by 2002:a17:906:3385:: with SMTP id v5mr112020844eja.301.1561063128315;
+        Thu, 20 Jun 2019 13:38:48 -0700 (PDT)
+Received: from archlinux-epyc ([2a01:4f9:2b:2b15::2])
+        by smtp.gmail.com with ESMTPSA id g6sm69844ejb.18.2019.06.20.13.38.47
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Thu, 20 Jun 2019 13:38:47 -0700 (PDT)
+Date:   Thu, 20 Jun 2019 13:38:45 -0700
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     Nick Desaulniers <ndesaulniers@google.com>
+Cc:     Doug Anderson <dianders@google.com>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Tom Roeder <tmroeder@google.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Raul E Rangel <rrangel@chromium.org>,
+        Tom Hughes <tomhughes@chromium.org>,
+        Ryan Case <ryandcase@chromium.org>, Yu Liu <yudiliu@google.com>
+Subject: Re: [PATCH] gen_compile_command: Add support for separate
+ KBUILD_OUTPUT directory
+Message-ID: <20190620203845.GA102280@archlinux-epyc>
+References: <20190620184523.155756-1-mka@chromium.org>
+ <CAKwvOdn-o9UszRW+MQ9Z0Ds9B2wSVBWUsPBPSF0S2DYxVFYpqA@mail.gmail.com>
+ <CAD=FV=WcH=dVeVWznO7Ti5A8HBDRM=rPvvH=-XJ2o1PKXvHAQw@mail.gmail.com>
+ <CAKwvOd=twuZAAyKsBRSeJEFuQZGdyTw+=JAwmJugUhV+bppdtg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKwvOd=twuZAAyKsBRSeJEFuQZGdyTw+=JAwmJugUhV+bppdtg@mail.gmail.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+On Thu, Jun 20, 2019 at 01:25:36PM -0700, Nick Desaulniers wrote:
+> On Thu, Jun 20, 2019 at 1:13 PM Doug Anderson <dianders@google.com> wrote:
+> > On Thu, Jun 20, 2019 at 12:53 PM Nick Desaulniers
+> > <ndesaulniers@google.com> wrote:
+> > >
+> > > I do miss Doug's Kbuild caching patches' speedup.
+> >
+> > You actually get quite a bit of this by grabbing a new version of
+> > ccache (assuming you use ccache).  :-P  You still have to pay the
+> > penalty (twice) for all the options that are tested that the compiler
+> > _doesn't_ support, but at least you get the cache for the commands
+> > that the compiler does support.
+> 
+> Hello darkness my old friend:
+> https://nickdesaulniers.github.io/blog/2018/06/02/speeding-up-linux-kernel-builds-with-ccache/
+> Man, that post has not aged well.  Here's what we do now:
+> https://github.com/ClangBuiltLinux/continuous-integration/blob/45ab5842a69cb0c72d27d34e73b0599ec2a0e2ed/driver.sh#L227-L245
+> 
+> > Specifically, make sure you have a ccache with:
+> >
+> >     * https://github.com/ccache/ccache/pull/365
+> >     * https://github.com/ccache/ccache/pull/370
+> 
+> Oh! Interesting finds and thanks for the pointers.  Did these make it
+> into a release version of ccache, yet? If so, do you know which
+> version?
+>
 
-Currently, PASID Capability checks are repeated across all PASID API's.
-Instead, cache the capability check result in pci_pasid_init() and use
-it in other PASID API's. Also, since PASID is a shared resource between
-PF/VF, initialize PASID features with default values in pci_pasid_init().
+It should be available in 3.7 if I am reading git history right.
 
-Signed-off-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
----
- drivers/pci/ats.c   | 76 ++++++++++++++++++++++++++++++++-------------
- include/linux/pci.h |  1 +
- 2 files changed, 56 insertions(+), 21 deletions(-)
+Cheers,
+Nathan
 
-diff --git a/drivers/pci/ats.c b/drivers/pci/ats.c
-index a14ab20f1c28..b5ce40c54e0b 100644
---- a/drivers/pci/ats.c
-+++ b/drivers/pci/ats.c
-@@ -50,6 +50,41 @@ static void pci_pri_init(struct pci_dev *pdev)
- }
- #endif
- 
-+#ifdef CONFIG_PCI_PASID
-+static void pci_pasid_init(struct pci_dev *pdev)
-+{
-+	u16 supported;
-+	int pos;
-+
-+	/*
-+	 * As per PCIe r4.0, sec 9.3.7.14, only PF is permitted to
-+	 * implement PASID Capability and all associated VFs can
-+	 * only use it. Since PF already initialized the PASID
-+	 * parameters there is no need to proceed further.
-+	 */
-+	if (pdev->is_virtfn)
-+		return;
-+
-+	pos = pci_find_ext_capability(pdev, PCI_EXT_CAP_ID_PASID);
-+	if (!pos)
-+		return;
-+
-+	pci_read_config_word(pdev, pos + PCI_PASID_CAP, &supported);
-+
-+	supported &= PCI_PASID_CAP_EXEC | PCI_PASID_CAP_PRIV;
-+
-+	/*
-+	 * Enable all supported features. Since PASID is a shared
-+	 * resource between PF/VF, we must not set this feature as
-+	 * a per device property in pci_enable_pasid().
-+	 */
-+	pci_write_config_word(pdev, pos + PCI_PASID_CTRL, supported);
-+
-+	pdev->pasid_features = supported;
-+	pdev->pasid_cap = pos;
-+}
-+#endif
-+
- void pci_ats_init(struct pci_dev *dev)
- {
- 	int pos;
-@@ -66,6 +101,9 @@ void pci_ats_init(struct pci_dev *dev)
- #ifdef CONFIG_PCI_PRI
- 	pci_pri_init(dev);
- #endif
-+#ifdef CONFIG_PCI_PASID
-+	pci_pasid_init(dev);
-+#endif
- }
- 
- /**
-@@ -326,11 +364,13 @@ EXPORT_SYMBOL_GPL(pci_reset_pri);
-  * Returns 0 on success, negative value on error. This function checks
-  * whether the features are actually supported by the device and returns
-  * an error if not.
-+ *
-+ * TODO: Since PASID is a shared resource between PF/VF, don't update
-+ * PASID features in the same API as a per device feature.
-  */
- int pci_enable_pasid(struct pci_dev *pdev, int features)
- {
- 	u16 control, supported;
--	int pos;
- 
- 	if (WARN_ON(pdev->pasid_enabled))
- 		return -EBUSY;
-@@ -338,11 +378,11 @@ int pci_enable_pasid(struct pci_dev *pdev, int features)
- 	if (!pdev->eetlp_prefix_path)
- 		return -EINVAL;
- 
--	pos = pci_find_ext_capability(pdev, PCI_EXT_CAP_ID_PASID);
--	if (!pos)
-+	if (!pdev->pasid_cap)
- 		return -EINVAL;
- 
--	pci_read_config_word(pdev, pos + PCI_PASID_CAP, &supported);
-+	pci_read_config_word(pdev, pdev->pasid_cap + PCI_PASID_CAP,
-+			     &supported);
- 	supported &= PCI_PASID_CAP_EXEC | PCI_PASID_CAP_PRIV;
- 
- 	/* User wants to enable anything unsupported? */
-@@ -352,7 +392,7 @@ int pci_enable_pasid(struct pci_dev *pdev, int features)
- 	control = PCI_PASID_CTRL_ENABLE | features;
- 	pdev->pasid_features = features;
- 
--	pci_write_config_word(pdev, pos + PCI_PASID_CTRL, control);
-+	pci_write_config_word(pdev, pdev->pasid_cap + PCI_PASID_CTRL, control);
- 
- 	pdev->pasid_enabled = 1;
- 
-@@ -367,16 +407,14 @@ EXPORT_SYMBOL_GPL(pci_enable_pasid);
- void pci_disable_pasid(struct pci_dev *pdev)
- {
- 	u16 control = 0;
--	int pos;
- 
- 	if (WARN_ON(!pdev->pasid_enabled))
- 		return;
- 
--	pos = pci_find_ext_capability(pdev, PCI_EXT_CAP_ID_PASID);
--	if (!pos)
-+	if (!pdev->pasid_cap)
- 		return;
- 
--	pci_write_config_word(pdev, pos + PCI_PASID_CTRL, control);
-+	pci_write_config_word(pdev, pdev->pasid_cap + PCI_PASID_CTRL, control);
- 
- 	pdev->pasid_enabled = 0;
- }
-@@ -389,17 +427,15 @@ EXPORT_SYMBOL_GPL(pci_disable_pasid);
- void pci_restore_pasid_state(struct pci_dev *pdev)
- {
- 	u16 control;
--	int pos;
- 
- 	if (!pdev->pasid_enabled)
- 		return;
- 
--	pos = pci_find_ext_capability(pdev, PCI_EXT_CAP_ID_PASID);
--	if (!pos)
-+	if (!pdev->pasid_cap)
- 		return;
- 
- 	control = PCI_PASID_CTRL_ENABLE | pdev->pasid_features;
--	pci_write_config_word(pdev, pos + PCI_PASID_CTRL, control);
-+	pci_write_config_word(pdev, pdev->pasid_cap + PCI_PASID_CTRL, control);
- }
- EXPORT_SYMBOL_GPL(pci_restore_pasid_state);
- 
-@@ -416,13 +452,12 @@ EXPORT_SYMBOL_GPL(pci_restore_pasid_state);
- int pci_pasid_features(struct pci_dev *pdev)
- {
- 	u16 supported;
--	int pos;
- 
--	pos = pci_find_ext_capability(pdev, PCI_EXT_CAP_ID_PASID);
--	if (!pos)
-+	if (!pdev->pasid_cap)
- 		return -EINVAL;
- 
--	pci_read_config_word(pdev, pos + PCI_PASID_CAP, &supported);
-+	pci_read_config_word(pdev, pdev->pasid_cap + PCI_PASID_CAP,
-+			     &supported);
- 
- 	supported &= PCI_PASID_CAP_EXEC | PCI_PASID_CAP_PRIV;
- 
-@@ -472,13 +507,12 @@ EXPORT_SYMBOL_GPL(pci_prg_resp_pasid_required);
- int pci_max_pasids(struct pci_dev *pdev)
- {
- 	u16 supported;
--	int pos;
- 
--	pos = pci_find_ext_capability(pdev, PCI_EXT_CAP_ID_PASID);
--	if (!pos)
-+	if (!pdev->pasid_cap)
- 		return -EINVAL;
- 
--	pci_read_config_word(pdev, pos + PCI_PASID_CAP, &supported);
-+	pci_read_config_word(pdev, pdev->pasid_cap + PCI_PASID_CAP,
-+			     &supported);
- 
- 	supported = (supported & PASID_NUMBER_MASK) >> PASID_NUMBER_SHIFT;
- 
-diff --git a/include/linux/pci.h b/include/linux/pci.h
-index f3fe625bc8bb..b4010276dff6 100644
---- a/include/linux/pci.h
-+++ b/include/linux/pci.h
-@@ -456,6 +456,7 @@ struct pci_dev {
- 	u32		pri_reqs_alloc; /* Number of PRI requests allocated */
- #endif
- #ifdef CONFIG_PCI_PASID
-+	u16		pasid_cap;	/* PASID Capability offset */
- 	u16		pasid_features;
- #endif
- #ifdef CONFIG_PCI_P2PDMA
--- 
-2.21.0
-
+> > I still have it in my thoughts to avoid the penalty for options that
+> > the compiler doesn't support but haven't had time to work on it
+> > recently.
+> 
+> It had better not be autoconf! (Hopefully yet-to-be-written GNU C
+> extensions can support feature detection via C preprocessor)
+> -- 
+> Thanks,
+> ~Nick Desaulniers
