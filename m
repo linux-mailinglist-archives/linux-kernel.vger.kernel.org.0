@@ -2,14 +2,14 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 37A124D4DA
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 19:24:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CEA1B4D50A
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 19:25:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732397AbfFTRYT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 13:24:19 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:52604 "EHLO
+        id S1732257AbfFTRZU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 13:25:20 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:52574 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732175AbfFTRXT (ORCPT
+        with ESMTP id S1732155AbfFTRXT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 20 Jun 2019 13:23:19 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
@@ -18,26 +18,26 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From:
         Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=wEP/uGZbmvWdMQQ7lu7aU2Sw4lu0L8oVUgCmRRiaIis=; b=hYGfsqnERhERW74kuTKpp9dGDQ
-        idsqIvnqbQ2HPeOGcNBZLOjPftaE8Gwcdl438lmZWxfJpxkt8iYRtBngBVbmBlqjUSjsWp/dQhJtd
-        ee9PUG4S7g1GnHolIVGWRRQdcisjteczrPJfGLxNqgp8SnFqO0ZbBlNpqn7OnEZF//0zKWfRc7Vhc
-        nrdiz+VUllggL7n965C/tvo65s171yFy31OWozOPy4YgmvRUujCF6tMzmkMnlTCj+vJynIEo1AQzm
-        6NoNQsv+AuOhidkNC0KUnR2GXbS5MWgh8odBAmJ2LtClaurYDOqV4KMxTfqnbV36dD9Ig5VN3hBXz
-        NG41ur8w==;
+        bh=FociWLakoZ+8To2zv3/tt7eXrQHxKyGo8THcaHAtO7Q=; b=S8ZNtNr52BE4rZAEFXY58sn9rw
+        TNCKgArSvKnw1rvmONqPycw3LSgNbDU+YWO2mcvDBrD7Jp01rnFzx9IIrP0J5dzX9gw6TwqzMJxeu
+        Q35+1iiZ6PB5zG0gIgn0HMHcRYrXlvy345A7o6rpZHfsfu0BeVRLTa3/Is/rPQmZ4TrIFLXBviMGn
+        iyTLq+c/kWrRcdCQh8v0VIH235kdU93tUkcrjmWoEeCLIwcMerV3NSmWG1bDokT3CyHpAxGJYfPPp
+        JAtTvaaM3hM74HyoJMqnTFLgtteU0/JdskA6g0h+Jqw1BlSPwfSI+oXMnagEmzQY1PigqVzdcxSGS
+        1gbWNtTg==;
 Received: from [177.97.20.138] (helo=bombadil.infradead.org)
         by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1he0mM-0008S1-A8; Thu, 20 Jun 2019 17:23:18 +0000
+        id 1he0mM-0008Ru-AK; Thu, 20 Jun 2019 17:23:18 +0000
 Received: from mchehab by bombadil.infradead.org with local (Exim 4.92)
         (envelope-from <mchehab@bombadil.infradead.org>)
-        id 1he0mJ-0000Cw-LS; Thu, 20 Jun 2019 14:23:15 -0300
+        id 1he0mJ-0000D0-MH; Thu, 20 Jun 2019 14:23:15 -0300
 From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>
 Cc:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Mauro Carvalho Chehab <mchehab@infradead.org>,
         linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>
-Subject: [PATCH v2 05/22] scripts/get_abi.pl: avoid use literal blocks when not needed
-Date:   Thu, 20 Jun 2019 14:22:57 -0300
-Message-Id: <5964e0e4e93dc6582a8a1662116c015f07247a36.1561050806.git.mchehab+samsung@kernel.org>
+Subject: [PATCH v2 06/22] scripts/get_abi.pl: split label naming from xref logic
+Date:   Thu, 20 Jun 2019 14:22:58 -0300
+Message-Id: <a94701a22320efb500c016620996380cc2d4ae48.1561050806.git.mchehab+samsung@kernel.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <cover.1561050806.git.mchehab+samsung@kernel.org>
 References: <cover.1561050806.git.mchehab+samsung@kernel.org>
@@ -48,203 +48,179 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The usage of literal blocks make the document very complex,
-causing the browser to take a long time to load.
+Instead of using a ReST compilant label while parsing,
+move the label to ReST output. That makes the parsing logic
+more generic, allowing it to provide other types of output.
 
-On most ABI descriptions, they're a plain text, and don't
-require a literal block.
-
-So, add a logic there with identifies when a literal block
-is needed.
-
-As, on literal blocks, we need to respect the original
-document space, the most complex part of this patch is
-to preserve the original spacing where needed.
+As a side effect, now all files used to generate the output
+will be output. We can later add command line arguments to
+filter.
 
 Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 ---
- scripts/get_abi.pl | 104 +++++++++++++++++++++++++++++++++------------
- 1 file changed, 78 insertions(+), 26 deletions(-)
+ scripts/get_abi.pl | 94 ++++++++++++++++++++++++++--------------------
+ 1 file changed, 53 insertions(+), 41 deletions(-)
 
 diff --git a/scripts/get_abi.pl b/scripts/get_abi.pl
-index ef9b6e108973..0ede9593c639 100755
+index 0ede9593c639..f84d321a72bb 100755
 --- a/scripts/get_abi.pl
 +++ b/scripts/get_abi.pl
-@@ -59,29 +59,34 @@ sub parse_abi {
+@@ -49,17 +49,23 @@ sub parse_abi {
+ 	my $name = $file;
+ 	$name =~ s,.*/,,;
+ 
++	my $nametag = "File $name";
++	$data{$nametag}->{what} = "File $name";
++	$data{$nametag}->{type} = "File";
++	$data{$nametag}->{file} = $name;
++	$data{$nametag}->{is_file} = 1;
++
+ 	my $type = $file;
+ 	$type =~ s,.*/(.*)/.*,$1,;
+ 
+ 	my $what;
+ 	my $new_what;
+ 	my $tag;
+-	my $label;
  	my $ln;
- 	my $has_file;
+-	my $has_file;
  	my $xrefs;
-+	my $space;
+ 	my $space;
++	my @labels;
++	my $label;
  
  	print STDERR "Opening $file\n" if ($debug > 1);
  	open IN, $file;
- 	while(<IN>) {
- 		$ln++;
--		if (m/^(\S+):\s*(.*)/i) {
-+		if (m/^(\S+)(:\s*)(.*)/i) {
- 			my $new_tag = lc($1);
--			my $content = $2;
-+			my $sep = $2;
-+			my $content = $3;
+@@ -88,28 +94,13 @@ sub parse_abi {
+ 					parse_error($file, $ln, "What '$what' doesn't have a description", "") if ($what && !$data{$what}->{description});
  
- 			if (!($new_tag =~ m/(what|date|kernelversion|contact|description|users)/)) {
- 				if ($tag eq "description") {
--					$data{$what}->{$tag} .= "\n$content";
--					$data{$what}->{$tag} =~ s/\n+$//;
--					next;
-+					# New "tag" is actually part of
-+					# description. Don't consider it a tag
-+					$new_tag = "";
- 				} else {
- 					parse_error($file, $ln, "tag '$tag' is invalid", $_);
- 				}
- 			}
- 
- 			if ($new_tag =~ m/what/) {
-+				$space = "";
- 				if ($tag =~ m/what/) {
- 					$what .= ", " . $content;
- 				} else {
-+					parse_error($file, $ln, "What '$what' doesn't have a description", "") if ($what && !$data{$what}->{description});
-+
  					$what = $content;
++					$label = $content;
  					$new_what = 1;
  				}
-@@ -108,25 +113,38 @@ sub parse_abi {
++				push @labels, [($content, $label)];
+ 				$tag = $new_tag;
+ 
+-				if ($has_file) {
+-					$label = "abi_" . $content . " ";
+-					$label =~ tr/A-Z/a-z/;
+-
+-					# Convert special chars to "_"
+-					$label =~s/[\x00-\x2f]+/_/g;
+-					$label =~s/[\x3a-\x40]+/_/g;
+-					$label =~s/[\x7b-\xff]+/_/g;
+-					$label =~ s,_+,_,g;
+-					$label =~ s,_$,,;
+-
+-					$data{$what}->{label} .= $label;
+-
+-					# Escape special chars from content
+-					$content =~s/([\x00-\x1f\x21-\x2f\x3a-\x40\x7b-\xff])/\\$1/g;
+-
+-					$xrefs .= "- :ref:`$content <$label>`\n\n";
+-				}
++				push @{$data{$nametag}->{xrefs}}, [($content, $label)] if ($data{$nametag}->{what});
  				next;
  			}
  
--			$tag = $new_tag;
-+			if ($new_tag) {
-+				$tag = $new_tag;
+@@ -117,6 +108,9 @@ sub parse_abi {
+ 				$tag = $new_tag;
  
--			if ($new_what) {
--				$new_what = 0;
-+				if ($new_what) {
-+					$new_what = 0;
+ 				if ($new_what) {
++					@{$data{$what}->{label}} = @labels if ($data{$nametag}->{what});
++					@labels = ();
++					$label = "";
+ 					$new_what = 0;
  
--				$data{$what}->{type} = $type;
--				$data{$what}->{file} = $name;
--				print STDERR "\twhat: $what\n" if ($debug > 1);
--			}
-+					$data{$what}->{type} = $type;
-+					$data{$what}->{file} = $name;
-+					print STDERR "\twhat: $what\n" if ($debug > 1);
-+				}
- 
--			if (!$what) {
--				parse_error($file, $ln, "'What:' should come first:", $_);
-+				if (!$what) {
-+					parse_error($file, $ln, "'What:' should come first:", $_);
-+					next;
-+				}
-+				if ($tag eq "description") {
-+					next if ($content =~ m/^\s*$/);
-+					if ($content =~ m/^(\s*)(.*)/) {
-+						my $new_content = $2;
-+						$space = $new_tag . $sep . $1;
-+						while ($space =~ s/\t+/' ' x (length($&) * 8 - length($`) % 8)/e) {}
-+						$space =~ s/./ /g;
-+						$data{$what}->{$tag} .= "$new_content\n";
-+					}
-+				} else {
-+					$data{$what}->{$tag} = $content;
-+				}
- 				next;
- 			}
--			$data{$what}->{$tag} = $content;
--			next;
+ 					$data{$what}->{type} = $type;
+@@ -145,15 +139,8 @@ sub parse_abi {
  		}
  
--		# Store any contents before the database
-+		# Store any contents before tags at the database
- 		if (!$tag) {
- 			next if (/^\n/);
- 
-@@ -139,6 +157,32 @@ sub parse_abi {
+ 		# Store any contents before tags at the database
+-		if (!$tag) {
+-			next if (/^\n/);
+-
+-			my $my_what = "File $name";
+-			$data{$my_what}->{what} = "File $name";
+-			$data{$my_what}->{type} = "File";
+-			$data{$my_what}->{file} = $name;
+-			$data{$my_what}->{description} .= $_;
+-			$has_file = 1;
++		if (!$tag && $data{$nametag}->{what}) {
++			$data{$nametag}->{description} .= $_;
  			next;
  		}
  
-+		if ($tag eq "description") {
-+			if (!$data{$what}->{description}) {
-+				next if (m/^\s*\n/);
-+				if (m/^(\s*)(.*)/) {
-+					$space = $1;
-+					while ($space =~ s/\t+/' ' x (length($&) * 8 - length($`) % 8)/e) {}
-+					$data{$what}->{$tag} .= "$2\n";
-+				}
-+			} else {
-+				my $content = $_;
-+				if (m/^\s*\n/) {
-+					$data{$what}->{$tag} .= $content;
-+					next;
-+				}
-+
-+				while ($content =~ s/\t+/' ' x (length($&) * 8 - length($`) % 8)/e) {}
-+				$space = "" if (!($content =~ s/^($space)//));
-+
-+				# Compress spaces with tabs
-+				$content =~ s<^ {8}> <\t>;
-+				$content =~ s<^ {1,7}\t> <\t>;
-+				$content =~ s< {1,7}\t> <\t>;
-+				$data{$what}->{$tag} .= $content;
-+			}
-+			next;
-+		}
- 		if (m/^\s*(.*)/) {
- 			$data{$what}->{$tag} .= "\n$1";
- 			$data{$what}->{$tag} =~ s/\n+$//;
-@@ -165,6 +209,9 @@ sub output_rest {
- 		my $w = $what;
- 		$w =~ s/([\(\)\_\-\*\=\^\~\\])/\\$1/g;
+@@ -192,12 +179,8 @@ sub parse_abi {
+ 		# Everything else is error
+ 		parse_error($file, $ln, "Unexpected line:", $_);
+ 	}
++	$data{$nametag}->{description} =~ s/^\n+//;
+ 	close IN;
+-
+-	if ($has_file) {
+-		my $my_what = "File $name";
+-		$data{$my_what}->{xrefs} = $xrefs;
+-	}
+ }
  
-+		my $bar = $w;
-+		$bar =~ s/./-/g;
+ # Outputs the output on ReST format
+@@ -212,11 +195,22 @@ sub output_rest {
+ 		my $bar = $w;
+ 		$bar =~ s/./-/g;
+ 
+-		if ($data{$what}->{label}) {
+-			my @labels = split(/\s/, $data{$what}->{label});
+-			foreach my $label (@labels) {
+-				printf ".. _%s:\n\n", $label;
+-			}
++		foreach my $p (@{$data{$what}->{label}}) {
++			my ($content, $label) = @{$p};
++			$label = "abi_" . $label . " ";
++			$label =~ tr/A-Z/a-z/;
 +
- 		if ($data{$what}->{label}) {
- 			my @labels = split(/\s/, $data{$what}->{label});
- 			foreach my $label (@labels) {
-@@ -172,10 +219,9 @@ sub output_rest {
++			# Convert special chars to "_"
++			$label =~s/([\x00-\x2f\x3a-\x40\x5b-\x60\x7b-\xff])/_/g;
++			$label =~ s,_+,_,g;
++			$label =~ s,_$,,;
++
++			$data{$what}->{label} .= $label;
++
++			printf ".. _%s:\n\n", $label;
++
++			# only one label is enough
++			last;
+ 		}
+ 
+ 		print "$w\n$bar\n\n";
+@@ -243,10 +237,28 @@ sub output_rest {
+ 				print "$desc\n\n";
  			}
- 		}
- 
--		print "$w\n\n";
-+		print "$w\n$bar\n\n";
- 
- 		print "- defined on file $file (type: $type)\n\n" if ($type ne "File");
--		print "::\n\n";
- 
- 		my $desc = $data{$what}->{description};
- 		$desc =~ s/^\s+//;
-@@ -183,18 +229,24 @@ sub output_rest {
- 		# Remove title markups from the description, as they won't work
- 		$desc =~ s/\n[\-\*\=\^\~]+\n/\n/g;
- 
--		# put everything inside a code block
--		$desc =~ s/\n/\n /g;
--
--
- 		if (!($desc =~ /^\s*$/)) {
--			print " $desc\n\n";
-+			if ($desc =~ m/\:\n/ || $desc =~ m/\n[\t ]+/  || $desc =~ m/[\x00-\x08\x0b-\x1f\x7b-\xff]/) {
-+				# put everything inside a code block
-+				$desc =~ s/\n/\n /g;
-+
-+				print "::\n\n";
-+				print " $desc\n\n";
-+			} else {
-+				# Escape any special chars from description
-+				$desc =~s/([\x00-\x08\x0b-\x1f\x21-\x2a\x2d\x2f\x3c-\x40\x5c\x5e-\x60\x7b-\xff])/\\$1/g;
-+
-+				print "$desc\n\n";
-+			}
  		} else {
--			print " DESCRIPTION MISSING for $what\n\n";
-+			print "DESCRIPTION MISSING for $what\n\n";
+-			print "DESCRIPTION MISSING for $what\n\n";
++			print "DESCRIPTION MISSING for $what\n\n" if (!$data{$what}->{is_file});
  		}
  
- 		printf "Has the following ABI:\n\n%s", $data{$what}->{xrefs} if ($data{$what}->{xrefs});
--
+-		printf "Has the following ABI:\n\n%s", $data{$what}->{xrefs} if ($data{$what}->{xrefs});
++		if ($data{$what}->{xrefs}) {
++			printf "Has the following ABI:\n\n";
++
++			foreach my $p(@{$data{$what}->{xrefs}}) {
++				my ($content, $label) = @{$p};
++				$label = "abi_" . $label . " ";
++				$label =~ tr/A-Z/a-z/;
++
++				# Convert special chars to "_"
++				$label =~s/([\x00-\x2f\x3a-\x40\x5b-\x60\x7b-\xff])/_/g;
++				$label =~ s,_+,_,g;
++				$label =~ s,_$,,;
++
++				# Escape special chars from content
++				$content =~s/([\x00-\x1f\x21-\x2f\x3a-\x40\x7b-\xff])/\\$1/g;
++
++				print "- :ref:`$content <$label>`\n\n";
++			}
++		}
  	}
  }
  
