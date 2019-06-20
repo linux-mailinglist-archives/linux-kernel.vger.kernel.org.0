@@ -2,175 +2,181 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B036F4CB5D
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 11:55:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 911984CB71
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 12:00:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730848AbfFTJz5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 05:55:57 -0400
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:42956 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726082AbfFTJz5 (ORCPT
+        id S1730991AbfFTKAJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 06:00:09 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:40235 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726175AbfFTKAJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 05:55:57 -0400
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x5K9tfj3111742;
-        Thu, 20 Jun 2019 04:55:41 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1561024541;
-        bh=gMzqG6E9O4i2YfBt81xekJ8pv03pPdWDJCxTqsWo7G0=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=NQ1so63dygklF44KpEHQFiJ65zCl0/AG3QG3xL6D2Q80yRU4yN1Xr7yF7OXemcQ/g
-         L/6fgj0DcUkGXq9jDqzNfvHqmJLecmfbVOYF2e0EhgDKIlQ/N3PvauhHr48h0H6+Um
-         6Erh7jeFw3aOiugZPDZqfCMIL+NMlwhgpUM63Nuk=
-Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x5K9tfcN086307
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 20 Jun 2019 04:55:41 -0500
-Received: from DLEE106.ent.ti.com (157.170.170.36) by DLEE103.ent.ti.com
- (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Thu, 20
- Jun 2019 04:55:41 -0500
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE106.ent.ti.com
- (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Thu, 20 Jun 2019 04:55:41 -0500
-Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id x5K9tciC018188;
-        Thu, 20 Jun 2019 04:55:38 -0500
-Subject: Re: [PATCH 09/16] dt-bindings: dma: ti: Add document for K3 UDMA
-To:     Rob Herring <robh@kernel.org>
-CC:     Vinod <vkoul@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        "open list:DMA GENERIC OFFLOAD ENGINE SUBSYSTEM" 
-        <dmaengine@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        Lokesh Vutla <lokeshvutla@ti.com>,
-        Tero Kristo <t-kristo@ti.com>, Tony Lindgren <tony@atomide.com>
-References: <20190506123456.6777-1-peter.ujfalusi@ti.com>
- <20190506123456.6777-10-peter.ujfalusi@ti.com> <20190613181626.GA7039@bogus>
- <e0d6a264-96b5-31a6-e70b-3b1c2d863988@ti.com>
- <CAL_JsqJNMkKL_FubZfjKY6jLebMetmgR24EoendHoPM2ckrUQA@mail.gmail.com>
- <e811d674-b79f-4da8-c632-c7a90844b6c5@ti.com>
- <CAL_JsqJTWNKTB1D2wNysonzasgL9awLLvr1HdOckUnQbpgsDQw@mail.gmail.com>
-From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
-Message-ID: <f7bb4e82-95ea-a043-e2b1-f429b16642ba@ti.com>
-Date:   Thu, 20 Jun 2019 12:56:16 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.1
+        Thu, 20 Jun 2019 06:00:09 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x5K9wH5f906576
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Thu, 20 Jun 2019 02:58:17 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x5K9wH5f906576
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019061801; t=1561024698;
+        bh=8gIP6uyAeZBecJEWAZebwYMMjCbnoUAO9/4qg9zM7es=;
+        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
+        b=Hk27VAAk61/B/X6uJaj0JwYWyfs1U0n1fwggOVdnnEWF3s6XJs1jtXRkF3EH6Ymw1
+         kRYMDmwmRtqg6aDcVdCrWoFrEnqXkjA7Kk+WE3EtEgukYGn3grCAzexKRtHm2Oo/SK
+         OC6iHr5e1n+ua0mGginBhN1Lfa2AOlHz6AMONvtdi9IuJHqSTCEg4917gETCrU6yhW
+         4wo7vo5aHv53/5nAKUA40UYXjLvP8sfDkVlhlGDVlUTD+5SOaVD5vFHRDqo1y9QEGl
+         RBiyoVBbogqLEWmqumSTGIyT7fP75zv9PvdCsJJ9QUV2OucRUKb5sK/aHu3fWbGN/m
+         pIEV2uXQoYt0w==
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x5K9wG4G906572;
+        Thu, 20 Jun 2019 02:58:16 -0700
+Date:   Thu, 20 Jun 2019 02:58:16 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Thomas Lendacky <tipbot@zytor.com>
+Message-ID: <tip-c603a309cc75f3dd018ddb20ee44c05047918cbf@git.kernel.org>
+Cc:     dave.hansen@intel.com, keescook@chromium.org,
+        ndesaulniers@google.com, luto@kernel.org, samitolvanen@google.com,
+        mingo@redhat.com, dyoung@redhat.com, x86@kernel.org,
+        Thomas.Lendacky@amd.com, hpa@zytor.com, brijesh.singh@amd.com,
+        okaya@codeaurora.org, jgross@suse.com,
+        linux-kernel@vger.kernel.org, mingo@kernel.org, lijiang@redhat.com,
+        rrichter@marvell.com, pasha.tatashin@oracle.com,
+        peterz@infradead.org, bp@suse.de, jroedel@suse.de, bhe@redhat.com,
+        tglx@linutronix.de, thomas.lendacky@amd.com
+Reply-To: jgross@suse.com, linux-kernel@vger.kernel.org,
+          brijesh.singh@amd.com, okaya@codeaurora.org, x86@kernel.org,
+          hpa@zytor.com, Thomas.Lendacky@amd.com, mingo@kernel.org,
+          lijiang@redhat.com, thomas.lendacky@amd.com, tglx@linutronix.de,
+          bhe@redhat.com, jroedel@suse.de, peterz@infradead.org,
+          bp@suse.de, rrichter@marvell.com, pasha.tatashin@oracle.com,
+          dave.hansen@intel.com, luto@kernel.org, ndesaulniers@google.com,
+          keescook@chromium.org, dyoung@redhat.com, mingo@redhat.com,
+          samitolvanen@google.com
+In-Reply-To: <7db7da45b435f8477f25e66f292631ff766a844c.1560969363.git.thomas.lendacky@amd.com>
+References: <7db7da45b435f8477f25e66f292631ff766a844c.1560969363.git.thomas.lendacky@amd.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/kdump] x86/mm: Identify the end of the kernel area to be
+ reserved
+Git-Commit-ID: c603a309cc75f3dd018ddb20ee44c05047918cbf
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-In-Reply-To: <CAL_JsqJTWNKTB1D2wNysonzasgL9awLLvr1HdOckUnQbpgsDQw@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
+X-Spam-Status: No, score=-1.2 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DATE_IN_FUTURE_06_12,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,
+        DKIM_VALID_EF autolearn=ham autolearn_force=no version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Commit-ID:  c603a309cc75f3dd018ddb20ee44c05047918cbf
+Gitweb:     https://git.kernel.org/tip/c603a309cc75f3dd018ddb20ee44c05047918cbf
+Author:     Thomas Lendacky <Thomas.Lendacky@amd.com>
+AuthorDate: Wed, 19 Jun 2019 18:40:57 +0000
+Committer:  Borislav Petkov <bp@suse.de>
+CommitDate: Thu, 20 Jun 2019 09:22:47 +0200
 
+x86/mm: Identify the end of the kernel area to be reserved
 
-On 19/06/2019 17.04, Rob Herring wrote:
-> On Fri, Jun 14, 2019 at 7:42 AM Peter Ujfalusi <peter.ujfalusi@ti.com> wrote:
->>
->>
->> On 14/06/2019 16.20, Rob Herring wrote:
->>> On Thu, Jun 13, 2019 at 2:33 PM Peter Ujfalusi <peter.ujfalusi@ti.com> wrote:
->>>>
->>>> Rob,
->>>>
->>>> On 13/06/2019 21.16, Rob Herring wrote:
->>>>>> +Remote PSI-L endpoint
->>>>>> +
->>>>>> +Required properties:
->>>>>> +--------------------
->>>>>> +- ti,psil-base:             PSI-L thread ID base of the endpoint
->>>>>> +
->>>>>> +Within the PSI-L endpoint node thread configuration subnodes must present with:
->>>>>> +ti,psil-configX naming convention, where X is the thread ID offset.
->>>>>
->>>>> Don't use vendor prefixes on node names.
->>>>
->>>> OK.
->>>>
->>>>>> +
->>>>>> +Configuration node Required properties:
->>>>>> +--------------------
->>>>>> +- linux,udma-mode:  Channel mode, can be:
->>>>>> +                    - UDMA_PKT_MODE: for Packet mode channels (peripherals)
->>>>>> +                    - UDMA_TR_MODE: for Third-Party mode
->>>>>
->>>>> This is hardly a common linux thing. What determines the value here.
->>>>
->>>> Unfortunately it is.
->>>
->>> No, it's a feature of your h/w and in no way is something linux
->>> defined which is the point of 'linux' prefix.
->>
->> The channel can be either Packet or TR mode. The HW is really flexible
->> on this (and on other things as well).
->> It just happens that Linux need to use specific channels in a specific mode.
->>
->> Would it help if we assume that all channels are used in Packet mode,
->> but we have linux,tr-mode bool to indicate that the given channel in
->> Linux need to be used in TR mode.
-> 
-> Your use of 'linux' prefix is wrong. Stop using it.
+The memory occupied by the kernel is reserved using memblock_reserve()
+in setup_arch(). Currently, the area is from symbols _text to __bss_stop.
+Everything after __bss_stop must be specifically reserved otherwise it
+is discarded. This is not clearly documented.
 
-OK, I can not argue with that.
-I'll have 'tr-mode' bool to indicate that the channel should be
-configured in TR mode for the given thread.
+Add a new symbol, __end_of_kernel_reserve, that more readily identifies
+what is reserved, along with comments that indicate what is reserved,
+what is discarded and what needs to be done to prevent a section from
+being discarded.
 
->>>> Each channel can be configured to Packet or TR mode. For some
->>>> peripherals it is true that they only support packet mode, these are the
->>>> newer PSI-L native peripherals.
->>>> For these channels a udma-mode property would be correct.
->>>>
->>>> But we have legacy peripherals as well and they are serviced by PDMA
->>>> (which is a native peripheral designed to talk to the given legacy IP).
->>>> We can use either packet or TR mode in UDMAP to talk to PDMAs, it is in
->>>> most cases clear what to use, but for example for audio (McASP) channels
->>>> Linux is using TR channel because we need cyclic DMA while for example
->>>> RTOS is using Packet mode as it fits their needs better.
->>>>
->>>> Here I need to prefix the udma-mode with linux as the mode is used by
->>>> Linux, but other OS might opt to use different channel mode.
->>>
->>> So you'd need <os>,udma-mode? That doesn't work... If the setting is
->>> per OS, then it belongs in the OS because the same dtb should work
->>> across OS's.
->>
->> So I should have a table for the thread IDs in the DMA driver and mark
->> channels as TR or Packet in there for Linux use?
-> 
-> Perhaps. I haven't heard any reasons why you need this in DT. If Linux
-> is dictating the modes, then sounds like it should be in Linux.
-> 
-> But really, I don't fully understand what you are doing here to tell
-> you what to do beyond using 'linux' prefix is wrong.
+Signed-off-by: Tom Lendacky <thomas.lendacky@amd.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Reviewed-by: Baoquan He <bhe@redhat.com>
+Reviewed-by: Dave Hansen <dave.hansen@intel.com>
+Tested-by: Lianbo Jiang <lijiang@redhat.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Brijesh Singh <brijesh.singh@amd.com>
+Cc: Dave Young <dyoung@redhat.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Joerg Roedel <jroedel@suse.de>
+Cc: Juergen Gross <jgross@suse.com>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Nick Desaulniers <ndesaulniers@google.com>
+Cc: Pavel Tatashin <pasha.tatashin@oracle.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Robert Richter <rrichter@marvell.com>
+Cc: Sami Tolvanen <samitolvanen@google.com>
+Cc: Sinan Kaya <okaya@codeaurora.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: "x86@kernel.org" <x86@kernel.org>
+Link: https://lkml.kernel.org/r/7db7da45b435f8477f25e66f292631ff766a844c.1560969363.git.thomas.lendacky@amd.com
+---
+ arch/x86/include/asm/sections.h | 2 ++
+ arch/x86/kernel/setup.c         | 8 +++++++-
+ arch/x86/kernel/vmlinux.lds.S   | 9 ++++++++-
+ 3 files changed, 17 insertions(+), 2 deletions(-)
 
-We have certain peripherals (McASP/UART/McSPI/etc) which is serviced by
-PDMAs to be compatible with the data movement architecture implemented
-within NAVSS.
-Unlike native peripherals, like networking we can configure the UDMAP
-channel to either Packet or TR mode. There are differences between the
-two modes, but the job can be done in both modes.
-In Linux we use TR mode for audio channels as it provides the needed
-functionality we need (efficient cyclic mode, can disable interrupts).
-
-There is no information from the HW on how a given thread is best used
-and other OSs can opt for not optimal use.
-
-But the majority of threads are better served in Packet mode, so adding
-a bool flag to the thread configuration to indicate that TR mode is the
-advised mode for it is perfectly fine.
-
-- Péter
-
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+diff --git a/arch/x86/include/asm/sections.h b/arch/x86/include/asm/sections.h
+index 8ea1cfdbeabc..71b32f2570ab 100644
+--- a/arch/x86/include/asm/sections.h
++++ b/arch/x86/include/asm/sections.h
+@@ -13,4 +13,6 @@ extern char __end_rodata_aligned[];
+ extern char __end_rodata_hpage_align[];
+ #endif
+ 
++extern char __end_of_kernel_reserve[];
++
+ #endif	/* _ASM_X86_SECTIONS_H */
+diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
+index 08a5f4a131f5..dac60ad37e5e 100644
+--- a/arch/x86/kernel/setup.c
++++ b/arch/x86/kernel/setup.c
+@@ -827,8 +827,14 @@ dump_kernel_offset(struct notifier_block *self, unsigned long v, void *p)
+ 
+ void __init setup_arch(char **cmdline_p)
+ {
++	/*
++	 * Reserve the memory occupied by the kernel between _text and
++	 * __end_of_kernel_reserve symbols. Any kernel sections after the
++	 * __end_of_kernel_reserve symbol must be explicitly reserved with a
++	 * separate memblock_reserve() or they will be discarded.
++	 */
+ 	memblock_reserve(__pa_symbol(_text),
+-			 (unsigned long)__bss_stop - (unsigned long)_text);
++			 (unsigned long)__end_of_kernel_reserve - (unsigned long)_text);
+ 
+ 	/*
+ 	 * Make sure page 0 is always reserved because on systems with
+diff --git a/arch/x86/kernel/vmlinux.lds.S b/arch/x86/kernel/vmlinux.lds.S
+index 0850b5149345..ca2252ca6ad7 100644
+--- a/arch/x86/kernel/vmlinux.lds.S
++++ b/arch/x86/kernel/vmlinux.lds.S
+@@ -368,6 +368,14 @@ SECTIONS
+ 		__bss_stop = .;
+ 	}
+ 
++	/*
++	 * The memory occupied from _text to here, __end_of_kernel_reserve, is
++	 * automatically reserved in setup_arch(). Anything after here must be
++	 * explicitly reserved using memblock_reserve() or it will be discarded
++	 * and treated as available memory.
++	 */
++	__end_of_kernel_reserve = .;
++
+ 	. = ALIGN(PAGE_SIZE);
+ 	.brk : AT(ADDR(.brk) - LOAD_OFFSET) {
+ 		__brk_base = .;
+@@ -382,7 +390,6 @@ SECTIONS
+ 	STABS_DEBUG
+ 	DWARF_DEBUG
+ 
+-	/* Sections to be discarded */
+ 	DISCARDS
+ 	/DISCARD/ : {
+ 		*(.eh_frame)
