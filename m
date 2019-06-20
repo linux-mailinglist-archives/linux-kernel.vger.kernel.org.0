@@ -2,22 +2,22 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 215A04C508
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 03:43:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 37CF04C50B
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 03:44:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731189AbfFTBnt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Jun 2019 21:43:49 -0400
+        id S1731221AbfFTBnx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Jun 2019 21:43:53 -0400
 Received: from mga01.intel.com ([192.55.52.88]:60105 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726349AbfFTBnt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1726325AbfFTBnt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 19 Jun 2019 21:43:49 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Jun 2019 18:43:48 -0700
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Jun 2019 18:43:49 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.63,394,1557212400"; 
-   d="scan'208";a="243484914"
+   d="scan'208";a="243484919"
 Received: from romley-ivt3.sc.intel.com ([172.25.110.60])
   by orsmga001.jf.intel.com with ESMTP; 19 Jun 2019 18:43:48 -0700
 From:   Fenghua Yu <fenghua.yu@intel.com>
@@ -31,9 +31,9 @@ To:     "Thomas Gleixner" <tglx@linutronix.de>,
         "Ravi V Shankar" <ravi.v.shankar@intel.com>
 Cc:     "linux-kernel" <linux-kernel@vger.kernel.org>,
         "x86" <x86@kernel.org>, Fenghua Yu <fenghua.yu@intel.com>
-Subject: [PATCH v5 1/5] x86/cpufeatures: Enumerate user wait instructions
-Date:   Wed, 19 Jun 2019 18:33:54 -0700
-Message-Id: <1560994438-235698-2-git-send-email-fenghua.yu@intel.com>
+Subject: [PATCH v5 2/5] x86/umwait: Initialize umwait control values
+Date:   Wed, 19 Jun 2019 18:33:55 -0700
+Message-Id: <1560994438-235698-3-git-send-email-fenghua.yu@intel.com>
 X-Mailer: git-send-email 2.5.0
 In-Reply-To: <1560994438-235698-1-git-send-email-fenghua.yu@intel.com>
 References: <1560994438-235698-1-git-send-email-fenghua.yu@intel.com>
@@ -42,59 +42,134 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-umonitor, umwait, and tpause are a set of user wait instructions.
+umwait or tpause allows processor to enter a light-weight
+power/performance optimized state (C0.1 state) or an improved
+power/performance optimized state (C0.2 state) for a period
+specified by the instruction or until the system time limit or until
+a store to the monitored address range in umwait.
 
-umonitor arms address monitoring hardware using an address. The
-address range is determined by using CPUID.0x5. A store to
-an address within the specified address range triggers the
-monitoring hardware to wake up the processor waiting in umwait.
+IA32_UMWAIT_CONTROL MSR register allows kernel to enable/disable C0.2
+on the processor and set maximum time the processor can reside in
+C0.1 or C0.2.
 
-umwait instructs the processor to enter an implementation-dependent
-optimized state while monitoring a range of addresses. The optimized
-state may be either a light-weight power/performance optimized state
-(C0.1 state) or an improved power/performance optimized state
-(C0.2 state).
+By default C0.2 is enabled so the user wait instructions can enter the
+C0.2 state to save more power with slower wakeup time.
 
-tpause instructs the processor to enter an implementation-dependent
-optimized state C0.1 or C0.2 state and wake up when time-stamp counter
-reaches specified timeout.
+Andy Lutomirski proposes setting maximum umwait time to 100000 cycles
+by default. A quote from Andy:
 
-The three instructions may be executed at any privilege level.
+"What I want to avoid is the case where it works dramatically differently
+on NO_HZ_FULL systems as compared to everything else. Also, UMWAIT may
+behave a bit differently if the max timeout is hit, and I'd like that path
+to get exercised widely by making it happen even on default configs."
 
-The instructions provide power saving method while waiting in
-user space. Additionally, they can allow a sibling hyperthread to
-make faster progress while this thread is waiting. One example of an
-application usage of umwait is when waiting for input data from another
-application, such as a user level multi-threaded packet processing
-engine.
-
-Availability of the user wait instructions is indicated by the presence
-of the CPUID feature flag WAITPKG CPUID.0x07.0x0:ECX[5].
-
-Detailed information on the instructions and CPUID feature WAITPKG flag
-can be found in the latest Intel Architecture Instruction Set Extensions
-and Future Features Programming Reference and Intel 64 and IA-32
-Architectures Software Developer's Manual.
+A later patch provides a sysfs interface to adjust this value.
 
 Signed-off-by: Fenghua Yu <fenghua.yu@intel.com>
 Reviewed-by: Ashok Raj <ashok.raj@intel.com>
 Reviewed-by: Andy Lutomirski <luto@kernel.org>
 ---
- arch/x86/include/asm/cpufeatures.h | 1 +
- 1 file changed, 1 insertion(+)
+ arch/x86/include/asm/msr-index.h |  4 +++
+ arch/x86/kernel/cpu/Makefile     |  1 +
+ arch/x86/kernel/cpu/umwait.c     | 62 ++++++++++++++++++++++++++++++++
+ 3 files changed, 67 insertions(+)
+ create mode 100644 arch/x86/kernel/cpu/umwait.c
 
-diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
-index 75f27ee2c263..b8bd428ae5bc 100644
---- a/arch/x86/include/asm/cpufeatures.h
-+++ b/arch/x86/include/asm/cpufeatures.h
-@@ -322,6 +322,7 @@
- #define X86_FEATURE_UMIP		(16*32+ 2) /* User Mode Instruction Protection */
- #define X86_FEATURE_PKU			(16*32+ 3) /* Protection Keys for Userspace */
- #define X86_FEATURE_OSPKE		(16*32+ 4) /* OS Protection Keys Enable */
-+#define X86_FEATURE_WAITPKG		(16*32+ 5) /* UMONITOR/UMWAIT/TPAUSE Instructions */
- #define X86_FEATURE_AVX512_VBMI2	(16*32+ 6) /* Additional AVX512 Vector Bit Manipulation Instructions */
- #define X86_FEATURE_GFNI		(16*32+ 8) /* Galois Field New Instructions */
- #define X86_FEATURE_VAES		(16*32+ 9) /* Vector AES */
+diff --git a/arch/x86/include/asm/msr-index.h b/arch/x86/include/asm/msr-index.h
+index 979ef971cc78..3b057079d6b5 100644
+--- a/arch/x86/include/asm/msr-index.h
++++ b/arch/x86/include/asm/msr-index.h
+@@ -61,6 +61,10 @@
+ #define MSR_PLATFORM_INFO_CPUID_FAULT_BIT	31
+ #define MSR_PLATFORM_INFO_CPUID_FAULT		BIT_ULL(MSR_PLATFORM_INFO_CPUID_FAULT_BIT)
+ 
++#define MSR_IA32_UMWAIT_CONTROL			0xe1
++#define MSR_IA32_UMWAIT_CONTROL_C02_DISABLED	BIT(0)
++#define MSR_IA32_UMWAIT_CONTROL_MAX_TIME	0xfffffffc
++
+ #define MSR_PKG_CST_CONFIG_CONTROL	0x000000e2
+ #define NHM_C3_AUTO_DEMOTE		(1UL << 25)
+ #define NHM_C1_AUTO_DEMOTE		(1UL << 26)
+diff --git a/arch/x86/kernel/cpu/Makefile b/arch/x86/kernel/cpu/Makefile
+index 5102bf7c8192..b4c81e9a18c6 100644
+--- a/arch/x86/kernel/cpu/Makefile
++++ b/arch/x86/kernel/cpu/Makefile
+@@ -24,6 +24,7 @@ obj-y			+= match.o
+ obj-y			+= bugs.o
+ obj-y			+= aperfmperf.o
+ obj-y			+= cpuid-deps.o
++obj-y			+= umwait.o
+ 
+ obj-$(CONFIG_PROC_FS)	+= proc.o
+ obj-$(CONFIG_X86_FEATURE_NAMES) += capflags.o powerflags.o
+diff --git a/arch/x86/kernel/cpu/umwait.c b/arch/x86/kernel/cpu/umwait.c
+new file mode 100644
+index 000000000000..b0bf7adde36f
+--- /dev/null
++++ b/arch/x86/kernel/cpu/umwait.c
+@@ -0,0 +1,62 @@
++// SPDX-License-Identifier: GPL-2.0
++#include <linux/syscore_ops.h>
++#include <linux/suspend.h>
++#include <linux/cpu.h>
++#include <asm/msr.h>
++
++#define UMWAIT_C02_ENABLED	(0 & MSR_IA32_UMWAIT_CONTROL_C02_DISABLED)
++
++#define UMWAIT_CTRL_VAL(max_time, c02_disabled)				\
++	(((max_time) & MSR_IA32_UMWAIT_CONTROL_MAX_TIME) |		\
++	((c02_disabled) & MSR_IA32_UMWAIT_CONTROL_C02_DISABLED))
++
++/*
++ * Cache IA32_UMWAIT_CONTROL MSR in this variable. All CPUs have the same
++ * MSR value. By default, umwait max time is 100000 in TSC-quanta and C0.2
++ * is enabled
++ */
++static u32 umwait_control_cached = UMWAIT_CTRL_VAL(100000, UMWAIT_C02_ENABLED);
++
++/* Set up IA32_UMWAIT_CONTROL MSR on CPU using the current global setting. */
++static int umwait_cpu_online(unsigned int cpu)
++{
++	wrmsr(MSR_IA32_UMWAIT_CONTROL, umwait_control_cached, 0);
++
++	return 0;
++}
++
++/*
++ * On resume, set up IA32_UMWAIT_CONTROL MSR on BP which is the only active
++ * CPU at this time. Setting up the MSR on APs when they are re-added later
++ * using CPU hotplug.
++ * The MSR on BP is supposed not to be changed during suspend and thus it's
++ * unnecessary to set it again during resume from suspend. But at this point
++ * we don't know resume is from suspend or hibernation. To simplify the
++ * situation, just set up the MSR on resume from suspend.
++ */
++static void umwait_syscore_resume(void)
++{
++	wrmsr(MSR_IA32_UMWAIT_CONTROL, umwait_control_cached, 0);
++}
++
++static struct syscore_ops umwait_syscore_ops = {
++	.resume	= umwait_syscore_resume,
++};
++
++static int __init umwait_init(void)
++{
++	int ret;
++
++	if (!boot_cpu_has(X86_FEATURE_WAITPKG))
++		return -ENODEV;
++
++	ret = cpuhp_setup_state(CPUHP_AP_ONLINE_DYN, "umwait/intel:online",
++				umwait_cpu_online, NULL);
++	if (ret < 0)
++		return ret;
++
++	register_syscore_ops(&umwait_syscore_ops);
++
++	return 0;
++}
++device_initcall(umwait_init);
 -- 
 2.19.1
 
