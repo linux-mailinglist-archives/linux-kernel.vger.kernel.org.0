@@ -2,38 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 503054D87F
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 20:27:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 93F4E4D5B5
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 20:01:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728276AbfFTS1F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 14:27:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58780 "EHLO mail.kernel.org"
+        id S1726901AbfFTSAP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 14:00:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48762 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727716AbfFTSFY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 14:05:24 -0400
+        id S1726159AbfFTSAN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Jun 2019 14:00:13 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 51E9A204FD;
-        Thu, 20 Jun 2019 18:05:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7650F21530;
+        Thu, 20 Jun 2019 18:00:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561053923;
-        bh=K0D5RiaBxXVakvVfZoWJm431MDLU2u7E5g65ouIOmp0=;
+        s=default; t=1561053613;
+        bh=WsPLfgBAEBmpTq68qUbNRWJh0JBq5hVy9+FUFKzH7gI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lDymvYj4RjXdEGaUGvG1GP0dbPBCYgIuI17STwCAPv/ZzaM4r4GwtNm419LxAvf/r
-         urM3fq5oq3pvCW75ceiRZ4YfkGIfOTvHcboQc2sKscASollAUy4MhJ3VfEqQg10rdn
-         tTHgpqi9ed71g3sjbtl/myLXgDgZ+aZG1jzQ8QVQ=
+        b=lDwe7ksfjOxCIGkDdeccfqPnjXRf/KdUqKD2xOinpuq1YJuF77US60sJlPK7z6iGT
+         8xU05jlvcBnqYChlvRsvx6A5AAMKe7ItWWTT+PLut2HF/js0TY5Us3iwRad7pPJftQ
+         okZl3ubr+j48yFNZrSVQz0h1YAlxzM+iljFA8Lsw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Young Xiao <YangX92@hotmail.com>,
+        stable@vger.kernel.org, Dick Kennedy <dick.kennedy@broadcom.com>,
+        James Smart <jsmart2021@gmail.com>,
+        Bart Van Assche <bvanassche@acm.org>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 073/117] Drivers: misc: fix out-of-bounds access in function param_set_kgdbts_var
-Date:   Thu, 20 Jun 2019 19:56:47 +0200
-Message-Id: <20190620174356.961101617@linuxfoundation.org>
+Subject: [PATCH 4.4 51/84] scsi: lpfc: add check for loss of ndlp when sending RRQ
+Date:   Thu, 20 Jun 2019 19:56:48 +0200
+Message-Id: <20190620174346.566882359@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190620174351.964339809@linuxfoundation.org>
-References: <20190620174351.964339809@linuxfoundation.org>
+In-Reply-To: <20190620174337.538228162@linuxfoundation.org>
+References: <20190620174337.538228162@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,43 +46,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit b281218ad4311a0342a40cb02fb17a363df08b48 ]
+[ Upstream commit c8cb261a072c88ca1aff0e804a30db4c7606521b ]
 
-There is an out-of-bounds access to "config[len - 1]" array when the
-variable "len" is zero.
+There was a missing qualification of a valid ndlp structure when calling to
+send an RRQ for an abort.  Add the check.
 
-See commit dada6a43b040 ("kgdboc: fix KASAN global-out-of-bounds bug
-in param_set_kgdboc_var()") for details.
-
-Signed-off-by: Young Xiao <YangX92@hotmail.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Dick Kennedy <dick.kennedy@broadcom.com>
+Signed-off-by: James Smart <jsmart2021@gmail.com>
+Tested-by: Bart Van Assche <bvanassche@acm.org>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/misc/kgdbts.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/scsi/lpfc/lpfc_els.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/misc/kgdbts.c b/drivers/misc/kgdbts.c
-index 99635dd9dbac..bb3a76ad80da 100644
---- a/drivers/misc/kgdbts.c
-+++ b/drivers/misc/kgdbts.c
-@@ -1132,7 +1132,7 @@ static void kgdbts_put_char(u8 chr)
- 
- static int param_set_kgdbts_var(const char *kmessage, struct kernel_param *kp)
+diff --git a/drivers/scsi/lpfc/lpfc_els.c b/drivers/scsi/lpfc/lpfc_els.c
+index 398c9a0a5ade..82a690924f5e 100644
+--- a/drivers/scsi/lpfc/lpfc_els.c
++++ b/drivers/scsi/lpfc/lpfc_els.c
+@@ -6498,7 +6498,10 @@ int
+ lpfc_send_rrq(struct lpfc_hba *phba, struct lpfc_node_rrq *rrq)
  {
--	int len = strlen(kmessage);
-+	size_t len = strlen(kmessage);
- 
- 	if (len >= MAX_CONFIG_LEN) {
- 		printk(KERN_ERR "kgdbts: config string too long\n");
-@@ -1152,7 +1152,7 @@ static int param_set_kgdbts_var(const char *kmessage, struct kernel_param *kp)
- 
- 	strcpy(config, kmessage);
- 	/* Chop out \n char as a result of echo */
--	if (config[len - 1] == '\n')
-+	if (len && config[len - 1] == '\n')
- 		config[len - 1] = '\0';
- 
- 	/* Go and configure with the new params. */
+ 	struct lpfc_nodelist *ndlp = lpfc_findnode_did(rrq->vport,
+-							rrq->nlp_DID);
++						       rrq->nlp_DID);
++	if (!ndlp)
++		return 1;
++
+ 	if (lpfc_test_rrq_active(phba, ndlp, rrq->xritag))
+ 		return lpfc_issue_els_rrq(rrq->vport, ndlp,
+ 					 rrq->nlp_DID, rrq);
 -- 
 2.20.1
 
