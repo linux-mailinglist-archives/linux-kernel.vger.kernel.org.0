@@ -2,95 +2,157 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D33F14D4CE
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 19:23:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BA9804D519
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 19:25:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732322AbfFTRXx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 13:23:53 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:42768 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732296AbfFTRXu (ORCPT
+        id S1732569AbfFTRZq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 13:25:46 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:44558 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732140AbfFTRZn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 13:23:50 -0400
-Received: by mail-qt1-f193.google.com with SMTP id s15so3952154qtk.9
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2019 10:23:49 -0700 (PDT)
+        Thu, 20 Jun 2019 13:25:43 -0400
+Received: by mail-io1-f67.google.com with SMTP id s7so827439iob.11
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2019 10:25:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=SfbKUCdSGF4+jFDRzcaQ+Fna6TrcXDnyta04yl7lq1Y=;
-        b=fDa+hMU4rcsLRRCH2gWRtgjYh9RFedwMwqv0Trz+YbWuMGaoX85v7I71KOkTii51uB
-         oO9IljJOAF7bcm1YYxdaerj3SB1eX+ROcV7aGqi3ZBwoKVBEGC2K9Gm0a4yLiiEn/uAk
-         fBk5sWnkPe6Qfa4DgWWmQRbh4XlFAlCgTAsATQPIvgIfBdORGI7YHDMsJoSK7wBXLdyk
-         G7L29YhKyUqgAQjd6fwdckTK5NEQcVswgxlSYd5TMwXXMxxdYk5swQozsEqhRL82kEHN
-         PYoc9M2dsT9k3d119XICrYvVvAjQcFqPNiWbp3QBf8xLIqoPCbUOF1ztjjMN/UPlCr8M
-         O9Xw==
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Uk7ZIBjV+VR8aLMJpfzpl5Ntma1pb1M7AjThVeR3/Lw=;
+        b=lWHV/5eR2B3caBjxG4cP62L0BKX5+DFDOH9t5g8sI8uHgZiTX0lOT4X20fvXwSA5qJ
+         A0pTf8M+e704lkfjlV26jPd6UAbvzhWdnGUrRTxvTt7qE6SNvM81e9y/2s2bRBYmnLmv
+         /MFyEQsgp7eEwb/7xoLdGWppVk3xmWQpsCjdo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=SfbKUCdSGF4+jFDRzcaQ+Fna6TrcXDnyta04yl7lq1Y=;
-        b=tcjL7OSdwmAMuHCYSp2Nu0t/j9i385uTJjI1l1MqWvVAdNIhjYofqP0A4Sww6WaxSV
-         4WgA1hGZsIkItKXmwG6HTUB6SgwvWxei1gu/TExAJy7UjFPDQC9kop8Rr+nubX2eq36c
-         /AKzKBU5L8/NEpxFPWQgPtitbJsstXJAa+LsU2ymlTqc2RzEeKlIv+50631lJ/eAaCQZ
-         cbfalPVobu3hw/9dGAaxdLcpDqtkyNC+/YsigK21KD493lgw7La8kYySw1W8S+gLV0h9
-         e/g13l82uvTMuHENfwkGuOk66t2vlpdFzMG+347ZJa8eUraYGt6Zhqy8V/6rTPlm9DPN
-         XzqA==
-X-Gm-Message-State: APjAAAWv9iM8/B3LpQ7RuRx5qpftH1AciUKei5HOtR3Ag//D2D27wxuo
-        UpSYqGZTGa5I8PKFSVbhiVgKDuDDEJZxPQ==
-X-Google-Smtp-Source: APXvYqw404QwKeABmWhU9qLItoqgwLK+kwwRuUpz/G8u1JQs97zHuMB8xnbcA0CiswhJAlAz0nkrug==
-X-Received: by 2002:ac8:2409:: with SMTP id c9mr53861547qtc.145.1561051428982;
-        Thu, 20 Jun 2019 10:23:48 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-156-34-55-100.dhcp-dynamic.fibreop.ns.bellaliant.net. [156.34.55.100])
-        by smtp.gmail.com with ESMTPSA id c5sm109198qtj.27.2019.06.20.10.23.48
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 20 Jun 2019 10:23:48 -0700 (PDT)
-Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1he0mq-0005eq-0K; Thu, 20 Jun 2019 14:23:48 -0300
-Date:   Thu, 20 Jun 2019 14:23:47 -0300
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     Logan Gunthorpe <logang@deltatee.com>
-Cc:     linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org,
-        linux-rdma@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
-        Christoph Hellwig <hch@lst.de>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        Keith Busch <kbusch@kernel.org>,
-        Stephen Bates <sbates@raithlin.com>
-Subject: Re: [RFC PATCH 04/28] block: Never bounce dma-direct bios
-Message-ID: <20190620172347.GE19891@ziepe.ca>
-References: <20190620161240.22738-1-logang@deltatee.com>
- <20190620161240.22738-5-logang@deltatee.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Uk7ZIBjV+VR8aLMJpfzpl5Ntma1pb1M7AjThVeR3/Lw=;
+        b=ukDIMDqMK7o1CuGzvkErntFveOytBShDDsV9whtcjhRIUJWL4xGyseQFNOZaoJe+kC
+         p4oyDvVwXqNxQ9brLsGow+5t2STZAVGCh2tymDQ24ar1550zHG34TmIb95jA9nTeKTYA
+         aEOeEva/sR3Hqy6yJaAyjnmARYuigkX5xfmfvWHMvF/JU5RTGFvr1p5Be877yI+27puL
+         FP+MzOVLviiTjYJb6xVcxSlVnAhkTmeBs6JxtiQaArcukdFvdNNVM6eghCT3UfcHEl5F
+         sbmW3WdyJqapUVx8LLwbuq5j2YApdZIDSn0qb+kxbkmLOtLNg2P95WVpXNmM1LqpJPnn
+         XPFA==
+X-Gm-Message-State: APjAAAUVk8f8QZf6t8Yy5szKKkjGjrwOBhl1vfzPc5JlLKEXggBzJz70
+        dNGiCK4V1tocFHNoCzycfVLWFG0UvTU=
+X-Google-Smtp-Source: APXvYqzK1zAFa59VY6wl49lE/oDTCnNQFP2f+DvVlRcF6tBKYKCfokp+zM2FEYQk9TK24euQ0vMJww==
+X-Received: by 2002:a5d:948a:: with SMTP id v10mr1807559ioj.103.1561051542492;
+        Thu, 20 Jun 2019 10:25:42 -0700 (PDT)
+Received: from mail-io1-f46.google.com (mail-io1-f46.google.com. [209.85.166.46])
+        by smtp.gmail.com with ESMTPSA id b8sm562278ioj.16.2019.06.20.10.25.41
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Thu, 20 Jun 2019 10:25:41 -0700 (PDT)
+Received: by mail-io1-f46.google.com with SMTP id m24so176483ioo.2
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2019 10:25:41 -0700 (PDT)
+X-Received: by 2002:a5d:96d8:: with SMTP id r24mr31877702iol.269.1561051541200;
+ Thu, 20 Jun 2019 10:25:41 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190620161240.22738-5-logang@deltatee.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <20190618213406.7667-1-ezequiel@collabora.com> <20190618213406.7667-3-ezequiel@collabora.com>
+In-Reply-To: <20190618213406.7667-3-ezequiel@collabora.com>
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Thu, 20 Jun 2019 10:25:25 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=XoKNA4aW2LT7g8K2t+ABwgt=QJGAyiet1-Gyz3CgWmvg@mail.gmail.com>
+Message-ID: <CAD=FV=XoKNA4aW2LT7g8K2t+ABwgt=QJGAyiet1-Gyz3CgWmvg@mail.gmail.com>
+Subject: Re: [PATCH 2/3] drm/rockchip: Add optional support for CRTC gamma LUT
+To:     Ezequiel Garcia <ezequiel@collabora.com>
+Cc:     dri-devel <dri-devel@lists.freedesktop.org>,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
+        Sandy Huang <hjc@rock-chips.com>, kernel@collabora.com,
+        Sean Paul <seanpaul@chromium.org>,
+        Boris Brezillon <boris.brezillon@collabora.com>,
+        Jacopo Mondi <jacopo@jmondi.org>,
+        Ilia Mirkin <imirkin@alum.mit.edu>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 20, 2019 at 10:12:16AM -0600, Logan Gunthorpe wrote:
-> It is expected the creator of the dma-direct bio will ensure the
-> target device can access the DMA address it's creating bios for.
-> It's also not possible to bounce a dma-direct bio seeing the block
-> layer doesn't have any way to access the underlying data behind
-> the DMA address.
-> 
-> Thus, never bounce dma-direct bios.
+Hi,
 
-I wonder how feasible it would be to implement a 'dma vec' copy
-from/to? 
+On Tue, Jun 18, 2019 at 2:43 PM Ezequiel Garcia <ezequiel@collabora.com> wrote:
+>
+> +static void vop_crtc_gamma_set(struct vop *vop, struct drm_crtc *crtc,
+> +                              struct drm_crtc_state *old_state)
+> +{
+> +       int idle, ret, i;
+> +
+> +       spin_lock(&vop->reg_lock);
+> +       VOP_REG_SET(vop, common, dsp_lut_en, 0);
+> +       vop_cfg_done(vop);
+> +       spin_unlock(&vop->reg_lock);
+> +
+> +       ret = readx_poll_timeout(vop_dsp_lut_is_enable, vop,
+> +                          idle, !idle, 5, 30 * 1000);
+> +       if (ret)
 
-That is about the only operation you could safely do on P2P BAR
-memory. 
+Worth an error message?
 
-I wonder if a copy implementation could somehow query the iommu layer
-to get a kmap of the memory pointed at by the dma address so we don't
-need to carry struct page around?
 
-Jason
+> @@ -1205,6 +1294,7 @@ static void vop_crtc_atomic_flush(struct drm_crtc *crtc,
+>
+>  static const struct drm_crtc_helper_funcs vop_crtc_helper_funcs = {
+>         .mode_fixup = vop_crtc_mode_fixup,
+> +       .atomic_check = vop_crtc_atomic_check,
+
+At first I was worried that there was a bug here since in the context
+of dw_hdmi (an encoder) adding ".atomic_check" caused ".mode_fixup" to
+stop getting called as per mode_fixup() in
+"drivers/gpu/drm/drm_atomic_helper.c".
+
+...but it seems like it's OK for CRTCs, so I think we're fine.
+
+
+> @@ -1323,6 +1413,7 @@ static const struct drm_crtc_funcs vop_crtc_funcs = {
+>         .disable_vblank = vop_crtc_disable_vblank,
+>         .set_crc_source = vop_crtc_set_crc_source,
+>         .verify_crc_source = vop_crtc_verify_crc_source,
+> +       .gamma_set = drm_atomic_helper_legacy_gamma_set,
+
+Are there any issues in adding this ".gamma_set" property even though
+we may or may not actually have the ability to set the gamma
+(depending on whether or not the LUT register range was provided in
+the device tree)?  I am a DRM noob but
+drm_atomic_helper_legacy_gamma_set() is not a trivial little function
+and now we'll be running it in some cases where we don't actually have
+gamma.
+
+I also notice that there's at least one bit of code that seems to
+check if ".gamma_set" is NULL.  ...and if it is, it'll return -ENOSYS
+right away.  Do we still properly return -ENOSYS on devices that don't
+have the register range?
+
+It seems like the absolute safest would be to have two copies of this
+struct: one used for VOPs that have the range and one for VOPs that
+don't.
+
+...but possibly I'm just paranoid and as I've said I'm a clueless
+noob.  If someone says it's fine to always provide the .gamma_set
+property that's fine too.
+
+
+>  static void vop_fb_unref_worker(struct drm_flip_work *work, void *val)
+> @@ -1480,6 +1571,10 @@ static int vop_create_crtc(struct vop *vop)
+>                 goto err_cleanup_planes;
+>
+>         drm_crtc_helper_add(crtc, &vop_crtc_helper_funcs);
+> +       if (vop_data->lut_size) {
+> +               drm_mode_crtc_set_gamma_size(crtc, vop_data->lut_size);
+> +               drm_crtc_enable_color_mgmt(crtc, 0, false, vop_data->lut_size);
+
+Should we only do the above calls if we successfully mapped the resources?
+
+
+> @@ -1776,6 +1871,17 @@ static int vop_bind(struct device *dev, struct device *master, void *data)
+>         if (IS_ERR(vop->regs))
+>                 return PTR_ERR(vop->regs);
+>
+> +       res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "lut");
+
+As per comments in the bindings, shouldn't use the name "lut" but
+should just pick resource #1.
