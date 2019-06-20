@@ -2,106 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 24D314D2C2
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 18:08:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8E1D44D2DE
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 18:10:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732214AbfFTQIm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 12:08:42 -0400
-Received: from out30-56.freemail.mail.aliyun.com ([115.124.30.56]:51365 "EHLO
-        out30-56.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1732184AbfFTQIl (ORCPT
+        id S1731986AbfFTQKV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 12:10:21 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:59906 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726654AbfFTQKV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 12:08:41 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R771e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04446;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=9;SR=0;TI=SMTPD_---0TUlBe2E_1561046914;
-Received: from US-143344MP.local(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0TUlBe2E_1561046914)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Fri, 21 Jun 2019 00:08:37 +0800
-Subject: Re: [PATCH] mm: mempolicy: handle vma with unmovable pages mapped
- correctly in mbind
-To:     Vlastimil Babka <vbabka@suse.cz>, Michal Hocko <mhocko@kernel.org>
-Cc:     akpm@linux-foundation.org, mgorman@techsingularity.net,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Eric Dumazet <edumazet@google.com>,
-        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org
-References: <1560797290-42267-1-git-send-email-yang.shi@linux.alibaba.com>
- <20190618130253.GH3318@dhcp22.suse.cz>
- <cf33b724-fdd5-58e3-c06a-1bc563525311@linux.alibaba.com>
- <20190618182848.GJ3318@dhcp22.suse.cz>
- <68c2592d-b747-e6eb-329f-7a428bff1f86@linux.alibaba.com>
- <20190619052133.GB2968@dhcp22.suse.cz>
- <21a0b20c-5b62-490e-ad8e-26b4b78ac095@suse.cz>
- <687f4e57-5c50-7900-645e-6ef3a5c1c0c7@linux.alibaba.com>
- <55eb2ea9-2c74-87b1-4568-b620c7913e17@linux.alibaba.com>
- <d81b36bb-876e-917a-6115-cedf496b4923@suse.cz>
-From:   Yang Shi <yang.shi@linux.alibaba.com>
-Message-ID: <d185f277-85ed-4dc1-8ff2-2984b54a0d64@linux.alibaba.com>
-Date:   Thu, 20 Jun 2019 09:08:30 -0700
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
- Gecko/20100101 Thunderbird/52.7.0
+        Thu, 20 Jun 2019 12:10:21 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id E3E816090F; Thu, 20 Jun 2019 16:10:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1561047019;
+        bh=c+3aFyFm/rHxZsXwmsaa8gZe+tDKRvfjN/JtdoBhohk=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=AAJToONAZdgHDZhyzwm16hq7ikjQrFqnVcNAr2ejhWHeVcGNAcAjUvTlDAw87MYmM
+         kWSyGUPi2LyhgPx9XvV8xt4gMhgD4VeHEQRa1WbaGolsHxlgWsHBJyRmV88bpEFxgX
+         riejGTFKaRnEv/NP9XDQf3Xu73xowmbne5MQp7tw=
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        pdx-caf-mail.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_INVALID,DKIM_SIGNED,SPF_NONE autolearn=no autolearn_force=no
+        version=3.4.0
+Received: from [10.79.136.27] (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: saiprakash.ranjan@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id ADB4B6087F;
+        Thu, 20 Jun 2019 16:10:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1561047018;
+        bh=c+3aFyFm/rHxZsXwmsaa8gZe+tDKRvfjN/JtdoBhohk=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=VgtcJ2Oid3anwp7PhUeB1dWBnTG33+bPyT5WuNkyCiIo93T/o0/7d543tHKIvEErv
+         QUbewcFV9GRlsJ/M6Ao80aJTPhqBjQTkiAJVq73sW2+W3b8tFuhtfcjAI6SDTcp8+F
+         MGBuINdqojz0F0bRBc8y6DLvGS/MhKDzg25Jzd7c=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org ADB4B6087F
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=saiprakash.ranjan@codeaurora.org
+Subject: Re: [PATCH 2/2] coresight: Abort probe for missing CPU phandle
+To:     Suzuki K Poulose <suzuki.poulose@arm.com>,
+        mathieu.poirier@linaro.org, leo.yan@linaro.org,
+        alexander.shishkin@linux.intel.com, david.brown@linaro.org,
+        mark.rutland@arm.com
+Cc:     rnayak@codeaurora.org, vivek.gautam@codeaurora.org,
+        sibis@codeaurora.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
+References: <cover.1561037262.git.saiprakash.ranjan@codeaurora.org>
+ <d93e28fc80227f9a385130a766a24f8f39a1dcf0.1561037262.git.saiprakash.ranjan@codeaurora.org>
+ <1ddee3c1-8299-1991-eb88-151b9c3ee180@arm.com>
+ <e3e13629-a723-8b08-cbae-5a3295170900@codeaurora.org>
+ <0182216b-5495-bcf7-bb0e-869133b24830@arm.com>
+From:   Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
+Message-ID: <ff99f1b5-7a04-a11a-7bbc-1a6a68908113@codeaurora.org>
+Date:   Thu, 20 Jun 2019 21:40:13 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-In-Reply-To: <d81b36bb-876e-917a-6115-cedf496b4923@suse.cz>
+In-Reply-To: <0182216b-5495-bcf7-bb0e-869133b24830@arm.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
 Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 6/20/2019 8:53 PM, Suzuki K Poulose wrote:
+> 
+> 
+> 
+> Please wait for Mathieu's thoughts on it. And in general I would wait
+> for feedback from the people in a version, before posting another one,
+> to reduce the number of respins.
+> 
 
+Mathieu already said he was OK in the other thread, but I will wait for
+some more feedbacks.
 
-On 6/20/19 12:18 AM, Vlastimil Babka wrote:
-> On 6/19/19 8:19 PM, Yang Shi wrote:
->>>>> This is getting even more muddy TBH. Is there any reason that we
->>>>> have to
->>>>> handle this problem during the isolation phase rather the migration?
->>>> I think it was already said that if pages can't be isolated, then
->>>> migration phase won't process them, so they're just ignored.
->>> Yes，exactly.
->>>
->>>> However I think the patch is wrong to abort immediately when
->>>> encountering such page that cannot be isolated (AFAICS). IMHO it should
->>>> still try to migrate everything it can, and only then return -EIO.
->>> It is fine too. I don't see mbind semantics define how to handle such
->>> case other than returning -EIO.
-> I think it does. There's:
-> If MPOL_MF_MOVE is specified in flags, then the kernel *will attempt to
-> move all the existing pages* ... If MPOL_MF_STRICT is also specified,
-> then the call fails with the error *EIO if some pages could not be moved*
->
-> Aborting immediately would be against the attempt to move all.
->
->> By looking into the code, it looks not that easy as what I thought.
->> do_mbind() would check the return value of queue_pages_range(), it just
->> applies the policy and manipulates vmas as long as the return value is 0
->> (success), then migrate pages on the list. We could put the movable
->> pages on the list by not breaking immediately, but they will be ignored.
->> If we migrate the pages regardless of the return value, it may break the
->> policy since the policy will *not* be applied at all.
-> I think we just need to remember if there was at least one page that
-> failed isolation or migration, but keep working, and in the end return
-> EIO if there was such page(s). I don't think it breaks the policy. Once
-> pages are allocated in a mapping, changing the policy is a best effort
-> thing anyway.
+Thanks,
+Sai
 
-The current behavior is:
-If queue_pages_range() return -EIO (vma is not migratable, ignore other 
-conditions since we just focus on page migration), the policy won't be 
-set and no page will be migrated.
-
-However, the problem here is the vma might look migratable, but some or 
-all the underlying pages are unmovable. So, my patch assumes the vma is 
-*not* migratable if at least one page is unmovable. I'm not sure if it 
-is possible to have both movable and unmovable pages for the same 
-mapping or not, I'm supposed the vma would be split much earlier.
-
-If we don't abort immediately, then we record if there is unmovable 
-page, then we could do:
-#1. Still follows the current behavior (then why not abort immediately?)
-#2. Set mempolicy then migrate all the migratable pages. But, we may end 
-up with the pages on node A, but the policy says node B. Doesn't it 
-break the policy?
-
->
->>>
-
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
