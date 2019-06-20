@@ -2,99 +2,133 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EBB1D4DCA1
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 23:37:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 54C244DC93
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 23:31:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726132AbfFTVhD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 17:37:03 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:45431 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725815AbfFTVhC (ORCPT
+        id S1726396AbfFTVbD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 17:31:03 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:34324 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725905AbfFTVbD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 17:37:02 -0400
-Received: by mail-ed1-f67.google.com with SMTP id a14so6711594edv.12
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2019 14:37:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to;
-        bh=v3IpD3zOAyT/o3jFLveqYdHxVLapPS/YFt6LidFqVKU=;
-        b=KvOr4Sp+Id3A6XKZfDq0jaToh9hTpDvR4uHERHTmM5jYRInzJr41kiC9SoOmmDJhky
-         oWXqPY/lKaIz9THmlD7IH7YFcmC3tZDq/MG8PgXKGCf9XHFgOdbfcOfRn1VFfw/TeOoP
-         bFK/Xo6W9HJHbqyCJAlgYtMGuDNKG7dFjc43Q=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to;
-        bh=v3IpD3zOAyT/o3jFLveqYdHxVLapPS/YFt6LidFqVKU=;
-        b=U79vuhi7R8u4ri0CyVV3uWJB1hZBet/VhMRZ3ZzXNSD5cKb0X32dlnbmryl1je0MWS
-         aMtPDQISUAVN0w4nxsv+1JVeIdSiKRg3T609FkSZu+sjKkUuDKkV2fDFWeXNp5JBAkNG
-         lFZ1umsbgi5lHtNJVv9tLaz1dmYjtHhSsX6U5tsYd0bV1DtDUFrj9BJ0nkxhoo84eXPf
-         De76Dbe86z/rmE/1PnJ0UExjgleRHE6wq2FBxUj6WGeIup9Fb1L1B0EWHfFmWcc9pkvy
-         m89ysbTMfx+UMGmX0bY4p3fcTZZege2IpSgbOf7v3W0wFW9jIt+c8zSG47ZTmg6HsmsJ
-         /fMA==
-X-Gm-Message-State: APjAAAX8abUT2+z96UcnG/3+iFHg9lMlOXJuYsc+iEbuqdyTgRdjuzpS
-        nbdH4ripWCyi0wXLpfHg343xGRmTuJs=
-X-Google-Smtp-Source: APXvYqwvR/hMYD3xrgS9iC4wgSKZzeekpDjgwXzHCyOHlapnUcWRMSvlntMdrtQE2IYJlwCdGWYEtw==
-X-Received: by 2002:a50:f5f5:: with SMTP id x50mr55771854edm.89.1561066621050;
-        Thu, 20 Jun 2019 14:37:01 -0700 (PDT)
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com. [209.85.208.48])
-        by smtp.gmail.com with ESMTPSA id m19sm86599eje.30.2019.06.20.14.37.00
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Thu, 20 Jun 2019 14:37:00 -0700 (PDT)
-Received: by mail-ed1-f48.google.com with SMTP id m10so6778858edv.6
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2019 14:37:00 -0700 (PDT)
-X-Received: by 2002:a17:906:b315:: with SMTP id n21mr8174762ejz.312.1561066175899;
- Thu, 20 Jun 2019 14:29:35 -0700 (PDT)
+        Thu, 20 Jun 2019 17:31:03 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=enjs7CHak9fTSsrtrkc6AsjIa820JWzWgsah7wbOA1Y=; b=Yaq67oiPAUNb6kpFKiMcxMNSy
+        1sLwhxmWqDoRJyxjUTMtjT+tgwEMyPQ7OWvj0YfFsdbO96kUZn/ZBK92ypjpaU0Y14XwzerZidJ5Z
+        SSvz3jycgMDfYkK85HcblRrkUsIb3x56ebJ3WO/aipaP0V2x/Qg10m2k6iLndl/6x5BFkR+STNfEn
+        8AAhHI7ViErnWYtrKnVCFt14Df4Ke9+LnoC1bnKVphgIAQwfPAKJVENgxztxSt6hW7U5pbahOWkTg
+        WSwc/nv9yW0L6FQaxSlXBwbspYOy+K9bglgMNdvEiJzWkIQ022GXEFYotyNySuPSA2zm/OaXipTHw
+        nsTM/tvVw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1he4e2-0000U4-Uc; Thu, 20 Jun 2019 21:30:59 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 5B1F82021E585; Thu, 20 Jun 2019 23:30:57 +0200 (CEST)
+Date:   Thu, 20 Jun 2019 23:30:57 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+Cc:     "Vineet.Gupta1@synopsys.com" <Vineet.Gupta1@synopsys.com>,
+        "jbaron@akamai.com" <jbaron@akamai.com>,
+        "linux-snps-arc@lists.infradead.org" 
+        <linux-snps-arc@lists.infradead.org>,
+        Alexey Brodkin <Alexey.Brodkin@synopsys.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+        "pbonzini@redhat.com" <pbonzini@redhat.com>,
+        "ard.biesheuvel@linaro.org" <ard.biesheuvel@linaro.org>
+Subject: Re: [PATCH] ARC: ARCv2: jump label: implement jump label patching
+Message-ID: <20190620213057.GD3436@hirez.programming.kicks-ass.net>
+References: <20190614164049.31626-1-Eugeniy.Paltsev@synopsys.com>
+ <C2D7FE5348E1B147BCA15975FBA2307501A252CCC3@us01wembx1.internal.synopsys.com>
+ <20190619081227.GL3419@hirez.programming.kicks-ass.net>
+ <C2D7FE5348E1B147BCA15975FBA2307501A252E40B@us01wembx1.internal.synopsys.com>
+ <20190620070120.GU3402@hirez.programming.kicks-ass.net>
+ <a945de7d3b6f2da03c62c9e1043e125b4c4211aa.camel@synopsys.com>
 MIME-Version: 1.0
-References: <20190620151839.195506-1-zwisler@google.com> <20190620151839.195506-3-zwisler@google.com>
- <20190620212517.GC4650@mit.edu>
-In-Reply-To: <20190620212517.GC4650@mit.edu>
-From:   Ross Zwisler <zwisler@chromium.org>
-Date:   Thu, 20 Jun 2019 15:29:24 -0600
-X-Gmail-Original-Message-ID: <CAGRrVHw8LuMT7eTnJ4VV9OpnetSSYaLh5nLkN4Anevz6r8KmZA@mail.gmail.com>
-Message-ID: <CAGRrVHw8LuMT7eTnJ4VV9OpnetSSYaLh5nLkN4Anevz6r8KmZA@mail.gmail.com>
-Subject: Re: [PATCH v2 2/3] jbd2: introduce jbd2_inode dirty range scoping
-To:     "Theodore Ts'o" <tytso@mit.edu>,
-        Ross Zwisler <zwisler@chromium.org>,
-        linux-kernel@vger.kernel.org, Ross Zwisler <zwisler@google.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Jan Kara <jack@suse.com>, linux-ext4@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        Fletcher Woodruff <fletcherw@google.com>,
-        Justin TerAvest <teravest@google.com>, Jan Kara <jack@suse.cz>,
-        stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a945de7d3b6f2da03c62c9e1043e125b4c4211aa.camel@synopsys.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 20, 2019 at 3:25 PM Theodore Ts'o <tytso@mit.edu> wrote:
-> On Thu, Jun 20, 2019 at 09:18:38AM -0600, Ross Zwisler wrote:
-> > diff --git a/include/linux/jbd2.h b/include/linux/jbd2.h
-> > index 5c04181b7c6d8..0e0393e7f41a4 100644
-> > --- a/include/linux/jbd2.h
-> > +++ b/include/linux/jbd2.h
-> > @@ -1397,6 +1413,12 @@ extern int        jbd2_journal_force_commit(journal_t *);
-> >  extern int      jbd2_journal_force_commit_nested(journal_t *);
-> >  extern int      jbd2_journal_inode_add_write(handle_t *handle, struct jbd2_inode *inode);
-> >  extern int      jbd2_journal_inode_add_wait(handle_t *handle, struct jbd2_inode *inode);
-> > +extern int      jbd2_journal_inode_ranged_write(handle_t *handle,
-> > +                     struct jbd2_inode *inode, loff_t start_byte,
-> > +                     loff_t length);
-> > +extern int      jbd2_journal_inode_ranged_wait(handle_t *handle,
-> > +                     struct jbd2_inode *inode, loff_t start_byte,
-> > +                     loff_t length);
-> >  extern int      jbd2_journal_begin_ordered_truncate(journal_t *journal,
-> >                               struct jbd2_inode *inode, loff_t new_size);
-> >  extern void     jbd2_journal_init_jbd_inode(struct jbd2_inode *jinode, struct inode *inode);
->
-> You're adding two new functions that are called from outside the jbd2
-> subsystem.  To support compiling jbd2 as a module, we also need to add
-> EXPORT_SYMBOL declarations for these two functions.
->
-> I'll take care of this when applying this change.
+On Thu, Jun 20, 2019 at 06:34:55PM +0000, Eugeniy Paltsev wrote:
+> On Thu, 2019-06-20 at 09:01 +0200, Peter Zijlstra wrote:
 
-Ah, yep, great catch.  Thanks!
+> > In particular we do not need the alignment.
+> > 
+> > So what the x86 code does is:
+> > 
+> >  - overwrite the first byte of the instruction with a single byte trap
+> >    instruction
+> > 
+> >  - machine wide IPI which synchronizes I$
+> > 
+> > At this point, any CPU that encounters this instruction will trap; and
+> > the trap handler will emulate the 'new' instruction -- typically a jump.
+> > 
+> >   - overwrite the tail of the instruction (if there is a tail)
+> > 
+> >   - machine wide IPI which syncrhonizes I$
+> > 
+> > At this point, nobody will execute the tail, because we'll still trap on
+> > that first single byte instruction, but if they were to read the
+> > instruction stream, the tail must be there.
+> > 
+> >   - overwrite the first byte of the instruction to now have a complete
+> >     instruction.
+> > 
+> >   - machine wide IPI which syncrhonizes I$
+> > 
+> > At this point, any CPU will encounter the new instruction as a whole,
+> > irrespective of alignment.
+> > 
+> > 
+> > So the benefit of this scheme is that is works irrespective of the
+> > instruction fetch window size and don't need the 'funny' alignment
+> > stuff.
+> > 
+> 
+> Thanks for explanation. Now I understand how this x86 magic works.
+> 
+> However it looks like even more complex than ARM implementation.
+> As I understand on ARM they do something like that:
+> ---------------------------->8-------------------------
+> on_each_cpu {
+> 	write_instruction
+> 	flush_data_cache_region
+> 	invalidate_instruction_cache_region
+> }
+> ---------------------------->8-------------------------
+> 
+> https://elixir.bootlin.com/linux/v5.1/source/arch/arm/kernel/patch.c#L121
+> 
+> Yep, there is some overhead - as we don't need to do white and D$ flush on each cpu
+> but that makes code simple and avoids additional checks.
+> 
+> And I don't understand in which cases x86 approach with trap is better.
+> In this ARM implementation we do one machine wide IPI instead of three in x86 trap approach.
+> 
+> Probably there is some x86 specifics I don't get?
+
+It's about variable instruction length; ARM (RISC in general) doesn't
+have that, ARC does.
+
+Your current proposal works by keeping the instruction inside of the
+i-fetch window, but that then results in instruction padding (extra
+NOPs). And that is fine, it really should work.
+
+The x86 approach however allows you to get rid of that padding and
+should work for unaligned variable length instructions (we have 1-15
+byte instructions).
+
+I just wanted to make sure you were aware of the possiblities such that
+you made an informed decision, I'm not trying to force complexity on you
+:-)
