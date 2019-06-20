@@ -2,122 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4AD104D71B
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 20:16:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 840B04D781
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 20:19:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729734AbfFTSQJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 14:16:09 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:43860 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729300AbfFTSQG (ORCPT
+        id S1729569AbfFTSTP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 14:19:15 -0400
+Received: from eddie.linux-mips.org ([148.251.95.138]:38034 "EHLO
+        cvs.linux-mips.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727349AbfFTSTM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 14:16:06 -0400
-Received: by mail-pf1-f193.google.com with SMTP id i189so2102867pfg.10
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2019 11:16:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=VUfn1IOEl9rD06WsT02+mqNYFppRegXo3iWeR3nXox0=;
-        b=PDzWNDJmo14cyT5iiWirFxCbttBGQcs6+m6znSmNqWkbpH9CQvnWemOOGcn8NzWSaY
-         Me/Btlvf1i4v5Az6LCxb27WLi+/N2yWCGZM4+wHVmriX/AbDcLibJm2fqVPIUgxSzzjI
-         LBIKQN7uIIL0XSbRDkSMx0ehxU1ZfnoZx0TaU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=VUfn1IOEl9rD06WsT02+mqNYFppRegXo3iWeR3nXox0=;
-        b=n0GQoetK3QRviuhzEWDcuX/kaUn/v/Sy90XK7ftkfACQUAzKFtCAWT/5ohR5dHhXZr
-         ZMiq9G99UtE/T41tK6RuEdAgqOqlmNzUWgKRwIu4YFJxMfd5V87hZH9D1+kVzlZfUKzY
-         KpqXbxwOcHoenIugo26cesPnbe82Z650QkuqVHHDyjVydviD4leaXrOF5wLEqfyNHbqH
-         RUsTT57d8MYSxD9TB34uXNkYFg4tVAW5XRYODl5c8VS5+t+g4zS6fX01n8LFOXMrCHj1
-         d5+Ps5k5D29N+MpewmRHBqA/SJS1DWGwpOgX18JvgM3q3e1/GpA0VBJc1IHkKYYe7Ua4
-         tKHw==
-X-Gm-Message-State: APjAAAUSjlYRsG/PgsL/49euHDP9iB8y7oX/IK9GtFod63qNSld4DDBP
-        ZiwjHdyQ/WnATHOlhcFRfIgY8w==
-X-Google-Smtp-Source: APXvYqw79XlOckNLsRwzTUGfUfSvKWCIsmZtm9ZMQM+GdS+4jaUOmnAbOXIYsSXrzSkx6Fl0/HRCVA==
-X-Received: by 2002:a17:90a:36a9:: with SMTP id t38mr990899pjb.19.1561054565839;
-        Thu, 20 Jun 2019 11:16:05 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id w4sm147481pfw.97.2019.06.20.11.16.04
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 20 Jun 2019 11:16:05 -0700 (PDT)
-Date:   Thu, 20 Jun 2019 11:16:04 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Anton Vorontsov <anton@enomsg.org>,
-        Colin Cross <ccross@android.com>,
-        Tony Luck <tony.luck@intel.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] pstore: no need to check return value of debugfs_create
- functions
-Message-ID: <201906201115.37C12233AB@keescook>
-References: <20190612152033.GA17290@kroah.com>
+        Thu, 20 Jun 2019 14:19:12 -0400
+Received: (from localhost user: 'macro', uid#1010) by eddie.linux-mips.org
+        with ESMTP id S23994574AbfFTSTIXLeUG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org> + 1 other);
+        Thu, 20 Jun 2019 20:19:08 +0200
+Date:   Thu, 20 Jun 2019 19:19:08 +0100 (BST)
+From:   "Maciej W. Rozycki" <macro@linux-mips.org>
+To:     Paul Burton <paul.burton@mips.com>
+cc:     Serge Semin <fancer.lancer@gmail.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        James Hogan <jhogan@kernel.org>,
+        Serge Semin <Sergey.Semin@t-platforms.ru>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "Vadim V . Vlasov" <vadim.vlasov@t-platforms.ru>,
+        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] mips: Remove q-accessors from non-64bit platforms
+In-Reply-To: <20190620174002.tgayzon7dc5d57fh@pburton-laptop>
+Message-ID: <alpine.LFD.2.21.1906201851580.21654@eddie.linux-mips.org>
+References: <20190614063341.1672-1-fancer.lancer@gmail.com> <20190620174002.tgayzon7dc5d57fh@pburton-laptop>
+User-Agent: Alpine 2.21 (LFD 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190612152033.GA17290@kroah.com>
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 12, 2019 at 05:20:33PM +0200, Greg Kroah-Hartman wrote:
-> When calling debugfs functions, there is no need to ever check the
-> return value.  The function can work or not, but the code logic should
-> never do something different based on this.
+On Thu, 20 Jun 2019, Paul Burton wrote:
+
+> So this seems pretty reasonable. Build testing all our defconfigs only
+> showed up one issue for decstation_defconfig & decstation_r4k_defconfig:
 > 
-> Cc: Kees Cook <keescook@chromium.org>
-> Cc: Anton Vorontsov <anton@enomsg.org>
-> Cc: Colin Cross <ccross@android.com>
-> Cc: Tony Luck <tony.luck@intel.com>
-> Cc: linux-kernel@vger.kernel.org
-> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
-Thanks; applied to my for-next/pstore tree.
-
--Kees
-
-> ---
->  fs/pstore/ftrace.c | 18 ++----------------
->  1 file changed, 2 insertions(+), 16 deletions(-)
+>   drivers/net/fddi/defza.c: In function 'fza_reads':
+>   drivers/net/fddi/defza.c:88:17: error: implicit declaration of
+>     function 'readq_relaxed'; did you mean 'readw_relaxed'?
+>     [-Werror=implicit-function-declaration]
+>    #define readq_u readq_relaxed
+>                    ^~~~~~~~~~~~~
+>   drivers/net/fddi/defza.c:126:13: note: in expansion of macro 'readq_u'
+>       *dst++ = readq_u(src++);
+>                ^~~~~~~
+>   drivers/net/fddi/defza.c: In function 'fza_writes':
+>   drivers/net/fddi/defza.c:92:18: error: implicit declaration of
+>     function 'writeq_relaxed'; did you mean 'writel_relaxed'?
+>     [-Werror=implicit-function-declaration]
+>    #define writeq_u writeq_relaxed
+>                     ^~~~~~~~~~~~~~
+>   drivers/net/fddi/defza.c:151:4: note: in expansion of macro 'writeq_u'
+>       writeq_u(*src++, dst++);
+>       ^~~~~~~~
+>     CC      net/core/scm.o
+>   cc1: some warnings being treated as errors
+>   make[4]: *** [scripts/Makefile.build:279: drivers/net/fddi/defza.o] Error 1
 > 
-> diff --git a/fs/pstore/ftrace.c b/fs/pstore/ftrace.c
-> index b8a0931568f8..fd9468928bef 100644
-> --- a/fs/pstore/ftrace.c
-> +++ b/fs/pstore/ftrace.c
-> @@ -120,27 +120,13 @@ static struct dentry *pstore_ftrace_dir;
->  
->  void pstore_register_ftrace(void)
->  {
-> -	struct dentry *file;
-> -
->  	if (!psinfo->write)
->  		return;
->  
->  	pstore_ftrace_dir = debugfs_create_dir("pstore", NULL);
-> -	if (!pstore_ftrace_dir) {
-> -		pr_err("%s: unable to create pstore directory\n", __func__);
-> -		return;
-> -	}
-> -
-> -	file = debugfs_create_file("record_ftrace", 0600, pstore_ftrace_dir,
-> -				   NULL, &pstore_knob_fops);
-> -	if (!file) {
-> -		pr_err("%s: unable to create record_ftrace file\n", __func__);
-> -		goto err_file;
-> -	}
->  
-> -	return;
-> -err_file:
-> -	debugfs_remove(pstore_ftrace_dir);
-> +	debugfs_create_file("record_ftrace", 0600, pstore_ftrace_dir, NULL,
-> +			    &pstore_knob_fops);
->  }
->  
->  void pstore_unregister_ftrace(void)
-> -- 
-> 2.22.0
+> These uses of readq_relaxed & writeq_relaxed are both conditional upon
+> sizeof(unsigned long) == 8, ie. upon CONFIG_64BIT=y so they're not going
+> to present a runtime issue but we need to provide some implementation of
+> the *q accessors to keep the compiler happy.
 > 
+> I see a few options:
+> 
+> 1) We could just have defza.c include <io-64-nonatomic-lo-hi.h> to get
+>    the appropriate declarations, which should then get optimized away by
+>    the compiler anyway & never actually be used.
 
--- 
-Kees Cook
+ This, definitely.
+
+> 2) We could have defza.h #define its readq_u & writeq_u macros
+>    differently for CONFIG_32BIT=y kernels, perhaps using
+>    __compiletime_error to catch any bogus use of them.
+> 
+> 3) We could do the same in a generic header, though if nobody else has
+>    needed it so far & this is the only place we need it then maybe it's
+>    not worth it.
+> 
+> So I'm thinking option 2 might be best, as below. Having said that I
+> don't mind option 1 either - it's simple. Maciej do you have any
+> preference?
+
+ The use of 64-bit operations to access option's packet memory, which is 
+true SRAM, i.e. no side effects, is to improve throughput only and there's 
+no need for atomicity here nor also any kind of barriers, except at the 
+conclusion.  Splitting 64-bit accesses into 32-bit halves in software 
+would not be a functional error here.
+
+ I benchmarked it back in the day and the difference was noticeable with 
+actual network transmissions between loops using 32-bit (LW/SW) and 64-bit 
+(LD/SD) accesses respectively, though I may not be able to track down the 
+figures anymore as it must have been some 18 years ago.  The performance 
+of the MB ASIC used to interface the R4400 CPU to DRAM and TURBOchannel 
+with the 5000/260 systems was stellar as it was specifically designed with 
+high throughput in mind, as an upgrade to the exiting R3400-based 5000/240 
+systems (the CPU and the ASIC are both on a daughtercard), though new such 
+machines used to be sold as well.
+
+ For the record the CPU and TURBOchannel run at 60MHz (40MHz with the 
+R3400) and 25MHz respectively with these systems.
+
+ Thanks for the heads-up!
+
+  Maciej
