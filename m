@@ -2,141 +2,138 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9C6CE4D82C
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 20:24:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 69C104D85B
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 20:26:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728672AbfFTSYo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 14:24:44 -0400
-Received: from ale.deltatee.com ([207.54.116.67]:33686 "EHLO ale.deltatee.com"
+        id S1728040AbfFTS0A (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 14:26:00 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:40920 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726633AbfFTSYi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 14:24:38 -0400
-Received: from s01061831bf6ec98c.cg.shawcable.net ([68.147.80.180] helo=[192.168.6.132])
-        by ale.deltatee.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.89)
-        (envelope-from <logang@deltatee.com>)
-        id 1he1jU-0005yI-Se; Thu, 20 Jun 2019 12:24:26 -0600
-To:     Jason Gunthorpe <jgg@ziepe.ca>
-Cc:     linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org,
-        linux-rdma@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
-        Christoph Hellwig <hch@lst.de>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        Keith Busch <kbusch@kernel.org>,
-        Stephen Bates <sbates@raithlin.com>
-References: <20190620161240.22738-1-logang@deltatee.com>
- <20190620161240.22738-21-logang@deltatee.com>
- <20190620164909.GC19891@ziepe.ca>
- <f9186b2b-7737-965f-2dca-25e40e566e64@deltatee.com>
- <20190620171105.GD19891@ziepe.ca>
-From:   Logan Gunthorpe <logang@deltatee.com>
-Message-ID: <a3a8ad66-459c-d590-5ce7-ce593cd8f34a@deltatee.com>
-Date:   Thu, 20 Jun 2019 12:24:20 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.1
+        id S1726924AbfFTSZ4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Jun 2019 14:25:56 -0400
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id B9913316290E;
+        Thu, 20 Jun 2019 18:25:42 +0000 (UTC)
+Received: from krava (ovpn-204-72.brq.redhat.com [10.40.204.72])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 56BEC19C5B;
+        Thu, 20 Jun 2019 18:25:23 +0000 (UTC)
+Date:   Thu, 20 Jun 2019 20:25:19 +0200
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     John Garry <john.garry@huawei.com>
+Cc:     peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
+        alexander.shishkin@linux.intel.com, namhyung@kernel.org,
+        tmricht@linux.ibm.com, brueckner@linux.ibm.com,
+        kan.liang@linux.intel.com, ben@decadent.org.uk,
+        mathieu.poirier@linaro.org, mark.rutland@arm.com,
+        will.deacon@arm.com, linux-kernel@vger.kernel.org,
+        linuxarm@huawei.com, linux-arm-kernel@lists.infradead.org,
+        zhangshaokun@hisilicon.com
+Subject: Re: [PATCH v2 2/5] perf pmu: Support more complex PMU event aliasing
+Message-ID: <20190620182519.GA15239@krava>
+References: <1560521283-73314-1-git-send-email-john.garry@huawei.com>
+ <1560521283-73314-3-git-send-email-john.garry@huawei.com>
+ <20190616095844.GC2500@krava>
+ <a27e65b4-b487-9206-6dd0-6f9dcec0f1f5@huawei.com>
 MIME-Version: 1.0
-In-Reply-To: <20190620171105.GD19891@ziepe.ca>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 68.147.80.180
-X-SA-Exim-Rcpt-To: sbates@raithlin.com, kbusch@kernel.org, sagi@grimberg.me, dan.j.williams@intel.com, bhelgaas@google.com, hch@lst.de, axboe@kernel.dk, linux-rdma@vger.kernel.org, linux-pci@vger.kernel.org, linux-nvme@lists.infradead.org, linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, jgg@ziepe.ca
-X-SA-Exim-Mail-From: logang@deltatee.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on ale.deltatee.com
-X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        GREYLIST_ISWHITE autolearn=ham autolearn_force=no version=3.4.2
-Subject: Re: [RFC PATCH 20/28] IB/core: Introduce API for initializing a RW
- ctx from a DMA address
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a27e65b4-b487-9206-6dd0-6f9dcec0f1f5@huawei.com>
+User-Agent: Mutt/1.11.4 (2019-03-13)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.41]); Thu, 20 Jun 2019 18:25:55 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 2019-06-20 11:11 a.m., Jason Gunthorpe wrote:
-> On Thu, Jun 20, 2019 at 10:59:44AM -0600, Logan Gunthorpe wrote:
->>
->>
->> On 2019-06-20 10:49 a.m., Jason Gunthorpe wrote:
->>> On Thu, Jun 20, 2019 at 10:12:32AM -0600, Logan Gunthorpe wrote:
->>>> Introduce rdma_rw_ctx_dma_init() and rdma_rw_ctx_dma_destroy() which
->>>> peform the same operation as rdma_rw_ctx_init() and
->>>> rdma_rw_ctx_destroy() respectively except they operate on a DMA
->>>> address and length instead of an SGL.
->>>>
->>>> This will be used for struct page-less P2PDMA, but there's also
->>>> been opinions expressed to migrate away from SGLs and struct
->>>> pages in the RDMA APIs and this will likely fit with that
->>>> effort.
->>>>
->>>> Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
->>>>  drivers/infiniband/core/rw.c | 74 ++++++++++++++++++++++++++++++------
->>>>  include/rdma/rw.h            |  6 +++
->>>>  2 files changed, 69 insertions(+), 11 deletions(-)
->>>>
->>>> diff --git a/drivers/infiniband/core/rw.c b/drivers/infiniband/core/rw.c
->>>> index 32ca8429eaae..cefa6b930bc8 100644
->>>> +++ b/drivers/infiniband/core/rw.c
->>>> @@ -319,6 +319,39 @@ int rdma_rw_ctx_init(struct rdma_rw_ctx *ctx, struct ib_qp *qp, u8 port_num,
->>>>  }
->>>>  EXPORT_SYMBOL(rdma_rw_ctx_init);
->>>>  
->>>> +/**
->>>> + * rdma_rw_ctx_dma_init - initialize a RDMA READ/WRITE context from a
->>>> + *	DMA address instead of SGL
->>>> + * @ctx:	context to initialize
->>>> + * @qp:		queue pair to operate on
->>>> + * @port_num:	port num to which the connection is bound
->>>> + * @addr:	DMA address to READ/WRITE from/to
->>>> + * @len:	length of memory to operate on
->>>> + * @remote_addr:remote address to read/write (relative to @rkey)
->>>> + * @rkey:	remote key to operate on
->>>> + * @dir:	%DMA_TO_DEVICE for RDMA WRITE, %DMA_FROM_DEVICE for RDMA READ
->>>> + *
->>>> + * Returns the number of WQEs that will be needed on the workqueue if
->>>> + * successful, or a negative error code.
->>>> + */
->>>> +int rdma_rw_ctx_dma_init(struct rdma_rw_ctx *ctx, struct ib_qp *qp,
->>>> +		u8 port_num, dma_addr_t addr, u32 len, u64 remote_addr,
->>>> +		u32 rkey, enum dma_data_direction dir)
->>>
->>> Why not keep the same basic signature here but replace the scatterlist
->>> with the dma vec ?
->>
->> Could do. At the moment, I had no need for dma_vec in this interface.
+On Mon, Jun 17, 2019 at 10:06:08AM +0100, John Garry wrote:
+> On 16/06/2019 10:58, Jiri Olsa wrote:
+> > On Fri, Jun 14, 2019 at 10:08:00PM +0800, John Garry wrote:
+> > > The jevent "Unit" field is used for uncore PMU alias definition.
+> > > 
+> > > The form uncore_pmu_example_X is supported, where "X" is a wildcard,
+> > > to support multiple instances of the same PMU in a system.
+> > > 
+> > > Unfortunately this format not suitable for all uncore PMUs; take the Hisi
+> > > DDRC uncore PMU for example, where the name is in the form
+> > > hisi_scclX_ddrcY.
+> > > 
+> > > For the current jevent parsing, we would be required to hardcode an uncore
+> > > alias translation for each possible value of X. This is not scalable.
+> > > 
+> > > Instead, add support for "Unit" field in the form "hisi_sccl,ddrc", where
+> > > we can match by hisi_scclX and ddrcY. Tokens in Unit field are
+> > > delimited by ','.
+> > > 
+> > > Signed-off-by: John Garry <john.garry@huawei.com>
+> > > ---
+> > >  tools/perf/util/pmu.c | 39 ++++++++++++++++++++++++++++++++++-----
+> > >  1 file changed, 34 insertions(+), 5 deletions(-)
+> > > 
+> > > diff --git a/tools/perf/util/pmu.c b/tools/perf/util/pmu.c
+> > > index 7e7299fee550..bc71c60589b5 100644
+> > > --- a/tools/perf/util/pmu.c
+> > > +++ b/tools/perf/util/pmu.c
+> > > @@ -700,6 +700,39 @@ struct pmu_events_map *perf_pmu__find_map(struct perf_pmu *pmu)
+> > >  	return map;
+> > >  }
+> > > 
+> > > +static bool pmu_uncore_alias_match(const char *pmu_name, const char *name)
+> > > +{
+> > > +	char *tmp, *tok, *str;
+> > > +	bool res;
+> > > +
+> > > +	str = strdup(pmu_name);
+> > > +	if (!str)
+> > > +		return false;
+> > > +
+> > > +	/*
+> > > +	 * uncore alias may be from different PMU with common
+> > > +	 * prefix or matching tokens.
+> > > +	 */
+> > > +	tok = strtok_r(str, ",", &tmp);
+> > > +	if (strncmp(pmu_name, tok, strlen(tok))) {
+> > 
 > 
-> I think that is because you only did nvme not srp/iser :)
+> Hi Jirka,
 
-I'm not sure that's true at least for the P2P case. With P2P we are able
-to  allocate one continuous region of memory for each transaction. It
-would be quite weird to allocate multiple regions for a single transaction.
+heya,
+sry for late reply
 
->>>> +{
->>>> +	struct scatterlist sg;
->>>> +
->>>> +	sg_dma_address(&sg) = addr;
->>>> +	sg_dma_len(&sg) = len;
->>>
->>> This needs to fail if the driver is one of the few that require
->>> struct page to work..
->>
->> Yes, right. Currently P2PDMA checks for the use of dma_virt_ops. And
->> that probably should also be done here. But is that sufficient? You're
->> probably right that it'll take an audit of the RDMA tree to sort that out.
 > 
-> For this purpose I'd be fine if you added a flag to the struct
-> ib_device_ops that is set on drivers that we know are OK.. We can make
-> that list bigger over time.
+> > if tok is NULL in here we crash
+> > 
+> 
+> As I see, tok could not be NULL. If str contains no delimiters, then we just
+> return same as str in tok.
+> 
+> Can you see tok being NULL?
 
-Ok, that would mirror what we did for the block layer. I'll look at
-doing something like that in the near future.
+well, if there's no ',' in the str it returns NULL, right?
+and IIUC this function is still called for standard uncore
+pmu names
 
-Thanks,
+> 
+> > > +		res = false;
+> > > +		goto out;
+> > > +	}
+> > > +
+> > > +	for (; tok; name += strlen(tok), tok = strtok_r(NULL, ",", &tmp)) {
+> > 
+> > why is name shifted in here?
+> 
+> I want to ensure that we match the tokens in order and also guard against
+> possible repeated token matches in 'name'.
 
-Logan
+i might not understand this correctly.. so
+
+str is the alias name that can contain ',' now, like:
+  hisi_sccl,ddrc
+
+and name is still pmu with no ',' ... please make this or
+proper version that in some comment
+
+thanks,
+jirka
