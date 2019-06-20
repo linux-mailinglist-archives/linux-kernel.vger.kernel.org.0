@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 568114D723
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 20:17:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C12B14D7FE
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 20:24:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729408AbfFTSQl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 14:16:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45854 "EHLO mail.kernel.org"
+        id S1728995AbfFTSVo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 14:21:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39808 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728759AbfFTSQk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 14:16:40 -0400
+        id S1727193AbfFTSMD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Jun 2019 14:12:03 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6330F205F4;
-        Thu, 20 Jun 2019 18:16:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3D9972070B;
+        Thu, 20 Jun 2019 18:12:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561054599;
-        bh=4i/pOg1BQheMfb1D9CPYgDXBxnXtl0Ni8DVdI9l0Nb0=;
+        s=default; t=1561054321;
+        bh=TBAws2c/GmHnYBrpWrysQHwua9SqWMmW78aPAlCjFQg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uPo7Fmk0mUSMlIE3Adyn5/Pgqfq2qOZdMM908YehAddcR7CZ+tDAs1J5PhkG0EW4B
-         SGvJ9DCMbn8M97o+zurdEim37L9GQiQ7Q8Md1m8P45QTlX0lL6LYo7je/BRBs6y91l
-         m8BYNc83FbhoRJ0crOG1WFfSpnOY/KNAhAX94pMo=
+        b=wyLEA/crunDQl+Q1N/w0ka3hz69bRW8xYNITfGs0qLVE4w7W/o47k7ctKCesOhtqf
+         zD31KcLTX3npAExiqm9D51CKkys/jTAyydEsu69ehSzaTdQSW/mfNo0iL+1fdu0xMN
+         BCt141Nk4TYcS4I5RYpu48kZGNcDSJhnzRvVhW3g=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Paul Mackerras <paulus@ozlabs.org>,
-        =?UTF-8?q?C=C3=A9dric=20Le=20Goater?= <clg@kaod.org>,
+        stable@vger.kernel.org, Sami Tolvanen <samitolvanen@google.com>,
+        Will Deacon <will.deacon@arm.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 77/98] KVM: PPC: Book3S HV: Dont take kvm->lock around kvm_for_each_vcpu
-Date:   Thu, 20 Jun 2019 19:57:44 +0200
-Message-Id: <20190620174353.118893627@linuxfoundation.org>
+Subject: [PATCH 4.19 50/61] arm64: use the correct function type for __arm64_sys_ni_syscall
+Date:   Thu, 20 Jun 2019 19:57:45 +0200
+Message-Id: <20190620174345.934523625@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190620174349.443386789@linuxfoundation.org>
-References: <20190620174349.443386789@linuxfoundation.org>
+In-Reply-To: <20190620174336.357373754@linuxfoundation.org>
+References: <20190620174336.357373754@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,63 +44,81 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 5a3f49364c3ffa1107bd88f8292406e98c5d206c ]
+[ Upstream commit 1e29ab3186e33c77dbb2d7566172a205b59fa390 ]
 
-Currently the HV KVM code takes the kvm->lock around calls to
-kvm_for_each_vcpu() and kvm_get_vcpu_by_id() (which can call
-kvm_for_each_vcpu() internally).  However, that leads to a lock
-order inversion problem, because these are called in contexts where
-the vcpu mutex is held, but the vcpu mutexes nest within kvm->lock
-according to Documentation/virtual/kvm/locking.txt.  Hence there
-is a possibility of deadlock.
+Calling sys_ni_syscall through a syscall_fn_t pointer trips indirect
+call Control-Flow Integrity checking due to a function type
+mismatch. Use SYSCALL_DEFINE0 for __arm64_sys_ni_syscall instead and
+remove the now unnecessary casts.
 
-To fix this, we simply don't take the kvm->lock mutex around these
-calls.  This is safe because the implementations of kvm_for_each_vcpu()
-and kvm_get_vcpu_by_id() have been designed to be able to be called
-locklessly.
-
-Signed-off-by: Paul Mackerras <paulus@ozlabs.org>
-Reviewed-by: Cédric Le Goater <clg@kaod.org>
-Signed-off-by: Paul Mackerras <paulus@ozlabs.org>
+Signed-off-by: Sami Tolvanen <samitolvanen@google.com>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/powerpc/kvm/book3s_hv.c | 9 +--------
- 1 file changed, 1 insertion(+), 8 deletions(-)
+ arch/arm64/kernel/sys.c   | 14 +++++++++-----
+ arch/arm64/kernel/sys32.c |  7 ++-----
+ 2 files changed, 11 insertions(+), 10 deletions(-)
 
-diff --git a/arch/powerpc/kvm/book3s_hv.c b/arch/powerpc/kvm/book3s_hv.c
-index 9f49087c3a41..6d4f0f72231f 100644
---- a/arch/powerpc/kvm/book3s_hv.c
-+++ b/arch/powerpc/kvm/book3s_hv.c
-@@ -445,12 +445,7 @@ static void kvmppc_dump_regs(struct kvm_vcpu *vcpu)
+diff --git a/arch/arm64/kernel/sys.c b/arch/arm64/kernel/sys.c
+index 162a95ed0881..fe20c461582a 100644
+--- a/arch/arm64/kernel/sys.c
++++ b/arch/arm64/kernel/sys.c
+@@ -47,22 +47,26 @@ SYSCALL_DEFINE1(arm64_personality, unsigned int, personality)
+ 	return ksys_personality(personality);
+ }
  
- static struct kvm_vcpu *kvmppc_find_vcpu(struct kvm *kvm, int id)
- {
--	struct kvm_vcpu *ret;
++asmlinkage long sys_ni_syscall(void);
++
++asmlinkage long __arm64_sys_ni_syscall(const struct pt_regs *__unused)
++{
++	return sys_ni_syscall();
++}
++
+ /*
+  * Wrappers to pass the pt_regs argument.
+  */
+ #define __arm64_sys_personality		__arm64_sys_arm64_personality
+ 
+-asmlinkage long sys_ni_syscall(const struct pt_regs *);
+-#define __arm64_sys_ni_syscall	sys_ni_syscall
 -
--	mutex_lock(&kvm->lock);
--	ret = kvm_get_vcpu_by_id(kvm, id);
--	mutex_unlock(&kvm->lock);
--	return ret;
-+	return kvm_get_vcpu_by_id(kvm, id);
+ #undef __SYSCALL
+ #define __SYSCALL(nr, sym)	asmlinkage long __arm64_##sym(const struct pt_regs *);
+ #include <asm/unistd.h>
+ 
+ #undef __SYSCALL
+-#define __SYSCALL(nr, sym)	[nr] = (syscall_fn_t)__arm64_##sym,
++#define __SYSCALL(nr, sym)	[nr] = __arm64_##sym,
+ 
+ const syscall_fn_t sys_call_table[__NR_syscalls] = {
+-	[0 ... __NR_syscalls - 1] = (syscall_fn_t)sys_ni_syscall,
++	[0 ... __NR_syscalls - 1] = __arm64_sys_ni_syscall,
+ #include <asm/unistd.h>
+ };
+diff --git a/arch/arm64/kernel/sys32.c b/arch/arm64/kernel/sys32.c
+index 0f8bcb7de700..3c80a40c1c9d 100644
+--- a/arch/arm64/kernel/sys32.c
++++ b/arch/arm64/kernel/sys32.c
+@@ -133,17 +133,14 @@ COMPAT_SYSCALL_DEFINE6(aarch32_fallocate, int, fd, int, mode,
+ 	return ksys_fallocate(fd, mode, arg_u64(offset), arg_u64(len));
  }
  
- static void init_vpa(struct kvm_vcpu *vcpu, struct lppaca *vpa)
-@@ -1502,7 +1497,6 @@ static void kvmppc_set_lpcr(struct kvm_vcpu *vcpu, u64 new_lpcr,
- 	struct kvmppc_vcore *vc = vcpu->arch.vcore;
- 	u64 mask;
+-asmlinkage long sys_ni_syscall(const struct pt_regs *);
+-#define __arm64_sys_ni_syscall	sys_ni_syscall
+-
+ #undef __SYSCALL
+ #define __SYSCALL(nr, sym)	asmlinkage long __arm64_##sym(const struct pt_regs *);
+ #include <asm/unistd32.h>
  
--	mutex_lock(&kvm->lock);
- 	spin_lock(&vc->lock);
- 	/*
- 	 * If ILE (interrupt little-endian) has changed, update the
-@@ -1542,7 +1536,6 @@ static void kvmppc_set_lpcr(struct kvm_vcpu *vcpu, u64 new_lpcr,
- 		mask &= 0xFFFFFFFF;
- 	vc->lpcr = (vc->lpcr & ~mask) | (new_lpcr & mask);
- 	spin_unlock(&vc->lock);
--	mutex_unlock(&kvm->lock);
- }
+ #undef __SYSCALL
+-#define __SYSCALL(nr, sym)	[nr] = (syscall_fn_t)__arm64_##sym,
++#define __SYSCALL(nr, sym)	[nr] = __arm64_##sym,
  
- static int kvmppc_get_one_reg_hv(struct kvm_vcpu *vcpu, u64 id,
+ const syscall_fn_t compat_sys_call_table[__NR_compat_syscalls] = {
+-	[0 ... __NR_compat_syscalls - 1] = (syscall_fn_t)sys_ni_syscall,
++	[0 ... __NR_compat_syscalls - 1] = __arm64_sys_ni_syscall,
+ #include <asm/unistd32.h>
+ };
 -- 
 2.20.1
 
