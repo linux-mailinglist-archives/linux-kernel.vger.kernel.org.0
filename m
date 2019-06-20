@@ -2,131 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 717464C734
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 08:08:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B90D04C742
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 08:10:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726402AbfFTGHh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 02:07:37 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:44512 "EHLO mx1.redhat.com"
+        id S1726689AbfFTGKE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 02:10:04 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:34317 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726082AbfFTGHd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 02:07:33 -0400
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1725937AbfFTGKE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Jun 2019 02:10:04 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 8C636F0D13;
-        Thu, 20 Jun 2019 06:07:33 +0000 (UTC)
-Received: from sirius.home.kraxel.org (ovpn-116-212.ams2.redhat.com [10.36.116.212])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 2B4FD19C71;
-        Thu, 20 Jun 2019 06:07:33 +0000 (UTC)
-Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
-        id 253859D89; Thu, 20 Jun 2019 08:07:28 +0200 (CEST)
-From:   Gerd Hoffmann <kraxel@redhat.com>
-To:     dri-devel@lists.freedesktop.org
-Cc:     Gerd Hoffmann <kraxel@redhat.com>, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        virtualization@lists.linux-foundation.org (open list:VIRTIO GPU DRIVER),
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v4 12/12] drm/virtio: remove virtio_gpu_alloc_object
-Date:   Thu, 20 Jun 2019 08:07:26 +0200
-Message-Id: <20190620060726.926-13-kraxel@redhat.com>
-In-Reply-To: <20190620060726.926-1-kraxel@redhat.com>
-References: <20190620060726.926-1-kraxel@redhat.com>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Thu, 20 Jun 2019 06:07:33 +0000 (UTC)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45TryK4GJMz9s00;
+        Thu, 20 Jun 2019 16:10:01 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1561011001;
+        bh=0WhBsC+4o0OLnZMGP8BZUzOQGqtindWRsuVIP+YFVlI=;
+        h=Date:From:To:Cc:Subject:From;
+        b=m+Rr2+ukya2JmiyV9RpDg+33wy3RC3alZJ2QVaCk0ru6Aie9Cg19Dq69N9WX/s4YG
+         qLdErzkjQorspm4Vtc4dZZXtEllTWNlYZG9B8Xin9y99oXVgNCJ01BOHTbMHwX9g3V
+         aaPoqYKQoTAiGeus3apc7w0XpdOPoLijQXKkjJs89ZbwkCPMoKhY3xnxhZKhvNkl7k
+         ACRqbmYnr6+i6Z9ehASMXJybYGCxuFK5IRf+4+7o2bGDloPE+3ueEk+ajLJiRuKL3y
+         c3hfAXaAsCL+nWsYVUyKXPAwoDP7Ru8pwh5wUYjRtVeCE1U8jJ+sNg31n1s0zwxAMt
+         kHHCdHweG3ntg==
+Date:   Thu, 20 Jun 2019 16:10:00 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     James Bottomley <James.Bottomley@HansenPartnership.com>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Ming Lei <ming.lei@redhat.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: linux-next: build warning after merge of the scsi tree
+Message-ID: <20190620161000.7e5017b8@canb.auug.org.au>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/Jj1n2oCW4zjll+uOaCF.5wK"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thin wrapper around virtio_gpu_object_create(),
-but calling that directly works equally well.
+--Sig_/Jj1n2oCW4zjll+uOaCF.5wK
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
-Acked-by: Daniel Vetter <daniel.vetter@ffwll.ch>
----
- drivers/gpu/drm/virtio/virtgpu_drv.h   |  4 ----
- drivers/gpu/drm/virtio/virtgpu_gem.c   | 23 ++++-------------------
- drivers/gpu/drm/virtio/virtgpu_ioctl.c |  6 +++---
- 3 files changed, 7 insertions(+), 26 deletions(-)
+Hi all,
 
-diff --git a/drivers/gpu/drm/virtio/virtgpu_drv.h b/drivers/gpu/drm/virtio/virtgpu_drv.h
-index 1d589de34449..3a593129981a 100644
---- a/drivers/gpu/drm/virtio/virtgpu_drv.h
-+++ b/drivers/gpu/drm/virtio/virtgpu_drv.h
-@@ -228,10 +228,6 @@ int virtio_gpu_gem_object_open(struct drm_gem_object *obj,
- 			       struct drm_file *file);
- void virtio_gpu_gem_object_close(struct drm_gem_object *obj,
- 				 struct drm_file *file);
--struct virtio_gpu_object*
--virtio_gpu_alloc_object(struct drm_device *dev,
--			struct virtio_gpu_object_params *params,
--			struct virtio_gpu_fence *fence);
- int virtio_gpu_mode_dumb_create(struct drm_file *file_priv,
- 				struct drm_device *dev,
- 				struct drm_mode_create_dumb *args);
-diff --git a/drivers/gpu/drm/virtio/virtgpu_gem.c b/drivers/gpu/drm/virtio/virtgpu_gem.c
-index c5028b04cd92..f5765b94811a 100644
---- a/drivers/gpu/drm/virtio/virtgpu_gem.c
-+++ b/drivers/gpu/drm/virtio/virtgpu_gem.c
-@@ -26,35 +26,20 @@
- #include <drm/drmP.h>
- #include "virtgpu_drv.h"
- 
--struct virtio_gpu_object*
--virtio_gpu_alloc_object(struct drm_device *dev,
--			struct virtio_gpu_object_params *params,
--			struct virtio_gpu_fence *fence)
--{
--	struct virtio_gpu_device *vgdev = dev->dev_private;
--	struct virtio_gpu_object *obj;
--	int ret;
--
--	ret = virtio_gpu_object_create(vgdev, params, &obj, fence);
--	if (ret)
--		return ERR_PTR(ret);
--
--	return obj;
--}
--
- int virtio_gpu_gem_create(struct drm_file *file,
- 			  struct drm_device *dev,
- 			  struct virtio_gpu_object_params *params,
- 			  struct drm_gem_object **obj_p,
- 			  uint32_t *handle_p)
- {
-+	struct virtio_gpu_device *vgdev = dev->dev_private;
- 	struct virtio_gpu_object *obj;
- 	int ret;
- 	u32 handle;
- 
--	obj = virtio_gpu_alloc_object(dev, params, NULL);
--	if (IS_ERR(obj))
--		return PTR_ERR(obj);
-+	ret = virtio_gpu_object_create(vgdev, params, &obj, NULL);
-+	if (ret < 0)
-+		return ret;
- 
- 	ret = drm_gem_handle_create(file, &obj->base.base, &handle);
- 	if (ret) {
-diff --git a/drivers/gpu/drm/virtio/virtgpu_ioctl.c b/drivers/gpu/drm/virtio/virtgpu_ioctl.c
-index d574ca38ebaa..c5f5af97d821 100644
---- a/drivers/gpu/drm/virtio/virtgpu_ioctl.c
-+++ b/drivers/gpu/drm/virtio/virtgpu_ioctl.c
-@@ -264,10 +264,10 @@ static int virtio_gpu_resource_create_ioctl(struct drm_device *dev, void *data,
- 	fence = virtio_gpu_fence_alloc(vgdev);
- 	if (!fence)
- 		return -ENOMEM;
--	qobj = virtio_gpu_alloc_object(dev, &params, fence);
-+	ret = virtio_gpu_object_create(vgdev, &params, &qobj, fence);
- 	dma_fence_put(&fence->f);
--	if (IS_ERR(qobj))
--		return PTR_ERR(qobj);
-+	if (ret < 0)
-+		return ret;
- 	obj = &qobj->base.base;
- 
- 	ret = drm_gem_handle_create(file_priv, obj, &handle);
--- 
-2.18.1
+After merging the scsi tree, today's linux-next build (x86_64
+allmodconfig) produced this warning:
 
+In file included from include/linux/pci-dma-compat.h:8,
+                 from include/linux/pci.h:2408,
+                 from drivers/scsi/mvumi.c:13:
+drivers/scsi/mvumi.c: In function 'mvumi_queue_command':
+include/linux/dma-mapping.h:608:34: warning: 'sg' may be used uninitialized=
+ in this function [-Wmaybe-uninitialized]
+ #define dma_unmap_sg(d, s, n, r) dma_unmap_sg_attrs(d, s, n, r, 0)
+                                  ^~~~~~~~~~~~~~~~~~
+drivers/scsi/mvumi.c:192:22: note: 'sg' was declared here
+  struct scatterlist *sg;
+                      ^~
+
+Introduced by commit
+
+  350d66a72adc ("scsi: mvumi: use sg helper to iterate over scatterlist")
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/Jj1n2oCW4zjll+uOaCF.5wK
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0LIzgACgkQAVBC80lX
+0Gzt7Af/e1u6fMbvwkLJDZtwh7G2osR4E+e45qm948F0sW5fM7+A5EltFzpDgreA
+xn6DO5tVQrSn5yE7R7gHGdYyO+ZcZS1IsYFBb5g2OiRC0YLTR+5dFIFvWTQWI2M6
+rduMQS1B9E+z03k7cL7Ly/pAIAY7VzfKjWAtgFfXfPWdROgW26MJyRKjYhz8zqhV
+hNMc58gDeupt9PuiRDcjXVWq6OGnv9bkxp9Y7x5IslDJOiYy/2xCIW9e4doYeaqo
+XqRmsZbWCyZg+Y98DMY43gUSmL00rAVDbfBtbFyW/fhkeKWMRBxmSwf2lreOED9t
+J9Wp5WgYJSuQ71MZiujQA3ykpTrj8w==
+=cR3U
+-----END PGP SIGNATURE-----
+
+--Sig_/Jj1n2oCW4zjll+uOaCF.5wK--
