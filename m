@@ -2,92 +2,375 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1724A4C90D
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 10:11:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2EFEF4C919
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 10:12:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731150AbfFTILj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 04:11:39 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:38628 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725875AbfFTILf (ORCPT
+        id S1731280AbfFTIML (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 04:12:11 -0400
+Received: from mail-io1-f65.google.com ([209.85.166.65]:38317 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725966AbfFTIMK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 04:11:35 -0400
-Received: by mail-wr1-f66.google.com with SMTP id d18so2003500wrs.5
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2019 01:11:34 -0700 (PDT)
+        Thu, 20 Jun 2019 04:12:10 -0400
+Received: by mail-io1-f65.google.com with SMTP id j6so872829ioa.5;
+        Thu, 20 Jun 2019 01:12:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
+        d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=HhWyyUaFjokwwCj2d1/nEx4QjaLwX5bSHXHfoJ/Z1z4=;
-        b=PdSWTevoSjMzvE1lmytqcgGP0RPJzKrM/e7aTP+8QeiMu0OnXdcMYmHugWc7jRuWa7
-         ODM7F9jtOna23X01M84cHN4WO2ADB1u0UZJNBYff3lcyv9QVEo/1GMvgUI2+cyL151qM
-         +wPj/ZlKF+qWkg3KVXqNkgbrOrudX0MFEFXbSRuDgXAmzJP5hxTBy1W0STvDt0CuJDDq
-         AZDwcR1lrDCTQs1OlP5QDbQnEib7ttSGqpAgJnSSuagSjwtf+tGh3F2iWGFn4TwW65L5
-         Z25fM51nzg6unt1ho3xAOJ7YlMgtCGDSZMpTyvzL5EPtv6x6IPSMW+vnZrXcnsBTr3+G
-         NWDA==
+        bh=poRl8BzWsgFsI4yFLzIdcMz1Un/5UxxSMxDmSncQkyU=;
+        b=fIv3UVWBKEeMQHAwCtJGRHOiYoK+XAgaTtOFhdRJj+6hr6mA6WZizU7bvFlOh/uWqh
+         TDqfSdwb9HDjRS7+WEsr6d7TIWfs3qemyLE910f8O7B8DbWX65I+gz4ouRUAHyiSWetM
+         9RgbhjY5l5aLa6fwmf8Q17/iVMLDHjonXDf/wdy85XgMhHKyRQOm+ZZc3m1KN1yiNJ0D
+         slYzTuDnRgGnBIW5tstYThXUlKxAK8jnllh62SdzLLtDdEsg20uDdmD646bij/1Mb9Qc
+         YtzJdFrWPAmGIOPnv7+QvImeaONYVDwkiGTdOX3xkh+YxBnmVgoEDO0fGSi8QmIIji8j
+         JDrw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=HhWyyUaFjokwwCj2d1/nEx4QjaLwX5bSHXHfoJ/Z1z4=;
-        b=jeNLbXtgc7X41nIuddbuUlzXOMwTBX4dohSUseOqwtzwnGeuIjOYcRnDuaUAKMHIcK
-         9RRDOn3Lm4LkpkNB+iVE92pvirsc1nImrLobVq95F3o6tn1SE/jMG/Mr5uGMv75xFw+t
-         6V1aE0Ub2+SVctUxHlGvWm4jZMqa12FueqBqDJoZFTGx26IsQYSNetswBLyV7Kalmewb
-         F4t9ryYR0Dkl45Z0W/Y9HC14sPw0uSnz+dXkS3XZ9DFGrmhpHRCu0vr1tS/5yJuxIEXo
-         /FQ+c8hTCQRaYzUSgnYaVqjaPIqTkICiDXE3pe912P5YuNcFcB7lGt5j9w+8Wz6Nfq7n
-         eHnA==
-X-Gm-Message-State: APjAAAVZWTUpabVuoH/4clZ2kwukabiwBp24MGZlExGLYMDWYslOT0zF
-        qAasf4SHyDePV1VrzukUBLUM3Q==
-X-Google-Smtp-Source: APXvYqzjvw+YuFRfVDg/VKnRQl34K5IFA/EQSugWLkyCXSp67bzfp/MtHssS/iKWK+3hoI6SfOun3A==
-X-Received: by 2002:a05:6000:146:: with SMTP id r6mr78481877wrx.237.1561018293930;
-        Thu, 20 Jun 2019 01:11:33 -0700 (PDT)
-Received: from srini-hackbox.lan (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
-        by smtp.gmail.com with ESMTPSA id q12sm17559174wrp.50.2019.06.20.01.11.32
+        bh=poRl8BzWsgFsI4yFLzIdcMz1Un/5UxxSMxDmSncQkyU=;
+        b=QH4bhjJyx6s7qUhd3wtvntzK7XSYEWbte3iHKdTtPFlo5qnW2OEpoSVJirksBPZC0g
+         nRuOukyVRB4dJKuObwQt5S32rE1PYYjFkW6ooEcYeqqN3+HunyU2Xh8hniAJ5wMSzbyy
+         WHDJaShcWr+R5IgOt+1qob/id3ax0b2HYXRpG4sZhQDRtmSjT9Pik0IKcyeViX6BB2fV
+         UC88slgylOx39Da0EWrDqz0fenVBuHoMYA0MnYiWRJItT8OxMdw6FM/OlbQiBu7FzJDI
+         Tes4zwGCIovIp32DT6E3wNoH/lTlT/yWQaCvHPj1i2cYzCqfRHHAon5M+JBMvHTevqkE
+         DL6w==
+X-Gm-Message-State: APjAAAUub678yCoqkUREV/0ui28xOg4XW9P6ccFJtIipIyA5cBnHbWPb
+        YpSgNSxgRGgq74JlU9Zr9cE=
+X-Google-Smtp-Source: APXvYqxbZeTtu4U1sVnMyebV3FlPKvsYb8x1CnIkW0oBSuJ67UuD1o8ljoIViM+ZI/yO7itdWXrwhQ==
+X-Received: by 2002:a6b:641a:: with SMTP id t26mr3231491iog.3.1561018329450;
+        Thu, 20 Jun 2019 01:12:09 -0700 (PDT)
+Received: from clevo.lan (CPE883d24a52a78-CMf0f2495c7700.cpe.net.fido.ca. [72.141.129.116])
+        by smtp.googlemail.com with ESMTPSA id u187sm37157138iod.37.2019.06.20.01.12.08
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 20 Jun 2019 01:11:33 -0700 (PDT)
-From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-To:     gregkh@linuxfoundation.org
-Cc:     linux-kernel@vger.kernel.org
-Subject: [PATCH 3/3] slimbus: core: generate uevent for non-dt only
-Date:   Thu, 20 Jun 2019 09:11:29 +0100
-Message-Id: <20190620081129.4721-4-srinivas.kandagatla@linaro.org>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190620081129.4721-1-srinivas.kandagatla@linaro.org>
-References: <20190620081129.4721-1-srinivas.kandagatla@linaro.org>
+        Thu, 20 Jun 2019 01:12:09 -0700 (PDT)
+From:   Ethan Sommer <e5ten.arch@gmail.com>
+Cc:     hpa@zytor.com, Ethan Sommer <e5ten.arch@gmail.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        Joe Perches <joe@perches.com>,
+        Federico Vaga <federico.vaga@vaga.pv.it>,
+        Ingo Molnar <mingo@kernel.org>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Borislav Petkov <bp@suse.de>,
+        Mark Rutland <mark.rutland@arm.com>,
+        John Stultz <john.stultz@linaro.org>,
+        Corey Minyard <cminyard@mvista.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2] replace timeconst bc script with an sh script
+Date:   Thu, 20 Jun 2019 04:11:32 -0400
+Message-Id: <20190620081142.31302-1-e5ten.arch@gmail.com>
+X-Mailer: git-send-email 2.22.0
+In-Reply-To: <8a9ffb4b-791d-35d1-bb2a-7b6ad812bff1@ideasonboard.com>
+References: <8a9ffb4b-791d-35d1-bb2a-7b6ad812bff1@ideasonboard.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Rely on MODULE_ALIAS() for automatic kernel module loading, rather than
-basing it on the OF compatible. This ensures that drivers without
-of_device_id table, such as wcd9335, will be automatically loaded.
+removes the bc build dependency introduced when timeconst.pl was
+replaced by timeconst.bc:
+70730bca1331 ("kernel: Replace timeconst.pl with a bc script")
 
-Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-[bjorn: Added commit message]
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Signed-off-by: Ethan Sommer <e5ten.arch@gmail.com>
 ---
- drivers/slimbus/core.c | 5 -----
- 1 file changed, 5 deletions(-)
+ Documentation/process/changes.rst |   6 --
+ Kbuild                            |   4 +-
+ kernel/time/timeconst.bc          | 117 -----------------------------
+ kernel/time/timeconst.sh          | 118 ++++++++++++++++++++++++++++++
+ 4 files changed, 120 insertions(+), 125 deletions(-)
+ delete mode 100644 kernel/time/timeconst.bc
+ create mode 100755 kernel/time/timeconst.sh
 
-diff --git a/drivers/slimbus/core.c b/drivers/slimbus/core.c
-index b2f07d2043eb..526e3215d8fe 100644
---- a/drivers/slimbus/core.c
-+++ b/drivers/slimbus/core.c
-@@ -98,11 +98,6 @@ static int slim_device_remove(struct device *dev)
- static int slim_device_uevent(struct device *dev, struct kobj_uevent_env *env)
- {
- 	struct slim_device *sbdev = to_slim_device(dev);
--	int ret;
--
--	ret = of_device_uevent_modalias(dev, env);
--	if (ret != -ENODEV)
--		return ret;
+diff --git a/Documentation/process/changes.rst b/Documentation/process/changes.rst
+index 18735dc460a0..14347f6752ea 100644
+--- a/Documentation/process/changes.rst
++++ b/Documentation/process/changes.rst
+@@ -108,12 +108,6 @@ Perl
+ You will need perl 5 and the following modules: ``Getopt::Long``,
+ ``Getopt::Std``, ``File::Basename``, and ``File::Find`` to build the kernel.
  
- 	return add_uevent_var(env, "MODALIAS=slim:%s", dev_name(&sbdev->dev));
- }
+-BC
+---
+-
+-You will need bc to build kernels 3.10 and higher
+-
+-
+ OpenSSL
+ -------
+ 
+diff --git a/Kbuild b/Kbuild
+index 8637fd14135f..2b5f2957cf04 100644
+--- a/Kbuild
++++ b/Kbuild
+@@ -20,9 +20,9 @@ timeconst-file := include/generated/timeconst.h
+ 
+ targets += $(timeconst-file)
+ 
+-filechk_gentimeconst = echo $(CONFIG_HZ) | bc -q $<
++filechk_gentimeconst = $(CONFIG_SHELL) $< $(CONFIG_HZ)
+ 
+-$(timeconst-file): kernel/time/timeconst.bc FORCE
++$(timeconst-file): kernel/time/timeconst.sh FORCE
+ 	$(call filechk,gentimeconst)
+ 
+ #####
+diff --git a/kernel/time/timeconst.bc b/kernel/time/timeconst.bc
+deleted file mode 100644
+index 7ed0e0fb5831..000000000000
+--- a/kernel/time/timeconst.bc
++++ /dev/null
+@@ -1,117 +0,0 @@
+-/* SPDX-License-Identifier: GPL-2.0 */
+-
+-scale=0
+-
+-define gcd(a,b) {
+-	auto t;
+-	while (b) {
+-		t = b;
+-		b = a % b;
+-		a = t;
+-	}
+-	return a;
+-}
+-
+-/* Division by reciprocal multiplication. */
+-define fmul(b,n,d) {
+-       return (2^b*n+d-1)/d;
+-}
+-
+-/* Adjustment factor when a ceiling value is used.  Use as:
+-   (imul * n) + (fmulxx * n + fadjxx) >> xx) */
+-define fadj(b,n,d) {
+-	auto v;
+-	d = d/gcd(n,d);
+-	v = 2^b*(d-1)/d;
+-	return v;
+-}
+-
+-/* Compute the appropriate mul/adj values as well as a shift count,
+-   which brings the mul value into the range 2^b-1 <= x < 2^b.  Such
+-   a shift value will be correct in the signed integer range and off
+-   by at most one in the upper half of the unsigned range. */
+-define fmuls(b,n,d) {
+-	auto s, m;
+-	for (s = 0; 1; s++) {
+-		m = fmul(s,n,d);
+-		if (m >= 2^(b-1))
+-			return s;
+-	}
+-	return 0;
+-}
+-
+-define timeconst(hz) {
+-	print "/* Automatically generated by kernel/time/timeconst.bc */\n"
+-	print "/* Time conversion constants for HZ == ", hz, " */\n"
+-	print "\n"
+-
+-	print "#ifndef KERNEL_TIMECONST_H\n"
+-	print "#define KERNEL_TIMECONST_H\n\n"
+-
+-	print "#include <linux/param.h>\n"
+-	print "#include <linux/types.h>\n\n"
+-
+-	print "#if HZ != ", hz, "\n"
+-	print "#error \qinclude/generated/timeconst.h has the wrong HZ value!\q\n"
+-	print "#endif\n\n"
+-
+-	if (hz < 2) {
+-		print "#error Totally bogus HZ value!\n"
+-	} else {
+-		s=fmuls(32,1000,hz)
+-		obase=16
+-		print "#define HZ_TO_MSEC_MUL32\tU64_C(0x", fmul(s,1000,hz), ")\n"
+-		print "#define HZ_TO_MSEC_ADJ32\tU64_C(0x", fadj(s,1000,hz), ")\n"
+-		obase=10
+-		print "#define HZ_TO_MSEC_SHR32\t", s, "\n"
+-
+-		s=fmuls(32,hz,1000)
+-		obase=16
+-		print "#define MSEC_TO_HZ_MUL32\tU64_C(0x", fmul(s,hz,1000), ")\n"
+-		print "#define MSEC_TO_HZ_ADJ32\tU64_C(0x", fadj(s,hz,1000), ")\n"
+-		obase=10
+-		print "#define MSEC_TO_HZ_SHR32\t", s, "\n"
+-
+-		obase=10
+-		cd=gcd(hz,1000)
+-		print "#define HZ_TO_MSEC_NUM\t\t", 1000/cd, "\n"
+-		print "#define HZ_TO_MSEC_DEN\t\t", hz/cd, "\n"
+-		print "#define MSEC_TO_HZ_NUM\t\t", hz/cd, "\n"
+-		print "#define MSEC_TO_HZ_DEN\t\t", 1000/cd, "\n"
+-		print "\n"
+-
+-		s=fmuls(32,1000000,hz)
+-		obase=16
+-		print "#define HZ_TO_USEC_MUL32\tU64_C(0x", fmul(s,1000000,hz), ")\n"
+-		print "#define HZ_TO_USEC_ADJ32\tU64_C(0x", fadj(s,1000000,hz), ")\n"
+-		obase=10
+-		print "#define HZ_TO_USEC_SHR32\t", s, "\n"
+-
+-		s=fmuls(32,hz,1000000)
+-		obase=16
+-		print "#define USEC_TO_HZ_MUL32\tU64_C(0x", fmul(s,hz,1000000), ")\n"
+-		print "#define USEC_TO_HZ_ADJ32\tU64_C(0x", fadj(s,hz,1000000), ")\n"
+-		obase=10
+-		print "#define USEC_TO_HZ_SHR32\t", s, "\n"
+-
+-		obase=10
+-		cd=gcd(hz,1000000)
+-		print "#define HZ_TO_USEC_NUM\t\t", 1000000/cd, "\n"
+-		print "#define HZ_TO_USEC_DEN\t\t", hz/cd, "\n"
+-		print "#define USEC_TO_HZ_NUM\t\t", hz/cd, "\n"
+-		print "#define USEC_TO_HZ_DEN\t\t", 1000000/cd, "\n"
+-
+-		cd=gcd(hz,1000000000)
+-		print "#define HZ_TO_NSEC_NUM\t\t", 1000000000/cd, "\n"
+-		print "#define HZ_TO_NSEC_DEN\t\t", hz/cd, "\n"
+-		print "#define NSEC_TO_HZ_NUM\t\t", hz/cd, "\n"
+-		print "#define NSEC_TO_HZ_DEN\t\t", 1000000000/cd, "\n"
+-		print "\n"
+-
+-		print "#endif /* KERNEL_TIMECONST_H */\n"
+-	}
+-	halt
+-}
+-
+-hz = read();
+-timeconst(hz)
+diff --git a/kernel/time/timeconst.sh b/kernel/time/timeconst.sh
+new file mode 100755
+index 000000000000..20dd24815ae1
+--- /dev/null
++++ b/kernel/time/timeconst.sh
+@@ -0,0 +1,118 @@
++#!/bin/sh
++# SPDX-License-Identifier: GPL-2.0
++
++if [ -z "$1" ]; then
++	printf '%s <HZ>\n' "$0"
++	exit 1
++else
++	hz="$1"
++fi
++
++# 2 to the power of n
++pot() {
++	local i=1
++    local j=1
++	while [ "${j}" -le "$1" ]; do
++		i="$((i * 2))"
++        j="$((j + 1))"
++	done
++	printf '%s\n' "${i}"
++}
++
++# Greatest common denominator
++gcd() {
++	local i="$1"
++	local j="$2"
++	local k
++	while [ "${j}" -ne 0 ]; do
++		k="${j}"
++		j="$((i % j))"
++		i="${k}"
++	done
++	printf '%s\n' "${i}"
++}
++
++# Division by reciprocal multiplication.
++fmul() {
++	printf '%s\n' "$((($(pot "$1") * $2 + $3 - 1) / $3))"
++}
++
++# Adjustment factor when a ceiling value is used.
++fadj() {
++	local i="$(gcd "$2" "$3")"
++	printf '%s\n' "$(($(pot "$1") * ($3 / i - 1) / ($3 / i)))"
++}
++
++# Compute the appropriate mul/adj values as well as a shift count,
++# which brings the mul value into the range 2^b-1 <= x < 2^b.  Such
++# a shift value will be correct in the signed integer range and off
++# by at most one in the upper half of the unsigned range.
++fmuls() {
++	local i=0
++    local j
++	while true; do
++        j="$(fmul "${i}" "$2" "$3")"
++		if [ "${j}" -ge "$(pot "$(($1 - 1))")" ]; then
++			printf '%s\n' "${i}" && return
++		fi
++		i="$((i + 1))"
++	done
++}
++
++printf '/* Automatically generated by kernel/time/timeconst.sh */\n'
++printf '/* Time conversion constants for HZ == %s */\n\n' "$1"
++
++printf '#ifndef KERNEL_TIMECONST_H\n'
++printf '#define KERNEL_TIMECONST_H\n\n'
++
++printf '#include <linux/param.h>\n'
++printf '#include <linux/types.h>\n\n'
++
++printf '#if HZ != %s\n' "$1"
++printf '#error "include/generated/timeconst.h has the wrong HZ value!"\n'
++printf '#endif\n\n'
++
++if [ "$1" -lt 2 ]; then
++	printf '#error Totally bogus HZ value!\n'
++	exit 1
++fi
++
++s="$(fmuls 32 1000 "$1")"
++printf '#define HZ_TO_MSEC_MUL32\tU64_C(0x%X)\n' "$(fmul "${s}" 1000 "$1")"
++printf '#define HZ_TO_MSEC_ADJ32\tU64_C(0x%X)\n' "$(fadj "${s}" 1000 "$1")"
++printf '#define HZ_TO_MSEC_SHR32\t%s\n' "${s}"
++
++s="$(fmuls 32 "$1" 1000)"
++printf '#define MSEC_TO_HZ_MUL32\tU64_C(0x%X)\n' "$(fmul "${s}" "$1" 1000)"
++printf '#define MSEC_TO_HZ_ADJ32\tU64_C(0x%X)\n' "$(fadj "${s}" "$1" 1000)"
++printf '#define MSEC_TO_HZ_SHR32\t%s\n' "${s}"
++
++cd="$(gcd "$1" 1000)"
++printf '#define HZ_TO_MSEC_NUM\t\t%s\n' "$((1000 / cd))"
++printf '#define HZ_TO_MSEC_DEN\t\t%s\n' "$((hz / cd))"
++printf '#define MSEC_TO_HZ_NUM\t\t%s\n' "$((hz / cd))"
++printf '#define MSEC_TO_HZ_DEN\t\t%s\n\n' "$((1000 / cd))"
++
++s="$(fmuls 32 1000000 "$1")"
++printf '#define HZ_TO_USEC_MUL32\tU64_C(0x%X)\n' "$(fmul "${s}" 1000000 "$1")"
++printf '#define HZ_TO_USEC_ADJ32\tU64_C(0x%X)\n' "$(fadj "${s}" 1000000 "$1")"
++printf '#define HZ_TO_USEC_SHR32\t%s\n' "${s}"
++
++s="$(fmuls 32 "$1" 1000000)"
++printf '#define USEC_TO_HZ_MUL32\tU64_C(0x%X)\n' "$(fmul "${s}" "$1" 1000000)"
++printf '#define USEC_TO_HZ_ADJ32\tU64_C(0x%X)\n' "$(fadj "${s}" "$1" 1000000)"
++printf '#define USEC_TO_HZ_SHR32\t%s\n' "${s}"
++
++cd="$(gcd "$1" 1000000)"
++printf '#define HZ_TO_USEC_NUM\t\t%s\n' "$((1000000 / cd))"
++printf '#define HZ_TO_USEC_DEN\t\t%s\n' "$((hz / cd))"
++printf '#define USEC_TO_HZ_NUM\t\t%s\n' "$((hz / cd))"
++printf '#define USEC_TO_HZ_DEN\t\t%s\n' "$((1000000 / cd))"
++
++cd="$(gcd "$1" 1000000000)"
++printf '#define HZ_TO_NSEC_NUM\t\t%s\n' "$((1000000000 / cd))"
++printf '#define HZ_TO_NSEC_DEN\t\t%s\n' "$((hz / cd))"
++printf '#define NSEC_TO_HZ_NUM\t\t%s\n' "$((hz / cd))"
++printf '#define NSEC_TO_HZ_DEN\t\t%s\n' "$((1000000000 / cd))"
++
++printf '\n#endif /* KERNEL_TIMECONST_H */\n'
 -- 
-2.21.0
+2.22.0
 
