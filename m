@@ -2,116 +2,304 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A9AE04DB5C
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 22:38:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B53F64DB7D
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 22:41:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726121AbfFTUiu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 16:38:50 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:45363 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725815AbfFTUiu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 16:38:50 -0400
-Received: by mail-ed1-f66.google.com with SMTP id a14so6495523edv.12
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2019 13:38:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=3NNpxQC9inEMdQiCtKdevzqLpK6p/o11oFFffa2tXtA=;
-        b=drTB1igfYgyVGqDFahZ5NCLWxeC+zgZym5tNhHU9P8EVSYWsif8ATO7pGEP+d9b4jh
-         JAOnze86pJuhlaTw0qlD/nW6rmrmbt2IBo7iigDcsRG6wUQWA25EcHINzbbeiMWc6kbv
-         TIuJ7KJQbLsp195+3AwE47Er77voagXXJT1rsAjFejlw31omdfGinBG6DPOUaGItFu+D
-         ys8HdSTj7s+FDlec/VPr03RWlEH28OKXZuN5/b58TkSNoU+KY/KedGOeatIk/zPPPXh0
-         /tB97o72J1eTHRzAcS1bmSx1VBukLqxVclGb2OyRv47B3yeHVfSUQUjUoYCoslao1nwy
-         iMOw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=3NNpxQC9inEMdQiCtKdevzqLpK6p/o11oFFffa2tXtA=;
-        b=Xv+x6F6WxapgwKqTgv1wIW7DFHARCHFFpIvvaVqA2BVdK+sTFKN8gD5UlFRlIV+FW3
-         EfQaulFSHDCzha7UQPRLuEGVYaGFbPwvI6PwMyKF3F1Vs3MU0VHpKMUzAqaNNddBGzEc
-         +v7qkmSaIMeSjwUzfEiF0uBAm768g9TIcA+5u4gusN9vGL0NZSL/1Pei1uy9BiFpJkeW
-         2mWPgOICH68O5hZlng9BdQscc0eWx3FyhcZ+KfG3XeXPWYnVtCd8xwjlrtbQf+y9TCNC
-         8yufn50sRgwf8REAvt7Dj3wc73L2bYtvzfTX33vazkv985ziuk9Xnny96DW+gfkM+ZRN
-         5qyA==
-X-Gm-Message-State: APjAAAUud7mQsjIOfKgXv2/RFTxtg3UV+5Nc6NCU6JVW9ABPhOj5tfCB
-        +ZyW2yJcbewCvn7IERSRZr9PmleRPeMOdQ==
-X-Google-Smtp-Source: APXvYqyFv7TcKmDYh6aGGxLZIuOvRIKKOd88Mr+MJzIGjGqg4v29rEZylk+bGGm4BsLzINtBP1v0qQ==
-X-Received: by 2002:a17:906:3385:: with SMTP id v5mr112020844eja.301.1561063128315;
-        Thu, 20 Jun 2019 13:38:48 -0700 (PDT)
-Received: from archlinux-epyc ([2a01:4f9:2b:2b15::2])
-        by smtp.gmail.com with ESMTPSA id g6sm69844ejb.18.2019.06.20.13.38.47
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 20 Jun 2019 13:38:47 -0700 (PDT)
+        id S1726301AbfFTUlF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 16:41:05 -0400
+Received: from mga04.intel.com ([192.55.52.120]:28568 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726100AbfFTUk6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Jun 2019 16:40:58 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Jun 2019 13:40:57 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.63,398,1557212400"; 
+   d="scan'208";a="311788168"
+Received: from skuppusw-desk.jf.intel.com ([10.54.74.33])
+  by orsmga004.jf.intel.com with ESMTP; 20 Jun 2019 13:40:56 -0700
+From:   sathyanarayanan.kuppuswamy@linux.intel.com
+To:     bhelgaas@google.com
+Cc:     linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ashok.raj@intel.com, keith.busch@intel.com,
+        sathyanarayanan.kuppuswamy@linux.intel.com
+Subject: [PATCH v3 4/7] PCI/ATS: Add PRI support for PCIe VF devices
 Date:   Thu, 20 Jun 2019 13:38:45 -0700
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Nick Desaulniers <ndesaulniers@google.com>
-Cc:     Doug Anderson <dianders@google.com>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Tom Roeder <tmroeder@google.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Raul E Rangel <rrangel@chromium.org>,
-        Tom Hughes <tomhughes@chromium.org>,
-        Ryan Case <ryandcase@chromium.org>, Yu Liu <yudiliu@google.com>
-Subject: Re: [PATCH] gen_compile_command: Add support for separate
- KBUILD_OUTPUT directory
-Message-ID: <20190620203845.GA102280@archlinux-epyc>
-References: <20190620184523.155756-1-mka@chromium.org>
- <CAKwvOdn-o9UszRW+MQ9Z0Ds9B2wSVBWUsPBPSF0S2DYxVFYpqA@mail.gmail.com>
- <CAD=FV=WcH=dVeVWznO7Ti5A8HBDRM=rPvvH=-XJ2o1PKXvHAQw@mail.gmail.com>
- <CAKwvOd=twuZAAyKsBRSeJEFuQZGdyTw+=JAwmJugUhV+bppdtg@mail.gmail.com>
+Message-Id: <f098c6d59e7ef7f371f1340fe1195511308d6103.1561061640.git.sathyanarayanan.kuppuswamy@linux.intel.com>
+X-Mailer: git-send-email 2.21.0
+In-Reply-To: <cover.1561061640.git.sathyanarayanan.kuppuswamy@linux.intel.com>
+References: <cover.1561061640.git.sathyanarayanan.kuppuswamy@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAKwvOd=twuZAAyKsBRSeJEFuQZGdyTw+=JAwmJugUhV+bppdtg@mail.gmail.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 20, 2019 at 01:25:36PM -0700, Nick Desaulniers wrote:
-> On Thu, Jun 20, 2019 at 1:13 PM Doug Anderson <dianders@google.com> wrote:
-> > On Thu, Jun 20, 2019 at 12:53 PM Nick Desaulniers
-> > <ndesaulniers@google.com> wrote:
-> > >
-> > > I do miss Doug's Kbuild caching patches' speedup.
-> >
-> > You actually get quite a bit of this by grabbing a new version of
-> > ccache (assuming you use ccache).  :-P  You still have to pay the
-> > penalty (twice) for all the options that are tested that the compiler
-> > _doesn't_ support, but at least you get the cache for the commands
-> > that the compiler does support.
-> 
-> Hello darkness my old friend:
-> https://nickdesaulniers.github.io/blog/2018/06/02/speeding-up-linux-kernel-builds-with-ccache/
-> Man, that post has not aged well.  Here's what we do now:
-> https://github.com/ClangBuiltLinux/continuous-integration/blob/45ab5842a69cb0c72d27d34e73b0599ec2a0e2ed/driver.sh#L227-L245
-> 
-> > Specifically, make sure you have a ccache with:
-> >
-> >     * https://github.com/ccache/ccache/pull/365
-> >     * https://github.com/ccache/ccache/pull/370
-> 
-> Oh! Interesting finds and thanks for the pointers.  Did these make it
-> into a release version of ccache, yet? If so, do you know which
-> version?
->
+From: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
 
-It should be available in 3.7 if I am reading git history right.
+When IOMMU tries to enable Page Request Interface (PRI) for VF device
+in iommu_enable_dev_iotlb(), it always fails because PRI support for
+PCIe VF device is currently broken. Current implementation expects
+the given PCIe device (PF & VF) to implement PRI capability before
+enabling the PRI support. But this assumption is incorrect. As per PCIe
+spec r4.0, sec 9.3.7.11, all VFs associated with PF can only use the
+PRI of the PF and not implement it. Hence we need to create exception
+for handling the PRI support for PCIe VF device.
 
-Cheers,
-Nathan
+Also, since PRI is a shared resource between PF/VF, following rules
+should apply.
 
-> > I still have it in my thoughts to avoid the penalty for options that
-> > the compiler doesn't support but haven't had time to work on it
-> > recently.
-> 
-> It had better not be autoconf! (Hopefully yet-to-be-written GNU C
-> extensions can support feature detection via C preprocessor)
-> -- 
-> Thanks,
-> ~Nick Desaulniers
+1. Use proper locking before accessing/modifying PF resources in VF
+   PRI enable/disable call.
+2. Use reference count logic to track the usage of PRI resource.
+3. Disable PRI only if the PRI reference count (pri_ref_cnt) is zero.
+
+Cc: Ashok Raj <ashok.raj@intel.com>
+Cc: Keith Busch <keith.busch@intel.com>
+Suggested-by: Ashok Raj <ashok.raj@intel.com>
+Signed-off-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+---
+ drivers/pci/ats.c   | 146 +++++++++++++++++++++++++++++++++-----------
+ include/linux/pci.h |   2 +
+ 2 files changed, 112 insertions(+), 36 deletions(-)
+
+diff --git a/drivers/pci/ats.c b/drivers/pci/ats.c
+index b5ce40c54e0b..d321953e64ec 100644
+--- a/drivers/pci/ats.c
++++ b/drivers/pci/ats.c
+@@ -31,6 +31,8 @@ static void pci_pri_init(struct pci_dev *pdev)
+ 	if (pdev->is_virtfn)
+ 		return;
+ 
++	mutex_init(&pdev->pri_lock);
++
+ 	pos = pci_find_ext_capability(pdev, PCI_EXT_CAP_ID_PRI);
+ 	if (!pos)
+ 		return;
+@@ -260,29 +262,57 @@ int pci_enable_pri(struct pci_dev *pdev, u32 reqs)
+ {
+ 	u16 control, status;
+ 	u32 max_requests;
++	int ret = 0;
++	struct pci_dev *pf = pci_physfn(pdev);
+ 
+-	if (WARN_ON(pdev->pri_enabled))
+-		return -EBUSY;
++	mutex_lock(&pf->pri_lock);
+ 
+-	if (!pdev->pri_cap)
+-		return -EINVAL;
++	if (WARN_ON(pdev->pri_enabled)) {
++		ret = -EBUSY;
++		goto pri_unlock;
++	}
+ 
+-	pci_read_config_word(pdev, pdev->pri_cap + PCI_PRI_STATUS, &status);
+-	if (!(status & PCI_PRI_STATUS_STOPPED))
+-		return -EBUSY;
++	if (!pf->pri_cap) {
++		ret = -EINVAL;
++		goto pri_unlock;
++	}
++
++	if (pdev->is_virtfn && pf->pri_enabled)
++		goto update_status;
++
++	/*
++	 * Before updating PRI registers, make sure there is no
++	 * outstanding PRI requests.
++	 */
++	pci_read_config_word(pf, pf->pri_cap + PCI_PRI_STATUS, &status);
++	if (!(status & PCI_PRI_STATUS_STOPPED)) {
++		ret = -EBUSY;
++		goto pri_unlock;
++	}
+ 
+-	pci_read_config_dword(pdev, pdev->pri_cap + PCI_PRI_MAX_REQ,
+-			      &max_requests);
++	pci_read_config_dword(pf, pf->pri_cap + PCI_PRI_MAX_REQ, &max_requests);
+ 	reqs = min(max_requests, reqs);
+-	pdev->pri_reqs_alloc = reqs;
+-	pci_write_config_dword(pdev, pdev->pri_cap + PCI_PRI_ALLOC_REQ, reqs);
++	pf->pri_reqs_alloc = reqs;
++	pci_write_config_dword(pf, pf->pri_cap + PCI_PRI_ALLOC_REQ, reqs);
+ 
+ 	control = PCI_PRI_CTRL_ENABLE;
+-	pci_write_config_word(pdev, pdev->pri_cap + PCI_PRI_CTRL, control);
++	pci_write_config_word(pf, pf->pri_cap + PCI_PRI_CTRL, control);
+ 
+-	pdev->pri_enabled = 1;
++	/*
++	 * If PRI is not already enabled in PF, increment the PF
++	 * pri_ref_cnt to track the usage of PRI interface.
++	 */
++	if (pdev->is_virtfn && !pf->pri_enabled) {
++		atomic_inc(&pf->pri_ref_cnt);
++		pf->pri_enabled = 1;
++	}
+ 
+-	return 0;
++update_status:
++	atomic_inc(&pf->pri_ref_cnt);
++	pdev->pri_enabled = 1;
++pri_unlock:
++	mutex_unlock(&pf->pri_lock);
++	return ret;
+ }
+ EXPORT_SYMBOL_GPL(pci_enable_pri);
+ 
+@@ -295,18 +325,30 @@ EXPORT_SYMBOL_GPL(pci_enable_pri);
+ void pci_disable_pri(struct pci_dev *pdev)
+ {
+ 	u16 control;
++	struct pci_dev *pf = pci_physfn(pdev);
+ 
+-	if (WARN_ON(!pdev->pri_enabled))
+-		return;
++	mutex_lock(&pf->pri_lock);
+ 
+-	if (!pdev->pri_cap)
+-		return;
++	if (WARN_ON(!pdev->pri_enabled) || !pf->pri_cap)
++		goto pri_unlock;
++
++	atomic_dec(&pf->pri_ref_cnt);
+ 
+-	pci_read_config_word(pdev, pdev->pri_cap + PCI_PRI_CTRL, &control);
++	/*
++	 * If pri_ref_cnt is not zero, then don't modify hardware
++	 * registers.
++	 */
++	if (atomic_read(&pf->pri_ref_cnt))
++		goto done;
++
++	pci_read_config_word(pf, pf->pri_cap + PCI_PRI_CTRL, &control);
+ 	control &= ~PCI_PRI_CTRL_ENABLE;
+-	pci_write_config_word(pdev, pdev->pri_cap + PCI_PRI_CTRL, control);
++	pci_write_config_word(pf, pf->pri_cap + PCI_PRI_CTRL, control);
+ 
++done:
+ 	pdev->pri_enabled = 0;
++pri_unlock:
++	mutex_unlock(&pf->pri_lock);
+ }
+ EXPORT_SYMBOL_GPL(pci_disable_pri);
+ 
+@@ -316,17 +358,28 @@ EXPORT_SYMBOL_GPL(pci_disable_pri);
+  */
+ void pci_restore_pri_state(struct pci_dev *pdev)
+ {
+-	u16 control = PCI_PRI_CTRL_ENABLE;
+-	u32 reqs = pdev->pri_reqs_alloc;
++	u16 control;
++	u32 reqs;
++	struct pci_dev *pf = pci_physfn(pdev);
+ 
+-	if (!pdev->pri_enabled)
+-		return;
++	mutex_lock(&pf->pri_lock);
+ 
+-	if (!pdev->pri_cap)
+-		return;
++	if (!pdev->pri_enabled || !pf->pri_cap)
++		goto pri_unlock;
++
++	/* If PRI is already enabled by other VF's or PF, return */
++	pci_read_config_word(pf, pf->pri_cap + PCI_PRI_CTRL, &control);
++	if (control & PCI_PRI_CTRL_ENABLE)
++		goto pri_unlock;
++
++	reqs = pf->pri_reqs_alloc;
++	control = PCI_PRI_CTRL_ENABLE;
++
++	pci_write_config_dword(pf, pf->pri_cap + PCI_PRI_ALLOC_REQ, reqs);
++	pci_write_config_word(pf, pf->pri_cap + PCI_PRI_CTRL, control);
+ 
+-	pci_write_config_dword(pdev, pdev->pri_cap + PCI_PRI_ALLOC_REQ, reqs);
+-	pci_write_config_word(pdev, pdev->pri_cap + PCI_PRI_CTRL, control);
++pri_unlock:
++	mutex_unlock(&pf->pri_lock);
+ }
+ EXPORT_SYMBOL_GPL(pci_restore_pri_state);
+ 
+@@ -339,18 +392,32 @@ EXPORT_SYMBOL_GPL(pci_restore_pri_state);
+  */
+ int pci_reset_pri(struct pci_dev *pdev)
+ {
++	struct pci_dev *pf = pci_physfn(pdev);
+ 	u16 control;
++	int ret = 0;
+ 
+-	if (WARN_ON(pdev->pri_enabled))
+-		return -EBUSY;
++	mutex_lock(&pf->pri_lock);
+ 
+-	if (!pdev->pri_cap)
+-		return -EINVAL;
++	if (WARN_ON(pdev->pri_enabled)) {
++		ret = -EBUSY;
++		goto done;
++	}
++
++	if (!pf->pri_cap) {
++		ret = -EINVAL;
++		goto done;
++	}
++
++	/* If PRI is already enabled by other VF's or PF, return 0 */
++	if (pf->pri_enabled)
++		goto done;
+ 
+ 	control = PCI_PRI_CTRL_RESET;
+-	pci_write_config_word(pdev, pdev->pri_cap + PCI_PRI_CTRL, control);
+ 
+-	return 0;
++	pci_write_config_word(pf, pf->pri_cap + PCI_PRI_CTRL, control);
++done:
++	mutex_unlock(&pf->pri_lock);
++	return ret;
+ }
+ EXPORT_SYMBOL_GPL(pci_reset_pri);
+ #endif /* CONFIG_PCI_PRI */
+@@ -480,11 +547,18 @@ EXPORT_SYMBOL_GPL(pci_pasid_features);
+ int pci_prg_resp_pasid_required(struct pci_dev *pdev)
+ {
+ 	u16 status;
++	struct pci_dev *pf = pci_physfn(pdev);
++
++	mutex_lock(&pf->pri_lock);
+ 
+-	if (!pdev->pri_cap)
++	if (!pf->pri_cap) {
++		mutex_unlock(&pf->pri_lock);
+ 		return 0;
++	}
++
++	pci_read_config_word(pf, pf->pri_cap + PCI_PRI_STATUS, &status);
+ 
+-	pci_read_config_word(pdev, pdev->pri_cap + PCI_PRI_STATUS, &status);
++	mutex_unlock(&pf->pri_lock);
+ 
+ 	if (status & PCI_PRI_STATUS_PASID)
+ 		return 1;
+diff --git a/include/linux/pci.h b/include/linux/pci.h
+index b4010276dff6..d0075413b63f 100644
+--- a/include/linux/pci.h
++++ b/include/linux/pci.h
+@@ -452,8 +452,10 @@ struct pci_dev {
+ 	atomic_t	ats_ref_cnt;	/* Number of VFs with ATS enabled */
+ #endif
+ #ifdef CONFIG_PCI_PRI
++	struct mutex	pri_lock;	/* PRI enable lock */
+ 	u16		pri_cap;	/* PRI Capability offset */
+ 	u32		pri_reqs_alloc; /* Number of PRI requests allocated */
++	atomic_t	pri_ref_cnt;	/* Number of PF/VF PRI users */
+ #endif
+ #ifdef CONFIG_PCI_PASID
+ 	u16		pasid_cap;	/* PASID Capability offset */
+-- 
+2.21.0
+
