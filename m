@@ -2,160 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DC5564D497
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 19:11:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E9BED4D4A6
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 19:14:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732042AbfFTRLJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 13:11:09 -0400
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:39594 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726649AbfFTRLI (ORCPT
+        id S1732017AbfFTROe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 13:14:34 -0400
+Received: from mail-ua1-f65.google.com ([209.85.222.65]:34926 "EHLO
+        mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726530AbfFTROd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 13:11:08 -0400
-Received: by mail-qt1-f195.google.com with SMTP id i34so3927958qta.6
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2019 10:11:07 -0700 (PDT)
+        Thu, 20 Jun 2019 13:14:33 -0400
+Received: by mail-ua1-f65.google.com with SMTP id j21so1958400uap.2
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2019 10:14:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=B/Z1xHhYAjAI7ioTCGgFoDOmi7PSKcfXMaUReB0Dr1o=;
-        b=iDKiiByf/rCLVBiwQKacZOEFqluND5l/Q7B8xuyrYYiT8npctI6tkA6bd5Z3+X6WXJ
-         7gP3l17z5AQNjEKoghc1QQGWYYTQhxhcX9yGx54PMvjgvEHZEh7JKLlg64yxdauLIkD6
-         PlX1F93t1CtWxQ8kNNXs9JCH7/Ycn3pW7NdVjaUwoeBrG9xILQAk6iI0m+ngDTRaz0n2
-         KHM4oMsjPmMO77I7PU4GywcSoyfCFebua5oLxUE6W85UfxNuyOXg7jsaASQUndU7XOUT
-         zN203NLRIh3JOjlN2kSuwATpWhmPazDPI0SbRVShwbgeM2SVzNCO4ifAlBXeUKKBuJD+
-         jaDw==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=GR6x4on2th+OpGEr++2MdtxVD5WfNFN9wx4DvQ5w7Rc=;
+        b=V8bIRrbAwIjB8y/e3VK5hdGQiO8fdK96fE89vK+8xM34pSYwtIAitElGMyEc8eEZ8Y
+         JNN2Dm3GQX4EuHrYdTR03KQM7saTG0dG9xx5zg8ZkNjOfIr6ls5jeWmDIaheAotE/Yfs
+         HELQdZl4/gheu42t/o9XX2Hh2YkYYtpBtob1vLOLhf9cgFBMV0rKwK8fnXV2suKtO/C4
+         XaCv7FZXM2vP1vPi93jU4r/GnJzEFBq/C2BcDaw/yl5TkAlj+EOjsIQ+vkSq6f4v28Z8
+         W3CDYr6Ag4umJu04mO2GC/WVWTh8HbyridbYuXZEfCtzeI4aRTnbJLsQ1DmiR9jSu4Ai
+         gbtw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=B/Z1xHhYAjAI7ioTCGgFoDOmi7PSKcfXMaUReB0Dr1o=;
-        b=LEChPhyHH9sxSkg/0P8Rx/U9mcxHusca4N1cK+uWmFjP8MojyTFBPgOiGGmo5r3nFz
-         YJ+C+9FnhzXezdmQWJoil2mtXdOccKyuB3Tgz8tfPhYLLQxiekb4tGxUxrh3l7c9iaOy
-         iZFnZT6HaXJzZTsc6iCRuOTS4Ao4ClKXpxW44NVvQvswLKVdh0rmSzNk35O4nY3+aO2z
-         6xx5uK0xF7L+p2pH/eILNLLuGcwybQ8DdCVFSrF9vOBKVtZCRHUNfl2fLrV7ISbgf75e
-         21jPl7AF/F21hRfsCkFoel3dRAeWdKB3a3pSV0F4jKCBbwt2UjOhuGKJszH6Sc7shvtT
-         CtOQ==
-X-Gm-Message-State: APjAAAXN9fjDgW61cs/VSO5LBTP9Dd9KPzshOULLisSl4AM+jjt8TsMZ
-        hMzQRMQu5KJhouJSKfId80920c0cmqm8uQ==
-X-Google-Smtp-Source: APXvYqwc2iwZPScenX0v4jDBGu4RdLUTLz2n8sdXn8hwtd0G64nXQQ8UGnDbXfC6MHvJ9vTLmjr9lQ==
-X-Received: by 2002:ac8:2e5d:: with SMTP id s29mr105147696qta.70.1561050666885;
-        Thu, 20 Jun 2019 10:11:06 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-156-34-55-100.dhcp-dynamic.fibreop.ns.bellaliant.net. [156.34.55.100])
-        by smtp.gmail.com with ESMTPSA id t29sm152221qtt.42.2019.06.20.10.11.06
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 20 Jun 2019 10:11:06 -0700 (PDT)
-Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1he0aX-0005SU-RR; Thu, 20 Jun 2019 14:11:05 -0300
-Date:   Thu, 20 Jun 2019 14:11:05 -0300
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     Logan Gunthorpe <logang@deltatee.com>
-Cc:     linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org,
-        linux-rdma@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
-        Christoph Hellwig <hch@lst.de>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        Keith Busch <kbusch@kernel.org>,
-        Stephen Bates <sbates@raithlin.com>
-Subject: Re: [RFC PATCH 20/28] IB/core: Introduce API for initializing a RW
- ctx from a DMA address
-Message-ID: <20190620171105.GD19891@ziepe.ca>
-References: <20190620161240.22738-1-logang@deltatee.com>
- <20190620161240.22738-21-logang@deltatee.com>
- <20190620164909.GC19891@ziepe.ca>
- <f9186b2b-7737-965f-2dca-25e40e566e64@deltatee.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=GR6x4on2th+OpGEr++2MdtxVD5WfNFN9wx4DvQ5w7Rc=;
+        b=dm9GfbBecMfCLuEA8zbBZqlnLnb5Saq94ub290r+AHM+xKtOJwWf5NiSFbftEwaphR
+         b672Ccv6EMwz0uAjTBpqxpuEnoBp3zhtTpVPYAKl2shZO22Sy/c2IIFcFqo1dmi0kyvW
+         BCjOgAfvDxGsNBIsUEp1zSdG5YgyuYtBYCPOIOnN+/WE2ZP5oEkL9W/2kqMADeRXuek/
+         q7WxVgeni37KcxluGB60uGmUh8en3/vyoWtYAZ0RK4biJhxRhWM8GNbrYMW5yRAwf4hn
+         3bV8MhFMXh+YG+kjSplYuxL2Nfy7IiqAfZgo/A2PkA+tbqjIsG+JZs7I2VYelAWTqdjN
+         GBXw==
+X-Gm-Message-State: APjAAAU6OItrsgBMozvKpi+3EQ93i0ECHFjYCJpgTfS6wJ2TJS3faNZV
+        YiSPVN6OshF+34vRPOA5sFtPgn3p12d9bNKcBVS/zQOG
+X-Google-Smtp-Source: APXvYqy13gguR6NEUfCLLKpXnDy4AttZXqs4ykBs0SX9Cxiei5TfjAP35fuOn0fKJ5MLZcb+jT6s0DLzf4BvjOV0F9U=
+X-Received: by 2002:ab0:2556:: with SMTP id l22mr9364887uan.46.1561050872751;
+ Thu, 20 Jun 2019 10:14:32 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f9186b2b-7737-965f-2dca-25e40e566e64@deltatee.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <1560755897-5002-1-git-send-email-yannick.fertre@st.com>
+In-Reply-To: <1560755897-5002-1-git-send-email-yannick.fertre@st.com>
+From:   Emil Velikov <emil.l.velikov@gmail.com>
+Date:   Thu, 20 Jun 2019 18:12:16 +0100
+Message-ID: <CACvgo50vSNCTTTKp9D_07tazOE9YkU-zKAsDywvWe6h0NgcEmQ@mail.gmail.com>
+Subject: Re: [PATCH 1/3] drm/stm: drv: fix suspend/resume
+To:     =?UTF-8?Q?Yannick_Fertr=C3=A9?= <yannick.fertre@st.com>
+Cc:     Philippe Cornu <philippe.cornu@st.com>,
+        Benjamin Gaignard <benjamin.gaignard@st.com>,
+        Vincent Abriou <vincent.abriou@st.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        ML dri-devel <dri-devel@lists.freedesktop.org>,
+        linux-stm32@st-md-mailman.stormreply.com,
+        LAKML <linux-arm-kernel@lists.infradead.org>,
+        "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 20, 2019 at 10:59:44AM -0600, Logan Gunthorpe wrote:
-> 
-> 
-> On 2019-06-20 10:49 a.m., Jason Gunthorpe wrote:
-> > On Thu, Jun 20, 2019 at 10:12:32AM -0600, Logan Gunthorpe wrote:
-> >> Introduce rdma_rw_ctx_dma_init() and rdma_rw_ctx_dma_destroy() which
-> >> peform the same operation as rdma_rw_ctx_init() and
-> >> rdma_rw_ctx_destroy() respectively except they operate on a DMA
-> >> address and length instead of an SGL.
-> >>
-> >> This will be used for struct page-less P2PDMA, but there's also
-> >> been opinions expressed to migrate away from SGLs and struct
-> >> pages in the RDMA APIs and this will likely fit with that
-> >> effort.
-> >>
-> >> Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
-> >>  drivers/infiniband/core/rw.c | 74 ++++++++++++++++++++++++++++++------
-> >>  include/rdma/rw.h            |  6 +++
-> >>  2 files changed, 69 insertions(+), 11 deletions(-)
-> >>
-> >> diff --git a/drivers/infiniband/core/rw.c b/drivers/infiniband/core/rw.c
-> >> index 32ca8429eaae..cefa6b930bc8 100644
-> >> +++ b/drivers/infiniband/core/rw.c
-> >> @@ -319,6 +319,39 @@ int rdma_rw_ctx_init(struct rdma_rw_ctx *ctx, struct ib_qp *qp, u8 port_num,
-> >>  }
-> >>  EXPORT_SYMBOL(rdma_rw_ctx_init);
-> >>  
-> >> +/**
-> >> + * rdma_rw_ctx_dma_init - initialize a RDMA READ/WRITE context from a
-> >> + *	DMA address instead of SGL
-> >> + * @ctx:	context to initialize
-> >> + * @qp:		queue pair to operate on
-> >> + * @port_num:	port num to which the connection is bound
-> >> + * @addr:	DMA address to READ/WRITE from/to
-> >> + * @len:	length of memory to operate on
-> >> + * @remote_addr:remote address to read/write (relative to @rkey)
-> >> + * @rkey:	remote key to operate on
-> >> + * @dir:	%DMA_TO_DEVICE for RDMA WRITE, %DMA_FROM_DEVICE for RDMA READ
-> >> + *
-> >> + * Returns the number of WQEs that will be needed on the workqueue if
-> >> + * successful, or a negative error code.
-> >> + */
-> >> +int rdma_rw_ctx_dma_init(struct rdma_rw_ctx *ctx, struct ib_qp *qp,
-> >> +		u8 port_num, dma_addr_t addr, u32 len, u64 remote_addr,
-> >> +		u32 rkey, enum dma_data_direction dir)
-> > 
-> > Why not keep the same basic signature here but replace the scatterlist
-> > with the dma vec ?
-> 
-> Could do. At the moment, I had no need for dma_vec in this interface.
+Hi Yannick,
 
-I think that is because you only did nvme not srp/iser :)
+On Mon, 17 Jun 2019 at 08:18, Yannick Fertr=C3=A9 <yannick.fertre@st.com> w=
+rote:
 
-> >> +{
-> >> +	struct scatterlist sg;
-> >> +
-> >> +	sg_dma_address(&sg) = addr;
-> >> +	sg_dma_len(&sg) = len;
-> > 
-> > This needs to fail if the driver is one of the few that require
-> > struct page to work..
-> 
-> Yes, right. Currently P2PDMA checks for the use of dma_virt_ops. And
-> that probably should also be done here. But is that sufficient? You're
-> probably right that it'll take an audit of the RDMA tree to sort that out.
+> @@ -155,15 +154,17 @@ static __maybe_unused int drv_resume(struct device =
+*dev)
+>         struct ltdc_device *ldev =3D ddev->dev_private;
+>         int ret;
+>
+> +       if (WARN_ON(!ldev->suspend_state))
+> +               return -ENOENT;
+> +
+>         pm_runtime_force_resume(dev);
+>         ret =3D drm_atomic_helper_resume(ddev, ldev->suspend_state);
+> -       if (ret) {
+> +       if (ret)
+Hmm the msm driver uses !ret here. Suspecting that you want the same,
+although I haven't checked in detail.
 
-For this purpose I'd be fine if you added a flag to the struct
-ib_device_ops that is set on drivers that we know are OK.. We can make
-that list bigger over time.
-
-> > This is not so hard to do, as most drivers are already struct page
-> > free, but is pretty much blocked on needing some way to go from the
-> > block layer SGL world to the dma vec world that does not hurt storage
-> > performance.
-> 
-> Maybe I can end up helping with that if it helps push the ideas here
-> through. (And assuming people think it's an acceptable approach for the
-> block-layer side of things).
-
-Let us hope for a clear decision then
-
-Jason
+HTH
+-Emil
