@@ -2,114 +2,153 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 35C744C92D
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 10:14:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7E32D4C93A
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 10:17:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731205AbfFTIOv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 04:14:51 -0400
-Received: from mail-eopbgr140087.outbound.protection.outlook.com ([40.107.14.87]:25126
-        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725889AbfFTIOu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 04:14:50 -0400
+        id S1730865AbfFTIRk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 04:17:40 -0400
+Received: from mail-io1-f68.google.com ([209.85.166.68]:36837 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726506AbfFTIRk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Jun 2019 04:17:40 -0400
+Received: by mail-io1-f68.google.com with SMTP id h6so112462ioh.3
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2019 01:17:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=itdevltd.onmicrosoft.com; s=selector1-itdevltd-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=kTn2nAR+PmPACY6QGnQ5p+1bbU8o6uBslmhrq/lYWXw=;
- b=EurrVFioVayz+wwJ2nQsAs/BCBE7IwZl8rqxApzaLzo3tM+S12jvi+/dRt08Z8+AuO4gfpK7dEP/1tVtug4J2KnviOjke1Lrr/VkS3KH+NzaTIiZUxx/PN6Pq+A7pHfgaKywLan7iSnZS4GwXWmjGvlEZJps7BeOD6tmJOQ04tg=
-Received: from VI1PR08MB3168.eurprd08.prod.outlook.com (52.133.15.143) by
- VI1PR08MB3408.eurprd08.prod.outlook.com (20.177.59.10) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1987.11; Thu, 20 Jun 2019 08:14:46 +0000
-Received: from VI1PR08MB3168.eurprd08.prod.outlook.com
- ([fe80::f142:fb4a:57c2:3b5]) by VI1PR08MB3168.eurprd08.prod.outlook.com
- ([fe80::f142:fb4a:57c2:3b5%6]) with mapi id 15.20.1987.014; Thu, 20 Jun 2019
- 08:14:46 +0000
-From:   Quentin Deslandes <quentin.deslandes@itdev.co.uk>
-To:     Colin King <colin.king@canonical.com>
-CC:     Forest Bond <forest@alittletooquiet.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
-        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] staging: vt6656: fix indentation on break statement
-Thread-Topic: [PATCH] staging: vt6656: fix indentation on break statement
-Thread-Index: AQHVJr+dU2gnHxTDVkufdp78GoxcxqakMu6A
-Date:   Thu, 20 Jun 2019 08:14:46 +0000
-Message-ID: <20190620081443.GA19564@qd-ubuntu>
-References: <20190619165405.7784-1-colin.king@canonical.com>
-In-Reply-To: <20190619165405.7784-1-colin.king@canonical.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: DB8PR06CA0066.eurprd06.prod.outlook.com
- (2603:10a6:10:120::40) To VI1PR08MB3168.eurprd08.prod.outlook.com
- (2603:10a6:803:47::15)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=quentin.deslandes@itdev.co.uk; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [89.21.227.133]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 6466686c-3b1c-40be-f5be-08d6f5575b29
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(7021145)(8989299)(4534185)(7022145)(4603075)(4627221)(201702281549075)(8990200)(7048125)(7024125)(7027125)(7023125)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:VI1PR08MB3408;
-x-ms-traffictypediagnostic: VI1PR08MB3408:
-x-microsoft-antispam-prvs: <VI1PR08MB3408F0AE9C635D95A90AEE8BB3E40@VI1PR08MB3408.eurprd08.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:605;
-x-forefront-prvs: 0074BBE012
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(7916004)(346002)(136003)(366004)(396003)(376002)(39830400003)(199004)(189003)(86362001)(33656002)(14454004)(316002)(6246003)(25786009)(68736007)(66446008)(4326008)(33716001)(66066001)(74482002)(54906003)(81156014)(102836004)(76176011)(26005)(52116002)(305945005)(2906002)(3846002)(6116002)(8676002)(44832011)(446003)(53936002)(99286004)(508600001)(7736002)(386003)(14444005)(81166006)(6916009)(8936002)(486006)(66946007)(256004)(11346002)(1076003)(64756008)(71190400001)(5660300002)(4744005)(186003)(71200400001)(66476007)(476003)(6436002)(229853002)(6512007)(66556008)(6486002)(6506007)(73956011)(9686003);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR08MB3408;H:VI1PR08MB3168.eurprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: itdev.co.uk does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: js7aXb0bF6ZYeUpHJsE30nftnF0lCiXb9gWjHQeY4WLpmWezFznXi43oFqmNTRwGf/9QV+TA4BOquQNffSIt1HFQwUmnUr3MGYjpNR6C4CCkgGjvjAFWHj4S+775Wo+S0KCIYa3XVturCpEFCbh8umWJCIay8WUl/RgJRNCEz3Uz8FKbj45mUAkbVUHwlaVwuRa+hE9ASgvyHs6NuAYwL0lQzUYdexCHal6hKf6ryX1pXZ7R4swpnWBmlkrAvbI+qhlbxOv7Bzsgqv67ye/QhyNtG9YmWZuQvR/GxrAV8s+6aGinWI07R+FUAve/W1d3S3sO5slW/68mboHE9mgdzoMiy0Fs50GxBJJ46VvKpSGvcSPRO2Cv1jOWFiZjzJqk/0A0yYPP/sqNOR8vE0ecxfeNtP9NcDYEAbNEvd382Dc=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <D04D965FCA89FE4BA30708D1B76B9B28@eurprd08.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=L4YztDUoEeZNSItpvBqXAMHzKgEhPW4KSrwgqWZNxZ0=;
+        b=OBkhp4o3op8N2jgrTX4I/tH93sjhXYIrF0FFetZzSv5AC5XT2nhL0Kjz7jdLDHnSGI
+         ArUBUXG3lrb4oqMsxfLQA0Aza0zz9fjxvKqUw7IW8o4VFBzy/sSIGS5DPEVQKynMo4Hq
+         cc72AEowt4e+lj0UWxoRKW5uhJoH1TTTQOQlOB6s030MpuGnWMzevxg9fObiQFOMcUzv
+         94xb/435Se3+UVm+a1r9qtsgPjAbQ2jsRiaKilMEVCsLHzp7GvyVifWDs/tg7HVxTkHp
+         ngruAOTG+MemFJ5d7eYJAsLl9ylhIpBA+ip8zoTQTIVIdf+3ZqIKhak8k94Nh6iiqbku
+         qG4w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=L4YztDUoEeZNSItpvBqXAMHzKgEhPW4KSrwgqWZNxZ0=;
+        b=hvUvdjHJEBw+XdV1rWjJrsbhf/pxAMFYcXra/IiBPnSkoRHvdx+/nJXY0du4iu7VSG
+         14dmX0ykmgiylBb5gnIHhhVnehuNy/kcW/xOTjc0e4LQ5x+zefMGohgT7zo1SB6HOyWj
+         dGTrPhTv1HFO9SgX57ZPaUGDGcXezxtkPo/ttIgu3nO8gErHHkfOBQL77W8/81xBdEgq
+         ovzdJy7TFWCnQdzXrcLXf1H6gm9NgTQrnjaBGKVMoz2LInJdSB7712owL9mll0OYje1W
+         JePNzil7d71166zshUD4tuNANKqS1rEq+oeOhfW71CdsMX0ZiYZ5++CsOwo7BU6QJXU3
+         EzHQ==
+X-Gm-Message-State: APjAAAXdls8Fqy6WRat0CrAz6t5l0JZQ8C/ivnUIR1C7wDsn8Rt//xa0
+        MgyjmUs5dtzaqUbUMOTcWx7NnAg2+x/yPDMVoN5e6g==
+X-Google-Smtp-Source: APXvYqxe4q2rYA/eK3CssvAan7/QclqCFivs0lgX+SqqohST3vQOcRkfXN2YktNNYJxfT76HM1HWD0WoW2I90qYqTFc=
+X-Received: by 2002:a02:3308:: with SMTP id c8mr33710225jae.103.1561018658694;
+ Thu, 20 Jun 2019 01:17:38 -0700 (PDT)
 MIME-Version: 1.0
-X-OriginatorOrg: itdev.co.uk
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6466686c-3b1c-40be-f5be-08d6f5575b29
-X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Jun 2019 08:14:46.3368
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 2d2930c4-2251-45b4-ad79-3582c5f41740
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: quentin.deslandes@itdev.co.uk
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR08MB3408
+References: <20190620003244.261595-1-ndesaulniers@google.com> <20190620074640.GA27228@brain-police>
+In-Reply-To: <20190620074640.GA27228@brain-police>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Thu, 20 Jun 2019 10:17:25 +0200
+Message-ID: <CAKv+Gu_KCFCVxw_zAfzUf8DjD4DmhvaJEoqBsX_SigOse_NwYw@mail.gmail.com>
+Subject: Re: [PATCH] arm64: defconfig: update and enable CONFIG_RANDOMIZE_BASE
+To:     Will Deacon <will.deacon@arm.com>
+Cc:     Nick Desaulniers <ndesaulniers@google.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Mark Brown <broonie@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Olof Johansson <olof@lixom.net>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Jagan Teki <jagan@amarulasolutions.com>,
+        Arnd Bergmann <arnd@arndb.de>, Shawn Guo <shawnguo@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Dinh Nguyen <dinguyen@kernel.org>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 19, 2019 at 05:54:05PM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
->=20
-> The break statement is indented one level too deep, fix this.
->=20
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/staging/vt6656/card.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/staging/vt6656/card.c b/drivers/staging/vt6656/card.=
-c
-> index 08fc03d8740e..56cd77fd9ea0 100644
-> --- a/drivers/staging/vt6656/card.c
-> +++ b/drivers/staging/vt6656/card.c
-> @@ -166,7 +166,7 @@ static void vnt_calculate_ofdm_rate(u16 rate, u8 bb_t=
-ype,
->  			*tx_rate =3D 0x8b;
->  			*rsv_time =3D 30;
->  		}
-> -			break;
-> +		break;
->  	case RATE_9M:
->  		if (bb_type =3D=3D BB_TYPE_11A) {
->  			*tx_rate =3D 0x9f;
-> --=20
-> 2.20.1
->=20
+On Thu, 20 Jun 2019 at 09:47, Will Deacon <will.deacon@arm.com> wrote:
+>
+> Hi Nick,
+>
+> On Wed, Jun 19, 2019 at 05:32:42PM -0700, Nick Desaulniers wrote:
+> > Generated via:
+> > $ ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- make defconfig
+> > $ ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- make menuconfig
+> > <enable CONFIG_RANDOMIZE_BASE aka KASLR>
+> > $ ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- make savedefconfig
+> > $ mv defconfig arch/arm64/configs/defconfig
+>
+> Hmm, I'm in two minds about whether we want this on by default. On the plus
+> side, it gets us extra testing coverage, although the /vast/ majority of
+> firmware implementations I run into either don't pass a seed or don't
+> provide a working EFI_RNG. Perhaps that's just a chicken-and-egg problem
+> which can be solved if we shout loud enough when we fail to randomize; we'll
+> also eventually be in a better position when CPUs start implementing the
+> v8.5 RNG instructions (but don't hold your breath unless you have an
+> unusually high lung capacity).
+>
 
-Reviewed-by: Quentin Deslandes <quentin.deslandes@itdev.co.uk>
+For testing coverage purposes, exercising the relocation machinery etc
+even on no-kaslr boots would be beneficial imo. (The kernel is
+relocated once for non-kaslr boots and twice for kaslr boots on kaslr
+capable kernels)
 
-Regards,
-Quentin
+> On the flip side, I worry that it could make debugging more difficult, but I
+> don't know whether that's a genuine concern or not. I'm assuming you've
+> debugged your fair share of crashes from KASLR-enabled kernels; how bad is
+> it? (I'm thinking of the case where somebody mails you part of a panic log
+> and a .config).
+>
+
+When you are debugging using GDB, it can get a bit tedious, since you
+have to pass the offset when you load the symbols. However, in that
+case, you can just pass 'nokaslr' unless you are debugging something
+that is affected by the randomization.
+
+For reading backtraces etc, nothing really changes, since we get
+symbol+nnn/mmm entries (and the full panic log prints the KASLR offset
+as well, in case it matters)
+
+> Irrespective of the above, I know Catalin was running into issues with his
+> automated tests where the kernel would die silently during early boot with
+> some seeds.  That's a bit rubbish if it's still the case -- Catalin?
+>
+
+Yes, it would be good if we could fix that. In fact, I would argue
+that having this change in would have increased the likelihood that
+someone else would have spotted it and fixed it :-)
+
+In fact, given how many Android phones are running this code: Nick,
+can you check if there are any KASLR related kernel fixes that haven't
+been upstreamed?
+
+> Finally, I know that (K)ASLR can be a bit controversial amongst security
+> folks, with some seeing it as purely a smoke-and-mirrors game with no
+> tangible benefits other than making us feel better about ourselves. Is it
+> still the case that it can be trivially bypassed, or do you see it actually
+> preventing some attacks in production?
+>
+> Sorry for the barrage of questions, but I think enabling this one by default
+> is quite a significant thing to do and probably deserves a bit of scrutiny
+> beforehand.
+>
+
+I think it is mostly controversial among non-security folks, who think
+that every mitigation by itself should be bullet proof. Security folks
+tend to think more about how each layer reduces the attack surface,
+hopefully resulting in a secure system when all layers are enabled.
+
+So KASLR is known to be broken unless you enable KPTI as well, so that
+is something we could take into account. I.e., mitigations that don't
+reduce the attack surface at all are just pointless complexity, which
+should obviously be avoided.
+
+Another thing to note is that the runtime cost of KASLR is ~zero, with
+the exception of the module PLTs. However, the latter could do with
+some additional coverage as well, so in summary, I think enabling this
+is a good thing. Otherwise, we could disable full module randomization
+so that the module PLT code doesn't get used in practice.
+
+Acked-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
