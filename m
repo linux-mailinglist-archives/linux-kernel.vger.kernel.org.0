@@ -2,91 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4616E4D1ED
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 17:19:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4EF844D1E0
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 17:18:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732150AbfFTPTL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 11:19:11 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:38120 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726798AbfFTPTI (ORCPT
+        id S1726940AbfFTPSx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 11:18:53 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:32967 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726979AbfFTPSv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 11:19:08 -0400
-Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-        by mx08-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5KFHhOE011982;
-        Thu, 20 Jun 2019 17:18:05 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
- : date : message-id : references : in-reply-to : content-type : content-id
- : content-transfer-encoding : mime-version; s=STMicroelectronics;
- bh=3awahpLzjIg/zQ8bAq/yq4u/Eajukl1uJeabfahZE1k=;
- b=QE4URSfxjpHaljx4dsJHe7OiqHVN6fRUApZ7Yc2CHBNzWUJ0sELxztHUhoNWPWJA9H+p
- 7bAVnFzPrpkMJ3zKoP/vmqvYoJ4dvQ5bE4U89jwhIRfnJy0I9BTc5ljcBwXAxVp35OOo
- etfmfe+F7NIo7hFUzjXFv7uPJfEX03p44gkNNV77syS3TtMiB5Q7hP6BEzSII79JKmfW
- WrkyoyNiAjxyV8RxFpUuCChqDuS3ZJjIL6C3PNr2uosibu4XfNu9UMTZJo7+S7utW3W5
- RegGBa6tbYoq9e3OhzSxlmX92P8iXb18fHvUVSYGxZCyFtNmyGYvv9XKNGyLWikcjlPp lA== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx08-00178001.pphosted.com with ESMTP id 2t78132f08-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Thu, 20 Jun 2019 17:18:05 +0200
-Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id EC41831;
-        Thu, 20 Jun 2019 15:18:03 +0000 (GMT)
-Received: from Webmail-eu.st.com (sfhdag3node3.st.com [10.75.127.9])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id C8FE02C8C;
-        Thu, 20 Jun 2019 15:18:03 +0000 (GMT)
-Received: from SFHDAG3NODE2.st.com (10.75.127.8) by SFHDAG3NODE3.st.com
- (10.75.127.9) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Thu, 20 Jun
- 2019 17:18:03 +0200
-Received: from SFHDAG3NODE2.st.com ([fe80::b82f:1ce:8854:5b96]) by
- SFHDAG3NODE2.st.com ([fe80::b82f:1ce:8854:5b96%20]) with mapi id
- 15.00.1347.000; Thu, 20 Jun 2019 17:18:03 +0200
-From:   Amelie DELAUNAY <amelie.delaunay@st.com>
-To:     Lee Jones <lee.jones@linaro.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-CC:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre TORGUE <alexandre.torgue@st.com>,
-        "linux-stm32@st-md-mailman.stormreply.com" 
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
-Subject: Re: [PATCH] mfd: stmfx: Fix an endian bug in stmfx_irq_handler()
-Thread-Topic: [PATCH] mfd: stmfx: Fix an endian bug in stmfx_irq_handler()
-Thread-Index: AQHVJT/EzC9etQZAeEm7fd3OYhvByKag8E+AgADT/ICAAJenAIACLrsA
-Date:   Thu, 20 Jun 2019 15:18:03 +0000
-Message-ID: <f0ff1e54-c1b9-4a08-c7ff-2ff545e398c3@st.com>
-References: <CAHk-=wgTL5sYCGxX8+xQqyBRWRUE05GAdL58+UTG8bYwjFxMkw@mail.gmail.com>
- <20190617190605.GA21332@mwanda> <20190618081645.GM16364@dell>
- <CAHk-=wghW+AKvRGevUiVWwTqWObygSZSdq6Dz2ad81H73VeuRQ@mail.gmail.com>
- <20190619055816.GF18371@dell>
-In-Reply-To: <20190619055816.GF18371@dell>
-Accept-Language: fr-FR, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.75.127.50]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <18B2C5B8D6D879419D1A363687D100BA@st.com>
-Content-Transfer-Encoding: base64
+        Thu, 20 Jun 2019 11:18:51 -0400
+Received: by mail-io1-f66.google.com with SMTP id u13so1348594iop.0
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2019 08:18:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=cjD1oM5q5tMvxLtnHLi6QjIV6Kzj0WhrdaBw8sxqP6E=;
+        b=KL5ut//fcz2BIKILaDyB8ohi01uo46BlAttcUNa51KKAK1tcFXFhC8SCH2ucE0+zu0
+         joRzLAIQOyAlR2Jt4XsZvDwQoJQxyJxF0Eha7wO+Lcc8hMsDmgZFzdjia1zGXgTCUqe+
+         R4q+jSRaCPpupw065Ncg6Ytj3OtHHyjuvu7rI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=cjD1oM5q5tMvxLtnHLi6QjIV6Kzj0WhrdaBw8sxqP6E=;
+        b=KsfPLMXX2f0wiiIUV+SqcCJzDLhr0LzpFdXCPH3TN4k7Vt1Jwf2HbtM4KYmfxUz0Zo
+         KB5bUQY4F2+dZXcsJ9E5hPFQ/Aj/sBRlPJ7ju8YVW9iZV0qnevxw0a73Ajio58y5Zs36
+         LGj09u8Sgz5hu675JnPMLDUBSYeiqEaovXkmvHiBqq02g9s16hyqbW/2T8D7UeAkSjqU
+         YXwDE6c8eQlUm2pXUHdsj7MkNMzEwXHL2qs7fCEcBhlx2nF+h3IWi7Ys+6cnd4YmCp7h
+         mabgVPIAoUXJBEItVy04ed4cfcIxMlwOrGJU6QMS53wprNA9O+lELfmpGzWvAJb8Ks7K
+         R2cg==
+X-Gm-Message-State: APjAAAXqlhfRBoFveVKSL2P0yxgAXch/G5vx6LPHO9tSm/566FJ28Iat
+        yykq4PjW3DFhNbXEOJAssuz2LRZiycY=
+X-Google-Smtp-Source: APXvYqyhVkr7S5sXnpnoik5KXYCmAR287xq9lSFfhPvYClEQVEFY414UtXFLtAdnecBoub+5eQcwPg==
+X-Received: by 2002:a6b:641a:: with SMTP id t26mr5195793iog.3.1561043929997;
+        Thu, 20 Jun 2019 08:18:49 -0700 (PDT)
+Received: from localhost ([2620:15c:183:200:855f:8919:84a7:4794])
+        by smtp.gmail.com with ESMTPSA id c23sm140526iod.11.2019.06.20.08.18.48
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 20 Jun 2019 08:18:49 -0700 (PDT)
+From:   Ross Zwisler <zwisler@chromium.org>
+X-Google-Original-From: Ross Zwisler <zwisler@google.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Ross Zwisler <zwisler@google.com>, "Theodore Ts'o" <tytso@mit.edu>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Jan Kara <jack@suse.com>, linux-ext4@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        Fletcher Woodruff <fletcherw@google.com>,
+        Justin TerAvest <teravest@google.com>
+Subject: [PATCH v2 0/3] Add dirty range scoping to jbd2
+Date:   Thu, 20 Jun 2019 09:18:36 -0600
+Message-Id: <20190620151839.195506-1-zwisler@google.com>
+X-Mailer: git-send-email 2.22.0.410.gd8fdbe21b5-goog
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-20_11:,,
- signatures=0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gNi8xOS8xOSA3OjU4IEFNLCBMZWUgSm9uZXMgd3JvdGU6DQo+IE9uIFR1ZSwgMTggSnVuIDIw
-MTksIExpbnVzIFRvcnZhbGRzIHdyb3RlOg0KPiANCj4+IE9uIFR1ZSwgSnVuIDE4LCAyMDE5IGF0
-IDE6MTYgQU0gTGVlIEpvbmVzIDxsZWUuam9uZXNAbGluYXJvLm9yZz4gd3JvdGU6DQo+Pj4NCj4+
-Pj4gUmVwb3J0ZWQtYnk6IExpbnVzIFRvcnZhbGRzIDx0b3J2YWxkc0BsaW51eC1mb3VuZGF0aW9u
-Lm9yZz4NCj4+Pg0KPj4+IElkZWFsbHkgd2UgY2FuIGdldCBhIHJldmlldyB0b28uDQo+Pg0KPj4g
-TG9va3MgZmluZSB0byBtZSwgYnV0IG9idmlvdXNseSBzb21lYm9keSBzaG91bGQgYWN0dWFsbHkg
-X3Rlc3RfIGl0IHRvby4NCj4gDQo+IEFtZWxpZSwgd291bGQgeW91IGJlIHNvIGtpbmQ/DQo+IA0K
-DQpUZXN0ZWQgb24gc3RtMzJtcDE1N2MtZXYxLg0KDQpUZXN0ZWQtYnk6IEFtZWxpZSBEZWxhdW5h
-eSA8YW1lbGllLmRlbGF1bmF5QHN0LmNvbT4=
+Changes from v1:
+ - Relocated the code which resets dirty range upon transaction completion.
+   (Jan)
+ - Cc'd stable@vger.kernel.org because we see this issue with v4.14 and
+   v4.19 stable kernels in the field.
+
+---
+
+This patch series fixes the issue I described here:
+
+https://www.spinics.net/lists/linux-block/msg38274.html
+
+Essentially the issue is that journal_finish_inode_data_buffers() operates
+on the entire address space of each of the inodes associated with a given
+journal entry.  This means that if we have an inode where we are constantly
+appending dirty pages we can end up waiting for an indefinite amount of
+time in journal_finish_inode_data_buffers().
+
+This series improves this situation in ext4 by scoping each of the inode
+dirty ranges associated with a given transaction.  Other users of jbd2
+which don't (yet?) take advantage of this scoping (ocfs2) will continue to
+have the old behavior.
+
+Ross Zwisler (3):
+  mm: add filemap_fdatawait_range_keep_errors()
+  jbd2: introduce jbd2_inode dirty range scoping
+  ext4: use jbd2_inode dirty range scoping
+
+ fs/ext4/ext4_jbd2.h   | 12 +++++------
+ fs/ext4/inode.c       | 13 +++++++++---
+ fs/ext4/move_extent.c |  3 ++-
+ fs/jbd2/commit.c      | 23 ++++++++++++++------
+ fs/jbd2/journal.c     |  2 ++
+ fs/jbd2/transaction.c | 49 ++++++++++++++++++++++++-------------------
+ include/linux/fs.h    |  2 ++
+ include/linux/jbd2.h  | 22 +++++++++++++++++++
+ mm/filemap.c          | 22 +++++++++++++++++++
+ 9 files changed, 111 insertions(+), 37 deletions(-)
+
+-- 
+2.22.0.410.gd8fdbe21b5-goog
+
