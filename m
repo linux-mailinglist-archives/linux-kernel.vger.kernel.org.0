@@ -2,236 +2,133 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AB3434C561
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 04:24:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E9E4B4C56A
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 04:27:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731558AbfFTCYH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Jun 2019 22:24:07 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:59062 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726370AbfFTCYH (ORCPT
+        id S1731255AbfFTC1d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Jun 2019 22:27:33 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:47076 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726370AbfFTC1d (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Jun 2019 22:24:07 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:
-        From:Date:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=db6JPvpCz3hoflV8W037Dtn2xhi+L6YV1HcCa4+XjBQ=; b=qtscGbxxnS1WBhq+OUuuJ2LOZ
-        4Qam1Qp8bSyIqMh7MF2RTJ9QcJfagUtjCQHlXYpaRIrkH/UjW2ENTOHgio8ydFetcRNpKSnPL9lB5
-        Zu3VGbIe0tlkbgj7NkF5NMGmxSqYtzFwr0Toej8TG2DfN6ooBNNxNwOiBnMHyL6aQra4UbVx9KAkR
-        QZrkmpZedHBzDjrBSEc3gDdiw2rbWQWHLCXk+xKsOoBZJBPTDbVCLyb7/V7ti1Tt9Xb51aUhtiWuX
-        5tSD944M17TrUs1dxdV4Rlx8+8aNnPOoU+ebzu8L8t8ic1EYm2PAKx5epCNkHrsy+COEhrsWSS34p
-        9QkwSKZdQ==;
-Received: from 177.133.86.196.dynamic.adsl.gvt.net.br ([177.133.86.196] helo=coco.lan)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hdmkA-0001Ik-0I; Thu, 20 Jun 2019 02:24:06 +0000
-Date:   Wed, 19 Jun 2019 23:24:02 -0300
-From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 12/22] docs: driver-api: add .rst files from the main
- dir
-Message-ID: <20190619232402.20970470@coco.lan>
-In-Reply-To: <20190619212753.GQ3419@hirez.programming.kicks-ass.net>
-References: <cover.1560890771.git.mchehab+samsung@kernel.org>
-        <b0d24e805d5368719cc64e8104d64ee9b5b89dd0.1560890772.git.mchehab+samsung@kernel.org>
-        <20190619114356.GP3419@hirez.programming.kicks-ass.net>
-        <20190619101922.04340605@coco.lan>
-        <20190619212753.GQ3419@hirez.programming.kicks-ass.net>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        Wed, 19 Jun 2019 22:27:33 -0400
+Received: by mail-pl1-f195.google.com with SMTP id e5so701852pls.13
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2019 19:27:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=rZe0jF1fnIyGnpK652ETkNOA+XkaYNF8CGCQ/FTB5oc=;
+        b=O7xnBGcEjc+6HH9FPNRtdKx7U6xpjrgMFnsvTc1id4kCZt6Tdakw3afMiCRoGQ8T76
+         HwaIAqNap8G42JmxPCjEWZMkl5dI9TLfvF7oq/gMZpYbEUZ70h0OvOREWZ2skn3uEivp
+         BgqGQUhlmKRqeP6dUMPwJXsIonQYHXK/HW+GkGTqL2ZookJlYmxeWxrjzMBdWUVoLdxa
+         WtwQBnSWqIWqPa0eIx12RLE2ANaxvFiAy0Gc7We5ixKqnbppoaagD0GUjmh8OB/37Gb+
+         m3bm8B6epxzr+EGyPuVn3FUjNI/1MU6usEcP8PzVOQQSAw2+4Od+kP2AwgV3dIN4QvQa
+         FS8w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=rZe0jF1fnIyGnpK652ETkNOA+XkaYNF8CGCQ/FTB5oc=;
+        b=DpdjWqM4vlCg6lcQ5wawoZxrQhIm2iGWj18QR64mXEAGVGER2+XZUH7FerQ5+HuPn/
+         ZggCJpVVnDiPuD2FSMAj6SBc7hYduUfhSaqCj75ydkDRQnrkiI6Hq+eZYL5zgsurqvQ3
+         amlobi2jdw2JP7GH7ce/Ugr4svlWNMYE4Z4moKcALacayoWI9gXKXwHNGkwzOSKJ4f1f
+         UsI0egaryoC5xShMvv+iIjTOLPluUdYomf7fkurZ3yI9mhVa3a4q5GLtN2T/NjtZU0xc
+         RHYk6VHncFToXo6LDJYA+tm0T6IEgSt7agucu6CTPgbtYdt3NGFU4AclH8vaRiMQm6ws
+         MzFg==
+X-Gm-Message-State: APjAAAV7onhLf/317phDLlEMC1k4Q1poiG794JW/5akVttpYkwB2zBPr
+        grvu+NYkxLoSXad9+esndI4=
+X-Google-Smtp-Source: APXvYqwdAtGhD5XNJZSHPBwAYoQpJBoDZXZhetbZbQvr4LcPPT8qyQDrJZfAyLiJLcX0ILcYbSi3pw==
+X-Received: by 2002:a17:902:e58b:: with SMTP id cl11mr100882004plb.24.1560997653013;
+        Wed, 19 Jun 2019 19:27:33 -0700 (PDT)
+Received: from hari-Inspiron-1545 ([183.83.92.187])
+        by smtp.gmail.com with ESMTPSA id j23sm19200394pff.90.2019.06.19.19.27.29
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 19 Jun 2019 19:27:31 -0700 (PDT)
+Date:   Thu, 20 Jun 2019 07:57:26 +0530
+From:   Hariprasad Kelam <hariprasad.kelam@gmail.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Nishka Dasgupta <nishkadg.linux@gmail.com>,
+        Himadri Pandya <himadri18.07@gmail.com>,
+        Hardik Singh Rathore <hardiksingh.k@gmail.com>,
+        Hariprasad Kelam <hariprasad.kelam@gmail.com>,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] staging: rtl8723bs: hal: hal_btcoex: Remove variables
+ pHalData and pU1Tmp
+Message-ID: <20190620022726.GA19556@hari-Inspiron-1545>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Wed, 19 Jun 2019 23:27:53 +0200
-Peter Zijlstra <peterz@infradead.org> escreveu:
+Remove pHalData variable as it is set but unused in function.
+Remove pU1Tmp and replace this with pu8
 
-> On Wed, Jun 19, 2019 at 10:19:22AM -0300, Mauro Carvalho Chehab wrote:
-> > (c/c list cleaned)
-> > 
-> > Em Wed, 19 Jun 2019 13:43:56 +0200
-> > Peter Zijlstra <peterz@infradead.org> escreveu:
-> >   
-> > > On Tue, Jun 18, 2019 at 05:53:17PM -0300, Mauro Carvalho Chehab wrote:
-> > >   
-> > > >  .../{ => driver-api}/atomic_bitops.rst        |  2 -    
-> > > 
-> > > That's a .txt file, big fat NAK for making it an rst.  
-> > 
-> > Rst is a text file. This one is parsed properly by Sphinx without
-> > any changes.  
-> 
-> In my tree it is a .txt file, I've not seen patches changing it. And I
-> disagree, rst is just as much 'a text file' as .c is.
+Signed-off-by: Hariprasad Kelam <hariprasad.kelam@gmail.com>
+---
+ drivers/staging/rtl8723bs/hal/hal_btcoex.c | 14 +++++---------
+ 1 file changed, 5 insertions(+), 9 deletions(-)
 
-ReStructured text is just text with a stricter style + some commands,
-if the text author wants to enhance it.
+diff --git a/drivers/staging/rtl8723bs/hal/hal_btcoex.c b/drivers/staging/rtl8723bs/hal/hal_btcoex.c
+index fd0be52..e673319 100644
+--- a/drivers/staging/rtl8723bs/hal/hal_btcoex.c
++++ b/drivers/staging/rtl8723bs/hal/hal_btcoex.c
+@@ -560,18 +560,14 @@ static u8 halbtcoutsrc_Set(void *pBtcContext, u8 setType, void *pInBuf)
+ {
+ 	PBTC_COEXIST pBtCoexist;
+ 	struct adapter *padapter;
+-	struct hal_com_data *pHalData;
+ 	u8 *pu8;
+-	u8 *pU1Tmp;
+ 	u32 *pU4Tmp;
+ 	u8 ret;
+ 
+ 
+ 	pBtCoexist = (PBTC_COEXIST)pBtcContext;
+ 	padapter = pBtCoexist->Adapter;
+-	pHalData = GET_HAL_DATA(padapter);
+ 	pu8 = pInBuf;
+-	pU1Tmp = pInBuf;
+ 	pU4Tmp = pInBuf;
+ 	ret = true;
+ 
+@@ -614,11 +610,11 @@ static u8 halbtcoutsrc_Set(void *pBtcContext, u8 setType, void *pInBuf)
+ 
+ 	/*  set some u8 type variables. */
+ 	case BTC_SET_U1_RSSI_ADJ_VAL_FOR_AGC_TABLE_ON:
+-		pBtCoexist->btInfo.rssiAdjustForAgcTableOn = *pU1Tmp;
++		pBtCoexist->btInfo.rssiAdjustForAgcTableOn = *pu8;
+ 		break;
+ 
+ 	case BTC_SET_U1_AGG_BUF_SIZE:
+-		pBtCoexist->btInfo.aggBufSize = *pU1Tmp;
++		pBtCoexist->btInfo.aggBufSize = *pu8;
+ 		break;
+ 
+ 	/*  the following are some action which will be triggered */
+@@ -633,15 +629,15 @@ static u8 halbtcoutsrc_Set(void *pBtcContext, u8 setType, void *pInBuf)
+ 	/* 1Ant =========== */
+ 	/*  set some u8 type variables. */
+ 	case BTC_SET_U1_RSSI_ADJ_VAL_FOR_1ANT_COEX_TYPE:
+-		pBtCoexist->btInfo.rssiAdjustFor1AntCoexType = *pU1Tmp;
++		pBtCoexist->btInfo.rssiAdjustFor1AntCoexType = *pu8;
+ 		break;
+ 
+ 	case BTC_SET_U1_LPS_VAL:
+-		pBtCoexist->btInfo.lpsVal = *pU1Tmp;
++		pBtCoexist->btInfo.lpsVal = *pu8;
+ 		break;
+ 
+ 	case BTC_SET_U1_RPWM_VAL:
+-		pBtCoexist->btInfo.rpwmVal = *pU1Tmp;
++		pBtCoexist->btInfo.rpwmVal = *pu8;
+ 		break;
+ 
+ 	/*  the following are some action which will be triggered */
+-- 
+2.7.4
 
-Btw, I'm glad you mentioned c. 
-
-This is c:
-
-	int
-	func( int a, int
-			 b ) {
-	 return a + b;
-	}
-
-This is also c:
-
-	func(int a,int b) { goto foo;
-	foo:
-	   return(a+b) }
-
-K&R style is also c, and this is also c:
-
-	#define f(a,b) (a+b)
-
-Despite none of the above matches my taste - and some have issues - they
-all build with gcc.
-
-Yet, none of the above follows the Kernel coding style.
-
-The way we use ReST (with absolute minimal changes), it becomes just
-a text style.
-
-Btw, I agree with you: there are some odd things at its style - and we 
-should work to try to reduce this to its minimal extent.
-
-> 
-> > > >  .../{ => driver-api}/futex-requeue-pi.rst     |  2 -    
-> > >   
-> > > >  .../{ => driver-api}/gcc-plugins.rst          |  2 -    
-> > >   
-> > > >  Documentation/{ => driver-api}/kprobes.rst    |  2 -
-> > > >  .../{ => driver-api}/percpu-rw-semaphore.rst  |  2 -    
-> > > 
-> > > More NAK for rst conversion  
-> > 
-> > Again, those don't need any conversion. Those files already parse 
-> > as-is by Sphinx, with no need for any change.  
-> 
-> And yet, they're a .txt file in my tree. And I've not seen a rename,
-> just this move.
-
-Rename is on patch 1/22.
-
-No matter the extension, all the above files pass at the Sphinx style
-validation without warnings or errors. Patch 1/22 doesn't make any
-conversion.
-
-Btw, the .rst extension is just a convenient way to help identifying what
-was not validated. If I'm not mistaken, when the discussions about a
-replacement for DocBook started at at linux-doc, someone proposed to
-keep the .txt extension (changing it to accept .rst, .txt or both is
-a single line change at conf.py).
-
-> 
-> > The only change here is that, on patch 1/22, the files that
-> > aren't listed on an index file got a :orphan: added in order
-> > to make this explicit. This patch removes it.  
-> 
-> I've no idea what :orphan: is. Text file don't have markup.
-> 
-> > > >  Documentation/{ => driver-api}/pi-futex.rst   |  2 -
-> > > >  .../{ => driver-api}/preempt-locking.rst      |  2 -    
-> > >   
-> > > >  Documentation/{ => driver-api}/rbtree.rst     |  2 -    
-> > >   
-> > > >  .../{ => driver-api}/robust-futex-ABI.rst     |  2 -
-> > > >  .../{ => driver-api}/robust-futexes.rst       |  2 -    
-> > >   
-> > > >  .../{ => driver-api}/speculation.rst          |  8 +--
-> > > >  .../{ => driver-api}/static-keys.rst          |  2 -    
-> > >   
-> > > >  .../{ => driver-api}/this_cpu_ops.rst         |  2 -    
-> > >   
-> > > >  Documentation/locking/rt-mutex.rst            |  2 +-    
-> > > 
-> > > NAK. None of the above have anything to do with driver-api.  
-> > 
-> > Ok. Where do you think they should sit instead? core-api?  
-> 
-> Pretty much all of then are core-api I tihnk, with exception of the one
-> that are ABI, which have nothing to do with API. 
-
-OK.
-
-> And i've no idea where
-> GCC plugins go, but it's definitely nothing to do with drivers.
-
-I suspect that Documentation/security would be a better place
-for GCC plugins (as it has been discussed at kernel-hardening ML),
-but I'm waiting a feedback from Kees.
-
-> 
-> Many of the futex ones are about the sys_futex user API, which
-> apparently we have Documentation/userspace-api/ for.
-
-Yeah, it makes sense to place sys_futex there.
-
-Despite being an old dir, it is not too popular: there are
-very few document there. I only discovered this one a few
-days ago.
-
-> 
-> Why are you doing this if you've no clue what they're on about?
-
-I don't pretend to know precisely where each document will fit.
-If you read carefully the content of each orphaned document, you'll see
-that many of them have uAPI, kAPI and admin-guide info inside.
-
-To be frank, I actually tried to get rid of this document shift
-part, but a Jon's feedback when I submitted a much simpler RFC
-patchset challenged me to try to place each document on some place. The 
-renaming part is by far a lot more complex than the conversion, 
-because depending on how you interpret the file contents -
-and the description of each documentation chapter - it may fit on a
-different subdir.
-
--
-
-My main goal is to have an organized body with the documentation. 
-
-Try to read our docs as if it is a book, and you'll see what I'm talking
-about: there are important missing parts, the document order isn't in
-an order that would make easier for the headers, several documents are
-placed on random places, etc.
-
-Just like we have Makefiles, the index.rst files, plus the subdirectories
-help to classify and organize the documentation on a coherent way.
-
-- 
-
-The main problem I want to address with this particular patch is that 
-there are so many random documents from all sorts of subject at
-Documentation/*.txt that it makes really hard to see the document
-structure or to organize them.
-
-Also, keeping txt files there at the root doc dir is a bad idea, as 
-people keep flooding Documentation/ root with new unclassified documents
-on almost every Kernel version.
-
-After 5.1, there are two new documents added inside Documentation/*.txt
-(I guess both added at linux-next for 5.3).
-
-I proposed a few months ago to create a Documentation/staging, and do:
-
-	mv Documentation/*.txt Documentation/*.rst Documentation/staging 
-
-Jani proposed today something similar to it (Documentation/attic)
-
-The name is not important. Having a place were we can temporarily
-place documents while we organize the directory structure and the
-documentation indexes seem to be the best way to reorganize the
-docs on a coherent way.
-
-Thanks,
-Mauro
