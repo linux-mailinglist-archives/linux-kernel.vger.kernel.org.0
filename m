@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 71DE34D5D0
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 20:01:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 22E004D6A2
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 20:10:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727218AbfFTSBU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 14:01:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50718 "EHLO mail.kernel.org"
+        id S1728602AbfFTSK0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 14:10:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37916 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727198AbfFTSBR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 14:01:17 -0400
+        id S1728799AbfFTSKU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Jun 2019 14:10:20 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E6A7E2084A;
-        Thu, 20 Jun 2019 18:01:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D9FAC2082C;
+        Thu, 20 Jun 2019 18:10:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561053676;
-        bh=U+Fw+56pmtSjJpXkynyZcARIJ3ukFQN6yVeJ/gkDaHU=;
+        s=default; t=1561054220;
+        bh=SjfTpmvzvuQZ9JZgKZvtzkAgoLB4u3yXSE2feqq0kUo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=s4k4z47FnnDT3HxbfyJYFvC0hIMWhu9Jyal7DG2TUxz5M8/BSpgVhYAs4HYPV234O
-         8vurF3m2xEM+HfIUiUfmQA10JLzPjgOlB+YZAkiX0J2V5WkPZ+jzPsEZ8s99CZl/8Y
-         b1hAV9Jhm4uao3O3Dq/WOCtYUB4DkEQpgNZOi66c=
+        b=skm4ODibmPXABGUdekoFOZ7G2orcr9/iECBeveWCggQ35tLQOexXQ1L7dlc2T5EqG
+         sT1hRJSPfQBgjxts54dsWE/J7kimDCnrSDVz7jc6NcPa00sNgq8QnPJLCXG7KMNKex
+         GNhfFYUUJWEn2JukpZRp4qBzfiMENtniYsLSwXnQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        Willem de Bruijn <willemb@google.com>,
+        stable@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.4 65/84] ipv6: flowlabel: fl6_sock_lookup() must use atomic_inc_not_zero
+Subject: [PATCH 4.19 07/61] net: dsa: rtl8366: Fix up VLAN filtering
 Date:   Thu, 20 Jun 2019 19:57:02 +0200
-Message-Id: <20190620174348.118555462@linuxfoundation.org>
+Message-Id: <20190620174338.691124752@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190620174337.538228162@linuxfoundation.org>
-References: <20190620174337.538228162@linuxfoundation.org>
+In-Reply-To: <20190620174336.357373754@linuxfoundation.org>
+References: <20190620174336.357373754@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,47 +43,60 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eric Dumazet <edumazet@google.com>
+From: Linus Walleij <linus.walleij@linaro.org>
 
-[ Upstream commit 65a3c497c0e965a552008db8bc2653f62bc925a1 ]
+[ Upstream commit 760c80b70bed2cd01630e8595d1bbde910339f31 ]
 
-Before taking a refcount, make sure the object is not already
-scheduled for deletion.
+We get this regression when using RTL8366RB as part of a bridge
+with OpenWrt:
 
-Same fix is needed in ipv6_flowlabel_opt()
+WARNING: CPU: 0 PID: 1347 at net/switchdev/switchdev.c:291
+	 switchdev_port_attr_set_now+0x80/0xa4
+lan0: Commit of attribute (id=7) failed.
+(...)
+realtek-smi switch lan0: failed to initialize vlan filtering on this port
 
-Fixes: 18367681a10b ("ipv6 flowlabel: Convert np->ipv6_fl_list to RCU.")
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Cc: Willem de Bruijn <willemb@google.com>
+This is because it is trying to disable VLAN filtering
+on VLAN0, as we have forgot to add 1 to the port number
+to get the right VLAN in rtl8366_vlan_filtering(): when
+we initialize the VLAN we associate VLAN1 with port 0,
+VLAN2 with port 1 etc, so we need to add 1 to the port
+offset.
+
+Fixes: d8652956cf37 ("net: dsa: realtek-smi: Add Realtek SMI driver")
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv6/ip6_flowlabel.c |    7 ++++---
+ drivers/net/dsa/rtl8366.c |    7 ++++---
  1 file changed, 4 insertions(+), 3 deletions(-)
 
---- a/net/ipv6/ip6_flowlabel.c
-+++ b/net/ipv6/ip6_flowlabel.c
-@@ -254,9 +254,9 @@ struct ip6_flowlabel *fl6_sock_lookup(st
- 	rcu_read_lock_bh();
- 	for_each_sk_fl_rcu(np, sfl) {
- 		struct ip6_flowlabel *fl = sfl->fl;
--		if (fl->label == label) {
-+
-+		if (fl->label == label && atomic_inc_not_zero(&fl->users)) {
- 			fl->lastuse = jiffies;
--			atomic_inc(&fl->users);
- 			rcu_read_unlock_bh();
- 			return fl;
- 		}
-@@ -622,7 +622,8 @@ int ipv6_flowlabel_opt(struct sock *sk,
- 						goto done;
- 					}
- 					fl1 = sfl->fl;
--					atomic_inc(&fl1->users);
-+					if (!atomic_inc_not_zero(&fl1->users))
-+						fl1 = NULL;
- 					break;
- 				}
- 			}
+--- a/drivers/net/dsa/rtl8366.c
++++ b/drivers/net/dsa/rtl8366.c
+@@ -307,7 +307,8 @@ int rtl8366_vlan_filtering(struct dsa_sw
+ 	struct rtl8366_vlan_4k vlan4k;
+ 	int ret;
+ 
+-	if (!smi->ops->is_vlan_valid(smi, port))
++	/* Use VLAN nr port + 1 since VLAN0 is not valid */
++	if (!smi->ops->is_vlan_valid(smi, port + 1))
+ 		return -EINVAL;
+ 
+ 	dev_info(smi->dev, "%s filtering on port %d\n",
+@@ -318,12 +319,12 @@ int rtl8366_vlan_filtering(struct dsa_sw
+ 	 * The hardware support filter ID (FID) 0..7, I have no clue how to
+ 	 * support this in the driver when the callback only says on/off.
+ 	 */
+-	ret = smi->ops->get_vlan_4k(smi, port, &vlan4k);
++	ret = smi->ops->get_vlan_4k(smi, port + 1, &vlan4k);
+ 	if (ret)
+ 		return ret;
+ 
+ 	/* Just set the filter to FID 1 for now then */
+-	ret = rtl8366_set_vlan(smi, port,
++	ret = rtl8366_set_vlan(smi, port + 1,
+ 			       vlan4k.member,
+ 			       vlan4k.untag,
+ 			       1);
 
 
