@@ -2,38 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 923D44D5B7
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 20:01:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 550374D620
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 20:04:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726937AbfFTSAW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 14:00:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48958 "EHLO mail.kernel.org"
+        id S1726818AbfFTSEi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 14:04:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57128 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726907AbfFTSAS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 14:00:18 -0400
+        id S1727882AbfFTSEf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Jun 2019 14:04:35 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0481F208CA;
-        Thu, 20 Jun 2019 18:00:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EA50821479;
+        Thu, 20 Jun 2019 18:04:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561053618;
-        bh=lYwmXNi2gRXd0Sj13VdaDEUHQXlhtornMixWj3JjQKA=;
+        s=default; t=1561053874;
+        bh=vWblSKgM7/w+DGeiPntDismRJC5xmWE9Nfwes/z5ies=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hgBrTBzKLV8Hg0SM8EAP4lrDHJ7xggNfMb9BIfBu0oL9xOcl5gu5kBwav6Sl/TqQy
-         Cox0KkK8Ab6lhd09KYE1w8p2eZhG8JhYlsOdNJu1vwScAizDrY4sQau5ngljyq29RO
-         3jD97TKjFWmYjqWLn3cL5WmDfXBD4ba5g2jvhMzI=
+        b=i95V9WhROCMMlPv4RTDlO8KuYilkecUYwp7g73/IgwY0mQvZyB9nfnrohzHwUD6s2
+         p1vI2PFlKNArWanibO5HRwpYn2378b2hJ9gbwxf3X9R6402CFfRoGwSPhC5gfZLZkn
+         tr/IdYiwPll2/c3zsM7MWwNBgRLZLE8eZsrETjak=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 35/84] ARM: dts: exynos: Always enable necessary APIO_1V8 and ABB_1V8 regulators on Arndale Octa
+        stable@vger.kernel.org,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 4.9 058/117] libata: Extend quirks for the ST1000LM024 drives with NOLPM quirk
 Date:   Thu, 20 Jun 2019 19:56:32 +0200
-Message-Id: <20190620174343.321036371@linuxfoundation.org>
+Message-Id: <20190620174356.227658568@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190620174337.538228162@linuxfoundation.org>
-References: <20190620174337.538228162@linuxfoundation.org>
+In-Reply-To: <20190620174351.964339809@linuxfoundation.org>
+References: <20190620174351.964339809@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,51 +45,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 5ab99cf7d5e96e3b727c30e7a8524c976bd3723d ]
+From: Hans de Goede <hdegoede@redhat.com>
 
-The PVDD_APIO_1V8 (LDO2) and PVDD_ABB_1V8 (LDO8) regulators were turned
-off by Linux kernel as unused.  However they supply critical parts of
-SoC so they should be always on:
+commit 31f6264e225fb92cf6f4b63031424f20797c297d upstream.
 
-1. PVDD_APIO_1V8 supplies SYS pins (gpx[0-3], PSHOLD), HDMI level shift,
-   RTC, VDD1_12 (DRAM internal 1.8 V logic), pull-up for PMIC interrupt
-   lines, TTL/UARTR level shift, reset pins and SW-TACT1 button.
-   It also supplies unused blocks like VDDQ_SRAM (for SROM controller) and
-   VDDQ_GPIO (gpm7, gpy7).
-   The LDO2 cannot be turned off (S2MPS11 keeps it on anyway) so
-   marking it "always-on" only reflects its real status.
+We've received a bugreport that using LPM with ST1000LM024 drives leads
+to system lockups. So it seems that these models are buggy in more then
+1 way. Add NOLPM quirk to the existing quirks entry for BROKEN_FPDMA_AA.
 
-2. PVDD_ABB_1V8 supplies Adaptive Body Bias Generator for ARM cores,
-   memory and Mali (G3D).
+BugLink: https://bugzilla.redhat.com/show_bug.cgi?id=1571330
+Cc: stable@vger.kernel.org
+Reviewed-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/boot/dts/exynos5420-arndale-octa.dts | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/ata/libata-core.c |    9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm/boot/dts/exynos5420-arndale-octa.dts b/arch/arm/boot/dts/exynos5420-arndale-octa.dts
-index 4ecef6981d5c..b54c0b8a5b34 100644
---- a/arch/arm/boot/dts/exynos5420-arndale-octa.dts
-+++ b/arch/arm/boot/dts/exynos5420-arndale-octa.dts
-@@ -97,6 +97,7 @@
- 				regulator-name = "PVDD_APIO_1V8";
- 				regulator-min-microvolt = <1800000>;
- 				regulator-max-microvolt = <1800000>;
-+				regulator-always-on;
- 			};
+--- a/drivers/ata/libata-core.c
++++ b/drivers/ata/libata-core.c
+@@ -4355,9 +4355,12 @@ static const struct ata_blacklist_entry
+ 	{ "ST3320[68]13AS",	"SD1[5-9]",	ATA_HORKAGE_NONCQ |
+ 						ATA_HORKAGE_FIRMWARE_WARN },
  
- 			ldo3_reg: LDO3 {
-@@ -135,6 +136,7 @@
- 				regulator-name = "PVDD_ABB_1V8";
- 				regulator-min-microvolt = <1800000>;
- 				regulator-max-microvolt = <1800000>;
-+				regulator-always-on;
- 			};
+-	/* drives which fail FPDMA_AA activation (some may freeze afterwards) */
+-	{ "ST1000LM024 HN-M101MBB", "2AR10001",	ATA_HORKAGE_BROKEN_FPDMA_AA },
+-	{ "ST1000LM024 HN-M101MBB", "2BA30001",	ATA_HORKAGE_BROKEN_FPDMA_AA },
++	/* drives which fail FPDMA_AA activation (some may freeze afterwards)
++	   the ST disks also have LPM issues */
++	{ "ST1000LM024 HN-M101MBB", "2AR10001",	ATA_HORKAGE_BROKEN_FPDMA_AA |
++						ATA_HORKAGE_NOLPM, },
++	{ "ST1000LM024 HN-M101MBB", "2BA30001",	ATA_HORKAGE_BROKEN_FPDMA_AA |
++						ATA_HORKAGE_NOLPM, },
+ 	{ "VB0250EAVER",	"HPG7",		ATA_HORKAGE_BROKEN_FPDMA_AA },
  
- 			ldo9_reg: LDO9 {
--- 
-2.20.1
-
+ 	/* Blacklist entries taken from Silicon Image 3124/3132
 
 
