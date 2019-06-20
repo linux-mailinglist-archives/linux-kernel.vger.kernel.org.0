@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DB86F4D722
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 20:16:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 64C1C4D850
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 20:26:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729820AbfFTSQj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 14:16:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45822 "EHLO mail.kernel.org"
+        id S1728179AbfFTSZE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 14:25:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34862 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729809AbfFTSQi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 14:16:38 -0400
+        id S1728393AbfFTSHz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Jun 2019 14:07:55 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BDD3B205F4;
-        Thu, 20 Jun 2019 18:16:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 635EB21655;
+        Thu, 20 Jun 2019 18:07:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561054597;
-        bh=zgbUZHD2UZoYFx3E8SfXLifV6MSgtlLNZd2Kb/AYhUg=;
+        s=default; t=1561054074;
+        bh=UAq3Zd5iE5Z2DQ5n60G4ImH9wEGYyDXiedKzqA3WeIE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=L2RUeENzLqmJdMIB2D9qIZ9RbbWhkTrSmqm+sEOGeHujbQzinPeXmXQYwhsORukTD
-         CYjVWFDF3ULujSrXl/2pDxk1i58X2VritHrUJ9ruhpqRB2DXSFKfa6F3lpc5QYAu52
-         HRTCdDGVNecbWYmf6/IVqsiG/3WTbAiV2w+vi+aY=
+        b=k37ibfYRdMvBr/7n4+v6GtUMPr55vL8dydRF2iGXvZDhqtIdVnlCM3murCL5QelvI
+         0/haR18yfCDlA8xhHwKQJdwvU9SOZMxW1wXLfb1q7A6RE/TJneVeOYsUX6lq3PVGUi
+         ZpBsbzHivqE6nE9UZ9OBZ1BKa9MFay/mwNmr1RCo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>,
-        Mathias Nyman <mathias.nyman@linux.intel.com>,
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 45/98] usb: xhci: Fix a potential null pointer dereference in xhci_debugfs_create_endpoint()
+Subject: [PATCH 4.14 10/45] Staging: vc04_services: Fix a couple error codes
 Date:   Thu, 20 Jun 2019 19:57:12 +0200
-Message-Id: <20190620174351.203439345@linuxfoundation.org>
+Message-Id: <20190620174333.399157265@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190620174349.443386789@linuxfoundation.org>
-References: <20190620174349.443386789@linuxfoundation.org>
+In-Reply-To: <20190620174328.608036501@linuxfoundation.org>
+References: <20190620174328.608036501@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,42 +44,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 5bce256f0b528624a34fe907db385133bb7be33e ]
+[ Upstream commit ca4e4efbefbbdde0a7bb3023ea08d491f4daf9b9 ]
 
-In xhci_debugfs_create_slot(), kzalloc() can fail and
-dev->debugfs_private will be NULL.
-In xhci_debugfs_create_endpoint(), dev->debugfs_private is used without
-any null-pointer check, and can cause a null pointer dereference.
+These are accidentally returning positive EINVAL instead of negative
+-EINVAL.  Some of the callers treat positive values as success.
 
-To fix this bug, a null-pointer check is added in
-xhci_debugfs_create_endpoint().
-
-This bug is found by a runtime fuzzing tool named FIZZER written by us.
-
-[subjet line change change, add potential -Mathais]
-Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
-Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
+Fixes: 7b3ad5abf027 ("staging: Import the BCM2835 MMAL-based V4L2 camera driver.")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Acked-by: Stefan Wahren <stefan.wahren@i2se.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/usb/host/xhci-debugfs.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/staging/vc04_services/bcm2835-camera/controls.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/usb/host/xhci-debugfs.c b/drivers/usb/host/xhci-debugfs.c
-index cadc01336bf8..7ba6afc7ef23 100644
---- a/drivers/usb/host/xhci-debugfs.c
-+++ b/drivers/usb/host/xhci-debugfs.c
-@@ -440,6 +440,9 @@ void xhci_debugfs_create_endpoint(struct xhci_hcd *xhci,
- 	struct xhci_ep_priv	*epriv;
- 	struct xhci_slot_priv	*spriv = dev->debugfs_private;
+diff --git a/drivers/staging/vc04_services/bcm2835-camera/controls.c b/drivers/staging/vc04_services/bcm2835-camera/controls.c
+index 77a5d6f4e1eb..8a242f609d3b 100644
+--- a/drivers/staging/vc04_services/bcm2835-camera/controls.c
++++ b/drivers/staging/vc04_services/bcm2835-camera/controls.c
+@@ -579,7 +579,7 @@ static int ctrl_set_image_effect(struct bm2835_mmal_dev *dev,
+ 				dev->colourfx.enable ? "true" : "false",
+ 				dev->colourfx.u, dev->colourfx.v,
+ 				ret, (ret == 0 ? 0 : -EINVAL));
+-	return (ret == 0 ? 0 : EINVAL);
++	return (ret == 0 ? 0 : -EINVAL);
+ }
  
-+	if (!spriv)
-+		return;
-+
- 	if (spriv->eps[ep_index])
- 		return;
+ static int ctrl_set_colfx(struct bm2835_mmal_dev *dev,
+@@ -603,7 +603,7 @@ static int ctrl_set_colfx(struct bm2835_mmal_dev *dev,
+ 		 "%s: After: mmal_ctrl:%p ctrl id:0x%x ctrl val:%d ret %d(%d)\n",
+ 			__func__, mmal_ctrl, ctrl->id, ctrl->val, ret,
+ 			(ret == 0 ? 0 : -EINVAL));
+-	return (ret == 0 ? 0 : EINVAL);
++	return (ret == 0 ? 0 : -EINVAL);
+ }
  
+ static int ctrl_set_bitrate(struct bm2835_mmal_dev *dev,
 -- 
 2.20.1
 
