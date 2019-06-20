@@ -2,192 +2,177 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F2CE84DC37
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 23:10:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0E44E4DC45
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 23:12:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726927AbfFTVK2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 17:10:28 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:54854 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726807AbfFTVKZ (ORCPT
+        id S1726246AbfFTVMN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 17:12:13 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:34248 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725921AbfFTVMN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 17:10:25 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=5PW4XZmchu+Ac4QXAmqxzBgwKjq7Qa2xaIQiv21ft7E=; b=osV60pJeOxlnA0nBYxb6H6iEL
-        QD+A5Xyszd79qwuxf/BTivUsNmY8boZjaDaojawGFTn56QfsDcLcdyAhLsY5XIPn8nfCcfugeBg8W
-        7y8pcyulw47UhinYfwmbkCsgNiwcHiIwLrYnrKjg9vm09ZFG/8+0Zn6QrdOu1tEsUttoYZJWSlD9e
-        XvHhEwbUJaJWy/vSiVKRA20OnCstqh9Tf7xMUT1EBzNSjUjftAVGuh47FqUU0pVXOWT1RKItIPd1U
-        tEhN84+rL0k8lRKJpJ9OUjV+9Y7ha4UszeNIYnFUnUbB/crgM00uKs8SO3Ocyc2qjGFOO6Y5I/Iyx
-        gkbvWlTbQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1he4K5-0001NI-OL; Thu, 20 Jun 2019 21:10:22 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id B6C4C2021E583; Thu, 20 Jun 2019 23:10:19 +0200 (CEST)
-Date:   Thu, 20 Jun 2019 23:10:19 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     "Paul E. McKenney" <paulmck@linux.ibm.com>
-Cc:     linux-kernel@vger.kernel.org, mingo@redhat.com,
-        frederic@kernel.org, tglx@linutronix.de
-Subject: Re: [PATCH] time/tick-broadcast: Fix tick_broadcast_offline()
- lockdep complaint
-Message-ID: <20190620211019.GA3436@hirez.programming.kicks-ass.net>
-References: <20190619181903.GA14233@linux.ibm.com>
- <20190620121032.GU3436@hirez.programming.kicks-ass.net>
- <20190620160118.GQ26519@linux.ibm.com>
+        Thu, 20 Jun 2019 17:12:13 -0400
+Received: by mail-ed1-f66.google.com with SMTP id s49so6721692edb.1
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2019 14:12:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=959ru36WY2J0Xrly1vs1MXuZnqXsrreyoL0xoecTXQA=;
+        b=ZyyEIWc8g9qNg4ofLToKGhgAmro8fi/qsiplRDzzYnsQzgUBFe4c86Ee/wR4SebDjt
+         d63ZPlgcJxB1wYNf1eIPn3M3bB13fdEww4NsSF+uA3/ahauLDZUM1S12sFjWLoIzrkEq
+         HMbsASyI+4J0m7OfyVxoUW085H+KZiQlel8eY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=959ru36WY2J0Xrly1vs1MXuZnqXsrreyoL0xoecTXQA=;
+        b=URh/gwvwsoY2BNopFro0qh4euMmoGsJ4WnfowCRDhEsmBChDdBj+3HCS4RxPZaTN30
+         Tz0E+xrCw5xWVooqNXOzDFKrYeiHt0N+AGpLjxcPjoriN4WL9trC88tCqidlzBaznGe2
+         SfxKSxUVDX3JJIuv92pvTavOSe++NIXpqZle79svoKSN1wMDOVn74wbfWr8owtkm5t2R
+         SD1dPKhkXELHBXGOz+Wl0+ybxUViz1+uUbDn4UvzaBgMZMK3t3sYR5E8UbpgwBSW+BZA
+         p4etMDt2XC4HgE9IdGUqTuz/ff/tG3hi3pAhAt8WC2Rlh3oc2OyZhI2RWAJ1n1LL7P90
+         disQ==
+X-Gm-Message-State: APjAAAW35sOgxM+Z+mdlAiqdE/WmhFvSOPzP7lIn6uayrnK50YPp+M6Z
+        wyGufnB5RfoNom1IcH3YCtMBBw==
+X-Google-Smtp-Source: APXvYqx3EnsHuhcIFTP2RIslvwoM3AQZ6N+bN+bCoN37PG+nA2hCPhd0nIWscWNoh843HbyPEoTJjw==
+X-Received: by 2002:a17:906:2510:: with SMTP id i16mr98153366ejb.130.1561065130725;
+        Thu, 20 Jun 2019 14:12:10 -0700 (PDT)
+Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
+        by smtp.gmail.com with ESMTPSA id p18sm76849ejr.61.2019.06.20.14.12.08
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Thu, 20 Jun 2019 14:12:09 -0700 (PDT)
+Date:   Thu, 20 Jun 2019 23:12:04 +0200
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     Cheng-yi Chiang <cychiang@chromium.org>
+Cc:     Hans Verkuil <hverkuil@xs4all.nl>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Takashi Iwai <tiwai@suse.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Russell King <rmk+kernel@armlinux.org.uk>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        David Airlie <airlied@linux.ie>,
+        Rob Herring <robh+dt@kernel.org>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Doug Anderson <dianders@chromium.org>,
+        Dylan Reid <dgreid@chromium.org>, tzungbi@chromium.org,
+        linux-media@vger.kernel.org,
+        "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." 
+        <alsa-devel@alsa-project.org>, dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
+        Dariusz Marcinkiewicz <darekm@google.com>,
+        Daniel Vetter <daniel@ffwll.ch>
+Subject: Re: [PATCH 1/7] video: add HDMI state notifier support
+Message-ID: <20190620211204.GW12905@phenom.ffwll.local>
+Mail-Followup-To: Cheng-yi Chiang <cychiang@chromium.org>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>, Takashi Iwai <tiwai@suse.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Russell King <rmk+kernel@armlinux.org.uk>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Doug Anderson <dianders@chromium.org>,
+        Dylan Reid <dgreid@chromium.org>, tzungbi@chromium.org,
+        linux-media@vger.kernel.org,
+        "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." <alsa-devel@alsa-project.org>,
+        dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
+        Dariusz Marcinkiewicz <darekm@google.com>
+References: <20190603080931.GG21222@phenom.ffwll.local>
+ <CAFv8Nw+1sB8i1d87vLeKxRricZOi4gnXFSgOzW9k0sa_Tzybjg@mail.gmail.com>
+ <20190604072411.GP21222@phenom.ffwll.local>
+ <CAFv8NwKL9ZL=gNpDmdRV+R9eq22+Da_1kzuYBv8kMMyV3Hq14g@mail.gmail.com>
+ <20190611123455.GD2458@phenom.ffwll.local>
+ <CAFv8NwJxs-R=ehgeqyx=e+T5OmUBsk3uWnUb2t0cC-LDPS7G5w@mail.gmail.com>
+ <20190618121220.GU12905@phenom.ffwll.local>
+ <CAFv8NwLci2ALi3V-e=8jjatciHWOoOj-FeajwNLWRpWRtqgBdg@mail.gmail.com>
+ <20190620092506.GP12905@phenom.ffwll.local>
+ <CAFv8NwLbS_f4cfeorzqtmRzQSY0u1tgM7fitAokg_QfViPvq=Q@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190620160118.GQ26519@linux.ibm.com>
+In-Reply-To: <CAFv8NwLbS_f4cfeorzqtmRzQSY0u1tgM7fitAokg_QfViPvq=Q@mail.gmail.com>
+X-Operating-System: Linux phenom 4.19.0-5-amd64 
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 20, 2019 at 09:01:18AM -0700, Paul E. McKenney wrote:
+Massively cutting this thread, since halfway through in my previous reply
+I realized that maybe hdmi_codec is a much better starting point.
 
-> > > +#define TICK_SCHED_REMOTE_OFFLINE	0
-> > > +#define TICK_SCHED_REMOTE_RUNNING	1
-> > > +#define TICK_SCHED_REMOTE_OFFLINING	2
-> > 
-> > That seems a daft set of values; consider { RUNNING, OFFLINING, OFFLINE }
-> > and see below.
+On Thu, Jun 20, 2019 at 09:23:23PM +0800, Cheng-yi Chiang wrote:
+> On Thu, Jun 20, 2019 at 5:25 PM Daniel Vetter <daniel@ffwll.ch> wrote:
+> > Yeah fully agreeing that hdmi_audio_code is probably a better starting
+> > point. Problem is that becuase hdmi_codec is built on top of platform
+> > device it's quite a bit harder to extend with callbacks and things like
+> > that, without breaking the driver model.
+> >
+> > I need to think about this more, but if all we need to look at is
+> > hdmi_codec, then I think this becomes a lot easier. And we can ignore
+> > drm_audio_component.h completely.
 > 
-> As in make it an enum?  I could do that.
-
-Enum or define, I don't much care, but the 'natural' ordering of the
-states is either: running -> offlining -> offline, or the other way
-around, the given order in the patch just didn't make sense.
-
-The one with running=0 just seems to work out nicer.
-
-> > > +
-> > > +// State diagram for ->state:
-> > > +//
-> > > +//
-> > > +//      +----->OFFLINE--------------------------+
-> > > +//      |                                       |
-> > > +//      |                                       |
-> > > +//      |                                       | sched_tick_start()
-> > > +//      | sched_tick_remote()                   |
-> > > +//      |                                       |
-> > > +//      |                                       V
-> > > +//      |                        +---------->RUNNING
-> > > +//      |                        |              |
-> > > +//      |                        |              |
-> > > +//      |                        |              |
-> > > +//      |     sched_tick_start() |              | sched_tick_stop()
-> > > +//      |                        |              |
-> > > +//      |                        |              |
-> > > +//      |                        |              |
-> > > +//      +--------------------OFFLINING<---------+
-> > > +//
-> > > +//
-> > > +// Other transitions get WARN_ON_ONCE(), except that sched_tick_remote()
-> > > +// and sched_tick_start() are happy to leave the state in RUNNING.
-
-> > Also, I find it harder to read that needed, maybe a little something
-> > like so:
-> > 
-> > /*
-> >  *              OFFLINE
-> >  *               |   ^
-> >  *               |   | tick_remote()
-> >  *               |   |
-> >  *               +--OFFLINING
-> >  *               |   ^
-> >  *  tick_start() |   | tick_stop()
-> >  *               v   |
-> >  *              RUNNING
-> >  */
 > 
-> As in remove the leading "sched_" from the function names?  (The names
-> were already there, so I left them be.)
-
-That was just me being lazy, the main part being getting the states in a
-linear order, instead of spread around a 2d grid.
-
-> > While not wrong, it seems overly complicated; can't we do something
-> > like:
-> > 
-> > tick:
+> It is surprising that you think this way.
+> Maybe the original patch before hdmi-notifier was introduced is the
+> better way to solve this issue, if we only need to look at hdmi_codec.
 > 
-> As in sched_tick_remote(), right?
+> The history of hdmi_codec driver is in this patch series:
 > 
-> > 	state = atomic_read(->state);
-> > 	if (state) {
+> https://lore.kernel.org/patchwork/patch/539656/
+
+Hm, this doesn't seem to be the hdmi_codec driver I meant, but another,
+new one. I was talking about SND_SOC_HDMI_CODEC.
+
+> There was a callback mechanism implemented between dw-hdmi and hdmi
+> codec driver.
+> It was later consolidated by Doug in this patch for better jack status
+> reporting:
 > 
-> You sure you don't want "if (state != RUNNING)"?  But I guess you need
-> to understand that RUNNING==0 to understand the atomic_inc_not_zero().
+> https://chromium-review.googlesource.com/c/chromiumos/third_party/kernel/+/303573/
 
-Right..
+Hm that still seems entirely separate hdmi-codec specific to dw-hdmi only
+...
 
+> I am not sure why the original patch series did not get fully accepted
+> in the upstream.
+> It was quite long time ago.
 > 
-> > 		WARN_ON_ONCE(state != OFFLINING);
-> > 		if (atomic_inc_not_zero(->state))
+> But if you think this might be the right way to do, then it is even
+> better for us because the patch series and Doug's patch had been quite
+> stable
+> on our RK3288 products for about four years with plenty of users, so
+> we have much higher confidence in them.
+> I can rebase and clean up them and post another patch for review.
 > 
-> This assumes that there cannot be concurrent calls to sched_tick_remote(),
-> otherwise, you can end up with ->state==3.  Which is a situation that
-> my version does a WARN_ON_ONCE() for, so I guess the only difference is
-> that mine would be guaranteed to complain and yours would complain with
-> high probability.  So fair enough!
+> Please let me know what approach you feel is better.
+> Thanks again!
 
-I was assuming there was only a single work per CPU and there'd not be
-concurrency on this path.
+Not sure we're talking about the same. What I had in mind is to add jack
+status to the hdmi-codec.c stuff, which is used by multiple soc drm
+display drivers already. Looking at git grep output, there seems to be
+already some support for dw-hdmi synopsys drm_bridge driver. I thought of
+extending that. Does that not work for you?
 
-> > 			return;
-> > 	}
-> > 	queue_delayed_work();
-> > 
-> > 
-> > stop:
-> > 	/*
-> > 	 * This is hotplug; even without stop-machine, there cannot be
-> > 	 * concurrency on offlining specific CPUs.
-> > 	 */
-> > 	state = atomic_read(->state);
-> 
-> There cannot be a sched_tick_stop() or sched_tick_stop(), but there really
-> can be a sched_tick_remote() right here in the absence of stop-machine,
-> can't there?  Or am I missing something other than stop-machine that
-> prevents this?
-
-There can be a remote tick, indeed.
-
-> Now, you could argue that concurrency is safe: Either sched_tick_remote()
-> sees RUNNING and doesn't touch the value, or it sees offlining and
-> sched_tick_stop() makes no further changes,
-
-That was indeed the thinking.
-
-> but I am not sure that this qualifies as simpler...
-
-There is that I suppose. I think my initial version was a little more
-complicated, but after a few passes this happened :-)
-
-> > 	WARN_ON_ONCE(state != RUNNING);
-> > 	atomic_set(->state, OFFLINING);
-> 
-> Another option would be to use atomic_xchg() as below instead of the
-> atomic_read()/atomic_set() pair.  Would that work for you?
-
-Yes, that works I suppose. Is more expensive, but I don't think we
-particularly care about that here.
-
-> > start:
-> > 	state = atomic_xchg(->state, RUNNING);
-> > 	WARN_ON_ONCE(state == RUNNING);
-> > 	if (state == OFFLINE) {
-> > 		// ...
-> > 		queue_delayed_work();
-> > 	}
-> 
-> This one looks to be an improvement on mine regardless of the other two.
-
-
+Thanks, Daniel
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
