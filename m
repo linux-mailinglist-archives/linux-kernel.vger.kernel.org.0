@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 308A14D6EF
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 20:14:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A5E784D663
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 20:08:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729383AbfFTSOE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 14:14:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42170 "EHLO mail.kernel.org"
+        id S1728311AbfFTSHW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 14:07:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33642 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729081AbfFTSOB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 14:14:01 -0400
+        id S1726511AbfFTSHP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Jun 2019 14:07:15 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 311F5205F4;
-        Thu, 20 Jun 2019 18:14:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 547282082C;
+        Thu, 20 Jun 2019 18:07:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561054440;
-        bh=6ijn6mL8RusQO+kHen1qojezEJ0W/LWwviffWpE/j+A=;
+        s=default; t=1561054034;
+        bh=9oLMAM/nIBoGCDh6ofVMyFf0mrfY/YKE5fI1NiFYlA4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fpdddb6v7Bb5RDdM58VoDodQ7CXddoLvDU8Yu01BbHMGvAALXELZsEbMwK98BngvL
-         d3GaxAkOYLIcc6wyQNSZcsIof8q9RfSmcW0Frvs9tXNhBgaNMGB8P/Tb3Zpq31sSrK
-         78ypo2zZZ+730Qu1tIPoEczffMZwDHYdXxlNFZfY=
+        b=Mw+I28DxnlOZo+lMfUr84t/0gxLvppGiSlr2fyjOrc9zx4cIrP+hJEyS+0Lprg30N
+         nEJEcEsyjD672LgNnYGwJvEji7eqGZYFWgOetEiO6vGKSjEaWa0enHcITrQ2ckTBGw
+         I3R5SWGTm/UtB4yzVtxV6u4VWCYbZPjWHzpDNfQw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, syzbot <syzkaller@googlegroups.com>,
-        Willem de Bruijn <willemb@google.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.1 30/98] net: correct udp zerocopy refcnt also when zerocopy only on append
+        stable@vger.kernel.org, Douglas Anderson <dianders@chromium.org>,
+        Minas Harutyunyan <hminas@synopsys.com>,
+        Martin Schiller <ms@dev.tdt.de>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>
+Subject: [PATCH 4.9 083/117] usb: dwc2: Fix DMA cache alignment issues
 Date:   Thu, 20 Jun 2019 19:56:57 +0200
-Message-Id: <20190620174350.484033329@linuxfoundation.org>
+Message-Id: <20190620174357.244764381@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190620174349.443386789@linuxfoundation.org>
-References: <20190620174349.443386789@linuxfoundation.org>
+In-Reply-To: <20190620174351.964339809@linuxfoundation.org>
+References: <20190620174351.964339809@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,54 +45,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Willem de Bruijn <willemb@google.com>
+From: Martin Schiller <ms@dev.tdt.de>
 
-[ Upstream commit 522924b583082f51b8a2406624a2f27c22119b20 ]
+commit 4a4863bf2e7932e584a3a462d3c6daf891142ddc upstream.
 
-The below patch fixes an incorrect zerocopy refcnt increment when
-appending with MSG_MORE to an existing zerocopy udp skb.
+Insert a padding between data and the stored_xfer_buffer pointer to
+ensure they are not on the same cache line.
 
-  send(.., MSG_ZEROCOPY | MSG_MORE);	// refcnt 1
-  send(.., MSG_ZEROCOPY | MSG_MORE);	// refcnt still 1 (bar frags)
+Otherwise, the stored_xfer_buffer gets corrupted for IN URBs on
+non-cache-coherent systems. (In my case: Lantiq xRX200 MIPS)
 
-But it missed that zerocopy need not be passed at the first send. The
-right test whether the uarg is newly allocated and thus has extra
-refcnt 1 is not !skb, but !skb_zcopy.
-
-  send(.., MSG_MORE);			// <no uarg>
-  send(.., MSG_ZEROCOPY);		// refcnt 1
-
-Fixes: 100f6d8e09905 ("net: correct zerocopy refcnt with udp MSG_MORE")
-Reported-by: syzbot <syzkaller@googlegroups.com>
-Signed-off-by: Willem de Bruijn <willemb@google.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: 3bc04e28a030 ("usb: dwc2: host: Get aligned DMA in a more supported way")
+Fixes: 56406e017a88 ("usb: dwc2: Fix DMA alignment to start at allocated boundary")
+Cc: <stable@vger.kernel.org>
+Tested-by: Douglas Anderson <dianders@chromium.org>
+Reviewed-by: Douglas Anderson <dianders@chromium.org>
+Acked-by: Minas Harutyunyan <hminas@synopsys.com>
+Signed-off-by: Martin Schiller <ms@dev.tdt.de>
+Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/ipv4/ip_output.c  |    2 +-
- net/ipv6/ip6_output.c |    2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
 
---- a/net/ipv4/ip_output.c
-+++ b/net/ipv4/ip_output.c
-@@ -923,7 +923,7 @@ static int __ip_append_data(struct sock
- 		uarg = sock_zerocopy_realloc(sk, length, skb_zcopy(skb));
- 		if (!uarg)
- 			return -ENOBUFS;
--		extra_uref = !skb;	/* only extra ref if !MSG_MORE */
-+		extra_uref = !skb_zcopy(skb);	/* only ref on new uarg */
- 		if (rt->dst.dev->features & NETIF_F_SG &&
- 		    csummode == CHECKSUM_PARTIAL) {
- 			paged = true;
---- a/net/ipv6/ip6_output.c
-+++ b/net/ipv6/ip6_output.c
-@@ -1344,7 +1344,7 @@ emsgsize:
- 		uarg = sock_zerocopy_realloc(sk, length, skb_zcopy(skb));
- 		if (!uarg)
- 			return -ENOBUFS;
--		extra_uref = !skb;	/* only extra ref if !MSG_MORE */
-+		extra_uref = !skb_zcopy(skb);	/* only ref on new uarg */
- 		if (rt->dst.dev->features & NETIF_F_SG &&
- 		    csummode == CHECKSUM_PARTIAL) {
- 			paged = true;
+---
+ drivers/usb/dwc2/hcd.c |   10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
+
+--- a/drivers/usb/dwc2/hcd.c
++++ b/drivers/usb/dwc2/hcd.c
+@@ -2552,8 +2552,10 @@ static void dwc2_free_dma_aligned_buffer
+ 		return;
+ 
+ 	/* Restore urb->transfer_buffer from the end of the allocated area */
+-	memcpy(&stored_xfer_buffer, urb->transfer_buffer +
+-	       urb->transfer_buffer_length, sizeof(urb->transfer_buffer));
++	memcpy(&stored_xfer_buffer,
++	       PTR_ALIGN(urb->transfer_buffer + urb->transfer_buffer_length,
++			 dma_get_cache_alignment()),
++	       sizeof(urb->transfer_buffer));
+ 
+ 	if (usb_urb_dir_in(urb))
+ 		memcpy(stored_xfer_buffer, urb->transfer_buffer,
+@@ -2580,6 +2582,7 @@ static int dwc2_alloc_dma_aligned_buffer
+ 	 * DMA
+ 	 */
+ 	kmalloc_size = urb->transfer_buffer_length +
++		(dma_get_cache_alignment() - 1) +
+ 		sizeof(urb->transfer_buffer);
+ 
+ 	kmalloc_ptr = kmalloc(kmalloc_size, mem_flags);
+@@ -2590,7 +2593,8 @@ static int dwc2_alloc_dma_aligned_buffer
+ 	 * Position value of original urb->transfer_buffer pointer to the end
+ 	 * of allocation for later referencing
+ 	 */
+-	memcpy(kmalloc_ptr + urb->transfer_buffer_length,
++	memcpy(PTR_ALIGN(kmalloc_ptr + urb->transfer_buffer_length,
++			 dma_get_cache_alignment()),
+ 	       &urb->transfer_buffer, sizeof(urb->transfer_buffer));
+ 
+ 	if (usb_urb_dir_out(urb))
 
 
