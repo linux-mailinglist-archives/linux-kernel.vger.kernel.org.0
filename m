@@ -2,111 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 83B414DB8E
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 22:46:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 520E84DB90
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 22:47:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726058AbfFTUqN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 16:46:13 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:45418 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725913AbfFTUqM (ORCPT
+        id S1726212AbfFTUrE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 16:47:04 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:45976 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725913AbfFTUrE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 16:46:12 -0400
-Received: by mail-ed1-f68.google.com with SMTP id a14so6524638edv.12
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2019 13:46:11 -0700 (PDT)
+        Thu, 20 Jun 2019 16:47:04 -0400
+Received: by mail-pg1-f193.google.com with SMTP id k35so547790pgm.12
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2019 13:47:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rasmusvillemoes.dk; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=zlxmS4RlOT5dd4x2YBCTagMAGWiR3GVlEN2t2GzpYWM=;
-        b=KIuWzBO+cFBOW/VG7l3ADv+pAc3wHn2VRuBgi7vrjKNGJx451pnMmWftiXJFRNmUU5
-         YfDghHf/UW+DCeBP9IVDhXrGyEljBcAXzMDfNF6E3NfcFgXACNnRlmILufPStxxHJ2qF
-         2fONboiWrY5C2bdssBDNqyx2UpYoP24R80CjY=
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=O7l+Vz8Z+P5e/XZWrPOY5NRWsmIcQSKPNpkfC3vTPbA=;
+        b=LPdPtGZm3Cn4AH88lhL8O5Q3ngb9omPQ6UlcQz+FUPIDjiuAqz0J341JuPnNaUYkSQ
+         /2WDq945SjNbhP0UH69dhcavWBJUFj1jh+R5LOnEc7xa2Rsfh3bWsYu5uurPZzBwV32R
+         Wie2iQCTYHkHjSE7VCDn6rzndnvldaDH5+Hvc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=zlxmS4RlOT5dd4x2YBCTagMAGWiR3GVlEN2t2GzpYWM=;
-        b=WkBqpoUE5PtqFnDPLFctH5jIPoKIq0oosq87q/8mVh+L7zS6K5PY1rlawOmH5NkUNi
-         Hl7i3n+8GQ5jYrfpOZ0lmTuet3/IvN2SY1tE8VR9Z4IsGGsp4XJKTwLF3V+Ku0y1OIJG
-         fe4sF4YpJsOd0mO5eL4LJbbUaqWpW0x6HJ7e6YTLtPT4QDW2oKk3/YTCGJ45KPtY4gFo
-         zoQfnB0hfrCL6f01bffZsGuRk60MYI8O2GPbkU20H0o6ML4YeZNW6IZTCGwhGbYY5C8K
-         S8iTNE8eJ3jeeDakP6l+xNGyJEYKNLfq0eRCzsrJPgaOjYX60Lh3+0fdKRNcIUiM1d0+
-         TSHQ==
-X-Gm-Message-State: APjAAAXHgW7HggS/8uhbmNe7+8sZbRJc9SyFnoqYvnjDSbSDhMgP4EGN
-        Y8hk1FP3FlWqcTzzheZx0nhPhpXCRmznF7fB
-X-Google-Smtp-Source: APXvYqwOfucS6taGA1Dn70RUcLmZ1YfsfUD+LtB5NFJTNGhro2ofEAzoAgJGWXD2MfavUPahwa1fxA==
-X-Received: by 2002:a17:906:85d4:: with SMTP id i20mr3125274ejy.256.1561063570440;
-        Thu, 20 Jun 2019 13:46:10 -0700 (PDT)
-Received: from [192.168.1.149] (ip-5-186-113-204.cgn.fibianet.dk. [5.186.113.204])
-        by smtp.gmail.com with ESMTPSA id c48sm180605edb.10.2019.06.20.13.46.09
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=O7l+Vz8Z+P5e/XZWrPOY5NRWsmIcQSKPNpkfC3vTPbA=;
+        b=P1PplnCfneL5e2hbNZcAZhVLb7B0OVaf3tntClZpnrO/zegJK+fxActrRU0p2HB8B2
+         69DobWsKaDI3qEVma0ZLMMTyvC697vvxgWf2abTzJgJDWL+yA+m9hQNiGiGkWiBszNi2
+         lopTVD8cBbEillYJ8CRNCf2Woc3RWRK77rkJ4YnDtpcYuZGvlfrJnWZVhjLoQZJE+vOP
+         CQkknQPl8rErl8OtkezzilTIckce+S9L2I3uB3wgbyE1LtP+iMO6OfxTfkD5tu6+Kiio
+         UfIWOzhFAvIfW6B4qG87AOHli8GSiBs0/Pwb/1EPfXxWy2mlvQ5rvfCx2+oBI7LwtSDQ
+         BMew==
+X-Gm-Message-State: APjAAAX+ifM4XckOzIBBaoR3IOpyOd685RokCihdbDG3unJJWjm1uAZB
+        PcobcHDzFqPzHNsvGac78KMaIA==
+X-Google-Smtp-Source: APXvYqx5GZWgd48a6+yKfnLbweOOJhEBeIBAGntj/FOqK0vjt6TATda1inqr3cAGAltTTmAiF918jg==
+X-Received: by 2002:a17:90a:ac11:: with SMTP id o17mr1639575pjq.134.1561063623898;
+        Thu, 20 Jun 2019 13:47:03 -0700 (PDT)
+Received: from localhost ([2620:15c:202:1:75a:3f6e:21d:9374])
+        by smtp.gmail.com with ESMTPSA id f15sm564455pje.17.2019.06.20.13.47.03
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 20 Jun 2019 13:46:09 -0700 (PDT)
-Subject: Re: [PATCH v6 7/8] dynamic_debug: add asm-generic implementation for
- DYNAMIC_DEBUG_RELATIVE_POINTERS
-To:     Nick Desaulniers <ndesaulniers@google.com>
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jason Baron <jbaron@akamai.com>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <20190617222034.10799-1-linux@rasmusvillemoes.dk>
- <20190617222034.10799-8-linux@rasmusvillemoes.dk>
- <CAKwvOdn5fhCTqtciKBwAj3vYQMhi06annzxcdC1GjKxri=dHnw@mail.gmail.com>
-From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Message-ID: <12bd1adc-2258-ad5d-f6c9-079fdf0821b8@rasmusvillemoes.dk>
-Date:   Thu, 20 Jun 2019 22:46:08 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        Thu, 20 Jun 2019 13:47:03 -0700 (PDT)
+Date:   Thu, 20 Jun 2019 13:47:01 -0700
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     Tom Roeder <tmroeder@google.com>
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-kernel@vger.kernel.org, Raul E Rangel <rrangel@chromium.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Tom Hughes <tomhughes@chromium.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        Ryan Case <ryandcase@chromium.org>, Yu Liu <yudiliu@google.com>
+Subject: Re: [PATCH] gen_compile_command: Add support for separate
+ KBUILD_OUTPUT directory
+Message-ID: <20190620204701.GX137143@google.com>
+References: <20190620184523.155756-1-mka@chromium.org>
+ <20190620192345.GA133204@google.com>
 MIME-Version: 1.0
-In-Reply-To: <CAKwvOdn5fhCTqtciKBwAj3vYQMhi06annzxcdC1GjKxri=dHnw@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+In-Reply-To: <20190620192345.GA133204@google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 18/06/2019 00.35, Nick Desaulniers wrote:
-> On Mon, Jun 17, 2019 at 3:20 PM Rasmus Villemoes
-> <linux@rasmusvillemoes.dk> wrote:
->>
->> It relies on
->>
->> (1) standard assembly directives that should work on
->> all architectures
->> (2) the "i" constraint for an constant, and
->> (3) %cN emitting the constant operand N without punctuation
->>
->> and of course the layout of _ddebug being what one expects.
->>
->> Now, clang before 9.0 doesn't satisfy (3) for non-x86 targets.
+On Thu, Jun 20, 2019 at 12:23:45PM -0700, Tom Roeder wrote:
+> I can confirm that I can still run clang-tidy on the kernel using this
+> new version of the script; it generates a version of
+> compile_commands.json that works in my case.
 > 
-> Thanks so much for resending with this case fixed, and sorry I did not
-> implement (3) sooner!  I appreciate your patience.
-> Acked-by: Nick Desaulniers <ndesaulniers@google.com>
+> On Thu, Jun 20, 2019 at 11:45:23AM -0700, Matthias Kaehlcke wrote:
+> > gen_compile_command.py currently assumes that the .cmd files and the
+> > source code live in the same directory, which is not the case when
+> > a separate KBUILD_OUTPUT directory is used.
+> > 
+> > Add a new option to specify the kbuild output directory. If the
+> > option is not set the kernel source directory is used.
+> > 
+> > Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+> Reviewed-by: Tom Roeder <tmroeder@google.com>
+> Tested-by: Tom Roeder <tmroeder@google.com>
+
+Thanks!
+
+> >  scripts/gen_compile_commands.py | 28 +++++++++++++++++++---------
+> >  1 file changed, 19 insertions(+), 9 deletions(-)
+> > 
+> > diff --git a/scripts/gen_compile_commands.py b/scripts/gen_compile_commands.py
+> > index 7915823b92a5..5a738ec66cc7 100755
+> > --- a/scripts/gen_compile_commands.py
+> > +++ b/scripts/gen_compile_commands.py
+> > @@ -31,15 +31,21 @@ def parse_arguments():
+> >  
+> >      Returns:
+> >          log_level: A logging level to filter log output.
+> > -        directory: The directory to search for .cmd files.
+> > +        source_directory: The kernel source directory.
+> > +        kbuild_output_directory: The directory to search for .cmd files.
+> >          output: Where to write the compile-commands JSON file.
+> >      """
+> >      usage = 'Creates a compile_commands.json database from kernel .cmd files'
+> >      parser = argparse.ArgumentParser(description=usage)
+> >  
+> > -    directory_help = ('Path to the kernel source directory to search '
+> > +    directory_help = ('Path to the kernel source directory'
+> Minor detail: this needs a space after "directory" so that it reads
+> "directory '". Otherwise, the output doesn't have a space before the
+> parenthesis.
 > 
-> I'm happy to help test this series, do you have a tree I could pull
-> these from quickly? 
+> >                        '(defaults to the working directory)')
+> >      parser.add_argument('-d', '--directory', type=str, help=directory_help)
+> > +    kbuild_output_directory_help = ('Path to the directory to search for '
+> > +                                    '.cmd files'
+> Same comment here: this should be "files '", with a space before the
+> ending quote character.
 
-I've pushed them to https://github.com/Villemoes/linux/tree/dyndebug_v6
-. They rebase pretty cleanly to just about anything you might prefer
-testing on. Enabling it for arm64 or ppc64 is a trivial two-liner
-similar to the x86 patch (and similar to the previous patches for those
-arches). Thanks for volunteering to test this :)
-
-> Anything I should test at runtime besides a boot
-> test?
-
-Well, apart from booting, I've mostly just tested that the debugfs
-control file is identical before and after enabling relative pointers,
-and that enabling/disabling various pr_debug()s by writing to the
-control file takes effect. I should only be changing the format for
-storing the metadata in the kernel image, so I think that should be enough.
-
-While this is still not merged, some new user of one of the string
-members could creep in, but that should be caught at build time.
-
-Rasmus
+Ok, I'll wait a bit for it there are other comments and send out a new
+version with the spaces added.
