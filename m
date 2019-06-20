@@ -2,126 +2,183 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 667934CEB4
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 15:32:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 283974CEB9
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 15:32:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731691AbfFTNcD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 09:32:03 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:51258 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726530AbfFTNcC (ORCPT
+        id S1731810AbfFTNci (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 09:32:38 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:59216 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731747AbfFTNcf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 09:32:02 -0400
-Received: by mail-wm1-f66.google.com with SMTP id 207so3120094wma.1
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2019 06:32:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=s4mJvF/EBCi9urzBjDVk6HyByyO2EXSJJe+w8Mr6PqE=;
-        b=fcQ2LGsvLhMHenQaR0fPJrheg/Ke4ddcB5Wu7YfIryVJUo9ToV0DrbYLLy5uEKt+Te
-         2eAlQZaWMnmihwnpB4DJYMLeVliQetctkognWmabqg2/bsj8vtTQ3Wdrk+/7DO4VmNG3
-         idw+XcIFBhIqZqB++Mw/O8IMVCpYutg5pJSVKzdMLiLzmItHKlz0b8OfrR7rtZ9kG3B0
-         PKKZxH1aruGECIB8MkZB2p8I+nWXXn5inX9QgpLCSUp9zSeHDaxhypHI8x4Pe1hjvwhw
-         vzzKpP408bHesT24rsySd1QPusV0TiHkwQeIkwFsr0iPxO7OVyk0/rcCLNTy7QcBcnmw
-         lOEQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=s4mJvF/EBCi9urzBjDVk6HyByyO2EXSJJe+w8Mr6PqE=;
-        b=s/BxE0HQR1Yc7bpBqf8EAXllQCDMzDZ9XFKjqzXQSe+9tYpVppawISzkB8Bl/+TAZ1
-         hoHozAQjYubDuC3+ANYEYUolPCHgym0nB8mGdQNEHQiLbjikNjW/HDFaWPYveVn+n6I2
-         GTFL0rM8nLcXLysz52b+kSv/NduW6JLYAaHJl2RXCq6cdGmoNxvKhUMgARLrl049XKnb
-         FBl+6aAMsHBrl/JmnWaeKQKpXCSMFc7279FCux9ZreayRwO0jwA4DmXH5K43EWLe4dTP
-         xg7MOAh8c7MyGFinNpxBaaknLJAQZUqj1SRSPMr6F9bLUVFdKor+wWS7XbekEops1ici
-         Q0kQ==
-X-Gm-Message-State: APjAAAWOR0KSPeRTABy8f1TW8N3vXCWgCDFHL0MCVYIfa1xW976B2gqv
-        qVWqr7325MIQy2UneviMNfDO/Q==
-X-Google-Smtp-Source: APXvYqyZ+XwqzkDzsOqDlRPJBWJqgVr7mKBJlSUjoZoLBHrCLh8eDBez55m86Gy5WHroG5f6vyKnPA==
-X-Received: by 2002:a1c:cb0c:: with SMTP id b12mr2974917wmg.93.1561037520557;
-        Thu, 20 Jun 2019 06:32:00 -0700 (PDT)
-Received: from holly.lan (cpc141214-aztw34-2-0-cust773.18-1.cable.virginm.net. [86.9.19.6])
-        by smtp.googlemail.com with ESMTPSA id l19sm2782480wmj.33.2019.06.20.06.31.59
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Thu, 20 Jun 2019 06:31:59 -0700 (PDT)
-Subject: Re: [PATCH v1] backlight: Don't build support by default
-To:     Marc Gonzalez <marc.w.gonzalez@free.fr>,
-        Lee Jones <lee.jones@linaro.org>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc:     DRI <dri-devel@lists.freedesktop.org>,
-        fbdev <linux-fbdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Antonino Daplas <adaplas@gmail.com>
-References: <70bd61f9-8fc5-75b1-9f32-7a5826ce6b48@free.fr>
-From:   Daniel Thompson <daniel.thompson@linaro.org>
-Message-ID: <7958bf6a-5c2e-1330-1800-f9dbce3c01c6@linaro.org>
-Date:   Thu, 20 Jun 2019 14:31:58 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
-MIME-Version: 1.0
-In-Reply-To: <70bd61f9-8fc5-75b1-9f32-7a5826ce6b48@free.fr>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Thu, 20 Jun 2019 09:32:35 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
+        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
+        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
+        List-Archive; bh=Xmh5kmupsYkZefSvmh0+GLUxUu6Ox/qAde76AztFzu4=; b=Sekp60hrd2xU
+        NaNS8uehgVfNNmU7fz0afMhE/ijpwcij5kGZqeYgJ8jKgq7tnqLmGhVpAUyVrTZiMCO24bpzmvdwI
+        cw9IrkK86Vph290bcxyVQNkq1/3kTy+kHwglnRKCFsJ/ASBE4WFx/acJniTFIeGMi7iqLQdzvYmpI
+        WOcOQ=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=finisterre.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1hdxAw-0000jB-TU; Thu, 20 Jun 2019 13:32:27 +0000
+Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
+        id 587E544004B; Thu, 20 Jun 2019 14:32:26 +0100 (BST)
+From:   Mark Brown <broonie@kernel.org>
+To:     Olivier Moysan <olivier.moysan@st.com>
+Cc:     alexandre.torgue@st.com, alsa-devel@alsa-project.org,
+        arnaud.pouliquen@st.com, benjamin.gaignard@st.com,
+        broonie@kernel.org, lgirdwood@gmail.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        Mark Brown <broonie@kernel.org>, mcoquelin.stm32@gmail.com,
+        olivier.moysan@st.com, perex@perex.cz, tiwai@suse.com
+Subject: Applied "ASoC: stm32: dfsdm: add 16 bits audio record support" to the asoc tree
+In-Reply-To: <1560944402-8115-1-git-send-email-olivier.moysan@st.com>
+X-Patchwork-Hint: ignore
+Message-Id: <20190620133226.587E544004B@finisterre.sirena.org.uk>
+Date:   Thu, 20 Jun 2019 14:32:26 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/06/2019 14:27, Marc Gonzalez wrote:
-> b20c5249aa6a ("backlight: Fix compile error if CONFIG_FB is unset")
-> added 'default m' for BACKLIGHT_CLASS_DEVICE and LCD_CLASS_DEVICE.
+The patch
 
-It took me some little while until I realized this patch is from 2005 
-which explains why I couldn't find it in the modern git repo!
+   ASoC: stm32: dfsdm: add 16 bits audio record support
 
+has been applied to the asoc tree at
 
-> Let's go back to not building support by default.
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.3
 
-At first glance disabling this by default looks like it would cause some 
-existing defconfig files to disable useful drivers.
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
-For backlight I think this isn't true (because both DRM and FB_BACKLIGHT 
-have a "select" on BACKLIGHT_CLASS_DEVICE).
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-However for LCD it is not nearly as clear cut. Commit message needs to 
-explain why this won't cause unacceptable problems for existinng 
-defconfig files.
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
-Daniel.
+Thanks,
+Mark
 
+From 1e7f6e1c69f0ff35c90878f9b44adcff77995eb9 Mon Sep 17 00:00:00 2001
+From: Olivier Moysan <olivier.moysan@st.com>
+Date: Wed, 19 Jun 2019 13:40:02 +0200
+Subject: [PATCH] ASoC: stm32: dfsdm: add 16 bits audio record support
 
+Add support of audio 16 bits format record to STM32
+DFSDM driver.
 
+Signed-off-by: Olivier Moysan <olivier.moysan@st.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ sound/soc/stm/stm32_adfsdm.c | 49 ++++++++++++++++++++++++++++--------
+ 1 file changed, 39 insertions(+), 10 deletions(-)
 
-> 
-> Signed-off-by: Marc Gonzalez <marc.w.gonzalez@free.fr>
-> ---
->   drivers/video/backlight/Kconfig | 2 --
->   1 file changed, 2 deletions(-)
-> 
-> diff --git a/drivers/video/backlight/Kconfig b/drivers/video/backlight/Kconfig
-> index 8b081d61773e..40676be2e46a 100644
-> --- a/drivers/video/backlight/Kconfig
-> +++ b/drivers/video/backlight/Kconfig
-> @@ -10,7 +10,6 @@ menu "Backlight & LCD device support"
->   #
->   config LCD_CLASS_DEVICE
->           tristate "Lowlevel LCD controls"
-> -	default m
->   	help
->   	  This framework adds support for low-level control of LCD.
->   	  Some framebuffer devices connect to platform-specific LCD modules
-> @@ -143,7 +142,6 @@ endif # LCD_CLASS_DEVICE
->   #
->   config BACKLIGHT_CLASS_DEVICE
->           tristate "Lowlevel Backlight controls"
-> -	default m
->   	help
->   	  This framework adds support for low-level control of the LCD
->             backlight. This includes support for brightness and power.
-> 
+diff --git a/sound/soc/stm/stm32_adfsdm.c b/sound/soc/stm/stm32_adfsdm.c
+index cc517e007039..3c9a9deec9af 100644
+--- a/sound/soc/stm/stm32_adfsdm.c
++++ b/sound/soc/stm/stm32_adfsdm.c
+@@ -45,7 +45,7 @@ struct stm32_adfsdm_priv {
+ static const struct snd_pcm_hardware stm32_adfsdm_pcm_hw = {
+ 	.info = SNDRV_PCM_INFO_INTERLEAVED | SNDRV_PCM_INFO_BLOCK_TRANSFER |
+ 		SNDRV_PCM_INFO_MMAP | SNDRV_PCM_INFO_PAUSE,
+-	.formats = SNDRV_PCM_FMTBIT_S32_LE,
++	.formats = SNDRV_PCM_FMTBIT_S16_LE | SNDRV_PCM_FMTBIT_S32_LE,
+ 
+ 	.rate_min = 8000,
+ 	.rate_max = 32000,
+@@ -141,7 +141,8 @@ static const struct snd_soc_dai_driver stm32_adfsdm_dai = {
+ 	.capture = {
+ 		    .channels_min = 1,
+ 		    .channels_max = 1,
+-		    .formats = SNDRV_PCM_FMTBIT_S32_LE,
++		    .formats = SNDRV_PCM_FMTBIT_S16_LE |
++			       SNDRV_PCM_FMTBIT_S32_LE,
+ 		    .rates = (SNDRV_PCM_RATE_8000 | SNDRV_PCM_RATE_16000 |
+ 			      SNDRV_PCM_RATE_32000),
+ 		    },
+@@ -152,30 +153,58 @@ static const struct snd_soc_component_driver stm32_adfsdm_dai_component = {
+ 	.name = "stm32_dfsdm_audio",
+ };
+ 
++static void memcpy_32to16(void *dest, const void *src, size_t n)
++{
++	unsigned int i = 0;
++	u16 *d = (u16 *)dest, *s = (u16 *)src;
++
++	s++;
++	for (i = n; i > 0; i--) {
++		*d++ = *s++;
++		s++;
++	}
++}
++
+ static int stm32_afsdm_pcm_cb(const void *data, size_t size, void *private)
+ {
+ 	struct stm32_adfsdm_priv *priv = private;
+ 	struct snd_soc_pcm_runtime *rtd = priv->substream->private_data;
+ 	u8 *pcm_buff = priv->pcm_buff;
+ 	u8 *src_buff = (u8 *)data;
+-	unsigned int buff_size = snd_pcm_lib_buffer_bytes(priv->substream);
+-	unsigned int period_size = snd_pcm_lib_period_bytes(priv->substream);
+ 	unsigned int old_pos = priv->pos;
+-	unsigned int cur_size = size;
++	size_t buff_size = snd_pcm_lib_buffer_bytes(priv->substream);
++	size_t period_size = snd_pcm_lib_period_bytes(priv->substream);
++	size_t cur_size, src_size = size;
++	snd_pcm_format_t format = priv->substream->runtime->format;
++
++	if (format == SNDRV_PCM_FORMAT_S16_LE)
++		src_size >>= 1;
++	cur_size = src_size;
+ 
+ 	dev_dbg(rtd->dev, "%s: buff_add :%pK, pos = %d, size = %zu\n",
+-		__func__, &pcm_buff[priv->pos], priv->pos, size);
++		__func__, &pcm_buff[priv->pos], priv->pos, src_size);
+ 
+-	if ((priv->pos + size) > buff_size) {
+-		memcpy(&pcm_buff[priv->pos], src_buff, buff_size - priv->pos);
++	if ((priv->pos + src_size) > buff_size) {
++		if (format == SNDRV_PCM_FORMAT_S16_LE)
++			memcpy_32to16(&pcm_buff[priv->pos], src_buff,
++				      buff_size - priv->pos);
++		else
++			memcpy(&pcm_buff[priv->pos], src_buff,
++			       buff_size - priv->pos);
+ 		cur_size -= buff_size - priv->pos;
+ 		priv->pos = 0;
+ 	}
+ 
+-	memcpy(&pcm_buff[priv->pos], &src_buff[size - cur_size], cur_size);
++	if (format == SNDRV_PCM_FORMAT_S16_LE)
++		memcpy_32to16(&pcm_buff[priv->pos],
++			      &src_buff[src_size - cur_size], cur_size);
++	else
++		memcpy(&pcm_buff[priv->pos], &src_buff[src_size - cur_size],
++		       cur_size);
++
+ 	priv->pos = (priv->pos + cur_size) % buff_size;
+ 
+-	if (cur_size != size || (old_pos && (old_pos % period_size < size)))
++	if (cur_size != src_size || (old_pos && (old_pos % period_size < size)))
+ 		snd_pcm_period_elapsed(priv->substream);
+ 
+ 	return 0;
+-- 
+2.20.1
 
