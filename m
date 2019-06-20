@@ -2,38 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8175C4D709
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 20:15:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 396FE4D854
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 20:26:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729344AbfFTSPP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 14:15:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43926 "EHLO mail.kernel.org"
+        id S1727450AbfFTSZ3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 14:25:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33782 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726859AbfFTSPN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 14:15:13 -0400
+        id S1727893AbfFTSHV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Jun 2019 14:07:21 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DA4872089C;
-        Thu, 20 Jun 2019 18:15:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A0F89214AF;
+        Thu, 20 Jun 2019 18:07:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561054513;
-        bh=1vfw/5YDOBpYEgT8fnTZuuzqDh13TDwAsSxwqD/sPoI=;
+        s=default; t=1561054040;
+        bh=28RQEocHXMyMc52tIA8yMURHobn6pY+6+nuVZ/IHVys=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MN1RxeVfeUsjdCP3Pjr5ha7jyWFkh68vxpbN3NH99odZ1r5Pwyifug4gykqM6Ht0T
-         RCr7DaOxoIBNv7EZG1RknkGkPieXa8U5agxdqs4LWKuOquM0B7OP5H864xK5GFtUFj
-         ah/+AX7slVo5qEa1L1A4BFk/+uB+orhLbp5i0pp4=
+        b=XCFOfLnyJE4UtDLMnMV5mMRKpu2VfzIljImg/RP8tILpaghaVndogtnuk3L1vzeiu
+         /H9f09/nZ0k3muMFf9BRI8LMLwxOfG+GBkDX//E2e/8SbaeFecIBii2//WT/g3ti32
+         YoF0bA4SJPNzcPf7qrDa/oq8DV3bYxdcZ2GCjwpY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 55/98] io_uring: Fix __io_uring_register() false success
+        stable@vger.kernel.org, Thomas Richter <tmricht@linux.ibm.com>,
+        Hendrik Brueckner <brueckner@linux.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 108/117] perf record: Fix s390 missing module symbol and warning for non-root users
 Date:   Thu, 20 Jun 2019 19:57:22 +0200
-Message-Id: <20190620174351.820212114@linuxfoundation.org>
+Message-Id: <20190620174358.096022974@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190620174349.443386789@linuxfoundation.org>
-References: <20190620174349.443386789@linuxfoundation.org>
+In-Reply-To: <20190620174351.964339809@linuxfoundation.org>
+References: <20190620174351.964339809@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,31 +46,100 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit a278682dad37fd2f8d2f30d8e84e376a856ab472 ]
+[ Upstream commit 6738028dd57df064b969d8392c943ef3b3ae705d ]
 
-If io_copy_iov() fails, it will break the loop and report success,
-albeit partially completed operation.
+Command 'perf record' and 'perf report' on a system without kernel
+debuginfo packages uses /proc/kallsyms and /proc/modules to find
+addresses for kernel and module symbols. On x86 this works for root and
+non-root users.
 
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+On s390, when invoked as non-root user, many of the following warnings
+are shown and module symbols are missing:
+
+    proc/{kallsyms,modules} inconsistency while looking for
+        "[sha1_s390]" module!
+
+Command 'perf record' creates a list of module start addresses by
+parsing the output of /proc/modules and creates a PERF_RECORD_MMAP
+record for the kernel and each module. The following function call
+sequence is executed:
+
+  machine__create_kernel_maps
+    machine__create_module
+      modules__parse
+        machine__create_module --> for each line in /proc/modules
+          arch__fix_module_text_start
+
+Function arch__fix_module_text_start() is s390 specific. It opens
+file /sys/module/<name>/sections/.text to extract the module's .text
+section start address. On s390 the module loader prepends a header
+before the first section, whereas on x86 the module's text section
+address is identical the the module's load address.
+
+However module section files are root readable only. For non-root the
+read operation fails and machine__create_module() returns an error.
+Command perf record does not generate any PERF_RECORD_MMAP record
+for loaded modules. Later command perf report complains about missing
+module maps.
+
+To fix this function arch__fix_module_text_start() always returns
+success. For root users there is no change, for non-root users
+the module's load address is used as module's text start address
+(the prepended header then counts as part of the text section).
+
+This enable non-root users to use module symbols and avoid the
+warning when perf report is executed.
+
+Output before:
+
+  [tmricht@m83lp54 perf]$ ./perf report -D | fgrep MMAP
+  0 0x168 [0x50]: PERF_RECORD_MMAP ... x [kernel.kallsyms]_text
+
+Output after:
+
+  [tmricht@m83lp54 perf]$ ./perf report -D | fgrep MMAP
+  0 0x168 [0x50]: PERF_RECORD_MMAP ... x [kernel.kallsyms]_text
+  0 0x1b8 [0x98]: PERF_RECORD_MMAP ... x /lib/modules/.../autofs4.ko.xz
+  0 0x250 [0xa8]: PERF_RECORD_MMAP ... x /lib/modules/.../sha_common.ko.xz
+  0 0x2f8 [0x98]: PERF_RECORD_MMAP ... x /lib/modules/.../des_generic.ko.xz
+
+Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
+Reviewed-by: Hendrik Brueckner <brueckner@linux.ibm.com>
+Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
+Link: http://lkml.kernel.org/r/20190522144601.50763-4-tmricht@linux.ibm.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/io_uring.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tools/perf/arch/s390/util/machine.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 4e32a033394c..e82adbf8adc1 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -2506,7 +2506,7 @@ static int io_sqe_buffer_register(struct io_ring_ctx *ctx, void __user *arg,
+diff --git a/tools/perf/arch/s390/util/machine.c b/tools/perf/arch/s390/util/machine.c
+index b9a95a1a8e69..d3d1452021d4 100644
+--- a/tools/perf/arch/s390/util/machine.c
++++ b/tools/perf/arch/s390/util/machine.c
+@@ -4,16 +4,19 @@
+ #include "util.h"
+ #include "machine.h"
+ #include "api/fs/fs.h"
++#include "debug.h"
  
- 		ret = io_copy_iov(ctx, &iov, arg, i);
- 		if (ret)
--			break;
-+			goto err;
+ int arch__fix_module_text_start(u64 *start, const char *name)
+ {
++	u64 m_start = *start;
+ 	char path[PATH_MAX];
  
- 		/*
- 		 * Don't impose further limits on the size and buffer
+ 	snprintf(path, PATH_MAX, "module/%.*s/sections/.text",
+ 				(int)strlen(name) - 2, name + 1);
+-
+-	if (sysfs__read_ull(path, (unsigned long long *)start) < 0)
+-		return -1;
++	if (sysfs__read_ull(path, (unsigned long long *)start) < 0) {
++		pr_debug2("Using module %s start:%#lx\n", path, m_start);
++		*start = m_start;
++	}
+ 
+ 	return 0;
+ }
 -- 
 2.20.1
 
