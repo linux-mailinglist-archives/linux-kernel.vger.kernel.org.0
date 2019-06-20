@@ -2,112 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B6C554D201
+	by mail.lfdr.de (Postfix) with ESMTP id 4E3564D200
 	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 17:21:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732145AbfFTPVt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 11:21:49 -0400
-Received: from shell.v3.sk ([90.176.6.54]:51739 "EHLO shell.v3.sk"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726661AbfFTPVr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1732099AbfFTPVr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
         Thu, 20 Jun 2019 11:21:47 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id 5137DCC536;
-        Thu, 20 Jun 2019 17:21:44 +0200 (CEST)
-Received: from shell.v3.sk ([127.0.0.1])
-        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id mOScGofMifvh; Thu, 20 Jun 2019 17:21:39 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id 53F66CC53C;
-        Thu, 20 Jun 2019 17:21:39 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at zimbra.v3.sk
-Received: from shell.v3.sk ([127.0.0.1])
-        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id 2Yg7H9k7TFsZ; Thu, 20 Jun 2019 17:21:38 +0200 (CEST)
-Received: from belphegor.brq.redhat.com (nat-pool-brq-t.redhat.com [213.175.37.10])
-        by zimbra.v3.sk (Postfix) with ESMTPSA id 3B852CC536;
-        Thu, 20 Jun 2019 17:21:38 +0200 (CEST)
-From:   Lubomir Rintel <lkundrak@v3.sk>
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>
-Cc:     linux-kernel@vger.kernel.org, Lubomir Rintel <lkundrak@v3.sk>,
-        Pavel Machek <pavel@ucw.cz>
-Subject: [PATCH] irqchip/mmp: do not use of_address_to_resource() to get mux regs
-Date:   Thu, 20 Jun 2019 17:21:22 +0200
-Message-Id: <20190620152122.1407853-1-lkundrak@v3.sk>
-X-Mailer: git-send-email 2.21.0
+Received: from mx2.suse.de ([195.135.220.15]:39278 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726697AbfFTPVr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Jun 2019 11:21:47 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id B917CAD5D;
+        Thu, 20 Jun 2019 15:21:45 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 643371E434F; Thu, 20 Jun 2019 17:21:45 +0200 (CEST)
+Date:   Thu, 20 Jun 2019 17:21:45 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Tejun Heo <tj@kernel.org>
+Cc:     dsterba@suse.com, clm@fb.com, josef@toxicpanda.com,
+        axboe@kernel.dk, jack@suse.cz, linux-btrfs@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+        kernel-team@fb.com
+Subject: Re: [PATCH 2/9] blkcg, writeback: Add wbc->no_wbc_acct
+Message-ID: <20190620152145.GL30243@quack2.suse.cz>
+References: <20190615182453.843275-1-tj@kernel.org>
+ <20190615182453.843275-3-tj@kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190615182453.843275-3-tj@kernel.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The "regs" property of the "mrvl,mmp2-mux-intc" devices are silly. They
-are offsets from intc's base, not addresses on the parent bus. At this
-point it probably can't be fixed.
+On Sat 15-06-19 11:24:46, Tejun Heo wrote:
+> When writeback IOs are bounced through async layers, the IOs should
+> only be accounted against the wbc from the original bdi writeback to
+> avoid confusing cgroup inode ownership arbitration.  Add
+> wbc->no_wbc_acct to allow disabling wbc accounting.  This will be used
+> make btfs compression work well with cgroup IO control.
+> 
+> Signed-off-by: Tejun Heo <tj@kernel.org>
+> Reviewed-by: Josef Bacik <josef@toxicpanda.com>
 
-On an OLPC XO-1.75 machine, the muxes are children of the intc, not the
-axi bus, and thus of_address_to_resource() won't work. We should treat
-the values as mere integers as opposed to bus addresses.
+I'm completely ignorant of how btrfs compressed writeback works so don't
+quite understand implications of this. So does this mean that writeback to
+btrfs compressed files won't be able to transition inodes from one memcg to
+another? Or are you trying to say the 'wbc' used from async worker thread
+is actually a dummy one and we would double-account the writeback?
 
-Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
-Acked-by: Pavel Machek <pavel@ucw.cz>
+Anyway, AFAICS no_wbc_acct means: "IO done as a result of this wbc will not
+have influence on inode memcg ownership", doesn't it?
 
----
-Changes since v4 of "MMP platform fixes" set
-- Add a comment, as suggested by Pavel
----
- drivers/irqchip/irq-mmp.c | 20 +++++++++++---------
- 1 file changed, 11 insertions(+), 9 deletions(-)
-
-diff --git a/drivers/irqchip/irq-mmp.c b/drivers/irqchip/irq-mmp.c
-index 8eed478f3b7e..e3d3baa0470f 100644
---- a/drivers/irqchip/irq-mmp.c
-+++ b/drivers/irqchip/irq-mmp.c
-@@ -427,9 +427,9 @@ IRQCHIP_DECLARE(mmp2_intc, "mrvl,mmp2-intc", mmp2_of_=
-init);
- static int __init mmp2_mux_of_init(struct device_node *node,
- 				   struct device_node *parent)
- {
--	struct resource res;
- 	int i, ret, irq, j =3D 0;
- 	u32 nr_irqs, mfp_irq;
-+	u32 reg[4];
-=20
- 	if (!parent)
- 		return -ENODEV;
-@@ -441,18 +441,20 @@ static int __init mmp2_mux_of_init(struct device_no=
-de *node,
- 		pr_err("Not found mrvl,intc-nr-irqs property\n");
- 		return -EINVAL;
- 	}
--	ret =3D of_address_to_resource(node, 0, &res);
-+
-+	/*
-+	 * For historical reasonsm, the "regs" property of the
-+	 * mrvl,mmp2-mux-intc is not a regular * "regs" property containing
-+	 * addresses on the parent bus, but offsets from the intc's base.
-+	 * That is why we can't use of_address_to_resource() here.
-+	 */
-+	ret =3D of_property_read_u32_array(node, "reg", reg, ARRAY_SIZE(reg));
- 	if (ret < 0) {
- 		pr_err("Not found reg property\n");
- 		return -EINVAL;
- 	}
--	icu_data[i].reg_status =3D mmp_icu_base + res.start;
--	ret =3D of_address_to_resource(node, 1, &res);
--	if (ret < 0) {
--		pr_err("Not found reg property\n");
--		return -EINVAL;
--	}
--	icu_data[i].reg_mask =3D mmp_icu_base + res.start;
-+	icu_data[i].reg_status =3D mmp_icu_base + reg[0];
-+	icu_data[i].reg_mask =3D mmp_icu_base + reg[2];
- 	icu_data[i].cascade_irq =3D irq_of_parse_and_map(node, 0);
- 	if (!icu_data[i].cascade_irq)
- 		return -EINVAL;
---=20
-2.21.0
-
+								Honza
+> ---
+>  fs/fs-writeback.c         | 2 +-
+>  include/linux/writeback.h | 1 +
+>  2 files changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
+> index c29cff345b1f..667ba07fffcd 100644
+> --- a/fs/fs-writeback.c
+> +++ b/fs/fs-writeback.c
+> @@ -724,7 +724,7 @@ void wbc_account_io(struct writeback_control *wbc, struct page *page,
+>  	 * behind a slow cgroup.  Ultimately, we want pageout() to kick off
+>  	 * regular writeback instead of writing things out itself.
+>  	 */
+> -	if (!wbc->wb)
+> +	if (!wbc->wb || wbc->no_wbc_acct)
+>  		return;
+>  
+>  	id = mem_cgroup_css_from_page(page)->id;
+> diff --git a/include/linux/writeback.h b/include/linux/writeback.h
+> index 738a0c24874f..b8f5f000cde4 100644
+> --- a/include/linux/writeback.h
+> +++ b/include/linux/writeback.h
+> @@ -68,6 +68,7 @@ struct writeback_control {
+>  	unsigned for_reclaim:1;		/* Invoked from the page allocator */
+>  	unsigned range_cyclic:1;	/* range_start is cyclic */
+>  	unsigned for_sync:1;		/* sync(2) WB_SYNC_ALL writeback */
+> +	unsigned no_wbc_acct:1;		/* skip wbc IO accounting */
+>  #ifdef CONFIG_CGROUP_WRITEBACK
+>  	struct bdi_writeback *wb;	/* wb this writeback is issued under */
+>  	struct inode *inode;		/* inode being written out */
+> -- 
+> 2.17.1
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
