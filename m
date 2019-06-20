@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AFBB54D8CA
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 20:30:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2ED734D67D
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 20:08:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727380AbfFTSCE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 14:02:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52124 "EHLO mail.kernel.org"
+        id S1728532AbfFTSIo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 14:08:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36046 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726838AbfFTSCB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 14:02:01 -0400
+        id S1728511AbfFTSIj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Jun 2019 14:08:39 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B3410208CA;
-        Thu, 20 Jun 2019 18:01:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 087942089C;
+        Thu, 20 Jun 2019 18:08:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561053720;
-        bh=l7yIvmOktxjxjn7fNCF6xlrW81F+83972uYnm4hnJAA=;
+        s=default; t=1561054118;
+        bh=MnLRgpKf8bf7JXa3l3G1EigBR7h3gNLETgMTq6ZJNU8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YowKmdFHEmwi8V2U72NWg9D/+l5GkZgaKGumqPVJ5QyvbGZbULoVRKKXGj8mookP8
-         IG2iiRZfP8TBR/pDEDiT/JeYDUyaSelnWY7YQcx+P/cAb7R7dtIMHBDnQ7s05XgNRE
-         Nf1ELJHyNrONiaPHsE6aW5jlTD8DxminEg7zTepk=
+        b=tW5XVvM4TzGzhR3MN+Lr4NuDvbruXcP+XLw8HtypXDTMGSBlMXVHZuXkKxDPC5ovq
+         Yqb7lo7H0HBrNdNhFq5tnr5qDxmxPMIDjoFQ0+xiG5DqU90y3Se/7WMl2wRmmkl1qT
+         vJTUoeW7+Tz3OKKmEolZVDG5VrzXiLbvgmmbj7p8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 69/84] mISDN: make sure device name is NUL terminated
-Date:   Thu, 20 Jun 2019 19:57:06 +0200
-Message-Id: <20190620174348.580281291@linuxfoundation.org>
+        stable@vger.kernel.org,
+        syzbot+afb980676c836b4a0afa@syzkaller.appspotmail.com,
+        Jeremy Sowden <jeremy@azazel.net>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.14 05/45] lapb: fixed leak of control-blocks.
+Date:   Thu, 20 Jun 2019 19:57:07 +0200
+Message-Id: <20190620174331.745047067@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190620174337.538228162@linuxfoundation.org>
-References: <20190620174337.538228162@linuxfoundation.org>
+In-Reply-To: <20190620174328.608036501@linuxfoundation.org>
+References: <20190620174328.608036501@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,56 +45,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit ccfb62f27beb295103e9392462b20a6ed807d0ea ]
+From: Jeremy Sowden <jeremy@azazel.net>
 
-The user can change the device_name with the IMSETDEVNAME ioctl, but we
-need to ensure that the user's name is NUL terminated.  Otherwise it
-could result in a buffer overflow when we copy the name back to the user
-with IMGETDEVINFO ioctl.
+[ Upstream commit 6be8e297f9bcea666ea85ac7a6cd9d52d6deaf92 ]
 
-I also changed two strcpy() calls which handle the name to strscpy().
-Hopefully, there aren't any other ways to create a too long name, but
-it's nice to do this as a kernel hardening measure.
+lapb_register calls lapb_create_cb, which initializes the control-
+block's ref-count to one, and __lapb_insert_cb, which increments it when
+adding the new block to the list of blocks.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+lapb_unregister calls __lapb_remove_cb, which decrements the ref-count
+when removing control-block from the list of blocks, and calls lapb_put
+itself to decrement the ref-count before returning.
+
+However, lapb_unregister also calls __lapb_devtostruct to look up the
+right control-block for the given net_device, and __lapb_devtostruct
+also bumps the ref-count, which means that when lapb_unregister returns
+the ref-count is still 1 and the control-block is leaked.
+
+Call lapb_put after __lapb_devtostruct to fix leak.
+
+Reported-by: syzbot+afb980676c836b4a0afa@syzkaller.appspotmail.com
+Signed-off-by: Jeremy Sowden <jeremy@azazel.net>
 Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/isdn/mISDN/socket.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ net/lapb/lapb_iface.c |    1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/isdn/mISDN/socket.c b/drivers/isdn/mISDN/socket.c
-index 0d29b5a6356d..8cbb75d09a1d 100644
---- a/drivers/isdn/mISDN/socket.c
-+++ b/drivers/isdn/mISDN/socket.c
-@@ -394,7 +394,7 @@ data_sock_ioctl(struct socket *sock, unsigned int cmd, unsigned long arg)
- 			memcpy(di.channelmap, dev->channelmap,
- 			       sizeof(di.channelmap));
- 			di.nrbchan = dev->nrbchan;
--			strcpy(di.name, dev_name(&dev->dev));
-+			strscpy(di.name, dev_name(&dev->dev), sizeof(di.name));
- 			if (copy_to_user((void __user *)arg, &di, sizeof(di)))
- 				err = -EFAULT;
- 		} else
-@@ -678,7 +678,7 @@ base_sock_ioctl(struct socket *sock, unsigned int cmd, unsigned long arg)
- 			memcpy(di.channelmap, dev->channelmap,
- 			       sizeof(di.channelmap));
- 			di.nrbchan = dev->nrbchan;
--			strcpy(di.name, dev_name(&dev->dev));
-+			strscpy(di.name, dev_name(&dev->dev), sizeof(di.name));
- 			if (copy_to_user((void __user *)arg, &di, sizeof(di)))
- 				err = -EFAULT;
- 		} else
-@@ -692,6 +692,7 @@ base_sock_ioctl(struct socket *sock, unsigned int cmd, unsigned long arg)
- 			err = -EFAULT;
- 			break;
- 		}
-+		dn.name[sizeof(dn.name) - 1] = '\0';
- 		dev = get_mdevice(dn.id);
- 		if (dev)
- 			err = device_rename(&dev->dev, dn.name);
--- 
-2.20.1
-
+--- a/net/lapb/lapb_iface.c
++++ b/net/lapb/lapb_iface.c
+@@ -182,6 +182,7 @@ int lapb_unregister(struct net_device *d
+ 	lapb = __lapb_devtostruct(dev);
+ 	if (!lapb)
+ 		goto out;
++	lapb_put(lapb);
+ 
+ 	lapb_stop_t1timer(lapb);
+ 	lapb_stop_t2timer(lapb);
 
 
