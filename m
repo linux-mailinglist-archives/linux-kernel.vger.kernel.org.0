@@ -2,122 +2,151 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7CE3E4D9AE
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 20:45:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8D17C4D9B8
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 20:48:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726955AbfFTSpw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 14:45:52 -0400
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:37248 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726903AbfFTSpu (ORCPT
+        id S1726591AbfFTSsc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 14:48:32 -0400
+Received: from dc8-smtprelay2.synopsys.com ([198.182.47.102]:50542 "EHLO
+        smtprelay-out1.synopsys.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726062AbfFTSsb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 14:45:50 -0400
-Received: by mail-oi1-f193.google.com with SMTP id t76so2925076oih.4
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2019 11:45:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=5VxtaXvavuIj/WSwZHnAHCDIqk0MlZk9aDQYd+gdFk4=;
-        b=PvhKM5V+6yqnt2aU5HxaJksE4uPAQmNs5skwhuJ6n8y5XgZlmqj3eeb150T7SBN6SE
-         gIm81w+vU1PtiVJorKQJeZTOHd5OFru39TU4SqL/hr3Rtekmt9KMOkokl1EdfE8VlZMk
-         1NkJs/r1WvgIbwR5DJQ0DbUyxIuHbh3jBXe8LKcbCXSMEinhkyK/xlaSv+78VovqYMtg
-         q1DEjNCTrdAytojICVF4MAcW1VhW5C6b2MEs9t9SRvlyLXj7Lh7Yhv74YAr6kla9u8Qp
-         j8ElcBqtPWtUqgwrRBxPPxQ++W67n8FbK6X2OdqDEGZA60ahsSfATor7gBkpcrk+yQzG
-         znqA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=5VxtaXvavuIj/WSwZHnAHCDIqk0MlZk9aDQYd+gdFk4=;
-        b=DoZD3NhUeJQrl5u75q3wrzvqWYNWJWVM8ppsuMC6sr8Bs0kmxmafTfwoKnQYl/B0Am
-         3Phl+DDVMg3j/Uw5PXK5p3oLWdjJfJeOb/WtZqPM/6j6hCMfCstmytQcsEQZKawzpIlt
-         hfdiBGPQKQcONCSTQiVzgf625vbfbxnvQwSXEO2oycGxWsxSJSW6KT3ir14/IzlpZrFu
-         OFgln67PNqtP0Qpd2B/1LhT1uejmn0HDn4cgD9U4K9yl1/L0xosVDCbnPO+PbWoDHd/V
-         QKLisizNljYGMi1xFyCee7ZCxPA7fSRK6RKvkMRiU4c07Gd2cVCv4gyN8Vg6HLicmHBw
-         ig3g==
-X-Gm-Message-State: APjAAAXqVimdqOS7hQPktAileTUKtrIPVE7wLmb0PE+n+DJkFieBb+3T
-        pXEzyKnROqXuw9ij+Bdsu92T7qIVJcIop2LNdo+VOg==
-X-Google-Smtp-Source: APXvYqxzQJlp4UblxkfvTerY7hS4anNKGD6JaiZlLO54L7p3q2W7RUsf+utlNLQ8WFVB+mqDyi2X0jOIR79GoWAQb9A=
-X-Received: by 2002:aca:ec82:: with SMTP id k124mr222240oih.73.1561056349598;
- Thu, 20 Jun 2019 11:45:49 -0700 (PDT)
+        Thu, 20 Jun 2019 14:48:31 -0400
+Received: from mailhost.synopsys.com (dc2-mailhost1.synopsys.com [10.12.135.161])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (No client certificate requested)
+        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id BA543C01C9;
+        Thu, 20 Jun 2019 18:48:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1561056510; bh=YiLUG6U2F5fJuiZJSr7erxApqQi3Co5bwxuwy/JI5xw=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To:From;
+        b=GnZlWCiYMCIVGXPGynajwI0rcUt46SjJj2j20MHIOB5S4xpgfzRKE1bvXqoWyOXE1
+         0jox0u+FnnF+qz03kXvewOez08TYh0Qj/Itcm6VTRJry+OXCi02r9E0btbhCpVOLSr
+         jo3fFx2UU0+O9+Vr0RzRvMPsY9mHuwzaNz1HuKqWsGvM2PKIauuhV0pTstVSRW06nn
+         YYSpfiCAB2f7r3j47Qc2ZyqqTwuOwFptiYDfaK3WQPOycm+vuXFiC84YTDE8dDkznk
+         F1D7t8VXIZFjxNPBaBH30Hi1r+PtMyLpvpmmnNM/5yePxowDitFWiq1jGSnreakLGY
+         gdtML2U+ZhbXQ==
+Received: from us01wehtc1.internal.synopsys.com (us01wehtc1-vip.internal.synopsys.com [10.12.239.236])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mailhost.synopsys.com (Postfix) with ESMTPS id 0190BA008B;
+        Thu, 20 Jun 2019 18:48:25 +0000 (UTC)
+Received: from IN01WEHTCB.internal.synopsys.com (10.144.199.106) by
+ us01wehtc1.internal.synopsys.com (10.12.239.231) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Thu, 20 Jun 2019 11:48:25 -0700
+Received: from IN01WEHTCA.internal.synopsys.com (10.144.199.103) by
+ IN01WEHTCB.internal.synopsys.com (10.144.199.105) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Fri, 21 Jun 2019 00:18:22 +0530
+Received: from [10.10.161.66] (10.10.161.66) by
+ IN01WEHTCA.internal.synopsys.com (10.144.199.243) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Fri, 21 Jun 2019 00:18:21 +0530
+Subject: Re: [PATCH] ARC: ARCv2: jump label: implement jump label patching
+To:     Peter Zijlstra <peterz@infradead.org>
+CC:     Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
+        "linux-snps-arc@lists.infradead.org" 
+        <linux-snps-arc@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Alexey Brodkin <Alexey.Brodkin@synopsys.com>,
+        Jason Baron <jbaron@akamai.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>
+Newsgroups: gmane.linux.kernel,gmane.linux.kernel.arc,gmane.linux.kernel.cross-arch
+References: <20190614164049.31626-1-Eugeniy.Paltsev@synopsys.com>
+ <C2D7FE5348E1B147BCA15975FBA2307501A252CCC3@us01wembx1.internal.synopsys.com>
+ <20190619081227.GL3419@hirez.programming.kicks-ass.net>
+ <C2D7FE5348E1B147BCA15975FBA2307501A252E40B@us01wembx1.internal.synopsys.com>
+ <20190620070120.GU3402@hirez.programming.kicks-ass.net>
+From:   Vineet Gupta <Vineet.Gupta1@synopsys.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=vgupta@synopsys.com; keydata=
+ mQINBFEffBMBEADIXSn0fEQcM8GPYFZyvBrY8456hGplRnLLFimPi/BBGFA24IR+B/Vh/EFk
+ B5LAyKuPEEbR3WSVB1x7TovwEErPWKmhHFbyugdCKDv7qWVj7pOB+vqycTG3i16eixB69row
+ lDkZ2RQyy1i/wOtHt8Kr69V9aMOIVIlBNjx5vNOjxfOLux3C0SRl1veA8sdkoSACY3McOqJ8
+ zR8q1mZDRHCfz+aNxgmVIVFN2JY29zBNOeCzNL1b6ndjU73whH/1hd9YMx2Sp149T8MBpkuQ
+ cFYUPYm8Mn0dQ5PHAide+D3iKCHMupX0ux1Y6g7Ym9jhVtxq3OdUI5I5vsED7NgV9c8++baM
+ 7j7ext5v0l8UeulHfj4LglTaJIvwbUrCGgtyS9haKlUHbmey/af1j0sTrGxZs1ky1cTX7yeF
+ nSYs12GRiVZkh/Pf3nRLkjV+kH++ZtR1GZLqwamiYZhAHjo1Vzyl50JT9EuX07/XTyq/Bx6E
+ dcJWr79ZphJ+mR2HrMdvZo3VSpXEgjROpYlD4GKUApFxW6RrZkvMzuR2bqi48FThXKhFXJBd
+ JiTfiO8tpXaHg/yh/V9vNQqdu7KmZIuZ0EdeZHoXe+8lxoNyQPcPSj7LcmE6gONJR8ZqAzyk
+ F5voeRIy005ZmJJ3VOH3Gw6Gz49LVy7Kz72yo1IPHZJNpSV5xwARAQABtCpWaW5lZXQgR3Vw
+ dGEgKGFsaWFzKSA8dmd1cHRhQHN5bm9wc3lzLmNvbT6JAj4EEwECACgCGwMGCwkIBwMCBhUI
+ AgkKCwQWAgMBAh4BAheABQJbBYpwBQkLx0HcAAoJEGnX8d3iisJeChAQAMR2UVbJyydOv3aV
+ jmqP47gVFq4Qml1weP5z6czl1I8n37bIhdW0/lV2Zll+yU1YGpMgdDTHiDqnGWi4pJeu4+c5
+ xsI/VqkH6WWXpfruhDsbJ3IJQ46//jb79ogjm6VVeGlOOYxx/G/RUUXZ12+CMPQo7Bv+Jb+t
+ NJnYXYMND2Dlr2TiRahFeeQo8uFbeEdJGDsSIbkOV0jzrYUAPeBwdN8N0eOB19KUgPqPAC4W
+ HCg2LJ/o6/BImN7bhEFDFu7gTT0nqFVZNXlOw4UcGGpM3dq/qu8ZgRE0turY9SsjKsJYKvg4
+ djAaOh7H9NJK72JOjUhXY/sMBwW5vnNwFyXCB5t4ZcNxStoxrMtyf35synJVinFy6wCzH3eJ
+ XYNfFsv4gjF3l9VYmGEJeI8JG/ljYQVjsQxcrU1lf8lfARuNkleUL8Y3rtxn6eZVtAlJE8q2
+ hBgu/RUj79BKnWEPFmxfKsaj8of+5wubTkP0I5tXh0akKZlVwQ3lbDdHxznejcVCwyjXBSny
+ d0+qKIXX1eMh0/5sDYM06/B34rQyq9HZVVPRHdvsfwCU0s3G+5Fai02mK68okr8TECOzqZtG
+ cuQmkAeegdY70Bpzfbwxo45WWQq8dSRURA7KDeY5LutMphQPIP2syqgIaiEatHgwetyVCOt6
+ tf3ClCidHNaGky9KcNSQ
+Message-ID: <a0a1aa81-d46e-71db-ff7b-207bc468068d@synopsys.com>
+Date:   Thu, 20 Jun 2019 11:48:17 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-References: <20190620161240.22738-1-logang@deltatee.com>
-In-Reply-To: <20190620161240.22738-1-logang@deltatee.com>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Thu, 20 Jun 2019 11:45:38 -0700
-Message-ID: <CAPcyv4ijztOK1FUjLuFing7ps4LOHt=6z=eO=98HHWauHA+yog@mail.gmail.com>
-Subject: Re: [RFC PATCH 00/28] Removing struct page from P2PDMA
-To:     Logan Gunthorpe <logang@deltatee.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-block@vger.kernel.org, linux-nvme@lists.infradead.org,
-        linux-pci@vger.kernel.org, linux-rdma <linux-rdma@vger.kernel.org>,
-        Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        Keith Busch <kbusch@kernel.org>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Stephen Bates <sbates@raithlin.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190620070120.GU3402@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.10.161.66]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 20, 2019 at 9:13 AM Logan Gunthorpe <logang@deltatee.com> wrote:
->
-> For eons there has been a debate over whether or not to use
-> struct pages for peer-to-peer DMA transactions. Pro-pagers have
-> argued that struct pages are necessary for interacting with
-> existing code like scatterlists or the bio_vecs. Anti-pagers
-> assert that the tracking of the memory is unecessary and
-> allocating the pages is a waste of memory. Both viewpoints are
-> valid, however developers working on GPUs and RDMA tend to be
-> able to do away with struct pages relatively easily
+On 6/20/19 12:01 AM, Peter Zijlstra wrote:
 
-Presumably because they have historically never tried to be
-inter-operable with the block layer or drivers outside graphics and
-RDMA.
+> 
+> In particular we do not need the alignment.
+> 
+> So what the x86 code does is:
+> 
+>  - overwrite the first byte of the instruction with a single byte trap
+>    instruction
+> 
+>  - machine wide IPI which synchronizes I$
+> 
+> At this point, any CPU that encounters this instruction will trap; and
+> the trap handler will emulate the 'new' instruction -- typically a jump.
+> 
+>   - overwrite the tail of the instruction (if there is a tail)
+> 
+>   - machine wide IPI which syncrhonizes I$
+> 
+> At this point, nobody will execute the tail, because we'll still trap on
+> that first single byte instruction, but if they were to read the
+> instruction stream, the tail must be there.
+> 
+>   - overwrite the first byte of the instruction to now have a complete
+>     instruction.
+> 
+>   - machine wide IPI which syncrhonizes I$
+> 
+> At this point, any CPU will encounter the new instruction as a whole,
+> irrespective of alignment.
+> 
+> 
+> So the benefit of this scheme is that is works irrespective of the
+> instruction fetch window size and don't need the 'funny' alignment
+> stuff.
+> 
+> Now, I've no idea if something like this is feasible on ARC; for it to
+> work you need that 2 byte trap instruction -- since all instructions are
+> 2 byte aligned, you can always poke that without issue.
 
->  compared to
-> those wanting to work with NVMe devices through the block layer.
-> So it would be of great value to be able to universally do P2PDMA
-> transactions without the use of struct pages.
+We do have a 2 byte TRAP_S u6 which is used for all/any trap'ing: syscalls,
+software breakpoint, kprobes etc. But using it like x86 seems a bit excessive for
+ARC. Given that x86 doesn't implement flush_icache_range() it must have I$
+snooping D$ and also this machine wide IPI sync I$ must be totally under the hood
+all hardware affair - unlike ARC which needs on_each_cpu( I$ line range).
 
-Please spell out the value, it is not immediately obvious to me
-outside of some memory capacity savings.
+Using TRAP_S would actually requires 2 passes (and 2 rounds of IPI) for code
+patching - the last one to undo the TRAP_S itself.
 
-> Previously, there have been multiple attempts[1][2] to replace
-> struct page usage with pfn_t but this has been unpopular seeing
-> it creates dangerous edge cases where unsuspecting code might
-> run accross pfn_t's they are not ready for.
-
-That's not the conclusion I arrived at because pfn_t is specifically
-an opaque type precisely to force "unsuspecting" code to throw
-compiler assertions. Instead pfn_t was dealt its death blow here:
-
-https://lore.kernel.org/lkml/CA+55aFzON9617c2_Amep0ngLq91kfrPiSccdZakxir82iekUiA@mail.gmail.com/
-
-...and I think that feedback also reads on this proposal.
-
-> Currently, we have P2PDMA using struct pages through the block layer
-> and the dangerous cases are avoided by using a queue flag that
-> indicates support for the special pages.
->
-> This RFC proposes a new solution: allow the block layer to take
-> DMA addresses directly for queues that indicate support. This will
-> provide a more general path for doing P2PDMA-like requests and will
-> allow us to remove the struct pages that back P2PDMA memory thus paving
-> the way to build a more uniform P2PDMA ecosystem.
-
-My primary concern with this is that ascribes a level of generality
-that just isn't there for peer-to-peer dma operations. "Peer"
-addresses are not "DMA" addresses, and the rules about what can and
-can't do peer-DMA are not generically known to the block layer. At
-least with a side object there's a chance to describe / recall those
-restrictions as these things get passed around the I/O stack, but an
-undecorated "DMA" address passed through the block layer with no other
-benefit to any subsystem besides RDMA does not feel like it advances
-the state of the art.
-
-Again, what are the benefits of plumbing this RDMA special case?
+I do worry about the occasional alignment induced extra NOP_S instruction (2 byte)
+but there doesn't seem to be an easy solution. Heck if we could use the NOP_S /
+B_S in first place. While not a clean solution by any standards, could anything be
+done to reduce the code path of DO_ONCE() so that unlikely code is not too far off.
