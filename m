@@ -2,47 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1DDBE4D5EA
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 20:02:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AF0774D6FE
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 20:14:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726879AbfFTSCM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 14:02:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52388 "EHLO mail.kernel.org"
+        id S1729497AbfFTSOr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 14:14:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43094 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727397AbfFTSCI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 14:02:08 -0400
+        id S1729474AbfFTSOk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Jun 2019 14:14:40 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 91A0221479;
-        Thu, 20 Jun 2019 18:02:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4385121530;
+        Thu, 20 Jun 2019 18:14:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561053728;
-        bh=eyuOxI71prna88R5lnuoLifJTKB9Tn477jX+DSh3PO4=;
+        s=default; t=1561054479;
+        bh=2ifiMgl8orG4/FZtSN1k/rJ/Xz6HkjDxpOnrOdsp394=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=c9JFsu0jX4RpYYQNXY00cY7BIwDUVloCztiNCKh7WboycyQ2XVWTjQd0FKhxBh5kR
-         OyBMd3XJ4aUP0+RBAgoyHzcC+qpZRz7SaH45V5yKHqd8g/r9H6yQ4+W7nCt3k1jtU1
-         UxMeMSE7iWAN13E+Qz1vqZr885OFiQ43JapcRDLQ=
+        b=1P66H9X8wvarAQ7WHz0M1hbOvSHpeel1uzLLg1oyHDGfnLOd8lApsi5G1gBhM0KHd
+         CHwVX07XgdYvV1QYJVzgrLB9HT3alT2LWvN4yY0Xn6pVVTRfHXSkjlKaZoCFnipWGh
+         Ytg6WiNicPT5uHmE1KZrCinFKLGtq6Zao1+7IAWk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yabin Cui <yabinc@google.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Stephane Eranian <eranian@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Vince Weaver <vincent.weaver@maine.edu>, acme@kernel.org,
-        mark.rutland@arm.com, namhyung@kernel.org,
-        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 72/84] perf/ring_buffer: Add ordering to rb->nest increment
+        stable@vger.kernel.org,
+        Jeffrin Jose T <jeffrin@rajagiritech.edu.in>,
+        Florian Westphal <fw@strlen.de>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.1 42/98] selftests: netfilter: missing error check when setting up veth interface
 Date:   Thu, 20 Jun 2019 19:57:09 +0200
-Message-Id: <20190620174348.717271940@linuxfoundation.org>
+Message-Id: <20190620174351.022943386@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190620174337.538228162@linuxfoundation.org>
-References: <20190620174337.538228162@linuxfoundation.org>
+In-Reply-To: <20190620174349.443386789@linuxfoundation.org>
+References: <20190620174349.443386789@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -52,58 +46,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 3f9fbe9bd86c534eba2faf5d840fd44c6049f50e ]
+[ Upstream commit 82ce6eb1dd13fd12e449b2ee2c2ec051e6f52c43 ]
 
-Similar to how decrementing rb->next too early can cause data_head to
-(temporarily) be observed to go backward, so too can this happen when
-we increment too late.
+A test for the basic NAT functionality uses ip command which needs veth
+device. There is a condition where the kernel support for veth is not
+compiled into the kernel and the test script breaks. This patch contains
+code for reasonable error display and correct code exit.
 
-This barrier() ensures the rb->head load happens after the increment,
-both the one in the 'goto again' path, as the one from
-perf_output_get_handle() -- albeit very unlikely to matter for the
-latter.
-
-Suggested-by: Yabin Cui <yabinc@google.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Stephane Eranian <eranian@google.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Vince Weaver <vincent.weaver@maine.edu>
-Cc: acme@kernel.org
-Cc: mark.rutland@arm.com
-Cc: namhyung@kernel.org
-Fixes: ef60777c9abd ("perf: Optimize the perf_output() path by removing IRQ-disables")
-Link: http://lkml.kernel.org/r/20190517115418.309516009@infradead.org
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Jeffrin Jose T <jeffrin@rajagiritech.edu.in>
+Acked-by: Florian Westphal <fw@strlen.de>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/events/ring_buffer.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ tools/testing/selftests/netfilter/nft_nat.sh | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/kernel/events/ring_buffer.c b/kernel/events/ring_buffer.c
-index 70e31c48ae9b..410f83cad06c 100644
---- a/kernel/events/ring_buffer.c
-+++ b/kernel/events/ring_buffer.c
-@@ -49,6 +49,15 @@ static void perf_output_put_handle(struct perf_output_handle *handle)
- 	unsigned long head;
+diff --git a/tools/testing/selftests/netfilter/nft_nat.sh b/tools/testing/selftests/netfilter/nft_nat.sh
+index 3194007cf8d1..a59c5fd4e987 100755
+--- a/tools/testing/selftests/netfilter/nft_nat.sh
++++ b/tools/testing/selftests/netfilter/nft_nat.sh
+@@ -23,7 +23,11 @@ ip netns add ns0
+ ip netns add ns1
+ ip netns add ns2
  
- again:
-+	/*
-+	 * In order to avoid publishing a head value that goes backwards,
-+	 * we must ensure the load of @rb->head happens after we've
-+	 * incremented @rb->nest.
-+	 *
-+	 * Otherwise we can observe a @rb->head value before one published
-+	 * by an IRQ/NMI happening between the load and the increment.
-+	 */
-+	barrier();
- 	head = local_read(&rb->head);
+-ip link add veth0 netns ns0 type veth peer name eth0 netns ns1
++ip link add veth0 netns ns0 type veth peer name eth0 netns ns1 > /dev/null 2>&1
++if [ $? -ne 0 ];then
++    echo "SKIP: No virtual ethernet pair device support in kernel"
++    exit $ksft_skip
++fi
+ ip link add veth1 netns ns0 type veth peer name eth0 netns ns2
  
- 	/*
+ ip -net ns0 link set lo up
 -- 
 2.20.1
 
