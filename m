@@ -2,43 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B1ED4D7D3
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 20:24:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6312F4D845
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 20:26:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728892AbfFTSLN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 14:11:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38826 "EHLO mail.kernel.org"
+        id S1728334AbfFTSHf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 14:07:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34140 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727517AbfFTSLH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 14:11:07 -0400
+        id S1728316AbfFTSHc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Jun 2019 14:07:32 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 33244215EA;
-        Thu, 20 Jun 2019 18:11:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 297612070B;
+        Thu, 20 Jun 2019 18:07:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561054266;
-        bh=8FEJBlsPgGUlPAFJgXTBUbeBRFkXgl8m6hhx9L8hzgU=;
+        s=default; t=1561054051;
+        bh=oF0Q3Dv/WmqIztF6Nc0ID0/Nw6Jp7Ul/63w0zWN2vdM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kmQ78YAQRrtTGLjU+ZGAUepU40hu0KXHF6IptnMphz+bYHZsKze8mhaSTuvprmYqT
-         3NROi+JrCcV+Lb1ae4Qv2fORmzGnfGE1LuDhRpPbW5PMqYOXZL0jueTYAc8HuijNSV
-         F9X5/9e14dYa137Ppsvc9rtJEIBUWyKunf6deWuY=
+        b=mzTbPnIwhHJVqL+C2oicAVQyrlg6B+EaYXEBJRMRYPeMG0KqMsgOFoR1q4B/xdvXN
+         PVfyfc/Nyp6/7SqDRlikYZHKUFwD6uNkEDYV1wklJ/2udqr38M96T5iEYFQ+iWc/XM
+         fZRSulqygUOm8akdBRIwS9XTmTPL3A//EJ8bYLb0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, kbuild test robot <lkp@intel.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        linux-gpio@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Michael Hennerich <michael.hennerich@analog.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
+        stable@vger.kernel.org, Paul Mackerras <paulus@ozlabs.org>,
+        =?UTF-8?q?C=C3=A9dric=20Le=20Goater?= <clg@kaod.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 30/61] gpio: fix gpio-adp5588 build errors
+Subject: [PATCH 4.9 111/117] KVM: PPC: Book3S HV: Dont take kvm->lock around kvm_for_each_vcpu
 Date:   Thu, 20 Jun 2019 19:57:25 +0200
-Message-Id: <20190620174342.507409004@linuxfoundation.org>
+Message-Id: <20190620174358.202365176@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190620174336.357373754@linuxfoundation.org>
-References: <20190620174336.357373754@linuxfoundation.org>
+In-Reply-To: <20190620174351.964339809@linuxfoundation.org>
+References: <20190620174351.964339809@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -48,49 +44,63 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit e9646f0f5bb62b7d43f0968f39d536cfe7123b53 ]
+[ Upstream commit 5a3f49364c3ffa1107bd88f8292406e98c5d206c ]
 
-The gpio-adp5588 driver uses interfaces that are provided by
-GPIOLIB_IRQCHIP, so select that symbol in its Kconfig entry.
+Currently the HV KVM code takes the kvm->lock around calls to
+kvm_for_each_vcpu() and kvm_get_vcpu_by_id() (which can call
+kvm_for_each_vcpu() internally).  However, that leads to a lock
+order inversion problem, because these are called in contexts where
+the vcpu mutex is held, but the vcpu mutexes nest within kvm->lock
+according to Documentation/virtual/kvm/locking.txt.  Hence there
+is a possibility of deadlock.
 
-Fixes these build errors:
+To fix this, we simply don't take the kvm->lock mutex around these
+calls.  This is safe because the implementations of kvm_for_each_vcpu()
+and kvm_get_vcpu_by_id() have been designed to be able to be called
+locklessly.
 
-../drivers/gpio/gpio-adp5588.c: In function ‘adp5588_irq_handler’:
-../drivers/gpio/gpio-adp5588.c:266:26: error: ‘struct gpio_chip’ has no member named ‘irq’
-            dev->gpio_chip.irq.domain, gpio));
-                          ^
-../drivers/gpio/gpio-adp5588.c: In function ‘adp5588_irq_setup’:
-../drivers/gpio/gpio-adp5588.c:298:2: error: implicit declaration of function ‘gpiochip_irqchip_add_nested’ [-Werror=implicit-function-declaration]
-  ret = gpiochip_irqchip_add_nested(&dev->gpio_chip,
-  ^
-../drivers/gpio/gpio-adp5588.c:307:2: error: implicit declaration of function ‘gpiochip_set_nested_irqchip’ [-Werror=implicit-function-declaration]
-  gpiochip_set_nested_irqchip(&dev->gpio_chip,
-  ^
-
-Fixes: 459773ae8dbb ("gpio: adp5588-gpio: support interrupt controller")
-Reported-by: kbuild test robot <lkp@intel.com>
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Cc: linux-gpio@vger.kernel.org
-Reviewed-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Acked-by: Michael Hennerich <michael.hennerich@analog.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Paul Mackerras <paulus@ozlabs.org>
+Reviewed-by: Cédric Le Goater <clg@kaod.org>
+Signed-off-by: Paul Mackerras <paulus@ozlabs.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpio/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+ arch/powerpc/kvm/book3s_hv.c | 9 +--------
+ 1 file changed, 1 insertion(+), 8 deletions(-)
 
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index 4f52c3a8ec99..ed51221621a5 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -784,6 +784,7 @@ config GPIO_ADP5588
- config GPIO_ADP5588_IRQ
- 	bool "Interrupt controller support for ADP5588"
- 	depends on GPIO_ADP5588=y
-+	select GPIOLIB_IRQCHIP
- 	help
- 	  Say yes here to enable the adp5588 to be used as an interrupt
- 	  controller. It requires the driver to be built in the kernel.
+diff --git a/arch/powerpc/kvm/book3s_hv.c b/arch/powerpc/kvm/book3s_hv.c
+index 0a2b247dbc6b..e840f943cd2c 100644
+--- a/arch/powerpc/kvm/book3s_hv.c
++++ b/arch/powerpc/kvm/book3s_hv.c
+@@ -374,12 +374,7 @@ static void kvmppc_dump_regs(struct kvm_vcpu *vcpu)
+ 
+ static struct kvm_vcpu *kvmppc_find_vcpu(struct kvm *kvm, int id)
+ {
+-	struct kvm_vcpu *ret;
+-
+-	mutex_lock(&kvm->lock);
+-	ret = kvm_get_vcpu_by_id(kvm, id);
+-	mutex_unlock(&kvm->lock);
+-	return ret;
++	return kvm_get_vcpu_by_id(kvm, id);
+ }
+ 
+ static void init_vpa(struct kvm_vcpu *vcpu, struct lppaca *vpa)
+@@ -1098,7 +1093,6 @@ static void kvmppc_set_lpcr(struct kvm_vcpu *vcpu, u64 new_lpcr,
+ 	struct kvmppc_vcore *vc = vcpu->arch.vcore;
+ 	u64 mask;
+ 
+-	mutex_lock(&kvm->lock);
+ 	spin_lock(&vc->lock);
+ 	/*
+ 	 * If ILE (interrupt little-endian) has changed, update the
+@@ -1132,7 +1126,6 @@ static void kvmppc_set_lpcr(struct kvm_vcpu *vcpu, u64 new_lpcr,
+ 		mask &= 0xFFFFFFFF;
+ 	vc->lpcr = (vc->lpcr & ~mask) | (new_lpcr & mask);
+ 	spin_unlock(&vc->lock);
+-	mutex_unlock(&kvm->lock);
+ }
+ 
+ static int kvmppc_get_one_reg_hv(struct kvm_vcpu *vcpu, u64 id,
 -- 
 2.20.1
 
