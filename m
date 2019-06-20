@@ -2,41 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9E44A4D8E7
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 20:30:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DB5584D5A4
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 20:00:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727878AbfFTS3B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 14:29:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54546 "EHLO mail.kernel.org"
+        id S1726650AbfFTR7h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 13:59:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47352 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727606AbfFTSDV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 14:03:21 -0400
+        id S1726591AbfFTR7f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Jun 2019 13:59:35 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7F8C921479;
-        Thu, 20 Jun 2019 18:03:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5E30321537;
+        Thu, 20 Jun 2019 17:59:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561053801;
-        bh=dXL5b03flAPcpcuWlTJ2U+RH4K9Xbh+O5tOkr79hCb8=;
+        s=default; t=1561053574;
+        bh=wJosM/IXAOM62siRFEv7nyyg9v6l3hy6RuozEeBW+MY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oTvVlQKCRV2rzOYciYmVRtbU+39Ic3NXScuZec6a/Mtd7WjyO65OFYypeKmD+rEHT
-         udphNgNq8MAPna9HAZxxt/vxoSC/HFQdf5juzA5KMeFPPV3GzXoXKRRNI57ZsmC0ID
-         Wm5kVI32vPy6ZLJQ4YhsKvr1KXJTVQlizkgOUFH4=
+        b=YXygaoMJeqLsy0bhaGozCZX8srhSvZobcnheCQnffDLKvQxh0BudzsceOK2OlfqmZ
+         w0TdfYsguJgoEzJm4uKKTrsPIjBBJPY3hj+KMNAb7lBtVJalI/c1L1akTUpKgB3jQQ
+         Sg8KLaQY3BqndLVFx1WNUZYS8+IaNEEq9wgHWlR8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kirill Smelkov <kirr@nexedi.com>,
-        Han-Wen Nienhuys <hanwen@google.com>,
-        Jakob Unterwurzacher <jakobunt@gmail.com>,
-        Miklos Szeredi <mszeredi@redhat.com>,
+        stable@vger.kernel.org, Binbin Wu <binbin.wu@intel.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Lee Jones <lee.jones@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 031/117] fuse: retrieve: cap requested size to negotiated max_write
+Subject: [PATCH 4.4 08/84] mfd: intel-lpss: Set the device in reset state when init
 Date:   Thu, 20 Jun 2019 19:56:05 +0200
-Message-Id: <20190620174353.861621759@linuxfoundation.org>
+Message-Id: <20190620174338.751558848@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190620174351.964339809@linuxfoundation.org>
-References: <20190620174351.964339809@linuxfoundation.org>
+In-Reply-To: <20190620174337.538228162@linuxfoundation.org>
+References: <20190620174337.538228162@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,61 +46,70 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 7640682e67b33cab8628729afec8ca92b851394f ]
+[ Upstream commit dad06532292d77f37fbe831a02948a593500f682 ]
 
-FUSE filesystem server and kernel client negotiate during initialization
-phase, what should be the maximum write size the client will ever issue.
-Correspondingly the filesystem server then queues sys_read calls to read
-requests with buffer capacity large enough to carry request header + that
-max_write bytes. A filesystem server is free to set its max_write in
-anywhere in the range between [1*page, fc->max_pages*page]. In particular
-go-fuse[2] sets max_write by default as 64K, wheres default fc->max_pages
-corresponds to 128K. Libfuse also allows users to configure max_write, but
-by default presets it to possible maximum.
+In virtualized setup, when system reboots due to warm
+reset interrupt storm is seen.
 
-If max_write is < fc->max_pages*page, and in NOTIFY_RETRIEVE handler we
-allow to retrieve more than max_write bytes, corresponding prepared
-NOTIFY_REPLY will be thrown away by fuse_dev_do_read, because the
-filesystem server, in full correspondence with server/client contract, will
-be only queuing sys_read with ~max_write buffer capacity, and
-fuse_dev_do_read throws away requests that cannot fit into server request
-buffer. In turn the filesystem server could get stuck waiting indefinitely
-for NOTIFY_REPLY since NOTIFY_RETRIEVE handler returned OK which is
-understood by clients as that NOTIFY_REPLY was queued and will be sent
-back.
+Call Trace:
+<IRQ>
+dump_stack+0x70/0xa5
+__report_bad_irq+0x2e/0xc0
+note_interrupt+0x248/0x290
+? add_interrupt_randomness+0x30/0x220
+handle_irq_event_percpu+0x54/0x80
+handle_irq_event+0x39/0x60
+handle_fasteoi_irq+0x91/0x150
+handle_irq+0x108/0x180
+do_IRQ+0x52/0xf0
+common_interrupt+0xf/0xf
+</IRQ>
+RIP: 0033:0x76fc2cfabc1d
+Code: 24 28 bf 03 00 00 00 31 c0 48 8d 35 63 77 0e 00 48 8d 15 2e
+94 0e 00 4c 89 f9 49 89 d9 4c 89 d3 e8 b8 e2 01 00 48 8b 54 24 18
+<48> 89 ef 48 89 de 4c 89 e1 e8 d5 97 01 00 84 c0 74 2d 48 8b 04
+24
+RSP: 002b:00007ffd247c1fc0 EFLAGS: 00000293 ORIG_RAX: ffffffffffffffda
+RAX: 0000000000000000 RBX: 00007ffd247c1ff0 RCX: 000000000003d3ce
+RDX: 0000000000000000 RSI: 00007ffd247c1ff0 RDI: 000076fc2cbb6010
+RBP: 000076fc2cded010 R08: 00007ffd247c2210 R09: 00007ffd247c22a0
+R10: 000076fc29465470 R11: 0000000000000000 R12: 00007ffd247c1fc0
+R13: 000076fc2ce8e470 R14: 000076fc27ec9960 R15: 0000000000000414
+handlers:
+[<000000000d3fa913>] idma64_irq
+Disabling IRQ #27
 
-Cap requested size to negotiate max_write to avoid the problem.  This
-aligns with the way NOTIFY_RETRIEVE handler works, which already
-unconditionally caps requested retrieve size to fuse_conn->max_pages.  This
-way it should not hurt NOTIFY_RETRIEVE semantic if we return less data than
-was originally requested.
+To avoid interrupt storm, set the device in reset state
+before bringing out the device from reset state.
 
-Please see [1] for context where the problem of stuck filesystem was hit
-for real, how the situation was traced and for more involving patch that
-did not make it into the tree.
+Changelog v2:
+- correct the subject line by adding "mfd: "
 
-[1] https://marc.info/?l=linux-fsdevel&m=155057023600853&w=2
-[2] https://github.com/hanwen/go-fuse
-
-Signed-off-by: Kirill Smelkov <kirr@nexedi.com>
-Cc: Han-Wen Nienhuys <hanwen@google.com>
-Cc: Jakob Unterwurzacher <jakobunt@gmail.com>
-Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+Signed-off-by: Binbin Wu <binbin.wu@intel.com>
+Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Signed-off-by: Lee Jones <lee.jones@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/fuse/dev.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/mfd/intel-lpss.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/fs/fuse/dev.c
-+++ b/fs/fuse/dev.c
-@@ -1668,7 +1668,7 @@ static int fuse_retrieve(struct fuse_con
- 	offset = outarg->offset & ~PAGE_MASK;
- 	file_size = i_size_read(inode);
+diff --git a/drivers/mfd/intel-lpss.c b/drivers/mfd/intel-lpss.c
+index ac867489b5a9..498875193386 100644
+--- a/drivers/mfd/intel-lpss.c
++++ b/drivers/mfd/intel-lpss.c
+@@ -267,6 +267,9 @@ static void intel_lpss_init_dev(const struct intel_lpss *lpss)
+ {
+ 	u32 value = LPSS_PRIV_SSP_REG_DIS_DMA_FIN;
  
--	num = outarg->size;
-+	num = min(outarg->size, fc->max_write);
- 	if (outarg->offset > file_size)
- 		num = 0;
- 	else if (outarg->offset + num > file_size)
++	/* Set the device in reset state */
++	writel(0, lpss->priv + LPSS_PRIV_RESETS);
++
+ 	intel_lpss_deassert_reset(lpss);
+ 
+ 	intel_lpss_set_remap_addr(lpss);
+-- 
+2.20.1
+
 
 
