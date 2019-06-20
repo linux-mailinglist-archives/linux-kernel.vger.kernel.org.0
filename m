@@ -2,66 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 920324D88E
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 20:27:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0870C4D87A
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 20:27:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728306AbfFTS12 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 14:27:28 -0400
-Received: from mga05.intel.com ([192.55.52.43]:56248 "EHLO mga05.intel.com"
+        id S1727053AbfFTSFJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 14:05:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58040 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726408AbfFTSFD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 14:05:03 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Jun 2019 11:05:02 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.63,397,1557212400"; 
-   d="scan'208";a="243714870"
-Received: from tassilo.jf.intel.com (HELO tassilo.localdomain) ([10.7.201.137])
-  by orsmga001.jf.intel.com with ESMTP; 20 Jun 2019 11:05:01 -0700
-Received: by tassilo.localdomain (Postfix, from userid 1000)
-        id 9ABAE300FFA; Thu, 20 Jun 2019 11:05:01 -0700 (PDT)
-From:   Andi Kleen <andi@firstfloor.org>
-To:     ehankland@google.com
-Cc:     linux-kernel@vger.kernel.org, linux-kvm@vger.kernel.org
-Subject: Re: [PATCH v1] KVM: x86: PMU Whitelist
-References: <CAOyeoRWfPNmaWY6Lifdkdj3KPPM654vzDO+s3oduEMCJP+Asow@mail.gmail.com>
-Date:   Thu, 20 Jun 2019 11:05:01 -0700
-In-Reply-To: <CAOyeoRWfPNmaWY6Lifdkdj3KPPM654vzDO+s3oduEMCJP+Asow@mail.gmail.com>
-        (Eric Hankland's message of "Wed, 22 May 2019 15:23:00 -0700")
-Message-ID: <877e9g9lpu.fsf@firstfloor.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
-MIME-Version: 1.0
-Content-Type: text/plain
+        id S1727968AbfFTSFC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Jun 2019 14:05:02 -0400
+Subject: Re: [GIT PULL] MMC fixes for v5.2-rc6
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1561053901;
+        bh=Tet6We5LAT61iq9rXmZ/ioron9PWqR4Z/wAcFJW+uaI=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=d7EaMCPtv36/flzGtvzmdqYDIefPRc5U8lXJV1Ds2TkZj5dbEOUXFFqq1SZt8tOYs
+         BrShsDXKQphFXBUFJrhmPptrObSPZUsh8CpxOMqOnM2RbmvabaaKCADp7OPs3IiWsW
+         hTDSmXdd8lerA+FTxgRD+g0rqW9aL9piJdB99UtQ=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <20190620111602.17958-1-ulf.hansson@linaro.org>
+References: <20190620111602.17958-1-ulf.hansson@linaro.org>
+X-PR-Tracked-List-Id: <linux-wireless.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20190620111602.17958-1-ulf.hansson@linaro.org>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git tags/mmc-v5.2-rc4
+X-PR-Tracked-Commit-Id: 83293386bc95cf5e9f0c0175794455835bd1cb4a
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 6331d118ac61454ee52d5f9be098e9ddab6d6572
+Message-Id: <156105390175.28041.11147339547209360887.pr-tracker-bot@kernel.org>
+Date:   Thu, 20 Jun 2019 18:05:01 +0000
+To:     Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     Linus <torvalds@linux-foundation.org>, linux-mmc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Arend van Spriel <arend.vanspriel@broadcom.com>,
+        linux-wireless@vger.kernel.org,
+        Adrian Hunter <adrian.hunter@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Eric Hankland <ehankland@google.com> writes:
->
-> +int kvm_vcpu_ioctl_set_pmu_whitelist(struct kvm_vcpu *vcpu,
-> +                                    struct kvm_pmu_whitelist __user *whtlst)
-> +{
-> +       struct kvm_pmu *pmu = vcpu_to_pmu(vcpu);
-> +       struct kvm_pmu_whitelist *old = pmu->whitelist;
-> +       struct kvm_pmu_whitelist *new = NULL;
-> +       struct kvm_pmu_whitelist tmp;
-> +       int r;
-> +       size_t size;
-> +
-> +       r = -EFAULT;
-> +       if (copy_from_user(&tmp, whtlst, sizeof(struct kvm_pmu_whitelist)))
-> +               goto err;
-> +
-> +       size = sizeof(tmp) + sizeof(tmp.events[0]) * tmp.num_events;
-> +       new = kvzalloc(size, GFP_KERNEL_ACCOUNT);
+The pull request you sent on Thu, 20 Jun 2019 13:16:02 +0200:
 
-Consider what happens when tmp.num_events is large enough to wrap size.
-I suspect that's a kernel exploit as written.
+> git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git tags/mmc-v5.2-rc4
 
-Also don't you need to copy tmp to new?
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/6331d118ac61454ee52d5f9be098e9ddab6d6572
 
--Andi
+Thank you!
 
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
