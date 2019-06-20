@@ -2,60 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9937F4CB98
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 12:11:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DA5984CBA0
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 12:17:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730879AbfFTKLk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 06:11:40 -0400
-Received: from cmccmta2.chinamobile.com ([221.176.66.80]:2499 "EHLO
-        cmccmta2.chinamobile.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726081AbfFTKLj (ORCPT
+        id S1730504AbfFTKRw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 06:17:52 -0400
+Received: from retiisi.org.uk ([95.216.213.190]:37036 "EHLO
+        hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726081AbfFTKRu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 06:11:39 -0400
-Received: from spf.mail.chinamobile.com (unknown[172.16.121.5]) by rmmx-syy-dmz-app05-12005 (RichMail) with SMTP id 2ee55d0b5bc4b63-aacf5; Thu, 20 Jun 2019 18:11:17 +0800 (CST)
-X-RM-TRANSID: 2ee55d0b5bc4b63-aacf5
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG: 00000000
-Received: from localhost.localdomain (unknown[223.105.0.243])
-        by rmsmtp-syy-appsvr03-12003 (RichMail) with SMTP id 2ee35d0b5bc4b72-284b9;
-        Thu, 20 Jun 2019 18:11:17 +0800 (CST)
-X-RM-TRANSID: 2ee35d0b5bc4b72-284b9
-From:   Ding Xiang <dingxiang@cmss.chinamobile.com>
-To:     rubini@gnudd.com
-Cc:     linux-kernel@vger.kernel.org
-Subject: [PATCH] FMC: fix 'passing zero to PTR_ERR()' warning
-Date:   Thu, 20 Jun 2019 18:10:21 +0800
-Message-Id: <1561025421-19655-1-git-send-email-dingxiang@cmss.chinamobile.com>
-X-Mailer: git-send-email 1.9.1
+        Thu, 20 Jun 2019 06:17:50 -0400
+Received: from valkosipuli.localdomain (valkosipuli.retiisi.org.uk [IPv6:2a01:4f9:c010:4572::80:2])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by hillosipuli.retiisi.org.uk (Postfix) with ESMTPS id CBB81634C7B;
+        Thu, 20 Jun 2019 13:17:17 +0300 (EEST)
+Received: from sailus by valkosipuli.localdomain with local (Exim 4.89)
+        (envelope-from <sakari.ailus@retiisi.org.uk>)
+        id 1hdu85-0002Az-Qx; Thu, 20 Jun 2019 13:17:17 +0300
+Date:   Thu, 20 Jun 2019 13:17:17 +0300
+From:   Sakari Ailus <sakari.ailus@iki.fi>
+To:     Robert Jarzmik <robert.jarzmik@free.fr>
+Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Enrico Scholz <enrico.scholz@sigma-chemnitz.de>,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] media: mt9m111: fix fw-node refactoring
+Message-ID: <20190620101717.7h2hczachuk2rjr6@valkosipuli.retiisi.org.uk>
+References: <20190603200155.24358-1-robert.jarzmik@free.fr>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190603200155.24358-1-robert.jarzmik@free.fr>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix a static code checker warning:
-drivers/fmc/fmc-debug.c:155
-	fmc_debug_init() warn: passing zero to 'PTR_ERR'
+Hi Robert,
 
-Signed-off-by: Ding Xiang <dingxiang@cmss.chinamobile.com>
----
- drivers/fmc/fmc-debug.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Mon, Jun 03, 2019 at 10:01:55PM +0200, Robert Jarzmik wrote:
+> In the patch refactoring the fw-node, the mt9m111 was broken for all
+> platform_data based platforms, which were the first aim of this
+> driver. Only the devicetree platform are still functional, probably
+> because the testing was done on these.
+> 
+> The result is that -EINVAL is systematically return for such platforms,
+> what this patch fixes.
+> 
+> Fixes: 98480d65c48c ("media: mt9m111: allow to setup pixclk polarity")
+> Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
+> ---
+>  drivers/media/i2c/mt9m111.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/media/i2c/mt9m111.c b/drivers/media/i2c/mt9m111.c
+> index 168a5c74f368..d65c23301498 100644
+> --- a/drivers/media/i2c/mt9m111.c
+> +++ b/drivers/media/i2c/mt9m111.c
+> @@ -1209,7 +1209,7 @@ static int mt9m111_probe(struct i2c_client *client,
+>  {
+>  	struct mt9m111 *mt9m111;
+>  	struct i2c_adapter *adapter = to_i2c_adapter(client->dev.parent);
+> -	int ret;
+> +	int ret = 0;
+>  
+>  	if (!i2c_check_functionality(adapter, I2C_FUNC_SMBUS_WORD_DATA)) {
+>  		dev_warn(&adapter->dev,
+> @@ -1221,7 +1221,8 @@ static int mt9m111_probe(struct i2c_client *client,
+>  	if (!mt9m111)
+>  		return -ENOMEM;
+>  
+> -	ret = mt9m111_probe_fw(client, mt9m111);
+> +	if (client->dev.of_node)
+> +		ret = mt9m111_probe_fw(client, mt9m111);
+>  	if (ret)
+>  		return ret;
+>  
 
-diff --git a/drivers/fmc/fmc-debug.c b/drivers/fmc/fmc-debug.c
-index 1734c7c..dd33951 100644
---- a/drivers/fmc/fmc-debug.c
-+++ b/drivers/fmc/fmc-debug.c
-@@ -152,7 +152,7 @@ int fmc_debug_init(struct fmc_device *fmc)
- 	fmc->dbg_dir = debugfs_create_dir(dev_name(&fmc->dev), NULL);
- 	if (IS_ERR_OR_NULL(fmc->dbg_dir)) {
- 		pr_err("FMC: Cannot create debugfs\n");
--		return PTR_ERR(fmc->dbg_dir);
-+		return PTR_ERR_OR_ZERO(fmc->dbg_dir);
- 	}
+This didn't quite apply with the i2c adapter cleanups. I applied it,
+reworking the ret check, and the patch became:
+
+diff --git a/drivers/media/i2c/mt9m111.c b/drivers/media/i2c/mt9m111.c
+index bd3a51c3b081..9761a6105407 100644
+--- a/drivers/media/i2c/mt9m111.c
++++ b/drivers/media/i2c/mt9m111.c
+@@ -1263,9 +1263,11 @@ static int mt9m111_probe(struct i2c_client *client,
+ 	if (!mt9m111)
+ 		return -ENOMEM;
  
- 	fmc->dbg_sdb_dump = debugfs_create_file(FMC_DBG_SDB_DUMP, 0444,
+-	ret = mt9m111_probe_fw(client, mt9m111);
+-	if (ret)
+-		return ret;
++	if (dev_fwnode(client->dev)) {
++		ret = mt9m111_probe_fw(client, mt9m111);
++		if (ret)
++			return ret;
++	}
+ 
+ 	mt9m111->clk = v4l2_clk_get(&client->dev, "mclk");
+ 	if (IS_ERR(mt9m111->clk))
+
+I hope this is fine.
+
 -- 
-1.9.1
+Kind regards,
 
-
-
+Sakari Ailus
