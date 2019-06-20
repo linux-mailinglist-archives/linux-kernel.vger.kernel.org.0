@@ -2,39 +2,47 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0C9844D6AB
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 20:10:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B274D4D71E
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 20:16:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728843AbfFTSKm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 14:10:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38336 "EHLO mail.kernel.org"
+        id S1729771AbfFTSQZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 14:16:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45526 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728836AbfFTSKl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 14:10:41 -0400
+        id S1729766AbfFTSQX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Jun 2019 14:16:23 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3333A21743;
-        Thu, 20 Jun 2019 18:10:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AC33121537;
+        Thu, 20 Jun 2019 18:16:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561054240;
-        bh=GA7Rj70Pk8B6oc6Hgt1wREzuMQGVvWN5sbWzzcIE+ns=;
+        s=default; t=1561054582;
+        bh=cdbMbd2xPMxy28IF8dLqeKRuQYbE9LCL365zB0QDSCA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LtZQbaLsPY6RJO8gVqfOJitk/U67H2tTj+oyejSoD+NiPcyd81I3MyfqFDwV9bVr2
-         m6m5zW4qkstT7RFKjiU1hUjc0mJx1b78NS+EsCznR7E9hTtiwnKlV7NMwbqlEGF9FI
-         Abjkc+I3AnRrj06XRZZrDaB2FkSK29yeR7iNcF4c=
+        b=QIbK1j/O1qD+CTAjni3VFBg1iNRVNtPWUwExdaykqgioLYko7ynuFFtmovKbJdqxv
+         EaC962AkkNNRgFdhzVlcnEtWERhFXw/sGy3NZzQhRWA7znelhNQelfEw0LSkfaw9JC
+         MhEkXemAaBObgNco9+kZuPVgJwavzvJpWKCDVn58=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tony Lindgren <tony@atomide.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 22/61] clk: ti: clkctrl: Fix clkdm_clk handling
+        stable@vger.kernel.org, Yabin Cui <yabinc@google.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Stephane Eranian <eranian@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Vince Weaver <vincent.weaver@maine.edu>, acme@kernel.org,
+        mark.rutland@arm.com, namhyung@kernel.org,
+        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.1 50/98] perf/ring-buffer: Always use {READ,WRITE}_ONCE() for rb->user_page data
 Date:   Thu, 20 Jun 2019 19:57:17 +0200
-Message-Id: <20190620174341.062147415@linuxfoundation.org>
+Message-Id: <20190620174351.533977697@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190620174336.357373754@linuxfoundation.org>
-References: <20190620174336.357373754@linuxfoundation.org>
+In-Reply-To: <20190620174349.443386789@linuxfoundation.org>
+References: <20190620174349.443386789@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,54 +52,64 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 1cc54078d104f5b4d7e9f8d55362efa5a8daffdb ]
+[ Upstream commit 4d839dd9e4356bbacf3eb0ab13a549b83b008c21 ]
 
-We need to always call clkdm_clk_enable() and clkdm_clk_disable() even
-the clkctrl clock(s) enabled for the domain do not have any gate register
-bits. Otherwise clockdomains may never get enabled except when devices get
-probed with the legacy "ti,hwmods" devicetree property.
+We must use {READ,WRITE}_ONCE() on rb->user_page data such that
+concurrent usage will see whole values. A few key sites were missing
+this.
 
-Fixes: 88a172526c32 ("clk: ti: add support for clkctrl clocks")
-Signed-off-by: Tony Lindgren <tony@atomide.com>
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Suggested-by: Yabin Cui <yabinc@google.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Stephane Eranian <eranian@google.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Vince Weaver <vincent.weaver@maine.edu>
+Cc: acme@kernel.org
+Cc: mark.rutland@arm.com
+Cc: namhyung@kernel.org
+Fixes: 7b732a750477 ("perf_counter: new output ABI - part 1")
+Link: http://lkml.kernel.org/r/20190517115418.394192145@infradead.org
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/ti/clkctrl.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ kernel/events/ring_buffer.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/clk/ti/clkctrl.c b/drivers/clk/ti/clkctrl.c
-index 421b05392220..ca3218337fd7 100644
---- a/drivers/clk/ti/clkctrl.c
-+++ b/drivers/clk/ti/clkctrl.c
-@@ -137,9 +137,6 @@ static int _omap4_clkctrl_clk_enable(struct clk_hw *hw)
- 	int ret;
- 	union omap4_timeout timeout = { 0 };
+diff --git a/kernel/events/ring_buffer.c b/kernel/events/ring_buffer.c
+index 4b5f8d932400..7a0c73e4b3eb 100644
+--- a/kernel/events/ring_buffer.c
++++ b/kernel/events/ring_buffer.c
+@@ -100,7 +100,7 @@ static void perf_output_put_handle(struct perf_output_handle *handle)
+ 	 * See perf_output_begin().
+ 	 */
+ 	smp_wmb(); /* B, matches C */
+-	rb->user_page->data_head = head;
++	WRITE_ONCE(rb->user_page->data_head, head);
  
--	if (!clk->enable_bit)
--		return 0;
--
- 	if (clk->clkdm) {
- 		ret = ti_clk_ll_ops->clkdm_clk_enable(clk->clkdm, hw->clk);
- 		if (ret) {
-@@ -151,6 +148,9 @@ static int _omap4_clkctrl_clk_enable(struct clk_hw *hw)
- 		}
- 	}
+ 	/*
+ 	 * We must publish the head before decrementing the nest count,
+@@ -496,7 +496,7 @@ void perf_aux_output_end(struct perf_output_handle *handle, unsigned long size)
+ 		perf_event_aux_event(handle->event, aux_head, size,
+ 				     handle->aux_flags);
  
-+	if (!clk->enable_bit)
-+		return 0;
-+
- 	val = ti_clk_ll_ops->clk_readl(&clk->enable_reg);
+-	rb->user_page->aux_head = rb->aux_head;
++	WRITE_ONCE(rb->user_page->aux_head, rb->aux_head);
+ 	if (rb_need_aux_wakeup(rb))
+ 		wakeup = true;
  
- 	val &= ~OMAP4_MODULEMODE_MASK;
-@@ -179,7 +179,7 @@ static void _omap4_clkctrl_clk_disable(struct clk_hw *hw)
- 	union omap4_timeout timeout = { 0 };
+@@ -528,7 +528,7 @@ int perf_aux_output_skip(struct perf_output_handle *handle, unsigned long size)
  
- 	if (!clk->enable_bit)
--		return;
-+		goto exit;
+ 	rb->aux_head += size;
  
- 	val = ti_clk_ll_ops->clk_readl(&clk->enable_reg);
- 
+-	rb->user_page->aux_head = rb->aux_head;
++	WRITE_ONCE(rb->user_page->aux_head, rb->aux_head);
+ 	if (rb_need_aux_wakeup(rb)) {
+ 		perf_output_wakeup(handle);
+ 		handle->wakeup = rb->aux_wakeup + rb->aux_watermark;
 -- 
 2.20.1
 
