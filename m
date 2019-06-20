@@ -2,83 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A0ABA4C939
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 10:17:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 958324C94B
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 10:19:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726480AbfFTIRd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 04:17:33 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:53237 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725966AbfFTIRc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 04:17:32 -0400
-Received: by mail-wm1-f66.google.com with SMTP id s3so2081446wms.2
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2019 01:17:31 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=sFGIfcUZjU/cwOWwsrC6pPBswmDh2q5+9s+Y8U5BUlc=;
-        b=Ume/80BZi4tPC8zUHlN7IHziNvG79rCPvpMt+ysT7WSR5GKPmYGz3b3sAp49In3BkB
-         OUE9MP7xKU8I0O+TAqNqSidQJEXLfwykQemh18pRjdwVfnNBMQeO2qdyPbvhXdaQ/kI8
-         R2r4Smz1whPtSecU3904erQxsybAQN8UKvaQr1R6f9LeZypVapc90dZLDFLudtGPrFjE
-         BI2KnKEoTMDD/66dZspJZhR0vPdni23xRFoSRO8k+YeCPuf42AC3aTwS5QWrJe0G3Y4g
-         Q9oLhdJ/+F1SWKrN10mWIook7ePhlwh9uIjYNKjxH7UEtk65CXqV671xB9WGMLDEC/fw
-         v5zA==
-X-Gm-Message-State: APjAAAWNRvhya+w+D3Tj6jxBPfnu5sLBiEEzurDPRX4NQf9Z+a7ScVGa
-        aN1+gZVOq9i7wt2n4Lf4E3tazQL65hw=
-X-Google-Smtp-Source: APXvYqw1zymo82PY/ubWagkFMz7ntmIuvIEbcPlzXhLe1h4GT7yyGE0KexnDUK1gAK0FYM/L0/DH6w==
-X-Received: by 2002:a1c:a5c8:: with SMTP id o191mr1732649wme.84.1561018650331;
-        Thu, 20 Jun 2019 01:17:30 -0700 (PDT)
-Received: from ?IPv6:2001:b07:6468:f312:7822:aa18:a9d8:39ab? ([2001:b07:6468:f312:7822:aa18:a9d8:39ab])
-        by smtp.gmail.com with ESMTPSA id v67sm4998541wme.24.2019.06.20.01.17.29
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Thu, 20 Jun 2019 01:17:29 -0700 (PDT)
-Subject: Re: [PATCH] KVM: vmx: Fix the broken usage of vmx_xsaves_supported
-To:     Xiaoyao Li <xiaoyao.li@linux.intel.com>,
-        Wanpeng Li <kernellwp@gmail.com>, Tao Xu <tao3.xu@intel.com>
-Cc:     Radim Krcmar <rkrcmar@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, kvm <kvm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <20190620050301.1149-1-tao3.xu@intel.com>
- <CANRm+Cwg7ogTN1w=xNyn+8CfxwofdxRykULFe217pXidzEhh6Q@mail.gmail.com>
- <f358c914-ae58-9889-a8ef-6ea9f3b2650e@linux.intel.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Message-ID: <b3f76acd-cc7e-9cd7-d7f7-404ba756ab87@redhat.com>
-Date:   Thu, 20 Jun 2019 10:17:29 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S1731206AbfFTITV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 04:19:21 -0400
+Received: from mga03.intel.com ([134.134.136.65]:50876 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726122AbfFTITV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Jun 2019 04:19:21 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Jun 2019 01:19:20 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.63,396,1557212400"; 
+   d="scan'208";a="150860357"
+Received: from pipin.fi.intel.com (HELO pipin) ([10.237.72.175])
+  by orsmga007.jf.intel.com with ESMTP; 20 Jun 2019 01:19:17 -0700
+From:   Felipe Balbi <felipe.balbi@linux.intel.com>
+To:     Chunfeng Yun <chunfeng.yun@mediatek.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Chunfeng Yun <chunfeng.yun@mediatek.com>,
+        linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH] usb: dwc3: remove unused @lock member of dwc3_ep struct
+In-Reply-To: <342af01a252a9ef9457a6a6ec653a40698058fbc.1561018149.git.chunfeng.yun@mediatek.com>
+References: <342af01a252a9ef9457a6a6ec653a40698058fbc.1561018149.git.chunfeng.yun@mediatek.com>
+Date:   Thu, 20 Jun 2019 11:19:16 +0300
+Message-ID: <87pnn8brej.fsf@linux.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <f358c914-ae58-9889-a8ef-6ea9f3b2650e@linux.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 20/06/19 08:46, Xiaoyao Li wrote:
->>
->> It depends on whether or not processors support the 1-setting instead
->> of “enable XSAVES/XRSTORS” is 1 in VM-exection control field. Anyway,
-> 
-> Yes, whether this field exist or not depends on whether processors
-> support the 1-setting.
-> 
-> But if "enable XSAVES/XRSTORS" is clear to 0, XSS_EXIT_BITMAP doesn't
-> work. I think in this case, there is no need to set this vmcs field?
 
-vmx->secondary_exec_control can change; you are making the code more
-complex by relying on the value of the field at the point of vmx_vcpu_setup.
+Hi,
 
-I do _think_ your version is incorrect, because at this point CPUID has
-not been initialized yet and therefore
-vmx_compute_secondary_exec_control has not set SECONDARY_EXEC_XSAVES.
-However I may be wrong because I didn't review the code very closely:
-the old code is obvious and so there is no point in changing it.
+Chunfeng Yun <chunfeng.yun@mediatek.com> writes:
 
-Paolo
+> The member @lock of dwc2_ep struct is only initialized,
+> and not used elsewhere, so remove it.
+>
+> Signed-off-by: Chunfeng Yun <chunfeng.yun@mediatek.com>
+> ---
+>  drivers/usb/dwc3/core.h   | 2 --
+>  drivers/usb/dwc3/gadget.c | 2 --
+>  2 files changed, 4 deletions(-)
+>
+> diff --git a/drivers/usb/dwc3/core.h b/drivers/usb/dwc3/core.h
+> index f19cbeb01087..72d28cb14bdf 100644
+> --- a/drivers/usb/dwc3/core.h
+> +++ b/drivers/usb/dwc3/core.h
+> @@ -649,7 +649,6 @@ struct dwc3_event_buffer {
+>   * @cancelled_list: list of cancelled requests for this endpoint
+>   * @pending_list: list of pending requests for this endpoint
+>   * @started_list: list of started requests on this endpoint
+> - * @lock: spinlock for endpoint request queue traversal
+>   * @regs: pointer to first endpoint register
+>   * @trb_pool: array of transaction buffers
+>   * @trb_pool_dma: dma address of @trb_pool
+> @@ -677,7 +676,6 @@ struct dwc3_ep {
+>  	struct list_head	pending_list;
+>  	struct list_head	started_list;
+>  
+> -	spinlock_t		lock;
+>  	void __iomem		*regs;
+>  
+>  	struct dwc3_trb		*trb_pool;
+> diff --git a/drivers/usb/dwc3/gadget.c b/drivers/usb/dwc3/gadget.c
+> index d67655384eb2..7f75da30caba 100644
+> --- a/drivers/usb/dwc3/gadget.c
+> +++ b/drivers/usb/dwc3/gadget.c
+> @@ -2251,8 +2251,6 @@ static int dwc3_gadget_init_endpoint(struct dwc3 *dwc, u8 epnum)
+>  		dep->endpoint.comp_desc = NULL;
+>  	}
+>  
+> -	spin_lock_init(&dep->lock);
+
+heh, thanks. This is left-over from when I playing with further
+paralelizing the driver. Turned out that there are not enough gains to
+justify that work. I'll apply this patch.
+
+-- 
+balbi
