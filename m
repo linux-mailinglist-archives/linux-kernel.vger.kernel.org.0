@@ -2,114 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0247C4C69F
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 07:13:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EBDF64C6C2
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 07:26:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731393AbfFTFNn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 01:13:43 -0400
-Received: from mga09.intel.com ([134.134.136.24]:48862 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725857AbfFTFNn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 01:13:43 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Jun 2019 22:13:42 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.63,395,1557212400"; 
-   d="scan'208";a="154011514"
-Received: from pgsmsx105.gar.corp.intel.com ([10.221.44.96])
-  by orsmga008.jf.intel.com with ESMTP; 19 Jun 2019 22:13:39 -0700
-Received: from pgsmsx114.gar.corp.intel.com ([169.254.4.160]) by
- PGSMSX105.gar.corp.intel.com ([169.254.4.28]) with mapi id 14.03.0439.000;
- Thu, 20 Jun 2019 13:13:38 +0800
-From:   "Ong, Boon Leong" <boon.leong.ong@intel.com>
-To:     Jose Abreu <Jose.Abreu@synopsys.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        biao huang <biao.huang@mediatek.com>,
-        Andrew Lunn <andrew@lunn.ch>
-CC:     "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Giuseppe Cavallaro" <peppe.cavallaro@st.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        "Kweh, Hock Leong" <hock.leong.kweh@intel.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        "Voon, Weifeng" <weifeng.voon@intel.com>
-Subject: RE: [PATCH net-next v6 2/5] net: stmmac: introducing support for
- DWC xPCS logics
-Thread-Topic: [PATCH net-next v6 2/5] net: stmmac: introducing support for
- DWC xPCS logics
-Thread-Index: AQHVGsR8mZhQFRvu0EOiETyHTmqFxaaLcWMAgAET3gCAATg0IIAWWfBQ
-Date:   Thu, 20 Jun 2019 05:13:38 +0000
-Message-ID: <AF233D1473C1364ABD51D28909A1B1B75C17F73B@pgsmsx114.gar.corp.intel.com>
-References: <1559674736-2190-1-git-send-email-weifeng.voon@intel.com>
- <1559674736-2190-3-git-send-email-weifeng.voon@intel.com>
- <05cf54dc-7c40-471e-f08a-7fdf5fe4ef54@gmail.com>
- <78EB27739596EE489E55E81C33FEC33A0B93EF69@DE02WEMBXB.internal.synopsys.com>
- <AF233D1473C1364ABD51D28909A1B1B75C12D381@pgsmsx114.gar.corp.intel.com>
-In-Reply-To: <AF233D1473C1364ABD51D28909A1B1B75C12D381@pgsmsx114.gar.corp.intel.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ctpclassification: CTP_NT
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiMmQ4ZWFhNWMtOTIxZS00YmRmLWJhNDUtZTkxZDZkMTQ2ZDBmIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiNzY2c2YxY0p5Z2RUcVwvM3RWOTFabHVBaHBvR3ZKZm1aUUV3dGNoWWsrdWtYSG1hRW5YcEpGc0lVWVVKUWxsclwvIn0=
-dlp-product: dlpe-windows
-dlp-version: 11.2.0.6
-dlp-reaction: no-action
-x-originating-ip: [172.30.20.206]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        id S1726368AbfFTFZb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 01:25:31 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:43306 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725857AbfFTFZa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Jun 2019 01:25:30 -0400
+Received: by mail-pf1-f193.google.com with SMTP id i189so968670pfg.10
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2019 22:25:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:subject:to:cc:references:in-reply-to:mime-version
+         :user-agent:message-id:content-transfer-encoding;
+        bh=zlU77qurwFBHY4ItXISiY+NZzcjBbiD22X4dtBHNWtU=;
+        b=dYQXMd9pHNzHz6HK2pXYsrRhHBwvsP7wJdPtTqX4UcubHVwuffRExKOkpyrHJ5Qx4W
+         0hktkH8dgpFWn35KG4U5iMQEvPgXirPaWCN2d5Cy5p8qgIOLY/B/74d+vx15hj0xrrzb
+         7pwHLsqTe+G6XqRL7WNcQRXZZbZtn7chXkzPPvGIn5U4UfufxM+jI4dsNcixbgL/RLAe
+         6Vei0LuwvqnqlaRTateNDpYgHiEIkd2FXZhysojioH/5uKAP/YIhOxVu62TyAeU2eiUr
+         JBViTIvys1+cM3VFgaNXViIefNGz6PUDGXU+Mb5WTT+aaNT4RjS5yadFnG0/URWikP8R
+         M6SA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:subject:to:cc:references:in-reply-to
+         :mime-version:user-agent:message-id:content-transfer-encoding;
+        bh=zlU77qurwFBHY4ItXISiY+NZzcjBbiD22X4dtBHNWtU=;
+        b=iGa3c+xarRFL1pdVb8fin8vrOR/ratTuCNo7Dd0ir6tXRt4SISFkcdRLc1NHmpwxwy
+         duuen6bglT8u8XImHD4j1lo1qFZ3CG+fuDbPOg86X/O6Ba8qC2svhErK1D0M1ZBej7Wb
+         wnuuc7sNBXcH7J2JJ3PUlp264h2JFyjPouyW35eOJWCJmq8ckAhVrZNUCF5xdk/O6Rdb
+         G85ve95AOxEe6I6wzqS8jrmZXpAHE4hPH30gmcOOc4vP1C+Lpv2v9d9pK3t4EdjxQuEd
+         j0MZ1mFZAa9Kb/FVI80VAkKizM8X0AacqPqR/yBtEAyQHSsltZgXAMp/dvZcsSPlbhCQ
+         ACcQ==
+X-Gm-Message-State: APjAAAWUTEud/igT29jZvyoFRbQL8sul3PMlninaibYAofhgYguncn8n
+        sfycNklrq6CqHdDrYzxxzxY=
+X-Google-Smtp-Source: APXvYqwGlNIh3qGSCHGTDNRkebDfOHC9wPc4sz46s7V/6RQiPr6YS1ATNPfWQ2H4D+vJDveyDEuVjQ==
+X-Received: by 2002:a63:c44f:: with SMTP id m15mr11085798pgg.34.1561008330349;
+        Wed, 19 Jun 2019 22:25:30 -0700 (PDT)
+Received: from localhost (193-116-72-140.tpgi.com.au. [193.116.72.140])
+        by smtp.gmail.com with ESMTPSA id s24sm20437852pfh.133.2019.06.19.22.25.29
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Wed, 19 Jun 2019 22:25:29 -0700 (PDT)
+Date:   Thu, 20 Jun 2019 15:25:38 +1000
+From:   Nicholas Piggin <npiggin@gmail.com>
+Subject: Re: [PATCH v2] ocxl: Allow contexts to be attached with a NULL mm
+To:     Alastair D'Silva <alastair@au1.ibm.com>, alastair@d-silva.org
+Cc:     Andrew Donnellan <ajd@linux.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Frederic Barrat <fbarrat@linux.ibm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Paul Mackerras <paulus@samba.org>,
+        Suraj Jitindar Singh <sjitindarsingh@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>
+References: <20190620041203.12274-1-alastair@au1.ibm.com>
+In-Reply-To: <20190620041203.12274-1-alastair@au1.ibm.com>
 MIME-Version: 1.0
+User-Agent: astroid/0.14.0 (https://github.com/astroidmail/astroid)
+Message-Id: <1561008239.9nxgz9ee3u.astroid@bobo.none>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Pj5Gcm9tOiBKb3NlIEFicmV1IFttYWlsdG86Sm9zZS5BYnJldUBzeW5vcHN5cy5jb21dDQo+PkZy
-b206IEZsb3JpYW4gRmFpbmVsbGkgPGYuZmFpbmVsbGlAZ21haWwuY29tPg0KPj4NCj4+PiArUnVz
-c2VsbCwNCj4+Pg0KPj4+IE9uIDYvNC8yMDE5IDExOjU4IEFNLCBWb29uIFdlaWZlbmcgd3JvdGU6
-DQo+Pj4gPiBGcm9tOiBPbmcgQm9vbiBMZW9uZyA8Ym9vbi5sZW9uZy5vbmdAaW50ZWwuY29tPg0K
-Pj4+ID4NCj4+PiA+IHhQQ1MgaXMgRFdDIEV0aGVybmV0IFBoeXNpY2FsIENvZGluZyBTdWJsYXll
-ciB0aGF0IG1heSBiZSBpbnRlZ3JhdGVkDQo+Pj4gPiBpbnRvIGEgR2JFIGNvbnRyb2xsZXIgdGhh
-dCB1c2VzIERXQyBFUW9TIE1BQyBjb250cm9sbGVyLiBBbiBleGFtcGxlIG9mDQo+Pj4gPiBIVyBj
-b25maWd1cmF0aW9uIGlzIHNob3duIGJlbG93Oi0NCj4+PiA+DQo+Pj4gPiAgIDwtLS0tLS0tLS0t
-LS0tLS0tLUdCRSBDb250cm9sbGVyLS0tLS0tLS0tLT58PC0tRXh0ZXJuYWwgUEhZIGNoaXAtLT4N
-Cj4+PiA+DQo+Pj4gPiAgICstLS0tLS0tLS0tKyAgICAgICAgICstLS0tKyAgICArLS0tKyAgICAg
-ICAgICAgICAgICstLS0tLS0tLS0tLS0tLSsNCj4+PiA+ICAgfCAgIEVRb1MgICB8IDwtR01JSS0+
-fCBEVyB8PC0tPnxQSFl8IDwtLSBTR01JSSAtLT4gfCBFeHRlcm5hbCBHYkUgfA0KPj4+ID4gICB8
-ICAgTUFDICAgIHwgICAgICAgICB8eFBDU3wgICAgfElGIHwgICAgICAgICAgICAgICB8IFBIWSBD
-aGlwICAgICB8DQo+Pj4gPiAgICstLS0tLS0tLS0tKyAgICAgICAgICstLS0tKyAgICArLS0tKyAg
-ICAgICAgICAgICAgICstLS0tLS0tLS0tLS0tLSsNCj4+PiA+ICAgICAgICAgIF4gICAgICAgICAg
-ICAgICBeICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIF4NCj4+PiA+ICAgICAgICAg
-IHwgICAgICAgICAgICAgICB8ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHwNCj4+
-PiA+ICAgICAgICAgICstLS0tLS0tLS0tLS0tLS0tLS0tLS1NRElPLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLSsNCj4+PiA+DQo+Pj4gPiB4UENTIGlzIGEgQ2xhdXNlLTQ1IE1ESU8gTWFuYWdlYWJs
-ZSBEZXZpY2UgKE1NRCkgYW5kIHdlIG5lZWQgYSB3YXkNCj4+dG8NCj4+PiA+IGRpZmZlcmVudGlh
-dGUgaXQgZnJvbSBleHRlcm5hbCBQSFkgY2hpcCB0aGF0IGlzIGRpc2NvdmVyZWQgb3ZlciBNRElP
-Lg0KPj4+ID4gVGhlcmVmb3JlLCB4cGNzX3BoeV9hZGRyIGlzIGludHJvZHVjZWQgaW4gc3RtbWFj
-IHBsYXRmb3JtIGRhdGENCj4+PiA+IChwbGF0X3N0bW1hY2VuZXRfZGF0YSkgZm9yIGRpZmZlcmVu
-dGlhdGluZyB4UENTIGZyb20gJ3BoeV9hZGRyJyB0aGF0DQo+Pj4gPiBiZWxvbmdzIHRvIGV4dGVy
-bmFsIFBIWS4NCj4+Pg0KPj4+IEFzc3VtaW5nIHRoaXMgRFcgeFBDUyBjYW4gYmUgZm91bmQgd2l0
-aCBkZXNpZ25zIG90aGVyIHRoYW4gU1RNTUFDDQo+PndvdWxkDQo+Pj4gbm90IGl0IG1ha2Ugc2Vu
-c2UgdG8gbW9kZWwgdGhpcyBhcyBzb21lIGtpbmQgb2YgUEhZL01ESU8gYnJpZGdlPyBBDQo+Pj4g
-bGl0dGxlIGJpdCBsaWtlIHdoYXQgZHJpdmVycy9uZXQvcGh5L3hpbGlueF9nbWlpMnJnbWlpLmMg
-dHJpZXMgdG8gZG8/DQo+Pg0KPj5ZZXMsIERXIFhQQ1MgaXMgYSBzZXBhcmF0ZSBJUCB0aGF0IGNh
-biBiZSBzb2xkIHdpdGhvdXQgdGhlIE1BQy4NCj4NCj5IaSBGbG9yaWFuLCB0aGFua3MgZm9yIHBv
-aW50aW5nIG91dCB0aGUgUEhZIGRyaXZlciBmb3IgR01JSSB0byBSR01JSSBjb252ZXJ0ZXINCj5p
-bXBsZW1lbnRhdGlvbi4gSXQgc2VlbXMgbGlrZSBjb21tdW5pdHkgd291bGQgbGlrZSBkd3hwY3Mg
-dG8gdGFrZSB0aGUNCj5jb252ZXJ0ZXIgcGh5IGRyaXZlciBkaXJlY3Rpb24uDQo+DQo+V2Ugd291
-bGQgbGlrZSB0byBjaGVjayB3aXRoIGNvbW11bml0eSB3aGF0IGlzIHRoZSBNQUMgY29udHJvbGxl
-ciB0aGF0IGlzDQo+dXNpbmcgYWJvdmUgUEhZIGRyaXZlciBzbyB0aGF0IHdlIGNhbiBkaWcgZGVl
-cGVyIGludG8gdGhlIFBIWSAmIE1BQyBkcml2ZXINCj5hcmNoaXRlY3R1cmUuIFdlIHdvdWxkIGxp
-a2UgdG8gbWFwIHRoZSBleGlzdGluZyB1c2FnZSBvZiBkd3hwY3MuYyBpbiAzLzUgb2YNCj50aGlz
-IHNlcmllcyBpcyBhcmNoaXRlY3R1cmFsbHkgcmVhZHkgZm9yIFBIWSBkcml2ZXIgZnJhbWV3b3Jr
-IG9yIG5ldyBBUElzDQo+d291bGQgbmVlZCB0byBiZSBkZWZpbmVkLg0KDQpKdXN0IHRvIGN5Y2xl
-LWJhY2sgdG8gdGhpcyB0cmFjaywgd2UgYXJlIHdvcmtpbmcgdG93YXJkcyBnZXR0aW5nIHRoZSBB
-Q1BJIGRldmljZQ0KSUQgZm9yIHRoaXMgSVAuIE1lYW53aGlsZSwgc2luY2UgdGhlIEM0NSBNRElP
-IHBhdHljaCBpcyBhbHNvIG5lZWRlZCBieSANCkJpYW8sIHdlIHBsYW4gdG8gbGluZSB1cCB0aGUg
-YmVsb3cgcGF0Y2ggZm9yIG1lcmdlLg0KDQpbUEFUQ0ggbmV0LW5leHQgdjYgMS81XSBuZXQ6IHN0
-bW1hYzogZW5hYmxlIGNsYXVzZSA0NSBtZGlvIHN1cHBvcnQNCg0KSXMgdGhlcmUgYW55IGNvbmNl
-cm4gd2l0aCB0aGlzIGFwcHJvYWNoPyANCg==
+Alastair D'Silva's on June 20, 2019 2:12 pm:
+> From: Alastair D'Silva <alastair@d-silva.org>
+>=20
+> If an OpenCAPI context is to be used directly by a kernel driver, there
+> may not be a suitable mm to use.
+>=20
+> The patch makes the mm parameter to ocxl_context_attach optional.
+>=20
+> Signed-off-by: Alastair D'Silva <alastair@d-silva.org>
+
+Yeah I don't think you need to manage a kernel context explicitly
+because it will always be flushed with tlbie, comment helps. For
+the powerpc/mm bit,
+
+Acked-by: Nicholas Piggin <npiggin@gmail.com>
+
+=
