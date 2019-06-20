@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1CFA64D6F7
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 20:14:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 691D84D679
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 20:08:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729445AbfFTSOY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 14:14:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42610 "EHLO mail.kernel.org"
+        id S1728495AbfFTSIf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 14:08:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35772 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729440AbfFTSOV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 14:14:21 -0400
+        id S1728281AbfFTSIZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Jun 2019 14:08:25 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 30F6A2082C;
-        Thu, 20 Jun 2019 18:14:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DECFD2089C;
+        Thu, 20 Jun 2019 18:08:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561054460;
-        bh=I3BsryP/5Zxl8KTwCtVmeaeJ9pMHX61Ww9t6D4ooh+c=;
+        s=default; t=1561054104;
+        bh=/SYrF4igYH9DXu7t6onqiM2r0S/NibwYcqITNb3Z4Us=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ERPQsRvOqdkson3/1l5pjwRKTn3Jmt5tSUy2HRpXBkxze0xc/JJ5cu2ApeLvPdTtb
-         xIvREfDgx0wfgC3RUK8hnHdvztBEhrA2q52jWwuj/NVHg84Dm8uV4n5N8f3PWrI6YL
-         Kgzlx5MqHFM5rxHQLzR5Dtc578d2J4SEwy+9C2WI=
+        b=Vj+0UHHhYfo4UzLi2/Ng7CkmUq6rx3fAImBAzLzJQpTp5ivzLu5eW3c38JY6q7Wdf
+         qdUXBnOXonq1nardcm6Db7VYhNQCBo3dubWTn16sORidDQRU67GJ/RkPzINjITLFt6
+         nAKKf8IZPyde+8CGNIPwuLGwK/wEzqDWS+4RuNHc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 36/98] pinctrl: intel: Clear interrupt status in mask/unmask callback
-Date:   Thu, 20 Jun 2019 19:57:03 +0200
-Message-Id: <20190620174350.729997143@linuxfoundation.org>
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        syzbot <syzkaller@googlegroups.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.14 02/45] ax25: fix inconsistent lock state in ax25_destroy_timer
+Date:   Thu, 20 Jun 2019 19:57:04 +0200
+Message-Id: <20190620174329.954085990@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190620174349.443386789@linuxfoundation.org>
-References: <20190620174349.443386789@linuxfoundation.org>
+In-Reply-To: <20190620174328.608036501@linuxfoundation.org>
+References: <20190620174328.608036501@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,94 +44,117 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 670784fb4ebe54434e263837390e358405031d9e ]
+From: Eric Dumazet <edumazet@google.com>
 
-Commit a939bb57cd47 ("pinctrl: intel: implement gpio_irq_enable") was
-added because clearing interrupt status bit is required to avoid
-unexpected behavior.
+[ Upstream commit d4d5d8e83c9616aeef28a2869cea49cc3fb35526 ]
 
-Turns out the unmask callback also needs the fix, which can solve weird
-IRQ triggering issues on I2C touchpad ELAN1200.
+Before thread in process context uses bh_lock_sock()
+we must disable bh.
 
-Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+sysbot reported :
+
+WARNING: inconsistent lock state
+5.2.0-rc3+ #32 Not tainted
+
+inconsistent {SOFTIRQ-ON-W} -> {IN-SOFTIRQ-W} usage.
+blkid/26581 [HC0[0]:SC1[1]:HE1:SE0] takes:
+00000000e0da85ee (slock-AF_AX25){+.?.}, at: spin_lock include/linux/spinlock.h:338 [inline]
+00000000e0da85ee (slock-AF_AX25){+.?.}, at: ax25_destroy_timer+0x53/0xc0 net/ax25/af_ax25.c:275
+{SOFTIRQ-ON-W} state was registered at:
+  lock_acquire+0x16f/0x3f0 kernel/locking/lockdep.c:4303
+  __raw_spin_lock include/linux/spinlock_api_smp.h:142 [inline]
+  _raw_spin_lock+0x2f/0x40 kernel/locking/spinlock.c:151
+  spin_lock include/linux/spinlock.h:338 [inline]
+  ax25_rt_autobind+0x3ca/0x720 net/ax25/ax25_route.c:429
+  ax25_connect.cold+0x30/0xa4 net/ax25/af_ax25.c:1221
+  __sys_connect+0x264/0x330 net/socket.c:1834
+  __do_sys_connect net/socket.c:1845 [inline]
+  __se_sys_connect net/socket.c:1842 [inline]
+  __x64_sys_connect+0x73/0xb0 net/socket.c:1842
+  do_syscall_64+0xfd/0x680 arch/x86/entry/common.c:301
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+irq event stamp: 2272
+hardirqs last  enabled at (2272): [<ffffffff810065f3>] trace_hardirqs_on_thunk+0x1a/0x1c
+hardirqs last disabled at (2271): [<ffffffff8100660f>] trace_hardirqs_off_thunk+0x1a/0x1c
+softirqs last  enabled at (1522): [<ffffffff87400654>] __do_softirq+0x654/0x94c kernel/softirq.c:320
+softirqs last disabled at (2267): [<ffffffff81449010>] invoke_softirq kernel/softirq.c:374 [inline]
+softirqs last disabled at (2267): [<ffffffff81449010>] irq_exit+0x180/0x1d0 kernel/softirq.c:414
+
+other info that might help us debug this:
+ Possible unsafe locking scenario:
+
+       CPU0
+       ----
+  lock(slock-AF_AX25);
+  <Interrupt>
+    lock(slock-AF_AX25);
+
+ *** DEADLOCK ***
+
+1 lock held by blkid/26581:
+ #0: 0000000010fd154d ((&ax25->dtimer)){+.-.}, at: lockdep_copy_map include/linux/lockdep.h:175 [inline]
+ #0: 0000000010fd154d ((&ax25->dtimer)){+.-.}, at: call_timer_fn+0xe0/0x720 kernel/time/timer.c:1312
+
+stack backtrace:
+CPU: 1 PID: 26581 Comm: blkid Not tainted 5.2.0-rc3+ #32
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ <IRQ>
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0x172/0x1f0 lib/dump_stack.c:113
+ print_usage_bug.cold+0x393/0x4a2 kernel/locking/lockdep.c:2935
+ valid_state kernel/locking/lockdep.c:2948 [inline]
+ mark_lock_irq kernel/locking/lockdep.c:3138 [inline]
+ mark_lock+0xd46/0x1370 kernel/locking/lockdep.c:3513
+ mark_irqflags kernel/locking/lockdep.c:3391 [inline]
+ __lock_acquire+0x159f/0x5490 kernel/locking/lockdep.c:3745
+ lock_acquire+0x16f/0x3f0 kernel/locking/lockdep.c:4303
+ __raw_spin_lock include/linux/spinlock_api_smp.h:142 [inline]
+ _raw_spin_lock+0x2f/0x40 kernel/locking/spinlock.c:151
+ spin_lock include/linux/spinlock.h:338 [inline]
+ ax25_destroy_timer+0x53/0xc0 net/ax25/af_ax25.c:275
+ call_timer_fn+0x193/0x720 kernel/time/timer.c:1322
+ expire_timers kernel/time/timer.c:1366 [inline]
+ __run_timers kernel/time/timer.c:1685 [inline]
+ __run_timers kernel/time/timer.c:1653 [inline]
+ run_timer_softirq+0x66f/0x1740 kernel/time/timer.c:1698
+ __do_softirq+0x25c/0x94c kernel/softirq.c:293
+ invoke_softirq kernel/softirq.c:374 [inline]
+ irq_exit+0x180/0x1d0 kernel/softirq.c:414
+ exiting_irq arch/x86/include/asm/apic.h:536 [inline]
+ smp_apic_timer_interrupt+0x13b/0x550 arch/x86/kernel/apic/apic.c:1068
+ apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:806
+ </IRQ>
+RIP: 0033:0x7f858d5c3232
+Code: 8b 61 08 48 8b 84 24 d8 00 00 00 4c 89 44 24 28 48 8b ac 24 d0 00 00 00 4c 8b b4 24 e8 00 00 00 48 89 7c 24 68 48 89 4c 24 78 <48> 89 44 24 58 8b 84 24 e0 00 00 00 89 84 24 84 00 00 00 8b 84 24
+RSP: 002b:00007ffcaf0cf5c0 EFLAGS: 00000206 ORIG_RAX: ffffffffffffff13
+RAX: 00007f858d7d27a8 RBX: 00007f858d7d8820 RCX: 00007f858d3940d8
+RDX: 00007ffcaf0cf798 RSI: 00000000f5e616f3 RDI: 00007f858d394fee
+RBP: 0000000000000000 R08: 00007ffcaf0cf780 R09: 00007f858d7db480
+R10: 0000000000000000 R11: 0000000009691a75 R12: 0000000000000005
+R13: 00000000f5e616f3 R14: 0000000000000000 R15: 00007ffcaf0cf798
+
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/pinctrl/intel/pinctrl-intel.c | 37 +++++----------------------
- 1 file changed, 6 insertions(+), 31 deletions(-)
+ net/ax25/ax25_route.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/pinctrl/intel/pinctrl-intel.c b/drivers/pinctrl/intel/pinctrl-intel.c
-index 70638b74f9d6..95d224404c7c 100644
---- a/drivers/pinctrl/intel/pinctrl-intel.c
-+++ b/drivers/pinctrl/intel/pinctrl-intel.c
-@@ -913,35 +913,6 @@ static void intel_gpio_irq_ack(struct irq_data *d)
+--- a/net/ax25/ax25_route.c
++++ b/net/ax25/ax25_route.c
+@@ -443,9 +443,11 @@ int ax25_rt_autobind(ax25_cb *ax25, ax25
  	}
- }
  
--static void intel_gpio_irq_enable(struct irq_data *d)
--{
--	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
--	struct intel_pinctrl *pctrl = gpiochip_get_data(gc);
--	const struct intel_community *community;
--	const struct intel_padgroup *padgrp;
--	int pin;
--
--	pin = intel_gpio_to_pin(pctrl, irqd_to_hwirq(d), &community, &padgrp);
--	if (pin >= 0) {
--		unsigned int gpp, gpp_offset, is_offset;
--		unsigned long flags;
--		u32 value;
--
--		gpp = padgrp->reg_num;
--		gpp_offset = padgroup_offset(padgrp, pin);
--		is_offset = community->is_offset + gpp * 4;
--
--		raw_spin_lock_irqsave(&pctrl->lock, flags);
--		/* Clear interrupt status first to avoid unexpected interrupt */
--		writel(BIT(gpp_offset), community->regs + is_offset);
--
--		value = readl(community->regs + community->ie_offset + gpp * 4);
--		value |= BIT(gpp_offset);
--		writel(value, community->regs + community->ie_offset + gpp * 4);
--		raw_spin_unlock_irqrestore(&pctrl->lock, flags);
--	}
--}
--
- static void intel_gpio_irq_mask_unmask(struct irq_data *d, bool mask)
- {
- 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
-@@ -954,15 +925,20 @@ static void intel_gpio_irq_mask_unmask(struct irq_data *d, bool mask)
- 	if (pin >= 0) {
- 		unsigned int gpp, gpp_offset;
- 		unsigned long flags;
--		void __iomem *reg;
-+		void __iomem *reg, *is;
- 		u32 value;
+ 	if (ax25->sk != NULL) {
++		local_bh_disable();
+ 		bh_lock_sock(ax25->sk);
+ 		sock_reset_flag(ax25->sk, SOCK_ZAPPED);
+ 		bh_unlock_sock(ax25->sk);
++		local_bh_enable();
+ 	}
  
- 		gpp = padgrp->reg_num;
- 		gpp_offset = padgroup_offset(padgrp, pin);
- 
- 		reg = community->regs + community->ie_offset + gpp * 4;
-+		is = community->regs + community->is_offset + gpp * 4;
- 
- 		raw_spin_lock_irqsave(&pctrl->lock, flags);
-+
-+		/* Clear interrupt status first to avoid unexpected interrupt */
-+		writel(BIT(gpp_offset), is);
-+
- 		value = readl(reg);
- 		if (mask)
- 			value &= ~BIT(gpp_offset);
-@@ -1106,7 +1082,6 @@ static irqreturn_t intel_gpio_irq(int irq, void *data)
- 
- static struct irq_chip intel_gpio_irqchip = {
- 	.name = "intel-gpio",
--	.irq_enable = intel_gpio_irq_enable,
- 	.irq_ack = intel_gpio_irq_ack,
- 	.irq_mask = intel_gpio_irq_mask,
- 	.irq_unmask = intel_gpio_irq_unmask,
--- 
-2.20.1
-
+ put:
 
 
