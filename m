@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D6A854D6C2
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 20:12:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EDF384D651
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 20:08:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728955AbfFTSLr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 14:11:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39514 "EHLO mail.kernel.org"
+        id S1728203AbfFTSGj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 14:06:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60838 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728947AbfFTSLo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 14:11:44 -0400
+        id S1728189AbfFTSGh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Jun 2019 14:06:37 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C40962070B;
-        Thu, 20 Jun 2019 18:11:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D92C3215EA;
+        Thu, 20 Jun 2019 18:06:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561054304;
-        bh=oZYhfpp0Op1xc6m4V+6kPYh6gfC2XpR7/BahVh4+Pxw=;
+        s=default; t=1561053996;
+        bh=/NRaRJ0jp8elJzijBdTeELMvF+Ynqa9zz4v4LSQZ5ZU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IF2mG9j5acBI2J9ubO2NQIyPp/qmU1/ny0XTPa+0LTPzvDmEDlZKZATlkxk+Jji+4
-         pYxgFqRSTeiZmO1fiRMqKSLgc0KgyaSy2wY9dcMXAVs8QzUGMDGLXSs8DIj5mW0NOO
-         94BpZJaHEXiRbIQcaR8kYGizp7uurN1xYun871po=
+        b=XQz4kUScaVM6kTbo2j6iWJVv2L4z2WdKcFVD1l+vOs2sPHxmxx0vrvoV6v6m9W3Cm
+         43LmDoft3jotNTiF35AnPM21ebuMzl1VZZ2GhIxM4l6IchyAEQAs6b8N6ROv27eGiq
+         yR30wGIKhr32tTpxTLQAJPzfwhaPE8/lnUQqEAoA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        Stefan Wahren <stefan.wahren@i2se.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 17/61] Staging: vc04_services: Fix a couple error codes
-Date:   Thu, 20 Jun 2019 19:57:12 +0200
-Message-Id: <20190620174340.093063170@linuxfoundation.org>
+Subject: [PATCH 4.9 099/117] mISDN: make sure device name is NUL terminated
+Date:   Thu, 20 Jun 2019 19:57:13 +0200
+Message-Id: <20190620174357.769992972@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190620174336.357373754@linuxfoundation.org>
-References: <20190620174336.357373754@linuxfoundation.org>
+In-Reply-To: <20190620174351.964339809@linuxfoundation.org>
+References: <20190620174351.964339809@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,42 +44,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit ca4e4efbefbbdde0a7bb3023ea08d491f4daf9b9 ]
+[ Upstream commit ccfb62f27beb295103e9392462b20a6ed807d0ea ]
 
-These are accidentally returning positive EINVAL instead of negative
--EINVAL.  Some of the callers treat positive values as success.
+The user can change the device_name with the IMSETDEVNAME ioctl, but we
+need to ensure that the user's name is NUL terminated.  Otherwise it
+could result in a buffer overflow when we copy the name back to the user
+with IMGETDEVINFO ioctl.
 
-Fixes: 7b3ad5abf027 ("staging: Import the BCM2835 MMAL-based V4L2 camera driver.")
+I also changed two strcpy() calls which handle the name to strscpy().
+Hopefully, there aren't any other ways to create a too long name, but
+it's nice to do this as a kernel hardening measure.
+
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Acked-by: Stefan Wahren <stefan.wahren@i2se.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/staging/vc04_services/bcm2835-camera/controls.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/isdn/mISDN/socket.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/staging/vc04_services/bcm2835-camera/controls.c b/drivers/staging/vc04_services/bcm2835-camera/controls.c
-index cff7b1e07153..b688ebc01740 100644
---- a/drivers/staging/vc04_services/bcm2835-camera/controls.c
-+++ b/drivers/staging/vc04_services/bcm2835-camera/controls.c
-@@ -576,7 +576,7 @@ static int ctrl_set_image_effect(struct bm2835_mmal_dev *dev,
- 				dev->colourfx.enable ? "true" : "false",
- 				dev->colourfx.u, dev->colourfx.v,
- 				ret, (ret == 0 ? 0 : -EINVAL));
--	return (ret == 0 ? 0 : EINVAL);
-+	return (ret == 0 ? 0 : -EINVAL);
- }
- 
- static int ctrl_set_colfx(struct bm2835_mmal_dev *dev,
-@@ -600,7 +600,7 @@ static int ctrl_set_colfx(struct bm2835_mmal_dev *dev,
- 		 "%s: After: mmal_ctrl:%p ctrl id:0x%x ctrl val:%d ret %d(%d)\n",
- 			__func__, mmal_ctrl, ctrl->id, ctrl->val, ret,
- 			(ret == 0 ? 0 : -EINVAL));
--	return (ret == 0 ? 0 : EINVAL);
-+	return (ret == 0 ? 0 : -EINVAL);
- }
- 
- static int ctrl_set_bitrate(struct bm2835_mmal_dev *dev,
+diff --git a/drivers/isdn/mISDN/socket.c b/drivers/isdn/mISDN/socket.c
+index f96b8f2bdf74..d7c986fb0b3b 100644
+--- a/drivers/isdn/mISDN/socket.c
++++ b/drivers/isdn/mISDN/socket.c
+@@ -394,7 +394,7 @@ data_sock_ioctl(struct socket *sock, unsigned int cmd, unsigned long arg)
+ 			memcpy(di.channelmap, dev->channelmap,
+ 			       sizeof(di.channelmap));
+ 			di.nrbchan = dev->nrbchan;
+-			strcpy(di.name, dev_name(&dev->dev));
++			strscpy(di.name, dev_name(&dev->dev), sizeof(di.name));
+ 			if (copy_to_user((void __user *)arg, &di, sizeof(di)))
+ 				err = -EFAULT;
+ 		} else
+@@ -678,7 +678,7 @@ base_sock_ioctl(struct socket *sock, unsigned int cmd, unsigned long arg)
+ 			memcpy(di.channelmap, dev->channelmap,
+ 			       sizeof(di.channelmap));
+ 			di.nrbchan = dev->nrbchan;
+-			strcpy(di.name, dev_name(&dev->dev));
++			strscpy(di.name, dev_name(&dev->dev), sizeof(di.name));
+ 			if (copy_to_user((void __user *)arg, &di, sizeof(di)))
+ 				err = -EFAULT;
+ 		} else
+@@ -692,6 +692,7 @@ base_sock_ioctl(struct socket *sock, unsigned int cmd, unsigned long arg)
+ 			err = -EFAULT;
+ 			break;
+ 		}
++		dn.name[sizeof(dn.name) - 1] = '\0';
+ 		dev = get_mdevice(dn.id);
+ 		if (dev)
+ 			err = device_rename(&dev->dev, dn.name);
 -- 
 2.20.1
 
