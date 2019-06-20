@@ -2,38 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7E13B4D805
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 20:24:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 108094D680
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 20:09:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729239AbfFTSV7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 14:21:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39366 "EHLO mail.kernel.org"
+        id S1728553AbfFTSIx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 14:08:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36224 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726567AbfFTSLg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 14:11:36 -0400
+        id S1728537AbfFTSIs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Jun 2019 14:08:48 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 63A6E2084E;
-        Thu, 20 Jun 2019 18:11:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D6EA82084E;
+        Thu, 20 Jun 2019 18:08:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561054295;
-        bh=PwWlKA8m+2tDl7NpQJwU5cGiGWelzNJId2IrD++57wk=;
+        s=default; t=1561054127;
+        bh=l/yJKou2oDHAdhnzdsC8NyeBypmK5iwGNwUo+9N61XY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=q9cVAM8xPeo5KvKqmHS4pVPQSjic5bfSclNZrJGgJfEVGbZQy9PlI52tsj5hCnvkw
-         XTk27pypC+q16joSK0Z2DCb+9SLhuP2VkAzD0rlX+J/h2aiZBe8Uw7RrV7cZ7Io8mU
-         EefRTiMh+ym1+tdrZuUfr5WSUL/G5Pycza+WDiKg=
+        b=JLBLhQTpFh5aNFU/xWxb97iIdTrJ98zYyfYiWfSgzyk0qzN3oupKy9i1xnQP4dd4f
+         kzAeWSmdmlj74QMPt6go1xNvxdY6En7vzR5Gf3EHeCj1eX3GZycnYch8y1d7a6YZau
+         J/MxgPS8ze1AkxPYPz5h4wUQdlNWN7M3YFZItqLk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alaa Hleihel <alaa@mellanox.com>,
-        Saeed Mahameed <saeedm@mellanox.com>
-Subject: [PATCH 4.19 14/61] net/mlx5: Avoid reloading already removed devices
-Date:   Thu, 20 Jun 2019 19:57:09 +0200
-Message-Id: <20190620174339.631034585@linuxfoundation.org>
+        stable@vger.kernel.org, Neil Horman <nhorman@tuxdriver.com>,
+        syzbot+f7e9153b037eac9b1df8@syzkaller.appspotmail.com,
+        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
+        Xin Long <lucien.xin@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org
+Subject: [PATCH 4.14 08/45] sctp: Free cookie before we memdup a new one
+Date:   Thu, 20 Jun 2019 19:57:10 +0200
+Message-Id: <20190620174333.093872702@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190620174336.357373754@linuxfoundation.org>
-References: <20190620174336.357373754@linuxfoundation.org>
+In-Reply-To: <20190620174328.608036501@linuxfoundation.org>
+References: <20190620174328.608036501@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,61 +46,82 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alaa Hleihel <alaa@mellanox.com>
+From: Neil Horman <nhorman@tuxdriver.com>
 
-Prior to reloading a device we must first verify that it was not already
-removed. Otherwise, the attempt to remove the device will do nothing, and
-in that case we will end up proceeding with adding an new device that no
-one was expecting to remove, leaving behind used resources such as EQs that
-causes a failure to destroy comp EQs and syndrome (0x30f433).
+[ Upstream commit ce950f1050cece5e406a5cde723c69bba60e1b26 ]
 
-Fix that by making sure that we try to remove and add a device (based on a
-protocol) only if the device is already added.
+Based on comments from Xin, even after fixes for our recent syzbot
+report of cookie memory leaks, its possible to get a resend of an INIT
+chunk which would lead to us leaking cookie memory.
 
-Fixes: c5447c70594b ("net/mlx5: E-Switch, Reload IB interface when switching devlink modes")
-Signed-off-by: Alaa Hleihel <alaa@mellanox.com>
-Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
+To ensure that we don't leak cookie memory, free any previously
+allocated cookie first.
+
+Change notes
+v1->v2
+update subsystem tag in subject (davem)
+repeat kfree check for peer_random and peer_hmacs (xin)
+
+v2->v3
+net->sctp
+also free peer_chunks
+
+v3->v4
+fix subject tags
+
+v4->v5
+remove cut line
+
+Signed-off-by: Neil Horman <nhorman@tuxdriver.com>
+Reported-by: syzbot+f7e9153b037eac9b1df8@syzkaller.appspotmail.com
+CC: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
+CC: Xin Long <lucien.xin@gmail.com>
+CC: "David S. Miller" <davem@davemloft.net>
+CC: netdev@vger.kernel.org
+Acked-by: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/mellanox/mlx5/core/dev.c |   25 +++++++++++++++++++++++--
- 1 file changed, 23 insertions(+), 2 deletions(-)
+ net/sctp/sm_make_chunk.c |    8 ++++++++
+ 1 file changed, 8 insertions(+)
 
---- a/drivers/net/ethernet/mellanox/mlx5/core/dev.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/dev.c
-@@ -342,11 +342,32 @@ void mlx5_unregister_interface(struct ml
- }
- EXPORT_SYMBOL(mlx5_unregister_interface);
+--- a/net/sctp/sm_make_chunk.c
++++ b/net/sctp/sm_make_chunk.c
+@@ -2586,6 +2586,8 @@ do_addr_param:
+ 	case SCTP_PARAM_STATE_COOKIE:
+ 		asoc->peer.cookie_len =
+ 			ntohs(param.p->length) - sizeof(struct sctp_paramhdr);
++		if (asoc->peer.cookie)
++			kfree(asoc->peer.cookie);
+ 		asoc->peer.cookie = kmemdup(param.cookie->body, asoc->peer.cookie_len, gfp);
+ 		if (!asoc->peer.cookie)
+ 			retval = 0;
+@@ -2650,6 +2652,8 @@ do_addr_param:
+ 			goto fall_through;
  
-+/* Must be called with intf_mutex held */
-+static bool mlx5_has_added_dev_by_protocol(struct mlx5_core_dev *mdev, int protocol)
-+{
-+	struct mlx5_device_context *dev_ctx;
-+	struct mlx5_interface *intf;
-+	bool found = false;
-+
-+	list_for_each_entry(intf, &intf_list, list) {
-+		if (intf->protocol == protocol) {
-+			dev_ctx = mlx5_get_device(intf, &mdev->priv);
-+			if (dev_ctx && test_bit(MLX5_INTERFACE_ADDED, &dev_ctx->state))
-+				found = true;
-+			break;
-+		}
-+	}
-+
-+	return found;
-+}
-+
- void mlx5_reload_interface(struct mlx5_core_dev *mdev, int protocol)
- {
- 	mutex_lock(&mlx5_intf_mutex);
--	mlx5_remove_dev_by_protocol(mdev, protocol);
--	mlx5_add_dev_by_protocol(mdev, protocol);
-+	if (mlx5_has_added_dev_by_protocol(mdev, protocol)) {
-+		mlx5_remove_dev_by_protocol(mdev, protocol);
-+		mlx5_add_dev_by_protocol(mdev, protocol);
-+	}
- 	mutex_unlock(&mlx5_intf_mutex);
- }
+ 		/* Save peer's random parameter */
++		if (asoc->peer.peer_random)
++			kfree(asoc->peer.peer_random);
+ 		asoc->peer.peer_random = kmemdup(param.p,
+ 					    ntohs(param.p->length), gfp);
+ 		if (!asoc->peer.peer_random) {
+@@ -2663,6 +2667,8 @@ do_addr_param:
+ 			goto fall_through;
  
+ 		/* Save peer's HMAC list */
++		if (asoc->peer.peer_hmacs)
++			kfree(asoc->peer.peer_hmacs);
+ 		asoc->peer.peer_hmacs = kmemdup(param.p,
+ 					    ntohs(param.p->length), gfp);
+ 		if (!asoc->peer.peer_hmacs) {
+@@ -2678,6 +2684,8 @@ do_addr_param:
+ 		if (!ep->auth_enable)
+ 			goto fall_through;
+ 
++		if (asoc->peer.peer_chunks)
++			kfree(asoc->peer.peer_chunks);
+ 		asoc->peer.peer_chunks = kmemdup(param.p,
+ 					    ntohs(param.p->length), gfp);
+ 		if (!asoc->peer.peer_chunks)
 
 
