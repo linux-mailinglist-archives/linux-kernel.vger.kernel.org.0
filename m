@@ -2,143 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8DB574D9B4
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 20:48:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4E4104D9BC
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 20:49:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726405AbfFTSs0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 14:48:26 -0400
-Received: from mail2-relais-roc.national.inria.fr ([192.134.164.83]:4891 "EHLO
-        mail2-relais-roc.national.inria.fr" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726062AbfFTSs0 (ORCPT
+        id S1726700AbfFTStX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 14:49:23 -0400
+Received: from mail-io1-f65.google.com ([209.85.166.65]:46365 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726034AbfFTStX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 14:48:26 -0400
-X-IronPort-AV: E=Sophos;i="5.63,397,1557180000"; 
-   d="scan'208";a="388394882"
-Received: from abo-12-105-68.mrs.modulonet.fr (HELO hadrien) ([85.68.105.12])
-  by mail2-relais-roc.national.inria.fr with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Jun 2019 20:48:23 +0200
-Date:   Thu, 20 Jun 2019 20:48:23 +0200 (CEST)
-From:   Julia Lawall <julia.lawall@lip6.fr>
-X-X-Sender: jll@hadrien
-To:     Markus Elfring <Markus.Elfring@web.de>
-cc:     kernel-janitors@vger.kernel.org,
-        Gilles Muller <Gilles.Muller@lip6.fr>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Nicolas Palix <nicolas.palix@imag.fr>,
-        Coccinelle <cocci@systeme.lip6.fr>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Ding Xiang <dingxiang@cmss.chinamobile.com>
-Subject: Re: [PATCH] Coccinelle: Add a SmPL script for the reconsideration
- of redundant dev_err() calls
-In-Reply-To: <05d85182-7ec3-8fc1-4bcd-fd2528de3a40@web.de>
-Message-ID: <alpine.DEB.2.21.1906202046550.3087@hadrien>
-References: <05d85182-7ec3-8fc1-4bcd-fd2528de3a40@web.de>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Thu, 20 Jun 2019 14:49:23 -0400
+Received: by mail-io1-f65.google.com with SMTP id i10so1003247iol.13
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2019 11:49:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=81FbK2MGDTB2Q0Lt6NRfym4JTD/ft6H2LYFu0+BpVcc=;
+        b=DflsZjsCnlZp08kXiOJJ6An2xdgV238TPGSiu9uyyUsm9OkUN9/kKo8e1beLAXMUbS
+         qYuVZwvv6dE53Bwjs0e/+mlKTcc4RWSX9KTRRYn7tsr6nz4atgpQDZIU1e7F3pQscX7V
+         xeY02wHBTNOq5EPowL5/HcAv8R6jLa6CCxKMQJ+/h4GXoyINhupnIQvG2/ZKFFPKAo6E
+         uiKgoJD2/9di1J8WllMZyF1MLZ0ycEF9Q/mch1G52EvvfcJIhzDnzc6lLgffnA53jaAS
+         +ZoRG4bMQrNjoDucqSIPk6YNxGNuNctcvOf5l1pnh9ikc514sEfEv/sRTm7MHgbcUXgk
+         ZoTg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=81FbK2MGDTB2Q0Lt6NRfym4JTD/ft6H2LYFu0+BpVcc=;
+        b=tp3bYdwk/44A4Pf1/BwthuDzC2F6SNz9hQYnGinPNPF6DRGvCZ7sF8tYB5KffUvRwQ
+         4Ad4+JxXhz9shLrMW8O6eyrwOYVGSn+YIbYqxhOiG71CIJK03VSDiRVZaEn81+JGRPwq
+         nRLI1f4kSSDymB3MN7beWmBh+anyExSwkbTq0pLCTtIGXewoPciePlg4A2sGMNmx4IgB
+         cxeFlnQl582HEFvpdKi2BHmwQ481kkNk0Aynm6WSlIICTM3usK+u2wWHZz48Ck41El7k
+         4XCpcOulYEs3dEWObFHbWD1FWjfahSNl6aqObXfuGwRXM79/VCbqzMWC4za4qMarAn1N
+         C5JA==
+X-Gm-Message-State: APjAAAWGbhRC+dilxYx7tdflGY6xpImgM99QEHg2WOsPssjs91ouHQOu
+        6grJNSbK1FDbU+P9Okkkb8UDNHWbXXbXhxiJAhW3Ig==
+X-Google-Smtp-Source: APXvYqw3T+wT6RqXErOCAGICJIb6qphtc1KJTX8sfmv5CUYrd3Eq+yqn3DloJYm0LiXeiKSznCHZUlDvmeyAD1VHIhA=
+X-Received: by 2002:a6b:b40b:: with SMTP id d11mr10574591iof.122.1561056562075;
+ Thu, 20 Jun 2019 11:49:22 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323329-1240475580-1561056503=:3087"
+References: <20190620110240.25799-1-vkuznets@redhat.com> <20190620110240.25799-2-vkuznets@redhat.com>
+In-Reply-To: <20190620110240.25799-2-vkuznets@redhat.com>
+From:   Jim Mattson <jmattson@google.com>
+Date:   Thu, 20 Jun 2019 11:49:11 -0700
+Message-ID: <CALMp9eTZSWA-7SOHS=2xrMKaXv_imKpURHGcDpfgusF+JDXFMg@mail.gmail.com>
+Subject: Re: [PATCH RFC 1/5] x86: KVM: svm: don't pretend to advance RIP in
+ case wrmsr_interception() results in #GP
+To:     Vitaly Kuznetsov <vkuznets@redhat.com>
+Cc:     kvm list <kvm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Joerg Roedel <joro@8bytes.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
-
---8323329-1240475580-1561056503=:3087
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-
-
-
-On Thu, 20 Jun 2019, Markus Elfring wrote:
-
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Thu, 20 Jun 2019 19:12:53 +0200
+On Thu, Jun 20, 2019 at 4:02 AM Vitaly Kuznetsov <vkuznets@redhat.com> wrote:
 >
-> The function “devm_ioremap_resource” contains appropriate error reporting.
-> Thus it can be questionable to present another error message
-> at other places.
+> svm->next_rip is only used by skip_emulated_instruction() and in case
+> kvm_set_msr() fails we rightfully don't do that. Move svm->next_rip
+> advancement to 'else' branch to avoid creating false impression that
+> it's always advanced.
 >
-> Provide design options for the adjustment of affected source code
-> by the means of the semantic patch language (Coccinelle software).
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  .../coccinelle/misc/redundant_dev_err.cocci   | 53 +++++++++++++++++++
->  1 file changed, 53 insertions(+)
->  create mode 100644 scripts/coccinelle/misc/redundant_dev_err.cocci
->
-> diff --git a/scripts/coccinelle/misc/redundant_dev_err.cocci b/scripts/coccinelle/misc/redundant_dev_err.cocci
-> new file mode 100644
-> index 000000000000..aeb228280276
-> --- /dev/null
-> +++ b/scripts/coccinelle/misc/redundant_dev_err.cocci
-> @@ -0,0 +1,53 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/// Reconsider a function call for redundant error reporting.
-> +//
-> +// Keywords: dev_err redundant device error messages
-> +// Confidence: Medium
-> +
-> +virtual patch
-> +virtual context
-> +virtual org
-> +virtual report
-> +
-> +@display depends on context@
-> +expression e;
-> +@@
-> + e = devm_ioremap_resource(...);
-> + if (IS_ERR(e))
-> + {
-> +*   dev_err(...);
-> +    return (...);
-> + }
+> By the way, rdmsr_interception() has it right already.
 
-Why do you assume that there is exactly one dev_err and one return after
-the test?
-
-> +
-> +@deletion depends on patch@
-> +expression e;
-> +@@
-> + e = devm_ioremap_resource(...);
-> + if (IS_ERR(e))
-> +-{
-> +-   dev_err(...);
-> +    return (...);
-> +-}
-> +
-> +@or depends on org || report@
-> +expression e;
-> +position p;
-> +@@
-> + e = devm_ioremap_resource(...);
-> + if (IS_ERR(e))
-> + {
-> +    dev_err@p(...);
-> +    return (...);
-> + }
-> +
-> +@script:python to_do depends on org@
-> +p << or.p;
-> +@@
-> +coccilib.org.print_todo(p[0],
-> +                        "WARNING: An error message is probably not needed here because the previously called function contains appropriate error reporting.")
-
-"the previously called function" would be better as
-"devm_ioremap_resource".
-
-julia
-
-> +
-> +@script:python reporting depends on report@
-> +p << or.p;
-> +@@
-> +coccilib.report.print_report(p[0],
-> +                             "WARNING: An error message is probably not needed here because the previously called function contains appropriate error reporting.")
-> --
-> 2.22.0
->
->
---8323329-1240475580-1561056503=:3087--
+I think I actually prefer the current placement, because this allows
+the code that's common to both kvm-amd.ko and kvm-intel.ko to be
+hoisted into the vendor-agnostic kvm module. Also, this hard-coded '2'
+should be going away, right?
