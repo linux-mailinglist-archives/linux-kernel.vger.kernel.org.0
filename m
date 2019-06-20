@@ -2,101 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6FC8E4D6E7
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 20:13:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4AD104D71B
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 20:16:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729302AbfFTSNi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 14:13:38 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:42986 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729284AbfFTSNe (ORCPT
+        id S1729734AbfFTSQJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 14:16:09 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:43860 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729300AbfFTSQG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 14:13:34 -0400
-Received: by mail-pl1-f193.google.com with SMTP id ay6so1695175plb.9
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2019 11:13:34 -0700 (PDT)
+        Thu, 20 Jun 2019 14:16:06 -0400
+Received: by mail-pf1-f193.google.com with SMTP id i189so2102867pfg.10
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2019 11:16:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=RmdL4r6TvJ+oKourpQb+LBst9Fomwh98eeYZGetnRvY=;
-        b=oV9KeU7fuBkBdNRgFANyfh0fcXSl4wDv8kbA4/2xYSLmTm8D40QNMvO/CQH/+cDxK7
-         GbW9f/ukXyTOqWTO2qrk4Tff8D13y9JHIJMsHsnmCAXLnEngZl922vBjaJ4Phu50pSyF
-         pE8CYKHUOKZwcRKjRd0O9tRtzDNgGbDGVRcmw=
+        bh=VUfn1IOEl9rD06WsT02+mqNYFppRegXo3iWeR3nXox0=;
+        b=PDzWNDJmo14cyT5iiWirFxCbttBGQcs6+m6znSmNqWkbpH9CQvnWemOOGcn8NzWSaY
+         Me/Btlvf1i4v5Az6LCxb27WLi+/N2yWCGZM4+wHVmriX/AbDcLibJm2fqVPIUgxSzzjI
+         LBIKQN7uIIL0XSbRDkSMx0ehxU1ZfnoZx0TaU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=RmdL4r6TvJ+oKourpQb+LBst9Fomwh98eeYZGetnRvY=;
-        b=Y8Fno+z82EWuOjrzjhAkSFLGC22ijYwwFWybdaQw8EJPwT5Biq+8nB34+YIzg0OAum
-         Sry7riSviAcfNgSa6oK3ylcUnQjhUnehaPUuFd75Pj3bzo8tv59OdK+KyQUXsVzLcMeF
-         ynAMHFzi2RhD4SQ6UVPflrW2YjEHo3Q+pddyTLzTExIosJtDM0meylPfn83fqKXfjHh7
-         Wa8r+rUKtTv8I7jiTvMKpCum4pgajGK6ZwK/UbTDYm59zmVo5GJ/CECmEQBLIPw6OpQi
-         yxh7hX9v+cEMMaeRM+QuJVAKZHbrWnA30l8uh32XN/xHr07OJJvu7qxfeniki6kAVHJV
-         KY8Q==
-X-Gm-Message-State: APjAAAXOGLnVWI16jScHVsEjBVuo6xIRFx2lh7Z3mcpJAj/NUfbOAPvY
-        fiMaNfBCqCkP07GCa+e+H7cXMg==
-X-Google-Smtp-Source: APXvYqwRqHmHiOefZUkjtzQ5hzlVB17R/dzjZKqG93Hc2P9UkalWcaAo2ZuXfBOPjxAeefIn2Ir5zA==
-X-Received: by 2002:a17:902:d707:: with SMTP id w7mr8966934ply.128.1561054413761;
-        Thu, 20 Jun 2019 11:13:33 -0700 (PDT)
+        bh=VUfn1IOEl9rD06WsT02+mqNYFppRegXo3iWeR3nXox0=;
+        b=n0GQoetK3QRviuhzEWDcuX/kaUn/v/Sy90XK7ftkfACQUAzKFtCAWT/5ohR5dHhXZr
+         ZMiq9G99UtE/T41tK6RuEdAgqOqlmNzUWgKRwIu4YFJxMfd5V87hZH9D1+kVzlZfUKzY
+         KpqXbxwOcHoenIugo26cesPnbe82Z650QkuqVHHDyjVydviD4leaXrOF5wLEqfyNHbqH
+         RUsTT57d8MYSxD9TB34uXNkYFg4tVAW5XRYODl5c8VS5+t+g4zS6fX01n8LFOXMrCHj1
+         d5+Ps5k5D29N+MpewmRHBqA/SJS1DWGwpOgX18JvgM3q3e1/GpA0VBJc1IHkKYYe7Ua4
+         tKHw==
+X-Gm-Message-State: APjAAAUSjlYRsG/PgsL/49euHDP9iB8y7oX/IK9GtFod63qNSld4DDBP
+        ZiwjHdyQ/WnATHOlhcFRfIgY8w==
+X-Google-Smtp-Source: APXvYqw79XlOckNLsRwzTUGfUfSvKWCIsmZtm9ZMQM+GdS+4jaUOmnAbOXIYsSXrzSkx6Fl0/HRCVA==
+X-Received: by 2002:a17:90a:36a9:: with SMTP id t38mr990899pjb.19.1561054565839;
+        Thu, 20 Jun 2019 11:16:05 -0700 (PDT)
 Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id b6sm311008pgd.5.2019.06.20.11.13.32
+        by smtp.gmail.com with ESMTPSA id w4sm147481pfw.97.2019.06.20.11.16.04
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 20 Jun 2019 11:13:32 -0700 (PDT)
-Date:   Thu, 20 Jun 2019 11:13:32 -0700
+        Thu, 20 Jun 2019 11:16:05 -0700 (PDT)
+Date:   Thu, 20 Jun 2019 11:16:04 -0700
 From:   Kees Cook <keescook@chromium.org>
-To:     Colin King <colin.king@canonical.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] lkdtm: remove redundant initialization of ret
-Message-ID: <201906201112.AE06471@keescook>
-References: <20190614094311.24024-1-colin.king@canonical.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Anton Vorontsov <anton@enomsg.org>,
+        Colin Cross <ccross@android.com>,
+        Tony Luck <tony.luck@intel.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] pstore: no need to check return value of debugfs_create
+ functions
+Message-ID: <201906201115.37C12233AB@keescook>
+References: <20190612152033.GA17290@kroah.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190614094311.24024-1-colin.king@canonical.com>
+In-Reply-To: <20190612152033.GA17290@kroah.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 14, 2019 at 10:43:11AM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
+On Wed, Jun 12, 2019 at 05:20:33PM +0200, Greg Kroah-Hartman wrote:
+> When calling debugfs functions, there is no need to ever check the
+> return value.  The function can work or not, but the code logic should
+> never do something different based on this.
 > 
-> The variable ret is being initialized with the value -EINVAL however
-> this value is never read and ret is being re-assigned later on. Hence
-> the initialization is redundant and can be removed.
-> 
-> Addresses-Coverity: ("Unused value")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> Cc: Kees Cook <keescook@chromium.org>
+> Cc: Anton Vorontsov <anton@enomsg.org>
+> Cc: Colin Cross <ccross@android.com>
+> Cc: Tony Luck <tony.luck@intel.com>
+> Cc: linux-kernel@vger.kernel.org
+> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Thanks!
-
-Acked-by: Kees Cook <keescook@chromium.org>
-
-Greg, can you take this please?
+Thanks; applied to my for-next/pstore tree.
 
 -Kees
 
 > ---
->  drivers/misc/lkdtm/core.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  fs/pstore/ftrace.c | 18 ++----------------
+>  1 file changed, 2 insertions(+), 16 deletions(-)
 > 
-> diff --git a/drivers/misc/lkdtm/core.c b/drivers/misc/lkdtm/core.c
-> index bba093224813..92df35fdeab0 100644
-> --- a/drivers/misc/lkdtm/core.c
-> +++ b/drivers/misc/lkdtm/core.c
-> @@ -390,7 +390,7 @@ static int __init lkdtm_module_init(void)
->  {
->  	struct crashpoint *crashpoint = NULL;
->  	const struct crashtype *crashtype = NULL;
-> -	int ret = -EINVAL;
-> +	int ret;
->  	int i;
+> diff --git a/fs/pstore/ftrace.c b/fs/pstore/ftrace.c
+> index b8a0931568f8..fd9468928bef 100644
+> --- a/fs/pstore/ftrace.c
+> +++ b/fs/pstore/ftrace.c
+> @@ -120,27 +120,13 @@ static struct dentry *pstore_ftrace_dir;
 >  
->  	/* Neither or both of these need to be set */
+>  void pstore_register_ftrace(void)
+>  {
+> -	struct dentry *file;
+> -
+>  	if (!psinfo->write)
+>  		return;
+>  
+>  	pstore_ftrace_dir = debugfs_create_dir("pstore", NULL);
+> -	if (!pstore_ftrace_dir) {
+> -		pr_err("%s: unable to create pstore directory\n", __func__);
+> -		return;
+> -	}
+> -
+> -	file = debugfs_create_file("record_ftrace", 0600, pstore_ftrace_dir,
+> -				   NULL, &pstore_knob_fops);
+> -	if (!file) {
+> -		pr_err("%s: unable to create record_ftrace file\n", __func__);
+> -		goto err_file;
+> -	}
+>  
+> -	return;
+> -err_file:
+> -	debugfs_remove(pstore_ftrace_dir);
+> +	debugfs_create_file("record_ftrace", 0600, pstore_ftrace_dir, NULL,
+> +			    &pstore_knob_fops);
+>  }
+>  
+>  void pstore_unregister_ftrace(void)
 > -- 
-> 2.20.1
+> 2.22.0
 > 
 
 -- 
