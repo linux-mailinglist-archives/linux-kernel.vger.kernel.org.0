@@ -2,45 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CF41A4D5C4
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 20:01:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 88BF54D6E5
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 20:13:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725886AbfFTSAy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 14:00:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49938 "EHLO mail.kernel.org"
+        id S1729271AbfFTSN3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 14:13:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41362 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727076AbfFTSAv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 14:00:51 -0400
+        id S1728568AbfFTSN1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Jun 2019 14:13:27 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F26C32084A;
-        Thu, 20 Jun 2019 18:00:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5A461205F4;
+        Thu, 20 Jun 2019 18:13:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561053650;
-        bh=H/Oz7X7/nW3FTr2cRjEkaTcDt1nImZOdKJfO0etYTrE=;
+        s=default; t=1561054405;
+        bh=1jvFCFaLxy6uOpCnkPvG36xJ7K2dKW9T0jGxew2JqQY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=yKHneP8gkvBNACx8CLRJeaUjr749x8GdQvwBhVt0jnf26Yoh86tpln+sByajr5J0L
-         4/v06JbkHZSLdi3UVeHG2vnbuMf7nsrG13s8WeGY/WSJJeX1NSALW4EpwYbRzPsvMe
-         bk4Okh4kurtEVGDUb9Z1qMnvotS1On/9LTX/ebk4=
+        b=I9qaF2Xv434c0qDRLN0DO5ZFTJE0dtGMhAYMNB7tJnPs1pEcxgHY9aKDqiqfH/u4I
+         Wf5RpgIjiaGQrtaxTOhKiMOSkkPsXjYIEM4G4HxJMynUDiE5xaZHfJNQ0i6+SeyJu5
+         WLNTofiZAq89EGBFIV4PpWkjt8Kp84FbcLcsCAFk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Phong Hoang <phong.hoang.wz@renesas.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Hoan Nguyen An <na-hoan@jinso.co.jp>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 36/84] pwm: Fix deadlock warning when removing PWM device
-Date:   Thu, 20 Jun 2019 19:56:33 +0200
-Message-Id: <20190620174343.531074876@linuxfoundation.org>
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        syzbot <syzkaller@googlegroups.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 5.1 07/98] neigh: fix use-after-free read in pneigh_get_next
+Date:   Thu, 20 Jun 2019 19:56:34 +0200
+Message-Id: <20190620174349.715332779@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190620174337.538228162@linuxfoundation.org>
-References: <20190620174337.538228162@linuxfoundation.org>
+In-Reply-To: <20190620174349.443386789@linuxfoundation.org>
+References: <20190620174349.443386789@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -50,272 +44,185 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 347ab9480313737c0f1aaa08e8f2e1a791235535 ]
+From: Eric Dumazet <edumazet@google.com>
 
-This patch fixes deadlock warning if removing PWM device
-when CONFIG_PROVE_LOCKING is enabled.
+[ Upstream commit f3e92cb8e2eb8c27d109e6fd73d3a69a8c09e288 ]
 
-This issue can be reproceduced by the following steps on
-the R-Car H3 Salvator-X board if the backlight is disabled:
+Nine years ago, I added RCU handling to neighbours, not pneighbours.
+(pneigh are not commonly used)
 
- # cd /sys/class/pwm/pwmchip0
- # echo 0 > export
- # ls
- device  export  npwm  power  pwm0  subsystem  uevent  unexport
- # cd device/driver
- # ls
- bind  e6e31000.pwm  uevent  unbind
- # echo e6e31000.pwm > unbind
+Unfortunately I missed that /proc dump operations would use a
+common entry and exit point : neigh_seq_start() and neigh_seq_stop()
 
-[   87.659974] ======================================================
-[   87.666149] WARNING: possible circular locking dependency detected
-[   87.672327] 5.0.0 #7 Not tainted
-[   87.675549] ------------------------------------------------------
-[   87.681723] bash/2986 is trying to acquire lock:
-[   87.686337] 000000005ea0e178 (kn->count#58){++++}, at: kernfs_remove_by_name_ns+0x50/0xa0
-[   87.694528]
-[   87.694528] but task is already holding lock:
-[   87.700353] 000000006313b17c (pwm_lock){+.+.}, at: pwmchip_remove+0x28/0x13c
-[   87.707405]
-[   87.707405] which lock already depends on the new lock.
-[   87.707405]
-[   87.715574]
-[   87.715574] the existing dependency chain (in reverse order) is:
-[   87.723048]
-[   87.723048] -> #1 (pwm_lock){+.+.}:
-[   87.728017]        __mutex_lock+0x70/0x7e4
-[   87.732108]        mutex_lock_nested+0x1c/0x24
-[   87.736547]        pwm_request_from_chip.part.6+0x34/0x74
-[   87.741940]        pwm_request_from_chip+0x20/0x40
-[   87.746725]        export_store+0x6c/0x1f4
-[   87.750820]        dev_attr_store+0x18/0x28
-[   87.754998]        sysfs_kf_write+0x54/0x64
-[   87.759175]        kernfs_fop_write+0xe4/0x1e8
-[   87.763615]        __vfs_write+0x40/0x184
-[   87.767619]        vfs_write+0xa8/0x19c
-[   87.771448]        ksys_write+0x58/0xbc
-[   87.775278]        __arm64_sys_write+0x18/0x20
-[   87.779721]        el0_svc_common+0xd0/0x124
-[   87.783986]        el0_svc_compat_handler+0x1c/0x24
-[   87.788858]        el0_svc_compat+0x8/0x18
-[   87.792947]
-[   87.792947] -> #0 (kn->count#58){++++}:
-[   87.798260]        lock_acquire+0xc4/0x22c
-[   87.802353]        __kernfs_remove+0x258/0x2c4
-[   87.806790]        kernfs_remove_by_name_ns+0x50/0xa0
-[   87.811836]        remove_files.isra.1+0x38/0x78
-[   87.816447]        sysfs_remove_group+0x48/0x98
-[   87.820971]        sysfs_remove_groups+0x34/0x4c
-[   87.825583]        device_remove_attrs+0x6c/0x7c
-[   87.830197]        device_del+0x11c/0x33c
-[   87.834201]        device_unregister+0x14/0x2c
-[   87.838638]        pwmchip_sysfs_unexport+0x40/0x4c
-[   87.843509]        pwmchip_remove+0xf4/0x13c
-[   87.847773]        rcar_pwm_remove+0x28/0x34
-[   87.852039]        platform_drv_remove+0x24/0x64
-[   87.856651]        device_release_driver_internal+0x18c/0x21c
-[   87.862391]        device_release_driver+0x14/0x1c
-[   87.867175]        unbind_store+0xe0/0x124
-[   87.871265]        drv_attr_store+0x20/0x30
-[   87.875442]        sysfs_kf_write+0x54/0x64
-[   87.879618]        kernfs_fop_write+0xe4/0x1e8
-[   87.884055]        __vfs_write+0x40/0x184
-[   87.888057]        vfs_write+0xa8/0x19c
-[   87.891887]        ksys_write+0x58/0xbc
-[   87.895716]        __arm64_sys_write+0x18/0x20
-[   87.900154]        el0_svc_common+0xd0/0x124
-[   87.904417]        el0_svc_compat_handler+0x1c/0x24
-[   87.909289]        el0_svc_compat+0x8/0x18
-[   87.913378]
-[   87.913378] other info that might help us debug this:
-[   87.913378]
-[   87.921374]  Possible unsafe locking scenario:
-[   87.921374]
-[   87.927286]        CPU0                    CPU1
-[   87.931808]        ----                    ----
-[   87.936331]   lock(pwm_lock);
-[   87.939293]                                lock(kn->count#58);
-[   87.945120]                                lock(pwm_lock);
-[   87.950599]   lock(kn->count#58);
-[   87.953908]
-[   87.953908]  *** DEADLOCK ***
-[   87.953908]
-[   87.959821] 4 locks held by bash/2986:
-[   87.963563]  #0: 00000000ace7bc30 (sb_writers#6){.+.+}, at: vfs_write+0x188/0x19c
-[   87.971044]  #1: 00000000287991b2 (&of->mutex){+.+.}, at: kernfs_fop_write+0xb4/0x1e8
-[   87.978872]  #2: 00000000f739d016 (&dev->mutex){....}, at: device_release_driver_internal+0x40/0x21c
-[   87.988001]  #3: 000000006313b17c (pwm_lock){+.+.}, at: pwmchip_remove+0x28/0x13c
-[   87.995481]
-[   87.995481] stack backtrace:
-[   87.999836] CPU: 0 PID: 2986 Comm: bash Not tainted 5.0.0 #7
-[   88.005489] Hardware name: Renesas Salvator-X board based on r8a7795 ES1.x (DT)
-[   88.012791] Call trace:
-[   88.015235]  dump_backtrace+0x0/0x190
-[   88.018891]  show_stack+0x14/0x1c
-[   88.022204]  dump_stack+0xb0/0xec
-[   88.025514]  print_circular_bug.isra.32+0x1d0/0x2e0
-[   88.030385]  __lock_acquire+0x1318/0x1864
-[   88.034388]  lock_acquire+0xc4/0x22c
-[   88.037958]  __kernfs_remove+0x258/0x2c4
-[   88.041874]  kernfs_remove_by_name_ns+0x50/0xa0
-[   88.046398]  remove_files.isra.1+0x38/0x78
-[   88.050487]  sysfs_remove_group+0x48/0x98
-[   88.054490]  sysfs_remove_groups+0x34/0x4c
-[   88.058580]  device_remove_attrs+0x6c/0x7c
-[   88.062671]  device_del+0x11c/0x33c
-[   88.066154]  device_unregister+0x14/0x2c
-[   88.070070]  pwmchip_sysfs_unexport+0x40/0x4c
-[   88.074421]  pwmchip_remove+0xf4/0x13c
-[   88.078163]  rcar_pwm_remove+0x28/0x34
-[   88.081906]  platform_drv_remove+0x24/0x64
-[   88.085996]  device_release_driver_internal+0x18c/0x21c
-[   88.091215]  device_release_driver+0x14/0x1c
-[   88.095478]  unbind_store+0xe0/0x124
-[   88.099048]  drv_attr_store+0x20/0x30
-[   88.102704]  sysfs_kf_write+0x54/0x64
-[   88.106359]  kernfs_fop_write+0xe4/0x1e8
-[   88.110275]  __vfs_write+0x40/0x184
-[   88.113757]  vfs_write+0xa8/0x19c
-[   88.117065]  ksys_write+0x58/0xbc
-[   88.120374]  __arm64_sys_write+0x18/0x20
-[   88.124291]  el0_svc_common+0xd0/0x124
-[   88.128034]  el0_svc_compat_handler+0x1c/0x24
-[   88.132384]  el0_svc_compat+0x8/0x18
+We need to read_lock(tbl->lock) or risk use-after-free while
+iterating the pneigh structures.
 
-The sysfs unexport in pwmchip_remove() is completely asymmetric
-to what we do in pwmchip_add_with_polarity() and commit 0733424c9ba9
-("pwm: Unexport children before chip removal") is a strong indication
-that this was wrong to begin with. We should just move
-pwmchip_sysfs_unexport() where it belongs, which is right after
-pwmchip_sysfs_unexport_children(). In that case, we do not need
-separate functions anymore either.
+We might later convert pneigh to RCU and revert this patch.
 
-We also really want to remove sysfs irrespective of whether or not
-the chip will be removed as a result of pwmchip_remove(). We can only
-assume that the driver will be gone after that, so we shouldn't leave
-any dangling sysfs files around.
+sysbot reported :
 
-This warning disappears if we move pwmchip_sysfs_unexport() to
-the top of pwmchip_remove(), pwmchip_sysfs_unexport_children().
-That way it is also outside of the pwm_lock section, which indeed
-doesn't seem to be needed.
+BUG: KASAN: use-after-free in pneigh_get_next.isra.0+0x24b/0x280 net/core/neighbour.c:3158
+Read of size 8 at addr ffff888097f2a700 by task syz-executor.0/9825
 
-Moving the pwmchip_sysfs_export() call outside of that section also
-seems fine and it'd be perfectly symmetric with pwmchip_remove() again.
+CPU: 1 PID: 9825 Comm: syz-executor.0 Not tainted 5.2.0-rc4+ #32
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0x172/0x1f0 lib/dump_stack.c:113
+ print_address_description.cold+0x7c/0x20d mm/kasan/report.c:188
+ __kasan_report.cold+0x1b/0x40 mm/kasan/report.c:317
+ kasan_report+0x12/0x20 mm/kasan/common.c:614
+ __asan_report_load8_noabort+0x14/0x20 mm/kasan/generic_report.c:132
+ pneigh_get_next.isra.0+0x24b/0x280 net/core/neighbour.c:3158
+ neigh_seq_next+0xdb/0x210 net/core/neighbour.c:3240
+ seq_read+0x9cf/0x1110 fs/seq_file.c:258
+ proc_reg_read+0x1fc/0x2c0 fs/proc/inode.c:221
+ do_loop_readv_writev fs/read_write.c:714 [inline]
+ do_loop_readv_writev fs/read_write.c:701 [inline]
+ do_iter_read+0x4a4/0x660 fs/read_write.c:935
+ vfs_readv+0xf0/0x160 fs/read_write.c:997
+ kernel_readv fs/splice.c:359 [inline]
+ default_file_splice_read+0x475/0x890 fs/splice.c:414
+ do_splice_to+0x127/0x180 fs/splice.c:877
+ splice_direct_to_actor+0x2d2/0x970 fs/splice.c:954
+ do_splice_direct+0x1da/0x2a0 fs/splice.c:1063
+ do_sendfile+0x597/0xd00 fs/read_write.c:1464
+ __do_sys_sendfile64 fs/read_write.c:1525 [inline]
+ __se_sys_sendfile64 fs/read_write.c:1511 [inline]
+ __x64_sys_sendfile64+0x1dd/0x220 fs/read_write.c:1511
+ do_syscall_64+0xfd/0x680 arch/x86/entry/common.c:301
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x4592c9
+Code: fd b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 cb b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007f4aab51dc78 EFLAGS: 00000246 ORIG_RAX: 0000000000000028
+RAX: ffffffffffffffda RBX: 0000000000000004 RCX: 00000000004592c9
+RDX: 0000000000000000 RSI: 0000000000000004 RDI: 0000000000000005
+RBP: 000000000075bf20 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000080000000 R11: 0000000000000246 R12: 00007f4aab51e6d4
+R13: 00000000004c689d R14: 00000000004db828 R15: 00000000ffffffff
 
-So, this patch fixes them.
+Allocated by task 9827:
+ save_stack+0x23/0x90 mm/kasan/common.c:71
+ set_track mm/kasan/common.c:79 [inline]
+ __kasan_kmalloc mm/kasan/common.c:489 [inline]
+ __kasan_kmalloc.constprop.0+0xcf/0xe0 mm/kasan/common.c:462
+ kasan_kmalloc+0x9/0x10 mm/kasan/common.c:503
+ __do_kmalloc mm/slab.c:3660 [inline]
+ __kmalloc+0x15c/0x740 mm/slab.c:3669
+ kmalloc include/linux/slab.h:552 [inline]
+ pneigh_lookup+0x19c/0x4a0 net/core/neighbour.c:731
+ arp_req_set_public net/ipv4/arp.c:1010 [inline]
+ arp_req_set+0x613/0x720 net/ipv4/arp.c:1026
+ arp_ioctl+0x652/0x7f0 net/ipv4/arp.c:1226
+ inet_ioctl+0x2a0/0x340 net/ipv4/af_inet.c:926
+ sock_do_ioctl+0xd8/0x2f0 net/socket.c:1043
+ sock_ioctl+0x3ed/0x780 net/socket.c:1194
+ vfs_ioctl fs/ioctl.c:46 [inline]
+ file_ioctl fs/ioctl.c:509 [inline]
+ do_vfs_ioctl+0xd5f/0x1380 fs/ioctl.c:696
+ ksys_ioctl+0xab/0xd0 fs/ioctl.c:713
+ __do_sys_ioctl fs/ioctl.c:720 [inline]
+ __se_sys_ioctl fs/ioctl.c:718 [inline]
+ __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:718
+ do_syscall_64+0xfd/0x680 arch/x86/entry/common.c:301
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
 
-Signed-off-by: Phong Hoang <phong.hoang.wz@renesas.com>
-[shimoda: revise the commit log and code]
-Fixes: 76abbdde2d95 ("pwm: Add sysfs interface")
-Fixes: 0733424c9ba9 ("pwm: Unexport children before chip removal")
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Tested-by: Hoan Nguyen An <na-hoan@jinso.co.jp>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
-Signed-off-by: Thierry Reding <thierry.reding@gmail.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Freed by task 9824:
+ save_stack+0x23/0x90 mm/kasan/common.c:71
+ set_track mm/kasan/common.c:79 [inline]
+ __kasan_slab_free+0x102/0x150 mm/kasan/common.c:451
+ kasan_slab_free+0xe/0x10 mm/kasan/common.c:459
+ __cache_free mm/slab.c:3432 [inline]
+ kfree+0xcf/0x220 mm/slab.c:3755
+ pneigh_ifdown_and_unlock net/core/neighbour.c:812 [inline]
+ __neigh_ifdown+0x236/0x2f0 net/core/neighbour.c:356
+ neigh_ifdown+0x20/0x30 net/core/neighbour.c:372
+ arp_ifdown+0x1d/0x21 net/ipv4/arp.c:1274
+ inetdev_destroy net/ipv4/devinet.c:319 [inline]
+ inetdev_event+0xa14/0x11f0 net/ipv4/devinet.c:1544
+ notifier_call_chain+0xc2/0x230 kernel/notifier.c:95
+ __raw_notifier_call_chain kernel/notifier.c:396 [inline]
+ raw_notifier_call_chain+0x2e/0x40 kernel/notifier.c:403
+ call_netdevice_notifiers_info+0x3f/0x90 net/core/dev.c:1749
+ call_netdevice_notifiers_extack net/core/dev.c:1761 [inline]
+ call_netdevice_notifiers net/core/dev.c:1775 [inline]
+ rollback_registered_many+0x9b9/0xfc0 net/core/dev.c:8178
+ rollback_registered+0x109/0x1d0 net/core/dev.c:8220
+ unregister_netdevice_queue net/core/dev.c:9267 [inline]
+ unregister_netdevice_queue+0x1ee/0x2c0 net/core/dev.c:9260
+ unregister_netdevice include/linux/netdevice.h:2631 [inline]
+ __tun_detach+0xd8a/0x1040 drivers/net/tun.c:724
+ tun_detach drivers/net/tun.c:741 [inline]
+ tun_chr_close+0xe0/0x180 drivers/net/tun.c:3451
+ __fput+0x2ff/0x890 fs/file_table.c:280
+ ____fput+0x16/0x20 fs/file_table.c:313
+ task_work_run+0x145/0x1c0 kernel/task_work.c:113
+ tracehook_notify_resume include/linux/tracehook.h:185 [inline]
+ exit_to_usermode_loop+0x273/0x2c0 arch/x86/entry/common.c:168
+ prepare_exit_to_usermode arch/x86/entry/common.c:199 [inline]
+ syscall_return_slowpath arch/x86/entry/common.c:279 [inline]
+ do_syscall_64+0x58e/0x680 arch/x86/entry/common.c:304
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+The buggy address belongs to the object at ffff888097f2a700
+ which belongs to the cache kmalloc-64 of size 64
+The buggy address is located 0 bytes inside of
+ 64-byte region [ffff888097f2a700, ffff888097f2a740)
+The buggy address belongs to the page:
+page:ffffea00025fca80 refcount:1 mapcount:0 mapping:ffff8880aa400340 index:0x0
+flags: 0x1fffc0000000200(slab)
+raw: 01fffc0000000200 ffffea000250d548 ffffea00025726c8 ffff8880aa400340
+raw: 0000000000000000 ffff888097f2a000 0000000100000020 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+ ffff888097f2a600: 00 00 00 00 00 00 00 00 fc fc fc fc fc fc fc fc
+ ffff888097f2a680: fb fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc
+>ffff888097f2a700: fb fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc
+                   ^
+ ffff888097f2a780: fb fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc
+ ffff888097f2a800: fb fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc
+
+Fixes: 767e97e1e0db ("neigh: RCU conversion of struct neighbour")
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/pwm/core.c  | 10 +++++-----
- drivers/pwm/sysfs.c | 14 +-------------
- include/linux/pwm.h |  5 -----
- 3 files changed, 6 insertions(+), 23 deletions(-)
+ net/core/neighbour.c |    7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/drivers/pwm/core.c b/drivers/pwm/core.c
-index ec84ff8ad1b4..6911f9662300 100644
---- a/drivers/pwm/core.c
-+++ b/drivers/pwm/core.c
-@@ -284,10 +284,12 @@ int pwmchip_add_with_polarity(struct pwm_chip *chip,
- 	if (IS_ENABLED(CONFIG_OF))
- 		of_pwmchip_add(chip);
+--- a/net/core/neighbour.c
++++ b/net/core/neighbour.c
+@@ -3199,6 +3199,7 @@ static void *neigh_get_idx_any(struct se
+ }
  
--	pwmchip_sysfs_export(chip);
--
- out:
- 	mutex_unlock(&pwm_lock);
+ void *neigh_seq_start(struct seq_file *seq, loff_t *pos, struct neigh_table *tbl, unsigned int neigh_seq_flags)
++	__acquires(tbl->lock)
+ 	__acquires(rcu_bh)
+ {
+ 	struct neigh_seq_state *state = seq->private;
+@@ -3209,6 +3210,7 @@ void *neigh_seq_start(struct seq_file *s
+ 
+ 	rcu_read_lock_bh();
+ 	state->nht = rcu_dereference_bh(tbl->nht);
++	read_lock(&tbl->lock);
+ 
+ 	return *pos ? neigh_get_idx_any(seq, pos) : SEQ_START_TOKEN;
+ }
+@@ -3242,8 +3244,13 @@ out:
+ EXPORT_SYMBOL(neigh_seq_next);
+ 
+ void neigh_seq_stop(struct seq_file *seq, void *v)
++	__releases(tbl->lock)
+ 	__releases(rcu_bh)
+ {
++	struct neigh_seq_state *state = seq->private;
++	struct neigh_table *tbl = state->tbl;
 +
-+	if (!ret)
-+		pwmchip_sysfs_export(chip);
-+
- 	return ret;
++	read_unlock(&tbl->lock);
+ 	rcu_read_unlock_bh();
  }
- EXPORT_SYMBOL_GPL(pwmchip_add_with_polarity);
-@@ -321,7 +323,7 @@ int pwmchip_remove(struct pwm_chip *chip)
- 	unsigned int i;
- 	int ret = 0;
- 
--	pwmchip_sysfs_unexport_children(chip);
-+	pwmchip_sysfs_unexport(chip);
- 
- 	mutex_lock(&pwm_lock);
- 
-@@ -341,8 +343,6 @@ int pwmchip_remove(struct pwm_chip *chip)
- 
- 	free_pwms(chip);
- 
--	pwmchip_sysfs_unexport(chip);
--
- out:
- 	mutex_unlock(&pwm_lock);
- 	return ret;
-diff --git a/drivers/pwm/sysfs.c b/drivers/pwm/sysfs.c
-index 375008e2be20..199370e41da9 100644
---- a/drivers/pwm/sysfs.c
-+++ b/drivers/pwm/sysfs.c
-@@ -338,19 +338,6 @@ void pwmchip_sysfs_export(struct pwm_chip *chip)
- }
- 
- void pwmchip_sysfs_unexport(struct pwm_chip *chip)
--{
--	struct device *parent;
--
--	parent = class_find_device(&pwm_class, NULL, chip,
--				   pwmchip_sysfs_match);
--	if (parent) {
--		/* for class_find_device() */
--		put_device(parent);
--		device_unregister(parent);
--	}
--}
--
--void pwmchip_sysfs_unexport_children(struct pwm_chip *chip)
- {
- 	struct device *parent;
- 	unsigned int i;
-@@ -368,6 +355,7 @@ void pwmchip_sysfs_unexport_children(struct pwm_chip *chip)
- 	}
- 
- 	put_device(parent);
-+	device_unregister(parent);
- }
- 
- static int __init pwm_sysfs_init(void)
-diff --git a/include/linux/pwm.h b/include/linux/pwm.h
-index aa8736d5b2f3..cfc3ed46cad2 100644
---- a/include/linux/pwm.h
-+++ b/include/linux/pwm.h
-@@ -331,7 +331,6 @@ static inline void pwm_remove_table(struct pwm_lookup *table, size_t num)
- #ifdef CONFIG_PWM_SYSFS
- void pwmchip_sysfs_export(struct pwm_chip *chip);
- void pwmchip_sysfs_unexport(struct pwm_chip *chip);
--void pwmchip_sysfs_unexport_children(struct pwm_chip *chip);
- #else
- static inline void pwmchip_sysfs_export(struct pwm_chip *chip)
- {
-@@ -340,10 +339,6 @@ static inline void pwmchip_sysfs_export(struct pwm_chip *chip)
- static inline void pwmchip_sysfs_unexport(struct pwm_chip *chip)
- {
- }
--
--static inline void pwmchip_sysfs_unexport_children(struct pwm_chip *chip)
--{
--}
- #endif /* CONFIG_PWM_SYSFS */
- 
- #endif /* __LINUX_PWM_H */
--- 
-2.20.1
-
+ EXPORT_SYMBOL(neigh_seq_stop);
 
 
