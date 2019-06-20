@@ -2,107 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7A7874D4A2
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 19:14:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 480AA4D4AB
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 19:16:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726975AbfFTRN5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 13:13:57 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:39831 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726530AbfFTRN4 (ORCPT
+        id S1726913AbfFTRQf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 13:16:35 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:52384 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726530AbfFTRQe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 13:13:56 -0400
-Received: by mail-pf1-f193.google.com with SMTP id j2so2027219pfe.6
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2019 10:13:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=SxlO+FSAxDd632DpLfLCq/OUwvg6eaO8V3k3L6zEVyA=;
-        b=AV7X7aYgHwBXxgw3zTNxXUoIkYIRKYXuB2SNjcPxrI5cN6QdU5ft8aLqv61MezByn9
-         Skir3SYjIi4thmMA+ZaNtCXTpB8zIoHuAXP4x2Li0v0AHE1EAGklVzNFRfD5w0XcO8aw
-         NAKrZuz9PjK0bDHSL8idlm6Du30lv3oB9bEmJfs0W0uQ4mHTLhmd1jvwKR4nzmmXhZUZ
-         kMNjCskDOQAjK0P1EXeh8f4R5TVcklnmEUbjaNEPz1n8b676CIOwjjrOSGQFBJY1O2Ql
-         SU+T+HCUc9gWfrwSXFLpSwyv9XBkGr0MnctGYDbFP4ZydiyRA9B0Eq1gFCoVNhtnBbSD
-         xC4w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=SxlO+FSAxDd632DpLfLCq/OUwvg6eaO8V3k3L6zEVyA=;
-        b=Dc2hlFdodj7qGjI+Fc3Eo2QMDdhziQnEza6Ao41nl8nDeTz6C+Uv4g5HOQWByLB/PH
-         2nLkgtUI6V/rcCriMUWuoiBGGNIXy8XKsZkt6IkJc7jI24wIR2amv846X/Q6uw0LtoUQ
-         lCxM1O7Uvv7REBH/tvaVs6QO44DCkyS9hJ2azfuw/eoH8eKUsajVgbPlaYqbE0nOcz9h
-         RH6Sru1H28SAd40mhcb9XHQLGBYatqEEuIzt7FENLsF/BsyNSyBD8MxnN1Pbwko5K6Rt
-         4xv/Q6Z4gLb/ekSrOIUnmKJsTOgdXrVrKXAThxYzwO9S/8muQFF60dUKGLwK3ecRwiyt
-         fkDw==
-X-Gm-Message-State: APjAAAUdpCaKa1b+0wa0TN4fRE5kA+Q+rfAEarqg4vh092j4qhPim9NJ
-        JnyPCoZypLmLM+yNKGRJnUulHA==
-X-Google-Smtp-Source: APXvYqyWa7oDW4n/vwBZPT9s8zK5XpweT+4yAE05XynKgxzqLcEa8yJCFOcFKJcqjzbZfWH02mCGRQ==
-X-Received: by 2002:a63:fa0d:: with SMTP id y13mr13773253pgh.258.1561050835591;
-        Thu, 20 Jun 2019 10:13:55 -0700 (PDT)
-Received: from builder (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id s129sm32753pfb.186.2019.06.20.10.13.54
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 20 Jun 2019 10:13:54 -0700 (PDT)
-Date:   Thu, 20 Jun 2019 10:13:52 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
-Cc:     lgirdwood@gmail.com, broonie@kernel.org,
-        jorge.ramirez-ortiz@linaro.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] regulator: qcom_spmi: Do NULL check for lvs
-Message-ID: <20190620171352.GA19899@builder>
-References: <20190620142228.11773-1-jeffrey.l.hugo@gmail.com>
+        Thu, 20 Jun 2019 13:16:34 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:
+        From:Date:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=kCqgyiR5F0aD4cVPBETsM4czwZlhKydQ/vgPSIJD7N4=; b=JXYWNbvwW9E2LPETc7q4kiFoa
+        Ye2a5VuGyanq9MjczZmXHJZsjGbwD0meqnrbxijKsYaf0Cg2I6bnIz2EUQA28RSgYWvh8cEjD6ZXQ
+        D35i3N/qEMPUh7/DxH3WAxKCYODn72OVqb3cRgbMPhL4Cw55nTweO6IgA07mrBOqOGQle+2i+bI13
+        mTmUvb3IlE7o9poVsCZr8Pz1uYGZT/kREM3eVQqCi27W546CCJO2mL+dARfLPLbPPA41e2f/pSKo8
+        Ro1TaDAZjpepoOZgAfVf5LP+5QD0YNVRAHC3tIBj1y60gxRtrb7tSB34YTlPAGzY94bEYUlKFjh8h
+        fokuyz5BQ==;
+Received: from [177.97.20.138] (helo=coco.lan)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1he0fo-0005vU-Mr; Thu, 20 Jun 2019 17:16:32 +0000
+Date:   Thu, 20 Jun 2019 14:16:28 -0300
+From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Johan Hovold <johan@kernel.org>,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab@s-opensource.com>,
+        Mauro Carvalho Chehab <mchehab@infradead.org>,
+        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+        Stefan Achatz <erazor_de@users.sourceforge.net>
+Subject: Re: [PATCH 04/14] ABI: better identificate tables
+Message-ID: <20190620141628.71157dda@coco.lan>
+In-Reply-To: <20190620162945.GC23052@kroah.com>
+References: <cover.1560477540.git.mchehab+samsung@kernel.org>
+        <6bc45c0d5d464d25d4d16eceac48a2f407166944.1560477540.git.mchehab+samsung@kernel.org>
+        <20190619125135.GG25248@localhost>
+        <20190619105633.7f7315a5@coco.lan>
+        <20190619150207.GA19346@kroah.com>
+        <20190620120150.GH6241@localhost>
+        <20190620125413.GA5170@kroah.com>
+        <20190620112034.0d2be447@coco.lan>
+        <20190620162945.GC23052@kroah.com>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190620142228.11773-1-jeffrey.l.hugo@gmail.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 20 Jun 07:22 PDT 2019, Jeffrey Hugo wrote:
+Em Thu, 20 Jun 2019 18:29:45 +0200
+Greg Kroah-Hartman <gregkh@linuxfoundation.org> escreveu:
 
-> Low-voltage switches (lvs) don't have set_points since the voltage ranges
-> of the output are really controlled by the inputs.  This is a problem for
-> the newly added linear range support in the probe(), as that will cause
-> a null pointer dereference error on older platforms like msm8974 which
-> happen to need to control some of the implemented lvs.
+> On Thu, Jun 20, 2019 at 11:20:34AM -0300, Mauro Carvalho Chehab wrote:
+> > Em Thu, 20 Jun 2019 14:54:13 +0200
+> > Greg Kroah-Hartman <gregkh@linuxfoundation.org> escreveu:
+> >   
+> > > On Thu, Jun 20, 2019 at 02:01:50PM +0200, Johan Hovold wrote:  
+> > > > > I don't know when "Description" and "RST-Description" would be used.
+> > > > > Why not just parse "Description" like rst text and if things are "messy"
+> > > > > we fix them up as found, like you did with the ":" here?  It doesn't
+> > > > > have to be complex, we can always fix them up after-the-fact if new
+> > > > > stuff gets added that doesn't quite parse properly.
+> > > > > 
+> > > > > Just like we do for most kernel-doc formatting :)    
+> > > > 
+> > > > But kernel-doc has a documented format, which was sort of the point I
+> > > > was trying to make. If the new get_abi.pl scripts expects a colon I
+> > > > think it should be mentioned somewhere (e.g. Documentation/ABI/README).
+> > > > 
+> > > > Grepping for attribute entries in linux-next still reveals a number
+> > > > descriptions that still lack that colon and use varying formatting. More
+> > > > are bound to be added later, but perhaps that's ok depending on what
+> > > > you're aiming at here.    
+> > > 
+> > > I'm aiming for "good enough" to start with, and then we can work through
+> > > the exceptions.
+> > > 
+> > > But given that Mauro hasn't resent the script that does the conversion
+> > > of the files, I don't know if that will even matter... {hint}  
+> > 
+> > It sounds I missed something... are you expecting a new version?   
 > 
-> Fix this by adding the appropriate null check.
-> 
+> Yes, the last round of patches didn't have a SPDX header on the script,
+> so I couldn't add it to the tree :(
 
-Thanks Jeff, this resolves the regression I've seen the last couple of
-days on linux-next.
+I could swear I sent you a version with SPDX on it... anyway, I'm
+re-sending the hole thing. The SPDX header addition is on a separate
+patch.
 
-Tested-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 
-Regards,
-Bjorn
-
-> Fixes: 86f4ff7a0c0c ("regulator: qcom_spmi: enable linear range info")
-> Reported-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> Signed-off-by: Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
-> ---
->  drivers/regulator/qcom_spmi-regulator.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/regulator/qcom_spmi-regulator.c b/drivers/regulator/qcom_spmi-regulator.c
-> index 877df33e0246..7f51c5fc8194 100644
-> --- a/drivers/regulator/qcom_spmi-regulator.c
-> +++ b/drivers/regulator/qcom_spmi-regulator.c
-> @@ -2045,7 +2045,7 @@ static int qcom_spmi_regulator_probe(struct platform_device *pdev)
->  			}
->  		}
->  
-> -		if (vreg->set_points->count == 1) {
-> +		if (vreg->set_points && vreg->set_points->count == 1) {
->  			/* since there is only one range */
->  			range = vreg->set_points->range;
->  			vreg->desc.uV_step = range->step_uV;
-> -- 
-> 2.17.1
-> 
+Thanks,
+Mauro
