@@ -2,100 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 495A54CA75
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 11:15:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8AC774CA85
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 11:17:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731264AbfFTJPe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 05:15:34 -0400
-Received: from mail-vk1-f196.google.com ([209.85.221.196]:34063 "EHLO
-        mail-vk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725875AbfFTJPd (ORCPT
+        id S1731341AbfFTJRs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 05:17:48 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:34830 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725965AbfFTJRr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 05:15:33 -0400
-Received: by mail-vk1-f196.google.com with SMTP id g124so435509vkd.1
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2019 02:15:33 -0700 (PDT)
+        Thu, 20 Jun 2019 05:17:47 -0400
+Received: by mail-pg1-f193.google.com with SMTP id s27so1271067pgl.2
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2019 02:17:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=zVEBadlmAqvAbvjrHtPKEhl6sy5MiRg1y/WHqaW1MFk=;
-        b=cEA1L3F3tm4jC6qMJtPjGbKzkv2maSEguj7rZacN6SN4Jk9/AMtS2MNF2eOFHyvKxs
-         pfeQ+CI0ywkDGj9+imLlZycMDNflpxNP++u+UXTVOgnLAstuQsPZX4gkDBjsTYij4ADb
-         /BBc2+hsBf2JkLRNWU6Fqd51xw7GC79O4owGhultlCSlpGReVzvDQgy6AgiacpmmM5t7
-         d1+Egi3EnVBwrSBfPl7NUMIp2EKRrR96ZBeKhrr9qjN5eQ+bzQSJ/z4zMcZNXhBEc0wi
-         sNMH7Mj+o87T3mCuhXr/o8dETxZCcTzcLg/I5sngBwtCxf+AFebNb/dUtY/MbqdJ3MJT
-         5CNQ==
+        h=sender:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=H/N0qHE94BgVcSxh7Y7ddjnVY+VEqSIyYgrIMxgshDU=;
+        b=Jdg/UCsKPmIjRfaapYt1gOM5GjjcSZvHtz8ONkgpvHrAWlb9vbnRJMNl4MW4FbYtEw
+         8+YR65T2T2ap5Lwq5+sMJuahof/pFY9ZKkJuf2gUBIelzu163GN+7HW0H+Ku4aKkWBPN
+         ITlXlxJGNrnau/yhcjNck0/pYz21gwLdhwooI29uqWwrbEgFPJe2wKt024dcE+KG+Vp+
+         zf//1oOezxAGYjrucQmfBYcsUrUDteM5Mwu5XAcx8yY/eRJfguZs2eY1rj5MQEHgax5R
+         RoxM3lbwpH2LrteXty6Tn/Mx5Gh42sZZi/AojBszBTgqvPti6KKt4QFtG1yVDu7GmCB1
+         0krQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=zVEBadlmAqvAbvjrHtPKEhl6sy5MiRg1y/WHqaW1MFk=;
-        b=tY0OaHNJT2KG1pi83Lzi7WaxaSdjp6aY9IuQri0hvkMtp0dQc2Pk+mSwnpiB6aMC7E
-         jdRUYtpZ3eRIB5YtBxRQ6l2V59ohWTPM9LYbXZrjuLqNKc8QtIAb6D63yBXHHO1AUllP
-         te6Wg4sMpOBRYIuwELwtYgIyPSUKnB3wkwxqUO+KcKupKijZ0+Rwg0vuRho44V8HtUMF
-         yqj9+AAY/WXz9RSh0MbAmuvCalsAN17+DdrV8c/nRdU9wJAGQEdv9qYaTnK9mUK6fPZj
-         6RkqnosV87XUl3RhnAsGYJv2tRGt45X7exqw+Np+jn7KGo81JI847tLfsuRqnCTYzPZj
-         AVMw==
-X-Gm-Message-State: APjAAAU2sRjoav5Oph4u+UkYGLI8YFD46W0886JmJU7U3bYoZ7C/oNBR
-        TK2cS8IjtS1QtxRSzL3CgeBjqZpmsQBm++yv1YEaLb4XkBY=
-X-Google-Smtp-Source: APXvYqyPESBDQzVs2eQMsn5+hOSq/k6+/7ihvhDVrl/YTa9c7uIC6OLNGMjx050tdl17kdMYPaV9PehEtZFCtaN9eJM=
-X-Received: by 2002:a1f:2896:: with SMTP id o144mr6607492vko.73.1561022132558;
- Thu, 20 Jun 2019 02:15:32 -0700 (PDT)
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
+         :mime-version:content-transfer-encoding;
+        bh=H/N0qHE94BgVcSxh7Y7ddjnVY+VEqSIyYgrIMxgshDU=;
+        b=hWlXRz9I6Mi88WTzn7JSX8H6K2MtBuPlVkXhn5l5JwBNcj3Yv/hna/zK/9Td+4xnLa
+         4BDf63ZMDyn2bvmcGW4Qm/uNb1SP1hGbcxTKMdmpcVP5J4kUxxOXFtVQDlL+pQuJsyCl
+         7AmuYTKxG8p/8oKdezsOf/DMjSdcvDrGkr7LVyYj0XvC2xXbzLfitPi2JVvwaJE9wDO7
+         W9ZGIv+ay7Ai3RlsUUIQduj0gLNBxWTWfE9ifVxrPlyfExlXUQ7VFmOQYLMJgUN/KjYI
+         3M4Xq8omRf+oybEf+sFgudYeMp0cjHCA5Q89dQepfKQNkDJ6R05+ZbXz/HoCv4wpGwXC
+         nWBw==
+X-Gm-Message-State: APjAAAW8bNS+3xPKJJA7SBs9rkQr1oMsNUBDsmNPN0dc+wF9R8VAVU/Y
+        sSdiGf3hsfJ6fRXEvdNLNzs=
+X-Google-Smtp-Source: APXvYqyjRU2XOSFHLaSw2NHSfqeinOcL6lcfQZPbUgKSsSNdlUUmXuhILPthF8TjGwD0ko3/VxzC9w==
+X-Received: by 2002:a17:90a:e38f:: with SMTP id b15mr2075612pjz.85.1561022266727;
+        Thu, 20 Jun 2019 02:17:46 -0700 (PDT)
+Received: from voyager.ibm.com ([36.255.48.244])
+        by smtp.gmail.com with ESMTPSA id j64sm32324138pfb.126.2019.06.20.02.17.43
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Thu, 20 Jun 2019 02:17:46 -0700 (PDT)
+From:   Joel Stanley <joel@jms.id.au>
+To:     Vijay Khemka <vijaykhemka@fb.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>, Andrew Jeffery <andrew@aj.id.au>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] soc: aspeed: lpc-ctrl: Fix probe error handling
+Date:   Thu, 20 Jun 2019 18:47:38 +0930
+Message-Id: <20190620091738.14683-1-joel@jms.id.au>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-References: <20190617124150.989515-1-arnd@arndb.de>
-In-Reply-To: <20190617124150.989515-1-arnd@arndb.de>
-From:   Oded Gabbay <oded.gabbay@gmail.com>
-Date:   Thu, 20 Jun 2019 12:15:06 +0300
-Message-ID: <CAFCwf13Dwq25R88Sdd6cM2whJvzSaHXpx4ShXoTLDmG-91wS7g@mail.gmail.com>
-Subject: Re: [PATCH] habanalabs: use u64_to_user_ptr() for reading user pointers
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Omer Shpigelman <oshpigelman@habana.ai>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Dalit Ben Zoor <dbenzoor@habana.ai>,
-        Tomer Tayar <ttayar@habana.ai>,
-        "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 17, 2019 at 3:41 PM Arnd Bergmann <arnd@arndb.de> wrote:
->
-> We cannot cast a 64-bit integer to a pointer on 32-bit architectures
-> without a warning:
->
-> drivers/misc/habanalabs/habanalabs_ioctl.c: In function 'debug_coresight':
-> drivers/misc/habanalabs/habanalabs_ioctl.c:143:23: error: cast to pointer from integer of different size [-Werror=int-to-pointer-cast]
->    input = memdup_user((const void __user *) args->input_ptr,
->
-> Use the macro that was defined for this purpose.
->
-> Fixes: 315bc055ed56 ("habanalabs: add new IOCTL for debug, tracing and profiling")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->  drivers/misc/habanalabs/habanalabs_ioctl.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/misc/habanalabs/habanalabs_ioctl.c b/drivers/misc/habanalabs/habanalabs_ioctl.c
-> index eeefb22023e9..b7a0eecf6b6c 100644
-> --- a/drivers/misc/habanalabs/habanalabs_ioctl.c
-> +++ b/drivers/misc/habanalabs/habanalabs_ioctl.c
-> @@ -140,7 +140,7 @@ static int debug_coresight(struct hl_device *hdev, struct hl_debug_args *args)
->         params->op = args->op;
->
->         if (args->input_ptr && args->input_size) {
-> -               input = memdup_user((const void __user *) args->input_ptr,
-> +               input = memdup_user(u64_to_user_ptr(args->input_ptr),
->                                         args->input_size);
->                 if (IS_ERR(input)) {
->                         rc = PTR_ERR(input);
-> --
-> 2.20.0
->
+gcc warns that a mising "flash" phandle node leads to undefined
+behavior later:
 
-Thanks!
-applied to -fixes
+drivers/soc/aspeed/aspeed-lpc-ctrl.c: In function 'aspeed_lpc_ctrl_probe':
+drivers/soc/aspeed/aspeed-lpc-ctrl.c:201:18: error: '*((void *)&resm+8)' may be used uninitialized in this function [-Werror=maybe-uninitialized]
 
-Oded
+Only set the flash base and size if we find a phandle in the device
+tree.
+
+Reported-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Joel Stanley <joel@jms.id.au>
+---
+ drivers/soc/aspeed/aspeed-lpc-ctrl.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/soc/aspeed/aspeed-lpc-ctrl.c b/drivers/soc/aspeed/aspeed-lpc-ctrl.c
+index aca13779764a..eee26c2d8b52 100644
+--- a/drivers/soc/aspeed/aspeed-lpc-ctrl.c
++++ b/drivers/soc/aspeed/aspeed-lpc-ctrl.c
+@@ -223,10 +223,11 @@ static int aspeed_lpc_ctrl_probe(struct platform_device *pdev)
+ 			dev_err(dev, "Couldn't address to resource for flash\n");
+ 			return rc;
+ 		}
++
++		lpc_ctrl->pnor_size = resource_size(&resm);
++		lpc_ctrl->pnor_base = resm.start;
+ 	}
+ 
+-	lpc_ctrl->pnor_size = resource_size(&resm);
+-	lpc_ctrl->pnor_base = resm.start;
+ 
+ 	dev_set_drvdata(&pdev->dev, lpc_ctrl);
+ 
+-- 
+2.20.1
+
