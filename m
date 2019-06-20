@@ -2,98 +2,144 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C22584C4F5
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 03:28:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 06EE44C50D
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 03:44:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731124AbfFTB2M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Jun 2019 21:28:12 -0400
-Received: from mail-io1-f67.google.com ([209.85.166.67]:41857 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726480AbfFTB2L (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Jun 2019 21:28:11 -0400
-Received: by mail-io1-f67.google.com with SMTP id w25so1316404ioc.8
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2019 18:28:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=K+lJ3CLPTlV9tpNBKFgd0Xmeaz/SJ4QdPFY55va1FCk=;
-        b=T9qVefZXg/l4TY1fZ5t4+FBcV8bawtYd7X1iwe2XqARuiVY+xJvg4NGnhUnJ/dR/K1
-         Y9cB1lnaFpB2sOYEZkpB8u1dWTE9wM6t07kCXXzXW3SqvSe6lqHfvnhmN3QyN0W4IRi9
-         CTTi0MmuSSPbmAZXhKPRSNz3zuDNzA0674j2o=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=K+lJ3CLPTlV9tpNBKFgd0Xmeaz/SJ4QdPFY55va1FCk=;
-        b=FDUJIqk8vCrfjiB5rWTEwdgQ03iA/P0Hug/9kt4vlwtPo0Pr9cTMJt7Dq+DE5ioJyr
-         zE0i+ZoTbai3M2wtJseQR/GsBFVcX7qBF7mvUll0iO8M5eFQPlSKlBalCJdlXGLQz6/3
-         LM5NiZkMWydyaJZZBE19dLvOH66By25hdc8oIsW1VVZn9N8VQUqMkqPfjUw72h/8Gl/a
-         O1Ve4RWOrBgvVlIT4FHhzqF/R1WFXDJ6hQLslhxQ/PkNjVpTU7X3Xihh1XuHUbTqQlqN
-         pb5h6hqd7wqw5dSjB6O21ybkQC0GA+PGkvir21wEQwM6awRVNWazdMsCW9TkX7kCzICr
-         c6Nw==
-X-Gm-Message-State: APjAAAUzinefFLHfJRh/Whs2I9RNEKHKB7pwV8a4iGfjxxHiFfIcKALi
-        jvvqrjDodYOym14DU6efvSCC0AFtN3A=
-X-Google-Smtp-Source: APXvYqxp9aX1saz2EW6H9mUyv6K5WGpLW8KhGgvGJzTY6+PjksMifKnkIHdtCCxcioxpuTKqTJekNw==
-X-Received: by 2002:a02:914c:: with SMTP id b12mr14411283jag.105.1560994090948;
-        Wed, 19 Jun 2019 18:28:10 -0700 (PDT)
-Received: from mail-io1-f44.google.com (mail-io1-f44.google.com. [209.85.166.44])
-        by smtp.gmail.com with ESMTPSA id p63sm25055819iof.45.2019.06.19.18.28.10
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Wed, 19 Jun 2019 18:28:10 -0700 (PDT)
-Received: by mail-io1-f44.google.com with SMTP id r185so442791iod.6
-        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2019 18:28:10 -0700 (PDT)
-X-Received: by 2002:a5e:d615:: with SMTP id w21mr12594037iom.0.1560994089873;
- Wed, 19 Jun 2019 18:28:09 -0700 (PDT)
-MIME-Version: 1.0
-References: <1458265206-15733-1-git-send-email-heiko@sntech.de> <1458265206-15733-5-git-send-email-heiko@sntech.de>
-In-Reply-To: <1458265206-15733-5-git-send-email-heiko@sntech.de>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Wed, 19 Jun 2019 18:27:55 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=U23+5pcze=6zDTx0dAYF8HTmbR8s8zem93VhgYgaZeGQ@mail.gmail.com>
-Message-ID: <CAD=FV=U23+5pcze=6zDTx0dAYF8HTmbR8s8zem93VhgYgaZeGQ@mail.gmail.com>
-Subject: Re: [PATCH 04/10] ARM: dts: rockchip: add startup delay to
- rk3288-veyron panel-regulators
-To:     "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>
-Cc:     Heiko Stuebner <heiko@sntech.de>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Yakir Yang <ykk@rock-chips.com>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S1731162AbfFTBnt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Jun 2019 21:43:49 -0400
+Received: from mga01.intel.com ([192.55.52.88]:60105 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726325AbfFTBnt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 19 Jun 2019 21:43:49 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Jun 2019 18:43:48 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.63,394,1557212400"; 
+   d="scan'208";a="243484910"
+Received: from romley-ivt3.sc.intel.com ([172.25.110.60])
+  by orsmga001.jf.intel.com with ESMTP; 19 Jun 2019 18:43:47 -0700
+From:   Fenghua Yu <fenghua.yu@intel.com>
+To:     "Thomas Gleixner" <tglx@linutronix.de>,
+        "Ingo Molnar" <mingo@redhat.com>, "Borislav Petkov" <bp@alien8.de>,
+        "H Peter Anvin" <hpa@zytor.com>,
+        "Andy Lutomirski" <luto@kernel.org>,
+        "Peter Zijlstra" <peterz@infradead.org>,
+        "Ashok Raj" <ashok.raj@intel.com>,
+        "Tony Luck" <tony.luck@intel.com>,
+        "Ravi V Shankar" <ravi.v.shankar@intel.com>
+Cc:     "linux-kernel" <linux-kernel@vger.kernel.org>,
+        "x86" <x86@kernel.org>, Fenghua Yu <fenghua.yu@intel.com>
+Subject: [PATCH v5 0/5] x86/umwait: Enable user wait instructions
+Date:   Wed, 19 Jun 2019 18:33:53 -0700
+Message-Id: <1560994438-235698-1-git-send-email-fenghua.yu@intel.com>
+X-Mailer: git-send-email 2.5.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Today, if an application needs to wait for a very short duration
+they have to have spinloops. Spinloops consume more power and continue
+to use execution resources that could hurt its thread siblings in a core
+with hyperthreads. New instructions umonitor, umwait and tpause allow
+a low power alternative waiting at the same time could improve the HT
+sibling perform while giving it any power headroom. These instructions
+can be used in both user space and kernel space.
 
-On Wed, Fri, 18 Mar 2016 Heiko Stuebner <heiko@sntech.de> wrote:
->
-> The panels need a bit of time to actually turn on. If this isn't
-> observed, this results in problems when trying talk to the panels
-> and thus produces detection errors. 100ms seem to be a safe value
-> for the time being.
->
-> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-> ---
->  arch/arm/boot/dts/rk3288-veyron-jaq.dts    | 1 +
->  arch/arm/boot/dts/rk3288-veyron-jerry.dts  | 1 +
->  arch/arm/boot/dts/rk3288-veyron-minnie.dts | 1 +
->  arch/arm/boot/dts/rk3288-veyron-speedy.dts | 1 +
->  4 files changed, 4 insertions(+)
+A new MSR IA32_UMWAIT_CONTROL allows kernel to set a time limit in
+TSC-quanta that prevents user applications from waiting for a long time.
+This allows applications to yield the CPU and the user application
+should consider using other alternatives to wait.
 
-I know it was 3 years ago, but any idea how to reproduce the problems
-you were seeing without this patch?  I believe the downstream kernel
-never had any delay like this and I'm not aware of any issues.
+A quote from Andy Lutomirski on setting the time limit:
 
-I wonder if the need for this extra 100 ms delay is no longer there
-now that we have:
+"What I want to avoid is the case where it works dramatically
+differently on NO_HZ_FULL systems as compared to everything else.
+Also, UMWAIT may behave a bit differently if the max timeout is hit,
+and I'd like that path to get exercised widely by making it happen
+even on default configs.
 
-3157694d8c7f pwm-backlight: Add support for PWM delays proprieties.
-5fb5caee92ba pwm-backlight: Enable/disable the PWM before/after LCD
-enable toggle.
-6d5922dd0d60 ARM: dts: rockchip: set PWM delay backlight settings for Veyron
+So I propose setting the timeout to either 100 microseconds or 100k
+"cycles" by default."
+
+The processor supports two levels of optimized states: a light-weight
+power/performance optimized state (C0.1 state) or an improved
+power/performance optimized state (C0.2 state with deeper power saving
+and higher exit latency). The above MSR can be used to restrict
+entry to C0.2 and then any request for C0.2 will revert to C0.1.
+
+This patch set covers feature discovery, provides initial values for
+the MSR, adds some sysfs control files for admin to tweak the values
+in the MSR if needed.
+
+The sysfs interface files are in /sys/devices/system/cpu/umwait_control/
+
+GCC 9 enables intrinsics for the instructions. To use the instructions,
+user applications should include <immintrin.h> and be compiled with
+-mwaitpkg.
+
+Detailed information on the instructions, the MSR, and syntax of the
+intrinsics can be found in the latest Intel Architecture Instruction
+Set Extensions and Future Features Programming Reference and Intel 64
+and IA-32 Architectures Software Developer's Manual.
+
+Changelog:
+v5:
+- Change locking from mutex to disabling irq before wrmsr per
+Andy Lutomirski's comment
+- Add macro UMWAIT_CTRL_VAL to explicitly disable C0.2 per
+Thomas Gleixner's comment
+- Move umwait.c to arch/x86/kernel/cpu/ per Peter Zijlstra's comment
+- Add justification of max time 100k per Peter Zijlstra's comment
+
+v4:
+- Error out when bit[1:0] in IA32_UMWAIT_CONTROL is not zero per
+Andy Lutomirski's comment.
+- Use umwait_control_cached to cache IA32_UMWAIT_CONTROL MSR. This
+variable replaces the two previous variables umwait_max_time and
+umwait_c0_2_enabled. The code is simpler than before and the cached MSR
+will be easier to be used in future KVM support.
+
+v3:
+Address issues pointed out by Andy Lutomirski:
+- Change default umwait max time to 100k TSC cycles
+- Setting up MSR on BSP during resume suspend/hibernation
+- A few other naming and coding changes as suggested
+- Some security concerns of the user wait instructions are not issues
+of the patches and cannot be addressed in the patch set. They will be
+discussed on lkml.
+
+Plus:
+- Add ABI document entry for umwait control sysfs interfaces
+
+v2:
+- Address comments from Thomas Gleixner and Andy Lutomirski
+- Remove vDSO functions
+- Add sysfs control file for umwait max time
+
+v1:
+Based on comments from Thomas:
+- Change user APIs to vDSO functions
+- Changed sysfs per comments from Thomas.
+- Change patch descriptions etc
+
+Fenghua Yu (5):
+  x86/cpufeatures: Enumerate user wait instructions
+  x86/umwait: Initialize umwait control values
+  x86/umwait: Add sysfs interface to control umwait C0.2 state
+  x86/umwait: Add sysfs interface to control umwait maximum time
+  x86/umwait: Document umwait control sysfs interfaces
+
+ .../ABI/testing/sysfs-devices-system-cpu      |  21 ++
+ arch/x86/include/asm/cpufeatures.h            |   1 +
+ arch/x86/include/asm/msr-index.h              |   4 +
+ arch/x86/kernel/cpu/Makefile                  |   1 +
+ arch/x86/kernel/cpu/umwait.c                  | 205 ++++++++++++++++++
+ 5 files changed, 232 insertions(+)
+ create mode 100644 arch/x86/kernel/cpu/umwait.c
+
+-- 
+2.19.1
+
