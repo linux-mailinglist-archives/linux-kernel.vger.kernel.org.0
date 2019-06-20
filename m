@@ -2,88 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CC8394C7C1
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 08:59:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 907CD4C7C9
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 09:01:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730464AbfFTG7V (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 02:59:21 -0400
-Received: from mail-wr1-f51.google.com ([209.85.221.51]:39808 "EHLO
-        mail-wr1-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725872AbfFTG7V (ORCPT
+        id S1730248AbfFTHBd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 03:01:33 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:39384 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725977AbfFTHBd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 02:59:21 -0400
-Received: by mail-wr1-f51.google.com with SMTP id x4so1773045wrt.6;
-        Wed, 19 Jun 2019 23:59:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=OwGe+wwXcxGE7MVG6NszekKRb+yyjl24bcgMiAUtrm8=;
-        b=HnEPuIdWJ+u83Cf9tIV1Y5IC6qJoodMpYRNSSX717SVsMuubEVaFOF15XpaGGNUUvm
-         OvqIOOPiTbJTCt4wBLL4u/G+/GgnVgluque9YCIA2zxTkOPLqK3iY0l0GUSkhs5waUL8
-         m12HxFX7N3/M7/J4qgJEvbQsxvolsnRx7winfhTvAd+xuSO7LoBiIyuY+Yd8Uk9oRVZW
-         IT/Rir6F14n25ZOFmBSBfSKCPmhLSLn0SoA3jqpmvEX+is+1FL9SQ9liqB27l7n0vLGk
-         V1LjtbnQ8tIt+hutj4egRblsxDkeG4bSEJ2O3a0vXS1u9iV8JsKAlwNCCHl502MpGfa5
-         tgHA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=OwGe+wwXcxGE7MVG6NszekKRb+yyjl24bcgMiAUtrm8=;
-        b=dqgkwEisobwBpaOmodoGy2iAnkDRqlkaBi1IhwkXetHN3XuEbggpONlI/3gEeJxEMi
-         mM1a1idJzRYWUNpJo0iko7v7o2gyo4AvNjulvbaB427XZqI9XU3T/uyvtkw/lDg8iOi/
-         /WM6LzVdf5OT2li/IlBLw8oZ/hXmaZkYdvtzUMKieVXTiGdn1Vh9azj2sHb+6GY0L5iH
-         YeulMwujAOD8Sc38+2iW+ZE4WCNakELzWp1J3bZud9E2vDw8106Q8cEopgJI4/8EiCQo
-         FRVXSPX3DzZXT3nchKfIwLz78+QugEL9Xl7dsHmJ1IFrbry1x2K3vwVJDA0XTx41FW4O
-         X61w==
-X-Gm-Message-State: APjAAAWGNlArgbAtmvI4J+HPgKwXnMCaYpdxi/7O+0UrOodDtnWZJJdz
-        0NRO0hS8Ui/0wbFI0LOvqWk=
-X-Google-Smtp-Source: APXvYqx4wUtee1331pXODV1GHjEgfQo1oaXBp2gOzH07ls2ipj8cp/TLSt4r6m19NMIJUBBa68s3uQ==
-X-Received: by 2002:a5d:46c6:: with SMTP id g6mr33312516wrs.1.1561013959169;
-        Wed, 19 Jun 2019 23:59:19 -0700 (PDT)
-Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id y12sm20860874wrr.3.2019.06.19.23.59.17
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 19 Jun 2019 23:59:18 -0700 (PDT)
-Date:   Thu, 20 Jun 2019 08:59:16 +0200
-From:   Ingo Molnar <mingo@kernel.org>
-To:     "Paul E. McKenney" <paulmck@linux.ibm.com>
-Cc:     rcu@vger.kernel.org, linux-kernel@vger.kernel.org,
-        bigeasy@linutronix.de, joel@joelfernandes.org,
-        benbjiang@tencent.com, zhenzhong.duan@oracle.com,
-        neeraju@codeaurora.org, longman@redhat.com,
-        andrea.parri@amarulasolutions.com, oleg@redhat.com
-Subject: Re: [GIT PULL rcu/next] RCU commits for 5.3
-Message-ID: <20190620065916.GA110390@gmail.com>
-References: <20190618180742.GA8043@linux.ibm.com>
- <20190619125038.GA8922@linux.ibm.com>
+        Thu, 20 Jun 2019 03:01:33 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=PTOIMEj00vfO8On/6ax+pMtY/ZUuxme2siDQP0KLuaQ=; b=EBW5/LFHzubDzUgD36jUn4ltK
+        qrxrNozYutzNnTPg6QZDL8fZ6B7kRt7eYLWQCkWoZBXXJfVLqQKryunmkWVJXo3RD7JH83G7QE0Zx
+        A3VnuFfAZaRIeyDMDBrrChI2B+wJ4/sY3FH4uMNV/ezC6+LzyLWwTdQKcwLnrIWibcXfPstavnbOR
+        jvnboPFCtC6C94f1MgpEPaFfU/0Qs7umJyhLvke4PRH2Tb2rYd03rflSqlHTQqCTtP3PYxudWevDZ
+        R5GU5lTgKUDim8rG8pGT5lYYnA5ZlZ/h7l8SlvujJi5qT4vQYh/IbWityC8nvddz2wDQ+wi5Fee0C
+        E6jTLrLfA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1hdr4V-00045u-KN; Thu, 20 Jun 2019 07:01:23 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id A7356200B4CB3; Thu, 20 Jun 2019 09:01:20 +0200 (CEST)
+Date:   Thu, 20 Jun 2019 09:01:20 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Vineet Gupta <Vineet.Gupta1@synopsys.com>
+Cc:     Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
+        "linux-snps-arc@lists.infradead.org" 
+        <linux-snps-arc@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Alexey Brodkin <Alexey.Brodkin@synopsys.com>,
+        Jason Baron <jbaron@akamai.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>
+Subject: Re: [PATCH] ARC: ARCv2: jump label: implement jump label patching
+Message-ID: <20190620070120.GU3402@hirez.programming.kicks-ass.net>
+References: <20190614164049.31626-1-Eugeniy.Paltsev@synopsys.com>
+ <C2D7FE5348E1B147BCA15975FBA2307501A252CCC3@us01wembx1.internal.synopsys.com>
+ <20190619081227.GL3419@hirez.programming.kicks-ass.net>
+ <C2D7FE5348E1B147BCA15975FBA2307501A252E40B@us01wembx1.internal.synopsys.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190619125038.GA8922@linux.ibm.com>
+In-Reply-To: <C2D7FE5348E1B147BCA15975FBA2307501A252E40B@us01wembx1.internal.synopsys.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Jun 19, 2019 at 11:55:41PM +0000, Vineet Gupta wrote:
+> On 6/19/19 1:12 AM, Peter Zijlstra wrote:
 
-* Paul E. McKenney <paulmck@linux.ibm.com> wrote:
-
-> On Tue, Jun 18, 2019 at 11:07:42AM -0700, Paul E. McKenney wrote:
-> > Hello, Ingo,
-> > 
-> > This pull request contains the following changes:
+> > I'm assuming you've looked at what x86 currently does and found
+> > something like that doesn't work for ARC?
 > 
-> Gah!!!  This one has some duplicated commits, so please ignore.
-> I will send an updated pull request early next week.
+> Just looked at x86 code and it seems similar
+
+I think you missed a bit.
+
+> >>> +	WRITE_ONCE(*instr_addr, instr);
+> >>> +	flush_icache_range(entry->code, entry->code + JUMP_LABEL_NOP_SIZE);
+> > So do you have a 2 byte opcode that traps unconditionally? In that case
+> > I'm thinking you could do something like x86 does. And it would avoid
+> > that NOP padding you do to get the alignment.
 > 
-> It is functionally correct, but...
-> 
-> One of those weeks, I guess.  :-/
+> Just to be clear there is no trapping going on in the canonical sense of it. There
+> are regular instructions for NO-OP and Branch.
+> We do have 2 byte opcodes for both but as described the branch offset is too
+> limited so not usable.
 
-No problem! :-)
+In particular we do not need the alignment.
 
-Thanks,
+So what the x86 code does is:
 
-	Ingo
+ - overwrite the first byte of the instruction with a single byte trap
+   instruction
+
+ - machine wide IPI which synchronizes I$
+
+At this point, any CPU that encounters this instruction will trap; and
+the trap handler will emulate the 'new' instruction -- typically a jump.
+
+  - overwrite the tail of the instruction (if there is a tail)
+
+  - machine wide IPI which syncrhonizes I$
+
+At this point, nobody will execute the tail, because we'll still trap on
+that first single byte instruction, but if they were to read the
+instruction stream, the tail must be there.
+
+  - overwrite the first byte of the instruction to now have a complete
+    instruction.
+
+  - machine wide IPI which syncrhonizes I$
+
+At this point, any CPU will encounter the new instruction as a whole,
+irrespective of alignment.
+
+
+So the benefit of this scheme is that is works irrespective of the
+instruction fetch window size and don't need the 'funny' alignment
+stuff.
+
+Now, I've no idea if something like this is feasible on ARC; for it to
+work you need that 2 byte trap instruction -- since all instructions are
+2 byte aligned, you can always poke that without issue.
