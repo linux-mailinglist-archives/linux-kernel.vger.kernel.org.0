@@ -2,81 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DC6C34CCBD
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 13:18:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 54B944CCC5
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 13:20:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731468AbfFTLSC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 07:18:02 -0400
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:39580 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726268AbfFTLSC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 07:18:02 -0400
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x5KBHDSm116464;
-        Thu, 20 Jun 2019 06:17:13 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1561029433;
-        bh=9YIcG6AiHgUmr37CnjME814rjWmvhSgfnmVxwIR8FZY=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=L9LJI8sJnky8khbmqas5ZDeiHiDXo11y+9jcgT7uimAmqQi/qvYB2xbTZBDG3x3Hf
-         OS5m45mojrqexLp+HGwxH3mq0YFFwJVbzlDXt+8xUL5wMwIr1ZMdeOlz5Bo9ECLOBj
-         WvuYK591iU6VcdafLzusWf0qD18nJs7aTjx0FvD8=
-Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x5KBHDMO108408
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 20 Jun 2019 06:17:13 -0500
-Received: from DLEE111.ent.ti.com (157.170.170.22) by DLEE115.ent.ti.com
- (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Thu, 20
- Jun 2019 06:17:13 -0500
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE111.ent.ti.com
- (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Thu, 20 Jun 2019 06:17:13 -0500
-Received: from [172.24.190.172] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id x5KBH9Xm081448;
-        Thu, 20 Jun 2019 06:17:10 -0500
-Subject: Re: [RESEND PATCH v5 0/5] ARM: da850: enable cpufreq in DT mode
-To:     Bartosz Golaszewski <brgl@bgdev.pl>,
-        Kevin Hilman <khilman@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        David Lechner <david@lechnology.com>,
-        Adam Ford <aford173@gmail.com>
-CC:     <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-References: <20190527082259.29237-1-brgl@bgdev.pl>
-From:   Sekhar Nori <nsekhar@ti.com>
-Message-ID: <2ac90e9b-5434-0f68-7b59-3c75264ae54e@ti.com>
-Date:   Thu, 20 Jun 2019 16:47:09 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        id S1726810AbfFTLUL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 07:20:11 -0400
+Received: from shell.v3.sk ([90.176.6.54]:50943 "EHLO shell.v3.sk"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726300AbfFTLUL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Jun 2019 07:20:11 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by zimbra.v3.sk (Postfix) with ESMTP id 5217DCBF3B;
+        Thu, 20 Jun 2019 13:20:07 +0200 (CEST)
+Received: from shell.v3.sk ([127.0.0.1])
+        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id zXqrAcrTZPav; Thu, 20 Jun 2019 13:20:00 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by zimbra.v3.sk (Postfix) with ESMTP id 9FC7FCBF26;
+        Thu, 20 Jun 2019 13:20:00 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at zimbra.v3.sk
+Received: from shell.v3.sk ([127.0.0.1])
+        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id Vnc8pR165BgE; Thu, 20 Jun 2019 13:20:00 +0200 (CEST)
+Received: from belphegor.brq.redhat.com (nat-pool-brq-t.redhat.com [213.175.37.10])
+        by zimbra.v3.sk (Postfix) with ESMTPSA id B9C22CBF0D;
+        Thu, 20 Jun 2019 13:19:59 +0200 (CEST)
+From:   Lubomir Rintel <lkundrak@v3.sk>
+To:     Lee Jones <lee.jones@linaro.org>
+Cc:     linux-kernel@vger.kernel.org, Lubomir Rintel <lkundrak@v3.sk>
+Subject: [PATCH RESEND] mfd: cs5535-mfd: remove ifdef OLPC noise
+Date:   Thu, 20 Jun 2019 13:19:57 +0200
+Message-Id: <20190620111957.1385008-1-lkundrak@v3.sk>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-In-Reply-To: <20190527082259.29237-1-brgl@bgdev.pl>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 27/05/19 1:52 PM, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> 
-> Note: resending rebased on top of v5.2-rc2
-> 
-> ===
-> 
-> This series adds cpufreq-dt operating points for da850 boards supported
-> with device tree (da850-lcdk, da850-lego-ev3, da850-evm).
-> 
-> Last patch enables CPUFREQ_DT in davinci_all_defconfig.
+<asm/olpc.h> provides machine_is_olpc() stub for CONFIG_OLPC=3Dn,
+compiler should just optimize the unneeded bits away.
 
-Series applied and pull request sent for v5.3
+Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
+---
+ drivers/mfd/cs5535-mfd.c | 24 +++++++-----------------
+ 1 file changed, 7 insertions(+), 17 deletions(-)
 
-Thanks,
-Sekhar
+diff --git a/drivers/mfd/cs5535-mfd.c b/drivers/mfd/cs5535-mfd.c
+index 0b49940c490e..f1825c0ccbd0 100644
+--- a/drivers/mfd/cs5535-mfd.c
++++ b/drivers/mfd/cs5535-mfd.c
+@@ -100,22 +100,10 @@ static struct mfd_cell cs5535_mfd_cells[] =3D {
+ 	},
+ };
+=20
+-#ifdef CONFIG_OLPC
+-static void cs5535_clone_olpc_cells(void)
+-{
+-	static const char *acpi_clones[] =3D {
+-		"olpc-xo1-pm-acpi",
+-		"olpc-xo1-sci-acpi"
+-	};
+-
+-	if (!machine_is_olpc())
+-		return;
+-
+-	mfd_clone_cell("cs5535-acpi", acpi_clones, ARRAY_SIZE(acpi_clones));
+-}
+-#else
+-static void cs5535_clone_olpc_cells(void) { }
+-#endif
++static const char *olpc_acpi_clones[] =3D {
++	"olpc-xo1-pm-acpi",
++	"olpc-xo1-sci-acpi"
++};
+=20
+ static int cs5535_mfd_probe(struct pci_dev *pdev,
+ 		const struct pci_device_id *id)
+@@ -145,7 +133,9 @@ static int cs5535_mfd_probe(struct pci_dev *pdev,
+ 		dev_err(&pdev->dev, "MFD add devices failed: %d\n", err);
+ 		goto err_disable;
+ 	}
+-	cs5535_clone_olpc_cells();
++
++	if (machine_is_olpc())
++		mfd_clone_cell("cs5535-acpi", olpc_acpi_clones, ARRAY_SIZE(olpc_acpi_c=
+lones));
+=20
+ 	dev_info(&pdev->dev, "%zu devices registered.\n",
+ 			ARRAY_SIZE(cs5535_mfd_cells));
+--=20
+2.21.0
+
