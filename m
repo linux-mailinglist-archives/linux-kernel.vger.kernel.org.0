@@ -2,156 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E71534D301
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 18:13:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F4404D36E
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 18:16:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732320AbfFTQN0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 12:13:26 -0400
-Received: from foss.arm.com ([217.140.110.172]:46806 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732246AbfFTQNZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 12:13:25 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1DDF42B;
-        Thu, 20 Jun 2019 09:13:24 -0700 (PDT)
-Received: from donnerap.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4E3563F246;
-        Thu, 20 Jun 2019 09:13:22 -0700 (PDT)
-Date:   Thu, 20 Jun 2019 17:13:19 +0100
-From:   Andre Przywara <andre.przywara@arm.com>
-To:     Sudeep Holla <sudeep.holla@arm.com>
-Cc:     <peng.fan@nxp.com>, <robh+dt@kernel.org>, <mark.rutland@arm.com>,
-        <jassisinghbrar@gmail.com>, <f.fainelli@gmail.com>,
-        <kernel@pengutronix.de>, <linux-imx@nxp.com>,
-        <shawnguo@kernel.org>, <festevam@gmail.com>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <van.freenix@gmail.com>
-Subject: Re: [PATCH V2 1/2] DT: mailbox: add binding doc for the ARM SMC
- mailbox
-Message-ID: <20190620171319.13dae226@donnerap.cambridge.arm.com>
-In-Reply-To: <20190620092241.GC1248@e107155-lin>
-References: <20190603083005.4304-1-peng.fan@nxp.com>
-        <20190603083005.4304-2-peng.fan@nxp.com>
-        <20190620092241.GC1248@e107155-lin>
-Organization: ARM
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; aarch64-unknown-linux-gnu)
+        id S1732243AbfFTQPy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 12:15:54 -0400
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:11668 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726881AbfFTQPy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Jun 2019 12:15:54 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5d0bb13a0001>; Thu, 20 Jun 2019 09:15:54 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Thu, 20 Jun 2019 09:15:53 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Thu, 20 Jun 2019 09:15:53 -0700
+Received: from HQMAIL101.nvidia.com (172.20.187.10) by HQMAIL104.nvidia.com
+ (172.18.146.11) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 20 Jun
+ 2019 16:15:53 +0000
+Received: from hqnvemgw02.nvidia.com (172.16.227.111) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
+ Transport; Thu, 20 Jun 2019 16:15:53 +0000
+Received: from linux.nvidia.com (Not Verified[10.24.34.185]) by hqnvemgw02.nvidia.com with Trustwave SEG (v7,5,8,10121)
+        id <B5d0bb1370000>; Thu, 20 Jun 2019 09:15:53 -0700
+From:   Sameer Pujar <spujar@nvidia.com>
+To:     <vkoul@kernel.org>, <dan.j.williams@intel.com>
+CC:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
+        <ldewangan@nvidia.com>, <dmaengine@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Sameer Pujar <spujar@nvidia.com>
+Subject: [PATCH] dmaengine: tegra210-adma: fix transfer failure
+Date:   Thu, 20 Jun 2019 21:45:48 +0530
+Message-ID: <1561047348-14413-1-git-send-email-spujar@nvidia.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1561047354; bh=ohJbaSrus9ivGDKfVAYHPSEvxvcXu3P+/EkE2Rx69dQ=;
+        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
+         MIME-Version:Content-Type;
+        b=P9JNy3PKkOH53Xbyzr0tn2IzDyUc6rvw1q6vv4EefhJPW0Ls6gIkxtwv15tDDQ9O0
+         QUQrXsyAoxOmCBB76werU/Km/AA7SZ+37LHZLHI7Ut8rIOUMkEqqrw2hbNcO4Q71zC
+         LTNbfXnbxK2A5flHVFQd+OZxkoJ8sSRZq3Qku8Dq/lS3dvnN64wTuT/YgyhX4lz0c+
+         BxTImo6r1ORM2cX+MFz9eAMEmP3TYWLkNGziFFgzYFv0U9ie7O8hrY/vARgiL91mN/
+         cBopQJ43ksFgPQ2MBsveaW6qBaqdf0wfO20gij0K6I+u4KMpj37de3WGA4PF8ndo06
+         xWcLQ3z9qRQWA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 20 Jun 2019 10:22:41 +0100
-Sudeep Holla <sudeep.holla@arm.com> wrote:
+From Tegra186 onwards OUTSTANDING_REQUESTS field is added in channel
+configuration register (bits 7:4). ADMA allows a maximum of 8 reads
+to source and that many writes to target memory be outstanding at any
+given point of time. If this field is not programmed, DMA transfers
+fail to happen.
 
-> On Mon, Jun 03, 2019 at 04:30:04PM +0800, peng.fan@nxp.com wrote:
-> > From: Peng Fan <peng.fan@nxp.com>
-> > 
-> > The ARM SMC mailbox binding describes a firmware interface to trigger
-> > actions in software layers running in the EL2 or EL3 exception levels.
-> > The term "ARM" here relates to the SMC instruction as part of the ARM
-> > instruction set, not as a standard endorsed by ARM Ltd.
-> > 
-> > Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> > ---
-> > 
-> > V2:
-> > Introduce interrupts as a property.
-> > 
-> > V1:
-> > arm,func-ids is still kept as an optional property, because there is no
-> > defined SMC funciton id passed from SCMI. So in my test, I still use
-> > arm,func-ids for ARM SIP service.
-> > 
-> >  .../devicetree/bindings/mailbox/arm-smc.txt        | 101 +++++++++++++++++++++
-> >  1 file changed, 101 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/mailbox/arm-smc.txt
-> > 
-> > diff --git a/Documentation/devicetree/bindings/mailbox/arm-smc.txt b/Documentation/devicetree/bindings/mailbox/arm-smc.txt
-> > new file mode 100644
-> > index 000000000000..401887118c09
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/mailbox/arm-smc.txt
-> > @@ -0,0 +1,101 @@
-> > +ARM SMC Mailbox Interface
-> > +=========================
-> > +
-> > +This mailbox uses the ARM smc (secure monitor call) instruction to trigger
-> > +a mailbox-connected activity in firmware, executing on the very same core
-> > +as the caller. By nature this operation is synchronous and this mailbox
-> > +provides no way for asynchronous messages to be delivered the other way
-> > +round, from firmware to the OS, but asynchronous notification could also
-> > +be supported. However the value of r0/w0/x0 the firmware returns after
-> > +the smc call is delivered as a received message to the mailbox framework,
-> > +so a synchronous communication can be established, for a asynchronous
-> > +notification, no value will be returned. The exact meaning of both the
-> > +action the mailbox triggers as well as the return value is defined by
-> > +their users and is not subject to this binding.
-> > +
-> > +One use case of this mailbox is the SCMI interface, which uses shared memory
-> > +to transfer commands and parameters, and a mailbox to trigger a function
-> > +call. This allows SoCs without a separate management processor (or when
-> > +such a processor is not available or used) to use this standardized
-> > +interface anyway.
-> > +
-> > +This binding describes no hardware, but establishes a firmware interface.
-> > +Upon receiving an SMC using one of the described SMC function identifiers,
-> > +the firmware is expected to trigger some mailbox connected functionality.
-> > +The communication follows the ARM SMC calling convention[1].
-> > +Firmware expects an SMC function identifier in r0 or w0. The supported
-> > +identifiers are passed from consumers, or listed in the the arm,func-ids
-> > +properties as described below. The firmware can return one value in
-> > +the first SMC result register, it is expected to be an error value,
-> > +which shall be propagated to the mailbox client.
-> > +
-> > +Any core which supports the SMC or HVC instruction can be used, as long as
-> > +a firmware component running in EL3 or EL2 is handling these calls.
-> > +
-> > +Mailbox Device Node:
-> > +====================
-> > +
-> > +This node is expected to be a child of the /firmware node.
-> > +
-> > +Required properties:
-> > +--------------------
-> > +- compatible:		Shall be "arm,smc-mbox"
-> > +- #mbox-cells		Shall be 1 - the index of the channel needed.
-> > +- arm,num-chans		The number of channels supported.
-> > +- method:		A string, either:
-> > +			"hvc": if the driver shall use an HVC call, or
-> > +			"smc": if the driver shall use an SMC call.
-> > +
-> > +Optional properties:
-> > +- arm,func-ids		An array of 32-bit values specifying the function
-> > +			IDs used by each mailbox channel. Those function IDs
-> > +			follow the ARM SMC calling convention standard [1].
-> > +			There is one identifier per channel and the number
-> > +			of supported channels is determined by the length
-> > +			of this array.
-> > +- interrupts		SPI interrupts may be listed for notification,
-> > +			each channel should use a dedicated interrupt
-> > +			line.
-> > +  
-> 
-> I think SMC mailbox as mostly unidirectional/Tx only channel. And the
-> interrupts here as stated are for notifications, so I prefer to keep
-> them separate channel. I assume SMC call return indicates completion.
-> Or do you plan to use these interrupts as the indication for completion
-> of the command? I see in patch 2/2 the absence of IRQ is anyway dealt
-> the way I mention above.
-> 
-> Does it make sense or am I missing something here ?
+Thus added 'ch_pending_req' member in chip data structure and the
+same is populated with maximum allowed pending requests. Since the
+field is not applicable to Tegra210, mentioned bit fields are unused
+and hence the member is initialized with 0.
 
-I think you are right. From a mailbox point of view "completion" means
-that the trigger has reached the other side. A returning smc call is a
-perfect indication of this fact. Whether the action triggered by this
-mailbox command has completed is a totally separate question and out of
-the scope of the mailbox. This should be handled by a higher level
-protocol (SCPI in this case). Which could mean that this employs a
-separate return mailbox channel, which is RX only and implemented by
-interrupts. Which could or could not be part of this driver.
+Fixes: 433de642a76c ("dmaengine: tegra210-adma: add support for Tegra186/Tegra194")
 
-Cheers,
-Andre
+Signed-off-by: Sameer Pujar <spujar@nvidia.com>
+---
+ drivers/dma/tegra210-adma.c | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/drivers/dma/tegra210-adma.c b/drivers/dma/tegra210-adma.c
+index 17ea4dd99..8d291cf 100644
+--- a/drivers/dma/tegra210-adma.c
++++ b/drivers/dma/tegra210-adma.c
+@@ -96,6 +96,7 @@ struct tegra_adma;
+  * @ch_req_tx_shift: Register offset for AHUB transmit channel select.
+  * @ch_req_rx_shift: Register offset for AHUB receive channel select.
+  * @ch_base_offset: Register offset of DMA channel registers.
++ * @ch_pending_req: Outstaning DMA requests for a channel.
+  * @ch_fifo_ctrl: Default value for channel FIFO CTRL register.
+  * @ch_req_mask: Mask for Tx or Rx channel select.
+  * @ch_req_max: Maximum number of Tx or Rx channels available.
+@@ -109,6 +110,7 @@ struct tegra_adma_chip_data {
+ 	unsigned int ch_req_tx_shift;
+ 	unsigned int ch_req_rx_shift;
+ 	unsigned int ch_base_offset;
++	unsigned int ch_pending_req;
+ 	unsigned int ch_fifo_ctrl;
+ 	unsigned int ch_req_mask;
+ 	unsigned int ch_req_max;
+@@ -613,6 +615,7 @@ static int tegra_adma_set_xfer_params(struct tegra_adma_chan *tdc,
+ 			 ADMA_CH_CTRL_FLOWCTRL_EN;
+ 	ch_regs->config |= cdata->adma_get_burst_config(burst_size);
+ 	ch_regs->config |= ADMA_CH_CONFIG_WEIGHT_FOR_WRR(1);
++	ch_regs->config |= cdata->ch_pending_req;
+ 	ch_regs->fifo_ctrl = cdata->ch_fifo_ctrl;
+ 	ch_regs->tc = desc->period_len & ADMA_CH_TC_COUNT_MASK;
+ 
+@@ -797,6 +800,7 @@ static const struct tegra_adma_chip_data tegra210_chip_data = {
+ 	.ch_req_tx_shift	= 28,
+ 	.ch_req_rx_shift	= 24,
+ 	.ch_base_offset		= 0,
++	.ch_pending_req		= 0,
+ 	.ch_fifo_ctrl		= TEGRA210_FIFO_CTRL_DEFAULT,
+ 	.ch_req_mask		= 0xf,
+ 	.ch_req_max		= 10,
+@@ -811,6 +815,7 @@ static const struct tegra_adma_chip_data tegra186_chip_data = {
+ 	.ch_req_tx_shift	= 27,
+ 	.ch_req_rx_shift	= 22,
+ 	.ch_base_offset		= 0x10000,
++	.ch_pending_req		= (8 << 4),
+ 	.ch_fifo_ctrl		= TEGRA186_FIFO_CTRL_DEFAULT,
+ 	.ch_req_mask		= 0x1f,
+ 	.ch_req_max		= 20,
+-- 
+2.7.4
+
