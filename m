@@ -2,41 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 439AE4D771
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 20:19:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0E2634D876
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 20:26:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729540AbfFTSPF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 14:15:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43594 "EHLO mail.kernel.org"
+        id S1728107AbfFTS0r (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 14:26:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59466 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729531AbfFTSPC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 14:15:02 -0400
+        id S1728076AbfFTSFq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Jun 2019 14:05:46 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 273C72082C;
-        Thu, 20 Jun 2019 18:15:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8B6D3215EA;
+        Thu, 20 Jun 2019 18:05:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561054501;
-        bh=49ezs3/aU5lyBfud/X1bg7oOESx5cpNZfLmlGK7x1To=;
+        s=default; t=1561053946;
+        bh=e2nZU217aUWFTWDMd16QQVgHs+P9wdQvvC9J69tTyhs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=yqW9Qzh/o/iRYzAzoMEyVP6c+cLcvWG5XCWc8NXsI18qb+iH7Nj8QtdnpArwqjvnb
-         KZJdi/22QFz+R8agWXu5q74wGWmSKhgKAyPr51/xpPYGr29zPNBsKw2BxPii9trV4/
-         s/ZJ13LcL14IvJ/1ju5x5o86Ct5vQ/lBnEljwrJY=
+        b=mzOSPmHyBujuNNso6nuOzGeHgi5tIqNp+CWfC9pV9FO+oa/szRIc7fiqDdpnVhroZ
+         Z+wgCZcjWt0fuoZXriFlgvKqz+Gx5KK3Yf1IfbubwU/QQ8vNWMSDl4MokYUVyaUNe5
+         RkIvR5nQMlgulgSi7naIAOS20Mzn2GIVRJkTyuJ8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Robert Hancock <hancock@sedsystems.ca>,
-        Vivien Didelot <vivien.didelot@gmail.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.1 21/98] net: dsa: microchip: Dont try to read stats for unused ports
-Date:   Thu, 20 Jun 2019 19:56:48 +0200
-Message-Id: <20190620174350.185106211@linuxfoundation.org>
+        stable@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Anshuman Khandual <anshuman.khandual@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 075/117] arm64/mm: Inhibit huge-vmap with ptdump
+Date:   Thu, 20 Jun 2019 19:56:49 +0200
+Message-Id: <20190620174357.017502121@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190620174349.443386789@linuxfoundation.org>
-References: <20190620174349.443386789@linuxfoundation.org>
+In-Reply-To: <20190620174351.964339809@linuxfoundation.org>
+References: <20190620174351.964339809@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,37 +47,76 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Robert Hancock <hancock@sedsystems.ca>
+[ Upstream commit 7ba36eccb3f83983a651efd570b4f933ecad1b5c ]
 
-[ Upstream commit 6bb9e376c2a4cc5120c3bf5fd3048b9a0a6ec1f8 ]
+The arm64 ptdump code can race with concurrent modification of the
+kernel page tables. At the time this was added, this was sound as:
 
-If some of the switch ports were not listed in the device tree, due to
-being unused, the ksz_mib_read_work function ended up accessing a NULL
-dp->slave pointer and causing an oops. Skip checking statistics for any
-unused ports.
+* Modifications to leaf entries could result in stale information being
+  logged, but would not result in a functional problem.
 
-Fixes: 7c6ff470aa867f53 ("net: dsa: microchip: add MIB counter reading support")
-Signed-off-by: Robert Hancock <hancock@sedsystems.ca>
-Reviewed-by: Vivien Didelot <vivien.didelot@gmail.com>
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+* Boot time modifications to non-leaf entries (e.g. freeing of initmem)
+  were performed when the ptdump code cannot be invoked.
+
+* At runtime, modifications to non-leaf entries only occurred in the
+  vmalloc region, and these were strictly additive, as intermediate
+  entries were never freed.
+
+However, since commit:
+
+  commit 324420bf91f6 ("arm64: add support for ioremap() block mappings")
+
+... it has been possible to create huge mappings in the vmalloc area at
+runtime, and as part of this existing intermediate levels of table my be
+removed and freed.
+
+It's possible for the ptdump code to race with this, and continue to
+walk tables which have been freed (and potentially poisoned or
+reallocated). As a result of this, the ptdump code may dereference bogus
+addresses, which could be fatal.
+
+Since huge-vmap is a TLB and memory optimization, we can disable it when
+the runtime ptdump code is in use to avoid this problem.
+
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Fixes: 324420bf91f60582 ("arm64: add support for ioremap() block mappings")
+Acked-by: Ard Biesheuvel <ard.biesheuvel@arm.com>
+Signed-off-by: Mark Rutland <mark.rutland@arm.com>
+Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/dsa/microchip/ksz_common.c |    3 +++
- 1 file changed, 3 insertions(+)
+ arch/arm64/mm/mmu.c | 11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
 
---- a/drivers/net/dsa/microchip/ksz_common.c
-+++ b/drivers/net/dsa/microchip/ksz_common.c
-@@ -83,6 +83,9 @@ static void ksz_mib_read_work(struct wor
- 	int i;
+diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
+index 0a56898f8410..efd65fc85238 100644
+--- a/arch/arm64/mm/mmu.c
++++ b/arch/arm64/mm/mmu.c
+@@ -765,13 +765,18 @@ void *__init fixmap_remap_fdt(phys_addr_t dt_phys)
  
- 	for (i = 0; i < dev->mib_port_cnt; i++) {
-+		if (dsa_is_unused_port(dev->ds, i))
-+			continue;
-+
- 		p = &dev->ports[i];
- 		mib = &p->mib;
- 		mutex_lock(&mib->cnt_mutex);
+ int __init arch_ioremap_pud_supported(void)
+ {
+-	/* only 4k granule supports level 1 block mappings */
+-	return IS_ENABLED(CONFIG_ARM64_4K_PAGES);
++	/*
++	 * Only 4k granule supports level 1 block mappings.
++	 * SW table walks can't handle removal of intermediate entries.
++	 */
++	return IS_ENABLED(CONFIG_ARM64_4K_PAGES) &&
++	       !IS_ENABLED(CONFIG_ARM64_PTDUMP_DEBUGFS);
+ }
+ 
+ int __init arch_ioremap_pmd_supported(void)
+ {
+-	return 1;
++	/* See arch_ioremap_pud_supported() */
++	return !IS_ENABLED(CONFIG_ARM64_PTDUMP_DEBUGFS);
+ }
+ 
+ int pud_set_huge(pud_t *pud, phys_addr_t phys, pgprot_t prot)
+-- 
+2.20.1
+
 
 
