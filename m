@@ -2,149 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 554A74C57D
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 04:39:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 43E1E4C5A4
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 04:55:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731677AbfFTCjB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 19 Jun 2019 22:39:01 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:25309 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1731358AbfFTCid (ORCPT
+        id S1731210AbfFTCzD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 19 Jun 2019 22:55:03 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:44801 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726370AbfFTCzD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 19 Jun 2019 22:38:33 -0400
-X-UUID: 7cdb53777c6d40dd95594d017f91e663-20190620
-X-UUID: 7cdb53777c6d40dd95594d017f91e663-20190620
-Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw02.mediatek.com
-        (envelope-from <weiyi.lu@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 1926986207; Thu, 20 Jun 2019 10:38:22 +0800
-Received: from mtkcas09.mediatek.inc (172.21.101.178) by
- mtkmbs02n1.mediatek.inc (172.21.101.77) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Thu, 20 Jun 2019 10:38:20 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas09.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Thu, 20 Jun 2019 10:38:20 +0800
-From:   Weiyi Lu <weiyi.lu@mediatek.com>
-To:     Nicolas Boichat <drinkcat@chromium.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Rob Herring <robh@kernel.org>
-CC:     James Liao <jamesjj.liao@mediatek.com>,
-        Fan Chen <fan.chen@mediatek.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <srv_heupstream@mediatek.com>, Weiyi Lu <weiyi.lu@mediatek.com>,
-        Yong Wu <yong.wu@mediatek.com>
-Subject: [PATCH v6 14/14] arm64: dts: Add power controller device node of MT8183
-Date:   Thu, 20 Jun 2019 10:38:06 +0800
-Message-ID: <1560998286-9189-15-git-send-email-weiyi.lu@mediatek.com>
-X-Mailer: git-send-email 1.8.1.1.dirty
-In-Reply-To: <1560998286-9189-1-git-send-email-weiyi.lu@mediatek.com>
-References: <1560998286-9189-1-git-send-email-weiyi.lu@mediatek.com>
+        Wed, 19 Jun 2019 22:55:03 -0400
+Received: by mail-ed1-f68.google.com with SMTP id k8so2259101edr.11
+        for <linux-kernel@vger.kernel.org>; Wed, 19 Jun 2019 19:55:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=OZ+ejxndkdfy6SmQH0Sb4mkugBsvHzjhSLcNChrvWio=;
+        b=nJBn19UPynmT3Ibyor9XDF2WMVfWpTauLfl98pZIsfjouBRoiw9pMuKnW9NeN//I9D
+         SfSaxQVpHRX0Kmnf/Z5QFl4Rk1qIJ3mxWyo088XCIDQnmhoBZu6czXrDsLnWVSiCT1IX
+         ooigmZ+JzHGbsJCqePRHhWSEbKUXii/v88oKZAqyOyFCatttqhOkMAMinBoyxk0km5Xb
+         CfqlC7gpsHj/coBMOtjtRb9Iyz7dPT5sa2rb0FY9EnCmWHWStZ1SbXN3tR0lV05TjlY1
+         HfkqvRTyIREla9LCGaU0siybl63bMNuLha/fzqenKQf6JfqFeWlxDPYeyx18yTWttQxO
+         wsxw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=OZ+ejxndkdfy6SmQH0Sb4mkugBsvHzjhSLcNChrvWio=;
+        b=neAK8Jed/AWgC8v5lW66XvLByxhQgwvcjMGTOjix3fRgeMAvVcUvu6ct6N5YDd+hbA
+         Sx+62Yj7bkONSrTpVdufCHoBO0uCV2FNZRdT9NQjvdKqhN5NIaL6P0QCsxjhYnRlVAPo
+         48TKGHaLo3JR9dI87CPSN8xMRrIkrlCXNMUVf4fLc90+FgQa+BqCXLr2iDenrpUz5NsQ
+         bfgim+A1nabx48JQ4B+nNYTvkVQHmBl8WcgAkFEFrViNMl/fGTYBntQL6ZzOJ7xWubJB
+         sJ69XZHxPEa6n3/5VDFpSopoY7GWzf7KgiA5UJrSTLEZcrFyT7cNu8Bfb5meZaRwyIC9
+         NnQg==
+X-Gm-Message-State: APjAAAVE8+92IoNS/vq4bOjycrvyCYsDWsP9i6WQ6V8yiCg517sH6/Nk
+        3JXJKqFZWw/pw1R1a/Ecvmc=
+X-Google-Smtp-Source: APXvYqwPRevbrgfSt4uDPXCliMqeMhgRwXbGEHZx81KfOtD6/K0ijJQWfwx9EbJnA7PP7TcFHRmjmw==
+X-Received: by 2002:a17:906:e204:: with SMTP id gf4mr66672835ejb.302.1560999301295;
+        Wed, 19 Jun 2019 19:55:01 -0700 (PDT)
+Received: from archlinux-epyc ([2a01:4f9:2b:2b15::2])
+        by smtp.gmail.com with ESMTPSA id n7sm3557068ejl.58.2019.06.19.19.55.00
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Wed, 19 Jun 2019 19:55:00 -0700 (PDT)
+Date:   Wed, 19 Jun 2019 19:54:59 -0700
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     Nick Desaulniers <ndesaulniers@google.com>
+Cc:     akpm@linux-foundation.org, clang-built-linux@googlegroups.com,
+        joe@perches.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] MAINTAINERS: add CLANG/LLVM BUILD SUPPORT info
+Message-ID: <20190620025459.GB5669@archlinux-epyc>
+References: <d4b42858366e50f92b133ceb6399e9f16a7cef88.camel@perches.com>
+ <20190620001907.255803-1-ndesaulniers@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190620001907.255803-1-ndesaulniers@google.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add power controller node and smi-common node for MT8183
-In scpsys node, it contains clocks and regmapping of
-infracfg and smi-common for bus protection.
+On Wed, Jun 19, 2019 at 05:19:07PM -0700, 'Nick Desaulniers' via Clang Built Linux wrote:
+> Add keyword support so that our mailing list gets cc'ed for clang/llvm
+> patches. We're pretty active on our mailing list so far as code review.
+> There are numerous Googlers like myself that are paid to support
+> building the Linux kernel with Clang and LLVM.
+> 
+> Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
 
-Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
----
- arch/arm64/boot/dts/mediatek/mt8183.dtsi | 62 ++++++++++++++++++++++++++++++++
- 1 file changed, 62 insertions(+)
+FWIW, if it is not too late:
 
-diff --git a/arch/arm64/boot/dts/mediatek/mt8183.dtsi b/arch/arm64/boot/dts/mediatek/mt8183.dtsi
-index 08274bf..75c4881 100644
---- a/arch/arm64/boot/dts/mediatek/mt8183.dtsi
-+++ b/arch/arm64/boot/dts/mediatek/mt8183.dtsi
-@@ -8,6 +8,7 @@
- #include <dt-bindings/clock/mt8183-clk.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- #include <dt-bindings/interrupt-controller/irq.h>
-+#include <dt-bindings/power/mt8183-power.h>
- 
- / {
- 	compatible = "mediatek,mt8183";
-@@ -196,6 +197,62 @@
- 			#clock-cells = <1>;
- 		};
- 
-+		scpsys: syscon@10006000 {
-+			compatible = "mediatek,mt8183-scpsys", "syscon";
-+			#power-domain-cells = <1>;
-+			reg = <0 0x10006000 0 0x1000>;
-+			clocks = <&topckgen CLK_TOP_MUX_AUD_INTBUS>,
-+				 <&infracfg CLK_INFRA_AUDIO>,
-+				 <&infracfg CLK_INFRA_AUDIO_26M_BCLK>,
-+				 <&topckgen CLK_TOP_MUX_MFG>,
-+				 <&topckgen CLK_TOP_MUX_MM>,
-+				 <&topckgen CLK_TOP_MUX_CAM>,
-+				 <&topckgen CLK_TOP_MUX_IMG>,
-+				 <&topckgen CLK_TOP_MUX_IPU_IF>,
-+				 <&topckgen CLK_TOP_MUX_DSP>,
-+				 <&topckgen CLK_TOP_MUX_DSP1>,
-+				 <&topckgen CLK_TOP_MUX_DSP2>,
-+				 <&mmsys CLK_MM_SMI_COMMON>,
-+				 <&mmsys CLK_MM_SMI_LARB0>,
-+				 <&mmsys CLK_MM_SMI_LARB1>,
-+				 <&mmsys CLK_MM_GALS_COMM0>,
-+				 <&mmsys CLK_MM_GALS_COMM1>,
-+				 <&mmsys CLK_MM_GALS_CCU2MM>,
-+				 <&mmsys CLK_MM_GALS_IPU12MM>,
-+				 <&mmsys CLK_MM_GALS_IMG2MM>,
-+				 <&mmsys CLK_MM_GALS_CAM2MM>,
-+				 <&mmsys CLK_MM_GALS_IPU2MM>,
-+				 <&imgsys CLK_IMG_LARB5>,
-+				 <&imgsys CLK_IMG_LARB2>,
-+				 <&camsys CLK_CAM_LARB6>,
-+				 <&camsys CLK_CAM_LARB3>,
-+				 <&camsys CLK_CAM_SENINF>,
-+				 <&camsys CLK_CAM_CAMSV0>,
-+				 <&camsys CLK_CAM_CAMSV1>,
-+				 <&camsys CLK_CAM_CAMSV2>,
-+				 <&camsys CLK_CAM_CCU>,
-+				 <&ipu_conn CLK_IPU_CONN_IPU>,
-+				 <&ipu_conn CLK_IPU_CONN_AHB>,
-+				 <&ipu_conn CLK_IPU_CONN_AXI>,
-+				 <&ipu_conn CLK_IPU_CONN_ISP>,
-+				 <&ipu_conn CLK_IPU_CONN_CAM_ADL>,
-+				 <&ipu_conn CLK_IPU_CONN_IMG_ADL>;
-+			clock-names = "audio", "audio1", "audio2",
-+				      "mfg", "mm", "cam",
-+				      "isp", "vpu", "vpu1",
-+				      "vpu2", "vpu3", "mm-0",
-+				      "mm-1", "mm-2", "mm-3",
-+				      "mm-4", "mm-5", "mm-6",
-+				      "mm-7", "mm-8", "mm-9",
-+				      "isp-0", "isp-1", "cam-0",
-+				      "cam-1", "cam-2", "cam-3",
-+				      "cam-4", "cam-5", "cam-6",
-+				      "vpu-0", "vpu-1", "vpu-2",
-+				      "vpu-3", "vpu-4", "vpu-5";
-+			infracfg = <&infracfg>;
-+			smi_comm = <&smi_common>;
-+		};
-+
- 		apmixedsys: syscon@1000c000 {
- 			compatible = "mediatek,mt8183-apmixedsys", "syscon";
- 			reg = <0 0x1000c000 0 0x1000>;
-@@ -260,6 +317,11 @@
- 			#clock-cells = <1>;
- 		};
- 
-+		smi_common: smi@14019000 {
-+			compatible = "mediatek,mt8183-smi-common", "syscon";
-+			reg = <0 0x14019000 0 0x1000>;
-+		};
-+
- 		imgsys: syscon@15020000 {
- 			compatible = "mediatek,mt8183-imgsys", "syscon";
- 			reg = <0 0x15020000 0 0x1000>;
--- 
-1.8.1.1.dirty
+Reviewed-by: Nathan Chancellor <natechancellor@gmail.com>
 
+> ---
+> Changes V1 -> V2:
+> - tabs vs spaces as per Joe Perches
+> 
+>  MAINTAINERS | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index ef58d9a881ee..f92432452f46 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -3940,6 +3940,14 @@ M:	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+>  S:	Maintained
+>  F:	.clang-format
+>  
+> +CLANG/LLVM BUILD SUPPORT
+> +L:	clang-built-linux@googlegroups.com
+> +W:	https://clangbuiltlinux.github.io/
+> +B:	https://github.com/ClangBuiltLinux/linux/issues
+> +C:	irc://chat.freenode.net/clangbuiltlinux
+> +S:	Supported
+> +K:	\b(?i:clang|llvm)\b
+> +
+>  CLEANCACHE API
+>  M:	Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+>  L:	linux-kernel@vger.kernel.org
+> -- 
+> 2.22.0.410.gd8fdbe21b5-goog
+> 
