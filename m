@@ -2,42 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E3354D4D8
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 19:24:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DEC6E4D501
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 19:25:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732362AbfFTRYG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 13:24:06 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:52598 "EHLO
+        id S1732374AbfFTRYQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 13:24:16 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:52576 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732170AbfFTRXU (ORCPT
+        with ESMTP id S1732159AbfFTRXT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 13:23:20 -0400
+        Thu, 20 Jun 2019 13:23:19 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Sender:Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
         Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From:
         Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=86TkPPpFJuPy6eZbgDCbTxzixd78qAKph70hSGg4B2A=; b=Zh8ChdpjsyoRdr5MI8wxvQhrc/
-        r7TNo/xgDdhHJg/JELsFNSjsYg+skhi5iJDyewwBsIcf88Knfwxjf92QGbNI7pqfCTkOPGc3r51I8
-        l/jXQdDFz0p7MH72ON/ttQ0DqDkQFk4v++0GnVOaj3H5+4ERT5K7MhrgwTNzZeq824agJ1sWMuRhi
-        NOfnDUhZOFubAFRJrTmy7CXxbMFNdbVGdcRC/jtRBK2CZB/9rwK2OBsuyOCZ4q3OvjBFBj6mL4+Fq
-        gKGpelt6p62b9D/NIdH0MuzvdoFe2/8RsASaruDT2lrLkckmIM7eN3S2G+Pfjv2RTaHT39kuZLx8r
-        kw9oyMqA==;
+        bh=YlkVRaJYoloPTJHSMGpuuWEZdOaSNGKkqHxmAd4fl1s=; b=JqJ22RS8x5aZfiVIMPJPFgIKSU
+        7YBDFpuBz9BXmuTMmXXEhbf7AVT/UZebH67y/OfS9w2jIXmfI7GeC6ydTo7avEJKX/1VXCG4uasp/
+        F+RQWsjayIUZnGvdj9Cuj9io4wZtZwmWVpAKwBwpcJBQLJ6upZ1K8Si857ZVplovrLWF9VqC+QpbZ
+        4gkDBkKBgOud8npAhzsxp7eYATkT51iAIu2RuFR+pKL0UdWy0GDgU4ZNueh3z3gGv9F3Bna6YpMr+
+        bBbWd1BIguLNt+3z332fKuxAy8Yekpcjv1YXTP05UPSkdv4VDvUUnCXybDTh9ZtP083Jabaxsoka7
+        pcY0UDlQ==;
 Received: from [177.97.20.138] (helo=bombadil.infradead.org)
         by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1he0mM-0008Rs-8b; Thu, 20 Jun 2019 17:23:18 +0000
+        id 1he0mM-0008Rv-9h; Thu, 20 Jun 2019 17:23:18 +0000
 Received: from mchehab by bombadil.infradead.org with local (Exim 4.92)
         (envelope-from <mchehab@bombadil.infradead.org>)
-        id 1he0mK-0000E2-2F; Thu, 20 Jun 2019 14:23:16 -0300
+        id 1he0mK-0000E7-32; Thu, 20 Jun 2019 14:23:16 -0300
 From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>
 Cc:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Mauro Carvalho Chehab <mchehab@infradead.org>,
         linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>
-Subject: [PATCH v2 21/22] scripts/get_feat.pl: handle ".." special case
-Date:   Thu, 20 Jun 2019 14:23:13 -0300
-Message-Id: <59a9078408e4c4bf593c60af48e30ddfee845354.1561050806.git.mchehab+samsung@kernel.org>
+Subject: [PATCH v2 22/22] scripts/get_abi.pl: change script to allow parsing in ReST mode
+Date:   Thu, 20 Jun 2019 14:23:14 -0300
+Message-Id: <c4d540b2df8f17bbcd9284c25910a23b081c9cf9.1561050806.git.mchehab+samsung@kernel.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <cover.1561050806.git.mchehab+samsung@kernel.org>
 References: <cover.1561050806.git.mchehab+samsung@kernel.org>
@@ -48,31 +48,150 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The status ".." Means that the feature can't be implemented
-on a given architecture.
+Right now, several ABI files won't parse as ReST, as they
+contain severe violations to the spec, with makes the script
+to crash.
 
-The problem is that this doesn't show anything at the
-output, so replace it by "---", with is a markup for a long
-hyphen.
+So, the code has a sanity logic with escapes bad code and
+cleans tags that can cause Sphinx to crash.
+
+Add support for disabling this mode.
+
+Right now, as enabling rst-mode causes crash, it is disabled
+by default.
 
 Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 ---
- scripts/get_feat.pl | 2 ++
- 1 file changed, 2 insertions(+)
+ scripts/get_abi.pl | 74 ++++++++++++++++++++++++++++++----------------
+ 1 file changed, 48 insertions(+), 26 deletions(-)
 
-diff --git a/scripts/get_feat.pl b/scripts/get_feat.pl
-index 401cbc820caa..79d83595addd 100755
---- a/scripts/get_feat.pl
-+++ b/scripts/get_feat.pl
-@@ -141,6 +141,8 @@ sub parse_feat {
- 				$max_size_arch = length($a);
- 			}
+diff --git a/scripts/get_abi.pl b/scripts/get_abi.pl
+index 7bc619b6890c..e2cd2234af34 100755
+--- a/scripts/get_abi.pl
++++ b/scripts/get_abi.pl
+@@ -12,8 +12,14 @@ my $man;
+ my $debug;
+ my $prefix="Documentation/ABI";
  
-+			$status = "---" if ($status =~ m/^\.\.$/);
++#
++# If true, assumes that the description is formatted with ReST
++#
++my $description_is_rst = 0;
 +
- 			$archs{$a} = 1;
- 			$arch_table{$a} = $status;
- 			next;
+ GetOptions(
+ 	"debug|d+" => \$debug,
++	"rst-source!" => \$description_is_rst,
+ 	"dir=s" => \$prefix,
+ 	'help|?' => \$help,
+ 	man => \$man
+@@ -145,14 +151,15 @@ sub parse_abi {
+ 					next;
+ 				}
+ 				if ($tag eq "description") {
+-					next if ($content =~ m/^\s*$/);
+-					if ($content =~ m/^(\s*)(.*)/) {
+-						my $new_content = $2;
+-						$space = $new_tag . $sep . $1;
+-						while ($space =~ s/\t+/' ' x (length($&) * 8 - length($`) % 8)/e) {}
+-						$space =~ s/./ /g;
+-						$data{$what}->{$tag} .= "$new_content\n";
++					# Preserve initial spaces for the first line
++					$content = ' ' x length($new_tag) . $sep . $content;
++					$content =~ s,^(\s*):,$1 ,;
++					if ($content =~ m/^(\s*)(.*)$/) {
++						$space = $1;
++						$content = $2;
+ 					}
++					while ($space =~ s/\t+/' ' x (length($&) * 8 - length($`) % 8)/e) {}
++					$data{$what}->{$tag} .= $content;
+ 				} else {
+ 					$data{$what}->{$tag} = $content;
+ 				}
+@@ -168,11 +175,15 @@ sub parse_abi {
+ 
+ 		if ($tag eq "description") {
+ 			if (!$data{$what}->{description}) {
+-				next if (m/^\s*\n/);
++				s/^($space)//;
+ 				if (m/^(\s*)(.*)/) {
+-					$space = $1;
+-					while ($space =~ s/\t+/' ' x (length($&) * 8 - length($`) % 8)/e) {}
+-					$data{$what}->{$tag} .= "$2\n";
++					my $sp = $1;
++					while ($sp =~ s/\t+/' ' x (length($&) * 8 - length($`) % 8)/e) {}
++					my $content = "$sp$2";
++
++					$content =~ s/^($space)//;
++
++					$data{$what}->{$tag} .= "$content";
+ 				}
+ 			} else {
+ 				my $content = $_;
+@@ -282,23 +293,27 @@ sub output_rest {
+ 		print "Defined on file :ref:`$file <$fileref>`\n\n" if ($type ne "File");
+ 
+ 		my $desc = $data{$what}->{description};
+-		$desc =~ s/^\s+//;
+-
+-		# Remove title markups from the description, as they won't work
+-		$desc =~ s/\n[\-\*\=\^\~]+\n/\n/g;
+ 
+ 		if (!($desc =~ /^\s*$/)) {
+-			if ($desc =~ m/\:\n/ || $desc =~ m/\n[\t ]+/  || $desc =~ m/[\x00-\x08\x0b-\x1f\x7b-\xff]/) {
+-				# put everything inside a code block
+-				$desc =~ s/\n/\n /g;
+-
+-				print "::\n\n";
+-				print " $desc\n\n";
+-			} else {
+-				# Escape any special chars from description
+-				$desc =~s/([\x00-\x08\x0b-\x1f\x21-\x2a\x2d\x2f\x3c-\x40\x5c\x5e-\x60\x7b-\xff])/\\$1/g;
+-
++			if ($description_is_rst) {
+ 				print "$desc\n\n";
++			} else {
++				$desc =~ s/^\s+//;
++
++				# Remove title markups from the description, as they won't work
++				$desc =~ s/\n[\-\*\=\^\~]+\n/\n\n/g;
++
++				if ($desc =~ m/\:\n/ || $desc =~ m/\n[\t ]+/  || $desc =~ m/[\x00-\x08\x0b-\x1f\x7b-\xff]/) {
++					# put everything inside a code block
++					$desc =~ s/\n/\n /g;
++
++					print "::\n\n";
++					print " $desc\n\n";
++				} else {
++					# Escape any special chars from description
++					$desc =~s/([\x00-\x08\x0b-\x1f\x21-\x2a\x2d\x2f\x3c-\x40\x5c\x5e-\x60\x7b-\xff])/\\$1/g;
++					print "$desc\n\n";
++				}
+ 			}
+ 		} else {
+ 			print "DESCRIPTION MISSING for $what\n\n" if (!$data{$what}->{is_file});
+@@ -390,7 +405,7 @@ abi_book.pl - parse the Linux ABI files and produce a ReST book.
+ 
+ =head1 SYNOPSIS
+ 
+-B<abi_book.pl> [--debug] [--man] [--help] [--dir=<dir>] <COMAND> [<ARGUMENT>]
++B<abi_book.pl> [--debug] [--man] [--help] --[(no-)rst-source] [--dir=<dir>] <COMAND> [<ARGUMENT>]
+ 
+ Where <COMMAND> can be:
+ 
+@@ -413,6 +428,13 @@ B<validate>              - validate the ABI contents
+ Changes the location of the ABI search. By default, it uses
+ the Documentation/ABI directory.
+ 
++=item B<--rst-source> and B<--no-rst-source>
++
++The input file may be using ReST syntax or not. Those two options allow
++selecting between a rst-compliant source ABI (--rst-source), or a
++plain text that may be violating ReST spec, so it requres some escaping
++logic (--no-rst-source).
++
+ =item B<--debug>
+ 
+ Put the script in verbose mode, useful for debugging. Can be called multiple
 -- 
 2.21.0
 
