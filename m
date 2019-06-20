@@ -2,189 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2EDE94D0F1
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 16:52:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 426374D0F6
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 16:53:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732006AbfFTOwu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 10:52:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52238 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726675AbfFTOwu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 10:52:50 -0400
-Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EEB7420679;
-        Thu, 20 Jun 2019 14:52:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561042369;
-        bh=EaDyAtg8euX5pskKcouYfYWBKvYrsXwOMR+jrlOcxls=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=0Dnu+BLgZjPnr6dVZfMvc9QRpCCo9QL7NQCYB0LduXY0a3Rubd+QRCxquCtI9ydWN
-         modMScwVPqyXLJvh2J8qRhQaLTwUtTKEBMoVLNzMswBHo+Ayr4Z8bcSWxVwN7/yUax
-         be55PZYyBWukBftlXgAwMpGKM7cGveaPR1FvCMJg=
-Received: by mail-qt1-f169.google.com with SMTP id y57so3482414qtk.4;
-        Thu, 20 Jun 2019 07:52:48 -0700 (PDT)
-X-Gm-Message-State: APjAAAXQtYlcYe4hl/KwVdz9yOjw26xnfjHR80HHPeaCOhPGEf6/TMU0
-        FmBruWlJu/vu4b+fty6hmYOI1z4ZdgnGnqDbXw==
-X-Google-Smtp-Source: APXvYqyR3TdgTdHL9HJ+C/MH0tWTCoy8T6RDUCj3s/Rtzv9hCbDuW8dyF53jU3kMLWuDuPl6q2X9SvIBU++c4EcOkzw=
-X-Received: by 2002:aed:3fb0:: with SMTP id s45mr59844862qth.136.1561042368214;
- Thu, 20 Jun 2019 07:52:48 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190619215156.27795-1-robh@kernel.org> <20190620090122.GB26689@ulmo>
-In-Reply-To: <20190620090122.GB26689@ulmo>
-From:   Rob Herring <robh@kernel.org>
-Date:   Thu, 20 Jun 2019 08:52:36 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqKC-RDjdMQWM6yk_HiWu-WwuU+vUf946t=TDJAxnqMW7Q@mail.gmail.com>
-Message-ID: <CAL_JsqKC-RDjdMQWM6yk_HiWu-WwuU+vUf946t=TDJAxnqMW7Q@mail.gmail.com>
-Subject: Re: [RFC PATCH 1/4] dt-bindings: display: Convert common panel
- bindings to DT schema
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     dri-devel <dri-devel@lists.freedesktop.org>,
-        devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Content-Type: text/plain; charset="UTF-8"
+        id S1732063AbfFTOxB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 10:53:01 -0400
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:36039 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732048AbfFTOw6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Jun 2019 10:52:58 -0400
+Received: by mail-qk1-f194.google.com with SMTP id g18so2109997qkl.3
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2019 07:52:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lca.pw; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=5oMdsQsw1n7pkd5dZK0BAR68goU9Cphs7Z7vjhmXNXA=;
+        b=if6+rXaoBnz+H02oYwem3HWXB48VPwWoSvmotiKQcqueZkz88R/UOJrQJGPnqSxWh0
+         X3WWxz+KMriBFBvZG0/EZYb9KDDdGilbulSCa5O193BQx6OEd9S4APxsT3UV78tLkx6n
+         9WXhfxiDzSEcl6WRrOWKy533PY7TkmIDzQcBW47lcU6tBxY6A/Leti2v2Qxk0TsMDGA6
+         1hqoNBZw/ZyMe154WWMQCmMz6g4Lj58hgSdmjM6+cwvRNW3fbMoFd6qdZ0iPJMu4of9V
+         y7ZbI0HRLfHcm8QOkYoc0KpKXqUbujLWeiBtQ02Z71c6zN+vOkispdwvmTBl0TJGOVHZ
+         H8Bw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=5oMdsQsw1n7pkd5dZK0BAR68goU9Cphs7Z7vjhmXNXA=;
+        b=P/ZB6n8mDiQtB975yV/Df6ShnsrctaWKGV/x2iKM8XCExti6STF2IH4sBOcJY7VrUJ
+         f9OezE4NSEwtMnVKHA+h8mRSW5fr/ygit+dU4kGNkBYaeEu+ifDkNF1saCXwEdbVQ8Ap
+         dNc+ax2bcTaPOVHL1WY/GEqM6VrO8Q0PoXXjaZUiTXTvGwYCg9N+R3QN4WbQqZK8On34
+         qPyKyrD2niAvVYAAQPUXJLFwrRAyYvIB6a3yq6CPsNmI5OzIwUTrKbsDIodr1DxmWOcy
+         Z0yS50ypdU9Z0xhK5C2fBTTOFSxI7Zc6Ra9VXHW5D6L150R6etg4/GFHvMV0j3syjTNj
+         ROmA==
+X-Gm-Message-State: APjAAAWogSsz/7QaA6MIkbz8cy3meQD9mdLiNN01F1h2nGtAIwCjrWmx
+        AJgFYyOL13nDcDw3+jcXT0fn3g==
+X-Google-Smtp-Source: APXvYqyLJk0+3HOrUCnuJqkk0jfG4hnZ4d747OQBhmE1HQEm9E2OZkcZvXeiDoYq6X0FOJ8JYq4oTw==
+X-Received: by 2002:ae9:eb96:: with SMTP id b144mr25466663qkg.321.1561042377583;
+        Thu, 20 Jun 2019 07:52:57 -0700 (PDT)
+Received: from qcai.nay.com (nat-pool-bos-t.redhat.com. [66.187.233.206])
+        by smtp.gmail.com with ESMTPSA id f9sm10553867qtl.75.2019.06.20.07.52.56
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 20 Jun 2019 07:52:57 -0700 (PDT)
+From:   Qian Cai <cai@lca.pw>
+To:     davem@davemloft.net
+Cc:     edumazet@google.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Qian Cai <cai@lca.pw>
+Subject: [PATCH -next] inet: fix compilation warnings in fqdir_pre_exit()
+Date:   Thu, 20 Jun 2019 10:52:40 -0400
+Message-Id: <1561042360-20480-1-git-send-email-cai@lca.pw>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 20, 2019 at 3:01 AM Thierry Reding <thierry.reding@gmail.com> wrote:
->
-> On Wed, Jun 19, 2019 at 03:51:53PM -0600, Rob Herring wrote:
-> > Convert the common panel bindings to DT schema consolidating scattered
-> > definitions to a single schema file.
-> >
-> > The 'simple-panel' binding just a collection of properties and not a
-> > complete binding itself. All of the 'simple-panel' properties are
-> > covered by the panel-common.txt binding with the exception of the
-> > 'no-hpd' property, so add that to the schema.
-> >
-> > As there are lots of references to simple-panel.txt, just keep the file
-> > with a reference to panel-common.yaml for now until all the bindings are
-> > converted.
-> >
-> > Cc: Thierry Reding <thierry.reding@gmail.com>
-> > Cc: Sam Ravnborg <sam@ravnborg.org>
-> > Cc: Maxime Ripard <maxime.ripard@bootlin.com>
-> > Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> > Cc: dri-devel@lists.freedesktop.org
-> > Signed-off-by: Rob Herring <robh@kernel.org>
-> > ---
-> > Note there's still some references to panel-common.txt that I need to
-> > update or just go ahead and convert to schema.
-> >
-> >  .../bindings/display/panel/panel-common.txt   | 101 -------------
-> >  .../bindings/display/panel/panel-common.yaml  | 143 ++++++++++++++++++
-> >  .../bindings/display/panel/panel.txt          |   4 -
-> >  .../bindings/display/panel/simple-panel.txt   |  29 +---
-> >  4 files changed, 144 insertions(+), 133 deletions(-)
-> >  delete mode 100644 Documentation/devicetree/bindings/display/panel/panel-common.txt
-> >  create mode 100644 Documentation/devicetree/bindings/display/panel/panel-common.yaml
->
-> I know it was this way before, but perhaps remove the redundant panel-
-> prefix while at it?
+The linux-next commit "inet: fix various use-after-free in defrags
+units" [1] introduced compilation warnings,
 
-Sure.
+./include/net/inet_frag.h:117:1: warning: 'inline' is not at beginning
+of declaration [-Wold-style-declaration]
+ static void inline fqdir_pre_exit(struct fqdir *fqdir)
+ ^~~~~~
+In file included from ./include/net/netns/ipv4.h:10,
+                 from ./include/net/net_namespace.h:20,
+                 from ./include/linux/netdevice.h:38,
+                 from ./include/linux/icmpv6.h:13,
+                 from ./include/linux/ipv6.h:86,
+                 from ./include/net/ipv6.h:12,
+                 from ./include/rdma/ib_verbs.h:51,
+                 from ./include/linux/mlx5/device.h:37,
+                 from ./include/linux/mlx5/driver.h:51,
+                 from
+drivers/net/ethernet/mellanox/mlx5/core/pagealloc.c:37:
 
+[1] https://lore.kernel.org/netdev/20190618180900.88939-3-edumazet@google.com/
 
-> > diff --git a/Documentation/devicetree/bindings/display/panel/panel-common.yaml b/Documentation/devicetree/bindings/display/panel/panel-common.yaml
-> > new file mode 100644
-> > index 000000000000..6fe87254edad
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/display/panel/panel-common.yaml
-> > @@ -0,0 +1,143 @@
-> > +# SPDX-License-Identifier: GPL-2.0
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/display/panel/panel-common.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: Common Properties for Display Panels
-> > +
-> > +maintainers:
-> > +  - Thierry Reding <thierry.reding@gmail.com>
-> > +  - Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-> > +
-> > +description: |
-> > +  This document defines device tree properties common to several classes of
-> > +  display panels. It doesn't constitue a device tree binding specification by
-> > +  itself but is meant to be referenced by device tree bindings.
-> > +
-> > +  When referenced from panel device tree bindings the properties defined in this
-> > +  document are defined as follows. The panel device tree bindings are
-> > +  responsible for defining whether each property is required or optional.
-> > +
-> > +
->
-> Are the two blank lines here on purpose?
+Signed-off-by: Qian Cai <cai@lca.pw>
+---
+ include/net/inet_frag.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-No.
+diff --git a/include/net/inet_frag.h b/include/net/inet_frag.h
+index 46574d996f1d..010f26b31c89 100644
+--- a/include/net/inet_frag.h
++++ b/include/net/inet_frag.h
+@@ -114,7 +114,7 @@ struct inet_frags {
+ 
+ int fqdir_init(struct fqdir **fqdirp, struct inet_frags *f, struct net *net);
+ 
+-static void inline fqdir_pre_exit(struct fqdir *fqdir)
++static inline void fqdir_pre_exit(struct fqdir *fqdir)
+ {
+ 	fqdir->high_thresh = 0; /* prevent creation of new frags */
+ 	fqdir->dead = true;
+-- 
+1.8.3.1
 
-> The original document had two
-> blank lines here, but that was mostly for readability I would guess. The
-> YAML format doesn't really need additional formatting for readability,
-> so perhaps just remove the extra blank line?
->
-> > +properties:
-> > +  # Descriptive Properties
-> > +  width-mm:
-> > +    description: The width-mm and height-mm specify the width and height of the
-> > +      physical area where images are displayed. These properties are expressed
-> > +      in millimeters and rounded to the closest unit.
-> > +
-> > +  height-mm:
-> > +    description: The width-mm and height-mm specify the width and height of the
-> > +      physical area where images are displayed. These properties are expressed
-> > +      in millimeters and rounded to the closest unit.
->
-> I suppose there's no way in YAML to share the description between both
-> the width-mm and height-mm properties? It's a little unfortunate that we
-> have to copy, but if there's no better way, guess we'll have to live
-> with it.
-
-I could make it a comment instead, but then we loose being able to
-parse it. I should probably just reword them to be separate:
-
-"Specifies the height of the physical area where images are displayed.
-The property is expressed in millimeters and rounded to the closest
-unit."
-
-Also, just realized I need to make these 2 dependencies on either
-other (i.e. not valid to only have one).
-
-> > +  label:
-> > +    description: |
-> > +      The label property specifies a symbolic name for the panel as a
-> > +      string suitable for use by humans. It typically contains a name inscribed
-> > +      on the system (e.g. as an affixed label) or specified in the system's
-> > +      documentation (e.g. in the user's manual).
-> > +
-> > +      If no such name exists, and unless the property is mandatory according to
-> > +      device tree bindings, it shall rather be omitted than constructed of
-> > +      non-descriptive information. For instance an LCD panel in a system that
-> > +      contains a single panel shall not be labelled "LCD" if that name is not
-> > +      inscribed on the system or used in a descriptive fashion in system
-> > +      documentation.
-> > +
-> > +  rotation:
-> > +    description:
-> > +      Display rotation in degrees counter clockwise (0,90,180,270)
-> > +    allOf:
-> > +      - $ref: /schemas/types.yaml#/definitions/uint32
-> > +      - enum: [ 0, 90, 180, 270 ]
-> > +
-> > +  # Display Timings
-> > +  panel-timing:
->
-> Am I the only one bugged by the redundancy in this property name? What
-> else is the timing going to express if not the timing of the panel that
-> it's part of. "timing" really would be enough. Anyway, not much we can
-> do about it now.
-
-I'm just happy we have a defined name.
-
-Rob
