@@ -2,77 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0C8484CB1B
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 11:40:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B40804CB21
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 11:41:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731005AbfFTJkT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 05:40:19 -0400
-Received: from mx2.suse.de ([195.135.220.15]:49268 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725937AbfFTJkT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 05:40:19 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 795A9AED4;
-        Thu, 20 Jun 2019 09:40:18 +0000 (UTC)
-From:   Juergen Gross <jgross@suse.com>
-To:     xen-devel@lists.xenproject.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Cc:     Juergen Gross <jgross@suse.com>,
-        Alexander Duyck <alexander.h.duyck@linux.intel.com>
-Subject: [PATCH RFC] mm: fix regression with deferred struct page init
-Date:   Thu, 20 Jun 2019 11:40:15 +0200
-Message-Id: <20190620094015.21206-1-jgross@suse.com>
-X-Mailer: git-send-email 2.16.4
+        id S1731183AbfFTJle (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 05:41:34 -0400
+Received: from cmccmta2.chinamobile.com ([221.176.66.80]:2498 "EHLO
+        cmccmta2.chinamobile.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726096AbfFTJla (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Jun 2019 05:41:30 -0400
+Received: from spf.mail.chinamobile.com (unknown[172.16.121.11]) by rmmx-syy-dmz-app05-12005 (RichMail) with SMTP id 2ee55d0b54b9ee7-aa075; Thu, 20 Jun 2019 17:41:13 +0800 (CST)
+X-RM-TRANSID: 2ee55d0b54b9ee7-aa075
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG: 00000000
+Received: from localhost.localdomain (unknown[223.105.0.243])
+        by rmsmtp-syy-appsvr06-12006 (RichMail) with SMTP id 2ee65d0b54b833c-25d6d;
+        Thu, 20 Jun 2019 17:41:13 +0800 (CST)
+X-RM-TRANSID: 2ee65d0b54b833c-25d6d
+From:   Ding Xiang <dingxiang@cmss.chinamobile.com>
+To:     stefanr@s5r6.in-berlin.de
+Cc:     linux1394-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+Subject: [PATCH] fireware: Remove always true condition
+Date:   Thu, 20 Jun 2019 17:40:17 +0800
+Message-Id: <1561023617-2218-1-git-send-email-dingxiang@cmss.chinamobile.com>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit 0e56acae4b4dd4a9 ("mm: initialize MAX_ORDER_NR_PAGES at a time
-instead of doing larger sections") is causing a regression on some
-systems when the kernel is booted as Xen dom0.
+The range of max_hops is 0~15 and gap_count_table size is 16,
+so the condition is always true, just remove it.
 
-The system will just hang in early boot.
-
-Reason is an endless loop in get_page_from_freelist() in case the first
-zone looked at has no free memory. deferred_grow_zone() is always
-returning true due to the following code snipplet:
-
-  /* If the zone is empty somebody else may have cleared out the zone */
-  if (!deferred_init_mem_pfn_range_in_zone(&i, zone, &spfn, &epfn,
-                                           first_deferred_pfn)) {
-          pgdat->first_deferred_pfn = ULONG_MAX;
-          pgdat_resize_unlock(pgdat, &flags);
-          return true;
-  }
-
-This in turn results in the loop as get_page_from_freelist() is
-assuming forward progress can be made by doing some more struct page
-initialization.
-
-Fixes: 0e56acae4b4dd4a9 ("mm: initialize MAX_ORDER_NR_PAGES at a time instead of doing larger sections")
+Signed-off-by: Ding Xiang <dingxiang@cmss.chinamobile.com>
 ---
-This patch makes my system boot again as Xen dom0, but I'm not really
-sure it is the correct way to do it, hence the RFC.
-Signed-off-by: Juergen Gross <jgross@suse.com>
----
- mm/page_alloc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/firewire/core-card.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index d66bc8abe0af..6ee754b5cd92 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -1826,7 +1826,7 @@ deferred_grow_zone(struct zone *zone, unsigned int order)
- 						 first_deferred_pfn)) {
- 		pgdat->first_deferred_pfn = ULONG_MAX;
- 		pgdat_resize_unlock(pgdat, &flags);
--		return true;
-+		return false;
- 	}
- 
- 	/*
+diff --git a/drivers/firewire/core-card.c b/drivers/firewire/core-card.c
+index 54be881..3489d00 100644
+--- a/drivers/firewire/core-card.c
++++ b/drivers/firewire/core-card.c
+@@ -462,8 +462,7 @@ static void bm_work(struct work_struct *work)
+ 	 * Pick a gap count from 1394a table E-1.  The table doesn't cover
+ 	 * the typically much larger 1394b beta repeater delays though.
+ 	 */
+-	if (!card->beta_repeaters_present &&
+-	    root_node->max_hops < ARRAY_SIZE(gap_count_table))
++	if (!card->beta_repeaters_present)
+ 		gap_count = gap_count_table[root_node->max_hops];
+ 	else
+ 		gap_count = 63;
 -- 
-2.16.4
+1.9.1
+
+
 
