@@ -2,109 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BC5694D09E
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 16:44:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 42B0A4D0A5
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 16:47:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726958AbfFTOok (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 10:44:40 -0400
-Received: from mail-yw1-f66.google.com ([209.85.161.66]:43646 "EHLO
-        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726492AbfFTOoj (ORCPT
+        id S1731671AbfFTOrC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 10:47:02 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:45981 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726921AbfFTOrA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 10:44:39 -0400
-Received: by mail-yw1-f66.google.com with SMTP id t2so1263048ywe.10
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2019 07:44:39 -0700 (PDT)
+        Thu, 20 Jun 2019 10:47:00 -0400
+Received: by mail-wr1-f67.google.com with SMTP id f9so3290302wre.12
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2019 07:46:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=hkFAHTitPkfoSMrSNRMsrnAtfZq9o+iv5woQgM2GCxU=;
-        b=thXTMTeTx0xXiZ9u/a78f4w6z2h57qLbhWVkhGpc5uU4+H4pPEGPk9N0YCZIJUb/U4
-         TnuCUQ66JQqC0RvWoZCgR5L5jwqo76zVzKpMp8pXzP0t0CQ13sojAuWtJV7WnzKSCT2L
-         TWtmySeyPfLwUziR7l0nrBHtk8fljJ+2ySjxfL+NG8AENzVWfMDj+iozng9mw4Awlsxa
-         skqETBHwe+amhnj7vzDXN7JX46bW7xj9yy4+eq7BrRCQxowABoE0AiBdKbjHH05Jx41W
-         5BmmPDMNbpX33eiLB6cDqnj9kFawoUkLCrF0p8UIYzkm0l8IfyFnL90oSO42R54TvW4k
-         dHxA==
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=oyyHT2lwIblI7pqbXaGA8lthaH3RzK0tbWj+O93TtPs=;
+        b=Oit0hFLJiNyL9EMSEqexEcPXKgySrpANwU0lVIrg7hHPpm+tC6du8Xwa0nqH+37qDB
+         kVnMVGC2CbL6Xo8bWlAAVR7wzML9t8QatRqDQ9OFvVXs8Ko1+a2DqPqv5O4Ae9CpT+VH
+         CbZvW0Kzy524h244pqvDUS9FQfHcOgiejizU+DFkR3HOW4UPSp9Oy74e8/nSVk/+vl+E
+         zqte5zaoEnGWau1/BoAmgAm3CQ1P1GfPd1/gkdEKfe3BGnWbyX0Fr5oitGvMIrPOVtvf
+         0K5V1191mLtxlfVEZTgf3fAhq9Kj5m5n6y8+WbvdikSJNUNP5cceEUwEbjc+YrwUl9oe
+         8vkw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=hkFAHTitPkfoSMrSNRMsrnAtfZq9o+iv5woQgM2GCxU=;
-        b=YVpfnJ4JQruoL7R5sL5ZfxxaZwk2jaFtIDHem0DnNzSacJFx1HrYxXe5SzOH8qP1Zy
-         OeVvchJ+FqigvBP90S3x1tI6mrm5u8v0uoXqhnRIWthITzxHS0oDpbSmjrpSuh/jhTda
-         7lHkDzMb2F6PaXuU5olZmMD6cV6vJr0SaTl4gy+XwRxiCBpS9KHRr2P6RZpZ8JFAbDDD
-         7jvz8SAwOKVEGGHeC71Yr9jypH4L1bkhmdMDW06zfyzVWq5DG5sWGxmQSWumfYnTkbDO
-         P2nCdCHFKRra97121xVsmCmTKiSqy/g4CIrM3cD30bK713y7KTxPyLY2/G3Xb5MAx5rI
-         7HEA==
-X-Gm-Message-State: APjAAAXb9vNUWHrQoJuHRjn+Nq64y12S7mu+QKqHFSgEq/EsbFYJJG8I
-        68waGD5TeotQxXAQj5ByPE6k8tigKq4UmIBlNKraTw==
-X-Google-Smtp-Source: APXvYqx6zBr4fQkuPVHdnX/C78xgvMrTTDAZuq5i6MOjKE9DTzL7jnNL4Y6jb/qP1KrId0xDX5nVw5xKzMf3llYMevw=
-X-Received: by 2002:a81:ae0e:: with SMTP id m14mr55624057ywh.308.1561041878378;
- Thu, 20 Jun 2019 07:44:38 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=oyyHT2lwIblI7pqbXaGA8lthaH3RzK0tbWj+O93TtPs=;
+        b=Ybhd0JwTUTf4SaQzlQaVxIl8DlICT9SEqzj+f79v8wxbYCtlKrshexgU5dypMq47b+
+         uHjI1VFUd+RUteq7xsz/x2n5x+kYT+VrKmXOWZ4p8Twwj2yAbJhKYTc/kqHcOwHgYjAA
+         lh6v6rc142MZoaIgPbgvhXEFfeLzhj9nCVQ4+YhNVl1B5Cw++lkSvOOqFPoJ+n+9E6Qn
+         LHtBDAbISx95L6g/bjL8FtnnFH2n8TIqt4CAOWqFC/nC8p3l+X3l12OGPkcFOQRfRK7W
+         0S6p/2g1YpN/33kYnd4lt2MDVyMIe9ZCfg3Bt7HCc4ld0PTAmPZMGaHN5qX5wQvKFCiR
+         AT+Q==
+X-Gm-Message-State: APjAAAWs4bAxh5Hgb9Y8aaA8JnbbY/8HnbiqVd7n1HL9c7oznh+Al/Th
+        TodWwOC90h908V5ZN9Im0+EGVQ==
+X-Google-Smtp-Source: APXvYqw3Z7uKmbYj8tHPoxZ0pdtdU567UPfWnhCzUL9GENblV9yERFF+nmh7LNw95ZafmmZ9x2hYuA==
+X-Received: by 2002:adf:e442:: with SMTP id t2mr17566195wrm.286.1561042018342;
+        Thu, 20 Jun 2019 07:46:58 -0700 (PDT)
+Received: from bender.baylibre.local (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id i25sm11297806wrc.91.2019.06.20.07.46.57
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Thu, 20 Jun 2019 07:46:57 -0700 (PDT)
+From:   Neil Armstrong <narmstrong@baylibre.com>
+To:     thierry.reding@gmail.com
+Cc:     Neil Armstrong <narmstrong@baylibre.com>,
+        linux-pwm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
+        martin.blumenstingl@googlemail.com
+Subject: [PATCH] pwm: meson: fix the G12A AO clock parents order
+Date:   Thu, 20 Jun 2019 16:46:55 +0200
+Message-Id: <20190620144655.2142-1-narmstrong@baylibre.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-References: <20190619232514.58994-1-shakeelb@google.com> <20190620055028.GA12083@dhcp22.suse.cz>
-In-Reply-To: <20190620055028.GA12083@dhcp22.suse.cz>
-From:   Shakeel Butt <shakeelb@google.com>
-Date:   Thu, 20 Jun 2019 07:44:27 -0700
-Message-ID: <CALvZod4Fd5X91CzDLaVAvspQL-zoD7+9OGTiOro-hiMda=DqBA@mail.gmail.com>
-Subject: Re: [PATCH] slub: Don't panic for memcg kmem cache creation failure
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Johannes Weiner <hannes@cmpxchg.org>,
-        Christoph Lameter <cl@linux.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Roman Gushchin <guro@fb.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Cgroups <cgroups@vger.kernel.org>, Linux MM <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Dave Hansen <dave.hansen@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 19, 2019 at 10:50 PM Michal Hocko <mhocko@kernel.org> wrote:
->
-> On Wed 19-06-19 16:25:14, Shakeel Butt wrote:
-> > Currently for CONFIG_SLUB, if a memcg kmem cache creation is failed and
-> > the corresponding root kmem cache has SLAB_PANIC flag, the kernel will
-> > be crashed. This is unnecessary as the kernel can handle the creation
-> > failures of memcg kmem caches.
->
-> AFAICS it will handle those by simply not accounting those objects
-> right?
->
+The Amlogic G12A and G12B Documentation is wrong, the AO xtal and clk81
+clock source order is reversed, and validated when adding DVFS support by
+using the PWM AO D output to control the CPU supply voltage.
 
-The memcg kmem cache creation is async. The allocation has already
-been decided not to be accounted on creation trigger. If memcg kmem
-cache creation is failed, it will fail silently and the next
-allocation will trigger the creation process again.
+The vendor tree also uses the reversed xtal and clk81 order at [1].
 
-> > Additionally CONFIG_SLAB does not
-> > implement this behavior. So, to keep the behavior consistent between
-> > SLAB and SLUB, removing the panic for memcg kmem cache creation
-> > failures. The root kmem cache creation failure for SLAB_PANIC correctly
-> > panics for both SLAB and SLUB.
->
-> I do agree that panicing is really dubious especially because it opens
-> doors to shut the system down from a restricted environment. So the
-> patch makes sesne to me.
->
-> I am wondering whether SLAB_PANIC makes sense in general though. Why is
-> it any different from any other essential early allocations? We tend to
-> not care about allocation failures for those on bases that the system
-> must be in a broken state to fail that early already. Do you think it is
-> time to remove SLAB_PANIC altogether?
->
+[1] https://github.com/hardkernel/linux/blob/odroidn2-4.9.y/drivers/amlogic/pwm/pwm_meson.c#L462
 
-That would need some investigation into the history of SLAB_PANIC. I
-will look into it.
+Fixes: f41efceb46e6 ("pwm: meson: Add clock source configuration for Meson G12A")
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+---
+ drivers/pwm/pwm-meson.c | 13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
 
-> > Reported-by: Dave Hansen <dave.hansen@intel.com>
-> > Signed-off-by: Shakeel Butt <shakeelb@google.com>
->
-> Acked-by: Michal Hocko <mhocko@suse.com>
+diff --git a/drivers/pwm/pwm-meson.c b/drivers/pwm/pwm-meson.c
+index 5e65b042c240..e15d045947bb 100644
+--- a/drivers/pwm/pwm-meson.c
++++ b/drivers/pwm/pwm-meson.c
+@@ -453,8 +453,17 @@ static const struct meson_pwm_data pwm_axg_ao_data = {
+ 	.num_parents = ARRAY_SIZE(pwm_axg_ao_parent_names),
+ };
+ 
++static const char * const pwm_g12a_ao_ab_parent_names[] = {
++	"xtal", "aoclk81", "fclk_div4", "fclk_div5"
++};
++
++static const struct meson_pwm_data pwm_g12a_ao_ab_data = {
++	.parent_names = pwm_g12a_ao_ab_parent_names,
++	.num_parents = ARRAY_SIZE(pwm_g12a_ao_ab_parent_names),
++};
++
+ static const char * const pwm_g12a_ao_cd_parent_names[] = {
+-	"aoclk81", "xtal",
++	"xtal", "aoclk81",
+ };
+ 
+ static const struct meson_pwm_data pwm_g12a_ao_cd_data = {
+@@ -498,7 +507,7 @@ static const struct of_device_id meson_pwm_matches[] = {
+ 	},
+ 	{
+ 		.compatible = "amlogic,meson-g12a-ao-pwm-ab",
+-		.data = &pwm_axg_ao_data
++		.data = &pwm_g12a_ao_ab_data
+ 	},
+ 	{
+ 		.compatible = "amlogic,meson-g12a-ao-pwm-cd",
+-- 
+2.21.0
 
-Thanks.
