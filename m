@@ -2,48 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 07C054DC3E
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 23:10:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 702A44DC31
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 23:10:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726986AbfFTVKm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 17:10:42 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:43954 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726716AbfFTVKM (ORCPT
+        id S1726785AbfFTVKQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 17:10:16 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:36921 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725958AbfFTVKO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 17:10:12 -0400
-Received: by mail-pg1-f194.google.com with SMTP id f25so2202842pgv.10;
-        Thu, 20 Jun 2019 14:10:12 -0700 (PDT)
+        Thu, 20 Jun 2019 17:10:14 -0400
+Received: by mail-pf1-f195.google.com with SMTP id 19so2360943pfa.4;
+        Thu, 20 Jun 2019 14:10:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=G1Ij2gv2TDQKvgmKxxszCgpp7AI+3jM9fqq69fwOpA4=;
-        b=S0b2a7aE0WAuieFytAiXyQlQYVr7CGECSzLS6wJFSzGtJ+1HgTIIaRECxzTfKTjNkb
-         cErfqueoa45U43t+jz8QO0Zwp/ZwWHSElXz3DG5jBope2nWbrkpDBhA9V5YnPEj/MbyN
-         B67GD9QJ35CfNL5Exh83tpWY1m75RLYEzuyFH3wTESQ1cFH2WuascjO24sU7gvKKUC5X
-         0sm+/gYt6xFT3mUBqYxXFtiqMEuW6YfUZaLiLbHkf5Awrc2EcrPeowK9YqkPooHME/mE
-         oVNqgxxj3NpqdCZ89eLk5V608mQw2kea8NJ9K65x4x3D6Gebm6f9uhgvtou/id7uGQqH
-         2aYg==
+        bh=d7vMFa0RiXSgIQ7GsvInRxIKmt+saHYI+AQuO3/IDBY=;
+        b=gWbcCmVMhKhfH83nz0SjOdViQ6bh80WcOh4JOq9apD0RZ3GvLo6yMIGpz6gWuRBfhg
+         xyhsiwWbOmiD3O1NFP+UCB+IfcbuNYmqLr2gHzzayjHX75hby0YC+7Yz2hFuV+u1dilz
+         a8NV+0xx44k5S91z/FNjzBResy8ZymC96ybQBmF0qfCTxZHf2hO6zcBw+xO2P8vgE5+R
+         lcN0jQLlyI7HWxYRogLqGz5N53kMU1P3M/XoSQTHIsj5KMgGo9rzrZp3bU75W6O/PAre
+         NLosSZLaNftHUl8nDeEpKppSNajoZNEcH9z2Pv/lvoRTwlzAhQZHxiz3EUS3El8OGKx4
+         Mpaw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=G1Ij2gv2TDQKvgmKxxszCgpp7AI+3jM9fqq69fwOpA4=;
-        b=QeWulPQmbgmfywwsgPA9AYqLrmzKW9i8f08hEeS0pbKdFAglAnNODCLdueyH+eDcFu
-         clU6pzPBgcmRRjDM/wTHclcJuMD1g8WSuOLxZ+docL/WGwl7zRBD7Z9NyequoTQ2ZoLY
-         K8PlV3bcOWi1gMppjP6lm9K8XQgVC00v+eu9/4pg1sEAbj8koXahsdNPGAuubSET7o5T
-         JFkfVyaNTotfV3SY+oeS3dIaQDyKYcfG8vSw+kN4vHOEgXYkKTdXjA3nb/2or7I85J3Q
-         gAVo9JNoqwpwRaqcPJubjPTclIeRkLJpBdhYPrvQrMYhN/VYyPkj36frQcTzyOcE5kR1
-         msyw==
-X-Gm-Message-State: APjAAAXl1cM84Mxijtmx9OOud9U4WdqPig1cgedz9PEMzBV/Dp94dfWP
-        yZQ8VirK9aRPaObprO8/r0glDgx06rc=
-X-Google-Smtp-Source: APXvYqzhfbSmcHI0Ef9C7wLbXuSiZnL4lXcN/K/RVjRqcfrVNFxMmQJbBdZzfxS1WWdDw4WarFSUVw==
-X-Received: by 2002:a17:90a:a505:: with SMTP id a5mr1715567pjq.27.1561065011551;
-        Thu, 20 Jun 2019 14:10:11 -0700 (PDT)
+        bh=d7vMFa0RiXSgIQ7GsvInRxIKmt+saHYI+AQuO3/IDBY=;
+        b=IOoij155dGht7F7hij+rHgnM4pTFjPQdDdNSgC4UUyCBgu0hKyip7isF9J4jciNmwx
+         CeFfuVMFTBiBKRFK4OSdWRcrpJCFeDylLx/HorO+5968dwI3pVIGTQnnKQOvdEfYKNN6
+         hJON/QYnZUIOgFdqtMeklAqiDWUmKKWJ9uEOL4FwQalC+Zn6PRzpgjIkkAs6vvSWjCX/
+         miiuBYiEwjPyBpZAB9JCNHE9LxD5LaYCJ53/Xi5uvHHNRacswI60pk5zE02cvAbGTfDV
+         bbCVF9YdL16NbRwIdYQra5fF671j5PxoSZzjZkgzYRYNrTKJ13IpfyXBVh2waN64Lz3s
+         7g6g==
+X-Gm-Message-State: APjAAAWeV0F3ebOujyGyKB+n2Omq+P1mWzd3uIZDYfBCpYRyCNbMWdT6
+        juTmK0IaZNA9FZENF8KD1DuSGPC4DfU=
+X-Google-Smtp-Source: APXvYqwPu7zJoLPZ+CyAH5QO33Bz/OAkt9kFMf1CNxrQboGzgxE1HFuV1K6F0dmYBSU8fVvnKOW7bg==
+X-Received: by 2002:a17:90a:cb8e:: with SMTP id a14mr1653269pju.124.1561065013299;
+        Thu, 20 Jun 2019 14:10:13 -0700 (PDT)
 Received: from stbsrv-and-3.and.broadcom.com ([192.19.231.250])
-        by smtp.gmail.com with ESMTPSA id p1sm386805pff.74.2019.06.20.14.10.09
+        by smtp.gmail.com with ESMTPSA id p1sm386805pff.74.2019.06.20.14.10.11
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 20 Jun 2019 14:10:11 -0700 (PDT)
+        Thu, 20 Jun 2019 14:10:12 -0700 (PDT)
 From:   Al Cooper <alcooperx@gmail.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     Al Cooper <alcooperx@gmail.com>, devicetree@vger.kernel.org,
@@ -52,9 +52,9 @@ Cc:     Al Cooper <alcooperx@gmail.com>, devicetree@vger.kernel.org,
         linux-usb@vger.kernel.org, Luis Chamberlain <mcgrof@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Rob Herring <robh+dt@kernel.org>
-Subject: [PATCH 2/6] usb: bdc: Cleanup clock support
-Date:   Thu, 20 Jun 2019 17:09:47 -0400
-Message-Id: <1561064991-16874-3-git-send-email-alcooperx@gmail.com>
+Subject: [PATCH 3/6] usb: bdc: driver may fail to get USB PHY
+Date:   Thu, 20 Jun 2019 17:09:48 -0400
+Message-Id: <1561064991-16874-4-git-send-email-alcooperx@gmail.com>
 X-Mailer: git-send-email 1.9.0.138.g2de3478
 In-Reply-To: <1561064991-16874-1-git-send-email-alcooperx@gmail.com>
 References: <1561064991-16874-1-git-send-email-alcooperx@gmail.com>
@@ -63,61 +63,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-- Fix driver to defer on clk_get defer
+Initialization order is important for the USB PHY and the PHY clients.
+The init order is based on the build order of the drivers in the
+makefiles and the PHY drivers are built early to help with
+dependencies, but the new SCMI based clock subsystem has the side
+effect of making some additional drivers DEFER until the clock
+is ready. This is causing the USB PHY driver to defer which is causing
+some PHY clients to fail when they try to get the PHY. The fix is to have
+the client driver return DEFER when it's "get phy" routine returns DEFER.
 
 Signed-off-by: Al Cooper <alcooperx@gmail.com>
 ---
- drivers/usb/gadget/udc/bdc/bdc_core.c | 15 +++++++++------
- 1 file changed, 9 insertions(+), 6 deletions(-)
+ drivers/usb/gadget/udc/bdc/bdc_core.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/usb/gadget/udc/bdc/bdc_core.c b/drivers/usb/gadget/udc/bdc/bdc_core.c
-index ccbd1d34eb2a..11a43de6c1c6 100644
+index 11a43de6c1c6..c794890d785b 100644
 --- a/drivers/usb/gadget/udc/bdc/bdc_core.c
 +++ b/drivers/usb/gadget/udc/bdc/bdc_core.c
-@@ -490,8 +490,14 @@ static int bdc_probe(struct platform_device *pdev)
- 
- 	dev_dbg(dev, "%s()\n", __func__);
- 
-+	bdc = devm_kzalloc(dev, sizeof(*bdc), GFP_KERNEL);
-+	if (!bdc)
-+		return -ENOMEM;
-+
- 	clk = devm_clk_get(dev, "sw_usbd");
- 	if (IS_ERR(clk)) {
-+		if (PTR_ERR(clk) == -EPROBE_DEFER)
-+			return -EPROBE_DEFER;
- 		dev_info(dev, "Clock not found in Device Tree\n");
- 		clk = NULL;
+@@ -543,9 +543,13 @@ static int bdc_probe(struct platform_device *pdev)
+ 			dev, dev->of_node, phy_num);
+ 		if (IS_ERR(bdc->phys[phy_num])) {
+ 			ret = PTR_ERR(bdc->phys[phy_num]);
++			if (ret == -EPROBE_DEFER) {
++				dev_dbg(bdc->dev, "DEFER, waiting for PHY\n");
++				return ret;
++			}
+ 			dev_err(bdc->dev,
+ 				"BDC phy specified but not found:%d\n", ret);
+-			return ret;
++			goto clk_cleanup;
+ 		}
  	}
-@@ -501,11 +507,6 @@ static int bdc_probe(struct platform_device *pdev)
- 		dev_err(dev, "could not enable clock\n");
- 		return ret;
- 	}
--
--	bdc = devm_kzalloc(dev, sizeof(*bdc), GFP_KERNEL);
--	if (!bdc)
--		return -ENOMEM;
--
- 	bdc->clk = clk;
- 
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-@@ -551,7 +552,7 @@ static int bdc_probe(struct platform_device *pdev)
- 	ret = bdc_phy_init(bdc);
- 	if (ret) {
- 		dev_err(bdc->dev, "BDC phy init failure:%d\n", ret);
--		return ret;
-+		goto clk_cleanup;
- 	}
- 
- 	temp = bdc_readl(bdc->regs, BDC_BDCCAP1);
-@@ -583,6 +584,8 @@ static int bdc_probe(struct platform_device *pdev)
- 	bdc_hw_exit(bdc);
- phycleanup:
- 	bdc_phy_exit(bdc);
-+clk_cleanup:
-+	clk_disable_unprepare(bdc->clk);
- 	return ret;
- }
  
 -- 
 1.9.0.138.g2de3478
