@@ -2,74 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A74114CCF1
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 13:33:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EF90A4CCF5
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 13:35:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731654AbfFTLdL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 07:33:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52902 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726404AbfFTLdL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 07:33:11 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        id S1731471AbfFTLfp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 07:35:45 -0400
+Received: from retiisi.org.uk ([95.216.213.190]:37628 "EHLO
+        hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726404AbfFTLfp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Jun 2019 07:35:45 -0400
+Received: from valkosipuli.localdomain (valkosipuli.retiisi.org.uk [IPv6:2a01:4f9:c010:4572::80:2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E72ED2082C;
-        Thu, 20 Jun 2019 11:33:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561030390;
-        bh=iEIU3iBNotat6D5yj7F2SKd8Q0SHAYqUttB3s3mKcpU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=U+gNw00T7uKO8O9jJLcKMyTNmgrPKx663f0xKKbw9enP5h7i3ute5HiMQbaFTdQSg
-         eXdVgt7XFAFffapzWo+/rJHsfZ+qLMgaM9XNs20L/AhyUCV3iC1YsgbjD1vo9tKE7s
-         LHO8ElTouzdf768k5EhFj5U3PXEgmBHKBASo/JmI=
-Date:   Thu, 20 Jun 2019 13:33:08 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Christian =?iso-8859-1?Q?M=FCller?= <muellerch-privat@web.de>
-Cc:     johnfwhitmore@gmail.com, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org, linux-kernel@i4.cs.fau.de,
-        felix.trommer@hotmail.de
-Subject: Re: [PATCH 1/1] drivers/staging/rtl8129u: adjust block comments
-Message-ID: <20190620113308.GA16195@kroah.com>
-References: <20190620094534.5658-1-muellerch-privat@web.de>
- <20190620094534.5658-2-muellerch-privat@web.de>
+        by hillosipuli.retiisi.org.uk (Postfix) with ESMTPS id 22D3A634C7B;
+        Thu, 20 Jun 2019 14:35:12 +0300 (EEST)
+Received: from sailus by valkosipuli.localdomain with local (Exim 4.89)
+        (envelope-from <sakari.ailus@retiisi.org.uk>)
+        id 1hdvLU-0002BU-29; Thu, 20 Jun 2019 14:35:12 +0300
+Date:   Thu, 20 Jun 2019 14:35:11 +0300
+From:   Sakari Ailus <sakari.ailus@iki.fi>
+To:     Jacopo Mondi <jacopo@jmondi.org>, ubomir Rintel <lkundrak@v3.sk>
+Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>, linux-media@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Pavel Machek <pavel@ucw.cz>
+Subject: Re: [PATCH v6 5/7] [media] marvell-ccic/mmp: add devicetree support
+Message-ID: <20190620113511.rxoybnxm2exv2ibl@valkosipuli.retiisi.org.uk>
+References: <20190528090731.10341-1-lkundrak@v3.sk>
+ <20190528090731.10341-6-lkundrak@v3.sk>
+ <20190614103940.4dg43fo7dmbwnpfs@uno.localdomain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190620094534.5658-2-muellerch-privat@web.de>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <20190614103940.4dg43fo7dmbwnpfs@uno.localdomain>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 20, 2019 at 11:45:34AM +0200, Christian Müller wrote:
-> As stated in coding-styles.rst multiline comments should be structured in a way,
-> that the actual comment starts on the second line of the commented portion. E.g:
-> 
-> /*
->  * Multiline comments
->  * should look like
->  * this.
->  */
-> 
-> The comments in this file were of a format, that looked like this:
-> 
-> /* Multiline comments previous
->  * to this patch
->  * looked like this.
->  */
-> 
-> There is an exception to files in /net and drivers/net,
-> where multiline comments are preferred to look like the second example above,
-> but since this file resides in a different directory,
-> this patch changes the style to match the preferred style.
+Ping?
 
-Ah.  Hm.  Turns out this is a networking driver, and some day, the goal
-would be for it to live under drivers/net/  If it were to move there,
-then these comments would be in the correct format already.
+Lubomir: I'm applying the set now, but please addres Jacopo's comment.
+Thanks.
 
-So this patch isn't needed, sorry.
-
-greg k-h
+-- 
+Sakari Ailus
