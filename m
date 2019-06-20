@@ -2,44 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BEFCE4D5E7
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 20:02:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 66BD44D807
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 20:24:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727392AbfFTSCG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 14:02:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52198 "EHLO mail.kernel.org"
+        id S1729251AbfFTSWE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 14:22:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39276 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727373AbfFTSCD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 14:02:03 -0400
+        id S1728662AbfFTSLa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Jun 2019 14:11:30 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 32B872083B;
-        Thu, 20 Jun 2019 18:02:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 852D921530;
+        Thu, 20 Jun 2019 18:11:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561053722;
-        bh=+iq6a0EJweFbxe7Tbugz4yJJnjYrqZVQT43fJ+GYcLQ=;
+        s=default; t=1561054290;
+        bh=xh82Oq10IAg2tIgfkxQvYdcJPdGAQ7vUAQhGRQWV0jA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZD2I3aOLh64wNzteagFLV+5NM1nTjrGGX5poRJw7N7+evUBtYHiRsh0h13bqHytlC
-         QCfb8Q/Y52/nAkCLLNz9OeumMT1D8EytAqrsWi/szEzbsO8MrgAbQpPXP/PW9Dv2Gn
-         gqGAvykV/NfZjVYkJnKjlO+lfYdRx3lgDb7avCgo=
+        b=hasA8CGCVGeKRVsSAin8n4ng+SpeT46W4i+31yRncILLEt3C90gVBosa6rUIxuGMZ
+         BRa3j6Ls2zyxkLwa8DO1aqwgILUjYRz1UoPcfr6pXA35tDK481tAjncUB/iIuuDMdA
+         H9uqLjKe2r3P/XbdPpRgxV6lEyPA2+XqvA55i2X0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Frank van der Linden <fllinden@amazon.com>,
-        Borislav Petkov <bp@suse.de>,
-        Andy Lutomirski <luto@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>, bp@alien8.de,
-        jiaxun.yang@flygoat.com, Ingo Molnar <mingo@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 70/84] x86/CPU/AMD: Dont force the CPB cap when running under a hypervisor
+        stable@vger.kernel.org,
+        syzbot+78fbe679c8ca8d264a8d@syzkaller.appspotmail.com,
+        Xin Long <lucien.xin@gmail.com>,
+        Ying Xue <ying.xue@windriver.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.19 12/61] tipc: purge deferredq list for each grp member in tipc_group_delete
 Date:   Thu, 20 Jun 2019 19:57:07 +0200
-Message-Id: <20190620174348.647694803@linuxfoundation.org>
+Message-Id: <20190620174339.251440063@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190620174337.538228162@linuxfoundation.org>
-References: <20190620174337.538228162@linuxfoundation.org>
+In-Reply-To: <20190620174336.357373754@linuxfoundation.org>
+References: <20190620174336.357373754@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -49,68 +46,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 2ac44ab608705948564791ce1d15d43ba81a1e38 ]
+From: Xin Long <lucien.xin@gmail.com>
 
-For F17h AMD CPUs, the CPB capability ('Core Performance Boost') is forcibly set,
-because some versions of that chip incorrectly report that they do not have it.
+[ Upstream commit 5cf02612b33f104fe1015b2dfaf1758ad3675588 ]
 
-However, a hypervisor may filter out the CPB capability, for good
-reasons. For example, KVM currently does not emulate setting the CPB
-bit in MSR_K7_HWCR, and unchecked MSR access errors will be thrown
-when trying to set it as a guest:
+Syzbot reported a memleak caused by grp members' deferredq list not
+purged when the grp is be deleted.
 
-	unchecked MSR access error: WRMSR to 0xc0010015 (tried to write 0x0000000001000011) at rIP: 0xffffffff890638f4 (native_write_msr+0x4/0x20)
+The issue occurs when more(msg_grp_bc_seqno(hdr), m->bc_rcv_nxt) in
+tipc_group_filter_msg() and the skb will stay in deferredq.
 
-	Call Trace:
-	boost_set_msr+0x50/0x80 [acpi_cpufreq]
-	cpuhp_invoke_callback+0x86/0x560
-	sort_range+0x20/0x20
-	cpuhp_thread_fun+0xb0/0x110
-	smpboot_thread_fn+0xef/0x160
-	kthread+0x113/0x130
-	kthread_create_worker_on_cpu+0x70/0x70
-	ret_from_fork+0x35/0x40
+So fix it by calling __skb_queue_purge for each member's deferredq
+in tipc_group_delete() when a tipc sk leaves the grp.
 
-To avoid this issue, don't forcibly set the CPB capability for a CPU
-when running under a hypervisor.
-
-Signed-off-by: Frank van der Linden <fllinden@amazon.com>
-Acked-by: Borislav Petkov <bp@suse.de>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: bp@alien8.de
-Cc: jiaxun.yang@flygoat.com
-Fixes: 0237199186e7 ("x86/CPU/AMD: Set the CPB bit unconditionally on F17h")
-Link: http://lkml.kernel.org/r/20190522221745.GA15789@dev-dsk-fllinden-2c-c1893d73.us-west-2.amazon.com
-[ Minor edits to the changelog. ]
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Fixes: b87a5ea31c93 ("tipc: guarantee group unicast doesn't bypass group broadcast")
+Reported-by: syzbot+78fbe679c8ca8d264a8d@syzkaller.appspotmail.com
+Signed-off-by: Xin Long <lucien.xin@gmail.com>
+Acked-by: Ying Xue <ying.xue@windriver.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/kernel/cpu/amd.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ net/tipc/group.c |    1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/x86/kernel/cpu/amd.c b/arch/x86/kernel/cpu/amd.c
-index e94e6f16172b..6f2483292de0 100644
---- a/arch/x86/kernel/cpu/amd.c
-+++ b/arch/x86/kernel/cpu/amd.c
-@@ -717,8 +717,11 @@ static void init_amd_zn(struct cpuinfo_x86 *c)
- {
- 	set_cpu_cap(c, X86_FEATURE_ZEN);
+--- a/net/tipc/group.c
++++ b/net/tipc/group.c
+@@ -218,6 +218,7 @@ void tipc_group_delete(struct net *net,
  
--	/* Fix erratum 1076: CPB feature bit not being set in CPUID. */
--	if (!cpu_has(c, X86_FEATURE_CPB))
-+	/*
-+	 * Fix erratum 1076: CPB feature bit not being set in CPUID.
-+	 * Always set it, except when running under a hypervisor.
-+	 */
-+	if (!cpu_has(c, X86_FEATURE_HYPERVISOR) && !cpu_has(c, X86_FEATURE_CPB))
- 		set_cpu_cap(c, X86_FEATURE_CPB);
- }
- 
--- 
-2.20.1
-
+ 	rbtree_postorder_for_each_entry_safe(m, tmp, tree, tree_node) {
+ 		tipc_group_proto_xmit(grp, m, GRP_LEAVE_MSG, &xmitq);
++		__skb_queue_purge(&m->deferredq);
+ 		list_del(&m->list);
+ 		kfree(m);
+ 	}
 
 
