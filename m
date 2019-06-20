@@ -2,79 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 127E84CADE
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 11:29:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9DBDC4CA4D
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 11:08:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727076AbfFTJ3z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 05:29:55 -0400
-Received: from mail-yb1-f193.google.com ([209.85.219.193]:34636 "EHLO
-        mail-yb1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726391AbfFTJ3y (ORCPT
+        id S1731481AbfFTJIt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 05:08:49 -0400
+Received: from twhmllg3.macronix.com ([211.75.127.131]:25152 "EHLO
+        TWHMLLG3.macronix.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726084AbfFTJIs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 05:29:54 -0400
-Received: by mail-yb1-f193.google.com with SMTP id x32so991815ybh.1
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2019 02:29:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=hj2LK8IWRYBdQ0R1r6pmm07xyZU9AXmd7btS3Jqax5U=;
-        b=Bo3SAk17rTWl5zOPk2OgnCMZqs9lRWwiIQS4YR3VUA8VmvI48o4gu7+7OloFoGYlwN
-         AkvE5Bfmi0BVjgYJHtP0LQQ0AYKFew9e7Xt0h+2Kakr+tXX4+P1CZXU9cbF6KbfSDhaM
-         17KL3fxJaDVdNGOXTaeomYp48XP32+2Cvx2+QNzyLr3UaKk8tmMxEFr6b+YEel0Aio5c
-         lsSHeM/VWSS2U86RqnANlLJXTINZxTGcTFbOQEnm7naIwnm7sqsbgWj5RAqJRbAU/j7O
-         ZGJfaTdmhLpjkmmvo0q749pwa3mkxgwvHhrlpFN7bH8crdhyfVEQmQikUqOmMHYK5p2S
-         s7uQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=hj2LK8IWRYBdQ0R1r6pmm07xyZU9AXmd7btS3Jqax5U=;
-        b=TiVZ5OSxFMwKuLmyQnkmMEULtpMGHqLwpMGzlzNr/cBPQNL5S1+tKa7xHcnRRCMkhV
-         QVeTewVkG4UFvPPjvmn3k8XyfjHAhsvaS0jNPdCiWFmFUMq9hqHs/zOeNuRp3ZDNfF0t
-         1t5QD/919pnwfjLl+zqTMaOa5svJ7gVq8rG1rLrazrWpS2iNUSpU0nheatCH5d7LBc66
-         wKriv07PUQfuY7nvbpRynfa+RkQ8O9yDCzdGpSWBNVH5rXLHMFkG8dfRWnSEdfrv0QDr
-         TMymHk+DgND3ML50q1iDF4caVCO175oQxhSm354b6r3vjIhvdrEOSOzVz3Lsfqoeayz5
-         pKHg==
-X-Gm-Message-State: APjAAAVQatSBNodV7psH8O5c02pMxVP9384VVEygoKzK225EfbDJnE/1
-        bAOTw1BXB4VyVydAXnmWYEk8yqWbhCZfHHHu
-X-Google-Smtp-Source: APXvYqyWpX5kcQzhqQVr831NmEzD6uXasQb3bUu/eTNGZZmi3oHFZ1zTiFIotPiCj4RaxWT2pGGI9w==
-X-Received: by 2002:a25:d98a:: with SMTP id q132mr63412471ybg.19.1561022992869;
-        Thu, 20 Jun 2019 02:29:52 -0700 (PDT)
-Received: from ?IPv6:2600:380:5278:90d8:9c74:6b59:c9f5:5bd0? ([2600:380:5278:90d8:9c74:6b59:c9f5:5bd0])
-        by smtp.gmail.com with ESMTPSA id 144sm5343556ywb.66.2019.06.20.02.29.49
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 20 Jun 2019 02:29:52 -0700 (PDT)
-Subject: Re: [PATCH] blk-iolatency: only account submitted bios
-To:     Dennis Zhou <dennis@kernel.org>, Josef Bacik <josef@toxicpanda.com>
-Cc:     kernel-team@fb.com, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20190523201018.49615-1-dennis@kernel.org>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <11086c9d-7d73-bcc4-1427-ac7807397997@kernel.dk>
-Date:   Thu, 20 Jun 2019 03:29:47 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
-MIME-Version: 1.0
-In-Reply-To: <20190523201018.49615-1-dennis@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Thu, 20 Jun 2019 05:08:48 -0400
+Received: from localhost.localdomain ([172.17.195.96])
+        by TWHMLLG3.macronix.com with ESMTP id x5K985xD044197;
+        Thu, 20 Jun 2019 17:08:05 +0800 (GMT-8)
+        (envelope-from masonccyang@mxic.com.tw)
+From:   Mason Yang <masonccyang@mxic.com.tw>
+To:     broonie@kernel.org, marek.vasut@gmail.com,
+        linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
+        bbrezillon@kernel.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        lee.jones@linaro.org, sergei.shtylyov@cogentembedded.com,
+        robh+dt@kernel.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org
+Cc:     juliensu@mxic.com.tw, Simon Horman <horms@verge.net.au>,
+        Mason Yang <masonccyang@mxic.com.tw>, miquel.raynal@bootlin.com
+Subject: [PATCH v14 0/2] spi: Add Renesas R-Car Gen3 RPC-IF SPI driver
+Date:   Thu, 20 Jun 2019 17:30:44 +0800
+Message-Id: <1561023046-20886-1-git-send-email-masonccyang@mxic.com.tw>
+X-Mailer: git-send-email 1.9.1
+X-MAIL: TWHMLLG3.macronix.com x5K985xD044197
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5/23/19 2:10 PM, Dennis Zhou wrote:
-> As is, iolatency recognizes done_bio and cleanup as ending paths. If a
-> request is marked REQ_NOWAIT and fails to get a request, the bio is
-> cleaned up via rq_qos_cleanup() and ended in bio_wouldblock_error().
-> This results in underflowing the inflight counter. Fix this by only
-> accounting bios that were actually submitted.
+Hi Mark,
 
-Looks good to me, applied.
+V14 patch including:
+1) Patch RPC-IF back to SPI mode only instead of MFD & SPI 
+   by MFD maintainer, Lee Jones comments.
+2) Patch pm_runtime control in spi transfer.
+
+v13 patch including:
+1) rename mfd to ddata for SPI driver.
+2) Patch RPC-IF devicetree for SPI and HyperFlash.
+
+v12 patch including:
+1) add back "wbuf" in dts example.
+2) RPC-IF replace rpc-if in dts.
+
+v11 patch including:
+1) Patch mfd include header file.
+2) mfd coding style.
+3) add back wbuf description in dts.
+
+v10 patch including:
+1) Address range for > 64M byte flash.
+2) Removed dirmap_write due to WBUF 256 bytes transfer issue.
+3) Dummy bytes setting according to spi-nor.c layer.
+
+v9 patch is for RPC MFD driver and RPC SPI driver.
+
+v8 patch including:
+1) Supported SoC-specific values in DTS.
+2) Rename device node name as flash.
+
+v7 patch is according to Geert and Sergei's comments:
+1) Add all R-Car Gen3 model in dts.
+2) patch rpc-if child node search.
+3) minror coding style.
+
+v6 patch is accroding to Geert, Marek and Sergei's comments:
+1) spi_controller for new code.
+2) "renesas,rcar-gen3-rpc" instead of "renesas,r8a77995-rpc."
+3) patch external address read mode w/o u64 readq().
+4) patch dts for write buffer & drop "renesas,rpc-mode".
+5) coding style and so on.
+
+v5 patch is accroding to Sergei's comments:
+1) Read 6 bytes ID from Sergei's patch.
+2) regmap_update_bits().
+3) C++ style comment.
+
+v4 patch is according to Sergei's comments including:
+1) Drop soc_device_match().
+2) Drop unused RPC registers.
+3) Use ilog2() instead of fls().
+4) Patch read 6 bytes ID w/ one command.
+5) Coding style and so on.
+
+v3 patch is according to Marek and Geert's comments including:
+1) soc_device_mach() to set up RPC_PHYCNT_STRTIM.
+2) get_unaligned().
+3) rpc-mode for rpi-spi-flash or rpc-hyperflash.
+4) coding style and so on.
+
+v2 patch including:
+1) remove RPC clock enable/dis-able control,
+2) patch run time PM.
+3) add RPC module software reset,
+4) add regmap.
+5) other coding style and so on.
+
+thanks for your review.
+
+best regards,
+Mason
+
+
+Mason Yang (2):
+  spi: Add Renesas R-Car Gen3 RPC-IF SPI controller driver
+  dt-bindings: spi: Document Renesas R-Car Gen3 RPC-IF controller
+    bindings
+
+ .../devicetree/bindings/spi/spi-renesas-rpc.txt    |  43 ++
+ drivers/spi/Kconfig                                |   6 +
+ drivers/spi/Makefile                               |   1 +
+ drivers/spi/spi-renesas-rpc.c                      | 760 +++++++++++++++++++++
+ 4 files changed, 810 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/spi/spi-renesas-rpc.txt
+ create mode 100644 drivers/spi/spi-renesas-rpc.c
 
 -- 
-Jens Axboe
+1.9.1
 
