@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1AC2D4D822
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 20:24:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 48D6A4D64A
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 20:06:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728945AbfFTSYX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 14:24:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36014 "EHLO mail.kernel.org"
+        id S1728135AbfFTSGV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 14:06:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60298 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728104AbfFTSIg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 14:08:36 -0400
+        id S1728124AbfFTSGN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Jun 2019 14:06:13 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5C8022084E;
-        Thu, 20 Jun 2019 18:08:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9471221530;
+        Thu, 20 Jun 2019 18:06:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561054115;
+        s=default; t=1561053973;
         bh=5g4ElFNDCPyJ9TdYepS3uPQ5YhDdovUUaE1ZRrmnZNM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mM/Uqnu0auq8sN2H57lqTPLZrXyTEmQcx3I9qG2wZUnABtbLXOOwxeN1d823jlo6G
-         pwlrYOorgVqt2K8ufMgTn98yvx8NUam9AJdApTP20S5myhqBeU5QOqLYmJ3fYnhp/8
-         4Yac35tVRU+T9oTjkzG9GobYu9YvO/ejNKUlsbrs=
+        b=f+UlOrJNiNq7WUAUzqRGMt0wZssHx+tHEc5GN445Fuv17uY/+eQ+xxuU4VYYtj6qX
+         1EKoNGGJm6Is/SBnxen8RGMfsTcXsX86g+zYsEGzLfc58MFJLEPYrPdCITJXzI7BLS
+         RAzlRHJvUy1OlUFkqs2fm8GV948HTRruVvWQjMY4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
         Willem de Bruijn <willemb@google.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 04/45] ipv6: flowlabel: fl6_sock_lookup() must use atomic_inc_not_zero
+Subject: [PATCH 4.9 092/117] ipv6: flowlabel: fl6_sock_lookup() must use atomic_inc_not_zero
 Date:   Thu, 20 Jun 2019 19:57:06 +0200
-Message-Id: <20190620174330.882005177@linuxfoundation.org>
+Message-Id: <20190620174357.517902879@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190620174328.608036501@linuxfoundation.org>
-References: <20190620174328.608036501@linuxfoundation.org>
+In-Reply-To: <20190620174351.964339809@linuxfoundation.org>
+References: <20190620174351.964339809@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
