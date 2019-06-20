@@ -2,120 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0F4404D36E
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 18:16:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 21B6A4D376
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 18:16:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732243AbfFTQPy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 12:15:54 -0400
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:11668 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726881AbfFTQPy (ORCPT
+        id S1732202AbfFTQQu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 12:16:50 -0400
+Received: from sonic301-3.consmr.mail.bf2.yahoo.com ([74.6.129.42]:45692 "EHLO
+        sonic301-3.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726661AbfFTQQu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 12:15:54 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5d0bb13a0001>; Thu, 20 Jun 2019 09:15:54 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Thu, 20 Jun 2019 09:15:53 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Thu, 20 Jun 2019 09:15:53 -0700
-Received: from HQMAIL101.nvidia.com (172.20.187.10) by HQMAIL104.nvidia.com
- (172.18.146.11) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 20 Jun
- 2019 16:15:53 +0000
-Received: from hqnvemgw02.nvidia.com (172.16.227.111) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Thu, 20 Jun 2019 16:15:53 +0000
-Received: from linux.nvidia.com (Not Verified[10.24.34.185]) by hqnvemgw02.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5d0bb1370000>; Thu, 20 Jun 2019 09:15:53 -0700
-From:   Sameer Pujar <spujar@nvidia.com>
-To:     <vkoul@kernel.org>, <dan.j.williams@intel.com>
-CC:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-        <ldewangan@nvidia.com>, <dmaengine@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Sameer Pujar <spujar@nvidia.com>
-Subject: [PATCH] dmaengine: tegra210-adma: fix transfer failure
-Date:   Thu, 20 Jun 2019 21:45:48 +0530
-Message-ID: <1561047348-14413-1-git-send-email-spujar@nvidia.com>
-X-Mailer: git-send-email 2.7.4
+        Thu, 20 Jun 2019 12:16:50 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1561047408; bh=q0klBQI4vbOV8yr3MxjOcIs0aoIIe58Na4Z8WYaQ1C0=; h=Date:From:Reply-To:Subject:References:From:Subject; b=CjN/0ypp6TF2s8TFfgGgSHEoHxS2ANUQpSDqJdrvhjh8qh6t09amA/KzuM4JcahhnlzrGCLzwtMx3JsIJeF5wA8i36rpS8DHiFaRui7tkvl78ACy8odYFFBtjhVvOV8FKAOY1I7SN+YiGQei3h8VGvYD6T+1Q02lYjOUnYNM1vHaCHGugnLVj8Elx1yEMoo5D9u107HAwIKNzptVRPri9CYFcOth3KhWCJCwZaPQcirKO2hVdu+sc7idYidMM+9+PY9h75Gc3OdhkuB6nEo3yIlIoE90pLzC65FvU1OOME0wnDLoBDfOn5K81OQ3aK9o1xatIJtzJOIwF0O0YcF7/A==
+X-YMail-OSG: R7fZpGgVM1nif.4lmkQVCTOxwSThzY2zKXJCN0DeLqqghnlPFCRgpkXUHMhh0zS
+ v36epaRgdoG_lryGSo.usdXWH2rulqlNfUGhaoWVpv7G7tWC7PvnFi.Nq5GTId7nJitRghcfHyUg
+ 8typaa.QqhnG5vDo9D2cGEnafS4QE9L2USicBR4ma22yGANpliHJl2dvmlEkqyo8LBYDdpvQ2krX
+ 6P_0GShuNit5n.HRQPFLV6zG4lyoppX8QSyfXGEI3MRDjh.1J7OLrM08xM6hlYIKfEMeL0nVSB.R
+ 7NiAweXVQIpc.vbLBScGeSCkJsoC3TVaha7suWz9hA.W2GKEWXJtCqAhzUwxvtXmqE4bnBpU9hft
+ JpvS4VRTTBQHktGmE7TsjFDd12stR8K2AbM9di0EwZ0Wq25WbiOu3XV9RVgMprFKvnrakhqx2IBP
+ CNGDBnvKGmSSXuu_9ETFN1LuNLvVIKr0luhs2t7wKctUcM7K2o3g7zz__0CDvZ06iPq8JJuDlRd.
+ LEHpukUy.2tGo7rQX50b2uECNkS5W1lKC92YIJRGUSPImV7V2s2CpsGVTpSPJbDOsjEkR0WHkuK1
+ txMRCFIPxbJzAlIYoP73jT_Riv_SFQBnPjRzOsNP7OuceWqSHv.fhv.DLhI81cAaIbA7O.xZg5eJ
+ xNg488Iywgicr2IGBQesTIzpptZpZ_yRa_PcxVStqyOMt7GHdfUOVw91CzNPIqSQReo6WBv9bbG5
+ g_oEnfHI89KPCwAuEyjnHA1MMK.bK903DN0uy9.d0HQRLV_5WHA_8_Go7CEJC4i_XxpkrEnNrHCu
+ puKcM63JNXhDqnlapL7uHaq_WPTABViQC.ldazlytkVh35koMnX_tHE1JmE07WZsSnmVnu.tpyOm
+ nfqcXcnnBR31KimAknOZzDpSCMuTV5m8DL8pBL.gy43n82JVnYX6l2FBDwZddM7UdvTYxenympok
+ 4p1DnvpfhPC0HH85z1zkfkN6eXDd7Px3NwAycthBPCxueE3SD3923.C0fBAB1ptr4QlT8KoOgRxk
+ 0GDb7xdT0zie.zEtab7H.B7C4U3hTyVachk2YPUBRrsSdanGeULnAsoN3DskMr7fKBWWzY3gYTjo
+ yHPC6h5HjyMbsS2rksoIeK.LCJtbaMTaqjMsT9pVEVACli997zlDajBL3qyC5zH.ej5fo9QSxKWF
+ .xdp8nK3MNnOoB.HJ2MHO8VBiaLXIvm_lqaqSmag.Ky.HRfICiHjMveS2VvN4ZcuwLV_X2Jn3J.D
+ c91Vfl9weAMjP
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic301.consmr.mail.bf2.yahoo.com with HTTP; Thu, 20 Jun 2019 16:16:48 +0000
+Date:   Thu, 20 Jun 2019 16:16:44 +0000 (UTC)
+From:   Jerome Njitap <jeromenjitap700@gmail.com>
+Reply-To: Jerome Njitap <jeromenjitap100@gmail.com>
+Message-ID: <2021156192.3266800.1561047404279@mail.yahoo.com>
+Subject: Dearest
 MIME-Version: 1.0
-Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1561047354; bh=ohJbaSrus9ivGDKfVAYHPSEvxvcXu3P+/EkE2Rx69dQ=;
-        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
-         MIME-Version:Content-Type;
-        b=P9JNy3PKkOH53Xbyzr0tn2IzDyUc6rvw1q6vv4EefhJPW0Ls6gIkxtwv15tDDQ9O0
-         QUQrXsyAoxOmCBB76werU/Km/AA7SZ+37LHZLHI7Ut8rIOUMkEqqrw2hbNcO4Q71zC
-         LTNbfXnbxK2A5flHVFQd+OZxkoJ8sSRZq3Qku8Dq/lS3dvnN64wTuT/YgyhX4lz0c+
-         BxTImo6r1ORM2cX+MFz9eAMEmP3TYWLkNGziFFgzYFv0U9ie7O8hrY/vARgiL91mN/
-         cBopQJ43ksFgPQ2MBsveaW6qBaqdf0wfO20gij0K6I+u4KMpj37de3WGA4PF8ndo06
-         xWcLQ3z9qRQWA==
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+References: <2021156192.3266800.1561047404279.ref@mail.yahoo.com>
+X-Mailer: WebService/1.1.13837 YahooMailBasic Mozilla/5.0 (Windows NT 6.3; Win64; x64; rv:67.0) Gecko/20100101 Firefox/67.0
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From Tegra186 onwards OUTSTANDING_REQUESTS field is added in channel
-configuration register (bits 7:4). ADMA allows a maximum of 8 reads
-to source and that many writes to target memory be outstanding at any
-given point of time. If this field is not programmed, DMA transfers
-fail to happen.
+Dear Friend,
 
-Thus added 'ch_pending_req' member in chip data structure and the
-same is populated with maximum allowed pending requests. Since the
-field is not applicable to Tegra210, mentioned bit fields are unused
-and hence the member is initialized with 0.
+I am Mr Jerome Njitap, former ministry of Agriculture and Urban development. I have also held the post of the assistant Governor of the BCEAO bank, quivalent to the central bank here in my country
+Burkina Faso. Also, former head and chairman of the Burkina Faso electoral commission.
 
-Fixes: 433de642a76c ("dmaengine: tegra210-adma: add support for Tegra186/Tegra194")
 
-Signed-off-by: Sameer Pujar <spujar@nvidia.com>
----
- drivers/dma/tegra210-adma.c | 5 +++++
- 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/dma/tegra210-adma.c b/drivers/dma/tegra210-adma.c
-index 17ea4dd99..8d291cf 100644
---- a/drivers/dma/tegra210-adma.c
-+++ b/drivers/dma/tegra210-adma.c
-@@ -96,6 +96,7 @@ struct tegra_adma;
-  * @ch_req_tx_shift: Register offset for AHUB transmit channel select.
-  * @ch_req_rx_shift: Register offset for AHUB receive channel select.
-  * @ch_base_offset: Register offset of DMA channel registers.
-+ * @ch_pending_req: Outstaning DMA requests for a channel.
-  * @ch_fifo_ctrl: Default value for channel FIFO CTRL register.
-  * @ch_req_mask: Mask for Tx or Rx channel select.
-  * @ch_req_max: Maximum number of Tx or Rx channels available.
-@@ -109,6 +110,7 @@ struct tegra_adma_chip_data {
- 	unsigned int ch_req_tx_shift;
- 	unsigned int ch_req_rx_shift;
- 	unsigned int ch_base_offset;
-+	unsigned int ch_pending_req;
- 	unsigned int ch_fifo_ctrl;
- 	unsigned int ch_req_mask;
- 	unsigned int ch_req_max;
-@@ -613,6 +615,7 @@ static int tegra_adma_set_xfer_params(struct tegra_adma_chan *tdc,
- 			 ADMA_CH_CTRL_FLOWCTRL_EN;
- 	ch_regs->config |= cdata->adma_get_burst_config(burst_size);
- 	ch_regs->config |= ADMA_CH_CONFIG_WEIGHT_FOR_WRR(1);
-+	ch_regs->config |= cdata->ch_pending_req;
- 	ch_regs->fifo_ctrl = cdata->ch_fifo_ctrl;
- 	ch_regs->tc = desc->period_len & ADMA_CH_TC_COUNT_MASK;
- 
-@@ -797,6 +800,7 @@ static const struct tegra_adma_chip_data tegra210_chip_data = {
- 	.ch_req_tx_shift	= 28,
- 	.ch_req_rx_shift	= 24,
- 	.ch_base_offset		= 0,
-+	.ch_pending_req		= 0,
- 	.ch_fifo_ctrl		= TEGRA210_FIFO_CTRL_DEFAULT,
- 	.ch_req_mask		= 0xf,
- 	.ch_req_max		= 10,
-@@ -811,6 +815,7 @@ static const struct tegra_adma_chip_data tegra186_chip_data = {
- 	.ch_req_tx_shift	= 27,
- 	.ch_req_rx_shift	= 22,
- 	.ch_base_offset		= 0x10000,
-+	.ch_pending_req		= (8 << 4),
- 	.ch_fifo_ctrl		= TEGRA186_FIFO_CTRL_DEFAULT,
- 	.ch_req_mask		= 0x1f,
- 	.ch_req_max		= 20,
--- 
-2.7.4
+Now i have been made head of an auditing department of a top bank here in Burkina faso. Here, in my department i have discovered an unclaimed fund in our bank here belonging to a foreigner. Further research which i discovered upon research that the owner of the account has been deceased for years with his family members on an air craft. He was a French business man into Agricultural and mining business.
 
+Hence, upon this discovery i have made this offer to you to stand as the beneficiary of the fund and with my technical assistance as an insider, i will do the necessary underwork to make sure my bank releases and transfer the fund to your bank account. You have to understand that it only a foreigner i can present to my bank to apply as the beneficiary of the fund since the deceased beneficiary was also a foreigner and not a citizen of Burkina Faso.
+
+Please note that this discovery is known only to me at the moment and neither of the bank managements are aware of this for years now. I have the statement of account of account and every documentation that shall be sent to you for your analysis once we agree.
+
+I intend to share the fund with you 60% for me and 40% for you. While i intend to invest my share under your guidance and directory in your country and into profitable business ventures and areas such as Fish industries, Textile, Technology, Real estate, etc. As soon as i receive your confirmation i shall direct you on how to apply to my bank as the beneficiary of the fund so they can begin the transfer and release procedures immediately.Please all communications should be through this email address for confidential purpose(jeromenjitap100@gmail.com)
+
+Feel free to also check my professional linkeldin page. Revert with your confirmation and direct mobile number for easier communication.
+
+Regards,
+Mr. Jerome.N
