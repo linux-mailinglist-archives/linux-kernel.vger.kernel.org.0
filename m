@@ -2,35 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B56D44D92A
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 20:32:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 77DC34D58E
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 19:59:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726289AbfFTR6t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 13:58:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45544 "EHLO mail.kernel.org"
+        id S1726310AbfFTR6v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 13:58:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45622 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726127AbfFTR6q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 13:58:46 -0400
+        id S1726264AbfFTR6t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Jun 2019 13:58:49 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AFED62089C;
-        Thu, 20 Jun 2019 17:58:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CF9AF208CA;
+        Thu, 20 Jun 2019 17:58:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561053525;
-        bh=oKXaoL1Mu3y3usuaJWfvzzcoOd7MzSIw2E9UyGTNbvc=;
+        s=default; t=1561053528;
+        bh=fN+mNrmLgtHQROZH8aqQZFI7JhULnm8CryM/SGFakXo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=p/WVlent9QLoFaAFhAbMsIdjy0U7PGOVo3nxYC7zotJNrvqWO+IXno5Ek/19E98w8
-         Ep4vB6Nk30jh2/wv03/2ucjeaqw7gTlxQ/V+D5H+oghqQ9Zma8HGoD3rTMoVtxSfG5
-         Vcywc7SqZRP2GvRof21wewVf5NDSDlJOtJOr/EQ4=
+        b=qatGdQmr+NQO8dcddAepiTJrgawstCV63feIsTAL68XXL6fVVq1x3pPu0m30MasHc
+         B/U5EFrkT6mxSjhWuHtB7m7KMhkohDArm96tG4A/1noonybTPn3S1l7ksNswS2Ty9j
+         bB285bIw/7J9cajHOc7AetanYhjUJ87foRvz4HM8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "J. Bruce Fields" <bfields@redhat.com>,
+        stable@vger.kernel.org, Wenwen Wang <wang6495@umn.edu>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 19/84] nfsd: allow fh_want_write to be called twice
-Date:   Thu, 20 Jun 2019 19:56:16 +0200
-Message-Id: <20190620174340.410803103@linuxfoundation.org>
+Subject: [PATCH 4.4 20/84] x86/PCI: Fix PCI IRQ routing table memory leak
+Date:   Thu, 20 Jun 2019 19:56:17 +0200
+Message-Id: <20190620174340.620380342@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190620174337.538228162@linuxfoundation.org>
 References: <20190620174337.538228162@linuxfoundation.org>
@@ -43,49 +46,65 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 0b8f62625dc309651d0efcb6a6247c933acd8b45 ]
+[ Upstream commit ea094d53580f40c2124cef3d072b73b2425e7bfd ]
 
-A fuzzer recently triggered lockdep warnings about potential sb_writers
-deadlocks caused by fh_want_write().
+In pcibios_irq_init(), the PCI IRQ routing table 'pirq_table' is first
+found through pirq_find_routing_table().  If the table is not found and
+CONFIG_PCI_BIOS is defined, the table is then allocated in
+pcibios_get_irq_routing_table() using kmalloc().  Later, if the I/O APIC is
+used, this table is actually not used.  In that case, the allocated table
+is not freed, which is a memory leak.
 
-Looks like we aren't careful to pair each fh_want_write() with an
-fh_drop_write().
+Free the allocated table if it is not used.
 
-It's not normally a problem since fh_put() will call fh_drop_write() for
-us.  And was OK for NFSv3 where we'd do one operation that might call
-fh_want_write(), and then put the filehandle.
-
-But an NFSv4 protocol fuzzer can do weird things like call unlink twice
-in a compound, and then we get into trouble.
-
-I'm a little worried about this approach of just leaving everything to
-fh_put().  But I think there are probably a lot of
-fh_want_write()/fh_drop_write() imbalances so for now I think we need it
-to be more forgiving.
-
-Signed-off-by: J. Bruce Fields <bfields@redhat.com>
+Signed-off-by: Wenwen Wang <wang6495@umn.edu>
+[bhelgaas: added Ingo's reviewed-by, since the only change since v1 was to
+use the irq_routing_table local variable name he suggested]
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+Reviewed-by: Ingo Molnar <mingo@kernel.org>
+Acked-by: Thomas Gleixner <tglx@linutronix.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/nfsd/vfs.h | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ arch/x86/pci/irq.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
-diff --git a/fs/nfsd/vfs.h b/fs/nfsd/vfs.h
-index fcfc48cbe136..128d6e216fd7 100644
---- a/fs/nfsd/vfs.h
-+++ b/fs/nfsd/vfs.h
-@@ -109,8 +109,11 @@ void		nfsd_put_raparams(struct file *file, struct raparms *ra);
+diff --git a/arch/x86/pci/irq.c b/arch/x86/pci/irq.c
+index 9bd115484745..5f0e596b0519 100644
+--- a/arch/x86/pci/irq.c
++++ b/arch/x86/pci/irq.c
+@@ -1117,6 +1117,8 @@ static struct dmi_system_id __initdata pciirq_dmi_table[] = {
  
- static inline int fh_want_write(struct svc_fh *fh)
+ void __init pcibios_irq_init(void)
  {
--	int ret = mnt_want_write(fh->fh_export->ex_path.mnt);
-+	int ret;
++	struct irq_routing_table *rtable = NULL;
++
+ 	DBG(KERN_DEBUG "PCI: IRQ init\n");
  
-+	if (fh->fh_want_write)
-+		return 0;
-+	ret = mnt_want_write(fh->fh_export->ex_path.mnt);
- 	if (!ret)
- 		fh->fh_want_write = true;
- 	return ret;
+ 	if (raw_pci_ops == NULL)
+@@ -1127,8 +1129,10 @@ void __init pcibios_irq_init(void)
+ 	pirq_table = pirq_find_routing_table();
+ 
+ #ifdef CONFIG_PCI_BIOS
+-	if (!pirq_table && (pci_probe & PCI_BIOS_IRQ_SCAN))
++	if (!pirq_table && (pci_probe & PCI_BIOS_IRQ_SCAN)) {
+ 		pirq_table = pcibios_get_irq_routing_table();
++		rtable = pirq_table;
++	}
+ #endif
+ 	if (pirq_table) {
+ 		pirq_peer_trick();
+@@ -1143,8 +1147,10 @@ void __init pcibios_irq_init(void)
+ 		 * If we're using the I/O APIC, avoid using the PCI IRQ
+ 		 * routing table
+ 		 */
+-		if (io_apic_assign_pci_irqs)
++		if (io_apic_assign_pci_irqs) {
++			kfree(rtable);
+ 			pirq_table = NULL;
++		}
+ 	}
+ 
+ 	x86_init.pci.fixup_irqs();
 -- 
 2.20.1
 
