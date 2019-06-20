@@ -2,178 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E6CEC4C916
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 10:12:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A5F34C91E
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 10:12:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731235AbfFTIMB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 04:12:01 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:43550 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725966AbfFTIMA (ORCPT
+        id S1731356AbfFTIMs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 04:12:48 -0400
+Received: from mailgw02.mediatek.com ([1.203.163.81]:25389 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725925AbfFTIMp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 04:12:00 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 4B66B60A24; Thu, 20 Jun 2019 08:11:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1561018319;
-        bh=dvU4ajc5X9Scc24IFrnqiFqzqsUgEwHjZnNW7TXMMe0=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=A8a0vgs6wuLOa5DhlPnxpcrazX1vxYuDRWrWSzkLd/06sm6s0ntsxwPyafsFlNtE1
-         yvx0wDhjvPUbLyRKkz8WAC455jLiKdwrUt+InOQtH+AuJGDg1BHmuNl35HJripnOoK
-         1PpwxglLi7dbuMM0Cxh0rbtbGEbgvfaFSn5tItEA=
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        pdx-caf-mail.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
-        DKIM_INVALID,DKIM_SIGNED autolearn=no autolearn_force=no version=3.4.0
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.codeaurora.org (Postfix) with ESMTP id 74195606FC;
-        Thu, 20 Jun 2019 08:11:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1561018318;
-        bh=dvU4ajc5X9Scc24IFrnqiFqzqsUgEwHjZnNW7TXMMe0=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=mIpVAMaCbF25A6O5Q2W1kSuhBfKw9/MFQrVxSXyN/4+hEcaHJmGfVgMbYhyOJHTGN
-         vVy6Ry5XkWEDNXqJzuNJJJo6ilp4QfaK3WCarKedHJ8LktQ0AqzwV8Ny5d2PYK1Rcd
-         hdNpDqhM6Al521NWNQd3so6Ql+LwK98volxYAqXI=
+        Thu, 20 Jun 2019 04:12:45 -0400
+X-UUID: b566a0946ec84570b984f1c3fe670ffa-20190620
+X-UUID: b566a0946ec84570b984f1c3fe670ffa-20190620
+Received: from mtkcas36.mediatek.inc [(172.27.4.253)] by mailgw02.mediatek.com
+        (envelope-from <chunfeng.yun@mediatek.com>)
+        (mailgw01.mediatek.com ESMTP with TLS)
+        with ESMTP id 1645524193; Thu, 20 Jun 2019 16:12:39 +0800
+Received: from mtkcas08.mediatek.inc (172.21.101.126) by
+ MTKMBS31N1.mediatek.inc (172.27.4.69) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Thu, 20 Jun 2019 16:12:36 +0800
+Received: from localhost.localdomain (10.17.3.153) by mtkcas08.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Thu, 20 Jun 2019 16:12:35 +0800
+From:   Chunfeng Yun <chunfeng.yun@mediatek.com>
+To:     Felipe Balbi <felipe.balbi@linux.intel.com>
+CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Chunfeng Yun <chunfeng.yun@mediatek.com>,
+        <linux-usb@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>
+Subject: [PATCH] usb: dwc3: remove unused @lock member of dwc3_ep struct
+Date:   Thu, 20 Jun 2019 16:12:31 +0800
+Message-ID: <342af01a252a9ef9457a6a6ec653a40698058fbc.1561018149.git.chunfeng.yun@mediatek.com>
+X-Mailer: git-send-email 1.7.9.5
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Thu, 20 Jun 2019 13:41:58 +0530
-From:   amasule@codeaurora.org
-To:     Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, vgarodia@codeaurora.org
-Subject: Re: [PATCH 1/5] media: venus: Add codec data table
-In-Reply-To: <bc6035d8-2688-f79a-068e-bf6630dd65ef@linaro.org>
-References: <1560233130-27264-1-git-send-email-amasule@codeaurora.org>
- <1560233130-27264-2-git-send-email-amasule@codeaurora.org>
- <bc6035d8-2688-f79a-068e-bf6630dd65ef@linaro.org>
-Message-ID: <cc674c104d0f7bc9007285efd67e8885@codeaurora.org>
-X-Sender: amasule@codeaurora.org
-User-Agent: Roundcube Webmail/1.2.5
+Content-Type: text/plain
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Stan,
+The member @lock of dwc2_ep struct is only initialized,
+and not used elsewhere, so remove it.
 
-On 2019-06-17 14:07, Stanimir Varbanov wrote:
-> Hi Aniket,
-> 
-> On 6/11/19 9:05 AM, Aniket Masule wrote:
->> Add vpp cycles for for different types of codec
->> It indicates the cycles required by video hardware
->> to process each macroblock.
->> 
->> Signed-off-by: Aniket Masule <amasule@codeaurora.org>
->> ---
->>  drivers/media/platform/qcom/venus/core.c | 13 +++++++++++++
->>  drivers/media/platform/qcom/venus/core.h | 15 +++++++++++++++
->>  2 files changed, 28 insertions(+)
->> 
->> diff --git a/drivers/media/platform/qcom/venus/core.c 
->> b/drivers/media/platform/qcom/venus/core.c
->> index 7393667..43eb446 100644
->> --- a/drivers/media/platform/qcom/venus/core.c
->> +++ b/drivers/media/platform/qcom/venus/core.c
->> @@ -473,9 +473,22 @@ static __maybe_unused int 
->> venus_runtime_resume(struct device *dev)
->>  	{  244800, 100000000 },	/* 1920x1080@30 */
->>  };
->> 
->> +static struct codec_data sdm845_codec_data[] =  {
->> +	{ V4L2_PIX_FMT_H264, VIDC_SESSION_TYPE_ENC, 675 },
->> +	{ V4L2_PIX_FMT_HEVC, VIDC_SESSION_TYPE_ENC, 675 },
->> +	{ V4L2_PIX_FMT_VP8, VIDC_SESSION_TYPE_ENC, 675 },
->> +	{ V4L2_PIX_FMT_MPEG2, VIDC_SESSION_TYPE_DEC, 200 },
->> +	{ V4L2_PIX_FMT_H264, VIDC_SESSION_TYPE_DEC, 200 },
->> +	{ V4L2_PIX_FMT_HEVC, VIDC_SESSION_TYPE_DEC, 200 },
->> +	{ V4L2_PIX_FMT_VP8, VIDC_SESSION_TYPE_DEC, 200 },
->> +	{ V4L2_PIX_FMT_VP9, VIDC_SESSION_TYPE_DEC, 200 },
->> +};
->> +
->>  static const struct venus_resources sdm845_res = {
->>  	.freq_tbl = sdm845_freq_table,
->>  	.freq_tbl_size = ARRAY_SIZE(sdm845_freq_table),
->> +	.codec_data = sdm845_codec_data,
->> +	.codec_data_size = ARRAY_SIZE(sdm845_codec_data),
->>  	.clks = {"core", "iface", "bus" },
->>  	.clks_num = 3,
->>  	.max_load = 2563200,
->> diff --git a/drivers/media/platform/qcom/venus/core.h 
->> b/drivers/media/platform/qcom/venus/core.h
->> index 7a3feb5..b1a9b43 100644
->> --- a/drivers/media/platform/qcom/venus/core.h
->> +++ b/drivers/media/platform/qcom/venus/core.h
->> @@ -35,12 +35,20 @@ struct reg_val {
->>  	u32 value;
->>  };
->> 
->> +struct codec_data {
-> 
-> The name is very generic, could you rename the structure to something
-> like vpp_cycles_data?
-> 
-I will be adding vsp_cycles with next patch for bitrate based clock 
-scaling.
-So, I could rename it to codec_cycles_data.
+Signed-off-by: Chunfeng Yun <chunfeng.yun@mediatek.com>
+---
+ drivers/usb/dwc3/core.h   | 2 --
+ drivers/usb/dwc3/gadget.c | 2 --
+ 2 files changed, 4 deletions(-)
 
->> +u32 pixfmt;
->> +u32 session_type;
->> +int vpp_cycles;
-> 
-> please check your editor, those fields should have a tab to the right.
-> 
->> +};
->> +
->>  struct venus_resources {
->>  	u64 dma_mask;
->>  	const struct freq_tbl *freq_tbl;
->>  	unsigned int freq_tbl_size;
->>  	const struct reg_val *reg_tbl;
->>  	unsigned int reg_tbl_size;
->> +	const struct codec_data *codec_data;
->> +	unsigned int codec_data_size;
->>  	const char * const clks[VIDC_CLKS_NUM_MAX];
->>  	unsigned int clks_num;
->>  	enum hfi_version hfi_version;
->> @@ -216,6 +224,12 @@ struct venus_buffer {
->>  	struct list_head ref_list;
->>  };
->> 
->> +struct clock_data {
->> +	u32 core_id;
->> +	unsigned long freq;
-> 
-> I cannot see how this 'freq' structure field is used? I can see that 
-> you
-> fill it in 3/5 patch but you don't used nowhere.
-> 
-Yes Stan, I will remove 'freq' from clock data structure.
+diff --git a/drivers/usb/dwc3/core.h b/drivers/usb/dwc3/core.h
+index f19cbeb01087..72d28cb14bdf 100644
+--- a/drivers/usb/dwc3/core.h
++++ b/drivers/usb/dwc3/core.h
+@@ -649,7 +649,6 @@ struct dwc3_event_buffer {
+  * @cancelled_list: list of cancelled requests for this endpoint
+  * @pending_list: list of pending requests for this endpoint
+  * @started_list: list of started requests on this endpoint
+- * @lock: spinlock for endpoint request queue traversal
+  * @regs: pointer to first endpoint register
+  * @trb_pool: array of transaction buffers
+  * @trb_pool_dma: dma address of @trb_pool
+@@ -677,7 +676,6 @@ struct dwc3_ep {
+ 	struct list_head	pending_list;
+ 	struct list_head	started_list;
+ 
+-	spinlock_t		lock;
+ 	void __iomem		*regs;
+ 
+ 	struct dwc3_trb		*trb_pool;
+diff --git a/drivers/usb/dwc3/gadget.c b/drivers/usb/dwc3/gadget.c
+index d67655384eb2..7f75da30caba 100644
+--- a/drivers/usb/dwc3/gadget.c
++++ b/drivers/usb/dwc3/gadget.c
+@@ -2251,8 +2251,6 @@ static int dwc3_gadget_init_endpoint(struct dwc3 *dwc, u8 epnum)
+ 		dep->endpoint.comp_desc = NULL;
+ 	}
+ 
+-	spin_lock_init(&dep->lock);
+-
+ 	if (num == 0)
+ 		ret = dwc3_gadget_init_control_endpoint(dep);
+ 	else if (direction)
+-- 
+2.21.0
 
->> +	struct codec_data *codec_data;
->> +};
-> 
-> Having the fact that freq field seems not needed can we just merge the
-> fields in venus_inst structure?
-> 
-I will be adding 'freq' with next patch for bitrate based clock scaling.
-So, it would be easier if we maintain separate structure from this 
-patch.
->> +
->>  #define to_venus_buffer(ptr)	container_of(ptr, struct venus_buffer, 
->> vb)
->> 
->>  /**
->> @@ -275,6 +289,7 @@ struct venus_inst {
->>  	struct list_head list;
->>  	struct mutex lock;
->>  	struct venus_core *core;
->> +	struct clock_data clk_data;
->>  	struct list_head dpbbufs;
->>  	struct list_head internalbufs;
->>  	struct list_head registeredbufs;
->> 
