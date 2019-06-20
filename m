@@ -2,53 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 708404DC6D
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 23:25:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3C6914DC72
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 23:25:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726334AbfFTVZK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 17:25:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41294 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726225AbfFTVZG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 17:25:06 -0400
-Subject: Re: [GIT PULL] KVM changes for 5.2-rc6
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561065905;
-        bh=9EoO62JLk1jVQvtIT4L9YOC63Emf0v9KKVGZozkBpeU=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=bMvUIZoMRPY9RQHn0a0FnE5RQ3lTM5nwODadh6klXBkQmGJvOYFeuok9dFBOo8AS/
-         h3rQV11UyY7NP5r/881qX5VkrdVLi5xLruWHtbkA2crixxldsp+xPS6zaV5X0NLuKl
-         hzLyBJB5s1r0SIBXXvzmLEPVyB4Dzb8c3509DjDI=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <1561048719-38059-1-git-send-email-pbonzini@redhat.com>
-References: <1561048719-38059-1-git-send-email-pbonzini@redhat.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <1561048719-38059-1-git-send-email-pbonzini@redhat.com>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/virt/kvm/kvm.git
- tags/for-linus
-X-PR-Tracked-Commit-Id: b21e31b253048b7f9768ca7cc270e67765fd6ba2
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: b3e978337b25b042aa653652a029e3d798814c12
-Message-Id: <156106590588.13749.10359742865855568161.pr-tracker-bot@kernel.org>
-Date:   Thu, 20 Jun 2019 21:25:05 +0000
-To:     Paolo Bonzini <pbonzini@redhat.com>
-Cc:     torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
-        rkrcmar@redhat.com, kvm@vger.kernel.org
+        id S1726535AbfFTVZe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 17:25:34 -0400
+Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:54051 "EHLO
+        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725905AbfFTVZe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Jun 2019 17:25:34 -0400
+Received: from callcc.thunk.org (guestnat-104-133-0-109.corp.google.com [104.133.0.109] (may be forged))
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id x5KLPHSK007114
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 20 Jun 2019 17:25:18 -0400
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id 86C56420484; Thu, 20 Jun 2019 17:25:17 -0400 (EDT)
+Date:   Thu, 20 Jun 2019 17:25:17 -0400
+From:   "Theodore Ts'o" <tytso@mit.edu>
+To:     Ross Zwisler <zwisler@chromium.org>
+Cc:     linux-kernel@vger.kernel.org, Ross Zwisler <zwisler@google.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Jan Kara <jack@suse.com>, linux-ext4@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        Fletcher Woodruff <fletcherw@google.com>,
+        Justin TerAvest <teravest@google.com>, Jan Kara <jack@suse.cz>,
+        stable@vger.kernel.org
+Subject: Re: [PATCH v2 2/3] jbd2: introduce jbd2_inode dirty range scoping
+Message-ID: <20190620212517.GC4650@mit.edu>
+Mail-Followup-To: Theodore Ts'o <tytso@mit.edu>,
+        Ross Zwisler <zwisler@chromium.org>, linux-kernel@vger.kernel.org,
+        Ross Zwisler <zwisler@google.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andreas Dilger <adilger.kernel@dilger.ca>, Jan Kara <jack@suse.com>,
+        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, Fletcher Woodruff <fletcherw@google.com>,
+        Justin TerAvest <teravest@google.com>, Jan Kara <jack@suse.cz>,
+        stable@vger.kernel.org
+References: <20190620151839.195506-1-zwisler@google.com>
+ <20190620151839.195506-3-zwisler@google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190620151839.195506-3-zwisler@google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Thu, 20 Jun 2019 18:38:39 +0200:
+On Thu, Jun 20, 2019 at 09:18:38AM -0600, Ross Zwisler wrote:
+> diff --git a/include/linux/jbd2.h b/include/linux/jbd2.h
+> index 5c04181b7c6d8..0e0393e7f41a4 100644
+> --- a/include/linux/jbd2.h
+> +++ b/include/linux/jbd2.h
+> @@ -1397,6 +1413,12 @@ extern int	   jbd2_journal_force_commit(journal_t *);
+>  extern int	   jbd2_journal_force_commit_nested(journal_t *);
+>  extern int	   jbd2_journal_inode_add_write(handle_t *handle, struct jbd2_inode *inode);
+>  extern int	   jbd2_journal_inode_add_wait(handle_t *handle, struct jbd2_inode *inode);
+> +extern int	   jbd2_journal_inode_ranged_write(handle_t *handle,
+> +			struct jbd2_inode *inode, loff_t start_byte,
+> +			loff_t length);
+> +extern int	   jbd2_journal_inode_ranged_wait(handle_t *handle,
+> +			struct jbd2_inode *inode, loff_t start_byte,
+> +			loff_t length);
+>  extern int	   jbd2_journal_begin_ordered_truncate(journal_t *journal,
+>  				struct jbd2_inode *inode, loff_t new_size);
+>  extern void	   jbd2_journal_init_jbd_inode(struct jbd2_inode *jinode, struct inode *inode);
 
-> https://git.kernel.org/pub/scm/virt/kvm/kvm.git tags/for-linus
+You're adding two new functions that are called from outside the jbd2
+subsystem.  To support compiling jbd2 as a module, we also need to add
+EXPORT_SYMBOL declarations for these two functions.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/b3e978337b25b042aa653652a029e3d798814c12
+I'll take care of this when applying this change.
 
-Thank you!
+Thanks, applied.
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+    		     	       	       - Ted
