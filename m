@@ -2,86 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BC5854D244
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 17:37:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B756C4D253
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 17:42:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731733AbfFTPhf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 11:37:35 -0400
-Received: from mx2.suse.de ([195.135.220.15]:41674 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726798AbfFTPhe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 11:37:34 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 519C0AE46;
-        Thu, 20 Jun 2019 15:37:33 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 12BC11E434F; Thu, 20 Jun 2019 17:37:33 +0200 (CEST)
-Date:   Thu, 20 Jun 2019 17:37:33 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Tejun Heo <tj@kernel.org>
-Cc:     dsterba@suse.com, clm@fb.com, josef@toxicpanda.com,
-        axboe@kernel.dk, jack@suse.cz, linux-btrfs@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
-        kernel-team@fb.com
-Subject: Re: [PATCH 4/9] blkcg: implement REQ_CGROUP_PUNT
-Message-ID: <20190620153733.GM30243@quack2.suse.cz>
-References: <20190615182453.843275-1-tj@kernel.org>
- <20190615182453.843275-5-tj@kernel.org>
+        id S1726786AbfFTPmF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 11:42:05 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:50506 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726530AbfFTPmE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Jun 2019 11:42:04 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=6s6aZu8b9dqDAqPoq81Bk78Hj/YlZ9Zu2gddBiQR0jA=; b=jov01KPU7Ey0HCtDvL/bMfUvM
+        q+kHss2+okCgunU54lbz7AUEXxS2cz7t6hVp3TCiDXLIBSddCYMcK66KsNAYrByHqXzLdYmj5E8ms
+        s98+kDkEwIFNMnhf/WgI7uAcAm8nRSMA5EA0gm8aA9dNtYxJ/3JhRSD6SoNS961M86AwU=;
+Received: from [2001:470:1f1d:6b5:7e7a:91ff:fede:4a45] (helo=finisterre.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1hdzCB-0000qH-N9; Thu, 20 Jun 2019 15:41:51 +0000
+Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
+        id AF546440046; Thu, 20 Jun 2019 16:41:50 +0100 (BST)
+Date:   Thu, 20 Jun 2019 16:41:50 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Collabora Kernel ML <kernel@collabora.com>,
+        Xing Zheng <zhengxing@rock-chips.com>,
+        Benson Leung <bleung@chromium.org>,
+        Jaroslav Kysela <perex@perex.cz>, alsa-devel@alsa-project.org,
+        Heiko Stuebner <heiko@sntech.de>,
+        linux-rockchip@lists.infradead.org, Takashi Iwai <tiwai@suse.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] ASoC: rk3399_gru_sound: Support 32, 44.1 and 88.2 kHz
+ sample rates
+Message-ID: <20190620154150.GE5316@sirena.org.uk>
+References: <20190620134708.28311-1-enric.balletbo@collabora.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="rOnZ5ITIX7GHaQD9"
 Content-Disposition: inline
-In-Reply-To: <20190615182453.843275-5-tj@kernel.org>
+In-Reply-To: <20190620134708.28311-1-enric.balletbo@collabora.com>
+X-Cookie: Editing is a rewording activity.
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat 15-06-19 11:24:48, Tejun Heo wrote:
-> When a shared kthread needs to issue a bio for a cgroup, doing so
-> synchronously can lead to priority inversions as the kthread can be
-> trapped waiting for that cgroup.  This patch implements
-> REQ_CGROUP_PUNT flag which makes submit_bio() punt the actual issuing
-> to a dedicated per-blkcg work item to avoid such priority inversions.
-> 
-> This will be used to fix priority inversions in btrfs compression and
-> should be generally useful as we grow filesystem support for
-> comprehensive IO control.
-> 
-> Signed-off-by: Tejun Heo <tj@kernel.org>
-> Reviewed-by: Josef Bacik <josef@toxicpanda.com>
-> Cc: Chris Mason <clm@fb.com>
 
-...
+--rOnZ5ITIX7GHaQD9
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> +bool __blkcg_punt_bio_submit(struct bio *bio)
-> +{
-> +	struct blkcg_gq *blkg = bio->bi_blkg;
-> +
-> +	/* consume the flag first */
-> +	bio->bi_opf &= ~REQ_CGROUP_PUNT;
-> +
-> +	/* never bounce for the root cgroup */
-> +	if (!blkg->parent)
-> +		return false;
-> +
-> +	spin_lock_bh(&blkg->async_bio_lock);
-> +	bio_list_add(&blkg->async_bios, bio);
-> +	spin_unlock_bh(&blkg->async_bio_lock);
-> +
-> +	queue_work(blkcg_punt_bio_wq, &blkg->async_bio_work);
-> +	return true;
-> +}
-> +
+On Thu, Jun 20, 2019 at 03:47:08PM +0200, Enric Balletbo i Serra wrote:
+> According to the datasheet the max98357a also supports 32, 44.1 and
+> 88.2 kHz sample rate. This support was also introduced recently by
+> commit fdf34366d324 ("ASoC: max98357a: add missing supported rates").
+> This patch adds support for these rates also for the machine driver so
+> we get rid of the errors like the below and we are able to play files
+> using these sample rates.
 
-So does this mean that if there is some inode with lots of dirty data for a
-blkcg that is heavily throttled, that blkcg can occupy a ton of workers all
-being throttled in submit_bio()? Or what is constraining a number of
-workers one blkcg can consume?
+Does the machine actually need to validate this at all?  The component
+drivers can all apply whatever constraints are needed and do their own
+validation, the machine driver is just getting in the way here.
 
-								Honza
+--rOnZ5ITIX7GHaQD9
+Content-Type: application/pgp-signature; name="signature.asc"
 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl0LqT0ACgkQJNaLcl1U
+h9Aomwf+IWYRVucBBZvhsm/gdBVe/B8CpBjmp/2qlcOTbdBRiwV3TGlwjFiWqyNF
+a/7criDs2zMUCDb4Ad2Xh7FoRj24dC+1QikkP64iwyN/Y5wJLwQhRRDuM60vjRGp
+waQP/rQ86h14cWtTi/+IE8Rm3nFcs/0J0S+87SVuW8kIifVcEAzUGYH8fhTwgkki
+SerVWbkR+weSZLJVq/cvR2CKQvt4qPaQ2AT2V7W9pCRzBJRza8CLIg+t7jaFUuLP
+EefouE+9/aOgtVf4NT+BPfcy7pptkMZwAsbX0Obcm6+1dmIpjffWRdRzki4AVnJD
+wUUi0N6O0HWIkSLhMnqzgBaOrZBMjg==
+=cr78
+-----END PGP SIGNATURE-----
+
+--rOnZ5ITIX7GHaQD9--
