@@ -2,102 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7A39A4D84E
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 20:26:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 47A1A4D67B
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 20:08:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728384AbfFTSIA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 14:08:00 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:36546 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728014AbfFTSH6 (ORCPT
+        id S1727860AbfFTSIj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 14:08:39 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:34854 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728486AbfFTSId (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 14:07:58 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 6ED3061215; Thu, 20 Jun 2019 18:07:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1561054076;
-        bh=7oF5FYVB4lfqoUS0Whfvt1/H7DjfkYY/IRM8xOGXllU=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=ZEoATi2NY3mmajhG/7O9iXBPacMeW6VD1Oubpnmld7rQE/vcTJOa4ZqpA+kbax24f
-         d7qXwOFoi5FbB3tSRKAIqG7EiQAzmQKk027S5VQpPMkjFMcm7M9jbKKGWiPpa+9fCy
-         IjthsOiW/Hq5NL12PcJ3S3SjMjOIz2ZqWuxuHHVQ=
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        pdx-caf-mail.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
-        DKIM_INVALID,DKIM_SIGNED,SPF_NONE autolearn=no autolearn_force=no
-        version=3.4.0
-Received: from [192.168.1.100] (unknown [157.45.245.98])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: saiprakash.ranjan@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 4309760E57;
-        Thu, 20 Jun 2019 18:07:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1561054074;
-        bh=7oF5FYVB4lfqoUS0Whfvt1/H7DjfkYY/IRM8xOGXllU=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=agu9uSKcqLRU1u8dTJcRsoe5C4M6B+ntgNfLUgVMBz+jj2LE6WkQBaXE3SkqP0MRu
-         rf/B6aRW/MyrsRTed2F2jFmJj/pBTu8sUwSSjIn4CfprmjyP0nhwACjGX/x33JPI5O
-         CinIvimXEuZa97ng+wQ2GNtkrUmfHVtjjgP3ZopA=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4309760E57
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=saiprakash.ranjan@codeaurora.org
-Subject: Re: [PATCH 2/2] coresight: Abort probe for missing CPU phandle
-To:     Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc:     Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Leo Yan <leo.yan@linaro.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Sibi Sankar <sibis@codeaurora.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org
-References: <cover.1561037262.git.saiprakash.ranjan@codeaurora.org>
- <d93e28fc80227f9a385130a766a24f8f39a1dcf0.1561037262.git.saiprakash.ranjan@codeaurora.org>
- <20190620174308.GB5581@xps15>
-From:   Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
-Message-ID: <94bd685a-1c03-f234-7d3c-e5df0856845b@codeaurora.org>
-Date:   Thu, 20 Jun 2019 23:37:45 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        Thu, 20 Jun 2019 14:08:33 -0400
+Received: by mail-pl1-f195.google.com with SMTP id p1so1714179plo.2;
+        Thu, 20 Jun 2019 11:08:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=m48O7FRi8r+gWyNb3X9q+djqhmJvKoGCXjsAReJFTG8=;
+        b=oOdnCN4kibi8UdpRROgkAuatPNdLADRR5vMRpA6WbXvPjlpFyAcbAvd+0xqxUgV0h4
+         SPHGlofI0JU1zboGi/T4cSFHDikLE4dLIa+UrDbLWwGfBNsXb0EIBv3OXMhrHideSCX8
+         Kb/QgY2rEsAhiBZ36H5UvnIllETIYM2WsQ6jjCfaq24hyHxENTBazYfnFpMVCOdIMGTd
+         O6siub7W7CNaF82pTIdXx19jyJQuKAIwIIOiXiKYK9G6ZN1WO5ZbTl5XEoYVRDtKBFqH
+         BGtOYJDCygj5v/Z6yrMKy2PPJ5KhcAaQSYwIuSsEKZZRbTn1JMWpLHCSCJVjA7iczOQe
+         AcsQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=m48O7FRi8r+gWyNb3X9q+djqhmJvKoGCXjsAReJFTG8=;
+        b=m7MoS/svtJEZO0SM70Ig6QTVW/3udszz9J7XmKHyD2FHlz5E5rKIkT0fRtViyTyDx3
+         CUNrXFQVsTFGTd4DDOivw4fldX8ObRYh9hFNAMM3u/nhNkZqdFAXhO/rvzvVpnOxlTML
+         wGLfsKXYfcB5RFmHuu/9t/ADPPffV49k3vbeFTqRiKlxtPy9vMDwsOrOu4uL4ovinQyd
+         ETtpspNezdI6iqRGYFw+2nhCaCkfoIGbGNrY2ZUANxLrMjF40LW2IGrx81/A3WZq3e3r
+         2O/rmKEEfepUlu2aSoKdiCdf333EbYiZuU2bwKWg78fPLblAbwb0shynaczRbzKp4HZR
+         A+CA==
+X-Gm-Message-State: APjAAAUhpVIKdYKVCKaPIepvxqs3sBWsusRPw4HJcY/RI/8xk5vDOCsL
+        DLImU6ts/4QZboIjlK5MLNA=
+X-Google-Smtp-Source: APXvYqyqnqQIhs6j31ORV6H+CICacUP1ugT9/edQHjN+VwobCmftwnkoxQ+fW2POJwSWWxlAl1DhFQ==
+X-Received: by 2002:a17:902:7883:: with SMTP id q3mr124656755pll.89.1561054112215;
+        Thu, 20 Jun 2019 11:08:32 -0700 (PDT)
+Received: from localhost.localdomain ([112.196.181.13])
+        by smtp.googlemail.com with ESMTPSA id 85sm289016pgb.52.2019.06.20.11.08.28
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Thu, 20 Jun 2019 11:08:31 -0700 (PDT)
+From:   Puranjay Mohan <puranjay12@gmail.com>
+To:     Shuah Khan <skhan@linuxfoundation.org>
+Cc:     Puranjay Mohan <puranjay12@gmail.com>,
+        Bjorn Helgaas <bjorn@helgaas.com>,
+        netdev <netdev@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-kernel-mentees@lists.linuxfoundation.org,
+        linux-pci@vger.kernel.org
+Subject: [PATCH v2 0/3] net: fddi: skfp: Use PCI generic definitions instead of private duplicates
+Date:   Thu, 20 Jun 2019 23:37:51 +0530
+Message-Id: <20190620180754.15413-1-puranjay12@gmail.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-In-Reply-To: <20190620174308.GB5581@xps15>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Mathieu,
+This patch series removes the private duplicates of PCI definitions in
+favour of generic definitions defined in pci_regs.h.
 
-Thanks for the review comments.
+This driver only uses one of the generic PCI definitons, i.e.
+PCI_REVISION_ID, which is included from pci_regs.h and its private
+version is removed from skfbi.h with all other private defines.
 
-On 6/20/2019 11:13 PM, Mathieu Poirier wrote:
-> On Thu, Jun 20, 2019 at 07:15:47PM +0530, Sai Prakash Ranjan wrote:
->> diff --git a/drivers/hwtracing/coresight/coresight-cpu-debug.c b/drivers/hwtracing/coresight/coresight-cpu-debug.c
->> index 07a1367c733f..43f32fa71ff9 100644
->> --- a/drivers/hwtracing/coresight/coresight-cpu-debug.c
->> +++ b/drivers/hwtracing/coresight/coresight-cpu-debug.c
->> @@ -579,6 +579,9 @@ static int debug_probe(struct amba_device *adev, const struct amba_id *id)
->>   		return -ENOMEM;
->>   
->>   	drvdata->cpu = coresight_get_cpu(dev);
->> +	if (drvdata->cpu == -ENODEV)
->> +		return -ENODEV;
-> 
-> As Suzuki pointed out, simply return the error message conveyed by
-> coresight_get_cpu().
-> 
-> Also please merge both patches together to avoid bisect nightmare.
+The skfbi.h defines PCI_REV_ID which is renamed to PCI_REVISION_ID in
+drvfbi.c to make it compatible with the generic define in pci_regs.h.
 
-Sure, will do it.
+Puranjay Mohan (3):
+  net: fddi: skfp: Rename PCI_REV_ID to PCI_REVISION_ID
+  net: fddi: skfp: Include generic PCI definitions
+  net: fddi: skfp: Remove unused private PCI definitions
+
+ drivers/net/fddi/skfp/drvfbi.c  |   4 +-
+ drivers/net/fddi/skfp/h/skfbi.h | 207 +-------------------------------
+ 2 files changed, 3 insertions(+), 208 deletions(-)
 
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+2.21.0
+
