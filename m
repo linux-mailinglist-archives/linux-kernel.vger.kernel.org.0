@@ -2,56 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C414F4CF86
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 15:49:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 20EA04CF98
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 15:51:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731983AbfFTNt3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 09:49:29 -0400
-Received: from ozlabs.org ([203.11.71.1]:32773 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726551AbfFTNt3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 09:49:29 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45V38P0wjWz9s5c;
-        Thu, 20 Jun 2019 23:49:24 +1000 (AEST)
-From:   Michael Ellerman <mpe@ellerman.id.au>
-To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Christoph Hellwig <hch@lst.de>, paulus@samba.org
-Cc:     Larry.Finger@lwfinger.net, linuxppc-dev@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org, aaro.koskinen@iki.fi
-Subject: Re: [PATCH] powerpc: enable a 30-bit ZONE_DMA for 32-bit pmac
-In-Reply-To: <a5fc355e44fb5edea41274329f7c5d04a8dff6fc.camel@kernel.crashing.org>
-References: <20190613082446.18685-1-hch@lst.de> <20190619105039.GA10118@lst.de> <87tvcldacn.fsf@concordia.ellerman.id.au> <a5fc355e44fb5edea41274329f7c5d04a8dff6fc.camel@kernel.crashing.org>
-Date:   Thu, 20 Jun 2019 23:49:20 +1000
-Message-ID: <87k1dgcqov.fsf@concordia.ellerman.id.au>
+        id S1732116AbfFTNvF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 09:51:05 -0400
+Received: from mail-ua1-f68.google.com ([209.85.222.68]:36347 "EHLO
+        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732105AbfFTNvE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Jun 2019 09:51:04 -0400
+Received: by mail-ua1-f68.google.com with SMTP id v20so1682359uao.3
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2019 06:51:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=2IFwlqbKib7dWbeVbv8X2YweFdeF4XDbaSTOpsTFt9E=;
+        b=cnBfFGGl3pJdpKp1MmBsF47mWvkNWCygNpH36R5cENrnDyoojF55rqerYfDLfwbbTj
+         RFNj58C5CUCULzDhnJhuuGUawX8GzXHIVIZhOz7jX/xVeIdC14e76z4ee9EhQzScRn3r
+         yZyPrtDQwDjqyu6vqRuq4CLTKqp19vhLDP1kzyZlJral0qqZUmCvS5srHMy+sgfXo7OX
+         8J3/HDJJtVqUJPoO9R3c2uQaBqDPo5Hb8yFlY4a3lZNrdJXrZ2uvs7wDiEP1uZSr6Jfu
+         RATefM9/IOvINHrRt3pDF9AMIZimpQikwZUjdX3vOvvUC0JBvtUIxqFbJK3SbyUB77sX
+         swNA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=2IFwlqbKib7dWbeVbv8X2YweFdeF4XDbaSTOpsTFt9E=;
+        b=iD0er6Kywd7CFhvH/O5XKooUN89xeof9bohyQYuAX4X83T3ILNZGu3RMSUNgWnkl06
+         dn03oBvfYE2jzub2C1rpMr+DUoqNgnzmai+o9ok1mshFi3e2ZKWUPlSwYP8FhR6oRQyL
+         e/9/tQW/XHd/GxA5iuFKaP1w56XRABEXYdp6x5dOh3W57Tzq8mCy2YX64YC+esZ827M+
+         SoVhpsnbST14Eyf6FJvApByxjAiAnmj0PkmtNPnbk6w0Qa11EOAd80Jgecj0DOTMbp3Z
+         gg3hXhxOfUXYMl9zgmmqS5UpF/TmVHIk+Zux5HJwi02K+vVjUdFOiY8asyee+Uqe6o6J
+         U+SQ==
+X-Gm-Message-State: APjAAAUAEL5RozifVXmBaruxGq97W2oQLtSZpkfV+l8uZNqAz5lpGN7f
+        L2jp6EaEUohSsMLEyALS9kV1PFbRK3hv4oVRevIwWg==
+X-Google-Smtp-Source: APXvYqyZXCFrwLLbuKH87ntBoB1uPTcKE017Mrw8Z9+j3VOUxMLwq/g1pwfocngRvtK/nHu4TYQODtwzbAxVOv/4r8s=
+X-Received: by 2002:a9f:242e:: with SMTP id 43mr8151929uaq.100.1561038663128;
+ Thu, 20 Jun 2019 06:51:03 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <1559577325-19266-1-git-send-email-ludovic.Barre@st.com>
+ <5b7e1ae5-c97e-5a21-fc3e-7cc328087f04@st.com> <CAPDyKFrULRk=cHzVodU9aa6LDX9ip-VPHNwG7QXhmNZrMpPjGw@mail.gmail.com>
+In-Reply-To: <CAPDyKFrULRk=cHzVodU9aa6LDX9ip-VPHNwG7QXhmNZrMpPjGw@mail.gmail.com>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Thu, 20 Jun 2019 15:50:26 +0200
+Message-ID: <CAPDyKFr_KNpNY-xgGdKXdAnmmD5OD1=wxgs2LmBAUJOn0mZwqg@mail.gmail.com>
+Subject: Re: [PATCH V3 0/3] mmc: mmci: add busy detect for stm32 sdmmc variant
+To:     Ludovic BARRE <ludovic.barre@st.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        DTML <devicetree@vger.kernel.org>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        linux-stm32@st-md-mailman.stormreply.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Benjamin Herrenschmidt <benh@kernel.crashing.org> writes:
-> On Wed, 2019-06-19 at 22:32 +1000, Michael Ellerman wrote:
->> Christoph Hellwig <hch@lst.de> writes:
->> > Any chance this could get picked up to fix the regression?
->> 
->> Was hoping Ben would Ack it. He's still powermac maintainer :)
->> 
->> I guess he OK'ed it in the other thread, will add it to my queue.
+Hi Ludovic,
+
+On Thu, 13 Jun 2019 at 15:13, Ulf Hansson <ulf.hansson@linaro.org> wrote:
 >
-> Yeah ack. If I had written it myself, I would have made the DMA bits a
-> variable and only set it down to 30 if I see that device in the DT
-> early on, but I can't be bothered now, if it works, ship it :-)
+> On Thu, 13 Jun 2019 at 15:02, Ludovic BARRE <ludovic.barre@st.com> wrote:
+> >
+> > hi Ulf
+> >
+> > Just a "gentleman ping" about this series.
+> > I know you are busy, it's just to be sure you do not forget me :-)
+>
+> Thanks! I started briefly to review, but got distracted again. I will
+> come to it, but it just seems to take more time than it should, my
+> apologies.
 
-OK, we can do that next release if someone's motivated.
+Alright, so I planned to review this this week - but failed. I have
+been overwhelmed with work lately (as usual when vacation is getting
+closer).
 
-> Note: The patch affects all ppc32, though I don't think it will cause
-> any significant issue on those who don't need it.
+I need to gently request to come back to this as of week 28, when I
+will give this the highest prio. Again apologize for the delays!
 
-Yeah. We could always hide it behind CONFIG_PPC_PMAC if it becomes a problem.
+Kind regards
+Uffe
 
-cheers
+>
+> Br
+> Uffe
+>
+> >
+> > Regards
+> > Ludo
+> >
+> > On 6/3/19 5:55 PM, Ludovic Barre wrote:
+> > > From: Ludovic Barre <ludovic.barre@st.com>
+> > >
+> > > This patch series adds busy detect for stm32 sdmmc variant.
+> > > Some adaptations are required:
+> > > -Clear busy status bit if busy_detect_flag and busy_detect_mask are
+> > >   different.
+> > > -Add hardware busy timeout with MMCIDATATIMER register.
+> > >
+> > > V3:
+> > > -rebase on latest mmc next
+> > > -replace re-read by status parameter.
+> > >
+> > > V2:
+> > > -mmci_cmd_irq cleanup in separate patch.
+> > > -simplify the busy_detect_flag exclude
+> > > -replace sdmmc specific comment in
+> > > "mmc: mmci: avoid fake busy polling in mmci_irq"
+> > > to focus on common behavior
+> > >
+> > > Ludovic Barre (3):
+> > >    mmc: mmci: fix read status for busy detect
+> > >    mmc: mmci: add hardware busy timeout feature
+> > >    mmc: mmci: add busy detect for stm32 sdmmc variant
+> > >
+> > >   drivers/mmc/host/mmci.c | 49 +++++++++++++++++++++++++++++++++++++++++--------
+> > >   drivers/mmc/host/mmci.h |  3 +++
+> > >   2 files changed, 44 insertions(+), 8 deletions(-)
+> > >
