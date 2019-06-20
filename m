@@ -2,208 +2,196 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 09A884D539
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 19:28:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B08584D559
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 19:37:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732369AbfFTR21 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 13:28:27 -0400
-Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:36072 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1732330AbfFTR2Y (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 13:28:24 -0400
-Received: from pps.filterd (m0044008.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5KHK12v008132
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2019 10:28:23 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : in-reply-to : references : mime-version :
- content-type; s=facebook; bh=hD2kmpWpjDtZ0Sd5qjALN5Ckzd1PVypTF/Ew4nsBLJo=;
- b=kTITvPU+VLMLvfdbMFDyZifEq4QY77unhvF7ZNsPRIYRVmsaTTAczOkMqjQbrW4KkNyx
- WRfB20b5+cNT/Nla5uSLnfp54+53I10+wQTxJ6BmSDrwxxjWvi59igHtflD1vYawgI+G
- 1bHjUCkL41VroygCaOla9CU8Q2cjtAL1Z0U= 
-Received: from maileast.thefacebook.com ([163.114.130.16])
-        by mx0a-00082601.pphosted.com with ESMTP id 2t85v8hthx-2
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2019 10:28:23 -0700
-Received: from mx-out.facebook.com (2620:10d:c0a8:1b::d) by
- mail.thefacebook.com (2620:10d:c0a8:82::e) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1713.5; Thu, 20 Jun 2019 10:28:21 -0700
-Received: by devbig006.ftw2.facebook.com (Postfix, from userid 4523)
-        id 51AB362E2004; Thu, 20 Jun 2019 10:28:20 -0700 (PDT)
-Smtp-Origin-Hostprefix: devbig
-From:   Song Liu <songliubraving@fb.com>
-Smtp-Origin-Hostname: devbig006.ftw2.facebook.com
-To:     <linux-mm@kvack.org>, <linux-fsdevel@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-CC:     <matthew.wilcox@oracle.com>, <kirill.shutemov@linux.intel.com>,
-        <kernel-team@fb.com>, <william.kucharski@oracle.com>,
-        <akpm@linux-foundation.org>, Song Liu <songliubraving@fb.com>
-Smtp-Origin-Cluster: ftw2c04
-Subject: [PATCH v4 6/6] mm,thp: avoid writes to file with THP in pagecache
-Date:   Thu, 20 Jun 2019 10:27:52 -0700
-Message-ID: <20190620172752.3300742-7-songliubraving@fb.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190620172752.3300742-1-songliubraving@fb.com>
-References: <20190620172752.3300742-1-songliubraving@fb.com>
-X-FB-Internal: Safe
+        id S1731967AbfFTRhC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 13:37:02 -0400
+Received: from mout.web.de ([212.227.15.4]:59185 "EHLO mout.web.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726530AbfFTRhB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Jun 2019 13:37:01 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
+        s=dbaedf251592; t=1561052217;
+        bh=6ABCqgrNckGfVod4g9nc/CDSQ2u7KfwMvXsjxDVsW30=;
+        h=X-UI-Sender-Class:To:From:Subject:Cc:Date;
+        b=XutUicq+hpaeNQ2QBWVgHYs7HcdMUkOb6RzWn2JIL0z1WspbzqFl0YEqBM070qIiu
+         rjwzpZT3FCEO8I44aKlw+E1fnFBLBvOuCfLBbeA1hHNYYbXT2TmNVDBEhBUgs2esiv
+         DHGvQ4UnOQU3s/21SJiqYV8OgS2tIHDkhN00jEbk=
+X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
+Received: from [192.168.1.2] ([2.243.128.109]) by smtp.web.de (mrweb001
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 0MUEoU-1i3pDy1Z3a-00R3Y2; Thu, 20
+ Jun 2019 19:31:00 +0200
+To:     kernel-janitors@vger.kernel.org,
+        Gilles Muller <Gilles.Muller@lip6.fr>,
+        Julia Lawall <Julia.Lawall@lip6.fr>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Nicolas Palix <nicolas.palix@imag.fr>
+From:   Markus Elfring <Markus.Elfring@web.de>
+Subject: [PATCH] Coccinelle: Add a SmPL script for the reconsideration of
+ redundant dev_err() calls
+Openpgp: preference=signencrypt
+Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
+ 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 FEE=
+Cc:     Coccinelle <cocci@systeme.lip6.fr>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Ding Xiang <dingxiang@cmss.chinamobile.com>
+Message-ID: <05d85182-7ec3-8fc1-4bcd-fd2528de3a40@web.de>
+Date:   Thu, 20 Jun 2019 19:30:56 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-20_12:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=792 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1906200124
-X-FB-Internal: deliver
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:vFxa6NtbOwXDi9mrX1xEx5OTYjttZSWjmZO5m1ggnwUeVy6wgxl
+ PxePf3+FKdpeV421gsigNFcSUAdLU4bYE0StXPbWzgN1xn7lBHkVX3aK39y37ULkh2aDTsx
+ gerFcvcTp9OWZf+oz9t/70jDbU2nvDCpvYymEjh0c7saJ2TLFu/H4MwFa8t14uYgxqu1LgK
+ 5RBcGI+dCUEIym+m6qbCg==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:AoCkKZjM5oY=:RQFBISEft/yVryamYYe46m
+ 7TgQ/2lKmp6vnCpUjKdlLc7azdXp5pyUgC7hdGDEMuKjkbEqKJctVYfJz9SpQhENoH27X99Of
+ uxvapMjQDJolUM6u+aSQZ+eyDYVJrdaCQlX0sJF2/dG37CM9JIjMb4dX/lapgLnyo5avLqHNd
+ U3ghT+5L+ii1QMCF9lukLX8b8pnp/OY2fM5/h8hHxaBwIprGtbWAeufdiToAy6QAfDTUeSe1X
+ 8n7A+2WjuHttEfJtQlnFEt1ZA2DgYT1bkqzME8RIdi5yzdK9YQo30JUWA20ad1AHI1M/rMU3a
+ pfodEZzRU5kvLfjjjpymYRbm9WAZQAq4UkDV0vRfdaKJkUrncK+fgnJtRuM8aWOjmUEYRzM+o
+ oRTCH/+Y04c3/slq8UgVC1VO27Yg6lQpTuxerDa1dQZn3s/aWzXjbfUxc34j7DJBOfv+d6yi+
+ A1BHI5r3MTlceerN7YAL7e1IT+bkGfkhuVlCawoWBnqQBOVg4oDz+Pqal4Une/g/l9GisKIGa
+ ebML6ezqnkADEdCvUZH/IVA7V0siaFU1sCFq4k7bhYV/HBOqhsL4X/SFJejWz7UyNDJrJR/Ma
+ W6Po/bTCoaxgBqUwQcT8nep3o3r/uaXijUUyV1BDobOGEi2+C9mq6L5z48j+fyOUrapXhx3Ew
+ 8fuZqIkhNxLisJW4JIGy7i3nzQ24r8FDILlyFJZEbFC1DTkq5Y02lqwuBMfVPisKQTBqE2RaX
+ ttopAxy57y+h1sZO6mwRcQnHrj02YTfW9qI7O8xBA1xzhUgaAV8SSGkOnpVNloYHMAAnLI+6k
+ o6iTSa2HOtaHeHaqskFpLoLc9kGFUXfp2WPY7cA3ACcDEnFTC0IJ+YaCMvk/OmU8IjYhLBUAs
+ 4BXia6fEmfGXoEDTj0vkRSCUV5nSrov124YdMs574wBv9xCJJlXaSA/BAvGgN9GH3YDuFB9+O
+ UFEDSj5VWBCTt3kFKNY9jzHUcEnAZaNgnBH46xQpcfkWG1Io9Bkgi
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In previous patch, an application could put part of its text section in
-THP via madvise(). These THPs will be protected from writes when the
-application is still running (TXTBSY). However, after the application
-exits, the file is available for writes.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 20 Jun 2019 19:12:53 +0200
 
-This patch avoids writes to file THP by dropping page cache for the file
-when the last vma with VM_DENYWRITE is removed. A new counter nr_thps is
-added to struct address_space. In exit_mmap(), if nr_thps is non-zero, we
-drop page cache for the whole file.
+The function =E2=80=9Cdevm_ioremap_resource=E2=80=9D contains appropriate =
+error reporting.
+Thus it can be questionable to present another error message
+at other places.
 
-Signed-off-by: Song Liu <songliubraving@fb.com>
----
- fs/inode.c         |  3 +++
- include/linux/fs.h | 31 +++++++++++++++++++++++++++++++
- mm/filemap.c       |  1 +
- mm/khugepaged.c    |  4 +++-
- mm/mmap.c          | 14 ++++++++++++++
- 5 files changed, 52 insertions(+), 1 deletion(-)
+Provide design options for the adjustment of affected source code
+by the means of the semantic patch language (Coccinelle software).
 
-diff --git a/fs/inode.c b/fs/inode.c
-index df6542ec3b88..518113a4e219 100644
---- a/fs/inode.c
-+++ b/fs/inode.c
-@@ -181,6 +181,9 @@ int inode_init_always(struct super_block *sb, struct inode *inode)
- 	mapping->flags = 0;
- 	mapping->wb_err = 0;
- 	atomic_set(&mapping->i_mmap_writable, 0);
-+#ifdef CONFIG_READ_ONLY_THP_FOR_FS
-+	atomic_set(&mapping->nr_thps, 0);
-+#endif
- 	mapping_set_gfp_mask(mapping, GFP_HIGHUSER_MOVABLE);
- 	mapping->private_data = NULL;
- 	mapping->writeback_index = 0;
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index f7fdfe93e25d..3edf4ee42eee 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -444,6 +444,10 @@ struct address_space {
- 	struct xarray		i_pages;
- 	gfp_t			gfp_mask;
- 	atomic_t		i_mmap_writable;
-+#ifdef CONFIG_READ_ONLY_THP_FOR_FS
-+	/* number of thp, only for non-shmem files */
-+	atomic_t		nr_thps;
-+#endif
- 	struct rb_root_cached	i_mmap;
- 	struct rw_semaphore	i_mmap_rwsem;
- 	unsigned long		nrpages;
-@@ -2790,6 +2794,33 @@ static inline errseq_t filemap_sample_wb_err(struct address_space *mapping)
- 	return errseq_sample(&mapping->wb_err);
- }
- 
-+static inline int filemap_nr_thps(struct address_space *mapping)
-+{
-+#ifdef CONFIG_READ_ONLY_THP_FOR_FS
-+	return atomic_read(&mapping->nr_thps);
-+#else
-+	return 0;
-+#endif
-+}
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ .../coccinelle/misc/redundant_dev_err.cocci   | 53 +++++++++++++++++++
+ 1 file changed, 53 insertions(+)
+ create mode 100644 scripts/coccinelle/misc/redundant_dev_err.cocci
+
+diff --git a/scripts/coccinelle/misc/redundant_dev_err.cocci b/scripts/coc=
+cinelle/misc/redundant_dev_err.cocci
+new file mode 100644
+index 000000000000..aeb228280276
+=2D-- /dev/null
++++ b/scripts/coccinelle/misc/redundant_dev_err.cocci
+@@ -0,0 +1,53 @@
++// SPDX-License-Identifier: GPL-2.0
++/// Reconsider a function call for redundant error reporting.
++//
++// Keywords: dev_err redundant device error messages
++// Confidence: Medium
 +
-+static inline void filemap_nr_thps_inc(struct address_space *mapping)
-+{
-+#ifdef CONFIG_READ_ONLY_THP_FOR_FS
-+	atomic_inc(&mapping->nr_thps);
-+#else
-+	WARN_ON_ONCE(1);
-+#endif
-+}
++virtual patch
++virtual context
++virtual org
++virtual report
 +
-+static inline void filemap_nr_thps_dec(struct address_space *mapping)
-+{
-+#ifdef CONFIG_READ_ONLY_THP_FOR_FS
-+	atomic_dec(&mapping->nr_thps);
-+#else
-+	WARN_ON_ONCE(1);
-+#endif
-+}
++@display depends on context@
++expression e;
++@@
++ e =3D devm_ioremap_resource(...);
++ if (IS_ERR(e))
++ {
++*   dev_err(...);
++    return (...);
++ }
 +
- extern int vfs_fsync_range(struct file *file, loff_t start, loff_t end,
- 			   int datasync);
- extern int vfs_fsync(struct file *file, int datasync);
-diff --git a/mm/filemap.c b/mm/filemap.c
-index e79ceccdc6df..a8e86c136381 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -205,6 +205,7 @@ static void unaccount_page_cache_page(struct address_space *mapping,
- 			__dec_node_page_state(page, NR_SHMEM_THPS);
- 	} else if (PageTransHuge(page)) {
- 		__dec_node_page_state(page, NR_FILE_THPS);
-+		filemap_nr_thps_dec(mapping);
- 	}
- 
- 	/*
-diff --git a/mm/khugepaged.c b/mm/khugepaged.c
-index fbcff5a1d65a..17ebe9da56ce 100644
---- a/mm/khugepaged.c
-+++ b/mm/khugepaged.c
-@@ -1500,8 +1500,10 @@ static void collapse_file(struct vm_area_struct *vma,
- 
- 	if (is_shmem)
- 		__inc_node_page_state(new_page, NR_SHMEM_THPS);
--	else
-+	else {
- 		__inc_node_page_state(new_page, NR_FILE_THPS);
-+		filemap_nr_thps_inc(mapping);
-+	}
- 
- 	if (nr_none) {
- 		struct zone *zone = page_zone(new_page);
-diff --git a/mm/mmap.c b/mm/mmap.c
-index 7e8c3e8ae75f..8094ce028d74 100644
---- a/mm/mmap.c
-+++ b/mm/mmap.c
-@@ -3088,6 +3088,18 @@ int vm_brk(unsigned long addr, unsigned long len)
- }
- EXPORT_SYMBOL(vm_brk);
- 
-+static inline void release_file_thp(struct vm_area_struct *vma)
-+{
-+#ifdef CONFIG_READ_ONLY_THP_FOR_FS
-+	struct file *file = vma->vm_file;
++@deletion depends on patch@
++expression e;
++@@
++ e =3D devm_ioremap_resource(...);
++ if (IS_ERR(e))
++-{
++-   dev_err(...);
++    return (...);
++-}
 +
-+	if (file && (vma->vm_flags & VM_DENYWRITE) &&
-+	    atomic_read(&file_inode(file)->i_writecount) == 0 &&
-+	    filemap_nr_thps(file_inode(file)->i_mapping))
-+		truncate_pagecache(file_inode(file), 0);
-+#endif
-+}
++@or depends on org || report@
++expression e;
++position p;
++@@
++ e =3D devm_ioremap_resource(...);
++ if (IS_ERR(e))
++ {
++    dev_err@p(...);
++    return (...);
++ }
 +
- /* Release all mmaps. */
- void exit_mmap(struct mm_struct *mm)
- {
-@@ -3153,6 +3165,8 @@ void exit_mmap(struct mm_struct *mm)
- 	while (vma) {
- 		if (vma->vm_flags & VM_ACCOUNT)
- 			nr_accounted += vma_pages(vma);
++@script:python to_do depends on org@
++p << or.p;
++@@
++coccilib.org.print_todo(p[0],
++                        "WARNING: An error message is probably not needed=
+ here because the previously called function contains appropriate error re=
+porting.")
 +
-+		release_file_thp(vma);
- 		vma = remove_vma(vma);
- 	}
- 	vm_unacct_memory(nr_accounted);
--- 
-2.17.1
++@script:python reporting depends on report@
++p << or.p;
++@@
++coccilib.report.print_report(p[0],
++                             "WARNING: An error message is probably not n=
+eeded here because the previously called function contains appropriate err=
+or reporting.")
+=2D-
+2.22.0
 
