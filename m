@@ -2,59 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B82F34CDF2
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 14:47:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 004234CDF7
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 14:49:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731835AbfFTMri (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 08:47:38 -0400
-Received: from helcar.hmeau.com ([216.24.177.18]:45742 "EHLO deadmen.hmeau.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731729AbfFTMri (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 08:47:38 -0400
-Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
-        by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
-        id 1hdwTW-0001yT-RK; Thu, 20 Jun 2019 20:47:34 +0800
-Received: from herbert by gondobar with local (Exim 4.89)
-        (envelope-from <herbert@gondor.apana.org.au>)
-        id 1hdwTT-0004hJ-Cw; Thu, 20 Jun 2019 20:47:31 +0800
-Date:   Thu, 20 Jun 2019 20:47:31 +0800
-From:   Herbert Xu <herbert@gondor.apana.org.au>
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     stfrench@microsoft.com, linux-cifs@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>
-Subject: Re: cifs: Fix tracing build error with O=
-Message-ID: <20190620124731.dpnocjhh5co2ab5g@gondor.apana.org.au>
-References: <20190620064023.cwvcj5g4rgnmkmmn@gondor.apana.org.au>
- <9c994536a297449d843947ba9be05998@SOC-EX01V.e01.socionext.com>
- <20190620075838.sthw4kjpp2gt6t6j@gondor.apana.org.au>
- <CAK7LNATbMou4DHN9=POay4RGT6upj1RoUZPwfvaB7oZwqm5rfA@mail.gmail.com>
+        id S1731903AbfFTMs4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 08:48:56 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:34034 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726757AbfFTMsy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Jun 2019 08:48:54 -0400
+Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 017E69432391C7476A9E;
+        Thu, 20 Jun 2019 20:48:48 +0800 (CST)
+Received: from use12-sp2.huawei.com (10.67.189.174) by
+ DGGEMS401-HUB.china.huawei.com (10.3.19.201) with Microsoft SMTP Server id
+ 14.3.439.0; Thu, 20 Jun 2019 20:48:38 +0800
+From:   Xiaoming Ni <nixiaoming@huawei.com>
+To:     <trond.myklebust@hammerspace.com>, <anna.schumaker@netapp.com>,
+        <bfields@fieldses.org>, <jlayton@kernel.org>,
+        <davem@davemloft.net>, <semen.protsenko@linaro.org>,
+        <akpm@linux-foundation.org>, <gregkh@linuxfoundation.org>,
+        <vvs@virtuozzo.com>, <tglx@linutronix.de>
+CC:     <nixiaoming@huawei.com>, <dylix.dailei@huawei.com>,
+        <alex.huangjianhui@huawei.com>, <adobriyan@gmail.com>,
+        <mingo@kernel.org>, <viresh.kumar@linaro.org>, <luto@kernel.org>,
+        <arjan@linux.intel.com>, <Nadia.Derbey@bull.net>,
+        <torvalds@linux-foundation.org>, <stern@rowland.harvard.edu>,
+        <paulmck@linux.vnet.ibm.com>, <linux-kernel@vger.kernel.org>,
+        <linux-nfs@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <stable@kernel.org>
+Subject: [PATCH v2 1/3] kernel/notifier.c: avoid duplicate registration
+Date:   Thu, 20 Jun 2019 20:48:32 +0800
+Message-ID: <1561034914-106990-1-git-send-email-nixiaoming@huawei.com>
+X-Mailer: git-send-email 1.8.5.6
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAK7LNATbMou4DHN9=POay4RGT6upj1RoUZPwfvaB7oZwqm5rfA@mail.gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Type: text/plain
+X-Originating-IP: [10.67.189.174]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 20, 2019 at 08:56:10PM +0900, Masahiro Yamada wrote:
->
-> The similar question, and the answer is here:
-> https://lkml.org/lkml/2019/1/17/584
+Registering the same notifier to a hook repeatedly can cause the hook
+list to form a ring or lose other members of the list.
 
-But it doesn't work with O=:
+case1: An infinite loop in notifier_chain_register() can cause soft lockup
+        atomic_notifier_chain_register(&test_notifier_list, &test1);
+        atomic_notifier_chain_register(&test_notifier_list, &test1);
+        atomic_notifier_chain_register(&test_notifier_list, &test2);
 
-$ rm -rf build-compile/fs/cifs
-$ make O=build-compile fs/cifs
-make[1]: Entering directory '/home/herbert/src/build/kernel/test/build-compile'
-make[1]: Nothing to be done for '../fs/cifs'.
-make[1]: Leaving directory '/home/herbert/src/build/kernel/test/build-compile'
-$
+case2: An infinite loop in notifier_chain_register() can cause soft lockup
+        atomic_notifier_chain_register(&test_notifier_list, &test1);
+        atomic_notifier_chain_register(&test_notifier_list, &test1);
+        atomic_notifier_call_chain(&test_notifier_list, 0, NULL);
 
-Cheers,
+case3: lose other hook test2
+        atomic_notifier_chain_register(&test_notifier_list, &test1);
+        atomic_notifier_chain_register(&test_notifier_list, &test2);
+        atomic_notifier_chain_register(&test_notifier_list, &test1);
+
+case4: Unregister returns 0, but the hook is still in the linked list,
+        and it is not really registered. If you call notifier_call_chain
+        after ko is unloaded, it will trigger oops.
+
+If the system is configured with softlockup_panic and the same
+hook is repeatedly registered on the panic_notifier_list, it
+will cause a loop panic.
+
+Add a check in notifier_chain_register() to avoid duplicate registration
+
+Signed-off-by: Xiaoming Ni <nixiaoming@huawei.com>
+---
+ kernel/notifier.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/kernel/notifier.c b/kernel/notifier.c
+index d9f5081..30bedb8 100644
+--- a/kernel/notifier.c
++++ b/kernel/notifier.c
+@@ -23,7 +23,10 @@ static int notifier_chain_register(struct notifier_block **nl,
+ 		struct notifier_block *n)
+ {
+ 	while ((*nl) != NULL) {
+-		WARN_ONCE(((*nl) == n), "double register detected");
++		if (unlikely((*nl) == n)) {
++			WARN(1, "double register detected");
++			return 0;
++		}
+ 		if (n->priority > (*nl)->priority)
+ 			break;
+ 		nl = &((*nl)->next);
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+1.8.5.6
+
