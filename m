@@ -2,127 +2,196 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6CE064D3E8
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 18:38:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C6B6A4D401
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 18:40:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732162AbfFTQir (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 12:38:47 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:35398 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726837AbfFTQio (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 12:38:44 -0400
-Received: by mail-wr1-f68.google.com with SMTP id m3so3748296wrv.2;
-        Thu, 20 Jun 2019 09:38:42 -0700 (PDT)
+        id S1732055AbfFTQj4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 12:39:56 -0400
+Received: from mail-eopbgr770049.outbound.protection.outlook.com ([40.107.77.49]:36184
+        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1732179AbfFTQiy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Jun 2019 12:38:54 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:date:message-id;
-        bh=E1zSQny9YRRdHwfEgEpwDA5eSOxszmxLDpT/5VN+UTI=;
-        b=n0MyWeLMjOjk56sWHslQ5KowK4Xqqy4KEjaqMiv5ywD0u7uUowp/XKK1Ob6+2AZnTe
-         tcQym3wmLJeFk9wOp+qfTKHHZ2VqSMqmyJD93XVxzc+DCHX/bQPmVlckMkCd/m+YPL+A
-         zy5+B7dA5J1uEqZrYFJtZVewDs0Lx+MX9/XVwQ74nWWnYu4+xhDEeAyREbNrb30gsIJL
-         M3qEeHPeOqjAckkX3i/okUBvmbzndQxiCNmz2av9X2awP6vxSefjuXZK3DUsxn2+R4AO
-         /5x/uTmz79Ccb+5sUKES6+fQa8ufvKs6awd2XbaRRA+b2z0SypTXNbwdErbL5kB2cdZN
-         /3qg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id;
-        bh=E1zSQny9YRRdHwfEgEpwDA5eSOxszmxLDpT/5VN+UTI=;
-        b=VcHWkMz7bMU9Fs7S79GGv1Y2U4Kp4pONESt4qhRhlUTO2I8p64+QNGRdttUB52Be53
-         AzyJjjOFV1+Xp/IJTKKsu4+wXWwVx17p3NcZy2sk+9LJ4YPBtrcrg3iM13Us/M2iEnTD
-         ITNgA8NCweu0blP6Zn9I2psBiGKvfFRhgkT05AkqK3lzT/xS700nNAL8Zx4K7JNjiqFe
-         /19ycM59MgpX+Coma/HkyZGU0gIxsr14W/VQdoiqQ+jssLWlsHjGFVA26/XeTI7DQGIa
-         GXByABlXXElCjvcm6BIRaExMXtYUmGSIYUJmUzXMbniDFTRaUWQW4hUAKGk6clvv24Nx
-         qpMw==
-X-Gm-Message-State: APjAAAV+CBr5WCOAi7TLSZmUyjtZt3FqTkeEGgWX89zlvR4CYE95gukZ
-        csG0dCLqV6Lxn6UVBRUekzG2hZHz
-X-Google-Smtp-Source: APXvYqxBW54IZ8TGH3u+omyIeOTsx4gy8ScfRrWDXzbYvIlOB0fBPQY3OP9ShlNw2Tg0ZimHm5JXkg==
-X-Received: by 2002:adf:de90:: with SMTP id w16mr59995339wrl.217.1561048721772;
-        Thu, 20 Jun 2019 09:38:41 -0700 (PDT)
-Received: from 640k.lan ([93.56.166.5])
-        by smtp.gmail.com with ESMTPSA id u6sm87286wml.9.2019.06.20.09.38.40
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 20 Jun 2019 09:38:40 -0700 (PDT)
-From:   Paolo Bonzini <pbonzini@redhat.com>
-To:     torvalds@linux-foundation.org
-Cc:     linux-kernel@vger.kernel.org, rkrcmar@redhat.com,
-        kvm@vger.kernel.org
-Subject: [GIT PULL] KVM changes for 5.2-rc6
-Date:   Thu, 20 Jun 2019 18:38:39 +0200
-Message-Id: <1561048719-38059-1-git-send-email-pbonzini@redhat.com>
-X-Mailer: git-send-email 1.8.3.1
+ d=amdcloud.onmicrosoft.com; s=selector1-amdcloud-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=kc71Y2ypexjgI19ljEHBbP4Xsc0D4nCMgwKamL+Nql4=;
+ b=atu7k5H5uNjjZdtVMameEBmC+uS5pRm0iub5TuXgZno/wHYtIeF6E/2tV5YFnfiwntKurGZWEgAMA16xV46h8VkzK+c0iAXkIWweqg/JfuRDpxW0Qg2jJp+m8DckEOzeS09w/nwc9OZ6iJeIb3RysrSCllfSj7gJMcdVYEsryRM=
+Received: from DM6PR12MB2682.namprd12.prod.outlook.com (20.176.116.31) by
+ DM6PR12MB3401.namprd12.prod.outlook.com (20.178.198.96) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1987.11; Thu, 20 Jun 2019 16:38:50 +0000
+Received: from DM6PR12MB2682.namprd12.prod.outlook.com
+ ([fe80::b9c1:b235:fff3:dba2]) by DM6PR12MB2682.namprd12.prod.outlook.com
+ ([fe80::b9c1:b235:fff3:dba2%6]) with mapi id 15.20.1987.014; Thu, 20 Jun 2019
+ 16:38:50 +0000
+From:   "Singh, Brijesh" <brijesh.singh@amd.com>
+To:     "kvm@vger.kernel.org" <kvm@vger.kernel.org>
+CC:     "Singh, Brijesh" <brijesh.singh@amd.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        =?utf-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Joerg Roedel <joro@8bytes.org>, Borislav Petkov <bp@suse.de>,
+        "Lendacky, Thomas" <Thomas.Lendacky@amd.com>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: [RFC PATCH v2 01/11] KVM: SVM: Add KVM_SEV SEND_START command
+Thread-Topic: [RFC PATCH v2 01/11] KVM: SVM: Add KVM_SEV SEND_START command
+Thread-Index: AQHVJ4ajn+++m5i4FkqNC4fjbVLm0A==
+Date:   Thu, 20 Jun 2019 16:38:50 +0000
+Message-ID: <20190620163832.5451-2-brijesh.singh@amd.com>
+References: <20190620163832.5451-1-brijesh.singh@amd.com>
+In-Reply-To: <20190620163832.5451-1-brijesh.singh@amd.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: DM5PR15CA0055.namprd15.prod.outlook.com
+ (2603:10b6:3:ae::17) To DM6PR12MB2682.namprd12.prod.outlook.com
+ (2603:10b6:5:4a::31)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=brijesh.singh@amd.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-mailer: git-send-email 2.17.1
+x-originating-ip: [165.204.77.1]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: e280143d-6dea-4e18-3878-08d6f59dc609
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:DM6PR12MB3401;
+x-ms-traffictypediagnostic: DM6PR12MB3401:
+x-microsoft-antispam-prvs: <DM6PR12MB3401172E0455135559EBFFDBE5E40@DM6PR12MB3401.namprd12.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:6790;
+x-forefront-prvs: 0074BBE012
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(346002)(376002)(39860400002)(396003)(136003)(199004)(189003)(446003)(305945005)(6116002)(36756003)(54906003)(11346002)(478600001)(25786009)(50226002)(14454004)(8936002)(4326008)(7416002)(1730700003)(8676002)(86362001)(68736007)(5660300002)(316002)(81166006)(1076003)(81156014)(256004)(66476007)(66556008)(53936002)(99286004)(2501003)(6916009)(71190400001)(7736002)(186003)(73956011)(71200400001)(66946007)(66446008)(26005)(64756008)(2906002)(2351001)(3846002)(66066001)(6436002)(102836004)(5640700003)(6486002)(476003)(2616005)(386003)(6506007)(6512007)(52116002)(486006)(76176011);DIR:OUT;SFP:1101;SCL:1;SRVR:DM6PR12MB3401;H:DM6PR12MB2682.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: amd.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: IZAeqjJGvKmAyMXAz1Se/RQoh6R+FH5JoDPmvYkHJU/8SV8xY1cMUW7mocPpC91biGiDNbx7PKbFpw6KjVkWSVRgZBM4YddpJFvfFg+HKbA8JIJc+GBPKmxR76aewcqwwre72xLYGT+QyeZphCQ3VcSU5wfqHKsGNMssciCtyGv9hqdxdRcx4lgsu8WC49eHNAfPWN7wuow3HVIqCOQjiJyy4jBdMu0Jf+JunyaZY5PAUJPaLd8bb8o6v3/wyIEfU4jA3qFuZCjfyZIhrXwdb47xRuVOhxODQigrT1m0fjercJYnIfzIPYhPgIqBxcPxh6ADRh/nDevi9RKT9YlUgsmfrDquuPRtV6/ksJOOn4Am9KLl8lOa9r02Qkcq9T15ILrGIooQN8CbWLKKAqEnkOb35aFxVqlFXu1Wlem63cE=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <15A0A480CEC5094DB055252DB37F88CA@namprd12.prod.outlook.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e280143d-6dea-4e18-3878-08d6f59dc609
+X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Jun 2019 16:38:50.5374
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: sbrijesh@amd.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB3401
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Linus,
-
-The following changes since commit f8d221d2e0e1572d0d60174c118e3554d1aa79fa:
-
-  Merge tag 'kvm-s390-master-5.2-2' of git://git.kernel.org/pub/scm/linux/kernel/git/kvms390/linux into kvm-master (2019-06-01 00:49:02 +0200)
-
-are available in the git repository at:
-
-
-  https://git.kernel.org/pub/scm/virt/kvm/kvm.git tags/for-linus
-
-for you to fetch changes up to b21e31b253048b7f9768ca7cc270e67765fd6ba2:
-
-  Merge tag 'kvmarm-fixes-for-5.2-2' of git://git.kernel.org/pub/scm/linux/kernel/git/kvmarm/kvmarm into HEAD (2019-06-20 18:24:18 +0200)
-
-----------------------------------------------------------------
-
-Fixes for ARM and x86, plus selftest patches and nicer structs
-for nested state save/restore.
-
-----------------------------------------------------------------
-Aaron Lewis (2):
-      kvm: tests: Sort tests in the Makefile alphabetically
-      tests: kvm: Check for a kernel warning
-
-Andrew Jones (1):
-      KVM: arm/arm64: Fix emulated ptimer irq injection
-
-Dave Martin (2):
-      KVM: arm64: Filter out invalid core register IDs in KVM_GET_REG_LIST
-      KVM: arm/arm64: vgic: Fix kvm_device leak in vgic_its_destroy
-
-Dennis Restle (1):
-      KVM: fix typo in documentation
-
-Liran Alon (1):
-      KVM: x86: Modify struct kvm_nested_state to have explicit fields for data
-
-Paolo Bonzini (2):
-      KVM: nVMX: reorganize initial steps of vmx_set_nested_state
-      Merge tag 'kvmarm-fixes-for-5.2-2' of git://git.kernel.org/.../kvmarm/kvmarm into HEAD
-
-Sean Christopherson (1):
-      KVM: x86/mmu: Allocate PAE root array when using SVM's 32-bit NPT
-
-Viresh Kumar (1):
-      KVM: arm64: Implement vq_present() as a macro
-
-Vitaly Kuznetsov (1):
-      KVM: nVMX: use correct clean fields when copying from eVMCS
-
- Documentation/virtual/kvm/api.txt                  |  48 +++++---
- arch/arm64/kvm/guest.c                             |  65 +++++++----
- arch/x86/include/uapi/asm/kvm.h                    |  33 ++++--
- arch/x86/kvm/mmu.c                                 |  16 ++-
- arch/x86/kvm/vmx/nested.c                          | 103 +++++++++--------
- arch/x86/kvm/vmx/vmcs12.h                          |   5 +-
- tools/arch/x86/include/uapi/asm/kvm.h              |   2 +-
- tools/testing/selftests/kvm/.gitignore             |   1 +
- tools/testing/selftests/kvm/Makefile               |  21 ++--
- tools/testing/selftests/kvm/include/kvm_util.h     |   2 +
- .../selftests/kvm/include/x86_64/processor.h       |   2 +
- tools/testing/selftests/kvm/lib/kvm_util.c         |  36 ++++++
- tools/testing/selftests/kvm/lib/x86_64/processor.c |  16 +++
- .../selftests/kvm/x86_64/mmio_warning_test.c       | 126 +++++++++++++++++++++
- .../kvm/x86_64/vmx_set_nested_state_test.c         |  68 ++++++-----
- virt/kvm/arm/arch_timer.c                          |   5 +-
- virt/kvm/arm/vgic/vgic-its.c                       |   1 +
- 17 files changed, 405 insertions(+), 145 deletions(-)
- create mode 100644 tools/testing/selftests/kvm/x86_64/mmio_warning_test.c
+VGhlIGNvbW1hbmQgaXMgdXNlZCB0byBjcmVhdGUgYW4gb3V0Z29pbmcgU0VWIGd1ZXN0IGVuY3J5
+cHRpb24gY29udGV4dC4NCg0KQ2M6IFRob21hcyBHbGVpeG5lciA8dGdseEBsaW51dHJvbml4LmRl
+Pg0KQ2M6IEluZ28gTW9sbmFyIDxtaW5nb0ByZWRoYXQuY29tPg0KQ2M6ICJILiBQZXRlciBBbnZp
+biIgPGhwYUB6eXRvci5jb20+DQpDYzogUGFvbG8gQm9uemluaSA8cGJvbnppbmlAcmVkaGF0LmNv
+bT4NCkNjOiAiUmFkaW0gS3LEjW3DocWZIiA8cmtyY21hckByZWRoYXQuY29tPg0KQ2M6IEpvZXJn
+IFJvZWRlbCA8am9yb0A4Ynl0ZXMub3JnPg0KQ2M6IEJvcmlzbGF2IFBldGtvdiA8YnBAc3VzZS5k
+ZT4NCkNjOiBUb20gTGVuZGFja3kgPHRob21hcy5sZW5kYWNreUBhbWQuY29tPg0KQ2M6IHg4NkBr
+ZXJuZWwub3JnDQpDYzoga3ZtQHZnZXIua2VybmVsLm9yZw0KQ2M6IGxpbnV4LWtlcm5lbEB2Z2Vy
+Lmtlcm5lbC5vcmcNClNpZ25lZC1vZmYtYnk6IEJyaWplc2ggU2luZ2ggPGJyaWplc2guc2luZ2hA
+YW1kLmNvbT4NCi0tLQ0KIC4uLi92aXJ0dWFsL2t2bS9hbWQtbWVtb3J5LWVuY3J5cHRpb24ucnN0
+ICAgICB8ICAyNyArKysrKw0KIGFyY2gveDg2L2t2bS9zdm0uYyAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICB8IDEwNSArKysrKysrKysrKysrKysrKysNCiBpbmNsdWRlL3VhcGkvbGludXgva3Zt
+LmggICAgICAgICAgICAgICAgICAgICAgfCAgMTIgKysNCiAzIGZpbGVzIGNoYW5nZWQsIDE0NCBp
+bnNlcnRpb25zKCspDQoNCmRpZmYgLS1naXQgYS9Eb2N1bWVudGF0aW9uL3ZpcnR1YWwva3ZtL2Ft
+ZC1tZW1vcnktZW5jcnlwdGlvbi5yc3QgYi9Eb2N1bWVudGF0aW9uL3ZpcnR1YWwva3ZtL2FtZC1t
+ZW1vcnktZW5jcnlwdGlvbi5yc3QNCmluZGV4IDY1OWJiYzA5M2I1Mi4uOWVhOTc0Yzg3OTgwIDEw
+MDY0NA0KLS0tIGEvRG9jdW1lbnRhdGlvbi92aXJ0dWFsL2t2bS9hbWQtbWVtb3J5LWVuY3J5cHRp
+b24ucnN0DQorKysgYi9Eb2N1bWVudGF0aW9uL3ZpcnR1YWwva3ZtL2FtZC1tZW1vcnktZW5jcnlw
+dGlvbi5yc3QNCkBAIC0yMzgsNiArMjM4LDMzIEBAIFJldHVybnM6IDAgb24gc3VjY2VzcywgLW5l
+Z2F0aXZlIG9uIGVycm9yDQogICAgICAgICAgICAgICAgIF9fdTMyIHRyYW5zX2xlbjsNCiAgICAg
+ICAgIH07DQogDQorMTAuIEtWTV9TRVZfU0VORF9TVEFSVA0KKy0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0NCisNCitUaGUgS1ZNX1NFVl9TRU5EX1NUQVJUIGNvbW1hbmQgY2FuIGJlIHVzZWQgYnkgdGhl
+IGh5cGVydmlzb3IgdG8gY3JlYXRlIGFuDQorb3V0Z29pbmcgZ3Vlc3QgZW5jcnlwdGlvbiBjb250
+ZXh0Lg0KKw0KK1BhcmFtZXRlcnMgKGluKTogc3RydWN0IGt2bV9zZXZfc2VuZF9zdGFydA0KKw0K
+K1JldHVybnM6IDAgb24gc3VjY2VzcywgLW5lZ2F0aXZlIG9uIGVycm9yDQorDQorOjoNCisgICAg
+ICAgIHN0cnVjdCBrdm1fc2V2X3NlbmRfc3RhcnQgew0KKyAgICAgICAgICAgICAgICBfX3UzMiBw
+b2xpY3k7ICAgICAgICAgICAgICAgICAvKiBndWVzdCBwb2xpY3kgKi8NCisNCisgICAgICAgICAg
+ICAgICAgX191NjQgcGRoX2NlcnRfdWFkZHI7ICAgICAgICAgLyogcGxhdGZvcm0gRGlmZmllLUhl
+bGxtYW4gY2VydGlmaWNhdGUgKi8NCisgICAgICAgICAgICAgICAgX191MzIgcGRoX2NlcnRfbGVu
+Ow0KKw0KKyAgICAgICAgICAgICAgICBfX3U2NCBwbGF0X2NlcnRfdWFkZHI7ICAgICAgICAvKiBw
+bGF0Zm9ybSBjZXJ0aWZpY2F0ZSBjaGFpbiAqLw0KKyAgICAgICAgICAgICAgICBfX3UzMiBwbGF0
+X2NlcnRfbGVuOw0KKw0KKyAgICAgICAgICAgICAgICBfX3U2NCBhbWRfY2VydF91YWRkcjsgICAg
+ICAgICAvKiBBTUQgY2VydGlmaWNhdGUgKi8NCisgICAgICAgICAgICAgICAgX191MzIgYW1kX2Nl
+cnRfbGVuOw0KKw0KKyAgICAgICAgICAgICAgICBfX3U2NCBzZXNzaW9uX3VhZGRyOyAgICAgICAg
+IC8qIEd1ZXN0IHNlc3Npb24gaW5mb3JtYXRpb24gKi8NCisgICAgICAgICAgICAgICAgX191MzIg
+c2Vzc2lvbl9sZW47DQorICAgICAgICB9Ow0KKw0KIFJlZmVyZW5jZXMNCiA9PT09PT09PT09DQog
+DQpkaWZmIC0tZ2l0IGEvYXJjaC94ODYva3ZtL3N2bS5jIGIvYXJjaC94ODYva3ZtL3N2bS5jDQpp
+bmRleCA3MzViOGMwMTg5NWUuLjk4ZTVhNmMyYmFjYyAxMDA2NDQNCi0tLSBhL2FyY2gveDg2L2t2
+bS9zdm0uYw0KKysrIGIvYXJjaC94ODYva3ZtL3N2bS5jDQpAQCAtNjk2MCw2ICs2OTYwLDEwOCBA
+QCBzdGF0aWMgaW50IHNldl9sYXVuY2hfc2VjcmV0KHN0cnVjdCBrdm0gKmt2bSwgc3RydWN0IGt2
+bV9zZXZfY21kICphcmdwKQ0KIAlyZXR1cm4gcmV0Ow0KIH0NCiANCitzdGF0aWMgaW50IHNldl9z
+ZW5kX3N0YXJ0KHN0cnVjdCBrdm0gKmt2bSwgc3RydWN0IGt2bV9zZXZfY21kICphcmdwKQ0KK3sN
+CisJc3RydWN0IGt2bV9zZXZfaW5mbyAqc2V2ID0gJnRvX2t2bV9zdm0oa3ZtKS0+c2V2X2luZm87
+DQorCXZvaWQgKmFtZF9jZXJ0ID0gTlVMTCwgKnNlc3Npb25fZGF0YSA9IE5VTEw7DQorCXZvaWQg
+KnBkaF9jZXJ0ID0gTlVMTCwgKnBsYXRfY2VydCA9IE5VTEw7DQorCXN0cnVjdCBzZXZfZGF0YV9z
+ZW5kX3N0YXJ0ICpkYXRhID0gTlVMTDsNCisJc3RydWN0IGt2bV9zZXZfc2VuZF9zdGFydCBwYXJh
+bXM7DQorCWludCByZXQ7DQorDQorCWlmICghc2V2X2d1ZXN0KGt2bSkpDQorCQlyZXR1cm4gLUVO
+T1RUWTsNCisNCisJaWYgKGNvcHlfZnJvbV91c2VyKCZwYXJhbXMsICh2b2lkIF9fdXNlciAqKSh1
+aW50cHRyX3QpYXJncC0+ZGF0YSwNCisJCQkJc2l6ZW9mKHN0cnVjdCBrdm1fc2V2X3NlbmRfc3Rh
+cnQpKSkNCisJCXJldHVybiAtRUZBVUxUOw0KKw0KKwlkYXRhID0ga3phbGxvYyhzaXplb2YoKmRh
+dGEpLCBHRlBfS0VSTkVMKTsNCisJaWYgKCFkYXRhKQ0KKwkJcmV0dXJuIC1FTk9NRU07DQorDQor
+CS8qIHVzZXJzcGFjZSB3YW50cyB0byBxdWVyeSB0aGUgc2Vzc2lvbiBsZW5ndGggKi8NCisJaWYg
+KCFwYXJhbXMuc2Vzc2lvbl9sZW4pDQorCQlnb3RvIGNtZDsNCisNCisJaWYgKCFwYXJhbXMucGRo
+X2NlcnRfdWFkZHIgfHwgIXBhcmFtcy5wZGhfY2VydF9sZW4gfHwNCisJICAgICFwYXJhbXMuc2Vz
+c2lvbl91YWRkcikNCisJCXJldHVybiAtRUlOVkFMOw0KKw0KKwkvKiBjb3B5IHRoZSBjZXJ0aWZp
+Y2F0ZSBibG9icyBmcm9tIHVzZXJzcGFjZSAqLw0KKwlwZGhfY2VydCA9IHBzcF9jb3B5X3VzZXJf
+YmxvYihwYXJhbXMucGRoX2NlcnRfdWFkZHIsIHBhcmFtcy5wZGhfY2VydF9sZW4pOw0KKwlpZiAo
+SVNfRVJSKHBkaF9jZXJ0KSkgew0KKwkJcmV0ID0gUFRSX0VSUihwZGhfY2VydCk7DQorCQlnb3Rv
+IGVfZnJlZTsNCisJfQ0KKw0KKwlkYXRhLT5wZGhfY2VydF9hZGRyZXNzID0gX19wc3BfcGEocGRo
+X2NlcnQpOw0KKwlkYXRhLT5wZGhfY2VydF9sZW4gPSBwYXJhbXMucGRoX2NlcnRfbGVuOw0KKw0K
+KwlwbGF0X2NlcnQgPSBwc3BfY29weV91c2VyX2Jsb2IocGFyYW1zLnBsYXRfY2VydF91YWRkciwg
+cGFyYW1zLnBsYXRfY2VydF9sZW4pOw0KKwlpZiAoSVNfRVJSKHBsYXRfY2VydCkpIHsNCisJCXJl
+dCA9IFBUUl9FUlIocGxhdF9jZXJ0KTsNCisJCWdvdG8gZV9mcmVlX3BkaDsNCisJfQ0KKw0KKwlk
+YXRhLT5wbGF0X2NlcnRfYWRkcmVzcyA9IF9fcHNwX3BhKHBsYXRfY2VydCk7DQorCWRhdGEtPnBs
+YXRfY2VydF9sZW4gPSBwYXJhbXMucGxhdF9jZXJ0X2xlbjsNCisNCisJYW1kX2NlcnQgPSBwc3Bf
+Y29weV91c2VyX2Jsb2IocGFyYW1zLmFtZF9jZXJ0X3VhZGRyLCBwYXJhbXMuYW1kX2NlcnRfbGVu
+KTsNCisJaWYgKElTX0VSUihhbWRfY2VydCkpIHsNCisJCXJldCA9IFBUUl9FUlIoYW1kX2NlcnQp
+Ow0KKwkJZ290byBlX2ZyZWVfcGxhdF9jZXJ0Ow0KKwl9DQorDQorCWRhdGEtPmFtZF9jZXJ0X2Fk
+ZHJlc3MgPSBfX3BzcF9wYShhbWRfY2VydCk7DQorCWRhdGEtPmFtZF9jZXJ0X2xlbiA9IHBhcmFt
+cy5hbWRfY2VydF9sZW47DQorDQorCXJldCA9IC1FSU5WQUw7DQorCWlmIChwYXJhbXMuc2Vzc2lv
+bl9sZW4gPiBTRVZfRldfQkxPQl9NQVhfU0laRSkNCisJCWdvdG8gZV9mcmVlX2FtZF9jZXJ0Ow0K
+Kw0KKwlyZXQgPSAtRU5PTUVNOw0KKwlzZXNzaW9uX2RhdGEgPSBrbWFsbG9jKHBhcmFtcy5zZXNz
+aW9uX2xlbiwgR0ZQX0tFUk5FTCk7DQorCWlmICghc2Vzc2lvbl9kYXRhKQ0KKwkJZ290byBlX2Zy
+ZWVfYW1kX2NlcnQ7DQorDQorCWRhdGEtPnNlc3Npb25fYWRkcmVzcyA9IF9fcHNwX3BhKHNlc3Np
+b25fZGF0YSk7DQorCWRhdGEtPnNlc3Npb25fbGVuID0gcGFyYW1zLnNlc3Npb25fbGVuOw0KK2Nt
+ZDoNCisJZGF0YS0+aGFuZGxlID0gc2V2LT5oYW5kbGU7DQorCXJldCA9IHNldl9pc3N1ZV9jbWQo
+a3ZtLCBTRVZfQ01EX1NFTkRfU1RBUlQsIGRhdGEsICZhcmdwLT5lcnJvcik7DQorDQorCS8qIGlm
+IHdlIHF1ZXJpZWQgdGhlIHNlc3Npb24gbGVuZ3RoLCBGVyByZXNwb25kZWQgd2l0aCBleHBlY3Rl
+ZCBkYXRhICovDQorCWlmICghcGFyYW1zLnNlc3Npb25fbGVuKQ0KKwkJZ290byBkb25lOw0KKw0K
+KwlpZiAoY29weV90b191c2VyKCh2b2lkIF9fdXNlciAqKSh1aW50cHRyX3QpIHBhcmFtcy5zZXNz
+aW9uX3VhZGRyLA0KKwkJCXNlc3Npb25fZGF0YSwgcGFyYW1zLnNlc3Npb25fbGVuKSkgew0KKwkJ
+cmV0ID0gLUVGQVVMVDsNCisJCWdvdG8gZV9mcmVlX3Nlc3Npb247DQorCX0NCisNCisJcGFyYW1z
+LnBvbGljeSA9IGRhdGEtPnBvbGljeTsNCisNCitkb25lOg0KKwlwYXJhbXMuc2Vzc2lvbl9sZW4g
+PSBkYXRhLT5zZXNzaW9uX2xlbjsNCisJaWYgKGNvcHlfdG9fdXNlcigodm9pZCBfX3VzZXIgKiko
+dWludHB0cl90KWFyZ3AtPmRhdGEsICZwYXJhbXMsDQorCQkJCXNpemVvZihzdHJ1Y3Qga3ZtX3Nl
+dl9zZW5kX3N0YXJ0KSkpDQorCQlyZXQgPSAtRUZBVUxUOw0KKw0KK2VfZnJlZV9zZXNzaW9uOg0K
+KwlrZnJlZShzZXNzaW9uX2RhdGEpOw0KK2VfZnJlZV9hbWRfY2VydDoNCisJa2ZyZWUoYW1kX2Nl
+cnQpOw0KK2VfZnJlZV9wbGF0X2NlcnQ6DQorCWtmcmVlKHBsYXRfY2VydCk7DQorZV9mcmVlX3Bk
+aDoNCisJa2ZyZWUocGRoX2NlcnQpOw0KK2VfZnJlZToNCisJa2ZyZWUoZGF0YSk7DQorCXJldHVy
+biByZXQ7DQorfQ0KKw0KIHN0YXRpYyBpbnQgc3ZtX21lbV9lbmNfb3Aoc3RydWN0IGt2bSAqa3Zt
+LCB2b2lkIF9fdXNlciAqYXJncCkNCiB7DQogCXN0cnVjdCBrdm1fc2V2X2NtZCBzZXZfY21kOw0K
+QEAgLTcwMDEsNiArNzEwMyw5IEBAIHN0YXRpYyBpbnQgc3ZtX21lbV9lbmNfb3Aoc3RydWN0IGt2
+bSAqa3ZtLCB2b2lkIF9fdXNlciAqYXJncCkNCiAJY2FzZSBLVk1fU0VWX0xBVU5DSF9TRUNSRVQ6
+DQogCQlyID0gc2V2X2xhdW5jaF9zZWNyZXQoa3ZtLCAmc2V2X2NtZCk7DQogCQlicmVhazsNCisJ
+Y2FzZSBLVk1fU0VWX1NFTkRfU1RBUlQ6DQorCQlyID0gc2V2X3NlbmRfc3RhcnQoa3ZtLCAmc2V2
+X2NtZCk7DQorCQlicmVhazsNCiAJZGVmYXVsdDoNCiAJCXIgPSAtRUlOVkFMOw0KIAkJZ290byBv
+dXQ7DQpkaWZmIC0tZ2l0IGEvaW5jbHVkZS91YXBpL2xpbnV4L2t2bS5oIGIvaW5jbHVkZS91YXBp
+L2xpbnV4L2t2bS5oDQppbmRleCAyZmUxMmI0MGQ1MDMuLjRlOWU3YTViMjA2NiAxMDA2NDQNCi0t
+LSBhL2luY2x1ZGUvdWFwaS9saW51eC9rdm0uaA0KKysrIGIvaW5jbHVkZS91YXBpL2xpbnV4L2t2
+bS5oDQpAQCAtMTUzMSw2ICsxNTMxLDE4IEBAIHN0cnVjdCBrdm1fc2V2X2RiZyB7DQogCV9fdTMy
+IGxlbjsNCiB9Ow0KIA0KK3N0cnVjdCBrdm1fc2V2X3NlbmRfc3RhcnQgew0KKwlfX3UzMiBwb2xp
+Y3k7DQorCV9fdTY0IHBkaF9jZXJ0X3VhZGRyOw0KKwlfX3UzMiBwZGhfY2VydF9sZW47DQorCV9f
+dTY0IHBsYXRfY2VydF91YWRkcjsNCisJX191MzIgcGxhdF9jZXJ0X2xlbjsNCisJX191NjQgYW1k
+X2NlcnRfdWFkZHI7DQorCV9fdTMyIGFtZF9jZXJ0X2xlbjsNCisJX191NjQgc2Vzc2lvbl91YWRk
+cjsNCisJX191MzIgc2Vzc2lvbl9sZW47DQorfTsNCisNCiAjZGVmaW5lIEtWTV9ERVZfQVNTSUdO
+X0VOQUJMRV9JT01NVQkoMSA8PCAwKQ0KICNkZWZpbmUgS1ZNX0RFVl9BU1NJR05fUENJXzJfMwkJ
+KDEgPDwgMSkNCiAjZGVmaW5lIEtWTV9ERVZfQVNTSUdOX01BU0tfSU5UWAkoMSA8PCAyKQ0KLS0g
+DQoyLjE3LjENCg0K
