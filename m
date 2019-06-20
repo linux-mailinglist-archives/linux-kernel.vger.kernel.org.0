@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7E0384D8BF
-	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 20:30:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3FC734D7F4
+	for <lists+linux-kernel@lfdr.de>; Thu, 20 Jun 2019 20:24:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727179AbfFTSBL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 14:01:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50446 "EHLO mail.kernel.org"
+        id S1729195AbfFTSNM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 14:13:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41042 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727161AbfFTSBI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 14:01:08 -0400
+        id S1728638AbfFTSNG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 20 Jun 2019 14:13:06 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6F9F82089C;
-        Thu, 20 Jun 2019 18:01:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 08396205F4;
+        Thu, 20 Jun 2019 18:13:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561053667;
-        bh=8EyeSjUpQh19iCE24F3U8olC8MptdrzOxFATJHzEoSY=;
+        s=default; t=1561054386;
+        bh=XSmt2kupemjqB1GXrcptmo3Q9SLtuR3ACvyPs23UnSo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AwiEU7p0Y4TdxUOXamE/WiZGJlYIGSZeKxuT+C3s3e60VvIJm6gzD7UqBrG4KAzxk
-         b78/HVDq1GsSsKj+jgy2CXGIyyIB9h5avF9MgnLQkC/KPhnV0wB1EEOUxLRw2MvmPB
-         PMWgVRPqN8shT8ySk9mxOAcYcN3jP60aw/yi1vMk=
+        b=slbr1RpDYoE18+S01DISYibGpDHMryGNT0xJnQz39AMSm7GOyPIAyHgUWWN9P6TnY
+         z1uU8X0I2WiCTQnezUcOYZFJhD6fGIRkj+Ji7x4BXFpxm4obhwpP1hQEX6r8XT3Ayn
+         RZLAGWXxrPMJRGOlfz0IQ6Mmk0kvGTHTI/GGGbxs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 4.4 41/84] libata: Extend quirks for the ST1000LM024 drives with NOLPM quirk
+        stable@vger.kernel.org, Young Xiao <92siuyang@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 5.1 11/98] nfc: Ensure presence of required attributes in the deactivate_target handler
 Date:   Thu, 20 Jun 2019 19:56:38 +0200
-Message-Id: <20190620174344.378289560@linuxfoundation.org>
+Message-Id: <20190620174349.861479740@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190620174337.538228162@linuxfoundation.org>
-References: <20190620174337.538228162@linuxfoundation.org>
+In-Reply-To: <20190620174349.443386789@linuxfoundation.org>
+References: <20190620174349.443386789@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,42 +43,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hans de Goede <hdegoede@redhat.com>
+From: Young Xiao <92siuyang@gmail.com>
 
-commit 31f6264e225fb92cf6f4b63031424f20797c297d upstream.
+[ Upstream commit 385097a3675749cbc9e97c085c0e5dfe4269ca51 ]
 
-We've received a bugreport that using LPM with ST1000LM024 drives leads
-to system lockups. So it seems that these models are buggy in more then
-1 way. Add NOLPM quirk to the existing quirks entry for BROKEN_FPDMA_AA.
+Check that the NFC_ATTR_TARGET_INDEX attributes (in addition to
+NFC_ATTR_DEVICE_INDEX) are provided by the netlink client prior to
+accessing them. This prevents potential unhandled NULL pointer dereference
+exceptions which can be triggered by malicious user-mode programs,
+if they omit one or both of these attributes.
 
-BugLink: https://bugzilla.redhat.com/show_bug.cgi?id=1571330
-Cc: stable@vger.kernel.org
-Reviewed-by: Martin K. Petersen <martin.petersen@oracle.com>
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Young Xiao <92siuyang@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/ata/libata-core.c |    9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ net/nfc/netlink.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/ata/libata-core.c
-+++ b/drivers/ata/libata-core.c
-@@ -4176,9 +4176,12 @@ static const struct ata_blacklist_entry
- 	{ "ST3320[68]13AS",	"SD1[5-9]",	ATA_HORKAGE_NONCQ |
- 						ATA_HORKAGE_FIRMWARE_WARN },
+--- a/net/nfc/netlink.c
++++ b/net/nfc/netlink.c
+@@ -922,7 +922,8 @@ static int nfc_genl_deactivate_target(st
+ 	u32 device_idx, target_idx;
+ 	int rc;
  
--	/* drives which fail FPDMA_AA activation (some may freeze afterwards) */
--	{ "ST1000LM024 HN-M101MBB", "2AR10001",	ATA_HORKAGE_BROKEN_FPDMA_AA },
--	{ "ST1000LM024 HN-M101MBB", "2BA30001",	ATA_HORKAGE_BROKEN_FPDMA_AA },
-+	/* drives which fail FPDMA_AA activation (some may freeze afterwards)
-+	   the ST disks also have LPM issues */
-+	{ "ST1000LM024 HN-M101MBB", "2AR10001",	ATA_HORKAGE_BROKEN_FPDMA_AA |
-+						ATA_HORKAGE_NOLPM, },
-+	{ "ST1000LM024 HN-M101MBB", "2BA30001",	ATA_HORKAGE_BROKEN_FPDMA_AA |
-+						ATA_HORKAGE_NOLPM, },
- 	{ "VB0250EAVER",	"HPG7",		ATA_HORKAGE_BROKEN_FPDMA_AA },
+-	if (!info->attrs[NFC_ATTR_DEVICE_INDEX])
++	if (!info->attrs[NFC_ATTR_DEVICE_INDEX] ||
++	    !info->attrs[NFC_ATTR_TARGET_INDEX])
+ 		return -EINVAL;
  
- 	/* Blacklist entries taken from Silicon Image 3124/3132
+ 	device_idx = nla_get_u32(info->attrs[NFC_ATTR_DEVICE_INDEX]);
 
 
