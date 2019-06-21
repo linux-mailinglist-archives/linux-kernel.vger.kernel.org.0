@@ -2,195 +2,190 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D95014E039
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 08:06:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 927A84E042
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 08:07:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726132AbfFUGGM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Jun 2019 02:06:12 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:34971 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725911AbfFUGGL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Jun 2019 02:06:11 -0400
-Received: by mail-lf1-f68.google.com with SMTP id a25so4153946lfg.2;
-        Thu, 20 Jun 2019 23:06:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Us9SZtnCz2EeCOZyrZ0mXxBCzbiC8YyMbRyNWhRn56g=;
-        b=tLX52EUmCyDejuOuDkuAEPyovndrLyf0ijKLR6SPpuRb3sb6hnGQdb+HD/ARLuLfLi
-         ClCuyehKswfIpeltF4uWj4v/c1+97vTolsFMEO17bQ1Xr4e/gZ1R1v3TdCsh3WMPq70b
-         YXfgtZ66wLWC4zK30oop5lFe1fxDDGe0tizlNGxmxToa0APE/uQIhvD8iY0KXKOwHhcc
-         ekZdgKE3fT0fNONZQDUE+tZAgKS7DW+IPq3SqyXLkigM5j9ctVQtK2QX20LPecTeSwuN
-         Ie5w4oHn8TFpYiosGMgP2ptqGPWV6HNCK//yehcaLRZ9IYWI6MDXtIumlDVkXZsVDiCG
-         gcpQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Us9SZtnCz2EeCOZyrZ0mXxBCzbiC8YyMbRyNWhRn56g=;
-        b=MwhtVhg7LW7kRyvtmPSyEw51yeC0vnbPQ+6eAGCJLnS+lcc21URXeCQsm9rXBr2F1c
-         N0Ugj//PJy8JHmmUUahh/Ppn/E2iiKuIMhPGPL4qz86aFG1Zra8r90T0p1e7vT5GyLQh
-         hHpRftgNzHywJS6Y0DSI1WVQhRe1JSq6OUcBvSIfM4ZOQ5RWb3awN5NqlMfG7eNr4tt8
-         QQKDvotTnJw2o7MNzIhjC3nf8k4+Eurqp1bD30e+OntOtCWGKvUH5FHIHqTnSW8b2N5v
-         QrPFcKlnScDCpmd/jaHusHVVAwfsMlTe1qGJRo0hxhpNXoQJLw3aSksxP+4xIHEEbSmi
-         jLNg==
-X-Gm-Message-State: APjAAAWqgOL/UjdjwVZsIJTZPTjCjJsl0kOoSdH9YBjy6aguhhHU64NQ
-        bkOdaK2b5I4oJn8PET8GbCE=
-X-Google-Smtp-Source: APXvYqyXGrLpmpW5po6mgKNT0oWg8gLE/EdeyuiyQ5xXvv9xF1YrGzwdJP3pK7NPmBQ0oOTWIkRbTw==
-X-Received: by 2002:ac2:5922:: with SMTP id v2mr66821749lfi.180.1561097168921;
-        Thu, 20 Jun 2019 23:06:08 -0700 (PDT)
-Received: from mobilestation ([5.164.217.122])
-        by smtp.gmail.com with ESMTPSA id g5sm245935ljj.69.2019.06.20.23.06.07
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 20 Jun 2019 23:06:08 -0700 (PDT)
-Date:   Fri, 21 Jun 2019 09:06:01 +0300
-From:   Serge Semin <fancer.lancer@gmail.com>
-To:     Paul Burton <paul.burton@mips.com>
-Cc:     "Maciej W. Rozycki" <macro@linux-mips.org>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        James Hogan <jhogan@kernel.org>,
-        Serge Semin <Sergey.Semin@t-platforms.ru>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "Vadim V . Vlasov" <vadim.vlasov@t-platforms.ru>,
-        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] mips: Remove q-accessors from non-64bit platforms
-Message-ID: <20190621060600.eb6yrh4z42s7dh7z@mobilestation>
-References: <20190614063341.1672-1-fancer.lancer@gmail.com>
- <20190620174002.tgayzon7dc5d57fh@pburton-laptop>
+        id S1726224AbfFUGHU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Jun 2019 02:07:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46856 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725911AbfFUGHU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Jun 2019 02:07:20 -0400
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 06D5B214AF;
+        Fri, 21 Jun 2019 06:07:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1561097239;
+        bh=KknwHMJjpccYcMKRX360itgyWBoFtU2UT6fvF1AkfDU=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=L3MFdCX86vWeynVoGWGNcPpAS78gc+tmRnnlnkI1YNI5zGKILWM3jBxqYT1z4zBg+
+         5vReH/ZO+ExLGw2/DR2MGqlnNQb7uIvGScFBJo0/baPxnlf6pNdcePW5AmUh3iyQKj
+         je4zrMBD+kaWif/fmCm6QHEs1d8L3O2ctu1m7+hI=
+Received: by mail-lf1-f45.google.com with SMTP id z15so4090981lfh.13;
+        Thu, 20 Jun 2019 23:07:18 -0700 (PDT)
+X-Gm-Message-State: APjAAAV3u7TTushMNhAKLmglA0llpDZmanRyqRkJh+B/Nv5ccb7Hz4+O
+        PJlKWCoJBHAHSB/KnrRI806d78zS5dEjtZA7V1c=
+X-Google-Smtp-Source: APXvYqz6uGTo2fBNH4dZ7z5NTpj+FDvFjriFcekrS3PTjDclP8VyU5ySdzE/tfmn9/UrGCzgW1Jygo0TAB3o4pqxQ8I=
+X-Received: by 2002:ac2:4d1c:: with SMTP id r28mr28515447lfi.159.1561097237252;
+ Thu, 20 Jun 2019 23:07:17 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190620174002.tgayzon7dc5d57fh@pburton-laptop>
-User-Agent: NeoMutt/20180716
+References: <1560938081892.33415@sensor-technik.de> <CAJKOXPej57MJKe6ShinG+VJdG+XM4qhpeD3rQ2ZHzRTmO43+GA@mail.gmail.com>
+ <1561066629320.13520@sensor-technik.de>
+In-Reply-To: <1561066629320.13520@sensor-technik.de>
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+Date:   Fri, 21 Jun 2019 08:07:06 +0200
+X-Gmail-Original-Message-ID: <CAJKOXPfW40SwW8oMp+sFfc2K2nBn4sB=BDVPRZPMU1dQPzyBrg@mail.gmail.com>
+Message-ID: <CAJKOXPfW40SwW8oMp+sFfc2K2nBn4sB=BDVPRZPMU1dQPzyBrg@mail.gmail.com>
+Subject: Re: [PATCH V2] gpio: Fix return value mismatch of function gpiod_get_from_of_node()
+To:     Waibel Georg <Georg.Waibel@sensor-technik.de>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Support Opensource <support.opensource@diasemi.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Sangbeom Kim <sbkim73@samsung.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-samsung-soc@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Paul,
-
-On Thu, Jun 20, 2019 at 05:40:04PM +0000, Paul Burton wrote:
-> Hi Serge,
-> 
-> On Fri, Jun 14, 2019 at 09:33:42AM +0300, Serge Semin wrote:
-> > There are some generic drivers in the kernel, which make use of the
-> > q-accessors or their derivatives. While at current asm/io.h the accessors
-> > are defined, their implementation is only applicable either for 64bit
-> > systems, or for systems with cpu_has_64bits flag set. Obviously there
-> > are MIPS systems which are neither of these, but still need to have
-> > those drivers supported. In this case the solution is to define some
-> > generic versions of the q-accessors, but with a limitation to be
-> > non-atomic. Such accessors are defined in the
-> > io-64-nonatomic-{hi-lo,lo-hi}.h file. The drivers which utilize the
-> > q-suffixed IO-methods are supposed to include the header file, so
-> > in case if these accessors aren't defined for the platform, the generic
-> > non-atomic versions are utilized. Currently the MIPS-specific asm/io.h
-> > file provides the q-accessors for any MIPS system even for ones, which
-> > in fact don't support them and raise BUG() in case if any of them is
-> > called. Due to this the generic versions of the accessors are never
-> > used while an attempt to call the IO-methods causes the kernel BUG().
-> > In order to fix this we need to define the q-accessors only for
-> > the MIPS systems, which actually support them, and don't define them
-> > otherwise, so to let the corresponding drivers to use the non-atomic
-> > q-suffixed accessors.
-> > 
-> > Signed-off-by: Serge Semin <fancer.lancer@gmail.com>
-> > Suggested-by: Arnd Bergmann <arnd@arndb.de>
-> > Cc: Vadim V. Vlasov <vadim.vlasov@t-platforms.ru>
-> > ---
-> >  arch/mips/include/asm/io.h | 11 +++++++++++
-> >  1 file changed, 11 insertions(+)
-> 
-> So this seems pretty reasonable. Build testing all our defconfigs only
-> showed up one issue for decstation_defconfig & decstation_r4k_defconfig:
-> 
->   drivers/net/fddi/defza.c: In function 'fza_reads':
->   drivers/net/fddi/defza.c:88:17: error: implicit declaration of
->     function 'readq_relaxed'; did you mean 'readw_relaxed'?
->     [-Werror=implicit-function-declaration]
->    #define readq_u readq_relaxed
->                    ^~~~~~~~~~~~~
->   drivers/net/fddi/defza.c:126:13: note: in expansion of macro 'readq_u'
->       *dst++ = readq_u(src++);
->                ^~~~~~~
->   drivers/net/fddi/defza.c: In function 'fza_writes':
->   drivers/net/fddi/defza.c:92:18: error: implicit declaration of
->     function 'writeq_relaxed'; did you mean 'writel_relaxed'?
->     [-Werror=implicit-function-declaration]
->    #define writeq_u writeq_relaxed
->                     ^~~~~~~~~~~~~~
->   drivers/net/fddi/defza.c:151:4: note: in expansion of macro 'writeq_u'
->       writeq_u(*src++, dst++);
->       ^~~~~~~~
->     CC      net/core/scm.o
->   cc1: some warnings being treated as errors
->   make[4]: *** [scripts/Makefile.build:279: drivers/net/fddi/defza.o] Error 1
-> 
-
-Thanks for review and testing this for each target. I see you and Maciej already
-agreed regarding the solution, and you even sent the fixup. So I don't have
-to send the v2 patch.)
-
-Regards,
--Sergey
-
-> These uses of readq_relaxed & writeq_relaxed are both conditional upon
-> sizeof(unsigned long) == 8, ie. upon CONFIG_64BIT=y so they're not going
-> to present a runtime issue but we need to provide some implementation of
-> the *q accessors to keep the compiler happy.
-> 
-> I see a few options:
-> 
-> 1) We could just have defza.c include <io-64-nonatomic-lo-hi.h> to get
->    the appropriate declarations, which should then get optimized away by
->    the compiler anyway & never actually be used.
-> 
-> 2) We could have defza.h #define its readq_u & writeq_u macros
->    differently for CONFIG_32BIT=y kernels, perhaps using
->    __compiletime_error to catch any bogus use of them.
-> 
-> 3) We could do the same in a generic header, though if nobody else has
->    needed it so far & this is the only place we need it then maybe it's
->    not worth it.
-> 
-> So I'm thinking option 2 might be best, as below. Having said that I
-> don't mind option 1 either - it's simple. Maciej do you have any
-> preference?
-> 
-
-> Thanks,
->     Paul
-> 
+On Thu, 20 Jun 2019 at 23:37, Waibel Georg
+<Georg.Waibel@sensor-technik.de> wrote:
+>
+> In case the requested gpio property is not found in the device tree, some
+> callers of gpiod_get_from_of_node() expect a return value of NULL, others
+> expect -ENOENT.
+> In particular devm_fwnode_get_index_gpiod_from_child() expects -ENOENT.
+> Currently it gets a NULL, which breaks the loop that tries all
+> gpio_suffixes. The result is that a gpio property is not found, even
+> though it is there.
+>
+> This patch changes gpiod_get_from_of_node() to return -ENOENT instead
+> of NULL when the requested gpio property is not found in the device
+> tree. Additionally it modifies all calling functions to properly
+> evaluate the return value.
+>
+> Another approach would be to leave the return value of
+> gpiod_get_from_of_node() as is and fix the bug in
+> devm_fwnode_get_index_gpiod_from_child(). Other callers would still need
+> to be reworked. The effort would be the same as with the chosen solution.
+>
+> Signed-off-by: Georg Waibel <georg.waibel@sensor-technik.de>
 > ---
-> diff --git a/drivers/net/fddi/defza.c b/drivers/net/fddi/defza.c
-> index c5cae8e74dc4..85d6a7f22fe7 100644
-> --- a/drivers/net/fddi/defza.c
-> +++ b/drivers/net/fddi/defza.c
-> @@ -85,11 +85,21 @@ static u8 hw_addr_beacon[8] = { 0x01, 0x80, 0xc2, 0x00, 0x01, 0x00 };
+>
+> V2: Rebased on top of [PATCH] regulator: s2mps11: Fix ERR_PTR dereference on GPIO lookup failure
+>
+> ---
+>  drivers/gpio/gpiolib.c                 | 6 +-----
+>  drivers/regulator/da9211-regulator.c   | 2 ++
+>  drivers/regulator/s2mps11.c            | 4 +++-
+>  drivers/regulator/s5m8767.c            | 4 +++-
+>  drivers/regulator/tps65090-regulator.c | 7 ++++---
+>  5 files changed, 13 insertions(+), 10 deletions(-)
+
+You missed my tag from v1:
+
+For s2mps11 and s5m8767 bits:
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+
+Best regards,
+Krzysztof
+
+> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+> index e013d41..be1d1d2 100644
+> --- a/drivers/gpio/gpiolib.c
+> +++ b/drivers/gpio/gpiolib.c
+> @@ -4244,8 +4244,7 @@ EXPORT_SYMBOL_GPL(gpiod_get_index);
+>   *
+>   * Returns:
+>   * On successful request the GPIO pin is configured in accordance with
+> - * provided @dflags. If the node does not have the requested GPIO
+> - * property, NULL is returned.
+> + * provided @dflags.
+>   *
+>   * In case of error an ERR_PTR() is returned.
 >   */
->  #define readw_u readw_relaxed
->  #define readl_u readl_relaxed
-> -#define readq_u readq_relaxed
->  
->  #define writew_u writew_relaxed
->  #define writel_u writel_relaxed
-> -#define writeq_u writeq_relaxed
-> +
-> +#ifdef CONFIG_32BIT
-> +extern u64 defza_readq_u(const void *ptr)
-> +	__compiletime_error("readq_u should not be used by 32b kernels");
-> +extern void defza_writeq_u(u64 val, void *ptr)
-> +	__compiletime_error("writeq_u should not be used by 32b kernels");
-> +# define readq_u defza_readq_u
-> +# define writeq_u defza_writeq_u
-> +#else
-> +# define readq_u readq_relaxed
-> +# define writeq_u writeq_relaxed
-> +#endif
->  
->  static inline struct sk_buff *fza_alloc_skb_irq(struct net_device *dev,
->  						unsigned int length)
-> 
+> @@ -4267,9 +4266,6 @@ struct gpio_desc *gpiod_get_from_of_node(struct device_node *node,
+>                                         index, &flags);
+>
+>         if (!desc || IS_ERR(desc)) {
+> -               /* If it is not there, just return NULL */
+> -               if (PTR_ERR(desc) == -ENOENT)
+> -                       return NULL;
+>                 return desc;
+>         }
+>
+> diff --git a/drivers/regulator/da9211-regulator.c b/drivers/regulator/da9211-regulator.c
+> index da37b4c..0309823 100644
+> --- a/drivers/regulator/da9211-regulator.c
+> +++ b/drivers/regulator/da9211-regulator.c
+> @@ -289,6 +289,8 @@ static struct da9211_pdata *da9211_parse_regulators_dt(
+>                                   0,
+>                                   GPIOD_OUT_HIGH | GPIOD_FLAGS_BIT_NONEXCLUSIVE,
+>                                   "da9211-enable");
+> +               if (IS_ERR(pdata->gpiod_ren[n]))
+> +                       pdata->gpiod_ren[n] = NULL;
+>                 n++;
+>         }
+>
+> diff --git a/drivers/regulator/s2mps11.c b/drivers/regulator/s2mps11.c
+> index af9bf10..209d1ff 100644
+> --- a/drivers/regulator/s2mps11.c
+> +++ b/drivers/regulator/s2mps11.c
+> @@ -821,7 +821,9 @@ static void s2mps14_pmic_dt_parse_ext_control_gpio(struct platform_device *pdev,
+>                                 0,
+>                                 GPIOD_OUT_HIGH | GPIOD_FLAGS_BIT_NONEXCLUSIVE,
+>                                 "s2mps11-regulator");
+> -               if (IS_ERR(gpio[reg])) {
+> +               if (PTR_ERR(gpio[reg]) == -ENOENT)
+> +                       gpio[reg] = NULL;
+> +               else if (IS_ERR(gpio[reg])) {
+>                         dev_err(&pdev->dev, "Failed to get control GPIO for %d/%s\n",
+>                                 reg, rdata[reg].name);
+>                         gpio[reg] = NULL;
+> diff --git a/drivers/regulator/s5m8767.c b/drivers/regulator/s5m8767.c
+> index bb9d1a0..6ca27e9 100644
+> --- a/drivers/regulator/s5m8767.c
+> +++ b/drivers/regulator/s5m8767.c
+> @@ -574,7 +574,9 @@ static int s5m8767_pmic_dt_parse_pdata(struct platform_device *pdev,
+>                         0,
+>                         GPIOD_OUT_HIGH | GPIOD_FLAGS_BIT_NONEXCLUSIVE,
+>                         "s5m8767");
+> -               if (IS_ERR(rdata->ext_control_gpiod))
+> +               if (PTR_ERR(rdata->ext_control_gpiod) == -ENOENT)
+> +                       rdata->ext_control_gpiod = NULL;
+> +               else if (IS_ERR(rdata->ext_control_gpiod))
+>                         return PTR_ERR(rdata->ext_control_gpiod);
+>
+>                 rdata->id = i;
+> diff --git a/drivers/regulator/tps65090-regulator.c b/drivers/regulator/tps65090-regulator.c
+> index ca39b3d..10ea4b5 100644
+> --- a/drivers/regulator/tps65090-regulator.c
+> +++ b/drivers/regulator/tps65090-regulator.c
+> @@ -371,11 +371,12 @@ static struct tps65090_platform_data *tps65090_parse_dt_reg_data(
+>                                                                     "dcdc-ext-control-gpios", 0,
+>                                                                     gflags,
+>                                                                     "tps65090");
+> -                       if (IS_ERR(rpdata->gpiod))
+> -                               return ERR_CAST(rpdata->gpiod);
+> -                       if (!rpdata->gpiod)
+> +                       if (PTR_ERR(rpdata->gpiod) == -ENOENT) {
+>                                 dev_err(&pdev->dev,
+>                                         "could not find DCDC external control GPIO\n");
+> +                               rpdata->gpiod = NULL;
+> +                       } else if (IS_ERR(rpdata->gpiod))
+> +                               return ERR_CAST(rpdata->gpiod);
+>                 }
+>
+>                 if (of_property_read_u32(tps65090_matches[idx].of_node,
+> --
+> 2.7.4
+>
