@@ -2,109 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4C1DE4EA12
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 16:00:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9AA354EA1D
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 16:02:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726180AbfFUOA1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Jun 2019 10:00:27 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:41709 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725985AbfFUOA0 (ORCPT
+        id S1726253AbfFUOCD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Jun 2019 10:02:03 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:54072 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725985AbfFUOCC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Jun 2019 10:00:26 -0400
-Received: by mail-lj1-f194.google.com with SMTP id s21so6060758lji.8;
-        Fri, 21 Jun 2019 07:00:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=HdPpqlE5KQOryOI+FWcAGSlfSeIeXjYoyYw5O4jWzks=;
-        b=LIGoxNHDQCkPWYXbaamae5C9X8NCDUGNdSiwdnSAcKkGC4KheSc0mzoT1Cskr/yd3g
-         Wr+SU7sDp7Tw4CZQsezQV5/q+W+jASBXRTn4tXM+mHtiTG6qGGoASTAURKHSApuJo8+9
-         QSvN/nn5pFLhP5f1auMMhhQJOUwITRGQmUXw8MOjooFLqNZiGRoAfcCeG2jRn4wRla4B
-         WOxnCjZpJj+JoxeuujISG7BfaNMLW8WNf+KRHTrtZ5JinzZaFhuGLfA64Tt0muspivH1
-         zKh2eVkJotVuzkZGoS8ljYhrxU/37XydWz/dvzJeUU91iFZtbCmsHJOwsPRxLF+825bO
-         N6CA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=HdPpqlE5KQOryOI+FWcAGSlfSeIeXjYoyYw5O4jWzks=;
-        b=sSSkcg59vI55eh/8HzeOHMx+4EDGQCY5O0OFTeIixRrcZHAAmSgFm8BvnM+EX2hivC
-         /gcUW6zHgzXHN5/z6okmDSkYhyNMvYOPgVOU/UqQKa8fBIboJA9H+YRR6W9ollIHeTUp
-         RNV6ezGMI0YAX+McEHcY/35atZqNWEFqYpkYwZyw40DmqOl8p7/9WD+ABDs/7xWHmmS5
-         YIMGYTXOVEUuIXnu5LjzlmLV6JW508FqkDtpPSZgfOhp472QvVOQUHp+KwssQS5/7y0z
-         5ZkWT+Yi+ZuYLngIbOKUgMo5/4RyAFwLdZygCMP+Gf1ICZByTuTkEXYmNhIzwL0S1d2k
-         C7xw==
-X-Gm-Message-State: APjAAAU2ANldyoJOCOIoHsd6+WHG7qUPl5Q3t39paaeR+zKSbte6v1x9
-        8wgxXAY6x5CeTZX5nvC17c4mI338VV5HvkvFo6A=
-X-Google-Smtp-Source: APXvYqzHIiebJqKGNowqGUaOStPrvIC4CDHyk3T1vJyUD7aGteNqYdBz5YnghaRqCjI8auZqhyn4Z6jZuR2Eayg9KkA=
-X-Received: by 2002:a2e:8650:: with SMTP id i16mr24506131ljj.178.1561125624436;
- Fri, 21 Jun 2019 07:00:24 -0700 (PDT)
+        Fri, 21 Jun 2019 10:02:02 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=V+UWa912wmx+/lMg7vn6RvLW3wLYid8k0rOU2aGJZBs=; b=wxqCPnHbDdrC9+hqfs4NEmJdx
+        +j9KcH7tz9gtLXN73MaDBjZnoD5mx9da/M1SCKtyaQ7I2FUG8G70w0pRMJGBy62FRlV5HrL2R1h6+
+        54Y3jp3Exx/Xwdohye7bE8Y3aLr4BAOVgU4dnRZzFOPr01yNq7GsPZvQgSX24SrzTthlCMDDuzMP6
+        68ocd/yR8yaTtJuDH2arGa5ZzrGZ2wYP1q4Ev8FxSQVXDtoGNYn7Cnpl+aLOC9RRR8juBThWnQIbu
+        s4TYCk62xvzcVRr3jOt04yrv4KqHTDTzNK0e3SkJ6Vyz+XurnLtwWa7wE+zNKS+kLDHI5JEiINw51
+        2bi7etQ2Q==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1heK6d-0000tt-Gi; Fri, 21 Jun 2019 14:01:31 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id C4D90209FCA1F; Fri, 21 Jun 2019 16:01:28 +0200 (CEST)
+Date:   Fri, 21 Jun 2019 16:01:28 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Patrick Bellasi <patrick.bellasi@arm.com>
+Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        Ingo Molnar <mingo@redhat.com>, Tejun Heo <tj@kernel.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Paul Turner <pjt@google.com>,
+        Quentin Perret <quentin.perret@arm.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Todd Kjos <tkjos@google.com>,
+        Joel Fernandes <joelaf@google.com>,
+        Steve Muckle <smuckle@google.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Alessio Balsini <balsini@android.com>
+Subject: Re: [PATCH v10 11/16] sched/fair: uclamp: Add uclamp support to
+ energy_compute()
+Message-ID: <20190621140128.GL3436@hirez.programming.kicks-ass.net>
+References: <20190621084217.8167-1-patrick.bellasi@arm.com>
+ <20190621084217.8167-12-patrick.bellasi@arm.com>
 MIME-Version: 1.0
-References: <1561037428-13855-1-git-send-email-robert.chiras@nxp.com> <1561037428-13855-2-git-send-email-robert.chiras@nxp.com>
-In-Reply-To: <1561037428-13855-2-git-send-email-robert.chiras@nxp.com>
-From:   Fabio Estevam <festevam@gmail.com>
-Date:   Fri, 21 Jun 2019 11:00:42 -0300
-Message-ID: <CAOMZO5DunK3+ovBd0c0X4NTf-zkW1Tjz6KgXFMaRQKMk2SBMiw@mail.gmail.com>
-Subject: Re: [PATCH v3 1/2] dt-bindings: display: panel: Add support for
- Raydium RM67191 panel
-To:     Robert Chiras <robert.chiras@nxp.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        DRI mailing list <dri-devel@lists.freedesktop.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        NXP Linux Team <linux-imx@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190621084217.8167-12-patrick.bellasi@arm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Robert,
+On Fri, Jun 21, 2019 at 09:42:12AM +0100, Patrick Bellasi wrote:
 
-On Thu, Jun 20, 2019 at 10:32 AM Robert Chiras <robert.chiras@nxp.com> wrote:
->
-> Add dt-bindings documentation for Raydium RM67191 DSI panel.
->
-> Signed-off-by: Robert Chiras <robert.chiras@nxp.com>
-> Reviewed-by: Sam Ravnborg <sam@ravnborg.org>
-> ---
->  .../bindings/display/panel/raydium,rm67191.txt     | 39 ++++++++++++++++++++++
->  1 file changed, 39 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/display/panel/raydium,rm67191.txt
->
-> diff --git a/Documentation/devicetree/bindings/display/panel/raydium,rm67191.txt b/Documentation/devicetree/bindings/display/panel/raydium,rm67191.txt
-> new file mode 100644
-> index 0000000..52af272
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/display/panel/raydium,rm67191.txt
-> @@ -0,0 +1,39 @@
-> +Raydium RM67171 OLED LCD panel with MIPI-DSI protocol
-> +
-> +Required properties:
-> +- compatible:          "raydium,rm67191"
-> +- reg:                 virtual channel for MIPI-DSI protocol
-> +                       must be <0>
-> +- dsi-lanes:           number of DSI lanes to be used
-> +                       must be <3> or <4>
-> +- port:                input port node with endpoint definition as
-> +                       defined in Documentation/devicetree/bindings/graph.txt;
-> +                       the input port should be connected to a MIPI-DSI device
-> +                       driver
-> +
-> +Optional properties:
-> +- reset-gpios:         a GPIO spec for the RST_B GPIO pin
-> +- width-mm:            see panel-common.txt
-> +- height-mm:           see panel-common.txt
-> +- video-mode:          0 - burst-mode
-> +                       1 - non-burst with sync event
-> +                       2 - non-burst with sync po ulse
+> diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+> index ce2da8b9ff8c..f81e8930ff19 100644
+> --- a/kernel/sched/sched.h
+> +++ b/kernel/sched/sched.h
+> @@ -2322,7 +2322,6 @@ static inline unsigned long capacity_orig_of(int cpu)
+>  }
+>  #endif
+>  
+> -#ifdef CONFIG_CPU_FREQ_GOV_SCHEDUTIL
+>  /**
+>   * enum schedutil_type - CPU utilization type
+>   * @FREQUENCY_UTIL:	Utilization used to select frequency
+> @@ -2338,15 +2337,11 @@ enum schedutil_type {
+>  	ENERGY_UTIL,
+>  };
+>  
+> -unsigned long schedutil_freq_util(int cpu, unsigned long util_cfs,
+> -				  unsigned long max, enum schedutil_type type);
+> -
+> -static inline unsigned long schedutil_energy_util(int cpu, unsigned long cfs)
+> -{
+> -	unsigned long max = arch_scale_cpu_capacity(NULL, cpu);
 
-No power-supply property?
+That conflicts with the patch I have removing that NULL argument, fixed
+it up.
+
+> +#ifdef CONFIG_CPU_FREQ_GOV_SCHEDUTIL
+>  
+> -	return schedutil_freq_util(cpu, cfs, max, ENERGY_UTIL);
+> -}
+> +unsigned long schedutil_cpu_util(int cpu, unsigned long util_cfs,
+> +				 unsigned long max, enum schedutil_type type,
+> +				 struct task_struct *p);
+>  
+>  static inline unsigned long cpu_bw_dl(struct rq *rq)
+>  {
+> @@ -2375,11 +2370,8 @@ static inline unsigned long cpu_util_rt(struct rq *rq)
+>  	return READ_ONCE(rq->avg_rt.util_avg);
+>  }
+>  #else /* CONFIG_CPU_FREQ_GOV_SCHEDUTIL */
+> -static inline unsigned long schedutil_energy_util(int cpu, unsigned long cfs)
+> -{
+> -	return cfs;
+> -}
+> -#endif
+> +#define schedutil_cpu_util(cpu, util_cfs, max, type, p) 0
+
+Was there a good reason for this to be a macro and not an inline
+function? I've changed it, if it explodes in 0day, it's all my fault ;-)
+
+> +#endif /* CONFIG_CPU_FREQ_GOV_SCHEDUTIL */
