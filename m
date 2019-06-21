@@ -2,99 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ACEC64EAF6
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 16:45:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ED2924EAFB
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 16:46:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726368AbfFUOpS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Jun 2019 10:45:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35728 "EHLO mail.kernel.org"
+        id S1726254AbfFUOqs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Jun 2019 10:46:48 -0400
+Received: from frisell.zx2c4.com ([192.95.5.64]:34057 "EHLO frisell.zx2c4.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726049AbfFUOpR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Jun 2019 10:45:17 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4E23C2089E;
-        Fri, 21 Jun 2019 14:45:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561128316;
-        bh=rsCDn3qBb6zALp8DkCiY9VjakZ7sbnF4v1lpfSmqIgY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=pt1qnHiaVa94ao+grRWkTuG10JTHcF/bDa+54km7+h6lxQKR/RJXV2B/ayzRPSOl6
-         gHvKhTBmlif7HvDupZb7a95DkOd45YJxEaqIiqIjBJczzcRmN8Ps8F6qVl4aFKvS59
-         GMcApy5WNnDO6/3Up2lEoumpYwg+J9v59sZKmz2M=
-Date:   Fri, 21 Jun 2019 16:45:14 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Rajat Jain <rajatja@google.com>
-Cc:     Bjorn Helgaas <bhelgaas@google.com>,
-        linux-pci <linux-pci@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: PCI/AER sysfs files violate the rules of how sysfs works
-Message-ID: <20190621144514.GB6493@kroah.com>
-References: <20190621072911.GA21600@kroah.com>
- <CACK8Z6GeAheLfmPcYXNnrTn1Rg7C-rndi_YCxiLsePapGCMmzw@mail.gmail.com>
+        id S1726017AbfFUOqr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Jun 2019 10:46:47 -0400
+Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTP id be52ef50
+        for <linux-kernel@vger.kernel.org>;
+        Fri, 21 Jun 2019 14:13:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=zx2c4.com; h=mime-version
+        :references:in-reply-to:from:date:message-id:subject:to:cc
+        :content-type; s=mail; bh=JPjauernHso6uAK9ikz8SKW4XZM=; b=dZXpZN
+        2FbnOThfcWqSZTt/3LEJC6PDLD/M7HHi7q8I+IKmCSiD4MX+eEx4gkZjP9dMCHVw
+        INhDVZQK50wn8q319bIdzQVvHRJmxnpjRXpHVkf7Kcoy+q/GtNruh74acfOv0lFP
+        6vkMBZ9WytUwlSHXhkAhk4g1yJdNDpYpQJZUreMlJMzXCloWeq2yuD2ABAzuYa3l
+        tynH/5wCpvHTvZgnXKI9TDLyqEsq9WzQK0Tx2WWfJHq67QIdBh1YUxXbaBZgDWqi
+        +Aj9BsFTmaVDioxlS1lPeeRpky+fajMkUiUdwR3ngeF/gEHzM3O2aIl70mSL5mHK
+        ezQDkL4TqLvile2Q==
+Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 9730adec (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256:NO)
+        for <linux-kernel@vger.kernel.org>;
+        Fri, 21 Jun 2019 14:13:21 +0000 (UTC)
+Received: by mail-ot1-f46.google.com with SMTP id r21so6554081otq.6
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2019 07:46:45 -0700 (PDT)
+X-Gm-Message-State: APjAAAW1fpuRktOuxe/BTAjCbReWAHdZRVMz/62ICcRpgL2q9fAn2Oek
+        mAwYs3sTrD9sI4fhEcyTaQrHj7Uh9MaZXoS1IAg=
+X-Google-Smtp-Source: APXvYqzZGdtSyfVmV68atPrv4JHfMT0AEdbpO6M87y0EIbTH4vUTWTAy3LfyaawIX7ryVabajxYkAYQgjBa9G826oMw=
+X-Received: by 2002:a9d:4f0f:: with SMTP id d15mr19770032otl.52.1561128404638;
+ Fri, 21 Jun 2019 07:46:44 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CACK8Z6GeAheLfmPcYXNnrTn1Rg7C-rndi_YCxiLsePapGCMmzw@mail.gmail.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+References: <CAHmME9pyf1AmjWOFFdJFXV9-OBv-ChpKZ130733+x=BtjF62mA@mail.gmail.com>
+ <20190620141159.15965-1-Jason@zx2c4.com> <20190620141159.15965-3-Jason@zx2c4.com>
+ <CAK8P3a1Dfx0MayHFP46KL0RDta9cZYBy3pVRTaVTbEsbMOy5xg@mail.gmail.com>
+In-Reply-To: <CAK8P3a1Dfx0MayHFP46KL0RDta9cZYBy3pVRTaVTbEsbMOy5xg@mail.gmail.com>
+From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
+Date:   Fri, 21 Jun 2019 16:46:32 +0200
+X-Gmail-Original-Message-ID: <CAHmME9qDAEzZKBDowLmdaxtc8fJqp-w_cvOWsvubh5Yr=Kgm-g@mail.gmail.com>
+Message-ID: <CAHmME9qDAEzZKBDowLmdaxtc8fJqp-w_cvOWsvubh5Yr=Kgm-g@mail.gmail.com>
+Subject: Re: [PATCH 3/3] timekeeping: add missing _ns functions for coarse accessors
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 21, 2019 at 07:08:38AM -0700, Rajat Jain wrote:
-> On Fri, Jun 21, 2019, 12:29 AM Greg KH <gregkh@linuxfoundation.org> wrote:
-> 
-> > Hi,
-> >
-> > When working on some documentation scripts to show the
-> > Documentation/ABI/ files in an automated way, I ran across this "gem" of
-> > a sysfs file: Documentation/ABI/testing/sysfs-bus-pci-devices-aer_stats
-> >
-> > In it you describe how the files
-> > /sys/bus/pci/devices/<dev>/aer_dev_correctable and
-> > /sys/bus/pci/devices/<dev>/aer_dev_fatal and
-> > /sys/bus/pci/devices/<dev>/aer_dev_nonfatal
-> > all display a bunch of text on multiple lines.
-> >
-> > This violates the "one value per sysfs file" rule, and should never have
-> > been merged as-is :(
-> >
-> > Please fix it up to be a lot of individual files if your really need all
-> > of those different values.
-> >
-> > Remember, sysfs files should never have to have a parser to read them
-> > other than a simple "what is this single value", and you should NEVER
-> > have fun macros like:
-> >
-> >         for (i = 0; i < ARRAY_SIZE(strings_array); i++) {               \
-> >                 if (strings_array[i])                                   \
-> >                         str += sprintf(str, "%s %llu\n",                \
-> >                                        strings_array[i], stats[i]);     \
-> >                 else if (stats[i])                                      \
-> >                         str += sprintf(str, #stats_array "_bit[%d]
-> > %llu\n",\
-> >                                        i, stats[i]);                    \
-> >         }                                                               \
-> >         str += sprintf(str, "TOTAL_%s %llu\n", total_string,            \
-> >                        pdev->aer_stats->total_field);                   \
-> >
-> > spit out sysfs information.
-> >
-> > Note, I am all for not properly checking the length of the sysfs file
-> > when writing to it, but that is ONLY because you "know" that a single
-> > integer will never overflow anything.  Here you are writing a ton of
-> > different values, with no error checking at all.  So just when I thought
-> > it couldn't be any worse...
-> >
-> > Please fix.
-> >
-> 
-> My apologies. I will discuss with Bjorn and fix this.
+On Fri, Jun 21, 2019 at 4:45 PM Arnd Bergmann <arnd@arndb.de> wrote:
+> I would prefer the 'coarse' on the other side, i.e.
+> ktime_get_coarse_real_ns instead of ktime_get_real_coarse_ns,
+> as this is what we already have with ktime_get_coarse_real_ts64.
+>
+> I originally went with that order to avoid the function sounding
+> "real coarse", although I have to admit that it was before Thomas
+> fixed it in e3ff9c3678b4 ("timekeeping: Repair ktime_get_coarse*()
+> granularity"). ;-)
 
-thank you.  I'll be glad to review patches for this.
-
-thanks,
-
-greg k-h
+I can do this, but that means also I'll change get_real_fast to
+get_fast_real, too, in order to be consistent. Is that okay?
