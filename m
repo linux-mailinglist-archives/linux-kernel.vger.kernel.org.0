@@ -2,141 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7381A4E1DA
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 10:24:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D68A84E1E5
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 10:28:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726313AbfFUIYl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Jun 2019 04:24:41 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:51600 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726171AbfFUIYk (ORCPT
+        id S1726402AbfFUI2h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Jun 2019 04:28:37 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:39103 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726074AbfFUI2g (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Jun 2019 04:24:40 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=WDATsJm5QHSgoI0BXmnIgMn4hqXmdsiP6w1+JnWmjd8=; b=vSBoJuJZr0pPHaY0a1nj7rXkD
-        ZE9iV1K6CUDGFVezmcYkO2/8ticfGSmE/qo5KLjloj8r4NKTamX7eEHE5pFQo1KnLkcviyY1dZbg9
-        BxXps5ZbkIdkKPlYedqgBawggJ1uWUvKF0cv+H90Wr/ufEi/9cVYbraKxNJVBJPuGxH8POCKlZXIE
-        zwO0OWYdUa77QKU85asjX/3Ee0vAhkkMjJlVjlxoyHJXM8fahF65CWnB8rtZo24BsojzIEygDeq/C
-        aEskEiCaKWd9PkZaSSoCoxZ45gY+kZRChqK+G+0beBFYJ7G61NvxbIXjbhEtEIvFj5zPd4sleOhft
-        a1URl3p/w==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1heEqP-0007kn-9r; Fri, 21 Jun 2019 08:24:25 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 54283203C06F5; Fri, 21 Jun 2019 10:24:22 +0200 (CEST)
-Date:   Fri, 21 Jun 2019 10:24:22 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Ian Rogers <irogers@google.com>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        linux-kernel@vger.kernel.org,
-        Kan Liang <kan.liang@linux.intel.com>, ak@linux.intel.com,
-        eranian@google.com
-Subject: Re: [PATCH] perf cgroups: Don't rotate events for cgroups
- unnecessarily
-Message-ID: <20190621082422.GH3436@hirez.programming.kicks-ass.net>
-References: <20190601082722.44543-1-irogers@google.com>
+        Fri, 21 Jun 2019 04:28:36 -0400
+Received: by mail-lj1-f193.google.com with SMTP id v18so5227019ljh.6
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2019 01:28:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=Y/byJ90aNdg3Pqz+FT01BYtKKMWzDXjNty5j77MnPKg=;
+        b=dEwA46sKfRRhifrHIC27/RULTXBoKZ4uCeUXCJTtP0a9w+Nzc2qMNvCT8I2KZDdETX
+         O8OWAWY/PITqJTflD8CLvfNKglM3MGJX6rw637njcWHvh52xJV0XaMAHI66NMbd5eMU8
+         n3m5+8rF468uYmQrfXVQOBHXcSHjpokhO1xiGD0c/EIf1BscV2Ba53pKTDpxFSAY/ODO
+         QJK4tHlKietA5IkWOkTRj/qdzEVV0bhWxgVgz5uQOGE0ESEMdLP5QkGNpEPMxONzQk48
+         cDuvzbeWZgFEzH+h0Pa87g3CpqCBRY5XwUosBT1zOg15/+6PjUm1VwHiW2exg8aEWMP8
+         JyCA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Y/byJ90aNdg3Pqz+FT01BYtKKMWzDXjNty5j77MnPKg=;
+        b=g4I9L7OR5Fl3OmlcV+ip6mj9IUlR8G92kAmj8L9xyxZcLgcAx/PnY6j4RvfG4In3ER
+         Xt3AI5gM3Wj4uScqqIaXnSjis66V0m5DXn42fQkbI7SQ7yTuT8JOXrpiUJ0voDN6uAh+
+         fPyZtyx1Tn4XGAt1iZWwuq5ghswP6ydMKwuc4GJvzPoS3Qjj2HyF9g0rL/wVY6xU8Ooh
+         71cdPWs8qHlnsWT+kNoE4Dj2avMvkXFVgLac8oeAZZu9tas2G7YMH9PsrZ4o0dDALxTd
+         ZMVrmY2ocJZomBGJQPZj50pjwyxA7Z6BNC/5Pbj2YLRFBODOdp/3ZCywzo4dH3Groocc
+         43fg==
+X-Gm-Message-State: APjAAAVH8fzwdXJ+DdgtKtwckkvXXAvScD9GuM9RLjDpVWilB/e8aUui
+        cu6Se+Cb2zk5M8mk+E9f//Bsww==
+X-Google-Smtp-Source: APXvYqwNSL1uHelWPTEWNV2IUQNYffRO96scF8rXsXvJoqpeVar8A9njpmcrYixAWbYA0AoFEG2tvg==
+X-Received: by 2002:a2e:5bdd:: with SMTP id m90mr62098450lje.46.1561105714963;
+        Fri, 21 Jun 2019 01:28:34 -0700 (PDT)
+Received: from [192.168.0.199] ([31.173.80.27])
+        by smtp.gmail.com with ESMTPSA id r17sm291512ljb.77.2019.06.21.01.28.33
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 21 Jun 2019 01:28:34 -0700 (PDT)
+Subject: Re: [PATCH 6/6] usb: bdc: Update compatible match strings
+To:     Al Cooper <alcooperx@gmail.com>, linux-kernel@vger.kernel.org
+Cc:     devicetree@vger.kernel.org, Felipe Balbi <balbi@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-usb@vger.kernel.org, Luis Chamberlain <mcgrof@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>
+References: <1561064991-16874-1-git-send-email-alcooperx@gmail.com>
+ <1561064991-16874-7-git-send-email-alcooperx@gmail.com>
+From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <facac509-1e64-e35b-ee25-5ba265a514c4@cogentembedded.com>
+Date:   Fri, 21 Jun 2019 11:28:33 +0300
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190601082722.44543-1-irogers@google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <1561064991-16874-7-git-send-email-alcooperx@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jun 01, 2019 at 01:27:22AM -0700, Ian Rogers wrote:
-> @@ -3325,6 +3331,15 @@ static int flexible_sched_in(struct perf_event *event, void *data)
->  			sid->can_add_hw = 0;
->  	}
->  
-> +	/*
-> +	 * If the group wasn't scheduled then set that multiplexing is necessary
-> +	 * for the context. Note, this won't be set if the event wasn't
-> +	 * scheduled due to event_filter_match failing due to the earlier
-> +	 * return.
-> +	 */
-> +	if (event->state == PERF_EVENT_STATE_INACTIVE)
-> +		sid->ctx->rotate_necessary = 1;
-> +
->  	return 0;
->  }
+Hello!
 
-That looked odd; which had me look harder at this function which
-resulted in the below. Should we not terminate the context interation
-the moment one flexible thingy fails to schedule?
+On 21.06.2019 0:09, Al Cooper wrote:
 
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -2314,12 +2314,8 @@ group_sched_in(struct perf_event *group_
- 		return 0;
- 
- 	pmu->start_txn(pmu, PERF_PMU_TXN_ADD);
--
--	if (event_sched_in(group_event, cpuctx, ctx)) {
--		pmu->cancel_txn(pmu);
--		perf_mux_hrtimer_restart(cpuctx);
--		return -EAGAIN;
--	}
-+	if (event_sched_in(group_event, cpuctx, ctx))
-+		goto cancel;
- 
- 	/*
- 	 * Schedule in siblings as one group (if any):
-@@ -2348,10 +2344,9 @@ group_sched_in(struct perf_event *group_
- 	}
- 	event_sched_out(group_event, cpuctx, ctx);
- 
-+cancel:
- 	pmu->cancel_txn(pmu);
--
- 	perf_mux_hrtimer_restart(cpuctx);
--
- 	return -EAGAIN;
- }
- 
-@@ -3317,6 +3312,7 @@ static int pinned_sched_in(struct perf_e
- static int flexible_sched_in(struct perf_event *event, void *data)
- {
- 	struct sched_in_data *sid = data;
-+	int ret;
- 
- 	if (event->state <= PERF_EVENT_STATE_OFF)
- 		return 0;
-@@ -3325,21 +3321,15 @@ static int flexible_sched_in(struct perf
- 		return 0;
- 
- 	if (group_can_go_on(event, sid->cpuctx, sid->can_add_hw)) {
--		if (!group_sched_in(event, sid->cpuctx, sid->ctx))
--			list_add_tail(&event->active_list, &sid->ctx->flexible_active);
--		else
-+		ret = group_sched_in(event, sid->cpuctx, sid->ctx);
-+		if (ret) {
- 			sid->can_add_hw = 0;
-+			sid->ctx->rotate_necessary = 1;
-+			return ret;
-+		}
-+		list_add_tail(&event->active_list, &sid->ctx->flexible_active);
- 	}
- 
--	/*
--	 * If the group wasn't scheduled then set that multiplexing is necessary
--	 * for the context. Note, this won't be set if the event wasn't
--	 * scheduled due to event_filter_match failing due to the earlier
--	 * return.
--	 */
--	if (event->state == PERF_EVENT_STATE_INACTIVE)
--		sid->ctx->rotate_necessary = 1;
--
- 	return 0;
- }
- 
+> Remove "brcm,bdc-v0.16" because it was never used on any system.
+
+    You're not really removing it, are you?
+
+> Add "brcm,bdc-udc-v3.1" which exists for any STB system with BDC.
+> 
+> Signed-off-by: Al Cooper <alcooperx@gmail.com>
+> ---
+>   drivers/usb/gadget/udc/bdc/bdc_core.c | 1 +
+>   1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/usb/gadget/udc/bdc/bdc_core.c b/drivers/usb/gadget/udc/bdc/bdc_core.c
+> index 15e28790142d..e2b2628925e6 100644
+> --- a/drivers/usb/gadget/udc/bdc/bdc_core.c
+> +++ b/drivers/usb/gadget/udc/bdc/bdc_core.c
+> @@ -644,6 +644,7 @@ static SIMPLE_DEV_PM_OPS(bdc_pm_ops, bdc_suspend,
+>   		bdc_resume);
+>   
+>   static const struct of_device_id bdc_of_match[] = {
+> +	{ .compatible = "brcm,bdc-udc-v3.1" },
+>   	{ .compatible = "brcm,bdc-v0.16" },
+>   	{ .compatible = "brcm,bdc" },
+>   	{ /* sentinel */ }
+
+MBR, Sergei
