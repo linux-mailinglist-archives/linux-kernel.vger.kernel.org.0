@@ -2,63 +2,175 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 41EEE4E9EE
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 15:52:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 51BE24EA0C
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 15:59:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726147AbfFUNwN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Jun 2019 09:52:13 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:58826 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726002AbfFUNwN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Jun 2019 09:52:13 -0400
-Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 877D560B9E224E3E924D;
-        Fri, 21 Jun 2019 21:52:08 +0800 (CST)
-Received: from localhost.localdomain.localdomain (10.175.113.25) by
- DGGEMS401-HUB.china.huawei.com (10.3.19.201) with Microsoft SMTP Server id
- 14.3.439.0; Fri, 21 Jun 2019 21:52:00 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     Benson Leung <bleung@chromium.org>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Nick Crews <ncrews@chromium.org>
-CC:     YueHaibing <yuehaibing@huawei.com>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>
-Subject: [PATCH -next] platform/chrome: wilco_ec: Use kmemdup in enqueue_events()
-Date:   Fri, 21 Jun 2019 13:59:07 +0000
-Message-ID: <20190621135907.112232-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.20.1
+        id S1726111AbfFUN7E (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Jun 2019 09:59:04 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:34141 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725985AbfFUN7E (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Jun 2019 09:59:04 -0400
+Received: by mail-lj1-f195.google.com with SMTP id p17so6085190ljg.1;
+        Fri, 21 Jun 2019 06:59:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=z+WQ5L7jyykHtcS1CaXqa3gfb+mYN5tnXeopjV9M8CY=;
+        b=vgUpFjpv5ZZqrSFc78/TAZwdLTsExKEeFmU93mFN3yiJ8vozEvyCLfce/BIT0sk3ZX
+         fb4W7rysGrty4ceatf35AHHNPaGDJFsZ+s83f2WToV9Gko+fe3U/fFpD74uHYCMF5r1p
+         U+PfUIRAfCvp/0fY+a3BaBCvBdc+PHZkf9tAE4CCg6Cu96fcJsnwYsDZZoBpm2fxNRAW
+         wIfA5hq/bmruwJ9X1f21bZr8wmLeT30ZRXo5VIficsOnI9KiLr8CQTH/co8nhFGLLZZH
+         131Fl6emwOwazlwG66O/kw9N+SRT7zxvRT6nHm8ltg2by4h8KD6j2/uX14T3jGjNwop4
+         b+pQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=z+WQ5L7jyykHtcS1CaXqa3gfb+mYN5tnXeopjV9M8CY=;
+        b=mjNiIFTmCvVonzI5/Dbc2g3z55mD0/1LPo+A37LzQWi0eDeXOsVIxrx/T0lFsHJf+n
+         S5sBSMS8jsQFNgie1ilB2lJ9ODmeZmdaDHdXRpe2rgeGlx/TGQcySpMnqWFataHfohOi
+         jb/X3R6LKbRjeZTKbdH32U6KHgnpyNcH7niJ6Z3y3NA/DF7tjoPBUW/22vRk49rv5lXT
+         aqjCRASItxXESejOpPemrzuqKc9hIRTmfc1FgjisNf62CnEEhUD8KVH8ZTJQP3iKtwke
+         d6u7Xu9jvL3AVBzHd8Enb167FELcJ0fddZhK2ix0DbuHY6mvwK7NBJSho5yBqU28XD3R
+         HKJQ==
+X-Gm-Message-State: APjAAAX+reoo9KnMyEbXTCT+13Yr+lLArf6H/dzvsU4k6S3bH9xbXt2d
+        plTCgVrSDyXP43NgP/DC+2b+vGjZ3wa+QygfcAo=
+X-Google-Smtp-Source: APXvYqyt8yBta8bXLwF3TPCIh4vXPw+1C+YH2PaA7n6MW+n+xOcCd+FZKm8ynnqW0f6tzdYQjTVqYzRna3Q4v+GilBY=
+X-Received: by 2002:a2e:8650:: with SMTP id i16mr24502679ljj.178.1561125542140;
+ Fri, 21 Jun 2019 06:59:02 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type:   text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
-X-Originating-IP: [10.175.113.25]
-X-CFilter-Loop: Reflected
+References: <1561037428-13855-1-git-send-email-robert.chiras@nxp.com> <1561037428-13855-3-git-send-email-robert.chiras@nxp.com>
+In-Reply-To: <1561037428-13855-3-git-send-email-robert.chiras@nxp.com>
+From:   Fabio Estevam <festevam@gmail.com>
+Date:   Fri, 21 Jun 2019 10:59:19 -0300
+Message-ID: <CAOMZO5DS2v15h9E=qKg2vKuFkBSQQwdBHA5Th5mZ+ca6DWgQsw@mail.gmail.com>
+Subject: Re: [PATCH v3 2/2] drm/panel: Add support for Raydium RM67191 panel driver
+To:     Robert Chiras <robert.chiras@nxp.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        DRI mailing list <dri-devel@lists.freedesktop.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        NXP Linux Team <linux-imx@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use kmemdup rather than duplicating its implementation
+Hi Robert,
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- drivers/platform/chrome/wilco_ec/event.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+On Thu, Jun 20, 2019 at 10:31 AM Robert Chiras <robert.chiras@nxp.com> wrote:
 
-diff --git a/drivers/platform/chrome/wilco_ec/event.c b/drivers/platform/chrome/wilco_ec/event.c
-index c975b76e6255..70156e75047e 100644
---- a/drivers/platform/chrome/wilco_ec/event.c
-+++ b/drivers/platform/chrome/wilco_ec/event.c
-@@ -248,10 +248,9 @@ static int enqueue_events(struct acpi_device *adev, const u8 *buf, u32 length)
- 		offset += event_size;
- 
- 		/* Copy event into the queue */
--		queue_event = kzalloc(event_size, GFP_KERNEL);
-+		queue_event = kmemdup(event, event_size, GFP_KERNEL);
- 		if (!queue_event)
- 			return -ENOMEM;
--		memcpy(queue_event, event, event_size);
- 		event_queue_push(dev_data->events, queue_event);
- 	}
+> +fail:
+> +       if (rad->reset)
+> +               gpiod_set_value_cansleep(rad->reset, 1);
+
+gpiod_set_value_cansleep() can handle NULL, so no need for the if() check.
+
+> +static const struct display_timing rad_default_timing = {
+> +       .pixelclock = { 132000000, 132000000, 132000000 },
+
+Having the same information listed three times does not seem useful.
+
+You could use a drm_display_mode structure with a single entry instead.
+
+> +       videomode_from_timing(&rad_default_timing, &panel->vm);
+> +
+> +       of_property_read_u32(np, "width-mm", &panel->width_mm);
+> +       of_property_read_u32(np, "height-mm", &panel->height_mm);
+> +
+> +       panel->reset = devm_gpiod_get(dev, "reset", GPIOD_OUT_LOW);
+
+Since this is optional it would be better to use
+devm_gpiod_get_optional() instead.
 
 
+> +
+> +       if (IS_ERR(panel->reset))
+> +               panel->reset = NULL;
+> +       else
+> +               gpiod_set_value_cansleep(panel->reset, 1);
 
+This is not handling defer probing, so it would be better to do like this:
+
+panel->reset = devm_gpiod_get_optional(dev, "reset", GPIOD_OUT_LOW);
+if (IS_ERR(panel->reset))
+      return  PTR_ERR(panel->reset);
+
+> +       memset(&bl_props, 0, sizeof(bl_props));
+> +       bl_props.type = BACKLIGHT_RAW;
+> +       bl_props.brightness = 255;
+> +       bl_props.max_brightness = 255;
+> +
+> +       panel->backlight = devm_backlight_device_register(dev, dev_name(dev),
+> +                                                         dev, dsi,
+> +                                                         &rad_bl_ops,
+> +                                                         &bl_props);
+
+Could you put more parameters into the same line?
+
+Using 4 lines seems excessive.
+
+> +       if (IS_ERR(panel->backlight)) {
+> +               ret = PTR_ERR(panel->backlight);
+> +               dev_err(dev, "Failed to register backlight (%d)\n", ret);
+> +               return ret;
+> +       }
+> +
+> +       drm_panel_init(&panel->panel);
+> +       panel->panel.funcs = &rad_panel_funcs;
+> +       panel->panel.dev = dev;
+> +       dev_set_drvdata(dev, panel);
+> +
+> +       ret = drm_panel_add(&panel->panel);
+> +
+
+Unneeded blank line
+
+> +       if (ret < 0)
+> +               return ret;
+> +
+> +       ret = mipi_dsi_attach(dsi);
+> +       if (ret < 0)
+> +               drm_panel_remove(&panel->panel);
+> +
+> +       return ret;
+
+You did not handle the "power" regulator.
+
+> +static int __maybe_unused rad_panel_suspend(struct device *dev)
+> +{
+> +       struct rad_panel *rad = dev_get_drvdata(dev);
+> +
+> +       if (!rad->reset)
+> +               return 0;
+> +
+> +       devm_gpiod_put(dev, rad->reset);
+> +       rad->reset = NULL;
+> +
+> +       return 0;
+> +}
+> +
+> +static int __maybe_unused rad_panel_resume(struct device *dev)
+> +{
+> +       struct rad_panel *rad = dev_get_drvdata(dev);
+> +
+> +       if (rad->reset)
+> +               return 0;
+> +
+> +       rad->reset = devm_gpiod_get(dev, "reset", GPIOD_OUT_LOW);
+
+Why do you call devm_gpiod_get() once again?
+
+I am having a hard time to understand the need for this suspend/resume hooks.
+
+Can't you simply remove them?
