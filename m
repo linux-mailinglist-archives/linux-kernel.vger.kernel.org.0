@@ -2,103 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C09504DF82
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 06:09:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 381A44DF8B
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 06:17:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726052AbfFUEJl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Jun 2019 00:09:41 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:40805 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725818AbfFUEJk (ORCPT
+        id S1726034AbfFUERP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Jun 2019 00:17:15 -0400
+Received: from smtp-as-02-09.vtxnet.net ([194.38.175.148]:41271 "EHLO
+        smtp-as-02.vtxnet.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725818AbfFUERP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Jun 2019 00:09:40 -0400
-Received: by mail-pf1-f195.google.com with SMTP id p184so2863427pfp.7
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2019 21:09:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=s+s/XSWVXkMdm2LhsY97bPHzncR03/yzplCNbJ4zAnU=;
-        b=NleuHgZJxbf2bxIW5QCtsY+dKkhc5T/rAVLCWaztJ1qrdcVBIHlpEDmP3xMUP8eKh8
-         73toW62S4i2QSAS9AMrp+Cqj0ue16FPdKbh2JTsCmwKgYThnNOOFpBWR6LH/RPhYXGV4
-         tDcCjXb7IgGi84/+G+GMw6dpHN8vCNKrh0zkY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=s+s/XSWVXkMdm2LhsY97bPHzncR03/yzplCNbJ4zAnU=;
-        b=CsrSDGLAaduAVKC3WDllvvQhD5ru+zO8tBSj8ccdmHbTxTQmSOCetihL5+VKSXD6zL
-         xXMXisvpVwgPcHochneRkuJ/VV4QdadWgAbTzQRmEVIaWcIB4UVteoh8xMUMMwb7BD3A
-         UtBtLVDZVTITl/isowh52GsYyEHGwrkjBNxbkZhIgtIdh6QX+D4hLf5SWUQhCaDMmu8T
-         0Wtwhg+o0wz1heaPB1dcC8Y81mkpJ4Je+lD9dWO9jcSkIaIKtWVkadYvyHnP+8VKQuyz
-         wtOlaRpSHBhW+WpdTBXShkxoXF9sDUGsXvoNoCrVkDat4NwZs5A+07m2CV4R9xobfyUN
-         fktw==
-X-Gm-Message-State: APjAAAU8XypjFmWewzIO5FVg3RHpSmJIW12oacbrXkbhF/WZExBtnFzD
-        JBUqdWUzJgoFsax6CzdMXdzB/A==
-X-Google-Smtp-Source: APXvYqwmQXLi5Pk3pGhuyO8qiBBiKgdkX+g+szMSnhLqCYqNltxbT3SHmRFeIwEaMyQpArp0jmo8vQ==
-X-Received: by 2002:a63:c60b:: with SMTP id w11mr5685117pgg.356.1561090179984;
-        Thu, 20 Jun 2019 21:09:39 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id 23sm958498pfn.176.2019.06.20.21.09.38
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 20 Jun 2019 21:09:39 -0700 (PDT)
-Date:   Thu, 20 Jun 2019 21:09:38 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Matthew Garrett <matthewgarrett@google.com>
-Cc:     jmorris@namei.org, linux-security@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-        David Howells <dhowells@redhat.com>,
-        Matthew Garrett <mjg59@google.com>
-Subject: Re: [PATCH V33 27/30] lockdown: Print current->comm in restriction
- messages
-Message-ID: <201906202109.F7662EB8@keescook>
-References: <20190621011941.186255-1-matthewgarrett@google.com>
- <20190621011941.186255-28-matthewgarrett@google.com>
+        Fri, 21 Jun 2019 00:17:15 -0400
+X-Greylist: delayed 424 seconds by postgrey-1.27 at vger.kernel.org; Fri, 21 Jun 2019 00:17:14 EDT
+X-Spam-Flag: NO
+X-Spam-Score: 1.199
+X-Spam-Level: *
+X-Spam-Status: No, score=1.199 tagged_above=-999 required=999
+        tests=[FREEMAIL_FORGED_REPLYTO=1.199] autolearn=no
+Received: from smtp-02.datacomm.ch (smtp-02-5.datacomm.ch [212.40.2.22])
+        by smtp-as-02.vtxnet.net (Postfix) with ESMTP id D724645639;
+        Fri, 21 Jun 2019 06:10:07 +0200 (CEST)
+Received: from webmail.vtx.ch (bas-flu-webmail-01.vtxnet.net [212.40.2.41])
+        by smtp-02.datacomm.ch (VTX Datacomm AG) with ESMTP id 0859E120038;
+        Fri, 21 Jun 2019 06:10:07 +0200 (CEST)
+Received: from [41.83.204.113]
+ by webmail.vtx.ch
+ with HTTP (HTTP/1.1 POST); Fri, 21 Jun 2019 06:10:07 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190621011941.186255-28-matthewgarrett@google.com>
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 8bit
+Date:   Fri, 21 Jun 2019 06:10:07 +0200
+From:   Ocean Finance <mfconsilium@vtxmail.ch>
+To:     undisclosed-recipients:;
+Subject: =?UTF-8?Q?Ben=C3=B6tigen_Sie_einen_dringenden_Kredit=3F?=
+Reply-To: oceanfinance_@hotmail.com
+Mail-Reply-To: oceanfinance_@hotmail.com
+Message-ID: <233bca5894f4ccb3a325d1f92f07560e@vtxmail.ch>
+X-Sender: mfconsilium@vtxmail.ch
+User-Agent: Roundcube Webmail/1.2.7
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 20, 2019 at 06:19:38PM -0700, Matthew Garrett wrote:
-> Print the content of current->comm in messages generated by lockdown to
-> indicate a restriction that was hit.  This makes it a bit easier to find
-> out what caused the message.
-> 
-> The message now patterned something like:
-> 
->         Lockdown: <comm>: <what> is restricted; see man kernel_lockdown.7
-> 
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> Signed-off-by: Matthew Garrett <mjg59@google.com>
-> ---
->  security/lockdown/lockdown.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/security/lockdown/lockdown.c b/security/lockdown/lockdown.c
-> index 14edc475d75c..408f0048f8a2 100644
-> --- a/security/lockdown/lockdown.c
-> +++ b/security/lockdown/lockdown.c
-> @@ -80,8 +80,8 @@ early_param("lockdown", lockdown_param);
->  static int lockdown_is_locked_down(enum lockdown_reason what)
->  {	
->  	if ((kernel_locked_down >= what) && lockdown_reasons[what])
-> -		pr_notice("Lockdown: %s is restricted; see man kernel_lockdown.7\n",
-> -			  lockdown_reasons[what]);
-> +		pr_notice("Lockdown: %s: %s is restricted; see man kernel_lockdown.7\n",
-> +			  current->comm, lockdown_reasons[what]);
->  	return (kernel_locked_down >= what);
->  }
 
-Maybe needs ratelimiting?
-
->  
-> -- 
-> 2.22.0.410.gd8fdbe21b5-goog
-> 
 
 -- 
-Kees Cook
+Schönen Tag.
+Benötigen Sie einen dringenden Kredit?
+
+Wir bieten Unternehmen Darlehensdienstleistungen für 
+Geschäftserweiterungen, Investitionen und Projekte an. Darüber hinaus 
+bieten wir Privatkredite mit einem Zinssatz von 1,3% an. Wenn Sie sich 
+jetzt bewerben, können Sie Ihre Transaktion innerhalb von 48/72 Stunden 
+umgehend genehmigen lassen.
+
+    Wenn Sie also interessiert sind, sollten Sie uns Ihre 
+Bewerbungsdaten für eine dringende Antwort zusenden, um weitere 
+Informationen an Sie zurückzusenden.
+
+
+Vollständiger Name:..................
+Land:....................
+Darlehensbetrag: ................
+Leihdauer: ..............
+Darlehen Zweck:...............
+Telefonnummer:...........
+
+Wir erwarten Ihre schnelle Antwort.
+
+Freundliche Grüße.
+
+Harris Cooper
+Kundendienst / Berater
+
+Ocean Finance
+Think Park, Mosley Road, Trafford Park,
+Manchester M17 1FQ, United Kingdom.
