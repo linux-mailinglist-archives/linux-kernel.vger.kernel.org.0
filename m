@@ -2,123 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CAD484E9B3
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 15:44:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EBE944E9BA
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 15:44:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726276AbfFUNoG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Jun 2019 09:44:06 -0400
-Received: from smtp-fw-6001.amazon.com ([52.95.48.154]:63354 "EHLO
-        smtp-fw-6001.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725985AbfFUNoF (ORCPT
+        id S1726339AbfFUNo2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Jun 2019 09:44:28 -0400
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:34402 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725985AbfFUNo1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Jun 2019 09:44:05 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1561124644; x=1592660644;
-  h=subject:to:cc:references:from:message-id:date:
-   mime-version:in-reply-to:content-transfer-encoding;
-  bh=yfXI9UxtyIv8G/MPell59xXge03VdkSIiUnf5zgJv64=;
-  b=Vgd8q/pO/mZTvk5T3W+n/gzcNpToR4D2ulrvpclc/YNF4AxgIJ6WJazf
-   W4S5hUKKPb64cHMrsZ3XYcfTzzObDCR5qI+5jQfiGYFyZ3Ys1VG0GfqYc
-   VR9Ga8anW2BrGKHDgDXuJWMA6wqsTPI49RZABcBC3+YK2Yoeldf1wbvvy
-   U=;
-X-IronPort-AV: E=Sophos;i="5.62,400,1554768000"; 
-   d="scan'208";a="401783048"
-Received: from iad6-co-svc-p1-lb1-vlan3.amazon.com (HELO email-inbound-relay-1a-807d4a99.us-east-1.amazon.com) ([10.124.125.6])
-  by smtp-border-fw-out-6001.iad6.amazon.com with ESMTP; 21 Jun 2019 13:44:03 +0000
-Received: from EX13MTAUWC001.ant.amazon.com (iad55-ws-svc-p15-lb9-vlan2.iad.amazon.com [10.40.159.162])
-        by email-inbound-relay-1a-807d4a99.us-east-1.amazon.com (Postfix) with ESMTPS id 8959FA22A3;
-        Fri, 21 Jun 2019 13:43:58 +0000 (UTC)
-Received: from EX13D20UWC001.ant.amazon.com (10.43.162.244) by
- EX13MTAUWC001.ant.amazon.com (10.43.162.135) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Fri, 21 Jun 2019 13:43:57 +0000
-Received: from 38f9d3867b82.ant.amazon.com (10.43.162.225) by
- EX13D20UWC001.ant.amazon.com (10.43.162.244) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Fri, 21 Jun 2019 13:43:53 +0000
-Subject: Re: [v2, 3/4] Demonstrating unit testing via simple-harness
-To:     Sam Caccavale <samcacc@amazon.de>
-CC:     <samcaccavale@gmail.com>, <nmanthey@amazon.de>,
-        <wipawel@amazon.de>, <dwmw@amazon.co.uk>, <mpohlack@amazon.de>,
-        <karahmed@amazon.de>, <andrew.cooper3@citrix.com>,
-        <JBeulich@suse.com>, <pbonzini@redhat.com>, <rkrcmar@redhat.com>,
-        <tglx@linutronix.de>, <mingo@redhat.com>, <bp@alien8.de>,
-        <hpa@zytor.com>, <paullangton4@gmail.com>,
-        <anirudhkaushik@google.com>, <x86@kernel.org>,
-        <kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20190612153600.13073-1-samcacc@amazon.de>
- <20190612153600.13073-4-samcacc@amazon.de>
-From:   Alexander Graf <graf@amazon.com>
-Message-ID: <54e7eb69-3700-2e54-77b9-79b61ca69a1b@amazon.com>
-Date:   Fri, 21 Jun 2019 15:43:51 +0200
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
- Gecko/20100101 Thunderbird/60.7.1
+        Fri, 21 Jun 2019 09:44:27 -0400
+Received: by mail-qt1-f196.google.com with SMTP id m29so6965209qtu.1;
+        Fri, 21 Jun 2019 06:44:27 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=1VRloZAnkBM20C0VMUxA/xb315UbiGomahozxwvH1Z8=;
+        b=lJMEoVrtp3544DX1I4a5sA0Sh6wlsis37MrKFTDnfx3UaW/XOb0MwRzhlK0qsYp2lG
+         az/Vostqoi9m7pFrtRvsqg8w5Tp0qmu1Hvk0Sq0TI0r426w42ZB+RTJHSDHNBFsD1APm
+         LBMywE5iZUtI8YkNHGYvHCky4uWCEcZwXX6tOOdW6zar/Za4jVbJ8rRGhIO9FEcEU19M
+         HviF3qySrkR0iGHSwQZGqPAYf0cieok6OAlB5gCLuWLjA04IR3MB+yeRAJtRxEw19sfH
+         VCiRj0mpsZf2KVNYooN+nZeP6uzumU0DRgxTRB+iOlhSSoQhn8l0mgmfMKcVwAHrvICt
+         ynug==
+X-Gm-Message-State: APjAAAWqrknmsROP0u0bjQdKuOt2RBO3bBLLS3pVSFMtZ7UtGxhrmZcg
+        yzubvvckNqvZL90zk+el++ZI/opXhhKyRTY8U1U=
+X-Google-Smtp-Source: APXvYqx9NB1qq4sDlov2UHcJxN+0a0rXwnpPmDPhIrvdFCKv81905QoRFNrlrNFvlCAE1/C6IOoX27NwUsfLu0J+GcU=
+X-Received: by 2002:aed:2bc1:: with SMTP id e59mr96965363qtd.7.1561124666614;
+ Fri, 21 Jun 2019 06:44:26 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20190612153600.13073-4-samcacc@amazon.de>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.43.162.225]
-X-ClientProxiedBy: EX13D23UWC001.ant.amazon.com (10.43.162.196) To
- EX13D20UWC001.ant.amazon.com (10.43.162.244)
+References: <20190618094731.3677294-1-arnd@arndb.de> <201906201034.9E44D8A2A8@keescook>
+ <CAK8P3a2uFcaGMSHRdg4NECHJwgAyhtMuYDv3U=z2UdBSL5U0Lw@mail.gmail.com> <CAKv+Gu-A_OWUQ_neUAprmQOotPA=LoUGQHvFkZ2tqQAg=us1jA@mail.gmail.com>
+In-Reply-To: <CAKv+Gu-A_OWUQ_neUAprmQOotPA=LoUGQHvFkZ2tqQAg=us1jA@mail.gmail.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Fri, 21 Jun 2019 15:44:08 +0200
+Message-ID: <CAK8P3a2d3H-pdiLX_8aA4LNLOVTSyPW_jvwZQkv0Ey3SJS87Bg@mail.gmail.com>
+Subject: Re: [PATCH] structleak: disable BYREF_ALL in combination with KASAN_STACK
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Alexander Potapenko <glider@google.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        kasan-dev <kasan-dev@googlegroups.com>,
+        Alexander Popov <alex.popov@linux.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Jun 21, 2019 at 3:32 PM Ard Biesheuvel
+<ard.biesheuvel@linaro.org> wrote:
+> On Fri, 21 Jun 2019 at 11:44, Arnd Bergmann <arnd@arndb.de> wrote:
+> > On Thu, Jun 20, 2019 at 7:36 PM Kees Cook <keescook@chromium.org> wrote:
+> > > On Tue, Jun 18, 2019 at 11:47:13AM +0200, Arnd Bergmann wrote:
+> > > > The combination of KASAN_STACK and GCC_PLUGIN_STRUCTLEAK_BYREF_ALL
+> > > > leads to much larger kernel stack usage, as seen from the warnings
+> > > > about functions that now exceed the 2048 byte limit:
+> > >
+> > > Is the preference that this go into v5.2 (there's not much time left),
+> > > or should this be v5.3? (You didn't mark it as Cc: stable?)
+> >
+> > Having it in 5.2 would be great. I had not done much build testing in the last
+> > months, so I didn't actually realize that your patch was merged a while ago
+> > rather than only in linux-next.
+> >
+> > BTW, I have now run into a small number of files that are still affected
+> > by a stack overflow warning from STRUCTLEAK_BYREF_ALL. I'm trying
+> > to come up with patches for those as well, we can probably do it in a way
+> > that also improves the affected drivers. I'll put you on Cc when I
+> > find another one.
+> >
+>
+> There is something fundamentally wrong here, though. BYREF_ALL only
+> initializes variables that have their address taken, which does not
+> explain why the size of the stack frame should increase (since in
+> order to have an address in the first place, the variable must already
+> have a stack slot assigned)
+>
+> So I suspect that BYREF_ALL is defeating some optimizations where.
+> e.g., the call involving the address of the variable is optimized
+> away, but the the initialization remains, thus forcing the variable to
+> be allocated in the stack frame even though the initializer is the
+> only thing that references it.
 
+One pattern I have seen here is temporary variables from macros or
+inline functions whose lifetime now extends over the entire function
+rather than just the basic block in which they are defined, see e.g.
+lpfc_debug_dump_qe() being inlined multiple times into
+lpfc_debug_dump_all_queues(). Each instance of the local
+"char line_buf[LPFC_LBUF_SZ];" seems to add on to the previous
+one now, where the behavior without the structleak plugin is that
+they don't.
 
-On 12.06.19 17:35, Sam Caccavale wrote:
-> Simple-harness.c uses inline asm support to generate asm and then has the
-> emulator emulate this code.  This may be useful as a form of testing for
-> the emulator.
-> 
-> CR: https://code.amazon.com/reviews/CR-8591638
-> ---
->   tools/fuzz/x86ie/Makefile         |  7 ++++--
->   tools/fuzz/x86ie/simple-harness.c | 42 +++++++++++++++++++++++++++++++
->   2 files changed, 47 insertions(+), 2 deletions(-)
->   create mode 100644 tools/fuzz/x86ie/simple-harness.c
-> 
-> diff --git a/tools/fuzz/x86ie/Makefile b/tools/fuzz/x86ie/Makefile
-> index d45fe6d266b9..e79d275e1040 100644
-> --- a/tools/fuzz/x86ie/Makefile
-> +++ b/tools/fuzz/x86ie/Makefile
-> @@ -44,8 +44,11 @@ LOCAL_OBJS := emulator_ops.o stubs.o
->   afl-harness: afl-harness.o $(LOCAL_OBJS) $(KERNEL_OBJS)
->   	@$(CC) -v $(KBUILD_CFLAGS) $(LOCAL_OBJS) $(KERNEL_OBJS) $< $(INCLUDES) -Istubs.h -o $@ -no-pie
-> 
-> -all: afl-harness
-> +simple-harness: simple-harness.o $(LOCAL_OBJS) $(KERNEL_OBJS)
-> +	@$(CC) -v $(KBUILD_CFLAGS) $(LOCAL_OBJS) $(KERNEL_OBJS) $< $(INCLUDES) -Istubs.h -o $@ -no-pie
-> +
-> +all: afl-harness simple-harness
-> 
->   .PHONY: clean
->   clean:
-> -	$(RM) -r *.o afl-harness
-> +	$(RM) -r *.o afl-harness simple-harness
-> diff --git a/tools/fuzz/x86ie/simple-harness.c b/tools/fuzz/x86ie/simple-harness.c
-> new file mode 100644
-> index 000000000000..f21fdafe1dd1
-> --- /dev/null
-> +++ b/tools/fuzz/x86ie/simple-harness.c
-> @@ -0,0 +1,42 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +
-> +#include <assert.h>
-> +#include <stdint.h>
-> +#include <stdio.h>
-> +#include <string.h>
-> +#include "emulator_ops.h"
-> +#include <asm/kvm_emulate.h>
-> +
-> +extern void foo(void)
-> +{
-> +	asm volatile("__start:"
-> +		     ".byte 0x32, 0x05, 0x00, 0x00, 0x00, 0x00;" // xor eax,DWORD PTR [rip+0x0]
-> +		     ".byte 0x90;"
-> +		     //".byte 0x0f, 0x7f, 0xde;" // movq mm6,mm3
-
-Why?
-
-Alex
+      Arnd
