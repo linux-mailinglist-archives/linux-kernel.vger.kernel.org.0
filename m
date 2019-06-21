@@ -2,102 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 515EC4DE79
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 03:20:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D8F1B4DE5F
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 03:19:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726740AbfFUBUh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 21:20:37 -0400
-Received: from mail-pl1-f202.google.com ([209.85.214.202]:48803 "EHLO
-        mail-pl1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726699AbfFUBU2 (ORCPT
+        id S1726059AbfFUBTa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 21:19:30 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:42568 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725906AbfFUBTa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 21:20:28 -0400
-Received: by mail-pl1-f202.google.com with SMTP id i33so2654284pld.15
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2019 18:20:28 -0700 (PDT)
+        Thu, 20 Jun 2019 21:19:30 -0400
+Received: by mail-pl1-f196.google.com with SMTP id ay6so2121786plb.9
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2019 18:19:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=iJrEpiYEEq/u9uVQ7rtK8OnmsmoBNHfJU3q0QdD2/5Y=;
-        b=F9ZPwUtUQbrjYEXZQyys0W0e+13BLgRaMQSW6Q81kqXAQet8b/73xFPivmrD1M/C2I
-         9M1sv4e8uEkc/EvXNP5EiV4mjSNxEK0hC4EXMQ6YfQRkihmViiE508BR39E3lV8smyu8
-         AvFNJ/jgB3m0BM53WQxjvDN5I0mkE2Daka0tGee+3XchZBmYPEDZ7vTc8z7pvxFIAskv
-         Pv6AehRkSqxKGjcOr5kPpDp635xUFWQOKqbJgtWNl2xALyeXTEgmtwewwTJJN5CttJ24
-         qmCHjQIU8yJjzuyjGRCzVL+wbvFIblHROGH9FBKyv4j09Gi9B+F7ZD4gqHXvm3zU68BL
-         hkQg==
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=eJKYybw5a1SWYpHwymEpjHSIfv7GuhVzn0pIpamG/wM=;
+        b=naw7755fmAIXafE+Jl7dV8RVkpTo05kib/8CyuURh0MhrDFRQHF3jVyKVS6EeiB8N9
+         BoFpd2iPgtOquKwlZ5rum1uAPcDMOfYH2zVtsc/BNjku12A7gon9LDPgQ+5iJ4Ko7J14
+         5OMRX+XjMMr1O4lr8I4IGUtO/vyhyJrLisAS0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=iJrEpiYEEq/u9uVQ7rtK8OnmsmoBNHfJU3q0QdD2/5Y=;
-        b=Y41Z+1z/iUNcmFDvglJfdan8eBc9q+nY0SJAGXtNqJgZF4WurjOyAiQMHQyt97krz/
-         vFp6hgnuU52CeBgOuS4DlZ5rEqzOzdxlNkPaaiOnMPTWxi+C+Yquj60uCaqzuNp2zh5e
-         geRGJWOhePoZn5TXe1PUQAC1u16V67ZixZL0+vof4dHAvdG8IjXPIUyFx4ctvViW43Uy
-         BW+vpgTWLqmo4wz3Fht3uR3XcyDZe0mppx9YrkmrFBsQ3uprCvjqXSKw/YZGdGR5yc5Z
-         /AezHJrW+xzFMotCmWmltS6mICZd/q8Iq7ZY0IHxSNkWM6Gnd85Y5On+f5OBnEoyC/ZC
-         F0nQ==
-X-Gm-Message-State: APjAAAU9syCH/R8rhI+/t2wjcmqCocmAzD8eUW+NPTsmjTSb2aDcCnaa
-        3+D3qPSIWKb+H8T50bB4LeqgqmF7KCjbuJWsSN+uVA==
-X-Google-Smtp-Source: APXvYqwY3NxahetSXDYqQ9ndXRHa9UacYcJUwFfE58pwvnctD/tPrLKsdvpeA4hn6iytxyEZ2DJWm7PHUyN5yS+aMVkdxw==
-X-Received: by 2002:a63:5207:: with SMTP id g7mr10342146pgb.284.1561080027898;
- Thu, 20 Jun 2019 18:20:27 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=eJKYybw5a1SWYpHwymEpjHSIfv7GuhVzn0pIpamG/wM=;
+        b=Bl5eIxPZK8Z6E+cZjJnXTiMHNf2fFT7G25m6FzFX3ufdtl60+eJrylh1aMmqNbI/Ba
+         aDyR6eu43nhZ8RDLj+YwvdGuRNfenRPTdTdyo/yeDXiDwONMxScJBG8jvuKOV1yZwisz
+         Qyzv9DjkNz211qD9Rt3lBrajDBYST4ebhB60E9yWIqijAYfO9JFOhi6MeJHE3iWbmakH
+         xBSKTTrXt92JLZQV/+gcRwTywgGMbPzp2O5FL0TqVCVkTGBMK74nfk4UH1VWNdAZJR5K
+         Rq6iIfNsLisaFVn9KqrYEf3LTxND9HS3OJNDUn7+TtlTIi4yN+OgjHk7cd08aM1Zc/HP
+         QJcQ==
+X-Gm-Message-State: APjAAAWkB5rLFUfln+u4rLKXzOb8GSMMQEMt3+tm4Y9/O7yAc/i1w6qy
+        DLzOYVNpAcCDoW1+lSjJSF1gJg==
+X-Google-Smtp-Source: APXvYqzDCGsl/sfw+DruyeiWlGEv/UbXrhWxZujE3VvkgVVndHlvNmAR1JKU/5PFrVACJM85q79/Uw==
+X-Received: by 2002:a17:902:968c:: with SMTP id n12mr34357353plp.59.1561079969560;
+        Thu, 20 Jun 2019 18:19:29 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id b26sm680142pfo.129.2019.06.20.18.19.28
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 20 Jun 2019 18:19:28 -0700 (PDT)
 Date:   Thu, 20 Jun 2019 18:19:27 -0700
-In-Reply-To: <20190621011941.186255-1-matthewgarrett@google.com>
-Message-Id: <20190621011941.186255-17-matthewgarrett@google.com>
-Mime-Version: 1.0
-References: <20190621011941.186255-1-matthewgarrett@google.com>
-X-Mailer: git-send-email 2.22.0.410.gd8fdbe21b5-goog
-Subject: [PATCH V33 16/30] acpi: Ignore acpi_rsdp kernel param when the kernel
- has been locked down
-From:   Matthew Garrett <matthewgarrett@google.com>
-To:     jmorris@namei.org
-Cc:     linux-security@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-api@vger.kernel.org, Josh Boyer <jwboyer@redhat.com>,
-        David Howells <dhowells@redhat.com>,
-        Matthew Garrett <mjg59@google.com>,
-        Dave Young <dyoung@redhat.com>, linux-acpi@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+From:   Kees Cook <keescook@chromium.org>
+To:     Qian Cai <cai@lca.pw>
+Cc:     akpm@linux-foundation.org, glider@google.com, cl@linux.com,
+        penberg@kernel.org, rientjes@google.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH -next] slub: play init_on_free=1 well with SLAB_RED_ZONE
+Message-ID: <201906201818.6C90BC875@keescook>
+References: <1561058881-9814-1-git-send-email-cai@lca.pw>
+ <201906201812.8B49A36@keescook>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <201906201812.8B49A36@keescook>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Josh Boyer <jwboyer@redhat.com>
+On Thu, Jun 20, 2019 at 06:14:33PM -0700, Kees Cook wrote:
+> On Thu, Jun 20, 2019 at 03:28:01PM -0400, Qian Cai wrote:
+> > diff --git a/mm/slub.c b/mm/slub.c
+> > index a384228ff6d3..787971d4fa36 100644
+> > --- a/mm/slub.c
+> > +++ b/mm/slub.c
+> > @@ -1437,7 +1437,7 @@ static inline bool slab_free_freelist_hook(struct kmem_cache *s,
+> >  		do {
+> >  			object = next;
+> >  			next = get_freepointer(s, object);
+> > -			memset(object, 0, s->size);
+> > +			memset(object, 0, s->object_size);
+> 
+> I think this should be more dynamic -- we _do_ want to wipe all
+> of object_size in the case where it's just alignment and padding
+> adjustments. If redzones are enabled, let's remove that portion only.
 
-This option allows userspace to pass the RSDP address to the kernel, which
-makes it possible for a user to modify the workings of hardware .  Reject
-the option when the kernel is locked down.
+(Sorry, I meant: all of object's "size", not object_size.)
 
-Signed-off-by: Josh Boyer <jwboyer@redhat.com>
-Signed-off-by: David Howells <dhowells@redhat.com>
-Signed-off-by: Matthew Garrett <mjg59@google.com>
-cc: Dave Young <dyoung@redhat.com>
-cc: linux-acpi@vger.kernel.org
----
- drivers/acpi/osl.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/acpi/osl.c b/drivers/acpi/osl.c
-index f29e427d0d1d..1f8f394fce34 100644
---- a/drivers/acpi/osl.c
-+++ b/drivers/acpi/osl.c
-@@ -40,6 +40,7 @@
- #include <linux/list.h>
- #include <linux/jiffies.h>
- #include <linux/semaphore.h>
-+#include <linux/security.h>
- 
- #include <asm/io.h>
- #include <linux/uaccess.h>
-@@ -194,7 +195,7 @@ acpi_physical_address __init acpi_os_get_root_pointer(void)
- 	acpi_physical_address pa;
- 
- #ifdef CONFIG_KEXEC
--	if (acpi_rsdp)
-+	if (acpi_rsdp && !security_is_locked_down(LOCKDOWN_ACPI_TABLES))
- 		return acpi_rsdp;
- #endif
- 	pa = acpi_arch_get_root_pointer();
 -- 
-2.22.0.410.gd8fdbe21b5-goog
-
+Kees Cook
