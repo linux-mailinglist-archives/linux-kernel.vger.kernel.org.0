@@ -2,110 +2,137 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 01F2E4EDCB
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 19:27:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B3564EDD7
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 19:29:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726129AbfFUR1r (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Jun 2019 13:27:47 -0400
-Received: from smtprelay0186.hostedemail.com ([216.40.44.186]:50306 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726032AbfFUR1q (ORCPT
+        id S1726285AbfFUR3f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Jun 2019 13:29:35 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:60471 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726063AbfFUR3e (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Jun 2019 13:27:46 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay01.hostedemail.com (Postfix) with ESMTP id 3F510100E806B;
-        Fri, 21 Jun 2019 17:27:45 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::::::,RULES_HIT:41:355:379:599:800:960:968:973:982:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1542:1593:1594:1711:1730:1747:1777:1792:1978:1981:2194:2199:2393:2553:2559:2562:2693:2828:3138:3139:3140:3141:3142:3354:3865:3866:3867:3868:3870:3871:3872:3873:3874:4250:4321:4362:5007:7514:7809:7903:9010:10004:10400:10471:10848:11232:11657:11658:11914:12043:12048:12050:12296:12297:12663:12740:12760:12895:13161:13229:13255:13439:14096:14097:14181:14659:14721:21080:21451:21627:30030:30045:30054:30060:30090:30091,0,RBL:23.242.196.136:@perches.com:.lbl8.mailshell.net-62.14.0.180 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:24,LUA_SUMMARY:none
-X-HE-Tag: cream64_93b04b7d1048
-X-Filterd-Recvd-Size: 3436
-Received: from XPS-9350 (cpe-23-242-196-136.socal.res.rr.com [23.242.196.136])
-        (Authenticated sender: joe@perches.com)
-        by omf06.hostedemail.com (Postfix) with ESMTPA;
-        Fri, 21 Jun 2019 17:27:43 +0000 (UTC)
-Message-ID: <698d3e3614ae903ae9582547d64c6a9846629e57.camel@perches.com>
-Subject: Re: [PATCH 0/3] net: ethernet: atheros: atlx: Use PCI generic
- definitions instead of private duplicates
-From:   Joe Perches <joe@perches.com>
-To:     Bjorn Helgaas <bhelgaas@google.com>,
-        Puranjay Mohan <puranjay12@gmail.com>,
-        Jay Cliburn <jcliburn@gmail.com>,
-        Chris Snook <chris.snook@gmail.com>
-Cc:     Shuah Khan <skhan@linuxfoundation.org>,
-        Bjorn Helgaas <bjorn@helgaas.com>,
-        netdev <netdev@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-kernel-mentees@lists.linuxfoundation.org,
-        Linux PCI <linux-pci@vger.kernel.org>
-Date:   Fri, 21 Jun 2019 10:27:41 -0700
-In-Reply-To: <CAErSpo5TMPokae7BMY8ZcOXtW=GeGsWXX_bqS8SrZnh0pEQYxw@mail.gmail.com>
-References: <20190621163921.26188-1-puranjay12@gmail.com>
-         <CAErSpo5TMPokae7BMY8ZcOXtW=GeGsWXX_bqS8SrZnh0pEQYxw@mail.gmail.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.30.5-0ubuntu0.18.10.1 
+        Fri, 21 Jun 2019 13:29:34 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x5LHSX3J1666602
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Fri, 21 Jun 2019 10:28:34 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x5LHSX3J1666602
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019061801; t=1561138114;
+        bh=WRGRSwMjS+gsCyKb+EZz9hlahlXg6vwSnnie4pPAk3c=;
+        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
+        b=l0gpDVDjxbKhhqO48wRcB5NiS2QsSf2Hr8KagsGLZOrnxPub2/FJqYlYC4lR85GKP
+         mPErQwdNtmc8TjXIHQha3mjhCFa4lJjkjItkGkKDDO8krOWzHoumDNey12Ug+tlETq
+         g2ZRSPxwHxzB7X2pZSiQQAb/XZoiPilFiWoAu7Wx1mSz4MAz8rDkooI/dIDO7rXVax
+         FSmKTW5m7hqPZv23GdoB6HSUnb1BEmr74tmSI3hnTOddkPiLC9FGes6hIea3smmJml
+         8nvkkZcctK9E5j/JLHgCdsFtfiGOJWVqZM6hJjZmq6dWNCpuJ3Oj0pkv5BEvde0NlY
+         ffD7i90KKehtw==
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x5LHSWEZ1666599;
+        Fri, 21 Jun 2019 10:28:32 -0700
+Date:   Fri, 21 Jun 2019 10:28:32 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Krzysztof Kozlowski <tipbot@zytor.com>
+Message-ID: <tip-166da5c5462f4cf299e0daa47c7384617c1699d7@git.kernel.org>
+Cc:     x86@kernel.org, ard.biesheuvel@linaro.org,
+        yamada.masahiro@socionext.com, tglx@linutronix.de, bp@suse.de,
+        linux-kernel@vger.kernel.org, kilobyte@angband.pl,
+        mingo@kernel.org, geert+renesas@glider.be, darwish.07@gmail.com,
+        akpm@linux-foundation.org, krzk@kernel.org, mingo@redhat.com,
+        hpa@zytor.com, alexey.brodkin@synopsys.com
+Reply-To: x86@kernel.org, ard.biesheuvel@linaro.org,
+          yamada.masahiro@socionext.com, bp@suse.de, tglx@linutronix.de,
+          linux-kernel@vger.kernel.org, kilobyte@angband.pl,
+          mingo@kernel.org, darwish.07@gmail.com, geert+renesas@glider.be,
+          akpm@linux-foundation.org, krzk@kernel.org, mingo@redhat.com,
+          hpa@zytor.com, alexey.brodkin@synopsys.com
+In-Reply-To: <1559635284-21696-1-git-send-email-krzk@kernel.org>
+References: <1559635284-21696-1-git-send-email-krzk@kernel.org>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/cleanups] x86/defconfigs: Remove useless
+ UEVENT_HELPER_PATH
+Git-Commit-ID: 166da5c5462f4cf299e0daa47c7384617c1699d7
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
+X-Spam-Status: No, score=-0.8 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        FREEMAIL_FORGED_REPLYTO,FREEMAIL_REPLYTO_END_DIGIT autolearn=no
+        autolearn_force=no version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-(adding the atlx maintainers to cc)
+Commit-ID:  166da5c5462f4cf299e0daa47c7384617c1699d7
+Gitweb:     https://git.kernel.org/tip/166da5c5462f4cf299e0daa47c7384617c1699d7
+Author:     Krzysztof Kozlowski <krzk@kernel.org>
+AuthorDate: Tue, 4 Jun 2019 10:01:24 +0200
+Committer:  Borislav Petkov <bp@suse.de>
+CommitDate: Fri, 21 Jun 2019 19:22:08 +0200
 
-On Fri, 2019-06-21 at 12:11 -0500, Bjorn Helgaas wrote:
-> On Fri, Jun 21, 2019 at 11:39 AM Puranjay Mohan <puranjay12@gmail.com> wrote:
-> > This patch series removes the private duplicates of PCI definitions in
-> > favour of generic definitions defined in pci_regs.h.
-> > 
-> > Puranjay Mohan (3):
-> >   net: ethernet: atheros: atlx: Rename local PCI defines to generic
-> >     names
-> >   net: ethernet: atheros: atlx: Include generic PCI definitions
-> >   net: ethernet: atheros: atlx: Remove unused and private PCI
-> >     definitions
-> > 
-> >  drivers/net/ethernet/atheros/atlx/atl2.c | 5 +++--
-> >  drivers/net/ethernet/atheros/atlx/atl2.h | 2 --
-> >  drivers/net/ethernet/atheros/atlx/atlx.h | 1 -
-> >  3 files changed, 3 insertions(+), 5 deletions(-)
-> 
-> Let's slow this down a little bit; I'm afraid we're going to overwhelm folks.
+x86/defconfigs: Remove useless UEVENT_HELPER_PATH
 
-I generally disagree.
+Remove the CONFIG_UEVENT_HELPER_PATH because:
+1. It is disabled since commit
 
-Consolidation of these sorts of changes are generally
-better done treewide all at once, posted as a series to
-a list and maintainers allowing time (weeks to months)
-for the specific maintainers to accept them and then
-whatever remainder exists reposted and possibly applied
-by an overall maintainer (e.g.: Dave M)
+  1be01d4a5714 ("driver: base: Disable CONFIG_UEVENT_HELPER by default")
 
-> Before posting more to LKML/netdev, how about we first complete a
-> sweep of all the drivers to see what we're getting into.  It could be
-> that this will end up being more churn than it's worth.
+as its dependency (UEVENT_HELPER) was made default to 'n',
 
-Also doubtful.
+2. It is not recommended (help message: "This should not be used today
+   [...] creates a high system load") and was kept only for ancient
+   userland,
 
-Subsystem specific local PCI #defines without generic
-naming is poor style and makes treewide grep and
-refactoring much more difficult.
+3. Certain userland specifically requests it to be disabled (systemd
+   README: "Legacy hotplug slows down the system and confuses udev").
 
-The atlx maintainers should definitely have been cc'd
-on these patches.
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Adam Borowski <kilobyte@angband.pl>
+Cc: "Ahmed S. Darwish" <darwish.07@gmail.com>
+Cc: Alexey Brodkin <alexey.brodkin@synopsys.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: x86-ml <x86@kernel.org>
+Link: https://lkml.kernel.org/r/1559635284-21696-1-git-send-email-krzk@kernel.org
+---
+ arch/x86/configs/i386_defconfig   | 1 -
+ arch/x86/configs/x86_64_defconfig | 1 -
+ 2 files changed, 2 deletions(-)
 
-Jay Cliburn <jcliburn@gmail.com> (maintainer:ATLX ETHERNET DRIVERS)
-Chris Snook <chris.snook@gmail.com> (maintainer:ATLX ETHERNET DRIVERS)
-
-Puranjay, can you please do a few things more here:
-
-1: Make sure you use scripts/get_maintainer.pl to cc the
-   appropriate people.
-
-2: Show that you compiled the object files and verified
-   where possible that there are no object file changes.
-
-3: State that there are no object changes in the proposed
-   commit log.
-
-thanks.
-
+diff --git a/arch/x86/configs/i386_defconfig b/arch/x86/configs/i386_defconfig
+index 2b2481acc661..59ce9ed58430 100644
+--- a/arch/x86/configs/i386_defconfig
++++ b/arch/x86/configs/i386_defconfig
+@@ -130,7 +130,6 @@ CONFIG_CFG80211=y
+ CONFIG_MAC80211=y
+ CONFIG_MAC80211_LEDS=y
+ CONFIG_RFKILL=y
+-CONFIG_UEVENT_HELPER_PATH="/sbin/hotplug"
+ CONFIG_DEVTMPFS=y
+ CONFIG_DEVTMPFS_MOUNT=y
+ CONFIG_DEBUG_DEVRES=y
+diff --git a/arch/x86/configs/x86_64_defconfig b/arch/x86/configs/x86_64_defconfig
+index e8829abf063a..d0a5ffeae8df 100644
+--- a/arch/x86/configs/x86_64_defconfig
++++ b/arch/x86/configs/x86_64_defconfig
+@@ -129,7 +129,6 @@ CONFIG_CFG80211=y
+ CONFIG_MAC80211=y
+ CONFIG_MAC80211_LEDS=y
+ CONFIG_RFKILL=y
+-CONFIG_UEVENT_HELPER_PATH="/sbin/hotplug"
+ CONFIG_DEVTMPFS=y
+ CONFIG_DEVTMPFS_MOUNT=y
+ CONFIG_DEBUG_DEVRES=y
