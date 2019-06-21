@@ -2,149 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 480934E449
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 11:41:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AFB884E460
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 11:42:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726948AbfFUJlh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Jun 2019 05:41:37 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:34080 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726877AbfFUJkV (ORCPT
+        id S1726666AbfFUJmr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Jun 2019 05:42:47 -0400
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:34825 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726442AbfFUJmq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Jun 2019 05:40:21 -0400
-Received: by mail-pf1-f195.google.com with SMTP id c85so3324146pfc.1;
-        Fri, 21 Jun 2019 02:40:21 -0700 (PDT)
+        Fri, 21 Jun 2019 05:42:46 -0400
+Received: by mail-qt1-f193.google.com with SMTP id d23so6282913qto.2
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2019 02:42:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=gDChq3jgrlh7Kfl67z51Bq3UYV+aDXpvLz2pr3LXsbw=;
-        b=atUeVU1wcczoU76Kdq0ubtl5EaLRaarzaAxHhV7CRiTol2lTgAi9mSfuHgTZ4jKcj0
-         jWsm59MMmrpQlZaBYrKadRnDSwL6g0pmpPvaQtwuaR6FC3AZ+mSoKRamYX4T8dGWFWQH
-         XTjaJUe0QI7NHZcmtnAQthuYuXr5FeKtPUNEqo6E2SYRKGV5I2om1c8raJLtJlcKKCGu
-         +KCqV1Auk6nxjztT0Izd9sbJnH3S74UFGKxP00k2HT883OVeZkzArgneusEK8A4+RO7c
-         oNkB5OOftcpimbjwsuXTAAZ8VK2LneXxrWqyuw6QdVDA36ixe73J6xaF41jOmcSNErN9
-         rXfA==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=voXOjCDKaWVYdLTWFMcEZUkDxmgR0CxuF6yexARSuUY=;
+        b=EHtwzXV9ag4SceJsJSACSOeeNk35bKg24uObths0QcZgvsQNeZwiX9MbzsoIrzqHB8
+         PmDx+jEaygonb3ZbpcvywsCMlWAh2LIdKxbzgI3ENIjF4e+hQ4AJ96WjNosw0LDZcEqD
+         d27h/VFLj7CkGf0/NikIaE/fU+5kGhdnC/Bjdmp7SDNj8ComKdAaSoAGY0CcPOCvZ5Jf
+         MHn/Z2lRNuJ1u7/onIxivRkSI3wf0jDjVCak9YjwHs8YG0njxbsT+5EB2VyRl9cnIUJk
+         612Oji/k97NlbeZrhIsT3TMfGzEjQKBwsSTDG880f7cBovak8rhAqAelO5n1VBfcGD3A
+         645A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=gDChq3jgrlh7Kfl67z51Bq3UYV+aDXpvLz2pr3LXsbw=;
-        b=FZMW3GkllWkTb3eF/zqt4/LPMIVRIBzmTG7IdqgEUPFnoewUNrTpRneaDvudfhxpt+
-         oBbjjvZVXqj6vwy62x4KwqvUjWbZ02WqMqu0yhrUEgcHFBxfdOcXPevZLkxCYJZeoGrZ
-         1eL9UNN3PDvpRXmt6y9IYOUEr0BwSDU15In5KcWkUKpjNmmeDAcf1Wubxws0EK2zPVm0
-         Mw6czHqFIi4dIc8H+1PxEbYBP+yXqy6yoqnnjZHzPU0oA+OHFqQQVzCKuucmBWGNKL2p
-         4Ouj02Ax8toe/DXkpbW6pAc/KceipuDbfvZcYf06oPlJUN/RWmY7SE19JbRB/yitrnYv
-         Yung==
-X-Gm-Message-State: APjAAAWELRfHiG3io65i8yuZv87dhMEXX5n5/NRhMnTuhnxo2PxRsSmH
-        sfH9HRcUsjv83v7R1PWtZkXpV2NW
-X-Google-Smtp-Source: APXvYqzSpDiVbBYFbXVJ82vVhV16mKsR/7Exr86GibnvfdCZ6k7SBKf0ewTsP0MSq+vCZSjvt2AhHQ==
-X-Received: by 2002:a17:90a:22ef:: with SMTP id s102mr5601135pjc.2.1561110021153;
-        Fri, 21 Jun 2019 02:40:21 -0700 (PDT)
-Received: from localhost.localdomain ([203.205.141.123])
-        by smtp.googlemail.com with ESMTPSA id y14sm1999506pjr.13.2019.06.21.02.40.19
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Fri, 21 Jun 2019 02:40:20 -0700 (PDT)
-From:   Wanpeng Li <kernellwp@gmail.com>
-X-Google-Original-From: Wanpeng Li <wanpengli@tencent.com>
-To:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
-        Marcelo Tosatti <mtosatti@redhat.com>
-Subject: [PATCH v5 4/4] KVM: LAPIC: Don't inject already-expired timer via posted interrupt
-Date:   Fri, 21 Jun 2019 17:40:02 +0800
-Message-Id: <1561110002-4438-5-git-send-email-wanpengli@tencent.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1561110002-4438-1-git-send-email-wanpengli@tencent.com>
-References: <1561110002-4438-1-git-send-email-wanpengli@tencent.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=voXOjCDKaWVYdLTWFMcEZUkDxmgR0CxuF6yexARSuUY=;
+        b=q80B8gJpV7S33LJINsdpX2M9kS2Qq53XVXG3QxOEn6fi8DRmcBuz6yKyydoTrvlz/4
+         Z+JYbjpPAnGmm5LoFuoS21oArUOogEttlHCSmjYQzUd7Z5iPNheEV33OWD6EArIMB7Gs
+         ILPtOz/jjYJ1UEA25TwSX5Ygvdh9vLvg+y99ViMloV86b4SYILtQ6OcOkZB5tKblnZEC
+         8CADnRXP0lRMwqL69aRM1V2dyJBO/XWkCNvq5CCa51yY3I1pn/ekPKsVjFTkhGryeboN
+         1KmgSrfwHGy9MN7lqUaGGWtkzRrS44fyyhxORYd2lH6dFkOygNbErIPZ4KfVgZt1Qyzj
+         OP0Q==
+X-Gm-Message-State: APjAAAUuMOMWzC4IpguQf0XE5z6PkEE2NrrIhO4KejuBDViWPVduMUlS
+        fQLAwj0cqA99/8hZIS4Svhl5tig5NEM9dg+IoMuiYQ==
+X-Google-Smtp-Source: APXvYqxG/ETQk1E8/TUYPfflkh7ZrDwEi3NeU1BW/bV+XNteZsnNKMWTbT4FgYaJzDfH6YCpg7S38j2Dzf3ZtixqdyQ=
+X-Received: by 2002:a0c:99d5:: with SMTP id y21mr43534451qve.106.1561110165510;
+ Fri, 21 Jun 2019 02:42:45 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20190620150306.124839-1-yuehaibing@huawei.com>
+In-Reply-To: <20190620150306.124839-1-yuehaibing@huawei.com>
+From:   Benjamin Gaignard <benjamin.gaignard@linaro.org>
+Date:   Fri, 21 Jun 2019 11:42:34 +0200
+Message-ID: <CA+M3ks69T+Eh0Hd_OgCfT_VP=S_ouUwU+dawueJw9fzWO=LzmA@mail.gmail.com>
+Subject: Re: [PATCH -next] drm/sti: Remove duplicated include from sti_drv.c
+To:     YueHaibing <yuehaibing@huawei.com>
+Cc:     Vincent Abriou <vincent.abriou@st.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        ML dri-devel <dri-devel@lists.freedesktop.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wanpeng Li <wanpengli@tencent.com>
+Le jeu. 20 juin 2019 =C3=A0 16:56, YueHaibing <yuehaibing@huawei.com> a =C3=
+=A9crit :
+>
+> Remove duplicated include.
+>
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 
-already-expired timer interrupt can be injected to guest when vCPU who 
-arms the lapic timer re-vmentry, don't posted inject in this case.
+Applied on drm-misc-next,
+Thanks for the patch.
 
-Cc: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Radim Krčmář <rkrcmar@redhat.com>
-Cc: Marcelo Tosatti <mtosatti@redhat.com>
-Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
----
- arch/x86/kvm/lapic.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+Benjamin
 
-diff --git a/arch/x86/kvm/lapic.c b/arch/x86/kvm/lapic.c
-index ae575c0..7cd95ea 100644
---- a/arch/x86/kvm/lapic.c
-+++ b/arch/x86/kvm/lapic.c
-@@ -1452,7 +1452,7 @@ static void kvm_apic_inject_pending_timer_irqs(struct kvm_lapic *apic)
- 	}
- }
- 
--static void apic_timer_expired(struct kvm_lapic *apic)
-+static void apic_timer_expired(struct kvm_lapic *apic, bool can_pi_inject)
- {
- 	struct kvm_vcpu *vcpu = apic->vcpu;
- 	struct swait_queue_head *q = &vcpu->wq;
-@@ -1464,7 +1464,7 @@ static void apic_timer_expired(struct kvm_lapic *apic)
- 	if (apic_lvtt_tscdeadline(apic) || ktimer->hv_timer_in_use)
- 		ktimer->expired_tscdeadline = ktimer->tscdeadline;
- 
--	if (posted_interrupt_inject_timer(apic->vcpu)) {
-+	if (can_pi_inject && posted_interrupt_inject_timer(apic->vcpu)) {
- 		if (apic->lapic_timer.timer_advance_ns)
- 			kvm_wait_lapic_expire(vcpu, true);
- 		kvm_apic_inject_pending_timer_irqs(apic);
-@@ -1607,7 +1607,7 @@ static void start_sw_tscdeadline(struct kvm_lapic *apic)
- 		expire = ktime_sub_ns(expire, ktimer->timer_advance_ns);
- 		hrtimer_start(&ktimer->timer, expire, HRTIMER_MODE_ABS);
- 	} else
--		apic_timer_expired(apic);
-+		apic_timer_expired(apic, false);
- 
- 	local_irq_restore(flags);
- }
-@@ -1697,7 +1697,7 @@ static void start_sw_period(struct kvm_lapic *apic)
- 
- 	if (ktime_after(ktime_get(),
- 			apic->lapic_timer.target_expiration)) {
--		apic_timer_expired(apic);
-+		apic_timer_expired(apic, false);
- 
- 		if (apic_lvtt_oneshot(apic))
- 			return;
-@@ -1759,7 +1759,7 @@ static bool start_hv_timer(struct kvm_lapic *apic)
- 		if (atomic_read(&ktimer->pending)) {
- 			cancel_hv_timer(apic);
- 		} else if (expired) {
--			apic_timer_expired(apic);
-+			apic_timer_expired(apic, false);
- 			cancel_hv_timer(apic);
- 		}
- 	}
-@@ -1809,7 +1809,7 @@ void kvm_lapic_expired_hv_timer(struct kvm_vcpu *vcpu)
- 		goto out;
- 	WARN_ON(swait_active(&vcpu->wq));
- 	cancel_hv_timer(apic);
--	apic_timer_expired(apic);
-+	apic_timer_expired(apic, false);
- 
- 	if (apic_lvtt_period(apic) && apic->lapic_timer.period) {
- 		advance_periodic_target_expiration(apic);
-@@ -2312,7 +2312,7 @@ static enum hrtimer_restart apic_timer_fn(struct hrtimer *data)
- 	struct kvm_timer *ktimer = container_of(data, struct kvm_timer, timer);
- 	struct kvm_lapic *apic = container_of(ktimer, struct kvm_lapic, lapic_timer);
- 
--	apic_timer_expired(apic);
-+	apic_timer_expired(apic, true);
- 
- 	if (lapic_is_periodic(apic)) {
- 		advance_periodic_target_expiration(apic);
--- 
-2.7.4
-
+> ---
+>  drivers/gpu/drm/sti/sti_drv.c | 1 -
+>  1 file changed, 1 deletion(-)
+>
+> diff --git a/drivers/gpu/drm/sti/sti_drv.c b/drivers/gpu/drm/sti/sti_drv.=
+c
+> index bb6ae6dd66c9..2edd666fb44a 100644
+> --- a/drivers/gpu/drm/sti/sti_drv.c
+> +++ b/drivers/gpu/drm/sti/sti_drv.c
+> @@ -23,7 +23,6 @@
+>
+>  #include "sti_crtc.h"
+>  #include "sti_drv.h"
+> -#include "sti_drv.h"
+>  #include "sti_plane.h"
+>
+>  #define DRIVER_NAME    "sti"
+>
+>
+>
