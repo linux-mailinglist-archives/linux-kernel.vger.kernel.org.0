@@ -2,92 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4F18E4EDCE
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 19:28:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 92CE54EDDB
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 19:32:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726163AbfFUR2O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Jun 2019 13:28:14 -0400
-Received: from mga14.intel.com ([192.55.52.115]:40713 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726031AbfFUR2O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Jun 2019 13:28:14 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Jun 2019 10:28:13 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.63,401,1557212400"; 
-   d="scan'208";a="171282794"
-Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.7.199.155])
-  by orsmga002.jf.intel.com with ESMTP; 21 Jun 2019 10:28:13 -0700
-Date:   Fri, 21 Jun 2019 10:31:26 -0700
-From:   Jacob Pan <jacob.jun.pan@intel.com>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     Kate Stewart <kstewart@linuxfoundation.org>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Ashok Raj <ashok.raj@intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Jan Kiszka <jan.kiszka@siemens.com>, x86 <x86@kernel.org>,
-        Ricardo Neri <ricardo.neri@intel.com>,
-        Stephane Eranian <eranian@google.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Juergen Gross <jgross@suse.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        iommu@lists.linux-foundation.org,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
-        Andi Kleen <andi.kleen@intel.com>,
-        Borislav Petkov <bp@suse.de>, Ingo Molnar <mingo@kernel.org>,
-        Wincy Van <fanwenyi0529@gmail.com>, jacob.jun.pan@intel.com
-Subject: Re: [RFC PATCH v4 20/21] iommu/vt-d: hpet: Reserve an interrupt
- remampping table entry for watchdog
-Message-ID: <20190621103126.585ca6d3@jacob-builder>
-In-Reply-To: <alpine.DEB.2.21.1906211732330.5503@nanos.tec.linutronix.de>
-References: <1558660583-28561-1-git-send-email-ricardo.neri-calderon@linux.intel.com>
-        <1558660583-28561-21-git-send-email-ricardo.neri-calderon@linux.intel.com>
-        <alpine.DEB.2.21.1906162049300.1760@nanos.tec.linutronix.de>
-        <alpine.DEB.2.21.1906171007360.1760@nanos.tec.linutronix.de>
-        <CABPqkBTai76Bgb4E61tF-mJUkFNxVa4B8M2bxTEYVgBsuAANNQ@mail.gmail.com>
-        <alpine.DEB.2.21.1906172343120.1963@nanos.tec.linutronix.de>
-        <20190619084316.71ce5477@jacob-builder>
-        <alpine.DEB.2.21.1906211732330.5503@nanos.tec.linutronix.de>
-Organization: OTC
-X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+        id S1726155AbfFURcE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Jun 2019 13:32:04 -0400
+Received: from mail-io1-f65.google.com ([209.85.166.65]:38240 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725992AbfFURcD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Jun 2019 13:32:03 -0400
+Received: by mail-io1-f65.google.com with SMTP id j6so2549991ioa.5
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2019 10:32:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:cc;
+        bh=x0w0cICqmKMHbqMi3TqTJo/d6Opn22c9DRuCkjr5CKM=;
+        b=l8HMkD1dRulhfDkq5w4c4pNGnTo2f0drZAn2TA7/ulWSn4SEEVCjvhfjE9a7s0Q8mG
+         XVoeWrkG8EwD94uhco+flGFOYkoAU+M8dU8wSqv4+EuwT9LfetuuhKL1dAoGUecN+3fL
+         jUwadaN55cnpbP8X8g9D/RSzSMel66BWTgc9DfQHImMzMiE6hnm2x3G+PBwU2vN4kS8V
+         COSml29XhDuV5Qqh/PAC9T+Eup5CnbND93l3iOjASRwlaW9Pfgm42Cb8TKd32l3bkAXO
+         QZaOTeFXicL4Ml4zygN8ndvJToZAGXvAzIYvTKB7La/y/JmVwov9ySUMFcPOwjIvEVcN
+         XTtg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:cc;
+        bh=x0w0cICqmKMHbqMi3TqTJo/d6Opn22c9DRuCkjr5CKM=;
+        b=WIwF7BUZ/duoXfIPeOr1ELV0PAWA/rFmOhSngZPG/RUVhlUHvxx5JtfAVI1/S42z59
+         oAa67OVmtznO2qDyC9syNGsS4pJGVFqpoV18M9/+AzAlSN2mbHx9C4X9WprV0MD5Yr0I
+         o5/Arh+LYvkG93xy1w05UIkTL3SlrD9notEOJ6RTQo2SWn7vTbOFLxkxadbrauRkz6TQ
+         voTdJD64OqB0WHtM59c+IAGQlipOSlmXGVFMh0gbL9HRJ5vLtTAadWgRscoCpmfVEvTI
+         EhDIgBjuLVG/GfNYWfVQnfjmchsYXrgq+dYnbQwdzqGbIevZwcXLTQsVr0yKxj57GtTw
+         5R4w==
+X-Gm-Message-State: APjAAAWY0HxF/CloGJCbaLEEBi742aZRSb5flrZfdHu4Wy30SAcHN6aX
+        UvIyzioG3OBXv4l6il/seLuStop5BzVl5vs3PTI=
+X-Received: by 2002:a02:b10b:: with SMTP id r11mt884598jah.140.1561138323173;
+ Fri, 21 Jun 2019 10:32:03 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20190614185547.34518-1-jeffrey.l.hugo@gmail.com>
+In-Reply-To: <20190614185547.34518-1-jeffrey.l.hugo@gmail.com>
+From:   Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+Date:   Fri, 21 Jun 2019 11:31:50 -0600
+Message-ID: <CAOCk7NoaP=DkNLgdiUw5M0JYRGEGGCFQkn1sCO9dqtexMPC9dQ@mail.gmail.com>
+Subject: Re: [PATCH 0/2] MSM8998 MTP Display
+Cc:     Dave Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, thierry.reding@gmail.com,
+        sam@ravnborg.org, Bjorn Andersson <bjorn.andersson@linaro.org>,
+        "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
+        DTML <devicetree@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 21 Jun 2019 17:33:28 +0200 (CEST)
-Thomas Gleixner <tglx@linutronix.de> wrote:
+On Fri, Jun 14, 2019 at 12:55 PM Jeffrey Hugo <jeffrey.l.hugo@gmail.com> wrote:
+>
+> Since we are trying to get the GPU and display hardware in the SoC
+> supported, it would be nice to be able to put the output on the
+> integrated panel for the reference platform.  To do so, we need support
+> in the Truly driver to support the specific panel variant for the
+> MSM8998 MTP.  This series adds taht support.
+>
+> Jeffrey Hugo (2):
+>   dt-bindings: display: truly: Add MSM8998 MTP panel
+>   drm/panel: truly: Add MSM8998 MTP support
 
-> On Wed, 19 Jun 2019, Jacob Pan wrote:
-> > On Tue, 18 Jun 2019 01:08:06 +0200 (CEST)
-> > Thomas Gleixner <tglx@linutronix.de> wrote:  
-> > > 
-> > > Unless this problem is not solved and I doubt it can be solved
-> > > after talking to IOMMU people and studying manuals,  
-> >
-> > I agree. modify irte might be done with cmpxchg_double() but the
-> > queued invalidation interface for IRTE cache flush is shared with
-> > DMA and requires holding a spinlock for enque descriptors, QI tail
-> > update etc.
-> > 
-> > Also, reserving & manipulating IRTE slot for hpet via backdoor
-> > might not be needed if the HPET PCI BDF (found in ACPI) can be
-> > utilized. But it might need more work to add a fake PCI device for
-> > HPET.  
-> 
-> What would PCI/BDF solve?
-I was thinking if HPET is a PCI device then it can naturally
-gain slots in IOMMU remapping table IRTEs via PCI MSI code. Then perhaps
-it can use the IRQ subsystem to set affinity etc. w/o directly adding
-additional helper functions in IRQ remapping code. I have not followed
-all the discussions, just a thought.
-
+Lets actually hold off on this series.  I thought I could solve an
+issue in the DSI driver, but thats not working out like how I'd hoped.
+I may need to rework this.
