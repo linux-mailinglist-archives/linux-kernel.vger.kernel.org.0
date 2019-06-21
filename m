@@ -2,88 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CBC974E929
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 15:29:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 304004E92A
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 15:30:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726202AbfFUN3X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Jun 2019 09:29:23 -0400
-Received: from out2-smtp.messagingengine.com ([66.111.4.26]:54261 "EHLO
-        out2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726029AbfFUN3W (ORCPT
+        id S1726079AbfFUNa1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Jun 2019 09:30:27 -0400
+Received: from smtp-fw-6001.amazon.com ([52.95.48.154]:54651 "EHLO
+        smtp-fw-6001.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725958AbfFUNa1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Jun 2019 09:29:22 -0400
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
-        by mailout.nyi.internal (Postfix) with ESMTP id C66D922274;
-        Fri, 21 Jun 2019 09:29:21 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute6.internal (MEProxy); Fri, 21 Jun 2019 09:29:21 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm1; bh=X4jgCsPTpY0MEyCO3acdNzjmRnr
-        VZZybxhhzrkSRkpg=; b=MZT72ONacup78AyY+/OaPqJTP8rVj6568fzz264cyE+
-        zL7w8UjHip/us4TT8XrOQKcHVKh/G62D+xAdVwrQKu15BUAeIg48c2KujO0eGkLi
-        Ln/fqc9hebl69ljogWKZCIfhNZSoBuRbR1Fp/vayWkCjgfqtsxFqLy+vlxC6devk
-        GJ9h9DoAxP9yGR9TQz9Ku1b0dDsU7aRQu2nvBzE1OTp3Tg9DSLu0N24KkmI4XYc7
-        7Q6lF5SPppHFbc8CivoQb2sM0K/FTl1Rr5yZFhXoBQugZri4HVV+nSANM7ORvaFx
-        vvsU3S+9d/niB+jqDWKbdHupA8U/MnCRKj4Gn9O5I9g==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=X4jgCs
-        PTpY0MEyCO3acdNzjmRnrVZZybxhhzrkSRkpg=; b=VlyXDNvPlC0caYrX34HuKQ
-        6ueNkeMsGPuxUHtFlE9XeABex7787SRxDGPeKsay7zvRV6OdVTHndHV3qHmIRf0h
-        FnJ8ilZXDALymYa9ItSIQolP6YYpiO1XVI8ySUD/gue+3yjvy9RHAYCut80wOfkZ
-        0mF6f7U1LkmqP9bwE6nxuR4VrgUkLowjcD9qNxs/W3aExyzJ9NTaEiouXPsB0Tl2
-        LrpFLd+H2uSrstGcyTokddaU61FblEHWGNxsGy+gJinek8S9oRouxZdMZ7hkG+m8
-        OaAsvbs7CotNKvv59sxHzn/EZOn+nvZpBfja07m37vEE6LDMuzOFCgUzp2kTmEPQ
-        ==
-X-ME-Sender: <xms:sdsMXQdS8sp-Fop-zkwMXZynm5yMa7xerpDlqAUG-_zvntB4SF-Z4w>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduvddrtdeigdeikecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpeffhffvuffkfhggtggujggfsehttdertddtredvnecuhfhrohhmpefirhgvghcu
-    mffjuceoghhrvghgsehkrhhorghhrdgtohhmqeenucfkphepkeefrdekiedrkeelrddutd
-    ejnecurfgrrhgrmhepmhgrihhlfhhrohhmpehgrhgvgheskhhrohgrhhdrtghomhenucev
-    lhhushhtvghrufhiiigvpedt
-X-ME-Proxy: <xmx:sdsMXdVczzU5XQo_4uMPNGo54aOeYYG6kjN3SNMd95yuq8syqySCVQ>
-    <xmx:sdsMXW7_l6vHrUwGEx91PhsCZLlxHgbTiaGDpHlj-rRM-JB9VXrGbQ>
-    <xmx:sdsMXVxV4nx-WM6v_K8uaxnccIu7fukqOKznHi5tSrnTPrUnPLNqyg>
-    <xmx:sdsMXRICYGDyj15hbhbtIbxg4Or3tBvPuRhFllb71Jrfy8_C7XylRg>
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        by mail.messagingengine.com (Postfix) with ESMTPA id F3263380074;
-        Fri, 21 Jun 2019 09:29:20 -0400 (EDT)
-Date:   Fri, 21 Jun 2019 15:29:10 +0200
-From:   Greg KH <greg@kroah.com>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Subject: Re: linux-next: unexpected file in the usb tree
-Message-ID: <20190621132910.GA11875@kroah.com>
-References: <20190621212423.2b264411@canb.auug.org.au>
+        Fri, 21 Jun 2019 09:30:27 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1561123826; x=1592659826;
+  h=subject:to:cc:references:from:message-id:date:
+   mime-version:in-reply-to:content-transfer-encoding;
+  bh=SKySCs7j8cyYDZiLXPPcbo5tvJi2ii0pqqcOJAm/4wg=;
+  b=B2yCTaB8aNYBX51ya8IoFoIs/2EePRgaEuzovjbse6bwlnT4lr4P0t09
+   J8+bBIurvDUdl8ldVXXwBHFPgqhWn1ahI30iAa9Hw8YfiPGJub03+5NNo
+   YjU1qhG1d45jzXe7wPJMi83648aOJk6slyiYucurH9mFCKG+Oop2Dhr4n
+   A=;
+X-IronPort-AV: E=Sophos;i="5.62,400,1554768000"; 
+   d="scan'208";a="401780754"
+Received: from iad6-co-svc-p1-lb1-vlan3.amazon.com (HELO email-inbound-relay-1d-98acfc19.us-east-1.amazon.com) ([10.124.125.6])
+  by smtp-border-fw-out-6001.iad6.amazon.com with ESMTP; 21 Jun 2019 13:30:24 +0000
+Received: from EX13MTAUWC001.ant.amazon.com (iad55-ws-svc-p15-lb9-vlan3.iad.amazon.com [10.40.159.166])
+        by email-inbound-relay-1d-98acfc19.us-east-1.amazon.com (Postfix) with ESMTPS id 078D9A2A35;
+        Fri, 21 Jun 2019 13:30:19 +0000 (UTC)
+Received: from EX13D20UWC001.ant.amazon.com (10.43.162.244) by
+ EX13MTAUWC001.ant.amazon.com (10.43.162.135) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Fri, 21 Jun 2019 13:30:19 +0000
+Received: from 38f9d3867b82.ant.amazon.com (10.43.161.166) by
+ EX13D20UWC001.ant.amazon.com (10.43.162.244) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Fri, 21 Jun 2019 13:30:13 +0000
+Subject: Re: [v2, 0/4] x86 instruction emulator fuzzing
+To:     Sam Caccavale <samcacc@amazon.de>
+CC:     <samcaccavale@gmail.com>, <nmanthey@amazon.de>,
+        <wipawel@amazon.de>, <dwmw@amazon.co.uk>, <mpohlack@amazon.de>,
+        <graf@amazon.de>, <karahmed@amazon.de>,
+        <andrew.cooper3@citrix.com>, <JBeulich@suse.com>,
+        <pbonzini@redhat.com>, <rkrcmar@redhat.com>, <tglx@linutronix.de>,
+        <mingo@redhat.com>, <bp@alien8.de>, <hpa@zytor.com>,
+        <paullangton4@gmail.com>, <anirudhkaushik@google.com>,
+        <x86@kernel.org>, <kvm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20190612153600.13073-1-samcacc@amazon.de>
+From:   Alexander Graf <graf@amazon.com>
+Message-ID: <305788a1-afe8-add8-10ee-d738b76867bc@amazon.com>
+Date:   Fri, 21 Jun 2019 15:30:11 +0200
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
+ Gecko/20100101 Thunderbird/60.7.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190621212423.2b264411@canb.auug.org.au>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <20190612153600.13073-1-samcacc@amazon.de>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Originating-IP: [10.43.161.166]
+X-ClientProxiedBy: EX13d09UWC004.ant.amazon.com (10.43.162.114) To
+ EX13D20UWC001.ant.amazon.com (10.43.162.244)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 21, 2019 at 09:24:23PM +1000, Stephen Rothwell wrote:
-> Hi Greg,
-> 
-> Commit
-> 
->   ecefae6db042 ("docs: usb: rename files to .rst and add them to drivers-api")
-> 
-> added this unexpected file:
-> 
->   Documentation/index.rst.rej
 
-Ugh, that's what I get for having to manually apply a patch :(
+On 12.06.19 17:35, Sam Caccavale wrote:
+> Dear all,
+>
+> This series aims to provide an entrypoint for, and fuzz KVM's x86 instruction
+> emulator from userspace.  It mirrors Xen's application of the AFL fuzzer to
+> it's instruction emulator in the hopes of discovering vulnerabilities.
+> Since this entrypoint also allows arbitrary execution of the emulators code
+> from userspace, it may also be useful for testing.
+>
+> The current 4 patches build the emulator and 2 harnesses: simple-harness is
+> an example of unit testing; afl-harness is a frontend for the AFL fuzzer.
+>
+> Patches
+> =======
+>
+> - 01: Builds and links afl-harness with the required kernel objects.
+> - 02: Introduces the minimal set of emulator operations and supporting code
+> to emulate simple instructions.
+> - 03: Demonstrates simple-harness as a unit test.
+> - 04: Adds scripts for install, running, and crash triage.
+>
+> Any comments/suggestions are greatly appreciated.
 
-I'll go remove it now, thanks for noticing.
 
-greg k-h
+The cover letter as well as the individual patches are missing a change 
+log from v1 to v2.
+
+
+
+Alex
+
+
