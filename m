@@ -2,152 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DA1634EA00
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 15:56:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 41EEE4E9EE
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 15:52:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726198AbfFUN4W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Jun 2019 09:56:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58322 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725985AbfFUN4V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Jun 2019 09:56:21 -0400
-Received: from localhost (unknown [69.71.4.100])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B206E2083B;
-        Fri, 21 Jun 2019 13:56:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561125381;
-        bh=BBRLV5HK4wojUuRwh0Rs7j6ma6H9sAhgSFIRNIQgDhg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=UBkgFZ78v39DEfSXuGiLLocJ+jUu/9obvwtDpFnq9msQlxrPRQNKcqCS1tzCrzzu9
-         zcX6lYf5FN4xy5pbLwGx1vi+D/nXP3DNXAzTsefIFPkn7QSBaheUzxp4f51QG6Hs9d
-         rPFDb7MuSom/wFM61ziIx+4IyV1xEZWrPphXDgf8=
-Date:   Fri, 21 Jun 2019 08:56:19 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     John Garry <john.garry@huawei.com>
-Cc:     xuwei5@huawei.com, linuxarm@huawei.com, arm@kernel.org,
-        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-        joe@perches.com, linux-acpi@vger.kernel.org,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Subject: Re: [PATCH 4/5] bus: hisi_lpc: Add .remove method to avoid driver
- unbind crash
-Message-ID: <20190621135619.GE82584@google.com>
-References: <1561026716-140537-1-git-send-email-john.garry@huawei.com>
- <1561026716-140537-5-git-send-email-john.garry@huawei.com>
+        id S1726147AbfFUNwN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Jun 2019 09:52:13 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:58826 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726002AbfFUNwN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Jun 2019 09:52:13 -0400
+Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 877D560B9E224E3E924D;
+        Fri, 21 Jun 2019 21:52:08 +0800 (CST)
+Received: from localhost.localdomain.localdomain (10.175.113.25) by
+ DGGEMS401-HUB.china.huawei.com (10.3.19.201) with Microsoft SMTP Server id
+ 14.3.439.0; Fri, 21 Jun 2019 21:52:00 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     Benson Leung <bleung@chromium.org>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Nick Crews <ncrews@chromium.org>
+CC:     YueHaibing <yuehaibing@huawei.com>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>
+Subject: [PATCH -next] platform/chrome: wilco_ec: Use kmemdup in enqueue_events()
+Date:   Fri, 21 Jun 2019 13:59:07 +0000
+Message-ID: <20190621135907.112232-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1561026716-140537-5-git-send-email-john.garry@huawei.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type:   text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+X-Originating-IP: [10.175.113.25]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[+cc Rafael, linux-acpi]
+Use kmemdup rather than duplicating its implementation
 
-On Thu, Jun 20, 2019 at 06:31:55PM +0800, John Garry wrote:
-> The original driver author seemed to be under the impression that a driver
-> cannot be removed if it does not have a .remove method. Or maybe if it is
-> a built-in platform driver.
-> 
-> This is not true. This crash can be created:
-> 
-> root@ubuntu:/sys/bus/platform/drivers/hisi-lpc# echo HISI0191\:00 > unbind
-> root@ubuntu:/sys/bus/platform/drivers/hisi-lpc# ipmitool raw 6 1
->  Unable to handle kernel paging request at virtual address ffff000010035010
-> ...
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/platform/chrome/wilco_ec/event.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-> The problem here is that the host goes away but the associated logical PIO
-> region remains registered, as do the child devices.
-> 
-> Fix by adding a .remove method to tidy-up by removing the child devices
-> and unregistering the logical PIO region.
-> 
-> Fixes: adf38bb0b595 ("HISI LPC: Support the LPC host on Hip06/Hip07 with DT bindings")
-> Signed-off-by: John Garry <john.garry@huawei.com>
-> ---
->  drivers/bus/hisi_lpc.c | 34 ++++++++++++++++++++++++++++++++--
->  1 file changed, 32 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/bus/hisi_lpc.c b/drivers/bus/hisi_lpc.c
-> index 6d301aafcad2..0e9f1f141c93 100644
-> --- a/drivers/bus/hisi_lpc.c
-> +++ b/drivers/bus/hisi_lpc.c
-> @@ -456,6 +456,17 @@ struct hisi_lpc_acpi_cell {
->  	size_t pdata_size;
->  };
->  
-> +static void hisi_lpc_acpi_remove(struct device *hostdev)
-> +{
-> +	struct acpi_device *adev = ACPI_COMPANION(hostdev);
-> +	struct acpi_device *child;
-> +
-> +	device_for_each_child(hostdev, NULL, hisi_lpc_acpi_remove_subdev);
-> +
-> +	list_for_each_entry(child, &adev->children, node)
-> +		acpi_device_clear_enumerated(child);
+diff --git a/drivers/platform/chrome/wilco_ec/event.c b/drivers/platform/chrome/wilco_ec/event.c
+index c975b76e6255..70156e75047e 100644
+--- a/drivers/platform/chrome/wilco_ec/event.c
++++ b/drivers/platform/chrome/wilco_ec/event.c
+@@ -248,10 +248,9 @@ static int enqueue_events(struct acpi_device *adev, const u8 *buf, u32 length)
+ 		offset += event_size;
+ 
+ 		/* Copy event into the queue */
+-		queue_event = kzalloc(event_size, GFP_KERNEL);
++		queue_event = kmemdup(event, event_size, GFP_KERNEL);
+ 		if (!queue_event)
+ 			return -ENOMEM;
+-		memcpy(queue_event, event, event_size);
+ 		event_queue_push(dev_data->events, queue_event);
+ 	}
 
-There are only two other non-ACPI core callers of
-acpi_device_clear_enumerated() (i2c and spi).  That always makes me
-wonder if we're getting too deep in ACPI internals.
 
-> +}
-> +
->  /*
->   * hisi_lpc_acpi_probe - probe children for ACPI FW
->   * @hostdev: LPC host device pointer
-> @@ -555,8 +566,7 @@ static int hisi_lpc_acpi_probe(struct device *hostdev)
->  	return 0;
->  
->  fail:
-> -	device_for_each_child(hostdev, NULL,
-> -			      hisi_lpc_acpi_remove_subdev);
-> +	hisi_lpc_acpi_remove(hostdev);
->  	return ret;
->  }
->  
-> @@ -626,6 +636,8 @@ static int hisi_lpc_probe(struct platform_device *pdev)
->  		return ret;
->  	}
->  
-> +	dev_set_drvdata(dev, lpcdev);
-> +
->  	io_end = lpcdev->io_host->io_start + lpcdev->io_host->size;
->  	dev_info(dev, "registered range [%pa - %pa]\n",
->  		 &lpcdev->io_host->io_start, &io_end);
-> @@ -633,6 +645,23 @@ static int hisi_lpc_probe(struct platform_device *pdev)
->  	return ret;
->  }
->  
-> +static int hisi_lpc_remove(struct platform_device *pdev)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct acpi_device *acpi_device = ACPI_COMPANION(dev);
-> +	struct hisi_lpc_dev *lpcdev = dev_get_drvdata(dev);
-> +	struct logic_pio_hwaddr *range = lpcdev->io_host;
-> +
-> +	if (acpi_device)
-> +		hisi_lpc_acpi_remove(dev);
-> +	else
-> +		of_platform_depopulate(dev);
-> +
-> +	logic_pio_unregister_range(range);
-> +
-> +	return 0;
-> +}
-> +
->  static const struct of_device_id hisi_lpc_of_match[] = {
->  	{ .compatible = "hisilicon,hip06-lpc", },
->  	{ .compatible = "hisilicon,hip07-lpc", },
-> @@ -646,5 +675,6 @@ static struct platform_driver hisi_lpc_driver = {
->  		.acpi_match_table = ACPI_PTR(hisi_lpc_acpi_match),
->  	},
->  	.probe = hisi_lpc_probe,
-> +	.remove = hisi_lpc_remove,
->  };
->  builtin_platform_driver(hisi_lpc_driver);
-> -- 
-> 2.17.1
-> 
+
