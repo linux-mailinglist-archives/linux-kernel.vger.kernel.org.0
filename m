@@ -2,125 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 441C04E899
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 15:09:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AED504E872
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 15:03:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726867AbfFUNJy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Jun 2019 09:09:54 -0400
-Received: from mx-rz-2.rrze.uni-erlangen.de ([131.188.11.21]:60433 "EHLO
-        mx-rz-2.rrze.uni-erlangen.de" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726285AbfFUNJy (ORCPT
+        id S1726773AbfFUNDs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Jun 2019 09:03:48 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:53468 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726311AbfFUNDs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Jun 2019 09:09:54 -0400
-X-Greylist: delayed 473 seconds by postgrey-1.27 at vger.kernel.org; Fri, 21 Jun 2019 09:09:52 EDT
-Received: from mx-rz-smart.rrze.uni-erlangen.de (mx-rz-smart.rrze.uni-erlangen.de [IPv6:2001:638:a000:1025::1e])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mx-rz-2.rrze.uni-erlangen.de (Postfix) with ESMTPS id 45Vf3B4LpFzPkKs;
-        Fri, 21 Jun 2019 15:01:58 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fau.de; s=fau-2013;
-        t=1561122118; bh=EG7lcFvB9T+O8vsdLpuJUEMt1JSbCZEPsjwogrh6WHo=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From:To:CC:
-         Subject;
-        b=B/x9jBWwEqhqn9sQNqIeXhuRPL/5F4qDqijp4jtBV0dRJVUMUrd4wRRpcBcMhW2JL
-         6WUwVeu+tkoe1cy1mdiYFVwhzkSgcu29YzBr3qVKTCGRWXCrnYuX1z8sbqPMavxJdd
-         P43GVEPotpl0IRqq2wwxePez975yDvFAHGNfeZ+iE/FV7Y9Gto3A0bUcsH9u0QEwtF
-         XRuwOYQRkDhPW+gs882c3Hik8hyhZJSIOHXQ1i/kqstq0UYTdViV0n/Jk2B296UVi3
-         95HxWa7+gZsMvXcSlyAkJN9mf7Bt42boDd5EIiuOKDE3F/YlvoSjCiVJSdwd3kc0da
-         Xsez3QG1/uDuA==
-X-Virus-Scanned: amavisd-new at boeck4.rrze.uni-erlangen.de (RRZE)
-X-RRZE-Flag: Not-Spam
-X-RRZE-Submit-IP: 2003:ea:371a:4600:e106:19f8:34a7:eaec
-Received: from [IPv6:2003:ea:371a:4600:e106:19f8:34a7:eaec] (p200300EA371A4600E10619F834A7EAEC.dip0.t-ipconnect.de [IPv6:2003:ea:371a:4600:e106:19f8:34a7:eaec])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: U2FsdGVkX19ZePNdXmNy1kvc6Mw6MaNW3XSCvzEfcTA=)
-        by smtp-auth.uni-erlangen.de (Postfix) with ESMTPSA id 45Vf3272gLzPkfT;
-        Fri, 21 Jun 2019 15:01:50 +0200 (CEST)
-Subject: Re: [PATCH 4/4] rts5208: Fix usleep range is preferred over udelay
-To:     Pavel Machek <pavel@ucw.cz>
-Cc:     kim.jamie.bradley@gmail.com, pakki001@umn.edu,
-        colin.king@canonical.com, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org, Jannik Moritz <jannik.moritz@fau.de>,
-        linux-kernel@i4.cs.fau.de
-References: <20190619154648.13840-1-lukas.s.schneider@fau.de>
- <20190619154648.13840-4-lukas.s.schneider@fau.de>
- <20190621110405.GG24145@amd>
-From:   Lukas Schneider <lukas.s.schneider@fau.de>
-Message-ID: <1e397063-9cf2-69d3-84fe-53c5776f2c5b@fau.de>
-Date:   Fri, 21 Jun 2019 15:01:38 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.1
+        Fri, 21 Jun 2019 09:03:48 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=8voMoB854F0d0ERXQAC40rhDRb6mL2IHOiaUQ+KH42o=; b=z8rASQxg05EpGWK8+LWzS8UKu
+        R2t5YFty57rg3tJ+9o5GBkwAFsW238Ziar0WfMCtcJq1L/DAcVT1w/tbaJA4s64uIwHAkmnFyISd4
+        4ANrU0r4enmtDhKjihUH0dSv4PnuZ4uUBgt0i5fxsojbqLFtJLRJZk23qdNTYXHIxV16wNZ4pDumI
+        /sjfSFSbKJDdeOKwJ3Jnna5pw+NrsuUl4w0QdqE31uGhi36L8x9HNb/RZ2nLEob7bPa3O0kvNi5kb
+        qce7MpVKClVlejw/WlIYqVDd8POiUFWKg6VCUmo1w6J3NbQsMuTKB3wsmCpKosmPAI9zG9BJ2bFMr
+        HQRgz5mrw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1heJCI-0000dQ-6O; Fri, 21 Jun 2019 13:03:18 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id EF757203C694A; Fri, 21 Jun 2019 15:03:16 +0200 (CEST)
+Date:   Fri, 21 Jun 2019 15:03:16 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     xiaoggchen@tencent.com
+Cc:     jasperwang@tencent.com, heddchen@tencent.com, mingo@redhat.com,
+        linux-kernel@vger.kernel.org, tj@kernel.org, lizefan@huawei.com,
+        hannes@cmpxchg.org, cgroups@vger.kernel.org,
+        viresh.kumar@linaro.org
+Subject: Re: [PATCH 0/5] BT scheduling class
+Message-ID: <20190621130316.GK3436@hirez.programming.kicks-ass.net>
+References: <1561103157-11246-1-git-send-email-xiaoggchen@tencent.com>
 MIME-Version: 1.0
-In-Reply-To: <20190621110405.GG24145@amd>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1561103157-11246-1-git-send-email-xiaoggchen@tencent.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Jun 21, 2019 at 03:45:52PM +0800, xiaoggchen@tencent.com wrote:
 
-Am 21.06.2019 um 13:04 schrieb Pavel Machek:
-> On Wed 2019-06-19 17:46:48, Lukas Schneider wrote:
->> This patch fixes the issue reported by checkpatch:
->>
->> CHECK: usleep_range is preferred over udelay;
->> see Doucmentation/timers/timers-howto.txt
->>
->> It's save to sleep here instead of using busy waiting,
->> because we are not in an atomic context.
-> Is it good idea? How can the system really sleep for 50 usec?
->
->        	   	     	     	    	   	     Pavel
+> First only server application exists in the system and the success
+> rate is 99.998% and the average cpu use is only 25%.
 
-According to Doucmentation/timers/timers-howto.txt, usleep_range should 
-be used for sleep times between 10us and 20ms, so it is the correct 
-function for 50us.
+Have you guys looked at this series:
 
-Lukas
+  https://lkml.kernel.org/r/cover.1556182964.git.viresh.kumar@linaro.org
 
->> @@ -865,7 +865,7 @@ static int sd_change_phase(struct rtsx_chip *chip, u8 sample_point, u8 tune_dir)
->>   						     PHASE_CHANGE);
->>   			if (retval)
->>   				return retval;
->> -			udelay(50);
->> +			usleep_range(50, 60);
->>   			retval = rtsx_write_register(chip, SD_VP_CTL, 0xFF,
->>   						     PHASE_CHANGE |
->>   						     PHASE_NOT_RESET |
->> @@ -877,14 +877,14 @@ static int sd_change_phase(struct rtsx_chip *chip, u8 sample_point, u8 tune_dir)
->>   						     CHANGE_CLK, CHANGE_CLK);
->>   			if (retval)
->>   				return retval;
->> -			udelay(50);
->> +			usleep_range(50, 60);
->>   			retval = rtsx_write_register(chip, SD_VP_CTL, 0xFF,
->>   						     PHASE_NOT_RESET |
->>   						     sample_point);
->>   			if (retval)
->>   				return retval;
->>   		}
->> -		udelay(100);
->> +		usleep_range(100, 110);
->>   
->>   		rtsx_init_cmd(chip);
->>   		rtsx_add_cmd(chip, WRITE_REG_CMD, SD_DCMPS_CTL, DCMPS_CHANGE,
->> @@ -918,7 +918,7 @@ static int sd_change_phase(struct rtsx_chip *chip, u8 sample_point, u8 tune_dir)
->>   				return retval;
->>   		}
->>   
->> -		udelay(50);
->> +		usleep_range(50, 60);
->>   	}
->>   
->>   	retval = rtsx_write_register(chip, SD_CFG1, SD_ASYNC_FIFO_NOT_RST, 0);
->> @@ -1416,7 +1416,7 @@ static int sd_wait_data_idle(struct rtsx_chip *chip)
->>   			retval = STATUS_SUCCESS;
->>   			break;
->>   		}
->> -		udelay(100);
->> +		usleep_range(100, 110);
->>   	}
->>   	dev_dbg(rtsx_dev(chip), "SD_DATA_STATE: 0x%02x\n", val);
->>   
+
