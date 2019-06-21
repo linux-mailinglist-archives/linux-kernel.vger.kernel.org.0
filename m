@@ -2,59 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 29AC64E275
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 10:59:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ED6F54E284
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 11:02:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726450AbfFUI7B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Jun 2019 04:59:01 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:35144 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726321AbfFUI7A (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Jun 2019 04:59:00 -0400
-Received: by mail-pl1-f194.google.com with SMTP id p1so2683499plo.2
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2019 01:59:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=endlessm-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=4bJVSAowx8t/cxxp9cv6smvKfxDPXT8u9MmQ6mO3sDU=;
-        b=U/ePaK8tXP07xOTAuQcgBMObbVfGYNIWLv5JXHrC5etbmv0PLidyI7dGDcGub6NzPk
-         OHv9lW6GFHNXgrfDj3m5lUrYq1hQlVS1+MI3Lz7lHy2yCepJdruSBdccuJLfeIADbSNu
-         Ccq1sF1hvqdVW1wrYIylCbqe7GPkJsxHr739eJ/wDxzC68wt98mFKeubQM0N68ieAJXb
-         j731IoJKsTNL8rtnpEK5uXS78IuzD3DLUChHI/tD53j9VR3p03GFKeTGEyHUTQtGiCkn
-         DnVqEDj9m6TEjx4X8Ie79gZWjBtRuh70od7VZ8woEvshnFl5tqGU0wNflNQ5Bq4olbzn
-         oWbg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=4bJVSAowx8t/cxxp9cv6smvKfxDPXT8u9MmQ6mO3sDU=;
-        b=YBvE80BNpEHkX9ouSDy4IFsKJvN3ptdeQXT3iJPEHMPRjRxNOIae3dLSHXvv2wTIlQ
-         359Vh3hzmS5lK25jTJmVrPJ27vGpR/A8JFgIXpzuvuB4g0orCs++Nl5SV5KjXjc5IC62
-         icyiOumgLI77M5MStPocSRN/++WTkA1o0eI0bo0ySvDoR+cXVJZG+QTJAJ+oZzAVany2
-         HrPUwJO2MmK8QgOb6yY00+QLG9Z1bZfgHqM1FeYQ7126nD5cMUK/RuJ7ibxcBQW68jJR
-         ZfYUWoJqCBesqLxeKi3KrPPrwKC0aA81N7gOXXNcIuZh7ner4HhwA6V0V+MVuxz0KNC5
-         36eg==
-X-Gm-Message-State: APjAAAWCxLG7tm7xSKZ0Vjs/QsuNJ8Mb1+7aXTs7KiztoTpTdyoQioT/
-        +VUjq5PGW4GLJtRmk8L5UMS9Ag==
-X-Google-Smtp-Source: APXvYqx8jg2L3co0DYC0wN++64bpnfJeWPOTJom1WsTagX1aHyyqtbHPWcDS6G7HVNDTWBpYaIuMIA==
-X-Received: by 2002:a17:902:583:: with SMTP id f3mr66988266plf.137.1561107539850;
-        Fri, 21 Jun 2019 01:58:59 -0700 (PDT)
-Received: from localhost.localdomain (123-204-46-122.static.seed.net.tw. [123.204.46.122])
-        by smtp.gmail.com with ESMTPSA id y19sm1796356pfe.150.2019.06.21.01.58.57
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Fri, 21 Jun 2019 01:58:59 -0700 (PDT)
-From:   Jian-Hong Pan <jian-hong@endlessm.com>
-To:     Marcel Holtmann <marcel@holtmann.org>,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        Daniel Drake <drake@endlessm.com>
-Cc:     linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jian-Hong Pan <jian-hong@endlessm.com>
-Subject: [PATCH] Bluetooth: btrtl: HCI reset on close for RTL8822BE
-Date:   Fri, 21 Jun 2019 16:58:40 +0800
-Message-Id: <20190621085840.6341-1-jian-hong@endlessm.com>
-X-Mailer: git-send-email 2.22.0
+        id S1726485AbfFUJCd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Jun 2019 05:02:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39138 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726055AbfFUJCc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Jun 2019 05:02:32 -0400
+Received: from localhost.localdomain (unknown [106.201.116.189])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id BF2AE20673;
+        Fri, 21 Jun 2019 09:02:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1561107751;
+        bh=6Fsldr5ySj7ombUaOz/6PYPhO3cHLQdyQZ5gwcAdiNo=;
+        h=From:To:Cc:Subject:Date:From;
+        b=lPEynh4Mgr2RjzIZPl0bAO1eC375blSNspKB7UcsMp2GkV3un+KGosvRNWsqHOP8Q
+         jVQq8d5BEgLK+API8yDXTVn36aUQYD81leGlLBEn0uwGqPBhiyOKu6URQ0XnKWio0z
+         aPNMn7iph7x0jdROzaJGM2NEp1LUwjP4cmgOOn2k=
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Mathias Nyman <mathias.nyman@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-arm-msm@vger.kernel.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Vinod Koul <vkoul@kernel.org>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Christian Lamparter <chunkeey@googlemail.com>,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/5]  usb: xhci: Add support for Renesas USB controllers
+Date:   Fri, 21 Jun 2019 14:29:08 +0530
+Message-Id: <20190621085913.8722-1-vkoul@kernel.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -62,37 +43,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Realtek RTL8822BE BT chip on ASUS X420FA cannot be turned on correctly
-after on-off several times.  Bluetooth daemon sets BT mode failed when
-this issue happens.
+This series add support for Renesas USB controllers uPD720201 and uPD720202.
+These require firmware to be loaded and in case devices have ROM those can
+also be programmed if empty. If ROM is programmed, it runs from ROM as well.
 
-bluetoothd[1576]: Failed to set mode: Failed (0x03)
+This includes two patches from Christian which supported these controllers
+w/o ROM and later my patches for ROM support and multiple firmware versions.
 
-If BT is tunred off, then turned on again, it works correctly again.
-This patch makes RTL8822BE BT reset on close to fix this issue.
+Changes in v2:
+  used macros for timeout count and delay
+  removed renesas_fw_alive_check
+  cleaned renesas_fw_callback
+  removed recurion for renesas_fw_download
+  added MODULE_FIRMWARE
+  added comment for multiple fw order
 
-Signed-off-by: Jian-Hong Pan <jian-hong@endlessm.com>
----
- drivers/bluetooth/btrtl.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Christian Lamparter (2):
+  usb: xhci: add firmware loader for uPD720201 and uPD720202 w/o ROM
+  usb: xhci: handle uPD720201 and uPD720202 w/o ROM
 
-diff --git a/drivers/bluetooth/btrtl.c b/drivers/bluetooth/btrtl.c
-index 208feef63de4..7e9930f0f231 100644
---- a/drivers/bluetooth/btrtl.c
-+++ b/drivers/bluetooth/btrtl.c
-@@ -608,10 +608,11 @@ int btrtl_download_firmware(struct hci_dev *hdev,
- 	case RTL_ROM_LMP_8723A:
- 	case RTL_ROM_LMP_3499:
- 		return btrtl_setup_rtl8723a(hdev, btrtl_dev);
-+	case RTL_ROM_LMP_8822B:
-+		set_bit(HCI_QUIRK_RESET_ON_CLOSE, &hdev->quirks);
- 	case RTL_ROM_LMP_8723B:
- 	case RTL_ROM_LMP_8821A:
- 	case RTL_ROM_LMP_8761A:
--	case RTL_ROM_LMP_8822B:
- 		return btrtl_setup_rtl8723b(hdev, btrtl_dev);
- 	default:
- 		rtl_dev_info(hdev, "rtl: assuming no firmware upload needed\n");
+Vinod Koul (3):
+  usb: xhci: Use register defined and field names
+  usb: xhci: Add ROM loader for uPD720201
+  usb: xhci: allow multiple firmware versions
+
+ drivers/usb/host/xhci-pci.c | 942 ++++++++++++++++++++++++++++++++++++
+ 1 file changed, 942 insertions(+)
+
 -- 
 2.20.1
 
