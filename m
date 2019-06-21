@@ -2,180 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3D3324E821
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 14:39:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 38CFF4E82A
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 14:40:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726717AbfFUMjU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Jun 2019 08:39:20 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:38382 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726260AbfFUMjT (ORCPT
+        id S1726829AbfFUMkm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Jun 2019 08:40:42 -0400
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:40630 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726260AbfFUMkl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Jun 2019 08:39:19 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:
-        From:Date:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=IPY/WjpwDduN3Te1YABfv2FDARx5WUlMHv5/S8L1c5s=; b=Aew36X9orfe9DG8f1aYCJSYs4
-        5z3wAmYvJqQyL7pohcvPwIQQs+5vhmEgJaD8RJnjfTPjBoDGGF35xPEpSOENVDf9+0Ls3sOP6LkGr
-        hP2Dwt40epsYPA3J/WXbBj+QFwz1BwBObeNJD568RxUSQYtG64TijkM8i/wGg3SBo/8cduLhZkIX4
-        fV3DCG4BzrtDkTxZugi7ZLPKOU76OW2K9Iq1ypKDphDSXgHNXnCpvreq9HTEiFzNKesvdYtT68eJD
-        VMHBSu7kwaj5OFrBfqe1i9RxdpsQA+Xr1c1irEQADsZLIkEssG5fa4GM0Mz/+YSXPFlw/aUdYZN/3
-        gYOUfZvSQ==;
-Received: from [177.97.20.138] (helo=coco.lan)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1heIp4-00068L-Ug; Fri, 21 Jun 2019 12:39:19 +0000
-Date:   Fri, 21 Jun 2019 09:39:15 -0300
-From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Mauro Carvalho Chehab <mchehab@infradead.org>,
-        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>
-Subject: Re: [PATCH RFC 0/6] Produce ABI guide without escaping ReST source
- files
-Message-ID: <20190621093915.4a466f79@coco.lan>
-In-Reply-To: <cover.1561118631.git.mchehab+samsung@kernel.org>
-References: <cover.1561118631.git.mchehab+samsung@kernel.org>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        Fri, 21 Jun 2019 08:40:41 -0400
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20190621124039euoutp0105f3bc4d88ff7169b01bb8013cd2187e~qNyHrmRPA2886828868euoutp01f
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2019 12:40:39 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20190621124039euoutp0105f3bc4d88ff7169b01bb8013cd2187e~qNyHrmRPA2886828868euoutp01f
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1561120839;
+        bh=8kS2pxnsEaPOj1BInin3UbKyqgpFMf6kwywPiLXgiEY=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=Jjv7wREegHklLHKYBIuFWVCfcTYv9+lymrykXUEmpy4s+iVib4Wlaf0OYrsi7dTSa
+         ZPQGws0YHK/beFoQWifbSFvjMumpY55YxyUA/tOLCt/Hf598o/uf4zEscwUXrKGwuI
+         BdpYGOR1CVFl4NQ7ND3PaoAuzCnLcIiIAB3JgkRk=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20190621124039eucas1p2ad34629456ceb682b2727edf5024410f~qNyHZvgzK2811828118eucas1p2t;
+        Fri, 21 Jun 2019 12:40:39 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id B6.35.04325.740DC0D5; Fri, 21
+        Jun 2019 13:40:39 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20190621124038eucas1p2bcb63eb4c575c499b1450eab5356430e~qNyGx32th0061200612eucas1p2N;
+        Fri, 21 Jun 2019 12:40:38 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20190621124038eusmtrp230219c1d2b12ddb35a018d51c869173f~qNyGj5myT2599325993eusmtrp2f;
+        Fri, 21 Jun 2019 12:40:38 +0000 (GMT)
+X-AuditID: cbfec7f5-b75ff700000010e5-10-5d0cd0479f61
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id CF.DD.04140.640DC0D5; Fri, 21
+        Jun 2019 13:40:38 +0100 (BST)
+Received: from [106.120.51.71] (unknown [106.120.51.71]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20190621124038eusmtip12ce56187f0d5cc33aae9dbc2b3d2e4b6~qNyGR2mAa2222122221eusmtip1S;
+        Fri, 21 Jun 2019 12:40:38 +0000 (GMT)
+Subject: Re: [PATCH] video: fbdev-MMP: Use struct_size() in devm_kzalloc()
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc:     dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+From:   Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Message-ID: <f789452f-5b4e-543e-67e2-16157af8e49e@samsung.com>
+Date:   Fri, 21 Jun 2019 14:40:35 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+        Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20190604233205.GA5377@embeddedor>
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupnleLIzCtJLcpLzFFi42LZduznOV33CzyxBp+OsVlc+fqezWLrHlWL
+        E30fWC0u75rD5sDise6gqsf97uNMHp83yQUwR3HZpKTmZJalFunbJXBlXN9wgK3gHXvF9hcG
+        DYyz2LoYOTkkBEwkeq6cB7K5OIQEVjBK7Dh+iAXC+cIo8XTmBiaQKiGBz4wSTzY4w3R8+DUP
+        qmM5o0TL5O3sEM5bRomtr5awgFQJC3hJdO06AGaLCBhJzJ7RzQpiMwskSJxedA8sziZgJTGx
+        fRUjiM0rYCexc/9EZhCbRUBVYt+Xm2A1ogIREvePbWCFqBGUODnzCVicU0BfYumTk0wQM8Ul
+        bj2ZD2XLS2x/O4cZ5CAJgXZ2iccfZjNDnO0i8WDFG0YIW1ji1fEt7BC2jMT/nSDNIA3rGCX+
+        dryA6t7OKLF88j9oMFlLHD5+EegMDqAVmhLrd+lDhB0l3r1tZQMJSwjwSdx4KwhxBJ/EpG3T
+        mSHCvBIdbUIQ1WoSG5ZtYINZ27VzJfMERqVZSF6bheSdWUjemYWwdwEjyypG8dTS4tz01GLj
+        vNRyveLE3OLSvHS95PzcTYzAZHL63/GvOxj3/Uk6xCjAwajEw3tgFnesEGtiWXFl7iFGCQ5m
+        JRFenhyeWCHelMTKqtSi/Pii0pzU4kOM0hwsSuK81QwPooUE0hNLUrNTUwtSi2CyTBycUg2M
+        lnt4F89bZ/Hi8/vbmRtSVzQ9vCGoEW749aqjrO7EZSeOnjEpe93zuVf9RN9iRYtV5XPfetp4
+        /fugb/Dud8cc3j1FfdtqdOY/bpVZcp+/Otd97xXmm98em1tcY+uLm9mteq1fZjUjY98JB49p
+        zZKzVlz9ZGCYPDnxhu1yuT0hO0zlp+x++OHGUiWW4oxEQy3mouJEACD9VDsiAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprPIsWRmVeSWpSXmKPExsVy+t/xu7puF3hiDebvl7S48vU9m8XWPaoW
+        J/o+sFpc3jWHzYHFY91BVY/73ceZPD5vkgtgjtKzKcovLUlVyMgvLrFVija0MNIztLTQMzKx
+        1DM0No+1MjJV0rezSUnNySxLLdK3S9DLuL7hAFvBO/aK7S8MGhhnsXUxcnJICJhIfPg1D8jm
+        4hASWMoo8f7LW5YuRg6ghIzE8fVlEDXCEn+udUHVvGaU2L64FaxZWMBLomvXARYQW0TASGL2
+        jG5WkF5mgQSJZ/NSQMJCAk2MEkdfSYPYbAJWEhPbVzGC2LwCdhI7909kBrFZBFQl9n25CTZG
+        VCBC4sz7FSwQNYISJ2c+AbM5BfQllj45yQRiMwuoS/yZd4kZwhaXuPVkPlRcXmL72znMExiF
+        ZiFpn4WkZRaSlllIWhYwsqxiFEktLc5Nzy020itOzC0uzUvXS87P3cQIjJxtx35u2cHY9S74
+        EKMAB6MSD++BWdyxQqyJZcWVuYcYJTiYlUR4eXJ4YoV4UxIrq1KL8uOLSnNSiw8xmgI9N5FZ
+        SjQ5HxjVeSXxhqaG5haWhubG5sZmFkrivB0CB2OEBNITS1KzU1MLUotg+pg4OKUaGNPTfOJj
+        fZ8Enp5zpurY/t33fh09qOlVuvmS8aJFxrYV7CHMJyM+N/cm5K2O6WVi61q/7E7vRdttOy4K
+        5z8RkWh89n5eT4tM8tWNy+av1Awz4+V4+zcs4nTdYjtb4SW8n84Un9DLuJoxa4aWnU2L0toZ
+        +ZezUta7sTtcvqd9fpay1wTPhRqxAkosxRmJhlrMRcWJAMi3q0CyAgAA
+X-CMS-MailID: 20190621124038eucas1p2bcb63eb4c575c499b1450eab5356430e
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20190604233211epcas1p1473ce5a9bb5e1113a91b37ec9a43f320
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20190604233211epcas1p1473ce5a9bb5e1113a91b37ec9a43f320
+References: <CGME20190604233211epcas1p1473ce5a9bb5e1113a91b37ec9a43f320@epcas1p1.samsung.com>
+        <20190604233205.GA5377@embeddedor>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Fri, 21 Jun 2019 09:32:00 -0300
-Mauro Carvalho Chehab <mchehab+samsung@kernel.org> escreveu:
 
-> Hi Greg,
+On 6/5/19 1:32 AM, Gustavo A. R. Silva wrote:
+> One of the more common cases of allocation size calculations is finding
+> the size of a structure that has a zero-sized array at the end, along
+> with memory for some number of elements for that array. For example:
 > 
-> As you proposed to give it a try on removing the escape code from the
-> script which parses the ReST file, I changed a few things there,
-> adding the capability of selectively enabling to output an ABI sub-dir
-> without escaping things that would crash Sphinx.
+> struct foo {
+>     int stuff;
+>     struct boo entry[];
+> };
 > 
-> PS.: As for now this is just a RFC, I'm not getting the ABI file
-> maintainers, copying just LKML, linux-doc ML, plus you and Jon.
+> size = sizeof(struct foo) + count * sizeof(struct boo);
+> instance = devm_kzalloc(dev, size, GFP_KERNEL);
 > 
-> I also manually fixed the contents of ABI/stable, in order for it to
-> pass without causing troubles.
+> Instead of leaving these open-coded and prone to type mistakes, we can
+> now use the new struct_size() helper:
 > 
-> I added all patches from ABI and features at this branch:
+> instance = devm_kzalloc(dev, struct_size(instance, entry, count), GFP_KERNEL);
 > 
-> 	https://git.linuxtv.org/mchehab/experimental.git/log/?h=abi_patches_v4.1
+> Notice that, in this case, variable size is not necessary, hence it
+> is removed.
 > 
-> The html output is at https://www.infradead.org/~mchehab/rst_features/,
-> and you can see the resulting ABI guide on:
+> This code was detected with the help of Coccinelle.
 > 
-> 	https://www.infradead.org/~mchehab/rst_features/admin-guide/abi.html
-> 
-> No Sphinx crashes/warnings happen when building it.
-> 
-> That's my personal notes about such work:
-> 
-> 1) Documentation/ABI/stable/sysfs-class-infiniband
-> 
-> It had some title captions inside it, like:
-> 
-> 	Errors info:
->                 -----------
-> 
-> For one of the "What:"
-> 
-> Sphinx is really pick with title markups. As the entire Documentation/stable is
-> parsed as if it were a single document, there should be a coherency on what
-> character is used to markup a level-one title. I mean, if one document uses:
-> 
-> foo
-> ----
-> 
-> For the first level, all other documents should use "---...-" as well.
-> 
-> The alternative would be to have one entry for every single file at
-> Documentation/admin-guide/abi-*.rst, with, IMHO, it would be a lot
-> harder to maintain.
-> 
-> So, the best seems to let clear at ABI/README about how titles/subtitles
-> should be used inside files, if any.
-> 
-> 2) Some documents there use a "Values:" tag, with is not defined as a
-> valid one at ABI/README. The script handles it as part of the description,
-> so no harm done;
-> 
-> 3) Among the 47 files under ABI/stable, 14 of them names the file
-> contents, using a valid ReST markup for the document title. That is shown
-> at the index at:
-> 
-> 	https://www.infradead.org/~mchehab/rst_features/admin-guide/abi.html
-> 
-> 
-> - ABI stable symbols
-> 
->   -  sysfs interface for Mellanox ConnectX HCA IB driver (mlx4)
->   -  sysfs interface for Intel IB driver qib
->   -  sysfs interface for Intel(R) X722 iWARP i40iw driver
->   -  sysfs interface for QLogic qedr NIC Driver
->   -  sysfs interface for NetEffect RNIC Low-Level iWARP driver (nes)
->   -  sysfs interface for Cisco VIC (usNIC) Verbs Driver
->   -  sysfs interface for Chelsio T3 RDMA Driver (cxgb3)
->   -  sysfs interface for Chelsio T4/T5 RDMA driver (cxgb4)
->   -  sysfs interface for Intel Omni-Path driver (HFI1)
->   -  sysfs interface for VMware Paravirtual RDMA driver
->   -  sysfs interface for Mellanox Connect-IB HCA driver mlx5
->   -  sysfs interface for Emulex RoCE HCA Driver
->   -  sysfs interface for Broadcom NetXtreme-E RoCE driver
->   -  sysfs interface for Mellanox IB HCA low-level driver (mthca)
-> 
-> I liked that, but ideally all ABI files should either use it or not.
-> 
-> 4) I was expecting to have troubles with asterisk characters inside the
-> ABI files. That was not the case: I had to escape just one occurrence on
-> a single file of the 47 ones inside ABI/stable. 
-> 
-> -
-> 
-> My conclusion from this experiment is that it is worth cleaning the ABI
-> files for them to be parsed without needing to escape non-ReST compliant
-> parts of the ABI file.
-> 
-> Perhaps we could keep rst-compliant the stable, obsolete and removed
-> directories only, and gradually moving stuff from ABI/testing to ABI/stable,
-> while fixing them to be rst-compliant.
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
-Btw, adding :rst: to kernel-abi markup at abi-obsolete.rst and 
-abi-removed.rst produced just two warnings:
+Patch queued for v5.3, thanks.
 
-get_abi.pl rest --dir $srctree/Documentation/ABI/obsolete --rst-source:1689: ERROR: Unexpected indentation.
-get_abi.pl rest --dir $srctree/Documentation/ABI/obsolete --rst-source:1692: WARNING: Block quote ends without a blank line; unexpected unindent.
-
-I'll fix those too at my repository.
-
-I suspect, however, that Documentation/ABI/testing with its 353 files will
-require a lot more care.
-
-Thanks,
-Mauro
-
-diff --git a/Documentation/admin-guide/abi-obsolete.rst b/Documentation/admin-guide/abi-obsolete.rst
-index cda9168445a5..d095867899c5 100644
---- a/Documentation/admin-guide/abi-obsolete.rst
-+++ b/Documentation/admin-guide/abi-obsolete.rst
-@@ -8,3 +8,4 @@ The description of the interface will document the reason why it is
- obsolete and when it can be expected to be removed.
- 
- .. kernel-abi:: $srctree/Documentation/ABI/obsolete
-+   :rst:
-diff --git a/Documentation/admin-guide/abi-removed.rst b/Documentation/admin-guide/abi-removed.rst
-index 497978fc9632..f7e9e43023c1 100644
---- a/Documentation/admin-guide/abi-removed.rst
-+++ b/Documentation/admin-guide/abi-removed.rst
-@@ -2,3 +2,4 @@ ABI removed symbols
- ===================
- 
- .. kernel-abi:: $srctree/Documentation/ABI/removed
-+   :rst:
-
-
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
