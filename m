@@ -2,111 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 292264ED44
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 18:40:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C5D364ED3A
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 18:40:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726323AbfFUQka (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Jun 2019 12:40:30 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:38913 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725985AbfFUQka (ORCPT
+        id S1726186AbfFUQkK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Jun 2019 12:40:10 -0400
+Received: from conuserg-12.nifty.com ([210.131.2.79]:60112 "EHLO
+        conuserg-12.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725985AbfFUQkK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Jun 2019 12:40:30 -0400
-Received: by mail-pg1-f196.google.com with SMTP id 196so3640314pgc.6;
-        Fri, 21 Jun 2019 09:40:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=W/+t2oF2T5eKqD5lT+8QUcLyNJmob85epyf9XJ3GxDw=;
-        b=Kgf4e/ku7hwdnwqim/1SbJpQ5kGBJoNmQYquTn1A1plv/H2fh0Jh6AAm3KZKVNaZgq
-         nPgi8op6X+XC1c8R6/CfKv60wnU26d02nUWIfLpLSUcmslW12tUJinjzcG3j7/l/hbSR
-         7P8Bo2dpSY5sWum/w7s/L9LxjnAaGyWqIc5QZyRxb562ln+nmQFeToUep5+cU887hTt+
-         oLrIDgTRKu/cO0GdfiYz1wqmnX2M/4Sq0/PLjiqVFyKqiKH8y9iOGv2IPIHDqgZACv+8
-         OPewJQ7/K9UvnWnt1lAQKSW9iWQutAdxmHKzkNFZiSESLvD+NGeQXbu4dtO1HJAOgxpq
-         M/hw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=W/+t2oF2T5eKqD5lT+8QUcLyNJmob85epyf9XJ3GxDw=;
-        b=K5EC0JCwrVzbTuYQzcBXW3Kp7ttVIvR+u5Xv0j5kNzUeJQa/Pr/amAfjAeyNc0mecJ
-         tbjapbJ4h2rz7EXS1FVsT+cpl54SahUDQEY3kACHWuarhbdDMq5T2e9FfIGSnIAWK4Nf
-         Hm18R13VZtpQCmPs716f1lt5fDdhD0prFzrycV+a6BzPyCRLKsKDiYcMMpfJTWVgtnPr
-         0jb3SI8m0jKIN5mb9fIXhDzws7nJQIpzattPK8UFN9dZQCb04Pkn3ny56XXGL2vwfOUa
-         5+jxouETyxsmrreW40T3Is+VwZWlHpDHY2Eit/HbaDq6Hq5v14lUztmylcZ/Jhj8G7DE
-         fjOg==
-X-Gm-Message-State: APjAAAV6+gPxgJvWNTnsbAvkn2k+z/w+Un39Tc/KW+9CS4HIc+cWY18V
-        dfokq4Zz3iIIwG0Y4gMSKOU=
-X-Google-Smtp-Source: APXvYqynM1s+PyD4cl/ai3zSbzmA/prIyg8EVBjmhCpUibSYWaTLbyW66gmF1EipEN4MivuwfBBQqg==
-X-Received: by 2002:a17:90a:b78b:: with SMTP id m11mr7978235pjr.106.1561135229262;
-        Fri, 21 Jun 2019 09:40:29 -0700 (PDT)
-Received: from localhost.localdomain ([112.196.181.13])
-        by smtp.googlemail.com with ESMTPSA id n89sm25702450pjc.0.2019.06.21.09.40.20
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Fri, 21 Jun 2019 09:40:28 -0700 (PDT)
-From:   Puranjay Mohan <puranjay12@gmail.com>
-To:     Shuah Khan <skhan@linuxfoundation.org>
-Cc:     Puranjay Mohan <puranjay12@gmail.com>,
-        Bjorn Helgaas <bjorn@helgaas.com>,
-        netdev <netdev@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-kernel-mentees@lists.linuxfoundation.org,
-        linux-pci@vger.kernel.org
-Subject: [PATCH 3/3] net: ethernet: atheros: atlx: Remove unused and private PCI definitions
-Date:   Fri, 21 Jun 2019 22:09:21 +0530
-Message-Id: <20190621163921.26188-4-puranjay12@gmail.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190621163921.26188-1-puranjay12@gmail.com>
-References: <20190621163921.26188-1-puranjay12@gmail.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Fri, 21 Jun 2019 12:40:10 -0400
+Received: from grover.flets-west.jp (softbank126125154139.bbtec.net [126.125.154.139]) (authenticated)
+        by conuserg-12.nifty.com with ESMTP id x5LGdXbA030778;
+        Sat, 22 Jun 2019 01:39:33 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-12.nifty.com x5LGdXbA030778
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1561135174;
+        bh=ozhNqk/jJbRlOJsA1fVCfpWIUlNkHQWb4qUWtLdFnnk=;
+        h=From:To:Cc:Subject:Date:From;
+        b=eIkfdIS+O26Z2YOKvyyUQPDJEfS8R4Fhs0ivGILBOqSQUUm5uWKbiPvKnX/+WtwFg
+         bR6tU9HZ4+pLdiRnLxprJkokHFgCtkFoMktC1DDnmtum2THZ3CVntvFIDae0PqQwJz
+         UKsDDf8vlHPw6lhKvHOC5bPX9K+MKp9Zup6GlavY83airXFt5PwUrWGHKBwQLMLuVU
+         kmDNdZ4svkbDbE9jeS3mqKjBXcv5ohpvAiAgS9EWfEq5D4E5/eDRtcyqvkzithnuhb
+         xtCZFMEJe7KxegEtkFkx2ypPYLJzg/fgwsSocOPsVDT+rg+2BXnDFsGwl+LcF3XH9e
+         bZh+TEYRkfgHg==
+X-Nifty-SrcIP: [126.125.154.139]
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+To:     linux-kbuild@vger.kernel.org
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-kernel@vger.kernel.org,
+        Michal Marek <michal.lkml@markovi.net>,
+        linux-mediatek@lists.infradead.org,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH] kbuild: compile-test global headers to ensure they are self-contained
+Date:   Sat, 22 Jun 2019 01:39:31 +0900
+Message-Id: <20190621163931.19397-1-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove unused private PCI definitions from skfbi.h because generic PCI
-symbols are already included from pci_regs.h.
+Make as many headers self-contained as possible so that they can be
+included without relying on a specific include order.
 
-Signed-off-by: Puranjay Mohan <puranjay12@gmail.com>
+This commit compiles only a few headers, but it is a good start point.
+
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 ---
- drivers/net/ethernet/atheros/atlx/atl2.h | 2 --
- drivers/net/ethernet/atheros/atlx/atlx.h | 1 -
- 2 files changed, 3 deletions(-)
 
-diff --git a/drivers/net/ethernet/atheros/atlx/atl2.h b/drivers/net/ethernet/atheros/atlx/atl2.h
-index c53b810a831d..1b25d6d747de 100644
---- a/drivers/net/ethernet/atheros/atlx/atl2.h
-+++ b/drivers/net/ethernet/atheros/atlx/atl2.h
-@@ -32,7 +32,6 @@
- int ethtool_ioctl(struct ifreq *ifr);
- #endif
- 
--#define PCI_COMMAND_REGISTER	PCI_COMMAND
- #define CMD_MEM_WRT_INVALIDATE	PCI_COMMAND_INVALIDATE
- 
- #define ATL2_WRITE_REG(a, reg, value) (iowrite32((value), \
-@@ -202,7 +201,6 @@ static void atl2_force_ps(struct atl2_hw *hw);
- #define MII_DBG_DATA	0x1E
- 
- /* PCI Command Register Bit Definitions */
--#define PCI_COMMAND		0x04
- #define CMD_IO_SPACE		0x0001
- #define CMD_MEMORY_SPACE	0x0002
- #define CMD_BUS_MASTER		0x0004
-diff --git a/drivers/net/ethernet/atheros/atlx/atlx.h b/drivers/net/ethernet/atheros/atlx/atlx.h
-index 09464cb02ce0..4d355dbc2d01 100644
---- a/drivers/net/ethernet/atheros/atlx/atlx.h
-+++ b/drivers/net/ethernet/atheros/atlx/atlx.h
-@@ -445,7 +445,6 @@
- #define MII_DBG_DATA			0x1E
- 
- /* PCI Command Register Bit Definitions */
--#define PCI_COMMAND			0x04	/* PCI Command Register */
- #define CMD_IO_SPACE			0x0001
- #define CMD_MEMORY_SPACE		0x0002
- #define CMD_BUS_MASTER			0x0004
+ Makefile         |  1 +
+ include/Makefile | 31 +++++++++++++++++++++++++++++++
+ 2 files changed, 32 insertions(+)
+ create mode 100644 include/Makefile
+
+diff --git a/Makefile b/Makefile
+index c23f5e8381ad..82c1722dd9e9 100644
+--- a/Makefile
++++ b/Makefile
+@@ -610,6 +610,7 @@ drivers-y	:= drivers/ sound/
+ drivers-$(CONFIG_SAMPLES) += samples/
+ net-y		:= net/
+ libs-y		:= lib/
++libs-$(CONFIG_HEADER_TEST) += include/
+ core-y		:= usr/
+ virt-y		:= virt/
+ endif # KBUILD_EXTMOD
+diff --git a/include/Makefile b/include/Makefile
+new file mode 100644
+index 000000000000..68a76ac732c3
+--- /dev/null
++++ b/include/Makefile
+@@ -0,0 +1,31 @@
++# SPDX-License-Identifier: GPL-2.0-only
++
++# extend the test coverage when existing errors are fixed
++
++header-test += linux/w*.h
++header-test += linux/x*.h
++header-test += linux/y*.h
++header-test += ras/*.h
++header-test += soc/at91/*.h
++header-test += soc/bcm2835/*.h
++header-test += soc/mediatek/*.h
++header-test += soc/sa1100/*.h
++
++all-headers = $(patsubst $(srctree)/include/%,%,\
++	    $(wildcard $(addprefix $(srctree)/include/, $(header-test))))
++
++# Do not include directly
++no-header-test += linux/compiler-clang.h
++no-header-test += linux/compiler-gcc.h
++no-header-test += linux/patchkey.h
++no-header-test += linux/rwlock_api_smp.h
++no-header-test += linux/spinlock_types_up.h
++no-header-test += linux/spinlock_up.h
++no-header-test += linux/wimax/debug.h
++no-header-test += rdma/uverbs_named_ioctl.h
++
++# Conditionally included
++no-header-test += linux/byteorder/big_endian.h
++no-header-test += linux/byteorder/little_endian.h
++
++header-test-y = $(filter-out $(no-header-test), $(all-headers))
 -- 
-2.21.0
+2.17.1
 
