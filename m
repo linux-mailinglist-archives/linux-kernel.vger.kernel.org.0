@@ -2,441 +2,184 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5B1874E4DE
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 11:54:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7330A4E4D1
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 11:54:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727241AbfFUJyT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Jun 2019 05:54:19 -0400
-Received: from foss.arm.com ([217.140.110.172]:55958 "EHLO foss.arm.com"
+        id S1727096AbfFUJx4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Jun 2019 05:53:56 -0400
+Received: from foss.arm.com ([217.140.110.172]:55638 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727219AbfFUJyR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Jun 2019 05:54:17 -0400
+        id S1726652AbfFUJxw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Jun 2019 05:53:52 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EABCC14F6;
-        Fri, 21 Jun 2019 02:54:16 -0700 (PDT)
-Received: from e119884-lin.cambridge.arm.com (e119884-lin.cambridge.arm.com [10.1.196.72])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 609CB3F246;
-        Fri, 21 Jun 2019 02:54:14 -0700 (PDT)
-From:   Vincenzo Frascino <vincenzo.frascino@arm.com>
-To:     linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org,
-        linux-kselftest@vger.kernel.org
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Russell King <linux@armlinux.org.uk>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Mark Salyzyn <salyzyn@android.com>,
-        Peter Collingbourne <pcc@google.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Dmitry Safonov <0x7f454c46@gmail.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Huw Davies <huw@codeweavers.com>,
-        Shijith Thotton <sthotton@marvell.com>,
-        Andre Przywara <andre.przywara@arm.com>
-Subject: [PATCH v7 25/25] kselftest: Extend vDSO selftest
-Date:   Fri, 21 Jun 2019 10:52:52 +0100
-Message-Id: <20190621095252.32307-26-vincenzo.frascino@arm.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190621095252.32307-1-vincenzo.frascino@arm.com>
-References: <20190621095252.32307-1-vincenzo.frascino@arm.com>
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B368814F6;
+        Fri, 21 Jun 2019 02:53:51 -0700 (PDT)
+Received: from e110455-lin.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 785153F802;
+        Fri, 21 Jun 2019 02:53:51 -0700 (PDT)
+Received: by e110455-lin.cambridge.arm.com (Postfix, from userid 1000)
+        id 3C69A682574; Fri, 21 Jun 2019 10:53:50 +0100 (BST)
+Date:   Fri, 21 Jun 2019 10:53:50 +0100
+From:   Liviu Dudau <Liviu.Dudau@arm.com>
+To:     Dave Airlie <airlied@gmail.com>
+Cc:     Daniel Vetter <daniel.vetter@ffwll.ch>,
+        MaliDP Maintainers <malidp@foss.arm.com>,
+        DRI devel <dri-devel@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "Lowry Li (Arm Technology China)" <lowry.li@arm.com>,
+        "james qian wang (Arm Technology China)" <james.qian.wang@arm.com>
+Subject: Re: [GIT PULL] mali-dp and komeda patches for drm-next
+Message-ID: <20190621095349.GI17204@e110455-lin.cambridge.arm.com>
+References: <20190620103524.GF17204@e110455-lin.cambridge.arm.com>
+ <CAPM=9tx9n7eAiHakdp+A8twco1GbKs5sy3=kJL6tH_SoYsLG1g@mail.gmail.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAPM=9tx9n7eAiHakdp+A8twco1GbKs5sy3=kJL6tH_SoYsLG1g@mail.gmail.com>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The current version of the multiarch vDSO selftest verifies only
-gettimeofday.
+On Fri, Jun 21, 2019 at 01:54:11PM +1000, Dave Airlie wrote:
+> On Thu, 20 Jun 2019 at 20:35, Liviu Dudau <Liviu.Dudau@arm.com> wrote:
+> >
+> > Hi DRM maintainers,
+> >
+> > Picking up pace on the upstreaming of Komeda driver, with quite a lot
+> > of new features added this time. On top of that we have the small
+> > cleanups and improved usage of the debugfs functions. Please pull!
+> 
+> It looks like you rebased this at the last moment, please don't do
+> that, don't rebase just because you can.
 
-Extend the vDSO selftest to the other library functions:
- - time
- - clock_getres
- - clock_gettime
+Yes, sorry again, I was trying to be up-to-date with drm-next so as to figure
+out if there are any conflicts before sending the pull request.
 
-The extension has been used to verify the unified vdso library on the
-supported architectures.
+> 
+> The reason I noticed is because
+> dim: 344f00e4d7d6 ("drm/komeda: Make Komeda interrupts shareable"):
+> author Signed-off-by missing.
 
-Cc: Shuah Khan <shuah@kernel.org>
-Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
----
- tools/testing/selftests/vDSO/Makefile         |   2 +
- tools/testing/selftests/vDSO/vdso_config.h    |  90 +++++++
- tools/testing/selftests/vDSO/vdso_full_test.c | 244 ++++++++++++++++++
- 3 files changed, 336 insertions(+)
- create mode 100644 tools/testing/selftests/vDSO/vdso_config.h
- create mode 100644 tools/testing/selftests/vDSO/vdso_full_test.c
+Huh, I've missed the fact that Ayan has updated his S-o-b line, I'll have a
+chat with him to get his author updated as well.
 
-diff --git a/tools/testing/selftests/vDSO/Makefile b/tools/testing/selftests/vDSO/Makefile
-index 9e03d61f52fd..68e9b4a1cdcf 100644
---- a/tools/testing/selftests/vDSO/Makefile
-+++ b/tools/testing/selftests/vDSO/Makefile
-@@ -5,6 +5,7 @@ uname_M := $(shell uname -m 2>/dev/null || echo not)
- ARCH ?= $(shell echo $(uname_M) | sed -e s/i.86/x86/ -e s/x86_64/x86/)
- 
- TEST_GEN_PROGS := $(OUTPUT)/vdso_test
-+TEST_GEN_PROGS += $(OUTPUT)/vdso_full_test
- ifeq ($(ARCH),x86)
- TEST_GEN_PROGS += $(OUTPUT)/vdso_standalone_test_x86
- endif
-@@ -18,6 +19,7 @@ endif
- 
- all: $(TEST_GEN_PROGS)
- $(OUTPUT)/vdso_test: parse_vdso.c vdso_test.c
-+$(OUTPUT)/vdso_full_test: parse_vdso.c vdso_full_test.c
- $(OUTPUT)/vdso_standalone_test_x86: vdso_standalone_test_x86.c parse_vdso.c
- 	$(CC) $(CFLAGS) $(CFLAGS_vdso_standalone_test_x86) \
- 		vdso_standalone_test_x86.c parse_vdso.c \
-diff --git a/tools/testing/selftests/vDSO/vdso_config.h b/tools/testing/selftests/vDSO/vdso_config.h
-new file mode 100644
-index 000000000000..eeb725df6045
---- /dev/null
-+++ b/tools/testing/selftests/vDSO/vdso_config.h
-@@ -0,0 +1,90 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * vdso_config.h: Configuration options for vDSO tests.
-+ * Copyright (c) 2019 Arm Ltd.
-+ */
-+#ifndef __VDSO_CONFIG_H__
-+#define __VDSO_CONFIG_H__
-+
-+/*
-+ * Each architecture exports its vDSO implementation with different names
-+ * and a different version from the others, so we need to handle it as a
-+ * special case.
-+ */
-+#if defined(__arm__)
-+#define VDSO_VERSION		0
-+#define VDSO_NAMES		1
-+#define VDSO_32BIT		1
-+#elif defined(__aarch64__)
-+#define VDSO_VERSION		3
-+#define VDSO_NAMES		0
-+#elif defined(__powerpc__)
-+#define VDSO_VERSION		1
-+#define VDSO_NAMES		0
-+#define VDSO_32BIT		1
-+#elif defined(__powerpc64__)
-+#define VDSO_VERSION		1
-+#define VDSO_NAMES		0
-+#elif defined (__s390__)
-+#define VDSO_VERSION		2
-+#define VDSO_NAMES		0
-+#define VDSO_32BIT		1
-+#elif defined (__s390X__)
-+#define VDSO_VERSION		2
-+#define VDSO_NAMES		0
-+#elif defined(__mips__)
-+#define VDSO_VERSION		0
-+#define VDSO_NAMES		1
-+#define VDSO_32BIT		1
-+#elif defined(__sparc__)
-+#define VDSO_VERSION		0
-+#define VDSO_NAMES		1
-+#define VDSO_32BIT		1
-+#elif defined(__i386__)
-+#define VDSO_VERSION		0
-+#define VDSO_NAMES		1
-+#define VDSO_32BIT		1
-+#elif defined(__x86_64__)
-+#define VDSO_VERSION		0
-+#define VDSO_NAMES		1
-+#elif defined(__riscv__)
-+#define VDSO_VERSION		5
-+#define VDSO_NAMES		1
-+#define VDSO_32BIT		1
-+#else /* nds32 */
-+#define VDSO_VERSION		4
-+#define VDSO_NAMES		1
-+#define VDSO_32BIT		1
-+#endif
-+
-+static const char *versions[6] = {
-+	"LINUX_2.6",
-+	"LINUX_2.6.15",
-+	"LINUX_2.6.29",
-+	"LINUX_2.6.39",
-+	"LINUX_4",
-+	"LINUX_4.15",
-+};
-+
-+static const char *names[2][5] = {
-+	{
-+		"__kernel_gettimeofday",
-+		"__kernel_clock_gettime",
-+		"__kernel_time",
-+		"__kernel_clock_getres",
-+#if defined(VDSO_32BIT)
-+		"__kernel_clock_gettime64",
-+#endif
-+	},
-+	{
-+		"__vdso_gettimeofday",
-+		"__vdso_clock_gettime",
-+		"__vdso_time",
-+		"__vdso_clock_getres",
-+#if defined(VDSO_32BIT)
-+		"__vdso_clock_gettime64",
-+#endif
-+	},
-+};
-+
-+#endif /* __VDSO_CONFIG_H__ */
-diff --git a/tools/testing/selftests/vDSO/vdso_full_test.c b/tools/testing/selftests/vDSO/vdso_full_test.c
-new file mode 100644
-index 000000000000..3d603f1394af
---- /dev/null
-+++ b/tools/testing/selftests/vDSO/vdso_full_test.c
-@@ -0,0 +1,244 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * vdso_full_test.c: Sample code to test all the timers.
-+ * Copyright (c) 2019 Arm Ltd.
-+ *
-+ * Compile with:
-+ * gcc -std=gnu99 vdso_full_test.c parse_vdso.c
-+ *
-+ */
-+
-+#include <stdint.h>
-+#include <elf.h>
-+#include <stdio.h>
-+#include <time.h>
-+#include <sys/auxv.h>
-+#include <sys/time.h>
-+#define _GNU_SOURCE
-+#include <unistd.h>
-+#include <sys/syscall.h>
-+
-+#include "../kselftest.h"
-+#include "vdso_config.h"
-+
-+extern void *vdso_sym(const char *version, const char *name);
-+extern void vdso_init_from_sysinfo_ehdr(uintptr_t base);
-+extern void vdso_init_from_auxv(void *auxv);
-+
-+static const char *version;
-+static const char **name;
-+
-+typedef long (*vdso_gettimeofday_t)(struct timeval *tv, struct timezone *tz);
-+typedef long (*vdso_clock_gettime_t)(clockid_t clk_id, struct timespec *ts);
-+typedef long (*vdso_clock_getres_t)(clockid_t clk_id, struct timespec *ts);
-+typedef time_t (*vdso_time_t)(time_t *t);
-+
-+static int vdso_test_gettimeofday(void)
-+{
-+	/* Find gettimeofday. */
-+	vdso_gettimeofday_t vdso_gettimeofday =
-+		(vdso_gettimeofday_t)vdso_sym(version, name[0]);
-+
-+	if (!vdso_gettimeofday) {
-+		printf("Could not find %s\n", name[0]);
-+		return KSFT_SKIP;
-+	}
-+
-+	struct timeval tv;
-+	long ret = vdso_gettimeofday(&tv, 0);
-+
-+	if (ret == 0) {
-+		printf("The time is %lld.%06lld\n",
-+		       (long long)tv.tv_sec, (long long)tv.tv_usec);
-+	} else {
-+		printf("%s failed\n", name[0]);
-+		return KSFT_FAIL;
-+	}
-+
-+	return KSFT_PASS;
-+}
-+
-+static int vdso_test_clock_gettime(clockid_t clk_id)
-+{
-+	/* Find clock_gettime. */
-+	vdso_clock_gettime_t vdso_clock_gettime =
-+		(vdso_clock_gettime_t)vdso_sym(version, name[1]);
-+
-+	if (!vdso_clock_gettime) {
-+		printf("Could not find %s\n", name[1]);
-+		return KSFT_SKIP;
-+	}
-+
-+	struct timespec ts;
-+	long ret = vdso_clock_gettime(clk_id, &ts);
-+
-+	if (ret == 0) {
-+		printf("The time is %lld.%06lld\n",
-+		       (long long)ts.tv_sec, (long long)ts.tv_nsec);
-+	} else {
-+		printf("%s failed\n", name[1]);
-+		return KSFT_FAIL;
-+	}
-+
-+	return KSFT_PASS;
-+}
-+
-+static int vdso_test_time(void)
-+{
-+	/* Find time. */
-+	vdso_time_t vdso_time =
-+		(vdso_time_t)vdso_sym(version, name[2]);
-+
-+	if (!vdso_time) {
-+		printf("Could not find %s\n", name[2]);
-+		return KSFT_SKIP;
-+	}
-+
-+	long ret = vdso_time(NULL);
-+
-+	if (ret > 0) {
-+		printf("The time in hours since January 1, 1970 is %lld\n",
-+				(long long)(ret / 3600));
-+	} else {
-+		printf("%s failed\n", name[2]);
-+		return KSFT_FAIL;
-+	}
-+
-+	return KSFT_PASS;
-+}
-+
-+static int vdso_test_clock_getres(clockid_t clk_id)
-+{
-+	/* Find clock_getres. */
-+	vdso_clock_getres_t vdso_clock_getres =
-+		(vdso_clock_getres_t)vdso_sym(version, name[3]);
-+
-+	if (!vdso_clock_getres) {
-+		printf("Could not find %s\n", name[3]);
-+		return KSFT_SKIP;
-+	}
-+
-+	struct timespec ts, sys_ts;
-+	long ret = vdso_clock_getres(clk_id, &ts);
-+
-+	if (ret == 0) {
-+		printf("The resolution is %lld %lld\n",
-+		       (long long)ts.tv_sec, (long long)ts.tv_nsec);
-+	} else {
-+		printf("%s failed\n", name[3]);
-+		return KSFT_FAIL;
-+	}
-+
-+	ret = syscall(SYS_clock_getres, clk_id, &sys_ts);
-+
-+	if ((sys_ts.tv_sec != ts.tv_sec) || (sys_ts.tv_nsec != ts.tv_nsec)) {
-+		printf("%s failed\n", name[3]);
-+		return KSFT_FAIL;
-+	}
-+
-+	return KSFT_PASS;
-+}
-+
-+const char *vdso_clock_name[12] = {
-+	"CLOCK_REALTIME",
-+	"CLOCK_MONOTONIC",
-+	"CLOCK_PROCESS_CPUTIME_ID",
-+	"CLOCK_THREAD_CPUTIME_ID",
-+	"CLOCK_MONOTONIC_RAW",
-+	"CLOCK_REALTIME_COARSE",
-+	"CLOCK_MONOTONIC_COARSE",
-+	"CLOCK_BOOTTIME",
-+	"CLOCK_REALTIME_ALARM",
-+	"CLOCK_BOOTTIME_ALARM",
-+	"CLOCK_SGI_CYCLE",
-+	"CLOCK_TAI",
-+};
-+
-+/*
-+ * This function calls vdso_test_clock_gettime and vdso_test_clock_getres
-+ * with different values for clock_id.
-+ */
-+static inline int vdso_test_clock(clockid_t clock_id)
-+{
-+	int ret0, ret1;
-+
-+	ret0 = vdso_test_clock_gettime(clock_id);
-+	/* A skipped test is considered passed */
-+	if (ret0 == KSFT_SKIP)
-+		ret0 = KSFT_PASS;
-+
-+	ret1 = vdso_test_clock_getres(clock_id);
-+	/* A skipped test is considered passed */
-+	if (ret1 == KSFT_SKIP)
-+		ret1 = KSFT_PASS;
-+
-+	ret0 += ret1;
-+
-+	printf("clock_id: %s", vdso_clock_name[clock_id]);
-+
-+	if (ret0 > 0)
-+		printf(" [FAIL]\n");
-+	else
-+		printf(" [PASS]\n");
-+
-+	return ret0;
-+}
-+
-+int main(int argc, char **argv)
-+{
-+	unsigned long sysinfo_ehdr = getauxval(AT_SYSINFO_EHDR);
-+	int ret;
-+
-+	if (!sysinfo_ehdr) {
-+		printf("AT_SYSINFO_EHDR is not present!\n");
-+		return KSFT_SKIP;
-+	}
-+
-+	version = versions[VDSO_VERSION];
-+	name = (const char **)&names[VDSO_NAMES];
-+
-+	printf("[vDSO kselftest] VDSO_VERSION: %s\n", version);
-+
-+	vdso_init_from_sysinfo_ehdr(getauxval(AT_SYSINFO_EHDR));
-+
-+	ret = vdso_test_gettimeofday();
-+
-+#if _POSIX_TIMERS > 0
-+
-+#ifdef CLOCK_REALTIME
-+	ret += vdso_test_clock(CLOCK_REALTIME);
-+#endif
-+
-+#ifdef CLOCK_BOOTTIME
-+	ret += vdso_test_clock(CLOCK_BOOTTIME);
-+#endif
-+
-+#ifdef CLOCK_TAI
-+	ret += vdso_test_clock(CLOCK_TAI);
-+#endif
-+
-+#ifdef CLOCK_REALTIME_COARSE
-+	ret += vdso_test_clock(CLOCK_REALTIME_COARSE);
-+#endif
-+
-+#ifdef CLOCK_MONOTONIC
-+	ret += vdso_test_clock(CLOCK_MONOTONIC);
-+#endif
-+
-+#ifdef CLOCK_MONOTONIC_RAW
-+	ret += vdso_test_clock(CLOCK_MONOTONIC_RAW);
-+#endif
-+
-+#ifdef CLOCK_MONOTONIC_COARSE
-+	ret += vdso_test_clock(CLOCK_MONOTONIC_COARSE);
-+#endif
-+
-+#endif
-+
-+	ret += vdso_test_time();
-+
-+	if (ret > 0)
-+		return KSFT_FAIL;
-+
-+	return KSFT_PASS;
-+}
+> dim: 1885a6d946f5 ("drm/komeda: fix 32-bit
+> komeda_crtc_update_clock_ratio"): SHA1 in fixes line not found:
+> dim:     a962091227ed ("drm/komeda: Add engine clock requirement check
+> for the downscaling")
+> dim: ERROR: issues in commits detected, aborting
+> 
+> so clearly rebasing the fixed commit broke stuff, you should probably
+> squash fixes if you are rebasing.
+> 
+> Please resend with above fixed, and refrain from misc rebases in future.
+
+They are now fixed, sorry about the noise.
+
+Best regards,
+Liviu
+
+
+The following changes since commit 52d2d44eee8091e740d0d275df1311fb8373c9a9:
+
+  Merge v5.2-rc5 into drm-next (2019-06-19 12:07:29 +0200)
+
+are available in the Git repository at:
+
+  git://linux-arm.org/linux-ld.git for-upstream/mali-dp
+
+for you to fetch changes up to 2cfb1981dd0d9505b59868a7f7591746f51794b0:
+
+  drm/komeda: Make Komeda interrupts shareable (2019-06-21 10:47:15 +0100)
+
+----------------------------------------------------------------
+Arnd Bergmann (1):
+      drm/komeda: fix 32-bit komeda_crtc_update_clock_ratio
+
+Ayan Halder (1):
+      drm/komeda: Make Komeda interrupts shareable
+
+Greg Kroah-Hartman (2):
+      komeda: no need to check return value of debugfs_create functions
+      malidp: no need to check return value of debugfs_create functions
+
+Liviu Dudau (1):
+      arm/komeda: Convert dp_wait_cond() to return an error code.
+
+Lowry Li (Arm Technology China) (10):
+      drm/komeda: Creates plane alpha and blend mode properties
+      drm/komeda: Clear enable bit in CU_INPUTx_CONTROL
+      drm/komeda: Add rotation support on Komeda driver
+      drm/komeda: Adds limitation check for AFBC wide block not support Rot90
+      drm/komeda: Update HW up-sampling on D71
+      drm/komeda: Enable color-encoding (YUV format) support
+      drm/komeda: Adds SMMU support
+      dt/bindings: drm/komeda: Adds SMMU support for D71 devicetree
+      drm/komeda: Adds zorder support
+      drm/komeda: Add slave pipeline support
+
+james qian wang (Arm Technology China) (21):
+      drm/komeda: Add writeback support
+      drm/komeda: Added AFBC support for komeda driver
+      drm/komeda: Attach scaler to drm as private object
+      drm/komeda: Add the initial scaler support for CORE
+      drm/komeda: Implement D71 scaler support
+      drm/komeda: Add writeback scaling support
+      drm/komeda: Add engine clock requirement check for the downscaling
+      drm/komeda: Add image enhancement support
+      drm/komeda: Add komeda_fb_check_src_coords
+      drm/komeda: Add format support for Y0L2, P010, YUV420_8/10BIT
+      drm/komeda: Unify mclk/pclk/pipeline->aclk to one MCLK
+      drm/komeda: Rename main engine clk name "mclk" to "aclk"
+      dt/bindings: drm/komeda: Unify mclk/pclk/pipeline->aclk to one ACLK
+      drm/komeda: Add component komeda_merger
+      drm/komeda: Add split support for scaler
+      drm/komeda: Add layer split support
+      drm/komeda: Refine function to_d71_input_id
+      drm/komeda: Accept null writeback configurations for writeback
+      drm/komeda: Add new component komeda_splitter
+      drm/komeda: Enable writeback split support
+      drm/komeda: Correct printk format specifier for "size_t"
+
+ .../devicetree/bindings/display/arm,komeda.txt     |  23 +-
+ drivers/gpu/drm/arm/display/include/malidp_io.h    |   7 +
+ drivers/gpu/drm/arm/display/include/malidp_utils.h |   5 +-
+ drivers/gpu/drm/arm/display/komeda/Makefile        |   2 +
+ .../gpu/drm/arm/display/komeda/d71/d71_component.c | 582 +++++++++++++++++-
+ drivers/gpu/drm/arm/display/komeda/d71/d71_dev.c   | 142 +++--
+ drivers/gpu/drm/arm/display/komeda/d71/d71_dev.h   |   2 +
+ .../gpu/drm/arm/display/komeda/komeda_color_mgmt.c |  67 ++
+ .../gpu/drm/arm/display/komeda/komeda_color_mgmt.h |  17 +
+ drivers/gpu/drm/arm/display/komeda/komeda_crtc.c   | 154 ++++-
+ drivers/gpu/drm/arm/display/komeda/komeda_dev.c    |  59 +-
+ drivers/gpu/drm/arm/display/komeda/komeda_dev.h    |  13 +-
+ .../drm/arm/display/komeda/komeda_format_caps.c    |  58 ++
+ .../drm/arm/display/komeda/komeda_format_caps.h    |  24 +-
+ .../drm/arm/display/komeda/komeda_framebuffer.c    | 175 +++++-
+ .../drm/arm/display/komeda/komeda_framebuffer.h    |  13 +-
+ drivers/gpu/drm/arm/display/komeda/komeda_kms.c    | 130 +++-
+ drivers/gpu/drm/arm/display/komeda/komeda_kms.h    |  71 ++-
+ .../gpu/drm/arm/display/komeda/komeda_pipeline.c   |  66 +-
+ .../gpu/drm/arm/display/komeda/komeda_pipeline.h   | 111 +++-
+ .../drm/arm/display/komeda/komeda_pipeline_state.c | 679 ++++++++++++++++++++-
+ drivers/gpu/drm/arm/display/komeda/komeda_plane.c  | 191 +++++-
+ .../drm/arm/display/komeda/komeda_private_obj.c    | 154 +++++
+ .../drm/arm/display/komeda/komeda_wb_connector.c   | 199 ++++++
+ drivers/gpu/drm/arm/malidp_drv.c                   |  11 +-
+ 25 files changed, 2728 insertions(+), 227 deletions(-)
+ create mode 100644 drivers/gpu/drm/arm/display/komeda/komeda_color_mgmt.c
+ create mode 100644 drivers/gpu/drm/arm/display/komeda/komeda_color_mgmt.h
+ create mode 100644 drivers/gpu/drm/arm/display/komeda/komeda_wb_connector.c
+
 -- 
-2.21.0
-
+====================
+| I would like to |
+| fix the world,  |
+| but they're not |
+| giving me the   |
+ \ source code!  /
+  ---------------
+    ¯\_(ツ)_/¯
