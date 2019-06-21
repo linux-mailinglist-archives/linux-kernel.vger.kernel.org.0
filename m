@@ -2,97 +2,140 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 63C9A4EB44
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 16:55:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 28E264EB49
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 16:56:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726259AbfFUOzh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Jun 2019 10:55:37 -0400
-Received: from foss.arm.com ([217.140.110.172]:33916 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725985AbfFUOzh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Jun 2019 10:55:37 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A70E028;
-        Fri, 21 Jun 2019 07:55:36 -0700 (PDT)
-Received: from e110439-lin (e110439-lin.cambridge.arm.com [10.1.194.43])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6D84D3F575;
-        Fri, 21 Jun 2019 07:55:34 -0700 (PDT)
-Date:   Fri, 21 Jun 2019 15:55:32 +0100
-From:   Patrick Bellasi <patrick.bellasi@arm.com>
-To:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Tejun Heo <tj@kernel.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Paul Turner <pjt@google.com>,
-        Quentin Perret <quentin.perret@arm.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Todd Kjos <tkjos@google.com>,
-        Joel Fernandes <joelaf@google.com>,
-        Steve Muckle <smuckle@google.com>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Alessio Balsini <balsini@android.com>
-Subject: Re: [PATCH v10 00/16] Add utilization clamping support
-Message-ID: <20190621145532.dvghqs32zprl6ty2@e110439-lin>
-References: <20190621084217.8167-1-patrick.bellasi@arm.com>
+        id S1726375AbfFUO4G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Jun 2019 10:56:06 -0400
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:38292 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726010AbfFUO4F (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Jun 2019 10:56:05 -0400
+Received: by mail-qt1-f195.google.com with SMTP id n11so7201905qtl.5
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2019 07:56:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=R6wGdifeYAUiKIP0GGBLBBUmTIFn7pweCX0GnLETICU=;
+        b=PC43vDQr0y9Pg1xdmHWeVytAX0ixGDJ2KVFtpgNjVmhFcr7lbZ/t7arGdgSs8On4Ak
+         ohXY78wNEgZSyIcjb+KONvqeB3pqoKuDYW70mISNbDqa7lpE5pU4K3quOAsgO49Qywyv
+         /Y+V1Au4AV7aqfEcLunnS5+kC4RjT1K+J/HNYLYNNNJ8knZASPBiDA5dSKl8/ubBkWfK
+         CFCv6jpPDFaO7GdHIugMNa56NIMAf3wAjJhG3o9RBtaIwCLOxPpbHEQdK38zIy8t5lJt
+         FK2vkXbIVTeXWMsQRMZB8VpadI3wrbanvwNdt65Chd6QoQlwOxyYaeUkJPH+6sSYCqmP
+         KZxA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=R6wGdifeYAUiKIP0GGBLBBUmTIFn7pweCX0GnLETICU=;
+        b=aI47+SsvyvVODTcIQOV/J8PwF+J5i6E/JSJIPT82WeKwJz58lN5GLyVex+4ULCvCQX
+         b3fZXuyQeCmJL2NnjUQUnmIYZmAvbbl0FCpdS3rZLCXHSnO+TPIKtuRAn+S46d0pCFNr
+         Om95uklMVa9s4TYJoajO3rEUkjFsI2YFhQdZQipOAJYpHUwbUMtXBn8KpZxYuqlLq/8v
+         ZT2br5wuiGPMTUYSTTbvSjZOTncwlQ4z0eWf+m3uHue85IttBSyywXqKZx4ow1LgzoPt
+         ynC9qeViHZ0kO4lFhN5wCkVsWT9WO+fwjrnbrak8kgaklyaJ899T/KzXheBc+hDQkuwb
+         nZ/A==
+X-Gm-Message-State: APjAAAXDBBqqN0Vq62KxbLZqy6650CFd24ILQtAlYhj7Tja6kxvkyZ+A
+        B/kEfJfR0qfKJikgujfk0OBWRA==
+X-Google-Smtp-Source: APXvYqyAbsm7eaRgX9kud1TQA1Yyk/iFLRylWhqYxFe6R8hA4ojV40v1zXQ0PAw31WmaCEsLhCsTyg==
+X-Received: by 2002:ac8:7349:: with SMTP id q9mr113636418qtp.151.1561128964914;
+        Fri, 21 Jun 2019 07:56:04 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-156-34-55-100.dhcp-dynamic.fibreop.ns.bellaliant.net. [156.34.55.100])
+        by smtp.gmail.com with ESMTPSA id y29sm1546916qkj.8.2019.06.21.07.56.04
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 21 Jun 2019 07:56:04 -0700 (PDT)
+Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1heKxQ-00014G-1d; Fri, 21 Jun 2019 11:56:04 -0300
+Date:   Fri, 21 Jun 2019 11:56:04 -0300
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     Dag Moxnes <dag.moxnes@oracle.com>
+Cc:     dledford@redhat.com, leon@kernel.org, linux-rdma@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Parav Pandit <parav@mellanox.com>
+Subject: Re: [PATCH] RDMA/core: Fix race when resolving IP address
+Message-ID: <20190621145604.GS19891@ziepe.ca>
+References: <1561126156-10162-1-git-send-email-dag.moxnes@oracle.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190621084217.8167-1-patrick.bellasi@arm.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <1561126156-10162-1-git-send-email-dag.moxnes@oracle.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 21-Jun 09:42, Patrick Bellasi wrote:
-> Hi all, this is a respin of:
+On Fri, Jun 21, 2019 at 04:09:16PM +0200, Dag Moxnes wrote:
+> Use neighbour lock when copying MAC address from neighbour data struct
+> in dst_fetch_ha.
 > 
->   https://lore.kernel.org/lkml/20190515094459.10317-1-patrick.bellasi@arm.com/
+> When not using the lock, it is possible for the function to race with
+> neigh_update, causing it to copy an invalid MAC address.
 > 
-> which addresses all Tejun's concerns:
+> It is possible to provoke this error by calling rdma_resolve_addr in a
+> tight loop, while deleting the corresponding ARP entry in another tight
+> loop.
 > 
->  - rename cgroup attributes to be cpu.uclamp.{min,max}
->  - update initialization of subgroups clamps to be "no clamps" by default
->  - use percentage rational numbers for clamp attributes, e.g. "12.34" for 12.34%.
+> Signed-off-by: Dag Moxnes <dag.moxnes@oracle.com>
+> Change-Id: I3c5f982b304457f0a83ea7def2fac70315ed38b4
+>  drivers/infiniband/core/addr.c | 6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
 > 
-> by introducing modifications impacting only patches:
-> 
->  [PATCH v10 12/16] sched/core: uclamp: Extend CPU's cgroup controller
->  [PATCH v10 13/16] sched/core: uclamp: Propagate parent clamps
-> 
-> The rest of the patches are the same as per in v9, they have been just rebased
-> on top of:
-> 
->    tj/cgroup.git	for-5.3
->    tip/tip.git		sched/core
-> 
-> AFAIU, all the first 11 patches have been code reviewed and should be at a
-> "ready to merge" quality level. Please let me know if I'm wrong and there
-> is something else I need/can to do on those patches.
-> 
-> Otherwise, now that we should have settled all the behavioral aspects, I'm
+> diff --git a/drivers/infiniband/core/addr.c b/drivers/infiniband/core/addr.c
+> index 2f7d141598..e4945fd1bb 100644
+> +++ b/drivers/infiniband/core/addr.c
+> @@ -333,12 +333,16 @@ static int dst_fetch_ha(const struct dst_entry *dst,
+>  	if (!n)
+>  		return -ENODATA;
+>  
+> +	read_lock_bh(&n->lock)
+>  	if (!(n->nud_state & NUD_VALID)) {
+> -		neigh_event_send(n, NULL);
+>  		ret = -ENODATA;
+>  	} else {
+>  		memcpy(dev_addr->dst_dev_addr, n->ha, MAX_ADDR_LEN);
+>  	}
+> +	read_unlock_bh(&n->lock);
+> +
+> +	if (ret)
+> +		neigh_event_send(n, NULL);
+>  
+>  	neigh_release(n);
 
-Regarding the behavioral aspects, here I have a report with some
-simple tests for the current implementation:
+Can we write this with less spaghetti please, maybe:
 
-   https://gist.github.com/derkling/519459b5a2be35d8681fbaf1d6efe225
+static int dst_fetch_ha(const struct dst_entry *dst,
+			struct rdma_dev_addr *dev_addr,
+			const void *daddr)
+{
+	struct neighbour *n;
+	int ret = 0;
 
-There are a couple of sections at the end to test the "Delegation
-Model" with both CGroups v1 and v2.
+	n = dst_neigh_lookup(dst, daddr);
+	if (!n)
+		return -ENODATA;
 
-I'm sharing the link just in case it can be helpful to verify if what
-has been implemented is actually matching what Tejun expects as a sane
-cgroups interface.
+	read_lock_bh(&n->lock);
+	if (!(n->nud_state & NUD_VALID)) {
+		read_unlock_bh(&n->lock);
+		goto out_send;
+	}
+	memcpy(dev_addr->dst_dev_addr, n->ha, MAX_ADDR_LEN);
+	read_unlock_bh(&n->lock);
 
-Cheers,
-Patrick
+	goto out_release;
 
--- 
-#include <best/regards.h>
+out_send:
+	neigh_event_send(n, NULL);
+	ret = -ENODATA;
+out_release:
+	neigh_release(n);
 
-Patrick Bellasi
+	return ret;
+}
+
+Also, Parav should look at it.
+
+Thanks,
+Jason
