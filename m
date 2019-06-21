@@ -2,206 +2,142 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 677FA4E447
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 11:41:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 797FE4E44C
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 11:41:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726905AbfFUJl2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Jun 2019 05:41:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:32862 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726289AbfFUJkZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Jun 2019 05:40:25 -0400
-Received: from localhost.localdomain (unknown [223.93.147.148])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 23F1820673;
-        Fri, 21 Jun 2019 09:40:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561110024;
-        bh=RUhdn1Fmrgf8hVLPUiLBH+TPrUQP4dOPOdTJb/LnqtY=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uUmaTQod0r/I/XSqI+fJry40BgwW1Z8jeSlAYe0F6cPJ7Soy8mOxJM4SG4pXm3lCo
-         o7GQ46bOwXMiwzB02MHEIX4qh2CreB80W3GuN3/s59hlE0gQGSvk00T5S11U2eOD55
-         e7NPsZzpZdlAZyeOwFZnh/pFbD4LWcqkur0Bj+cA=
-From:   guoren@kernel.org
-To:     julien.grall@arm.com, arnd@arndb.de, linux-kernel@vger.kernel.org
-Cc:     linux-csky@vger.kernel.org, Guo Ren <ren_guo@c-sky.com>
-Subject: [PATCH V2 3/4] csky: Use generic asid algorithm to implement switch_mm
+        id S1726864AbfFUJkT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Jun 2019 05:40:19 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:46778 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726807AbfFUJkN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Jun 2019 05:40:13 -0400
+Received: by mail-pg1-f194.google.com with SMTP id v9so3076842pgr.13;
+        Fri, 21 Jun 2019 02:40:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=bQOe4YC55MjXidhQyekhFCyApqlkjR49EVWhHXYQiyE=;
+        b=BDgqvb/XyDsbKkYanM6KgSq03AoObOC4Mzi0/rvdbhtI+xJcz3c02UgaosuWwpgxds
+         nSgBy2Bsa5xqOOrVUKs4J5nSoFF5xgzKSTC+Oe+GkilueJ99ouOjcldenHOBkyzNO3Aa
+         4zKQDJH/I0FSKcxys3TZSWK3OILRe2cVw28WmbIJYMZM/41gsk59CRB6QQ78r0v+7jRL
+         qWDeL7eVvksfSC2o8+XpCsS9o7lFNEFOSdSScYismRlFtn137wC5Q3jotArw/PTu6p2V
+         gxSKK3d9TaDFqimtiYkXMUlIj0ZWInTbpcyNH3XF1Ji6niko/oRzrDgUedtyMgawtJLm
+         5jrA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=bQOe4YC55MjXidhQyekhFCyApqlkjR49EVWhHXYQiyE=;
+        b=Dw0/UoQW/IKHByzqJPJ1OiZkZMEQYYdfjPKe4r+bi91mMTfP80URqFZy0AZmVhGn/m
+         irfUVPXkyCxVMq66KeFCO3N0RAYBINtPQ8Iug6z1ygw98axlHcKg5T5h8z6Z1Ag1ZE/p
+         NRmYK+nnHK+T6XAcOD5IwJ6tnc4kV4IAsp6isLTroe0tfXd8FUkDsJAfB+oU/QGmEgW4
+         aDWLUQ5n/xhDxmwy4TrYXnF0mQ2tdnM39AKmo02dtVAp7sqRRXfU7Bk+ytNcQJ6rrDJA
+         OaDuGGDP+ufcIwpiNQjiGSLZlWsnR/YO9T6TJY5NXQRQW305eFmc8xHt3N3mrIgUIQtk
+         9DdQ==
+X-Gm-Message-State: APjAAAXr2LDvh8spvULA3/+ejzGMaUk6J1NXEwT/qw1Xi9KAohuYCRaF
+        v0myiPYEco/tk7V6kK1g0ip6WuiH
+X-Google-Smtp-Source: APXvYqyObj0KET/d7/xGsMB3ZP6ObgrbfDqJzqBiXHQPN7WbduJdareFUM3/qeZO7VsRgzJ5kC+14A==
+X-Received: by 2002:a17:90a:8a15:: with SMTP id w21mr5463984pjn.134.1561110012819;
+        Fri, 21 Jun 2019 02:40:12 -0700 (PDT)
+Received: from localhost.localdomain ([203.205.141.123])
+        by smtp.googlemail.com with ESMTPSA id y14sm1999506pjr.13.2019.06.21.02.40.10
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Fri, 21 Jun 2019 02:40:12 -0700 (PDT)
+From:   Wanpeng Li <kernellwp@gmail.com>
+X-Google-Original-From: Wanpeng Li <wanpengli@tencent.com>
+To:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+        Marcelo Tosatti <mtosatti@redhat.com>
+Subject: [PATCH v5 0/4] KVM: LAPIC: Implement Exitless Timer
 Date:   Fri, 21 Jun 2019 17:39:58 +0800
-Message-Id: <1561109999-4322-4-git-send-email-guoren@kernel.org>
+Message-Id: <1561110002-4438-1-git-send-email-wanpengli@tencent.com>
 X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1561109999-4322-1-git-send-email-guoren@kernel.org>
-References: <1561109999-4322-1-git-send-email-guoren@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Guo Ren <ren_guo@c-sky.com>
+Dedicated instances are currently disturbed by unnecessary jitter due 
+to the emulated lapic timers fire on the same pCPUs which vCPUs resident.
+There is no hardware virtual timer on Intel for guest like ARM. Both 
+programming timer in guest and the emulated timer fires incur vmexits.
+This patchset tries to avoid vmexit which is incurred by the emulated 
+timer fires in dedicated instance scenario. 
 
-Use linux generic asid/vmid algorithm to implement csky
-switch_mm function. The algorithm is from arm and it could
-work with SMP system. It'll help reduce tlb flush for
-switch_mm in task/vm switch.
+When nohz_full is enabled in dedicated instances scenario, the unpinned 
+timer will be moved to the nearest busy housekeepers after commit
+9642d18eee2cd (nohz: Affine unpinned timers to housekeepers) and commit 
+444969223c8 ("sched/nohz: Fix affine unpinned timers mess"). However, 
+KVM always makes lapic timer pinned to the pCPU which vCPU residents, the 
+reason is explained by commit 61abdbe0 (kvm: x86: make lapic hrtimer 
+pinned). Actually, these emulated timers can be offload to the housekeeping 
+cpus since APICv is really common in recent years. The guest timer interrupt 
+is injected by posted-interrupt which is delivered by housekeeping cpu 
+once the emulated timer fires. 
 
-Signed-off-by: Guo Ren <ren_guo@c-sky.com>
-Cc: Arnd Bergmann <arnd@arndb.de>
----
- arch/csky/abiv1/inc/abi/ckmmu.h     |  6 +++++
- arch/csky/abiv2/inc/abi/ckmmu.h     | 10 ++++++++
- arch/csky/include/asm/mmu.h         |  1 +
- arch/csky/include/asm/mmu_context.h | 12 ++++++++--
- arch/csky/mm/Makefile               |  1 +
- arch/csky/mm/context.c              | 46 +++++++++++++++++++++++++++++++++++++
- 6 files changed, 74 insertions(+), 2 deletions(-)
- create mode 100644 arch/csky/mm/context.c
+The host admin should fine tuned, e.g. dedicated instances scenario w/ 
+nohz_full cover the pCPUs which vCPUs resident, several pCPUs surplus 
+for busy housekeeping, disable mwait/hlt/pause vmexits to keep in non-root  
+mode, ~3% redis performance benefit can be observed on Skylake server.
 
-diff --git a/arch/csky/abiv1/inc/abi/ckmmu.h b/arch/csky/abiv1/inc/abi/ckmmu.h
-index 81f3771..ba8eb58 100644
---- a/arch/csky/abiv1/inc/abi/ckmmu.h
-+++ b/arch/csky/abiv1/inc/abi/ckmmu.h
-@@ -78,6 +78,12 @@ static inline void tlb_invalid_all(void)
- 	cpwcr("cpcr8", 0x04000000);
- }
- 
-+
-+static inline void local_tlb_invalid_all(void)
-+{
-+	tlb_invalid_all();
-+}
-+
- static inline void tlb_invalid_indexed(void)
- {
- 	cpwcr("cpcr8", 0x02000000);
-diff --git a/arch/csky/abiv2/inc/abi/ckmmu.h b/arch/csky/abiv2/inc/abi/ckmmu.h
-index e4480e6..73ded7c 100644
---- a/arch/csky/abiv2/inc/abi/ckmmu.h
-+++ b/arch/csky/abiv2/inc/abi/ckmmu.h
-@@ -85,6 +85,16 @@ static inline void tlb_invalid_all(void)
- #endif
- }
- 
-+static inline void local_tlb_invalid_all(void)
-+{
-+#ifdef CONFIG_CPU_HAS_TLBI
-+	asm volatile("tlbi.all\n":::"memory");
-+	sync_is();
-+#else
-+	tlb_invalid_all();
-+#endif
-+}
-+
- static inline void tlb_invalid_indexed(void)
- {
- 	mtcr("cr<8, 15>", 0x02000000);
-diff --git a/arch/csky/include/asm/mmu.h b/arch/csky/include/asm/mmu.h
-index 06f509a..b382a14 100644
---- a/arch/csky/include/asm/mmu.h
-+++ b/arch/csky/include/asm/mmu.h
-@@ -5,6 +5,7 @@
- #define __ASM_CSKY_MMU_H
- 
- typedef struct {
-+	atomic64_t	asid;
- 	void *vdso;
- } mm_context_t;
- 
-diff --git a/arch/csky/include/asm/mmu_context.h b/arch/csky/include/asm/mmu_context.h
-index 86dde48..0285b0a 100644
---- a/arch/csky/include/asm/mmu_context.h
-+++ b/arch/csky/include/asm/mmu_context.h
-@@ -20,20 +20,28 @@
- #define TLBMISS_HANDLER_SETUP_PGD_KERNEL(pgd) \
- 	setup_pgd(__pa(pgd), true)
- 
--#define init_new_context(tsk,mm)	0
-+#define ASID_MASK		((1 << CONFIG_CPU_ASID_BITS) - 1)
-+#define cpu_asid(mm)		(atomic64_read(&mm->context.asid) & ASID_MASK)
-+
-+#define init_new_context(tsk,mm)	({ atomic64_set(&(mm)->context.asid, 0); 0; })
- #define activate_mm(prev,next)		switch_mm(prev, next, current)
- 
- #define destroy_context(mm)		do {} while (0)
- #define enter_lazy_tlb(mm, tsk)		do {} while (0)
- #define deactivate_mm(tsk, mm)		do {} while (0)
- 
-+void check_and_switch_context(struct mm_struct *mm, unsigned int cpu);
-+
- static inline void
- switch_mm(struct mm_struct *prev, struct mm_struct *next,
- 	  struct task_struct *tsk)
- {
-+	unsigned int cpu = smp_processor_id();
-+
- 	if (prev != next)
--		tlb_invalid_all();
-+		check_and_switch_context(next, cpu);
- 
- 	TLBMISS_HANDLER_SETUP_PGD(next->pgd);
-+	write_mmu_entryhi(next->context.asid.counter);
- }
- #endif /* __ASM_CSKY_MMU_CONTEXT_H */
-diff --git a/arch/csky/mm/Makefile b/arch/csky/mm/Makefile
-index 897368f..34cb5b1 100644
---- a/arch/csky/mm/Makefile
-+++ b/arch/csky/mm/Makefile
-@@ -12,3 +12,4 @@ obj-y +=			ioremap.o
- obj-y +=			syscache.o
- obj-y +=			tlb.o
- obj-y +=			asid.o
-+obj-y +=			context.o
-diff --git a/arch/csky/mm/context.c b/arch/csky/mm/context.c
-new file mode 100644
-index 0000000..0d95bdd
---- /dev/null
-+++ b/arch/csky/mm/context.c
-@@ -0,0 +1,46 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// Copyright (C) 2018 Hangzhou C-SKY Microsystems co.,ltd.
-+
-+#include <linux/bitops.h>
-+#include <linux/sched.h>
-+#include <linux/slab.h>
-+#include <linux/mm.h>
-+
-+#include <asm/asid.h>
-+#include <asm/mmu_context.h>
-+#include <asm/smp.h>
-+#include <asm/tlbflush.h>
-+
-+static DEFINE_PER_CPU(atomic64_t, active_asids);
-+static DEFINE_PER_CPU(u64, reserved_asids);
-+
-+struct asid_info asid_info;
-+
-+void check_and_switch_context(struct mm_struct *mm, unsigned int cpu)
-+{
-+	asid_check_context(&asid_info, &mm->context.asid, cpu, mm);
-+}
-+
-+static void asid_flush_cpu_ctxt(void)
-+{
-+	local_tlb_invalid_all();
-+}
-+
-+static int asids_init(void)
-+{
-+	BUG_ON(((1 << CONFIG_CPU_ASID_BITS) - 1) <= num_possible_cpus());
-+
-+	if (asid_allocator_init(&asid_info, CONFIG_CPU_ASID_BITS, 1,
-+				asid_flush_cpu_ctxt))
-+		panic("Unable to initialize ASID allocator for %lu ASIDs\n",
-+		      NUM_ASIDS(&asid_info));
-+
-+	asid_info.active = &active_asids;
-+	asid_info.reserved = &reserved_asids;
-+
-+	pr_info("ASID allocator initialised with %lu entries\n",
-+		NUM_CTXT_ASIDS(&asid_info));
-+
-+	return 0;
-+}
-+early_initcall(asids_init);
+w/o patchset:
+
+            VM-EXIT  Samples  Samples%  Time%   Min Time  Max Time   Avg time
+
+EXTERNAL_INTERRUPT    42916    49.43%   39.30%   0.47us   106.09us   0.71us ( +-   1.09% )
+
+w/ patchset:
+
+            VM-EXIT  Samples  Samples%  Time%   Min Time  Max Time         Avg time
+
+EXTERNAL_INTERRUPT    6871     9.29%     2.96%   0.44us    57.88us   0.72us ( +-   4.02% )
+
+Cc: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Radim Krčmář <rkrcmar@redhat.com>
+Cc: Marcelo Tosatti <mtosatti@redhat.com>
+
+v4 -> v5:
+ * update patch description in patch 1/4
+ * feed latest apic->lapic_timer.expired_tscdeadline to kvm_wait_lapic_expire()
+ * squash advance timer handling to patch 2/4
+
+v3 -> v4:
+ * drop the HRTIMER_MODE_ABS_PINNED, add kick after set pending timer
+ * don't posted inject already-expired timer
+
+v2 -> v3:
+ * disarming the vmx preemption timer when posted_interrupt_inject_timer_enabled()
+ * check kvm_hlt_in_guest instead
+
+v1 -> v2:
+ * check vcpu_halt_in_guest
+ * move module parameter from kvm-intel to kvm
+ * add housekeeping_enabled
+ * rename apic_timer_expired_pi to kvm_apic_inject_pending_timer_irqs
+
+
+Wanpeng Li (4):
+  KVM: LAPIC: Make lapic timer unpinned
+  KVM: LAPIC: Inject timer interrupt via posted interrupt
+  KVM: LAPIC: Ignore timer migration when lapic timer is injected by pi
+  KVM: LAPIC: Don't inject already-expired timer via posted interrupt
+
+ arch/x86/kvm/lapic.c            | 68 +++++++++++++++++++++++++++--------------
+ arch/x86/kvm/lapic.h            |  3 +-
+ arch/x86/kvm/svm.c              |  2 +-
+ arch/x86/kvm/vmx/vmx.c          |  5 +--
+ arch/x86/kvm/x86.c              | 11 ++++---
+ arch/x86/kvm/x86.h              |  2 ++
+ include/linux/sched/isolation.h |  2 ++
+ kernel/sched/isolation.c        |  6 ++++
+ 8 files changed, 67 insertions(+), 32 deletions(-)
+
 -- 
 2.7.4
 
