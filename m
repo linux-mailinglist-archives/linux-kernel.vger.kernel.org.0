@@ -2,87 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 03F1C4E9A1
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 15:41:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 095174E940
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 15:36:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726448AbfFUNlH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Jun 2019 09:41:07 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:24053 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726010AbfFUNlG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Jun 2019 09:41:06 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id D5C503086208;
-        Fri, 21 Jun 2019 13:41:05 +0000 (UTC)
-Received: from dhcp201-121.englab.pnq.redhat.com (ovpn-116-60.sin2.redhat.com [10.67.116.60])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id CC28D5B690;
-        Fri, 21 Jun 2019 13:40:27 +0000 (UTC)
-From:   Pankaj Gupta <pagupta@redhat.com>
-To:     dm-devel@redhat.com, linux-nvdimm@lists.01.org,
-        linux-kernel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, kvm@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-acpi@vger.kernel.org,
-        qemu-devel@nongnu.org, linux-ext4@vger.kernel.org,
-        linux-xfs@vger.kernel.org
-Cc:     dan.j.williams@intel.com, zwisler@kernel.org,
-        vishal.l.verma@intel.com, dave.jiang@intel.com, mst@redhat.com,
-        jasowang@redhat.com, willy@infradead.org, rjw@rjwysocki.net,
-        hch@infradead.org, lenb@kernel.org, jack@suse.cz, tytso@mit.edu,
-        adilger.kernel@dilger.ca, darrick.wong@oracle.com,
-        lcapitulino@redhat.com, kwolf@redhat.com, imammedo@redhat.com,
-        jmoyer@redhat.com, nilal@redhat.com, riel@surriel.com,
-        stefanha@redhat.com, aarcange@redhat.com, david@redhat.com,
-        david@fromorbit.com, cohuck@redhat.com,
-        xiaoguangrong.eric@gmail.com, pagupta@redhat.com,
-        pbonzini@redhat.com, yuval.shaia@oracle.com, kilobyte@angband.pl,
-        jstaron@google.com, rdunlap@infradead.org, snitzer@redhat.com
-Subject: [PATCH v14 7/7] xfs: disable map_sync for async flush
-Date:   Fri, 21 Jun 2019 19:04:55 +0530
-Message-Id: <20190621133455.3303-8-pagupta@redhat.com>
-In-Reply-To: <20190621133455.3303-1-pagupta@redhat.com>
-References: <20190621133455.3303-1-pagupta@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Fri, 21 Jun 2019 13:41:06 +0000 (UTC)
+        id S1726062AbfFUNgN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Jun 2019 09:36:13 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:45330 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725975AbfFUNgN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Jun 2019 09:36:13 -0400
+Received: by mail-ed1-f65.google.com with SMTP id a14so10102723edv.12
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2019 06:36:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=cnC3suzlgwD62Q8O7FoLN2Bc0yj3F9CWcR6TgaR1LLc=;
+        b=zrrtFvrl4p7uTqycYUBHGqaztc91HANl9u9PpKLY7U7rcWsCOOeWiEDqlASL4SSEuY
+         ZqqicXW/nV5z+021k5EusmejEXXNNfgLn3AvyKy6M71xezPYdXaG0rCj9wTdkWiMDHkG
+         /Cl3PE8EUukQhj0s9A9WX3zqTgEwNaIZaXQQnVAE/2/gc7JSt8hB0gS4w2ympIr1Yrxy
+         mmZzOvlxL/7bfRgFnthfff+zVrJS39UskfbFNPwu7sXRX8oj+Ufgl3BNlkqQMt6o9YAN
+         jqRYeFjPL/z3fsImc5/ifslgFZuK7s81erlgqIukiir0X2pl9WFKyjdvldE9MDFxGJ+Y
+         EpPA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=cnC3suzlgwD62Q8O7FoLN2Bc0yj3F9CWcR6TgaR1LLc=;
+        b=npYilcgpruJ7CZ7VYGVJHpTd0AtHcTaUTCEIPRJuzDY8+CkPm+3Z2Vw9Dt7+SW+mb7
+         bsTaQ/w0JwXA3D3VubN+fgoWiu9KdgKRtyj3SPfIXPbkgQueomM0wNRBvluwJXrxUdYO
+         uPfvLsM25LXrRrQOYhbAFT1M9sBW0GvL+rKnwc8k0QbR91uVkis9qtJuXi4XvV99Vxuj
+         ltDrfXqvDqAogjIBhpiRVcfnFbjSQL4VgjlvQGIehVBRRdoAYCVqjkIIzAjl4SpNPAO1
+         9Y9LQ4xOqthHdPsCNrw3nE0WTSPp027a0vUZTZ4OCWtY61nufc/+XXQjJurVlnYULT+g
+         b+7g==
+X-Gm-Message-State: APjAAAW5w40GMbaRd/ePXPwtLCyQep+zrVAQfvrZu/knq0ZG2GiiLjAY
+        nt401DF/fUbeydi1/3T+K0+Vyw1dOo4=
+X-Google-Smtp-Source: APXvYqylF/ZGnoajREjtqJ3qd8ZnbSjXbf2NB4U/xNXjWS/QwEe58V6Y8Ny7PU80e6ICaU6cNuj7qg==
+X-Received: by 2002:a17:906:5008:: with SMTP id s8mr80542081ejj.308.1561124171736;
+        Fri, 21 Jun 2019 06:36:11 -0700 (PDT)
+Received: from box.localdomain ([86.57.175.117])
+        by smtp.gmail.com with ESMTPSA id e1sm432826ejl.2.2019.06.21.06.36.10
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 21 Jun 2019 06:36:11 -0700 (PDT)
+Received: by box.localdomain (Postfix, from userid 1000)
+        id 39A5410289C; Fri, 21 Jun 2019 16:36:13 +0300 (+03)
+Date:   Fri, 21 Jun 2019 16:36:13 +0300
+From:   "Kirill A. Shutemov" <kirill@shutemov.name>
+To:     Song Liu <songliubraving@fb.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>, Linux-MM <linux-mm@kvack.org>,
+        "oleg@redhat.com" <oleg@redhat.com>,
+        "rostedt@goodmis.org" <rostedt@goodmis.org>,
+        "mhiramat@kernel.org" <mhiramat@kernel.org>,
+        "matthew.wilcox@oracle.com" <matthew.wilcox@oracle.com>,
+        "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>,
+        Kernel Team <Kernel-team@fb.com>
+Subject: Re: [PATCH v4 5/5] uprobe: collapse THP pmd after removing all
+ uprobes
+Message-ID: <20190621133613.xnzpdlicqvjklrze@box>
+References: <20190613175747.1964753-1-songliubraving@fb.com>
+ <20190613175747.1964753-6-songliubraving@fb.com>
+ <20190621124823.ziyyx3aagnkobs2n@box>
+ <B72B62C9-78EE-4440-86CA-590D3977BDB1@fb.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <B72B62C9-78EE-4440-86CA-590D3977BDB1@fb.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dont support 'MAP_SYNC' with non-DAX files and DAX files
-with asynchronous dax_device. Virtio pmem provides
-asynchronous host page cache flush mechanism. We don't
-support 'MAP_SYNC' with virtio pmem and xfs.
+On Fri, Jun 21, 2019 at 01:17:05PM +0000, Song Liu wrote:
+> 
+> 
+> > On Jun 21, 2019, at 5:48 AM, Kirill A. Shutemov <kirill@shutemov.name> wrote:
+> > 
+> > On Thu, Jun 13, 2019 at 10:57:47AM -0700, Song Liu wrote:
+> >> After all uprobes are removed from the huge page (with PTE pgtable), it
+> >> is possible to collapse the pmd and benefit from THP again. This patch
+> >> does the collapse.
+> >> 
+> >> An issue on earlier version was discovered by kbuild test robot.
+> >> 
+> >> Reported-by: kbuild test robot <lkp@intel.com>
+> >> Signed-off-by: Song Liu <songliubraving@fb.com>
+> >> ---
+> >> include/linux/huge_mm.h |  7 +++++
+> >> kernel/events/uprobes.c |  5 ++-
+> >> mm/huge_memory.c        | 69 +++++++++++++++++++++++++++++++++++++++++
+> > 
+> > I still sync it's duplication of khugepaged functinallity. We need to fix
+> > khugepaged to handle SCAN_PAGE_COMPOUND and probably refactor the code to
+> > be able to call for collapse of particular range if we have all locks
+> > taken (as we do in uprobe case).
+> > 
+> 
+> I see the point now. I misunderstood it for a while. 
+> 
+> If we add this to khugepaged, it will have some conflicts with my other 
+> patchset. How about we move the functionality to khugepaged after these
+> two sets get in? 
 
-Signed-off-by: Pankaj Gupta <pagupta@redhat.com>
-Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
----
- fs/xfs/xfs_file.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+Is the last patch of the patchset essential? I think this part can be done
+a bit later in a proper way, no?
 
-diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
-index a7ceae90110e..f17652cca5ff 100644
---- a/fs/xfs/xfs_file.c
-+++ b/fs/xfs/xfs_file.c
-@@ -1203,11 +1203,14 @@ xfs_file_mmap(
- 	struct file	*filp,
- 	struct vm_area_struct *vma)
- {
-+	struct dax_device 	*dax_dev;
-+
-+	dax_dev = xfs_find_daxdev_for_inode(file_inode(filp));
- 	/*
--	 * We don't support synchronous mappings for non-DAX files. At least
--	 * until someone comes with a sensible use case.
-+	 * We don't support synchronous mappings for non-DAX files and
-+	 * for DAX files if underneath dax_device is not synchronous.
- 	 */
--	if (!IS_DAX(file_inode(filp)) && (vma->vm_flags & VM_SYNC))
-+	if (!daxdev_mapping_supported(vma, dax_dev))
- 		return -EOPNOTSUPP;
- 
- 	file_accessed(filp);
 -- 
-2.20.1
-
+ Kirill A. Shutemov
