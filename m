@@ -2,125 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B214D4EBF5
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 17:27:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AD2694EBFB
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 17:28:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726275AbfFUP1S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Jun 2019 11:27:18 -0400
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:38557 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726002AbfFUP1Q (ORCPT
+        id S1726418AbfFUP2K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Jun 2019 11:28:10 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:53294 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726100AbfFUP2I (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Jun 2019 11:27:16 -0400
-Received: by mail-ot1-f65.google.com with SMTP id d17so6692863oth.5
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2019 08:27:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=r/y2umFI+hLi0gqB/rGAubbWLUwkck+57yGiyeuQgSY=;
-        b=IckKuSoiNlAN+R3Z7KagwwSqiMULpfnyYjhGFqV3B10qOS3tAz5qWzbravJhLfm7Nn
-         MBM47QBtmecN/B9H/8yM571Y8ymLkyQDWRh8HrG5CiN4gKyxfKwjuhVrpgLPKjtkGOwl
-         Qu3S509r9QsAZGUnh9qhM/im3oxrR62oXDIJw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=r/y2umFI+hLi0gqB/rGAubbWLUwkck+57yGiyeuQgSY=;
-        b=qEZbO2s82hCdpXFtotZnetCB0Sj141uio17DvioXJZpYf7aR3U4baprtMXyD0OJ/tQ
-         AVM3gnJ0YeVZcBD8+Yydi34SEQQCMFKDfngn6Za14JJI4g3m0ewF02I1K0a0yrrL1hiD
-         doeS9ibOzRAsHdW/4DlFAsq+XpEv+7r4rXSFQHL5D71HTBZmgGJfBUP97gsAuScwqzgO
-         8/LqcB8TSrzI+rUpjI9BetPYnioKJXPvB1slMqdVBnZtzZftKrYcfsZK5XiemlSZmDkr
-         H/rQRQTYoxLMumGK617pFQvLxmi9v4gk1SThMejnendEBL3o6QKUHq5WAYtnWhQMcgiy
-         V7HA==
-X-Gm-Message-State: APjAAAWZI6dVta2TYkXNl3k+6YROK91aBsYHozwIcLOuyGbP4XnDyqax
-        2NaAczwgiQXPW43HdOF047c89ciH0xgMI0ClUmj9HaoF
-X-Google-Smtp-Source: APXvYqwgOEf24UbMQB0qb7e97wfqsZUAngBWilMHIaq7tVmIYhrhEDo0c+FZY4p3gcRnoOqR3Rxglb8FloyZTHfS6Uo=
-X-Received: by 2002:a9d:4b95:: with SMTP id k21mr6328797otf.281.1561130835867;
- Fri, 21 Jun 2019 08:27:15 -0700 (PDT)
+        Fri, 21 Jun 2019 11:28:08 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Sender:Content-Transfer-Encoding:
+        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Reply-To:Content-Type:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=Be/MzKSNe3fAjFm8bS597mD7hGn/oAppHYPoJ6iD6gA=; b=e0zJob7d2mhL2Pdyssnl46dzP
+        1uY6uynfUbsnUb0y/0wjEeX6XH+LZcU5JsZVpp9U1KQyqkGodRRvM0Frc7Zg9M/6ku30giVLrv1QI
+        xSuIAUQH4poHkPWbPu3YYipODeLp3DZ3CL2I/917p/Wh6G9nFSfQCvHaedMRMTCBFsZi/jSVgKSyP
+        tjzgSTKfG9fDsxF7fqsmaLQ8txCRulLqPVKcxwcClhfCEqsfM+OtKubtOHdZQKDoqGIjybKBba3Ij
+        M8VK0022EItpF9O7Ptf0B1GmzayE3Y4y9W/J+DDQgxu+8A381SbzEpp5Qx8OqCEgkS3ns8G0R5VTt
+        2kAaqPghQ==;
+Received: from [177.97.20.138] (helo=bombadil.infradead.org)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1heLSR-0006At-KA; Fri, 21 Jun 2019 15:28:07 +0000
+Received: from mchehab by bombadil.infradead.org with local (Exim 4.92)
+        (envelope-from <mchehab@bombadil.infradead.org>)
+        id 1heLSO-0005i8-Hd; Fri, 21 Jun 2019 12:28:04 -0300
+From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>
+Cc:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Mauro Carvalho Chehab <mchehab@infradead.org>,
+        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+        gregkh@linuxfoundation.org
+Subject: [PATCH 0/2] Report warnings to the file they belong
+Date:   Fri, 21 Jun 2019 12:28:00 -0300
+Message-Id: <cover.1561130657.git.mchehab+samsung@kernel.org>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-References: <1561112433-5308-1-git-send-email-raymond.smith@arm.com>
-In-Reply-To: <1561112433-5308-1-git-send-email-raymond.smith@arm.com>
-From:   Daniel Vetter <daniel@ffwll.ch>
-Date:   Fri, 21 Jun 2019 17:27:00 +0200
-Message-ID: <CAKMK7uEjh+GrSy5AgbVLVQd1S5oJ8KFiWEUmxtMMVdcMSBtdCQ@mail.gmail.com>
-Subject: Re: [PATCH] drm/fourcc: Add Arm 16x16 block modifier
-To:     Raymond Smith <Raymond.Smith@arm.com>
-Cc:     "maarten.lankhorst@linux.intel.com" 
-        <maarten.lankhorst@linux.intel.com>,
-        "maxime.ripard@bootlin.com" <maxime.ripard@bootlin.com>,
-        "sean@poorly.run" <sean@poorly.run>,
-        "airlied@linux.ie" <airlied@linux.ie>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "yuq825@gmail.com" <yuq825@gmail.com>,
-        Ayan Halder <Ayan.Halder@arm.com>,
-        Brian Starkey <Brian.Starkey@arm.com>,
-        "malidp@foss.arm.com" <malidp@foss.arm.com>, nd <nd@arm.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 21, 2019 at 12:21 PM Raymond Smith <Raymond.Smith@arm.com> wrote:
->
-> Add the DRM_FORMAT_MOD_ARM_16X16_BLOCK_U_INTERLEAVED modifier to
-> denote the 16x16 block u-interleaved format used in Arm Utgard and
-> Midgard GPUs.
->
-> Signed-off-by: Raymond Smith <raymond.smith@arm.com>
-> ---
->  include/uapi/drm/drm_fourcc.h | 10 ++++++++++
->  1 file changed, 10 insertions(+)
->
-> diff --git a/include/uapi/drm/drm_fourcc.h b/include/uapi/drm/drm_fourcc.h
-> index 3feeaa3..8ed7ecf 100644
-> --- a/include/uapi/drm/drm_fourcc.h
-> +++ b/include/uapi/drm/drm_fourcc.h
-> @@ -743,6 +743,16 @@ extern "C" {
->  #define AFBC_FORMAT_MOD_BCH     (1ULL << 11)
->
->  /*
-> + * Arm 16x16 Block U-Interleaved modifier
-> + *
-> + * This is used by Arm Mali Utgard and Midgard GPUs. It divides the image
-> + * into 16x16 pixel blocks. Blocks are stored linearly in order, but pixels
-> + * in the block are reordered.
-> + */
-> +#define DRM_FORMAT_MOD_ARM_16X16_BLOCK_U_INTERLEAVED \
-> +       fourcc_mod_code(ARM, ((1ULL << 55) | 1))
+Reporting an ABI error to the get_abi.pl script is not nice, as it
+doesn't maky any easy to fix it.
 
-This seems to be an extremely random pick for a new number. What's the
-thinking here? Aside from "doesnt match any of the afbc combos" ofc.
-If you're already up to having thrown away 55bits, then it's not going
-to last long really :-)
+Instead, just like with kernel-doc, put the fingers to the files
+that didn't parse ok:
 
-I think a good idea would be to reserve a bunch of the high bits as
-some form of index (afbc would get index 0 for backwards compat). And
-then the lower bits would be for free use for a given index/mode. And
-the first mode is probably an enumeration, where possible modes simple
-get enumerated without further flags or anything.
 
-The other bit: Would be real good to define the format a bit more
-precisely, including the layout within the tile.
+    Documentation/ABI/testing/sysfs-kernel-mm-hugepages:3: WARNING: Definition list ends without a blank line; unexpected unindent.
+    Documentation/ABI/testing/evm:4: ERROR: Unexpected indentation.
+    Documentation/ABI/testing/evm:3: WARNING: Block quote ends without a blank line; unexpected unindent.
 
-Also ofc needs acks from lima/panfrost people since I assume they'll
-be using this, too.
+---
 
-Thanks, Daniel
+Greg,
 
-> +
-> +/*
->   * Allwinner tiled modifier
->   *
->   * This tiling mode is implemented by the VPU found on all Allwinner platforms,
-> --
-> 2.7.4
->
+Independently of the RFC patches, I would apply those two ones
+together with the script, as they make a lot easier to debug
+issues.
 
+Mauro Carvalho Chehab (2):
+  get_abi.pl: Allow optionally record from where a line came from
+  docs: kernel_abi.py: use --enable-lineno for get_abi.pl
+
+ Documentation/sphinx/kernel_abi.py | 18 ++++++++++++++----
+ scripts/get_abi.pl                 | 21 ++++++++++++++++++++-
+ 2 files changed, 34 insertions(+), 5 deletions(-)
 
 -- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-+41 (0) 79 365 57 48 - http://blog.ffwll.ch
+2.21.0
+
+
