@@ -2,119 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5D7D34DE56
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 03:08:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C4E804DE5A
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 03:15:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726127AbfFUBIr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 21:08:47 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:33909 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725906AbfFUBIq (ORCPT
+        id S1726180AbfFUBOu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 21:14:50 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:45764 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725906AbfFUBOt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 21:08:46 -0400
-Received: by mail-io1-f68.google.com with SMTP id k8so820983iot.1;
-        Thu, 20 Jun 2019 18:08:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:references:in-reply-to:subject:date:message-id
-         :mime-version:content-transfer-encoding:thread-index
-         :content-language;
-        bh=OQMetjZyUoUPsTFn8SOJEsiqJU03SCmw6h6Ex7ggGOM=;
-        b=aK6raknsrvrRPolS7lAcqPknBT9z1hipNuKzyvLgR3QnZ+e6JJzskUaz2NL64NxNPX
-         /E3oo8PJrp2AEByUrirS3wV/u8hFtoJA+WQm9LJWpA9muaKz6OFQhLwfeG9jRIRll5N6
-         C3ca7J9kFjfye3zcsxF/heZC/+7vdhMvrXxpq8U3D6QDDPF3ElF9uUKyXQLWwrhDpSEh
-         RVMBDCBtlihfE4gTshXd07ghhcSWAaHkyBhALm8iDmdijS6uu9UBKHmgkpWc1s2FlJ/m
-         9T9iE+C+JJ8/E1IfgaeQtF/RIJMJu0A9pyZbOT1NrYBoyAxSbAM2TZuiI+PlhBHGVEdo
-         ZrTQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:references:in-reply-to:subject:date
-         :message-id:mime-version:content-transfer-encoding:thread-index
-         :content-language;
-        bh=OQMetjZyUoUPsTFn8SOJEsiqJU03SCmw6h6Ex7ggGOM=;
-        b=LJOzaxTTcr4u68F7SosvHO3QVzPn57n7Ma07Sq1UsZ1Qn9z5s2K5/n6+v56ersIE/W
-         SU6b/lNRbdd3g75+L6fJ456xwfRCT7xYmLfQybg8fu5qS1FDmlgm7wCc8H//hiUmTPge
-         EiDu9kbdZTlJHqOQRuckti5e8+m2vsb5QB0U4G3uFwfuucoBgdHiVJpr0XOlsPhX/8wH
-         OP5lmIweWV3sWgrIgEHup9DiLNj4kufISmm5wwrIfUq/7howTEBaigJlr9dYVtme9uWb
-         ow2ITsg7dVQ7s2aYA5aeUEoAlqCnSX7HXCrYXb1d0ukFKJAGyo/vAL6wAF4HmSeWuEWG
-         sl8Q==
-X-Gm-Message-State: APjAAAW1+MPG1QCChCWxlEoyWh+LOxUifJjq3iQOHv11HsIUBwcHt5Rz
-        f663i+SN8C70xMhICaarkD0=
-X-Google-Smtp-Source: APXvYqz5xJA4rHilmB13nL0BZpDwoS4B9iQghmci4gARVVr5cxYmXdZfoVZXl44hYYfeG7ksdtEfGg==
-X-Received: by 2002:a02:aa8f:: with SMTP id u15mr95274817jai.39.1561079325719;
-        Thu, 20 Jun 2019 18:08:45 -0700 (PDT)
-Received: from AlexPC (CPEac9e17937810-CM64777dd8e660.cpe.net.cable.rogers.com. [174.112.199.101])
-        by smtp.gmail.com with ESMTPSA id t133sm2863100iof.21.2019.06.20.18.08.44
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 20 Jun 2019 18:08:44 -0700 (PDT)
-From:   <alex.bou9@gmail.com>
-To:     "'Dan Carpenter'" <dan.carpenter@oracle.com>,
-        "'Andrew Morton'" <akpm@linux-foundation.org>
-Cc:     "'Ira Weiny'" <ira.weiny@intel.com>,
-        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
-        "'Matt Porter'" <mporter@kernel.crashing.org>
-References: <20190529110601.GB19119@mwanda>
-In-Reply-To: <20190529110601.GB19119@mwanda>
-Subject: RE: [PATCH] rapidio/mport_cdev: NUL terminate some strings
-Date:   Thu, 20 Jun 2019 21:08:43 -0400
-Message-ID: <001101d527cd$e03b0180$a0b10480$@gmail.com>
+        Thu, 20 Jun 2019 21:14:49 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5L1DeA8042178;
+        Fri, 21 Jun 2019 01:14:21 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
+ from : references : date : in-reply-to : message-id : mime-version :
+ content-type; s=corp-2018-07-02;
+ bh=6IlbzkV3Z0HNy70iucmx+Oaex/RmrCR3lowOfenjYsI=;
+ b=dfS4HZzZZq8KHEakbGTQFoXeMoo7bl8KAPqFDOSRdzf3WCRz8Tzm7DGjj61Ou3BD+4jW
+ kePMfetzto8EL5mLnJYv8vuJFWhKQpsZuJOhG+mKcp4SOot+PW8vJMLx544EYAdFZ9ZD
+ K77EL0rig5qVzEJ7KYUVNxsfUvteYfN1IuFxwdxG+Fy0yYsOOuo6eI2v5sMyp1jfZiHc
+ HjJdnj28u7QVyLGLeqhDL20LYaQI5pdJGJzTbg50FjkiaryTikwdrBZbwTMGUJ5rAvxm
+ JcPo0Hxw2E/K0Jy9xTAVwPlG0l7jCvLmqCpWBa8QgM+FsNnbLM7BWhclwkWZGZPCrhZh WQ== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by userp2120.oracle.com with ESMTP id 2t7809kubk-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 21 Jun 2019 01:14:21 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5L1DTSE167400;
+        Fri, 21 Jun 2019 01:14:21 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userp3020.oracle.com with ESMTP id 2t77ynxt6u-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 21 Jun 2019 01:14:21 +0000
+Received: from abhmp0020.oracle.com (abhmp0020.oracle.com [141.146.116.26])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x5L1EACp015929;
+        Fri, 21 Jun 2019 01:14:13 GMT
+Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 21 Jun 2019 01:14:09 +0000
+To:     James Bottomley <James.Bottomley@HansenPartnership.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Christoph Hellwig <hch@lst.de>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Hannes Reinecke <hare@suse.com>
+Subject: Re: linux-next: manual merge of the scsi tree with Linus' tree
+From:   "Martin K. Petersen" <martin.petersen@oracle.com>
+Organization: Oracle Corporation
+References: <20190522100808.66994f6b@canb.auug.org.au>
+        <20190528114320.30637398@canb.auug.org.au>
+        <20190621095907.4a6a50fa@canb.auug.org.au>
+        <CAHk-=whVBjssws88tSeoVLG5o5ZWXQu=S7rv-0Hd3qt9=VYsTQ@mail.gmail.com>
+        <1561077341.7970.47.camel@HansenPartnership.com>
+Date:   Thu, 20 Jun 2019 21:14:07 -0400
+In-Reply-To: <1561077341.7970.47.camel@HansenPartnership.com> (James
+        Bottomley's message of "Thu, 20 Jun 2019 17:35:41 -0700")
+Message-ID: <yq1fto3pwo0.fsf@oracle.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1.92 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQHqSTig6vd4VCxw0340JcsQqG4IG6Z7CPbw
-Content-Language: en-us
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9294 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=963
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1906210008
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9294 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1906210008
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Acked-by: Alexandre Bounine <alex.bou9@gmail.com>  
 
------Original Message-----
-From: Dan Carpenter <dan.carpenter@oracle.com> 
-Sent: Wednesday, May 29, 2019 7:06 AM
-To: Matt Porter <mporter@kernel.crashing.org>
-Cc: Alexandre Bounine <alex.bou9@gmail.com>; Andrew Morton
-<akpm@linux-foundation.org>; Ira Weiny <ira.weiny@intel.com>;
-linux-kernel@vger.kernel.org; kernel-janitors@vger.kernel.org
-Subject: [PATCH] rapidio/mport_cdev: NUL terminate some strings
+James,
 
-The dev_info.name[] array has space for RIO_MAX_DEVNAME_SZ + 1
-characters.  But the problem here is that we don't ensure that the user
-put a NUL terminator on the end of the string.  It could lead to an out
-of bounds read.
+> There's two problems.  One is simple terminology: the
+> Documentation/process/licence-rules.rst say:
+>
+> GPL-2.0 means GPL 2 only
+> GPL-2.0+ means GPL 2 or later
+>
+> I believe RMS made a fuss about this and he finally agreed to 
+>
+> GPL-2.0-only
+> GPL-2.0-or-later
 
-Fixes: e8de370188d0 ("rapidio: add mport char device driver")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
- drivers/rapidio/devices/rio_mport_cdev.c | 2 ++
- 1 file changed, 2 insertions(+)
+Looks like there are tons of the old style SPDX tags in the kernel. Is
+there going to be a treewide conversion to the new tag format?
 
-diff --git a/drivers/rapidio/devices/rio_mport_cdev.c
-b/drivers/rapidio/devices/rio_mport_cdev.c
-index 4a4a75fa26d5..3440b3e8e578 100644
---- a/drivers/rapidio/devices/rio_mport_cdev.c
-+++ b/drivers/rapidio/devices/rio_mport_cdev.c
-@@ -1690,6 +1690,7 @@ static int rio_mport_add_riodev(struct mport_cdev_priv
-*priv,
- 
- 	if (copy_from_user(&dev_info, arg, sizeof(dev_info)))
- 		return -EFAULT;
-+	dev_info.name[sizeof(dev_info.name) - 1] = '\0';
- 
- 	rmcd_debug(RDEV, "name:%s ct:0x%x did:0x%x hc:0x%x", dev_info.name,
- 		   dev_info.comptag, dev_info.destid, dev_info.hopcount);
-@@ -1821,6 +1822,7 @@ static int rio_mport_del_riodev(struct mport_cdev_priv
-*priv, void __user *arg)
- 
- 	if (copy_from_user(&dev_info, arg, sizeof(dev_info)))
- 		return -EFAULT;
-+	dev_info.name[sizeof(dev_info.name) - 1] = '\0';
- 
- 	mport = priv->md->mport;
- 
+Just wondering how much to clean up given that the files Christoph
+touched only constitute a subset of the old style tags found under
+drivers/scsi.
+
 -- 
-2.20.1
-
+Martin K. Petersen	Oracle Linux Engineering
