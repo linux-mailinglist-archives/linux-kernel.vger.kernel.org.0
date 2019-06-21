@@ -2,99 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6ADCA4EDA2
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 19:13:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3621D4EDB9
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 19:19:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726141AbfFURNr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Jun 2019 13:13:47 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:42912 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725985AbfFURNr (ORCPT
+        id S1726073AbfFURTY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Jun 2019 13:19:24 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:55496 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725985AbfFURTY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Jun 2019 13:13:47 -0400
-Received: by mail-wr1-f68.google.com with SMTP id x17so7285632wrl.9
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2019 10:13:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=qxEeJzLHY0AeUcloFKyhFKP9J1yDvwDSvarBW0sLpWk=;
-        b=p5YERf40iErVwSZIGOYNWLyxjEuRXNvD/C2U5Y+E51jvy3Rq/RKLLwPOdqeoC2lL6B
-         tVbknWqPGSwqGmNBSCWCUa8F7rKWJbV1a7DPqZHvI8boVpM+e7aFH/S7NoKXpTHxUCZJ
-         wNekLDjNPqeAZEmYlsvzdXVAozPX/u9XiQnp7EUSdNG38yquIJMQMcKZMaOXeqaNa5F1
-         0yEQ9T5nVIQa43R+17s5rBS9JgXCTWJAbXEpuPzUK8ewJrtKe1vMCxAnVT02hs2z0DU4
-         /jv8AY43RGiCYPlt0ozbf+kq01jnXv3cNkg9piIzxT217H0mYYA9YkTrZ9sG0dJqbHN1
-         GWWg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=qxEeJzLHY0AeUcloFKyhFKP9J1yDvwDSvarBW0sLpWk=;
-        b=AEubLuZ+T0Jrk5bnKbyHHbOPkh/vp8RfYacfjTtxS6gjvGcffad3gYzozwETDDJgg9
-         gjUHyWlkWjSlYvE7Pa4pZkKNM6zRXfzxSsxwEL0S1rjevWUUIdtyhHRBnft901hllnus
-         Jjcj/KeKjYhHbPmZ3llSHGQbJqAKW+9HVercVB+pbpXh4FpPRsJG/77QEjwgSpI/+tpT
-         BsKF9YKt+dpatJ/ANu1C+R+N2cJ5N7MGtnzq1pdLL1eAagAlSvM4xA5xdW6ko26zoah2
-         BYDWbWShSpJuwejSu0LxefMflJo9M1/1LaNqvWiAtFvd1Disf8ipxI3a4SeaY6aTo/XF
-         cxJw==
-X-Gm-Message-State: APjAAAWXd/XwJu4Gg9GnjZ2BTr2Dm4gFn4Q2WyyW/5ntEk8AMvsesplJ
-        VSV0qQJgkEWCO67YqxmupILT/VdpJIZSnnnlvrVU
-X-Google-Smtp-Source: APXvYqwAeQ+zEBR2/g5pAVKTpbJ9LVgSg5JtBVMrUMNnV3DXee1zuaDai4mk8y32FoPD80tF0FRkNZK7YSifRRNDIaU=
-X-Received: by 2002:a5d:5702:: with SMTP id a2mr55706240wrv.89.1561137226363;
- Fri, 21 Jun 2019 10:13:46 -0700 (PDT)
+        Fri, 21 Jun 2019 13:19:24 -0400
+Received: from p5b06daab.dip0.t-ipconnect.de ([91.6.218.171] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1heNC4-0002RK-SJ; Fri, 21 Jun 2019 19:19:21 +0200
+Date:   Fri, 21 Jun 2019 19:19:20 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Zhenzhong Duan <zhenzhong.duan@oracle.com>
+cc:     linux-kernel@vger.kernel.org, mingo@kernel.org, bp@alien8.de,
+        x86@kernel.org, hpa@zytor.com, jgross@suse.com,
+        ndesaulniers@google.com, gregkh@linuxfoundation.org,
+        srinivas.eeda@oracle.com
+Subject: Re: [PATCH] x86/speculation/mds: Flush store buffer after wake up
+ from sleep
+In-Reply-To: <1561011237-12312-1-git-send-email-zhenzhong.duan@oracle.com>
+Message-ID: <alpine.DEB.2.21.1906211916000.5503@nanos.tec.linutronix.de>
+References: <1561011237-12312-1-git-send-email-zhenzhong.duan@oracle.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-References: <20190621163921.26188-1-puranjay12@gmail.com> <20190621163921.26188-4-puranjay12@gmail.com>
-In-Reply-To: <20190621163921.26188-4-puranjay12@gmail.com>
-From:   Bjorn Helgaas <bhelgaas@google.com>
-Date:   Fri, 21 Jun 2019 12:13:34 -0500
-Message-ID: <CAErSpo4BBczS7hdwmXF=07LqUtT1-3e1Q1Z2r0+J6N=rVhXb7g@mail.gmail.com>
-Subject: Re: [PATCH 3/3] net: ethernet: atheros: atlx: Remove unused and
- private PCI definitions
-To:     Puranjay Mohan <puranjay12@gmail.com>
-Cc:     Shuah Khan <skhan@linuxfoundation.org>,
-        Bjorn Helgaas <bjorn@helgaas.com>,
-        netdev <netdev@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-kernel-mentees@lists.linuxfoundation.org,
-        Linux PCI <linux-pci@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 21, 2019 at 11:40 AM Puranjay Mohan <puranjay12@gmail.com> wrote:
->
-> Remove unused private PCI definitions from skfbi.h because generic PCI
-> symbols are already included from pci_regs.h.
->
-> Signed-off-by: Puranjay Mohan <puranjay12@gmail.com>
-> ---
->  drivers/net/ethernet/atheros/atlx/atl2.h | 2 --
->  drivers/net/ethernet/atheros/atlx/atlx.h | 1 -
->  2 files changed, 3 deletions(-)
->
-> diff --git a/drivers/net/ethernet/atheros/atlx/atl2.h b/drivers/net/ethernet/atheros/atlx/atl2.h
-> index c53b810a831d..1b25d6d747de 100644
-> --- a/drivers/net/ethernet/atheros/atlx/atl2.h
-> +++ b/drivers/net/ethernet/atheros/atlx/atl2.h
-> @@ -32,7 +32,6 @@
->  int ethtool_ioctl(struct ifreq *ifr);
->  #endif
->
-> -#define PCI_COMMAND_REGISTER   PCI_COMMAND
->  #define CMD_MEM_WRT_INVALIDATE PCI_COMMAND_INVALIDATE
->
->  #define ATL2_WRITE_REG(a, reg, value) (iowrite32((value), \
-> @@ -202,7 +201,6 @@ static void atl2_force_ps(struct atl2_hw *hw);
->  #define MII_DBG_DATA   0x1E
->
->  /* PCI Command Register Bit Definitions */
-> -#define PCI_COMMAND            0x04
->  #define CMD_IO_SPACE           0x0001
->  #define CMD_MEMORY_SPACE       0x0002
->  #define CMD_BUS_MASTER         0x0004
+On Wed, 19 Jun 2019, Zhenzhong Duan wrote:
 
-These bit definitions (CMD_IO_SPACE, CMD_MEMORY_SPACE, etc) are also
-generic PCI things that should be replaced with PCI_COMMAND_IO,
-PCI_COMMAND_MEMORY, etc.  I haven't looked at the file, but there are
-likely more.
+> Intel document says: "When a thread wakes from a sleep state, the store
+> buffer is repartitioned again. This causes the store buffer to transfer
+> store buffer entries from the thread that was already active to the one
+> which just woke up."
+> 
+> To avoid data leak from sibling thread to the woken thread, flush store
+> buffer right after wake up.
+
+That's a pointless exercise. The buffers are flushed again when returning
+to user space. Inside the kernel the potential leak is completely
+uninteresting unless you consider the kernel as a malicious entity.
+ 
+> Move mds_idle_clear_cpu_buffers() after trace_hardirqs_on() to ensure
+> all store buffer entries are flushed before sleep.
+
+I'm fine with that change, albeit trace_hardirqs_on() is hardly leaking
+somethimg interesting.
+
+Thanks,
+
+	tglx
