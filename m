@@ -2,113 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BE62D4E96B
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 15:38:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4C3E54E979
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 15:39:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726314AbfFUNiY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Jun 2019 09:38:24 -0400
-Received: from mail-vs1-f66.google.com ([209.85.217.66]:35143 "EHLO
-        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725975AbfFUNiY (ORCPT
+        id S1726353AbfFUNjO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Jun 2019 09:39:14 -0400
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:42832 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726169AbfFUNjN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Jun 2019 09:38:24 -0400
-Received: by mail-vs1-f66.google.com with SMTP id u124so3846747vsu.2;
-        Fri, 21 Jun 2019 06:38:23 -0700 (PDT)
+        Fri, 21 Jun 2019 09:39:13 -0400
+Received: by mail-qk1-f193.google.com with SMTP id b18so4391991qkc.9
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2019 06:39:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=y3RLgKLOFIxvZMzXOwU7F5Yurn0c+NOUw+jUTBkhCgo=;
-        b=mF442hqXyWC8aR9fMe4LMrIymhJ7j/2eWnIxti4QdqJLT13eFvyCmkjK/JQY0DiqUe
-         Rq+PluQKYySpM44e6mT8Fm8qEge3slgpf2R8P8egW9Hyx/L0JR2nPtmBa7matk//sNQW
-         diWPsvfkFSQHfIHvRtYfVlPMNPrI7TOvuYKlGLalZP/wLcqU5gIoyZkN6gaJJeAwupkC
-         8ancpd/cKIYDueEMn3+rvFNdtVbyXc3MqtnyGv0wiwK6rvwrOlACLt9uxgIetlB2wdsF
-         kYVkSBrSp7gkRX0eAVJhu5jnxXWNG+cdqzM9jEDNm/UCzUyCTUvT7BlY0XV2fvJJTLY3
-         J2ig==
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=W1v9REbUjdM2ZPgzn5WvSncnmCktMY/9EZgX6QI0HOA=;
+        b=LOaqH/DlAyTiaVsb+/cJ5fNqCKK9dcYheZzqBkbU8/dJCNcbdbTdvycRRW6WsdWNrq
+         s1KlIlJ8pqtzQuZr4K+pscDPf+VAoNvvbLh7zGps691WEcEWVHVgG/y+SfGLilLH8xno
+         0bDlX2xF7lyCGAB4ZXKagYnPnFu5m/m8VbNEpdAbBtffvGdOG5+2xjfKlD1S7GX/sCJ8
+         Tki+kAZuPALbN16uIeo3/RJOzrwHbwCpqBWSiMTS52KfM4E4JV89wOogvhl4vLh60o2b
+         9hG2keijKi4DWyDadCzOTDOZpyKgf7ZyhWBT1TsI17RSZcSyUl57cSd5RfTlT2NIe0b0
+         X9Vw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=y3RLgKLOFIxvZMzXOwU7F5Yurn0c+NOUw+jUTBkhCgo=;
-        b=sHgOQznNqWDy5VzJfpZkiIc34P26Z7vlgx6G5B3CfVdFupaBJ6KKoT3knEAhpwycMy
-         RCQnXpwjSyAqp/xfye0zEfpi1jv5IH7HXSI2SGguf5sE1zPz79DskOpjRmmAhsYZNn33
-         ODFY0h4DjngHgX/1GqQfETYJjcqrxwK9wsc/ay56Y89gAXltN8AiIZpUccx+bui9pgD5
-         8NI5DLWEo7Z+CLN1UYS4FksgNJnFZznlTjiS0Txs+1bI8CXgqOATN8I+d7vJjQru0HCy
-         HYEnaY4ZSdXepuC/AzrbFMf3hwuE9Kf/++rXLxEpuhjSL35/UXdNUiiGO3kWnNMZdwTr
-         nv8w==
-X-Gm-Message-State: APjAAAWnFMVgKhwboa+EqhexjtaR7XjYc5G/ap+NqRmIIRfSRg0i21SF
-        mCco8960SpkwMniulC9MiEMRlWIkLVGvLbVfsWU=
-X-Google-Smtp-Source: APXvYqwXhGSaeU4cIvOV+lL4GHqdL9eNUIi3gdmDB80kH/6pe8U/CrLJNfH7mhCD+EiR1b9dDIWgOj4eTxHfMp3XkCI=
-X-Received: by 2002:a67:f8d4:: with SMTP id c20mr11787135vsp.239.1561124302979;
- Fri, 21 Jun 2019 06:38:22 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=W1v9REbUjdM2ZPgzn5WvSncnmCktMY/9EZgX6QI0HOA=;
+        b=mzsgTHfy0CHgBA60XDT+rRxABoZxrW5NYRAHJelWd1JVyNhADXHmfGh1hzw+oesfTt
+         qeZ6l+/gz5OUtoqGPOtoaptjd8hqTEmNkaakP343tjcX1zOZ/nrXPdHeH+1Tf8cHOBXH
+         zkVoBNOYRCejY7WjTRT7QZjcZs6KMFOiVnNm2NU/0hUr4eleffXD4lBGiuv6Db8iAHNk
+         RMteGPJHgUa8uYcxFbacmFSI3vDD3frnpACpeVoz9Lgg6d5l06OFsVhRUHwPqQR6H4hI
+         jXLxrFDHqsWG45OntCIGQNpZD3jmxgq2nG/XDOkFdYjMctHv7dxdPVEtaPedechL0FPH
+         nwKg==
+X-Gm-Message-State: APjAAAVDyIZ7Wg96NTKsDAFv4qXs5hoFfk82W43VDgb6sp3rvNS5+Rqu
+        2gTk2WrfJLD4bvum84biCF28hw==
+X-Google-Smtp-Source: APXvYqwDjXm2EEI8RDeCs7A5M5DgZpv1lwL8EVk5ylfRpHYYLvhclwPmRsPezAJyTvAyxaG7iZQC7A==
+X-Received: by 2002:a37:ef01:: with SMTP id j1mr40587433qkk.163.1561124352349;
+        Fri, 21 Jun 2019 06:39:12 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-156-34-55-100.dhcp-dynamic.fibreop.ns.bellaliant.net. [156.34.55.100])
+        by smtp.gmail.com with ESMTPSA id a6sm1525606qth.76.2019.06.21.06.39.11
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 21 Jun 2019 06:39:11 -0700 (PDT)
+Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1heJl1-00005R-4p; Fri, 21 Jun 2019 10:39:11 -0300
+Date:   Fri, 21 Jun 2019 10:39:11 -0300
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Khalid Aziz <khalid.aziz@oracle.com>,
+        Andrey Konovalov <andreyknvl@google.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        linux-mips@vger.kernel.org, linux-sh@vger.kernel.org,
+        sparclinux@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-mm@kvack.org, x86@kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 01/16] mm: use untagged_addr() for get_user_pages_fast
+ addresses
+Message-ID: <20190621133911.GL19891@ziepe.ca>
+References: <20190611144102.8848-1-hch@lst.de>
+ <20190611144102.8848-2-hch@lst.de>
 MIME-Version: 1.0
-References: <1561064991-16874-1-git-send-email-alcooperx@gmail.com>
- <1561064991-16874-4-git-send-email-alcooperx@gmail.com> <1561095579.32589.3.camel@mhfsdcap03>
-In-Reply-To: <1561095579.32589.3.camel@mhfsdcap03>
-From:   Alan Cooper <alcooperx@gmail.com>
-Date:   Fri, 21 Jun 2019 09:39:08 -0400
-Message-ID: <CAOGqxeWUHbo51k-BpBJ0NT=s1hhJW5TOQ_js2QyqHV=mGbYUEw@mail.gmail.com>
-Subject: Re: [PATCH 3/6] usb: bdc: driver may fail to get USB PHY
-To:     Chunfeng Yun <chunfeng.yun@mediatek.com>
-Cc:     ": Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
-        DTML <devicetree@vger.kernel.org>,
-        Felipe Balbi <balbi@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        USB list <linux-usb@vger.kernel.org>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190611144102.8848-2-hch@lst.de>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It's been very useful to have the DEFER debug message so I'd like to
-leave in the check for DEFER. I should not be skipping the clock
-disable, so I'll "goto clk_cleanup" for both cases.
+On Tue, Jun 11, 2019 at 04:40:47PM +0200, Christoph Hellwig wrote:
+> This will allow sparc64 to override its ADI tags for
+> get_user_pages and get_user_pages_fast.
+> 
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+>  mm/gup.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/mm/gup.c b/mm/gup.c
+> index ddde097cf9e4..6bb521db67ec 100644
+> +++ b/mm/gup.c
+> @@ -2146,7 +2146,7 @@ int __get_user_pages_fast(unsigned long start, int nr_pages, int write,
+>  	unsigned long flags;
+>  	int nr = 0;
+>  
+> -	start &= PAGE_MASK;
+> +	start = untagged_addr(start) & PAGE_MASK;
+>  	len = (unsigned long) nr_pages << PAGE_SHIFT;
+>  	end = start + len;
 
-Thanks
-Al
+Hmm, this function, and the other, goes on to do:
 
-On Fri, Jun 21, 2019 at 1:39 AM Chunfeng Yun <chunfeng.yun@mediatek.com> wrote:
->
-> On Thu, 2019-06-20 at 17:09 -0400, Al Cooper wrote:
-> > Initialization order is important for the USB PHY and the PHY clients.
-> > The init order is based on the build order of the drivers in the
-> > makefiles and the PHY drivers are built early to help with
-> > dependencies, but the new SCMI based clock subsystem has the side
-> > effect of making some additional drivers DEFER until the clock
-> > is ready. This is causing the USB PHY driver to defer which is causing
-> > some PHY clients to fail when they try to get the PHY. The fix is to have
-> > the client driver return DEFER when it's "get phy" routine returns DEFER.
-> >
-> > Signed-off-by: Al Cooper <alcooperx@gmail.com>
-> > ---
-> >  drivers/usb/gadget/udc/bdc/bdc_core.c | 6 +++++-
-> >  1 file changed, 5 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/usb/gadget/udc/bdc/bdc_core.c b/drivers/usb/gadget/udc/bdc/bdc_core.c
-> > index 11a43de6c1c6..c794890d785b 100644
-> > --- a/drivers/usb/gadget/udc/bdc/bdc_core.c
-> > +++ b/drivers/usb/gadget/udc/bdc/bdc_core.c
-> > @@ -543,9 +543,13 @@ static int bdc_probe(struct platform_device *pdev)
-> >                       dev, dev->of_node, phy_num);
-> >               if (IS_ERR(bdc->phys[phy_num])) {
-> >                       ret = PTR_ERR(bdc->phys[phy_num]);
-> > +                     if (ret == -EPROBE_DEFER) {
-> > +                             dev_dbg(bdc->dev, "DEFER, waiting for PHY\n");
-> why not disable clock here? when re-probe, will enable clock again.
-> to me, no need check -EPROBE_DEFFER.
-> > +                             return ret;
-> > +                     }
->
-> >                       dev_err(bdc->dev,
-> >                               "BDC phy specified but not found:%d\n", ret);
-> > -                     return ret;
-> > +                     goto clk_cleanup;
-> >               }
-> >       }
-> >
->
->
+        if (unlikely(!access_ok((void __user *)start, len)))
+                return 0;
+
+and I thought that access_ok takes in the tagged pointer?
+
+How about re-order it a bit?
+
+diff --git a/mm/gup.c b/mm/gup.c
+index ddde097cf9e410..f48747ced4723b 100644
+--- a/mm/gup.c
++++ b/mm/gup.c
+@@ -2148,11 +2148,12 @@ int __get_user_pages_fast(unsigned long start, int nr_pages, int write,
+ 
+ 	start &= PAGE_MASK;
+ 	len = (unsigned long) nr_pages << PAGE_SHIFT;
+-	end = start + len;
+-
+ 	if (unlikely(!access_ok((void __user *)start, len)))
+ 		return 0;
+ 
++	start = untagged_ptr(start);
++	end = start + len;
++
+ 	/*
+ 	 * Disable interrupts.  We use the nested form as we can already have
+ 	 * interrupts disabled by get_futex_key.
