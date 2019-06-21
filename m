@@ -2,87 +2,158 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E7A214EB2A
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 16:51:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BF97B4EB10
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 16:50:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726540AbfFUOvS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Jun 2019 10:51:18 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:45237 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726520AbfFUOvQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Jun 2019 10:51:16 -0400
-Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5LEbDMY025341;
-        Fri, 21 Jun 2019 16:51:05 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
- : date : message-id : in-reply-to : references : mime-version :
- content-type; s=STMicroelectronics;
- bh=63y160HFJfBAkQYPLcAgcAmZ5AQpL6Dt+zlImmifyE4=;
- b=LIaIcJCZC0zT5KKJM2srtwt0K7M6fBkSQJyLhKcNawrX3sRFSO3vI8X936Tc4rHvKWis
- RZ6p9eYX5pRL/lSB6iezHw9fmLlEcg7hxxB/blFi/VXiHKSDUEL3pTTvtSfWMtakQW+p
- N1FdaZXoVxlJRn70/JjCvqfnIR9CT6zcKeepcmy3tSnZK8sgad8J0CAXnqSfuiq6OItE
- 5lWnVs3PQaB1zUcDcd9DgxDYAtvGdoBJ4G/QO1WPqDpUVhxnJHHCzrglXN6bgG+Vtk94
- Et08lwVnKukV0pxEmurJ7q7s/5q03u90o9nM7QQrcdrT7/xSFMoKI3LiA0XbGHoYqjU+ Tw== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2t7wxssp1j-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Fri, 21 Jun 2019 16:51:05 +0200
-Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 5B3EA31;
-        Fri, 21 Jun 2019 14:51:04 +0000 (GMT)
-Received: from Webmail-eu.st.com (sfhdag6node2.st.com [10.75.127.17])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 3FF542BE2;
-        Fri, 21 Jun 2019 14:51:04 +0000 (GMT)
-Received: from localhost (10.75.127.49) by SFHDAG6NODE2.st.com (10.75.127.17)
- with Microsoft SMTP Server (TLS) id 15.0.1347.2; Fri, 21 Jun 2019 16:51:03
- +0200
-From:   Christophe Kerello <christophe.kerello@st.com>
-To:     <robh+dt@kernel.org>, <mark.rutland@arm.com>,
-        <alexandre.torgue@st.com>, <linux@armlinux.org.uk>,
-        <olof@lixom.net>, <arnd@arndb.de>
-CC:     <mcoquelin.stm32@gmail.com>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Christophe Kerello <christophe.kerello@st.com>
-Subject: [PATCH 4/4] ARM: multi_v7_defconfig: add FMC2 NAND  controller support
-Date:   Fri, 21 Jun 2019 16:49:50 +0200
-Message-ID: <1561128590-14621-5-git-send-email-christophe.kerello@st.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1561128590-14621-1-git-send-email-christophe.kerello@st.com>
-References: <1561128590-14621-1-git-send-email-christophe.kerello@st.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.75.127.49]
-X-ClientProxiedBy: SFHDAG8NODE1.st.com (10.75.127.22) To SFHDAG6NODE2.st.com
- (10.75.127.17)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-21_10:,,
- signatures=0
+        id S1726205AbfFUOuj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Jun 2019 10:50:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39318 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726031AbfFUOuj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Jun 2019 10:50:39 -0400
+Received: from devnote2 (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A8CC92089E;
+        Fri, 21 Jun 2019 14:50:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1561128638;
+        bh=S09RYkUMMxHYoHx76cTWh53Cqr6Fibp+qLvkSIpPItQ=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=VTUHdnMaOZ0iDcqeySu7ks48hk5JDg+Vls1nObiTqE94DrxyTAcElQrmmD0FfzeE9
+         AwmbDFds/aoQsDKuurx+IyjCDHZpJZduH7+ddd7CTjxtE1jKJw5wlP3K/vPLj2FMDx
+         wx5gT00rQzju9oABrDET2XzyIALVVE/Zxk+5tSlI=
+Date:   Fri, 21 Jun 2019 23:50:34 +0900
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>
+Cc:     Michael Ellerman <mpe@ellerman.id.au>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        <linuxppc-dev@lists.ozlabs.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 7/7] powerpc/kprobes: Allow probing on any ftrace
+ address
+Message-Id: <20190621235034.acc00fc3e2b2c7e89caa1fd5@kernel.org>
+In-Reply-To: <d26f5467577ff0aeecea55e7035ea64e303bdf17.1560868106.git.naveen.n.rao@linux.vnet.ibm.com>
+References: <cover.1560868106.git.naveen.n.rao@linux.vnet.ibm.com>
+        <d26f5467577ff0aeecea55e7035ea64e303bdf17.1560868106.git.naveen.n.rao@linux.vnet.ibm.com>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds FMC2 NAND controller support used by STM32MP SOCs.
+On Tue, 18 Jun 2019 20:17:06 +0530
+"Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com> wrote:
 
-Signed-off-by: Christophe Kerello <christophe.kerello@st.com>
----
- arch/arm/configs/multi_v7_defconfig | 1 +
- 1 file changed, 1 insertion(+)
+> With KPROBES_ON_FTRACE, kprobe is allowed to be inserted on instructions
+> that branch to _mcount (referred to as ftrace location). With
+> -mprofile-kernel, we now include the preceding 'mflr r0' as being part
+> of the ftrace location.
+> 
+> However, by default, probing on an instruction that is not actually the
+> branch to _mcount() is prohibited, as that is considered to not be at an
+> instruction boundary. This is not the case on powerpc, so allow the same
+> by overriding arch_check_ftrace_location()
+> 
+> In addition, we update kprobe_ftrace_handler() to detect this scenarios
+> and to pass the proper nip to the pre and post probe handlers.
+> 
+> Signed-off-by: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
+> ---
+>  arch/powerpc/kernel/kprobes-ftrace.c | 30 ++++++++++++++++++++++++++++
+>  1 file changed, 30 insertions(+)
+> 
+> diff --git a/arch/powerpc/kernel/kprobes-ftrace.c b/arch/powerpc/kernel/kprobes-ftrace.c
+> index 972cb28174b2..6a0bd3c16cb6 100644
+> --- a/arch/powerpc/kernel/kprobes-ftrace.c
+> +++ b/arch/powerpc/kernel/kprobes-ftrace.c
+> @@ -12,14 +12,34 @@
+>  #include <linux/preempt.h>
+>  #include <linux/ftrace.h>
+>  
+> +/*
+> + * With -mprofile-kernel, we patch two instructions -- the branch to _mcount
+> + * as well as the preceding 'mflr r0'. Both these instructions are claimed
+> + * by ftrace and we should allow probing on either instruction.
+> + */
+> +int arch_check_ftrace_location(struct kprobe *p)
+> +{
+> +	if (ftrace_location((unsigned long)p->addr))
+> +		p->flags |= KPROBE_FLAG_FTRACE;
+> +	return 0;
+> +}
+> +
+>  /* Ftrace callback handler for kprobes */
+>  void kprobe_ftrace_handler(unsigned long nip, unsigned long parent_nip,
+>  			   struct ftrace_ops *ops, struct pt_regs *regs)
+>  {
+>  	struct kprobe *p;
+> +	int mflr_kprobe = 0;
+>  	struct kprobe_ctlblk *kcb;
+>  
+>  	p = get_kprobe((kprobe_opcode_t *)nip);
+> +	if (unlikely(!p)) {
 
-diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
-index e386f35..092255c 100644
---- a/arch/arm/configs/multi_v7_defconfig
-+++ b/arch/arm/configs/multi_v7_defconfig
-@@ -197,6 +197,7 @@ CONFIG_MTD_NAND_GPMI_NAND=y
- CONFIG_MTD_NAND_BRCMNAND=y
- CONFIG_MTD_NAND_VF610_NFC=y
- CONFIG_MTD_NAND_DAVINCI=y
-+CONFIG_MTD_NAND_STM32_FMC2=y
- CONFIG_MTD_SPI_NOR=y
- CONFIG_MTD_UBI=y
- CONFIG_BLK_DEV_LOOP=y
+Hmm, is this really unlikely? If we put a kprobe on the second instruction address,
+we will see p == NULL always.
+
+> +		p = get_kprobe((kprobe_opcode_t *)(nip - MCOUNT_INSN_SIZE));
+> +		if (!p)
+
+Here will be unlikely, because we can not find kprobe at both of nip and
+nip - MCOUNT_INSN_SIZE.
+
+> +			return;
+> +		mflr_kprobe = 1;
+> +	}
+> +
+>  	if (unlikely(!p) || kprobe_disabled(p))
+
+"unlikely(!p)" is not needed here.
+
+Thank you,
+
+>  		return;
+>  
+> @@ -33,6 +53,9 @@ void kprobe_ftrace_handler(unsigned long nip, unsigned long parent_nip,
+>  		 */
+>  		regs->nip -= MCOUNT_INSN_SIZE;
+>  
+> +		if (mflr_kprobe)
+> +			regs->nip -= MCOUNT_INSN_SIZE;
+> +
+>  		__this_cpu_write(current_kprobe, p);
+>  		kcb->kprobe_status = KPROBE_HIT_ACTIVE;
+>  		if (!p->pre_handler || !p->pre_handler(p, regs)) {
+> @@ -45,6 +68,8 @@ void kprobe_ftrace_handler(unsigned long nip, unsigned long parent_nip,
+>  				kcb->kprobe_status = KPROBE_HIT_SSDONE;
+>  				p->post_handler(p, regs, 0);
+>  			}
+> +			if (mflr_kprobe)
+> +				regs->nip += MCOUNT_INSN_SIZE;
+>  		}
+>  		/*
+>  		 * If pre_handler returns !0, it changes regs->nip. We have to
+> @@ -57,6 +82,11 @@ NOKPROBE_SYMBOL(kprobe_ftrace_handler);
+>  
+>  int arch_prepare_kprobe_ftrace(struct kprobe *p)
+>  {
+> +	if ((unsigned long)p->addr & 0x03) {
+> +		printk("Attempt to register kprobe at an unaligned address\n");
+> +		return -EILSEQ;
+> +	}
+> +
+>  	p->ainsn.insn = NULL;
+>  	p->ainsn.boostable = -1;
+>  	return 0;
+> -- 
+> 2.22.0
+> 
+
+
 -- 
-1.9.1
-
+Masami Hiramatsu <mhiramat@kernel.org>
