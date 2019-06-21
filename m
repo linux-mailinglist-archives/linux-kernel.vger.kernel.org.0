@@ -2,76 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0C8994E0CE
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 09:05:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 333D74E0EB
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 09:08:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726307AbfFUHFv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Jun 2019 03:05:51 -0400
-Received: from inva021.nxp.com ([92.121.34.21]:38570 "EHLO inva021.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726008AbfFUHFp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Jun 2019 03:05:45 -0400
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 2296A200911;
-        Fri, 21 Jun 2019 09:05:44 +0200 (CEST)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id E309D200902;
-        Fri, 21 Jun 2019 09:05:33 +0200 (CEST)
-Received: from mega.ap.freescale.net (mega.ap.freescale.net [10.192.208.232])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 67799402DF;
-        Fri, 21 Jun 2019 15:05:21 +0800 (SGT)
-From:   Anson.Huang@nxp.com
-To:     catalin.marinas@arm.com, will@kernel.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, shawnguo@kernel.org, s.hauer@pengutronix.de,
-        kernel@pengutronix.de, festevam@gmail.com, mturquette@baylibre.com,
-        sboyd@kernel.org, leonard.crestez@nxp.com, aisheng.dong@nxp.com,
-        ping.bai@nxp.com, daniel.baluta@nxp.com, peng.fan@nxp.com,
-        abel.vesa@nxp.com, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Cc:     Linux-imx@nxp.com
-Subject: [PATCH 4/4] arm64: dts: imx8mm: Add system counter node
-Date:   Fri, 21 Jun 2019 15:07:20 +0800
-Message-Id: <20190621070720.12395-4-Anson.Huang@nxp.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190621070720.12395-1-Anson.Huang@nxp.com>
-References: <20190621070720.12395-1-Anson.Huang@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1726257AbfFUHIz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Jun 2019 03:08:55 -0400
+Received: from kirsty.vergenet.net ([202.4.237.240]:55706 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726008AbfFUHIy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Jun 2019 03:08:54 -0400
+Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
+        by kirsty.vergenet.net (Postfix) with ESMTPA id 0FC9025AE8A;
+        Fri, 21 Jun 2019 17:08:52 +1000 (AEST)
+Received: by reginn.horms.nl (Postfix, from userid 7100)
+        id 121309408C4; Fri, 21 Jun 2019 09:08:50 +0200 (CEST)
+Date:   Fri, 21 Jun 2019 09:08:50 +0200
+From:   Simon Horman <horms@verge.net.au>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     linux-mmc@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCH] dt-binding: mmc: rename tmio_mmc.txt to renesas_sdhi.txt
+Message-ID: <20190621070849.7efe5qihb3zxgjse@verge.net.au>
+References: <20190621035010.13884-1-yamada.masahiro@socionext.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190621035010.13884-1-yamada.masahiro@socionext.com>
+Organisation: Horms Solutions BV
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Anson Huang <Anson.Huang@nxp.com>
+On Fri, Jun 21, 2019 at 12:50:10PM +0900, Masahiro Yamada wrote:
+> As commit b6147490e6aa ("mmc: tmio: split core functionality, DMA and
+> MFD glue") said, these MMC controllers use the IP from Panasonic.
+> 
+> TMIO (Toshiba Mobile IO) MMC was the first upstreamed user of this IP.
+> The common driver code was split and expanded as 'tmio-mmc-core', then
+> it become historical misnomer since 'tmio' is not the name of this IP
+> in the first place.
+> 
+> In the discussion [1], we decide to keep calling these MMC variants
+> 'TMIO MMC' at least in Linux driver level because renaming all of them
+> is a big churn.
+> 
+> However, DT should not be oriented to a particular project even though
+> it is developed in Linux communities.
+> 
+> Let's stop exporting this unfortunate things to other projects, where
+> there is no good reason to call this "TMIO". Rename the file to
+> renesas_sdhi.txt. In fact, all the information in this file is specific
+> to the Renesas platform.
+> 
+> This commit also removes the first paragraph entirely. The DT-binding
+> should describe the hardware. It is really strange to talk about Linux
+> driver internals such as how the drivers are probed, how platform data
+> are handed off, etc.
+> 
+> [1] https://www.spinics.net/lists/linux-mmc/msg46952.html
+> 
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> ---
+> 
+> I sent this before, but it was dismissed somehow.
+> I am resending this.
 
-Add i.MX8MM system counter node to enable timer-imx-sysctr
-broadcast timer driver.
+Hi Yamada-san,
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
----
- arch/arm64/boot/dts/freescale/imx8mm.dtsi | 9 +++++++++
- 1 file changed, 9 insertions(+)
+I for one am fine with this change.
 
-diff --git a/arch/arm64/boot/dts/freescale/imx8mm.dtsi b/arch/arm64/boot/dts/freescale/imx8mm.dtsi
-index 232a741..f606efa 100644
---- a/arch/arm64/boot/dts/freescale/imx8mm.dtsi
-+++ b/arch/arm64/boot/dts/freescale/imx8mm.dtsi
-@@ -510,6 +510,15 @@
- 				#pwm-cells = <2>;
- 				status = "disabled";
- 			};
-+
-+			system_counter: timer@306a0000 {
-+				compatible = "nxp,sysctr-timer";
-+				reg = <0x306a0000 0x30000>;
-+				interrupts = <GIC_SPI 47 IRQ_TYPE_LEVEL_HIGH>,
-+					     <GIC_SPI 48 IRQ_TYPE_LEVEL_HIGH>;
-+				clocks = <&clk IMX8MM_CLK_SYS_CTR>;
-+				clock-names = "per";
-+			};
- 		};
- 
- 		aips3: bus@30800000 {
--- 
-2.7.4
+My minor nit is that I think that renesas,sdhi.txt would be a slightly
+better filename in terms of consistency with other renesas bindings
+documentation filenames.
 
+> 
+> 
+>  .../bindings/mmc/{tmio_mmc.txt => renesas_sdhi.txt}   | 11 +----------
+>  1 file changed, 1 insertion(+), 10 deletions(-)
+>  rename Documentation/devicetree/bindings/mmc/{tmio_mmc.txt => renesas_sdhi.txt} (87%)
+> 
+> diff --git a/Documentation/devicetree/bindings/mmc/tmio_mmc.txt b/Documentation/devicetree/bindings/mmc/renesas_sdhi.txt
+> similarity index 87%
+> rename from Documentation/devicetree/bindings/mmc/tmio_mmc.txt
+> rename to Documentation/devicetree/bindings/mmc/renesas_sdhi.txt
+> index 2b4f17ca9087..dd08d038a65c 100644
+> --- a/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
+> +++ b/Documentation/devicetree/bindings/mmc/renesas_sdhi.txt
+> @@ -1,13 +1,4 @@
+> -* Toshiba Mobile IO SD/MMC controller
+> -
+> -The tmio-mmc driver doesn't probe its devices actively, instead its binding to
+> -devices is managed by either MFD drivers or by the sh_mobile_sdhi platform
+> -driver. Those drivers supply the tmio-mmc driver with platform data, that either
+> -describe hardware capabilities, known to them, or are obtained by them from
+> -their own platform data or from their DT information. In the latter case all
+> -compulsory and any optional properties, common to all SD/MMC drivers, as
+> -described in mmc.txt, can be used. Additionally the following tmio_mmc-specific
+> -optional bindings can be used.
+> +* Renesas SDHI SD/MMC controller
+>  
+>  Required properties:
+>  - compatible: should contain one or more of the following:
+> -- 
+> 2.17.1
+> 
