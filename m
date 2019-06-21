@@ -2,83 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 48E714E10A
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 09:16:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 972634E117
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 09:21:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726138AbfFUHP7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Jun 2019 03:15:59 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:35568 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726008AbfFUHP7 (ORCPT
+        id S1726264AbfFUHVb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Jun 2019 03:21:31 -0400
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:52846 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726025AbfFUHVb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Jun 2019 03:15:59 -0400
-Received: by mail-lj1-f196.google.com with SMTP id x25so5067273ljh.2
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2019 00:15:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=XSUCOxHlkFUBz5gOkL+YkOnWwRG0wygo2ECnNkuYlL8=;
-        b=WUl1bx9siUegi5mkRjvO0AUJW4wqDwsrKfuE0wgqvrakrSfnVyyWYhq4hLDiihtOM9
-         Bj+vLtsQkFm8q3YNENAPI/kLX6IUZqyTvMDll5Y+RQZILNnYhE/fQOXDFT8x92Sb/QIh
-         ptZZt7RcPTakK/t8xxTixq8x0C8EACOx8N6loE8c3XiBYzjo+8IL++K3413SjLgioott
-         dDgaPF/UNJnsXYnwRyE05lfivJ19hW6ioO9RjEGK7fomY560+2YU8/Dy7gAwYhjWEDi6
-         Jnd0oxQVZXE9wvpeBA4Z1+giXBRvmL8SAdgojhVzTaPxVwTG0RPlu4XdxiWpg4nrybfI
-         xZOA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=XSUCOxHlkFUBz5gOkL+YkOnWwRG0wygo2ECnNkuYlL8=;
-        b=bs22Zy3pO/Sj1rR3YCIx4LtLSUSiYUOqla5/hIMdH9hsKuBBbNPVy1jGEtAM6apLFP
-         xpBCH70LrqzSsRyRs7oLgPqylM3zJVWJ38+6GNy2eYFcg55qHHrx3OxDjR8qaG0OubA5
-         GyDKnS9xvvNYVrk/SUNEq0CIJ9RbwhJB/MPPfZzXuWmfrVUepLgyasxQk8ka0Y94TVaJ
-         7AyQuoIPj8p3dP8/8EVYhP3Xgbnu8jA+jC0Xb6r9JFypFQhvdc57RLVgl6zZZFk3ueab
-         KFGNF8F8TkiYod/LxkFKaBMDUzy17LEIX/kPfRPa92gkxgrqU14BrtpK00fmGKmKbjC0
-         enzA==
-X-Gm-Message-State: APjAAAUYj/VtxmUfzo/xMWn9dQomnuy1AynTpoYj2Nf5HUtCKTzKgtgA
-        C52O50CCJPGEAIDxf3xY6qYsVO7JSFdT0NZYeAM=
-X-Google-Smtp-Source: APXvYqzhL/AKhwy+teH3qpul2SqjNG7jsggu957HBDRYsIjlCc422K7XmDpUjAJ9glKMO/pz4UGKDGnUbUCfRSm6qnY=
-X-Received: by 2002:a2e:50e:: with SMTP id 14mr53636790ljf.5.1561101356981;
- Fri, 21 Jun 2019 00:15:56 -0700 (PDT)
+        Fri, 21 Jun 2019 03:21:31 -0400
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x5L7LTVl070831;
+        Fri, 21 Jun 2019 02:21:29 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1561101689;
+        bh=BwS7Wv9pUKAyjpW6XFRZm7DUw0EuM7u/gRcfp5alsmU=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=XMhGMr3BLtVuVmi0eY0fczAjCV3BuflKfqf/UPn35eBetFILruwqrR9mnKAjJrBle
+         OCv8dLZMX5AKQzEqmipWlIyi69ndUZCCPAXEMaxCZm7isi3Dtg7UEcIPtnotrjh7bd
+         aMM8X6yDFGOL6k2fAbA+3BPkzH4Np4NWEGpNl7CI=
+Received: from DFLE104.ent.ti.com (dfle104.ent.ti.com [10.64.6.25])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x5L7LTWm018851
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 21 Jun 2019 02:21:29 -0500
+Received: from DFLE107.ent.ti.com (10.64.6.28) by DFLE104.ent.ti.com
+ (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Fri, 21
+ Jun 2019 02:21:29 -0500
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE107.ent.ti.com
+ (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Fri, 21 Jun 2019 02:21:29 -0500
+Received: from [172.24.190.233] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id x5L7LROd095477;
+        Fri, 21 Jun 2019 02:21:28 -0500
+Subject: Re: [GIT PULL v2] PHY: for 5.2-rc
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     <linux-kernel@vger.kernel.org>
+References: <20190612102803.25398-1-kishon@ti.com>
+ <3c16d177-adb3-5c42-7e90-49ddae9723cb@ti.com>
+ <20190621064019.GA12643@kroah.com>
+From:   Kishon Vijay Abraham I <kishon@ti.com>
+Message-ID: <105a126a-5897-5607-e371-1af958523631@ti.com>
+Date:   Fri, 21 Jun 2019 12:50:01 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Received: by 2002:ab3:7207:0:0:0:0:0 with HTTP; Fri, 21 Jun 2019 00:15:56
- -0700 (PDT)
-Reply-To: mrrocksteven505@gmail.com
-From:   "Mr.Rock Steven" <rame.straight121@gmail.com>
-Date:   Fri, 21 Jun 2019 09:15:56 +0200
-Message-ID: <CAHNZL18N0E1zbDV_ef-4UMCfd5YU1B4yY4N-Hxqi2tKAEnp-zA@mail.gmail.com>
-Subject: VERY URGENT!!
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190621064019.GA12643@kroah.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dear friend.
-I assume you and your family are in good health. I am the foreign
-operations Manager at one of the leading generation bank here in West
-Africa.
 
-This being a wide world in which it can be difficult to make new
-acquaintances and because it is virtually impossible to know who is
-trustworthy and who can be believed, i have decided to repose
-confidence in you after much fasting and prayer. It is only because of
-this that I have decided to confide in you and to share with you this
-confidential business.
 
-In my bank; there resides an overdue and unclaimed sum of $15.5m,
-(Fifteen Million Five Hundred Thousand Dollars Only) When the account
-holder suddenly passed on, he left no beneficiary who would be
-entitled to the receipt of this fund. For this reason, I have found it
-expedient to transfer this fund to a trustworthy individual with
-capacity to act as foreign business partner. Thus i humbly request
-your assistance to claim this fund.
+On 21/06/19 12:10 PM, Greg Kroah-Hartman wrote:
+> On Fri, Jun 21, 2019 at 11:41:26AM +0530, Kishon Vijay Abraham I wrote:
+>> Hi Greg,
+>>
+>> On 12/06/19 3:57 PM, Kishon Vijay Abraham I wrote:
+>>> Hi Greg,
+>>>
+>>> Please find the updated pull request for 5.2 -rc cycle. Here I dropped
+>>> the patch that added "static" for a function to fix sparse warning.
+>>>
+>>> I'm also sending the patches along with this pull request in case you'd
+>>> like to look them.
+>>>
+>>> Consider merging it in this -rc cycle and let me know if you want me
+>>> to make any further changes.
+>>
+>> Are you planning to merge this?
+> 
+> Ugh, fell through the cracks of my huge TODO mbox at the moment, sorry.
+> It's still there, should get to it next week...
 
-Upon the transfer of this fund in your account, you will take 45% as
-your share from the total fund, 10% will be shared to Charity
-Organizations in both country and 45% will be for me. Please if you
-are really sure you can handle this project, contact me immediately.
+All right, thanks!
 
-Yours Faithful,
-Mr.Rock Steven,
+-Kishon
