@@ -2,160 +2,163 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CFDEF4EE4D
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 20:01:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AEF884EE51
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 20:02:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726359AbfFUSBo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Jun 2019 14:01:44 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:37504 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725992AbfFUSBn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Jun 2019 14:01:43 -0400
-Received: by mail-wr1-f65.google.com with SMTP id v14so7433267wrr.4
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2019 11:01:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=KddSnqJk8N2HccW5lB3LKF7N+h2SRaXdd/fZu8Bc+Lk=;
-        b=YFiDyop64/iXrObHdO/Sgrip+DwxTbflll8pn4Cep0G8Iv7W9rRpxgMdPS77jFhOby
-         iabgmfZsVJ1MLI8DaFurSwQC17KTT8Se54I4TioiBVkhKw8WSCoGkq4N8ERK6Y9Ov/l9
-         q9QTVbVkirEZsYwDXKZ6V8W051djxYse9oxxJVY3gJkS4Uu3dygzTGI0tVqRw+35JoyG
-         +TcFIS3n2HH9KWx3KgWsaESaQR04QNHJPU0G6f/snPEDqmKaA9czthbG4Gso37ZtqR7B
-         4C32o1gzAcPlRMuxgsJpZxuH6uDkwaHqcYTsIKX/R8kYUBOg713j6F/IvaJSo/9yTowY
-         fbKw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=KddSnqJk8N2HccW5lB3LKF7N+h2SRaXdd/fZu8Bc+Lk=;
-        b=RBd2CSvoV384ag7nH5vUJnSm9BzOacz8zVsWJDIWrMzk//IQWf4A+EuivkkOlAtxPS
-         O0bCoJ+csIfopfaigdPISVh9rXAgzN9yBISBF95UCp6Nl/cIN1e8mgZ+M5ED6VQYnGQG
-         ph8p4kNz60JVYYjYZ+OQ4wfd+zLpG1hPxWOSeqM8kbv8onvrFslJhEOVrpLLR8C4hU3b
-         /4vKPUKjKLh6qIrB8xvZGm4oNH5dTbk9sIAmNYoJJCrGh2nmDjq77LtCo2kuPp5gxZ8o
-         JLp8WYRD84el4PrJRkFtXyR+so58I677k4FpmvyMetcR86qHMe9B9iW/HAzkTdjE/trV
-         B9+w==
-X-Gm-Message-State: APjAAAWGY6/k0kuyywg3RMBKD/bOnNI+1vhMo7w6KQU7cCwqrqMUXicx
-        nls2hiOrLuaoGyr78gCbcmd38eG6mJAFQT2boFu12A==
-X-Google-Smtp-Source: APXvYqwEMcu6B71QNn1AX9wEDwh+KSuCxo40a8d81EPKtgRDVo+AbDFvw/Mqx5KeHFCuV0XErdSyljwEf4xriGyxlJ0=
-X-Received: by 2002:a5d:49c4:: with SMTP id t4mr40662447wrs.318.1561140101725;
- Fri, 21 Jun 2019 11:01:41 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190601082722.44543-1-irogers@google.com> <20190621082422.GH3436@hirez.programming.kicks-ass.net>
-In-Reply-To: <20190621082422.GH3436@hirez.programming.kicks-ass.net>
-From:   Ian Rogers <irogers@google.com>
-Date:   Fri, 21 Jun 2019 11:01:29 -0700
-Message-ID: <CAP-5=fW7sMjQEHm+1e=cdAi+ZyP53UyU7xhAbnouMApuxYqrhw@mail.gmail.com>
-Subject: Re: [PATCH] perf cgroups: Don't rotate events for cgroups unnecessarily
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Kan Liang <kan.liang@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Stephane Eranian <eranian@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        id S1726412AbfFUSC0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Jun 2019 14:02:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44912 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725992AbfFUSC0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Jun 2019 14:02:26 -0400
+Received: from localhost.localdomain (unknown [194.230.155.186])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E74762070B;
+        Fri, 21 Jun 2019 18:02:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1561140145;
+        bh=kOXrOATchPDjqjaXCZf5RTt6UsgtNnQOmhinsiIP4As=;
+        h=From:To:Cc:Subject:Date:From;
+        b=U2ZF4cs6LAR1BHvpT4BE4VkqFlx0BF7npjfh4eOOMKHbMwUNLAvnuvvU8lujqfe/d
+         ttVViCvoYT+6LKe3YKk5SJ77aWbwV6pylRhJRASBonj3AnGu7L6R9tDd3EeJPTMzuv
+         qIEJIff9HTbuw/w4zdLFNO3qtbY4hXka1UnsKzxg=
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Joseph Kogut <joseph.kogut@gmail.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Inki Dae <inki.dae@samsung.com>
+Subject: [PATCH v2 1/7] ARM: dts: exynos: Add GPU/Mali 400 node to Exynos3250
+Date:   Fri, 21 Jun 2019 20:02:02 +0200
+Message-Id: <20190621180208.25361-1-krzk@kernel.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 21, 2019 at 1:24 AM Peter Zijlstra <peterz@infradead.org> wrote:
->
-> On Sat, Jun 01, 2019 at 01:27:22AM -0700, Ian Rogers wrote:
-> > @@ -3325,6 +3331,15 @@ static int flexible_sched_in(struct perf_event *event, void *data)
-> >                       sid->can_add_hw = 0;
-> >       }
-> >
-> > +     /*
-> > +      * If the group wasn't scheduled then set that multiplexing is necessary
-> > +      * for the context. Note, this won't be set if the event wasn't
-> > +      * scheduled due to event_filter_match failing due to the earlier
-> > +      * return.
-> > +      */
-> > +     if (event->state == PERF_EVENT_STATE_INACTIVE)
-> > +             sid->ctx->rotate_necessary = 1;
-> > +
-> >       return 0;
-> >  }
->
-> That looked odd; which had me look harder at this function which
-> resulted in the below. Should we not terminate the context interation
-> the moment one flexible thingy fails to schedule?
+Add nodes for GPU (Mali 400) to Exynos3250.  This is still limited and
+not tested:
+1. No dynamic voltage and frequency scaling,
+2. Not sure what to do with CLK_G3D clock responsible for gating entire
+   IP block (it is now being disabled as unused).
 
-If we knew all the events were hardware events then this would be
-true, as there may be software events that always schedule then the
-continued iteration is necessary.
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-Thanks,
-Ian
+---
 
-> --- a/kernel/events/core.c
-> +++ b/kernel/events/core.c
-> @@ -2314,12 +2314,8 @@ group_sched_in(struct perf_event *group_
->                 return 0;
->
->         pmu->start_txn(pmu, PERF_PMU_TXN_ADD);
-> -
-> -       if (event_sched_in(group_event, cpuctx, ctx)) {
-> -               pmu->cancel_txn(pmu);
-> -               perf_mux_hrtimer_restart(cpuctx);
-> -               return -EAGAIN;
-> -       }
-> +       if (event_sched_in(group_event, cpuctx, ctx))
-> +               goto cancel;
->
->         /*
->          * Schedule in siblings as one group (if any):
-> @@ -2348,10 +2344,9 @@ group_sched_in(struct perf_event *group_
->         }
->         event_sched_out(group_event, cpuctx, ctx);
->
-> +cancel:
->         pmu->cancel_txn(pmu);
-> -
->         perf_mux_hrtimer_restart(cpuctx);
-> -
->         return -EAGAIN;
->  }
->
-> @@ -3317,6 +3312,7 @@ static int pinned_sched_in(struct perf_e
->  static int flexible_sched_in(struct perf_event *event, void *data)
->  {
->         struct sched_in_data *sid = data;
-> +       int ret;
->
->         if (event->state <= PERF_EVENT_STATE_OFF)
->                 return 0;
-> @@ -3325,21 +3321,15 @@ static int flexible_sched_in(struct perf
->                 return 0;
->
->         if (group_can_go_on(event, sid->cpuctx, sid->can_add_hw)) {
-> -               if (!group_sched_in(event, sid->cpuctx, sid->ctx))
-> -                       list_add_tail(&event->active_list, &sid->ctx->flexible_active);
-> -               else
-> +               ret = group_sched_in(event, sid->cpuctx, sid->ctx);
-> +               if (ret) {
->                         sid->can_add_hw = 0;
-> +                       sid->ctx->rotate_necessary = 1;
-> +                       return ret;
-> +               }
-> +               list_add_tail(&event->active_list, &sid->ctx->flexible_active);
->         }
->
-> -       /*
-> -        * If the group wasn't scheduled then set that multiplexing is necessary
-> -        * for the context. Note, this won't be set if the event wasn't
-> -        * scheduled due to event_filter_match failing due to the earlier
-> -        * return.
-> -        */
-> -       if (event->state == PERF_EVENT_STATE_INACTIVE)
-> -               sid->ctx->rotate_necessary = 1;
-> -
->         return 0;
->  }
->
+Changes since v1:
+1. Use samsung,exynos4210-mali compatible
+2. Use CLK_G3D as bus clock (clock for entire IP block)
+---
+ arch/arm/boot/dts/exynos3250-artik5.dtsi |  5 ++++
+ arch/arm/boot/dts/exynos3250-monk.dts    |  5 ++++
+ arch/arm/boot/dts/exynos3250-rinato.dts  |  5 ++++
+ arch/arm/boot/dts/exynos3250.dtsi        | 33 ++++++++++++++++++++++++
+ 4 files changed, 48 insertions(+)
+
+diff --git a/arch/arm/boot/dts/exynos3250-artik5.dtsi b/arch/arm/boot/dts/exynos3250-artik5.dtsi
+index ace50e194a45..dee35e3a5c4b 100644
+--- a/arch/arm/boot/dts/exynos3250-artik5.dtsi
++++ b/arch/arm/boot/dts/exynos3250-artik5.dtsi
+@@ -59,6 +59,11 @@
+ 	cpu0-supply = <&buck2_reg>;
+ };
+ 
++&gpu {
++	mali-supply = <&buck3_reg>;
++	status = "okay";
++};
++
+ &i2c_0 {
+ 	#address-cells = <1>;
+ 	#size-cells = <0>;
+diff --git a/arch/arm/boot/dts/exynos3250-monk.dts b/arch/arm/boot/dts/exynos3250-monk.dts
+index e25765500e99..248bd372fe70 100644
+--- a/arch/arm/boot/dts/exynos3250-monk.dts
++++ b/arch/arm/boot/dts/exynos3250-monk.dts
+@@ -172,6 +172,11 @@
+ 	status = "okay";
+ };
+ 
++&gpu {
++	mali-supply = <&buck3_reg>;
++	status = "okay";
++};
++
+ &hsotg {
+ 	vusb_d-supply = <&ldo15_reg>;
+ 	vusb_a-supply = <&ldo12_reg>;
+diff --git a/arch/arm/boot/dts/exynos3250-rinato.dts b/arch/arm/boot/dts/exynos3250-rinato.dts
+index 7479993755da..86c26a4edfd7 100644
+--- a/arch/arm/boot/dts/exynos3250-rinato.dts
++++ b/arch/arm/boot/dts/exynos3250-rinato.dts
+@@ -244,6 +244,11 @@
+ 	};
+ };
+ 
++&gpu {
++	mali-supply = <&buck3_reg>;
++	status = "okay";
++};
++
+ &i2c_0 {
+ 	#address-cells = <1>;
+ 	#size-cells = <0>;
+diff --git a/arch/arm/boot/dts/exynos3250.dtsi b/arch/arm/boot/dts/exynos3250.dtsi
+index 8ce3a7786b19..c17870a54acf 100644
+--- a/arch/arm/boot/dts/exynos3250.dtsi
++++ b/arch/arm/boot/dts/exynos3250.dtsi
+@@ -126,6 +126,39 @@
+ 		};
+ 	};
+ 
++	gpu: gpu@13000000 {
++		compatible = "samsung,exynos4210-mali", "arm,mali-400";
++		reg = <0x13000000 0x10000>;
++		interrupts = <GIC_SPI 187 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 182 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 183 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 178 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 184 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 179 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 185 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 180 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 186 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 181 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 177 IRQ_TYPE_LEVEL_HIGH>;
++		interrupt-names = "gp",
++				  "gpmmu",
++				  "pp0",
++				  "ppmmu0",
++				  "pp1",
++				  "ppmmu1",
++				  "pp2",
++				  "ppmmu2",
++				  "pp3",
++				  "ppmmu3",
++				  "pmu";
++		clocks = <&cmu CLK_G3D>,
++			 <&cmu CLK_SCLK_G3D>;
++		clock-names = "bus", "core";
++		power-domains = <&pd_g3d>;
++		status = "disabled";
++		/* TODO: operating points for DVFS, assigned clock as 134 MHz */
++	};
++
+ 	pmu {
+ 		compatible = "arm,cortex-a7-pmu";
+ 		interrupts = <GIC_SPI 18 IRQ_TYPE_LEVEL_HIGH>,
+-- 
+2.17.1
+
