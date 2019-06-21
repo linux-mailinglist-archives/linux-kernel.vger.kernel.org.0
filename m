@@ -2,81 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D01E94EB18
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 16:51:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E9E684EB28
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 16:51:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726395AbfFUOuy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Jun 2019 10:50:54 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:57150 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726338AbfFUOuy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Jun 2019 10:50:54 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 0E8E6C057F2B;
-        Fri, 21 Jun 2019 14:50:53 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-57.rdu2.redhat.com [10.10.120.57])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 6F1B75D9E2;
-        Fri, 21 Jun 2019 14:50:51 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <20190621132839.6ggsppexqfp5htpw@brauner.io>
-References: <20190621132839.6ggsppexqfp5htpw@brauner.io> <20190621094757.zijugn6cfulmchnf@brauner.io> <155905626142.1662.18430571708534506785.stgit@warthog.procyon.org.uk> <155905627927.1662.13276277442207649583.stgit@warthog.procyon.org.uk> <21652.1561122763@warthog.procyon.org.uk> <E76F5188-CED8-4472-9136-BDCDFDAF57F0@brauner.io>
-To:     Christian Brauner <christian@brauner.io>
-Cc:     dhowells@redhat.com, viro@zeniv.linux.org.uk, raven@themaw.net,
-        linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mszeredi@redhat.com
-Subject: Re: [PATCH 02/25] vfs: Allow fsinfo() to query what's in an fs_context [ver #13]
+        id S1726521AbfFUOvP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Jun 2019 10:51:15 -0400
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:37084 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726481AbfFUOvL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Jun 2019 10:51:11 -0400
+Received: by mail-oi1-f196.google.com with SMTP id t76so4850373oih.4
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2019 07:51:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=MPOaRO8S8j6POsMNSOTvAi8picol4QkFsiK82NYjeMA=;
+        b=RYjOHKu4v4FBjwrmpg/XxNrJWp9TG6JbyeCz1eQLWDQoOGdY/5iG65aqUI3F3KnXts
+         2celWDauYGUjP7iRcdEXGRR6dI9+w4gvjojJfTAj7Ilijq64pMIXsOouT8SPWDshlgUo
+         s57tD5x+JoSF8tbpkbb+vX2hBvX3BiF1lMA98=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=MPOaRO8S8j6POsMNSOTvAi8picol4QkFsiK82NYjeMA=;
+        b=T3XX7Q3FSx0qa9geWJD/Aun+oHrvw65UfVDlC7e6nuPouOLSXvtVbsNRSr2E8P1z4o
+         u+z9BkhnpbTZgJspr5XcAQ4SqXQOT9nOKutG/3Ja4Xr/vCNcmhAMW+OKPHFiV/a/8qC8
+         vtN6qBKHfiSVJox4k6k9ZmpmBAvjsyqJLE7Mi1SEkrczxoabt5QWBDxOeRK8G+sE+P5B
+         7ZLSd9y7ducwYPo6QTovAg2Ss0JFvjTwFWVPQ8GMkvn9sXUMx8/zXS902b/Sv7CIwDof
+         EDEMfYHEWDDow5qY3zRsCfQjRE4I3Ban7ywiRlxadMuWcV5Z3bR6CDElOZAf4V/g4Xd6
+         laBg==
+X-Gm-Message-State: APjAAAXGU71EFJYqSuiUH2uFFMxM9eyjcbTW5NHtYcoO4w29Xpi41G4S
+        igrYcfan3n48XbOER7xxXXexurmtQxc=
+X-Google-Smtp-Source: APXvYqyaLFKgT90jHd8R6Izrq/VfOAhnLK891hRVMkSAkPh59R7JOlycns53KXdbg/PIn/DSXJd5xQ==
+X-Received: by 2002:aca:de46:: with SMTP id v67mr2859259oig.167.1561128670496;
+        Fri, 21 Jun 2019 07:51:10 -0700 (PDT)
+Received: from mail-ot1-f49.google.com (mail-ot1-f49.google.com. [209.85.210.49])
+        by smtp.gmail.com with ESMTPSA id a12sm1175989oiy.23.2019.06.21.07.51.09
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Fri, 21 Jun 2019 07:51:09 -0700 (PDT)
+Received: by mail-ot1-f49.google.com with SMTP id l15so6533291otn.9
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2019 07:51:09 -0700 (PDT)
+X-Received: by 2002:a9d:2c41:: with SMTP id f59mr53563597otb.268.1561128669207;
+ Fri, 21 Jun 2019 07:51:09 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <27767.1561128650.1@warthog.procyon.org.uk>
-Date:   Fri, 21 Jun 2019 15:50:50 +0100
-Message-ID: <27768.1561128650@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Fri, 21 Jun 2019 14:50:54 +0000 (UTC)
+References: <20190621135907.112232-1-yuehaibing@huawei.com>
+In-Reply-To: <20190621135907.112232-1-yuehaibing@huawei.com>
+From:   Nick Crews <ncrews@chromium.org>
+Date:   Fri, 21 Jun 2019 08:50:57 -0600
+X-Gmail-Original-Message-ID: <CAHX4x86qUKPTkRFWvWMgTMh1VY8ogJfr55khsSJTakS0emiyFA@mail.gmail.com>
+Message-ID: <CAHX4x86qUKPTkRFWvWMgTMh1VY8ogJfr55khsSJTakS0emiyFA@mail.gmail.com>
+Subject: Re: [PATCH -next] platform/chrome: wilco_ec: Use kmemdup in enqueue_events()
+To:     YueHaibing <yuehaibing@huawei.com>
+Cc:     Benson Leung <bleung@chromium.org>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Christian Brauner <christian@brauner.io> wrote:
+Thanks Yue, looks good to me.
 
-> > >If you tried to go through /proc/pid/fd with open(O_PATH), I think
-> > >you'd get
-> > >the symlink, not the target.
-> > 
-> > Then you should use fdget(), no? :)
-> 
-> That is unless you want fsinfo() to be useable on any fd and just fds
-> that are returned from the new mount-api syscalls. Maybe that wasn't
-> clear from my first mail.
+Nick
 
-fsinfo(), as coded, is usable on any fd, as for fstat(), statx() and
-fstatfs().
-
-I have made it such that if you do this on the fd returned by fsopen() or
-fspick(), the access is diverted to the filesystem that the fs_context refers
-to since querying anon_inodes is of little value.
-
-Now, it could be argued that it should require an AT_xxx flag to cause this
-diversion to happen.
-
-> Is the information returned for:
-> 
-> int fd = fsopen()/fspick();
-> fsinfo(fd);
-> 
-> int ofd = open("/", O_PATH);
-> fsinfo(ofd, ...);
-> 
-> the same if they refer to the same mount or would they differ?
-
-At the moment it differs.  In the former case, there may not even be a
-superblock attached to the fd to query, though invariants like filesystem
-parameter types and names can be queried.
-
-David
+On Fri, Jun 21, 2019 at 7:59 AM YueHaibing <yuehaibing@huawei.com> wrote:
+>
+> Use kmemdup rather than duplicating its implementation
+>
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+> ---
+>  drivers/platform/chrome/wilco_ec/event.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+>
+> diff --git a/drivers/platform/chrome/wilco_ec/event.c b/drivers/platform/chrome/wilco_ec/event.c
+> index c975b76e6255..70156e75047e 100644
+> --- a/drivers/platform/chrome/wilco_ec/event.c
+> +++ b/drivers/platform/chrome/wilco_ec/event.c
+> @@ -248,10 +248,9 @@ static int enqueue_events(struct acpi_device *adev, const u8 *buf, u32 length)
+>                 offset += event_size;
+>
+>                 /* Copy event into the queue */
+> -               queue_event = kzalloc(event_size, GFP_KERNEL);
+> +               queue_event = kmemdup(event, event_size, GFP_KERNEL);
+>                 if (!queue_event)
+>                         return -ENOMEM;
+> -               memcpy(queue_event, event, event_size);
+>                 event_queue_push(dev_data->events, queue_event);
+>         }
+>
+>
+>
