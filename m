@@ -2,167 +2,163 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D0BA4DEB8
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 03:40:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8C7D04DEBC
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 03:41:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726169AbfFUBkg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 21:40:36 -0400
-Received: from mail-io1-f65.google.com ([209.85.166.65]:45381 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725936AbfFUBkf (ORCPT
+        id S1726329AbfFUBl3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 21:41:29 -0400
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:46280 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725936AbfFUBl1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 21:40:35 -0400
-Received: by mail-io1-f65.google.com with SMTP id e3so679458ioc.12
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2019 18:40:34 -0700 (PDT)
+        Thu, 20 Jun 2019 21:41:27 -0400
+Received: by mail-ot1-f67.google.com with SMTP id z23so4688915ote.13;
+        Thu, 20 Jun 2019 18:41:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=NZnurSBLJdIfkJgx/5dwcZZFf4ycxK72Auy3OJll/TE=;
-        b=bZmwoFfLSb6kDiM4V+mKT/zgbkVVryUT3VZqZx3z8LCa30gAcwILhqnVzvCeC1axv2
-         2VtrpAu1HntKfcuKnqIcXSlnA95ZJlIaoKqsrHOpUOhk/YcBOmPIT4SEuEXJsNHUGn1r
-         ftjM+Ss/P0F6eEsNC5BxEWvXblnx95W7yWgMu+HfjYpeBlxg7zseR5IxmGLOC56SRfDK
-         bWfiQZo296uPVmLZAEu8LNERSBpfJYSuUHDLK0wPZPUW7RH5mEf8/B0aSROBH4vD2iGW
-         F8pL++I/ISEh1EO8XqmHFxjKc2akJGXrBBgGbAK5moVj+u1hKZm7L1NO5KCpaduBsr8N
-         AAhA==
+         :cc:content-transfer-encoding;
+        bh=5K99qU465Y/n1tzLPu9YxwdgC2mSpe51ZhWRmC2pnwU=;
+        b=AYwGRLvpyHTyDwk5RUElurCTbQV5qtO9iO1tbPbw6cEWRiofvEQ7QuT/WxmI9SXcg8
+         PfkrzmiqwtTtreLYNSg4hmjtXwVZJQgjAOHZVdr5lZ2hGTSZd4hx98eRQQErSBtO8CEo
+         b+SDQaN4l6OvDVq7u1H9arQcgb8287eYIP5VmWXJqkpo52/x0zpNBGM4nWRkoxbJbzAv
+         +JFX5Gv5y6kJrwzPTl4j/COxk4GtABFanM5XYU8KCDw9Iysls++BvyZkgNmgJPkcfx+q
+         rDYhF+fexvoCJ7ssv+02EMWrSS3owS9SAFlUnIl3ux/zuZZ39prHaqUMw7ND9gpqdk+L
+         MCGA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=NZnurSBLJdIfkJgx/5dwcZZFf4ycxK72Auy3OJll/TE=;
-        b=RL1W7nBkY+KryjIgvjYJXgyUjugOYdSs5rufIbBF+QkI9mRumF3etKci3l/SSb/1AN
-         N/AlhRRkBI5gG6BFJQpqwEzKqVjkLOOpjzD9pKLJHx1ZO20SDV630Z4E+G3eV9mg6iny
-         pd1ZVeYl46bjim5POwptT6Q4l4HW+Uh4cHX4QSoWzdr/wx7kmNXyRbOIIbmQghaUPvzt
-         kcDwCmyDaj0HkU2m1iCI1iDG4o7DaTJo13dWjmb1W6Uxq5dAzWCoL+rW/YD8FyzmwOky
-         x3sQvZ/ZYjtyZgzsPAGkbrPdQcNUd8s6RAsXrcxh+7tWZdH4pKBJ43PYMS9dzbCmGrkf
-         8YTQ==
-X-Gm-Message-State: APjAAAX3fsCYslW4hHx9hM2m2YFzdYY9A93VorCW/UR8wXaLB/cV96U+
-        QoeVSG7abLnakyx7ja8gkCHIhX7AKQvn2L89D+M=
-X-Google-Smtp-Source: APXvYqxBNFP14Ny1HpEdhqKlp2lSGyXI+MY93zfhyerR6bNQY9PKTsQuKJnzEgpVU9R+988hLPhXLG2Ed/sLtRjwRW0=
-X-Received: by 2002:a5e:c70c:: with SMTP id f12mr22982280iop.293.1561081234147;
- Thu, 20 Jun 2019 18:40:34 -0700 (PDT)
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=5K99qU465Y/n1tzLPu9YxwdgC2mSpe51ZhWRmC2pnwU=;
+        b=HZGXF4c9sreM+DhkxgL8O4LyivEUlWEE0FFYDg/G3tnbZazmuCJT+laQe9d8j3SXXZ
+         Q7vp+VgSVwz7QrMPLOEl7bgxl6xV7ZgfhvvYHmepNDQ2wVoIcMdkzeRvPHaleoC1pMju
+         29PLM7qgnyaeHaYYLeEaaEYpXRYJbBUWVAYrVE8zQcwr2dR30fwgy5tLRLFaEh7Ry7ZF
+         jwXre//6WWjQD2y5IajiGKPGt1crypYaaYfIf8BOiOhZ0O1r63S6GxpO5ii7G0LQu/Gm
+         R2XrpyBJHe/NClhWmlM3SPbjeiNBFro6VSmmRwY7TdHl7LzUM/KO/7gctYYF2YNDDdaZ
+         RvBw==
+X-Gm-Message-State: APjAAAWur0s2WWCpSDsMs4NjSk0TVbcEmuvRdzar0BTA9KjpETCDwrZr
+        ODqHi/8Ro0l7SBU/n041vUNqqabEaj/jn76H02Q=
+X-Google-Smtp-Source: APXvYqwNyZyAKX6IT31Y1GxMTo6SUdAmyZewWriWRLYIAR4AtWJVG3Aup0uectw1fN8YKxZgIsshrr+N5jyD+xzFeHM=
+X-Received: by 2002:a9d:2c47:: with SMTP id f65mr78355040otb.185.1561081286628;
+ Thu, 20 Jun 2019 18:41:26 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190523074924.19659-1-hch@lst.de> <20190523074924.19659-5-hch@lst.de>
-In-Reply-To: <20190523074924.19659-5-hch@lst.de>
-From:   "Oliver O'Halloran" <oohall@gmail.com>
-Date:   Fri, 21 Jun 2019 11:40:23 +1000
-Message-ID: <CAOSf1CE2UgF7-BtQj2SfQSUUsctg2boS_kSL-Cs-ugZe4=6N7Q@mail.gmail.com>
-Subject: Re: [PATCH 4/4] powerpc/powernv: remove the unused vas_win_paste_addr
- and vas_win_id functions
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        sukadev@linux.ibm.com
+References: <1560770687-23227-1-git-send-email-wanpengli@tencent.com>
+ <1560770687-23227-3-git-send-email-wanpengli@tencent.com> <20190618133541.GA3932@amt.cnet>
+ <CANRm+Cz0v1VfDaCCWX+5RzCusTV7g9Hwr+OLGDRijeyqFx=Kzw@mail.gmail.com> <20190619210346.GA13033@amt.cnet>
+In-Reply-To: <20190619210346.GA13033@amt.cnet>
+From:   Wanpeng Li <kernellwp@gmail.com>
+Date:   Fri, 21 Jun 2019 09:42:39 +0800
+Message-ID: <CANRm+Cwxz7rR3o2m1HKg0-0z30B8-O-i4RrVC6EMG1jgBRxWPg@mail.gmail.com>
+Subject: Re: [PATCH v4 2/5] KVM: LAPIC: inject lapic timer interrupt by posted interrupt
+To:     Marcelo Tosatti <mtosatti@redhat.com>
+Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>, kvm <kvm@vger.kernel.org>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 23, 2019 at 5:56 PM Christoph Hellwig <hch@lst.de> wrote:
+On Thu, 20 Jun 2019 at 05:04, Marcelo Tosatti <mtosatti@redhat.com> wrote:
 >
-> These two function have never been used since they were added to the
-> kernel.
+> Hi Li,
 >
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
->  arch/powerpc/include/asm/vas.h              | 10 ----------
->  arch/powerpc/platforms/powernv/vas-window.c | 19 -------------------
->  arch/powerpc/platforms/powernv/vas.h        | 20 --------------------
->  3 files changed, 49 deletions(-)
+> On Wed, Jun 19, 2019 at 08:36:06AM +0800, Wanpeng Li wrote:
+> > On Tue, 18 Jun 2019 at 21:36, Marcelo Tosatti <mtosatti@redhat.com> wro=
+te:
+> > >
+> > > On Mon, Jun 17, 2019 at 07:24:44PM +0800, Wanpeng Li wrote:
+> > > > From: Wanpeng Li <wanpengli@tencent.com>
+> > > >
+> > > > Dedicated instances are currently disturbed by unnecessary jitter d=
+ue
+> > > > to the emulated lapic timers fire on the same pCPUs which vCPUs res=
+ident.
+> > > > There is no hardware virtual timer on Intel for guest like ARM. Bot=
+h
+> > > > programming timer in guest and the emulated timer fires incur vmexi=
+ts.
+> > > > This patch tries to avoid vmexit which is incurred by the emulated
+> > > > timer fires in dedicated instance scenario.
+> > > >
+> > > > When nohz_full is enabled in dedicated instances scenario, the emul=
+ated
+> > > > timers can be offload to the nearest busy housekeeping cpus since A=
+PICv
+> > > > is really common in recent years. The guest timer interrupt is inje=
+cted
+> > > > by posted-interrupt which is delivered by housekeeping cpu once the=
+ emulated
+> > > > timer fires.
+> > > >
+> > > > The host admin should fine tuned, e.g. dedicated instances scenario=
+ w/
+> > > > nohz_full cover the pCPUs which vCPUs resident, several pCPUs surpl=
+us
+> > > > for busy housekeeping, disable mwait/hlt/pause vmexits to keep in n=
+on-root
+> > > > mode, ~3% redis performance benefit can be observed on Skylake serv=
+er.
+> > > >
+> > > > w/o patch:
+> > > >
+> > > >             VM-EXIT  Samples  Samples%  Time%   Min Time  Max Time =
+  Avg time
+> > > >
+> > > > EXTERNAL_INTERRUPT    42916    49.43%   39.30%   0.47us   106.09us =
+  0.71us ( +-   1.09% )
+> > > >
+> > > > w/ patch:
+> > > >
+> > > >             VM-EXIT  Samples  Samples%  Time%   Min Time  Max Time =
+        Avg time
+> > > >
+> > > > EXTERNAL_INTERRUPT    6871     9.29%     2.96%   0.44us    57.88us =
+  0.72us ( +-   4.02% )
+> > > >
+> > > > Cc: Paolo Bonzini <pbonzini@redhat.com>
+> > > > Cc: Radim Kr=C4=8Dm=C3=A1=C5=99 <rkrcmar@redhat.com>
+> > > > Cc: Marcelo Tosatti <mtosatti@redhat.com>
+> > > > Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
+> > > > ---
+> > > >  arch/x86/kvm/lapic.c            | 33 ++++++++++++++++++++++++++---=
+----
+> > > >  arch/x86/kvm/lapic.h            |  1 +
+> > > >  arch/x86/kvm/vmx/vmx.c          |  3 ++-
+> > > >  arch/x86/kvm/x86.c              |  5 +++++
+> > > >  arch/x86/kvm/x86.h              |  2 ++
+> > > >  include/linux/sched/isolation.h |  2 ++
+> > > >  kernel/sched/isolation.c        |  6 ++++++
+> > > >  7 files changed, 44 insertions(+), 8 deletions(-)
+> > > >
+> > > > diff --git a/arch/x86/kvm/lapic.c b/arch/x86/kvm/lapic.c
+> > > > index 87ecb56..9ceeee5 100644
+> > > > --- a/arch/x86/kvm/lapic.c
+> > > > +++ b/arch/x86/kvm/lapic.c
+> > > > @@ -122,6 +122,13 @@ static inline u32 kvm_x2apic_id(struct kvm_lap=
+ic *apic)
+> > > >       return apic->vcpu->vcpu_id;
+> > > >  }
+> > > >
+> > > > +bool posted_interrupt_inject_timer(struct kvm_vcpu *vcpu)
+> > > > +{
+> > > > +     return pi_inject_timer && kvm_vcpu_apicv_active(vcpu) &&
+> > > > +             kvm_hlt_in_guest(vcpu->kvm);
+> > > > +}
+> > > > +EXPORT_SYMBOL_GPL(posted_interrupt_inject_timer);
+> > >
+> > > Paolo, can you explain the reasoning behind this?
+> > >
+> > > Should not be necessary...
 
-Sukadev (+cc), what's the reason this is not being used?
+https://lkml.org/lkml/2019/6/5/436  "Here you need to check
+kvm_halt_in_guest, not kvm_mwait_in_guest, because you need to go
+through kvm_apic_expired if the guest needs to be woken up from
+kvm_vcpu_block."
 
-IIRC the VAS hardware on P9 had some issues, but I don't know any of
-the details.
+I think we can still be woken up from kvm_vcpu_block() if pir is set.
 
-> diff --git a/arch/powerpc/include/asm/vas.h b/arch/powerpc/include/asm/vas.h
-> index 771456227496..9b5b7261df7b 100644
-> --- a/arch/powerpc/include/asm/vas.h
-> +++ b/arch/powerpc/include/asm/vas.h
-> @@ -167,14 +167,4 @@ int vas_copy_crb(void *crb, int offset);
->   */
->  int vas_paste_crb(struct vas_window *win, int offset, bool re);
->
-> -/*
-> - * Return a system-wide unique id for the VAS window @win.
-> - */
-> -extern u32 vas_win_id(struct vas_window *win);
-> -
-> -/*
-> - * Return the power bus paste address associated with @win so the caller
-> - * can map that address into their address space.
-> - */
-> -extern u64 vas_win_paste_addr(struct vas_window *win);
->  #endif /* __ASM_POWERPC_VAS_H */
-> diff --git a/arch/powerpc/platforms/powernv/vas-window.c b/arch/powerpc/platforms/powernv/vas-window.c
-> index e59e0e60e5b5..e48c44cb3a16 100644
-> --- a/arch/powerpc/platforms/powernv/vas-window.c
-> +++ b/arch/powerpc/platforms/powernv/vas-window.c
-> @@ -44,16 +44,6 @@ static void compute_paste_address(struct vas_window *window, u64 *addr, int *len
->         pr_debug("Txwin #%d: Paste addr 0x%llx\n", winid, *addr);
->  }
->
-> -u64 vas_win_paste_addr(struct vas_window *win)
-> -{
-> -       u64 addr;
-> -
-> -       compute_paste_address(win, &addr, NULL);
-> -
-> -       return addr;
-> -}
-> -EXPORT_SYMBOL(vas_win_paste_addr);
-> -
->  static inline void get_hvwc_mmio_bar(struct vas_window *window,
->                         u64 *start, int *len)
->  {
-> @@ -1268,12 +1258,3 @@ int vas_win_close(struct vas_window *window)
->         return 0;
->  }
->  EXPORT_SYMBOL_GPL(vas_win_close);
-> -
-> -/*
-> - * Return a system-wide unique window id for the window @win.
-> - */
-> -u32 vas_win_id(struct vas_window *win)
-> -{
-> -       return encode_pswid(win->vinst->vas_id, win->winid);
-> -}
-> -EXPORT_SYMBOL_GPL(vas_win_id);
-> diff --git a/arch/powerpc/platforms/powernv/vas.h b/arch/powerpc/platforms/powernv/vas.h
-> index f5493dbdd7ff..551affaddd59 100644
-> --- a/arch/powerpc/platforms/powernv/vas.h
-> +++ b/arch/powerpc/platforms/powernv/vas.h
-> @@ -448,26 +448,6 @@ static inline u64 read_hvwc_reg(struct vas_window *win,
->         return in_be64(win->hvwc_map+reg);
->  }
->
-> -/*
-> - * Encode/decode the Partition Send Window ID (PSWID) for a window in
-> - * a way that we can uniquely identify any window in the system. i.e.
-> - * we should be able to locate the 'struct vas_window' given the PSWID.
-> - *
-> - *     Bits    Usage
-> - *     0:7     VAS id (8 bits)
-> - *     8:15    Unused, 0 (3 bits)
-> - *     16:31   Window id (16 bits)
-> - */
-> -static inline u32 encode_pswid(int vasid, int winid)
-> -{
-> -       u32 pswid = 0;
-> -
-> -       pswid |= vasid << (31 - 7);
-> -       pswid |= winid;
-> -
-> -       return pswid;
-> -}
-> -
->  static inline void decode_pswid(u32 pswid, int *vasid, int *winid)
->  {
->         if (vasid)
-> --
-> 2.20.1
->
+Regards,
+Wanpeng Li
