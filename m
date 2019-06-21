@@ -2,46 +2,33 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2D0EB4EBFC
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 17:28:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 464004ED17
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 18:22:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726454AbfFUP2L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Jun 2019 11:28:11 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:53300 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726067AbfFUP2I (ORCPT
+        id S1726121AbfFUQWe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Jun 2019 12:22:34 -0400
+Received: from mslow2.mail.gandi.net ([217.70.178.242]:49370 "EHLO
+        mslow2.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726010AbfFUQWd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Jun 2019 11:28:08 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Sender:Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
-        Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=OxYHxuhO2A3jKgWH7QzxkO6AYqKVbir/TdN17HPdksE=; b=Vv006MlNVoSUf9KgGWQStu1nZw
-        /T9uCiyMM059iy8zwxh/6DZ67a9kwa5ZlKGL1kGYAbXRxILQRaWsxYXUGSsNMY4r6f2b6DtJE1qPj
-        TayUoi8+6dO9x2A5j8g8vdSyzQHyAi6G6y0EV0b8lrD8IORh5zMOcfMdqP4HKlrOihy6enxCHjMaU
-        OhMiWG3Z0EWozb71BnNyo8xK3XO0tBdnD4FiRR3ERo5IEzb57BeTJabGcoobaXzwDecHkGSSa56eE
-        +b/oqWdJorVRtoSe+5jD125dF3BCiFV2UIIJ0QoR7smOgt2db0szOwaFPDejZKwPspQJ6xA4rGuRX
-        QD5CbvfA==;
-Received: from [177.97.20.138] (helo=bombadil.infradead.org)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1heLSR-0006As-KA; Fri, 21 Jun 2019 15:28:07 +0000
-Received: from mchehab by bombadil.infradead.org with local (Exim 4.92)
-        (envelope-from <mchehab@bombadil.infradead.org>)
-        id 1heLSO-0005iF-Ja; Fri, 21 Jun 2019 12:28:04 -0300
-From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>
-Cc:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Mauro Carvalho Chehab <mchehab@infradead.org>,
-        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        gregkh@linuxfoundation.org
-Subject: [PATCH 2/2] docs: kernel_abi.py: use --enable-lineno for get_abi.pl
-Date:   Fri, 21 Jun 2019 12:28:02 -0300
-Message-Id: <3d64e957b8fb9bd17d4d7f7dbc4d77d76091d44d.1561130657.git.mchehab+samsung@kernel.org>
+        Fri, 21 Jun 2019 12:22:33 -0400
+Received: from relay2-d.mail.gandi.net (unknown [217.70.183.194])
+        by mslow2.mail.gandi.net (Postfix) with ESMTP id ADDAE3AB780;
+        Fri, 21 Jun 2019 15:30:12 +0000 (UTC)
+X-Originating-IP: 90.88.16.156
+Received: from localhost (aaubervilliers-681-1-41-156.w90-88.abo.wanadoo.fr [90.88.16.156])
+        (Authenticated sender: antoine.tenart@bootlin.com)
+        by relay2-d.mail.gandi.net (Postfix) with ESMTPSA id 710BE40012;
+        Fri, 21 Jun 2019 15:30:03 +0000 (UTC)
+From:   Antoine Tenart <antoine.tenart@bootlin.com>
+To:     davem@davemloft.net, nicolas.ferre@microchip.com
+Cc:     Antoine Tenart <antoine.tenart@bootlin.com>,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ludovic.desroches@microchip.com, alexandre.belloni@bootlin.com
+Subject: [PATCH net-next] net: macb: use NAPI_POLL_WEIGHT
+Date:   Fri, 21 Jun 2019 17:28:55 +0200
+Message-Id: <20190621152855.30330-1-antoine.tenart@bootlin.com>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <cover.1561130657.git.mchehab+samsung@kernel.org>
-References: <cover.1561130657.git.mchehab+samsung@kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -49,73 +36,27 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Just like kernel-doc extension, we need to be able to identify
-what part of an imported document has issues, as reporting them
-as:
+Use NAPI_POLL_WEIGHT, the default NAPI poll() weight instead of
+redefining our own value (which turns out to be 64 as well).
 
-	get_abi.pl rest --dir $srctree/Documentation/ABI/obsolete --rst-source:1689: ERROR: Unexpected indentation.
-
-Makes a lot harder for someone to fix.
-
-It should be noticed that it the line which will be reported is
-the line where the "What:" definition is, and not the line
-with actually has an error.
-
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Signed-off-by: Antoine Tenart <antoine.tenart@bootlin.com>
 ---
- Documentation/sphinx/kernel_abi.py | 18 ++++++++++++++----
- 1 file changed, 14 insertions(+), 4 deletions(-)
+ drivers/net/ethernet/cadence/macb_main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/Documentation/sphinx/kernel_abi.py b/Documentation/sphinx/kernel_abi.py
-index 88dddb8f4152..7f00f9d04a53 100644
---- a/Documentation/sphinx/kernel_abi.py
-+++ b/Documentation/sphinx/kernel_abi.py
-@@ -35,6 +35,7 @@ import codecs
- import os
- import subprocess
- import sys
-+import re
+diff --git a/drivers/net/ethernet/cadence/macb_main.c b/drivers/net/ethernet/cadence/macb_main.c
+index 163deba244ab..1cd1f2c36d6f 100644
+--- a/drivers/net/ethernet/cadence/macb_main.c
++++ b/drivers/net/ethernet/cadence/macb_main.c
+@@ -3490,7 +3490,7 @@ static int macb_init(struct platform_device *pdev)
  
- from os import path
- 
-@@ -93,7 +94,7 @@ class KernelCmd(Directive):
- 
-         env = doc.settings.env
-         cwd = path.dirname(doc.current_source)
--        cmd = "get_abi.pl rest --dir "
-+        cmd = "get_abi.pl rest --enable-lineno --dir "
- 
-         cmd += self.arguments[0]
- 
-@@ -141,7 +142,7 @@ class KernelCmd(Directive):
-                               % (self.name, ErrorString(exc)))
-         return out
- 
--    def nestedParse(self, lines, fname):
-+    def nestedParse(self, lines, f):
-         content = ViewList()
-         node    = nodes.section()
- 
-@@ -151,8 +152,17 @@ class KernelCmd(Directive):
-                 code_block += "\n    " + l
-             lines = code_block + "\n\n"
- 
--        for c, l in enumerate(lines.split("\n")):
--            content.append(l, fname, c)
-+        line_regex = re.compile("^#define LINENO (\S+)\#([0-9]+)$")
-+        ln = 0
-+
-+        for line in lines.split("\n"):
-+            match = line_regex.search(line)
-+            if match:
-+                f = match.group(1)
-+                # sphinx counts lines from 0
-+                ln = int(match.group(2)) - 1
-+            else:
-+                content.append(line, f, ln)
- 
-         buf  = self.state.memo.title_styles, self.state.memo.section_level, self.state.memo.reporter
- 
+ 		queue = &bp->queues[q];
+ 		queue->bp = bp;
+-		netif_napi_add(dev, &queue->napi, macb_poll, 64);
++		netif_napi_add(dev, &queue->napi, macb_poll, NAPI_POLL_WEIGHT);
+ 		if (hw_q) {
+ 			queue->ISR  = GEM_ISR(hw_q - 1);
+ 			queue->IER  = GEM_IER(hw_q - 1);
 -- 
 2.21.0
 
