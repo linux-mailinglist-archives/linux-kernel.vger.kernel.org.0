@@ -2,63 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 003444E8F6
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 15:23:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F23084E8F2
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 15:23:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726484AbfFUNXp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Jun 2019 09:23:45 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:35539 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726246AbfFUNXe (ORCPT
+        id S1726417AbfFUNXj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Jun 2019 09:23:39 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:33436 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726311AbfFUNXg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Jun 2019 09:23:34 -0400
-Received: by mail-wr1-f65.google.com with SMTP id m3so6614824wrv.2
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2019 06:23:33 -0700 (PDT)
+        Fri, 21 Jun 2019 09:23:36 -0400
+Received: by mail-wm1-f66.google.com with SMTP id h19so9151128wme.0
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2019 06:23:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=fq+Z50AlOAOovE68oIdAizLRw1Oe4GlAcSjc3Z5IAmg=;
-        b=Cy8gsxAuPsWgA60+HCVbZ+nbzkJ6dlQSJjSVksW3OiAEHQUBROFi9UyiWxOUaGvUFx
-         HuIGfoWy4Oqmng0EYzN9T0AaggH6lVP/7XJARkS/T9U9Klu6591jGN+U57ZTR1LiXr1c
-         sOcYSMoUCEiMdHFihphRgKBFw9928QEYbt3CP05DCmdyHgqpRqZzMXfGgwZkrIKrfaJN
-         o3ZpZVctPxxGqqonaD75qt4XOUxuMJSBAawKhGVPIgftzDjSusRc4HWL8Tz6yG2j9sXu
-         l3c+2p/Bez1KE92iW8V/vPPJqZ4W0WE6Y84xI4VcQfvliIW0jMhlwaHNVfVGSY6eznZ4
-         juuw==
+        bh=hWOyvG8gK3Yd2gZuZPX+zS+OzCMre8gWSxnhV9rJDR4=;
+        b=c36ZpSewLyxdsNlrsvfl54dP1d3jg1M3kR6dJKnAlk5Kh6PlPsU1RM1YhgbelAsiB8
+         KpDVG6V6mFy2Emmx9iXwPq8EIC6KiyewIFRtn7C86MwlueFkplHP1GF74Vi4K12kxjIB
+         x2I3j7ScntkAxx19yk6Z339XPBZ1fQkRdWTGiUJ3xsUlU79u9TGcvn2+CrijnwNf2JiF
+         u9o421T2miZQiLckihrPw66oLEHr1elWqUNNCGt020T49WC32Jsb5xkOQTHBdFQpYeTU
+         G3D+d7LeI1PWxZ2zpYpm8PnS4+UsS0KRK3B6tZGx66Xw5HHqzyGTQbJbQjUz6uvy0yvh
+         rIRA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=fq+Z50AlOAOovE68oIdAizLRw1Oe4GlAcSjc3Z5IAmg=;
-        b=Trgfhel8MarKG7jF7zoUl2wwOJM3rjMOrFP5yGqgA0LBUa9yon3QuYojtpcnjsfGu3
-         IPiw5hjOdaJM8wx97kdWAGS9C9FDADYBRozEdtVGT5QwxMt+2sQA9ZoROg9gmC1i2Y2P
-         kCTntQNlcBVjFKzfJlINwfARG93qJxGT970f4oAarpLu9pHOIsDZUhpBq/hh6HpXAbVm
-         q4cVbefay/BGn+yS+x0NTYTMq//qm9ktpG5GXswzVvcL3/yX4XpfecHrUN8sqLjgBJ3G
-         TZeINoa7PVhLQSRLAQXNMUrJ8wzwrS+m1dh7GyqMsoLmq4R+K9KNUK5HwvcVsTJOxyu7
-         NmGQ==
-X-Gm-Message-State: APjAAAUdkiW9ST92eBSfVvKFOhZW8uj0UH81zv+rjrT2E1qp9BfMPGBH
-        n8oeJ1JaNIiRb1qaj60N25cS3uyWg7w=
-X-Google-Smtp-Source: APXvYqyXQ/G4rNGx0EM/Bw+9JQKTF91f36TGVl8rfi0tSILHCQdL+onbnDx+h5JIzzjxLnDFJhNJ/w==
-X-Received: by 2002:adf:ce03:: with SMTP id p3mr73752462wrn.94.1561123412645;
-        Fri, 21 Jun 2019 06:23:32 -0700 (PDT)
+        bh=hWOyvG8gK3Yd2gZuZPX+zS+OzCMre8gWSxnhV9rJDR4=;
+        b=oRey3E/BWSsGVLzQlF1ekphyyMh6fNc5BREX5cv835gkv1zioimzowE1iismmkwk2r
+         6DZN2CMg38tDkIbifnrdT7HFc0MThx9qXp4uev5szQ/AHI8irJh6p9RoCZYIQ+ws/AQk
+         U5mVObyPrIyNMncNRMiCuaA+ZaEqBYVOiSnaKseoJobBsBzOtDh1OKhrfxdJFcDvb/P4
+         DstI8UixIRoxGMBC8mV2+xmqdFpUtSMuOIZ16rmKjb2edCBCh0iE/QL00e1WlyTYABup
+         ye+vwT4EknJPpXJWLDxVQoQPJnc5SUFFbqx/oifWEP+RViW1RE/6v4cX1x3nxxWiNRZg
+         9tQw==
+X-Gm-Message-State: APjAAAXgqRu6vjyRMMS94IvkNcg0scSGh7TY4Y8U3lNcFYrDxPubOgV4
+        unP4hGRwCID8RvCQlh9uWy6t6w==
+X-Google-Smtp-Source: APXvYqy3Q4/KfwLZiWac+IHlKAnk7Sl69mV+esSGzR2nnxIARsD/wBgEhPqG7TrBrUdnQkcJUBT6jw==
+X-Received: by 2002:a1c:730d:: with SMTP id d13mr4066497wmb.88.1561123414277;
+        Fri, 21 Jun 2019 06:23:34 -0700 (PDT)
 Received: from clegane.local (206.105.129.77.rev.sfr.net. [77.129.105.206])
-        by smtp.gmail.com with ESMTPSA id s188sm1981234wmf.40.2019.06.21.06.23.31
+        by smtp.gmail.com with ESMTPSA id s188sm1981234wmf.40.2019.06.21.06.23.33
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 21 Jun 2019 06:23:32 -0700 (PDT)
+        Fri, 21 Jun 2019 06:23:33 -0700 (PDT)
 From:   Daniel Lezcano <daniel.lezcano@linaro.org>
 To:     viresh.kumar@linaro.org
 Cc:     edubezval@gmail.com, linux-kernel@vger.kernel.org,
-        Zhang Rui <rui.zhang@intel.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        linux-pm@vger.kernel.org (open list:THERMAL),
-        linux-arm-kernel@lists.infradead.org (moderated list:ARM/FREESCALE IMX
-        / MXC ARM ARCHITECTURE)
-Subject: [PATCH 5/6] thermal/drivers/imx: Remove cooling device usage
-Date:   Fri, 21 Jun 2019 15:23:01 +0200
-Message-Id: <20190621132302.30414-5-daniel.lezcano@linaro.org>
+        Keerthy <j-keerthy@ti.com>, Zhang Rui <rui.zhang@intel.com>,
+        linux-pm@vger.kernel.org (open list:TI BANDGAP AND THERMAL DRIVER),
+        linux-omap@vger.kernel.org (open list:TI BANDGAP AND THERMAL DRIVER)
+Subject: [PATCH 6/6] thermal/drivers/ti: Remove cooling device usage
+Date:   Fri, 21 Jun 2019 15:23:02 +0200
+Message-Id: <20190621132302.30414-6-daniel.lezcano@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190621132302.30414-1-daniel.lezcano@linaro.org>
 References: <20190621132302.30414-1-daniel.lezcano@linaro.org>
@@ -75,42 +69,42 @@ As there is no more need of this pointer, remove it.
 
 Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
 ---
- drivers/thermal/imx_thermal.c | 8 ++++----
+ drivers/thermal/ti-soc-thermal/ti-thermal-common.c | 8 ++++----
  1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/thermal/imx_thermal.c b/drivers/thermal/imx_thermal.c
-index 6746f1b73eb7..021c0948b740 100644
---- a/drivers/thermal/imx_thermal.c
-+++ b/drivers/thermal/imx_thermal.c
-@@ -203,7 +203,6 @@ static struct thermal_soc_data thermal_imx7d_data = {
- struct imx_thermal_data {
+diff --git a/drivers/thermal/ti-soc-thermal/ti-thermal-common.c b/drivers/thermal/ti-soc-thermal/ti-thermal-common.c
+index 217b1aae8b4f..170b70b6ec61 100644
+--- a/drivers/thermal/ti-soc-thermal/ti-thermal-common.c
++++ b/drivers/thermal/ti-soc-thermal/ti-thermal-common.c
+@@ -41,7 +41,6 @@ struct ti_thermal_data {
  	struct cpufreq_policy *policy;
- 	struct thermal_zone_device *tz;
--	struct thermal_cooling_device *cdev;
+ 	struct thermal_zone_device *ti_thermal;
+ 	struct thermal_zone_device *pcb_tz;
+-	struct thermal_cooling_device *cool_dev;
+ 	struct ti_bandgap *bgp;
  	enum thermal_device_mode mode;
- 	struct regmap *tempmon;
- 	u32 c1, c2; /* See formula in imx_init_calib() */
-@@ -656,6 +655,7 @@ MODULE_DEVICE_TABLE(of, of_imx_thermal_match);
- static int imx_thermal_register_legacy_cooling(struct imx_thermal_data *data)
+ 	struct work_struct thermal_wq;
+@@ -233,6 +232,7 @@ int ti_thermal_register_cpu_cooling(struct ti_bandgap *bgp, int id)
  {
- 	struct device_node *np;
+ 	struct ti_thermal_data *data;
+ 	struct device_node *np = bgp->dev->of_node;
 +	struct thermal_cooling_device *cdev;
- 	int ret;
  
- 	data->policy = cpufreq_cpu_get(0);
-@@ -667,9 +667,9 @@ static int imx_thermal_register_legacy_cooling(struct imx_thermal_data *data)
- 	np = of_get_cpu_node(data->policy->cpu, NULL);
+ 	/*
+ 	 * We are assuming here that if one deploys the zone
+@@ -256,9 +256,9 @@ int ti_thermal_register_cpu_cooling(struct ti_bandgap *bgp, int id)
+ 	}
  
- 	if (!np || !of_find_property(np, "#cooling-cells", NULL)) {
--		data->cdev = cpufreq_cooling_register(data->policy);
--		if (IS_ERR(data->cdev)) {
--			ret = PTR_ERR(data->cdev);
-+		cdev = cpufreq_cooling_register(data->policy);
-+		if (IS_ERR(cdev)) {
-+			ret = PTR_ERR(cdev);
- 			cpufreq_cpu_put(data->policy);
- 			return ret;
- 		}
+ 	/* Register cooling device */
+-	data->cool_dev = cpufreq_cooling_register(data->policy);
+-	if (IS_ERR(data->cool_dev)) {
+-		int ret = PTR_ERR(data->cool_dev);
++	cdev = cpufreq_cooling_register(data->policy);
++	if (IS_ERR(cdev)) {
++		int ret = PTR_ERR(cdev);
+ 		dev_err(bgp->dev, "Failed to register cpu cooling device %d\n",
+ 			ret);
+ 		cpufreq_cpu_put(data->policy);
 -- 
 2.17.1
 
