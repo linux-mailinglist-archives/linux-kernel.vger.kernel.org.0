@@ -2,161 +2,255 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A67694E364
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 11:22:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CA39A4E35F
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 11:21:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726648AbfFUJV6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Jun 2019 05:21:58 -0400
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:4549 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726210AbfFUJV5 (ORCPT
+        id S1726591AbfFUJVq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Jun 2019 05:21:46 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:57176 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726210AbfFUJVp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Jun 2019 05:21:57 -0400
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5d0ca1b40000>; Fri, 21 Jun 2019 02:21:56 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Fri, 21 Jun 2019 02:21:56 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Fri, 21 Jun 2019 02:21:56 -0700
-Received: from HQMAIL110.nvidia.com (172.18.146.15) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 21 Jun
- 2019 09:21:56 +0000
-Received: from HQMAIL108.nvidia.com (172.18.146.13) by hqmail110.nvidia.com
- (172.18.146.15) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 21 Jun
- 2019 09:21:55 +0000
-Received: from hqnvemgw02.nvidia.com (172.16.227.111) by HQMAIL108.nvidia.com
- (172.18.146.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Fri, 21 Jun 2019 09:21:55 +0000
-Received: from vidyas-desktop.nvidia.com (Not Verified[10.24.37.38]) by hqnvemgw02.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5d0ca1b10000>; Fri, 21 Jun 2019 02:21:55 -0700
-From:   Vidya Sagar <vidyas@nvidia.com>
-To:     <jingoohan1@gmail.com>, <gustavo.pimentel@synopsys.com>,
-        <lorenzo.pieralisi@arm.com>, <bhelgaas@google.com>,
-        <Jisheng.Zhang@synaptics.com>, <thierry.reding@gmail.com>,
-        <kishon@ti.com>
-CC:     <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kthota@nvidia.com>, <mmaddireddy@nvidia.com>, <vidyas@nvidia.com>,
-        <sagar.tv@gmail.com>
-Subject: [PATCH V5 3/3] PCI: dwc: Export APIs to support .remove() implementation
-Date:   Fri, 21 Jun 2019 14:51:27 +0530
-Message-ID: <20190621092127.17930-3-vidyas@nvidia.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190621092127.17930-1-vidyas@nvidia.com>
-References: <20190621092127.17930-1-vidyas@nvidia.com>
-X-NVConfidentiality: public
+        Fri, 21 Jun 2019 05:21:45 -0400
+Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5L9IKea031042
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2019 05:21:45 -0400
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2t8vg0840q-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2019 05:21:44 -0400
+Received: from localhost
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <fbarrat@linux.ibm.com>;
+        Fri, 21 Jun 2019 10:21:42 +0100
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 21 Jun 2019 10:21:40 +0100
+Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x5L9Ldbk59506730
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 21 Jun 2019 09:21:39 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 1DFFA42049;
+        Fri, 21 Jun 2019 09:21:39 +0000 (GMT)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id BDCBA42045;
+        Fri, 21 Jun 2019 09:21:38 +0000 (GMT)
+Received: from pic2.home (unknown [9.145.83.243])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Fri, 21 Jun 2019 09:21:38 +0000 (GMT)
+Subject: Re: [PATCH 2/4] powerpc/powernv: remove the unused tunneling exports
+To:     "Oliver O'Halloran" <oohall@gmail.com>,
+        Christoph Hellwig <hch@lst.de>
+Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Andrew Donnellan <ajd@linux.ibm.com>
+References: <20190523074924.19659-1-hch@lst.de>
+ <20190523074924.19659-3-hch@lst.de>
+ <CAOSf1CFu_T=7weW0eagzjTc8474ntVx1uCKdQh8sX85bfaPxCQ@mail.gmail.com>
+From:   Frederic Barrat <fbarrat@linux.ibm.com>
+Date:   Fri, 21 Jun 2019 11:21:38 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1561108916; bh=FYvdzaOFVr+ym70x/EMdYSOq8J8rrVBpAoEJx3pKPlI=;
-        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
-         In-Reply-To:References:X-NVConfidentiality:MIME-Version:
-         Content-Type;
-        b=jBK/W4RPh2mDanVQ6hDD7KJZdwQQ8tVllvwMPdHu1c1pFn/1O9fnmbnHuCDBbk8EH
-         MCINnwoLn0ei+ETFs5yg8CDz4yxFe1oYkr0POABti82VIqEhQHTKu5Xh/NSv4Rgqo5
-         E63TvGyK4b+kOXUxvXyQEeQe2ZgqMN6oZxc2OYyef4hstWhgG4kqxRYUeXrAwQyN2/
-         gOSsZfUiI7R0kKL37sBe/qeM070OOwq3yqnvaXCMH4i/4da07/2irbNd4As2ym6yGT
-         Zukx3osLIUGwA99eTI2cAtsO2nJeLnXNcupEwsRJwSFH/0svtnqpb1IH8tBDZT+vcF
-         C8qGvLb+sdI0Q==
+In-Reply-To: <CAOSf1CFu_T=7weW0eagzjTc8474ntVx1uCKdQh8sX85bfaPxCQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: fr-MC
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19062109-0020-0000-0000-0000034C21B1
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19062109-0021-0000-0000-0000219F80AF
+Message-Id: <048e1242-a6ea-5d56-dc9a-e16f9eedf6d9@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-21_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1906210077
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Export all configuration space access APIs and also other APIs to
-support host controller drivers of DesignWare core based implementations
-while adding support for .remove() hook to build their respective drivers
-as modules
 
-Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
-Acked-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
----
-Changes from v4:
-* Removed __ (underscore) from dw_pcie_{write/read}_dbi API names
 
-Changes from v3:
-* Exported only __dw_pcie_{read/write}_dbi() APIs instead of
-  dw_pcie_read{l/w/b}_dbi & dw_pcie_write{l/w/b}_dbi APIs.
+Le 21/06/2019 à 03:47, Oliver O'Halloran a écrit :
+> On Thu, May 23, 2019 at 5:51 PM Christoph Hellwig <hch@lst.de> wrote:
+>>
+>> These have been unused ever since they've been added to the kernel.
+>>
+>> Signed-off-by: Christoph Hellwig <hch@lst.de>
+>> ---
+>>   arch/powerpc/include/asm/pnv-pci.h        |  4 --
+>>   arch/powerpc/platforms/powernv/pci-ioda.c |  4 +-
+>>   arch/powerpc/platforms/powernv/pci.c      | 71 -----------------------
+>>   arch/powerpc/platforms/powernv/pci.h      |  1 -
+>>   4 files changed, 3 insertions(+), 77 deletions(-)
+>>
+>> diff --git a/arch/powerpc/include/asm/pnv-pci.h b/arch/powerpc/include/asm/pnv-pci.h
+>> index 9fcb0bc462c6..1ab4b0111abc 100644
+>> --- a/arch/powerpc/include/asm/pnv-pci.h
+>> +++ b/arch/powerpc/include/asm/pnv-pci.h
+>> @@ -27,12 +27,8 @@ extern int pnv_pci_get_power_state(uint64_t id, uint8_t *state);
+>>   extern int pnv_pci_set_power_state(uint64_t id, uint8_t state,
+>>                                     struct opal_msg *msg);
+>>
+>> -extern int pnv_pci_enable_tunnel(struct pci_dev *dev, uint64_t *asnind);
+>> -extern int pnv_pci_disable_tunnel(struct pci_dev *dev);
+>>   extern int pnv_pci_set_tunnel_bar(struct pci_dev *dev, uint64_t addr,
+>>                                    int enable);
+>> -extern int pnv_pci_get_as_notify_info(struct task_struct *task, u32 *lpid,
+>> -                                     u32 *pid, u32 *tid);
+> 
+> IIRC as-notify was for CAPI which has an in-tree driver (cxl). Fred or
+> Andrew (+cc), what's going on with this? Will it ever see the light of
+> day?
 
-Changes from v2:
-* Rebased on top of linux-next top of the tree branch
 
-Changes from v1:
-* s/Designware/DesignWare
+The as-notify can be used in both CAPI mode and PCI mode. In capi mode, 
+it's integrated in the capi protocol, so the cxl driver doesn't need to 
+do extra setup, compared to what's already done to activate capi.
+As mentioned in a previous iteration of that patchset, those APIs are to 
+be used by the Mellanox CX5 driver. The in-tree driver is always a step 
+behind their latest, but word is they are working on upstreaming those 
+interactions.
 
- drivers/pci/controller/dwc/pcie-designware-host.c | 4 ++++
- drivers/pci/controller/dwc/pcie-designware.c      | 4 ++++
- 2 files changed, 8 insertions(+)
+   Fred
 
-diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/pci/controller/dwc/pcie-designware-host.c
-index d069e4290180..f93252d0da5b 100644
---- a/drivers/pci/controller/dwc/pcie-designware-host.c
-+++ b/drivers/pci/controller/dwc/pcie-designware-host.c
-@@ -311,6 +311,7 @@ void dw_pcie_msi_init(struct pcie_port *pp)
- 	dw_pcie_wr_own_conf(pp, PCIE_MSI_ADDR_HI, 4,
- 			    upper_32_bits(msi_target));
- }
-+EXPORT_SYMBOL_GPL(dw_pcie_msi_init);
- 
- int dw_pcie_host_init(struct pcie_port *pp)
- {
-@@ -495,6 +496,7 @@ int dw_pcie_host_init(struct pcie_port *pp)
- 		dw_pcie_free_msi(pp);
- 	return ret;
- }
-+EXPORT_SYMBOL_GPL(dw_pcie_host_init);
- 
- void dw_pcie_host_deinit(struct pcie_port *pp)
- {
-@@ -503,6 +505,7 @@ void dw_pcie_host_deinit(struct pcie_port *pp)
- 	if (pci_msi_enabled() && !pp->ops->msi_host_init)
- 		dw_pcie_free_msi(pp);
- }
-+EXPORT_SYMBOL_GPL(dw_pcie_host_deinit);
- 
- static int dw_pcie_access_other_conf(struct pcie_port *pp, struct pci_bus *bus,
- 				     u32 devfn, int where, int size, u32 *val,
-@@ -695,3 +698,4 @@ void dw_pcie_setup_rc(struct pcie_port *pp)
- 	val |= PORT_LOGIC_SPEED_CHANGE;
- 	dw_pcie_wr_own_conf(pp, PCIE_LINK_WIDTH_SPEED_CONTROL, 4, val);
- }
-+EXPORT_SYMBOL_GPL(dw_pcie_setup_rc);
-diff --git a/drivers/pci/controller/dwc/pcie-designware.c b/drivers/pci/controller/dwc/pcie-designware.c
-index 5d22028d854e..a6504295ac58 100644
---- a/drivers/pci/controller/dwc/pcie-designware.c
-+++ b/drivers/pci/controller/dwc/pcie-designware.c
-@@ -34,6 +34,7 @@ int dw_pcie_read(void __iomem *addr, int size, u32 *val)
- 
- 	return PCIBIOS_SUCCESSFUL;
- }
-+EXPORT_SYMBOL_GPL(dw_pcie_read);
- 
- int dw_pcie_write(void __iomem *addr, int size, u32 val)
- {
-@@ -51,6 +52,7 @@ int dw_pcie_write(void __iomem *addr, int size, u32 val)
- 
- 	return PCIBIOS_SUCCESSFUL;
- }
-+EXPORT_SYMBOL_GPL(dw_pcie_write);
- 
- u32 dw_pcie_read_dbi(struct dw_pcie *pci, void __iomem *base, u32 reg,
- 		     size_t size)
-@@ -67,6 +69,7 @@ u32 dw_pcie_read_dbi(struct dw_pcie *pci, void __iomem *base, u32 reg,
- 
- 	return val;
- }
-+EXPORT_SYMBOL_GPL(dw_pcie_read_dbi);
- 
- void dw_pcie_write_dbi(struct dw_pcie *pci, void __iomem *base, u32 reg,
- 		       size_t size, u32 val)
-@@ -82,6 +85,7 @@ void dw_pcie_write_dbi(struct dw_pcie *pci, void __iomem *base, u32 reg,
- 	if (ret)
- 		dev_err(pci->dev, "Write DBI address failed\n");
- }
-+EXPORT_SYMBOL_GPL(dw_pcie_write_dbi);
- 
- u32 dw_pcie_read_dbi2(struct dw_pcie *pci, void __iomem *base, u32 reg,
- 		      size_t size)
--- 
-2.17.1
+>>   int pnv_phb_to_cxl_mode(struct pci_dev *dev, uint64_t mode);
+>>   int pnv_cxl_ioda_msi_setup(struct pci_dev *dev, unsigned int hwirq,
+>>                             unsigned int virq);
+>> diff --git a/arch/powerpc/platforms/powernv/pci-ioda.c b/arch/powerpc/platforms/powernv/pci-ioda.c
+>> index 126602b4e399..6b0caa2d0425 100644
+>> --- a/arch/powerpc/platforms/powernv/pci-ioda.c
+>> +++ b/arch/powerpc/platforms/powernv/pci-ioda.c
+>> @@ -54,6 +54,8 @@
+>>   static const char * const pnv_phb_names[] = { "IODA1", "IODA2", "NPU_NVLINK",
+>>                                                "NPU_OCAPI" };
+>>
+>> +static void pnv_pci_ioda2_set_bypass(struct pnv_ioda_pe *pe, bool enable);
+>> +
+>>   void pe_level_printk(const struct pnv_ioda_pe *pe, const char *level,
+>>                              const char *fmt, ...)
+>>   {
+>> @@ -2360,7 +2362,7 @@ static long pnv_pci_ioda2_set_window(struct iommu_table_group *table_group,
+>>          return 0;
+>>   }
+>>
+>> -void pnv_pci_ioda2_set_bypass(struct pnv_ioda_pe *pe, bool enable)
+>> +static void pnv_pci_ioda2_set_bypass(struct pnv_ioda_pe *pe, bool enable)
+>>   {
+>>          uint16_t window_id = (pe->pe_number << 1 ) + 1;
+>>          int64_t rc;
+>> diff --git a/arch/powerpc/platforms/powernv/pci.c b/arch/powerpc/platforms/powernv/pci.c
+>> index 8d28f2932c3b..fc69f5611020 100644
+>> --- a/arch/powerpc/platforms/powernv/pci.c
+>> +++ b/arch/powerpc/platforms/powernv/pci.c
+>> @@ -868,54 +868,6 @@ struct device_node *pnv_pci_get_phb_node(struct pci_dev *dev)
+>>   }
+>>   EXPORT_SYMBOL(pnv_pci_get_phb_node);
+>>
+>> -int pnv_pci_enable_tunnel(struct pci_dev *dev, u64 *asnind)
+>> -{
+>> -       struct device_node *np;
+>> -       const __be32 *prop;
+>> -       struct pnv_ioda_pe *pe;
+>> -       uint16_t window_id;
+>> -       int rc;
+>> -
+>> -       if (!radix_enabled())
+>> -               return -ENXIO;
+>> -
+>> -       if (!(np = pnv_pci_get_phb_node(dev)))
+>> -               return -ENXIO;
+>> -
+>> -       prop = of_get_property(np, "ibm,phb-indications", NULL);
+>> -       of_node_put(np);
+>> -
+>> -       if (!prop || !prop[1])
+>> -               return -ENXIO;
+>> -
+>> -       *asnind = (u64)be32_to_cpu(prop[1]);
+>> -       pe = pnv_ioda_get_pe(dev);
+>> -       if (!pe)
+>> -               return -ENODEV;
+>> -
+>> -       /* Increase real window size to accept as_notify messages. */
+>> -       window_id = (pe->pe_number << 1 ) + 1;
+>> -       rc = opal_pci_map_pe_dma_window_real(pe->phb->opal_id, pe->pe_number,
+>> -                                            window_id, pe->tce_bypass_base,
+>> -                                            (uint64_t)1 << 48);
+>> -       return opal_error_code(rc);
+>> -}
+>> -EXPORT_SYMBOL_GPL(pnv_pci_enable_tunnel);
+>> -
+>> -int pnv_pci_disable_tunnel(struct pci_dev *dev)
+>> -{
+>> -       struct pnv_ioda_pe *pe;
+>> -
+>> -       pe = pnv_ioda_get_pe(dev);
+>> -       if (!pe)
+>> -               return -ENODEV;
+>> -
+>> -       /* Restore default real window size. */
+>> -       pnv_pci_ioda2_set_bypass(pe, true);
+>> -       return 0;
+>> -}
+>> -EXPORT_SYMBOL_GPL(pnv_pci_disable_tunnel);
+>> -
+>>   int pnv_pci_set_tunnel_bar(struct pci_dev *dev, u64 addr, int enable)
+>>   {
+>>          __be64 val;
+>> @@ -970,29 +922,6 @@ int pnv_pci_set_tunnel_bar(struct pci_dev *dev, u64 addr, int enable)
+>>   }
+>>   EXPORT_SYMBOL_GPL(pnv_pci_set_tunnel_bar);
+>>
+>> -#ifdef CONFIG_PPC64    /* for thread.tidr */
+>> -int pnv_pci_get_as_notify_info(struct task_struct *task, u32 *lpid, u32 *pid,
+>> -                              u32 *tid)
+>> -{
+>> -       struct mm_struct *mm = NULL;
+>> -
+>> -       if (task == NULL)
+>> -               return -EINVAL;
+>> -
+>> -       mm = get_task_mm(task);
+>> -       if (mm == NULL)
+>> -               return -EINVAL;
+>> -
+>> -       *pid = mm->context.id;
+>> -       mmput(mm);
+>> -
+>> -       *tid = task->thread.tidr;
+>> -       *lpid = mfspr(SPRN_LPID);
+>> -       return 0;
+>> -}
+>> -EXPORT_SYMBOL_GPL(pnv_pci_get_as_notify_info);
+>> -#endif
+>> -
+>>   void pnv_pci_shutdown(void)
+>>   {
+>>          struct pci_controller *hose;
+>> diff --git a/arch/powerpc/platforms/powernv/pci.h b/arch/powerpc/platforms/powernv/pci.h
+>> index 4f11c077af62..469c24463247 100644
+>> --- a/arch/powerpc/platforms/powernv/pci.h
+>> +++ b/arch/powerpc/platforms/powernv/pci.h
+>> @@ -195,7 +195,6 @@ extern int pnv_setup_msi_irqs(struct pci_dev *pdev, int nvec, int type);
+>>   extern void pnv_teardown_msi_irqs(struct pci_dev *pdev);
+>>   extern struct pnv_ioda_pe *pnv_ioda_get_pe(struct pci_dev *dev);
+>>   extern void pnv_set_msi_irq_chip(struct pnv_phb *phb, unsigned int virq);
+>> -extern void pnv_pci_ioda2_set_bypass(struct pnv_ioda_pe *pe, bool enable);
+>>   extern unsigned long pnv_pci_ioda2_get_table_size(__u32 page_shift,
+>>                  __u64 window_size, __u32 levels);
+>>   extern int pnv_eeh_post_init(void);
+>> --
+>> 2.20.1
+>>
+> 
 
