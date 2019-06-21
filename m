@@ -2,87 +2,211 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AB8D94DE00
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 02:07:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A0244DE09
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 02:22:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726125AbfFUAHm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 20:07:42 -0400
-Received: from mail-lf1-f54.google.com ([209.85.167.54]:40563 "EHLO
-        mail-lf1-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726017AbfFUAHl (ORCPT
+        id S1726083AbfFUAWk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 20:22:40 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:13948 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725907AbfFUAWk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 20:07:41 -0400
-Received: by mail-lf1-f54.google.com with SMTP id a9so3679489lff.7
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2019 17:07:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=2z2u574W9H71BioYVxLQ0ozgxvmOVS9ZyuXKTynCQ8I=;
-        b=eOYdft4VCOo1FjwQ83dZ9VZGvR/D+h+ysV8dTzc6d3lCPpwPy4PFUttAcLDdDTNmtV
-         5wENLEbsDTZAkJzA7xaOEBCxkFvMReHYVkdBdeUIC8ba/5mU9mSYbDhp9jGLS6WOz8nr
-         P4fPq8bVR1aMtzI71pdeWLxLHYJHDCFgdOR4Y=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=2z2u574W9H71BioYVxLQ0ozgxvmOVS9ZyuXKTynCQ8I=;
-        b=tq+hByhsPwM8N/T9aMDyDZVqiSTukYrhcvELUs50zIWQ/ejx1j+Cq+j5E/Zp0VL2ip
-         A5D+VgdENRmZSq06TQNE26DHi8yevKuJiVUPLcS3h0hkiQEldWQBWubajJ/3IYRF0EFL
-         ZQ6VcOgDzQ5y8opbxOdZuR0hMKOfKW03BFEUd/HFOiEm+pxRyskEZtzhSFGYZBbPSGya
-         j+aB3Bs6UXLyPp7y49mqpb32u7bMCMxCId+mUBxgWE3rbXX5zCfa2V/uTQ4cd3kqhCb3
-         Xceb8Vanq7hD0xae074s0DZid3wkkxvYU2ehK8/gLxOxtbHdvjPfNyGbohbLwbJAEjBN
-         TgvQ==
-X-Gm-Message-State: APjAAAVSPUkCxRrMSWOrZMdS/eOHpS+0EnznJ+2Zzlo91sdETiqRj4p1
-        l05McL00sW8PCzO4MAvsnEP47uckRpA=
-X-Google-Smtp-Source: APXvYqwqrY+E4MtAqJgb5pWz9SS3Iak1DrKesVZaPnbZreheWXOM2Xppjv7GpqgMEZXshx2vgerPsw==
-X-Received: by 2002:a19:7905:: with SMTP id u5mr66217016lfc.117.1561075659594;
-        Thu, 20 Jun 2019 17:07:39 -0700 (PDT)
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com. [209.85.208.175])
-        by smtp.gmail.com with ESMTPSA id k82sm152933lje.30.2019.06.20.17.07.36
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Thu, 20 Jun 2019 17:07:36 -0700 (PDT)
-Received: by mail-lj1-f175.google.com with SMTP id 16so4305207ljv.10
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2019 17:07:36 -0700 (PDT)
-X-Received: by 2002:a2e:a0cf:: with SMTP id f15mr7451510ljm.180.1561075656161;
- Thu, 20 Jun 2019 17:07:36 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190522100808.66994f6b@canb.auug.org.au> <20190528114320.30637398@canb.auug.org.au>
- <20190621095907.4a6a50fa@canb.auug.org.au>
-In-Reply-To: <20190621095907.4a6a50fa@canb.auug.org.au>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Thu, 20 Jun 2019 17:07:20 -0700
-X-Gmail-Original-Message-ID: <CAHk-=whVBjssws88tSeoVLG5o5ZWXQu=S7rv-0Hd3qt9=VYsTQ@mail.gmail.com>
-Message-ID: <CAHk-=whVBjssws88tSeoVLG5o5ZWXQu=S7rv-0Hd3qt9=VYsTQ@mail.gmail.com>
-Subject: Re: linux-next: manual merge of the scsi tree with Linus' tree
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     James Bottomley <James.Bottomley@hansenpartnership.com>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
+        Thu, 20 Jun 2019 20:22:40 -0400
+Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5L0MUCW069951
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2019 20:22:38 -0400
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2t8hsynb2s-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2019 20:22:38 -0400
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <ajd@linux.ibm.com>;
+        Fri, 21 Jun 2019 01:22:36 +0100
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 21 Jun 2019 01:22:32 +0100
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x5L0MVOF48169088
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 21 Jun 2019 00:22:31 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 452AC5204F;
+        Fri, 21 Jun 2019 00:22:31 +0000 (GMT)
+Received: from ozlabs.au.ibm.com (unknown [9.192.253.14])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 9F0195204E;
+        Fri, 21 Jun 2019 00:22:30 +0000 (GMT)
+Received: from [9.81.215.199] (unknown [9.81.215.199])
+        (using TLSv1.2 with cipher AES128-SHA (128/128 bits))
+        (No client certificate requested)
+        by ozlabs.au.ibm.com (Postfix) with ESMTPSA id A89F5A004E;
+        Fri, 21 Jun 2019 10:22:26 +1000 (AEST)
+Subject: Re: [PATCH v2] ocxl: Allow contexts to be attached with a NULL mm
+To:     "Alastair D'Silva" <alastair@au1.ibm.com>, alastair@d-silva.org
+Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Frederic Barrat <fbarrat@linux.ibm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Christoph Hellwig <hch@lst.de>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Hannes Reinecke <hare@suse.com>
-Content-Type: text/plain; charset="UTF-8"
+        Nicholas Piggin <npiggin@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Suraj Jitindar Singh <sjitindarsingh@gmail.com>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+References: <20190620041203.12274-1-alastair@au1.ibm.com>
+From:   Andrew Donnellan <ajd@linux.ibm.com>
+Date:   Fri, 21 Jun 2019 10:22:26 +1000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
+MIME-Version: 1.0
+In-Reply-To: <20190620041203.12274-1-alastair@au1.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-AU
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 19062100-4275-0000-0000-00000344378D
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19062100-4276-0000-0000-0000385468AA
+Message-Id: <a4e6b156-0dce-53e3-786f-cc954ebe08fa@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-20_15:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=825 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1906210000
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 20, 2019 at 4:59 PM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->
-> At what point does it become worth while to do a back merge of v5.2-rc4
-> (I think the last of the SPDX changes went into there) to take care of
-> all these (rather than Linus having to edit each of these files himself
-> during the merge window)?
+On 20/6/19 2:12 pm, Alastair D'Silva wrote:
+> From: Alastair D'Silva <alastair@d-silva.org>
+> 
+> If an OpenCAPI context is to be used directly by a kernel driver, there
+> may not be a suitable mm to use.
+> 
+> The patch makes the mm parameter to ocxl_context_attach optional.
+> 
+> Signed-off-by: Alastair D'Silva <alastair@d-silva.org>
 
-For just trivial conflicts like this that have no code, I really would
-prefer no backmerges.
+Acked-by: Andrew Donnellan <ajd@linux.ibm.com>
 
-That said, I would tend to trust the due diligence that Thomas, Greg &
-co have done, and am wondering why the scsi tree ends up having
-different SPDX results in the first place..
+> ---
+>   arch/powerpc/mm/book3s64/radix_tlb.c |  5 +++++
+>   drivers/misc/ocxl/context.c          |  9 ++++++---
+>   drivers/misc/ocxl/link.c             | 28 ++++++++++++++++++++++++----
+>   3 files changed, 35 insertions(+), 7 deletions(-)
+> 
+> diff --git a/arch/powerpc/mm/book3s64/radix_tlb.c b/arch/powerpc/mm/book3s64/radix_tlb.c
+> index bb9835681315..ce8a77fae6a7 100644
+> --- a/arch/powerpc/mm/book3s64/radix_tlb.c
+> +++ b/arch/powerpc/mm/book3s64/radix_tlb.c
+> @@ -666,6 +666,11 @@ EXPORT_SYMBOL(radix__flush_tlb_page);
+>   #define radix__flush_all_mm radix__local_flush_all_mm
+>   #endif /* CONFIG_SMP */
+>   
+> +/*
+> + * If kernel TLBIs ever become local rather than global, then
+> + * drivers/misc/ocxl/link.c:ocxl_link_add_pe will need some work, as it
+> + * assumes kernel TLBIs are global.
+> + */
+>   void radix__flush_tlb_kernel_range(unsigned long start, unsigned long end)
+>   {
+>   	_tlbie_pid(0, RIC_FLUSH_ALL);
+> diff --git a/drivers/misc/ocxl/context.c b/drivers/misc/ocxl/context.c
+> index bab9c9364184..994563a078eb 100644
+> --- a/drivers/misc/ocxl/context.c
+> +++ b/drivers/misc/ocxl/context.c
+> @@ -69,6 +69,7 @@ static void xsl_fault_error(void *data, u64 addr, u64 dsisr)
+>   int ocxl_context_attach(struct ocxl_context *ctx, u64 amr, struct mm_struct *mm)
+>   {
+>   	int rc;
+> +	unsigned long pidr = 0;
+>   
+>   	// Locks both status & tidr
+>   	mutex_lock(&ctx->status_mutex);
+> @@ -77,9 +78,11 @@ int ocxl_context_attach(struct ocxl_context *ctx, u64 amr, struct mm_struct *mm)
+>   		goto out;
+>   	}
+>   
+> -	rc = ocxl_link_add_pe(ctx->afu->fn->link, ctx->pasid,
+> -			mm->context.id, ctx->tidr, amr, mm,
+> -			xsl_fault_error, ctx);
+> +	if (mm)
+> +		pidr = mm->context.id;
+> +
+> +	rc = ocxl_link_add_pe(ctx->afu->fn->link, ctx->pasid, pidr, ctx->tidr,
+> +			      amr, mm, xsl_fault_error, ctx);
+>   	if (rc)
+>   		goto out;
+>   
+> diff --git a/drivers/misc/ocxl/link.c b/drivers/misc/ocxl/link.c
+> index cce5b0d64505..58d111afd9f6 100644
+> --- a/drivers/misc/ocxl/link.c
+> +++ b/drivers/misc/ocxl/link.c
+> @@ -224,6 +224,17 @@ static irqreturn_t xsl_fault_handler(int irq, void *data)
+>   		ack_irq(spa, ADDRESS_ERROR);
+>   		return IRQ_HANDLED;
+>   	}
+> +
+> +	if (!pe_data->mm) {
+> +		/*
+> +		 * translation fault from a kernel context - an OpenCAPI
+> +		 * device tried to access a bad kernel address
+> +		 */
+> +		rcu_read_unlock();
+> +		pr_warn("Unresolved OpenCAPI xsl fault in kernel context\n");
+> +		ack_irq(spa, ADDRESS_ERROR);
+> +		return IRQ_HANDLED;
+> +	}
+>   	WARN_ON(pe_data->mm->context.id != pid);
+>   
+>   	if (mmget_not_zero(pe_data->mm)) {
+> @@ -523,7 +534,13 @@ int ocxl_link_add_pe(void *link_handle, int pasid, u32 pidr, u32 tidr,
+>   	pe->amr = cpu_to_be64(amr);
+>   	pe->software_state = cpu_to_be32(SPA_PE_VALID);
+>   
+> -	mm_context_add_copro(mm);
+> +	/*
+> +	 * For user contexts, register a copro so that TLBIs are seen
+> +	 * by the nest MMU. If we have a kernel context, TLBIs are
+> +	 * already global.
+> +	 */
+> +	if (mm)
+> +		mm_context_add_copro(mm);
+>   	/*
+>   	 * Barrier is to make sure PE is visible in the SPA before it
+>   	 * is used by the device. It also helps with the global TLBI
+> @@ -546,7 +563,8 @@ int ocxl_link_add_pe(void *link_handle, int pasid, u32 pidr, u32 tidr,
+>   	 * have a reference on mm_users. Incrementing mm_count solves
+>   	 * the problem.
+>   	 */
+> -	mmgrab(mm);
+> +	if (mm)
+> +		mmgrab(mm);
+>   	trace_ocxl_context_add(current->pid, spa->spa_mem, pasid, pidr, tidr);
+>   unlock:
+>   	mutex_unlock(&spa->spa_lock);
+> @@ -652,8 +670,10 @@ int ocxl_link_remove_pe(void *link_handle, int pasid)
+>   	if (!pe_data) {
+>   		WARN(1, "Couldn't find pe data when removing PE\n");
+>   	} else {
+> -		mm_context_remove_copro(pe_data->mm);
+> -		mmdrop(pe_data->mm);
+> +		if (pe_data->mm) {
+> +			mm_context_remove_copro(pe_data->mm);
+> +			mmdrop(pe_data->mm);
+> +		}
+>   		kfree_rcu(pe_data, rcu);
+>   	}
+>   unlock:
+> 
 
-             Linus
+-- 
+Andrew Donnellan              OzLabs, ADL Canberra
+ajd@linux.ibm.com             IBM Australia Limited
+
