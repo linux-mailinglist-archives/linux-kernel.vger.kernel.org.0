@@ -2,147 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 21E164EDF8
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 19:41:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DF5044EDFC
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 19:41:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726583AbfFURlF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Jun 2019 13:41:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60086 "EHLO mail.kernel.org"
+        id S1726636AbfFURlN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Jun 2019 13:41:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60202 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726233AbfFURlE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Jun 2019 13:41:04 -0400
+        id S1726591AbfFURlJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Jun 2019 13:41:09 -0400
 Received: from quaco.ghostprotocols.net (187-26-104-93.3g.claro.net.br [187.26.104.93])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D8FA6208C3;
-        Fri, 21 Jun 2019 17:40:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EF2FC2083B;
+        Fri, 21 Jun 2019 17:41:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561138863;
-        bh=QPJHaL3OS0GzfeK6O1ZxuGW8Vz75KPhsoGFuVduABng=;
+        s=default; t=1561138868;
+        bh=+qK84BAps1j7VkvEwGzBLN2AZRxGDsH7iIVCI8pVNm4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wN1itsimpustKG30e0ueI6HXePSqD0jBieAjifNXTLIKDv96oumJMz4CnYPlN0F2T
-         odHpXrDIn9m/RD6inXUwepvT5w1AmwYEX3WH3oxf4ayImFqnkKy57jKboPi1UOTXIR
-         VgHmCfsFgqP+xi/zcLZGnZMi+MRDRVp8vtIWzcss=
+        b=imcz3/sYzCHOWTSjHSwYIDyhnXJM0kdviAbmoCeHadZVDk1hDDP/3oS77RMvxqvOW
+         goGDFFxncZprx384DqJtFPeBNeAtopf3diolQMyumPbtaHyKJRVOmsFlq+I/RP+Ecl
+         cVtFWWfwM66WKH6D1wV1AMdtAj7SZX5czyAdJYsI=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>
 Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
         Clark Williams <williams@redhat.com>,
         linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        John Garry <john.garry@huawei.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Ben Hutchings <ben@decadent.org.uk>,
-        Hendrik Brueckner <brueckner@linux.ibm.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Kan Liang <kan.liang@linux.intel.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Shaokun Zhang <zhangshaokun@hisilicon.com>,
-        Thomas Richter <tmricht@linux.ibm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        linux-arm-kernel@lists.infradead.org, linuxarm@huawei.com,
-        stable@vger.kernel.org, Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 19/25] perf pmu: Fix uncore PMU alias list for ARM64
-Date:   Fri, 21 Jun 2019 14:38:25 -0300
-Message-Id: <20190621173831.13780-20-acme@kernel.org>
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Brendan Gregg <brendan.d.gregg@gmail.com>,
+        =?UTF-8?q?Luis=20Cl=C3=A1udio=20Gon=C3=A7alves?= 
+        <lclaudio@redhat.com>
+Subject: [PATCH 20/25] perf trace: Fixup pointer arithmetic when consuming augmented syscall args
+Date:   Fri, 21 Jun 2019 14:38:26 -0300
+Message-Id: <20190621173831.13780-21-acme@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190621173831.13780-1-acme@kernel.org>
 References: <20190621173831.13780-1-acme@kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: John Garry <john.garry@huawei.com>
+From: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-In commit 292c34c10249 ("perf pmu: Fix core PMU alias list for X86
-platform"), we fixed the issue of CPU events being aliased to uncore
-events.
+We can't just add the consumed bytes to the arg->augmented.args member,
+as it is not void *, so it will access (consumed * sizeof(struct augmented_arg))
+in the next augmented arg, totally wrong, cast the member to void pointe
+before adding the number of bytes consumed, duh.
 
-Fix this same issue for ARM64, since the said commit left the (broken)
-behaviour untouched for ARM64.
+With this and hardcoding handling the 'renameat' and 'renameat2'
+syscalls in the tools/perf/examples/bpf/augmented_raw_syscalls.c eBPF
+proggie, we get:
 
-Signed-off-by: John Garry <john.garry@huawei.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Ben Hutchings <ben@decadent.org.uk>
-Cc: Hendrik Brueckner <brueckner@linux.ibm.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Kan Liang <kan.liang@linux.intel.com>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
+	mv/24388 renameat2(AT_FDCWD, "/tmp/build/perf/util/.bpf-event.o.tmp", AT_FDCWD, "/tmp/build/perf/util/.bpf-event.o.cmd", RENAME_NOREPLACE) = 0
+	mv/24394 renameat2(AT_FDCWD, "/tmp/build/perf/util/.perf-hooks.o.tmp", AT_FDCWD, "/tmp/build/perf/util/.perf-hooks.o.cmd", RENAME_NOREPLACE) = 0
+	mv/24398 renameat2(AT_FDCWD, "/tmp/build/perf/util/.pmu-bison.o.tmp", AT_FDCWD, "/tmp/build/perf/util/.pmu-bison.o.cmd", RENAME_NOREPLACE) = 0
+	mv/24401 renameat2(AT_FDCWD, "/tmp/build/perf/util/.expr-bison.o.tmp", AT_FDCWD, "/tmp/build/perf/util/.expr-bison.o.cmd", RENAME_NOREPLACE) = 0
+	mv/24406 renameat2(AT_FDCWD, "/tmp/build/perf/util/.pmu.o.tmp", AT_FDCWD, "/tmp/build/perf/util/.pmu.o.cmd", RENAME_NOREPLACE) = 0
+	mv/24407 renameat2(AT_FDCWD, "/tmp/build/perf/util/.pmu-flex.o.tmp", AT_FDCWD, "/tmp/build/perf/util/.pmu-flex.o.cmd", RENAME_NOREPLACE) = 0
+	mv/24416 renameat2(AT_FDCWD, "/tmp/build/perf/util/.parse-events-flex.o.tmp", AT_FDCWD, "/tmp/build/perf/util/.parse-events-flex.o.cmd", RENAME_NOREPLACE) = 0
+
+I.e. it works with two string args in the same syscall.
+
+Now back to taming the verifier...
+
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Brendan Gregg <brendan.d.gregg@gmail.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Luis Cláudio Gonçalves <lclaudio@redhat.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Shaokun Zhang <zhangshaokun@hisilicon.com>
-Cc: Thomas Richter <tmricht@linux.ibm.com>
-Cc: Will Deacon <will.deacon@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linuxarm@huawei.com
-Cc: stable@vger.kernel.org
-Fixes: 292c34c10249 ("perf pmu: Fix core PMU alias list for X86 platform")
-Link: http://lkml.kernel.org/r/1560521283-73314-2-git-send-email-john.garry@huawei.com
+Fixes: 8195168e8779 ("perf trace: Consume the augmented_raw_syscalls payload")
+Link: https://lkml.kernel.org/n/tip-n1w59lpxks6m1le7fpo6rmyw@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/pmu.c | 28 ++++++++++++----------------
- 1 file changed, 12 insertions(+), 16 deletions(-)
+ tools/perf/builtin-trace.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/perf/util/pmu.c b/tools/perf/util/pmu.c
-index e0429f4ef335..faa8eb231e1b 100644
---- a/tools/perf/util/pmu.c
-+++ b/tools/perf/util/pmu.c
-@@ -709,9 +709,7 @@ static void pmu_add_cpu_aliases(struct list_head *head, struct perf_pmu *pmu)
- {
- 	int i;
- 	struct pmu_events_map *map;
--	struct pmu_event *pe;
- 	const char *name = pmu->name;
--	const char *pname;
- 
- 	map = perf_pmu__find_map(pmu);
- 	if (!map)
-@@ -722,28 +720,26 @@ static void pmu_add_cpu_aliases(struct list_head *head, struct perf_pmu *pmu)
+diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
+index d5b2e4d8bf41..f3532b081b31 100644
+--- a/tools/perf/builtin-trace.c
++++ b/tools/perf/builtin-trace.c
+@@ -1239,7 +1239,7 @@ static size_t syscall_arg__scnprintf_augmented_string(struct syscall_arg *arg, c
  	 */
- 	i = 0;
- 	while (1) {
-+		const char *cpu_name = is_arm_pmu_core(name) ? name : "cpu";
-+		struct pmu_event *pe = &map->table[i++];
-+		const char *pname = pe->pmu ? pe->pmu : cpu_name;
+ 	int consumed = sizeof(*augmented_arg) + augmented_arg->size;
  
--		pe = &map->table[i++];
- 		if (!pe->name) {
- 			if (pe->metric_group || pe->metric_name)
- 				continue;
- 			break;
- 		}
+-	arg->augmented.args += consumed;
++	arg->augmented.args = ((void *)arg->augmented.args) + consumed;
+ 	arg->augmented.size -= consumed;
  
--		if (!is_arm_pmu_core(name)) {
--			pname = pe->pmu ? pe->pmu : "cpu";
--
--			/*
--			 * uncore alias may be from different PMU
--			 * with common prefix
--			 */
--			if (pmu_is_uncore(name) &&
--			    !strncmp(pname, name, strlen(pname)))
--				goto new_alias;
-+		/*
-+		 * uncore alias may be from different PMU
-+		 * with common prefix
-+		 */
-+		if (pmu_is_uncore(name) &&
-+		    !strncmp(pname, name, strlen(pname)))
-+			goto new_alias;
- 
--			if (strcmp(pname, name))
--				continue;
--		}
-+		if (strcmp(pname, name))
-+			continue;
- 
- new_alias:
- 		/* need type casts to override 'const' */
+ 	return printed;
 -- 
 2.20.1
 
