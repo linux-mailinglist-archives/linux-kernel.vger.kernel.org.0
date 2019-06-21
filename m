@@ -2,167 +2,174 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AC8774F0C2
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2019 00:27:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 65F584F0CA
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2019 00:31:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726121AbfFUW1s (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Jun 2019 18:27:48 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:35578 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726031AbfFUW1s (ORCPT
+        id S1726254AbfFUWbi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Jun 2019 18:31:38 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:8008 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726221AbfFUWbf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Jun 2019 18:27:48 -0400
-Received: by mail-pf1-f194.google.com with SMTP id d126so4287162pfd.2
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2019 15:27:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fomichev-me.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=12Gmw5zKib47jcBiDKW7HN4evhmenszIUvUtcBNVr/w=;
-        b=Xf8yOiJSLOSDq8hWrSlqpVXhoLaAmtIuYSuhh/74sBbU3do17BqBGp8WItUeF/yGen
-         7QyMyUUFMICKWkLKDOjqV9xQzIl8ml5EglhEaZ5q7B7ht6KlF5augdWsLTNIeapnDgwo
-         tsiSht9gHfvxnPm6uEpfxtFooUB4B5AVXpaJNLwYWGHj9n0asq1s+48vQT5N11RUCUam
-         xkooi/XOAN4ALTzwT5nU+13PdxyRVZOvq/9+uocblGa/k3frtWsRIz8BBt1wcobxNprH
-         qQd1iUwf1V6UKbv2VDNdJ/VX+PsCET2klo7Q7Prr2VV0Le1jdGqcfBRVx5BEQbhf/2Ua
-         VkVA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=12Gmw5zKib47jcBiDKW7HN4evhmenszIUvUtcBNVr/w=;
-        b=K40pmg99OG4jL8EFlqZjAPr5H+4llKJCEIIXoa8nWnSCVb+1AMsQUJD2Nih3ceQUec
-         7fVIHAf2wjnnZsw3JT+1/+E5nuVQ/o9fpOFjpiFuNFG5+0pWPhSXfs8lzGUBYi98Zfwy
-         wQXGB7Ov3tseWFhcPoMCu+B9slT0si9Rdkh60gJYT+9l/GAQ+f0PU0XV7oEGW92hsqrK
-         kvlp6SOhJRxapmRSebQbvXHEeq98uuCHgHuDfrUEyqf7t6OpmgRVuJkE4311g9qojDwS
-         CTexhXCSa9jUdI/HvvSZxJIkRmfh/WVDyLV2LGu4WhZrMvCCbf/M9a7cCmgBM8D/XLHn
-         NUAw==
-X-Gm-Message-State: APjAAAVSVURKuP0jATqWF8sXj3RWW9ZiXcmxVSTVOARBrJq8QTn538GD
-        FbB4OK5fdl/ujQHOvUZrBrKh6Q==
-X-Google-Smtp-Source: APXvYqyaiXsnJomCA0jaG6+PiyM9/ArBlY8whr81Mb/Rcx7aNr8Hgjb7UwlTl2XzXFsDehOifOqB8w==
-X-Received: by 2002:a17:90a:9b8a:: with SMTP id g10mr9335809pjp.66.1561156067118;
-        Fri, 21 Jun 2019 15:27:47 -0700 (PDT)
-Received: from localhost ([2601:646:8f00:18d9:d0fa:7a4b:764f:de48])
-        by smtp.gmail.com with ESMTPSA id m2sm3241108pgq.48.2019.06.21.15.27.46
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Fri, 21 Jun 2019 15:27:46 -0700 (PDT)
-Date:   Fri, 21 Jun 2019 15:27:45 -0700
-From:   Stanislav Fomichev <sdf@fomichev.me>
-To:     Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc:     kernel test robot <rong.a.chen@intel.com>,
-        Stanislav Fomichev <sdf@google.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Martin Lau <kafai@fb.com>, LKML <linux-kernel@vger.kernel.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        bpf <bpf@vger.kernel.org>, lkp@01.org
-Subject: Re: [selftests/bpf] 69d96519db:
- kernel_selftests.bpf.test_socket_cookie.fail
-Message-ID: <20190621222745.GH1383@mini-arch>
-References: <20190621084040.GU7221@shao2-debian>
- <20190621161039.GF1383@mini-arch>
- <CAEf4Bzaajc27=YyMaOa8UFRz=xE7y6E+qLbPBPbvLADO2peXQg@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAEf4Bzaajc27=YyMaOa8UFRz=xE7y6E+qLbPBPbvLADO2peXQg@mail.gmail.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+        Fri, 21 Jun 2019 18:31:35 -0400
+Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5LMVXkI123371
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2019 18:31:33 -0400
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2t975s1s2g-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2019 18:31:33 -0400
+Received: from localhost
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Fri, 21 Jun 2019 23:31:30 +0100
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 21 Jun 2019 23:31:28 +0100
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x5LMVRPH63242380
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 21 Jun 2019 22:31:27 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 1A4815209F;
+        Fri, 21 Jun 2019 22:31:27 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.81.152])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 33A80520A0;
+        Fri, 21 Jun 2019 22:31:26 +0000 (GMT)
+Subject: Re: [PATCH V33 03/30] security: Add a static lockdown policy LSM
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Matthew Garrett <matthewgarrett@google.com>, jmorris@namei.org
+Cc:     linux-security@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-api@vger.kernel.org, Matthew Garrett <mjg59@google.com>,
+        David Howells <dhowells@redhat.com>
+Date:   Fri, 21 Jun 2019 18:31:15 -0400
+In-Reply-To: <20190621011941.186255-4-matthewgarrett@google.com>
+References: <20190621011941.186255-1-matthewgarrett@google.com>
+         <20190621011941.186255-4-matthewgarrett@google.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19062122-0008-0000-0000-000002F5F4F4
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19062122-0009-0000-0000-000022631B2F
+Message-Id: <1561156275.4057.154.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-21_15:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1906210172
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/21, Andrii Nakryiko wrote:
-> )
-> 
-> On Fri, Jun 21, 2019 at 9:11 AM Stanislav Fomichev <sdf@fomichev.me> wrote:
-> >
-> > On 06/21, kernel test robot wrote:
-> > > FYI, we noticed the following commit (built with gcc-7):
-> > >
-> > > commit: 69d96519dbf0bfa1868dc8597d4b9b2cdeb009d7 ("selftests/bpf: convert socket_cookie test to sk storage")
-> > > https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git master
-> > >
-> > > in testcase: kernel_selftests
-> > > with following parameters:
-> > >
-> > >       group: kselftests-00
-> > >
-> > > test-description: The kernel contains a set of "self tests" under the tools/testing/selftests/ directory. These are intended to be small unit tests to exercise individual code paths in the kernel.
-> > > test-url: https://www.kernel.org/doc/Documentation/kselftest.txt
-> > >
-> > >
-> > > on test machine: qemu-system-x86_64 -enable-kvm -cpu SandyBridge -smp 2 -m 4G
-> > >
-> > > caused below changes (please refer to attached dmesg/kmsg for entire log/backtrace):
-> > >
-> > >
-> > > If you fix the issue, kindly add following tag
-> > > Reported-by: kernel test robot <rong.a.chen@intel.com>
-> > >
-> > > # selftests: bpf: test_socket_cookie
-> > > # libbpf: failed to create map (name: 'socket_cookies'): Invalid
-> > > # argument
-> > Another case of old clang trying to create a map that depends on BTF?
-> > Should we maybe switch those BTF checks in the kernel to return
-> > EOPNOTSUPP to make it easy to diagnose?
-> 
-> For older compilers that don't generate DATASEC/VAR, you'll see a clear message:
-> 
-> libbpf: DATASEC '.maps' not found.
-> 
-> So this must be something else. I just confirmed with clang version
-> 7.0.20180201 that for ./test_socket_cookie that's the first line
-> that's emitted on failure.
-Thanks for checking, I also took a look at the attached kernel_selftests.xz,
-here is what it has:
-2019-06-21 11:58:35 ln -sf /usr/bin/clang-6.0 /usr/bin/clang
-2019-06-21 11:58:35 ln -sf /usr/bin/llc-6.0 /usr/bin/llc
-...
-# BTF libbpf test[1] (test_btf_haskv.o): SKIP. No ELF .BTF found
-# BTF libbpf test[2] (test_btf_nokv.o): SKIP. No ELF .BTF found
-...
-# Test case #0 (btf_dump_test_case_syntax): test_btf_dump_case:71:FAIL
-# failed to load test BTF: -2
-# Test case #1 (btf_dump_test_case_ordering): test_btf_dump_case:71:FAIL
-# failed to load test BTF: -2
-...
+On Thu, 2019-06-20 at 18:19 -0700, Matthew Garrett wrote:
 
-And so on. So there is clearly an old clang that doesn't emit any
-BTF. And I also don't see your recent abd29c931459 before 69d96519dbf0 in
-linux-next, that's why it doesn't complain about missing/corrupt BTF.
+> --- a/Documentation/admin-guide/kernel-parameters.txt
+> +++ b/Documentation/admin-guide/kernel-parameters.txt
+> @@ -2239,6 +2239,15 @@
+>  	lockd.nlm_udpport=M	[NFS] Assign UDP port.
+>  			Format: <integer>
+>  
+> +	lockdown=	[SECURITY]
+> +			{ integrity | confidentiality }
+> +			Enable the kernel lockdown feature. If set to
+> +			integrity, kernel features that allow userland to
+> +			modify the running kernel are disabled. If set to
+> +			confidentiality, kernel features that allow userland
+> +			to extract confidential information from the kernel
+> +			are also disabled.
+> +
 
-We need to convince lkp people to upgrade clang, otherwise, I suppose,
-we'll get more of these reportings after your recent df0b77925982 :-(
+Does "also" imply "integrity" is a prereq for "confidentiality"?
 
-> > > # libbpf: failed to load object './socket_cookie_prog.o'
-> > > # (test_socket_cookie.c:149: errno: Invalid argument) Failed to load
-> > > # ./socket_cookie_prog.o
-> > > # FAILED
-> > > not ok 15 selftests: bpf: test_socket_cookie
-> > >
-> > >
-> > >
-> > >
-> > > To reproduce:
-> > >
-> > >         # build kernel
-> > >       cd linux
-> > >       cp config-5.2.0-rc2-00598-g69d9651 .config
-> > >       make HOSTCC=gcc-7 CC=gcc-7 ARCH=x86_64 olddefconfig
-> > >       make HOSTCC=gcc-7 CC=gcc-7 ARCH=x86_64 prepare
-> > >       make HOSTCC=gcc-7 CC=gcc-7 ARCH=x86_64 modules_prepare
-> > >       make HOSTCC=gcc-7 CC=gcc-7 ARCH=x86_64 SHELL=/bin/bash
-> > >       make HOSTCC=gcc-7 CC=gcc-7 ARCH=x86_64 bzImage
-> > >
-> > >
-> > >         git clone https://github.com/intel/lkp-tests.git
-> > >         cd lkp-tests
-> > >         bin/lkp qemu -k <bzImage> job-script # job-script is attached in this email
-> > >
-> > >
-> > >
-> > > Thanks,
-> > > Rong Chen
-> > >
-> >
-> 
-> <mega snip>
+> diff --git a/security/lockdown/Kconfig b/security/lockdown/Kconfig
+> new file mode 100644
+> index 000000000000..431cd2b9a14e
+> --- /dev/null
+> +++ b/security/lockdown/Kconfig
+> @@ -0,0 +1,46 @@
+> +config SECURITY_LOCKDOWN_LSM
+> +	bool "Basic module for enforcing kernel lockdown"
+> +	depends on SECURITY
+> +	help
+> +	  Build support for an LSM that enforces a coarse kernel lockdown
+> +	  behaviour.
+> +
+> +config SECURITY_LOCKDOWN_LSM_EARLY
+> +        bool "Enable lockdown LSM early in init"
+> +	depends on SECURITY_LOCKDOWN_LSM
+> +	help
+> +	  Enable the lockdown LSM early in boot. This is necessary in order
+> +	  to ensure that lockdown enforcement can be carried out on kernel
+> +	  boot parameters that are otherwise parsed before the security
+> +	  subsystem is fully initialised.
+> +
+> +choice
+> +	prompt "Kernel default lockdown mode"
+> +	default LOCK_DOWN_KERNEL_FORCE_NONE
+> +	depends on SECURITY_LOCKDOWN_LSM
+> +	help
+> +	  The kernel can be configured to default to differing levels of
+> +	  lockdown.
+> +
+> +config LOCK_DOWN_KERNEL_FORCE_NONE
+> +       bool "None"
+> +       help
+> +          No lockdown functionality is enabled by default. Lockdown may be
+> +	  enabled via the kernel commandline or /sys/kernel/security/lockdown.
+> +
+> +config LOCK_DOWN_KERNEL_FORCE_INTEGRITY
+> +       bool "Integrity"
+> +       help
+> +         The kernel runs in integrity mode by default. Features that allow
+> +	 the kernel to be modified at runtime are disabled.
+> +
+> +config LOCK_DOWN_KERNEL_FORCE_CONFIDENTIALITY
+> +       bool "Confidentiality"
+> +       help
+> +         The kernel runs in confidentiality mode by default. Features that
+> +	 allow the kernel to be modified at runtime or that permit userland
+> +	 code to read confidential material held inside the kernel are
+> +	 disabled.
+> +
+
+Is there a missing dependency on LOCK_DOWN_KERNEL_FORCE_INTEGRITY
+here?
+
+> +endchoice
+> +
+
+
+> diff --git a/security/lockdown/lockdown.c b/security/lockdown/lockdown.c
+> new file mode 100644
+> index 000000000000..1ecb2eecb245
+> --- /dev/null
+> +++ b/security/lockdown/lockdown.c
+
+> +
+> +static int __init lockdown_lsm_init(void)
+> +{
+> +#if defined(CONFIG_LOCK_DOWN_KERNEL_FORCE_INTEGRITY)
+> +	lock_kernel_down("Kernel configuration", LOCKDOWN_INTEGRITY_MAX);
+> +#elif defined(CONFIG_LOCK_DOWN_KERNEL_FORCE_CONFIDENTIALITY)
+> +	lock_kernel_down("Kernel configuration", LOCKDOWN_CONFIDENTIALITY_MAX);
+> +#endif
+> +	security_add_hooks(lockdown_hooks, ARRAY_SIZE(lockdown_hooks),
+> +			   "lockdown");
+> +	return 0;
+> +}
+
+If there is a dependency on
+"defined(CONFIG_LOCK_DOWN_KERNEL_FORCE_INTEGRITY" for
+"CONFIG_LOCK_DOWN_KERNEL_FORCE_CONFIDENTIALITY", then the ordering
+should be reversed.  If there isn't a dependency of one on the other,
+then replace the "elif" with "endif".
+
+Mimi
+
