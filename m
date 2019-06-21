@@ -2,86 +2,154 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 44ADD4EF22
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 20:53:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1ED114EE49
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 20:01:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726514AbfFUSxu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Jun 2019 14:53:50 -0400
-Received: from www1102.sakura.ne.jp ([219.94.129.142]:33392 "EHLO
-        www1102.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726017AbfFUSxt (ORCPT
+        id S1726304AbfFUSBE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Jun 2019 14:01:04 -0400
+Received: from conuserg-11.nifty.com ([210.131.2.78]:43420 "EHLO
+        conuserg-11.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726073AbfFUSBE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Jun 2019 14:53:49 -0400
-X-Greylist: delayed 3192 seconds by postgrey-1.27 at vger.kernel.org; Fri, 21 Jun 2019 14:53:49 EDT
-Received: from fsav402.sakura.ne.jp (fsav402.sakura.ne.jp [133.242.250.101])
-        by www1102.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x5LI0N5B077983;
-        Sat, 22 Jun 2019 03:00:23 +0900 (JST)
-        (envelope-from katsuhiro@katsuster.net)
-Received: from www1102.sakura.ne.jp (219.94.129.142)
- by fsav402.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav402.sakura.ne.jp);
- Sat, 22 Jun 2019 03:00:23 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav402.sakura.ne.jp)
-Received: from localhost.localdomain (118.153.231.153.ap.dti.ne.jp [153.231.153.118])
-        (authenticated bits=0)
-        by www1102.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x5LI0JBf077976
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
-        Sat, 22 Jun 2019 03:00:23 +0900 (JST)
-        (envelope-from katsuhiro@katsuster.net)
-From:   Katsuhiro Suzuki <katsuhiro@katsuster.net>
-To:     Heiko Stuebner <heiko@sntech.de>,
-        linux-rockchip@lists.infradead.org
-Cc:     linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Katsuhiro Suzuki <katsuhiro@katsuster.net>
-Subject: [PATCH] ARM: dts: rockchip: add ethernet phy node for tinker board
-Date:   Sat, 22 Jun 2019 03:00:17 +0900
-Message-Id: <20190621180017.29646-1-katsuhiro@katsuster.net>
-X-Mailer: git-send-email 2.20.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Fri, 21 Jun 2019 14:01:04 -0400
+Received: from grover.flets-west.jp (softbank126125154139.bbtec.net [126.125.154.139]) (authenticated)
+        by conuserg-11.nifty.com with ESMTP id x5LI0Wvw030591;
+        Sat, 22 Jun 2019 03:00:33 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-11.nifty.com x5LI0Wvw030591
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1561140033;
+        bh=gmN+6EpvZxwlHEVbdGNCjhmKTNUl54+7mWpdXjRHo+8=;
+        h=From:To:Cc:Subject:Date:From;
+        b=ILnjeNcNJ6aEAgZBkHfURXwDC8QagWDgMY5McU02iJtGrDE5GHwtHJ6FoPOWDKvE+
+         5pJjGMfunMT13NCOY5zYqVWWqmY4ggxJ26fU2dmvQlunWlFmITtLkAn1WxHnUgw4HF
+         06uih0+BhOrofH5n0/hHtVWHgsU7vILen0iH6CJQQmfh+DtKK52ALV4dSEXThCIn6H
+         OGxic7pnepBkMI83oaPb/c6KCVFBiKIo0qNz7oROKuWlcrm102TQnOOl9C+5h6dJoi
+         nph+72NKw5b7Q/Vh4RoUMQD/A/0sniSBvXulZfaT2N4FTrUnCI2CsM/kxFVhlsSHwH
+         +cKCC5nwoDOXQ==
+X-Nifty-SrcIP: [126.125.154.139]
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+To:     linux-arm-kernel@lists.infradead.org
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Subject: [PATCH] arm64: dts: uniphier: add reserved-memory for secure memory
+Date:   Sat, 22 Jun 2019 03:00:26 +0900
+Message-Id: <20190621180026.25071-1-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds missing mdio and ethernet PHY nodes for rk3328 ASUS
-tinker board.
+The memory regions specified by /memreserve/ are passed to
+early_init_dt_reserve_memory_arch() with nomap=false, so it is
+not suitable for reserving memory for Trusted Firmware-A etc.
 
-Signed-off-by: Katsuhiro Suzuki <katsuhiro@katsuster.net>
+Use the more robust /reserved-memory node with the no-map property
+to prevent the kernel from mapping it.
+
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 ---
- arch/arm/boot/dts/rk3288-tinker.dtsi | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
 
-diff --git a/arch/arm/boot/dts/rk3288-tinker.dtsi b/arch/arm/boot/dts/rk3288-tinker.dtsi
-index 293576869546..3190817e8d5d 100644
---- a/arch/arm/boot/dts/rk3288-tinker.dtsi
-+++ b/arch/arm/boot/dts/rk3288-tinker.dtsi
-@@ -117,6 +117,7 @@
- 	assigned-clocks = <&cru SCLK_MAC>;
- 	assigned-clock-parents = <&ext_gmac>;
- 	clock_in_out = "input";
-+	phy-handle = <&phy0>;
- 	phy-mode = "rgmii";
- 	phy-supply = <&vcc33_lan>;
- 	pinctrl-names = "default";
-@@ -127,6 +128,17 @@
- 	tx_delay = <0x30>;
- 	rx_delay = <0x10>;
- 	status = "ok";
+ arch/arm64/boot/dts/socionext/uniphier-ld11.dtsi | 13 +++++++++++--
+ arch/arm64/boot/dts/socionext/uniphier-ld20.dtsi | 13 +++++++++++--
+ arch/arm64/boot/dts/socionext/uniphier-pxs3.dtsi | 13 +++++++++++--
+ 3 files changed, 33 insertions(+), 6 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/socionext/uniphier-ld11.dtsi b/arch/arm64/boot/dts/socionext/uniphier-ld11.dtsi
+index e32f8aef40bf..8ec40a0b8b1e 100644
+--- a/arch/arm64/boot/dts/socionext/uniphier-ld11.dtsi
++++ b/arch/arm64/boot/dts/socionext/uniphier-ld11.dtsi
+@@ -8,8 +8,6 @@
+ #include <dt-bindings/gpio/gpio.h>
+ #include <dt-bindings/gpio/uniphier-gpio.h>
+ 
+-/memreserve/ 0x80000000 0x02000000;
+-
+ / {
+ 	compatible = "socionext,uniphier-ld11";
+ 	#address-cells = <2>;
+@@ -110,6 +108,17 @@
+ 			     <1 10 4>;
+ 	};
+ 
++	reserved-memory {
++		#address-cells = <2>;
++		#size-cells = <2>;
++		ranges;
 +
-+	mdio0 {
-+		compatible = "snps,dwmac-mdio";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		phy0: ethernet-phy@0 {
-+			compatible = "ethernet-phy-ieee802.3-c22";
-+			reg = <0>;
++		secure-memory@81000000 {
++			reg = <0x0 0x81000000 0x0 0x01000000>;
++			no-map;
 +		};
 +	};
- };
++
+ 	soc@0 {
+ 		compatible = "simple-bus";
+ 		#address-cells = <1>;
+diff --git a/arch/arm64/boot/dts/socionext/uniphier-ld20.dtsi b/arch/arm64/boot/dts/socionext/uniphier-ld20.dtsi
+index 0e1b30656fea..b658f2b641e2 100644
+--- a/arch/arm64/boot/dts/socionext/uniphier-ld20.dtsi
++++ b/arch/arm64/boot/dts/socionext/uniphier-ld20.dtsi
+@@ -9,8 +9,6 @@
+ #include <dt-bindings/gpio/uniphier-gpio.h>
+ #include <dt-bindings/thermal/thermal.h>
  
- &gpu {
+-/memreserve/ 0x80000000 0x02000000;
+-
+ / {
+ 	compatible = "socionext,uniphier-ld20";
+ 	#address-cells = <2>;
+@@ -215,6 +213,17 @@
+ 		};
+ 	};
+ 
++	reserved-memory {
++		#address-cells = <2>;
++		#size-cells = <2>;
++		ranges;
++
++		secure-memory@81000000 {
++			reg = <0x0 0x81000000 0x0 0x01000000>;
++			no-map;
++		};
++	};
++
+ 	soc@0 {
+ 		compatible = "simple-bus";
+ 		#address-cells = <1>;
+diff --git a/arch/arm64/boot/dts/socionext/uniphier-pxs3.dtsi b/arch/arm64/boot/dts/socionext/uniphier-pxs3.dtsi
+index d3863157ddd9..d6f6cee4d549 100644
+--- a/arch/arm64/boot/dts/socionext/uniphier-pxs3.dtsi
++++ b/arch/arm64/boot/dts/socionext/uniphier-pxs3.dtsi
+@@ -8,8 +8,6 @@
+ #include <dt-bindings/gpio/gpio.h>
+ #include <dt-bindings/gpio/uniphier-gpio.h>
+ 
+-/memreserve/ 0x80000000 0x02000000;
+-
+ / {
+ 	compatible = "socionext,uniphier-pxs3";
+ 	#address-cells = <2>;
+@@ -138,6 +136,17 @@
+ 			     <1 10 4>;
+ 	};
+ 
++	reserved-memory {
++		#address-cells = <2>;
++		#size-cells = <2>;
++		ranges;
++
++		secure-memory@81000000 {
++			reg = <0x0 0x81000000 0x0 0x01000000>;
++			no-map;
++		};
++	};
++
+ 	soc@0 {
+ 		compatible = "simple-bus";
+ 		#address-cells = <1>;
 -- 
-2.20.1
+2.17.1
 
