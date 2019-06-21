@@ -2,107 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A98414EE57
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 20:02:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EA8854EE4E
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 20:02:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726487AbfFUSCi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Jun 2019 14:02:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45218 "EHLO mail.kernel.org"
+        id S1726387AbfFUSCI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Jun 2019 14:02:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44588 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725992AbfFUSCh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Jun 2019 14:02:37 -0400
-Received: from localhost.localdomain (unknown [194.230.155.186])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1725992AbfFUSCI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Jun 2019 14:02:08 -0400
+Received: from localhost (unknown [104.132.1.68])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3CA13208CA;
-        Fri, 21 Jun 2019 18:02:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C1BA22070B;
+        Fri, 21 Jun 2019 18:02:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561140156;
-        bh=KdwZGHbHXVQpBZoiMfbjFuz+YnmUsW8tNHrtvh3KE/0=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zIPWY7B+gz8hytngUBJsNTSTBNB8LnCsxMFf2LDGSm7jENmAcsCvkhYymFc4ZIFzK
-         zualW1DjgXqAQgCvI8wsxDaudR34JfkDBX7aEtqO0AYhPWWsx8v1hrSZ/L5MItRnCm
-         EI5EvVM/4HgqLnkx2guIvnIbFVAUVq/5JMovDCjY=
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Joseph Kogut <joseph.kogut@gmail.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Inki Dae <inki.dae@samsung.com>
-Subject: [PATCH v2 4/7] arm64: dts: exynos: Add GPU/Mali T760 node to Exynos7
-Date:   Fri, 21 Jun 2019 20:02:05 +0200
-Message-Id: <20190621180208.25361-4-krzk@kernel.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190621180208.25361-1-krzk@kernel.org>
-References: <20190621180208.25361-1-krzk@kernel.org>
+        s=default; t=1561140126;
+        bh=g79cNV6mf95ZmNPYnM1FB01DX5LPgZqiGUD7akF6G6E=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Ox4m1w+PS7vUV8r9TxOITAt1Szi7NPEgyksJHkf2lyp999RYb4j+gqL+htr6gvvTW
+         QazJsF8LbXmELHinQXJOlt0BjQSv+FOidYA2eimQ2cMJWFn7R/Qa6tTaSNx+f4o0tA
+         wDn4Za7mziYVpYox27i7qI7VGqf3WHjWxwylpif8=
+Date:   Fri, 21 Jun 2019 11:02:06 -0700
+From:   Jaegeuk Kim <jaegeuk@kernel.org>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Chao Yu <yuchao0@huawei.com>, Qiuyang Sun <sunqiuyang@huawei.com>,
+        linux-f2fs-devel@lists.sourceforge.net,
+        Linux-Next <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH -next] f2fs: Use div_u64*() for 64-bit divisions
+Message-ID: <20190621180206.GD79502@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20190620143800.20640-1-geert@linux-m68k.org>
+ <dd980fec-d507-6969-cd86-971bafb401c2@huawei.com>
+ <CAMuHMdUHi3z5xmLyut2XqOPf9XFMF3AJiTnkwOAL-GQ6Ck_1ow@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdUHi3z5xmLyut2XqOPf9XFMF3AJiTnkwOAL-GQ6Ck_1ow@mail.gmail.com>
+User-Agent: Mutt/1.8.2 (2017-04-18)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add nodes for GPU (Mali T760) to Exynos7.  Current support for Exynos7
-misses a lot, including proper clocks, power domains, frequency and
-voltage scaling and cooling.  However this still can provide basic GPU
-description.  Not tested on HW.
+On 06/21, Geert Uytterhoeven wrote:
+> Hi Chao,
+> 
+> On Fri, Jun 21, 2019 at 11:54 AM Chao Yu <yuchao0@huawei.com> wrote:
+> > Since the original patch hasn't been merged to upstream, I think we can merge
+> > this into original patch, how do you think?
+> 
+> Thanks, that's fine for me.
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Merged the fix.
+Thank you so much.
 
----
-
-Changes since v1:
-1. None
----
- arch/arm64/boot/dts/exynos/exynos7-espresso.dts |  5 +++++
- arch/arm64/boot/dts/exynos/exynos7.dtsi         | 11 +++++++++++
- 2 files changed, 16 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/exynos/exynos7-espresso.dts b/arch/arm64/boot/dts/exynos/exynos7-espresso.dts
-index 00dd89b92b42..080e0f56e108 100644
---- a/arch/arm64/boot/dts/exynos/exynos7-espresso.dts
-+++ b/arch/arm64/boot/dts/exynos/exynos7-espresso.dts
-@@ -59,6 +59,11 @@
- 	clock-frequency = <24000000>;
- };
- 
-+&gpu {
-+	mali-supply = <&buck6_reg>;
-+	status = "okay";
-+};
-+
- &serial_2 {
- 	status = "okay";
- };
-diff --git a/arch/arm64/boot/dts/exynos/exynos7.dtsi b/arch/arm64/boot/dts/exynos/exynos7.dtsi
-index 077d23478901..bcb9d8cee267 100644
---- a/arch/arm64/boot/dts/exynos/exynos7.dtsi
-+++ b/arch/arm64/boot/dts/exynos/exynos7.dtsi
-@@ -78,6 +78,17 @@
- 		};
- 	};
- 
-+	gpu: gpu@14ac0000 {
-+		compatible = "samsung,exynos5433-mali", "arm,mali-t760";
-+		reg = <0x14ac0000 0x5000>;
-+		interrupts = <GIC_SPI 241 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 242 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupt-names = "job", "mmu", "gpu";
-+		status = "disabled";
-+		/* TODO: operating points for DVFS, cooling device */
-+	};
-+
- 	psci {
- 		compatible = "arm,psci-0.2";
- 		method = "smc";
--- 
-2.17.1
-
+> 
+> > On 2019/6/20 22:38, Geert Uytterhoeven wrote:
+> > > On 32-bit (e.g. m68k):
+> > >
+> > >     fs/f2fs/gc.o: In function `f2fs_resize_fs':
+> > >     gc.c:(.text+0x3056): undefined reference to `__umoddi3'
+> > >     gc.c:(.text+0x30c4): undefined reference to `__udivdi3'
+> > >
+> > > Fix this by using div_u64_rem() and div_u64() for 64-by-32 modulo resp.
+> > > division operations.
+> > >
+> > > Reported-by: noreply@ellerman.id.au
+> > > Fixes: d2ae7494d043bfaf ("f2fs: ioctl for removing a range from F2FS")
+> > > Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> > > ---
+> > > This assumes BLKS_PER_SEC(sbi) is 32-bit.
+> > >
+> > >     #define BLKS_PER_SEC(sbi)                                       \
+> > >           ((sbi)->segs_per_sec * (sbi)->blocks_per_seg)
+> > >
+> > > Notes:
+> > >   1. f2fs_sb_info.segs_per_sec and f2fs_sb_info.blocks_per_seg are both
+> > >      unsigned int,
+> > >   2. The multiplication is done in 32-bit arithmetic, hence the result
+> > >      is of type unsigned int.
+> > >   3. Is it guaranteed that the result will always fit in 32-bit, or can
+> > >      this overflow?
+> > >   4. fs/f2fs/debug.c:update_sit_info() assigns BLKS_PER_SEC(sbi) to
+> > >      unsigned long long blks_per_sec, anticipating a 64-bit value.
+> > > ---
+> > >  fs/f2fs/gc.c | 6 ++++--
+> > >  1 file changed, 4 insertions(+), 2 deletions(-)
+> > >
+> > > diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+> > > index 5b1076505ade9f84..c65f87f11de029f4 100644
+> > > --- a/fs/f2fs/gc.c
+> > > +++ b/fs/f2fs/gc.c
+> > > @@ -1438,13 +1438,15 @@ int f2fs_resize_fs(struct f2fs_sb_info *sbi, __u64 block_count)
+> > >       unsigned int secs;
+> > >       int gc_mode, gc_type;
+> > >       int err = 0;
+> > > +     __u32 rem;
+> > >
+> > >       old_block_count = le64_to_cpu(F2FS_RAW_SUPER(sbi)->block_count);
+> > >       if (block_count > old_block_count)
+> > >               return -EINVAL;
+> > >
+> > >       /* new fs size should align to section size */
+> > > -     if (block_count % BLKS_PER_SEC(sbi))
+> > > +     div_u64_rem(block_count, BLKS_PER_SEC(sbi), &rem);
+> > > +     if (rem)
+> > >               return -EINVAL;
+> > >
+> > >       if (block_count == old_block_count)
+> > > @@ -1463,7 +1465,7 @@ int f2fs_resize_fs(struct f2fs_sb_info *sbi, __u64 block_count)
+> > >       freeze_bdev(sbi->sb->s_bdev);
+> > >
+> > >       shrunk_blocks = old_block_count - block_count;
+> > > -     secs = shrunk_blocks / BLKS_PER_SEC(sbi);
+> > > +     secs = div_u64(shrunk_blocks, BLKS_PER_SEC(sbi));
+> > >       spin_lock(&sbi->stat_lock);
+> > >       if (shrunk_blocks + valid_user_blocks(sbi) +
+> > >               sbi->current_reserved_blocks + sbi->unusable_block_count +
+> 
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+> 
+> -- 
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> 
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
