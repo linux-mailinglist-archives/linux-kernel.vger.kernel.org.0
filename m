@@ -2,166 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B8764E500
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 11:54:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 77E384E529
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 11:56:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727256AbfFUJys (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Jun 2019 05:54:48 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:37802 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726620AbfFUJyl (ORCPT
+        id S1726597AbfFUJ4J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Jun 2019 05:56:09 -0400
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:33512 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726210AbfFUJ4J (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Jun 2019 05:54:41 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Sender:Content-Transfer-Encoding:
-        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Reply-To:Content-Type:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=wI0EAuMFs+aVQKSucBM2sTBK5ECXZZNvaUXFQdbT4O4=; b=JTpScT0W9/QGxBnSHrK8kC9QS
-        aYRHK2SzsuZ0aEBEd2JXakX09pxNeNmdMLQwDXfKgKiNJ4sgL5+sSOi+wxCfxv93JrmGLykMlB3TF
-        qR/u7xEOqs6xi+eg8aYmgmQynikRZ8Qwkz8sjspygzR9VY9tSEzcGDMCDkgfI1cc8CK5tZT32gv06
-        +XJyPBGucyAXyP+jIVVkNn8TzjvzNkSQ06cJmJNyKscyIrYuyn02iI6lmbCX/S5eK2P+Dzh44ZcCE
-        neX1lft7VJqjm9F+0rbes8JjHwZVQud+d1CfOFWSm/FbV6llKbqFm8wT2FUfbqpWDO1PzWsTNFAv0
-        r8D9/bm8g==;
-Received: from [177.97.20.138] (helo=bombadil.infradead.org)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1heGFa-0004le-Q7; Fri, 21 Jun 2019 09:54:30 +0000
-Received: from mchehab by bombadil.infradead.org with local (Exim 4.92)
-        (envelope-from <mchehab@bombadil.infradead.org>)
-        id 1heGFX-0004dt-D3; Fri, 21 Jun 2019 06:54:27 -0300
-From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Mauro Carvalho Chehab <mchehab@infradead.org>,
-        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        "Darren Hart (VMware)" <dvhart@infradead.org>,
-        Vadim Pasternak <vadimp@mellanox.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: [PATCH] ABI: sysfs-driver-mlxreg-io: fix the what fields
-Date:   Fri, 21 Jun 2019 06:54:25 -0300
-Message-Id: <4cd2ece080041d8545cc2f3e86cb1ff7c8a91f5b.1561110859.git.mchehab+samsung@kernel.org>
-X-Mailer: git-send-email 2.21.0
+        Fri, 21 Jun 2019 05:56:09 -0400
+Received: by mail-qt1-f193.google.com with SMTP id x2so6330468qtr.0;
+        Fri, 21 Jun 2019 02:56:08 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=zoSCQQgDyqdNTKrY/BA7yRe6rgMh4ABI0Zse4HOFW8I=;
+        b=iGbUzHSUsXKE4Mhdgla4u6B7/wCG8Wbmf5kDEQ4BN4k1tQ8eg8CQayXAinNe5wTRGl
+         RgZb3XHyc3YUpW/i6jHAP2Slc280FCqKj4v1pyc3XxorwWYgJ9iHTb3QF2zwUZuUT/fB
+         RVFxSEKbmMSV8JQPOW68FxPyBLivkZCncf9tp4NEz/ZV8fRl8ykLK+pjeyJSfF38jqXP
+         fZ/ntGqcFdrzhmJSLFKtHne4UkS5Eca6PdGXe4CgH4tx2t6iI6BUU5qzbt4HSsqu9fdx
+         8QeL7UYNipQ2zOZjrEfWxkurPIbyI4/KAK3wyWO30U6rxA8itr/IkMri5NUHlFDujyDV
+         SESw==
+X-Gm-Message-State: APjAAAVriE4RiYeS1vHfGyvxgGyYEdIomySOqmqhCFsE87bF3ZM05ExW
+        xUv5sqP0emizTYgZgFatYR7PYimq627vK1UvQCs=
+X-Google-Smtp-Source: APXvYqxw7aZjDgZ7ucZwG6IV1T0CZcfI+f0WlXd3bEKJ5eJl95/WgLNK/53xguy0PsbHRE0STqxRzd1MrkBr3wNBVjI=
+X-Received: by 2002:ac8:2379:: with SMTP id b54mr56769954qtb.168.1561110967884;
+ Fri, 21 Jun 2019 02:56:07 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20190620143800.20640-1-geert@linux-m68k.org> <dd980fec-d507-6969-cd86-971bafb401c2@huawei.com>
+In-Reply-To: <dd980fec-d507-6969-cd86-971bafb401c2@huawei.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Fri, 21 Jun 2019 11:55:56 +0200
+Message-ID: <CAMuHMdUHi3z5xmLyut2XqOPf9XFMF3AJiTnkwOAL-GQ6Ck_1ow@mail.gmail.com>
+Subject: Re: [PATCH -next] f2fs: Use div_u64*() for 64-bit divisions
+To:     Chao Yu <yuchao0@huawei.com>
+Cc:     Qiuyang Sun <sunqiuyang@huawei.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        linux-f2fs-devel@lists.sourceforge.net,
+        Linux-Next <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The author of this file should be given an award for creativity:
-the What: fields on this file technically fulfills the description
-at README. Yet, the way it is, it can't be parsed on a script,
-and if someone would try to do something like:
+Hi Chao,
 
-	grep hwmon*/jtag_enable
+On Fri, Jun 21, 2019 at 11:54 AM Chao Yu <yuchao0@huawei.com> wrote:
+> Since the original patch hasn't been merged to upstream, I think we can merge
+> this into original patch, how do you think?
 
-It wouldn't find anything.
+Thanks, that's fine for me.
 
-Fix the What fields in a way that it can be parseable by a
-script and other search tools.
+> On 2019/6/20 22:38, Geert Uytterhoeven wrote:
+> > On 32-bit (e.g. m68k):
+> >
+> >     fs/f2fs/gc.o: In function `f2fs_resize_fs':
+> >     gc.c:(.text+0x3056): undefined reference to `__umoddi3'
+> >     gc.c:(.text+0x30c4): undefined reference to `__udivdi3'
+> >
+> > Fix this by using div_u64_rem() and div_u64() for 64-by-32 modulo resp.
+> > division operations.
+> >
+> > Reported-by: noreply@ellerman.id.au
+> > Fixes: d2ae7494d043bfaf ("f2fs: ioctl for removing a range from F2FS")
+> > Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> > ---
+> > This assumes BLKS_PER_SEC(sbi) is 32-bit.
+> >
+> >     #define BLKS_PER_SEC(sbi)                                       \
+> >           ((sbi)->segs_per_sec * (sbi)->blocks_per_seg)
+> >
+> > Notes:
+> >   1. f2fs_sb_info.segs_per_sec and f2fs_sb_info.blocks_per_seg are both
+> >      unsigned int,
+> >   2. The multiplication is done in 32-bit arithmetic, hence the result
+> >      is of type unsigned int.
+> >   3. Is it guaranteed that the result will always fit in 32-bit, or can
+> >      this overflow?
+> >   4. fs/f2fs/debug.c:update_sit_info() assigns BLKS_PER_SEC(sbi) to
+> >      unsigned long long blks_per_sec, anticipating a 64-bit value.
+> > ---
+> >  fs/f2fs/gc.c | 6 ++++--
+> >  1 file changed, 4 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+> > index 5b1076505ade9f84..c65f87f11de029f4 100644
+> > --- a/fs/f2fs/gc.c
+> > +++ b/fs/f2fs/gc.c
+> > @@ -1438,13 +1438,15 @@ int f2fs_resize_fs(struct f2fs_sb_info *sbi, __u64 block_count)
+> >       unsigned int secs;
+> >       int gc_mode, gc_type;
+> >       int err = 0;
+> > +     __u32 rem;
+> >
+> >       old_block_count = le64_to_cpu(F2FS_RAW_SUPER(sbi)->block_count);
+> >       if (block_count > old_block_count)
+> >               return -EINVAL;
+> >
+> >       /* new fs size should align to section size */
+> > -     if (block_count % BLKS_PER_SEC(sbi))
+> > +     div_u64_rem(block_count, BLKS_PER_SEC(sbi), &rem);
+> > +     if (rem)
+> >               return -EINVAL;
+> >
+> >       if (block_count == old_block_count)
+> > @@ -1463,7 +1465,7 @@ int f2fs_resize_fs(struct f2fs_sb_info *sbi, __u64 block_count)
+> >       freeze_bdev(sbi->sb->s_bdev);
+> >
+> >       shrunk_blocks = old_block_count - block_count;
+> > -     secs = shrunk_blocks / BLKS_PER_SEC(sbi);
+> > +     secs = div_u64(shrunk_blocks, BLKS_PER_SEC(sbi));
+> >       spin_lock(&sbi->stat_lock);
+> >       if (shrunk_blocks + valid_user_blocks(sbi) +
+> >               sbi->current_reserved_blocks + sbi->unusable_block_count +
 
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
----
- .../ABI/stable/sysfs-driver-mlxreg-io         | 45 ++++++++-----------
- 1 file changed, 19 insertions(+), 26 deletions(-)
+Gr{oetje,eeting}s,
 
-diff --git a/Documentation/ABI/stable/sysfs-driver-mlxreg-io b/Documentation/ABI/stable/sysfs-driver-mlxreg-io
-index 156319fc5b80..3544968f43cc 100644
---- a/Documentation/ABI/stable/sysfs-driver-mlxreg-io
-+++ b/Documentation/ABI/stable/sysfs-driver-mlxreg-io
-@@ -1,5 +1,4 @@
--What:		/sys/devices/platform/mlxplat/mlxreg-io/hwmon/hwmon*/
--							asic_health
-+What:		/sys/devices/platform/mlxplat/mlxreg-io/hwmon/hwmon*/asic_health
- 
- Date:		June 2018
- KernelVersion:	4.19
-@@ -9,9 +8,8 @@ Description:	This file shows ASIC health status. The possible values are:
- 
- 		The files are read only.
- 
--What:		/sys/devices/platform/mlxplat/mlxreg-io/hwmon/hwmon*/
--							cpld1_version
--							cpld2_version
-+What:		/sys/devices/platform/mlxplat/mlxreg-io/hwmon/hwmon*/cpld1_version
-+What:		/sys/devices/platform/mlxplat/mlxreg-io/hwmon/hwmon*/cpld2_version
- Date:		June 2018
- KernelVersion:	4.19
- Contact:	Vadim Pasternak <vadimpmellanox.com>
-@@ -20,8 +18,7 @@ Description:	These files show with which CPLD versions have been burned
- 
- 		The files are read only.
- 
--What:		/sys/devices/platform/mlxplat/mlxreg-io/hwmon/hwmon*/
--							fan_dir
-+What:		/sys/devices/platform/mlxplat/mlxreg-io/hwmon/hwmon*/fan_dir
- 
- Date:		December 2018
- KernelVersion:	5.0
-@@ -32,8 +29,7 @@ Description:	This file shows the system fans direction:
- 
- 		The files are read only.
- 
--What:		/sys/devices/platform/mlxplat/mlxreg-io/hwmon/hwmon*/
--							jtag_enable
-+What:		/sys/devices/platform/mlxplat/mlxreg-io/hwmon/hwmon*/jtag_enable
- 
- Date:		November 2018
- KernelVersion:	5.0
-@@ -43,8 +39,7 @@ Description:	These files show with which CPLD versions have been burned
- 
- 		The files are read only.
- 
--What:		/sys/devices/platform/mlxplat/mlxreg-io/hwmon/hwmon*/
--							jtag_enable
-+What:		/sys/devices/platform/mlxplat/mlxreg-io/hwmon/hwmon*/jtag_enable
- 
- Date:		November 2018
- KernelVersion:	5.0
-@@ -87,16 +82,15 @@ Description:	These files allow asserting system power cycling, switching
- 
- 		The files are write only.
- 
--What:		/sys/devices/platform/mlxplat/mlxreg-io/hwmon/hwmon*/
--							reset_aux_pwr_or_ref
--							reset_asic_thermal
--							reset_hotswap_or_halt
--							reset_hotswap_or_wd
--							reset_fw_reset
--							reset_long_pb
--							reset_main_pwr_fail
--							reset_short_pb
--							reset_sw_reset
-+What:		/sys/devices/platform/mlxplat/mlxreg-io/hwmon/hwmon*/reset_aux_pwr_or_ref
-+What:		/sys/devices/platform/mlxplat/mlxreg-io/hwmon/hwmon*/reset_asic_thermal
-+What:		/sys/devices/platform/mlxplat/mlxreg-io/hwmon/hwmon*/reset_hotswap_or_halt
-+What:		/sys/devices/platform/mlxplat/mlxreg-io/hwmon/hwmon*/reset_hotswap_or_wd
-+What:		/sys/devices/platform/mlxplat/mlxreg-io/hwmon/hwmon*/reset_fw_reset
-+What:		/sys/devices/platform/mlxplat/mlxreg-io/hwmon/hwmon*/reset_long_pb
-+What:		/sys/devices/platform/mlxplat/mlxreg-io/hwmon/hwmon*/reset_main_pwr_fail
-+What:		/sys/devices/platform/mlxplat/mlxreg-io/hwmon/hwmon*/reset_short_pb
-+What:		/sys/devices/platform/mlxplat/mlxreg-io/hwmon/hwmon*/reset_sw_reset
- Date:		June 2018
- KernelVersion:	4.19
- Contact:	Vadim Pasternak <vadimpmellanox.com>
-@@ -110,11 +104,10 @@ Description:	These files show the system reset cause, as following: power
- 
- 		The files are read only.
- 
--What:		/sys/devices/platform/mlxplat/mlxreg-io/hwmon/hwmon*/
--						reset_comex_pwr_fail
--						reset_from_comex
--						reset_system
--						reset_voltmon_upgrade_fail
-+What:		/sys/devices/platform/mlxplat/mlxreg-io/hwmon/hwmon*/reset_comex_pwr_fail
-+What:		/sys/devices/platform/mlxplat/mlxreg-io/hwmon/hwmon*/reset_from_comex
-+What:		/sys/devices/platform/mlxplat/mlxreg-io/hwmon/hwmon*/reset_system
-+What:		/sys/devices/platform/mlxplat/mlxreg-io/hwmon/hwmon*/reset_voltmon_upgrade_fail
- 
- Date:		November 2018
- KernelVersion:	5.0
+                        Geert
+
 -- 
-2.21.0
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
