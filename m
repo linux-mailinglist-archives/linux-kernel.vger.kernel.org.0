@@ -2,135 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 895564E95D
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 15:37:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4E2874E97E
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 15:39:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726262AbfFUNht (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Jun 2019 09:37:49 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:63690 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726010AbfFUNhs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Jun 2019 09:37:48 -0400
-Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5LDba19099061
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2019 09:37:47 -0400
-Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2t8y882wrv-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2019 09:37:44 -0400
-Received: from localhost
-        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <pasic@linux.ibm.com>;
-        Fri, 21 Jun 2019 14:37:17 +0100
-Received: from b06avi18626390.portsmouth.uk.ibm.com (9.149.26.192)
-        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 21 Jun 2019 14:37:14 +0100
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
-        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x5LDb4W738994388
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 21 Jun 2019 13:37:04 GMT
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B628DA405C;
-        Fri, 21 Jun 2019 13:37:12 +0000 (GMT)
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 592A7A4054;
-        Fri, 21 Jun 2019 13:37:12 +0000 (GMT)
-Received: from oc2783563651 (unknown [9.152.224.137])
-        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Fri, 21 Jun 2019 13:37:12 +0000 (GMT)
-Date:   Fri, 21 Jun 2019 15:37:11 +0200
-From:   Halil Pasic <pasic@linux.ibm.com>
-To:     Cornelia Huck <cohuck@redhat.com>
-Cc:     Sebastian Ott <sebott@linux.ibm.com>,
-        Peter Oberparleiter <oberpar@linux.ibm.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] s390/cio: introduce driver_override on the css bus
-In-Reply-To: <20190621115604.0f3e3f69.cohuck@redhat.com>
-References: <20190613110815.17251-1-cohuck@redhat.com>
-        <20190621115604.0f3e3f69.cohuck@redhat.com>
-Organization: IBM
-X-Mailer: Claws Mail 3.11.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
+        id S1726174AbfFUNjk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Jun 2019 09:39:40 -0400
+Received: from m15-14.126.com ([220.181.15.14]:46907 "EHLO m15-14.126.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726049AbfFUNjk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Jun 2019 09:39:40 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
+        s=s110527; h=Date:From:Subject:MIME-Version:Message-ID; bh=QGdsU
+        gyXCSYHoOEp1Wefv/TO84Pvr2WEjxPG073SWEk=; b=HtOzTPWrh4OlfO89a6B8o
+        NxANss8JkIJn+zNkYys1QiDA09nMJhL/t62eic3xpaHIPb87r/reROWpqGsDqZTA
+        iTXGOR7dV3JUJLbHMfqpUsS5Mi8dsVcOlDAR1xMvcuT7rcjxqi3X/P3tWIPILsQS
+        yaXCjttebq5dux8RpEqeXs=
+Received: from kernelpatch$126.com ( [117.136.87.52] ) by
+ ajax-webmail-wmsvr14 (Coremail) ; Fri, 21 Jun 2019 21:38:44 +0800 (CST)
+X-Originating-IP: [117.136.87.52]
+Date:   Fri, 21 Jun 2019 21:38:44 +0800 (CST)
+From:   "Tiezhu Yang" <kernelpatch@126.com>
+To:     "Borislav Petkov" <bp@alien8.de>
+Cc:     tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
+        x86@kernel.org, linux-kernel@vger.kernel.org, vgoyal@redhat.com
+Subject: Re:Re: [PATCH] kexec: fix warnig of crash_zero_bytes in crash.c
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version SP_ntes V3.5 build
+ 20190614(cb3344cf) Copyright (c) 2002-2019 www.mailtech.cn 126com
+In-Reply-To: <20190620163900.GF28032@zn.tnic>
+References: <fa5d08.1fe.16b5848e5f7.Coremail.kernelpatch@126.com>
+ <20190620163900.GF28032@zn.tnic>
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=GBK
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19062113-0012-0000-0000-0000032B3A4B
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19062113-0013-0000-0000-000021646468
-Message-Id: <20190621153711.7d713c4d.pasic@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-21_10:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=894 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1906210114
+Message-ID: <7c86df5d.8b94.16b7a42c5be.Coremail.kernelpatch@126.com>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID: DsqowAA3JVbl3QxdKMRFAA--.18968W
+X-CM-SenderInfo: xnhu0vxosd3ubk6rjloofrz/1tbirwDa9VpD6Xs+gwABs3
+X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 21 Jun 2019 11:56:04 +0200
-Cornelia Huck <cohuck@redhat.com> wrote:
-
-> On Thu, 13 Jun 2019 13:08:15 +0200
-> Cornelia Huck <cohuck@redhat.com> wrote:
-> 
-> > Sometimes, we want to control which of the matching drivers
-> > binds to a subchannel device (e.g. for subchannels we want to
-> > handle via vfio-ccw).
-> > 
-> > For pci devices, a mechanism to do so has been introduced in
-> > 782a985d7af2 ("PCI: Introduce new device binding path using
-> > pci_dev.driver_override"). It makes sense to introduce the
-> > driver_override attribute for subchannel devices as well, so
-> > that we can easily extend the 'driverctl' tool (which makes
-> > use of the driver_override attribute for pci).
-> > 
-> > Note that unlike pci we still require a driver override to
-> > match the subchannel type; matching more than one subchannel
-> > type is probably not useful anyway.
-> > 
-> > Signed-off-by: Cornelia Huck <cohuck@redhat.com>
-
-Reviewed-by: Halil Pasic <pasic@linux.ibm.com>
-
-I guess the '\n' handling is customary, and is what the same what
-the pci counterpart (782a985d7af2) does anyway. It bothers
-me a little that you don't necessarily get back from with show
-what you stored. E.g. # echo -e "bug\nfree"
-> /sys/bus/css/devices/0.0.0001/driver_override # echo $?
-0
-# cat /sys/bus/css/devices/0.0.0001/driver_override
-bug
-# echo $?
-0
-But given the previous art (782a985d7af2) I think it is the best way
-to do it.
-
-The rest is very straightforward.
-
-> > ---
-> > 
-> > Lightly tested; did not yet attempt to adapt driverctl to actually
-> > make use of it.
-> 
-> Friendly ping.
-> 
-> In the meanwhile, I figured out that you do not need to adapt driverctl
-> at all, but just need to pass it '-b css' to work on the css bus; this
-> seems to work just fine with this patch applied.
-> 
-
-Interesting. I hope to get around and have a closer look at it
-eventually.
-
-Regards,
-Halil
-
+QXQgMjAxOS0wNi0yMSAwMDozOTowMCwgIkJvcmlzbGF2IFBldGtvdiIgPGJwQGFsaWVuOC5kZT4g
+d3JvdGU6Cj5PbiBTYXQsIEp1biAxNSwgMjAxOSBhdCAwNzoxODoyMEFNICswODAwLCBUaWV6aHUg
+WWFuZyB3cm90ZToKPj4gVGhpcyBwYXRjaCBmaXhlcyB0aGUgZm9sbG93aW5nIHNwYXJzZSB3YXJu
+aW5nOgo+Cj5Bdm9pZCBoYXZpbmcgIlRoaXMgcGF0Y2giIG9yICJUaGlzIGNvbW1pdCIgaW4gdGhl
+IGNvbW1pdCBtZXNzYWdlLiBJdCBpcwo+dGF1dG9sb2dpY2FsbHkgdXNlbGVzcy4KPgo+QWxzbywg
+ZG8KPgo+JCBnaXQgZ3JlcCAnVGhpcyBwYXRjaCcgRG9jdW1lbnRhdGlvbi9wcm9jZXNzCj4KPmZv
+ciBtb3JlIGRldGFpbHMuCj4KPj4gYXJjaC94ODYva2VybmVsL2NyYXNoLmM6NTk6MTU6Cj4+IHdh
+cm5pbmc6IHN5bWJvbCAnY3Jhc2hfemVyb19ieXRlcycgd2FzIG5vdCBkZWNsYXJlZC4gU2hvdWxk
+IGl0IGJlIHN0YXRpYz8KPj4gCj4+IEluIGFkZGl0aW9uLCBjcmFzaF96ZXJvX2J5dGVzIGlzIHVz
+ZWQgd2hlbiBDT05GSUdfS0VYRUNfRklMRSBpcwo+PiBzZXQsIHNvIG1ha2UgaXQgb25seSBhdmFp
+bGFibGUgdW5kZXIgQ09ORklHX0tFWEVDX0ZJTEUuIE90aGVyd2lzZSwKPj4gaWYgQ09ORklHX0tF
+WEVDX0ZJTEUgaXMgbm90IHNldCwgdGhlIGZvbGxvd2luZyB3YXJuaW5nIHdpbGwgYXBwZWFyOgo+
+PiAKPj4gYXJjaC94ODYva2VybmVsL2NyYXNoLmM6NTk6MjI6Cj4+IHdhcm5pbmc6IKGuY3Jhc2hf
+emVyb19ieXRlc6GvIGRlZmluZWQgYnV0IG5vdCB1c2VkIFstV3VudXNlZC12YXJpYWJsZV0KPgo+
+VGhhdCBoYXBwZW5zIG9ubHkgd2hlbiB5b3UgbWFrZSBpdCBzdGF0aWMsIHNvIHBsZWFzZSBzdGF0
+ZSB0aGF0IGluIHRoZQo+Y29tbWl0IG1lc3NhZ2UuCgpUaGFua3MgZm9yIHlvdXIgc3VnZ2VzdGlv
+biwgSSB3aWxsIHNlbmQgYSB2MiBwYXRjaC4KClRoYW5rcywKCj4KPlRoeC4KPgo+LS0gCj5SZWdh
+cmRzL0dydXNzLAo+ICAgIEJvcmlzLgo+Cj5Hb29kIG1haWxpbmcgcHJhY3RpY2VzIGZvciA0MDA6
+IGF2b2lkIHRvcC1wb3N0aW5nIGFuZCB0cmltIHRoZSByZXBseS4K
