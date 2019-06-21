@@ -2,107 +2,143 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E5274E924
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 15:28:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EEDBA4E927
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 15:29:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726141AbfFUN2o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Jun 2019 09:28:44 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:35951 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726121AbfFUN2o (ORCPT
+        id S1726231AbfFUN3X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Jun 2019 09:29:23 -0400
+Received: from pandora.armlinux.org.uk ([78.32.30.218]:42320 "EHLO
+        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725975AbfFUN3X (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Jun 2019 09:28:44 -0400
-Received: by mail-wr1-f68.google.com with SMTP id n4so5402542wrs.3
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2019 06:28:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brauner.io; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=9EMsrpo1moUaH2rHK1LlYi+tUBFSGMr7JAdJB+mRI/g=;
-        b=ePuxoeeNHfTWihZvcOuCDGTjMSQJR2s8+iO36eDnxzA2613uotv2mmvRre4mAoyBTH
-         tpHZUMHF+W/Gl6aVgY2WlMgOi4JGt/7LoReSbjccE3cOlvYGjvQlqV1PSwbqPLsXYiwc
-         Qbty5/DAl6yAmIPjDjKlqz9wHu5liUE2Ezb+Aq99lkDjiz3zaJkziT+iqQ/GDj5N8rzx
-         mlbBbYGt0+pd4MFtLT8gN0NsbWg7B1X3DTL3RWXaHw29eyXy4tbP89E8WacQIkQHmrkC
-         jU3BInZsYTLHfOgK8SwzIPX+iC+yGTzWH01ZETolkrtW4q/J59eqLmHjKW2zLeZZ021t
-         J2uw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=9EMsrpo1moUaH2rHK1LlYi+tUBFSGMr7JAdJB+mRI/g=;
-        b=amNG5pWrIgte5FuRFzWs2aiP7AhMFAkJAVvanMdmQmrd3Ub3K49WgQq1oXWCVGJjdO
-         yu3puT9UNObQC+2sG/XoB6+q9FU2E2F4W4kkbrWpKm3PSseGxU1gouWkKjuIIWR867lN
-         MNcjGB70a/YVx2TL3hhFHGqG/qdsvo+H1vX34Rnu2xzQEWxIvqNDw5P6trQJAFZedjmH
-         a1tZNm69JhijsDXP++6X4jc5DWiTHhvDKG3hMkL2K60pYygJ75945v6scg73JZwqpNQv
-         iZKPnbNfpevxRi3VD+6Bn2xNIm6kvyxotwXE6xwbMZpBmYFBcPRlehmlHMvOkh2gVWZv
-         iUDA==
-X-Gm-Message-State: APjAAAXFNHRwRiSnXTaEhUujzAwEWaevNiYGtgp4FhHgNTnW1XHFzeQG
-        yqO20g9nqoSfBqCARTkatpdABw==
-X-Google-Smtp-Source: APXvYqz7/r+j2/bz2zXC4bWeBw0/AOUH64ui71bNQocHtMgX5fBuIDo4/VDUKh7gVgVmUFvnOKbPGA==
-X-Received: by 2002:adf:eacd:: with SMTP id o13mr24607835wrn.91.1561123722303;
-        Fri, 21 Jun 2019 06:28:42 -0700 (PDT)
-Received: from brauner.io ([212.91.227.56])
-        by smtp.gmail.com with ESMTPSA id v15sm2867708wrt.25.2019.06.21.06.28.41
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Fri, 21 Jun 2019 06:28:41 -0700 (PDT)
-Date:   Fri, 21 Jun 2019 15:28:40 +0200
-From:   Christian Brauner <christian@brauner.io>
-To:     David Howells <dhowells@redhat.com>
-Cc:     viro@zeniv.linux.org.uk, raven@themaw.net,
-        linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mszeredi@redhat.com
-Subject: Re: [PATCH 02/25] vfs: Allow fsinfo() to query what's in an
- fs_context [ver #13]
-Message-ID: <20190621132839.6ggsppexqfp5htpw@brauner.io>
-References: <20190621094757.zijugn6cfulmchnf@brauner.io>
- <155905626142.1662.18430571708534506785.stgit@warthog.procyon.org.uk>
- <155905627927.1662.13276277442207649583.stgit@warthog.procyon.org.uk>
- <21652.1561122763@warthog.procyon.org.uk>
- <E76F5188-CED8-4472-9136-BDCDFDAF57F0@brauner.io>
+        Fri, 21 Jun 2019 09:29:23 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=Ktktx7WWcR89AvzTAqOgzzcNH2dYkqhvf9ZrJwb2fiA=; b=eoSdTfz1Y+hQKVIUHciDRjJwQ
+        Y6iEmcdMNaZs1NthSOikK4uB2t5UFwT6xLqXXgdiXDduKyy8Sv+JqyHIV2KWuEZuHjZ86xTVfCDx2
+        nJhGcQFb51Xnoj9B9Bb1/8yvenT2Q6Sk9Cx+7fhReJxPrYPrh8cYzc0VLfM/7lYYw/4FYDILuCD5j
+        6Bs52SprI4an9IXEsMImJH8hHroEVKjH77CTMcz+PW1SKDxn/b6IZR3IoYjvrh6Qc5y7aeZU0rcY+
+        HpN8MWHgyivYXikvUieglP7P2P3kp3mFeCRIb5rFdyMMjR+k3vnrgeepnLawra3bbUUdoiT06dLNc
+        EopYGpyhg==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:59864)
+        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.90_1)
+        (envelope-from <linux@armlinux.org.uk>)
+        id 1heJbN-0005eu-Rh; Fri, 21 Jun 2019 14:29:13 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.89)
+        (envelope-from <linux@shell.armlinux.org.uk>)
+        id 1heJbK-0003IY-DH; Fri, 21 Jun 2019 14:29:10 +0100
+Date:   Fri, 21 Jun 2019 14:29:10 +0100
+From:   Russell King - ARM Linux admin <linux@armlinux.org.uk>
+To:     Parshuram Thombare <pthombar@cadence.com>
+Cc:     andrew@lunn.ch, nicolas.ferre@microchip.com, davem@davemloft.net,
+        f.fainelli@gmail.com, netdev@vger.kernel.org, hkallweit1@gmail.com,
+        linux-kernel@vger.kernel.org, rafalc@cadence.com,
+        aniljoy@cadence.com, piotrs@cadence.com
+Subject: Re: [PATCH v3 1/5] net: macb: add phylink support
+Message-ID: <20190621132910.kd6y2i3vk6ogcher@shell.armlinux.org.uk>
+References: <1561106037-6859-1-git-send-email-pthombar@cadence.com>
+ <1561106084-8241-1-git-send-email-pthombar@cadence.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <E76F5188-CED8-4472-9136-BDCDFDAF57F0@brauner.io>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <1561106084-8241-1-git-send-email-pthombar@cadence.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 21, 2019 at 03:16:04PM +0200, Christian Brauner wrote:
-> On June 21, 2019 3:12:43 PM GMT+02:00, David Howells <dhowells@redhat.com> wrote:
-> >Christian Brauner <christian@brauner.io> wrote:
-> >
-> >> >  static int vfs_fsinfo_fd(unsigned int fd, struct fsinfo_kparams
-> >*params)
-> >> >  {
-> >> >  	struct fd f = fdget_raw(fd);
-> >> 
-> >> You're using fdget_raw() which means you want to allow O_PATH fds but
-> >> below you're checking whether the f_ops correspond to
-> >> fscontext_fops. If it's an O_PATH
-> >
-> >It can't be.  The only way to get an fs_context fd is from fsopen() or
-> >fspick() - neither of which allow O_PATH to be specified.
-> >
-> >If you tried to go through /proc/pid/fd with open(O_PATH), I think
-> >you'd get
-> >the symlink, not the target.
-> 
-> Then you should use fdget(), no? :)
+On Fri, Jun 21, 2019 at 09:34:44AM +0100, Parshuram Thombare wrote:
+> @@ -438,115 +439,145 @@ static void macb_set_tx_clk(struct clk *clk, int speed, struct net_device *dev)
+>  		netdev_err(dev, "adjusting tx_clk failed.\n");
+>  }
+>  
+> -static void macb_handle_link_change(struct net_device *dev)
+> +static void gem_phylink_validate(struct phylink_config *pl_config,
+> +				 unsigned long *supported,
+> +				 struct phylink_link_state *state)
+>  {
+> -	struct macb *bp = netdev_priv(dev);
+> -	struct phy_device *phydev = dev->phydev;
+> -	unsigned long flags;
+> -	int status_change = 0;
+> +	struct net_device *netdev = to_net_dev(pl_config->dev);
+> +	struct macb *bp = netdev_priv(netdev);
+> +	__ETHTOOL_DECLARE_LINK_MODE_MASK(mask) = { 0, };
+> +
+> +	switch (state->interface) {
+> +	case PHY_INTERFACE_MODE_GMII:
+> +	case PHY_INTERFACE_MODE_RGMII:
+> +		if (bp->caps & MACB_CAPS_GIGABIT_MODE_AVAILABLE) {
+> +			phylink_set(mask, 1000baseT_Full);
+> +			phylink_set(mask, 1000baseX_Full);
+> +			if (!(bp->caps & MACB_CAPS_NO_GIGABIT_HALF)) {
+> +				phylink_set(mask, 1000baseT_Half);
+> +				phylink_set(mask, 1000baseT_Half);
+> +			}
+> +		}
+> +	/* fallthrough */
+> +	case PHY_INTERFACE_MODE_MII:
+> +	case PHY_INTERFACE_MODE_RMII:
+> +		phylink_set(mask, 10baseT_Half);
+> +		phylink_set(mask, 10baseT_Full);
+> +		phylink_set(mask, 100baseT_Half);
+> +		phylink_set(mask, 100baseT_Full);
+> +		break;
+> +	default:
+> +		break;
 
-That is unless you want fsinfo() to be useable on any fd and just fds
-that are returned from the new mount-api syscalls. Maybe that wasn't
-clear from my first mail.
+PHY_INTERFACE_MODE_NA is used to ascertain the _full_ set of support
+from the MAC irrespective of interface mode, so that (eg) SFPs can
+select an appropriate interface mode from the subset of capabililties
+supported by the SFP and MAC.
 
-Is the information returned for:
+Also note this behaviour for MACs that support switching between
+2500BASE-X and 1000BASE-X (which are fixed speed BASE-X):
 
-int fd = fsopen()/fspick();
-fsinfo(fd);
+static void mvneta_validate(struct net_device *ndev, unsigned long *supported,
+                            struct phylink_link_state *state)
+{
+...
+        /* Half-duplex at speeds higher than 100Mbit is unsupported */
+        if (pp->comphy || state->interface != PHY_INTERFACE_MODE_2500BASEX) {
+                phylink_set(mask, 1000baseT_Full);
+                phylink_set(mask, 1000baseX_Full);
+        }
+        if (pp->comphy || state->interface == PHY_INTERFACE_MODE_2500BASEX) {
+                phylink_set(mask, 2500baseT_Full);
+                phylink_set(mask, 2500baseX_Full);
+        }
 
-int ofd = open("/", O_PATH);
-fsinfo(ofd, ...);
+The idea here is that _if_ we have a comphy, we can reprogram the comphy
+to select between 1G and 2.5G speeds.  So we offer both 1G and 2.5G
+capabilities irrespective of interface mode.
 
-the same if they refer to the same mount or would they differ?
+When the interface type is set in mvneta_mac_config(), the comphy is
+configured for the link mode, including setting the link speed to either
+1.25Gbaud or 3.125Gbaud.
 
-Christian
+So, the speed of the serdes lane is determined by the selected
+PHY_INTERFACE_MODE.
+
+There is additional logic in the mvneta_validate() method to deal with
+the selection of 1G and 2.5G modes for BASE-X:
+
+        /* We can only operate at 2500BaseX or 1000BaseX.  If requested
+         * to advertise both, only report advertising at 2500BaseX.
+         */
+        phylink_helper_basex_speed(state);
+
+What this does is clear state->advertising, ensuring that only one of
+2500BASE_X or 1000BASE_X is shown, and also sets state->interface in
+the validate callback accordingly to select the interface mode.
+
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
+According to speedtest.net: 11.9Mbps down 500kbps up
