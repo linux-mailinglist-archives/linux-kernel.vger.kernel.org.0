@@ -2,164 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 862A54E13D
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 09:28:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8EA3F4E140
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 09:29:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726147AbfFUH20 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Jun 2019 03:28:26 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:37372 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726025AbfFUH20 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Jun 2019 03:28:26 -0400
-Received: by mail-pl1-f195.google.com with SMTP id bh12so2566948plb.4
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2019 00:28:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=4FclFX+hRX7smZPEvP2u/zWBJAaj+hoSELqqFb76AF8=;
-        b=a/nxgMG8rBvO6Z0tcmA1XvSg5kb0V2TtVLGWoVu9dKu3GfIfO9cUBTPQy+22vEy7qI
-         j8xzcmGumH/f0AC0+AzUN3dUP+wO0G9Om5lqG04+SswN6jkHLB3ewiAzA+w+bBE9Yu8i
-         fcmslAANCVye5jXtVOCcA9CnUIefPiUdYtBpY1CWUW2mQg18BiEldcJ95tW5aVwWHCLP
-         TSlkvWAvMNRMjSQNcXt3whbg8ve32a1q/gcW8oARq74Q3DU4xeQAqSjgLO1V06hlfiWB
-         LhkKLlXhMMXr6Qkg+DtV8CktoTN8SUPH+/+W8r3GCbV5WrXBtTxJBq8uI5JhsRF7IMrt
-         381g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=4FclFX+hRX7smZPEvP2u/zWBJAaj+hoSELqqFb76AF8=;
-        b=jiYuLs7uNl/An6p+/ghiIuWxCAFc5qtJMX7eOfHzoA9KCgRjiGJS7MC43CkNXHIzkW
-         HN6/OQ0g3RqGhEKgQm7YlFs5BkDnmIHJ9lXbmqw7ycT/SbJvZEq9vAF3wvJyWpjkNuVl
-         gKLOPO6gWw6Vj5UcY921AaIYOdyW0aihiXbeQ3AdLxmE2+BSznF7HiTCenpw50uX+sXa
-         ewyKQ0QoH91aE4w+jWZu46sD8QlFItGmoopv6/j/Jp2W2rvvJ/FiUGl56xwVIMza1iSv
-         sd5MPFncoJnFhxMRShZE77xfLZu0jZljKjoFdYEDQonuO4l0NVf821qo2gIxmKdP9ics
-         QyCA==
-X-Gm-Message-State: APjAAAXRma1hsLVJqicSGmxO0RUQ1xJW/IoaBkHW03Ls3iNPoBZnFtt1
-        SGeewBNJjQGaIrhTsYq6vKzpA/CC
-X-Google-Smtp-Source: APXvYqx/rZoqtPDnhnSq+6zvgHqfTV80vsO8Rw46Lq/H2l8oT1DaaduDc9Huqwd2S18gOr4VcAnOkQ==
-X-Received: by 2002:a17:902:724:: with SMTP id 33mr126468994pli.49.1561102105312;
-        Fri, 21 Jun 2019 00:28:25 -0700 (PDT)
-Received: from localhost.localdomain ([203.205.141.123])
-        by smtp.googlemail.com with ESMTPSA id a12sm3972617pje.3.2019.06.21.00.28.23
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Fri, 21 Jun 2019 00:28:24 -0700 (PDT)
-From:   Wanpeng Li <kernellwp@gmail.com>
-X-Google-Original-From: Wanpeng Li <wanpengli@tencent.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Frederic Weisbecker <frederic@kernel.org>
-Subject: [PATCH v3] sched/isolation: Prefer housekeeping cpu in local node
-Date:   Fri, 21 Jun 2019 15:28:15 +0800
-Message-Id: <1561102095-29069-1-git-send-email-wanpengli@tencent.com>
-X-Mailer: git-send-email 2.7.4
+        id S1726256AbfFUH3P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Jun 2019 03:29:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47998 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726025AbfFUH3O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Jun 2019 03:29:14 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 16E9D208C3;
+        Fri, 21 Jun 2019 07:29:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1561102153;
+        bh=kPwFEjWK93xycgmBhsOnGfFIY99Nc6Bkb8Tptor+iqs=;
+        h=Date:From:To:Cc:Subject:From;
+        b=y41jUmAOSMnjkujPbnGkQf0zhRwU2Je97kQwG2jtH13S07da1Dmedk5OCCnfN0dsP
+         L3UuM3nclZUdf6qnbGhOaQxa9KMPxh2DDh7B7RbyC0s+yTiG8N6sdeSeTS3f4V1Xrf
+         aakaUfGwqNs+2LbC6oyPvendd31cETNHqhMwZrmo=
+Date:   Fri, 21 Jun 2019 09:29:11 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Rajat Jain <rajatja@google.com>
+Cc:     Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: PCI/AER sysfs files violate the rules of how sysfs works
+Message-ID: <20190621072911.GA21600@kroah.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wanpeng Li <wanpengli@tencent.com>
+Hi,
 
-In real product setup, there will be houseeking cpus in each nodes, it 
-is prefer to do housekeeping from local node, fallback to global online 
-cpumask if failed to find houseeking cpu from local node.
+When working on some documentation scripts to show the
+Documentation/ABI/ files in an automated way, I ran across this "gem" of
+a sysfs file: Documentation/ABI/testing/sysfs-bus-pci-devices-aer_stats
 
-Cc: Ingo Molnar <mingo@redhat.com> 
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Frederic Weisbecker <frederic@kernel.org>
-Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
----
-v2 -> v3:
- * add sched_numa_find_closest comments
-v1 -> v2:
- * introduce sched_numa_find_closest
+In it you describe how the files
+/sys/bus/pci/devices/<dev>/aer_dev_correctable and
+/sys/bus/pci/devices/<dev>/aer_dev_fatal and
+/sys/bus/pci/devices/<dev>/aer_dev_nonfatal
+all display a bunch of text on multiple lines.
 
- kernel/sched/isolation.c | 12 ++++++++++--
- kernel/sched/sched.h     |  5 ++---
- kernel/sched/topology.c  | 22 ++++++++++++++++++++++
- 3 files changed, 34 insertions(+), 5 deletions(-)
+This violates the "one value per sysfs file" rule, and should never have
+been merged as-is :(
 
-diff --git a/kernel/sched/isolation.c b/kernel/sched/isolation.c
-index 123ea07..589afba 100644
---- a/kernel/sched/isolation.c
-+++ b/kernel/sched/isolation.c
-@@ -16,9 +16,17 @@ static unsigned int housekeeping_flags;
- 
- int housekeeping_any_cpu(enum hk_flags flags)
- {
--	if (static_branch_unlikely(&housekeeping_overridden))
--		if (housekeeping_flags & flags)
-+	int cpu;
-+
-+	if (static_branch_unlikely(&housekeeping_overridden)) {
-+		if (housekeeping_flags & flags) {
-+			cpu = sched_numa_find_closest(housekeeping_mask, smp_processor_id());
-+			if (cpu < nr_cpu_ids)
-+				return cpu;
-+
- 			return cpumask_any_and(housekeeping_mask, cpu_online_mask);
-+		}
-+	}
- 	return smp_processor_id();
- }
- EXPORT_SYMBOL_GPL(housekeeping_any_cpu);
-diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index b08dee2..0db7431 100644
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -1212,9 +1212,6 @@ enum numa_topology_type {
- extern enum numa_topology_type sched_numa_topology_type;
- extern int sched_max_numa_distance;
- extern bool find_numa_distance(int distance);
--#endif
--
--#ifdef CONFIG_NUMA
- extern void sched_init_numa(void);
- extern void sched_domains_numa_masks_set(unsigned int cpu);
- extern void sched_domains_numa_masks_clear(unsigned int cpu);
-@@ -1224,6 +1221,8 @@ static inline void sched_domains_numa_masks_set(unsigned int cpu) { }
- static inline void sched_domains_numa_masks_clear(unsigned int cpu) { }
- #endif
- 
-+extern int sched_numa_find_closest(const struct cpumask *cpus, int cpu);
-+
- #ifdef CONFIG_NUMA_BALANCING
- /* The regions in numa_faults array from task_struct */
- enum numa_faults_stats {
-diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
-index 63184cf..083ef23 100644
---- a/kernel/sched/topology.c
-+++ b/kernel/sched/topology.c
-@@ -1726,6 +1726,28 @@ void sched_domains_numa_masks_clear(unsigned int cpu)
- 
- #endif /* CONFIG_NUMA */
- 
-+/*
-+ * sched_numa_find_closest() - given the NUMA topology, find the cpu
-+ *                             closest to @cpu from @cpumask.
-+ * cpumask: cpumask to find a cpu from
-+ * cpu: cpu to be close to
-+ *
-+ * returns: cpu, or >= nr_cpu_ids when nothing found (or !NUMA).
-+ */
-+int sched_numa_find_closest(const struct cpumask *cpus, int cpu)
-+{
-+#ifdef CONFIG_NUMA
-+	int i, j = cpu_to_node(cpu);
-+
-+	for (i = 0; i < sched_domains_numa_levels; i++) {
-+		cpu = cpumask_any_and(cpus, sched_domains_numa_masks[i][j]);
-+		if (cpu < nr_cpu_ids)
-+			return cpu;
-+	}
-+#endif
-+	return nr_cpu_ids;
-+}
-+
- static int __sdt_alloc(const struct cpumask *cpu_map)
- {
- 	struct sched_domain_topology_level *tl;
--- 
-2.7.4
+Please fix it up to be a lot of individual files if your really need all
+of those different values.
 
+Remember, sysfs files should never have to have a parser to read them
+other than a simple "what is this single value", and you should NEVER
+have fun macros like:
+
+        for (i = 0; i < ARRAY_SIZE(strings_array); i++) {               \
+                if (strings_array[i])                                   \
+                        str += sprintf(str, "%s %llu\n",                \
+                                       strings_array[i], stats[i]);     \
+                else if (stats[i])                                      \
+                        str += sprintf(str, #stats_array "_bit[%d] %llu\n",\
+                                       i, stats[i]);                    \
+        }                                                               \
+        str += sprintf(str, "TOTAL_%s %llu\n", total_string,            \
+                       pdev->aer_stats->total_field);                   \
+
+spit out sysfs information.
+
+Note, I am all for not properly checking the length of the sysfs file
+when writing to it, but that is ONLY because you "know" that a single
+integer will never overflow anything.  Here you are writing a ton of
+different values, with no error checking at all.  So just when I thought
+it couldn't be any worse...
+
+Please fix.
+
+thanks,
+
+greg k-h
