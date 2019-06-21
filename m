@@ -2,65 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E2874E97E
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 15:39:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BE62D4E96B
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 15:38:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726174AbfFUNjk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Jun 2019 09:39:40 -0400
-Received: from m15-14.126.com ([220.181.15.14]:46907 "EHLO m15-14.126.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726049AbfFUNjk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Jun 2019 09:39:40 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
-        s=s110527; h=Date:From:Subject:MIME-Version:Message-ID; bh=QGdsU
-        gyXCSYHoOEp1Wefv/TO84Pvr2WEjxPG073SWEk=; b=HtOzTPWrh4OlfO89a6B8o
-        NxANss8JkIJn+zNkYys1QiDA09nMJhL/t62eic3xpaHIPb87r/reROWpqGsDqZTA
-        iTXGOR7dV3JUJLbHMfqpUsS5Mi8dsVcOlDAR1xMvcuT7rcjxqi3X/P3tWIPILsQS
-        yaXCjttebq5dux8RpEqeXs=
-Received: from kernelpatch$126.com ( [117.136.87.52] ) by
- ajax-webmail-wmsvr14 (Coremail) ; Fri, 21 Jun 2019 21:38:44 +0800 (CST)
-X-Originating-IP: [117.136.87.52]
-Date:   Fri, 21 Jun 2019 21:38:44 +0800 (CST)
-From:   "Tiezhu Yang" <kernelpatch@126.com>
-To:     "Borislav Petkov" <bp@alien8.de>
-Cc:     tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
-        x86@kernel.org, linux-kernel@vger.kernel.org, vgoyal@redhat.com
-Subject: Re:Re: [PATCH] kexec: fix warnig of crash_zero_bytes in crash.c
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version SP_ntes V3.5 build
- 20190614(cb3344cf) Copyright (c) 2002-2019 www.mailtech.cn 126com
-In-Reply-To: <20190620163900.GF28032@zn.tnic>
-References: <fa5d08.1fe.16b5848e5f7.Coremail.kernelpatch@126.com>
- <20190620163900.GF28032@zn.tnic>
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=GBK
+        id S1726314AbfFUNiY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Jun 2019 09:38:24 -0400
+Received: from mail-vs1-f66.google.com ([209.85.217.66]:35143 "EHLO
+        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725975AbfFUNiY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Jun 2019 09:38:24 -0400
+Received: by mail-vs1-f66.google.com with SMTP id u124so3846747vsu.2;
+        Fri, 21 Jun 2019 06:38:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=y3RLgKLOFIxvZMzXOwU7F5Yurn0c+NOUw+jUTBkhCgo=;
+        b=mF442hqXyWC8aR9fMe4LMrIymhJ7j/2eWnIxti4QdqJLT13eFvyCmkjK/JQY0DiqUe
+         Rq+PluQKYySpM44e6mT8Fm8qEge3slgpf2R8P8egW9Hyx/L0JR2nPtmBa7matk//sNQW
+         diWPsvfkFSQHfIHvRtYfVlPMNPrI7TOvuYKlGLalZP/wLcqU5gIoyZkN6gaJJeAwupkC
+         8ancpd/cKIYDueEMn3+rvFNdtVbyXc3MqtnyGv0wiwK6rvwrOlACLt9uxgIetlB2wdsF
+         kYVkSBrSp7gkRX0eAVJhu5jnxXWNG+cdqzM9jEDNm/UCzUyCTUvT7BlY0XV2fvJJTLY3
+         J2ig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=y3RLgKLOFIxvZMzXOwU7F5Yurn0c+NOUw+jUTBkhCgo=;
+        b=sHgOQznNqWDy5VzJfpZkiIc34P26Z7vlgx6G5B3CfVdFupaBJ6KKoT3knEAhpwycMy
+         RCQnXpwjSyAqp/xfye0zEfpi1jv5IH7HXSI2SGguf5sE1zPz79DskOpjRmmAhsYZNn33
+         ODFY0h4DjngHgX/1GqQfETYJjcqrxwK9wsc/ay56Y89gAXltN8AiIZpUccx+bui9pgD5
+         8NI5DLWEo7Z+CLN1UYS4FksgNJnFZznlTjiS0Txs+1bI8CXgqOATN8I+d7vJjQru0HCy
+         HYEnaY4ZSdXepuC/AzrbFMf3hwuE9Kf/++rXLxEpuhjSL35/UXdNUiiGO3kWnNMZdwTr
+         nv8w==
+X-Gm-Message-State: APjAAAWnFMVgKhwboa+EqhexjtaR7XjYc5G/ap+NqRmIIRfSRg0i21SF
+        mCco8960SpkwMniulC9MiEMRlWIkLVGvLbVfsWU=
+X-Google-Smtp-Source: APXvYqwXhGSaeU4cIvOV+lL4GHqdL9eNUIi3gdmDB80kH/6pe8U/CrLJNfH7mhCD+EiR1b9dDIWgOj4eTxHfMp3XkCI=
+X-Received: by 2002:a67:f8d4:: with SMTP id c20mr11787135vsp.239.1561124302979;
+ Fri, 21 Jun 2019 06:38:22 -0700 (PDT)
 MIME-Version: 1.0
-Message-ID: <7c86df5d.8b94.16b7a42c5be.Coremail.kernelpatch@126.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID: DsqowAA3JVbl3QxdKMRFAA--.18968W
-X-CM-SenderInfo: xnhu0vxosd3ubk6rjloofrz/1tbirwDa9VpD6Xs+gwABs3
-X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
+References: <1561064991-16874-1-git-send-email-alcooperx@gmail.com>
+ <1561064991-16874-4-git-send-email-alcooperx@gmail.com> <1561095579.32589.3.camel@mhfsdcap03>
+In-Reply-To: <1561095579.32589.3.camel@mhfsdcap03>
+From:   Alan Cooper <alcooperx@gmail.com>
+Date:   Fri, 21 Jun 2019 09:39:08 -0400
+Message-ID: <CAOGqxeWUHbo51k-BpBJ0NT=s1hhJW5TOQ_js2QyqHV=mGbYUEw@mail.gmail.com>
+Subject: Re: [PATCH 3/6] usb: bdc: driver may fail to get USB PHY
+To:     Chunfeng Yun <chunfeng.yun@mediatek.com>
+Cc:     ": Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
+        DTML <devicetree@vger.kernel.org>,
+        Felipe Balbi <balbi@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        USB list <linux-usb@vger.kernel.org>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-QXQgMjAxOS0wNi0yMSAwMDozOTowMCwgIkJvcmlzbGF2IFBldGtvdiIgPGJwQGFsaWVuOC5kZT4g
-d3JvdGU6Cj5PbiBTYXQsIEp1biAxNSwgMjAxOSBhdCAwNzoxODoyMEFNICswODAwLCBUaWV6aHUg
-WWFuZyB3cm90ZToKPj4gVGhpcyBwYXRjaCBmaXhlcyB0aGUgZm9sbG93aW5nIHNwYXJzZSB3YXJu
-aW5nOgo+Cj5Bdm9pZCBoYXZpbmcgIlRoaXMgcGF0Y2giIG9yICJUaGlzIGNvbW1pdCIgaW4gdGhl
-IGNvbW1pdCBtZXNzYWdlLiBJdCBpcwo+dGF1dG9sb2dpY2FsbHkgdXNlbGVzcy4KPgo+QWxzbywg
-ZG8KPgo+JCBnaXQgZ3JlcCAnVGhpcyBwYXRjaCcgRG9jdW1lbnRhdGlvbi9wcm9jZXNzCj4KPmZv
-ciBtb3JlIGRldGFpbHMuCj4KPj4gYXJjaC94ODYva2VybmVsL2NyYXNoLmM6NTk6MTU6Cj4+IHdh
-cm5pbmc6IHN5bWJvbCAnY3Jhc2hfemVyb19ieXRlcycgd2FzIG5vdCBkZWNsYXJlZC4gU2hvdWxk
-IGl0IGJlIHN0YXRpYz8KPj4gCj4+IEluIGFkZGl0aW9uLCBjcmFzaF96ZXJvX2J5dGVzIGlzIHVz
-ZWQgd2hlbiBDT05GSUdfS0VYRUNfRklMRSBpcwo+PiBzZXQsIHNvIG1ha2UgaXQgb25seSBhdmFp
-bGFibGUgdW5kZXIgQ09ORklHX0tFWEVDX0ZJTEUuIE90aGVyd2lzZSwKPj4gaWYgQ09ORklHX0tF
-WEVDX0ZJTEUgaXMgbm90IHNldCwgdGhlIGZvbGxvd2luZyB3YXJuaW5nIHdpbGwgYXBwZWFyOgo+
-PiAKPj4gYXJjaC94ODYva2VybmVsL2NyYXNoLmM6NTk6MjI6Cj4+IHdhcm5pbmc6IKGuY3Jhc2hf
-emVyb19ieXRlc6GvIGRlZmluZWQgYnV0IG5vdCB1c2VkIFstV3VudXNlZC12YXJpYWJsZV0KPgo+
-VGhhdCBoYXBwZW5zIG9ubHkgd2hlbiB5b3UgbWFrZSBpdCBzdGF0aWMsIHNvIHBsZWFzZSBzdGF0
-ZSB0aGF0IGluIHRoZQo+Y29tbWl0IG1lc3NhZ2UuCgpUaGFua3MgZm9yIHlvdXIgc3VnZ2VzdGlv
-biwgSSB3aWxsIHNlbmQgYSB2MiBwYXRjaC4KClRoYW5rcywKCj4KPlRoeC4KPgo+LS0gCj5SZWdh
-cmRzL0dydXNzLAo+ICAgIEJvcmlzLgo+Cj5Hb29kIG1haWxpbmcgcHJhY3RpY2VzIGZvciA0MDA6
-IGF2b2lkIHRvcC1wb3N0aW5nIGFuZCB0cmltIHRoZSByZXBseS4K
+It's been very useful to have the DEFER debug message so I'd like to
+leave in the check for DEFER. I should not be skipping the clock
+disable, so I'll "goto clk_cleanup" for both cases.
+
+Thanks
+Al
+
+On Fri, Jun 21, 2019 at 1:39 AM Chunfeng Yun <chunfeng.yun@mediatek.com> wrote:
+>
+> On Thu, 2019-06-20 at 17:09 -0400, Al Cooper wrote:
+> > Initialization order is important for the USB PHY and the PHY clients.
+> > The init order is based on the build order of the drivers in the
+> > makefiles and the PHY drivers are built early to help with
+> > dependencies, but the new SCMI based clock subsystem has the side
+> > effect of making some additional drivers DEFER until the clock
+> > is ready. This is causing the USB PHY driver to defer which is causing
+> > some PHY clients to fail when they try to get the PHY. The fix is to have
+> > the client driver return DEFER when it's "get phy" routine returns DEFER.
+> >
+> > Signed-off-by: Al Cooper <alcooperx@gmail.com>
+> > ---
+> >  drivers/usb/gadget/udc/bdc/bdc_core.c | 6 +++++-
+> >  1 file changed, 5 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/usb/gadget/udc/bdc/bdc_core.c b/drivers/usb/gadget/udc/bdc/bdc_core.c
+> > index 11a43de6c1c6..c794890d785b 100644
+> > --- a/drivers/usb/gadget/udc/bdc/bdc_core.c
+> > +++ b/drivers/usb/gadget/udc/bdc/bdc_core.c
+> > @@ -543,9 +543,13 @@ static int bdc_probe(struct platform_device *pdev)
+> >                       dev, dev->of_node, phy_num);
+> >               if (IS_ERR(bdc->phys[phy_num])) {
+> >                       ret = PTR_ERR(bdc->phys[phy_num]);
+> > +                     if (ret == -EPROBE_DEFER) {
+> > +                             dev_dbg(bdc->dev, "DEFER, waiting for PHY\n");
+> why not disable clock here? when re-probe, will enable clock again.
+> to me, no need check -EPROBE_DEFFER.
+> > +                             return ret;
+> > +                     }
+>
+> >                       dev_err(bdc->dev,
+> >                               "BDC phy specified but not found:%d\n", ret);
+> > -                     return ret;
+> > +                     goto clk_cleanup;
+> >               }
+> >       }
+> >
+>
+>
