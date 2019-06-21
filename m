@@ -2,154 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5A9344DEBE
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 03:44:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F4C84DEBA
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 03:41:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726100AbfFUBoG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 21:44:06 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:36109 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725906AbfFUBoF (ORCPT
+        id S1726244AbfFUBlN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 21:41:13 -0400
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:34546 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725936AbfFUBlM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 21:44:05 -0400
-Received: by mail-pl1-f195.google.com with SMTP id k8so2170392plt.3
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2019 18:44:05 -0700 (PDT)
+        Thu, 20 Jun 2019 21:41:12 -0400
+Received: by mail-ot1-f65.google.com with SMTP id n5so4756128otk.1
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2019 18:41:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=tkhWcpP90IbCc1eyz8PQ0udFiMlHh5Rce8pgGVY2kqc=;
-        b=Y5cwSWd84cr5pT+ngrBbRH9+/jE2OLSDi0XBYRKj6+Xus5HgLPw1PJdKybc44+nUq1
-         X3dWOffFmP1CVquRKX3fXOgWa8rTvna91lq/GyTuuaUPaH+RnKh9YffwEhOJRx81tOa8
-         46MwCFN+/0W2M46jOSujkeC2v1R7szVirSpn4XvYNKC8TuDZ+H8h5se3jdQAwoePEaHC
-         /Rzze0bP7Z5ZL/wr1D6H7RItwgP+7T/SrAg/v8ulxcNElp+ntccKXuVxK9SkHblpGGbm
-         VMjZVlaodt68TaUWIaUhE4aRYv1khWwHZFnPTaUvRmNqe0kXa8zoicsrwwrJ8jEmKftr
-         sKMQ==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Rzeo006/jzKSPbm/r6/uBrpWXDZY3RJIqz2UkltKFyE=;
+        b=InHu5zUe2eCXIwwtW0YOX9gE+fyok9lXwN7cVGa4LDl8uiFbj5KtVU7tjR2Q3cbsZw
+         s7WbGsOSewa1njscsIAyEn7uZrD9r+eyBqXnL2jRE7tXwqRos1abF7o8FHOMd7X/I8KP
+         1TjN7xcOZfVlgnSvgS389tb2seOt2ZZCuALShhDwKxnuzq8DnXkERb83GnpNPkNysW/m
+         SxEGAVKvao4sRWK8IcykA5zInIe1APOFnj261YgJTuIlUjr0mLLpivhtS2kKOr54595j
+         EB9bvH9nEDQO8btvJf4HU7D0VCWn3jyb05uoMVY5FlrSBvmoqiwFHbotzOEeccKodt8B
+         lH5A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=tkhWcpP90IbCc1eyz8PQ0udFiMlHh5Rce8pgGVY2kqc=;
-        b=cF0vwOZlgCwthM6618TlPQ15EHK2jVHCugQvrSxo122/3NuU7ahF9p833vhKy5bSYv
-         Wt2wkFzggkDLhsKWBgdoiT8Kl4uNU5aXKISYe5rHVwsr2JbeKtLZQB5q/0ojVnAczsG2
-         Psh8bresAnOVUrVgT0jcfmA/G4QYLwTI6aSLXEQraPAaxgpwrwpu2AqoFWJ495MzjkU5
-         9sgKeftGehLwBvUj3aZ/GbimOnT5I7AI70Z4WcX5ZTUfPwASMoW+V6PMONt2C4hefwfs
-         LuVeWztDyvHFkRbZW13blqNa809bxHvqyqf2OY3chOlTvTu4nYxwm1A3LmEs0KmEK2Hq
-         AqkQ==
-X-Gm-Message-State: APjAAAU5KTXlvos33zTFEmFz6xT+97tytTGOIvlqCVMht+UznX/xuKf0
-        aomOvxsi+6ZPdGbULqda+QHsTmQ1
-X-Google-Smtp-Source: APXvYqzrMYBb0VFopsTbd4r4MVBFyvwIJ9B3mR3PK+YTa21v0FfnE2hgifoWrwe0qsGetzNidIeJwg==
-X-Received: by 2002:a17:902:1101:: with SMTP id d1mr7875672pla.212.1561080916138;
-        Thu, 20 Jun 2019 18:35:16 -0700 (PDT)
-Received: from localhost.localdomain ([203.205.141.123])
-        by smtp.googlemail.com with ESMTPSA id p68sm707845pfb.80.2019.06.20.18.35.14
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 20 Jun 2019 18:35:15 -0700 (PDT)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Rzeo006/jzKSPbm/r6/uBrpWXDZY3RJIqz2UkltKFyE=;
+        b=KQkqxR3Ihhnd/zDo9DfFjstp5ZrtXbfsPfksx1V7w79HhKEO9Snu58PQcOaUhNvi6a
+         gu7yBo8LpgUOrNfAnpU3qlralnTvF0TpJxgX3V3s9k1O09djUej1QYr/5eeBriECyPxA
+         Ct+HvDVSpmZhNQXMlb9BAdMrp6Z+PfOc+pw+f0UCkv59DxCeTogRMzr3hieYUy5g0VIO
+         ASXTu2+BOVqA8bPGmmMofMjkCNaobRnE4QME3wvoWdbMX1bMRyfZBLuBMRlzcuvBq00d
+         2otD94pHI4FZ02C8AhMCbHjlia8pQNcLkPPiOPf5tUE8SGAaXOAAosLZ4DHFD3HkYYPO
+         ySKQ==
+X-Gm-Message-State: APjAAAV4+gvTAc1P1fKVCSyQoNLule0WMqwsRMF3DRjnnMrUW7if8y/e
+        wSSwPuIwlXmyYpf+7Ig3dclgewCfuUHFE1fqSPc=
+X-Google-Smtp-Source: APXvYqyc2uHg7iq570Lo7bKCfpjFfDQTFm/HBeMCa5eMK1ady5LaV1BB4tBXqYIIi/0EMVPC2X6gWsvrhstVsfXSfzU=
+X-Received: by 2002:a9d:62c4:: with SMTP id z4mr5878774otk.56.1561080890907;
+ Thu, 20 Jun 2019 18:34:50 -0700 (PDT)
+MIME-Version: 1.0
+References: <1561030614-17026-1-git-send-email-wanpengli@tencent.com> <20190620123807.GX3436@hirez.programming.kicks-ass.net>
+In-Reply-To: <20190620123807.GX3436@hirez.programming.kicks-ass.net>
 From:   Wanpeng Li <kernellwp@gmail.com>
-X-Google-Original-From: Wanpeng Li <wanpengli@tencent.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
+Date:   Fri, 21 Jun 2019 09:36:04 +0800
+Message-ID: <CANRm+CwfaafP6vwo-zu==G6BTmZb64xUDB+Ko7xsFy-iVGFXUg@mail.gmail.com>
+Subject: Re: [PATCH] sched/isolation: Prefer housekeeping cpu in local node
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>, Ingo Molnar <mingo@redhat.com>,
         Frederic Weisbecker <frederic@kernel.org>
-Subject: [PATCH v2] sched/isolation: Prefer housekeeping cpu in local node
-Date:   Fri, 21 Jun 2019 09:35:11 +0800
-Message-Id: <1561080911-22655-1-git-send-email-wanpengli@tencent.com>
-X-Mailer: git-send-email 2.7.4
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wanpeng Li <wanpengli@tencent.com>
+On Thu, 20 Jun 2019 at 20:38, Peter Zijlstra <peterz@infradead.org> wrote:
+>
+> On Thu, Jun 20, 2019 at 07:36:54PM +0800, Wanpeng Li wrote:
+> > From: Wanpeng Li <wanpengli@tencent.com>
+> >
+> > In real product setup, there will be houseeking cpus in each nodes, it
+> > is prefer to do housekeeping from local node, fallback to global online
+> > cpumask if failed to find houseeking cpu from local node.
+> >
+> > Cc: Ingo Molnar <mingo@redhat.com>
+> > Cc: Peter Zijlstra <peterz@infradead.org>
+> > Cc: Frederic Weisbecker <frederic@kernel.org>
+> > Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
+> > ---
+> >  kernel/sched/isolation.c | 11 +++++++++--
+> >  1 file changed, 9 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/kernel/sched/isolation.c b/kernel/sched/isolation.c
+> > index 123ea07..9eb6805 100644
+> > --- a/kernel/sched/isolation.c
+> > +++ b/kernel/sched/isolation.c
+> > @@ -16,9 +16,16 @@ static unsigned int housekeeping_flags;
+> >
+> >  int housekeeping_any_cpu(enum hk_flags flags)
+> >  {
+> > +     int cpu;
+> > +
+> >       if (static_branch_unlikely(&housekeeping_overridden))
+> > -             if (housekeeping_flags & flags)
+> > -                     return cpumask_any_and(housekeeping_mask, cpu_online_mask);
+> > +             if (housekeeping_flags & flags) {
+> > +                     cpu = cpumask_any_and(housekeeping_mask, cpu_cpu_mask(smp_processor_id()));
+> > +                     if (cpu < nr_cpu_ids)
+> > +                             return cpu;
+> > +                     else
+> > +                             return cpumask_any_and(housekeeping_mask, cpu_online_mask);
+> > +             }
+> >       return smp_processor_id();
+> >  }
+> >  EXPORT_SYMBOL_GPL(housekeeping_any_cpu);
+>
+> Why not something like so? IIRC there's more places that want this, but
+> I can't seem to remember quite where.
 
-In real product setup, there will be houseeking cpus in each nodes, it 
-is prefer to do housekeeping from local node, fallback to global online 
-cpumask if failed to find houseeking cpu from local node.
+Good point, do it in v2. Btw, could you have a look this patch?
+https://lkml.org/lkml/2019/6/17/1723
 
-Cc: Ingo Molnar <mingo@redhat.com> 
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Frederic Weisbecker <frederic@kernel.org>
-Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
----
-v1 -> v2:
- * introduce sched_numa_find_closest
-
- kernel/sched/isolation.c | 12 ++++++++++--
- kernel/sched/sched.h     |  5 ++---
- kernel/sched/topology.c  | 14 ++++++++++++++
- 3 files changed, 26 insertions(+), 5 deletions(-)
-
-diff --git a/kernel/sched/isolation.c b/kernel/sched/isolation.c
-index 123ea07..589afba 100644
---- a/kernel/sched/isolation.c
-+++ b/kernel/sched/isolation.c
-@@ -16,9 +16,17 @@ static unsigned int housekeeping_flags;
- 
- int housekeeping_any_cpu(enum hk_flags flags)
- {
--	if (static_branch_unlikely(&housekeeping_overridden))
--		if (housekeeping_flags & flags)
-+	int cpu;
-+
-+	if (static_branch_unlikely(&housekeeping_overridden)) {
-+		if (housekeeping_flags & flags) {
-+			cpu = sched_numa_find_closest(housekeeping_mask, smp_processor_id());
-+			if (cpu < nr_cpu_ids)
-+				return cpu;
-+
- 			return cpumask_any_and(housekeeping_mask, cpu_online_mask);
-+		}
-+	}
- 	return smp_processor_id();
- }
- EXPORT_SYMBOL_GPL(housekeeping_any_cpu);
-diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index b08dee2..0db7431 100644
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -1212,9 +1212,6 @@ enum numa_topology_type {
- extern enum numa_topology_type sched_numa_topology_type;
- extern int sched_max_numa_distance;
- extern bool find_numa_distance(int distance);
--#endif
--
--#ifdef CONFIG_NUMA
- extern void sched_init_numa(void);
- extern void sched_domains_numa_masks_set(unsigned int cpu);
- extern void sched_domains_numa_masks_clear(unsigned int cpu);
-@@ -1224,6 +1221,8 @@ static inline void sched_domains_numa_masks_set(unsigned int cpu) { }
- static inline void sched_domains_numa_masks_clear(unsigned int cpu) { }
- #endif
- 
-+extern int sched_numa_find_closest(const struct cpumask *cpus, int cpu);
-+
- #ifdef CONFIG_NUMA_BALANCING
- /* The regions in numa_faults array from task_struct */
- enum numa_faults_stats {
-diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
-index 63184cf..3d3fb04 100644
---- a/kernel/sched/topology.c
-+++ b/kernel/sched/topology.c
-@@ -1726,6 +1726,20 @@ void sched_domains_numa_masks_clear(unsigned int cpu)
- 
- #endif /* CONFIG_NUMA */
- 
-+int sched_numa_find_closest(const struct cpumask *cpus, int cpu)
-+{
-+#ifdef CONFIG_NUMA
-+	int i, j = cpu_to_node(cpu);
-+
-+	for (i = 0; i < sched_domains_numa_levels; i++) {
-+		cpu = cpumask_any_and(cpus, sched_domains_numa_masks[i][j]);
-+		if (cpu < nr_cpu_ids)
-+			return cpu;
-+	}
-+#endif
-+	return nr_cpu_ids;
-+}
-+
- static int __sdt_alloc(const struct cpumask *cpu_map)
- {
- 	struct sched_domain_topology_level *tl;
--- 
-2.7.4
-
+Regards,
+Wanpeng Li
