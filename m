@@ -2,84 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5BDE24EA23
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 16:03:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4186E4EA27
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 16:05:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726138AbfFUODv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Jun 2019 10:03:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35750 "EHLO mail.kernel.org"
+        id S1726215AbfFUOFH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Jun 2019 10:05:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36608 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725985AbfFUODv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Jun 2019 10:03:51 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        id S1725975AbfFUOFG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Jun 2019 10:05:06 -0400
+Received: from localhost (unknown [69.71.4.100])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 891872075E;
-        Fri, 21 Jun 2019 14:03:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2D5E82075E;
+        Fri, 21 Jun 2019 14:05:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561125830;
-        bh=bAd9RSgxnQbh9QhY94/GPs+DJutctfaBKOnc7qBa8NQ=;
+        s=default; t=1561125906;
+        bh=9SpD7uZXF12Lgn71hZIUmDAfAlF2fpqc8oZvSOye1Ac=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=iDdczVXpJtWEoP6wDxIKV62OkLkdOKzp7b65d/63pq1+/9RXSh0wFfARernJNZdhn
-         gR0tEFJdNtDUsESalYHNwj3w2DCi5l1vGwo+Q7fBwZiIzooHgsbtIzKhqaTzBSCSH0
-         U/7lr9DZb2mORFud5nZ0ap6wyq3LrhOddwOKuD7g=
-Date:   Fri, 21 Jun 2019 16:03:47 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Colin King <colin.king@canonical.com>
-Cc:     Kees Cook <keescook@chromium.org>, Arnd Bergmann <arnd@arndb.de>,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] lkdtm: remove redundant initialization of ret
-Message-ID: <20190621140347.GA7011@kroah.com>
-References: <20190614094311.24024-1-colin.king@canonical.com>
+        b=Gduhdc+w/cr/kolxidI6ZyawEhqHL84tr773iV8OL8RKQMfeOdtzbEe4enD/Z2N6/
+         fV/1UP8V1+YW/UFNIJjStUdRgpNlmVzKI4kMQZ1D5/xf8kD4AFoHJ1/leobK9PPc8x
+         O3HnQ33TbfucZ4IAcL8n2m9hBviPF58L6F90iA9c=
+Date:   Fri, 21 Jun 2019 09:05:05 -0500
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Puranjay Mohan <puranjay12@gmail.com>
+Cc:     Shuah Khan <skhan@linuxfoundation.org>,
+        Bjorn Helgaas <bjorn@helgaas.com>,
+        netdev <netdev@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-kernel-mentees@lists.linuxfoundation.org,
+        linux-pci@vger.kernel.org,
+        Stephen Hemminger <stephen@networkplumber.org>
+Subject: Re: [PATCH v3 0/3] net: fddi: skfp: Use PCI generic definitions
+ instead of private duplicates
+Message-ID: <20190621140505.GF82584@google.com>
+References: <20190621094607.15011-1-puranjay12@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190614094311.24024-1-colin.king@canonical.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <20190621094607.15011-1-puranjay12@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 14, 2019 at 10:43:11AM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The variable ret is being initialized with the value -EINVAL however
-> this value is never read and ret is being re-assigned later on. Hence
-> the initialization is redundant and can be removed.
-> 
-> Addresses-Coverity: ("Unused value")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> Acked-by: Kees Cook <keescook@chromium.org>
-> ---
->  drivers/misc/lkdtm/core.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/misc/lkdtm/core.c b/drivers/misc/lkdtm/core.c
-> index bba093224813..92df35fdeab0 100644
-> --- a/drivers/misc/lkdtm/core.c
-> +++ b/drivers/misc/lkdtm/core.c
-> @@ -390,7 +390,7 @@ static int __init lkdtm_module_init(void)
->  {
->  	struct crashpoint *crashpoint = NULL;
->  	const struct crashtype *crashtype = NULL;
-> -	int ret = -EINVAL;
-> +	int ret;
->  	int i;
->  
->  	/* Neither or both of these need to be set */
-> -- 
-> 2.20.1
-> 
+[+cc Stephen]
 
-With this patch now applied, I get this build warning:
-drivers/misc/lkdtm/core.c: In function lkdtm_module_init:
-drivers/misc/lkdtm/core.c:467:9: warning: ret may be used uninitialized in this function [-Wmaybe-uninitialized]
-  return ret;
-         ^~~
+On Fri, Jun 21, 2019 at 03:16:04PM +0530, Puranjay Mohan wrote:
+> This patch series removes the private duplicates of PCI definitions in
+> favour of generic definitions defined in pci_regs.h.
+> 
+> This driver only uses some of the generic PCI definitons,
+> which are included from pci_regs.h and thier private versions
+> are removed from skfbi.h with all other private defines.
+> 
+> The skfbi.h defines PCI_REV_ID and other private defines with different
+> names, these are renamed to Generic PCI names to make them
+> compatible with defines in pci_regs.h.
+> 
+> All unused defines are removed from skfbi.h.
+> 
+> Puranjay Mohan (3):
+>   net: fddi: skfp: Rename local PCI defines to match generic PCI defines
+>   net: fddi: skfp: Include generic PCI definitions
+>   net: fddi: skfp: Remove unused private PCI definitions
+> 
+>  drivers/net/fddi/skfp/drvfbi.c  |  3 +-
+>  drivers/net/fddi/skfp/h/skfbi.h | 80 +--------------------------------
+>  2 files changed, 4 insertions(+), 79 deletions(-)
 
-So are you _sure_ it shouldn't be initialized?
+It's good form to CC people who have commented on previous versions of
+your series, so I added Stephen.
 
-thanks,
+FWIW,
 
-greg k-h
+Reviewed-by: Bjorn Helgaas <bhelgaas@google.com>
