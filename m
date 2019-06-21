@@ -2,154 +2,189 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E87404E2FA
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 11:16:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3BA1E4E338
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 11:17:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726540AbfFUJQP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Jun 2019 05:16:15 -0400
-Received: from mout.web.de ([217.72.192.78]:38775 "EHLO mout.web.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726210AbfFUJQO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Jun 2019 05:16:14 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
-        s=dbaedf251592; t=1561108541;
-        bh=ilUtmFA+0J+AjoNoXtJ0NP4uwPoKJNaN+ECoIPbIa5U=;
-        h=X-UI-Sender-Class:Subject:To:Cc:References:From:Date:In-Reply-To;
-        b=i5ADZggLXzAkg/KSD/IILIG+QGyCgEh8FIR98SGo6c2XuL0+Fvsh/i16IQdR/LdeR
-         6rdp9wkDeQPY4NlKC/p4xOj+hBZhGgiBvlj/owHc9PfEbhsBKuCcpLvCQ9qyUJE/8D
-         npfrSpKIdmAw2zNVSBNXLDWMq60xU9zkwwYeUmUg=
-X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
-Received: from [192.168.1.2] ([93.131.156.129]) by smtp.web.de (mrweb103
- [213.165.67.124]) with ESMTPSA (Nemesis) id 0LxfGh-1ignZu06KB-017IAX; Fri, 21
- Jun 2019 11:15:41 +0200
-Subject: Re: Coccinelle: Add a SmPL script for the reconsideration of
- redundant dev_err() calls
-To:     Julia Lawall <julia.lawall@lip6.fr>,
-        kernel-janitors@vger.kernel.org
-Cc:     Gilles Muller <Gilles.Muller@lip6.fr>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Nicolas Palix <nicolas.palix@imag.fr>,
-        Coccinelle <cocci@systeme.lip6.fr>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Ding Xiang <dingxiang@cmss.chinamobile.com>
-References: <05d85182-7ec3-8fc1-4bcd-fd2528de3a40@web.de>
- <alpine.DEB.2.21.1906202046550.3087@hadrien>
- <34d528db-5582-5fe2-caeb-89bcb07a1d30@web.de>
- <alpine.DEB.2.21.1906202110310.3087@hadrien>
-From:   Markus Elfring <Markus.Elfring@web.de>
-Openpgp: preference=signencrypt
-Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
- 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 FEE=
-Message-ID: <13890878-9e5f-f297-7f7c-bcc1212d83b7@web.de>
-Date:   Fri, 21 Jun 2019 11:15:37 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.1
+        id S1726610AbfFUJRn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Jun 2019 05:17:43 -0400
+Received: from outils.crapouillou.net ([89.234.176.41]:38608 "EHLO
+        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726571AbfFUJRm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Jun 2019 05:17:42 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
+        s=mail; t=1561108660; h=from:from:sender:reply-to:subject:subject:date:date:
+         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+         content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=GnEDnNvupRre4CH08nnBcLiK4v5p3vrEADxifZSPTDw=;
+        b=v2SArrbxf+UM2hExzUQIAhwuMux2k22X2xLBcomYkHut/QLUp/KABfbgouxorSAtXc1eQd
+        +tmE3zTZ3EGKfeGBQJcdFxNbUup3aGk2VXDHmlHHv8EeMCj/Dz6oxlkjLA7rA1avhbS6Dz
+        QFtwhgFx0o0tncedkVFh4g7g74GuAxU=
+Date:   Fri, 21 Jun 2019 11:17:34 +0200
+From:   Paul Cercueil <paul@crapouillou.net>
+Subject: Re: [PATCH v5 2/2] DRM: Add KMS driver for the Ingenic JZ47xx SoCs
+To:     Daniel Vetter <daniel@ffwll.ch>
+Cc:     Sam Ravnborg <sam@ravnborg.org>, David Airlie <airlied@linux.ie>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Sean Paul <sean@poorly.run>, od@zcrc.me,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Artur Rojek <contact@artur-rojek.eu>
+Message-Id: <1561108654.1777.1@crapouillou.net>
+In-Reply-To: <20190621091343.GA12905@phenom.ffwll.local>
+References: <20190603152331.23160-1-paul@crapouillou.net>
+        <20190603152331.23160-2-paul@crapouillou.net>
+        <20190619122622.GB29084@ravnborg.org> <1561040159.1978.0@crapouillou.net>
+        <20190621090411.GY12905@phenom.ffwll.local>
+        <1561108050.1777.0@crapouillou.net>
+        <20190621091343.GA12905@phenom.ffwll.local>
 MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.21.1906202110310.3087@hadrien>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset=iso-8859-1; format=flowed
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:NzVn5oeUAefREfJ9BsmN+lSXeoxZ0nYOXhCg4JUcHRq4kowfFaA
- jnHYtVkJ41FaSBuZwMH+lKIXRVQJm6oFnlX2xlL78XjfjID0M7MpE3dv07DlJdKTahIE/LH
- 2JEYx0lKG2JxLjmu3skpqBq1UYzy0PwtOkaz/3Vy6QNOQXA11j/EOm1UqFopIJ+R26IF4Ep
- qVOUESC4DOa2yf446KuOQ==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:kJe6KNIX7IE=:G/XeKtPXJ1MfoJo0D/cAg1
- 2rIRicGc1XcC8nXhB+CNDS42My7N1ObfdFkFYYR6s98UqYOXIEWS95c/FYsSFEVGz96eKyFr4
- YATrc91fRDiDbcaTvRwr5mXv5+Gct8XnhDoxhIR5U0lOZP1QCX5HezL328UoSHXmHn1Y1zbOg
- Mt/PhnvsciZQSR4Gn1xXMbFfjfheLSOzhLoakd9d4kU6x3IouJe9Y9rQqiHJwmWstTaVITASn
- 87q0xpzMWRKZr6hrDv+USuNHAkIqupopu29p5x4GGrvZeDYlSDRqafT1chdUjUCZy6lGpmaJB
- DVEAfJGkLdaoBrF7Fx0/GLOpU490azNYorIeo/XPl58R2yRBfnnmIWAuvATzqyetgGbsPJMAk
- d6UbmmjielyCN5SpsAqWQ7AyuZzWbQxoQef/EDskocwPYOrbYNa0Ma+i5fAhLXEZ9fxqwZnr/
- u81TsvEENrnkZU39eQD5af8XLJoETzrVzPeBiImJ5SvxnqrPki0XQxeAoz3GbgILHfz7ofooZ
- gIb83ykQY+ZHuWr9BlA1DgOzB77krruavV5oT+it1+2fEU2odHAS2b+NpbVKKlqx53KD7uXmQ
- mCf/TZdLZ80yuSBvutPH+g8CpUpLpj9gbocIv1rYhkupNSdsDJsMkcoIsfmY855RGA9iTdjcS
- fS0rOETgftlPfdL6PUWfSbwiIL8Kg6D/TWugmzVeiHe4xFHubbuxPhEq33o1Ynhl0k0e4UxXf
- ce7+7wTcn2UxMe0UxF28ab+NMMyNFocKrvr0xNWMtJZZvO4Z4ZjjB60Qc+VrjiGbusCMfnej2
- 1Zcc4iF5hxN2I2BFa+vPlHAqY9YuLtjwL7W4NHUevNlw3UWiTv5yjlYXv56mTuPOQ4yE+P+Cm
- Lul90xjT/nJey+ut8T9tPsEkGWF2iDEs3aGy9pmw5k14Fus5kbqcR77oGvitnXUi1GDOFdG+K
- 2e/o4CDTv0110+BIOa3xfy/XxHjobDfCh5Sr9yZQ1RQUnrrR0XYCP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> I think that something like
->
-> if (IS_ERR(e))
-> {
-> <+...
-> *dev_err(...)
-> ...+>
-> }
->
-> would be more appropriate.  Whether there is a return or not doesn't
-> really matter.
-
-Do you find the following SmPL change specification useful and acceptable?
 
 
-@deletion depends on patch@
-expression e;
-@@
- e =3D devm_ioremap_resource(...);
- if (IS_ERR(e))
-(
--{
--   dev_err(...);
-    return (...);
--}
-|{
- <+...
--   dev_err(...);
- ...+>
- }
-)
+Le ven. 21 juin 2019 =E0 11:13, Daniel Vetter <daniel@ffwll.ch> a =E9crit=20
+:
+> On Fri, Jun 21, 2019 at 11:07:30AM +0200, Paul Cercueil wrote:
+>>=20
+>>=20
+>>  Le ven. 21 juin 2019 =E0 11:04, Daniel Vetter <daniel@ffwll.ch> a=20
+>> =E9crit :
+>>  > On Thu, Jun 20, 2019 at 04:15:59PM +0200, Paul Cercueil wrote:
+>>  > >
+>>  > >
+>>  > >  Le mer. 19 juin 2019 =E0 14:26, Sam Ravnborg <sam@ravnborg.org>=20
+>> a
+>>  > > =E9crit :
+>>  > >  > Hi Paul.
+>>  > >  >
+>>  > >  > On Mon, Jun 03, 2019 at 05:23:31PM +0200, Paul Cercueil=20
+>> wrote:
+>>  > >  > >  Add a KMS driver for the Ingenic JZ47xx family of SoCs.
+>>  > >  > >  This driver is meant to replace the aging jz4740-fb=20
+>> driver.
+>>  > >  > >
+>>  > >  > >  This driver does not make use of the simple pipe helper,=20
+>> for
+>>  > > the
+>>  > >  > > reason
+>>  > >  > >  that it will soon be updated to support more advanced=20
+>> features
+>>  > > like
+>>  > >  > >  multiple planes, IPU integration for colorspace=20
+>> conversion and
+>>  > >  > > up/down
+>>  > >  > >  scaling, support for DSI displays, and TV-out and HDMI=20
+>> outputs.
+>>  > >  > >
+>>  > >  > >  Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+>>  > >  > >  Tested-by: Artur Rojek <contact@artur-rojek.eu>
+>>  > >  > >  ---
+>>  > >  > >
+>>  > >  > >  Notes:
+>>  > >  > >      v2: - Remove custom handling of panel. The panel is=20
+>> now
+>>  > >  > > discovered using
+>>  > >  > >      	  the standard API.
+>>  > >  > >      	- Lots of small tweaks suggested by upstream
+>>  > >  > >
+>>  > >  > >      v3: - Use devm_drm_dev_init()
+>>  > >  > >      	- Update compatible strings to -lcd instead of -drm
+>>  > >  > >      	- Add destroy() callbacks to plane and crtc
+>>  > >  > >      	- The ingenic,lcd-mode is now read from the bridge's=20
+>> DT
+>>  > > node
+>>  > >  > >
+>>  > >  > >      v4: Remove ingenic,lcd-mode property completely. The
+>>  > > various
+>>  > >  > > modes are now
+>>  > >  > >      	deduced from the connector type, the pixel format or=20
+>> the
+>>  > > bus
+>>  > >  > > flags.
+>>  > >  > >
+>>  > >  > >      v5: - Fix framebuffer size incorrectly calculated for=20
+>> 24bpp
+>>  > >  > > framebuffers
+>>  > >  > >      	- Use 32bpp framebuffer instead of 16bpp, as it'll=20
+>> work
+>>  > > with
+>>  > >  > > both
+>>  > >  > >      	  16-bit and 24-bit panel
+>>  > >  > >      	- Get rid of drm_format_plane_cpp() which has been=20
+>> dropped
+>>  > >  > > upstream
+>>  > >  > >      	- Avoid using drm_format_info->depth, which is=20
+>> deprecated.
+>>  > >  > In the drm world we include the revision notes in the=20
+>> changelog.
+>>  > >  > So I did this when I applied it to drm-misc-next.
+>>  > >  >
+>>  > >  > Fixed a few trivial checkpatch warnings about indent too.
+>>  > >  > There was a few too-long-lines warnings that I ignored.=20
+>> Fixing
+>>  > > them
+>>  > >  > would have hurt readability.
+>>  > >
+>>  > >  Thanks.
+>>  > >
+>>  > >  > I assume you will maintain this driver onwards from now.
+>>  > >  > Please request drm-misc commit rights (see
+>>  > >  > https://www.freedesktop.org/wiki/AccountRequests/)
+>>  > >  > You will need a legacy SSH account.
+>>  > >
+>>  > >  I requested an account here:
+>>  > > =20
+>> https://gitlab.freedesktop.org/freedesktop/freedesktop/issues/162
+>>  >
+>>  > This 404s for me. Did you set the issue to private by any chance?=20
+>> Or
+>>  > deleted already again?
+>>  > -Daniel
+>>=20
+>>  Sorry, yes, I set it to private. I thought I had to :(
+>=20
+> Well I can't ack it if its private, so please change that. Also,
+> everything is public around here, or almost everything ...
+> -Daniel
+
+I closed the old one and created a new, public one:
+https://gitlab.freedesktop.org/freedesktop/freedesktop/issues/165
 
 
-Would this approach need a version check for the Coccinelle software?
+>>=20
+>>  > >
+>>  > >  > And you should familiarize yourself with the=20
+>> maintainer-tools:
+>>  > >  > https://drm.pages.freedesktop.org/maintainer-tools/index.html
+>>  > >  >
+>>  > >  > For my use I use "dim update-branches; dim apply; dim push
+>>  > >  > So only a small subset i needed for simple use.
+>>  > >  >
+>>  > >  > 	Sam
+>>  > >
+>>  > >
+>>  >
+>>  > --
+>>  > Daniel Vetter
+>>  > Software Engineer, Intel Corporation
+>>  > http://blog.ffwll.ch
+>>=20
+>>=20
+>=20
+> --
+> Daniel Vetter
+> Software Engineer, Intel Corporation
+> http://blog.ffwll.ch
 
-Regards,
-Markus
+=
+
