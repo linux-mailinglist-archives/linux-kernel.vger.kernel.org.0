@@ -2,102 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A0E1D4E057
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 08:10:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 275814E060
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 08:12:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726243AbfFUGKt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Jun 2019 02:10:49 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:45768 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726054AbfFUGKt (ORCPT
+        id S1726304AbfFUGM5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Jun 2019 02:12:57 -0400
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:57786 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726210AbfFUGM4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Jun 2019 02:10:49 -0400
-Received: by mail-pl1-f193.google.com with SMTP id bi6so2450873plb.12
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2019 23:10:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=xzioaCMOpZ9xQIhn8ZgZe3ezoCoNBuqDVW6enXrUWdI=;
-        b=ctO7hOIdc1bJes6IfW+jMC3YvFiVSz45t+/wcP7nl8TQnixOumEuakVUduy54+D7vJ
-         IdmjNUS/kNTfK7m3QaYMos3dbKCZRVWTfrJFCalZJNsrO1H1o/F7taY9HeBHZRisbRgf
-         NjO/pdbW9rE9yRbiBiXHxrhud2JsVcugAKH+sg89svmnAcKH7fuQ0977VQ8x1qNV3YbE
-         QthTsJiP1TuuIINMBQ3GV/EHrVuRwMj7SiMzRwunaN33CqyeO7qPgc4hmRVnbIFXtyop
-         jL+FJiNe7n3XdJTacXjginoA/dKAYtF0soKm0PxiGhj2m7/NHDZNIXnV7rrH0Aosw6a0
-         ZcKQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=xzioaCMOpZ9xQIhn8ZgZe3ezoCoNBuqDVW6enXrUWdI=;
-        b=LJ8+mB7pRam9x3H03UhWogeI9ePcWGDuXYwHWEJR3Qz/3UP/pMiz2gfwON9xMTH8as
-         BeW/MKDaYKVttYnJbE8oMAiVw2XJkUC9hNTmqctgqOPXGwyWxT1x68pMrkjjre15UFrk
-         ox2zlchGHbXAwwXrOjpHubcCSlFHY+3Dzty8aLIJbTwPi3h6Im2SXgWfvpdH57SLtfK5
-         sEOIe81nghsCIIRRQdWcbZ8uHJueSPB18ArJ+FgpCI6aoUgxnnDnLpymS8EFwjZmFgiX
-         m4E/MEeGq09U1CPqhcz9zRNSokrLCve+Mk/GxzKgoeHWC3kAmpZJjy0zqO262Tz+3R20
-         tcBg==
-X-Gm-Message-State: APjAAAXax4J0VpAFCqbS6lAX4x+9erWG4ZGWWlBmvZgeP+iA5C9s9Ag7
-        kmnLExZg7a9RRIM0SN6sTMJgUA==
-X-Google-Smtp-Source: APXvYqwNG2i/oMNUPGHebpRlmIa/kWkRWV3Ez3z7eWR9nYZaeTxX5aOLEn6fqpOIvgHIP0ZnhK13+w==
-X-Received: by 2002:a17:902:b611:: with SMTP id b17mr77686806pls.261.1561097448592;
-        Thu, 20 Jun 2019 23:10:48 -0700 (PDT)
-Received: from buildserver-90.open-silicon.com ([114.143.65.226])
-        by smtp.googlemail.com with ESMTPSA id x17sm1450053pgk.72.2019.06.20.23.10.44
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 20 Jun 2019 23:10:47 -0700 (PDT)
-From:   Yash Shah <yash.shah@sifive.com>
-To:     robh+dt@kernel.org, paul.walmsley@sifive.com,
-        devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Cc:     mark.rutland@arm.com, palmer@sifive.com, aou@eecs.berkeley.edu,
-        sachin.ghadi@sifive.com, Yash Shah <yash.shah@sifive.com>
-Subject: [PATCH] riscv: dts: Add DT node for SiFive FU540 Ethernet controller driver
-Date:   Fri, 21 Jun 2019 11:40:22 +0530
-Message-Id: <1561097422-25130-2-git-send-email-yash.shah@sifive.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1561097422-25130-1-git-send-email-yash.shah@sifive.com>
-References: <1561097422-25130-1-git-send-email-yash.shah@sifive.com>
+        Fri, 21 Jun 2019 02:12:56 -0400
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x5L6CsMi004046;
+        Fri, 21 Jun 2019 01:12:54 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1561097574;
+        bh=PD/ayTptu33JuDSOPUfDqiqPSm+5LeRQA4Er8+oHVf4=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=NGavKgrilS95a4euDX0uhK//dEkL5SN+ZoyfV1lW2J+rNgmIoS2uNR/t+HKYeLB78
+         gQEUDGloMD9inCDSwwJfkFY+Xn1eUC/fXEUxiYkA5YYXfQk0noBs1xDBehCkKp+8Wt
+         FcbgYZMiDR1IN5XvFpPd4YwrNEVDBxszJYYdEOv8=
+Received: from DFLE108.ent.ti.com (dfle108.ent.ti.com [10.64.6.29])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x5L6CsLW044455
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 21 Jun 2019 01:12:54 -0500
+Received: from DFLE108.ent.ti.com (10.64.6.29) by DFLE108.ent.ti.com
+ (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Fri, 21
+ Jun 2019 01:12:54 -0500
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE108.ent.ti.com
+ (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Fri, 21 Jun 2019 01:12:54 -0500
+Received: from [172.24.190.233] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id x5L6Cq41127207;
+        Fri, 21 Jun 2019 01:12:53 -0500
+Subject: Re: [GIT PULL v2] PHY: for 5.2-rc
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     <linux-kernel@vger.kernel.org>
+References: <20190612102803.25398-1-kishon@ti.com>
+From:   Kishon Vijay Abraham I <kishon@ti.com>
+Message-ID: <3c16d177-adb3-5c42-7e90-49ddae9723cb@ti.com>
+Date:   Fri, 21 Jun 2019 11:41:26 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
+MIME-Version: 1.0
+In-Reply-To: <20190612102803.25398-1-kishon@ti.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DT node for SiFive FU540-C000 GEMGXL Ethernet controller driver added
+Hi Greg,
 
-Signed-off-by: Yash Shah <yash.shah@sifive.com>
----
- arch/riscv/boot/dts/sifive/fu540-c000.dtsi | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+On 12/06/19 3:57 PM, Kishon Vijay Abraham I wrote:
+> Hi Greg,
+> 
+> Please find the updated pull request for 5.2 -rc cycle. Here I dropped
+> the patch that added "static" for a function to fix sparse warning.
+> 
+> I'm also sending the patches along with this pull request in case you'd
+> like to look them.
+> 
+> Consider merging it in this -rc cycle and let me know if you want me
+> to make any further changes.
 
-diff --git a/arch/riscv/boot/dts/sifive/fu540-c000.dtsi b/arch/riscv/boot/dts/sifive/fu540-c000.dtsi
-index 4e8fbde..584e737 100644
---- a/arch/riscv/boot/dts/sifive/fu540-c000.dtsi
-+++ b/arch/riscv/boot/dts/sifive/fu540-c000.dtsi
-@@ -225,5 +225,25 @@
- 			#address-cells = <1>;
- 			#size-cells = <0>;
- 		};
-+		eth0: ethernet@10090000 {
-+			compatible = "sifive,fu540-macb";
-+			interrupt-parent = <&plic0>;
-+			interrupts = <53>;
-+			reg = <0x0 0x10090000 0x0 0x2000
-+			       0x0 0x100a0000 0x0 0x1000>;
-+			reg-names = "control";
-+			local-mac-address = [00 00 00 00 00 00];
-+			phy-mode = "gmii";
-+			phy-handle = <&phy1>;
-+			clock-names = "pclk", "hclk";
-+			clocks = <&prci PRCI_CLK_GEMGXLPLL>,
-+				 <&prci PRCI_CLK_GEMGXLPLL>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			phy1: ethernet-phy@0 {
-+				reg = <0>;
-+			};
-+		};
-+
- 	};
- };
--- 
-1.9.1
+Are you planning to merge this?
 
+Thanks
+Kishon
+
+> 
+> Thanks
+> Kishon
+> 
+> The following changes since commit a188339ca5a396acc588e5851ed7e19f66b0ebd9:
+> 
+>   Linux 5.2-rc1 (2019-05-19 15:47:09 -0700)
+> 
+> are available in the Git repository at:
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/kishon/linux-phy.git tags/phy-for-5.2-rc_v2
+> 
+> for you to fetch changes up to e3888cda394c72dcfd450afec1121d9777a59805:
+> 
+>   phy: tegra: xusb: Add Tegra210 PLL power supplies (2019-06-12 15:35:44 +0530)
+> 
+> ----------------------------------------------------------------
+> phy: for 5.2-rc
+> 
+>   *) Move Tegra124 PLL power supplies to be enabled by xusb-tegra124
+>   *) Move Tegra210 PLL power supplies to be enabled by xusb-tegra210
+>   *) Minor fixes: fix memory leaks at error path and addresses coverity.
+> 
+> Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+> 
+> ----------------------------------------------------------------
+> Colin Ian King (1):
+>       phy: qcom-qusb2: fix missing assignment of ret when calling clk_prepare_enable
+> 
+> Florian Fainelli (1):
+>       phy: usb: phy-brcm-usb: Remove sysfs attributes upon driver removal
+> 
+> Thierry Reding (3):
+>       dt-bindings: phy: tegra-xusb: List PLL power supplies
+>       phy: tegra: xusb: Add Tegra124 PLL power supplies
+>       phy: tegra: xusb: Add Tegra210 PLL power supplies
+> 
+> Yoshihiro Shimoda (1):
+>       phy: renesas: rcar-gen2: Fix memory leak at error paths
+> 
+>  Documentation/devicetree/bindings/phy/nvidia,tegra124-xusb-padctl.txt | 12 ++++++++++++
+>  drivers/phy/broadcom/phy-brcm-usb.c                                   |  8 ++++++++
+>  drivers/phy/qualcomm/phy-qcom-qusb2.c                                 |  2 +-
+>  drivers/phy/renesas/phy-rcar-gen2.c                                   |  2 ++
+>  drivers/phy/tegra/xusb-tegra124.c                                     |  9 +++++++++
+>  drivers/phy/tegra/xusb-tegra210.c                                     |  9 +++++++++
+>  6 files changed, 41 insertions(+), 1 deletion(-)
+> 
