@@ -2,134 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A0EE64E711
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 13:23:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 13C674E716
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 13:24:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726596AbfFULXk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Jun 2019 07:23:40 -0400
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:44702 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726360AbfFULXj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Jun 2019 07:23:39 -0400
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20190621112338euoutp01677e65c536811b62e3b0c6de9879bd2e~qMu3wkLzZ0440404404euoutp01H
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2019 11:23:38 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20190621112338euoutp01677e65c536811b62e3b0c6de9879bd2e~qMu3wkLzZ0440404404euoutp01H
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1561116218;
-        bh=9WXJOsmsdpNjqD2mqazjYllrCAaz0beIZ+leLl14Ekg=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=FAzewMiXZBYrAWvx++nVCLwM1srZNuSPqfPQnH/H4L3VkhlwVdCVlcyLJETA/hszj
-         HoM5UaqiNtwrd42hacgWXwWXt1v2x/uiAOyS66vqQf1LjlqAcTgeOsF8Eq7DlIZivE
-         nCivZQwoqwkZImgV5NVU8tFYYQz0ziN1nv2xG5K0=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20190621112337eucas1p13a38adba7ca38ac2372c2dd23145a8b8~qMu3EFE6W2737227372eucas1p1f;
-        Fri, 21 Jun 2019 11:23:37 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges3new.samsung.com (EUCPMTA) with SMTP id 24.6C.04325.93EBC0D5; Fri, 21
-        Jun 2019 12:23:37 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20190621112336eucas1p2c3730a3a45ab0c47cf15e8794464dc06~qMu2UpgN41885518855eucas1p20;
-        Fri, 21 Jun 2019 11:23:36 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20190621112336eusmtrp13053b6817d1ea4f644ee5476ad65c0d1~qMu2GngNn1174011740eusmtrp10;
-        Fri, 21 Jun 2019 11:23:36 +0000 (GMT)
-X-AuditID: cbfec7f5-b75ff700000010e5-58-5d0cbe394270
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id 6E.CC.04146.83EBC0D5; Fri, 21
-        Jun 2019 12:23:36 +0100 (BST)
-Received: from [106.120.51.71] (unknown [106.120.51.71]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20190621112336eusmtip1cea6d5fa1d3eda4575b6c7d309ed8555~qMu1wQQTv1114311143eusmtip1M;
-        Fri, 21 Jun 2019 11:23:36 +0000 (GMT)
-Subject: Re: [PATCH] video: fbdev: pvr2fb: fix link error for
- pvr2fb_pci_exit
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     YueHaibing <yuehaibing@huawei.com>,
-        Ira Weiny <ira.weiny@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Linux Fbdev development list <linux-fbdev@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-From:   Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Message-ID: <cabdf0c8-8c8a-aa40-37ed-d3d11c9d3bb8@samsung.com>
-Date:   Fri, 21 Jun 2019 13:23:33 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
-        Thunderbird/60.6.1
+        id S1726729AbfFULY2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Jun 2019 07:24:28 -0400
+Received: from ozlabs.org ([203.11.71.1]:35271 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726311AbfFULY1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Jun 2019 07:24:27 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45Vbtc4QFXz9s4V;
+        Fri, 21 Jun 2019 21:24:24 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1561116265;
+        bh=w9QqvJ0HjQ+a4vkaOugPMvDP3ZNXDtM3YxoGeN1r9wk=;
+        h=Date:From:To:Cc:Subject:From;
+        b=ZnhVfspAFndgY7TT1s+MnpETU1yntpVIjiSPTeJiju9Qkv3UNe6FOhWYChPt1sJdY
+         iNdcvMLjuRZQMgtSe5KB/uGVbMpgbJ09QpHVXvFvWo1NKjfgbgC8I0jqOxhGCKnsze
+         yrXfYalJfVum5CJRx6is70ZpxL97CEAYOrOJCYbB+tzrmz3nIG4KN6Tg8A4XMm4oOu
+         FHp0aQjSE0RlSEUY+rbsVp4E4fzvVLru2hSry92dNzsIEvzwmuUUN60pypXurSWL+p
+         JH0C4jZ7BDBwyeLmeFxD6hao9iNPPnKwaQx5JwjLFRj/NIaa8pT+kklWPaxlMLWZb2
+         kRyNd/IiPzWoQ==
+Date:   Fri, 21 Jun 2019 21:24:23 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Greg KH <greg@kroah.com>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Subject: linux-next: unexpected file in the usb tree
+Message-ID: <20190621212423.2b264411@canb.auug.org.au>
 MIME-Version: 1.0
-In-Reply-To: <CAK8P3a3qTCnJn7X1msg03Av71aZmmN8YB=WNs0JfzYoMH+uL-w@mail.gmail.com>
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrAKsWRmVeSWpSXmKPExsWy7djP87qW+3hiDS7O4LeYs34Nm8XfScfY
-        La58fc9msf/pcxaLE30fWC0u75rDZnHn63MWB3aP378mMXq0HHnL6rF4z0smjxMzfrN43O8+
-        zuTxeZNcAFsUl01Kak5mWWqRvl0CV0bflBXsBWfYKk5Oe8TYwLiNtYuRk0NCwETi2MedjF2M
-        XBxCAisYJf68+s8M4XxhlJi9pI8FwvnMKLFw5W5GmJZ3U99BtSxnlFg9aT+U85ZRYkXPRSaQ
-        KmEBf4m239fYQGwRAUWJqS+egc1lFpjLJPHxxgqwUWwCVhIT21eB2bwCdhJXrp4AKuLgYBFQ
-        lTj2TwgkLCoQIXH/2AZWiBJBiZMzn7CA2JwCgRLLbz1iBrGZBcQlbj2ZzwRhy0tsfzuHGeLS
-        Q+wS9555QtguEld3L4b6QFji1fEt7BC2jMTpyT1gb0oIrGOU+NvxghnC2c4osXzyPzaIKmuJ
-        w8cvsoIcxyygKbF+lz5E2FFi1fatTCBhCQE+iRtvBSFu4JOYtG06M0SYV6KjTQiiWk1iw7IN
-        bDBru3auZJ7AqDQLyWezkHwzC8k3sxD2LmBkWcUonlpanJueWmycl1quV5yYW1yal66XnJ+7
-        iRGYjk7/O/51B+O+P0mHGAU4GJV4eA/M4o4VYk0sK67MPcQowcGsJMLLk8MTK8SbklhZlVqU
-        H19UmpNafIhRmoNFSZy3muFBtJBAemJJanZqakFqEUyWiYNTqoGxcnre4WkLv/3JdCiY8Gj3
-        uU5H7blxVyPMH3/6uOn2tvkq8nfSbzzJM89j7vrrPVujSTVOylF6aVy9qsfrG69sJzac3uZ6
-        S3WT7Avn09/4tUp/Ovld3lA/tUA5pNJWQv/TtHybP2EGZqpvP00Nbo//vir9a5HMk/MLZ8ao
-        b2v/f52npD/54Dd7JZbijERDLeai4kQAdTenmkMDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrEIsWRmVeSWpSXmKPExsVy+t/xu7oW+3hiDXYcUrCYs34Nm8XfScfY
-        La58fc9msf/pcxaLE30fWC0u75rDZnHn63MWB3aP378mMXq0HHnL6rF4z0smjxMzfrN43O8+
-        zuTxeZNcAFuUnk1RfmlJqkJGfnGJrVK0oYWRnqGlhZ6RiaWeobF5rJWRqZK+nU1Kak5mWWqR
-        vl2CXkbflBXsBWfYKk5Oe8TYwLiNtYuRk0NCwETi3dR3jF2MXBxCAksZJWbcns7excgBlJCR
-        OL6+DKJGWOLPtS42iJrXjBI9PQ/ZQBLCAr4SM978ZgexRQQUJaa+eMYMUsQsMJdJ4u7KHhaI
-        jhYmiZ6jv5lAqtgErCQmtq9iBLF5Bewkrlw9wQyyjUVAVeLYPyGQsKhAhMSZ9ytYIEoEJU7O
-        fAJmcwoESiy/9YgZxGYWUJf4M+8SlC0ucevJfCYIW15i+9s5zBMYhWYhaZ+FpGUWkpZZSFoW
-        MLKsYhRJLS3OTc8tNtQrTswtLs1L10vOz93ECIy/bcd+bt7BeGlj8CFGAQ5GJR7eA7O4Y4VY
-        E8uKK3MPMUpwMCuJ8PLk8MQK8aYkVlalFuXHF5XmpBYfYjQF+m0is5Rocj4wNeSVxBuaGppb
-        WBqaG5sbm1koifN2CByMERJITyxJzU5NLUgtgulj4uCUamD0cD+gdufuxGmBdxs0np45vKf4
-        7Oc9D9+zbLwz1Xpi+KUZxyVNr2cmZhRk957e0u66PeNBFWfwPxcxof/P7zIVifxmuMO1wGeO
-        9Xp/h7lxzVYMd0x//i85Y3r5daPvy7+WZaaWZxlL9pb71yx8rta7++Kh587Trhvv5NML/Xmh
-        +WlI3Zd9E2YpKrEUZyQaajEXFScCAK5PMuDVAgAA
-X-CMS-MailID: 20190621112336eucas1p2c3730a3a45ab0c47cf15e8794464dc06
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20190617131645epcas1p3340c80f9e83af93bcbb4c68128b1ea44
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20190617131645epcas1p3340c80f9e83af93bcbb4c68128b1ea44
-References: <CGME20190617131645epcas1p3340c80f9e83af93bcbb4c68128b1ea44@epcas1p3.samsung.com>
-        <20190617131624.2382303-1-arnd@arndb.de>
-        <1628618a-7cf6-506e-9d87-c0966a99fbea@samsung.com>
-        <CAK8P3a3qTCnJn7X1msg03Av71aZmmN8YB=WNs0JfzYoMH+uL-w@mail.gmail.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/XJOShJY0Ij/5q/Xu_UDrkXw"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+--Sig_/XJOShJY0Ij/5q/Xu_UDrkXw
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-On 6/21/19 1:05 PM, Arnd Bergmann wrote:
-> On Fri, Jun 21, 2019 at 12:58 PM Bartlomiej Zolnierkiewicz
-> <b.zolnierkie@samsung.com> wrote:
->>
->> On 6/17/19 3:16 PM, Arnd Bergmann wrote:
->>> When the driver is built-in for PCI, we reference the exit function
->>> after discarding it:
->>>
->>> `pvr2fb_pci_exit' referenced in section `.ref.data' of drivers/video/fbdev/pvr2fb.o: defined in discarded section `.exit.text' of drivers/video/fbdev/pvr2fb.o
->>>
->>> Just remove the __exit annotation as the easiest workaround.
->>
->> Don't we also need to fix pvr2fb_dc_exit() for CONFIG_SH_DREAMCAST=y case?
-> 
-> I think that's correct, yes. Can you fix that up when applying the patch?
+Hi Greg,
 
-Sure.
+Commit
 
-I've queued the patch for v5.3, thanks!
+  ecefae6db042 ("docs: usb: rename files to .rst and add them to drivers-ap=
+i")
 
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+added this unexpected file:
+
+  Documentation/index.rst.rej
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/XJOShJY0Ij/5q/Xu_UDrkXw
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0MvmcACgkQAVBC80lX
+0Gz43wgAl00qKYCW7nw2PVf9Fkqw56z65Mw8ZCrBhUodoTEqCxSYG7w5lZ0VwsJj
+mvnPvsJbBgLLf/7tZX8fdtKTr32JqESWyjOo9z7XTOO/FuNRA+E4GHglq4GGOXGt
+dMUMaBxMJBCVMCAqA8er6WtP6kgIgNJmI/JovOnBHfUZ/dD0U+8x7EtWW+pY7QCK
+9ZVZq9zSgzWsjmSlHMYkvy8qrWtWu0Wl50gKD9Z9Lx28oSknz7hmVsBUDBwRd8Mt
+XLcfUDFJGZ6v6b4mUwjtH/MYsIgHdS/ulqn40jK1EJuYP2L+K1qKHUTnyRYkfHFL
+G8UQXZfpOlc9MxMb20D4RuQbXr7OqA==
+=e0zi
+-----END PGP SIGNATURE-----
+
+--Sig_/XJOShJY0Ij/5q/Xu_UDrkXw--
