@@ -2,104 +2,167 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5544D4EA1A
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 16:01:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3D9274EA1F
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 16:02:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726209AbfFUOBv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Jun 2019 10:01:51 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:44064 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725985AbfFUOBu (ORCPT
+        id S1726292AbfFUOCF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Jun 2019 10:02:05 -0400
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:34643 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725985AbfFUOCD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Jun 2019 10:01:50 -0400
-Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5LDuf6Q019584;
-        Fri, 21 Jun 2019 16:01:34 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
- : date : message-id : references : in-reply-to : content-type : content-id
- : content-transfer-encoding : mime-version; s=STMicroelectronics;
- bh=ExRPSHAf2oaqoI/rvhpwZf2rtDMJg0QWAnnvxeZLPVI=;
- b=f+Jx5nMQp4ZRubCQ1iz1vgxfPg7ERoECkB6K/IN0XgRRT/rzSCYsGsuNV0haltz+9XcH
- 7pfn75dECHZantSm1xIcyiRmj304+sDrc4Xbnf+AkVgjVDCU/AC6vVvmI+9Z+vvfz1U4
- Vct4KACAeBV/SiwjzYInOXtsLPVvnjG2JDO7ENsXOmLQeJFkW8nMFIS1FYPdLCHBRGAb
- 59dzPvK4mrlqnbATvgSRS7wFLxY/QQgw/fVHwreLtGToEg6LXf6iDFY3rMduZL+7K6tN
- mMs+XrgYhVUzXUgY0TkJ5fI8o4m4SCqzHvlDfdVa2VF9LaaE9uNVv+xZAgWzz4Zr0XZ0 Eg== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2t7813qkj6-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Fri, 21 Jun 2019 16:01:34 +0200
-Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 61B093D;
-        Fri, 21 Jun 2019 14:01:32 +0000 (GMT)
-Received: from Webmail-eu.st.com (sfhdag5node1.st.com [10.75.127.13])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id F072E2B25;
-        Fri, 21 Jun 2019 14:01:31 +0000 (GMT)
-Received: from SFHDAG6NODE1.st.com (10.75.127.16) by SFHDAG5NODE1.st.com
- (10.75.127.13) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Fri, 21 Jun
- 2019 16:01:31 +0200
-Received: from SFHDAG6NODE1.st.com ([fe80::8d96:4406:44e3:eb27]) by
- SFHDAG6NODE1.st.com ([fe80::8d96:4406:44e3:eb27%20]) with mapi id
- 15.00.1347.000; Fri, 21 Jun 2019 16:01:31 +0200
-From:   Yannick FERTRE <yannick.fertre@st.com>
-To:     Emil Velikov <emil.l.velikov@gmail.com>
-CC:     Philippe CORNU <philippe.cornu@st.com>,
-        Benjamin GAIGNARD <benjamin.gaignard@st.com>,
-        Vincent ABRIOU <vincent.abriou@st.com>,
-        "David Airlie" <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre TORGUE <alexandre.torgue@st.com>,
-        "ML dri-devel" <dri-devel@lists.freedesktop.org>,
-        "linux-stm32@st-md-mailman.stormreply.com" 
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        LAKML <linux-arm-kernel@lists.infradead.org>,
-        "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/3] drm/stm: drv: fix suspend/resume
-Thread-Topic: [PATCH 1/3] drm/stm: drv: fix suspend/resume
-Thread-Index: AQHVJNzXIA8cZ3x1+kCqnLPAiEBAX6akq10AgAFdCYA=
-Date:   Fri, 21 Jun 2019 14:01:31 +0000
-Message-ID: <2c169739-febb-12a9-0fa1-d5da053ded67@st.com>
-References: <1560755897-5002-1-git-send-email-yannick.fertre@st.com>
- <CACvgo50vSNCTTTKp9D_07tazOE9YkU-zKAsDywvWe6h0NgcEmQ@mail.gmail.com>
-In-Reply-To: <CACvgo50vSNCTTTKp9D_07tazOE9YkU-zKAsDywvWe6h0NgcEmQ@mail.gmail.com>
-Accept-Language: fr-FR, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.75.127.50]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <662427F63BD55B4D8D5465D3980AEB62@st.com>
-Content-Transfer-Encoding: base64
+        Fri, 21 Jun 2019 10:02:03 -0400
+Received: by mail-qt1-f196.google.com with SMTP id m29so7029718qtu.1;
+        Fri, 21 Jun 2019 07:02:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=OXXeAOb5rpGL+JHRiSVPIGXcFlOX3Qaj7ipceyvS4V0=;
+        b=mO+m6EjeMd5/Z2WxgkIpPTtqyOtlO7whwtHFoAG+kFKD1b10/PjeeH1c2KQ8Tr090q
+         MnB6S3KA2RI9DQcXfPCaFJ+vaWsdD/zm4/NE38Rz2KYlywimkqfqAnH1VJsgU3erZod6
+         8As2vsNudllgRBAuZq3gUmq61Hs0labops+H69/uO3CNW2X955kCCTGbtNgXC3C0zq6E
+         QLNKINFgFWPrR5NGGJcNbHVzw3LaouSdd+OYSF2ltFr2g3ZOG8ZdUm7zSh8iDSzTVqAT
+         T40SXu2ZypxYynQh2sSWN43eeMGuk3pZQU3Jc6z/XAQ6TqIx/wyCPFJBszncJO5ZI/38
+         JFEg==
+X-Gm-Message-State: APjAAAWRPtJtXJbYqqSH2vYsP/U3PSynNDlp+bWp5cf4/klzGxloOC2q
+        /d7KDl3m8i++kJWHQALwylNFhIk3cdqXwWbj0NA=
+X-Google-Smtp-Source: APXvYqyqCloALuEtaHZRSNBaVsW1xlN7t8qrHA3DGfCUIY7hIRgYdpVqVn4diklgt+vPjMiv5ONk9xTmUOnCGfXAXuE=
+X-Received: by 2002:aed:2bc1:: with SMTP id e59mr97042293qtd.7.1561125722684;
+ Fri, 21 Jun 2019 07:02:02 -0700 (PDT)
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-21_10:,,
- signatures=0
+References: <20190614063341.1672-1-fancer.lancer@gmail.com>
+ <20190620174002.tgayzon7dc5d57fh@pburton-laptop> <alpine.LFD.2.21.1906201851580.21654@eddie.linux-mips.org>
+ <CAK8P3a28Dp3UygNyomDPDxDmCmey37VS7TJkmDogaKUGZMF2mw@mail.gmail.com>
+ <alpine.LFD.2.21.1906211048360.21654@eddie.linux-mips.org>
+ <CAK8P3a3HWn7RXjcT0KA_qOc+C1SgWd2qXSdCTTAmRKHdc4qNbQ@mail.gmail.com> <alpine.LFD.2.21.1906211230170.21654@eddie.linux-mips.org>
+In-Reply-To: <alpine.LFD.2.21.1906211230170.21654@eddie.linux-mips.org>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Fri, 21 Jun 2019 16:01:46 +0200
+Message-ID: <CAK8P3a0Vw-DPjRxsOKiqQmACztdKW5Drkdza8eb6yeEkjdsxoQ@mail.gmail.com>
+Subject: Re: [PATCH] mips: Remove q-accessors from non-64bit platforms
+To:     "Maciej W. Rozycki" <macro@linux-mips.org>
+Cc:     Paul Burton <paul.burton@mips.com>,
+        Serge Semin <fancer.lancer@gmail.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        James Hogan <jhogan@kernel.org>,
+        Serge Semin <Sergey.Semin@t-platforms.ru>,
+        "Vadim V . Vlasov" <vadim.vlasov@t-platforms.ru>,
+        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkgRW1pbCwNCg0KVGhlIG1zbSBkcml2ZXIgdGVzdHMgdGhlIHJldHVybiB2YWx1ZSAmIHNldCBz
-dGF0ZSB0byBOVUxMIGlmIG5vIGVycm9yIGlzIA0KZGV0ZWN0ZWQuDQoNCnRoZSBsdGRjIGRyaXZl
-ciB0ZXN0cyB0aGUgcmV0dXJuIHZhbHVlICYgZm9yY2UgdG8gc3VzcGVuZCBpZiBhbiBlcnJvciBp
-cyANCmRldGVjdGVkLg0KDQpJdCdzIG5vdCBleGFjdGx5IHRoZSBzYW1lLg0KDQpCZXN0IHJlZ2Fy
-ZHMNCg0KDQotLSANCllhbm5pY2sgRmVydHLDqSB8IFRJTkE6IDE2NiA3MTUyIHwgVGVsOiArMzMg
-MjQ0MDI3MTUyIHwgTW9iaWxlOiArMzMgNjIwNjAwMjcwDQpNaWNyb2NvbnRyb2xsZXJzIGFuZCBE
-aWdpdGFsIElDcyBHcm91cCB8IE1pY3JvY29udHJvbGxldXJzIERpdmlzaW9uDQoNCk9uIDYvMjAv
-MTkgNzoxMiBQTSwgRW1pbCBWZWxpa292IHdyb3RlOg0KPiBIaSBZYW5uaWNrLA0KPg0KPiBPbiBN
-b24sIDE3IEp1biAyMDE5IGF0IDA4OjE4LCBZYW5uaWNrIEZlcnRyw6kgPHlhbm5pY2suZmVydHJl
-QHN0LmNvbT4gd3JvdGU6DQo+DQo+PiBAQCAtMTU1LDE1ICsxNTQsMTcgQEAgc3RhdGljIF9fbWF5
-YmVfdW51c2VkIGludCBkcnZfcmVzdW1lKHN0cnVjdCBkZXZpY2UgKmRldikNCj4+ICAgICAgICAg
-IHN0cnVjdCBsdGRjX2RldmljZSAqbGRldiA9IGRkZXYtPmRldl9wcml2YXRlOw0KPj4gICAgICAg
-ICAgaW50IHJldDsNCj4+DQo+PiArICAgICAgIGlmIChXQVJOX09OKCFsZGV2LT5zdXNwZW5kX3N0
-YXRlKSkNCj4+ICsgICAgICAgICAgICAgICByZXR1cm4gLUVOT0VOVDsNCj4+ICsNCj4+ICAgICAg
-ICAgIHBtX3J1bnRpbWVfZm9yY2VfcmVzdW1lKGRldik7DQo+PiAgICAgICAgICByZXQgPSBkcm1f
-YXRvbWljX2hlbHBlcl9yZXN1bWUoZGRldiwgbGRldi0+c3VzcGVuZF9zdGF0ZSk7DQo+PiAtICAg
-ICAgIGlmIChyZXQpIHsNCj4+ICsgICAgICAgaWYgKHJldCkNCj4gSG1tIHRoZSBtc20gZHJpdmVy
-IHVzZXMgIXJldCBoZXJlLiBTdXNwZWN0aW5nIHRoYXQgeW91IHdhbnQgdGhlIHNhbWUsDQo+IGFs
-dGhvdWdoIEkgaGF2ZW4ndCBjaGVja2VkIGluIGRldGFpbC4NCj4NCj4gSFRIDQo+IC1FbWlsDQot
-LSANCllhbm5pY2sgRmVydHLDqSB8IFRJTkE6IDE2NiA3MTUyIHwgVGVsOiArMzMgMjQ0MDI3MTUy
-IHwgTW9iaWxlOiArMzMgNjIwNjAwMjcwDQpNaWNyb2NvbnRyb2xsZXJzIGFuZCBEaWdpdGFsIElD
-cyBHcm91cCB8IE1pY3JvY29udHJvbGxldXJzIERpdmlzaW9u
+On Fri, Jun 21, 2019 at 2:24 PM Maciej W. Rozycki <macro@linux-mips.org> wrote:
+> On Fri, 21 Jun 2019, Arnd Bergmann wrote:
+> > > > The other property of packet memory and similar things is that you
+> > > > basically want memcpy()-behavior with no byteswaps. This is one
+> > > > of the few cases in which __raw_readq() is actually the right accessor
+> > > > in (mostly) portable code.
+> > >
+> > >  Correct, but we're missing an `__raw_readq_relaxed', etc. interface and
+> > > having additional barriers applied on every access would hit performance
+> > > very badly;
+> >
+> > How so? __raw_readq() by definition has the least barriers of
+> > all, you can't make it more relaxed than it already is.
+>
+>  Well, `__raw_readq' has all the barriers plain `readq' has except it does
+> not ever do byte-swapping (which may be bad where address swizzling is
+> also present).  Whereas `readq_relaxed' at least avoids the trailing DMA
+> barrier.
+>
+>  This is what the MIPS version has:
+>
+> #define __BUILD_MEMORY_SINGLE(pfx, bwlq, type, barrier, relax, irq)     \
+> [...]
+>
+> #define __BUILD_MEMORY_PFX(bus, bwlq, type, relax)                      \
+>                                                                         \
+> __BUILD_MEMORY_SINGLE(bus, bwlq, type, 1, relax, 1)
+>
+> #define BUILDIO_MEM(bwlq, type)                                         \
+>                                                                         \
+> __BUILD_MEMORY_PFX(__raw_, bwlq, type, 0)                               \
+> __BUILD_MEMORY_PFX(__relaxed_, bwlq, type, 1)                           \
+> __BUILD_MEMORY_PFX(__mem_, bwlq, type, 0)                               \
+> __BUILD_MEMORY_PFX(, bwlq, type, 0)
+>
+> So `barrier' is always passed 1 and consequently all the accessors have a
+> leading MMIO ordering barrier inserted and only `__relaxed_*' ones have
+> `relax' set to 0 making them skip the trailing MMIO read vs DMA ordering
+> barrier.  This is in accordance to Documentation/memory-barriers.txt I
+> believe.
+
+It is definitely not what other architectures do here. In particular, the
+asm-generic implementation that is now used on most of them
+defines raw_readl() as
+
+static inline u32 __raw_readl(const volatile void __iomem *addr)
+{
+        return *(const volatile u32 __force *)addr;
+}
+
+and there are a number of drivers that depend on this behavior.
+readl_relaxed() typically adds the byteswap on this, and readl() adds
+the barriers on top of readl_relaxed().
+
+>  NB I got one part wrong in the previous e-mail, sorry, as for packet
+> memory accesses etc. the correct accessors are actually `__mem_*' rather
+> than `__raw_*' ones, but the former ones are not portable.  I always
+> forget about this peculiarity and it took us years to get it right with
+> the MIPS port and the old IDE subsystem when doing PIO.
+>
+>  The `__mem_*' handlers still do whetever system-specific transformation
+> is required to present data in the memory rather than CPU byte ordering.
+> See arch/mips/include/asm/mach-ip27/mangle-port.h for a non-trivial
+> example and arch/mips/include/asm/mach-generic/mangle-port.h for the
+> general case.  Whereas `__raw_*' pass raw data unchanged and are generally
+> only suitable for accesses to onchip SOC MMIO or similar resources that do
+> not traverse any external bus where a system's endianness may be observed.
+
+Ok, so what you have for __mem_* is actually what I had expected from
+__raw_* for an architecture, except for the barriers that should have been
+left out.
+
+>  So contrary to what I have written before for the theoretical case of a
+> big-endian system possibly doing address swizzling we'd have to define and
+> use `__mem_readq_unordered', etc. here rather than `__raw_readq_relaxed',
+> etc.
+
+Right.
+
+> > > in fact even the barriers `*_relaxed' accessors imply would
+> > > best be removed in this use (which is why defza.c uses `readw_o' vs
+> > > `readw_u', etc. internally), but after all the struggles over the years
+> > > for weakly ordered internal APIs x86 people are so averse to I'm not sure
+> > > if I want to start another one.  We can get away with `readq_relaxed' in
+> > > this use though as all the systems this device can be used with are
+> > > little-endian as is TURBOchannel, so no byte-swapping will ever actually
+> > > occur.
+> >
+> > I still don't see any downside of using __raw_readq() here, while the
+> > upsides are:
+> >
+> > - makes the driver portable to big-endian kernels (even though we don't
+> >   care)
+> > - avoids all barriers
+> > - fixes the build regression.
+>
+>  Giving my observations above it would only address item #3 on your list,
+> while addressing #1 and #2 would require defining `__mem_readq_unordered',
+> etc. I am afraid.
+>
+>  Have I missed anything?
+
+No, I think you are right based on how mips defines __raw_readl().
+
+Unfortunately, this also means that all portable drivers using the
+__raw_ accessors to do what you want here are broken on mips
+(at least on big-endian), while mips drivers using __raw_* are not
+portable to anything else.
+
+      Arnd
