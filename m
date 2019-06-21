@@ -2,153 +2,191 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E81A54E5FE
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 12:33:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 985FF4E60B
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 12:33:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726676AbfFUKdQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Jun 2019 06:33:16 -0400
-Received: from lucky1.263xmail.com ([211.157.147.135]:49012 "EHLO
-        lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726282AbfFUKdP (ORCPT
+        id S1726735AbfFUKdd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Jun 2019 06:33:33 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:37985 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726484AbfFUKda (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Jun 2019 06:33:15 -0400
-Received: from tony.xie?rock-chips.com (unknown [192.168.167.192])
-        by lucky1.263xmail.com (Postfix) with ESMTP id A192637A80;
-        Fri, 21 Jun 2019 18:33:07 +0800 (CST)
-X-263anti-spam: KSV:0;BIG:0;
-X-MAIL-GRAY: 1
-X-MAIL-DELIVERY: 0
-X-KSVirus-check: 0
-X-ADDR-CHECKED4: 1
-X-ABS-CHECKED: 1
-X-SKE-CHECKED: 1
-X-ANTISPAM-LEVEL: 2
-Received: from localhost.localdomain (unknown [58.22.7.114])
-        by smtp.263.net (postfix) whith ESMTP id P14435T140356020590336S1561113180405822_;
-        Fri, 21 Jun 2019 18:33:07 +0800 (CST)
-X-IP-DOMAINF: 1
-X-UNIQUE-TAG: <aa4bbec0df911b6ad65070d297612e64>
-X-RL-SENDER: tony.xie@rock-chips.com
-X-SENDER: xxx@rock-chips.com
-X-LOGIN-NAME: tony.xie@rock-chips.com
-X-FST-TO: heiko@sntech.de
-X-SENDER-IP: 58.22.7.114
-X-ATTACHMENT-NUM: 0
-X-DNS-TYPE: 0
-From:   Tony Xie <tony.xie@rock-chips.com>
-To:     heiko@sntech.de
-Cc:     broonie@kernel.org, lee.jones@linaro.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, a.zummo@towertech.it,
-        alexandre.belloni@bootlin.com, sboyd@kernel.org,
-        linux-clk@vger.kernel.org, linux-rtc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, chenjh@rock-chips.com,
-        xsf@rock-chips.com, zhangqing@rock-chips.com,
-        huangtao@rock-chips.com, tony.xie@rock-chips.com
-Subject: [PATCH v10 4/6] dt-bindings: mfd: rk808: Add binding information for RK809 and RK817.
-Date:   Fri, 21 Jun 2019 06:32:56 -0400
-Message-Id: <20190621103258.8154-5-tony.xie@rock-chips.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190621103258.8154-1-tony.xie@rock-chips.com>
-References: <20190621103258.8154-1-tony.xie@rock-chips.com>
+        Fri, 21 Jun 2019 06:33:30 -0400
+Received: by mail-pl1-f195.google.com with SMTP id g4so2790721plb.5;
+        Fri, 21 Jun 2019 03:33:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=zpskMPE9OKTdD4zPuyxeU/1TLb1myVFguUVGtb+4nAs=;
+        b=ujArdU0ao9KvztpXXnIF0b/LNyDio8E3uB+CEa6q3s6SF2q7uWFkyxZY6K0BXkYkaT
+         gQuZ9M1xYi+7pvPv4JV9S2nhknsMNsPkAZodbNReTUOeyXwkW0lC40jbjeKJq0wOJINA
+         F0aJl7OpQvlaL9qlVodOPkymvBUwtWP9uWxQv9Qr6JFcfL5DA4XAkH3AzK7GSvML1JlM
+         GlkVBpYFyFdR892j3FBITgAEDKil0/4jyy7lTJipYEwOrUH64iKgYCK9//ocU0fmf2Xq
+         Mm5nySCfdafySz/P8ePI1hzYDozeoW6xqmwpCZgeJlWXoROtDiqQnILkpP7pMOvcV2PI
+         jaag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=zpskMPE9OKTdD4zPuyxeU/1TLb1myVFguUVGtb+4nAs=;
+        b=uf54tpppuHkwdL/mKRYonQITYKfyWmjEUrTla8KW5JTWetZByOkRPNC6zUlaXxgWrw
+         nJCHLV0pU1AkaKeDtFWOSGIky6zOuAox91iiORlxYHJIgQKCvC7LiKoqs4F5MkPjf0sY
+         nVUNqrwsAfaEL72yvXByn2hL39qOlEnoW/sFe0aJRF2NuYcfxfCCFYYPEnLSXX0QPhzz
+         pQYrD+ad9ltWM/ynqQQ1J8kjJFZxjWvPrtZ8d0HFsJVrixGTL5atvxflXlIGSACpsQBa
+         9Wr2RVeNg5Y6vzds0W920LJuq7MjfEcPJOndJLUsw9Y3QxKXbyJBfUXLSnlB48PFNqXd
+         41lA==
+X-Gm-Message-State: APjAAAXMSl4xJ63wAxx6ehsIwGwRmppoLiL1Fc3jORQCn4UKVJs3oxi4
+        GECBSQ8nYXpx0f5hU8PJDY3ZuGzPHv+/Mr8k9khtAQVi
+X-Google-Smtp-Source: APXvYqzb+KJiyIP1rR7QPFyAhavPjo+cePP7gRZEkDElAYTtlI9UER2Pl2DUjFOEtLobLb9SP7kV+lUXmfBBLlZLhvM=
+X-Received: by 2002:a17:902:ab90:: with SMTP id f16mr127848301plr.262.1561113209896;
+ Fri, 21 Jun 2019 03:33:29 -0700 (PDT)
+MIME-Version: 1.0
+References: <4cd2ece080041d8545cc2f3e86cb1ff7c8a91f5b.1561110859.git.mchehab+samsung@kernel.org>
+In-Reply-To: <4cd2ece080041d8545cc2f3e86cb1ff7c8a91f5b.1561110859.git.mchehab+samsung@kernel.org>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Fri, 21 Jun 2019 13:33:18 +0300
+Message-ID: <CAHp75VdSWMzPCEogUMwkjwSx4e=fhd2a6Mu8RkczEaFhwO=rRw@mail.gmail.com>
+Subject: Re: [PATCH] ABI: sysfs-driver-mlxreg-io: fix the what fields
+To:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Cc:     Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mauro Carvalho Chehab <mchehab@infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        "Darren Hart (VMware)" <dvhart@infradead.org>,
+        Vadim Pasternak <vadimp@mellanox.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add device tree bindings documentation for Rockchip's RK809 & RK817 PMIC.
+On Fri, Jun 21, 2019 at 12:54 PM Mauro Carvalho Chehab
+<mchehab+samsung@kernel.org> wrote:
+>
+> The author of this file should be given an award for creativity:
+> the What: fields on this file technically fulfills the description
+> at README. Yet, the way it is, it can't be parsed on a script,
+> and if someone would try to do something like:
+>
+>         grep hwmon*/jtag_enable
+>
+> It wouldn't find anything.
+>
+> Fix the What fields in a way that it can be parseable by a
+> script and other search tools.
+>
 
-Signed-off-by: Tony Xie <tony.xie@rock-chips.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
-Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
----
- .../devicetree/bindings/mfd/rk808.txt         | 44 +++++++++++++++++++
- 1 file changed, 44 insertions(+)
+Acked-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 
-diff --git a/Documentation/devicetree/bindings/mfd/rk808.txt b/Documentation/devicetree/bindings/mfd/rk808.txt
-index 1683ec3245bc..04df07f6f793 100644
---- a/Documentation/devicetree/bindings/mfd/rk808.txt
-+++ b/Documentation/devicetree/bindings/mfd/rk808.txt
-@@ -3,11 +3,15 @@ RK8XX Power Management Integrated Circuit
- The rk8xx family current members:
- rk805
- rk808
-+rk809
-+rk817
- rk818
- 
- Required properties:
- - compatible: "rockchip,rk805"
- - compatible: "rockchip,rk808"
-+- compatible: "rockchip,rk809"
-+- compatible: "rockchip,rk817"
- - compatible: "rockchip,rk818"
- - reg: I2C slave address
- - interrupts: the interrupt outputs of the controller.
-@@ -45,6 +49,23 @@ Optional RK808 properties:
-   the gpio controller. If DVS GPIOs aren't present, voltage changes will happen
-   very quickly with no slow ramp time.
- 
-+Optional shared RK809 and RK817 properties:
-+- vcc1-supply:  The input supply for DCDC_REG1
-+- vcc2-supply:  The input supply for DCDC_REG2
-+- vcc3-supply:  The input supply for DCDC_REG3
-+- vcc4-supply:  The input supply for DCDC_REG4
-+- vcc5-supply:  The input supply for LDO_REG1, LDO_REG2, LDO_REG3
-+- vcc6-supply:  The input supply for LDO_REG4, LDO_REG5, LDO_REG6
-+- vcc7-supply:  The input supply for LDO_REG7, LDO_REG8, LDO_REG9
-+
-+Optional RK809 properties:
-+- vcc8-supply:  The input supply for SWITCH_REG1
-+- vcc9-supply:  The input supply for DCDC_REG5, SWITCH_REG2
-+
-+Optional RK817 properties:
-+- vcc8-supply:  The input supply for BOOST
-+- vcc9-supply:  The input supply for OTG_SWITCH
-+
- Optional RK818 properties:
- - vcc1-supply:  The input supply for DCDC_REG1
- - vcc2-supply:  The input supply for DCDC_REG2
-@@ -86,6 +107,21 @@ number as described in RK808 datasheet.
- 	- SWITCH_REGn
- 		- valid values for n are 1 to 2
- 
-+Following regulators of the RK809 and RK817 PMIC blocks are supported. Note that
-+the 'n' in regulator name, as in DCDC_REGn or LDOn, represents the DCDC or LDO
-+number as described in RK809 and RK817 datasheets.
-+
-+	- DCDC_REGn
-+		- valid values for n are 1 to 5 for RK809.
-+		- valid values for n are 1 to 4 for RK817.
-+	- LDO_REGn
-+		- valid values for n are 1 to 9 for RK809.
-+		- valid values for n are 1 to 9 for RK817.
-+	- SWITCH_REGn
-+		- valid values for n are 1 to 2 for RK809.
-+	- BOOST for RK817
-+	- OTG_SWITCH for RK817
-+
- Following regulators of the RK818 PMIC block are supported. Note that
- the 'n' in regulator name, as in DCDC_REGn or LDOn, represents the DCDC or LDO
- number as described in RK818 datasheet.
-@@ -98,6 +134,14 @@ number as described in RK818 datasheet.
- 	- HDMI_SWITCH
- 	- OTG_SWITCH
- 
-+It is necessary to configure three pins for both the RK809 and RK817, the three
-+pins are "gpio_ts" "gpio_gt" "gpio_slp".
-+	The gpio_gt and gpio_ts pins support the gpio function.
-+	The gpio_slp pin is for controlling the pmic states, as below:
-+		- reset
-+		- power down
-+		- sleep
-+
- Standard regulator bindings are used inside regulator subnodes. Check
-   Documentation/devicetree/bindings/regulator/regulator.txt
- for more details
+Thanks, Mauro, for fixing this.
+
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+> ---
+>  .../ABI/stable/sysfs-driver-mlxreg-io         | 45 ++++++++-----------
+>  1 file changed, 19 insertions(+), 26 deletions(-)
+>
+> diff --git a/Documentation/ABI/stable/sysfs-driver-mlxreg-io b/Documentation/ABI/stable/sysfs-driver-mlxreg-io
+> index 156319fc5b80..3544968f43cc 100644
+> --- a/Documentation/ABI/stable/sysfs-driver-mlxreg-io
+> +++ b/Documentation/ABI/stable/sysfs-driver-mlxreg-io
+> @@ -1,5 +1,4 @@
+> -What:          /sys/devices/platform/mlxplat/mlxreg-io/hwmon/hwmon*/
+> -                                                       asic_health
+> +What:          /sys/devices/platform/mlxplat/mlxreg-io/hwmon/hwmon*/asic_health
+>
+>  Date:          June 2018
+>  KernelVersion: 4.19
+> @@ -9,9 +8,8 @@ Description:    This file shows ASIC health status. The possible values are:
+>
+>                 The files are read only.
+>
+> -What:          /sys/devices/platform/mlxplat/mlxreg-io/hwmon/hwmon*/
+> -                                                       cpld1_version
+> -                                                       cpld2_version
+> +What:          /sys/devices/platform/mlxplat/mlxreg-io/hwmon/hwmon*/cpld1_version
+> +What:          /sys/devices/platform/mlxplat/mlxreg-io/hwmon/hwmon*/cpld2_version
+>  Date:          June 2018
+>  KernelVersion: 4.19
+>  Contact:       Vadim Pasternak <vadimpmellanox.com>
+> @@ -20,8 +18,7 @@ Description:  These files show with which CPLD versions have been burned
+>
+>                 The files are read only.
+>
+> -What:          /sys/devices/platform/mlxplat/mlxreg-io/hwmon/hwmon*/
+> -                                                       fan_dir
+> +What:          /sys/devices/platform/mlxplat/mlxreg-io/hwmon/hwmon*/fan_dir
+>
+>  Date:          December 2018
+>  KernelVersion: 5.0
+> @@ -32,8 +29,7 @@ Description:  This file shows the system fans direction:
+>
+>                 The files are read only.
+>
+> -What:          /sys/devices/platform/mlxplat/mlxreg-io/hwmon/hwmon*/
+> -                                                       jtag_enable
+> +What:          /sys/devices/platform/mlxplat/mlxreg-io/hwmon/hwmon*/jtag_enable
+>
+>  Date:          November 2018
+>  KernelVersion: 5.0
+> @@ -43,8 +39,7 @@ Description:  These files show with which CPLD versions have been burned
+>
+>                 The files are read only.
+>
+> -What:          /sys/devices/platform/mlxplat/mlxreg-io/hwmon/hwmon*/
+> -                                                       jtag_enable
+> +What:          /sys/devices/platform/mlxplat/mlxreg-io/hwmon/hwmon*/jtag_enable
+>
+>  Date:          November 2018
+>  KernelVersion: 5.0
+> @@ -87,16 +82,15 @@ Description:        These files allow asserting system power cycling, switching
+>
+>                 The files are write only.
+>
+> -What:          /sys/devices/platform/mlxplat/mlxreg-io/hwmon/hwmon*/
+> -                                                       reset_aux_pwr_or_ref
+> -                                                       reset_asic_thermal
+> -                                                       reset_hotswap_or_halt
+> -                                                       reset_hotswap_or_wd
+> -                                                       reset_fw_reset
+> -                                                       reset_long_pb
+> -                                                       reset_main_pwr_fail
+> -                                                       reset_short_pb
+> -                                                       reset_sw_reset
+> +What:          /sys/devices/platform/mlxplat/mlxreg-io/hwmon/hwmon*/reset_aux_pwr_or_ref
+> +What:          /sys/devices/platform/mlxplat/mlxreg-io/hwmon/hwmon*/reset_asic_thermal
+> +What:          /sys/devices/platform/mlxplat/mlxreg-io/hwmon/hwmon*/reset_hotswap_or_halt
+> +What:          /sys/devices/platform/mlxplat/mlxreg-io/hwmon/hwmon*/reset_hotswap_or_wd
+> +What:          /sys/devices/platform/mlxplat/mlxreg-io/hwmon/hwmon*/reset_fw_reset
+> +What:          /sys/devices/platform/mlxplat/mlxreg-io/hwmon/hwmon*/reset_long_pb
+> +What:          /sys/devices/platform/mlxplat/mlxreg-io/hwmon/hwmon*/reset_main_pwr_fail
+> +What:          /sys/devices/platform/mlxplat/mlxreg-io/hwmon/hwmon*/reset_short_pb
+> +What:          /sys/devices/platform/mlxplat/mlxreg-io/hwmon/hwmon*/reset_sw_reset
+>  Date:          June 2018
+>  KernelVersion: 4.19
+>  Contact:       Vadim Pasternak <vadimpmellanox.com>
+> @@ -110,11 +104,10 @@ Description:      These files show the system reset cause, as following: power
+>
+>                 The files are read only.
+>
+> -What:          /sys/devices/platform/mlxplat/mlxreg-io/hwmon/hwmon*/
+> -                                               reset_comex_pwr_fail
+> -                                               reset_from_comex
+> -                                               reset_system
+> -                                               reset_voltmon_upgrade_fail
+> +What:          /sys/devices/platform/mlxplat/mlxreg-io/hwmon/hwmon*/reset_comex_pwr_fail
+> +What:          /sys/devices/platform/mlxplat/mlxreg-io/hwmon/hwmon*/reset_from_comex
+> +What:          /sys/devices/platform/mlxplat/mlxreg-io/hwmon/hwmon*/reset_system
+> +What:          /sys/devices/platform/mlxplat/mlxreg-io/hwmon/hwmon*/reset_voltmon_upgrade_fail
+>
+>  Date:          November 2018
+>  KernelVersion: 5.0
+> --
+> 2.21.0
+>
+
+
 -- 
-2.17.1
-
-
-
+With Best Regards,
+Andy Shevchenko
