@@ -2,70 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7EF594EA78
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 16:20:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C8CE54EA6A
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 16:18:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726387AbfFUOUx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Jun 2019 10:20:53 -0400
-Received: from outbound-smtp26.blacknight.com ([81.17.249.194]:54238 "EHLO
-        outbound-smtp26.blacknight.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726031AbfFUOUx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Jun 2019 10:20:53 -0400
-Received: from mail.blacknight.com (pemlinmail04.blacknight.ie [81.17.254.17])
-        by outbound-smtp26.blacknight.com (Postfix) with ESMTPS id 695C2B8862
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2019 15:20:51 +0100 (IST)
-Received: (qmail 22845 invoked from network); 21 Jun 2019 14:20:51 -0000
-Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[84.203.21.36])
-  by 81.17.254.9 with ESMTPSA (AES256-SHA encrypted, authenticated); 21 Jun 2019 14:20:51 -0000
-Date:   Fri, 21 Jun 2019 15:16:33 +0100
-From:   Mel Gorman <mgorman@techsingularity.net>
-To:     Alan Jenkins <alan.christopher.jenkins@gmail.com>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH] mm: fix setting the high and low watermarks
-Message-ID: <20190621141633.GA2978@techsingularity.net>
-References: <20190621114325.711-1-alan.christopher.jenkins@gmail.com>
+        id S1726192AbfFUOSg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Jun 2019 10:18:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48232 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725975AbfFUOSg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Jun 2019 10:18:36 -0400
+Received: from tleilax.poochiereds.net (cpe-71-70-156-158.nc.res.rr.com [71.70.156.158])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D0EBB20679;
+        Fri, 21 Jun 2019 14:18:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1561126715;
+        bh=utpNSfhfqDUGvBr9WSoyJ8v2U6SsAumLTAISUYtlQTY=;
+        h=From:To:Cc:Subject:Date:From;
+        b=eRaYWm9YQG+vjmKWshHLBOcgeJpq63PTM/hsvBnkJzVYfsqhUV51SAFEgR+v+xBPj
+         IiM5mHFJnjB/ZeuUpREW6v6K9uiwDFWK3VR2+E661IoaaJmZQK8rpYIJbEBXKmIdG7
+         Bdz7S1xcCTEaaks8+NMyEWVgZ9aaeuLNZh1rA1OY=
+From:   Jeff Layton <jlayton@kernel.org>
+To:     linux-kernel@vger.kernel.org, ceph-devel@vger.kernel.org
+Cc:     idryomov@gmail.com, zyan@redhat.com, sage@redhat.com,
+        agruenba@redhat.com, joe@perches.com, geert+renesas@glider.be,
+        andriy.shevchenko@linux.intel.com
+Subject: [PATCH v3 0/2] ceph: don't NULL terminate virtual xattr values
+Date:   Fri, 21 Jun 2019 10:18:31 -0400
+Message-Id: <20190621141833.17551-1-jlayton@kernel.org>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
-Content-Disposition: inline
-In-Reply-To: <20190621114325.711-1-alan.christopher.jenkins@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 21, 2019 at 12:43:25PM +0100, Alan Jenkins wrote:
-> When setting the low and high watermarks we use min_wmark_pages(zone).
-> I guess this is to reduce the line length.  But we forgot that this macro
-> includes zone->watermark_boost.  We need to reset zone->watermark_boost
-> first.  Otherwise the watermarks will be set inconsistently.
-> 
-> E.g. this could cause inconsistent values if the watermarks have been
-> boosted, and then you change a sysctl which triggers
-> __setup_per_zone_wmarks().
-> 
-> I strongly suspect this explains why I have seen slightly high watermarks.
-> Suspicious-looking zoneinfo below - notice high-low != low-min.
-> 
-> Node 0, zone   Normal
->   pages free     74597
->         min      9582
->         low      34505
->         high     36900
-> 
-> https://unix.stackexchange.com/questions/525674/my-low-and-high-watermarks-seem-higher-than-predicted-by-documentation-sysctl-vm/525687
-> 
-> Signed-off-by: Alan Jenkins <alan.christopher.jenkins@gmail.com>
-> Fixes: 1c30844d2dfe ("mm: reclaim small amounts of memory when an external
->                       fragmentation event occurs")
-> Cc: stable@vger.kernel.org
+v3: switch to using an intermediate buffer for snprintf destination
+    add patch to fix ceph_vxattrcb_layout return value
+v2: drop bogus EXPORT_SYMBOL of static function
 
-Either way
+This is the 3rd posting of this patchset. Instead of adding a new
+snprintf variant that doesn't NULL terminate, this set instead has
+the vxattr handlers use an intermediate buffer as the snprintf
+destination and then memcpy's the result into the destination buffer.
 
-Acked-by: Mel Gorman <mgorman@techsingularity.net>
+Also, I added a patch to fix up the return of ceph_vxattrcb_layout. The
+existing code actually worked, but relied on casting a signed negative
+value to unsigned and back, which seemed a little sketchy.
+
+Most of the rationale for this set is in the description of the first
+patch of the series.
+
+Jeff Layton (2):
+  ceph: fix buffer length handling in virtual xattrs
+  ceph: fix return of ceph_vxattrcb_layout
+
+ fs/ceph/xattr.c | 113 ++++++++++++++++++++++++++++++++++--------------
+ 1 file changed, 81 insertions(+), 32 deletions(-)
 
 -- 
-Mel Gorman
-SUSE Labs
+2.21.0
+
