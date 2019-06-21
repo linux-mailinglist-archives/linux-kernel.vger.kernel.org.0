@@ -2,255 +2,141 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CA39A4E35F
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 11:21:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C041E4E36E
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 11:23:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726591AbfFUJVq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Jun 2019 05:21:46 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:57176 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726210AbfFUJVp (ORCPT
+        id S1726384AbfFUJXv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Jun 2019 05:23:51 -0400
+Received: from mail1.bemta25.messagelabs.com ([195.245.230.4]:16095 "EHLO
+        mail1.bemta25.messagelabs.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726210AbfFUJXu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Jun 2019 05:21:45 -0400
-Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5L9IKea031042
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2019 05:21:45 -0400
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2t8vg0840q-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2019 05:21:44 -0400
-Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <fbarrat@linux.ibm.com>;
-        Fri, 21 Jun 2019 10:21:42 +0100
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 21 Jun 2019 10:21:40 +0100
-Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x5L9Ldbk59506730
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 21 Jun 2019 09:21:39 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 1DFFA42049;
-        Fri, 21 Jun 2019 09:21:39 +0000 (GMT)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id BDCBA42045;
-        Fri, 21 Jun 2019 09:21:38 +0000 (GMT)
-Received: from pic2.home (unknown [9.145.83.243])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Fri, 21 Jun 2019 09:21:38 +0000 (GMT)
-Subject: Re: [PATCH 2/4] powerpc/powernv: remove the unused tunneling exports
-To:     "Oliver O'Halloran" <oohall@gmail.com>,
-        Christoph Hellwig <hch@lst.de>
-Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andrew Donnellan <ajd@linux.ibm.com>
-References: <20190523074924.19659-1-hch@lst.de>
- <20190523074924.19659-3-hch@lst.de>
- <CAOSf1CFu_T=7weW0eagzjTc8474ntVx1uCKdQh8sX85bfaPxCQ@mail.gmail.com>
-From:   Frederic Barrat <fbarrat@linux.ibm.com>
-Date:   Fri, 21 Jun 2019 11:21:38 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        Fri, 21 Jun 2019 05:23:50 -0400
+Received: from [46.226.52.104] (using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256 bits))
+        by server-4.bemta.az-a.eu-west-1.aws.symcld.net id 87/50-04913-222AC0D5; Fri, 21 Jun 2019 09:23:46 +0000
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrJJsWRWlGSWpSXmKPExsWSoc9nrqu0iCf
+  WYMZ3QYsvc0+xWHy61s1ocf/rUUaLy7vmsFlsffmOyWLvofmMFn3n3C1WnpjF7MDhMe3AbHaP
+  9zda2T1md8xk9bhzbQ+bx7OF61k8Tp56wuLxeZNcAHsUa2ZeUn5FAmvGr7ubmQpusFa8nNHG2
+  sB4n6WLkYuDReAEs8TBG+eZQRwhgYlMElOn32SHcO4zSrRen8PUxcjJwSZgKDHvzXtGEFtEQE
+  Wic/1/FhCbWeA9s8Tko6ldjBwcwgIOEt0TyyFKHCUW9NxggrCNJN5N7QRrZRFQlTh0/CMriM0
+  rECtxqf02K8SudkaJCV9OsYEkOAVMJdYe+w5mMwrISnxpXM0MsUtc4taT+WBDJQQEJJbsOc8M
+  YYtKvHz8jxWiPl6iff9bdoi4jsTZ608YIWwliWU3ZrFC2LISl+Z3Q8V9JfY+62MCOUJC4BajR
+  PflJ1BDtSTeT54ENUhK4sTFo1DNORIbbq1hg7DVJKas/wRVLyPxb9dUZohBy9gkXh74DFYkJJ
+  As8WHuWahBchKreh+yQBRdYJa43jWBfQKj9iwk30HYOhILdn9ig7C1JZYtfM08CxxkghInZz5
+  hWcDIsorRIqkoMz2jJDcxM0fX0MBA19DQSNfQ0gSITfUSq3QT9VJLdctTi0t0DfUSy4v1iitz
+  k3NS9PJSSzYxAtNbSsGhwzsYpxx4rXeIUZKDSUmU9xQLT6wQX1J+SmVGYnFGfFFpTmrxIUYZD
+  g4lCd7MhUA5waLU9NSKtMwcYKqFSUtw8CiJ8FYvAErzFhck5hZnpkOkTjEac0x4OXcRM8fN90
+  sWMQux5OXnpUqJ83KATBIAKc0ozYMbBMsBlxhlpYR5GRkYGIR4ClKLcjNLUOVfMYpzMCoJ874
+  FWciTmVcCt+8V0ClMQKcsmM0FckpJIkJKqoHp/Jov/3lybHdWVlyW2HbrTM2fKTXpPkoL9kXr
+  cl6bFynt2Cw2eZVcodG23e8C2Z/oRMbMWWrHb2fZefXtTu9Vi66+y/Pj2/lEwWX/qV/nbO6Kh
+  Fy57Z/UdUhywr3CpzN1LM6cmfHnqsGv7KuRO5N8L3h09mhwhIsKLj3uWKcV52Zz78xsld+uTp
+  w/gxr4vhlt3vz2t4vH8S0zPzyatdDsCkP0p8OTJq6x3iZkmtZqWNwb8CvyVeHW0vIqnkCTZUx
+  Kpa/r86al8VVWvHzp6dR0NkRHLOLwOn+Gn0sXa/5axZOQsvOSzrqTVmcLLM7+2c9Y3Rm5vX/u
+  vjvfLF9ezblZu+Xi6z28ZhH/g8Re8qSdUmIpzkg01GIuKk4EAEl2jo58BAAA
+X-Env-Sender: stwiss.opensource@diasemi.com
+X-Msg-Ref: server-15.tower-268.messagelabs.com!1561109025!1167171!1
+X-Originating-IP: [104.47.14.55]
+X-SYMC-ESS-Client-Auth: mailfrom-relay-check=pass
+X-StarScan-Received: 
+X-StarScan-Version: 9.43.9; banners=-,-,-
+X-VirusChecked: Checked
+Received: (qmail 11508 invoked from network); 21 Jun 2019 09:23:46 -0000
+Received: from mail-vi1eur04lp2055.outbound.protection.outlook.com (HELO EUR04-VI1-obe.outbound.protection.outlook.com) (104.47.14.55)
+  by server-15.tower-268.messagelabs.com with ECDHE-RSA-AES256-GCM-SHA384 encrypted SMTP; 21 Jun 2019 09:23:46 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=dialogsemiconductor.onmicrosoft.com;
+ s=selector2-dialogsemiconductor-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=QPd4q7bNp6p3xRzRXQqgSPvCVCtxUK/NBYgb8OPPSOM=;
+ b=t5CJ7LUsmHrorHz4Zq8/muAPKcGZMNCSImkrL+6cAEUPZ83hhnGy1vH+e9RGujhC+RV4qe9mg5hgm0AJomQMvo66DdXVHA7tn7+soIwAtoR8xPaBKWPSYTEfkcOQWRcMXjS+U1uiF2Fl9mqjal2Bu1IVBoJdtCnjntxC+/8NrZo=
+Received: from AM6PR10MB2181.EURPRD10.PROD.OUTLOOK.COM (20.177.113.222) by
+ AM6PR10MB2328.EURPRD10.PROD.OUTLOOK.COM (20.177.116.21) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2008.16; Fri, 21 Jun 2019 09:23:44 +0000
+Received: from AM6PR10MB2181.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::4561:9d63:48fa:a882]) by AM6PR10MB2181.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::4561:9d63:48fa:a882%7]) with mapi id 15.20.1987.014; Fri, 21 Jun 2019
+ 09:23:44 +0000
+From:   Steve Twiss <stwiss.opensource@diasemi.com>
+To:     Wolfram Sang <wsa@the-dreams.de>
+CC:     "wsa+renesas@sang-engineering.com" <wsa+renesas@sang-engineering.com>,
+        "bgolaszewski@baylibre.com" <bgolaszewski@baylibre.com>,
+        "kieran.bingham+renesas@ideasonboard.com" 
+        <kieran.bingham+renesas@ideasonboard.com>,
+        "lee.jones@linaro.org" <lee.jones@linaro.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>,
+        "peda@axentia.se" <peda@axentia.se>,
+        Support Opensource <Support.Opensource@diasemi.com>
+Subject: RE: [PATCH] mfd: da9063: occupy second I2C address, too
+Thread-Topic: [PATCH] mfd: da9063: occupy second I2C address, too
+Thread-Index: AQHVJ0mFTYYovliAiEq8ojZ9DyPua6aly35Q
+Date:   Fri, 21 Jun 2019 09:23:44 +0000
+Message-ID: <AM6PR10MB218134CDB4ECB0A9534B6B96FEE70@AM6PR10MB2181.EURPRD10.PROD.OUTLOOK.COM>
+References: <AM6PR10MB218184C8F2206024C6CB77EAFEE40@AM6PR10MB2181.EURPRD10.PROD.OUTLOOK.COM>
+ <20190620092116.y7aqun6jjjn4mgow@katana>
+In-Reply-To: <20190620092116.y7aqun6jjjn4mgow@katana>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [193.240.73.196]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 292a6a9e-1580-4429-333d-08d6f62a283e
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:AM6PR10MB2328;
+x-ms-traffictypediagnostic: AM6PR10MB2328:
+x-ms-exchange-purlcount: 1
+x-microsoft-antispam-prvs: <AM6PR10MB2328FA1411730120783AEC72F5E70@AM6PR10MB2328.EURPRD10.PROD.OUTLOOK.COM>
+x-ms-oob-tlc-oobclassifiers: OLM:7219;
+x-forefront-prvs: 0075CB064E
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(136003)(366004)(39850400004)(376002)(346002)(189003)(199004)(5660300002)(6116002)(3846002)(8936002)(52536014)(14454004)(14444005)(71190400001)(4326008)(256004)(71200400001)(5024004)(54906003)(86362001)(229853002)(74316002)(81156014)(81166006)(966005)(8676002)(4744005)(73956011)(76116006)(7736002)(6436002)(316002)(66446008)(64756008)(66556008)(66476007)(305945005)(66946007)(53936002)(476003)(99286004)(107886003)(486006)(55016002)(6306002)(9686003)(102836004)(26005)(76176011)(7696005)(2906002)(6506007)(53546011)(186003)(25786009)(6916009)(66066001)(33656002)(478600001)(11346002)(446003)(6246003)(68736007);DIR:OUT;SFP:1101;SCL:1;SRVR:AM6PR10MB2328;H:AM6PR10MB2181.EURPRD10.PROD.OUTLOOK.COM;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:0;
+received-spf: None (protection.outlook.com: diasemi.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: k3Pv5IRdsTC8ikpuEAUKEafOcOXcnX5SFvWy90QCrU1VBz/L9L5hucpeF9R/LTBtiw542z1aJ3res/X/kIcj/+bMSBmDHy1/OoeiDWzKm1LMGwtRMBOPqeRfp+SmXTWbJxVxCr1OqBn+6vlREkdg+qzunD16IcPMSCvNhsPwO9AeqGlc73Zwgficf9V/tcYaEUJq+CbFKJ8AbCXBwPTMcNqwwSwOKWXY2tghLEQcQC36rSUT17q0lYtG+526KgSMT7glWW4uhc3hW/EC1DkKTsEfdza3mUYAbQgfXDW0XHe6Q+D7Ey1KLlUkq6plmmy0v/Ewt38qfa7K68KGOT3PfVGOWqb9BynVW399fmfeT+oiX4yBj2En6rjChwXYzSUv/ccDlBFYaDzSYm6PzIT/sPl93m4ZRaEkIN6Z7zC+1/I=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-In-Reply-To: <CAOSf1CFu_T=7weW0eagzjTc8474ntVx1uCKdQh8sX85bfaPxCQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr-MC
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19062109-0020-0000-0000-0000034C21B1
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19062109-0021-0000-0000-0000219F80AF
-Message-Id: <048e1242-a6ea-5d56-dc9a-e16f9eedf6d9@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-21_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1906210077
+X-OriginatorOrg: diasemi.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 292a6a9e-1580-4429-333d-08d6f62a283e
+X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Jun 2019 09:23:44.2768
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 511e3c0e-ee96-486e-a2ec-e272ffa37b7c
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: stephen.twiss@diasemi.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR10MB2328
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Wolfram,
 
+On 20 June 2019 10:21, Wolfram Sang wrote:
+> Subject: Re: [PATCH] mfd: da9063: occupy second I2C address, too
+>=20
+> > Is this a safety clause? What I mean is, shouldn't the hardware design =
+make
+> > sure there are not two devices located on the same I2C bus with the sam=
+e slave
+> > address?
+>=20
+> It is more about preventing userspace to accidently access this address,
+> and thus the registers behind it.
 
-Le 21/06/2019 à 03:47, Oliver O'Halloran a écrit :
-> On Thu, May 23, 2019 at 5:51 PM Christoph Hellwig <hch@lst.de> wrote:
->>
->> These have been unused ever since they've been added to the kernel.
->>
->> Signed-off-by: Christoph Hellwig <hch@lst.de>
->> ---
->>   arch/powerpc/include/asm/pnv-pci.h        |  4 --
->>   arch/powerpc/platforms/powernv/pci-ioda.c |  4 +-
->>   arch/powerpc/platforms/powernv/pci.c      | 71 -----------------------
->>   arch/powerpc/platforms/powernv/pci.h      |  1 -
->>   4 files changed, 3 insertions(+), 77 deletions(-)
->>
->> diff --git a/arch/powerpc/include/asm/pnv-pci.h b/arch/powerpc/include/asm/pnv-pci.h
->> index 9fcb0bc462c6..1ab4b0111abc 100644
->> --- a/arch/powerpc/include/asm/pnv-pci.h
->> +++ b/arch/powerpc/include/asm/pnv-pci.h
->> @@ -27,12 +27,8 @@ extern int pnv_pci_get_power_state(uint64_t id, uint8_t *state);
->>   extern int pnv_pci_set_power_state(uint64_t id, uint8_t state,
->>                                     struct opal_msg *msg);
->>
->> -extern int pnv_pci_enable_tunnel(struct pci_dev *dev, uint64_t *asnind);
->> -extern int pnv_pci_disable_tunnel(struct pci_dev *dev);
->>   extern int pnv_pci_set_tunnel_bar(struct pci_dev *dev, uint64_t addr,
->>                                    int enable);
->> -extern int pnv_pci_get_as_notify_info(struct task_struct *task, u32 *lpid,
->> -                                     u32 *pid, u32 *tid);
-> 
-> IIRC as-notify was for CAPI which has an in-tree driver (cxl). Fred or
-> Andrew (+cc), what's going on with this? Will it ever see the light of
-> day?
+For what it's worth, maybe consider adding a dev_warn attached to the retur=
+n
+of devm_i2c_new_dummy_device?
 
+Regards,
+Steve
 
-The as-notify can be used in both CAPI mode and PCI mode. In capi mode, 
-it's integrated in the capi protocol, so the cxl driver doesn't need to 
-do extra setup, compared to what's already done to activate capi.
-As mentioned in a previous iteration of that patchset, those APIs are to 
-be used by the Mellanox CX5 driver. The in-tree driver is always a step 
-behind their latest, but word is they are working on upstreaming those 
-interactions.
+My apologies again for accidentally splitting your original e-mail thread o=
+n this:
+- https://lore.kernel.org/lkml/20190619171806.30116-1-wsa+renesas@sang-engi=
+neering.com/
 
-   Fred
-
->>   int pnv_phb_to_cxl_mode(struct pci_dev *dev, uint64_t mode);
->>   int pnv_cxl_ioda_msi_setup(struct pci_dev *dev, unsigned int hwirq,
->>                             unsigned int virq);
->> diff --git a/arch/powerpc/platforms/powernv/pci-ioda.c b/arch/powerpc/platforms/powernv/pci-ioda.c
->> index 126602b4e399..6b0caa2d0425 100644
->> --- a/arch/powerpc/platforms/powernv/pci-ioda.c
->> +++ b/arch/powerpc/platforms/powernv/pci-ioda.c
->> @@ -54,6 +54,8 @@
->>   static const char * const pnv_phb_names[] = { "IODA1", "IODA2", "NPU_NVLINK",
->>                                                "NPU_OCAPI" };
->>
->> +static void pnv_pci_ioda2_set_bypass(struct pnv_ioda_pe *pe, bool enable);
->> +
->>   void pe_level_printk(const struct pnv_ioda_pe *pe, const char *level,
->>                              const char *fmt, ...)
->>   {
->> @@ -2360,7 +2362,7 @@ static long pnv_pci_ioda2_set_window(struct iommu_table_group *table_group,
->>          return 0;
->>   }
->>
->> -void pnv_pci_ioda2_set_bypass(struct pnv_ioda_pe *pe, bool enable)
->> +static void pnv_pci_ioda2_set_bypass(struct pnv_ioda_pe *pe, bool enable)
->>   {
->>          uint16_t window_id = (pe->pe_number << 1 ) + 1;
->>          int64_t rc;
->> diff --git a/arch/powerpc/platforms/powernv/pci.c b/arch/powerpc/platforms/powernv/pci.c
->> index 8d28f2932c3b..fc69f5611020 100644
->> --- a/arch/powerpc/platforms/powernv/pci.c
->> +++ b/arch/powerpc/platforms/powernv/pci.c
->> @@ -868,54 +868,6 @@ struct device_node *pnv_pci_get_phb_node(struct pci_dev *dev)
->>   }
->>   EXPORT_SYMBOL(pnv_pci_get_phb_node);
->>
->> -int pnv_pci_enable_tunnel(struct pci_dev *dev, u64 *asnind)
->> -{
->> -       struct device_node *np;
->> -       const __be32 *prop;
->> -       struct pnv_ioda_pe *pe;
->> -       uint16_t window_id;
->> -       int rc;
->> -
->> -       if (!radix_enabled())
->> -               return -ENXIO;
->> -
->> -       if (!(np = pnv_pci_get_phb_node(dev)))
->> -               return -ENXIO;
->> -
->> -       prop = of_get_property(np, "ibm,phb-indications", NULL);
->> -       of_node_put(np);
->> -
->> -       if (!prop || !prop[1])
->> -               return -ENXIO;
->> -
->> -       *asnind = (u64)be32_to_cpu(prop[1]);
->> -       pe = pnv_ioda_get_pe(dev);
->> -       if (!pe)
->> -               return -ENODEV;
->> -
->> -       /* Increase real window size to accept as_notify messages. */
->> -       window_id = (pe->pe_number << 1 ) + 1;
->> -       rc = opal_pci_map_pe_dma_window_real(pe->phb->opal_id, pe->pe_number,
->> -                                            window_id, pe->tce_bypass_base,
->> -                                            (uint64_t)1 << 48);
->> -       return opal_error_code(rc);
->> -}
->> -EXPORT_SYMBOL_GPL(pnv_pci_enable_tunnel);
->> -
->> -int pnv_pci_disable_tunnel(struct pci_dev *dev)
->> -{
->> -       struct pnv_ioda_pe *pe;
->> -
->> -       pe = pnv_ioda_get_pe(dev);
->> -       if (!pe)
->> -               return -ENODEV;
->> -
->> -       /* Restore default real window size. */
->> -       pnv_pci_ioda2_set_bypass(pe, true);
->> -       return 0;
->> -}
->> -EXPORT_SYMBOL_GPL(pnv_pci_disable_tunnel);
->> -
->>   int pnv_pci_set_tunnel_bar(struct pci_dev *dev, u64 addr, int enable)
->>   {
->>          __be64 val;
->> @@ -970,29 +922,6 @@ int pnv_pci_set_tunnel_bar(struct pci_dev *dev, u64 addr, int enable)
->>   }
->>   EXPORT_SYMBOL_GPL(pnv_pci_set_tunnel_bar);
->>
->> -#ifdef CONFIG_PPC64    /* for thread.tidr */
->> -int pnv_pci_get_as_notify_info(struct task_struct *task, u32 *lpid, u32 *pid,
->> -                              u32 *tid)
->> -{
->> -       struct mm_struct *mm = NULL;
->> -
->> -       if (task == NULL)
->> -               return -EINVAL;
->> -
->> -       mm = get_task_mm(task);
->> -       if (mm == NULL)
->> -               return -EINVAL;
->> -
->> -       *pid = mm->context.id;
->> -       mmput(mm);
->> -
->> -       *tid = task->thread.tidr;
->> -       *lpid = mfspr(SPRN_LPID);
->> -       return 0;
->> -}
->> -EXPORT_SYMBOL_GPL(pnv_pci_get_as_notify_info);
->> -#endif
->> -
->>   void pnv_pci_shutdown(void)
->>   {
->>          struct pci_controller *hose;
->> diff --git a/arch/powerpc/platforms/powernv/pci.h b/arch/powerpc/platforms/powernv/pci.h
->> index 4f11c077af62..469c24463247 100644
->> --- a/arch/powerpc/platforms/powernv/pci.h
->> +++ b/arch/powerpc/platforms/powernv/pci.h
->> @@ -195,7 +195,6 @@ extern int pnv_setup_msi_irqs(struct pci_dev *pdev, int nvec, int type);
->>   extern void pnv_teardown_msi_irqs(struct pci_dev *pdev);
->>   extern struct pnv_ioda_pe *pnv_ioda_get_pe(struct pci_dev *dev);
->>   extern void pnv_set_msi_irq_chip(struct pnv_phb *phb, unsigned int virq);
->> -extern void pnv_pci_ioda2_set_bypass(struct pnv_ioda_pe *pe, bool enable);
->>   extern unsigned long pnv_pci_ioda2_get_table_size(__u32 page_shift,
->>                  __u64 window_size, __u32 levels);
->>   extern int pnv_eeh_post_init(void);
->> --
->> 2.20.1
->>
-> 
 
