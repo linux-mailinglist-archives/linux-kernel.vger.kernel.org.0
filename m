@@ -2,125 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 737EC4DE12
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 02:33:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B7E094DE1F
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 02:37:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726079AbfFUAdU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 20:33:20 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:35371 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725911AbfFUAdU (ORCPT
+        id S1726290AbfFUAhU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 20:37:20 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:50422 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726129AbfFUAhU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 20:33:20 -0400
-Received: by mail-pg1-f194.google.com with SMTP id s27so2459887pgl.2
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2019 17:33:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fomichev-me.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=VWCFU1NtUy1SLx0P04uvsBj+Xrz/jdAYg/mA6p5ibZI=;
-        b=fhB2iXQOxt0Df3GjN40VkZ9tXjPjZNZoZO3igKZZxEYyR3nven7fpjRelb3jUm2Sfo
-         Il/TUTEZNtgolHPyvbLRktFPs9V48tjRCgAURSb1mOTme54GZzjN1z9o5+P9M6Ovwp+F
-         6BzRKexLuOi/kSJoVCOlSmEcUTMa85wsRN5xqor+cYmRRyOMUiitJU538yqxO2NQFBdx
-         Jo6Xob8iNHVZrayIJgmpDsGGgNNSsI7S1wtAk2GrfbuyJm0wANKfNKdDpU/GUsEDM0sy
-         KmT4DFvnifcmiuIxfIn1/expYZchYkOd9AfNfJlP0hjk/tID7iw0V+yAR6lrH1R+3MO+
-         fsbg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=VWCFU1NtUy1SLx0P04uvsBj+Xrz/jdAYg/mA6p5ibZI=;
-        b=ldCrLSLL82EPzZGpiPfafiB0jnwMyGXDdzq7HoxDNDfIiQ+sETkckWOP+obiaYGwJB
-         3twqF+gbdkfgV9EcMyh2dKzxBplr88y3903q5Ot8LbtMEN+RWiHk/aJ6E1zwMd8YvxkK
-         jc3uQAwDwmPfSG2IH3koWiVLMoVqW32OSZQFzezI+4E+A04zgj5FJF/G34ra4fMjkTwy
-         uUo2Ll0wRMIbp2NsY/ldHPtu0u+qjhoJAb2GkF6G1vwwaVO2IwylJ+LwGcgMSON/cvz5
-         ZqlQN4EY+IzcWh6N8UCtyUFGZ5BG0pqx4PtPuLMxKtE5/f1H/kzXnNqHHLAc9g72joFL
-         OXlw==
-X-Gm-Message-State: APjAAAVsZeCY9J4CZOXCvgQnyDZ9Jm/1cz/BDSlRIFIZc5FOuGTjDK0y
-        ypDvxI3xaJ7c/E5WLs5hbINieg==
-X-Google-Smtp-Source: APXvYqx8XHF2lzyJRvlD0WQnCu3FXRxUp23oyFjChE34lsemufCBaNkdLqKB5bQVDLc8iKIqu0qW7Q==
-X-Received: by 2002:a63:e001:: with SMTP id e1mr15482674pgh.306.1561077199414;
-        Thu, 20 Jun 2019 17:33:19 -0700 (PDT)
-Received: from localhost ([2601:646:8f00:18d9:d0fa:7a4b:764f:de48])
-        by smtp.gmail.com with ESMTPSA id q198sm625125pfq.155.2019.06.20.17.33.18
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 20 Jun 2019 17:33:18 -0700 (PDT)
-Date:   Thu, 20 Jun 2019 17:33:17 -0700
-From:   Stanislav Fomichev <sdf@fomichev.me>
-To:     Yuehaibing <yuehaibing@huawei.com>
-Cc:     davem@davemloft.net, sdf@google.com, jianbol@mellanox.com,
-        jiri@mellanox.com, mirq-linux@rere.qmqm.pl, willemb@google.com,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org
-Subject: Re: [PATCH] flow_dissector: Fix vlan header offset in
- __skb_flow_dissect
-Message-ID: <20190621003317.GE1383@mini-arch>
-References: <20190619160132.38416-1-yuehaibing@huawei.com>
- <20190619183938.GA19111@mini-arch>
- <00a5d09f-a23e-661f-60c0-75fba6227451@huawei.com>
+        Thu, 20 Jun 2019 20:37:20 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5L0ZhaB017940;
+        Fri, 21 Jun 2019 00:36:50 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
+ from : references : date : in-reply-to : message-id : mime-version :
+ content-type; s=corp-2018-07-02;
+ bh=/7QDdP9/WJOg0gSuyjMLRQTxk0IMpbuTco7zCSYWUl0=;
+ b=mUdvtFPGZYyJz9ZH6pK+IPtHf5kTpZaljmEa62c/hoM+P5HypXjJtAlIiqQqApfKN3sy
+ 6+SMbR7deZR87cqa0ZOs/tf0FimOY1z9riOS4rwFHkuj0ZD0j0VRL8JN6TjslcUscLAR
+ 87oWd88sUw77PCMDEO8AqL861igMQQ73Tzgevp1dFQ8wgifsM2/GidQwMclqH5TWJnlK
+ u1cZ9dYQlHC9xSaNlKSFxP9ukAI6NRScFtwcRoldSp5iORqw9RYwE0MACpBQLIoDSpTB
+ jVgBURGpwMuNpvYRqNCKkPJbk0uRZ3RTQ6V7OGkKfOO6tJMEoCSVcsJOW2yENyTG25hf +w== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by userp2120.oracle.com with ESMTP id 2t7809ksc8-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 21 Jun 2019 00:36:50 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5L0Xf9S007583;
+        Fri, 21 Jun 2019 00:34:49 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userp3030.oracle.com with ESMTP id 2t77ynx82k-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 21 Jun 2019 00:34:49 +0000
+Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x5L0Ye0c024603;
+        Fri, 21 Jun 2019 00:34:42 GMT
+Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 20 Jun 2019 17:34:40 -0700
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Christoph Hellwig <hch@lst.de>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Hannes Reinecke <hare@suse.com>
+Subject: Re: linux-next: manual merge of the scsi tree with Linus' tree
+From:   "Martin K. Petersen" <martin.petersen@oracle.com>
+Organization: Oracle Corporation
+References: <20190522100808.66994f6b@canb.auug.org.au>
+        <20190528114320.30637398@canb.auug.org.au>
+        <20190621095907.4a6a50fa@canb.auug.org.au>
+        <CAHk-=whVBjssws88tSeoVLG5o5ZWXQu=S7rv-0Hd3qt9=VYsTQ@mail.gmail.com>
+Date:   Thu, 20 Jun 2019 20:34:37 -0400
+In-Reply-To: <CAHk-=whVBjssws88tSeoVLG5o5ZWXQu=S7rv-0Hd3qt9=VYsTQ@mail.gmail.com>
+        (Linus Torvalds's message of "Thu, 20 Jun 2019 17:07:20 -0700")
+Message-ID: <yq1wohfpyhu.fsf@oracle.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1.92 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <00a5d09f-a23e-661f-60c0-75fba6227451@huawei.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9294 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1906210002
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9294 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1906210002
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/20, Yuehaibing wrote:
-> On 2019/6/20 2:39, Stanislav Fomichev wrote:
-> > On 06/20, YueHaibing wrote:
-> >> We build vlan on top of bonding interface, which vlan offload
-> >> is off, bond mode is 802.3ad (LACP) and xmit_hash_policy is
-> >> BOND_XMIT_POLICY_ENCAP34.
-> >>
-> >> __skb_flow_dissect() fails to get information from protocol headers
-> >> encapsulated within vlan, because 'nhoff' is points to IP header,
-> >> so bond hashing is based on layer 2 info, which fails to distribute
-> >> packets across slaves.
-> >>
-> >> Fixes: d5709f7ab776 ("flow_dissector: For stripped vlan, get vlan info from skb->vlan_tci")
-> >> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> >> ---
-> >>  net/core/flow_dissector.c | 3 +++
-> >>  1 file changed, 3 insertions(+)
-> >>
-> >> diff --git a/net/core/flow_dissector.c b/net/core/flow_dissector.c
-> >> index 415b95f..2a52abb 100644
-> >> --- a/net/core/flow_dissector.c
-> >> +++ b/net/core/flow_dissector.c
-> >> @@ -785,6 +785,9 @@ bool __skb_flow_dissect(const struct sk_buff *skb,
-> >>  		    skb && skb_vlan_tag_present(skb)) {
-> >>  			proto = skb->protocol;
-> >>  		} else {
-> >> +			if (dissector_vlan == FLOW_DISSECTOR_KEY_MAX)
-> >> +				nhoff -=  sizeof(*vlan);
-> >> +
-> > Should we instead fix the place where the skb is allocated to properly
-> > pull vlan (skb_vlan_untag)? I'm not sure this particular place is
-> > supposed to work with an skb. Having an skb with nhoff pointing to
-> > IP header but missing skb_vlan_tag_present() when with
-> > proto==ETH_P_8021xx seems weird.
-> 
-> The skb is a forwarded vxlan packet, it send through vlan interface like this:
-> 
->    vlan_dev_hard_start_xmit
->     --> __vlan_hwaccel_put_tag //vlan_tci and VLAN_TAG_PRESENT is set
->     --> dev_queue_xmit
->         --> validate_xmit_skb
->           --> validate_xmit_vlan // vlan_hw_offload_capable is false
->              --> __vlan_hwaccel_push_inside //here skb_push vlan_hlen, then clear skb->tci
-> 
->     --> bond_start_xmit
->        --> bond_xmit_hash
->          --> __skb_flow_dissect // nhoff point to IP header
->             -->  case htons(ETH_P_8021Q)
->             // skb_vlan_tag_present is false, so
->               vlan = __skb_header_pointer(skb, nhoff, sizeof(_vlan), //vlan point to ip header wrongly
-I see, so bonding device propagates hw VLAN support from the slaves.
-If one of the slaves doesn't have it, its disabled for the bond device.
-Any idea why we do that? Why not pass skbs to the slave devices
-instead and let them handle the hw/sw vlan implementation?
-I see the propagation was added in 278339a42a1b 10 years ago and
-I don't see any rationale in the commit description.
-Somebody with more context should probably chime in :-)
+
+Linus,
+
+> That said, I would tend to trust the due diligence that Thomas, Greg &
+> co have done, and am wondering why the scsi tree ends up having
+> different SPDX results in the first place..
+
+I left Christoph's patches in my 5.3 queue after Stephen let me know
+about the treewide series because, well, it came from people with SCSI
+affiliation and it got reviewed.
+
+In any case I assumed the delta was formatting or purely cosmetic. I
+don't recall there being any ambiguity about choice of license or SPDX
+tag when I reviewed the patches.
+
+I have been meaning to take a closer look but have had a critical fire
+eating up a bunch of my time the last couple of weeks. I'll get to it...
+
+-- 
+Martin K. Petersen	Oracle Linux Engineering
