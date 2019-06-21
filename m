@@ -2,246 +2,154 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 33B224E9AD
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 15:43:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BACAF4E9B2
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 15:43:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726070AbfFUNnM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Jun 2019 09:43:12 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:33988 "EHLO mx1.redhat.com"
+        id S1726230AbfFUNnh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Jun 2019 09:43:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49562 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725985AbfFUNnM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Jun 2019 09:43:12 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1725985AbfFUNng (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Jun 2019 09:43:36 -0400
+Received: from localhost (unknown [69.71.4.100])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id AC7D9756;
-        Fri, 21 Jun 2019 13:43:06 +0000 (UTC)
-Received: from redhat.com (ovpn-121-168.rdu2.redhat.com [10.10.121.168])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id A9DEC608A7;
-        Fri, 21 Jun 2019 13:43:02 +0000 (UTC)
-Date:   Fri, 21 Jun 2019 09:43:00 -0400
-From:   Joe Lawrence <joe.lawrence@redhat.com>
-To:     Petr Mladek <pmladek@suse.com>
-Cc:     Jiri Kosina <jikos@kernel.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Miroslav Benes <mbenes@suse.cz>,
-        Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>,
-        Nicolai Stange <nstange@suse.de>,
-        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC 2/5] livepatch: Basic API to track system state changes
-Message-ID: <20190621134300.GB20356@redhat.com>
-References: <20190611135627.15556-1-pmladek@suse.com>
- <20190611135627.15556-3-pmladek@suse.com>
+        by mail.kernel.org (Postfix) with ESMTPSA id 31387206B7;
+        Fri, 21 Jun 2019 13:43:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1561124615;
+        bh=j7CrSlfQAmRQGesg3mqy/vLQAoSNzS1OohkNwYrKLXM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=fZcpYdKLbdodX/fGQwJ3O5sT84JfuexstDzFvbQ1a9rlx6xwFxEA7EACKzuwY+iu8
+         NUjmeZgGcTiSn3xNRjqMNiXG/jbF96btkM5PTzeUKhXS+H/veJaA47U6ETYYTus0mA
+         sdnKlp14BpLpis+dOlOnATjrl4PpN9Et6X1S8MeU=
+Date:   Fri, 21 Jun 2019 08:43:32 -0500
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     John Garry <john.garry@huawei.com>
+Cc:     xuwei5@huawei.com, linuxarm@huawei.com, arm@kernel.org,
+        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+        joe@perches.com
+Subject: Re: [PATCH 1/5] lib: logic_pio: Fix RCU usage
+Message-ID: <20190621134332.GC82584@google.com>
+References: <1561026716-140537-1-git-send-email-john.garry@huawei.com>
+ <1561026716-140537-2-git-send-email-john.garry@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190611135627.15556-3-pmladek@suse.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Fri, 21 Jun 2019 13:43:11 +0000 (UTC)
+In-Reply-To: <1561026716-140537-2-git-send-email-john.garry@huawei.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 11, 2019 at 03:56:24PM +0200, Petr Mladek wrote:
-> This is another step how to help maintaining more livepatches.
+On Thu, Jun 20, 2019 at 06:31:52PM +0800, John Garry wrote:
+> The traversing of io_range_list with list_for_each_entry_rcu()
+> is not properly protected by rcu_read_lock(), so add it.
 > 
-> One big help was the atomic replace and cumulative livepatches. These
-> livepatches replaces the already installed ones. Therefore it should
+> In addition, the list traversing used in logic_pio_register_range()
+> does not need to use the rcu variant.
 
-nit: s/replaces/replaces
+Not being an RCU expert myself, a few words here about why one path
+needs protection but the other doesn't would be helpful.  This
+basically restates what the patch *does*, which is obvious from the
+diff, but not *why*.
 
-> be enough when each cumulative livepatch is consistent.
-> 
-> The problems might come with shadow variables and callbacks. They might
-> change the system behavior or state so that it is not longer safe to
-
-nit: s/not longer safe/no longer safe
-
-> go back and use an older livepatch or the original kernel code. Also
-> any new livepatch must be able to detect what changes have already been
-> done by the already installed livepatches.
-> 
-> This is where the livepatch system state tracking gets useful. It
-> allows to:
-> 
->   - find whether a system state has already been modified by
->     previous livepatches
-> 
->   - store data needed to manipulate and restore the system state
-> 
-> The information about the manipulated system states is stored in an
-> array of struct klp_state. There are two functions that allow
-> to find this structure for a given struct klp_patch or for
-> already installed (replaced) livepatches.
-> 
-
-suggestion: "Two new functions, klp_get_state() and
-klp_get_prev_state(), can find this structure ..." or perhaps drop this
-part altogether and let the future reader do a 'git show' or 'git log
--p' to see the code changes and the exact function names.
-
--- Joe
-
-> The dependencies are going to be solved by a version field added later.
-> The only important information is that it will be allowed to modify
-> the same state by more non-cumulative livepatches. It is the same logic
-> as that it is allowed to modify the same function several times.
-> The livepatch author is responsible for preventing incompatible
-> changes.
-> 
-> Signed-off-by: Petr Mladek <pmladek@suse.com>
+> Fixes: 031e3601869c ("lib: Add generic PIO mapping method")
+> Signed-off-by: John Garry <john.garry@huawei.com>
 > ---
->  include/linux/livepatch.h | 15 +++++++++
->  kernel/livepatch/Makefile |  2 +-
->  kernel/livepatch/state.c  | 83 +++++++++++++++++++++++++++++++++++++++++++++++
->  3 files changed, 99 insertions(+), 1 deletion(-)
->  create mode 100644 kernel/livepatch/state.c
+>  lib/logic_pio.c | 49 +++++++++++++++++++++++++++++++++++--------------
+>  1 file changed, 35 insertions(+), 14 deletions(-)
 > 
-> diff --git a/include/linux/livepatch.h b/include/linux/livepatch.h
-> index eeba421cc671..591abdee30d7 100644
-> --- a/include/linux/livepatch.h
-> +++ b/include/linux/livepatch.h
-> @@ -132,10 +132,21 @@ struct klp_object {
->  	bool patched;
->  };
+> diff --git a/lib/logic_pio.c b/lib/logic_pio.c
+> index feea48fd1a0d..761296376fbc 100644
+> --- a/lib/logic_pio.c
+> +++ b/lib/logic_pio.c
+> @@ -46,7 +46,7 @@ int logic_pio_register_range(struct logic_pio_hwaddr *new_range)
+>  	end = new_range->hw_start + new_range->size;
 >  
-> +/**
-> + * struct klp_state - state of the system modified by the livepatch
-> + * @id:		system state identifier (non zero)
-> + * @data:	custom data
-> + */
-> +struct klp_state {
-> +	int id;
-> +	void *data;
-> +};
+>  	mutex_lock(&io_range_mutex);
+> -	list_for_each_entry_rcu(range, &io_range_list, list) {
+> +	list_for_each_entry(range, &io_range_list, list) {
+>  		if (range->fwnode == new_range->fwnode) {
+>  			/* range already there */
+>  			goto end_register;
+> @@ -108,26 +108,38 @@ int logic_pio_register_range(struct logic_pio_hwaddr *new_range)
+>   */
+>  struct logic_pio_hwaddr *find_io_range_by_fwnode(struct fwnode_handle *fwnode)
+>  {
+> -	struct logic_pio_hwaddr *range;
+> +	struct logic_pio_hwaddr *range, *found_range = NULL;
+>  
+> +	rcu_read_lock();
+>  	list_for_each_entry_rcu(range, &io_range_list, list) {
+> -		if (range->fwnode == fwnode)
+> -			return range;
+> +		if (range->fwnode == fwnode) {
+> +			found_range = range;
+> +			break;
+> +		}
+>  	}
+> -	return NULL;
+> +	rcu_read_unlock();
 > +
+> +	return found_range;
+>  }
+>  
+>  /* Return a registered range given an input PIO token */
+>  static struct logic_pio_hwaddr *find_io_range(unsigned long pio)
+>  {
+> -	struct logic_pio_hwaddr *range;
+> +	struct logic_pio_hwaddr *range, *found_range = NULL;
+>  
+> +	rcu_read_lock();
+>  	list_for_each_entry_rcu(range, &io_range_list, list) {
+> -		if (in_range(pio, range->io_start, range->size))
+> -			return range;
+> +		if (in_range(pio, range->io_start, range->size)) {
+> +			found_range = range;
+> +			break;
+> +		}
+>  	}
+> -	pr_err("PIO entry token %lx invalid\n", pio);
+> -	return NULL;
+> +	rcu_read_unlock();
+> +
+> +	if (!found_range)
+> +		pr_err("PIO entry token 0x%lx invalid\n", pio);
+> +
+> +	return found_range;
+>  }
+>  
 >  /**
->   * struct klp_patch - patch structure for live patching
->   * @mod:	reference to the live patch module
->   * @objs:	object entries for kernel objects to be patched
-> + * @states:	system states that can get modified
->   * @replace:	replace all actively used patches
->   * @list:	list node for global list of actively used patches
->   * @kobj:	kobject for sysfs resources
-> @@ -150,6 +161,7 @@ struct klp_patch {
->  	/* external */
->  	struct module *mod;
->  	struct klp_object *objs;
-> +	struct klp_state *states;
->  	bool replace;
+> @@ -180,14 +192,23 @@ unsigned long logic_pio_trans_cpuaddr(resource_size_t addr)
+>  {
+>  	struct logic_pio_hwaddr *range;
 >  
->  	/* internal */
-> @@ -220,6 +232,9 @@ void *klp_shadow_get_or_alloc(void *obj, unsigned long id,
->  void klp_shadow_free(void *obj, unsigned long id, klp_shadow_dtor_t dtor);
->  void klp_shadow_free_all(unsigned long id, klp_shadow_dtor_t dtor);
+> +	rcu_read_lock();
+>  	list_for_each_entry_rcu(range, &io_range_list, list) {
+>  		if (range->flags != LOGIC_PIO_CPU_MMIO)
+>  			continue;
+> -		if (in_range(addr, range->hw_start, range->size))
+> -			return addr - range->hw_start + range->io_start;
+> +		if (in_range(addr, range->hw_start, range->size)) {
+> +			unsigned long cpuaddr;
+> +
+> +			cpuaddr = addr - range->hw_start + range->io_start;
+> +
+> +			rcu_read_unlock();
+> +			return cpuaddr;
+> +		}
+>  	}
+> -	pr_err("addr %llx not registered in io_range_list\n",
+> -	       (unsigned long long) addr);
+> +	rcu_read_unlock();
+> +
+> +	pr_err("addr %pa not registered in io_range_list\n", &addr);
+> +
+>  	return ~0UL;
+>  }
 >  
-> +struct klp_state *klp_get_state(struct klp_patch *patch, int id);
-> +struct klp_state *klp_get_prev_state(int id);
-> +
->  #else /* !CONFIG_LIVEPATCH */
->  
->  static inline int klp_module_coming(struct module *mod) { return 0; }
-> diff --git a/kernel/livepatch/Makefile b/kernel/livepatch/Makefile
-> index cf9b5bcdb952..cf03d4bdfc66 100644
-> --- a/kernel/livepatch/Makefile
-> +++ b/kernel/livepatch/Makefile
-> @@ -1,4 +1,4 @@
->  # SPDX-License-Identifier: GPL-2.0-only
->  obj-$(CONFIG_LIVEPATCH) += livepatch.o
->  
-> -livepatch-objs := core.o patch.o shadow.o transition.o
-> +livepatch-objs := core.o patch.o shadow.o state.o transition.o
-> diff --git a/kernel/livepatch/state.c b/kernel/livepatch/state.c
-> new file mode 100644
-> index 000000000000..f8822b71f96e
-> --- /dev/null
-> +++ b/kernel/livepatch/state.c
-> @@ -0,0 +1,83 @@
-> +// SPDX-License-Identifier: GPL-2.0-or-later
-> +/*
-> + * system_state.c - State of the system modified by livepatches
-> + *
-> + * Copyright (C) 2019 SUSE
-> + */
-> +
-> +#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
-> +
-> +#include <linux/livepatch.h>
-> +#include "core.h"
-> +#include "transition.h"
-> +
-> +#define klp_for_each_state(patch, state)		\
-> +	for (state = patch->states; state && state->id; state++)
-> +
-> +/**
-> + * klp_get_state() - get information about system state modified by
-> + *	the given patch
-> + * @patch:	livepatch that modifies the given system state
-> + * @id:		custom identifier of the modified system state
-> + *
-> + * Checks whether the given patch modifies to given system state.
-> + *
-> + * The function can be called either from pre/post (un)patch
-> + * callbacks or from the kernel code added by the livepatch.
-> + *
-> + * Return: pointer to struct klp_state when found, otherwise NULL.
-> + */
-> +struct klp_state *klp_get_state(struct klp_patch *patch, int id)
-> +{
-> +	struct klp_state *state;
-> +
-> +	klp_for_each_state(patch, state) {
-> +		if (state->id == id)
-> +			return state;
-> +	}
-> +
-> +	return NULL;
-> +}
-> +EXPORT_SYMBOL_GPL(klp_get_state);
-> +
-> +/**
-> + * klp_get_prev_state() - get information about system state modified by
-> + *	the already installed livepatches
-> + * @id:		custom identifier of the modified system state
-> + *
-> + * Checks whether already installed livepatches modify the given
-> + * system state.
-> + *
-> + * The same system state can be modified by more non-cumulative
-> + * livepatches. It is expected that the latest livepatch has
-> + * the most up-to-date information.
-> + *
-> + * The function can be called only during transition when a new
-> + * livepatch is being enabled or when such a transition is reverted.
-> + * It is typically called only from from pre/post (un)patch
-> + * callbacks.
-> + *
-> + * Return: pointer to the latest struct klp_state from already
-> + *	installed livepatches, NULL when not found.
-> + */
-> +struct klp_state *klp_get_prev_state(int id)
-> +{
-> +	struct klp_patch *patch;
-> +	struct klp_state *state, *last_state = NULL;
-> +
-> +	if (WARN_ON_ONCE(!klp_transition_patch))
-> +		return NULL;
-> +
-> +	klp_for_each_patch(patch) {
-> +		if (patch == klp_transition_patch)
-> +			goto out;
-> +
-> +		state = klp_get_state(patch, id);
-> +		if (state)
-> +			last_state = state;
-> +	}
-> +
-> +out:
-> +	return last_state;
-> +}
-> +EXPORT_SYMBOL_GPL(klp_get_prev_state);
 > -- 
-> 2.16.4
+> 2.17.1
 > 
