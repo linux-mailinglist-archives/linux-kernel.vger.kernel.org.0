@@ -2,102 +2,164 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DD4054E482
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 11:47:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4358F4E48B
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 11:48:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726807AbfFUJrK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Jun 2019 05:47:10 -0400
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:16578 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726720AbfFUJrI (ORCPT
+        id S1726842AbfFUJsC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Jun 2019 05:48:02 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:42487 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726381AbfFUJsC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Jun 2019 05:47:08 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5d0ca79b0000>; Fri, 21 Jun 2019 02:47:07 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Fri, 21 Jun 2019 02:47:08 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Fri, 21 Jun 2019 02:47:08 -0700
-Received: from [10.24.47.36] (172.20.13.39) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 21 Jun
- 2019 09:47:04 +0000
-Subject: Re: [PATCH V5 2/3] PCI: dwc: Cleanup DBI read and write APIs
-To:     Kishon Vijay Abraham I <kishon@ti.com>, <jingoohan1@gmail.com>,
-        <gustavo.pimentel@synopsys.com>, <lorenzo.pieralisi@arm.com>,
-        <bhelgaas@google.com>, <Jisheng.Zhang@synaptics.com>,
-        <thierry.reding@gmail.com>
-CC:     <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kthota@nvidia.com>, <mmaddireddy@nvidia.com>, <sagar.tv@gmail.com>
-References: <20190621092127.17930-1-vidyas@nvidia.com>
- <20190621092127.17930-2-vidyas@nvidia.com>
- <63b59d6b-f6d7-fe4f-f319-6459a146ef36@ti.com>
-X-Nvconfidentiality: public
-From:   Vidya Sagar <vidyas@nvidia.com>
-Message-ID: <e23ef76b-e74a-ee29-05c2-5c09f206ee36@nvidia.com>
-Date:   Fri, 21 Jun 2019 15:17:01 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        Fri, 21 Jun 2019 05:48:02 -0400
+Received: by mail-wr1-f66.google.com with SMTP id x17so5894774wrl.9
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2019 02:48:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=brauner.io; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=3sR1fsmOSmMKPt8ApFzplMSFtr7yaH3nHZVGcmffx0Q=;
+        b=GV35dJjszA2zyHawIt2qliimXzvnUf0QFh4LXG6Qrac1iPxZRxa0EV3PU1oiQ3rqgI
+         w2dWQImPU9+JzAZD4UHzer/YglnG9xfKpla/T1B1o3XfW6P++B4wKJzaBkKBpyDIpaxp
+         fOzqNdhAXv1JUkvFNBoXaEIcNVqoz9UGPppTawtHbf+ElY2DsjcTpUutsbyyv5HjJiDs
+         sa023duB/cjPXzrkXUROEYjvu0yhO6SRf6I3fDpLNculp9vqjPgQ/yWWGFW4LU9gYOjK
+         X0c6PHgiC1AOvAcu8hn5SrY2wHe3+MnG3/DQ1W6owW76RuaKyWXi8d0RJHNHYpnylfJN
+         cJBw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=3sR1fsmOSmMKPt8ApFzplMSFtr7yaH3nHZVGcmffx0Q=;
+        b=YMJ5/l3YupQPzA8vcP8cJYnGXdbj4FhjUmfwn4M2nRwycKnK3kk27ZWOIhiLPT+YTB
+         jHCt0LqJxBlMicj4QDH93MeeuLIh7SnnsEMbNi3Rb/fD4HRb6jCUyA+yvmHuYaMsXhkP
+         QkX9RC00XgsloV0O8fuv1R5tI52oB7sM01Amm1Sl2+3T99zNEk3wfN7hJPKVBvoHyqtP
+         p4BJ3867fAqWAxjcLIQ+gkSbKZ73oD6GW7ohG04/Hp6E/6fTgPT+UVEEfDYRfSEu5SwV
+         /ywua2POh4HXy3YH/fvmnAaE8MT258MC3SSivoYFWhbofkVG1ELS7s3lVGnfeYqZwCkv
+         FUdQ==
+X-Gm-Message-State: APjAAAUESEX3IVelF/Y4EPnSpVr2UXlihuMOgl6DXf8tO62aAUJNiQjz
+        GG7Q4Tai6jozL8rqEkHMssGx5Q==
+X-Google-Smtp-Source: APXvYqwCnu1hdf21Y7luHVjdpSkHECqDwwuknTo9xsscjgheBeySu0sil9T4YyQsIlO/8EnrX+BBiw==
+X-Received: by 2002:a5d:62c9:: with SMTP id o9mr60848301wrv.186.1561110480029;
+        Fri, 21 Jun 2019 02:48:00 -0700 (PDT)
+Received: from brauner.io ([212.91.227.56])
+        by smtp.gmail.com with ESMTPSA id 66sm1941602wma.11.2019.06.21.02.47.59
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Fri, 21 Jun 2019 02:47:59 -0700 (PDT)
+Date:   Fri, 21 Jun 2019 11:47:58 +0200
+From:   Christian Brauner <christian@brauner.io>
+To:     David Howells <dhowells@redhat.com>
+Cc:     viro@zeniv.linux.org.uk, raven@themaw.net,
+        linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mszeredi@redhat.com
+Subject: Re: [PATCH 02/25] vfs: Allow fsinfo() to query what's in an
+ fs_context [ver #13]
+Message-ID: <20190621094757.zijugn6cfulmchnf@brauner.io>
+References: <155905626142.1662.18430571708534506785.stgit@warthog.procyon.org.uk>
+ <155905627927.1662.13276277442207649583.stgit@warthog.procyon.org.uk>
 MIME-Version: 1.0
-In-Reply-To: <63b59d6b-f6d7-fe4f-f319-6459a146ef36@ti.com>
-X-Originating-IP: [172.20.13.39]
-X-ClientProxiedBy: HQMAIL106.nvidia.com (172.18.146.12) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1561110427; bh=zyE6pQSIIRro/h0SV26v4KyjO3eLf6LhmiYNfvQp6zY=;
-        h=X-PGP-Universal:Subject:To:CC:References:X-Nvconfidentiality:From:
-         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
-         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=Xs4uRZ93IA+XRMGM5tc7qh/euAtpotDKtTGaOFBj6Gtxl2HHkiAcw5Y+rnht1bbty
-         jq25xAH0sFZ2/X/rejLDHZSIWgDayWRvJ4ProViuaRTABlBrLXoA1BKQlAQGkCUEJn
-         8bllPKu1XZAm/ZgZXOdbN+i8yJZ6HwAOT4yW6sihXUa2iCi7nZ+H68/cKGC4L2ZDXp
-         JusfG1Y81y0xHbp7C+CnIqEiqAttA8LKfjCX1Xt2UExkcBJx4FJl/Yq2y9C/mfhVNI
-         2ZLL/yO0d8u6XWM3a3TgN7Bgz4oluRi/7apb0GfU9ZzYYUE9DZ32AsBuDM6BMZGmJt
-         0ntJg64n9zOkA==
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <155905627927.1662.13276277442207649583.stgit@warthog.procyon.org.uk>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 6/21/2019 2:57 PM, Kishon Vijay Abraham I wrote:
-> Hi Vidya,
+On Tue, May 28, 2019 at 04:11:19PM +0100, David Howells wrote:
+> Allow fsinfo() to be used to query the filesystem attached to an fs_context
+> once a superblock has been created or if it comes from fspick().
 > 
-> On 21/06/19 2:51 PM, Vidya Sagar wrote:
->> Cleanup DBI read and write APIs by removing "__" (underscore) from their
->> names as there are no no-underscore versions and the underscore versions
->> are already doing what no-underscore versions typically do.
->>
->> Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
->> ---
->> Changes from v4:
->> * This is a new patch in this series
->>
->>   drivers/pci/controller/dwc/pcie-designware.c | 16 ++++-----
->>   drivers/pci/controller/dwc/pcie-designware.h | 36 ++++++++++----------
->>   2 files changed, 26 insertions(+), 26 deletions(-)
->>
->> diff --git a/drivers/pci/controller/dwc/pcie-designware.c b/drivers/pci/controller/dwc/pcie-designware.c
->> index 9d7c51c32b3b..5d22028d854e 100644
->> --- a/drivers/pci/controller/dwc/pcie-designware.c
->> +++ b/drivers/pci/controller/dwc/pcie-designware.c
->> @@ -52,8 +52,8 @@ int dw_pcie_write(void __iomem *addr, int size, u32 val)
->>   	return PCIBIOS_SUCCESSFUL;
->>   }
->>   
->> -u32 __dw_pcie_read_dbi(struct dw_pcie *pci, void __iomem *base, u32 reg,
->> -		       size_t size)
->> +u32 dw_pcie_read_dbi(struct dw_pcie *pci, void __iomem *base, u32 reg,
->> +		     size_t size)
+> This is done with something like:
 > 
-> The "base" here was added when we used the same API for both dbi_base and
-> dbi_base2. Now that we have separate APIs, we should be able to remove that.
+> 	fd = fsopen("ext4", 0);
+> 	...
+> 	fsconfig(fd, fsconfig_cmd_create, ...);
+> 	fsinfo(fd, NULL, ...);
 > 
-> Thanks
-> Kishon
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> ---
 > 
-Got it. Let me address it.
+>  fs/fsinfo.c |   30 +++++++++++++++++++++++++++++-
+>  fs/statfs.c |    2 +-
+>  2 files changed, 30 insertions(+), 2 deletions(-)
+> 
+> diff --git a/fs/fsinfo.c b/fs/fsinfo.c
+> index f9a63410e9a2..14db881dd02d 100644
+> --- a/fs/fsinfo.c
+> +++ b/fs/fsinfo.c
+> @@ -8,6 +8,7 @@
+>  #include <linux/security.h>
+>  #include <linux/uaccess.h>
+>  #include <linux/fsinfo.h>
+> +#include <linux/fs_context.h>
+>  #include <uapi/linux/mount.h>
+>  #include "internal.h"
+>  
+> @@ -315,13 +316,40 @@ static int vfs_fsinfo_path(int dfd, const char __user *filename,
+>  	return ret;
+>  }
+>  
+> +static int vfs_fsinfo_fscontext(struct fs_context *fc,
+> +				struct fsinfo_kparams *params)
+> +{
+> +	int ret;
+> +
+> +	if (fc->ops == &legacy_fs_context_ops)
+> +		return -EOPNOTSUPP;
+> +
+> +	ret = mutex_lock_interruptible(&fc->uapi_mutex);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	ret = -EIO;
+> +	if (fc->root) {
+> +		struct path path = { .dentry = fc->root };
+> +
+> +		ret = vfs_fsinfo(&path, params);
+> +	}
+> +
+> +	mutex_unlock(&fc->uapi_mutex);
+> +	return ret;
+> +}
+> +
+>  static int vfs_fsinfo_fd(unsigned int fd, struct fsinfo_kparams *params)
+>  {
+>  	struct fd f = fdget_raw(fd);
 
+You're using fdget_raw() which means you want to allow O_PATH fds but
+below you're checking whether the f_ops correspond to
+fscontext_fops. If it's an O_PATH f_ops will be set to empty_fops so
+you'll always end up in the vfs_fsinfo branch. Is that your intention?
+
+That means the new mount api doesn't support fsinfo() without using a
+non-O_PATH fd, right? Why the fallback then?
+
+Christian
+
+>  	int ret = -EBADF;
+>  
+>  	if (f.file) {
+> -		ret = vfs_fsinfo(&f.file->f_path, params);
+> +		if (f.file->f_op == &fscontext_fops)
+> +			ret = vfs_fsinfo_fscontext(f.file->private_data,
+> +						   params);
+> +		else
+> +			ret = vfs_fsinfo(&f.file->f_path, params);
+>  		fdput(f);
+>  	}
+>  	return ret;
+> diff --git a/fs/statfs.c b/fs/statfs.c
+> index eea7af6f2f22..b9b63d9f4f24 100644
+> --- a/fs/statfs.c
+> +++ b/fs/statfs.c
+> @@ -86,7 +86,7 @@ int vfs_statfs(const struct path *path, struct kstatfs *buf)
+>  	int error;
+>  
+>  	error = statfs_by_dentry(path->dentry, buf);
+> -	if (!error)
+> +	if (!error && path->mnt)
+>  		buf->f_flags = calculate_f_flags(path->mnt);
+>  	return error;
+>  }
+> 
