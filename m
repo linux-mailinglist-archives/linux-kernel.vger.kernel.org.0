@@ -2,144 +2,167 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 880BA4E159
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 09:45:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 67E734E168
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 09:54:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726200AbfFUHpA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Jun 2019 03:45:00 -0400
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:35273 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726030AbfFUHo7 (ORCPT
+        id S1726320AbfFUHyF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Jun 2019 03:54:05 -0400
+Received: from mail2.tencent.com ([163.177.67.195]:51935 "EHLO
+        mail2.tencent.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726057AbfFUHyE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Jun 2019 03:44:59 -0400
-Received: by mail-ot1-f68.google.com with SMTP id j19so5452443otq.2
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2019 00:44:59 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=jCjaVoKTyPRR78eS0nlxQJdxhx1Fm/kEmVMEp327nwU=;
-        b=pXzOCqz/yX1uJSyIzG1B6ekq8FlBG4tBdYXTtmedGEBrrQ+Ox91y7R/ebVaHjuHvu4
-         Ssb4R+9q5Beq1dCHyyu1CEYBYKKAn6YlI5dt2dfPo0c2IPKW21jfRFb1JhWdftCqIacW
-         kWuCzsO/dLkd8kbLV9r5ilKVWwnvPPAPWQE/mEQRaWPpjc0h8bi/qmnZKPa8usHJ/kSi
-         KZkQuaqkjGFt3LwPMh7+uGDj7GYzQrsJwvXNjsx54Gsq4jA9wkgVN5NYLi1MZ2+VVw4h
-         1Pd94n/5fMjYArvUaYyJiWLqKDa+tGsNGdklFPXuShW/TWjWp5m1NhpfoQWTkulcvOyf
-         Y20Q==
-X-Gm-Message-State: APjAAAU/R+arhDHiv/a6hXJEWAlAEdUhzMngLU2EP0FNCszTgysvqj7H
-        CUnLl2qspmfoIMmSlFhJ7xdpIzXLbix0Bw4DZI0=
-X-Google-Smtp-Source: APXvYqyiXaZZrxUSiFqnv2LX1/K2WincSSLALOTvnJFwWkSwZhsmv9FWSuxx/pw/7sQzFXNQl9KWgKF2Lg1rvdvWq1c=
-X-Received: by 2002:a05:6830:12c7:: with SMTP id a7mr8978645otq.284.1561103098787;
- Fri, 21 Jun 2019 00:44:58 -0700 (PDT)
+        Fri, 21 Jun 2019 03:54:04 -0400
+Received: from EXHUB-SZMail01.tencent.com (unknown [10.14.6.21])
+        by mail2.tencent.com (Postfix) with ESMTP id 3743D8E797;
+        Fri, 21 Jun 2019 15:47:19 +0800 (CST)
+Received: from localhost.localdomain.localdomain (10.22.120.143) by
+ EXHUB-SZMail01.tencent.com (10.14.6.21) with Microsoft SMTP Server (TLS) id
+ 14.3.408.0; Fri, 21 Jun 2019 15:47:18 +0800
+From:   <xiaoggchen@tencent.com>
+To:     <jasperwang@tencent.com>, <heddchen@tencent.com>
+CC:     <mingo@redhat.com>, <peterz@infradead.org>,
+        <linux-kernel@vger.kernel.org>, <tj@kernel.org>,
+        <lizefan@huawei.com>, <hannes@cmpxchg.org>,
+        <cgroups@vger.kernel.org>, chen xiaoguang <xiaoggchen@tencent.com>
+Subject: [PATCH 0/5] BT scheduling class
+Date:   Fri, 21 Jun 2019 15:45:52 +0800
+Message-ID: <1561103157-11246-1-git-send-email-xiaoggchen@tencent.com>
+X-Mailer: git-send-email 1.8.3.1
 MIME-Version: 1.0
-References: <20190621071342.17897-1-malat@debian.org> <CACPK8XcJgtCHqrHuNe6f2eLDKWvHRP-uEq1ozOdEnsmED-KL2Q@mail.gmail.com>
-In-Reply-To: <CACPK8XcJgtCHqrHuNe6f2eLDKWvHRP-uEq1ozOdEnsmED-KL2Q@mail.gmail.com>
-From:   Mathieu Malaterre <malat@debian.org>
-Date:   Fri, 21 Jun 2019 09:44:47 +0200
-Message-ID: <CA+7wUsxW1D3k+Vfe_sh9816jQLutd0K2QRTesRtKkCBwwWax2g@mail.gmail.com>
-Subject: Re: [PATCH] crypto: Fix build for clang
-To:     Joel Stanley <joel@jms.id.au>
-Cc:     Dmitry Kasatkin <dmitry.kasatkin@intel.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Segher Boessenkool <segher@kernel.crashing.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Originating-IP: [10.22.120.143]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Joel,
+From: chen xiaoguang <xiaoggchen@tencent.com>
 
-On Fri, Jun 21, 2019 at 9:30 AM Joel Stanley <joel@jms.id.au> wrote:
->
-> On Fri, 21 Jun 2019 at 07:13, Mathieu Malaterre <malat@debian.org> wrote:
-> >
-> > The header file `longlong.h` makes uses of GNU extensions, this trigger
-> > an error when compiling this code with clang. Add a special flag to make
-> > clang tolerate this syntax.
->
-> Another old copy of longlong.h in the kernel!
->
-> This looks similar to another clang related warnings I fixed in the
-> powerpc math-emu code. There's an updated version of these macros in
-> GCC, and we updated the kernel version to match the GCC version. Can
-> you see if a similar change would work here?
->
-> https://lore.kernel.org/linuxppc-dev/43BCRQ6ZqDz9s55@ozlabs.org/
-> https://git.kernel.org/torvalds/c/b682c8692442711684befe413cf93cf01c5324ea
+This patch set introduces a new scheduler, we name it BT scheduler
+for the moment.
 
-Great ! Thanks for the pointer. Looks like a much bettter solution in
-the long term. Will try asap.
+First let me introduce the background why we add a new scheduler.
 
-> Cheers,
->
-> Joel
->
-> >
-> > Silence the following warnings triggered using W=1:
-> >
-> >     CC      lib/mpi/generic_mpih-mul1.o
-> >   ../lib/mpi/generic_mpih-mul1.c:37:13: error: invalid use of a cast in a inline asm context requiring an l-value: remove the cast or build with
-> >         -fheinous-gnu-extensions
-> >                   umul_ppmm(prod_high, prod_low, s1_ptr[j], s2_limb);
-> >                   ~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> >   ../lib/mpi/longlong.h:824:20: note: expanded from macro 'umul_ppmm'
-> >           : "=r" ((USItype) ph) \
-> >                   ~~~~~~~~~~^~
-> >
-> > and
-> >
-> >     CC      lib/mpi/generic_mpih-mul2.o
-> >   ../lib/mpi/generic_mpih-mul2.c:36:13: error: invalid use of a cast in a inline asm context requiring an l-value: remove the cast or build with
-> >         -fheinous-gnu-extensions
-> >                   umul_ppmm(prod_high, prod_low, s1_ptr[j], s2_limb);
-> >                   ~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> >   ../lib/mpi/longlong.h:824:20: note: expanded from macro 'umul_ppmm'
-> >           : "=r" ((USItype) ph) \
-> >                   ~~~~~~~~~~^~
-> >
-> >   1 warning generated.
-> >     CC      lib/mpi/generic_mpih-mul3.o
-> >   ../lib/mpi/generic_mpih-mul3.c:36:13: error: invalid use of a cast in a inline asm context requiring an l-value: remove the cast or build with
-> >         -fheinous-gnu-extensions
-> >                   umul_ppmm(prod_high, prod_low, s1_ptr[j], s2_limb);
-> >                   ~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> >   ../lib/mpi/longlong.h:824:20: note: expanded from macro 'umul_ppmm'
-> >           : "=r" ((USItype) ph) \
-> >                   ~~~~~~~~~~^~
-> >
-> > Or even:
-> >
-> >   ../lib/mpi/mpih-div.c:99:16: error: invalid use of a cast in a inline asm context requiring an l-value: remove the cast or build with -fheinous-gnu-extensions
-> >                                   sub_ddmmss(n1, n0, n1, n0, d1, d0);
-> >                                   ~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~
-> >
-> > Cc: Joel Stanley <joel@jms.id.au>
-> > Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
-> > Signed-off-by: Mathieu Malaterre <malat@debian.org>
-> > ---
-> >  lib/mpi/Makefile | 7 +++++++
-> >  1 file changed, 7 insertions(+)
-> >
-> > diff --git a/lib/mpi/Makefile b/lib/mpi/Makefile
-> > index d5874a7f5ff9..de4d96e988a3 100644
-> > --- a/lib/mpi/Makefile
-> > +++ b/lib/mpi/Makefile
-> > @@ -5,6 +5,13 @@
-> >
-> >  obj-$(CONFIG_MPILIB) = mpi.o
-> >
-> > +ifdef CONFIG_CC_IS_CLANG
-> > +CFLAGS_generic_mpih-mul1.o  += -fheinous-gnu-extensions
-> > +CFLAGS_generic_mpih-mul2.o  += -fheinous-gnu-extensions
-> > +CFLAGS_generic_mpih-mul3.o  += -fheinous-gnu-extensions
-> > +CFLAGS_mpih-div.o  += -fheinous-gnu-extensions
-> > +endif
-> > +
-> >  mpi-y = \
-> >         generic_mpih-lshift.o           \
-> >         generic_mpih-mul1.o             \
-> > --
-> > 2.20.1
-> >
+We have two scenarios in our business:
+
+Scenario 1:
+Server application need to response to 10 million requests in one minute
+and we must achieve to at least 99.99% successful response to the requests
+to keep user experience.
+
+First only server application exists in the system and the success
+rate is 99.998% and the average cpu use is only 25%.
+To improve the cpu use we run some other applications which are not time
+critical tasks in the system. Cgroup's share mechanism is used to restrict
+the cpu usage for these kinds of tasks. But there are nearly 5000 requests
+in one minute that cannot be handled in time by the server and the success
+rate is only 99.94%. Then the BT scheduler is used for the other
+applications. After test we found that at most 400 requests failed in one
+minute and the success rate are 99.996%. The cpu use increased to 70%.
+
+Test results:
+------------------------------------------------------------------------
+                     | failure counts/m |success rate  |cpu utilization|
+------------------------------------------------------------------------
+server load(CFS)     | 200              | 99.998%      | 25%           |
+------------------------------------------------------------------------
+server load(CFS +    | 5000             | 99.95%       | 55%           |
+cgroup.shares=65536) |                  |              |               |
+other load(CFS +     |                  |              |               |
+cgroup.shares=2)     |                  |              |               |
+------------------------------------------------------------------------
+server load(CFS)     | 200-400          | 99.996%      | 70%           |
+other load(BT)       |                  |              |               |
+------------------------------------------------------------------------
+
+Scenario 2:
+A service program receives 2000 requests per minute and the average latency
+per request is 115 milliseconds. Then we add some other tasks into the
+system to share the cpu with the service program. While the other tasks use
+the CFS scheduler the average latency increased to 138 milliseconds.
+Also dozens of failures increased at the same time.
+A server program usually depends on several modules which depend on
+additional other modules and so on. So if the latency increased several
+milliseconds for one module then the whole latency for the service program
+will be amplified times.
+
+Then we use the BT scheduler for the other tasks the average latency
+is 122 milliseconds but the failures keep the same. 
+
+Test results:
+-----------------------------------------------------------------------
+                    | failure counts/m | AVG latency(milliseconds)    |
+-----------------------------------------------------------------------
+server load(CFS)    |                  | 115                          |
+-----------------------------------------------------------------------
+server load(CFS)+   | increase 30-50   | 138                          |
+other load(CFS)     |                  |                              |
+-----------------------------------------------------------------------
+server load(CFS)+   | no change        | 122                          |
+other load(BT)      |                  |                              |
+-----------------------------------------------------------------------
+
+From the above two cases we know that tasks with BT scheduler will not
+interfere the normal tasks and will run in cpu spare time. It can be
+preempted by normal tasks on demand.
+
+We have millions of servers in our company, so it is very important for
+us to improve the cpu use to reduce the costs.
+
+The goal of BT scheduler is to improve the cpu use while do not interfere
+the normal tasks.
+
+BT is the abbreviation of batch and we will change the name when we find
+a more suitable word.
+
+Tasks with BT schedule class are usually cpu-bound and run in background
+and will be preempted by normal tasks such as tasks with CFS schedule class
+at any time.
+
+This patch set is just the basic schedule class of BT scheduler.
+We will send the complete patches after we finish the full test.
+
+The BT scheduler is similar with the CFS scheduler. We also use the
+rb-tree as the run queue to save the runnable tasks. And the vruntime 
+concept is also used in the BT scheduler. And the priority of BT scheduler
+is from 140 to 179. So now the schedulers in the kernel are as follows:
+deadline, RT, CFS, BT and idle.
+
+We can restrict the usage percent of tasks with BT scheduler in per cpu
+granularity. We also optimized the load balance algorithm by taking 
+cpu's ability of running BT tasks and the waiting times in the run
+queue of BT tasks into account. We also add cgroup support for BT
+scheduling class.
+
+chen xiaoguang (5):
+  sched/BT: add BT scheduling entity
+  sched/BT: implement the BT scheduling class
+  sched/BT: extend the priority for BT scheduling class
+  sched/BT: account the cpu time for BT scheduling class
+  sched/BT: add debug information for BT scheduling class
+
+ fs/proc/base.c                 |    3 +-
+ include/linux/ioprio.h         |    2 +-
+ include/linux/sched.h          |   18 +
+ include/linux/sched/bt.h       |   30 ++
+ include/linux/sched/prio.h     |    5 +-
+ include/uapi/linux/sched.h     |    1 +
+ init/init_task.c               |    6 +-
+ kernel/delayacct.c             |    2 +-
+ kernel/exit.c                  |    3 +-
+ kernel/sched/Makefile          |    2 +-
+ kernel/sched/bt.c              | 1040 ++++++++++++++++++++++++++++++++++++++++
+ kernel/sched/core.c            |   55 ++-
+ kernel/sched/cputime.c         |   33 +-
+ kernel/sched/debug.c           |   37 ++
+ kernel/sched/fair.c            |   31 +-
+ kernel/sched/loadavg.c         |    5 +-
+ kernel/sched/sched.h           |   40 ++
+ kernel/time/posix-cpu-timers.c |    2 +-
+ 18 files changed, 1272 insertions(+), 43 deletions(-)
+ create mode 100644 include/linux/sched/bt.h
+ create mode 100644 kernel/sched/bt.c
+
+-- 
+1.8.3.1
+
