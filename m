@@ -2,109 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A4BF74EFC2
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 22:05:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8CE3C4EFC8
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 22:06:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726137AbfFUUFZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Jun 2019 16:05:25 -0400
-Received: from iolanthe.rowland.org ([192.131.102.54]:34458 "HELO
-        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with SMTP id S1725985AbfFUUFZ (ORCPT
+        id S1726231AbfFUUF5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Jun 2019 16:05:57 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:39646 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725985AbfFUUF4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Jun 2019 16:05:25 -0400
-Received: (qmail 11223 invoked by uid 2102); 21 Jun 2019 16:05:24 -0400
-Received: from localhost (sendmail-bs@127.0.0.1)
-  by localhost with SMTP; 21 Jun 2019 16:05:24 -0400
-Date:   Fri, 21 Jun 2019 16:05:24 -0400 (EDT)
-From:   Alan Stern <stern@rowland.harvard.edu>
-X-X-Sender: stern@iolanthe.rowland.org
-To:     Suwan Kim <suwan.kim027@gmail.com>
-cc:     shuah@kernel.org, <valentina.manea.m@gmail.com>,
-        <gregkh@linuxfoundation.org>, <linux-usb@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/2] usbip: Implement SG support to vhci
-In-Reply-To: <20190621174553.28862-3-suwan.kim027@gmail.com>
-Message-ID: <Pine.LNX.4.44L0.1906211548560.1471-100000@iolanthe.rowland.org>
+        Fri, 21 Jun 2019 16:05:56 -0400
+Received: by mail-io1-f67.google.com with SMTP id r185so1209524iod.6
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2019 13:05:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=DypY5fiIicrIoi3ORV0h3vKCopNCu2H79dLHF98Wk1s=;
+        b=BieFlEeaOPgi+fafYZbwPJAk/rgzMYgJne9JdDRFRlJ67BByhxNbJeiWxMC9B5y/s9
+         Gp8olywbJtE8mi44Ji6k8zEHSqnnACQtDN7I28HDQcTwz/mye1jJMaedbY6/qHdXorLI
+         Wfs9/larHy+OePAeGIpWCU4PVYoHRu54s+yDpX0ZYjNvvwg5OXzrDsxcjH6q8d7OOF7j
+         48AI5VhQZTNHr+JUkc9MWxW0n/4tx9Kt3taDC+fhcfCafvOZH8dO7US0xim1pWzmY5Eh
+         uxPjC59ST8oJkI5UEY7MywS+dGHUEPH7uSwunhiu0xgIfllo0HFRZbPbo7RM3eC4BaAX
+         +b3g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=DypY5fiIicrIoi3ORV0h3vKCopNCu2H79dLHF98Wk1s=;
+        b=hwsMnXsS78VlZiWBZnhdWM7BILDXyP5ctTs3hYWqWdiWNebCaIJN1zUbqp3YRvQ7U9
+         YBT3FyHGVXJFk99oLlzJsvM8ido0uHPnoG+m2uDWdTjDfBB9L4pkF2wsAeiTMFl2O69T
+         zhZOCVKVPtR+AGBcGFQyI/uMpYUnJunkgTZl8lqYiMppMBsOOeNFuv+6ceWD753wMPwF
+         6MGWa10SOcSYphbni5qQNTz4572SqMfD0mcD7k0/dAjkXGniiqmz2hpEoa3M3habrpMs
+         OU1IdoGEaau9qFXwLNje+D/V3RWDq3kpdp5pxCEXPecU8JxC7u8Fa9fpS++nw7BoVzFd
+         FDrg==
+X-Gm-Message-State: APjAAAVX4e2X0NvnAluppEpOOjngdGjtDhRrm63mBsa7RFsyNnzEkmzP
+        LmxNVlaSiyX+4mEZA10yGNmSYnnAhZxYmxDeOxFS4g==
+X-Google-Smtp-Source: APXvYqyvFcTfOyKgeM/UaweMDg4Kki2AkTgmwFItVLQmiTExSzaei2TBGbOswsUQLvi+574xJqn1fxM3Q6bPWu5Kiec=
+X-Received: by 2002:a6b:8dcf:: with SMTP id p198mr36640213iod.46.1561147555624;
+ Fri, 21 Jun 2019 13:05:55 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+References: <20190621011941.186255-1-matthewgarrett@google.com>
+ <20190621011941.186255-25-matthewgarrett@google.com> <CALCETrVUwQP7roLnW6kFG80Cc5U6X_T6AW+BTAftLccYGp8+Ow@mail.gmail.com>
+In-Reply-To: <CALCETrVUwQP7roLnW6kFG80Cc5U6X_T6AW+BTAftLccYGp8+Ow@mail.gmail.com>
+From:   Matthew Garrett <mjg59@google.com>
+Date:   Fri, 21 Jun 2019 13:05:44 -0700
+Message-ID: <CACdnJuv2sePuGBtTM6UL4S2k1UATcAk517o6vPx2EWF0Uxt8iw@mail.gmail.com>
+Subject: Re: [PATCH V33 24/30] bpf: Restrict bpf when kernel lockdown is in
+ confidentiality mode
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     James Morris <jmorris@namei.org>, linux-security@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        Network Development <netdev@vger.kernel.org>,
+        Chun-Yi Lee <jlee@suse.com>,
+        Daniel Borkmann <daniel@iogearbox.net>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 22 Jun 2019, Suwan Kim wrote:
+On Thu, Jun 20, 2019 at 10:22 PM Andy Lutomirski <luto@kernel.org> wrote:
+> On Thu, Jun 20, 2019 at 6:21 PM Matthew Garrett
+> <matthewgarrett@google.com> wrote:
+> > --- a/security/lockdown/lockdown.c
+> > +++ b/security/lockdown/lockdown.c
+> > @@ -33,6 +33,7 @@ static char *lockdown_reasons[LOCKDOWN_CONFIDENTIALITY_MAX+1] = {
+> >         [LOCKDOWN_INTEGRITY_MAX] = "integrity",
+> >         [LOCKDOWN_KCORE] = "/proc/kcore access",
+> >         [LOCKDOWN_KPROBES] = "use of kprobes",
+> > +       [LOCKDOWN_BPF] = "use of bpf",
+> >         [LOCKDOWN_CONFIDENTIALITY_MAX] = "confidentiality",
+>
+> The text here says "use of bpf", but what this patch is *really* doing
+> is locking down use of BPF to read kernel memory.  If the details
+> change, then every LSM needs to get updated, and we risk breaking user
+> policies that are based on LSMs that offer excessively fine
+> granularity.
 
-> There are bugs on vhci with usb 3.0 storage device. Originally, vhci
-> doesn't supported SG. So, USB storage driver on vhci divides SG list
-> into multiple URBs and it causes buffer overflow on the xhci of the
-> server. So we need to add SG support to vhci
+The text is descriptive rather than normative, and no changes should
+be made that alter the semantics of a reason - it makes more sense to
+just add another reason.
 
-It doesn't cause buffer overflow.  The problem was that a transfer got
-terminated too early because the transfer length for one of the URBs
-was not divisible by the maxpacket size.
+> I'd be more comfortable if the LSM only got to see "confidentiality"
+> or "integrity".
 
-> In this patch, vhci basically support SG and it sends each SG list
-> entry to the stub driver. Then, the stub driver sees total length of
-> the buffer and allocates SG table and pages according to the total
-> buffer length calling sgl_alloc(). After the stub driver receives
-> completed URB, it again sends each SG list entry to the vhci.
-> 
-> If HCD of server doesn't support SG, the stub driver allocates
-> big buffer using kmalloc() instead of using sgl_alloc() which
-> allocates SG list and pages.
-
-You might be better off not using kmalloc.  It's easier for the kernel 
-to allocate a bunch of small buffers than a single big one.  Then you 
-can create a separate URB for each buffer.
-
-> Alan fixed vhci bug with the USB 3.0 storage device by modifying
-> USB storage driver.
-> ("usb-storage: Set virt_boundary_mask to avoid SG overflows")
-> But the fundamental solution of it is to add SG support to vhci.
-> 
-> This patch works well with the USB 3.0 storage devices without Alan's
-> patch, and we can revert Alan's patch if it causes some troubles.
-
-These last two paragraphs don't need to be in the patch description.
-
-> Signed-off-by: Suwan Kim <suwan.kim027@gmail.com>
-> ---
-
-I'm not sufficiently familiar with the usbip drivers to review most of 
-this.  However...
-
-> diff --git a/drivers/usb/usbip/vhci_hcd.c b/drivers/usb/usbip/vhci_hcd.c
-> index be87c8a63e24..cc93c1a87a3e 100644
-> --- a/drivers/usb/usbip/vhci_hcd.c
-> +++ b/drivers/usb/usbip/vhci_hcd.c
-> @@ -696,7 +696,8 @@ static int vhci_urb_enqueue(struct usb_hcd *hcd, struct urb *urb, gfp_t mem_flag
->  	}
->  	vdev = &vhci_hcd->vdev[portnum-1];
->  
-> -	if (!urb->transfer_buffer && urb->transfer_buffer_length) {
-> +	if (!urb->transfer_buffer && !urb->num_sgs &&
-> +	     urb->transfer_buffer_length) {
->  		dev_dbg(dev, "Null URB transfer buffer\n");
->  		return -EINVAL;
->  	}
-> @@ -1142,6 +1143,11 @@ static int vhci_setup(struct usb_hcd *hcd)
->  		hcd->speed = HCD_USB3;
->  		hcd->self.root_hub->speed = USB_SPEED_SUPER;
->  	}
-> +
-> +	/* support sg */
-> +	hcd->self.sg_tablesize = ~0;
-> +	hcd->self.no_sg_constraint = 1;
-
-You probably shouldn't do this, for two reasons.  First, sg_tablesize
-of the server's HCD may be smaller than ~0.  If the client's value is
-larger than the server's, a transfer could be accepted on the client
-but then fail on the server because the SG list was too big.
-
-Also, you may want to restrict the size of SG transfers even further,
-so that you don't have to allocate a tremendous amount of memory all at
-once on the server.  An SG transfer can be quite large.  I don't know 
-what a reasonable limit would be -- 16 perhaps?
-
-Alan Stern
-
+If LSM authors can be trusted to do the right thing here, then I see
+no problem in providing additional data. I'm happy to defer to James
+on that.
