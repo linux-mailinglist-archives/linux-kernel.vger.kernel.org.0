@@ -2,150 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D5974E2A7
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 11:07:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D73FB4E2C0
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 11:12:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726353AbfFUJHm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Jun 2019 05:07:42 -0400
-Received: from outils.crapouillou.net ([89.234.176.41]:36498 "EHLO
-        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726055AbfFUJHl (ORCPT
+        id S1726451AbfFUJMK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Jun 2019 05:12:10 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:41981 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726210AbfFUJMJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Jun 2019 05:07:41 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
-        s=mail; t=1561108058; h=from:from:sender:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-         content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=0hmNXNpfLXB/81EAq7J6wicDteIao7+vjXFAj9FSVA4=;
-        b=o6cpdXWDkPBz1kMBgJ3nUoQc8y1XLQgy/0vEsbf+f0AeDnjVUvg+9Dk14VgdGX0Rr9HTOT
-        DoGjrVfLFOH72xmc1UVRmuyP3K49pDeqL+fJtFJhu2uJiTtbsL/RK/vVwbaQTzUVlCHjlR
-        AKXm6m4MNJEtuek94uG0vl2qXtIkCCQ=
-Date:   Fri, 21 Jun 2019 11:07:30 +0200
-From:   Paul Cercueil <paul@crapouillou.net>
-Subject: Re: [PATCH v5 2/2] DRM: Add KMS driver for the Ingenic JZ47xx SoCs
-To:     Daniel Vetter <daniel@ffwll.ch>
-Cc:     Sam Ravnborg <sam@ravnborg.org>, David Airlie <airlied@linux.ie>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sean Paul <sean@poorly.run>, od@zcrc.me,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Artur Rojek <contact@artur-rojek.eu>
-Message-Id: <1561108050.1777.0@crapouillou.net>
-In-Reply-To: <20190621090411.GY12905@phenom.ffwll.local>
-References: <20190603152331.23160-1-paul@crapouillou.net>
-        <20190603152331.23160-2-paul@crapouillou.net>
-        <20190619122622.GB29084@ravnborg.org> <1561040159.1978.0@crapouillou.net>
-        <20190621090411.GY12905@phenom.ffwll.local>
+        Fri, 21 Jun 2019 05:12:09 -0400
+Received: by mail-lf1-f68.google.com with SMTP id 136so4491477lfa.8
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2019 02:12:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lightnvm-io.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=723zdSxWmoIrgdl5a9Vt9oyfiq9xWUVExK76ZlKKCm0=;
+        b=GNLUMzSRQRmkYgy9HO+y6XgqaWAZIWNFVi9h69iWiliFFjd9IFHmqVG76eQ4YHiOXn
+         /+WpPrRrgqs+Q4/nRaDJUuYJ5iYYybvpYZRhZkoxB4NW6FRbfJllLFSG6yH4O+FtoTrL
+         vipl5QyBxeB9tn8ZT7ciGgPGYFWj4Cv97DYEktPOREq0mukGacs6qdtgVSKrI8m9O+Ie
+         ZVogQ0rB4hMzCPst7UYN5PboCgVC5NL74msG2oJJC1t+Fr4yMI1RghX/o+g0j5elqWwI
+         ZSNPebq1fPPvXyym+LyJOAF1PfVldlI56S6slBqYLZgdVLqDah3A2biq1kw9I0VgzZiY
+         t6vQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=723zdSxWmoIrgdl5a9Vt9oyfiq9xWUVExK76ZlKKCm0=;
+        b=Pb6UeCyCjaQWmhRAgSUGGOU+b528D81yqjfs9HE9SwYOaJRved8Mc2roMsLwptpnCf
+         /GEnm+G5jup8eX1NlK3SmXNghmORbwUU60bWBREWMi6O9mKoKBL6QqlZF9oP4TWMKq4s
+         w1M+0pap/HR7s3akkgWk3P6b4WfNL4j+gM1ZtWm1W7zMZNNu7jI0XDzXdet5UtyU1FY5
+         KDbow/DZKnGeraHNPAGfViuSG23ABuLQEtD3bDyBKpBWgIkSMdIH/UxNmLTG9nL7aTCM
+         zwkRBDOuVbV9NSgfPLrZoGxkF2ceHcFx5uNbV7v8wdkTHXkoaOB5ppsvBciRmgi2DEEu
+         V2Sw==
+X-Gm-Message-State: APjAAAUFjgfel8pb8bEr3qztx/c/wfVzsRbN3ZeD8cmBXwpgWtC4zE3C
+        kK/CcN3kJeBXYzOVIll/b05R4g==
+X-Google-Smtp-Source: APXvYqzI16rVPuwHp28e4FF+f2uPEhf7qLRQa3YMIi0B/32uwA4eiEFweuEIRbWyoQXAZqvXJsPNMw==
+X-Received: by 2002:ac2:528e:: with SMTP id q14mr38367414lfm.17.1561108327647;
+        Fri, 21 Jun 2019 02:12:07 -0700 (PDT)
+Received: from skyninja.webspeed.dk (2-111-91-225-cable.dk.customer.tdc.net. [2.111.91.225])
+        by smtp.gmail.com with ESMTPSA id z26sm303178ljz.64.2019.06.21.02.12.06
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Fri, 21 Jun 2019 02:12:06 -0700 (PDT)
+From:   =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
+To:     axboe@fb.com
+Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
+Subject: [GIT PULL 0/2] lightnvm updates for 5.3
+Date:   Fri, 21 Jun 2019 11:11:58 +0200
+Message-Id: <20190621091200.23168-1-mb@lightnvm.io>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1; format=flowed
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Jens,
 
+A couple of patches for the 5.3 window. Geert fixed an uninitialized
+pointer bug, and Heiner fixed up a bug when merging bio pages in pblk.
 
-Le ven. 21 juin 2019 =E0 11:04, Daniel Vetter <daniel@ffwll.ch> a =E9crit=20
-:
-> On Thu, Jun 20, 2019 at 04:15:59PM +0200, Paul Cercueil wrote:
->>=20
->>=20
->>  Le mer. 19 juin 2019 =E0 14:26, Sam Ravnborg <sam@ravnborg.org> a=20
->> =E9crit :
->>  > Hi Paul.
->>  >
->>  > On Mon, Jun 03, 2019 at 05:23:31PM +0200, Paul Cercueil wrote:
->>  > >  Add a KMS driver for the Ingenic JZ47xx family of SoCs.
->>  > >  This driver is meant to replace the aging jz4740-fb driver.
->>  > >
->>  > >  This driver does not make use of the simple pipe helper, for=20
->> the
->>  > > reason
->>  > >  that it will soon be updated to support more advanced features=20
->> like
->>  > >  multiple planes, IPU integration for colorspace conversion and
->>  > > up/down
->>  > >  scaling, support for DSI displays, and TV-out and HDMI outputs.
->>  > >
->>  > >  Signed-off-by: Paul Cercueil <paul@crapouillou.net>
->>  > >  Tested-by: Artur Rojek <contact@artur-rojek.eu>
->>  > >  ---
->>  > >
->>  > >  Notes:
->>  > >      v2: - Remove custom handling of panel. The panel is now
->>  > > discovered using
->>  > >      	  the standard API.
->>  > >      	- Lots of small tweaks suggested by upstream
->>  > >
->>  > >      v3: - Use devm_drm_dev_init()
->>  > >      	- Update compatible strings to -lcd instead of -drm
->>  > >      	- Add destroy() callbacks to plane and crtc
->>  > >      	- The ingenic,lcd-mode is now read from the bridge's DT=20
->> node
->>  > >
->>  > >      v4: Remove ingenic,lcd-mode property completely. The=20
->> various
->>  > > modes are now
->>  > >      	deduced from the connector type, the pixel format or the=20
->> bus
->>  > > flags.
->>  > >
->>  > >      v5: - Fix framebuffer size incorrectly calculated for 24bpp
->>  > > framebuffers
->>  > >      	- Use 32bpp framebuffer instead of 16bpp, as it'll work=20
->> with
->>  > > both
->>  > >      	  16-bit and 24-bit panel
->>  > >      	- Get rid of drm_format_plane_cpp() which has been dropped
->>  > > upstream
->>  > >      	- Avoid using drm_format_info->depth, which is deprecated.
->>  > In the drm world we include the revision notes in the changelog.
->>  > So I did this when I applied it to drm-misc-next.
->>  >
->>  > Fixed a few trivial checkpatch warnings about indent too.
->>  > There was a few too-long-lines warnings that I ignored. Fixing=20
->> them
->>  > would have hurt readability.
->>=20
->>  Thanks.
->>=20
->>  > I assume you will maintain this driver onwards from now.
->>  > Please request drm-misc commit rights (see
->>  > https://www.freedesktop.org/wiki/AccountRequests/)
->>  > You will need a legacy SSH account.
->>=20
->>  I requested an account here:
->>  https://gitlab.freedesktop.org/freedesktop/freedesktop/issues/162
->=20
-> This 404s for me. Did you set the issue to private by any chance? Or
-> deleted already again?
-> -Daniel
+Thank you,
+Matias
 
-Sorry, yes, I set it to private. I thought I had to :(
+Geert Uytterhoeven (1):
+  lightnvm: fix uninitialized pointer in nvm_remove_tgt()
 
--Paul
+Heiner Litz (1):
+  lightnvm: pblk: fix freeing of merged pages
 
+ drivers/lightnvm/core.c      |  2 +-
+ drivers/lightnvm/pblk-core.c | 16 +++++++++-------
+ 2 files changed, 10 insertions(+), 8 deletions(-)
 
->>=20
->>  > And you should familiarize yourself with the maintainer-tools:
->>  > https://drm.pages.freedesktop.org/maintainer-tools/index.html
->>  >
->>  > For my use I use "dim update-branches; dim apply; dim push
->>  > So only a small subset i needed for simple use.
->>  >
->>  > 	Sam
->>=20
->>=20
->=20
-> --
-> Daniel Vetter
-> Software Engineer, Intel Corporation
-> http://blog.ffwll.ch
-
-=
+-- 
+2.19.1
 
