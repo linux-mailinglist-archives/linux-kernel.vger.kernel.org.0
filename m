@@ -2,78 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D5F44EE6C
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 20:05:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 68DE04EE71
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 20:10:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726187AbfFUSFg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Jun 2019 14:05:36 -0400
-Received: from mail-lf1-f49.google.com ([209.85.167.49]:46688 "EHLO
-        mail-lf1-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725992AbfFUSFg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Jun 2019 14:05:36 -0400
-Received: by mail-lf1-f49.google.com with SMTP id z15so5655310lfh.13
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2019 11:05:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=PkYyL67CNGYKGgM9r7dwT8ZYE4U7QkyC3ItCF9X1hcM=;
-        b=dv9Qvp8QX5IP5eCfEA74EyTjANkLhGHdTL6idhmn93L0PLv8UwhQOuZJyDSXIiXMh0
-         G0QjXxaba0bumx+9KOJcvCd/6/ze7+24mK+uCLBNVeMWatUp1oCVLbji7XZmgbxa9FJ8
-         d1fgYMD4EFaoGpXyrtOJAaQwtVZjUFNJSGv6Y=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=PkYyL67CNGYKGgM9r7dwT8ZYE4U7QkyC3ItCF9X1hcM=;
-        b=JYLtvorOYYDzSY00saW/qvoG6eoUjnCo7/269fr3HxFEbDZ5qz07s4YQf88UMmPecN
-         gCEhaKDlqpc/lxtp4dbCYOe3CuJyPD2jlvZW8MaLyhuiBa0PZLMro6YkHWiDFBCigyQh
-         S0S5fLXfgz3RgrboZLtCdgwFJWlqJd12FGcO9/Thk53mTCHAL2TgPUaV0reZKKrz7NCC
-         RgCMf2u2hYYRXWLyg7ZJ1nO3X3FStkDEo6O4ILa3G/PWNDKIVP79+OTk9uKYZoNMpAq6
-         UbCFqEJlgaxKGcoeQb5h5j+TRQ/JpY0evWPS8VC0hcg6L/0zfB4Y4ntJwn4B9kcJ9IYh
-         Q9hA==
-X-Gm-Message-State: APjAAAWWUrLTvyIPF8DdrIQVuIJvJ28ptId7VQN5mOlUJH9nG2FQ2+2X
-        lBZ2zDbuoSujOoFSMqlp6iM1y6akfhY=
-X-Google-Smtp-Source: APXvYqyWg8mZCIS1Xse7Ypbio7jrUjvl01rzRReKGqd4JyOM16nWCK3kYQi8XuiAjWcc+CxpiALCEw==
-X-Received: by 2002:a19:750b:: with SMTP id y11mr31738050lfe.16.1561140333664;
-        Fri, 21 Jun 2019 11:05:33 -0700 (PDT)
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com. [209.85.208.180])
-        by smtp.gmail.com with ESMTPSA id l29sm477974lfp.83.2019.06.21.11.05.32
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Fri, 21 Jun 2019 11:05:32 -0700 (PDT)
-Received: by mail-lj1-f180.google.com with SMTP id v18so6744001ljh.6
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2019 11:05:32 -0700 (PDT)
-X-Received: by 2002:a2e:a0cf:: with SMTP id f15mr10076233ljm.180.1561140332237;
- Fri, 21 Jun 2019 11:05:32 -0700 (PDT)
-MIME-Version: 1.0
-References: <CAPM=9tyM7BRfAwruJ4QsY_gMCGVHxS=ag7cNA1H304zcnAFK+A@mail.gmail.com>
- <CAHk-=wifNAnkd+bXfoNWXO1K5NQ8Tr+Hc13SgaBXU3RoQB7Pwg@mail.gmail.com> <CAPj87rP451duPWi4TQjcqzbyVKYp_v7=ibwR=2UnQyWttLDWNg@mail.gmail.com>
-In-Reply-To: <CAPj87rP451duPWi4TQjcqzbyVKYp_v7=ibwR=2UnQyWttLDWNg@mail.gmail.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Fri, 21 Jun 2019 11:05:16 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wih2mBygBvVru4QLbBHEO_5C5yLwbE8qL47Fzj3A1m6vA@mail.gmail.com>
-Message-ID: <CAHk-=wih2mBygBvVru4QLbBHEO_5C5yLwbE8qL47Fzj3A1m6vA@mail.gmail.com>
+        id S1726233AbfFUSKG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Jun 2019 14:10:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49900 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726080AbfFUSKG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Jun 2019 14:10:06 -0400
 Subject: Re: [git pull] drm fixes for 5.2-rc6
-To:     Daniel Stone <daniel@fooishbar.org>
-Cc:     Dave Airlie <airlied@gmail.com>,
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1561140605;
+        bh=mR8KjeZ5mZCL45IMza5e+2KDiyn01CmfPthvqngvozA=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=mZ8/EO+JS2JqmX9nwkdG43vBFncloyj48BWBxfwmamuwAp7zJkblCRqG5m+OX2JIc
+         +a/AaDl0td6uhyZb1PAFDla6BxcG7TNnzSBhpCC/aOy164O89W8vaaM9ZyvDB298Rs
+         M5UVoiuc9dqL52WRncPod382sN4IVreNV7sj6ln0=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <CAPM=9tyM7BRfAwruJ4QsY_gMCGVHxS=ag7cNA1H304zcnAFK+A@mail.gmail.com>
+References: <CAPM=9tyM7BRfAwruJ4QsY_gMCGVHxS=ag7cNA1H304zcnAFK+A@mail.gmail.com>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <CAPM=9tyM7BRfAwruJ4QsY_gMCGVHxS=ag7cNA1H304zcnAFK+A@mail.gmail.com>
+X-PR-Tracked-Remote: git://anongit.freedesktop.org/drm/drm
+ tags/drm-fixes-2019-06-21
+X-PR-Tracked-Commit-Id: 5eab9cf87b6c261f4e2f6c7623171cc2f5ea1a9c
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 0728f6c3cab107f0aab2c8ded1292dd2cc41a228
+Message-Id: <156114060533.12314.5609427400390584129.pr-tracker-bot@kernel.org>
+Date:   Fri, 21 Jun 2019 18:10:05 +0000
+To:     Dave Airlie <airlied@gmail.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
         Daniel Vetter <daniel.vetter@ffwll.ch>,
         dri-devel <dri-devel@lists.freedesktop.org>,
         LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 21, 2019 at 10:06 AM Daniel Stone <daniel@fooishbar.org> wrote:
->
-> > Does it work for you? I'm getting a connection reset, no data.
->
-> It is quite sick indeed; it's fallen down an NFS hole and is being
-> restarted. Should be back in a few minutes.
+The pull request you sent on Fri, 21 Jun 2019 14:20:53 +1000:
 
-Thanks,  everything does indeed look good again now,
+> git://anongit.freedesktop.org/drm/drm tags/drm-fixes-2019-06-21
 
-                 Linus
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/0728f6c3cab107f0aab2c8ded1292dd2cc41a228
+
+Thank you!
+
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
