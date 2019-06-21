@@ -2,168 +2,152 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 257154E8C4
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 15:18:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2D3214E8CA
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 15:20:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726414AbfFUNSC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Jun 2019 09:18:02 -0400
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:34643 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726002AbfFUNSB (ORCPT
+        id S1726099AbfFUNUW convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Fri, 21 Jun 2019 09:20:22 -0400
+Received: from mail.fireflyinternet.com ([109.228.58.192]:51996 "EHLO
+        fireflyinternet.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726002AbfFUNUW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Jun 2019 09:18:01 -0400
-Received: by mail-qt1-f194.google.com with SMTP id m29so6874091qtu.1
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2019 06:18:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lca.pw; s=google;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=6EZ0gR7z8Dh+/hnSQH7YpH2ogNmaNCPQh/J8NFRWbO0=;
-        b=JEAD13h0TLm9EB6aYZve86G8r9dnXpPGF8CZQ9cJZ/pmdZ8X73ahqqdYrx+ynsrWS3
-         6vyG2hgSQIvDnKzABjXST9Cuhz0U1lKAWTGacv//r09wHPvRuexSrP7Hl5I6a2PbOeAC
-         +eeFA+7wm0KAq8GWFLu1Fxg4CnmMfMBSjuJIzCWvMvtk8AOcUGeOkCXKVdrtu4P33B9T
-         dV+WeXbPRiJaRgQ9SQ2oghzrrd2M9BUmFuGynVrbyJkj/6rjeMJ0vl+rLR4Ne4FtqxZo
-         KfTiPx+wirhg8c1tdHHIPJR5vsyxYy0mCAQgtzKcY9WYWQZJHCXpT3MyYKoEgCXbFLTU
-         x1/g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=6EZ0gR7z8Dh+/hnSQH7YpH2ogNmaNCPQh/J8NFRWbO0=;
-        b=Z2h5figkydXetp3bepOOcvUKtscP9FL0O7PC3TyUf0X/piEet+GwIrVfvHFmeJCA77
-         Arz4WX/ye0hlcqNubbrQ9rKkjD+FW6SkntQzNJI/ldHHDQrMWWK0oMDzXDmcVBgLQnMQ
-         xRJRQtAuwlVrKyZzwKtYEuEeJhe37pgd9iTB2SYbG2azPUXrCPh5b5mx1979Oq9WzPIO
-         YOPJpvYKiw+cNe7WAZiO6Qhupd2PzOlXQmujnqMwdUeRSGjhz2ZAyovsclcJt2oEeVJ7
-         8/N2IGuNQ5NZTt6O4VuZw/GTLleC71kpwo6BVNkBgxgqpAKtkxiOY52A45yyT1QyeIlu
-         aqdA==
-X-Gm-Message-State: APjAAAXV6SKYNq6T1sTenmfIUFEQmZ4lWH+fFupLwDwr2/pMC5D0KdVL
-        0XeaHQcuwhGoxSHrov6lZwitGQ==
-X-Google-Smtp-Source: APXvYqxSqZAXWNDzloJvhsgvJUwDefEESXhZFAG3jCaHWEdp5PRedaS9loqp7FD/hfEgnf2ddggbFg==
-X-Received: by 2002:ac8:2734:: with SMTP id g49mr89550088qtg.228.1561123080778;
-        Fri, 21 Jun 2019 06:18:00 -0700 (PDT)
-Received: from dhcp-41-57.bos.redhat.com (nat-pool-bos-t.redhat.com. [66.187.233.206])
-        by smtp.gmail.com with ESMTPSA id 2sm1789423qtz.73.2019.06.21.06.17.59
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 21 Jun 2019 06:18:00 -0700 (PDT)
-Message-ID: <1561123078.5154.41.camel@lca.pw>
-Subject: Re: [PATCH -next v2] mm/hotplug: fix a null-ptr-deref during NUMA
- boot
-From:   Qian Cai <cai@lca.pw>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     akpm@linux-foundation.org, brho@google.com, kernelfans@gmail.com,
-        dave.hansen@intel.com, rppt@linux.ibm.com, peterz@infradead.org,
-        mpe@ellerman.id.au, mingo@elte.hu, osalvador@suse.de,
-        luto@kernel.org, tglx@linutronix.de, linux-mm@kvack.org,
+        Fri, 21 Jun 2019 09:20:22 -0400
+X-Default-Received-SPF: pass (skip=forwardok (res=PASS)) x-ip-name=78.156.65.138;
+Received: from localhost (unverified [78.156.65.138]) 
+        by fireflyinternet.com (Firefly Internet (M1)) with ESMTP (TLS) id 16979502-1500050 
+        for multiple; Fri, 21 Jun 2019 14:19:12 +0100
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8BIT
+To:     Peter Xu <peterx@redhat.com>, iommu@lists.linux-foundation.org,
         linux-kernel@vger.kernel.org
-Date:   Fri, 21 Jun 2019 09:17:58 -0400
-In-Reply-To: <20190513124112.GH24036@dhcp22.suse.cz>
-References: <20190512054829.11899-1-cai@lca.pw>
-         <20190513124112.GH24036@dhcp22.suse.cz>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6 (3.22.6-10.el7) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+From:   Chris Wilson <chris@chris-wilson.co.uk>
+In-Reply-To: <20190621023205.12936-1-peterx@redhat.com>
+Cc:     joro@8bytes.org, peterx@redhat.com,
+        Lu Baolu <baolu.lu@linux.intel.com>, dave.jiang@intel.com
+References: <20190621023205.12936-1-peterx@redhat.com>
+Message-ID: <156112315020.2401.16873297513079645766@skylake-alporthouse-com>
+User-Agent: alot/0.6
+Subject: Re: [PATCH] Revert "iommu/vt-d: Fix lock inversion between iommu->lock and
+ device_domain_lock"
+Date:   Fri, 21 Jun 2019 14:19:10 +0100
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sigh...
-
-I don't see any benefit to keep the broken commit,
-
-"x86, numa: always initialize all possible nodes"
-
-for so long in linux-next that just prevent x86 NUMA machines with any memory-
-less node from booting.
-
-Andrew, maybe it is time to drop this patch until Michal found some time to fix
-it properly.
-
-On Mon, 2019-05-13 at 14:41 +0200, Michal Hocko wrote:
-> On Sun 12-05-19 01:48:29, Qian Cai wrote:
-> > The linux-next commit ("x86, numa: always initialize all possible
-> > nodes") introduced a crash below during boot for systems with a
-> > memory-less node. This is due to CPUs that get onlined during SMP boot,
-> > but that onlining triggers a page fault in bus_add_device() during
-> > device registration:
-> > 
-> > 	error = sysfs_create_link(&bus->p->devices_kset->kobj,
-> > 
-> > bus->p is NULL. That "p" is the subsys_private struct, and it should
-> > have been set in,
-> > 
-> > 	postcore_initcall(register_node_type);
-> > 
-> > but that happens in do_basic_setup() after smp_init().
-> > 
-> > The old code had set this node online via alloc_node_data(), so when it
-> > came time to do_cpu_up() -> try_online_node(), the node was already up
-> > and nothing happened.
-> > 
-> > Now, it attempts to online the node, which registers the node with
-> > sysfs, but that can't happen before the 'node' subsystem is registered.
-> > 
-> > Since kernel_init() is running by a kernel thread that is in
-> > SYSTEM_SCHEDULING state, fixed this by skipping registering with sysfs
-> > during the early boot in __try_online_node().
+Quoting Peter Xu (2019-06-21 03:32:05)
+> This reverts commit 7560cc3ca7d9d11555f80c830544e463fcdb28b8.
 > 
-> Relying on SYSTEM_SCHEDULING looks really hackish. Why cannot we simply
-> drop try_online_node from do_cpu_up? Your v2 remark below suggests that
-> we need to call node_set_online because something later on depends on
-> that. Btw. why do we even allocate a pgdat from this path? This looks
-> really messy.
+> With 5.2.0-rc5 I can easily trigger this with lockdep and iommu=pt:
 > 
-> > Call Trace:
-> >  device_add+0x43e/0x690
-> >  device_register+0x107/0x110
-> >  __register_one_node+0x72/0x150
-> >  __try_online_node+0x8f/0xd0
-> >  try_online_node+0x2b/0x50
-> >  do_cpu_up+0x46/0xf0
-> >  cpu_up+0x13/0x20
-> >  smp_init+0x6e/0xd0
-> >  kernel_init_freeable+0xe5/0x21f
-> >  kernel_init+0xf/0x180
-> >  ret_from_fork+0x1f/0x30
-> > 
-> > Reported-by: Barret Rhoden <brho@google.com>
-> > Signed-off-by: Qian Cai <cai@lca.pw>
-> > ---
-> > 
-> > v2: Set the node online as it have CPUs. Otherwise, those memory-less nodes
-> > will
-> >     end up being not in sysfs i.e., /sys/devices/system/node/.
-> > 
-> >  mm/memory_hotplug.c | 12 ++++++++++++
-> >  1 file changed, 12 insertions(+)
-> > 
-> > diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
-> > index b236069ff0d8..6eb2331fa826 100644
-> > --- a/mm/memory_hotplug.c
-> > +++ b/mm/memory_hotplug.c
-> > @@ -1037,6 +1037,18 @@ static int __try_online_node(int nid, u64 start, bool
-> > set_node_online)
-> >  	if (node_online(nid))
-> >  		return 0;
-> >  
-> > +	/*
-> > +	 * Here is called by cpu_up() to online a node without memory from
-> > +	 * kernel_init() which guarantees that "set_node_online" is true
-> > which
-> > +	 * will set the node online as it have CPUs but not ready to call
-> > +	 * register_one_node() as "node_subsys" has not been initialized
-> > +	 * properly yet.
-> > +	 */
-> > +	if (system_state == SYSTEM_SCHEDULING) {
-> > +		node_set_online(nid);
-> > +		return 0;
-> > +	}
-> > +
-> >  	pgdat = hotadd_new_pgdat(nid, start);
-> >  	if (!pgdat) {
-> >  		pr_err("Cannot online node %d due to NULL pgdat\n", nid);
-> > -- 
-> > 2.20.1 (Apple Git-117)
+>     ======================================================
+>     WARNING: possible circular locking dependency detected
+>     5.2.0-rc5 #78 Not tainted
+>     ------------------------------------------------------
+>     swapper/0/1 is trying to acquire lock:
+>     00000000ea2b3beb (&(&iommu->lock)->rlock){+.+.}, at: domain_context_mapping_one+0xa5/0x4e0
+>     but task is already holding lock:
+>     00000000a681907b (device_domain_lock){....}, at: domain_context_mapping_one+0x8d/0x4e0
+>     which lock already depends on the new lock.
+>     the existing dependency chain (in reverse order) is:
+>     -> #1 (device_domain_lock){....}:
+>            _raw_spin_lock_irqsave+0x3c/0x50
+>            dmar_insert_one_dev_info+0xbb/0x510
+>            domain_add_dev_info+0x50/0x90
+>            dev_prepare_static_identity_mapping+0x30/0x68
+>            intel_iommu_init+0xddd/0x1422
+>            pci_iommu_init+0x16/0x3f
+>            do_one_initcall+0x5d/0x2b4
+>            kernel_init_freeable+0x218/0x2c1
+>            kernel_init+0xa/0x100
+>            ret_from_fork+0x3a/0x50
+>     -> #0 (&(&iommu->lock)->rlock){+.+.}:
+>            lock_acquire+0x9e/0x170
+>            _raw_spin_lock+0x25/0x30
+>            domain_context_mapping_one+0xa5/0x4e0
+>            pci_for_each_dma_alias+0x30/0x140
+>            dmar_insert_one_dev_info+0x3b2/0x510
+>            domain_add_dev_info+0x50/0x90
+>            dev_prepare_static_identity_mapping+0x30/0x68
+>            intel_iommu_init+0xddd/0x1422
+>            pci_iommu_init+0x16/0x3f
+>            do_one_initcall+0x5d/0x2b4
+>            kernel_init_freeable+0x218/0x2c1
+>            kernel_init+0xa/0x100
+>            ret_from_fork+0x3a/0x50
 > 
+>     other info that might help us debug this:
+>      Possible unsafe locking scenario:
+>            CPU0                    CPU1
+>            ----                    ----
+>       lock(device_domain_lock);
+>                                    lock(&(&iommu->lock)->rlock);
+>                                    lock(device_domain_lock);
+>       lock(&(&iommu->lock)->rlock);
 > 
+>      *** DEADLOCK ***
+>     2 locks held by swapper/0/1:
+>      #0: 00000000033eb13d (dmar_global_lock){++++}, at: intel_iommu_init+0x1e0/0x1422
+>      #1: 00000000a681907b (device_domain_lock){....}, at: domain_context_mapping_one+0x8d/0x4e0
+> 
+>     stack backtrace:
+>     CPU: 2 PID: 1 Comm: swapper/0 Not tainted 5.2.0-rc5 #78
+>     Hardware name: LENOVO 20KGS35G01/20KGS35G01, BIOS N23ET50W (1.25 ) 06/25/2018
+>     Call Trace:
+>      dump_stack+0x85/0xc0
+>      print_circular_bug.cold.57+0x15c/0x195
+>      __lock_acquire+0x152a/0x1710
+>      lock_acquire+0x9e/0x170
+>      ? domain_context_mapping_one+0xa5/0x4e0
+>      _raw_spin_lock+0x25/0x30
+>      ? domain_context_mapping_one+0xa5/0x4e0
+>      domain_context_mapping_one+0xa5/0x4e0
+>      ? domain_context_mapping_one+0x4e0/0x4e0
+>      pci_for_each_dma_alias+0x30/0x140
+>      dmar_insert_one_dev_info+0x3b2/0x510
+>      domain_add_dev_info+0x50/0x90
+>      dev_prepare_static_identity_mapping+0x30/0x68
+>      intel_iommu_init+0xddd/0x1422
+>      ? printk+0x58/0x6f
+>      ? lockdep_hardirqs_on+0xf0/0x180
+>      ? do_early_param+0x8e/0x8e
+>      ? e820__memblock_setup+0x63/0x63
+>      pci_iommu_init+0x16/0x3f
+>      do_one_initcall+0x5d/0x2b4
+>      ? do_early_param+0x8e/0x8e
+>      ? rcu_read_lock_sched_held+0x55/0x60
+>      ? do_early_param+0x8e/0x8e
+>      kernel_init_freeable+0x218/0x2c1
+>      ? rest_init+0x230/0x230
+>      kernel_init+0xa/0x100
+>      ret_from_fork+0x3a/0x50
+> 
+> domain_context_mapping_one() is taking device_domain_lock first then
+> iommu lock, while dmar_insert_one_dev_info() is doing the reverse.
+> 
+> That should be introduced by commit:
+> 
+> 7560cc3ca7d9 ("iommu/vt-d: Fix lock inversion between iommu->lock and
+>               device_domain_lock", 2019-05-27)
+> 
+> So far I still cannot figure out how the previous deadlock was
+> triggered (I cannot find iommu lock taken before calling of
+> iommu_flush_dev_iotlb()), however I'm pretty sure that that change
+> should be incomplete at least because it does not fix all the places
+> so we're still taking the locks in different orders, while reverting
+> that commit is very clean to me so far that we should always take
+> device_domain_lock first then the iommu lock.
+> 
+> We can continue to try to find the real culprit mentioned in
+> 7560cc3ca7d9, but for now I think we should revert it to fix current
+> breakage.
+> 
+> CC: Joerg Roedel <joro@8bytes.org>
+> CC: Lu Baolu <baolu.lu@linux.intel.com>
+> CC: dave.jiang@intel.com
+> Signed-off-by: Peter Xu <peterx@redhat.com>
+
+I've run this through our CI which was also reporting the inversion, so
+Tested-by: Chris Wilson <chris@chris-wilson.co.uk>
+-Chris
