@@ -2,161 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A77554ED06
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 18:20:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0EBA74ED12
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 18:22:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726540AbfFUQT6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Jun 2019 12:19:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52506 "EHLO mail.kernel.org"
+        id S1726174AbfFUQVa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Jun 2019 12:21:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53282 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726031AbfFUQT6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Jun 2019 12:19:58 -0400
-Received: from localhost.localdomain (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        id S1726058AbfFUQV3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Jun 2019 12:21:29 -0400
+Received: from localhost.localdomain (unknown [194.230.155.186])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 483972089E;
-        Fri, 21 Jun 2019 16:19:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 56A322089E;
+        Fri, 21 Jun 2019 16:21:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561133996;
-        bh=vZTIPel1k0Goob2NV5rhCNi/4PicEMn+Wbjb1yT/6XM=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YUd1vKgbdSdGZc7N9T/+k9JhJB1idwqKfzo1/pjXfG3eYUDMIqiPnmQNisboqicJt
-         liqC5Y/9BlpTOPtrFYfPup8MjPvNqzAtZpDJ3Akx1CVW6kMICiWWEG1u7ZK1GBnOWy
-         Aq895LBsf0idoDc6SEPnCnEwUZVqmb5lVXhQyDVY=
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Steven Rostedt <rostedt@goodmis.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>
-Cc:     Ingo Molnar <mingo@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: [RFC PATCH 11/11] tracing: of: Add synthetic event support
-Date:   Sat, 22 Jun 2019 01:19:51 +0900
-Message-Id: <156113399174.28344.17111722475993258131.stgit@devnote2>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <156113387975.28344.16009584175308192243.stgit@devnote2>
-References: <156113387975.28344.16009584175308192243.stgit@devnote2>
-User-Agent: StGit/0.17.1-dirty
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+        s=default; t=1561134088;
+        bh=i3bOwZCT85Q9yvApyiLHd1cEaAunSmxNvQtZBURK4gA=;
+        h=From:To:Cc:Subject:Date:From;
+        b=LAovNkRmT7jv/zYTohSOPD5n7AZiXiuDJek2AUQvr38TGR6rgnGIQnNHZfy8QqTr4
+         Fusf7Pxnv817IFYu9Ed5oRY38K5+/x77K0K+IQU6X7UqO1ydcAfJSFCYbTY6N4lPul
+         Mp/EHpW+d5TLkT2v/pliMtBFEqIyW3l9xnGPZXm4=
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Qiang Yu <yuq825@gmail.com>, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        dri-devel@lists.freedesktop.org, lima@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org
+Cc:     Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH v2 1/4] drm/lima: Mark 64-bit number as ULL to silence Smatch warning
+Date:   Fri, 21 Jun 2019 18:21:14 +0200
+Message-Id: <20190621162117.22533-1-krzk@kernel.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add synthetic event node support. The synthetic event node must be
-a child node of ftrace node, and the node must start with "synth@"
-prefix. The synth node requires fields string (not string array),
-which defines the fields as same as tracing/synth_events interface.
+Mark long numbers with ULL to silence the Smatch warning:
 
-Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+    drivers/gpu/drm/lima/lima_device.c:314:32: warning: constant 0x100000000 is so big it is long long
+
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Reviewed-by: Qiang Yu <yuq825@gmail.com>
+
 ---
- kernel/trace/trace_events_hist.c |    5 ++++
- kernel/trace/trace_of.c          |   54 ++++++++++++++++++++++++++++++++++++--
- 2 files changed, 56 insertions(+), 3 deletions(-)
 
-diff --git a/kernel/trace/trace_events_hist.c b/kernel/trace/trace_events_hist.c
-index db973928e580..e7f5d0a353e2 100644
---- a/kernel/trace/trace_events_hist.c
-+++ b/kernel/trace/trace_events_hist.c
-@@ -1343,6 +1343,11 @@ static int create_or_delete_synth_event(int argc, char **argv)
- 	return ret == -ECANCELED ? -EINVAL : ret;
- }
+Changes since v1:
+1. Add reviewed-by tag
+---
+ drivers/gpu/drm/lima/lima_vm.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/gpu/drm/lima/lima_vm.h b/drivers/gpu/drm/lima/lima_vm.h
+index caee2f8a29b4..e0bdedcf14dd 100644
+--- a/drivers/gpu/drm/lima/lima_vm.h
++++ b/drivers/gpu/drm/lima/lima_vm.h
+@@ -15,9 +15,9 @@
+ #define LIMA_VM_NUM_PT_PER_BT (1 << LIMA_VM_NUM_PT_PER_BT_SHIFT)
+ #define LIMA_VM_NUM_BT (LIMA_PAGE_ENT_NUM >> LIMA_VM_NUM_PT_PER_BT_SHIFT)
  
-+int synth_event_run_command(const char *command)
-+{
-+	return trace_run_command(command, create_or_delete_synth_event);
-+}
-+
- static int synth_event_create(int argc, const char **argv)
- {
- 	const char *name = argv[0];
-diff --git a/kernel/trace/trace_of.c b/kernel/trace/trace_of.c
-index 43d87e5065a3..1b2a1306fc60 100644
---- a/kernel/trace/trace_of.c
-+++ b/kernel/trace/trace_of.c
-@@ -24,6 +24,7 @@ extern ssize_t tracing_resize_ring_buffer(struct trace_array *tr,
- 					  unsigned long size, int cpu_id);
- extern int trigger_process_regex(struct trace_event_file *file, char *buff);
- extern int trace_kprobe_run_command(const char *command);
-+extern int synth_event_run_command(const char *command);
+-#define LIMA_VA_RESERVE_START  0xFFF00000
++#define LIMA_VA_RESERVE_START  0x0FFF00000ULL
+ #define LIMA_VA_RESERVE_DLBU   LIMA_VA_RESERVE_START
+-#define LIMA_VA_RESERVE_END    0x100000000
++#define LIMA_VA_RESERVE_END    0x100000000ULL
  
- static void __init
- trace_of_set_ftrace_options(struct trace_array *tr, struct device_node *node)
-@@ -133,6 +134,38 @@ trace_of_add_kprobe_event(struct device_node *node,
- 	return 0;
- }
+ struct lima_device;
  
-+static int __init
-+trace_of_add_synth_event(struct device_node *node, const char *event)
-+{
-+	struct property *prop;
-+	char buf[MAX_BUF_LEN], *q;
-+	const char *p;
-+	int len, delta, ret;
-+
-+	len = ARRAY_SIZE(buf);
-+	delta = snprintf(buf, len, "%s", event);
-+	if (delta >= len) {
-+		pr_err("Event name is too long: %s\n", event);
-+		return -E2BIG;
-+	}
-+	len -= delta; q = buf + delta;
-+
-+	of_property_for_each_string(node, "fields", prop, p) {
-+		delta = snprintf(q, len, " %s;", p);
-+		if (delta >= len) {
-+			pr_err("fields string is too long: %s\n", p);
-+			return -E2BIG;
-+		}
-+		len -= delta; q += delta;
-+	}
-+
-+	ret = synth_event_run_command(buf);
-+	if (ret < 0)
-+		pr_err("Failed to add synthetic event: %s\n", buf);
-+
-+	return ret;
-+}
-+
- static void __init
- trace_of_init_one_event(struct trace_array *tr, struct device_node *node)
- {
-@@ -160,15 +193,30 @@ trace_of_init_one_event(struct trace_array *tr, struct device_node *node)
- 	event = buf;
- 
- 	group = strsep(&event, ":");
--	/* For a kprobe event, we have to generates an event at first */
-+
-+	/* Generates kprobe/synth event at first */
- 	if (of_find_property(node, "probes", NULL)) {
-+		if (of_find_property(node, "fields", NULL)) {
-+			pr_err("Error: %s node has both probes and fields\n",
-+				of_node_full_name(node));
-+			return;
-+		}
- 		if (!event) {
- 			event = buf;
- 			group = "kprobes";
- 		}
--		err = trace_of_add_kprobe_event(node, group, event);
--		if (err < 0)
-+		if (trace_of_add_kprobe_event(node, group, event) < 0)
-+			return;
-+	} else if (of_find_property(node, "fields", NULL)) {
-+		if (!event)
-+			event = buf;
-+		else if (strcmp(group, "synthetic") != 0) {
-+			pr_err("Synthetic event must be in synthetic group\n");
-+			return;
-+		}
-+		if (trace_of_add_synth_event(node, event) < 0)
- 			return;
-+		group = "synthetic";
- 	} else {
- 		if (!event) {
- 			pr_err("%s has no group name\n", buf);
+-- 
+2.17.1
 
