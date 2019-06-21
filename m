@@ -2,173 +2,182 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 42D8E4F110
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2019 01:17:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 21FD84F122
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2019 01:24:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726097AbfFUXRR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Jun 2019 19:17:17 -0400
-Received: from mail-pf1-f202.google.com ([209.85.210.202]:43235 "EHLO
-        mail-pf1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726259AbfFUXRO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Jun 2019 19:17:14 -0400
-Received: by mail-pf1-f202.google.com with SMTP id j7so5259422pfn.10
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2019 16:17:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=CUCPsO3jo98uPWQzYPGBmLbPJQj/PLpHh9qafy5RrRc=;
-        b=HZK8KCjJImIc7GaiInhM8ZZ/258RRA2Voe62DwCyvpjD8nA7Lw/bF+G4AkFymv2J6v
-         O7aN1jKPiR4BSV3MHpXtCQchPzekAqEtrsrSXMZfEF5kKtBtAiBUpFktqslwp1aJMqUX
-         E5jnTKGOvXz2fg6ObmERGenqiVYoud3ya1wWGbtPyHaNRaMr8OxpgHkLZdLBgNieLfP3
-         Z8AFI3kiGPnMKMGfrneLKhxmNMx7qKiqNYEyvt5vS3gmr72hAOChLjr5v6wHm31VXaKo
-         UiwoHxYa2hylnNqTX5YodwEF8MnkzhI5rcM9iJMrIu7Xxol/q/jD2wRVLRopeaoCZJAx
-         dnuw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=CUCPsO3jo98uPWQzYPGBmLbPJQj/PLpHh9qafy5RrRc=;
-        b=uOcsE8Cjnaw1T9E7xSglPrWulBkG/yjgfeasPPxDQ1f7atSITO+9r/JNbsg5zkFONG
-         xuvncHdyMaOaPDVp5zzXb6c8e9fwfKICJrKzCuIORrJlfukSsqK+jLQ5n05h4p2KX108
-         0+d0olieLubEbyAMP3ynaQL1mp37X3H8WJr3mI0Nhd8w1ppFsRJ8q5+uz+29Whe5ZA1m
-         KtP5cZO7kBPD8+n0dCwchkfMKqB9Z57vS7m8+fOdbTUUbERa9lcmWOM7KvEo8365PEyP
-         vF5X8aGe+TX9uXGhZeGLXUuMCb4BlLn/FdSr9nvZqRR6yHcmHuvlH8Vl+EYL1TYqZAVw
-         PExg==
-X-Gm-Message-State: APjAAAXC+bzLrDTa9rxryehdBKT5Uai7oSLO08tJ9ySFcmTZ5Hvgnjb6
-        tqdiZgFrFkOPlB2yGeB96UwjH96pih4s
-X-Google-Smtp-Source: APXvYqwFBmSJsBUFYd6ijdvz1XM4mXf7aPBuGASZP0bhWfFcnZlAzKCOnLFVEX3C8DsDYoYO/r1RMEZFS0AV
-X-Received: by 2002:a63:3f48:: with SMTP id m69mr20448994pga.17.1561159033052;
- Fri, 21 Jun 2019 16:17:13 -0700 (PDT)
-Date:   Fri, 21 Jun 2019 16:16:50 -0700
-In-Reply-To: <20190621231650.32073-1-brianvv@google.com>
-Message-Id: <20190621231650.32073-7-brianvv@google.com>
-Mime-Version: 1.0
-References: <20190621231650.32073-1-brianvv@google.com>
-X-Mailer: git-send-email 2.22.0.410.gd8fdbe21b5-goog
-Subject: [RFC PATCH 6/6] selftests/bpf: add test to measure performance of BPF_MAP_DUMP
-From:   Brian Vazquez <brianvv@google.com>
-To:     Brian Vazquez <brianvv.kernel@gmail.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        "David S . Miller" <davem@davemloft.net>
-Cc:     Stanislav Fomichev <sdf@google.com>,
-        Willem de Bruijn <willemb@google.com>,
-        Petar Penkov <ppenkov@google.com>,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        bpf@vger.kernel.org, Brian Vazquez <brianvv@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        id S1726092AbfFUXY4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Jun 2019 19:24:56 -0400
+Received: from mail-eopbgr800135.outbound.protection.outlook.com ([40.107.80.135]:39026
+        "EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726049AbfFUXY4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Jun 2019 19:24:56 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=UU7IqQyczAy2oNT3KSa7QaXx+Aucle5sGt8GCjfqZQfZ/Txppqg6nVIUrs/ReVOzdpab1z9UV+5W5pHPx5oAAnCucGmLhs+QpNozXMYlSO/6QoKRlSTUcY+edqR5ArUEKdkVK5K9v+5R8SxJ8CI6VhnbnXBzJofMeyMG1zZ/C7Q9oocqnIIkV7edW1+9atoFfWIxMA8xX5qI+hd4mvTVdnYt1uQJPbboLJAt+y/KVn/Zaj9WZ6fXzSaOZ6IE85gJAqJQnuy8XUTm75TcVpJbnpXiUiUcMtRIcT+1fI8SB8JUNMXOZdsWXaDnMjchYkMR8bpThKr/RziBuBLP/Y49Mg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=vubLWmtWqKeMlK47t8WEhMdr0Batk3JO8VBBrBVeOfU=;
+ b=mFY5uS20+dAO+yScPithiEKIyJX933nwQqvN+KBI58As7/3XNxUyXGo4PKmsTWF4PQBpgmyV+ZOg0WjuZioUHZNzSEt7bQBZkjoLf/YA59b3uTbEdTFTdCezMQ5bB0T2r+t/P+KdeACMeJL0w0hgGFnrIUlvbhv029gxC83hupY7hbRfvi3Sybs5KgtM5xg7ZYQ8AN8txQmjPUyypu52RZc46Ty0lVICwBX0mkywqqOad5IdyyGkyEDJF1UarbXIoeZGYRYumHAA6AY8VU1yEdU6rx9/sFDJMD7iZLqrQT9XrQ6leLh9ruUrrOQsd9WTaaefHRgdS2iCRFRAr+C0Yw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1;spf=pass
+ smtp.mailfrom=microsoft.com;dmarc=pass action=none
+ header.from=microsoft.com;dkim=pass header.d=microsoft.com;arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=vubLWmtWqKeMlK47t8WEhMdr0Batk3JO8VBBrBVeOfU=;
+ b=Pq5/zeb7cFzOe89VIKXGCNAxqNY7ilWnwwhqB43uHYxpx15EGnp+GON3Se4HPKTGAfJVoZjh4HbTMwmDcoo5f3NnEUqlWUxj0hLQnWIoQ6JOEEi09OIlE+foW9D0rrrH/XFTsbNUTrJcqI0+oL5X2F+o9LvzTSXArLSXgqjG4kI=
+Received: from BYAPR21MB1352.namprd21.prod.outlook.com (20.179.60.214) by
+ BYAPR21MB1352.namprd21.prod.outlook.com (20.179.60.214) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2032.6; Fri, 21 Jun 2019 23:24:51 +0000
+Received: from BYAPR21MB1352.namprd21.prod.outlook.com
+ ([fe80::b52f:faf3:6bc6:32de]) by BYAPR21MB1352.namprd21.prod.outlook.com
+ ([fe80::b52f:faf3:6bc6:32de%5]) with mapi id 15.20.2032.005; Fri, 21 Jun 2019
+ 23:24:51 +0000
+From:   Michael Kelley <mikelley@microsoft.com>
+To:     Dexuan Cui <decui@microsoft.com>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        "bhelgaas@google.com" <bhelgaas@google.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        KY Srinivasan <kys@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Sasha Levin <Alexander.Levin@microsoft.com>,
+        "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+        "olaf@aepfle.de" <olaf@aepfle.de>,
+        "apw@canonical.com" <apw@canonical.com>,
+        "jasowang@redhat.com" <jasowang@redhat.com>,
+        vkuznets <vkuznets@redhat.com>,
+        "marcelo.cerri@canonical.com" <marcelo.cerri@canonical.com>
+CC:     "Lili Deng (Wicresoft North America Ltd)" <v-lide@microsoft.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "driverdev-devel@linuxdriverproject.org" 
+        <driverdev-devel@linuxdriverproject.org>
+Subject: RE: [PATCH] PCI: hv: Fix a use-after-free bug in
+ hv_eject_device_work()
+Thread-Topic: [PATCH] PCI: hv: Fix a use-after-free bug in
+ hv_eject_device_work()
+Thread-Index: AdUoYqahDsLeDiTlTqKiO6h8RAkcdgAJUV9w
+Date:   Fri, 21 Jun 2019 23:24:51 +0000
+Message-ID: <BYAPR21MB13524CDAAD1F9A19935E5F9BD7E70@BYAPR21MB1352.namprd21.prod.outlook.com>
+References: <PU1P153MB01691036654142C7972F3ACDBFE70@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM>
+In-Reply-To: <PU1P153MB01691036654142C7972F3ACDBFE70@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+msip_labels: MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=True;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Owner=decui@microsoft.com;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2019-06-21T19:02:22.0981116Z;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=General;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Application=Microsoft Azure
+ Information Protection;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ActionId=f5ac9eff-e920-4812-8c36-4a93f3cf745c;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Extended_MSFT_Method=Automatic
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=mikelley@microsoft.com; 
+x-originating-ip: [24.22.167.197]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: b8bcb456-7a95-4c70-3087-08d6f69fa8f0
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:BYAPR21MB1352;
+x-ms-traffictypediagnostic: BYAPR21MB1352:
+x-ld-processed: 72f988bf-86f1-41af-91ab-2d7cd011db47,ExtAddr
+x-microsoft-antispam-prvs: <BYAPR21MB1352C9E82C4D26EFB8A209FDD7E70@BYAPR21MB1352.namprd21.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:4502;
+x-forefront-prvs: 0075CB064E
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(376002)(39860400002)(136003)(366004)(396003)(189003)(199004)(86362001)(7696005)(52536014)(6116002)(5660300002)(3846002)(76116006)(10290500003)(478600001)(316002)(7416002)(14444005)(81156014)(7736002)(2501003)(66446008)(256004)(71190400001)(110136005)(22452003)(66946007)(66556008)(64756008)(8990500004)(11346002)(81166006)(446003)(54906003)(73956011)(53936002)(71200400001)(2906002)(2201001)(10090500001)(66476007)(102836004)(99286004)(8676002)(8936002)(26005)(14454004)(33656002)(6246003)(25786009)(9686003)(55016002)(476003)(229853002)(4326008)(76176011)(6436002)(486006)(305945005)(74316002)(66066001)(68736007)(186003)(6506007)(1511001)(921003)(1121003);DIR:OUT;SFP:1102;SCL:1;SRVR:BYAPR21MB1352;H:BYAPR21MB1352.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: microsoft.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: fOPOs+6npQ0yMuFMkxrEtHJ+9LIVMrUeRE5vy2oEWqsFP2G1Y+VywGcjE5pOW+XosnKCP28N6ibWe6PW3uvbeFgNT22mP8R8m4Crv2e8Xe3N4pxxlbXyx5aY6EgUvpRg30wG6X8sjbW4kVgFvkPAyRwKGrtQAUktEO1aPgGVJn0Z7l5cNy6dimlYj9zpZ7U/NaKVzPSzF0E84TFsHnJeEBf1w9qaPheZpeytbTtLPt9A33/xsRJ7d3Nr4QPBYHT4o340QP42O+vPw7xpPszKcJMZusS+/VAk7dsklfh3w1zMArp22NarGfNeEITQa+M5VLc8rrRgxsE+HqX/C0jpDS97pxJHT2lZUUtwO9f53hLbpA7K3SqJYZnjUVyaJVo1RbadUW2JvthR3z7CQv7YztmLMiMrqEQKwMDz+/ky8yY=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: microsoft.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b8bcb456-7a95-4c70-3087-08d6f69fa8f0
+X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Jun 2019 23:24:51.2589
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: mikelley@ntdev.microsoft.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR21MB1352
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This tests compares the amount of time that takes to read an entire
-table of 100K elements on a bpf hashmap using both BPF_MAP_DUMP and
-BPF_MAP_GET_NEXT_KEY + BPF_MAP_LOOKUP_ELEM.
+From: Dexuan Cui <decui@microsoft.com> Sent: Friday, June 21, 2019 12:02 PM
+>=20
+> The commit 05f151a73ec2 itself is correct, but it exposes this
+> use-after-free bug, which is caught by some memory debug options.
+>=20
+> Add the Fixes tag to indicate the dependency.
+>=20
+> Fixes: 05f151a73ec2 ("PCI: hv: Fix a memory leak in hv_eject_device_work(=
+)")
+> Signed-off-by: Dexuan Cui <decui@microsoft.com>
+> Cc: stable@vger.kernel.org
+> ---
+> Sorry for not spotting the bug when sending 05f151a73ec2.
+>=20
+> Now I have enabled the mm debug options to help catch such mistakes in fu=
+ture.
+>=20
+>  drivers/pci/controller/pci-hyperv.c | 6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/pci/controller/pci-hyperv.c b/drivers/pci/controller=
+/pci-hyperv.c
+> index 808a182830e5..42ace1a690f9 100644
+> --- a/drivers/pci/controller/pci-hyperv.c
+> +++ b/drivers/pci/controller/pci-hyperv.c
+> @@ -1880,6 +1880,7 @@ static void hv_pci_devices_present(struct hv_pcibus=
+_device
+> *hbus,
+>  static void hv_eject_device_work(struct work_struct *work)
+>  {
+>  	struct pci_eject_response *ejct_pkt;
+> +	struct hv_pcibus_device *hbus;
+>  	struct hv_pci_dev *hpdev;
+>  	struct pci_dev *pdev;
+>  	unsigned long flags;
+> @@ -1890,6 +1891,7 @@ static void hv_eject_device_work(struct work_struct=
+ *work)
+>  	} ctxt;
+>=20
+>  	hpdev =3D container_of(work, struct hv_pci_dev, wrk);
+> +	hbus =3D hpdev->hbus;
 
-Signed-off-by: Brian Vazquez <brianvv@google.com>
----
- tools/testing/selftests/bpf/test_maps.c | 71 +++++++++++++++++++++++++
- 1 file changed, 71 insertions(+)
+In the lines of code following this new assignment, there are four uses of
+hpdev->hbus besides the one at the bottom of the function that causes the
+use-after-free error.  With 'hbus' now available as a local variable, it lo=
+oks
+rather strange to have those other places still using hpdev->hbus.  I'm thi=
+nking
+they should be shortened to just 'hbus' for consistency, even though such
+changes aren't directly related to fixing the bug.
 
-diff --git a/tools/testing/selftests/bpf/test_maps.c b/tools/testing/selftests/bpf/test_maps.c
-index 3df72b46fd1d9..61050272c20ee 100644
---- a/tools/testing/selftests/bpf/test_maps.c
-+++ b/tools/testing/selftests/bpf/test_maps.c
-@@ -18,6 +18,7 @@
- #include <sys/socket.h>
- #include <netinet/in.h>
- #include <linux/bpf.h>
-+#include <linux/time64.h>
- 
- #include <bpf/bpf.h>
- #include <bpf/libbpf.h>
-@@ -376,6 +377,75 @@ static void test_hashmap_dump(void)
- 	close(fd);
- }
- 
-+static void test_hashmap_dump_perf(void)
-+{
-+	int fd, i, max_entries = 100000;
-+	uint64_t key, value, next_key;
-+	bool next_key_valid = true;
-+	void *buf;
-+	u32 buf_len, entries;
-+	int j, k = 0;
-+	int num_ent, off;
-+	int clk_id = CLOCK_MONOTONIC;
-+	struct timespec begin, end;
-+	long long time_spent, dump_time_spent;
-+	double res;
-+	int tests[] = {1, 2, 230, 5000, 73000, 100000, 234567};
-+	int test_len = ARRAY_SIZE(tests);
-+	const int elem_size = sizeof(key) + sizeof(value);
-+
-+	fd = helper_fill_hashmap(max_entries);
-+	// Alloc memory considering the largest buffer
-+	buf = malloc(elem_size * tests[test_len-1]);
-+	assert(buf != NULL);
-+
-+test:
-+	entries = tests[k];
-+	buf_len = elem_size*tests[k];
-+	k++;
-+	clock_gettime(clk_id, &begin);
-+	errno = 0;
-+	i = 0;
-+	while (errno == 0) {
-+		bpf_map_dump(fd, !i ? NULL : &key,
-+				  buf, &buf_len);
-+		if (errno)
-+			break;
-+		num_ent = buf_len / elem_size;
-+		for (j = 0, off = 0;  j < num_ent; j++) {
-+			key = *((uint64_t *)(buf + off));
-+			off += sizeof(key);
-+			value = *((uint64_t *)(buf + off));
-+			off += sizeof(value);
-+		}
-+		i += num_ent;
-+	}
-+	clock_gettime(clk_id, &end);
-+	assert(i  == max_entries);
-+	dump_time_spent = NSEC_PER_SEC * (end.tv_sec - begin.tv_sec) +
-+			  end.tv_nsec - begin.tv_nsec;
-+	next_key_valid = true;
-+	clock_gettime(clk_id, &begin);
-+	assert(bpf_map_get_next_key(fd, NULL, &key) == 0);
-+	for (i = 0; next_key_valid; i++) {
-+		next_key_valid = bpf_map_get_next_key(fd, &key, &next_key) == 0;
-+		assert(bpf_map_lookup_elem(fd, &key, &value) == 0);
-+		key = next_key;
-+	}
-+	clock_gettime(clk_id, &end);
-+	time_spent = NSEC_PER_SEC * (end.tv_sec - begin.tv_sec) +
-+		     end.tv_nsec - begin.tv_nsec;
-+	res = (1-((double)dump_time_spent/time_spent))*100;
-+	printf("buf_len_%u:\t %llu entry-by-entry: %llu improvement %lf\n",
-+	       entries, dump_time_spent, time_spent, res);
-+	assert(i  == max_entries);
-+
-+	if (k < test_len)
-+		goto test;
-+	free(buf);
-+	close(fd);
-+}
-+
- static void test_hashmap_zero_seed(void)
- {
- 	int i, first, second, old_flags;
-@@ -1736,6 +1806,7 @@ static void run_all_tests(void)
- 	test_hashmap_walk(0, NULL);
- 	test_hashmap_zero_seed();
- 	test_hashmap_dump();
-+	test_hashmap_dump_perf();
- 
- 	test_arraymap(0, NULL);
- 	test_arraymap_percpu(0, NULL);
--- 
-2.22.0.410.gd8fdbe21b5-goog
+Michael
+
+>=20
+>  	WARN_ON(hpdev->state !=3D hv_pcichild_ejecting);
+>=20
+> @@ -1929,7 +1931,9 @@ static void hv_eject_device_work(struct work_struct=
+ *work)
+>  	/* For the two refs got in new_pcichild_device() */
+>  	put_pcichild(hpdev);
+>  	put_pcichild(hpdev);
+> -	put_hvpcibus(hpdev->hbus);
+> +	/* hpdev has been freed. Do not use it any more. */
+> +
+> +	put_hvpcibus(hbus);
+>  }
+>=20
+>  /**
+> --
+> 2.17.1
 
