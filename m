@@ -2,176 +2,632 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A805C4EC45
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 17:39:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7BDCB4EC4E
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 17:40:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726661AbfFUPjc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Jun 2019 11:39:32 -0400
-Received: from smtprelay-out1.synopsys.com ([198.182.61.142]:40226 "EHLO
-        smtprelay-out1.synopsys.com" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726196AbfFUPjb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Jun 2019 11:39:31 -0400
-Received: from mailhost.synopsys.com (badc-mailhost2.synopsys.com [10.192.0.18])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (No client certificate requested)
-        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id AF172C0D9C;
-        Fri, 21 Jun 2019 15:39:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1561131571; bh=6079FvYrnSuIcm6KjAAvflaWDCqsqM0Yq9xGQZzLwWQ=;
-        h=From:To:CC:Subject:Date:References:In-Reply-To:From;
-        b=O+q7znAOzBk/+h2uPxLq7f1cdPH5exgEndPAn6kmrW4tvwo6e/anGnpLZyJZ0rNH8
-         ABlwMnqdnSxB9Wea78xBX//9Ecio+JN7Be+wijHOm/GVcr7+iE78c63SUXV56TPOTh
-         8KiQvdhKEEaQFreibsXvAY8ub4bHprV2Vx1QYajKfmByG6m81tvoCoXXxl8yiCQayy
-         3CvXxVwv7eC9XvY66IPos8zgTwX0QZ9PVhGNT+g5NtSwY0ZsU9SI625zjaIRHwA9dG
-         pnpDlpmLfsSLYHE3forkgseok1Ae5z61ydo/tfq+9kxtKMT84nQzVPNEOgOmiPtnw6
-         /Vc6AnewBBTPg==
-Received: from US01WEHTC3.internal.synopsys.com (us01wehtc3.internal.synopsys.com [10.15.84.232])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mailhost.synopsys.com (Postfix) with ESMTPS id 4E3B2A0067;
-        Fri, 21 Jun 2019 15:39:29 +0000 (UTC)
-Received: from US01HYBRID2.internal.synopsys.com (10.15.246.24) by
- US01WEHTC3.internal.synopsys.com (10.15.84.232) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Fri, 21 Jun 2019 08:39:29 -0700
-Received: from NAM03-BY2-obe.outbound.protection.outlook.com (10.13.134.195)
- by mrs.synopsys.com (10.15.246.24) with Microsoft SMTP Server (TLS) id
- 14.3.408.0; Fri, 21 Jun 2019 08:39:28 -0700
+        id S1726682AbfFUPkK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Jun 2019 11:40:10 -0400
+Received: from mail-eopbgr730069.outbound.protection.outlook.com ([40.107.73.69]:27328
+        "EHLO NAM05-DM3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726062AbfFUPkJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Jun 2019 11:40:09 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=synopsys.onmicrosoft.com; s=selector1-synopsys-onmicrosoft-com;
+ d=xilinx.onmicrosoft.com; s=selector1-xilinx-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=fK77iwFW/p1wq0uLyo2wr+jo704PfAHVr6SzTpkXxGs=;
- b=TwpHuqBw5ZJMLSIlSNUynwR0MwpZXtqNWSVw7AgyAsmGlblcaDRFruV18VIvioXL1hXEl+80rSKaypgHsycL77r1Oe13BQe0edkdilCIQuNxKNxW5oXYEfa4bsyK0S3lXADd4O1DdnHP28T7MsTw1av/ZScUVYjlvLd5icIMTWM=
-Received: from CY4PR1201MB0120.namprd12.prod.outlook.com (10.172.78.14) by
- CY4PR1201MB0184.namprd12.prod.outlook.com (10.172.78.141) with Microsoft SMTP
+ bh=W1vK+WymXNoSphbkOiOkOBFOg9Zs+c4Ct2cLCmklynQ=;
+ b=ZKDVJrJ1dc0f0KmTcwJgtMDSrlAuoOEs3RwUBroiifAZFf3HCJ0c4DPq0eucGlhPLcoqfRVDY8BvSmwmR02Dzwdinezxb1rctYPI0Hu0OlRBxbd2YoKZhXuB8VEHGdkuZKTs03oj6So/rS5eL8jeNnuZEEgZ2OxTsmx88gSl7kQ=
+Received: from CH2PR02MB6359.namprd02.prod.outlook.com (52.132.231.93) by
+ CH2PR02MB6328.namprd02.prod.outlook.com (52.132.231.74) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1987.15; Fri, 21 Jun 2019 15:39:27 +0000
-Received: from CY4PR1201MB0120.namprd12.prod.outlook.com
- ([fe80::d536:9377:4e1c:75ad]) by CY4PR1201MB0120.namprd12.prod.outlook.com
- ([fe80::d536:9377:4e1c:75ad%4]) with mapi id 15.20.1987.014; Fri, 21 Jun 2019
- 15:39:27 +0000
-From:   Alexey Brodkin <Alexey.Brodkin@synopsys.com>
-To:     Vineet Gupta <Vineet.Gupta1@synopsys.com>
-CC:     "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Peter Zijlstra <peterz@infradead.org>,
+ 15.20.2008.16; Fri, 21 Jun 2019 15:39:59 +0000
+Received: from CH2PR02MB6359.namprd02.prod.outlook.com
+ ([fe80::b9dd:11e0:7fca:ba55]) by CH2PR02MB6359.namprd02.prod.outlook.com
+ ([fe80::b9dd:11e0:7fca:ba55%5]) with mapi id 15.20.1987.014; Fri, 21 Jun 2019
+ 15:39:59 +0000
+From:   Dragan Cvetic <draganc@xilinx.com>
+To:     Greg KH <gregkh@linuxfoundation.org>
+CC:     "arnd@arndb.de" <arnd@arndb.de>, Michal Simek <michals@xilinx.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Jason Baron <jbaron@akamai.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        "linux-snps-arc@lists.infradead.org" 
-        <linux-snps-arc@lists.infradead.org>,
-        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
-Subject: RE: [PATCH] ARC: ARCv2: jump label: implement jump label patching
-Thread-Topic: [PATCH] ARC: ARCv2: jump label: implement jump label patching
-Thread-Index: AQHVItAEofkbV+NXXEuPQB3Di+rJQKakNJEAgADZNACAATpIEA==
-Date:   Fri, 21 Jun 2019 15:39:27 +0000
-Message-ID: <CY4PR1201MB0120D86E5774F93769320B59A1E70@CY4PR1201MB0120.namprd12.prod.outlook.com>
-References: <20190614164049.31626-1-Eugeniy.Paltsev@synopsys.com>
- <C2D7FE5348E1B147BCA15975FBA2307501A252CCC3@us01wembx1.internal.synopsys.com>
- <20190619081227.GL3419@hirez.programming.kicks-ass.net>
- <C2D7FE5348E1B147BCA15975FBA2307501A252E40B@us01wembx1.internal.synopsys.com>
- <20190620075224.GT3419@hirez.programming.kicks-ass.net>
- <9192bd26-5f34-dcbf-8552-2f474866a31e@synopsys.com>
-In-Reply-To: <9192bd26-5f34-dcbf-8552-2f474866a31e@synopsys.com>
+        Derek Kiernan <dkiernan@xilinx.com>
+Subject: RE: [PATCH V7 04/11] misc: xilinx_sdfec: Store driver config and
+ state
+Thread-Topic: [PATCH V7 04/11] misc: xilinx_sdfec: Store driver config and
+ state
+Thread-Index: AQHVIHtIV/9OJEFHFE2Nh7XS0XIE3qamNlqAgAAXK9A=
+Date:   Fri, 21 Jun 2019 15:39:59 +0000
+Message-ID: <CH2PR02MB63590483D68D5516AF415B78CBE70@CH2PR02MB6359.namprd02.prod.outlook.com>
+References: <1560274185-264438-1-git-send-email-dragan.cvetic@xilinx.com>
+ <1560274185-264438-5-git-send-email-dragan.cvetic@xilinx.com>
+ <20190621141437.GA4130@kroah.com>
+In-Reply-To: <20190621141437.GA4130@kroah.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
+X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
 X-MS-TNEF-Correlator: 
 authentication-results: spf=none (sender IP is )
- smtp.mailfrom=abrodkin@synopsys.com; 
-x-originating-ip: [188.243.7.154]
+ smtp.mailfrom=draganc@xilinx.com; 
+x-originating-ip: [149.199.80.133]
 x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: d51d80cd-b358-4c8c-7259-08d6f65ea506
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:CY4PR1201MB0184;
-x-ms-traffictypediagnostic: CY4PR1201MB0184:
-x-microsoft-antispam-prvs: <CY4PR1201MB01841C05DCDAE94EA848DC39A1E70@CY4PR1201MB0184.namprd12.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:1443;
+x-ms-office365-filtering-correlation-id: 3a0d4422-367a-40e1-a96d-08d6f65eb812
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:CH2PR02MB6328;
+x-ms-traffictypediagnostic: CH2PR02MB6328:
+x-microsoft-antispam-prvs: <CH2PR02MB6328116AF25021B8B153E99FCBE70@CH2PR02MB6328.namprd02.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:8882;
 x-forefront-prvs: 0075CB064E
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(136003)(366004)(39850400004)(396003)(376002)(346002)(189003)(13464003)(199004)(54906003)(6636002)(3846002)(6116002)(8676002)(66066001)(26005)(186003)(99286004)(81166006)(446003)(6436002)(11346002)(53546011)(476003)(102836004)(7736002)(9686003)(68736007)(8936002)(76176011)(71200400001)(81156014)(7696005)(6506007)(486006)(229853002)(73956011)(55016002)(256004)(6862004)(14454004)(316002)(66476007)(74316002)(25786009)(33656002)(71190400001)(2906002)(305945005)(5660300002)(66446008)(53936002)(66946007)(66556008)(6246003)(64756008)(76116006)(4326008)(52536014)(478600001)(107886003)(86362001);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR1201MB0184;H:CY4PR1201MB0120.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: synopsys.com does not designate
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(376002)(366004)(346002)(396003)(39850400004)(189003)(199004)(13464003)(11346002)(7736002)(305945005)(229853002)(2906002)(316002)(9686003)(86362001)(446003)(14454004)(66946007)(66476007)(66556008)(64756008)(66446008)(76116006)(73956011)(54906003)(6436002)(3846002)(486006)(6116002)(53946003)(66066001)(74316002)(55016002)(476003)(25786009)(52536014)(33656002)(6246003)(26005)(5660300002)(8936002)(102836004)(81166006)(186003)(478600001)(8676002)(81156014)(256004)(107886003)(14444005)(53936002)(76176011)(30864003)(99286004)(6916009)(71190400001)(71200400001)(53546011)(68736007)(4326008)(7696005)(6506007)(461764006);DIR:OUT;SFP:1101;SCL:1;SRVR:CH2PR02MB6328;H:CH2PR02MB6359.namprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: xilinx.com does not designate
  permitted sender hosts)
 x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: YRzWRAhD8HI6vlD80FWP/P9AVgehMaKOJC4a4Z2B+sXae6mufMVCvcE58LzAs1EnRQdAjquzN79VPYa4nTrkLOjjpQ+g1fNKFpiOW38P9oXd4TawI6t0Ulo2dTDVG9fYmHIg56TLqsLUHi+RlHvAeei9NGzfzOWFyaLq4Imlm9g5GmMgFY1133y/rwtHPmywQX51erlcbERjrxZR/3nUbA7rN8JaBvA0pRLMvOW0JfZPi/CBoaBLfJb5Z7N+AnbjnMhF+YZahIdBzK722V9+rAE8/apRSVlN3NtxO2aY/YPIB9hedDdAunMAmnIY9j+QbA0F1Bq33oPA1WK/A+to0Pm51z1XgKmSfk4hV5jlJyHI6VgeW1jQWYyhFKqaUM7+/Zk+jnUAMckSbdX0+DLVcNGtkCPw6GN6FQfE5jLFWY8=
+x-microsoft-antispam-message-info: x1Jk8Q3zlyiSYctrnqqZXnNG+XDUql+lVkEVtSnmA5yXFU62OF2faETCM3xE3fXk2xG+dk0dbTp2H4Ca0ZTX8DClK6b5O29mcnfcgv2dfATnGvzqOWXRAE3qe2y4owWwXMBjF/x62Nb2R2yXWmjZy2Rko0lwSVCS6Ikmu//XBm6TW4uHGGBWT6tlLrnr9MqRBA/wC9Si/5nRdsscTn6YrWcm1TIqyxIy9i4VkyFSX7kzoJcLGfXBHny8YAD8/eID5cb5QvODb1Vz389zXk3Z6tvhMFISOuSp3vO+XwWAkU5vKgVR+ZySooWzYcMqh20xHELqcN5aFX1UOclWkPqMrT1qpigchxp/gqsWTHjXRHC10ne2pNZtWB+86XvBiEpIT6lXu3mfSUMj48kG17rFl0tDxhoMzBGYaAoiCMlsgqk=
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: d51d80cd-b358-4c8c-7259-08d6f65ea506
-X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Jun 2019 15:39:27.4584
+X-OriginatorOrg: xilinx.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3a0d4422-367a-40e1-a96d-08d6f65eb812
+X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Jun 2019 15:39:59.3304
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: c33c9f88-1eb7-4099-9700-16013fd9e8aa
+X-MS-Exchange-CrossTenant-id: 657af505-d5df-48d0-8300-c31994686c5c
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: abrodkin@synopsys.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR1201MB0184
-X-OriginatorOrg: synopsys.com
+X-MS-Exchange-CrossTenant-userprincipalname: draganc@xilinx.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR02MB6328
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Vineet,
+
 
 > -----Original Message-----
-> From: linux-snps-arc <linux-snps-arc-bounces@lists.infradead.org> On Beha=
-lf Of Vineet Gupta
-> Sent: Thursday, June 20, 2019 11:50 PM
-> To: Peter Zijlstra <peterz@infradead.org>
-> Cc: linux-arch@vger.kernel.org; Ard Biesheuvel <ard.biesheuvel@linaro.org=
->; Alexey Brodkin
-> <abrodkin@synopsys.com>; linux-kernel@vger.kernel.org; Jason Baron <jbaro=
-n@akamai.com>; Paolo Bonzini
-> <pbonzini@redhat.com>; linux-snps-arc@lists.infradead.org; Eugeniy Paltse=
-v
-> <Eugeniy.Paltsev@synopsys.com>
-> Subject: Re: [PATCH] ARC: ARCv2: jump label: implement jump label patchin=
-g
+> From: Greg KH [mailto:gregkh@linuxfoundation.org]
+> Sent: Friday 21 June 2019 15:15
+> To: Dragan Cvetic <draganc@xilinx.com>
+> Cc: arnd@arndb.de; Michal Simek <michals@xilinx.com>; linux-arm-kernel@li=
+sts.infradead.org; robh+dt@kernel.org;
+> mark.rutland@arm.com; devicetree@vger.kernel.org; linux-kernel@vger.kerne=
+l.org; Derek Kiernan <dkiernan@xilinx.com>
+> Subject: Re: [PATCH V7 04/11] misc: xilinx_sdfec: Store driver config and=
+ state
+>=20
+> On Tue, Jun 11, 2019 at 06:29:38PM +0100, Dragan Cvetic wrote:
+> > Stores configuration based on parameters from the DT
+> > node and values from the SD-FEC core plus reads
+> > the default state from the SD-FEC core. To obtain
+> > values from the core register read, write capabilities
+> > have been added plus related register map details.
+> >
+> > Tested-by: Dragan Cvetic <dragan.cvetic@xilinx.com>
+> > Signed-off-by: Derek Kiernan <derek.kiernan@xilinx.com>
+> > Signed-off-by: Dragan Cvetic <dragan.cvetic@xilinx.com>
+> > ---
+> >  drivers/misc/xilinx_sdfec.c      | 293 +++++++++++++++++++++++++++++++=
+++++++++
+> >  include/uapi/misc/xilinx_sdfec.h | 138 ++++++++++++++++++
+> >  2 files changed, 431 insertions(+)
+> >  create mode 100644 include/uapi/misc/xilinx_sdfec.h
+> >
+> > diff --git a/drivers/misc/xilinx_sdfec.c b/drivers/misc/xilinx_sdfec.c
+> > index f257d38..3b031c6 100644
+> > --- a/drivers/misc/xilinx_sdfec.c
+> > +++ b/drivers/misc/xilinx_sdfec.c
+> > @@ -20,11 +20,92 @@
+> >  #include <linux/slab.h>
+> >  #include <linux/clk.h>
+> >
+> > +#include <uapi/misc/xilinx_sdfec.h>
+> > +
+> >  #define DEV_NAME_LEN 12
+> >
+> >  static struct idr dev_idr;
+> >  static struct mutex dev_idr_lock;
+> >
+> > +/* Xilinx SDFEC Register Map */
+> > +/* CODE_WRI_PROTECT Register */
+> > +#define XSDFEC_CODE_WR_PROTECT_ADDR (0x4)
+> > +
+> > +/* ACTIVE Register */
+> > +#define XSDFEC_ACTIVE_ADDR (0x8)
+> > +#define XSDFEC_IS_ACTIVITY_SET (0x1)
+> > +
+> > +/* AXIS_WIDTH Register */
+> > +#define XSDFEC_AXIS_WIDTH_ADDR (0xC)
+> > +#define XSDFEC_AXIS_DOUT_WORDS_LSB (5)
+> > +#define XSDFEC_AXIS_DOUT_WIDTH_LSB (3)
+> > +#define XSDFEC_AXIS_DIN_WORDS_LSB (2)
+> > +#define XSDFEC_AXIS_DIN_WIDTH_LSB (0)
+> > +
+> > +/* AXIS_ENABLE Register */
+> > +#define XSDFEC_AXIS_ENABLE_ADDR (0x10)
+> > +#define XSDFEC_AXIS_OUT_ENABLE_MASK (0x38)
+> > +#define XSDFEC_AXIS_IN_ENABLE_MASK (0x7)
+> > +#define XSDFEC_AXIS_ENABLE_MASK                                       =
+         \
+> > +	(XSDFEC_AXIS_OUT_ENABLE_MASK | XSDFEC_AXIS_IN_ENABLE_MASK)
+> > +
+> > +/* FEC_CODE Register */
+> > +#define XSDFEC_FEC_CODE_ADDR (0x14)
+> > +
+> > +/* ORDER Register Map */
+> > +#define XSDFEC_ORDER_ADDR (0x18)
+> > +
+> > +/* Interrupt Status Register */
+> > +#define XSDFEC_ISR_ADDR (0x1C)
+> > +/* Interrupt Status Register Bit Mask */
+> > +#define XSDFEC_ISR_MASK (0x3F)
+> > +
+> > +/* Write Only - Interrupt Enable Register */
+> > +#define XSDFEC_IER_ADDR (0x20)
+> > +/* Write Only - Interrupt Disable Register */
+> > +#define XSDFEC_IDR_ADDR (0x24)
+> > +/* Read Only - Interrupt Mask Register */
+> > +#define XSDFEC_IMR_ADDR (0x28)
+> > +
+> > +/* ECC Interrupt Status Register */
+> > +#define XSDFEC_ECC_ISR_ADDR (0x2C)
+> > +/* Single Bit Errors */
+> > +#define XSDFEC_ECC_ISR_SBE_MASK (0x7FF)
+> > +/* PL Initialize Single Bit Errors */
+> > +#define XSDFEC_PL_INIT_ECC_ISR_SBE_MASK (0x3C00000)
+> > +/* Multi Bit Errors */
+> > +#define XSDFEC_ECC_ISR_MBE_MASK (0x3FF800)
+> > +/* PL Initialize Multi Bit Errors */
+> > +#define XSDFEC_PL_INIT_ECC_ISR_MBE_MASK (0x3C000000)
+> > +/* Multi Bit Error to Event Shift */
+> > +#define XSDFEC_ECC_ISR_MBE_TO_EVENT_SHIFT (11)
+> > +/* PL Initialize Multi Bit Error to Event Shift */
+> > +#define XSDFEC_PL_INIT_ECC_ISR_MBE_TO_EVENT_SHIFT (4)
+> > +/* ECC Interrupt Status Bit Mask */
+> > +#define XSDFEC_ECC_ISR_MASK (XSDFEC_ECC_ISR_SBE_MASK | XSDFEC_ECC_ISR_=
+MBE_MASK)
+> > +/* ECC Interrupt Status PL Initialize Bit Mask */
+> > +#define XSDFEC_PL_INIT_ECC_ISR_MASK                                   =
+         \
+> > +	(XSDFEC_PL_INIT_ECC_ISR_SBE_MASK | XSDFEC_PL_INIT_ECC_ISR_MBE_MASK)
+> > +/* ECC Interrupt Status All Bit Mask */
+> > +#define XSDFEC_ALL_ECC_ISR_MASK                                       =
+         \
+> > +	(XSDFEC_ECC_ISR_MASK | XSDFEC_PL_INIT_ECC_ISR_MASK)
+> > +/* ECC Interrupt Status Single Bit Errors Mask */
+> > +#define XSDFEC_ALL_ECC_ISR_SBE_MASK                                   =
+         \
+> > +	(XSDFEC_ECC_ISR_SBE_MASK | XSDFEC_PL_INIT_ECC_ISR_SBE_MASK)
+> > +/* ECC Interrupt Status Multi Bit Errors Mask */
+> > +#define XSDFEC_ALL_ECC_ISR_MBE_MASK                                   =
+         \
+> > +	(XSDFEC_ECC_ISR_MBE_MASK | XSDFEC_PL_INIT_ECC_ISR_MBE_MASK)
+> > +
+> > +/* Write Only - ECC Interrupt Enable Register */
+> > +#define XSDFEC_ECC_IER_ADDR (0x30)
+> > +/* Write Only - ECC Interrupt Disable Register */
+> > +#define XSDFEC_ECC_IDR_ADDR (0x34)
+> > +/* Read Only - ECC Interrupt Mask Register */
+> > +#define XSDFEC_ECC_IMR_ADDR (0x38)
+> > +
+> > +/* BYPASS Register */
+> > +#define XSDFEC_BYPASS_ADDR (0x3C)
+> > +
+> >  /**
+> >   * struct xsdfec_clks - For managing SD-FEC clocks
+> >   * @core_clk: Main processing clock for core
+> > @@ -51,6 +132,8 @@ struct xsdfec_clks {
+> >   * struct xsdfec_dev - Driver data for SDFEC
+> >   * @regs: device physical base address
+> >   * @dev: pointer to device struct
+> > + * @state: State of the SDFEC device
+> > + * @config: Configuration of the SDFEC device
+> >   * @miscdev: Misc device handle
+> >   * @error_data_lock: Error counter and states spinlock
+> >   * @clks: Clocks managed by the SDFEC driver
+> > @@ -62,6 +145,8 @@ struct xsdfec_clks {
+> >  struct xsdfec_dev {
+> >  	void __iomem *regs;
+> >  	struct device *dev;
+> > +	enum xsdfec_state state;
+> > +	struct xsdfec_config config;
+> >  	struct miscdevice miscdev;
+> >  	/* Spinlock to protect state_updated and stats_updated */
+> >  	spinlock_t error_data_lock;
+> > @@ -70,10 +155,212 @@ struct xsdfec_dev {
+> >  	int dev_id;
+> >  };
+> >
+> > +static inline void xsdfec_regwrite(struct xsdfec_dev *xsdfec, u32 addr=
+,
+> > +				   u32 value)
+> > +{
+> > +	dev_dbg(xsdfec->dev, "Writing 0x%x to offset 0x%x", value, addr);
+> > +	iowrite32(value, xsdfec->regs + addr);
+> > +}
+> > +
+> > +static inline u32 xsdfec_regread(struct xsdfec_dev *xsdfec, u32 addr)
+> > +{
+> > +	u32 rval;
+> > +
+> > +	rval =3D ioread32(xsdfec->regs + addr);
+> > +	dev_dbg(xsdfec->dev, "Read value =3D 0x%x from offset 0x%x", rval, ad=
+dr);
+> > +	return rval;
+> > +}
+> > +
+> > +static void update_bool_config_from_reg(struct xsdfec_dev *xsdfec,
+> > +					u32 reg_offset, u32 bit_num,
+> > +					char *config_value)
+> > +{
+> > +	u32 reg_val;
+> > +	u32 bit_mask =3D 1 << bit_num;
+> > +
+> > +	reg_val =3D xsdfec_regread(xsdfec, reg_offset);
+> > +	*config_value =3D (reg_val & bit_mask) > 0;
+> > +}
+> > +
+> > +static void update_config_from_hw(struct xsdfec_dev *xsdfec)
+> > +{
+> > +	u32 reg_value;
+> > +	bool sdfec_started;
+> > +
+> > +	/* Update the Order */
+> > +	reg_value =3D xsdfec_regread(xsdfec, XSDFEC_ORDER_ADDR);
+> > +	xsdfec->config.order =3D reg_value;
+> > +
+> > +	update_bool_config_from_reg(xsdfec, XSDFEC_BYPASS_ADDR,
+> > +				    0, /* Bit Number, maybe change to mask */
+> > +				    &xsdfec->config.bypass);
+> > +
+> > +	update_bool_config_from_reg(xsdfec, XSDFEC_CODE_WR_PROTECT_ADDR,
+> > +				    0, /* Bit Number */
+> > +				    &xsdfec->config.code_wr_protect);
+> > +
+> > +	reg_value =3D xsdfec_regread(xsdfec, XSDFEC_IMR_ADDR);
+> > +	xsdfec->config.irq.enable_isr =3D (reg_value & XSDFEC_ISR_MASK) > 0;
+> > +
+> > +	reg_value =3D xsdfec_regread(xsdfec, XSDFEC_ECC_IMR_ADDR);
+> > +	xsdfec->config.irq.enable_ecc_isr =3D
+> > +		(reg_value & XSDFEC_ECC_ISR_MASK) > 0;
+> > +
+> > +	reg_value =3D xsdfec_regread(xsdfec, XSDFEC_AXIS_ENABLE_ADDR);
+> > +	sdfec_started =3D (reg_value & XSDFEC_AXIS_IN_ENABLE_MASK) > 0;
+> > +	if (sdfec_started)
+> > +		xsdfec->state =3D XSDFEC_STARTED;
+> > +	else
+> > +		xsdfec->state =3D XSDFEC_STOPPED;
+> > +}
+> > +
+> > +static u32
+> > +xsdfec_translate_axis_width_cfg_val(enum xsdfec_axis_width axis_width_=
+cfg)
+> > +{
+> > +	u32 axis_width_field =3D 0;
+> > +
+> > +	switch (axis_width_cfg) {
+> > +	case XSDFEC_1x128b:
+> > +		axis_width_field =3D 0;
+> > +		break;
+> > +	case XSDFEC_2x128b:
+> > +		axis_width_field =3D 1;
+> > +		break;
+> > +	case XSDFEC_4x128b:
+> > +		axis_width_field =3D 2;
+> > +		break;
+> > +	}
+> > +
+> > +	return axis_width_field;
+> > +}
+> > +
+> > +static u32 xsdfec_translate_axis_words_cfg_val(enum xsdfec_axis_word_i=
+nclude
+> > +	axis_word_inc_cfg)
+> > +{
+> > +	u32 axis_words_field =3D 0;
+> > +
+> > +	if (axis_word_inc_cfg =3D=3D XSDFEC_FIXED_VALUE ||
+> > +	    axis_word_inc_cfg =3D=3D XSDFEC_IN_BLOCK)
+> > +		axis_words_field =3D 0;
+> > +	else if (axis_word_inc_cfg =3D=3D XSDFEC_PER_AXI_TRANSACTION)
+> > +		axis_words_field =3D 1;
+> > +
+> > +	return axis_words_field;
+> > +}
+> > +
+> > +static int xsdfec_cfg_axi_streams(struct xsdfec_dev *xsdfec)
+> > +{
+> > +	u32 reg_value;
+> > +	u32 dout_words_field;
+> > +	u32 dout_width_field;
+> > +	u32 din_words_field;
+> > +	u32 din_width_field;
+> > +	struct xsdfec_config *config =3D &xsdfec->config;
+> > +
+> > +	/* translate config info to register values */
+> > +	dout_words_field =3D
+> > +		xsdfec_translate_axis_words_cfg_val(config->dout_word_include);
+> > +	dout_width_field =3D
+> > +		xsdfec_translate_axis_width_cfg_val(config->dout_width);
+> > +	din_words_field =3D
+> > +		xsdfec_translate_axis_words_cfg_val(config->din_word_include);
+> > +	din_width_field =3D
+> > +		xsdfec_translate_axis_width_cfg_val(config->din_width);
+> > +
+> > +	reg_value =3D dout_words_field << XSDFEC_AXIS_DOUT_WORDS_LSB;
+> > +	reg_value |=3D dout_width_field << XSDFEC_AXIS_DOUT_WIDTH_LSB;
+> > +	reg_value |=3D din_words_field << XSDFEC_AXIS_DIN_WORDS_LSB;
+> > +	reg_value |=3D din_width_field << XSDFEC_AXIS_DIN_WIDTH_LSB;
+> > +
+> > +	xsdfec_regwrite(xsdfec, XSDFEC_AXIS_WIDTH_ADDR, reg_value);
+> > +
+> > +	return 0;
+> > +}
+> > +
+> >  static const struct file_operations xsdfec_fops =3D {
+> >  	.owner =3D THIS_MODULE,
+> >  };
+> >
+> > +static int xsdfec_parse_of(struct xsdfec_dev *xsdfec)
+> > +{
+> > +	struct device *dev =3D xsdfec->dev;
+> > +	struct device_node *node =3D dev->of_node;
+> > +	int rval;
+> > +	const char *fec_code;
+> > +	enum xsdfec_axis_width din_width;
+> > +	enum xsdfec_axis_word_include din_word_include;
+> > +	enum xsdfec_axis_width dout_width;
+> > +	enum xsdfec_axis_word_include dout_word_include;
+> > +
+> > +	rval =3D of_property_read_string(node, "xlnx,sdfec-code", &fec_code);
+> > +	if (rval < 0)
+> > +		return rval;
+> > +
+> > +	if (!strcasecmp(fec_code, "ldpc"))
+> > +		xsdfec->config.code =3D XSDFEC_LDPC_CODE;
+> > +	else if (!strcasecmp(fec_code, "turbo"))
+> > +		xsdfec->config.code =3D XSDFEC_TURBO_CODE;
+> > +	else
+> > +		return -EINVAL;
+> > +
+> > +	rval =3D of_property_read_u32(node, "xlnx,sdfec-din-words",
+> > +				    &din_word_include);
+> > +	if (rval < 0)
+> > +		return rval;
+> > +
+> > +	if (din_word_include < XSDFEC_AXIS_WORDS_INCLUDE_MAX)
+> > +		xsdfec->config.din_word_include =3D din_word_include;
+> > +	else
+> > +		return -EINVAL;
+> > +
+> > +	rval =3D of_property_read_u32(node, "xlnx,sdfec-din-width", &din_widt=
+h);
+> > +	if (rval < 0)
+> > +		return rval;
+> > +
+> > +	switch (din_width) {
+> > +	/* Fall through and set for valid values */
+> > +	case XSDFEC_1x128b:
+> > +	case XSDFEC_2x128b:
+> > +	case XSDFEC_4x128b:
+> > +		xsdfec->config.din_width =3D din_width;
+> > +		break;
+> > +	default:
+> > +		return -EINVAL;
+> > +	}
+> > +
+> > +	rval =3D of_property_read_u32(node, "xlnx,sdfec-dout-words",
+> > +				    &dout_word_include);
+> > +	if (rval < 0)
+> > +		return rval;
+> > +
+> > +	if (dout_word_include < XSDFEC_AXIS_WORDS_INCLUDE_MAX)
+> > +		xsdfec->config.dout_word_include =3D dout_word_include;
+> > +	else
+> > +		return -EINVAL;
+> > +
+> > +	rval =3D of_property_read_u32(node, "xlnx,sdfec-dout-width", &dout_wi=
+dth);
+> > +	if (rval < 0)
+> > +		return rval;
+> > +
+> > +	switch (dout_width) {
+> > +	/* Fall through and set for valid values */
+> > +	case XSDFEC_1x128b:
+> > +	case XSDFEC_2x128b:
+> > +	case XSDFEC_4x128b:
+> > +		xsdfec->config.dout_width =3D dout_width;
+> > +		break;
+> > +	default:
+> > +		return -EINVAL;
+> > +	}
+> > +
+> > +	/* Write LDPC to CODE Register */
+> > +	xsdfec_regwrite(xsdfec, XSDFEC_FEC_CODE_ADDR, xsdfec->config.code);
+> > +
+> > +	xsdfec_cfg_axi_streams(xsdfec);
+> > +
+> > +	return 0;
+> > +}
+> > +
+> >  static int xsdfec_clk_init(struct platform_device *pdev,
+> >  			   struct xsdfec_clks *clks)
+> >  {
+> > @@ -260,6 +547,12 @@ static int xsdfec_probe(struct platform_device *pd=
+ev)
+> >  		goto err_xsdfec_dev;
+> >  	}
+> >
+> > +	err =3D xsdfec_parse_of(xsdfec);
+> > +	if (err < 0)
+> > +		goto err_xsdfec_dev;
+> > +
+> > +	update_config_from_hw(xsdfec);
+> > +
+> >  	/* Save driver private data */
+> >  	platform_set_drvdata(pdev, xsdfec);
+> >
+> > diff --git a/include/uapi/misc/xilinx_sdfec.h b/include/uapi/misc/xilin=
+x_sdfec.h
+> > new file mode 100644
+> > index 0000000..aec26b3
+> > --- /dev/null
+> > +++ b/include/uapi/misc/xilinx_sdfec.h
+> > @@ -0,0 +1,138 @@
+> > +/* SPDX-License-Identifier: GPL-2.0+ WITH Linux-syscall-note */
+> > +/*
+> > + * Xilinx SD-FEC
+> > + *
+> > + * Copyright (C) 2019 Xilinx, Inc.
+> > + *
+> > + * Description:
+> > + * This driver is developed for SDFEC16 IP. It provides a char device
+> > + * in sysfs and supports file operations like open(), close() and ioct=
+l().
+> > + */
+> > +#ifndef __XILINX_SDFEC_H__
+> > +#define __XILINX_SDFEC_H__
+> > +
+> > +#include <linux/types.h>
+> > +
+> > +/**
+> > + * enum xsdfec_code - Code Type.
+> > + * @XSDFEC_TURBO_CODE: Driver is configured for Turbo mode.
+> > + * @XSDFEC_LDPC_CODE: Driver is configured for LDPC mode.
+> > + *
+> > + * This enum is used to indicate the mode of the driver. The mode is d=
+etermined
+> > + * by checking which codes are set in the driver. Note that the mode c=
+annot be
+> > + * changed by the driver.
+> > + */
+> > +enum xsdfec_code {
+> > +	XSDFEC_TURBO_CODE =3D 0,
+> > +	XSDFEC_LDPC_CODE,
+> > +};
+> > +
+> > +/**
+> > + * enum xsdfec_order - Order
+> > + * @XSDFEC_MAINTAIN_ORDER: Maintain order execution of blocks.
+> > + * @XSDFEC_OUT_OF_ORDER: Out-of-order execution of blocks.
+> > + *
+> > + * This enum is used to indicate whether the order of blocks can chang=
+e from
+> > + * input to output.
+> > + */
+> > +enum xsdfec_order {
+> > +	XSDFEC_MAINTAIN_ORDER =3D 0,
+> > +	XSDFEC_OUT_OF_ORDER,
+> > +};
+> > +
+> > +/**
+> > + * enum xsdfec_state - State.
+> > + * @XSDFEC_INIT: Driver is initialized.
+> > + * @XSDFEC_STARTED: Driver is started.
+> > + * @XSDFEC_STOPPED: Driver is stopped.
+> > + * @XSDFEC_NEEDS_RESET: Driver needs to be reset.
+> > + * @XSDFEC_PL_RECONFIGURE: Programmable Logic needs to be recofigured.
+> > + *
+> > + * This enum is used to indicate the state of the driver.
+> > + */
+> > +enum xsdfec_state {
+> > +	XSDFEC_INIT =3D 0,
+> > +	XSDFEC_STARTED,
+> > +	XSDFEC_STOPPED,
+> > +	XSDFEC_NEEDS_RESET,
+> > +	XSDFEC_PL_RECONFIGURE,
+> > +};
+> > +
+> > +/**
+> > + * enum xsdfec_axis_width - AXIS_WIDTH.DIN Setting for 128-bit width.
+> > + * @XSDFEC_1x128b: DIN data input stream consists of a 128-bit lane
+> > + * @XSDFEC_2x128b: DIN data input stream consists of two 128-bit lanes
+> > + * @XSDFEC_4x128b: DIN data input stream consists of four 128-bit lane=
+s
+> > + *
+> > + * This enum is used to indicate the AXIS_WIDTH.DIN setting for 128-bi=
+t width.
+> > + * The number of lanes of the DIN data input stream depends upon the
+> > + * AXIS_WIDTH.DIN parameter.
+> > + */
+> > +enum xsdfec_axis_width {
+> > +	XSDFEC_1x128b =3D 1,
+> > +	XSDFEC_2x128b =3D 2,
+> > +	XSDFEC_4x128b =3D 4,
+> > +};
+> > +
+> > +/**
+> > + * enum xsdfec_axis_word_include - Words Configuration.
+> > + * @XSDFEC_FIXED_VALUE: Fixed, the DIN_WORDS AXI4-Stream interface is =
+removed
+> > + *			from the IP instance and is driven with the specified
+> > + *			number of words.
+> > + * @XSDFEC_IN_BLOCK: In Block, configures the IP instance to expect a =
+single
+> > + *		     DIN_WORDS value per input code block. The DIN_WORDS
+> > + *		     interface is present.
+> > + * @XSDFEC_PER_AXI_TRANSACTION: Per Transaction, configures the IP ins=
+tance to
+> > + * expect one DIN_WORDS value per input transaction on the DIN interfa=
+ce. The
+> > + * DIN_WORDS interface is present.
+> > + * @XSDFEC_AXIS_WORDS_INCLUDE_MAX: Used to indicate out of bound Words
+> > + *				   Configurations.
+> > + *
+> > + * This enum is used to specify the DIN_WORDS configuration.
+> > + */
+> > +enum xsdfec_axis_word_include {
+> > +	XSDFEC_FIXED_VALUE =3D 0,
+> > +	XSDFEC_IN_BLOCK,
+> > +	XSDFEC_PER_AXI_TRANSACTION,
+> > +	XSDFEC_AXIS_WORDS_INCLUDE_MAX,
+> > +};
+> > +
+> > +/**
+> > + * struct xsdfec_irq - Enabling or Disabling Interrupts.
+> > + * @enable_isr: If true enables the ISR
+> > + * @enable_ecc_isr: If true enables the ECC ISR
+> > + */
+> > +struct xsdfec_irq {
+> > +	__s8 enable_isr;
+> > +	__s8 enable_ecc_isr;
+> > +};
+> > +
+> > +/**
+> > + * struct xsdfec_config - Configuration of SD-FEC core.
+> > + * @code: The codes being used by the SD-FEC instance
+> > + * @order: Order of Operation
+> > + * @bypass: Is the core being bypassed
+> > + * @code_wr_protect: Is write protection of LDPC codes enabled
+> > + * @din_width: Width of the DIN AXI4-Stream
+> > + * @din_word_include: How DIN_WORDS are inputted
+> > + * @dout_width: Width of the DOUT AXI4-Stream
+> > + * @dout_word_include: HOW DOUT_WORDS are outputted
+> > + * @irq: Enabling or disabling interrupts
+> > + */
+> > +struct xsdfec_config {
+> > +	__u32 code;
+> > +	__u32 order;
+> > +	__s8 bypass;
+> > +	__s8 code_wr_protect;
+> > +	__u32 din_width;
+> > +	__u32 din_word_include;
+> > +	__u32 dout_width;
+> > +	__u32 dout_word_include;
+> > +	struct xsdfec_irq irq;
+> > +};
+>=20
+> Ick, that structure is not a good one to pass across the user/kernel
+> boundry.  Are you ok with that big hole in there?
+>=20
+> Please use a tool like pahole to figure out how to get this to work
+> properly on both 32 and 64bit machines without unneeded padding.
 
-[snip]
+Accepted,=20
+I'll run "pahole" and update accordingly=09
 
-> Insn encoding is always middl eendina - irrespective of endianness.
-
-Apparently only in little-endian mode instructions are encoded as middle-en=
-dian,
-see:
--------------->8-------------
-# cat endian.S
-
-.global myfunc
-myfunc:
-        mov r0, r1
--------------->8-------------
-
-Little-endian:
--------------->8-------------
-# arc-linux-gcc -c -mcpu=3Darchs endian.S -EL
-# arc-linux-objdump -d endian.o
-
-endian.o:     file format elf32-littlearc
-
-Disassembly of section .text:
-00000000 <myfunc>:
-   0:   200a 0040               mov     r0,r1
-
-# arc-linux-readelf -x .text endian.o
-Hex dump of section '.text':
-  0x00000000 0a204000                            . @.
--------------->8-------------
-
-Big-endian:
--------------->8-------------
-# arc-linux-gcc -c -mcpu=3Darchs endian.S -EB
-# arc-linux-objdump -d endian.o
-
-endian.o:     file format elf32-bigarc
-
-Disassembly of section .text:
-00000000 <myfunc>:
-   0:   200a 0040               mov     r0,r1
-
-# arc-linux-readelf -x .text endian.o
-
-Hex dump of section '.text':
-  0x00000000 200a0040                             ..@
--------------->8-------------
-
--Alexey
+>=20
+> thanks,
+>=20
+> greg k-h
