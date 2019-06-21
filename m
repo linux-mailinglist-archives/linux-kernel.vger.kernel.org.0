@@ -2,84 +2,182 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3CD284EC0A
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 17:31:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A6D1F4EC10
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 17:31:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726385AbfFUPa5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Jun 2019 11:30:57 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:55275 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726070AbfFUPa5 (ORCPT
+        id S1726429AbfFUPbo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Jun 2019 11:31:44 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:38003 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726002AbfFUPbn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Jun 2019 11:30:57 -0400
-Received: from p5b06daab.dip0.t-ipconnect.de ([91.6.218.171] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1heLV6-0005xn-RP; Fri, 21 Jun 2019 17:30:53 +0200
-Date:   Fri, 21 Jun 2019 17:30:52 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-cc:     Chris Wilson <chris@chris-wilson.co.uk>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Joerg Roedel <joro@8bytes.org>
-Subject: Re: NMI hardlock stacktrace deadlock [was Re: Linux 5.2-rc5]
-In-Reply-To: <CAHk-=wjoeZ9_aiu+642ur=iGhGjfBQhRPURxX9Py+-B6coctXw@mail.gmail.com>
-Message-ID: <alpine.DEB.2.21.1906211725200.5503@nanos.tec.linutronix.de>
-References: <CAHk-=whEQPvLpDbx+WR4Q4jf2FxXjf_zTX3uLy_6ZzHtgTV4LA@mail.gmail.com> <156094799629.21217.4574572565333265288@skylake-alporthouse-com> <CAHk-=wjhJNKVfHgwd0QX_bq769sxfP4jvfy0dd-WtFMfdivMwg@mail.gmail.com> <156097197830.664.13418742301997062555@skylake-alporthouse-com>
- <CAHk-=wjoeZ9_aiu+642ur=iGhGjfBQhRPURxX9Py+-B6coctXw@mail.gmail.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Fri, 21 Jun 2019 11:31:43 -0400
+Received: by mail-wr1-f65.google.com with SMTP id d18so7022161wrs.5
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2019 08:31:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=JWWG2zIxOmDWYe8rHXUBcArY9/ATsP/XYEP3DtcCOfs=;
+        b=fuK4lB9+T6YbLmGR8I6IvaXx2bH3xYDajvtykVso1Deqa/GAPTE2u1PcDkunMYy2R3
+         ZJvzG53ItaL9ykdD4/oHfzGHlSkmVHAow0ABQIzYkddwz+vkwryxLl6FRX4kx95bCcDE
+         lbnycNMPLK8H1r9htlyqL6H1J89aE+CJ4gHtmJDQJ1ovCveulFbyH2P9m+YWoQmXl8fR
+         CMAoPXCbMIH6qYV30dK4VgkMbV7ASvpe3mGZi217hLkf+6jA6d/WvEAF6bzFqxhCSNhx
+         e2s3TVPiP8stSQc8/e04ZO2UWQpoeft+m0qbGqYqe7HHtaUqI4Q9AaqU37CNuLe0TJxl
+         96ng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=JWWG2zIxOmDWYe8rHXUBcArY9/ATsP/XYEP3DtcCOfs=;
+        b=dv1eegkoqhj5gZFU2x4rrZNV+6FNx37LCys9FNI4de9xTelIFF+K2OzXQQdzdY8noD
+         qdyYB/5TAZxtv8ZdEQH2B59Fh2DAtUMU2ggdraxl6Oe4JJcaymTVBvnaZjIUFj8CMkTG
+         Gby7aCvcOhllLSpXMxaFWRAxzNQzWSLpIotCfVfq0wRBOb2LXd+4bm1DtRCqTZX+PsiU
+         FNjtJgPqH6J72X8V3np4cFic6rZR0739W2BATk3gDtAVxOssymaEg+QRfXBLsWDRhQBh
+         XRGu1dy30LZMkNWeQunkH/rCC8NtLcZ48nuEQbetdZ5+Wu5oL/5E8QDKNe/TzcllN7ox
+         iExg==
+X-Gm-Message-State: APjAAAWRXLTG7ytjmymI0kcrYOnGXrsuLucdxEUsTi+zwlz/szz0qSOq
+        m1GpO8+L9T2iJsDB6ENBCJdH9p4/rAs=
+X-Google-Smtp-Source: APXvYqyAW9yR+tYHSa53pZVTsEE/Hg18IvMwVe9mKGLtmJpJfqWcKoJHDeXBjtxQq4c5ys7FoD0kUw==
+X-Received: by 2002:adf:ebc4:: with SMTP id v4mr795012wrn.113.1561131101120;
+        Fri, 21 Jun 2019 08:31:41 -0700 (PDT)
+Received: from alan-laptop.carrier.duckdns.org (host-89-243-246-11.as13285.net. [89.243.246.11])
+        by smtp.gmail.com with ESMTPSA id 5sm5505682wrc.76.2019.06.21.08.31.39
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Fri, 21 Jun 2019 08:31:40 -0700 (PDT)
+From:   Alan Jenkins <alan.christopher.jenkins@gmail.com>
+To:     linux-mm@kvack.org
+Cc:     Vlastimil Babka <vbabka@suse.cz>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        linux-kernel@vger.kernel.org,
+        Bharath Vedartham <linux.bhar@gmail.com>,
+        Alan Jenkins <alan.christopher.jenkins@gmail.com>
+Subject: [PATCH v2] mm: avoid inconsistent "boosts" when updating the high and low watermarks
+Date:   Fri, 21 Jun 2019 16:31:07 +0100
+Message-Id: <20190621153107.23667-1-alan.christopher.jenkins@gmail.com>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <3d15b808-b7cd-7379-a6a9-d3cf04b7dcec@suse.cz>
+References: <3d15b808-b7cd-7379-a6a9-d3cf04b7dcec@suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 19 Jun 2019, Linus Torvalds wrote:
+When setting the low and high watermarks we use min_wmark_pages(zone).
+I guess this was to reduce the line length.  Then this macro was modified
+to include zone->watermark_boost.  So we needed to set watermark_boost
+before we set the high and low watermarks... but we did not.
 
-> On Wed, Jun 19, 2019 at 12:19 PM Chris Wilson <chris@chris-wilson.co.uk> wrote:
-> >
-> > > Do you have the oops itself at all?
-> >
-> > An example at
-> > https://intel-gfx-ci.01.org/tree/drm-tip/CI_DRM_6310/fi-kbl-x1275/dmesg0.log
-> > https://intel-gfx-ci.01.org/tree/drm-tip/CI_DRM_6310/fi-kbl-x1275/boot0.log
+It seems mostly harmless.  It might set the watermarks a bit higher than
+needed: when 1) the watermarks have been "boosted" and 2) you then
+triggered __setup_per_zone_wmarks() (by setting one of the sysctls, or
+hotplugging memory...).
 
-The second once contains a lockdep splat which warns about a potential
-deadlock in the iommu code.
+I noticed it because it also breaks the documented equality
+(high - low == low - min).  Below is an example of reproducing the bug.
 
-> > The bug causing the oops is clearly a driver problem. The rc5 fallout
-> > just seems to be because of some shrinker changes affecting some object
-> > reaping that were unfortunately still active. What perturbed the CI
-> > team was the machine failed to panic & reboot.
-> 
-> Hmm. It's hard to guess at the cause of that. The oopses themselves
-> don't look like they are happening in any particularly bad context, so
-> all the normal reboot-on-oops etc stuff _should_ work.
-> 
-> So it would help a lot if you could bisect the bad problem at least a
-> bit, if it is at all reproducible. Because with no other clues, it's
-> hard to even guess at what might be up.
-> 
-> The fact that you say "NMI watchdog firing as we dumped the ftrace"
-> means that maybe it might be some ftrace / stacktrace issue where the
-> dumping itself leads to some endless loop, but who knows.
-> 
-> For example, one thing that has happened during this development cycle
-> is the stacktrace common infrastructure changes (arch_stack_walk() and
-> friends). I'm, not seeing why that would cause your issues, but I'm
-> adding a few random people for ftrace / stacktrace changes.
+First sample.  Equality is met (high - low == low - min):
 
-/me whistels innocently.
+Node 0, zone   Normal
+  pages free     11962
+        min      9531
+        low      11913
+        high     14295
+        spanned  1173504
+        present  1173504
+        managed  1134235
 
-Chris, do you have the actual NMI lockup detector splats somewhere?
+A later sample.  Something has caused us to boost the watermarks:
 
-Thanks,
+Node 0, zone   Normal
+  pages free     12614
+        min      10043
+        low      12425
+        high     14807
 
-	tglx
+Now trigger the watermarks to be recalculated.  "cd /proc/sys/vm" and
+"cat watermark_scale_factor > watermark_scale_factor".  Then the watermarks
+are boosted inconsistently.  The equality is broken:
+
+Node 0, zone   Normal
+  pages free     12412
+        min      9531
+        low      12425
+        high     14807
+
+14807 - 12425 = 2382
+12425 -  9531 = 2894
+
+Co-developed-by: Vlastimil Babka <vbabka@suse.cz>
+Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
+Signed-off-by: Alan Jenkins <alan.christopher.jenkins@gmail.com>
+Fixes: 1c30844d2dfe ("mm: reclaim small amounts of memory when an external
+                      fragmentation event occurs")
+Acked-by: Mel Gorman <mgorman@techsingularity.net>
+
+---
+
+Changes since v1:
+
+Use Vlastimil's suggested code.  It is much cleaner, thanks :-).
+I considered this "Co-developed-by" and s-o-b credit.
+
+Update commit message to be specific about expected effects.
+
+Node data is always allocated with kzalloc().  So there is no risk of
+the code reading arbitrary unintialized data from ->watermark_boost,
+the first time it is run.
+
+AFAICT the bug is mostly harmless.  I do not require a -stable port.
+I leave it to anyone else, if they think it's worth adding
+"Cc: stable@vger.kernel.org".
+
+
+ mm/page_alloc.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
+ 
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index c02cff1ed56e..01233705e490 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -7570,6 +7570,7 @@ static void __setup_per_zone_wmarks(void)
+ 
+ 	for_each_zone(zone) {
+ 		u64 tmp;
++		unsigned long wmark_min;
+ 
+ 		spin_lock_irqsave(&zone->lock, flags);
+ 		tmp = (u64)pages_min * zone_managed_pages(zone);
+@@ -7588,13 +7589,13 @@ static void __setup_per_zone_wmarks(void)
+ 
+ 			min_pages = zone_managed_pages(zone) / 1024;
+ 			min_pages = clamp(min_pages, SWAP_CLUSTER_MAX, 128UL);
+-			zone->_watermark[WMARK_MIN] = min_pages;
++			wmark_min = min_pages;
+ 		} else {
+ 			/*
+ 			 * If it's a lowmem zone, reserve a number of pages
+ 			 * proportionate to the zone's size.
+ 			 */
+-			zone->_watermark[WMARK_MIN] = tmp;
++			wmark_min = tmp;
+ 		}
+ 
+ 		/*
+@@ -7606,8 +7607,9 @@ static void __setup_per_zone_wmarks(void)
+ 			    mult_frac(zone_managed_pages(zone),
+ 				      watermark_scale_factor, 10000));
+ 
+-		zone->_watermark[WMARK_LOW]  = min_wmark_pages(zone) + tmp;
+-		zone->_watermark[WMARK_HIGH] = min_wmark_pages(zone) + tmp * 2;
++		zone->_watermark[WMARK_MIN]  = wmark_min;
++		zone->_watermark[WMARK_LOW]  = wmark_min + tmp;
++		zone->_watermark[WMARK_HIGH] = wmark_min + tmp * 2;
+ 		zone->watermark_boost = 0;
+ 
+ 		spin_unlock_irqrestore(&zone->lock, flags);
+-- 
+2.20.1
+
