@@ -2,143 +2,166 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D106C4E27F
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 11:01:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 92FC14E297
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 11:03:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726468AbfFUJBg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Jun 2019 05:01:36 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:40172 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726232AbfFUJBf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Jun 2019 05:01:35 -0400
-Received: by mail-ed1-f65.google.com with SMTP id k8so9024012eds.7
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2019 02:01:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Xgdrm/+uDzgv3SzhRxL0tfed3iEPzeIqwWeZ4LUbXGY=;
-        b=cMQ/vDuRGUEoyum98yMdueDd2jydiu/6afc0tmWAZBeP10inFyVjuZChKUqT4PiHp4
-         ZaSOaO0GrmX6Pzrpoc89zr4LDXG1Rs6RAUq+EHe/URL5DxcN/rxWzl7evg9hSMa3R+ai
-         uAt/AmC9AhH4m47gSgcwZtfZUKFOEVgKQDP5k=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=Xgdrm/+uDzgv3SzhRxL0tfed3iEPzeIqwWeZ4LUbXGY=;
-        b=Fcxn0ApXXBL5YjSfOX6Gb4KdSSRHlV5kKCE7W7JlNzNgZmt5JNonT+WDD8htRjLQtd
-         qDE6XyWTFkkcehHyvDCsZysqk6QCg/oiBSO1eQKO2cEdewSUpc0SZCvBnP0R7WSTvk+t
-         3LfpKySZA6fySFoijNyfUn3OdnukoIO3ozSi3whBLxQAV6Rgt16ThKbrJRizYULEaKVl
-         jhl5f/B4/ksW6NuW1YKoa6T+uw/QJTanOIsvTpUL/x/5lG77zmiSu9iq3z9Xd5yck9Rb
-         msYooQqIcy76lTRFkg+CRR1M7vNkZz4st+IXGA9Bdd+WkjB0RSi2qPMHbj7zOsGoNBBU
-         e94Q==
-X-Gm-Message-State: APjAAAU7OIeIub/U/T4tPZPIamU92U18ElkDOZ+JXeluuL6QFHoBda+p
-        khupKjlNbpr9sX4AJm8AzLlrZg==
-X-Google-Smtp-Source: APXvYqznrdn8j6NIihoYPfy33vPTVa+X0ZBuzxvWDrMGfyNYMVq6ZP0YVj6cK3KfmQdSrvV8TaEBdA==
-X-Received: by 2002:a17:906:ce21:: with SMTP id sd1mr98973416ejb.189.1561107693780;
-        Fri, 21 Jun 2019 02:01:33 -0700 (PDT)
-Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
-        by smtp.gmail.com with ESMTPSA id w35sm658424edd.32.2019.06.21.02.01.31
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Fri, 21 Jun 2019 02:01:32 -0700 (PDT)
-Date:   Fri, 21 Jun 2019 11:01:25 +0200
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Neil Armstrong <narmstrong@baylibre.com>
-Cc:     Jonas Karlman <jonas@kwiboo.se>,
-        "a.hajda@samsung.com" <a.hajda@samsung.com>,
-        "Laurent.pinchart@ideasonboard.com" 
-        <Laurent.pinchart@ideasonboard.com>,
-        "jernej.skrabec@siol.net" <jernej.skrabec@siol.net>,
-        "maxime.ripard@bootlin.com" <maxime.ripard@bootlin.com>,
-        "khilman@baylibre.com" <khilman@baylibre.com>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "wens@csie.org" <wens@csie.org>,
-        "zhengyang@rock-chips.com" <zhengyang@rock-chips.com>
-Subject: Re: [PATCH 0/4] drm/bridge: dw-hdmi: Add support for HDR metadata
-Message-ID: <20190621090125.GX12905@phenom.ffwll.local>
-Mail-Followup-To: Neil Armstrong <narmstrong@baylibre.com>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        "a.hajda@samsung.com" <a.hajda@samsung.com>,
-        "Laurent.pinchart@ideasonboard.com" <Laurent.pinchart@ideasonboard.com>,
-        "jernej.skrabec@siol.net" <jernej.skrabec@siol.net>,
-        "maxime.ripard@bootlin.com" <maxime.ripard@bootlin.com>,
-        "khilman@baylibre.com" <khilman@baylibre.com>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "wens@csie.org" <wens@csie.org>,
-        "zhengyang@rock-chips.com" <zhengyang@rock-chips.com>
-References: <VI1PR03MB420621617DDEAB3596700DE0AC1C0@VI1PR03MB4206.eurprd03.prod.outlook.com>
- <085dc3be-20e5-b2fe-4c02-bf4a4d1473da@baylibre.com>
+        id S1726637AbfFUJDM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Jun 2019 05:03:12 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:57872 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726270AbfFUJDL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Jun 2019 05:03:11 -0400
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id BEE7F88305;
+        Fri, 21 Jun 2019 09:02:55 +0000 (UTC)
+Received: from localhost (ovpn-12-28.pek2.redhat.com [10.72.12.28])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 9C0F360FAB;
+        Fri, 21 Jun 2019 09:02:52 +0000 (UTC)
+Date:   Fri, 21 Jun 2019 17:02:49 +0800
+From:   Baoquan He <bhe@redhat.com>
+To:     "Kirill A. Shutemov" <kirill@shutemov.name>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>, x86@kernel.org,
+        linux-kernel@vger.kernel.org,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Kyle Pelton <kyle.d.pelton@intel.com>
+Subject: Re: [PATCH] x86/mm: Handle physical-virtual alignment mismatch in
+ phys_p4d_init()
+Message-ID: <20190621090249.GL24419@MiWiFi-R3L-srv>
+References: <20190620112239.28346-1-kirill.shutemov@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <085dc3be-20e5-b2fe-4c02-bf4a4d1473da@baylibre.com>
-X-Operating-System: Linux phenom 4.19.0-5-amd64 
+In-Reply-To: <20190620112239.28346-1-kirill.shutemov@linux.intel.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Fri, 21 Jun 2019 09:03:11 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 20, 2019 at 04:40:12PM +0200, Neil Armstrong wrote:
-> Hi Andrzej,
-> 
-> Gentle ping, could you review the dw-hdmi changes here ?
+Hi Kirill,
 
-btw not sure you absolutely need review from Andrzej, we're currently a
-bit undersupplied with bridge reviewers I think ... Better to ramp up
-more.
--Daniel
+On 06/20/19 at 02:22pm, Kirill A. Shutemov wrote:
+> Kyle has reported that kernel crashes sometimes when it boots in
+> 5-level paging mode with KASLR enabled:
 
-> 
-> Thanks,
-> Neil
-> 
-> On 26/05/2019 23:18, Jonas Karlman wrote:
-> > Add support for HDR metadata using the hdr_output_metadata connector property,
-> > configure Dynamic Range and Mastering InfoFrame accordingly.
-> > 
-> > A drm_infoframe flag is added to dw_hdmi_plat_data that platform drivers
-> > can use to signal when Dynamic Range and Mastering infoframes is supported.
-> > This flag is needed because Amlogic GXBB and GXL report same DW-HDMI version,
-> > and only GXL support DRM InfoFrame.
-> > 
-> > The first patch add functionality to configure DRM InfoFrame based on the
-> > hdr_output_metadata connector property.
-> > 
-> > The remaining patches sets the drm_infoframe flag on some SoCs supporting
-> > Dynamic Range and Mastering InfoFrame.
-> > 
-> > Note that this was based on top of drm-misc-next and Neil Armstrong's
-> > "drm/meson: Add support for HDMI2.0 YUV420 4k60" series at [1]
-> > 
-> > [1] https://patchwork.freedesktop.org/series/58725/#rev2
-> > 
-> > Jonas Karlman (4):
-> >   drm/bridge: dw-hdmi: Add Dynamic Range and Mastering InfoFrame support
-> >   drm/rockchip: Enable DRM InfoFrame support on RK3328 and RK3399
-> >   drm/meson: Enable DRM InfoFrame support on GXL, GXM and G12A
-> >   drm/sun4i: Enable DRM InfoFrame support on H6
-> > 
-> >  drivers/gpu/drm/bridge/synopsys/dw-hdmi.c   | 109 ++++++++++++++++++++
-> >  drivers/gpu/drm/bridge/synopsys/dw-hdmi.h   |  37 +++++++
-> >  drivers/gpu/drm/meson/meson_dw_hdmi.c       |   5 +
-> >  drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c |   2 +
-> >  drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c       |   2 +
-> >  drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h       |   1 +
-> >  include/drm/bridge/dw_hdmi.h                |   1 +
-> >  7 files changed, 157 insertions(+)
-> > 
-> 
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+This is a great finding, thanks for the fix. I ever have modified codes
+to make them accommodate PMD level of randomization, this
+phys_p4d_init() part is included. Not sure why I missed it when later
+took PUD level randomization for 5-level.
 
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+https://github.com/baoquan-he/linux/commit/dc91f5292bf1f55666c9139b6621d830b5b38aa5
+
+Have some concerns, please check.
+
+> [    0.000000] WARNING: CPU: 0 PID: 0 at arch/x86/mm/init_64.c:87 phys_p4d_init+0x1d4/0x1ea
+...... 
+> Kyle bisected the issue to commmit b569c1843498 ("x86/mm/KASLR: Reduce
+> randomization granularity for 5-level paging to 1GB")
+> 
+> The commit relaxes KASLR alignment requirements and it can lead to
+> mismatch bentween 'i' and 'p4d_index(vaddr)' inside the loop in
+           ^ between
+> phys_p4d_init(). The mismatch in its turn leads to clearing wrong p4d
+> entry and eventually to the oops.
+> 
+> The fix is to make phys_p4d_init() walk virtual address space, not
+> physical one.
+> 
+> Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+> Reported-and-tested-by: Kyle Pelton <kyle.d.pelton@intel.com>
+> Fixes: b569c1843498 ("x86/mm/KASLR: Reduce randomization granularity for 5-level paging to 1GB")
+> Cc: Baoquan He <bhe@redhat.com>
+> ---
+>  arch/x86/mm/init_64.c | 39 ++++++++++++++++-----------------------
+>  1 file changed, 16 insertions(+), 23 deletions(-)
+> 
+> diff --git a/arch/x86/mm/init_64.c b/arch/x86/mm/init_64.c
+> index 693aaf28d5fe..4628ac9105a2 100644
+> --- a/arch/x86/mm/init_64.c
+> +++ b/arch/x86/mm/init_64.c
+> @@ -671,41 +671,34 @@ static unsigned long __meminit
+>  phys_p4d_init(p4d_t *p4d_page, unsigned long paddr, unsigned long paddr_end,
+>  	      unsigned long page_size_mask, bool init)
+>  {
+> -	unsigned long paddr_next, paddr_last = paddr_end;
+> -	unsigned long vaddr = (unsigned long)__va(paddr);
+> -	int i = p4d_index(vaddr);
+> +	unsigned long vaddr, vaddr_start, vaddr_end, vaddr_next, paddr_last;
+> +
+> +	paddr_last = paddr_end;
+> +	vaddr = (unsigned long)__va(paddr);
+> +	vaddr_end = (unsigned long)__va(paddr_end);
+> +	vaddr_start = vaddr;
+
+Variable vaddr_start is not used in this patch, redundent?
+
+>  
+>  	if (!pgtable_l5_enabled())
+>  		return phys_pud_init((pud_t *) p4d_page, paddr, paddr_end,
+>  				     page_size_mask, init);
+>  
+> -	for (; i < PTRS_PER_P4D; i++, paddr = paddr_next) {
+> -		p4d_t *p4d;
+> +	for (; vaddr < vaddr_end; vaddr = vaddr_next) {
+> +		p4d_t *p4d = p4d_page + p4d_index(vaddr);
+>  		pud_t *pud;
+>  
+> -		vaddr = (unsigned long)__va(paddr);
+> -		p4d = p4d_page + p4d_index(vaddr);
+> -		paddr_next = (paddr & P4D_MASK) + P4D_SIZE;
+> +		vaddr_next = (vaddr & P4D_MASK) + P4D_SIZE;
+>  
+
+The code block as below is to zero p4d entries which are not coverred by
+the current memory range, and if haven't been mapped already. It's
+clearred away in this patch, could you also mention it in log, and tell
+why it doesn't matter now?
+
+If it doesn't matter, should we clear away the simillar code in
+phys_pud_init/phys_pmd_init/phys_pte_init? Maybe a prep patch to do the
+clean up?
+
+Thanks
+Baoquan
+
+> -		if (paddr >= paddr_end) {
+> -			if (!after_bootmem &&
+> -			    !e820__mapped_any(paddr & P4D_MASK, paddr_next,
+> -					     E820_TYPE_RAM) &&
+> -			    !e820__mapped_any(paddr & P4D_MASK, paddr_next,
+> -					     E820_TYPE_RESERVED_KERN))
+> -				set_p4d_init(p4d, __p4d(0), init);
+> -			continue;
+> -		}
+> -
+> -		if (!p4d_none(*p4d)) {
+> -			pud = pud_offset(p4d, 0);
+> -			paddr_last = phys_pud_init(pud, paddr, paddr_end,
+> -						   page_size_mask, init);
+> +		if (p4d_val(*p4d)) {
+> +			pud = (pud_t *)p4d_page_vaddr(*p4d);
+> +			paddr_last = phys_pud_init(pud, __pa(vaddr),
+> +						   __pa(vaddr_end),
+> +						   page_size_mask,
+> +						   init);
+>  			continue;
+>  		}
+>  
+>  		pud = alloc_low_page();
+> -		paddr_last = phys_pud_init(pud, paddr, paddr_end,
+> +		paddr_last = phys_pud_init(pud, __pa(vaddr), __pa(vaddr_end),
+>  					   page_size_mask, init);
+>  
+>  		spin_lock(&init_mm.page_table_lock);
+> -- 
+> 2.21.0
+> 
