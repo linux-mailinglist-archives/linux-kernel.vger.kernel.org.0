@@ -2,62 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A12C84F0C6
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2019 00:30:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BA1064F037
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 22:58:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726083AbfFUWaj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Jun 2019 18:30:39 -0400
-Received: from canit3.cat.cbpf.br ([152.84.253.68]:58224 "EHLO
-        canit3.cat.cbpf.br" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726018AbfFUWai (ORCPT
+        id S1726106AbfFUU6K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Jun 2019 16:58:10 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:39160 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725985AbfFUU6K (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Jun 2019 18:30:38 -0400
-X-Greylist: delayed 5138 seconds by postgrey-1.27 at vger.kernel.org; Fri, 21 Jun 2019 18:30:37 EDT
-Received: from mail.cat.cbpf.br (mail.cat.cbpf.br [152.84.253.72])
-        by canit3.cat.cbpf.br (8.15.2/8.15.2/Debian-8) with ESMTP id x5LL16ag089608;
-        Fri, 21 Jun 2019 18:01:07 -0300
-Received: from mail.cat.cbpf.br (localhost [127.0.0.1])
-        by mail.cat.cbpf.br (8.15.2/) with ESMTP id x5LL0xNQ006323;
-        Fri, 21 Jun 2019 18:00:59 -0300
-Received: (from www-data@localhost)
-        by mail.cat.cbpf.br (8.15.2/8.15.2/Submit) id x5LKvBY1005803;
-        Fri, 21 Jun 2019 17:57:11 -0300
-X-Authentication-Warning: mail.cat.cbpf.br: www-data set sender to danilo@cbpf.br using -f
-Received: from [154.66.52.55] ([154.66.52.55]) by p0m1.cat.cbpf.br (Horde
- Framework) with HTTPS; Fri, 21 Jun 2019 17:57:11 -0300
-Date:   Fri, 21 Jun 2019 17:56:56 -0300
-Message-ID: <20190621175656.Horde.2mK3KCDLHWnELaPNE3Xd-H5@p0m1.cat.cbpf.br>
-From:   "Mr Mikhail M. Fridman" <danilo@cbpf.br>
-Subject: Charity Gift !!!
-Reply-to: mikhail_fridman111@126.com
-User-Agent: Horde Application Framework 5
-Content-Type: text/plain; charset=utf-8; format=flowed; DelSp=Yes
+        Fri, 21 Jun 2019 16:58:10 -0400
+Received: by mail-pg1-f193.google.com with SMTP id 196so3920952pgc.6
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2019 13:58:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:in-reply-to:message-id:references
+         :user-agent:mime-version;
+        bh=8yYOqvu5kX2LRYKzF9g/pziCLKwTlUixwBsdMp/H9Nc=;
+        b=cuDC9qVShlq//zw6GpvnrOHJFr1tcJ4HACKd/9B6u34xyHNjsW0OOZZDRgr1qM5/Hp
+         M0EB1zZM9gs5L8IJxIQGhXyVdveLkFnCOdJvfz/4XhENaTANN3GCW8/cP3RIrws83hYf
+         NjmDQ0cqNT7vUgF56dqnL3z2x4Gapjcups6HVuJqAMMa/NjkniW/WC2yI0x1gkc+P1oR
+         x+W55orwr1MH5BNxQsFA9adhAFgSOApJrYCp+37QsyH3D9VgVufcKKcs67USdy54C/lM
+         H/QFupT5whQ6zNnOb0NQtQr+1v35QV8uptQ7kg+pJdyJOUZxnqhRROHJzPv+icVCuj+Y
+         QuhA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
+         :references:user-agent:mime-version;
+        bh=8yYOqvu5kX2LRYKzF9g/pziCLKwTlUixwBsdMp/H9Nc=;
+        b=cclHuvvOtDuNC9EZ5a3/5dmcb8CIwJWuXReDkiE9EPcfVbgOrVL7hdy2zyvStOcZY6
+         ESXmk6xB9YQV5K/lxHzTt6BFukR/NsYuSsiCIi84Jnf4uQu+vdeMN5KXx5/EDg5t7YYI
+         nlETy2jC+gwlFK4NsLHeBvLENaeinWjCVfN04rOzwu6ymaMYgq2zrM82OFg+jdob7fqT
+         cJkBo2nnZQPq/DbGRbQIcbQEv1yoku0ToG1LOrGfH2K463zV3O233n2HfzBybIpTp/dD
+         8AeHK3FIjrgwgvH7LnUso/hF5U0Zfi7JVNC6JexzIRTdxrMtFUTB1feUR8p+iTQJ0SdZ
+         AAmw==
+X-Gm-Message-State: APjAAAXKAvEgsE4bk5uWubgk22YJ9rp01kVM7lbk1Q+bDql23WMd5N6L
+        RiAArLrm7vOa7HNCvC6wZwCZnw==
+X-Google-Smtp-Source: APXvYqzENl1koEQxTi7C5Y8/9tx1iueVhtL6QRrM0tus5wsF6Daa6W5Dsr6LEZDlBw4XS9jAkYfZew==
+X-Received: by 2002:a17:90a:2562:: with SMTP id j89mr9083829pje.123.1561150689472;
+        Fri, 21 Jun 2019 13:58:09 -0700 (PDT)
+Received: from [2620:15c:17:3:3a5:23a7:5e32:4598] ([2620:15c:17:3:3a5:23a7:5e32:4598])
+        by smtp.gmail.com with ESMTPSA id h1sm4763129pfo.152.2019.06.21.13.58.08
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Fri, 21 Jun 2019 13:58:08 -0700 (PDT)
+Date:   Fri, 21 Jun 2019 13:58:08 -0700 (PDT)
+From:   David Rientjes <rientjes@google.com>
+X-X-Sender: rientjes@chino.kir.corp.google.com
+To:     Alan Jenkins <alan.christopher.jenkins@gmail.com>
+cc:     linux-mm@kvack.org, Vlastimil Babka <vbabka@suse.cz>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        linux-kernel@vger.kernel.org,
+        Bharath Vedartham <linux.bhar@gmail.com>
+Subject: Re: [PATCH v2] mm: avoid inconsistent "boosts" when updating the
+ high and low watermarks
+In-Reply-To: <20190621153107.23667-1-alan.christopher.jenkins@gmail.com>
+Message-ID: <alpine.DEB.2.21.1906211357560.77141@chino.kir.corp.google.com>
+References: <3d15b808-b7cd-7379-a6a9-d3cf04b7dcec@suse.cz> <20190621153107.23667-1-alan.christopher.jenkins@gmail.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Disposition: inline
-X-Bayes-Prob: 0.9999 (Score 10, tokens from: saida, @@RPTN)
-X-Spam-Score: 14.70 (**************) [Hold at 15.00] FREEMAIL_FORGED_REPLYTO:2.503,FREEMAIL_REPLYTO_END_DIGIT:0.25,HK_NAME_MR_MRS:0.001,REPLYTO_WITHOUT_TO_CC:1.946,Bayes(0.9999:10.0)
-X-CanIt-Incident-Id: 010rx17yD
-X-CanIt-Geo: ip=152.84.253.72; country=BR; latitude=-22.8305; longitude=-43.2192; http://maps.google.com/maps?q=-22.8305,-43.2192&z=6
-X-CanItPRO-Stream: saida
-X-Canit-Stats-ID: 010rx17yD - d8ad5260b86d - 20190621
-X-Scanned-By: CanIt (www . roaringpenguin . com) on 152.84.253.68
-To:     unlisted-recipients:; (no To-header on input)
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, 21 Jun 2019, Alan Jenkins wrote:
 
+> When setting the low and high watermarks we use min_wmark_pages(zone).
+> I guess this was to reduce the line length.  Then this macro was modified
+> to include zone->watermark_boost.  So we needed to set watermark_boost
+> before we set the high and low watermarks... but we did not.
+> 
+> It seems mostly harmless.  It might set the watermarks a bit higher than
+> needed: when 1) the watermarks have been "boosted" and 2) you then
+> triggered __setup_per_zone_wmarks() (by setting one of the sysctls, or
+> hotplugging memory...).
+> 
+> I noticed it because it also breaks the documented equality
+> (high - low == low - min).  Below is an example of reproducing the bug.
+> 
+> First sample.  Equality is met (high - low == low - min):
+> 
+> Node 0, zone   Normal
+>   pages free     11962
+>         min      9531
+>         low      11913
+>         high     14295
+>         spanned  1173504
+>         present  1173504
+>         managed  1134235
+> 
+> A later sample.  Something has caused us to boost the watermarks:
+> 
+> Node 0, zone   Normal
+>   pages free     12614
+>         min      10043
+>         low      12425
+>         high     14807
+> 
+> Now trigger the watermarks to be recalculated.  "cd /proc/sys/vm" and
+> "cat watermark_scale_factor > watermark_scale_factor".  Then the watermarks
+> are boosted inconsistently.  The equality is broken:
+> 
+> Node 0, zone   Normal
+>   pages free     12412
+>         min      9531
+>         low      12425
+>         high     14807
+> 
+> 14807 - 12425 = 2382
+> 12425 -  9531 = 2894
+> 
+> Co-developed-by: Vlastimil Babka <vbabka@suse.cz>
+> Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
+> Signed-off-by: Alan Jenkins <alan.christopher.jenkins@gmail.com>
+> Fixes: 1c30844d2dfe ("mm: reclaim small amounts of memory when an external
+>                       fragmentation event occurs")
+> Acked-by: Mel Gorman <mgorman@techsingularity.net>
 
--- 
-I, Mikhail Fridman have selected you specifically as one of my  
-beneficiaries for my Charitable Donation of $5 Million Dollars,
-
-Check the link below for confirmation:
-
-https://www.rt.com/business/343781-mikhail-fridman-will-charity/
-
-I await your earliest response.
-
-Best Regards,
-Mikhail Fridman.
+Acked-by: David Rientjes <rientjes@google.com>
