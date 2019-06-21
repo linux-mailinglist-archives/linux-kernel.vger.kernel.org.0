@@ -2,106 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 680A04EECE
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 20:36:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7D6004EEDE
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 20:42:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726448AbfFUSg0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Jun 2019 14:36:26 -0400
-Received: from mga07.intel.com ([134.134.136.100]:32036 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726017AbfFUSg0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Jun 2019 14:36:26 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Jun 2019 11:36:25 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.63,401,1557212400"; 
-   d="scan'208";a="151340684"
-Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.7.199.155])
-  by orsmga007.jf.intel.com with ESMTP; 21 Jun 2019 11:36:25 -0700
-Date:   Fri, 21 Jun 2019 11:39:38 -0700
-From:   Jacob Pan <jacob.jun.pan@intel.com>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     Kate Stewart <kstewart@linuxfoundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Jan Kiszka <jan.kiszka@siemens.com>,
-        Ricardo Neri <ricardo.neri@intel.com>,
-        Stephane Eranian <eranian@google.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Wincy Van <fanwenyi0529@gmail.com>,
-        Ashok Raj <ashok.raj@intel.com>, x86 <x86@kernel.org>,
-        Andi Kleen <andi.kleen@intel.com>,
-        Borislav Petkov <bp@suse.de>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Juergen Gross <jgross@suse.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        iommu@lists.linux-foundation.org,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        jacob.jun.pan@intel.com
-Subject: Re: [RFC PATCH v4 20/21] iommu/vt-d: hpet: Reserve an interrupt
- remampping table entry for watchdog
-Message-ID: <20190621113938.1679f329@jacob-builder>
-In-Reply-To: <20190621103126.585ca6d3@jacob-builder>
-References: <1558660583-28561-1-git-send-email-ricardo.neri-calderon@linux.intel.com>
-        <1558660583-28561-21-git-send-email-ricardo.neri-calderon@linux.intel.com>
-        <alpine.DEB.2.21.1906162049300.1760@nanos.tec.linutronix.de>
-        <alpine.DEB.2.21.1906171007360.1760@nanos.tec.linutronix.de>
-        <CABPqkBTai76Bgb4E61tF-mJUkFNxVa4B8M2bxTEYVgBsuAANNQ@mail.gmail.com>
-        <alpine.DEB.2.21.1906172343120.1963@nanos.tec.linutronix.de>
-        <20190619084316.71ce5477@jacob-builder>
-        <alpine.DEB.2.21.1906211732330.5503@nanos.tec.linutronix.de>
-        <20190621103126.585ca6d3@jacob-builder>
-Organization: OTC
-X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+        id S1726198AbfFUSmY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Jun 2019 14:42:24 -0400
+Received: from mo4-p00-ob.smtp.rzone.de ([81.169.146.218]:21294 "EHLO
+        mo4-p00-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726066AbfFUSmX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Jun 2019 14:42:23 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1561142538;
+        s=strato-dkim-0002; d=pinc-software.de;
+        h=Message-Id:Date:Subject:Cc:To:From:X-RZG-CLASS-ID:X-RZG-AUTH:From:
+        Subject:Sender;
+        bh=STBik00mBqmEMQGHJb7F0XIWyxHIt223mOwbnCAgOAM=;
+        b=EUeJuktgXGpH5YC0sSxMDQjHwxVLNllnv1jkrIsiTXIjPCUwf6OHHqe/OCRdPZSWnA
+        /vkw910mHak9NHGR6lcqGqI0TVGJUIgLe4ECZ3RNAp+8xE2qX15CHJTyvlLB5fnFMKeZ
+        nJugqzrqN1TPEJxVjVTM2SRfJYczz4KsJ79/ReKHA0ZvsuxICSLmnsIjz6/gE77nP9jB
+        HnjjHswGGLtWpXunp/KMk069ftLLHf3WaSZ8rZ6Zfmc4Gkp/Nkc0IWSbllu4HVZjkEl9
+        TBNls/wF9rwfFy7g1tgLVwC9GiSQKXE319WnIclrOwzoD1LGFex2nbgQJAUGGSlqsSsM
+        grYg==
+X-RZG-AUTH: ":LXQBeUSIa/ZoedDIRs9YOPxY4/Y41LMYtYgA+S704F0fcsNycI1rqp7htm44FTK51uMij61Yqhw="
+X-RZG-CLASS-ID: mo00
+Received: from localhost
+        by smtp.strato.de (RZmta 44.24 DYNA|AUTH)
+        with ESMTPSA id z087d6v5LIgIRbr
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
+        (Client did not present a certificate);
+        Fri, 21 Jun 2019 20:42:18 +0200 (CEST)
+From:   =?UTF-8?q?Axel=20D=C3=B6rfler?= <axeld@pinc-software.de>
+To:     Luis de Bethencourt <luisbg@kernel.org>,
+        Salah Triki <salah.triki@gmail.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     =?UTF-8?q?Axel=20D=C3=B6rfler?= <axeld@pinc-software.de>
+Subject: [PATCH RESEND] befs: Allow file sizes beyond 2GiB
+Date:   Fri, 21 Jun 2019 20:42:08 +0200
+Message-Id: <20190621184208.15417-1-axeld@pinc-software.de>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 21 Jun 2019 10:31:26 -0700
-Jacob Pan <jacob.jun.pan@intel.com> wrote:
+This just enables LFS support in the VFS. The implementation already
+supports large files.
 
-> On Fri, 21 Jun 2019 17:33:28 +0200 (CEST)
-> Thomas Gleixner <tglx@linutronix.de> wrote:
-> 
-> > On Wed, 19 Jun 2019, Jacob Pan wrote:  
-> > > On Tue, 18 Jun 2019 01:08:06 +0200 (CEST)
-> > > Thomas Gleixner <tglx@linutronix.de> wrote:    
-> > > > 
-> > > > Unless this problem is not solved and I doubt it can be solved
-> > > > after talking to IOMMU people and studying manuals,    
-> > >
-> > > I agree. modify irte might be done with cmpxchg_double() but the
-> > > queued invalidation interface for IRTE cache flush is shared with
-> > > DMA and requires holding a spinlock for enque descriptors, QI tail
-> > > update etc.
-> > > 
-> > > Also, reserving & manipulating IRTE slot for hpet via backdoor
-> > > might not be needed if the HPET PCI BDF (found in ACPI) can be
-> > > utilized. But it might need more work to add a fake PCI device for
-> > > HPET.    
-> > 
-> > What would PCI/BDF solve?  
-> I was thinking if HPET is a PCI device then it can naturally
-> gain slots in IOMMU remapping table IRTEs via PCI MSI code. Then
-> perhaps it can use the IRQ subsystem to set affinity etc. w/o
-> directly adding additional helper functions in IRQ remapping code. I
-> have not followed all the discussions, just a thought.
-> 
-I looked at the code again, seems the per cpu HPET code already taken
-care of HPET MSI management. Why can't we use IR-HPET-MSI chip and
-domain to allocate and set affinity etc.?
-Most APIC timer has ARAT not enough per cpu HPET, so per cpu HPET is
-not used mostly.
+Signed-off-by: Axel Dörfler <axeld@pinc-software.de>
+---
+ fs/befs/linuxvfs.c | 1 +
+ 1 file changed, 1 insertion(+)
 
+diff --git a/fs/befs/linuxvfs.c b/fs/befs/linuxvfs.c
+index 462d096ff3e9..1d7d91c2e63f 100644
+--- a/fs/befs/linuxvfs.c
++++ b/fs/befs/linuxvfs.c
+@@ -891,6 +891,7 @@ befs_fill_super(struct super_block *sb, void *data, int silent)
+ 	sb->s_magic = BEFS_SUPER_MAGIC;
+ 	/* Set real blocksize of fs */
+ 	sb_set_blocksize(sb, (ulong) befs_sb->block_size);
++	sb->s_maxbytes = MAX_LFS_FILESIZE;
+ 	sb->s_op = &befs_sops;
+ 	sb->s_export_op = &befs_export_operations;
+ 	root = befs_iget(sb, iaddr2blockno(sb, &(befs_sb->root_dir)));
+-- 
+2.17.1
 
-Jacob
