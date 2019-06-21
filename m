@@ -2,116 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5A92A4EE03
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 19:41:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4E7F64EE0B
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 19:42:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726610AbfFURlK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Jun 2019 13:41:10 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:10320 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726587AbfFURlJ (ORCPT
+        id S1726374AbfFURm0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Jun 2019 13:42:26 -0400
+Received: from asavdk3.altibox.net ([109.247.116.14]:33016 "EHLO
+        asavdk3.altibox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726080AbfFURm0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Jun 2019 13:41:09 -0400
-Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5LHbCOx105818
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2019 13:41:08 -0400
-Received: from e16.ny.us.ibm.com (e16.ny.us.ibm.com [129.33.205.206])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2t90vh7x79-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2019 13:41:07 -0400
-Received: from localhost
-        by e16.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Fri, 21 Jun 2019 18:41:06 +0100
-Received: from b01cxnp22033.gho.pok.ibm.com (9.57.198.23)
-        by e16.ny.us.ibm.com (146.89.104.203) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 21 Jun 2019 18:41:04 +0100
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x5LHf36E48169386
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 21 Jun 2019 17:41:03 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 24A4EB206A;
-        Fri, 21 Jun 2019 17:41:03 +0000 (GMT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 083C5B2068;
-        Fri, 21 Jun 2019 17:41:03 +0000 (GMT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.26])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Fri, 21 Jun 2019 17:41:02 +0000 (GMT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 22A7D16C1D2E; Fri, 21 Jun 2019 10:41:04 -0700 (PDT)
-Date:   Fri, 21 Jun 2019 10:41:04 -0700
-From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     linux-kernel@vger.kernel.org, mingo@redhat.com,
-        frederic@kernel.org, tglx@linutronix.de
-Subject: Re: [PATCH] time/tick-broadcast: Fix tick_broadcast_offline()
- lockdep complaint
-Reply-To: paulmck@linux.ibm.com
-References: <20190619181903.GA14233@linux.ibm.com>
- <20190620121032.GU3436@hirez.programming.kicks-ass.net>
- <20190620160118.GQ26519@linux.ibm.com>
- <20190620211019.GA3436@hirez.programming.kicks-ass.net>
- <20190620221336.GZ26519@linux.ibm.com>
- <20190621105503.GI3436@hirez.programming.kicks-ass.net>
- <20190621121630.GE26519@linux.ibm.com>
- <20190621122927.GV3402@hirez.programming.kicks-ass.net>
- <20190621133414.GF26519@linux.ibm.com>
+        Fri, 21 Jun 2019 13:42:26 -0400
+Received: from ravnborg.org (unknown [158.248.194.18])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by asavdk3.altibox.net (Postfix) with ESMTPS id 4044F20020;
+        Fri, 21 Jun 2019 19:42:22 +0200 (CEST)
+Date:   Fri, 21 Jun 2019 19:42:15 +0200
+From:   Sam Ravnborg <sam@ravnborg.org>
+To:     Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+Cc:     Dave Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, thierry.reding@gmail.com,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
+        DTML <devicetree@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 0/2] MSM8998 MTP Display
+Message-ID: <20190621174215.GA16409@ravnborg.org>
+References: <20190614185547.34518-1-jeffrey.l.hugo@gmail.com>
+ <CAOCk7NoaP=DkNLgdiUw5M0JYRGEGGCFQkn1sCO9dqtexMPC9dQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190621133414.GF26519@linux.ibm.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 19062117-0072-0000-0000-0000043F461C
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00011304; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000286; SDB=6.01221277; UDB=6.00642520; IPR=6.01002415;
- MB=3.00027409; MTD=3.00000008; XFM=3.00000015; UTC=2019-06-21 17:41:05
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19062117-0073-0000-0000-00004CAF5966
-Message-Id: <20190621174104.GA7519@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-21_12:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=965 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1906210137
+In-Reply-To: <CAOCk7NoaP=DkNLgdiUw5M0JYRGEGGCFQkn1sCO9dqtexMPC9dQ@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-CMAE-Score: 0
+X-CMAE-Analysis: v=2.3 cv=dqr19Wo4 c=1 sm=1 tr=0
+        a=UWs3HLbX/2nnQ3s7vZ42gw==:117 a=UWs3HLbX/2nnQ3s7vZ42gw==:17
+        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=pGLkceISAAAA:8
+        a=_aGGFSCzEicpxybLgu0A:9 a=CjuIK1q_8ugA:10
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 21, 2019 at 06:34:14AM -0700, Paul E. McKenney wrote:
-> On Fri, Jun 21, 2019 at 02:29:27PM +0200, Peter Zijlstra wrote:
-> > On Fri, Jun 21, 2019 at 05:16:30AM -0700, Paul E. McKenney wrote:
-> > > A pair of full hangs at boot (TASKS03 and TREE04), no console output
-> > > whatsoever.  Not sure how these changes could cause that, but suspicion
-> > > falls on sched_tick_offload_init().  Though even that is a bit strange
-> > > because if so, why didn't TREE01 and TREE07 also hang?  Again, looking
-> > > into it.
-> > 
-> > Pesky details ;-)
+Hi Jeffrey.
+
+On Fri, Jun 21, 2019 at 11:31:50AM -0600, Jeffrey Hugo wrote:
+> On Fri, Jun 14, 2019 at 12:55 PM Jeffrey Hugo <jeffrey.l.hugo@gmail.com> wrote:
+> >
+> > Since we are trying to get the GPU and display hardware in the SoC
+> > supported, it would be nice to be able to put the output on the
+> > integrated panel for the reference platform.  To do so, we need support
+> > in the Truly driver to support the specific panel variant for the
+> > MSM8998 MTP.  This series adds taht support.
+> >
+> > Jeffrey Hugo (2):
+> >   dt-bindings: display: truly: Add MSM8998 MTP panel
+> >   drm/panel: truly: Add MSM8998 MTP support
 > 
-> And backing out to the earlier patch removes the hangs, though statistical
-> insignificance and all that.
+> Lets actually hold off on this series.  I thought I could solve an
+> issue in the DSI driver, but thats not working out like how I'd hoped.
+> I may need to rework this.
 
-And purists might argue that four failures out of four attempts does not
-constitute true statistical significance, but too bad.  If I interpose
-a twork pointer in sched_tick_offload_init()'s initialization, it seems
-to work fine, give or take lack of statistical significance.  This is
-surprising, so I am rerunning with added parentheses in the atomic_set()
-expression.
+Thanks for the heads up, and good luck with it.
+Despite the missing response on this patchset please do not hesitate
+to post an updated version or another patchset in the future.
 
-			Thanx, Paul "I hate initialization" McKenney
-
-> Ah, in answer to your earlier question, if you want it in v5.3, you
-> will need to take it (but I do humbly request that you wait until it
-> actually works).  If you don't take it, I won't be submitting it earlier
-> than v5.4.  Either way, your choice!
-> 
-> 							Thanx, Paul
-
+	Sam
