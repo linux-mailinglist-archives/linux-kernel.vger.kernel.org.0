@@ -2,76 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 459034DE33
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 02:53:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 66D524DE3A
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 02:56:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726209AbfFUAxs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 20:53:48 -0400
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:42363 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726169AbfFUAxr (ORCPT
+        id S1726204AbfFUA4F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 20:56:05 -0400
+Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:59656 "EHLO
+        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725906AbfFUA4E (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 20:53:47 -0400
-Received: by mail-ot1-f65.google.com with SMTP id l15so4620489otn.9
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2019 17:53:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=IghIqITuGVBjgBvbbflv0TslA9+YilTAx3aDj+IKW0E=;
-        b=iSUEzSFfmatZoJgKO1yj/Kcbx3Ywzei9QORLaR3Ctk/x/ZYE9lzCOtEprPLVw0JUmv
-         e13psNOsRtWfcQB5DP4gjXZ+W67oU/THRjMaePL9RklilCagvxOCdWt2wqmYBo/G/hZJ
-         BF53dTAMBZg+GSYbRutW2r3Kb9wAq82+yBo0pOfZimU+uELWz6e277eESoPJ5ltQj7fh
-         Vp5uWFCUjk73zisVQgonagRy/navlO+k6ayJUPF8Mw2iLVsIUyelwZSrmXHMP4v5bTEr
-         LHfazDoivo65gBtWJzg8uQ5nBE46PmVGr2J+/msk0Oa0gJQdaHhYGOrp+RToECfW9iI1
-         5Bng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=IghIqITuGVBjgBvbbflv0TslA9+YilTAx3aDj+IKW0E=;
-        b=sqi4RjYZL0D/FmUbwUj2S1kpJ1gij/T3sy4Douy2RL+0UGlkvqGQzPZXBOlcshsYJG
-         kuw7J0/g6VyPUFNd9NPAfLjhs+uA0Rlsvw3flEOyGFZAkS7wYbmnZKyE5UICEeIZgekp
-         hnoC8uVPoBiHT+WsjUpPj+JcTocOaFSLTj2w5exX7fZ9COL6l+Q08NQYle2bDsozFyyE
-         /DoKURbef9e/oLsXW/nY2/RL77vUNMq8jpAPbfuemKioDz2Ls++uwodVD0t3dMlb42cK
-         A5aOqtTDm7DKDqLPFuSH7BIeqGhyzqTt8JNpaY+/tu0EEQGuYeEsRTGSfLf0Ah5EFpz2
-         KAiQ==
-X-Gm-Message-State: APjAAAVsav37RDskA+Uew6Rq82DplmKvszS0kspQ4vmbswbrnFH95MKj
-        lXv6xvFUsjfHdukEdtIpM5NWO4lqv5Pd6JKAnlL6cw==
-X-Google-Smtp-Source: APXvYqx5KcOBOzPCKgbcSAH1KU0s2av7WgxnuPirQK4Cf1comzME+lU9tyw6zXdJxCrPsxTVvDEls2SfMF3l78DzMSw=
-X-Received: by 2002:a9d:470d:: with SMTP id a13mr41545473otf.126.1561078427423;
- Thu, 20 Jun 2019 17:53:47 -0700 (PDT)
+        Thu, 20 Jun 2019 20:56:04 -0400
+Received: from callcc.thunk.org (guestnat-104-133-0-109.corp.google.com [104.133.0.109] (may be forged))
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id x5L0sK0h000800
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 20 Jun 2019 20:54:21 -0400
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id 28403420484; Thu, 20 Jun 2019 20:54:20 -0400 (EDT)
+Date:   Thu, 20 Jun 2019 20:54:20 -0400
+From:   "Theodore Ts'o" <tytso@mit.edu>
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc:     matthew.garrett@nebula.com, yuchao0@huawei.com,
+        ard.biesheuvel@linaro.org, josef@toxicpanda.com, clm@fb.com,
+        adilger.kernel@dilger.ca, viro@zeniv.linux.org.uk, jack@suse.com,
+        dsterba@suse.com, jaegeuk@kernel.org, jk@ozlabs.org,
+        reiserfs-devel@vger.kernel.org, linux-efi@vger.kernel.org,
+        devel@lists.orangefs.org, linux-kernel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org,
+        linux-mm@kvack.org, linux-nilfs@vger.kernel.org,
+        linux-mtd@lists.infradead.org, ocfs2-devel@oss.oracle.com,
+        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-btrfs@vger.kernel.org
+Subject: Re: [PATCH 1/6] mm/fs: don't allow writes to immutable files
+Message-ID: <20190621005420.GH4650@mit.edu>
+Mail-Followup-To: Theodore Ts'o <tytso@mit.edu>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        matthew.garrett@nebula.com, yuchao0@huawei.com,
+        ard.biesheuvel@linaro.org, josef@toxicpanda.com, clm@fb.com,
+        adilger.kernel@dilger.ca, viro@zeniv.linux.org.uk, jack@suse.com,
+        dsterba@suse.com, jaegeuk@kernel.org, jk@ozlabs.org,
+        reiserfs-devel@vger.kernel.org, linux-efi@vger.kernel.org,
+        devel@lists.orangefs.org, linux-kernel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org,
+        linux-mm@kvack.org, linux-nilfs@vger.kernel.org,
+        linux-mtd@lists.infradead.org, ocfs2-devel@oss.oracle.com,
+        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-btrfs@vger.kernel.org
+References: <156022836912.3227213.13598042497272336695.stgit@magnolia>
+ <156022837711.3227213.11787906519006016743.stgit@magnolia>
+ <20190620215212.GG4650@mit.edu>
+ <20190620221306.GD5375@magnolia>
 MIME-Version: 1.0
-References: <20190621004038.15180-1-vishal.l.verma@intel.com>
-In-Reply-To: <20190621004038.15180-1-vishal.l.verma@intel.com>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Thu, 20 Jun 2019 17:53:36 -0700
-Message-ID: <CAPcyv4hzK12RKns5pybmy=5B-yfCQ+-C4FO+2kRGjRZP4wa5GQ@mail.gmail.com>
-Subject: Re: [PATCH] device-dax: Add a 'resource' attribute
-To:     Vishal Verma <vishal.l.verma@intel.com>
-Cc:     linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190620221306.GD5375@magnolia>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 20, 2019 at 5:41 PM Vishal Verma <vishal.l.verma@intel.com> wrote:
->
-> device-dax based devices were missing a 'resource' attribute to indicate
-> the physical address range contributed by the device in question. This
-> information is desirable to userspace tooling that may want to use the
-> dax device as system-ram, and wants to selectively hotplug and online
-> the memory blocks associated with a given device.
->
-> Without this, the tooling would have to parse /proc/iomem for the memory
-> ranges contributed by dax devices, which can be a workaround, but it is
-> far easier to provide this information in the sysfs hierarchy.
->
-> Cc: Dave Hansen <dave.hansen@linux.intel.com>
-> Cc: Dan Williams <dan.j.williams@intel.com>
-> Signed-off-by: Vishal Verma <vishal.l.verma@intel.com>
+On Thu, Jun 20, 2019 at 03:13:06PM -0700, Darrick J. Wong wrote:
+> > I note that this patch doesn't allow writes to swap files.  So Amir's
+> > generic/554 test will still fail for those file systems that don't use
+> > copy_file_range.
+> 
+> I didn't add any IS_SWAPFILE checks here, so I'm not sure to what you're
+> referring?
 
-Looks good to me, applied.
+Sorry, my bad; I mistyped.  What I should have said is this patch
+doesn't *prohibit* writes to swap files....
+
+(And so Amir's generic/554 test, even modified so it allow reads from
+swapfiles, but not writes, when using copy_file_range, is still
+failing for ext4.  I was looking to see if I could remove it from my
+exclude list, but not yet.  :-)
+
+> > I'm indifferent as to whether you add a new patch, or include that
+> > change in this patch, but perhaps we should fix this while we're
+> > making changes in these code paths?
+> 
+> The swapfile patches should be in a separate patch, which I was planning
+> to work on but hadn't really gotten around to it.
+
+Ok, great, thanks!!
+
+				- Ted
