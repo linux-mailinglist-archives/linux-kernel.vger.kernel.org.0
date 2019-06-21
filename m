@@ -2,196 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 99F374E2D4
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 11:13:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E644C4E2F5
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 11:15:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726482AbfFUJNy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Jun 2019 05:13:54 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:40936 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726250AbfFUJNy (ORCPT
+        id S1726509AbfFUJPb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Jun 2019 05:15:31 -0400
+Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:60282 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726232AbfFUJP3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Jun 2019 05:13:54 -0400
-Received: by mail-ed1-f66.google.com with SMTP id k8so9075382eds.7
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2019 02:13:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
-         :references:mime-version:content-disposition
-         :content-transfer-encoding:in-reply-to:user-agent;
-        bh=2bGIaORqqfh7NthvfPKeSWzPcbNzBBYxFsaIjbRgqzI=;
-        b=cVvcQJ3ufJ+1Qqgqq4fWCNNUQ+RUopn+7hW8VyzYhB/jgWEmSBwXkOA93mdNxl3+4x
-         zec6W4/WvUs2j9kiT0afQFuRDsf2jTsrbeZ/NhVF42PG33pIHNkX5BLj1IoYDgn31T0W
-         iD8ZlugNc30sg2bDloI5XgFiyGiO1MB3lbZrE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :content-transfer-encoding:in-reply-to:user-agent;
-        bh=2bGIaORqqfh7NthvfPKeSWzPcbNzBBYxFsaIjbRgqzI=;
-        b=F12iNRaIup+BcYFSSLPyqdBc01K+DUhfNhdix6Jvgeh9NlfD0NWpL/sBo+b8E6mKgr
-         FjDvQGWJe3AldF6gEL5ar+kXDKvxOdzMfp6UWhJWCKWwI2DqJP/13QPgcWStzakfDend
-         ZOoCGiVfpAr623wdOEYcSuCckPfBWxJGuDwC475ZHRMH/lqxgaUbSNRsSnY/mH4TVzkb
-         Vft2yCRoQoczGSQ+9SY+WCgrY2SIsXu165W2IzO7XQqMI9x6csKbKfHz5aynSYY7NroJ
-         3sUBEMlliXWx6Dt9wbZzEVNcbHVkB/8d6/HoHsdyNJEWCV6J7HDySz3G/A2cAwcV/Inj
-         UrbQ==
-X-Gm-Message-State: APjAAAXGIjaduuh73wpTj5SK3p3u47vI3lqU/bh4LyLKpJnIDZCnLS0o
-        Sl+t+/26UTZ+NOUyL871C6IxYw==
-X-Google-Smtp-Source: APXvYqw14PDnEzjHiPPTDgNf/p3y3XKQE24CKUmI/tC7fQOPfvWanfqpuXk6IlS1WmRPiRcr2v9GQA==
-X-Received: by 2002:aa7:c619:: with SMTP id h25mr82941231edq.295.1561108431657;
-        Fri, 21 Jun 2019 02:13:51 -0700 (PDT)
-Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
-        by smtp.gmail.com with ESMTPSA id p18sm327962ejr.61.2019.06.21.02.13.49
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Fri, 21 Jun 2019 02:13:50 -0700 (PDT)
-Date:   Fri, 21 Jun 2019 11:13:43 +0200
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Paul Cercueil <paul@crapouillou.net>
-Cc:     Daniel Vetter <daniel@ffwll.ch>, Sam Ravnborg <sam@ravnborg.org>,
-        David Airlie <airlied@linux.ie>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sean Paul <sean@poorly.run>, od@zcrc.me,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Artur Rojek <contact@artur-rojek.eu>
-Subject: Re: [PATCH v5 2/2] DRM: Add KMS driver for the Ingenic JZ47xx SoCs
-Message-ID: <20190621091343.GA12905@phenom.ffwll.local>
-Mail-Followup-To: Paul Cercueil <paul@crapouillou.net>,
-        Sam Ravnborg <sam@ravnborg.org>, David Airlie <airlied@linux.ie>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sean Paul <sean@poorly.run>, od@zcrc.me,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Artur Rojek <contact@artur-rojek.eu>
-References: <20190603152331.23160-1-paul@crapouillou.net>
- <20190603152331.23160-2-paul@crapouillou.net>
- <20190619122622.GB29084@ravnborg.org>
- <1561040159.1978.0@crapouillou.net>
- <20190621090411.GY12905@phenom.ffwll.local>
- <1561108050.1777.0@crapouillou.net>
+        Fri, 21 Jun 2019 05:15:29 -0400
+Received: from pps.filterd (m0109333.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5L959OU013692;
+        Fri, 21 Jun 2019 02:15:27 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : references : in-reply-to : content-type : content-id
+ : content-transfer-encoding : mime-version; s=facebook;
+ bh=flqjpcj4fWLOyAG8SvHboxGOc+E72I/m8STWy4fDd2g=;
+ b=NAniB6lMCdtP6q3N5NLBrmVNjQBlWSudza4J8q/W1xR98UxxlB6r8ZMqabmpZeQIK4Sd
+ U3AMU8YuoXnm1aEweYh6Qzz15lU/rU4e5gX3se+HQLoaKh20qQXUdgJDQMsVMSUw/UJu
+ 2n/TkuTrnl8rNkaSyT94ivtJPO4jORSoStU= 
+Received: from mail.thefacebook.com (mailout.thefacebook.com [199.201.64.23])
+        by mx0a-00082601.pphosted.com with ESMTP id 2t8tnk8aph-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
+        Fri, 21 Jun 2019 02:15:27 -0700
+Received: from prn-mbx01.TheFacebook.com (2620:10d:c081:6::15) by
+ prn-hub01.TheFacebook.com (2620:10d:c081:35::125) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.1.1713.5; Fri, 21 Jun 2019 02:15:23 -0700
+Received: from prn-hub01.TheFacebook.com (2620:10d:c081:35::125) by
+ prn-mbx01.TheFacebook.com (2620:10d:c081:6::15) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.1.1713.5; Fri, 21 Jun 2019 02:15:22 -0700
+Received: from NAM03-BY2-obe.outbound.protection.outlook.com (192.168.54.28)
+ by o365-in.thefacebook.com (192.168.16.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.1.1713.5
+ via Frontend Transport; Fri, 21 Jun 2019 02:15:22 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
+ s=selector1-fb-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=flqjpcj4fWLOyAG8SvHboxGOc+E72I/m8STWy4fDd2g=;
+ b=m7FhTSeHXDSLp7Gn4LZSv/B3sKKXV/Xj7X+cJPxznNxBXUNkKNG0exf6Nhg1KqXvBJjGmACfZ4NTJGz3dF7DHPvkgrFRaXaYgAhFH0Yi6ayNpggG2DRfDOK9FZ39QTg9+X8euNw2QAGkkW9Lsz//YLPEMXdnEKGxUSqWU6iiGMc=
+Received: from CY4PR15MB1463.namprd15.prod.outlook.com (10.172.159.10) by
+ CY4PR15MB1814.namprd15.prod.outlook.com (10.172.77.141) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1987.12; Fri, 21 Jun 2019 09:15:21 +0000
+Received: from CY4PR15MB1463.namprd15.prod.outlook.com
+ ([fe80::39f5:87bb:21d:2031]) by CY4PR15MB1463.namprd15.prod.outlook.com
+ ([fe80::39f5:87bb:21d:2031%10]) with mapi id 15.20.1987.014; Fri, 21 Jun 2019
+ 09:15:00 +0000
+From:   Jens Axboe <axboe@fb.com>
+To:     =?utf-8?B?TWF0aWFzIEJqw7hybGluZw==?= <mb@lightnvm.io>
+CC:     "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [GIT PULL 0/2] lightnvm updates for 5.3
+Thread-Topic: [GIT PULL 0/2] lightnvm updates for 5.3
+Thread-Index: AQHVKBFxHHI1YIZeCES8RExyO+fe0Kal02qA
+Date:   Fri, 21 Jun 2019 09:14:59 +0000
+Message-ID: <a3ca86b4-42ad-006f-e2f2-6c63049ad5fb@fb.com>
+References: <20190621091200.23168-1-mb@lightnvm.io>
+In-Reply-To: <20190621091200.23168-1-mb@lightnvm.io>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: HE1PR05CA0306.eurprd05.prod.outlook.com
+ (2603:10a6:7:93::37) To CY4PR15MB1463.namprd15.prod.outlook.com
+ (2603:10b6:903:fa::10)
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [5.186.115.204]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: ccc7b057-747b-44c2-0500-08d6f628ef4f
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:CY4PR15MB1814;
+x-ms-traffictypediagnostic: CY4PR15MB1814:
+x-microsoft-antispam-prvs: <CY4PR15MB18143FA7969D0EC25984A964C0E70@CY4PR15MB1814.namprd15.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:1186;
+x-forefront-prvs: 0075CB064E
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(346002)(136003)(366004)(396003)(376002)(199004)(189003)(316002)(99286004)(2616005)(26005)(102836004)(6916009)(5660300002)(52116002)(476003)(76176011)(66066001)(86362001)(31696002)(14454004)(71446004)(53546011)(68736007)(3846002)(11346002)(6116002)(25786009)(386003)(6506007)(36756003)(446003)(6246003)(4326008)(186003)(6512007)(6486002)(2906002)(486006)(6436002)(73956011)(66946007)(66476007)(64756008)(66446008)(66556008)(558084003)(54906003)(8936002)(81156014)(81166006)(8676002)(256004)(31686004)(53936002)(71200400001)(71190400001)(229853002)(7736002)(305945005)(478600001);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR15MB1814;H:CY4PR15MB1463.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: fb.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: VmaITFq7xK09b4aHiUx5phubQGtdyoKRW2SMmWB5TdDMhEyi/9yi2hQxEhp1C1udoRgSUTpXlL70Agky7g8weQmJnoTenMQXzpcmnaYPUhRfU+8a7eCAepG24HRnzkgs8eogyz+OMRe8ZXuZJk23HSUXdUS0w/d9cYIS9F1nQ1aI4VcqO9LFxkW3Z76wDYl7TY8wDOpaXopWDn1A2ioExu3P+2r7+R40frqZjlPh/CEztweHw7krZJQ76Lx3snXLcLPZ3Z/mGaNubjHCxTEBrgtBy/DJQ2s+kLnuqItWWdeLbuQsd6+LgWxRFvTsOI/vIVRBGayElEasC47DJp7mQLrWzZcoiNCtAdW65oHQREbLyUQQkocacdhZgcQmpXouPqTjLRLNn+5OrBqPkw99V3tqtpexXfmI3Q4IoZe4jIE=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <BFC8252CF0F4B243AB2D07557DA31C5E@namprd15.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1561108050.1777.0@crapouillou.net>
-X-Operating-System: Linux phenom 4.19.0-5-amd64 
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-MS-Exchange-CrossTenant-Network-Message-Id: ccc7b057-747b-44c2-0500-08d6f628ef4f
+X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Jun 2019 09:15:00.2999
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: axboe@fb.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR15MB1814
+X-OriginatorOrg: fb.com
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-21_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=825 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1906210077
+X-FB-Internal: deliver
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 21, 2019 at 11:07:30AM +0200, Paul Cercueil wrote:
-> 
-> 
-> Le ven. 21 juin 2019 à 11:04, Daniel Vetter <daniel@ffwll.ch> a écrit :
-> > On Thu, Jun 20, 2019 at 04:15:59PM +0200, Paul Cercueil wrote:
-> > > 
-> > > 
-> > >  Le mer. 19 juin 2019 à 14:26, Sam Ravnborg <sam@ravnborg.org> a
-> > > écrit :
-> > >  > Hi Paul.
-> > >  >
-> > >  > On Mon, Jun 03, 2019 at 05:23:31PM +0200, Paul Cercueil wrote:
-> > >  > >  Add a KMS driver for the Ingenic JZ47xx family of SoCs.
-> > >  > >  This driver is meant to replace the aging jz4740-fb driver.
-> > >  > >
-> > >  > >  This driver does not make use of the simple pipe helper, for
-> > > the
-> > >  > > reason
-> > >  > >  that it will soon be updated to support more advanced features
-> > > like
-> > >  > >  multiple planes, IPU integration for colorspace conversion and
-> > >  > > up/down
-> > >  > >  scaling, support for DSI displays, and TV-out and HDMI outputs.
-> > >  > >
-> > >  > >  Signed-off-by: Paul Cercueil <paul@crapouillou.net>
-> > >  > >  Tested-by: Artur Rojek <contact@artur-rojek.eu>
-> > >  > >  ---
-> > >  > >
-> > >  > >  Notes:
-> > >  > >      v2: - Remove custom handling of panel. The panel is now
-> > >  > > discovered using
-> > >  > >      	  the standard API.
-> > >  > >      	- Lots of small tweaks suggested by upstream
-> > >  > >
-> > >  > >      v3: - Use devm_drm_dev_init()
-> > >  > >      	- Update compatible strings to -lcd instead of -drm
-> > >  > >      	- Add destroy() callbacks to plane and crtc
-> > >  > >      	- The ingenic,lcd-mode is now read from the bridge's DT
-> > > node
-> > >  > >
-> > >  > >      v4: Remove ingenic,lcd-mode property completely. The
-> > > various
-> > >  > > modes are now
-> > >  > >      	deduced from the connector type, the pixel format or the
-> > > bus
-> > >  > > flags.
-> > >  > >
-> > >  > >      v5: - Fix framebuffer size incorrectly calculated for 24bpp
-> > >  > > framebuffers
-> > >  > >      	- Use 32bpp framebuffer instead of 16bpp, as it'll work
-> > > with
-> > >  > > both
-> > >  > >      	  16-bit and 24-bit panel
-> > >  > >      	- Get rid of drm_format_plane_cpp() which has been dropped
-> > >  > > upstream
-> > >  > >      	- Avoid using drm_format_info->depth, which is deprecated.
-> > >  > In the drm world we include the revision notes in the changelog.
-> > >  > So I did this when I applied it to drm-misc-next.
-> > >  >
-> > >  > Fixed a few trivial checkpatch warnings about indent too.
-> > >  > There was a few too-long-lines warnings that I ignored. Fixing
-> > > them
-> > >  > would have hurt readability.
-> > > 
-> > >  Thanks.
-> > > 
-> > >  > I assume you will maintain this driver onwards from now.
-> > >  > Please request drm-misc commit rights (see
-> > >  > https://www.freedesktop.org/wiki/AccountRequests/)
-> > >  > You will need a legacy SSH account.
-> > > 
-> > >  I requested an account here:
-> > >  https://gitlab.freedesktop.org/freedesktop/freedesktop/issues/162
-> > 
-> > This 404s for me. Did you set the issue to private by any chance? Or
-> > deleted already again?
-> > -Daniel
-> 
-> Sorry, yes, I set it to private. I thought I had to :(
-
-Well I can't ack it if its private, so please change that. Also,
-everything is public around here, or almost everything ...
--Daniel
-
-> 
-> -Paul
-> 
-> 
-> > > 
-> > >  > And you should familiarize yourself with the maintainer-tools:
-> > >  > https://drm.pages.freedesktop.org/maintainer-tools/index.html
-> > >  >
-> > >  > For my use I use "dim update-branches; dim apply; dim push
-> > >  > So only a small subset i needed for simple use.
-> > >  >
-> > >  > 	Sam
-> > > 
-> > > 
-> > 
-> > --
-> > Daniel Vetter
-> > Software Engineer, Intel Corporation
-> > http://blog.ffwll.ch
-> 
-> 
-
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+T24gNi8yMS8xOSAzOjExIEFNLCBNYXRpYXMgQmrDuHJsaW5nIHdyb3RlOg0KPiBIaSBKZW5zLA0K
+PiANCj4gQSBjb3VwbGUgb2YgcGF0Y2hlcyBmb3IgdGhlIDUuMyB3aW5kb3cuIEdlZXJ0IGZpeGVk
+IGFuIHVuaW5pdGlhbGl6ZWQNCj4gcG9pbnRlciBidWcsIGFuZCBIZWluZXIgZml4ZWQgdXAgYSBi
+dWcgd2hlbiBtZXJnaW5nIGJpbyBwYWdlcyBpbiBwYmxrLg0KDQpBcHBsaWVkLCB0aGFua3MuDQoN
+Ci0tIA0KSmVucyBBeGJvZQ0KDQo=
