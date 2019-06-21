@@ -2,72 +2,176 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7A9AE4ED0A
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 18:20:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DECD44ED00
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 18:20:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726594AbfFUQUR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Jun 2019 12:20:17 -0400
-Received: from mga04.intel.com ([192.55.52.120]:13108 "EHLO mga04.intel.com"
+        id S1726498AbfFUQTg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Jun 2019 12:19:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52218 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726557AbfFUQUO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Jun 2019 12:20:14 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Jun 2019 09:20:14 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.63,401,1557212400"; 
-   d="scan'208";a="312029878"
-Received: from black.fi.intel.com (HELO black.fi.intel.com.) ([10.237.72.28])
-  by orsmga004.jf.intel.com with ESMTP; 21 Jun 2019 09:20:12 -0700
-From:   Alexander Shishkin <alexander.shishkin@linux.intel.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Ammy Yi <ammy.yi@intel.com>
-Subject: [GIT PULL 3/4] intel_th: msu: Fix single mode with disabled IOMMU
-Date:   Fri, 21 Jun 2019 19:19:29 +0300
-Message-Id: <20190621161930.60785-4-alexander.shishkin@linux.intel.com>
+        id S1726052AbfFUQTf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Jun 2019 12:19:35 -0400
+Received: from localhost.localdomain (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 75F63208CA;
+        Fri, 21 Jun 2019 16:19:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1561133974;
+        bh=/kwntWQW3LP0jIYi0ujmhqQBYlYdyIflNjwJ6hVtcyk=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=DeVZG3oHwcAJHg/sjbWMBLJuxrr2U8BBKSwHdXkkxtf531RZUR33wKuWqtOg0AmDZ
+         EgkIklMGEDcSGoS4PmsCKhkilU6HppGV9EpIurkBdhEv2JLsm9rFdd+NPJg/HdZWk8
+         srhKN2eMvErjIa3kjyKkG7oDbkrEHCC9YFY9Movo=
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Steven Rostedt <rostedt@goodmis.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>
+Cc:     Ingo Molnar <mingo@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: [RFC PATCH 09/11] tracing: of: Add trace event settings
+Date:   Sat, 22 Jun 2019 01:19:30 +0900
+Message-Id: <156113396992.28344.5633907708861645713.stgit@devnote2>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190621161930.60785-1-alexander.shishkin@linux.intel.com>
-References: <20190621161930.60785-1-alexander.shishkin@linux.intel.com>
+In-Reply-To: <156113387975.28344.16009584175308192243.stgit@devnote2>
+References: <156113387975.28344.16009584175308192243.stgit@devnote2>
+User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit 4e0eaf239fb3 ("intel_th: msu: Fix single mode with IOMMU") switched
-the single mode code to use dma mapping pages obtained from the page
-allocator, but with IOMMU disabled, that may lead to using SWIOTLB bounce
-buffers and without additional sync'ing, produces empty trace buffers.
+Add per-event settings, which includes filter and actions.
 
-Fix this by using a DMA32 GFP flag to the page allocation in single mode,
-as the device supports full 32-bit DMA addressing.
-
-Signed-off-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Fixes: 4e0eaf239fb3 ("intel_th: msu: Fix single mode with IOMMU")
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Reported-by: Ammy Yi <ammy.yi@intel.com>
+Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
 ---
- drivers/hwtracing/intel_th/msu.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ kernel/trace/trace_events_trigger.c |    2 -
+ kernel/trace/trace_of.c             |   81 +++++++++++++++++++++++++++++++++++
+ 2 files changed, 82 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/hwtracing/intel_th/msu.c b/drivers/hwtracing/intel_th/msu.c
-index 6bfce03c6489..cfd48c81b9d9 100644
---- a/drivers/hwtracing/intel_th/msu.c
-+++ b/drivers/hwtracing/intel_th/msu.c
-@@ -667,7 +667,7 @@ static int msc_buffer_contig_alloc(struct msc *msc, unsigned long size)
- 		goto err_out;
+diff --git a/kernel/trace/trace_events_trigger.c b/kernel/trace/trace_events_trigger.c
+index 2a2912cb4533..74a19c18219f 100644
+--- a/kernel/trace/trace_events_trigger.c
++++ b/kernel/trace/trace_events_trigger.c
+@@ -208,7 +208,7 @@ static int event_trigger_regex_open(struct inode *inode, struct file *file)
+ 	return ret;
+ }
  
- 	ret = -ENOMEM;
--	page = alloc_pages(GFP_KERNEL | __GFP_ZERO, order);
-+	page = alloc_pages(GFP_KERNEL | __GFP_ZERO | GFP_DMA32, order);
- 	if (!page)
- 		goto err_free_sgt;
+-static int trigger_process_regex(struct trace_event_file *file, char *buff)
++int trigger_process_regex(struct trace_event_file *file, char *buff)
+ {
+ 	char *command, *next = buff;
+ 	struct event_command *p;
+diff --git a/kernel/trace/trace_of.c b/kernel/trace/trace_of.c
+index 5e34e2475d42..696f59234e62 100644
+--- a/kernel/trace/trace_of.c
++++ b/kernel/trace/trace_of.c
+@@ -22,6 +22,7 @@ extern int ftrace_set_clr_event(struct trace_array *tr, char *buf, int set);
+ extern void __init trace_init_tracepoint_printk(void);
+ extern ssize_t tracing_resize_ring_buffer(struct trace_array *tr,
+ 					  unsigned long size, int cpu_id);
++extern int trigger_process_regex(struct trace_event_file *file, char *buff);
  
--- 
-2.20.1
+ static void __init
+ trace_of_set_ftrace_options(struct trace_array *tr, struct device_node *node)
+@@ -98,6 +99,85 @@ trace_of_enable_events(struct trace_array *tr, struct device_node *node)
+ 	}
+ }
+ 
++static void __init
++trace_of_init_one_event(struct trace_array *tr, struct device_node *node)
++{
++	struct trace_event_file *file;
++	struct property *prop;
++	char buf[MAX_BUF_LEN];
++	char *bufp;
++	const char *p;
++	int err;
++
++	if (!of_node_name_prefix(node, "event"))
++		return;
++
++	err = of_property_read_string(node, "event", &p);
++	if (err) {
++		pr_err("Failed to find event on %s\n", of_node_full_name(node));
++		return;
++	}
++
++	err = strlcpy(buf, p, ARRAY_SIZE(buf));
++	if (err >= ARRAY_SIZE(buf)) {
++		pr_err("Event name is too long: %s\n", p);
++		return;
++	}
++	bufp = buf;
++
++	p = strsep(&bufp, ":");
++	if (!bufp) {
++		pr_err("%s has no group name\n", buf);
++		return;
++	}
++
++	mutex_lock(&event_mutex);
++	file = find_event_file(tr, buf, bufp);
++	if (!file) {
++		pr_err("Failed to find event: %s\n", buf);
++		return;
++	}
++
++	err = of_property_read_string(node, "filter", &p);
++	if (!err) {
++		if (strlcpy(buf, p, ARRAY_SIZE(buf)) >= ARRAY_SIZE(buf)) {
++			pr_err("filter string is too long: %s\n", p);
++			return;
++		}
++
++		if (apply_event_filter(file, buf) < 0) {
++			pr_err("Failed to apply filter: %s\n", buf);
++			return;
++		}
++	}
++
++	of_property_for_each_string(node, "actions", prop, p) {
++		if (strlcpy(buf, p, ARRAY_SIZE(buf)) >= ARRAY_SIZE(buf)) {
++			pr_err("action string is too long: %s\n", p);
++			continue;
++		}
++
++		if (trigger_process_regex(file, buf) < 0)
++			pr_err("Failed to apply an action: %s\n", buf);
++	}
++
++	if (of_property_read_bool(node, "enable")) {
++		if (trace_event_enable_disable(file, 1, 0) < 0)
++			pr_err("Failed to enable event node: %s\n",
++				of_node_full_name(node));
++	}
++	mutex_unlock(&event_mutex);
++}
++
++static void __init
++trace_of_init_events(struct trace_array *tr, struct device_node *node)
++{
++	struct device_node *enode;
++
++	for_each_child_of_node(node, enode)
++		trace_of_init_one_event(tr, enode);
++}
++
+ static void __init
+ trace_of_enable_tracer(struct trace_array *tr, struct device_node *trace_node)
+ {
+@@ -126,6 +206,7 @@ static int __init trace_of_init(void)
+ 		goto end;
+ 
+ 	trace_of_set_ftrace_options(tr, trace_node);
++	trace_of_init_events(tr, trace_node);
+ 	trace_of_enable_events(tr, trace_node);
+ 	trace_of_enable_tracer(tr, trace_node);
+ 
 
