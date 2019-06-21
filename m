@@ -2,232 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E0E9C4E118
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 09:21:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 86D854E115
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 09:20:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726296AbfFUHV5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Jun 2019 03:21:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45940 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726025AbfFUHV4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Jun 2019 03:21:56 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B2A1A206E0;
-        Fri, 21 Jun 2019 07:21:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561101715;
-        bh=BEm/q++STfaV62as0+wcSgtLxmizISkWXiUqnVMMcA8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=TWKaDNQi0vZQLYHOjm5oSwQZDBExUBu0mcyVTTIIuKM2dcRnN/k5wl3PN+CJ0PYTa
-         3/PkfR0ytMUNdyjY8JcoS9yasedMvXB5336kHhrolzA41NbVrRIfXH2fEM2jCQMx0f
-         HSxIHzcVBegtI8YwRWqMAJ0jKObS+aICiRmMc3M0=
-Date:   Fri, 21 Jun 2019 09:21:52 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Cc:     Johan Hovold <johan@kernel.org>,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab@s-opensource.com>,
-        Mauro Carvalho Chehab <mchehab@infradead.org>,
-        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        Stefan Achatz <erazor_de@users.sourceforge.net>
-Subject: Re: [PATCH 04/14] ABI: better identificate tables
-Message-ID: <20190621072152.GA21300@kroah.com>
-References: <cover.1560477540.git.mchehab+samsung@kernel.org>
- <6bc45c0d5d464d25d4d16eceac48a2f407166944.1560477540.git.mchehab+samsung@kernel.org>
- <20190619125135.GG25248@localhost>
- <20190619105633.7f7315a5@coco.lan>
- <20190619150207.GA19346@kroah.com>
- <20190619131408.26b45c3b@coco.lan>
- <20190620112749.5e3fb4e9@coco.lan>
+        id S1726194AbfFUHUn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Jun 2019 03:20:43 -0400
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:33973 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726025AbfFUHUm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Jun 2019 03:20:42 -0400
+Received: by mail-oi1-f193.google.com with SMTP id a128so4026763oib.1
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2019 00:20:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=SMhJ1n4qOdtBd/fX0oiTCQ/7TMu0IHm4BE9A21n2lt4=;
+        b=BRkK4+v8VVQ1hYjK43YeflGS1uxzyu0aZIt1GSzeQuVKxYcSSTQzAuwV5p1nSPPtrh
+         IdalGPmmQjUbiPxsL7xUNeR9FruGaC7W3wsHBkcJi6q6oFz9yJ94q1GGnBEHSaNINCSq
+         zekEVDOTttB1y+o+9qQeHAHf19xBgQqTVvmROBGUHhNoZl8jzJXC7h9WidFvmE5MVSOz
+         ujmQw+fPIqzUNdkRejpm782phwWKH3xy4AEwvy3nSFuhN+he5YbQE0RFocRWAvScO4C6
+         3brCHXTTKo/ppIa/am1Wa3dgL5aQA0b5U3tjNNnzA7aGLl3Saqp9SfoNXJJ2Y7vf3Z/n
+         a7lg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=SMhJ1n4qOdtBd/fX0oiTCQ/7TMu0IHm4BE9A21n2lt4=;
+        b=M22ehMlE2rp/L07A11sFEijm7ZzsfpUGdRV4PjWZ2WiZZAiNCQLyi/sgWAhex7HMwo
+         ix/Is9ibPCoB7e6MyTsGu+X1BUzF1H64RCjymeWckGUqlk8fPl+PNduFDMzkQcmb5Ruq
+         48GMpSzkK53GbS8GGiMTMF2HZkfoQ3D7jMm2m+orhtmjl2qB7JCP+FTqvB/E6kZmp8l9
+         WWNA7DImIYudcef0yubetidq8Zss1H/0oCSRZM3ByKHmuaqpdkxop0uNkQGP9xS7S02p
+         VeUa+3bfEl5YxWNwaH9nv7QXJ5Mz0hQaW0x262mtAgxiWZZqs8ZWzgIU4RIrpzosPdEX
+         Z0cA==
+X-Gm-Message-State: APjAAAVIJl/CfefKWZc+m3VVOcTs4OWpuZi4OQOttSyfUs2xICpTFAsm
+        V5aNmOEvnNyAZYUoMmBW34i5euVJECVdXsBPFwM=
+X-Google-Smtp-Source: APXvYqyQdpCbmT03bH87iRjoaZkomb+caFAYsy5/Rv4fmw9uCFmXPqA2aVDhhFEeq5vU0pQi0lUH5GIMnwR+uS+n6lE=
+X-Received: by 2002:aca:b9d4:: with SMTP id j203mr1805994oif.5.1561101641950;
+ Fri, 21 Jun 2019 00:20:41 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190620112749.5e3fb4e9@coco.lan>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+References: <1561080911-22655-1-git-send-email-wanpengli@tencent.com> <20190621065842.GF3436@hirez.programming.kicks-ass.net>
+In-Reply-To: <20190621065842.GF3436@hirez.programming.kicks-ass.net>
+From:   Wanpeng Li <kernellwp@gmail.com>
+Date:   Fri, 21 Jun 2019 15:21:54 +0800
+Message-ID: <CANRm+CxvtjbhoGtwzK64VcBFVpEnoPFaicvbQx5isc2Wdno+MA@mail.gmail.com>
+Subject: Re: [PATCH v2] sched/isolation: Prefer housekeeping cpu in local node
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>, Ingo Molnar <mingo@redhat.com>,
+        Frederic Weisbecker <frederic@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 20, 2019 at 11:27:49AM -0300, Mauro Carvalho Chehab wrote:
-> Em Wed, 19 Jun 2019 13:14:08 -0300
-> Mauro Carvalho Chehab <mchehab+samsung@kernel.org> escreveu:
-> 
-> > Em Wed, 19 Jun 2019 17:02:07 +0200
-> > Greg Kroah-Hartman <gregkh@linuxfoundation.org> escreveu:
-> > 
-> > > On Wed, Jun 19, 2019 at 10:56:33AM -0300, Mauro Carvalho Chehab wrote:  
-> > > > Hi Johan,
-> > > > 
-> > > > Em Wed, 19 Jun 2019 14:51:35 +0200
-> > > > Johan Hovold <johan@kernel.org> escreveu:
-> > > >     
-> > > > > On Thu, Jun 13, 2019 at 11:04:10PM -0300, Mauro Carvalho Chehab wrote:    
-> > > > > > From: Mauro Carvalho Chehab <mchehab@s-opensource.com>
-> > > > > > 
-> > > > > > When parsing via script, it is important to know if the script
-> > > > > > should consider a description as a literal block that should
-> > > > > > be displayed as-is, or if the description can be considered
-> > > > > > as a normal text.
-> > > > > > 
-> > > > > > Change descriptions to ensure that the preceding line of a table
-> > > > > > ends with a colon. That makes easy to identify the need of a
-> > > > > > literal block.      
-> > > > > 
-> > > > > In the cover letter you say that the first four patches of this series,
-> > > > > including this one, "fix some ABI descriptions that are violating the
-> > > > > syntax described at Documentation/ABI/README". This seems a bit harsh,
-> > > > > given that it's you that is now *introducing* a new syntax requirement
-> > > > > to assist your script.    
-> > > > 
-> > > > Yeah, what's there at the cover letter doesn't apply to this specific
-> > > > patch. The thing is that I wrote this series a lot of time ago (2016/17).
-> > > > 
-> > > > I revived those per a request at KS ML, as we still need to expose the
-> > > > ABI content on some book that will be used by userspace people.
-> > > > 
-> > > > So, I just rebased it on the top of curent Kernel, add a cover letter
-> > > > with the things I remembered and re-sent.
-> > > > 
-> > > > In the specific case of this patch, the ":" there actually makes sense
-> > > > for someone that it is reading it as a text file, and it is an easy
-> > > > hack to make it parse better.
-> > > >     
-> > > > > Specifically, this new requirement isn't documented anywhere AFAICT, so
-> > > > > how will anyone adding new ABI descriptions learn about it?    
-> > > > 
-> > > > Yeah, either that or provide an alternative to "Description" tag, to be
-> > > > used with more complex ABI descriptions.
-> > > > 
-> > > > One of the things that occurred to me, back on 2017, is that we should
-> > > > have a way to to specify that an specific ABI description would have
-> > > > a rich format. Something like:
-> > > > 
-> > > > What:		/sys/bus/usb/devices/<busnum>-<devnum>:<config num>.<interface num>/<hid-bus>:<vendor-id>:<product-id>.<num>/pyra/roccatpyra<minor>/actual_cpi
-> > > > Date:		August 2010
-> > > > Contact:	Stefan Achatz <erazor_de@users.sourceforge.net>
-> > > > RST-Description:
-> > > > 		It is possible to switch the cpi setting of the mouse with the
-> > > > 		press of a button.
-> > > > 		When read, this file returns the raw number of the actual cpi
-> > > > 		setting reported by the mouse. This number has to be further
-> > > > 		processed to receive the real dpi value:
-> > > > 
-> > > > 		===== =====
-> > > > 		VALUE DPI
-> > > > 		===== =====
-> > > > 		1     400
-> > > > 		2     800
-> > > > 		4     1600
-> > > > 		===== =====
-> > > > 
-> > > > With that, the script will know that the description contents will be using
-> > > > the ReST markup, and parse it accordingly. Right now, what it does, instead,
-> > > > is to place the description on a code-block, e. g. it will produce this
-> > > > output for the description:
-> > > > 
-> > > > ::
-> > > > 
-> > > > 		It is possible to switch the cpi setting of the mouse with the
-> > > > 		press of a button.
-> > > > 		When read, this file returns the raw number of the actual cpi
-> > > > 		setting reported by the mouse. This number has to be further
-> > > > 		processed to receive the real dpi value:
-> > > > 
-> > > > 		VALUE DPI
-> > > > 		1     400
-> > > > 		2     800
-> > > > 		4     1600
-> > > > 
-> > > > 
-> > > > Greg, 
-> > > > 
-> > > > what do you think?    
-> > > 
-> > > I don't know when "Description" and "RST-Description" would be used.
-> > > Why not just parse "Description" like rst text and if things are "messy"
-> > > we fix them up as found, like you did with the ":" here?  It doesn't
-> > > have to be complex, we can always fix them up after-the-fact if new
-> > > stuff gets added that doesn't quite parse properly.
-> > > 
-> > > Just like we do for most kernel-doc formatting :)  
-> > 
-> > Works for me. Yet, I guess I tried that, back on 2017. 
-> > 
-> > If I'm not mistaken, the initial patchset to solve the broken things 
-> > won't be small, and will be require a lot of attention in order to
-> > identify what's broken and where.
-> > 
-> > Btw, one thing is to pass at ReST validation. Another thing is to
-> > produce something that people can read. 
-> > 
-> > Right now, the pertinent logic at the script I wrote (scripts/get_abi.pl)
-> > is here:
-> > 
-> >                 if (!($desc =~ /^\s*$/)) {
-> >                         if ($desc =~ m/\:\n/ || $desc =~ m/\n[\t ]+/  || $desc =~ m/[\x00-\x08\x0b-\x1f\x7b-\xff]/) {
-> >                                 # put everything inside a code block
-> >                                 $desc =~ s/\n/\n /g;
-> > 
-> >                                 print "::\n\n";
-> >                                 print " $desc\n\n";
-> >                         } else {
-> >                                 # Escape any special chars from description
-> >                                 $desc =~s/([\x00-\x08\x0b-\x1f\x21-\x2a\x2d\x2f\x3c-\x40\x5c\x5e-\x60\x7b-\xff])/\\$1/g;
-> > 
-> >                                 print "$desc\n\n";
-> >                         }
-> >                 }
-> > 
-> > If it discovers something weird enough, it just places everything
-> > into a comment block. Otherwise, it assumes that it is a plain
-> > text and that any special characters should be escaped.
-> > 
-> > If the above block is replaced by a simple:
-> > 
-> > 		print "$desc\n\n";
-> > 
-> > The description content will be handled as a ReST file.
-> > 
-> > I don't have any time right now to do this change and to handle the
-> > warnings that will start to popup.
-> > 
-> > Btw, a single replace there is enough to show the amount of problems that
-> > it will rise, as it will basically break Sphinx build with:
-> > 
-> > 	reading sources... [  1%] admin-guide/abi-testing
-> > 	reST markup error:
-> > 	get_abi.pl rest --dir $srctree/Documentation/ABI/testing:45261: (SEVERE/4) Missing matching underline for section title overline.
-> > 	
-> > 	==========================
-> > 	PCIe Device AER statistics
-> > 	These attributes show up under all the devices that are AER capable. These
-> 
-> To be clear here: the problem with the above is that ReST has zero
-> tolerance and actually behaves like a crash, if it receives something like:
-> 
->    ==========================
->    PCIe Device AER statistics
->    ==========================
-> 
-> For it to work, it has to have zero spaces before ===..=== line, e. g.:
-> 
-> ==========================
-> PCIe Device AER statistics
-> ==========================
-> 
-> Ok, maybe we could try to teach the parser a way to identify the initial
-> spacing of the first description line and remove that amount of 
-> spaces/tabs for the following lines, but it may require some heuristics.
+On Fri, 21 Jun 2019 at 14:58, Peter Zijlstra <peterz@infradead.org> wrote:
+>
+> On Fri, Jun 21, 2019 at 09:35:11AM +0800, Wanpeng Li wrote:
+> > From: Wanpeng Li <wanpengli@tencent.com>
+> >
+> > In real product setup, there will be houseeking cpus in each nodes, it
+> > is prefer to do housekeeping from local node, fallback to global online
+> > cpumask if failed to find houseeking cpu from local node.
+> >
+> > Cc: Ingo Molnar <mingo@redhat.com>
+> > Cc: Peter Zijlstra <peterz@infradead.org>
+> > Cc: Frederic Weisbecker <frederic@kernel.org>
+> > Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
+>
+> Looks good; did it actually work? :-)
 
-Or we can clean this type of thing up by hand :)
+Yeah, it works! :)
 
-Let's see how bad this gets, the documentation in these files should not
-be very complex as they _should_ only be one-value-per-file, but as you
-have shown in this very example, that rule is violated :(
+>
+> > diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
+> > index 63184cf..3d3fb04 100644
+> > --- a/kernel/sched/topology.c
+> > +++ b/kernel/sched/topology.c
+> > @@ -1726,6 +1726,20 @@ void sched_domains_numa_masks_clear(unsigned int cpu)
+> >
+> >  #endif /* CONFIG_NUMA */
+>
+>
+> Please double check this function; I wrote it in a hurry :-) Also maybe
 
-thanks,
+So smart. :)
 
-greg k-h
+> add a wee comment on top like:
+>
+> /*
+>  * sched_numa_file_closest() - given the NUMA topology, find the cpu
+>  *                             closest to @cpu from @cpumask.
+>  * cpumask: cpumask to find a cpu from
+>  * cpu: cpu to be close to
+>  *
+>  * returns: cpu, or >= nr_cpu_ids when nothing found (or !NUMA).
+>  */
+>
+
+Will do in v3.
+
+Regards,
+Wanpeng Li
+
+> > +int sched_numa_find_closest(const struct cpumask *cpus, int cpu)
+> > +{
+> > +#ifdef CONFIG_NUMA
+> > +     int i, j = cpu_to_node(cpu);
+> > +
+> > +     for (i = 0; i < sched_domains_numa_levels; i++) {
+> > +             cpu = cpumask_any_and(cpus, sched_domains_numa_masks[i][j]);
+> > +             if (cpu < nr_cpu_ids)
+> > +                     return cpu;
+> > +     }
+> > +#endif
+> > +     return nr_cpu_ids;
+> > +}
