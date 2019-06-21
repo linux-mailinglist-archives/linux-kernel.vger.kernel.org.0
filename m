@@ -2,90 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D6B84EFBB
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 21:59:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 45B4E4EFC4
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 22:05:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726145AbfFUT70 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Jun 2019 15:59:26 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:55153 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725985AbfFUT70 (ORCPT
+        id S1726200AbfFUUFi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Jun 2019 16:05:38 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:56966 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725985AbfFUUFh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Jun 2019 15:59:26 -0400
-Received: by mail-wm1-f67.google.com with SMTP id g135so7319510wme.4;
-        Fri, 21 Jun 2019 12:59:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=rrgP+tN7q+KdQueUxlF4aRY0BkMcXUVAckmsuIhwpT0=;
-        b=L8tes+emvST9pmj/IRzX9+hojeOq4GZDIGhXxywVATI8gFUF36BSHIDNOPx7EIFvlg
-         Dqe2ZBXumHdHNB1+AaiBqOA2ciM0EzKSuqJHmqrR4CY5zxj6myfpVBLFs6HNNVHzuJ/1
-         nhMcwOfXVXk1CSdtsVbkKXKgFp1yssRB/NXBEV/sbWRH0Q58Q/2V8sNWgQyyq00gNLee
-         R7uLrPpIAr8oMpiNVuhE+zjJn6CY+v2PDedNHna3YUOukRp4NOqOualC7fuoGOqHVCqx
-         iH80DV2EdO8Fwg7g5PpHdcs0d4hG6uqbt8HgPDt6BbL37SL9c1CIx0hSkPA+0C12TLn/
-         tLMg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=rrgP+tN7q+KdQueUxlF4aRY0BkMcXUVAckmsuIhwpT0=;
-        b=YfTFUWBlurPB21AnPQS1yRWZHjlIzJcnJAG7tEtiuagqZKSPzHHkVlhtbGHaOTn4Zw
-         kaQPZo3m5PwymEv4PMXx/cphMVmrhMMOuWJKaXPEjsh0FnW+JD7UXPWdTlK2b7hQlXAb
-         7DIjf8xPv+4UZXR6n4IYs3elIJAomAyk03jwg5Gp2QZstTLFWe0xybTVIwHhYSXngby/
-         HTlqseS20/46ph5DJVHiECFPi5pX5aZ7A9rjPCEC2zzu/H4Ve7lhVluHGeJzjwfg9THl
-         4ONZ5P6vFvVjzshdwzn780I4oMjqu4fvZifjf+Cpwi9teOrnxQffW/srqj4EP2+HHWTy
-         A7Qw==
-X-Gm-Message-State: APjAAAWJekkrbYi/PRy02wNYGCjoFuj/RfMEwbgsTmH6/Yl7WOFKzKKB
-        PqUjkvoBa8TzO5sYYUv27sA=
-X-Google-Smtp-Source: APXvYqxBKJ3IjnD6wDUtMi2m6hREJvgcNdbUZ0ji3JRi+mfPQSCt2CnZ9Or3TiA5SwO0YHSVt46P6g==
-X-Received: by 2002:a1c:a654:: with SMTP id p81mr4872126wme.36.1561147163961;
-        Fri, 21 Jun 2019 12:59:23 -0700 (PDT)
-Received: from debian64.daheim (pD9E297F7.dip0.t-ipconnect.de. [217.226.151.247])
-        by smtp.gmail.com with ESMTPSA id g19sm2198006wmg.10.2019.06.21.12.59.23
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Fri, 21 Jun 2019 12:59:23 -0700 (PDT)
-Received: from localhost.daheim ([127.0.0.1] helo=debian64.localnet)
-        by debian64.daheim with esmtp (Exim 4.92)
-        (envelope-from <chunkeey@gmail.com>)
-        id 1hePgw-0006iD-KX; Fri, 21 Jun 2019 21:59:22 +0200
-From:   Christian Lamparter <chunkeey@gmail.com>
-To:     Vinod Koul <vkoul@kernel.org>
-Cc:     Mathias Nyman <mathias.nyman@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-arm-msm@vger.kernel.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Christian Lamparter <chunkeey@googlemail.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/5] usb: xhci: add firmware loader for uPD720201 and uPD720202 w/o ROM
-Date:   Fri, 21 Jun 2019 21:59:22 +0200
-Message-ID: <1897697.zOhlaAKarQ@debian64>
-In-Reply-To: <20190621085913.8722-2-vkoul@kernel.org>
-References: <20190621085913.8722-1-vkoul@kernel.org> <20190621085913.8722-2-vkoul@kernel.org>
+        Fri, 21 Jun 2019 16:05:37 -0400
+Received: from p5b06daab.dip0.t-ipconnect.de ([91.6.218.171] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1hePmQ-00060Y-Lz; Fri, 21 Jun 2019 22:05:02 +0200
+Date:   Fri, 21 Jun 2019 22:05:01 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Jacob Pan <jacob.jun.pan@intel.com>
+cc:     Kate Stewart <kstewart@linuxfoundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Jan Kiszka <jan.kiszka@siemens.com>,
+        Ricardo Neri <ricardo.neri@intel.com>,
+        Stephane Eranian <eranian@google.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Wincy Van <fanwenyi0529@gmail.com>,
+        Ashok Raj <ashok.raj@intel.com>, x86 <x86@kernel.org>,
+        Andi Kleen <andi.kleen@intel.com>,
+        Borislav Petkov <bp@suse.de>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Juergen Gross <jgross@suse.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        iommu@lists.linux-foundation.org,
+        Philippe Ombredanne <pombredanne@nexb.com>
+Subject: Re: [RFC PATCH v4 20/21] iommu/vt-d: hpet: Reserve an interrupt
+ remampping table entry for watchdog
+In-Reply-To: <20190621113938.1679f329@jacob-builder>
+Message-ID: <alpine.DEB.2.21.1906212201400.5503@nanos.tec.linutronix.de>
+References: <1558660583-28561-1-git-send-email-ricardo.neri-calderon@linux.intel.com>        <1558660583-28561-21-git-send-email-ricardo.neri-calderon@linux.intel.com>        <alpine.DEB.2.21.1906162049300.1760@nanos.tec.linutronix.de>       
+ <alpine.DEB.2.21.1906171007360.1760@nanos.tec.linutronix.de>        <CABPqkBTai76Bgb4E61tF-mJUkFNxVa4B8M2bxTEYVgBsuAANNQ@mail.gmail.com>        <alpine.DEB.2.21.1906172343120.1963@nanos.tec.linutronix.de>        <20190619084316.71ce5477@jacob-builder>    
+    <alpine.DEB.2.21.1906211732330.5503@nanos.tec.linutronix.de>        <20190621103126.585ca6d3@jacob-builder> <20190621113938.1679f329@jacob-builder>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Friday, June 21, 2019 10:59:09 AM CEST Vinod Koul wrote:
-> +	/*
-> +	 * The Firmware's Data Format is describe in
-> +	 * "6.3 Data Format" R19UH0078EJ0500 Rev.5.00 page 124
-> +	 */
-> +
-> +	/* "Each row is 8 bytes". => firmware size must be a multiple of 8. */
-> +	if (length % 8 != 0)
-> +		dev_warn(&dev->dev, "firmware size is not a multiple of 8.");
+On Fri, 21 Jun 2019, Jacob Pan wrote:
+> On Fri, 21 Jun 2019 10:31:26 -0700
+> Jacob Pan <jacob.jun.pan@intel.com> wrote:
+> 
+> > On Fri, 21 Jun 2019 17:33:28 +0200 (CEST)
+> > Thomas Gleixner <tglx@linutronix.de> wrote:
+> > 
+> > > On Wed, 19 Jun 2019, Jacob Pan wrote:  
+> > > > On Tue, 18 Jun 2019 01:08:06 +0200 (CEST)
+> > > > Thomas Gleixner <tglx@linutronix.de> wrote:    
+> > > > > 
+> > > > > Unless this problem is not solved and I doubt it can be solved
+> > > > > after talking to IOMMU people and studying manuals,    
+> > > >
+> > > > I agree. modify irte might be done with cmpxchg_double() but the
+> > > > queued invalidation interface for IRTE cache flush is shared with
+> > > > DMA and requires holding a spinlock for enque descriptors, QI tail
+> > > > update etc.
+> > > > 
+> > > > Also, reserving & manipulating IRTE slot for hpet via backdoor
+> > > > might not be needed if the HPET PCI BDF (found in ACPI) can be
+> > > > utilized. But it might need more work to add a fake PCI device for
+> > > > HPET.    
+> > > 
+> > > What would PCI/BDF solve?  
+> > I was thinking if HPET is a PCI device then it can naturally
+> > gain slots in IOMMU remapping table IRTEs via PCI MSI code. Then
+> > perhaps it can use the IRQ subsystem to set affinity etc. w/o
+> > directly adding additional helper functions in IRQ remapping code. I
+> > have not followed all the discussions, just a thought.
+> > 
+> I looked at the code again, seems the per cpu HPET code already taken
+> care of HPET MSI management. Why can't we use IR-HPET-MSI chip and
+> domain to allocate and set affinity etc.?
+> Most APIC timer has ARAT not enough per cpu HPET, so per cpu HPET is
+> not used mostly.
 
-It doesn't look like this holds true for the newer K2026090.mem which
-arguably fixes a lot of bugs over K2013080.mem. I think we should remove
-this check and message.
+Sure, we can use that, but that does not allow to move the affinity from
+NMI context either. Same issue with the IOMMU as with the other hack.
 
-Cheers,
-Christian
+Thanks,
 
-
+	tglx
