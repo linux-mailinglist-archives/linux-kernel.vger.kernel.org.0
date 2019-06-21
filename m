@@ -2,41 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 945DD4E85D
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 14:57:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BE3FD4E861
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 14:57:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726933AbfFUM5K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Jun 2019 08:57:10 -0400
-Received: from mail-io1-f69.google.com ([209.85.166.69]:48480 "EHLO
-        mail-io1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726368AbfFUM5J (ORCPT
+        id S1726890AbfFUM5J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Jun 2019 08:57:09 -0400
+Received: from mail-io1-f72.google.com ([209.85.166.72]:44473 "EHLO
+        mail-io1-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726688AbfFUM5J (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 21 Jun 2019 08:57:09 -0400
-Received: by mail-io1-f69.google.com with SMTP id z19so10600088ioi.15
+Received: by mail-io1-f72.google.com with SMTP id i133so10572538ioa.11
         for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2019 05:57:08 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=78tsIkS+lSlJ2Qg9EpWFnHiL10KOQKlqa3jVgJ57mtQ=;
-        b=gbuXE26oAKb/jtrS9YeRGGmOpa5vuJfWjC6p2tA+SA63reAy3mpKX60Kh+v9BBE851
-         3rb5uAOIk8I/LCj2J6HGeeUwBvTT05yGsPx9MnCg5mt1J/g7mH6CzWfAvPHx+ce6tx0y
-         Hkh82HBzv2TQhEZ4VeCaRUYZ2ITz4TFEoGVdQHdBoNH64ZjPTYLAzlvQ9jtaUfaVmyHf
-         pUvJ9f0nsNLXXjUVoy8Hlh9P6K05vt9jc8CyjjPq1AsOCI+mFAVaWWOhph8pJ15pZfuO
-         eIjVMRRvvdJ/3Ga+K1xguKOwgoAS/yi24UCaeYwdwI+8tWYmj3Vu6Y0QtaAOzMsXKKFx
-         rjVw==
-X-Gm-Message-State: APjAAAU4FuPgQH+qfokhvoisz5b5768r0pws4aAub9kVNz07XvjY3YhI
-        4wjjlLMe5BcHf4+w1U1bYBEM9opqzZ1VcMsOMcj3DgT98lnM
-X-Google-Smtp-Source: APXvYqzoY34g/RAfwBy624pHE+aWyayxBonvBmNr10muWigm7v+WgW6nhfDp8GzIsUBQy7P5bBt3DYuV8wT0FuwtL3cTyMHdY83/
+        bh=rrJgEkmhWL/jAI/VVr1E6xB9thGk94zrBrmoibWlXfE=;
+        b=QSJ7GhoPQNjaEH+pFvjCjzufO4d6luothe2ooXDV5hWOKbAkz5XYwfF7PMwUFsWuTZ
+         2p1ViXAxxEtm0kwkRdUpiixBR4vhyXaj++BUlxejSKrdfrukWGoW85bFbNpPg5J/c+nT
+         640f5z5yAO9EPs9bZdo7b9QUx+MmvDJpi+bnL/a7VKOdt6ld/4lzA4HuLkks+7tJ8uDT
+         9BLA2ex2Cfn8HZu3NnlZlmrbLne24Wj243hmbyiLVybt2HJmD9L8XjaBBhQBKxEXEujJ
+         at3hpGTtt7J9rNTCFoWLXBpObll6KPSLd3Dc+PbFeaX7qBVWLwFs/xaMEoiIzkSoE+Eu
+         5hIQ==
+X-Gm-Message-State: APjAAAVGAUswBrl2POpX+gXmZxIUw2J7+WUvS3mKx8uTbfoy9MGjhWef
+        9xyMi+zhcfSO1O33mIbSc01l4Pe9Lg7iMRkQY/WCXUl1f2gK
+X-Google-Smtp-Source: APXvYqwPOGegcwnFEX0aJMbIj9Al8/IJwTfxUbnFQhM/VWS+5moqNPPcR3X3TvCWl7yjicCua4ZleN/YDWWbAReZZfGtuzKytRyO
 MIME-Version: 1.0
-X-Received: by 2002:a6b:bf01:: with SMTP id p1mr3310137iof.181.1561121828652;
+X-Received: by 2002:a05:6602:22cc:: with SMTP id e12mr20577466ioe.192.1561121828208;
  Fri, 21 Jun 2019 05:57:08 -0700 (PDT)
 Date:   Fri, 21 Jun 2019 05:57:08 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000000c4e3e058bd5008d@google.com>
-Subject: KASAN: use-after-free Write in validate_chain
-From:   syzbot <syzbot+55c548ad445cef6063ab@syzkaller.appspotmail.com>
-To:     linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Message-ID: <000000000000058a0f058bd50068@google.com>
+Subject: memory leak in llc_ui_create (2)
+From:   syzbot <syzbot+6bf095f9becf5efef645@syzkaller.appspotmail.com>
+To:     davem@davemloft.net, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        xiyou.wangcong@gmail.com
 Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -49,69 +51,114 @@ syzbot found the following crash on:
 
 HEAD commit:    abf02e29 Merge tag 'pm-5.2-rc6' of git://git.kernel.org/pu..
 git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=128b8be6a00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=28ec3437a5394ee0
-dashboard link: https://syzkaller.appspot.com/bug?extid=55c548ad445cef6063ab
-compiler:       clang version 9.0.0 (/home/glider/llvm/clang  
-80fee25776c2fb61e74c1ecb1a523375c2500b69)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=128ce13aa00000
+console output: https://syzkaller.appspot.com/x/log.txt?x=14cc10b1a00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=56f1da14935c3cce
+dashboard link: https://syzkaller.appspot.com/bug?extid=6bf095f9becf5efef645
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1698d45ea00000
 
 IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+55c548ad445cef6063ab@syzkaller.appspotmail.com
+Reported-by: syzbot+6bf095f9becf5efef645@syzkaller.appspotmail.com
 
-==================================================================
-BUG: KASAN: use-after-free in check_prev_add kernel/locking/lockdep.c:2298  
-[inline]
-BUG: KASAN: use-after-free in check_prevs_add kernel/locking/lockdep.c:2418  
-[inline]
-BUG: KASAN: use-after-free in validate_chain+0x1a35/0x84f0  
-kernel/locking/lockdep.c:2800
-Write of size 8 at addr ffff8880972652b0 by task syz-executor.3/9443
+85.529503][ T7031] 8021q: adding VLAN 0 to HW filter on device batadv0
+2019/06/20 19:36:46 executed programs: 1
+2019/06/20 19:36:51 executed programs: 3
+BUG: memory leak
+unreferenced object 0xffff888118b8d800 (size 2048):
+   comm "syz-executor.0", pid 7054, jiffies 4295036362 (age 12.560s)
+   hex dump (first 32 bytes):
+     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+     1a 00 07 40 00 00 00 00 00 00 00 00 00 00 00 00  ...@............
+   backtrace:
+     [<000000004a3a66c0>] kmemleak_alloc_recursive  
+include/linux/kmemleak.h:43 [inline]
+     [<000000004a3a66c0>] slab_post_alloc_hook mm/slab.h:439 [inline]
+     [<000000004a3a66c0>] slab_alloc mm/slab.c:3326 [inline]
+     [<000000004a3a66c0>] __do_kmalloc mm/slab.c:3658 [inline]
+     [<000000004a3a66c0>] __kmalloc+0x161/0x2c0 mm/slab.c:3669
+     [<00000000cc5a7d28>] kmalloc include/linux/slab.h:552 [inline]
+     [<00000000cc5a7d28>] sk_prot_alloc+0xd6/0x170 net/core/sock.c:1602
+     [<000000000c449f88>] sk_alloc+0x35/0x2f0 net/core/sock.c:1656
+     [<0000000008b99378>] llc_sk_alloc+0x35/0x170 net/llc/llc_conn.c:950
+     [<00000000d4e72aed>] llc_ui_create+0x7b/0x140 net/llc/af_llc.c:173
+     [<00000000d0bfef06>] __sock_create+0x164/0x250 net/socket.c:1424
+     [<0000000058cf7a3c>] sock_create net/socket.c:1475 [inline]
+     [<0000000058cf7a3c>] __sys_socket+0x69/0x110 net/socket.c:1517
+     [<000000003ce548ba>] __do_sys_socket net/socket.c:1526 [inline]
+     [<000000003ce548ba>] __se_sys_socket net/socket.c:1524 [inline]
+     [<000000003ce548ba>] __x64_sys_socket+0x1e/0x30 net/socket.c:1524
+     [<0000000029c8eba9>] do_syscall_64+0x76/0x1a0  
+arch/x86/entry/common.c:301
+     [<00000000dba589d4>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
 
-CPU: 1 PID: 9443 Comm: syz-executor.3 Not tainted 5.2.0-rc5+ #4
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
+BUG: memory leak
+unreferenced object 0xffff888120dd7a00 (size 224):
+   comm "syz-executor.0", pid 7054, jiffies 4295036362 (age 12.560s)
+   hex dump (first 32 bytes):
+     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+     00 10 0c 24 81 88 ff ff 00 d8 b8 18 81 88 ff ff  ...$............
+   backtrace:
+     [<00000000b6c096c6>] kmemleak_alloc_recursive  
+include/linux/kmemleak.h:43 [inline]
+     [<00000000b6c096c6>] slab_post_alloc_hook mm/slab.h:439 [inline]
+     [<00000000b6c096c6>] slab_alloc_node mm/slab.c:3269 [inline]
+     [<00000000b6c096c6>] kmem_cache_alloc_node+0x153/0x2a0 mm/slab.c:3579
+     [<00000000556a01d4>] __alloc_skb+0x6e/0x210 net/core/skbuff.c:194
+     [<0000000085622924>] alloc_skb include/linux/skbuff.h:1054 [inline]
+     [<0000000085622924>] alloc_skb_with_frags+0x5f/0x250  
+net/core/skbuff.c:5328
+     [<00000000ca5b438b>] sock_alloc_send_pskb+0x269/0x2a0  
+net/core/sock.c:2222
+     [<0000000044a5b8c6>] sock_alloc_send_skb+0x32/0x40 net/core/sock.c:2239
+     [<00000000b19d8ca2>] llc_ui_sendmsg+0x10a/0x540 net/llc/af_llc.c:933
+     [<00000000aaeaeaf3>] sock_sendmsg_nosec net/socket.c:646 [inline]
+     [<00000000aaeaeaf3>] sock_sendmsg+0x54/0x70 net/socket.c:665
+     [<000000009ae2ec20>] ___sys_sendmsg+0x393/0x3c0 net/socket.c:2286
+     [<000000003ac4094d>] __sys_sendmsg+0x80/0xf0 net/socket.c:2324
+     [<00000000d3b808ba>] __do_sys_sendmsg net/socket.c:2333 [inline]
+     [<00000000d3b808ba>] __se_sys_sendmsg net/socket.c:2331 [inline]
+     [<00000000d3b808ba>] __x64_sys_sendmsg+0x23/0x30 net/socket.c:2331
+     [<0000000029c8eba9>] do_syscall_64+0x76/0x1a0  
+arch/x86/entry/common.c:301
+     [<00000000dba589d4>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
 
-Allocated by task 1172321806:
-(stack is not available)
+BUG: memory leak
+unreferenced object 0xffff8881178e3800 (size 512):
+   comm "syz-executor.0", pid 7054, jiffies 4295036362 (age 12.560s)
+   hex dump (first 32 bytes):
+     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+     00 00 00 00 ad ad f3 00 00 00 00 00 00 00 00 00  ................
+   backtrace:
+     [<00000000baa5fe0c>] kmemleak_alloc_recursive  
+include/linux/kmemleak.h:43 [inline]
+     [<00000000baa5fe0c>] slab_post_alloc_hook mm/slab.h:439 [inline]
+     [<00000000baa5fe0c>] slab_alloc_node mm/slab.c:3269 [inline]
+     [<00000000baa5fe0c>] kmem_cache_alloc_node_trace+0x15b/0x2a0  
+mm/slab.c:3597
+     [<00000000ef42ca2e>] __do_kmalloc_node mm/slab.c:3619 [inline]
+     [<00000000ef42ca2e>] __kmalloc_node_track_caller+0x38/0x50  
+mm/slab.c:3634
+     [<00000000792340d3>] __kmalloc_reserve.isra.0+0x40/0xb0  
+net/core/skbuff.c:138
+     [<000000003b989a40>] __alloc_skb+0xa0/0x210 net/core/skbuff.c:206
+     [<0000000085622924>] alloc_skb include/linux/skbuff.h:1054 [inline]
+     [<0000000085622924>] alloc_skb_with_frags+0x5f/0x250  
+net/core/skbuff.c:5328
+     [<00000000ca5b438b>] sock_alloc_send_pskb+0x269/0x2a0  
+net/core/sock.c:2222
+     [<0000000044a5b8c6>] sock_alloc_send_skb+0x32/0x40 net/core/sock.c:2239
+     [<00000000b19d8ca2>] llc_ui_sendmsg+0x10a/0x540 net/llc/af_llc.c:933
+     [<00000000aaeaeaf3>] sock_sendmsg_nosec net/socket.c:646 [inline]
+     [<00000000aaeaeaf3>] sock_sendmsg+0x54/0x70 net/socket.c:665
+     [<000000009ae2ec20>] ___sys_sendmsg+0x393/0x3c0 net/socket.c:2286
+     [<000000003ac4094d>] __sys_sendmsg+0x80/0xf0 net/socket.c:2324
+     [<00000000d3b808ba>] __do_sys_sendmsg net/socket.c:2333 [inline]
+     [<00000000d3b808ba>] __se_sys_sendmsg net/socket.c:2331 [inline]
+     [<00000000d3b808ba>] __x64_sys_sendmsg+0x23/0x30 net/socket.c:2331
+     [<0000000029c8eba9>] do_syscall_64+0x76/0x1a0  
+arch/x86/entry/common.c:301
+     [<00000000dba589d4>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
 
-Freed by task 2287698508:
-------------[ cut here ]------------
-kernel BUG at mm/slab.c:4178!
-invalid opcode: 0000 [#1] PREEMPT SMP KASAN
-CPU: 1 PID: 9443 Comm: syz-executor.3 Not tainted 5.2.0-rc5+ #4
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-RIP: 0010:__check_heap_object+0xcb/0xd0 mm/slab.c:4202
-Code: 4c 89 d1 4d 89 c8 e8 44 4d 07 00 5b 41 5e 5d c3 49 8b 73 58 41 0f b6  
-d0 48 c7 c7 15 78 5d 88 4c 89 d1 4d 89 c8 e8 e5 4d 07 00 <0f> 0b 0f 1f 00  
-55 48 89 e5 41 56 53 48 83 ff 10 74 4a 48 89 fb 48
-RSP: 0018:ffff8880972638b0 EFLAGS: 00010046
-RAX: 0000000000000fa9 RBX: 00000000000011c0 RCX: 000000000000000c
-RDX: 000000000000000c RSI: 0000000000000002 RDI: 0000000000000001
-RBP: ffff8880972638c0 R08: 0000000000000000 R09: ffffffff81b5ce7a
-R10: ffff8880972639c0 R11: ffff8880aa58f940 R12: ffff8880972639c2
-R13: 0000000000000200 R14: ffff888097262800 R15: ffff8880972639c0
-FS:  0000555556169940(0000) GS:ffff8880aeb00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: ffffffff8adea628 CR3: 00000000a5dc4000 CR4: 00000000001406e0
-Call Trace:
-Modules linked in:
----[ end trace 8685358c22a34005 ]---
-RIP: 0010:__check_heap_object+0xcb/0xd0 mm/slab.c:4202
-Code: 4c 89 d1 4d 89 c8 e8 44 4d 07 00 5b 41 5e 5d c3 49 8b 73 58 41 0f b6  
-d0 48 c7 c7 15 78 5d 88 4c 89 d1 4d 89 c8 e8 e5 4d 07 00 <0f> 0b 0f 1f 00  
-55 48 89 e5 41 56 53 48 83 ff 10 74 4a 48 89 fb 48
-RSP: 0018:ffff8880972638b0 EFLAGS: 00010046
-RAX: 0000000000000fa9 RBX: 00000000000011c0 RCX: 000000000000000c
-RDX: 000000000000000c RSI: 0000000000000002 RDI: 0000000000000001
-RBP: ffff8880972638c0 R08: 0000000000000000 R09: ffffffff81b5ce7a
-R10: ffff8880972639c0 R11: ffff8880aa58f940 R12: ffff8880972639c2
-R13: 0000000000000200 R14: ffff888097262800 R15: ffff8880972639c0
-FS:  0000555556169940(0000) GS:ffff8880aeb00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: ffffffff8adea628 CR3: 00000000a5dc4000 CR4: 00000000001406e0
 
 
 ---
