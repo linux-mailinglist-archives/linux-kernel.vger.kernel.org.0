@@ -2,96 +2,183 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 486204E336
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 11:17:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0BC4E4E349
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 11:19:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726563AbfFUJRl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Jun 2019 05:17:41 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:55914 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726503AbfFUJRk (ORCPT
+        id S1726404AbfFUJTe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Jun 2019 05:19:34 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:35943 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726210AbfFUJTe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Jun 2019 05:17:40 -0400
-Received: by mail-wm1-f68.google.com with SMTP id a15so5638669wmj.5
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2019 02:17:39 -0700 (PDT)
+        Fri, 21 Jun 2019 05:19:34 -0400
+Received: by mail-wm1-f65.google.com with SMTP id u8so5814136wmm.1;
+        Fri, 21 Jun 2019 02:19:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=uqOVQTxmNExiORglBPUYXCzHT8Z+/V19PnzivbaHVFg=;
+        b=AtY+EMm+8qKifhQvPhh0SzfwY8M40OwmQaZCjKlTFlON5z0akSBcx0Fj8962OPK3ax
+         qSeCVT1pZ7yHTxx1zUODdIkRlJf0v2QfrzZ0vXrWHmop2DQLKfQxfTbLBOBUC3Fxovef
+         hDWBmtqxaYo6hkz7FeuQGR9PkIz/Zg6AGkClzwe+5erBgT7hzbe60jJOYiN54ZTgWgFU
+         IpuQhCE6lGLTOnsgqCJda4W/R3IpPzppR+Jz8j05S+TyH4UcgUcxA+vs3ci829X4uaaC
+         UJKoOhqFMxgLLlRlQN2h2ZniFUDim5S9N8yK6CW5Ff2EI0fqFEnV3fTcbrlZl1Xf0ebw
+         7e5Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=k3dnealLbWyKFjr0ipaHscOu2tOtwFDnep9BD/IPqN0=;
-        b=oZTZphewxO3UUSAKf3xZWned8JRK46o/FAaRc7TyM/jnJyJQMiduZzyLroZamA+Fnw
-         sUKDLK9ZbfrOWZqYSacWikEVri876/NAR3Jg47ZreDgJ865XgiKDPSTES8FBPQJy5SEZ
-         sU+0HngplR8cD9dIjF0KOifX8856SU6VeiUpig7WFsJim23L7IGT9Vls5TkqZu+Zm1yE
-         2f3jOevRDg8AKXbViVzLR+B1xlv7J2GlWCwWpZGEEV4xvB6OMJ3DCD4VpOAn4ss0J5J8
-         UAYsP/EPZqRIAcNK3mgygE0ePZqJDx+YSsObKwfYe6v2t/LF/WNgdI2LRRf4+zGmZUjf
-         qLEg==
-X-Gm-Message-State: APjAAAXGPgBjuiawbyxxHm+iM0gZEhMm1dK152OiFyT8MOYpRylHDxZR
-        oNrX/eX1CMgyWtstJh1KNiQWBw==
-X-Google-Smtp-Source: APXvYqxHgEfyILwYCkmxsqsTCXwxiiJpJc4v55sF3T1608Z/IqVl+kc1VnKFmZhemZ3jBom5b0F/bA==
-X-Received: by 2002:a1c:bbc1:: with SMTP id l184mr3212935wmf.111.1561108658412;
-        Fri, 21 Jun 2019 02:17:38 -0700 (PDT)
-Received: from localhost (nat-pool-brq-t.redhat.com. [213.175.37.10])
-        by smtp.gmail.com with ESMTPSA id r2sm1933610wme.30.2019.06.21.02.17.36
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=uqOVQTxmNExiORglBPUYXCzHT8Z+/V19PnzivbaHVFg=;
+        b=eauckQPq24eVQZqCmzqLjhOYHu0h7QEIVx7jE/gj7ozxtdTKBJfW4E6AhpWNLJ3QVf
+         xaaDMBkQlte4bm7O1ydq9FZsvEq14WD6vWvAKQMs6KgTuGljnKyqgmU2OY+rXh88BIRe
+         8sz1VhhFzfkS59GiqA4zhBzbFFldEeOaQ3d3d3weug89SfugXi3w+n42x2U8eqKmxxce
+         oRcFItEF6Tv+VKuPTpXG4zS7W+EkFZ6ifj/TnssKQhoAHhC7VwtohPVGiRrhxYp7HRfA
+         wq6A3Dc9gY2FbCsjTSkWRGiXR13IZPi8TNe7e/q2Cwr/rz8RLRwgvioqy+YwdzbPV1eu
+         iQMA==
+X-Gm-Message-State: APjAAAV7Xrfrp6h5hIHL1CWYqi1nTA4ucrXvtm1gWRbzA5Y+gSIrkJrp
+        Hx1FUk45ycRR4jdI3ZQbyik=
+X-Google-Smtp-Source: APXvYqyqeaEKJauyN71saFZvZTDk0qi91ACjIQXrzW5Yfpqp1okzyBsUv4pQHA0207ShjTomFKY7Lw==
+X-Received: by 2002:a1c:4b1a:: with SMTP id y26mr3294210wma.105.1561108771060;
+        Fri, 21 Jun 2019 02:19:31 -0700 (PDT)
+Received: from localhost (p2E5BEF36.dip0.t-ipconnect.de. [46.91.239.54])
+        by smtp.gmail.com with ESMTPSA id r12sm1761771wrt.95.2019.06.21.02.19.29
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Fri, 21 Jun 2019 02:17:37 -0700 (PDT)
-From:   Oleksandr Natalenko <oleksandr@redhat.com>
-To:     Jiri Kosina <jikos@kernel.org>
-Cc:     Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        Sebastian Parschauer <sparschauer@suse.de>,
-        Dave Young <dyoung@redhat.com>,
-        "Herton R . Krzesinski" <herton@redhat.com>,
-        Oliver Neukum <oneukum@suse.de>, linux-input@vger.kernel.org,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: [PATCH] hid: add another quirk for Chicony PixArt mouse
-Date:   Fri, 21 Jun 2019 11:17:36 +0200
-Message-Id: <20190621091736.14503-1-oleksandr@redhat.com>
-X-Mailer: git-send-email 2.22.0
+        Fri, 21 Jun 2019 02:19:30 -0700 (PDT)
+Date:   Fri, 21 Jun 2019 11:19:28 +0200
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     "dbasehore ." <dbasehore@chromium.org>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        David Airlie <airlied@linux.ie>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Sean Paul <sean@poorly.run>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        CK Hu <ck.hu@mediatek.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        devicetree@vger.kernel.org,
+        Intel Graphics <intel-gfx@lists.freedesktop.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-mediatek@lists.infradead.org>,
+        Daniel Vetter <daniel@ffwll.ch>
+Subject: Re: [PATCH 3/5] drm/panel: Add attach/detach callbacks
+Message-ID: <20190621091928.GA11839@ulmo>
+References: <20190611040350.90064-1-dbasehore@chromium.org>
+ <20190611040350.90064-4-dbasehore@chromium.org>
+ <20190611085722.GX21222@phenom.ffwll.local>
+ <CAGAzgsr2sh5B1xi_ztQPN0xoQsZd26DDXwWT_qqJ68XeKReJ_Q@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="cWoXeonUoKmBZSoM"
+Content-Disposition: inline
+In-Reply-To: <CAGAzgsr2sh5B1xi_ztQPN0xoQsZd26DDXwWT_qqJ68XeKReJ_Q@mail.gmail.com>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I've spotted another Chicony PixArt mouse in the wild, which requires
-HID_QUIRK_ALWAYS_POLL quirk, otherwise it disconnects each minute.
 
-USB ID of this device is 0x04f2:0x0939.
+--cWoXeonUoKmBZSoM
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-We've introduced quirks like this for other models before, so lets add
-this mouse too.
+On Tue, Jun 11, 2019 at 05:25:47PM -0700, dbasehore . wrote:
+> On Tue, Jun 11, 2019 at 1:57 AM Daniel Vetter <daniel@ffwll.ch> wrote:
+> >
+> > On Mon, Jun 10, 2019 at 09:03:48PM -0700, Derek Basehore wrote:
+> > > This adds the attach/detach callbacks. These are for setting up
+> > > internal state for the connector/panel pair that can't be done at
+> > > probe (since the connector doesn't exist) and which don't need to be
+> > > repeatedly done for every get/modes, prepare, or enable callback.
+> > > Values such as the panel orientation, and display size can be filled
+> > > in for the connector.
+> > >
+> > > Signed-off-by: Derek Basehore <dbasehore@chromium.org>
+> > > ---
+> > >  drivers/gpu/drm/drm_panel.c | 14 ++++++++++++++
+> > >  include/drm/drm_panel.h     |  4 ++++
+> > >  2 files changed, 18 insertions(+)
+> > >
+> > > diff --git a/drivers/gpu/drm/drm_panel.c b/drivers/gpu/drm/drm_panel.c
+> > > index 3b689ce4a51a..72f67678d9d5 100644
+> > > --- a/drivers/gpu/drm/drm_panel.c
+> > > +++ b/drivers/gpu/drm/drm_panel.c
+> > > @@ -104,12 +104,23 @@ EXPORT_SYMBOL(drm_panel_remove);
+> > >   */
+> > >  int drm_panel_attach(struct drm_panel *panel, struct drm_connector *=
+connector)
+> > >  {
+> > > +     int ret;
+> > > +
+> > >       if (panel->connector)
+> > >               return -EBUSY;
+> > >
+> > >       panel->connector =3D connector;
+> > >       panel->drm =3D connector->dev;
+> > >
+> > > +     if (panel->funcs->attach) {
+> > > +             ret =3D panel->funcs->attach(panel);
+> > > +             if (ret < 0) {
+> > > +                     panel->connector =3D NULL;
+> > > +                     panel->drm =3D NULL;
+> > > +                     return ret;
+> > > +             }
+> > > +     }
+> >
+> > Why can't we just implement this in the drm helpers for everyone, by e.=
+g.
+> > storing a dt node in drm_panel? Feels a bit overkill to have these new
+> > hooks here.
+> >
+> > Also, my understanding is that this dt stuff is supposed to be
+> > standardized, so this should work.
+>=20
+> So do you want all of this information added to the drm_panel struct?
+> If we do that, we don't necessarily even need the drm helper function.
+> We could just copy the values over here in the drm_panel_attach
+> function (and clear them in drm_panel_detach).
 
-Link: https://github.com/sriemer/fix-linux-mouse#usb-mouse-disconnectsreconnects-every-minute-on-linux
-Signed-off-by: Oleksandr Natalenko <oleksandr@redhat.com>
----
- drivers/hid/hid-ids.h    | 1 +
- drivers/hid/hid-quirks.c | 1 +
- 2 files changed, 2 insertions(+)
+Yeah, I think we should have all this extra information in the struct
+drm_panel. However, I think we need to more carefully split things such
+that the DT parsing happens at panel probe time. That way we can catch
+errors in DT, or missing entries/resources when we can still do
+something about it.
 
-diff --git a/drivers/hid/hid-ids.h b/drivers/hid/hid-ids.h
-index eac0c54c5970..69f0553d9d95 100644
---- a/drivers/hid/hid-ids.h
-+++ b/drivers/hid/hid-ids.h
-@@ -269,6 +269,7 @@
- #define USB_DEVICE_ID_CHICONY_MULTI_TOUCH	0xb19d
- #define USB_DEVICE_ID_CHICONY_WIRELESS	0x0618
- #define USB_DEVICE_ID_CHICONY_PIXART_USB_OPTICAL_MOUSE	0x1053
-+#define USB_DEVICE_ID_CHICONY_PIXART_USB_OPTICAL_MOUSE2	0x0939
- #define USB_DEVICE_ID_CHICONY_WIRELESS2	0x1123
- #define USB_DEVICE_ID_ASUS_AK1D		0x1125
- #define USB_DEVICE_ID_CHICONY_TOSHIBA_WT10A	0x1408
-diff --git a/drivers/hid/hid-quirks.c b/drivers/hid/hid-quirks.c
-index e5ca6fe2ca57..671a285724f9 100644
---- a/drivers/hid/hid-quirks.c
-+++ b/drivers/hid/hid-quirks.c
-@@ -42,6 +42,7 @@ static const struct hid_device_id hid_quirks[] = {
- 	{ HID_USB_DEVICE(USB_VENDOR_ID_ATEN, USB_DEVICE_ID_ATEN_UC100KM), HID_QUIRK_NOGET },
- 	{ HID_USB_DEVICE(USB_VENDOR_ID_CHICONY, USB_DEVICE_ID_CHICONY_MULTI_TOUCH), HID_QUIRK_MULTI_INPUT },
- 	{ HID_USB_DEVICE(USB_VENDOR_ID_CHICONY, USB_DEVICE_ID_CHICONY_PIXART_USB_OPTICAL_MOUSE), HID_QUIRK_ALWAYS_POLL },
-+	{ HID_USB_DEVICE(USB_VENDOR_ID_CHICONY, USB_DEVICE_ID_CHICONY_PIXART_USB_OPTICAL_MOUSE2), HID_QUIRK_ALWAYS_POLL },
- 	{ HID_USB_DEVICE(USB_VENDOR_ID_CHICONY, USB_DEVICE_ID_CHICONY_WIRELESS), HID_QUIRK_MULTI_INPUT },
- 	{ HID_USB_DEVICE(USB_VENDOR_ID_CHIC, USB_DEVICE_ID_CHIC_GAMEPAD), HID_QUIRK_BADPAD },
- 	{ HID_USB_DEVICE(USB_VENDOR_ID_CH, USB_DEVICE_ID_CH_3AXIS_5BUTTON_STICK), HID_QUIRK_NOGET },
--- 
-2.22.0
+If we start parsing DT and encounter failures, it's going to be very
+confusing if that's at panel attach time where code will usually just
+assume that everything is already validated and can't fail anymore.
 
+Thierry
+
+--cWoXeonUoKmBZSoM
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl0MoR0ACgkQ3SOs138+
+s6HqSA/+K8hfGyhC4XmLpKlVudKyrd41RyGRD7AunVOl6aE/CaukHevacdCPSUtk
+d/jaIe1fC3ImLE/uIZQDQBsBL3JzwrJHo0RVxijTJ7P9X1jrMR1ynK5sOWW0dPxR
+Sd87iKVNNu0Rl8CxAYzucxHrr2Up2W6uT02H0Lbxk+idIWKixRrPbUAVCMpFHTyr
+MbaVLkRd1sOEqLzetlU7HoUCx3wKgWdQgeRllgTDYgGutEQWnizljTrTglT0IAeQ
+U2LAykWBhhM4LBxYoEcdfOnosYQpKrg9suaNHNXknN+KEB5lnt/UbWCi5poLg1P4
+vyXMGFN8GwXXRNEKP0hYKGlLTzM19i3g9FRXAzeKv1hxmYhdG6S3dnzX22TG75No
+g0mUT2aFCEImAtMtQaCsucDHAnU/+YfmTekla4NxZo2UdOh0GYyKTaZ8OKsaETu+
+Hb+l76/ebe16vU+nJUYzKF5i/T+UlplLKLLGF8ivNBDSbWDD4l5Gh+hec2akFAVd
+U/CvEE85FyPaUIM9rTztStgICDwaxJNk62apvYouCkIIHOR3QVlgkxvk6DM6O5/c
+AjfC0dJqHvnx1HYiD0Sz65SeWArm/ujA1tcNZAFKLtPN2P5CHo6b2P2C1DfclkCw
+HBVMLmjbClz3caQjKmTvXk9YSnSSZBejdPW6zptywAik+UBj2r0=
+=ph6O
+-----END PGP SIGNATURE-----
+
+--cWoXeonUoKmBZSoM--
