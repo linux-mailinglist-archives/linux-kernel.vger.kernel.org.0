@@ -2,77 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B97A44ED81
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 18:58:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0E38D4ED88
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 19:04:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726190AbfFUQ6a (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Jun 2019 12:58:30 -0400
-Received: from mail-lj1-f170.google.com ([209.85.208.170]:34659 "EHLO
-        mail-lj1-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725985AbfFUQ63 (ORCPT
+        id S1726066AbfFUREh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Jun 2019 13:04:37 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:55438 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725985AbfFUREg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Jun 2019 12:58:29 -0400
-Received: by mail-lj1-f170.google.com with SMTP id p17so6610831ljg.1
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2019 09:58:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=qqgwigxeGvjK7xvfQe9Dvq5Cf0ZDiG37Tc57yFWJcMQ=;
-        b=HLPSctb6nl32d222OwEgCE8oXMwKKjmA5QJ5svDz1qmhQDBKuR4ch/qK2amWcD9BAr
-         nwk3pIDezfn/h8eg4B6mI5VTRVMWDjnPVhM5AN5msZa2mEd0pBEChghfh/EjDx6RAgZM
-         MFQltZWhYR0PlHn4Nr0+9mdGGZV+iUXEPTUNM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=qqgwigxeGvjK7xvfQe9Dvq5Cf0ZDiG37Tc57yFWJcMQ=;
-        b=V65HWF+O0/1nMOf1UAag6f4kSSFVXG0te8DJzw3QfuDinKuqsaHTFF2zfL8msjSV8X
-         18Vcong76PfXi0B2/JlVO+Kj6Im4vtOdr/gnjyuVdW0Uxo0a9vEBmPCg7fDzwVYApNxa
-         eT4IUntang+Pv8nal8awf9MJoqrC4UCC71WnlzgPXgQmSG/bTMHNdWQlXXWh50gnNxcf
-         3dceW0P0sc4Az0QFClU6qE+7NtDWwxSH8ONUm3lPfl+qUTCwcH9WLdPIRBZDhiYU36VT
-         qJQCzwaSkzRFf5fghjfq/LO9YCzApk1umQdGv3ZUfB2wVj8R+Tg135UWcTNzUUX8K7W9
-         0LxA==
-X-Gm-Message-State: APjAAAV1XlrThhrUo2GS1vAafqsQYKYvUCvjwXy63SwGL0TyhnEJ4Lz/
-        wVnJzl2ByAaEOgJ0arFFwepm8oxG/DY=
-X-Google-Smtp-Source: APXvYqyUT4yAEiM5wmEgqF0V1kglPNcoRq/9DC/kssp5Msut5NW/b5xqkeZvtlwaSi3/P8wCOArllA==
-X-Received: by 2002:a2e:9d18:: with SMTP id t24mr45175579lji.2.1561136307253;
-        Fri, 21 Jun 2019 09:58:27 -0700 (PDT)
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com. [209.85.167.42])
-        by smtp.gmail.com with ESMTPSA id b25sm459924lff.42.2019.06.21.09.58.26
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Fri, 21 Jun 2019 09:58:26 -0700 (PDT)
-Received: by mail-lf1-f42.google.com with SMTP id a25so5582286lfg.2
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2019 09:58:26 -0700 (PDT)
-X-Received: by 2002:a19:f808:: with SMTP id a8mr5270618lff.29.1561136306025;
- Fri, 21 Jun 2019 09:58:26 -0700 (PDT)
+        Fri, 21 Jun 2019 13:04:36 -0400
+Received: from p5b06daab.dip0.t-ipconnect.de ([91.6.218.171] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1heMxd-000217-6g; Fri, 21 Jun 2019 19:04:25 +0200
+Date:   Fri, 21 Jun 2019 19:04:24 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Hillf Danton <hdanton@sina.com>
+cc:     kernel test robot <rong.a.chen@intel.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>, tipbuild@zytor.com, lkp@01.org
+Subject: Re: [x86/hpet] 286b15db78: BUG:KASAN:wild-memory-access_in_t
+In-Reply-To: <20190620032009.716-1-hdanton@sina.com>
+Message-ID: <alpine.DEB.2.21.1906211902060.5503@nanos.tec.linutronix.de>
+References: <20190620032009.716-1-hdanton@sina.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-References: <CAPM=9tyM7BRfAwruJ4QsY_gMCGVHxS=ag7cNA1H304zcnAFK+A@mail.gmail.com>
-In-Reply-To: <CAPM=9tyM7BRfAwruJ4QsY_gMCGVHxS=ag7cNA1H304zcnAFK+A@mail.gmail.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Fri, 21 Jun 2019 09:58:10 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wifNAnkd+bXfoNWXO1K5NQ8Tr+Hc13SgaBXU3RoQB7Pwg@mail.gmail.com>
-Message-ID: <CAHk-=wifNAnkd+bXfoNWXO1K5NQ8Tr+Hc13SgaBXU3RoQB7Pwg@mail.gmail.com>
-Subject: Re: [git pull] drm fixes for 5.2-rc6
-To:     Dave Airlie <airlied@gmail.com>
-Cc:     Daniel Vetter <daniel.vetter@ffwll.ch>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 20, 2019 at 9:21 PM Dave Airlie <airlied@gmail.com> wrote:
->
-> Just catching up on the week since back from holidays, everything
-> seems quite sane.
+On Thu, 20 Jun 2019, Hillf Danton wrote:
+> > 
+> > +------------------------------------------+------------+------------+
+> > |                                          | dfd001e50c | 286b15db78 |
+> > +------------------------------------------+------------+------------+
+> > | boot_successes                           | 14         | 0          |
+> > | boot_failures                            | 0          | 16         |
+> > | BUG:KASAN:wild-memory-access_in_t        | 0          | 16         |
+> > | general_protection_fault:#[##]           | 0          | 16         |
+> > | RIP:try_module_get                       | 0          | 16         |
+> > | Kernel_panic-not_syncing:Fatal_exception | 0          | 16         |
+> > +------------------------------------------+------------+------------+
+> > 
+> > 
+> > If you fix the issue, kindly add following tag
+> > Reported-by: kernel test robot <rong.a.chen@intel.com>
+> > 
+> > 
+> > [    2.801166] BUG: KASAN: wild-memory-access in try_module_get+0x78/0x1bf
+> > [    2.803334] Read of size 4 at addr 6b6b6b6b6b6b6b6b by task swapper/0
 
-.. well, except for anongit.freedesktop.org itself, which seems very
-sick indeed.
+Yuck.
 
-Does it work for you? I'm getting a connection reset, no data.
+> > 
+> Try to pump up module after checking it is valid only if .owner = THIS_MODULE
+> does not help in the case of hpet.
 
-               Linus
+Errrm?
+
+> Hillf
+> ---
+>  kernel/time/tick-common.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/kernel/time/tick-common.c b/kernel/time/tick-common.c
+> index 529143b..1b33215 100644
+> --- a/kernel/time/tick-common.c
+> +++ b/kernel/time/tick-common.c
+> @@ -311,7 +311,7 @@ void tick_check_new_device(struct clock_event_device *newdev)
+>  	if (!tick_check_preferred(curdev, newdev))
+>  		goto out_bc;
+>  
+> -	if (!try_module_get(newdev->owner))
+> +	if (newdev->owner && !try_module_get(newdev->owner))
+
+How does that prevent the above? That's not about a NULL pointer. Its
+simply uninitialized memory.
+
+Aside that the check is pointless as try_module_get() has a NULL pointer
+check inside already.
+
+Thanks,
+
+	tglx
+
