@@ -2,93 +2,149 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BFF414E3AF
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 11:37:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 480934E449
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 11:41:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726447AbfFUJhP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Jun 2019 05:37:15 -0400
-Received: from foss.arm.com ([217.140.110.172]:53634 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726210AbfFUJhP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Jun 2019 05:37:15 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 68334142F;
-        Fri, 21 Jun 2019 02:37:14 -0700 (PDT)
-Received: from [10.37.13.79] (unknown [10.37.13.79])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2ED413F246;
-        Fri, 21 Jun 2019 02:37:12 -0700 (PDT)
-Subject: Re: [PATCHv2 2/2] coresight: Abort probe if cpus are not available
-To:     saiprakash.ranjan@codeaurora.org, mathieu.poirier@linaro.org,
-        leo.yan@linaro.org, robh+dt@kernel.org, devicetree@vger.kernel.org,
-        alexander.shishkin@linux.intel.com, david.brown@linaro.org,
-        mark.rutland@arm.com
-Cc:     rnayak@codeaurora.org, vivek.gautam@codeaurora.org,
-        sibis@codeaurora.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
-References: <cover.1561054498.git.saiprakash.ranjan@codeaurora.org>
- <65050e4cb2b0433f3cb9b1ca0bf6ec49d0751086.1561054498.git.saiprakash.ranjan@codeaurora.org>
-From:   Suzuki K Poulose <suzuki.poulose@arm.com>
-Message-ID: <d6e6a32e-4e15-5bc8-42f9-6cfe72fc0910@arm.com>
-Date:   Fri, 21 Jun 2019 10:40:02 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1726948AbfFUJlh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Jun 2019 05:41:37 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:34080 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726877AbfFUJkV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Jun 2019 05:40:21 -0400
+Received: by mail-pf1-f195.google.com with SMTP id c85so3324146pfc.1;
+        Fri, 21 Jun 2019 02:40:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=gDChq3jgrlh7Kfl67z51Bq3UYV+aDXpvLz2pr3LXsbw=;
+        b=atUeVU1wcczoU76Kdq0ubtl5EaLRaarzaAxHhV7CRiTol2lTgAi9mSfuHgTZ4jKcj0
+         jWsm59MMmrpQlZaBYrKadRnDSwL6g0pmpPvaQtwuaR6FC3AZ+mSoKRamYX4T8dGWFWQH
+         XTjaJUe0QI7NHZcmtnAQthuYuXr5FeKtPUNEqo6E2SYRKGV5I2om1c8raJLtJlcKKCGu
+         +KCqV1Auk6nxjztT0Izd9sbJnH3S74UFGKxP00k2HT883OVeZkzArgneusEK8A4+RO7c
+         oNkB5OOftcpimbjwsuXTAAZ8VK2LneXxrWqyuw6QdVDA36ixe73J6xaF41jOmcSNErN9
+         rXfA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=gDChq3jgrlh7Kfl67z51Bq3UYV+aDXpvLz2pr3LXsbw=;
+        b=FZMW3GkllWkTb3eF/zqt4/LPMIVRIBzmTG7IdqgEUPFnoewUNrTpRneaDvudfhxpt+
+         oBbjjvZVXqj6vwy62x4KwqvUjWbZ02WqMqu0yhrUEgcHFBxfdOcXPevZLkxCYJZeoGrZ
+         1eL9UNN3PDvpRXmt6y9IYOUEr0BwSDU15In5KcWkUKpjNmmeDAcf1Wubxws0EK2zPVm0
+         Mw6czHqFIi4dIc8H+1PxEbYBP+yXqy6yoqnnjZHzPU0oA+OHFqQQVzCKuucmBWGNKL2p
+         4Ouj02Ax8toe/DXkpbW6pAc/KceipuDbfvZcYf06oPlJUN/RWmY7SE19JbRB/yitrnYv
+         Yung==
+X-Gm-Message-State: APjAAAWELRfHiG3io65i8yuZv87dhMEXX5n5/NRhMnTuhnxo2PxRsSmH
+        sfH9HRcUsjv83v7R1PWtZkXpV2NW
+X-Google-Smtp-Source: APXvYqzSpDiVbBYFbXVJ82vVhV16mKsR/7Exr86GibnvfdCZ6k7SBKf0ewTsP0MSq+vCZSjvt2AhHQ==
+X-Received: by 2002:a17:90a:22ef:: with SMTP id s102mr5601135pjc.2.1561110021153;
+        Fri, 21 Jun 2019 02:40:21 -0700 (PDT)
+Received: from localhost.localdomain ([203.205.141.123])
+        by smtp.googlemail.com with ESMTPSA id y14sm1999506pjr.13.2019.06.21.02.40.19
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Fri, 21 Jun 2019 02:40:20 -0700 (PDT)
+From:   Wanpeng Li <kernellwp@gmail.com>
+X-Google-Original-From: Wanpeng Li <wanpengli@tencent.com>
+To:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+        Marcelo Tosatti <mtosatti@redhat.com>
+Subject: [PATCH v5 4/4] KVM: LAPIC: Don't inject already-expired timer via posted interrupt
+Date:   Fri, 21 Jun 2019 17:40:02 +0800
+Message-Id: <1561110002-4438-5-git-send-email-wanpengli@tencent.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1561110002-4438-1-git-send-email-wanpengli@tencent.com>
+References: <1561110002-4438-1-git-send-email-wanpengli@tencent.com>
 MIME-Version: 1.0
-In-Reply-To: <65050e4cb2b0433f3cb9b1ca0bf6ec49d0751086.1561054498.git.saiprakash.ranjan@codeaurora.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/20/2019 07:31 PM, Sai Prakash Ranjan wrote:
-> Currently coresight etm and cpu-debug will go ahead with
-> the probe even when corresponding cpus are not available
-> and error out later in the probe path. In such cases, it
-> is better to abort the probe earlier.
-> 
-> Without this, setting *nosmp* will throw below errors:
-> 
->   [    5.910622] coresight-cpu-debug 850000.debug: Coresight debug-CPU0 initialized
->   [    5.914266] coresight-cpu-debug 852000.debug: CPU1 debug arch init failed
->   [    5.921474] coresight-cpu-debug 854000.debug: CPU2 debug arch init failed
->   [    5.928328] coresight-cpu-debug 856000.debug: CPU3 debug arch init failed
->   [    5.935330] coresight etm0: CPU0: ETM v4.0 initialized
->   [    5.941875] coresight-etm4x 85d000.etm: ETM arch init failed
->   [    5.946794] coresight-etm4x: probe of 85d000.etm failed with error -22
->   [    5.952707] coresight-etm4x 85e000.etm: ETM arch init failed
->   [    5.958945] coresight-etm4x: probe of 85e000.etm failed with error -22
->   [    5.964853] coresight-etm4x 85f000.etm: ETM arch init failed
->   [    5.971096] coresight-etm4x: probe of 85f000.etm failed with error -22
+From: Wanpeng Li <wanpengli@tencent.com>
 
-That is expected. What else do you expect ?
+already-expired timer interrupt can be injected to guest when vCPU who 
+arms the lapic timer re-vmentry, don't posted inject in this case.
 
-> 
-> Signed-off-by: Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
-> ---
->   drivers/hwtracing/coresight/coresight-platform.c | 3 +++
->   1 file changed, 3 insertions(+)
-> 
-> diff --git a/drivers/hwtracing/coresight/coresight-platform.c b/drivers/hwtracing/coresight/coresight-platform.c
-> index 8b03fa573684..3f4559596c6b 100644
-> --- a/drivers/hwtracing/coresight/coresight-platform.c
-> +++ b/drivers/hwtracing/coresight/coresight-platform.c
-> @@ -168,6 +168,9 @@ static int of_coresight_get_cpu(struct device *dev)
->   	cpu = of_cpu_node_to_id(dn);
->   	of_node_put(dn);
->   
-> +	if (num_online_cpus() <= cpu)
-> +		return -ENODEV;
+Cc: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Radim Krčmář <rkrcmar@redhat.com>
+Cc: Marcelo Tosatti <mtosatti@redhat.com>
+Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
+---
+ arch/x86/kvm/lapic.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-That is a pointless and terribly wrong check. What if you have only 2
-online CPUs (CPU0 and CPU4) and you were processing the ETM for CPU4 ?
+diff --git a/arch/x86/kvm/lapic.c b/arch/x86/kvm/lapic.c
+index ae575c0..7cd95ea 100644
+--- a/arch/x86/kvm/lapic.c
++++ b/arch/x86/kvm/lapic.c
+@@ -1452,7 +1452,7 @@ static void kvm_apic_inject_pending_timer_irqs(struct kvm_lapic *apic)
+ 	}
+ }
+ 
+-static void apic_timer_expired(struct kvm_lapic *apic)
++static void apic_timer_expired(struct kvm_lapic *apic, bool can_pi_inject)
+ {
+ 	struct kvm_vcpu *vcpu = apic->vcpu;
+ 	struct swait_queue_head *q = &vcpu->wq;
+@@ -1464,7 +1464,7 @@ static void apic_timer_expired(struct kvm_lapic *apic)
+ 	if (apic_lvtt_tscdeadline(apic) || ktimer->hv_timer_in_use)
+ 		ktimer->expired_tscdeadline = ktimer->tscdeadline;
+ 
+-	if (posted_interrupt_inject_timer(apic->vcpu)) {
++	if (can_pi_inject && posted_interrupt_inject_timer(apic->vcpu)) {
+ 		if (apic->lapic_timer.timer_advance_ns)
+ 			kvm_wait_lapic_expire(vcpu, true);
+ 		kvm_apic_inject_pending_timer_irqs(apic);
+@@ -1607,7 +1607,7 @@ static void start_sw_tscdeadline(struct kvm_lapic *apic)
+ 		expire = ktime_sub_ns(expire, ktimer->timer_advance_ns);
+ 		hrtimer_start(&ktimer->timer, expire, HRTIMER_MODE_ABS);
+ 	} else
+-		apic_timer_expired(apic);
++		apic_timer_expired(apic, false);
+ 
+ 	local_irq_restore(flags);
+ }
+@@ -1697,7 +1697,7 @@ static void start_sw_period(struct kvm_lapic *apic)
+ 
+ 	if (ktime_after(ktime_get(),
+ 			apic->lapic_timer.target_expiration)) {
+-		apic_timer_expired(apic);
++		apic_timer_expired(apic, false);
+ 
+ 		if (apic_lvtt_oneshot(apic))
+ 			return;
+@@ -1759,7 +1759,7 @@ static bool start_hv_timer(struct kvm_lapic *apic)
+ 		if (atomic_read(&ktimer->pending)) {
+ 			cancel_hv_timer(apic);
+ 		} else if (expired) {
+-			apic_timer_expired(apic);
++			apic_timer_expired(apic, false);
+ 			cancel_hv_timer(apic);
+ 		}
+ 	}
+@@ -1809,7 +1809,7 @@ void kvm_lapic_expired_hv_timer(struct kvm_vcpu *vcpu)
+ 		goto out;
+ 	WARN_ON(swait_active(&vcpu->wq));
+ 	cancel_hv_timer(apic);
+-	apic_timer_expired(apic);
++	apic_timer_expired(apic, false);
+ 
+ 	if (apic_lvtt_period(apic) && apic->lapic_timer.period) {
+ 		advance_periodic_target_expiration(apic);
+@@ -2312,7 +2312,7 @@ static enum hrtimer_restart apic_timer_fn(struct hrtimer *data)
+ 	struct kvm_timer *ktimer = container_of(data, struct kvm_timer, timer);
+ 	struct kvm_lapic *apic = container_of(ktimer, struct kvm_lapic, lapic_timer);
+ 
+-	apic_timer_expired(apic);
++	apic_timer_expired(apic, true);
+ 
+ 	if (lapic_is_periodic(apic)) {
+ 		advance_periodic_target_expiration(apic);
+-- 
+2.7.4
 
-More over you should simply let the driver handle a case where the CPU
-is not online. May be the driver could register a hotplug notifier and
-bring itself up when the CPU comes online.
-
-So, please drop this patch.
-
-Kind regards
-Suzuki
