@@ -2,191 +2,134 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 806044EA38
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 16:07:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 29B964EA44
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 16:10:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726118AbfFUOH0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Jun 2019 10:07:26 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:43546 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725985AbfFUOHZ (ORCPT
+        id S1726342AbfFUOKK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Jun 2019 10:10:10 -0400
+Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:22330 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725985AbfFUOKK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Jun 2019 10:07:25 -0400
-Received: by mail-pg1-f195.google.com with SMTP id f25so3427469pgv.10;
-        Fri, 21 Jun 2019 07:07:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=B9MbqUVZ6G19blzK9C/nkDqisYrvP0LYF0mShhHWuxw=;
-        b=lOBd+HVMv320N1woFRqwNylMIxbiTQfNRbF/AHuUNBEjxQ7emmCHOkdA8QDk0yLfAh
-         aO2GP/DmzWaH4Pg8diNbgfpd9aRePF/Q0xQFQm4ypEqpDDseJ7ogrhg7ogmYI3RPh9I7
-         PXsVpwPcJkNnO4FTqXaCs26yhCYK+NKDiWLiUuH1Fxw35ExG6HP1jA5viTTtVW/oyIOd
-         s+JdJk6eNsPuy6bhZbdMqmKNfRmn34HWx/VgEHKTxq3fccFUYyCc1CEa1VHYLiWwFBW/
-         QT7RzdACqo4tFezRHqjTbdPQX/yAPEjduQwreXBFWMgP6iBIac1GEVLQvo5VrAM4tdOT
-         NVGA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=B9MbqUVZ6G19blzK9C/nkDqisYrvP0LYF0mShhHWuxw=;
-        b=sZX1LP/dNqSBpSMco0euHeGA57BmV8ghJUnQhIveFPeHcU6nC1unf6Tgvv19FQrvLL
-         3eUwm4scyHOps3ibW6jHrMmPzJ/2L5SGMvO6E+6/qvhVctQ8gceQXlOJ4p/5Zvh8S9Li
-         SmKtgA6mxNRCkFSR5V2gG7uWHOrU0b9wyxX1iZx3qZSDJXYFGBpzpDpykipjLWEunn9o
-         KYC/dBczGx/cSTD3VrGtMCb1GSExkYaRlGTqKUdMQezs7iA9ye7oaGPQrF8o0oh0y1Ud
-         SkK0/ZfjfKZNgHqjMsltwTdeGESlllx0T/W7p3LrZIvCMxH3xBrN3+ra8T0HHxaXUpu0
-         8FtA==
-X-Gm-Message-State: APjAAAW7JJ1Bfx5Pl/EkZCHgKRvtUuNcilOuWge5TKtpJ0BO6UDfatTe
-        AG7Bu3hCivPz6r9OCVGAzAg=
-X-Google-Smtp-Source: APXvYqwrRphIx8JSIR9al4LlncdG1rD27NbYACKxsZn0B4B6xTwrmoSIm8B0VLJd/wYsCPFzfkv8qw==
-X-Received: by 2002:a17:90a:9b08:: with SMTP id f8mr6983306pjp.103.1561126044926;
-        Fri, 21 Jun 2019 07:07:24 -0700 (PDT)
-Received: from bharath12345-Inspiron-5559 ([103.110.42.36])
-        by smtp.gmail.com with ESMTPSA id 11sm3041870pfo.19.2019.06.21.07.07.20
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 21 Jun 2019 07:07:24 -0700 (PDT)
-Date:   Fri, 21 Jun 2019 19:37:17 +0530
-From:   Bharath Vedartham <linux.bhar@gmail.com>
-To:     Vlastimil Babka <vbabka@suse.cz>
-Cc:     Alan Jenkins <alan.christopher.jenkins@gmail.com>,
-        Mel Gorman <mgorman@techsingularity.net>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH] mm: fix setting the high and low watermarks
-Message-ID: <20190621140717.GA28387@bharath12345-Inspiron-5559>
-References: <20190621114325.711-1-alan.christopher.jenkins@gmail.com>
- <3d15b808-b7cd-7379-a6a9-d3cf04b7dcec@suse.cz>
+        Fri, 21 Jun 2019 10:10:10 -0400
+Received: from pps.filterd (m0148461.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5LE7gC0014544;
+        Fri, 21 Jun 2019 07:09:05 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : references : in-reply-to : content-type : content-id
+ : content-transfer-encoding : mime-version; s=facebook;
+ bh=OqjnU2VkCUT/RL7ii7MyB3NxIyF6Mv4Ttfz3Y59kmuU=;
+ b=pxCASNjkw1/mHsNKYLU/01vXdr0hatlJzhxT/UNYcPtJdQjFgSiBtBSkaw5RfjuDUNwn
+ JLwdPZRPkUaF9msyEt/NP7Egl51UAywLW3aGW498f3QREGW1h5o+0Y10nKzMAahCH545
+ cFvpea3lTNgRMkM0ElMIgVwme27kEdVieoI= 
+Received: from mail.thefacebook.com (mailout.thefacebook.com [199.201.64.23])
+        by mx0a-00082601.pphosted.com with ESMTP id 2t90esr2kj-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
+        Fri, 21 Jun 2019 07:09:04 -0700
+Received: from prn-hub06.TheFacebook.com (2620:10d:c081:35::130) by
+ prn-hub06.TheFacebook.com (2620:10d:c081:35::130) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.1.1713.5; Fri, 21 Jun 2019 07:09:03 -0700
+Received: from NAM03-BY2-obe.outbound.protection.outlook.com (192.168.54.28)
+ by o365-in.thefacebook.com (192.168.16.30) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.1.1713.5
+ via Frontend Transport; Fri, 21 Jun 2019 07:09:03 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
+ s=selector1-fb-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=OqjnU2VkCUT/RL7ii7MyB3NxIyF6Mv4Ttfz3Y59kmuU=;
+ b=tKn1C+xUoPXZ5YKFrDw4/XMeerHQbVK+9sKt5MP04sniSn7QDnRvzls4HMgAdK0UfIET7oLvGzbtgoZVBCWj5MFcbtdE7Me7sJ/W/X5kCmyezOSdrUyfnGK1hyxs5w7Ah9B/yqYahFf5eQRhTVOsdk04vMh988C17t6e4noJUhY=
+Received: from MWHPR15MB1165.namprd15.prod.outlook.com (10.175.3.22) by
+ MWHPR15MB1373.namprd15.prod.outlook.com (10.173.233.151) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1987.12; Fri, 21 Jun 2019 14:08:44 +0000
+Received: from MWHPR15MB1165.namprd15.prod.outlook.com
+ ([fe80::400e:e329:ea98:aa0d]) by MWHPR15MB1165.namprd15.prod.outlook.com
+ ([fe80::400e:e329:ea98:aa0d%6]) with mapi id 15.20.2008.014; Fri, 21 Jun 2019
+ 14:08:44 +0000
+From:   Song Liu <songliubraving@fb.com>
+To:     "Kirill A. Shutemov" <kirill@shutemov.name>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "oleg@redhat.com" <oleg@redhat.com>,
+        "rostedt@goodmis.org" <rostedt@goodmis.org>,
+        "mhiramat@kernel.org" <mhiramat@kernel.org>,
+        "matthew.wilcox@oracle.com" <matthew.wilcox@oracle.com>,
+        "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>,
+        Kernel Team <Kernel-team@fb.com>
+Subject: Re: [PATCH v4 3/5] mm, thp: introduce FOLL_SPLIT_PMD
+Thread-Topic: [PATCH v4 3/5] mm, thp: introduce FOLL_SPLIT_PMD
+Thread-Index: AQHVIhGahpwtXNAKfka+bawgVMaQOKamGd4AgAAXqYA=
+Date:   Fri, 21 Jun 2019 14:08:44 +0000
+Message-ID: <6D00E9F1-A81D-44B8-9504-3B7B440CF093@fb.com>
+References: <20190613175747.1964753-1-songliubraving@fb.com>
+ <20190613175747.1964753-4-songliubraving@fb.com>
+ <20190621124402.z4l67ck4vr5g7xe3@box>
+In-Reply-To: <20190621124402.z4l67ck4vr5g7xe3@box>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: Apple Mail (2.3445.104.11)
+x-originating-ip: [2620:10d:c090:180::1:ed23]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 4ede19af-12c0-47b3-ac9e-08d6f651f8b0
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:MWHPR15MB1373;
+x-ms-traffictypediagnostic: MWHPR15MB1373:
+x-microsoft-antispam-prvs: <MWHPR15MB137352A7B854ABB8A7412BE8B3E70@MWHPR15MB1373.namprd15.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:5516;
+x-forefront-prvs: 0075CB064E
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(366004)(346002)(39860400002)(376002)(136003)(199004)(189003)(50226002)(476003)(53546011)(6506007)(11346002)(446003)(486006)(102836004)(186003)(64756008)(14454004)(66476007)(76116006)(76176011)(46003)(25786009)(66556008)(66446008)(2616005)(316002)(8936002)(36756003)(478600001)(6246003)(73956011)(86362001)(4326008)(5660300002)(99286004)(6436002)(229853002)(66946007)(6512007)(6486002)(81166006)(81156014)(8676002)(256004)(33656002)(14444005)(4744005)(6916009)(53936002)(6116002)(54906003)(68736007)(305945005)(57306001)(7736002)(2906002)(71190400001)(71200400001);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR15MB1373;H:MWHPR15MB1165.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: fb.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: yFcG8VFYpoeh1scsxtFjPMyNxBDkkzIuM3W568+JvDBmCmVe4DJM5XOGBxDVpl2hVjW8f54RMoAQ9aPrrx3VU17YYBT0XjSUOq1mRd3KAm4ZaaKDWFipSfowzsBGeVIQ177W1fL5uVGWhIO9cjMVBCFBdKXFbhNisiwW2viTGlns3l2OicExzW2lhiV5B+P8/EZcg3pewgiQ6WAV4MFxXN3Ub0BYjJpGg+irn58ZhG4lRov21ITRnBxPRamlb4s5XAw4Kp+Qf9yUw15qycxIaol9WJrRlxCOmiS8+7RJrBycs9IvRvoqL1k8owN8GGCl8ehZv3PZ8RBYJMctwWbOE/c16BfFqAqIh8VyG/m5u5sOCteIzJCnUPOi1MZaA0vt+NIAbFkCArbchuQxu/bMWie6r4Jm0zmGKltYVTEdCLU=
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <8C7F22507F1F2648A13AD376EE5EF553@namprd15.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3d15b808-b7cd-7379-a6a9-d3cf04b7dcec@suse.cz>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4ede19af-12c0-47b3-ac9e-08d6f651f8b0
+X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Jun 2019 14:08:44.3364
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: songliubraving@fb.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR15MB1373
+X-OriginatorOrg: fb.com
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-21_10:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=657 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1906210118
+X-FB-Internal: deliver
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 21, 2019 at 02:09:31PM +0200, Vlastimil Babka wrote:
-> On 6/21/19 1:43 PM, Alan Jenkins wrote:
-> > When setting the low and high watermarks we use min_wmark_pages(zone).
-> > I guess this is to reduce the line length.  But we forgot that this macro
-> > includes zone->watermark_boost.  We need to reset zone->watermark_boost
-> > first.  Otherwise the watermarks will be set inconsistently.
-> > 
-> > E.g. this could cause inconsistent values if the watermarks have been
-> > boosted, and then you change a sysctl which triggers
-> > __setup_per_zone_wmarks().
-> > 
-> > I strongly suspect this explains why I have seen slightly high watermarks.
-> > Suspicious-looking zoneinfo below - notice high-low != low-min.
-> > 
-> > Node 0, zone   Normal
-> >   pages free     74597
-> >         min      9582
-> >         low      34505
-> >         high     36900
-> > 
-> > https://unix.stackexchange.com/questions/525674/my-low-and-high-watermarks-seem-higher-than-predicted-by-documentation-sysctl-vm/525687
-> > 
-> > Signed-off-by: Alan Jenkins <alan.christopher.jenkins@gmail.com>
-> > Fixes: 1c30844d2dfe ("mm: reclaim small amounts of memory when an external
-> >                       fragmentation event occurs")
-> > Cc: stable@vger.kernel.org
-> 
-> Nice catch, thanks!
-> 
-> Acked-by: Vlastimil Babka <vbabka@suse.cz>
-> 
-> Personally I would implement it a bit differently, see below. If you
-> agree, it's fine if you keep the authorship of the whole patch.
-> 
-> > ---
-> > 
-> > Tested by compiler :-).
-> > 
-> > Ideally the commit message would be clear about what happens the
-> > *first* time __setup_per_zone_watermarks() is called.  I guess that
-> > zone->watermark_boost is *usually* zero, or we would have noticed
-> > some wild problems :-).  However I am not familiar with how the zone
-> > structures are allocated & initialized.  Maybe there is a case where
-> > zone->watermark_boost could contain an arbitrary unitialized value
-> > at this point.  Can we rule that out?
-> 
-> Dunno if there's some arch override, but generic_alloc_nodedata() uses
-> kzalloc() so it's zeroed.
-> 
-> -----8<-----
-> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-> index d66bc8abe0af..3b2f0cedf78e 100644
-> --- a/mm/page_alloc.c
-> +++ b/mm/page_alloc.c
-> @@ -7624,6 +7624,7 @@ static void __setup_per_zone_wmarks(void)
->  
->  	for_each_zone(zone) {
->  		u64 tmp;
-> +		unsigned long wmark_min;
->  
->  		spin_lock_irqsave(&zone->lock, flags);
->  		tmp = (u64)pages_min * zone_managed_pages(zone);
-> @@ -7642,13 +7643,13 @@ static void __setup_per_zone_wmarks(void)
->  
->  			min_pages = zone_managed_pages(zone) / 1024;
->  			min_pages = clamp(min_pages, SWAP_CLUSTER_MAX, 128UL);
-> -			zone->_watermark[WMARK_MIN] = min_pages;
-> +			wmark_min = min_pages;
->  		} else {
->  			/*
->  			 * If it's a lowmem zone, reserve a number of pages
->  			 * proportionate to the zone's size.
->  			 */
-> -			zone->_watermark[WMARK_MIN] = tmp;
-> +			wmark_min = tmp;
->  		}
->  
->  		/*
-> @@ -7660,8 +7661,9 @@ static void __setup_per_zone_wmarks(void)
->  			    mult_frac(zone_managed_pages(zone),
->  				      watermark_scale_factor, 10000));
->  
-> -		zone->_watermark[WMARK_LOW]  = min_wmark_pages(zone) + tmp;
-> -		zone->_watermark[WMARK_HIGH] = min_wmark_pages(zone) + tmp * 2;
-> +		zone->_watermark[WMARK_MIN]  = wmark_min;
-> +		zone->_watermark[WMARK_LOW]  = wmark_min + tmp;
-> +		zone->_watermark[WMARK_HIGH] = wmark_min + tmp * 2;
->  		zone->watermark_boost = 0;
-Do you think this could cause a race condition between
-__setup_per_zone_wmarks and pgdat_watermark_boosted which checks whether
-the watermark_boost of each zone is non-zero? pgdat_watermark_boosted is
-not called with a zone lock.
-Here is a probable case scenario:
-watermarks are boosted in steal_suitable_fallback(which happens under a
-zone lock). After that kswapd is woken up by
-wakeup_kswapd(zone,0,0,zone_idx(zone)) in rmqueue without holding a
-zone lock. Lets say someone modified min_kfree_bytes, this would lead to
-all the zone->watermark_boost being set to 0. This may cause
-pgdat_watermark_boosted to return false, which would not wakeup kswapd
-as intended by boosting the watermark. This behaviour is similar to waking up kswapd for a
-balanced node.
 
-Also if kswapd was woken up successfully because of watermarks being
-boosted. In balance_pgdat, we use nr_boost_reclaim to count number of
-pages to reclaim because of boosting. nr_boost_reclaim is calculated as:
-nr_boost_reclaim = 0;
-for (i = 0; i <= classzone_idx; i++) {
-	zone = pgdat->node_zones + i;
-	if (!managed_zone(zone))
-		continue;
 
-	nr_boost_reclaim += zone->watermark_boost;
-	zone_boosts[i] = zone->watermark_boost;
-}
-boosted = nr_boost_reclaim;
+> On Jun 21, 2019, at 5:44 AM, Kirill A. Shutemov <kirill@shutemov.name> wr=
+ote:
+>=20
+> On Thu, Jun 13, 2019 at 10:57:45AM -0700, Song Liu wrote:
+>> @@ -419,6 +419,11 @@ static struct page *follow_pmd_mask(struct vm_area_=
+struct *vma,
+>> 			put_page(page);
+>> 			if (pmd_none(*pmd))
+>> 				return no_page_table(vma, flags);
+>> +		} else {  /* flags & FOLL_SPLIT_PMD */
+>> +			spin_unlock(ptl);
+>> +			ret =3D 0;
+>> +			split_huge_pmd(vma, pmd, address);
+>> +			pte_alloc(mm, pmd);
+>=20
+> pte_alloc() can fail and the failure should be propogated to the caller.
 
-This is not under a zone_lock. This could lead to nr_boost_reclaim to
-be 0 if min_kfree_bytes is set to 0. Which would wake up kcompactd
-without reclaiming memory. 
-kcompactd compaction might be spurious if the if the memory reclaim step is not happening?
+Good catch! Fixing it now.=20
 
-Any thoughts?
->  		spin_unlock_irqrestore(&zone->lock, flags);
->
-
+Thanks,
+Song=
