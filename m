@@ -2,145 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BF9D74EB0A
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 16:49:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D6AC64EB1A
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 16:51:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726357AbfFUOtA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Jun 2019 10:49:00 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:40500 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726002AbfFUOtA (ORCPT
+        id S1726430AbfFUOu5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Jun 2019 10:50:57 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:32192 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726135AbfFUOuz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Jun 2019 10:49:00 -0400
-Received: by mail-pl1-f195.google.com with SMTP id a93so3123542pla.7;
-        Fri, 21 Jun 2019 07:48:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=xllrJTB8B8ElfqEi7jLajptsKVcgf1poB5tDdPZCtl4=;
-        b=XuYJxoFO8NUo0BlBFOH84oyOAfrNEIBDI8YKQK7b0vcvDzfo+xGDpZNnoD2hg47m5k
-         ziEJORFZ3T0xxTA2+WKsVbCjMJAKIeYXdG1B3dT47n8I05yaodRAVLRIK4d1p3TiJtZZ
-         4zRB0DqxDDF2L/RNsHmB8kRYFARM2GwUrF1Lc9oBekrIuAmArFI0sjARcg1hBxb+Ltda
-         G4BbH3wCT5AlJx/JphPxxfllCuZAl+jSqRYlYLQNuzP55Fx+jHXO7DOBTJrDqqyJnB1d
-         vSR6r++dJ7nmHsqO9E9ajQSYJtsO/voNRg9TQaTNnsWdHMIWvwPGYVhjgyqtZ+VP9+Lr
-         gw3g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=xllrJTB8B8ElfqEi7jLajptsKVcgf1poB5tDdPZCtl4=;
-        b=r7UieyVGIDeLJANWxj3hX7UxPDaeQIWSkZFa+oFXuHZv8VqhumvI6sM6alEvXTXL3O
-         SeWCbBHD4A3wHSgKTzcPPSk+x+1Lz4h9FRc9GjC+9lzNrOTcSZF8vWOo8KyeAI5fUevi
-         zF4JFwfT9OizQgpbkg4xFholnpJWqeSz5EH2qxN0H2YNg65DX8GiOTUwsd+amaYJR+Js
-         mrSRJXS7mdlrGBH7rpF/9AYQv0nW7Mlr078AxXdusY8b9m57S9rCsFHPxKVPSlveLqUR
-         c3IyAGnp0QaK5bnIHt+XPA/PtqMH7RmeVVz1AfWsU6d2FyDCtwr9qohc74tlR9eKffni
-         NgEQ==
-X-Gm-Message-State: APjAAAXhvO4/FBEnNpG4gNUhoBAtUBbrPvHc9KCq/2W2YB9rdwSwWFOL
-        BkRdEDq3VfaFeCWto+/OJqI=
-X-Google-Smtp-Source: APXvYqzEx9cEX7WhDSf/+AktxcwIhinYzbOG/rbT4THtM4dftSxhhLqbPBS5viOtU6y18WynvQNdSw==
-X-Received: by 2002:a17:902:aa03:: with SMTP id be3mr54044072plb.240.1561128539221;
-        Fri, 21 Jun 2019 07:48:59 -0700 (PDT)
-Received: from aw-bldr-10.qualcomm.com (i-global254.qualcomm.com. [199.106.103.254])
-        by smtp.gmail.com with ESMTPSA id j8sm2891737pfi.148.2019.06.21.07.48.57
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 21 Jun 2019 07:48:58 -0700 (PDT)
-From:   Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
-Cc:     benjamin.tissoires@redhat.com, dmitry.torokhov@gmail.com,
-        jikos@kernel.org, hdegoede@redhat.com, bjorn.andersson@linaro.org,
-        agross@kernel.org, lee.jones@linaro.org, xnox@ubuntu.com,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        linux-input@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
-Subject: [PATCH v8 0/5] Basic DT support for Lenovo Miix 630
-Date:   Fri, 21 Jun 2019 07:48:54 -0700
-Message-Id: <20190621144854.38568-1-jeffrey.l.hugo@gmail.com>
-X-Mailer: git-send-email 2.17.1
-To:     unlisted-recipients:; (no To-header on input)
+        Fri, 21 Jun 2019 10:50:55 -0400
+Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5LEbCh7025330;
+        Fri, 21 Jun 2019 16:50:36 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-type; s=STMicroelectronics;
+ bh=HJ0CqY8bW91EX2SWPcZ15rMKds2BBP88CmgxAnUANf4=;
+ b=k2RLRaZLXke5j7JsPj6TviyqvKK/1JGgzJJgk7D9i5hDYpiUCU0KM/MYd92FL/CPCVIx
+ PhBoQRMc92hhBJ8vAquwmJHnX2eFd5XeE65QPa2CrUMQzNOpndLzG5iMlGJZfpLgpRbY
+ 8tOK11PkZ5GXkr1eLs2D+XYMHzoiQB5ycRyVetVhLMMptA/oJkS+xGFg/GmtmbzZ7yxK
+ 8tRSipbt9EMY1eb8AVgiYHqvhkHWKiYK1I1g3Q1t7LHBHQRP7tNuQVl69Y4JmkpkMZEd
+ 6pfM0ipmCgYiJanmnOpdaiiHcpVdXW5Uo+N3KDB/26i0h2K3Vy+UFkMqtbNB5W0/Ac9k HA== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 2t7wxssnyu-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Fri, 21 Jun 2019 16:50:36 +0200
+Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 569C53A;
+        Fri, 21 Jun 2019 14:50:36 +0000 (GMT)
+Received: from Webmail-eu.st.com (sfhdag6node2.st.com [10.75.127.17])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 2B1232BD7;
+        Fri, 21 Jun 2019 14:50:36 +0000 (GMT)
+Received: from localhost (10.75.127.49) by SFHDAG6NODE2.st.com (10.75.127.17)
+ with Microsoft SMTP Server (TLS) id 15.0.1347.2; Fri, 21 Jun 2019 16:50:35
+ +0200
+From:   Christophe Kerello <christophe.kerello@st.com>
+To:     <robh+dt@kernel.org>, <mark.rutland@arm.com>,
+        <alexandre.torgue@st.com>, <linux@armlinux.org.uk>,
+        <olof@lixom.net>, <arnd@arndb.de>
+CC:     <mcoquelin.stm32@gmail.com>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Christophe Kerello <christophe.kerello@st.com>
+Subject: [PATCH 0/4] ARM: dts: stm32: enable FMC2 NAND controller on stm32mp157c-ev1
+Date:   Fri, 21 Jun 2019 16:49:46 +0200
+Message-ID: <1561128590-14621-1-git-send-email-christophe.kerello@st.com>
+X-Mailer: git-send-email 1.9.1
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.75.127.49]
+X-ClientProxiedBy: SFHDAG6NODE3.st.com (10.75.127.18) To SFHDAG6NODE2.st.com
+ (10.75.127.17)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-21_10:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Lenovo Miix 630 is one of three ARM based (specifically Qualcomm
-MSM8998) laptops that comes with Windows, and seems to have a dedicated
-following of folks intrested to get Linux up and running on it.
+This patchset adds and enables FMC2 NAND controller used on
+stm32mp157c-ev1.
 
-This series adds support for the basic functionality this is validated
-towork using devicetree.  Although the laptops do feed ACPI to Windows,
-the existing MSM8998 support in mainline is DT based, so DT provides a
-quick path to functionality while ACPI support is investigated.
+Christophe Kerello (4):
+  ARM: dts: stm32: add FMC2 NAND controller support on stm32mp157c
+  ARM: dts: stm32: add FMC2 NAND controller pins muxing on
+    stm32mp157c-ev1
+  ARM: dts: stm32: enable FMC2 NAND controller on stm32mp157c-ev1
+  ARM: multi_v7_defconfig: add FMC2 NAND  controller support
 
-The three devices are very similar, but do have differences in the set
-of peripherals supported, so the idea is that the vast majority of the
-support for all three can live in a common include, which should reduce
-overall duplication.  Adding support for the other two devices is tacked
-onto the end of the series.
-
-The bleeding edge work for these laptops and work in progress can be
-found at https://github.com/aarch64-laptops/prebuilt
-
-v8:
--Used original Elan copyright for new header file
--Kept the DT ids in the Elan core driver instead of miving them to the
-header
--Fixed "device" misspelling in new header
-
-v7:
--Removed HID matching on compatible strings as it was determined to be
-not needed
-
-v6:
--Export the elan_i2c DT and ACPI ids so that hid-quirks can use them
--Use the elan_i2c ids within hid-quirks to reduce duplication
--Add DTs for the Asus and HP devices since the DT seems finalized, and
-folks have been asking
-
-v5:
--Split out elan_i2c changes into their own patch
--Use a static list of strings to match
--Fixed typo of "whitelist"
--Dropped incorrect thermal zones
--Dropped tags from Bjorn and Lee since the functional should be
-identical, but the code is structured different
-
-v4:
--Changed the hid-quirks ELAN handling around per Benjamin Tissoires
--Dropped new DT binding
-
-v3:
--Changed "clam" to "clamshell"
--Defined a dt binding for the combo Elan keyboard + touchpad device
--Adjusted the HID quirk to be correct for dt boot
--Removed extranious comment in board dts
--Fixed board level compatible
-
-v2:
--Changed "cls" to "clam" since feedback indicated "cls" is too opaque,
-but
-"clamshell" is a mouthfull.  "clam" seems to be a happy medium.
-
-Jeffrey Hugo (5):
-  Input: elan_i2c: Export the device id whitelist
-  HID: quirks: Refactor ELAN 400 and 401 handling
-  arm64: dts: qcom: Add Lenovo Miix 630
-  arm64: dts: qcom: Add HP Envy x2
-  arm64: dts: qcom: Add Asus NovaGo TP370QL
-
- arch/arm64/boot/dts/qcom/Makefile             |   3 +
- .../dts/qcom/msm8998-asus-novago-tp370ql.dts  |  47 ++++
- .../boot/dts/qcom/msm8998-clamshell.dtsi      | 240 ++++++++++++++++++
- .../boot/dts/qcom/msm8998-hp-envy-x2.dts      |  30 +++
- .../boot/dts/qcom/msm8998-lenovo-miix-630.dts |  30 +++
- drivers/hid/hid-quirks.c                      |  22 +-
- drivers/input/mouse/elan_i2c_core.c           |  50 +---
- include/linux/input/elan-i2c-ids.h            |  76 ++++++
- 8 files changed, 438 insertions(+), 60 deletions(-)
- create mode 100644 arch/arm64/boot/dts/qcom/msm8998-asus-novago-tp370ql.dts
- create mode 100644 arch/arm64/boot/dts/qcom/msm8998-clamshell.dtsi
- create mode 100644 arch/arm64/boot/dts/qcom/msm8998-hp-envy-x2.dts
- create mode 100644 arch/arm64/boot/dts/qcom/msm8998-lenovo-miix-630.dts
- create mode 100644 include/linux/input/elan-i2c-ids.h
+ arch/arm/boot/dts/stm32mp157-pinctrl.dtsi | 44 +++++++++++++++++++++++++++++++
+ arch/arm/boot/dts/stm32mp157c-ev1.dts     | 16 +++++++++++
+ arch/arm/boot/dts/stm32mp157c.dtsi        | 19 +++++++++++++
+ arch/arm/configs/multi_v7_defconfig       |  1 +
+ 4 files changed, 80 insertions(+)
 
 -- 
-2.17.1
+1.9.1
 
