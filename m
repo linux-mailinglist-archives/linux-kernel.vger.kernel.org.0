@@ -2,144 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 256484EDD9
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 19:30:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F18E4EDCE
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 19:28:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726108AbfFURaf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Jun 2019 13:30:35 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:42858 "EHLO mx1.redhat.com"
+        id S1726163AbfFUR2O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Jun 2019 13:28:14 -0400
+Received: from mga14.intel.com ([192.55.52.115]:40713 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725992AbfFURaf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Jun 2019 13:30:35 -0400
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 2D41D308FC5F;
-        Fri, 21 Jun 2019 17:30:29 +0000 (UTC)
-Received: from llong.com (dhcp-17-85.bos.redhat.com [10.18.17.85])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id DDD0519C68;
-        Fri, 21 Jun 2019 17:30:22 +0000 (UTC)
-From:   Waiman Long <longman@redhat.com>
-To:     Christoph Lameter <cl@linux.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Michal Hocko <mhocko@kernel.org>, Roman Gushchin <guro@fb.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Shakeel Butt <shakeelb@google.com>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Waiman Long <longman@redhat.com>
-Subject: [PATCH-next] mm, memcg: Add ":deact" tag for reparented kmem caches in memcg_slabinfo
-Date:   Fri, 21 Jun 2019 13:30:05 -0400
-Message-Id: <20190621173005.31514-1-longman@redhat.com>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Fri, 21 Jun 2019 17:30:34 +0000 (UTC)
+        id S1726031AbfFUR2O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Jun 2019 13:28:14 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Jun 2019 10:28:13 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.63,401,1557212400"; 
+   d="scan'208";a="171282794"
+Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.7.199.155])
+  by orsmga002.jf.intel.com with ESMTP; 21 Jun 2019 10:28:13 -0700
+Date:   Fri, 21 Jun 2019 10:31:26 -0700
+From:   Jacob Pan <jacob.jun.pan@intel.com>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Kate Stewart <kstewart@linuxfoundation.org>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Ashok Raj <ashok.raj@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Jan Kiszka <jan.kiszka@siemens.com>, x86 <x86@kernel.org>,
+        Ricardo Neri <ricardo.neri@intel.com>,
+        Stephane Eranian <eranian@google.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Juergen Gross <jgross@suse.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        iommu@lists.linux-foundation.org,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
+        Andi Kleen <andi.kleen@intel.com>,
+        Borislav Petkov <bp@suse.de>, Ingo Molnar <mingo@kernel.org>,
+        Wincy Van <fanwenyi0529@gmail.com>, jacob.jun.pan@intel.com
+Subject: Re: [RFC PATCH v4 20/21] iommu/vt-d: hpet: Reserve an interrupt
+ remampping table entry for watchdog
+Message-ID: <20190621103126.585ca6d3@jacob-builder>
+In-Reply-To: <alpine.DEB.2.21.1906211732330.5503@nanos.tec.linutronix.de>
+References: <1558660583-28561-1-git-send-email-ricardo.neri-calderon@linux.intel.com>
+        <1558660583-28561-21-git-send-email-ricardo.neri-calderon@linux.intel.com>
+        <alpine.DEB.2.21.1906162049300.1760@nanos.tec.linutronix.de>
+        <alpine.DEB.2.21.1906171007360.1760@nanos.tec.linutronix.de>
+        <CABPqkBTai76Bgb4E61tF-mJUkFNxVa4B8M2bxTEYVgBsuAANNQ@mail.gmail.com>
+        <alpine.DEB.2.21.1906172343120.1963@nanos.tec.linutronix.de>
+        <20190619084316.71ce5477@jacob-builder>
+        <alpine.DEB.2.21.1906211732330.5503@nanos.tec.linutronix.de>
+Organization: OTC
+X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-With Roman's kmem cache reparent patch, multiple kmem caches of the same
-type can be seen attached to the same memcg id. All of them, except
-maybe one, are reparent'ed kmem caches. It can be useful to tag those
-reparented caches by adding a new slab flag "SLAB_DEACTIVATED" to those
-kmem caches that will be reparent'ed if it cannot be destroyed completely.
+On Fri, 21 Jun 2019 17:33:28 +0200 (CEST)
+Thomas Gleixner <tglx@linutronix.de> wrote:
 
-For the reparent'ed memcg kmem caches, the tag ":deact" will now be
-shown in <debugfs>/memcg_slabinfo.
-
-Signed-off-by: Waiman Long <longman@redhat.com>
----
- include/linux/slab.h |  4 ++++
- mm/slab.c            |  1 +
- mm/slab_common.c     | 14 ++++++++------
- mm/slub.c            |  1 +
- 4 files changed, 14 insertions(+), 6 deletions(-)
-
-diff --git a/include/linux/slab.h b/include/linux/slab.h
-index fecf40b7be69..19ab1380f875 100644
---- a/include/linux/slab.h
-+++ b/include/linux/slab.h
-@@ -116,6 +116,10 @@
- /* Objects are reclaimable */
- #define SLAB_RECLAIM_ACCOUNT	((slab_flags_t __force)0x00020000U)
- #define SLAB_TEMPORARY		SLAB_RECLAIM_ACCOUNT	/* Objects are short-lived */
-+
-+/* Slab deactivation flag */
-+#define SLAB_DEACTIVATED	((slab_flags_t __force)0x10000000U)
-+
- /*
-  * ZERO_SIZE_PTR will be returned for zero sized kmalloc requests.
-  *
-diff --git a/mm/slab.c b/mm/slab.c
-index a2e93adf1df0..e8c7743fc283 100644
---- a/mm/slab.c
-+++ b/mm/slab.c
-@@ -2245,6 +2245,7 @@ int __kmem_cache_shrink(struct kmem_cache *cachep)
- #ifdef CONFIG_MEMCG
- void __kmemcg_cache_deactivate(struct kmem_cache *cachep)
- {
-+	cachep->flags |= SLAB_DEACTIVATED;
- 	__kmem_cache_shrink(cachep);
- }
- 
-diff --git a/mm/slab_common.c b/mm/slab_common.c
-index 146d8eaa639c..85cf0c374303 100644
---- a/mm/slab_common.c
-+++ b/mm/slab_common.c
-@@ -1533,7 +1533,7 @@ static int memcg_slabinfo_show(struct seq_file *m, void *unused)
- 	struct slabinfo sinfo;
- 
- 	mutex_lock(&slab_mutex);
--	seq_puts(m, "# <name> <css_id[:dead]> <active_objs> <num_objs>");
-+	seq_puts(m, "# <name> <css_id[:dead|deact]> <active_objs> <num_objs>");
- 	seq_puts(m, " <active_slabs> <num_slabs>\n");
- 	list_for_each_entry(s, &slab_root_caches, root_caches_node) {
- 		/*
-@@ -1544,22 +1544,24 @@ static int memcg_slabinfo_show(struct seq_file *m, void *unused)
- 
- 		memset(&sinfo, 0, sizeof(sinfo));
- 		get_slabinfo(s, &sinfo);
--		seq_printf(m, "%-17s root      %6lu %6lu %6lu %6lu\n",
-+		seq_printf(m, "%-17s root       %6lu %6lu %6lu %6lu\n",
- 			   cache_name(s), sinfo.active_objs, sinfo.num_objs,
- 			   sinfo.active_slabs, sinfo.num_slabs);
- 
- 		for_each_memcg_cache(c, s) {
- 			struct cgroup_subsys_state *css;
--			char *dead = "";
-+			char *status = "";
- 
- 			css = &c->memcg_params.memcg->css;
- 			if (!(css->flags & CSS_ONLINE))
--				dead = ":dead";
-+				status = ":dead";
-+			else if (c->flags & SLAB_DEACTIVATED)
-+				status = ":deact";
- 
- 			memset(&sinfo, 0, sizeof(sinfo));
- 			get_slabinfo(c, &sinfo);
--			seq_printf(m, "%-17s %4d%5s %6lu %6lu %6lu %6lu\n",
--				   cache_name(c), css->id, dead,
-+			seq_printf(m, "%-17s %4d%-6s %6lu %6lu %6lu %6lu\n",
-+				   cache_name(c), css->id, status,
- 				   sinfo.active_objs, sinfo.num_objs,
- 				   sinfo.active_slabs, sinfo.num_slabs);
- 		}
-diff --git a/mm/slub.c b/mm/slub.c
-index a384228ff6d3..c965b4413658 100644
---- a/mm/slub.c
-+++ b/mm/slub.c
-@@ -4057,6 +4057,7 @@ void __kmemcg_cache_deactivate(struct kmem_cache *s)
- 	 */
- 	slub_set_cpu_partial(s, 0);
- 	s->min_partial = 0;
-+	s->flags |= SLAB_DEACTIVATED;
- }
- #endif	/* CONFIG_MEMCG */
- 
--- 
-2.18.1
+> On Wed, 19 Jun 2019, Jacob Pan wrote:
+> > On Tue, 18 Jun 2019 01:08:06 +0200 (CEST)
+> > Thomas Gleixner <tglx@linutronix.de> wrote:  
+> > > 
+> > > Unless this problem is not solved and I doubt it can be solved
+> > > after talking to IOMMU people and studying manuals,  
+> >
+> > I agree. modify irte might be done with cmpxchg_double() but the
+> > queued invalidation interface for IRTE cache flush is shared with
+> > DMA and requires holding a spinlock for enque descriptors, QI tail
+> > update etc.
+> > 
+> > Also, reserving & manipulating IRTE slot for hpet via backdoor
+> > might not be needed if the HPET PCI BDF (found in ACPI) can be
+> > utilized. But it might need more work to add a fake PCI device for
+> > HPET.  
+> 
+> What would PCI/BDF solve?
+I was thinking if HPET is a PCI device then it can naturally
+gain slots in IOMMU remapping table IRTEs via PCI MSI code. Then perhaps
+it can use the IRQ subsystem to set affinity etc. w/o directly adding
+additional helper functions in IRQ remapping code. I have not followed
+all the discussions, just a thought.
 
