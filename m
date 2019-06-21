@@ -2,100 +2,154 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A7A354DE97
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 03:23:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5A9344DEBE
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 03:44:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726953AbfFUBVL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 20 Jun 2019 21:21:11 -0400
-Received: from mail-yw1-f74.google.com ([209.85.161.74]:39034 "EHLO
-        mail-yw1-f74.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726928AbfFUBVE (ORCPT
+        id S1726100AbfFUBoG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 20 Jun 2019 21:44:06 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:36109 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725906AbfFUBoF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 20 Jun 2019 21:21:04 -0400
-Received: by mail-yw1-f74.google.com with SMTP id w127so4883146ywe.6
-        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2019 18:21:03 -0700 (PDT)
+        Thu, 20 Jun 2019 21:44:05 -0400
+Received: by mail-pl1-f195.google.com with SMTP id k8so2170392plt.3
+        for <linux-kernel@vger.kernel.org>; Thu, 20 Jun 2019 18:44:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=knoEDxerDamiS2udwBAyDKB2ttd1lX+80CF4AC/SyM0=;
-        b=ICMNVRkNz9HnJz3EvoIc4iF32ARr2jxl8GgTxe7lk2BN+XJU+KaLeMD/xZw/RUgzBj
-         2IL4z04wtDp23HqSdMnyrxoaA16Rk6s7u8X92iR3qnSMgGiAALWsSPXk8Rbm5iZf1HFJ
-         AKcA2cV/jHmxmTRZu1LPNcYoeYkmR1BjKdhDUXgEAN2OyQgMW1krbjk+tbEoV/1+MYP5
-         /Uq42xpHhwGYRr2fefqC2TK7cE5w8u6XMt4GStffGhwP6FZ2bof1USBItw3kW7Kd7giP
-         GHViyL8q45sG3E0i5Do1T6WQHdYVQaRRGdkUud8BrJPUj45c8qJIwU9nXrpeons+BrZ/
-         k/PQ==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=tkhWcpP90IbCc1eyz8PQ0udFiMlHh5Rce8pgGVY2kqc=;
+        b=Y5cwSWd84cr5pT+ngrBbRH9+/jE2OLSDi0XBYRKj6+Xus5HgLPw1PJdKybc44+nUq1
+         X3dWOffFmP1CVquRKX3fXOgWa8rTvna91lq/GyTuuaUPaH+RnKh9YffwEhOJRx81tOa8
+         46MwCFN+/0W2M46jOSujkeC2v1R7szVirSpn4XvYNKC8TuDZ+H8h5se3jdQAwoePEaHC
+         /Rzze0bP7Z5ZL/wr1D6H7RItwgP+7T/SrAg/v8ulxcNElp+ntccKXuVxK9SkHblpGGbm
+         VMjZVlaodt68TaUWIaUhE4aRYv1khWwHZFnPTaUvRmNqe0kXa8zoicsrwwrJ8jEmKftr
+         sKMQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=knoEDxerDamiS2udwBAyDKB2ttd1lX+80CF4AC/SyM0=;
-        b=g2O7RgEOhd49d/FPTH61wKIanZYGc0k7imZePrvkHnZJ9V6BztxkHmYhxQG74tiBOq
-         0CkW4Kx3Yf/eYEpIYRTL/0cB2PqhsFeCMb+0krm43g5EnVAYrClBOjUS8eEGhy+fFs98
-         I4juGXwqZEE81Ptbyw/RMgDZ0QBmzuvS82zGiLGYoN/+6Vbh5scnHthDAh9wyjzwr2Ot
-         PhZFu328Pvf20r4Za9lDvoFTejX+5m7Pml5GUDzS4jWTnUlnKj8JR6b+6791O8Vt4dCJ
-         awexLhHGuTJImrQ5damaYgpRokVnEUeHAD+5D6vsC18zh3HIVuHQoRbh0Gb21PApv1Hr
-         hfSg==
-X-Gm-Message-State: APjAAAWnsq2d0p4/EWoCEINOSLW60UVo8eSf4vuE8XyxV7xd48zEYyKd
-        uNrSdQYtYEWB8DPkgkHUhbIuQuWeEn1RC8sMG6A/Fw==
-X-Google-Smtp-Source: APXvYqzXtKc4q/eOrcelOahjOBOrBEBeNLXGOpYukdIfoX1WsAoG+47EYNVhHraiGgoP/Z3FQm4pLmztSWSJawWS+XNZAw==
-X-Received: by 2002:a81:590a:: with SMTP id n10mr7812986ywb.187.1561080063114;
- Thu, 20 Jun 2019 18:21:03 -0700 (PDT)
-Date:   Thu, 20 Jun 2019 18:19:41 -0700
-In-Reply-To: <20190621011941.186255-1-matthewgarrett@google.com>
-Message-Id: <20190621011941.186255-31-matthewgarrett@google.com>
-Mime-Version: 1.0
-References: <20190621011941.186255-1-matthewgarrett@google.com>
-X-Mailer: git-send-email 2.22.0.410.gd8fdbe21b5-goog
-Subject: [PATCH V33 30/30] efi: Restrict efivar_ssdt_load when the kernel is
- locked down
-From:   Matthew Garrett <matthewgarrett@google.com>
-To:     jmorris@namei.org
-Cc:     linux-security@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-api@vger.kernel.org,
-        Matthew Garrett <matthewgarrett@google.com>,
-        Matthew Garrett <mjg59@google.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        linux-efi@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=tkhWcpP90IbCc1eyz8PQ0udFiMlHh5Rce8pgGVY2kqc=;
+        b=cF0vwOZlgCwthM6618TlPQ15EHK2jVHCugQvrSxo122/3NuU7ahF9p833vhKy5bSYv
+         Wt2wkFzggkDLhsKWBgdoiT8Kl4uNU5aXKISYe5rHVwsr2JbeKtLZQB5q/0ojVnAczsG2
+         Psh8bresAnOVUrVgT0jcfmA/G4QYLwTI6aSLXEQraPAaxgpwrwpu2AqoFWJ495MzjkU5
+         9sgKeftGehLwBvUj3aZ/GbimOnT5I7AI70Z4WcX5ZTUfPwASMoW+V6PMONt2C4hefwfs
+         LuVeWztDyvHFkRbZW13blqNa809bxHvqyqf2OY3chOlTvTu4nYxwm1A3LmEs0KmEK2Hq
+         AqkQ==
+X-Gm-Message-State: APjAAAU5KTXlvos33zTFEmFz6xT+97tytTGOIvlqCVMht+UznX/xuKf0
+        aomOvxsi+6ZPdGbULqda+QHsTmQ1
+X-Google-Smtp-Source: APXvYqzrMYBb0VFopsTbd4r4MVBFyvwIJ9B3mR3PK+YTa21v0FfnE2hgifoWrwe0qsGetzNidIeJwg==
+X-Received: by 2002:a17:902:1101:: with SMTP id d1mr7875672pla.212.1561080916138;
+        Thu, 20 Jun 2019 18:35:16 -0700 (PDT)
+Received: from localhost.localdomain ([203.205.141.123])
+        by smtp.googlemail.com with ESMTPSA id p68sm707845pfb.80.2019.06.20.18.35.14
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Thu, 20 Jun 2019 18:35:15 -0700 (PDT)
+From:   Wanpeng Li <kernellwp@gmail.com>
+X-Google-Original-From: Wanpeng Li <wanpengli@tencent.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Ingo Molnar <mingo@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Frederic Weisbecker <frederic@kernel.org>
+Subject: [PATCH v2] sched/isolation: Prefer housekeeping cpu in local node
+Date:   Fri, 21 Jun 2019 09:35:11 +0800
+Message-Id: <1561080911-22655-1-git-send-email-wanpengli@tencent.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-efivar_ssdt_load allows the kernel to import arbitrary ACPI code from an
-EFI variable, which gives arbitrary code execution in ring 0. Prevent
-that when the kernel is locked down.
+From: Wanpeng Li <wanpengli@tencent.com>
 
-Signed-off-by: Matthew Garrett <mjg59@google.com>
-Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc: linux-efi@vger.kernel.org
+In real product setup, there will be houseeking cpus in each nodes, it 
+is prefer to do housekeeping from local node, fallback to global online 
+cpumask if failed to find houseeking cpu from local node.
+
+Cc: Ingo Molnar <mingo@redhat.com> 
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Frederic Weisbecker <frederic@kernel.org>
+Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
 ---
- drivers/firmware/efi/efi.c | 4 ++++
- 1 file changed, 4 insertions(+)
+v1 -> v2:
+ * introduce sched_numa_find_closest
 
-diff --git a/drivers/firmware/efi/efi.c b/drivers/firmware/efi/efi.c
-index 55b77c576c42..a9ea649e0512 100644
---- a/drivers/firmware/efi/efi.c
-+++ b/drivers/firmware/efi/efi.c
-@@ -31,6 +31,7 @@
- #include <linux/acpi.h>
- #include <linux/ucs2_string.h>
- #include <linux/memblock.h>
-+#include <linux/security.h>
+ kernel/sched/isolation.c | 12 ++++++++++--
+ kernel/sched/sched.h     |  5 ++---
+ kernel/sched/topology.c  | 14 ++++++++++++++
+ 3 files changed, 26 insertions(+), 5 deletions(-)
+
+diff --git a/kernel/sched/isolation.c b/kernel/sched/isolation.c
+index 123ea07..589afba 100644
+--- a/kernel/sched/isolation.c
++++ b/kernel/sched/isolation.c
+@@ -16,9 +16,17 @@ static unsigned int housekeeping_flags;
  
- #include <asm/early_ioremap.h>
- 
-@@ -242,6 +243,9 @@ static void generic_ops_unregister(void)
- static char efivar_ssdt[EFIVAR_SSDT_NAME_MAX] __initdata;
- static int __init efivar_ssdt_setup(char *str)
+ int housekeeping_any_cpu(enum hk_flags flags)
  {
-+	if (security_is_locked_down(LOCKDOWN_ACPI_TABLES))
-+		return -EPERM;
+-	if (static_branch_unlikely(&housekeeping_overridden))
+-		if (housekeeping_flags & flags)
++	int cpu;
 +
- 	if (strlen(str) < sizeof(efivar_ssdt))
- 		memcpy(efivar_ssdt, str, strlen(str));
- 	else
++	if (static_branch_unlikely(&housekeeping_overridden)) {
++		if (housekeeping_flags & flags) {
++			cpu = sched_numa_find_closest(housekeeping_mask, smp_processor_id());
++			if (cpu < nr_cpu_ids)
++				return cpu;
++
+ 			return cpumask_any_and(housekeeping_mask, cpu_online_mask);
++		}
++	}
+ 	return smp_processor_id();
+ }
+ EXPORT_SYMBOL_GPL(housekeeping_any_cpu);
+diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+index b08dee2..0db7431 100644
+--- a/kernel/sched/sched.h
++++ b/kernel/sched/sched.h
+@@ -1212,9 +1212,6 @@ enum numa_topology_type {
+ extern enum numa_topology_type sched_numa_topology_type;
+ extern int sched_max_numa_distance;
+ extern bool find_numa_distance(int distance);
+-#endif
+-
+-#ifdef CONFIG_NUMA
+ extern void sched_init_numa(void);
+ extern void sched_domains_numa_masks_set(unsigned int cpu);
+ extern void sched_domains_numa_masks_clear(unsigned int cpu);
+@@ -1224,6 +1221,8 @@ static inline void sched_domains_numa_masks_set(unsigned int cpu) { }
+ static inline void sched_domains_numa_masks_clear(unsigned int cpu) { }
+ #endif
+ 
++extern int sched_numa_find_closest(const struct cpumask *cpus, int cpu);
++
+ #ifdef CONFIG_NUMA_BALANCING
+ /* The regions in numa_faults array from task_struct */
+ enum numa_faults_stats {
+diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
+index 63184cf..3d3fb04 100644
+--- a/kernel/sched/topology.c
++++ b/kernel/sched/topology.c
+@@ -1726,6 +1726,20 @@ void sched_domains_numa_masks_clear(unsigned int cpu)
+ 
+ #endif /* CONFIG_NUMA */
+ 
++int sched_numa_find_closest(const struct cpumask *cpus, int cpu)
++{
++#ifdef CONFIG_NUMA
++	int i, j = cpu_to_node(cpu);
++
++	for (i = 0; i < sched_domains_numa_levels; i++) {
++		cpu = cpumask_any_and(cpus, sched_domains_numa_masks[i][j]);
++		if (cpu < nr_cpu_ids)
++			return cpu;
++	}
++#endif
++	return nr_cpu_ids;
++}
++
+ static int __sdt_alloc(const struct cpumask *cpu_map)
+ {
+ 	struct sched_domain_topology_level *tl;
 -- 
-2.22.0.410.gd8fdbe21b5-goog
+2.7.4
 
