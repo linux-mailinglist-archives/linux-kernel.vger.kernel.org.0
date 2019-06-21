@@ -2,111 +2,135 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 095174E940
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 15:36:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 895564E95D
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 15:37:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726062AbfFUNgN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Jun 2019 09:36:13 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:45330 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725975AbfFUNgN (ORCPT
+        id S1726262AbfFUNht (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Jun 2019 09:37:49 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:63690 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726010AbfFUNhs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Jun 2019 09:36:13 -0400
-Received: by mail-ed1-f65.google.com with SMTP id a14so10102723edv.12
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2019 06:36:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=cnC3suzlgwD62Q8O7FoLN2Bc0yj3F9CWcR6TgaR1LLc=;
-        b=zrrtFvrl4p7uTqycYUBHGqaztc91HANl9u9PpKLY7U7rcWsCOOeWiEDqlASL4SSEuY
-         ZqqicXW/nV5z+021k5EusmejEXXNNfgLn3AvyKy6M71xezPYdXaG0rCj9wTdkWiMDHkG
-         /Cl3PE8EUukQhj0s9A9WX3zqTgEwNaIZaXQQnVAE/2/gc7JSt8hB0gS4w2ympIr1Yrxy
-         mmZzOvlxL/7bfRgFnthfff+zVrJS39UskfbFNPwu7sXRX8oj+Ufgl3BNlkqQMt6o9YAN
-         jqRYeFjPL/z3fsImc5/ifslgFZuK7s81erlgqIukiir0X2pl9WFKyjdvldE9MDFxGJ+Y
-         EpPA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=cnC3suzlgwD62Q8O7FoLN2Bc0yj3F9CWcR6TgaR1LLc=;
-        b=npYilcgpruJ7CZ7VYGVJHpTd0AtHcTaUTCEIPRJuzDY8+CkPm+3Z2Vw9Dt7+SW+mb7
-         bsTaQ/w0JwXA3D3VubN+fgoWiu9KdgKRtyj3SPfIXPbkgQueomM0wNRBvluwJXrxUdYO
-         uPfvLsM25LXrRrQOYhbAFT1M9sBW0GvL+rKnwc8k0QbR91uVkis9qtJuXi4XvV99Vxuj
-         ltDrfXqvDqAogjIBhpiRVcfnFbjSQL4VgjlvQGIehVBRRdoAYCVqjkIIzAjl4SpNPAO1
-         9Y9LQ4xOqthHdPsCNrw3nE0WTSPp027a0vUZTZ4OCWtY61nufc/+XXQjJurVlnYULT+g
-         b+7g==
-X-Gm-Message-State: APjAAAW5w40GMbaRd/ePXPwtLCyQep+zrVAQfvrZu/knq0ZG2GiiLjAY
-        nt401DF/fUbeydi1/3T+K0+Vyw1dOo4=
-X-Google-Smtp-Source: APXvYqylF/ZGnoajREjtqJ3qd8ZnbSjXbf2NB4U/xNXjWS/QwEe58V6Y8Ny7PU80e6ICaU6cNuj7qg==
-X-Received: by 2002:a17:906:5008:: with SMTP id s8mr80542081ejj.308.1561124171736;
-        Fri, 21 Jun 2019 06:36:11 -0700 (PDT)
-Received: from box.localdomain ([86.57.175.117])
-        by smtp.gmail.com with ESMTPSA id e1sm432826ejl.2.2019.06.21.06.36.10
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 21 Jun 2019 06:36:11 -0700 (PDT)
-Received: by box.localdomain (Postfix, from userid 1000)
-        id 39A5410289C; Fri, 21 Jun 2019 16:36:13 +0300 (+03)
-Date:   Fri, 21 Jun 2019 16:36:13 +0300
-From:   "Kirill A. Shutemov" <kirill@shutemov.name>
-To:     Song Liu <songliubraving@fb.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>, Linux-MM <linux-mm@kvack.org>,
-        "oleg@redhat.com" <oleg@redhat.com>,
-        "rostedt@goodmis.org" <rostedt@goodmis.org>,
-        "mhiramat@kernel.org" <mhiramat@kernel.org>,
-        "matthew.wilcox@oracle.com" <matthew.wilcox@oracle.com>,
-        "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>,
-        Kernel Team <Kernel-team@fb.com>
-Subject: Re: [PATCH v4 5/5] uprobe: collapse THP pmd after removing all
- uprobes
-Message-ID: <20190621133613.xnzpdlicqvjklrze@box>
-References: <20190613175747.1964753-1-songliubraving@fb.com>
- <20190613175747.1964753-6-songliubraving@fb.com>
- <20190621124823.ziyyx3aagnkobs2n@box>
- <B72B62C9-78EE-4440-86CA-590D3977BDB1@fb.com>
+        Fri, 21 Jun 2019 09:37:48 -0400
+Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5LDba19099061
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2019 09:37:47 -0400
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2t8y882wrv-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2019 09:37:44 -0400
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <pasic@linux.ibm.com>;
+        Fri, 21 Jun 2019 14:37:17 +0100
+Received: from b06avi18626390.portsmouth.uk.ibm.com (9.149.26.192)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 21 Jun 2019 14:37:14 +0100
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
+        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x5LDb4W738994388
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 21 Jun 2019 13:37:04 GMT
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B628DA405C;
+        Fri, 21 Jun 2019 13:37:12 +0000 (GMT)
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 592A7A4054;
+        Fri, 21 Jun 2019 13:37:12 +0000 (GMT)
+Received: from oc2783563651 (unknown [9.152.224.137])
+        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Fri, 21 Jun 2019 13:37:12 +0000 (GMT)
+Date:   Fri, 21 Jun 2019 15:37:11 +0200
+From:   Halil Pasic <pasic@linux.ibm.com>
+To:     Cornelia Huck <cohuck@redhat.com>
+Cc:     Sebastian Ott <sebott@linux.ibm.com>,
+        Peter Oberparleiter <oberpar@linux.ibm.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] s390/cio: introduce driver_override on the css bus
+In-Reply-To: <20190621115604.0f3e3f69.cohuck@redhat.com>
+References: <20190613110815.17251-1-cohuck@redhat.com>
+        <20190621115604.0f3e3f69.cohuck@redhat.com>
+Organization: IBM
+X-Mailer: Claws Mail 3.11.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <B72B62C9-78EE-4440-86CA-590D3977BDB1@fb.com>
-User-Agent: NeoMutt/20180716
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19062113-0012-0000-0000-0000032B3A4B
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19062113-0013-0000-0000-000021646468
+Message-Id: <20190621153711.7d713c4d.pasic@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-21_10:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=894 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1906210114
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 21, 2019 at 01:17:05PM +0000, Song Liu wrote:
-> 
-> 
-> > On Jun 21, 2019, at 5:48 AM, Kirill A. Shutemov <kirill@shutemov.name> wrote:
-> > 
-> > On Thu, Jun 13, 2019 at 10:57:47AM -0700, Song Liu wrote:
-> >> After all uprobes are removed from the huge page (with PTE pgtable), it
-> >> is possible to collapse the pmd and benefit from THP again. This patch
-> >> does the collapse.
-> >> 
-> >> An issue on earlier version was discovered by kbuild test robot.
-> >> 
-> >> Reported-by: kbuild test robot <lkp@intel.com>
-> >> Signed-off-by: Song Liu <songliubraving@fb.com>
-> >> ---
-> >> include/linux/huge_mm.h |  7 +++++
-> >> kernel/events/uprobes.c |  5 ++-
-> >> mm/huge_memory.c        | 69 +++++++++++++++++++++++++++++++++++++++++
-> > 
-> > I still sync it's duplication of khugepaged functinallity. We need to fix
-> > khugepaged to handle SCAN_PAGE_COMPOUND and probably refactor the code to
-> > be able to call for collapse of particular range if we have all locks
-> > taken (as we do in uprobe case).
-> > 
-> 
-> I see the point now. I misunderstood it for a while. 
-> 
-> If we add this to khugepaged, it will have some conflicts with my other 
-> patchset. How about we move the functionality to khugepaged after these
-> two sets get in? 
+On Fri, 21 Jun 2019 11:56:04 +0200
+Cornelia Huck <cohuck@redhat.com> wrote:
 
-Is the last patch of the patchset essential? I think this part can be done
-a bit later in a proper way, no?
+> On Thu, 13 Jun 2019 13:08:15 +0200
+> Cornelia Huck <cohuck@redhat.com> wrote:
+> 
+> > Sometimes, we want to control which of the matching drivers
+> > binds to a subchannel device (e.g. for subchannels we want to
+> > handle via vfio-ccw).
+> > 
+> > For pci devices, a mechanism to do so has been introduced in
+> > 782a985d7af2 ("PCI: Introduce new device binding path using
+> > pci_dev.driver_override"). It makes sense to introduce the
+> > driver_override attribute for subchannel devices as well, so
+> > that we can easily extend the 'driverctl' tool (which makes
+> > use of the driver_override attribute for pci).
+> > 
+> > Note that unlike pci we still require a driver override to
+> > match the subchannel type; matching more than one subchannel
+> > type is probably not useful anyway.
+> > 
+> > Signed-off-by: Cornelia Huck <cohuck@redhat.com>
 
--- 
- Kirill A. Shutemov
+Reviewed-by: Halil Pasic <pasic@linux.ibm.com>
+
+I guess the '\n' handling is customary, and is what the same what
+the pci counterpart (782a985d7af2) does anyway. It bothers
+me a little that you don't necessarily get back from with show
+what you stored. E.g. # echo -e "bug\nfree"
+> /sys/bus/css/devices/0.0.0001/driver_override # echo $?
+0
+# cat /sys/bus/css/devices/0.0.0001/driver_override
+bug
+# echo $?
+0
+But given the previous art (782a985d7af2) I think it is the best way
+to do it.
+
+The rest is very straightforward.
+
+> > ---
+> > 
+> > Lightly tested; did not yet attempt to adapt driverctl to actually
+> > make use of it.
+> 
+> Friendly ping.
+> 
+> In the meanwhile, I figured out that you do not need to adapt driverctl
+> at all, but just need to pass it '-b css' to work on the css bus; this
+> seems to work just fine with this patch applied.
+> 
+
+Interesting. I hope to get around and have a closer look at it
+eventually.
+
+Regards,
+Halil
+
