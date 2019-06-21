@@ -2,103 +2,239 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EE1FE4EB82
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 17:04:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C507F4EB87
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 17:05:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726203AbfFUPEu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Jun 2019 11:04:50 -0400
-Received: from out3-smtp.messagingengine.com ([66.111.4.27]:33953 "EHLO
-        out3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726018AbfFUPEu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Jun 2019 11:04:50 -0400
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
-        by mailout.nyi.internal (Postfix) with ESMTP id 554112211E;
-        Fri, 21 Jun 2019 11:04:49 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute6.internal (MEProxy); Fri, 21 Jun 2019 11:04:49 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm1; bh=zG55VncHkz6LJ59AozPYl8biJeb
-        XBi2KCs6/rgVfSUI=; b=pB7XJPRxOuCrgkrA4gKktitowy4ilexVihUO8gYZKjZ
-        0FMVgDfF44jO5GGI67EIFJSvOFViE6HU7p0zzq/X3E58c1ycQ74yEwpx3t6yu0i3
-        JasXbBEt1KuHU7L1SMpHHENWw49FaVmZweCSZ5Q2me/PC7x/WAS4FWoo62+BDZDS
-        ZibN35CqIvrVaV9w/yyL+Q0U9QZIhf/jCZqLs24LRoagtR4Qk3BIFwU145LKXY1t
-        p+kWYpX5Kv/EKjvKZymn90NriXIEn7vplDlsNFsU3oKPwViNbprQ26IKQQzRfmcg
-        jxfE/FrZWkOJJhRn7OXJOPBVfd+mCuM8OKzEeWAxNfA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=zG55Vn
-        cHkz6LJ59AozPYl8biJebXBi2KCs6/rgVfSUI=; b=cFKxi/SsePJ2Zk5WaOBwLi
-        PFxr+F1UR8S1woEvVHDH4mUuoIjGSRu+l2UGvPJMV38S20S9nlJ5t2ZD5V4C8dp9
-        3xqseobd4GqHVhlIJGAmfCr/+CfPkB12EoIou0Ux+WfRBVhmaKyBtDKjZUbIBcEl
-        2De/o8o47dNQP3ZJ6hWlOd1il1nFr6HZMFjqvTGKHNfnz/tPu0KLdtOoicQnne0A
-        fnBs8u+DPjomTq8UFAoLC8MHwkQg8t7LMN5WugSDdm5pX6fBY/mYIashruwB/Yj3
-        fTZkMZ1HNTpVeSpf99duETsr/jvCdYC8/3Vp55lEi0GG5/6sjjAGsuKDgF8Jr+OQ
-        ==
-X-ME-Sender: <xms:D_IMXWLtzizZ4kAMdsroUXg1NmlavFC3OY2qfqTfO3MnW9oYuLbCUg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduvddrtdeigdekjecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpeffhffvuffkfhggtggujggfsehttdertddtredvnecuhfhrohhmpefirhgvghcu
-    mffjuceoghhrvghgsehkrhhorghhrdgtohhmqeenucfkphepkeefrdekiedrkeelrddutd
-    ejnecurfgrrhgrmhepmhgrihhlfhhrohhmpehgrhgvgheskhhrohgrhhdrtghomhenucev
-    lhhushhtvghrufhiiigvpedt
-X-ME-Proxy: <xmx:D_IMXbv6_LqrDv8f1EyQvwPzBAPsi9xVwwwjTibGTsbjwE5gjjMmMQ>
-    <xmx:D_IMXdIxDsQcsZa3HEAPObVcIgsA0sVOfMw8mAyAkodxK6B4QvOrNQ>
-    <xmx:D_IMXc-2GozhEI2wpFb8kiwARuVPPwwxrT422ZG8b4l5hVVfq1Zegw>
-    <xmx:EfIMXXlB-6azIiAyDHE555Xzc8YU51uP8p4z1f94K7yRGoO6GGkt9Q>
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 1A1EE380085;
-        Fri, 21 Jun 2019 11:04:46 -0400 (EDT)
-Date:   Fri, 21 Jun 2019 17:04:45 +0200
-From:   Greg KH <greg@kroah.com>
-To:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Cc:     Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab@infradead.org>,
-        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Anton Vorontsov <anton@enomsg.org>,
-        Colin Cross <ccross@android.com>,
-        Tony Luck <tony.luck@intel.com>
-Subject: Re: [PATCH v2 00/22] Add ABI and features docs to the Kernel
- documentation
-Message-ID: <20190621150445.GA11015@kroah.com>
-References: <cover.1561050806.git.mchehab+samsung@kernel.org>
+        id S1726323AbfFUPFj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Jun 2019 11:05:39 -0400
+Received: from frisell.zx2c4.com ([192.95.5.64]:40599 "EHLO frisell.zx2c4.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726017AbfFUPFj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Jun 2019 11:05:39 -0400
+Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTP id a8f37cd9;
+        Fri, 21 Jun 2019 14:32:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=zx2c4.com; h=from:to:cc
+        :subject:date:message-id:mime-version:content-transfer-encoding;
+         s=mail; bh=f+1ZpDMIWGAfcOagOZkUXYhHHpM=; b=dXGh30j+89ZrxvGORDQl
+        L2Ng3HBm0EPpDynKsNIEQI6JxVHN4rvF7vKc2x10SQ5OAWJUFFStMGf4gxsNS4rR
+        ix828oEOdpltmoxaMovG2dcEataDBFKk5pfCTx+0sEks693l+5WR/ibI0jmL0Nit
+        OfpAGIKvIdlMSylL+AzWH1gn01Shbj/jpTfFJwHhqsKYdy4UO5v/csDEA7T+QJO4
+        6M3gd/xMG3ivdgRqhOCOdH4BWiCcJzHdi7b2ujjA+blBHjPnXMi3YhogAun3THtx
+        z9nX+C+XjDJNbcs+0DWkzwCUX2Vn2Bz4vWc1dMqlhQXNM+ibRbvlTEOeYYy6lpxa
+        JA==
+Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id bf6a32d7 (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256:NO);
+        Fri, 21 Jun 2019 14:32:12 +0000 (UTC)
+From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: [PATCH v3 1/4] timekeeping: add missing non-_ns functions for fast accessors
+Date:   Fri, 21 Jun 2019 17:05:18 +0200
+Message-Id: <20190621150521.17687-1-Jason@zx2c4.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1561050806.git.mchehab+samsung@kernel.org>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 20, 2019 at 02:22:52PM -0300, Mauro Carvalho Chehab wrote:
-> This is a rebased version of the scripts with parse
-> Documentation/ABI and Documentation/feature files
-> and produce a ReST output. Those scripts are added to the
-> Kernel building system, in order to output their contents
-> inside the Kernel documentation.
-> 
-> Please notice that, as discussed, I added support at get_abi.pl
-> to handle ABI files as if they're compatible with ReST. Right
-> now, this feature can't be enabled for normal builds, as it will
-> cause Sphinx crashes. After getting the offending ABI files fixed,
-> a single line change will be enough to make it default.
-> 
-> a version "0" was sent back on 2017.
+Previously there was no analogue to get proper ktime_t versions of the
+fast variety of ktime invocations. This commit makes the interface
+uniform with the other accessors.
 
-Ok, I added the first chunk of these patches to my tree, that add the
-get_abi.pl file to the tree.  I didn't touch the others that touched the
-documentation build or other scripts just yet, as I wanted to get others
-to agree with them before accepting them.
+Signed-off-by: Jason A. Donenfeld <Jason@zx2c4.com>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+---
+ Documentation/core-api/timekeeping.rst |  7 +++-
+ include/linux/timekeeping.h            | 28 ++++++++++++--
+ kernel/time/timekeeping.c              | 52 +++++++++++++-------------
+ 3 files changed, 55 insertions(+), 32 deletions(-)
 
-Or we can just wait until after 5.3-rc1 is out and then the rest can go
-through the documentation tree.
+diff --git a/Documentation/core-api/timekeeping.rst b/Documentation/core-api/timekeeping.rst
+index 93cbeb9daec0..47b41e948459 100644
+--- a/Documentation/core-api/timekeeping.rst
++++ b/Documentation/core-api/timekeeping.rst
+@@ -94,7 +94,7 @@ different format depending on what is required by the user:
+ 	down the seconds to the full seconds of the last timer tick
+ 	using the respective reference.
+ 
+-Coarse and fast_ns access
++Coarse and fast access
+ -------------------------
+ 
+ Some additional variants exist for more specialized cases:
+@@ -125,6 +125,11 @@ Some additional variants exist for more specialized cases:
+ 	up to several microseconds on older hardware with an external
+ 	clocksource.
+ 
++.. c:function:: ktime_t ktime_get_mono_fast( void )
++		ktime_t ktime_get_raw_fast( void )
++		ktime_t ktime_get_boottime_fast( void )
++		ktime_t ktime_get_real_fast( void )
++
+ .. c:function:: u64 ktime_get_mono_fast_ns( void )
+ 		u64 ktime_get_raw_fast_ns( void )
+ 		u64 ktime_get_boot_fast_ns( void )
+diff --git a/include/linux/timekeeping.h b/include/linux/timekeeping.h
+index a8ab0f143ac4..c5d360779fab 100644
+--- a/include/linux/timekeeping.h
++++ b/include/linux/timekeeping.h
+@@ -146,10 +146,30 @@ static inline u64 ktime_get_raw_ns(void)
+ 	return ktime_to_ns(ktime_get_raw());
+ }
+ 
+-extern u64 ktime_get_mono_fast_ns(void);
+-extern u64 ktime_get_raw_fast_ns(void);
+-extern u64 ktime_get_boot_fast_ns(void);
+-extern u64 ktime_get_real_fast_ns(void);
++extern ktime_t ktime_get_mono_fast(void);
++extern ktime_t ktime_get_raw_fast(void);
++extern ktime_t ktime_get_boottime_fast(void);
++extern ktime_t ktime_get_real_fast(void);
++
++static inline u64 ktime_get_mono_fast_ns(void)
++{
++	return ktime_to_ns(ktime_get_mono_fast());
++}
++
++static inline u64 ktime_get_raw_fast_ns(void)
++{
++	return ktime_to_ns(ktime_get_raw_fast());
++}
++
++static inline u64 ktime_get_boot_fast_ns(void)
++{
++	return ktime_to_ns(ktime_get_boottime_fast());
++}
++
++static inline u64 ktime_get_real_fast_ns(void)
++{
++	return ktime_to_ns(ktime_get_real_fast());
++}
+ 
+ /*
+  * timespec64/time64_t interfaces utilizing the ktime based ones
+diff --git a/kernel/time/timekeeping.c b/kernel/time/timekeeping.c
+index 44b726bab4bd..4c97c9c8c217 100644
+--- a/kernel/time/timekeeping.c
++++ b/kernel/time/timekeeping.c
+@@ -443,41 +443,40 @@ static void update_fast_timekeeper(const struct tk_read_base *tkr,
+  * of the following timestamps. Callers need to be aware of that and
+  * deal with it.
+  */
+-static __always_inline u64 __ktime_get_fast_ns(struct tk_fast *tkf)
++static __always_inline ktime_t __ktime_get_fast(struct tk_fast *tkf)
+ {
+ 	struct tk_read_base *tkr;
+ 	unsigned int seq;
+-	u64 now;
++	ktime_t now;
+ 
+ 	do {
+ 		seq = raw_read_seqcount_latch(&tkf->seq);
+ 		tkr = tkf->base + (seq & 0x01);
+-		now = ktime_to_ns(tkr->base);
+-
+-		now += timekeeping_delta_to_ns(tkr,
++		now = ktime_add_ns(tkr->base,
++			timekeeping_delta_to_ns(tkr,
+ 				clocksource_delta(
+ 					tk_clock_read(tkr),
+ 					tkr->cycle_last,
+-					tkr->mask));
++					tkr->mask)));
+ 	} while (read_seqcount_retry(&tkf->seq, seq));
+ 
+ 	return now;
+ }
+ 
+-u64 ktime_get_mono_fast_ns(void)
++ktime_t ktime_get_mono_fast(void)
+ {
+-	return __ktime_get_fast_ns(&tk_fast_mono);
++	return __ktime_get_fast(&tk_fast_mono);
+ }
+-EXPORT_SYMBOL_GPL(ktime_get_mono_fast_ns);
++EXPORT_SYMBOL_GPL(ktime_get_mono_fast);
+ 
+-u64 ktime_get_raw_fast_ns(void)
++ktime_t ktime_get_raw_fast(void)
+ {
+-	return __ktime_get_fast_ns(&tk_fast_raw);
++	return __ktime_get_fast(&tk_fast_raw);
+ }
+-EXPORT_SYMBOL_GPL(ktime_get_raw_fast_ns);
++EXPORT_SYMBOL_GPL(ktime_get_raw_fast);
+ 
+ /**
+- * ktime_get_boot_fast_ns - NMI safe and fast access to boot clock.
++ * ktime_get_boottime_fast - NMI safe and fast access to boot clock.
+  *
+  * To keep it NMI safe since we're accessing from tracing, we're not using a
+  * separate timekeeper with updates to monotonic clock and boot offset
+@@ -497,47 +496,46 @@ EXPORT_SYMBOL_GPL(ktime_get_raw_fast_ns);
+  * partially updated.  Since the tk->offs_boot update is a rare event, this
+  * should be a rare occurrence which postprocessing should be able to handle.
+  */
+-u64 notrace ktime_get_boot_fast_ns(void)
++ktime_t notrace ktime_get_boottime_fast(void)
+ {
+ 	struct timekeeper *tk = &tk_core.timekeeper;
+ 
+-	return (ktime_get_mono_fast_ns() + ktime_to_ns(tk->offs_boot));
++	return ktime_add(ktime_get_mono_fast(), tk->offs_boot);
+ }
+-EXPORT_SYMBOL_GPL(ktime_get_boot_fast_ns);
++EXPORT_SYMBOL_GPL(ktime_get_boottime_fast);
+ 
+ 
+ /*
+- * See comment for __ktime_get_fast_ns() vs. timestamp ordering
++ * See comment for __ktime_get_fast() vs. timestamp ordering
+  */
+-static __always_inline u64 __ktime_get_real_fast_ns(struct tk_fast *tkf)
++static __always_inline ktime_t __ktime_get_real_fast(struct tk_fast *tkf)
+ {
+ 	struct tk_read_base *tkr;
+ 	unsigned int seq;
+-	u64 now;
++	ktime_t now;
+ 
+ 	do {
+ 		seq = raw_read_seqcount_latch(&tkf->seq);
+ 		tkr = tkf->base + (seq & 0x01);
+-		now = ktime_to_ns(tkr->base_real);
+-
+-		now += timekeeping_delta_to_ns(tkr,
++		now = ktime_add_ns(tkr->base_real,
++			timekeeping_delta_to_ns(tkr,
+ 				clocksource_delta(
+ 					tk_clock_read(tkr),
+ 					tkr->cycle_last,
+-					tkr->mask));
++					tkr->mask)));
+ 	} while (read_seqcount_retry(&tkf->seq, seq));
+ 
+ 	return now;
+ }
+ 
+ /**
+- * ktime_get_real_fast_ns: - NMI safe and fast access to clock realtime.
++ * ktime_get_real_fast: - NMI safe and fast access to clock realtime.
+  */
+-u64 ktime_get_real_fast_ns(void)
++ktime_t ktime_get_real_fast(void)
+ {
+-	return __ktime_get_real_fast_ns(&tk_fast_mono);
++	return __ktime_get_real_fast(&tk_fast_mono);
+ }
+-EXPORT_SYMBOL_GPL(ktime_get_real_fast_ns);
++EXPORT_SYMBOL_GPL(ktime_get_real_fast);
+ 
+ /**
+  * halt_fast_timekeeper - Prevent fast timekeeper from accessing clocksource.
+-- 
+2.21.0
 
-thanks,
-
-greg k-h
