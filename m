@@ -2,78 +2,152 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ECBC04EC1A
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 17:34:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6D8C74EC22
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 17:36:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726148AbfFUPeq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Jun 2019 11:34:46 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:55295 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726045AbfFUPeq (ORCPT
+        id S1726292AbfFUPgP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Jun 2019 11:36:15 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:45212 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726045AbfFUPgP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Jun 2019 11:34:46 -0400
-Received: from p5b06daab.dip0.t-ipconnect.de ([91.6.218.171] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1heLXd-00065k-Gq; Fri, 21 Jun 2019 17:33:29 +0200
-Date:   Fri, 21 Jun 2019 17:33:28 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Jacob Pan <jacob.jun.pan@intel.com>
-cc:     Stephane Eranian <eranian@google.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Jan Kiszka <jan.kiszka@siemens.com>,
-        Ricardo Neri <ricardo.neri@intel.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Wincy Van <fanwenyi0529@gmail.com>,
-        Ashok Raj <ashok.raj@intel.com>, x86 <x86@kernel.org>,
-        Andi Kleen <andi.kleen@intel.com>,
-        Borislav Petkov <bp@suse.de>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Juergen Gross <jgross@suse.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        iommu@lists.linux-foundation.org,
-        Philippe Ombredanne <pombredanne@nexb.com>
-Subject: Re: [RFC PATCH v4 20/21] iommu/vt-d: hpet: Reserve an interrupt
- remampping table entry for watchdog
-In-Reply-To: <20190619084316.71ce5477@jacob-builder>
-Message-ID: <alpine.DEB.2.21.1906211732330.5503@nanos.tec.linutronix.de>
-References: <1558660583-28561-1-git-send-email-ricardo.neri-calderon@linux.intel.com> <1558660583-28561-21-git-send-email-ricardo.neri-calderon@linux.intel.com> <alpine.DEB.2.21.1906162049300.1760@nanos.tec.linutronix.de> <alpine.DEB.2.21.1906171007360.1760@nanos.tec.linutronix.de>
- <CABPqkBTai76Bgb4E61tF-mJUkFNxVa4B8M2bxTEYVgBsuAANNQ@mail.gmail.com> <alpine.DEB.2.21.1906172343120.1963@nanos.tec.linutronix.de> <20190619084316.71ce5477@jacob-builder>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Fri, 21 Jun 2019 11:36:15 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5LFOCdN084301;
+        Fri, 21 Jun 2019 15:35:20 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=6t/T0oCX3FYtWnSX59C7RPueclXGYaVh3ih9FejJyy8=;
+ b=n7PC265Dn1bw/BeVQsMjARhjLsH2Q5nXXw5HrQQxZRruJV3Pk3wuDJoJppdU8WjTwsE5
+ IFOO4VQ1ALO3Tkqca1A1aKFr2myITmN65QxfOid1gg19CyyUUp5tW5p0gcveHhrEOhRp
+ bccPzjsBjxJ37TIq0DEoxTFJ3GSerzNRpyQgmcNIrgRZcWIJi6frNAUKxJQrh1B7Domg
+ h+0kFLkrc++e4VL6uWl+SqEVobF25+Aly2yk1RoVooheayqd01ChzxdKKr3O9if86pf1
+ 0CuQzsjTBC6fhX2gfPmrldWHTXgV8F98JdJPt1DFwiWomTWPOxESNbF+r+mTo403B7Bo dw== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by userp2130.oracle.com with ESMTP id 2t7809q6yq-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 21 Jun 2019 15:35:20 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5LFZJQK100494;
+        Fri, 21 Jun 2019 15:35:19 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserp3030.oracle.com with ESMTP id 2t7rdxtbm7-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 21 Jun 2019 15:35:19 +0000
+Received: from abhmp0008.oracle.com (abhmp0008.oracle.com [141.146.116.14])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x5LFZDpA005218;
+        Fri, 21 Jun 2019 15:35:13 GMT
+Received: from [10.154.105.108] (/10.154.105.108)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 21 Jun 2019 08:35:13 -0700
+Subject: Re: [PATCH 01/16] mm: use untagged_addr() for get_user_pages_fast
+ addresses
+To:     Jason Gunthorpe <jgg@ziepe.ca>, Christoph Hellwig <hch@lst.de>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Andrey Konovalov <andreyknvl@google.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        linux-mips@vger.kernel.org, linux-sh@vger.kernel.org,
+        sparclinux@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-mm@kvack.org, x86@kernel.org, linux-kernel@vger.kernel.org
+References: <20190611144102.8848-1-hch@lst.de>
+ <20190611144102.8848-2-hch@lst.de> <20190621133911.GL19891@ziepe.ca>
+From:   Khalid Aziz <khalid.aziz@oracle.com>
+Organization: Oracle Corp
+Message-ID: <9a4e1485-4683-92b0-3d26-73f26896d646@oracle.com>
+Date:   Fri, 21 Jun 2019 09:35:11 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+In-Reply-To: <20190621133911.GL19891@ziepe.ca>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9295 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=857
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1906210125
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9295 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=897 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1906210125
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 19 Jun 2019, Jacob Pan wrote:
-> On Tue, 18 Jun 2019 01:08:06 +0200 (CEST)
-> Thomas Gleixner <tglx@linutronix.de> wrote:
-> > 
-> > Unless this problem is not solved and I doubt it can be solved after
-> > talking to IOMMU people and studying manuals,
->
-> I agree. modify irte might be done with cmpxchg_double() but the queued
-> invalidation interface for IRTE cache flush is shared with DMA and
-> requires holding a spinlock for enque descriptors, QI tail update etc.
-> 
-> Also, reserving & manipulating IRTE slot for hpet via backdoor might not
-> be needed if the HPET PCI BDF (found in ACPI) can be utilized. But it
-> might need more work to add a fake PCI device for HPET.
+On 6/21/19 7:39 AM, Jason Gunthorpe wrote:
+> On Tue, Jun 11, 2019 at 04:40:47PM +0200, Christoph Hellwig wrote:
+>> This will allow sparc64 to override its ADI tags for
+>> get_user_pages and get_user_pages_fast.
+>>
+>> Signed-off-by: Christoph Hellwig <hch@lst.de>
+>>  mm/gup.c | 4 ++--
+>>  1 file changed, 2 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/mm/gup.c b/mm/gup.c
+>> index ddde097cf9e4..6bb521db67ec 100644
+>> +++ b/mm/gup.c
+>> @@ -2146,7 +2146,7 @@ int __get_user_pages_fast(unsigned long start, i=
+nt nr_pages, int write,
+>>  	unsigned long flags;
+>>  	int nr =3D 0;
+>> =20
+>> -	start &=3D PAGE_MASK;
+>> +	start =3D untagged_addr(start) & PAGE_MASK;
+>>  	len =3D (unsigned long) nr_pages << PAGE_SHIFT;
+>>  	end =3D start + len;
+>=20
+> Hmm, this function, and the other, goes on to do:
+>=20
+>         if (unlikely(!access_ok((void __user *)start, len)))
+>                 return 0;
+>=20
+> and I thought that access_ok takes in the tagged pointer?
+>=20
+> How about re-order it a bit?
 
-What would PCI/BDF solve?
+access_ok() can handle tagged or untagged pointers. It just strips the
+tag bits from the top bits. Current order doesn't really matter from
+functionality point of view. There might be minor gain in delaying
+untagging in __get_user_pages_fast() but I could go either way.
 
-Thanks,
+--
+Khalid
 
-	tglx
+>=20
+> diff --git a/mm/gup.c b/mm/gup.c
+> index ddde097cf9e410..f48747ced4723b 100644
+> --- a/mm/gup.c
+> +++ b/mm/gup.c
+> @@ -2148,11 +2148,12 @@ int __get_user_pages_fast(unsigned long start, =
+int nr_pages, int write,
+> =20
+>  	start &=3D PAGE_MASK;
+>  	len =3D (unsigned long) nr_pages << PAGE_SHIFT;
+> -	end =3D start + len;
+> -
+>  	if (unlikely(!access_ok((void __user *)start, len)))
+>  		return 0;
+> =20
+> +	start =3D untagged_ptr(start);
+> +	end =3D start + len;
+> +
+>  	/*
+>  	 * Disable interrupts.  We use the nested form as we can already have=
+
+>  	 * interrupts disabled by get_futex_key.
+>=20
+
+
