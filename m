@@ -2,69 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A70134E244
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 10:45:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 164264E247
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 10:45:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726858AbfFUInf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Jun 2019 04:43:35 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:55099 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726657AbfFUInd (ORCPT
+        id S1726520AbfFUIoI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Jun 2019 04:44:08 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:55830 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726260AbfFUIoE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Jun 2019 04:43:33 -0400
-Received: by mail-wm1-f66.google.com with SMTP id g135so5536225wme.4
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2019 01:43:32 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=RGP6lrdFeiyCR8bFc4y9TBM1FWLgB81TixkDIMIJnYg=;
-        b=Huue2Fwh+OM4NVaxQZ4/Fjgh4zwrJ69PC/72s55q9bsF5RkqNhk1a24k6oHCTOidMh
-         TEy0moYae3uRk76cT4Pie6DxQt/VISg91XCtYEg6Hv6lrkHxgTNRpQRaw0A57TvKQGAw
-         dNnIqZ7hS3Zh43UyQ0cFqix4zthoiBtCARZBRnnwQthYF1Xr8yJBLeHWKuLYyUlYDTvK
-         72UqKTpogQ28YmyiE3okyL8kchQXt1uhdzby9D6P0XKPdLsGYJzex/qIzrSRaghdjwyF
-         k+sfctQs8RFLuFRY5dK73/5mXI7R3p+jgjQToQvOOR7EHTwXI+oMPLnXd5IddnwO/1gQ
-         pvbA==
-X-Gm-Message-State: APjAAAWk/aNCLyCwsi+Z2uw1lVdU7kr0dNaP4z1LGYcHHcKwqQbV4/pM
-        JmIzxaGnWF3NqUawNkfPqOSboA==
-X-Google-Smtp-Source: APXvYqwZFutXN6BvKeDJNb/D/OOiLk+eQ4ygcLMq6gGb3r3C2Sg0Vxxr+txQdjtA94eBouvi/KXLLw==
-X-Received: by 2002:a1c:e90f:: with SMTP id q15mr3293812wmc.89.1561106611736;
-        Fri, 21 Jun 2019 01:43:31 -0700 (PDT)
-Received: from vitty.brq.redhat.com (ip-89-176-127-31.net.upcbroadband.cz. [89.176.127.31])
-        by smtp.gmail.com with ESMTPSA id r4sm2447702wra.96.2019.06.21.01.43.30
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Fri, 21 Jun 2019 01:43:31 -0700 (PDT)
-From:   Vitaly Kuznetsov <vkuznets@redhat.com>
-To:     Jim Mattson <jmattson@google.com>
-Cc:     kvm list <kvm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Joerg Roedel <joro@8bytes.org>
-Subject: Re: [PATCH RFC 3/5] x86: KVM: svm: clear interrupt shadow on all paths in skip_emulated_instruction()
-In-Reply-To: <CALMp9eQ85h58NMDh-yOYvHN6_2f2T-wu63f+yLnNbwuG+p3Uvw@mail.gmail.com>
-References: <20190620110240.25799-1-vkuznets@redhat.com> <20190620110240.25799-4-vkuznets@redhat.com> <CALMp9eQ85h58NMDh-yOYvHN6_2f2T-wu63f+yLnNbwuG+p3Uvw@mail.gmail.com>
-Date:   Fri, 21 Jun 2019 10:43:30 +0200
-Message-ID: <87o92rfhvx.fsf@vitty.brq.redhat.com>
+        Fri, 21 Jun 2019 04:44:04 -0400
+X-UUID: 9b79d7030ee94a63b31ea7d234ef86ba-20190621
+X-UUID: 9b79d7030ee94a63b31ea7d234ef86ba-20190621
+Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw02.mediatek.com
+        (envelope-from <roger.lu@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 434556469; Fri, 21 Jun 2019 16:43:57 +0800
+Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
+ mtkmbs01n1.mediatek.inc (172.21.101.68) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Fri, 21 Jun 2019 16:43:56 +0800
+Received: from mtksdaap41.mediatek.inc (172.21.77.4) by MTKCAS06.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Fri, 21 Jun 2019 16:43:56 +0800
+From:   Roger Lu <roger.lu@mediatek.com>
+To:     Kevin Hilman <khilman@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Nicolas Boichat <drinkcat@google.com>,
+        Stephen Boyd <sboyd@kernel.org>
+CC:     Fan Chen <fan.chen@mediatek.com>,
+        HenryC Chen <HenryC.Chen@mediatek.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Nishanth Menon <nm@ti.com>, Roger Lu <roger.lu@mediatek.com>,
+        <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>
+Subject: [PATCH v3 0/2] PM / AVS: SVS: Introduce SVS engine
+Date:   Fri, 21 Jun 2019 16:43:46 +0800
+Message-ID: <20190621084348.16834-1-roger.lu@mediatek.com>
+X-Mailer: git-send-email 2.18.0
 MIME-Version: 1.0
 Content-Type: text/plain
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Jim Mattson <jmattson@google.com> writes:
+SVS driver use OPP adjust event in [1] to update
+OPP table voltage part.
 
-> On Thu, Jun 20, 2019 at 4:02 AM Vitaly Kuznetsov <vkuznets@redhat.com> wrote:
->>
->> Regardless of the way how we skip instruction, interrupt shadow needs to be
->> cleared.
->
-> This change is definitely an improvement, but the existing code seems
-> to assume that we never call skip_emulated_instruction on a
-> POP-SS/MOV-to-SS/STI. Is that enforced anywhere?
+[1] https://patchwork.kernel.org/patch/10946069/
 
-Hm, good question. I'll try to check before v1.
+changes since v2:
+- Improve SVS driver: For power saving point of view,
+disable SVS main clk when probe fail.
 
--- 
-Vitaly
+Roger Lu (2):
+  dt-bindings: soc: add mtk svs dt-bindings
+  PM / AVS: SVS: Introduce SVS engine
+
+ .../devicetree/bindings/power/mtk-svs.txt     |   88 +
+ drivers/power/avs/Kconfig                     |   10 +
+ drivers/power/avs/Makefile                    |    1 +
+ drivers/power/avs/mtk_svs.c                   | 2093 +++++++++++++++++
+ include/linux/power/mtk_svs.h                 |   23 +
+ 5 files changed, 2215 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/power/mtk-svs.txt
+ create mode 100644 drivers/power/avs/mtk_svs.c
+ create mode 100644 include/linux/power/mtk_svs.h
+
+
