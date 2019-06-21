@@ -2,96 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4508C4EC4C
-	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 17:40:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5812C4EC55
+	for <lists+linux-kernel@lfdr.de>; Fri, 21 Jun 2019 17:41:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726675AbfFUPjw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Jun 2019 11:39:52 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:46340 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726062AbfFUPjw (ORCPT
+        id S1726551AbfFUPlC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Jun 2019 11:41:02 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:44733 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725992AbfFUPlB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Jun 2019 11:39:52 -0400
-Received: by mail-lj1-f194.google.com with SMTP id v24so6323144ljg.13;
-        Fri, 21 Jun 2019 08:39:50 -0700 (PDT)
+        Fri, 21 Jun 2019 11:41:01 -0400
+Received: by mail-pf1-f195.google.com with SMTP id t16so3782782pfe.11;
+        Fri, 21 Jun 2019 08:41:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=FTokQgNx7cdPK/mv6WeJrmrK4oV61TYi+9Ysp/6TCqk=;
-        b=QNGeB8au8O4X7zRxBILcHMpiRAvThsjSSlCDFzpzLn1gzxbzWjjsQK7XJrjtVI6A6W
-         Tgz6QjqHyp67mHUQp8WsiowO6LVI6QEqYSp5HfPqDcCyCK45NZbldsRXJPaHCNmaNFCj
-         WHUnRrkKUOgK9VcmNDl7giRvj7NBo0rW7wuad8P2OEHM+ZAWBhn3KeYsiWdxEeFhmVCY
-         2IS5cVLmlChE4PS34FeFGM7AgNylk72tiCxwLE42XYJn26OcPxKxJQuzKqFPcdXLAM3b
-         Uy40pnT3QPNcmLMREtzCaO9/zItQM86ctpG3iCR9c0KQjVQVqzVwtvBGsU3EoZkkbm5p
-         Fi0Q==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=EJDiq31OV+XOzMvfVzXl+2UwahEbMZev2ZHrV8WxK5E=;
+        b=CBeHdfsAjH/vhHFVhKYolBfVhpk7AU5PIFQxMEcrUxqMTagGV1z3K8iN5P+BDWMAiH
+         4YOSwc/2XYkLD5UudTQzEAWJ3H2/m6/wAK59VqASaWdrqmEA8cOYKjVLWERY97s23i6j
+         3uiVQ6e9SA0egeqbjRZK5yOSTQGsGq27ULHdW4RZvDGUEz3B0E7gwoRpwp8WH/6Bt+S/
+         VvRpPJICbg31ocSKcu5fXhN32BVPubS7QWV7q4e0dwg/kPrML5PY6wHyCfvuV71lw+cf
+         LT6qVxggJCaZ+/7hOxLH9eZyOGmb028d7oqILfgWAGpaJbkfbzGD35RBDwWDzPDElyoJ
+         qXhA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=FTokQgNx7cdPK/mv6WeJrmrK4oV61TYi+9Ysp/6TCqk=;
-        b=RuF5znzzjwSR1j7mL7C2n5Yjpc//73iRh/L/J10lMt/8aWTVbTIv4T1B3RXpHpw4lC
-         7/5Ez0R0/u1DODy9hKcE4SGVcFoQmHXGehm0syECefXW026Dmv9nPOtxKU+Zzghs8Jq6
-         W2ioMxq4GuE1ryGiaZUgirREciT8YmBY8IZc0aMfJKc+Fwroo+qJPF9bAPwX3JKgA1nt
-         z8iOjMTYMv18jXKqeprRZ/LcxmdAUOFJMhmPP7WgtIuoPQXSDlNE8fjEj1JjaxcO9XxV
-         5SrHU+RcfCZ9hxErdDLW2jwQQpK4JZ8+OfKsWU4XSk50bwsEt4mmOyKjQQhQcdo6JULr
-         n/BQ==
-X-Gm-Message-State: APjAAAVfxL8NHNZsN/7u7K5r8//CjEmSy0XTdOdWcHVyCv6husp9WDnX
-        ARMO5MC938XzX+vj6uG6DOozVf5S2A216ZCIEz0=
-X-Google-Smtp-Source: APXvYqxhyvKOX88teGy56BaP4nj6I0qAUv/MiHp1Om2bnmvacGEay3hQQw60oMQOe4cFzs8KKjanBBAqFj3PL249YRM=
-X-Received: by 2002:a2e:a311:: with SMTP id l17mr52525936lje.214.1561131589876;
- Fri, 21 Jun 2019 08:39:49 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=EJDiq31OV+XOzMvfVzXl+2UwahEbMZev2ZHrV8WxK5E=;
+        b=ug/glARO3tcMNSs+hpM4MK4VbhY3bTxSOnvpA9RvD9+w2PdZRAE/rrFXcWTbCUUi/G
+         Zn7BbFjCUlF5xBKMnIsiLUd5IB/ngjhCyFvQH16V2YaGehUxcpztcOHlrYF4HWJ+4g6Q
+         /2FCI3sn4azmCCj9RBoYxA6bZBRjos/YJcwmg8ZCF11m6jcgM2tNL2Dk9AxDbJ12fh8n
+         MhpXV4fENvak0qI9it1E3U/trE91wuJNfjFCUvcEJrVkYpZLuu+Qg+lRGTi2xPXVDM+z
+         O6ar6KAWuIPj7OvPUlRIb+3/c1Ujzz9YZ6TBt9QavlhWQoCmrZ7VjsFdpQgBZD3mWRvz
+         Lt9A==
+X-Gm-Message-State: APjAAAWFce/urcqEX6iHx2lZwryoiPBFkBvKRrsKTj4iLUh2CbxVtVPJ
+        NvmBlm/A4EsY/hGofBrn95evu7SAC4YB6w==
+X-Google-Smtp-Source: APXvYqwkpj2NQ/IdVQNi2ZOIXe+vJ+m5C2x0CHDk6mvsjFr0zVBFRoEF0zomjold+7YGGDZJZC2C6A==
+X-Received: by 2002:a63:6ec1:: with SMTP id j184mr19205606pgc.225.1561131660887;
+        Fri, 21 Jun 2019 08:41:00 -0700 (PDT)
+Received: from localhost.localdomain ([112.196.181.13])
+        by smtp.googlemail.com with ESMTPSA id m8sm2556940pjs.22.2019.06.21.08.40.57
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Fri, 21 Jun 2019 08:41:00 -0700 (PDT)
+From:   Puranjay Mohan <puranjay12@gmail.com>
+To:     Shuah Khan <skhan@linuxfoundation.org>
+Cc:     Puranjay Mohan <puranjay12@gmail.com>,
+        Bjorn Helgaas <bjorn@helgaas.com>,
+        netdev <netdev@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-kernel-mentees@lists.linuxfoundation.org,
+        linux-pci@vger.kernel.org,
+        Stephen Hemminger <stephen@networkplumber.org>
+Subject: [PATCH v5 0/3] net: fddi: skfp: Use PCI generic definitions instead of private duplicates
+Date:   Fri, 21 Jun 2019 21:10:34 +0530
+Message-Id: <20190621154037.25245-1-puranjay12@gmail.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-References: <CAOuPNLiBA9VjEoG_D2y2O5mKiqsDNW1VZXOk1eWXpGY+h86acg@mail.gmail.com>
- <CAOMZO5BcLaS0gXUPi6oN6vjqagS5yf+rHh+EUjmi-Wi1OX7vqQ@mail.gmail.com>
- <CAOuPNLgEEfDca4aeT1+q8GfUfGzbJ4x6JwGf-ROB1pgpXUBHSw@mail.gmail.com>
- <CAOMZO5BY8JcLNMCRCC_d=emy8HR6kE=dB9f5qfZ=ci_c+Jak0w@mail.gmail.com>
- <CAOuPNLjYhkP_kL+q-ZpiDZMMpOHrU88BFBc2agtnCzXt8dihOg@mail.gmail.com>
- <CAOMZO5ADK1L5UMM9XZetHvmjTvmvUg99G7VPdeXitgpctGLCkw@mail.gmail.com>
- <CAOuPNLhZhgN26rquLQq9zHBct1QxK-7hXAza0xk-0QooPGYLNw@mail.gmail.com>
- <CAOMZO5BsJWTw0nCeUboam4kuKyCO3N_Ch5ZW8k5Y9KFtQBanhQ@mail.gmail.com>
- <CAOuPNLjrAU_C_TUKFMs1d0eGsw=AxuG6d6FhNHtHFwVhfYZGgA@mail.gmail.com> <CAOuPNLhstoCjxijrnKNmV1iKWjAXvSZ38Z13tfd5bvGbYSqPAA@mail.gmail.com>
-In-Reply-To: <CAOuPNLhstoCjxijrnKNmV1iKWjAXvSZ38Z13tfd5bvGbYSqPAA@mail.gmail.com>
-From:   Fabio Estevam <festevam@gmail.com>
-Date:   Fri, 21 Jun 2019 12:40:07 -0300
-Message-ID: <CAOMZO5CD-QQaZwNfiX6mOLAup4J8dBiqEb_V_6jz_z5jXZ5cEw@mail.gmail.com>
-Subject: Re: [IMX] [DRM]: suspend/resume support
-To:     Pintu Agarwal <pintu.ping@gmail.com>
-Cc:     open list <linux-kernel@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Kernelnewbies <kernelnewbies@kernelnewbies.org>,
-        linux-pm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 21, 2019 at 12:13 PM Pintu Agarwal <pintu.ping@gmail.com> wrote:
+This patch series removes the private duplicates of PCI definitions in
+favour of generic definitions defined in pci_regs.h.
 
-> Okay there is some update on the 2nd part.
-> Now I am able to successfully install all imx modules after the resume
-> (no hang).
-> But, I got some errors after install finish:
-> [drm] disabling vblank on crtc 1
-> [IMX]: imx_drm_disable_vblank - called
-> [drm:drm_atomic_helper_commit_cleanup_done] *ERROR* [CRTC:24:crtc-0]
-> flip_done timed out
->
-> Also I am able to start the weston successfully.
-> But I see LCD/HDMI display is not working (only some backlight is visible).
->
-> And, I noticed, weston also reports the following errors:
-> imx-ipuv3 2400000.ipu: DC stop timeout after 50 ms
-> [IMX]: drm_crtc_vblank_off - called
-> [IMX]: imx_drm_disable_vblank - called
-> INFO: rcu_preempt detected stalls on CPUs/tasks: { 1} (detected by 0,
-> t=6002 jiffies, g=289, c=288, q=8)
-> Task dump for CPU 1:
-> weston          R running      0   306      1 0x00000000
-> [<c05282d8>] (__schedule) from [<00080193>] (0x80193)
->
-> Do you have any clue about these errors ?
+This driver only uses some of the generic PCI definitons,
+which are included from pci_regs.h and thier private versions
+are removed from skfbi.h with all other private defines.
 
-Which kernel version is this?
+The skfbi.h defines PCI_REV_ID and other private defines with different
+names, these are renamed to Generic PCI names to make them
+compatible with defines in pci_regs.h.
+
+All unused defines are removed from skfbi.h.
+
+Changes in v5:
+Removed unused PCI definitions which were left in v4
+
+Changes in v4:
+Removed unused PCI definitions which were left in v3
+
+Changes in v3:
+Renamed all local PCI definitions to Generic names.
+Corrected coding style mistakes.
+
+Changes in v2:
+Converted individual patches to a series.
+Made sure that individual patches build correctly
+
+Puranjay Mohan (3):
+  net: fddi: skfp: Rename local PCI defines to match generic PCI defines
+  net: fddi: skfp: Include generic PCI definitions
+  net: fddi: skfp: Remove unused private PCI definitions
+
+ drivers/net/fddi/skfp/drvfbi.c  |   3 +-
+ drivers/net/fddi/skfp/h/skfbi.h | 231 +-------------------------------
+ 2 files changed, 6 insertions(+), 228 deletions(-)
+
+-- 
+2.21.0
+
