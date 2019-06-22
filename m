@@ -2,119 +2,174 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B900B4F33B
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2019 04:42:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4FF3B4F34A
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2019 04:57:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726129AbfFVCmz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Jun 2019 22:42:55 -0400
-Received: from Mailgw01.mediatek.com ([1.203.163.78]:40257 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726049AbfFVCmz (ORCPT
+        id S1726134AbfFVC45 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Jun 2019 22:56:57 -0400
+Received: from mail-yw1-f67.google.com ([209.85.161.67]:41393 "EHLO
+        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726049AbfFVC45 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Jun 2019 22:42:55 -0400
-X-UUID: 3a5c12a496284309aaa64221c992f670-20190622
-X-UUID: 3a5c12a496284309aaa64221c992f670-20190622
-Received: from mtkcas34.mediatek.inc [(172.27.4.253)] by mailgw01.mediatek.com
-        (envelope-from <yong.wu@mediatek.com>)
-        (mailgw01.mediatek.com ESMTP with TLS)
-        with ESMTP id 1618682078; Sat, 22 Jun 2019 10:42:50 +0800
-Received: from MTKCAS32.mediatek.inc (172.27.4.184) by MTKMBS31DR.mediatek.inc
- (172.27.6.102) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Sat, 22 Jun
- 2019 10:42:48 +0800
-Received: from [10.17.3.153] (172.27.4.253) by MTKCAS32.mediatek.inc
- (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Sat, 22 Jun 2019 10:42:47 +0800
-Message-ID: <1561171367.4850.8.camel@mhfsdcap03>
-Subject: Re: [PATCH v2 02/12] iommu/mediatek: Add probe_defer for smi-larb
-From:   Yong Wu <yong.wu@mediatek.com>
-To:     Matthias Brugger <matthias.bgg@gmail.com>
-CC:     Joerg Roedel <joro@8bytes.org>, Rob Herring <robh+dt@kernel.org>,
-        "Evan Green" <evgreen@chromium.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        "Tomasz Figa" <tfiga@google.com>,
-        Will Deacon <will.deacon@arm.com>,
-        <linux-mediatek@lists.infradead.org>,
-        <srv_heupstream@mediatek.com>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <iommu@lists.linux-foundation.org>, <yingjoe.chen@mediatek.com>,
-        <youlin.pei@mediatek.com>, Nicolas Boichat <drinkcat@chromium.org>,
-        <anan.sun@mediatek.com>
-Date:   Sat, 22 Jun 2019 10:42:47 +0800
-In-Reply-To: <a11fa818-cf62-cc24-2c41-4688fda5a88f@gmail.com>
-References: <1560171313-28299-1-git-send-email-yong.wu@mediatek.com>
-         <1560171313-28299-3-git-send-email-yong.wu@mediatek.com>
-         <a11fa818-cf62-cc24-2c41-4688fda5a88f@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu2 
+        Fri, 21 Jun 2019 22:56:57 -0400
+Received: by mail-yw1-f67.google.com with SMTP id y185so3554492ywy.8
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2019 19:56:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=/g9EiwqrPvEcGP2ni72jxssRku07PD+BBNFgfPzyheY=;
+        b=mYbRmL5/P2mRzNOQSsSEJmGQWFcVIzmw0SVxH6/kO00xVRkQXvbGTzwNqSaOScTjWB
+         NHe6cCqxuiNoFoCBP+2+JLyNbzb644qpJWhOw5dt+Ans39QxbhA4zcRsBusIzJ+hAKYY
+         TfYxeV4uWgb7WwKWbr7iOeaRr3OL+RLTRvDA5oR5rHx6q+BH5Ydn/3NzL8zIkMA3Xb+Z
+         kCyfe+Pt4VRUpawyN+ajT7qbUup5s/4CkWFzXb3Y1GXcvKBKGeqZ85/BNlzgJmwrvAkH
+         4MAPxqyyRXjPUaM5bKehs6KgDYPv+ActooRkzqnEFYi+YsCj98tmxl7JeGUZyr2SrHF9
+         KICw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=/g9EiwqrPvEcGP2ni72jxssRku07PD+BBNFgfPzyheY=;
+        b=azOlysfLn4f9wy5lqe7fHGnQPfq3yVy++AbnP1e/ImOEOkzIQsJt+QvsXF/JM/p4GQ
+         OqOXJuBV4c7uVBeVl2+oS7yVWtj9dguPLt4GnedzPBaySlnSL90vTfq1T5/fBdn9F+nn
+         /Mb/03rfln16DNpEK/eJl41K2KCX3QUZKzFaWQwi5vdAgGA4m58OsFaj1QufZ0tvXdnS
+         riP4hgnJ9Lbvq2wTV1IYHfCWbC45ttSwb7Zv31OhnFHM28X2b84zyiTHOCCsc5JHR9ZD
+         2U3lu9gTf7D5NrKHtJa2u0PchBA8VS+7HhZRLTk4OHQ5HtWMU9HxUk5YTf4r+V/vEc6G
+         bNGg==
+X-Gm-Message-State: APjAAAXqQ3rxQeg2cIw1IqJldktHavAzno6xHGD3AhJFVX6WaIRLVFss
+        YwcF+Ua0/6m8pX1iANPpTzPR8L9DvZ153d0V5FHTlg==
+X-Google-Smtp-Source: APXvYqxFuhE0Kf5yAADli3a4wL8we59okF0BtHIRD++QuwlaOJlXqbkRZzRIR+nIVbqVOcPqNt3u2NLWkIRfajq57vw=
+X-Received: by 2002:a81:ae0e:: with SMTP id m14mr61725056ywh.308.1561172215649;
+ Fri, 21 Jun 2019 19:56:55 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-SNTS-SMTP: 62D4D809DF879D30713C1D085668025D905896208B75832BE651A5243713B1D32000:8
-X-MTK:  N
+References: <20190621173005.31514-1-longman@redhat.com>
+In-Reply-To: <20190621173005.31514-1-longman@redhat.com>
+From:   Shakeel Butt <shakeelb@google.com>
+Date:   Fri, 21 Jun 2019 19:56:44 -0700
+Message-ID: <CALvZod51uMXsS+1DpyG+=1nC-6pYNc8C6yOwQUdiRLD0yrp4ZA@mail.gmail.com>
+Subject: Re: [PATCH-next] mm, memcg: Add ":deact" tag for reparented kmem
+ caches in memcg_slabinfo
+To:     Waiman Long <longman@redhat.com>
+Cc:     Christoph Lameter <cl@linux.com>,
+        Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux MM <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Michal Hocko <mhocko@kernel.org>, Roman Gushchin <guro@fb.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Jun 21, 2019 at 10:30 AM Waiman Long <longman@redhat.com> wrote:
+>
+> With Roman's kmem cache reparent patch, multiple kmem caches of the same
+> type can be seen attached to the same memcg id. All of them, except
+> maybe one, are reparent'ed kmem caches. It can be useful to tag those
+> reparented caches by adding a new slab flag "SLAB_DEACTIVATED" to those
+> kmem caches that will be reparent'ed if it cannot be destroyed completely.
+>
+> For the reparent'ed memcg kmem caches, the tag ":deact" will now be
+> shown in <debugfs>/memcg_slabinfo.
+>
+> Signed-off-by: Waiman Long <longman@redhat.com>
 
-On Wed, 2019-06-19 at 15:52 +0200, Matthias Brugger wrote:
-> 
-> On 10/06/2019 14:55, Yong Wu wrote:
-> > The iommu consumer should use device_link to connect with the
-> > smi-larb(supplier). then the smi-larb should run before the iommu
-> > consumer. Here we delay the iommu driver until the smi driver is
-> > ready, then all the iommu consumer always is after the smi driver.
-> > 
-> > When there is no this patch, if some consumer drivers run before
-> > smi-larb, the supplier link_status is DL_DEV_NO_DRIVER(0) in the
-> > device_link_add, then device_links_driver_bound will use WARN_ON
-> > to complain that the link_status of supplier is not right.
-> > 
-> > This is a preparing patch for adding device_link.
-> > 
-> > Signed-off-by: Yong Wu <yong.wu@mediatek.com>
-> > ---
-> >  drivers/iommu/mtk_iommu.c    | 2 +-
-> >  drivers/iommu/mtk_iommu_v1.c | 2 +-
-> >  2 files changed, 2 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/drivers/iommu/mtk_iommu.c b/drivers/iommu/mtk_iommu.c
-> > index 6fe3369..f7599d8 100644
-> > --- a/drivers/iommu/mtk_iommu.c
-> > +++ b/drivers/iommu/mtk_iommu.c
-> > @@ -664,7 +664,7 @@ static int mtk_iommu_probe(struct platform_device *pdev)
-> >  			id = i;
-> >  
-> >  		plarbdev = of_find_device_by_node(larbnode);
-> > -		if (!plarbdev) {
-> > +		if (!plarbdev || !plarbdev->dev.driver) {
-> 
-> can't we use:
-> device_lock()
-> device_is_bound(struct device *dev)
-> device_unlock()
+Reviewed-by: Shakeel Butt <shakeelb@google.com>
 
-A new API for me. Thanks the hint. I have tried. it is ok.
-
-
-> 
-> >  			of_node_put(larbnode);
-> >  			return -EPROBE_DEFER;
-> >  		}
-> > diff --git a/drivers/iommu/mtk_iommu_v1.c b/drivers/iommu/mtk_iommu_v1.c
-> > index 0b0908c..c43c4a0 100644
-> > --- a/drivers/iommu/mtk_iommu_v1.c
-> > +++ b/drivers/iommu/mtk_iommu_v1.c
-> > @@ -604,7 +604,7 @@ static int mtk_iommu_probe(struct platform_device *pdev)
-> >  			plarbdev = of_platform_device_create(
-> >  						larb_spec.np, NULL,
-> >  						platform_bus_type.dev_root);
-> > -			if (!plarbdev) {
-> > +			if (!plarbdev || !plarbdev->dev.driver) {
-> >  				of_node_put(larb_spec.np);
-> >  				return -EPROBE_DEFER;
-> >  			}
-> > 
-
-
-
+> ---
+>  include/linux/slab.h |  4 ++++
+>  mm/slab.c            |  1 +
+>  mm/slab_common.c     | 14 ++++++++------
+>  mm/slub.c            |  1 +
+>  4 files changed, 14 insertions(+), 6 deletions(-)
+>
+> diff --git a/include/linux/slab.h b/include/linux/slab.h
+> index fecf40b7be69..19ab1380f875 100644
+> --- a/include/linux/slab.h
+> +++ b/include/linux/slab.h
+> @@ -116,6 +116,10 @@
+>  /* Objects are reclaimable */
+>  #define SLAB_RECLAIM_ACCOUNT   ((slab_flags_t __force)0x00020000U)
+>  #define SLAB_TEMPORARY         SLAB_RECLAIM_ACCOUNT    /* Objects are short-lived */
+> +
+> +/* Slab deactivation flag */
+> +#define SLAB_DEACTIVATED       ((slab_flags_t __force)0x10000000U)
+> +
+>  /*
+>   * ZERO_SIZE_PTR will be returned for zero sized kmalloc requests.
+>   *
+> diff --git a/mm/slab.c b/mm/slab.c
+> index a2e93adf1df0..e8c7743fc283 100644
+> --- a/mm/slab.c
+> +++ b/mm/slab.c
+> @@ -2245,6 +2245,7 @@ int __kmem_cache_shrink(struct kmem_cache *cachep)
+>  #ifdef CONFIG_MEMCG
+>  void __kmemcg_cache_deactivate(struct kmem_cache *cachep)
+>  {
+> +       cachep->flags |= SLAB_DEACTIVATED;
+>         __kmem_cache_shrink(cachep);
+>  }
+>
+> diff --git a/mm/slab_common.c b/mm/slab_common.c
+> index 146d8eaa639c..85cf0c374303 100644
+> --- a/mm/slab_common.c
+> +++ b/mm/slab_common.c
+> @@ -1533,7 +1533,7 @@ static int memcg_slabinfo_show(struct seq_file *m, void *unused)
+>         struct slabinfo sinfo;
+>
+>         mutex_lock(&slab_mutex);
+> -       seq_puts(m, "# <name> <css_id[:dead]> <active_objs> <num_objs>");
+> +       seq_puts(m, "# <name> <css_id[:dead|deact]> <active_objs> <num_objs>");
+>         seq_puts(m, " <active_slabs> <num_slabs>\n");
+>         list_for_each_entry(s, &slab_root_caches, root_caches_node) {
+>                 /*
+> @@ -1544,22 +1544,24 @@ static int memcg_slabinfo_show(struct seq_file *m, void *unused)
+>
+>                 memset(&sinfo, 0, sizeof(sinfo));
+>                 get_slabinfo(s, &sinfo);
+> -               seq_printf(m, "%-17s root      %6lu %6lu %6lu %6lu\n",
+> +               seq_printf(m, "%-17s root       %6lu %6lu %6lu %6lu\n",
+>                            cache_name(s), sinfo.active_objs, sinfo.num_objs,
+>                            sinfo.active_slabs, sinfo.num_slabs);
+>
+>                 for_each_memcg_cache(c, s) {
+>                         struct cgroup_subsys_state *css;
+> -                       char *dead = "";
+> +                       char *status = "";
+>
+>                         css = &c->memcg_params.memcg->css;
+>                         if (!(css->flags & CSS_ONLINE))
+> -                               dead = ":dead";
+> +                               status = ":dead";
+> +                       else if (c->flags & SLAB_DEACTIVATED)
+> +                               status = ":deact";
+>
+>                         memset(&sinfo, 0, sizeof(sinfo));
+>                         get_slabinfo(c, &sinfo);
+> -                       seq_printf(m, "%-17s %4d%5s %6lu %6lu %6lu %6lu\n",
+> -                                  cache_name(c), css->id, dead,
+> +                       seq_printf(m, "%-17s %4d%-6s %6lu %6lu %6lu %6lu\n",
+> +                                  cache_name(c), css->id, status,
+>                                    sinfo.active_objs, sinfo.num_objs,
+>                                    sinfo.active_slabs, sinfo.num_slabs);
+>                 }
+> diff --git a/mm/slub.c b/mm/slub.c
+> index a384228ff6d3..c965b4413658 100644
+> --- a/mm/slub.c
+> +++ b/mm/slub.c
+> @@ -4057,6 +4057,7 @@ void __kmemcg_cache_deactivate(struct kmem_cache *s)
+>          */
+>         slub_set_cpu_partial(s, 0);
+>         s->min_partial = 0;
+> +       s->flags |= SLAB_DEACTIVATED;
+>  }
+>  #endif /* CONFIG_MEMCG */
+>
+> --
+> 2.18.1
+>
