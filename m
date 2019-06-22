@@ -2,54 +2,54 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C90CF4F528
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2019 12:17:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 340F34F52B
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2019 12:18:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726357AbfFVKRw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 22 Jun 2019 06:17:52 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:55707 "EHLO
+        id S1726382AbfFVKSh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 22 Jun 2019 06:18:37 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:60247 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726121AbfFVKRw (ORCPT
+        with ESMTP id S1726130AbfFVKSe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Jun 2019 06:17:52 -0400
+        Sat, 22 Jun 2019 06:18:34 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x5MAHhYQ2098813
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x5MAIPNM2099144
         (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Sat, 22 Jun 2019 03:17:43 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x5MAHhYQ2098813
+        Sat, 22 Jun 2019 03:18:25 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x5MAIPNM2099144
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019061801; t=1561198664;
-        bh=zgVpyglInROjudxCEYYGJTa1FJpVm0qGd01pxcrAV3Q=;
+        s=2019061801; t=1561198706;
+        bh=bYgHPItfFFDjImAJ/oIv3lH6aQ9oDyXmc6qOyUrF+wI=;
         h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
-        b=HlqaBFCrU5FgLIuQ1WnHOlxNGZQcIlhntLqW1Yk+GPmvkAc2hCw5Bj1EhtjH5tBoH
-         KYYeB7ntS9Fq+Qabntk2ikYzTbquL42soY9LKvg3qWKA5aVqo/h9bd3a3Lq3KFHy19
-         TB3gaCM1FfKCaxm5Si3WMcUi8YFVwytIMmtA7yVM7opMR/+kXmOHxMlsTkI15HVrPT
-         0TwQk9OoeUGKTPNMZElx97BbZ8AzOkbC5ukhQyyykegHQATlcUeG7GVdP8Lk2vRPJc
-         MRZcmJ0zQTzU6eOqfkYOL1n5TMgUMO9wv/W37NkVBGAX92HsvvSWpfqSuq6VyciXv8
-         RlckHjiArVq/w==
+        b=GvOCynNjx03QeWy6xEFqJHiyna6gWJsbb53VslB3lotDbAZmUiV1f0eowzb2xC9wZ
+         PXB7PHIXHe1dRLBTKgy+vke8+/PUzZuPJyAUmIif55AZOGsjxhqHN0ol7XlHCAf09e
+         +G+Mc5Nzz/nQv5OMp1cGc7+8skasg4ebuv1tq9biHbwKs3UwrE9UEJvC/+T7bW3Jbm
+         xyYJRG0ruaWclooc+1nvjjz4QItUexx/Byu972bwK4Ai41HltYnu+E0SRFS03C8N4P
+         8q8Q1j6Hkpkd9wmljEdWRFpJsJ8pcRTpY1MwaItSUdNXEVjR3zn7DAvtr52LqdnIZz
+         yCwAJYAR+hkCw==
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x5MAHgXK2098810;
-        Sat, 22 Jun 2019 03:17:42 -0700
-Date:   Sat, 22 Jun 2019 03:17:42 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x5MAIPGU2099141;
+        Sat, 22 Jun 2019 03:18:25 -0700
+Date:   Sat, 22 Jun 2019 03:18:25 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Tony W Wang-oc <tipbot@zytor.com>
-Message-ID: <tip-773b2f30a3fc026f3ed121a8b945b0ae19b64ec5@git.kernel.org>
-Cc:     gregkh@linuxfoundation.org, DavidWang@zhaoxin.com,
-        HerryYang@zhaoxin.com, TonyWWang-oc@zhaoxin.com,
-        CooperYan@zhaoxin.com, QiyuanWang@zhaoxin.com,
-        linux-kernel@vger.kernel.org, hpa@zytor.com, rjw@rjwysocki.net,
-        lenb@kernel.org, mingo@kernel.org, tglx@linutronix.de
-Reply-To: QiyuanWang@zhaoxin.com, gregkh@linuxfoundation.org,
-          DavidWang@zhaoxin.com, hpa@zytor.com,
-          linux-kernel@vger.kernel.org, rjw@rjwysocki.net, lenb@kernel.org,
-          HerryYang@zhaoxin.com, mingo@kernel.org, tglx@linutronix.de,
-          TonyWWang-oc@zhaoxin.com, CooperYan@zhaoxin.com
-In-Reply-To: <d1cfd937dabc44518d42038b55522c53@zhaoxin.com>
-References: <d1cfd937dabc44518d42038b55522c53@zhaoxin.com>
+Message-ID: <tip-f8c0e061cb83bd528ff0843e717bcebc846d4838@git.kernel.org>
+Cc:     TonyWWang-oc@zhaoxin.com, hpa@zytor.com, tglx@linutronix.de,
+        CooperYan@zhaoxin.com, gregkh@linuxfoundation.org, lenb@kernel.org,
+        mingo@kernel.org, QiyuanWang@zhaoxin.com, HerryYang@zhaoxin.com,
+        linux-kernel@vger.kernel.org, DavidWang@zhaoxin.com,
+        rjw@rjwysocki.net
+Reply-To: lenb@kernel.org, gregkh@linuxfoundation.org,
+          CooperYan@zhaoxin.com, rjw@rjwysocki.net, DavidWang@zhaoxin.com,
+          tglx@linutronix.de, hpa@zytor.com, linux-kernel@vger.kernel.org,
+          QiyuanWang@zhaoxin.com, HerryYang@zhaoxin.com, mingo@kernel.org,
+          TonyWWang-oc@zhaoxin.com
+In-Reply-To: <a370503660994669991a7f7cda7c5e98@zhaoxin.com>
+References: <a370503660994669991a7f7cda7c5e98@zhaoxin.com>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/cpu] ACPI, x86: Add Zhaoxin processors support for NONSTOP
- TSC
-Git-Commit-ID: 773b2f30a3fc026f3ed121a8b945b0ae19b64ec5
+Subject: [tip:x86/cpu] x86/acpi/cstate: Add Zhaoxin processors support for
+ cache flush policy in C3
+Git-Commit-ID: f8c0e061cb83bd528ff0843e717bcebc846d4838
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -67,17 +67,18 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  773b2f30a3fc026f3ed121a8b945b0ae19b64ec5
-Gitweb:     https://git.kernel.org/tip/773b2f30a3fc026f3ed121a8b945b0ae19b64ec5
+Commit-ID:  f8c0e061cb83bd528ff0843e717bcebc846d4838
+Gitweb:     https://git.kernel.org/tip/f8c0e061cb83bd528ff0843e717bcebc846d4838
 Author:     Tony W Wang-oc <TonyWWang-oc@zhaoxin.com>
-AuthorDate: Tue, 18 Jun 2019 08:37:14 +0000
+AuthorDate: Tue, 18 Jun 2019 08:37:29 +0000
 Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Sat, 22 Jun 2019 11:45:57 +0200
+CommitDate: Sat, 22 Jun 2019 11:45:58 +0200
 
-ACPI, x86: Add Zhaoxin processors support for NONSTOP TSC
+x86/acpi/cstate: Add Zhaoxin processors support for cache flush policy in C3
 
-Zhaoxin CPUs have NONSTOP TSC feature, so enable the ACPI
-driver support for it.
+Same as Intel, Zhaoxin MP CPUs support C3 share cache and on all
+recent Zhaoxin platforms ARB_DISABLE is a nop. So set related
+flags correctly in the same way as Intel does.
 
 Signed-off-by: Tony W Wang-oc <TonyWWang-oc@zhaoxin.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
@@ -89,34 +90,35 @@ Cc: David Wang <DavidWang@zhaoxin.com>
 Cc: "Cooper Yan(BJ-RD)" <CooperYan@zhaoxin.com>
 Cc: "Qiyuan Wang(BJ-RD)" <QiyuanWang@zhaoxin.com>
 Cc: "Herry Yang(BJ-RD)" <HerryYang@zhaoxin.com>
-Link: https://lkml.kernel.org/r/d1cfd937dabc44518d42038b55522c53@zhaoxin.com
+Link: https://lkml.kernel.org/r/a370503660994669991a7f7cda7c5e98@zhaoxin.com
 
 ---
- drivers/acpi/acpi_pad.c       | 1 +
- drivers/acpi/processor_idle.c | 1 +
- 2 files changed, 2 insertions(+)
+ arch/x86/kernel/acpi/cstate.c | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
-diff --git a/drivers/acpi/acpi_pad.c b/drivers/acpi/acpi_pad.c
-index 6b3f1217a237..e7dc0133f817 100644
---- a/drivers/acpi/acpi_pad.c
-+++ b/drivers/acpi/acpi_pad.c
-@@ -64,6 +64,7 @@ static void power_saving_mwait_init(void)
- 	case X86_VENDOR_HYGON:
- 	case X86_VENDOR_AMD:
- 	case X86_VENDOR_INTEL:
-+	case X86_VENDOR_ZHAOXIN:
- 		/*
- 		 * AMD Fam10h TSC will tick in all
- 		 * C/P/S0/S1 states when this bit is set.
-diff --git a/drivers/acpi/processor_idle.c b/drivers/acpi/processor_idle.c
-index e387a258d649..ed56c6d20b08 100644
---- a/drivers/acpi/processor_idle.c
-+++ b/drivers/acpi/processor_idle.c
-@@ -196,6 +196,7 @@ static void tsc_check_state(int state)
- 	case X86_VENDOR_AMD:
- 	case X86_VENDOR_INTEL:
- 	case X86_VENDOR_CENTAUR:
-+	case X86_VENDOR_ZHAOXIN:
- 		/*
- 		 * AMD Fam10h TSC will tick in all
- 		 * C/P/S0/S1 states when this bit is set.
+diff --git a/arch/x86/kernel/acpi/cstate.c b/arch/x86/kernel/acpi/cstate.c
+index a5e5484988fd..caf2edccbad2 100644
+--- a/arch/x86/kernel/acpi/cstate.c
++++ b/arch/x86/kernel/acpi/cstate.c
+@@ -64,6 +64,21 @@ void acpi_processor_power_init_bm_check(struct acpi_processor_flags *flags,
+ 		    c->x86_stepping >= 0x0e))
+ 			flags->bm_check = 1;
+ 	}
++
++	if (c->x86_vendor == X86_VENDOR_ZHAOXIN) {
++		/*
++		 * All Zhaoxin CPUs that support C3 share cache.
++		 * And caches should not be flushed by software while
++		 * entering C3 type state.
++		 */
++		flags->bm_check = 1;
++		/*
++		 * On all recent Zhaoxin platforms, ARB_DISABLE is a nop.
++		 * So, set bm_control to zero to indicate that ARB_DISABLE
++		 * is not required while entering C3 type state.
++		 */
++		flags->bm_control = 0;
++	}
+ }
+ EXPORT_SYMBOL(acpi_processor_power_init_bm_check);
+ 
