@@ -2,14 +2,14 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 24DF04F748
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2019 18:59:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 207084F73E
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2019 18:59:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726497AbfFVQ7B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 22 Jun 2019 12:59:01 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:42768 "EHLO
+        id S1726565AbfFVQ7J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 22 Jun 2019 12:59:09 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:42804 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726338AbfFVQ67 (ORCPT
+        with ESMTP id S1726310AbfFVQ67 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sat, 22 Jun 2019 12:58:59 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
@@ -18,27 +18,27 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From:
         Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=WNiRsq7voQTs7B1oPyVixDdCGhlnrWKg3Vv2Nss1FD8=; b=Hh+aXUXStJvJezZXWhBGcYfd0r
-        RZzU1nKWIDB2k1NorMcMyJ9E8+fNfC/rPVRBv0h/KDTnEpvFIMDA5sRFkNLCYgffUYvT6MM5lmnPY
-        +W8M2Pzalbs6/COiXrr/yyharw6eReLEFbFEVBq+CK9bv5NrWrJHK+oY6JcFXvyeLCURWhbwQ1WHS
-        eEoea5TIdtI5z47zvjRqpUcJ/khe2Bo78RyBMXWkPOBY4492CsrijE1sUA6leq0sDlLtC1jmcWSIa
-        0KAh+uEXfw2IgdWYhZeg37SRBV1IBDR2nJxfNK35yKCEE3KJKvzi8fer0HpCaVfSpoAVE33dmEd5E
-        MMn4venA==;
+        bh=4yo27ijYQu1yYo30q/R/RGMGUqSkkm83kufrAmJA9ng=; b=aG0oHNyitqdv4BKL74sEhz3za+
+        wy0ANv0OsdGgH5c3Dmg9WThh3df+r39AeC+isJD0GLw1eknwlznaEqfDFFCWKmjNDx+NEO4pnQbCc
+        ZYD/Xxm955zlUxAEg2K9tKCbRQKiFxvG9LvUolOQm39uyQg+2IYOfU65K8NetdoZaZHqDqyQtYz0D
+        eOVSvSlxoTyAzPsyYWfexJsDFHu/cOIG2khPAslNre9bB4x9AWARih+th/OtGuTrMXkzRZ3Ab36n3
+        t5W1tesi235ox9iRV2IWohcC7Ptd35JfjZFPZiWC28c/qz3qTVWsBoR+B0MZSQQCsxNSXBoXamZWV
+        N6RBxJ3w==;
 Received: from [179.95.45.115] (helo=bombadil.infradead.org)
         by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hejLu-00054p-Gq; Sat, 22 Jun 2019 16:58:58 +0000
+        id 1hejLu-00054n-HS; Sat, 22 Jun 2019 16:58:58 +0000
 Received: from mchehab by bombadil.infradead.org with local (Exim 4.92)
         (envelope-from <mchehab@bombadil.infradead.org>)
-        id 1hejLr-0000vU-Un; Sat, 22 Jun 2019 13:58:55 -0300
+        id 1hejLr-0000vY-Vd; Sat, 22 Jun 2019 13:58:55 -0300
 From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>,
         gregkh@linuxfoundation.org, Jonathan Corbet <corbet@lwn.net>
 Cc:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Mauro Carvalho Chehab <mchehab@infradead.org>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 06/12] docs: kernel_abi.py: fix UTF-8 support
-Date:   Sat, 22 Jun 2019 13:58:47 -0300
-Message-Id: <0428053efffd316e64a4eb97766e071044a8be5e.1561221403.git.mchehab+samsung@kernel.org>
+Subject: [PATCH 07/12] docs: kernel_abi.py: make it compatible with Sphinx 1.7+
+Date:   Sat, 22 Jun 2019 13:58:48 -0300
+Message-Id: <c0e5c974d3abb398e6fbeb55cd86602104e4afbb.1561221403.git.mchehab+samsung@kernel.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <cover.1561221403.git.mchehab+samsung@kernel.org>
 References: <cover.1561221403.git.mchehab+samsung@kernel.org>
@@ -49,72 +49,78 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The parser breaks with UTF-8 characters with Sphinx 1.4.
+The same way kerneldoc.py needed changes to work with newer
+Sphinx, this script needs the same changes.
+
+While here, reorganize the include order to match kerneldoc.py.
 
 Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 ---
- Documentation/sphinx/kernel_abi.py | 20 +++++++-------------
- 1 file changed, 7 insertions(+), 13 deletions(-)
+ Documentation/sphinx/kernel_abi.py | 39 +++++++++++++++++++++---------
+ 1 file changed, 27 insertions(+), 12 deletions(-)
 
 diff --git a/Documentation/sphinx/kernel_abi.py b/Documentation/sphinx/kernel_abi.py
-index 32ce90775d96..0f3e51e67e8d 100644
+index 0f3e51e67e8d..2d5d582207f7 100644
 --- a/Documentation/sphinx/kernel_abi.py
 +++ b/Documentation/sphinx/kernel_abi.py
-@@ -1,4 +1,5 @@
--# -*- coding: utf-8; mode: python -*-
-+# coding=utf-8
-+#
- u"""
-     kernel-abi
-     ~~~~~~~~~~
-@@ -28,6 +29,7 @@ u"""
- 
+@@ -30,18 +30,27 @@ u"""
  """
  
-+import codecs
- import sys
+ import codecs
+-import sys
  import os
- from os import path
-@@ -43,14 +45,6 @@ from docutils.utils.error_reporting import ErrorString
+-from os import path
+ import subprocess
++import sys
+ 
+-from sphinx.ext.autodoc import AutodocReporter
++from os import path
+ 
+-from docutils import nodes
+-from docutils.parsers.rst import Directive, directives
++from docutils import nodes, statemachine
+ from docutils.statemachine import ViewList
++from docutils.parsers.rst import directives, Directive
+ from docutils.utils.error_reporting import ErrorString
+ 
++#
++# AutodocReporter is only good up to Sphinx 1.7
++#
++import sphinx
++
++Use_SSI = sphinx.__version__[:3] >= '1.7'
++if Use_SSI:
++    from sphinx.util.docutils import switch_source_input
++else:
++    from sphinx.ext.autodoc import AutodocReporter
  
  __version__  = '1.0'
  
--# We can't assume that six is installed
--PY3 = sys.version_info[0] == 3
--PY2 = sys.version_info[0] == 2
--if PY3:
--    # pylint: disable=C0103, W0622
--    unicode     = str
--    basestring  = str
--
- def setup(app):
+@@ -139,11 +148,17 @@ class KernelCmd(Directive):
+             content.append(l, fname, c)
  
-     app.add_directive("kernel-abi", KernelCmd)
-@@ -115,12 +109,12 @@ class KernelCmd(Directive):
-                 cmd
-                 , stdout = subprocess.PIPE
-                 , stderr = subprocess.PIPE
--                , universal_newlines = True
-                 , **kwargs
-             )
-             out, err = proc.communicate()
--            if err:
--                self.warn(err)
+         buf  = self.state.memo.title_styles, self.state.memo.section_level, self.state.memo.reporter
+-        self.state.memo.title_styles  = []
+-        self.state.memo.section_level = 0
+-        self.state.memo.reporter      = AutodocReporter(content, self.state.memo.reporter)
+-        try:
+-            self.state.nested_parse(content, 0, node, match_titles=1)
+-        finally:
+-            self.state.memo.title_styles, self.state.memo.section_level, self.state.memo.reporter = buf
 +
-+            out, err = codecs.decode(out, 'utf-8'), codecs.decode(err, 'utf-8')
++        if Use_SSI:
++            with switch_source_input(self.state, content):
++                self.state.nested_parse(content, 0, node, match_titles=1)
++        else:
++            self.state.memo.title_styles  = []
++            self.state.memo.section_level = 0
++            self.state.memo.reporter      = AutodocReporter(content, self.state.memo.reporter)
++            try:
++                self.state.nested_parse(content, 0, node, match_titles=1)
++            finally:
++                self.state.memo.title_styles, self.state.memo.section_level, self.state.memo.reporter = buf
 +
-             if proc.returncode != 0:
-                 raise self.severe(
-                     u"command '%s' failed with return code %d"
-@@ -129,7 +123,7 @@ class KernelCmd(Directive):
-         except OSError as exc:
-             raise self.severe(u"problems with '%s' directive: %s."
-                               % (self.name, ErrorString(exc)))
--        return unicode(out)
-+        return out
- 
-     def nestedParse(self, lines, fname):
-         content = ViewList()
+         return node.children
 -- 
 2.21.0
 
