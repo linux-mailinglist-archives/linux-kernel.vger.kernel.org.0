@@ -2,65 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A4B374F6F1
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2019 18:29:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 559744F71D
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2019 18:41:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726439AbfFVQ3B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 22 Jun 2019 12:29:01 -0400
-Received: from sonic301-3.consmr.mail.bf2.yahoo.com ([74.6.129.42]:44042 "EHLO
-        sonic301-3.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726410AbfFVQ2u (ORCPT
+        id S1726350AbfFVQlI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 22 Jun 2019 12:41:08 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:38110 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726276AbfFVQlI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Jun 2019 12:28:50 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1561220929; bh=3fXYToOZXvh5MOJ1JSawYDThjnynC/Ekt2gucIg6zZg=; h=Date:From:Reply-To:Subject:From:Subject; b=FwrBLUl7u665XwQeVPTq5hUQ4Ptv5qPcwgE0MfCyAxPjQW66W+sBKlTITy95Xiak8M/9mL3k87XvuhuNYmdzjOXFqAsXXJ7ZeR0tr0xQhaR4qpp9+I79zHB4JVXDeOtUnrv/ni1DEn3m49tSMIml9+1SbDvUcui/xLYzcB7mOtvlwJJC6bBkcbOwJW8drH7WnSKYQVlUvO9PRg8+IWYABo4m/HoTrmg3JSd7+tfq1bmdsTjreC9G6uwJClVG1p8XyGEOijmNqXv9Ivunj8UzUvxVldTIg/taTAKdSlSG3i+xbnz28LKLpxSK2+M63p52Vf+hNJ0OycyVj1TkO+H8OQ==
-X-YMail-OSG: BClZlNgVM1mJa1pSUAMlnjmDwJQUKDn0osVKNVIeZ6AC0JZQ8NzrV_.P2vPToBw
- lk4l1yMYy0P1wu9iKWHPF1vwWtED.NCcY6jE.jXdELnZdUngnDzcX.f1Ik7TcPjN._6dUftCNvSG
- 0ilPDIIh6JKut3rld3EDzfXqVTEprJFL10dLfXEmdNXy8_9HzWnLN9Uxxh6FWr8nj4DbExyF48M8
- b8CzHn8AtWzh0fDjJqMRXb5UR1L1fHF.mq4wk_41bl8VHLLREhO8D9AiMB_Iou.TvP.xektI4Uzf
- lBotEg54S8nbe5a5a2eamKaLSiD6XaCIzSQkrGwkgk9qzk7J4361PG1C2lAWhSULJjGYH.uKi9SH
- 8omXh8MvwuZmVU7umqXbA4eIFWV8ruRR3qRFWtA.2B0Eer.D49EbNovsAu.wRPm8yYyL6YMdaoys
- 3vYAkjype1yPgR0gHAH3zObnNPMrtMzQfsTzcaha59dNYsVWPRo5EvcFgAIKXVIUqnKnooWuODru
- O4SgrdrM8PGEZGs5dJS.h.dJB3gwQ.0I1wf1Q_CLgJhbPMrumaMiWl3ifhN9G_CCxrGhRPRltqdB
- RyAvAXGENXKEJswzM.sYWHkLQyblOWaGX5TLKzeDGaJCZVu7CtZvQ0aNcyWtqrf4SAtE7MK9SqUH
- 7phABBxeBrGdyDkvdUQOX_EPh25.Hb3SncDKllMEIHjvEdwbQcMGmqMEDVCI8Jh0nfgpjh259ODl
- q.bGW_sz63_QvjPWXygjUQ4RzfXiei1bHIkvbkPAHc04dS.Qr8LP1Jyxp2QD0wtNtJgo5RScK99X
- P5NPqcNAR8eez8YgXpk3cKLQCR9JSylhL6QyUVACODhQSLMO_l73eEDpWzNQUeEQLrEwA53TFUO9
- BXx4lR26gADp4OeWMANR3pTNDn8J7Oc5G1l.tF8AqVFtdsoB5vgCdw0tzoX9_22cJzNNteihaN9H
- ktOSXaCeUY26x9DWNkYi7HTOCc9F4vHnioRwelB9Lv.KGDeGPUJBBPmfcn0xXC8MB2YTlUFeVHzN
- FJsHhvFz9eJx.VwEAdhJs3DHW6xmbj9a_RSOf.BoLPiAvMAdoBe_1sVY8nFOqhuBwpkbj17TOzIW
- ts0JEWafkyantIFw8kEnIr0AHDEAK4aB1fgOVS8TQpbEaj2tB4pKHPa4OOjXszQAPBozr7PYVj2f
- 6AcwHFYhcmsrFfliX20p43dgFMRY8GMXgvUWeegBAeAuOTxCoUC9WvAdL
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic301.consmr.mail.bf2.yahoo.com with HTTP; Sat, 22 Jun 2019 16:28:49 +0000
-Date:   Sat, 22 Jun 2019 16:28:46 +0000 (UTC)
-From:   "Miss.Fatima Yusuf" <fatimayusuf5@outlook.fr>
-Reply-To: miss.fmayusuf11@gmail.com
-Message-ID: <270302503.296556.1561220926635@mail.yahoo.com>
-Subject: From:Miss: Fatima Yusuf.
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-To:     unlisted-recipients:; (no To-header on input)
+        Sat, 22 Jun 2019 12:41:08 -0400
+Received: by mail-pf1-f194.google.com with SMTP id y15so493108pfn.5
+        for <linux-kernel@vger.kernel.org>; Sat, 22 Jun 2019 09:41:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=lJepOsaA8mamkEWBgZFhhdkuq2on+kd/GU1u/vUh49o=;
+        b=mu6JU6JFyAZ+TREz1RN+V2t/T29Se0Wd3A1zzBwUuz58G1ldV8WJwhZfVlHdinhcaO
+         UDBvQ1ffTp03sRnblV0fkphEGljhoxjU6FZ0FCHAjvDMpEVzgNX+w8fRNU40z9CCScP5
+         Iew8fyLOpawIpuYh3MxDJ5Klk++x7BxbTSaTe0zKXtIu9vrPR8yhiU/dmnz5JPIvP3lH
+         pou0yILYMCKlaa3ARWYNDTQXmp6zcEi4mR2jAftIG5KR9z0OgARdbBTR/hk8l1Zjd+Nj
+         fWYCMRQoiLOSJn0ooyT4h/W+63z2xHsqjSfMvxQocd7QkDuCQJsssmvhVQkntK63iKFX
+         qA5Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=lJepOsaA8mamkEWBgZFhhdkuq2on+kd/GU1u/vUh49o=;
+        b=bvvBQ+DDzIE4gk5qs68syKdn908w3oYBCRE0CHwn/RMAZvqxl5irM57xYDsuifxaQT
+         PrWxFLjGtlMgJLU+Wv2+e7ar6kybX45lVED46nwGSRI6IN5LZZ8Yxu6z7j18Pow4cIGd
+         taLWGHYJSuGkbXNNQwHg3/OG4P3YXSPKpTbZLcpusg/3UebTi/vtrNj9hu43H8gnn1LN
+         3WkchJRrpQRrz2Obl5MG2fi8G1xzg/gfk7+Pi4Z9TAiPhmP0+0fhRHOKpVtjWfo2ER6Y
+         An+6iuL8z2ABam8YP5u4GmJELhedC+dueFQ3Ct8hIE2ImEzMnjEzphp0o5UHWVImhEDY
+         ilDw==
+X-Gm-Message-State: APjAAAVSF219C9KIpWiQOsp7EYRRTdK5L0ODaHEzO3zhtBuNFcTL6+7n
+        Qn3rjTecVlwybPN70xypSEs/qgbmvW4=
+X-Google-Smtp-Source: APXvYqxY6WZ9J1wmcavq39bA3G5zySVTK0kZEz5Lo/CRKStdyZfu7ty3tpwEmnhUkzQWpy5LBlFE1g==
+X-Received: by 2002:a17:90a:21ac:: with SMTP id q41mr14205717pjc.31.1561221667593;
+        Sat, 22 Jun 2019 09:41:07 -0700 (PDT)
+Received: from localhost.localdomain (c-98-210-58-162.hsd1.ca.comcast.net. [98.210.58.162])
+        by smtp.gmail.com with ESMTPSA id u5sm5809161pgp.19.2019.06.22.09.41.06
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Sat, 22 Jun 2019 09:41:06 -0700 (PDT)
+From:   Shobhit Kukreti <shobhitkukreti@gmail.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Bastien Nocera <hadess@hadess.net>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Larry Finger <Larry.Finger@lwfinger.net>
+Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        Shobhit Kukreti <shobhitkukreti@gmail.com>
+Subject: [PATCH 0/3] Change function return type to void
+Date:   Sat, 22 Jun 2019 09:40:39 -0700
+Message-Id: <cover.1561220637.git.shobhitkukreti@gmail.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This patchset modifies function return types to void.
+The return values of the function are never checked and 
+they always return success.
+This resolves coccicheck Unneeded variable warnings.
+
+PATCH[1/3]: This patch changes return type of rtw_suspend_normal() to 
+void
+
+PATCH[2/3]: This patch changes return type of rtw_suspend_wow() to 
+void 
+
+PATCH[3/3]: This patch changes return type of rtw_init_default_value to 
+void
 
 
-From:Miss: Fatima Yusuf.
+Shobhit Kukreti (3):
+  staging: rtl8723bs: os_dep: Change return type of function    
+    rtw_suspend_normal() to void
+  staging: rtl8723bs: os_dep: modified return type of function    
+    rtw_suspend_wow() to void
+  staging: rtl8723bs: os_dep: Change return type of    
+    rtw_init_default_value() to void
 
-For sure this mail would definitely come to you as a surprise, but do take your good time to go through it, My name is Ms. Fatima Yusuf,i am from Ivory Coast.
+ drivers/staging/rtl8723bs/include/drv_types.h |  2 +-
+ drivers/staging/rtl8723bs/os_dep/os_intfs.c   | 14 ++++----------
+ 2 files changed, 5 insertions(+), 11 deletions(-)
 
-I lost my parents a year and couple of months ago. My father was a serving director of the Agro-exporting board until his death. He was assassinated by his business partners.Before his death, he made a deposit of US$9.7 Million Dollars here in Cote d'ivoire which was for the purchase of cocoa processing machine and development of another factory before his untimely death.
+-- 
+2.7.4
 
-Being that this part of the world experiences political and crises time without number, there is no guarantee of lives and properties. I cannot invest this money here any long, despite the fact it had been my late father's industrial plans.
-
-I want you to do me a favor to receive this funds into your country or any safer place as the beneficiary, I have plans to invest this money in continuation with the investment vision of my late father, but not in this place again rather in your country. I have the vision of going into real estate and industrial production or any profitable business venture.
-
-I will be ready to compensate you with 20% of the total Amount, now all my hope is banked on you and i really wants to invest this money in your country, where there is stability of Government, political and economic welfare.
-
-My greatest worry now is how to move out of this country because my uncle is threatening to kill me as he killed my father,Please do not let anybody hear about this, it is between me and you alone because of my security reason.
-
-I am waiting to hear from you.
-Yours Sincerely,
-Miss.Fatima Yusuf.
