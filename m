@@ -2,51 +2,52 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CC83A4F51D
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2019 12:13:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0AB094F523
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2019 12:16:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726383AbfFVKN2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 22 Jun 2019 06:13:28 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:49669 "EHLO
+        id S1726390AbfFVKQK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 22 Jun 2019 06:16:10 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:56355 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726138AbfFVKN1 (ORCPT
+        with ESMTP id S1726121AbfFVKQJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Jun 2019 06:13:27 -0400
+        Sat, 22 Jun 2019 06:16:09 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x5MADK972097959
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x5MAE11h2098044
         (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Sat, 22 Jun 2019 03:13:20 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x5MADK972097959
+        Sat, 22 Jun 2019 03:14:02 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x5MAE11h2098044
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019061801; t=1561198400;
-        bh=RzdNB5kyxjyHy1NKN8iaDyUy1VHJEC9k9ScsNc4KmIQ=;
+        s=2019061801; t=1561198442;
+        bh=pN8vPWIgNpcbtttpyOuUlN4blwblrQFFYcPXRvfmUCo=;
         h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
-        b=DFALrcBr1ORluVLHbMZEqo9BASNcCfK+0d1uRuE45o5B9ZR6CoQMSjKjoWzfRiVN3
-         RaLY9EcTAdbEcMXdqSew5JOa4h+iQQhNm8XCL1a2HsL8BLQ5QHV7/IMy7180ddWM7L
-         r9ZFtxCiSeH9dqtI3Iin9bITvgIJiuWRM8E/+S2Dp8lwpAzLrWc+1fWNVGSS6G+/oT
-         HA1y8MyStH/DbJP1aUvi2UpMNLP9oeXiaZCiX6BywnLRP0Wdkxep26sm9P3wqKub1i
-         mem7x/LsyKsnFuMoGs02zWMQ4/rXlvouBDhwaNM64+3JUK4N4XEWc0VJE7vNYivSJ5
-         q3fKMo2+1iVhA==
+        b=rURTxwYaZN9BUKxFronxfwQSLBj2E6fzWWLc6+Mzu21WylD4/N+qaEr6MndxZ9GU9
+         xQq/W4R3gsYTFznawfTii0Qq2qh/ZA3QHpUkvKp2LvA6t7Uq+IgmoEEoa9obEWbgA9
+         GafJPQ1bV70KLzpE2OgSxezK2GsADpHrNF+SDBnYQlslPf+kzlOE07NSEG/hxb0lrR
+         mBCnxVqfCfWF/sMrWOV4nOaB1NiAiHYyCLYrSvgh6eFZ4PlX7F9grk9fiPQLyMxBYz
+         JoFMtO4hC4rXrwOsOBCfbAQ07lbxUojTqF3hF/MgJDsgT8iqKwqZaMC4OTr1onMtEe
+         YRCtukB6EYSZQ==
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x5MADJiL2097956;
-        Sat, 22 Jun 2019 03:13:19 -0700
-Date:   Sat, 22 Jun 2019 03:13:19 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x5MAE1qB2098041;
+        Sat, 22 Jun 2019 03:14:01 -0700
+Date:   Sat, 22 Jun 2019 03:14:01 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   "tip-bot for Chang S. Bae" <tipbot@zytor.com>
-Message-ID: <tip-a87730cc3acc475eff12ddde3f7d5687371b5c76@git.kernel.org>
-Cc:     ak@linux.intel.com, ravi.v.shankar@intel.com,
-        linux-kernel@vger.kernel.org, chang.seok.bae@intel.com,
-        luto@kernel.org, mingo@kernel.org, tglx@linutronix.de,
-        hpa@zytor.com
-Reply-To: mingo@kernel.org, chang.seok.bae@intel.com, luto@kernel.org,
-          ravi.v.shankar@intel.com, linux-kernel@vger.kernel.org,
-          ak@linux.intel.com, tglx@linutronix.de, hpa@zytor.com
-In-Reply-To: <1557309753-24073-16-git-send-email-chang.seok.bae@intel.com>
-References: <1557309753-24073-16-git-send-email-chang.seok.bae@intel.com>
+From:   tip-bot for Andy Lutomirski <tipbot@zytor.com>
+Message-ID: <tip-2032f1f96ee0da600633c6c627b9c0a2e0f8b8a6@git.kernel.org>
+Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org,
+        chang.seok.bae@intel.com, ravi.v.shankar@intel.com,
+        ak@linux.intel.com, tglx@linutronix.de, hpa@zytor.com,
+        luto@kernel.org
+Reply-To: hpa@zytor.com, luto@kernel.org, mingo@kernel.org,
+          linux-kernel@vger.kernel.org, tglx@linutronix.de,
+          ak@linux.intel.com, ravi.v.shankar@intel.com,
+          chang.seok.bae@intel.com
+In-Reply-To: <1557309753-24073-17-git-send-email-chang.seok.bae@intel.com>
+References: <1557309753-24073-17-git-send-email-chang.seok.bae@intel.com>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/cpu] selftests/x86/fsgsbase: Test ptracer-induced GSBASE
- write with FSGSBASE
-Git-Commit-ID: a87730cc3acc475eff12ddde3f7d5687371b5c76
+Subject: [tip:x86/cpu] x86/cpu: Enable FSGSBASE on 64bit by default and add
+ a chicken bit
+Git-Commit-ID: 2032f1f96ee0da600633c6c627b9c0a2e0f8b8a6
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -64,64 +65,95 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  a87730cc3acc475eff12ddde3f7d5687371b5c76
-Gitweb:     https://git.kernel.org/tip/a87730cc3acc475eff12ddde3f7d5687371b5c76
-Author:     Chang S. Bae <chang.seok.bae@intel.com>
-AuthorDate: Wed, 8 May 2019 03:02:30 -0700
+Commit-ID:  2032f1f96ee0da600633c6c627b9c0a2e0f8b8a6
+Gitweb:     https://git.kernel.org/tip/2032f1f96ee0da600633c6c627b9c0a2e0f8b8a6
+Author:     Andy Lutomirski <luto@kernel.org>
+AuthorDate: Wed, 8 May 2019 03:02:31 -0700
 Committer:  Thomas Gleixner <tglx@linutronix.de>
 CommitDate: Sat, 22 Jun 2019 11:38:56 +0200
 
-selftests/x86/fsgsbase: Test ptracer-induced GSBASE write with FSGSBASE
+x86/cpu: Enable FSGSBASE on 64bit by default and add a chicken bit
 
-This validates that GS and GSBASE are independently preserved in
-ptracer commands.
+Now that FSGSBASE is fully supported, remove unsafe_fsgsbase, enable
+FSGSBASE by default, and add nofsgsbase to disable it.
 
-Suggested-by: Andy Lutomirski <luto@kernel.org>
+Signed-off-by: Andy Lutomirski <luto@kernel.org>
 Signed-off-by: Chang S. Bae <chang.seok.bae@intel.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Andi Kleen <ak@linux.intel.com>
+Reviewed-by: Andi Kleen <ak@linux.intel.com>
 Cc: Ravi Shankar <ravi.v.shankar@intel.com>
 Cc: H. Peter Anvin <hpa@zytor.com>
-Link: https://lkml.kernel.org/r/1557309753-24073-16-git-send-email-chang.seok.bae@intel.com
+Link: https://lkml.kernel.org/r/1557309753-24073-17-git-send-email-chang.seok.bae@intel.com
 
 ---
- tools/testing/selftests/x86/fsgsbase.c | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
+ Documentation/admin-guide/kernel-parameters.txt |  3 +--
+ arch/x86/kernel/cpu/common.c                    | 32 +++++++++++--------------
+ 2 files changed, 15 insertions(+), 20 deletions(-)
 
-diff --git a/tools/testing/selftests/x86/fsgsbase.c b/tools/testing/selftests/x86/fsgsbase.c
-index afd029897c79..21fd4f94b5b0 100644
---- a/tools/testing/selftests/x86/fsgsbase.c
-+++ b/tools/testing/selftests/x86/fsgsbase.c
-@@ -470,7 +470,7 @@ static void test_ptrace_write_gsbase(void)
- 	wait(&status);
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index b0fa5273b0fc..35bc3c3574c6 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -2857,8 +2857,7 @@
+ 	no5lvl		[X86-64] Disable 5-level paging mode. Forces
+ 			kernel to use 4-level paging instead.
  
- 	if (WSTOPSIG(status) == SIGTRAP) {
--		unsigned long gs;
-+		unsigned long gs, base;
- 		unsigned long gs_offset = USER_REGS_OFFSET(gs);
- 		unsigned long base_offset = USER_REGS_OFFSET(gs_base);
+-	unsafe_fsgsbase	[X86] Allow FSGSBASE instructions.  This will be
+-			replaced with a nofsgsbase flag.
++	nofsgsbase	[X86] Disables FSGSBASE instructions.
  
-@@ -486,6 +486,7 @@ static void test_ptrace_write_gsbase(void)
- 			err(1, "PTRACE_POKEUSER");
+ 	no_console_suspend
+ 			[HW] Never suspend the console
+diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
+index 71defe2d1b7c..1305f16b6105 100644
+--- a/arch/x86/kernel/cpu/common.c
++++ b/arch/x86/kernel/cpu/common.c
+@@ -366,21 +366,21 @@ out:
+ 	cr4_clear_bits(X86_CR4_UMIP);
+ }
  
- 		gs = ptrace(PTRACE_PEEKUSER, child, gs_offset, NULL);
-+		base = ptrace(PTRACE_PEEKUSER, child, base_offset, NULL);
+-/*
+- * Temporary hack: FSGSBASE is unsafe until a few kernel code paths are
+- * updated. This allows us to get the kernel ready incrementally.
+- *
+- * Once all the pieces are in place, these will go away and be replaced with
+- * a nofsgsbase chicken flag.
+- */
+-static bool unsafe_fsgsbase;
+-
+-static __init int setup_unsafe_fsgsbase(char *arg)
++static __init int x86_nofsgsbase_setup(char *arg)
+ {
+-	unsafe_fsgsbase = true;
++	/* Require an exact match without trailing characters. */
++	if (strlen(arg))
++		return 0;
++
++	/* Do not emit a message if the feature is not present. */
++	if (!boot_cpu_has(X86_FEATURE_FSGSBASE))
++		return 1;
++
++	setup_clear_cpu_cap(X86_FEATURE_FSGSBASE);
++	pr_info("FSGSBASE disabled via kernel command line\n");
+ 	return 1;
+ }
+-__setup("unsafe_fsgsbase", setup_unsafe_fsgsbase);
++__setup("nofsgsbase", x86_nofsgsbase_setup);
  
- 		/*
- 		 * In a non-FSGSBASE system, the nonzero selector will load
-@@ -496,8 +497,14 @@ static void test_ptrace_write_gsbase(void)
- 		if (gs != 0x7) {
- 			nerrs++;
- 			printf("[FAIL]\tGS changed to %lx\n", gs);
-+		} else if (have_fsgsbase && (base != 0xFF)) {
-+			nerrs++;
-+			printf("[FAIL]\tGSBASE changed to %lx\n", base);
- 		} else {
--			printf("[OK]\tGS remained 0x7\n");
-+			printf("[OK]\tGS remained 0x7 %s");
-+			if (have_fsgsbase)
-+				printf("and GSBASE changed to 0xFF");
-+			printf("\n");
- 		}
- 	}
+ /*
+  * Protection Keys are not available in 32-bit mode.
+@@ -1387,12 +1387,8 @@ static void identify_cpu(struct cpuinfo_x86 *c)
+ 	setup_umip(c);
  
+ 	/* Enable FSGSBASE instructions if available. */
+-	if (cpu_has(c, X86_FEATURE_FSGSBASE)) {
+-		if (unsafe_fsgsbase)
+-			cr4_set_bits(X86_CR4_FSGSBASE);
+-		else
+-			clear_cpu_cap(c, X86_FEATURE_FSGSBASE);
+-	}
++	if (cpu_has(c, X86_FEATURE_FSGSBASE))
++		cr4_set_bits(X86_CR4_FSGSBASE);
+ 
+ 	/*
+ 	 * The vendor-specific functions might have changed features.
