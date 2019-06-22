@@ -2,51 +2,52 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8C3564F516
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2019 12:10:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 894CA4F518
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2019 12:11:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726359AbfFVKKh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 22 Jun 2019 06:10:37 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:49303 "EHLO
+        id S1726385AbfFVKLT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 22 Jun 2019 06:11:19 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:44673 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726112AbfFVKKh (ORCPT
+        with ESMTP id S1726112AbfFVKLS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Jun 2019 06:10:37 -0400
+        Sat, 22 Jun 2019 06:11:18 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x5MAATB92097280
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x5MABBnm2097397
         (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Sat, 22 Jun 2019 03:10:29 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x5MAATB92097280
+        Sat, 22 Jun 2019 03:11:11 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x5MABBnm2097397
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019061801; t=1561198230;
-        bh=gTND2DBZeseQSs7ocwQbubb7EY7qtmdUKccOBH4D3xk=;
+        s=2019061801; t=1561198272;
+        bh=j/DNIi/iDremzgIMMeTl2wiB9+LG3io3oQ57FQWE0M4=;
         h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
-        b=njV5NTe7XmclNk0L0J5bAvcT/JizlNVZazZZxyMkdVcc5dRMl9PWRc/Rro67EodBu
-         4aA3p3//h9XBMfdlmb1m6edndnTlc4n6n9tJFrCxReuDlNhKOonkvRqMS9i0h1l/SA
-         cnIs6409ShrH8Bqz0ezfUUuOSAEcMhKHgfBbugPG9tHAX+6qPzvyVVnzuSH4WAb/tE
-         W/klWZUr3XXfl/+xVy2tq6e94js2aw1sWn1DTPRDny//MZ1o8qtv85fP0v4v0baTfH
-         Tb2l68gL2R7mhx0hF4xRviGdnUWjMJCvo5SgunmLlDfpAERrT/2wJPAJvBohB9HXS8
-         N3iSF1Wolvriw==
+        b=RIQ1oDTTU9HmmkpZMPLlsztDWTqUAgZ0psAW/vt92xjA/yLFmtdqszDmeYin7/mdo
+         V8sCmws6AaAk74jpWg8q2Y9cncW35BzcXV1v+Q9kZZ2iB5rCw4uQ9mmOXZ4uBoZYK5
+         Bg/GZO5lQNJB8/WZpLud6CiAnvA9ZlnYkrSwj478sg6UOmhoQfiSM/qQmvdgpkLVr1
+         zirE+1GocgXKyLf4iYrG74/wd/SLyDm7sMUcI3ZkeROA4ZLt10cj1Ba1dduG4eUCFV
+         dss2jdkD6MZ8f0f9qsbNODrVW6aEw4jagqhS8VpNCApxs584GLDi2J/UFwu35OWjjT
+         /xIB/mbWF819A==
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x5MAATp22097277;
-        Sat, 22 Jun 2019 03:10:29 -0700
-Date:   Sat, 22 Jun 2019 03:10:29 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x5MABBOO2097394;
+        Sat, 22 Jun 2019 03:11:11 -0700
+Date:   Sat, 22 Jun 2019 03:11:11 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   "tip-bot for Chang S. Bae" <tipbot@zytor.com>
-Message-ID: <tip-79e1932fa3cedd731ddbd6af111fe4db8ca109ae@git.kernel.org>
-Cc:     luto@kernel.org, ravi.v.shankar@intel.com,
-        linux-kernel@vger.kernel.org, mingo@kernel.org, hpa@zytor.com,
-        dave.hansen@linux.intel.com, ak@linux.intel.com,
-        chang.seok.bae@intel.com, tglx@linutronix.de
-Reply-To: luto@kernel.org, ravi.v.shankar@intel.com,
-          linux-kernel@vger.kernel.org, hpa@zytor.com, ak@linux.intel.com,
-          dave.hansen@linux.intel.com, mingo@kernel.org,
-          tglx@linutronix.de, chang.seok.bae@intel.com
-In-Reply-To: <1557309753-24073-12-git-send-email-chang.seok.bae@intel.com>
-References: <1557309753-24073-12-git-send-email-chang.seok.bae@intel.com>
+Message-ID: <tip-708078f65721b46d82d9934a3f0b36a2b8ad0656@git.kernel.org>
+Cc:     ravi.v.shankar@intel.com, hpa@zytor.com, luto@kernel.org,
+        dave.hansen@linux.intel.com, linux-kernel@vger.kernel.org,
+        mingo@kernel.org, tglx@linutronix.de, chang.seok.bae@intel.com,
+        ak@linux.intel.com
+Reply-To: mingo@kernel.org, linux-kernel@vger.kernel.org,
+          tglx@linutronix.de, chang.seok.bae@intel.com, ak@linux.intel.com,
+          hpa@zytor.com, ravi.v.shankar@intel.com, luto@kernel.org,
+          dave.hansen@linux.intel.com
+In-Reply-To: <1557309753-24073-13-git-send-email-chang.seok.bae@intel.com>
+References: <1557309753-24073-13-git-send-email-chang.seok.bae@intel.com>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/cpu] x86/entry/64: Introduce the FIND_PERCPU_BASE macro
-Git-Commit-ID: 79e1932fa3cedd731ddbd6af111fe4db8ca109ae
+Subject: [tip:x86/cpu] x86/entry/64: Handle FSGSBASE enabled paranoid
+ entry/exit
+Git-Commit-ID: 708078f65721b46d82d9934a3f0b36a2b8ad0656
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -64,115 +65,218 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  79e1932fa3cedd731ddbd6af111fe4db8ca109ae
-Gitweb:     https://git.kernel.org/tip/79e1932fa3cedd731ddbd6af111fe4db8ca109ae
+Commit-ID:  708078f65721b46d82d9934a3f0b36a2b8ad0656
+Gitweb:     https://git.kernel.org/tip/708078f65721b46d82d9934a3f0b36a2b8ad0656
 Author:     Chang S. Bae <chang.seok.bae@intel.com>
-AuthorDate: Wed, 8 May 2019 03:02:26 -0700
+AuthorDate: Wed, 8 May 2019 03:02:27 -0700
 Committer:  Thomas Gleixner <tglx@linutronix.de>
 CommitDate: Sat, 22 Jun 2019 11:38:54 +0200
 
-x86/entry/64: Introduce the FIND_PERCPU_BASE macro
+x86/entry/64: Handle FSGSBASE enabled paranoid entry/exit
 
-GSBASE is used to find per-CPU data in the kernel. But when GSBASE is
-unknown, the per-CPU base can be found from the per_cpu_offset table with a
-CPU NR.  The CPU NR is extracted from the limit field of the CPUNODE entry
-in GDT, or by the RDPID instruction. This is a prerequisite for using
-FSGSBASE in the low level entry code.
+Without FSGSBASE, user space cannot change GSBASE other than through a
+PRCTL. The kernel enforces that the user space GSBASE value is postive as
+negative values are used for detecting the kernel space GSBASE value in the
+paranoid entry code.
 
-Also, add the GAS-compatible RDPID macro as binutils 2.21 do not support
-it. Support is added in version 2.27.
+If FSGSBASE is enabled, user space can set arbitrary GSBASE values without
+kernel intervention, including negative ones, which breaks the paranoid
+entry assumptions.
 
-[ tglx: Massaged changelog ]
+To avoid this, paranoid entry needs to unconditionally save the current
+GSBASE value independent of the interrupted context, retrieve and write the
+kernel GSBASE and unconditionally restore the saved value on exit. The
+restore happens either in paranoid_exit or in the special exit path of the
+NMI low level code.
+
+All other entry code pathes which use unconditional SWAPGS are not affected
+as they do not depend on the actual content.
+
+[ tglx: Massaged changelogs and comments ]
 
 Suggested-by: H. Peter Anvin <hpa@zytor.com>
+Suggested-by: Andy Lutomirski <luto@kernel.org>
+Suggested-by: Thomas Gleixner <tglx@linutronix.de>
 Signed-off-by: Chang S. Bae <chang.seok.bae@intel.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Andy Lutomirski <luto@kernel.org>
 Cc: Andi Kleen <ak@linux.intel.com>
 Cc: Ravi Shankar <ravi.v.shankar@intel.com>
 Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Link: https://lkml.kernel.org/r/1557309753-24073-12-git-send-email-chang.seok.bae@intel.com
+Link: https://lkml.kernel.org/r/1557309753-24073-13-git-send-email-chang.seok.bae@intel.com
 
 ---
- arch/x86/entry/calling.h    | 34 ++++++++++++++++++++++++++++++++++
- arch/x86/include/asm/inst.h | 15 +++++++++++++++
- 2 files changed, 49 insertions(+)
+ arch/x86/entry/calling.h  |  6 ++++
+ arch/x86/entry/entry_64.S | 80 ++++++++++++++++++++++++++++++++++++++++-------
+ 2 files changed, 75 insertions(+), 11 deletions(-)
 
 diff --git a/arch/x86/entry/calling.h b/arch/x86/entry/calling.h
-index efb0d1b1f15f..9a524360ae2e 100644
+index 9a524360ae2e..d3fbe2dc03ea 100644
 --- a/arch/x86/entry/calling.h
 +++ b/arch/x86/entry/calling.h
-@@ -6,6 +6,7 @@
- #include <asm/percpu.h>
- #include <asm/asm-offsets.h>
- #include <asm/processor-flags.h>
-+#include <asm/inst.h>
- 
- /*
- 
-@@ -345,6 +346,39 @@ For 32-bit we have the following conventions - kernel is built with
+@@ -338,6 +338,12 @@ For 32-bit we have the following conventions - kernel is built with
  #endif
  .endm
  
-+#ifdef CONFIG_SMP
-+
-+/*
-+ * CPU/node NR is loaded from the limit (size) field of a special segment
-+ * descriptor entry in GDT.
-+ */
-+.macro LOAD_CPU_AND_NODE_SEG_LIMIT reg:req
-+	movq	$__CPUNODE_SEG, \reg
-+	lsl	\reg, \reg
++.macro SAVE_AND_SET_GSBASE scratch_reg:req save_reg:req
++	rdgsbase \save_reg
++	GET_PERCPU_BASE \scratch_reg
++	wrgsbase \scratch_reg
 +.endm
 +
-+/*
-+ * Fetch the per-CPU GSBASE value for this processor and put it in @reg.
-+ * We normally use %gs for accessing per-CPU data, but we are setting up
-+ * %gs here and obviously can not use %gs itself to access per-CPU data.
-+ */
-+.macro GET_PERCPU_BASE reg:req
-+	ALTERNATIVE \
-+		"LOAD_CPU_AND_NODE_SEG_LIMIT \reg", \
-+		"RDPID	\reg", \
-+		X86_FEATURE_RDPID
-+	andq	$VDSO_CPUNODE_MASK, \reg
-+	movq	__per_cpu_offset(, \reg, 8), \reg
-+.endm
-+
-+#else
-+
-+.macro GET_PERCPU_BASE reg:req
-+	movq	pcpu_unit_offsets(%rip), \reg
-+.endm
-+
-+#endif /* CONFIG_SMP */
-+
- /*
-  * This does 'call enter_from_user_mode' unless we can avoid it based on
-  * kernel config or using the static jump infrastructure.
-diff --git a/arch/x86/include/asm/inst.h b/arch/x86/include/asm/inst.h
-index f5a796da07f8..d063841a17e3 100644
---- a/arch/x86/include/asm/inst.h
-+++ b/arch/x86/include/asm/inst.h
-@@ -306,6 +306,21 @@
+ #endif /* CONFIG_X86_64 */
+ 
+ .macro STACKLEAK_ERASE
+diff --git a/arch/x86/entry/entry_64.S b/arch/x86/entry/entry_64.S
+index aaa846f8850a..7f9f5119d6b1 100644
+--- a/arch/x86/entry/entry_64.S
++++ b/arch/x86/entry/entry_64.S
+@@ -38,6 +38,7 @@
+ #include <asm/export.h>
+ #include <asm/frame.h>
+ #include <asm/nospec-branch.h>
++#include <asm/fsgsbase.h>
+ #include <linux/err.h>
+ 
+ #include "calling.h"
+@@ -947,7 +948,6 @@ ENTRY(\sym)
+ 	addq	$\ist_offset, CPU_TSS_IST(\shift_ist)
  	.endif
- 	MODRM 0xc0 movq_r64_xmm_opd1 movq_r64_xmm_opd2
- 	.endm
-+
-+.macro RDPID opd
-+	REG_TYPE rdpid_opd_type \opd
-+	.if rdpid_opd_type == REG_TYPE_R64
-+	R64_NUM rdpid_opd \opd
-+	.else
-+	R32_NUM rdpid_opd \opd
-+	.endif
-+	.byte 0xf3
-+	.if rdpid_opd > 7
-+	PFX_REX rdpid_opd 0
-+	.endif
-+	.byte 0x0f, 0xc7
-+	MODRM 0xc0 rdpid_opd 0x7
-+.endm
+ 
+-	/* these procedures expect "no swapgs" flag in ebx */
+ 	.if \paranoid
+ 	jmp	paranoid_exit
+ 	.else
+@@ -1164,9 +1164,14 @@ idtentry machine_check		do_mce			has_error_code=0	paranoid=1
  #endif
  
- #endif
+ /*
+- * Save all registers in pt_regs, and switch gs if needed.
+- * Use slow, but surefire "are we in kernel?" check.
+- * Return: ebx=0: need swapgs on exit, ebx=1: otherwise
++ * Save all registers in pt_regs. Return GSBASE related information
++ * in EBX depending on the availability of the FSGSBASE instructions:
++ *
++ * FSGSBASE	R/EBX
++ *     N        0 -> SWAPGS on exit
++ *              1 -> no SWAPGS on exit
++ *
++ *     Y        GSBASE value at entry, must be restored in paranoid_exit
+  */
+ ENTRY(paranoid_entry)
+ 	UNWIND_HINT_FUNC
+@@ -1174,7 +1179,6 @@ ENTRY(paranoid_entry)
+ 	PUSH_AND_CLEAR_REGS save_ret=1
+ 	ENCODE_FRAME_POINTER 8
+ 
+-1:
+ 	/*
+ 	 * Always stash CR3 in %r14.  This value will be restored,
+ 	 * verbatim, at exit.  Needed if paranoid_entry interrupted
+@@ -1192,6 +1196,25 @@ ENTRY(paranoid_entry)
+ 	 */
+ 	SAVE_AND_SWITCH_TO_KERNEL_CR3 scratch_reg=%rax save_reg=%r14
+ 
++        /*
++	 * Handling GSBASE depends on the availability of FSGSBASE.
++	 *
++	 * Without FSGSBASE the kernel enforces that negative GSBASE
++	 * values indicate kernel GSBASE. With FSGSBASE no assumptions
++	 * can be made about the GSBASE value when entering from user
++	 * space.
++	*/
++	ALTERNATIVE "jmp .Lparanoid_entry_checkgs", "", X86_FEATURE_FSGSBASE
++
++	/*
++	 * Read the current GSBASE and store it in in %rbx unconditionally,
++	 * retrieve and set the current CPUs kernel GSBASE. The stored value
++	 * has to be restored in paranoid_exit unconditionally.
++	 */
++	SAVE_AND_SET_GSBASE scratch_reg=%rax save_reg=%rbx
++	ret
++
++.Lparanoid_entry_checkgs:
+ 	/* EBX = 1 -> kernel GSBASE active, no restore required */
+ 	movl	$1, %ebx
+ 	/*
+@@ -1218,16 +1241,32 @@ END(paranoid_entry)
+  *
+  * We may be returning to very strange contexts (e.g. very early
+  * in syscall entry), so checking for preemption here would
+- * be complicated.  Fortunately, we there's no good reason
+- * to try to handle preemption here.
++ * be complicated.  Fortunately, there's no good reason to try
++ * to handle preemption here.
+  *
+- * On entry, ebx is "no swapgs" flag (1: don't need swapgs, 0: need it)
++ * R/EBX contains the GSBASE related information depending on the
++ * availability of the FSGSBASE instructions:
++ *
++ * FSGSBASE	R/EBX
++ *     N        0 -> SWAPGS on exit
++ *              1 -> no SWAPGS on exit
++ *
++ *     Y        User space GSBASE, must be restored unconditionally
+  */
+ ENTRY(paranoid_exit)
+ 	UNWIND_HINT_REGS
+ 	DISABLE_INTERRUPTS(CLBR_ANY)
+ 	TRACE_IRQS_OFF_DEBUG
+-	/* If EBX is 0, SWAPGS is required */
++
++	/* Handle GS depending on FSGSBASE availability */
++	ALTERNATIVE "jmp .Lparanoid_exit_checkgs", "nop",X86_FEATURE_FSGSBASE
++
++	/* With FSGSBASE enabled, unconditionally restore GSBASE */
++	wrgsbase	%rbx
++	jmp	.Lparanoid_exit_no_swapgs;
++
++.Lparanoid_exit_checkgs:
++	/* On non-FSGSBASE systems, conditionally do SWAPGS */
+ 	testl	%ebx, %ebx
+ 	jnz	.Lparanoid_exit_no_swapgs
+ 	TRACE_IRQS_IRETQ
+@@ -1235,12 +1274,14 @@ ENTRY(paranoid_exit)
+ 	RESTORE_CR3	scratch_reg=%rbx save_reg=%r14
+ 	SWAPGS_UNSAFE_STACK
+ 	jmp	.Lparanoid_exit_restore
++
+ .Lparanoid_exit_no_swapgs:
+ 	TRACE_IRQS_IRETQ_DEBUG
+ 	/* Always restore stashed CR3 value (see paranoid_entry) */
+ 	RESTORE_CR3	scratch_reg=%rbx save_reg=%r14
++
+ .Lparanoid_exit_restore:
+-	jmp restore_regs_and_return_to_kernel
++	jmp	restore_regs_and_return_to_kernel
+ END(paranoid_exit)
+ 
+ /*
+@@ -1651,10 +1692,27 @@ end_repeat_nmi:
+ 	/* Always restore stashed CR3 value (see paranoid_entry) */
+ 	RESTORE_CR3 scratch_reg=%r15 save_reg=%r14
+ 
+-	testl	%ebx, %ebx			/* swapgs needed? */
++	/*
++	 * The above invocation of paranoid_entry stored the GSBASE
++	 * related information in R/EBX depending on the availability
++	 * of FSGSBASE.
++	 *
++	 * If FSGSBASE is enabled, restore the saved GSBASE value
++	 * unconditionally, otherwise take the conditional SWAPGS path.
++	 */
++	ALTERNATIVE "jmp nmi_no_fsgsbase", "", X86_FEATURE_FSGSBASE
++
++	wrgsbase	%rbx
++	jmp	nmi_restore
++
++nmi_no_fsgsbase:
++	/* EBX == 0 -> invoke SWAPGS */
++	testl	%ebx, %ebx
+ 	jnz	nmi_restore
++
+ nmi_swapgs:
+ 	SWAPGS_UNSAFE_STACK
++
+ nmi_restore:
+ 	POP_REGS
+ 
