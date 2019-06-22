@@ -2,86 +2,183 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9FA9D4F48E
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2019 10:58:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E0D924F490
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2019 11:02:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726317AbfFVI6R (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 22 Jun 2019 04:58:17 -0400
-Received: from sonic315-15.consmr.mail.bf2.yahoo.com ([74.6.134.125]:39146
-        "EHLO sonic315-15.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726276AbfFVI6R (ORCPT
+        id S1726329AbfFVJB5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 22 Jun 2019 05:01:57 -0400
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:46442 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726275AbfFVJB5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Jun 2019 04:58:17 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1561193895; bh=tPMFdTY+0vCEHEJdls+8ad0RGQoZkRGbQBF0vnIRvYg=; h=Date:From:Reply-To:Subject:References:From:Subject; b=Fa2sDulrveNhVX5ZvPAs2LBenvSUPihMfmoxsCSL/jAKdE6cKi3vat9qUfzIblQe7T3Kdep0Fd/2UGnnZ6ZHIA94FF1wZPLg/0PXk4VJ+ANO+zRKLc3AeNFb0iaBJMFEEO/XBLMh6tCav976l7FeFy/dR+lM4s8o9g4KNCkyL37+HkNWkhR1zCBK0unGt/XsTgBnMFayJ0H0HHmGQdJgewGkPSg8mveCcsh5P0NCmnC0BTl03h+4G4GlqbVONI0O+tw/FLz1IxObx/wQoXn8zsa3vVElbA6XpFm2L2Bzysr0Pvhi6iIi7gtvGIzQXcak0dReKidPGPxlWmyXJwBrWw==
-X-YMail-OSG: BAotZdwVM1m9qEhWVEek5aegVFAibZda1EMsJh1OzZ6G6XqOXmDDA01PG9pM0oj
- j1HYPoh4yf5M5uNlnx9CoCdZ.dViiI.OLKoIPQ3mUMw8tkxrEX7.HbhgdxQcG_PGAz_M2SM0BhH3
- a9pUIcGNWZP34sphUNPgDwPkAsQKixgom5BtzCNOMwfUJzFqfDtmDQGE9zmo7YLtZDPTXuy6Y5CA
- AcLS6dVX0EZXWBN8QTbqvWA40QU_Bv2b829pPmBbT.BP7a9Vb6DkwnykAkid23D2jV_3VVUKFAta
- Nwqp25voFLNCtsj8bQ75xoyMTEoYkp8nIT8YyA9bBP3LmnOK6lucjPre0JV_ltdYkNpEc3b_Pp.s
- 317gFAZkZjuqTku.cTIXnLYuHdUvkNRhdb9M_2VbUnjP.W8JDFfkRKpZeh4F4j2UvDEexUt151yV
- F7XB9Xudu_X69DSZYYLZQq3YSgG_4zlx4sF16jJHxXl6PI4D_vFDNZMCyywDrsXcamp_RPinaqGy
- U8lDZ_gruVLq.AceP6M3CEmHBXgknJCRfgrvya54zQWjzrUIIalIPLZ.v1UfhSIYEBBkZ7uq7uw4
- ei0BEWIioaWkP1ieXE82lffWsRWYAJHBEFV25RVaZ85lQ9Km8WeerVCAap1D885Lv4EmI02ppW7E
- ZRxHMUf27WO9BON4Ito2lT_7WSx1Ewc0ehp4Ko74zLHlqVyP8qqwNrFeyEd3ZCblEVj7vkaBhnZM
- eNGphX8yDex39qFit0OW7X0ouScGmwjM10lO8kUdo2a.NQgbw0n_trO0o4WdNYMU6r2u9n6jIV_l
- UxBsAp1lT_NY0Lzb5MhL3JLDIdxB9kF_7.A16z5RPnZ0Tn4A2OzvlSw8qjvGSQVTdteO8vnux8Zh
- L_MVG3iYPHrm0SOTTcPMWVjUKA_ROqBk0GLSY8UDT_s6_3Bw3ibm3t1m17pNrTv1f3eiEeFLZDVc
- Q3o.HeAK4h_XMnFmCE54_mo7rM_0j4TDx3effEXPnaKU3gukWp0EV6x21gnr01lDc0NwbMRBQJAS
- AUyOqaL_0KRwFOaSzMG2wTKyeyhARLfOsIl4WWb0o8_NHN1ynY.82W8pqrj9ZYroK11dSypxt00v
- lgu3OUO.ksIv2xtNkwOSN3ITwq97qxvXeeqCIIAVaqviXcEXPyTZrvYPb9W5BFpuv3T4StBEmhIs
- 4FVNgFuFlnwMhWk79DLbeyw02SNkLHJAToanzmFhh.5j2oNNzwGvpeL8-
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic315.consmr.mail.bf2.yahoo.com with HTTP; Sat, 22 Jun 2019 08:58:15 +0000
-Date:   Sat, 22 Jun 2019 08:58:12 +0000 (UTC)
-From:   DR Rhama David Benson <bensondrrdavid@gmail.com>
-Reply-To: DR Rhama David Benson <bdrrhamadavid221@gmail.com>
-Message-ID: <450288071.230098.1561193892986@mail.yahoo.com>
-Subject: Please read carefully,
+        Sat, 22 Jun 2019 05:01:57 -0400
+Received: by mail-ot1-f67.google.com with SMTP id z23so8639845ote.13;
+        Sat, 22 Jun 2019 02:01:56 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Am4zNsdjshHM90JZDzFjZuL0ON4HFAuYzga2LSkhurU=;
+        b=UBIW+RBcEg0qQ1QY+1EPmrh2kYSmClrFI2v2mHHyxEyEDYfTyD7myhbjX45SFAFWEr
+         5g1KBLUsXQWgec+1OJNbNlWVN05icc0Xe+VfSTi1A91jlmz8GOZHSzkNbVIZjM6X47GB
+         3qI9S7yXxbb0A7tWYK1xpEcgIX1JUIEngLXTFzhenTL4szhQo7ABAQTzfnJvT3mHJdk2
+         exweCgqiz7i2RLEVs7dwaQCXPJhF6w7tNk9otlflP+Yfqr/TLl6DNF8IId+/I2lDhnyD
+         TuWvkeYrDLUp4HIfqlwxr/ff0fDo/YR8qsudJtcPBNdEgHqIXKUxYlZw5tqwqkNkoitw
+         X5iQ==
+X-Gm-Message-State: APjAAAVjMVfP1FD8ybcU9hovrfU/cvBowka5GdyN+fA/Y8sBOM+txM6o
+        0X21H3q3lXJs7k+lPsg6GUn/jyH8bogD0ZUFtCE=
+X-Google-Smtp-Source: APXvYqwdxb7u3LZKydtaWtFS50RQkYKAv2KRBoAKm2g76GJd1iOJ+Trs5tf78028BvvvjXrT7G0dVz7TZ/OOLIi/h68=
+X-Received: by 2002:a9d:5d15:: with SMTP id b21mr14204964oti.262.1561194115936;
+ Sat, 22 Jun 2019 02:01:55 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-References: <450288071.230098.1561193892986.ref@mail.yahoo.com>
-X-Mailer: WebService/1.1.13837 YahooMailBasic Mozilla/5.0 (Windows NT 6.1; rv:67.0) Gecko/20100101 Firefox/67.0
-To:     unlisted-recipients:; (no To-header on input)
+References: <20190621151725.20414-1-thierry.reding@gmail.com>
+In-Reply-To: <20190621151725.20414-1-thierry.reding@gmail.com>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Sat, 22 Jun 2019 11:01:44 +0200
+Message-ID: <CAJZ5v0iZ9Y3eAMe-kODqiXYzycb7MtxtzMbs_qgwcjhYUJ2geQ@mail.gmail.com>
+Subject: Re: [PATCH v3] driver: core: Allow subsystems to continue deferring probe
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh@kernel.org>, linux-gpio@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Jun 21, 2019 at 5:17 PM Thierry Reding <thierry.reding@gmail.com> wrote:
+>
+> From: Thierry Reding <treding@nvidia.com>
+>
+> Some subsystems, such as pinctrl, allow continuing to defer probe
+> indefinitely. This is useful for devices that depend on resources
+> provided by devices that are only probed after the init stage.
+>
+> One example of this can be seen on Tegra, where the DPAUX hardware
+> contains pinmuxing controls for pins that it shares with an I2C
+> controller. The I2C controller is typically used for communication
+> with a monitor over HDMI (DDC). However, other instances of the I2C
+> controller are used to access system critical components, such as a
+> PMIC. The I2C controller driver will therefore usually be a builtin
+> driver, whereas the DPAUX driver is part of the display driver that
+> is loaded from a module to avoid bloating the kernel image with all
+> of the DRM/KMS subsystem.
+>
+> In this particular case the pins used by this I2C/DDC controller
+> become accessible very late in the boot process. However, since the
+> controller is only used in conjunction with display, that's not an
+> issue.
+>
+> Unfortunately the driver core currently outputs a warning message
+> when a device fails to get the pinctrl before the end of the init
+> stage. That can be confusing for the user because it may sound like
+> an unwanted error occurred, whereas it's really an expected and
+> harmless situation.
+>
+> In order to eliminate this warning, this patch allows callers of the
+> driver_deferred_probe_check_state() helper to specify that they want
+> to continue deferring probe, regardless of whether we're past the
+> init stage or not. All of the callers of that function are updated
+> for the new signature, but only the pinctrl subsystem passes a true
+> value in the new persist parameter if appropriate.
+>
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
 
+Overall
 
-From: Dr Rhama David Benson,
-Please read carefully,
+Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-This message might meet you in utmost surprise. However, it's just my
-urgent need for foreign partner that made me to contact you for this
-transaction. I got your contact from yahoo tourist search while I was
-searching for a foreign partner. I am assured of your capability and
-reliability to champion this business opportunity when I prayed about
-you.
+with one nit below.
 
-I am a banker by profession in Burkina-Faso, West Africa and currently
-holding the post of manager in account and auditing department in our
-bank. I have the opportunity of transferring the left over funds ($
-5.5 Million Dollars) belonging to our deceased customer who died along
-with his entire family in a plane crash
+> ---
+> Changes in v3:
+> - add new function rather than extend the existing function with flags
+>
+> Changes in v2:
+> - pass persist flag via flags parameter to make the function call easier
+>   to understand
+>
+>  drivers/base/dd.c            | 55 ++++++++++++++++++++++++++++++------
+>  drivers/pinctrl/devicetree.c |  7 ++---
+>  include/linux/device.h       |  1 +
+>  3 files changed, 51 insertions(+), 12 deletions(-)
+>
+> diff --git a/drivers/base/dd.c b/drivers/base/dd.c
+> index 0df9b4461766..994a90747420 100644
+> --- a/drivers/base/dd.c
+> +++ b/drivers/base/dd.c
+> @@ -235,6 +235,19 @@ static int __init deferred_probe_timeout_setup(char *str)
+>  }
+>  __setup("deferred_probe_timeout=", deferred_probe_timeout_setup);
+>
+> +static int __driver_deferred_probe_check_state(struct device *dev)
+> +{
+> +       if (!initcalls_done)
+> +               return -EPROBE_DEFER;
+> +
+> +       if (!deferred_probe_timeout) {
+> +               dev_WARN(dev, "deferred probe timeout, ignoring dependency");
+> +               return -ETIMEDOUT;
+> +       }
+> +
+> +       return 0;
+> +}
+> +
+>  /**
+>   * driver_deferred_probe_check_state() - Check deferred probe state
+>   * @dev: device to check
+> @@ -248,14 +261,40 @@ __setup("deferred_probe_timeout=", deferred_probe_timeout_setup);
+>   */
+>  int driver_deferred_probe_check_state(struct device *dev)
+>  {
+> -       if (initcalls_done) {
+> -               if (!deferred_probe_timeout) {
+> -                       dev_WARN(dev, "deferred probe timeout, ignoring dependency");
+> -                       return -ETIMEDOUT;
+> -               }
+> -               dev_warn(dev, "ignoring dependency for device, assuming no driver");
+> -               return -ENODEV;
+> -       }
+> +       int ret;
+> +
+> +       ret = __driver_deferred_probe_check_state(dev);
+> +       if (ret < 0)
 
-Hence; I am inviting you for a business deal where this money can be
-shared between us in the ratio of 60/40 if you agree to my business
-proposal. Further details of the transfer will be forwarded to you as
-soon as I receive your return mail as soon as you receive this letter.
+The function returning this valie doesn't return positive numbers, so
+it "if (ret)" would be sufficient here (and below).
 
-Please indicate your willingness by sending the below information for
-more clarification and easy communication.
-For more details, Contact me for more details.
-
-(1) YOUR FULL NAME...............................
-(2) YOUR AGE AND SEX............................
-(3) YOUR CONTACT ADDRESS..................
-(4) YOUR PRIVATE PHONE N0..........
-(5) FAX NUMBER..............
-(6) YOUR COUNTRY OF ORIGIN..................
-(7) YOUR OCCUPATION.........................
-
-Trusting to hear from you immediately.
-Thanks & Best Regards,
- Dr Rhama David Benson.
+> +               return ret;
+> +
+> +       dev_warn(dev, "ignoring dependency for device, assuming no driver");
+> +
+> +       return -ENODEV;
+> +}
+> +
+> +/**
+> + * driver_deferred_probe_check_state_continue() - check deferred probe state
+> + * @dev: device to check
+> + *
+> + * Returns -ETIMEDOUT if deferred probe debug timeout has expired, or
+> + * -EPROBE_DEFER otherwise.
+> + *
+> + * Drivers or subsystems can opt-in to calling this function instead of
+> + * directly returning -EPROBE_DEFER.
+> + *
+> + * This is similar to driver_deferred_probe_check_state(), but it allows the
+> + * subsystem to keep deferring probe after built-in drivers have had a chance
+> + * to probe. One scenario where that is useful is if built-in drivers rely on
+> + * resources that are provided by modular drivers.
+> + */
+> +int driver_deferred_probe_check_state_continue(struct device *dev)
+> +{
+> +       int ret;
+> +
+> +       ret = __driver_deferred_probe_check_state(dev);
+> +       if (ret < 0)
+> +               return ret;
+> +
+>         return -EPROBE_DEFER;
+>  }
