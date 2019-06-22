@@ -2,257 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 445C14F4B2
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2019 11:30:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DCE7B4F4BA
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2019 11:34:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726353AbfFVJad (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 22 Jun 2019 05:30:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42836 "EHLO mail.kernel.org"
+        id S1726382AbfFVJeJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 22 Jun 2019 05:34:09 -0400
+Received: from mga11.intel.com ([192.55.52.93]:26120 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726187AbfFVJad (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Jun 2019 05:30:33 -0400
-Received: from archlinux (cpc149474-cmbg20-2-0-cust94.5-4.cable.virginm.net [82.4.196.95])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 99BE52075E;
-        Sat, 22 Jun 2019 09:30:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561195831;
-        bh=kbmCfu7JLsyXc4sM8ZXB5nDnTJqCjT6QBaFydFU721s=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=Pa2Vu7lkVZwkpSflRfCLgEGIhVKq0c7U3HPg80K9Mxp5wVRP6RPgHAtuZ0maQRMZj
-         soXCn4HcV0waXflscgQQfrwVLe2AMutnTH7J3IYCySB/zUh2u7T0MgGZ4XRoZyuyh6
-         i4IVa52lZdErnOJLxarPixfXU+zgA/n0HYCSOxDo=
-Date:   Sat, 22 Jun 2019 10:30:26 +0100
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Olivier Moysan <olivier.moysan@st.com>
-Cc:     <knaack.h@gmx.de>, <lars@metafoo.de>, <pmeerw@pmeerw.net>,
-        <mcoquelin.stm32@gmail.com>, <alexandre.torgue@st.com>,
-        <fabrice.gasnier@st.com>, <linux-iio@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <benjamin.gaignard@st.com>
-Subject: Re: [PATCH 4/5] iio: adc: stm32-dfsdm: add fast mode support
-Message-ID: <20190622103026.0617d30e@archlinux>
-In-Reply-To: <1560949431-22948-5-git-send-email-olivier.moysan@st.com>
-References: <1560949431-22948-1-git-send-email-olivier.moysan@st.com>
-        <1560949431-22948-5-git-send-email-olivier.moysan@st.com>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1726293AbfFVJeJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 22 Jun 2019 05:34:09 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Jun 2019 02:34:09 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.63,404,1557212400"; 
+   d="scan'208";a="312233133"
+Received: from ahunter-desktop.fi.intel.com ([10.237.72.198])
+  by orsmga004.jf.intel.com with ESMTP; 22 Jun 2019 02:34:07 -0700
+From:   Adrian Hunter <adrian.hunter@intel.com>
+To:     Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc:     Jiri Olsa <jolsa@redhat.com>, linux-kernel@vger.kernel.org
+Subject: [PATCH 0/7] perf intel-pt: CBR improvements
+Date:   Sat, 22 Jun 2019 12:32:41 +0300
+Message-Id: <20190622093248.581-1-adrian.hunter@intel.com>
+X-Mailer: git-send-email 2.17.1
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki, Business Identity Code: 0357606 - 4, Domiciled in Helsinki
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 19 Jun 2019 15:03:50 +0200
-Olivier Moysan <olivier.moysan@st.com> wrote:
+Hi
 
-> The use of fast mode allows to get a larger set of solution
-> for filter parameters. This can be useful to reach a better
-> output sample resolution, when fast mode can be used.
-> 
-> Fast mode is selected at startup if it is relevant.
-> The startup is performed in postenable callback context,
-> where there are too tight time constraints for filter parameters
-> computation. For this reason both fast and non fast filter parameters
-> are pre-computed previously.
-> 
-> Signed-off-by: Olivier Moysan <olivier.moysan@st.com>
-I've no problem with precomputing these but I'm curious.
-What is the use model where postenable is performance critical?
+Here are some improvements for the handling of core-to-bus ratio (CBR),
+including exporting it.
 
-Patch looks fine to me.
 
-Applied to the togreg branch of iio.git and pushed out as testing
-for the autobuilders to play with it.
+Adrian Hunter (7):
+      perf intel-pt: Decoder to output CBR changes immediately
+      perf intel-pt: Cater for CBR change in PSB+
+      perf intel-pt: Add CBR value to decoder state
+      perf intel-pt: Synthesize CBR events when last seen value changes
+      perf db-export: Export synth events
+      perf scripts python: export-to-sqlite.py: Export Intel PT power and ptwrite events
+      perf scripts python: export-to-postgresql.py: Export Intel PT power and ptwrite events
 
-Thanks,
+ tools/perf/scripts/python/export-to-postgresql.py  | 251 +++++++++++++++++++++
+ tools/perf/scripts/python/export-to-sqlite.py      | 239 ++++++++++++++++++++
+ .../perf/util/intel-pt-decoder/intel-pt-decoder.c  |  24 +-
+ .../perf/util/intel-pt-decoder/intel-pt-decoder.h  |   1 +
+ tools/perf/util/intel-pt.c                         |  65 ++++--
+ .../util/scripting-engines/trace-event-python.c    |  46 +++-
+ 6 files changed, 590 insertions(+), 36 deletions(-)a
 
-Jonathan
 
-> ---
->  drivers/iio/adc/stm32-dfsdm-adc.c | 65 ++++++++++++++++++++++++++++++---------
->  drivers/iio/adc/stm32-dfsdm.h     |  4 +--
->  2 files changed, 53 insertions(+), 16 deletions(-)
-> 
-> diff --git a/drivers/iio/adc/stm32-dfsdm-adc.c b/drivers/iio/adc/stm32-dfsdm-adc.c
-> index 5b19a88412a6..d855a605eab6 100644
-> --- a/drivers/iio/adc/stm32-dfsdm-adc.c
-> +++ b/drivers/iio/adc/stm32-dfsdm-adc.c
-> @@ -196,7 +196,7 @@ static int stm32_dfsdm_compute_osrs(struct stm32_dfsdm_filter *fl,
->  	int bits, shift;
->  	unsigned int m = 1;	/* multiplication factor */
->  	unsigned int p = fl->ford;	/* filter order (ford) */
-> -	struct stm32_dfsdm_filter_osr *flo = &fl->flo;
-> +	struct stm32_dfsdm_filter_osr *flo = &fl->flo[fast];
->  
->  	pr_debug("%s: Requested oversampling: %d\n",  __func__, oversamp);
->  	/*
-> @@ -217,7 +217,6 @@ static int stm32_dfsdm_compute_osrs(struct stm32_dfsdm_filter *fl,
->  	 * Look for filter and integrator oversampling ratios which allows
->  	 * to maximize data output resolution.
->  	 */
-> -	flo->res = 0;
->  	for (fosr = 1; fosr <= DFSDM_MAX_FL_OVERSAMPLING; fosr++) {
->  		for (iosr = 1; iosr <= DFSDM_MAX_INT_OVERSAMPLING; iosr++) {
->  			if (fast)
-> @@ -309,6 +308,28 @@ static int stm32_dfsdm_compute_osrs(struct stm32_dfsdm_filter *fl,
->  	return 0;
->  }
->  
-> +static int stm32_dfsdm_compute_all_osrs(struct iio_dev *indio_dev,
-> +					unsigned int oversamp)
-> +{
-> +	struct stm32_dfsdm_adc *adc = iio_priv(indio_dev);
-> +	struct stm32_dfsdm_filter *fl = &adc->dfsdm->fl_list[adc->fl_id];
-> +	int ret0, ret1;
-> +
-> +	memset(&fl->flo[0], 0, sizeof(fl->flo[0]));
-> +	memset(&fl->flo[1], 0, sizeof(fl->flo[1]));
-> +
-> +	ret0 = stm32_dfsdm_compute_osrs(fl, 0, oversamp);
-> +	ret1 = stm32_dfsdm_compute_osrs(fl, 1, oversamp);
-> +	if (ret0 < 0 && ret1 < 0) {
-> +		dev_err(&indio_dev->dev,
-> +			"Filter parameters not found: errors %d/%d\n",
-> +			ret0, ret1);
-> +		return -EINVAL;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
->  static int stm32_dfsdm_start_channel(struct stm32_dfsdm_adc *adc)
->  {
->  	struct iio_dev *indio_dev = iio_priv_to_dev(adc);
-> @@ -433,11 +454,25 @@ static int stm32_dfsdm_channels_configure(struct stm32_dfsdm_adc *adc,
->  	struct iio_dev *indio_dev = iio_priv_to_dev(adc);
->  	struct regmap *regmap = adc->dfsdm->regmap;
->  	struct stm32_dfsdm_filter *fl = &adc->dfsdm->fl_list[fl_id];
-> -	struct stm32_dfsdm_filter_osr *flo = &fl->flo;
-> +	struct stm32_dfsdm_filter_osr *flo = &fl->flo[0];
->  	const struct iio_chan_spec *chan;
->  	unsigned int bit;
->  	int ret;
->  
-> +	fl->fast = 0;
-> +
-> +	/*
-> +	 * In continuous mode, use fast mode configuration,
-> +	 * if it provides a better resolution.
-> +	 */
-> +	if (adc->nconv == 1 && !trig &&
-> +	    (indio_dev->currentmode & INDIO_BUFFER_SOFTWARE)) {
-> +		if (fl->flo[1].res >= fl->flo[0].res) {
-> +			fl->fast = 1;
-> +			flo = &fl->flo[1];
-> +		}
-> +	}
-> +
->  	if (!flo->res)
->  		return -EINVAL;
->  
-> @@ -463,7 +498,7 @@ static int stm32_dfsdm_filter_configure(struct stm32_dfsdm_adc *adc,
->  	struct iio_dev *indio_dev = iio_priv_to_dev(adc);
->  	struct regmap *regmap = adc->dfsdm->regmap;
->  	struct stm32_dfsdm_filter *fl = &adc->dfsdm->fl_list[fl_id];
-> -	struct stm32_dfsdm_filter_osr *flo = &fl->flo;
-> +	struct stm32_dfsdm_filter_osr *flo = &fl->flo[fl->fast];
->  	u32 cr1;
->  	const struct iio_chan_spec *chan;
->  	unsigned int bit, jchg = 0;
-> @@ -490,6 +525,12 @@ static int stm32_dfsdm_filter_configure(struct stm32_dfsdm_adc *adc,
->  	if (ret)
->  		return ret;
->  
-> +	ret = regmap_update_bits(regmap, DFSDM_CR1(fl_id),
-> +				 DFSDM_CR1_FAST_MASK,
-> +				 DFSDM_CR1_FAST(fl->fast));
-> +	if (ret)
-> +		return ret;
-> +
->  	/*
->  	 * DFSDM modes configuration W.R.T audio/iio type modes
->  	 * ----------------------------------------------------------------
-> @@ -636,7 +677,6 @@ static int dfsdm_adc_set_samp_freq(struct iio_dev *indio_dev,
->  				   unsigned int spi_freq)
->  {
->  	struct stm32_dfsdm_adc *adc = iio_priv(indio_dev);
-> -	struct stm32_dfsdm_filter *fl = &adc->dfsdm->fl_list[adc->fl_id];
->  	unsigned int oversamp;
->  	int ret;
->  
-> @@ -646,11 +686,10 @@ static int dfsdm_adc_set_samp_freq(struct iio_dev *indio_dev,
->  			"Rate not accurate. requested (%u), actual (%u)\n",
->  			sample_freq, spi_freq / oversamp);
->  
-> -	ret = stm32_dfsdm_compute_osrs(fl, 0, oversamp);
-> -	if (ret < 0) {
-> -		dev_err(&indio_dev->dev, "No filter parameters that match!\n");
-> +	ret = stm32_dfsdm_compute_all_osrs(indio_dev, oversamp);
-> +	if (ret < 0)
->  		return ret;
-> -	}
-> +
->  	adc->sample_freq = spi_freq / oversamp;
->  	adc->oversamp = oversamp;
->  
-> @@ -783,7 +822,7 @@ static inline void stm32_dfsdm_process_data(struct stm32_dfsdm_adc *adc,
->  					    s32 *buffer)
->  {
->  	struct stm32_dfsdm_filter *fl = &adc->dfsdm->fl_list[adc->fl_id];
-> -	struct stm32_dfsdm_filter_osr *flo = &fl->flo;
-> +	struct stm32_dfsdm_filter_osr *flo = &fl->flo[fl->fast];
->  	unsigned int i = adc->nconv;
->  	s32 *ptr = buffer;
->  
-> @@ -1171,7 +1210,6 @@ static int stm32_dfsdm_write_raw(struct iio_dev *indio_dev,
->  				 int val, int val2, long mask)
->  {
->  	struct stm32_dfsdm_adc *adc = iio_priv(indio_dev);
-> -	struct stm32_dfsdm_filter *fl = &adc->dfsdm->fl_list[adc->fl_id];
->  	struct stm32_dfsdm_channel *ch = &adc->dfsdm->ch_list[chan->channel];
->  	unsigned int spi_freq;
->  	int ret = -EINVAL;
-> @@ -1181,7 +1219,7 @@ static int stm32_dfsdm_write_raw(struct iio_dev *indio_dev,
->  		ret = iio_device_claim_direct_mode(indio_dev);
->  		if (ret)
->  			return ret;
-> -		ret = stm32_dfsdm_compute_osrs(fl, 0, val);
-> +		ret = stm32_dfsdm_compute_all_osrs(indio_dev, val);
->  		if (!ret)
->  			adc->oversamp = val;
->  		iio_device_release_direct_mode(indio_dev);
-> @@ -1430,8 +1468,7 @@ static int stm32_dfsdm_adc_init(struct iio_dev *indio_dev)
->  	int ret, chan_idx;
->  
->  	adc->oversamp = DFSDM_DEFAULT_OVERSAMPLING;
-> -	ret = stm32_dfsdm_compute_osrs(&adc->dfsdm->fl_list[adc->fl_id], 0,
-> -				       adc->oversamp);
-> +	ret = stm32_dfsdm_compute_all_osrs(indio_dev, adc->oversamp);
->  	if (ret < 0)
->  		return ret;
->  
-> diff --git a/drivers/iio/adc/stm32-dfsdm.h b/drivers/iio/adc/stm32-dfsdm.h
-> index 18b06ee6ed7b..5dbdae4ed881 100644
-> --- a/drivers/iio/adc/stm32-dfsdm.h
-> +++ b/drivers/iio/adc/stm32-dfsdm.h
-> @@ -263,13 +263,13 @@ struct stm32_dfsdm_filter_osr {
->  /**
->   * struct stm32_dfsdm_filter - structure relative to stm32 FDSDM filter
->   * @ford: filter order
-> - * @flo: filter oversampling structure
-> + * @flo: filter oversampling data table indexed by fast mode flag
->   * @sync_mode: filter synchronized with filter 0
->   * @fast: filter fast mode
->   */
->  struct stm32_dfsdm_filter {
->  	enum stm32_dfsdm_sinc_order ford;
-> -	struct stm32_dfsdm_filter_osr flo;
-> +	struct stm32_dfsdm_filter_osr flo[2];
->  	unsigned int sync_mode;
->  	unsigned int fast;
->  };
+Regards
+Adrian
 
