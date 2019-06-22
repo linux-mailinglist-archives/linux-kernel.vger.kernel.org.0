@@ -2,62 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 613444F3C6
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2019 07:02:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BBDB94F5CB
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2019 14:58:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726198AbfFVFCc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 22 Jun 2019 01:02:32 -0400
-Received: from ex13-edg-ou-002.vmware.com ([208.91.0.190]:26729 "EHLO
-        EX13-EDG-OU-002.vmware.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726111AbfFVFCc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Jun 2019 01:02:32 -0400
-Received: from sc9-mailhost3.vmware.com (10.113.161.73) by
- EX13-EDG-OU-002.vmware.com (10.113.208.156) with Microsoft SMTP Server id
- 15.0.1156.6; Fri, 21 Jun 2019 22:02:27 -0700
-Received: from akaher-lnx-dev.eng.vmware.com (unknown [10.110.19.203])
-        by sc9-mailhost3.vmware.com (Postfix) with ESMTP id 3C55341723;
-        Fri, 21 Jun 2019 22:02:25 -0700 (PDT)
-From:   Ajay Kaher <akaher@vmware.com>
-To:     <aarcange@redhat.com>, <jannh@google.com>, <oleg@redhat.com>,
-        <peterx@redhat.com>, <rppt@linux.ibm.com>, <jgg@mellanox.com>,
-        <mhocko@suse.com>
-CC:     <jglisse@redhat.com>, <akpm@linux-foundation.org>,
-        <mike.kravetz@oracle.com>, <viro@zeniv.linux.org.uk>,
-        <riandrews@android.com>, <arve@android.com>,
-        <yishaih@mellanox.com>, <dledford@redhat.com>,
-        <sean.hefty@intel.com>, <hal.rosenstock@gmail.com>,
-        <matanb@mellanox.com>, <leonro@mellanox.com>,
-        <linux-fsdevel@vger.kernel.org>, <linux-mm@kvack.org>,
-        <devel@driverdev.osuosl.org>, <linux-rdma@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <stable@vger.kernel.org>,
-        <akaher@vmware.com>, <srivatsab@vmware.com>, <amakhalov@vmware.com>
-Subject: [PATCH v3 0/2] [v4.9.y] coredump: fix race condition between mmget_not_zero()/get_task_mm() and core dumping
-Date:   Sat, 22 Jun 2019 18:32:19 +0530
-Message-ID: <1561208539-29682-3-git-send-email-akaher@vmware.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1561208539-29682-1-git-send-email-akaher@vmware.com>
-References: <1561208539-29682-1-git-send-email-akaher@vmware.com>
+        id S1726317AbfFVM6p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 22 Jun 2019 08:58:45 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:19058 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726286AbfFVM6p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 22 Jun 2019 08:58:45 -0400
+Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 2EA12DE6D53BC5843FA8;
+        Sat, 22 Jun 2019 20:58:42 +0800 (CST)
+Received: from localhost.localdomain.localdomain (10.175.113.25) by
+ DGGEMS401-HUB.china.huawei.com (10.3.19.201) with Microsoft SMTP Server id
+ 14.3.439.0; Sat, 22 Jun 2019 20:58:32 +0800
+From:   Mao Wenan <maowenan@huawei.com>
+To:     <airlied@linux.ie>, <daniel@ffwll.ch>, <alexander.deucher@amd.com>,
+        <christian.koenig@amd.com>, <David1.Zhou@amd.com>,
+        <dan.carpenter@oracle.com>, <julia.lawall@lip6.fr>
+CC:     <kernel-janitors@vger.kernel.org>, <amd-gfx@lists.freedesktop.org>,
+        <linux-kernel@vger.kernel.org>, Mao Wenan <maowenan@huawei.com>
+Subject: [PATCH -next v2] drm/amdgpu: return 'ret' in amdgpu_pmu_init
+Date:   Sat, 22 Jun 2019 21:05:27 +0800
+Message-ID: <20190622130527.182022-1-maowenan@huawei.com>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190622104318.GT28859@kadam>
+References: <20190622104318.GT28859@kadam>
 MIME-Version: 1.0
-Content-Type: text/plain
-Received-SPF: None (EX13-EDG-OU-002.vmware.com: akaher@vmware.com does not
- designate permitted sender hosts)
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.175.113.25]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-coredump: fix race condition between mmget_not_zero()/get_task_mm()
-and core dumping
+There is one warning:
+drivers/gpu/drm/amd/amdgpu/amdgpu_pmu.c: In function ‘amdgpu_pmu_init’:
+drivers/gpu/drm/amd/amdgpu/amdgpu_pmu.c:249:6: warning: variable ‘ret’ set but not used [-Wunused-but-set-variable]
+  int ret = 0;
+      ^
+amdgpu_pmu_init() is called by amdgpu_device_init() in drivers/gpu/drm/amd/amdgpu/amdgpu_device.c,
+which will use the return value. So it returns 'ret' for caller.
+amdgpu_device_init()
+	r = amdgpu_pmu_init(adev);
 
-[PATCH v3 1/2]:
-Backporting of commit 04f5866e41fb70690e28397487d8bd8eea7d712a upstream.
+Fixes: 9c7c85f7ea1f ("drm/amdgpu: add pmu counters")
 
-[PATCH v3 2/2]:
-Extension of commit 04f5866e41fb to fix the race condition between
-get_task_mm() and core dumping for IB->mlx4 and IB->mlx5 drivers.
+Signed-off-by: Mao Wenan <maowenan@huawei.com>
+---
+ v1->v2: change the subject for this patch; change the indenting when it calls init_pmu_by_type; use the value 'ret' in
+ amdgpu_pmu_init().
+ drivers/gpu/drm/amd/amdgpu/amdgpu_pmu.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-[diff from v2]:
-- moved mmget_still_valid to mm.h in [PATCH v3 1/2]
-- added binder.c changes in [PATCH v3 1/2]
-- added [PATCH v3 2/2]
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_pmu.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_pmu.c
+index 0e6dba9..145e720 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_pmu.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_pmu.c
+@@ -252,8 +252,8 @@ int amdgpu_pmu_init(struct amdgpu_device *adev)
+ 	case CHIP_VEGA20:
+ 		/* init df */
+ 		ret = init_pmu_by_type(adev, df_v3_6_attr_groups,
+-				       "DF", "amdgpu_df", PERF_TYPE_AMDGPU_DF,
+-				       DF_V3_6_MAX_COUNTERS);
++							   "DF", "amdgpu_df", PERF_TYPE_AMDGPU_DF,
++							   DF_V3_6_MAX_COUNTERS);
+ 
+ 		/* other pmu types go here*/
+ 		break;
+@@ -261,7 +261,7 @@ int amdgpu_pmu_init(struct amdgpu_device *adev)
+ 		return 0;
+ 	}
+ 
+-	return 0;
++	return ret;
+ }
+ 
+ 
+-- 
+2.7.4
+
