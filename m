@@ -2,47 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 42A214F67C
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2019 17:23:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 87A474F67E
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2019 17:23:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726342AbfFVPXm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 22 Jun 2019 11:23:42 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:46277 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726138AbfFVPXm (ORCPT
+        id S1726372AbfFVPXv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 22 Jun 2019 11:23:51 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:41465 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726138AbfFVPXv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Jun 2019 11:23:42 -0400
-Received: by mail-pf1-f193.google.com with SMTP id 81so5055416pfy.13
-        for <linux-kernel@vger.kernel.org>; Sat, 22 Jun 2019 08:23:42 -0700 (PDT)
+        Sat, 22 Jun 2019 11:23:51 -0400
+Received: by mail-pf1-f196.google.com with SMTP id m30so5069501pff.8
+        for <linux-kernel@vger.kernel.org>; Sat, 22 Jun 2019 08:23:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=64rfDwm6z7J4Eoudftbx7Yfz/GS48slNahoFEbbSYSE=;
-        b=Z/D+kKMAPiM4pEcdUvCNl5F7O3CiZW2+XmJ2as8DlefeTMFa0yFNJhqUTQn/PtIevr
-         2ZZ7i7nZIc9OIdLxISeALY4bNAiRDPxlVusMksKmeIZGaomsmGDBurrc0x6gpktsiOQD
-         O8GBmFIZXbtpABoX0q0gpe5bQ8rcJz5oUlcHijBKF8Hd1gcSXizUQbTIOz/2J/EuP2yi
-         tQ1FtX4sDXevE8ByGVS5grPjTmEZ+R15l4XmoHe81bXSiOu0/PqqU4H5/uFo+P9oh8t7
-         e82YskjeLArnAAc9Iu+Lwek2fyCh4BJKtTiZAKaEDao6JwyDoPu907wLn+r7vu06FYs+
-         kHZg==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :in-reply-to:references;
+        bh=GPTSxD3SoJJYK/xNju7R95QIb8W/tbtt9nogyltuHKI=;
+        b=i2GbMAGmEqn1FEhmuQIzC8R4PZBkb57Nq/tMdcdhltwWXrJoPQLVNRVA4JQYAQFwin
+         IDN/J2kcEauj6qdhcGjIZtDXeFXoFzvv7986vWoSWE1d31OCX0qD+UrLb2037FubK7ZA
+         izxfLqm/bhP9yrfjKD4Bm0bNhCCBnN7DcgjCsf1GEiIx4vvOehTQF5o5Z1KAkuBEuwgF
+         YqBNNbG1i8BkqGX6DO7gpec74/s6+nBnT0hD34eUiLcUwlqYmKU1UNg1+KfQF74q+jkA
+         5uIrLR9yr6dtUp3SeysaZh0RnOgdppSxEWsP3IgfHWpOCHBLyNeAt+AUXSFNJqfYI8t6
+         be4g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=64rfDwm6z7J4Eoudftbx7Yfz/GS48slNahoFEbbSYSE=;
-        b=eX/lpbFHQLYKPUJUzZ7dqIQP0NzDeUw3kavV1NR2vBBRqFVBsmfDSEwpiaWXiy5A5T
-         aiQ8XrcgNhKxf+QERRQbqmTiM/7FLx14boPcTe8hHjDKk/2uCyufS0xA4o73mRjnCAcM
-         Zit0EkYsbiRmPH5efeLjrydKtUfBxRaKqzeQ2Fn7OeGZsH7qOt2GPhBdEgSbUV4oTLH/
-         AdzRbsVaiKVDuvbuHPLGd8NofIALGFv7N6yyxAjf1UEzMJayCbddGhX531UR2tHoIvnO
-         3zdFiKchTj3ge5DWu2fCaoMWJd75Uvb1WUzulQ4h6w7t/3MsDgASlMFAuR6Klmlt+Dro
-         9CGA==
-X-Gm-Message-State: APjAAAWoFO6GhOop55xl4zEa/bAaMVhstbO0yL4tFtVC2vz0Cg+OAR4X
-        3/hg6ngBIs5nOYzMIoWO/H0=
-X-Google-Smtp-Source: APXvYqytvQnckoLSzsyVUDjnEMPO07TkPNcRcqkfFHTQs/ML7iouJlHa6Nwq3nmlLLp9664WpvLU4A==
-X-Received: by 2002:a63:63c1:: with SMTP id x184mr17894625pgb.213.1561217021616;
-        Sat, 22 Jun 2019 08:23:41 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:in-reply-to:references;
+        bh=GPTSxD3SoJJYK/xNju7R95QIb8W/tbtt9nogyltuHKI=;
+        b=VzOlHdETc2CxhKMJZgnkJeUM9O6NCS70w8xk2sWJP1+eC+uRBYvBmIxz38NFa0+lLy
+         U+zZQVfGqvSgBt8qoejXivIabU4hDLXT07SSsgJtDhnAUBcXg6/tcZGezBs97yge+55Y
+         XyT0+6Zz+RMd7br9r71WXuQ50yR2qCsvzxrveUS0/JdIo0H1OrsjntMyCPMXKA+HEouQ
+         YTuQ2vfO5+knpL5HeYvPj0M48UYE0+DZiGPevVlMhqyBi9KUSrfwCmn/Y4k6IuazsB+X
+         xwsTvQcRKeze71veuguUddV6KgCWTThV9OyHQynytEbDLEHJ6o1rfmMVs3xM+5TpN5HY
+         hDYA==
+X-Gm-Message-State: APjAAAWY3zH8Aqh+a/blYpPFHzhZXsBCLANzRbAMdy1GmS51LrI+jcPq
+        8oi6oXsL2Zm9YbbZ4RTJ9Ko=
+X-Google-Smtp-Source: APXvYqymA3yN0jS/j3O3H11EeqM2fFBKrp9PzSnPWeIQ8ZRd2SMZ6XYTKv00yPMwn100vITjLj42rg==
+X-Received: by 2002:a17:90a:2430:: with SMTP id h45mr14093490pje.14.1561217030491;
+        Sat, 22 Jun 2019 08:23:50 -0700 (PDT)
 Received: from localhost.localdomain (c-98-210-58-162.hsd1.ca.comcast.net. [98.210.58.162])
-        by smtp.gmail.com with ESMTPSA id l44sm12496777pje.29.2019.06.22.08.23.40
+        by smtp.gmail.com with ESMTPSA id l44sm12496777pje.29.2019.06.22.08.23.49
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Sat, 22 Jun 2019 08:23:40 -0700 (PDT)
+        Sat, 22 Jun 2019 08:23:50 -0700 (PDT)
 From:   Shobhit Kukreti <shobhitkukreti@gmail.com>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Bastien Nocera <hadess@hadess.net>,
@@ -50,33 +52,53 @@ To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Larry Finger <Larry.Finger@lwfinger.net>
 Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
         Shobhit Kukreti <shobhitkukreti@gmail.com>
-Subject: [PATCH 0/2] Modify functions return type to void
-Date:   Sat, 22 Jun 2019 08:23:06 -0700
-Message-Id: <cover.1561215416.git.shobhitkukreti@gmail.com>
+Subject: [PATCH 1/2] staging: rtl8723bs: os_dep: Modify return type of function loadparam(..) to void
+Date:   Sat, 22 Jun 2019 08:23:07 -0700
+Message-Id: <7ca00f90afa0cfa4acfe1ca5dd984a8a1083fe1a.1561215416.git.shobhitkukreti@gmail.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <cover.1561215416.git.shobhitkukreti@gmail.com>
+References: <cover.1561215416.git.shobhitkukreti@gmail.com>
+In-Reply-To: <cover.1561215416.git.shobhitkukreti@gmail.com>
+References: <cover.1561215416.git.shobhitkukreti@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patchset modifies two function return types to void.
-The return values of the function are never checked and they always return success.
-This resolves coccicheck Unneeded variable warnings
+The function static uint loadparam(struct adapter *padapter, _nic_hdl
+pnetdev) return type is modified to void.
+The initial return value was always returning _SUCCESS and the return value
+is never checked when the function is called. 
+This resolves coccicheck warnings of unneeded variables.
 
-PATCH[1/2] : This patch modifies return type of function loadparam() to void. 
+Signed-off-by: Shobhit Kukreti <shobhitkukreti@gmail.com>
+---
+ drivers/staging/rtl8723bs/os_dep/os_intfs.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-PATCH[2/2] : This patch modifies return type of rtw_reset_drv_sw() to void.
-
-Shobhit Kukreti (2):
-  staging: rtl8723bs: os_dep: Modify return type of function
-    loadparam(..)     to void
-  staging: rtl8723bs: os_dep: Modify return type of function    
-    rtw_reset_drv_sw() to void.
-
- drivers/staging/rtl8723bs/include/osdep_intf.h | 2 +-
- drivers/staging/rtl8723bs/os_dep/os_intfs.c    | 8 ++------
- 2 files changed, 3 insertions(+), 7 deletions(-)
-
+diff --git a/drivers/staging/rtl8723bs/os_dep/os_intfs.c b/drivers/staging/rtl8723bs/os_dep/os_intfs.c
+index 8a9d838..bd8e316 100644
+--- a/drivers/staging/rtl8723bs/os_dep/os_intfs.c
++++ b/drivers/staging/rtl8723bs/os_dep/os_intfs.c
+@@ -223,9 +223,8 @@ int _netdev_open(struct net_device *pnetdev);
+ int netdev_open (struct net_device *pnetdev);
+ static int netdev_close (struct net_device *pnetdev);
+ 
+-static uint loadparam(struct adapter *padapter, _nic_hdl pnetdev)
++static void loadparam(struct adapter *padapter, _nic_hdl pnetdev)
+ {
+-	uint status = _SUCCESS;
+ 	struct registry_priv  *registry_par = &padapter->registrypriv;
+ 
+ 	registry_par->chip_version = (u8)rtw_chip_version;
+@@ -330,7 +329,6 @@ static uint loadparam(struct adapter *padapter, _nic_hdl pnetdev)
+ 	registry_par->qos_opt_enable = (u8)rtw_qos_opt_enable;
+ 
+ 	registry_par->hiq_filter = (u8)rtw_hiq_filter;
+-	return status;
+ }
+ 
+ static int rtw_net_set_mac_address(struct net_device *pnetdev, void *p)
 -- 
 2.7.4
 
