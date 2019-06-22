@@ -2,73 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 230364F7BF
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2019 20:13:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 11F8A4F7C1
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2019 20:13:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726372AbfFVSNb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 22 Jun 2019 14:13:31 -0400
-Received: from smtprelay0129.hostedemail.com ([216.40.44.129]:51928 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725995AbfFVSNb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Jun 2019 14:13:31 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay07.hostedemail.com (Postfix) with ESMTP id 90855181D33FC;
-        Sat, 22 Jun 2019 18:13:29 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::::::::::,RULES_HIT:41:152:355:379:599:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2198:2199:2393:2559:2562:3138:3139:3140:3141:3142:3352:3622:3865:3866:3867:3868:3870:3871:3872:3873:4321:4605:5007:7903:10004:10400:10848:11026:11232:11233:11473:11657:11658:11914:12043:12048:12296:12297:12438:12679:12740:12895:13069:13161:13229:13311:13357:13894:14659:14721:21063:21080:21451:21627:30012:30054:30070:30091,0,RBL:23.242.196.136:@perches.com:.lbl8.mailshell.net-62.8.0.180 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:24,LUA_SUMMARY:none
-X-HE-Tag: guide54_1e3a390309d01
-X-Filterd-Recvd-Size: 2148
-Received: from XPS-9350.home (cpe-23-242-196-136.socal.res.rr.com [23.242.196.136])
-        (Authenticated sender: joe@perches.com)
-        by omf08.hostedemail.com (Postfix) with ESMTPA;
-        Sat, 22 Jun 2019 18:13:27 +0000 (UTC)
-Message-ID: <0ab82cdb0bec30e7e431f106f8e0e9d141491555.camel@perches.com>
-Subject: Re: [PATCH -next v2] drm/amdgpu: return 'ret' in amdgpu_pmu_init
-From:   Joe Perches <joe@perches.com>
-To:     Mao Wenan <maowenan@huawei.com>, airlied@linux.ie, daniel@ffwll.ch,
-        alexander.deucher@amd.com, christian.koenig@amd.com,
-        David1.Zhou@amd.com, dan.carpenter@oracle.com, julia.lawall@lip6.fr
-Cc:     kernel-janitors@vger.kernel.org, amd-gfx@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, Jonathan Kim <jonathan.kim@amd.com>
-Date:   Sat, 22 Jun 2019 11:13:26 -0700
-In-Reply-To: <20190622130527.182022-1-maowenan@huawei.com>
-References: <20190622104318.GT28859@kadam>
-         <20190622130527.182022-1-maowenan@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.5-0ubuntu0.18.10.1 
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S1726423AbfFVSNu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 22 Jun 2019 14:13:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57680 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725995AbfFVSNu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 22 Jun 2019 14:13:50 -0400
+Received: from localhost (unknown [23.100.24.84])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8C8F320862;
+        Sat, 22 Jun 2019 18:13:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1561227229;
+        bh=PtbC7W+6tNFbvpDBqITDfGMZNEIVMI975PlpkBAy260=;
+        h=Date:From:To:To:To:Cc:Cc:Cc:Subject:In-Reply-To:References:From;
+        b=jk+Ik0ClG6jCrQUO4tPMjvBNnNhIk2cCjeHuU+0AraFhNkDWIU7P+IbiL7GGfZmcJ
+         vf8c2gGKti+MdBTn/uJoSgKMujg1N2VfUZLRZBg+uFdJ76V1cL+ykAv+mGqXZC9GCb
+         Iy/D9c7hP/T4Ca+rk1qZc/rkFCw4PdpQHHQ478TM=
+Date:   Sat, 22 Jun 2019 18:13:48 +0000
+From:   Sasha Levin <sashal@kernel.org>
+To:     Sasha Levin <sashal@kernel.org>
+To:     Marcel Holtmann <marcel@holtmann.org>
+To:     torvalds@linux-foundation.org
+Cc:     linux-kernel@vger.kernel.org, linux-bluetooth@vger.kernel.org
+Cc:     stable@vger.kernel.org
+Cc:     stable@vger.kernel.org
+Subject: Re: [PATCH v5.2-rc5] Bluetooth: Fix regression with minimum encryption key size alignment
+In-Reply-To: <20190622134701.7088-1-marcel@holtmann.org>
+References: <20190622134701.7088-1-marcel@holtmann.org>
+Message-Id: <20190622181349.8C8F320862@mail.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 2019-06-22 at 21:05 +0800, Mao Wenan wrote:
-> There is one warning:
-> drivers/gpu/drm/amd/amdgpu/amdgpu_pmu.c: In function ‘amdgpu_pmu_init’:
-> drivers/gpu/drm/amd/amdgpu/amdgpu_pmu.c:249:6: warning: variable ‘ret’ set but not used [-Wunused-but-set-variable]
->   int ret = 0;
-[]
->  v1->v2: change the subject for this patch; change the indenting when it calls init_pmu_by_type; use the value 'ret' in
->  amdgpu_pmu_init().
-[]
-> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_pmu.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_pmu.c
-[]
-> @@ -252,8 +252,8 @@ int amdgpu_pmu_init(struct amdgpu_device *adev)
->  	case CHIP_VEGA20:
->  		/* init df */
->  		ret = init_pmu_by_type(adev, df_v3_6_attr_groups,
-> -				       "DF", "amdgpu_df", PERF_TYPE_AMDGPU_DF,
-> -				       DF_V3_6_MAX_COUNTERS);
-> +							   "DF", "amdgpu_df", PERF_TYPE_AMDGPU_DF,
-> +							   DF_V3_6_MAX_COUNTERS);
+Hi,
 
-trivia:
+[This is an automated email]
 
-The indentation change seems superfluous and
-appears to make the code harder to read.
+This commit has been processed because it contains a "Fixes:" tag,
+fixing commit: d5bb334a8e17 Bluetooth: Align minimum encryption key size for LE and BR/EDR connections.
 
-You could also cc Jonathan Kim who wrote all of this.
+The bot has tested the following trees: v5.1.12, v4.19.53, v4.14.128, v4.9.182, v4.4.182.
 
+v5.1.12: Build failed! Errors:
+    net/bluetooth/l2cap_core.c:1356:24: error: ‘HCI_MIN_ENC_KEY_SIZE’ undeclared (first use in this function); did you mean ‘SMP_MIN_ENC_KEY_SIZE’?
 
+v4.19.53: Build failed! Errors:
+    net/bluetooth/l2cap_core.c:1355:24: error: ‘HCI_MIN_ENC_KEY_SIZE’ undeclared (first use in this function); did you mean ‘SMP_MIN_ENC_KEY_SIZE’?
+
+v4.14.128: Build failed! Errors:
+    net/bluetooth/l2cap_core.c:1355:24: error: ‘HCI_MIN_ENC_KEY_SIZE’ undeclared (first use in this function); did you mean ‘SMP_MIN_ENC_KEY_SIZE’?
+
+v4.9.182: Build OK!
+v4.4.182: Build OK!
+
+How should we proceed with this patch?
+
+--
+Thanks,
+Sasha
