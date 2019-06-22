@@ -2,64 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7DC9B4F3CF
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2019 07:13:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 935844F3CD
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2019 07:13:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726178AbfFVFNV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 22 Jun 2019 01:13:21 -0400
-Received: from conssluserg-05.nifty.com ([210.131.2.90]:41492 "EHLO
-        conssluserg-05.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725994AbfFVFNU (ORCPT
+        id S1726111AbfFVFMr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 22 Jun 2019 01:12:47 -0400
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:39896 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726059AbfFVFMq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Jun 2019 01:13:20 -0400
-Received: from mail-vk1-f169.google.com (mail-vk1-f169.google.com [209.85.221.169]) (authenticated)
-        by conssluserg-05.nifty.com with ESMTP id x5M5DDqi017299;
-        Sat, 22 Jun 2019 14:13:14 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-05.nifty.com x5M5DDqi017299
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1561180394;
-        bh=KdIj9gfPTr+KrZ1sDxUOA4m0IeC48LHZH0YQxYceD7E=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=vNXZk1hsI4XAgvzZbNpj3eEkuhbxR+xJUJgEQAfDLHUrThJBuGHZnQCO5vbNRFhY9
-         O6JJNTD2AoilsIhPpmAPLB1s4tU2y4wbYNdFvz73Ofj6mHBYw5ZRKRChdKtWhGqZDi
-         iBqeIGPFn9ldiGUmjSY9CUglghoeCgD3qPumjrBDSZNEKfDG9ZU7ueOhebEc+fo969
-         TgZY6+nM4I2xd4ajLhqTRGukFPJdLyN8D1rO1s1h9MYefCsRGBHweTxXGMXf846gEd
-         yNByTY3dWBt06CrMLnC6+MAxZ8qT1YpkX/lPVr2HSHKo/3ucD9voLty7ne2cwWjDPH
-         Jx7qcb82+RPrQ==
-X-Nifty-SrcIP: [209.85.221.169]
-Received: by mail-vk1-f169.google.com with SMTP id f68so1742819vkf.5;
-        Fri, 21 Jun 2019 22:13:14 -0700 (PDT)
-X-Gm-Message-State: APjAAAVeQWdYkqKNvJIsA4mA8ghhGCCWKN4H1uKX2jwXlCdWA6dxG5el
-        iu10ScYvznuXsFnP40/mV2q2vPEyZ9pYdqqsk3Y=
-X-Google-Smtp-Source: APXvYqzPInWk1IBu1alc9KP2LKnKvdXwjA7lll6wtO8cUk3YyTmS0WJGwLrcgnJ/Z+EOnHvGr4hhymNP3eUnWblqKus=
-X-Received: by 2002:a1f:aad2:: with SMTP id t201mr11091589vke.74.1561180393149;
- Fri, 21 Jun 2019 22:13:13 -0700 (PDT)
+        Sat, 22 Jun 2019 01:12:46 -0400
+Received: by mail-ot1-f66.google.com with SMTP id r21so8383619otq.6
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2019 22:12:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:sender:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=rxGwl9brbbzNCTzS3nb+kHgPol3S82HiUdfpZte44UA=;
+        b=PWHmyfQMaMEkwPazBIRvv4hN5gT7A1Jphc71ykj2F7JPPNkcK/P6EcAQwW5ZKSGsRV
+         OE7lVqQg/ZMScMNsFTtKsf8CDa+A3Ibm/cadiJABmO3D1OdRMhj6x0VPN4jTNAzN3w6w
+         j7pLzOhldgokX8t4diM0vImK4DrrRyL3VbYg6bTGd8le8Be1Rl/OzWZWblzoWu80ryIU
+         QAv2nAObtCn0KzV6lMDs8ZxzjDhgSf7NxJC5NWf/6imjLAOHQ5pJM6cViAExSkoM4fRh
+         ZC80ujTX/73W0JP83Iv7ML5v2I6/ooirujjBK6GYSrxAtWvE8OgR3PpZZKGnV2gWUpyI
+         DB0w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:sender:from:date
+         :message-id:subject:to:content-transfer-encoding;
+        bh=rxGwl9brbbzNCTzS3nb+kHgPol3S82HiUdfpZte44UA=;
+        b=Y9ZCLzQQwmxwjSJB+r9s62MoZxNXn2we5gJTl2zQZ4CSYVxWTXLDVr7R0gQp/XDF3g
+         b4Dy30lNx9baofpJcj1raKE6Hsym4MGSZ6hZy136RJerujdcNxN6ohfCA8xnDC5RW5Gc
+         60F28XAeG8/E2SdEND4pOhTOHTUHkzLQhV23H4S14sbzyx4rKS4IOoBTolnmcZiPPtWQ
+         nCS47yoscjQ2GXPQniKM8glCYWY2Z7nd1fjjaQr/Wyow40m6Thp3+Yjp6d1qfk+THKvk
+         lHjoDH+XlR6Ph3XeaNE/Iqma8XHK70TLXulxjDir6Z+32mYDJNnG57fW0NzU0ZKHnmW8
+         F9oA==
+X-Gm-Message-State: APjAAAXoAWzHipXFeYN75PY03hRX8qRr6EbV2ewQYppGhxaKPLKBO8bD
+        fXEXHK/Zz1SYRs+Sp3Cd+KPnC5Xd67Dr1jJCjVI=
+X-Google-Smtp-Source: APXvYqycYhfBorcibLWtWV5ysWcgUiDb4FtZB7BjlpeNYqt0H3bdUD/6oQW7EudyHt5EfYN9gYwKgK2HnUu4jofWrac=
+X-Received: by 2002:a9d:4048:: with SMTP id o8mr36262666oti.217.1561180365928;
+ Fri, 21 Jun 2019 22:12:45 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190604101409.2078-1-yamada.masahiro@socionext.com>
- <20190604101409.2078-16-yamada.masahiro@socionext.com> <CAK8P3a08f25WYP5r57JHPcZWieS2+07=_qTphLosS4M2w8F0Zw@mail.gmail.com>
-In-Reply-To: <CAK8P3a08f25WYP5r57JHPcZWieS2+07=_qTphLosS4M2w8F0Zw@mail.gmail.com>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Sat, 22 Jun 2019 14:12:37 +0900
-X-Gmail-Original-Message-ID: <CAK7LNATt8BSrMfrOVjZ_SbA0awsh4CvRhu6TF3gYYynirpviWw@mail.gmail.com>
-Message-ID: <CAK7LNATt8BSrMfrOVjZ_SbA0awsh4CvRhu6TF3gYYynirpviWw@mail.gmail.com>
-Subject: Re: [PATCH 15/15] kbuild: compile test UAPI headers to ensure they
- are self-contained
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        David Howells <dhowells@redhat.com>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Jani Nikula <jani.nikula@intel.com>,
-        Song Liu <songliubraving@fb.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Networking <netdev@vger.kernel.org>, Yonghong Song <yhs@fb.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-riscv@lists.infradead.org,
-        Michal Marek <michal.lkml@markovi.net>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Palmer Dabbelt <palmer@sifive.com>, bpf@vger.kernel.org,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Albert Ou <aou@eecs.berkeley.edu>
+Reply-To: zongok96@gmail.com
+Received: by 2002:ac9:1823:0:0:0:0:0 with HTTP; Fri, 21 Jun 2019 22:12:45
+ -0700 (PDT)
+From:   "Mr. Karim Zongo" <kzongo210@gmail.com>
+Date:   Sat, 22 Jun 2019 07:12:45 +0200
+X-Google-Sender-Auth: 4Cwta0roGBtcedqaDpiealE4S1k
+Message-ID: <CAHTGGiZ3h7TnbZcVUuH+YVvAgPBxQXpC5=dxHxTcQks=kNS9dQ@mail.gmail.com>
+Subject: PLEASE THIS IS VERY URGENT.
+To:     undisclosed-recipients:;
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
@@ -67,50 +58,30 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jun 22, 2019 at 4:05 AM Arnd Bergmann <arnd@arndb.de> wrote:
->
-> On Tue, Jun 4, 2019 at 12:16 PM Masahiro Yamada
-> <yamada.masahiro@socionext.com> wrote:
->
-> > --- a/Makefile
-> > +++ b/Makefile
-> > @@ -1363,7 +1363,7 @@ CLEAN_DIRS  +=3D $(MODVERDIR) include/ksym
-> >  CLEAN_FILES +=3D modules.builtin.modinfo
-> >
-> >  # Directories & files removed with 'make mrproper'
-> > -MRPROPER_DIRS  +=3D include/config usr/include include/generated      =
-    \
-> > +MRPROPER_DIRS  +=3D include/config include/generated          \
-> >                   arch/$(SRCARCH)/include/generated .tmp_objdiff
-> >  MRPROPER_FILES +=3D .config .config.old .version \
-> >                   Module.symvers tags TAGS cscope* GPATH GTAGS GRTAGS G=
-SYMS \
->
-> This change seems to have caused a minor regression:
->
-> $ make clean ; make clean
-> find: =E2=80=98*=E2=80=99: No such file or directory
+Compliment of the day,
 
-Hmm, I cannot reproduce this.
+I am Mr. Karim Zongo Have a Business Proposal of $5.3 million For You.
+I am aware of the unsafe nature of the internet, and was compelled to
+use this medium due to the nature of this project.
 
-I checked the latest linux-next.
+I have access to very vital information that can be used to transfer
+this huge amount of money, which may culminate into the investment of
+the said funds into your company or any lucrative venture in your
+country.
 
+If you will like to assist me as a partner then indicate your
+interest, after which we shall both discuss the modalities and the
+sharing percentage.
 
-masahiro@grover:~/ref/linux-next$ git describe
-next-20190621
-masahiro@grover:~/ref/linux-next$ make clean; make clean
-masahiro@grover:~/ref/linux-next$
+Upon receipt of your reply on your expression of Interest I will give
+you full details,
+on how the business will be executed I am open for negotiation. You
+should forward your reply to this private email id
+(zongok96@gmail.com) Thanks for your anticipated cooperation.
 
+Note you might receive this message in your inbox or spam or junk
+folder, depends on your web host or server network.
 
-
-
-
-> Any idea?
->
->       Arnd
-
-
-
---=20
+Thanks=E2=80=99
 Best Regards
-Masahiro Yamada
+Mr. Karim Zongo
