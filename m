@@ -2,48 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 853524F760
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2019 19:17:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 552D74F772
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2019 19:32:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726453AbfFVRRO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 22 Jun 2019 13:17:14 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:43804 "EHLO
+        id S1726447AbfFVRcB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 22 Jun 2019 13:32:01 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:45124 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726338AbfFVRRM (ORCPT
+        with ESMTP id S1726328AbfFVRcA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Jun 2019 13:17:12 -0400
+        Sat, 22 Jun 2019 13:32:00 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Sender:Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
-        Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=/fqpHAt8CSw6pch/Pj9aN8ynFTK0mhOoYKSJDMULvgk=; b=nv6Rgic/hNzrSqAfC5jG/edRyV
-        4P/pbbAa1vt7C0pHqlJX8W1Ah8H3uc/h9DBk+p1xxfVfN6W4KmUTd6OozGjHHustnZ7QBZSmoEOC3
-        YWwJYVK70iimup4E5UV4GNWCx37q2oLeKwqcIeEc8KekTGpeeH4ilob3RMuuMI59E5zzuPbWbAkAT
-        u5Q0NIQCgeu68pM2J8JWhcFJZ8xdB0RlEuDCJ1wwjrigvJ4LDGSxMG+BPSZUB+tY7ZcN7cwekT15I
-        bSfP6x1LbXeWDL64mCMmhQLg61fTGxZrVDW6kiNhTGyYmspTEy7zRsaCXskq+uaRskp3XI1ycNuwG
-        Fj2qRlrA==;
+        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Reply-To:Content-Type:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=LYvD0SkaRvCNw3DeXdCNf59ut30pmqyr5CJXUF3fCo8=; b=n2TVkKWEaHqdMhFtjM33CRITs
+        iB8r/4rHrOm6KLB/1+drUAm+DQvkMI2RGNxYNBeUwHTkFJ01Mbh8uWE8XagU/RkCJbNYS8vYPAjGf
+        QC7RavKtLfuJ7wFc3wT7cCy8mlYsxFH0z4/ty0+bfBsPGEqi/WUTO9pdOmAqMXdFJgssp1wVFvJqN
+        7cpect3aka0KZ6D1Af9+yHTTrvDQ60+7gw9tnlW/m8z+54/XtqhNRgY7l9NeblE/rrvDTUftebeX8
+        MYHYjNPWB51fsaMhSZSr9dvSWKDOBfKrNeIS5RSbdAEz36npW1tDWPy9kREzaIDafPRRKZ2MtNv7C
+        5uOz2YcKw==;
 Received: from [179.95.45.115] (helo=bombadil.infradead.org)
         by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hejdX-0002tf-Sn; Sat, 22 Jun 2019 17:17:11 +0000
+        id 1hejrs-00076e-26; Sat, 22 Jun 2019 17:32:00 +0000
 Received: from mchehab by bombadil.infradead.org with local (Exim 4.92)
         (envelope-from <mchehab@bombadil.infradead.org>)
-        id 1hejdV-00014X-7Z; Sat, 22 Jun 2019 14:17:09 -0300
+        id 1hejrq-0001H5-3z; Sat, 22 Jun 2019 14:31:58 -0300
 From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        gregkh@linuxfoundation.org, Jonathan Corbet <corbet@lwn.net>
+        gregkh@linuxfoundation.org
 Cc:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Mauro Carvalho Chehab <mchehab@infradead.org>,
-        linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org
-Subject: [PATCH 4/4] docs: admin-guide, x86: add a features list
-Date:   Sat, 22 Jun 2019 14:17:07 -0300
-Message-Id: <bb4a41b13f37d20836ca7eb0e392f1fbfc641534.1561222784.git.mchehab+samsung@kernel.org>
+        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>
+Subject: [RFC v2 0/8]Produce ABI guide without escaping ReST source  files
+Date:   Sat, 22 Jun 2019 14:31:48 -0300
+Message-Id: <cover.1561224093.git.mchehab+samsung@kernel.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <cover.1561222784.git.mchehab+samsung@kernel.org>
-References: <cover.1561222784.git.mchehab+samsung@kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -51,72 +47,157 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a feature list matrix at the admin-guide and a x86-specific
-feature list to the respective Kernel books.
+Hi Greg,
 
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
----
- Documentation/admin-guide/features.rst | 3 +++
- Documentation/admin-guide/index.rst    | 1 +
- Documentation/conf.py                  | 2 +-
- Documentation/x86/features.rst         | 3 +++
- Documentation/x86/index.rst            | 1 +
- 5 files changed, 9 insertions(+), 1 deletion(-)
- create mode 100644 Documentation/admin-guide/features.rst
- create mode 100644 Documentation/x86/features.rst
+It turns out that fixing ABI/testing for it to be parsed transparently
+was easy :-)
 
-diff --git a/Documentation/admin-guide/features.rst b/Documentation/admin-guide/features.rst
-new file mode 100644
-index 000000000000..8c167082a84f
---- /dev/null
-+++ b/Documentation/admin-guide/features.rst
-@@ -0,0 +1,3 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
-+.. kernel-feat:: $srctree/Documentation/features
-diff --git a/Documentation/admin-guide/index.rst b/Documentation/admin-guide/index.rst
-index 20c3020fd73c..14c8464f6ca9 100644
---- a/Documentation/admin-guide/index.rst
-+++ b/Documentation/admin-guide/index.rst
-@@ -17,6 +17,7 @@ etc.
-    kernel-parameters
-    devices
-    abi
-+   features
- 
- This section describes CPU vulnerabilities and their mitigations.
- 
-diff --git a/Documentation/conf.py b/Documentation/conf.py
-index 598256fb5c98..a0ef76ce5615 100644
---- a/Documentation/conf.py
-+++ b/Documentation/conf.py
-@@ -34,7 +34,7 @@ needs_sphinx = '1.3'
- # Add any Sphinx extension module names here, as strings. They can be
- # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
- # ones.
--extensions = ['kerneldoc', 'rstFlatTable', 'kernel_include', 'cdomain', 'kfigure', 'sphinx.ext.ifconfig', 'kernel_abi']
-+extensions = ['kerneldoc', 'rstFlatTable', 'kernel_include', 'cdomain', 'kfigure', 'sphinx.ext.ifconfig', 'kernel_abi', 'kernel_feat']
- 
- # The name of the math extension changed on Sphinx 1.4
- if (major == 1 and minor > 3) or (major > 1):
-diff --git a/Documentation/x86/features.rst b/Documentation/x86/features.rst
-new file mode 100644
-index 000000000000..b663f15053ce
---- /dev/null
-+++ b/Documentation/x86/features.rst
-@@ -0,0 +1,3 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
-+.. kernel-feat:: $srctree/Documentation/features x86
-diff --git a/Documentation/x86/index.rst b/Documentation/x86/index.rst
-index ae36fc5fc649..ed42c8c9154d 100644
---- a/Documentation/x86/index.rst
-+++ b/Documentation/x86/index.rst
-@@ -29,3 +29,4 @@ x86-specific Documentation
-    usb-legacy-support
-    i386/index
-    x86_64/index
-+   features
+This series goes on top of the series I pasted early today:
+
+	Subject: [PATCH 00/12] Add the ABI documentation to the admin guide
+	
+It basically change the ABI parser to not try to escape ReST code.
+
+With that, the descriptions inside the ABI files should now be compatible 
+with ReST output.
+
+Patch 1 states that at ABI/README;
+
+Patch 2 and 3 fix troubles at stable and testing ABI files. No changes at the
+content of the ABI themselves. Most of the changes there are due to some
+examples, tables and some parameter descriptions with weird formats.
+
+Patch 4 enables the "clear mode" for stable;
+
+Patch 5 is just a helper patch: it adds a second level to the ABI index, in order
+to allow seeing what sections the parsed files will produce;
+
+patch 6 enables "clear mode" to obsolete and removed;
+
+patch 7 enables "clear mode" to testing
+
+-
+
+Patch 8 is here just for us not to forget it - it causes any COMPILE_TEST
+build to validate if the ABI files are following the syntax described at
+ABI/README. It won't try to build it with Sphinx, though. As this is quick
+(~100ms on my desktop), I think it is worth to have it.
+
+Mauro Carvalho Chehab (8):
+  docs: ABI: README: specify that files should be ReST compatible
+  docs: ABI: stable: make files ReST compatible
+  docs: ABI: testing: make the files compatible with ReST output
+  docs: ABI: make it parse ABI/stable as ReST-compatible files
+  docs: ABI: create a 2-depth index for ABI
+  docs: ABI: don't escape ReST-incompatible chars from obsolete and
+    removed
+  docs: abi-testing.rst: enable --rst-sources when building docs
+  docs: Kconfig/Makefile: add a check for broken ABI files
+
+ Documentation/ABI/README                      |  10 +-
+ Documentation/ABI/obsolete/sysfs-gpio         |   2 +
+ Documentation/ABI/stable/firewire-cdev        |   4 +
+ Documentation/ABI/stable/sysfs-acpi-pmprofile |  22 +-
+ Documentation/ABI/stable/sysfs-bus-firewire   |   3 +
+ Documentation/ABI/stable/sysfs-bus-nvmem      |  19 +-
+ Documentation/ABI/stable/sysfs-bus-usb        |   6 +-
+ .../ABI/stable/sysfs-class-backlight          |   1 +
+ .../ABI/stable/sysfs-class-infiniband         |  97 +++++--
+ Documentation/ABI/stable/sysfs-class-rfkill   |  13 +-
+ Documentation/ABI/stable/sysfs-class-tpm      |  90 +++----
+ Documentation/ABI/stable/sysfs-devices        |   5 +-
+ Documentation/ABI/stable/sysfs-driver-ib_srp  |   1 +
+ .../ABI/stable/sysfs-firmware-efi-vars        |   4 +
+ .../ABI/stable/sysfs-firmware-opal-dump       |   5 +
+ .../ABI/stable/sysfs-firmware-opal-elog       |   2 +
+ Documentation/ABI/stable/sysfs-hypervisor-xen |   3 +
+ Documentation/ABI/stable/vdso                 |   5 +-
+ .../ABI/testing/configfs-spear-pcie-gadget    |  36 +--
+ Documentation/ABI/testing/configfs-usb-gadget |  77 +++---
+ .../ABI/testing/configfs-usb-gadget-hid       |  10 +-
+ .../ABI/testing/configfs-usb-gadget-rndis     |  16 +-
+ .../ABI/testing/configfs-usb-gadget-uac1      |  18 +-
+ .../ABI/testing/configfs-usb-gadget-uvc       | 220 +++++++++-------
+ Documentation/ABI/testing/debugfs-ec          |  11 +-
+ Documentation/ABI/testing/debugfs-pktcdvd     |  11 +-
+ Documentation/ABI/testing/dev-kmsg            |  27 +-
+ Documentation/ABI/testing/evm                 |  17 +-
+ Documentation/ABI/testing/ima_policy          | 132 +++++-----
+ Documentation/ABI/testing/procfs-diskstats    |  40 +--
+ Documentation/ABI/testing/sysfs-block         |  26 +-
+ Documentation/ABI/testing/sysfs-block-device  |   2 +
+ Documentation/ABI/testing/sysfs-bus-acpi      |  18 +-
+ .../sysfs-bus-event_source-devices-format     |   3 +-
+ .../ABI/testing/sysfs-bus-i2c-devices-pca954x |  27 +-
+ Documentation/ABI/testing/sysfs-bus-iio       |  10 +
+ .../sysfs-bus-iio-adc-envelope-detector       |   5 +-
+ .../ABI/testing/sysfs-bus-iio-cros-ec         |   2 +-
+ .../ABI/testing/sysfs-bus-iio-dfsdm-adc-stm32 |  10 +-
+ .../ABI/testing/sysfs-bus-iio-lptimer-stm32   |  29 ++-
+ .../sysfs-bus-iio-magnetometer-hmc5843        |  19 +-
+ .../sysfs-bus-iio-temperature-max31856        |  19 +-
+ .../ABI/testing/sysfs-bus-iio-timer-stm32     | 114 +++++----
+ .../testing/sysfs-bus-intel_th-devices-msc    |   4 +
+ .../testing/sysfs-bus-pci-devices-aer_stats   | 119 +++++----
+ Documentation/ABI/testing/sysfs-bus-rapidio   |  23 +-
+ .../ABI/testing/sysfs-bus-thunderbolt         |  40 +--
+ Documentation/ABI/testing/sysfs-bus-usb       |  30 ++-
+ .../testing/sysfs-bus-usb-devices-usbsevseg   |   7 +-
+ Documentation/ABI/testing/sysfs-bus-vfio-mdev |  10 +-
+ Documentation/ABI/testing/sysfs-class-cxl     |  15 +-
+ Documentation/ABI/testing/sysfs-class-led     |   2 +-
+ Documentation/ABI/testing/sysfs-class-mic.txt |  52 ++--
+ Documentation/ABI/testing/sysfs-class-ocxl    |   3 +
+ Documentation/ABI/testing/sysfs-class-power   |  73 +++++-
+ .../ABI/testing/sysfs-class-power-twl4030     |  33 +--
+ Documentation/ABI/testing/sysfs-class-rc      |  30 ++-
+ .../ABI/testing/sysfs-class-scsi_host         |   7 +-
+ Documentation/ABI/testing/sysfs-class-typec   |  12 +-
+ .../testing/sysfs-devices-platform-ACPI-TAD   |   4 +
+ .../ABI/testing/sysfs-devices-platform-docg3  |  10 +-
+ .../sysfs-devices-platform-sh_mobile_lcdc_fb  |   8 +-
+ .../ABI/testing/sysfs-devices-system-cpu      |  99 +++++---
+ .../ABI/testing/sysfs-devices-system-ibm-rtl  |   6 +-
+ .../testing/sysfs-driver-bd9571mwv-regulator  |   4 +
+ Documentation/ABI/testing/sysfs-driver-genwqe |  11 +-
+ .../testing/sysfs-driver-hid-logitech-lg4ff   |  18 +-
+ .../ABI/testing/sysfs-driver-hid-wiimote      |  11 +-
+ .../ABI/testing/sysfs-driver-samsung-laptop   |  13 +-
+ .../ABI/testing/sysfs-driver-toshiba_acpi     |  26 ++
+ .../ABI/testing/sysfs-driver-toshiba_haps     |   2 +
+ Documentation/ABI/testing/sysfs-driver-wacom  |   4 +-
+ Documentation/ABI/testing/sysfs-firmware-acpi | 237 +++++++++---------
+ .../ABI/testing/sysfs-firmware-dmi-entries    |  50 ++--
+ Documentation/ABI/testing/sysfs-firmware-gsmi |   2 +-
+ .../ABI/testing/sysfs-firmware-memmap         |  16 +-
+ Documentation/ABI/testing/sysfs-fs-ext4       |   4 +-
+ .../ABI/testing/sysfs-hypervisor-xen          |  13 +-
+ .../ABI/testing/sysfs-kernel-boot_params      |  23 +-
+ .../ABI/testing/sysfs-kernel-mm-hugepages     |  12 +-
+ .../ABI/testing/sysfs-platform-asus-laptop    |  21 +-
+ .../ABI/testing/sysfs-platform-asus-wmi       |   1 +
+ Documentation/ABI/testing/sysfs-platform-at91 |  10 +-
+ .../ABI/testing/sysfs-platform-eeepc-laptop   |  14 +-
+ .../ABI/testing/sysfs-platform-ideapad-laptop |   9 +-
+ .../sysfs-platform-intel-wmi-thunderbolt      |   1 +
+ .../ABI/testing/sysfs-platform-sst-atom       |  13 +-
+ .../ABI/testing/sysfs-platform-usbip-vudc     |  11 +-
+ Documentation/ABI/testing/sysfs-ptp           |   2 +-
+ Documentation/ABI/testing/sysfs-uevent        |  10 +-
+ Documentation/Kconfig                         |  11 +
+ Documentation/Makefile                        |   5 +
+ Documentation/admin-guide/abi-obsolete.rst    |   1 +
+ Documentation/admin-guide/abi-removed.rst     |   1 +
+ Documentation/admin-guide/abi-stable.rst      |   1 +
+ Documentation/admin-guide/abi-testing.rst     |   1 +
+ Documentation/admin-guide/abi.rst             |   2 +-
+ Documentation/sphinx/kernel_abi.py            |   8 +-
+ lib/Kconfig.debug                             |   2 +
+ scripts/get_abi.pl                            |  14 +-
+ 100 files changed, 1457 insertions(+), 905 deletions(-)
+ create mode 100644 Documentation/Kconfig
+
 -- 
 2.21.0
+
 
