@@ -2,261 +2,180 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 764CF4F2FD
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2019 03:03:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9DB2F4F300
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2019 03:04:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726383AbfFVBDB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Jun 2019 21:03:01 -0400
-Received: from esa2.hgst.iphmx.com ([68.232.143.124]:25771 "EHLO
-        esa2.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726052AbfFVBDB (ORCPT
+        id S1726404AbfFVBEm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Jun 2019 21:04:42 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:38928 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726137AbfFVBEm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Jun 2019 21:03:01 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1561165409; x=1592701409;
-  h=from:to:cc:subject:date:message-id:references:
-   content-transfer-encoding:mime-version;
-  bh=Udndhz60ZzlfIpHCFeg0jc33OOEAT1IEHGJWYT7AkSI=;
-  b=oLXbFf2vzvHkoOcMu+olU87Yw/KRNxs3U6WxMdEBQiLT5Coi50ziHZyy
-   zIZV1U9BiyAmgIWDBskq2yuqNUx/s0VGYaDYg2O7AFQ2FhdnI9T9A2mPp
-   KJPDef279kDfnyf9Ldv+0mpun8do6msSQ750jC5psy630z8UFjYb5oDeD
-   lRRM1EnHqAwbjbG/o2SZa8t+PXoynmnwmLCWZPPYP7OUKG7+BCPmXvzz5
-   1cidxbO0EtOUuVUdm7FSdRcdSXUeg/IQdUY4xltNRBJI78B7w5/3ODVnb
-   zZgapC1YXflehQvnJgKzA4YoWofsCfw3aZutAoaorfdtKd1s7K2T6+W/9
-   w==;
-X-IronPort-AV: E=Sophos;i="5.63,402,1557158400"; 
-   d="scan'208";a="210966298"
-Received: from mail-bn3nam04lp2053.outbound.protection.outlook.com (HELO NAM04-BN3-obe.outbound.protection.outlook.com) ([104.47.46.53])
-  by ob1.hgst.iphmx.com with ESMTP; 22 Jun 2019 09:03:26 +0800
+        Fri, 21 Jun 2019 21:04:42 -0400
+Received: by mail-pg1-f194.google.com with SMTP id 196so4143152pgc.6
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2019 18:04:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=TxhXsic7HCm3JaUSZgoQTreVYV33L1KfbJ+EQXdKi6o=;
- b=ILEoYwB2jxL1/pMblb8QS49+oV6UFU2CU4YLnsSNtVmmYd/rokHyoL9tHv8RZRKpyZeZeh4WOuFrMzrrP1SLHWhbJCv1YEi29nor5XvDrLPrknoWdDvW7ToVpgCqmr1RvC7GiYpJnP4FHeAB496mQUvgfq27rw/Bc2UtBLkq6w4=
-Received: from BYAPR04MB5816.namprd04.prod.outlook.com (20.179.58.207) by
- BYAPR04MB5142.namprd04.prod.outlook.com (52.135.235.80) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2008.16; Sat, 22 Jun 2019 01:02:57 +0000
-Received: from BYAPR04MB5816.namprd04.prod.outlook.com
- ([fe80::e94e:8ead:40b1:fae6]) by BYAPR04MB5816.namprd04.prod.outlook.com
- ([fe80::e94e:8ead:40b1:fae6%7]) with mapi id 15.20.1987.014; Sat, 22 Jun 2019
- 01:02:57 +0000
-From:   Damien Le Moal <Damien.LeMoal@wdc.com>
-To:     =?iso-8859-1?Q?Matias_Bj=F8rling?= <mb@lightnvm.io>,
-        "axboe@fb.com" <axboe@fb.com>, "hch@lst.de" <hch@lst.de>,
-        Chaitanya Kulkarni <Chaitanya.Kulkarni@wdc.com>,
-        Dmitry Fomichev <Dmitry.Fomichev@wdc.com>,
-        Ajay Joshi <Ajay.Joshi@wdc.com>,
-        Aravind Ramesh <Aravind.Ramesh@wdc.com>,
-        "martin.petersen@oracle.com" <martin.petersen@oracle.com>,
-        "James.Bottomley@HansenPartnership.com" 
-        <James.Bottomley@HansenPartnership.com>,
-        "agk@redhat.com" <agk@redhat.com>,
-        "snitzer@redhat.com" <snitzer@redhat.com>
-CC:     "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "dm-devel@redhat.com" <dm-devel@redhat.com>,
-        Matias Bjorling <Matias.Bjorling@wdc.com>
-Subject: Re: [PATCH 2/4] null_blk: add zone open, close, and finish support
-Thread-Topic: [PATCH 2/4] null_blk: add zone open, close, and finish support
-Thread-Index: AQHVKDJPvRqrrDdCI02PGkGKUbxkfQ==
-Date:   Sat, 22 Jun 2019 01:02:57 +0000
-Message-ID: <BYAPR04MB5816D471063D970DDCF9AEC7E7E60@BYAPR04MB5816.namprd04.prod.outlook.com>
-References: <20190621130711.21986-1-mb@lightnvm.io>
- <20190621130711.21986-3-mb@lightnvm.io>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Damien.LeMoal@wdc.com; 
-x-originating-ip: [60.117.181.124]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 5d46e582-e6b4-4697-e547-08d6f6ad5d27
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:BYAPR04MB5142;
-x-ms-traffictypediagnostic: BYAPR04MB5142:
-wdcipoutbound: EOP-TRUE
-x-microsoft-antispam-prvs: <BYAPR04MB514291E08B70C40920C7DC6AE7E60@BYAPR04MB5142.namprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:9508;
-x-forefront-prvs: 0076F48C8A
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(39860400002)(396003)(376002)(346002)(136003)(199004)(189003)(6246003)(7416002)(25786009)(14454004)(6436002)(68736007)(52536014)(72206003)(316002)(66446008)(64756008)(66556008)(66476007)(66946007)(71190400001)(71200400001)(73956011)(91956017)(76116006)(5660300002)(66574012)(478600001)(55016002)(2501003)(229853002)(2906002)(66066001)(9686003)(74316002)(14444005)(305945005)(7736002)(7696005)(76176011)(81166006)(186003)(476003)(81156014)(486006)(446003)(256004)(8936002)(4326008)(8676002)(110136005)(54906003)(53936002)(6116002)(3846002)(26005)(99286004)(6506007)(86362001)(102836004)(53546011)(33656002)(2201001)(921003)(1121003);DIR:OUT;SFP:1102;SCL:1;SRVR:BYAPR04MB5142;H:BYAPR04MB5816.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: PkAnvaKGB2HsQemJLvBkMO67uA8gGV03iMOEKSErEPPZmvtRaHQyJ6E0IjzXdkueUZRXIfTzhqtbPSUxGJS2oM2SxFVQzIm+Y6HPT7E9hmpHefvtT64llT6r3QOpdEzjv7nGrsOvdl5C/UGeUqB5GXOG1n2ECR4TvW/QLMed6oU+ze/Fl+Pa4m3DqSHoSZ8IYI4A0u6W7rIL5l0nGfJVWAhDZnryjuPGMxq107YZQmVH9wRIxgY8qcLsTAyH9FeM4sC26F+0CY6mFdCy1RrsEDovnDlnEYmmOJOlIiJG4zu1SZahgEkKYjKDnYS5M7uAPAbbDYX5EZrE1R0aJutnRgszIhKNKo5TQ7dC6BZ3pEKUiWv6oV/s3biY4sgC2qW3m6Xwpuk9brqN50cfmpwRwpS+2mePHUhwViBtvPSxfrc=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        d=eng.ucsd.edu; s=google;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=GfizAMGSCO2YDH0saSeDriLC3WuBj3aonCixX8hvm+M=;
+        b=WjE0UV2zFRzt+OwF5oLL6YtpYoOZvtc1PCDVPa6t6K+AwAxebcFBGTwvu0jFojzJFt
+         uXMdlRxqk9OEjOWC1GmwYKunk9GjEt8hWVgDfbX5ZAb7dZXYzsBdG1NfPuhMBBGpZ1IR
+         Qd3j8PePYowCqtIwRkeDXdIRU2kh/BX10Ya7o=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=GfizAMGSCO2YDH0saSeDriLC3WuBj3aonCixX8hvm+M=;
+        b=WfUC+gtSSOwCOkGK9eTtQ1I0nIO+w5TU8vjogBOnEw8RH+LqQ4pQRF73LMSkPnNEVG
+         wmorncua1pPbiIiMhEiZhnGp2jje/eYwT5KYTVlEEkyPJ4TUis1SzPQJJpc2LOSjhepS
+         yGm1Z20lKbx0c0RxvbYTctdekVRHK+AkqXvTL96fNlSBqoJ6R8En1qfZSxGRWIMwelqi
+         B5AWUxekQEe1kTzPEYyWmiMQJh55HFv6+COxU8IC4q6qh4+XzFPBWaOA7m7wi1hDf30r
+         rZ3sJBO4bsTF8RPk7Vy6dxpb+m7aA+fgdlJaWwoL06fagrE/R7MfMxB5nMt3kElyQXta
+         SiXQ==
+X-Gm-Message-State: APjAAAWmywBCaxeAg/Ovam1D9exlmVSx9wfWatPg2HVtUDWllWv8bZrL
+        ROFOj7PB3zFDeQW41BDjxslerg==
+X-Google-Smtp-Source: APXvYqxZCTGfZsPDZqVX7ZBMfh8KlIfIG/U6ZDitvqNpfZviVk1euhZK0v3XmyusRjcBbpkndQUnsg==
+X-Received: by 2002:a63:db05:: with SMTP id e5mr21195210pgg.121.1561165481427;
+        Fri, 21 Jun 2019 18:04:41 -0700 (PDT)
+Received: from luke-XPS-13 (cpe-66-75-255-136.san.res.rr.com. [66.75.255.136])
+        by smtp.gmail.com with ESMTPSA id s24sm3814436pfh.133.2019.06.21.18.04.39
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Fri, 21 Jun 2019 18:04:40 -0700 (PDT)
+Date:   Fri, 21 Jun 2019 18:04:38 -0700
+From:   Luke Nowakowski-Krijger <lnowakow@eng.ucsd.edu>
+To:     hverkuil@xs4all.nl
+Cc:     mchehab@kernel.org, linux-media@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-kernel-mentees@lists.linuxfoundation.org
+Subject: [Linux-kernel-mentees] [PATCH v4 RESEND] Media: Radio: Change
+ devm_k*alloc to k*alloc
+Message-ID: <20190622010438.GA10125@luke-XPS-13>
 MIME-Version: 1.0
-X-OriginatorOrg: wdc.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5d46e582-e6b4-4697-e547-08d6f6ad5d27
-X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Jun 2019 01:02:57.1375
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: Damien.LeMoal@wdc.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR04MB5142
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019/06/21 22:07, Matias Bj=F8rling wrote:=0A=
-> From: Ajay Joshi <ajay.joshi@wdc.com>=0A=
-> =0A=
-> Implement REQ_OP_ZONE_OPEN, REQ_OP_ZONE_CLOSE and REQ_OP_ZONE_FINISH=0A=
-> support to allow explicit control of zone states.=0A=
-> =0A=
-> Signed-off-by: Ajay Joshi <ajay.joshi@wdc.com>=0A=
-> Signed-off-by: Matias Bj=F8rling <matias.bjorling@wdc.com>=0A=
-> ---=0A=
->  drivers/block/null_blk.h       |  4 ++--=0A=
->  drivers/block/null_blk_main.c  | 13 ++++++++++---=0A=
->  drivers/block/null_blk_zoned.c | 33 ++++++++++++++++++++++++++++++---=0A=
->  3 files changed, 42 insertions(+), 8 deletions(-)=0A=
-> =0A=
-> diff --git a/drivers/block/null_blk.h b/drivers/block/null_blk.h=0A=
-> index 34b22d6523ba..62ef65cb0f3e 100644=0A=
-> --- a/drivers/block/null_blk.h=0A=
-> +++ b/drivers/block/null_blk.h=0A=
-> @@ -93,7 +93,7 @@ int null_zone_report(struct gendisk *disk, sector_t sec=
-tor,=0A=
->  		     gfp_t gfp_mask);=0A=
->  void null_zone_write(struct nullb_cmd *cmd, sector_t sector,=0A=
->  			unsigned int nr_sectors);=0A=
-> -void null_zone_reset(struct nullb_cmd *cmd, sector_t sector);=0A=
-> +void null_zone_mgmt_op(struct nullb_cmd *cmd, sector_t sector);=0A=
->  #else=0A=
->  static inline int null_zone_init(struct nullb_device *dev)=0A=
->  {=0A=
-> @@ -111,6 +111,6 @@ static inline void null_zone_write(struct nullb_cmd *=
-cmd, sector_t sector,=0A=
->  				   unsigned int nr_sectors)=0A=
->  {=0A=
->  }=0A=
-> -static inline void null_zone_reset(struct nullb_cmd *cmd, sector_t secto=
-r) {}=0A=
-> +static inline void null_zone_mgmt_op(struct nullb_cmd *cmd, sector_t sec=
-tor) {}=0A=
->  #endif /* CONFIG_BLK_DEV_ZONED */=0A=
->  #endif /* __NULL_BLK_H */=0A=
-> diff --git a/drivers/block/null_blk_main.c b/drivers/block/null_blk_main.=
-c=0A=
-> index 447d635c79a2..5058fb980c9c 100644=0A=
-> --- a/drivers/block/null_blk_main.c=0A=
-> +++ b/drivers/block/null_blk_main.c=0A=
-> @@ -1209,10 +1209,17 @@ static blk_status_t null_handle_cmd(struct nullb_=
-cmd *cmd)=0A=
->  			nr_sectors =3D blk_rq_sectors(cmd->rq);=0A=
->  		}=0A=
->  =0A=
-> -		if (op =3D=3D REQ_OP_WRITE)=0A=
-> +		switch (op) {=0A=
-> +		case REQ_OP_WRITE:=0A=
->  			null_zone_write(cmd, sector, nr_sectors);=0A=
-> -		else if (op =3D=3D REQ_OP_ZONE_RESET)=0A=
-> -			null_zone_reset(cmd, sector);=0A=
-> +			break;=0A=
-> +		case REQ_OP_ZONE_RESET:=0A=
-> +		case REQ_OP_ZONE_OPEN:=0A=
-> +		case REQ_OP_ZONE_CLOSE:=0A=
-> +		case REQ_OP_ZONE_FINISH:=0A=
-> +			null_zone_mgmt_op(cmd, sector);=0A=
-> +			break;=0A=
-> +		}=0A=
->  	}=0A=
->  out:=0A=
->  	/* Complete IO by inline, softirq or timer */=0A=
-> diff --git a/drivers/block/null_blk_zoned.c b/drivers/block/null_blk_zone=
-d.c=0A=
-> index fca0c97ff1aa..47d956b2e148 100644=0A=
-> --- a/drivers/block/null_blk_zoned.c=0A=
-> +++ b/drivers/block/null_blk_zoned.c=0A=
-> @@ -121,17 +121,44 @@ void null_zone_write(struct nullb_cmd *cmd, sector_=
-t sector,=0A=
->  	}=0A=
->  }=0A=
->  =0A=
-> -void null_zone_reset(struct nullb_cmd *cmd, sector_t sector)=0A=
-> +void null_zone_mgmt_op(struct nullb_cmd *cmd, sector_t sector)=0A=
->  {=0A=
->  	struct nullb_device *dev =3D cmd->nq->dev;=0A=
->  	unsigned int zno =3D null_zone_no(dev, sector);=0A=
->  	struct blk_zone *zone =3D &dev->zones[zno];=0A=
-> +	enum req_opf op =3D req_op(cmd->rq);=0A=
->  =0A=
->  	if (zone->type =3D=3D BLK_ZONE_TYPE_CONVENTIONAL) {=0A=
->  		cmd->error =3D BLK_STS_IOERR;=0A=
->  		return;=0A=
->  	}=0A=
->  =0A=
-> -	zone->cond =3D BLK_ZONE_COND_EMPTY;=0A=
-> -	zone->wp =3D zone->start;=0A=
-> +	switch (op) {=0A=
-> +	case REQ_OP_ZONE_RESET:=0A=
-> +		zone->cond =3D BLK_ZONE_COND_EMPTY;=0A=
-> +		zone->wp =3D zone->start;=0A=
-> +		return;=0A=
-> +	case REQ_OP_ZONE_OPEN:=0A=
-> +		if (zone->cond =3D=3D BLK_ZONE_COND_FULL) {=0A=
-> +			cmd->error =3D BLK_STS_IOERR;=0A=
-> +			return;=0A=
-> +		}=0A=
-> +		zone->cond =3D BLK_ZONE_COND_EXP_OPEN;=0A=
-=0A=
-=0A=
-With ZBC, open of a full zone is a "nop". No error. So I would rather have =
-this as:=0A=
-=0A=
-		if (zone->cond !=3D BLK_ZONE_COND_FULL)=0A=
-			zone->cond =3D BLK_ZONE_COND_EXP_OPEN;=0A=
-		=0A=
-=0A=
-> +		return;=0A=
-> +	case REQ_OP_ZONE_CLOSE:=0A=
-> +		if (zone->cond =3D=3D BLK_ZONE_COND_FULL) {=0A=
-> +			cmd->error =3D BLK_STS_IOERR;=0A=
-> +			return;=0A=
-> +		}=0A=
-> +		zone->cond =3D BLK_ZONE_COND_CLOSED;=0A=
-=0A=
-Sam as for open. Closing a full zone on ZBC is a nop. And the code above wo=
-uld=0A=
-also set an empty zone to closed. Finally, if the zone is open but nothing =
-was=0A=
-written to it, it must be returned to empty condition, not closed. So somet=
-hing=0A=
-like this is needed.=0A=
-=0A=
-		switch (zone->cond) {=0A=
-		case BLK_ZONE_COND_FULL:=0A=
-		case BLK_ZONE_COND_EMPTY:=0A=
-			break;=0A=
-		case BLK_ZONE_COND_EXP_OPEN:=0A=
-			if (zone->wp =3D=3D zone->start) {=0A=
-				zone->cond =3D BLK_ZONE_COND_EMPTY;=0A=
-				break;=0A=
-			}=0A=
-		/* fallthrough */=0A=
-		default:=0A=
-			zone->cond =3D BLK_ZONE_COND_CLOSED;=0A=
-		}=0A=
-=0A=
-> +		return;=0A=
-> +	case REQ_OP_ZONE_FINISH:=0A=
-> +		zone->cond =3D BLK_ZONE_COND_FULL;=0A=
-> +		zone->wp =3D zone->start + zone->len;=0A=
-> +		return;=0A=
-> +	default:=0A=
-> +		/* Invalid zone condition */=0A=
-> +		cmd->error =3D BLK_STS_IOERR;=0A=
-> +		return;=0A=
-> +	}=0A=
->  }=0A=
-> =0A=
-=0A=
-=0A=
--- =0A=
-Damien Le Moal=0A=
-Western Digital Research=0A=
+Change devm_k*alloc to k*alloc to manually allocate memory 
+
+The manual allocation and freeing of memory is necessary because when
+the USB radio is disconnected, the memory associated with devm_k*alloc
+is freed. Meaning if we still have unresolved references to the radio
+device, then we get use-after-free errors. 
+
+This patch fixes this by manually allocating memory, and freeing it in 
+the v4l2.release callback that gets called when the last radio device
+exits. 
+
+Reported-and-tested-by: syzbot+a4387f5b6b799f6becbf@syzkaller.appspotmail.com
+Signed-off-by: Luke Nowakowski-Krijger <lnowakow@eng.ucsd.edu>
+---
+Changes in RESEND: 
++ Added reported-and-tested-by tag
++ Further updated description
+- Removed whitespace in patch description
+Changes in v4:
+- Removed whitespace to fix checkpatch.pl errors
+Changes in v3:
++ Update release method in v2 for v4l2.release callback 
++ Assign v4l2.release callback to release method
+- Remove vdev.release callback used in v2
+Changes in v2:
++ Create raremono_device_release method
++ Assign vdev.release to release method
++ Added gotos for better memory cleanup
+- Removed incorrect kfrees in usb_release in v1
+Changes in v1: 
++ Added k*allocs to raremono_device struct, and buffs
++ Added kfrees on error conditions in usb_probe
++ Added kfrees in usb_release
+- Removed devm_k*allocs
+
+ drivers/media/radio/radio-raremono.c | 31 +++++++++++++++++++++-------
+ 1 file changed, 24 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/media/radio/radio-raremono.c b/drivers/media/radio/radio-raremono.c
+index 5e782b3c2fa9..a5b12372eccb 100644
+--- a/drivers/media/radio/radio-raremono.c
++++ b/drivers/media/radio/radio-raremono.c
+@@ -271,6 +271,15 @@ static int vidioc_g_frequency(struct file *file, void *priv,
+ 	return 0;
+ }
+ 
++static void raremono_device_release(struct v4l2_device *v4l2_dev)
++{
++	struct raremono_device *radio = to_raremono_dev(v4l2_dev);
++
++	kfree(radio->buffer);
++	kfree(radio);
++}
++
++
+ /* File system interface */
+ static const struct v4l2_file_operations usb_raremono_fops = {
+ 	.owner		= THIS_MODULE,
+@@ -295,12 +304,14 @@ static int usb_raremono_probe(struct usb_interface *intf,
+ 	struct raremono_device *radio;
+ 	int retval = 0;
+ 
+-	radio = devm_kzalloc(&intf->dev, sizeof(struct raremono_device), GFP_KERNEL);
+-	if (radio)
+-		radio->buffer = devm_kmalloc(&intf->dev, BUFFER_LENGTH, GFP_KERNEL);
+-
+-	if (!radio || !radio->buffer)
++	radio = kzalloc(sizeof(struct raremono_device), GFP_KERNEL);
++	if (!radio)
++		return -ENOMEM;
++	radio->buffer = kmalloc(BUFFER_LENGTH, GFP_KERNEL);
++	if (!radio->buffer) {
++		kfree(radio);
+ 		return -ENOMEM;
++	}
+ 
+ 	radio->usbdev = interface_to_usbdev(intf);
+ 	radio->intf = intf;
+@@ -324,7 +335,8 @@ static int usb_raremono_probe(struct usb_interface *intf,
+ 	if (retval != 3 ||
+ 	    (get_unaligned_be16(&radio->buffer[1]) & 0xfff) == 0x0242) {
+ 		dev_info(&intf->dev, "this is not Thanko's Raremono.\n");
+-		return -ENODEV;
++		retval = -ENODEV;
++		goto free_mem;
+ 	}
+ 
+ 	dev_info(&intf->dev, "Thanko's Raremono connected: (%04X:%04X)\n",
+@@ -333,7 +345,7 @@ static int usb_raremono_probe(struct usb_interface *intf,
+ 	retval = v4l2_device_register(&intf->dev, &radio->v4l2_dev);
+ 	if (retval < 0) {
+ 		dev_err(&intf->dev, "couldn't register v4l2_device\n");
+-		return retval;
++		goto free_mem;
+ 	}
+ 
+ 	mutex_init(&radio->lock);
+@@ -345,6 +357,7 @@ static int usb_raremono_probe(struct usb_interface *intf,
+ 	radio->vdev.ioctl_ops = &usb_raremono_ioctl_ops;
+ 	radio->vdev.lock = &radio->lock;
+ 	radio->vdev.release = video_device_release_empty;
++	radio->v4l2_dev.release = raremono_device_release;
+ 
+ 	usb_set_intfdata(intf, &radio->v4l2_dev);
+ 
+@@ -360,6 +373,10 @@ static int usb_raremono_probe(struct usb_interface *intf,
+ 	}
+ 	dev_err(&intf->dev, "could not register video device\n");
+ 	v4l2_device_unregister(&radio->v4l2_dev);
++
++free_mem:
++	kfree(radio->buffer);
++	kfree(radio);
+ 	return retval;
+ }
+ 
+-- 
+2.20.1
+
