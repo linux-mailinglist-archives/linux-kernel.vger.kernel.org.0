@@ -2,79 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E80D34F506
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2019 11:58:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1F9CF4F509
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2019 11:59:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726286AbfFVJ6f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 22 Jun 2019 05:58:35 -0400
-Received: from saturn.retrosnub.co.uk ([46.235.226.198]:50804 "EHLO
-        saturn.retrosnub.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726112AbfFVJ6f (ORCPT
+        id S1726357AbfFVJ7P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 22 Jun 2019 05:59:15 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:50543 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726112AbfFVJ7P (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Jun 2019 05:58:35 -0400
-Received: from archlinux (cpc149474-cmbg20-2-0-cust94.5-4.cable.virginm.net [82.4.196.95])
-        by saturn.retrosnub.co.uk (Postfix; Retrosnub mail submission) with ESMTPSA id 851469E74F7;
-        Sat, 22 Jun 2019 10:58:32 +0100 (BST)
-Date:   Sat, 22 Jun 2019 10:58:30 +0100
-From:   Jonathan Cameron <jic23@jic23.retrosnub.co.uk>
-To:     William Breathitt Gray <vilhelm.gray@gmail.com>
-Cc:     Patrick Havelange <patrick.havelange@essensium.com>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: [PATCH 1/1] counter/ftm-quaddec: Add missing '>' in
- MODULE_AUTHOR
-Message-ID: <20190622105830.787b2fe7@archlinux>
-In-Reply-To: <20190618091731.GA8257@icarus>
-References: <20190618090542.13885-1-patrick.havelange@essensium.com>
-        <20190618091731.GA8257@icarus>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Sat, 22 Jun 2019 05:59:15 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x5M9wmMi2091397
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Sat, 22 Jun 2019 02:58:48 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x5M9wmMi2091397
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019061801; t=1561197528;
+        bh=6e2G3wXX6PEzpiwRMhk4HymR/KsMtROAKKP5aBCi/XQ=;
+        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
+        b=gKGYm22PpmKj3TPX0NqP/McEbC7cgmG5fHeRH6tY6+ZkAxc7i8RyuU/FHApQnZzZZ
+         gHan5BIB0WvUNz+r3/BxZGBqk4BSaInr9gXkmmHqnl1TtsWZzzxt7CPLQp2UikqorC
+         Yp5QAcX+d0uVV6NFPz3VW0PKTNSi0U6kpm2Qq/Hqb1R8pBOVww9RlBR9zCPl5krYJh
+         vloyzuTrA6YJY2t39086kchi3h7GH7TZsnPYfjUD1M5RBEh8KbxuvDxm+9NIyATEqs
+         KbEoDS7fYKy84E3JfBI9kBKZagG/fS7z2Qo8HFgEhQe5KUwfvaPqFDkpZfn/3BGfzx
+         pVahtZ9OPSCIg==
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x5M9wlUm2091394;
+        Sat, 22 Jun 2019 02:58:47 -0700
+Date:   Sat, 22 Jun 2019 02:58:47 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Kees Cook <tipbot@zytor.com>
+Message-ID: <tip-8dbec27a242cd3e2816eeb98d3237b9f57cf6232@git.kernel.org>
+Cc:     keescook@chromium.org, dave.hansen@intel.com, tglx@linutronix.de,
+        mingo@kernel.org, linux-kernel@vger.kernel.org, hpa@zytor.com,
+        peterz@infradead.org, torvalds@linux-foundation.org
+Reply-To: hpa@zytor.com, peterz@infradead.org,
+          torvalds@linux-foundation.org, mingo@kernel.org,
+          keescook@chromium.org, dave.hansen@intel.com, tglx@linutronix.de,
+          linux-kernel@vger.kernel.org
+In-Reply-To: <20190618045503.39105-4-keescook@chromium.org>
+References: <20190618045503.39105-4-keescook@chromium.org>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/asm] x86/asm: Pin sensitive CR0 bits
+Git-Commit-ID: 8dbec27a242cd3e2816eeb98d3237b9f57cf6232
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
+X-Spam-Status: No, score=-3.1 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF autolearn=ham
+        autolearn_force=no version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 18 Jun 2019 18:17:31 +0900
-William Breathitt Gray <vilhelm.gray@gmail.com> wrote:
+Commit-ID:  8dbec27a242cd3e2816eeb98d3237b9f57cf6232
+Gitweb:     https://git.kernel.org/tip/8dbec27a242cd3e2816eeb98d3237b9f57cf6232
+Author:     Kees Cook <keescook@chromium.org>
+AuthorDate: Mon, 17 Jun 2019 21:55:03 -0700
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Sat, 22 Jun 2019 11:55:22 +0200
 
-> On Tue, Jun 18, 2019 at 11:05:41AM +0200, Patrick Havelange wrote:
-> > The last '>' chars were missing in the MODULE_AUTHOR entries.
-> > 
-> > Reported-by: Randy Dunlap <rdunlap@infradead.org>
-> > Fixes: a3b9a99980d9 ("counter: add FlexTimer Module Quadrature decoder counter driver")
-> > Signed-off-by: Patrick Havelange <patrick.havelange@essensium.com>
-> > ---
-> >  drivers/counter/ftm-quaddec.c | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/drivers/counter/ftm-quaddec.c b/drivers/counter/ftm-quaddec.c
-> > index c83c8875bf82..68a9b7393457 100644
-> > --- a/drivers/counter/ftm-quaddec.c
-> > +++ b/drivers/counter/ftm-quaddec.c
-> > @@ -352,5 +352,5 @@ static struct platform_driver ftm_quaddec_driver = {
-> >  module_platform_driver(ftm_quaddec_driver);
-> >  
-> >  MODULE_LICENSE("GPL");
-> > -MODULE_AUTHOR("Kjeld Flarup <kfa@deif.com");
-> > -MODULE_AUTHOR("Patrick Havelange <patrick.havelange@essensium.com");
-> > +MODULE_AUTHOR("Kjeld Flarup <kfa@deif.com>");
-> > +MODULE_AUTHOR("Patrick Havelange <patrick.havelange@essensium.com>");
-> > -- 
-> > 2.19.1  
-> 
-> Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
-> 
-> Jonathan, please pick up this fix as well.
-> 
-Applied to the togreg branch of iio.git and pushed out as testing though not
-sure anyone other than Randy is running checks on this one!
+x86/asm: Pin sensitive CR0 bits
 
-Thanks,
+With sensitive CR4 bits pinned now, it's possible that the WP bit for
+CR0 might become a target as well.
 
-Jonathan
+Following the same reasoning for the CR4 pinning, pin CR0's WP
+bit. Contrary to the cpu feature dependend CR4 pinning this can be done
+with a constant value.
 
-> William Breathit Gray
+Suggested-by: Peter Zijlstra <peterz@infradead.org>
+Signed-off-by: Kees Cook <keescook@chromium.org>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Dave Hansen <dave.hansen@intel.com>
+Cc: kernel-hardening@lists.openwall.com
+Link: https://lkml.kernel.org/r/20190618045503.39105-4-keescook@chromium.org
 
+---
+ arch/x86/include/asm/special_insns.h | 15 ++++++++++++++-
+ 1 file changed, 14 insertions(+), 1 deletion(-)
+
+diff --git a/arch/x86/include/asm/special_insns.h b/arch/x86/include/asm/special_insns.h
+index c8c8143ab27b..b2e84d113f2a 100644
+--- a/arch/x86/include/asm/special_insns.h
++++ b/arch/x86/include/asm/special_insns.h
+@@ -31,7 +31,20 @@ static inline unsigned long native_read_cr0(void)
+ 
+ static inline void native_write_cr0(unsigned long val)
+ {
+-	asm volatile("mov %0,%%cr0": : "r" (val), "m" (__force_order));
++	unsigned long bits_missing = 0;
++
++set_register:
++	asm volatile("mov %0,%%cr0": "+r" (val), "+m" (__force_order));
++
++	if (static_branch_likely(&cr_pinning)) {
++		if (unlikely((val & X86_CR0_WP) != X86_CR0_WP)) {
++			bits_missing = X86_CR0_WP;
++			val |= bits_missing;
++			goto set_register;
++		}
++		/* Warn after we've set the missing bits. */
++		WARN_ONCE(bits_missing, "CR0 WP bit went missing!?\n");
++	}
+ }
+ 
+ static inline unsigned long native_read_cr2(void)
