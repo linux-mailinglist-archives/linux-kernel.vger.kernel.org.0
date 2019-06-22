@@ -2,148 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3021A4F682
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2019 17:26:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3E8234F688
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2019 17:28:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726334AbfFVP0D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 22 Jun 2019 11:26:03 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:44743 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726138AbfFVP0D (ORCPT
+        id S1726393AbfFVP2m (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 22 Jun 2019 11:28:42 -0400
+Received: from mail-ua1-f48.google.com ([209.85.222.48]:36066 "EHLO
+        mail-ua1-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726138AbfFVP2m (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Jun 2019 11:26:03 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x5MFPOjO2217871
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Sat, 22 Jun 2019 08:25:25 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x5MFPOjO2217871
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019061801; t=1561217125;
-        bh=2ISqZgRgJWnyeqUUJGNgQHPEq3Uk846/xeG+w3hucwc=;
-        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
-        b=X5ykuascB+kGw0AVuvSudX0KnmEgsMFc3RpukG2Yyls35JDHZfzodmyyCn8PghNAi
-         I4PhE+nMizK2xKf3cfZSMb4MXgrxUBw8OfWYRQRk2Y9Q+V+DRA1qHCviizWqA7EzvA
-         mhc3gUdPemJLT7kO59qCVn1gEOT6kEnKu9BxOpHGmE7fcMVRUPV45cNAnDxPQPS1oB
-         f3kNDyvoP5F7hv13gcfGg2FrsDJn8WW5ZyU/qcqM3O0Mnj5HHFnyZTYDh+TZYzYsF3
-         IhSYoVRSaoCf0aDf+9ENxXkKZsSDzzhwL/Q6mH4kK1/ugG3Nnc8TlDb8OGxFh12Ad0
-         jbsnoNT0A+Gtg==
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x5MFPNfl2217867;
-        Sat, 22 Jun 2019 08:25:23 -0700
-Date:   Sat, 22 Jun 2019 08:25:23 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Konstantin Khlebnikov <tipbot@zytor.com>
-Message-ID: <tip-cc9e303c91f5c25c49a4312552841f4c23fa2b69@git.kernel.org>
-Cc:     linux-kernel@vger.kernel.org, hpa@zytor.com, len.brown@intel.com,
-        mingo@kernel.org, paulmck@linux.vnet.ibm.com,
-        rafael.j.wysocki@intel.com, tglx@linutronix.de,
-        khlebnikov@yandex-team.ru, frederic@kernel.org,
-        peterz@infradead.org
-Reply-To: paulmck@linux.vnet.ibm.com, rafael.j.wysocki@intel.com,
-          tglx@linutronix.de, khlebnikov@yandex-team.ru,
-          peterz@infradead.org, frederic@kernel.org,
-          linux-kernel@vger.kernel.org, hpa@zytor.com, len.brown@intel.com,
-          mingo@kernel.org
-In-Reply-To: <155790354043.1104.15333317408370209.stgit@buzz>
-References: <155790354043.1104.15333317408370209.stgit@buzz>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/cpu] x86/cpu: Disable frequency requests via aperfmperf
- IPI for nohz_full CPUs
-Git-Commit-ID: cc9e303c91f5c25c49a4312552841f4c23fa2b69
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Sat, 22 Jun 2019 11:28:42 -0400
+Received: by mail-ua1-f48.google.com with SMTP id v20so4129807uao.3
+        for <linux-kernel@vger.kernel.org>; Sat, 22 Jun 2019 08:28:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to;
+        bh=nPwq31T/zG3xT1NFQQy/vnu0qnZsJ3CDVx6948lNe+I=;
+        b=veutYtz0cNysmrFO6w8vH//7Ix4RRVZgo6d3LWVTCE8xQERoPUZpgMB7B/vC0ToR9G
+         Khyoin+4zSI9KN+Q0nCl2p0YAbSXARFbZAVn6uhZmJQkWa2Q/PSzIns1wXhEf3MClhyy
+         riVa2hOph1iJLNX0zxdboNAW49q0nXz2UE8+yHPjqI+BCRR5mouRKgBbcPNcRupm/QfN
+         ocmaBkKp2tUsPaAzsyySuGuq/Zgy0HOvp0MgxNWY0VVVkSTT4rOKHo38vSvMqRDsar7c
+         zy9VI0J3lb4I+SKnE0qQk5SyX3oPN4ziJwy365ew2qQd/lEeiqKBpih8P0Sjio2FKYjx
+         M8Xg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
+        bh=nPwq31T/zG3xT1NFQQy/vnu0qnZsJ3CDVx6948lNe+I=;
+        b=JtypLG4Db+Vqvf8qbyMr1uykMsw/totcbFgrxVLHv/IwFUKmb4u+4LXPf0fdTq192h
+         UOcH+tL4N8Xvs4fZ9/cEEeD+0IgCOwtLMgiAmRhdcaILkShgz1Peqhc+qasSEod3wplj
+         39r0d8VR8wwSLkzqHdXtI75X0fcQbBm7yavLiLFl+GXRf5mPHZHRrUlPigTZ323qLBsR
+         XFoAp6a83GJvLBEs0mAdor2/YHbtqAWJHAnBLVQlZK41tw5nH4Y/VOKveFGcmNI5kOj+
+         F1YBBJvWUnO1zRuCHzzItY1q+k2pevdzKaWmmYDp8rhNdws5wkMbFK2UCqsR0BLFUdAJ
+         66Qw==
+X-Gm-Message-State: APjAAAU7T1fmjCS4UATP+eMPPbnLzBWbYoqb18+Iz5smRXkiUVVTssCk
+        eWEvu6BLnoEpnGBZE1ZikPRXv3yD2CxKRYBi8NyZFu9z
+X-Google-Smtp-Source: APXvYqwdKXbggtqi2ODw4JBYlkbzg4GbJUH3YCDJoapFQ6DVS+ufP1STnrIpfNWYR2GWWAyQGTxehUSiC2xSXJudZgU=
+X-Received: by 2002:a9f:3770:: with SMTP id a45mr14538349uae.64.1561217320640;
+ Sat, 22 Jun 2019 08:28:40 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
-X-Spam-Status: No, score=-1.2 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        DATE_IN_FUTURE_06_12,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,
-        DKIM_VALID_EF autolearn=ham autolearn_force=no version=3.4.2
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
+From:   Ajay Garg <ajaygargnsit@gmail.com>
+Date:   Sat, 22 Jun 2019 20:58:29 +0530
+Message-ID: <CAHP4M8Vj-BmDXQgF-rkLr5fthey7RVaZ-1o87yTUg=9uh4hEOw@mail.gmail.com>
+Subject: Difference in values of addresses in System.map and /proc/kallsyms
+To:     linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  cc9e303c91f5c25c49a4312552841f4c23fa2b69
-Gitweb:     https://git.kernel.org/tip/cc9e303c91f5c25c49a4312552841f4c23fa2b69
-Author:     Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-AuthorDate: Wed, 15 May 2019 09:59:00 +0300
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Sat, 22 Jun 2019 17:23:48 +0200
+Hi All.
 
-x86/cpu: Disable frequency requests via aperfmperf IPI for nohz_full CPUs
+My system is
 
-Since commit 7d5905dc14a8 ("x86 / CPU: Always show current CPU frequency
-in /proc/cpuinfo") open and read of /proc/cpuinfo sends IPI to all CPUs.
-Many applications read /proc/cpuinfo at the start for trivial reasons like
-counting cores or detecting cpu features. While sensitive workloads like
-DPDK network polling don't like any interrupts.
+ajay@latitude-3480:~$ uname -a
+Linux latitude-3480 4.13.0-38-generic #43~16.04.1-Ubuntu SMP Wed Mar
+14 17:48:43 UTC 2018 x86_64 x86_64 x86_64 GNU/Linux
 
-Integrates this feature with cpu isolation and do not send IPIs to CPUs
-without housekeeping flag HK_FLAG_MISC (set by nohz_full).
 
-Code that requests cpu frequency like show_cpuinfo() falls back to the last
-frequency set by the cpufreq driver if this method returns 0.
+When I see the address for a symbol, say linux_banner, in
+/boot/System.map-4.13.0-38-generic, it shows
+ffffffff81e00120 R linux_banner
 
-Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Len Brown <len.brown@intel.com>
-Cc: Frederic Weisbecker <frederic@kernel.org>
-Cc: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Cc: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Link: https://lkml.kernel.org/r/155790354043.1104.15333317408370209.stgit@buzz
+However, when I see it in /proc/kallsyms, it shows
+ffffffffa7000120 R linux_banner
 
----
- arch/x86/kernel/cpu/aperfmperf.c | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/kernel/cpu/aperfmperf.c b/arch/x86/kernel/cpu/aperfmperf.c
-index e71a6ff8a67e..e2f319dc992d 100644
---- a/arch/x86/kernel/cpu/aperfmperf.c
-+++ b/arch/x86/kernel/cpu/aperfmperf.c
-@@ -13,6 +13,7 @@
- #include <linux/percpu.h>
- #include <linux/cpufreq.h>
- #include <linux/smp.h>
-+#include <linux/sched/isolation.h>
- 
- #include "cpu.h"
- 
-@@ -85,6 +86,9 @@ unsigned int aperfmperf_get_khz(int cpu)
- 	if (!boot_cpu_has(X86_FEATURE_APERFMPERF))
- 		return 0;
- 
-+	if (!housekeeping_cpu(cpu, HK_FLAG_MISC))
-+		return 0;
-+
- 	aperfmperf_snapshot_cpu(cpu, ktime_get(), true);
- 	return per_cpu(samples.khz, cpu);
- }
-@@ -101,9 +105,12 @@ void arch_freq_prepare_all(void)
- 	if (!boot_cpu_has(X86_FEATURE_APERFMPERF))
- 		return;
- 
--	for_each_online_cpu(cpu)
-+	for_each_online_cpu(cpu) {
-+		if (!housekeeping_cpu(cpu, HK_FLAG_MISC))
-+			continue;
- 		if (!aperfmperf_snapshot_cpu(cpu, now, false))
- 			wait = true;
-+	}
- 
- 	if (wait)
- 		msleep(APERFMPERF_REFRESH_DELAY_MS);
-@@ -117,6 +124,9 @@ unsigned int arch_freq_get_on_cpu(int cpu)
- 	if (!boot_cpu_has(X86_FEATURE_APERFMPERF))
- 		return 0;
- 
-+	if (!housekeeping_cpu(cpu, HK_FLAG_MISC))
-+		return 0;
-+
- 	if (aperfmperf_snapshot_cpu(cpu, ktime_get(), true))
- 		return per_cpu(samples.khz, cpu);
- 
+Also, I note that /proc/kallsyms addresses vary upon reboots, so I am
+a little confused as to what the entries in /proc/kallsyms really
+mean.
+So, will be grateful for some pointers from the experts :)
+
+
+Thanks and Regards,
+Ajay
