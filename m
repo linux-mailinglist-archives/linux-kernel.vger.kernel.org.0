@@ -2,59 +2,50 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0AD4E4F416
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2019 08:49:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 68D0F4F414
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2019 08:48:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726276AbfFVGtF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 22 Jun 2019 02:49:05 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:37881 "EHLO
+        id S1726237AbfFVGsH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 22 Jun 2019 02:48:07 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:43077 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726070AbfFVGtF (ORCPT
+        with ESMTP id S1726070AbfFVGsG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Jun 2019 02:49:05 -0400
+        Sat, 22 Jun 2019 02:48:06 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x5M6lGEV2009260
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x5M6lwgB2009370
         (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Fri, 21 Jun 2019 23:47:17 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x5M6lGEV2009260
+        Fri, 21 Jun 2019 23:47:58 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x5M6lwgB2009370
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019061801; t=1561186037;
-        bh=4N0qIimBgRlZkyrF8sbnld3SktgxYNoFlT596cd/75A=;
-        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
-        b=OIo0bkHsnxzk+UZcj4JQZz7/pUzbfOv3xuJu+xNGBRbtJRzapfrP/UWYAiGngzwtI
-         C1BiNksIVAVMfXwvIEEc4syRNloRhLO9ZRv7VtNpPG3T/sOXpxsDQcW9hdSMiQaqkZ
-         mdMh0+cAdzeoGdorGYJpJNUpiOyh60E46ycqWy8wqqlZDWki5OfCddowq//kqlSpaN
-         rFbOcCdS68RNWB/TaV12ndBRmfCCRGb6s18ziWdaMZQOqRY/OVGQubEM2HfTTM7QXO
-         K8mFyYfnp6RO/kgzaTJ4371aPfW72Fledj4NfFAFfkfnqtNWN8yIobeSY4jGIT0Vgw
-         j1CccUZnvrwhA==
+        s=2019061801; t=1561186079;
+        bh=ToNY+4/+kcq5cYAWpKj8iVLy+yIWMfvVL0atPf5Bx6E=;
+        h=Date:From:Cc:Reply-To:To:Subject:From;
+        b=nIdM5RvCHlCRgIn534rL/920Md1KsLYfIJbLo0uTAYY7sfwEf9GmJnmRgdQyLcZkZ
+         dP/NV0S2eomcpzpgoCvirYm6OrkfaQxkJqWsdr08QVshf/k/M/9GBMOyWSkM7Yxyrc
+         IHUN7pIqTYTyqJbnYFhdn0Ivzs10u4hIF/DLPCCm10lmPhd/iaAEyexOi7kU4FkCC4
+         P4t/jXrZwQg5MuK0QJbe/ANztKqzGsBhh3alaDJG/V6ekgEgxXjNSntkD7xXsLgDb6
+         FjBwOLJfzQpI4MjO3NKN8aZDO5Wwdw8EcvPRNL6X2vEfbu8R2WJBDu08TQ47YxKFII
+         yOi6+xdI79+RA==
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x5M6lFOe2009238;
-        Fri, 21 Jun 2019 23:47:15 -0700
-Date:   Fri, 21 Jun 2019 23:47:15 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x5M6lwmF2009367;
+        Fri, 21 Jun 2019 23:47:58 -0700
+Date:   Fri, 21 Jun 2019 23:47:58 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for John Garry <tipbot@zytor.com>
-Message-ID: <tip-599ee18f0740d7661b8711249096db94c09bc508@git.kernel.org>
-Cc:     alexander.shishkin@linux.intel.com, john.garry@huawei.com,
-        ben@decadent.org.uk, will.deacon@arm.com, acme@redhat.com,
-        jolsa@redhat.com, brueckner@linux.ibm.com,
-        mathieu.poirier@linaro.org, mark.rutland@arm.com,
-        tmricht@linux.ibm.com, mingo@kernel.org,
-        zhangshaokun@hisilicon.com, tglx@linutronix.de, hpa@zytor.com,
-        namhyung@kernel.org, linux-kernel@vger.kernel.org,
-        peterz@infradead.org, kan.liang@linux.intel.com
-Reply-To: mathieu.poirier@linaro.org, mark.rutland@arm.com,
-          brueckner@linux.ibm.com, jolsa@redhat.com, acme@redhat.com,
-          will.deacon@arm.com, ben@decadent.org.uk, john.garry@huawei.com,
-          alexander.shishkin@linux.intel.com, kan.liang@linux.intel.com,
-          namhyung@kernel.org, peterz@infradead.org,
-          linux-kernel@vger.kernel.org, hpa@zytor.com, tglx@linutronix.de,
-          zhangshaokun@hisilicon.com, mingo@kernel.org,
-          tmricht@linux.ibm.com
-In-Reply-To: <1560521283-73314-2-git-send-email-john.garry@huawei.com>
-References: <1560521283-73314-2-git-send-email-john.garry@huawei.com>
+From:   tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
+Message-ID: <tip-n1w59lpxks6m1le7fpo6rmyw@git.kernel.org>
+Cc:     brendan.d.gregg@gmail.com, tglx@linutronix.de, acme@redhat.com,
+        namhyung@kernel.org, adrian.hunter@intel.com,
+        linux-kernel@vger.kernel.org, hpa@zytor.com, mingo@kernel.org,
+        lclaudio@redhat.com, jolsa@kernel.org
+Reply-To: mingo@kernel.org, hpa@zytor.com, linux-kernel@vger.kernel.org,
+          adrian.hunter@intel.com, jolsa@kernel.org, lclaudio@redhat.com,
+          tglx@linutronix.de, brendan.d.gregg@gmail.com,
+          namhyung@kernel.org, acme@redhat.com
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf pmu: Fix uncore PMU alias list for ARM64
-Git-Commit-ID: 599ee18f0740d7661b8711249096db94c09bc508
+Subject: [tip:perf/core] perf trace: Fixup pointer arithmetic when consuming
+ augmented syscall args
+Git-Commit-ID: 016f327ce48f9b0b1cdea729ba7080596113563f
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -63,106 +54,68 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-X-Spam-Status: No, score=-1.2 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+X-Spam-Status: No, score=0.9 required=5.0 tests=ALL_TRUSTED,BAYES_00,
         DATE_IN_FUTURE_06_12,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,
-        DKIM_VALID_EF autolearn=ham autolearn_force=no version=3.4.2
+        DKIM_VALID_EF,FREEMAIL_FORGED_REPLYTO autolearn=no autolearn_force=no
+        version=3.4.2
 X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  599ee18f0740d7661b8711249096db94c09bc508
-Gitweb:     https://git.kernel.org/tip/599ee18f0740d7661b8711249096db94c09bc508
-Author:     John Garry <john.garry@huawei.com>
-AuthorDate: Fri, 14 Jun 2019 22:07:59 +0800
+Commit-ID:  016f327ce48f9b0b1cdea729ba7080596113563f
+Gitweb:     https://git.kernel.org/tip/016f327ce48f9b0b1cdea729ba7080596113563f
+Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
+AuthorDate: Fri, 14 Jun 2019 16:50:19 -0300
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
 CommitDate: Mon, 17 Jun 2019 15:57:19 -0300
 
-perf pmu: Fix uncore PMU alias list for ARM64
+perf trace: Fixup pointer arithmetic when consuming augmented syscall args
 
-In commit 292c34c10249 ("perf pmu: Fix core PMU alias list for X86
-platform"), we fixed the issue of CPU events being aliased to uncore
-events.
+We can't just add the consumed bytes to the arg->augmented.args member,
+as it is not void *, so it will access (consumed * sizeof(struct augmented_arg))
+in the next augmented arg, totally wrong, cast the member to void pointe
+before adding the number of bytes consumed, duh.
 
-Fix this same issue for ARM64, since the said commit left the (broken)
-behaviour untouched for ARM64.
+With this and hardcoding handling the 'renameat' and 'renameat2'
+syscalls in the tools/perf/examples/bpf/augmented_raw_syscalls.c eBPF
+proggie, we get:
 
-Signed-off-by: John Garry <john.garry@huawei.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Ben Hutchings <ben@decadent.org.uk>
-Cc: Hendrik Brueckner <brueckner@linux.ibm.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Kan Liang <kan.liang@linux.intel.com>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
+	mv/24388 renameat2(AT_FDCWD, "/tmp/build/perf/util/.bpf-event.o.tmp", AT_FDCWD, "/tmp/build/perf/util/.bpf-event.o.cmd", RENAME_NOREPLACE) = 0
+	mv/24394 renameat2(AT_FDCWD, "/tmp/build/perf/util/.perf-hooks.o.tmp", AT_FDCWD, "/tmp/build/perf/util/.perf-hooks.o.cmd", RENAME_NOREPLACE) = 0
+	mv/24398 renameat2(AT_FDCWD, "/tmp/build/perf/util/.pmu-bison.o.tmp", AT_FDCWD, "/tmp/build/perf/util/.pmu-bison.o.cmd", RENAME_NOREPLACE) = 0
+	mv/24401 renameat2(AT_FDCWD, "/tmp/build/perf/util/.expr-bison.o.tmp", AT_FDCWD, "/tmp/build/perf/util/.expr-bison.o.cmd", RENAME_NOREPLACE) = 0
+	mv/24406 renameat2(AT_FDCWD, "/tmp/build/perf/util/.pmu.o.tmp", AT_FDCWD, "/tmp/build/perf/util/.pmu.o.cmd", RENAME_NOREPLACE) = 0
+	mv/24407 renameat2(AT_FDCWD, "/tmp/build/perf/util/.pmu-flex.o.tmp", AT_FDCWD, "/tmp/build/perf/util/.pmu-flex.o.cmd", RENAME_NOREPLACE) = 0
+	mv/24416 renameat2(AT_FDCWD, "/tmp/build/perf/util/.parse-events-flex.o.tmp", AT_FDCWD, "/tmp/build/perf/util/.parse-events-flex.o.cmd", RENAME_NOREPLACE) = 0
+
+I.e. it works with two string args in the same syscall.
+
+Now back to taming the verifier...
+
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Brendan Gregg <brendan.d.gregg@gmail.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Luis Cláudio Gonçalves <lclaudio@redhat.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Shaokun Zhang <zhangshaokun@hisilicon.com>
-Cc: Thomas Richter <tmricht@linux.ibm.com>
-Cc: Will Deacon <will.deacon@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linuxarm@huawei.com
-Cc: stable@vger.kernel.org
-Fixes: 292c34c10249 ("perf pmu: Fix core PMU alias list for X86 platform")
-Link: http://lkml.kernel.org/r/1560521283-73314-2-git-send-email-john.garry@huawei.com
+Fixes: 8195168e8779 ("perf trace: Consume the augmented_raw_syscalls payload")
+Link: https://lkml.kernel.org/n/tip-n1w59lpxks6m1le7fpo6rmyw@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/pmu.c | 28 ++++++++++++----------------
- 1 file changed, 12 insertions(+), 16 deletions(-)
+ tools/perf/builtin-trace.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/perf/util/pmu.c b/tools/perf/util/pmu.c
-index e0429f4ef335..faa8eb231e1b 100644
---- a/tools/perf/util/pmu.c
-+++ b/tools/perf/util/pmu.c
-@@ -709,9 +709,7 @@ static void pmu_add_cpu_aliases(struct list_head *head, struct perf_pmu *pmu)
- {
- 	int i;
- 	struct pmu_events_map *map;
--	struct pmu_event *pe;
- 	const char *name = pmu->name;
--	const char *pname;
- 
- 	map = perf_pmu__find_map(pmu);
- 	if (!map)
-@@ -722,28 +720,26 @@ static void pmu_add_cpu_aliases(struct list_head *head, struct perf_pmu *pmu)
+diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
+index d5b2e4d8bf41..f3532b081b31 100644
+--- a/tools/perf/builtin-trace.c
++++ b/tools/perf/builtin-trace.c
+@@ -1239,7 +1239,7 @@ static size_t syscall_arg__scnprintf_augmented_string(struct syscall_arg *arg, c
  	 */
- 	i = 0;
- 	while (1) {
-+		const char *cpu_name = is_arm_pmu_core(name) ? name : "cpu";
-+		struct pmu_event *pe = &map->table[i++];
-+		const char *pname = pe->pmu ? pe->pmu : cpu_name;
+ 	int consumed = sizeof(*augmented_arg) + augmented_arg->size;
  
--		pe = &map->table[i++];
- 		if (!pe->name) {
- 			if (pe->metric_group || pe->metric_name)
- 				continue;
- 			break;
- 		}
+-	arg->augmented.args += consumed;
++	arg->augmented.args = ((void *)arg->augmented.args) + consumed;
+ 	arg->augmented.size -= consumed;
  
--		if (!is_arm_pmu_core(name)) {
--			pname = pe->pmu ? pe->pmu : "cpu";
--
--			/*
--			 * uncore alias may be from different PMU
--			 * with common prefix
--			 */
--			if (pmu_is_uncore(name) &&
--			    !strncmp(pname, name, strlen(pname)))
--				goto new_alias;
-+		/*
-+		 * uncore alias may be from different PMU
-+		 * with common prefix
-+		 */
-+		if (pmu_is_uncore(name) &&
-+		    !strncmp(pname, name, strlen(pname)))
-+			goto new_alias;
- 
--			if (strcmp(pname, name))
--				continue;
--		}
-+		if (strcmp(pname, name))
-+			continue;
- 
- new_alias:
- 		/* need type casts to override 'const' */
+ 	return printed;
