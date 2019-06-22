@@ -2,109 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D4FC74F368
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2019 05:41:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E6C2C4F376
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2019 05:52:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726219AbfFVDlR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Jun 2019 23:41:17 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:36841 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726189AbfFVDlQ (ORCPT
+        id S1726099AbfFVDtz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Jun 2019 23:49:55 -0400
+Received: from smtprelay0034.hostedemail.com ([216.40.44.34]:58503 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726049AbfFVDty (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Jun 2019 23:41:16 -0400
-Received: by mail-pf1-f196.google.com with SMTP id r7so4538494pfl.3
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2019 20:41:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=4i2YSPugXI0nrqp33kMy8Y944Y94lb5ecy4lCGMxEsQ=;
-        b=niGTS4FI/C687+sa3kKLIMPE58L7G7E5nctX9I6CtYN8GELqO1dmYNy3W+bytP3lM2
-         7jJLiBQxNMTmWuycDio83VjqRBYXENo40QGJV77eJIpEvs05teclhe/XR8ex/VpLgaDx
-         lNQopJYpNYfOR+08BHj2q1c/NuSF1p8+Ua8Lg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=4i2YSPugXI0nrqp33kMy8Y944Y94lb5ecy4lCGMxEsQ=;
-        b=H3UkNvq8OnnmDGJZq/JUBgTipsh0Hs9wfqtmULoPcfv8lzG5MZV3lJyuRVEq3ZNjOw
-         8UhpD8nSTO/52pLJHDuzufiufX1KqW5nv9LSFUEx7Ip/K3efr0XIk/Ptubp0bQfwzpw7
-         VU3WSPpBggvOmaFXcz2O+Kb8aOOtKhK2xk+0hMfyBSOTz5e8TDffCWQAjj9g4fqpBiMp
-         8DC+sLioJq2VxLh3mOBNqe67gFIyOz+Q7Gj3K0KIsP04umBBkeQ9t5YY6tNFrvwcajwG
-         MPVtokzbRax9p5ShTIiFC1BoLUbfjWHF+uy+UMOZ1fxDE0oF8rdNwJAyNBs3v0kkSIWO
-         awAw==
-X-Gm-Message-State: APjAAAUHZTS//ukLyTF9vYDsZAvoZAq+S9HJPL2pnCNMoPlC10griWqe
-        IZAfZ682ZD7HgHB+mOyXjr+E2pY916s=
-X-Google-Smtp-Source: APXvYqzslQDI58gAtC55+8w+gQS8zY9PascQUVg5lYBeYsEo3d9ImRfo5a3yRY89wZxYrkoWlqCAMQ==
-X-Received: by 2002:a17:90b:d8f:: with SMTP id bg15mr10778249pjb.65.1561174875712;
-        Fri, 21 Jun 2019 20:41:15 -0700 (PDT)
-Received: from exogeni.mtv.corp.google.com ([2620:15c:202:1:5be8:f2a6:fd7b:7459])
-        by smtp.gmail.com with ESMTPSA id u128sm4756688pfu.26.2019.06.21.20.41.14
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Fri, 21 Jun 2019 20:41:15 -0700 (PDT)
-From:   Derek Basehore <dbasehore@chromium.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        CK Hu <ck.hu@mediatek.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org,
-        Derek Basehore <dbasehore@chromium.org>
-Subject: [PATCH v4 4/4] drm/mtk: add panel orientation property
-Date:   Fri, 21 Jun 2019 20:41:05 -0700
-Message-Id: <20190622034105.188454-5-dbasehore@chromium.org>
-X-Mailer: git-send-email 2.22.0.410.gd8fdbe21b5-goog
-In-Reply-To: <20190622034105.188454-1-dbasehore@chromium.org>
-References: <20190622034105.188454-1-dbasehore@chromium.org>
+        Fri, 21 Jun 2019 23:49:54 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay04.hostedemail.com (Postfix) with ESMTP id 48FC3180A814D;
+        Sat, 22 Jun 2019 03:49:53 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::,RULES_HIT:41:355:379:599:800:960:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1538:1567:1593:1594:1711:1714:1730:1747:1777:1792:2393:2553:2559:2562:2828:3138:3139:3140:3141:3142:3622:3865:3867:4321:5007:10004:10400:10848:10967:11026:11232:11658:11914:12043:12297:12438:12740:12760:12895:13069:13311:13357:13439:13972:14181:14659:14721:21080:21627:30003:30054:30090:30091,0,RBL:23.242.70.174:@perches.com:.lbl8.mailshell.net-62.14.0.180 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:36,LUA_SUMMARY:none
+X-HE-Tag: screw48_3903c87882536
+X-Filterd-Recvd-Size: 1770
+Received: from XPS-9350 (cpe-23-242-70-174.socal.res.rr.com [23.242.70.174])
+        (Authenticated sender: joe@perches.com)
+        by omf03.hostedemail.com (Postfix) with ESMTPA;
+        Sat, 22 Jun 2019 03:49:51 +0000 (UTC)
+Message-ID: <fca1233b4a88beb603ba453c84bbd735e5adb07a.camel@perches.com>
+Subject: Re: [PATCH 7/7] powerpc/kprobes: Allow probing on any ftrace address
+From:   Joe Perches <joe@perches.com>
+To:     Masami Hiramatsu <mhiramat@kernel.org>,
+        "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>
+Cc:     Michael Ellerman <mpe@ellerman.id.au>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Date:   Fri, 21 Jun 2019 20:49:50 -0700
+In-Reply-To: <20190621235034.acc00fc3e2b2c7e89caa1fd5@kernel.org>
+References: <cover.1560868106.git.naveen.n.rao@linux.vnet.ibm.com>
+         <d26f5467577ff0aeecea55e7035ea64e303bdf17.1560868106.git.naveen.n.rao@linux.vnet.ibm.com>
+         <20190621235034.acc00fc3e2b2c7e89caa1fd5@kernel.org>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.30.5-0ubuntu0.18.10.1 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This inits the panel orientation property for the mediatek dsi driver
-if the panel orientation (connector.display_info.panel_orientation) is
-not DRM_MODE_PANEL_ORIENTATION_UNKNOWN.
+On Fri, 2019-06-21 at 23:50 +0900, Masami Hiramatsu wrote:
+> On Tue, 18 Jun 2019 20:17:06 +0530
+> "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com> wrote:
 
-Signed-off-by: Derek Basehore <dbasehore@chromium.org>
----
- drivers/gpu/drm/mediatek/mtk_dsi.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+trivia:
 
-diff --git a/drivers/gpu/drm/mediatek/mtk_dsi.c b/drivers/gpu/drm/mediatek/mtk_dsi.c
-index 4a0b9150a7bb..08ffdc7526dd 100644
---- a/drivers/gpu/drm/mediatek/mtk_dsi.c
-+++ b/drivers/gpu/drm/mediatek/mtk_dsi.c
-@@ -782,10 +782,18 @@ static int mtk_dsi_create_connector(struct drm_device *drm, struct mtk_dsi *dsi)
- 			DRM_ERROR("Failed to attach panel to drm\n");
- 			goto err_connector_cleanup;
- 		}
-+
-+		ret = drm_connector_init_panel_orientation_property(&dsi->conn);
-+		if (ret) {
-+			DRM_ERROR("Failed to init panel orientation\n");
-+			goto err_panel_detach;
-+		}
- 	}
- 
- 	return 0;
- 
-+err_panel_detach:
-+	drm_panel_detach(dsi->panel);
- err_connector_cleanup:
- 	drm_connector_cleanup(&dsi->conn);
- 	return ret;
--- 
-2.22.0.410.gd8fdbe21b5-goog
+> > diff --git a/arch/powerpc/kernel/kprobes-ftrace.c b/arch/powerpc/kernel/kprobes-ftrace.c
+[]
+> > @@ -57,6 +82,11 @@ NOKPROBE_SYMBOL(kprobe_ftrace_handler);
+> >  
+> >  int arch_prepare_kprobe_ftrace(struct kprobe *p)
+> >  {
+> > +	if ((unsigned long)p->addr & 0x03) {
+> > +		printk("Attempt to register kprobe at an unaligned address\n");
+
+Please use the appropriate KERN_<LEVEL> or pr_<level>
+
 
