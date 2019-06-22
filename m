@@ -2,77 +2,167 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E8234F688
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2019 17:28:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B6D34F691
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2019 17:32:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726393AbfFVP2m (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 22 Jun 2019 11:28:42 -0400
-Received: from mail-ua1-f48.google.com ([209.85.222.48]:36066 "EHLO
-        mail-ua1-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726138AbfFVP2m (ORCPT
+        id S1726357AbfFVPbw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 22 Jun 2019 11:31:52 -0400
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:51274 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726138AbfFVPbw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Jun 2019 11:28:42 -0400
-Received: by mail-ua1-f48.google.com with SMTP id v20so4129807uao.3
-        for <linux-kernel@vger.kernel.org>; Sat, 22 Jun 2019 08:28:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to;
-        bh=nPwq31T/zG3xT1NFQQy/vnu0qnZsJ3CDVx6948lNe+I=;
-        b=veutYtz0cNysmrFO6w8vH//7Ix4RRVZgo6d3LWVTCE8xQERoPUZpgMB7B/vC0ToR9G
-         Khyoin+4zSI9KN+Q0nCl2p0YAbSXARFbZAVn6uhZmJQkWa2Q/PSzIns1wXhEf3MClhyy
-         riVa2hOph1iJLNX0zxdboNAW49q0nXz2UE8+yHPjqI+BCRR5mouRKgBbcPNcRupm/QfN
-         ocmaBkKp2tUsPaAzsyySuGuq/Zgy0HOvp0MgxNWY0VVVkSTT4rOKHo38vSvMqRDsar7c
-         zy9VI0J3lb4I+SKnE0qQk5SyX3oPN4ziJwy365ew2qQd/lEeiqKBpih8P0Sjio2FKYjx
-         M8Xg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
-        bh=nPwq31T/zG3xT1NFQQy/vnu0qnZsJ3CDVx6948lNe+I=;
-        b=JtypLG4Db+Vqvf8qbyMr1uykMsw/totcbFgrxVLHv/IwFUKmb4u+4LXPf0fdTq192h
-         UOcH+tL4N8Xvs4fZ9/cEEeD+0IgCOwtLMgiAmRhdcaILkShgz1Peqhc+qasSEod3wplj
-         39r0d8VR8wwSLkzqHdXtI75X0fcQbBm7yavLiLFl+GXRf5mPHZHRrUlPigTZ323qLBsR
-         XFoAp6a83GJvLBEs0mAdor2/YHbtqAWJHAnBLVQlZK41tw5nH4Y/VOKveFGcmNI5kOj+
-         F1YBBJvWUnO1zRuCHzzItY1q+k2pevdzKaWmmYDp8rhNdws5wkMbFK2UCqsR0BLFUdAJ
-         66Qw==
-X-Gm-Message-State: APjAAAU7T1fmjCS4UATP+eMPPbnLzBWbYoqb18+Iz5smRXkiUVVTssCk
-        eWEvu6BLnoEpnGBZE1ZikPRXv3yD2CxKRYBi8NyZFu9z
-X-Google-Smtp-Source: APXvYqwdKXbggtqi2ODw4JBYlkbzg4GbJUH3YCDJoapFQ6DVS+ufP1STnrIpfNWYR2GWWAyQGTxehUSiC2xSXJudZgU=
-X-Received: by 2002:a9f:3770:: with SMTP id a45mr14538349uae.64.1561217320640;
- Sat, 22 Jun 2019 08:28:40 -0700 (PDT)
-MIME-Version: 1.0
-From:   Ajay Garg <ajaygargnsit@gmail.com>
-Date:   Sat, 22 Jun 2019 20:58:29 +0530
-Message-ID: <CAHP4M8Vj-BmDXQgF-rkLr5fthey7RVaZ-1o87yTUg=9uh4hEOw@mail.gmail.com>
-Subject: Difference in values of addresses in System.map and /proc/kallsyms
-To:     linux-kernel@vger.kernel.org
+        Sat, 22 Jun 2019 11:31:52 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 3FBA88EE105;
+        Sat, 22 Jun 2019 08:31:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1561217511;
+        bh=T65+vk73Z2CaX9Tc5+vGvjBb20vMTuCAgO9aJXpwF4Q=;
+        h=Subject:From:To:Cc:Date:From;
+        b=p72xwm+xQ+vBm3M1v+K5P/Nu1txCJNxGl2N36mk3KCkE5j6UypR4Thb0EU9mipNfx
+         sNsevNE9ZWTwl0Jy45+occEVyy9FNAM8ypxLvTwbw5DiLzjnFP59FWUj0aT8HAknwf
+         h/9mCEd7/NbMDR9wETMqlo+/NgLY3V0qFxcoA9uA=
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id emMTLkq_VslB; Sat, 22 Jun 2019 08:31:51 -0700 (PDT)
+Received: from jarvis.lan (unknown [50.35.68.20])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id BD77D8EE0D7;
+        Sat, 22 Jun 2019 08:31:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1561217510;
+        bh=T65+vk73Z2CaX9Tc5+vGvjBb20vMTuCAgO9aJXpwF4Q=;
+        h=Subject:From:To:Cc:Date:From;
+        b=ALNjQzy7sKBavhitCPabl8p/5nFr775EgND8esZd5m1Ee80LVQA3aISlAw1A0UwAj
+         +CPcbtIjuUmU3KNQQA6ysDhpCBZIgbpWjGWr1TO9nTnErLbXzXURgr434WI42zbcCT
+         vpX5ZUTzr/PELiBRv20myxjZrIzH4D17e7O8UjAg=
+Message-ID: <1561217509.3260.5.camel@HansenPartnership.com>
+Subject: [GIT PULL] SCSI fixes for 5.2-rc5
+From:   James Bottomley <James.Bottomley@HansenPartnership.com>
+To:     Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-scsi <linux-scsi@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Date:   Sat, 22 Jun 2019 08:31:49 -0700
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi All.
+Three driver fixes (and one version number update): a suspend hang in
+ufs, a qla hard lock on module removal and a qedi panic during
+discovery.
 
-My system is
+The patch is available here:
 
-ajay@latitude-3480:~$ uname -a
-Linux latitude-3480 4.13.0-38-generic #43~16.04.1-Ubuntu SMP Wed Mar
-14 17:48:43 UTC 2018 x86_64 x86_64 x86_64 GNU/Linux
+git://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi.git scsi-fixes
 
+The short changelog is:
 
-When I see the address for a symbol, say linux_banner, in
-/boot/System.map-4.13.0-38-generic, it shows
-ffffffff81e00120 R linux_banner
+Arun Easi (1):
+      scsi: qla2xxx: Fix hardlockup in abort command during driver remove
 
-However, when I see it in /proc/kallsyms, it shows
-ffffffffa7000120 R linux_banner
+Nilesh Javali (2):
+      scsi: qedi: update driver version to 8.37.0.20
+      scsi: qedi: Check targetname while finding boot target information
 
-
-Also, I note that /proc/kallsyms addresses vary upon reboots, so I am
-a little confused as to what the entries in /proc/kallsyms really
-mean.
-So, will be grateful for some pointers from the experts :)
+Stanley Chu (1):
+      scsi: ufs: Avoid runtime suspend possibly being blocked forever
 
 
-Thanks and Regards,
-Ajay
+And the diffstat:
+
+ drivers/scsi/qedi/qedi_main.c    |  3 +++
+ drivers/scsi/qedi/qedi_version.h |  6 +++---
+ drivers/scsi/qla2xxx/qla_os.c    |  2 +-
+ drivers/scsi/ufs/ufshcd-pltfrm.c | 11 ++++-------
+ 4 files changed, 11 insertions(+), 11 deletions(-)
+
+With full diff below
+
+James
+
+---
+
+diff --git a/drivers/scsi/qedi/qedi_main.c b/drivers/scsi/qedi/qedi_main.c
+index e5db9a9954dc..a6ff7be0210a 100644
+--- a/drivers/scsi/qedi/qedi_main.c
++++ b/drivers/scsi/qedi/qedi_main.c
+@@ -990,6 +990,9 @@ static int qedi_find_boot_info(struct qedi_ctx *qedi,
+ 		if (!iscsi_is_session_online(cls_sess))
+ 			continue;
+ 
++		if (!sess->targetname)
++			continue;
++
+ 		if (pri_ctrl_flags) {
+ 			if (!strcmp(pri_tgt->iscsi_name, sess->targetname) &&
+ 			    !strcmp(pri_tgt->ip_addr, ep_ip_addr)) {
+diff --git a/drivers/scsi/qedi/qedi_version.h b/drivers/scsi/qedi/qedi_version.h
+index 41bcbbafebd4..2c17544c7785 100644
+--- a/drivers/scsi/qedi/qedi_version.h
++++ b/drivers/scsi/qedi/qedi_version.h
+@@ -7,8 +7,8 @@
+  * this source tree.
+  */
+ 
+-#define QEDI_MODULE_VERSION	"8.33.0.21"
++#define QEDI_MODULE_VERSION	"8.37.0.20"
+ #define QEDI_DRIVER_MAJOR_VER		8
+-#define QEDI_DRIVER_MINOR_VER		33
++#define QEDI_DRIVER_MINOR_VER		37
+ #define QEDI_DRIVER_REV_VER		0
+-#define QEDI_DRIVER_ENG_VER		21
++#define QEDI_DRIVER_ENG_VER		20
+diff --git a/drivers/scsi/qla2xxx/qla_os.c b/drivers/scsi/qla2xxx/qla_os.c
+index 172ef21827dd..d056f5e7cf93 100644
+--- a/drivers/scsi/qla2xxx/qla_os.c
++++ b/drivers/scsi/qla2xxx/qla_os.c
+@@ -1731,8 +1731,8 @@ static void qla2x00_abort_srb(struct qla_qpair *qp, srb_t *sp, const int res,
+ 	     !test_bit(ABORT_ISP_ACTIVE, &vha->dpc_flags) &&
+ 	     !qla2x00_isp_reg_stat(ha))) {
+ 		sp->comp = &comp;
+-		rval = ha->isp_ops->abort_command(sp);
+ 		spin_unlock_irqrestore(qp->qp_lock_ptr, *flags);
++		rval = ha->isp_ops->abort_command(sp);
+ 
+ 		switch (rval) {
+ 		case QLA_SUCCESS:
+diff --git a/drivers/scsi/ufs/ufshcd-pltfrm.c b/drivers/scsi/ufs/ufshcd-pltfrm.c
+index 8a74ec30c3d2..d7d521b394c3 100644
+--- a/drivers/scsi/ufs/ufshcd-pltfrm.c
++++ b/drivers/scsi/ufs/ufshcd-pltfrm.c
+@@ -430,24 +430,21 @@ int ufshcd_pltfrm_init(struct platform_device *pdev,
+ 		goto dealloc_host;
+ 	}
+ 
+-	pm_runtime_set_active(&pdev->dev);
+-	pm_runtime_enable(&pdev->dev);
+-
+ 	ufshcd_init_lanes_per_dir(hba);
+ 
+ 	err = ufshcd_init(hba, mmio_base, irq);
+ 	if (err) {
+ 		dev_err(dev, "Initialization failed\n");
+-		goto out_disable_rpm;
++		goto dealloc_host;
+ 	}
+ 
+ 	platform_set_drvdata(pdev, hba);
+ 
++	pm_runtime_set_active(&pdev->dev);
++	pm_runtime_enable(&pdev->dev);
++
+ 	return 0;
+ 
+-out_disable_rpm:
+-	pm_runtime_disable(&pdev->dev);
+-	pm_runtime_set_suspended(&pdev->dev);
+ dealloc_host:
+ 	ufshcd_dealloc_host(hba);
+ out:
