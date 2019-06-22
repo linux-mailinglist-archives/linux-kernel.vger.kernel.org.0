@@ -2,76 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2A4574F6D0
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2019 18:27:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A4B374F6F1
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2019 18:29:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726338AbfFVQ1P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 22 Jun 2019 12:27:15 -0400
-Received: from mx2.suse.de ([195.135.220.15]:52884 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726276AbfFVQ1P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Jun 2019 12:27:15 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 7A142AE56;
-        Sat, 22 Jun 2019 16:27:13 +0000 (UTC)
-Date:   Sat, 22 Jun 2019 18:27:10 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Ajay Kaher <akaher@vmware.com>
-Cc:     Greg KH <gregkh@linuxfoundation.org>,
-        "Stable tree ," <stable@vger.kernel.org>,
-        "Jason Gunthorpe ," <jgg@mellanox.com>,
-        "linux-mm@kvack.org, LKML ," <linux-kernel@vger.kernel.org>,
-        "Andrea Arcangeli ," <aarcange@redhat.com>,
-        "Jann Horn ," <jannh@google.com>,
-        "Oleg Nesterov ," <oleg@redhat.com>,
-        "Peter Xu ," <peterx@redhat.com>,
-        "Mike Rapoport ," <rppt@linux.ibm.com>,
-        "Andrew Morton ," <akpm@linux-foundation.org>,
-        "Linus Torvalds ," <torvalds@linux-foundation.org>,
-        Joel Fernandes <joel@joelfernandes.org>
-Subject: Re: [PATCH stable-4.4 v3] coredump: fix race condition between
- mmget_not_zero()/get_task_mm() and core dumping
-Message-ID: <20190622162710.GA15805@dhcp22.suse.cz>
-References: <66C05D07-4075-400D-832C-C82120C93922@vmware.com>
+        id S1726439AbfFVQ3B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 22 Jun 2019 12:29:01 -0400
+Received: from sonic301-3.consmr.mail.bf2.yahoo.com ([74.6.129.42]:44042 "EHLO
+        sonic301-3.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726410AbfFVQ2u (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 22 Jun 2019 12:28:50 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1561220929; bh=3fXYToOZXvh5MOJ1JSawYDThjnynC/Ekt2gucIg6zZg=; h=Date:From:Reply-To:Subject:From:Subject; b=FwrBLUl7u665XwQeVPTq5hUQ4Ptv5qPcwgE0MfCyAxPjQW66W+sBKlTITy95Xiak8M/9mL3k87XvuhuNYmdzjOXFqAsXXJ7ZeR0tr0xQhaR4qpp9+I79zHB4JVXDeOtUnrv/ni1DEn3m49tSMIml9+1SbDvUcui/xLYzcB7mOtvlwJJC6bBkcbOwJW8drH7WnSKYQVlUvO9PRg8+IWYABo4m/HoTrmg3JSd7+tfq1bmdsTjreC9G6uwJClVG1p8XyGEOijmNqXv9Ivunj8UzUvxVldTIg/taTAKdSlSG3i+xbnz28LKLpxSK2+M63p52Vf+hNJ0OycyVj1TkO+H8OQ==
+X-YMail-OSG: BClZlNgVM1mJa1pSUAMlnjmDwJQUKDn0osVKNVIeZ6AC0JZQ8NzrV_.P2vPToBw
+ lk4l1yMYy0P1wu9iKWHPF1vwWtED.NCcY6jE.jXdELnZdUngnDzcX.f1Ik7TcPjN._6dUftCNvSG
+ 0ilPDIIh6JKut3rld3EDzfXqVTEprJFL10dLfXEmdNXy8_9HzWnLN9Uxxh6FWr8nj4DbExyF48M8
+ b8CzHn8AtWzh0fDjJqMRXb5UR1L1fHF.mq4wk_41bl8VHLLREhO8D9AiMB_Iou.TvP.xektI4Uzf
+ lBotEg54S8nbe5a5a2eamKaLSiD6XaCIzSQkrGwkgk9qzk7J4361PG1C2lAWhSULJjGYH.uKi9SH
+ 8omXh8MvwuZmVU7umqXbA4eIFWV8ruRR3qRFWtA.2B0Eer.D49EbNovsAu.wRPm8yYyL6YMdaoys
+ 3vYAkjype1yPgR0gHAH3zObnNPMrtMzQfsTzcaha59dNYsVWPRo5EvcFgAIKXVIUqnKnooWuODru
+ O4SgrdrM8PGEZGs5dJS.h.dJB3gwQ.0I1wf1Q_CLgJhbPMrumaMiWl3ifhN9G_CCxrGhRPRltqdB
+ RyAvAXGENXKEJswzM.sYWHkLQyblOWaGX5TLKzeDGaJCZVu7CtZvQ0aNcyWtqrf4SAtE7MK9SqUH
+ 7phABBxeBrGdyDkvdUQOX_EPh25.Hb3SncDKllMEIHjvEdwbQcMGmqMEDVCI8Jh0nfgpjh259ODl
+ q.bGW_sz63_QvjPWXygjUQ4RzfXiei1bHIkvbkPAHc04dS.Qr8LP1Jyxp2QD0wtNtJgo5RScK99X
+ P5NPqcNAR8eez8YgXpk3cKLQCR9JSylhL6QyUVACODhQSLMO_l73eEDpWzNQUeEQLrEwA53TFUO9
+ BXx4lR26gADp4OeWMANR3pTNDn8J7Oc5G1l.tF8AqVFtdsoB5vgCdw0tzoX9_22cJzNNteihaN9H
+ ktOSXaCeUY26x9DWNkYi7HTOCc9F4vHnioRwelB9Lv.KGDeGPUJBBPmfcn0xXC8MB2YTlUFeVHzN
+ FJsHhvFz9eJx.VwEAdhJs3DHW6xmbj9a_RSOf.BoLPiAvMAdoBe_1sVY8nFOqhuBwpkbj17TOzIW
+ ts0JEWafkyantIFw8kEnIr0AHDEAK4aB1fgOVS8TQpbEaj2tB4pKHPa4OOjXszQAPBozr7PYVj2f
+ 6AcwHFYhcmsrFfliX20p43dgFMRY8GMXgvUWeegBAeAuOTxCoUC9WvAdL
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic301.consmr.mail.bf2.yahoo.com with HTTP; Sat, 22 Jun 2019 16:28:49 +0000
+Date:   Sat, 22 Jun 2019 16:28:46 +0000 (UTC)
+From:   "Miss.Fatima Yusuf" <fatimayusuf5@outlook.fr>
+Reply-To: miss.fmayusuf11@gmail.com
+Message-ID: <270302503.296556.1561220926635@mail.yahoo.com>
+Subject: From:Miss: Fatima Yusuf.
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <66C05D07-4075-400D-832C-C82120C93922@vmware.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat 22-06-19 06:30:37, Ajay Kaher wrote:
-> 
-> > On Mon, Jun 17, 2019 at 08:58:24AM +0200, Michal Hocko wrote:
-> > > From: Andrea Arcangeli <aarcange@redhat.com>
-> > > 
-> > > Upstream 04f5866e41fb70690e28397487d8bd8eea7d712a commit.
-> > > 
-> > > Signed-off-by: Michal Hocko <mhocko@suse.com>
-> > > ---
-> > >  drivers/android/binder.c          |  6 ++++++
-> > >  drivers/infiniband/hw/mlx4/main.c |  3 +++
-> > >  fs/proc/task_mmu.c                | 18 ++++++++++++++++++
-> > >  fs/userfaultfd.c                  | 10 ++++++++--
-> > >  include/linux/mm.h                | 21 +++++++++++++++++++++
-> > >  mm/mmap.c                         |  7 ++++++-
-> > >  6 files changed, 62 insertions(+), 3 deletions(-)
-> >
-> > I've queued this up now, as it looks like everyone agrees with it.  What
-> > about a 4.9.y backport?
-> 
-> Greg, it's here please review.
-> https://lore.kernel.org/stable/1561208539-29682-1-git-send-email-akaher@vmware.com/T/#m53eaf6e687cb27e46395173aa74a85c2ccb5c190
-> 
-> Michal, patched for binder code Thanks, would you like to suggest 
-> if mmget_still_valid check require anywhere for khugepaged code.
 
-khugepaged patch has gone its own way. See 59ea6d06cfa9 ("coredump: fix
-race condition between collapse_huge_page() and core dumping")
--- 
-Michal Hocko
-SUSE Labs
+
+From:Miss: Fatima Yusuf.
+
+For sure this mail would definitely come to you as a surprise, but do take your good time to go through it, My name is Ms. Fatima Yusuf,i am from Ivory Coast.
+
+I lost my parents a year and couple of months ago. My father was a serving director of the Agro-exporting board until his death. He was assassinated by his business partners.Before his death, he made a deposit of US$9.7 Million Dollars here in Cote d'ivoire which was for the purchase of cocoa processing machine and development of another factory before his untimely death.
+
+Being that this part of the world experiences political and crises time without number, there is no guarantee of lives and properties. I cannot invest this money here any long, despite the fact it had been my late father's industrial plans.
+
+I want you to do me a favor to receive this funds into your country or any safer place as the beneficiary, I have plans to invest this money in continuation with the investment vision of my late father, but not in this place again rather in your country. I have the vision of going into real estate and industrial production or any profitable business venture.
+
+I will be ready to compensate you with 20% of the total Amount, now all my hope is banked on you and i really wants to invest this money in your country, where there is stability of Government, political and economic welfare.
+
+My greatest worry now is how to move out of this country because my uncle is threatening to kill me as he killed my father,Please do not let anybody hear about this, it is between me and you alone because of my security reason.
+
+I am waiting to hear from you.
+Yours Sincerely,
+Miss.Fatima Yusuf.
