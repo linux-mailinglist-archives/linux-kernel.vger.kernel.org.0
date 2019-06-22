@@ -2,144 +2,243 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2DF4E4F501
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2019 11:55:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C31814F507
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2019 11:58:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726307AbfFVJzR convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Sat, 22 Jun 2019 05:55:17 -0400
-Received: from mout.kundenserver.de ([212.227.17.13]:50825 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726112AbfFVJzQ (ORCPT
+        id S1726333AbfFVJ6t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 22 Jun 2019 05:58:49 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:42503 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726112AbfFVJ6s (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Jun 2019 05:55:16 -0400
-Received: from [192.168.1.162] ([37.4.249.111]) by mrelayeu.kundenserver.de
- (mreue106 [212.227.15.183]) with ESMTPSA (Nemesis) id
- 1MG9wg-1hoT1Z3SrE-00GYeg; Sat, 22 Jun 2019 11:54:49 +0200
-Subject: Re: [PATCH v4 0/7] cpufreq support for Raspberry Pi
-From:   Stefan Wahren <stefan.wahren@i2se.com>
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Mike Turquette <mturquette@baylibre.com>
-Cc:     Florian Fainelli <f.fainelli@gmail.com>,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        linux-kernel@vger.kernel.org, mbrugger@suse.de,
-        viresh.kumar@linaro.org, rjw@rjwysocki.net, eric@anholt.net,
-        bcm-kernel-feedback-list@broadcom.com, ptesarik@suse.com,
-        linux-rpi-kernel@lists.infradead.org, ssuloev@orpaltech.com,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-pm@vger.kernel.org
-References: <20190612182500.4097-1-nsaenzjulienne@suse.de>
- <6a9e1450-80ad-a13c-59d2-d0b39f25f67e@gmail.com>
- <7acfd967-0a82-5429-4eed-8b802e6620f5@i2se.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=stefan.wahren@i2se.com; keydata=
- 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 AQ==
-Message-ID: <d8b20179-45ef-479a-47dc-390a4a2dfddf@i2se.com>
-Date:   Sat, 22 Jun 2019 11:54:47 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.1
+        Sat, 22 Jun 2019 05:58:48 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x5M9w46o2091252
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Sat, 22 Jun 2019 02:58:04 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x5M9w46o2091252
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019061801; t=1561197485;
+        bh=Zb1aczCSwjeM4FnlWDbA0IIgq4qu93j8a+0qITByBbs=;
+        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
+        b=UgjqXsM/7giP8e/TwMucE7Qmt5pVw/4Jrbik+zwCKvseCJARmF3mc1pzKVp5SiP/X
+         /WaC8UfbsbwSHz/jx1wMD3t0y4lQu7GEyIpOEPEhumEB0PlXWezDshQcLwX/L4603q
+         kFoj5/qZw0oQ+wX2yFLh9y5T3N2MICk7fuB0ZDdiZ7wf3l8EWi6s3qsZPO2WcDxqR7
+         EB/+dZOps3mHfdRcduPmRgbIFLiWALe5P6X0lZ0utqKg2zHPTdxESSmGuCoecV7Gdz
+         2hM172kO4GhQ5n+WLxef+0lpJwVq1jIMT3zEr2RPCzRIgF5IO+MTrQJ+L1gCxsHqXk
+         f6cRVWxr5X2rw==
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x5M9w3M72091249;
+        Sat, 22 Jun 2019 02:58:03 -0700
+Date:   Sat, 22 Jun 2019 02:58:03 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Kees Cook <tipbot@zytor.com>
+Message-ID: <tip-873d50d58f67ef15d2777b5e7f7a5268bb1fbae2@git.kernel.org>
+Cc:     keescook@chromium.org, hpa@zytor.com, mingo@kernel.org,
+        torvalds@linux-foundation.org, dave.hansen@intel.com,
+        linux-kernel@vger.kernel.org, tglx@linutronix.de,
+        peterz@infradead.org
+Reply-To: mingo@kernel.org, torvalds@linux-foundation.org,
+          dave.hansen@intel.com, linux-kernel@vger.kernel.org,
+          keescook@chromium.org, hpa@zytor.com, tglx@linutronix.de,
+          peterz@infradead.org
+In-Reply-To: <20190618045503.39105-3-keescook@chromium.org>
+References: <20190618045503.39105-3-keescook@chromium.org>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/asm] x86/asm: Pin sensitive CR4 bits
+Git-Commit-ID: 873d50d58f67ef15d2777b5e7f7a5268bb1fbae2
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-In-Reply-To: <7acfd967-0a82-5429-4eed-8b802e6620f5@i2se.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Content-Language: en-US
-X-Provags-ID: V03:K1:kNVNWkAjuEb7vVPkGdiQQKKmCJU8LtLX0sh+gtr0KzMusrY4L1K
- WyeiwBUxZtVlmhaLqVUZkU865SX7UDf78Q+0dQ2L2wKmqwMhCSPNpqlYL7GHgb4CSrkewru
- EkvEVQlUmXu0zESbj+3YvSykrgtvGogfULKzeWL/31pQ+iqSakaY4pcTVvqcgOip1ViKSo3
- HJQZUEPr/2G+/NI2n1SDA==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:4OBIfy33c0Q=:sW/r3Ga/IfW0VsTiAv6ve/
- xYL0+TlPU1HSAZaE3jL9vbAvIpe0zwOOlJUtIKra2OkwV6r73fLvbKw3M6BHtwVqXlVyrjGeO
- +UGUtSbTWXOtRXPnV1TnSqs04JnRZyInCYqN08opCGsy11/3imhIoo/UsL3glMUYr+djkOTQi
- yJB7udc+6zSEIhj8Tc+/Q2pD7ooWYuhN/rMqjDRk0oAyLPhPWNhrDfQ5TSC6NXhrmR/F1g03Z
- fQMzSyuPyveUuXiSh1hRcQQt2rGm4P7nnD2RPlFjDNqwrLd8rMRFXEOf9JTo4cEdoNwQeVuOA
- NC/owZOW0/KmiOC/vUhFqTmef4ELCMs6wsbR8dKJbRJavzc68CPq8MqQjlUvuzRzkm3RxmXq6
- KMQsOhGkacGoZLGaVE1WmrkNoe+hHXWK8SnD/iMJJsK5K4spmAaepIVLM5tEwuTEBYAAgyUF8
- GB6nFPs1fGqEWKxIIU98MJWJCMXOFEocqMB0U+r0E9BR24Tc+mz16SDLtXpXhPT8jkCaDFjDG
- Kkruupffgf4kkX1QURUS6CEr44W677rCEcORWszvZg/zBo7mSTcQFW0vKK3/RtgNeP6Wtxp56
- 4z740VPg0lfNVXuLGMiJIb90WsHn0hypWcWjAO2XcU1rnAKQGhoycfhLAx3MDiuJGjSfoFYiu
- wEx6rXbBV/sTIzdUR8K2Cfd7EUwisqJ5nuJNQ1cAZBBUa59j+AKk1v3xBAmZBetuM4gngObs1
- FVJO94Ics+gfHODofTZvPoWntmJ2UBmNTlx/Q1q5HYycMxGDdfg/b2Aum+4=
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
+X-Spam-Status: No, score=-3.1 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF autolearn=ham
+        autolearn_force=no version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Stephen,
-hi Mike,
+Commit-ID:  873d50d58f67ef15d2777b5e7f7a5268bb1fbae2
+Gitweb:     https://git.kernel.org/tip/873d50d58f67ef15d2777b5e7f7a5268bb1fbae2
+Author:     Kees Cook <keescook@chromium.org>
+AuthorDate: Mon, 17 Jun 2019 21:55:02 -0700
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Sat, 22 Jun 2019 11:55:22 +0200
 
-Am 13.06.19 um 06:31 schrieb Stefan Wahren:
-> Hi Florian,
-> hi Stephen,
->
-> Am 13.06.19 um 05:31 schrieb Florian Fainelli:
->> On 6/12/2019 11:24 AM, Nicolas Saenz Julienne wrote:
->>> Hi all,
->>> this aims at adding cpufreq support to the Raspberry Pi family of
->>> boards.
->>>
->>> The series first factors out 'pllb' from clk-bcm2385 and creates a new
->>> clk driver that operates it over RPi's firmware interface[1]. We are
->>> forced to do so as the firmware 'owns' the pll and we're not allowed to
->>> change through the register interface directly as we might race with the
->>> over-temperature and under-voltage protections provided by the firmware.
->>>
->>> Next it creates a minimal cpufreq driver that populates the CPU's opp
->>> table, and registers cpufreq-dt. Which is needed as the firmware
->>> controls the max and min frequencies available.
->>>
->>> This was tested on a RPi3b+ and RPI2b, both using multi_v7_defconfig and
->>> arm64's defconfig.
->> How do we go about merging this? Stefan, will you pick up patch 3, 6 and
->> 7 and submit them for 5.3/5.4? Viresh has already picked up patch 4.
-> is it possible to let patches 1,2, 3 and 5 go via clk-tree?
->
-> I would take care of 6 and 7.
->
-> Stefan
-are you fine with the series, since Viresh already picked up patch 4?
+x86/asm: Pin sensitive CR4 bits
 
-are you okay with my suggestion above?
+Several recent exploits have used direct calls to the native_write_cr4()
+function to disable SMEP and SMAP before then continuing their exploits
+using userspace memory access.
 
-Stefan
+Direct calls of this form can be mitigate by pinning bits of CR4 so that
+they cannot be changed through a common function. This is not intended to
+be a general ROP protection (which would require CFI to defend against
+properly), but rather a way to avoid trivial direct function calling (or
+CFI bypasses via a matching function prototype) as seen in:
 
+https://googleprojectzero.blogspot.com/2017/05/exploiting-linux-kernel-via-packet.html
+(https://github.com/xairy/kernel-exploits/tree/master/CVE-2017-7308)
 
+The goals of this change:
+
+ - Pin specific bits (SMEP, SMAP, and UMIP) when writing CR4.
+
+ - Avoid setting the bits too early (they must become pinned only after
+   CPU feature detection and selection has finished).
+
+ - Pinning mask needs to be read-only during normal runtime.
+
+ - Pinning needs to be checked after write to validate the cr4 state
+
+Using __ro_after_init on the mask is done so it can't be first disabled
+with a malicious write.
+
+Since these bits are global state (once established by the boot CPU and
+kernel boot parameters), they are safe to write to secondary CPUs before
+those CPUs have finished feature detection. As such, the bits are set at
+the first cr4 write, so that cr4 write bugs can be detected (instead of
+silently papered over). This uses a few bytes less storage of a location we
+don't have: read-only per-CPU data.
+
+A check is performed after the register write because an attack could just
+skip directly to the register write. Such a direct jump is possible because
+of how this function may be built by the compiler (especially due to the
+removal of frame pointers) where it doesn't add a stack frame (function
+exit may only be a retq without pops) which is sufficient for trivial
+exploitation like in the timer overwrites mentioned above).
+
+The asm argument constraints gain the "+" modifier to convince the compiler
+that it shouldn't make ordering assumptions about the arguments or memory,
+and treat them as changed.
+
+Signed-off-by: Kees Cook <keescook@chromium.org>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Dave Hansen <dave.hansen@intel.com>
+Cc: kernel-hardening@lists.openwall.com
+Link: https://lkml.kernel.org/r/20190618045503.39105-3-keescook@chromium.org
+
+---
+ arch/x86/include/asm/special_insns.h | 22 +++++++++++++++++++++-
+ arch/x86/kernel/cpu/common.c         | 20 ++++++++++++++++++++
+ arch/x86/kernel/smpboot.c            |  8 +++++++-
+ 3 files changed, 48 insertions(+), 2 deletions(-)
+
+diff --git a/arch/x86/include/asm/special_insns.h b/arch/x86/include/asm/special_insns.h
+index 0a3c4cab39db..c8c8143ab27b 100644
+--- a/arch/x86/include/asm/special_insns.h
++++ b/arch/x86/include/asm/special_insns.h
+@@ -6,6 +6,8 @@
+ #ifdef __KERNEL__
+ 
+ #include <asm/nops.h>
++#include <asm/processor-flags.h>
++#include <linux/jump_label.h>
+ 
+ /*
+  * Volatile isn't enough to prevent the compiler from reordering the
+@@ -16,6 +18,10 @@
+  */
+ extern unsigned long __force_order;
+ 
++/* Starts false and gets enabled once CPU feature detection is done. */
++DECLARE_STATIC_KEY_FALSE(cr_pinning);
++extern unsigned long cr4_pinned_bits;
++
+ static inline unsigned long native_read_cr0(void)
+ {
+ 	unsigned long val;
+@@ -74,7 +80,21 @@ static inline unsigned long native_read_cr4(void)
+ 
+ static inline void native_write_cr4(unsigned long val)
+ {
+-	asm volatile("mov %0,%%cr4": : "r" (val), "m" (__force_order));
++	unsigned long bits_missing = 0;
++
++set_register:
++	asm volatile("mov %0,%%cr4": "+r" (val), "+m" (cr4_pinned_bits));
++
++	if (static_branch_likely(&cr_pinning)) {
++		if (unlikely((val & cr4_pinned_bits) != cr4_pinned_bits)) {
++			bits_missing = ~val & cr4_pinned_bits;
++			val |= bits_missing;
++			goto set_register;
++		}
++		/* Warn after we've set the missing bits. */
++		WARN_ONCE(bits_missing, "CR4 bits went missing: %lx!?\n",
++			  bits_missing);
++	}
+ }
+ 
+ #ifdef CONFIG_X86_64
+diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
+index 2c57fffebf9b..c578addfcf8a 100644
+--- a/arch/x86/kernel/cpu/common.c
++++ b/arch/x86/kernel/cpu/common.c
+@@ -366,6 +366,25 @@ out:
+ 	cr4_clear_bits(X86_CR4_UMIP);
+ }
+ 
++DEFINE_STATIC_KEY_FALSE_RO(cr_pinning);
++EXPORT_SYMBOL(cr_pinning);
++unsigned long cr4_pinned_bits __ro_after_init;
++EXPORT_SYMBOL(cr4_pinned_bits);
++
++/*
++ * Once CPU feature detection is finished (and boot params have been
++ * parsed), record any of the sensitive CR bits that are set, and
++ * enable CR pinning.
++ */
++static void __init setup_cr_pinning(void)
++{
++	unsigned long mask;
++
++	mask = (X86_CR4_SMEP | X86_CR4_SMAP | X86_CR4_UMIP);
++	cr4_pinned_bits = this_cpu_read(cpu_tlbstate.cr4) & mask;
++	static_key_enable(&cr_pinning.key);
++}
++
+ /*
+  * Protection Keys are not available in 32-bit mode.
+  */
+@@ -1464,6 +1483,7 @@ void __init identify_boot_cpu(void)
+ 	enable_sep_cpu();
+ #endif
+ 	cpu_detect_tlb(&boot_cpu_data);
++	setup_cr_pinning();
+ }
+ 
+ void identify_secondary_cpu(struct cpuinfo_x86 *c)
+diff --git a/arch/x86/kernel/smpboot.c b/arch/x86/kernel/smpboot.c
+index 362dd8953f48..1af7a2d89419 100644
+--- a/arch/x86/kernel/smpboot.c
++++ b/arch/x86/kernel/smpboot.c
+@@ -205,13 +205,19 @@ static int enable_start_cpu0;
+  */
+ static void notrace start_secondary(void *unused)
+ {
++	unsigned long cr4 = __read_cr4();
++
+ 	/*
+ 	 * Don't put *anything* except direct CPU state initialization
+ 	 * before cpu_init(), SMP booting is too fragile that we want to
+ 	 * limit the things done here to the most necessary things.
+ 	 */
+ 	if (boot_cpu_has(X86_FEATURE_PCID))
+-		__write_cr4(__read_cr4() | X86_CR4_PCIDE);
++		cr4 |= X86_CR4_PCIDE;
++	if (static_branch_likely(&cr_pinning))
++		cr4 |= cr4_pinned_bits;
++
++	__write_cr4(cr4);
+ 
+ #ifdef CONFIG_X86_32
+ 	/* switch away from the initial page table */
