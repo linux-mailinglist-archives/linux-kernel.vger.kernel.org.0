@@ -2,478 +2,241 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3676B4F53B
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2019 12:25:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 84A944F512
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2019 12:09:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726357AbfFVKZS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 22 Jun 2019 06:25:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48298 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726112AbfFVKZS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Jun 2019 06:25:18 -0400
-Received: from archlinux (cpc149474-cmbg20-2-0-cust94.5-4.cable.virginm.net [82.4.196.95])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9C1CA2075E;
-        Sat, 22 Jun 2019 10:25:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561199116;
-        bh=KAGG74HFs0qnbDhzuy88Dh54pxhgZXlhCGOiJW1r0I4=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=DgMcbIv2mrOV2mCx2w4t4PlAMEQl8dWkYtuT0sRZq51/8BOugHv3i9hf+4Q44sBlf
-         C/vQWu78KQZa3g7rP+6V40hic+amEMT+9p9zFVXps+WYeIFvE0r/RVMMY4EKIkhjB4
-         MGf7kOEIJPNQUkOyNaY9KEbNqUinp7Tmn5CqEYKU=
-Date:   Sat, 22 Jun 2019 11:07:15 +0100
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Fabien Lahoudere <fabien.lahoudere@collabora.com>
-Cc:     kernel@collabora.com, Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 2/8] iio: common: cros_ec_sensors: move channels to
- core structure
-Message-ID: <20190622110715.4d614f29@archlinux>
-In-Reply-To: <c17b3dc3e268b3eff08bc524175b84ca7feb8ed6.1560848479.git.fabien.lahoudere@collabora.com>
-References: <cover.1560848479.git.fabien.lahoudere@collabora.com>
-        <c17b3dc3e268b3eff08bc524175b84ca7feb8ed6.1560848479.git.fabien.lahoudere@collabora.com>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1726287AbfFVKI7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 22 Jun 2019 06:08:59 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:37689 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726112AbfFVKI7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 22 Jun 2019 06:08:59 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x5MA7dNL2096180
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Sat, 22 Jun 2019 03:07:39 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x5MA7dNL2096180
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019061801; t=1561198059;
+        bh=ibOFgSb/u+fjBRekLJqG7MSpW+l3TBIfNynhEDNqUho=;
+        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
+        b=y2E8XlKylqBJ/5WcXuxZ/EMkVFCCy4jSI5n2l6cq+wK1AAeOk1UdxIqxyOGA3H5z8
+         5sNmzGpMyKB4yG5C96z/GYcRfx/scnE9T+KckQP3o9WEHREdNWwz8dsNnCzuYmzpY9
+         JTLn9m/qbgF+SIsFuZBWYdCIyr36yjPSafGfgAI3I5P3g7XEH+Y6cIVjFSQuB66crq
+         eMAWgI0ehxJNPLCcjPi5vx0q0euF5dM7cnAm2pxEqZyYvLAUcIiUm6br9Q9wv3FszD
+         +zOFr4Dhgw8w9ljtuLckaqoIXzuY8eIk83kGB45UBZ3zywR9cwhsW6cPgCAumyOn8G
+         TBR/QVCk3BGHg==
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x5MA7cQq2096174;
+        Sat, 22 Jun 2019 03:07:38 -0700
+Date:   Sat, 22 Jun 2019 03:07:38 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   "tip-bot for Chang S. Bae" <tipbot@zytor.com>
+Message-ID: <tip-a86b4625138d39e97b4cc254fc9c4bb9e1dc4542@git.kernel.org>
+Cc:     tglx@linutronix.de, mingo@kernel.org, andrew.cooper3@citrix.com,
+        hpa@zytor.com, ravi.v.shankar@intel.com, chang.seok.bae@intel.com,
+        linux-kernel@vger.kernel.org, ak@linux.intel.com, luto@kernel.org
+Reply-To: hpa@zytor.com, andrew.cooper3@citrix.com,
+          chang.seok.bae@intel.com, ravi.v.shankar@intel.com,
+          ak@linux.intel.com, linux-kernel@vger.kernel.org,
+          luto@kernel.org, tglx@linutronix.de, mingo@kernel.org
+In-Reply-To: <1557309753-24073-7-git-send-email-chang.seok.bae@intel.com>
+References: <1557309753-24073-7-git-send-email-chang.seok.bae@intel.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/cpu] x86/fsgsbase/64: Enable FSGSBASE instructions in
+ helper functions
+Git-Commit-ID: a86b4625138d39e97b4cc254fc9c4bb9e1dc4542
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
+X-Spam-Status: No, score=-3.1 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF autolearn=ham
+        autolearn_force=no version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 18 Jun 2019 11:06:33 +0200
-Fabien Lahoudere <fabien.lahoudere@collabora.com> wrote:
+Commit-ID:  a86b4625138d39e97b4cc254fc9c4bb9e1dc4542
+Gitweb:     https://git.kernel.org/tip/a86b4625138d39e97b4cc254fc9c4bb9e1dc4542
+Author:     Chang S. Bae <chang.seok.bae@intel.com>
+AuthorDate: Wed, 8 May 2019 03:02:21 -0700
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Sat, 22 Jun 2019 11:38:52 +0200
 
-> To avoid code duplication, we move channels initialization in
-> cros_ec_sensors_core.
-> 
-> Signed-off-by: Fabien Lahoudere <fabien.lahoudere@collabora.com>
-Hi Fabien,
+x86/fsgsbase/64: Enable FSGSBASE instructions in helper functions
 
-In of itself a fairly minor gain in code sharing and at some slight
-cost in readability. Still on balance worthwhile I think.
-Minor stuff inline.
+Add cpu feature conditional FSGSBASE access to the relevant helper
+functions. That allows to accelerate certain FS/GS base operations in
+subsequent changes.
 
-Thanks,
+Note, that while possible, the user space entry/exit GSBASE operations are
+not going to use the new FSGSBASE instructions. The reason is that it would
+require additional storage for the user space value which adds more
+complexity to the low level code and experiments have shown marginal
+benefit. This may be revisited later but for now the SWAPGS based handling
+in the entry code is preserved except for the paranoid entry/exit code.
 
-Jonathan
+To preserve the SWAPGS entry mechanism introduce __[rd|wr]gsbase_inactive()
+helpers. Note, for Xen PV, paravirt hooks can be added later as they might
+allow a very efficient but different implementation.
 
-> ---
->  .../common/cros_ec_sensors/cros_ec_sensors.c  | 49 ++++++-------------
->  .../cros_ec_sensors/cros_ec_sensors_core.c    | 25 +++++++++-
->  drivers/iio/light/cros_ec_light_prox.c        | 42 ++++------------
->  drivers/iio/pressure/cros_ec_baro.c           | 38 +++-----------
->  .../linux/iio/common/cros_ec_sensors_core.h   | 24 ++++++++-
->  5 files changed, 78 insertions(+), 100 deletions(-)
-> 
-> diff --git a/drivers/iio/common/cros_ec_sensors/cros_ec_sensors.c b/drivers/iio/common/cros_ec_sensors/cros_ec_sensors.c
-> index c59b0ab8fe7d..897dc83a3355 100644
-> --- a/drivers/iio/common/cros_ec_sensors/cros_ec_sensors.c
-> +++ b/drivers/iio/common/cros_ec_sensors/cros_ec_sensors.c
-> @@ -28,8 +28,6 @@
->  struct cros_ec_sensors_state {
->  	/* Shared by all sensors */
->  	struct cros_ec_sensors_core_state core;
-> -
-> -	struct iio_chan_spec channels[CROS_EC_SENSORS_MAX_CHANNELS];
->  };
->  
->  static int cros_ec_sensors_read(struct iio_dev *indio_dev,
-> @@ -178,7 +176,6 @@ static int cros_ec_sensors_probe(struct platform_device *pdev)
->  	struct cros_ec_dev *ec_dev = dev_get_drvdata(dev->parent);
->  	struct iio_dev *indio_dev;
->  	struct cros_ec_sensors_state *state;
-> -	struct iio_chan_spec *channel;
->  	int ret, i;
->  
->  	if (!ec_dev || !ec_dev->ec_dev) {
-> @@ -186,63 +183,49 @@ static int cros_ec_sensors_probe(struct platform_device *pdev)
->  		return -EINVAL;
->  	}
->  
-> -	indio_dev = devm_iio_device_alloc(&pdev->dev, sizeof(*state));
-> -	if (!indio_dev)
-> -		return -ENOMEM;
-> -
-> -	ret = cros_ec_sensors_core_init(pdev, indio_dev, true);
-> +	ret = cros_ec_sensors_core_init(pdev, sizeof(*state),
-> +					CROS_EC_SENSORS_MAX_CHANNELS, true);
->  	if (ret)
->  		return ret;
->  
-> +	indio_dev = platform_get_drvdata(pdev);
->  	state = iio_priv(indio_dev);
-> -	for (channel = state->channels, i = CROS_EC_SENSOR_X;
-> -	     i < CROS_EC_SENSOR_MAX_AXIS; i++, channel++) {
-> +	for (i = CROS_EC_SENSOR_X; i < CROS_EC_SENSOR_MAX_AXIS; i++) {
->  		/* Common part */
-> -		channel->info_mask_separate =
-> +		cros_ec_core_channel_init(state->core.channels, i + 1);
-Given this is kind of 'partially' initializing the channel, perhaps
-we can name it as something that hints at that.
+[ tglx: Massaged changelog ]
 
-cros_ec_core_channel_common_init() or something like that?
+Signed-off-by: Chang S. Bae <chang.seok.bae@intel.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Ravi Shankar <ravi.v.shankar@intel.com>
+Cc: Andrew Cooper <andrew.cooper3@citrix.com>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Link: https://lkml.kernel.org/r/1557309753-24073-7-git-send-email-chang.seok.bae@intel.com
 
-> +		state->core.channels[i + 1].info_mask_separate =
->  			BIT(IIO_CHAN_INFO_RAW) |
->  			BIT(IIO_CHAN_INFO_CALIBBIAS);
-> -		channel->info_mask_shared_by_all =
-> +		state->core.channels[i + 1].info_mask_shared_by_all =
->  			BIT(IIO_CHAN_INFO_SCALE) |
->  			BIT(IIO_CHAN_INFO_FREQUENCY) |
->  			BIT(IIO_CHAN_INFO_SAMP_FREQ);
-> -		channel->scan_type.realbits = CROS_EC_SENSOR_BITS;
-> -		channel->scan_type.storagebits = CROS_EC_SENSOR_BITS;
-> -		channel->scan_index = i;
-> -		channel->ext_info = cros_ec_sensors_ext_info;
-> -		channel->modified = 1;
-> -		channel->channel2 = IIO_MOD_X + i;
-> -		channel->scan_type.sign = 's';
-> +		state->core.channels[i + 1].scan_index = i;
-> +		state->core.channels[i + 1].modified = 1;
-> +		state->core.channels[i + 1].channel2 = IIO_MOD_X + i;
-> +		state->core.channels[i + 1].scan_type.sign = 's';
->  
->  		/* Sensor specific */
->  		switch (state->core.type) {
->  		case MOTIONSENSE_TYPE_ACCEL:
-> -			channel->type = IIO_ACCEL;
-> +			state->core.channels[i + 1].type = IIO_ACCEL;
->  			break;
->  		case MOTIONSENSE_TYPE_GYRO:
-> -			channel->type = IIO_ANGL_VEL;
-> +			state->core.channels[i + 1].type = IIO_ANGL_VEL;
->  			break;
->  		case MOTIONSENSE_TYPE_MAG:
-> -			channel->type = IIO_MAGN;
-> +			state->core.channels[i + 1].type = IIO_MAGN;
->  			break;
->  		default:
->  			dev_err(&pdev->dev, "Unknown motion sensor\n");
->  			return -EINVAL;
->  		}
->  	}
-> +	state->core.channels[0].scan_index = CROS_EC_SENSOR_MAX_AXIS;
-> +
->  	state->core.info.read_raw = &cros_ec_sensors_read;
->  	state->core.info.write_raw = &cros_ec_sensors_write;
->  
-> -	/* Timestamp */
-> -	channel->type = IIO_TIMESTAMP;
-> -	channel->channel = -1;
-> -	channel->scan_index = CROS_EC_SENSOR_MAX_AXIS;
-> -	channel->scan_type.sign = 's';
-> -	channel->scan_type.realbits = 64;
-> -	channel->scan_type.storagebits = 64;
-> -
-> -	indio_dev->channels = state->channels;
-> -	indio_dev->num_channels = CROS_EC_SENSORS_MAX_CHANNELS;
-> -
->  	/* There is only enough room for accel and gyro in the io space */
->  	if ((state->core.ec->cmd_readmem != NULL) &&
->  	    (state->core.type != MOTIONSENSE_TYPE_MAG))
-> diff --git a/drivers/iio/common/cros_ec_sensors/cros_ec_sensors_core.c b/drivers/iio/common/cros_ec_sensors/cros_ec_sensors_core.c
-> index a1b324e1a5d8..e5181e007dd7 100644
-> --- a/drivers/iio/common/cros_ec_sensors/cros_ec_sensors_core.c
-> +++ b/drivers/iio/common/cros_ec_sensors/cros_ec_sensors_core.c
-> @@ -26,15 +26,25 @@ static char *cros_ec_loc[] = {
->  };
->  
->  int cros_ec_sensors_core_init(struct platform_device *pdev,
-> -			      struct iio_dev *indio_dev,
-> +			      int sizeof_priv,
-> +			      int num_channels,
->  			      bool physical_device)
->  {
->  	struct device *dev = &pdev->dev;
-> -	struct cros_ec_sensors_core_state *state = iio_priv(indio_dev);
-> +	struct cros_ec_sensors_core_state *state;
->  	struct cros_ec_dev *ec = dev_get_drvdata(pdev->dev.parent);
->  	struct cros_ec_sensor_platform *sensor_platform = dev_get_platdata(dev);
-> +	struct iio_dev *indio_dev;
-> +
-> +	if (num_channels > CROS_EC_SENSORS_CORE_MAX_CHANNELS)
-> +		return -EINVAL;
-> +
-> +	indio_dev = devm_iio_device_alloc(dev, sizeof_priv);
-> +	if (!indio_dev)
-> +		return -ENOMEM;
->  
->  	platform_set_drvdata(pdev, indio_dev);
-> +	state = iio_priv(indio_dev);
->  
->  	state->ec = ec->ec_dev;
->  	state->msg = devm_kzalloc(&pdev->dev,
-> @@ -70,6 +80,17 @@ int cros_ec_sensors_core_init(struct platform_device *pdev,
->  
->  	indio_dev->info = &state->info;
->  
-> +	/* Timestamp channel */
-> +	state->channels[0].type = IIO_TIMESTAMP;
-> +	state->channels[0].channel = -1;
-> +	state->channels[0].scan_index = 0;
-> +	state->channels[0].scan_type.sign = 's';
-> +	state->channels[0].scan_type.realbits = 64;
-> +	state->channels[0].scan_type.storagebits = 64;
-> +
-> +	indio_dev->channels = state->channels;
-> +	indio_dev->num_channels = num_channels;
-> +
->  	return 0;
->  }
->  EXPORT_SYMBOL_GPL(cros_ec_sensors_core_init);
-> diff --git a/drivers/iio/light/cros_ec_light_prox.c b/drivers/iio/light/cros_ec_light_prox.c
-> index b319d95fb70f..32ea5afd495f 100644
-> --- a/drivers/iio/light/cros_ec_light_prox.c
-> +++ b/drivers/iio/light/cros_ec_light_prox.c
-> @@ -31,8 +31,6 @@
->  struct cros_ec_light_prox_state {
->  	/* Shared by all sensors */
->  	struct cros_ec_sensors_core_state core;
-> -
-> -	struct iio_chan_spec channels[CROS_EC_LIGHT_PROX_MAX_CHANNELS];
->  };
->  
->  static int cros_ec_light_prox_read(struct iio_dev *indio_dev,
-> @@ -167,7 +165,6 @@ static int cros_ec_light_prox_probe(struct platform_device *pdev)
->  	struct cros_ec_dev *ec_dev = dev_get_drvdata(dev->parent);
->  	struct iio_dev *indio_dev;
->  	struct cros_ec_light_prox_state *state;
-> -	struct iio_chan_spec *channel;
->  	int ret;
->  
->  	if (!ec_dev || !ec_dev->ec_dev) {
-> @@ -175,46 +172,38 @@ static int cros_ec_light_prox_probe(struct platform_device *pdev)
->  		return -EINVAL;
->  	}
->  
-> -	indio_dev = devm_iio_device_alloc(dev, sizeof(*state));
-> -	if (!indio_dev)
-> -		return -ENOMEM;
-> -
-> -	ret = cros_ec_sensors_core_init(pdev, indio_dev, true);
-> +	ret = cros_ec_sensors_core_init(pdev, sizeof(*state),
-> +					CROS_EC_LIGHT_PROX_MAX_CHANNELS, true);
->  	if (ret)
->  		return ret;
->  
-> +	indio_dev = platform_get_drvdata(pdev);
->  	state = iio_priv(indio_dev);
->  	state->core.type = state->core.resp->info.type;
->  	state->core.loc = state->core.resp->info.location;
->  	state->core.info.read_raw = &cros_ec_light_prox_read;
->  	state->core.info.write_raw = &cros_ec_light_prox_write;
-> -	channel = state->channels;
->  
->  	/* Common part */
-> -	channel->info_mask_shared_by_all =
-> +	cros_ec_core_channel_init(state->core.channels, 1);
-> +	state->core.channels[1].info_mask_shared_by_all =
->  		BIT(IIO_CHAN_INFO_SAMP_FREQ) |
->  		BIT(IIO_CHAN_INFO_FREQUENCY);
-> -	channel->scan_type.realbits = CROS_EC_SENSOR_BITS;
-> -	channel->scan_type.storagebits = CROS_EC_SENSOR_BITS;
-> -	channel->scan_type.shift = 0;
-> -	channel->scan_index = 0;
-> -	channel->ext_info = cros_ec_sensors_ext_info;
-> -	channel->scan_type.sign = 'u';
->  
->  	state->core.calib[0] = 0;
->  
->  	/* Sensor specific */
->  	switch (state->core.type) {
->  	case MOTIONSENSE_TYPE_LIGHT:
-> -		channel->type = IIO_LIGHT;
-> -		channel->info_mask_separate =
-> +		state->core.channels[1].type = IIO_LIGHT;
-> +		state->core.channels[1].info_mask_separate =
->  			BIT(IIO_CHAN_INFO_PROCESSED) |
->  			BIT(IIO_CHAN_INFO_CALIBBIAS) |
->  			BIT(IIO_CHAN_INFO_CALIBSCALE);
->  		break;
->  	case MOTIONSENSE_TYPE_PROX:
-> -		channel->type = IIO_PROXIMITY;
-> -		channel->info_mask_separate =
-> +		state->core.channels[1].type = IIO_PROXIMITY;
-> +		state->core.channels[1].info_mask_separate =
->  			BIT(IIO_CHAN_INFO_RAW) |
->  			BIT(IIO_CHAN_INFO_CALIBBIAS) |
->  			BIT(IIO_CHAN_INFO_CALIBSCALE);
-> @@ -224,19 +213,6 @@ static int cros_ec_light_prox_probe(struct platform_device *pdev)
->  		return -EINVAL;
->  	}
->  
-> -	/* Timestamp */
-> -	channel++;
-> -	channel->type = IIO_TIMESTAMP;
-> -	channel->channel = -1;
-> -	channel->scan_index = 1;
-> -	channel->scan_type.sign = 's';
-> -	channel->scan_type.realbits = 64;
-> -	channel->scan_type.storagebits = 64;
-> -
-> -	indio_dev->channels = state->channels;
-> -
-> -	indio_dev->num_channels = CROS_EC_LIGHT_PROX_MAX_CHANNELS;
-> -
->  	state->core.read_ec_sensors_data = cros_ec_sensors_read_cmd;
->  
->  	ret = devm_iio_triggered_buffer_setup(dev, indio_dev, NULL,
-> diff --git a/drivers/iio/pressure/cros_ec_baro.c b/drivers/iio/pressure/cros_ec_baro.c
-> index 85a4864e3a4e..8718036d74d2 100644
-> --- a/drivers/iio/pressure/cros_ec_baro.c
-> +++ b/drivers/iio/pressure/cros_ec_baro.c
-> @@ -29,8 +29,6 @@
->  struct cros_ec_baro_state {
->  	/* Shared by all sensors */
->  	struct cros_ec_sensors_core_state core;
-> -
-> -	struct iio_chan_spec channels[CROS_EC_BARO_MAX_CHANNELS];
->  };
->  
->  static int cros_ec_baro_read(struct iio_dev *indio_dev,
-> @@ -113,7 +111,6 @@ static int cros_ec_baro_probe(struct platform_device *pdev)
->  	struct cros_ec_dev *ec_dev = dev_get_drvdata(dev->parent);
->  	struct iio_dev *indio_dev;
->  	struct cros_ec_baro_state *state;
-> -	struct iio_chan_spec *channel;
->  	int ret;
->  
->  	if (!ec_dev || !ec_dev->ec_dev) {
-> @@ -121,57 +118,38 @@ static int cros_ec_baro_probe(struct platform_device *pdev)
->  		return -EINVAL;
->  	}
->  
-> -	indio_dev = devm_iio_device_alloc(dev, sizeof(*state));
-> -	if (!indio_dev)
-> -		return -ENOMEM;
-> -
-> -	ret = cros_ec_sensors_core_init(pdev, indio_dev, true);
-> +	ret = cros_ec_sensors_core_init(pdev, sizeof(*state),
-> +					CROS_EC_BARO_MAX_CHANNELS, true);
->  	if (ret)
->  		return ret;
->  
-> +	indio_dev = platform_get_drvdata(pdev);
->  	state = iio_priv(indio_dev);
->  	state->core.type = state->core.resp->info.type;
->  	state->core.loc = state->core.resp->info.location;
->  	state->core.info.read_raw = &cros_ec_baro_read;
->  	state->core.info.write_raw = &cros_ec_baro_write;
-> -	channel = state->channels;
-> +
->  	/* Common part */
-> -	channel->info_mask_separate = BIT(IIO_CHAN_INFO_RAW);
-> -	channel->info_mask_shared_by_all =
-> +	cros_ec_core_channel_init(state->core.channels, 1);
-> +	state->core.channels[1].info_mask_separate = BIT(IIO_CHAN_INFO_RAW);
-> +	state->core.channels[1].info_mask_shared_by_all =
->  		BIT(IIO_CHAN_INFO_SCALE) |
->  		BIT(IIO_CHAN_INFO_SAMP_FREQ) |
->  		BIT(IIO_CHAN_INFO_FREQUENCY);
-> -	channel->scan_type.realbits = CROS_EC_SENSOR_BITS;
-> -	channel->scan_type.storagebits = CROS_EC_SENSOR_BITS;
-> -	channel->scan_type.shift = 0;
-> -	channel->scan_index = 0;
-> -	channel->ext_info = cros_ec_sensors_ext_info;
-> -	channel->scan_type.sign = 'u';
->  
->  	state->core.calib[0] = 0;
->  
->  	/* Sensor specific */
->  	switch (state->core.type) {
->  	case MOTIONSENSE_TYPE_BARO:
-> -		channel->type = IIO_PRESSURE;
-> +		state->core.channels[1].type = IIO_PRESSURE;
->  		break;
->  	default:
->  		dev_warn(dev, "Unknown motion sensor\n");
->  		return -EINVAL;
->  	}
->  
-> -	/* Timestamp */
-> -	channel++;
-> -	channel->type = IIO_TIMESTAMP;
-> -	channel->channel = -1;
-> -	channel->scan_index = 1;
-> -	channel->scan_type.sign = 's';
-> -	channel->scan_type.realbits = 64;
-> -	channel->scan_type.storagebits = 64;
-> -
-> -	indio_dev->channels = state->channels;
-> -	indio_dev->num_channels = CROS_EC_BARO_MAX_CHANNELS;
-> -
->  	state->core.read_ec_sensors_data = cros_ec_sensors_read_cmd;
->  
->  	ret = devm_iio_triggered_buffer_setup(dev, indio_dev, NULL,
-> diff --git a/include/linux/iio/common/cros_ec_sensors_core.h b/include/linux/iio/common/cros_ec_sensors_core.h
-> index a729e667f760..485c649b421f 100644
-> --- a/include/linux/iio/common/cros_ec_sensors_core.h
-> +++ b/include/linux/iio/common/cros_ec_sensors_core.h
-> @@ -31,6 +31,8 @@ enum {
->  /* Minimum sampling period to use when device is suspending */
->  #define CROS_EC_MIN_SUSPEND_SAMPLING_FREQUENCY 1000  /* 1 second */
->  
-> +#define CROS_EC_SENSORS_CORE_MAX_CHANNELS 8
-> +
->  /**
->   * struct cros_ec_sensors_core_state - state data for EC sensors IIO driver
->   * @ec:				cros EC device structure
-> @@ -71,6 +73,7 @@ struct cros_ec_sensors_core_state {
->  
->  	int curr_sampl_freq;
->  	struct iio_info info;
-> +	struct iio_chan_spec channels[CROS_EC_SENSORS_CORE_MAX_CHANNELS];
->  };
->  
->  /**
-> @@ -102,13 +105,15 @@ struct platform_device;
->  /**
->   * cros_ec_sensors_core_init() - basic initialization of the core structure
->   * @pdev:		platform device created for the sensors
-> - * @indio_dev:		iio device structure of the device
-> + * @sizeof_priv:	size of the private structure
-> + * @num_channels:	Number of channel
->   * @physical_device:	true if the device refers to a physical device
->   *
->   * Return: 0 on success, -errno on failure.
->   */
->  int cros_ec_sensors_core_init(struct platform_device *pdev,
-> -			      struct iio_dev *indio_dev, bool physical_device);
-> +			      int sizeof_priv, int num_channels,
-> +			      bool physical_device);
->  
->  /**
->   * cros_ec_sensors_capture() - the trigger handler function
-> @@ -124,6 +129,21 @@ int cros_ec_sensors_core_init(struct platform_device *pdev,
->   */
->  irqreturn_t cros_ec_sensors_capture(int irq, void *p);
->  
-> +/**
-> + * cros_ec_core_channel_init() - initialize channel
-> + * @channel:		channels table
-> + * @idx:		channel index to initialize
-> + *
-> + * Return: 0 on success, -errno on failure.
-> + */
-> +#define cros_ec_core_channel_init(channel, idx) \
-> +	channel[idx].scan_type.realbits = CROS_EC_SENSOR_BITS;\
-> +	channel[idx].scan_type.storagebits = CROS_EC_SENSOR_BITS;\
-> +	channel[idx].scan_type.shift = 0;\
+---
+ arch/x86/include/asm/fsgsbase.h | 27 ++++++++---------
+ arch/x86/kernel/process_64.c    | 66 +++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 78 insertions(+), 15 deletions(-)
 
-No need to define the 'obvious' 0 shift case. 
-These must already be initialized to zero or all sorts of things are
-going to potentially break.
-
-> +	channel[idx].scan_index = idx;\
-> +	channel[idx].ext_info = cros_ec_sensors_ext_info;\
-> +	channel[idx].scan_type.sign = 'u';
-> +
->  /**
->   * cros_ec_motion_send_host_cmd() - send motion sense host command
->   * @st:		pointer to state information for device
-
+diff --git a/arch/x86/include/asm/fsgsbase.h b/arch/x86/include/asm/fsgsbase.h
+index fdd1177499b4..aefd53767a5d 100644
+--- a/arch/x86/include/asm/fsgsbase.h
++++ b/arch/x86/include/asm/fsgsbase.h
+@@ -49,35 +49,32 @@ static __always_inline void wrgsbase(unsigned long gsbase)
+ 	asm volatile("wrgsbase %0" :: "r" (gsbase) : "memory");
+ }
+ 
++#include <asm/cpufeature.h>
++
+ /* Helper functions for reading/writing FS/GS base */
+ 
+ static inline unsigned long x86_fsbase_read_cpu(void)
+ {
+ 	unsigned long fsbase;
+ 
+-	rdmsrl(MSR_FS_BASE, fsbase);
++	if (static_cpu_has(X86_FEATURE_FSGSBASE))
++		fsbase = rdfsbase();
++	else
++		rdmsrl(MSR_FS_BASE, fsbase);
+ 
+ 	return fsbase;
+ }
+ 
+-static inline unsigned long x86_gsbase_read_cpu_inactive(void)
+-{
+-	unsigned long gsbase;
+-
+-	rdmsrl(MSR_KERNEL_GS_BASE, gsbase);
+-
+-	return gsbase;
+-}
+-
+ static inline void x86_fsbase_write_cpu(unsigned long fsbase)
+ {
+-	wrmsrl(MSR_FS_BASE, fsbase);
++	if (static_cpu_has(X86_FEATURE_FSGSBASE))
++		wrfsbase(fsbase);
++	else
++		wrmsrl(MSR_FS_BASE, fsbase);
+ }
+ 
+-static inline void x86_gsbase_write_cpu_inactive(unsigned long gsbase)
+-{
+-	wrmsrl(MSR_KERNEL_GS_BASE, gsbase);
+-}
++extern unsigned long x86_gsbase_read_cpu_inactive(void);
++extern void x86_gsbase_write_cpu_inactive(unsigned long gsbase);
+ 
+ #endif /* CONFIG_X86_64 */
+ 
+diff --git a/arch/x86/kernel/process_64.c b/arch/x86/kernel/process_64.c
+index 250e4c4ac6d9..c34ee0f72378 100644
+--- a/arch/x86/kernel/process_64.c
++++ b/arch/x86/kernel/process_64.c
+@@ -161,6 +161,40 @@ enum which_selector {
+ 	GS
+ };
+ 
++/*
++ * Out of line to be protected from kprobes. It is not used on Xen
++ * paravirt. When paravirt support is needed, it needs to be renamed
++ * with native_ prefix.
++ */
++static noinline unsigned long __rdgsbase_inactive(void)
++{
++	unsigned long gsbase;
++
++	lockdep_assert_irqs_disabled();
++
++	native_swapgs();
++	gsbase = rdgsbase();
++	native_swapgs();
++
++	return gsbase;
++}
++NOKPROBE_SYMBOL(__rdgsbase_inactive);
++
++/*
++ * Out of line to be protected from kprobes. It is not used on Xen
++ * paravirt. When paravirt support is needed, it needs to be renamed
++ * with native_ prefix.
++ */
++static noinline void __wrgsbase_inactive(unsigned long gsbase)
++{
++	lockdep_assert_irqs_disabled();
++
++	native_swapgs();
++	wrgsbase(gsbase);
++	native_swapgs();
++}
++NOKPROBE_SYMBOL(__wrgsbase_inactive);
++
+ /*
+  * Saves the FS or GS base for an outgoing thread if FSGSBASE extensions are
+  * not available.  The goal is to be reasonably fast on non-FSGSBASE systems.
+@@ -339,6 +373,38 @@ static unsigned long x86_fsgsbase_read_task(struct task_struct *task,
+ 	return base;
+ }
+ 
++unsigned long x86_gsbase_read_cpu_inactive(void)
++{
++	unsigned long gsbase;
++
++	if (static_cpu_has(X86_FEATURE_FSGSBASE)) {
++		unsigned long flags;
++
++		/* Interrupts are disabled here. */
++		local_irq_save(flags);
++		gsbase = __rdgsbase_inactive();
++		local_irq_restore(flags);
++	} else {
++		rdmsrl(MSR_KERNEL_GS_BASE, gsbase);
++	}
++
++	return gsbase;
++}
++
++void x86_gsbase_write_cpu_inactive(unsigned long gsbase)
++{
++	if (static_cpu_has(X86_FEATURE_FSGSBASE)) {
++		unsigned long flags;
++
++		/* Interrupts are disabled here. */
++		local_irq_save(flags);
++		__wrgsbase_inactive(gsbase);
++		local_irq_restore(flags);
++	} else {
++		wrmsrl(MSR_KERNEL_GS_BASE, gsbase);
++	}
++}
++
+ unsigned long x86_fsbase_read_task(struct task_struct *task)
+ {
+ 	unsigned long fsbase;
