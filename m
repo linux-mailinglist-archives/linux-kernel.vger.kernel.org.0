@@ -2,216 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C013D4F278
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2019 02:07:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 835C24F296
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2019 02:20:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727121AbfFVAFr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Jun 2019 20:05:47 -0400
-Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:10892 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726375AbfFVAFk (ORCPT
+        id S1726127AbfFVATT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Jun 2019 20:19:19 -0400
+Received: from mail-yw1-f65.google.com ([209.85.161.65]:44825 "EHLO
+        mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726052AbfFVATS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Jun 2019 20:05:40 -0400
-Received: from pps.filterd (m0044008.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5LNubfr026471
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2019 17:05:39 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : in-reply-to : references : mime-version :
- content-type; s=facebook; bh=G4U2JA+ITVRUPcGtQR0tfoOVR3mjydybAs8QYLDNQp4=;
- b=ov9Wys356HeJMTOhjJyvf09iU61MVwV9DlIOXWcRwc4uMSJ71zbAfKOLG/Y1zklxUweo
- toEHE/vDQB4xFKuqzRAs96BzcTLaH1DHXQLBuiFZ/ppm7PZuf0IvT1BG/maN2sll9JN/
- pIq6XLGME0LZezrk6NQv3iOiSQSDN0oQNlQ= 
-Received: from mail.thefacebook.com (mailout.thefacebook.com [199.201.64.23])
-        by mx0a-00082601.pphosted.com with ESMTP id 2t99btr0ps-19
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2019 17:05:39 -0700
-Received: from mx-out.facebook.com (2620:10d:c081:10::13) by
- mail.thefacebook.com (2620:10d:c081:35::126) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA) id 15.1.1713.5;
- Fri, 21 Jun 2019 17:05:33 -0700
-Received: by devbig006.ftw2.facebook.com (Postfix, from userid 4523)
-        id A698162E2D56; Fri, 21 Jun 2019 17:05:31 -0700 (PDT)
-Smtp-Origin-Hostprefix: devbig
-From:   Song Liu <songliubraving@fb.com>
-Smtp-Origin-Hostname: devbig006.ftw2.facebook.com
-To:     <linux-mm@kvack.org>, <linux-fsdevel@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-CC:     <matthew.wilcox@oracle.com>, <kirill.shutemov@linux.intel.com>,
-        <kernel-team@fb.com>, <william.kucharski@oracle.com>,
-        <akpm@linux-foundation.org>, Song Liu <songliubraving@fb.com>
-Smtp-Origin-Cluster: ftw2c04
-Subject: [PATCH v6 6/6] mm,thp: avoid writes to file with THP in pagecache
-Date:   Fri, 21 Jun 2019 17:05:12 -0700
-Message-ID: <20190622000512.923867-7-songliubraving@fb.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190622000512.923867-1-songliubraving@fb.com>
-References: <20190622000512.923867-1-songliubraving@fb.com>
-X-FB-Internal: Safe
+        Fri, 21 Jun 2019 20:19:18 -0400
+Received: by mail-yw1-f65.google.com with SMTP id l79so3433858ywe.11
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2019 17:19:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=w34v2JVJxopQHJuBlPs9SCtKuvVG0EhMCINJqC23axo=;
+        b=Z6SMPQ8RxkX6nPIpSrK4aF90fK7d9gpVD39j40VVwgv7iSXY2n/aX3JQaS7cPwwcaG
+         +8wPDt4yP4N+k85a/2F22SN1cYAs7zKmsBy/6ybxbrZhbQonRTwmv9KxDl1vyIBhbspr
+         D/UAEy8Ln/LbijPW6LEfHvxGh2ek7EkoMT+YmJICLLxU2rN5pKq4jsh8NByuX4v3FAfI
+         rLc0eIBSypPINN9kA68P01gaqgQ+62db1YKl1US2/6gxzb2Px5LQbmNlYs/GhGKZ0JNM
+         ZkMllbH2pSlrt0MVmTg0er3fmWvx6gjb3ELfizAlA9798NGF9MfvhdErb3QFrm9sqo/p
+         f8mA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=w34v2JVJxopQHJuBlPs9SCtKuvVG0EhMCINJqC23axo=;
+        b=FNymw1TdppKEZpO+yaODn1d+dz0lNifPFPVzHKVDO+WGhBvCBoRl7zAUOGoWgfhKlX
+         RN9NJPkZ+tc/iPQQsBPpijX6GeVw0/bUo1PDXDv/BE6Dr6/0LUEiYo1+OY9elYcYC22c
+         8pCU9FeTBF09JX+fIUv762cdgaoVGKc+lqtkrZYsrGnl2n+DYbW/wdPQKjHRjpl6cs3p
+         6nREa5bjc//SaxQQjZROyqrZgm3jrzOZpENYAKg9znBqPqEporhntoml7MHL1BdeMPDo
+         tGThuJuF+Iqu5i6K1vEN5eEQniLIpXKLcZ9jRcyFtDKJqiPYrRg89pHJx+zAtieu2bmh
+         4Gxw==
+X-Gm-Message-State: APjAAAXCK/nZO8iIJJFbUVym1Lb21QNIPjg1VtN4tu2zGrSbh1/U8Kic
+        Nq1fv0ZmIhAbQFSQmZ3HyzoUprQHOp4cQe/QkcaYCQ==
+X-Google-Smtp-Source: APXvYqzxHs2Kr+YLb64zVuj2l1IQKGyuMFYyvrpDf7ZkA3ofAvxtsszdMd26BP+4Kit5js3rHDzvKfMqOIHgKhujwLM=
+X-Received: by 2002:a81:6f84:: with SMTP id k126mr68080306ywc.496.1561162757421;
+ Fri, 21 Jun 2019 17:19:17 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-21_16:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=611 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1906210182
-X-FB-Internal: deliver
+References: <a624ec85-ea21-c72e-f997-06273d9b9f9e@valvesoftware.com>
+ <20190621214139.GA31034@kroah.com> <CAHk-=wgXoBMWdBahuQR9e75ri6oeVBBjoVEnk0rN1QXfSKK2Eg@mail.gmail.com>
+ <CANn89iL5+x3n9H9v4O6y39W=jvQs=uuXbzOvN5mBbcj0t+wdeg@mail.gmail.com> <CAHk-=wjZ=8VSjWuqeG6JJv4dQfK6M0Jgckq5-6=SJa25aku-vQ@mail.gmail.com>
+In-Reply-To: <CAHk-=wjZ=8VSjWuqeG6JJv4dQfK6M0Jgckq5-6=SJa25aku-vQ@mail.gmail.com>
+From:   Eric Dumazet <edumazet@google.com>
+Date:   Fri, 21 Jun 2019 20:19:04 -0400
+Message-ID: <CANn89iLU+NNy7QDPNLYPxNWMx5cXuhziOT7TX2uYt42uUJcNVg@mail.gmail.com>
+Subject: Re: Steam is broken on new kernels
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Pierre-Loup A. Griffais" <pgriffais@valvesoftware.com>,
+        lkml <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In previous patch, an application could put part of its text section in
-THP via madvise(). These THPs will be protected from writes when the
-application is still running (TXTBSY). However, after the application
-exits, the file is available for writes.
+On Fri, Jun 21, 2019 at 7:54 PM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> Eric is talking about this patch, I think:
+>
+>    https://patchwork.ozlabs.org/patch/1120222/
+>
 
-This patch avoids writes to file THP by dropping page cache for the file
-when the file is open for write. A new counter nr_thps is added to struct
-address_space. In do_last(), if the file is open for write and nr_thps
-is non-zero, we drop page cache for the whole file.
+That  is correct.
 
-Signed-off-by: Song Liu <songliubraving@fb.com>
----
- fs/inode.c         |  3 +++
- fs/namei.c         | 22 +++++++++++++++++++++-
- include/linux/fs.h | 31 +++++++++++++++++++++++++++++++
- mm/filemap.c       |  1 +
- mm/khugepaged.c    |  4 +++-
- 5 files changed, 59 insertions(+), 2 deletions(-)
+I am about to take a flight from Boston to Paris, so I can not really
+follow discussions/tests for the following hours.
 
-diff --git a/fs/inode.c b/fs/inode.c
-index df6542ec3b88..518113a4e219 100644
---- a/fs/inode.c
-+++ b/fs/inode.c
-@@ -181,6 +181,9 @@ int inode_init_always(struct super_block *sb, struct inode *inode)
- 	mapping->flags = 0;
- 	mapping->wb_err = 0;
- 	atomic_set(&mapping->i_mmap_writable, 0);
-+#ifdef CONFIG_READ_ONLY_THP_FOR_FS
-+	atomic_set(&mapping->nr_thps, 0);
-+#endif
- 	mapping_set_gfp_mask(mapping, GFP_HIGHUSER_MOVABLE);
- 	mapping->private_data = NULL;
- 	mapping->writeback_index = 0;
-diff --git a/fs/namei.c b/fs/namei.c
-index 20831c2fbb34..de64f24b58e9 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -3249,6 +3249,22 @@ static int lookup_open(struct nameidata *nd, struct path *path,
- 	return error;
- }
- 
-+/*
-+ * The file is open for write, so it is not mmapped with VM_DENYWRITE. If
-+ * it still has THP in page cache, drop the whole file from pagecache
-+ * before processing writes. This helps us avoid handling write back of
-+ * THP for now.
-+ */
-+static inline void release_file_thp(struct file *file)
-+{
-+#ifdef CONFIG_READ_ONLY_THP_FOR_FS
-+	struct inode *inode = file_inode(file);
-+
-+	if (inode_is_open_for_write(inode) && filemap_nr_thps(inode->i_mapping))
-+		truncate_pagecache(inode, 0);
-+#endif
-+}
-+
- /*
-  * Handle the last step of open()
-  */
-@@ -3418,7 +3434,11 @@ static int do_last(struct nameidata *nd,
- 		goto out;
- opened:
- 	error = ima_file_check(file, op->acc_mode);
--	if (!error && will_truncate)
-+	if (error)
-+		goto out;
-+
-+	release_file_thp(file);
-+	if (will_truncate)
- 		error = handle_truncate(file);
- out:
- 	if (unlikely(error > 0)) {
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index f7fdfe93e25d..3edf4ee42eee 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -444,6 +444,10 @@ struct address_space {
- 	struct xarray		i_pages;
- 	gfp_t			gfp_mask;
- 	atomic_t		i_mmap_writable;
-+#ifdef CONFIG_READ_ONLY_THP_FOR_FS
-+	/* number of thp, only for non-shmem files */
-+	atomic_t		nr_thps;
-+#endif
- 	struct rb_root_cached	i_mmap;
- 	struct rw_semaphore	i_mmap_rwsem;
- 	unsigned long		nrpages;
-@@ -2790,6 +2794,33 @@ static inline errseq_t filemap_sample_wb_err(struct address_space *mapping)
- 	return errseq_sample(&mapping->wb_err);
- }
- 
-+static inline int filemap_nr_thps(struct address_space *mapping)
-+{
-+#ifdef CONFIG_READ_ONLY_THP_FOR_FS
-+	return atomic_read(&mapping->nr_thps);
-+#else
-+	return 0;
-+#endif
-+}
-+
-+static inline void filemap_nr_thps_inc(struct address_space *mapping)
-+{
-+#ifdef CONFIG_READ_ONLY_THP_FOR_FS
-+	atomic_inc(&mapping->nr_thps);
-+#else
-+	WARN_ON_ONCE(1);
-+#endif
-+}
-+
-+static inline void filemap_nr_thps_dec(struct address_space *mapping)
-+{
-+#ifdef CONFIG_READ_ONLY_THP_FOR_FS
-+	atomic_dec(&mapping->nr_thps);
-+#else
-+	WARN_ON_ONCE(1);
-+#endif
-+}
-+
- extern int vfs_fsync_range(struct file *file, loff_t start, loff_t end,
- 			   int datasync);
- extern int vfs_fsync(struct file *file, int datasync);
-diff --git a/mm/filemap.c b/mm/filemap.c
-index e79ceccdc6df..a8e86c136381 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -205,6 +205,7 @@ static void unaccount_page_cache_page(struct address_space *mapping,
- 			__dec_node_page_state(page, NR_SHMEM_THPS);
- 	} else if (PageTransHuge(page)) {
- 		__dec_node_page_state(page, NR_FILE_THPS);
-+		filemap_nr_thps_dec(mapping);
- 	}
- 
- 	/*
-diff --git a/mm/khugepaged.c b/mm/khugepaged.c
-index fbcff5a1d65a..17ebe9da56ce 100644
---- a/mm/khugepaged.c
-+++ b/mm/khugepaged.c
-@@ -1500,8 +1500,10 @@ static void collapse_file(struct vm_area_struct *vma,
- 
- 	if (is_shmem)
- 		__inc_node_page_state(new_page, NR_SHMEM_THPS);
--	else
-+	else {
- 		__inc_node_page_state(new_page, NR_FILE_THPS);
-+		filemap_nr_thps_inc(mapping);
-+	}
- 
- 	if (nr_none) {
- 		struct zone *zone = page_zone(new_page);
--- 
-2.17.1
+Thanks.
 
+> I guess I'll ask people on the github thread to test that too.
+>
+>                   Linus
+>
+> On Fri, Jun 21, 2019 at 3:38 PM Eric Dumazet <edumazet@google.com> wrote:
+> >
+> > Please look at my recent patch.
+> >  Sorry I am travelling....
+> >
+> > On Fri, Jun 21, 2019, 6:19 PM Linus Torvalds <torvalds@linux-foundation.org> wrote:
+> >>
+> >> On Fri, Jun 21, 2019 at 2:41 PM Greg Kroah-Hartman
+> >> <gregkh@linuxfoundation.org> wrote:
+> >> >
+> >> > What specific commit caused the breakage?
+> >>
+> >> Both on reddit and on github there seems to be confusion about whether
+> >> it's a problem or not. Some people have it working with the exact same
+> >> kernel that breaks for others.
+> >>
+> >> And then some people seem to say it works intermittently for them,
+> >> which seems to indicate a timing issue.
+> >>
+> >> Looking at the SACK patches (assuming it's one of them), I'd suspect
+> >> the "tcp: tcp_fragment() should apply sane memory limits".
+> >>
+> >> Eric, that one does
+> >>
+> >>        if (unlikely((sk->sk_wmem_queued >> 1) > sk->sk_sndbuf)) {
+> >>                NET_INC_STATS(sock_net(sk), LINUX_MIB_TCPWQUEUETOOBIG);
+> >>                return -ENOMEM;
+> >>        }
+> >>
+> >> but I think it's *normal* for "sk_wmem_queued >> 1" to be around the
+> >> same size as sk_sndbuf. So if there is some fragmentation, and we add
+> >> more skb's to it, that would seem to trigger fairly easily.
+> >> Particularly since this is all in "truesize" units, which can be a lot
+> >> bigger than the packets themselves.
+> >>
+> >> I don't know the code, so I may be out to lunch and barking up
+> >> completely the wrong tree, but that particular check does seem like it
+> >> might trigger much more easily than I think the code _intended_ it to
+> >> trigger?
+> >>
+> >> Pierre-Loup - do you guys have a test-case inside of valve? Or is this
+> >> purely "we see some people with problems"?
+> >>
+> >>                Linus
