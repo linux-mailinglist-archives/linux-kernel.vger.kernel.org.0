@@ -2,141 +2,56 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 48BA44F67B
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2019 17:20:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 736C44F662
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2019 17:01:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726383AbfFVPU1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 22 Jun 2019 11:20:27 -0400
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:15570 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726138AbfFVPU1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Jun 2019 11:20:27 -0400
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5d0e473b0000>; Sat, 22 Jun 2019 08:20:27 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Sat, 22 Jun 2019 08:20:26 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Sat, 22 Jun 2019 08:20:26 -0700
-Received: from [10.25.72.60] (172.20.13.39) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Sat, 22 Jun
- 2019 15:01:17 +0000
-Subject: Re: [PATCH V6 2/3] PCI: dwc: Cleanup DBI read and write APIs
-To:     Jingoo Han <jingoohan1@gmail.com>,
-        "gustavo.pimentel@synopsys.com" <gustavo.pimentel@synopsys.com>,
-        "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>,
-        "bhelgaas@google.com" <bhelgaas@google.com>,
-        "Jisheng.Zhang@synaptics.com" <Jisheng.Zhang@synaptics.com>,
-        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
-        "kishon@ti.com" <kishon@ti.com>
-CC:     "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kthota@nvidia.com" <kthota@nvidia.com>,
-        "mmaddireddy@nvidia.com" <mmaddireddy@nvidia.com>,
-        "sagar.tv@gmail.com" <sagar.tv@gmail.com>
-References: <20190621111000.23216-1-vidyas@nvidia.com>
- <20190621111000.23216-2-vidyas@nvidia.com>
- <PSXP216MB0662399C169A6D944E7C6A8FAAE60@PSXP216MB0662.KORP216.PROD.OUTLOOK.COM>
-X-Nvconfidentiality: public
-From:   Vidya Sagar <vidyas@nvidia.com>
-Message-ID: <625ef12e-8986-b935-0b1b-a437c518ac29@nvidia.com>
-Date:   Sat, 22 Jun 2019 20:31:14 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        id S1726317AbfFVPBu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 22 Jun 2019 11:01:50 -0400
+Received: from smtp1.ono.com ([62.42.230.162]:54031 "EHLO smtp1.ono.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726138AbfFVPBt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 22 Jun 2019 11:01:49 -0400
+X-Junkmail-Premium-Raw: score=36/50,refid=2.7.2:2019.6.22.145116:17:36.586,ip=62.42.230.132,rules=__HAS_MSGID,
+ __SANE_MSGID, MSGID_JMAIL_DEFAULT, INVALID_MSGID_NO_FQDN, __HAS_FROM,
+ __HAS_REPLYTO, __FRAUD_WEBMAIL_REPLYTO, SUBJ_STARTS_IN_SPACE,
+ __SUBJ_ALPHA_END, __MIME_VERSION, __CT, __CT_TEXT_PLAIN, __CTE,
+ MISSING_HEADERS, __ANY_URI, __FRAUD_BODY_WEBMAIL, __URI_NO_WWW,
+ __FRAUD_INTRO, __STOCK_PHRASE_7, __FRAUD_MONEY_BIG_COIN_DIG, __OEM_PRICE,
+ __FRAUD_MONEY_CURRENCY_DOLLAR, __NO_HTML_TAG_RAW, BODYTEXTP_SIZE_400_LESS,
+ BODYTEXTP_SIZE_3000_LESS, BODY_SIZE_300_399, __MIME_TEXT_P1,
+ __MIME_TEXT_ONLY, __URI_NS, HTML_00_01, HTML_00_10, __FRAUD_MONEY_CURRENCY,
+ __FRAUD_MONEY_BIG_COIN, __FRAUD_MONEY_VALUE, __PHISH_SPEAR_GREETING,
+ __FRAUD_MONEY, FRAUD_X3, BODY_SIZE_5000_LESS, __FRAUD_WEBMAIL,
+ WEBMAIL_REPLYTO_NOT_FROM, FRAUD_WEBMAIL_R_NOT_F, __MIME_TEXT_P,
+ FRAUD_LITTLE_BODY, __PHISH_SPEAR_STRUCTURE_1, BODY_SIZE_1000_LESS,
+ BODY_SIZE_2000_LESS, __PHISH_SPEAR_STRUCTURE_2, REPLYTO_FROM_DIFF_ADDY,
+ NO_URI_HTTPS, BODY_SIZE_7000_LESS, TO_MALFORMED
+Received: from resprs02 (62.42.230.132) by smtp1.ono.com (9.0.019.09-1)
+        id 5C12554F09D7CF51; Sat, 22 Jun 2019 17:01:33 +0200
+Received: from (149.126.75.9) by webmailcpr02n.ono.com;  Sat, 22 Jun 2019 17:01:32 +0200
+Message-ID: <8584711.928541561215692752.JavaMail.defaultUser@defaultHost>
+Date:   Sat, 22 Jun 2019 17:01:32 +0200 (CEST)
+From:   "Mrs.Patricia Lugan" <pasaca@ono.com>
+Reply-To: mrs.patricialugan@gmail.com
+Subject:  Mrs patricia lugan
 MIME-Version: 1.0
-In-Reply-To: <PSXP216MB0662399C169A6D944E7C6A8FAAE60@PSXP216MB0662.KORP216.PROD.OUTLOOK.COM>
-X-Originating-IP: [172.20.13.39]
-X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
+Content-Type: text/plain;charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1561216828; bh=Gg6ynwqt5s5qIc9zttRBjajJzrIC+hXVHXW78gtZT6k=;
-        h=X-PGP-Universal:Subject:To:CC:References:X-Nvconfidentiality:From:
-         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
-         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=PnBlJaxJsQ2pdKDVSaXmZGLzacmfrdQdr7t8F8ZPGkdCZm/JejAkrFB5QeSG2dYU0
-         YsEyn/gy0z7d7uaYZ0TZ+nS95PBixeswFeTgGt5BaCevNhG7nTnNtZcs4mncXqyMU8
-         JUspGrgl7+nRB/dnTZbUfi0h3u0lK39N6KlRubcW2UzC3P7WlN8f2qqFHOevUo6jO6
-         CCpc51oJXo5LSS7dEsDGjfQP80JOlzX88YkGmcMl9tgFm85pFvlgEXNQfu71492FLW
-         sB4+9Va81TiVBA/pP8LSqMAikiblnf6iCKIIr8V+SOBeb5QFR1auzPSFA0fXhmn0D2
-         n7wmVXzek6pnA==
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 6/22/2019 10:56 AM, Jingoo Han wrote:
-> On 6/21/19, 8:10 PM, Vidya Sagar wrote:
->>
->> Cleanup DBI read and write APIs by removing "__" (underscore) from their
->> names as there are no no-underscore versions and the underscore versions
->> are already doing what no-underscore versions typically do. It also removes
->> passing dbi/dbi2 base address as one of the arguments as the same can be
->> derived with in read and write APIs.
->>
->> Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
->> ---
->> Changes from v5:
->> * Removed passing base address as one of the arguments as the same can be derived within
->>    the API itself.
->> * Modified ATU read/write APIs to call dw_pcie_{write/read}() API
-> 
-> Unlike previous patches (v1~v5), you modified ATU read/write APIs from v6.
-> Why do you change ATU read/write APIs to call dw_pcie_{write/read}() API???
-> It is not clean-up, but function change. Please add the reason to the commit message.
-> 
-> Best regards,
-> Jingoo Han
-Reason is that, now dbi/dbi2 APIs don't take base address offset as one of the input arguments
-instead, those APIs derive that inside the API itself. So, for ATU read/write DBI read/write
-APIs can be used directly and hence I called dw_pcie_{write/read}() API directly. But, taking a
-second look at it, it may work for Tegra, but, may not for other implementations where accessing
-DBI space is not a simple read/write to DBI base + offset. Let me address address that too in
-next patch.
+Dear Friend,
 
-Thanks,
-Vidya Sagar
+ I am Mrs Patricia lugan.am sending you this brief letter to solicit 
+your
+ partnership to transfer $18.5 million US Dollars.I shall send you more
+ information and procedures when I receive positive response from you.
+ please send me a message in my Email box(mrs.patricialugan@gmail.com)
+ as i wait to hear from you.
 
-> 
->>
->> Changes from v4:
->> * This is a new patch in this series
->>
->>   drivers/pci/controller/dwc/pcie-designware.c | 28 ++++++-------
->>   drivers/pci/controller/dwc/pcie-designware.h | 43 ++++++++++++--------
->>   2 files changed, 37 insertions(+), 34 deletions(-)
-> 
-> .....
-> 
->>   static inline void dw_pcie_writel_atu(struct dw_pcie *pci, u32 reg, u32 val)
->>   {
->> -	__dw_pcie_write_dbi(pci, pci->atu_base, reg, 0x4, val);
->> +	int ret;
->> +
->> +	ret = dw_pcie_write(pci->atu_base + reg, 0x4, val);
->> +	if (ret)
->> +		dev_err(pci->dev, "write ATU address failed\n");
->>   }
->>   
->>   static inline u32 dw_pcie_readl_atu(struct dw_pcie *pci, u32 reg)
->>   {
->> -	return __dw_pcie_read_dbi(pci, pci->atu_base, reg, 0x4);
->> +	int ret;
->> +	u32 val;
->> +
->> +	ret = dw_pcie_read(pci->atu_base + reg, 0x4, &val);
->> +	if (ret)
->> +		dev_err(pci->dev, "Read ATU address failed\n");
->> +
->> +	return val;
->>   }
->>   
->>   static inline void dw_pcie_dbi_ro_wr_en(struct dw_pcie *pci)
->> -- 
->> 2.17.1
-> 
+ Best regard
+ Mrs patricia lugan
 
