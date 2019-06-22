@@ -2,48 +2,56 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 71D8D4F415
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2019 08:48:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 285DE4F417
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2019 08:49:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726196AbfFVGsr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 22 Jun 2019 02:48:47 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:37539 "EHLO
+        id S1726281AbfFVGtj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 22 Jun 2019 02:49:39 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:46463 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726070AbfFVGsr (ORCPT
+        with ESMTP id S1726070AbfFVGtj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 22 Jun 2019 02:48:47 -0400
+        Sat, 22 Jun 2019 02:49:39 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x5M6mepl2009742
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x5M6nMNj2009890
         (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Fri, 21 Jun 2019 23:48:40 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x5M6mepl2009742
+        Fri, 21 Jun 2019 23:49:22 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x5M6nMNj2009890
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019061801; t=1561186120;
-        bh=qBUdV1VWho2F7uNdMn2urUjGRxMIKSwmSObEToaKHPQ=;
-        h=Date:From:Cc:Reply-To:To:Subject:From;
-        b=WalXed602zyWXUg+BKomcxurlt0DzumDl+NtYIgBSmqHNdCDxr6JFaj1uXFclmAEI
-         k3Ez5bQjxjKotEtAMKiExxiQoOcopIyMKU7xIbR83lqeIRZ42UyLm5tO3P4pIsAyqE
-         ESejfg19mKfvcwDhuhBUNPU9MGJ1PBOTXSZ3JhHz+gdXnK8bLaswhL46OyDhywit4X
-         fI7a5Jpe9Xt6GfB0aEgvT/8jf4jLjmnbgZ47QyGYMvxpibUttA9KtLkhE6Jts8shhL
-         3iggIC46W1S7elM6O35IDxG0y6BZHau5oLnXHwPXQvYefvwWd+aNOHSHXWrl9AM7Yz
-         hTJ3uSc1WeTww==
+        s=2019061801; t=1561186162;
+        bh=BL69RM8g2f23L0pRL/rFPGU06SBULa+QQgSoW/1w3W8=;
+        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
+        b=SccOsDYIVz1y2vzTas/Pde66r59Y1WsPkP3RUxrP/Es0OQLZAD5Wi2KtAH3K84dQ1
+         w9YkblcKQ/pqOgWav4MhImurEJNz55l2WaDEKoqB3NSTqDCyFDzD+iyZ1/tbvodxqU
+         cAUgIEyPhlgcGSqFcbHR/WdJoBDAFy5KSkrqTyw1erMmJynYPvZEgCJrfamMb1Qa3r
+         Z+ZwMatOFF5PVmzjRzsdF110S54jo9c3V+p0nx7MPJsrddmc0mlmJ02iAuDDhyNqOB
+         i8oq66+8U3F5nTphE3QlxECDLXWFIFyQVabaCw6nuLPhQx+SS9QoYQ1TJ3bDV7vWfd
+         N1LGPxHK8EHrg==
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x5M6me1U2009738;
-        Fri, 21 Jun 2019 23:48:40 -0700
-Date:   Fri, 21 Jun 2019 23:48:40 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x5M6nLs72009887;
+        Fri, 21 Jun 2019 23:49:21 -0700
+Date:   Fri, 21 Jun 2019 23:49:21 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
-Message-ID: <tip-f30ztaasku3z935cn3ak3h53@git.kernel.org>
-Cc:     linux-kernel@vger.kernel.org, hpa@zytor.com, mingo@kernel.org,
-        adrian.hunter@intel.com, jolsa@kernel.org, leo.yan@linaro.org,
-        acme@redhat.com, tglx@linutronix.de, namhyung@kernel.org
-Reply-To: linux-kernel@vger.kernel.org, hpa@zytor.com, acme@redhat.com,
-          tglx@linutronix.de, jolsa@kernel.org, leo.yan@linaro.org,
-          mingo@kernel.org, adrian.hunter@intel.com, namhyung@kernel.org
+From:   tip-bot for Florian Fainelli <tipbot@zytor.com>
+Message-ID: <tip-1955c8cf5e26b1f70d674190ff9984dbfd531ee9@git.kernel.org>
+Cc:     alexander.shishkin@linux.intel.com, jakub.kicinski@netronome.com,
+        f.fainelli@gmail.com, linux-kernel@vger.kernel.org,
+        jolsa@redhat.com, peterz@infradead.org, namhyung@kernel.org,
+        hpa@zytor.com, acme@redhat.com, mingo@kernel.org, sdf@google.com,
+        quentin.monnet@netronome.com, alexey.budankov@linux.intel.com,
+        tglx@linutronix.de
+Reply-To: alexey.budankov@linux.intel.com, quentin.monnet@netronome.com,
+          sdf@google.com, tglx@linutronix.de, mingo@kernel.org,
+          acme@redhat.com, hpa@zytor.com, namhyung@kernel.org,
+          peterz@infradead.org, jolsa@redhat.com, f.fainelli@gmail.com,
+          alexander.shishkin@linux.intel.com, jakub.kicinski@netronome.com,
+          linux-kernel@vger.kernel.org
+In-Reply-To: <20190614183949.5588-1-f.fainelli@gmail.com>
+References: <20190614183949.5588-1-f.fainelli@gmail.com>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf evsel: Make perf_evsel__name() accept a NULL
- argument
-Git-Commit-ID: fdbdd7e8580eac9bdafa532746c865644d125e34
+Subject: [tip:perf/core] perf tools: Don't hardcode host include path for
+ libslang
+Git-Commit-ID: 1955c8cf5e26b1f70d674190ff9984dbfd531ee9
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -52,64 +60,74 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-X-Spam-Status: No, score=-1.2 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+X-Spam-Status: No, score=0.9 required=5.0 tests=ALL_TRUSTED,BAYES_00,
         DATE_IN_FUTURE_06_12,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,
-        DKIM_VALID_EF autolearn=ham autolearn_force=no version=3.4.2
+        DKIM_VALID_EF,FREEMAIL_FORGED_REPLYTO autolearn=no autolearn_force=no
+        version=3.4.2
 X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  fdbdd7e8580eac9bdafa532746c865644d125e34
-Gitweb:     https://git.kernel.org/tip/fdbdd7e8580eac9bdafa532746c865644d125e34
-Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
-AuthorDate: Mon, 17 Jun 2019 14:32:53 -0300
+Commit-ID:  1955c8cf5e26b1f70d674190ff9984dbfd531ee9
+Gitweb:     https://git.kernel.org/tip/1955c8cf5e26b1f70d674190ff9984dbfd531ee9
+Author:     Florian Fainelli <f.fainelli@gmail.com>
+AuthorDate: Fri, 14 Jun 2019 11:39:47 -0700
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
 CommitDate: Mon, 17 Jun 2019 15:57:20 -0300
 
-perf evsel: Make perf_evsel__name() accept a NULL argument
+perf tools: Don't hardcode host include path for libslang
 
-In which case it simply returns "unknown", like when it can't figure out
-the evsel->name value.
+Hardcoding /usr/include/slang is fundamentally incompatible with cross
+compilation and will lead to the inability for a cross-compiled
+environment to properly detect whether slang is available or not.
 
-This makes this code more robust and fixes a problem in 'perf trace'
-where a NULL evsel was being passed to a routine that only used the
-evsel for printing its name when a invalid syscall id was passed.
+If /usr/include/slang is necessary that is a distribution specific
+knowledge that could be solved with either a standard pkg-config .pc
+file (which slang has) or simply overriding CFLAGS accordingly, but the
+default perf Makefile should be clean of all of that.
 
-Reported-by: Leo Yan <leo.yan@linaro.org>
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Alexey Budankov <alexey.budankov@linux.intel.com>
+Cc: bcm-kernel-feedback-list@broadcom.com
+Cc: Jakub Kicinski <jakub.kicinski@netronome.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
-Link: https://lkml.kernel.org/n/tip-f30ztaasku3z935cn3ak3h53@git.kernel.org
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Quentin Monnet <quentin.monnet@netronome.com>
+Cc: Stanislav Fomichev <sdf@google.com>
+Fixes: ef7b93a11904 ("perf report: Librarize the annotation code and use it in the newt browser")
+Link: http://lkml.kernel.org/r/20190614183949.5588-1-f.fainelli@gmail.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/evsel.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ tools/build/feature/Makefile | 2 +-
+ tools/perf/Makefile.config   | 1 -
+ 2 files changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
-index 0f506f10ecf0..04c4ed1573cb 100644
---- a/tools/perf/util/evsel.c
-+++ b/tools/perf/util/evsel.c
-@@ -589,6 +589,9 @@ const char *perf_evsel__name(struct perf_evsel *evsel)
- {
- 	char bf[128];
+diff --git a/tools/build/feature/Makefile b/tools/build/feature/Makefile
+index 523ee42db0c8..7ef7cf04a292 100644
+--- a/tools/build/feature/Makefile
++++ b/tools/build/feature/Makefile
+@@ -182,7 +182,7 @@ $(OUTPUT)test-libaudit.bin:
+ 	$(BUILD) -laudit
  
-+	if (!evsel)
-+		goto out_unknown;
-+
- 	if (evsel->name)
- 		return evsel->name;
+ $(OUTPUT)test-libslang.bin:
+-	$(BUILD) -I/usr/include/slang -lslang
++	$(BUILD) -lslang
  
-@@ -628,7 +631,10 @@ const char *perf_evsel__name(struct perf_evsel *evsel)
- 
- 	evsel->name = strdup(bf);
- 
--	return evsel->name ?: "unknown";
-+	if (evsel->name)
-+		return evsel->name;
-+out_unknown:
-+	return "unknown";
- }
- 
- const char *perf_evsel__group_name(struct perf_evsel *evsel)
+ $(OUTPUT)test-libcrypto.bin:
+ 	$(BUILD) -lcrypto
+diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
+index 5f16a20cae86..e04b7a81d221 100644
+--- a/tools/perf/Makefile.config
++++ b/tools/perf/Makefile.config
+@@ -648,7 +648,6 @@ ifndef NO_SLANG
+     NO_SLANG := 1
+   else
+     # Fedora has /usr/include/slang/slang.h, but ubuntu /usr/include/slang.h
+-    CFLAGS += -I/usr/include/slang
+     CFLAGS += -DHAVE_SLANG_SUPPORT
+     EXTLIBS += -lslang
+     $(call detected,CONFIG_SLANG)
