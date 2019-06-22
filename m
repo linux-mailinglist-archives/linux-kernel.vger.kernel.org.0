@@ -2,183 +2,161 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 951E24F2F6
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2019 03:00:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 00DB04F2FF
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2019 03:03:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726340AbfFVBAw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Jun 2019 21:00:52 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:43690 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726052AbfFVBAv (ORCPT
+        id S1726445AbfFVBDf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Jun 2019 21:03:35 -0400
+Received: from us-smtp-delivery-172.mimecast.com ([216.205.24.172]:23931 "EHLO
+        us-smtp-delivery-172.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726052AbfFVBDe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Jun 2019 21:00:51 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:
-        From:Date:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=DU48MQ9NZfd+dSFfhOVoqXBfrwMyOEsLPRg6YgjyGVI=; b=jhnuriO1MsaxnCd+jswIlYNwI
-        Z9eslOz5YY12SaOn2HmpCg3Jjl4UqJjNP2k5zUwZj75rfZRq1UVKMCePjopb2cwljbOaARcLctBH2
-        DIViKJ99NFy4w6DrFV48ErW/6qj3bFpd76z3SGTnEIo21MxhAkxSSsWIR4TFBoqJNpUYtEb0IXG+D
-        SipccnLUPJWlru8gtR60doHGE3X6te2sdU8mH+2QFM0faKrN5FxXIyOD93P4cWRoUk20PsX9gxkRk
-        m6RXGIxb7Zv/W9PlhqvMCVq5bNNdFiha/aT2g+TXkua+ML2H1KbQeWS7EYw4BlLxENbiqa2rYWzr3
-        8paKyQXWA==;
-Received: from [177.97.20.138] (helo=coco.lan)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1heUOg-00055M-PZ; Sat, 22 Jun 2019 01:00:51 +0000
-Date:   Fri, 21 Jun 2019 22:00:46 -0300
-From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-To:     Jonathan Corbet <corbet@lwn.net>
-Cc:     linux-doc@vger.kernel.org, Matthew Wilcox <willy@infradead.org>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] Docs: An initial automarkup extension for sphinx
-Message-ID: <20190621220046.3de30d9d@coco.lan>
-In-Reply-To: <20190621235159.6992-2-corbet@lwn.net>
-References: <20190621235159.6992-1-corbet@lwn.net>
-        <20190621235159.6992-2-corbet@lwn.net>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        Fri, 21 Jun 2019 21:03:34 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=valvesoftware.com;
+        s=mc20150811; t=1561165413;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=8T/ERB8E1LibLg93LolKTUL8QwTL40Jai0YiV5j2f+M=;
+        b=IhcDZi8PO/jrXAeNqSCJAkSZeVQax67YUsR4tY3pxpghO+vnR5uneAWUshS/WA0FzrD4L1
+        B0QsCu5FkqdyZ5qIJVwCXSBR28hW49vUvwWcJXmiNWxFN3q3C3ywdmtFHYL58HrwJIGztM
+        6yXthMxau2rfSdCAVrWKf+By741KI3U=
+Received: from smtp01.valvesoftware.com (smtp01.valvesoftware.com
+ [208.64.203.181]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-79-0tQdWoNqOoyH0Az5YJiF6w-1; Fri, 21 Jun 2019 21:03:32 -0400
+Received: from [172.16.1.107] (helo=antispam.valve.org)
+        by smtp01.valvesoftware.com with esmtp (Exim 4.86_2)
+        (envelope-from <pgriffais@valvesoftware.com>)
+        id 1heUdq-0006rI-Il
+        for linux-kernel@vger.kernel.org; Fri, 21 Jun 2019 18:16:30 -0700
+Received: from antispam.valve.org (127.0.0.1) id h1lv660171s1 for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2019 18:03:31 -0700 (envelope-from <pgriffais@valvesoftware.com>)
+Received: from mail1.valvemail.org ([172.16.144.22])
+        by antispam.valve.org ([172.16.1.107]) (SonicWALL 9.0.5.2081 )
+        with ESMTP id o201906220103310000288-5; Fri, 21 Jun 2019 18:03:31 -0700
+Received: from [172.18.41.51] (172.18.41.51) by mail1.valvemail.org
+ (172.16.144.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1415.2; Fri, 21 Jun
+ 2019 18:02:25 -0700
+From:   "Pierre-Loup A. Griffais" <pgriffais@valvesoftware.com>
+Subject: Re: Steam is broken on new kernels
+To:     Eric Dumazet <edumazet@google.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        lkml <linux-kernel@vger.kernel.org>
+References: <a624ec85-ea21-c72e-f997-06273d9b9f9e@valvesoftware.com>
+ <20190621214139.GA31034@kroah.com>
+ <CAHk-=wgXoBMWdBahuQR9e75ri6oeVBBjoVEnk0rN1QXfSKK2Eg@mail.gmail.com>
+ <CANn89iL5+x3n9H9v4O6y39W=jvQs=uuXbzOvN5mBbcj0t+wdeg@mail.gmail.com>
+ <CAHk-=wjZ=8VSjWuqeG6JJv4dQfK6M0Jgckq5-6=SJa25aku-vQ@mail.gmail.com>
+ <CANn89iLU+NNy7QDPNLYPxNWMx5cXuhziOT7TX2uYt42uUJcNVg@mail.gmail.com>
+Message-ID: <b72599d1-b5d5-1c23-15fc-8e2f9454af05@valvesoftware.com>
+Date:   Fri, 21 Jun 2019 18:01:44 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <CANn89iLU+NNy7QDPNLYPxNWMx5cXuhziOT7TX2uYt42uUJcNVg@mail.gmail.com>
+Content-Language: en-US
+X-ClientProxiedBy: mail1.valvemail.org (172.16.144.22) To mail1.valvemail.org
+ (172.16.144.22)
+X-EXCLAIMER-MD-CONFIG: fe5cb8ea-1338-4c54-81e0-ad323678e037
+X-Mlf-CnxnMgmt-Allow: 172.16.144.22
+X-Mlf-Version: 9.0.5.2081
+X-Mlf-License: BSVKCAP__
+X-Mlf-UniqueId: o201906220103310000288
+X-MC-Unique: 0tQdWoNqOoyH0Az5YJiF6w-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Fri, 21 Jun 2019 17:51:57 -0600
-Jonathan Corbet <corbet@lwn.net> escreveu:
-
-> Rather than fill our text files with :c:func:`function()` syntax, just do
-> the markup via a hook into the sphinx build process.
 
 
-Didn't test it, but it sounds a way nicer than the past version!
+On 6/21/19 5:19 PM, Eric Dumazet wrote:
+> On Fri, Jun 21, 2019 at 7:54 PM Linus Torvalds
+> <torvalds@linux-foundation.org> wrote:
+>>
+>> Eric is talking about this patch, I think:
+>>
+>>     https://patchwork.ozlabs.org/patch/1120222/
+>>
+>=20
+> That  is correct.
+>=20
+> I am about to take a flight from Boston to Paris, so I can not really
+> follow discussions/tests for the following hours.
 
-> Signed-off-by: Jonathan Corbet <corbet@lwn.net>
-> ---
->  Documentation/conf.py              |  3 +-
->  Documentation/sphinx/automarkup.py | 80 ++++++++++++++++++++++++++++++
->  2 files changed, 82 insertions(+), 1 deletion(-)
->  create mode 100644 Documentation/sphinx/automarkup.py
-> 
-> diff --git a/Documentation/conf.py b/Documentation/conf.py
-> index 7ace3f8852bd..a502baecbb85 100644
-> --- a/Documentation/conf.py
-> +++ b/Documentation/conf.py
-> @@ -34,7 +34,8 @@ needs_sphinx = '1.3'
->  # Add any Sphinx extension module names here, as strings. They can be
->  # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
->  # ones.
-> -extensions = ['kerneldoc', 'rstFlatTable', 'kernel_include', 'cdomain', 'kfigure', 'sphinx.ext.ifconfig']
-> +extensions = ['kerneldoc', 'rstFlatTable', 'kernel_include', 'cdomain',
-> +              'kfigure', 'sphinx.ext.ifconfig', 'automarkup']
->  
->  # The name of the math extension changed on Sphinx 1.4
->  if (major == 1 and minor > 3) or (major > 1):
-> diff --git a/Documentation/sphinx/automarkup.py b/Documentation/sphinx/automarkup.py
-> new file mode 100644
-> index 000000000000..14b09b5d145e
-> --- /dev/null
-> +++ b/Documentation/sphinx/automarkup.py
-> @@ -0,0 +1,80 @@
-> +# SPDX-License-Identifier: GPL-2.0
-> +# Copyright 2019 Jonathan Corbet <corbet@lwn.net>
-> +#
-> +# Apply kernel-specific tweaks after the initial document processing
-> +# has been done.
-> +#
-> +from docutils import nodes
-> +from sphinx import addnodes
-> +import re
-> +
-> +#
-> +# Regex nastiness.  Of course.
-> +# Try to identify "function()" that's not already marked up some
-> +# other way.  Sphinx doesn't like a lot of stuff right after a
-> +# :c:func: block (i.e. ":c:func:`mmap()`s" flakes out), so the last
-> +# bit tries to restrict matches to things that won't create trouble.
-> +#
-> +RE_function = re.compile(r'([\w_][\w\d_]+\(\))')
-> +
-> +#
-> +# The DVB docs create references for these basic system calls, leading
-> +# to lots of confusing links.  So just don't link them.
-> +#
-> +Skipfuncs = [ 'open', 'close', 'write' ]
+I built the tip of linux-5.1.y and reproduced the issue while trying to=20
+log out and back into Steam; it exhibited this symptom as well:
 
-and yeah, of course, if there's something weird, it has to be at
-the media docs :-)
+pgriffais@pgriffais:~$ nstat -az | grep -i wqueue
+TcpExtTCPWqueueTooBig           31                 0.0
 
-Btw, if I'm not mistaken, we do the same for ioctl.
-
-
-I'm wandering if this could also handle the Documentation/* auto-replace.
-
-The patch snipped I did (against your past version is enclosed).
-
-
-diff --git a/Documentation/sphinx/automarkup.py b/Documentation/sphinx/automarkup.py
-index 39c8f4d5af82..60dad596c790 100644
---- a/Documentation/sphinx/automarkup.py
-+++ b/Documentation/sphinx/automarkup.py
-@@ -9,6 +9,7 @@
- from __future__ import print_function
- import re
- import sphinx
-+#import sys		# Just for debug
- 
- #
- # Regex nastiness.  Of course.
-@@ -31,10 +32,26 @@ RE_literal = re.compile(r'^(\s*)(.*::\s*|\.\.\s+code-block::.*)$')
- #
- RE_whitesp = re.compile(r'^(\s*)')
- 
-+#
-+# Get a documentation reference
-+#
-+RE_doc_links = re.compile(r'\bDocumentation/([\w\d\-\_\/]+)\.rst\b')
-+
-+#
-+# Doc link false-positives
-+#
-+RE_false_doc_links = re.compile(r':ref:`\s*Documentation/[\w\d\-\_\/]+\.rst')
-+
- def MangleFile(app, docname, text):
-     ret = [ ]
-     previous = ''
-     literal = False
-+
-+    rel_dir = ''
-+
-+    for depth in range(0, docname.count('/')):
-+        rel_dir += "../"
-+
-     for line in text[0].split('\n'):
-         #
-         # See if we might be ending a literal block, as denoted by
-@@ -63,7 +80,18 @@ def MangleFile(app, docname, text):
-         # Normal line - perform substitutions.
-         #
-         else:
--            ret.append(RE_function.sub(r'\1:c:func:`\2`\3', line))
-+#            new_line = RE_function.sub(r'\1:c:func:`\2`\3', line)
-+            new_line = line
-+
-+            if not RE_false_doc_links.search(new_line):
-+                new_line = RE_doc_links.sub(r':doc:`' + rel_dir + r'\1`', new_line)
-+
-+ #           # Just for debug - should be removed on production
-+ #           if new_line != line:
-+ #               print ("===>" + new_line, file=sys.stderr)
-+
-+            ret.append(new_line)
-+
-         #
-         # Might we be starting a literal block?  If so make note of
-         # the fact.
-
+I applied Eric's path to the tip of the branch and ran that kernel and=20
+the bug didn't occur through several logout / login cycles, so things=20
+look good at first glance. I'll keep running that kernel and report back=20
+if anything crops up in the future, but I believe we're good, beyond=20
+getting distros to ship this additional fix.
 
 Thanks,
-Mauro
+  - Pierre-Loup
+
+>=20
+> Thanks.
+>=20
+>> I guess I'll ask people on the github thread to test that too.
+>>
+>>                    Linus
+>>
+>> On Fri, Jun 21, 2019 at 3:38 PM Eric Dumazet <edumazet@google.com> wrote=
+:
+>>>
+>>> Please look at my recent patch.
+>>>   Sorry I am travelling....
+>>>
+>>> On Fri, Jun 21, 2019, 6:19 PM Linus Torvalds <torvalds@linux-foundation=
+.org> wrote:
+>>>>
+>>>> On Fri, Jun 21, 2019 at 2:41 PM Greg Kroah-Hartman
+>>>> <gregkh@linuxfoundation.org> wrote:
+>>>>>
+>>>>> What specific commit caused the breakage?
+>>>>
+>>>> Both on reddit and on github there seems to be confusion about whether
+>>>> it's a problem or not. Some people have it working with the exact same
+>>>> kernel that breaks for others.
+>>>>
+>>>> And then some people seem to say it works intermittently for them,
+>>>> which seems to indicate a timing issue.
+>>>>
+>>>> Looking at the SACK patches (assuming it's one of them), I'd suspect
+>>>> the "tcp: tcp_fragment() should apply sane memory limits".
+>>>>
+>>>> Eric, that one does
+>>>>
+>>>>         if (unlikely((sk->sk_wmem_queued >> 1) > sk->sk_sndbuf)) {
+>>>>                 NET_INC_STATS(sock_net(sk), LINUX_MIB_TCPWQUEUETOOBIG)=
+;
+>>>>                 return -ENOMEM;
+>>>>         }
+>>>>
+>>>> but I think it's *normal* for "sk_wmem_queued >> 1" to be around the
+>>>> same size as sk_sndbuf. So if there is some fragmentation, and we add
+>>>> more skb's to it, that would seem to trigger fairly easily.
+>>>> Particularly since this is all in "truesize" units, which can be a lot
+>>>> bigger than the packets themselves.
+>>>>
+>>>> I don't know the code, so I may be out to lunch and barking up
+>>>> completely the wrong tree, but that particular check does seem like it
+>>>> might trigger much more easily than I think the code _intended_ it to
+>>>> trigger?
+>>>>
+>>>> Pierre-Loup - do you guys have a test-case inside of valve? Or is this
+>>>> purely "we see some people with problems"?
+>>>>
+>>>>                 Linus
+>=20
+
