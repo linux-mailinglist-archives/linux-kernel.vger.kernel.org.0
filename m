@@ -2,124 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 835C24F296
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2019 02:20:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 86C354F171
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Jun 2019 01:57:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726127AbfFVATT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 21 Jun 2019 20:19:19 -0400
-Received: from mail-yw1-f65.google.com ([209.85.161.65]:44825 "EHLO
-        mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726052AbfFVATS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 21 Jun 2019 20:19:18 -0400
-Received: by mail-yw1-f65.google.com with SMTP id l79so3433858ywe.11
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Jun 2019 17:19:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=w34v2JVJxopQHJuBlPs9SCtKuvVG0EhMCINJqC23axo=;
-        b=Z6SMPQ8RxkX6nPIpSrK4aF90fK7d9gpVD39j40VVwgv7iSXY2n/aX3JQaS7cPwwcaG
-         +8wPDt4yP4N+k85a/2F22SN1cYAs7zKmsBy/6ybxbrZhbQonRTwmv9KxDl1vyIBhbspr
-         D/UAEy8Ln/LbijPW6LEfHvxGh2ek7EkoMT+YmJICLLxU2rN5pKq4jsh8NByuX4v3FAfI
-         rLc0eIBSypPINN9kA68P01gaqgQ+62db1YKl1US2/6gxzb2Px5LQbmNlYs/GhGKZ0JNM
-         ZkMllbH2pSlrt0MVmTg0er3fmWvx6gjb3ELfizAlA9798NGF9MfvhdErb3QFrm9sqo/p
-         f8mA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=w34v2JVJxopQHJuBlPs9SCtKuvVG0EhMCINJqC23axo=;
-        b=FNymw1TdppKEZpO+yaODn1d+dz0lNifPFPVzHKVDO+WGhBvCBoRl7zAUOGoWgfhKlX
-         RN9NJPkZ+tc/iPQQsBPpijX6GeVw0/bUo1PDXDv/BE6Dr6/0LUEiYo1+OY9elYcYC22c
-         8pCU9FeTBF09JX+fIUv762cdgaoVGKc+lqtkrZYsrGnl2n+DYbW/wdPQKjHRjpl6cs3p
-         6nREa5bjc//SaxQQjZROyqrZgm3jrzOZpENYAKg9znBqPqEporhntoml7MHL1BdeMPDo
-         tGThuJuF+Iqu5i6K1vEN5eEQniLIpXKLcZ9jRcyFtDKJqiPYrRg89pHJx+zAtieu2bmh
-         4Gxw==
-X-Gm-Message-State: APjAAAXCK/nZO8iIJJFbUVym1Lb21QNIPjg1VtN4tu2zGrSbh1/U8Kic
-        Nq1fv0ZmIhAbQFSQmZ3HyzoUprQHOp4cQe/QkcaYCQ==
-X-Google-Smtp-Source: APXvYqzxHs2Kr+YLb64zVuj2l1IQKGyuMFYyvrpDf7ZkA3ofAvxtsszdMd26BP+4Kit5js3rHDzvKfMqOIHgKhujwLM=
-X-Received: by 2002:a81:6f84:: with SMTP id k126mr68080306ywc.496.1561162757421;
- Fri, 21 Jun 2019 17:19:17 -0700 (PDT)
+        id S1726287AbfFUX5W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 21 Jun 2019 19:57:22 -0400
+Received: from mga09.intel.com ([134.134.136.24]:48779 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726045AbfFUX5W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 21 Jun 2019 19:57:22 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Jun 2019 16:57:21 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.63,402,1557212400"; 
+   d="scan'208";a="359022880"
+Received: from megha-z97x-ud7-th.sc.intel.com ([143.183.85.162])
+  by fmsmga005.fm.intel.com with ESMTP; 21 Jun 2019 16:57:21 -0700
+From:   Megha Dey <megha.dey@linux.intel.com>
+To:     bhelgaas@google.com, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     tglx@linutronix.de, marc.zyngier@arm.com, ashok.raj@intel.com,
+        jacob.jun.pan@linux.intel.com, megha.dey@intel.com,
+        Megha Dey <megha.dey@linux.intel.com>
+Subject: [RFC V1 RESEND 0/6] Introduce dynamic allocation/freeing of MSI-X vectors
+Date:   Fri, 21 Jun 2019 17:19:32 -0700
+Message-Id: <1561162778-12669-1-git-send-email-megha.dey@linux.intel.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-References: <a624ec85-ea21-c72e-f997-06273d9b9f9e@valvesoftware.com>
- <20190621214139.GA31034@kroah.com> <CAHk-=wgXoBMWdBahuQR9e75ri6oeVBBjoVEnk0rN1QXfSKK2Eg@mail.gmail.com>
- <CANn89iL5+x3n9H9v4O6y39W=jvQs=uuXbzOvN5mBbcj0t+wdeg@mail.gmail.com> <CAHk-=wjZ=8VSjWuqeG6JJv4dQfK6M0Jgckq5-6=SJa25aku-vQ@mail.gmail.com>
-In-Reply-To: <CAHk-=wjZ=8VSjWuqeG6JJv4dQfK6M0Jgckq5-6=SJa25aku-vQ@mail.gmail.com>
-From:   Eric Dumazet <edumazet@google.com>
-Date:   Fri, 21 Jun 2019 20:19:04 -0400
-Message-ID: <CANn89iLU+NNy7QDPNLYPxNWMx5cXuhziOT7TX2uYt42uUJcNVg@mail.gmail.com>
-Subject: Re: Steam is broken on new kernels
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Pierre-Loup A. Griffais" <pgriffais@valvesoftware.com>,
-        lkml <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 21, 2019 at 7:54 PM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> Eric is talking about this patch, I think:
->
->    https://patchwork.ozlabs.org/patch/1120222/
->
+Currently, MSI-X vector enabling and allocation for a PCIe device is
+static i.e. a device driver gets only one chance to enable a specific
+number of MSI-X vectors, usually during device probe. Also, in many
+cases, drivers usually reserve more than required number of vectors
+anticipating their use, which unnecessarily blocks resources that
+could have been made available to other devices. Lastly, there is no
+way for drivers to reserve more vectors, if the MSI-x has already been
+enabled for that device.
+ 
+Hence, a dynamic MSI-X kernel infrastructure can benefit drivers by
+deferring MSI-X allocation to post probe phase, where actual demand
+information is available.
+ 
+This patchset enables the dynamic allocation/de-allocation of MSI-X
+vectors by introducing 2 new APIs:
+pci_alloc_irq_vectors_dyn() and pci_free_irq_vectors_grp():
 
-That  is correct.
+We have had requests from some of the NIC/RDMA users who have lots of
+interrupt resources and would like to allocate them on demand,
+instead of using an all or none approach.
 
-I am about to take a flight from Boston to Paris, so I can not really
-follow discussions/tests for the following hours.
+The APIs are fairly well tested (multiple allocations/deallocations),
+but we have no early adopters yet. Hence, sending this series as an
+RFC for review and comments.
 
-Thanks.
+The patches are based out of Linux 5.2-rc5.
 
-> I guess I'll ask people on the github thread to test that too.
->
->                   Linus
->
-> On Fri, Jun 21, 2019 at 3:38 PM Eric Dumazet <edumazet@google.com> wrote:
-> >
-> > Please look at my recent patch.
-> >  Sorry I am travelling....
-> >
-> > On Fri, Jun 21, 2019, 6:19 PM Linus Torvalds <torvalds@linux-foundation.org> wrote:
-> >>
-> >> On Fri, Jun 21, 2019 at 2:41 PM Greg Kroah-Hartman
-> >> <gregkh@linuxfoundation.org> wrote:
-> >> >
-> >> > What specific commit caused the breakage?
-> >>
-> >> Both on reddit and on github there seems to be confusion about whether
-> >> it's a problem or not. Some people have it working with the exact same
-> >> kernel that breaks for others.
-> >>
-> >> And then some people seem to say it works intermittently for them,
-> >> which seems to indicate a timing issue.
-> >>
-> >> Looking at the SACK patches (assuming it's one of them), I'd suspect
-> >> the "tcp: tcp_fragment() should apply sane memory limits".
-> >>
-> >> Eric, that one does
-> >>
-> >>        if (unlikely((sk->sk_wmem_queued >> 1) > sk->sk_sndbuf)) {
-> >>                NET_INC_STATS(sock_net(sk), LINUX_MIB_TCPWQUEUETOOBIG);
-> >>                return -ENOMEM;
-> >>        }
-> >>
-> >> but I think it's *normal* for "sk_wmem_queued >> 1" to be around the
-> >> same size as sk_sndbuf. So if there is some fragmentation, and we add
-> >> more skb's to it, that would seem to trigger fairly easily.
-> >> Particularly since this is all in "truesize" units, which can be a lot
-> >> bigger than the packets themselves.
-> >>
-> >> I don't know the code, so I may be out to lunch and barking up
-> >> completely the wrong tree, but that particular check does seem like it
-> >> might trigger much more easily than I think the code _intended_ it to
-> >> trigger?
-> >>
-> >> Pierre-Loup - do you guys have a test-case inside of valve? Or is this
-> >> purely "we see some people with problems"?
-> >>
-> >>                Linus
+Megha Dey (6):
+  PCI/MSI: New structures/macros for dynamic MSI-X allocation
+  PCI/MSI: Dynamic allocation of MSI-X vectors by group
+  x86: Introduce the dynamic teardown function
+  PCI/MSI: Introduce new structure to manage MSI-x entries
+  PCI/MSI: Free MSI-X resources by group
+  Documentation: PCI/MSI: Document dynamic MSI-X infrastructure
+
+ Documentation/PCI/MSI-HOWTO.txt |  38 +++++
+ arch/x86/include/asm/x86_init.h |   1 +
+ arch/x86/kernel/x86_init.c      |   6 +
+ drivers/pci/msi.c               | 363 +++++++++++++++++++++++++++++++++++++---
+ drivers/pci/probe.c             |   9 +
+ include/linux/device.h          |   3 +
+ include/linux/msi.h             |  13 ++
+ include/linux/pci.h             |  61 +++++++
+ kernel/irq/msi.c                |  34 +++-
+ 9 files changed, 497 insertions(+), 31 deletions(-)
+
+-- 
+2.7.4
+
