@@ -2,107 +2,166 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F9A94FED3
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 03:58:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8FFDC4FF29
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 04:14:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726834AbfFXB6G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 23 Jun 2019 21:58:06 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:54192 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726334AbfFXB6G (ORCPT
+        id S1726930AbfFXCOu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 23 Jun 2019 22:14:50 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:44107 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726477AbfFXCOu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Jun 2019 21:58:06 -0400
-Received: from pendragon.ideasonboard.com (81-175-216-236.bb.dnainternet.fi [81.175.216.236])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 115892E7;
-        Mon, 24 Jun 2019 01:32:46 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1561332766;
-        bh=ZwQFWKzylctm08JmQty7ouBHLLmW49Cc/PVD4oe55bw=;
-        h=Date:From:To:Subject:References:In-Reply-To:From;
-        b=VmVfFMY8V1HSANbboGANKSV49ISdL/edBWNI5njU/0h59r7/z/3CNcCQ/iz/Hl7VI
-         P3RlGCykuwWCZ2GniYPHndCKSgxtCOAfv+/PkjuhnBTenhDBxtjdSDPCVy4+aD97VD
-         f9HK/fpZfAg8LZuiDTuGovSPYWtYwvVWuxVF4QGo=
-Date:   Mon, 24 Jun 2019 02:30:17 +0300
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Neil Armstrong <narmstrong@baylibre.com>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        "a.hajda@samsung.com" <a.hajda@samsung.com>,
-        "jernej.skrabec@siol.net" <jernej.skrabec@siol.net>,
-        "maxime.ripard@bootlin.com" <maxime.ripard@bootlin.com>,
-        "khilman@baylibre.com" <khilman@baylibre.com>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "wens@csie.org" <wens@csie.org>,
-        "zhengyang@rock-chips.com" <zhengyang@rock-chips.com>
-Subject: Re: [PATCH 0/4] drm/bridge: dw-hdmi: Add support for HDR metadata
-Message-ID: <20190623233017.GI6124@pendragon.ideasonboard.com>
-References: <VI1PR03MB420621617DDEAB3596700DE0AC1C0@VI1PR03MB4206.eurprd03.prod.outlook.com>
- <085dc3be-20e5-b2fe-4c02-bf4a4d1473da@baylibre.com>
- <20190621090125.GX12905@phenom.ffwll.local>
+        Sun, 23 Jun 2019 22:14:50 -0400
+Received: by mail-lj1-f193.google.com with SMTP id k18so10938464ljc.11
+        for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2019 19:14:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:mail-followup-to:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Q7wz2t7u/9aK1bNPZ479OzccMgC+SVvO9ZTRTaDQNLE=;
+        b=wYbpjEslFKzGNA9UaWsVFJoVeLBrAL2HmRatz8rnXjHTni7OJoRzaBqf+1rBIdEwZw
+         Cx9pdmsZUDC/a+Q7OsWMnQCi4PH5CB8Hre6I0gStJ4XwjEoTZWjf+E2fZ0aa75ILq1/o
+         5wQyQz/YYBAYTpy4i6neEfHrjZqOG4vYDJ9qpJkyij231cxbv15bxsfnyKiSoUmIandO
+         iyzVrAmOx/iZrCrvom9Y7aLJOvkdw6HJLoe1pee4JERvMzXQ4SMrE/9CBfFDcd5XSRr0
+         ohuRCeg1XcOtmzKkZuVvV0xc9FQ6fNxv9yFvl9g5WAEjwm7x/GUrIV2kDIWoxEcWo2ZL
+         ICHw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=Q7wz2t7u/9aK1bNPZ479OzccMgC+SVvO9ZTRTaDQNLE=;
+        b=eY4PEdWk1U93ipCMmjCXIvsJYLh4r3wtnPg3UMWrhkhxRoKK+FxA2PlqabjtYmaCr1
+         KF0E3rvLKYGqM7YIEvvpv/V0yLjpoAFwfclESXpzzwrMJzpCX7r4Ot9ytgriMvu5zEZS
+         4GCpUfEOg9b62n0CCUaXyU6A96PosJxVLx9SukvOydl9HRaI3F90Hh4ExVu40Y2stkmL
+         Daa9Y6UaVUZjKjHQI9A2irw+fZDln6zs+FCQvdzM1qhNfZ1/5dDo0TStt0TzTg6g1jDy
+         3Nwvee2ZHySABkoyjwtVDOhz/G8kYRSfeiy/yt3HhazW9N1rQZSfj14HN7SWQC7I2VkX
+         VbYQ==
+X-Gm-Message-State: APjAAAVMnPj3niz5ikVbzZ4tBEj4Rp3bKNdU75xJln72sMkK6W4CoXpd
+        P+aFJe9D3jVOCKwIbRTdV3PrqQ==
+X-Google-Smtp-Source: APXvYqzVtXIxqFwTgM8EzEXOeQXVyES/27218XIBMarVRmRWmUa/XKEZAMMJKYyORixUr2FpTKApSw==
+X-Received: by 2002:a2e:9950:: with SMTP id r16mr45976579ljj.173.1561332668839;
+        Sun, 23 Jun 2019 16:31:08 -0700 (PDT)
+Received: from khorivan (59-201-94-178.pool.ukrtel.net. [178.94.201.59])
+        by smtp.gmail.com with ESMTPSA id 80sm1325307lfz.56.2019.06.23.16.31.07
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 23 Jun 2019 16:31:08 -0700 (PDT)
+Date:   Mon, 24 Jun 2019 02:31:06 +0300
+From:   Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
+To:     Keerthy <j-keerthy@ti.com>
+Cc:     davem@davemloft.net, andrew@lunn.ch, ilias.apalodimas@linaro.org,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        linux-omap@vger.kernel.org, t-kristo@ti.com,
+        grygorii.strashko@ti.com, nsekhar@ti.com
+Subject: Re: [PATCH] net: ethernet: ti: cpsw: Fix suspend/resume break
+Message-ID: <20190623233105.GA5472@khorivan>
+Mail-Followup-To: Keerthy <j-keerthy@ti.com>, davem@davemloft.net,
+        andrew@lunn.ch, ilias.apalodimas@linaro.org,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        linux-omap@vger.kernel.org, t-kristo@ti.com,
+        grygorii.strashko@ti.com, nsekhar@ti.com
+References: <20190622103140.22902-1-j-keerthy@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-In-Reply-To: <20190621090125.GX12905@phenom.ffwll.local>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190622103140.22902-1-j-keerthy@ti.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 21, 2019 at 11:01:25AM +0200, Daniel Vetter wrote:
-> On Thu, Jun 20, 2019 at 04:40:12PM +0200, Neil Armstrong wrote:
-> > Hi Andrzej,
-> > 
-> > Gentle ping, could you review the dw-hdmi changes here ?
-> 
-> btw not sure you absolutely need review from Andrzej, we're currently a
-> bit undersupplied with bridge reviewers I think ... Better to ramp up
-> more.
+On Sat, Jun 22, 2019 at 04:01:40PM +0530, Keerthy wrote:
 
-I try to review DRM bridge patches when possible, but dw-hdmi is a
-special case. I was told by the supplier of an SoC datasheet that
-contains the HDMI encoder IP core documentation that Synopsys required
-them to route all contributions made based on that documentation through
-Synopsys' internal legal review before publishing them. I thus decided
-to not contribute to the driver anymore, at least for areas that require
-access to documentation.
+Hi Keerty,
 
-> > On 26/05/2019 23:18, Jonas Karlman wrote:
-> > > Add support for HDR metadata using the hdr_output_metadata connector property,
-> > > configure Dynamic Range and Mastering InfoFrame accordingly.
-> > > 
-> > > A drm_infoframe flag is added to dw_hdmi_plat_data that platform drivers
-> > > can use to signal when Dynamic Range and Mastering infoframes is supported.
-> > > This flag is needed because Amlogic GXBB and GXL report same DW-HDMI version,
-> > > and only GXL support DRM InfoFrame.
-> > > 
-> > > The first patch add functionality to configure DRM InfoFrame based on the
-> > > hdr_output_metadata connector property.
-> > > 
-> > > The remaining patches sets the drm_infoframe flag on some SoCs supporting
-> > > Dynamic Range and Mastering InfoFrame.
-> > > 
-> > > Note that this was based on top of drm-misc-next and Neil Armstrong's
-> > > "drm/meson: Add support for HDMI2.0 YUV420 4k60" series at [1]
-> > > 
-> > > [1] https://patchwork.freedesktop.org/series/58725/#rev2
-> > > 
-> > > Jonas Karlman (4):
-> > >   drm/bridge: dw-hdmi: Add Dynamic Range and Mastering InfoFrame support
-> > >   drm/rockchip: Enable DRM InfoFrame support on RK3328 and RK3399
-> > >   drm/meson: Enable DRM InfoFrame support on GXL, GXM and G12A
-> > >   drm/sun4i: Enable DRM InfoFrame support on H6
-> > > 
-> > >  drivers/gpu/drm/bridge/synopsys/dw-hdmi.c   | 109 ++++++++++++++++++++
-> > >  drivers/gpu/drm/bridge/synopsys/dw-hdmi.h   |  37 +++++++
-> > >  drivers/gpu/drm/meson/meson_dw_hdmi.c       |   5 +
-> > >  drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c |   2 +
-> > >  drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c       |   2 +
-> > >  drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h       |   1 +
-> > >  include/drm/bridge/dw_hdmi.h                |   1 +
-> > >  7 files changed, 157 insertions(+)
+>Commit bfe59032bd6127ee190edb30be9381a01765b958 ("net: ethernet:
+>ti: cpsw: use cpsw as drv data")changes
+>the driver data to struct cpsw_common *cpsw. This is done
+>only in probe/remove but the suspend/resume functions are
+>still left with struct net_device *ndev. Hence fix both
+>suspend & resume also to fetch the updated driver data.
+>
+>Fixes: bfe59032bd6127ee1 ("net: ethernet: ti: cpsw: use cpsw as drv data")
+>Signed-off-by: Keerthy <j-keerthy@ti.com>
+>---
+> drivers/net/ethernet/ti/cpsw.c | 36 +++++++++++-----------------------
+> 1 file changed, 11 insertions(+), 25 deletions(-)
+>
+>diff --git a/drivers/net/ethernet/ti/cpsw.c b/drivers/net/ethernet/ti/cpsw.c
+>index 7bdd287074fc..2aeaad15e20e 100644
+>--- a/drivers/net/ethernet/ti/cpsw.c
+>+++ b/drivers/net/ethernet/ti/cpsw.c
+>@@ -2590,20 +2590,12 @@ static int cpsw_remove(struct platform_device *pdev)
+> #ifdef CONFIG_PM_SLEEP
+> static int cpsw_suspend(struct device *dev)
+> {
+>-	struct net_device	*ndev = dev_get_drvdata(dev);
+>-	struct cpsw_common	*cpsw = ndev_to_cpsw(ndev);
+>-
+>-	if (cpsw->data.dual_emac) {
+>-		int i;
+>+	struct cpsw_common *cpsw = dev_get_drvdata(dev);
+>+	int i;
+>
+>-		for (i = 0; i < cpsw->data.slaves; i++) {
+>-			if (netif_running(cpsw->slaves[i].ndev))
+>-				cpsw_ndo_stop(cpsw->slaves[i].ndev);
+>-		}
+>-	} else {
+>-		if (netif_running(ndev))
+>-			cpsw_ndo_stop(ndev);
+>-	}
+>+	for (i = 0; i < cpsw->data.slaves; i++)
+>+		if (netif_running(cpsw->slaves[i].ndev))
+Seems I've missed to add this, but in your fix potential issue in switch mode.
+ndev is not necessarily present for slave, you need to check on ndev != null
+before using it, if you still remove cpsw->data.dual_emac ofc.
+
+Thanks.
+
+>+			cpsw_ndo_stop(cpsw->slaves[i].ndev);
+>
+> 	/* Select sleep pin state */
+> 	pinctrl_pm_select_sleep_state(dev);
+>@@ -2613,25 +2605,19 @@ static int cpsw_suspend(struct device *dev)
+>
+> static int cpsw_resume(struct device *dev)
+> {
+>-	struct net_device	*ndev = dev_get_drvdata(dev);
+>-	struct cpsw_common	*cpsw = ndev_to_cpsw(ndev);
+>+	struct cpsw_common *cpsw = dev_get_drvdata(dev);
+>+	int i;
+>
+> 	/* Select default pin state */
+> 	pinctrl_pm_select_default_state(dev);
+>
+> 	/* shut up ASSERT_RTNL() warning in netif_set_real_num_tx/rx_queues */
+> 	rtnl_lock();
+>-	if (cpsw->data.dual_emac) {
+>-		int i;
+>
+>-		for (i = 0; i < cpsw->data.slaves; i++) {
+>-			if (netif_running(cpsw->slaves[i].ndev))
+>-				cpsw_ndo_open(cpsw->slaves[i].ndev);
+>-		}
+>-	} else {
+>-		if (netif_running(ndev))
+>-			cpsw_ndo_open(ndev);
+>-	}
+>+	for (i = 0; i < cpsw->data.slaves; i++)
+>+		if (netif_running(cpsw->slaves[i].ndev))
+>+			cpsw_ndo_open(cpsw->slaves[i].ndev);
+>+
+same here
+
+> 	rtnl_unlock();
+>
+> 	return 0;
+>-- 
+>2.17.1
+>
 
 -- 
 Regards,
-
-Laurent Pinchart
+Ivan Khoronzhuk
