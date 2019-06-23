@@ -2,104 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4722F4FCA8
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2019 18:19:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8C0814FCB5
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2019 18:36:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726660AbfFWQTi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 23 Jun 2019 12:19:38 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:36107 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726399AbfFWQTh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Jun 2019 12:19:37 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x5NGJOWu2708449
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Sun, 23 Jun 2019 09:19:25 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x5NGJOWu2708449
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019061801; t=1561306765;
-        bh=C1Kv2nk7aXwpcGMAiNdwZsLrtNiio7MlvKQqLw/vd/Y=;
-        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
-        b=MOUMU729rpr6ey5G4ncXppoeyxc7EJlp2cLdzYJDdllObkBhPudoKwdBZt+KeUThu
-         G/48AX4Y1YZ3AhUKVIBuX1bVbft2OWYQEg+KkZaeIxRzlaf8BP9En42oIYuNhCwA5o
-         UibUguanRggLIdWmH9X8RVv3dWI7GUqEXCCRyv9PhbLQUStBfBNpWDojQjQTxikYik
-         FfkqrIMG+JjS4Uv3HOFUKyCpIrHB8BMhsOq9Y+8FW2RDbplFI59dbjsbBOQlvfvwAR
-         vBqrBVn+81gCJvgvnDtTogaEDgWgfaAI9yCUi4LGLOT/DIK0sPUHpirUCVDvGioQS/
-         S2KNIM6H4kskg==
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x5NGJO0b2708446;
-        Sun, 23 Jun 2019 09:19:24 -0700
-Date:   Sun, 23 Jun 2019 09:19:24 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Muchun Song <tipbot@zytor.com>
-Message-ID: <tip-8afecaa68df1e94a9d634f1f961533a925f239fc@git.kernel.org>
-Cc:     tglx@linutronix.de, mingo@kernel.org, linux-kernel@vger.kernel.org,
-        smuchun@gmail.com, hpa@zytor.com
-Reply-To: linux-kernel@vger.kernel.org, mingo@kernel.org,
-          smuchun@gmail.com, hpa@zytor.com, tglx@linutronix.de
-In-Reply-To: <20190618143305.2038-1-smuchun@gmail.com>
-References: <20190618143305.2038-1-smuchun@gmail.com>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:irq/core] softirq: Use __this_cpu_write() in
- takeover_tasklets()
-Git-Commit-ID: 8afecaa68df1e94a9d634f1f961533a925f239fc
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        id S1726726AbfFWQgw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 23 Jun 2019 12:36:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50012 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726399AbfFWQgw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 23 Jun 2019 12:36:52 -0400
+Received: from localhost (unknown [106.201.35.23])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id EC0EE206BA;
+        Sun, 23 Jun 2019 16:36:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1561307811;
+        bh=bgRO7bREz2maqiR8ifkc3/2uY/Cw6hgv+ekC+zp5BUQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=L43njXquan/oLhDPeB4YacVyIXbcPYNsqx1NqEpiLD9ayL0nXbOkGMDMPwPQ0t5lt
+         JF2JD1SSggQkJycI3FsciabqRuih33k5Pp+ONI1y11fE3KRkwIm/leHZZc8oQB4Fx1
+         MXptBbdxfVq5dsHKkthHI7u8bqabI9geamVtlHPA=
+Date:   Sun, 23 Jun 2019 22:03:42 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Christian Lamparter <chunkeey@gmail.com>
+Cc:     Mathias Nyman <mathias.nyman@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-arm-msm@vger.kernel.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Christian Lamparter <chunkeey@googlemail.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/5] usb: xhci: add firmware loader for uPD720201 and
+ uPD720202 w/o ROM
+Message-ID: <20190623163342.GR2962@vkoul-mobl>
+References: <20190621085913.8722-1-vkoul@kernel.org>
+ <20190621085913.8722-2-vkoul@kernel.org>
+ <1897697.zOhlaAKarQ@debian64>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-X-Spam-Status: No, score=0.9 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        DATE_IN_FUTURE_06_12,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,
-        DKIM_VALID_EF,FREEMAIL_FORGED_REPLYTO autolearn=no autolearn_force=no
-        version=3.4.2
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
+In-Reply-To: <1897697.zOhlaAKarQ@debian64>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  8afecaa68df1e94a9d634f1f961533a925f239fc
-Gitweb:     https://git.kernel.org/tip/8afecaa68df1e94a9d634f1f961533a925f239fc
-Author:     Muchun Song <smuchun@gmail.com>
-AuthorDate: Tue, 18 Jun 2019 22:33:05 +0800
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Sun, 23 Jun 2019 18:14:27 +0200
+On 21-06-19, 21:59, Christian Lamparter wrote:
+> On Friday, June 21, 2019 10:59:09 AM CEST Vinod Koul wrote:
+> > +	/*
+> > +	 * The Firmware's Data Format is describe in
+> > +	 * "6.3 Data Format" R19UH0078EJ0500 Rev.5.00 page 124
+> > +	 */
+> > +
+> > +	/* "Each row is 8 bytes". => firmware size must be a multiple of 8. */
+> > +	if (length % 8 != 0)
+> > +		dev_warn(&dev->dev, "firmware size is not a multiple of 8.");
+> 
+> It doesn't look like this holds true for the newer K2026090.mem which
+> arguably fixes a lot of bugs over K2013080.mem. I think we should remove
+> this check and message.
 
-softirq: Use __this_cpu_write() in takeover_tasklets()
+The documentation still says so, that is why I changed error return and
+this to warning. Yeah lets remove to not confuse folks :)
 
-The code is executed with interrupts disabled, so it's safe to use
-__this_cpu_write().
-
-[ tglx: Massaged changelog ]
-
-Signed-off-by: Muchun Song <smuchun@gmail.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: joel@joelfernandes.org
-Cc: rostedt@goodmis.org
-Cc: frederic@kernel.org
-Cc: paulmck@linux.vnet.ibm.com
-Cc: alexander.levin@verizon.com
-Cc: peterz@infradead.org
-Link: https://lkml.kernel.org/r/20190618143305.2038-1-smuchun@gmail.com
-
----
- kernel/softirq.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/kernel/softirq.c b/kernel/softirq.c
-index 2c3382378d94..eaf3bdf7c749 100644
---- a/kernel/softirq.c
-+++ b/kernel/softirq.c
-@@ -650,7 +650,7 @@ static int takeover_tasklets(unsigned int cpu)
- 	/* Find end, append list for that CPU. */
- 	if (&per_cpu(tasklet_vec, cpu).head != per_cpu(tasklet_vec, cpu).tail) {
- 		*__this_cpu_read(tasklet_vec.tail) = per_cpu(tasklet_vec, cpu).head;
--		this_cpu_write(tasklet_vec.tail, per_cpu(tasklet_vec, cpu).tail);
-+		__this_cpu_write(tasklet_vec.tail, per_cpu(tasklet_vec, cpu).tail);
- 		per_cpu(tasklet_vec, cpu).head = NULL;
- 		per_cpu(tasklet_vec, cpu).tail = &per_cpu(tasklet_vec, cpu).head;
- 	}
+-- 
+~Vinod
