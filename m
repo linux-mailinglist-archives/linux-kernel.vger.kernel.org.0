@@ -2,23 +2,23 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A72C04FBE0
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2019 15:29:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 27ABC4FBC7
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2019 15:27:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727022AbfFWN2z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 23 Jun 2019 09:28:55 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:33454 "EHLO
+        id S1726783AbfFWN1s (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 23 Jun 2019 09:27:48 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:33463 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726520AbfFWN1o (ORCPT
+        with ESMTP id S1726720AbfFWN1q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Jun 2019 09:27:44 -0400
+        Sun, 23 Jun 2019 09:27:46 -0400
 Received: from localhost ([127.0.0.1] helo=nanos.tec.linutronix.de)
         by Galois.linutronix.de with esmtp (Exim 4.80)
         (envelope-from <tglx@linutronix.de>)
-        id 1hf2X0-0001kH-VK; Sun, 23 Jun 2019 15:27:43 +0200
-Message-Id: <20190623132435.149535103@linutronix.de>
+        id 1hf2X1-0001kP-N3; Sun, 23 Jun 2019 15:27:43 +0200
+Message-Id: <20190623132435.241032433@linutronix.de>
 User-Agent: quilt/0.65
-Date:   Sun, 23 Jun 2019 15:23:52 +0200
+Date:   Sun, 23 Jun 2019 15:23:53 +0200
 From:   Thomas Gleixner <tglx@linutronix.de>
 To:     LKML <linux-kernel@vger.kernel.org>
 Cc:     x86@kernel.org, Peter Zijlstra <peterz@infradead.org>,
@@ -28,7 +28,7 @@ Cc:     x86@kernel.org, Peter Zijlstra <peterz@infradead.org>,
         Suravee Suthikulpanit <Suravee.Suthikulpanit@amd.com>,
         Stephane Eranian <eranian@google.com>,
         Ravi Shankar <ravi.v.shankar@intel.com>
-Subject: [patch 12/29] x86/hpet: Simplify counter validation
+Subject: [patch 13/29] x86/hpet: Decapitalize and rename EVT_TO_HPET_DEV
 References: <20190623132340.463097504@linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -37,36 +37,81 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There is no point to loop for 200k TSC cycles to check afterwards whether
-the HPET counter is working. Read the counter inside of the loop and break
-out when the counter value changed.
+It's a function not a macro and the upcoming changes use channel for the
+individual hpet timer units to allow a step by step refactoring approach.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 ---
- arch/x86/kernel/hpet.c |   10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
+ arch/x86/kernel/hpet.c |   27 ++++++++++-----------------
+ 1 file changed, 10 insertions(+), 17 deletions(-)
 
 --- a/arch/x86/kernel/hpet.c
 +++ b/arch/x86/kernel/hpet.c
-@@ -853,15 +853,13 @@ static bool __init hpet_counting(void)
- 	 * 1 GHz == 200us
- 	 */
- 	do {
--		rep_nop();
-+		if (t1 != hpet_readl(HPET_COUNTER))
-+			return true;
- 		now = rdtsc();
- 	} while ((now - start) < 200000UL);
+@@ -69,9 +69,10 @@ static bool				hpet_verbose;
  
--	if (t1 == hpet_readl(HPET_COUNTER)) {
--		pr_warn("Counter not counting. HPET disabled\n");
--		return false;
--	}
--	return true;
-+	pr_warn("Counter not counting. HPET disabled\n");
-+	return false;
+ static struct clock_event_device	hpet_clockevent;
+ 
+-static inline struct hpet_dev *EVT_TO_HPET_DEV(struct clock_event_device *evtdev)
++static inline
++struct hpet_dev *clockevent_to_channel(struct clock_event_device *evt)
+ {
+-	return container_of(evtdev, struct hpet_dev, evt);
++	return container_of(evt, struct hpet_dev, evt);
  }
  
- /**
+ inline unsigned int hpet_readl(unsigned int a)
+@@ -458,28 +459,22 @@ void hpet_msi_write(struct hpet_dev *hde
+ 
+ static int hpet_msi_shutdown(struct clock_event_device *evt)
+ {
+-	struct hpet_dev *hdev = EVT_TO_HPET_DEV(evt);
+-
+-	return hpet_shutdown(evt, hdev->num);
++	return hpet_shutdown(evt, clockevent_to_channel(evt)->num);
+ }
+ 
+ static int hpet_msi_set_oneshot(struct clock_event_device *evt)
+ {
+-	struct hpet_dev *hdev = EVT_TO_HPET_DEV(evt);
+-
+-	return hpet_set_oneshot(evt, hdev->num);
++	return hpet_set_oneshot(evt, clockevent_to_channel(evt)->num);
+ }
+ 
+ static int hpet_msi_set_periodic(struct clock_event_device *evt)
+ {
+-	struct hpet_dev *hdev = EVT_TO_HPET_DEV(evt);
+-
+-	return hpet_set_periodic(evt, hdev->num);
++	return hpet_set_periodic(evt, clockevent_to_channel(evt)->num);
+ }
+ 
+ static int hpet_msi_resume(struct clock_event_device *evt)
+ {
+-	struct hpet_dev *hdev = EVT_TO_HPET_DEV(evt);
++	struct hpet_dev *hdev = clockevent_to_channel(evt);
+ 	struct irq_data *data = irq_get_irq_data(hdev->irq);
+ 	struct msi_msg msg;
+ 
+@@ -491,16 +486,14 @@ static int hpet_msi_resume(struct clock_
+ }
+ 
+ static int hpet_msi_next_event(unsigned long delta,
+-				struct clock_event_device *evt)
++			       struct clock_event_device *evt)
+ {
+-	struct hpet_dev *hdev = EVT_TO_HPET_DEV(evt);
+-
+-	return hpet_next_event(delta, hdev->num);
++	return hpet_next_event(delta, clockevent_to_channel(evt)->num);
+ }
+ 
+ static irqreturn_t hpet_interrupt_handler(int irq, void *data)
+ {
+-	struct hpet_dev *dev = (struct hpet_dev *)data;
++	struct hpet_dev *dev = data;
+ 	struct clock_event_device *hevt = &dev->evt;
+ 
+ 	if (!hevt->event_handler) {
 
 
