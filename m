@@ -2,219 +2,144 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6927A4FB22
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2019 12:39:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 55B744FB2D
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2019 12:51:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726572AbfFWKhH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 23 Jun 2019 06:37:07 -0400
-Received: from mail-io1-f72.google.com ([209.85.166.72]:42300 "EHLO
-        mail-io1-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726429AbfFWKhG (ORCPT
+        id S1726510AbfFWKvC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 23 Jun 2019 06:51:02 -0400
+Received: from mail-out.m-online.net ([212.18.0.9]:41328 "EHLO
+        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726350AbfFWKvC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Jun 2019 06:37:06 -0400
-Received: by mail-io1-f72.google.com with SMTP id f22so17906253ioj.9
-        for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2019 03:37:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=R+foo+kvOx4dze7eA0jrIqas8dcjlWlwn4IxLmthvzc=;
-        b=RJk/9HKjQdwCS0IyGBwTEfXTS0Asbqzw0hwPtCiwcubq64FOCYqj73Wt7AmMUoprm7
-         ngDLx4JpWzY5+xYaC3JnJ/JVttClYI3DiTw+8jwkFfnkLUWHuJPnuzuaw6BswfCM3VDL
-         DZTYFiE2sX0qyFK3NHNG9QAnP96FZ10LpdFa8LiMSjoLh90oXyLGPaC7HPv2w/MBmc5c
-         g0AvijcQRpauhKea52ho0xIa4jqiBrmpBhJmsBiui+ZAhZORYRenkMSkPgbhe5K1p2Ab
-         Bgs6y6M31bBU9VScd9ZX0pSQXsJb5PoMgnv5PmmhZ+wveSaBv0BsjqMSL+iEOssU3ruk
-         1mPg==
-X-Gm-Message-State: APjAAAVQOcnTgdk5ZFZW969/s2F6v1+LR5EoswkHgkLKAAHBVHTrE6Se
-        lTbBuFGK31kxA/Mn8gz2Q+diwAgXWQiXguLOlXUvVPwNNrrP
-X-Google-Smtp-Source: APXvYqyPxwE4xAz+WhN3dfZXCppVb0lL7NKPYBVn3COzs2MWVK0jgJS4T4arjDFDY7e+4G6g6DxZHZNUAnAn/hhS8aVRYB718/BZ
+        Sun, 23 Jun 2019 06:51:02 -0400
+Received: from frontend01.mail.m-online.net (unknown [192.168.8.182])
+        by mail-out.m-online.net (Postfix) with ESMTP id 45Wq354Tdvz1rBNc;
+        Sun, 23 Jun 2019 12:50:57 +0200 (CEST)
+Received: from localhost (dynscan1.mnet-online.de [192.168.6.70])
+        by mail.m-online.net (Postfix) with ESMTP id 45Wq353Yhpz1qrQG;
+        Sun, 23 Jun 2019 12:50:57 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at mnet-online.de
+Received: from mail.mnet-online.de ([192.168.8.182])
+        by localhost (dynscan1.mail.m-online.net [192.168.6.70]) (amavisd-new, port 10024)
+        with ESMTP id urD9018kUm2u; Sun, 23 Jun 2019 12:50:56 +0200 (CEST)
+X-Auth-Info: +p3y079CFfEIMLVv29pcMK0Ow+U7YZFULlYuWhFZ0tc=
+Received: from [IPv6:::1] (unknown [195.140.253.167])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.mnet-online.de (Postfix) with ESMTPSA;
+        Sun, 23 Jun 2019 12:50:56 +0200 (CEST)
+Subject: Re: Kernel touch Kconfig consult
+To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        "luhua.xu" <luhua.xu@mediatek.com>
+Cc:     Rob Herring <robh@kernel.org>, Nick Dyer <nick.dyer@itdev.co.uk>,
+        Richard Leitner <richard.leitner@skidata.com>,
+        Martin Kepplinger <martink@posteo.de>,
+        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+        weiqi.fu@mediatek.com, wsd_upstream@mediatek.com
+References: <1560509239.24963.25.camel@mbjsdccf07>
+ <20190623070249.GD204275@dtor-ws>
+From:   Marek Vasut <marex@denx.de>
+Openpgp: preference=signencrypt
+Autocrypt: addr=marex@denx.de; prefer-encrypt=mutual; keydata=
+ mQINBFHmnxgBEACuQOC6Kaw/32MTeUJdFuDZ1FrbG76a0Ys/I02Kj9jXDmCCLvqq18Z4A1b0
+ xbuMKGDy5WR77fqGV8zADUo6i1ATgCZeg+SRmQROF8r9K6n6digTznBySSLANhN3kXUMNRE1
+ WEIBGCZJ5FF+Qq59AkAUTB8CiIzfEW98o7lUjeEume/78wR18+QW+2z6eYli2qNECceRINXT
+ zS3oxRMr+ivqEUGKvMBC/WNLuvJoCGsfSQc2I+uGEU7MOdOCC6SsKdnPBGKYth5Ieb16bRS1
+ b9M5BoEKTEzDCOWn92OxeHX6M2gLEMQobfM0RdIowMfWaUHdci2cLUTyL0T/P/gIpHMR2LhL
+ 8sdbNZufgv73s9PDgxTWMzypXimMJ7VZmVh9I2nQd2xm8+uE1rghqb90aEMFCTwUlrz4Qhjh
+ vmczd2ScuuOMLzHEaaoOrMGbaWIEFcJvQgyHzJgMPgnG64eDq6uGyBEXRc3bBzv7B765Hcg8
+ SSNqoUstjuQQlGp3y3Yj16l+PyZ3Ucy2swFYLVPTc35xFBk/uGEIhGncoFpOX29rxt9M8r5G
+ hm7395m0GmDy50H/HN61/S8EPvM3HUjqBvX1EqU+vJXfwozxkKpIwcjx7h3W+PPS9TUb7r5v
+ vHCqnrWRd/m6KWbCJsv0rsIU66o2qKYX5cIHV6u6Y7Zm7BtHfwARAQABtBtNYXJlayBWYXN1
+ dCA8bWFyZXhAZGVueC5kZT6JAjgEEwECACIFAlHmnxgCGwMGCwkIBwMCBhUIAgkKCwQWAgMB
+ Ah4BAheAAAoJEOtsLUEh5B0XLk0QAINOYFYB3v4KjXSFHYBQLlDblqhXvVtjyQHMiJsY1BMO
+ mMrANUJQtpY3UkYquFspe2GBiFQbfW+mDlwFlSNpzaJ68qGEK+57I/MufsZKV6Ze9j7QeClu
+ orYH+zfIBI7sn0HkY/MWN/Z270gRv2xSxDBP/8SPdB53EkImLZUFOo4/5eyuQ4t8HLgol02u
+ 2ncwXrnT036QC3SiNJDCJhwkpjvamPHghxr8hbIwkdOLZlYWfl0yzYzQohl8zBEwtBxl5cS4
+ 1TcrgBXsanQUMVNBpl0s8nQLKuHJNPOAhBnKstAe54yY3iWswYayHqqgqIQldcDqttHhdTJW
+ mb9hTSf5p6fnZqcsfi3PUFwj5PJSN3aAbF8w42FwRvIOWbksFIWXpxYI3mq2TmX4GtlKdlF8
+ xT+Q+Cbk538IBV4OQ5BapuYHs1C1ff9gVC0rfrCEloyteHafHwOv3ZuEGPlH89Rl4EjRvJxX
+ 8nE0sCiq6yUbpom8xRA5nFwA0bbTDwhH5RD/952bZraLpWcdJ6cWA2gefd2+2fy0268xyHmD
+ m87B49BIaAsZ2kvEb/scCZ/CvPHjHLAjr+/GsdzOxwB68P41ZajujMDmbka00CyeAl88pgLX
+ tTkPvAzuEDpRoJmg8zrQqrsmEKSdhFJhZ7d2MMKpCcVnInByXjM+1GEfSisTgWnluQINBFHm
+ nxgBEAC8MpoO1s1AB0uRQGXlhYzkYvxkDGAe50/18ct2K6ORSv7HjCmZBjJX+2xTPSmML9ju
+ 3P0KrlnRdT8qCh+ozijffLjm5X9Fk+6mGQ56UQzivuPNlgyC3epF3Z58VPVQcIfE2/pdAxtZ
+ zKc4P5t2yo5qk635huo0NvNg5mRhvfZ7mZpZuBahkHguR0Heh/tnGCa2v5P6uFbGX8+6rAA8
+ EKxl5Tclf27PFZwbIWL1buS9RwgzsHj2TFnnEFIcWdMHyGy2GT8JMgY0VwxKebzGJg2RqfOL
+ PaPjnvnXHAIYEknQp0TUtUiNxm0PBa4IQ30XhrB9D5QYdcw/DVvCzb9qyIlaQKEqHZm1fGU4
+ iCsH3jV+5D4Lrn5JfXc/+A1NsLUq/NFIYhphbX4fGjR2QdZJrDnGVcxSlwP7CeRuxGELrASz
+ m4G4Q0mYz7HdAlzBJHi8Ej4yC9l7PPlnxdUcAwheLxGwzMCf5vxw1C6Zi8PvKu/sY7Bha9XJ
+ plvuLBi7QrkD8mZEzt+xC9nWRt7hL47+UvyduFe4qDMTPrW20ROxCykC36gj53YhqqLblioX
+ 2//vGLKj8x+LiLSTwjkLkrwOremhdTqr457511vOXyaZyOlWhFjN+4j9xwbbg1IWwMenRAb7
+ Qwuipck6fN2o+PK9i6t6pWXrUDNI/VCMbimnuqPwAQARAQABiQIfBBgBAgAJBQJR5p8YAhsM
+ AAoJEOtsLUEh5B0XMqAP/1HbrClefDZ/Lvvo89mgC56vWzEstmFo8EihqxVZvpkiCjJoCH53
+ VCYeGl41p0y6K5gaLT28s9waVHBw+dhpwABba3neV/vyXv0wUtvkS3T0e4zruYFWw0lQoZi+
+ 8rtXTsuWN5t3u8avXsrdqD0CteTJdgZ7yBV8bBvK2ekqFMS/cLC+MoYlmUFn6Tcxmv0x8QZY
+ ux6ts9YpUvx8QxMJt9vfwt1WIUEFKR3JQdrZmbPGqWJ3s+u/C+v9stC5qf2eYafRjzy05lEn
+ B06W5D5Uc+FGEhuzq4G0eRLgivMoC0Eqz7HuwGcRAJYQILQ3Vzd4oHKPoUAtvlKqUwDmHodT
+ HPmN73JMsvO3jLrSdl4k6o3CdlS/DI0Eto4fD0Wqh6d5q11u1TOM7+/LehWrOOoGVqRc6FFT
+ ofck6h6rN/Urwkr1nWQ3kgO1cd/gevqy8Tevo/qkPYIf71BlypcXhKqn6IPjkq4QLiDPRjHM
+ tgPc2T/X/ETe5eCuhxMytIYbt1fK2pDXPoIKbbDK4uEmg9USXZ+pYrac4PFo1d+6D6vmTjRZ
+ GRRITOVpKgBndfPyqofxeKNKGdNf9FS/x89RlnDWXsQHm+0pXguSRG9XdB16ZFNgeo8SeZVr
+ qc9uLfhyQp/zB6qEnuX1TToug7PuDgcNZdjN3vgTXyno2TFMxp/LKHqg
+Message-ID: <b1ab79bd-e72a-a782-a293-c32f1c09cce9@denx.de>
+Date:   Sun, 23 Jun 2019 12:43:47 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-X-Received: by 2002:a6b:7a42:: with SMTP id k2mr29879531iop.214.1561286225444;
- Sun, 23 Jun 2019 03:37:05 -0700 (PDT)
-Date:   Sun, 23 Jun 2019 03:37:05 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000dc4531058bfb4605@google.com>
-Subject: KMSAN: uninit-value in gre_parse_header
-From:   syzbot <syzbot+f583ce3d4ddf9836b27a@syzkaller.appspotmail.com>
-To:     davem@davemloft.net, glider@google.com, kuznet@ms2.inr.ac.ru,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, xeb@mail.ru,
-        yoshfuji@linux-ipv6.org
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+In-Reply-To: <20190623070249.GD204275@dtor-ws>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On 6/23/19 9:02 AM, Dmitry Torokhov wrote:
+> Hi,
+> 
+> On Fri, Jun 14, 2019 at 06:47:19AM -0400, luhua.xu wrote:
+>> Hi Dmitry,Rob,Marek, Nick,Richard,Martin,
+>>
+>> In our  customer support experience, many smartphone have two or three
+>> touch vendor mixture , and customer use one load to support all touches.
+>> For easy to config touch driver  we use kernel config like this down
+>> below,
+>>  
+>> We change the config type from 'bool' to 'string'.
+>>  
+>> config TOUCHSCREEN_MTK_TOUCH
+>>   string "Touch IC name for Mediatek package"
+>>   help
+>>     Set touch IC name if you have touch panel.
+>>     To compile this dirver for used touch IC.
+>>  
+>>
+>> And we config touch driver like this：
+>> CONFIG_TOUCHSCREEN_MTK_TOUCH="GT9886 GT1151 TD4320"
+>>  
+>> I only use one config to support  3 touches, while we have to use 3
+>> config to support 3  touch drivers if we set the config as 'bool'.
+>>
+>> So can I use Kconfig like this?
+>> I do look forward to receiving your reply at your convenience .
+>>
+> 
+> I really do not see why having a sting is easier to have than 3 bools,
+> especially if they pertain to different touch controllers. You must also
+> have some custom processing of the config above as I am pretty sure our
+> standard build tools would not work for it.
 
-syzbot found the following crash on:
+I might be missing something obvious, but isn't DT something you want to
+use on your ARM device to describe the hardware , instead of hard-coding
+it into the kernel configuration ?
 
-HEAD commit:    088c01ea kmsan: fix comment, NFC
-git tree:       kmsan
-console output: https://syzkaller.appspot.com/x/log.txt?x=15efc163200000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=68044283f8b8640d
-dashboard link: https://syzkaller.appspot.com/bug?extid=f583ce3d4ddf9836b27a
-compiler:       clang version 8.0.0 (trunk 350509)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10775ecd200000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1364b30f200000
+I recently worked with MT6797 (the Gemini PDA SoC), and the vendorkernel
+does exactly this, it's a spectacular display of ifdeffery and Kconfig
+chaos, so I suspect this is where the idea of putting stuff into Kconfig
+comes from.
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+f583ce3d4ddf9836b27a@syzkaller.appspotmail.com
-
-IPv6: ADDRCONF(NETDEV_CHANGE): hsr_slave_1: link becomes ready
-IPv6: ADDRCONF(NETDEV_CHANGE): hsr0: link becomes ready
-8021q: adding VLAN 0 to HW filter on device batadv0
-raw_sendmsg: syz-executor949 forgot to set AF_INET. Fix it!
-==================================================================
-BUG: KMSAN: uninit-value in __arch_swab32  
-arch/x86/include/uapi/asm/swab.h:10 [inline]
-BUG: KMSAN: uninit-value in __fswab32 include/uapi/linux/swab.h:59 [inline]
-BUG: KMSAN: uninit-value in gre_parse_header+0x1396/0x1690  
-net/ipv4/gre_demux.c:136
-CPU: 1 PID: 10485 Comm: syz-executor949 Not tainted 5.1.0-rc2+ #21
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  <IRQ>
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x173/0x1d0 lib/dump_stack.c:113
-  kmsan_report+0x131/0x2a0 mm/kmsan/kmsan.c:624
-  __msan_warning+0x7a/0xf0 mm/kmsan/kmsan_instr.c:310
-  __arch_swab32 arch/x86/include/uapi/asm/swab.h:10 [inline]
-  __fswab32 include/uapi/linux/swab.h:59 [inline]
-  gre_parse_header+0x1396/0x1690 net/ipv4/gre_demux.c:136
-  gre_rcv+0x1c3/0x1800 net/ipv4/ip_gre.c:409
-  gre_rcv+0x2dd/0x3c0 net/ipv4/gre_demux.c:160
-  ip_protocol_deliver_rcu+0x584/0xbb0 net/ipv4/ip_input.c:208
-  ip_local_deliver_finish net/ipv4/ip_input.c:234 [inline]
-  NF_HOOK include/linux/netfilter.h:289 [inline]
-  ip_local_deliver+0x624/0x7b0 net/ipv4/ip_input.c:255
-  dst_input include/net/dst.h:450 [inline]
-  ip_rcv_finish net/ipv4/ip_input.c:414 [inline]
-  NF_HOOK include/linux/netfilter.h:289 [inline]
-  ip_rcv+0x6bd/0x740 net/ipv4/ip_input.c:524
-  __netif_receive_skb_one_core net/core/dev.c:4973 [inline]
-  __netif_receive_skb net/core/dev.c:5083 [inline]
-  process_backlog+0x756/0x10e0 net/core/dev.c:5923
-  napi_poll net/core/dev.c:6346 [inline]
-  net_rx_action+0x78b/0x1a60 net/core/dev.c:6412
-  __do_softirq+0x53f/0x93a kernel/softirq.c:294
-  do_softirq_own_stack+0x49/0x80 arch/x86/entry/entry_64.S:1039
-  </IRQ>
-  do_softirq kernel/softirq.c:339 [inline]
-  __local_bh_enable_ip+0x1a3/0x1f0 kernel/softirq.c:191
-  local_bh_enable+0x36/0x40 include/linux/bottom_half.h:32
-  rcu_read_unlock_bh include/linux/rcupdate.h:684 [inline]
-  ip_finish_output2+0x1721/0x1930 net/ipv4/ip_output.c:231
-  ip_finish_output+0xd2b/0xfd0 net/ipv4/ip_output.c:317
-  NF_HOOK_COND include/linux/netfilter.h:278 [inline]
-  ip_output+0x53f/0x610 net/ipv4/ip_output.c:405
-  dst_output include/net/dst.h:444 [inline]
-  ip_local_out net/ipv4/ip_output.c:124 [inline]
-  ip_send_skb net/ipv4/ip_output.c:1465 [inline]
-  ip_push_pending_frames+0x243/0x460 net/ipv4/ip_output.c:1485
-  raw_sendmsg+0x2e31/0x4650 net/ipv4/raw.c:676
-  inet_sendmsg+0x54a/0x720 net/ipv4/af_inet.c:798
-  sock_sendmsg_nosec net/socket.c:622 [inline]
-  sock_sendmsg net/socket.c:632 [inline]
-  ___sys_sendmsg+0xdb3/0x1220 net/socket.c:2137
-  __sys_sendmmsg+0x580/0xad0 net/socket.c:2232
-  __do_sys_sendmmsg net/socket.c:2261 [inline]
-  __se_sys_sendmmsg+0xbd/0xe0 net/socket.c:2258
-  __x64_sys_sendmmsg+0x56/0x70 net/socket.c:2258
-  do_syscall_64+0xbc/0xf0 arch/x86/entry/common.c:291
-  entry_SYSCALL_64_after_hwframe+0x63/0xe7
-RIP: 0033:0x441999
-Code: 18 89 d0 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 bb 10 fc ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007ffd647de1c8 EFLAGS: 00000246 ORIG_RAX: 0000000000000133
-RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000441999
-RDX: 0000000000000001 RSI: 00000000200006c0 RDI: 0000000000000004
-RBP: 00000000004a9030 R08: 0000000001bbbbbb R09: 0000000001bbbbbb
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000402ee0
-R13: 0000000000402f70 R14: 0000000000000000 R15: 0000000000000000
-
-Uninit was stored to memory at:
-  kmsan_save_stack_with_flags mm/kmsan/kmsan.c:205 [inline]
-  kmsan_save_stack mm/kmsan/kmsan.c:220 [inline]
-  kmsan_internal_chain_origin+0x134/0x230 mm/kmsan/kmsan.c:426
-  kmsan_memcpy_memmove_metadata+0xb5b/0xfe0 mm/kmsan/kmsan.c:304
-  kmsan_memcpy_metadata+0xb/0x10 mm/kmsan/kmsan.c:324
-  __msan_memcpy+0x58/0x70 mm/kmsan/kmsan_instr.c:139
-  pskb_expand_head+0x3aa/0x1a30 net/core/skbuff.c:1478
-  __skb_cow include/linux/skbuff.h:3029 [inline]
-  skb_cow_head include/linux/skbuff.h:3063 [inline]
-  ip_tunnel_xmit+0x2c4e/0x3310 net/ipv4/ip_tunnel.c:824
-  __gre_xmit net/ipv4/ip_gre.c:444 [inline]
-  erspan_xmit+0x1f5e/0x3640 net/ipv4/ip_gre.c:679
-  __netdev_start_xmit include/linux/netdevice.h:4411 [inline]
-  netdev_start_xmit include/linux/netdevice.h:4420 [inline]
-  xmit_one net/core/dev.c:3278 [inline]
-  dev_hard_start_xmit+0x604/0xc40 net/core/dev.c:3294
-  sch_direct_xmit+0x58a/0x880 net/sched/sch_generic.c:327
-  qdisc_restart net/sched/sch_generic.c:390 [inline]
-  __qdisc_run+0x1cd7/0x34b0 net/sched/sch_generic.c:398
-  qdisc_run include/net/pkt_sched.h:121 [inline]
-  __dev_xmit_skb net/core/dev.c:3473 [inline]
-  __dev_queue_xmit+0x1e51/0x3ce0 net/core/dev.c:3832
-  dev_queue_xmit+0x4b/0x60 net/core/dev.c:3897
-  neigh_resolve_output+0xab7/0xb40 net/core/neighbour.c:1487
-  neigh_output include/net/neighbour.h:508 [inline]
-  ip_finish_output2+0x1709/0x1930 net/ipv4/ip_output.c:229
-  ip_finish_output+0xd2b/0xfd0 net/ipv4/ip_output.c:317
-  NF_HOOK_COND include/linux/netfilter.h:278 [inline]
-  ip_output+0x53f/0x610 net/ipv4/ip_output.c:405
-  dst_output include/net/dst.h:444 [inline]
-  ip_local_out net/ipv4/ip_output.c:124 [inline]
-  ip_send_skb net/ipv4/ip_output.c:1465 [inline]
-  ip_push_pending_frames+0x243/0x460 net/ipv4/ip_output.c:1485
-  raw_sendmsg+0x2e31/0x4650 net/ipv4/raw.c:676
-  inet_sendmsg+0x54a/0x720 net/ipv4/af_inet.c:798
-  sock_sendmsg_nosec net/socket.c:622 [inline]
-  sock_sendmsg net/socket.c:632 [inline]
-  ___sys_sendmsg+0xdb3/0x1220 net/socket.c:2137
-  __sys_sendmmsg+0x580/0xad0 net/socket.c:2232
-  __do_sys_sendmmsg net/socket.c:2261 [inline]
-  __se_sys_sendmmsg+0xbd/0xe0 net/socket.c:2258
-  __x64_sys_sendmmsg+0x56/0x70 net/socket.c:2258
-  do_syscall_64+0xbc/0xf0 arch/x86/entry/common.c:291
-  entry_SYSCALL_64_after_hwframe+0x63/0xe7
-
-Uninit was created at:
-  kmsan_save_stack_with_flags mm/kmsan/kmsan.c:205 [inline]
-  kmsan_internal_poison_shadow+0x92/0x150 mm/kmsan/kmsan.c:159
-  kmsan_kmalloc+0xa9/0x130 mm/kmsan/kmsan_hooks.c:173
-  kmsan_slab_alloc+0xe/0x10 mm/kmsan/kmsan_hooks.c:182
-  slab_post_alloc_hook mm/slab.h:441 [inline]
-  slab_alloc_node mm/slub.c:2771 [inline]
-  __kmalloc_node_track_caller+0xead/0x1000 mm/slub.c:4396
-  __kmalloc_reserve net/core/skbuff.c:140 [inline]
-  __alloc_skb+0x309/0xa20 net/core/skbuff.c:208
-  alloc_skb include/linux/skbuff.h:1059 [inline]
-  __ip_append_data+0x3671/0x5000 net/ipv4/ip_output.c:1005
-  ip_append_data+0x324/0x480 net/ipv4/ip_output.c:1220
-  raw_sendmsg+0x2d2a/0x4650 net/ipv4/raw.c:670
-  inet_sendmsg+0x54a/0x720 net/ipv4/af_inet.c:798
-  sock_sendmsg_nosec net/socket.c:622 [inline]
-  sock_sendmsg net/socket.c:632 [inline]
-  ___sys_sendmsg+0xdb3/0x1220 net/socket.c:2137
-  __sys_sendmmsg+0x580/0xad0 net/socket.c:2232
-  __do_sys_sendmmsg net/socket.c:2261 [inline]
-  __se_sys_sendmmsg+0xbd/0xe0 net/socket.c:2258
-  __x64_sys_sendmmsg+0x56/0x70 net/socket.c:2258
-  do_syscall_64+0xbc/0xf0 arch/x86/entry/common.c:291
-  entry_SYSCALL_64_after_hwframe+0x63/0xe7
-==================================================================
-
-
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+-- 
+Best regards,
+Marek Vasut
