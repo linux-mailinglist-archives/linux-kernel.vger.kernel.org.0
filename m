@@ -2,120 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BA8134FCC2
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2019 18:40:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 82AB74FCBC
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2019 18:39:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726699AbfFWQks (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 23 Jun 2019 12:40:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50984 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726399AbfFWQks (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Jun 2019 12:40:48 -0400
-Received: from localhost (unknown [106.201.35.23])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3F16C2073F;
-        Sun, 23 Jun 2019 16:40:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561308047;
-        bh=mtPesJuWQ7t0JFWn2B6X2pN6nU+T7enAXuVl76hjQRk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=uaHq9OKEc72NTXo6bCpJxpTavqpbbSn6z00ubbv1DmU/IVJZKGezMw4fPM48T/bHR
-         bU/kMUAUqfdSatwL/btXAf5kuMXGBnfJzF+A62KLdjpBf0dVipbpqHGdwOg81k/bwZ
-         BvLXP1+MoiMiwy/jT3IES3RYMGfLpFTPUICxwdJM=
-Date:   Sun, 23 Jun 2019 22:07:37 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Christian Lamparter <chunkeey@gmail.com>
-Cc:     Mathias Nyman <mathias.nyman@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-arm-msm@vger.kernel.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Christian Lamparter <chunkeey@googlemail.com>,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/5]  usb: xhci: Add support for Renesas USB
- controllers
-Message-ID: <20190623163737.GU2962@vkoul-mobl>
-References: <20190621085913.8722-1-vkoul@kernel.org>
- <11747914.jfR0NPdACA@debian64>
+        id S1726754AbfFWQjA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 23 Jun 2019 12:39:00 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:33801 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726399AbfFWQjA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 23 Jun 2019 12:39:00 -0400
+Received: from p5b06daab.dip0.t-ipconnect.de ([91.6.218.171] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1hf5Vk-0003To-B7; Sun, 23 Jun 2019 18:38:36 +0200
+Date:   Sun, 23 Jun 2019 18:38:34 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Zhiqiang Liu <liuzhiqiang26@huawei.com>
+cc:     corbet@lwn.net, mcgrof@kernel.org,
+        Kees Cook <keescook@chromium.org>, akpm@linux-foundation.org,
+        manfred@colorfullife.com, jwilk@jwilk.net, dvyukov@google.com,
+        feng.tang@intel.com, sunilmut@microsoft.com,
+        quentin.perret@arm.com, linux@leemhuis.info, alex.popov@linux.com,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        "wangxiaogang (F)" <wangxiaogang3@huawei.com>,
+        "Zhoukang (A)" <zhoukang7@huawei.com>,
+        Mingfangsen <mingfangsen@huawei.com>, tedheadster@gmail.com,
+        Eric Dumazet <edumazet@google.com>
+Subject: Re: [PATCH next] softirq: enable MAX_SOFTIRQ_TIME tuning with sysctl
+ max_softirq_time_usecs
+In-Reply-To: <f274f85a-bbb6-3e32-b293-1d5d7f27a98f@huawei.com>
+Message-ID: <alpine.DEB.2.21.1906231820470.32342@nanos.tec.linutronix.de>
+References: <f274f85a-bbb6-3e32-b293-1d5d7f27a98f@huawei.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <11747914.jfR0NPdACA@debian64>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 21-06-19, 21:41, Christian Lamparter wrote:
-> On Friday, June 21, 2019 10:59:08 AM CEST Vinod Koul wrote:
-> > This series add support for Renesas USB controllers uPD720201 and uPD720202.
-> > These require firmware to be loaded and in case devices have ROM those can
-> > also be programmed if empty. If ROM is programmed, it runs from ROM as well.
-> > 
-> > This includes two patches from Christian which supported these controllers
-> > w/o ROM and later my patches for ROM support and multiple firmware versions.
-> > 
-> > Changes in v2:
-> >   used macros for timeout count and delay
-> >   removed renesas_fw_alive_check
-> >   cleaned renesas_fw_callback
-> >   removed recurion for renesas_fw_download
-> >   added MODULE_FIRMWARE
-> >   added comment for multiple fw order
-> > 
-> > Christian Lamparter (2):
-> >   usb: xhci: add firmware loader for uPD720201 and uPD720202 w/o ROM
-> >   usb: xhci: handle uPD720201 and uPD720202 w/o ROM
-> > 
-> > Vinod Koul (3):
-> >   usb: xhci: Use register defined and field names
-> >   usb: xhci: Add ROM loader for uPD720201
-> >   usb: xhci: allow multiple firmware versions
-> > 
-> >  drivers/usb/host/xhci-pci.c | 942 ++++++++++++++++++++++++++++++++++++
-> >  1 file changed, 942 insertions(+)
-> > 
-> 
-> bootlog from a Netgear WNDR4700 with a 32GiB USB3 Stick attached to the 
-> Renesas uPD720202K8-711-BAA-A chip.
-> 
-> [   13.523094] xhci_hcd 0000:45:00.0: firmware size is not a multiple of 8.
-> [   13.868071] xhci_hcd 0000:45:00.0: xHCI Host Controller
-> [   13.873325] xhci_hcd 0000:45:00.0: new USB bus registered, assigned bus number 2
-> [   13.886296] xhci_hcd 0000:45:00.0: hcc params 0x014051cf hci version 0x100 quirks 0x0000000101000090
-> [   13.902719] usbcore: registered new interface driver usb-storage
-> [   13.909277] kmodloader: done loading kernel modules from /etc/modules-boot.d/*
-> [   13.917336] hub 2-0:1.0: USB hub found
-> [   13.921432] init: - preinit -
-> [   13.930356] hub 2-0:1.0: 2 ports detected
-> [   13.942869] xhci_hcd 0000:45:00.0: xHCI Host Controller
-> [   13.948122] xhci_hcd 0000:45:00.0: new USB bus registered, assigned bus number 3
-> [   13.955514] xhci_hcd 0000:45:00.0: Host supports USB 3.0  SuperSpeed
-> [   13.981227] usb usb3: We don't know the algorithms for LPM for this host, disabling LPM.
-> [   13.997141] hub 3-0:1.0: USB hub found
-> [   14.004375] hub 3-0:1.0: 2 ports detected
-> [   14.375644] usb-storage 1-1:1.0: USB Mass Storage device detected
-> [   14.382247] scsi host1: usb-storage 1-1:1.0
-> [   14.438959] usb 3-2: new SuperSpeed Gen 1 USB device number 2 using xhci_hcd
-> [   14.467746] usb-storage 3-2:1.0: USB Mass Storage device detected
-> [   14.474241] scsi host2: usb-storage 3-2:1.0
-> [   15.394562] scsi 1:0:0:0: Direct-Access     Generic  STORAGE DEVICE   9454 PQ: 0 ANSI: 0
-> [   15.405183] sd 1:0:0:0: [sda] Attached SCSI removable disk
-> [   15.522448] scsi 2:0:0:0: Direct-Access     SanDisk  Ultra            1.00 PQ: 0 ANSI: 6
-> [   15.531952] sd 2:0:0:0: [sdb] 60063744 512-byte logical blocks: (30.8 GB/28.6 GiB)
-> [   15.541007] sd 2:0:0:0: [sdb] Write Protect is off
-> [   15.546808] sd 2:0:0:0: [sdb] Write cache: disabled, read cache: enabled, doesn't support DPO or FUA
-> [   15.574567]  sdb: sdb1
-> [   15.580581] sd 2:0:0:0: [sdb] Attached SCSI removable disk
-> 
-> This is working.
-> 
-> Tested-by: Christian Lamparter <chunkeey@gmail.com>
+Zhiqiang,
 
-Thanks for the verification Christian.
+On Thu, 20 Jun 2019, Zhiqiang Liu wrote:
 
-Regards
--- 
-~Vinod
+> From: Zhiqiang liu <liuzhiqiang26@huawei.com>
+> 
+> In __do_softirq func, MAX_SOFTIRQ_TIME was set to 2ms via experimentation by
+> commit c10d73671 ("softirq: reduce latencies") in 2013, which was designed
+> to reduce latencies for various network workloads. The key reason is that the
+> maximum number of microseconds in one NAPI polling cycle in net_rx_action func
+> was set to 2 jiffies, so different HZ settting will lead to different latencies.
+> 
+> However, commit 7acf8a1e8 ("Replace 2 jiffies with sysctl netdev_budget_usecs
+> to enable softirq tuning") adopts netdev_budget_usecs to tun maximum number of
+> microseconds in one NAPI polling cycle. So the latencies of net_rx_action can be
+> controlled by sysadmins to copy with hardware changes over time.
+
+So much for the theory. See below.
+
+> Correspondingly, the MAX_SOFTIRQ_TIME should be able to be tunned by sysadmins,
+> who knows best about hardware performance, for excepted tradeoff between latence
+> and fairness.
+> 
+> Here, we add sysctl variable max_softirq_time_usecs to replace MAX_SOFTIRQ_TIME
+> with 2ms default value.
+
+...
+
+>   */
+> -#define MAX_SOFTIRQ_TIME  msecs_to_jiffies(2)
+> +unsigned int __read_mostly max_softirq_time_usecs = 2000;
+>  #define MAX_SOFTIRQ_RESTART 10
+> 
+>  #ifdef CONFIG_TRACE_IRQFLAGS
+> @@ -248,7 +249,8 @@ static inline void lockdep_softirq_end(bool in_hardirq) { }
+> 
+>  asmlinkage __visible void __softirq_entry __do_softirq(void)
+>  {
+> -	unsigned long end = jiffies + MAX_SOFTIRQ_TIME;
+> +	unsigned long end = jiffies +
+> +		usecs_to_jiffies(max_softirq_time_usecs);
+
+That's still jiffies based and therefore depends on CONFIG_HZ. Any budget
+value will be rounded up to the next jiffie. So in case of HZ=100 and
+time=1000us this will still result in 10ms of allowed loop time.
+
+I'm not saying that we must use a more fine grained time source, but both
+the changelog and the sysctl documentation are misleading.
+
+If we keep it jiffies based, then microseconds do not make any sense. They
+just give a false sense of controlability.
+
+Keep also in mind that with jiffies the accuracy depends also on the
+distance to the next tick when 'end' is evaluated. The next tick might be
+imminent.
+
+That's all information which needs to be in the documentation.
+
+> +	{
+> +		.procname	= "max_softirq_time_usecs",
+> +		.data		= &max_softirq_time_usecs,
+> +		.maxlen		= sizeof(unsigned int),
+> +		.mode		= 0644,
+> +		.proc_handler   = proc_dointvec_minmax,
+> +		.extra1		= &zero,
+> +	},
+
+Zero as the lower limit? That means it allows a single loop. Fine, but
+needs to be documented as well.
+
+Thanks,
+
+	tglx
