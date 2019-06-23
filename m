@@ -2,202 +2,773 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1C0524FF2B
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 04:16:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9DB734FE69
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 03:41:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726953AbfFXCQC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 23 Jun 2019 22:16:02 -0400
-Received: from mailout2.samsung.com ([203.254.224.25]:17871 "EHLO
-        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726334AbfFXCQB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Jun 2019 22:16:01 -0400
-Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
-        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20190623234831epoutp02b73cc145b1c4b71e089a789be62e74f8~q_L0Obz-W3105331053epoutp02a
-        for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2019 23:48:31 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20190623234831epoutp02b73cc145b1c4b71e089a789be62e74f8~q_L0Obz-W3105331053epoutp02a
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1561333711;
-        bh=y5JFwrOZq4d42qzJPkw+Zg+TcIER/Wk/VIKyGC4xXtM=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=ZROOufcthysiq9fS5Ltd8c6Dx5aWt+gIVm844JI6QoJpm/HScuN0loVoZU9aW1Put
-         +uHq2Ab/UTYaNPfVOjKy+8rYxbN+J3ehT7mR+gyN9IpPjKGcBURZp3mEIMNXtwPd/p
-         5BW7lWaXJOrD3/n0+45cQP8GNsUCSdFRFcxViUgg=
-Received: from epsmges1p4.samsung.com (unknown [182.195.40.158]) by
-        epcas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20190623234827epcas1p13e2ecfb1ca561a0b2c3a901536393930~q_Lv3tEc_0191701917epcas1p1O;
-        Sun, 23 Jun 2019 23:48:27 +0000 (GMT)
-Received: from epcas1p3.samsung.com ( [182.195.41.47]) by
-        epsmges1p4.samsung.com (Symantec Messaging Gateway) with SMTP id
-        4D.7E.04257.2CF001D5; Mon, 24 Jun 2019 08:48:18 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
-        20190623234817epcas1p394d0ec7c278969f0b2e3d73c45df407a~q_LnCE6ds0503705037epcas1p3f;
-        Sun, 23 Jun 2019 23:48:17 +0000 (GMT)
-Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20190623234817epsmtrp10e6374e407264530a6ab2f883a9634cb~q_LnBOmNw2617626176epsmtrp1E;
-        Sun, 23 Jun 2019 23:48:17 +0000 (GMT)
-X-AuditID: b6c32a38-5e3ff700000010a1-1f-5d100fc2f8bf
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        2C.AF.03662.1CF001D5; Mon, 24 Jun 2019 08:48:17 +0900 (KST)
-Received: from [10.113.221.102] (unknown [10.113.221.102]) by
-        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20190623234817epsmtip1264e7902c17275a3cf2cc2e0c14370f0~q_Lm5JBod0344203442epsmtip1y;
-        Sun, 23 Jun 2019 23:48:17 +0000 (GMT)
-Subject: Re: [PATCH v4 00/16] NVIDIA Tegra devfreq improvements and
- Tegra20/30 support
-To:     Dmitry Osipenko <digetx@gmail.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
-        linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-From:   Chanwoo Choi <cw00.choi@samsung.com>
-Organization: Samsung Electronics
-Message-ID: <31fc1430-5a3b-cccb-06bb-7b46081edb68@samsung.com>
-Date:   Mon, 24 Jun 2019 08:50:53 +0900
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
-        Thunderbird/60.7.1
+        id S1726686AbfFXBlL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 23 Jun 2019 21:41:11 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:43987 "EHLO
+        mail.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726612AbfFXBlC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 23 Jun 2019 21:41:02 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x5NNp5sM2859525
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Sun, 23 Jun 2019 16:51:05 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x5NNp5sM2859525
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019061801; t=1561333867;
+        bh=7qvTnqRclRmhWrY3/XnF2t6T7Pq5G1h2Jt9BGNN0K/E=;
+        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
+        b=FnQpRo86bpb9aRO90UZWkpmR4J3zAjgX7/GB+TlDXBMNFL2IELCqoh4/nXbdArHxZ
+         4QRE5+r0cUW3/Vn5wzQRePfhAdorND+T+wLH9BzVx0z38J9LKVgSdA+buOnb8EC/dA
+         hgjSMssUQz9yeTNdhXtqh+ydKTONTKYxznS2XHvKXZo7xz1x93RrFvDi8nib5vMo/C
+         8PL+PGfD6Gy39QFq4uctlbPJd31oE8HkDzZRq1yp9LA9ohBKUqD/qieQTw5WWnenyj
+         9FOs9LdjpBdV7wkReubuXPSVL5AnKh9ZmsEZxuYdBDRz6l0ELMV5xKZrFWNPHE7clm
+         BzyFRCF1xjpcw==
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x5NNp47Q2859519;
+        Sun, 23 Jun 2019 16:51:04 -0700
+Date:   Sun, 23 Jun 2019 16:51:04 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Vincenzo Frascino <tipbot@zytor.com>
+Message-ID: <tip-a7f71a2c8903f8599312f75233946287c558d9f6@git.kernel.org>
+Cc:     linux-kernel@vger.kernel.org, hpa@zytor.com,
+        andre.przywara@arm.com, salyzyn@android.com,
+        linux@rasmusvillemoes.dk, 0x7f454c46@gmail.com, mingo@kernel.org,
+        shuah@kernel.org, paul.burton@mips.com, catalin.marinas@arm.com,
+        linux@armlinux.org.uk, arnd@arndb.de, tglx@linutronix.de,
+        ralf@linux-mips.org, sthotton@marvell.com, will.deacon@arm.com,
+        daniel.lezcano@linaro.org, pcc@google.com, huw@codeweavers.com,
+        vincenzo.frascino@arm.com
+Reply-To: mingo@kernel.org, paul.burton@mips.com, catalin.marinas@arm.com,
+          shuah@kernel.org, salyzyn@android.com,
+          linux-kernel@vger.kernel.org, hpa@zytor.com,
+          andre.przywara@arm.com, linux@rasmusvillemoes.dk,
+          0x7f454c46@gmail.com, daniel.lezcano@linaro.org, pcc@google.com,
+          huw@codeweavers.com, vincenzo.frascino@arm.com, arnd@arndb.de,
+          tglx@linutronix.de, linux@armlinux.org.uk, will.deacon@arm.com,
+          ralf@linux-mips.org, sthotton@marvell.com
+In-Reply-To: <20190621095252.32307-11-vincenzo.frascino@arm.com>
+References: <20190621095252.32307-11-vincenzo.frascino@arm.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:timers/vdso] arm64: compat: Add vDSO
+Git-Commit-ID: a7f71a2c8903f8599312f75233946287c558d9f6
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-In-Reply-To: <389cc71d-8f0b-fa39-1325-433d27c75dc8@gmail.com>
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrIJsWRmVeSWpSXmKPExsWy7bCmvu4hfoFYg2f/NS1Wf3zMaNEyaxGL
-        xdmmN+wWl3fNYbP43HuE0aLzyyw2i9uNK9gsfu6ax2LRt/YSmwOnx467Sxg9ds66y+7R2/yO
-        zaNvyypGj8+b5AJYo7JtMlITU1KLFFLzkvNTMvPSbZW8g+Od403NDAx1DS0tzJUU8hJzU22V
-        XHwCdN0yc4AOUlIoS8wpBQoFJBYXK+nb2RTll5akKmTkF5fYKqUWpOQUWBboFSfmFpfmpesl
-        5+daGRoYGJkCFSZkZyx6sJqp4IFkRdOHWYwNjEdFuhg5OSQETCR23bvH3sXIxSEksINRYsm0
-        xUwQzidGiQ1n30E53xglTp/+ygbT8nP/V2aIxF5Gic7OB1D97xkljn84D1YlLBAh8WrROmYQ
-        W0QgUOLds31gHcwCbUwS7Rf/MoEk2AS0JPa/uAHWwC+gKHH1x2NGEJtXwE7ief8nVhCbRUBV
-        ovntBLAaUaChl7fsgqoRlDg58wkLiM0pYCsx/8txsGXMAuISt57MZ4Kw5SWat84GWywh8J9N
-        YmLnR6gfXCR2fO9mgbCFJV4d38IOYUtJvOxvg7KrJVaePMIG0dzBKLFl/wVWiISxxP6lk4E2
-        cABt0JRYv0sfIqwosfP3XEaIxXwS7772sIKUSAjwSnS0CUGUKEtcfnCXCcKWlFjc3sk2gVFp
-        FpJ3ZiF5YRaSF2YhLFvAyLKKUSy1oDg3PbXYsMAEOb43MYKTq5bFDsY953wOMQpwMCrx8Aps
-        4I8VYk0sK67MPcQowcGsJMLLk8MTK8SbklhZlVqUH19UmpNafIjRFBjaE5mlRJPzgYk/ryTe
-        0NTI2NjYwsTQzNTQUEmcN577ZoyQQHpiSWp2ampBahFMHxMHp1QDo+fzoN2zf6ZtuhYdz3jY
-        JbWtoTgl+seu/gStxoQIcQF1rx3nzN6sDNz/4MoMtg2K5U+uWQud/fkwLY43aG/Y2jdZbomW
-        x/u9n2noJ8w7+jI8fq9F2uOE2DPdh1XaUqaVneLuXR6Y8WHryen5Md7VTovj+b6z7FW8WaEd
-        M8NkzhoFfUHBfO8uJZbijERDLeai4kQAQ/dOV8QDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprFIsWRmVeSWpSXmKPExsWy7bCSnO5BfoFYg4uv5CxWf3zMaNEyaxGL
-        xdmmN+wWl3fNYbP43HuE0aLzyyw2i9uNK9gsfu6ax2LRt/YSmwOnx467Sxg9ds66y+7R2/yO
-        zaNvyypGj8+b5AJYo7hsUlJzMstSi/TtErgyFj1YzVTwQLKi6cMsxgbGoyJdjJwcEgImEj/3
-        f2UGsYUEdjNKnF+UDBGXlJh28ShQnAPIFpY4fLi4i5ELqOQto8TSiRvYQGqEBSIk5l+4xARi
-        iwgESpx+sJURpIhZoINJ4sn6n4wQHfuZJbZ3fWUBqWIT0JLY/+IGWDe/gKLE1R+PGUFsXgE7
-        ief9n1hBbBYBVYnmtxPAakSBNvS1zWaDqBGUODnzCdgcTgFbiflfjoNdzSygLvFn3iUoW1zi
-        1pP5TBC2vETz1tnMExiFZyFpn4WkZRaSlllIWhYwsqxilEwtKM5Nzy02LDDKSy3XK07MLS7N
-        S9dLzs/dxAiOMS2tHYwnTsQfYhTgYFTi4RXYwB8rxJpYVlyZe4hRgoNZSYSXJ4cnVog3JbGy
-        KrUoP76oNCe1+BCjNAeLkjivfP6xSCGB9MSS1OzU1ILUIpgsEwenVANj/+8vs1ifhtToZJkH
-        CDx7PdFDblXhXgf7EuV6x6nfo1abMnqyFmv++TtntYssR5LKQdOw78cc5ir5tYkfXrNyYqar
-        VefF5ztzA4zLOx9uWvt1WVu2n0b0p30zJ3q9WahrJDmH8ZqG0GcOR5Wltcqnrn15ZXb50iMW
-        dp2Md28n3VhnerJKPnCGEktxRqKhFnNRcSIAPNA1Pa0CAAA=
-X-CMS-MailID: 20190623234817epcas1p394d0ec7c278969f0b2e3d73c45df407a
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20190501234148epcas5p1cc9a8dafa9ee6d8d046d1292b8270727
-References: <CGME20190501234148epcas5p1cc9a8dafa9ee6d8d046d1292b8270727@epcas5p1.samsung.com>
-        <20190501233815.32643-1-digetx@gmail.com>
-        <60ef6e47-e61b-3a92-e90d-90debedfcfc4@samsung.com>
-        <fa061a65-f108-6c5e-1f87-950a9a8caafc@gmail.com>
-        <0fb50eb1-a173-1756-6889-2526a10ac707@gmail.com>
-        <683b343a-e64f-8345-ac44-10f5c00521bd@samsung.com>
-        <5c2a7c32-a98c-3930-14ae-beb0241908d0@gmail.com>
-        <389cc71d-8f0b-fa39-1325-433d27c75dc8@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
+X-Spam-Status: No, score=2.3 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DATE_IN_FUTURE_03_06,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,
+        DKIM_VALID_EF,FREEMAIL_FORGED_REPLYTO,FREEMAIL_REPLYTO_END_DIGIT
+        autolearn=no autolearn_force=no version=3.4.2
+X-Spam-Level: **
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Dmitry,
+Commit-ID:  a7f71a2c8903f8599312f75233946287c558d9f6
+Gitweb:     https://git.kernel.org/tip/a7f71a2c8903f8599312f75233946287c558d9f6
+Author:     Vincenzo Frascino <vincenzo.frascino@arm.com>
+AuthorDate: Fri, 21 Jun 2019 10:52:37 +0100
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Sat, 22 Jun 2019 21:21:08 +0200
 
-On 19. 6. 24. 오전 2:17, Dmitry Osipenko wrote:
-> 05.06.2019 2:09, Dmitry Osipenko пишет:
->> 04.06.2019 3:49, Chanwoo Choi пишет:
->>> On 19. 6. 4. 오전 1:52, Dmitry Osipenko wrote:
->>>> 03.05.2019 3:52, Dmitry Osipenko пишет:
->>>>> 03.05.2019 3:31, Chanwoo Choi пишет:
->>>>>> Hi Dmitry,
->>>>>>
->>>>>> On 19. 5. 2. 오전 8:37, Dmitry Osipenko wrote:
->>>>>>> Changelog:
->>>>>>>
->>>>>>> v4: Addressed all review comments that were made by Chanwoo Choi to v3:
->>>>>>>
->>>>>>>     - changed the driver removal order to match the probe exactly
->>>>>>>     - added clarifying comment for 1/8 ratio to the Tegra20 driver
->>>>>>>
->>>>>>>     Chanwoo, please also note that the clk patch that should fix
->>>>>>>     compilation problem that was reported the kbuild-test-robot is already
->>>>>>>     applied and available in the recent linux-next.
->>>>>>
->>>>>> I knew that Stephen picked up your path about clock.
->>>>>
->>>>> Hi Chanwoo,
->>>>>
->>>>> Okay, good. Thank you very much for reviewing this series! I assume it's
->>>>> too late now for v5.2, but it should be good to go for v5.3.
->>>>>
->>>>
->>>> Hello Chanwoo,
->>>>
->>>> Will be nice to see the patches in the linux-next before they'll hit mainline. We have tested that
->>>> everything works fine on a selective devices, but won't hurt to get some extra testing beforehand.
->>>> AFAIK, at least NVIDIA people are regularly testing -next on theirs dev boards. Please note that
->>>> this not very important, so don't bother if there is some hurdle with pushing to the tracking branch
->>>> for now. Also please let me know if you're expecting to see some ACK's on the patches, I'm sure
->>>> we'll be able to work out that with Thierry and Jon if necessary.
->>>>
->>>>
->>>
->>> Hi Dmitry,
->>> I think that it is enough for applying to mainline branch.
->>> The devfreq.git is maintained by Myungjoo. He will be merged or
->>> reviewed if there are th remained review point.
->>
->> Thank you very much!
->>
->>>
->>> Hi Myungjoo,
->>> I reviewed the Dmitry's patches from v1 to v4 patches.
->>> And then I tested them on my testing branch[1] for catching
->>> the build warning and error. In result, it is clean.
->>> [1] https://git.kernel.org/pub/scm/linux/kernel/git/chanwoo/linux.git/log/?h=devfreq-testing
->>>
->>> Please review or apply these patches for v5.3.
->>>
->>
->> Hello Myungjoo,
->>
->> I think this patchset should be completed now. Thierry has some extra
->> comments to the patches, but seems nothing critical so far and all the
->> concerns could be addressed in a follow-up series. Please let me know if
->> you're fine with this, I can re-spin v5 as well if necessary.
->>
-> 
-> Hello Chanwoo,
-> 
-> It looks like Myungjoo is inactive at the moment. Do you know if he'll
-> be back to the time of the merge window opening or you'll be curating
-> the pull request for 5.3 this time?
+arm64: compat: Add vDSO
 
-Myungoo works in the same place. I'll talk with him.
+Provide the arm64 compat (AArch32) vDSO in kernel/vdso32 in a similar
+way to what happens in kernel/vdso.
 
-> 
-> Secondly, I'll send a few more patches on top of this series, addressing
-> Thierry's comments and making more improvements. Please let me know if
-> this causes any problems and I should re-spin the whole series.
+The compat vDSO leverages on an adaptation of the arm architecture code
+with few changes:
 
-OK. I'll review them.
+ - Use of lib/vdso for gettimeofday
+ - Implement a syscall based fallback
+ - Introduce clock_getres() for the compat library
+ - Implement trampolines
+ - Implement elf note
 
+To build the compat vDSO a 32 bit compiler is required and needs to be
+specified via CONFIG_CROSS_COMPILE_COMPAT_VDSO.
 
--- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+The code is not yet enabled as other prerequisites are missing.
+
+Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Tested-by: Shijith Thotton <sthotton@marvell.com>
+Tested-by: Andre Przywara <andre.przywara@arm.com>
+Cc: linux-arch@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-mips@vger.kernel.org
+Cc: linux-kselftest@vger.kernel.org
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Russell King <linux@armlinux.org.uk>
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: Paul Burton <paul.burton@mips.com>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: Mark Salyzyn <salyzyn@android.com>
+Cc: Peter Collingbourne <pcc@google.com>
+Cc: Shuah Khan <shuah@kernel.org>
+Cc: Dmitry Safonov <0x7f454c46@gmail.com>
+Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Cc: Huw Davies <huw@codeweavers.com>
+Link: https://lkml.kernel.org/r/20190621095252.32307-11-vincenzo.frascino@arm.com
+
+---
+ arch/arm64/include/asm/vdso/compat_barrier.h      |  51 ++++++
+ arch/arm64/include/asm/vdso/compat_gettimeofday.h | 108 +++++++++++++
+ arch/arm64/kernel/vdso32/.gitignore               |   2 +
+ arch/arm64/kernel/vdso32/Makefile                 | 186 ++++++++++++++++++++++
+ arch/arm64/kernel/vdso32/note.c                   |  15 ++
+ arch/arm64/kernel/vdso32/sigreturn.S              |  62 ++++++++
+ arch/arm64/kernel/vdso32/vdso.S                   |  19 +++
+ arch/arm64/kernel/vdso32/vdso.lds.S               |  82 ++++++++++
+ arch/arm64/kernel/vdso32/vgettimeofday.c          |  59 +++++++
+ 9 files changed, 584 insertions(+)
+
+diff --git a/arch/arm64/include/asm/vdso/compat_barrier.h b/arch/arm64/include/asm/vdso/compat_barrier.h
+new file mode 100644
+index 000000000000..ea24ea856b07
+--- /dev/null
++++ b/arch/arm64/include/asm/vdso/compat_barrier.h
+@@ -0,0 +1,51 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Copyright (C) 2018 ARM Limited
++ */
++#ifndef __COMPAT_BARRIER_H
++#define __COMPAT_BARRIER_H
++
++#ifndef __ASSEMBLY__
++/*
++ * Warning: This code is meant to be used with
++ * ENABLE_COMPAT_VDSO only.
++ */
++#ifndef ENABLE_COMPAT_VDSO
++#error This header is meant to be used with ENABLE_COMPAT_VDSO only
++#endif
++
++#ifdef dmb
++#undef dmb
++#endif
++
++#if __LINUX_ARM_ARCH__ >= 7
++#define dmb(option) __asm__ __volatile__ ("dmb " #option : : : "memory")
++#elif __LINUX_ARM_ARCH__ == 6
++#define dmb(x) __asm__ __volatile__ ("mcr p15, 0, %0, c7, c10, 5" \
++				    : : "r" (0) : "memory")
++#else
++#define dmb(x) __asm__ __volatile__ ("" : : : "memory")
++#endif
++
++#if __LINUX_ARM_ARCH__ >= 8
++#define aarch32_smp_mb()	dmb(ish)
++#define aarch32_smp_rmb()	dmb(ishld)
++#define aarch32_smp_wmb()	dmb(ishst)
++#else
++#define aarch32_smp_mb()	dmb(ish)
++#define aarch32_smp_rmb()	aarch32_smp_mb()
++#define aarch32_smp_wmb()	dmb(ishst)
++#endif
++
++
++#undef smp_mb
++#undef smp_rmb
++#undef smp_wmb
++
++#define smp_mb()	aarch32_smp_mb()
++#define smp_rmb()	aarch32_smp_rmb()
++#define smp_wmb()	aarch32_smp_wmb()
++
++#endif /* !__ASSEMBLY__ */
++
++#endif /* __COMPAT_BARRIER_H */
+diff --git a/arch/arm64/include/asm/vdso/compat_gettimeofday.h b/arch/arm64/include/asm/vdso/compat_gettimeofday.h
+new file mode 100644
+index 000000000000..93dbd935b66d
+--- /dev/null
++++ b/arch/arm64/include/asm/vdso/compat_gettimeofday.h
+@@ -0,0 +1,108 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Copyright (C) 2018 ARM Limited
++ */
++#ifndef __ASM_VDSO_GETTIMEOFDAY_H
++#define __ASM_VDSO_GETTIMEOFDAY_H
++
++#ifndef __ASSEMBLY__
++
++#include <asm/unistd.h>
++#include <uapi/linux/time.h>
++
++#include <asm/vdso/compat_barrier.h>
++
++#define VDSO_HAS_CLOCK_GETRES		1
++
++static __always_inline
++int gettimeofday_fallback(struct __kernel_old_timeval *_tv,
++			  struct timezone *_tz)
++{
++	register struct timezone *tz asm("r1") = _tz;
++	register struct __kernel_old_timeval *tv asm("r0") = _tv;
++	register long ret asm ("r0");
++	register long nr asm("r7") = __NR_compat_gettimeofday;
++
++	asm volatile(
++	"	swi #0\n"
++	: "=r" (ret)
++	: "r" (tv), "r" (tz), "r" (nr)
++	: "memory");
++
++	return ret;
++}
++
++static __always_inline
++long clock_gettime_fallback(clockid_t _clkid, struct __kernel_timespec *_ts)
++{
++	register struct __kernel_timespec *ts asm("r1") = _ts;
++	register clockid_t clkid asm("r0") = _clkid;
++	register long ret asm ("r0");
++	register long nr asm("r7") = __NR_compat_clock_gettime64;
++
++	asm volatile(
++	"	swi #0\n"
++	: "=r" (ret)
++	: "r" (clkid), "r" (ts), "r" (nr)
++	: "memory");
++
++	return ret;
++}
++
++static __always_inline
++int clock_getres_fallback(clockid_t _clkid, struct __kernel_timespec *_ts)
++{
++	register struct __kernel_timespec *ts asm("r1") = _ts;
++	register clockid_t clkid asm("r0") = _clkid;
++	register long ret asm ("r0");
++	register long nr asm("r7") = __NR_compat_clock_getres_time64;
++
++	/* The checks below are required for ABI consistency with arm */
++	if ((_clkid >= MAX_CLOCKS) && (_ts == NULL))
++		return -EINVAL;
++
++	asm volatile(
++	"       swi #0\n"
++	: "=r" (ret)
++	: "r" (clkid), "r" (ts), "r" (nr)
++	: "memory");
++
++	return ret;
++}
++
++static __always_inline u64 __arch_get_hw_counter(s32 clock_mode)
++{
++	u64 res;
++
++	isb();
++	asm volatile("mrrc p15, 1, %Q0, %R0, c14" : "=r" (res));
++
++	return res;
++}
++
++static __always_inline const struct vdso_data *__arch_get_vdso_data(void)
++{
++	const struct vdso_data *ret;
++
++	/*
++	 * This simply puts &_vdso_data into ret. The reason why we don't use
++	 * `ret = _vdso_data` is that the compiler tends to optimise this in a
++	 * very suboptimal way: instead of keeping &_vdso_data in a register,
++	 * it goes through a relocation almost every time _vdso_data must be
++	 * accessed (even in subfunctions). This is both time and space
++	 * consuming: each relocation uses a word in the code section, and it
++	 * has to be loaded at runtime.
++	 *
++	 * This trick hides the assignment from the compiler. Since it cannot
++	 * track where the pointer comes from, it will only use one relocation
++	 * where __arch_get_vdso_data() is called, and then keep the result in
++	 * a register.
++	 */
++	asm volatile("mov %0, %1" : "=r"(ret) : "r"(_vdso_data));
++
++	return ret;
++}
++
++#endif /* !__ASSEMBLY__ */
++
++#endif /* __ASM_VDSO_GETTIMEOFDAY_H */
+diff --git a/arch/arm64/kernel/vdso32/.gitignore b/arch/arm64/kernel/vdso32/.gitignore
+new file mode 100644
+index 000000000000..4fea950fa5ed
+--- /dev/null
++++ b/arch/arm64/kernel/vdso32/.gitignore
+@@ -0,0 +1,2 @@
++vdso.lds
++vdso.so.raw
+diff --git a/arch/arm64/kernel/vdso32/Makefile b/arch/arm64/kernel/vdso32/Makefile
+new file mode 100644
+index 000000000000..288c14d30b45
+--- /dev/null
++++ b/arch/arm64/kernel/vdso32/Makefile
+@@ -0,0 +1,186 @@
++# SPDX-License-Identifier: GPL-2.0
++#
++# Makefile for vdso32
++#
++
++# Absolute relocation type $(ARCH_REL_TYPE_ABS) needs to be defined before
++# the inclusion of generic Makefile.
++ARCH_REL_TYPE_ABS := R_ARM_JUMP_SLOT|R_ARM_GLOB_DAT|R_ARM_ABS32
++include $(srctree)/lib/vdso/Makefile
++
++COMPATCC := $(CROSS_COMPILE_COMPAT)gcc
++
++# Same as cc-*option, but using COMPATCC instead of CC
++cc32-option = $(call try-run,\
++        $(COMPATCC) $(1) -c -x c /dev/null -o "$$TMP",$(1),$(2))
++cc32-disable-warning = $(call try-run,\
++	$(COMPATCC) -W$(strip $(1)) -c -x c /dev/null -o "$$TMP",-Wno-$(strip $(1)))
++cc32-ldoption = $(call try-run,\
++        $(COMPATCC) $(1) -nostdlib -x c /dev/null -o "$$TMP",$(1),$(2))
++
++# We cannot use the global flags to compile the vDSO files, the main reason
++# being that the 32-bit compiler may be older than the main (64-bit) compiler
++# and therefore may not understand flags set using $(cc-option ...). Besides,
++# arch-specific options should be taken from the arm Makefile instead of the
++# arm64 one.
++# As a result we set our own flags here.
++
++# From top-level Makefile
++# NOSTDINC_FLAGS
++VDSO_CPPFLAGS := -nostdinc -isystem $(shell $(COMPATCC) -print-file-name=include)
++VDSO_CPPFLAGS += $(LINUXINCLUDE)
++VDSO_CPPFLAGS += $(KBUILD_CPPFLAGS)
++
++# Common C and assembly flags
++# From top-level Makefile
++VDSO_CAFLAGS := $(VDSO_CPPFLAGS)
++VDSO_CAFLAGS += $(call cc32-option,-fno-PIE)
++ifdef CONFIG_DEBUG_INFO
++VDSO_CAFLAGS += -g
++endif
++ifeq ($(shell $(CONFIG_SHELL) $(srctree)/scripts/gcc-goto.sh $(COMPATCC)), y)
++VDSO_CAFLAGS += -DCC_HAVE_ASM_GOTO
++endif
++
++# From arm Makefile
++VDSO_CAFLAGS += $(call cc32-option,-fno-dwarf2-cfi-asm)
++VDSO_CAFLAGS += -mabi=aapcs-linux -mfloat-abi=soft
++ifeq ($(CONFIG_CPU_BIG_ENDIAN), y)
++VDSO_CAFLAGS += -mbig-endian
++else
++VDSO_CAFLAGS += -mlittle-endian
++endif
++
++# From arm vDSO Makefile
++VDSO_CAFLAGS += -fPIC -fno-builtin -fno-stack-protector
++VDSO_CAFLAGS += -DDISABLE_BRANCH_PROFILING
++
++# Try to compile for ARMv8. If the compiler is too old and doesn't support it,
++# fall back to v7. There is no easy way to check for what architecture the code
++# is being compiled, so define a macro specifying that (see arch/arm/Makefile).
++VDSO_CAFLAGS += $(call cc32-option,-march=armv8-a -D__LINUX_ARM_ARCH__=8,\
++                                   -march=armv7-a -D__LINUX_ARM_ARCH__=7)
++
++VDSO_CFLAGS := $(VDSO_CAFLAGS)
++VDSO_CFLAGS += -DENABLE_COMPAT_VDSO=1
++# KBUILD_CFLAGS from top-level Makefile
++VDSO_CFLAGS += -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs \
++               -fno-strict-aliasing -fno-common \
++               -Werror-implicit-function-declaration \
++               -Wno-format-security \
++               -std=gnu89
++VDSO_CFLAGS  += -O2
++# Some useful compiler-dependent flags from top-level Makefile
++VDSO_CFLAGS += $(call cc32-option,-Wdeclaration-after-statement,)
++VDSO_CFLAGS += $(call cc32-option,-Wno-pointer-sign)
++VDSO_CFLAGS += $(call cc32-option,-fno-strict-overflow)
++VDSO_CFLAGS += $(call cc32-option,-Werror=strict-prototypes)
++VDSO_CFLAGS += $(call cc32-option,-Werror=date-time)
++VDSO_CFLAGS += $(call cc32-option,-Werror=incompatible-pointer-types)
++
++# The 32-bit compiler does not provide 128-bit integers, which are used in
++# some headers that are indirectly included from the vDSO code.
++# This hack makes the compiler happy and should trigger a warning/error if
++# variables of such type are referenced.
++VDSO_CFLAGS += -D__uint128_t='void*'
++# Silence some warnings coming from headers that operate on long's
++# (on GCC 4.8 or older, there is unfortunately no way to silence this warning)
++VDSO_CFLAGS += $(call cc32-disable-warning,shift-count-overflow)
++VDSO_CFLAGS += -Wno-int-to-pointer-cast
++
++VDSO_AFLAGS := $(VDSO_CAFLAGS)
++VDSO_AFLAGS += -D__ASSEMBLY__
++
++VDSO_LDFLAGS := $(VDSO_CPPFLAGS)
++# From arm vDSO Makefile
++VDSO_LDFLAGS += -Wl,-Bsymbolic -Wl,--no-undefined -Wl,-soname=linux-vdso.so.1
++VDSO_LDFLAGS += -Wl,-z,max-page-size=4096 -Wl,-z,common-page-size=4096
++VDSO_LDFLAGS += -nostdlib -shared -mfloat-abi=soft
++VDSO_LDFLAGS += $(call cc32-ldoption,-Wl$(comma)--hash-style=sysv)
++VDSO_LDFLAGS += $(call cc32-ldoption,-Wl$(comma)--build-id)
++VDSO_LDFLAGS += $(call cc32-ldoption,-fuse-ld=bfd)
++
++
++# Borrow vdsomunge.c from the arm vDSO
++# We have to use a relative path because scripts/Makefile.host prefixes
++# $(hostprogs-y) with $(obj)
++munge := ../../../arm/vdso/vdsomunge
++hostprogs-y := $(munge)
++
++c-obj-vdso := note.o
++c-obj-vdso-gettimeofday := vgettimeofday.o
++asm-obj-vdso := sigreturn.o
++
++ifneq ($(c-gettimeofday-y),)
++VDSO_CFLAGS_gettimeofday_o += -include $(c-gettimeofday-y)
++endif
++
++VDSO_CFLAGS_REMOVE_vgettimeofday.o = $(CC_FLAGS_FTRACE) -Os
++
++# Build rules
++targets := $(c-obj-vdso) $(c-obj-vdso-gettimeofday) $(asm-obj-vdso) vdso.so vdso.so.dbg vdso.so.raw
++c-obj-vdso := $(addprefix $(obj)/, $(c-obj-vdso))
++c-obj-vdso-gettimeofday := $(addprefix $(obj)/, $(c-obj-vdso-gettimeofday))
++asm-obj-vdso := $(addprefix $(obj)/, $(asm-obj-vdso))
++obj-vdso := $(c-obj-vdso) $(c-obj-vdso-gettimeofday) $(asm-obj-vdso)
++
++obj-y += vdso.o
++extra-y += vdso.lds
++CPPFLAGS_vdso.lds += -P -C -U$(ARCH)
++
++# Force dependency (vdso.s includes vdso.so through incbin)
++$(obj)/vdso.o: $(obj)/vdso.so
++
++include/generated/vdso32-offsets.h: $(obj)/vdso.so.dbg FORCE
++	$(call if_changed,vdsosym)
++
++# Strip rule for vdso.so
++$(obj)/vdso.so: OBJCOPYFLAGS := -S
++$(obj)/vdso.so: $(obj)/vdso.so.dbg FORCE
++	$(call if_changed,objcopy)
++
++$(obj)/vdso.so.dbg: $(obj)/vdso.so.raw $(obj)/$(munge) FORCE
++	$(call if_changed,vdsomunge)
++
++# Link rule for the .so file, .lds has to be first
++$(obj)/vdso.so.raw: $(src)/vdso.lds $(obj-vdso) FORCE
++	$(call if_changed,vdsold)
++	$(call if_changed,vdso_check)
++
++# Compilation rules for the vDSO sources
++$(c-obj-vdso): %.o: %.c FORCE
++	$(call if_changed_dep,vdsocc)
++$(c-obj-vdso-gettimeofday): %.o: %.c FORCE
++	$(call if_changed_dep,vdsocc_gettimeofday)
++$(asm-obj-vdso): %.o: %.S FORCE
++	$(call if_changed_dep,vdsoas)
++
++# Actual build commands
++quiet_cmd_vdsold = VDSOL   $@
++      cmd_vdsold = $(COMPATCC) -Wp,-MD,$(depfile) $(VDSO_LDFLAGS) \
++                   -Wl,-T $(filter %.lds,$^) $(filter %.o,$^) -o $@
++quiet_cmd_vdsocc = VDSOC   $@
++      cmd_vdsocc = $(COMPATCC) -Wp,-MD,$(depfile) $(VDSO_CFLAGS) -c -o $@ $<
++quiet_cmd_vdsocc_gettimeofday = VDSOC_GTD   $@
++      cmd_vdsocc_gettimeofday = $(COMPATCC) -Wp,-MD,$(depfile) $(VDSO_CFLAGS) $(VDSO_CFLAGS_gettimeofday_o) -c -o $@ $<
++quiet_cmd_vdsoas = VDSOA   $@
++      cmd_vdsoas = $(COMPATCC) -Wp,-MD,$(depfile) $(VDSO_AFLAGS) -c -o $@ $<
++
++quiet_cmd_vdsomunge = MUNGE   $@
++      cmd_vdsomunge = $(obj)/$(munge) $< $@
++
++# Generate vDSO offsets using helper script (borrowed from the 64-bit vDSO)
++gen-vdsosym := $(srctree)/$(src)/../vdso/gen_vdso_offsets.sh
++quiet_cmd_vdsosym = VDSOSYM $@
++# The AArch64 nm should be able to read an AArch32 binary
++      cmd_vdsosym = $(NM) $< | $(gen-vdsosym) | LC_ALL=C sort > $@
++
++# Install commands for the unstripped file
++quiet_cmd_vdso_install = INSTALL $@
++      cmd_vdso_install = cp $(obj)/$@.dbg $(MODLIB)/vdso/vdso32.so
++
++vdso.so: $(obj)/vdso.so.dbg
++	@mkdir -p $(MODLIB)/vdso
++	$(call cmd,vdso_install)
++
++vdso_install: vdso.so
+diff --git a/arch/arm64/kernel/vdso32/note.c b/arch/arm64/kernel/vdso32/note.c
+new file mode 100644
+index 000000000000..eff5bf9efb8b
+--- /dev/null
++++ b/arch/arm64/kernel/vdso32/note.c
+@@ -0,0 +1,15 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (C) 2012-2018 ARM Limited
++ *
++ * This supplies .note.* sections to go into the PT_NOTE inside the vDSO text.
++ * Here we can supply some information useful to userland.
++ */
++
++#include <linux/uts.h>
++#include <linux/version.h>
++#include <linux/elfnote.h>
++#include <linux/build-salt.h>
++
++ELFNOTE32("Linux", 0, LINUX_VERSION_CODE);
++BUILD_SALT;
+diff --git a/arch/arm64/kernel/vdso32/sigreturn.S b/arch/arm64/kernel/vdso32/sigreturn.S
+new file mode 100644
+index 000000000000..1a81277c2d09
+--- /dev/null
++++ b/arch/arm64/kernel/vdso32/sigreturn.S
+@@ -0,0 +1,62 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * This file provides both A32 and T32 versions, in accordance with the
++ * arm sigreturn code.
++ *
++ * Copyright (C) 2018 ARM Limited
++ */
++
++#include <linux/linkage.h>
++#include <asm/asm-offsets.h>
++#include <asm/unistd.h>
++
++#define ARM_ENTRY(name)		\
++	ENTRY(name)
++
++#define ARM_ENDPROC(name)	\
++	.type name, %function;	\
++	END(name)
++
++	.text
++
++	.arm
++	.fnstart
++	.save {r0-r15}
++	.pad #COMPAT_SIGFRAME_REGS_OFFSET
++	nop
++ARM_ENTRY(__kernel_sigreturn_arm)
++	mov r7, #__NR_compat_sigreturn
++	svc #0
++	.fnend
++ARM_ENDPROC(__kernel_sigreturn_arm)
++
++	.fnstart
++	.save {r0-r15}
++	.pad #COMPAT_RT_SIGFRAME_REGS_OFFSET
++	nop
++ARM_ENTRY(__kernel_rt_sigreturn_arm)
++	mov r7, #__NR_compat_rt_sigreturn
++	svc #0
++	.fnend
++ARM_ENDPROC(__kernel_rt_sigreturn_arm)
++
++	.thumb
++	.fnstart
++	.save {r0-r15}
++	.pad #COMPAT_SIGFRAME_REGS_OFFSET
++	nop
++ARM_ENTRY(__kernel_sigreturn_thumb)
++	mov r7, #__NR_compat_sigreturn
++	svc #0
++	.fnend
++ARM_ENDPROC(__kernel_sigreturn_thumb)
++
++	.fnstart
++	.save {r0-r15}
++	.pad #COMPAT_RT_SIGFRAME_REGS_OFFSET
++	nop
++ARM_ENTRY(__kernel_rt_sigreturn_thumb)
++	mov r7, #__NR_compat_rt_sigreturn
++	svc #0
++	.fnend
++ARM_ENDPROC(__kernel_rt_sigreturn_thumb)
+diff --git a/arch/arm64/kernel/vdso32/vdso.S b/arch/arm64/kernel/vdso32/vdso.S
+new file mode 100644
+index 000000000000..e72ac7bc4c04
+--- /dev/null
++++ b/arch/arm64/kernel/vdso32/vdso.S
+@@ -0,0 +1,19 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Copyright (C) 2012 ARM Limited
++ */
++
++#include <linux/init.h>
++#include <linux/linkage.h>
++#include <linux/const.h>
++#include <asm/page.h>
++
++	.globl vdso32_start, vdso32_end
++	.section .rodata
++	.balign PAGE_SIZE
++vdso32_start:
++	.incbin "arch/arm64/kernel/vdso32/vdso.so"
++	.balign PAGE_SIZE
++vdso32_end:
++
++	.previous
+diff --git a/arch/arm64/kernel/vdso32/vdso.lds.S b/arch/arm64/kernel/vdso32/vdso.lds.S
+new file mode 100644
+index 000000000000..a3944927eaeb
+--- /dev/null
++++ b/arch/arm64/kernel/vdso32/vdso.lds.S
+@@ -0,0 +1,82 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Adapted from arm64 version.
++ *
++ * GNU linker script for the VDSO library.
++ * Heavily based on the vDSO linker scripts for other archs.
++ *
++ * Copyright (C) 2012-2018 ARM Limited
++ */
++
++#include <linux/const.h>
++#include <asm/page.h>
++#include <asm/vdso.h>
++
++OUTPUT_FORMAT("elf32-littlearm", "elf32-bigarm", "elf32-littlearm")
++OUTPUT_ARCH(arm)
++
++SECTIONS
++{
++	PROVIDE_HIDDEN(_vdso_data = . - PAGE_SIZE);
++	. = VDSO_LBASE + SIZEOF_HEADERS;
++
++	.hash		: { *(.hash) }			:text
++	.gnu.hash	: { *(.gnu.hash) }
++	.dynsym		: { *(.dynsym) }
++	.dynstr		: { *(.dynstr) }
++	.gnu.version	: { *(.gnu.version) }
++	.gnu.version_d	: { *(.gnu.version_d) }
++	.gnu.version_r	: { *(.gnu.version_r) }
++
++	.note		: { *(.note.*) }		:text	:note
++
++	.dynamic	: { *(.dynamic) }		:text	:dynamic
++
++	.rodata		: { *(.rodata*) }		:text
++
++	.text		: { *(.text*) }			:text	=0xe7f001f2
++
++	.got		: { *(.got) }
++	.rel.plt	: { *(.rel.plt) }
++
++	/DISCARD/	: {
++		*(.note.GNU-stack)
++		*(.data .data.* .gnu.linkonce.d.* .sdata*)
++		*(.bss .sbss .dynbss .dynsbss)
++	}
++}
++
++/*
++ * We must supply the ELF program headers explicitly to get just one
++ * PT_LOAD segment, and set the flags explicitly to make segments read-only.
++ */
++PHDRS
++{
++	text		PT_LOAD		FLAGS(5) FILEHDR PHDRS; /* PF_R|PF_X */
++	dynamic		PT_DYNAMIC	FLAGS(4);		/* PF_R */
++	note		PT_NOTE		FLAGS(4);		/* PF_R */
++}
++
++VERSION
++{
++	LINUX_2.6 {
++	global:
++		__vdso_clock_gettime;
++		__vdso_gettimeofday;
++		__vdso_clock_getres;
++		__kernel_sigreturn_arm;
++		__kernel_sigreturn_thumb;
++		__kernel_rt_sigreturn_arm;
++		__kernel_rt_sigreturn_thumb;
++		__vdso_clock_gettime64;
++	local: *;
++	};
++}
++
++/*
++ * Make the sigreturn code visible to the kernel.
++ */
++VDSO_compat_sigreturn_arm	= __kernel_sigreturn_arm;
++VDSO_compat_sigreturn_thumb	= __kernel_sigreturn_thumb;
++VDSO_compat_rt_sigreturn_arm	= __kernel_rt_sigreturn_arm;
++VDSO_compat_rt_sigreturn_thumb	= __kernel_rt_sigreturn_thumb;
+diff --git a/arch/arm64/kernel/vdso32/vgettimeofday.c b/arch/arm64/kernel/vdso32/vgettimeofday.c
+new file mode 100644
+index 000000000000..54fc1c2ce93f
+--- /dev/null
++++ b/arch/arm64/kernel/vdso32/vgettimeofday.c
+@@ -0,0 +1,59 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * ARM64 compat userspace implementations of gettimeofday() and similar.
++ *
++ * Copyright (C) 2018 ARM Limited
++ *
++ */
++#include <linux/time.h>
++#include <linux/types.h>
++
++int __vdso_clock_gettime(clockid_t clock,
++			 struct old_timespec32 *ts)
++{
++	/* The checks below are required for ABI consistency with arm */
++	if ((u32)ts >= TASK_SIZE_32)
++		return -EFAULT;
++
++	return __cvdso_clock_gettime32(clock, ts);
++}
++
++int __vdso_clock_gettime64(clockid_t clock,
++			   struct __kernel_timespec *ts)
++{
++	/* The checks below are required for ABI consistency with arm */
++	if ((u32)ts >= TASK_SIZE_32)
++		return -EFAULT;
++
++	return __cvdso_clock_gettime(clock, ts);
++}
++
++int __vdso_gettimeofday(struct __kernel_old_timeval *tv,
++			struct timezone *tz)
++{
++	return __cvdso_gettimeofday(tv, tz);
++}
++
++int __vdso_clock_getres(clockid_t clock_id,
++			struct old_timespec32 *res)
++{
++	/* The checks below are required for ABI consistency with arm */
++	if ((u32)res >= TASK_SIZE_32)
++		return -EFAULT;
++
++	return __cvdso_clock_getres_time32(clock_id, res);
++}
++
++/* Avoid unresolved references emitted by GCC */
++
++void __aeabi_unwind_cpp_pr0(void)
++{
++}
++
++void __aeabi_unwind_cpp_pr1(void)
++{
++}
++
++void __aeabi_unwind_cpp_pr2(void)
++{
++}
