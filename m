@@ -2,215 +2,163 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E072B4FE6B
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 03:41:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7EC884FF1F
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 04:10:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726774AbfFXBlX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 23 Jun 2019 21:41:23 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:43987 "EHLO
-        mail.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726565AbfFXBk6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Jun 2019 21:40:58 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x5NNiXUx2858277
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Sun, 23 Jun 2019 16:44:33 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x5NNiXUx2858277
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019061801; t=1561333474;
-        bh=+Pnp97QirDw23SXvjDjC+j20gnJWLcG2oWbLeC/mHhQ=;
-        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
-        b=Wpa6IVGrSfOIwfOzANMbaE1ZzND3X6VdpkVhUfbCgoMpbjQcmFOwIgP6fDNKD8d/7
-         jIrVOIT8PEn1tIvZgHVy/I3QgvWSrVhS/oaAGEmY6/D4AaheXnIEIxoO9SAblguKNY
-         3ieJaKDkYTS3TMZAwVzAUx/smPQGvh4iOKFwLlti3c6tiq4iD1oqYZA/rj6NxoHo7G
-         yHPCYNi+j+Onr8H7/kfDB/b43HpGorCXq+QN06xVxGfbW4uAGBFHn+gzPjpkQ1zcvd
-         CyB+JiZaBZ2CedhEMdqHLgKPbw+JnT4dVYgcgNoKe3ti/cMSuRPH35k94ZY6StWap3
-         cu0B+2vkqSPig==
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x5NNiWpp2858274;
-        Sun, 23 Jun 2019 16:44:32 -0700
-Date:   Sun, 23 Jun 2019 16:44:32 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Vincenzo Frascino <tipbot@zytor.com>
-Message-ID: <tip-361f8aee9b093526297d567a9dc2f6cbf746e5f9@git.kernel.org>
-Cc:     linux@rasmusvillemoes.dk, daniel.lezcano@linaro.org, arnd@arndb.de,
-        mingo@kernel.org, tglx@linutronix.de, sthotton@marvell.com,
-        andre.przywara@arm.com, ralf@linux-mips.org, will.deacon@arm.com,
-        shuah@kernel.org, linux@armlinux.org.uk, vincenzo.frascino@arm.com,
-        huw@codeweavers.com, salyzyn@android.com, hpa@zytor.com,
-        paul.burton@mips.com, pcc@google.com, 0x7f454c46@gmail.com,
-        catalin.marinas@arm.com, linux-kernel@vger.kernel.org
-Reply-To: will.deacon@arm.com, ralf@linux-mips.org, andre.przywara@arm.com,
-          sthotton@marvell.com, tglx@linutronix.de, mingo@kernel.org,
-          arnd@arndb.de, daniel.lezcano@linaro.org,
-          linux@rasmusvillemoes.dk, catalin.marinas@arm.com,
-          linux-kernel@vger.kernel.org, 0x7f454c46@gmail.com,
-          pcc@google.com, paul.burton@mips.com, vincenzo.frascino@arm.com,
-          hpa@zytor.com, salyzyn@android.com, huw@codeweavers.com,
-          shuah@kernel.org, linux@armlinux.org.uk
-In-Reply-To: <20190621095252.32307-2-vincenzo.frascino@arm.com>
-References: <20190621095252.32307-2-vincenzo.frascino@arm.com>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:timers/vdso] vdso: Define standardized vdso_datapage
-Git-Commit-ID: 361f8aee9b093526297d567a9dc2f6cbf746e5f9
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        id S1726897AbfFXCKS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 23 Jun 2019 22:10:18 -0400
+Received: from mx0b-002e3701.pphosted.com ([148.163.143.35]:25304 "EHLO
+        mx0b-002e3701.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726320AbfFXCKS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 23 Jun 2019 22:10:18 -0400
+Received: from pps.filterd (m0150245.ppops.net [127.0.0.1])
+        by mx0b-002e3701.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5NNiO5J025879;
+        Sun, 23 Jun 2019 23:44:59 GMT
+Received: from g4t3426.houston.hpe.com (g4t3426.houston.hpe.com [15.241.140.75])
+        by mx0b-002e3701.pphosted.com with ESMTP id 2ta4wgb9hd-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Sun, 23 Jun 2019 23:44:59 +0000
+Received: from G2W6311.americas.hpqcorp.net (g2w6311.austin.hp.com [16.197.64.53])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by g4t3426.houston.hpe.com (Postfix) with ESMTPS id 5141954;
+        Sun, 23 Jun 2019 23:44:58 +0000 (UTC)
+Received: from G4W9334.americas.hpqcorp.net (16.208.32.120) by
+ G2W6311.americas.hpqcorp.net (16.197.64.53) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Sun, 23 Jun 2019 23:44:58 +0000
+Received: from G4W10205.americas.hpqcorp.net (2002:10cf:520f::10cf:520f) by
+ G4W9334.americas.hpqcorp.net (2002:10d0:2078::10d0:2078) with Microsoft SMTP
+ Server (TLS) id 15.0.1367.3; Sun, 23 Jun 2019 23:44:57 +0000
+Received: from NAM02-SN1-obe.outbound.protection.outlook.com (15.241.52.11) by
+ G4W10205.americas.hpqcorp.net (16.207.82.15) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3 via Frontend Transport; Sun, 23 Jun 2019 23:44:57 +0000
+Received: from CS1PR8401MB0727.NAMPRD84.PROD.OUTLOOK.COM (10.169.15.135) by
+ CS1PR8401MB0950.NAMPRD84.PROD.OUTLOOK.COM (10.169.14.16) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2008.13; Sun, 23 Jun 2019 23:44:55 +0000
+Received: from CS1PR8401MB0727.NAMPRD84.PROD.OUTLOOK.COM
+ ([fe80::f490:9066:df17:59e1]) by CS1PR8401MB0727.NAMPRD84.PROD.OUTLOOK.COM
+ ([fe80::f490:9066:df17:59e1%2]) with mapi id 15.20.2008.014; Sun, 23 Jun 2019
+ 23:44:55 +0000
+From:   "Vaden, Tom (HPE Server OS Architecture)" <tom.vaden@hpe.com>
+To:     Jiri Olsa <jolsa@redhat.com>, Andi Kleen <ak@linux.intel.com>
+CC:     Peter Zijlstra <peterz@infradead.org>,
+        Kan Liang <kan.liang@intel.com>, Jiri Olsa <jolsa@kernel.org>,
+        David Carrillo-Cisneros <davidcc@google.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Juergen Gross <jgross@suse.com>,
+        Alok Kataria <akataria@vmware.com>
+Subject: Re: [RFC] perf/x86/intel: Disable check_msr for real hw
+Thread-Topic: [RFC] perf/x86/intel: Disable check_msr for real hw
+Thread-Index: AQHVKFmGdWbA6mjcsEqpP4V4vJdZSaap2KCAgAAR2QA=
+Date:   Sun, 23 Jun 2019 23:44:55 +0000
+Message-ID: <73ec1d24-2dcf-1d48-2907-735fc1a4a7d0@hpe.com>
+References: <20190614112853.GC4325@krava>
+ <20190621174825.GA31027@tassilo.jf.intel.com> <20190623224031.GB5471@krava>
+In-Reply-To: <20190623224031.GB5471@krava>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: BL0PR02CA0037.namprd02.prod.outlook.com
+ (2603:10b6:207:3d::14) To CS1PR8401MB0727.NAMPRD84.PROD.OUTLOOK.COM
+ (2a01:111:e400:750d::7)
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [2601:85:c100:2d8d:dbb0:2ed9:59d1:461]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 09f651ff-b2d1-49b5-afe3-08d6f834cb31
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:CS1PR8401MB0950;
+x-ms-traffictypediagnostic: CS1PR8401MB0950:
+x-microsoft-antispam-prvs: <CS1PR8401MB0950C2C8EDA839ECC6F47018E8E10@CS1PR8401MB0950.NAMPRD84.PROD.OUTLOOK.COM>
+x-ms-oob-tlc-oobclassifiers: OLM:10000;
+x-forefront-prvs: 00770C4423
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(136003)(396003)(346002)(376002)(39860400002)(366004)(189003)(199004)(52116002)(7736002)(76176011)(66556008)(186003)(64756008)(66446008)(53546011)(316002)(66476007)(73956011)(305945005)(6436002)(66946007)(14444005)(256004)(110136005)(31686004)(54906003)(8936002)(6506007)(386003)(229853002)(5024004)(6486002)(71190400001)(71200400001)(4326008)(81156014)(53936002)(25786009)(6512007)(8676002)(81166006)(446003)(68736007)(36756003)(31696002)(86362001)(478600001)(11346002)(476003)(2616005)(46003)(14454004)(102836004)(5660300002)(7416002)(486006)(6246003)(6116002)(2906002)(99286004);DIR:OUT;SFP:1102;SCL:1;SRVR:CS1PR8401MB0950;H:CS1PR8401MB0727.NAMPRD84.PROD.OUTLOOK.COM;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: hpe.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: IIO4ger6hNA1luWNW3zEqGawoUPNzW2f6+nNJTPa9qHaLWoiL1AW5/WaBEjN+6QUPaLvw3nv18EWDKqHaqNjarPq1EfpUUUsrD7kpSbyCoyPEAt9CLy+B0tPj4uG1J6ldMCS3q9sMeQaB05HstVSOEMtLO4yyr9JAwTer7t+e1WCXH34axR52ljWo+k/RBG2vyHBT6O6Rpwj8QF6rT5SjJqtJpBNrD4daVfPBxBRd8Zsu22730I/q5398UuA4OtWRO9nrpvL7FGUB49PhuaopiuyGQPz3rf0D4WLTC9sC1xjcw9hb0v44Fwfjf9RGzhnDwCiKm2SxzA5vsJh3jlU0/jt9tQr/X/NTHsweHQzq5szx78RR2eDgOpkmixjuROs96qJu1LBSbbgEBIdLR5tVWAQgrCD+yeu+TkWoBIqsfc=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <304388C5C470954189ACB4092458D712@NAMPRD84.PROD.OUTLOOK.COM>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
-X-Spam-Status: No, score=2.3 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        DATE_IN_FUTURE_03_06,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,
-        DKIM_VALID_EF,FREEMAIL_FORGED_REPLYTO,FREEMAIL_REPLYTO_END_DIGIT
-        autolearn=no autolearn_force=no version=3.4.2
-X-Spam-Level: **
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 09f651ff-b2d1-49b5-afe3-08d6f834cb31
+X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Jun 2019 23:44:55.2924
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 105b2061-b669-4b31-92ac-24d304d195dc
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: tom.vaden@hpe.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CS1PR8401MB0950
+X-OriginatorOrg: hpe.com
+X-HPE-SCL: -1
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-23_18:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1906230205
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  361f8aee9b093526297d567a9dc2f6cbf746e5f9
-Gitweb:     https://git.kernel.org/tip/361f8aee9b093526297d567a9dc2f6cbf746e5f9
-Author:     Vincenzo Frascino <vincenzo.frascino@arm.com>
-AuthorDate: Fri, 21 Jun 2019 10:52:28 +0100
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Sat, 22 Jun 2019 21:21:05 +0200
-
-vdso: Define standardized vdso_datapage
-
-Define a common formet for the vdso datapage as a preparation for sharing
-the VDSO implementation as a generic library.
-
-The datastructures are based on the current x86 layout.
-
-[ tglx: Massaged changelog ]
-
-Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Tested-by: Shijith Thotton <sthotton@marvell.com>
-Tested-by: Andre Przywara <andre.przywara@arm.com>
-Cc: linux-arch@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-mips@vger.kernel.org
-Cc: linux-kselftest@vger.kernel.org
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Will Deacon <will.deacon@arm.com>
-Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: Russell King <linux@armlinux.org.uk>
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: Paul Burton <paul.burton@mips.com>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Mark Salyzyn <salyzyn@android.com>
-Cc: Peter Collingbourne <pcc@google.com>
-Cc: Shuah Khan <shuah@kernel.org>
-Cc: Dmitry Safonov <0x7f454c46@gmail.com>
-Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Cc: Huw Davies <huw@codeweavers.com>
-Link: https://lkml.kernel.org/r/20190621095252.32307-2-vincenzo.frascino@arm.com
-
----
- include/vdso/datapage.h | 93 +++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 93 insertions(+)
-
-diff --git a/include/vdso/datapage.h b/include/vdso/datapage.h
-new file mode 100644
-index 000000000000..e6eb36c3d54f
---- /dev/null
-+++ b/include/vdso/datapage.h
-@@ -0,0 +1,93 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef __VDSO_DATAPAGE_H
-+#define __VDSO_DATAPAGE_H
-+
-+#ifdef __KERNEL__
-+
-+#ifndef __ASSEMBLY__
-+
-+#include <linux/bits.h>
-+#include <linux/time.h>
-+#include <linux/types.h>
-+
-+#define VDSO_BASES	(CLOCK_TAI + 1)
-+#define VDSO_HRES	(BIT(CLOCK_REALTIME)		| \
-+			 BIT(CLOCK_MONOTONIC)		| \
-+			 BIT(CLOCK_BOOTTIME)		| \
-+			 BIT(CLOCK_TAI))
-+#define VDSO_COARSE	(BIT(CLOCK_REALTIME_COARSE)	| \
-+			 BIT(CLOCK_MONOTONIC_COARSE))
-+#define VDSO_RAW	(BIT(CLOCK_MONOTONIC_RAW))
-+
-+#define CS_HRES_COARSE	0
-+#define CS_RAW		1
-+#define CS_BASES	(CS_RAW + 1)
-+
-+/**
-+ * struct vdso_timestamp - basetime per clock_id
-+ * @sec:	seconds
-+ * @nsec:	nanoseconds
-+ *
-+ * There is one vdso_timestamp object in vvar for each vDSO-accelerated
-+ * clock_id. For high-resolution clocks, this encodes the time
-+ * corresponding to vdso_data.cycle_last. For coarse clocks this encodes
-+ * the actual time.
-+ *
-+ * To be noticed that for highres clocks nsec is left-shifted by
-+ * vdso_data.cs[x].shift.
-+ */
-+struct vdso_timestamp {
-+	u64	sec;
-+	u64	nsec;
-+};
-+
-+/**
-+ * struct vdso_data - vdso datapage representation
-+ * @seq:		timebase sequence counter
-+ * @clock_mode:		clock mode
-+ * @cycle_last:		timebase at clocksource init
-+ * @mask:		clocksource mask
-+ * @mult:		clocksource multiplier
-+ * @shift:		clocksource shift
-+ * @basetime[clock_id]:	basetime per clock_id
-+ * @tz_minuteswest:	minutes west of Greenwich
-+ * @tz_dsttime:		type of DST correction
-+ * @hrtimer_res:	hrtimer resolution
-+ * @__unused:		unused
-+ *
-+ * vdso_data will be accessed by 64 bit and compat code at the same time
-+ * so we should be careful before modifying this structure.
-+ */
-+struct vdso_data {
-+	u32			seq;
-+
-+	s32			clock_mode;
-+	u64			cycle_last;
-+	u64			mask;
-+	u32			mult;
-+	u32			shift;
-+
-+	struct vdso_timestamp	basetime[VDSO_BASES];
-+
-+	s32			tz_minuteswest;
-+	s32			tz_dsttime;
-+	u32			hrtimer_res;
-+	u32			__unused;
-+};
-+
-+/*
-+ * We use the hidden visibility to prevent the compiler from generating a GOT
-+ * relocation. Not only is going through a GOT useless (the entry couldn't and
-+ * must not be overridden by another library), it does not even work: the linker
-+ * cannot generate an absolute address to the data page.
-+ *
-+ * With the hidden visibility, the compiler simply generates a PC-relative
-+ * relocation, and this is what we need.
-+ */
-+extern struct vdso_data _vdso_data[CS_BASES] __attribute__((visibility("hidden")));
-+
-+#endif /* !__ASSEMBLY__ */
-+
-+#endif /* __KERNEL__ */
-+
-+#endif /* __VDSO_DATAPAGE_H */
+DQoNCk9uIDYvMjMvMTkgNjo0MCBQTSwgSmlyaSBPbHNhIHdyb3RlOg0KPiBPbiBGcmksIEp1biAy
+MSwgMjAxOSBhdCAxMDo0ODoyNUFNIC0wNzAwLCBBbmRpIEtsZWVuIHdyb3RlOg0KPj4gT24gRnJp
+LCBKdW4gMTQsIDIwMTkgYXQgMDE6Mjg6NTNQTSArMDIwMCwgSmlyaSBPbHNhIHdyb3RlOg0KPj4+
+IGhpLA0KPj4+IHRoZSBIUEUgc2VydmVyIGNhbiBkbyBQT1NUIHRyYWNpbmcgYW5kIGhhdmUgZW5h
+YmxlZCBMQlINCj4+PiB0cmFjaW5nIGR1cmluZyB0aGUgYm9vdCwgd2hpY2ggbWFrZXMgY2hlY2tf
+bXNyIGZhaWwgZmFsc2x5Lg0KPj4+DQo+Pj4gSXQgbG9va3MgbGlrZSBjaGVja19tc3IgY29kZSB3
+YXMgYWRkZWQgb25seSB0byBjaGVjayBvbiBndWVzdHMNCj4+PiBNU1IgYWNjZXNzLCB3b3VsZCBp
+dCBiZSB0aGVuIG9rIHRvIGRpc2FibGUgY2hlY2tfbXNyIGZvciByZWFsDQo+Pj4gaGFyZHdhcmU/
+IChhcyBpbiBwYXRjaCBiZWxvdykNCj4+Pg0KPj4+IFdlIGNvdWxkIGFsc28gY2hlY2sgaWYgTEJS
+IHRyYWNpbmcgaXMgZW5hYmxlZCBhbmQgbWFrZQ0KPj4+IGFwcHJvcHJpYXRlIGNoZWNrcywgYnV0
+IHRoaXMgY2hhbmdlIGlzIHNpbXBsZXIgOy0pDQo+Pj4NCj4+PiBpZGVhcz8gdGhhbmtzLA0KPj4+
+IGppcmthDQo+Pg0KPj4gU29ycnkgZm9yIHRoZSBsYXRlIGNvbW1lbnQuIEkgc2VlIHRoaXMgcGF0
+Y2ggaGFzIGJlZW4gbWVyZ2VkIG5vdy4NCj4+DQo+PiBVbmZvcnR1bmF0ZWx5IEkgZG9uJ3QgdGhp
+bmsgaXQncyBhIGdvb2QgaWRlYS4gVGhlIHByb2JsZW0NCj4+IGlzIHRoYXQgdGhlIGh5cGVydmlz
+b3IgZmxhZ3MgYXJlIG9ubHkgc2V0IGZvciBhIGZldyBoeXBlcnZpc29ycw0KPj4gdGhhdCBMaW51
+eCBrbm93cyBhYm91dC4gQnV0IGluIHByYWN0aWNlIHRoZXJlIGFyZSBtYW55IG1vcmUNCj4+IEh5
+cGVydmlzb3JzIGFyb3VuZCB0aGF0IHdpbGwgbm90IGNhdXNlIHRoZXNlIGZsYWdzIHRvIGJlIHNl
+dC4NCj4+IEJ1dCB0aGVzZSBhcmUgc3RpbGwgbGlrZWx5IHRvIG1pc3MgTVNScy4NCj4+DQo+PiBU
+aGUgb3RoZXIgaHlwZXJ2aXNvcnMgYXJlIHJlbGF0aXZlbHkgb2JzY3VyZSwgYnV0IGV2ZW50dWFs
+bHkNCj4+IHNvbWVvbmUgd2lsbCBoaXQgcHJvYmxlbXMuDQo+IA0KPiBhbnkgaWRlYSBpZiB0aGVy
+ZSdzIGFueSBvdGhlciBmbGFnL3dheSB3ZSBjb3VsZCB1c2UgdG8gZGV0ZWN0IHRob3NlPw0KPiAN
+Cj4gYWRkaW5nIGZldyB2aXJ0dWFsaXphdGlvbiBmb2xrcyB0byB0aGUgbG9vcA0KPiBhbmQgYXR0
+YWNoaW5nIHRoZSBvcmlnaW5hbCBwYXRjaA0KPiANCj4gdGhhbmtzLA0KPiBqaXJrYQ0KPiANCldv
+dWxkIGl0IGJlIHJlYXNvbmFibGUgdG8gY2hhbmdlIHRoZSBzZW5zZSBvZiB0aGUgb3JpZ2luYWwg
+cGF0Y2ggaW4gDQpjb21taXQgNDU1MDkzMSB0byBvbmx5IGVuYWJsZSB0aGUgY2hlY2sgZm9yIHRo
+ZSBzZXQgb2YgImNlcnRhaW4gaGFyZHdhcmUgDQplbXVsYXRvcnMiIGFuZCBsZWF2ZSB0aGUgY2hl
+Y2sgb3RoZXJ3aXNlIGRpc2FibGVkIGJ5IGRlZmF1bHQ/IEknbSANCmFzc3VtaW5nIHRoYXQgc2V0
+IGlzIGtub3duIChhbmQgc21hbGwpPw0KDQo+IA0KPiAtLS0NCj4gVG9tIFZhZGVuIHJlcG9ydGVk
+IGZhbHNlIGZhaWx1cmUgb2YgY2hlY2tfbXNyIGZ1bmN0aW9uLCBiZWNhdXNlDQo+IHNvbWUgc2Vy
+dmVycyBjYW4gZG8gUE9TVCB0cmFjaW5nIGFuZCBlbmFibGUgTEJSIHRyYWNpbmcgZHVyaW5nDQo+
+IHRoZSBib290Lg0KPiANCj4gS2FuIGNvbmZpcm1lZCB0aGF0IGNoZWNrX21zciBwYXRjaCB3YXMg
+dG8gZml4IGEgYnVnIHJlcG9ydCBpbg0KPiBndWVzdCwgc28gaXQncyBvayB0byBkaXNhYmxlIGl0
+IGZvciByZWFsIEhXLg0KPiANCj4gQ2M6IEthbiBMaWFuZyA8a2FuLmxpYW5nQGludGVsLmNvbT4N
+Cj4gUmVwb3J0ZWQtYnk6IFRvbSBWYWRlbiA8dG9tLnZhZGVuQGhwZS5jb20+DQo+IFNpZ25lZC1v
+ZmYtYnk6IEppcmkgT2xzYSA8am9sc2FAa2VybmVsLm9yZz4NCj4gLS0tDQo+ICAgYXJjaC94ODYv
+ZXZlbnRzL2ludGVsL2NvcmUuYyB8IDggKysrKysrKysNCj4gICAxIGZpbGUgY2hhbmdlZCwgOCBp
+bnNlcnRpb25zKCspDQo+IA0KPiBkaWZmIC0tZ2l0IGEvYXJjaC94ODYvZXZlbnRzL2ludGVsL2Nv
+cmUuYyBiL2FyY2gveDg2L2V2ZW50cy9pbnRlbC9jb3JlLmMNCj4gaW5kZXggNzEwMDFmMDA1YmZl
+Li4xMTk0YWU3ZTE5OTIgMTAwNjQ0DQo+IC0tLSBhL2FyY2gveDg2L2V2ZW50cy9pbnRlbC9jb3Jl
+LmMNCj4gKysrIGIvYXJjaC94ODYvZXZlbnRzL2ludGVsL2NvcmUuYw0KPiBAQCAtMjAsNiArMjAs
+NyBAQA0KPiAgICNpbmNsdWRlIDxhc20vaW50ZWwtZmFtaWx5Lmg+DQo+ICAgI2luY2x1ZGUgPGFz
+bS9hcGljLmg+DQo+ICAgI2luY2x1ZGUgPGFzbS9jcHVfZGV2aWNlX2lkLmg+DQo+ICsjaW5jbHVk
+ZSA8YXNtL2h5cGVydmlzb3IuaD4NCj4gICANCj4gICAjaW5jbHVkZSAiLi4vcGVyZl9ldmVudC5o
+Ig0KPiAgIA0KPiBAQCAtNDA1MCw2ICs0MDUxLDEzIEBAIHN0YXRpYyBib29sIGNoZWNrX21zcih1
+bnNpZ25lZCBsb25nIG1zciwgdTY0IG1hc2spDQo+ICAgew0KPiAgIAl1NjQgdmFsX29sZCwgdmFs
+X25ldywgdmFsX3RtcDsNCj4gICANCj4gKwkvKg0KPiArCSAqIERpc2FibGUgdGhlIGNoZWNrIGZv
+ciByZWFsIEhXLCBzbyB3ZSBkb24ndA0KPiArCSAqIG1lc3MgdXAgd2l0aCBwb3RlbnRpb25hbHkg
+ZW5hYmxlZCByZWdzLg0KPiArCSAqLw0KPiArCWlmIChoeXBlcnZpc29yX2lzX3R5cGUoWDg2X0hZ
+UEVSX05BVElWRSkpDQo+ICsJCXJldHVybiB0cnVlOw0KPiArDQo+ICAgCS8qDQo+ICAgCSAqIFJl
+YWQgdGhlIGN1cnJlbnQgdmFsdWUsIGNoYW5nZSBpdCBhbmQgcmVhZCBpdCBiYWNrIHRvIHNlZSBp
+ZiBpdA0KPiAgIAkgKiBtYXRjaGVzLCB0aGlzIGlzIG5lZWRlZCB0byBkZXRlY3QgY2VydGFpbiBo
+YXJkd2FyZSBlbXVsYXRvcnMNCj4gDQo=
