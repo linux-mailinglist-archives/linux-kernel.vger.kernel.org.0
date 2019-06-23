@@ -2,23 +2,23 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B230E4FBC6
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2019 15:27:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 712AE4FBD9
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2019 15:29:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726741AbfFWN1p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 23 Jun 2019 09:27:45 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:33444 "EHLO
+        id S1727038AbfFWN26 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 23 Jun 2019 09:28:58 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:33448 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726681AbfFWN1o (ORCPT
+        with ESMTP id S1726549AbfFWN1o (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 23 Jun 2019 09:27:44 -0400
 Received: from localhost ([127.0.0.1] helo=nanos.tec.linutronix.de)
         by Galois.linutronix.de with esmtp (Exim 4.80)
         (envelope-from <tglx@linutronix.de>)
-        id 1hf2Wz-0001k1-Rg; Sun, 23 Jun 2019 15:27:41 +0200
-Message-Id: <20190623132434.951733064@linutronix.de>
+        id 1hf2X0-0001kB-Cm; Sun, 23 Jun 2019 15:27:42 +0200
+Message-Id: <20190623132435.058540608@linutronix.de>
 User-Agent: quilt/0.65
-Date:   Sun, 23 Jun 2019 15:23:50 +0200
+Date:   Sun, 23 Jun 2019 15:23:51 +0200
 From:   Thomas Gleixner <tglx@linutronix.de>
 To:     LKML <linux-kernel@vger.kernel.org>
 Cc:     x86@kernel.org, Peter Zijlstra <peterz@infradead.org>,
@@ -28,7 +28,8 @@ Cc:     x86@kernel.org, Peter Zijlstra <peterz@infradead.org>,
         Suravee Suthikulpanit <Suravee.Suthikulpanit@amd.com>,
         Stephane Eranian <eranian@google.com>,
         Ravi Shankar <ravi.v.shankar@intel.com>
-Subject: [patch 10/29] x86/hpet: Shuffle code around for readability sake
+Subject: [patch 11/29] x86/hpet: Separate counter check out of clocksource
+ register code
 References: <20190623132340.463097504@linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -37,113 +38,112 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It doesn't make sense to have init functions in the middle of other
-code. Aside of that, further changes in that area create horrible diffs if
-the code stays where it is.
+The init code checks whether the HPET counter works late in the init
+function when the clocksource is registered. That should happen right with
+the other sanity checks.
 
-No functional change
+Split it into a separate validation function and move it to the other
+sanity checks.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 ---
- arch/x86/kernel/hpet.c |   81 ++++++++++++++++++++++++-------------------------
- 1 file changed, 41 insertions(+), 40 deletions(-)
+ arch/x86/kernel/hpet.c |   65 +++++++++++++++++++++++--------------------------
+ 1 file changed, 31 insertions(+), 34 deletions(-)
 
 --- a/arch/x86/kernel/hpet.c
 +++ b/arch/x86/kernel/hpet.c
-@@ -559,6 +559,47 @@ static void init_one_hpet_msi_clockevent
- 					0x7FFFFFFF);
- }
+@@ -809,38 +809,6 @@ static struct clocksource clocksource_hp
+ 	.resume		= hpet_resume_counter,
+ };
  
-+static struct hpet_dev *hpet_get_unused_timer(void)
-+{
-+	int i;
-+
-+	if (!hpet_devs)
-+		return NULL;
-+
-+	for (i = 0; i < hpet_num_timers; i++) {
-+		struct hpet_dev *hdev = &hpet_devs[i];
-+
-+		if (!(hdev->flags & HPET_DEV_VALID))
-+			continue;
-+		if (test_and_set_bit(HPET_DEV_USED_BIT,
-+			(unsigned long *)&hdev->flags))
-+			continue;
-+		return hdev;
-+	}
-+	return NULL;
-+}
-+
-+static int hpet_cpuhp_online(unsigned int cpu)
-+{
-+	struct hpet_dev *hdev = hpet_get_unused_timer();
-+
-+	if (hdev)
-+		init_one_hpet_msi_clockevent(hdev, cpu);
-+	return 0;
-+}
-+
-+static int hpet_cpuhp_dead(unsigned int cpu)
-+{
-+	struct hpet_dev *hdev = per_cpu(cpu_hpet_dev, cpu);
-+
-+	if (!hdev)
-+		return 0;
-+	free_irq(hdev->irq, hdev);
-+	hdev->flags &= ~HPET_DEV_USED;
-+	per_cpu(cpu_hpet_dev, cpu) = NULL;
-+	return 0;
-+}
-+
- #ifdef CONFIG_HPET
- /* Reserve at least one timer for userspace (/dev/hpet) */
- #define RESERVE_TIMERS 1
-@@ -644,46 +685,6 @@ static void __init hpet_reserve_msi_time
- }
- #endif
- 
--static struct hpet_dev *hpet_get_unused_timer(void)
+-static int __init hpet_clocksource_register(void)
 -{
--	int i;
+-	u64 start, now;
+-	u64 t1;
 -
--	if (!hpet_devs)
--		return NULL;
+-	/* Start the counter */
+-	hpet_restart_counter();
 -
--	for (i = 0; i < hpet_num_timers; i++) {
--		struct hpet_dev *hdev = &hpet_devs[i];
+-	/* Verify whether hpet counter works */
+-	t1 = hpet_readl(HPET_COUNTER);
+-	start = rdtsc();
 -
--		if (!(hdev->flags & HPET_DEV_VALID))
--			continue;
--		if (test_and_set_bit(HPET_DEV_USED_BIT,
--			(unsigned long *)&hdev->flags))
--			continue;
--		return hdev;
+-	/*
+-	 * We don't know the TSC frequency yet, but waiting for
+-	 * 200000 TSC cycles is safe:
+-	 * 4 GHz == 50us
+-	 * 1 GHz == 200us
+-	 */
+-	do {
+-		rep_nop();
+-		now = rdtsc();
+-	} while ((now - start) < 200000UL);
+-
+-	if (t1 == hpet_readl(HPET_COUNTER)) {
+-		pr_warn("Counter not counting. HPET disabled\n");
+-		return -ENODEV;
 -	}
--	return NULL;
--}
 -
--static int hpet_cpuhp_online(unsigned int cpu)
--{
--	struct hpet_dev *hdev = hpet_get_unused_timer();
--
--	if (hdev)
--		init_one_hpet_msi_clockevent(hdev, cpu);
+-	clocksource_register_hz(&clocksource_hpet, (u32)hpet_freq);
 -	return 0;
 -}
 -
--static int hpet_cpuhp_dead(unsigned int cpu)
--{
--	struct hpet_dev *hdev = per_cpu(cpu_hpet_dev, cpu);
--
--	if (!hdev)
--		return 0;
--	free_irq(hdev->irq, hdev);
--	hdev->flags &= ~HPET_DEV_USED;
--	per_cpu(cpu_hpet_dev, cpu) = NULL;
--	return 0;
--}
- #else
+ /*
+  * AMD SB700 based systems with spread spectrum enabled use a SMM based
+  * HPET emulation to provide proper frequency setting.
+@@ -869,6 +837,32 @@ static bool __init hpet_cfg_working(void
+ 	return false;
+ }
  
- static inline void hpet_msi_capability_lookup(unsigned int start_timer) { }
++static bool __init hpet_counting(void)
++{
++	u64 start, now, t1;
++
++	hpet_restart_counter();
++
++	t1 = hpet_readl(HPET_COUNTER);
++	start = rdtsc();
++
++	/*
++	 * We don't know the TSC frequency yet, but waiting for
++	 * 200000 TSC cycles is safe:
++	 * 4 GHz == 50us
++	 * 1 GHz == 200us
++	 */
++	do {
++		rep_nop();
++		now = rdtsc();
++	} while ((now - start) < 200000UL);
++
++	if (t1 == hpet_readl(HPET_COUNTER)) {
++		pr_warn("Counter not counting. HPET disabled\n");
++		return false;
++	}
++	return true;
++}
+ 
+ /**
+  * hpet_enable - Try to setup the HPET timer. Returns 1 on success.
+@@ -890,6 +884,10 @@ int __init hpet_enable(void)
+ 	if (!hpet_cfg_working())
+ 		goto out_nohpet;
+ 
++	/* Validate that the counter is counting */
++	if (!hpet_counting())
++		goto out_nohpet;
++
+ 	/*
+ 	 * Read the period and check for a sane value:
+ 	 */
+@@ -948,8 +946,7 @@ int __init hpet_enable(void)
+ 	}
+ 	hpet_print_config();
+ 
+-	if (hpet_clocksource_register())
+-		goto out_nohpet;
++	clocksource_register_hz(&clocksource_hpet, (u32)hpet_freq);
+ 
+ 	if (id & HPET_ID_LEGSUP) {
+ 		hpet_legacy_clockevent_register();
 
 
