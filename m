@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6BEBE4FF97
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 05:02:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1C11D4FF96
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 05:01:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727370AbfFXDBz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 23 Jun 2019 23:01:55 -0400
+        id S1727350AbfFXDBv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 23 Jun 2019 23:01:51 -0400
 Received: from Galois.linutronix.de ([193.142.43.55]:34569 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727335AbfFXDBu (ORCPT
+        with ESMTP id S1727317AbfFXDBr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Jun 2019 23:01:50 -0400
+        Sun, 23 Jun 2019 23:01:47 -0400
 Received: from p5b06daab.dip0.t-ipconnect.de ([91.6.218.171] helo=nanos)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tglx@linutronix.de>)
-        id 1hfApz-0007IB-Sg; Mon, 24 Jun 2019 00:19:52 +0200
-Date:   Mon, 24 Jun 2019 00:19:51 +0200 (CEST)
+        id 1hfB8b-0007OX-Ve; Mon, 24 Jun 2019 00:39:06 +0200
+Date:   Mon, 24 Jun 2019 00:39:05 +0200 (CEST)
 From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Andy Lutomirski <luto@amacapital.net>
-cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Lutomirski <luto@kernel.org>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [PATCH] x86/vdso: Give the [ph]vclock_page declarations real
- types
-In-Reply-To: <49C4F6B3-D419-4035-B49D-1586912C670C@amacapital.net>
-Message-ID: <alpine.DEB.2.21.1906240019130.32342@nanos.tec.linutronix.de>
-References: <6920c5188f8658001af1fc56fd35b815706d300c.1561241273.git.luto@kernel.org> <alpine.DEB.2.21.1906231441500.32342@nanos.tec.linutronix.de> <CAHk-=whywzng7FLV9X67RPmHNnygK+7VJV+zh4njT6BA+h9tCw@mail.gmail.com> <alpine.DEB.2.21.1906231509440.32342@nanos.tec.linutronix.de>
- <49C4F6B3-D419-4035-B49D-1586912C670C@amacapital.net>
+To:     Fenghua Yu <fenghua.yu@intel.com>
+cc:     Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        H Peter Anvin <hpa@zytor.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ashok Raj <ashok.raj@intel.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Ravi V Shankar <ravi.v.shankar@intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>, x86 <x86@kernel.org>
+Subject: Re: [PATCH v5 2/5] x86/umwait: Initialize umwait control values
+In-Reply-To: <1560994438-235698-3-git-send-email-fenghua.yu@intel.com>
+Message-ID: <alpine.DEB.2.21.1906232038421.32342@nanos.tec.linutronix.de>
+References: <1560994438-235698-1-git-send-email-fenghua.yu@intel.com> <1560994438-235698-3-git-send-email-fenghua.yu@intel.com>
 User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -43,26 +43,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 23 Jun 2019, Andy Lutomirski wrote:
+On Wed, 19 Jun 2019, Fenghua Yu wrote:
+>  
+> +#define MSR_IA32_UMWAIT_CONTROL			0xe1
+> +#define MSR_IA32_UMWAIT_CONTROL_C02_DISABLED	BIT(0)
+> +#define MSR_IA32_UMWAIT_CONTROL_MAX_TIME	0xfffffffc
 
-> 
-> > On Jun 23, 2019, at 6:10 AM, Thomas Gleixner <tglx@linutronix.de> wrote:
-> > 
-> >> On Sun, 23 Jun 2019, Linus Torvalds wrote:
-> >> 
-> >> Andy added comments and changed the patch in other ways too, so I think
-> >> it's fine to have him as author, and my sign-off is just for the original
-> >> smaller patch.
-> > 
-> > Well, that will earn me a nastigram from the next checkers as it's not
-> > compliant to our SOB rules ....
-> > 
-> 
-> Feel free to add:
-> 
-> Originally-by: Linus ...
-> 
-> I had assumed the textual description was enough.
+Errm, no! That's not maxtime, that's the time field mask in the
+MSR. Throughout the code you use that as a mask, which is not really
+obvious.
 
-Ha, completely forgot about Co-developed-by. That does the trick nicely.
+> +	(((max_time) & MSR_IA32_UMWAIT_CONTROL_MAX_TIME) |		\
 
+and later on:
+
+	if (max_time & ~MSR_IA32_UMWAIT_CONTROL_MAX_TIME)
+
+What? How is anyone supposed to understand that?
+
+	if (max_time & ~MSR_IA32_UMWAIT_CONTROL_TIME_MASK)
+
+makes it entirely clear that the value is not allowed to have any bits
+outside of the mask set.
+
+> +
+> +#define UMWAIT_C02_ENABLED	(0 & MSR_IA32_UMWAIT_CONTROL_C02_DISABLED)
+
+The AND is there for maximal confusion of the reader?
+
+> +/*
+> + * On resume, set up IA32_UMWAIT_CONTROL MSR on BP which is the only active
+> + * CPU at this time. Setting up the MSR on APs when they are re-added later
+> + * using CPU hotplug.
+> + * The MSR on BP is supposed not to be changed during suspend and thus it's
+> + * unnecessary to set it again during resume from suspend. But at this point
+> + * we don't know resume is from suspend or hibernation. To simplify the
+> + * situation, just set up the MSR on resume from suspend.
+
+We also do not trust any firmware by default whatever it is supposed to do.
+
+Thanks,
+
+	tglx
