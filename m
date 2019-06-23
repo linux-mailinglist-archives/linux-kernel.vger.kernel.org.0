@@ -2,76 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E57A34FB99
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2019 14:37:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5331C4FBA5
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2019 14:42:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726641AbfFWMhL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 23 Jun 2019 08:37:11 -0400
-Received: from inva021.nxp.com ([92.121.34.21]:43192 "EHLO inva021.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726599AbfFWMhJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Jun 2019 08:37:09 -0400
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id F0DD220012B;
-        Sun, 23 Jun 2019 14:37:07 +0200 (CEST)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 0DEAA2003D0;
-        Sun, 23 Jun 2019 14:36:59 +0200 (CEST)
-Received: from mega.ap.freescale.net (mega.ap.freescale.net [10.192.208.232])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 8473F40318;
-        Sun, 23 Jun 2019 20:36:48 +0800 (SGT)
-From:   Anson.Huang@nxp.com
-To:     daniel.lezcano@linaro.org, tglx@linutronix.de, robh+dt@kernel.org,
-        mark.rutland@arm.com, shawnguo@kernel.org, s.hauer@pengutronix.de,
-        kernel@pengutronix.de, festevam@gmail.com, l.stach@pengutronix.de,
-        abel.vesa@nxp.com, ccaione@baylibre.com, angus@akkea.ca,
-        andrew.smirnov@gmail.com, agx@sigxcpu.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Cc:     Linux-imx@nxp.com
-Subject: [PATCH RESEND V2 3/3] arm64: dts: imx8mq: Add system counter node
-Date:   Sun, 23 Jun 2019 20:38:50 +0800
-Message-Id: <20190623123850.22584-3-Anson.Huang@nxp.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190623123850.22584-1-Anson.Huang@nxp.com>
-References: <20190623123850.22584-1-Anson.Huang@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1726502AbfFWMmp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 23 Jun 2019 08:42:45 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:33352 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725963AbfFWMmp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 23 Jun 2019 08:42:45 -0400
+Received: from p5b06daab.dip0.t-ipconnect.de ([91.6.218.171] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1hf1pT-0000ul-3D; Sun, 23 Jun 2019 14:42:43 +0200
+Date:   Sun, 23 Jun 2019 14:42:42 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Andy Lutomirski <luto@kernel.org>
+cc:     x86@kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH] x86/vdso: Give the [ph]vclock_page declarations real
+ types
+In-Reply-To: <6920c5188f8658001af1fc56fd35b815706d300c.1561241273.git.luto@kernel.org>
+Message-ID: <alpine.DEB.2.21.1906231441500.32342@nanos.tec.linutronix.de>
+References: <6920c5188f8658001af1fc56fd35b815706d300c.1561241273.git.luto@kernel.org>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Anson Huang <Anson.Huang@nxp.com>
+On Sat, 22 Jun 2019, Andy Lutomirski wrote:
 
-Add i.MX8MQ system counter node to enable timer-imx-sysctr
-broadcast timer driver.
+> Clean up the vDSO code a bit by giving pvclock_page and hvclock_page
+> their actual types instead of u8[PAGE_SIZE].  This shouldn't
+> materially affect the generated code.
+> 
+> Heavily based on a patch from Linus.
+> 
+> Cc: Borislav Petkov <bp@alien8.de>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
----
-No change.
----
- arch/arm64/boot/dts/freescale/imx8mq.dtsi | 8 ++++++++
- 1 file changed, 8 insertions(+)
+So either this wants a
 
-diff --git a/arch/arm64/boot/dts/freescale/imx8mq.dtsi b/arch/arm64/boot/dts/freescale/imx8mq.dtsi
-index d09b808..9d99191 100644
---- a/arch/arm64/boot/dts/freescale/imx8mq.dtsi
-+++ b/arch/arm64/boot/dts/freescale/imx8mq.dtsi
-@@ -635,6 +635,14 @@
- 				#pwm-cells = <2>;
- 				status = "disabled";
- 			};
-+
-+			system_counter: timer@306a0000 {
-+				compatible = "nxp,sysctr-timer";
-+				reg = <0x306a0000 0x30000>;
-+				interrupts = <GIC_SPI 47 IRQ_TYPE_LEVEL_HIGH>,
-+					     <GIC_SPI 48 IRQ_TYPE_LEVEL_HIGH>;
-+				clock-frequency = <8333333>;
-+			};
- 		};
- 
- 		bus@30800000 { /* AIPS3 */
--- 
-2.7.4
+From: Linus line
 
+or this tag should be:
+
+Originally-by: Linus ...
+
+Hmm?
+
+Thanks,
+
+	tglx
