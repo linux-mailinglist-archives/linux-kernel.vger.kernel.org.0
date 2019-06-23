@@ -2,166 +2,183 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8FFDC4FF29
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 04:14:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3DD7A4FF10
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 04:06:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726930AbfFXCOu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 23 Jun 2019 22:14:50 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:44107 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726477AbfFXCOu (ORCPT
+        id S1726925AbfFXCGk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 23 Jun 2019 22:06:40 -0400
+Received: from mailout3.samsung.com ([203.254.224.33]:16170 "EHLO
+        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726360AbfFXCGj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Jun 2019 22:14:50 -0400
-Received: by mail-lj1-f193.google.com with SMTP id k18so10938464ljc.11
-        for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2019 19:14:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:mail-followup-to:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Q7wz2t7u/9aK1bNPZ479OzccMgC+SVvO9ZTRTaDQNLE=;
-        b=wYbpjEslFKzGNA9UaWsVFJoVeLBrAL2HmRatz8rnXjHTni7OJoRzaBqf+1rBIdEwZw
-         Cx9pdmsZUDC/a+Q7OsWMnQCi4PH5CB8Hre6I0gStJ4XwjEoTZWjf+E2fZ0aa75ILq1/o
-         5wQyQz/YYBAYTpy4i6neEfHrjZqOG4vYDJ9qpJkyij231cxbv15bxsfnyKiSoUmIandO
-         iyzVrAmOx/iZrCrvom9Y7aLJOvkdw6HJLoe1pee4JERvMzXQ4SMrE/9CBfFDcd5XSRr0
-         ohuRCeg1XcOtmzKkZuVvV0xc9FQ6fNxv9yFvl9g5WAEjwm7x/GUrIV2kDIWoxEcWo2ZL
-         ICHw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=Q7wz2t7u/9aK1bNPZ479OzccMgC+SVvO9ZTRTaDQNLE=;
-        b=eY4PEdWk1U93ipCMmjCXIvsJYLh4r3wtnPg3UMWrhkhxRoKK+FxA2PlqabjtYmaCr1
-         KF0E3rvLKYGqM7YIEvvpv/V0yLjpoAFwfclESXpzzwrMJzpCX7r4Ot9ytgriMvu5zEZS
-         4GCpUfEOg9b62n0CCUaXyU6A96PosJxVLx9SukvOydl9HRaI3F90Hh4ExVu40Y2stkmL
-         Daa9Y6UaVUZjKjHQI9A2irw+fZDln6zs+FCQvdzM1qhNfZ1/5dDo0TStt0TzTg6g1jDy
-         3Nwvee2ZHySABkoyjwtVDOhz/G8kYRSfeiy/yt3HhazW9N1rQZSfj14HN7SWQC7I2VkX
-         VbYQ==
-X-Gm-Message-State: APjAAAVMnPj3niz5ikVbzZ4tBEj4Rp3bKNdU75xJln72sMkK6W4CoXpd
-        P+aFJe9D3jVOCKwIbRTdV3PrqQ==
-X-Google-Smtp-Source: APXvYqzVtXIxqFwTgM8EzEXOeQXVyES/27218XIBMarVRmRWmUa/XKEZAMMJKYyORixUr2FpTKApSw==
-X-Received: by 2002:a2e:9950:: with SMTP id r16mr45976579ljj.173.1561332668839;
-        Sun, 23 Jun 2019 16:31:08 -0700 (PDT)
-Received: from khorivan (59-201-94-178.pool.ukrtel.net. [178.94.201.59])
-        by smtp.gmail.com with ESMTPSA id 80sm1325307lfz.56.2019.06.23.16.31.07
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 23 Jun 2019 16:31:08 -0700 (PDT)
-Date:   Mon, 24 Jun 2019 02:31:06 +0300
-From:   Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
-To:     Keerthy <j-keerthy@ti.com>
-Cc:     davem@davemloft.net, andrew@lunn.ch, ilias.apalodimas@linaro.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        linux-omap@vger.kernel.org, t-kristo@ti.com,
-        grygorii.strashko@ti.com, nsekhar@ti.com
-Subject: Re: [PATCH] net: ethernet: ti: cpsw: Fix suspend/resume break
-Message-ID: <20190623233105.GA5472@khorivan>
-Mail-Followup-To: Keerthy <j-keerthy@ti.com>, davem@davemloft.net,
-        andrew@lunn.ch, ilias.apalodimas@linaro.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        linux-omap@vger.kernel.org, t-kristo@ti.com,
-        grygorii.strashko@ti.com, nsekhar@ti.com
-References: <20190622103140.22902-1-j-keerthy@ti.com>
+        Sun, 23 Jun 2019 22:06:39 -0400
+Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
+        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20190623233638epoutp03e5f1304bb1fc195da44a3db830608be1~q_Bb_JHnk2176721767epoutp03W
+        for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2019 23:36:38 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20190623233638epoutp03e5f1304bb1fc195da44a3db830608be1~q_Bb_JHnk2176721767epoutp03W
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1561332998;
+        bh=gVdC7W3ldmM3ohxP3IShUQy55UMe0oYxTPCOE/6tAp4=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=a79KMVYmCPbz5nwheKxRjHWOh5KSF712suwcwku5/tdnPGdRG8Etpic6jwCY0+Y3a
+         vdKcEh6t/Fy3IPtGd3BgrIekJUt2n9YdKEqqFsXsK+7eiVomW5Kv0Ymfzo78Iuw8Uy
+         s0o9s9OEQ2kQ2ZmwEuanvc7PgHLhnAKd4L4og3Pk=
+Received: from epsmges1p5.samsung.com (unknown [182.195.40.154]) by
+        epcas1p4.samsung.com (KnoxPortal) with ESMTP id
+        20190623233634epcas1p4fe5ea4b0f69ce7ab48e9fb322831f662~q_BYg_Xme3169831698epcas1p4D;
+        Sun, 23 Jun 2019 23:36:34 +0000 (GMT)
+Received: from epcas1p4.samsung.com ( [182.195.41.48]) by
+        epsmges1p5.samsung.com (Symantec Messaging Gateway) with SMTP id
+        D1.9E.04108.20D001D5; Mon, 24 Jun 2019 08:36:34 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20190623233633epcas1p16ab9635c74bd01f3a7b0828eedf1f9d2~q_BXxNr2T1082210822epcas1p1f;
+        Sun, 23 Jun 2019 23:36:33 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20190623233633epsmtrp192a9eade0fcbece0e6e69272d2ecd321~q_BXtjTUt1920219202epsmtrp1c;
+        Sun, 23 Jun 2019 23:36:33 +0000 (GMT)
+X-AuditID: b6c32a39-8b7ff7000000100c-4a-5d100d02d9e1
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        C9.12.03692.10D001D5; Mon, 24 Jun 2019 08:36:33 +0900 (KST)
+Received: from [10.113.221.102] (unknown [10.113.221.102]) by
+        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20190623233633epsmtip1364fbdd2bc629b95785e2adfcd77b4c0~q_BXdmHmE3204032040epsmtip1G;
+        Sun, 23 Jun 2019 23:36:33 +0000 (GMT)
+Subject: Re: [PATCH v3] arm64: defconfig: Enable Panfrost and Lima drivers
+To:     Krzysztof Kozlowski <krzk@kernel.org>, cwchoi00@gmail.com
+Cc:     Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Olof Johansson <olof@lixom.net>,
+        Jagan Teki <jagan@amarulasolutions.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Dinh Nguyen <dinguyen@kernel.org>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Vasily Khoruzhick <anarsoul@gmail.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+From:   Chanwoo Choi <cw00.choi@samsung.com>
+Organization: Samsung Electronics
+Message-ID: <6edbe882-314c-85e1-4109-7c3b324dc7ab@samsung.com>
+Date:   Mon, 24 Jun 2019 08:39:09 +0900
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+        Thunderbird/60.7.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20190622103140.22902-1-j-keerthy@ti.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <CAJKOXPcFFY08R1H-DrrzX2BC3L8x4NPJTP7nDn9yixAvmaiF9Q@mail.gmail.com>
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA02TbUxbVRjHc3p7b8tG3bFs8kiisKszAVPWO9ZxMLA5ZdsN8gGmH4yR1Ru4
+        FkLf7G0X50yEbSLtlonxJdIN0FhRGASonTLY6ESGssUVQRHZqpgNsoEDkUkcM8S2t4t8+z/n
+        +T3nn/95UVPaalWKusLqFB1Wwcwya5RffpOu1yk0uETf0ptB3hycRuRScE5J5puPITJ94XFy
+        IdSrIG1X+hEZvvUnQ2776xgSCnWqyOfhBZr4r43RZLTnJEM+DPUpSPtAWEUmbwYRufjzIkNu
+        BJLJkauGJ7V8+8JvNN/W2Ib4xraDfHfYh/gz3rCK97e6Gf7q2FmG/8L3Bv/jd4dovmuuW8Ef
+        D7Qi/uSdJSW/6H+4SPNCZW65KJSJjjTRWmorq7Ca8thnnjU+bTRs03M6Lodks2lWwSLmsfmF
+        RbrdFeZIQDZtv2B2RZaKBEliN2/PddhcTjGt3CY581jRXma259gzJcEiuaymzFKb5QlOr99i
+        iIAvVZb7GkLIXodfXa7uRFXorMaDEtSAt8L4H26VB61Ra3E3gunmESQXfyHwnJ6l5WIJQftX
+        /1L3Rj5evhSnziG4OOJj5GIeQcP344oolYQLYPn9KSaq1+M86D3RqIxCFB6kofXwmDLaYHAG
+        BG+Mx6B1eCP89M81FNUavB1aPvOpolqJN8FSkye26Qb8PIwGeuLM/TBUfz22TwIuht/7FmMM
+        hZNh4npTXKfC4dMnqKgx4Dsq+KC+FskZ8qH66IJC1kkw821AJesUuPl2TVwfhJahAUYerkUQ
+        CA7TciMLgp++GxlWRxzSoaNns7y8Ec7cbUCy8X0w9/cxOooA1kBtjVZGHoHRyXDc9kH45C03
+        U4dY76o43lURvKsieP83+wgpW9EDol2ymESJsxtW37cfxZ5/Rk43Grxc2I+wGrGJGty5rkRL
+        C/ulA5Z+BGqKXa9JNCeWaDVlwoHXRIfN6HCZRakfGSKn/Q6VsqHUFvlMVqeRM2zJysoiW7lt
+        Bo5jkzXGtb+8qMUmwSlWiqJddNybU6gTUqpQrnsomLqjq/7ro9N7dAXS5K1z54+YX96Vfmp0
+        5+DePZP8SFfSTElOqklZUDz8Q3Yfcewr3l115W6+53Ldpp0Dex+1HXdXFSa80gtrm1+fWJk4
+        RS3tqk3NdjVRs3O07teVYE3hQ8Nsl9QxFZ6lZh7LPH8bdwzsmD9k27fy1HNTzve0rFIqF7gM
+        yiEJ/wHiKQPWFAQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Sa0hTYRiA+3bOzo7D4de09qmhtajQyLISvx8pkVaHMrILUYLYyINa21w7
+        almQlhZ4QUZR1rSptXLKBrYsLEVxNjWFllka5iqvqKl5S8oScluB/x7e93l4/7w0If5G+tBJ
+        yhRWrZTJpZSQfN4k9dsCRDB225hhO77ePAxwe8Mkib8/zgd42LoZW221PGz8ZAH47cQUhefM
+        GgrbbFUCbLBP87F5oIuPO18WU/iurZ6HTa/sAvx1tAHgtu5ZCo9US3B2b8huMWOa/sJnjDoj
+        YHTGy0yNXQ+YF1q7gDFX5lBMb1cdxTzVZzDvW6/xmSeTNTymoLoSMMW/5klm1uwXLYoR7opn
+        5UlprHpr+Glhov6+Dag08OLC1SqQCepEucCNRnAnKltoB7lASIthLUDdDxsJ18Ib3emwLjG9
+        xJ6oqYlzORMAGUp+kw7HEx5AC7eHKAd7wTBUW6QjHRIB2/joVv4o31U08tAjw5zTomAgahj5
+        6GQPuA59+DkAHCyC4aiiXC9wMAk3oPmSXJ6DV8GTqOBGEeVyVqLX9wadl93gEdRXP+t0CLgJ
+        /dG9I1wsQT2DJf/m/ijrWRGhAZ7aZbl2WaJdlmiXJaWArATerIpTJCi4YFWwkr0QxMkUXKoy
+        IehMssIMnC8QGFADOvVxFgBpIHUXwSqPWDFflsalKywA0YTUS+Qud48Vi+Jl6ZdYdXKcOlXO
+        chbgS5NSiWhI2XxKDBNkKew5llWx6v9bHu3mkwmM0rIx94iOEwcbVudFxB9uLRULKvyz+7P8
+        80x7i49Hro2Ybpf0makoqiN6pu7KvjeqkLXjkVzhoYD9R8+P14RK1vRkLg57caRYgAsXo2YG
+        IltI8+fsmJtEVFHYnpH6dF9NeYvQOrk+9IfEdKz/waQ9Y8eU/GzOvKRyY1j/CkGmlOQSZcGB
+        hJqT/QXGKxu3/gIAAA==
+X-CMS-MailID: 20190623233633epcas1p16ab9635c74bd01f3a7b0828eedf1f9d2
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: SVC_REQ_APPROVE
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20190623192007epcas4p2a3995bb00091b436562828fceb6ff790
+References: <20190621180208.25361-7-krzk@kernel.org>
+        <20190622191838.29850-1-krzk@kernel.org>
+        <CAGTfZH2g6E2pCEtqjfCd+PjEzjwc2AB75LXJfCeO+PcYLiLTUw@mail.gmail.com>
+        <CGME20190623192007epcas4p2a3995bb00091b436562828fceb6ff790@epcas4p2.samsung.com>
+        <CAJKOXPcFFY08R1H-DrrzX2BC3L8x4NPJTP7nDn9yixAvmaiF9Q@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jun 22, 2019 at 04:01:40PM +0530, Keerthy wrote:
+On 19. 6. 24. 오전 4:16, Krzysztof Kozlowski wrote:
+> On Sun, 23 Jun 2019 at 06:31, Chanwoo Choi <cwchoi00@gmail.com> wrote:
+>>
+>> Hi Krzysztof,
+>>
+>> 2019년 6월 23일 (일) 오전 4:20, Krzysztof Kozlowski <krzk@kernel.org>님이 작성:
+>>>
+>>> Enable support for Mali GPU with Panfrost and Lima drivers for:
+>>> 1. Samsung Exynos5433 and Exynos7 (having Mali T760),
+>>> 2. Allwiner A64 and H5 (Mali 400/450).
+>>>
+>>> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+>>>
+>>> ---
+>>>
+>>> Changes since v1:
+>>> 1. Enable Lima driver
+>>> ---
+>>>  arch/arm64/configs/defconfig | 3 ++-
+>>>  1 file changed, 2 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+>>> index fbbc065415d4..3d31611368af 100644
+>>> --- a/arch/arm64/configs/defconfig
+>>> +++ b/arch/arm64/configs/defconfig
+>>> @@ -518,6 +518,8 @@ CONFIG_DRM_HISI_HIBMC=m
+>>>  CONFIG_DRM_HISI_KIRIN=m
+>>>  CONFIG_DRM_MESON=m
+>>>  CONFIG_DRM_PL111=m
+>>> +CONFIG_DRM_LIMA=m
+>>> +CONFIG_DRM_PANFROST=m
+>>>  CONFIG_FB=y
+>>>  CONFIG_FB_MODE_HELPERS=y
+>>>  CONFIG_BACKLIGHT_GENERIC=m
+>>> @@ -718,7 +720,6 @@ CONFIG_ARCH_TEGRA_194_SOC=y
+>>>  CONFIG_ARCH_K3_AM6_SOC=y
+>>>  CONFIG_SOC_TI=y
+>>>  CONFIG_TI_SCI_PM_DOMAINS=y
+>>> -CONFIG_DEVFREQ_GOV_SIMPLE_ONDEMAND=y
+>>
+>> Exynos5433-tm2 board support the exynos-bus device which
+>> used the simple_ondmenad governor of devfreq.
+>> Why do you remove this configuration from the defconfig?
+> 
+> It is selected by default by DRM_PANFROST. The difference is that
+> PANFROST selects it as module. The 'y' is chosen because of:
+>   SCSI_UFSHCD [=y] && SCSI_LOWLEVEL [=y] && SCSI [=y] && SCSI_DMA [=y]
 
-Hi Keerty,
+When I tried to find the history of CONFIG_DEVFREQ_GOV_SIMPLE_ONDEMAND 
+for defconfig, the following patch[1] added this configuration.
+[1] b972ff75f2938c39e2205c23ea0e531d36b27f86
+- "arm64: defconfig: Enable UFS on msm8996"
 
->Commit bfe59032bd6127ee190edb30be9381a01765b958 ("net: ethernet:
->ti: cpsw: use cpsw as drv data")changes
->the driver data to struct cpsw_common *cpsw. This is done
->only in probe/remove but the suspend/resume functions are
->still left with struct net_device *ndev. Hence fix both
->suspend & resume also to fetch the updated driver data.
->
->Fixes: bfe59032bd6127ee1 ("net: ethernet: ti: cpsw: use cpsw as drv data")
->Signed-off-by: Keerthy <j-keerthy@ti.com>
->---
-> drivers/net/ethernet/ti/cpsw.c | 36 +++++++++++-----------------------
-> 1 file changed, 11 insertions(+), 25 deletions(-)
->
->diff --git a/drivers/net/ethernet/ti/cpsw.c b/drivers/net/ethernet/ti/cpsw.c
->index 7bdd287074fc..2aeaad15e20e 100644
->--- a/drivers/net/ethernet/ti/cpsw.c
->+++ b/drivers/net/ethernet/ti/cpsw.c
->@@ -2590,20 +2590,12 @@ static int cpsw_remove(struct platform_device *pdev)
-> #ifdef CONFIG_PM_SLEEP
-> static int cpsw_suspend(struct device *dev)
-> {
->-	struct net_device	*ndev = dev_get_drvdata(dev);
->-	struct cpsw_common	*cpsw = ndev_to_cpsw(ndev);
->-
->-	if (cpsw->data.dual_emac) {
->-		int i;
->+	struct cpsw_common *cpsw = dev_get_drvdata(dev);
->+	int i;
->
->-		for (i = 0; i < cpsw->data.slaves; i++) {
->-			if (netif_running(cpsw->slaves[i].ndev))
->-				cpsw_ndo_stop(cpsw->slaves[i].ndev);
->-		}
->-	} else {
->-		if (netif_running(ndev))
->-			cpsw_ndo_stop(ndev);
->-	}
->+	for (i = 0; i < cpsw->data.slaves; i++)
->+		if (netif_running(cpsw->slaves[i].ndev))
-Seems I've missed to add this, but in your fix potential issue in switch mode.
-ndev is not necessarily present for slave, you need to check on ndev != null
-before using it, if you still remove cpsw->data.dual_emac ofc.
-
-Thanks.
-
->+			cpsw_ndo_stop(cpsw->slaves[i].ndev);
->
-> 	/* Select sleep pin state */
-> 	pinctrl_pm_select_sleep_state(dev);
->@@ -2613,25 +2605,19 @@ static int cpsw_suspend(struct device *dev)
->
-> static int cpsw_resume(struct device *dev)
-> {
->-	struct net_device	*ndev = dev_get_drvdata(dev);
->-	struct cpsw_common	*cpsw = ndev_to_cpsw(ndev);
->+	struct cpsw_common *cpsw = dev_get_drvdata(dev);
->+	int i;
->
-> 	/* Select default pin state */
-> 	pinctrl_pm_select_default_state(dev);
->
-> 	/* shut up ASSERT_RTNL() warning in netif_set_real_num_tx/rx_queues */
-> 	rtnl_lock();
->-	if (cpsw->data.dual_emac) {
->-		int i;
->
->-		for (i = 0; i < cpsw->data.slaves; i++) {
->-			if (netif_running(cpsw->slaves[i].ndev))
->-				cpsw_ndo_open(cpsw->slaves[i].ndev);
->-		}
->-	} else {
->-		if (netif_running(ndev))
->-			cpsw_ndo_open(ndev);
->-	}
->+	for (i = 0; i < cpsw->data.slaves; i++)
->+		if (netif_running(cpsw->slaves[i].ndev))
->+			cpsw_ndo_open(cpsw->slaves[i].ndev);
->+
-same here
-
-> 	rtnl_unlock();
->
-> 	return 0;
->-- 
->2.17.1
->
+I think that this patch will affect the opration of 'USF on msm8998'.
 
 -- 
-Regards,
-Ivan Khoronzhuk
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
