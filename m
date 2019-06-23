@@ -2,82 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E60D44FBA2
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2019 14:38:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D65584FB9A
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2019 14:37:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726663AbfFWMh7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 23 Jun 2019 08:37:59 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:33336 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726086AbfFWMh6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Jun 2019 08:37:58 -0400
-Received: from p5b06daab.dip0.t-ipconnect.de ([91.6.218.171] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1hf1kj-0000ro-CY; Sun, 23 Jun 2019 14:37:49 +0200
-Date:   Sun, 23 Jun 2019 14:37:47 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Nadav Amit <namit@vmware.com>
-cc:     Peter Zijlstra <peterz@infradead.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
-        Borislav Petkov <bp@alien8.de>, x86@kernel.org,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Richard Henderson <rth@twiddle.net>,
-        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
-        Matt Turner <mattst88@gmail.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Rik van Riel <riel@surriel.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Subject: Re: [PATCH 0/9] x86: Concurrent TLB flushes and other improvements
-In-Reply-To: <20190613064813.8102-1-namit@vmware.com>
-Message-ID: <alpine.DEB.2.21.1906231431340.32342@nanos.tec.linutronix.de>
-References: <20190613064813.8102-1-namit@vmware.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+        id S1726619AbfFWMhJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 23 Jun 2019 08:37:09 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:43100 "EHLO inva021.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726386AbfFWMhH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 23 Jun 2019 08:37:07 -0400
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 1D0242003D1;
+        Sun, 23 Jun 2019 14:37:05 +0200 (CEST)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 2D7CC20012B;
+        Sun, 23 Jun 2019 14:36:56 +0200 (CEST)
+Received: from mega.ap.freescale.net (mega.ap.freescale.net [10.192.208.232])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 3EA8C4030C;
+        Sun, 23 Jun 2019 20:36:45 +0800 (SGT)
+From:   Anson.Huang@nxp.com
+To:     daniel.lezcano@linaro.org, tglx@linutronix.de, robh+dt@kernel.org,
+        mark.rutland@arm.com, shawnguo@kernel.org, s.hauer@pengutronix.de,
+        kernel@pengutronix.de, festevam@gmail.com, l.stach@pengutronix.de,
+        abel.vesa@nxp.com, ccaione@baylibre.com, angus@akkea.ca,
+        andrew.smirnov@gmail.com, agx@sigxcpu.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Cc:     Linux-imx@nxp.com
+Subject: [PATCH RESEND V2 1/3] clocksource/drivers/sysctr: Add optional clock-frequency property
+Date:   Sun, 23 Jun 2019 20:38:48 +0800
+Message-Id: <20190623123850.22584-1-Anson.Huang@nxp.com>
+X-Mailer: git-send-email 2.17.1
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Nadav,
+From: Anson Huang <Anson.Huang@nxp.com>
 
-On Wed, 12 Jun 2019, Nadav Amit wrote:
+Systems which use platform driver model for clock driver require the
+clock frequency to be supplied via device tree when system counter
+driver is enabled.
 
-> Patch 1 does small cleanup. Patches 2-5 implement the concurrent
-> execution of TLB flushes. Patches 6-9 deal with false-sharing and
-> unnecessary atomic operations. There is still no implementation that
-> uses the concurrent TLB flushes by Xen and Hyper-V. 
+This is necessary as in the platform driver model the of_clk operations
+do not work correctly because system counter driver is initialized in
+early phase of system boot up, and clock driver using platform driver
+model is NOT ready at that time, it will cause system counter driver
+initialization failed.
 
-I've picked up the patches which make sense independent of the TLB
-optimization. So they are out of your way :)
+Add the optinal clock-frequency to the device tree bindings of the NXP
+system counter, so the frequency can be handed in and the of_clk
+operations can be skipped.
 
-> There are various additional possible optimizations that were sent or
-> are in development (async flushes, x2apic shorthands, fewer mm_tlb_gen
-> accesses, etc.), but based on Andy's feedback, they will be sent later.
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+---
+Changes since V1:
+	- improve commit log, no content change.
+---
+ Documentation/devicetree/bindings/timer/nxp,sysctr-timer.txt | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-Vs. x2apic shorthands. It's not only x2apic. We generally do not make use
-of shorthands when CPU hotplug is enabled as that needs some deep care
-vs. the state whether a present CPU had been brought up at least once,
-similar to the MCE issue which causes us to do the online/offlie dance for
-SMT control at boot. There are a few other nasty details like the APIC
-state on CPU hot unplug and NMI shorthands.
+diff --git a/Documentation/devicetree/bindings/timer/nxp,sysctr-timer.txt b/Documentation/devicetree/bindings/timer/nxp,sysctr-timer.txt
+index d576599..c9907a0 100644
+--- a/Documentation/devicetree/bindings/timer/nxp,sysctr-timer.txt
++++ b/Documentation/devicetree/bindings/timer/nxp,sysctr-timer.txt
+@@ -14,6 +14,11 @@ Required properties:
+ - clocks : 	    Specifies the counter clock.
+ - clock-names: 	    Specifies the clock's name of this module
+ 
++Optional properties:
++
++- clock-frequency : Specifies system counter clock frequency and indicates system
++		    counter driver to skip clock operations.
++
+ Example:
+ 
+ 	system_counter: timer@306a0000 {
+@@ -22,4 +27,5 @@ Example:
+ 		clocks = <&clk_8m>;
+ 		clock-names = "per";
+ 		interrupts = <GIC_SPI 47 IRQ_TYPE_LEVEL_HIGH>;
++		clock-frequency = <8333333>;
+ 	};
+-- 
+2.7.4
 
-I have a WIP series in the pipeline which I'm going to post soon. I'll put
-you on CC.
-
-For the TLB related parts, I delegate the review happily to our x86 mm/tlb
-wizards. Hint, hint ...
-
-Thanks,
-
-	tglx
