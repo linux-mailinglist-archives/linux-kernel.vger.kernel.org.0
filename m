@@ -2,59 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 595DB4FE67
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 03:41:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E21574FE63
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 03:40:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726706AbfFXBlM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 23 Jun 2019 21:41:12 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:51211 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726614AbfFXBlC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Jun 2019 21:41:02 -0400
+        id S1726549AbfFXBk5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 23 Jun 2019 21:40:57 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:43987 "EHLO
+        mail.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726500AbfFXBkz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 23 Jun 2019 21:40:55 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x5NNmDeP2858999
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x5NNmrjI2859061
         (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Sun, 23 Jun 2019 16:48:13 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x5NNmDeP2858999
+        Sun, 23 Jun 2019 16:48:53 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x5NNmrjI2859061
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019061801; t=1561333694;
-        bh=XRnSXuAWjPYEZJkB8vf3MmczFKZ82gnFnAxf9/ZFQa0=;
+        s=2019061801; t=1561333734;
+        bh=5GSLaD9aeP1ooF7juF1Pn35jjes+DommM5+L6z+s0sw=;
         h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
-        b=WWg3J02wSu2AVjI/qmVsWlj9lvmlwP/JAz4bhotAh9x5avJdnjy3fNJE2M8kB6MmH
-         Lmig32gaoGgQEW0s4ZffBfSDM2Dnaf7PwLD8E1xMwAVArtE2lxlnaNUFaPryVFnYn3
-         ejpJoQOAeJTAnnJZjwLARNK+TMq1hjSllQRsXksDVShh8v6j3j5DEYBIPY6zaDBC3T
-         tL23mUeTB5IJS2ooTVn0DczVtWjqeUG2hhU2XPdKJ2iJG4ggPqZRHLSKuk6gl6ePCR
-         rVm+7XDBnmAXXfSz1U44J7M77nSGBEPfoJqFnLqx/RR2S8cwJ9ckM9jq1B0YKdjDCo
-         VgchzhO+EFwJw==
+        b=SF5sLTvXXNtz8tJOn4XIZEhygkD78GjY78NAxmT7X20BvxsJAbnQKLAqLqNkfLM36
+         wxbOWDagjb0Mx4RrBpxxfLajuwRpULOs3IfAUpR6CUXwNd2D+uYiPTv7/xZkeJuCd0
+         rryshm1WNExbFHFomPSfT+xv7lNb1a7hhDZD+49pMQbdfE8KeCyIk+640yvnfhoN9V
+         2TPCpch3GCovUZlZdxxZWWKhBOf4jlJpkrX5kMuOdLIBp9qraPvTrBE/yLIA9wNP6n
+         /G5+yXc+ey2MgEw0WlEGaUm4Z/39GqrFIzZ4ApvYH3k0Gukaa9DGtEXjfMf1UlG6BU
+         q4XMJjzi2Fqfw==
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x5NNmCho2858996;
-        Sun, 23 Jun 2019 16:48:12 -0700
-Date:   Sun, 23 Jun 2019 16:48:12 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x5NNmrhk2859058;
+        Sun, 23 Jun 2019 16:48:53 -0700
+Date:   Sun, 23 Jun 2019 16:48:53 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Peter Collingbourne <tipbot@zytor.com>
-Message-ID: <tip-98cd3c3f83fbba27a6bacd75ad12e8388a61a32a@git.kernel.org>
-Cc:     huw@codeweavers.com, mingo@kernel.org, salyzyn@android.com,
-        vincenzo.frascino@arm.com, will.deacon@arm.com, pcc@google.com,
-        linux-kernel@vger.kernel.org, sthotton@marvell.com,
-        linux@armlinux.org.uk, ralf@linux-mips.org, 0x7f454c46@gmail.com,
-        shuah@kernel.org, catalin.marinas@arm.com, tglx@linutronix.de,
-        arnd@arndb.de, andre.przywara@arm.com, hpa@zytor.com,
-        paul.burton@mips.com, salyzyn@google.com, linux@rasmusvillemoes.dk,
-        daniel.lezcano@linaro.org
-Reply-To: paul.burton@mips.com, hpa@zytor.com, andre.przywara@arm.com,
-          arnd@arndb.de, daniel.lezcano@linaro.org, salyzyn@google.com,
-          linux@rasmusvillemoes.dk, vincenzo.frascino@arm.com,
-          salyzyn@android.com, huw@codeweavers.com, mingo@kernel.org,
-          catalin.marinas@arm.com, tglx@linutronix.de, shuah@kernel.org,
-          0x7f454c46@gmail.com, ralf@linux-mips.org, linux@armlinux.org.uk,
-          sthotton@marvell.com, linux-kernel@vger.kernel.org,
-          pcc@google.com, will.deacon@arm.com
-In-Reply-To: <20190621095252.32307-6-vincenzo.frascino@arm.com>
-References: <20190621095252.32307-6-vincenzo.frascino@arm.com>
+From:   tip-bot for Vincenzo Frascino <tipbot@zytor.com>
+Message-ID: <tip-53c489e1dfeb6092b9fb14eb73c2cbcb07224798@git.kernel.org>
+Cc:     huw@codeweavers.com, salyzyn@android.com, pcc@google.com,
+        paul.burton@mips.com, linux-kernel@vger.kernel.org,
+        0x7f454c46@gmail.com, tglx@linutronix.de, linux@rasmusvillemoes.dk,
+        mingo@kernel.org, hpa@zytor.com, sthotton@marvell.com,
+        vincenzo.frascino@arm.com, arnd@arndb.de, catalin.marinas@arm.com,
+        daniel.lezcano@linaro.org, linux@armlinux.org.uk,
+        ralf@linux-mips.org, will.deacon@arm.com, shuah@kernel.org,
+        andre.przywara@arm.com
+Reply-To: huw@codeweavers.com, salyzyn@android.com, pcc@google.com,
+          paul.burton@mips.com, linux-kernel@vger.kernel.org,
+          0x7f454c46@gmail.com, tglx@linutronix.de,
+          linux@rasmusvillemoes.dk, mingo@kernel.org, sthotton@marvell.com,
+          hpa@zytor.com, vincenzo.frascino@arm.com, arnd@arndb.de,
+          catalin.marinas@arm.com, daniel.lezcano@linaro.org,
+          ralf@linux-mips.org, linux@armlinux.org.uk, will.deacon@arm.com,
+          shuah@kernel.org, andre.przywara@arm.com
+In-Reply-To: <20190621095252.32307-7-vincenzo.frascino@arm.com>
+References: <20190621095252.32307-7-vincenzo.frascino@arm.com>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:timers/vdso] arm64: vdso: Build vDSO with -ffixed-x18
-Git-Commit-ID: 98cd3c3f83fbba27a6bacd75ad12e8388a61a32a
+Subject: [tip:timers/vdso] arm64: compat: Add missing syscall numbers
+Git-Commit-ID: 53c489e1dfeb6092b9fb14eb73c2cbcb07224798
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -74,28 +73,20 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  98cd3c3f83fbba27a6bacd75ad12e8388a61a32a
-Gitweb:     https://git.kernel.org/tip/98cd3c3f83fbba27a6bacd75ad12e8388a61a32a
-Author:     Peter Collingbourne <pcc@google.com>
-AuthorDate: Fri, 21 Jun 2019 10:52:32 +0100
+Commit-ID:  53c489e1dfeb6092b9fb14eb73c2cbcb07224798
+Gitweb:     https://git.kernel.org/tip/53c489e1dfeb6092b9fb14eb73c2cbcb07224798
+Author:     Vincenzo Frascino <vincenzo.frascino@arm.com>
+AuthorDate: Fri, 21 Jun 2019 10:52:33 +0100
 Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Sat, 22 Jun 2019 21:21:06 +0200
+CommitDate: Sat, 22 Jun 2019 21:21:07 +0200
 
-arm64: vdso: Build vDSO with -ffixed-x18
+arm64: compat: Add missing syscall numbers
 
-The vDSO needs to be built with x18 reserved in order to accommodate
-userspace platform ABIs built on top of Linux that use the register
-to carry inter-procedural state, as provided for by the AAPCS.
-An example of such a platform ABI is the one that will be used by an
-upcoming version of Android.
+vDSO requires gettimeofday() and clock_gettime() syscalls to implement the
+fallback mechanism.
 
-Although this change is currently a no-op due to the fact that the vDSO
-is currently implemented in pure assembly on arm64, it is necessary
-in order to prepare for using the generic C implementation of the vDSO.
+Add the missing syscall numbers to unistd.h for arm64.
 
-[ tglx: Massaged changelog ]
-
-Signed-off-by: Peter Collingbourne <pcc@google.com>
 Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Tested-by: Shijith Thotton <sthotton@marvell.com>
@@ -112,27 +103,32 @@ Cc: Ralf Baechle <ralf@linux-mips.org>
 Cc: Paul Burton <paul.burton@mips.com>
 Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
 Cc: Mark Salyzyn <salyzyn@android.com>
+Cc: Peter Collingbourne <pcc@google.com>
 Cc: Shuah Khan <shuah@kernel.org>
 Cc: Dmitry Safonov <0x7f454c46@gmail.com>
 Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>
 Cc: Huw Davies <huw@codeweavers.com>
-Cc: Mark Salyzyn <salyzyn@google.com>
-Link: https://lkml.kernel.org/r/20190621095252.32307-6-vincenzo.frascino@arm.com
+Link: https://lkml.kernel.org/r/20190621095252.32307-7-vincenzo.frascino@arm.com
 
 ---
- arch/arm64/kernel/vdso/Makefile | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm64/include/asm/unistd.h | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/arch/arm64/kernel/vdso/Makefile b/arch/arm64/kernel/vdso/Makefile
-index 3acfc813e966..ec81d28aeb5d 100644
---- a/arch/arm64/kernel/vdso/Makefile
-+++ b/arch/arm64/kernel/vdso/Makefile
-@@ -20,7 +20,7 @@ obj-vdso := $(addprefix $(obj)/, $(obj-vdso))
- ldflags-y := -shared -nostdlib -soname=linux-vdso.so.1 --hash-style=sysv \
- 		--build-id -n -T
+diff --git a/arch/arm64/include/asm/unistd.h b/arch/arm64/include/asm/unistd.h
+index c9f8dd421c5f..2a23614198f1 100644
+--- a/arch/arm64/include/asm/unistd.h
++++ b/arch/arm64/include/asm/unistd.h
+@@ -22,8 +22,13 @@
+ #define __NR_compat_exit		1
+ #define __NR_compat_read		3
+ #define __NR_compat_write		4
++#define __NR_compat_gettimeofday	78
+ #define __NR_compat_sigreturn		119
+ #define __NR_compat_rt_sigreturn	173
++#define __NR_compat_clock_getres	247
++#define __NR_compat_clock_gettime	263
++#define __NR_compat_clock_gettime64	403
++#define __NR_compat_clock_getres_time64	406
  
--ccflags-y := -fno-common -fno-builtin -fno-stack-protector
-+ccflags-y := -fno-common -fno-builtin -fno-stack-protector -ffixed-x18
- ccflags-y += -DDISABLE_BRANCH_PROFILING
- 
- VDSO_LDFLAGS := -Bsymbolic
+ /*
+  * The following SVCs are ARM private.
