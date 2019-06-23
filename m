@@ -2,117 +2,160 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A14014FA92
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2019 09:05:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 07D1D4FAA5
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2019 09:41:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726462AbfFWHFH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 23 Jun 2019 03:05:07 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:43428 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725268AbfFWHFH (ORCPT
+        id S1726421AbfFWHlm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 23 Jun 2019 03:41:42 -0400
+Received: from mail10.wdc04.mandrillapp.com ([205.201.139.10]:1361 "EHLO
+        mail10.wdc04.mandrillapp.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726056AbfFWHlm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Jun 2019 03:05:07 -0400
-Received: by mail-pl1-f195.google.com with SMTP id cl9so5063324plb.10;
-        Sun, 23 Jun 2019 00:05:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=ZnpCzo1NN9Md21LN3g8I3RIF4YViSRZP0r1Fx0SQ3qk=;
-        b=jVEMmNei2LTirlxL0/IDX1B3y5pJJgi02yOX+2LKm83WV7r/qkwpHhzsDVlt4MlfsL
-         gLxlBAYRm+LmbywgT2m3fCT+OqBuWeB+gJkMIzbzVFjwonTWm6SkxDbPTvzik5qSEMcf
-         6YhwtJvv4gbVrCgwyAnBF4lfyoP9q0K6iR3ZxCNmHI0Ol0JEMSKrjAMIN6IfRCTiDwlX
-         nVvzAqTzJKhY1fEuS5XoSJ4zXZ+AhVTsyEcxyrttBWrLd+3N7E7fyjEOfs/kgpdX4iTn
-         ATpJlGA9iUR5jEJH8YgnCDaegvA6JtGOtXf1KuJeNAcui2MavguwTGnANMGl8+RC4thq
-         62cQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=ZnpCzo1NN9Md21LN3g8I3RIF4YViSRZP0r1Fx0SQ3qk=;
-        b=hyny7k3MKC/spKyzNAkI7RSis1jFpuH7rLcWXksLjTz7Z6dE2UKW0/rddlVKc2Y/4u
-         /K+hzZtb4fc7jZjOJSl5RZpeUTu/hlurCPwurArwb2q68+UDWO76gz7tzHXGcOfZ0WR1
-         gB+CgJa2aImUpXmK0+5+Yy29BuZ/RLDeoPSFHndTbhrNz3ai3JELQlxp8JJO1f1S49Oe
-         Ycfg6aB/YhMiamV3BGLo6xq0q2Mxeef3gq1r4bFNcA8tbuRRE3Y1IdwlfEFCfv5m6zZv
-         cPnNwb2dnxLpHeLmZl+bW7dW16ePGIVQYTM/fGndglTuWfMLImBZ9ogdJSJK7T2TBLZf
-         tU7g==
-X-Gm-Message-State: APjAAAXGOipPiJaAwuhkjA8gDr2rMDNO6I/pIuuBNNWoaYcXaZ8sTpEL
-        t/gZnPJCCTqNGBH6ZhoQdto=
-X-Google-Smtp-Source: APXvYqw98NyNvej0S/JhvdpiCIMWy/Pmnw7NdOwIaICwB1nXmuJIZDwQ+TpJs8zZzwVw2jutwskfnw==
-X-Received: by 2002:a17:902:2a26:: with SMTP id i35mr101268234plb.315.1561273506124;
-        Sun, 23 Jun 2019 00:05:06 -0700 (PDT)
-Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
-        by smtp.gmail.com with ESMTPSA id r1sm7040201pji.15.2019.06.23.00.05.05
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Sun, 23 Jun 2019 00:05:05 -0700 (PDT)
-Date:   Sun, 23 Jun 2019 00:05:04 -0700
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     Maxime Ripard <maxime.ripard@bootlin.com>
-Cc:     =?iso-8859-1?Q?Myl=E8ne?= Josserand 
-        <mylene.josserand@bootlin.com>, robh+dt@kernel.org,
-        mark.rutland@arm.com, linux-input@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        thomas.petazzoni@bootlin.com
-Subject: Re: [PATCH v1] Input: rotary-encoder - Add gpio as push button
-Message-ID: <20190623070504.GE204275@dtor-ws>
-References: <20190614133651.28396-1-mylene.josserand@bootlin.com>
- <20190614145158.ic5n4jauzigvcpru@flea>
+        Sun, 23 Jun 2019 03:41:42 -0400
+X-Greylist: delayed 901 seconds by postgrey-1.27 at vger.kernel.org; Sun, 23 Jun 2019 03:41:40 EDT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; s=mandrill; d=nexedi.com;
+ h=From:Subject:To:Cc:Message-Id:In-Reply-To:References:Date:MIME-Version:Content-Type:Content-Transfer-Encoding; i=kirr@nexedi.com;
+ bh=dSY8NMzAi0uW7gbo3MkKCEB6rvCWIFKhM/6k9k6ce5E=;
+ b=qdl30SBWmhx9DIxJm4gPr9bhAmF1Fj9mBA+xccPr0GTjFyRGf6e8Vvv6btalLaeLv2xYAlECzakQ
+   TBBHPj86GaTL/HePtxMB9EbFDsLD6l998s7hbsA4E0kjNnIExsGXLmeSLSOeZi78WkdKQrgsVXVF
+   YhOX5xUAxy/5/uiI7kM=
+Received: from pmta08.mandrill.prod.suw01.rsglab.com (127.0.0.1) by mail10.wdc04.mandrillapp.com id h1smj81jvmga for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2019 07:26:38 +0000 (envelope-from <bounce-md_31050260.5d0f29ae.v1-35928b741ae6496da30a567c5491a435@mandrillapp.com>)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mandrillapp.com; 
+ i=@mandrillapp.com; q=dns/txt; s=mandrill; t=1561274798; h=From : 
+ Subject : To : Cc : Message-Id : In-Reply-To : References : Date : 
+ MIME-Version : Content-Type : Content-Transfer-Encoding : From : 
+ Subject : Date : X-Mandrill-User : List-Unsubscribe; 
+ bh=dSY8NMzAi0uW7gbo3MkKCEB6rvCWIFKhM/6k9k6ce5E=; 
+ b=NAKfNnZiQPSwteksG3ggLqasc3SZ2dfa8MEBGjnA1SKN4GrsysJ4fGLT1l57yY9FJKTk74
+ qgU1cbraenhPCzJ7jK0u+5jCkAs7jcU0K6vXWYhVD/lhfUZ3WL22kdmVov02zlTG+eFY2Rrm
+ ijFaR6bh4WYlNbC76JrHjQN5s0bs8=
+From:   Kirill Smelkov <kirr@nexedi.com>
+Subject: [PATCH, RESEND] fuse: require /dev/fuse reads to have enough buffer capacity (take 2)
+Received: from [87.98.221.171] by mandrillapp.com id 35928b741ae6496da30a567c5491a435; Sun, 23 Jun 2019 07:26:38 +0000
+X-Mailer: git-send-email 2.20.1
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     Kirill Smelkov <kirr@nexedi.com>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        <gluster-devel@gluster.org>, <linux-fsdevel@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Sander Eikelenboom <linux@eikelenboom.it>,
+        Han-Wen Nienhuys <hanwen@google.com>,
+        Jakob Unterwurzacher <jakobunt@gmail.com>
+Message-Id: <20190623072619.31037-1-kirr@nexedi.com>
+In-Reply-To: <f79ff13f-701b-89d8-149c-e53bb880bb77@eikelenboom.it>
+References: 
+X-Report-Abuse: Please forward a copy of this message, including all headers, to abuse@mandrill.com
+X-Report-Abuse: You can also report abuse here: http://mandrillapp.com/contact/abuse?id=31050260.35928b741ae6496da30a567c5491a435
+X-Mandrill-User: md_31050260
+Date:   Sun, 23 Jun 2019 07:26:38 +0000
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190614145158.ic5n4jauzigvcpru@flea>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 14, 2019 at 04:51:58PM +0200, Maxime Ripard wrote:
-> Hi Mylene,
-> 
-> On Fri, Jun 14, 2019 at 03:36:51PM +0200, Mylène Josserand wrote:
-> > Add the support of a gpio that can be defined as a push button.
-> > Thanks to that, it is possible to emit a keycode in case of a
-> > "push" event, if the rotary supports that.
-> >
-> > The keycode to emit is defined using "linux,code" property
-> > (such as in gpio-keys).
-> >
-> > Signed-off-by: Mylène Josserand <mylene.josserand@bootlin.com>
-> > ---
-> >  .../devicetree/bindings/input/rotary-encoder.txt   |  5 +++
-> >  drivers/input/misc/rotary_encoder.c                | 50 ++++++++++++++++++++++
-> >  2 files changed, 55 insertions(+)
-> >
-> > diff --git a/Documentation/devicetree/bindings/input/rotary-encoder.txt b/Documentation/devicetree/bindings/input/rotary-encoder.txt
-> > index a644408b33b8..1cfce5d0b5c4 100644
-> > --- a/Documentation/devicetree/bindings/input/rotary-encoder.txt
-> > +++ b/Documentation/devicetree/bindings/input/rotary-encoder.txt
-> > @@ -22,6 +22,9 @@ Optional properties:
-> >  - wakeup-source: Boolean, rotary encoder can wake up the system.
-> >  - rotary-encoder,encoding: String, the method used to encode steps.
-> >    Supported are "gray" (the default and more common) and "binary".
-> > +- push-gpio: a gpio to be used as a detection of a push from the rotary.
-> 
-> According to Documentation/devicetree/bindings/gpio/gpio.txt, GPIO
-> properties with a -gpio suffix are now deprecated in favor of the
-> -gpios suffix.
-> 
-> > +- linux,code: keycode to emit with the push-gpio of this rotary encoder.
-> > +  Required property in case "push-gpio"'s one is used.
-> 
-> I guess we should make it clear in the property name that it's the
-> keycode emitted at push. Otherwise, it will be ambiguous between the
-> rotary itself, or the button.
+[ This retries commit d4b13963f217 which was reverted in 766741fcaa1f.
 
-Also, I am pretty sure someone will come up with a switch instead of a
-button shortly after ;) so I think we should have an event type there as
-well.
+  In this version we require only `sizeof(fuse_in_header) + sizeof(fuse_write_in)`
+  instead of 4K for FUSE request header room, because, contrary to
+  libfuse and kernel client behaviour, GlusterFS actually provides only
+  so much room for request header. ]
 
-Thanks.
+A FUSE filesystem server queues /dev/fuse sys_read calls to get
+filesystem requests to handle. It does not know in advance what would be
+that request as it can be anything that client issues - LOOKUP, READ,
+WRITE, ... Many requests are short and retrieve data from the
+filesystem. However WRITE and NOTIFY_REPLY write data into filesystem.
 
+Before getting into operation phase, FUSE filesystem server and kernel
+client negotiate what should be the maximum write size the client will
+ever issue. After negotiation the contract in between server/client is
+that the filesystem server then should queue /dev/fuse sys_read calls with
+enough buffer capacity to receive any client request - WRITE in
+particular, while FUSE client should not, in particular, send WRITE
+requests with > negotiated max_write payload. FUSE client in kernel and
+libfuse historically reserve 4K for request header. However an existing
+filesystem server - GlusterFS - was found which reserves only 80 bytes
+for header room (= `sizeof(fuse_in_header) + sizeof(fuse_write_in)`).
+
+https://lore.kernel.org/linux-fsdevel/20190611202738.GA22556@deco.navytux.spb.ru/
+https://github.com/gluster/glusterfs/blob/v3.8.15-0-gd174f021a/xlators/mount/fuse/src/fuse-bridge.c#L4894
+
+Since
+
+	`sizeof(fuse_in_header) + sizeof(fuse_write_in)` ==
+	`sizeof(fuse_in_header) + sizeof(fuse_read_in)`  ==
+	`sizeof(fuse_in_header) + sizeof(fuse_notify_retrieve_in)`
+
+is the absolute minimum any sane filesystem should be using for header
+room, the contract is that filesystem server should queue sys_reads with
+`sizeof(fuse_in_header) + sizeof(fuse_write_in)` + max_write buffer.
+
+If the filesystem server does not follow this contract, what can happen
+is that fuse_dev_do_read will see that request size is > buffer size,
+and then it will return EIO to client who issued the request but won't
+indicate in any way that there is a problem to filesystem server.
+This can be hard to diagnose because for some requests, e.g. for
+NOTIFY_REPLY which mimics WRITE, there is no client thread that is
+waiting for request completion and that EIO goes nowhere, while on
+filesystem server side things look like the kernel is not replying back
+after successful NOTIFY_RETRIEVE request made by the server.
+
+We can make the problem easy to diagnose if we indicate via error return to
+filesystem server when it is violating the contract.  This should not
+practically cause problems because if a filesystem server is using shorter
+buffer, writes to it were already very likely to cause EIO, and if the
+filesystem is read-only it should be too following FUSE_MIN_READ_BUFFER
+minimum buffer size.
+
+Please see [1] for context where the problem of stuck filesystem was hit
+for real (because kernel client was incorrectly sending more than
+max_write data with NOTIFY_REPLY; see also previous patch), how the
+situation was traced and for more involving patch that did not make it
+into the tree.
+
+[1] https://marc.info/?l=linux-fsdevel&m=155057023600853&w=2
+
+Signed-off-by: Kirill Smelkov <kirr@nexedi.com>
+Tested-by: Sander Eikelenboom <linux@eikelenboom.it>
+Cc: Han-Wen Nienhuys <hanwen@google.com>
+Cc: Jakob Unterwurzacher <jakobunt@gmail.com>
+---
+ fs/fuse/dev.c | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
+
+diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
+index ea8237513dfa..b2b2344eadcf 100644
+--- a/fs/fuse/dev.c
++++ b/fs/fuse/dev.c
+@@ -1317,6 +1317,26 @@ static ssize_t fuse_dev_do_read(struct fuse_dev *fud, struct file *file,
+ 	unsigned reqsize;
+ 	unsigned int hash;
+ 
++	/*
++	 * Require sane minimum read buffer - that has capacity for fixed part
++	 * of any request header + negotiated max_write room for data. If the
++	 * requirement is not satisfied return EINVAL to the filesystem server
++	 * to indicate that it is not following FUSE server/client contract.
++	 * Don't dequeue / abort any request.
++	 *
++	 * Historically libfuse reserves 4K for fixed header room, but e.g.
++	 * GlusterFS reserves only 80 bytes
++	 *
++	 *	= `sizeof(fuse_in_header) + sizeof(fuse_write_in)`
++	 *
++	 * which is the absolute minimum any sane filesystem should be using
++	 * for header room.
++	 */
++	if (nbytes < max_t(size_t, FUSE_MIN_READ_BUFFER,
++			   sizeof(struct fuse_in_header) + sizeof(struct fuse_write_in) +
++				fc->max_write))
++		return -EINVAL;
++
+  restart:
+ 	spin_lock(&fiq->waitq.lock);
+ 	err = -EAGAIN;
 -- 
-Dmitry
+2.20.1
