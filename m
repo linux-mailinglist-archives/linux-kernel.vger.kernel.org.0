@@ -2,81 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 12EA44FC3B
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2019 17:15:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 561544FC77
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2019 17:24:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726869AbfFWPPJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 23 Jun 2019 11:15:09 -0400
-Received: from netrider.rowland.org ([192.131.102.5]:43227 "HELO
-        netrider.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with SMTP id S1726429AbfFWPPI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Jun 2019 11:15:08 -0400
-Received: (qmail 25897 invoked by uid 500); 23 Jun 2019 11:15:06 -0400
-Received: from localhost (sendmail-bs@127.0.0.1)
-  by localhost with SMTP; 23 Jun 2019 11:15:06 -0400
-Date:   Sun, 23 Jun 2019 11:15:06 -0400 (EDT)
-From:   Alan Stern <stern@rowland.harvard.edu>
-X-X-Sender: stern@netrider.rowland.org
-To:     Akira Yokosawa <akiyks@gmail.com>
-cc:     "Paul E. McKenney" <paulmck@linux.ibm.com>,
-        Andrea Parri <andrea.parri@amarulasolutions.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Daniel Lustig <dlustig@nvidia.com>,
-        David Howells <dhowells@redhat.com>,
-        Jade Alglave <j.alglave@ucl.ac.uk>,
-        Luc Maranget <luc.maranget@inria.fr>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Kernel development list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 3/3] tools: memory-model: Improve data-race detection
-In-Reply-To: <91a9c6f8-7bbf-376d-b1e0-0e2693c84ee8@gmail.com>
-Message-ID: <Pine.LNX.4.44L0.1906231112300.24649-100000@netrider.rowland.org>
+        id S1726731AbfFWPYW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 23 Jun 2019 11:24:22 -0400
+Received: from vps0.lunn.ch ([185.16.172.187]:50638 "EHLO vps0.lunn.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726399AbfFWPYV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 23 Jun 2019 11:24:21 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=tO9c/rs97W0ia9zMhQ+rkqpEZpffIjpr7pWLTraofSE=; b=qaLFmSnMQl4sPp1o2z/HXGCzah
+        gMwwcsQXCYPlG6KtqEJ2hGiujAEeoKTqb98ksLJhFsHhnSDfRILIc+zxWu0H7DSDIuWGK71T6hTOU
+        14HFECNi1bjjVp3jlL82mzgEJBIVQFKM1uMHnP/u93T3aVmFe6tYIfHVKB48U4sWi+G8=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.89)
+        (envelope-from <andrew@lunn.ch>)
+        id 1hf4Kt-00088y-5x; Sun, 23 Jun 2019 17:23:19 +0200
+Date:   Sun, 23 Jun 2019 17:23:19 +0200
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Phong Tran <tranmanphong@gmail.com>
+Cc:     mark.rutland@arm.com, kstewart@linuxfoundation.org,
+        songliubraving@fb.com, peterz@infradead.org, nsekhar@ti.com,
+        ast@kernel.org, jolsa@redhat.com, netdev@vger.kernel.org,
+        gerg@uclinux.org, lorenzo.pieralisi@arm.com, will@kernel.org,
+        linux-samsung-soc@vger.kernel.org, daniel@iogearbox.net,
+        festevam@gmail.com, gregory.clement@bootlin.com,
+        allison@lohutok.net, linux@armlinux.org.uk, krzk@kernel.org,
+        haojian.zhuang@gmail.com, bgolaszewski@baylibre.com,
+        tony@atomide.com, mingo@redhat.com, linux-imx@nxp.com, yhs@fb.com,
+        sebastian.hesselbarth@gmail.com, illusionist.neo@gmail.com,
+        jason@lakedaemon.net, liviu.dudau@arm.com, s.hauer@pengutronix.de,
+        acme@kernel.org, lkundrak@v3.sk, robert.jarzmik@free.fr,
+        dmg@turingmachine.org, swinslow@gmail.com, namhyung@kernel.org,
+        tglx@linutronix.de, linux-omap@vger.kernel.org,
+        alexander.sverdlin@gmail.com, linux-arm-kernel@lists.infradead.org,
+        info@metux.net, gregkh@linuxfoundation.org,
+        linux-kernel@vger.kernel.org, alexander.shishkin@linux.intel.com,
+        hsweeten@visionengravers.com, kgene@kernel.org,
+        kernel@pengutronix.de, sudeep.holla@arm.com, bpf@vger.kernel.org,
+        shawnguo@kernel.org, kafai@fb.com, daniel@zonque.org
+Subject: Re: [PATCH 10/15] ARM: orion5x: cleanup cppcheck shifting errors
+Message-ID: <20190623152319.GD28942@lunn.ch>
+References: <20190623151313.970-1-tranmanphong@gmail.com>
+ <20190623151313.970-11-tranmanphong@gmail.com>
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190623151313.970-11-tranmanphong@gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 23 Jun 2019, Akira Yokosawa wrote:
+On Sun, Jun 23, 2019 at 10:13:08PM +0700, Phong Tran wrote:
+> [arch/arm/mach-orion5x/pci.c:281]: (error) Shifting signed 32-bit value
+> by 31 bits is undefined behaviour
+> [arch/arm/mach-orion5x/pci.c:305]: (error) Shifting signed 32-bit value
+> by 31 bits is undefined behaviour
+> 
+> Signed-off-by: Phong Tran <tranmanphong@gmail.com>
 
-> Hi Paul and Alan,
-> 
-> On 2019/06/22 8:54, Paul E. McKenney wrote:
-> > On Fri, Jun 21, 2019 at 10:25:23AM -0400, Alan Stern wrote:
-> >> On Fri, 21 Jun 2019, Andrea Parri wrote:
-> >>
-> >>> On Thu, Jun 20, 2019 at 11:55:58AM -0400, Alan Stern wrote:
-> >>>> Herbert Xu recently reported a problem concerning RCU and compiler
-> >>>> barriers.  In the course of discussing the problem, he put forth a
-> >>>> litmus test which illustrated a serious defect in the Linux Kernel
-> >>>> Memory Model's data-race-detection code.
-> 
-> I was not involved in the mail thread and wondering what the litmus test
-> looked like. Some searching of the archive has suggested that Alan presented
-> a properly formatted test based on Herbert's idea in [1].
-> 
-> [1]: https://lore.kernel.org/lkml/Pine.LNX.4.44L0.1906041026570.1731-100000@iolanthe.rowland.org/
+Maybe using the BIT() macro would be better, but this is O.K.
 
-Yes, that's it.  The test is also available at:
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
-https://github.com/paulmckrcu/litmus/blob/master/manual/plain/C-S-rcunoderef-2.litmus
-
-Alan
-
-> If this is the case, adding the link (or message id) in the change
-> log would help people see the circumstances, I suppose.
-> Paul, can you amend the change log?
-> 
-> I ran herd7 on said litmus test at both "lkmm" and "dev" of -rcu and
-> confirmed that this patch fixes the result.
-> 
-> So,
-> 
-> Tested-by: Akira Yokosawa <akiyks@gmail.com>
-> 
->         Thanks, Akira
-
+    Andrew
