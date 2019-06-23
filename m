@@ -2,89 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A16B14FBCE
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2019 15:28:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D8F504FBE9
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2019 15:32:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726950AbfFWN2P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 23 Jun 2019 09:28:15 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:33605 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726833AbfFWN1z (ORCPT
+        id S1726546AbfFWNb6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 23 Jun 2019 09:31:58 -0400
+Received: from www1102.sakura.ne.jp ([219.94.129.142]:55019 "EHLO
+        www1102.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726408AbfFWNb6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Jun 2019 09:27:55 -0400
-Received: from localhost ([127.0.0.1] helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtp (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1hf2XC-0001nW-H6; Sun, 23 Jun 2019 15:27:54 +0200
-Message-Id: <20190623132436.737689919@linutronix.de>
-User-Agent: quilt/0.65
-Date:   Sun, 23 Jun 2019 15:24:09 +0200
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     LKML <linux-kernel@vger.kernel.org>
-Cc:     x86@kernel.org, Peter Zijlstra <peterz@infradead.org>,
-        Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
-        Ashok Raj <ashok.raj@intel.com>,
-        Andi Kleen <andi.kleen@intel.com>,
-        Suravee Suthikulpanit <Suravee.Suthikulpanit@amd.com>,
-        Stephane Eranian <eranian@google.com>,
-        Ravi Shankar <ravi.v.shankar@intel.com>
-Subject: [patch 29/29] x86/hpet: Use channel for legacy clockevent storage
-References: <20190623132340.463097504@linutronix.de>
+        Sun, 23 Jun 2019 09:31:58 -0400
+Received: from fsav405.sakura.ne.jp (fsav405.sakura.ne.jp [133.242.250.104])
+        by www1102.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x5NDVU9l019165;
+        Sun, 23 Jun 2019 22:31:30 +0900 (JST)
+        (envelope-from katsuhiro@katsuster.net)
+Received: from www1102.sakura.ne.jp (219.94.129.142)
+ by fsav405.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav405.sakura.ne.jp);
+ Sun, 23 Jun 2019 22:31:30 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav405.sakura.ne.jp)
+Received: from [192.168.1.2] (118.153.231.153.ap.dti.ne.jp [153.231.153.118])
+        (authenticated bits=0)
+        by www1102.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x5NDVTux019135
+        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
+        Sun, 23 Jun 2019 22:31:29 +0900 (JST)
+        (envelope-from katsuhiro@katsuster.net)
+Subject: Re: [PATCH] ARM: dts: rockchip: add ethernet phy node for tinker
+ board
+To:     Andrew Lunn <andrew@lunn.ch>, Jose Abreu <joabreu@synopsys.com>
+Cc:     Heiko Stuebner <heiko@sntech.de>,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
+References: <20190621180017.29646-1-katsuhiro@katsuster.net>
+ <1871177.hjLhdHVgcu@phil>
+ <ccf5ad2c-bd56-2d77-4728-d7906045e302@katsuster.net>
+ <20190622175508.GE8497@lunn.ch>
+From:   Katsuhiro Suzuki <katsuhiro@katsuster.net>
+Message-ID: <8a006d47-a546-163f-0c3f-f35b0056ba3a@katsuster.net>
+Date:   Sun, 23 Jun 2019 22:31:29 +0900
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <20190622175508.GE8497@lunn.ch>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-All preparations are done. Use the channel storage for the legacy
-clockevent and remove the static variable.
+Hello Heiko, Andrew,
 
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Thank you for comments. I found the commit that has regression:
+   74371272f97f net: stmmac: Convert to phylink and remove phylib logic
+
+So I'll report it to netdev and stmmac guys.
+
+Best Regards,
 ---
- arch/x86/kernel/hpet.c |   11 +++--------
- 1 file changed, 3 insertions(+), 8 deletions(-)
+Katsuhiro Suzuki
 
---- a/arch/x86/kernel/hpet.c
-+++ b/arch/x86/kernel/hpet.c
-@@ -66,11 +66,6 @@ bool					boot_hpet_disable;
- bool					hpet_force_user;
- static bool				hpet_verbose;
- 
--/*
-- * The HPET clock event device wrapped in a channel for conversion
-- */
--static struct hpet_channel		hpet_channel0;
--
- static inline
- struct hpet_channel *clockevent_to_channel(struct clock_event_device *evt)
- {
-@@ -903,7 +898,7 @@ int __init hpet_enable(void)
- 	clocksource_register_hz(&clocksource_hpet, (u32)hpet_freq);
- 
- 	if (id & HPET_ID_LEGSUP) {
--		hpet_legacy_clockevent_register(&hpet_channel0);
-+		hpet_legacy_clockevent_register(&hpet_base.channels[0]);
- 		hpet_base.channels[0].mode = HPET_MODE_LEGACY;
- 		if (IS_ENABLED(CONFIG_HPET_EMULATE_RTC))
- 			hpet_base.channels[1].mode = HPET_MODE_LEGACY;
-@@ -1088,7 +1083,7 @@ int hpet_rtc_timer_init(void)
- 		return 0;
- 
- 	if (!hpet_default_delta) {
--		struct clock_event_device *evt = &hpet_channel0.evt;
-+		struct clock_event_device *evt = &hpet_base.channels[0].evt;
- 		uint64_t clc;
- 
- 		clc = (uint64_t) evt->mult * NSEC_PER_SEC;
-@@ -1186,7 +1181,7 @@ int hpet_set_periodic_freq(unsigned long
- 	if (freq <= DEFAULT_RTC_INT_FREQ) {
- 		hpet_pie_limit = DEFAULT_RTC_INT_FREQ / freq;
- 	} else {
--		struct clock_event_device *evt = &hpet_channel0.evt;
-+		struct clock_event_device *evt = &hpet_base.channels[0].evt;
- 
- 		clc = (uint64_t) evt->mult * NSEC_PER_SEC;
- 		do_div(clc, freq);
 
+On 2019/06/23 2:55, Andrew Lunn wrote:
+> On Sat, Jun 22, 2019 at 11:50:10PM +0900, Katsuhiro Suzuki wrote:
+>> Hello,
+> 
+> Hi Katsuhiro
+> 
+> Please also report this to netdev, and the stmmac maintainers.
+> 
+> ./scripts/get_maintainer.pl -f drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+> Giuseppe Cavallaro <peppe.cavallaro@st.com> (supporter:STMMAC ETHERNET DRIVER)
+> Alexandre Torgue <alexandre.torgue@st.com> (supporter:STMMAC ETHERNET DRIVER)
+> Jose Abreu <joabreu@synopsys.com> (supporter:STMMAC ETHERNET DRIVER)
+> "David S. Miller" <davem@davemloft.net> (odd fixer:NETWORKING DRIVERS)
+> Maxime Coquelin <mcoquelin.stm32@gmail.com> (maintainer:ARM/STM32 ARCHITECTURE)
+> netdev@vger.kernel.org (open list:STMMAC ETHERNET DRIVER)
+> linux-stm32@st-md-mailman.stormreply.com (moderated list:ARM/STM32 ARCHITECTURE)
+> linux-arm-kernel@lists.infradead.org (moderated list:ARM/STM32 ARCHITECTURE)
+> linux-kernel@vger.kernel.org (open list)
+> 
+>> I have not bisect commit of root cause yet... Is it better to bisect
+>> and find problem instead of sending this patch?
+> 
+> My guess is that it is one of these three which broken it:
+> 
+> 74371272f97f net: stmmac: Convert to phylink and remove phylib logic
+> eeef2f6b9f6e net: stmmac: Start adding phylink support
+> 9ad372fc5aaf net: stmmac: Prepare to convert to phylink
+> 
+> 	     Andrew
+> 
 
