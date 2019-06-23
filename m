@@ -2,23 +2,23 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 222524FBE1
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2019 15:29:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 02BD34FBD8
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2019 15:29:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727055AbfFWN3M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 23 Jun 2019 09:29:12 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:33424 "EHLO
+        id S1726729AbfFWN1p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 23 Jun 2019 09:27:45 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:33439 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726645AbfFWN1m (ORCPT
+        with ESMTP id S1725963AbfFWN1n (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Jun 2019 09:27:42 -0400
+        Sun, 23 Jun 2019 09:27:43 -0400
 Received: from localhost ([127.0.0.1] helo=nanos.tec.linutronix.de)
         by Galois.linutronix.de with esmtp (Exim 4.80)
         (envelope-from <tglx@linutronix.de>)
-        id 1hf2Wy-0001jc-Nz; Sun, 23 Jun 2019 15:27:40 +0200
-Message-Id: <20190623132434.754768274@linutronix.de>
+        id 1hf2Wz-0001ji-8z; Sun, 23 Jun 2019 15:27:41 +0200
+Message-Id: <20190623132434.860549134@linutronix.de>
 User-Agent: quilt/0.65
-Date:   Sun, 23 Jun 2019 15:23:48 +0200
+Date:   Sun, 23 Jun 2019 15:23:49 +0200
 From:   Thomas Gleixner <tglx@linutronix.de>
 To:     LKML <linux-kernel@vger.kernel.org>
 Cc:     x86@kernel.org, Peter Zijlstra <peterz@infradead.org>,
@@ -28,7 +28,7 @@ Cc:     x86@kernel.org, Peter Zijlstra <peterz@infradead.org>,
         Suravee Suthikulpanit <Suravee.Suthikulpanit@amd.com>,
         Stephane Eranian <eranian@google.com>,
         Ravi Shankar <ravi.v.shankar@intel.com>
-Subject: [patch 08/29] x86/hpet: Sanitize stub functions
+Subject: [patch 09/29] x86/hpet: Move static and global variables to one place
 References: <20190623132340.463097504@linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -37,42 +37,111 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Mark them inline and remove the pointless 'return;' statement.
+Having static and global variables sprinkled all over the code is just
+annoying to read. Move them all to the top of the file.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 ---
- arch/x86/kernel/hpet.c |   12 +++---------
- 1 file changed, 3 insertions(+), 9 deletions(-)
+ arch/x86/kernel/hpet.c |   50 +++++++++++++++++++++----------------------------
+ 1 file changed, 22 insertions(+), 28 deletions(-)
 
 --- a/arch/x86/kernel/hpet.c
 +++ b/arch/x86/kernel/hpet.c
-@@ -692,16 +692,10 @@ static int hpet_cpuhp_dead(unsigned int
+@@ -23,6 +23,15 @@
+ #undef  pr_fmt
+ #define pr_fmt(fmt) "hpet: " fmt
+ 
++struct hpet_dev {
++	struct clock_event_device	evt;
++	unsigned int			num;
++	int				cpu;
++	unsigned int			irq;
++	unsigned int			flags;
++	char				name[10];
++};
++
+ #define HPET_MASK			CLOCKSOURCE_MASK(32)
+ 
+ #define HPET_DEV_USED_BIT		2
+@@ -43,18 +52,22 @@ bool					hpet_msi_disable;
+ 
+ #ifdef CONFIG_PCI_MSI
+ static unsigned int			hpet_num_timers;
++static struct hpet_dev			*hpet_devs;
++static DEFINE_PER_CPU(struct hpet_dev *, cpu_hpet_dev);
++static struct irq_domain		*hpet_domain;
+ #endif
++
+ static void __iomem			*hpet_virt_address;
+ static u32				*hpet_boot_cfg;
+ 
+-struct hpet_dev {
+-	struct clock_event_device	evt;
+-	unsigned int			num;
+-	int				cpu;
+-	unsigned int			irq;
+-	unsigned int			flags;
+-	char				name[10];
+-};
++static bool				hpet_legacy_int_enabled;
++static unsigned long			hpet_freq;
++
++bool					boot_hpet_disable;
++bool					hpet_force_user;
++static bool				hpet_verbose;
++
++static struct clock_event_device	hpet_clockevent;
+ 
+ static inline struct hpet_dev *EVT_TO_HPET_DEV(struct clock_event_device *evtdev)
+ {
+@@ -85,10 +98,6 @@ static inline void hpet_clear_mapping(vo
+ /*
+  * HPET command line enable / disable
+  */
+-bool boot_hpet_disable;
+-bool hpet_force_user;
+-static bool hpet_verbose;
+-
+ static int __init hpet_setup(char *str)
+ {
+ 	while (str) {
+@@ -120,11 +129,6 @@ static inline int is_hpet_capable(void)
+ 	return !boot_hpet_disable && hpet_address;
  }
- #else
  
--static void hpet_msi_capability_lookup(unsigned int start_timer)
--{
--	return;
--}
-+static inline void hpet_msi_capability_lookup(unsigned int start_timer) { }
- 
- #ifdef CONFIG_HPET
--static void hpet_reserve_msi_timers(struct hpet_data *hd)
--{
--	return;
--}
-+static inline void hpet_reserve_msi_timers(struct hpet_data *hd) { }
+-/*
+- * HPET timer interrupt enable / disable
+- */
+-static bool hpet_legacy_int_enabled;
+-
+ /**
+  * is_hpet_enabled - check whether the hpet timer interrupt is enabled
+  */
+@@ -217,13 +221,7 @@ static void __init hpet_reserve_platform
+ static void hpet_reserve_platform_timers(unsigned int id) { }
  #endif
  
- #define hpet_cpuhp_online	NULL
-@@ -820,7 +814,7 @@ static struct clocksource clocksource_hp
- 	.resume		= hpet_resume_counter,
- };
- 
--static int hpet_clocksource_register(void)
-+static int __init hpet_clocksource_register(void)
+-/*
+- * Common hpet info
+- */
+-static unsigned long hpet_freq;
+-
+-static struct clock_event_device hpet_clockevent;
+-
++/* Common hpet functions */
+ static void hpet_stop_counter(void)
  {
- 	u64 start, now;
- 	u64 t1;
+ 	u32 cfg = hpet_readl(HPET_CFG);
+@@ -430,10 +428,6 @@ static struct clock_event_device hpet_cl
+  */
+ #ifdef CONFIG_PCI_MSI
+ 
+-static DEFINE_PER_CPU(struct hpet_dev *, cpu_hpet_dev);
+-static struct hpet_dev	*hpet_devs;
+-static struct irq_domain *hpet_domain;
+-
+ void hpet_msi_unmask(struct irq_data *data)
+ {
+ 	struct hpet_dev *hdev = irq_data_get_irq_handler_data(data);
 
 
