@@ -2,23 +2,23 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 46A0A4FBCF
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2019 15:28:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 33DD84FBD5
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2019 15:28:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726925AbfFWN2I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 23 Jun 2019 09:28:08 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:33558 "EHLO
+        id S1726985AbfFWN2k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 23 Jun 2019 09:28:40 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:33567 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726747AbfFWN1z (ORCPT
+        with ESMTP id S1726813AbfFWN1y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Jun 2019 09:27:55 -0400
+        Sun, 23 Jun 2019 09:27:54 -0400
 Received: from localhost ([127.0.0.1] helo=nanos.tec.linutronix.de)
         by Galois.linutronix.de with esmtp (Exim 4.80)
         (envelope-from <tglx@linutronix.de>)
-        id 1hf2X9-0001mh-5l; Sun, 23 Jun 2019 15:27:51 +0200
-Message-Id: <20190623132436.277510163@linutronix.de>
+        id 1hf2X9-0001ml-OR; Sun, 23 Jun 2019 15:27:51 +0200
+Message-Id: <20190623132436.368141247@linutronix.de>
 User-Agent: quilt/0.65
-Date:   Sun, 23 Jun 2019 15:24:04 +0200
+Date:   Sun, 23 Jun 2019 15:24:05 +0200
 From:   Thomas Gleixner <tglx@linutronix.de>
 To:     LKML <linux-kernel@vger.kernel.org>
 Cc:     x86@kernel.org, Peter Zijlstra <peterz@infradead.org>,
@@ -28,7 +28,7 @@ Cc:     x86@kernel.org, Peter Zijlstra <peterz@infradead.org>,
         Suravee Suthikulpanit <Suravee.Suthikulpanit@amd.com>,
         Stephane Eranian <eranian@google.com>,
         Ravi Shankar <ravi.v.shankar@intel.com>
-Subject: [patch 24/29] x86/hpet: Use cached info instead of extra flags
+Subject: [patch 25/29] x86/hpet: Wrap legacy clockevent in hpet_channel
 References: <20190623132340.463097504@linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -37,199 +37,125 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now that HPET clockevent support is integrated into the channel data, reuse
-the cached boot configuration instead of copying the same information into
-a flags field.
+For HPET channel 0 there exist two clockevent structures right now:
+  - the static hpet_clockevent
+  - the clockevent in channel 0 storage
 
-This also allows to consolidate the reservation code into one place, which
-can now solely depend on the mode information.
+The goal is to use the clockevent in the channel storage, remove the static
+variable and share code with the MSI implementation.
+
+As a first step wrap the legacy clockevent into a hpet_channel struct and
+convert the users.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 ---
- arch/x86/kernel/hpet.c |   76 ++++++++++++++-----------------------------------
- 1 file changed, 23 insertions(+), 53 deletions(-)
+ arch/x86/kernel/hpet.c |   49 +++++++++++++++++++++++++++----------------------
+ 1 file changed, 27 insertions(+), 22 deletions(-)
 
 --- a/arch/x86/kernel/hpet.c
 +++ b/arch/x86/kernel/hpet.c
-@@ -25,8 +25,8 @@ struct hpet_channel {
- 	unsigned int			num;
- 	unsigned int			cpu;
- 	unsigned int			irq;
-+	unsigned int			inuse;
- 	enum hpet_mode			mode;
--	unsigned int			flags;
- 	unsigned int			boot_cfg;
- 	char				name[10];
- };
-@@ -40,12 +40,6 @@ struct hpet_base {
+@@ -66,7 +66,7 @@ bool					boot_hpet_disable;
+ bool					hpet_force_user;
+ static bool				hpet_verbose;
  
- #define HPET_MASK			CLOCKSOURCE_MASK(32)
+-static struct clock_event_device	hpet_clockevent;
++static struct hpet_channel		hpet_channel0;
  
--#define HPET_DEV_USED_BIT		2
--#define HPET_DEV_USED			(1 << HPET_DEV_USED_BIT)
--#define HPET_DEV_VALID			0x8
--#define HPET_DEV_FSB_CAP		0x1000
--#define HPET_DEV_PERI_CAP		0x2000
--
- #define HPET_MIN_CYCLES			128
- #define HPET_MIN_PROG_DELTA		(HPET_MIN_CYCLES + (HPET_MIN_CYCLES >> 1))
+ static inline
+ struct hpet_channel *clockevent_to_channel(struct clock_event_device *evt)
+@@ -294,7 +294,7 @@ static void hpet_enable_legacy_int(void)
+ 	hpet_legacy_int_enabled = true;
+ }
  
-@@ -62,6 +56,7 @@ static struct irq_domain		*hpet_domain;
- #endif
+-static void hpet_legacy_clockevent_register(void)
++static void hpet_legacy_clockevent_register(struct hpet_channel *hc)
+ {
+ 	/* Start HPET legacy interrupts */
+ 	hpet_enable_legacy_int();
+@@ -303,10 +303,10 @@ static void hpet_legacy_clockevent_regis
+ 	 * Start HPET with the boot CPU's cpumask and make it global after
+ 	 * the IO_APIC has been initialized.
+ 	 */
+-	hpet_clockevent.cpumask = cpumask_of(boot_cpu_data.cpu_index);
+-	clockevents_config_and_register(&hpet_clockevent, hpet_freq,
++	hc->evt.cpumask = cpumask_of(boot_cpu_data.cpu_index);
++	clockevents_config_and_register(&hc->evt, hpet_freq,
+ 					HPET_MIN_PROG_DELTA, 0x7FFFFFFF);
+-	global_clock_event = &hpet_clockevent;
++	global_clock_event = &hc->evt;
+ 	pr_debug("Clockevent registered\n");
+ }
  
- static void __iomem			*hpet_virt_address;
-+
- static struct hpet_base			hpet_base;
+@@ -433,19 +433,21 @@ static int hpet_legacy_next_event(unsign
+ }
  
- static bool				hpet_legacy_int_enabled;
-@@ -190,8 +185,6 @@ do {								\
+ /*
+- * The HPET clock event device
++ * The HPET clock event device wrapped in a channel for conversion
   */
- #ifdef CONFIG_HPET
- 
--static void hpet_reserve_msi_timers(struct hpet_data *hd);
--
- static void __init hpet_reserve_platform_timers(void)
- {
- 	struct hpet_data hd;
-@@ -201,11 +194,6 @@ static void __init hpet_reserve_platform
- 	hd.hd_phys_address	= hpet_address;
- 	hd.hd_address		= hpet_virt_address;
- 	hd.hd_nirqs		= hpet_base.nr_channels;
--	hpet_reserve_timer(&hd, 0);
--
--#ifdef CONFIG_HPET_EMULATE_RTC
--	hpet_reserve_timer(&hd, 1);
--#endif
- 
- 	/*
- 	 * NOTE that hd_irq[] reflects IOAPIC input pins (LEGACY_8254
-@@ -215,13 +203,25 @@ static void __init hpet_reserve_platform
- 	hd.hd_irq[0] = HPET_LEGACY_8254;
- 	hd.hd_irq[1] = HPET_LEGACY_RTC;
- 
--	for (i = 2; i < hpet_base.nr_channels; i++)
--		hd.hd_irq[i] = hpet_base.channels[i].irq;
-+	for (i = 0; i < hpet_base.nr_channels; i++) {
-+		struct hpet_channel *hc = hpet_base.channels + i;
- 
--	hpet_reserve_msi_timers(&hd);
-+		if (i >= 2)
-+			hd.hd_irq[i] = hc->irq;
- 
--	hpet_alloc(&hd);
-+		switch (hc->mode) {
-+		case HPET_MODE_UNUSED:
-+		case HPET_MODE_DEVICE:
-+			hc->mode = HPET_MODE_DEVICE;
-+			break;
-+		case HPET_MODE_CLOCKEVT:
-+		case HPET_MODE_LEGACY:
-+			hpet_reserve_timer(&hd, hc->num);
-+			break;
-+		}
+-static struct clock_event_device hpet_clockevent = {
+-	.name			= "hpet",
+-	.features		= CLOCK_EVT_FEAT_PERIODIC |
+-				  CLOCK_EVT_FEAT_ONESHOT,
+-	.set_state_periodic	= hpet_legacy_set_periodic,
+-	.set_state_oneshot	= hpet_legacy_set_oneshot,
+-	.set_state_shutdown	= hpet_legacy_shutdown,
+-	.tick_resume		= hpet_legacy_resume,
+-	.set_next_event		= hpet_legacy_next_event,
+-	.irq			= 0,
+-	.rating			= 50,
++static struct hpet_channel hpet_channel0 = {
++	.evt = {
++		.name			= "hpet",
++		.features		= CLOCK_EVT_FEAT_PERIODIC |
++					  CLOCK_EVT_FEAT_ONESHOT,
++		.set_state_periodic	= hpet_legacy_set_periodic,
++		.set_state_oneshot	= hpet_legacy_set_oneshot,
++		.set_state_shutdown	= hpet_legacy_shutdown,
++		.tick_resume		= hpet_legacy_resume,
++		.set_next_event		= hpet_legacy_next_event,
++		.irq			= 0,
++		.rating			= 50,
 +	}
+ };
  
-+	hpet_alloc(&hd);
- }
+ /*
+@@ -916,7 +918,7 @@ int __init hpet_enable(void)
+ 	clocksource_register_hz(&clocksource_hpet, (u32)hpet_freq);
  
- static void __init hpet_select_device_channel(void)
-@@ -543,13 +543,11 @@ static int hpet_setup_irq(struct hpet_ch
- 	return 0;
- }
- 
-+/* Invoked from the hotplug callback on @cpu */
- static void init_one_hpet_msi_clockevent(struct hpet_channel *hc, int cpu)
- {
- 	struct clock_event_device *evt = &hc->evt;
- 
--	if (!(hc->flags & HPET_DEV_VALID))
--		return;
--
- 	hc->cpu = cpu;
- 	per_cpu(cpu_hpet_channel, cpu) = hc;
- 	evt->name = hc->name;
-@@ -558,7 +556,7 @@ static void init_one_hpet_msi_clockevent
- 
- 	evt->rating = 110;
- 	evt->features = CLOCK_EVT_FEAT_ONESHOT;
--	if (hc->flags & HPET_DEV_PERI_CAP) {
-+	if (hc->boot_cfg & HPET_TN_PERIODIC) {
- 		evt->features |= CLOCK_EVT_FEAT_PERIODIC;
- 		evt->set_state_periodic = hpet_msi_set_periodic;
- 	}
-@@ -580,11 +578,9 @@ static struct hpet_channel *hpet_get_unu
- 	for (i = 0; i < hpet_base.nr_channels; i++) {
- 		struct hpet_channel *hc = hpet_base.channels + i;
- 
--		if (!(hc->flags & HPET_DEV_VALID))
--			continue;
--		if (test_and_set_bit(HPET_DEV_USED_BIT,
--			(unsigned long *)&hc->flags))
-+		if (hc->mode != HPET_MODE_CLOCKEVT || hc->inuse)
- 			continue;
-+		hc->inuse = 1;
- 		return hc;
- 	}
- 	return NULL;
-@@ -606,7 +602,7 @@ static int hpet_cpuhp_dead(unsigned int
- 	if (!hc)
+ 	if (id & HPET_ID_LEGSUP) {
+-		hpet_legacy_clockevent_register();
++		hpet_legacy_clockevent_register(&hpet_channel0);
+ 		hpet_base.channels[0].mode = HPET_MODE_LEGACY;
+ 		if (IS_ENABLED(CONFIG_HPET_EMULATE_RTC))
+ 			hpet_base.channels[1].mode = HPET_MODE_LEGACY;
+@@ -1101,10 +1103,11 @@ int hpet_rtc_timer_init(void)
  		return 0;
- 	free_irq(hc->irq, hc);
--	hc->flags &= ~HPET_DEV_USED;
-+	hc->inuse = 0;
- 	per_cpu(cpu_hpet_channel, cpu) = NULL;
- 	return 0;
- }
-@@ -638,9 +634,6 @@ static void __init hpet_select_clockeven
- 		if (!(hc->boot_cfg & HPET_TN_FSB_CAP))
- 			continue;
  
--		hc->flags = 0;
--		if (hc->boot_cfg & HPET_TN_PERIODIC_CAP)
--			hc->flags |= HPET_DEV_PERI_CAP;
- 		sprintf(hc->name, "hpet%d", i);
+ 	if (!hpet_default_delta) {
++		struct clock_event_device *evt = &hpet_channel0.evt;
+ 		uint64_t clc;
  
- 		irq = hpet_assign_irq(hpet_domain, hc, hc->num);
-@@ -648,8 +641,6 @@ static void __init hpet_select_clockeven
- 			continue;
+-		clc = (uint64_t) hpet_clockevent.mult * NSEC_PER_SEC;
+-		clc >>= hpet_clockevent.shift + DEFAULT_RTC_SHIFT;
++		clc = (uint64_t) evt->mult * NSEC_PER_SEC;
++		clc >>= evt->shift + DEFAULT_RTC_SHIFT;
+ 		hpet_default_delta = clc;
+ 	}
  
- 		hc->irq = irq;
--		hc->flags |= HPET_DEV_FSB_CAP;
--		hc->flags |= HPET_DEV_VALID;
- 		hc->mode = HPET_MODE_CLOCKEVT;
- 
- 		if (++hpet_base.nr_clockevents == num_possible_cpus())
-@@ -660,31 +651,10 @@ static void __init hpet_select_clockeven
- 		hpet_base.nr_channels, hpet_base.nr_clockevents);
- }
- 
--#ifdef CONFIG_HPET
--static void __init hpet_reserve_msi_timers(struct hpet_data *hd)
--{
--	int i;
--
--	for (i = 0; i < hpet_base.nr_channels; i++) {
--		struct hpet_channel *hc = hpet_base.channels + i;
--
--		if (!(hc->flags & HPET_DEV_VALID))
--			continue;
--
--		hd->hd_irq[hc->num] = hc->irq;
--		hpet_reserve_timer(hd, hc->num);
--	}
--}
--#endif
--
- #else
- 
- static inline void hpet_select_clockevents(void) { }
- 
--#ifdef CONFIG_HPET
--static inline void hpet_reserve_msi_timers(struct hpet_data *hd) { }
--#endif
--
- #define hpet_cpuhp_online	NULL
- #define hpet_cpuhp_dead		NULL
- 
+@@ -1198,9 +1201,11 @@ int hpet_set_periodic_freq(unsigned long
+ 	if (freq <= DEFAULT_RTC_INT_FREQ) {
+ 		hpet_pie_limit = DEFAULT_RTC_INT_FREQ / freq;
+ 	} else {
+-		clc = (uint64_t) hpet_clockevent.mult * NSEC_PER_SEC;
++		struct clock_event_device *evt = &hpet_channel0.evt;
++
++		clc = (uint64_t) evt->mult * NSEC_PER_SEC;
+ 		do_div(clc, freq);
+-		clc >>= hpet_clockevent.shift;
++		clc >>= evt->shift;
+ 		hpet_pie_delta = clc;
+ 		hpet_pie_limit = 0;
+ 	}
 
 
