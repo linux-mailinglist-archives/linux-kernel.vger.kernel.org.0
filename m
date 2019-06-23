@@ -2,104 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 11D6C4FBA8
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2019 14:51:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8CA834FBAA
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2019 14:54:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726453AbfFWMvG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 23 Jun 2019 08:51:06 -0400
-Received: from mail-io1-f71.google.com ([209.85.166.71]:36543 "EHLO
-        mail-io1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725963AbfFWMvG (ORCPT
+        id S1726481AbfFWMy0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 23 Jun 2019 08:54:26 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:33361 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726086AbfFWMy0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Jun 2019 08:51:06 -0400
-Received: by mail-io1-f71.google.com with SMTP id k21so18201783ioj.3
-        for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2019 05:51:06 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=akj0uRzdQOuIMOVJzexqusSdGlgWZ/bYGADjUjTklDA=;
-        b=FT/kSRxkhr/IyNpw4U6I9njkkl46wa+zeY0dbJfju4CNjnD+Bgb1hUgWiKDAB5IJWg
-         G8GPfa/hxVOI1aNQ9Jg0bBBi/LlSSKrocZQKUdDi7fha0yQG4tWyongPGPYg9cre0vt0
-         70ZPmTRAtlzhlBwTee6ipSI4j9YYSXgh7P+p1FnL6+xv+0E0nalQ+VWWhklpqzOdYwSl
-         yn9qFthm7+O+NgqPEWO8LA7RotPOd/6+uknEvWmWFw8kCga3INbQU8MhirR7JyscBxyC
-         PXlvpQ2kPXlEa2pP4ro8c85FiaT6RrGZOPfWKJNvJUqrHp2w7Ggc9z5WEMZ1YxmBk22O
-         WbVQ==
-X-Gm-Message-State: APjAAAV7aNzCDLhUUOX3dJFaN1aicXyzCV23AbFFAVf8C54XZWZwILSq
-        /OlzpjSoKIMHGUy74wxFT4ozlqYMk2TxR2dTFYy98nXcZBCv
-X-Google-Smtp-Source: APXvYqwfgI8Kr0Lm57kf2Z5J8KyLFcQQTYBnM7py8lZ5TNLmAVC+giJmqSmJq4+s4FA1K5uqL9uHT3IghDrwVL82mIM+x/xbMJb+
+        Sun, 23 Jun 2019 08:54:26 -0400
+Received: from p5b06daab.dip0.t-ipconnect.de ([91.6.218.171] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1hf20c-0001D8-NF; Sun, 23 Jun 2019 14:54:14 +0200
+Date:   Sun, 23 Jun 2019 14:54:13 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Octavio Alvarez <octallk1@alvarezp.org>
+cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>, x86@kernel.org,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+        Jiang Biao <jiang.biao2@zte.com.cn>,
+        Yi Wang <wang.yi59@zte.com.cn>,
+        Dou Liyang <douly.fnst@cn.fujitsu.com>,
+        Nicolai Stange <nstange@suse.de>,
+        Mirko Lindner <mlindner@marvell.com>,
+        Stephen Hemminger <stephen@networkplumber.org>
+Subject: Re: PROBLEM: Marvell 88E8040 (sky2) fails after hibernation
+In-Reply-To: <alpine.DEB.2.21.1906221523340.5503@nanos.tec.linutronix.de>
+Message-ID: <alpine.DEB.2.21.1906231448540.32342@nanos.tec.linutronix.de>
+References: <aba1c363-92de-66d7-4aac-b555f398e70a@alvarezp.org> <2cf2f745-0e29-13a7-6364-0a981dae758c@alvarezp.org> <alpine.DEB.2.21.1906132229540.1791@nanos.tec.linutronix.de> <95539fd9-ffdb-b91c-935f-7fd54d048fdf@alvarezp.org>
+ <alpine.DEB.2.21.1906221523340.5503@nanos.tec.linutronix.de>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:38a:: with SMTP id y10mr37939351jap.104.1561294265707;
- Sun, 23 Jun 2019 05:51:05 -0700 (PDT)
-Date:   Sun, 23 Jun 2019 05:51:05 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000018f6f1058bfd26e4@google.com>
-Subject: kernel BUG at arch/x86/mm/physaddr.c:LINE! (3)
-From:   syzbot <syzbot+50a27df2d1cd8ae38609@syzkaller.appspotmail.com>
-To:     linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+Octavio,
 
-syzbot found the following crash on:
+On Sat, 22 Jun 2019, Thomas Gleixner wrote:
+> On Wed, 19 Jun 2019, Octavio Alvarez wrote:
+> > On 6/13/19 3:45 PM, Thomas Gleixner wrote:
+> > > Can you please provide the content of /proc/interrupts with the driver
+> > > loaded and working after boot (don't hibernate) for the following kernels:
+> > > 
+> > 
+> > $ cat linux-master-after-boot.txt
+> >            CPU0       CPU1       CPU2       CPU3
+> 
+> >  27:          1          0          0          0   PCI-MSI 3145728-edge eth0
+> 
+> > >    Linus upstream + revert
+> > 
+> > $ cat linux-master-reverted-after-boot.txt
+> >            CPU0       CPU1       CPU2       CPU3
+> 
+> >  27:          1          0          0          0   PCI-MSI 3145728-edge eth0
+>  
+> > Meanwhile, here it is for 4.9, which is the latest Debian-provided kernel and
+> > worked:
+> > 
+> > $ cat linux-4.9-after-boot.txt
+> >            CPU0       CPU1       CPU2       CPU3
+> 
+> >  24:          1          0          0          0   PCI-MSI 3145728-edge eth0
+>  
+> > I will keep trying 4.14, unless you say otherwise.
+> 
+> It would be interesting though I don't expect too much data.
+> 
+> So all of the above use PCI/MSI. That's at least a data point. I need to
+> stare into that driver again to figure out why this might make a
+> difference, but right now I'm lost.
 
-HEAD commit:    abf02e29 Merge tag 'pm-5.2-rc6' of git://git.kernel.org/pu..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=15068816a00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=e5c77f8090a3b96b
-dashboard link: https://syzkaller.appspot.com/bug?extid=50a27df2d1cd8ae38609
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+One other data point you could provide please:
 
-Unfortunately, I don't have any reproducer for this crash yet.
+ Load the driver on Linus master with the following module parameter:
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+50a27df2d1cd8ae38609@syzkaller.appspotmail.com
+   disable_msi=1
 
-------------[ cut here ]------------
-kernel BUG at arch/x86/mm/physaddr.c:27!
-invalid opcode: 0000 [#1] PREEMPT SMP KASAN
-CPU: 0 PID: 29308 Comm: kworker/0:0 Not tainted 5.2.0-rc5+ #31
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Workqueue: events cache_reap
-RIP: 0010:__phys_addr+0xb3/0x120 arch/x86/mm/physaddr.c:27
-Code: 08 4c 89 e3 31 ff 48 d3 eb 48 89 de e8 f6 00 3e 00 48 85 db 75 0f e8  
-4c ff 3d 00 4c 89 e0 5b 41 5c 41 5d 5d c3 e8 3d ff 3d 00 <0f> 0b e8 36 ff  
-3d 00 48 c7 c0 10 50 a7 88 48 ba 00 00 00 00 00 fc
-RSP: 0018:ffff88804752fbd8 EFLAGS: 00010093
-RAX: ffff888059350600 RBX: 0000000000000000 RCX: ffffffff8132c192
-RDX: 0000000000000000 RSI: ffffffff8132c1f3 RDI: 0000000000000006
-RBP: ffff88804752fbf0 R08: ffff888059350600 R09: ffffed1008ea5f80
-R10: ffffed1008ea5f7f R11: 0000000000000003 R12: 0000778000000000
-R13: 0000000080000000 R14: ffff88804dd46c00 R15: ffffea00025de388
-FS:  0000000000000000(0000) GS:ffff8880ae800000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000001b2f423000 CR3: 000000009320c000 CR4: 00000000001426f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
-  virt_to_head_page include/linux/mm.h:729 [inline]
-  free_block+0xa8/0x250 mm/slab.c:3349
-  drain_array_locked+0x36/0x90 mm/slab.c:2142
-  drain_array+0x8c/0xb0 mm/slab.c:3960
-  cache_reap+0xf4/0x280 mm/slab.c:4001
-  process_one_work+0x989/0x1790 kernel/workqueue.c:2269
-  worker_thread+0x98/0xe40 kernel/workqueue.c:2415
-  kthread+0x354/0x420 kernel/kthread.c:255
-  ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
-Modules linked in:
+That switches to INTx usage. Does the machine resume proper with that?
 
-======================================================
+Thanks,
 
-
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+	tglx
