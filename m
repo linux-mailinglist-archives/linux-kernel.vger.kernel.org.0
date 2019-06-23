@@ -2,181 +2,201 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 94E4F4FB0D
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2019 12:13:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5831C4FB33
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2019 13:02:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726551AbfFWKND (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 23 Jun 2019 06:13:03 -0400
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:43636 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726350AbfFWKNC (ORCPT
+        id S1726508AbfFWLBh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 23 Jun 2019 07:01:37 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:33198 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726350AbfFWLBh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Jun 2019 06:13:02 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=Ge3SY9labvAxE4Yy2J2jXFLMiCj48qKbZn4VIaVWNWk=; b=c6ORLuCvwylMf7lS7gWuZTe9Z
-        ykpKX6JD6FLvJbiRcfvzKRx2d7NB57YMkdzigkEmEXZw1ONKUzFNENnY/3b1x8HYG/ARzFuDVDipw
-        kpCXtGlSRTNghKvGhKWHhLckjfynTM9pl3ccQuTGzjdR12o4MpTyysX1vUGcBIfjYGMmyu8sZ4YvM
-        WywCPiq/N20VzO5wlmyz8pJnt63l+wzZR5ljJWt4jTmNtFf8kYocVDyBMufgj4xwSiwnfDXKbOhE7
-        cdcTHAWOLddUbtL8Gfyvp7j/nFDUZtl61r4LHhseRQq89XgxixhL+/LE4WpKJZFWMzyn2oe/JjA8v
-        B9n5di/eA==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:59908)
-        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.90_1)
-        (envelope-from <linux@armlinux.org.uk>)
-        id 1hezUU-0000iC-1F; Sun, 23 Jun 2019 11:12:54 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.89)
-        (envelope-from <linux@shell.armlinux.org.uk>)
-        id 1hezUT-0004wn-1u; Sun, 23 Jun 2019 11:12:53 +0100
-Date:   Sun, 23 Jun 2019 11:12:52 +0100
-From:   Russell King - ARM Linux admin <linux@armlinux.org.uk>
-To:     Parshuram Thombare <pthombar@cadence.com>
-Cc:     andrew@lunn.ch, nicolas.ferre@microchip.com, davem@davemloft.net,
-        f.fainelli@gmail.com, netdev@vger.kernel.org, hkallweit1@gmail.com,
-        linux-kernel@vger.kernel.org, rafalc@cadence.com,
-        aniljoy@cadence.com, piotrs@cadence.com
-Subject: Re: [PATCH v4 3/5] net: macb: add support for c45 PHY
-Message-ID: <20190623101252.olfxbls3phgxttcb@shell.armlinux.org.uk>
-References: <1561281419-6030-1-git-send-email-pthombar@cadence.com>
- <1561281797-13796-1-git-send-email-pthombar@cadence.com>
+        Sun, 23 Jun 2019 07:01:37 -0400
+Received: from p5b06daab.dip0.t-ipconnect.de ([91.6.218.171] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1hezZw-0007TA-3t; Sun, 23 Jun 2019 12:18:32 +0200
+Date:   Sun, 23 Jun 2019 12:18:26 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     "Sverdlin, Alexander (Nokia - DE/Ulm)" <alexander.sverdlin@nokia.com>
+cc:     "x86@kernel.org" <x86@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Jason Vas Dias <jason.vas.dias@gmail.com>,
+        Andy Lutomirski <luto@kernel.org>
+Subject: Re: [PATCH v3 1/2] x86/vdso: Move mult and shift into struct
+ vgtod_ts
+In-Reply-To: <20190605144116.28553-2-alexander.sverdlin@nokia.com>
+Message-ID: <alpine.DEB.2.21.1906231008170.32342@nanos.tec.linutronix.de>
+References: <20190605144116.28553-1-alexander.sverdlin@nokia.com> <20190605144116.28553-2-alexander.sverdlin@nokia.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1561281797-13796-1-git-send-email-pthombar@cadence.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jun 23, 2019 at 10:23:17AM +0100, Parshuram Thombare wrote:
-> This patch modify MDIO read/write functions to support
-> communication with C45 PHY.
+Alexander,
 
-Which Clause 45 PHY are you using?
+On Wed, 5 Jun 2019, Sverdlin, Alexander (Nokia - DE/Ulm) wrote:
 
+> From: Alexander Sverdlin <alexander.sverdlin@nokia.com>
 > 
-> Signed-off-by: Parshuram Thombare <pthombar@cadence.com>
-> ---
->  drivers/net/ethernet/cadence/macb.h      | 15 ++++--
->  drivers/net/ethernet/cadence/macb_main.c | 61 +++++++++++++++++++-----
->  2 files changed, 61 insertions(+), 15 deletions(-)
+> This is a preparation for CLOCK_MONOTONIC_RAW vDSO implementation.
+> Coincidentally it had a slight performance improvement as well:
 > 
-> diff --git a/drivers/net/ethernet/cadence/macb.h b/drivers/net/ethernet/cadence/macb.h
-> index 6d268283c318..330da702b946 100644
-> --- a/drivers/net/ethernet/cadence/macb.h
-> +++ b/drivers/net/ethernet/cadence/macb.h
-> @@ -642,10 +642,17 @@
->  #define GEM_CLK_DIV96				5
->  
->  /* Constants for MAN register */
-> -#define MACB_MAN_SOF				1
-> -#define MACB_MAN_WRITE				1
-> -#define MACB_MAN_READ				2
-> -#define MACB_MAN_CODE				2
-> +#define MACB_MAN_C22_SOF                        1
-> +#define MACB_MAN_C22_WRITE                      1
-> +#define MACB_MAN_C22_READ                       2
-> +#define MACB_MAN_C22_CODE                       2
-> +
-> +#define MACB_MAN_C45_SOF                        0
-> +#define MACB_MAN_C45_ADDR                       0
-> +#define MACB_MAN_C45_WRITE                      1
-> +#define MACB_MAN_C45_POST_READ_INCR             2
-> +#define MACB_MAN_C45_READ                       3
-> +#define MACB_MAN_C45_CODE                       2
->  
->  /* Capability mask bits */
->  #define MACB_CAPS_ISR_CLEAR_ON_WRITE		BIT(0)
-> diff --git a/drivers/net/ethernet/cadence/macb_main.c b/drivers/net/ethernet/cadence/macb_main.c
-> index 10d18b2cef31..94145e460e6e 100644
-> --- a/drivers/net/ethernet/cadence/macb_main.c
-> +++ b/drivers/net/ethernet/cadence/macb_main.c
-> @@ -341,11 +341,30 @@ static int macb_mdio_read(struct mii_bus *bus, int mii_id, int regnum)
->  	if (status < 0)
->  		goto mdio_read_exit;
->  
-> -	macb_writel(bp, MAN, (MACB_BF(SOF, MACB_MAN_SOF)
-> -			      | MACB_BF(RW, MACB_MAN_READ)
-> -			      | MACB_BF(PHYA, mii_id)
-> -			      | MACB_BF(REGA, regnum)
-> -			      | MACB_BF(CODE, MACB_MAN_CODE)));
-> +	if (regnum & MII_ADDR_C45) {
-> +		macb_writel(bp, MAN, (MACB_BF(SOF, MACB_MAN_C45_SOF)
-> +			    | MACB_BF(RW, MACB_MAN_C45_ADDR)
-> +			    | MACB_BF(PHYA, mii_id)
-> +			    | MACB_BF(REGA, (regnum >> 16) & 0x1F)
-> +			    | MACB_BF(DATA, regnum & 0xFFFF)
-> +			    | MACB_BF(CODE, MACB_MAN_C45_CODE)));
-> +
-> +		status = macb_mdio_wait_for_idle(bp);
-> +		if (status < 0)
-> +			goto mdio_read_exit;
-> +
-> +		macb_writel(bp, MAN, (MACB_BF(SOF, MACB_MAN_C45_SOF)
-> +			    | MACB_BF(RW, MACB_MAN_C45_READ)
-> +			    | MACB_BF(PHYA, mii_id)
-> +			    | MACB_BF(REGA, (regnum >> 16) & 0x1F)
-> +			    | MACB_BF(CODE, MACB_MAN_C45_CODE)));
-> +	} else {
-> +		macb_writel(bp, MAN, (MACB_BF(SOF, MACB_MAN_C22_SOF)
-> +				| MACB_BF(RW, MACB_MAN_C22_READ)
-> +				| MACB_BF(PHYA, mii_id)
-> +				| MACB_BF(REGA, regnum)
-> +				| MACB_BF(CODE, MACB_MAN_C22_CODE)));
-> +	}
->  
->  	status = macb_mdio_wait_for_idle(bp);
->  	if (status < 0)
-> @@ -374,12 +393,32 @@ static int macb_mdio_write(struct mii_bus *bus, int mii_id, int regnum,
->  	if (status < 0)
->  		goto mdio_write_exit;
->  
-> -	macb_writel(bp, MAN, (MACB_BF(SOF, MACB_MAN_SOF)
-> -			      | MACB_BF(RW, MACB_MAN_WRITE)
-> -			      | MACB_BF(PHYA, mii_id)
-> -			      | MACB_BF(REGA, regnum)
-> -			      | MACB_BF(CODE, MACB_MAN_CODE)
-> -			      | MACB_BF(DATA, value)));
-> +	if (regnum & MII_ADDR_C45) {
-> +		macb_writel(bp, MAN, (MACB_BF(SOF, MACB_MAN_C45_SOF)
-> +			    | MACB_BF(RW, MACB_MAN_C45_ADDR)
-> +			    | MACB_BF(PHYA, mii_id)
-> +			    | MACB_BF(REGA, (regnum >> 16) & 0x1F)
-> +			    | MACB_BF(DATA, regnum & 0xFFFF)
-> +			    | MACB_BF(CODE, MACB_MAN_C45_CODE)));
-> +
-> +		status = macb_mdio_wait_for_idle(bp);
-> +		if (status < 0)
-> +			goto mdio_write_exit;
-> +
-> +		macb_writel(bp, MAN, (MACB_BF(SOF, MACB_MAN_C45_SOF)
-> +			    | MACB_BF(RW, MACB_MAN_C45_WRITE)
-> +			    | MACB_BF(PHYA, mii_id)
-> +			    | MACB_BF(REGA, (regnum >> 16) & 0x1F)
-> +			    | MACB_BF(CODE, MACB_MAN_C45_CODE)
-> +			    | MACB_BF(DATA, value)));
-> +	} else {
-> +		macb_writel(bp, MAN, (MACB_BF(SOF, MACB_MAN_C22_SOF)
-> +				| MACB_BF(RW, MACB_MAN_C22_WRITE)
-> +				| MACB_BF(PHYA, mii_id)
-> +				| MACB_BF(REGA, regnum)
-> +				| MACB_BF(CODE, MACB_MAN_C22_CODE)
-> +				| MACB_BF(DATA, value)));
-> +	}
->  
->  	status = macb_mdio_wait_for_idle(bp);
->  	if (status < 0)
-> -- 
-> 2.17.1
+> ---- Test code ----
+>  #include <errno.h>
+>  #include <stdio.h>
+>  #include <stdlib.h>
+>  #include <time.h>
+>  #include <unistd.h>
 > 
+>  #define CLOCK_TYPE CLOCK_MONOTONIC_RAW
+>  #define DURATION_SEC 10
 > 
+> int main(int argc, char **argv)
+> {
+> 	struct timespec t, end;
+> 	unsigned long long cnt = 0;
+> 
+> 	clock_gettime(CLOCK_TYPE, &end);
+> 	end.tv_sec += DURATION_SEC;
+> 
+> 	do {
+> 		clock_gettime(CLOCK_TYPE, &t);
+> 		++cnt;
+> 	} while (t.tv_sec < end.tv_sec || t.tv_nsec < end.tv_nsec);
+> 
+> 	dprintf(STDOUT_FILENO, "%llu", cnt);
+> 
+> 	return EXIT_SUCCESS;
+> }
+> -------------------
+> 
+> The results from the above test program:
+> 
+> Clock                   Before  After   Diff
+> -----                   ------  -----   ----
+> CLOCK_MONOTONIC         355.5M  359.6M  +1%
+> CLOCK_REALTIME          355.5M  359.6M  +1%
 
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
-According to speedtest.net: 11.9Mbps down 500kbps up
+Been there done that. But the results of the micro benchmark above have to
+be taken with a grain of salt.
+
+Let's look at the cache side effects of this change:
+
+Before:
+
+struct vsyscall_gtod_data {
+	unsigned int               seq;                  /*     0     4 */
+	int                        vclock_mode;          /*     4     4 */
+	u64                        cycle_last;           /*     8     8 */
+	u64                        mask;                 /*    16     8 */
+	u32                        mult;                 /*    24     4 */
+	u32                        shift;                /*    28     4 */
+	struct vgtod_ts            basetime[12];         /*    32   192 */
+	/* --- cacheline 3 boundary (192 bytes) was 32 bytes ago --- */
+	int                        tz_minuteswest;       /*   224     4 */
+	int                        tz_dsttime;           /*   228     4 */
+
+	/* size: 232, cachelines: 4, members: 9 */
+	/* last cacheline: 40 bytes */
+};
+
+After:
+
+struct vsyscall_gtod_data {
+	unsigned int               seq;                  /*     0     4 */
+	int                        vclock_mode;          /*     4     4 */
+	u64                        cycle_last;           /*     8     8 */
+	u64                        mask;                 /*    16     8 */
+	struct vgtod_ts            basetime[12];         /*    24   288 */
+	/* --- cacheline 4 boundary (256 bytes) was 56 bytes ago --- */
+	int                        tz_minuteswest;       /*   312     4 */
+	int                        tz_dsttime;           /*   316     4 */
+
+	/* size: 320, cachelines: 5, members: 7 */
+};
+
+So the interesting change is here:
+
+	struct vgtod_ts            basetime[12];         /*    32   192 */
+
+vs.
+
+	struct vgtod_ts            basetime[12];         /*    24   288 */
+
+In the original version struct vgtod_ts occupies 16 bytes in the modified
+version it has 24 bytes. As a consequence:
+
+	CLOCK				Before		After
+	data->basetime[CLOCK_REALTIME]	32 .. 47	24 .. 47
+	data->basetime[CLOCK_MONOTONIC]	48 .. 63	48 .. 71
+
+That means that the CLOCK_MONOTONIC storage now overlaps into a second
+cache line. CLOCK_MONOTONIC is widely used.
+
+Of course on a micro benchmark this does not matter at all, but in real
+world use cases which care about cache pressure it does.
+
+Another thing is that just adding some small computation to the benchmark
+loop makes the advantage of the modified version go away and it becomes
+slightly slower.
+
+On a real world application which is a cache heavy and uses CLOCK MONOTONIC
+extensivly I can observe a significant L1 miss increase (%2) with the
+modified version.
+
+Now there is something else which is interesting:
+
+On a guest (pvclock) I can observe with your benchmark:
+
+ Before:
+
+	MONO  cnt: 576.7
+	REAL  cnt: 576.6
+
+ After: 
+
+ 	MONO  cnt: 577.1
+	REAL  cnt: 577.0
+
+But on a (different) host:
+
+ Before:
+
+       MONO   cnt: 353.9
+       REAL   cnt: 354.4
+
+ After:
+
+       MONO   cnt: 347.9
+       REAL   cnt: 347.1
+
+Yuck!
+
+So this is really sensitive and I'm inclined not to do that due to the
+cache line side effect.
+
+The alternative solution for this is what Vincenzo has in his unified VDSO
+patch series:
+
+  https://lkml.kernel.org/r/20190621095252.32307-1-vincenzo.frascino@arm.com
+
+It leaves the data struct unmodified and has a separate array for the raw
+clock. That does not have the side effects at all.
+
+I'm in the process of merging that series and I actually adapted your
+scheme to the new unified infrastructure where it has exactly the same
+effects as with your original patches against the x86 version.
+
+Thanks,
+
+	tglx
