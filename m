@@ -2,144 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 273204FD58
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2019 19:38:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D23834FD55
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2019 19:38:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726754AbfFWRiF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 23 Jun 2019 13:38:05 -0400
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:39259 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726718AbfFWRiE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Jun 2019 13:38:04 -0400
-Received: by mail-qt1-f195.google.com with SMTP id i34so12148053qta.6;
-        Sun, 23 Jun 2019 10:38:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=pU2ySpgeuPIDehUiqqbX8/63SN6HD4vkGtCiMTUdjZo=;
-        b=kkueY8ivVKNH+tWI8+mgANJNDQk80xpHteXLuYEKu+lR1WYRUseu4LuAVB74j8fXqW
-         Y5zo0vxu/p5xBjvtGK649WCz5M2jPoI6k94WYGaW3yAY0BMF52cvGkRZ0IkQGHuM9e7m
-         9Z6fA559SeuiSSw7YCjb0X9vuW6H1T5miQZI0qiL6zEWwu5PqvD3zxmuppBGc5qACIIi
-         /8cwmppSsalGvtm2Seork2xRsAcdcWQ3562Y8ObQtIPomQ0dXP7dcb7RwXyT/1VgAZC6
-         jSgz1FJmJoR7AX+pmdBVZnDaA4OUwPp+YCc4TYAI3+nuL9cwOo8nTR/k+hcuXxtjJ2sE
-         o1tQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=pU2ySpgeuPIDehUiqqbX8/63SN6HD4vkGtCiMTUdjZo=;
-        b=EB7ZJxfkCTb437b9aDvkGNCefVzOnneCxkgswcUkB5PkvP+28WYZXfcS6h7F/0533x
-         7gjNzToER6AdxMrvwIQE3s1E6SgDGJrg4Z0x36HYvIJ5mfKmkaNP0MisB4c0oiZaBooa
-         +1OoE5DWIYCL3FWYyFjvBDMfmPUuTIA7Wa4snuwphORq4Kr0lg/PZ1G1xF99MABd2AuR
-         TJg4/qr95VpCcr0vpw3SPamhT/MZzGGdicU8JP/e+//rhnO6rAmSKzi1DeE5aSUmVv7f
-         ub4O/FKXmCol5sFXaJXhyIDbvLQehGfkTgsiSjZRMf25ZwsIB9uTXnkva4sgc5IHnMyS
-         x3mw==
-X-Gm-Message-State: APjAAAW9T+Xwkle4VxXVVy67yxnuA04ddBTbI/sbilrDrFZb5oft/9zg
-        bXc2P9uBI6p/OwhvrLjbF4QcrwDw
-X-Google-Smtp-Source: APXvYqyTZWTsrXwrIZibYOusfJL78o9yLKMY/cHHOd0dx04WanYQvMb/lt5vUtmyvIHDzHPgAtqQ5w==
-X-Received: by 2002:a0c:818f:: with SMTP id 15mr26657878qvd.162.1561311483688;
-        Sun, 23 Jun 2019 10:38:03 -0700 (PDT)
-Received: from localhost.localdomain (ppp91-79-162-197.pppoe.mtu-net.ru. [91.79.162.197])
-        by smtp.gmail.com with ESMTPSA id c55sm5342498qtk.53.2019.06.23.10.38.02
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 23 Jun 2019 10:38:03 -0700 (PDT)
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v1 3/3] drm/tegra: vic: Use common helpers to attach/detach from IOMMU domain
-Date:   Sun, 23 Jun 2019 20:37:43 +0300
-Message-Id: <20190623173743.24088-3-digetx@gmail.com>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190623173743.24088-1-digetx@gmail.com>
-References: <20190623173743.24088-1-digetx@gmail.com>
+        id S1726647AbfFWRiA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 23 Jun 2019 13:38:00 -0400
+Received: from mail-eopbgr800071.outbound.protection.outlook.com ([40.107.80.71]:39424
+        "EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726466AbfFWRh7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 23 Jun 2019 13:37:59 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=micron.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=sU//ICQyKsXNwhNLqzUnO1yFVB4bPMOQrqsE5/jFOJk=;
+ b=kHUEMOx6wTAjZeG4gbW7IJfcXopCMtFbLzHMnvVENHgx7syyARpJIr+JYrRgQMG6yHAdN3lye9OHks9y6edZRHklaMdY4xA9uN+p3rJxuhOH/G9nPJz2tpcRJWeOGykKpWffrYYo2bKs++jiIyX3FlZbmVXZpzyKoBcv2dloVr0=
+Received: from BN7PR08MB5684.namprd08.prod.outlook.com (20.176.31.141) by
+ BN7PR08MB4241.namprd08.prod.outlook.com (52.133.222.155) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2008.13; Sun, 23 Jun 2019 17:37:56 +0000
+Received: from BN7PR08MB5684.namprd08.prod.outlook.com
+ ([fe80::4dd2:da15:6626:c3b0]) by BN7PR08MB5684.namprd08.prod.outlook.com
+ ([fe80::4dd2:da15:6626:c3b0%3]) with mapi id 15.20.2008.014; Sun, 23 Jun 2019
+ 17:37:56 +0000
+From:   "Bean Huo (beanhuo)" <beanhuo@micron.com>
+To:     Alim Akhtar <alim.akhtar@samsung.com>,
+        Avri Altman <avri.altman@wdc.com>,
+        Pedro Sousa <pedrom.sousa@synopsys.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+CC:     "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        Evan Green <evgreen@chromium.org>,
+        Stanley Chu <stanley.chu@mediatek.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "Bean Huo (beanhuo)" <beanhuo@micron.com>
+Subject: [PATCH v2 0/3] scsi: ufs: typo fixes and improvement
+Thread-Topic: [PATCH v2 0/3] scsi: ufs: typo fixes and improvement
+Thread-Index: AdUp6BAI7ZILf7ZTT5ms/BIKCU7S/A==
+Date:   Sun, 23 Jun 2019 17:37:56 +0000
+Message-ID: <BN7PR08MB5684A44F56972BCE0972B28EDBE10@BN7PR08MB5684.namprd08.prod.outlook.com>
+Accept-Language: en-150, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=beanhuo@micron.com; 
+x-originating-ip: [165.225.81.56]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 70cd04bc-5ab1-433e-759b-08d6f801870e
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(7168020)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:BN7PR08MB4241;
+x-ms-traffictypediagnostic: BN7PR08MB4241:|BN7PR08MB4241:
+x-microsoft-antispam-prvs: <BN7PR08MB4241AFC333E62658383985FADBE10@BN7PR08MB4241.namprd08.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:3968;
+x-forefront-prvs: 00770C4423
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(39860400002)(376002)(136003)(396003)(366004)(189003)(199004)(2906002)(52536014)(110136005)(71190400001)(26005)(102836004)(6506007)(74316002)(55236004)(14444005)(186003)(256004)(476003)(4326008)(4744005)(73956011)(316002)(71200400001)(486006)(81156014)(14454004)(66066001)(66946007)(81166006)(305945005)(7736002)(66476007)(5660300002)(8676002)(66446008)(66556008)(64756008)(54906003)(9686003)(478600001)(76116006)(86362001)(6436002)(68736007)(7696005)(53936002)(55016002)(33656002)(25786009)(8936002)(3846002)(6116002)(107886003)(99286004);DIR:OUT;SFP:1101;SCL:1;SRVR:BN7PR08MB4241;H:BN7PR08MB5684.namprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: micron.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: eoMLmnHGPnqwly1Ish1OP0Oj77JwuIKLQGn66g8Ryg04toDY1b8qppdZrZXN9TDNOxiuUT6xZ4cILh8Dim6ijofXK9wHYziF6bEQUn7VFdoSy9v9ifva8GpqytJaN3P3gbF0mMEyw2qDlnREAT70LEUKipoDQ4TjjFeLckZnmxRDsh7tJKhZ8Q/P+KRefdz4ZI/istZuZ3jlrIhpIGjcmto/FKxuBTstjL5hqytLoNF5OIWKExTT2Ef086dOcHG3y+yJM6S/NUPh1P+fYfsxeSXPSn0T6h0vWOPtizmeZwvWvQJP74knYTsEXd/gksE/9a+bZfini6nZx3jtfuNt9hnQOs6SovN+Id8AxpUEmRFTu415DCGCZQ6/+/UnJOIqFCO32JchbhP1Je0niEA3v2BGnnQImMkaH4jY5cdddAI=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: micron.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 70cd04bc-5ab1-433e-759b-08d6f801870e
+X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Jun 2019 17:37:56.1692
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: f38a5ecd-2813-4862-b11b-ac1d563c806f
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: beanhuo@micron.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN7PR08MB4241
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We now have helpers for the domain's attachment, let's use them.
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- drivers/gpu/drm/tegra/vic.c | 27 ++++++++-------------------
- 1 file changed, 8 insertions(+), 19 deletions(-)
+From: Bean Huo <beanhuo@micron.com>
 
-diff --git a/drivers/gpu/drm/tegra/vic.c b/drivers/gpu/drm/tegra/vic.c
-index 982ce37ecde1..baa00da780d0 100644
---- a/drivers/gpu/drm/tegra/vic.c
-+++ b/drivers/gpu/drm/tegra/vic.c
-@@ -36,7 +36,7 @@ struct vic {
- 	void __iomem *regs;
- 	struct tegra_drm_client client;
- 	struct host1x_channel *channel;
--	struct iommu_domain *domain;
-+	struct iommu_group *group;
- 	struct device *dev;
- 	struct clk *clk;
- 	struct reset_control *rst;
-@@ -183,21 +183,16 @@ static const struct falcon_ops vic_falcon_ops = {
- static int vic_init(struct host1x_client *client)
- {
- 	struct tegra_drm_client *drm = host1x_to_drm_client(client);
--	struct iommu_group *group = iommu_group_get(client->dev);
- 	struct drm_device *dev = dev_get_drvdata(client->parent);
- 	struct tegra_drm *tegra = dev->dev_private;
- 	struct vic *vic = to_vic(drm);
- 	int err;
- 
--	if (group && tegra->domain) {
--		err = iommu_attach_group(tegra->domain, group);
--		if (err < 0) {
--			dev_err(vic->dev, "failed to attach to domain: %d\n",
--				err);
--			return err;
--		}
--
--		vic->domain = tegra->domain;
-+	vic->group = host1x_client_iommu_attach(client, false);
-+	if (IS_ERR(vic->group)) {
-+		err = PTR_ERR(vic->group);
-+		dev_err(client->dev, "failed to attach to domain: %d\n", err);
-+		return err;
- 	}
- 
- 	vic->channel = host1x_channel_request(client->dev);
-@@ -223,8 +218,7 @@ static int vic_init(struct host1x_client *client)
- free_channel:
- 	host1x_channel_put(vic->channel);
- detach:
--	if (group && tegra->domain)
--		iommu_detach_group(tegra->domain, group);
-+	host1x_client_iommu_detach(client, vic->group, false);
- 
- 	return err;
- }
-@@ -232,7 +226,6 @@ static int vic_init(struct host1x_client *client)
- static int vic_exit(struct host1x_client *client)
- {
- 	struct tegra_drm_client *drm = host1x_to_drm_client(client);
--	struct iommu_group *group = iommu_group_get(client->dev);
- 	struct drm_device *dev = dev_get_drvdata(client->parent);
- 	struct tegra_drm *tegra = dev->dev_private;
- 	struct vic *vic = to_vic(drm);
-@@ -244,11 +237,7 @@ static int vic_exit(struct host1x_client *client)
- 
- 	host1x_syncpt_free(client->syncpts[0]);
- 	host1x_channel_put(vic->channel);
--
--	if (vic->domain) {
--		iommu_detach_group(vic->domain, group);
--		vic->domain = NULL;
--	}
-+	host1x_client_iommu_detach(client, vic->group, false);
- 
- 	return 0;
- }
--- 
-2.22.0
+This series patch is to fix several typos and fix one issue of twice
+completing ufs-bsg job in case of UPIU/DME command failed.
 
+Changed since v1:
+    - split v1 patch
+    - add fixes tag
+    - delete needless blank line
+
+Bean Huo (3):
+  scsi: ufs: fix typos in comment of ufshcd_uic_change_pwr_mode
+  scsi: ufs-bsg: fix typo in ufs_bsg_request
+  scsi: ufs-bsg: complete ufs-bsg job only if no error
+
+ drivers/scsi/ufs/ufs_bsg.c | 6 ++++--
+ drivers/scsi/ufs/ufshcd.c  | 4 ++--
+ 2 files changed, 6 insertions(+), 4 deletions(-)
+
+--=20
+2.7.4
