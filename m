@@ -2,23 +2,23 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 78CAC4FBCA
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2019 15:27:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E55434FBC9
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2019 15:27:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726849AbfFWN15 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 23 Jun 2019 09:27:57 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:33482 "EHLO
+        id S1726834AbfFWN1z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 23 Jun 2019 09:27:55 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:33495 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726681AbfFWN1s (ORCPT
+        with ESMTP id S1726766AbfFWN1s (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 23 Jun 2019 09:27:48 -0400
 Received: from localhost ([127.0.0.1] helo=nanos.tec.linutronix.de)
         by Galois.linutronix.de with esmtp (Exim 4.80)
         (envelope-from <tglx@linutronix.de>)
-        id 1hf2X3-0001kj-KY; Sun, 23 Jun 2019 15:27:45 +0200
-Message-Id: <20190623132435.545653922@linutronix.de>
+        id 1hf2X4-0001kr-6V; Sun, 23 Jun 2019 15:27:46 +0200
+Message-Id: <20190623132435.637420368@linutronix.de>
 User-Agent: quilt/0.65
-Date:   Sun, 23 Jun 2019 15:23:56 +0200
+Date:   Sun, 23 Jun 2019 15:23:57 +0200
 From:   Thomas Gleixner <tglx@linutronix.de>
 To:     LKML <linux-kernel@vger.kernel.org>
 Cc:     x86@kernel.org, Peter Zijlstra <peterz@infradead.org>,
@@ -29,7 +29,7 @@ Cc:     x86@kernel.org, Peter Zijlstra <peterz@infradead.org>,
         Stephane Eranian <eranian@google.com>,
         Ravi Shankar <ravi.v.shankar@intel.com>,
         Ingo Molnar <mingo@kernel.org>
-Subject: [patch 16/29] x86/hpet: Clean up comments
+Subject: [patch 17/29] x86/hpet: Coding style cleanup
 References: <20190623132340.463097504@linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,90 +43,134 @@ From: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 ---
- arch/x86/kernel/hpet.c |   41 +++++++++++++++++++++++------------------
- 1 file changed, 23 insertions(+), 18 deletions(-)
+ arch/x86/kernel/hpet.c |   43 ++++++++++++++++++++++++++-----------------
+ 1 file changed, 26 insertions(+), 17 deletions(-)
 
 --- a/arch/x86/kernel/hpet.c
 +++ b/arch/x86/kernel/hpet.c
-@@ -266,8 +266,8 @@ static void hpet_legacy_clockevent_regis
- 	hpet_enable_legacy_int();
+@@ -131,26 +131,33 @@ EXPORT_SYMBOL_GPL(is_hpet_enabled);
  
- 	/*
--	 * Start HPET with the boot cpu mask and make it
--	 * global after the IO_APIC has been initialized.
-+	 * Start HPET with the boot CPU's cpumask and make it global after
-+	 * the IO_APIC has been initialized.
- 	 */
- 	hpet_clockevent.cpumask = cpumask_of(boot_cpu_data.cpu_index);
- 	clockevents_config_and_register(&hpet_clockevent, hpet_freq,
-@@ -688,10 +688,10 @@ static inline void hpet_reserve_msi_time
- /*
-  * Reading the HPET counter is a very slow operation. If a large number of
-  * CPUs are trying to access the HPET counter simultaneously, it can cause
-- * massive delay and slow down system performance dramatically. This may
-+ * massive delays and slow down system performance dramatically. This may
-  * happen when HPET is the default clock source instead of TSC. For a
-  * really large system with hundreds of CPUs, the slowdown may be so
-- * severe that it may actually crash the system because of a NMI watchdog
-+ * severe, that it can actually crash the system because of a NMI watchdog
-  * soft lockup, for example.
-  *
-  * If multiple CPUs are trying to access the HPET counter at the same time,
-@@ -700,8 +700,7 @@ static inline void hpet_reserve_msi_time
-  *
-  * This special feature is only enabled on x86-64 systems. It is unlikely
-  * that 32-bit x86 systems will have enough CPUs to require this feature
-- * with its associated locking overhead. And we also need 64-bit atomic
-- * read.
-+ * with its associated locking overhead. We also need 64-bit atomic read.
-  *
-  * The lock and the HPET value are stored together and can be read in a
-  * single atomic 64-bit read. It is explicitly assumed that arch_spinlock_t
-@@ -1020,19 +1019,25 @@ void hpet_disable(void)
- 
- #ifdef CONFIG_HPET_EMULATE_RTC
- 
--/* HPET in LegacyReplacement Mode eats up RTC interrupt line. When, HPET
-+/*
-+ * HPET in LegacyReplacement mode eats up the RTC interrupt line. When HPET
-  * is enabled, we support RTC interrupt functionality in software.
-+ *
-  * RTC has 3 kinds of interrupts:
-- * 1) Update Interrupt - generate an interrupt, every sec, when RTC clock
-- *    is updated
-- * 2) Alarm Interrupt - generate an interrupt at a specific time of day
-- * 3) Periodic Interrupt - generate periodic interrupt, with frequencies
-- *    2Hz-8192Hz (2Hz-64Hz for non-root user) (all freqs in powers of 2)
-- * (1) and (2) above are implemented using polling at a frequency of
-- * 64 Hz. The exact frequency is a tradeoff between accuracy and interrupt
-- * overhead. (DEFAULT_RTC_INT_FREQ)
-- * For (3), we use interrupts at 64Hz or user specified periodic
-- * frequency, whichever is higher.
-+ *
-+ *  1) Update Interrupt - generate an interrupt, every second, when the
-+ *     RTC clock is updated
-+ *  2) Alarm Interrupt - generate an interrupt at a specific time of day
-+ *  3) Periodic Interrupt - generate periodic interrupt, with frequencies
-+ *     2Hz-8192Hz (2Hz-64Hz for non-root user) (all frequencies in powers of 2)
-+ *
-+ * (1) and (2) above are implemented using polling at a frequency of 64 Hz:
-+ * DEFAULT_RTC_INT_FREQ.
-+ *
-+ * The exact frequency is a tradeoff between accuracy and interrupt overhead.
-+ *
-+ * For (3), we use interrupts at 64 Hz, or the user specified periodic frequency,
-+ * if it's higher.
-  */
- #include <linux/mc146818rtc.h>
- #include <linux/rtc.h>
-@@ -1053,7 +1058,7 @@ static unsigned long hpet_pie_limit;
- static rtc_irq_handler irq_handler;
- 
- /*
-- * Check that the HPET counter c1 is ahead of the c2
-+ * Check that the HPET counter c1 is ahead of c2
-  */
- static inline int hpet_cnt_ahead(u32 c1, u32 c2)
+ static void _hpet_print_config(const char *function, int line)
  {
+-	u32 i, timers, l, h;
++	u32 i, id, period, cfg, status, channels, l, h;
++
+ 	pr_info("%s(%d):\n", function, line);
+-	l = hpet_readl(HPET_ID);
+-	h = hpet_readl(HPET_PERIOD);
+-	timers = ((l & HPET_ID_NUMBER) >> HPET_ID_NUMBER_SHIFT) + 1;
+-	pr_info("ID: 0x%x, PERIOD: 0x%x\n", l, h);
+-	l = hpet_readl(HPET_CFG);
+-	h = hpet_readl(HPET_STATUS);
+-	pr_info("CFG: 0x%x, STATUS: 0x%x\n", l, h);
++
++	id = hpet_readl(HPET_ID);
++	period = hpet_readl(HPET_PERIOD);
++	pr_info("ID: 0x%x, PERIOD: 0x%x\n", id, period);
++
++	cfg = hpet_readl(HPET_CFG);
++	status = hpet_readl(HPET_STATUS);
++	pr_info("CFG: 0x%x, STATUS: 0x%x\n", cfg, status);
++
+ 	l = hpet_readl(HPET_COUNTER);
+ 	h = hpet_readl(HPET_COUNTER+4);
+ 	pr_info("COUNTER_l: 0x%x, COUNTER_h: 0x%x\n", l, h);
+ 
+-	for (i = 0; i < timers; i++) {
++	channels = ((id & HPET_ID_NUMBER) >> HPET_ID_NUMBER_SHIFT) + 1;
++
++	for (i = 0; i < channels; i++) {
+ 		l = hpet_readl(HPET_Tn_CFG(i));
+ 		h = hpet_readl(HPET_Tn_CFG(i)+4);
+ 		pr_info("T%d: CFG_l: 0x%x, CFG_h: 0x%x\n", i, l, h);
++
+ 		l = hpet_readl(HPET_Tn_CMP(i));
+ 		h = hpet_readl(HPET_Tn_CMP(i)+4);
+ 		pr_info("T%d: CMP_l: 0x%x, CMP_h: 0x%x\n", i, l, h);
++
+ 		l = hpet_readl(HPET_Tn_ROUTE(i));
+ 		h = hpet_readl(HPET_Tn_ROUTE(i)+4);
+ 		pr_info("T%d ROUTE_l: 0x%x, ROUTE_h: 0x%x\n", i, l, h);
+@@ -216,6 +223,7 @@ static void hpet_reserve_platform_timers
+ static void hpet_stop_counter(void)
+ {
+ 	u32 cfg = hpet_readl(HPET_CFG);
++
+ 	cfg &= ~HPET_CFG_ENABLE;
+ 	hpet_writel(cfg, HPET_CFG);
+ }
+@@ -229,6 +237,7 @@ static void hpet_reset_counter(void)
+ static void hpet_start_counter(void)
+ {
+ 	unsigned int cfg = hpet_readl(HPET_CFG);
++
+ 	cfg |= HPET_CFG_ENABLE;
+ 	hpet_writel(cfg, HPET_CFG);
+ }
+@@ -393,7 +402,7 @@ static int hpet_legacy_resume(struct clo
+ }
+ 
+ static int hpet_legacy_next_event(unsigned long delta,
+-			struct clock_event_device *evt)
++				  struct clock_event_device *evt)
+ {
+ 	return hpet_next_event(delta, 0);
+ }
+@@ -1142,6 +1151,7 @@ EXPORT_SYMBOL_GPL(hpet_rtc_timer_init);
+ static void hpet_disable_rtc_channel(void)
+ {
+ 	u32 cfg = hpet_readl(HPET_T1_CFG);
++
+ 	cfg &= ~HPET_TN_ENABLE;
+ 	hpet_writel(cfg, HPET_T1_CFG);
+ }
+@@ -1183,8 +1193,7 @@ int hpet_set_rtc_irq_bit(unsigned long b
+ }
+ EXPORT_SYMBOL_GPL(hpet_set_rtc_irq_bit);
+ 
+-int hpet_set_alarm_time(unsigned char hrs, unsigned char min,
+-			unsigned char sec)
++int hpet_set_alarm_time(unsigned char hrs, unsigned char min, unsigned char sec)
+ {
+ 	if (!is_hpet_enabled())
+ 		return 0;
+@@ -1204,15 +1213,16 @@ int hpet_set_periodic_freq(unsigned long
+ 	if (!is_hpet_enabled())
+ 		return 0;
+ 
+-	if (freq <= DEFAULT_RTC_INT_FREQ)
++	if (freq <= DEFAULT_RTC_INT_FREQ) {
+ 		hpet_pie_limit = DEFAULT_RTC_INT_FREQ / freq;
+-	else {
++	} else {
+ 		clc = (uint64_t) hpet_clockevent.mult * NSEC_PER_SEC;
+ 		do_div(clc, freq);
+ 		clc >>= hpet_clockevent.shift;
+ 		hpet_pie_delta = clc;
+ 		hpet_pie_limit = 0;
+ 	}
++
+ 	return 1;
+ }
+ EXPORT_SYMBOL_GPL(hpet_set_periodic_freq);
+@@ -1272,8 +1282,7 @@ irqreturn_t hpet_rtc_interrupt(int irq,
+ 		hpet_prev_update_sec = curr_time.tm_sec;
+ 	}
+ 
+-	if (hpet_rtc_flags & RTC_PIE &&
+-	    ++hpet_pie_count >= hpet_pie_limit) {
++	if (hpet_rtc_flags & RTC_PIE && ++hpet_pie_count >= hpet_pie_limit) {
+ 		rtc_int_flag |= RTC_PF;
+ 		hpet_pie_count = 0;
+ 	}
+@@ -1282,7 +1291,7 @@ irqreturn_t hpet_rtc_interrupt(int irq,
+ 	    (curr_time.tm_sec == hpet_alarm_time.tm_sec) &&
+ 	    (curr_time.tm_min == hpet_alarm_time.tm_min) &&
+ 	    (curr_time.tm_hour == hpet_alarm_time.tm_hour))
+-			rtc_int_flag |= RTC_AF;
++		rtc_int_flag |= RTC_AF;
+ 
+ 	if (rtc_int_flag) {
+ 		rtc_int_flag |= (RTC_IRQF | (RTC_NUM_INTS << 8));
 
 
