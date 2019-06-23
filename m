@@ -2,244 +2,142 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7AFEB4FE6C
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 03:41:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 618C64FF3C
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 04:21:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726797AbfFXBlY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 23 Jun 2019 21:41:24 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:51211 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726566AbfFXBk6 (ORCPT
+        id S1727010AbfFXCVc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 23 Jun 2019 22:21:32 -0400
+Received: from mailout4.samsung.com ([203.254.224.34]:46304 "EHLO
+        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726700AbfFXCVc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Jun 2019 21:40:58 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x5NNu8Q22860229
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Sun, 23 Jun 2019 16:56:08 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x5NNu8Q22860229
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019061801; t=1561334169;
-        bh=C0loTj/gJM3E6LeqWTO4cZ658sIJrg5v1gEhQqEsWQI=;
-        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
-        b=TUKsgWp49LtQCbE/1dui0MQq+iOocWjyJTWVBsXgJisRwxGn7zE9Nnn6qFOAXyi5k
-         rbiNh+dSnwDWgspvBOv7i6uYZztGKnOzUyi1ys5DKEvLvb+68otF7kgbij+HVl6zHP
-         CuOWya10OTw6kApxD7dwPk0WX5vtNt3oTgMZ+iBkHfIRCgHHpNwjl9PDSMfQZE2z7K
-         wiPAwVfONIfCffYw1coA2sE2cajlXlOFEV4K9AK2D9ik6w1ylNlO9epzyzHyVqXrFb
-         w0znDjufvVsdrt6tq/JHIY+E/KCW2e5t4wh5urstmmD9vlrqb3pi10qG+CbrUpgg7o
-         alUonE3XYdcRA==
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x5NNu7BY2860226;
-        Sun, 23 Jun 2019 16:56:07 -0700
-Date:   Sun, 23 Jun 2019 16:56:07 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Vincenzo Frascino <tipbot@zytor.com>
-Message-ID: <tip-f66501dc53e72079045a6a17e023b41316ede220@git.kernel.org>
-Cc:     pcc@google.com, linux-kernel@vger.kernel.org, mingo@kernel.org,
-        0x7f454c46@gmail.com, salyzyn@android.com, andre.przywara@arm.com,
-        vincenzo.frascino@arm.com, shuah@kernel.org, linux@armlinux.org.uk,
-        linux@rasmusvillemoes.dk, paul.burton@mips.com, tglx@linutronix.de,
-        catalin.marinas@arm.com, ralf@linux-mips.org, hpa@zytor.com,
-        daniel.lezcano@linaro.org, sthotton@marvell.com, arnd@arndb.de,
-        will.deacon@arm.com, huw@codeweavers.com
-Reply-To: hpa@zytor.com, catalin.marinas@arm.com, ralf@linux-mips.org,
-          arnd@arndb.de, sthotton@marvell.com, daniel.lezcano@linaro.org,
-          will.deacon@arm.com, huw@codeweavers.com, paul.burton@mips.com,
-          tglx@linutronix.de, salyzyn@android.com, andre.przywara@arm.com,
-          shuah@kernel.org, vincenzo.frascino@arm.com,
-          linux@armlinux.org.uk, linux@rasmusvillemoes.dk,
-          mingo@kernel.org, pcc@google.com, linux-kernel@vger.kernel.org,
-          0x7f454c46@gmail.com
-In-Reply-To: <20190621095252.32307-24-vincenzo.frascino@arm.com>
-References: <20190621095252.32307-24-vincenzo.frascino@arm.com>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:timers/vdso] x86/vdso: Add clock_getres() entry point
-Git-Commit-ID: f66501dc53e72079045a6a17e023b41316ede220
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Sun, 23 Jun 2019 22:21:32 -0400
+Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
+        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20190623235340epoutp040b6089afee5343ed78aae72ec7e5d614~q_QToS9f_0379103791epoutp04e
+        for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2019 23:53:40 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20190623235340epoutp040b6089afee5343ed78aae72ec7e5d614~q_QToS9f_0379103791epoutp04e
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1561334020;
+        bh=KFlrYEjo0jzFT6JMRF6jRvxqRSuR+ds4ksWexr+YB2o=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=GOvz/2ttBp4Eldyzsn53oFeHj4VXTa3etxCWoGOe1bQBIJNOo52vzY9yf8ydePLX4
+         t2TTI7Qsd/AilM3/AUe1xlywVvg0fglc8Wrh610C6riMc4Akw/Qq6msZZEMpC7S4P4
+         1oQViV0uUAF7cz/vdLsNFV1BrPkr2rlqYMqcsKYo=
+Received: from epsmges1p4.samsung.com (unknown [182.195.40.155]) by
+        epcas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20190623235335epcas1p16165e77ecc55e20326e25c95a6d4191b~q_QPD9YCp0120301203epcas1p1W;
+        Sun, 23 Jun 2019 23:53:35 +0000 (GMT)
+Received: from epcas1p2.samsung.com ( [182.195.41.46]) by
+        epsmges1p4.samsung.com (Symantec Messaging Gateway) with SMTP id
+        F6.AF.04257.FF0101D5; Mon, 24 Jun 2019 08:53:35 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
+        20190623235334epcas1p31f68310b57d9c565b60fa3672ba2e53c~q_QOKQRE32894228942epcas1p31;
+        Sun, 23 Jun 2019 23:53:34 +0000 (GMT)
+Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20190623235334epsmtrp1bd8b149a93eb5a840b6fee088fd64d1f~q_QOJbSWr2617626176epsmtrp1f;
+        Sun, 23 Jun 2019 23:53:34 +0000 (GMT)
+X-AuditID: b6c32a38-5cbff700000010a1-f0-5d1010ff61a6
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        5D.DF.03662.EF0101D5; Mon, 24 Jun 2019 08:53:34 +0900 (KST)
+Received: from [10.113.221.102] (unknown [10.113.221.102]) by
+        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20190623235334epsmtip268db8037d684736d45b287830296547e~q_QN8kWVF2077720777epsmtip25;
+        Sun, 23 Jun 2019 23:53:34 +0000 (GMT)
+Subject: Re: [PATCH v2 0/2] extcon: Add fsa9480 extcon driver
+To:     =?UTF-8?Q?Pawe=c5=82_Chmiel?= <pawel.mikolaj.chmiel@gmail.com>,
+        myungjoo.ham@samsung.com
+Cc:     robh+dt@kernel.org, mark.rutland@arm.com,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+From:   Chanwoo Choi <cw00.choi@samsung.com>
+Organization: Samsung Electronics
+Message-ID: <871519f4-b653-e247-0afd-f7b1f29af8ae@samsung.com>
+Date:   Mon, 24 Jun 2019 08:56:09 +0900
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+        Thunderbird/60.7.1
 MIME-Version: 1.0
+In-Reply-To: <20190621111352.22976-1-pawel.mikolaj.chmiel@gmail.com>
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
-X-Spam-Status: No, score=2.3 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        DATE_IN_FUTURE_03_06,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,
-        DKIM_VALID_EF,FREEMAIL_FORGED_REPLYTO,FREEMAIL_REPLYTO_END_DIGIT
-        autolearn=no autolearn_force=no version=3.4.2
-X-Spam-Level: **
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprPJsWRmVeSWpSXmKPExsWy7bCmnu5/AYFYg6f9Ihbzj5xjtbi8aw6b
+        xdLrF5ksbjeuYLP4cbyP2aJ17xF2BzaPNfPWMHrsnHWX3WPTqk42j74tqxg9Pm+SC2CNyrbJ
+        SE1MSS1SSM1Lzk/JzEu3VfIOjneONzUzMNQ1tLQwV1LIS8xNtVVy8QnQdcvMAbpASaEsMacU
+        KBSQWFyspG9nU5RfWpKqkJFfXGKrlFqQklNgWaBXnJhbXJqXrpecn2tlaGBgZApUmJCdcX//
+        V9aChVwVh3oesjQwPmLvYuTkkBAwkdi9bjJTFyMXh5DADkaJ/k+7WCGcT4wSZ3f+YIdwvjFK
+        /D8xhxGm5dXkecwQib2MEhvnX2UDSQgJvGeUaJye3MXIwSEsYCvxYDI/SFhEIE5iXttkFhCb
+        WSBDYsWV92Cr2QS0JPa/uAHWyi+gKHH1x2Ow+bwCdhKXNz9nBbFZBFQl3p57zQRiiwpESFze
+        sguqRlDi5MwnYDM5BVwkXm56xAoxX1zi1pP5TBC2vETz1tlgd0oIPGeTOH58HdQDLhLr38xg
+        grCFJV4d3wINCymJl/1tUHa1xMqTR9ggmjsYJbbsv8AKkTCW2L8UFGAcQBs0Jdbv0ocIK0rs
+        /D2XEWIxn8S7rz2sICUSArwSHW1CECXKEpcf3IVaKymxuL2TbQKj0iwk78xC8sIsJC/MQli2
+        gJFlFaNYakFxbnpqsWGBCXJkb2IEJ04tix2Me875HGIU4GBU4uEV2MAfK8SaWFZcmXuIUYKD
+        WUmElyeHJ1aINyWxsiq1KD++qDQntfgQoykwtCcyS4km5wOTel5JvKGpkbGxsYWJoZmpoaGS
+        OG88980YIYH0xJLU7NTUgtQimD4mDk6pBsYZvUXJgTcvdPsaeHZ+c5T9d/DLDGentodcmTOl
+        CkPOSH1wtvn8Tr3pboOWE3vwhBb7L68KPziVWM5Sz7U6/30O2/Pw8Hf2R7ZxMj/zcVjtXyfW
+        qbg/f+aOH42fTKd9n6r2RvRto10r4yLhp4+XaoV+uFyx5v+2g7aXuN/U65z5psIQyvNK/IUS
+        S3FGoqEWc1FxIgCpBcvisgMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupikeLIzCtJLcpLzFFi42LZdlhJXvefgECswYdDQhbzj5xjtbi8aw6b
+        xdLrF5ksbjeuYLP4cbyP2aJ17xF2BzaPNfPWMHrsnHWX3WPTqk42j74tqxg9Pm+SC2CN4rJJ
+        Sc3JLEst0rdL4Mq4v/8ra8FCropDPQ9ZGhgfsXcxcnJICJhIvJo8j7mLkYtDSGA3o8Tpb1vZ
+        IBKSEtMuHgVKcADZwhKHDxdD1LxllPi99wgjSFxYwFbiwWR+kHIRgTiJiVv2s4LYzAIZEju+
+        LWGEqJ/OKNFz8i5Ygk1AS2L/ixtg8/kFFCWu/njMCGLzCthJXN78HKyGRUBV4u2510wgtqhA
+        hERf22w2iBpBiZMzn7CA2JwCLhIvNz2CWqYu8WfeJWYIW1zi1pP5TBC2vETz1tnMExiFZyFp
+        n4WkZRaSlllIWhYwsqxilEwtKM5Nzy02LDDKSy3XK07MLS7NS9dLzs/dxAiOIS2tHYwnTsQf
+        YhTgYFTi4RXYwB8rxJpYVlyZe4hRgoNZSYSXJ4cnVog3JbGyKrUoP76oNCe1+BCjNAeLkjiv
+        fP6xSCGB9MSS1OzU1ILUIpgsEwenVANjbVtZ1Nsq43sm6tlbUrbpnXxbXrFxUmXf2iUOZ167
+        6CeeM2De0OPRfbU/Nqkr/09tSf9HwboNmQFrmB+fvHR9faCm2PYUpqeT5ZmiGjR15JaU2MgW
+        TsucNtXyw+vQdRnZNwR5i8z51Bwt/0v2fbt/rk1RVX/JBSl/vansfL7PLm43CzfZvV+JpTgj
+        0VCLuag4EQDaHi34nQIAAA==
+X-CMS-MailID: 20190623235334epcas1p31f68310b57d9c565b60fa3672ba2e53c
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: SVC_REQ_APPROVE
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20190621111402epcas4p2f65fb1b6d3e83bd69bd129b27c90d295
+References: <CGME20190621111402epcas4p2f65fb1b6d3e83bd69bd129b27c90d295@epcas4p2.samsung.com>
+        <20190621111352.22976-1-pawel.mikolaj.chmiel@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  f66501dc53e72079045a6a17e023b41316ede220
-Gitweb:     https://git.kernel.org/tip/f66501dc53e72079045a6a17e023b41316ede220
-Author:     Vincenzo Frascino <vincenzo.frascino@arm.com>
-AuthorDate: Fri, 21 Jun 2019 10:52:50 +0100
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Sat, 22 Jun 2019 21:21:10 +0200
+On 19. 6. 21. 오후 8:13, Paweł Chmiel wrote:
+> This small patchset adds support for Fairchild Semiconductor FSA9480
+> microUSB switch.
+> 
+> It has been tested on Samsung Galaxy S and Samsung Fascinate 4G,
+> but it can be found also on other Samsung Aries (s5pv210) based devices.
+> 
+> Tomasz Figa (2):
+>   dt-bindings: extcon: Add support for fsa9480 switch
+>   extcon: Add fsa9480 extcon driver
+> 
+> Changes from v1:
+>   - Added newline at end of dt-bindings file
+>   - Removed interrupt-parent from dt-bindings file
+>   - Added Acked-by to dt-bindings patch
+>   - Remove license sentences from driver
+>   - Remove custom sysfs entries and manual switch code
+>   - Switch to using regmap api
+> 
+>  .../bindings/extcon/extcon-fsa9480.txt        |  19 +
+>  drivers/extcon/Kconfig                        |  12 +
+>  drivers/extcon/Makefile                       |   1 +
+>  drivers/extcon/extcon-fsa9480.c               | 395 ++++++++++++++++++
+>  4 files changed, 427 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/extcon/extcon-fsa9480.txt
+>  create mode 100644 drivers/extcon/extcon-fsa9480.c
+> 
 
-x86/vdso: Add clock_getres() entry point
+Applied this series to extcon-next
+after checked the build warning on extcon-testing branch.
 
-The generic vDSO library provides an implementation of clock_getres()
-that can be leveraged by each architecture.
+Thanks.
 
-Add the clock_getres() VDSO entry point on x86.
-
-[ tglx: Massaged changelog and cleaned up the function signature formatting ]
-
-Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-arch@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-mips@vger.kernel.org
-Cc: linux-kselftest@vger.kernel.org
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Will Deacon <will.deacon@arm.com>
-Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: Russell King <linux@armlinux.org.uk>
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: Paul Burton <paul.burton@mips.com>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Mark Salyzyn <salyzyn@android.com>
-Cc: Peter Collingbourne <pcc@google.com>
-Cc: Shuah Khan <shuah@kernel.org>
-Cc: Dmitry Safonov <0x7f454c46@gmail.com>
-Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Cc: Huw Davies <huw@codeweavers.com>
-Cc: Shijith Thotton <sthotton@marvell.com>
-Cc: Andre Przywara <andre.przywara@arm.com>
-Link: https://lkml.kernel.org/r/20190621095252.32307-24-vincenzo.frascino@arm.com
-
----
- arch/x86/entry/vdso/vclock_gettime.c     | 17 +++++++++++++++++
- arch/x86/entry/vdso/vdso.lds.S           |  2 ++
- arch/x86/entry/vdso/vdso32/vdso32.lds.S  |  1 +
- arch/x86/include/asm/vdso/gettimeofday.h | 31 +++++++++++++++++++++++++++++++
- 4 files changed, 51 insertions(+)
-
-diff --git a/arch/x86/entry/vdso/vclock_gettime.c b/arch/x86/entry/vdso/vclock_gettime.c
-index f01a3f0787ca..1a648b509d46 100644
---- a/arch/x86/entry/vdso/vclock_gettime.c
-+++ b/arch/x86/entry/vdso/vclock_gettime.c
-@@ -36,6 +36,7 @@ time_t time(time_t *t)	__attribute__((weak, alias("__vdso_time")));
- #if defined(CONFIG_X86_64) && !defined(BUILD_VDSO32_64)
- /* both 64-bit and x32 use these */
- extern int __vdso_clock_gettime(clockid_t clock, struct __kernel_timespec *ts);
-+extern int __vdso_clock_getres(clockid_t clock, struct __kernel_timespec *res);
- 
- int __vdso_clock_gettime(clockid_t clock, struct __kernel_timespec *ts)
- {
-@@ -45,9 +46,18 @@ int __vdso_clock_gettime(clockid_t clock, struct __kernel_timespec *ts)
- int clock_gettime(clockid_t, struct __kernel_timespec *)
- 	__attribute__((weak, alias("__vdso_clock_gettime")));
- 
-+int __vdso_clock_getres(clockid_t clock,
-+			struct __kernel_timespec *res)
-+{
-+	return __cvdso_clock_getres(clock, res);
-+}
-+int clock_getres(clockid_t, struct __kernel_timespec *)
-+	__attribute__((weak, alias("__vdso_clock_getres")));
-+
- #else
- /* i386 only */
- extern int __vdso_clock_gettime(clockid_t clock, struct old_timespec32 *ts);
-+extern int __vdso_clock_getres(clockid_t clock, struct old_timespec32 *res);
- 
- int __vdso_clock_gettime(clockid_t clock, struct old_timespec32 *ts)
- {
-@@ -57,4 +67,11 @@ int __vdso_clock_gettime(clockid_t clock, struct old_timespec32 *ts)
- int clock_gettime(clockid_t, struct old_timespec32 *)
- 	__attribute__((weak, alias("__vdso_clock_gettime")));
- 
-+int __vdso_clock_getres(clockid_t clock, struct old_timespec32 *res)
-+{
-+	return __cvdso_clock_getres_time32(clock, res);
-+}
-+
-+int clock_getres(clockid_t, struct old_timespec32 *)
-+	__attribute__((weak, alias("__vdso_clock_getres")));
- #endif
-diff --git a/arch/x86/entry/vdso/vdso.lds.S b/arch/x86/entry/vdso/vdso.lds.S
-index d3a2dce4cfa9..36b644e16272 100644
---- a/arch/x86/entry/vdso/vdso.lds.S
-+++ b/arch/x86/entry/vdso/vdso.lds.S
-@@ -25,6 +25,8 @@ VERSION {
- 		__vdso_getcpu;
- 		time;
- 		__vdso_time;
-+		clock_getres;
-+		__vdso_clock_getres;
- 	local: *;
- 	};
- }
-diff --git a/arch/x86/entry/vdso/vdso32/vdso32.lds.S b/arch/x86/entry/vdso/vdso32/vdso32.lds.S
-index 422764a81d32..991b26cc855b 100644
---- a/arch/x86/entry/vdso/vdso32/vdso32.lds.S
-+++ b/arch/x86/entry/vdso/vdso32/vdso32.lds.S
-@@ -26,6 +26,7 @@ VERSION
- 		__vdso_clock_gettime;
- 		__vdso_gettimeofday;
- 		__vdso_time;
-+		__vdso_clock_getres;
- 	};
- 
- 	LINUX_2.5 {
-diff --git a/arch/x86/include/asm/vdso/gettimeofday.h b/arch/x86/include/asm/vdso/gettimeofday.h
-index 0e2650fc191b..f92752d6cbcf 100644
---- a/arch/x86/include/asm/vdso/gettimeofday.h
-+++ b/arch/x86/include/asm/vdso/gettimeofday.h
-@@ -24,6 +24,8 @@
- 
- #define VDSO_HAS_TIME 1
- 
-+#define VDSO_HAS_CLOCK_GETRES 1
-+
- #ifdef CONFIG_PARAVIRT_CLOCK
- extern u8 pvclock_page[PAGE_SIZE]
- 	__attribute__((visibility("hidden")));
-@@ -60,6 +62,18 @@ long gettimeofday_fallback(struct __kernel_old_timeval *_tv,
- 	return ret;
- }
- 
-+static __always_inline
-+long clock_getres_fallback(clockid_t _clkid, struct __kernel_timespec *_ts)
-+{
-+	long ret;
-+
-+	asm ("syscall" : "=a" (ret), "=m" (*_ts) :
-+	     "0" (__NR_clock_getres), "D" (_clkid), "S" (_ts) :
-+	     "rcx", "r11");
-+
-+	return ret;
-+}
-+
- #else
- 
- static __always_inline
-@@ -97,6 +111,23 @@ long gettimeofday_fallback(struct __kernel_old_timeval *_tv,
- 	return ret;
- }
- 
-+static __always_inline long
-+clock_getres_fallback(clockid_t _clkid, struct __kernel_timespec *_ts)
-+{
-+	long ret;
-+
-+	asm (
-+		"mov %%ebx, %%edx \n"
-+		"mov %[clock], %%ebx \n"
-+		"call __kernel_vsyscall \n"
-+		"mov %%edx, %%ebx \n"
-+		: "=a" (ret), "=m" (*_ts)
-+		: "0" (__NR_clock_getres_time64), [clock] "g" (_clkid), "c" (_ts)
-+		: "edx");
-+
-+	return ret;
-+}
-+
- #endif
- 
- #ifdef CONFIG_PARAVIRT_CLOCK
+-- 
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
