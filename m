@@ -2,78 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CD13F4FF92
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 05:01:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 808A54FF69
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 04:32:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727302AbfFXDBo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 23 Jun 2019 23:01:44 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:34569 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726579AbfFXDBn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Jun 2019 23:01:43 -0400
-Received: from p5b06daab.dip0.t-ipconnect.de ([91.6.218.171] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1hfBFh-0007WN-Tm; Mon, 24 Jun 2019 00:46:26 +0200
-Date:   Mon, 24 Jun 2019 00:46:24 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Fenghua Yu <fenghua.yu@intel.com>
-cc:     Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        H Peter Anvin <hpa@zytor.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ashok Raj <ashok.raj@intel.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Ravi V Shankar <ravi.v.shankar@intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>, x86 <x86@kernel.org>
-Subject: Re: [PATCH v5 5/5] x86/umwait: Document umwait control sysfs
- interfaces
-In-Reply-To: <alpine.DEB.2.21.1906232305360.32342@nanos.tec.linutronix.de>
-Message-ID: <alpine.DEB.2.21.1906240043310.32342@nanos.tec.linutronix.de>
-References: <1560994438-235698-1-git-send-email-fenghua.yu@intel.com> <1560994438-235698-6-git-send-email-fenghua.yu@intel.com> <alpine.DEB.2.21.1906232305360.32342@nanos.tec.linutronix.de>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        id S1727187AbfFXCc0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 23 Jun 2019 22:32:26 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:48711 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726321AbfFXCc0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 23 Jun 2019 22:32:26 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45X76d2fsSz9sND;
+        Mon, 24 Jun 2019 08:55:05 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1561330508;
+        bh=CfQNGmyRCYuEzDMKXQ9cnOE6ZWSd1jrKEmYS1i0ftMY=;
+        h=Date:From:To:Cc:Subject:From;
+        b=OPPnWLest3qGwfakF/bUj22KshAxAKvJEZ0TvgYF5uvuSBZGz/y6stgy+9T9dbQbR
+         Q6TxIhic6rQNA3YkEEUzDlY9HLwZoY7in3lpLZXOHuZ4ou63g1TVccUu5L6ATd6iup
+         n+4FXtfPBWEWphTMfMcZGy9/GKOoEkdpPfauvfsknPMGWwRkggdulx3z5UxoFXAPMj
+         u637IiT4Zw+C/33wHl4r1qLk53b3xh0cPHvl5BNzGZlOiifsAUyhaBkWqqi9CTzODp
+         +SPxnLIjZs+nAFzHIj0jTqkFq+0MkcjMnnErRverJJdvM6c5GljDY0BrVrg/gWhV8w
+         W09yR2nk+4Ykw==
+Date:   Mon, 24 Jun 2019 08:54:58 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
+        ARM <linux-arm-kernel@lists.infradead.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linus Walleij <linus.walleij@linaro.org>
+Subject: linux-next: manual merge of the arm-soc tree with Linus' tree
+Message-ID: <20190624085444.7b4a01a5@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/TvkKorMsiA0+QoO2/asEuNP"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 24 Jun 2019, Thomas Gleixner wrote:
-> On Wed, 19 Jun 2019, Fenghua Yu wrote:
-> > +Description:	Umwait control
-> > +
-> > +		enable_c02: Read/write interface to control umwait C0.2 state
-> > +			Read returns C0.2 state status:
-> > +				0: C0.2 is disabled
-> > +				1: C0.2 is enabled
-> > +
-> > +			Write 'Yy1' or [oO][nN] for on to enable C0.2 state.
-> 
->   Write 'Yy1' ? You meant [Yy1] I assume.
-> 
-> > +			Write 'Nn0' or [oO][fF] for off to disable C0.2 state.
->   
-> What about avoiding all that unreadable confusion?
-> 
->                         Write 'y' or '1'  or 'on' to enable C0.2 state.
->                         Write 'n' or '0'  or 'of' to disable C0.2 state.
-> 
->                         The interface is case insensitive.
+--Sig_/TvkKorMsiA0+QoO2/asEuNP
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Don't try to fixup all that in a hurry.
+Hi all,
 
-I've already done most of it while trying to ready if for merging. If you
-see the tip bot mails coming in, make sure to double check my modifications
-and yell if I screwed up on the way.
+Today's linux-next merge of the arm-soc tree got a conflict in:
 
-Thanks,
+  arch/arm/include/debug/netx.S
 
-	tglx
+between commit:
 
+  d2912cb15bdd ("treewide: Replace GPLv2 boilerplate/reference with SPDX - =
+rule 500")
 
+from Linus' tree and commit:
+
+  ceb02dcf676f ("ARM: delete netx machine")
+
+from the arm-soc tree.
+
+I fixed it up (I just removed the file) and can carry the fix as
+necessary. This is now fixed as far as linux-next is concerned, but any
+non trivial conflicts should be mentioned to your upstream maintainer
+when your tree is submitted for merging.  You may also want to consider
+cooperating with the maintainer of the conflicting tree to minimise any
+particularly complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/TvkKorMsiA0+QoO2/asEuNP
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0QA0IACgkQAVBC80lX
+0GwUQwf/cvz09njduHbXOnvqgqpXjuwRlTlJVpRWy9/ThE0Q4jDgn7nlVqGXWJyV
+sHC6yPf5D3d4VWbcXhEt6rj1Nu5FiSUvPfS+4FGHpvCXQ76sDZIr2nMms6Y9kJ31
+D7wyipX+LWmd7LsTLGq06X0LMZbVEg5g8SjK/bvc4nzhM8yLhMazzFHh1fAYXG6n
+Vv7/KyDmUDosCC+Pas2adNx0XwyU5vWjAC9znJsMrZW/057g13iohKR67nImJKpw
+RB3SU6LPR1dpWHCtVbnlJjRZyXC3RccdkMDntccB+E8Sx3c/czVyCbm/nUmd4Uka
+zYJOk+AQkp3YtXBhcxQ1mjoy/1GMnA==
+=vLqH
+-----END PGP SIGNATURE-----
+
+--Sig_/TvkKorMsiA0+QoO2/asEuNP--
