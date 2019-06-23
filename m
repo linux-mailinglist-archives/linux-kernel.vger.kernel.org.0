@@ -2,23 +2,23 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 33DD84FBD5
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2019 15:28:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C51BF4FBCC
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2019 15:28:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726985AbfFWN2k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 23 Jun 2019 09:28:40 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:33567 "EHLO
+        id S1726937AbfFWN2M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 23 Jun 2019 09:28:12 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:33577 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726813AbfFWN1y (ORCPT
+        with ESMTP id S1726817AbfFWN1z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Jun 2019 09:27:54 -0400
+        Sun, 23 Jun 2019 09:27:55 -0400
 Received: from localhost ([127.0.0.1] helo=nanos.tec.linutronix.de)
         by Galois.linutronix.de with esmtp (Exim 4.80)
         (envelope-from <tglx@linutronix.de>)
-        id 1hf2X9-0001ml-OR; Sun, 23 Jun 2019 15:27:51 +0200
-Message-Id: <20190623132436.368141247@linutronix.de>
+        id 1hf2XA-0001mx-LA; Sun, 23 Jun 2019 15:27:52 +0200
+Message-Id: <20190623132436.461437795@linutronix.de>
 User-Agent: quilt/0.65
-Date:   Sun, 23 Jun 2019 15:24:05 +0200
+Date:   Sun, 23 Jun 2019 15:24:06 +0200
 From:   Thomas Gleixner <tglx@linutronix.de>
 To:     LKML <linux-kernel@vger.kernel.org>
 Cc:     x86@kernel.org, Peter Zijlstra <peterz@infradead.org>,
@@ -28,7 +28,7 @@ Cc:     x86@kernel.org, Peter Zijlstra <peterz@infradead.org>,
         Suravee Suthikulpanit <Suravee.Suthikulpanit@amd.com>,
         Stephane Eranian <eranian@google.com>,
         Ravi Shankar <ravi.v.shankar@intel.com>
-Subject: [patch 25/29] x86/hpet: Wrap legacy clockevent in hpet_channel
+Subject: [patch 26/29] x86/hpet: Consolidate clockevent functions
 References: <20190623132340.463097504@linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -37,125 +37,197 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For HPET channel 0 there exist two clockevent structures right now:
-  - the static hpet_clockevent
-  - the clockevent in channel 0 storage
-
-The goal is to use the clockevent in the channel storage, remove the static
-variable and share code with the MSI implementation.
-
-As a first step wrap the legacy clockevent into a hpet_channel struct and
-convert the users.
+Now that the legacy clockevent is wrapped in a hpet_channel struct most
+clockevent functions can be shared between the legacy and the MSI based
+clockevents.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 ---
- arch/x86/kernel/hpet.c |   49 +++++++++++++++++++++++++++----------------------
- 1 file changed, 27 insertions(+), 22 deletions(-)
+ arch/x86/kernel/hpet.c |   92 +++++++++++++------------------------------------
+ 1 file changed, 25 insertions(+), 67 deletions(-)
 
 --- a/arch/x86/kernel/hpet.c
 +++ b/arch/x86/kernel/hpet.c
-@@ -66,7 +66,7 @@ bool					boot_hpet_disable;
- bool					hpet_force_user;
- static bool				hpet_verbose;
- 
--static struct clock_event_device	hpet_clockevent;
-+static struct hpet_channel		hpet_channel0;
- 
- static inline
- struct hpet_channel *clockevent_to_channel(struct clock_event_device *evt)
-@@ -294,7 +294,7 @@ static void hpet_enable_legacy_int(void)
- 	hpet_legacy_int_enabled = true;
- }
- 
--static void hpet_legacy_clockevent_register(void)
-+static void hpet_legacy_clockevent_register(struct hpet_channel *hc)
- {
- 	/* Start HPET legacy interrupts */
- 	hpet_enable_legacy_int();
-@@ -303,10 +303,10 @@ static void hpet_legacy_clockevent_regis
- 	 * Start HPET with the boot CPU's cpumask and make it global after
- 	 * the IO_APIC has been initialized.
- 	 */
--	hpet_clockevent.cpumask = cpumask_of(boot_cpu_data.cpu_index);
--	clockevents_config_and_register(&hpet_clockevent, hpet_freq,
-+	hc->evt.cpumask = cpumask_of(boot_cpu_data.cpu_index);
-+	clockevents_config_and_register(&hc->evt, hpet_freq,
- 					HPET_MIN_PROG_DELTA, 0x7FFFFFFF);
--	global_clock_event = &hpet_clockevent;
-+	global_clock_event = &hc->evt;
+@@ -310,8 +310,9 @@ static void hpet_legacy_clockevent_regis
  	pr_debug("Clockevent registered\n");
  }
  
-@@ -433,19 +433,21 @@ static int hpet_legacy_next_event(unsign
+-static int hpet_set_periodic(struct clock_event_device *evt, int channel)
++static int hpet_clkevt_set_periodic(struct clock_event_device *evt)
+ {
++	unsigned int channel = clockevent_to_channel(evt)->num;
+ 	unsigned int cfg, cmp, now;
+ 	uint64_t delta;
+ 
+@@ -340,8 +341,9 @@ static int hpet_set_periodic(struct cloc
+ 	return 0;
  }
  
+-static int hpet_set_oneshot(struct clock_event_device *evt, int channel)
++static int hpet_clkevt_set_oneshot(struct clock_event_device *evt)
+ {
++	unsigned int channel = clockevent_to_channel(evt)->num;
+ 	unsigned int cfg;
+ 
+ 	cfg = hpet_readl(HPET_Tn_CFG(channel));
+@@ -352,8 +354,9 @@ static int hpet_set_oneshot(struct clock
+ 	return 0;
+ }
+ 
+-static int hpet_shutdown(struct clock_event_device *evt, int channel)
++static int hpet_clkevt_shutdown(struct clock_event_device *evt)
+ {
++	unsigned int channel = clockevent_to_channel(evt)->num;
+ 	unsigned int cfg;
+ 
+ 	cfg = hpet_readl(HPET_Tn_CFG(channel));
+@@ -363,15 +366,17 @@ static int hpet_shutdown(struct clock_ev
+ 	return 0;
+ }
+ 
+-static int hpet_resume(struct clock_event_device *evt)
++static int hpet_clkevt_legacy_resume(struct clock_event_device *evt)
+ {
+ 	hpet_enable_legacy_int();
+ 	hpet_print_config();
+ 	return 0;
+ }
+ 
+-static int hpet_next_event(unsigned long delta, int channel)
++static int
++hpet_clkevt_set_next_event(unsigned long delta, struct clock_event_device *evt)
+ {
++	unsigned int channel = clockevent_to_channel(evt)->num;
+ 	u32 cnt;
+ 	s32 res;
+ 
+@@ -406,32 +411,6 @@ static int hpet_next_event(unsigned long
+ 	return res < HPET_MIN_CYCLES ? -ETIME : 0;
+ }
+ 
+-static int hpet_legacy_shutdown(struct clock_event_device *evt)
+-{
+-	return hpet_shutdown(evt, 0);
+-}
+-
+-static int hpet_legacy_set_oneshot(struct clock_event_device *evt)
+-{
+-	return hpet_set_oneshot(evt, 0);
+-}
+-
+-static int hpet_legacy_set_periodic(struct clock_event_device *evt)
+-{
+-	return hpet_set_periodic(evt, 0);
+-}
+-
+-static int hpet_legacy_resume(struct clock_event_device *evt)
+-{
+-	return hpet_resume(evt);
+-}
+-
+-static int hpet_legacy_next_event(unsigned long delta,
+-				  struct clock_event_device *evt)
+-{
+-	return hpet_next_event(delta, 0);
+-}
+-
  /*
-- * The HPET clock event device
-+ * The HPET clock event device wrapped in a channel for conversion
+  * The HPET clock event device wrapped in a channel for conversion
   */
--static struct clock_event_device hpet_clockevent = {
--	.name			= "hpet",
--	.features		= CLOCK_EVT_FEAT_PERIODIC |
--				  CLOCK_EVT_FEAT_ONESHOT,
--	.set_state_periodic	= hpet_legacy_set_periodic,
--	.set_state_oneshot	= hpet_legacy_set_oneshot,
--	.set_state_shutdown	= hpet_legacy_shutdown,
--	.tick_resume		= hpet_legacy_resume,
--	.set_next_event		= hpet_legacy_next_event,
--	.irq			= 0,
--	.rating			= 50,
-+static struct hpet_channel hpet_channel0 = {
-+	.evt = {
-+		.name			= "hpet",
-+		.features		= CLOCK_EVT_FEAT_PERIODIC |
-+					  CLOCK_EVT_FEAT_ONESHOT,
-+		.set_state_periodic	= hpet_legacy_set_periodic,
-+		.set_state_oneshot	= hpet_legacy_set_oneshot,
-+		.set_state_shutdown	= hpet_legacy_shutdown,
-+		.tick_resume		= hpet_legacy_resume,
-+		.set_next_event		= hpet_legacy_next_event,
-+		.irq			= 0,
-+		.rating			= 50,
-+	}
- };
+@@ -440,11 +419,11 @@ static struct hpet_channel hpet_channel0
+ 		.name			= "hpet",
+ 		.features		= CLOCK_EVT_FEAT_PERIODIC |
+ 					  CLOCK_EVT_FEAT_ONESHOT,
+-		.set_state_periodic	= hpet_legacy_set_periodic,
+-		.set_state_oneshot	= hpet_legacy_set_oneshot,
+-		.set_state_shutdown	= hpet_legacy_shutdown,
+-		.tick_resume		= hpet_legacy_resume,
+-		.set_next_event		= hpet_legacy_next_event,
++		.set_state_periodic	= hpet_clkevt_set_periodic,
++		.set_state_oneshot	= hpet_clkevt_set_oneshot,
++		.set_state_shutdown	= hpet_clkevt_shutdown,
++		.tick_resume		= hpet_clkevt_legacy_resume,
++		.set_next_event		= hpet_clkevt_set_next_event,
+ 		.irq			= 0,
+ 		.rating			= 50,
+ 	}
+@@ -481,22 +460,7 @@ void hpet_msi_write(struct hpet_channel
+ 	hpet_writel(msg->address_lo, HPET_Tn_ROUTE(hc->num) + 4);
+ }
  
- /*
-@@ -916,7 +918,7 @@ int __init hpet_enable(void)
- 	clocksource_register_hz(&clocksource_hpet, (u32)hpet_freq);
+-static int hpet_msi_shutdown(struct clock_event_device *evt)
+-{
+-	return hpet_shutdown(evt, clockevent_to_channel(evt)->num);
+-}
+-
+-static int hpet_msi_set_oneshot(struct clock_event_device *evt)
+-{
+-	return hpet_set_oneshot(evt, clockevent_to_channel(evt)->num);
+-}
+-
+-static int hpet_msi_set_periodic(struct clock_event_device *evt)
+-{
+-	return hpet_set_periodic(evt, clockevent_to_channel(evt)->num);
+-}
+-
+-static int hpet_msi_resume(struct clock_event_device *evt)
++static int hpet_clkevt_msi_resume(struct clock_event_device *evt)
+ {
+ 	struct hpet_channel *hc = clockevent_to_channel(evt);
+ 	struct irq_data *data = irq_get_irq_data(hc->irq);
+@@ -509,13 +473,7 @@ static int hpet_msi_resume(struct clock_
+ 	return 0;
+ }
  
- 	if (id & HPET_ID_LEGSUP) {
--		hpet_legacy_clockevent_register();
-+		hpet_legacy_clockevent_register(&hpet_channel0);
- 		hpet_base.channels[0].mode = HPET_MODE_LEGACY;
- 		if (IS_ENABLED(CONFIG_HPET_EMULATE_RTC))
- 			hpet_base.channels[1].mode = HPET_MODE_LEGACY;
-@@ -1101,10 +1103,11 @@ int hpet_rtc_timer_init(void)
- 		return 0;
+-static int hpet_msi_next_event(unsigned long delta,
+-			       struct clock_event_device *evt)
+-{
+-	return hpet_next_event(delta, clockevent_to_channel(evt)->num);
+-}
+-
+-static irqreturn_t hpet_interrupt_handler(int irq, void *data)
++static irqreturn_t hpet_msi_interrupt_handler(int irq, void *data)
+ {
+ 	struct hpet_channel *hc = data;
+ 	struct clock_event_device *evt = &hc->evt;
+@@ -529,9 +487,9 @@ static irqreturn_t hpet_interrupt_handle
+ 	return IRQ_HANDLED;
+ }
  
- 	if (!hpet_default_delta) {
-+		struct clock_event_device *evt = &hpet_channel0.evt;
- 		uint64_t clc;
+-static int hpet_setup_irq(struct hpet_channel *hc)
++static int hpet_setup_msi_irq(struct hpet_channel *hc)
+ {
+-	if (request_irq(hc->irq, hpet_interrupt_handler,
++	if (request_irq(hc->irq, hpet_msi_interrupt_handler,
+ 			IRQF_TIMER | IRQF_NOBALANCING,
+ 			hc->name, hc))
+ 		return -1;
+@@ -553,20 +511,20 @@ static void init_one_hpet_msi_clockevent
+ 	hc->cpu = cpu;
+ 	per_cpu(cpu_hpet_channel, cpu) = hc;
+ 	evt->name = hc->name;
+-	hpet_setup_irq(hc);
++	hpet_setup_msi_irq(hc);
+ 	evt->irq = hc->irq;
  
--		clc = (uint64_t) hpet_clockevent.mult * NSEC_PER_SEC;
--		clc >>= hpet_clockevent.shift + DEFAULT_RTC_SHIFT;
-+		clc = (uint64_t) evt->mult * NSEC_PER_SEC;
-+		clc >>= evt->shift + DEFAULT_RTC_SHIFT;
- 		hpet_default_delta = clc;
+ 	evt->rating = 110;
+ 	evt->features = CLOCK_EVT_FEAT_ONESHOT;
+ 	if (hc->boot_cfg & HPET_TN_PERIODIC) {
+ 		evt->features |= CLOCK_EVT_FEAT_PERIODIC;
+-		evt->set_state_periodic = hpet_msi_set_periodic;
++		evt->set_state_periodic = hpet_clkevt_set_periodic;
  	}
  
-@@ -1198,9 +1201,11 @@ int hpet_set_periodic_freq(unsigned long
- 	if (freq <= DEFAULT_RTC_INT_FREQ) {
- 		hpet_pie_limit = DEFAULT_RTC_INT_FREQ / freq;
- 	} else {
--		clc = (uint64_t) hpet_clockevent.mult * NSEC_PER_SEC;
-+		struct clock_event_device *evt = &hpet_channel0.evt;
-+
-+		clc = (uint64_t) evt->mult * NSEC_PER_SEC;
- 		do_div(clc, freq);
--		clc >>= hpet_clockevent.shift;
-+		clc >>= evt->shift;
- 		hpet_pie_delta = clc;
- 		hpet_pie_limit = 0;
- 	}
+-	evt->set_state_shutdown = hpet_msi_shutdown;
+-	evt->set_state_oneshot = hpet_msi_set_oneshot;
+-	evt->tick_resume = hpet_msi_resume;
+-	evt->set_next_event = hpet_msi_next_event;
++	evt->set_state_shutdown = hpet_clkevt_shutdown;
++	evt->set_state_oneshot = hpet_clkevt_set_oneshot;
++	evt->set_next_event = hpet_clkevt_set_next_event;
++	evt->tick_resume = hpet_clkevt_msi_resume;
+ 	evt->cpumask = cpumask_of(hc->cpu);
+ 
+ 	clockevents_config_and_register(evt, hpet_freq, HPET_MIN_PROG_DELTA,
 
 
