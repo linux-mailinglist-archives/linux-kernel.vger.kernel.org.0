@@ -2,58 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1DB9F4FE65
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 03:41:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E4A694FE6D
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 03:41:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726645AbfFXBlE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 23 Jun 2019 21:41:04 -0400
+        id S1726732AbfFXBlW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 23 Jun 2019 21:41:22 -0400
 Received: from terminus.zytor.com ([198.137.202.136]:43987 "EHLO
         mail.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726544AbfFXBlC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Jun 2019 21:41:02 -0400
+        id S1726572AbfFXBk7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 23 Jun 2019 21:40:59 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x5NNpl932859584
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x5NNqTjR2859643
         (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Sun, 23 Jun 2019 16:51:47 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x5NNpl932859584
+        Sun, 23 Jun 2019 16:52:29 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x5NNqTjR2859643
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019061801; t=1561333908;
-        bh=FL9ElRP2NbGlm6mzGfn/VOTynle12eJGugbYHDBNIq4=;
+        s=2019061801; t=1561333950;
+        bh=BxzixoOusyzFB5MfBVCb4Q2TYJ4MTWYTpifuKqW+23I=;
         h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
-        b=rUg/d3Xk5aGEGkrifgFzZ9rPswCm4tUvVX+c1XDFzPw0WJ6isGkESU96Cf/ooazrz
-         qb/XoC3qxDCa0kxvE7ACmGANIPKQCMluzaDaJL+h7yPQPqRu2uXOXEfkEklYSQjvdJ
-         ob0x9GD+1gi3ug9aYlO53z7kJ9GqqfcweuHfRfJIb2QLcSlL6MnLcRkvfUK6+UhlmE
-         ZqkrjCSQGeQMf5tiD9SSPMZtt/DfRRqOc0a693UBrX4v8/ShdPEQI1mDrV92BrZC21
-         tA8MewVsLwoX9qxO111D9b2ihqLx+yvJHqwFJLyIdaXP2drtf5c2YJbfygm6OdADTk
-         fKzqsbsYqgrNA==
+        b=s3500vnSS78S8RykXAedTjZiUsJtE+QgTMOwrKzdKx6EMiR4w1aB7uI2P4QeyYMI5
+         yNvoe2719AK056h4r29LKIBF/tlrpSWzSBtejySQjbOrLEfI8X5DMYEVor4kuekV+l
+         bp0YsoPEr3i24rYI1+cjC/5DdT6cVN5hU8yVXm9PQ7qQhny0GrS95Vn0654aVpOM8q
+         6QkJ3Q3aLBkdmy8najVat0GQuF9jBUFYpzITIM7PtL5CSz2mRCr/dZeWx+XTpsFySx
+         B8MGbovCKVlqCw5lJQLCdKnj6c+AQWe6PfsNWKYIMpCWShtOs0SEg5pZFJ6LlqoHKD
+         q4Tff/mHERj8Q==
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x5NNpk3l2859580;
-        Sun, 23 Jun 2019 16:51:46 -0700
-Date:   Sun, 23 Jun 2019 16:51:46 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x5NNqSB42859640;
+        Sun, 23 Jun 2019 16:52:28 -0700
+Date:   Sun, 23 Jun 2019 16:52:28 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Vincenzo Frascino <tipbot@zytor.com>
-Message-ID: <tip-c7aa2d71020d74d4c673922e295b07f6adafd6e0@git.kernel.org>
-Cc:     ralf@linux-mips.org, sthotton@marvell.com,
-        linux-kernel@vger.kernel.org, tglx@linutronix.de,
-        linux@rasmusvillemoes.dk, hpa@zytor.com, pcc@google.com,
-        shuah@kernel.org, linux@armlinux.org.uk, mingo@kernel.org,
-        huw@codeweavers.com, 0x7f454c46@gmail.com, paul.burton@mips.com,
-        daniel.lezcano@linaro.org, arnd@arndb.de, salyzyn@android.com,
-        vincenzo.frascino@arm.com, catalin.marinas@arm.com,
-        will.deacon@arm.com, andre.przywara@arm.com
-Reply-To: linux@rasmusvillemoes.dk, hpa@zytor.com, pcc@google.com,
-          tglx@linutronix.de, linux-kernel@vger.kernel.org,
-          ralf@linux-mips.org, sthotton@marvell.com, huw@codeweavers.com,
-          0x7f454c46@gmail.com, mingo@kernel.org, shuah@kernel.org,
-          linux@armlinux.org.uk, arnd@arndb.de, daniel.lezcano@linaro.org,
-          paul.burton@mips.com, will.deacon@arm.com,
-          andre.przywara@arm.com, catalin.marinas@arm.com,
-          vincenzo.frascino@arm.com, salyzyn@android.com
-In-Reply-To: <20190621095252.32307-12-vincenzo.frascino@arm.com>
-References: <20190621095252.32307-12-vincenzo.frascino@arm.com>
+Message-ID: <tip-7c1deeeb01308426a27a70d5a506aa5fae66dc62@git.kernel.org>
+Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org,
+        ralf@linux-mips.org, hpa@zytor.com, pcc@google.com,
+        shuah@kernel.org, linux@armlinux.org.uk, will.deacon@arm.com,
+        tglx@linutronix.de, salyzyn@android.com, sthotton@marvell.com,
+        daniel.lezcano@linaro.org, 0x7f454c46@gmail.com,
+        andre.przywara@arm.com, linux@rasmusvillemoes.dk,
+        huw@codeweavers.com, arnd@arndb.de, catalin.marinas@arm.com,
+        paul.burton@mips.com, vincenzo.frascino@arm.com
+Reply-To: linux-kernel@vger.kernel.org, ralf@linux-mips.org,
+          mingo@kernel.org, hpa@zytor.com, pcc@google.com,
+          linux@armlinux.org.uk, shuah@kernel.org, will.deacon@arm.com,
+          tglx@linutronix.de, salyzyn@android.com, sthotton@marvell.com,
+          daniel.lezcano@linaro.org, 0x7f454c46@gmail.com,
+          andre.przywara@arm.com, linux@rasmusvillemoes.dk,
+          huw@codeweavers.com, arnd@arndb.de, catalin.marinas@arm.com,
+          paul.burton@mips.com, vincenzo.frascino@arm.com
+In-Reply-To: <20190621095252.32307-13-vincenzo.frascino@arm.com>
+References: <20190621095252.32307-13-vincenzo.frascino@arm.com>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:timers/vdso] arm64: vdso: Refactor vDSO code
-Git-Commit-ID: c7aa2d71020d74d4c673922e295b07f6adafd6e0
+Subject: [tip:timers/vdso] arm64: compat: VDSO setup for compat layer
+Git-Commit-ID: 7c1deeeb01308426a27a70d5a506aa5fae66dc62
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -73,20 +73,19 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  c7aa2d71020d74d4c673922e295b07f6adafd6e0
-Gitweb:     https://git.kernel.org/tip/c7aa2d71020d74d4c673922e295b07f6adafd6e0
+Commit-ID:  7c1deeeb01308426a27a70d5a506aa5fae66dc62
+Gitweb:     https://git.kernel.org/tip/7c1deeeb01308426a27a70d5a506aa5fae66dc62
 Author:     Vincenzo Frascino <vincenzo.frascino@arm.com>
-AuthorDate: Fri, 21 Jun 2019 10:52:38 +0100
+AuthorDate: Fri, 21 Jun 2019 10:52:39 +0100
 Committer:  Thomas Gleixner <tglx@linutronix.de>
 CommitDate: Sat, 22 Jun 2019 21:21:08 +0200
 
-arm64: vdso: Refactor vDSO code
+arm64: compat: VDSO setup for compat layer
 
-Most of the code for initializing the vDSOs in arm64 and compat will be
-shared, hence refactoring of the current code is required to avoid
-duplication and to simplify maintainability.
+If CONFIG_GENERIC_COMPAT_VDSO is enabled, compat vDSO is installed in a
+compat (32 bit) process instead of sigpage.
 
-No functional change.
+Add the necessary code to setup the vDSO required pages.
 
 Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
@@ -109,275 +108,183 @@ Cc: Shuah Khan <shuah@kernel.org>
 Cc: Dmitry Safonov <0x7f454c46@gmail.com>
 Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>
 Cc: Huw Davies <huw@codeweavers.com>
-Link: https://lkml.kernel.org/r/20190621095252.32307-12-vincenzo.frascino@arm.com
+Link: https://lkml.kernel.org/r/20190621095252.32307-13-vincenzo.frascino@arm.com
 
 ---
- arch/arm64/kernel/vdso.c | 215 +++++++++++++++++++++++++++++++----------------
- 1 file changed, 144 insertions(+), 71 deletions(-)
+ arch/arm64/kernel/vdso.c | 90 ++++++++++++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 88 insertions(+), 2 deletions(-)
 
 diff --git a/arch/arm64/kernel/vdso.c b/arch/arm64/kernel/vdso.c
-index 478ec865a413..be23efc3f60d 100644
+index be23efc3f60d..354b11e27c07 100644
 --- a/arch/arm64/kernel/vdso.c
 +++ b/arch/arm64/kernel/vdso.c
-@@ -29,7 +29,31 @@
+@@ -29,12 +29,22 @@
  #include <asm/vdso.h>
  
  extern char vdso_start[], vdso_end[];
--static unsigned long vdso_pages __ro_after_init;
-+
-+/* vdso_lookup arch_index */
-+enum arch_vdso_type {
-+	ARM64_VDSO = 0,
-+};
-+#define VDSO_TYPES		(ARM64_VDSO + 1)
-+
-+struct __vdso_abi {
-+	const char *name;
-+	const char *vdso_code_start;
-+	const char *vdso_code_end;
-+	unsigned long vdso_pages;
-+	/* Data Mapping */
-+	struct vm_special_mapping *dm;
-+	/* Code Mapping */
-+	struct vm_special_mapping *cm;
-+};
-+
-+static struct __vdso_abi vdso_lookup[VDSO_TYPES] __ro_after_init = {
++#ifdef CONFIG_COMPAT_VDSO
++extern char vdso32_start[], vdso32_end[];
++#endif /* CONFIG_COMPAT_VDSO */
+ 
+ /* vdso_lookup arch_index */
+ enum arch_vdso_type {
+ 	ARM64_VDSO = 0,
++#ifdef CONFIG_COMPAT_VDSO
++	ARM64_VDSO32 = 1,
++#endif /* CONFIG_COMPAT_VDSO */
+ };
++#ifdef CONFIG_COMPAT_VDSO
++#define VDSO_TYPES		(ARM64_VDSO32 + 1)
++#else
+ #define VDSO_TYPES		(ARM64_VDSO + 1)
++#endif /* CONFIG_COMPAT_VDSO */
+ 
+ struct __vdso_abi {
+ 	const char *name;
+@@ -53,6 +63,13 @@ static struct __vdso_abi vdso_lookup[VDSO_TYPES] __ro_after_init = {
+ 		.vdso_code_start = vdso_start,
+ 		.vdso_code_end = vdso_end,
+ 	},
++#ifdef CONFIG_COMPAT_VDSO
 +	{
-+		.name = "vdso",
-+		.vdso_code_start = vdso_start,
-+		.vdso_code_end = vdso_end,
++		.name = "vdso32",
++		.vdso_code_start = vdso32_start,
++		.vdso_code_end = vdso32_end,
 +	},
-+};
++#endif /* CONFIG_COMPAT_VDSO */
+ };
  
  /*
-  * The vDSO data page.
-@@ -40,10 +64,110 @@ static union {
- } vdso_data_store __page_aligned_data;
- struct vdso_data *vdso_data = vdso_data_store.data;
- 
-+static int __vdso_remap(enum arch_vdso_type arch_index,
-+			const struct vm_special_mapping *sm,
-+			struct vm_area_struct *new_vma)
-+{
-+	unsigned long new_size = new_vma->vm_end - new_vma->vm_start;
-+	unsigned long vdso_size = vdso_lookup[arch_index].vdso_code_end -
-+				  vdso_lookup[arch_index].vdso_code_start;
-+
-+	if (vdso_size != new_size)
-+		return -EINVAL;
-+
-+	current->mm->context.vdso = (void *)new_vma->vm_start;
-+
-+	return 0;
-+}
-+
-+static int __vdso_init(enum arch_vdso_type arch_index)
-+{
-+	int i;
-+	struct page **vdso_pagelist;
-+	unsigned long pfn;
-+
-+	if (memcmp(vdso_lookup[arch_index].vdso_code_start, "\177ELF", 4)) {
-+		pr_err("vDSO is not a valid ELF object!\n");
-+		return -EINVAL;
-+	}
-+
-+	vdso_lookup[arch_index].vdso_pages = (
-+			vdso_lookup[arch_index].vdso_code_end -
-+			vdso_lookup[arch_index].vdso_code_start) >>
-+			PAGE_SHIFT;
-+
-+	/* Allocate the vDSO pagelist, plus a page for the data. */
-+	vdso_pagelist = kcalloc(vdso_lookup[arch_index].vdso_pages + 1,
-+				sizeof(struct page *),
-+				GFP_KERNEL);
-+	if (vdso_pagelist == NULL)
-+		return -ENOMEM;
-+
-+	/* Grab the vDSO data page. */
-+	vdso_pagelist[0] = phys_to_page(__pa_symbol(vdso_data));
-+
-+
-+	/* Grab the vDSO code pages. */
-+	pfn = sym_to_pfn(vdso_lookup[arch_index].vdso_code_start);
-+
-+	for (i = 0; i < vdso_lookup[arch_index].vdso_pages; i++)
-+		vdso_pagelist[i + 1] = pfn_to_page(pfn + i);
-+
-+	vdso_lookup[arch_index].dm->pages = &vdso_pagelist[0];
-+	vdso_lookup[arch_index].cm->pages = &vdso_pagelist[1];
-+
-+	return 0;
-+}
-+
-+static int __setup_additional_pages(enum arch_vdso_type arch_index,
-+				    struct mm_struct *mm,
-+				    struct linux_binprm *bprm,
-+				    int uses_interp)
-+{
-+	unsigned long vdso_base, vdso_text_len, vdso_mapping_len;
-+	void *ret;
-+
-+	vdso_text_len = vdso_lookup[arch_index].vdso_pages << PAGE_SHIFT;
-+	/* Be sure to map the data page */
-+	vdso_mapping_len = vdso_text_len + PAGE_SIZE;
-+
-+	vdso_base = get_unmapped_area(NULL, 0, vdso_mapping_len, 0, 0);
-+	if (IS_ERR_VALUE(vdso_base)) {
-+		ret = ERR_PTR(vdso_base);
-+		goto up_fail;
-+	}
-+
-+	ret = _install_special_mapping(mm, vdso_base, PAGE_SIZE,
-+				       VM_READ|VM_MAYREAD,
-+				       vdso_lookup[arch_index].dm);
-+	if (IS_ERR(ret))
-+		goto up_fail;
-+
-+	vdso_base += PAGE_SIZE;
-+	mm->context.vdso = (void *)vdso_base;
-+	ret = _install_special_mapping(mm, vdso_base, vdso_text_len,
-+				       VM_READ|VM_EXEC|
-+				       VM_MAYREAD|VM_MAYWRITE|VM_MAYEXEC,
-+				       vdso_lookup[arch_index].cm);
-+	if (IS_ERR(ret))
-+		goto up_fail;
-+
-+	return 0;
-+
-+up_fail:
-+	mm->context.vdso = NULL;
-+	return PTR_ERR(ret);
-+}
-+
- #ifdef CONFIG_COMPAT
+@@ -163,24 +180,52 @@ up_fail:
  /*
   * Create and map the vectors page for AArch32 tasks.
   */
-+/*
-+ * aarch32_vdso_pages:
++#ifdef CONFIG_COMPAT_VDSO
++static int aarch32_vdso_mremap(const struct vm_special_mapping *sm,
++		struct vm_area_struct *new_vma)
++{
++	return __vdso_remap(ARM64_VDSO32, sm, new_vma);
++}
++#endif /* CONFIG_COMPAT_VDSO */
++
+ /*
+  * aarch32_vdso_pages:
+  * 0 - kuser helpers
+  * 1 - sigreturn code
++ * or (CONFIG_COMPAT_VDSO):
 + * 0 - kuser helpers
-+ * 1 - sigreturn code
-+ */
++ * 1 - vdso data
++ * 2 - vdso code
+  */
  #define C_VECTORS	0
++#ifdef CONFIG_COMPAT_VDSO
++#define C_VVAR		1
++#define C_VDSO		2
++#define C_PAGES		(C_VDSO + 1)
++#else
  #define C_SIGPAGE	1
  #define C_PAGES		(C_SIGPAGE + 1)
-@@ -172,18 +296,18 @@ out:
- static int vdso_mremap(const struct vm_special_mapping *sm,
- 		struct vm_area_struct *new_vma)
- {
--	unsigned long new_size = new_vma->vm_end - new_vma->vm_start;
--	unsigned long vdso_size = vdso_end - vdso_start;
--
--	if (vdso_size != new_size)
--		return -EINVAL;
--
--	current->mm->context.vdso = (void *)new_vma->vm_start;
--
--	return 0;
-+	return __vdso_remap(ARM64_VDSO, sm, new_vma);
- }
- 
--static struct vm_special_mapping vdso_spec[2] __ro_after_init = {
-+/*
-+ * aarch64_vdso_pages:
-+ * 0 - vvar
-+ * 1 - vdso
-+ */
-+#define A_VVAR		0
-+#define A_VDSO		1
-+#define A_PAGES		(A_VDSO + 1)
-+static struct vm_special_mapping vdso_spec[A_PAGES] __ro_after_init = {
++#endif /* CONFIG_COMPAT_VDSO */
+ static struct page *aarch32_vdso_pages[C_PAGES] __ro_after_init;
+-static const struct vm_special_mapping aarch32_vdso_spec[C_PAGES] = {
++static struct vm_special_mapping aarch32_vdso_spec[C_PAGES] = {
  	{
- 		.name	= "[vvar]",
+ 		.name	= "[vectors]", /* ABI */
+ 		.pages	= &aarch32_vdso_pages[C_VECTORS],
  	},
-@@ -195,37 +319,10 @@ static struct vm_special_mapping vdso_spec[2] __ro_after_init = {
++#ifdef CONFIG_COMPAT_VDSO
++	{
++		.name = "[vvar]",
++	},
++	{
++		.name = "[vdso]",
++		.mremap = aarch32_vdso_mremap,
++	},
++#else
+ 	{
+ 		.name	= "[sigpage]", /* ABI */
+ 		.pages	= &aarch32_vdso_pages[C_SIGPAGE],
+ 	},
++#endif /* CONFIG_COMPAT_VDSO */
+ };
  
- static int __init vdso_init(void)
- {
--	int i;
--	struct page **vdso_pagelist;
--	unsigned long pfn;
--
--	if (memcmp(vdso_start, "\177ELF", 4)) {
--		pr_err("vDSO is not a valid ELF object!\n");
--		return -EINVAL;
--	}
--
--	vdso_pages = (vdso_end - vdso_start) >> PAGE_SHIFT;
--
--	/* Allocate the vDSO pagelist, plus a page for the data. */
--	vdso_pagelist = kcalloc(vdso_pages + 1, sizeof(struct page *),
--				GFP_KERNEL);
--	if (vdso_pagelist == NULL)
--		return -ENOMEM;
--
--	/* Grab the vDSO data page. */
--	vdso_pagelist[0] = phys_to_page(__pa_symbol(vdso_data));
--
-+	vdso_lookup[ARM64_VDSO].dm = &vdso_spec[A_VVAR];
-+	vdso_lookup[ARM64_VDSO].cm = &vdso_spec[A_VDSO];
- 
--	/* Grab the vDSO code pages. */
--	pfn = sym_to_pfn(vdso_start);
--
--	for (i = 0; i < vdso_pages; i++)
--		vdso_pagelist[i + 1] = pfn_to_page(pfn + i);
--
--	vdso_spec[0].pages = &vdso_pagelist[0];
--	vdso_spec[1].pages = &vdso_pagelist[1];
--
--	return 0;
-+	return __vdso_init(ARM64_VDSO);
+ static int aarch32_alloc_kuser_vdso_page(void)
+@@ -203,7 +248,33 @@ static int aarch32_alloc_kuser_vdso_page(void)
+ 	return 0;
  }
- arch_initcall(vdso_init);
  
-@@ -233,41 +330,17 @@ int arch_setup_additional_pages(struct linux_binprm *bprm,
- 				int uses_interp)
- {
- 	struct mm_struct *mm = current->mm;
--	unsigned long vdso_base, vdso_text_len, vdso_mapping_len;
--	void *ret;
--
--	vdso_text_len = vdso_pages << PAGE_SHIFT;
--	/* Be sure to map the data page */
--	vdso_mapping_len = vdso_text_len + PAGE_SIZE;
+-static int __init aarch32_alloc_vdso_pages(void)
++#ifdef CONFIG_COMPAT_VDSO
++static int __aarch32_alloc_vdso_pages(void)
++{
 +	int ret;
++
++	vdso_lookup[ARM64_VDSO32].dm = &aarch32_vdso_spec[C_VVAR];
++	vdso_lookup[ARM64_VDSO32].cm = &aarch32_vdso_spec[C_VDSO];
++
++	ret = __vdso_init(ARM64_VDSO32);
++	if (ret)
++		return ret;
++
++	ret = aarch32_alloc_kuser_vdso_page();
++	if (ret) {
++		unsigned long c_vvar =
++			(unsigned long)page_to_virt(aarch32_vdso_pages[C_VVAR]);
++		unsigned long c_vdso =
++			(unsigned long)page_to_virt(aarch32_vdso_pages[C_VDSO]);
++
++		free_page(c_vvar);
++		free_page(c_vdso);
++	}
++
++	return ret;
++}
++#else
++static int __aarch32_alloc_vdso_pages(void)
+ {
+ 	extern char __aarch32_sigret_code_start[], __aarch32_sigret_code_end[];
+ 	int sigret_sz = __aarch32_sigret_code_end - __aarch32_sigret_code_start;
+@@ -224,6 +295,12 @@ static int __init aarch32_alloc_vdso_pages(void)
  
- 	if (down_write_killable(&mm->mmap_sem))
- 		return -EINTR;
--	vdso_base = get_unmapped_area(NULL, 0, vdso_mapping_len, 0, 0);
--	if (IS_ERR_VALUE(vdso_base)) {
--		ret = ERR_PTR(vdso_base);
--		goto up_fail;
--	}
--	ret = _install_special_mapping(mm, vdso_base, PAGE_SIZE,
--				       VM_READ|VM_MAYREAD,
--				       &vdso_spec[0]);
--	if (IS_ERR(ret))
--		goto up_fail;
--
--	vdso_base += PAGE_SIZE;
--	mm->context.vdso = (void *)vdso_base;
--	ret = _install_special_mapping(mm, vdso_base, vdso_text_len,
--				       VM_READ|VM_EXEC|
--				       VM_MAYREAD|VM_MAYWRITE|VM_MAYEXEC,
--				       &vdso_spec[1]);
--	if (IS_ERR(ret))
--		goto up_fail;
+ 	return ret;
+ }
++#endif /* CONFIG_COMPAT_VDSO */
++
++static int __init aarch32_alloc_vdso_pages(void)
++{
++	return __aarch32_alloc_vdso_pages();
++}
+ arch_initcall(aarch32_alloc_vdso_pages);
  
-+	ret = __setup_additional_pages(ARM64_VDSO,
+ static int aarch32_kuser_helpers_setup(struct mm_struct *mm)
+@@ -245,6 +322,7 @@ static int aarch32_kuser_helpers_setup(struct mm_struct *mm)
+ 	return PTR_ERR_OR_ZERO(ret);
+ }
+ 
++#ifndef CONFIG_COMPAT_VDSO
+ static int aarch32_sigreturn_setup(struct mm_struct *mm)
+ {
+ 	unsigned long addr;
+@@ -272,6 +350,7 @@ static int aarch32_sigreturn_setup(struct mm_struct *mm)
+ out:
+ 	return PTR_ERR_OR_ZERO(ret);
+ }
++#endif /* !CONFIG_COMPAT_VDSO */
+ 
+ int aarch32_setup_additional_pages(struct linux_binprm *bprm, int uses_interp)
+ {
+@@ -285,7 +364,14 @@ int aarch32_setup_additional_pages(struct linux_binprm *bprm, int uses_interp)
+ 	if (ret)
+ 		goto out;
+ 
++#ifdef CONFIG_COMPAT_VDSO
++	ret = __setup_additional_pages(ARM64_VDSO32,
 +				       mm,
 +				       bprm,
 +				       uses_interp);
++#else
+ 	ret = aarch32_sigreturn_setup(mm);
++#endif /* CONFIG_COMPAT_VDSO */
  
+ out:
  	up_write(&mm->mmap_sem);
--	return 0;
- 
--up_fail:
--	mm->context.vdso = NULL;
--	up_write(&mm->mmap_sem);
--	return PTR_ERR(ret);
-+	return ret;
- }
