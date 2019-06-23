@@ -2,183 +2,191 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3DD7A4FF10
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 04:06:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7C29B4FE6F
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 03:41:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726925AbfFXCGk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 23 Jun 2019 22:06:40 -0400
-Received: from mailout3.samsung.com ([203.254.224.33]:16170 "EHLO
-        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726360AbfFXCGj (ORCPT
+        id S1726829AbfFXBlk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 23 Jun 2019 21:41:40 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:51211 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726558AbfFXBk6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Jun 2019 22:06:39 -0400
-Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
-        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20190623233638epoutp03e5f1304bb1fc195da44a3db830608be1~q_Bb_JHnk2176721767epoutp03W
-        for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2019 23:36:38 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20190623233638epoutp03e5f1304bb1fc195da44a3db830608be1~q_Bb_JHnk2176721767epoutp03W
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1561332998;
-        bh=gVdC7W3ldmM3ohxP3IShUQy55UMe0oYxTPCOE/6tAp4=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=a79KMVYmCPbz5nwheKxRjHWOh5KSF712suwcwku5/tdnPGdRG8Etpic6jwCY0+Y3a
-         vdKcEh6t/Fy3IPtGd3BgrIekJUt2n9YdKEqqFsXsK+7eiVomW5Kv0Ymfzo78Iuw8Uy
-         s0o9s9OEQ2kQ2ZmwEuanvc7PgHLhnAKd4L4og3Pk=
-Received: from epsmges1p5.samsung.com (unknown [182.195.40.154]) by
-        epcas1p4.samsung.com (KnoxPortal) with ESMTP id
-        20190623233634epcas1p4fe5ea4b0f69ce7ab48e9fb322831f662~q_BYg_Xme3169831698epcas1p4D;
-        Sun, 23 Jun 2019 23:36:34 +0000 (GMT)
-Received: from epcas1p4.samsung.com ( [182.195.41.48]) by
-        epsmges1p5.samsung.com (Symantec Messaging Gateway) with SMTP id
-        D1.9E.04108.20D001D5; Mon, 24 Jun 2019 08:36:34 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20190623233633epcas1p16ab9635c74bd01f3a7b0828eedf1f9d2~q_BXxNr2T1082210822epcas1p1f;
-        Sun, 23 Jun 2019 23:36:33 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20190623233633epsmtrp192a9eade0fcbece0e6e69272d2ecd321~q_BXtjTUt1920219202epsmtrp1c;
-        Sun, 23 Jun 2019 23:36:33 +0000 (GMT)
-X-AuditID: b6c32a39-8b7ff7000000100c-4a-5d100d02d9e1
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        C9.12.03692.10D001D5; Mon, 24 Jun 2019 08:36:33 +0900 (KST)
-Received: from [10.113.221.102] (unknown [10.113.221.102]) by
-        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20190623233633epsmtip1364fbdd2bc629b95785e2adfcd77b4c0~q_BXdmHmE3204032040epsmtip1G;
-        Sun, 23 Jun 2019 23:36:33 +0000 (GMT)
-Subject: Re: [PATCH v3] arm64: defconfig: Enable Panfrost and Lima drivers
-To:     Krzysztof Kozlowski <krzk@kernel.org>, cwchoi00@gmail.com
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Olof Johansson <olof@lixom.net>,
-        Jagan Teki <jagan@amarulasolutions.com>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Dinh Nguyen <dinguyen@kernel.org>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Vasily Khoruzhick <anarsoul@gmail.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
-From:   Chanwoo Choi <cw00.choi@samsung.com>
-Organization: Samsung Electronics
-Message-ID: <6edbe882-314c-85e1-4109-7c3b324dc7ab@samsung.com>
-Date:   Mon, 24 Jun 2019 08:39:09 +0900
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
-        Thunderbird/60.7.1
+        Sun, 23 Jun 2019 21:40:58 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x5NNhbLv2856611
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Sun, 23 Jun 2019 16:43:38 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x5NNhbLv2856611
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019061801; t=1561333419;
+        bh=Zya2uyCCLGkqpLnHRxNkZNm9EbFu0GD0WvoO1K2KFO8=;
+        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
+        b=EmN3iritynRXUl33zPhXgJjAsERLAvF4CDkq3CvIlq4owKEZ3Kufvk4WZCXUlvGFH
+         0qp9jXW2BWsQwXS3NUwiSUzTs9+VfSTuIuWPqYuKR9IJ0WOfrKfI8RKiG+RBXVL8Ac
+         uZRQ+dIFd1kDAtuoUApsJ67kxU/J7teU1XmfA/GxxZbc6o5MPpaxknjToA/kbXt0iq
+         mHjVR2p++ujh897PE46NR80nKBI6zYk7eiEdKPZmGaGw773+7dni1VxhJOxM5XJ5RJ
+         MkTX6vcumI5hSEginD8MI7xelTXe27lC8cU16MNAQTN1DQ1TC6TlggfTIyxDH8Vx8j
+         Q0V73DBQGbwnA==
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x5NNhWC12856606;
+        Sun, 23 Jun 2019 16:43:32 -0700
+Date:   Sun, 23 Jun 2019 16:43:32 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Vincenzo Frascino <tipbot@zytor.com>
+Message-ID: <tip-32e29396f00e7849ea0b1aeebae097fc1de6e979@git.kernel.org>
+Cc:     salyzyn@android.com, ralf@linux-mips.org, 0x7f454c46@gmail.com,
+        hpa@zytor.com, daniel.lezcano@linaro.org, linux@rasmusvillemoes.dk,
+        sthotton@marvell.com, paul.burton@mips.com, huw@codeweavers.com,
+        tglx@linutronix.de, vincenzo.frascino@arm.com,
+        catalin.marinas@arm.com, will.deacon@arm.com, pcc@google.com,
+        arnd@arndb.de, linux@armlinux.org.uk, andre.przywara@arm.com,
+        shuah@kernel.org, linux-kernel@vger.kernel.org, mingo@kernel.org
+Reply-To: huw@codeweavers.com, tglx@linutronix.de, hpa@zytor.com,
+          0x7f454c46@gmail.com, salyzyn@android.com, ralf@linux-mips.org,
+          sthotton@marvell.com, paul.burton@mips.com,
+          linux@rasmusvillemoes.dk, daniel.lezcano@linaro.org,
+          linux-kernel@vger.kernel.org, shuah@kernel.org,
+          andre.przywara@arm.com, mingo@kernel.org, will.deacon@arm.com,
+          catalin.marinas@arm.com, vincenzo.frascino@arm.com,
+          linux@armlinux.org.uk, arnd@arndb.de, pcc@google.com
+In-Reply-To: <20190621095252.32307-3-vincenzo.frascino@arm.com>
+References: <20190621095252.32307-3-vincenzo.frascino@arm.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:timers/vdso] hrtimer: Split out hrtimer defines into separate
+ header
+Git-Commit-ID: 32e29396f00e7849ea0b1aeebae097fc1de6e979
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-In-Reply-To: <CAJKOXPcFFY08R1H-DrrzX2BC3L8x4NPJTP7nDn9yixAvmaiF9Q@mail.gmail.com>
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA02TbUxbVRjHc3p7b8tG3bFs8kiisKszAVPWO9ZxMLA5ZdsN8gGmH4yR1Ru4
-        FkLf7G0X50yEbSLtlonxJdIN0FhRGASonTLY6ESGssUVQRHZqpgNsoEDkUkcM8S2t4t8+z/n
-        +T3nn/95UVPaalWKusLqFB1Wwcwya5RffpOu1yk0uETf0ptB3hycRuRScE5J5puPITJ94XFy
-        IdSrIG1X+hEZvvUnQ2776xgSCnWqyOfhBZr4r43RZLTnJEM+DPUpSPtAWEUmbwYRufjzIkNu
-        BJLJkauGJ7V8+8JvNN/W2Ib4xraDfHfYh/gz3rCK97e6Gf7q2FmG/8L3Bv/jd4dovmuuW8Ef
-        D7Qi/uSdJSW/6H+4SPNCZW65KJSJjjTRWmorq7Ca8thnnjU+bTRs03M6Lodks2lWwSLmsfmF
-        RbrdFeZIQDZtv2B2RZaKBEliN2/PddhcTjGt3CY581jRXma259gzJcEiuaymzFKb5QlOr99i
-        iIAvVZb7GkLIXodfXa7uRFXorMaDEtSAt8L4H26VB61Ra3E3gunmESQXfyHwnJ6l5WIJQftX
-        /1L3Rj5evhSnziG4OOJj5GIeQcP344oolYQLYPn9KSaq1+M86D3RqIxCFB6kofXwmDLaYHAG
-        BG+Mx6B1eCP89M81FNUavB1aPvOpolqJN8FSkye26Qb8PIwGeuLM/TBUfz22TwIuht/7FmMM
-        hZNh4npTXKfC4dMnqKgx4Dsq+KC+FskZ8qH66IJC1kkw821AJesUuPl2TVwfhJahAUYerkUQ
-        CA7TciMLgp++GxlWRxzSoaNns7y8Ec7cbUCy8X0w9/cxOooA1kBtjVZGHoHRyXDc9kH45C03
-        U4dY76o43lURvKsieP83+wgpW9EDol2ymESJsxtW37cfxZ5/Rk43Grxc2I+wGrGJGty5rkRL
-        C/ulA5Z+BGqKXa9JNCeWaDVlwoHXRIfN6HCZRakfGSKn/Q6VsqHUFvlMVqeRM2zJysoiW7lt
-        Bo5jkzXGtb+8qMUmwSlWiqJddNybU6gTUqpQrnsomLqjq/7ro9N7dAXS5K1z54+YX96Vfmp0
-        5+DePZP8SFfSTElOqklZUDz8Q3Yfcewr3l115W6+53Ldpp0Dex+1HXdXFSa80gtrm1+fWJk4
-        RS3tqk3NdjVRs3O07teVYE3hQ8Nsl9QxFZ6lZh7LPH8bdwzsmD9k27fy1HNTzve0rFIqF7gM
-        yiEJ/wHiKQPWFAQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Sa0hTYRiA+3bOzo7D4de09qmhtajQyLISvx8pkVaHMrILUYLYyINa21w7
-        almQlhZ4QUZR1rSptXLKBrYsLEVxNjWFllka5iqvqKl5S8oScluB/x7e93l4/7w0If5G+tBJ
-        yhRWrZTJpZSQfN4k9dsCRDB225hhO77ePAxwe8Mkib8/zgd42LoZW221PGz8ZAH47cQUhefM
-        GgrbbFUCbLBP87F5oIuPO18WU/iurZ6HTa/sAvx1tAHgtu5ZCo9US3B2b8huMWOa/sJnjDoj
-        YHTGy0yNXQ+YF1q7gDFX5lBMb1cdxTzVZzDvW6/xmSeTNTymoLoSMMW/5klm1uwXLYoR7opn
-        5UlprHpr+Glhov6+Dag08OLC1SqQCepEucCNRnAnKltoB7lASIthLUDdDxsJ18Ib3emwLjG9
-        xJ6oqYlzORMAGUp+kw7HEx5AC7eHKAd7wTBUW6QjHRIB2/joVv4o31U08tAjw5zTomAgahj5
-        6GQPuA59+DkAHCyC4aiiXC9wMAk3oPmSXJ6DV8GTqOBGEeVyVqLX9wadl93gEdRXP+t0CLgJ
-        /dG9I1wsQT2DJf/m/ijrWRGhAZ7aZbl2WaJdlmiXJaWArATerIpTJCi4YFWwkr0QxMkUXKoy
-        IehMssIMnC8QGFADOvVxFgBpIHUXwSqPWDFflsalKywA0YTUS+Qud48Vi+Jl6ZdYdXKcOlXO
-        chbgS5NSiWhI2XxKDBNkKew5llWx6v9bHu3mkwmM0rIx94iOEwcbVudFxB9uLRULKvyz+7P8
-        80x7i49Hro2Ybpf0makoqiN6pu7KvjeqkLXjkVzhoYD9R8+P14RK1vRkLg57caRYgAsXo2YG
-        IltI8+fsmJtEVFHYnpH6dF9NeYvQOrk+9IfEdKz/waQ9Y8eU/GzOvKRyY1j/CkGmlOQSZcGB
-        hJqT/QXGKxu3/gIAAA==
-X-CMS-MailID: 20190623233633epcas1p16ab9635c74bd01f3a7b0828eedf1f9d2
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20190623192007epcas4p2a3995bb00091b436562828fceb6ff790
-References: <20190621180208.25361-7-krzk@kernel.org>
-        <20190622191838.29850-1-krzk@kernel.org>
-        <CAGTfZH2g6E2pCEtqjfCd+PjEzjwc2AB75LXJfCeO+PcYLiLTUw@mail.gmail.com>
-        <CGME20190623192007epcas4p2a3995bb00091b436562828fceb6ff790@epcas4p2.samsung.com>
-        <CAJKOXPcFFY08R1H-DrrzX2BC3L8x4NPJTP7nDn9yixAvmaiF9Q@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
+X-Spam-Status: No, score=2.3 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DATE_IN_FUTURE_03_06,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,
+        DKIM_VALID_EF,FREEMAIL_FORGED_REPLYTO,FREEMAIL_REPLYTO_END_DIGIT
+        autolearn=no autolearn_force=no version=3.4.2
+X-Spam-Level: **
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 19. 6. 24. 오전 4:16, Krzysztof Kozlowski wrote:
-> On Sun, 23 Jun 2019 at 06:31, Chanwoo Choi <cwchoi00@gmail.com> wrote:
->>
->> Hi Krzysztof,
->>
->> 2019년 6월 23일 (일) 오전 4:20, Krzysztof Kozlowski <krzk@kernel.org>님이 작성:
->>>
->>> Enable support for Mali GPU with Panfrost and Lima drivers for:
->>> 1. Samsung Exynos5433 and Exynos7 (having Mali T760),
->>> 2. Allwiner A64 and H5 (Mali 400/450).
->>>
->>> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
->>>
->>> ---
->>>
->>> Changes since v1:
->>> 1. Enable Lima driver
->>> ---
->>>  arch/arm64/configs/defconfig | 3 ++-
->>>  1 file changed, 2 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
->>> index fbbc065415d4..3d31611368af 100644
->>> --- a/arch/arm64/configs/defconfig
->>> +++ b/arch/arm64/configs/defconfig
->>> @@ -518,6 +518,8 @@ CONFIG_DRM_HISI_HIBMC=m
->>>  CONFIG_DRM_HISI_KIRIN=m
->>>  CONFIG_DRM_MESON=m
->>>  CONFIG_DRM_PL111=m
->>> +CONFIG_DRM_LIMA=m
->>> +CONFIG_DRM_PANFROST=m
->>>  CONFIG_FB=y
->>>  CONFIG_FB_MODE_HELPERS=y
->>>  CONFIG_BACKLIGHT_GENERIC=m
->>> @@ -718,7 +720,6 @@ CONFIG_ARCH_TEGRA_194_SOC=y
->>>  CONFIG_ARCH_K3_AM6_SOC=y
->>>  CONFIG_SOC_TI=y
->>>  CONFIG_TI_SCI_PM_DOMAINS=y
->>> -CONFIG_DEVFREQ_GOV_SIMPLE_ONDEMAND=y
->>
->> Exynos5433-tm2 board support the exynos-bus device which
->> used the simple_ondmenad governor of devfreq.
->> Why do you remove this configuration from the defconfig?
-> 
-> It is selected by default by DRM_PANFROST. The difference is that
-> PANFROST selects it as module. The 'y' is chosen because of:
->   SCSI_UFSHCD [=y] && SCSI_LOWLEVEL [=y] && SCSI [=y] && SCSI_DMA [=y]
+Commit-ID:  32e29396f00e7849ea0b1aeebae097fc1de6e979
+Gitweb:     https://git.kernel.org/tip/32e29396f00e7849ea0b1aeebae097fc1de6e979
+Author:     Vincenzo Frascino <vincenzo.frascino@arm.com>
+AuthorDate: Sat, 22 Jun 2019 15:02:07 +0200
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Sat, 22 Jun 2019 21:21:04 +0200
 
-When I tried to find the history of CONFIG_DEVFREQ_GOV_SIMPLE_ONDEMAND 
-for defconfig, the following patch[1] added this configuration.
-[1] b972ff75f2938c39e2205c23ea0e531d36b27f86
-- "arm64: defconfig: Enable UFS on msm8996"
+hrtimer: Split out hrtimer defines into separate header
 
-I think that this patch will affect the opration of 'USF on msm8998'.
+To avoid include dependency hell split out the hrtimer defines which are
+required in the upcoming VDSO library into a separate header file.
 
--- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+[ tglx: Split out from the VDSO library patch and included ktime.h as
+        the new header depends on it. ]
+
+Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Tested-by: Shijith Thotton <sthotton@marvell.com>
+Tested-by: Andre Przywara <andre.przywara@arm.com>
+Cc: linux-arch@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-mips@vger.kernel.org
+Cc: linux-kselftest@vger.kernel.org
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Russell King <linux@armlinux.org.uk>
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: Paul Burton <paul.burton@mips.com>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: Mark Salyzyn <salyzyn@android.com>
+Cc: Peter Collingbourne <pcc@google.com>
+Cc: Shuah Khan <shuah@kernel.org>
+Cc: Dmitry Safonov <0x7f454c46@gmail.com>
+Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Cc: Huw Davies <huw@codeweavers.com>
+Link: https://lkml.kernel.org/r/20190621095252.32307-3-vincenzo.frascino@arm.com
+---
+ include/linux/hrtimer.h      | 16 +---------------
+ include/linux/hrtimer_defs.h | 27 +++++++++++++++++++++++++++
+ 2 files changed, 28 insertions(+), 15 deletions(-)
+
+diff --git a/include/linux/hrtimer.h b/include/linux/hrtimer.h
+index 2e8957eac4d4..4971100a8cab 100644
+--- a/include/linux/hrtimer.h
++++ b/include/linux/hrtimer.h
+@@ -12,8 +12,8 @@
+ #ifndef _LINUX_HRTIMER_H
+ #define _LINUX_HRTIMER_H
+ 
++#include <linux/hrtimer_defs.h>
+ #include <linux/rbtree.h>
+-#include <linux/ktime.h>
+ #include <linux/init.h>
+ #include <linux/list.h>
+ #include <linux/percpu.h>
+@@ -298,26 +298,12 @@ struct clock_event_device;
+ 
+ extern void hrtimer_interrupt(struct clock_event_device *dev);
+ 
+-/*
+- * The resolution of the clocks. The resolution value is returned in
+- * the clock_getres() system call to give application programmers an
+- * idea of the (in)accuracy of timers. Timer values are rounded up to
+- * this resolution values.
+- */
+-# define HIGH_RES_NSEC		1
+-# define KTIME_HIGH_RES		(HIGH_RES_NSEC)
+-# define MONOTONIC_RES_NSEC	HIGH_RES_NSEC
+-# define KTIME_MONOTONIC_RES	KTIME_HIGH_RES
+-
+ extern void clock_was_set_delayed(void);
+ 
+ extern unsigned int hrtimer_resolution;
+ 
+ #else
+ 
+-# define MONOTONIC_RES_NSEC	LOW_RES_NSEC
+-# define KTIME_MONOTONIC_RES	KTIME_LOW_RES
+-
+ #define hrtimer_resolution	(unsigned int)LOW_RES_NSEC
+ 
+ static inline void clock_was_set_delayed(void) { }
+diff --git a/include/linux/hrtimer_defs.h b/include/linux/hrtimer_defs.h
+new file mode 100644
+index 000000000000..2d3e3c5fb946
+--- /dev/null
++++ b/include/linux/hrtimer_defs.h
+@@ -0,0 +1,27 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef _LINUX_HRTIMER_DEFS_H
++#define _LINUX_HRTIMER_DEFS_H
++
++#include <linux/ktime.h>
++
++#ifdef CONFIG_HIGH_RES_TIMERS
++
++/*
++ * The resolution of the clocks. The resolution value is returned in
++ * the clock_getres() system call to give application programmers an
++ * idea of the (in)accuracy of timers. Timer values are rounded up to
++ * this resolution values.
++ */
++# define HIGH_RES_NSEC		1
++# define KTIME_HIGH_RES		(HIGH_RES_NSEC)
++# define MONOTONIC_RES_NSEC	HIGH_RES_NSEC
++# define KTIME_MONOTONIC_RES	KTIME_HIGH_RES
++
++#else
++
++# define MONOTONIC_RES_NSEC	LOW_RES_NSEC
++# define KTIME_MONOTONIC_RES	KTIME_LOW_RES
++
++#endif
++
++#endif
