@@ -2,129 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D6B524FA6C
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2019 07:49:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A0CE34FA70
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2019 07:59:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726654AbfFWFtG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 23 Jun 2019 01:49:06 -0400
-Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:6278 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726634AbfFWFtD (ORCPT
+        id S1726370AbfFWF7o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 23 Jun 2019 01:59:44 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:45284 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725268AbfFWF7n (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Jun 2019 01:49:03 -0400
-Received: from pps.filterd (m0044010.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5N5j2fS008151
-        for <linux-kernel@vger.kernel.org>; Sat, 22 Jun 2019 22:49:02 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : in-reply-to : references : mime-version :
- content-type; s=facebook; bh=nrhKkEIFZQZyLO47iU67e7PRaxciftm8IRTz/uqOqR0=;
- b=n1Mcb0xGlFicl1b6shGpkYWp0dyD67YcBa33e1T8uSrJxtYb4UfwBYdtfsPWoV7EkMhp
- 5uVeE8tweF3P7RCVVxSK3WJq5YpcBEOxpchg/g8wF8itEhVIC/ddefSvFxVw/VIvlCBt
- W3QMPnENFjD20JsVCgt2dOeCFPCeAyljreE= 
-Received: from maileast.thefacebook.com ([163.114.130.16])
-        by mx0a-00082601.pphosted.com with ESMTP id 2t9fn2agce-4
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Sat, 22 Jun 2019 22:49:02 -0700
-Received: from mx-out.facebook.com (2620:10d:c0a8:1b::d) by
- mail.thefacebook.com (2620:10d:c0a8:83::5) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1713.5; Sat, 22 Jun 2019 22:49:00 -0700
-Received: by devbig006.ftw2.facebook.com (Postfix, from userid 4523)
-        id 4567E62E2CFB; Sat, 22 Jun 2019 22:48:58 -0700 (PDT)
-Smtp-Origin-Hostprefix: devbig
-From:   Song Liu <songliubraving@fb.com>
-Smtp-Origin-Hostname: devbig006.ftw2.facebook.com
-To:     <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>
-CC:     <matthew.wilcox@oracle.com>, <kirill.shutemov@linux.intel.com>,
-        <peterz@infradead.org>, <oleg@redhat.com>, <rostedt@goodmis.org>,
-        <kernel-team@fb.com>, <william.kucharski@oracle.com>,
-        Song Liu <songliubraving@fb.com>
-Smtp-Origin-Cluster: ftw2c04
-Subject: [PATCH v6 6/6] uprobe: collapse THP pmd after removing all uprobes
-Date:   Sat, 22 Jun 2019 22:48:29 -0700
-Message-ID: <20190623054829.4018117-7-songliubraving@fb.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190623054829.4018117-1-songliubraving@fb.com>
-References: <20190623054829.4018117-1-songliubraving@fb.com>
-X-FB-Internal: Safe
+        Sun, 23 Jun 2019 01:59:43 -0400
+Received: by mail-pg1-f195.google.com with SMTP id z19so2392956pgl.12;
+        Sat, 22 Jun 2019 22:59:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=TRsJBJ+b2h9hoTlcKSaQA1RdNR6UyuxgQKyZTUz5YGQ=;
+        b=MOcnQlgZGf4ZwRfZdThPoCPlQVxzwKy8P8t0OcjBi6zjFuzSHFQIRRgoAmZ0WzAmYw
+         4d5NEiL79jl5+RlESbcPcrERWpa9+navxhBGEFFNf7uC3rRHnY3MtrxGV38s2FSoXnrf
+         oGoOYM0TAIuWoKg2fQxPYWfMArw8/DPmhe0551DPOeV7UndZUSqXSCWY/1wMyTWzvR7u
+         thu9PltoVwTVcW+hmftT6tE+Lo16V0bT9x19w2SdtgdY30RQQhlklnxqW6VT1WkbqBKB
+         UOofQxAkpnbJ6qKCuC0r494cs32IxqN+2r4T8JmigjltAbjutxELJIZsatZa5I788nS7
+         s/Mg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=TRsJBJ+b2h9hoTlcKSaQA1RdNR6UyuxgQKyZTUz5YGQ=;
+        b=UljDe7JjffcoEnDBpNq5NjJw5j19QA39hX9UMBjCOTJXKOKdSq9PYSSjcAFGYbY4XL
+         3cIUBpUMPVC8Rcts+w1sJGSMw0N85ZpB6ZSO9c+U6K56cVcRC2xAjndui58krUlWq0x5
+         lYB7et4ku/0mCWT2uBcnhM+SVafR0e57M16H7jitevWp8QPY8da60OiDxSL5d7+Ee+If
+         PA7PwlN7kfHFMy9elnyD17ieojSZyaU1AwECl7Zlj7mIRzAE9T5ZVPKquvUKQcR7T6KT
+         ik6sIaroY+y/txkL/svxm7jNChbXZmpFrAn/8rvHJWL0Xrfet9qzJryAnfpmN/3IkDYq
+         JHWQ==
+X-Gm-Message-State: APjAAAWyFUZUVqb79dhIN2U0kbnplAtvxkFiH4+NygOTC/F8F/YaycOo
+        ooWcqrMwaFmDi8ykozPqCE0xwwuO
+X-Google-Smtp-Source: APXvYqyLCpof1dXxOQI9ZYS2M6tKS5ViBR+XRg4MnTxljhYsnsLJchv0vMrNAqNj1etSR+kgnES9ew==
+X-Received: by 2002:a63:a61:: with SMTP id z33mr8552388pgk.154.1561269582678;
+        Sat, 22 Jun 2019 22:59:42 -0700 (PDT)
+Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
+        by smtp.gmail.com with ESMTPSA id m31sm10264274pjb.6.2019.06.22.22.59.41
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Sat, 22 Jun 2019 22:59:41 -0700 (PDT)
+Date:   Sat, 22 Jun 2019 22:59:40 -0700
+From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc:     Benoit Parrot <bparrot@ti.com>,
+        Henrik Rydberg <rydberg@bitmath.org>,
+        Marco Felsch <m.felsch@pengutronix.de>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        linux-input <linux-input@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [Patch 1/1] Input: edt-ft5x06 - disable irq handling during
+ suspend
+Message-ID: <20190623055940.GA204275@dtor-ws>
+References: <20190621185124.28966-1-bparrot@ti.com>
+ <CAHp75VdcAfmn8u0du-Y95SjMcmuJa2402tdXCNHMcme1Y925xg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-23_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=728 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1906230050
-X-FB-Internal: deliver
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHp75VdcAfmn8u0du-Y95SjMcmuJa2402tdXCNHMcme1Y925xg@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-After all uprobes are removed from the huge page (with PTE pgtable), it
-is possible to collapse the pmd and benefit from THP again. This patch
-does the collapse by setting AS_COLLAPSE_PMD. khugepage would retrace
-the page table.
+On Sat, Jun 22, 2019 at 01:37:10PM +0300, Andy Shevchenko wrote:
+> On Fri, Jun 21, 2019 at 9:53 PM Benoit Parrot <bparrot@ti.com> wrote:
+> >
+> > As a wakeup source when the system is in suspend there is little point
+> > trying to access a register across the i2c bus as it is probably still
+> > inactive. We need to prevent the irq handler from being called during
+> > suspend.
+> >
+> 
+> Hmm... But how OS will know what the event to handle afterwards?
+> I mean shouldn't we guarantee somehow the delivery of the event to the
+> input, in this case, subsystem followed by corresponding user space?
 
-A check for vma->anon_vma is removed from retract_page_tables(). The
-check was initially marked as "probably overkill". The code works well
-without the check.
+If we are using level interrupts then it will work OK, however it is
+really easy to lose edge here, as replaying disabled edge triggered
+interrupts is not really reliable.
 
-An issue on earlier version was discovered by kbuild test robot.
+Benoit, what kind of interrupt do you use in your system?
 
-Reported-by: kbuild test robot <lkp@intel.com>
-Signed-off-by: Song Liu <songliubraving@fb.com>
----
- kernel/events/uprobes.c | 6 +++++-
- mm/khugepaged.c         | 3 ---
- 2 files changed, 5 insertions(+), 4 deletions(-)
+Thanks.
 
-diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
-index a20d7b43a056..418382259f61 100644
---- a/kernel/events/uprobes.c
-+++ b/kernel/events/uprobes.c
-@@ -474,6 +474,7 @@ int uprobe_write_opcode(struct arch_uprobe *auprobe, struct mm_struct *mm,
- 	struct page *old_page, *new_page;
- 	struct vm_area_struct *vma;
- 	int ret, is_register, ref_ctr_updated = 0;
-+	struct page *orig_page = NULL;
- 
- 	is_register = is_swbp_insn(&opcode);
- 	uprobe = container_of(auprobe, struct uprobe, arch);
-@@ -512,7 +513,6 @@ int uprobe_write_opcode(struct arch_uprobe *auprobe, struct mm_struct *mm,
- 	copy_to_page(new_page, vaddr, &opcode, UPROBE_SWBP_INSN_SIZE);
- 
- 	if (!is_register) {
--		struct page *orig_page;
- 		pgoff_t index;
- 
- 		index = vaddr_to_offset(vma, vaddr & PAGE_MASK) >> PAGE_SHIFT;
-@@ -540,6 +540,10 @@ int uprobe_write_opcode(struct arch_uprobe *auprobe, struct mm_struct *mm,
- 	if (ret && is_register && ref_ctr_updated)
- 		update_ref_ctr(uprobe, mm, -1);
- 
-+	if (!ret && orig_page && PageTransCompound(orig_page))
-+		set_bit(AS_COLLAPSE_PMD,
-+			&compound_head(orig_page)->mapping->flags);
-+
- 	return ret;
- }
- 
-diff --git a/mm/khugepaged.c b/mm/khugepaged.c
-index 9b980327fd9b..2e277a2d731f 100644
---- a/mm/khugepaged.c
-+++ b/mm/khugepaged.c
-@@ -1302,9 +1302,6 @@ static void retract_page_tables(struct address_space *mapping, pgoff_t pgoff,
- 
- 	i_mmap_lock_write(mapping);
- 	vma_interval_tree_foreach(vma, &mapping->i_mmap, pgoff, pgoff) {
--		/* probably overkill */
--		if (vma->anon_vma)
--			continue;
- 		addr = vma->vm_start + ((pgoff - vma->vm_pgoff) << PAGE_SHIFT);
- 		if (addr & ~HPAGE_PMD_MASK)
- 			continue;
 -- 
-2.17.1
-
+Dmitry
