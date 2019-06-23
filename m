@@ -2,115 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8BE7B4FD65
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2019 19:51:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 02D494FD6F
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2019 20:00:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726650AbfFWRvg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 23 Jun 2019 13:51:36 -0400
-Received: from mail-io1-f66.google.com ([209.85.166.66]:39857 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726417AbfFWRvf (ORCPT
+        id S1726694AbfFWSAT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 23 Jun 2019 14:00:19 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:40215 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726399AbfFWSAT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Jun 2019 13:51:35 -0400
-Received: by mail-io1-f66.google.com with SMTP id r185so322249iod.6
-        for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2019 10:51:35 -0700 (PDT)
+        Sun, 23 Jun 2019 14:00:19 -0400
+Received: by mail-wr1-f68.google.com with SMTP id p11so11405902wre.7
+        for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2019 11:00:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google;
-        h=date:from:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=Q2J+zKT6qsK6pe1jDDGYOH9t9wEmd7xRD0oxX/ZUOXQ=;
-        b=mvMMAei/5azOZcypBaEq8btNPNLpZxE8KXSkooN06cOew1QavQgeymrVjqWBjat1GL
-         uzBIDawPiu/bbiNJmLhZPmISgjP9aSiopTaL/7FR1APjAYczi+W0RvE9jR1WzBLBerqU
-         7u5n19EJbrps00jQxZD4b5DiKjfAR2j6nJ3QDQUWgjjIP4uU7Rl5uAh4S4a2XlFtPU/d
-         Q/Hnk1VimSW17bTId6rZHzDJiIQT2NBzvQefxhxRpAncjpMwQ7wUhc12FxoK2tKIdDcx
-         XjQBxcDItwoOpcj78IDtHiU5jixCisA0Fsm4m9M9YUFLtXmouM0VW0sBz9+81nwGIiVL
-         jisg==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=XwY7oF1s2rpAVXJCsz1ECdo2yKOBz2vGMZwE6GybNDE=;
+        b=gMjq9R2MKHHjqs9OKYS0aCOUV2sFpbrVHbG6pbzBSiKU8V67PGWeXT+ZlQui40ad7G
+         XN2U/tRPSQL99FaRbzn7v5nuOHgZTiMo2i0dMh1yMXNlXtNTezlwsE3TLESbm4Og2yOc
+         5LA4Qvfve8ePOBiDAB4vYchm2DuMaQCbLWjabU//ZMrhJaejGMC+BW1elZPSqU14w4oR
+         r4cVajtTSR325If+3rHI6joP4u8Cs7wVnHeN277pp+ltMnWTiYaOXNQlDU/DuZWh6b4e
+         BPMcqYLQb2JhJ4y+Wr5rokm5QaC2Fi1DsB65tsjGcfPCTGqBBH7udxSc6QlkoUuTIjyi
+         zsJQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=Q2J+zKT6qsK6pe1jDDGYOH9t9wEmd7xRD0oxX/ZUOXQ=;
-        b=T8UCAv2e421HouK3uaAUZDOQ4SxOG5FysYoRIkUSsOH22fTs3aNPZ9mEU8ft42KywX
-         YlN9awOFcEcbnxt8QiIRgKvWo1JhSizV957LrR85hGtF8IrD4KWmo4GMjVfhwpOYpYC0
-         Aqqt6MaP3Af2xX/3t4mmUN/MGuuxHbzSSojxAaFX0LZhtQUo64xpQ+EoKLlmRcAdpeBd
-         vvFT7kOwzK42quK0v/2cl4X1Y3WUeBKFPSMMICEFckaIIoC2698L5FdufybtdXqZgOBV
-         KWEvVD+Ns467E3oHkrtCuK66Sb7lnREywdMWB0AbxPvnvg3RUxzAKqr37SIcJ5nxDs1i
-         9yvA==
-X-Gm-Message-State: APjAAAXK+cc7N8hxyetjVpLMdXDnMXlYj4nMinJj8d1wJKc0KJRrTa7o
-        7mfq+XW59fYNN16yYFuT1AJ4Qw==
-X-Google-Smtp-Source: APXvYqzhFIic7VRKdOafvYSegTmj3HQpbIxq+GXv4K4JVmIbUVqc3WLm1Nzru7qiZWB7KESBlTOu5w==
-X-Received: by 2002:a02:ce52:: with SMTP id y18mr19504458jar.78.1561312294952;
-        Sun, 23 Jun 2019 10:51:34 -0700 (PDT)
-Received: from localhost (c-73-95-159-87.hsd1.co.comcast.net. [73.95.159.87])
-        by smtp.gmail.com with ESMTPSA id r5sm7607520iom.42.2019.06.23.10.51.34
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=XwY7oF1s2rpAVXJCsz1ECdo2yKOBz2vGMZwE6GybNDE=;
+        b=XiljCoUvQ80/0UeVOB/KrMM3DRS4MEi+Yfe4oVazdUQyzHC9wqMqGt8E88PHB3mUyO
+         k+4BfckEpWhQuDG4Sq8KVDg/Rj/QAtTUvG/M69NgUmpeBnIP9mB5sWEAj9/bhiR7nJ5r
+         iyAX2L35mbVmZkEhnTgU6n58kztukm7KqCGO5zkSQQPDcG8/sfLKTrK4qWSG7cd592jT
+         p+9yk2t9OtlL9WYhajuF/kWu8APw5hRe1aJZ2xf29Os9BZC6LlBNvolOprn4QrGa2gu9
+         gwSKN1Bey6Spmqk41uTpNOfJhxNKp3pyvfNNY09freDqSeOF624JTkbWWGiYz8LAOrqX
+         Sb3w==
+X-Gm-Message-State: APjAAAX5KqRkUkjZP3qAYdeyxjFlwuJVOkk+lj6OBCJaisqSnmiFksGz
+        P5lFCjXf9/NrMAnowzaiHdw=
+X-Google-Smtp-Source: APXvYqyhkzHacP8GvpB/UGe5BNJEowImB7WDuz4lkYbuNelTfLNQjMn1fK2AVjTQd3sNLbii4U1Tww==
+X-Received: by 2002:a5d:5303:: with SMTP id e3mr14568750wrv.239.1561312816800;
+        Sun, 23 Jun 2019 11:00:16 -0700 (PDT)
+Received: from localhost.localdomain ([2a02:8108:96bf:e0ab:2b68:5d76:a12a:e6ba])
+        by smtp.gmail.com with ESMTPSA id c4sm8216742wrt.86.2019.06.23.11.00.15
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Sun, 23 Jun 2019 10:51:34 -0700 (PDT)
-Date:   Sun, 23 Jun 2019 10:51:33 -0700 (PDT)
-From:   Paul Walmsley <paul.walmsley@sifive.com>
-X-X-Sender: paulw@viisi.sifive.com
-To:     Atish Patra <Atish.Patra@wdc.com>, linux@armlinux.org.uk
-cc:     "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "rfontana@redhat.com" <rfontana@redhat.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "jhugo@codeaurora.org" <jhugo@codeaurora.org>,
-        "aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>,
-        "mingo@kernel.org" <mingo@kernel.org>,
-        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-        "mchehab+samsung@kernel.org" <mchehab+samsung@kernel.org>,
-        "Jonathan.Cameron@huawei.com" <Jonathan.Cameron@huawei.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
-        "will.deacon@arm.com" <will.deacon@arm.com>,
-        "morten.rasmussen@arm.com" <morten.rasmussen@arm.com>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "palmer@sifive.com" <palmer@sifive.com>,
-        "peterz@infradead.org" <peterz@infradead.org>,
-        "ottosabart@seberm.com" <ottosabart@seberm.com>,
-        "sudeep.holla@arm.com" <sudeep.holla@arm.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "rafael@kernel.org" <rafael@kernel.org>,
-        "anup@brainfault.org" <anup@brainfault.org>,
-        "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
-        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v7 3/7] cpu-topology: Move cpu topology code to common
- code.
-In-Reply-To: <91559562f2958fa904b53e621e596d6216efa9fb.camel@wdc.com>
-Message-ID: <alpine.DEB.2.21.9999.1906231045280.13854@viisi.sifive.com>
-References: <20190617185920.29581-1-atish.patra@wdc.com>  <20190617185920.29581-4-atish.patra@wdc.com>  <20190619173801.GB20916@kroah.com> <91559562f2958fa904b53e621e596d6216efa9fb.camel@wdc.com>
-User-Agent: Alpine 2.21.9999 (DEB 301 2018-08-15)
+        Sun, 23 Jun 2019 11:00:16 -0700 (PDT)
+From:   Michael Straube <straube.linux@gmail.com>
+To:     gregkh@linuxfoundation.org
+Cc:     Larry.Finger@lwfinger.net, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org,
+        Michael Straube <straube.linux@gmail.com>
+Subject: [PATCH 1/2] staging: rtl8188eu: remove unused function get_bsstype()
+Date:   Sun, 23 Jun 2019 19:59:56 +0200
+Message-Id: <20190623175957.16763-1-straube.linux@gmail.com>
+X-Mailer: git-send-email 2.22.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Atish, Russell,
+Function get_bsstype() is not used in the driver code, so remove it.
 
-On Fri, 21 Jun 2019, Atish Patra wrote:
+Signed-off-by: Michael Straube <straube.linux@gmail.com>
+---
+ drivers/staging/rtl8188eu/core/rtw_wlan_util.c   | 10 ----------
+ drivers/staging/rtl8188eu/include/rtw_mlme_ext.h |  1 -
+ 2 files changed, 11 deletions(-)
 
-> On Wed, 2019-06-19 at 19:38 +0200, Greg Kroah-Hartman wrote:
-> > On Mon, Jun 17, 2019 at 11:59:16AM -0700, Atish Patra wrote:
-> > > Both RISC-V & ARM64 are using cpu-map device tree to describe
-> > > their cpu topology. It's better to move the relevant code to
-> > > a common place instead of duplicate code.
+diff --git a/drivers/staging/rtl8188eu/core/rtw_wlan_util.c b/drivers/staging/rtl8188eu/core/rtw_wlan_util.c
+index d1e99885c8f5..159c46b096cb 100644
+--- a/drivers/staging/rtl8188eu/core/rtw_wlan_util.c
++++ b/drivers/staging/rtl8188eu/core/rtw_wlan_util.c
+@@ -346,16 +346,6 @@ void set_channel_bwmode(struct adapter *padapter, unsigned char channel, unsigne
+ 	SetBWMode(padapter, bwmode, channel_offset);
+ }
+ 
+-int get_bsstype(unsigned short capability)
+-{
+-	if (capability & BIT(0))
+-		return WIFI_FW_AP_STATE;
+-	else if (capability & BIT(1))
+-		return WIFI_FW_ADHOC_STATE;
+-	else
+-		return 0;
+-}
+-
+ u16 get_beacon_interval(struct wlan_bssid_ex *bss)
+ {
+ 	__le16 val;
+diff --git a/drivers/staging/rtl8188eu/include/rtw_mlme_ext.h b/drivers/staging/rtl8188eu/include/rtw_mlme_ext.h
+index 1fb2349bd0a0..fa14b6fedf08 100644
+--- a/drivers/staging/rtl8188eu/include/rtw_mlme_ext.h
++++ b/drivers/staging/rtl8188eu/include/rtw_mlme_ext.h
+@@ -485,7 +485,6 @@ void flush_all_cam_entry(struct adapter *padapter);
+ void update_network(struct wlan_bssid_ex *dst, struct wlan_bssid_ex *src,
+ 		    struct adapter *adapter, bool update_ie);
+ 
+-int get_bsstype(unsigned short capability);
+ u16 get_beacon_interval(struct wlan_bssid_ex *bss);
+ 
+ int is_client_associated_to_ap(struct adapter *padapter);
+-- 
+2.22.0
 
-[ ... ]
-
-> I guess Greg has acked the series assuming that it will go through some
-> other tree. Can you take it through RISC-V tree ?
-> 
-> Sorry for the confusion.
-> 
-> Note: We are still waiting for RMK's ACK on arm patch before it can be
-> sent as a PR.
-
-I'm fine to take it through the RISC-V tree, once Russell acks the 
-arch/arm patch.
-
-
-- Paul
