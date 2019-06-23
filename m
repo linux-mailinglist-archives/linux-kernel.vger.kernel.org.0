@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CBC704FB9C
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2019 14:37:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E57A34FB99
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2019 14:37:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726657AbfFWMhR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 23 Jun 2019 08:37:17 -0400
-Received: from inva021.nxp.com ([92.121.34.21]:43132 "EHLO inva021.nxp.com"
+        id S1726641AbfFWMhL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 23 Jun 2019 08:37:11 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:43192 "EHLO inva021.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726086AbfFWMhJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1726599AbfFWMhJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 23 Jun 2019 08:37:09 -0400
 Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id BE51A2003D6;
-        Sun, 23 Jun 2019 14:37:06 +0200 (CEST)
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id F0DD220012B;
+        Sun, 23 Jun 2019 14:37:07 +0200 (CEST)
 Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id CB38F2003CF;
-        Sun, 23 Jun 2019 14:36:57 +0200 (CEST)
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 0DEAA2003D0;
+        Sun, 23 Jun 2019 14:36:59 +0200 (CEST)
 Received: from mega.ap.freescale.net (mega.ap.freescale.net [10.192.208.232])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id DBC6B40313;
-        Sun, 23 Jun 2019 20:36:46 +0800 (SGT)
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 8473F40318;
+        Sun, 23 Jun 2019 20:36:48 +0800 (SGT)
 From:   Anson.Huang@nxp.com
 To:     daniel.lezcano@linaro.org, tglx@linutronix.de, robh+dt@kernel.org,
         mark.rutland@arm.com, shawnguo@kernel.org, s.hauer@pengutronix.de,
@@ -29,9 +29,9 @@ To:     daniel.lezcano@linaro.org, tglx@linutronix.de, robh+dt@kernel.org,
         linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org
 Cc:     Linux-imx@nxp.com
-Subject: [PATCH RESEND V2 2/3] clocksource: imx-sysctr: Make timer work with clock driver using platform driver model
-Date:   Sun, 23 Jun 2019 20:38:49 +0800
-Message-Id: <20190623123850.22584-2-Anson.Huang@nxp.com>
+Subject: [PATCH RESEND V2 3/3] arm64: dts: imx8mq: Add system counter node
+Date:   Sun, 23 Jun 2019 20:38:50 +0800
+Message-Id: <20190623123850.22584-3-Anson.Huang@nxp.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190623123850.22584-1-Anson.Huang@nxp.com>
 References: <20190623123850.22584-1-Anson.Huang@nxp.com>
@@ -43,47 +43,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Anson Huang <Anson.Huang@nxp.com>
 
-On some i.MX8M platforms, clock driver uses platform driver
-model and it is NOT ready during timer initialization phase,
-the clock operations will fail and system counter driver will
-fail too. As all the i.MX8M platforms' system counter clock
-are from OSC which is always enabled, so it is no need to enable
-clock for system counter driver, the ONLY thing is to pass
-clock frequence to driver.
-
-To make system counter driver work for upper scenario, add an
-option of skipping of_clk operation for system counter driver,
-an optional property "clock-frequency" is introduced to pass
-the frequency value to system counter driver and indicate driver
-to skip of_clk operations.
+Add i.MX8MQ system counter node to enable timer-imx-sysctr
+broadcast timer driver.
 
 Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 ---
-Changes since V1:
-	- improve commit log, no content change.
+No change.
 ---
- drivers/clocksource/timer-imx-sysctr.c | 8 ++++++++
+ arch/arm64/boot/dts/freescale/imx8mq.dtsi | 8 ++++++++
  1 file changed, 8 insertions(+)
 
-diff --git a/drivers/clocksource/timer-imx-sysctr.c b/drivers/clocksource/timer-imx-sysctr.c
-index fd7d680..8ff3d7e 100644
---- a/drivers/clocksource/timer-imx-sysctr.c
-+++ b/drivers/clocksource/timer-imx-sysctr.c
-@@ -129,6 +129,14 @@ static void __init sysctr_clockevent_init(void)
- static int __init sysctr_timer_init(struct device_node *np)
- {
- 	int ret = 0;
-+	u32 rate;
+diff --git a/arch/arm64/boot/dts/freescale/imx8mq.dtsi b/arch/arm64/boot/dts/freescale/imx8mq.dtsi
+index d09b808..9d99191 100644
+--- a/arch/arm64/boot/dts/freescale/imx8mq.dtsi
++++ b/arch/arm64/boot/dts/freescale/imx8mq.dtsi
+@@ -635,6 +635,14 @@
+ 				#pwm-cells = <2>;
+ 				status = "disabled";
+ 			};
 +
-+	if (!of_property_read_u32(np, "clock-frequency",
-+				  &rate)) {
-+		to_sysctr.of_clk.rate = rate;
-+		to_sysctr.of_clk.period = DIV_ROUND_UP(rate, HZ);
-+		to_sysctr.flags &= ~TIMER_OF_CLOCK;
-+	}
++			system_counter: timer@306a0000 {
++				compatible = "nxp,sysctr-timer";
++				reg = <0x306a0000 0x30000>;
++				interrupts = <GIC_SPI 47 IRQ_TYPE_LEVEL_HIGH>,
++					     <GIC_SPI 48 IRQ_TYPE_LEVEL_HIGH>;
++				clock-frequency = <8333333>;
++			};
+ 		};
  
- 	ret = timer_of_init(np, &to_sysctr);
- 	if (ret)
+ 		bus@30800000 { /* AIPS3 */
 -- 
 2.7.4
 
