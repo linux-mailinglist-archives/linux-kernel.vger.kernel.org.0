@@ -2,141 +2,202 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ADC744FE75
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 03:42:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1C0524FF2B
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 04:16:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726932AbfFXBmF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 23 Jun 2019 21:42:05 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:43987 "EHLO
-        mail.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726525AbfFXBk4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Jun 2019 21:40:56 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x5NNoMfH2859239
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Sun, 23 Jun 2019 16:50:22 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x5NNoMfH2859239
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019061801; t=1561333823;
-        bh=UwzS8YFFJZyt/k85LgC78YnO8D2+HRtyxQ0RIzbovew=;
-        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
-        b=urFKSKjIh0B8p4dYffIhFtLANKq1GHVQBLs54SpRQMgB6MIOmDiW7VDPTzbHTwYD9
-         dM5pfx9zG+dRZJW0ZN59tQiQq+3WxOYyOdxisWBoONvMNXHBZkiuY8fEes0X3EyJ9d
-         8+jNnT74tUyhxAfpoceM6SVDXojf2dUt4+BMUIK0zSh3yQMFCkSQxK6/Xvt85jqQ7t
-         PkQvMqtgoqeWSq0LLy9pSrD86tCpWRdsu3mfGD6BAq8lX07LYjQP0EEDTEIUPuah8m
-         GvREYHHaMd893sGIVN9JQsnDNCpH6f1q3+nnNdKFswwy6wobEYJYN/06KaBenR+3nd
-         ewzGCevpi6TCw==
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x5NNoL7h2859236;
-        Sun, 23 Jun 2019 16:50:21 -0700
-Date:   Sun, 23 Jun 2019 16:50:21 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Vincenzo Frascino <tipbot@zytor.com>
-Message-ID: <tip-f14d8025d263f3c8236775df724a7c1f14e0dc94@git.kernel.org>
-Cc:     mingo@kernel.org, arnd@arndb.de, salyzyn@android.com,
-        vincenzo.frascino@arm.com, paul.burton@mips.com,
-        linux-kernel@vger.kernel.org, tglx@linutronix.de, pcc@google.com,
-        huw@codeweavers.com, ralf@linux-mips.org, andre.przywara@arm.com,
-        linux@armlinux.org.uk, catalin.marinas@arm.com,
-        sthotton@marvell.com, 0x7f454c46@gmail.com, will.deacon@arm.com,
-        hpa@zytor.com, daniel.lezcano@linaro.org, linux@rasmusvillemoes.dk,
-        shuah@kernel.org
-Reply-To: arnd@arndb.de, salyzyn@android.com, mingo@kernel.org,
-          paul.burton@mips.com, vincenzo.frascino@arm.com,
-          linux-kernel@vger.kernel.org, tglx@linutronix.de, pcc@google.com,
-          huw@codeweavers.com, linux@armlinux.org.uk,
-          andre.przywara@arm.com, ralf@linux-mips.org,
-          0x7f454c46@gmail.com, sthotton@marvell.com,
-          catalin.marinas@arm.com, daniel.lezcano@linaro.org,
-          will.deacon@arm.com, hpa@zytor.com, shuah@kernel.org,
-          linux@rasmusvillemoes.dk
-In-Reply-To: <20190621095252.32307-9-vincenzo.frascino@arm.com>
-References: <20190621095252.32307-9-vincenzo.frascino@arm.com>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:timers/vdso] arm64: compat: Generate asm offsets for signals
-Git-Commit-ID: f14d8025d263f3c8236775df724a7c1f14e0dc94
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        id S1726953AbfFXCQC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 23 Jun 2019 22:16:02 -0400
+Received: from mailout2.samsung.com ([203.254.224.25]:17871 "EHLO
+        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726334AbfFXCQB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 23 Jun 2019 22:16:01 -0400
+Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
+        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20190623234831epoutp02b73cc145b1c4b71e089a789be62e74f8~q_L0Obz-W3105331053epoutp02a
+        for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2019 23:48:31 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20190623234831epoutp02b73cc145b1c4b71e089a789be62e74f8~q_L0Obz-W3105331053epoutp02a
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1561333711;
+        bh=y5JFwrOZq4d42qzJPkw+Zg+TcIER/Wk/VIKyGC4xXtM=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=ZROOufcthysiq9fS5Ltd8c6Dx5aWt+gIVm844JI6QoJpm/HScuN0loVoZU9aW1Put
+         +uHq2Ab/UTYaNPfVOjKy+8rYxbN+J3ehT7mR+gyN9IpPjKGcBURZp3mEIMNXtwPd/p
+         5BW7lWaXJOrD3/n0+45cQP8GNsUCSdFRFcxViUgg=
+Received: from epsmges1p4.samsung.com (unknown [182.195.40.158]) by
+        epcas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20190623234827epcas1p13e2ecfb1ca561a0b2c3a901536393930~q_Lv3tEc_0191701917epcas1p1O;
+        Sun, 23 Jun 2019 23:48:27 +0000 (GMT)
+Received: from epcas1p3.samsung.com ( [182.195.41.47]) by
+        epsmges1p4.samsung.com (Symantec Messaging Gateway) with SMTP id
+        4D.7E.04257.2CF001D5; Mon, 24 Jun 2019 08:48:18 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
+        20190623234817epcas1p394d0ec7c278969f0b2e3d73c45df407a~q_LnCE6ds0503705037epcas1p3f;
+        Sun, 23 Jun 2019 23:48:17 +0000 (GMT)
+Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20190623234817epsmtrp10e6374e407264530a6ab2f883a9634cb~q_LnBOmNw2617626176epsmtrp1E;
+        Sun, 23 Jun 2019 23:48:17 +0000 (GMT)
+X-AuditID: b6c32a38-5e3ff700000010a1-1f-5d100fc2f8bf
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        2C.AF.03662.1CF001D5; Mon, 24 Jun 2019 08:48:17 +0900 (KST)
+Received: from [10.113.221.102] (unknown [10.113.221.102]) by
+        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20190623234817epsmtip1264e7902c17275a3cf2cc2e0c14370f0~q_Lm5JBod0344203442epsmtip1y;
+        Sun, 23 Jun 2019 23:48:17 +0000 (GMT)
+Subject: Re: [PATCH v4 00/16] NVIDIA Tegra devfreq improvements and
+ Tegra20/30 support
+To:     Dmitry Osipenko <digetx@gmail.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
+        linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+From:   Chanwoo Choi <cw00.choi@samsung.com>
+Organization: Samsung Electronics
+Message-ID: <31fc1430-5a3b-cccb-06bb-7b46081edb68@samsung.com>
+Date:   Mon, 24 Jun 2019 08:50:53 +0900
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+        Thunderbird/60.7.1
 MIME-Version: 1.0
+In-Reply-To: <389cc71d-8f0b-fa39-1325-433d27c75dc8@gmail.com>
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
-X-Spam-Status: No, score=2.3 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        DATE_IN_FUTURE_03_06,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,
-        DKIM_VALID_EF,FREEMAIL_FORGED_REPLYTO,FREEMAIL_REPLYTO_END_DIGIT
-        autolearn=no autolearn_force=no version=3.4.2
-X-Spam-Level: **
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrIJsWRmVeSWpSXmKPExsWy7bCmvu4hfoFYg2f/NS1Wf3zMaNEyaxGL
+        xdmmN+wWl3fNYbP43HuE0aLzyyw2i9uNK9gsfu6ax2LRt/YSmwOnx467Sxg9ds66y+7R2/yO
+        zaNvyypGj8+b5AJYo7JtMlITU1KLFFLzkvNTMvPSbZW8g+Od403NDAx1DS0tzJUU8hJzU22V
+        XHwCdN0yc4AOUlIoS8wpBQoFJBYXK+nb2RTll5akKmTkF5fYKqUWpOQUWBboFSfmFpfmpesl
+        5+daGRoYGJkCFSZkZyx6sJqp4IFkRdOHWYwNjEdFuhg5OSQETCR23bvH3sXIxSEksINRYsm0
+        xUwQzidGiQ1n30E53xglTp/+ygbT8nP/V2aIxF5Gic7OB1D97xkljn84D1YlLBAh8WrROmYQ
+        W0QgUOLds31gHcwCbUwS7Rf/MoEk2AS0JPa/uAHWwC+gKHH1x2NGEJtXwE7ief8nVhCbRUBV
+        ovntBLAaUaChl7fsgqoRlDg58wkLiM0pYCsx/8txsGXMAuISt57MZ4Kw5SWat84GWywh8J9N
+        YmLnR6gfXCR2fO9mgbCFJV4d38IOYUtJvOxvg7KrJVaePMIG0dzBKLFl/wVWiISxxP6lk4E2
+        cABt0JRYv0sfIqwosfP3XEaIxXwS7772sIKUSAjwSnS0CUGUKEtcfnCXCcKWlFjc3sk2gVFp
+        FpJ3ZiF5YRaSF2YhLFvAyLKKUSy1oDg3PbXYsMAEOb43MYKTq5bFDsY953wOMQpwMCrx8Aps
+        4I8VYk0sK67MPcQowcGsJMLLk8MTK8SbklhZlVqUH19UmpNafIjRFBjaE5mlRJPzgYk/ryTe
+        0NTI2NjYwsTQzNTQUEmcN577ZoyQQHpiSWp2ampBahFMHxMHp1QDo+fzoN2zf6ZtuhYdz3jY
+        JbWtoTgl+seu/gStxoQIcQF1rx3nzN6sDNz/4MoMtg2K5U+uWQud/fkwLY43aG/Y2jdZbomW
+        x/u9n2noJ8w7+jI8fq9F2uOE2DPdh1XaUqaVneLuXR6Y8WHryen5Md7VTovj+b6z7FW8WaEd
+        M8NkzhoFfUHBfO8uJZbijERDLeai4kQAQ/dOV8QDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprFIsWRmVeSWpSXmKPExsWy7bCSnO5BfoFYg4uv5CxWf3zMaNEyaxGL
+        xdmmN+wWl3fNYbP43HuE0aLzyyw2i9uNK9gsfu6ax2LRt/YSmwOnx467Sxg9ds66y+7R2/yO
+        zaNvyypGj8+b5AJYo7hsUlJzMstSi/TtErgyFj1YzVTwQLKi6cMsxgbGoyJdjJwcEgImEj/3
+        f2UGsYUEdjNKnF+UDBGXlJh28ShQnAPIFpY4fLi4i5ELqOQto8TSiRvYQGqEBSIk5l+4xARi
+        iwgESpx+sJURpIhZoINJ4sn6n4wQHfuZJbZ3fWUBqWIT0JLY/+IGWDe/gKLE1R+PGUFsXgE7
+        ief9n1hBbBYBVYnmtxPAakSBNvS1zWaDqBGUODnzCdgcTgFbiflfjoNdzSygLvFn3iUoW1zi
+        1pP5TBC2vETz1tnMExiFZyFpn4WkZRaSlllIWhYwsqxilEwtKM5Nzy02LDDKSy3XK07MLS7N
+        S9dLzs/dxAiOMS2tHYwnTsQfYhTgYFTi4RXYwB8rxJpYVlyZe4hRgoNZSYSXJ4cnVog3JbGy
+        KrUoP76oNCe1+BCjNAeLkjivfP6xSCGB9MSS1OzU1ILUIpgsEwenVANj/+8vs1ifhtToZJkH
+        CDx7PdFDblXhXgf7EuV6x6nfo1abMnqyFmv++TtntYssR5LKQdOw78cc5ir5tYkfXrNyYqar
+        VefF5ztzA4zLOx9uWvt1WVu2n0b0p30zJ3q9WahrJDmH8ZqG0GcOR5Wltcqnrn15ZXb50iMW
+        dp2Md28n3VhnerJKPnCGEktxRqKhFnNRcSIAPNA1Pa0CAAA=
+X-CMS-MailID: 20190623234817epcas1p394d0ec7c278969f0b2e3d73c45df407a
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: SVC_REQ_APPROVE
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20190501234148epcas5p1cc9a8dafa9ee6d8d046d1292b8270727
+References: <CGME20190501234148epcas5p1cc9a8dafa9ee6d8d046d1292b8270727@epcas5p1.samsung.com>
+        <20190501233815.32643-1-digetx@gmail.com>
+        <60ef6e47-e61b-3a92-e90d-90debedfcfc4@samsung.com>
+        <fa061a65-f108-6c5e-1f87-950a9a8caafc@gmail.com>
+        <0fb50eb1-a173-1756-6889-2526a10ac707@gmail.com>
+        <683b343a-e64f-8345-ac44-10f5c00521bd@samsung.com>
+        <5c2a7c32-a98c-3930-14ae-beb0241908d0@gmail.com>
+        <389cc71d-8f0b-fa39-1325-433d27c75dc8@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  f14d8025d263f3c8236775df724a7c1f14e0dc94
-Gitweb:     https://git.kernel.org/tip/f14d8025d263f3c8236775df724a7c1f14e0dc94
-Author:     Vincenzo Frascino <vincenzo.frascino@arm.com>
-AuthorDate: Fri, 21 Jun 2019 10:52:35 +0100
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Sat, 22 Jun 2019 21:21:07 +0200
+Hi Dmitry,
 
-arm64: compat: Generate asm offsets for signals
+On 19. 6. 24. 오전 2:17, Dmitry Osipenko wrote:
+> 05.06.2019 2:09, Dmitry Osipenko пишет:
+>> 04.06.2019 3:49, Chanwoo Choi пишет:
+>>> On 19. 6. 4. 오전 1:52, Dmitry Osipenko wrote:
+>>>> 03.05.2019 3:52, Dmitry Osipenko пишет:
+>>>>> 03.05.2019 3:31, Chanwoo Choi пишет:
+>>>>>> Hi Dmitry,
+>>>>>>
+>>>>>> On 19. 5. 2. 오전 8:37, Dmitry Osipenko wrote:
+>>>>>>> Changelog:
+>>>>>>>
+>>>>>>> v4: Addressed all review comments that were made by Chanwoo Choi to v3:
+>>>>>>>
+>>>>>>>     - changed the driver removal order to match the probe exactly
+>>>>>>>     - added clarifying comment for 1/8 ratio to the Tegra20 driver
+>>>>>>>
+>>>>>>>     Chanwoo, please also note that the clk patch that should fix
+>>>>>>>     compilation problem that was reported the kbuild-test-robot is already
+>>>>>>>     applied and available in the recent linux-next.
+>>>>>>
+>>>>>> I knew that Stephen picked up your path about clock.
+>>>>>
+>>>>> Hi Chanwoo,
+>>>>>
+>>>>> Okay, good. Thank you very much for reviewing this series! I assume it's
+>>>>> too late now for v5.2, but it should be good to go for v5.3.
+>>>>>
+>>>>
+>>>> Hello Chanwoo,
+>>>>
+>>>> Will be nice to see the patches in the linux-next before they'll hit mainline. We have tested that
+>>>> everything works fine on a selective devices, but won't hurt to get some extra testing beforehand.
+>>>> AFAIK, at least NVIDIA people are regularly testing -next on theirs dev boards. Please note that
+>>>> this not very important, so don't bother if there is some hurdle with pushing to the tracking branch
+>>>> for now. Also please let me know if you're expecting to see some ACK's on the patches, I'm sure
+>>>> we'll be able to work out that with Thierry and Jon if necessary.
+>>>>
+>>>>
+>>>
+>>> Hi Dmitry,
+>>> I think that it is enough for applying to mainline branch.
+>>> The devfreq.git is maintained by Myungjoo. He will be merged or
+>>> reviewed if there are th remained review point.
+>>
+>> Thank you very much!
+>>
+>>>
+>>> Hi Myungjoo,
+>>> I reviewed the Dmitry's patches from v1 to v4 patches.
+>>> And then I tested them on my testing branch[1] for catching
+>>> the build warning and error. In result, it is clean.
+>>> [1] https://git.kernel.org/pub/scm/linux/kernel/git/chanwoo/linux.git/log/?h=devfreq-testing
+>>>
+>>> Please review or apply these patches for v5.3.
+>>>
+>>
+>> Hello Myungjoo,
+>>
+>> I think this patchset should be completed now. Thierry has some extra
+>> comments to the patches, but seems nothing critical so far and all the
+>> concerns could be addressed in a follow-up series. Please let me know if
+>> you're fine with this, I can re-spin v5 as well if necessary.
+>>
+> 
+> Hello Chanwoo,
+> 
+> It looks like Myungjoo is inactive at the moment. Do you know if he'll
+> be back to the time of the merge window opening or you'll be curating
+> the pull request for 5.3 this time?
 
-Update asm-offsets for arm64 to generate the correct offsets for
-compat signals.
+Myungoo works in the same place. I'll talk with him.
 
-They will be useful for the implementation of the compat sigreturn
-trampolines in vDSO context.
+> 
+> Secondly, I'll send a few more patches on top of this series, addressing
+> Thierry's comments and making more improvements. Please let me know if
+> this causes any problems and I should re-spin the whole series.
 
-Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Tested-by: Shijith Thotton <sthotton@marvell.com>
-Tested-by: Andre Przywara <andre.przywara@arm.com>
-Cc: linux-arch@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-mips@vger.kernel.org
-Cc: linux-kselftest@vger.kernel.org
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Will Deacon <will.deacon@arm.com>
-Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: Russell King <linux@armlinux.org.uk>
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: Paul Burton <paul.burton@mips.com>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Mark Salyzyn <salyzyn@android.com>
-Cc: Peter Collingbourne <pcc@google.com>
-Cc: Shuah Khan <shuah@kernel.org>
-Cc: Dmitry Safonov <0x7f454c46@gmail.com>
-Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Cc: Huw Davies <huw@codeweavers.com>
-Link: https://lkml.kernel.org/r/20190621095252.32307-9-vincenzo.frascino@arm.com
+OK. I'll review them.
 
----
- arch/arm64/kernel/asm-offsets.c | 6 ++++++
- 1 file changed, 6 insertions(+)
 
-diff --git a/arch/arm64/kernel/asm-offsets.c b/arch/arm64/kernel/asm-offsets.c
-index 14c99b7a0c0e..e6f7409a78a4 100644
---- a/arch/arm64/kernel/asm-offsets.c
-+++ b/arch/arm64/kernel/asm-offsets.c
-@@ -19,6 +19,7 @@
- #include <asm/fixmap.h>
- #include <asm/thread_info.h>
- #include <asm/memory.h>
-+#include <asm/signal32.h>
- #include <asm/smp_plat.h>
- #include <asm/suspend.h>
- #include <linux/kbuild.h>
-@@ -66,6 +67,11 @@ int main(void)
-   DEFINE(S_STACKFRAME,		offsetof(struct pt_regs, stackframe));
-   DEFINE(S_FRAME_SIZE,		sizeof(struct pt_regs));
-   BLANK();
-+#ifdef CONFIG_COMPAT
-+  DEFINE(COMPAT_SIGFRAME_REGS_OFFSET,		offsetof(struct compat_sigframe, uc.uc_mcontext.arm_r0));
-+  DEFINE(COMPAT_RT_SIGFRAME_REGS_OFFSET,	offsetof(struct compat_rt_sigframe, sig.uc.uc_mcontext.arm_r0));
-+  BLANK();
-+#endif
-   DEFINE(MM_CONTEXT_ID,		offsetof(struct mm_struct, context.id.counter));
-   BLANK();
-   DEFINE(VMA_VM_MM,		offsetof(struct vm_area_struct, vm_mm));
+-- 
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
