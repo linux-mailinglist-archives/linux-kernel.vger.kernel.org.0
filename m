@@ -2,97 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B775A4FF77
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 04:37:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C2EB94FF7F
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 04:42:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727236AbfFXCh0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 23 Jun 2019 22:37:26 -0400
-Received: from ozlabs.org ([203.11.71.1]:60631 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726307AbfFXChZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Jun 2019 22:37:25 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45X5cV0C1qz9s5c;
-        Mon, 24 Jun 2019 07:47:22 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1561326442;
-        bh=VkBXuv7fVGNt+d2zUDjCDYOwbWse739pBe2u/5BhT/4=;
-        h=Date:From:To:Cc:Subject:From;
-        b=VkG2AWeCHJlfrD5pp+YEYXrGqA7/v/xmsgATu72h5xaqQdgJ/iUXbBPZd6S1YGfJT
-         qRqtd4D0SiIbj4xWVNtv3GLjbpLMXkZmtZ5p/JzOnuvh8pzsDpF2bRO8lWi8vXjHP5
-         J6Zqg+ibI4jg/eKcrSTlNYsupL2zY6I5DBoE3irMgX4IAZHcc0zoi86paQPCcrX3Bu
-         k1Sw4WSv5ih2H8eSXQvh/lC27+/cMfYoXFx7JLalWp0Axd6eA4ixhPv2Xk6cF9cNcl
-         fs/nRMwCfxmuD7jcjzJm+jvOrqmkdEN6t+tJtQFVqZB3G+4k8tXKiQxHh3kO2Md2Sd
-         EKOUh9aUUnAjQ==
-Date:   Mon, 24 Jun 2019 07:47:16 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     David Miller <davem@davemloft.net>,
-        Networking <netdev@vger.kernel.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Roland Hii <roland.king.guan.hii@intel.com>,
-        Ong Boon Leong <boon.leong.ong@intel.com>,
-        Voon Weifeng <weifeng.voon@intel.com>
-Subject: linux-next: Fixes tag needs some work in the net tree
-Message-ID: <20190624074716.44b749d3@canb.auug.org.au>
+        id S1727246AbfFXCmk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 23 Jun 2019 22:42:40 -0400
+Received: from smtprelay0004.hostedemail.com ([216.40.44.4]:39704 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726510AbfFXCmk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 23 Jun 2019 22:42:40 -0400
+Received: from smtprelay.hostedemail.com (10.5.19.251.rfc1918.com [10.5.19.251])
+        by smtpgrave04.hostedemail.com (Postfix) with ESMTP id 5857818019A00;
+        Sun, 23 Jun 2019 21:57:06 +0000 (UTC)
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay05.hostedemail.com (Postfix) with ESMTP id 2A69A18029123;
+        Sun, 23 Jun 2019 21:57:06 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::,RULES_HIT:41:355:379:599:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1538:1567:1593:1594:1711:1714:1730:1747:1777:1792:2393:2559:2562:2828:3138:3139:3140:3141:3142:3622:3866:3868:4321:5007:7903:10004:10400:10848:11026:11232:11658:11914:12043:12048:12296:12297:12679:12740:12760:12895:13069:13311:13357:13439:14181:14659:14721:21080:21627:30045:30054:30091,0,RBL:172.58.30.132:@perches.com:.lbl8.mailshell.net-62.8.0.180 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:27,LUA_SUMMARY:none
+X-HE-Tag: bean01_37b054319919
+X-Filterd-Recvd-Size: 1554
+Received: from XPS-9350 (unknown [172.58.30.132])
+        (Authenticated sender: joe@perches.com)
+        by omf08.hostedemail.com (Postfix) with ESMTPA;
+        Sun, 23 Jun 2019 21:57:03 +0000 (UTC)
+Message-ID: <c88cfce8a80eb69c932fd249f2ef0224e60b127a.camel@perches.com>
+Subject: Re: [PATCH] bluetooth: Cleanup formatting and coding style
+From:   Joe Perches <joe@perches.com>
+To:     Fabian Schindlatz <fabian.schindlatz@fau.de>,
+        Marcel Holtmann <marcel@holtmann.org>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Thomas =?ISO-8859-1?Q?R=F6thenbacher?= 
+        <thomas.roethenbacher@fau.de>, linux-kernel@i4.cs.fau.de
+Date:   Sun, 23 Jun 2019 14:56:33 -0700
+In-Reply-To: <20190623211548.1966-1-fabian.schindlatz@fau.de>
+References: <20190623211548.1966-1-fabian.schindlatz@fau.de>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.30.5-0ubuntu0.18.10.1 
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/Na9+/O=gek0KognWqCqb/n3"; protocol="application/pgp-signature"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/Na9+/O=gek0KognWqCqb/n3
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Sun, 2019-06-23 at 23:15 +0200, Fabian Schindlatz wrote:
+> Fix some warnings and one error reported by checkpatch.pl:
+[]
+> diff --git a/drivers/bluetooth/hci_ll.c b/drivers/bluetooth/hci_ll.c
+[]
+> @@ -351,7 +356,8 @@ static int ll_enqueue(struct hci_uart *hu, struct sk_buff *skb)
+>  		skb_queue_tail(&ll->tx_wait_q, skb);
+>  		break;
+>  	default:
+> -		BT_ERR("illegal hcill state: %ld (losing packet)", ll->hcill_state);
+> +		BT_ERR("illegal hcill state: %ld (losing packet)",
 
-Hi all,
+trivia:
 
-In commit
+Might use invalid instead of illegal as no crime was committed.
 
-  d0bb82fd6018 ("net: stmmac: set IC bit when transmitting frames with HW t=
-imestamp")
 
-Fixes tag
-
-  Fixes: f748be531d70 ("net: stmmac: Rework coalesce timer and fix multi-qu=
-eue races")
-
-has these problem(s):
-
-  - Subject does not match target commit subject
-    Just use
-	git log -1 --format=3D'Fixes: %h ("%s")'
-
-Fixes: f748be531d70 ("stmmac: support new GMAC4")
-
-or did you mean
-
-Fixes: 8fce33317023 ("net: stmmac: Rework coalesce timer and fix multi-queu=
-e races")
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/Na9+/O=gek0KognWqCqb/n3
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0P82QACgkQAVBC80lX
-0GzOpAf9F/VT4UgXO75BenZ0s4eht/5MSb6+HByvDuP5GyXkYOi+yl4lteWBrUFg
-tiBQvw3cq/j7aHcPs+x7NHhNHiMuFovU2g11GMGkG11hEAPAJ5CfQLmqJK2NiOwm
-Eala+LJs+CjbgBpWVQeqdJQZMQEe438y0LTyJG1YtRzSxP8/pmbOpJSEN7kP4h2X
-MPUCGd+dlAfHsilXpcg18Kg4svDD9SWk0y/j5rYS9XLcLGL8sPjsiEUZIxoDaOIU
-dukVL/9BtN75lseVL6Y87EMPS4Cuv2ahsEdaTRYpqSGcPkRN7DsNXygLITyno++A
-cjs07J5aKrvC8ejQ6GUoEvSnbBw5FA==
-=ygt7
------END PGP SIGNATURE-----
-
---Sig_/Na9+/O=gek0KognWqCqb/n3--
