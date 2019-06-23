@@ -2,56 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5D2774FE31
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2019 23:34:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 15E2C4FE88
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 03:42:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726419AbfFWVea (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 23 Jun 2019 17:34:30 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:45354 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726312AbfFWVea (ORCPT
+        id S1727093AbfFXBmo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 23 Jun 2019 21:42:44 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:39699 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727063AbfFXBmm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Jun 2019 17:34:30 -0400
-Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::d71])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id CDF99142DE3A5;
-        Sun, 23 Jun 2019 14:34:26 -0700 (PDT)
-Date:   Sun, 23 Jun 2019 14:34:24 -0700 (PDT)
-Message-Id: <20190623.143424.1962536673442328783.davem@davemloft.net>
-To:     gomonovych@gmail.com
-Cc:     george.cherian@cavium.com, herbert@gondor.apana.org.au,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] crypto: cavium remove casting dma_alloc
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20190623204849.22089-1-gomonovych@gmail.com>
-References: <20190623204849.22089-1-gomonovych@gmail.com>
-X-Mailer: Mew version 6.8 on Emacs 26.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Sun, 23 Jun 2019 14:34:27 -0700 (PDT)
+        Sun, 23 Jun 2019 21:42:42 -0400
+Received: by mail-lf1-f65.google.com with SMTP id p24so8753082lfo.6;
+        Sun, 23 Jun 2019 18:42:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=JAaIEeaw8b+tY17bCMux1o12jOT0tbHuJNxXmYk7btg=;
+        b=EMmpJ10h7+wKElBzLrjlEBB/rQw2Nl+GeGTINx61aCAEC0ZpoFg+705EZD1WZjIYHu
+         zNfXrXk+PLTkGVrTBb0SVWD/ssoh+QE1UwLznGToNGHFzfv5wLRUiEpny+K2+xUgpVgf
+         ZvzusBsUn6MM0zIY0c96JtsgF9JaqdXJ2oAJYvt6UDIdYOY+dBcC7XYnfDgkjGlerV0A
+         nR1lFMtGu+b5CdWMVsGG2397JN3NF1Djea2Ra/pA+rdgF1TZzO9fQBjAhlEjJ9TZCbg9
+         4pnEGJM8SbOKZgzg4mFwEeh7XTEBP9fKLFp6Blu/xDeqcp09AAVjMV72hIxmZP79mvWw
+         eqzw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=JAaIEeaw8b+tY17bCMux1o12jOT0tbHuJNxXmYk7btg=;
+        b=jciRtljG1kqscdh1U4A0FZu32h9ja2KsHtKeOGA/chQHtagqZyIxTEPlG29pXhZ4e7
+         TvOhAgUGbdknQsnBbAF8DV0rMx0PmQmiHeA++JyVwhbig9hLx5VYe6pDTF4vqgijOLB/
+         67wtCE6MyfJMOjXCuxjHCUuOgRUKnKqN2EmPlzoejOGpthX3gmPc9JnJsplJh4qGPYgg
+         cMVzNde9PPjFDs+gU67+0LAU25r8jdO1Fo0J5YUOmUtX5BaKwDXIKawR2yDuZ8H2O4gB
+         ckU0Iw1cgN5fBu8bNO3pAfXh3wHDHI9BmkB7ilzf0/iARUcQf04itxzVk7UCA9JJPfZ3
+         gJaQ==
+X-Gm-Message-State: APjAAAUdCGJ0dUG8vqdngvo1pU28cNixETAw8XQ08IxvMf0Nhs1z/jkw
+        ugGDhSCR7T2AJtIYg+Ayl3Twkmgv
+X-Google-Smtp-Source: APXvYqx7UhsnviQCljugSLWiGQv8kuKLpTeqI0FJYxjd4xmBH3rA38rb5eTdQDvEU/jYvRxlH9cS4w==
+X-Received: by 2002:ac2:5636:: with SMTP id b22mr44686440lff.2.1561326515040;
+        Sun, 23 Jun 2019 14:48:35 -0700 (PDT)
+Received: from localhost.localdomain (ppp91-79-162-197.pppoe.mtu-net.ru. [91.79.162.197])
+        by smtp.gmail.com with ESMTPSA id m17sm1460029lfb.9.2019.06.23.14.48.34
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 23 Jun 2019 14:48:34 -0700 (PDT)
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Cc:     linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v1 00/11] More improvements for Tegra30 devfreq driver
+Date:   Mon, 24 Jun 2019 00:46:47 +0300
+Message-Id: <20190623214658.11680-1-digetx@gmail.com>
+X-Mailer: git-send-email 2.22.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vasyl Gomonovych <gomonovych@gmail.com>
-Date: Sun, 23 Jun 2019 22:48:49 +0200
+Hello,
 
-> @@ -233,7 +233,7 @@ static int alloc_command_queues(struct cpt_vf *cptvf,
->  
->  			c_size = (rem_q_size > qcsize_bytes) ? qcsize_bytes :
->  					rem_q_size;
-> -			curr->head = (u8 *)dma_alloc_coherent(&pdev->dev,
-> +			curr->head = dma_alloc_coherent(&pdev->dev,
->  							      c_size + CPT_NEXT_CHUNK_PTR_SIZE,
->  							      &curr->dma_addr,
->  							      GFP_KERNEL);
+This series is a followup to [1] which addresses some additional review
+comments that were made by Thierry Reding to [1] and makes several
+important changes to the driver, fixing excessive interrupts activity.
+In the end I'm proposing myself as a maintainer for the driver.
 
-Please fix up the indentation of the 2nd, 3rd, and 4th line of the call
-if you do this.  Each of those lines should start precisely at the
-first column after the openning parenthesis of the first line.
+[1] https://lore.kernel.org/lkml/0fb50eb1-a173-1756-6889-2526a10ac707@gmail.com/T/
 
-Thank you.
+Dmitry Osipenko (11):
+  PM / devfreq: tegra30: Change irq type to unsigned int
+  PM / devfreq: tegra30: Keep interrupt disabled while governor is
+    stopped
+  PM / devfreq: tegra30: Handle possible round-rate error
+  PM / devfreq: tegra30: Drop write-barrier
+  PM / devfreq: tegra30: Rework frequency management logic
+  PM / devfreq: tegra30: Reset boosting on startup
+  PM / devfreq: tegra30: Reset boosting if clock rate changed
+  PM / devfreq: tegra30: Stop de-boosting once it's finished
+  PM / devfreq: tegra30: Don't enable consecutive-down interrupt on
+    startup
+  PM / devfreq: tegra30: Add debug messages
+  PM / devfreq: tegra30: Add Dmitry as maintainer
+
+ MAINTAINERS                       |   8 +
+ drivers/devfreq/tegra30-devfreq.c | 542 ++++++++++++++++++++++--------
+ 2 files changed, 409 insertions(+), 141 deletions(-)
+
+-- 
+2.22.0
+
