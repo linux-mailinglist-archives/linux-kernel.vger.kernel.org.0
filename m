@@ -2,103 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E8164FB43
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2019 13:27:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F2B94FB46
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2019 13:28:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726525AbfFWL1V (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 23 Jun 2019 07:27:21 -0400
-Received: from vmicros1.altlinux.org ([194.107.17.57]:38974 "EHLO
-        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726350AbfFWL1U (ORCPT
+        id S1726583AbfFWL2I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 23 Jun 2019 07:28:08 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:33234 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726350AbfFWL2I (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Jun 2019 07:27:20 -0400
-Received: from mua.local.altlinux.org (mua.local.altlinux.org [192.168.1.14])
-        by vmicros1.altlinux.org (Postfix) with ESMTP id A6F4F72CC6C;
-        Sun, 23 Jun 2019 14:27:17 +0300 (MSK)
-Received: by mua.local.altlinux.org (Postfix, from userid 508)
-        id 91AC37CCE2E; Sun, 23 Jun 2019 14:27:17 +0300 (MSK)
-Date:   Sun, 23 Jun 2019 14:27:17 +0300
-From:   "Dmitry V. Levin" <ldv@altlinux.org>
-To:     Christian Brauner <christian@brauner.io>
-Cc:     Jann Horn <jannh@google.com>, Oleg Nesterov <oleg@redhat.com>,
-        Arnd Bergmann <arnd@arndb.de>, linux-api@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 1/2] CLONE_PIDFD: do not use the value pointed by
- parent_tidptr
-Message-ID: <20190623112717.GA20697@altlinux.org>
-References: <20190620103105.cdxgqfelzlnkmblv@brauner.io>
- <20190620110037.GA4998@altlinux.org>
- <20190620111036.asi3mbcv4ax5ekrw@brauner.io>
- <20190621170613.GA26182@altlinux.org>
- <20190621221339.6yj4vg4zexv4y2j7@brauner.io>
+        Sun, 23 Jun 2019 07:28:08 -0400
+Received: from p5b06daab.dip0.t-ipconnect.de ([91.6.218.171] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1hf0ez-0008GA-S6; Sun, 23 Jun 2019 13:27:50 +0200
+Date:   Sun, 23 Jun 2019 13:27:48 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+cc:     Dave Hansen <dave.hansen@intel.com>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>, x86@kernel.org,
+        linux-kernel@vger.kernel.org,
+        Kyle Pelton <kyle.d.pelton@intel.com>,
+        Baoquan He <bhe@redhat.com>
+Subject: Re: [PATCH] x86/mm: Handle physical-virtual alignment mismatch in
+ phys_p4d_init()
+In-Reply-To: <20190620231547.dkefu73blzte32wq@black.fi.intel.com>
+Message-ID: <alpine.DEB.2.21.1906231322020.32342@nanos.tec.linutronix.de>
+References: <20190620112239.28346-1-kirill.shutemov@linux.intel.com> <4ecd0603-e847-1cae-bafa-e892d79b7259@intel.com> <20190620231547.dkefu73blzte32wq@black.fi.intel.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190621221339.6yj4vg4zexv4y2j7@brauner.io>
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Userspace needs a cheap and reliable way to tell whether CLONE_PIDFD
-is supported by the kernel or not.
+On Fri, 21 Jun 2019, Kirill A. Shutemov wrote:
+> On Thu, Jun 20, 2019 at 02:42:55PM +0000, Dave Hansen wrote:
+> > On 6/20/19 4:22 AM, Kirill A. Shutemov wrote:
+> > > The commit relaxes KASLR alignment requirements and it can lead to
+> > > mismatch bentween 'i' and 'p4d_index(vaddr)' inside the loop in
+> > > phys_p4d_init(). The mismatch in its turn leads to clearing wrong p4d
+> > > entry and eventually to the oops.
+> > 
+> > Just curious, but what does it relax the requirement to and from?
+> > 
+> > I'm just not clearly spotting the actual bug.
+> 
+> Before the commit PAGE_OFFSET is always aligned to P4D_SIZE if we boot in
+> 5-level paging mode. But now only PUD_SIZE alignment is guaranteed.
+> 
+> For phys_p4d_init() it means that paddr_next after the first iteration
+> can belong to the same p4d entry.
+> 
+> In the case I was able to reproduce the vaddr on the first iteration is
+> 0xff4228027fe00000 and paddr is 0x33fe00000. On the second iteration vaddr
+> becomes 0xff42287f40000000 and paddr is 0x8000000000. The vaddr in both
+> cases bolong to the same p4d entry.
+> 
+> It screws up 'i' count: we miss the last entry in the page table
+> completely.  And it confuses the branch under 'paddr >= paddr_end'
+> condition: the p4d entry can be cleared where must not to.
+> 
+> The patch makes phys_p4d_init() work like __kernel_physical_mapping_init()
+> which deals with phys-virt mismatch already.
+> 
+> I hope this explanation makes any sense :P
 
-While older kernels without CLONE_PIDFD support just leave unchanged
-the value pointed by parent_tidptr, current implementation fails with
-EINVAL if that value is non-zero.
+Yes, and it should have been in the changelog right away. It's much more
+useful than the 63 lines of untrimmed backtrace noise, which should be
+condensed to the real valuable information:
 
-If CLONE_PIDFD is supported and fd 0 is closed, then mandatory pidfd == 0
-pointed by parent_tidptr also remains unchanged, which effectively
-means that userspace must either check CLONE_PIDFD support beforehand
-or ensure that fd 0 is not closed when invoking CLONE_PIDFD.
+  WARNING: CPU: 0 PID: 0 at arch/x86/mm/init_64.c:87 phys_p4d_init+0x1d4/0x1ea
+  RIP: 0010:phys_p4d_init+0x1d4/0x1ea
+  Call Trace:
+   __kernel_physical_mapping_init+0x10a/0x35c
+   kernel_physical_mapping_init+0xe/0x10
+   init_memory_mapping+0x1aa/0x3b0
+   init_range_memory_mapping+0xc8/0x116
+   init_mem_mapping+0x225/0x2eb
+   setup_arch+0x6ff/0xcf5
+   start_kernel+0x64/0x53b
+   ? copy_bootdata+0x1f/0xce
+   x86_64_start_reservations+0x24/0x26
+   x86_64_start_kernel+0x8a/0x8d
+   secondary_startup_64+0xb6/0xc0
 
-The check for pidfd == 0 was introduced during v5.2 release cycle
-by commit b3e583825266 ("clone: add CLONE_PIDFD") to ensure that
-CLONE_PIDFD could be potentially extended by passing in flags through
-the return argument.
+which causes later:
 
-However, that extension would look horrendous, and with introduction of
-clone3 syscall in v5.3 there is no need to extend legacy clone syscall
-this way.
+  BUG: unable to handle page fault for address: ff484d019580eff8
+  #PF: supervisor read access in kernel mode
+  #PF: error_code(0x0000) - not-present page
+  BAD
+  Oops: 0000 [#1] SMP NOPTI
+  RIP: 0010:fill_pud+0x13/0x130
+  Call Trace:
+   set_pte_vaddr_p4d+0x2e/0x50
+   set_pte_vaddr+0x6f/0xb0
+   __native_set_fixmap+0x28/0x40
+   native_set_fixmap+0x39/0x70
+   register_lapic_address+0x49/0xb6
+   early_acpi_boot_init+0xa5/0xde
+   setup_arch+0x944/0xcf5
+   start_kernel+0x64/0x53b
 
-So remove the pidfd == 0 check.  Userspace that needs to be portable
-to kernels without CLONE_PIDFD support is advised to initialize pidfd
-with -1 and check the pidfd value returned by CLONE_PIDFD.
+Hmm?
 
-Signed-off-by: Dmitry V. Levin <ldv@altlinux.org>
----
- kernel/fork.c | 12 ------------
- 1 file changed, 12 deletions(-)
+Thanks,
 
-diff --git a/kernel/fork.c b/kernel/fork.c
-index 75675b9bf6df..39a3adaa4ad1 100644
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@ -1822,8 +1822,6 @@ static __latent_entropy struct task_struct *copy_process(
- 	}
- 
- 	if (clone_flags & CLONE_PIDFD) {
--		int reserved;
--
- 		/*
- 		 * - CLONE_PARENT_SETTID is useless for pidfds and also
- 		 *   parent_tidptr is used to return pidfds.
-@@ -1834,16 +1832,6 @@ static __latent_entropy struct task_struct *copy_process(
- 		if (clone_flags &
- 		    (CLONE_DETACHED | CLONE_PARENT_SETTID | CLONE_THREAD))
- 			return ERR_PTR(-EINVAL);
--
--		/*
--		 * Verify that parent_tidptr is sane so we can potentially
--		 * reuse it later.
--		 */
--		if (get_user(reserved, parent_tidptr))
--			return ERR_PTR(-EFAULT);
--
--		if (reserved != 0)
--			return ERR_PTR(-EINVAL);
- 	}
- 
- 	/*
--- 
-ldv
+	tglx
+
