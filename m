@@ -2,201 +2,149 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5831C4FB33
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2019 13:02:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 786BA4FB12
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2019 12:22:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726508AbfFWLBh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 23 Jun 2019 07:01:37 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:33198 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726350AbfFWLBh (ORCPT
+        id S1726484AbfFWKWj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 23 Jun 2019 06:22:39 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:37431 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726350AbfFWKWj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Jun 2019 07:01:37 -0400
-Received: from p5b06daab.dip0.t-ipconnect.de ([91.6.218.171] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1hezZw-0007TA-3t; Sun, 23 Jun 2019 12:18:32 +0200
-Date:   Sun, 23 Jun 2019 12:18:26 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     "Sverdlin, Alexander (Nokia - DE/Ulm)" <alexander.sverdlin@nokia.com>
-cc:     "x86@kernel.org" <x86@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Jason Vas Dias <jason.vas.dias@gmail.com>,
-        Andy Lutomirski <luto@kernel.org>
-Subject: Re: [PATCH v3 1/2] x86/vdso: Move mult and shift into struct
- vgtod_ts
-In-Reply-To: <20190605144116.28553-2-alexander.sverdlin@nokia.com>
-Message-ID: <alpine.DEB.2.21.1906231008170.32342@nanos.tec.linutronix.de>
-References: <20190605144116.28553-1-alexander.sverdlin@nokia.com> <20190605144116.28553-2-alexander.sverdlin@nokia.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Sun, 23 Jun 2019 06:22:39 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x5NAMOV02589435
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Sun, 23 Jun 2019 03:22:24 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x5NAMOV02589435
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019061801; t=1561285345;
+        bh=fL//r75TyoOH12BOusdMff8Y1ddZJgL7vjP9d2f+UKs=;
+        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
+        b=DFuAqy07/H5VoPIWAKG0DcdQ51PjdgxOeRuhRho5zbpcz2HAVmU9RoeY1dDvE3/k9
+         fVv0El+zOgyxzimj+5yJlYWoC4GMbrSQ+AuDx0z49bZAc12f6CBCDQHQz+KGfJizuy
+         RerD05FE6yfMNzCNMmytgHJPO/WY2Do6jsqau0WabNxjmTpqDhx5bIvTVRJ+XBerUk
+         cBCBLVO4iUH9H/NMpxrCzy7h2K45jYqW37E18WeywcRGqNF2id3Jdy+yBh9ehFEu5l
+         zYY7jKpC8xe5kMc66d9Z0jedwPN+LD9H+fDJ/kaI8yK6HT++fnhfg+0cnlkSt4dq1e
+         /YWTqyTD3CuKA==
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x5NAMODK2589431;
+        Sun, 23 Jun 2019 03:22:24 -0700
+Date:   Sun, 23 Jun 2019 03:22:24 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Nathan Huckleberry <tipbot@zytor.com>
+Message-ID: <tip-a9314773a91a1d3b36270085246a6715a326ff00@git.kernel.org>
+Cc:     linux-kernel@vger.kernel.org, tglx@linutronix.de, mingo@kernel.org,
+        ndesaulniers@google.com, hpa@zytor.com, nhuck@google.com
+Reply-To: tglx@linutronix.de, nhuck@google.com, ndesaulniers@google.com,
+          mingo@kernel.org, linux-kernel@vger.kernel.org, hpa@zytor.com
+In-Reply-To: <20190614181604.112297-1-nhuck@google.com>
+References: <20190614181604.112297-1-nhuck@google.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:timers/core] timer_list: Guard procfs specific code
+Git-Commit-ID: a9314773a91a1d3b36270085246a6715a326ff00
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
+X-Spam-Status: No, score=-0.1 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DATE_IN_FUTURE_03_06,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,
+        DKIM_VALID_EF autolearn=no autolearn_force=no version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Alexander,
+Commit-ID:  a9314773a91a1d3b36270085246a6715a326ff00
+Gitweb:     https://git.kernel.org/tip/a9314773a91a1d3b36270085246a6715a326ff00
+Author:     Nathan Huckleberry <nhuck@google.com>
+AuthorDate: Fri, 14 Jun 2019 11:16:04 -0700
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Sun, 23 Jun 2019 00:08:52 +0200
 
-On Wed, 5 Jun 2019, Sverdlin, Alexander (Nokia - DE/Ulm) wrote:
+timer_list: Guard procfs specific code
 
-> From: Alexander Sverdlin <alexander.sverdlin@nokia.com>
-> 
-> This is a preparation for CLOCK_MONOTONIC_RAW vDSO implementation.
-> Coincidentally it had a slight performance improvement as well:
-> 
-> ---- Test code ----
->  #include <errno.h>
->  #include <stdio.h>
->  #include <stdlib.h>
->  #include <time.h>
->  #include <unistd.h>
-> 
->  #define CLOCK_TYPE CLOCK_MONOTONIC_RAW
->  #define DURATION_SEC 10
-> 
-> int main(int argc, char **argv)
-> {
-> 	struct timespec t, end;
-> 	unsigned long long cnt = 0;
-> 
-> 	clock_gettime(CLOCK_TYPE, &end);
-> 	end.tv_sec += DURATION_SEC;
-> 
-> 	do {
-> 		clock_gettime(CLOCK_TYPE, &t);
-> 		++cnt;
-> 	} while (t.tv_sec < end.tv_sec || t.tv_nsec < end.tv_nsec);
-> 
-> 	dprintf(STDOUT_FILENO, "%llu", cnt);
-> 
-> 	return EXIT_SUCCESS;
-> }
-> -------------------
-> 
-> The results from the above test program:
-> 
-> Clock                   Before  After   Diff
-> -----                   ------  -----   ----
-> CLOCK_MONOTONIC         355.5M  359.6M  +1%
-> CLOCK_REALTIME          355.5M  359.6M  +1%
+With CONFIG_PROC_FS=n the following warning is emitted:
 
-Been there done that. But the results of the micro benchmark above have to
-be taken with a grain of salt.
+kernel/time/timer_list.c:361:36: warning: unused variable
+'timer_list_sops' [-Wunused-const-variable]
+   static const struct seq_operations timer_list_sops = {
 
-Let's look at the cache side effects of this change:
+Add #ifdef guard around procfs specific code.
 
-Before:
+Signed-off-by: Nathan Huckleberry <nhuck@google.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
+Cc: john.stultz@linaro.org
+Cc: sboyd@kernel.org
+Cc: clang-built-linux@googlegroups.com
+Link: https://github.com/ClangBuiltLinux/linux/issues/534
+Link: https://lkml.kernel.org/r/20190614181604.112297-1-nhuck@google.com
 
-struct vsyscall_gtod_data {
-	unsigned int               seq;                  /*     0     4 */
-	int                        vclock_mode;          /*     4     4 */
-	u64                        cycle_last;           /*     8     8 */
-	u64                        mask;                 /*    16     8 */
-	u32                        mult;                 /*    24     4 */
-	u32                        shift;                /*    28     4 */
-	struct vgtod_ts            basetime[12];         /*    32   192 */
-	/* --- cacheline 3 boundary (192 bytes) was 32 bytes ago --- */
-	int                        tz_minuteswest;       /*   224     4 */
-	int                        tz_dsttime;           /*   228     4 */
+---
+ kernel/time/timer_list.c | 36 +++++++++++++++++++-----------------
+ 1 file changed, 19 insertions(+), 17 deletions(-)
 
-	/* size: 232, cachelines: 4, members: 9 */
-	/* last cacheline: 40 bytes */
-};
-
-After:
-
-struct vsyscall_gtod_data {
-	unsigned int               seq;                  /*     0     4 */
-	int                        vclock_mode;          /*     4     4 */
-	u64                        cycle_last;           /*     8     8 */
-	u64                        mask;                 /*    16     8 */
-	struct vgtod_ts            basetime[12];         /*    24   288 */
-	/* --- cacheline 4 boundary (256 bytes) was 56 bytes ago --- */
-	int                        tz_minuteswest;       /*   312     4 */
-	int                        tz_dsttime;           /*   316     4 */
-
-	/* size: 320, cachelines: 5, members: 7 */
-};
-
-So the interesting change is here:
-
-	struct vgtod_ts            basetime[12];         /*    32   192 */
-
-vs.
-
-	struct vgtod_ts            basetime[12];         /*    24   288 */
-
-In the original version struct vgtod_ts occupies 16 bytes in the modified
-version it has 24 bytes. As a consequence:
-
-	CLOCK				Before		After
-	data->basetime[CLOCK_REALTIME]	32 .. 47	24 .. 47
-	data->basetime[CLOCK_MONOTONIC]	48 .. 63	48 .. 71
-
-That means that the CLOCK_MONOTONIC storage now overlaps into a second
-cache line. CLOCK_MONOTONIC is widely used.
-
-Of course on a micro benchmark this does not matter at all, but in real
-world use cases which care about cache pressure it does.
-
-Another thing is that just adding some small computation to the benchmark
-loop makes the advantage of the modified version go away and it becomes
-slightly slower.
-
-On a real world application which is a cache heavy and uses CLOCK MONOTONIC
-extensivly I can observe a significant L1 miss increase (%2) with the
-modified version.
-
-Now there is something else which is interesting:
-
-On a guest (pvclock) I can observe with your benchmark:
-
- Before:
-
-	MONO  cnt: 576.7
-	REAL  cnt: 576.6
-
- After: 
-
- 	MONO  cnt: 577.1
-	REAL  cnt: 577.0
-
-But on a (different) host:
-
- Before:
-
-       MONO   cnt: 353.9
-       REAL   cnt: 354.4
-
- After:
-
-       MONO   cnt: 347.9
-       REAL   cnt: 347.1
-
-Yuck!
-
-So this is really sensitive and I'm inclined not to do that due to the
-cache line side effect.
-
-The alternative solution for this is what Vincenzo has in his unified VDSO
-patch series:
-
-  https://lkml.kernel.org/r/20190621095252.32307-1-vincenzo.frascino@arm.com
-
-It leaves the data struct unmodified and has a separate array for the raw
-clock. That does not have the side effects at all.
-
-I'm in the process of merging that series and I actually adapted your
-scheme to the new unified infrastructure where it has exactly the same
-effects as with your original patches against the x86 version.
-
-Thanks,
-
-	tglx
+diff --git a/kernel/time/timer_list.c b/kernel/time/timer_list.c
+index 98ba50dcb1b2..acb326f5f50a 100644
+--- a/kernel/time/timer_list.c
++++ b/kernel/time/timer_list.c
+@@ -282,23 +282,6 @@ static inline void timer_list_header(struct seq_file *m, u64 now)
+ 	SEQ_printf(m, "\n");
+ }
+ 
+-static int timer_list_show(struct seq_file *m, void *v)
+-{
+-	struct timer_list_iter *iter = v;
+-
+-	if (iter->cpu == -1 && !iter->second_pass)
+-		timer_list_header(m, iter->now);
+-	else if (!iter->second_pass)
+-		print_cpu(m, iter->cpu, iter->now);
+-#ifdef CONFIG_GENERIC_CLOCKEVENTS
+-	else if (iter->cpu == -1 && iter->second_pass)
+-		timer_list_show_tickdevices_header(m);
+-	else
+-		print_tickdevice(m, tick_get_device(iter->cpu), iter->cpu);
+-#endif
+-	return 0;
+-}
+-
+ void sysrq_timer_list_show(void)
+ {
+ 	u64 now = ktime_to_ns(ktime_get());
+@@ -317,6 +300,24 @@ void sysrq_timer_list_show(void)
+ 	return;
+ }
+ 
++#ifdef CONFIG_PROC_FS
++static int timer_list_show(struct seq_file *m, void *v)
++{
++	struct timer_list_iter *iter = v;
++
++	if (iter->cpu == -1 && !iter->second_pass)
++		timer_list_header(m, iter->now);
++	else if (!iter->second_pass)
++		print_cpu(m, iter->cpu, iter->now);
++#ifdef CONFIG_GENERIC_CLOCKEVENTS
++	else if (iter->cpu == -1 && iter->second_pass)
++		timer_list_show_tickdevices_header(m);
++	else
++		print_tickdevice(m, tick_get_device(iter->cpu), iter->cpu);
++#endif
++	return 0;
++}
++
+ static void *move_iter(struct timer_list_iter *iter, loff_t offset)
+ {
+ 	for (; offset; offset--) {
+@@ -376,3 +377,4 @@ static int __init init_timer_list_procfs(void)
+ 	return 0;
+ }
+ __initcall(init_timer_list_procfs);
++#endif
