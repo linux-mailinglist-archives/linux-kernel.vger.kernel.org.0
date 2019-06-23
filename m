@@ -2,59 +2,50 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5136D4FE72
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 03:42:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F0B3B4FE8A
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 03:42:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726882AbfFXBlv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 23 Jun 2019 21:41:51 -0400
+        id S1726439AbfFXBkw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 23 Jun 2019 21:40:52 -0400
 Received: from terminus.zytor.com ([198.137.202.136]:51211 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726553AbfFXBk5 (ORCPT
+        with ESMTP id S1726304AbfFXBkv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Jun 2019 21:40:57 -0400
+        Sun, 23 Jun 2019 21:40:51 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x5NNupjx2860305
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x5NNvYO52860613
         (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Sun, 23 Jun 2019 16:56:51 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x5NNupjx2860305
+        Sun, 23 Jun 2019 16:57:34 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x5NNvYO52860613
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019061801; t=1561334212;
-        bh=cU6U0DTDpzt3ITirMeTEFL0anIB+F/Sdmvp7TuSAZkc=;
+        s=2019061801; t=1561334255;
+        bh=JCXMBZ4jwUQ64qsoesWTGpB3WEjAXkb75kfS12UJltI=;
         h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
-        b=yD/hblzZ86RHmH/i1/E9J/6kV/WgGChYHByBrVPwSRf5RaBWBsXLEzOtqT1glY58D
-         P8G0qWTYlvNSR4B1Dsi9T0CPhm/zeFQQq1DNlkwRa9dSoQ6jWKTTWRq6wPgJlqeeC2
-         bg11jqXxrfA5UORCI5bcXQ2lMO6T9hkxnyVe5fnjfXStK9lE+3XDisxXhurKo6RllX
-         p0COtxe8lHBHQptYcPybfk4NaPis9UrUfyqzfi+A5NCyb3YVXih1OXW3+xeMpIt/0Y
-         IOVn7WVrIJWm7kJpomRgi3xcZj8NsaweiPKSV+Y6vqcc8h+aXvDIeFOsswpvomrWon
-         pmogFJiqyfIOg==
+        b=ykk+mrqD2cJpX9IxNd+wcKHq2YcKd6fGEKyiyPhD+7WG9e1KQzQsQFE30eOIdhk1n
+         7BZoDQVX0mmJYZY0mhtwoHln2ViZrfVQjqwe6wgQfiA4PnenKlcluIiGIOtMFZ2EPu
+         ZHm0BJLpFSQbjV/3N8k6PaNDBlHrR+bpyDIzDJfU8OBbKrmJw3AyDqgMbp45zJjPUg
+         eM815F7Liz/2LE4vjJ8c1BgHfNabfH9gF8fBmoqzPZLHO61A9XZezHHl85URZR7BL3
+         Zl5iV00bcAzSdBnOWoM36NdOms9/O5cSllZVndw12cTgxAWQt6i9Khw0gnxcS1rCfw
+         FdrLCxHo+/WNg==
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x5NNuokd2860302;
-        Sun, 23 Jun 2019 16:56:50 -0700
-Date:   Sun, 23 Jun 2019 16:56:50 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x5NNvYgw2860610;
+        Sun, 23 Jun 2019 16:57:34 -0700
+Date:   Sun, 23 Jun 2019 16:57:34 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Vincenzo Frascino <tipbot@zytor.com>
-Message-ID: <tip-22ca962288c0a1c9729e8e440b9bb9ad05df6db6@git.kernel.org>
-Cc:     ralf@linux-mips.org, shuah@kernel.org,
-        linux-kernel@vger.kernel.org, arnd@arndb.de,
-        linux@rasmusvillemoes.dk, will.deacon@arm.com,
-        0x7f454c46@gmail.com, mingo@kernel.org, tglx@linutronix.de,
-        hpa@zytor.com, andre.przywara@arm.com, daniel.lezcano@linaro.org,
-        sthotton@marvell.com, vincenzo.frascino@arm.com, pcc@google.com,
-        linux@armlinux.org.uk, salyzyn@android.com, paul.burton@mips.com,
-        catalin.marinas@arm.com, huw@codeweavers.com
-Reply-To: daniel.lezcano@linaro.org, sthotton@marvell.com,
-          andre.przywara@arm.com, hpa@zytor.com, tglx@linutronix.de,
-          mingo@kernel.org, will.deacon@arm.com, 0x7f454c46@gmail.com,
-          linux@rasmusvillemoes.dk, arnd@arndb.de, shuah@kernel.org,
-          linux-kernel@vger.kernel.org, ralf@linux-mips.org,
-          huw@codeweavers.com, paul.burton@mips.com,
-          catalin.marinas@arm.com, salyzyn@android.com,
-          linux@armlinux.org.uk, pcc@google.com, vincenzo.frascino@arm.com
-In-Reply-To: <20190621095252.32307-25-vincenzo.frascino@arm.com>
-References: <20190621095252.32307-25-vincenzo.frascino@arm.com>
+From:   tip-bot for Andy Lutomirski <tipbot@zytor.com>
+Message-ID: <tip-ecf9db3d1f1a8fd2c335148891c3b044e9ce0628@git.kernel.org>
+Cc:     torvalds@linux-foundation.org, luto@kernel.org,
+        linux-kernel@vger.kernel.org, mingo@kernel.org, bp@alien8.de,
+        peterz@infradead.org, hpa@zytor.com, tglx@linutronix.de
+Reply-To: mingo@kernel.org, bp@alien8.de, linux-kernel@vger.kernel.org,
+          torvalds@linux-foundation.org, luto@kernel.org,
+          tglx@linutronix.de, hpa@zytor.com, peterz@infradead.org
+In-Reply-To: <6920c5188f8658001af1fc56fd35b815706d300c.1561241273.git.luto@kernel.org>
+References: <6920c5188f8658001af1fc56fd35b815706d300c.1561241273.git.luto@kernel.org>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:timers/vdso] x86/vdso: Add clock_gettime64() entry point
-Git-Commit-ID: 22ca962288c0a1c9729e8e440b9bb9ad05df6db6
+Subject: [tip:timers/vdso] x86/vdso: Give the [ph]vclock_page declarations
+ real types
+Git-Commit-ID: ecf9db3d1f1a8fd2c335148891c3b044e9ce0628
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -63,91 +54,108 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-X-Spam-Status: No, score=2.3 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+X-Spam-Status: No, score=-0.1 required=5.0 tests=ALL_TRUSTED,BAYES_00,
         DATE_IN_FUTURE_03_06,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,
-        DKIM_VALID_EF,FREEMAIL_FORGED_REPLYTO,FREEMAIL_REPLYTO_END_DIGIT
-        autolearn=no autolearn_force=no version=3.4.2
-X-Spam-Level: **
+        DKIM_VALID_EF autolearn=no autolearn_force=no version=3.4.2
 X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  22ca962288c0a1c9729e8e440b9bb9ad05df6db6
-Gitweb:     https://git.kernel.org/tip/22ca962288c0a1c9729e8e440b9bb9ad05df6db6
-Author:     Vincenzo Frascino <vincenzo.frascino@arm.com>
-AuthorDate: Fri, 21 Jun 2019 10:52:51 +0100
+Commit-ID:  ecf9db3d1f1a8fd2c335148891c3b044e9ce0628
+Gitweb:     https://git.kernel.org/tip/ecf9db3d1f1a8fd2c335148891c3b044e9ce0628
+Author:     Andy Lutomirski <luto@kernel.org>
+AuthorDate: Sat, 22 Jun 2019 15:08:18 -0700
 Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Sat, 22 Jun 2019 21:21:10 +0200
+CommitDate: Mon, 24 Jun 2019 01:21:31 +0200
 
-x86/vdso: Add clock_gettime64() entry point
+x86/vdso: Give the [ph]vclock_page declarations real types
 
-Linux 5.1 gained the new clock_gettime64() syscall to address the Y2038
-problem on 32bit systems. The x86 VDSO is missing support for this variant
-of clock_gettime().
+Clean up the vDSO code a bit by giving pvclock_page and hvclock_page
+their actual types instead of u8[PAGE_SIZE].  This shouldn't
+materially affect the generated code.
 
-Update the x86 specific vDSO library accordingly so it exposes the new time
-getter.
+Heavily based on a patch from Linus.
 
-[ tglx: Massaged changelog ]
+[ tglx: Adapted to the unified VDSO code ]
 
-Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
+Co-developed-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Andy Lutomirski <luto@kernel.org>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-arch@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-mips@vger.kernel.org
-Cc: linux-kselftest@vger.kernel.org
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Will Deacon <will.deacon@arm.com>
-Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: Russell King <linux@armlinux.org.uk>
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: Paul Burton <paul.burton@mips.com>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Mark Salyzyn <salyzyn@android.com>
-Cc: Peter Collingbourne <pcc@google.com>
-Cc: Shuah Khan <shuah@kernel.org>
-Cc: Dmitry Safonov <0x7f454c46@gmail.com>
-Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Cc: Huw Davies <huw@codeweavers.com>
-Cc: Shijith Thotton <sthotton@marvell.com>
-Cc: Andre Przywara <andre.przywara@arm.com>
-Link: https://lkml.kernel.org/r/20190621095252.32307-25-vincenzo.frascino@arm.com
-
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Link: https://lkml.kernel.org/r/6920c5188f8658001af1fc56fd35b815706d300c.1561241273.git.luto@kernel.org
 ---
- arch/x86/entry/vdso/vclock_gettime.c    | 8 ++++++++
- arch/x86/entry/vdso/vdso32/vdso32.lds.S | 1 +
- 2 files changed, 9 insertions(+)
+ arch/x86/include/asm/vdso/gettimeofday.h | 36 +++++++++++++++++++++-----------
+ 1 file changed, 24 insertions(+), 12 deletions(-)
 
-diff --git a/arch/x86/entry/vdso/vclock_gettime.c b/arch/x86/entry/vdso/vclock_gettime.c
-index 1a648b509d46..d9ff616bb0f6 100644
---- a/arch/x86/entry/vdso/vclock_gettime.c
-+++ b/arch/x86/entry/vdso/vclock_gettime.c
-@@ -67,6 +67,14 @@ int __vdso_clock_gettime(clockid_t clock, struct old_timespec32 *ts)
- int clock_gettime(clockid_t, struct old_timespec32 *)
- 	__attribute__((weak, alias("__vdso_clock_gettime")));
+diff --git a/arch/x86/include/asm/vdso/gettimeofday.h b/arch/x86/include/asm/vdso/gettimeofday.h
+index f92752d6cbcf..5b63f1f78a1f 100644
+--- a/arch/x86/include/asm/vdso/gettimeofday.h
++++ b/arch/x86/include/asm/vdso/gettimeofday.h
+@@ -26,13 +26,33 @@
  
-+int __vdso_clock_gettime64(clockid_t clock, struct __kernel_timespec *ts)
-+{
-+	return __cvdso_clock_gettime(clock, ts);
-+}
+ #define VDSO_HAS_CLOCK_GETRES 1
+ 
++/*
++ * Declare the memory-mapped vclock data pages.  These come from hypervisors.
++ * If we ever reintroduce something like direct access to an MMIO clock like
++ * the HPET again, it will go here as well.
++ *
++ * A load from any of these pages will segfault if the clock in question is
++ * disabled, so appropriate compiler barriers and checks need to be used
++ * to prevent stray loads.
++ *
++ * These declarations MUST NOT be const.  The compiler will assume that
++ * an extern const variable has genuinely constant contents, and the
++ * resulting code won't work, since the whole point is that these pages
++ * change over time, possibly while we're accessing them.
++ */
 +
-+int clock_gettime64(clockid_t, struct __kernel_timespec *)
-+	__attribute__((weak, alias("__vdso_clock_gettime64")));
-+
- int __vdso_clock_getres(clockid_t clock, struct old_timespec32 *res)
+ #ifdef CONFIG_PARAVIRT_CLOCK
+-extern u8 pvclock_page[PAGE_SIZE]
++/*
++ * This is the vCPU 0 pvclock page.  We only use pvclock from the vDSO
++ * if the hypervisor tells us that all vCPUs can get valid data from the
++ * vCPU 0 page.
++ */
++extern struct pvclock_vsyscall_time_info pvclock_page
+ 	__attribute__((visibility("hidden")));
+ #endif
+ 
+ #ifdef CONFIG_HYPERV_TSCPAGE
+-extern u8 hvclock_page[PAGE_SIZE]
++extern struct ms_hyperv_tsc_page hvclock_page
+ 	__attribute__((visibility("hidden")));
+ #endif
+ 
+@@ -131,14 +151,9 @@ clock_getres_fallback(clockid_t _clkid, struct __kernel_timespec *_ts)
+ #endif
+ 
+ #ifdef CONFIG_PARAVIRT_CLOCK
+-static const struct pvclock_vsyscall_time_info *get_pvti0(void)
+-{
+-	return (const struct pvclock_vsyscall_time_info *)&pvclock_page;
+-}
+-
+ static u64 vread_pvclock(void)
  {
- 	return __cvdso_clock_getres_time32(clock, res);
-diff --git a/arch/x86/entry/vdso/vdso32/vdso32.lds.S b/arch/x86/entry/vdso/vdso32/vdso32.lds.S
-index 991b26cc855b..c7720995ab1a 100644
---- a/arch/x86/entry/vdso/vdso32/vdso32.lds.S
-+++ b/arch/x86/entry/vdso/vdso32/vdso32.lds.S
-@@ -27,6 +27,7 @@ VERSION
- 		__vdso_gettimeofday;
- 		__vdso_time;
- 		__vdso_clock_getres;
-+		__vdso_clock_gettime64;
- 	};
+-	const struct pvclock_vcpu_time_info *pvti = &get_pvti0()->pvti;
++	const struct pvclock_vcpu_time_info *pvti = &pvclock_page.pvti;
+ 	u32 version;
+ 	u64 ret;
  
- 	LINUX_2.5 {
+@@ -180,10 +195,7 @@ static u64 vread_pvclock(void)
+ #ifdef CONFIG_HYPERV_TSCPAGE
+ static u64 vread_hvclock(void)
+ {
+-	const struct ms_hyperv_tsc_page *tsc_pg =
+-		(const struct ms_hyperv_tsc_page *)&hvclock_page;
+-
+-	return hv_read_tsc_page(tsc_pg);
++	return hv_read_tsc_page(&hvclock_page);
+ }
+ #endif
+ 
