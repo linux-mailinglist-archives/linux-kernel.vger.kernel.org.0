@@ -2,139 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 56C414FC96
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2019 18:04:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B2B84FC9F
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2019 18:13:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726770AbfFWQEt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 23 Jun 2019 12:04:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41200 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726483AbfFWQEt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Jun 2019 12:04:49 -0400
-Received: from guoren-Inspiron-7460.lan (89.208.247.74.16clouds.com [89.208.247.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E7697208C3;
-        Sun, 23 Jun 2019 16:04:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561305888;
-        bh=m3PXllBlpDL+ihlJ9/avHamsAhmCEasRuxU2xZbo2YU=;
+        id S1726700AbfFWQNj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 23 Jun 2019 12:13:39 -0400
+Received: from conuserg-09.nifty.com ([210.131.2.76]:23058 "EHLO
+        conuserg-09.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726647AbfFWQNi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 23 Jun 2019 12:13:38 -0400
+Received: from grover.flets-west.jp (softbank126125154139.bbtec.net [126.125.154.139]) (authenticated)
+        by conuserg-09.nifty.com with ESMTP id x5NGDU0w024279;
+        Mon, 24 Jun 2019 01:13:30 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-09.nifty.com x5NGDU0w024279
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1561306410;
+        bh=jqiQ1y5oNfRR0g7lME/nEDNqOJEW6bjlbalGJ20HGQ0=;
         h=From:To:Cc:Subject:Date:From;
-        b=R0cK7REIoa8qRyqgt9GaVPCPHEFgZHn6ATO0n0TugMlVT5WcRpfWQSIbtK+FO55wP
-         HD9E9t21JS/tDOosuFo/+3/rnlt+yPb8z9m+4dK2wbfCw19/+NEg5MyxG2NY6OupYs
-         qGVn6hGOM4ZRabeGejpmNritCd+nMrAjdSqSdOOg=
-From:   guoren@kernel.org
-To:     julien.grall@arm.com, arnd@arndb.de, linux-kernel@vger.kernel.org
-Cc:     linux-csky@vger.kernel.org, Guo Ren <ren_guo@c-sky.com>,
-        Catalin Marinas <catalin.marinas@arm.com>
-Subject: [PATCH] arm64: asid: Optimize cache_flush for SMT
-Date:   Mon, 24 Jun 2019 00:04:29 +0800
-Message-Id: <1561305869-18872-1-git-send-email-guoren@kernel.org>
-X-Mailer: git-send-email 2.7.4
+        b=xDxG0siw4cbp7po2wAgeT49KgFRCeqsPlrhZEwuZggbYGoHPmGabUijA79H8aOPgE
+         043ZeuEXYhloNDl93C987jGila8l9k6Y/w8ggnmssC4Bi84UxraxZcDh3fE+dD9Sqc
+         3gMDLiFYOK7Go3ya81r/l+RVnLl614U3qJI0IdHweL8YBZ0WY6mgyKwjGEM0fK0L9i
+         T+kBWj4+seEbUFVV7O8kBFQ6/2B1yknD4ywlPF1PVT4OJ5Q0z6BE/XcwPEtSl6Y+9Y
+         GplBE7YI11RrvZollgtMH3zvUysZa23pN6m++1tg+gNrJ90BOOB9Z0srA1pN6yea+F
+         Wf5HvEaiFhrZg==
+X-Nifty-SrcIP: [126.125.154.139]
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+To:     linux-kbuild@vger.kernel.org
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] kbuild: fix missed rebuild of modules.builtin
+Date:   Mon, 24 Jun 2019 01:13:27 +0900
+Message-Id: <20190623161328.22461-1-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Guo Ren <ren_guo@c-sky.com>
+Unlike modules.order, modules.builtin is not rebuilt every time.
+Once modules.builtin is created, it will not be updated until
+auto.conf or tristate.conf is changed.
 
-The hardware threads of one core could share the same TLB for SMT+SMP
-system. Assume hardware threads number sequence like this:
+So, it misses to notice a change in Makefile, for example, renaming
+of modules.
 
-| 0 1 2 3 | 4 5 6 7 | 8 9 a b | c d e f |
-   core1     core2     core3     core4
+Kbuild must always descend into directories for modules.builtin too.
 
-Current algorithm seems is correct for SMT+SMP, but it'll give some
-duplicate local_tlb_flush. Because one hardware threads local_tlb_flush
-will also flush other hardware threads' TLB entry in one core TLB.
-
-So we can use bitmap to reduce local_tlb_flush for SMT.
-
-C-SKY cores don't support SMT and the patch is no benefit for C-SKY.
-
-Signed-off-by: Guo Ren <ren_guo@c-sky.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Julien Grall <julien.grall@arm.com>
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 ---
- arch/csky/include/asm/asid.h |  4 ++++
- arch/csky/mm/asid.c          | 11 ++++++++++-
- arch/csky/mm/context.c       |  2 +-
- 3 files changed, 15 insertions(+), 2 deletions(-)
 
-diff --git a/arch/csky/include/asm/asid.h b/arch/csky/include/asm/asid.h
-index ac08b0f..f654492 100644
---- a/arch/csky/include/asm/asid.h
-+++ b/arch/csky/include/asm/asid.h
-@@ -23,6 +23,9 @@ struct asid_info
- 	unsigned int		ctxt_shift;
- 	/* Callback to locally flush the context. */
- 	void			(*flush_cpu_ctxt_cb)(void);
-+	/* To reduce duplicate tlb_flush for SMT */
-+	unsigned int		harts_per_core;
-+	unsigned int		harts_per_core_mask;
- };
+ Makefile | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
+
+diff --git a/Makefile b/Makefile
+index 9514dac2660a..19c33bc69bb1 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1289,12 +1289,16 @@ modules: $(vmlinux-dirs) $(if $(KBUILD_BUILTIN),vmlinux) modules.builtin
+ 	$(Q)$(MAKE) -f $(srctree)/scripts/Makefile.modpost
+ 	$(Q)$(CONFIG_SHELL) $(srctree)/scripts/modules-check.sh
  
- #define NUM_ASIDS(info)			(1UL << ((info)->bits))
-@@ -73,6 +76,7 @@ static inline void asid_check_context(struct asid_info *info,
+-modules.builtin: $(vmlinux-dirs:%=%/modules.builtin)
+-	$(Q)$(AWK) '!x[$$0]++' $^ > $(objtree)/modules.builtin
++modbuiltin-dirs := $(addprefix _modbuiltin_, $(vmlinux-dirs))
  
- int asid_allocator_init(struct asid_info *info,
- 			u32 bits, unsigned int asid_per_ctxt,
-+			unsigned int harts_per_core,
- 			void (*flush_cpu_ctxt_cb)(void));
+-%/modules.builtin: include/config/auto.conf include/config/tristate.conf
+-	$(Q)$(MAKE) $(modbuiltin)=$*
++modules.builtin: $(modbuiltin-dirs)
++	$(Q)$(AWK) '!x[$$0]++' $(addsuffix /$@, $(vmlinux-dirs)) > $@
  
- #endif
-diff --git a/arch/csky/mm/asid.c b/arch/csky/mm/asid.c
-index b2e9147..50a983e 100644
---- a/arch/csky/mm/asid.c
-+++ b/arch/csky/mm/asid.c
-@@ -148,8 +148,13 @@ void asid_new_context(struct asid_info *info, atomic64_t *pasid,
- 		atomic64_set(pasid, asid);
- 	}
++PHONY += $(modbuiltin-dirs)
++# tristate.conf is not included from this Makefile. Add it as a prerequisite
++# here to make it self-healing in case somebody accidentally removes it.
++$(modbuiltin-dirs): include/config/tristate.conf
++	$(Q)$(MAKE) $(modbuiltin)=$(patsubst _modbuiltin_%,%,$@)
  
--	if (cpumask_test_and_clear_cpu(cpu, &info->flush_pending))
-+	if (cpumask_test_cpu(cpu, &info->flush_pending)) {
-+		unsigned int i;
-+		unsigned int harts_base = cpu & info->harts_per_core_mask;
- 		info->flush_cpu_ctxt_cb();
-+		for (i = 0; i < info->harts_per_core; i++)
-+			cpumask_clear_cpu(harts_base + i, &info->flush_pending);
-+	}
- 
- 	atomic64_set(&active_asid(info, cpu), asid);
- 	cpumask_set_cpu(cpu, mm_cpumask(mm));
-@@ -162,15 +167,19 @@ void asid_new_context(struct asid_info *info, atomic64_t *pasid,
-  * @info: Pointer to the asid allocator structure
-  * @bits: Number of ASIDs available
-  * @asid_per_ctxt: Number of ASIDs to allocate per-context. ASIDs are
-+ * @harts_per_core: Number hardware threads per core, must be 1, 2, 4, 8, 16 ...
-  * allocated contiguously for a given context. This value should be a power of
-  * 2.
-  */
- int asid_allocator_init(struct asid_info *info,
- 			u32 bits, unsigned int asid_per_ctxt,
-+			unsigned int harts_per_core,
- 			void (*flush_cpu_ctxt_cb)(void))
- {
- 	info->bits = bits;
- 	info->ctxt_shift = ilog2(asid_per_ctxt);
-+	info->harts_per_core = harts_per_core;
-+	info->harts_per_core_mask = ~((1 << ilog2(harts_per_core)) - 1);
- 	info->flush_cpu_ctxt_cb = flush_cpu_ctxt_cb;
- 	/*
- 	 * Expect allocation after rollover to fail if we don't have at least
-diff --git a/arch/csky/mm/context.c b/arch/csky/mm/context.c
-index 0d95bdd..b58523b 100644
---- a/arch/csky/mm/context.c
-+++ b/arch/csky/mm/context.c
-@@ -30,7 +30,7 @@ static int asids_init(void)
- {
- 	BUG_ON(((1 << CONFIG_CPU_ASID_BITS) - 1) <= num_possible_cpus());
- 
--	if (asid_allocator_init(&asid_info, CONFIG_CPU_ASID_BITS, 1,
-+	if (asid_allocator_init(&asid_info, CONFIG_CPU_ASID_BITS, 1, 1,
- 				asid_flush_cpu_ctxt))
- 		panic("Unable to initialize ASID allocator for %lu ASIDs\n",
- 		      NUM_ASIDS(&asid_info));
+ # Target to prepare building external modules
+ PHONY += modules_prepare
 -- 
-2.7.4
+2.17.1
 
