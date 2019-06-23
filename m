@@ -2,70 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0EAA14FCC9
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2019 18:42:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EFFCC4FCEF
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2019 18:43:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726860AbfFWQmK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 23 Jun 2019 12:42:10 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:42074 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726399AbfFWQmJ (ORCPT
+        id S1726887AbfFWQmP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 23 Jun 2019 12:42:15 -0400
+Received: from mail-pf1-f171.google.com ([209.85.210.171]:37873 "EHLO
+        mail-pf1-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726399AbfFWQmM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Jun 2019 12:42:09 -0400
-Received: from turingmachine.home (unknown [IPv6:2804:431:d719:dd85:d711:794d:1c68:5ed3])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: tonyk)
-        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id 752AE2613D9;
-        Sun, 23 Jun 2019 17:42:05 +0100 (BST)
-From:   =?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@collabora.com>
-To:     linux-media@vger.kernel.org
-Cc:     mchehab@kernel.org, hverkuil@xs4all.nl, helen.koike@collabora.com,
-        kernel@collabora.com, linux-kernel@vger.kernel.org,
-        =?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@collabora.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Subject: [PATCH 5/5] media: vimc.rst: add vimc-streamer source documentation
-Date:   Sun, 23 Jun 2019 13:40:24 -0300
-Message-Id: <20190623164024.9836-5-andrealmeid@collabora.com>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190623164024.9836-1-andrealmeid@collabora.com>
-References: <20190623164024.9836-1-andrealmeid@collabora.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Sun, 23 Jun 2019 12:42:12 -0400
+Received: by mail-pf1-f171.google.com with SMTP id 19so6116946pfa.4;
+        Sun, 23 Jun 2019 09:42:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=guN3ScMcBAl3EdBUUBqxZnez+QFG6VTe2Us/ZifbIac=;
+        b=Mz2oXdfcHCl/AjLIwcbhOTvV4DP6dKb58+chvGV34eLndltGe35g/temtiD24fRjEN
+         yO1BCIoo8bh5zc6/o2VRRFRtjsovwC8cLmA+1lVCHOhT0SFjZk5L3YCig71oXdx65Ay6
+         IJlxs0Y3LoduHUNd8+DrFVCawb+VjTlRPH+zQU6SuvJBEefpifliMWnFp2zbWLm0slwC
+         tjDZURjLb8nicaltlMwIObu0WLqBfV7PR3AUoucywPMLq9ER8zdNaIil71f0+MqSRy0j
+         wXrslvoMOx9iyv0PhWNIJXmZaRM0w/a81eNMSJFXw/zoQqBitfzFru9jbmphDrk+v/qm
+         F7FA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=guN3ScMcBAl3EdBUUBqxZnez+QFG6VTe2Us/ZifbIac=;
+        b=GF/SriaDlAKpY4xJdZ6htSDpTTEuzJCLiVaQit2yjx06aqZbxpWSJzIZxUoUDqNG//
+         0ffrpaIgBahg3BWNES4rTzAcFl3/KvAmk90sipbMuoSjI/q+4A0SmvjcsS5QweER0BIp
+         BQlQ9wEbrbjE8BOJWefQB00Y5TyUfQIccogEb9+b4xABBBtAaAbnMEIKePvd2WCfu81N
+         0wlbJvAuNkqhLf70adnmcdRKfWojzP5Nskyhr5idQmcoN/Ua93OUUu60TBSt7ToMc97V
+         xVvb3OmYE9zsr1EY7s3LVJyVrmEpEKW8zxv4Oo9rSU6Tf4sKVFp1qbZ/YWeTPLou4nzo
+         Txsg==
+X-Gm-Message-State: APjAAAVC5m/U1qmVdou9OAUoUzZbxbuQIgx6ze+iMU1Gq1LUAwN8KGkt
+        KoO4YZHIFv0003iwLl7U8xk=
+X-Google-Smtp-Source: APXvYqzuNeNzlJfb0O2anqXdpR3fq7SW1y1TKzsXPcMSAaI/+wflpHzkgSycjT+gG4vxsg6zpZE3fg==
+X-Received: by 2002:a17:90a:a404:: with SMTP id y4mr20304680pjp.58.1561308131121;
+        Sun, 23 Jun 2019 09:42:11 -0700 (PDT)
+Received: from localhost (68.168.130.77.16clouds.com. [68.168.130.77])
+        by smtp.gmail.com with ESMTPSA id v138sm9644465pfc.15.2019.06.23.09.42.10
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 23 Jun 2019 09:42:10 -0700 (PDT)
+From:   Yangtao Li <tiny.windzz@gmail.com>
+To:     rui.zhang@intel.com, edubezval@gmail.com,
+        daniel.lezcano@linaro.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, maxime.ripard@bootlin.com, wens@csie.org,
+        davem@davemloft.net, gregkh@linuxfoundation.org,
+        mchehab+samsung@kernel.org, linus.walleij@linaro.org,
+        nicolas.ferre@microchip.com, paulmck@linux.ibm.com
+Cc:     linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Yangtao Li <tiny.windzz@gmail.com>
+Subject: [PATCH v4 00/11] add thermal driver for h6
+Date:   Sun, 23 Jun 2019 12:41:55 -0400
+Message-Id: <20190623164206.7467-1-tiny.windzz@gmail.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since vimc-streamer.{c, h} are fully documented and conforming with the
-kernel-doc syntax, add those files to vimc.rst
+This patchset add support for H3 and H6 thermal sensor.
 
-Signed-off-by: André Almeida <andrealmeid@collabora.com>
-Suggested-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+BTY, do a cleanup in thermal makfile.
+
+Yangtao Li (11):
+  thermal: sun8i: add thermal driver for h6
+  dt-bindings: thermal: add binding document for h6 thermal controller
+  thermal: fix indentation in makefile
+  thermal: sun8i: get ths sensor number from device compatible
+  thermal: sun8i: rework for sun8i_ths_get_temp()
+  thermal: sun8i: get ths init func from device compatible
+  thermal: sun8i: rework for ths irq handler func
+  thermal: sun8i: support ahb clocks
+  thermal: sun8i: rework for ths calibrate func
+  dt-bindings: thermal: add binding document for h3 thermal controller
+  thermal: sun8i: add thermal driver for h3
+
+ .../bindings/thermal/sun8i-thermal.yaml       |  94 +++
+ MAINTAINERS                                   |   7 +
+ drivers/thermal/Kconfig                       |  14 +
+ drivers/thermal/Makefile                      |   9 +-
+ drivers/thermal/sun8i_thermal.c               | 534 ++++++++++++++++++
+ 5 files changed, 654 insertions(+), 4 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/thermal/sun8i-thermal.yaml
+ create mode 100644 drivers/thermal/sun8i_thermal.c
+
 ---
- Documentation/media/v4l-drivers/vimc.rst | 11 +++++++++++
- 1 file changed, 11 insertions(+)
-
-diff --git a/Documentation/media/v4l-drivers/vimc.rst b/Documentation/media/v4l-drivers/vimc.rst
-index bece85867424..406417680db5 100644
---- a/Documentation/media/v4l-drivers/vimc.rst
-+++ b/Documentation/media/v4l-drivers/vimc.rst
-@@ -96,3 +96,14 @@ those arguments to each subdevice, not to the vimc module. For example::
-         Window size to calculate the mean. Note: the window size needs to be an
-         odd number, as the main pixel stays in the center of the window,
-         otherwise the next odd number is considered (the default value is 3).
-+
-+Source code documentation
-+-------------------------
-+
-+vimc-streamer
-+~~~~~~~~~~~~~
-+
-+.. kernel-doc:: drivers/media/platform/vimc/vimc-streamer.h
-+   :internal:
-+
-+.. kernel-doc:: drivers/media/platform/vimc/vimc-streamer.c
--- 
-2.22.0
+v4:
+-add h3 support
+-fix yaml file
+---
+2.17.1
 
