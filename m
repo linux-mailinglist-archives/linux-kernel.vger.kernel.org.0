@@ -2,57 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 481304FD56
+	by mail.lfdr.de (Postfix) with ESMTP id B1DC74FD57
 	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2019 19:38:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726688AbfFWRiC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 23 Jun 2019 13:38:02 -0400
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:35844 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726466AbfFWRiB (ORCPT
+        id S1726726AbfFWRiE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 23 Jun 2019 13:38:04 -0400
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:33569 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726466AbfFWRiD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Jun 2019 13:38:01 -0400
-Received: by mail-qt1-f194.google.com with SMTP id p15so12177726qtl.3;
-        Sun, 23 Jun 2019 10:38:01 -0700 (PDT)
+        Sun, 23 Jun 2019 13:38:03 -0400
+Received: by mail-qk1-f194.google.com with SMTP id r6so8138873qkc.0;
+        Sun, 23 Jun 2019 10:38:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=AJTlfv60mIEZXwta292fwI2V+CViZ4EgWCofxKK0NGs=;
-        b=iHScT30IUVlaqkLW9FzbhYmfsFdewA8sA9/jGO9fvv1CFkFaapyfjhYtPMDxpx7WzW
-         peqA+Lbd+lGEDDlqc6bhpxo2vtxdqvAwXeMOqsDC2yrpiAkRZjv2rcfPUkk2fjeKgEty
-         szZyXIM8vQcvDG6q7WfuEpa176sKGTPoGYenic5rMIk3Tgbw5tirSkXh0MgHcgK2gnfR
-         yN6aB0oK2XUHb+7RdXbtjOaUTw1695sjBrVwyUu1wpwri23zr5KCh2FEwx+UmHNTrjxI
-         u+lknBsrwiTYVIenkHVmcRK4yo1NQt5uk/PGhOZs00HokqYuB889l04tD33hRIM6SMh6
-         LuTA==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=Taorv013lx4BF1e9mQ5frJv1zsMiL53dKrJ0Mfj3qx4=;
+        b=i0qExktDOvmtUHmy+8LfQWIfsj+7c/KfuWryEMjvL850aOttg1UgB4u3YdMMiw6tUQ
+         oUr4Uzh0mo3H0NXiw6CXiEGEqW8wY/v2soaQTvK4xSpUQ8J4AEpCfTotUDFGu6C7+2Qz
+         FZRRfFHY50qwNhnwXZzX7GfNq4mSzAbYFAU+If4/4d2zgZwYzAyD5KTykp9ImlnylfYC
+         Rs5ShfPEJstSCDPIknItVC/6+brEZJvUNqc7Jd1tKMk3N+zyfXTctTbBp7UezxgMJqX+
+         cOSs0iEkUS/vmtde81cuHxxvPItAWeZIg0DsZWbWnOrczrXMVyYyDxdrt17f7umQn5tC
+         /UVQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=AJTlfv60mIEZXwta292fwI2V+CViZ4EgWCofxKK0NGs=;
-        b=QXZK/tbjxQKvw5j7JDdH6xXpBYAx8Xjv1T4r/dDiVmaBQNiHJ8PKJDvsTxdMFE/xt/
-         /jZ+D2CoVXgpIMeS2MVWO4weMZxNOlJrXzZhz9ZfRONr5k6Kj4bolmbwTPBS4A6/C2Aw
-         LiexsjDcyZP/2JtDuRYewMSFpQNx7Bjb54hhJ648HOiqtLvPlUB4OjUq9IUqJPb4qmTg
-         6/4RokGCxKeGRxvGymzpyUTi3A2IoFTfqBsDeUoitNuwarUYEqYlF7axtWACY3nw0f+B
-         TlRke39QzCTT8+R0XRwfXfdkTxchh23Km9Eru7ltIUbj3XopCzGVNN5GZSNMc1DXJJAV
-         2jDA==
-X-Gm-Message-State: APjAAAXDxGIVjgvNF9fwHiJGi3AbmSiRa/kBZ57RPvDrevE0+XtW46cD
-        uET1bN6ViDy8JUl/sqI3yCrCPXS9
-X-Google-Smtp-Source: APXvYqwH+yYOfjzCW3mL/GB1bTYbCEj4p34EhH/Z+ZuKtywHkF9tf6qNfNiRq4tv8gn+Hit+u1OaYg==
-X-Received: by 2002:a0c:8a26:: with SMTP id 35mr53756993qvt.158.1561311480668;
-        Sun, 23 Jun 2019 10:38:00 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=Taorv013lx4BF1e9mQ5frJv1zsMiL53dKrJ0Mfj3qx4=;
+        b=JAP8IbI759o250IEsfGAGEAYxlTOyTAavgidFk2zIdOtRlgy6KzUUA6flHZCu21u3K
+         fop4W3U8BDJKWu1aoV0KhH9trEF9pJnJT446Mwkq9rMux03Hc6hHFLU+g7I1hhKVdbjc
+         joEMNyv+WZQ1F2QByRH56VCgBdclOSLq1rYMFVQDRXHJ5qgxspuj2PsY66Non4LNUgwa
+         cXGYOZXfL1/cYK6LxZKTbZGjWZ1oCx+W8d4SZ9GLxZAD7UgzztA8q2j9N1Gm4BTBJIiD
+         gSyZoamdSp1o3lQq+zXMMWak/FwxWIIh5ULcpWv8RAdyp991iewSKzAn36XBYHSt4vPs
+         aS3Q==
+X-Gm-Message-State: APjAAAXgXyew9BuEh+ew//mHl1wYjjKCsDDYNAZAAOgFupQPwRdzbYEW
+        3U6ubDccHyTIj82njSBhmgU=
+X-Google-Smtp-Source: APXvYqyxoVySJ+bjh9dacS0w0vip5Vr0BkFtivb56+vWtspFfCp3xLiTPe3jL8pbW162KCckP1ophg==
+X-Received: by 2002:a37:8145:: with SMTP id c66mr13276625qkd.459.1561311482169;
+        Sun, 23 Jun 2019 10:38:02 -0700 (PDT)
 Received: from localhost.localdomain (ppp91-79-162-197.pppoe.mtu-net.ru. [91.79.162.197])
-        by smtp.gmail.com with ESMTPSA id c55sm5342498qtk.53.2019.06.23.10.37.59
+        by smtp.gmail.com with ESMTPSA id c55sm5342498qtk.53.2019.06.23.10.38.00
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 23 Jun 2019 10:38:00 -0700 (PDT)
+        Sun, 23 Jun 2019 10:38:01 -0700 (PDT)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>
 Cc:     dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v1 1/3] gpu: host1x: Remove implicit IOMMU backing on client's registration
-Date:   Sun, 23 Jun 2019 20:37:41 +0300
-Message-Id: <20190623173743.24088-1-digetx@gmail.com>
+Subject: [PATCH v1 2/3] drm/tegra: Fix 2d and 3d clients detaching from IOMMU domain
+Date:   Sun, 23 Jun 2019 20:37:42 +0300
+Message-Id: <20190623173743.24088-2-digetx@gmail.com>
 X-Mailer: git-send-email 2.22.0
+In-Reply-To: <20190623173743.24088-1-digetx@gmail.com>
+References: <20190623173743.24088-1-digetx@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -60,59 +62,126 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On ARM32 we don't want any of the clients device to be backed by the
-implicit domain, simply because we can't afford such a waste on older
-Tegra SoCs that have very few domains available in total. The recent IOMMU
-support addition for the Video Decoder hardware uncovered the problem
-that an unfortunate drivers probe order results in the DRM driver probe
-failure if CONFIG_ARM_DMA_USE_IOMMU=y due to a shortage of IOMMU domains
-caused by the implicit backing. The host1x_client_register() is a common
-function that is invoked by all of the relevant DRM drivers during theirs
-probe and hence it is convenient to remove the implicit backing there,
-resolving the problem.
+This should should fire up on the DRM's driver module re-loader because
+there won't be enough available domains on older Tegra SoCs.
 
+Cc: stable <stable@vger.kernel.org>
+Fixes: 0c407de5ed1a ("drm/tegra: Refactor IOMMU attach/detach")
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/gpu/host1x/bus.c | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+ drivers/gpu/drm/tegra/dc.c   | 4 ++--
+ drivers/gpu/drm/tegra/drm.c  | 9 ++++++---
+ drivers/gpu/drm/tegra/drm.h  | 3 ++-
+ drivers/gpu/drm/tegra/gr2d.c | 4 ++--
+ drivers/gpu/drm/tegra/gr3d.c | 4 ++--
+ 5 files changed, 14 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/gpu/host1x/bus.c b/drivers/gpu/host1x/bus.c
-index 742aa9ff21b8..559df3974afb 100644
---- a/drivers/gpu/host1x/bus.c
-+++ b/drivers/gpu/host1x/bus.c
-@@ -14,6 +14,10 @@
- #include "bus.h"
- #include "dev.h"
+diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
+index fa505baaaabc..c1b885444d90 100644
+--- a/drivers/gpu/drm/tegra/dc.c
++++ b/drivers/gpu/drm/tegra/dc.c
+@@ -2388,7 +2388,7 @@ static int tegra_dc_init(struct host1x_client *client)
+ 	if (!IS_ERR(primary))
+ 		drm_plane_cleanup(primary);
  
-+#if IS_ENABLED(CONFIG_ARM_DMA_USE_IOMMU)
-+#include <asm/dma-iommu.h>
-+#endif
+-	host1x_client_iommu_detach(client, dc->group);
++	host1x_client_iommu_detach(client, dc->group, true);
+ 	host1x_syncpt_free(dc->syncpt);
+ 
+ 	return err;
+@@ -2412,7 +2412,7 @@ static int tegra_dc_exit(struct host1x_client *client)
+ 		return err;
+ 	}
+ 
+-	host1x_client_iommu_detach(client, dc->group);
++	host1x_client_iommu_detach(client, dc->group, true);
+ 	host1x_syncpt_free(dc->syncpt);
+ 
+ 	return 0;
+diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
+index d2080bd7d392..f94441457c64 100644
+--- a/drivers/gpu/drm/tegra/drm.c
++++ b/drivers/gpu/drm/tegra/drm.c
+@@ -1120,15 +1120,18 @@ struct iommu_group *host1x_client_iommu_attach(struct host1x_client *client,
+ }
+ 
+ void host1x_client_iommu_detach(struct host1x_client *client,
+-				struct iommu_group *group)
++				struct iommu_group *group,
++				bool shared)
+ {
+ 	struct drm_device *drm = dev_get_drvdata(client->parent);
+ 	struct tegra_drm *tegra = drm->dev_private;
+ 
+ 	if (group) {
+-		if (group == tegra->group) {
++		if (!shared || group == tegra->group) {
+ 			iommu_detach_group(tegra->domain, group);
+-			tegra->group = NULL;
 +
- static DEFINE_MUTEX(clients_lock);
- static LIST_HEAD(clients);
++			if (group == tegra->group)
++				tegra->group = NULL;
+ 		}
  
-@@ -710,6 +714,21 @@ int host1x_client_register(struct host1x_client *client)
- 	struct host1x *host1x;
- 	int err;
+ 		iommu_group_put(group);
+diff --git a/drivers/gpu/drm/tegra/drm.h b/drivers/gpu/drm/tegra/drm.h
+index 488f36f00bd8..9f1a3d6f3406 100644
+--- a/drivers/gpu/drm/tegra/drm.h
++++ b/drivers/gpu/drm/tegra/drm.h
+@@ -107,7 +107,8 @@ int tegra_drm_unregister_client(struct tegra_drm *tegra,
+ struct iommu_group *host1x_client_iommu_attach(struct host1x_client *client,
+ 					       bool shared);
+ void host1x_client_iommu_detach(struct host1x_client *client,
+-				struct iommu_group *group);
++				struct iommu_group *group,
++				bool shared);
  
-+#if IS_ENABLED(CONFIG_ARM_DMA_USE_IOMMU)
-+	/*
-+	 * The client's driver could be backed by implicit IOMMU mapping
-+	 * and we don't want to have that because all of current Tegra
-+	 * drivers are managing IOMMU by themselves. This is a convenient
-+	 * place for unmapping of the implicit mapping because this function
-+	 * is called by all host1x drivers during theirs probe.
-+	 */
-+	if (client->dev->archdata.mapping) {
-+		struct dma_iommu_mapping *mapping =
-+			to_dma_iommu_mapping(client->dev);
-+		arm_iommu_detach_device(client->dev);
-+		arm_iommu_release_mapping(mapping);
-+	}
-+#endif
- 	mutex_lock(&devices_lock);
+ int tegra_drm_init(struct tegra_drm *tegra, struct drm_device *drm);
+ int tegra_drm_exit(struct tegra_drm *tegra);
+diff --git a/drivers/gpu/drm/tegra/gr2d.c b/drivers/gpu/drm/tegra/gr2d.c
+index 673059fd2fcb..c486e0a05c9d 100644
+--- a/drivers/gpu/drm/tegra/gr2d.c
++++ b/drivers/gpu/drm/tegra/gr2d.c
+@@ -69,7 +69,7 @@ static int gr2d_init(struct host1x_client *client)
+ 	return 0;
  
- 	list_for_each_entry(host1x, &devices, list) {
+ detach:
+-	host1x_client_iommu_detach(client, gr2d->group);
++	host1x_client_iommu_detach(client, gr2d->group, false);
+ free:
+ 	host1x_syncpt_free(client->syncpts[0]);
+ put:
+@@ -89,7 +89,7 @@ static int gr2d_exit(struct host1x_client *client)
+ 	if (err < 0)
+ 		return err;
+ 
+-	host1x_client_iommu_detach(client, gr2d->group);
++	host1x_client_iommu_detach(client, gr2d->group, false);
+ 	host1x_syncpt_free(client->syncpts[0]);
+ 	host1x_channel_put(gr2d->channel);
+ 
+diff --git a/drivers/gpu/drm/tegra/gr3d.c b/drivers/gpu/drm/tegra/gr3d.c
+index 4778ae999668..591bafe455e0 100644
+--- a/drivers/gpu/drm/tegra/gr3d.c
++++ b/drivers/gpu/drm/tegra/gr3d.c
+@@ -79,7 +79,7 @@ static int gr3d_init(struct host1x_client *client)
+ 	return 0;
+ 
+ detach:
+-	host1x_client_iommu_detach(client, gr3d->group);
++	host1x_client_iommu_detach(client, gr3d->group, false);
+ free:
+ 	host1x_syncpt_free(client->syncpts[0]);
+ put:
+@@ -98,7 +98,7 @@ static int gr3d_exit(struct host1x_client *client)
+ 	if (err < 0)
+ 		return err;
+ 
+-	host1x_client_iommu_detach(client, gr3d->group);
++	host1x_client_iommu_detach(client, gr3d->group, false);
+ 	host1x_syncpt_free(client->syncpts[0]);
+ 	host1x_channel_put(gr3d->channel);
+ 
 -- 
 2.22.0
 
