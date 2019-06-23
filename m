@@ -2,98 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8CA834FBAA
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2019 14:54:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0BF9B50B3A
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 14:58:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726481AbfFWMy0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 23 Jun 2019 08:54:26 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:33361 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726086AbfFWMy0 (ORCPT
+        id S1727839AbfFXM6d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 08:58:33 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:40094 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725916AbfFXM6d (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Jun 2019 08:54:26 -0400
-Received: from p5b06daab.dip0.t-ipconnect.de ([91.6.218.171] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1hf20c-0001D8-NF; Sun, 23 Jun 2019 14:54:14 +0200
-Date:   Sun, 23 Jun 2019 14:54:13 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Octavio Alvarez <octallk1@alvarezp.org>
-cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>, x86@kernel.org,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
-        Jiang Biao <jiang.biao2@zte.com.cn>,
-        Yi Wang <wang.yi59@zte.com.cn>,
-        Dou Liyang <douly.fnst@cn.fujitsu.com>,
-        Nicolai Stange <nstange@suse.de>,
-        Mirko Lindner <mlindner@marvell.com>,
-        Stephen Hemminger <stephen@networkplumber.org>
-Subject: Re: PROBLEM: Marvell 88E8040 (sky2) fails after hibernation
-In-Reply-To: <alpine.DEB.2.21.1906221523340.5503@nanos.tec.linutronix.de>
-Message-ID: <alpine.DEB.2.21.1906231448540.32342@nanos.tec.linutronix.de>
-References: <aba1c363-92de-66d7-4aac-b555f398e70a@alvarezp.org> <2cf2f745-0e29-13a7-6364-0a981dae758c@alvarezp.org> <alpine.DEB.2.21.1906132229540.1791@nanos.tec.linutronix.de> <95539fd9-ffdb-b91c-935f-7fd54d048fdf@alvarezp.org>
- <alpine.DEB.2.21.1906221523340.5503@nanos.tec.linutronix.de>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+        Mon, 24 Jun 2019 08:58:33 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5OCt2vM135433;
+        Mon, 24 Jun 2019 12:58:15 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id; s=corp-2018-07-02;
+ bh=kGn74/hddQ3jiwC8Udn/ISBNEFh1bmGXUBKkLp6x5h8=;
+ b=U17bqOBe5SuR9BvhJFsKv4UVniBZ1sKPJAqbmPY/7N3p2lj7KbKZYCDLPxRCOhNFccE5
+ Deb1pqdkOFG6K4wN6ojWL668yPCtsY4HjubegrZzScyyjyARg8L/PAlbtRmuOtsA2EHg
+ 2NfqrqNeiH3d4FWGBelPd9PA432MAhL9mS+NZVdGYJx+OVCYQyfc3kHudSSWVbH7Z3mE
+ JunV9VB9zobWi3xJJNYHBvozkouHaCvGsBfItDOrMwNbOt8mDGxKjHSw7GCh3fA6dUdC
+ L1bewGCLVjOSwAAuOEnz1lIfe45Adr+7ikVv+5aXJPgLIbqbjzaVYeaPvRRM7n2qK3i7 bg== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by userp2130.oracle.com with ESMTP id 2t9brsx997-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 24 Jun 2019 12:58:14 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5OCw9HI177777;
+        Mon, 24 Jun 2019 12:58:14 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userp3020.oracle.com with ESMTP id 2tat7bmd4j-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 24 Jun 2019 12:58:14 +0000
+Received: from abhmp0016.oracle.com (abhmp0016.oracle.com [141.146.116.22])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x5OCw7rw024782;
+        Mon, 24 Jun 2019 12:58:07 GMT
+Received: from z2.cn.oracle.com (/10.182.69.87)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 24 Jun 2019 05:58:06 -0700
+From:   Zhenzhong Duan <zhenzhong.duan@oracle.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     tglx@linutronix.de, mingo@kernel.org, bp@alien8.de, hpa@zytor.com,
+        boris.ostrovsky@oracle.com, jgross@suse.com,
+        sstabellini@kernel.org, Zhenzhong Duan <zhenzhong.duan@oracle.com>
+Subject: [PATCH 1/6] x86/xen: Mark xen_hvm_need_lapic() and xen_hvm_need_lapic() as __init
+Date:   Sun, 23 Jun 2019 21:01:38 +0800
+Message-Id: <1561294903-6166-1-git-send-email-zhenzhong.duan@oracle.com>
+X-Mailer: git-send-email 1.8.3.1
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9297 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1906240106
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9297 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=1 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1906240105
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Octavio,
+.. as they are only called at early bootup stage. In fact, other
+functions in x86_hyper_xen_hvm.init.* are all marked as __init.
 
-On Sat, 22 Jun 2019, Thomas Gleixner wrote:
-> On Wed, 19 Jun 2019, Octavio Alvarez wrote:
-> > On 6/13/19 3:45 PM, Thomas Gleixner wrote:
-> > > Can you please provide the content of /proc/interrupts with the driver
-> > > loaded and working after boot (don't hibernate) for the following kernels:
-> > > 
-> > 
-> > $ cat linux-master-after-boot.txt
-> >            CPU0       CPU1       CPU2       CPU3
-> 
-> >  27:          1          0          0          0   PCI-MSI 3145728-edge eth0
-> 
-> > >    Linus upstream + revert
-> > 
-> > $ cat linux-master-reverted-after-boot.txt
-> >            CPU0       CPU1       CPU2       CPU3
-> 
-> >  27:          1          0          0          0   PCI-MSI 3145728-edge eth0
->  
-> > Meanwhile, here it is for 4.9, which is the latest Debian-provided kernel and
-> > worked:
-> > 
-> > $ cat linux-4.9-after-boot.txt
-> >            CPU0       CPU1       CPU2       CPU3
-> 
-> >  24:          1          0          0          0   PCI-MSI 3145728-edge eth0
->  
-> > I will keep trying 4.14, unless you say otherwise.
-> 
-> It would be interesting though I don't expect too much data.
-> 
-> So all of the above use PCI/MSI. That's at least a data point. I need to
-> stare into that driver again to figure out why this might make a
-> difference, but right now I'm lost.
+Unexport xen_hvm_need_lapic as it's never used outside.
 
-One other data point you could provide please:
+Signed-off-by: Zhenzhong Duan <zhenzhong.duan@oracle.com>
+---
+ arch/x86/include/asm/xen/hypervisor.h | 6 +++---
+ arch/x86/xen/enlighten_hvm.c          | 3 +--
+ 2 files changed, 4 insertions(+), 5 deletions(-)
 
- Load the driver on Linus master with the following module parameter:
+diff --git a/arch/x86/include/asm/xen/hypervisor.h b/arch/x86/include/asm/xen/hypervisor.h
+index 39171b3..42e1245 100644
+--- a/arch/x86/include/asm/xen/hypervisor.h
++++ b/arch/x86/include/asm/xen/hypervisor.h
+@@ -44,14 +44,14 @@ static inline uint32_t xen_cpuid_base(void)
+ }
+ 
+ #ifdef CONFIG_XEN
+-extern bool xen_hvm_need_lapic(void);
++extern bool __init xen_hvm_need_lapic(void);
+ 
+-static inline bool xen_x2apic_para_available(void)
++static inline bool __init xen_x2apic_para_available(void)
+ {
+ 	return xen_hvm_need_lapic();
+ }
+ #else
+-static inline bool xen_x2apic_para_available(void)
++static inline bool __init xen_x2apic_para_available(void)
+ {
+ 	return (xen_cpuid_base() != 0);
+ }
+diff --git a/arch/x86/xen/enlighten_hvm.c b/arch/x86/xen/enlighten_hvm.c
+index 0e75642..ac4943c 100644
+--- a/arch/x86/xen/enlighten_hvm.c
++++ b/arch/x86/xen/enlighten_hvm.c
+@@ -218,7 +218,7 @@ static __init int xen_parse_nopv(char *arg)
+ }
+ early_param("xen_nopv", xen_parse_nopv);
+ 
+-bool xen_hvm_need_lapic(void)
++bool __init xen_hvm_need_lapic(void)
+ {
+ 	if (xen_nopv)
+ 		return false;
+@@ -230,7 +230,6 @@ bool xen_hvm_need_lapic(void)
+ 		return false;
+ 	return true;
+ }
+-EXPORT_SYMBOL_GPL(xen_hvm_need_lapic);
+ 
+ static uint32_t __init xen_platform_hvm(void)
+ {
+-- 
+1.8.3.1
 
-   disable_msi=1
-
-That switches to INTx usage. Does the machine resume proper with that?
-
-Thanks,
-
-	tglx
