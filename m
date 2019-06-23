@@ -2,121 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 82AB74FCBC
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2019 18:39:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2352D4FCC4
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Jun 2019 18:42:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726754AbfFWQjA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 23 Jun 2019 12:39:00 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:33801 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726399AbfFWQjA (ORCPT
+        id S1726723AbfFWQl4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 23 Jun 2019 12:41:56 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:42052 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726399AbfFWQl4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Jun 2019 12:39:00 -0400
-Received: from p5b06daab.dip0.t-ipconnect.de ([91.6.218.171] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1hf5Vk-0003To-B7; Sun, 23 Jun 2019 18:38:36 +0200
-Date:   Sun, 23 Jun 2019 18:38:34 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Zhiqiang Liu <liuzhiqiang26@huawei.com>
-cc:     corbet@lwn.net, mcgrof@kernel.org,
-        Kees Cook <keescook@chromium.org>, akpm@linux-foundation.org,
-        manfred@colorfullife.com, jwilk@jwilk.net, dvyukov@google.com,
-        feng.tang@intel.com, sunilmut@microsoft.com,
-        quentin.perret@arm.com, linux@leemhuis.info, alex.popov@linux.com,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        "wangxiaogang (F)" <wangxiaogang3@huawei.com>,
-        "Zhoukang (A)" <zhoukang7@huawei.com>,
-        Mingfangsen <mingfangsen@huawei.com>, tedheadster@gmail.com,
-        Eric Dumazet <edumazet@google.com>
-Subject: Re: [PATCH next] softirq: enable MAX_SOFTIRQ_TIME tuning with sysctl
- max_softirq_time_usecs
-In-Reply-To: <f274f85a-bbb6-3e32-b293-1d5d7f27a98f@huawei.com>
-Message-ID: <alpine.DEB.2.21.1906231820470.32342@nanos.tec.linutronix.de>
-References: <f274f85a-bbb6-3e32-b293-1d5d7f27a98f@huawei.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Sun, 23 Jun 2019 12:41:56 -0400
+Received: from turingmachine.home (unknown [IPv6:2804:431:d719:dd85:d711:794d:1c68:5ed3])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: tonyk)
+        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id 4252B2613D9;
+        Sun, 23 Jun 2019 17:41:51 +0100 (BST)
+From:   =?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@collabora.com>
+To:     linux-media@vger.kernel.org
+Cc:     mchehab@kernel.org, hverkuil@xs4all.nl, helen.koike@collabora.com,
+        kernel@collabora.com, linux-kernel@vger.kernel.org,
+        =?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@collabora.com>
+Subject: [PATCH 1/5] media: vimc: stream: remove obsolete function doc
+Date:   Sun, 23 Jun 2019 13:40:20 -0300
+Message-Id: <20190623164024.9836-1-andrealmeid@collabora.com>
+X-Mailer: git-send-email 2.22.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Zhiqiang,
+As a more complete version of vimc_streamer_s_streamer comment was added
+at "media: vimc: stream: add missing function documentation" commit in
+.c file, remove the old documentation from .h file.
 
-On Thu, 20 Jun 2019, Zhiqiang Liu wrote:
+Signed-off-by: André Almeida <andrealmeid@collabora.com>
+---
+ drivers/media/platform/vimc/vimc-streamer.h | 8 --------
+ 1 file changed, 8 deletions(-)
 
-> From: Zhiqiang liu <liuzhiqiang26@huawei.com>
-> 
-> In __do_softirq func, MAX_SOFTIRQ_TIME was set to 2ms via experimentation by
-> commit c10d73671 ("softirq: reduce latencies") in 2013, which was designed
-> to reduce latencies for various network workloads. The key reason is that the
-> maximum number of microseconds in one NAPI polling cycle in net_rx_action func
-> was set to 2 jiffies, so different HZ settting will lead to different latencies.
-> 
-> However, commit 7acf8a1e8 ("Replace 2 jiffies with sysctl netdev_budget_usecs
-> to enable softirq tuning") adopts netdev_budget_usecs to tun maximum number of
-> microseconds in one NAPI polling cycle. So the latencies of net_rx_action can be
-> controlled by sysadmins to copy with hardware changes over time.
+diff --git a/drivers/media/platform/vimc/vimc-streamer.h b/drivers/media/platform/vimc/vimc-streamer.h
+index 2b3667408794..28c3706e3c21 100644
+--- a/drivers/media/platform/vimc/vimc-streamer.h
++++ b/drivers/media/platform/vimc/vimc-streamer.h
+@@ -43,14 +43,6 @@ struct vimc_stream {
+ 	u32 producer_pixfmt;
+ };
+ 
+-/**
+- * vimc_streamer_s_streamer - start/stop the stream
+- *
+- * @stream:	the pointer to the stream to start or stop
+- * @ved:	The last entity of the streamer pipeline
+- * @enable:	any non-zero number start the stream, zero stop
+- *
+- */
+ int vimc_streamer_s_stream(struct vimc_stream *stream,
+ 			   struct vimc_ent_device *ved,
+ 			   int enable);
+-- 
+2.22.0
 
-So much for the theory. See below.
-
-> Correspondingly, the MAX_SOFTIRQ_TIME should be able to be tunned by sysadmins,
-> who knows best about hardware performance, for excepted tradeoff between latence
-> and fairness.
-> 
-> Here, we add sysctl variable max_softirq_time_usecs to replace MAX_SOFTIRQ_TIME
-> with 2ms default value.
-
-...
-
->   */
-> -#define MAX_SOFTIRQ_TIME  msecs_to_jiffies(2)
-> +unsigned int __read_mostly max_softirq_time_usecs = 2000;
->  #define MAX_SOFTIRQ_RESTART 10
-> 
->  #ifdef CONFIG_TRACE_IRQFLAGS
-> @@ -248,7 +249,8 @@ static inline void lockdep_softirq_end(bool in_hardirq) { }
-> 
->  asmlinkage __visible void __softirq_entry __do_softirq(void)
->  {
-> -	unsigned long end = jiffies + MAX_SOFTIRQ_TIME;
-> +	unsigned long end = jiffies +
-> +		usecs_to_jiffies(max_softirq_time_usecs);
-
-That's still jiffies based and therefore depends on CONFIG_HZ. Any budget
-value will be rounded up to the next jiffie. So in case of HZ=100 and
-time=1000us this will still result in 10ms of allowed loop time.
-
-I'm not saying that we must use a more fine grained time source, but both
-the changelog and the sysctl documentation are misleading.
-
-If we keep it jiffies based, then microseconds do not make any sense. They
-just give a false sense of controlability.
-
-Keep also in mind that with jiffies the accuracy depends also on the
-distance to the next tick when 'end' is evaluated. The next tick might be
-imminent.
-
-That's all information which needs to be in the documentation.
-
-> +	{
-> +		.procname	= "max_softirq_time_usecs",
-> +		.data		= &max_softirq_time_usecs,
-> +		.maxlen		= sizeof(unsigned int),
-> +		.mode		= 0644,
-> +		.proc_handler   = proc_dointvec_minmax,
-> +		.extra1		= &zero,
-> +	},
-
-Zero as the lower limit? That means it allows a single loop. Fine, but
-needs to be documented as well.
-
-Thanks,
-
-	tglx
