@@ -2,96 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 808A54FF69
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 04:32:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5F9A94FED3
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 03:58:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727187AbfFXCc0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 23 Jun 2019 22:32:26 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:48711 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726321AbfFXCc0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Jun 2019 22:32:26 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45X76d2fsSz9sND;
-        Mon, 24 Jun 2019 08:55:05 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1561330508;
-        bh=CfQNGmyRCYuEzDMKXQ9cnOE6ZWSd1jrKEmYS1i0ftMY=;
-        h=Date:From:To:Cc:Subject:From;
-        b=OPPnWLest3qGwfakF/bUj22KshAxAKvJEZ0TvgYF5uvuSBZGz/y6stgy+9T9dbQbR
-         Q6TxIhic6rQNA3YkEEUzDlY9HLwZoY7in3lpLZXOHuZ4ou63g1TVccUu5L6ATd6iup
-         n+4FXtfPBWEWphTMfMcZGy9/GKOoEkdpPfauvfsknPMGWwRkggdulx3z5UxoFXAPMj
-         u637IiT4Zw+C/33wHl4r1qLk53b3xh0cPHvl5BNzGZlOiifsAUyhaBkWqqi9CTzODp
-         +SPxnLIjZs+nAFzHIj0jTqkFq+0MkcjMnnErRverJJdvM6c5GljDY0BrVrg/gWhV8w
-         W09yR2nk+4Ykw==
-Date:   Mon, 24 Jun 2019 08:54:58 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
-        ARM <linux-arm-kernel@lists.infradead.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linus Walleij <linus.walleij@linaro.org>
-Subject: linux-next: manual merge of the arm-soc tree with Linus' tree
-Message-ID: <20190624085444.7b4a01a5@canb.auug.org.au>
+        id S1726834AbfFXB6G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 23 Jun 2019 21:58:06 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:54192 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726334AbfFXB6G (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 23 Jun 2019 21:58:06 -0400
+Received: from pendragon.ideasonboard.com (81-175-216-236.bb.dnainternet.fi [81.175.216.236])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 115892E7;
+        Mon, 24 Jun 2019 01:32:46 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1561332766;
+        bh=ZwQFWKzylctm08JmQty7ouBHLLmW49Cc/PVD4oe55bw=;
+        h=Date:From:To:Subject:References:In-Reply-To:From;
+        b=VmVfFMY8V1HSANbboGANKSV49ISdL/edBWNI5njU/0h59r7/z/3CNcCQ/iz/Hl7VI
+         P3RlGCykuwWCZ2GniYPHndCKSgxtCOAfv+/PkjuhnBTenhDBxtjdSDPCVy4+aD97VD
+         f9HK/fpZfAg8LZuiDTuGovSPYWtYwvVWuxVF4QGo=
+Date:   Mon, 24 Jun 2019 02:30:17 +0300
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Neil Armstrong <narmstrong@baylibre.com>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        "a.hajda@samsung.com" <a.hajda@samsung.com>,
+        "jernej.skrabec@siol.net" <jernej.skrabec@siol.net>,
+        "maxime.ripard@bootlin.com" <maxime.ripard@bootlin.com>,
+        "khilman@baylibre.com" <khilman@baylibre.com>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "wens@csie.org" <wens@csie.org>,
+        "zhengyang@rock-chips.com" <zhengyang@rock-chips.com>
+Subject: Re: [PATCH 0/4] drm/bridge: dw-hdmi: Add support for HDR metadata
+Message-ID: <20190623233017.GI6124@pendragon.ideasonboard.com>
+References: <VI1PR03MB420621617DDEAB3596700DE0AC1C0@VI1PR03MB4206.eurprd03.prod.outlook.com>
+ <085dc3be-20e5-b2fe-4c02-bf4a4d1473da@baylibre.com>
+ <20190621090125.GX12905@phenom.ffwll.local>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/TvkKorMsiA0+QoO2/asEuNP"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20190621090125.GX12905@phenom.ffwll.local>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/TvkKorMsiA0+QoO2/asEuNP
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Fri, Jun 21, 2019 at 11:01:25AM +0200, Daniel Vetter wrote:
+> On Thu, Jun 20, 2019 at 04:40:12PM +0200, Neil Armstrong wrote:
+> > Hi Andrzej,
+> > 
+> > Gentle ping, could you review the dw-hdmi changes here ?
+> 
+> btw not sure you absolutely need review from Andrzej, we're currently a
+> bit undersupplied with bridge reviewers I think ... Better to ramp up
+> more.
 
-Hi all,
+I try to review DRM bridge patches when possible, but dw-hdmi is a
+special case. I was told by the supplier of an SoC datasheet that
+contains the HDMI encoder IP core documentation that Synopsys required
+them to route all contributions made based on that documentation through
+Synopsys' internal legal review before publishing them. I thus decided
+to not contribute to the driver anymore, at least for areas that require
+access to documentation.
 
-Today's linux-next merge of the arm-soc tree got a conflict in:
+> > On 26/05/2019 23:18, Jonas Karlman wrote:
+> > > Add support for HDR metadata using the hdr_output_metadata connector property,
+> > > configure Dynamic Range and Mastering InfoFrame accordingly.
+> > > 
+> > > A drm_infoframe flag is added to dw_hdmi_plat_data that platform drivers
+> > > can use to signal when Dynamic Range and Mastering infoframes is supported.
+> > > This flag is needed because Amlogic GXBB and GXL report same DW-HDMI version,
+> > > and only GXL support DRM InfoFrame.
+> > > 
+> > > The first patch add functionality to configure DRM InfoFrame based on the
+> > > hdr_output_metadata connector property.
+> > > 
+> > > The remaining patches sets the drm_infoframe flag on some SoCs supporting
+> > > Dynamic Range and Mastering InfoFrame.
+> > > 
+> > > Note that this was based on top of drm-misc-next and Neil Armstrong's
+> > > "drm/meson: Add support for HDMI2.0 YUV420 4k60" series at [1]
+> > > 
+> > > [1] https://patchwork.freedesktop.org/series/58725/#rev2
+> > > 
+> > > Jonas Karlman (4):
+> > >   drm/bridge: dw-hdmi: Add Dynamic Range and Mastering InfoFrame support
+> > >   drm/rockchip: Enable DRM InfoFrame support on RK3328 and RK3399
+> > >   drm/meson: Enable DRM InfoFrame support on GXL, GXM and G12A
+> > >   drm/sun4i: Enable DRM InfoFrame support on H6
+> > > 
+> > >  drivers/gpu/drm/bridge/synopsys/dw-hdmi.c   | 109 ++++++++++++++++++++
+> > >  drivers/gpu/drm/bridge/synopsys/dw-hdmi.h   |  37 +++++++
+> > >  drivers/gpu/drm/meson/meson_dw_hdmi.c       |   5 +
+> > >  drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c |   2 +
+> > >  drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c       |   2 +
+> > >  drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h       |   1 +
+> > >  include/drm/bridge/dw_hdmi.h                |   1 +
+> > >  7 files changed, 157 insertions(+)
 
-  arch/arm/include/debug/netx.S
+-- 
+Regards,
 
-between commit:
-
-  d2912cb15bdd ("treewide: Replace GPLv2 boilerplate/reference with SPDX - =
-rule 500")
-
-from Linus' tree and commit:
-
-  ceb02dcf676f ("ARM: delete netx machine")
-
-from the arm-soc tree.
-
-I fixed it up (I just removed the file) and can carry the fix as
-necessary. This is now fixed as far as linux-next is concerned, but any
-non trivial conflicts should be mentioned to your upstream maintainer
-when your tree is submitted for merging.  You may also want to consider
-cooperating with the maintainer of the conflicting tree to minimise any
-particularly complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/TvkKorMsiA0+QoO2/asEuNP
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0QA0IACgkQAVBC80lX
-0GwUQwf/cvz09njduHbXOnvqgqpXjuwRlTlJVpRWy9/ThE0Q4jDgn7nlVqGXWJyV
-sHC6yPf5D3d4VWbcXhEt6rj1Nu5FiSUvPfS+4FGHpvCXQ76sDZIr2nMms6Y9kJ31
-D7wyipX+LWmd7LsTLGq06X0LMZbVEg5g8SjK/bvc4nzhM8yLhMazzFHh1fAYXG6n
-Vv7/KyDmUDosCC+Pas2adNx0XwyU5vWjAC9znJsMrZW/057g13iohKR67nImJKpw
-RB3SU6LPR1dpWHCtVbnlJjRZyXC3RccdkMDntccB+E8Sx3c/czVyCbm/nUmd4Uka
-zYJOk+AQkp3YtXBhcxQ1mjoy/1GMnA==
-=vLqH
------END PGP SIGNATURE-----
-
---Sig_/TvkKorMsiA0+QoO2/asEuNP--
+Laurent Pinchart
