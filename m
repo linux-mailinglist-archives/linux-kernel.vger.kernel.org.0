@@ -2,65 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C2EB94FF7F
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 04:42:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B6974FF84
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 04:47:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727246AbfFXCmk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 23 Jun 2019 22:42:40 -0400
-Received: from smtprelay0004.hostedemail.com ([216.40.44.4]:39704 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726510AbfFXCmk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Jun 2019 22:42:40 -0400
-Received: from smtprelay.hostedemail.com (10.5.19.251.rfc1918.com [10.5.19.251])
-        by smtpgrave04.hostedemail.com (Postfix) with ESMTP id 5857818019A00;
-        Sun, 23 Jun 2019 21:57:06 +0000 (UTC)
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay05.hostedemail.com (Postfix) with ESMTP id 2A69A18029123;
-        Sun, 23 Jun 2019 21:57:06 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::,RULES_HIT:41:355:379:599:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1538:1567:1593:1594:1711:1714:1730:1747:1777:1792:2393:2559:2562:2828:3138:3139:3140:3141:3142:3622:3866:3868:4321:5007:7903:10004:10400:10848:11026:11232:11658:11914:12043:12048:12296:12297:12679:12740:12760:12895:13069:13311:13357:13439:14181:14659:14721:21080:21627:30045:30054:30091,0,RBL:172.58.30.132:@perches.com:.lbl8.mailshell.net-62.8.0.180 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:27,LUA_SUMMARY:none
-X-HE-Tag: bean01_37b054319919
-X-Filterd-Recvd-Size: 1554
-Received: from XPS-9350 (unknown [172.58.30.132])
-        (Authenticated sender: joe@perches.com)
-        by omf08.hostedemail.com (Postfix) with ESMTPA;
-        Sun, 23 Jun 2019 21:57:03 +0000 (UTC)
-Message-ID: <c88cfce8a80eb69c932fd249f2ef0224e60b127a.camel@perches.com>
-Subject: Re: [PATCH] bluetooth: Cleanup formatting and coding style
-From:   Joe Perches <joe@perches.com>
-To:     Fabian Schindlatz <fabian.schindlatz@fau.de>,
-        Marcel Holtmann <marcel@holtmann.org>,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Thomas =?ISO-8859-1?Q?R=F6thenbacher?= 
-        <thomas.roethenbacher@fau.de>, linux-kernel@i4.cs.fau.de
-Date:   Sun, 23 Jun 2019 14:56:33 -0700
-In-Reply-To: <20190623211548.1966-1-fabian.schindlatz@fau.de>
-References: <20190623211548.1966-1-fabian.schindlatz@fau.de>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.30.5-0ubuntu0.18.10.1 
+        id S1727273AbfFXCr2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 23 Jun 2019 22:47:28 -0400
+Received: from ozlabs.org ([203.11.71.1]:39711 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727239AbfFXCr0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 23 Jun 2019 22:47:26 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45X5sS035Qz9s7h;
+        Mon, 24 Jun 2019 07:58:35 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1561327121;
+        bh=OEzrTpMB7aWMwD/2sS5vZldGTePP04H0y9EeyaLzovc=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=STw7GXtdl0hhKZc7avfNGQZx8rjA2X4imUkcFt/0Xu83toQpsqKVjKCQXMHBai2f0
+         qbBHXM/MCOz3fVJ7rNM/Wb2oHZfWbYtRCCc/4X4LgFqXlK9V5WlxvXxPLx9OPxsm7z
+         55mtFkcA7IYAGWZXVhWGTZ9gqYXYnlgz5A/UARAcW1kEWWON76Mu9gyMagsKrLaaep
+         Cu7z/0WcoztngBuqPWNlkbEcOKlDNWDHC5QBiIPl69aLQde3WfZq3+ITIUGaTpIcVH
+         cP38mBIcP0BVFLC++foZruiHor0YAMOzUyGUOCGVReL4fch6yyq6tK3wqamP01pjIM
+         ieWL9SnCN88nA==
+Date:   Mon, 24 Jun 2019 07:58:34 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Sasha Levin <sashal@kernel.org>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Michael Kelley <mikelley@microsoft.com>,
+        Vincenzo Frascino <vincenzo.frascino@arm.com>,
+        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
+        "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Russell King <linux@armlinux.org.uk>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Mark Salyzyn <salyzyn@android.com>,
+        Peter Collingbourne <pcc@google.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Dmitry Safonov <0x7f454c46@gmail.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Huw Davies <huw@codeweavers.com>, linux-hyperv@vger.kernel.org,
+        Greg KH <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH v6 18/19] x86: Add support for generic vDSO
+Message-ID: <20190624075834.2491a61a@canb.auug.org.au>
+In-Reply-To: <20190623190929.GL2226@sasha-vm>
+References: <20190530141531.43462-1-vincenzo.frascino@arm.com>
+        <20190530141531.43462-19-vincenzo.frascino@arm.com>
+        <BYAPR21MB1221D54FCEC97509EEF7395CD7180@BYAPR21MB1221.namprd21.prod.outlook.com>
+        <alpine.DEB.2.21.1906141313150.1722@nanos.tec.linutronix.de>
+        <20190614211710.GQ1513@sasha-vm>
+        <alpine.DEB.2.21.1906221542270.5503@nanos.tec.linutronix.de>
+        <20190623190929.GL2226@sasha-vm>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/CR.if9_1Fi5MEdkDk1BLyhb"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 2019-06-23 at 23:15 +0200, Fabian Schindlatz wrote:
-> Fix some warnings and one error reported by checkpatch.pl:
-[]
-> diff --git a/drivers/bluetooth/hci_ll.c b/drivers/bluetooth/hci_ll.c
-[]
-> @@ -351,7 +356,8 @@ static int ll_enqueue(struct hci_uart *hu, struct sk_buff *skb)
->  		skb_queue_tail(&ll->tx_wait_q, skb);
->  		break;
->  	default:
-> -		BT_ERR("illegal hcill state: %ld (losing packet)", ll->hcill_state);
-> +		BT_ERR("illegal hcill state: %ld (losing packet)",
+--Sig_/CR.if9_1Fi5MEdkDk1BLyhb
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-trivia:
+Hi Sasha,
 
-Might use invalid instead of illegal as no crime was committed.
+On Sun, 23 Jun 2019 15:09:29 -0400 Sasha Levin <sashal@kernel.org> wrote:
+>
+> Appologies about this. I ended up with way more travel than I would have
+> liked (writing this from an airport). I've reset our hyperv-next branch
+> to remove these 3 commits until we figure this out.
 
+But not pushed out, yet?
 
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/CR.if9_1Fi5MEdkDk1BLyhb
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0P9goACgkQAVBC80lX
+0GyfOQf+KDEXgXOC5E+iMk6d4D73wD02MBcwff9B0zoCSHO7wBwHMfcazt0CBgJn
+kDTyqzDFLcuCIPrA89xcZybdoNMg4aIooHEbEzdjaXFpm/Fs7d+jo+KVC0CoYEw5
+pqOio0r0q85NiYk6eENxVa+j+yfmvnxKcVJO5s+T2ifWbWq06fhziMUkf3ZEytHl
+1n48f9Hc2L5Zp4SoYWSF27Ro4Mo0H9aUH7RPvlt1tZkHN0OdfRS3NR84FN+w+KVU
+TZpFLuislCHo8QKh/5OMv1AxaWP/RX2vJael9DguO+6hZyYBglxTK6+E1IIYe9C/
+h0h8OPDTSELsQJmcd9Mda8F4vKV6qA==
+=/eNi
+-----END PGP SIGNATURE-----
+
+--Sig_/CR.if9_1Fi5MEdkDk1BLyhb--
