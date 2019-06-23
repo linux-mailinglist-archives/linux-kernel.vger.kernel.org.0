@@ -2,59 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C29B4FE6F
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 03:41:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E072B4FE6B
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 03:41:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726829AbfFXBlk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 23 Jun 2019 21:41:40 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:51211 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726558AbfFXBk6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        id S1726774AbfFXBlX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 23 Jun 2019 21:41:23 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:43987 "EHLO
+        mail.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726565AbfFXBk6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 23 Jun 2019 21:40:58 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x5NNhbLv2856611
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x5NNiXUx2858277
         (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Sun, 23 Jun 2019 16:43:38 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x5NNhbLv2856611
+        Sun, 23 Jun 2019 16:44:33 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x5NNiXUx2858277
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019061801; t=1561333419;
-        bh=Zya2uyCCLGkqpLnHRxNkZNm9EbFu0GD0WvoO1K2KFO8=;
+        s=2019061801; t=1561333474;
+        bh=+Pnp97QirDw23SXvjDjC+j20gnJWLcG2oWbLeC/mHhQ=;
         h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
-        b=EmN3iritynRXUl33zPhXgJjAsERLAvF4CDkq3CvIlq4owKEZ3Kufvk4WZCXUlvGFH
-         0qp9jXW2BWsQwXS3NUwiSUzTs9+VfSTuIuWPqYuKR9IJ0WOfrKfI8RKiG+RBXVL8Ac
-         uZRQ+dIFd1kDAtuoUApsJ67kxU/J7teU1XmfA/GxxZbc6o5MPpaxknjToA/kbXt0iq
-         mHjVR2p++ujh897PE46NR80nKBI6zYk7eiEdKPZmGaGw773+7dni1VxhJOxM5XJ5RJ
-         MkTX6vcumI5hSEginD8MI7xelTXe27lC8cU16MNAQTN1DQ1TC6TlggfTIyxDH8Vx8j
-         Q0V73DBQGbwnA==
+        b=Wpa6IVGrSfOIwfOzANMbaE1ZzND3X6VdpkVhUfbCgoMpbjQcmFOwIgP6fDNKD8d/7
+         jIrVOIT8PEn1tIvZgHVy/I3QgvWSrVhS/oaAGEmY6/D4AaheXnIEIxoO9SAblguKNY
+         3ieJaKDkYTS3TMZAwVzAUx/smPQGvh4iOKFwLlti3c6tiq4iD1oqYZA/rj6NxoHo7G
+         yHPCYNi+j+Onr8H7/kfDB/b43HpGorCXq+QN06xVxGfbW4uAGBFHn+gzPjpkQ1zcvd
+         CyB+JiZaBZ2CedhEMdqHLgKPbw+JnT4dVYgcgNoKe3ti/cMSuRPH35k94ZY6StWap3
+         cu0B+2vkqSPig==
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x5NNhWC12856606;
-        Sun, 23 Jun 2019 16:43:32 -0700
-Date:   Sun, 23 Jun 2019 16:43:32 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x5NNiWpp2858274;
+        Sun, 23 Jun 2019 16:44:32 -0700
+Date:   Sun, 23 Jun 2019 16:44:32 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Vincenzo Frascino <tipbot@zytor.com>
-Message-ID: <tip-32e29396f00e7849ea0b1aeebae097fc1de6e979@git.kernel.org>
-Cc:     salyzyn@android.com, ralf@linux-mips.org, 0x7f454c46@gmail.com,
-        hpa@zytor.com, daniel.lezcano@linaro.org, linux@rasmusvillemoes.dk,
-        sthotton@marvell.com, paul.burton@mips.com, huw@codeweavers.com,
-        tglx@linutronix.de, vincenzo.frascino@arm.com,
-        catalin.marinas@arm.com, will.deacon@arm.com, pcc@google.com,
-        arnd@arndb.de, linux@armlinux.org.uk, andre.przywara@arm.com,
-        shuah@kernel.org, linux-kernel@vger.kernel.org, mingo@kernel.org
-Reply-To: huw@codeweavers.com, tglx@linutronix.de, hpa@zytor.com,
-          0x7f454c46@gmail.com, salyzyn@android.com, ralf@linux-mips.org,
-          sthotton@marvell.com, paul.burton@mips.com,
-          linux@rasmusvillemoes.dk, daniel.lezcano@linaro.org,
-          linux-kernel@vger.kernel.org, shuah@kernel.org,
-          andre.przywara@arm.com, mingo@kernel.org, will.deacon@arm.com,
-          catalin.marinas@arm.com, vincenzo.frascino@arm.com,
-          linux@armlinux.org.uk, arnd@arndb.de, pcc@google.com
-In-Reply-To: <20190621095252.32307-3-vincenzo.frascino@arm.com>
-References: <20190621095252.32307-3-vincenzo.frascino@arm.com>
+Message-ID: <tip-361f8aee9b093526297d567a9dc2f6cbf746e5f9@git.kernel.org>
+Cc:     linux@rasmusvillemoes.dk, daniel.lezcano@linaro.org, arnd@arndb.de,
+        mingo@kernel.org, tglx@linutronix.de, sthotton@marvell.com,
+        andre.przywara@arm.com, ralf@linux-mips.org, will.deacon@arm.com,
+        shuah@kernel.org, linux@armlinux.org.uk, vincenzo.frascino@arm.com,
+        huw@codeweavers.com, salyzyn@android.com, hpa@zytor.com,
+        paul.burton@mips.com, pcc@google.com, 0x7f454c46@gmail.com,
+        catalin.marinas@arm.com, linux-kernel@vger.kernel.org
+Reply-To: will.deacon@arm.com, ralf@linux-mips.org, andre.przywara@arm.com,
+          sthotton@marvell.com, tglx@linutronix.de, mingo@kernel.org,
+          arnd@arndb.de, daniel.lezcano@linaro.org,
+          linux@rasmusvillemoes.dk, catalin.marinas@arm.com,
+          linux-kernel@vger.kernel.org, 0x7f454c46@gmail.com,
+          pcc@google.com, paul.burton@mips.com, vincenzo.frascino@arm.com,
+          hpa@zytor.com, salyzyn@android.com, huw@codeweavers.com,
+          shuah@kernel.org, linux@armlinux.org.uk
+In-Reply-To: <20190621095252.32307-2-vincenzo.frascino@arm.com>
+References: <20190621095252.32307-2-vincenzo.frascino@arm.com>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:timers/vdso] hrtimer: Split out hrtimer defines into separate
- header
-Git-Commit-ID: 32e29396f00e7849ea0b1aeebae097fc1de6e979
+Subject: [tip:timers/vdso] vdso: Define standardized vdso_datapage
+Git-Commit-ID: 361f8aee9b093526297d567a9dc2f6cbf746e5f9
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -74,20 +72,21 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  32e29396f00e7849ea0b1aeebae097fc1de6e979
-Gitweb:     https://git.kernel.org/tip/32e29396f00e7849ea0b1aeebae097fc1de6e979
+Commit-ID:  361f8aee9b093526297d567a9dc2f6cbf746e5f9
+Gitweb:     https://git.kernel.org/tip/361f8aee9b093526297d567a9dc2f6cbf746e5f9
 Author:     Vincenzo Frascino <vincenzo.frascino@arm.com>
-AuthorDate: Sat, 22 Jun 2019 15:02:07 +0200
+AuthorDate: Fri, 21 Jun 2019 10:52:28 +0100
 Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Sat, 22 Jun 2019 21:21:04 +0200
+CommitDate: Sat, 22 Jun 2019 21:21:05 +0200
 
-hrtimer: Split out hrtimer defines into separate header
+vdso: Define standardized vdso_datapage
 
-To avoid include dependency hell split out the hrtimer defines which are
-required in the upcoming VDSO library into a separate header file.
+Define a common formet for the vdso datapage as a preparation for sharing
+the VDSO implementation as a generic library.
 
-[ tglx: Split out from the VDSO library patch and included ktime.h as
-        the new header depends on it. ]
+The datastructures are based on the current x86 layout.
+
+[ tglx: Massaged changelog ]
 
 Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
@@ -110,83 +109,108 @@ Cc: Shuah Khan <shuah@kernel.org>
 Cc: Dmitry Safonov <0x7f454c46@gmail.com>
 Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>
 Cc: Huw Davies <huw@codeweavers.com>
-Link: https://lkml.kernel.org/r/20190621095252.32307-3-vincenzo.frascino@arm.com
----
- include/linux/hrtimer.h      | 16 +---------------
- include/linux/hrtimer_defs.h | 27 +++++++++++++++++++++++++++
- 2 files changed, 28 insertions(+), 15 deletions(-)
+Link: https://lkml.kernel.org/r/20190621095252.32307-2-vincenzo.frascino@arm.com
 
-diff --git a/include/linux/hrtimer.h b/include/linux/hrtimer.h
-index 2e8957eac4d4..4971100a8cab 100644
---- a/include/linux/hrtimer.h
-+++ b/include/linux/hrtimer.h
-@@ -12,8 +12,8 @@
- #ifndef _LINUX_HRTIMER_H
- #define _LINUX_HRTIMER_H
- 
-+#include <linux/hrtimer_defs.h>
- #include <linux/rbtree.h>
--#include <linux/ktime.h>
- #include <linux/init.h>
- #include <linux/list.h>
- #include <linux/percpu.h>
-@@ -298,26 +298,12 @@ struct clock_event_device;
- 
- extern void hrtimer_interrupt(struct clock_event_device *dev);
- 
--/*
-- * The resolution of the clocks. The resolution value is returned in
-- * the clock_getres() system call to give application programmers an
-- * idea of the (in)accuracy of timers. Timer values are rounded up to
-- * this resolution values.
-- */
--# define HIGH_RES_NSEC		1
--# define KTIME_HIGH_RES		(HIGH_RES_NSEC)
--# define MONOTONIC_RES_NSEC	HIGH_RES_NSEC
--# define KTIME_MONOTONIC_RES	KTIME_HIGH_RES
--
- extern void clock_was_set_delayed(void);
- 
- extern unsigned int hrtimer_resolution;
- 
- #else
- 
--# define MONOTONIC_RES_NSEC	LOW_RES_NSEC
--# define KTIME_MONOTONIC_RES	KTIME_LOW_RES
--
- #define hrtimer_resolution	(unsigned int)LOW_RES_NSEC
- 
- static inline void clock_was_set_delayed(void) { }
-diff --git a/include/linux/hrtimer_defs.h b/include/linux/hrtimer_defs.h
+---
+ include/vdso/datapage.h | 93 +++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 93 insertions(+)
+
+diff --git a/include/vdso/datapage.h b/include/vdso/datapage.h
 new file mode 100644
-index 000000000000..2d3e3c5fb946
+index 000000000000..e6eb36c3d54f
 --- /dev/null
-+++ b/include/linux/hrtimer_defs.h
-@@ -0,0 +1,27 @@
++++ b/include/vdso/datapage.h
+@@ -0,0 +1,93 @@
 +/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef _LINUX_HRTIMER_DEFS_H
-+#define _LINUX_HRTIMER_DEFS_H
++#ifndef __VDSO_DATAPAGE_H
++#define __VDSO_DATAPAGE_H
 +
-+#include <linux/ktime.h>
++#ifdef __KERNEL__
 +
-+#ifdef CONFIG_HIGH_RES_TIMERS
++#ifndef __ASSEMBLY__
++
++#include <linux/bits.h>
++#include <linux/time.h>
++#include <linux/types.h>
++
++#define VDSO_BASES	(CLOCK_TAI + 1)
++#define VDSO_HRES	(BIT(CLOCK_REALTIME)		| \
++			 BIT(CLOCK_MONOTONIC)		| \
++			 BIT(CLOCK_BOOTTIME)		| \
++			 BIT(CLOCK_TAI))
++#define VDSO_COARSE	(BIT(CLOCK_REALTIME_COARSE)	| \
++			 BIT(CLOCK_MONOTONIC_COARSE))
++#define VDSO_RAW	(BIT(CLOCK_MONOTONIC_RAW))
++
++#define CS_HRES_COARSE	0
++#define CS_RAW		1
++#define CS_BASES	(CS_RAW + 1)
++
++/**
++ * struct vdso_timestamp - basetime per clock_id
++ * @sec:	seconds
++ * @nsec:	nanoseconds
++ *
++ * There is one vdso_timestamp object in vvar for each vDSO-accelerated
++ * clock_id. For high-resolution clocks, this encodes the time
++ * corresponding to vdso_data.cycle_last. For coarse clocks this encodes
++ * the actual time.
++ *
++ * To be noticed that for highres clocks nsec is left-shifted by
++ * vdso_data.cs[x].shift.
++ */
++struct vdso_timestamp {
++	u64	sec;
++	u64	nsec;
++};
++
++/**
++ * struct vdso_data - vdso datapage representation
++ * @seq:		timebase sequence counter
++ * @clock_mode:		clock mode
++ * @cycle_last:		timebase at clocksource init
++ * @mask:		clocksource mask
++ * @mult:		clocksource multiplier
++ * @shift:		clocksource shift
++ * @basetime[clock_id]:	basetime per clock_id
++ * @tz_minuteswest:	minutes west of Greenwich
++ * @tz_dsttime:		type of DST correction
++ * @hrtimer_res:	hrtimer resolution
++ * @__unused:		unused
++ *
++ * vdso_data will be accessed by 64 bit and compat code at the same time
++ * so we should be careful before modifying this structure.
++ */
++struct vdso_data {
++	u32			seq;
++
++	s32			clock_mode;
++	u64			cycle_last;
++	u64			mask;
++	u32			mult;
++	u32			shift;
++
++	struct vdso_timestamp	basetime[VDSO_BASES];
++
++	s32			tz_minuteswest;
++	s32			tz_dsttime;
++	u32			hrtimer_res;
++	u32			__unused;
++};
 +
 +/*
-+ * The resolution of the clocks. The resolution value is returned in
-+ * the clock_getres() system call to give application programmers an
-+ * idea of the (in)accuracy of timers. Timer values are rounded up to
-+ * this resolution values.
++ * We use the hidden visibility to prevent the compiler from generating a GOT
++ * relocation. Not only is going through a GOT useless (the entry couldn't and
++ * must not be overridden by another library), it does not even work: the linker
++ * cannot generate an absolute address to the data page.
++ *
++ * With the hidden visibility, the compiler simply generates a PC-relative
++ * relocation, and this is what we need.
 + */
-+# define HIGH_RES_NSEC		1
-+# define KTIME_HIGH_RES		(HIGH_RES_NSEC)
-+# define MONOTONIC_RES_NSEC	HIGH_RES_NSEC
-+# define KTIME_MONOTONIC_RES	KTIME_HIGH_RES
++extern struct vdso_data _vdso_data[CS_BASES] __attribute__((visibility("hidden")));
 +
-+#else
++#endif /* !__ASSEMBLY__ */
 +
-+# define MONOTONIC_RES_NSEC	LOW_RES_NSEC
-+# define KTIME_MONOTONIC_RES	KTIME_LOW_RES
++#endif /* __KERNEL__ */
 +
-+#endif
-+
-+#endif
++#endif /* __VDSO_DATAPAGE_H */
