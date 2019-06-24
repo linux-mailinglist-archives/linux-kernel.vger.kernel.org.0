@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 57904506E3
+	by mail.lfdr.de (Postfix) with ESMTP id C00B7506E4
 	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 12:06:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729304AbfFXKC0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 06:02:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33526 "EHLO mail.kernel.org"
+        id S1729387AbfFXKC2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 06:02:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33570 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729326AbfFXKCX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 06:02:23 -0400
+        id S1729372AbfFXKCZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Jun 2019 06:02:25 -0400
 Received: from localhost (f4.8f.5177.ip4.static.sl-reverse.com [119.81.143.244])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BA8AF2146E;
-        Mon, 24 Jun 2019 10:02:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 72EE3208E4;
+        Mon, 24 Jun 2019 10:02:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561370542;
-        bh=/KiQPSqgnA+uU5cBwuXizkixVy1P5Z7IFHizo0NUjmU=;
+        s=default; t=1561370544;
+        bh=1SKhh12LS84tpsXfKN2vWKpB6nAz91sJg50C3dxaYsY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=M97Xk7o1dUK8Fw8RnOSX7bauF+iKZ1toEpi17Ug0bTOJNz0hhtpxeHzkxM+JL9p3X
-         5STHBUKaqC65BuA8vYpq1Bead9sWggCKFLNKzkZqR9zo9b7HRqJNSyEm+h6dLrY/Sv
-         T7a8wxFVTKoDyWoMeupo/8k26z57ynqXLP16emzA=
+        b=GuQfmggL2u0FkDZ4gh1r7znLqUXxdQNeXnY1qFd8eZUBt6GVc0/W4/KRdOh187ERQ
+         if6G8IrAZ5wdc4ZvPUFJwFMmoTAvkeHCPTuDfBB5XKMDSZta/lflLxJAvKRLMGZMz7
+         LIJPrkW1n29cfaC5ST8MqqO5SQjCburshWvyOlXs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Amir Goldstein <amir73il@gmail.com>,
         Miklos Szeredi <mszeredi@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 05/90] ovl: fix wrong flags check in FS_IOC_FS[SG]ETXATTR ioctls
-Date:   Mon, 24 Jun 2019 17:55:55 +0800
-Message-Id: <20190624092314.323719589@linuxfoundation.org>
+Subject: [PATCH 4.19 06/90] ovl: make i_ino consistent with st_ino in more cases
+Date:   Mon, 24 Jun 2019 17:55:56 +0800
+Message-Id: <20190624092314.401598163@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190624092313.788773607@linuxfoundation.org>
 References: <20190624092313.788773607@linuxfoundation.org>
@@ -44,150 +44,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 941d935ac7636911a3fd8fa80e758e52b0b11e20 ]
+[ Upstream commit 6dde1e42f497b2d4e22466f23019016775607947 ]
 
-The ioctl argument was parsed as the wrong type.
+Relax the condition that overlayfs supports nfs export, to require
+that i_ino is consistent with st_ino/d_ino.
 
-Fixes: b21d9c435f93 ("ovl: support the FS_IOC_FS[SG]ETXATTR ioctls")
+It is enough to require that st_ino and d_ino are consistent.
+
+This fixes the failure of xfstest generic/504, due to mismatch of
+st_ino to inode number in the output of /proc/locks.
+
+Fixes: 12574a9f4c9c ("ovl: consistent i_ino for non-samefs with xino")
+Cc: <stable@vger.kernel.org> # v4.19
 Signed-off-by: Amir Goldstein <amir73il@gmail.com>
 Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/overlayfs/file.c | 91 ++++++++++++++++++++++++++++++++-------------
- 1 file changed, 65 insertions(+), 26 deletions(-)
+ fs/overlayfs/inode.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/fs/overlayfs/file.c b/fs/overlayfs/file.c
-index 749532fd51d7..0bd276e4ccbe 100644
---- a/fs/overlayfs/file.c
-+++ b/fs/overlayfs/file.c
-@@ -409,37 +409,16 @@ static long ovl_real_ioctl(struct file *file, unsigned int cmd,
- 	return ret;
- }
+diff --git a/fs/overlayfs/inode.c b/fs/overlayfs/inode.c
+index b48273e846ad..373ccff9880c 100644
+--- a/fs/overlayfs/inode.c
++++ b/fs/overlayfs/inode.c
+@@ -553,15 +553,15 @@ static void ovl_fill_inode(struct inode *inode, umode_t mode, dev_t rdev,
+ 	int xinobits = ovl_xino_bits(inode->i_sb);
  
--static unsigned int ovl_get_inode_flags(struct inode *inode)
--{
--	unsigned int flags = READ_ONCE(inode->i_flags);
--	unsigned int ovl_iflags = 0;
--
--	if (flags & S_SYNC)
--		ovl_iflags |= FS_SYNC_FL;
--	if (flags & S_APPEND)
--		ovl_iflags |= FS_APPEND_FL;
--	if (flags & S_IMMUTABLE)
--		ovl_iflags |= FS_IMMUTABLE_FL;
--	if (flags & S_NOATIME)
--		ovl_iflags |= FS_NOATIME_FL;
--
--	return ovl_iflags;
--}
--
- static long ovl_ioctl_set_flags(struct file *file, unsigned int cmd,
--				unsigned long arg)
-+				unsigned long arg, unsigned int iflags)
- {
- 	long ret;
- 	struct inode *inode = file_inode(file);
--	unsigned int flags;
--	unsigned int old_flags;
-+	unsigned int old_iflags;
- 
- 	if (!inode_owner_or_capable(inode))
- 		return -EACCES;
- 
--	if (get_user(flags, (int __user *) arg))
--		return -EFAULT;
--
- 	ret = mnt_want_write_file(file);
- 	if (ret)
- 		return ret;
-@@ -448,8 +427,8 @@ static long ovl_ioctl_set_flags(struct file *file, unsigned int cmd,
- 
- 	/* Check the capability before cred override */
- 	ret = -EPERM;
--	old_flags = ovl_get_inode_flags(inode);
--	if (((flags ^ old_flags) & (FS_APPEND_FL | FS_IMMUTABLE_FL)) &&
-+	old_iflags = READ_ONCE(inode->i_flags);
-+	if (((iflags ^ old_iflags) & (S_APPEND | S_IMMUTABLE)) &&
- 	    !capable(CAP_LINUX_IMMUTABLE))
- 		goto unlock;
- 
-@@ -469,6 +448,63 @@ static long ovl_ioctl_set_flags(struct file *file, unsigned int cmd,
- 
- }
- 
-+static unsigned int ovl_fsflags_to_iflags(unsigned int flags)
-+{
-+	unsigned int iflags = 0;
-+
-+	if (flags & FS_SYNC_FL)
-+		iflags |= S_SYNC;
-+	if (flags & FS_APPEND_FL)
-+		iflags |= S_APPEND;
-+	if (flags & FS_IMMUTABLE_FL)
-+		iflags |= S_IMMUTABLE;
-+	if (flags & FS_NOATIME_FL)
-+		iflags |= S_NOATIME;
-+
-+	return iflags;
-+}
-+
-+static long ovl_ioctl_set_fsflags(struct file *file, unsigned int cmd,
-+				  unsigned long arg)
-+{
-+	unsigned int flags;
-+
-+	if (get_user(flags, (int __user *) arg))
-+		return -EFAULT;
-+
-+	return ovl_ioctl_set_flags(file, cmd, arg,
-+				   ovl_fsflags_to_iflags(flags));
-+}
-+
-+static unsigned int ovl_fsxflags_to_iflags(unsigned int xflags)
-+{
-+	unsigned int iflags = 0;
-+
-+	if (xflags & FS_XFLAG_SYNC)
-+		iflags |= S_SYNC;
-+	if (xflags & FS_XFLAG_APPEND)
-+		iflags |= S_APPEND;
-+	if (xflags & FS_XFLAG_IMMUTABLE)
-+		iflags |= S_IMMUTABLE;
-+	if (xflags & FS_XFLAG_NOATIME)
-+		iflags |= S_NOATIME;
-+
-+	return iflags;
-+}
-+
-+static long ovl_ioctl_set_fsxflags(struct file *file, unsigned int cmd,
-+				   unsigned long arg)
-+{
-+	struct fsxattr fa;
-+
-+	memset(&fa, 0, sizeof(fa));
-+	if (copy_from_user(&fa, (void __user *) arg, sizeof(fa)))
-+		return -EFAULT;
-+
-+	return ovl_ioctl_set_flags(file, cmd, arg,
-+				   ovl_fsxflags_to_iflags(fa.fsx_xflags));
-+}
-+
- static long ovl_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
- {
- 	long ret;
-@@ -480,8 +516,11 @@ static long ovl_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
- 		break;
- 
- 	case FS_IOC_SETFLAGS:
-+		ret = ovl_ioctl_set_fsflags(file, cmd, arg);
-+		break;
-+
- 	case FS_IOC_FSSETXATTR:
--		ret = ovl_ioctl_set_flags(file, cmd, arg);
-+		ret = ovl_ioctl_set_fsxflags(file, cmd, arg);
- 		break;
- 
- 	default:
+ 	/*
+-	 * When NFS export is enabled and d_ino is consistent with st_ino
+-	 * (samefs or i_ino has enough bits to encode layer), set the same
+-	 * value used for d_ino to i_ino, because nfsd readdirplus compares
+-	 * d_ino values to i_ino values of child entries. When called from
++	 * When d_ino is consistent with st_ino (samefs or i_ino has enough
++	 * bits to encode layer), set the same value used for st_ino to i_ino,
++	 * so inode number exposed via /proc/locks and a like will be
++	 * consistent with d_ino and st_ino values. An i_ino value inconsistent
++	 * with d_ino also causes nfsd readdirplus to fail.  When called from
+ 	 * ovl_new_inode(), ino arg is 0, so i_ino will be updated to real
+ 	 * upper inode i_ino on ovl_inode_init() or ovl_inode_update().
+ 	 */
+-	if (inode->i_sb->s_export_op &&
+-	    (ovl_same_sb(inode->i_sb) || xinobits)) {
++	if (ovl_same_sb(inode->i_sb) || xinobits) {
+ 		inode->i_ino = ino;
+ 		if (xinobits && fsid && !(ino >> (64 - xinobits)))
+ 			inode->i_ino |= (unsigned long)fsid << (64 - xinobits);
 -- 
 2.20.1
 
