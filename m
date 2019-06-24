@@ -2,188 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6105551B12
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 21:00:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DDAC451B19
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 21:01:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729777AbfFXTA2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 15:00:28 -0400
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:41216 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727014AbfFXTA1 (ORCPT
+        id S1729859AbfFXTBa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 15:01:30 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:40870 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727014AbfFXTB3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 15:00:27 -0400
-Received: by mail-qk1-f195.google.com with SMTP id c11so10593082qkk.8;
-        Mon, 24 Jun 2019 12:00:26 -0700 (PDT)
+        Mon, 24 Jun 2019 15:01:29 -0400
+Received: by mail-io1-f67.google.com with SMTP id n5so4523834ioc.7
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2019 12:01:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=jLe9rsWPnlF5E8hqDCO/kSAryjkkZLhq+lQJt0LPNsM=;
-        b=cFOczVForZZ0SZUzzYOzAfpcG3WInUSHcvbb4qSoAWCggO67XYv3JHFiSUina2IauF
-         lxnZUyt3yQCuKxuxpg/mB4fR0I0u+O6SYuGInjQvp6INdWnuyI0y6AlzaVcdUxPcQFxt
-         ulFy3aBZAidsEm39HpWgXluE5Aegt5TOsUi8+PiOeAsjUjeLaGWV75LcscnSPVmbpaK+
-         Fu/D/LEUe34Q/BPRdJS8Ov9WpCpt4BdmlWUpnbZA1sbyqqjovoxLtXby9T/a9CiABEzq
-         Z46qn20dL+LR3GTH5UJHi6VoiwMRPhJU0UbxwZcdKvlBWavlo3Km6rCGB3+gc1ZHBw9L
-         IjVQ==
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=vaLAv5uruC5N6GIJ3Ca+8odIT2de0GG0bR3H9unYxL4=;
+        b=U0oLeFIheqRkMaEDOA7ytntbjmAbd7b/ZvXK9QB17ojsD1bnHJimSSiJPNfZdF0lcu
+         bQBXC6gmBJG147ncDrZzV76gmcDtZOfUG3wankkay8U/d/i6vE2jh5suu3A3YgoK/FoO
+         CNqIpqNB3MqPg13DyW9IJakTWthuii4a+EvIs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=jLe9rsWPnlF5E8hqDCO/kSAryjkkZLhq+lQJt0LPNsM=;
-        b=aYZ6cUX9u7djsljri6cEkt/hucQUOFoDPJ1xgj66baY3CV+5rbDPlr0DKWSFJiXoa0
-         RlBWJvB4QwULsFLtYrY6iXb7bbgzMGZtac09XH7FqqAwKVeUjrXqJnynBWV4IMTuOSUQ
-         K6vLErdSXq+v546dzFZLtc8KypbZp7yeKpRMqTYxjBYKMa4E7/pS/uWU/vCUhbXGIrpL
-         d3nvoET+HK6Wr6k3sh4F3F83b/ZAsml1AXwjRc+8vTmLCk3ylkSSLJ6hJotJXp3ghH5p
-         p8hhszx5KuBbJMSQelCqqCIkg9VOJ5z35Ewh/OKsL2M4/tJVqBtgNwf+bqVrt6EYy1Ub
-         4uqg==
-X-Gm-Message-State: APjAAAV7NEHh9msTDUai476xhLNOsEXzhHBZ+jOdUr6a2pWe6rLG6Vwp
-        Jhn7xOWcTUAjKZ4pZjKG/WY=
-X-Google-Smtp-Source: APXvYqxH1PPatDijts/eOpzI83A95Elb5STnJn33I/c01bWUEAHnudlt9D1Fy2HNQWV0ACtjkgbKiw==
-X-Received: by 2002:a37:a643:: with SMTP id p64mr103665746qke.36.1561402825968;
-        Mon, 24 Jun 2019 12:00:25 -0700 (PDT)
-Received: from quaco.ghostprotocols.net ([179.97.35.11])
-        by smtp.gmail.com with ESMTPSA id d199sm6062744qkg.116.2019.06.24.12.00.24
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 24 Jun 2019 12:00:25 -0700 (PDT)
-From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id F01D341153; Mon, 24 Jun 2019 16:00:09 -0300 (-03)
-Date:   Mon, 24 Jun 2019 16:00:09 -0300
-To:     Leo Yan <leo.yan@linaro.org>
-Cc:     Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        netdev@vger.kernel.org, bpf@vger.kernel.org,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Suzuki Poulouse <suzuki.poulose@arm.com>,
-        Coresight ML <coresight@lists.linaro.org>
-Subject: Re: [PATCH] perf cs-etm: Improve completeness for kernel address
- space
-Message-ID: <20190624190009.GE4181@kernel.org>
-References: <20190617150024.11787-1-leo.yan@linaro.org>
- <CANLsYkyMW=WG+=yWTLSyMT3JXqd_2kvsrx9c-EwCoKEnRZvErA@mail.gmail.com>
- <20190620005829.GH24549@leoy-ThinkPad-X240s>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=vaLAv5uruC5N6GIJ3Ca+8odIT2de0GG0bR3H9unYxL4=;
+        b=O6eWrwjV0KJ0i/XYEpp8+/GSxfThqX7XL3sUE5o88oDvECSMhIn4331lBbi+G3BrzE
+         Q6EGRVNa7zeGp+BUIOAzrDNls0Nx0u/iue2E6OjgkmKFga4u6e1xde4MbaU4V47W/9wj
+         NYv0Jm42lEb6mYE1m8QcsEl6Yqefr0ZWQxIGTiLMhtWxzRDL/OgMdWE/DmFRKRlma4n0
+         wzTrD8eghFfWd/H4VRk0sCn1SisxrHl9acVn2Tsn0WyZivwT9Pt4peg2Hn/zB0dC2/hg
+         3kcmbv8jAq+KrF3ceFZrJO2oWE6rsLANahhdVjmkF/L7g+rpdtO0u5Mz2N10kUketj59
+         uOOQ==
+X-Gm-Message-State: APjAAAU355SnfUikrm/XM3WP5k54JOdAdt5NVcwF+P7OwBA+CxF+pTSV
+        OxwGdTlCadJ1PuhfddxcD+idxg==
+X-Google-Smtp-Source: APXvYqxeFZ2DuzMyCo/FkqOBaG6DyhR5EthZVkIKPGiAh0uomSOuKADzGpO6gIKGDrxbiNxU78fifw==
+X-Received: by 2002:a5d:948a:: with SMTP id v10mr16481899ioj.103.1561402888853;
+        Mon, 24 Jun 2019 12:01:28 -0700 (PDT)
+Received: from ncrews2.bld.corp.google.com ([2620:15c:183:200:cb43:2cd4:65f5:5c84])
+        by smtp.gmail.com with ESMTPSA id n17sm12577120iog.63.2019.06.24.12.01.27
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Mon, 24 Jun 2019 12:01:28 -0700 (PDT)
+From:   Nick Crews <ncrews@chromium.org>
+To:     enric.balletbo@collabora.com, bleung@chromium.org
+Cc:     linux-kernel@vger.kernel.org, dlaurie@chromium.org,
+        djkurtz@chromium.org, dtor@google.com, sjg@chromium.org,
+        yuehaibing@huawei.com, colin.king@canonical.com,
+        dan.carpenter@oracle.com, Nick Crews <ncrews@chromium.org>
+Subject: [PATCH v2 1/2] platform/chrome: wilco_ec: Fix unreleased lock in event_read()
+Date:   Mon, 24 Jun 2019 13:00:40 -0600
+Message-Id: <20190624190040.132120-1-ncrews@chromium.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190620005829.GH24549@leoy-ThinkPad-X240s>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.11.3 (2019-02-01)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Thu, Jun 20, 2019 at 08:58:29AM +0800, Leo Yan escreveu:
-> Hi Mathieu,
-> 
-> On Wed, Jun 19, 2019 at 11:49:44AM -0600, Mathieu Poirier wrote:
-> 
-> [...]
-> 
-> > > diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
-> > > index 51dd00f65709..4776c2c1fb6d 100644
-> > > --- a/tools/perf/Makefile.config
-> > > +++ b/tools/perf/Makefile.config
-> > > @@ -418,6 +418,30 @@ ifdef CORESIGHT
-> > >      endif
-> > >      LDFLAGS += $(LIBOPENCSD_LDFLAGS)
-> > >      EXTLIBS += $(OPENCSDLIBS)
-> > > +    ifneq ($(wildcard $(srctree)/arch/arm64/kernel/vmlinux.lds),)
-> > > +      # Extract info from lds:
-> > > +      #  . = ((((((((0xffffffffffffffff)) - (((1)) << (48)) + 1) + (0)) + (0x08000000))) + (0x08000000))) + 0x00080000;
-> > > +      # ARM64_PRE_START_SIZE := (0x08000000 + 0x08000000 + 0x00080000)
-> > > +      ARM64_PRE_START_SIZE := $(shell egrep ' \. \= \({8}0x[0-9a-fA-F]+\){2}' \
-> > > +        $(srctree)/arch/arm64/kernel/vmlinux.lds | \
-> > > +        sed -e 's/[(|)|.|=|+|<|;|-]//g' -e 's/ \+/ /g' -e 's/^[ \t]*//' | \
-> > > +        awk -F' ' '{print "("$$6 "+"  $$7 "+" $$8")"}' 2>/dev/null)
-> > > +    else
-> > > +      ARM64_PRE_START_SIZE := 0
-> > > +    endif
-> > > +    CFLAGS += -DARM64_PRE_START_SIZE="$(ARM64_PRE_START_SIZE)"
-> > > +    ifneq ($(wildcard $(srctree)/arch/arm/kernel/vmlinux.lds),)
-> > > +      # Extract info from lds:
-> > > +      #   . = ((0xC0000000)) + 0x00208000;
-> > > +      # ARM_PRE_START_SIZE := 0x00208000
-> > > +      ARM_PRE_START_SIZE := $(shell egrep ' \. \= \({2}0x[0-9a-fA-F]+\){2}' \
-> > > +        $(srctree)/arch/arm/kernel/vmlinux.lds | \
-> > > +        sed -e 's/[(|)|.|=|+|<|;|-]//g' -e 's/ \+/ /g' -e 's/^[ \t]*//' | \
-> > > +        awk -F' ' '{print "("$$2")"}' 2>/dev/null)
-> > > +    else
-> > > +      ARM_PRE_START_SIZE := 0
-> > > +    endif
-> > > +    CFLAGS += -DARM_PRE_START_SIZE="$(ARM_PRE_START_SIZE)"
-> > >      $(call detected,CONFIG_LIBOPENCSD)
-> > >      ifdef CSTRACE_RAW
-> > >        CFLAGS += -DCS_DEBUG_RAW
-> > > diff --git a/tools/perf/util/cs-etm.c b/tools/perf/util/cs-etm.c
-> > > index 0c7776b51045..ae831f836c70 100644
-> > > --- a/tools/perf/util/cs-etm.c
-> > > +++ b/tools/perf/util/cs-etm.c
-> > > @@ -613,10 +613,34 @@ static void cs_etm__free(struct perf_session *session)
-> > >  static u8 cs_etm__cpu_mode(struct cs_etm_queue *etmq, u64 address)
-> > >  {
-> > >         struct machine *machine;
-> > > +       u64 fixup_kernel_start = 0;
-> > > +       const char *arch;
-> > >
-> > >         machine = etmq->etm->machine;
-> > > +       arch = perf_env__arch(machine->env);
-> > >
-> > > -       if (address >= etmq->etm->kernel_start) {
-> > > +       /*
-> > > +        * Since arm and arm64 specify some memory regions prior to
-> > > +        * 'kernel_start', kernel addresses can be less than 'kernel_start'.
-> > > +        *
-> > > +        * For arm architecture, the 16MB virtual memory space prior to
-> > > +        * 'kernel_start' is allocated to device modules, a PMD table if
-> > > +        * CONFIG_HIGHMEM is enabled and a PGD table.
-> > > +        *
-> > > +        * For arm64 architecture, the root PGD table, device module memory
-> > > +        * region and BPF jit region are prior to 'kernel_start'.
-> > > +        *
-> > > +        * To reflect the complete kernel address space, compensate these
-> > > +        * pre-defined regions for kernel start address.
-> > > +        */
-> > > +       if (!strcmp(arch, "arm64"))
-> > > +               fixup_kernel_start = etmq->etm->kernel_start -
-> > > +                                    ARM64_PRE_START_SIZE;
-> > > +       else if (!strcmp(arch, "arm"))
-> > > +               fixup_kernel_start = etmq->etm->kernel_start -
-> > > +                                    ARM_PRE_START_SIZE;
-> > 
-> > I will test your work but from a quick look wouldn't it be better to
-> > have a single define name here?  From looking at the modifications you
-> > did to Makefile.config there doesn't seem to be a reason to have two.
-> 
-> Thanks for suggestion.  I changed to use single define
-> ARM_PRE_START_SIZE and sent patch v2 [1].
-> 
-> If possible, please test patch v2.
-> 
-> Thanks,
-> Leo Yan
+When copying an event to userspace failed, the event queue
+lock was never released. This fixes that.
 
-So just for the record, I'm waiting for Mathieu on this one, i.e. for
-him to test/ack v3.
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Nick Crews <ncrews@chromium.org>
+---
+ drivers/platform/chrome/wilco_ec/event.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-- Arnaldo
- 
-> [1] https://lore.kernel.org/linux-arm-kernel/20190620005428.20883-1-leo.yan@linaro.org/T/#u
-> 
-> > > +
-> > > +       if (address >= fixup_kernel_start) {
-> > >                 if (machine__is_host(machine))
-> > >                         return PERF_RECORD_MISC_KERNEL;
-> > >                 else
-> > > --
-> > > 2.17.1
-> > >
-
+diff --git a/drivers/platform/chrome/wilco_ec/event.c b/drivers/platform/chrome/wilco_ec/event.c
+index 4d2776f77dbd..1eed55681598 100644
+--- a/drivers/platform/chrome/wilco_ec/event.c
++++ b/drivers/platform/chrome/wilco_ec/event.c
+@@ -342,7 +342,7 @@ static ssize_t event_read(struct file *filp, char __user *buf, size_t count,
+ 				 struct ec_event_entry, list);
+ 	n_bytes_written = entry->size;
+ 	if (copy_to_user(buf, &entry->event, n_bytes_written))
+-		return -EFAULT;
++		n_bytes_written = -EFAULT;
+ 	list_del(&entry->list);
+ 	kfree(entry);
+ 	dev_data->num_events--;
 -- 
+2.20.1
 
-- Arnaldo
