@@ -2,60 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BB31B50DF1
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 16:27:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8171A50DEF
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 16:27:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728770AbfFXO1v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 10:27:51 -0400
-Received: from smtprelay0176.hostedemail.com ([216.40.44.176]:58485 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727742AbfFXO1v (ORCPT
+        id S1728725AbfFXO1o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 10:27:44 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:37304 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728180AbfFXO1o (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 10:27:51 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay04.hostedemail.com (Postfix) with ESMTP id 2872E180A68A0;
-        Mon, 24 Jun 2019 14:27:50 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::,RULES_HIT:41:355:379:599:982:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1538:1593:1594:1711:1714:1730:1747:1777:1792:1981:2194:2199:2393:2553:2559:2562:2828:3138:3139:3140:3141:3142:3351:3622:3865:3866:3867:3872:4321:5007:7903:10004:10400:10848:11232:11658:11914:12297:12740:12760:12895:13069:13072:13172:13229:13311:13357:13439:14659:14777:21080:21433:21451:21627:21819:30003:30022:30054:30090:30091,0,RBL:23.242.196.136:@perches.com:.lbl8.mailshell.net-62.14.0.180 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:31,LUA_SUMMARY:none
-X-HE-Tag: music70_444d31ab65a3e
-X-Filterd-Recvd-Size: 1449
-Received: from XPS-9350 (cpe-23-242-196-136.socal.res.rr.com [23.242.196.136])
-        (Authenticated sender: joe@perches.com)
-        by omf20.hostedemail.com (Postfix) with ESMTPA;
-        Mon, 24 Jun 2019 14:27:49 +0000 (UTC)
-Message-ID: <9528bb2c4455db9e130576120c8b985b9dd94e3d.camel@perches.com>
-Subject: Re: [PATCH] get_maintainer: Add --cc option
-From:   Joe Perches <joe@perches.com>
-To:     Peter Zijlstra <peterz@infradead.org>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc:     linux-kernel@vger.kernel.org
-Date:   Mon, 24 Jun 2019 07:27:47 -0700
-In-Reply-To: <20190624133333.GW3419@hirez.programming.kicks-ass.net>
-References: <20190624130323.14137-1-bigeasy@linutronix.de>
-         <20190624133333.GW3419@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.30.5-0ubuntu0.18.10.1 
+        Mon, 24 Jun 2019 10:27:44 -0400
+Received: by mail-ed1-f68.google.com with SMTP id w13so22111339eds.4
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2019 07:27:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=nMad3CaCSZkzI4gyvFvbmTY8mwA5a8Sp7vTVJg617is=;
+        b=jtU1r3t/2UsWRHp4cHYwBYGPpiZUxz1/KLoBCTrKS4GUbo9DYoiKDE4ko+tPLCvBZu
+         kVU2KDKQj4bZshQa9gZS8SkpWHRzIIr1zMHVlq+h71f92Sb1sMdH5cnBrexMB088xYoj
+         lsqFXhocWNoaRaULy95jAMLyLmMA7bfqik/wFGsDEb1zokXQv1eavf7pI0rdaS0SuOiE
+         7dXJYQcgVtIul74lHRgtWv1FCERbkHxuQATQxfehC89AGfJA6TAGFluhj8wPparDYqeP
+         dx75xVh4boioNOkMS5RMHsVzHq+Fqmr9V3rUsM9KoOJQYU4Kgjhf0MyUkXvlsYHXp7+O
+         n7Kg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=nMad3CaCSZkzI4gyvFvbmTY8mwA5a8Sp7vTVJg617is=;
+        b=daweTlfImIBw2UN330Lh9xQiw1BoMCtIkoYBRO7pNeB1IBKozYA5kVZIqV0ViQtcQr
+         cjJV3NlyN+6TBC1DwYdn1aDnCT7jKDreZ3j8YrKrZ6ENFuJSSoWvPXRVzP85kIc6JUE9
+         i3JEDqSRBzq7jlHPzyPVyfY6rBMOfSJFuwZSH0DUcgf7UG2ykjdmzfvMWZuM25cPghKw
+         jFRyCLMPtFdpRA8YTjdoc+MYlHkzaOiuwvszafCNaIbr1h6deAGAm3u9ozhg4xj4VbvT
+         HkjelJVQDneM7ccS/eqe4vNUWz8a0c4ki7anBIpM6ydw4SNUw0Pp4a1U/g9l/JlohpIi
+         uYUA==
+X-Gm-Message-State: APjAAAWUKgDdPPGyklLApAGmRykKM11CWLOiZiAIcfj9fi5YqXb/a1Ut
+        0hIvvkLEEpdOYdlkT8vqpLcPxQ==
+X-Google-Smtp-Source: APXvYqwqid3EK2KULR3HvJOfTxPaV9NVV4GB+bO31X1U4vpGtxWUZczZsb76evJVJFcgmV4mVSqaMg==
+X-Received: by 2002:a17:906:3c1:: with SMTP id c1mr34162609eja.221.1561386462321;
+        Mon, 24 Jun 2019 07:27:42 -0700 (PDT)
+Received: from box.localdomain ([86.57.175.117])
+        by smtp.gmail.com with ESMTPSA id a8sm3743134edt.56.2019.06.24.07.27.41
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 24 Jun 2019 07:27:41 -0700 (PDT)
+Received: by box.localdomain (Postfix, from userid 1000)
+        id 0F1161043B3; Mon, 24 Jun 2019 17:27:47 +0300 (+03)
+Date:   Mon, 24 Jun 2019 17:27:47 +0300
+From:   "Kirill A. Shutemov" <kirill@shutemov.name>
+To:     Song Liu <songliubraving@fb.com>
+Cc:     "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "matthew.wilcox@oracle.com" <matthew.wilcox@oracle.com>,
+        "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>,
+        Kernel Team <Kernel-team@fb.com>,
+        "william.kucharski@oracle.com" <william.kucharski@oracle.com>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "hdanton@sina.com" <hdanton@sina.com>
+Subject: Re: [PATCH v7 5/6] mm,thp: add read-only THP support for (non-shmem)
+ FS
+Message-ID: <20190624142747.chy5s3nendxktm3l@box>
+References: <20190623054749.4016638-1-songliubraving@fb.com>
+ <20190623054749.4016638-6-songliubraving@fb.com>
+ <20190624124746.7evd2hmbn3qg3tfs@box>
+ <52BDA50B-7CBF-4333-9D15-0C17FD04F6ED@fb.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <52BDA50B-7CBF-4333-9D15-0C17FD04F6ED@fb.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2019-06-24 at 15:33 +0200, Peter Zijlstra wrote:
-> On Mon, Jun 24, 2019 at 03:03:23PM +0200, Sebastian Andrzej Siewior wrote:
-> > The --cc adds a Cc: prefix infront of the email address so it can be
-> > used by other Scripts directly instead of adding another wrapper for
-> > this.
+On Mon, Jun 24, 2019 at 02:01:05PM +0000, Song Liu wrote:
+> >> @@ -1392,6 +1403,23 @@ static void collapse_file(struct mm_struct *mm,
+> >> 				result = SCAN_FAIL;
+> >> 				goto xa_unlocked;
+> >> 			}
+> >> +		} else if (!page || xa_is_value(page)) {
+> >> +			xas_unlock_irq(&xas);
+> >> +			page_cache_sync_readahead(mapping, &file->f_ra, file,
+> >> +						  index, PAGE_SIZE);
+> >> +			lru_add_drain();
+> > 
+> > Why?
+> 
+> isolate_lru_page() is likely to fail if we don't drain the pagevecs. 
 
-Not sure I like the "--cc" option naming.
-Maybe "--prefix [string]" to be a bit more generic.
+Please add a comment.
 
-> Would it make sense to make '--cc' imply --no-roles --no-rolestats ?
+> >> +			page = find_lock_page(mapping, index);
+> >> +			if (unlikely(page == NULL)) {
+> >> +				result = SCAN_FAIL;
+> >> +				goto xa_unlocked;
+> >> +			}
+> >> +		} else if (!PageUptodate(page)) {
+> > 
+> > Maybe we should try wait_on_page_locked() here before give up?
+> 
+> Are you referring to the "if (!PageUptodate(page))" case? 
 
-Maybe.
+Yes.
 
-It's also unlikely to be sensibly used with mailing
-lists so maybe --nol too.
-
-
+-- 
+ Kirill A. Shutemov
