@@ -2,114 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 65C8850DC8
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 16:23:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0FADD50DCE
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 16:23:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728191AbfFXOXN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 10:23:13 -0400
-Received: from foss.arm.com ([217.140.110.172]:51752 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727170AbfFXOXN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 10:23:13 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4151B344;
-        Mon, 24 Jun 2019 07:23:12 -0700 (PDT)
-Received: from [10.1.32.158] (unknown [10.1.32.158])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7C9083F71E;
-        Mon, 24 Jun 2019 07:23:10 -0700 (PDT)
-Subject: Re: [PATCH 1/7] arm-nommu: remove the partial DMA_ATTR_NON_CONSISTENT
- support
-To:     Christoph Hellwig <hch@lst.de>, Vineet Gupta <vgupta@synopsys.com>
-Cc:     Jonas Bonn <jonas@southpole.se>,
-        Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
-        Stafford Horne <shorne@gmail.com>,
-        Helge Deller <deller@gmx.de>,
-        linux-snps-arc@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org,
-        openrisc@lists.librecores.org, linux-parisc@vger.kernel.org,
-        linux-xtensa@linux-xtensa.org, iommu@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org
-References: <20190614144431.21760-1-hch@lst.de>
- <20190614144431.21760-2-hch@lst.de>
-From:   Vladimir Murzin <vladimir.murzin@arm.com>
-Message-ID: <a017e704-c6c4-7718-7f8b-eb8a0eced14d@arm.com>
-Date:   Mon, 24 Jun 2019 15:23:08 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
-MIME-Version: 1.0
-In-Reply-To: <20190614144431.21760-2-hch@lst.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+        id S1728337AbfFXOXf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 10:23:35 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:54666 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727170AbfFXOXf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Jun 2019 10:23:35 -0400
+Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::d71])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 4AA411504101A;
+        Mon, 24 Jun 2019 07:23:34 -0700 (PDT)
+Date:   Mon, 24 Jun 2019 07:23:33 -0700 (PDT)
+Message-Id: <20190624.072333.2300932810459542260.davem@davemloft.net>
+To:     j-keerthy@ti.com
+Cc:     ivan.khoronzhuk@linaro.org, andrew@lunn.ch,
+        ilias.apalodimas@linaro.org, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, linux-omap@vger.kernel.org,
+        t-kristo@ti.com, grygorii.strashko@ti.com, nsekhar@ti.com
+Subject: Re: [PATCH V2] net: ethernet: ti: cpsw: Fix suspend/resume break
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <20190624051619.20146-1-j-keerthy@ti.com>
+References: <20190624051619.20146-1-j-keerthy@ti.com>
+X-Mailer: Mew version 6.8 on Emacs 26.1
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Mon, 24 Jun 2019 07:23:34 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 6/14/19 3:44 PM, Christoph Hellwig wrote:
-> The arm-nommu DMA code supports DMA_ATTR_NON_CONSISTENT allocations, but
-> does not provide a cache_sync operation.  This means any user of it
-> will never be able to actually transfer cache ownership and thus cause
-> coherency bugs.
+From: Keerthy <j-keerthy@ti.com>
+Date: Mon, 24 Jun 2019 10:46:19 +0530
 
-By the way, Documentation/DMA-attributes.txt doesn't specify cache_sync() as
-requirement for DMA_ATTR_NON_CONSISTENT it only states that it is responsibility
-of the driver to have all the correct and necessary sync points.
-
+> Commit bfe59032bd6127ee190edb30be9381a01765b958 ("net: ethernet:
+> ti: cpsw: use cpsw as drv data")changes
+> the driver data to struct cpsw_common *cpsw. This is done
+> only in probe/remove but the suspend/resume functions are
+> still left with struct net_device *ndev. Hence fix both
+> suspend & resume also to fetch the updated driver data.
 > 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
->  arch/arm/mm/dma-mapping-nommu.c | 24 +++---------------------
->  1 file changed, 3 insertions(+), 21 deletions(-)
-> 
-> diff --git a/arch/arm/mm/dma-mapping-nommu.c b/arch/arm/mm/dma-mapping-nommu.c
-> index f304b10e23a4..bc003df45546 100644
-> --- a/arch/arm/mm/dma-mapping-nommu.c
-> +++ b/arch/arm/mm/dma-mapping-nommu.c
-> @@ -39,18 +39,7 @@ static void *arm_nommu_dma_alloc(struct device *dev, size_t size,
->  				 unsigned long attrs)
->  
->  {
-> -	void *ret;
-> -
-> -	/*
-> -	 * Try generic allocator first if we are advertised that
-> -	 * consistency is not required.
-> -	 */
-> -
-> -	if (attrs & DMA_ATTR_NON_CONSISTENT)
-> -		return dma_direct_alloc_pages(dev, size, dma_handle, gfp,
-> -				attrs);
-> -
-> -	ret = dma_alloc_from_global_coherent(size, dma_handle);
-> +	void *ret = dma_alloc_from_global_coherent(size, dma_handle);
->  
->  	/*
->  	 * dma_alloc_from_global_coherent() may fail because:
-> @@ -70,16 +59,9 @@ static void arm_nommu_dma_free(struct device *dev, size_t size,
->  			       void *cpu_addr, dma_addr_t dma_addr,
->  			       unsigned long attrs)
->  {
-> -	if (attrs & DMA_ATTR_NON_CONSISTENT) {
-> -		dma_direct_free_pages(dev, size, cpu_addr, dma_addr, attrs);
-> -	} else {
-> -		int ret = dma_release_from_global_coherent(get_order(size),
-> -							   cpu_addr);
-> -
-> -		WARN_ON_ONCE(ret == 0);
-> -	}
-> +	int ret = dma_release_from_global_coherent(get_order(size), cpu_addr);
->  
-> -	return;
-> +	WARN_ON_ONCE(ret == 0);
->  }
->  
->  static int arm_nommu_dma_mmap(struct device *dev, struct vm_area_struct *vma,
-> 
+> Fixes: bfe59032bd6127ee1 ("net: ethernet: ti: cpsw: use cpsw as drv data")
+> Signed-off-by: Keerthy <j-keerthy@ti.com>
 
-FWIW:
+Applied but please make it clear that changes are targetting net-next in the
+future by saying "[PATCH net-next v2] ...." in your Subject line.
 
-Reviewed-by: Vladimir Murzin <vladimir.murzin@arm.com>
-
-Cheers
-Vladimir
+Thank you.
