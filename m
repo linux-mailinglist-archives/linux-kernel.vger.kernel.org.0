@@ -2,100 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B1DE050F0C
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 16:49:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8543850F13
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 16:49:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730300AbfFXOtW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 10:49:22 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:39811 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728213AbfFXOtV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 10:49:21 -0400
-Received: by mail-wm1-f65.google.com with SMTP id z23so13687074wma.4
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2019 07:49:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:references:reply-to:message-id:mime-version;
-        bh=qICt3tvrDEjsshgOgeqB9NCEtKIKhDes2GEOtGUCIpo=;
-        b=mnrc7AJREizTtyko4LB8qv6Cg5B7WxC4INlkHs9Ks4iSd2+apictmURS40KuI0t5Tn
-         IB2Vnf/t+LVnP+tv1JvqK0FMsszntab9bsBVDhaq6iH/5dr9u7y6ngMLni2/8v8/KD3I
-         1RNcMErB5MGZrpdrKROpddh54ZDHRNg8rOMycQTJexvvjS09bSP+7duvAXFZuxYnmwGn
-         Wpgf31NfM9CwuosNa95m1z+0d2TNHFTO5beH//s/fat/KCaC+gG8C9eFd8v7zvt8OC3u
-         asoDvcItzT1/rBmW1y+Ab6G7mIjNAxdR7PXNNpiCVmsN1jFfPqU98sGJajv6Icl+rVEt
-         2jCg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:references:reply-to
-         :message-id:mime-version;
-        bh=qICt3tvrDEjsshgOgeqB9NCEtKIKhDes2GEOtGUCIpo=;
-        b=Amc7AcsmxA3mzmO5dajHi+jKsxKF4byzAFNh53eb8XRtzh04v90Ofkek0cYZ+fk8a/
-         g0fXhaa7z+3bw6A+mC3yXX6Ouvr1q5ZEuwx0g6fRXHwYIpEE9rA0uay3l9BUdndBFJnM
-         XkC5ewBaze8sEdr5mXyAvp0K/M1eyXCwrS3AqJTRMIaIGP74LypDcjVoQM1deGuCdcYg
-         zbDBfjVYdN2tiHeyxhyg8vllQPgUNKZnxGSUdXzRayuBdX46nAoeRNR9YM7tPXvteFYB
-         FlX8Sa6GURleKaAxi4f6T8n4MNQs1JuASYrTKFUwPx7meuBIztR05smzb1g7LskryliY
-         ZfYg==
-X-Gm-Message-State: APjAAAUyaCzN2/6NRs4tBK3vJwhVObys5xCPo2Ae2Ju8rJ1U2vsC+fRl
-        VazJLvjUdT36+ahf5O3SjWmz61b0ruY=
-X-Google-Smtp-Source: APXvYqyo+n4FXVEBememSCgVf3nyfXvEm0+s6OodWbZ0mTPQMuiNLuOddy70bQx8iLDOUizpxuJGKg==
-X-Received: by 2002:a1c:cc0d:: with SMTP id h13mr15799778wmb.119.1561387759831;
-        Mon, 24 Jun 2019 07:49:19 -0700 (PDT)
-Received: from localhost (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id t63sm11204083wmt.6.2019.06.24.07.49.19
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 24 Jun 2019 07:49:19 -0700 (PDT)
-From:   Julien Masson <jmasson@baylibre.com>
-To:     Neil Armstrong <narmstrong@baylibre.com>
-Cc:     linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, Julien Masson <jmasson@baylibre.com>
-Subject: [PATCH 9/9] drm: meson: venc: set the correct macrovision max
- amplitude value
-Date:   Mon, 24 Jun 2019 16:49:12 +0200
-References: <86zhm782g5.fsf@baylibre.com>
-Reply-To: <86zhm782g5.fsf@baylibre.com>
-Message-ID: <86mui782dt.fsf@baylibre.com>
+        id S1730354AbfFXOtc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 10:49:32 -0400
+Received: from foss.arm.com ([217.140.110.172]:52588 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728127AbfFXOtb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Jun 2019 10:49:31 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4C1F7344;
+        Mon, 24 Jun 2019 07:49:30 -0700 (PDT)
+Received: from arrakis.emea.arm.com (arrakis.cambridge.arm.com [10.1.196.78])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 12ADD3F71E;
+        Mon, 24 Jun 2019 07:49:26 -0700 (PDT)
+Date:   Mon, 24 Jun 2019 15:49:24 +0100
+From:   Catalin Marinas <catalin.marinas@arm.com>
+To:     Russell King - ARM Linux admin <linux@armlinux.org.uk>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Vincenzo Frascino <vincenzo.frascino@arm.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Will Deacon <will.deacon@arm.com>, linux-mips@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, Shuah Khan <shuah@kernel.org>,
+        linux-arch@vger.kernel.org, Dmitry Safonov <dima@arista.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Sasha Levin <sashal@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        Andre Przywara <andre.przywara@arm.com>,
+        Dmitry Safonov <0x7f454c46@gmail.com>,
+        Michael Kelley <mikelley@microsoft.com>,
+        Peter Collingbourne <pcc@google.com>,
+        LAK <linux-arm-kernel@lists.infradead.org>,
+        Andrei Vagin <avagin@openvz.org>,
+        Huw Davies <huw@codeweavers.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Mark Salyzyn <salyzyn@android.com>,
+        Paul Burton <paul.burton@mips.com>,
+        Shijith Thotton <sthotton@marvell.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH v7 00/25] Unify vDSOs across more architectures
+Message-ID: <20190624144924.GE29120@arrakis.emea.arm.com>
+References: <20190621095252.32307-1-vincenzo.frascino@arm.com>
+ <alpine.DEB.2.21.1906240142000.32342@nanos.tec.linutronix.de>
+ <alpine.DEB.2.21.1906241613280.32342@nanos.tec.linutronix.de>
+ <20190624142346.pxljv3m4npatdiyk@shell.armlinux.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190624142346.pxljv3m4npatdiyk@shell.armlinux.org.uk>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-According to the register description of ENCI_MACV_MAX_AMP, the
-macrovision max amplitude value should be:
-- hdmi 480i => 0xb
-- hdmi 576i => 0x7
+On Mon, Jun 24, 2019 at 03:23:46PM +0100, Russell King wrote:
+> On Mon, Jun 24, 2019 at 04:18:28PM +0200, Thomas Gleixner wrote:
+> > Vincenzo,
+> > 
+> > On Mon, 24 Jun 2019, Thomas Gleixner wrote:
+> > 
+> > > I did not merge the ARM and MIPS parts as they lack any form of
+> > > acknowlegment from their maintainers. Please talk to those folks. If they
+> > > ack/review the changes then I can pick them up and they go into 5.3 or they
+> > > have to go in a later cycle. Nevertheless it was well worth the trouble to
+> > > have those conversions done to confirm that the new common library fits a
+> > > bunch of different architectures.
+> > 
+> > I talked to Russell King and he suggested to file the ARM parts into his
+> > patch system and he'll pick them up after 5.3-rc1.
+> > 
+> >    https://www.arm.linux.org.uk/developer/patches/
+> > 
+> > I paged out how to deal with it, but you'll surely manage :)
+> 
+> Easy way: ask git to add the "KernelVersion" tag as a header to the
+> email using --add-header to e.g. git format-patch, and just mail them
+> to patches@armlinux.org.uk
 
-The max value is 0x7ff (10 bits).
+Although I haven't send patches to Russell in a while, I still have a
+git alias in my .gitconfig (only works with one patch at a time IIRC,
+sending multiple patches may arrive in a different order):
 
-Signed-off-by: Julien Masson <jmasson@baylibre.com>
----
- drivers/gpu/drm/meson/meson_venc.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+[alias]
+	send-rmk-email = !git send-email --add-header=\"KernelVersion: $(git describe --abbrev=0)\" --no-thread --suppress-cc=all --to="patches@arm.linux.org.uk"
 
-diff --git a/drivers/gpu/drm/meson/meson_venc.c b/drivers/gpu/drm/meson/meson_venc.c
-index 2835133ab676..acad16ff7371 100644
---- a/drivers/gpu/drm/meson/meson_venc.c
-+++ b/drivers/gpu/drm/meson/meson_venc.c
-@@ -192,7 +192,7 @@ union meson_hdmi_venc_mode meson_hdmi_enci_mode_480i = {
- 		.hso_end = 129,
- 		.vso_even = 3,
- 		.vso_odd = 260,
--		.macv_max_amp = 0x810b,
-+		.macv_max_amp = 0xb,
- 		.video_prog_mode = 0xf0,
- 		.video_mode = 0x8,
- 		.sch_adjust = 0x20,
-@@ -212,7 +212,7 @@ union meson_hdmi_venc_mode meson_hdmi_enci_mode_576i = {
- 		.hso_end = 129,
- 		.vso_even = 3,
- 		.vso_odd = 260,
--		.macv_max_amp = 8107,
-+		.macv_max_amp = 0x7,
- 		.video_prog_mode = 0xff,
- 		.video_mode = 0x13,
- 		.sch_adjust = 0x28,
 -- 
-2.17.1
-
+Catalin
