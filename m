@@ -2,91 +2,166 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E2665027A
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 08:45:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D3DA350280
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 08:47:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726574AbfFXGpD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 02:45:03 -0400
-Received: from 178.115.242.59.static.drei.at ([178.115.242.59]:43903 "EHLO
-        mail.osadl.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725267AbfFXGpD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 02:45:03 -0400
-X-Greylist: delayed 389 seconds by postgrey-1.27 at vger.kernel.org; Mon, 24 Jun 2019 02:45:02 EDT
-Received: by mail.osadl.at (Postfix, from userid 1001)
-        id C37BB5C02F0; Mon, 24 Jun 2019 08:37:18 +0200 (CEST)
-Date:   Mon, 24 Jun 2019 08:37:18 +0200
-From:   Nicholas Mc Guire <der.herr@hofr.at>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     eric@anholt.net, stefan.wahren@i2se.com,
-        gregkh@linuxfoundation.org, f.fainelli@gmail.com,
-        rjui@broadcom.com, sbranden@broadcom.com,
-        bcm-kernel-feedback-list@broadcom.com, tuomas.tynkkynen@iki.fi,
-        inf.braun@fau.de, tobias.buettner@fau.de, hofrat@osadl.org,
-        linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] staging: bcm2835-camera: Avoid apotential sleep while
- holding a spin_lock
-Message-ID: <20190624063718.GD31913@osadl.at>
-References: <20190624053351.5217-1-christophe.jaillet@wanadoo.fr>
+        id S1726944AbfFXGry (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 02:47:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41110 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726416AbfFXGry (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Jun 2019 02:47:54 -0400
+Received: from localhost (unknown [106.201.35.23])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 337C120674;
+        Mon, 24 Jun 2019 06:47:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1561358872;
+        bh=Z5He2uD9MlfIuLNKbxZIoYtCPRvHPO8k/v21KJxmYq0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=2QViUH+qEgmWJE4F5AvyDe6LvRqsgIt/PZ6vBKyrfY6vaFVugDnxfpJZvAd+hgVH2
+         iYZAucOQcIWIlVYGa2lnod/6QZkAnL1Zuf3EIHDkEodkglJmQFnKDv8f7umchVx4jH
+         xhYjd+JM+YtMIPmUUKJyPCR/t2Zmy2qHSwUOXYKQ=
+Date:   Mon, 24 Jun 2019 12:14:42 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     jassisinghbrar@gmail.com
+Cc:     dmaengine@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, orito.takao@socionext.com,
+        masami.hiramatsu@linaro.org, kasai.kazuhiro@socionext.com,
+        Jassi Brar <jaswinder.singh@linaro.org>
+Subject: Re: [PATCH 2/2] dmaengine: milbeaut-hdmac: Add HDMAC driver for
+ Milbeaut platforms
+Message-ID: <20190624064442.GW2962@vkoul-mobl>
+References: <20190613005109.1867-1-jassisinghbrar@gmail.com>
+ <20190613005247.2048-1-jassisinghbrar@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190624053351.5217-1-christophe.jaillet@wanadoo.fr>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20190613005247.2048-1-jassisinghbrar@gmail.com>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 24, 2019 at 07:33:51AM +0200, Christophe JAILLET wrote:
-> Do not allocate memory with GFP_KERNEL when holding a spin_lock, it may
-> sleep. Use GFP_NOWAIT instead.
->
+On 12-06-19, 19:52, jassisinghbrar@gmail.com wrote:
 
-checking for this in the rest of the kernel with a cocci spatch
-<snip>
-virtual report
+> +#include <linux/bits.h>
+> +#include <linux/clk.h>
+> +#include <linux/dma-mapping.h>
+> +#include <linux/dmaengine.h>
+> +#include <linux/interrupt.h>
+> +#include <linux/iopoll.h>
+> +#include <linux/list.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/of_dma.h>
 
-@nonatomic@
-position p;
-identifier var;
-@@
+Do we need both, IIRC of_dma.h does include of.h!
 
-  spin_lock(...)
-  ... when != spin_unlock(...)
-* var = idr_alloc@p(...,GFP_KERNEL);
-  ... when != spin_unlock(...)
-  spin_unlock(...);
-<snip>
-this seems to be the only instance of this specific problem.
+> +/* mc->vc.lock must be held by caller */
+> +static void milbeaut_chan_start(struct milbeaut_hdmac_chan *mc,
+> +				struct milbeaut_hdmac_desc *md)
+> +{
+> +	struct scatterlist *sg;
+> +	u32  cb, ca, src_addr, dest_addr, len;
+           ^^
+double space
 
-> Fixes: 950fd867c635 ("staging: bcm2835-camera: Replace open-coded idr with a struct idr.")
+> +static irqreturn_t milbeaut_hdmac_interrupt(int irq, void *dev_id)
+> +{
+> +	struct milbeaut_hdmac_chan *mc = dev_id;
+> +	struct milbeaut_hdmac_desc *md;
+> +	irqreturn_t ret = IRQ_HANDLED;
+> +	u32 val;
+> +
+> +	spin_lock(&mc->vc.lock);
+> +
+> +	/* Ack and Disable irqs */
+> +	val = readl_relaxed(mc->reg_ch_base + MLB_HDMAC_DMACB);
+> +	val &= ~(FIELD_PREP(MLB_HDMAC_SS, 0x7));
+                                         ^^^^
+Magic ..?
 
-The GFP_KERNEL actually was there befor this patch so not sure if this Fixes
-ref is correct - I think the GFP_KERNEL was introduced in:
-4e6bafdfb9f3 ("staging: bcm2835_camera: Use a mapping table for context field of mmal_msg_header")
+> +static int milbeaut_hdmac_chan_pause(struct dma_chan *chan)
+> +{
+> +	struct virt_dma_chan *vc = to_virt_chan(chan);
+> +	struct milbeaut_hdmac_chan *mc = to_milbeaut_hdmac_chan(vc);
+> +	u32 val;
+> +
+> +	spin_lock(&mc->vc.lock);
+> +	val = readl_relaxed(mc->reg_ch_base + MLB_HDMAC_DMACA);
+> +	val |= MLB_HDMAC_PB;
+> +	writel_relaxed(val, mc->reg_ch_base + MLB_HDMAC_DMACA);
 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Reviewed-by: Nicholas Mc Guire <hofrat@osadl.org>
+We really should have an updatel() and friends in kernel, feel free to
+add in your driver though!
 
-> ---
->  drivers/staging/vc04_services/bcm2835-camera/mmal-vchiq.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/staging/vc04_services/bcm2835-camera/mmal-vchiq.c b/drivers/staging/vc04_services/bcm2835-camera/mmal-vchiq.c
-> index 16af735af5c3..438d548c6e24 100644
-> --- a/drivers/staging/vc04_services/bcm2835-camera/mmal-vchiq.c
-> +++ b/drivers/staging/vc04_services/bcm2835-camera/mmal-vchiq.c
-> @@ -186,7 +186,7 @@ get_msg_context(struct vchiq_mmal_instance *instance)
->  	 */
->  	spin_lock(&instance->context_map_lock);
->  	handle = idr_alloc(&instance->context_map, msg_context,
-> -			   0, 0, GFP_KERNEL);
-> +			   0, 0, GFP_NOWAIT);
->  	spin_unlock(&instance->context_map_lock);
->  
->  	if (handle < 0) {
-> -- 
-> 2.20.1
-> 
+> +static int milbeaut_hdmac_chan_init(struct platform_device *pdev,
+> +				    struct milbeaut_hdmac_device *mdev,
+> +				    int chan_id)
+> +{
+> +	struct device *dev = &pdev->dev;
+> +	struct milbeaut_hdmac_chan *mc = &mdev->channels[chan_id];
+> +	char *irq_name;
+> +	int irq, ret;
+> +
+> +	irq = platform_get_irq(pdev, chan_id);
+> +	if (irq < 0) {
+> +		dev_err(&pdev->dev, "failed to get IRQ number for ch%d\n",
+> +			chan_id);
+> +		return irq;
+> +	}
+> +
+> +	irq_name = devm_kasprintf(dev, GFP_KERNEL, "milbeaut-hdmac-%d",
+> +				  chan_id);
+> +	if (!irq_name)
+> +		return -ENOMEM;
+> +
+> +	ret = devm_request_irq(dev, irq, milbeaut_hdmac_interrupt,
+> +			       IRQF_SHARED, irq_name, mc);
+
+I tend to dislike using devm_request_irq(), we have no control over when
+the irq is freed and what is a spirious irq is running while we are
+unrolling, so IMHO it make sense to free up and ensure all tasklets are
+quiesced when remove returns
+
+> +	if (ret)
+> +		return ret;
+> +
+> +	mc->mdev = mdev;
+> +	mc->reg_ch_base = mdev->reg_base + MLB_HDMAC_CH_STRIDE * (chan_id + 1);
+> +	mc->vc.desc_free = milbeaut_hdmac_desc_free;
+> +	vchan_init(&mc->vc, &mdev->ddev);
+
+who kills the vc->task?
+
+> +static int milbeaut_hdmac_remove(struct platform_device *pdev)
+> +{
+> +	struct milbeaut_hdmac_device *mdev = platform_get_drvdata(pdev);
+> +	struct dma_chan *chan;
+> +	int ret;
+> +
+> +	/*
+> +	 * Before reaching here, almost all descriptors have been freed by the
+> +	 * ->device_free_chan_resources() hook. However, each channel might
+> +	 * be still holding one descriptor that was on-flight at that moment.
+> +	 * Terminate it to make sure this hardware is no longer running. Then,
+> +	 * free the channel resources once again to avoid memory leak.
+> +	 */
+> +	list_for_each_entry(chan, &mdev->ddev.channels, device_node) {
+> +		ret = dmaengine_terminate_sync(chan);
+> +		if (ret)
+> +			return ret;
+> +		milbeaut_hdmac_free_chan_resources(chan);
+> +	}
+> +
+> +	of_dma_controller_free(pdev->dev.of_node);
+> +	dma_async_device_unregister(&mdev->ddev);
+> +	clk_disable_unprepare(mdev->clk);
+
+And as suspected we have active tasklets and irq at this time :(
+-- 
+~Vinod
