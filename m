@@ -2,99 +2,56 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 20B124FF27
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 04:13:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 93FAB4FF34
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 04:18:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726925AbfFXCNK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 23 Jun 2019 22:13:10 -0400
-Received: from mailout1.samsung.com ([203.254.224.24]:53127 "EHLO
-        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726849AbfFXCNK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 23 Jun 2019 22:13:10 -0400
-Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
-        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20190624021306epoutp015982f94b7bc6e2a0f05f632c06f94c27~rAKC9VSqu0940109401epoutp01H
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2019 02:13:06 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20190624021306epoutp015982f94b7bc6e2a0f05f632c06f94c27~rAKC9VSqu0940109401epoutp01H
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1561342386;
-        bh=Bjxv0RRUWPDBM+vlsvLdx6BQWrwtvpQPL5LR7DGLxjw=;
-        h=Subject:Reply-To:From:To:CC:In-Reply-To:Date:References:From;
-        b=hzjpX5+9hx/a1tdVMF8nJlqTy4AoOattbUJB3gjjl2g9E4cDDgyE9EZSCiKyYCk+j
-         AAxsgbzscgkEwuqqh8zB5aSwmHq5Hbw1hY7hQdcmF4cgc1m7EqhAuZDv3vU7K8i5Lx
-         O9AvXL2KfXmItk6fZhNotQzX4qzE3540oCxuNXuo=
-Received: from epsmges1p4.samsung.com (unknown [182.195.40.155]) by
-        epcas1p3.samsung.com (KnoxPortal) with ESMTP id
-        20190624021301epcas1p32614991eb0c0533de1d556cbf4945e11~rAJ_vt4kw0385803858epcas1p3A;
-        Mon, 24 Jun 2019 02:13:01 +0000 (GMT)
-X-AuditID: b6c32a38-5cbff700000010a1-02-5d10319df346
-Received: from epcas1p1.samsung.com ( [182.195.41.45]) by
-        epsmges1p4.samsung.com (Symantec Messaging Gateway) with SMTP id
-        D9.4A.04257.D91301D5; Mon, 24 Jun 2019 11:12:45 +0900 (KST)
-Mime-Version: 1.0
-Subject: RE: [PATCH v1 01/11] PM / devfreq: tegra30: Change irq type to
- unsigned int
-Reply-To: myungjoo.ham@samsung.com
-From:   MyungJoo Ham <myungjoo.ham@samsung.com>
-To:     Dmitry Osipenko <digetx@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Tomeu Vizoso <tomeu.vizoso@collabora.com>
-CC:     "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-X-Priority: 3
-X-Content-Kind-Code: NORMAL
-In-Reply-To: <20190623214658.11680-2-digetx@gmail.com>
-X-Drm-Type: N,general
-X-Msg-Generator: Mail
-X-Msg-Type: PERSONAL
-X-Reply-Demand: N
-Message-ID: <20190624021245epcms1p5366dd98904dac95625dc2deb4b649cb1@epcms1p5>
-Date:   Mon, 24 Jun 2019 11:12:45 +0900
-X-CMS-MailID: 20190624021245epcms1p5366dd98904dac95625dc2deb4b649cb1
-Content-Transfer-Encoding: 7bit
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-X-Brightmail-Tracker: H4sIAAAAAAAAA01Sa0hTYRj285ydHZfLz2n1YWXrQBeFpUedHStDSGJQghFUWDIPeprD3diZ
-        KytIUqk0zUIr5qUsI9PCC16ms5QZRZlFiYWEJd3MUrtohFjUtjOxf8/38Lzv87zv95KY7DIR
-        QmoNFs5sYHUUIcHb+8IUiioapkaOl9PMy5kxEdPw/R1g8m1XcWbgxISYGeyqJJjp4nuAOT1j
-        I5jZrmqcKbn9nEjwU9lHaoGq0zYiVhXnTRGqktZ6oJpuCU0WpWRtyeTYDM4s5wzpxgytQRNP
-        7dit3qZWxkbSCjqO2UjJDayei6cSdyYrtmt1rkCU3Mrqsl1UMsvzVMTWLWZjtoWTZxp5SzzF
-        mTJ0pjjTBp7V89kGzYZ0o34THRkZpXQJ07Iyx2YLRKZx38ODde+JXNDoWwj8SARjUF7BW8KN
-        ZdAO0IXRfYWAJKUwEP2xB7npILgHnSmxAUFCodzhu5jAR6BTo+0enoAK1NY0ghcCCRkM5wC6
-        0/lO5H5gsBOgqdY3YsFMii6d/IALeDnquNHmqfaDsejRi1PeQEvQcMOkeB5/vX8ZCDgYFbwe
-        wAQciEZnHWC+z6Wyv96eR9GLi9fEbmME8wEqbijziiLQ46qHnimlMAl9cvzyYByuQd+c173F
-        iej0UJHIjTG4CnVMVmLuTWAwDDV2RQiS1ahzrgoIksVo6ucZ0fxc9ur33vxrkdNR682/AvVf
-        rPFmVqGzM+WYsMWbAHU046VAblvYte0/Y9uC8RWA1YOlnInXazieNsX8/7stwHOc4YwddD/Z
-        6QSQBJS/FDYFpMpErJXP0TsBIjEqWOqv80+VSTPYnCOc2ag2Z+s43gmUrvnPYSFL0o2uUzdY
-        1LQyKjo6momhY5U0TS2TqhcNH5BBDWvhsjjOxJnn63xJv5BcEBy0SSKRfbM23uofqa7T3teG
-        Nj/tt35pOb+4rHZ2fXivpXSiyOiYHIxS1ZT77F33O+djwLFDnxVvQ7ldn5Z2/6ocL5qx90w/
-        S8Ff6VoqHMPyvocpuWUXjgds7H/c8yCh4od9haYmxzDUdnK5JDVtQmrVjoUm1Ww+mNTb7uMT
-        s3L/KgrnM1k6HDPz7D9DtmwasgMAAA==
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20190623214841epcas5p161cceab51cb10d5146e57d49a696d5e5
-References: <20190623214658.11680-2-digetx@gmail.com>
-        <20190623214658.11680-1-digetx@gmail.com>
-        <CGME20190623214841epcas5p161cceab51cb10d5146e57d49a696d5e5@epcms1p5>
+        id S1726993AbfFXCSO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 23 Jun 2019 22:18:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47060 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726307AbfFXCSO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 23 Jun 2019 22:18:14 -0400
+Received: from dragon (li1322-146.members.linode.com [45.79.223.146])
+        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 87AB120674;
+        Mon, 24 Jun 2019 02:18:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1561342693;
+        bh=257F5fxJKWLetwl7yOwDez+PdfcDjnS/2ElB4GNJgGk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=PJAjRz9lILz/xQ1VLh10zL0/rpq5WmV7WyaW6EtDdSODNn9+GsG9GMRE5PVkDsUEO
+         jFnKpHOuquZWgg+hjU9ZKjUlBWlvwC87BAeFWfiA8O6DwbcXunIecKSXdJtnMaWGuX
+         M+57Ztvo19r3SI7NUYL9ZqS+58XK1sZTMtVsiDKs=
+Date:   Mon, 24 Jun 2019 10:18:00 +0800
+From:   Shawn Guo <shawnguo@kernel.org>
+To:     Anson.Huang@nxp.com
+Cc:     catalin.marinas@arm.com, will@kernel.org,
+        maxime.ripard@bootlin.com, olof@lixom.net,
+        jagan@amarulasolutions.com, bjorn.andersson@linaro.org,
+        leonard.crestez@nxp.com, dinguyen@kernel.org,
+        enric.balletbo@collabora.com, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, Linux-imx@nxp.com
+Subject: Re: [PATCH] arm64: defconfig: Enable CONFIG_KEYBOARD_SNVS_PWRKEY as
+ module
+Message-ID: <20190624021759.GM3800@dragon>
+References: <20190621050603.20392-1-Anson.Huang@nxp.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190621050603.20392-1-Anson.Huang@nxp.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
->IRQ numbers are always positive, hence the corresponding variable should
->be unsigned to keep types consistent. This is a minor change that cleans
->up code a tad more.
->
->Suggested-by: Thierry Reding <thierry.reding@gmail.com>
->Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+On Fri, Jun 21, 2019 at 01:06:03PM +0800, Anson.Huang@nxp.com wrote:
+> From: Anson Huang <Anson.Huang@nxp.com>
+> 
+> Enable CONFIG_KEYBOARD_SNVS_PWRKEY as module to support i.MX8M
+> series SoCs' power key.
+> 
+> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 
-Acked-by: MyungJoo Ham <myungjoo.ham@samsung.com>
-
-
-Cheers,
-MyungJoo
+Applied, thanks.
