@@ -2,120 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 88B7951C14
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 22:14:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2633851C20
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 22:16:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729329AbfFXUOF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 16:14:05 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:33948 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727829AbfFXUOE (ORCPT
+        id S1731658AbfFXUQI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 16:16:08 -0400
+Received: from outgoing-stata.csail.mit.edu ([128.30.2.210]:60293 "EHLO
+        outgoing-stata.csail.mit.edu" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727595AbfFXUQI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 16:14:04 -0400
-Received: by mail-pf1-f195.google.com with SMTP id c85so8152590pfc.1
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2019 13:14:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=gA5g+3BvXIn/jRUNtYVuPBrGxTYGWqRjXHzrOj0QNto=;
-        b=L+LVVsngjla9IhiIu1qCjMLss6ub8VVfgUke6Gzkiw5NVrLAvU/gWqkuuHKGDOwMDW
-         iKWKiU1MlGwfjkeOFjN1NalBd7eBHsPeYrhg5k+FVzwWHaMVG3/Nr3MLS/ULe22cYYIm
-         IL/e1u438sX5K1I7IV95CS2mNWZ5Jx3DECYlJXfFyGyMMV7qeRLRg0T9Ta/abjre95vY
-         Al3azFfxrVdCoEM1E08zKV/Gdac9CyZMPq5/qme19eVRYysbxXDDQQnyvWQkH8ELAZhd
-         Vfkqazo5h0Y49tV+CODXvwa9eM4sGzGuCTYsu5+dqoaSCIWM0oEts3l4CQxlE8eRtodq
-         c5Cw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=gA5g+3BvXIn/jRUNtYVuPBrGxTYGWqRjXHzrOj0QNto=;
-        b=cdkv+QQIcDm9GhbKbAh9ENenFO7I3ntjThRkN423HTWvwSy7jDp1jDvES1c29LKdW6
-         s/W23u6hotPDEVcgqfKoEWN65YAel/iKxN63OJTCJLrSqxzKCg0mF4AUInFLcj9Z5BEu
-         xI912vQagWRzdis6CFytEyiDy0J9O342jDHxli+GH2+izRW0c/pKKPK02YCdqqlhzhym
-         1Y+9FSGaV7mq0NiMQeWnoeE82Rj8tJST92XLlk3jPYX0fnt9GptCT3cBCBuW0Z4uwBfG
-         1VHZSUQe4eHHjlv6aF9yt1t3EJpTA+iD0Pbg2XTOcYFqQ+FLiEYvL4jH+1wGKLwu/FCR
-         Kh+A==
-X-Gm-Message-State: APjAAAUhQJSsFnS9vh/7T1E6u376ab4TbvPLnMMuklA2MOUi1UxAE42x
-        VIITB2kkySWWOntDAA0QvkOaY4fEhGN58O2Fuh56LKCKhbaqlQ==
-X-Google-Smtp-Source: APXvYqwbHSEWWrxjTaNlQU9gt/t2po73l8ewfc3CeWUC+uGjt8eAkQ/DPm2hhyPcDvaU4F0z6E4FQeppylXUxiE/nP4=
-X-Received: by 2002:a63:52:: with SMTP id 79mr34338767pga.381.1561407243756;
- Mon, 24 Jun 2019 13:14:03 -0700 (PDT)
+        Mon, 24 Jun 2019 16:16:08 -0400
+Received: from [4.30.142.84] (helo=srivatsab-a01.vmware.com)
+        by outgoing-stata.csail.mit.edu with esmtpsa (TLS1.2:RSA_AES_128_CBC_SHA1:128)
+        (Exim 4.82)
+        (envelope-from <srivatsa@csail.mit.edu>)
+        id 1hfVNk-000XTK-Vd; Mon, 24 Jun 2019 16:16:05 -0400
+Subject: Re: [PATCH BUGFIX IMPROVEMENT 0/7] boost throughput with synced I/O,
+ reduce latency and fix a bandwidth bug
+To:     Paolo Valente <paolo.valente@linaro.org>,
+        Jens Axboe <axboe@kernel.dk>
+Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ulf.hansson@linaro.org, linus.walleij@linaro.org,
+        bfq-iosched@googlegroups.com, oleksandr@natalenko.name,
+        bottura.nicola95@gmail.com
+References: <20190624194042.38747-1-paolo.valente@linaro.org>
+From:   "Srivatsa S. Bhat" <srivatsa@csail.mit.edu>
+Message-ID: <f3e2d759-911b-f593-9ec5-b6b7a94df71c@csail.mit.edu>
+Date:   Mon, 24 Jun 2019 13:15:31 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
+ Gecko/20100101 Thunderbird/60.7.2
 MIME-Version: 1.0
-References: <20190618020307.50917-1-natechancellor@gmail.com>
-In-Reply-To: <20190618020307.50917-1-natechancellor@gmail.com>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Mon, 24 Jun 2019 13:13:52 -0700
-Message-ID: <CAKwvOd=U7GOuZm82_-pOAVaU1FejuGASETyxVw00xnnj2rPoHA@mail.gmail.com>
-Subject: Re: [PATCH] ARM: iop13xx: Simplify iop13xx_atu{e,x}_pci_status checks
-To:     Nathan Chancellor <natechancellor@gmail.com>
-Cc:     Russell King <linux@armlinux.org.uk>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        clang-built-linux <clang-built-linux@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190624194042.38747-1-paolo.valente@linaro.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 17, 2019 at 7:03 PM Nathan Chancellor
-<natechancellor@gmail.com> wrote:
->
-> clang warns:
->
-> arch/arm/mach-iop13xx/pci.c:292:7: warning: logical not is only applied
-> to the left hand side of this comparison [-Wlogical-not-parentheses]
->                 if (!iop13xx_atux_pci_status(1) == 0)
->                     ^                           ~~
-> arch/arm/mach-iop13xx/pci.c:439:7: warning: logical not is only applied
-> to the left hand side of this comparison [-Wlogical-not-parentheses]
->                 if (!iop13xx_atue_pci_status(1) == 0)
->                     ^                           ~~
->
-> !func() == 0 is equivalent to func(), which clears up this warning and
-> makes the code more readable.
+On 6/24/19 12:40 PM, Paolo Valente wrote:
+> Hi Jens,
+> this series, based against for-5.3/block, contains:
+> 1) The improvements to recover the throughput loss reported by
+>    Srivatsa [1] (first five patches)
+> 2) A preemption improvement to reduce I/O latency
+> 3) A fix of a subtle bug causing loss of control over I/O bandwidths
+> 
 
-Yep, this is more concise, thanks for the patch.
-Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
-please submit this to:
-https://www.armlinux.org.uk/developer/patches/add.php
+Thanks a lot for these patches, Paolo!
 
->
-> Link: https://github.com/ClangBuiltLinux/linux/issues/543
-> Reported-by: Nick Desaulniers <ndesaulniers@google.com>
-> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-> ---
->  arch/arm/mach-iop13xx/pci.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/arch/arm/mach-iop13xx/pci.c b/arch/arm/mach-iop13xx/pci.c
-> index 46ea06e906cc..94d30bc7bba1 100644
-> --- a/arch/arm/mach-iop13xx/pci.c
-> +++ b/arch/arm/mach-iop13xx/pci.c
-> @@ -289,7 +289,7 @@ iop13xx_atux_write_config(struct pci_bus *bus, unsigned int devfn, int where,
->
->         if (size != 4) {
->                 val = iop13xx_atux_read(addr);
-> -               if (!iop13xx_atux_pci_status(1) == 0)
-> +               if (iop13xx_atux_pci_status(1))
->                         return PCIBIOS_SUCCESSFUL;
->
->                 where = (where & 3) * 8;
-> @@ -436,7 +436,7 @@ iop13xx_atue_write_config(struct pci_bus *bus, unsigned int devfn, int where,
->
->         if (size != 4) {
->                 val = iop13xx_atue_read(addr);
-> -               if (!iop13xx_atue_pci_status(1) == 0)
-> +               if (iop13xx_atue_pci_status(1))
->                         return PCIBIOS_SUCCESSFUL;
->
->                 where = (where & 3) * 8;
-> --
-> 2.22.0
->
+Would you mind adding:
 
+Reported-by: Srivatsa S. Bhat (VMware) <srivatsa@csail.mit.edu>
+Tested-by: Srivatsa S. Bhat (VMware) <srivatsa@csail.mit.edu>
 
--- 
-Thanks,
-~Nick Desaulniers
+to the first 5 patches, as appropriate?
+
+Thank you!
+
+> 
+> [1] https://lkml.org/lkml/2019/5/17/755
+> 
+> Paolo Valente (7):
+>   block, bfq: reset inject limit when think-time state changes
+>   block, bfq: fix rq_in_driver check in bfq_update_inject_limit
+>   block, bfq: update base request service times when possible
+>   block, bfq: bring forward seek&think time update
+>   block, bfq: detect wakers and unconditionally inject their I/O
+>   block, bfq: preempt lower-weight or lower-priority queues
+>   block, bfq: re-schedule empty queues if they deserve I/O plugging
+> 
+>  block/bfq-iosched.c | 952 ++++++++++++++++++++++++++++++--------------
+>  block/bfq-iosched.h |  25 +-
+>  2 files changed, 686 insertions(+), 291 deletions(-)
+> 
+
+Regards,
+Srivatsa
+VMware Photon OS
