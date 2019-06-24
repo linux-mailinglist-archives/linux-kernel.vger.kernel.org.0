@@ -2,153 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A704F504FD
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 10:58:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CE5D95048A
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 10:28:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727991AbfFXI6L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 04:58:11 -0400
-Received: from lgeamrelo12.lge.com ([156.147.23.52]:50340 "EHLO
-        lgeamrelo11.lge.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725916AbfFXI6K (ORCPT
+        id S1727977AbfFXI2W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 04:28:22 -0400
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:39337 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726077AbfFXI2W (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 04:58:10 -0400
-X-Greylist: delayed 1799 seconds by postgrey-1.27 at vger.kernel.org; Mon, 24 Jun 2019 04:58:10 EDT
-Received: from unknown (HELO lgemrelse6q.lge.com) (156.147.1.121)
-        by 156.147.23.52 with ESMTP; 24 Jun 2019 17:28:09 +0900
-X-Original-SENDERIP: 156.147.1.121
-X-Original-MAILFROM: byungchul.park@lge.com
-Received: from unknown (HELO localhost.localdomain) (10.177.222.33)
-        by 156.147.1.121 with ESMTP; 24 Jun 2019 17:28:09 +0900
-X-Original-SENDERIP: 10.177.222.33
-X-Original-MAILFROM: byungchul.park@lge.com
-From:   Byungchul Park <byungchul.park@lge.com>
-To:     paulmck@linux.ibm.com, josh@joshtriplett.org, rostedt@goodmis.org,
-        mathieu.desnoyers@efficios.com, jiangshanlai@gmail.com,
-        joel@joelfernandes.org, rcu@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, kernel-team@lge.com
-Subject: [RFC] rcu: Warn that rcu ktheads cannot be spawned
-Date:   Mon, 24 Jun 2019 17:27:32 +0900
-Message-Id: <1561364852-5113-1-git-send-email-byungchul.park@lge.com>
-X-Mailer: git-send-email 1.9.1
+        Mon, 24 Jun 2019 04:28:22 -0400
+Received: by mail-ot1-f68.google.com with SMTP id r21so12682377otq.6
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2019 01:28:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=aOYWBoaLwTAQVgKv1wpzsu0smLvbq1hrhMNb9sUg/Dc=;
+        b=ZxUTj92wU6U7njtskwtF0VBplk2QFyERO4znO5hRAes3vk4U/+ZAR+RJoRI+jrwN6f
+         7tmfntz4sq7tD1SFggGDPT70Ui51nofjKjjXjWyCwyLjf+dZhPH22btOlR88Sjqy4LAW
+         3DgcApR0/zJi1WrAyf0SJQ/+G0+Z41ZCo3iUAbSVcGOVdQh/HcHuGrLQesvovM8/ZyYl
+         Jy7mpeVwOuTOidxAk1YV81iPgk3Lu/wtEDPmouMz44bbvMZTOKCyJW1QIBRBvQoiX4LC
+         IaESNxSDO1uDQsTqHGAmjtb/KWbrJ/vLxOmNolvST1XHvC4oRiBPBO/mZralck9/ffGP
+         No2Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=aOYWBoaLwTAQVgKv1wpzsu0smLvbq1hrhMNb9sUg/Dc=;
+        b=KH8SsJLE7W8/dhPNyG/Cgt6qrFPlCVCTNrATJgAkakUa86iDh0+y6LyFcLOLbyDzfb
+         gXBAO3NuRg0vZHXp9HPhyWrjn8PDdoC+Z4mgG+wPmT9itrD0JyNKr2YRw1l3hm6skV2o
+         pSGWC6fCkWx2X03IiUhwJtYtGMHefCtDTC53YXooda3q3M5o7WXW6rGp7PUHFvZkrd18
+         BjLU6g950hWFYPwwq1Dw8wUUNrxunufpnBB3TXnYNjw2gtn2+tNev5NM+bH9v1q+B7ac
+         27hJXKZUHdq0UWL48PinSt/OHVkehZ+Ry/WuF2hNOX7B3/HGSDMQvFoeUH4wUA3Ig6t2
+         GJxg==
+X-Gm-Message-State: APjAAAXGCerutB4pyVPdPX4PTKAZjpvRg16367SqmMdA/yJwq7sj4255
+        qS0ZdyGcSfb67ROmlJXnsrb63tLiAdcfPRHmVQtRJw==
+X-Google-Smtp-Source: APXvYqxcbcfSBUXbkJ1410ov+h25xcs0mRqAI79f3B02ZRT3jscAE0QqdTlHmovtNMgUL2grby+vNCzzhAfvaGQ0J48=
+X-Received: by 2002:a05:6830:1681:: with SMTP id k1mr66217365otr.256.1561364901506;
+ Mon, 24 Jun 2019 01:28:21 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190617113109.24689-1-colin.king@canonical.com>
+In-Reply-To: <20190617113109.24689-1-colin.king@canonical.com>
+From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Date:   Mon, 24 Jun 2019 10:28:10 +0200
+Message-ID: <CAMpxmJVxg2+2mdAQDSo5LTq=w7+ccXnwRmK+iz=4zkNhepE6pQ@mail.gmail.com>
+Subject: Re: [PATCH][next] clocksource: davinci-timer: fix memory leak of
+ clockevent on error return
+To:     Colin King <colin.king@canonical.com>
+Cc:     Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        kernel-janitors@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello rcu folks,
+pon., 17 cze 2019 o 13:31 Colin King <colin.king@canonical.com> napisa=C5=
+=82(a):
+>
+> From: Colin Ian King <colin.king@canonical.com>
+>
+> Currently when the call to request_irq falls there is a memory leak of
+> clockevent on the error return path. Fix this by kfree'ing clockevent.
+>
+> Addresses-Coverity: ("Resource leak")
+> Fixes: fe3b8194f274 ("clocksource: davinci-timer: add support for clockev=
+ents")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  drivers/clocksource/timer-davinci.c | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/drivers/clocksource/timer-davinci.c b/drivers/clocksource/ti=
+mer-davinci.c
+> index a9ca02390b66..8512f12e250a 100644
+> --- a/drivers/clocksource/timer-davinci.c
+> +++ b/drivers/clocksource/timer-davinci.c
+> @@ -300,6 +300,7 @@ int __init davinci_timer_register(struct clk *clk,
+>                          "clockevent/tim12", clockevent);
+>         if (rv) {
+>                 pr_err("Unable to request the clockevent interrupt");
+> +               kfree(clockevent);
+>                 return rv;
+>         }
+>
+> --
+> 2.20.1
+>
 
-I thought it'd better to announce it if those spawnings fail because of
-!rcu_scheduler_fully_active.
+Hi Colin,
 
-Of course, with the current code, it never happens though.
+I omitted the error checking in this driver on purpose - it doesn't
+make sense as the system won't boot without a timer.
 
-Thoughts?
-
-Thanks,
-Byungchul
-
----8<---
-From 58a33a85c70f82c406319b4752af95cf6ceb73a3 Mon Sep 17 00:00:00 2001
-From: Byungchul Park <byungchul.park@lge.com>
-Date: Mon, 24 Jun 2019 17:08:26 +0900
-Subject: [RFC] rcu: Warn that rcu ktheads cannot be spawned
-
-In case that rcu ktheads cannot be spawned due to
-!rcu_scheduler_fully_active, it'd be better to anounce it.
-
-While at it, because the return value of rcu_spawn_one_boost_kthread()
-is not used any longer, changed the return type from int to void.
-
-Signed-off-by: Byungchul Park <byungchul.park@lge.com>
----
- kernel/rcu/tree_plugin.h | 31 +++++++++++++++++++------------
- 1 file changed, 19 insertions(+), 12 deletions(-)
-
-diff --git a/kernel/rcu/tree_plugin.h b/kernel/rcu/tree_plugin.h
-index 1102765..7d74193 100644
---- a/kernel/rcu/tree_plugin.h
-+++ b/kernel/rcu/tree_plugin.h
-@@ -1131,7 +1131,7 @@ static void rcu_preempt_boost_start_gp(struct rcu_node *rnp)
-  * already exist.  We only create this kthread for preemptible RCU.
-  * Returns zero if all is well, a negated errno otherwise.
-  */
--static int rcu_spawn_one_boost_kthread(struct rcu_node *rnp)
-+static void rcu_spawn_one_boost_kthread(struct rcu_node *rnp)
- {
- 	int rnp_index = rnp - rcu_get_root();
- 	unsigned long flags;
-@@ -1139,25 +1139,24 @@ static int rcu_spawn_one_boost_kthread(struct rcu_node *rnp)
- 	struct task_struct *t;
- 
- 	if (!IS_ENABLED(CONFIG_PREEMPT_RCU))
--		return 0;
-+		return;
- 
--	if (!rcu_scheduler_fully_active || rcu_rnp_online_cpus(rnp) == 0)
--		return 0;
-+	if (rcu_rnp_online_cpus(rnp) == 0)
-+		return;
- 
- 	rcu_state.boost = 1;
- 	if (rnp->boost_kthread_task != NULL)
--		return 0;
-+		return;
- 	t = kthread_create(rcu_boost_kthread, (void *)rnp,
- 			   "rcub/%d", rnp_index);
- 	if (IS_ERR(t))
--		return PTR_ERR(t);
-+		return;
- 	raw_spin_lock_irqsave_rcu_node(rnp, flags);
- 	rnp->boost_kthread_task = t;
- 	raw_spin_unlock_irqrestore_rcu_node(rnp, flags);
- 	sp.sched_priority = kthread_prio;
- 	sched_setscheduler_nocheck(t, SCHED_FIFO, &sp);
- 	wake_up_process(t); /* get to TASK_INTERRUPTIBLE quickly. */
--	return 0;
- }
- 
- static void rcu_cpu_kthread_setup(unsigned int cpu)
-@@ -1264,8 +1263,12 @@ static void __init rcu_spawn_boost_kthreads(void)
- 		per_cpu(rcu_data.rcu_cpu_has_work, cpu) = 0;
- 	if (WARN_ONCE(smpboot_register_percpu_thread(&rcu_cpu_thread_spec), "%s: Could not start rcub kthread, OOM is now expected behavior\n", __func__))
- 		return;
-+
-+	if (WARN_ON(!rcu_scheduler_fully_active))
-+		return;
-+
- 	rcu_for_each_leaf_node(rnp)
--		(void)rcu_spawn_one_boost_kthread(rnp);
-+		rcu_spawn_one_boost_kthread(rnp);
- }
- 
- static void rcu_prepare_kthreads(int cpu)
-@@ -1273,9 +1276,11 @@ static void rcu_prepare_kthreads(int cpu)
- 	struct rcu_data *rdp = per_cpu_ptr(&rcu_data, cpu);
- 	struct rcu_node *rnp = rdp->mynode;
- 
-+	if (WARN_ON(!rcu_scheduler_fully_active))
-+		return;
-+
- 	/* Fire up the incoming CPU's kthread and leaf rcu_node kthread. */
--	if (rcu_scheduler_fully_active)
--		(void)rcu_spawn_one_boost_kthread(rnp);
-+	rcu_spawn_one_boost_kthread(rnp);
- }
- 
- #else /* #ifdef CONFIG_RCU_BOOST */
-@@ -2198,8 +2203,10 @@ static void rcu_spawn_one_nocb_kthread(int cpu)
-  */
- static void rcu_spawn_cpu_nocb_kthread(int cpu)
- {
--	if (rcu_scheduler_fully_active)
--		rcu_spawn_one_nocb_kthread(cpu);
-+	if (WARN_ON(!rcu_scheduler_fully_active))
-+		return;
-+
-+	rcu_spawn_one_nocb_kthread(cpu);
- }
- 
- /*
--- 
-1.9.1
-
+Bart
