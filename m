@@ -2,149 +2,303 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9467B518F7
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 18:49:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DF86A518EF
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 18:46:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730074AbfFXQtJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 12:49:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44236 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727715AbfFXQtJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 12:49:09 -0400
-Received: from localhost (unknown [106.201.35.23])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4D8D1204EC;
-        Mon, 24 Jun 2019 16:49:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561394947;
-        bh=/NHJfqWeCqb+Lp1/50yhyIeXAOct+MNKza0IWDRx7mQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=rnTD54Rb4s3lVxiO5SzU0ZulEwZcIBpuL1tTEC9wRmVu13q+75fb2w+vR4dIo/U5s
-         V0MZwRq0JJrXn2EQr0NG+C7+dEIAQSA67UxQBP2GdwiIEQRLCbrISQsgGu3tbJOniy
-         ql3Oen9IgZxiIULiGacGWLru4UV9HKaSrt+1zurI=
-Date:   Mon, 24 Jun 2019 22:15:56 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Peng Ma <peng.ma@nxp.com>
-Cc:     dan.j.williams@intel.com, leoyang.li@nxp.com,
-        linux-kernel@vger.kernel.org, dmaengine@vger.kernel.org
-Subject: Re: [V4 2/2] dmaengine: fsl-dpaa2-qdma: Add NXP dpaa2 qDMA
- controller driver for Layerscape SoCs
-Message-ID: <20190624164556.GD2962@vkoul-mobl>
-References: <20190613101341.21169-1-peng.ma@nxp.com>
- <20190613101341.21169-2-peng.ma@nxp.com>
+        id S1732199AbfFXQqV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 12:46:21 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:45256 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727847AbfFXQqU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Jun 2019 12:46:20 -0400
+Received: by mail-pf1-f196.google.com with SMTP id r1so7828763pfq.12;
+        Mon, 24 Jun 2019 09:46:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=rk32yi4TS8gcxPCzX8v7QY6cOglFHE8dF0I29LG2lnc=;
+        b=THWg/XKi4hT+eXURO6zCxBWh5cSpNTHmniF8SOoFsAEqFw3MYLE75X73Ad7B0Uoa/u
+         Js0H1vA9IBcQT7Y2zHy34pz1g5j7v/pxeblkUMN1Rk1Xz1mPZ6gmwgJcNTFcmTXPsF08
+         SrSoJKUdi3xus6naqN3TllR7GRAsM4YE9Be/qcoLjROxw2xVWemXxpRXJ/fx3Yf90u1U
+         DhvS26rMMyGG74u6F2J/dT609qVBy/gKV5dk5hA9Rsm0gJVfmuByPHgw2qcLYBZUnE1x
+         3KNGBWUu1sus3xLGGP5KtbBKJQ8PZnNvr48Gb77b8xwc8IJUi+KjhZ0uIdZ9udXpVBls
+         p3QQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=rk32yi4TS8gcxPCzX8v7QY6cOglFHE8dF0I29LG2lnc=;
+        b=obBZZvmdXJkTWnoEI5vC0QNde4bIrk/KL7tpxd1f7ZhmhbHVzr33bTefDNSJHW1RqN
+         5QDr1uPMqZwNEZ5qxlSzBhdXfyFy013Y7szBKcww8rhxYJd7eoq9I7cXyEVArprWSYGC
+         T//S9JMH8G0oyo6flSdkhO8iAfRp+2Gk4siS2bE6bSi/CXOV+Esh2cWbBxl5S7y4XqSA
+         9BJ9TZcfZ9Hgc/fLSeH2G+fsJW7M77hCAlgdaWJa3qFZYyJVWHEA0M4ariia9zt7n33V
+         FlZ+GITTpFomfyrd1PzvDbccRYwHX8BnBM1TJwLMB5jMOqgjy+aeSK+xOgAYSe2gWyAv
+         mJSg==
+X-Gm-Message-State: APjAAAUlzW+cCmqheGilj+A/RlRZ2IbH+oJy8CLyBr8lSWCBvkrgUvmX
+        M5EIGLv2iRzZIEOHR4Kiks0=
+X-Google-Smtp-Source: APXvYqxi3TsEmcjsEdXwtgJuHHbQfba3PGZKeJ2cIWYwMjOqJarwHX0qFk08wKvYtbaSkUp58mDLAA==
+X-Received: by 2002:a17:90a:c504:: with SMTP id k4mr25698395pjt.104.1561394778617;
+        Mon, 24 Jun 2019 09:46:18 -0700 (PDT)
+Received: from ?IPv6:240b:10:2720:5510:a182:288:3ffa:432a? ([240b:10:2720:5510:a182:288:3ffa:432a])
+        by smtp.gmail.com with ESMTPSA id y22sm15041975pgj.38.2019.06.24.09.46.15
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 24 Jun 2019 09:46:17 -0700 (PDT)
+Subject: Re: [PATCH v7 1/5] mtd: cfi_cmdset_0002: Add support for polling
+ status register
+To:     Vignesh Raghavendra <vigneshr@ti.com>,
+        Boris Brezillon <bbrezillon@kernel.org>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Rob Herring <robh+dt@kernel.org>
+Cc:     devicetree@vger.kernel.org,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Mason Yang <masonccyang@mxic.com.tw>,
+        linux-arm-kernel@lists.infradead.org
+References: <20190620172250.9102-1-vigneshr@ti.com>
+ <20190620172250.9102-2-vigneshr@ti.com>
+From:   Tokunori Ikegami <ikegami.t@gmail.com>
+Message-ID: <571484c7-0cf4-6a7d-6d7f-375cfb13ce8b@gmail.com>
+Date:   Tue, 25 Jun 2019 01:46:13 +0900
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190613101341.21169-2-peng.ma@nxp.com>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+In-Reply-To: <20190620172250.9102-2-vigneshr@ti.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 13-06-19, 10:13, Peng Ma wrote:
-> DPPA2(Data Path Acceleration Architecture 2) qDMA
-> supports channel virtualization by allowing DMA
 
-typo virtualization
-
-> jobs to be enqueued into different frame queues.
-> Core can initiate a DMA transaction by preparing a frame
-> descriptor(FD) for each DMA job and enqueuing this job to
-> a frame queue. through a hardware portal. The qDMA
-              ^^^
-why this full stop?
-
-> +static struct dpaa2_qdma_comp *
-> +dpaa2_qdma_request_desc(struct dpaa2_qdma_chan *dpaa2_chan)
+On 2019/06/21 2:22, Vignesh Raghavendra wrote:
+> HyperFlash devices are compliant with CFI AMD/Fujitsu Extended Command
+> Set (0x0002) for flash operations, therefore
+> drivers/mtd/chips/cfi_cmdset_0002.c can be used as is. But these devices
+> do not support DQ polling method of determining chip ready/good status.
+> These flashes provide Status Register whose bits can be polled to know
+> status of flash operation.
+>
+> Cypress HyperFlash datasheet here[1], talks about CFI Amd/Fujitsu
+> Extended Query version 1.5. Bit 0 of "Software Features supported" field
+> of CFI Primary Vendor-Specific Extended Query table indicates
+> presence/absence of status register and Bit 1 indicates whether or not
+> DQ polling is supported. Using these bits, its possible to determine
+> whether flash supports DQ polling or need to use Status Register.
+>
+> Add support for polling Status Register to know device ready/status of
+> erase/write operations when DQ polling is not supported.
+> Print error messages on erase/program failure by looking at related
+> Status Register bits.
+>
+> [1] https://www.cypress.com/file/213346/download
+>
+> Signed-off-by: Vignesh Raghavendra <vigneshr@ti.com>
+> ---
+> v7: No change
+>
+>   drivers/mtd/chips/cfi_cmdset_0002.c | 90 +++++++++++++++++++++++++++++
+>   include/linux/mtd/cfi.h             |  5 ++
+>   2 files changed, 95 insertions(+)
+>
+> diff --git a/drivers/mtd/chips/cfi_cmdset_0002.c b/drivers/mtd/chips/cfi_cmdset_0002.c
+> index c8fa5906bdf9..0f571f162e3b 100644
+> --- a/drivers/mtd/chips/cfi_cmdset_0002.c
+> +++ b/drivers/mtd/chips/cfi_cmdset_0002.c
+> @@ -49,6 +49,16 @@
+>   #define SST49LF008A		0x005a
+>   #define AT49BV6416		0x00d6
+>   
+> +/*
+> + * Status Register bit description. Used by flash devices that don't
+> + * support DQ polling (e.g. HyperFlash)
+> + */
+> +#define CFI_SR_DRB		BIT(7)
+> +#define CFI_SR_ESB		BIT(5)
+> +#define CFI_SR_PSB		BIT(4)
+> +#define CFI_SR_WBASB		BIT(3)
+> +#define CFI_SR_SLSB		BIT(1)
+> +
+>   static int cfi_amdstd_read (struct mtd_info *, loff_t, size_t, size_t *, u_char *);
+>   static int cfi_amdstd_write_words(struct mtd_info *, loff_t, size_t, size_t *, const u_char *);
+>   static int cfi_amdstd_write_buffers(struct mtd_info *, loff_t, size_t, size_t *, const u_char *);
+> @@ -97,6 +107,48 @@ static struct mtd_chip_driver cfi_amdstd_chipdrv = {
+>   	.module		= THIS_MODULE
+>   };
+>   
+> +/*
+> + * Use status register to poll for Erase/write completion when DQ is not
+> + * supported. This is indicated by Bit[1:0] of SoftwareFeatures field in
+> + * CFI Primary Vendor-Specific Extended Query table 1.5
+> + */
+> +static int cfi_use_status_reg(struct cfi_private *cfi)
 > +{
-> +	struct dpaa2_qdma_comp *comp_temp = NULL;
-> +	unsigned long flags;
+> +	struct cfi_pri_amdstd *extp = cfi->cmdset_priv;
 > +
-> +	spin_lock_irqsave(&dpaa2_chan->queue_lock, flags);
-> +	if (list_empty(&dpaa2_chan->comp_free)) {
-> +		spin_unlock_irqrestore(&dpaa2_chan->queue_lock, flags);
-> +		comp_temp = kzalloc(sizeof(*comp_temp), GFP_NOWAIT);
-> +		if (!comp_temp)
-> +			goto err;
-> +		comp_temp->fd_virt_addr =
-> +			dma_pool_alloc(dpaa2_chan->fd_pool, GFP_NOWAIT,
-> +				       &comp_temp->fd_bus_addr);
-> +		if (!comp_temp->fd_virt_addr)
-> +			goto err_comp;
+> +	return extp->MinorVersion >= '5' &&
+> +		(extp->SoftwareFeatures & 0x3) == 0x1;
+
+Seems to be better to use defined values instead of 0x3 and 0x1 hard 
+coded values.
+
+> +}
 > +
-> +		comp_temp->fl_virt_addr =
-> +			dma_pool_alloc(dpaa2_chan->fl_pool, GFP_NOWAIT,
-> +				       &comp_temp->fl_bus_addr);
-> +		if (!comp_temp->fl_virt_addr)
-> +			goto err_fd_virt;
+> +static void cfi_check_err_status(struct map_info *map, unsigned long adr)
+> +{
+> +	struct cfi_private *cfi = map->fldrv_priv;
+> +	map_word status;
 > +
-> +		comp_temp->desc_virt_addr =
-> +			dma_pool_alloc(dpaa2_chan->sdd_pool, GFP_NOWAIT,
-> +				       &comp_temp->desc_bus_addr);
-> +		if (!comp_temp->desc_virt_addr)
-> +			goto err_fl_virt;
+> +	if (!cfi_use_status_reg(cfi))
+> +		return;
 > +
-> +		comp_temp->qchan = dpaa2_chan;
-> +		return comp_temp;
+> +	cfi_send_gen_cmd(0x70, cfi->addr_unlock1, 0, map, cfi,
+
+Is it not necessary to set chip->start as the base parameter for 
+cfi_send_gen_cmd()?
+
+> +			 cfi->device_type, NULL);
+> +	status = map_read(map, adr);
+> +
+> +	if (map_word_bitsset(map, status, CMD(0x3a))) {
+> +		unsigned long chipstatus = MERGESTATUS(status);
+> +
+> +		if (chipstatus & CFI_SR_ESB)
+> +			pr_err("%s erase operation failed, status %lx\n",
+> +			       map->name, chipstatus);
+> +		if (chipstatus & CFI_SR_PSB)
+> +			pr_err("%s program operation failed, status %lx\n",
+> +			       map->name, chipstatus);
+> +		if (chipstatus & CFI_SR_WBASB)
+> +			pr_err("%s buffer program command aborted, status %lx\n",
+> +			       map->name, chipstatus);
+> +		if (chipstatus & CFI_SR_SLSB)
+> +			pr_err("%s sector write protected, status %lx\n",
+> +			       map->name, chipstatus);
+> +	}
+> +}
+>   
+>   /* #define DEBUG_CFI_FEATURES */
+>   
+> @@ -744,8 +796,22 @@ static struct mtd_info *cfi_amdstd_setup(struct mtd_info *mtd)
+>    */
+>   static int __xipram chip_ready(struct map_info *map, unsigned long addr)
+>   {
+> +	struct cfi_private *cfi = map->fldrv_priv;
+>   	map_word d, t;
+>   
+> +	if (cfi_use_status_reg(cfi)) {
+> +		map_word ready = CMD(CFI_SR_DRB);
+> +		/*
+> +		 * For chips that support status register, check device
+> +		 * ready bit
+> +		 */
+> +		cfi_send_gen_cmd(0x70, cfi->addr_unlock1, 0, map, cfi,
+
+Same comment as cfi_check_err_status() about the base address.
+
+> +				 cfi->device_type, NULL);
+> +		d = map_read(map, addr);
+> +
+> +		return map_word_andequal(map, d, ready, ready);
 > +	}
 > +
-> +	comp_temp = list_first_entry(&dpaa2_chan->comp_free,
-> +				     struct dpaa2_qdma_comp, list);
-> +	list_del(&comp_temp->list);
-> +	spin_unlock_irqrestore(&dpaa2_chan->queue_lock, flags);
-> +
-> +	comp_temp->qchan = dpaa2_chan;
-> +
-> +	return comp_temp;
-> +
-> +err_fl_virt:
+>   	d = map_read(map, addr);
+>   	t = map_read(map, addr);
+>   
+> @@ -769,8 +835,27 @@ static int __xipram chip_ready(struct map_info *map, unsigned long addr)
+>    */
+>   static int __xipram chip_good(struct map_info *map, unsigned long addr, map_word expected)
+>   {
+> +	struct cfi_private *cfi = map->fldrv_priv;
+>   	map_word oldd, curd;
+>   
+> +	if (cfi_use_status_reg(cfi)) {
+> +		map_word ready = CMD(CFI_SR_DRB);
+> +		map_word err = CMD(CFI_SR_PSB | CFI_SR_ESB);
 
-no err logs? how will you know what went wrong?
+Is it not necessary to check CFI_SR_WBASB and CFI_SR_SLSB that are 
+checked by cfi_check_err_status()?
 
-> +static enum
-> +dma_status dpaa2_qdma_tx_status(struct dma_chan *chan,
-> +				dma_cookie_t cookie,
-> +				struct dma_tx_state *txstate)
-> +{
-> +	return dma_cookie_status(chan, cookie, txstate);
+> +		/*
+> +		 * For chips that support status register, check device
+> +		 * ready bit and Erase/Program status bit to know if
+> +		 * operation succeeded.
+> +		 */
+> +		cfi_send_gen_cmd(0x70, cfi->addr_unlock1, 0, map, cfi,
 
-why not set dma_cookie_status as this callback?
+Same as cfi_check_err_status() and chip_ready() about the base address.
 
-> +static int __cold dpaa2_qdma_setup(struct fsl_mc_device *ls_dev)
-> +{
-> +	struct dpaa2_qdma_priv_per_prio *ppriv;
-> +	struct device *dev = &ls_dev->dev;
-> +	struct dpaa2_qdma_priv *priv;
-> +	u8 prio_def = DPDMAI_PRIO_NUM;
-> +	int err = -EINVAL;
-> +	int i;
+> +				 cfi->device_type, NULL);
+> +		curd = map_read(map, addr);
 > +
-> +	priv = dev_get_drvdata(dev);
+> +		if (map_word_andequal(map, curd, ready, ready))
+> +			return !map_word_bitsset(map, curd, err);
 > +
-> +	priv->dev = dev;
-> +	priv->dpqdma_id = ls_dev->obj_desc.id;
-> +
-> +	/* Get the handle for the DPDMAI this interface is associate with */
-> +	err = dpdmai_open(priv->mc_io, 0, priv->dpqdma_id, &ls_dev->mc_handle);
-> +	if (err) {
-> +		dev_err(dev, "dpdmai_open() failed\n");
-> +		return err;
+> +		return 0;
 > +	}
-> +	dev_info(dev, "Opened dpdmai object successfully\n");
-
-this is noise in kernel, consider debug level
-
-> +static int __cold dpaa2_dpdmai_bind(struct dpaa2_qdma_priv *priv)
-> +{
-> +	int err;
-> +	int i, num;
-> +	struct device *dev = priv->dev;
-> +	struct dpaa2_qdma_priv_per_prio *ppriv;
-> +	struct dpdmai_rx_queue_cfg rx_queue_cfg;
-> +	struct fsl_mc_device *ls_dev = to_fsl_mc_device(dev);
-
-the order is reverse than used in other fn, please stick to one style!
--- 
-~Vinod
+> +
+>   	oldd = map_read(map, addr);
+>   	curd = map_read(map, addr);
+>   
+> @@ -1644,6 +1729,7 @@ static int __xipram do_write_oneword(struct map_info *map, struct flchip *chip,
+>   	/* Did we succeed? */
+>   	if (!chip_good(map, adr, datum)) {
+>   		/* reset on all failures. */
+> +		cfi_check_err_status(map, adr);
+>   		map_write(map, CMD(0xF0), chip->start);
+>   		/* FIXME - should have reset delay before continuing */
+>   
+> @@ -1901,6 +1987,7 @@ static int __xipram do_write_buffer(struct map_info *map, struct flchip *chip,
+>   	 * See e.g.
+>   	 * http://www.spansion.com/Support/Application%20Notes/MirrorBit_Write_Buffer_Prog_Page_Buffer_Read_AN.pdf
+>   	 */
+> +	cfi_check_err_status(map, adr);
+>   	cfi_send_gen_cmd(0xAA, cfi->addr_unlock1, chip->start, map, cfi,
+>   			 cfi->device_type, NULL);
+>   	cfi_send_gen_cmd(0x55, cfi->addr_unlock2, chip->start, map, cfi,
+> @@ -2107,6 +2194,7 @@ static int do_panic_write_oneword(struct map_info *map, struct flchip *chip,
+>   
+>   	if (!chip_good(map, adr, datum)) {
+>   		/* reset on all failures. */
+> +		cfi_check_err_status(map, adr);
+>   		map_write(map, CMD(0xF0), chip->start);
+>   		/* FIXME - should have reset delay before continuing */
+>   
+> @@ -2316,6 +2404,7 @@ static int __xipram do_erase_chip(struct map_info *map, struct flchip *chip)
+>   	/* Did we succeed? */
+>   	if (ret) {
+>   		/* reset on all failures. */
+> +		cfi_check_err_status(map, adr);
+>   		map_write(map, CMD(0xF0), chip->start);
+>   		/* FIXME - should have reset delay before continuing */
+>   
+> @@ -2412,6 +2501,7 @@ static int __xipram do_erase_oneblock(struct map_info *map, struct flchip *chip,
+>   	/* Did we succeed? */
+>   	if (ret) {
+>   		/* reset on all failures. */
+> +		cfi_check_err_status(map, adr);
+>   		map_write(map, CMD(0xF0), chip->start);
+>   		/* FIXME - should have reset delay before continuing */
+>   
+> diff --git a/include/linux/mtd/cfi.h b/include/linux/mtd/cfi.h
+> index 208c87cf2e3e..b50416169049 100644
+> --- a/include/linux/mtd/cfi.h
+> +++ b/include/linux/mtd/cfi.h
+> @@ -219,6 +219,11 @@ struct cfi_pri_amdstd {
+>   	uint8_t  VppMin;
+>   	uint8_t  VppMax;
+>   	uint8_t  TopBottom;
+> +	/* Below field are added from version 1.5 */
+> +	uint8_t  ProgramSuspend;
+> +	uint8_t  UnlockBypass;
+> +	uint8_t  SecureSiliconSector;
+> +	uint8_t  SoftwareFeatures;
+>   } __packed;
+>   
+>   /* Vendor-Specific PRI for Atmel chips (command set 0x0002) */
