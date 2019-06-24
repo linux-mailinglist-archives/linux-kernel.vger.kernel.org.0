@@ -2,103 +2,135 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E0BF251009
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 17:12:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 063A4510D8
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 17:41:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730789AbfFXPMX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 11:12:23 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:34159 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730435AbfFXPMV (ORCPT
+        id S1731267AbfFXPk6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 11:40:58 -0400
+Received: from mx0a-00128a01.pphosted.com ([148.163.135.77]:41362 "EHLO
+        mx0a-00128a01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726551AbfFXPk6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 11:12:21 -0400
-Received: by mail-io1-f68.google.com with SMTP id k8so2397645iot.1
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2019 08:12:21 -0700 (PDT)
+        Mon, 24 Jun 2019 11:40:58 -0400
+X-Greylist: delayed 1649 seconds by postgrey-1.27 at vger.kernel.org; Mon, 24 Jun 2019 11:40:57 EDT
+Received: from pps.filterd (m0167089.ppops.net [127.0.0.1])
+        by mx0a-00128a01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5OEw7ec031348;
+        Mon, 24 Jun 2019 11:12:52 -0400
+Received: from nam01-bn3-obe.outbound.protection.outlook.com (mail-bn3nam01lp2053.outbound.protection.outlook.com [104.47.33.53])
+        by mx0a-00128a01.pphosted.com with ESMTP id 2t9h86dvcr-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 24 Jun 2019 11:12:52 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=i6RP5sEIUQVe7K2Xxca+vDWdrwxXZnb7gXo4fjhFOrI=;
-        b=jvgv4lXqQaoTaUCCgSqFt7dA1UG8exJvGDZ8+KtKxJ/F1Y3nXoRjm3mDxBFqek2yPa
-         6+vxZZK7y20j65gwxGP1TZgLx/GKaAMRMeotexYhGiKkgr37FscTGeHpnWfkup4MQBr7
-         kVxvBPx8VMwMyBZCYCSMzStUhOKfpSYUOOQNP1hG5P9YNsNt6Hqx3aziwKkU0BVMlqW5
-         XwuM0TSzS42G1XJIYxd1+xd1q7vW9P7SovoLT4e4ilPznQYjhpoSBkE7NXsIzj1AHE0l
-         W1m+hPlUxfwPUS1qbPsmfFXhOaK94yklTADYhpuaQtZALjOAMeIsSx6O8N77qkEgoEW0
-         dCVw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=i6RP5sEIUQVe7K2Xxca+vDWdrwxXZnb7gXo4fjhFOrI=;
-        b=bBmcy4UJHrIQ8xq/bh1JaKIjcNgzpyEdRROaSenX+Kpjz7bGXHK7L47Qlpm8dui1/C
-         mJT+lS3/8tejchL2aW5Tl45yYm9nIl/hQprS1BXBAhpZxhD0Tw9AhutTujj+Q3oh/ynL
-         dm46+NGhQDfXh8XsETHxBkk405Lu14tT6qSU40UhKzmXNpP8+RibeARjTTLNTK0p+yoc
-         Y+3bLf471VNOkxilw3JDT73eu/60p1rj6VjIqvNP8apAMU565uC/8XuCgCWNvxfXqyel
-         fHfSCGyjVWbktNUbZyY75AdDtZRGW1sUW2vGMlot2NpmUw2ODI9pOOSULm/7gVtHY2Ks
-         DI0A==
-X-Gm-Message-State: APjAAAX4UyxQtTt2hOKL89eA1lJUryMZELzkdwBbYpQcstDgORr/oA8r
-        x77/10h9DENe6th1KY852HUr0H+jq9IUmA==
-X-Google-Smtp-Source: APXvYqxhCdDitnoCJq15metdrBXJXKIUUa7soKbJdiR2x1Uo/Def9XZLDCqSPhNc0JhCX6SVb8UL6w==
-X-Received: by 2002:a02:2a8f:: with SMTP id w137mr127594244jaw.50.1561389140370;
-        Mon, 24 Jun 2019 08:12:20 -0700 (PDT)
-Received: from google.com ([2620:15c:183:200:855f:8919:84a7:4794])
-        by smtp.gmail.com with ESMTPSA id f17sm25760614ioc.2.2019.06.24.08.12.19
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 24 Jun 2019 08:12:19 -0700 (PDT)
-Date:   Mon, 24 Jun 2019 09:12:17 -0600
-From:   Ross Zwisler <zwisler@google.com>
-To:     kbuild test robot <lkp@intel.com>
-Cc:     Ross Zwisler <zwisler@chromium.org>, kbuild-all@01.org,
-        linux-kernel@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Jan Kara <jack@suse.com>, linux-ext4@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        Fletcher Woodruff <fletcherw@google.com>,
-        Justin TerAvest <teravest@google.com>, Jan Kara <jack@suse.cz>,
-        stable@vger.kernel.org
-Subject: Re: [PATCH v2 3/3] ext4: use jbd2_inode dirty range scoping
-Message-ID: <20190624151217.GA249955@google.com>
-References: <20190620151839.195506-4-zwisler@google.com>
- <201906240244.12r4nktI%lkp@intel.com>
+ d=analog.onmicrosoft.com; s=selector1-analog-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=GfbZVwc58P46CMiOnoHvfUklNQgir3M9/ioiILpOHhc=;
+ b=toPvrm4aD70oSS21YABqzAKXmNMWjvo2crmWL8Sysv31L25v4jxmSa23cbIM7uez7ahS2KxYvYhEm2H3y10XS61Q/bRMI0Xl/2i3A3hMpZ5QcEWmAnodiabobODSrv+QcDbeGEvUSayA0mrC1e4WoZ3F+EcX2g/pWUkLOjexJ+c=
+Received: from CY4PR03CA0106.namprd03.prod.outlook.com (2603:10b6:910:4d::47)
+ by BN3PR03MB2258.namprd03.prod.outlook.com (2a01:111:e400:7bbf::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2008.15; Mon, 24 Jun
+ 2019 15:12:50 +0000
+Received: from BL2NAM02FT038.eop-nam02.prod.protection.outlook.com
+ (2a01:111:f400:7e46::204) by CY4PR03CA0106.outlook.office365.com
+ (2603:10b6:910:4d::47) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2008.16 via Frontend
+ Transport; Mon, 24 Jun 2019 15:12:49 +0000
+Received-SPF: Pass (protection.outlook.com: domain of analog.com designates
+ 137.71.25.55 as permitted sender) receiver=protection.outlook.com;
+ client-ip=137.71.25.55; helo=nwd2mta1.analog.com;
+Received: from nwd2mta1.analog.com (137.71.25.55) by
+ BL2NAM02FT038.mail.protection.outlook.com (10.152.77.25) with Microsoft SMTP
+ Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.1987.11
+ via Frontend Transport; Mon, 24 Jun 2019 15:12:49 +0000
+Received: from NWD2HUBCAS7.ad.analog.com (nwd2hubcas7.ad.analog.com [10.64.69.107])
+        by nwd2mta1.analog.com (8.13.8/8.13.8) with ESMTP id x5OFCj1f004362
+        (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=OK);
+        Mon, 24 Jun 2019 08:12:45 -0700
+Received: from linux.ad.analog.com (10.32.226.41) by NWD2HUBCAS7.ad.analog.com
+ (10.64.69.107) with Microsoft SMTP Server id 14.3.408.0; Mon, 24 Jun 2019
+ 11:12:45 -0400
+From:   Stefan Popa <stefan.popa@analog.com>
+To:     <jic23@kernel.org>, <robh+dt@kernel.org>
+CC:     <mark.rutland@arm.com>, <knaack.h@gmx.de>, <lars@metafoo.de>,
+        <pmeerw@pmeerw.net>, <Michael.Hennerich@analog.com>,
+        <gregkh@linuxfoundation.org>, <linux-iio@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <stefan.popa@analog.com>
+Subject: [PATCH 3/4] dt-bindings: iio: frequency: Add ADF4372 PLL documentation
+Date:   Mon, 24 Jun 2019 18:12:42 +0300
+Message-ID: <1561389162-26291-1-git-send-email-stefan.popa@analog.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <201906240244.12r4nktI%lkp@intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+X-ADIRoutedOnPrem: True
+X-EOPAttributedMessage: 0
+X-MS-Office365-Filtering-HT: Tenant
+X-Forefront-Antispam-Report: CIP:137.71.25.55;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(39860400002)(396003)(136003)(376002)(346002)(2980300002)(199004)(189003)(8676002)(50466002)(8936002)(48376002)(72206003)(7696005)(6306002)(50226002)(51416003)(966005)(356004)(6666004)(77096007)(316002)(16586007)(47776003)(5660300002)(186003)(26005)(486006)(53376002)(107886003)(7636002)(305945005)(476003)(126002)(2906002)(246002)(426003)(44832011)(7416002)(2616005)(110136005)(54906003)(36756003)(4326008)(70586007)(70206006)(336012)(106002)(478600001);DIR:OUT;SFP:1101;SCL:1;SRVR:BN3PR03MB2258;H:nwd2mta1.analog.com;FPR:;SPF:Pass;LANG:en;PTR:nwd2mail10.analog.com;A:1;MX:1;
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 58e8e926-f94d-4c40-57d0-08d6f8b66bef
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(4709080)(1401327)(2017052603328);SRVR:BN3PR03MB2258;
+X-MS-TrafficTypeDiagnostic: BN3PR03MB2258:
+X-MS-Exchange-PUrlCount: 4
+X-Microsoft-Antispam-PRVS: <BN3PR03MB225856D795DE6AA853CACDDD9DE00@BN3PR03MB2258.namprd03.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:1079;
+X-Forefront-PRVS: 007814487B
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam-Message-Info: eQunBQt36pVOkQIuJ9889Oqz04yldQPJbMy/pNSGCvLxb0uuHYsbxaaWskVHasM2oK2mt3kLmFmUsIbZJoKHqzlpijuwRWEKscfkktgVNEH5YjpgiX2vA5Vn6ECYHUGVXP7HeFCmJtOcN/hg/35URZlBAl7Hw4yTw0dM1z+KJpSg5RVjabV6LQ0VaT7c0XD3PTFd0VpGDSibCD/FWyA9bGRbYCYIM3m0sULXBXpj5Q0zLlFZ34XXAk13o485mgD0J2AOFX6L7XkLFYESq8cAEWxSt1ToW/nbSgABKmV5kGvZRS0U85KsTHYGbVvlp4LHZ5UAyuVkpD4BbvJgqSry2HA3L2xKIApHLL7IwmQVSQw45HwduMsVfVVw/WvGUSq4WIyvSBH3EBBeIZWBvAuahRmgvHB0vQzRQJoqrhs8Qd8=
+X-OriginatorOrg: analog.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Jun 2019 15:12:49.5945
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 58e8e926-f94d-4c40-57d0-08d6f8b66bef
+X-MS-Exchange-CrossTenant-Id: eaa689b4-8f87-40e0-9c6f-7228de4d754a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=eaa689b4-8f87-40e0-9c6f-7228de4d754a;Ip=[137.71.25.55];Helo=[nwd2mta1.analog.com]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN3PR03MB2258
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-24_10:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1906240122
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 24, 2019 at 02:54:49AM +0800, kbuild test robot wrote:
-> Hi Ross,
-> 
-> Thank you for the patch! Yet something to improve:
-> 
-> [auto build test ERROR on linus/master]
-> [also build test ERROR on v5.2-rc6 next-20190621]
-> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
-> 
-> url:    https://github.com/0day-ci/linux/commits/Ross-Zwisler/mm-add-filemap_fdatawait_range_keep_errors/20190623-181603
-> config: x86_64-rhel-7.6 (attached as .config)
-> compiler: gcc-7 (Debian 7.3.0-1) 7.3.0
-> reproduce:
->         # save the attached .config to linux build tree
->         make ARCH=x86_64 
-> 
-> If you fix the issue, kindly add following tag
-> Reported-by: kbuild test robot <lkp@intel.com>
-> 
-> All errors (new ones prefixed by >>):
-> 
-> >> ERROR: "jbd2_journal_inode_ranged_wait" [fs/ext4/ext4.ko] undefined!
-> >> ERROR: "jbd2_journal_inode_ranged_write" [fs/ext4/ext4.ko] undefined!
+Document support for ADF4372 SPI Wideband Synthesizer.
 
-Yep, this is caused by the lack of EXPORT_SYMBOL() calls for these two new
-jbd2 functions.  Ted also pointed this out and fixed this up when he was
-committing:
+Signed-off-by: Stefan Popa <stefan.popa@analog.com>
+---
+ Documentation/devicetree/bindings/iio/frequency/adf4371.yaml | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-https://patchwork.kernel.org/patch/11007139/#22717091
+diff --git a/Documentation/devicetree/bindings/iio/frequency/adf4371.yaml b/Documentation/devicetree/bindings/iio/frequency/adf4371.yaml
+index 8a2a8f6..a268a9d 100644
+--- a/Documentation/devicetree/bindings/iio/frequency/adf4371.yaml
++++ b/Documentation/devicetree/bindings/iio/frequency/adf4371.yaml
+@@ -4,19 +4,21 @@
+ $id: http://devicetree.org/schemas/iio/frequency/adf4371.yaml#
+ $schema: http://devicetree.org/meta-schemas/core.yaml#
+ 
+-title: Analog Devices ADF4371 Wideband Synthesizer
++title: Analog Devices ADF4371/ADF4372 Wideband Synthesizers
+ 
+ maintainers:
+   - Popa Stefan <stefan.popa@analog.com>
+ 
+ description: |
+-  Analog Devices ADF4371 SPI Wideband Synthesizer
++  Analog Devices ADF4371/ADF4372 SPI Wideband Synthesizers
+   https://www.analog.com/media/en/technical-documentation/data-sheets/adf4371.pdf
++  https://www.analog.com/media/en/technical-documentation/data-sheets/adf4372.pdf
+ 
+ properties:
+   compatible:
+     enum:
+       - adi,adf4371
++      - adi,adf4372
+ 
+   reg:
+     maxItems: 1
+-- 
+2.7.4
 
-Thank you for the report!
