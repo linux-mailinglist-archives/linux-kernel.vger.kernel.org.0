@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D84E151DB3
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 23:59:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BB41851DA1
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 23:59:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732747AbfFXV7O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 17:59:14 -0400
-Received: from mail-io1-f65.google.com ([209.85.166.65]:44878 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732677AbfFXV7I (ORCPT
+        id S1732764AbfFXV7P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 17:59:15 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:33337 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732696AbfFXV7K (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 17:59:08 -0400
-Received: by mail-io1-f65.google.com with SMTP id s7so374640iob.11;
-        Mon, 24 Jun 2019 14:59:07 -0700 (PDT)
+        Mon, 24 Jun 2019 17:59:10 -0400
+Received: by mail-io1-f66.google.com with SMTP id u13so1058802iop.0;
+        Mon, 24 Jun 2019 14:59:09 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=mwUOQlLuJ3XhE9Np0zOsuYiPvKJ0VZzFo8+UtVJgieA=;
-        b=UTumO9WU8419zkGWlABUrSTnhrwtc9plOpfDCAzGzR/dFfP1g0UG/PYP/jqnyJWteV
-         4YRn1+lK2ZGOEjLbtn4uGHUQdyd9TJT39wcNPDTv9qOismnFtWJ2/7vLOPLynC2MWgjX
-         V5VL/RBWs0QHLstUUheyS7kJyWJHsHVb9MTME3lVUpqAnuqqBk8Zhj0XyBzjKyJRO6NY
-         2vi3Fn+GUABmhU2h0L3X/Mq1r5N7U4bLNNInm0FFTIKsz/TIGSzG18tP7Arl4ROpbnjL
-         Z80qqTTTppCaAEle5UhFXwfLdoRtgm2NNd53faxBQYCTsPi9iShA00EXBjUYW7paPUDk
-         IsEQ==
-X-Gm-Message-State: APjAAAWtXM+bZPlB1uk+Sv/DUnz9Av8JxFsd45LbrJ5DG15KQ/rvQojq
-        yk8u1dgM6zeIkxTcwpamHw==
-X-Google-Smtp-Source: APXvYqyxXnT1JtCb0RwdoHBwtx5v26EGMODkca/M/4MvZA3Oc1OC2p27IpM+tzl3ejOLPo5WWus1Zw==
-X-Received: by 2002:a6b:7d49:: with SMTP id d9mr1606554ioq.50.1561413547310;
-        Mon, 24 Jun 2019 14:59:07 -0700 (PDT)
+        bh=G+s42jlOutJVoH3ChTzadVhi4SKC/zB2mUxbB3XIwJ8=;
+        b=kudN0o0Xmy+CjXGINQvQBoevxmCpoXN7o5FX3fNWNZFc62L2DVtK961Q0Dc4T2A8EE
+         Q86QpvO3K43JaxXKbd0IHm1wE/okVQqNKKn8CPov0ASdGAxb+VVhvJrbLn9JNB1hYYEU
+         Vx9zaeOusmuWIW016QuKGrVhSE1fhKPbT0shVb35gPOgym6vbkdX8h8oHD0Uyi+Ps1cy
+         uRfA7pt6KbS5YoasLV83Roh7DrjJF/zUeifM3mcCLIDZ2KN54VzWQli9Isob0Yt3D408
+         SjwLrWujq0moaiqIFSm1LNB9PDM6hZc098qIfHl18owTm9xBE/3385UQrsJ9Lq2swulO
+         NT7A==
+X-Gm-Message-State: APjAAAWDzFJG5ueDdejaH3Bf28AnvXuq86ZiVSbGLGeDSnr5sKpa8DEM
+        64sSH2ugY7XzF9vWzEW5nuewUFk=
+X-Google-Smtp-Source: APXvYqydJRomez7URVatqxObQ0Hz4v2raDOQcuxNUQttepuMBd2GCFZzz37sgrf3Hpy/QU5pJj+M+w==
+X-Received: by 2002:a5d:8759:: with SMTP id k25mr17595306iol.307.1561413549182;
+        Mon, 24 Jun 2019 14:59:09 -0700 (PDT)
 Received: from localhost.localdomain ([64.188.179.247])
-        by smtp.googlemail.com with ESMTPSA id l5sm14717301ioq.83.2019.06.24.14.59.05
+        by smtp.googlemail.com with ESMTPSA id l5sm14717301ioq.83.2019.06.24.14.59.07
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 24 Jun 2019 14:59:06 -0700 (PDT)
+        Mon, 24 Jun 2019 14:59:08 -0700 (PDT)
 From:   Rob Herring <robh@kernel.org>
 To:     dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org,
@@ -41,10 +41,10 @@ Cc:     linux-kernel@vger.kernel.org,
         Sam Ravnborg <sam@ravnborg.org>,
         Maxime Ripard <maxime.ripard@bootlin.com>,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH v2 10/15] dt-bindings: display: Convert tpo,tpg110 panel to DT schema
-Date:   Mon, 24 Jun 2019 15:56:44 -0600
-Message-Id: <20190624215649.8939-11-robh@kernel.org>
+        Thierry Reding <treding@nvidia.com>
+Subject: [PATCH v2 11/15] dt-bindings: display: Convert panel-lvds to DT schema
+Date:   Mon, 24 Jun 2019 15:56:45 -0600
+Message-Id: <20190624215649.8939-12-robh@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190624215649.8939-1-robh@kernel.org>
 References: <20190624215649.8939-1-robh@kernel.org>
@@ -55,205 +55,264 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Convert the tpo,tpg110 panel binding to DT schema.
+Convert the panel-lvds binding to use DT schema. The panel-lvds schema
+inherits from the panel-common.yaml schema and specific LVDS panel
+bindings should inherit from this schema.
 
-Cc: Linus Walleij <linus.walleij@linaro.org>
 Cc: Thierry Reding <thierry.reding@gmail.com>
 Cc: Sam Ravnborg <sam@ravnborg.org>
-Cc: Maxime Ripard <maxime.ripard@bootlin.com>
 Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 Cc: dri-devel@lists.freedesktop.org
+Reviewed-by: Maxime Ripard <maxime.ripard@bootlin.com>
+Acked-by: Thierry Reding <treding@nvidia.com>
 Signed-off-by: Rob Herring <robh@kernel.org>
 ---
- .../bindings/display/panel/tpo,tpg110.txt     |  70 ------------
- .../bindings/display/panel/tpo,tpg110.yaml    | 101 ++++++++++++++++++
- 2 files changed, 101 insertions(+), 70 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/display/panel/tpo,tpg110.txt
- create mode 100644 Documentation/devicetree/bindings/display/panel/tpo,tpg110.yaml
+ .../bindings/display/panel/lvds.yaml          | 107 ++++++++++++++++
+ .../bindings/display/panel/panel-lvds.txt     | 121 ------------------
+ 2 files changed, 107 insertions(+), 121 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/display/panel/lvds.yaml
+ delete mode 100644 Documentation/devicetree/bindings/display/panel/panel-lvds.txt
 
-diff --git a/Documentation/devicetree/bindings/display/panel/tpo,tpg110.txt b/Documentation/devicetree/bindings/display/panel/tpo,tpg110.txt
-deleted file mode 100644
-index 40f3d7c713bb..000000000000
---- a/Documentation/devicetree/bindings/display/panel/tpo,tpg110.txt
-+++ /dev/null
-@@ -1,70 +0,0 @@
--TPO TPG110 Panel
--================
--
--This panel driver is a component that acts as an intermediary
--between an RGB output and a variety of panels. The panel
--driver is strapped up in electronics to the desired resolution
--and other properties, and has a control interface over 3WIRE
--SPI. By talking to the TPG110 over SPI, the strapped properties
--can be discovered and the hardware is therefore mostly
--self-describing.
--
--       +--------+
--SPI -> |  TPO   | -> physical display
--RGB -> | TPG110 |
--       +--------+
--
--If some electrical strap or alternate resolution is desired,
--this can be set up by taking software control of the display
--over the SPI interface. The interface can also adjust
--for properties of the display such as gamma correction and
--certain electrical driving levels.
--
--The TPG110 does not know the physical dimensions of the panel
--connected, so this needs to be specified in the device tree.
--
--It requires a GPIO line for control of its reset line.
--
--The serial protocol has line names that resemble I2C but the
--protocol is not I2C but 3WIRE SPI.
--
--Required properties:
--- compatible : one of:
--  "ste,nomadik-nhk15-display", "tpo,tpg110"
--  "tpo,tpg110"
--- grestb-gpios : panel reset GPIO
--- width-mm : see display/panel/panel-common.txt
--- height-mm : see display/panel/panel-common.txt
--
--The device needs to be a child of an SPI bus, see
--spi/spi-bus.txt. The SPI child must set the following
--properties:
--- spi-3wire
--- spi-max-frequency = <3000000>;
--as these are characteristics of this device.
--
--The device node can contain one 'port' child node with one child
--'endpoint' node, according to the bindings defined in
--media/video-interfaces.txt. This node should describe panel's video bus.
--
--Example
---------
--
--panel: display@0 {
--	compatible = "tpo,tpg110";
--	reg = <0>;
--	spi-3wire;
--	/* 320 ns min period ~= 3 MHz */
--	spi-max-frequency = <3000000>;
--	/* Width and height from data sheet */
--	width-mm = <116>;
--	height-mm = <87>;
--	grestb-gpios = <&foo_gpio 5 GPIO_ACTIVE_LOW>;
--	backlight = <&bl>;
--
--	port {
--		nomadik_clcd_panel: endpoint {
--			remote-endpoint = <&foo>;
--		};
--	};
--};
-diff --git a/Documentation/devicetree/bindings/display/panel/tpo,tpg110.yaml b/Documentation/devicetree/bindings/display/panel/tpo,tpg110.yaml
+diff --git a/Documentation/devicetree/bindings/display/panel/lvds.yaml b/Documentation/devicetree/bindings/display/panel/lvds.yaml
 new file mode 100644
-index 000000000000..a51660b73f28
+index 000000000000..d0083301acbe
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/display/panel/tpo,tpg110.yaml
-@@ -0,0 +1,101 @@
++++ b/Documentation/devicetree/bindings/display/panel/lvds.yaml
+@@ -0,0 +1,107 @@
 +# SPDX-License-Identifier: GPL-2.0
 +%YAML 1.2
 +---
-+$id: http://devicetree.org/schemas/display/panel/tpo,tpg110.yaml#
++$id: http://devicetree.org/schemas/display/panel/lvds.yaml#
 +$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+title: TPO TPG110 Panel
++title: LVDS Display Panel
 +
 +maintainers:
-+  - Linus Walleij <linus.walleij@linaro.org>
++  - Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 +  - Thierry Reding <thierry.reding@gmail.com>
 +
 +description: |+
-+  This panel driver is a component that acts as an intermediary
-+  between an RGB output and a variety of panels. The panel
-+  driver is strapped up in electronics to the desired resolution
-+  and other properties, and has a control interface over 3WIRE
-+  SPI. By talking to the TPG110 over SPI, the strapped properties
-+  can be discovered and the hardware is therefore mostly
-+  self-describing.
++  LVDS is a physical layer specification defined in ANSI/TIA/EIA-644-A. Multiple
++  incompatible data link layers have been used over time to transmit image data
++  to LVDS panels. This bindings supports display panels compatible with the
++  following specifications.
 +
-+         +--------+
-+  SPI -> |  TPO   | -> physical display
-+  RGB -> | TPG110 |
-+         +--------+
++  [JEIDA] "Digital Interface Standards for Monitor", JEIDA-59-1999, February
++  1999 (Version 1.0), Japan Electronic Industry Development Association (JEIDA)
++  [LDI] "Open LVDS Display Interface", May 1999 (Version 0.95), National
++  Semiconductor
++  [VESA] "VESA Notebook Panel Standard", October 2007 (Version 1.0), Video
++  Electronics Standards Association (VESA)
 +
-+  If some electrical strap or alternate resolution is desired,
-+  this can be set up by taking software control of the display
-+  over the SPI interface. The interface can also adjust
-+  for properties of the display such as gamma correction and
-+  certain electrical driving levels.
-+
-+  The TPG110 does not know the physical dimensions of the panel
-+  connected, so this needs to be specified in the device tree.
-+
-+  It requires a GPIO line for control of its reset line.
-+
-+  The serial protocol has line names that resemble I2C but the
-+  protocol is not I2C but 3WIRE SPI.
-+
++  Device compatible with those specifications have been marketed under the
++  FPD-Link and FlatLink brands.
 +
 +allOf:
 +  - $ref: panel-common.yaml#
 +
 +properties:
 +  compatible:
-+    oneOf:
-+      - items:
-+          - enum:
-+              - ste,nomadik-nhk15-display
-+          - const: tpo,tpg110
-+      - const: tpo,tpg110
++    contains:
++      const: panel-lvds
++    description:
++      Shall contain "panel-lvds" in addition to a mandatory panel-specific
++      compatible string defined in individual panel bindings. The "panel-lvds"
++      value shall never be used on its own.
 +
-+  reg: true
++  data-mapping:
++    enum:
++      - jeida-18
++      - jeida-24
++      - vesa-24
++    description: |
++      The color signals mapping order.
 +
-+  grestb-gpios:
-+    maxItems: 1
-+    description: panel reset GPIO
++      LVDS data mappings are defined as follows.
 +
-+  spi-3wire: true
++      - "jeida-18" - 18-bit data mapping compatible with the [JEIDA], [LDI] and
++        [VESA] specifications. Data are transferred as follows on 3 LVDS lanes.
 +
-+  spi-max-frequency:
-+    const: 3000000
++      Slot	    0       1       2       3       4       5       6
++            ________________                         _________________
++      Clock	                \_______________________/
++              ______  ______  ______  ______  ______  ______  ______
++      DATA0	><__G0__><__R5__><__R4__><__R3__><__R2__><__R1__><__R0__><
++      DATA1	><__B1__><__B0__><__G5__><__G4__><__G3__><__G2__><__G1__><
++      DATA2	><_CTL2_><_CTL1_><_CTL0_><__B5__><__B4__><__B3__><__B2__><
++
++      - "jeida-24" - 24-bit data mapping compatible with the [DSIM] and [LDI]
++        specifications. Data are transferred as follows on 4 LVDS lanes.
++
++      Slot	    0       1       2       3       4       5       6
++            ________________                         _________________
++      Clock	                \_______________________/
++              ______  ______  ______  ______  ______  ______  ______
++      DATA0	><__G2__><__R7__><__R6__><__R5__><__R4__><__R3__><__R2__><
++      DATA1	><__B3__><__B2__><__G7__><__G6__><__G5__><__G4__><__G3__><
++      DATA2	><_CTL2_><_CTL1_><_CTL0_><__B7__><__B6__><__B5__><__B4__><
++      DATA3	><_CTL3_><__B1__><__B0__><__G1__><__G0__><__R1__><__R0__><
++
++      - "vesa-24" - 24-bit data mapping compatible with the [VESA] specification.
++        Data are transferred as follows on 4 LVDS lanes.
++
++      Slot	    0       1       2       3       4       5       6
++            ________________                         _________________
++      Clock	                \_______________________/
++              ______  ______  ______  ______  ______  ______  ______
++      DATA0	><__G0__><__R5__><__R4__><__R3__><__R2__><__R1__><__R0__><
++      DATA1	><__B1__><__B0__><__G5__><__G4__><__G3__><__G2__><__G1__><
++      DATA2	><_CTL2_><_CTL1_><_CTL0_><__B5__><__B4__><__B3__><__B2__><
++      DATA3	><_CTL3_><__B7__><__B6__><__G7__><__G6__><__R7__><__R6__><
++
++      Control signals are mapped as follows.
++
++      CTL0: HSync
++      CTL1: VSync
++      CTL2: Data Enable
++      CTL3: 0
++
++  data-mirror:
++    type: boolean
++    description:
++      If set, reverse the bit order described in the data mappings below on all
++      data lanes, transmitting bits for slots 6 to 0 instead of 0 to 6.
 +
 +required:
 +  - compatible
-+  - reg
-+  - grestb-gpios
++  - data-mapping
 +  - width-mm
 +  - height-mm
-+  - spi-3wire
-+  - spi-max-frequency
++  - panel-timing
 +  - port
 +
-+examples:
-+  - |+
-+    spi {
-+      #address-cells = <1>;
-+      #size-cells = <0>;
-+
-+      panel: display@0 {
-+        compatible = "tpo,tpg110";
-+        reg = <0>;
-+        spi-3wire;
-+        /* 320 ns min period ~= 3 MHz */
-+        spi-max-frequency = <3000000>;
-+        /* Width and height from data sheet */
-+        width-mm = <116>;
-+        height-mm = <87>;
-+        grestb-gpios = <&foo_gpio 5 1>;
-+        backlight = <&bl>;
-+
-+        port {
-+          nomadik_clcd_panel: endpoint {
-+            remote-endpoint = <&foo>;
-+          };
-+        };
-+      };
-+    };
-+
 +...
+diff --git a/Documentation/devicetree/bindings/display/panel/panel-lvds.txt b/Documentation/devicetree/bindings/display/panel/panel-lvds.txt
+deleted file mode 100644
+index 250850a2150b..000000000000
+--- a/Documentation/devicetree/bindings/display/panel/panel-lvds.txt
++++ /dev/null
+@@ -1,121 +0,0 @@
+-LVDS Display Panel
+-==================
+-
+-LVDS is a physical layer specification defined in ANSI/TIA/EIA-644-A. Multiple
+-incompatible data link layers have been used over time to transmit image data
+-to LVDS panels. This bindings supports display panels compatible with the
+-following specifications.
+-
+-[JEIDA] "Digital Interface Standards for Monitor", JEIDA-59-1999, February
+-1999 (Version 1.0), Japan Electronic Industry Development Association (JEIDA)
+-[LDI] "Open LVDS Display Interface", May 1999 (Version 0.95), National
+-Semiconductor
+-[VESA] "VESA Notebook Panel Standard", October 2007 (Version 1.0), Video
+-Electronics Standards Association (VESA)
+-
+-Device compatible with those specifications have been marketed under the
+-FPD-Link and FlatLink brands.
+-
+-
+-Required properties:
+-
+-- compatible: Shall contain "panel-lvds" in addition to a mandatory
+-  panel-specific compatible string defined in individual panel bindings. The
+-  "panel-lvds" value shall never be used on its own.
+-- width-mm: See panel-common.txt.
+-- height-mm: See panel-common.txt.
+-- data-mapping: The color signals mapping order, "jeida-18", "jeida-24"
+-  or "vesa-24".
+-
+-Optional properties:
+-
+-- label: See panel-common.txt.
+-- gpios: See panel-common.txt.
+-- backlight: See panel-common.txt.
+-- power-supply: See panel-common.txt.
+-- data-mirror: If set, reverse the bit order described in the data mappings
+-  below on all data lanes, transmitting bits for slots 6 to 0 instead of
+-  0 to 6.
+-
+-Required nodes:
+-
+-- panel-timing: See panel-common.txt.
+-- ports: See panel-common.txt. These bindings require a single port subnode
+-  corresponding to the panel LVDS input.
+-
+-
+-LVDS data mappings are defined as follows.
+-
+-- "jeida-18" - 18-bit data mapping compatible with the [JEIDA], [LDI] and
+-  [VESA] specifications. Data are transferred as follows on 3 LVDS lanes.
+-
+-Slot	    0       1       2       3       4       5       6
+-	________________                         _________________
+-Clock	                \_______________________/
+-	  ______  ______  ______  ______  ______  ______  ______
+-DATA0	><__G0__><__R5__><__R4__><__R3__><__R2__><__R1__><__R0__><
+-DATA1	><__B1__><__B0__><__G5__><__G4__><__G3__><__G2__><__G1__><
+-DATA2	><_CTL2_><_CTL1_><_CTL0_><__B5__><__B4__><__B3__><__B2__><
+-
+-- "jeida-24" - 24-bit data mapping compatible with the [DSIM] and [LDI]
+-  specifications. Data are transferred as follows on 4 LVDS lanes.
+-
+-Slot	    0       1       2       3       4       5       6
+-	________________                         _________________
+-Clock	                \_______________________/
+-	  ______  ______  ______  ______  ______  ______  ______
+-DATA0	><__G2__><__R7__><__R6__><__R5__><__R4__><__R3__><__R2__><
+-DATA1	><__B3__><__B2__><__G7__><__G6__><__G5__><__G4__><__G3__><
+-DATA2	><_CTL2_><_CTL1_><_CTL0_><__B7__><__B6__><__B5__><__B4__><
+-DATA3	><_CTL3_><__B1__><__B0__><__G1__><__G0__><__R1__><__R0__><
+-
+-- "vesa-24" - 24-bit data mapping compatible with the [VESA] specification.
+-  Data are transferred as follows on 4 LVDS lanes.
+-
+-Slot	    0       1       2       3       4       5       6
+-	________________                         _________________
+-Clock	                \_______________________/
+-	  ______  ______  ______  ______  ______  ______  ______
+-DATA0	><__G0__><__R5__><__R4__><__R3__><__R2__><__R1__><__R0__><
+-DATA1	><__B1__><__B0__><__G5__><__G4__><__G3__><__G2__><__G1__><
+-DATA2	><_CTL2_><_CTL1_><_CTL0_><__B5__><__B4__><__B3__><__B2__><
+-DATA3	><_CTL3_><__B7__><__B6__><__G7__><__G6__><__R7__><__R6__><
+-
+-Control signals are mapped as follows.
+-
+-CTL0: HSync
+-CTL1: VSync
+-CTL2: Data Enable
+-CTL3: 0
+-
+-
+-Example
+--------
+-
+-panel {
+-	compatible = "mitsubishi,aa121td01", "panel-lvds";
+-
+-	width-mm = <261>;
+-	height-mm = <163>;
+-
+-	data-mapping = "jeida-24";
+-
+-	panel-timing {
+-		/* 1280x800 @60Hz */
+-		clock-frequency = <71000000>;
+-		hactive = <1280>;
+-		vactive = <800>;
+-		hsync-len = <70>;
+-		hfront-porch = <20>;
+-		hback-porch = <70>;
+-		vsync-len = <5>;
+-		vfront-porch = <3>;
+-		vback-porch = <15>;
+-	};
+-
+-	port {
+-		panel_in: endpoint {
+-			remote-endpoint = <&lvds_encoder>;
+-		};
+-	};
+-};
 -- 
 2.20.1
 
