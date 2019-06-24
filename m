@@ -2,109 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8171A50DEF
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 16:27:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E35BF51798
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 17:49:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728725AbfFXO1o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 10:27:44 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:37304 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728180AbfFXO1o (ORCPT
+        id S1730220AbfFXPtQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 11:49:16 -0400
+Received: from 22.17.110.36.static.bjtelecom.net ([36.110.17.22]:6445 "HELO
+        bsf01.didichuxing.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with SMTP id S1727957AbfFXPtQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 10:27:44 -0400
-Received: by mail-ed1-f68.google.com with SMTP id w13so22111339eds.4
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2019 07:27:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=nMad3CaCSZkzI4gyvFvbmTY8mwA5a8Sp7vTVJg617is=;
-        b=jtU1r3t/2UsWRHp4cHYwBYGPpiZUxz1/KLoBCTrKS4GUbo9DYoiKDE4ko+tPLCvBZu
-         kVU2KDKQj4bZshQa9gZS8SkpWHRzIIr1zMHVlq+h71f92Sb1sMdH5cnBrexMB088xYoj
-         lsqFXhocWNoaRaULy95jAMLyLmMA7bfqik/wFGsDEb1zokXQv1eavf7pI0rdaS0SuOiE
-         7dXJYQcgVtIul74lHRgtWv1FCERbkHxuQATQxfehC89AGfJA6TAGFluhj8wPparDYqeP
-         dx75xVh4boioNOkMS5RMHsVzHq+Fqmr9V3rUsM9KoOJQYU4Kgjhf0MyUkXvlsYHXp7+O
-         n7Kg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=nMad3CaCSZkzI4gyvFvbmTY8mwA5a8Sp7vTVJg617is=;
-        b=daweTlfImIBw2UN330Lh9xQiw1BoMCtIkoYBRO7pNeB1IBKozYA5kVZIqV0ViQtcQr
-         cjJV3NlyN+6TBC1DwYdn1aDnCT7jKDreZ3j8YrKrZ6ENFuJSSoWvPXRVzP85kIc6JUE9
-         i3JEDqSRBzq7jlHPzyPVyfY6rBMOfSJFuwZSH0DUcgf7UG2ykjdmzfvMWZuM25cPghKw
-         jFRyCLMPtFdpRA8YTjdoc+MYlHkzaOiuwvszafCNaIbr1h6deAGAm3u9ozhg4xj4VbvT
-         HkjelJVQDneM7ccS/eqe4vNUWz8a0c4ki7anBIpM6ydw4SNUw0Pp4a1U/g9l/JlohpIi
-         uYUA==
-X-Gm-Message-State: APjAAAWUKgDdPPGyklLApAGmRykKM11CWLOiZiAIcfj9fi5YqXb/a1Ut
-        0hIvvkLEEpdOYdlkT8vqpLcPxQ==
-X-Google-Smtp-Source: APXvYqwqid3EK2KULR3HvJOfTxPaV9NVV4GB+bO31X1U4vpGtxWUZczZsb76evJVJFcgmV4mVSqaMg==
-X-Received: by 2002:a17:906:3c1:: with SMTP id c1mr34162609eja.221.1561386462321;
-        Mon, 24 Jun 2019 07:27:42 -0700 (PDT)
-Received: from box.localdomain ([86.57.175.117])
-        by smtp.gmail.com with ESMTPSA id a8sm3743134edt.56.2019.06.24.07.27.41
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 24 Jun 2019 07:27:41 -0700 (PDT)
-Received: by box.localdomain (Postfix, from userid 1000)
-        id 0F1161043B3; Mon, 24 Jun 2019 17:27:47 +0300 (+03)
-Date:   Mon, 24 Jun 2019 17:27:47 +0300
-From:   "Kirill A. Shutemov" <kirill@shutemov.name>
-To:     Song Liu <songliubraving@fb.com>
-Cc:     "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "matthew.wilcox@oracle.com" <matthew.wilcox@oracle.com>,
-        "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>,
-        Kernel Team <Kernel-team@fb.com>,
-        "william.kucharski@oracle.com" <william.kucharski@oracle.com>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "hdanton@sina.com" <hdanton@sina.com>
-Subject: Re: [PATCH v7 5/6] mm,thp: add read-only THP support for (non-shmem)
- FS
-Message-ID: <20190624142747.chy5s3nendxktm3l@box>
-References: <20190623054749.4016638-1-songliubraving@fb.com>
- <20190623054749.4016638-6-songliubraving@fb.com>
- <20190624124746.7evd2hmbn3qg3tfs@box>
- <52BDA50B-7CBF-4333-9D15-0C17FD04F6ED@fb.com>
+        Mon, 24 Jun 2019 11:49:16 -0400
+X-Greylist: delayed 3642 seconds by postgrey-1.27 at vger.kernel.org; Mon, 24 Jun 2019 11:49:04 EDT
+X-ASG-Debug-ID: 1561386577-0e40886efc18f480001-xx1T2L
+Received: from BJEXCAS08.didichuxing.com (bogon [172.20.36.203]) by bsf01.didichuxing.com with ESMTP id UooTDiNe2MZyyI4j; Mon, 24 Jun 2019 22:29:37 +0800 (CST)
+X-Barracuda-Envelope-From: zhangweiping@didiglobal.com
+Received: from 192.168.3.9 (172.22.50.20) by BJSGEXMBX03.didichuxing.com
+ (172.20.15.133) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 24 Jun
+ 2019 22:29:37 +0800
+Date:   Mon, 24 Jun 2019 22:29:36 +0800
+From:   Weiping Zhang <zhangweiping@didiglobal.com>
+To:     <tglx@linutronix.de>, <axboe@kernel.dk>, <tj@kernel.org>,
+        <hch@lst.de>, <bvanassche@acm.org>, <keith.busch@intel.com>,
+        <minwoo.im.dev@gmail.com>
+CC:     <linux-block@vger.kernel.org>, <cgroups@vger.kernel.org>,
+        <linux-nvme@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v3 4/5] genirq/affinity: allow driver's discontigous affinity
+ set
+Message-ID: <1ead341c6d603cf138aed62e31091f257cb19981.1561385989.git.zhangweiping@didiglobal.com>
+X-ASG-Orig-Subj: [PATCH v3 4/5] genirq/affinity: allow driver's discontigous affinity
+ set
+Mail-Followup-To: tglx@linutronix.de, axboe@kernel.dk, tj@kernel.org,
+        hch@lst.de, bvanassche@acm.org, keith.busch@intel.com,
+        minwoo.im.dev@gmail.com, linux-block@vger.kernel.org,
+        cgroups@vger.kernel.org, linux-nvme@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+References: <cover.1561385989.git.zhangweiping@didiglobal.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <52BDA50B-7CBF-4333-9D15-0C17FD04F6ED@fb.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <cover.1561385989.git.zhangweiping@didiglobal.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Originating-IP: [172.22.50.20]
+X-ClientProxiedBy: BJEXCAS03.didichuxing.com (172.20.36.245) To
+ BJSGEXMBX03.didichuxing.com (172.20.15.133)
+X-Barracuda-Connect: bogon[172.20.36.203]
+X-Barracuda-Start-Time: 1561386577
+X-Barracuda-URL: https://bsf01.didichuxing.com:443/cgi-mod/mark.cgi
+X-Virus-Scanned: by bsmtpd at didichuxing.com
+X-Barracuda-Scan-Msg-Size: 756
+X-Barracuda-BRTS-Status: 1
+X-Barracuda-Bayes: INNOCENT GLOBAL 0.0002 1.0000 -2.0200
+X-Barracuda-Spam-Score: -2.02
+X-Barracuda-Spam-Status: No, SCORE=-2.02 using global scores of TAG_LEVEL=1000.0 QUARANTINE_LEVEL=1000.0 KILL_LEVEL=1000.0 tests=
+X-Barracuda-Spam-Report: Code version 3.2, rules version 3.2.3.73067
+        Rule breakdown below
+         pts rule name              description
+        ---- ---------------------- --------------------------------------------------
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 24, 2019 at 02:01:05PM +0000, Song Liu wrote:
-> >> @@ -1392,6 +1403,23 @@ static void collapse_file(struct mm_struct *mm,
-> >> 				result = SCAN_FAIL;
-> >> 				goto xa_unlocked;
-> >> 			}
-> >> +		} else if (!page || xa_is_value(page)) {
-> >> +			xas_unlock_irq(&xas);
-> >> +			page_cache_sync_readahead(mapping, &file->f_ra, file,
-> >> +						  index, PAGE_SIZE);
-> >> +			lru_add_drain();
-> > 
-> > Why?
-> 
-> isolate_lru_page() is likely to fail if we don't drain the pagevecs. 
+The driver may implement multiple affinity set, and some of
+are empty, for this case we just skip them.
 
-Please add a comment.
+Signed-off-by: Weiping Zhang <zhangweiping@didiglobal.com>
+---
+ kernel/irq/affinity.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-> >> +			page = find_lock_page(mapping, index);
-> >> +			if (unlikely(page == NULL)) {
-> >> +				result = SCAN_FAIL;
-> >> +				goto xa_unlocked;
-> >> +			}
-> >> +		} else if (!PageUptodate(page)) {
-> > 
-> > Maybe we should try wait_on_page_locked() here before give up?
-> 
-> Are you referring to the "if (!PageUptodate(page))" case? 
-
-Yes.
-
+diff --git a/kernel/irq/affinity.c b/kernel/irq/affinity.c
+index f18cd5aa33e8..6d964fe0fbd8 100644
+--- a/kernel/irq/affinity.c
++++ b/kernel/irq/affinity.c
+@@ -295,6 +295,10 @@ irq_create_affinity_masks(unsigned int nvecs, struct irq_affinity *affd)
+ 		unsigned int this_vecs = affd->set_size[i];
+ 		int ret;
+ 
++		/* skip empty affinity set */
++		if (this_vecs == 0)
++			continue;
++
+ 		ret = irq_build_affinity_masks(affd, curvec, this_vecs,
+ 					       curvec, masks);
+ 		if (ret) {
 -- 
- Kirill A. Shutemov
+2.14.1
+
