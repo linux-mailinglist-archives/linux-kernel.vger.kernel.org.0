@@ -2,162 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ACB58518B7
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 18:31:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 18A89528A4
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2019 11:54:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732166AbfFXQbT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 12:31:19 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:33120 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727953AbfFXQbS (ORCPT
+        id S1731773AbfFYJyQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 25 Jun 2019 05:54:16 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:37434 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729973AbfFYJyM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 12:31:18 -0400
-Received: by mail-pf1-f195.google.com with SMTP id x15so7835757pfq.0
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2019 09:31:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=6TOnU9AVWSLkG8jbZeJ4s1lTU9apIJrafSOUh1bs0Jw=;
-        b=dYS78e9Q13HbWqEmYT+tE7IDr0sOteESZft4ytKYRUgRQKzjl+UL8HXX3k44MlaTjn
-         5ZNlm+p5OxOa8N1t5mbBVgMuZPSNwz0Bz+GSza/T6s5TYJ/6+6f4ZScBneoqcNQhRsjw
-         xAks6X1JTyy2ELTQ7OPX3N1zLEbPwd/blCS+g=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=6TOnU9AVWSLkG8jbZeJ4s1lTU9apIJrafSOUh1bs0Jw=;
-        b=PbZOZ25Gl4M8cE1DOVCtzqDH/CAOSKIyphsSi76LGY684s1oSj2ggxvFk8Q1HdLKyk
-         fML+RZFRhN8pFAJTaxWhwYTUKq6ktMAa7OceFJEcKMiSA2BnCFQGpkGzUDhOFIZ6/fJy
-         TDdG9qTpmolz28Djbr1UTA8kKVqO+Vloc6VYoUukfdJKN3ky3ys0E+nhHtg8Q5zHSNPJ
-         M0y9IAbYiVNOf/v0WTV/jkz6nel8VrYABndA/9rHWNXIIe4peKtWwpvPRK4CV1Y68qkW
-         T/v9eMlX6bdR5aobWTLWD5KABwI/IqBj1VCuF4vmr0vdThme5uBgTDpi0P9bk305DU10
-         iWRQ==
-X-Gm-Message-State: APjAAAXwmRfGdTQw5eozE7PQGeqsnKVjJFK7cCppnxDdd73KvMj65q9b
-        Cr1fZAH8NUYA4DlMDpG54dn5OQ==
-X-Google-Smtp-Source: APXvYqyi3M9cexTZiqri1j5uENK/TLaXylZG6sJV0Njpxw8cDBF5o5v70/WLB1hGWb2hOgbhdGMKIw==
-X-Received: by 2002:a63:eb56:: with SMTP id b22mr32783369pgk.81.1561393877686;
-        Mon, 24 Jun 2019 09:31:17 -0700 (PDT)
-Received: from localhost ([2620:15c:202:1:75a:3f6e:21d:9374])
-        by smtp.gmail.com with ESMTPSA id z14sm11778757pgs.79.2019.06.24.09.31.15
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 24 Jun 2019 09:31:16 -0700 (PDT)
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     Tom Roeder <tmroeder@google.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     linux-kernel@vger.kernel.org, Raul E Rangel <rrangel@chromium.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Tom Hughes <tomhughes@chromium.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        Ryan Case <ryandcase@chromium.org>,
-        Yu Liu <yudiliu@google.com>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Matthias Kaehlcke <mka@chromium.org>
-Subject: [PATCH v2] gen_compile_command: Add support for separate KBUILD_OUTPUT directory
-Date:   Mon, 24 Jun 2019 09:31:11 -0700
-Message-Id: <20190624163111.171971-1-mka@chromium.org>
-X-Mailer: git-send-email 2.22.0.410.gd8fdbe21b5-goog
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Tue, 25 Jun 2019 05:54:12 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
+        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
+        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
+        List-Archive; bh=zx9LoJRA5VJOsRJ+xBMTylTkTEgRWd6viN1kglPW6EM=; b=uKFHQxrVpH8X
+        dVpD/orDeKDSABWJfcieBWLyp3ClSXXnpcDhLRzc3zeMTVQo6+BwUWzl3PoKSxu0f1SJDoWumFrT+
+        Yklo0nb7sxV1cZK4iRNN5jSsBeYVM/j8t3M1v54LvNzSL+VJ1A15g1ImipVt/yxSKPx+rEmYCVK+W
+        Zpba4=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=finisterre.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1hfi9G-0004ma-Ha; Tue, 25 Jun 2019 09:53:58 +0000
+Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
+        id 96F5D440046; Mon, 24 Jun 2019 17:32:13 +0100 (BST)
+From:   Mark Brown <broonie@kernel.org>
+To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Cc:     alsa-devel@alsa-project.org, Benson Leung <bleung@chromium.org>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Jaroslav Kysela <perex@perex.cz>, kernel@collabora.com,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-rockchip@lists.infradead.org,
+        Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>,
+        Xing Zheng <zhengxing@rock-chips.com>
+Subject: Applied "ASoC: rk3399_gru_sound: Support 32, 44.1 and 88.2 kHz sample rates" to the asoc tree
+In-Reply-To: <20190621155808.17182-1-enric.balletbo@collabora.com>
+X-Patchwork-Hint: ignore
+Message-Id: <20190624163213.96F5D440046@finisterre.sirena.org.uk>
+Date:   Mon, 24 Jun 2019 17:32:13 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-gen_compile_command.py currently assumes that the .cmd files and the
-source code live in the same directory, which is not the case when
-a separate KBUILD_OUTPUT directory is used.
+The patch
 
-Add a new option to specify this the kbuild output directory. If the
-option is not set the kernel source directory is used.
+   ASoC: rk3399_gru_sound: Support 32, 44.1 and 88.2 kHz sample rates
 
-Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
-Reviewed-by: Tom Roeder <tmroeder@google.com>
-Tested-by: Tom Roeder <tmroeder@google.com>
-Acked-by: Nick Desaulniers <ndesaulniers@google.com>
+has been applied to the asoc tree at
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.3
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 30b233b1cb4291d39ca08a95566721e8a52e5ee3 Mon Sep 17 00:00:00 2001
+From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Date: Fri, 21 Jun 2019 17:58:08 +0200
+Subject: [PATCH] ASoC: rk3399_gru_sound: Support 32, 44.1 and 88.2 kHz sample
+ rates
+
+According to the datasheet the max98357a also supports 32, 44.1 and
+88.2 kHz sample rate. This support was also introduced recently by
+commit fdf34366d324 ("ASoC: max98357a: add missing supported rates").
+
+Actually the machine driver validates the supported sample rates but
+this is not really needed because the component driver can all apply
+whatever constraints are needed and do their own validation. So, remove
+the checks from the machine driver as are not needed at all. This way,
+we also support 32, 44.1 and 88.2 kHz sample rates and we get rid of the
+errors like the below.
+
+  rk3399-gru-sound sound: rockchip_sound_max98357a_hw_params() doesn't support this sample rate: 44100
+  rk3399-gru-sound sound: ASoC: machine hw_params failed: -22
+
+Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
-Changes in v2:
-- added trailing space to help strings
-- added tags from Tom and Nick
----
- scripts/gen_compile_commands.py | 28 +++++++++++++++++++---------
- 1 file changed, 19 insertions(+), 9 deletions(-)
+ sound/soc/rockchip/rk3399_gru_sound.c | 14 +-------------
+ 1 file changed, 1 insertion(+), 13 deletions(-)
 
-diff --git a/scripts/gen_compile_commands.py b/scripts/gen_compile_commands.py
-index 7915823b92a5..47f37db6bd3a 100755
---- a/scripts/gen_compile_commands.py
-+++ b/scripts/gen_compile_commands.py
-@@ -31,15 +31,21 @@ def parse_arguments():
+diff --git a/sound/soc/rockchip/rk3399_gru_sound.c b/sound/soc/rockchip/rk3399_gru_sound.c
+index 879069fc0b94..769d5795919c 100644
+--- a/sound/soc/rockchip/rk3399_gru_sound.c
++++ b/sound/soc/rockchip/rk3399_gru_sound.c
+@@ -66,19 +66,7 @@ static int rockchip_sound_max98357a_hw_params(struct snd_pcm_substream *substrea
+ 	unsigned int mclk;
+ 	int ret;
  
-     Returns:
-         log_level: A logging level to filter log output.
--        directory: The directory to search for .cmd files.
-+        source_directory: The kernel source directory.
-+        kbuild_output_directory: The directory to search for .cmd files.
-         output: Where to write the compile-commands JSON file.
-     """
-     usage = 'Creates a compile_commands.json database from kernel .cmd files'
-     parser = argparse.ArgumentParser(description=usage)
+-	/* max98357a supports these sample rates */
+-	switch (params_rate(params)) {
+-	case 8000:
+-	case 16000:
+-	case 48000:
+-	case 96000:
+-		mclk = params_rate(params) * SOUND_FS;
+-		break;
+-	default:
+-		dev_err(rtd->card->dev, "%s() doesn't support this sample rate: %d\n",
+-				__func__, params_rate(params));
+-		return -EINVAL;
+-	}
++	mclk = params_rate(params) * SOUND_FS;
  
--    directory_help = ('Path to the kernel source directory to search '
-+    directory_help = ('Path to the kernel source directory '
-                       '(defaults to the working directory)')
-     parser.add_argument('-d', '--directory', type=str, help=directory_help)
-+    kbuild_output_directory_help = ('Path to the directory to search for '
-+                                    '.cmd files '
-+                      '(defaults to the kernel source directory)')
-+    parser.add_argument('-k', '--kbuild-output-directory', type=str,
-+                        help=kbuild_output_directory_help)
- 
-     output_help = ('The location to write compile_commands.json (defaults to '
-                    'compile_commands.json in the search directory)')
-@@ -58,11 +64,14 @@ def parse_arguments():
-     if log_level not in _VALID_LOG_LEVELS:
-         raise ValueError('%s is not a valid log level' % log_level)
- 
--    directory = args.directory or os.getcwd()
--    output = args.output or os.path.join(directory, _DEFAULT_OUTPUT)
--    directory = os.path.abspath(directory)
-+    source_directory = args.directory or os.getcwd()
-+    output = args.output or os.path.join(source_directory, _DEFAULT_OUTPUT)
-+    source_directory = os.path.abspath(source_directory)
- 
--    return log_level, directory, output
-+    kbuild_output_directory = args.kbuild_output_directory or source_directory
-+    kbuild_output_directory = os.path.abspath(kbuild_output_directory)
-+
-+    return log_level, source_directory, kbuild_output_directory, output
- 
- 
- def process_line(root_directory, file_directory, command_prefix, relative_path):
-@@ -109,7 +118,8 @@ def process_line(root_directory, file_directory, command_prefix, relative_path):
- 
- def main():
-     """Walks through the directory and finds and parses .cmd files."""
--    log_level, directory, output = parse_arguments()
-+    log_level, source_directory, kbuild_output_directory, output = \
-+        parse_arguments()
- 
-     level = getattr(logging, log_level)
-     logging.basicConfig(format='%(levelname)s: %(message)s', level=level)
-@@ -118,7 +128,7 @@ def main():
-     line_matcher = re.compile(_LINE_PATTERN)
- 
-     compile_commands = []
--    for dirpath, _, filenames in os.walk(directory):
-+    for dirpath, _, filenames in os.walk(kbuild_output_directory):
-         for filename in filenames:
-             if not filename_matcher.match(filename):
-                 continue
-@@ -131,7 +141,7 @@ def main():
-                         continue
- 
-                     try:
--                        entry = process_line(directory, dirpath,
-+                        entry = process_line(source_directory, dirpath,
-                                              result.group(1), result.group(2))
-                         compile_commands.append(entry)
-                     except ValueError as err:
+ 	ret = snd_soc_dai_set_sysclk(rtd->cpu_dai, 0, mclk, 0);
+ 	if (ret) {
 -- 
-2.22.0.410.gd8fdbe21b5-goog
+2.20.1
 
