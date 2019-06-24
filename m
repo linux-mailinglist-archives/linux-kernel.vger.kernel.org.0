@@ -2,59 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 931605063B
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 11:57:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C6654507A0
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 12:12:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728722AbfFXJ43 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 05:56:29 -0400
-Received: from foss.arm.com ([217.140.110.172]:44944 "EHLO foss.arm.com"
+        id S1730476AbfFXKIf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 06:08:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41272 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728708AbfFXJ40 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 05:56:26 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 164721500;
-        Mon, 24 Jun 2019 02:56:26 -0700 (PDT)
-Received: from e121650-lin.cambridge.arm.com (e121650-lin.cambridge.arm.com [10.1.196.120])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EC3213F71E;
-        Mon, 24 Jun 2019 02:56:24 -0700 (PDT)
-From:   Raphael Gault <raphael.gault@arm.com>
-To:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc:     jpoimboe@redhat.com, peterz@infradead.org, catalin.marinas@arm.com,
-        will.deacon@arm.com, julien.thierry@arm.com,
-        Raphael Gault <raphael.gault@arm.com>
-Subject: [RFC V3 11/18] arm64: alternative: Mark .altinstr_replacement as containing executable instructions
-Date:   Mon, 24 Jun 2019 10:55:41 +0100
-Message-Id: <20190624095548.8578-12-raphael.gault@arm.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190624095548.8578-1-raphael.gault@arm.com>
-References: <20190624095548.8578-1-raphael.gault@arm.com>
+        id S1730404AbfFXKIJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Jun 2019 06:08:09 -0400
+Received: from localhost (f4.8f.5177.ip4.static.sl-reverse.com [119.81.143.244])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E355E205C9;
+        Mon, 24 Jun 2019 10:08:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1561370889;
+        bh=fOvlLthS1MK46WfcNPVYkleqoAPilf+fyWhHYHhB55U=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=zNplICPL6mUyeThbWOr8DIgj+K2ZEuBh+r/tEXsZd5iG6JORxdmvpCCygaYlmc/i6
+         n1HVa597Pb4WQr5odVtHPwlBQpLmS95U8w8VUP2LFHu6j+QVvMLFAhmAjTNUjrVN03
+         qIVowgGUnJbd/5UPe/V8hygNGWbp2ph26bFN/fmM=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Stanley Chu <stanley.chu@mediatek.com>,
+        Avri Altman <avri.altman@wdc.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: [PATCH 5.1 009/121] scsi: ufs: Avoid runtime suspend possibly being blocked forever
+Date:   Mon, 24 Jun 2019 17:55:41 +0800
+Message-Id: <20190624092321.121774629@linuxfoundation.org>
+X-Mailer: git-send-email 2.22.0
+In-Reply-To: <20190624092320.652599624@linuxfoundation.org>
+References: <20190624092320.652599624@linuxfoundation.org>
+User-Agent: quilt/0.66
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Until now, the section .altinstr_replacement wasn't marked as containing
-executable instructions on arm64. This patch changes that so that it is
-coherent with what is done on x86.
+From: Stanley Chu <stanley.chu@mediatek.com>
 
-Signed-off-by: Raphael Gault <raphael.gault@arm.com>
+commit 24e2e7a19f7e4b83d0d5189040d997bce3596473 upstream.
+
+UFS runtime suspend can be triggered after pm_runtime_enable() is invoked
+in ufshcd_pltfrm_init(). However if the first runtime suspend is triggered
+before binding ufs_hba structure to ufs device structure via
+platform_set_drvdata(), then UFS runtime suspend will be no longer
+triggered in the future because its dev->power.runtime_error was set in the
+first triggering and does not have any chance to be cleared.
+
+To be more clear, dev->power.runtime_error is set if hba is NULL in
+ufshcd_runtime_suspend() which returns -EINVAL to rpm_callback() where
+dev->power.runtime_error is set as -EINVAL. In this case, any future
+rpm_suspend() for UFS device fails because rpm_check_suspend_allowed()
+fails due to non-zero
+dev->power.runtime_error.
+
+To resolve this issue, make sure the first UFS runtime suspend get valid
+"hba" in ufshcd_runtime_suspend(): Enable UFS runtime PM only after hba is
+successfully bound to UFS device structure.
+
+Fixes: 62694735ca95 ([SCSI] ufs: Add runtime PM support for UFS host controller driver)
+Cc: stable@vger.kernel.org
+Signed-off-by: Stanley Chu <stanley.chu@mediatek.com>
+Reviewed-by: Avri Altman <avri.altman@wdc.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- arch/arm64/include/asm/alternative.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/scsi/ufs/ufshcd-pltfrm.c |   11 ++++-------
+ 1 file changed, 4 insertions(+), 7 deletions(-)
 
-diff --git a/arch/arm64/include/asm/alternative.h b/arch/arm64/include/asm/alternative.h
-index b9f8d787eea9..e9e6b81e3eb4 100644
---- a/arch/arm64/include/asm/alternative.h
-+++ b/arch/arm64/include/asm/alternative.h
-@@ -71,7 +71,7 @@ static inline void apply_alternatives_module(void *start, size_t length) { }
- 	ALTINSTR_ENTRY(feature,cb)					\
- 	".popsection\n"							\
- 	" .if " __stringify(cb) " == 0\n"				\
--	".pushsection .altinstr_replacement, \"a\"\n"			\
-+	".pushsection .altinstr_replacement, \"ax\"\n"			\
- 	"663:\n\t"							\
- 	newinstr "\n"							\
- 	"664:\n\t"							\
--- 
-2.17.1
+--- a/drivers/scsi/ufs/ufshcd-pltfrm.c
++++ b/drivers/scsi/ufs/ufshcd-pltfrm.c
+@@ -340,24 +340,21 @@ int ufshcd_pltfrm_init(struct platform_d
+ 		goto dealloc_host;
+ 	}
+ 
+-	pm_runtime_set_active(&pdev->dev);
+-	pm_runtime_enable(&pdev->dev);
+-
+ 	ufshcd_init_lanes_per_dir(hba);
+ 
+ 	err = ufshcd_init(hba, mmio_base, irq);
+ 	if (err) {
+ 		dev_err(dev, "Initialization failed\n");
+-		goto out_disable_rpm;
++		goto dealloc_host;
+ 	}
+ 
+ 	platform_set_drvdata(pdev, hba);
+ 
++	pm_runtime_set_active(&pdev->dev);
++	pm_runtime_enable(&pdev->dev);
++
+ 	return 0;
+ 
+-out_disable_rpm:
+-	pm_runtime_disable(&pdev->dev);
+-	pm_runtime_set_suspended(&pdev->dev);
+ dealloc_host:
+ 	ufshcd_dealloc_host(hba);
+ out:
+
 
