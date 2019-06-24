@@ -2,112 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BBD1250CF2
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 15:58:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5DC5B50D0F
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 15:59:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731696AbfFXN61 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 09:58:27 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:50290 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727945AbfFXN60 (ORCPT
+        id S1729411AbfFXN7f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 09:59:35 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:34090 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727968AbfFXN7f (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 09:58:26 -0400
-Received: by mail-wm1-f65.google.com with SMTP id c66so12930393wmf.0
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2019 06:58:25 -0700 (PDT)
+        Mon, 24 Jun 2019 09:59:35 -0400
+Received: by mail-pg1-f194.google.com with SMTP id p10so7190629pgn.1
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2019 06:59:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=dpx8eoth7x4E7nkBTHqR/s25K085a3E8QHOn27Jqw80=;
-        b=JsLIzWzD6wkDp5TMTAUmAnHpY8eNIOl+XUOCLqavjXH5OVKh1XuMXekmger1K3gZ1K
-         bdOOjrO37X5KPmOpWA0a+a0pEQiUVcmDhWSpd8Cgy19Jy13aJCAyiqxa03PHjtKVF2ks
-         /syMmAmvIZcG4ORqXb5aqmKrOyd8gwYPSu5ITO7kpaR7TN5wflwzSc6IBPfutH9i9L6Y
-         ZT63XBR+09iHJlAG/d+YjfXqtOuhUaIQLuXZKic10ywj/imx4ertPa79XnzJnkYwNxNz
-         MMALXyGbN1cpi9tGPXHLk5+qO1FtUuC2DVL6OZz9QbBa5iVVrCJFMVXX0Y0IjTCTl0Mr
-         eW2A==
+         :content-disposition:in-reply-to:user-agent;
+        bh=8p0LSzziaw2XBSl9zJQVojlQHPmOP2r2WIfsm6JGgz8=;
+        b=ZYCVh/Bdl9VvD1gu+oUjObwInKu3Lh+Xi5XgI6EB1XPlcp8t8hfCu7V7g6lBJ705sq
+         Y2G9Oij3xOE/mTBTXwvKgNBAWuI11PYgXKMapP/3M/7dJGAvfdLf4wH2hRzoI/lnSn59
+         cYwptf58L3diOBgvzRW3PwR4mLDt2wWNp/ckb1XLXLvn78G8R7JwzxIQnwBot24sq0c1
+         0hkb4HIvcrK39BV821QOD4OJdOJ12BTihvzqNxSInP8Xu7jgTLeRCEXGVCJsEWeHALIA
+         VFDASOBjXh67x4U55mSJBYx/8obWgbgrKNDy+2tNDaMMxKGqgaZT44CFGiF/zG9dOO2g
+         myZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=dpx8eoth7x4E7nkBTHqR/s25K085a3E8QHOn27Jqw80=;
-        b=CCf0t8IwsTIRT07SXKKVSdV+HO07MWsBG8iV/eZ+HpWWn4jIfB9F4bHw4ToR8bYAF/
-         fICZSUbMouvzJjBq0uaA+ol/zQWxH0g6nA6dBtA/PLXeZrmhLwtOpbfMgAs1H7O4/8Le
-         +I6iifR9rBumZW5NcrSMPtaDFceYhASB0mxdzJrbS9GNiTaMAzMkGJQtjEhgkPAVVTGY
-         HoIXjhT8Dw0N/Z8wlgJLQsOhS7tqTeM/8rmcdj9V85TvAdTzZtO7hrSsc94xdM8SnslV
-         vT/AFxercKluk/ZNCapivGBn98qWTXqmqF/D4VyeYgbYgn66CfGJnMP2zFfF2u2tCA9a
-         +h3A==
-X-Gm-Message-State: APjAAAWr4ZpKnJd7puFkUFOXZBJjx+uiIH8MplmDBXeNmWqCuGg7J2r/
-        AOU9Vh9jgux71pRXXQRedyjqqA==
-X-Google-Smtp-Source: APXvYqyr1aVwE6ahr5d4wM6jmOAxIcqIWZ1NKs/ulfp1rdW/HdhuqnOJDo8LQ+XMLNkq9CDliY4ukg==
-X-Received: by 2002:a1c:ca14:: with SMTP id a20mr15608501wmg.71.1561384704646;
-        Mon, 24 Jun 2019 06:58:24 -0700 (PDT)
-Received: from dell ([2.27.35.164])
-        by smtp.gmail.com with ESMTPSA id n14sm24974398wra.75.2019.06.24.06.58.23
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 24 Jun 2019 06:58:24 -0700 (PDT)
-Date:   Mon, 24 Jun 2019 14:58:22 +0100
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Gwendal Grignou <gwendal@chromium.org>
-Cc:     bleung@chromium.org, enric.balletbo@collabora.com,
-        groeck@chromium.org, linux-kernel@vger.kernel.org,
-        Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: Re: [PATCH v6] mfd: cros_ec_dev: Register cros_ec_accel_legacy
- driver as a subdevice
-Message-ID: <20190624135822.GH4699@dell>
-References: <20190611071236.171518-1-gwendal@chromium.org>
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=8p0LSzziaw2XBSl9zJQVojlQHPmOP2r2WIfsm6JGgz8=;
+        b=Z1GxbjLFZ3Rr5xZ2A+Sk9l1rd+vhuY48CK81PZJI9XE5MrnDnDytvNrfyolMAtqXng
+         qw0O3kdL5DglNChb7Nnews/Xyyj96dW2mYE2yKIWNUfcpcg5eMbwuP2gL/1sfS+xEG7K
+         D2nf8Vpm0lqCni/+8IOaU4WudRO5Ps6vT2Eq0B4y5j3FOH96woHgO5KmLZArikOJ3UAf
+         O3rvtOtiEbIXmRTEgVHWiyuSfxgiecA4j8dQVQoYMI/Mv9Miyzi9HwefR3UNJQLMh2vt
+         JDKtEUBnWzRJGQgnER06F/gx3Hq+rXCGXH2A6ryIJYN0rzLTfNVjiNL5PoSENFXHZ5zM
+         TCRQ==
+X-Gm-Message-State: APjAAAXNYTK/4g39j4i8gfxe0boHl/WJt8C0WfHiZVwu2VJiAHIkU2jW
+        AgHR+7t9THb12GsB8RX82yaWHw==
+X-Google-Smtp-Source: APXvYqyvI6daCcYpiddemR6d+Ismu3G0GD/CDepLUwf/xIv5yLxqYK75h5H6EehqtgmVJJxCwejZ2w==
+X-Received: by 2002:a17:90a:730b:: with SMTP id m11mr24880498pjk.89.1561384774525;
+        Mon, 24 Jun 2019 06:59:34 -0700 (PDT)
+Received: from localhost ([122.172.211.128])
+        by smtp.gmail.com with ESMTPSA id c18sm12646192pfc.180.2019.06.24.06.59.32
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 24 Jun 2019 06:59:32 -0700 (PDT)
+Date:   Mon, 24 Jun 2019 19:29:30 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc:     rjw@rjwysocki.net, edubezval@gmail.com,
+        linux-kernel@vger.kernel.org,
+        "open list:CPU FREQUENCY SCALING FRAMEWORK" 
+        <linux-pm@vger.kernel.org>
+Subject: Re: [PATCH v2 1/2] cpufreq: Move the IS_ENABLED(CPU_THERMAL) macro
+ in a stub
+Message-ID: <20190624135930.vebfuh4ntn32nbrk@vireshk-i7>
+References: <20190624131715.1857-1-daniel.lezcano@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190611071236.171518-1-gwendal@chromium.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20190624131715.1857-1-daniel.lezcano@linaro.org>
+User-Agent: NeoMutt/20180716-391-311a52
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 11 Jun 2019, Gwendal Grignou wrote:
-
-> With this patch, the cros_ec_ctl driver will register the legacy
-> accelerometer driver (named cros_ec_accel_legacy) if it fails to
-> register sensors through the usual path cros_ec_sensors_register().
-> This legacy device is present on Chromebook devices with older EC
-> firmware only supporting deprecated EC commands:
-> - Glimmer based devices [Intel SOC using LPC transport]
-> - Veyron minnie devices [ARM SOC using SPI transport]
+On 24-06-19, 15:17, Daniel Lezcano wrote:
+> The cpufreq_online and the cpufreq_offline [un]register the driver as
+> a cooling device. This is done if the driver is flagged as a cooling
+> device in addition with a IS_ENABLED macro to compile out the branching
+> code.
 > 
-> Tested-by: Gwendal Grignou <gwendal@chromium.org>
-> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-> Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-> Signed-off-by: Gwendal Grignou <gwendal@chromium.org>
+> Group this test in a stub function added in the cpufreq header instead
+> of having the IS_ENABLED in the code path.
+> 
+> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
 > ---
-> Changes in v6:
-> - Remove .id field in mfd_cell, PLATFORM_DEVID_AUTO is set to auto
->   assign ids.
-> - Add support for ARM devices with older EC.
-> 
-> Changes in v5:
-> - Remove unnecessary white lines.
-> 
-> Changes in v4:
-> - [5/8] Nit: EC -> ECs (Lee Jones)
-> - [5/8] Statically define cros_ec_accel_legacy_cells (Lee Jones)
-> 
-> Changes in v3:
-> - [5/8] Add the Reviewed-by Andy Shevchenko.
-> 
-> Changes in v2:
-> - [5/8] Add the Reviewed-by Gwendal.
-> 
->  drivers/mfd/cros_ec_dev.c | 69 +++++++++++++++++++++++++++++++++++++++
->  1 file changed, 69 insertions(+)
+>  drivers/cpufreq/cpufreq.c | 6 ++----
+>  include/linux/cpufreq.h   | 5 +++++
+>  2 files changed, 7 insertions(+), 4 deletions(-)
 
-Applied, thanks.
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
 
 -- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+viresh
