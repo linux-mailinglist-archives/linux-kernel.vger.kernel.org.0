@@ -2,57 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 24D9850316
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 09:23:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BBE575033C
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 09:25:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726807AbfFXHXT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 03:23:19 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:35008 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726077AbfFXHXS (ORCPT
+        id S1727945AbfFXHYo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 03:24:44 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:46671 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726719AbfFXHYl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 03:23:18 -0400
-Received: from p5b06daab.dip0.t-ipconnect.de ([91.6.218.171] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1hfJJf-0000cI-KY; Mon, 24 Jun 2019 09:23:03 +0200
-Date:   Mon, 24 Jun 2019 09:23:02 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Christoph Hellwig <hch@lst.de>
-cc:     Oleg Nesterov <oleg@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
-        x86@kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-sh@vger.kernel.org, linux-arch@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: remove asm-generic/ptrace.h v3
-In-Reply-To: <20190624054728.30966-1-hch@lst.de>
-Message-ID: <alpine.DEB.2.21.1906240922420.32342@nanos.tec.linutronix.de>
-References: <20190624054728.30966-1-hch@lst.de>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Mon, 24 Jun 2019 03:24:41 -0400
+X-UUID: a763fee8f60547f9a7d74f0d789bde4e-20190624
+X-UUID: a763fee8f60547f9a7d74f0d789bde4e-20190624
+Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw01.mediatek.com
+        (envelope-from <neal.liu@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 2119492074; Mon, 24 Jun 2019 15:24:29 +0800
+Received: from mtkcas07.mediatek.inc (172.21.101.84) by
+ mtkmbs07n2.mediatek.inc (172.21.101.141) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Mon, 24 Jun 2019 15:24:28 +0800
+Received: from mtkswgap22.mediatek.inc (172.21.77.33) by mtkcas07.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Mon, 24 Jun 2019 15:24:28 +0800
+From:   Neal Liu <neal.liu@mediatek.com>
+To:     Matt Mackall <mpm@selenic.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Sean Wang <sean.wang@kernel.org>
+CC:     Neal Liu <neal.liu@mediatek.com>,
+        Crystal Guo <Crystal.Guo@mediatek.com>,
+        <linux-crypto@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <wsd_upstream@mediatek.com>
+Subject: [PATCH v4 0/3] MediaTek Security random number generator support
+Date:   Mon, 24 Jun 2019 15:24:09 +0800
+Message-ID: <1561361052-13072-1-git-send-email-neal.liu@mediatek.com>
+X-Mailer: git-send-email 1.7.9.5
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 24 Jun 2019, Christoph Hellwig wrote:
-> 
-> asm-generic/ptrace.h is a little weird in that it doesn't actually
-> implement any functionality, but it provided multiple layers of macros
-> that just implement trivial inline functions.  We implement those
-> directly in the few architectures and be off with a much simpler
-> design.
-> 
-> I'm not sure which tree is the right place, but may this can go through
-> the asm-generic tree since it removes an asm-generic header?
+These patch series introduce a generic rng driver for Trustzone
+based kernel driver which would like to communicate with ATF
+SIP services.
 
-Makes sense.
+Patch #1 initials SMC fid table for Mediatek SIP interfaces and
+adds HWRNG related SMC call.
 
-Thanks,
+Patch #2..3 adds mtk-sec-rng kernel driver for Trustzone based SoCs.
+For MediaTek SoCs on ARMv8 with TrustZone enabled, peripherals like
+entropy sources is not accessible from normal world (linux) and
+rather accessible from secure world (ATF/TEE) only. This driver aims
+to provide a generic interface to ATF rng service.
 
-	tglx
+
+changes since v1:
+- rename mt67xx-rng to mtk-sec-rng since all MediaTek ARMv8 SoCs
+can reuse this driver.
+- refine coding style and unnecessary check.
+
+changes since v2:
+- remove unused comments.
+- remove redundant variable.
+
+changes since v3:
+- add dt-bindings for MediaTek rng with TrustZone enabled
+- revise HWRNG SMC call fid
+
+
+Neal Liu (3):
+  soc: mediatek: add SMC fid table for SIP interface
+  dt-bindings: rng: add bindings for MediaTek ARMv8 SoCs
+  hwrng: add mtk-sec-rng driver
+
+ .../devicetree/bindings/rng/mtk-sec-rng.txt   | 10 ++
+ drivers/char/hw_random/Kconfig                | 16 +++
+ drivers/char/hw_random/Makefile               |  1 +
+ drivers/char/hw_random/mtk-sec-rng.c          | 97 +++++++++++++++++++
+ include/linux/soc/mediatek/mtk_sip_svc.h      | 33 +++++++
+ 5 files changed, 157 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/rng/mtk-sec-rng.txt
+ create mode 100644 drivers/char/hw_random/mtk-sec-rng.c
+ create mode 100644 include/linux/soc/mediatek/mtk_sip_svc.h
+
+-- 
+2.18.0
+
