@@ -2,86 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 47DF850922
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 12:42:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4932A50926
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 12:45:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729387AbfFXKmp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 06:42:45 -0400
-Received: from relay11.mail.gandi.net ([217.70.178.231]:57125 "EHLO
-        relay11.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728676AbfFXKmp (ORCPT
+        id S1729397AbfFXKoz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 06:44:55 -0400
+Received: from mail-io1-f68.google.com ([209.85.166.68]:41449 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728117AbfFXKoz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 06:42:45 -0400
-Received: from localhost (alyon-656-1-672-152.w92-137.abo.wanadoo.fr [92.137.69.152])
-        (Authenticated sender: alexandre.belloni@bootlin.com)
-        by relay11.mail.gandi.net (Postfix) with ESMTPSA id BE47B100005;
-        Mon, 24 Jun 2019 10:42:38 +0000 (UTC)
-Date:   Mon, 24 Jun 2019 12:42:34 +0200
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     Chen-Yu Tsai <wens@kernel.org>
-Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Vincent Donnefort <vdonnefort@gmail.com>,
-        linux-rtc@vger.kernel.org, devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 0/3] rtc: pcf8563: Fix unhandled interrupt storm
-Message-ID: <20190624104234.GG3133@piout.net>
-References: <20190604042337.26129-1-wens@kernel.org>
- <20190620162220.GA23549@piout.net>
- <CAGb2v67sf3L9zH9Li6tF3xunQ4-isoodBLQmSv2VJtAj6hS7Ug@mail.gmail.com>
+        Mon, 24 Jun 2019 06:44:55 -0400
+Received: by mail-io1-f68.google.com with SMTP id w25so383749ioc.8
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2019 03:44:54 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=BCgJq21igY0KSeVe2g6442gqLYQ5ESADKLIyY02vYSc=;
+        b=sWpjryLMWC9Jck5BhvBy818vz025w73m+vxk+5cRSNFChosTUbM8Ibsf/oUZCg1i91
+         eFz4UuoPLt9N/qOCfGRFVV8lH35YUJzRzsniR9zA+9OreKfdbvIiph8izSWCv2vOplYy
+         Kyfpe/ykH5GfYmkiY3U0RktDIuItXnnX1sF+gDg6ip0LSNXuiHHx8TbM2bZ0Fa+ff4gu
+         oIo7dMNnuVM50xv86XdZnmJB9BlDKa6pD6Mc8JDLOTOkMK0diabW5kZ2UgDHO/ExPBey
+         LlBiBkPK6b3+Yo9GojDv1LfADJp60ojVN0UFgvuQq/3vJPI12KKHvi8tudrOEQ8J9D+o
+         6XrQ==
+X-Gm-Message-State: APjAAAVt+NvNxDcMxYlMP5VvHkI7EBn3PoY/DWN+gxbWK3k03QQDoKRb
+        RzWR6nOdhdnKA1arbLi18mXX55/Gza7LgSPqOy8iag==
+X-Google-Smtp-Source: APXvYqyDcUV7/ft0Fe+wYR8jAaVZC48EZPDjC0/hFh9o1V9pGhwVl+uquTsaMxl4rwUCXSCbvah6+NItemUjJReLvCc=
+X-Received: by 2002:a02:ccdc:: with SMTP id k28mr16948024jaq.41.1561373094455;
+ Mon, 24 Jun 2019 03:44:54 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAGb2v67sf3L9zH9Li6tF3xunQ4-isoodBLQmSv2VJtAj6hS7Ug@mail.gmail.com>
-User-Agent: Mutt/1.12.0 (2019-05-25)
+References: <20190619123019.30032-1-mszeredi@redhat.com> <20190619123019.30032-5-mszeredi@redhat.com>
+ <1ea8ec52ce19499f021510b5c9e38be8d8ebe38f.camel@themaw.net>
+ <CAOssrKcU2JKDYMDbW7V6jpM7_4WFSMA91h9AjpjoYmX=H4ybeg@mail.gmail.com> <30205.1561372589@warthog.procyon.org.uk>
+In-Reply-To: <30205.1561372589@warthog.procyon.org.uk>
+From:   Miklos Szeredi <mszeredi@redhat.com>
+Date:   Mon, 24 Jun 2019 12:44:43 +0200
+Message-ID: <CAOssrKdGSRVSc38X1J0zCQQN+tUhiwPA4bCL0rHCZ-O8iVzzeQ@mail.gmail.com>
+Subject: Re: [PATCH 05/13] vfs: don't parse "silent" option
+To:     David Howells <dhowells@redhat.com>
+Cc:     Ian Kent <raven@themaw.net>, Al Viro <viro@zeniv.linux.org.uk>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 24/06/2019 18:34:29+0800, Chen-Yu Tsai wrote:
-> On Fri, Jun 21, 2019 at 12:22 AM Alexandre Belloni
-> <alexandre.belloni@bootlin.com> wrote:
-> >
-> > On 04/06/2019 12:23:34+0800, Chen-Yu Tsai wrote:
-> > > From: Chen-Yu Tsai <wens@csie.org>
-> > >
-> > > Hi everyone,
-> > >
-> > > While bringing up my Pine H64, I encountered an interrupt storm from the
-> > > pcf8563 RTC. The RTC chip's interrupt line is shared with the PMIC, and
-> > > was not properly added to the device tree. Also, the driver was using an
-> > > trigger method incompatible with the PMIC, preventing the interrupt line
-> > > from being shared. Last, the driver only clears and masks the alarm
-> > > interrupt, while leaving the timer interrupt untouched. This is a
-> > > problem if previous systems left the timer interrupt enabled, and there
-> > > was an interrupt pending.
-> > >
-> > > This patch set fixes all three issues, one per patch.
-> > >
-> > > Please have a look.
-> > >
-> >
-> > I don't have that particular RTC so I can't test but the interrupt
-> > handling in pcf8563_irq seems problematic too. I guess the RTC will only
-> > trigger once per second because the call to pcf8563_set_alarm_mode will
-> > explicitely leave the alarm enabled. The core doesn't really care but it
-> > doesn't really expect the alarm to stay enabled. i.e. It will ensure the
-> > alarm is enabled again after setting it when necessary. I think it would
-> > be safer to simply clear both AIE and AF here. Could you test?
-> 
-> Yeah, that bit looked weird to me as well. And actually the alarm doesn't
-> go down to the second, only the minute.
-> 
-> Is there a test program I can use to test the alarms?
-> 
+On Mon, Jun 24, 2019 at 12:36 PM David Howells <dhowells@redhat.com> wrote:
+>
+> Miklos Szeredi <mszeredi@redhat.com> wrote:
+>
+> > What I'm saying is that with a new interface the rules need not follow
+> > the rules of the old interface, because at the start no one is using
+> > the new interface, so no chance of breaking anything.
+>
+> Er. No.  That's not true, since the old interface comes through the new one.
 
-Sure, tools/testing/selftests/rtc/rtctest.c if you use a recent enough
-version, it will test minute boundaries.
+No, old interface sets SB_* directly from arg 4 of mount(2) and not
+via parsing arg 5.
 
-
--- 
-Alexandre Belloni, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Thanks,
+Miklos
