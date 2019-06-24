@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 499B0507A7
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 12:12:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A0678507AA
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 12:12:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730529AbfFXKIs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 06:08:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42250 "EHLO mail.kernel.org"
+        id S1730538AbfFXKIu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 06:08:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42398 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730467AbfFXKIe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 06:08:34 -0400
+        id S1728671AbfFXKIh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Jun 2019 06:08:37 -0400
 Received: from localhost (f4.8f.5177.ip4.static.sl-reverse.com [119.81.143.244])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1D51A205C9;
-        Mon, 24 Jun 2019 10:08:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CA0A1214DA;
+        Mon, 24 Jun 2019 10:08:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561370913;
-        bh=d37ICMBKvoimNiAqVg+adZ7Qd5e54zOXaNlzOgph3Rw=;
+        s=default; t=1561370916;
+        bh=hwX8jqJDODpfp7mZIgOC0uQF0I4HYA6THLExm7VxaZ8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VrKhmAKFW3xKZqUKp1ITmbKk5azM+mBeN88tjl+G/1vNZGY3Gf1/TVr6+zuTc/lzS
-         It2Xj/PJptbJrHoIBjBTgZid0Ur6OJywBAzArgTbnmEqfasVe5KwMJA2Q2Nd/Kf0+G
-         F9GtBYIJxtWgU8/AfZtTX7Csdt4bOS/5VF6BSV9I=
+        b=Zj44TLBz970hpFdmFv4vDdAckkIUVfWfwRdmT9Jkc3gofXvwVJIACdo5gzwDIVobV
+         XpulnrZt5TOJ2WJePqMFIe2RE6OACnKci0TqQNM03SIIJ5Czad/iq4dAz5mg9eJ2YS
+         FqHDbwOK8yeSRsbJgncVntpvIt3PWvMgQtqqkmq8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Helge Deller <deller@gmx.de>,
+        stable@vger.kernel.org, Oded Gabbay <oded.gabbay@gmail.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 048/121] parisc: Fix compiler warnings in float emulation code
-Date:   Mon, 24 Jun 2019 17:56:20 +0800
-Message-Id: <20190624092323.217985926@linuxfoundation.org>
+Subject: [PATCH 5.1 049/121] habanalabs: fix bug in checking huge page optimization
+Date:   Mon, 24 Jun 2019 17:56:21 +0800
+Message-Id: <20190624092323.261803905@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190624092320.652599624@linuxfoundation.org>
 References: <20190624092320.652599624@linuxfoundation.org>
@@ -43,48 +43,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 6b98d9134e14f5ef4bcf64b27eedf484ed19a1ec ]
+[ Upstream commit d724170160f800fa8dfd3c0cdebb8b093570b504 ]
 
-Avoid such compiler warnings:
-arch/parisc/math-emu/cnv_float.h:71:27: warning: ‘<<’ in boolean context, did you mean ‘<’ ? [-Wint-in-bool-context]
-     ((Dintp1(dint_valueA) << 33 - SGL_EXP_LENGTH) || Dintp2(dint_valueB))
-arch/parisc/math-emu/fcnvxf.c:257:6: note: in expansion of macro ‘Dint_isinexact_to_sgl’
-  if (Dint_isinexact_to_sgl(srcp1,srcp2)) {
+This patch fix a bug in the mmu code that checks whether we can use huge
+page mappings for host pages.
 
-Signed-off-by: Helge Deller <deller@gmx.de>
+The code is supposed to enable huge page mappings only if ALL DMA
+addresses are aligned to 2MB AND the number of pages in each DMA chunk is
+a modulo of the number of pages in 2MB. However, the code ignored the
+first requirement for the first DMA chunk.
+
+This patch fix that issue by making sure the requirement of address
+alignment is validated against all DMA chunks.
+
+Signed-off-by: Oded Gabbay <oded.gabbay@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/parisc/math-emu/cnv_float.h | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/misc/habanalabs/memory.c | 6 ------
+ 1 file changed, 6 deletions(-)
 
-diff --git a/arch/parisc/math-emu/cnv_float.h b/arch/parisc/math-emu/cnv_float.h
-index 933423fa5144..b0db61188a61 100644
---- a/arch/parisc/math-emu/cnv_float.h
-+++ b/arch/parisc/math-emu/cnv_float.h
-@@ -60,19 +60,19 @@
-     ((exponent < (SGL_P - 1)) ?				\
-      (Sall(sgl_value) << (SGL_EXP_LENGTH + 1 + exponent)) : FALSE)
+diff --git a/drivers/misc/habanalabs/memory.c b/drivers/misc/habanalabs/memory.c
+index fadaf557603f..425442819d31 100644
+--- a/drivers/misc/habanalabs/memory.c
++++ b/drivers/misc/habanalabs/memory.c
+@@ -675,11 +675,6 @@ static int init_phys_pg_pack_from_userptr(struct hl_ctx *ctx,
  
--#define Int_isinexact_to_sgl(int_value)	(int_value << 33 - SGL_EXP_LENGTH)
-+#define Int_isinexact_to_sgl(int_value)	((int_value << 33 - SGL_EXP_LENGTH) != 0)
+ 		total_npages += npages;
  
- #define Sgl_roundnearest_from_int(int_value,sgl_value)			\
-     if (int_value & 1<<(SGL_EXP_LENGTH - 2))   /* round bit */		\
--    	if ((int_value << 34 - SGL_EXP_LENGTH) || Slow(sgl_value))	\
-+	if (((int_value << 34 - SGL_EXP_LENGTH) != 0) || Slow(sgl_value)) \
- 		Sall(sgl_value)++
+-		if (first) {
+-			first = false;
+-			dma_addr &= PAGE_MASK_2MB;
+-		}
+-
+ 		if ((npages % PGS_IN_2MB_PAGE) ||
+ 					(dma_addr & (PAGE_SIZE_2MB - 1)))
+ 			is_huge_page_opt = false;
+@@ -704,7 +699,6 @@ static int init_phys_pg_pack_from_userptr(struct hl_ctx *ctx,
+ 	phys_pg_pack->total_size = total_npages * page_size;
  
- #define Dint_isinexact_to_sgl(dint_valueA,dint_valueB)		\
--    ((Dintp1(dint_valueA) << 33 - SGL_EXP_LENGTH) || Dintp2(dint_valueB))
-+    (((Dintp1(dint_valueA) << 33 - SGL_EXP_LENGTH) != 0) || Dintp2(dint_valueB))
+ 	j = 0;
+-	first = true;
+ 	for_each_sg(userptr->sgt->sgl, sg, userptr->sgt->nents, i) {
+ 		npages = get_sg_info(sg, &dma_addr);
  
- #define Sgl_roundnearest_from_dint(dint_valueA,dint_valueB,sgl_value)	\
-     if (Dintp1(dint_valueA) & 1<<(SGL_EXP_LENGTH - 2)) 			\
--    	if ((Dintp1(dint_valueA) << 34 - SGL_EXP_LENGTH) ||		\
-+	if (((Dintp1(dint_valueA) << 34 - SGL_EXP_LENGTH) != 0) ||	\
-     	Dintp2(dint_valueB) || Slow(sgl_value)) Sall(sgl_value)++
- 
- #define Dint_isinexact_to_dbl(dint_value) 	\
 -- 
 2.20.1
 
