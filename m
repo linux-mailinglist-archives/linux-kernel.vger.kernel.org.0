@@ -2,96 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3EB2950915
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 12:41:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1AFB25091F
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 12:42:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729239AbfFXKk7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 06:40:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36106 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728950AbfFXKk6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 06:40:58 -0400
-Received: from linux-8ccs (nat.nue.novell.com [195.135.221.2])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DA341208E4;
-        Mon, 24 Jun 2019 10:40:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561372858;
-        bh=2dFfTEoWp60ECXsMUMfLHSUmkyf/mCTPGHT9AHfNTTI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=KeLZOGsVIf33b6a/jBmrgyAu9CW9olZa/r5DJReovMFfccT8yDgE227sNpYUnbjKt
-         URN09Ki/8OKLOHtgz5J2wV60o6rWc/cFRTv0oTi16aiPf0ac07b170NBBpFxGIL5lx
-         A7oUZ6PpsXVhZg6HYZU3sZ5oio240itAk0RPH7+s=
-Date:   Mon, 24 Jun 2019 12:40:54 +0200
-From:   Jessica Yu <jeyu@kernel.org>
-To:     Yang Yingliang <yangyingliang@huawei.com>
-Cc:     linux-kernel@vger.kernel.org, peterz@infradead.org,
-        namit@vmware.com, cj.chengjian@huawei.com
-Subject: Re: [PATCH v2] modules: fix BUG when load module with rodata=n
-Message-ID: <20190624104053.GA22519@linux-8ccs>
-References: <1560997094-19920-1-git-send-email-yangyingliang@huawei.com>
+        id S1729362AbfFXKmZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 06:42:25 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:44976 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728676AbfFXKmZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Jun 2019 06:42:25 -0400
+Received: by mail-lf1-f65.google.com with SMTP id r15so9624298lfm.11;
+        Mon, 24 Jun 2019 03:42:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=ZKQur/4feM7yNS7/yjihV2CmCsKO6qLzrXuCht+A5oM=;
+        b=LdYoeXBBpqQ2fwvRbztpeh8hFO3N+98fqdFUyS35G7dvgm+WGNyRVubCCIaJn7OIA0
+         GFzYPD5Vi3po9+AHIhddgYC/VtRWJz7Hi1ZNqE33iok9f2XAejNUNPQF4anxX+uoSHeY
+         /KZw2U0wefzixeDhKMQUuimTVY8KuyCL6+JCxNuIN0+tSW1PDunvD7KVvXqM/MxiF7wC
+         niJovSyHpviJIj4r5XkXsZ8H0BgRYu+DJmzutdNTxB1wNPekKh36l5zbw/yJBWTgQz4l
+         loGDD3hoVJsh/5wdD0lvFgUofVOKm55tSpMxq7i0Z05jam3cfKrva/0NDwj4XNPi335k
+         GKsQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=ZKQur/4feM7yNS7/yjihV2CmCsKO6qLzrXuCht+A5oM=;
+        b=KyKx3qFQzCwLVFSVB8yhfJTuNFgC14f82ckBHGWnNlbVIw+rwtWZt8J5ETai9J+fUo
+         JqF/VRJnVN2H7B7HKc2MZI/xjojgXTH/p5cePNILjK5gYOPJqS2LQm6kArE1NtBgc3LB
+         yDQ7EUCNOPFhCLvwS9f+WlB89LcFfC/p6H9m6TVBINf4I14KPnP3JCNXxZYwCRJyKUFd
+         vVWQG7bUJXOJ83rep005kKUqwf7JBjFVraX0GWPrXrsJAoI6xoLIJNF9oKXOD+s6LRVs
+         ENWRaxu0vSFHeHMovlilIeMri4y1W0d4feAlCHYqov8AmxfWdUz3YT2fucfy5zCdar43
+         JsLQ==
+X-Gm-Message-State: APjAAAX/CNq4Z3/23gFaQnYT+Mp7GKK+BIKSLkvVbeVM0WcnCCI0QuXL
+        gHWHogSlZtEPwEDylQ3ph3Y=
+X-Google-Smtp-Source: APXvYqwYusjRTqAjFQIBBX2wQHYSRL2eiIcDsSuX5Yg2cauKLG99VWoJGr6qEkokrtmME+zPpnwEfQ==
+X-Received: by 2002:ac2:596c:: with SMTP id h12mr13962464lfp.101.1561372942517;
+        Mon, 24 Jun 2019 03:42:22 -0700 (PDT)
+Received: from [192.168.2.145] (ppp91-79-162-197.pppoe.mtu-net.ru. [91.79.162.197])
+        by smtp.googlemail.com with ESMTPSA id w1sm1914739ljm.81.2019.06.24.03.42.21
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 24 Jun 2019 03:42:21 -0700 (PDT)
+Subject: Re: [PATCH v4 13/16] PM / devfreq: tegra: Support Tegra30
+To:     myungjoo.ham@samsung.com
+Cc:     Chanwoo Choi <cw00.choi@samsung.com>,
+        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "jonathanh@nvidia.com" <jonathanh@nvidia.com>,
+        "thierry.reding@gmail.com" <thierry.reding@gmail.com>
+References: <20190624065919epcms1p1a366de5f455f5138c438d1da8151c12f@epcms1p1>
+ <CGME20190624065919epcms1p1a366de5f455f5138c438d1da8151c12f@epcms1p8>
+ <20190624073414epcms1p87b6dc13758b6bd401d275cfba583314a@epcms1p8>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <37db00bc-3a22-d1c2-7bdc-e27af42cd5c7@gmail.com>
+Date:   Mon, 24 Jun 2019 13:42:20 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <1560997094-19920-1-git-send-email-yangyingliang@huawei.com>
-X-OS:   Linux linux-8ccs 5.1.0-rc1-lp150.12.28-default+ x86_64
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190624073414epcms1p87b6dc13758b6bd401d275cfba583314a@epcms1p8>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-+++ Yang Yingliang [20/06/19 10:18 +0800]:
->When loading a module with rodata=n, it causes an executing
->NX-protected page BUG.
->
->[   32.379191] kernel tried to execute NX-protected page - exploit attempt? (uid: 0)
->[   32.382917] BUG: unable to handle page fault for address: ffffffffc0005000
->[   32.385947] #PF: supervisor instruction fetch in kernel mode
->[   32.387662] #PF: error_code(0x0011) - permissions violation
->[   32.389352] PGD 240c067 P4D 240c067 PUD 240e067 PMD 421a52067 PTE 8000000421a53063
->[   32.391396] Oops: 0011 [#1] SMP PTI
->[   32.392478] CPU: 7 PID: 2697 Comm: insmod Tainted: G           O      5.2.0-rc5+ #202
->[   32.394588] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.12.1-0-ga5cab58e9a3f-prebuilt.qemu.org 04/01/2014
->[   32.398157] RIP: 0010:ko_test_init+0x0/0x1000 [ko_test]
->[   32.399662] Code: Bad RIP value.
->[   32.400621] RSP: 0018:ffffc900029f3ca8 EFLAGS: 00010246
->[   32.402171] RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000000
->[   32.404332] RDX: 00000000000004c7 RSI: 0000000000000cc0 RDI: ffffffffc0005000
->[   32.406347] RBP: ffffffffc0005000 R08: ffff88842fbebc40 R09: ffffffff810ede4a
->[   32.408392] R10: ffffea00108e3480 R11: 0000000000000000 R12: ffff88842bee21a0
->[   32.410472] R13: 0000000000000001 R14: 0000000000000001 R15: ffffc900029f3e78
->[   32.412609] FS:  00007fb4f0c0a700(0000) GS:ffff88842fbc0000(0000) knlGS:0000000000000000
->[   32.414722] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->[   32.416290] CR2: ffffffffc0004fd6 CR3: 0000000421a90004 CR4: 0000000000020ee0
->[   32.418471] Call Trace:
->[   32.419136]  do_one_initcall+0x41/0x1df
->[   32.420199]  ? _cond_resched+0x10/0x40
->[   32.421433]  ? kmem_cache_alloc_trace+0x36/0x160
->[   32.422827]  do_init_module+0x56/0x1f7
->[   32.423946]  load_module+0x1e67/0x2580
->[   32.424947]  ? __alloc_pages_nodemask+0x150/0x2c0
->[   32.426413]  ? map_vm_area+0x2d/0x40
->[   32.427530]  ? __vmalloc_node_range+0x1ef/0x260
->[   32.428850]  ? __do_sys_init_module+0x135/0x170
->[   32.430060]  ? _cond_resched+0x10/0x40
->[   32.431249]  __do_sys_init_module+0x135/0x170
->[   32.432547]  do_syscall_64+0x43/0x120
->[   32.433853]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
->
->Because if rodata=n, set_memory_x() cann't be called, fix this by
->calling set_memory_x in complete_formation();
->
->v1 -> v2:
->   Remove empty lines between the frob_* calls.
->
->Fixes: f2c65fb3221a ("x86/modules: Avoid breaking W^X while loading modules")
->Suggested-by: Jian Cheng <cj.chengjian@huawei.com>
->Reviewed-by: Nadav Amit <namit@vmware.com>
->Signed-off-by: Yang Yingliang <yangyingliang@huawei.com>
+24.06.2019 10:34, MyungJoo Ham пишет:
+>>
+>> A question:
+>>
+>> Does this driver support Tegra20 as well?
+>> I'm asking this because ARCH_TEGRA includes ARCH_TEGRA_2x_SOC
+>> according to /drivers/soc/tegra/Kconfig.
+>>
+> 
+> For this matter, how about updating your 13/16 patch as follows?
+> 
+> ---
+>  drivers/devfreq/Kconfig         | 4 ++--
+>  drivers/devfreq/tegra-devfreq.c | 1 +
+>  2 files changed, 3 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/devfreq/Kconfig b/drivers/devfreq/Kconfig
+> index 7dd46d44579d..78c4b436aad8 100644
+> --- a/drivers/devfreq/Kconfig
+> +++ b/drivers/devfreq/Kconfig
+> @@ -93,8 +93,8 @@ config ARM_EXYNOS_BUS_DEVFREQ
+>  	  This does not yet operate with optimal voltages.
+>  
+>  config ARM_TEGRA_DEVFREQ
+> -	tristate "Tegra DEVFREQ Driver"
+> -	depends on ARCH_TEGRA_124_SOC
+> +	tristate "NVIDIA Tegra30/114/124/210 DEVFREQ Driver"
+> +	depends on ARCH_TEGRA_3x_SOC || ARCH_TEGRA_114_SOC || ARCH_TEGRA_124_SOC || ARCH_TEGRA_210_SOC
+>  	select PM_OPP
+>  	help
+>  	  This adds the DEVFREQ driver for the Tegra family of SoCs.
+> diff --git a/drivers/devfreq/tegra-devfreq.c b/drivers/devfreq/tegra-devfreq.c
+> index 5cddf2199c4e..a6ba75f4106d 100644
+> --- a/drivers/devfreq/tegra-devfreq.c
+> +++ b/drivers/devfreq/tegra-devfreq.c
+> @@ -726,6 +726,7 @@ static int tegra_devfreq_remove(struct platform_device *pdev)
+>  }
+>  
+>  static const struct of_device_id tegra_devfreq_of_match[] = {
+> +	{ .compatible = "nvidia,tegra30-actmon" },
+>  	{ .compatible = "nvidia,tegra124-actmon" },
+>  	{ },
+>  };
+> 
 
-Applied, thanks for the fix!
-
-Jessica
-
+Good call! I'll update this patch following yours suggestion, thanks.
