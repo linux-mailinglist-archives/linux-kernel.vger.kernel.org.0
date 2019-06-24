@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 52ABB50862
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 12:18:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E3AF8507F9
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 12:13:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730829AbfFXKQz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 06:16:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54372 "EHLO mail.kernel.org"
+        id S1729370AbfFXKFw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 06:05:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37838 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730801AbfFXKQt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 06:16:49 -0400
+        id S1729989AbfFXKFs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Jun 2019 06:05:48 -0400
 Received: from localhost (f4.8f.5177.ip4.static.sl-reverse.com [119.81.143.244])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4FA8C2146F;
-        Mon, 24 Jun 2019 10:16:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 77AA72145D;
+        Mon, 24 Jun 2019 10:05:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561371408;
-        bh=CnQAIDsK/qngiQI4aLOMQNGqTdbXr98z9kcIyjCyOKg=;
+        s=default; t=1561370746;
+        bh=VUru6ZPh216BdAHCYLYH+RFIWY6SIvlGVpx5BvcCHi4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cvHFW7xNZEgj4+IodIexrw4Mrpg7+wuq14FsPksI263psoaW5eEOVgd3S9A6mPU17
-         iIlSi94jEIpDHTrjK9RBBT6Kg8731EC0A62rfF065XCcjY4wpnkx4KUGeecF71riOy
-         GhvRAgVWrV8YpXRlS1uSTMz4txJPntx4JKQDrLWk=
+        b=p3ZDZUG63WzkZCfoo34Mwn1pGhB3nOf8+t+UM5IOxkmVH/cqH6lwhJAploQHhPIIC
+         Ky4b+p5c1zqDYAK5Jn1NwUjk2UHBbYBWwqbWHWNNdpe8AB//+gKv5xEM8BQznG7VRO
+         7cIDO5BhSDq9C6dYy+f0ItoZxJ1mMCpWJIv5X+XA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Filipe Manana <fdmanana@suse.com>,
-        Naohiro Aota <naohiro.aota@wdc.com>,
-        David Sterba <dsterba@suse.com>
-Subject: [PATCH 5.1 092/121] btrfs: start readahead also in seed devices
-Date:   Mon, 24 Jun 2019 17:57:04 +0800
-Message-Id: <20190624092325.492365383@linuxfoundation.org>
+        stable@vger.kernel.org, Faiz Abbas <faiz_abbas@ti.com>,
+        Tony Lindgren <tony@atomide.com>
+Subject: [PATCH 4.19 75/90] ARM: dts: dra76x: Update MMC2_HS200_MANUAL1 iodelay values
+Date:   Mon, 24 Jun 2019 17:57:05 +0800
+Message-Id: <20190624092318.900771558@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190624092320.652599624@linuxfoundation.org>
-References: <20190624092320.652599624@linuxfoundation.org>
+In-Reply-To: <20190624092313.788773607@linuxfoundation.org>
+References: <20190624092313.788773607@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,49 +43,84 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Naohiro Aota <naohiro.aota@wdc.com>
+From: Faiz Abbas <faiz_abbas@ti.com>
 
-commit c4e0540d0ad49c8ceab06cceed1de27c4fe29f6e upstream.
+commit c3c0b70cd3f801bded7a548198ee1c9851a0ca82 upstream.
 
-Currently, btrfs does not consult seed devices to start readahead. As a
-result, if readahead zone is added to the seed devices, btrfs_reada_wait()
-indefinitely wait for the reada_ctl to finish.
+Update the MMC2_HS200_MANUAL1 iodelay values to match with the latest
+dra76x data manual[1]. The new iodelay values will have better marginality
+and should prevent issues in corner cases.
 
-You can reproduce the hung by modifying btrfs/163 to have larger initial
-file size (e.g. xfs_io pwrite 4M instead of current 256K).
+Also this particular pinctrl-array is using spaces instead of tabs for
+spacing between the values and the comments. Fix this as well.
 
-Fixes: 7414a03fbf9e ("btrfs: initial readahead code and prototypes")
-Cc: stable@vger.kernel.org # 3.2+: ce7791ffee1e: Btrfs: fix race between readahead and device replace/removal
-Cc: stable@vger.kernel.org # 3.2+
-Reviewed-by: Filipe Manana <fdmanana@suse.com>
-Signed-off-by: Naohiro Aota <naohiro.aota@wdc.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+[1] http://www.ti.com/lit/ds/symlink/dra76p.pdf
+
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
+[tony@atomide.com: updated description with a bit more info]
+Signed-off-by: Tony Lindgren <tony@atomide.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/btrfs/reada.c |    5 +++++
- 1 file changed, 5 insertions(+)
+ arch/arm/boot/dts/dra76x-mmc-iodelay.dtsi |   40 +++++++++++++++---------------
+ 1 file changed, 20 insertions(+), 20 deletions(-)
 
---- a/fs/btrfs/reada.c
-+++ b/fs/btrfs/reada.c
-@@ -747,6 +747,7 @@ static void __reada_start_machine(struct
- 	u64 total = 0;
- 	int i;
+--- a/arch/arm/boot/dts/dra76x-mmc-iodelay.dtsi
++++ b/arch/arm/boot/dts/dra76x-mmc-iodelay.dtsi
+@@ -22,7 +22,7 @@
+  *
+  * Datamanual Revisions:
+  *
+- * DRA76x Silicon Revision 1.0: SPRS993A, Revised July 2017
++ * DRA76x Silicon Revision 1.0: SPRS993E, Revised December 2018
+  *
+  */
  
-+again:
- 	do {
- 		enqueued = 0;
- 		mutex_lock(&fs_devices->device_list_mutex);
-@@ -758,6 +759,10 @@ static void __reada_start_machine(struct
- 		mutex_unlock(&fs_devices->device_list_mutex);
- 		total += enqueued;
- 	} while (enqueued && total < 10000);
-+	if (fs_devices->seed) {
-+		fs_devices = fs_devices->seed;
-+		goto again;
-+	}
+@@ -169,25 +169,25 @@
+ 	/* Corresponds to MMC2_HS200_MANUAL1 in datamanual */
+ 	mmc2_iodelay_hs200_conf: mmc2_iodelay_hs200_conf {
+ 		pinctrl-pin-array = <
+-			0x190 A_DELAY_PS(384) G_DELAY_PS(0)       /* CFG_GPMC_A19_OEN */
+-			0x194 A_DELAY_PS(0) G_DELAY_PS(174)       /* CFG_GPMC_A19_OUT */
+-			0x1a8 A_DELAY_PS(410) G_DELAY_PS(0)       /* CFG_GPMC_A20_OEN */
+-			0x1ac A_DELAY_PS(85) G_DELAY_PS(0)        /* CFG_GPMC_A20_OUT */
+-			0x1b4 A_DELAY_PS(468) G_DELAY_PS(0)       /* CFG_GPMC_A21_OEN */
+-			0x1b8 A_DELAY_PS(139) G_DELAY_PS(0)       /* CFG_GPMC_A21_OUT */
+-			0x1c0 A_DELAY_PS(676) G_DELAY_PS(0)       /* CFG_GPMC_A22_OEN */
+-			0x1c4 A_DELAY_PS(69) G_DELAY_PS(0)        /* CFG_GPMC_A22_OUT */
+-			0x1d0 A_DELAY_PS(1062) G_DELAY_PS(154)	  /* CFG_GPMC_A23_OUT */
+-			0x1d8 A_DELAY_PS(640) G_DELAY_PS(0)       /* CFG_GPMC_A24_OEN */
+-			0x1dc A_DELAY_PS(0) G_DELAY_PS(0)         /* CFG_GPMC_A24_OUT */
+-			0x1e4 A_DELAY_PS(356) G_DELAY_PS(0)       /* CFG_GPMC_A25_OEN */
+-			0x1e8 A_DELAY_PS(0) G_DELAY_PS(0)         /* CFG_GPMC_A25_OUT */
+-			0x1f0 A_DELAY_PS(579) G_DELAY_PS(0)       /* CFG_GPMC_A26_OEN */
+-			0x1f4 A_DELAY_PS(0) G_DELAY_PS(0)         /* CFG_GPMC_A26_OUT */
+-			0x1fc A_DELAY_PS(435) G_DELAY_PS(0)       /* CFG_GPMC_A27_OEN */
+-			0x200 A_DELAY_PS(36) G_DELAY_PS(0)        /* CFG_GPMC_A27_OUT */
+-			0x364 A_DELAY_PS(759) G_DELAY_PS(0)       /* CFG_GPMC_CS1_OEN */
+-			0x368 A_DELAY_PS(72) G_DELAY_PS(0)        /* CFG_GPMC_CS1_OUT */
++			0x190 A_DELAY_PS(384) G_DELAY_PS(0)	/* CFG_GPMC_A19_OEN */
++			0x194 A_DELAY_PS(350) G_DELAY_PS(174)	/* CFG_GPMC_A19_OUT */
++			0x1a8 A_DELAY_PS(410) G_DELAY_PS(0)	/* CFG_GPMC_A20_OEN */
++			0x1ac A_DELAY_PS(335) G_DELAY_PS(0)	/* CFG_GPMC_A20_OUT */
++			0x1b4 A_DELAY_PS(468) G_DELAY_PS(0)	/* CFG_GPMC_A21_OEN */
++			0x1b8 A_DELAY_PS(339) G_DELAY_PS(0)	/* CFG_GPMC_A21_OUT */
++			0x1c0 A_DELAY_PS(676) G_DELAY_PS(0)	/* CFG_GPMC_A22_OEN */
++			0x1c4 A_DELAY_PS(219) G_DELAY_PS(0)	/* CFG_GPMC_A22_OUT */
++			0x1d0 A_DELAY_PS(1062) G_DELAY_PS(154)	/* CFG_GPMC_A23_OUT */
++			0x1d8 A_DELAY_PS(640) G_DELAY_PS(0)	/* CFG_GPMC_A24_OEN */
++			0x1dc A_DELAY_PS(150) G_DELAY_PS(0)	/* CFG_GPMC_A24_OUT */
++			0x1e4 A_DELAY_PS(356) G_DELAY_PS(0)	/* CFG_GPMC_A25_OEN */
++			0x1e8 A_DELAY_PS(150) G_DELAY_PS(0)	/* CFG_GPMC_A25_OUT */
++			0x1f0 A_DELAY_PS(579) G_DELAY_PS(0)	/* CFG_GPMC_A26_OEN */
++			0x1f4 A_DELAY_PS(200) G_DELAY_PS(0)	/* CFG_GPMC_A26_OUT */
++			0x1fc A_DELAY_PS(435) G_DELAY_PS(0)	/* CFG_GPMC_A27_OEN */
++			0x200 A_DELAY_PS(236) G_DELAY_PS(0)	/* CFG_GPMC_A27_OUT */
++			0x364 A_DELAY_PS(759) G_DELAY_PS(0)	/* CFG_GPMC_CS1_OEN */
++			0x368 A_DELAY_PS(372) G_DELAY_PS(0)	/* CFG_GPMC_CS1_OUT */
+ 	      >;
+ 	};
  
- 	if (enqueued == 0)
- 		return;
 
 
