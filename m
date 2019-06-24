@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5A62B5078E
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 12:12:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BC987507D4
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 12:13:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729899AbfFXKH7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 06:07:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40366 "EHLO mail.kernel.org"
+        id S1730629AbfFXKKf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 06:10:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40438 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730352AbfFXKHn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 06:07:43 -0400
+        id S1729805AbfFXKHq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Jun 2019 06:07:46 -0400
 Received: from localhost (f4.8f.5177.ip4.static.sl-reverse.com [119.81.143.244])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E806C205C9;
-        Mon, 24 Jun 2019 10:07:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A3848205C9;
+        Mon, 24 Jun 2019 10:07:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561370862;
-        bh=ECy2ZQeCJqHP2x9qvZA0fKlRWNpSNPyicrZYRdLcbmU=;
+        s=default; t=1561370865;
+        bh=waqXTwaY0VCyUvlzzqZ5JTTN5lmFWcixD7uBoIJW5wo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0nqlRvO3xFUUr+QklLaJ3HB5mJUM0j+nH46AZcXdc/WJ/Tld6fczHyDW3j5CSuhYp
-         nafBh3U91WvDEkScu10p6f2A5//KMB4p0qRX45jge1MmcHP3ya3nP21/bBJh5BeXwq
-         fBYRNbmICUuycK2L0Uay4HLQXR7JsGgTMaX1v1BI=
+        b=R1dmkRY1Su7IwMtOehX0cAD0OV9vBFNvDhEwGvZmuIe3XTXDH7f9kM5xYwIkrry2V
+         N7posF6Gmuq0e2DuNyZqEl2N/2lF3JTr+8Q501vQJQdouNtarmYnzvnhrEwr+iw0jz
+         niki+ov1LOuE95UEPomLivBgpu+34Vn4HMqdVNtw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wright Feng <wright.feng@cypress.com>,
-        Double Lo <double.lo@cypress.com>,
-        Madhan Mohan R <madhanmohan.r@cypress.com>,
-        Chi-Hsien Lin <chi-hsien.lin@cypress.com>,
-        Douglas Anderson <dianders@chromium.org>,
+        stable@vger.kernel.org, Douglas Anderson <dianders@chromium.org>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Arend van Spriel <arend.vanspriel@broadcom.com>,
         Kalle Valo <kvalo@codeaurora.org>,
         Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH 5.1 028/121] Revert "brcmfmac: disable command decode in sdio_aos"
-Date:   Mon, 24 Jun 2019 17:56:00 +0800
-Message-Id: <20190624092322.193778572@linuxfoundation.org>
+Subject: [PATCH 5.1 029/121] brcmfmac: sdio: Disable auto-tuning around commands expected to fail
+Date:   Mon, 24 Jun 2019 17:56:01 +0800
+Message-Id: <20190624092322.322523215@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190624092320.652599624@linuxfoundation.org>
 References: <20190624092320.652599624@linuxfoundation.org>
@@ -50,54 +48,52 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Douglas Anderson <dianders@chromium.org>
 
-commit abdd5dcc00207e7c38680f3754d1bfffafff1093 upstream.
+commit 2de0b42da263c97d330d276f5ccf7c4470e3324f upstream.
 
-This reverts commit 29f6589140a10ece8c1d73f58043ea5b3473ab3e.
+There are certain cases, notably when transitioning between sleep and
+active state, when Broadcom SDIO WiFi cards will produce errors on the
+SDIO bus.  This is evident from the source code where you can see that
+we try commands in a loop until we either get success or we've tried
+too many times.  The comment in the code reinforces this by saying
+"just one write attempt may fail"
 
-After that patch landed I find that my kernel log on
-rk3288-veyron-minnie and rk3288-veyron-speedy is filled with:
-brcmfmac: brcmf_sdio_bus_sleep: error while changing bus sleep state -110
+Unfortunately these failures sometimes end up causing an "-EILSEQ"
+back to the core which triggers a retuning of the SDIO card and that
+blocks all traffic to the card until it's done.
 
-This seems to happen every time the Broadcom WiFi transitions out of
-sleep mode.  Reverting the commit fixes the problem for me, so that's
-what this patch does.
+Let's disable retuning around the commands we expect might fail.
 
-Note that, in general, the justification in the original commit seemed
-a little weak.  It looked like someone was testing on a SD card
-controller that would sometimes die if there were CRC errors on the
-bus.  This used to happen back in early days of dw_mmc (the controller
-on my boards), but we fixed it.  Disabling a feature on all boards
-just because one SD card controller is broken seems bad.
-
-Fixes: 29f6589140a1 ("brcmfmac: disable command decode in sdio_aos")
-Cc: Wright Feng <wright.feng@cypress.com>
-Cc: Double Lo <double.lo@cypress.com>
-Cc: Madhan Mohan R <madhanmohan.r@cypress.com>
-Cc: Chi-Hsien Lin <chi-hsien.lin@cypress.com>
+Cc: stable@vger.kernel.org #v4.18+
 Signed-off-by: Douglas Anderson <dianders@chromium.org>
-Cc: stable@vger.kernel.org
+Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+Reviewed-by: Arend van Spriel <arend.vanspriel@broadcom.com>
 Acked-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.c |    6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
+ drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
 --- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.c
 +++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.c
-@@ -3373,11 +3373,7 @@ err:
+@@ -676,6 +676,8 @@ brcmf_sdio_kso_control(struct brcmf_sdio
  
- static bool brcmf_sdio_aos_no_decode(struct brcmf_sdio *bus)
- {
--	if (bus->ci->chip == CY_CC_43012_CHIP_ID ||
--	    bus->ci->chip == CY_CC_4373_CHIP_ID ||
--	    bus->ci->chip == BRCM_CC_4339_CHIP_ID ||
--	    bus->ci->chip == BRCM_CC_4345_CHIP_ID ||
--	    bus->ci->chip == BRCM_CC_4354_CHIP_ID)
-+	if (bus->ci->chip == CY_CC_43012_CHIP_ID)
- 		return true;
- 	else
- 		return false;
+ 	brcmf_dbg(TRACE, "Enter: on=%d\n", on);
+ 
++	sdio_retune_crc_disable(bus->sdiodev->func1);
++
+ 	wr_val = (on << SBSDIO_FUNC1_SLEEPCSR_KSO_SHIFT);
+ 	/* 1st KSO write goes to AOS wake up core if device is asleep  */
+ 	brcmf_sdiod_writeb(bus->sdiodev, SBSDIO_FUNC1_SLEEPCSR, wr_val, &err);
+@@ -736,6 +738,8 @@ brcmf_sdio_kso_control(struct brcmf_sdio
+ 	if (try_cnt > MAX_KSO_ATTEMPTS)
+ 		brcmf_err("max tries: rd_val=0x%x err=%d\n", rd_val, err);
+ 
++	sdio_retune_crc_enable(bus->sdiodev->func1);
++
+ 	return err;
+ }
+ 
 
 
