@@ -2,223 +2,388 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B400B50EB5
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 16:39:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0CFD050ED4
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 16:43:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728239AbfFXOj4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 10:39:56 -0400
-Received: from outils.crapouillou.net ([89.234.176.41]:38916 "EHLO
-        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726381AbfFXOjz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 10:39:55 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
-        s=mail; t=1561387193; h=from:from:sender:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-         content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=2QvYrE3ls/QXOBjihXF5hG/izh16IQcN2h5MrNGxNC8=;
-        b=Bhigd78ANkGaYmYI+0oAYzU8YmsKJKpGucWHCgAFcpgfWaU3meL5LseFh10NK0JeR5KmaM
-        12aEdcqwu8iiOZlWEOUx6HTENsi+bWOCqdoD7FO+fT75BOEoG6IBkftSspiT9/Scfd69v3
-        BqpepJB6H/+J64wFIT4/1DgXmX4rXVg=
-Date:   Mon, 24 Jun 2019 16:39:46 +0200
-From:   Paul Cercueil <paul@crapouillou.net>
-Subject: Re: [PATCH] backlight: pwm_bl: Set pin to sleep state when powered
- down
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Daniel Thompson <daniel.thompson@linaro.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        od@zcrc.me, linux-pwm@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Message-Id: <1561387186.20436.1@crapouillou.net>
-In-Reply-To: <20190621135608.GB11839@ulmo>
-References: <20190522163428.7078-1-paul@crapouillou.net>
-        <5b0f8bb3-e7b0-52c1-1f2f-9709992b76fc@linaro.org>
-        <20190621135608.GB11839@ulmo>
+        id S1728956AbfFXOmD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 10:42:03 -0400
+Received: from mx2.suse.de ([195.135.220.15]:50312 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725562AbfFXOmC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Jun 2019 10:42:02 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id A72D1AD4E;
+        Mon, 24 Jun 2019 14:42:00 +0000 (UTC)
+From:   Roman Penyaev <rpenyaev@suse.de>
+Cc:     Roman Penyaev <rpenyaev@suse.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Azat Khuzhin <azat@libevent.org>, Eric Wong <e@80x24.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v5 00/14] epoll: support pollable epoll from userspace
+Date:   Mon, 24 Jun 2019 16:41:37 +0200
+Message-Id: <20190624144151.22688-1-rpenyaev@suse.de>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1; format=flowed
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi all,
 
+This is v5 which introduces pollable epoll from userspace.
 
-Le ven. 21 juin 2019 =E0 15:56, Thierry Reding=20
-<thierry.reding@gmail.com> a =E9crit :
-> On Fri, Jun 21, 2019 at 01:41:45PM +0100, Daniel Thompson wrote:
->>  On 22/05/2019 17:34, Paul Cercueil wrote:
->>  > When the driver probes, the PWM pin is automatically configured=20
->> to its
->>  > default state, which should be the "pwm" function.
->>=20
->>  At which point in the probe... and by who?
->=20
-> The driver core will select the "default" state of a device right=20
-> before
-> calling the driver's probe, see:
->=20
-> 	drivers/base/pinctrl.c: pinctrl_bind_pins()
->=20
-> which is called from:
->=20
-> 	drivers/base/dd.c: really_probe()
->=20
->>  > However, at this
->>  > point we don't know the actual level of the pin, which may be=20
->> active or
->>  > inactive. As a result, if the driver probes without enabling the
->>  > backlight, the PWM pin might be active, and the backlight would be
->>  > lit way before being officially enabled.
->>  >
->>  > To work around this, if the probe function doesn't enable the=20
->> backlight,
->>  > the pin is set to its sleep state instead of the default one,=20
->> until the
->>  > backlight is enabled. Whenk the backlight is disabled, the pin is=20
->> reset
->>  > to its sleep state.
->>  Doesn't this workaround result in a backlight flash between=20
->> whatever enables
->>  it and the new code turning it off again?
->=20
-> Yeah, I think it would. I guess if you're very careful on how you set=20
-> up
-> the device tree you might be able to work around it. Besides the=20
-> default
-> and idle standard pinctrl states, there's also the "init" state. The
-> core will select that instead of the default state if available.=20
-> However
-> there's also pinctrl_init_done() which will try again to switch to the
-> default state after probe has finished and the driver didn't switch=20
-> away
-> from the init state.
->=20
-> So you could presumably set up the device tree such that you have=20
-> three
-> states defined: "default" would be the one where the PWM pin is=20
-> active,
-> "idle" would be used when backlight is off (PWM pin inactive) and then
-> another "init" state that would be the same as "idle" to be used=20
-> during
-> probe. During probe the driver could then switch to the "idle" state=20
-> so
-> that the pin shouldn't glitch.
+v5:
+  - Do not support architectures with reduced set of atomic ops,
+    namely arc-plat-eznps, sparc32, parisc.  Return -EOPNOTSUP on
+    attempt to create uepoll on these archs.
 
-That's exactly what I'm doing, yes (with the minor difference that your
-"idle" state is my "sleep" state).
+  - Explicitly hint compiler, that return value of 'xchg()' call
+    is not used, this fixes compilation on ia64.
+    Reported-by: kbuild test robot <lkp@intel.com>
 
-> I'm not sure this would actually work because I think the way that
-> pinctrl handles states both "init" and "idle" would be the same=20
-> pointer
-> values and therefore pinctrl_init_done() would think the driver didn't
-> change away from the "init" state because it is the same pointer value
-> as the "idle" state that the driver selected. One way to work around
-> that would be to duplicate the "idle" state definition and associate=20
-> one
-> instance of it with the "idle" state and the other with the "init"
-> state. At that point both states should be different (different=20
-> pointer
-> values) and we'd get the init state selected automatically before=20
-> probe,
-> select "idle" during probe and then the core will leave it alone.=20
-> That's
-> of course ugly because we duplicate the pinctrl state in DT, but=20
-> perhaps
-> it's the least ugly solution.
+v4:
+  Changes based on Peter Zijlstra remarks:
 
-That works perfectly on my side. I didn't have to duplicate the states=20
-in DT.
+  - remove wmb() which was used incorrectly on event path
+  - remove "atomic_" prefix from some local helpers in order not to
+    mix them with the atomic_t API.
+  - store and read all member shared with userspace using WRITE/READ_ONCE
+    in order to avoid store/load tearing.
+  - do xchg(&epi->event.events, event->events) in ep_modify() instead of
+    plain write to avoid value corruption on archs (parisc, sparc32 and
+	arc-eznps) where atomic ops support is limited.
+  - change lockless algorithm which adds events to the uring, mainly
+    get rid of busy loop on user side, which can last uncontrollably
+	long. The drawbacks are additional 2 cmpxchg ops on hot event path
+	and complexity of the add_event_to_uring() logic.
+  - no gcc atomic builtins are used
 
-> Adding Linus for visibility. Perhaps he can share some insight.
->=20
-> On that note, I'm wondering if perhaps it'd make sense for pinctrl to
-> support some mode where a device would start out in idle mode. That=20
-> is,
-> where pinctrl_bind_pins() would select the "idle" mode as the default
-> before probe. With something like that we could easily support this
-> use-case without glitching.
+  - add epoll_create2 syscall to all syscall*.tbl files (Arnd Bergmann)
+  - add uepoll kselftests: testing/selftests/uepoll/* (Andrew Morton)
+  - reduce size of epitem structure for the original epoll case (Eric Wong)
 
-You'd still need the driver to switch back between "default" and "idle"
-states, and switching to the "idle" state in the probe is a one-liner,
-so probably not worth the trouble, unless I don't understand the whole
-picture.
+  - queue work to the system's high priority workqueue
 
-Thanks,
--Paul
+v3:
+ - Measurements made, represented below.
 
-> I suppose yet another variant would be for the PWM backlight to not=20
-> use
-> any of the standard pinctrl states at all. Instead it could just=20
-> define
-> custom states, say "active" and "inactive". Looking at the code that
-> would prevent pinctrl_bind_pins() from doing anything with pinctrl
-> states and given the driver exact control over when each of the states
-> will be selected. That's somewhat suboptimal because we can't make use
-> of the pinctrl PM helpers and it'd require more boilerplate.
->=20
-> Thierry
->=20
->>  > Signed-off-by: Paul Cercueil <paul@crapouillou.net> > ---
->>  >   drivers/video/backlight/pwm_bl.c | 9 +++++++++
->>  >   1 file changed, 9 insertions(+)
->>  >
->>  > diff --git a/drivers/video/backlight/pwm_bl.c=20
->> b/drivers/video/backlight/pwm_bl.c
->>  > index fb45f866b923..422f7903b382 100644
->>  > --- a/drivers/video/backlight/pwm_bl.c
->>  > +++ b/drivers/video/backlight/pwm_bl.c
->>  > @@ -16,6 +16,7 @@
->>  >   #include <linux/module.h>
->>  >   #include <linux/kernel.h>
->>  >   #include <linux/init.h>
->>  > +#include <linux/pinctrl/consumer.h>
->>  >   #include <linux/platform_device.h>
->>  >   #include <linux/fb.h>
->>  >   #include <linux/backlight.h>
->>  > @@ -50,6 +51,8 @@ static void pwm_backlight_power_on(struct=20
->> pwm_bl_data *pb)
->>  >   	struct pwm_state state;
->>  >   	int err;
->>  > +	pinctrl_pm_select_default_state(pb->dev);
->>  > +
->>  >   	pwm_get_state(pb->pwm, &state);
->>  >   	if (pb->enabled)
->>  >   		return;
->>  > @@ -90,6 +93,8 @@ static void pwm_backlight_power_off(struct=20
->> pwm_bl_data *pb)
->>  >   	regulator_disable(pb->power_supply);
->>  >   	pb->enabled =3D false;
->>  > +
->>  > +	pinctrl_pm_select_sleep_state(pb->dev);
->>  >   }
->>  >   static int compute_duty_cycle(struct pwm_bl_data *pb, int=20
->> brightness)
->>  > @@ -626,6 +631,10 @@ static int pwm_backlight_probe(struct=20
->> platform_device *pdev)
->>  >   	backlight_update_status(bl);
->>  >   	platform_set_drvdata(pdev, bl);
->>  > +
->>  > +	if (bl->props.power =3D=3D FB_BLANK_POWERDOWN)
->>  > +		pinctrl_pm_select_sleep_state(&pdev->dev);
->>=20
->>  Didn't backlight_update_status(bl) already do this?
->>=20
->>=20
->>  Daniel.
->>=20
->>=20
->>  > +
->>  >   	return 0;
->>  >   err_alloc:
->>  >
->>=20
+ - Fix alignment for epoll_uitem structure on all 64-bit archs except
+   x86-64. epoll_uitem should be always 16 bit, proper BUILD_BUG_ON
+   is added. (Linus)
 
-=
+ - Check pollflags explicitly on 0 inside work callback, and do nothing
+   if 0.
+
+v2:
+ - No reallocations, the max number of items (thus size of the user ring)
+   is specified by the caller.
+
+ - Interface is simplified: -ENOSPC is returned on attempt to add a new
+   epoll item if number is reached the max, nothing more.
+
+ - Alloced pages are accounted using user->locked_vm and limited to
+   RLIMIT_MEMLOCK value.
+
+ - EPOLLONESHOT is handled.
+
+This series introduces pollable epoll from userspace, i.e. user creates
+epfd with a new EPOLL_USERPOLL flag, mmaps epoll descriptor, gets header
+and ring pointers and then consumes ready events from a ring, avoiding
+epoll_wait() call.  When ring is empty, user has to call epoll_wait()
+in order to wait for new events.  epoll_wait() returns -ESTALE if user
+ring has events in the ring (kind of indication, that user has to consume
+events from the user ring first, I could not invent anything better than
+returning -ESTALE).
+
+For user header and user ring allocation I used vmalloc_user().  I found
+that it is much easy to reuse remap_vmalloc_range_partial() instead of
+dealing with page cache (like aio.c does).  What is also nice is that
+virtual address is properly aligned on SHMLBA, thus there should not be
+any d-cache aliasing problems on archs with vivt or vipt caches.
+
+** Measurements
+
+In order to measure polling from userspace libevent was modified [1] and
+bench_http benchmark (client and server) was used:
+
+ o EPOLLET, original epoll:
+
+    20000 requests in 0.551306 sec. (36277.49 throughput)
+    Each took about 5.54 msec latency
+    1600000bytes read. 0 errors.
+
+ o EPOLLET + polling from userspace:
+
+    20000 requests in 0.475585 sec. (42053.47 throughput)
+    Each took about 4.78 msec latency
+    1600000bytes read. 0 errors.
+
+So harvesting events from userspace gives 15% gain.  Though bench_http
+is not ideal benchmark, but at least it is the part of libevent and was
+easy to modify.
+
+Worth to mention that uepoll is very sensible to CPU, e.g. the gain above
+is observed on desktop "Intel(R) Core(TM) i7-6820HQ CPU @ 2.70GHz", but on
+"Intel(R) Xeon(R) Silver 4110 CPU @ 2.10GHz" measurements are almost the
+same for both runs.
+
+** Limitations
+
+1. No support on architectures with reduced set of atomic ops,
+   namely arc-plat-eznps, sparc32, parisc.  For these archs
+   -EOPNOTSUP is returned.
+
+2. Expect always EPOLLET flag for new epoll items (Edge Triggered behavior)
+     obviously we can't call vfs_epoll() from userpace to have level
+     triggered behaviour.
+
+3. No support for EPOLLWAKEUP
+     events are consumed from userspace, thus no way to call __pm_relax()
+
+4. No support for EPOLLEXCLUSIVE
+     If device does not pass pollflags to wake_up() there is no way to
+     call poll() from the context under spinlock, thus special work is
+     scheduled to offload polling.  In this specific case we can't
+     support exclusive wakeups, because we do not know actual result
+     of scheduled work and have to wake up every waiter.
+
+** Principle of operation
+
+* Basic structures shared with userspace:
+
+In order to consume events from userspace all inserted items should be
+stored in items array, which has original epoll_event field and u32
+field for keeping ready events, i.e. each item has the following struct:
+
+ struct epoll_uitem {
+        __poll_t ready_events;
+        __poll_t events;
+        __u64 data;
+ };
+ BUILD_BUG_ON(sizeof(struct epoll_uitem) != 16);
+
+And the following is a header, which is seen by userspace:
+
+ struct epoll_uheader {
+    u32 magic;          /* epoll user header magic */
+    u32 header_length;  /* length of the header + items */
+    u32 index_length;   /* length of the index ring, always pow2 */
+    u32 max_items_nr;   /* max num of items */
+    u32 head;           /* updated by userland */
+    u32 int tail;       /* updated by kernel */
+
+	struct epoll_uitem items[] __aligned(128);
+ };
+
+ /* Header is 128 bytes, thus items are aligned on CPU cache */
+ BUILD_BUG_ON(sizeof(struct epoll_uheader) != 128);
+
+In order to poll epfd from userspace application has to call:
+
+   epoll_create2(EPOLL_USERPOLL, max_items_nr);
+
+Ready events are kept in a ring buffer, which is simply an index table,
+where each element points to an item in a header:
+
+ unsinged int *user_index;
+
+* How is new event accounted on kernel side?  Hot it is consumed from
+* userspace?
+
+When new event comes for some epoll item kernel does the following:
+
+ struct epoll_uitem *uitem;
+
+ /* Each item has a bit (index in user items array), discussed later */
+ uitem = user_header->items[epi->bit];
+
+ if (!atomic_fetch_or(uitem->ready_events, pollflags)) {
+     /* Increase all three subcounters at once */
+     cnt = atomic64_add_return_acquire(0x100010001, &ep->shadow_cnt);
+
+     idx = cnt_to_monotonic(cnt) - 1;
+     item_idx = &ep->user_index[idx & index_mask];
+
+     /* Add a bit to the uring */
+     WRITE_ONCE(*item_idx, uepi->bit);
+
+     do {
+         old = cnt;
+         if (cnt_to_refs(cnt) == 1) {
+             /* We are the last, we will advance the tail */
+             advance = cnt_to_advance(cnt);
+             WARN_ON(!advance);
+             /* Zero out all fields except monotonic counter */
+             cnt &= ~MONOTONIC_MASK;
+         } else {
+             /* Someone else will advance, only drop the ref */
+             advance = 0;
+             cnt -= 1;
+         }
+     } while ((cnt = atomic64_cmpxchg_release(&ep->shadow_cnt,
+                                              old, cnt)) != old);
+
+     if (advance) {
+         /*
+          * Advance the tail.  Tail is shared with userspace, thus we
+          * can't use kernel atomic_t for just atomic add, so use
+          * cmpxchg().  Sigh.
+          *
+          * We can race here with another cpu which also advances the
+          * tail.  This is absolutely ok, since the tail is advanced
+          * in one direction and eventually addition is commutative.
+          */
+         unsigned int old, tail = READ_ONCE(ep->user_header->tail);
+         do {
+             old = tail;
+         } while ((tail = cmpxchg(&ep->user_header->tail,
+                      old, old + advance)) != old);
+     }
+ }
+
+The most complicated part is how new event is added to the ring locklessly.
+To achieve that ->shadow_cnt is split on 3 subcounters and the whole
+layout of the counter can be represented as follows:
+
+   struct counter_t {
+       unsigned long long monotonic :32;
+       unsigned long long advance   :16;
+       unsigned long long refs      :16;
+   };
+
+   'monotonic' - Monotonically increases on each event insertion,
+                 never decreases.  Used as an index for an event
+                 in the uring.
+
+   'advance'   - Represents number of events on which user ->tail
+                 has to be advanced.  Monotonically increases if
+                 events are coming in parallel from different cpus
+                 while reference number keeps > 1.
+
+  'refs'       - Represents reference number, i.e. number of cpus
+                 inserting events in parallel.  Once there is a
+                 last inserter (the reference is 1), it should
+                 zero out 'advance' member and advance the tail
+                 for the userspace.
+
+What this is all about?  The main problem is that since event can be
+inserted from many cpus in parallel, we can't advance the tail if
+previous insertion has not been fully completed.  The idea to solve
+this is simple: the last one advances the tail.  Who is exactly the
+last?  Who detects the reference number is equal to 1.
+
+The other thing is worth to mention is that the ring can't infinitely
+grow and corrupt other elements, because kernel always checks that item
+was marked as ready, so userspace has to clear ready_events field.
+
+On userside events the following code should be used in order to consume
+events:
+
+ tail = READ_ONCE(header->tail);
+ for (i = 0; header->head != tail; header->head++) {
+     item_idx_ptr = &index[idx & indeces_mask];
+
+     /* Load index */
+     idx = __atomic_load_n(item_idx_ptr, __ATOMIC_ACQUIRE);
+
+     item = &header->items[idx];
+
+     /*
+      * Fetch data first, if event is cleared by the kernel we drop the data
+      * returning false.
+      */
+     event->data = item->event.data;
+     event->events = __atomic_exchange_n(&item->ready_events, 0,
+                         __ATOMIC_RELEASE);
+
+ }
+
+* How new epoll item gets its index inside user items array?
+
+Kernel has a bitmap for that and gets free bit on attempt to insert a new
+epoll item.  When bitmap is full -ENOSPC is returned.
+
+* Is there any testing app available?
+
+There is a small app [2] which starts many threads with many event fds and
+produces many events, while single consumer fetches them from userspace
+and goes to kernel from time to time in order to wait.
+
+Also libevent modification [1] is available, see "measurements" section
+above.
+
+[1] https://github.com/libevent/libevent/pull/801
+[2] https://github.com/rouming/test-tools/blob/master/userpolled-epoll.c
+
+Roman Penyaev (14):
+  epoll: move private helpers from a header to the source
+  epoll: introduce user structures for polling from userspace
+  epoll: allocate user header and user events ring for polling from
+    userspace
+  epoll: some sanity flags checks for epoll syscalls for polling from
+    userspace
+  epoll: offload polling to a work in case of epfd polled from userspace
+  epoll: introduce helpers for adding/removing events to uring
+  epoll: call ep_add_event_to_uring() from ep_poll_callback()
+  epoll: support polling from userspace for ep_insert()
+  epoll: support polling from userspace for ep_remove()
+  epoll: support polling from userspace for ep_modify()
+  epoll: support polling from userspace for ep_poll()
+  epoll: support mapping for epfd when polled from userspace
+  epoll: implement epoll_create2() syscall
+  kselftest: add uepoll-test which tests polling from userspace
+
+ arch/alpha/kernel/syscalls/syscall.tbl        |   2 +
+ arch/arm/tools/syscall.tbl                    |   1 +
+ arch/arm64/include/asm/unistd.h               |   2 +-
+ arch/arm64/include/asm/unistd32.h             |   2 +
+ arch/ia64/kernel/syscalls/syscall.tbl         |   2 +
+ arch/m68k/kernel/syscalls/syscall.tbl         |   2 +
+ arch/microblaze/kernel/syscalls/syscall.tbl   |   1 +
+ arch/mips/kernel/syscalls/syscall_n32.tbl     |   2 +
+ arch/mips/kernel/syscalls/syscall_n64.tbl     |   2 +
+ arch/mips/kernel/syscalls/syscall_o32.tbl     |   2 +
+ arch/parisc/kernel/syscalls/syscall.tbl       |   2 +
+ arch/powerpc/kernel/syscalls/syscall.tbl      |   2 +
+ arch/s390/kernel/syscalls/syscall.tbl         |   2 +
+ arch/sh/kernel/syscalls/syscall.tbl           |   2 +
+ arch/sparc/kernel/syscalls/syscall.tbl        |   2 +
+ arch/x86/entry/syscalls/syscall_32.tbl        |   1 +
+ arch/x86/entry/syscalls/syscall_64.tbl        |   1 +
+ arch/xtensa/kernel/syscalls/syscall.tbl       |   1 +
+ fs/eventpoll.c                                | 951 ++++++++++++++++--
+ include/linux/syscalls.h                      |   1 +
+ include/uapi/asm-generic/unistd.h             |   4 +-
+ include/uapi/linux/eventpoll.h                |  47 +-
+ kernel/sys_ni.c                               |   1 +
+ tools/testing/selftests/Makefile              |   1 +
+ tools/testing/selftests/uepoll/.gitignore     |   1 +
+ tools/testing/selftests/uepoll/Makefile       |  16 +
+ .../uepoll/atomic-builtins-support.c          |  13 +
+ tools/testing/selftests/uepoll/uepoll-test.c  | 603 +++++++++++
+ 28 files changed, 1566 insertions(+), 103 deletions(-)
+ create mode 100644 tools/testing/selftests/uepoll/.gitignore
+ create mode 100644 tools/testing/selftests/uepoll/Makefile
+ create mode 100644 tools/testing/selftests/uepoll/atomic-builtins-support.c
+ create mode 100644 tools/testing/selftests/uepoll/uepoll-test.c
+
+Signed-off-by: Roman Penyaev <rpenyaev@suse.de>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Azat Khuzhin <azat@libevent.org>
+Cc: Eric Wong <e@80x24.org>
+Cc: linux-fsdevel@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+
+-- 
+2.21.0
 
