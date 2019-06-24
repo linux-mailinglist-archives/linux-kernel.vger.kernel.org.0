@@ -2,101 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BDD5551B4E
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 21:18:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CCA2451B71
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 21:32:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730295AbfFXTSV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 15:18:21 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:32776 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728430AbfFXTSV (ORCPT
+        id S1730389AbfFXTcL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 15:32:11 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:34458 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727329AbfFXTcL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 15:18:21 -0400
-Received: by mail-wr1-f65.google.com with SMTP id n9so15159911wru.0
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2019 12:18:20 -0700 (PDT)
+        Mon, 24 Jun 2019 15:32:11 -0400
+Received: by mail-io1-f67.google.com with SMTP id k8so1617373iot.1
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2019 12:32:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=lxEW1OohvlQcLnagUdrYZ6F+TsIBwQcFUxd02nvE+RU=;
-        b=nZF7W2zlo265XbVDmUW32F/aZ/dmrJn/qv/ufMVAlkQ7G2TrlSGoiJV6JG7i5WkRNN
-         myB610ho4vcL4xXltP4/bhb/3bomHurKJAsfS9/sIcp4N0WQCkdWItPgN45uKFCAwlIb
-         Q+HZtCD4EYL+HhNkgFJ0kzouqPVZIneLjqPMjYxcH5WbR8IOn1BiWSKF3jpA3c3X8YKg
-         VYmlBt00NjmVCB71z12QU+9+1ZW9ZomzmoQ1tgVxncZB3bJhN3+R5v0UOo2JgWHUvTL1
-         vxDKeEzSc/GSdp84fsOljLUkAhtj9f+SDApmZNGkgn3gTeigKk5X39cqqd5Ai70onFJ/
-         KnMw==
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=46YubdxCxrFPh8KrDchM0Ty2p47WTPPMVanoBQz+N5I=;
+        b=WapHHi8N2f4HLGXe8Azqgnk2rXsYnSSwWeXoyTGoqptEniMQ7RI34LHdkfRxx+PTYJ
+         6q8PlKhv4L+QPsNZCCEMml8wD0fIpbl5OiXhrEU0oePfqE5PupxtN+Plt9pm45DyQEdT
+         xLv0d4d/GDSlQZxVi/VWkz/v0k08TuKOrnfCQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=lxEW1OohvlQcLnagUdrYZ6F+TsIBwQcFUxd02nvE+RU=;
-        b=JUANz2kNInVLuKUwanpNGjKsByUBiHb+yzV4mzF01aTktC8t7zr4QQZKxxchJyPxwO
-         be+31vvfKmMGENZNqSg0tvkNQ6kVXmHpb3szRYvo6RVwst+DVf5yXiWq36lReRqOSYug
-         aINU8TwbbhuKJudcLZlWapywpb9E+rAM1tU7QnAqhSByCZimPh180GCv9b+ysLSIoSic
-         kbQLN2tvfPReFJ0Fxkfy6mywzvglesGksrLyBxL9eU1n2+jor3XfPnbS8dGiEsoBHr2R
-         ImEy9LVAj90EgjVsKqPv8gOFY/ZVmZqMR8N2KF5ogBFZX+Gb7x10TPugnFfMeubmdpNa
-         gtTg==
-X-Gm-Message-State: APjAAAU+fvVCtlDUgHJebsFfto3CGb7vThN3jAv1qpCnJ8BfChdpMWt9
-        U5aocOeIzddOijvyIGkl53l42w==
-X-Google-Smtp-Source: APXvYqy4h5N/FeLOcZq3C1dFJDFd9oY8xJ0xWTlvXWev+mU7fzOJSsCmLphcLGBac/kUFB96zQ1acQ==
-X-Received: by 2002:adf:e301:: with SMTP id b1mr22616047wrj.304.1561403899298;
-        Mon, 24 Jun 2019 12:18:19 -0700 (PDT)
-Received: from [192.168.0.103] (146-241-101-27.dyn.eolo.it. [146.241.101.27])
-        by smtp.gmail.com with ESMTPSA id a7sm12181604wrs.94.2019.06.24.12.18.17
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 24 Jun 2019 12:18:18 -0700 (PDT)
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 12.4 \(3445.104.8\))
-Subject: Re: [PATCH BUGFIX V2] block, bfq: fix operator in BFQQ_TOTALLY_SEEKY
-From:   Paolo Valente <paolo.valente@linaro.org>
-In-Reply-To: <aec3e7b1-c235-ddb1-62b2-4ad7a7246a35@kernel.dk>
-Date:   Mon, 24 Jun 2019 21:18:17 +0200
-Cc:     linux-block <linux-block@vger.kernel.org>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>, linus.walleij@linaro.org,
-        bfq-iosched@googlegroups.com, oleksandr@natalenko.name
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <D9A203CB-DDA2-4C67-A20C-A3CA7354E3FB@linaro.org>
-References: <20190622204416.33871-1-paolo.valente@linaro.org>
- <aec3e7b1-c235-ddb1-62b2-4ad7a7246a35@kernel.dk>
-To:     Jens Axboe <axboe@kernel.dk>
-X-Mailer: Apple Mail (2.3445.104.8)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=46YubdxCxrFPh8KrDchM0Ty2p47WTPPMVanoBQz+N5I=;
+        b=RROxUDMfF8kMtUS1qPwyboKYMTmbuOe5DYJTNUXWFMeJncZP4IVSh3T86gGNzEpKF6
+         N1UchgYdg+Ag3TuBuba6gaKUx0CnIdWo4Pcv9592E0a1oPwNT5O2mXCyjUttopr/4zfo
+         P84inPz6LuzVEagW+uT0ful04KGagw2KVfVtNFKmvdSFkX708mz8fdnzJqGWeQla/TPn
+         CWNNOJZUB3GwTFl45ld1QR+Ndse71OS3a81SWuer61702jCc+5fPg5WfHm5ij/fBfkZq
+         OEHRCSsxzg9mWe1+61LiCTLJ3dsYyHOvDGfRDZUzIJhi/VrLmFk+X05WyuAlmUbCwoRD
+         zyRg==
+X-Gm-Message-State: APjAAAXP0PQ2TzP7HQMk6IPPYyl6sefO9AFpYtCk7S70OMC5N/kDUUFu
+        LIpoQ9VOUfsk0UW1aGqNe9uffOPiF98=
+X-Google-Smtp-Source: APXvYqzermPzG/eunflNCAys2OdCAv5ImejvBhMgl35nuT8yTa8yNUxWghkwzgya/sGhRpHhqtaApw==
+X-Received: by 2002:a02:b710:: with SMTP id g16mr34621566jam.88.1561404730355;
+        Mon, 24 Jun 2019 12:32:10 -0700 (PDT)
+Received: from mail-io1-f42.google.com (mail-io1-f42.google.com. [209.85.166.42])
+        by smtp.gmail.com with ESMTPSA id h18sm17892953iob.80.2019.06.24.12.32.10
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Mon, 24 Jun 2019 12:32:10 -0700 (PDT)
+Received: by mail-io1-f42.google.com with SMTP id i10so74942iol.13
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2019 12:32:10 -0700 (PDT)
+X-Received: by 2002:a02:aa1d:: with SMTP id r29mr14713662jam.127.1561404342590;
+ Mon, 24 Jun 2019 12:25:42 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190621211346.1324-1-ezequiel@collabora.com> <20190621211346.1324-2-ezequiel@collabora.com>
+In-Reply-To: <20190621211346.1324-2-ezequiel@collabora.com>
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Mon, 24 Jun 2019 12:25:29 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=UO8S_MHPKvpu-Uc1pTAv2NN_hf+U6_HCntRU0hzGQtWw@mail.gmail.com>
+Message-ID: <CAD=FV=UO8S_MHPKvpu-Uc1pTAv2NN_hf+U6_HCntRU0hzGQtWw@mail.gmail.com>
+Subject: Re: [PATCH v2 1/3] dt-bindings: display: rockchip: document VOP gamma
+ LUT address
+To:     Ezequiel Garcia <ezequiel@collabora.com>
+Cc:     dri-devel <dri-devel@lists.freedesktop.org>,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
+        Sandy Huang <hjc@rock-chips.com>, kernel@collabora.com,
+        Sean Paul <seanpaul@chromium.org>,
+        Boris Brezillon <boris.brezillon@collabora.com>,
+        Jacopo Mondi <jacopo@jmondi.org>,
+        Ilia Mirkin <imirkin@alum.mit.edu>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi,
 
+On Fri, Jun 21, 2019 at 2:14 PM Ezequiel Garcia <ezequiel@collabora.com> wrote:
+>
+> Add the register specifier description for an
+> optional gamma LUT address.
+>
+> Signed-off-by: Ezequiel Garcia <ezequiel@collabora.com>
+> ---
+> Changes from v1:
+> * Drop reg-names, suggested by Doug.
+> ---
+>  .../devicetree/bindings/display/rockchip/rockchip-vop.txt   | 6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
 
-> Il giorno 24 giu 2019, alle ore 18:12, Jens Axboe <axboe@kernel.dk> ha =
-scritto:
->=20
-> On 6/22/19 2:44 PM, Paolo Valente wrote:
->> By mistake, there is a '&' instead of a '=3D=3D' in the definition of =
-the
->> macro BFQQ_TOTALLY_SEEKY. This commit replaces the wrong operator =
-with
->> the correct one.
->=20
-> A bit worrying that this wasn't caught in testing, as it would have
-> resulted in _any_ queue being positive for totally seeky?
->=20
-
-Fortunately there's a somewhat reassuring explanation.  The commit
-introducing this macro prevented seeky queues from being considered
-soft real-time.  And, to be more selective, it actually filtered out
-only totally seeky queues, i.e., queues whose last I/O requests are
-*all* random.  With this error, any seeky queue was considered totally
-seeky.  This the broke (only) selectivity.
-
-> Anyway, applied.
->=20
-
-Thanks,
-Paolo
-
-> --=20
-> Jens Axboe
->=20
-
+Reviewed-by: Douglas Anderson <dianders@chromium.org>
