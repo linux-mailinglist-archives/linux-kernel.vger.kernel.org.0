@@ -2,94 +2,186 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 693A650114
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 07:41:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CA7C750138
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 07:44:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727014AbfFXFlw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 01:41:52 -0400
-Received: from dc8-smtprelay2.synopsys.com ([198.182.47.102]:41698 "EHLO
-        smtprelay-out1.synopsys.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726223AbfFXFlw (ORCPT
+        id S1727569AbfFXFoL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 01:44:11 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:35422 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727463AbfFXFoE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 01:41:52 -0400
-Received: from mailhost.synopsys.com (unknown [10.225.0.210])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (No client certificate requested)
-        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id D9084C01C4;
-        Mon, 24 Jun 2019 05:41:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1561354911; bh=E1ERrISIW+x8N6/XjWkPCVdmvp0aiB6uJtVc4k+4tXo=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=AJakDklB8qWucLSsOgZ7kcmOZ6Sd0wVHNpfzhJg27zkf+9MeY50eFDFnlhPkeRUCM
-         NsAHHH62qGvuMQA3TCQHdQ6F2WNUdq6O7en9wPPCFVRbuMp2Bv7lKP4VoddNKynS9o
-         qDS05iIumGYXIsOvKTqq4kZK+pZcqyNkYoF1x2hxyILh9iNAfEvXRcL6javwhFxR3K
-         LirNPYlsPwJc9TeWw/NgXFb7ZiEIZniIZftaqb97JQZ59uvXfi7/Wpqgz2igr3MNrx
-         6nAL523LjnSJrMhc4jCg1Tqb1B9GbbkURgkDznKe0UNnz+ciIXjYGp3seVWsGzHye1
-         4X8dgja8PUrxw==
-Received: from [10.116.70.206] (unknown [10.116.70.206])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mailhost.synopsys.com (Postfix) with ESMTPSA id EB20DA0231;
-        Mon, 24 Jun 2019 05:41:47 +0000 (UTC)
-Subject: Re: [PATCH] usb: dwc2: use a longer AHB idle timeout in
- dwc2_core_reset()
-To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "felipe.balbi@linux.intel.com" <felipe.balbi@linux.intel.com>
-Cc:     "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-stable <stable@vger.kernel.org>
-References: <20190620175022.29348-1-martin.blumenstingl@googlemail.com>
-From:   Minas Harutyunyan <Minas.Harutyunyan@synopsys.com>
-Message-ID: <a7647aea-b3e6-b785-8476-1851f50beff1@synopsys.com>
-Date:   Mon, 24 Jun 2019 09:41:46 +0400
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        Mon, 24 Jun 2019 01:44:04 -0400
+Received: by mail-pg1-f194.google.com with SMTP id s27so6497333pgl.2;
+        Sun, 23 Jun 2019 22:44:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=atvVCCZlaaqvzEl6Yh465+OzoxbvPTqnW+FcPoxAmko=;
+        b=dCs9iUVMJyqrd2/T7sKKRH+p0B2WfPpIE2OcecwSrrJFBpxBF4g8gg6xLeoURsDMhU
+         SpwAFGDkvq99q4fx9JKaty/5erC6z8reYxaxW1L7YohqUq2TQNUp9PgaqLN7zgXWSFFk
+         SuDy8SeiQoa7aX9gLJ5dckOnxNza7JYx/1Q4evNc1MrKWUWWyoZvmoEz1Ovfistwyc+t
+         t3mT51xsj3BKbBYvXq39ztgc12hFPZcVWULzX0wYL0sHaNkccwvk0nCtQbkTsGPxewTl
+         ddlfcraPP7hN1vCUH6cRdlqBbKLt7SdTndpij8arEh8xbue67P7jABIb0mqoP4ZL8UIY
+         yNag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=atvVCCZlaaqvzEl6Yh465+OzoxbvPTqnW+FcPoxAmko=;
+        b=Y41Kk9LOqXcgHyVKNLtIzHy17l48+76iK9F8j1nfN0sLrBvGOCGGtRlG8wE3qLRoXj
+         8zxEMnLb/i3b7tKL26G0ImnHw8bZO4m3Vc97Fd1tOhZdQ1z1j4XHRILRJ8Qk8atoc7Qu
+         eMim1McVQVQ1XemiIxzIGszHyba6DBLLzfmssvFuZNbxJXxNZ6nWAr5Z9j8T6fg113ga
+         TiHr4ToXnTgcPnFM48Sjf7SEcTNEAB4u4tNbJh0C0/h9FGf18VtsI7AKdYgf0ICnX6GU
+         X4mmK/syD7opfhuQtErWuRBJ/zj0eFMKKyzHPsCbbx7iok8YPWKdEU9GPgd9W/arLNqe
+         Z+Zw==
+X-Gm-Message-State: APjAAAUi2LRiHWlzAjN8bIYxfrlJrn6QIR0gHYmuJEnrRlo9qfeZEKxH
+        FWlEya06voi0JUvbGN//wtE=
+X-Google-Smtp-Source: APXvYqwCf8aQbMfAF7+Kb3CzB9vu5dq4fm2q5GLjv+X4nbjUH8Z4lOK4+PjGKWxJKVrEBMrnnsoQrA==
+X-Received: by 2002:a63:a41:: with SMTP id z1mr31007694pgk.290.1561355043781;
+        Sun, 23 Jun 2019 22:44:03 -0700 (PDT)
+Received: from localhost ([2601:600:103:d129:8c22:ab98:95b3:d831])
+        by smtp.gmail.com with ESMTPSA id f7sm10146829pfd.43.2019.06.23.22.44.03
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Sun, 23 Jun 2019 22:44:03 -0700 (PDT)
+From:   Jordan Hand <jordanhand22@gmail.com>
+Cc:     jordanhand22@gmail.com, Peter Huewe <peterhuewe@gmx.de>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Allison Randal <allison@lohutok.net>,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2] tpm: Get TCG log from TPM2 ACPI table for tpm2 systems
+Date:   Sun, 23 Jun 2019 22:42:31 -0700
+Message-Id: <20190624054232.20216-1-jordanhand22@gmail.com>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190624034734.15957-1-jordanhand22@gmail.com>
+References: <20190624034734.15957-1-jordanhand22@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20190620175022.29348-1-martin.blumenstingl@googlemail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 6/20/2019 9:51 PM, Martin Blumenstingl wrote:
-> Use a 10000us AHB idle timeout in dwc2_core_reset() and make it
-> consistent with the other "wait for AHB master IDLE state" ocurrences.
-> 
-> This fixes a problem for me where dwc2 would not want to initialize when
-> updating to 4.19 on a MIPS Lantiq VRX200 SoC. dwc2 worked fine with
-> 4.14.
-> Testing on my board shows that it takes 180us until AHB master IDLE
-> state is signalled. The very old vendor driver for this SoC (ifxhcd)
-> used a 1 second timeout.
-> Use the same timeout that is used everywhere when polling for
-> GRSTCTL_AHBIDLE instead of using a timeout that "works for one board"
-> (180us in my case) to have consistent behavior across the dwc2 driver.
-> 
-> Cc: linux-stable <stable@vger.kernel.org> # 4.19+
-> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-> ---
+For TPM2-based systems, retrieve the TCG log from the TPM2 ACPI table.
 
-Acked-by: Minas Harutyunyan <hminas@synopsys.com>
+Signed-off-by: Jordan Hand <jordanhand22@gmail.com>
+---
+v2:
+- Apologies, v1 had a silly compile error
 
->   drivers/usb/dwc2/core.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/usb/dwc2/core.c b/drivers/usb/dwc2/core.c
-> index 8b499d643461..8e41d70fd298 100644
-> --- a/drivers/usb/dwc2/core.c
-> +++ b/drivers/usb/dwc2/core.c
-> @@ -531,7 +531,7 @@ int dwc2_core_reset(struct dwc2_hsotg *hsotg, bool skip_wait)
->   	}
->   
->   	/* Wait for AHB master IDLE state */
-> -	if (dwc2_hsotg_wait_bit_set(hsotg, GRSTCTL, GRSTCTL_AHBIDLE, 50)) {
-> +	if (dwc2_hsotg_wait_bit_set(hsotg, GRSTCTL, GRSTCTL_AHBIDLE, 10000)) {
->   		dev_warn(hsotg->dev, "%s: HANG! AHB Idle timeout GRSTCTL GRSTCTL_AHBIDLE\n",
->   			 __func__);
->   		return -EBUSY;
-> 
+ drivers/char/tpm/eventlog/acpi.c | 67 +++++++++++++++++++++++---------
+ 1 file changed, 48 insertions(+), 19 deletions(-)
+
+diff --git a/drivers/char/tpm/eventlog/acpi.c b/drivers/char/tpm/eventlog/acpi.c
+index 63ada5e53f13..b945c4ff3af6 100644
+--- a/drivers/char/tpm/eventlog/acpi.c
++++ b/drivers/char/tpm/eventlog/acpi.c
+@@ -41,17 +41,31 @@ struct acpi_tcpa {
+ 	};
+ };
+ 
++struct acpi_tpm2 {
++	struct acpi_table_header hdr;
++	u16 platform_class;
++	u16 reserved;
++	u64 control_area_addr;
++	u32 start_method;
++	u8 start_method_params[12];
++	u32 log_max_len;
++	u64 log_start_addr;
++} __packed;
++
+ /* read binary bios log */
+ int tpm_read_log_acpi(struct tpm_chip *chip)
+ {
+-	struct acpi_tcpa *buff;
++	struct acpi_table_header *buff;
++	struct acpi_tcpa *tcpa;
++	struct acpi_tpm2 *tpm2;
++
+ 	acpi_status status;
+ 	void __iomem *virt;
+ 	u64 len, start;
++	int log_type;
+ 	struct tpm_bios_log *log;
+-
+-	if (chip->flags & TPM_CHIP_FLAG_TPM2)
+-		return -ENODEV;
++	bool is_tpm2 = chip->flags & TPM_CHIP_FLAG_TPM2;
++	acpi_string table_sig;
+ 
+ 	log = &chip->log;
+ 
+@@ -61,26 +75,41 @@ int tpm_read_log_acpi(struct tpm_chip *chip)
+ 	if (!chip->acpi_dev_handle)
+ 		return -ENODEV;
+ 
+-	/* Find TCPA entry in RSDT (ACPI_LOGICAL_ADDRESSING) */
+-	status = acpi_get_table(ACPI_SIG_TCPA, 1,
+-				(struct acpi_table_header **)&buff);
++	/* Find TCPA or TPM2 entry in RSDT (ACPI_LOGICAL_ADDRESSING) */
++	table_sig = is_tpm2 ? ACPI_SIG_TPM2 : ACPI_SIG_TCPA;
++	status = acpi_get_table(table_sig, 1, &buff);
+ 
+ 	if (ACPI_FAILURE(status))
+ 		return -ENODEV;
+ 
+-	switch(buff->platform_class) {
+-	case BIOS_SERVER:
+-		len = buff->server.log_max_len;
+-		start = buff->server.log_start_addr;
+-		break;
+-	case BIOS_CLIENT:
+-	default:
+-		len = buff->client.log_max_len;
+-		start = buff->client.log_start_addr;
+-		break;
++	/* If log_max_len and log_start_addr are set, start_method_params will
++	 * be 12 bytes, according to TCG ACPI spec. If start_method_params is
++	 * fewer than 12 bytes, the TCG log is not available
++	 */
++	if (is_tpm2 && (buff->length == sizeof(struct acpi_tpm2))) {
++		tpm2 = (struct acpi_tpm2 *)buff;
++		len = tpm2->log_max_len;
++		start = tpm2->log_start_addr;
++		log_type = EFI_TCG2_EVENT_LOG_FORMAT_TCG_2;
++	} else {
++		tcpa = (struct acpi_tcpa *)buff;
++		switch (tcpa->platform_class) {
++		case BIOS_SERVER:
++			len = tcpa->server.log_max_len;
++			start = tcpa->server.log_start_addr;
++			break;
++		case BIOS_CLIENT:
++		default:
++			len = tcpa->client.log_max_len;
++			start = tcpa->client.log_start_addr;
++			break;
++		}
++		log_type = EFI_TCG2_EVENT_LOG_FORMAT_TCG_1_2;
+ 	}
++
+ 	if (!len) {
+-		dev_warn(&chip->dev, "%s: TCPA log area empty\n", __func__);
++		dev_warn(&chip->dev, "%s: %s log area empty\n",
++				table_sig, __func__);
+ 		return -EIO;
+ 	}
+ 
+@@ -98,7 +127,7 @@ int tpm_read_log_acpi(struct tpm_chip *chip)
+ 	memcpy_fromio(log->bios_event_log, virt, len);
+ 
+ 	acpi_os_unmap_iomem(virt, len);
+-	return EFI_TCG2_EVENT_LOG_FORMAT_TCG_1_2;
++	return log_type;
+ 
+ err:
+ 	kfree(log->bios_event_log);
+-- 
+2.20.1
 
