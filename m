@@ -2,78 +2,148 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 864D35079B
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 12:12:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 503F150643
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2019 11:57:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730447AbfFXKIY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 24 Jun 2019 06:08:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40914 "EHLO mail.kernel.org"
+        id S1728387AbfFXJ5P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 24 Jun 2019 05:57:15 -0400
+Received: from foss.arm.com ([217.140.110.172]:44918 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730385AbfFXKH7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 24 Jun 2019 06:07:59 -0400
-Received: from localhost (f4.8f.5177.ip4.static.sl-reverse.com [119.81.143.244])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 41AF1205C9;
-        Mon, 24 Jun 2019 10:07:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561370878;
-        bh=L1T2MkkeIFA8NIvLd4nNQys+neonGjNiK4USvJQoEm8=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=V3rmhKCASJXh04LOCVDuq3h4dqXH+Jc1EbimKY4eSt56XXe8Sv/fCsRCrqI0zalCE
-         lNBRNy70EFn+GLppfxtZGByDdsMu37cKXWgn0VQiYxPTqBwzTVtn+3RLlBfmKL7dk7
-         tpBnFESaqrJ80uy+6zqFfgKpY+OZlSuZf34X2LfU=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, jjian zhou <jjian.zhou@mediatek.com>,
-        Chaotian Jing <chaotian.jing@mediatek.com>,
-        Yong Mao <yong.mao@mediatek.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH 5.1 005/121] mmc: mediatek: fix SDIO IRQ detection issue
-Date:   Mon, 24 Jun 2019 17:55:37 +0800
-Message-Id: <20190624092320.925025681@linuxfoundation.org>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190624092320.652599624@linuxfoundation.org>
-References: <20190624092320.652599624@linuxfoundation.org>
-User-Agent: quilt/0.66
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        id S1728638AbfFXJ4V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 24 Jun 2019 05:56:21 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BA46D106F;
+        Mon, 24 Jun 2019 02:56:20 -0700 (PDT)
+Received: from e121650-lin.cambridge.arm.com (e121650-lin.cambridge.arm.com [10.1.196.120])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9C54A3F71E;
+        Mon, 24 Jun 2019 02:56:19 -0700 (PDT)
+From:   Raphael Gault <raphael.gault@arm.com>
+To:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     jpoimboe@redhat.com, peterz@infradead.org, catalin.marinas@arm.com,
+        will.deacon@arm.com, julien.thierry@arm.com,
+        Raphael Gault <raphael.gault@arm.com>
+Subject: [RFC V3 07/18] objtool: Introduce INSN_UNKNOWN type
+Date:   Mon, 24 Jun 2019 10:55:37 +0100
+Message-Id: <20190624095548.8578-8-raphael.gault@arm.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190624095548.8578-1-raphael.gault@arm.com>
+References: <20190624095548.8578-1-raphael.gault@arm.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: jjian zhou <jjian.zhou@mediatek.com>
+On arm64 some object files contain data stored in the .text section.
+This data is interpreted by objtool as instruction but can't be
+identified as a valid one. In order to keep analysing those files we
+introduce INSN_UNKNOWN type. The "unknown instruction" warning will thus
+only be raised if such instructions are uncountered while validating an
+execution branch.
 
-commit 20314ce30af197963b0c239f0952db6aaef73f99 upstream.
+This change doesn't impact the x86 decoding logic since 0 is still used
+as a way to specify an unknown type, raising the "unknown instruction"
+warning during the decoding phase still.
 
-If cmd19 timeout or response crcerr occurs during execute_tuning(),
-it need invoke msdc_reset_hw(). Otherwise SDIO IRQ can't be detected.
-
-Signed-off-by: jjian zhou <jjian.zhou@mediatek.com>
-Signed-off-by: Chaotian Jing <chaotian.jing@mediatek.com>
-Signed-off-by: Yong Mao <yong.mao@mediatek.com>
-Fixes: 5215b2e952f3 ("mmc: mediatek: Add MMC_CAP_SDIO_IRQ support")
-Cc: stable@vger.kernel.org
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Raphael Gault <raphael.gault@arm.com>
 ---
- drivers/mmc/host/mtk-sd.c |    2 ++
- 1 file changed, 2 insertions(+)
+ tools/objtool/arch.h                           |  3 ++-
+ tools/objtool/arch/arm64/decode.c              |  8 ++++----
+ tools/objtool/arch/arm64/include/insn_decode.h |  4 ++--
+ tools/objtool/check.c                          | 10 +++++++++-
+ 4 files changed, 17 insertions(+), 8 deletions(-)
 
---- a/drivers/mmc/host/mtk-sd.c
-+++ b/drivers/mmc/host/mtk-sd.c
-@@ -1003,6 +1003,8 @@ static void msdc_request_done(struct msd
- 	msdc_track_cmd_data(host, mrq->cmd, mrq->data);
- 	if (mrq->data)
- 		msdc_unprepare_data(host, mrq);
-+	if (host->error)
-+		msdc_reset_hw(host);
- 	mmc_request_done(host->mmc, mrq);
+diff --git a/tools/objtool/arch.h b/tools/objtool/arch.h
+index 723600aae13f..f3f94e2a1403 100644
+--- a/tools/objtool/arch.h
++++ b/tools/objtool/arch.h
+@@ -26,7 +26,8 @@
+ #define INSN_CLAC		12
+ #define INSN_STD		13
+ #define INSN_CLD		14
+-#define INSN_OTHER		15
++#define INSN_UNKNOWN		15
++#define INSN_OTHER		16
+ #define INSN_LAST		INSN_OTHER
+ 
+ enum op_dest_type {
+diff --git a/tools/objtool/arch/arm64/decode.c b/tools/objtool/arch/arm64/decode.c
+index 5be1d87b1a1c..a40338a895f5 100644
+--- a/tools/objtool/arch/arm64/decode.c
++++ b/tools/objtool/arch/arm64/decode.c
+@@ -37,9 +37,9 @@
+  */
+ static arm_decode_class aarch64_insn_class_decode_table[] = {
+ 	[INSN_RESERVED]			= arm_decode_reserved,
+-	[INSN_UNKNOWN]			= arm_decode_unknown,
++	[INSN_UNALLOC_1]		= arm_decode_unknown,
+ 	[INSN_SVE_ENC]			= arm_decode_sve_encoding,
+-	[INSN_UNALLOC]			= arm_decode_unknown,
++	[INSN_UNALLOC_2]		= arm_decode_unknown,
+ 	[INSN_LD_ST_4]			= arm_decode_ld_st,
+ 	[INSN_DP_REG_5]			= arm_decode_dp_reg,
+ 	[INSN_LD_ST_6]			= arm_decode_ld_st,
+@@ -191,7 +191,7 @@ int arch_decode_instruction(struct elf *elf, struct section *sec,
+ int arm_decode_unknown(u32 instr, unsigned char *type,
+ 		       unsigned long *immediate, struct stack_op *op)
+ {
+-	*type = 0;
++	*type = INSN_UNKNOWN;
+ 	return 0;
  }
  
-
+@@ -206,7 +206,7 @@ int arm_decode_reserved(u32 instr, unsigned char *type,
+ 			unsigned long *immediate, struct stack_op *op)
+ {
+ 	*immediate = instr & ONES(16);
+-	*type = INSN_BUG;
++	*type = INSN_UNKNOWN;
+ 	return 0;
+ }
+ 
+diff --git a/tools/objtool/arch/arm64/include/insn_decode.h b/tools/objtool/arch/arm64/include/insn_decode.h
+index eb54fc39dca5..a01d76306749 100644
+--- a/tools/objtool/arch/arm64/include/insn_decode.h
++++ b/tools/objtool/arch/arm64/include/insn_decode.h
+@@ -20,9 +20,9 @@
+ #include "../../../arch.h"
+ 
+ #define INSN_RESERVED	0b0000
+-#define INSN_UNKNOWN	0b0001
++#define INSN_UNALLOC_1	0b0001
+ #define INSN_SVE_ENC	0b0010
+-#define INSN_UNALLOC	0b0011
++#define INSN_UNALLOC_2	0b0011
+ #define INSN_DP_IMM	0b1001	//0x100x
+ #define INSN_BRANCH	0b1011	//0x101x
+ #define INSN_LD_ST_4	0b0100	//0bx1x0
+diff --git a/tools/objtool/check.c b/tools/objtool/check.c
+index 3172f49c3a58..cba1d91451cc 100644
+--- a/tools/objtool/check.c
++++ b/tools/objtool/check.c
+@@ -1952,6 +1952,13 @@ static int validate_branch(struct objtool_file *file, struct instruction *first,
+ 	while (1) {
+ 		next_insn = next_insn_same_sec(file, insn);
+ 
++		if (insn->type == INSN_UNKNOWN) {
++			WARN("%s+0x%lx unknown instruction type, should never be reached",
++			     insn->sec->name,
++			     insn->offset);
++			return 1;
++		}
++
+ 		if (file->c_file && func && insn->func && func != insn->func->pfunc) {
+ 			WARN("%s() falls through to next function %s()",
+ 			     func->name, insn->func->name);
+@@ -2383,7 +2390,8 @@ static int validate_reachable_instructions(struct objtool_file *file)
+ 		return 0;
+ 
+ 	for_each_insn(file, insn) {
+-		if (insn->visited || ignore_unreachable_insn(insn))
++		if (insn->visited || ignore_unreachable_insn(insn) ||
++		    insn->type == INSN_UNKNOWN)
+ 			continue;
+ 
+ 		WARN_FUNC("unreachable instruction", insn->sec, insn->offset);
+-- 
+2.17.1
 
